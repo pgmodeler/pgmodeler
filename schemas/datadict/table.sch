@@ -59,13 +59,14 @@ $br [	] <tbody>
 	$br [		] <td $sp colspan="{colspan}" $sp class="nested-tab-parent">
 	$br [			] <table $sp class="nested-tab">
 	$br [				] <tr>
-	$br [					] <td [ class="title" colspan="5"]>Constraints</td>
+	$br [					] <td [ class="title" colspan="6"]>Constraints</td>
 	$br [				] </tr>
 	$br [				] <tr>
 	$br [					] <td [ class="title"]>Name</td>
 	$br [					] <td [ class="title"]>Type</td>
 	$br [					] <td [ class="title"]>Column(s)</td>
 	$br [					] <td [ class="title"]>References</td>
+	$br [					] <td [ class="title"]>Expression</td>
 	$br [					] <td [ class="title"]>Description</td>
 	$br [				] </tr>
 
@@ -118,19 +119,19 @@ $br </table> $br
 %if {index}	%then
 	$br <div>
 
-	%if {splitted} %and {previous} %then
+    %if {split} %and {previous} %then
 		$br [	] <a $sp href="{previous}.html" $sp class="nav-link"> &larr; $sp {previous}</a>
 	%end	
 		
-	%if {splitted} %then
+    %if {split} %then
 		$br [	<a href="index.html" class="nav-link">]
 	%else
 		$br [	<a href="\#index" class="nav-link">]
 	%end
 
-	[&uarr; Index</a>]
+    [&uarr; Index</a>]
 
-	%if {splitted} %and {next} %then
+    %if {split} %and {next} %then
 		$br [	] <a $sp href="{next}.html" $sp class="nav-link"> {next} $sp &rarr;</a>
 	%end
 

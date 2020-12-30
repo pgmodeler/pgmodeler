@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -30,13 +30,10 @@
 #include "codecompletionwidget.h"
 #include "objectstablewidget.h"
 #include "objectselectorwidget.h"
-#include "hinttextwidget.h"
 
 class GenericSQLWidget: public BaseObjectWidget, public Ui::GenericSQLWidget {
 	private:
 		Q_OBJECT
-
-		HintTextWidget *ref_name_ht, *use_signature_ht, *format_name_ht;
 
 		NumberedTextEditor *definition_txt, *preview_txt;
 
@@ -62,14 +59,14 @@ class GenericSQLWidget: public BaseObjectWidget, public Ui::GenericSQLWidget {
 		void setAttributes(DatabaseModel *model, OperationList *op_list, GenericSQL *genericsql=nullptr);
 
 	public slots:
-		void applyConfiguration(void);
+		void applyConfiguration();
 
 	private slots:
-		void updateCodePreview(void);
+		void updateCodePreview();
 		void addObjectReference(int row);
 		void editObjectReference(int row);
 		void updateObjectReference(int row);
-		void clearObjectReferenceForm(void);
+		void clearObjectReferenceForm();
 };
 
 #endif

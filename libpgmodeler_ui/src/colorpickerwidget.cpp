@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -69,10 +69,10 @@ bool ColorPickerWidget::eventFilter(QObject *object, QEvent *event)
 	if(event->type()==QEvent::ToolTip && button && button!=random_color_tb)
 	{
 		QToolTip::showText(QCursor::pos(), button->toolTip());
-		return(true);
+		return true;
 	}
 
-	return(QWidget::eventFilter(object, event));
+	return QWidget::eventFilter(object, event);
 }
 
 void ColorPickerWidget::setColor(int color_idx, const QColor &color)
@@ -96,12 +96,12 @@ QColor ColorPickerWidget::getColor(int color_idx)
 	if(color_idx < 0 || color_idx >= colors.size())
 		throw Exception(ErrorCode::RefElementInvalidIndex ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	return(colors[color_idx]);
+	return colors[color_idx];
 }
 
-unsigned ColorPickerWidget::getColorCount(void)
+unsigned ColorPickerWidget::getColorCount()
 {
-	return(colors.size());
+	return colors.size();
 }
 
 bool ColorPickerWidget::isButtonVisible(unsigned idx)
@@ -109,7 +109,7 @@ bool ColorPickerWidget::isButtonVisible(unsigned idx)
 	if(idx >= static_cast<unsigned>(buttons.size()))
 		throw Exception(ErrorCode::RefElementInvalidIndex ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	return(buttons[idx]->isVisible());
+	return buttons[idx]->isVisible();
 }
 
 void ColorPickerWidget::setButtonToolTip(unsigned button_idx, const QString &tooltip)
@@ -139,13 +139,13 @@ void ColorPickerWidget::setButtonVisible(unsigned idx, bool value)
 	buttons[idx]->setVisible(value);
 }
 
-void ColorPickerWidget::selectColor(void)
+void ColorPickerWidget::selectColor()
 {
 	QColorDialog color_dlg;
 	QToolButton *btn=qobject_cast<QToolButton *>(sender());
 	int btn_idx=buttons.indexOf(btn);
 
-	color_dlg.setWindowTitle(trUtf8("Select color"));
+	color_dlg.setWindowTitle(tr("Select color"));
 	color_dlg.setCurrentColor(colors[btn_idx]);
 	color_dlg.exec();
 
@@ -156,7 +156,7 @@ void ColorPickerWidget::selectColor(void)
 	}
 }
 
-void ColorPickerWidget::generateRandomColors(void)
+void ColorPickerWidget::generateRandomColors()
 {
 	QColor color;
 	uniform_int_distribution<unsigned> dist(0,255);

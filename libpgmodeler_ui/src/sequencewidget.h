@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -47,10 +47,10 @@ class SequenceWidget: public BaseObjectWidget, public Ui::SequenceWidget {
 		void setAttributes(DatabaseModel *model, OperationList *op_list, Schema *schema, Sequence *sequence);
 
 	public slots:
-		void applyConfiguration(void);
+		void applyConfiguration();
 
 	private slots:
-		void setDefaultValues(void);
+		void setDefaultValues();
 
 	friend class ColumnWidget;
 };

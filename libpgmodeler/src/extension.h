@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -42,7 +42,7 @@ class Extension: public BaseObject {
 	public:
 		static constexpr unsigned CurVersion=0,
 		OldVersion=1;
-		Extension(void);
+		Extension();
 
 		void setName(const QString &name);
 		void setSchema(BaseObject *schema);
@@ -56,7 +56,7 @@ class Extension: public BaseObject {
 		void setVersion(unsigned ver, const QString &value);
 
 		//! \brief Returns if the extension handles a datatype
-		bool handlesType(void);
+		bool handlesType();
 
 		//! \brief Returns on of the versions of the extension
 		QString getVersion(unsigned ver);

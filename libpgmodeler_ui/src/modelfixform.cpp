@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -21,16 +21,40 @@
 #include <iostream>
 #include "pgmodeleruins.h"
 
-const QString ModelFixForm::PgModelerCli=QString("pgmodeler-cli");
+const QString ModelFixForm::PgModelerCli("pgmodeler-cli");
 
 ModelFixForm::ModelFixForm(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 {
 	map<QString, attribs_map> confs=GeneralConfigWidget::getConfigurationParams();
 
 	setupUi(this);
-	hideEvent(nullptr);
 
-	PgModelerUiNs::configureWidgetFont(invalid_cli_lbl, PgModelerUiNs::MediumFontFactor);
+	input_file_sel = new FileSelectorWidget(this);
+	input_file_sel->setFileMode(QFileDialog::ExistingFile);
+	input_file_sel->setNameFilters({tr("Database model (*.dbm)"), tr("All files (*.*)")});
+	input_file_sel->setAcceptMode(QFileDialog::AcceptOpen);
+	input_file_sel->setAllowFilenameInput(true);
+	input_file_sel->setWindowTitle(tr("Select input file"));
+	model_fix_grid->addWidget(input_file_sel, 2, 2);
+
+	output_file_sel = new FileSelectorWidget(this);
+	output_file_sel->setFileMode(QFileDialog::AnyFile);
+	output_file_sel->setNameFilters({tr("Database model (*.dbm)"), tr("All files (*.*)")});
+	output_file_sel->setDefaultSuffix("dbm");
+	output_file_sel->setAcceptMode(QFileDialog::AcceptSave);
+	output_file_sel->setAllowFilenameInput(true);
+	input_file_sel->setWindowTitle(tr("Select output file"));
+	model_fix_grid->addWidget(output_file_sel, 3, 2);
+
+	pgmodeler_cli_sel = new FileSelectorWidget(this);
+	pgmodeler_cli_sel->setFileMode(QFileDialog::ExistingFile);
+	pgmodeler_cli_sel->setNameFilters({tr("pgModeler command line tool (%1)").arg(PgModelerCli)});
+	pgmodeler_cli_sel->setAcceptMode(QFileDialog::AcceptOpen);
+	pgmodeler_cli_sel->setAllowFilenameInput(true);
+	pgmodeler_cli_sel->setWindowTitle(tr("Select pgmodeler-cli executable"));
+	pgmodeler_cli_sel->setVisible(false);
+	model_fix_grid->addWidget(pgmodeler_cli_sel, 1, 2);
+
 	PgModelerUiNs::configureWidgetFont(message_lbl, PgModelerUiNs::MediumFontFactor);
 	PgModelerUiNs::configureWidgetFont(not_found_lbl, PgModelerUiNs::MediumFontFactor);
 
@@ -48,126 +72,94 @@ ModelFixForm::ModelFixForm(QWidget *parent, Qt::WindowFlags f) : QDialog(parent,
 	connect(&pgmodeler_cli_proc, SIGNAL(readyReadStandardError()), this, SLOT(updateOutput()));
 	connect(&pgmodeler_cli_proc, SIGNAL(finished(int)), this, SLOT(handleProcessFinish(int)));
 	connect(fix_btn, SIGNAL(clicked()), this, SLOT(fixModel()));
-	connect(sel_cli_exe_tb, SIGNAL(clicked()), this, SLOT(selectFile()));
-	connect(sel_in_file_tb, SIGNAL(clicked()), this, SLOT(selectFile()));
-	connect(sel_out_file_tb, SIGNAL(clicked()), this, SLOT(selectFile()));
-	connect(input_file_edt, SIGNAL(textChanged(QString)), this, SLOT(enableFix()));
-	connect(output_file_edt, SIGNAL(textChanged(QString)), this, SLOT(enableFix()));
-	connect(pgmodeler_cli_edt, SIGNAL(textChanged(QString)), this, SLOT(enableFix()));
+	connect(input_file_sel, SIGNAL(s_selectorChanged(bool)), this, SLOT(enableFix()));
+	connect(output_file_sel, SIGNAL(s_selectorChanged(bool)), this, SLOT(enableFix()));
+	connect(pgmodeler_cli_sel, SIGNAL(s_selectorChanged(bool)), this, SLOT(enableFix()));
 	connect(close_btn, SIGNAL(clicked()), this, SLOT(reject()));
+
+	hideEvent(nullptr);
 }
 
 void ModelFixForm::hideEvent(QHideEvent *)
 {
 	message_frm->setVisible(false);
 	pgmodeler_cli_lbl->setVisible(false);
-	pgmodeler_cli_edt->setVisible(false);
-	sel_cli_exe_tb->setVisible(false);
-	invalid_cli_lbl->setVisible(false);
-	input_file_edt->clear();
-	output_file_edt->clear();
-	output_txt->setPlainText(trUtf8("Waiting process to start..."));
+	pgmodeler_cli_sel->setVisible(false);
+	input_file_sel->clearSelector();
+	output_file_sel->clearSelector();
+	output_txt->setPlainText(tr("Waiting process to start..."));
 	load_model_chk->setChecked(true);
 }
 
-int ModelFixForm::exec(void)
+int ModelFixForm::exec()
 {
-	QFileInfo fi(GlobalAttributes::PgModelerCLIPath);
+	QFileInfo fi(GlobalAttributes::getPgModelerCLIPath());
 
 	//Show an warning if the cli command doesn't exists
 	if(!fi.exists())
 	{
-		not_found_lbl->setText(trUtf8("Could not locate <strong>%1</strong> tool on <strong>%2</strong>. The fix process can't continue! Please check pgModeler installation or try to manually specify the command below.")
+		not_found_lbl->setText(tr("Could not locate <strong>%1</strong> tool on <strong>%2</strong>. The fix process can't continue! Please check pgModeler installation or try to manually specify the command below.")
 							   .arg(PgModelerCli).arg(fi.absoluteDir().absolutePath()));
 		message_frm->setVisible(true);
 		pgmodeler_cli_lbl->setVisible(true);
-		pgmodeler_cli_edt->setVisible(true);
-		sel_cli_exe_tb->setVisible(true);
+		pgmodeler_cli_sel->setVisible(true);
 	}
 	else
-		pgmodeler_cli_edt->setText(GlobalAttributes::PgModelerCLIPath);
+		pgmodeler_cli_sel->setSelectedFile(GlobalAttributes::getPgModelerCLIPath());
 
-	return(QDialog::exec());
+	return QDialog::exec();
 }
 
-void ModelFixForm::enableFix(void)
+void ModelFixForm::enableFix()
 {
-	if(!pgmodeler_cli_edt->text().isEmpty())
+	if(!pgmodeler_cli_sel->getSelectedFile().isEmpty())
 	{
-		QFileInfo fi(pgmodeler_cli_edt->text());
-		bool visible=!fi.exists() || fi.baseName()!=PgModelerCli;
+		QFileInfo fi(pgmodeler_cli_sel->getSelectedFile());
+		bool invalid_cli = !fi.exists() || fi.baseName() != PgModelerCli;
 
-		invalid_cli_lbl->setVisible(visible);
-		message_frm->setVisible(visible);
+		if(invalid_cli)
+			pgmodeler_cli_sel->setCustomWarning(tr("The specified file is not the pgModeler command line tool (pgmodeler-cli)."));
+		else
+			pgmodeler_cli_sel->clearCustomWarning();
+
+		message_frm->setVisible(invalid_cli);
 	}
 	else
 	{
-		invalid_cli_lbl->setVisible(false);
+		pgmodeler_cli_sel->clearCustomWarning();
 		message_frm->setVisible(false);
 	}
 
-	fix_btn->setEnabled(!input_file_edt->text().isEmpty() &&
-						!output_file_edt->text().isEmpty() &&
-						!pgmodeler_cli_edt->text().isEmpty() &&
-						!invalid_cli_lbl->isVisible());
+	fix_btn->setEnabled(!input_file_sel->hasWarning() && !input_file_sel->getSelectedFile().isEmpty() &&
+											!output_file_sel->hasWarning() && !output_file_sel->getSelectedFile().isEmpty() &&
+											!pgmodeler_cli_sel->hasWarning() && !pgmodeler_cli_sel->getSelectedFile().isEmpty());
 }
 
-void ModelFixForm::fixModel(void)
+void ModelFixForm::fixModel()
 {
-	QString cmd=QString("\"%1\"");
+	QString cmd = QString("\"%1\"");
+	QStringList args;
 
 #ifdef Q_OS_MAC
 	cmd+=QString(" pgmodeler-cli");
 #endif
 
-	cmd+=QString(" --fix-model --fix-tries=%2 --input=\"%3\" --output=\"%4\"");
-	cmd=cmd.arg(pgmodeler_cli_edt->text())
-		.arg(fix_tries_sb->value())
-		.arg(input_file_edt->text())
-		.arg(output_file_edt->text());
+	args.append("--fix-model");
+	args.append("--fix-tries");
+	args.append(QString::number(fix_tries_sb->value()));
+	args.append("--input");
+	args.append(input_file_sel->getSelectedFile());
+	args.append("--output");
+	args.append(output_file_sel->getSelectedFile());
 
 	output_txt->clear();
 	pgmodeler_cli_proc.blockSignals(false);
-	pgmodeler_cli_proc.start(cmd);
+	pgmodeler_cli_proc.setArguments(args);
+	pgmodeler_cli_proc.setProgram(pgmodeler_cli_sel->getSelectedFile());
+	pgmodeler_cli_proc.start();
 }
 
-void ModelFixForm::selectFile(void)
-{
-	QObject *sender_obj=sender();
-	QFileDialog file_dlg;
-	QLineEdit *txt=nullptr;
-
-	if(sender_obj==sel_cli_exe_tb)
-	{
-		QString cli_cmd=PgModelerCli;
-		txt=pgmodeler_cli_edt;
-
-#ifdef Q_OS_WIN
-		cli_cmd+=QString(".exe");
-#endif
-
-		file_dlg.selectFile(cli_cmd);
-		file_dlg.setFileMode(QFileDialog::ExistingFile);
-		file_dlg.setNameFilter(trUtf8("pgModeler command line tool (%1)").arg(cli_cmd));
-		file_dlg.setWindowTitle(QString("Browse pgmodeler-cli command..."));
-	}
-	else
-	{
-		if(sender_obj==sel_in_file_tb)
-			txt=input_file_edt;
-		else
-			txt=output_file_edt;
-
-		file_dlg.setWindowTitle(QString("Select model file..."));
-	}
-
-	file_dlg.exec();
-
-	if(file_dlg.result()==QDialog::Accepted && !file_dlg.selectedFiles().isEmpty())
-		txt->setText(file_dlg.selectedFiles().at(0));
-}
-
-void ModelFixForm::updateOutput(void)
+void ModelFixForm::updateOutput()
 {
 	QTextCursor cursor;
 	QString txt=output_txt->toPlainText();
@@ -190,7 +182,7 @@ void ModelFixForm::handleProcessFinish(int res)
 	if(res==0 && load_model_chk->isChecked())
 	{
 		//Emit a signal indicating the file to be loaded
-		emit s_modelLoadRequested(output_file_edt->text());
+		emit s_modelLoadRequested(output_file_sel->getSelectedFile());
 		this->close();
 	}
 

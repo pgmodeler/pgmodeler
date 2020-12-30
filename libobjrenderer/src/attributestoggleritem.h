@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -98,13 +98,13 @@ class AttributesTogglerItem: public QObject, public RoundedRectItem {
 
 		/*! \brief Configure the buttons visibility and opacity based upon the current values
 		 * of pagination and collapse mode */
-		void configureButtonsState(void);
+		void configureButtonsState();
 
-		static void createButtonPolygons(void);
+		static void createButtonPolygons();
 
 	public:
 		AttributesTogglerItem(QGraphicsItem *parent = nullptr);
-		~AttributesTogglerItem(void);
+		virtual ~AttributesTogglerItem();
 
 		//! \brief Configures the buttons brush
 		void setButtonsBrush(const QBrush &brush);
@@ -135,13 +135,13 @@ class AttributesTogglerItem: public QObject, public RoundedRectItem {
 		void setPaginationValues(unsigned page_id, unsigned curr_page, unsigned max_page);
 
 		//! \brief Clears the selection status of the buttons
-		void clearButtonsSelection(void);
+		void clearButtonsSelection();
 
 		//! \brief Returns the width of the area occupied by all buttons (including spacing between them)
-		double getButtonsWidth(void);
+		double getButtonsWidth();
 
 		//! \brief Returns the height of the area occupied by all buttons (including a vertical spacing)
-		double getButtonsHeight(void);
+		double getButtonsHeight();
 
 		//! \brief Paints the toggler and its internal componets
 		void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = nullptr);

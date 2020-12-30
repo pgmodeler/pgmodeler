@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -18,18 +18,22 @@
 
 #include <QtTest/QtTest>
 #include "databasemodel.h"
+#include "pgmodelerunittest.h"
 
-class ServerTest: public QObject {
+class ServerTest: public QObject, public PgModelerUnitTest {
 	private:
 		Q_OBJECT
 
+	public:
+		ServerTest() : PgModelerUnitTest(SCHEMASDIR) {}
+
 	private slots:
-		void codeGeneratedIsWellFormed(void);
-		void modelReturnsDepsAndRefsForServer(void);
-		void modelCreatesServerfromXMLandResultingXMLisEqual(void);
+		void codeGeneratedIsWellFormed();
+		void modelReturnsDepsAndRefsForServer();
+		void modelCreatesServerfromXMLandResultingXMLisEqual();
 };
 
-void ServerTest::codeGeneratedIsWellFormed(void)
+void ServerTest::codeGeneratedIsWellFormed()
 {
 	ForeignDataWrapper fdw;
 	ForeignServer server;
@@ -45,7 +49,7 @@ OPTIONS (opt1 'value1',opt2 'value2'); \
 -- ddl-end -- \
 ALTER SERVER server_test OWNER TO postgres; \
 -- ddl-end -- \
-COMMENT ON SERVER server_test IS 'This is a test comment on server'; \
+COMMENT ON SERVER server_test IS E'This is a test comment on server'; \
 -- ddl-end -- ").simplified();
 
 	QString xml_code =QString(
@@ -82,7 +86,7 @@ COMMENT ON SERVER server_test IS 'This is a test comment on server'; \
 	}
 }
 
-void ServerTest::modelReturnsDepsAndRefsForServer(void)
+void ServerTest::modelReturnsDepsAndRefsForServer()
 {
 	DatabaseModel model;
 	Role owner;
@@ -123,7 +127,7 @@ void ServerTest::modelReturnsDepsAndRefsForServer(void)
 	}
 }
 
-void ServerTest::modelCreatesServerfromXMLandResultingXMLisEqual(void)
+void ServerTest::modelCreatesServerfromXMLandResultingXMLisEqual()
 {
 	DatabaseModel model;
 	Role owner;
@@ -164,7 +168,7 @@ void ServerTest::modelCreatesServerfromXMLandResultingXMLisEqual(void)
 		model.removeRole(&owner);
 
 		if(server)
-			delete(server);
+			delete server;
 
 		QCOMPARE(xml_code, res_xml_code);
 	}

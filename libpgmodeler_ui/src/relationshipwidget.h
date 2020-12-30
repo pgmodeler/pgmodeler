@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -29,7 +29,6 @@
 #include "ui_relationshipwidget.h"
 #include "objectstablewidget.h"
 #include "colorpickerwidget.h"
-#include "hinttextwidget.h"
 
 class RelationshipWidget: public BaseObjectWidget, public Ui::RelationshipWidget {
 	private:
@@ -42,12 +41,12 @@ class RelationshipWidget: public BaseObjectWidget, public Ui::RelationshipWidget
 		SpecialPkTab=4,
 		AdvancedTab=5;
 
-		HintTextWidget *gen_tab_name_ht, *ref_table_ht, *recv_table_ht,
-		*identifier_ht, *single_pk_ht, *default_part_ht;
-
 		ColorPickerWidget *color_picker;
 
 		NumberedTextEditor *part_bound_expr_txt;
+
+		//! \brief Indicates if the current relationship can use the name pattern fields
+		bool use_name_patterns;
 
 		//! \brief Stores the tab objects to change the configuration of the form depending on the type of the relationship
 		QWidgetList tabs;
@@ -69,7 +68,7 @@ class RelationshipWidget: public BaseObjectWidget, public Ui::RelationshipWidget
 		void listObjects(ObjectType obj_type);
 
 		//! \brief Lists the advanced objects in the repective table widget
-		void listAdvancedObjects(void);
+		void listAdvancedObjects();
 
 		/*! \brief Shows the object data in the specified table row. The table widget is idenfied by
 		 the current object type */
@@ -87,24 +86,24 @@ class RelationshipWidget: public BaseObjectWidget, public Ui::RelationshipWidget
 		RelationshipWidget(QWidget * parent = nullptr);
 		void setAttributes(DatabaseModel *model, OperationList *op_list, BaseRelationship *base_rel);
 
-		QSize getIdealSize(void);
+		QSize getIdealSize();
 
 	private slots:
-		void addObject(void);
+		void addObject();
 		void editObject(int row);
 		void removeObject(int row);
-		void removeObjects(void);
+		void removeObjects();
 		void showAdvancedObject(int row);
-		void selectCopyOptions(void);
-		void listSpecialPkColumns(void);
+		void selectCopyOptions();
+		void listSpecialPkColumns();
 		void duplicateObject(int curr_row, int new_row);
 		void useFKGlobalSettings(bool value);
 		void usePatternGlobalSettings(bool value);
-		void generateBoundingExpr(void);
+		void generateBoundingExpr();
 
 	public slots:
-		void applyConfiguration(void);
-		void cancelConfiguration(void);
+		void applyConfiguration();
+		void cancelConfiguration();
 
 		friend class ModelWidget;
 };

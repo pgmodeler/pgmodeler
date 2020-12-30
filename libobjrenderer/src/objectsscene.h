@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -113,9 +113,9 @@ class ObjectsScene: public QGraphicsScene {
 
 		/*! \brief Indicates if the mouse cursor is under a move spot portion of scene.
 		Additionally this method configures the direction of movement when returning true */
-		bool mouseIsAtCorner(void);
+		bool mouseIsAtCorner();
 
-		QGraphicsView *getActiveViewport(void);
+		QGraphicsView *getActiveViewport();
 
 		//! \brief Performs the final steps when moving the objects like adjusting position to grid, moving children object, etc
 		void finishObjectsMove(const QPointF &pnt_end);
@@ -128,7 +128,7 @@ class ObjectsScene: public QGraphicsScene {
 		//! \brief Formats the name of the layer removing any invalid chars and doing the desambiguation in case the name already exists
 		QString formatLayerName(const QString &name);
 
-		void clearTablesChildrenSelection(void);
+		void clearTablesChildrenSelection();
 
 	protected:
 		//! \brief Brush used to draw the grid over the scene
@@ -150,8 +150,8 @@ class ObjectsScene: public QGraphicsScene {
 		static constexpr unsigned DefaultLayer = 0,
 		InvalidLayer = UINT_MAX;
 
-		ObjectsScene(void);
-		~ObjectsScene(void);
+		ObjectsScene();
+		virtual ~ObjectsScene();
 
 		/*! \brief Add a new layer to the scene. In case of duplicated name this method
 		 * automatically does the desambiguation. The name of the new layer is returned. */
@@ -165,7 +165,7 @@ class ObjectsScene: public QGraphicsScene {
 		void removeLayer(const QString &name);
 
 		//! \brief Destroy all layers (except the default one) moving all objects from the destroyed layers to the default one
-		void removeLayers(void);
+		void removeLayers();
 
 		//! \brief Set the named layers as active. Activating a layer causes objects attached to it to be visible
 		void setActiveLayers(QStringList act_layers);
@@ -184,30 +184,30 @@ class ObjectsScene: public QGraphicsScene {
 		bool isLayerActive(unsigned layer_id);
 
 		//! \brief Returns a list containing the names of the active layers
-		QStringList getActiveLayers(void);
+		QStringList getActiveLayers();
 
 		//! \brief Returns a list containing the ids of the active layers
-		QList<unsigned> getActiveLayersIds(void);
+		QList<unsigned> getActiveLayersIds();
 
 		//! \brief Returns a list containing the names of all layers in the scene
-		QStringList getLayers(void);
+		QStringList getLayers();
 
 		//! \brief Returns the id of the named layer. If the layer does not exist the constant ObjectsScene::InvalidLayer is returned
 		unsigned getLayerId(const QString &name);
 
 		//! \brief This method causes objects in the active layers to have their visibility state updated.
-		void updateActiveLayers(void);
+		void updateActiveLayers();
 
 		static void setEnableCornerMove(bool enable);
 		static void setInvertRangeSelectionTrigger(bool invert);
-		static bool isCornerMoveEnabled(void);
+		static bool isCornerMoveEnabled();
 
 		static void setGridSize(unsigned size);
 		static void setGridOptions(bool show_grd, bool align_objs_grd, bool show_page_dlm);
 
-		static bool isAlignObjectsToGrid(void);
-		static bool isShowGrid(void);
-		static bool isShowPageDelimiters(void);
+		static bool isAlignObjectsToGrid();
+		static bool isShowGrid();
+		static bool isShowPageDelimiters();
 
 		static void setPaperConfiguration(QPrinter::PaperSize paper_sz, QPrinter::Orientation orient, QRectF margins, QSizeF custom_size=QSizeF(0,0));
 		static void getPaperConfiguration(QPrinter::PaperSize &paper_sz, QPrinter::Orientation &orient, QRectF &margins, QSizeF &custom_size);
@@ -235,18 +235,18 @@ class ObjectsScene: public QGraphicsScene {
 		//! \brief Returns a vector containing all the page rects.
 		vector<QRectF> getPagesForPrinting(const QSizeF &paper_size, const QSizeF &margin, unsigned &h_page_cnt, unsigned &v_page_cnt);
 
-		bool isRangeSelectionEnabled(void);
-		bool isRangeSelectionTriggerInverted(void);
-		bool isRelationshipLineVisible(void);
-		bool isMovingObjects(void);
+		bool isRangeSelectionEnabled();
+		bool isRangeSelectionTriggerInverted();
+		bool isRelationshipLineVisible();
+		bool isMovingObjects();
 
 		QList<QGraphicsItem *> selectedItems(void) const;
 		bool hasOnlyTableChildrenSelection(void) const;
 
 	public slots:
-		void alignObjectsToGrid(void);
-		void update(void);
-		void clearSelection(void);
+		void alignObjectsToGrid();
+		void update();
+		void clearSelection();
 
 		//! \brief Toggles the object range selection
 		void enableRangeSelection(bool value);
@@ -257,7 +257,7 @@ class ObjectsScene: public QGraphicsScene {
 		void enableSceneMove(bool value=true);
 
 		//! \brief Moves the scene when the user puts the mouse cursor on one of scene's edges
-		void moveObjectScene(void);
+		void moveObjectScene();
 
 		//! \brief Handles and redirects the signal emitted by the selected child object
 		void handlePopupMenuRequested(TableObject *child_obj);
@@ -266,7 +266,7 @@ class ObjectsScene: public QGraphicsScene {
 		void handleObjectSelection(BaseGraphicObject *object, bool selected);
 
 		//! \brief Handles the tables children objects selection changes
-		void handleChildrenSelectionChanged(void);
+		void handleChildrenSelectionChanged();
 
 	signals:
 		//! \brief Signal emitted when the user start or finalizes a object movement.
@@ -276,19 +276,19 @@ class ObjectsScene: public QGraphicsScene {
 		void s_objectModified(BaseGraphicObject *objeto);
 
 		//! \brief Signal emitted when the user toggles a table's collapse mode in the scene
-		void s_collapseModeChanged(void);
+		void s_collapseModeChanged();
 
 		//! \brief Signal emitted when the user toggles a table's attributes pagination
-		void s_paginationToggled(void);
+		void s_paginationToggled();
 
 		//! \brief Signal emitted when the user changes a table's attributes page
-		void s_currentPageChanged(void);
+		void s_currentPageChanged();
 
 		//! \brief Signal emitted when the user right-click a specific object on the scene requesting the popup menu
 		void s_popupMenuRequested(BaseObject *);
 
 		//! \brief Signal emitted when the user right-click one or more objects on the scene requesting the popup menu
-		void s_popupMenuRequested(void);
+		void s_popupMenuRequested();
 
 		//! \brief Signal emitted when the user double-click a object
 		void s_objectDoubleClicked(BaseGraphicObject *objeto);
@@ -297,22 +297,22 @@ class ObjectsScene: public QGraphicsScene {
 		void s_objectSelected(BaseGraphicObject *objeto, bool selecionado);
 
 		//! \brief Signal emitted when objects are selected via range selection
-		void s_objectsSelectedInRange(void);
+		void s_objectsSelectedInRange();
 
 		//! \brief Signal emitted when a blank area of the canvas is pressed
 		void s_objectsScenePressed(Qt::MouseButtons);
 
 		//! \brief Signal emitted when the active layers change
-		void s_activeLayersChanged(void);
+		void s_activeLayersChanged();
 
 		//! \brief Signal emitted when the layers change (add, remove, rename)
-		void s_layersChanged(void);
+		void s_layersChanged();
 
 		//! \brief Signal emitted when objects are moved from a layer to another
-		void s_objectsMovedLayer(void);
+		void s_objectsMovedLayer();
 
 		//! \brief Signal emitted when tables children objects have their selection statuses changed
-		void s_childrenSelectionChanged(void);
+		void s_childrenSelectionChanged();
 
 		friend class ModelWidget;
 };

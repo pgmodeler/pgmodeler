@@ -3,11 +3,19 @@
 #          Code generation can be broken if incorrect changes are made.
 
 %if {list} %then
-  [ SELECT cn.oid, cn.conname AS name FROM pg_conversion AS cn ]
+  
+  %if {use-signature} %then
+    %set {signature} [ ns.nspname || '.' || ]
+  %end 
+
+  [ SELECT cn.oid, cn.conname AS name, 
+    ns.nspname AS parent,
+    'schema' AS parent_type    
+    FROM pg_conversion AS cn 
+    LEFT JOIN pg_namespace AS ns ON cn.connamespace = ns.oid ]
 
   %if {schema} %then
-    [ LEFT JOIN pg_namespace AS ns ON cn.connamespace = ns.oid
-       WHERE ns.nspname = ] '{schema}'
+    [ WHERE ns.nspname = ] '{schema}'
   %end
 
   %if {last-sys-oid} %then
@@ -27,6 +35,16 @@
     %end
     ( {not-ext-object} )
   %end
+  
+  %if {name-filter} %then
+      %if {last-sys-oid} %or {schema} %or {not-ext-object} %then
+      [ AND ]
+    %else
+      [ WHERE ]
+    %end
+  
+    ( {signature} [ cn.conname ~* ] E'{name-filter}' )
+  %end  
 
 %else
     %if {attribs} %then

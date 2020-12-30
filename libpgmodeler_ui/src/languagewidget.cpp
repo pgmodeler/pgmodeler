@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -39,7 +39,7 @@ LanguageWidget::LanguageWidget(QWidget *parent): BaseObjectWidget(parent, Object
 
 		configureFormLayout(language_grid, ObjectType::Language);
 
-		frame=generateInformationFrame(trUtf8("The functions to be assigned to the language should have, respectively, the following signatures:<br/><br/>  <strong>Handler Function:</strong> <em>language_handler function()</em><br/>  <strong>Validator Function:</strong> <em>void function(oid)</em><br/>  <strong>Inline Function:</strong> <em>void function(internal)</em>"));
+		frame=generateInformationFrame(tr("The functions to be assigned to the language should have, respectively, the following signatures:<br/><br/>  <strong>Handler Function:</strong> <em>language_handler function()</em><br/>  <strong>Validator Function:</strong> <em>void function(oid)</em><br/>  <strong>Inline Function:</strong> <em>void function(internal)</em>"));
 
 		language_grid->addItem(new QSpacerItem(10,10,QSizePolicy::Minimum,QSizePolicy::Expanding), language_grid->count()+1, 0, 1, 0);
 		language_grid->addWidget(frame, language_grid->count()+1, 0, 1, 0);
@@ -72,7 +72,7 @@ void LanguageWidget::setAttributes(DatabaseModel *model, OperationList *op_list,
 	}
 }
 
-void LanguageWidget::applyConfiguration(void)
+void LanguageWidget::applyConfiguration()
 {
 	try
 	{

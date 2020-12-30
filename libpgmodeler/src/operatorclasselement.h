@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -64,7 +64,7 @@ class OperatorClassElement {
 		FunctionElem=1,
 		StorageElem=2;
 
-		OperatorClassElement(void);
+		OperatorClassElement();
 		virtual ~OperatorClassElement(void){}
 
 		//! \brief Defines the element as a function clause
@@ -80,25 +80,25 @@ class OperatorClassElement {
 		void setStorage(PgSqlType storage);
 
 		//! \brief Returns the element type
-		unsigned getElementType(void);
+		unsigned getElementType();
 
 		/*! \brief Returns the current assigned function.
 		 This method returns nullptr when the element is not an FUNCTION_ELEM */
-		Function *getFunction(void);
+		Function *getFunction();
 
 		/*! \brief Returns the current assigned operator.
 		 This method returns nullptr when the element is not an OPERATOR_ELEM */
-		Operator *getOperator(void);
+		Operator *getOperator();
 
 		/*! \brief Returns the operator family used by element.
 		This method returns nullptr when the element is not an OPERATOR_ELEM */
-		OperatorFamily *getOperatorFamily(void);
+		OperatorFamily *getOperatorFamily();
 
 		//! \brief Storage type of the element
-		PgSqlType getStorage(void);
+		PgSqlType getStorage();
 
 		//! \brief Returns the strategy (support) number of the element
-		unsigned getStrategyNumber(void);
+		unsigned getStrategyNumber();
 
 		//! \brief Returns the SQL / XML code definition for the element
 		virtual QString getCodeDefinition(unsigned def_type) final;

@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>858</width>
-    <height>1251</height>
+    <height>1278</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -106,28 +106,6 @@
          </property>
         </widget>
        </item>
-       <item row="3" column="2">
-        <widget class="QWidget" name="gen_tab_name_hint" native="true">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="minimumSize">
-          <size>
-           <width>22</width>
-           <height>22</height>
-          </size>
-         </property>
-         <property name="maximumSize">
-          <size>
-           <width>22</width>
-           <height>22</height>
-          </size>
-         </property>
-        </widget>
-       </item>
        <item row="2" column="0">
         <widget class="QLabel" name="card_lbl">
          <property name="sizePolicy">
@@ -203,28 +181,6 @@
          </property>
          <property name="text">
           <string>Rel. Type:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="6" column="2">
-        <widget class="QWidget" name="recv_table_hint" native="true">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="minimumSize">
-          <size>
-           <width>22</width>
-           <height>22</height>
-          </size>
-         </property>
-         <property name="maximumSize">
-          <size>
-           <width>22</width>
-           <height>22</height>
-          </size>
          </property>
         </widget>
        </item>
@@ -359,33 +315,14 @@
                 <verstretch>0</verstretch>
                </sizepolicy>
               </property>
+              <property name="toolTip">
+               <string>&lt;p&gt;The receiver's primary key will be composed by the generated foreign key columns.&lt;/p&gt;</string>
+              </property>
               <property name="statusTip">
-               <string>The receiver's primary key will be composed by the generated foreign key columns.</string>
+               <string/>
               </property>
               <property name="text">
                <string>Identifier</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QWidget" name="identifier_hint" native="true">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="minimumSize">
-               <size>
-                <width>22</width>
-                <height>22</height>
-               </size>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>22</width>
-                <height>22</height>
-               </size>
               </property>
              </widget>
             </item>
@@ -421,33 +358,14 @@
                 <verstretch>0</verstretch>
                </sizepolicy>
               </property>
+              <property name="toolTip">
+               <string>&lt;p&gt;Instead of create a multi-valued primary key with the generated foreign keys columns a single column is created and used as primary key.&lt;/p&gt;</string>
+              </property>
               <property name="statusTip">
-               <string>Instead of create a multi-valued primary key with the generated foreign keys columns a single column is created and used as primary key.</string>
+               <string/>
               </property>
               <property name="text">
                <string>Single PK column</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QWidget" name="single_pk_hint" native="true">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="minimumSize">
-               <size>
-                <width>22</width>
-                <height>22</height>
-               </size>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>22</width>
-                <height>22</height>
-               </size>
               </property>
              </widget>
             </item>
@@ -473,28 +391,6 @@
          </property>
          <property name="clearButtonEnabled">
           <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item row="4" column="2">
-        <widget class="QWidget" name="ref_table_hint" native="true">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="minimumSize">
-          <size>
-           <width>22</width>
-           <height>22</height>
-          </size>
-         </property>
-         <property name="maximumSize">
-          <size>
-           <width>22</width>
-           <height>22</height>
-          </size>
          </property>
         </widget>
        </item>
@@ -638,33 +534,14 @@
             </item>
             <item>
              <widget class="QCheckBox" name="default_part_chk">
+              <property name="toolTip">
+               <string>&lt;p&gt;Default partitions are only supported on &lt;strong&gt;PostgreSQL 11+&lt;/strong&gt;. Using this option and exporting the code to PostgreSQL 10 syntax errors will be raised.&lt;/p&gt;</string>
+              </property>
               <property name="statusTip">
-               <string>Default partitions are only supported on &lt;strong&gt;PostgreSQL 11+&lt;/strong&gt;. Using this option and exporting the code to PostgreSQL 10 syntax errors will be raised.</string>
+               <string/>
               </property>
               <property name="text">
                <string>Default partition</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QWidget" name="default_part_hint" native="true">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="minimumSize">
-               <size>
-                <width>22</width>
-                <height>22</height>
-               </size>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>22</width>
-                <height>22</height>
-               </size>
               </property>
              </widget>
             </item>
@@ -766,7 +643,7 @@
              <string>Use the values defined on settings dialogs for the fields below</string>
             </property>
             <property name="text">
-             <string>Use global settings for these fields</string>
+             <string>Use global settings</string>
             </property>
             <property name="checked">
              <bool>true</bool>
@@ -1105,7 +982,7 @@
              <string>Use the values defined on settings dialogs for the fields below</string>
             </property>
             <property name="text">
-             <string>Use global settings for these fields</string>
+             <string>Use global settings</string>
             </property>
             <property name="checked">
              <bool>true</bool>

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -24,7 +24,7 @@ AppearanceConfigWidget::AppearanceConfigWidget(QWidget * parent) : BaseConfigWid
 {
 	setupUi(this);
 
-	QString conf_ids[]={
+	QStringList conf_ids={
 	/* 00 */	Attributes::Global,
 	/* 01 */	Attributes::Constraints,
 	/* 02 */	Attributes::ObjSelection,
@@ -38,60 +38,64 @@ AppearanceConfigWidget::AppearanceConfigWidget(QWidget * parent) : BaseConfigWid
 	/* 10 */	Attributes::TableBody,
 	/* 11 */	Attributes::TableExtBody,
 	/* 12 */	Attributes::TableTitle,
-	/* 13 */	BaseObject::getSchemaName(ObjectType::Rule),
-	/* 14 */	BaseObject::getSchemaName(ObjectType::Rule),
-	/* 15 */	BaseObject::getSchemaName(ObjectType::Index),
-	/* 16 */	BaseObject::getSchemaName(ObjectType::Index),
-	/* 17 */	BaseObject::getSchemaName(ObjectType::Trigger),
-	/* 18 */	BaseObject::getSchemaName(ObjectType::Trigger),
-	/* 19 */	BaseObject::getSchemaName(ObjectType::Constraint),
-	/* 20 */	BaseObject::getSchemaName(ObjectType::Constraint),
-	/* 21 */	BaseObject::getSchemaName(ObjectType::Policy),
-	/* 22 */	BaseObject::getSchemaName(ObjectType::Policy),
-	/* 23 */	Attributes::ViewSchemaName,
-	/* 24 */	Attributes::ViewName,
-	/* 25 */	Attributes::ViewBody,
-	/* 26 */	Attributes::ViewExtBody,
-	/* 27 */	Attributes::ViewTitle,
-	/* 28 */	Attributes::Alias,
-	/* 29 */	Attributes::RefColumn,
-	/* 30 */	Attributes::RefTable,
-	/* 31 */	Attributes::Reference,
-	/* 32 */	BaseObject::getSchemaName(ObjectType::Textbox),
-	/* 33 */	Attributes::Column,
-	/* 34 */	Attributes::Column,
-	/* 35 */	Attributes::InhColumn,
-	/* 36 */	Attributes::ProtColumn,
-	/* 37 */	Attributes::PkColumn,
-	/* 38 */	Attributes::PkColumn,
-	/* 39 */	Attributes::FkColumn,
-	/* 40 */	Attributes::FkColumn,
-	/* 41 */	Attributes::UqColumn,
-	/* 42 */	Attributes::UqColumn,
-	/* 43 */	Attributes::NnColumn,
-	/* 44 */	Attributes::NnColumn,
-	/* 45 */	Attributes::Relationship,
-	/* 46 */	Attributes::Label,
-	/* 47 */	Attributes::Label,
-	/* 48 */	Attributes::Attribute,
-	/* 49 */	Attributes::Attribute,
-	/* 50 */	Attributes::Tag,
-	/* 51 */	Attributes::Tag,
-	/* 52 */	Attributes::Placeholder,
-	/* 53 */	Attributes::ForeignTableSchemaName,
-	/* 54 */	Attributes::ForeignTableName,
-	/* 55 */	Attributes::ForeignTableBody,
-	/* 56 */	Attributes::ForeignTableExtBody,
-	/* 57 */	Attributes::ForeignTableTitle };
+	/* 13 */	Attributes::TableTogglerButtons,
+	/* 14 */	Attributes::TableTogglerBody,
+	/* 15 */	BaseObject::getSchemaName(ObjectType::Rule),
+	/* 16 */	BaseObject::getSchemaName(ObjectType::Rule),
+	/* 17 */	BaseObject::getSchemaName(ObjectType::Index),
+	/* 18 */	BaseObject::getSchemaName(ObjectType::Index),
+	/* 19 */	BaseObject::getSchemaName(ObjectType::Trigger),
+	/* 20 */	BaseObject::getSchemaName(ObjectType::Trigger),
+	/* 21 */	BaseObject::getSchemaName(ObjectType::Constraint),
+	/* 22 */	BaseObject::getSchemaName(ObjectType::Constraint),
+	/* 23 */	BaseObject::getSchemaName(ObjectType::Policy),
+	/* 24 */	BaseObject::getSchemaName(ObjectType::Policy),
+	/* 25 */	Attributes::ViewSchemaName,
+	/* 26 */	Attributes::ViewName,
+	/* 27 */	Attributes::ViewBody,
+	/* 28 */	Attributes::ViewExtBody,
+	/* 29 */	Attributes::ViewTitle,
+	/* 30 */	Attributes::Alias,
+	/* 31 */	Attributes::RefColumn,
+	/* 32 */	Attributes::RefTable,
+	/* 33 */	Attributes::Reference,
+	/* 34 */	Attributes::ViewTogglerButtons,
+	/* 35 */	Attributes::ViewTogglerBody,
+	/* 36 */	BaseObject::getSchemaName(ObjectType::Textbox),
+	/* 37 */	Attributes::Column,
+	/* 38 */	Attributes::Column,
+	/* 39 */	Attributes::InhColumn,
+	/* 40 */	Attributes::ProtColumn,
+	/* 41 */	Attributes::PkColumn,
+	/* 42 */	Attributes::PkColumn,
+	/* 43 */	Attributes::FkColumn,
+	/* 44 */	Attributes::FkColumn,
+	/* 45 */	Attributes::UqColumn,
+	/* 46 */	Attributes::UqColumn,
+	/* 47 */	Attributes::NnColumn,
+	/* 48 */	Attributes::NnColumn,
+	/* 49 */	Attributes::Relationship,
+	/* 50 */	Attributes::Label,
+	/* 51 */	Attributes::Label,
+	/* 52 */	Attributes::Attribute,
+	/* 53 */	Attributes::Attribute,
+	/* 54 */	Attributes::Tag,
+	/* 55 */	Attributes::Tag,
+	/* 56 */	Attributes::Placeholder,
+	/* 57 */	Attributes::ForeignTableSchemaName,
+	/* 58 */	Attributes::ForeignTableName,
+	/* 59 */	Attributes::ForeignTableBody,
+	/* 60 */	Attributes::ForeignTableExtBody,
+	/* 61 */	Attributes::ForeignTableTitle,
+	/* 62 */	Attributes::ForeignTableTogglerButtons,
+	/* 63 */	Attributes::ForeignTableTogglerBody };
 
 	int i, count=element_cmb->count(),
 			//This auxiliary vector stores the id of elements that represents color/font confing of graphical objects
-			obj_conf_ids_vect[]={ 2, 4, 6, 7,
-														10, 11, 12, 14, 16, 18,
-														20, 22, 25, 26, 27,
-														31, 32, 34, 38,
-														40, 42, 44, 45, 47, 49,
-														51, 52, 55, 56, 57 };
+			obj_conf_ids_vect[]={ 2, 4, 6, 7, 10, 11, 12, 13, 14,
+														16, 18, 20, 22, 24, 27, 28, 29,
+														33, 34, 35, 36, 38, 42, 44, 46, 48,
+														49, 51, 53, 55, 56, 59, 60, 61, 62, 63 };
 	vector<int> conf_obj_ids(obj_conf_ids_vect, obj_conf_ids_vect + sizeof(obj_conf_ids_vect) / sizeof(int));
 
 	conf_items.resize(count);
@@ -124,12 +128,12 @@ AppearanceConfigWidget::AppearanceConfigWidget(QWidget * parent) : BaseConfigWid
 	grid->addWidget(color_picker, 3, 1, 1, 4);
 	grid->addWidget(viewp, 4 , 0, 1, 5);
 
-	connect(element_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(enableConfigElement(void)));
-	connect(font_cmb, SIGNAL(currentFontChanged(QFont)), this, SLOT(applyFontStyle(void)));
-	connect(font_size_spb, SIGNAL(valueChanged(double)), this, SLOT(applyFontStyle(void)));
-	connect(bold_chk, SIGNAL(toggled(bool)), this, SLOT(applyFontStyle(void)));
-	connect(underline_chk, SIGNAL(toggled(bool)), this, SLOT(applyFontStyle(void)));
-	connect(italic_chk, SIGNAL(toggled(bool)), this, SLOT(applyFontStyle(void)));
+	connect(element_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(enableConfigElement()));
+	connect(font_cmb, SIGNAL(currentFontChanged(QFont)), this, SLOT(applyFontStyle()));
+	connect(font_size_spb, SIGNAL(valueChanged(double)), this, SLOT(applyFontStyle()));
+	connect(bold_chk, SIGNAL(toggled(bool)), this, SLOT(applyFontStyle()));
+	connect(underline_chk, SIGNAL(toggled(bool)), this, SLOT(applyFontStyle()));
+	connect(italic_chk, SIGNAL(toggled(bool)), this, SLOT(applyFontStyle()));
 
 	connect(color_picker, SIGNAL(s_colorChanged(unsigned, QColor)), this, SLOT(applyElementColor(unsigned, QColor)));
 
@@ -140,22 +144,22 @@ AppearanceConfigWidget::AppearanceConfigWidget(QWidget * parent) : BaseConfigWid
 	});
 }
 
-AppearanceConfigWidget::~AppearanceConfigWidget(void)
+AppearanceConfigWidget::~AppearanceConfigWidget()
 {
 	scene->removeItem(placeholder);
 
-	delete(placeholder);
-	delete(viewp);
-	delete(scene);
-	delete(model);
+	delete placeholder;
+	delete viewp;
+	delete scene;
+	delete model;
 }
 
-map<QString, attribs_map> AppearanceConfigWidget::getConfigurationParams(void)
+map<QString, attribs_map> AppearanceConfigWidget::getConfigurationParams()
 {
-	return(config_params);
+	return config_params;
 }
 
-void AppearanceConfigWidget::loadExampleModel(void)
+void AppearanceConfigWidget::loadExampleModel()
 {
 	try
 	{
@@ -167,9 +171,7 @@ void AppearanceConfigWidget::loadExampleModel(void)
 
 		if(model->getObjectCount()==0)
 		{
-			model->loadModel(GlobalAttributes::TmplConfigurationDir +
-							 GlobalAttributes::DirSeparator +
-							 GlobalAttributes::ExampleModel);
+			model->loadModel(GlobalAttributes::getTmplConfigurationFilePath("", GlobalAttributes::ExampleModel));
 
 			count=model->getObjectCount(ObjectType::Table);
 			for(i=0; i < count; i++)
@@ -215,7 +217,7 @@ void AppearanceConfigWidget::loadExampleModel(void)
 				scene->addItem(txtbox);
 			}
 
-			placeholder->setRect(QRectF(170, 280, 100,50));
+			placeholder->setRect(QRectF(400, 280, 200, 150));
 			updatePlaceholderItem();
 			scene->addItem(placeholder);
 		}
@@ -226,7 +228,7 @@ void AppearanceConfigWidget::loadExampleModel(void)
 	}
 }
 
-void AppearanceConfigWidget::updatePlaceholderItem(void)
+void AppearanceConfigWidget::updatePlaceholderItem()
 {
 	placeholder->setBrush(BaseObjectView::getFillStyle(Attributes::Placeholder));
 	QPen pen=BaseObjectView::getBorderStyle(Attributes::Placeholder);
@@ -234,7 +236,7 @@ void AppearanceConfigWidget::updatePlaceholderItem(void)
 	placeholder->setPen(pen);
 }
 
-void AppearanceConfigWidget::loadConfiguration(void)
+void AppearanceConfigWidget::loadConfiguration()
 {
 	try
 	{
@@ -266,7 +268,7 @@ void AppearanceConfigWidget::loadConfiguration(void)
 	}
 }
 
-void AppearanceConfigWidget::saveConfiguration(void)
+void AppearanceConfigWidget::saveConfiguration()
 {
 	try
 	{
@@ -333,7 +335,7 @@ void AppearanceConfigWidget::saveConfiguration(void)
 	}
 }
 
-void AppearanceConfigWidget::enableConfigElement(void)
+void AppearanceConfigWidget::enableConfigElement()
 {
 	//QPalette pal;
 	int idx=element_cmb->currentIndex();
@@ -412,7 +414,7 @@ void AppearanceConfigWidget::applyElementColor(unsigned color_idx, QColor color)
 	setConfigurationChanged(true);
 }
 
-void AppearanceConfigWidget::applyFontStyle(void)
+void AppearanceConfigWidget::applyFontStyle()
 {
 	QFont font;
 
@@ -431,7 +433,7 @@ void AppearanceConfigWidget::applyFontStyle(void)
 	setConfigurationChanged(true);
 }
 
-void AppearanceConfigWidget::restoreDefaults(void)
+void AppearanceConfigWidget::restoreDefaults()
 {
 	try
 	{

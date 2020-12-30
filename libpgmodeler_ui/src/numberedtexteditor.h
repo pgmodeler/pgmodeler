@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -50,7 +50,7 @@ class NumberedTextEditor : public QPlainTextEdit {
 		static QFont default_font;
 
 		//! \brief Default tab size for texts
-		static int tab_width;
+		static double tab_width;
 
 		static QString src_editor_app;
 
@@ -77,7 +77,7 @@ class NumberedTextEditor : public QPlainTextEdit {
 		QProcess src_editor_proc;
 
 		//! \brief Determines and returns the line numbers widget width
-		int getLineNumbersWidth(void);
+		int getLineNumbersWidth();
 
 	protected:
 		void resizeEvent(QResizeEvent *event);
@@ -85,14 +85,14 @@ class NumberedTextEditor : public QPlainTextEdit {
 
 	public:
 		NumberedTextEditor(QWidget * parent = nullptr, bool handle_ext_files = false);
-		~NumberedTextEditor(void);
+		virtual ~NumberedTextEditor();
 
 		static void setDefaultFont(const QFont &font);
 		static void setLineNumbersVisible(bool value);
 		static void setHighlightLines(bool value);
 		static void setLineHighlightColor(const QColor &color);
-		static void setTabWidth(int value);
-		static int getTabWidth(void);
+		static void setTabDistance(double value);
+		static double getTabDistance();
 		static void setSourceEditorApp(const QString &app);
 		static void setSourceEditorAppArgs(const QString &args);
 
@@ -102,38 +102,38 @@ class NumberedTextEditor : public QPlainTextEdit {
 		void setCustomContextMenuEnabled(bool enabled);
 
 	private slots:
-		void showContextMenu(void);
+		void showContextMenu();
 
-		void changeSelectionToLower(void);
-		void changeSelectionToUpper(void);
+		void changeSelectionToLower();
+		void changeSelectionToUpper();
 		void changeSelectionCase(bool lower);
 
-		void identSelectionRight(void);
-		void identSelectionLeft(void);
+		void identSelectionRight();
+		void identSelectionLeft();
 		void identSelection(bool ident_right);
 
-		void loadFile(void);
-		void editSource(void);
+		void loadFile();
+		void editSource();
 		void updateSource(int exit_code);
-		void handleProcessStart(void);
-		void handleProcessError(void);
-		void enableEditor(void);
+		void handleProcessStart();
+		void handleProcessError();
+		void enableEditor();
 
 	public slots:
 		void setReadOnly(bool ro);
 
 		//! \brief Grabs the keyboard input and also highlight the current line
-		void setFocus(void);
+		void setFocus();
 
 		//! \brief Draw the line numbers according to the current visible lines
-		void updateLineNumbers(void);
+		void updateLineNumbers();
 
 		/*! \brief Configures the line numbers widget sizes (w,h) depending on the current
 		visible lines and the text editor height */
-		void updateLineNumbersSize(void);
+		void updateLineNumbersSize();
 
 		//! \brief Colors the background of the line where the cursor is
-		void highlightCurrentLine(void);
+		void highlightCurrentLine();
 };
 
 #endif

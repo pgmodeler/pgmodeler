@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -27,7 +27,6 @@
 
 #include "baseobjectwidget.h"
 #include "ui_foreigndatawrapperwidget.h"
-#include "hinttextwidget.h"
 #include "objectstablewidget.h"
 
 class ForeignDataWrapperWidget: public BaseObjectWidget, public Ui::ForeignDataWrapperWidget {
@@ -37,9 +36,6 @@ class ForeignDataWrapperWidget: public BaseObjectWidget, public Ui::ForeignDataW
 		ObjectSelectorWidget *func_handler_sel,
 		*func_validator_sel;
 
-		HintTextWidget *func_handler_ht,
-		*func_validator_ht;
-
 		ObjectsTableWidget *options_tab;
 
 	public:
@@ -47,7 +43,7 @@ class ForeignDataWrapperWidget: public BaseObjectWidget, public Ui::ForeignDataW
 		void setAttributes(DatabaseModel *model, OperationList *op_list, ForeignDataWrapper *fdw);
 
 	public slots:
-		void applyConfiguration(void);
+		void applyConfiguration();
 };
 
 #endif

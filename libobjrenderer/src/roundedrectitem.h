@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -40,7 +40,7 @@ class RoundedRectItem: public QGraphicsRectItem {
 		unsigned corners;
 
 		//! \brief Creates the polygon that represents the rounded rectangle
-		void createPolygon(void);
+		void createPolygon();
 
 		/*! \brief Calculates the points to simulate the rounded border. It must be informed
 		the starting point and start/end angles. Based upon those parameters a line
@@ -71,10 +71,10 @@ class RoundedRectItem: public QGraphicsRectItem {
 		explicit RoundedRectItem(QGraphicsItem *parent = 0);
 
 		void setBorderRadius(double radius);
-		double getBorderRadius(void);
+		double getBorderRadius();
 
 		void setRoundedCorners(unsigned corners);
-		unsigned getRoundedCorners(void);
+		unsigned getRoundedCorners();
 
 		//! \brief Test if a corners is configured to be rounded
 		bool isCornerRounded(unsigned corner);

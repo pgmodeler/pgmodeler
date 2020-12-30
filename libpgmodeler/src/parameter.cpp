@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -18,10 +18,20 @@
 
 #include "parameter.h"
 
-Parameter::Parameter(void)
+Parameter::Parameter()
 {
 	obj_type=ObjectType::Parameter;
 	is_in=is_out=is_variadic=false;
+}
+
+Parameter::Parameter(const Parameter &param) : Parameter()
+{
+	setName(param.obj_name);
+	setType(param.type);
+	setIn(param.is_in);
+	setOut(param.is_out);
+	setVariadic(param.is_variadic);
+	setDefaultValue(param.default_value);
 }
 
 Parameter::Parameter(const QString &name, PgSqlType type, bool in, bool out, bool variadic) : Parameter()
@@ -66,19 +76,34 @@ void Parameter::setVariadic(bool value)
 	if(value)	is_in=is_out=false;
 }
 
-bool Parameter::isIn(void)
+bool Parameter::isIn()
 {
-	return(is_in);
+	return is_in;
 }
 
-bool Parameter::isOut(void)
+bool Parameter::isOut()
 {
-	return(is_out);
+	return is_out;
 }
 
-bool Parameter::isVariadic(void)
+bool Parameter::isVariadic()
 {
-	return(is_variadic);
+	return is_variadic;
+}
+
+QString Parameter::getModeString()
+{
+	QString mode;
+
+	if(is_variadic)
+		mode = "VARIADIC";
+	else
+	{
+		if(is_in) mode = "IN";
+		if(is_out) mode += "OUT";
+	}
+
+	return mode;
 }
 
 void Parameter::operator = (const Parameter &param)
@@ -95,9 +120,9 @@ void Parameter::operator = (const Parameter &param)
 QString Parameter::getCodeDefinition(unsigned def_type)
 {
 	QString code_def=getCachedCode(def_type, false);
-	if(!code_def.isEmpty()) return(code_def);
+	if(!code_def.isEmpty()) return code_def;
 
-	return(this->getCodeDefinition(def_type, false));
+	return this->getCodeDefinition(def_type, false);
 }
 
 QString Parameter::getCodeDefinition(unsigned def_type, bool reduced_form)
@@ -107,11 +132,11 @@ QString Parameter::getCodeDefinition(unsigned def_type, bool reduced_form)
 	else
 		attributes[Attributes::Name]=obj_name;
 
-	attributes[Attributes::ParamIn]=(is_in ? Attributes::True : QString());
-	attributes[Attributes::ParamOut]=(is_out ? Attributes::True : QString());
-	attributes[Attributes::ParamVariadic]=(is_variadic ? Attributes::True : QString());
+	attributes[Attributes::ParamIn]=(is_in ? Attributes::True : "");
+	attributes[Attributes::ParamOut]=(is_out ? Attributes::True : "");
+	attributes[Attributes::ParamVariadic]=(is_variadic ? Attributes::True : "");
 	attributes[Attributes::DefaultValue]=default_value;
 	attributes[Attributes::Type]=type.getCodeDefinition(def_type);
 
-	return(BaseObject::getCodeDefinition(def_type, reduced_form));
+	return BaseObject::getCodeDefinition(def_type, reduced_form);
 }

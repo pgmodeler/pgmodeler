@@ -129,8 +129,11 @@
                 <height>0</height>
                </size>
               </property>
+              <property name="toolTip">
+               <string>&lt;p&gt;These spinners define the minimum amount of attributes visible per page in each section of tables and views when the pagination is enabled on them. The first one controls the amount of columns per page. The second defines the amount of extended attributes (constraints, indexes, trigger, rules, policies) displayed per page.&lt;/p&gt;</string>
+              </property>
               <property name="statusTip">
-               <string>These spinners define the minimum amount of attributes visible per page in each section of tables and views when the pagination is enabled on them. The first one controls the amount of columns per page. The second defines the amount of extended attributes (constraints, indexes, trigger, rules, policies) displayed per page.</string>
+               <string/>
               </property>
               <property name="minimum">
                <number>5</number>
@@ -176,8 +179,11 @@
                 <height>0</height>
                </size>
               </property>
+              <property name="toolTip">
+               <string>&lt;p&gt;Defines the minimum amount of attributes visible per page on tables and view when the pagination is enabled on these objects.&lt;/p&gt;</string>
+              </property>
               <property name="statusTip">
-               <string>Defines the minimum amount of attributes visible per page on tables and view when the pagination is enabled on these objects.</string>
+               <string/>
               </property>
               <property name="minimum">
                <number>5</number>
@@ -205,28 +211,6 @@
                </size>
               </property>
              </spacer>
-            </item>
-            <item>
-             <widget class="QWidget" name="attributes_per_page_hint" native="true">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="minimumSize">
-               <size>
-                <width>22</width>
-                <height>22</height>
-               </size>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>22</width>
-                <height>22</height>
-               </size>
-              </property>
-             </widget>
             </item>
            </layout>
           </item>
@@ -265,8 +249,11 @@
                 <height>0</height>
                </size>
               </property>
+              <property name="toolTip">
+               <string>&lt;p&gt;Defines the minimum opacity percentage applied to the objects when using the fade out feature. A zero opacity causes the object to be completely hidden not being possible to interact with it in the canvas area.&lt;/p&gt;</string>
+              </property>
               <property name="statusTip">
-               <string>Defines the minimum opacity percentage applied to the objects when using the fade out feature. A zero opacity causes the object to be completely hidden not being possible to interact with it in the canvas area.</string>
+               <string/>
               </property>
               <property name="minimum">
                <number>0</number>
@@ -295,28 +282,6 @@
               </property>
              </spacer>
             </item>
-            <item>
-             <widget class="QWidget" name="min_obj_opacity_hint" native="true">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="minimumSize">
-               <size>
-                <width>22</width>
-                <height>22</height>
-               </size>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>22</width>
-                <height>22</height>
-               </size>
-              </property>
-             </widget>
-            </item>
            </layout>
           </item>
           <item row="1" column="0">
@@ -336,10 +301,10 @@
                </size>
               </property>
               <property name="toolTip">
-               <string/>
+               <string>&lt;p&gt;Defines the period when the opened models will be saved automatically. The temporary models saving period will be defined as the half of the value defined here. If the autosave is disabled the temporary models saving will occur in a period of 5 minutes.&lt;/p&gt;</string>
               </property>
               <property name="statusTip">
-               <string>Defines the period when the opened models will be saved automatically. The temporary models saving period will be defined as the half of the value defined here. If the autosave is disabled the temporary models saving will occur in a period of 5 minutes.</string>
+               <string/>
               </property>
               <property name="text">
                <string>Autosave interval (minutes):</string>
@@ -384,28 +349,6 @@
               </property>
              </spacer>
             </item>
-            <item>
-             <widget class="QWidget" name="autosave_hint" native="true">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="minimumSize">
-               <size>
-                <width>22</width>
-                <height>22</height>
-               </size>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>22</width>
-                <height>22</height>
-               </size>
-              </property>
-             </widget>
-            </item>
            </layout>
           </item>
           <item row="2" column="0">
@@ -443,8 +386,11 @@
                 <height>0</height>
                </size>
               </property>
+              <property name="toolTip">
+               <string>&lt;p&gt;Defines the maximum amount of elements held in the operation history. Once reached the maximum number the history is automatically cleaned.&lt;/p&gt;</string>
+              </property>
               <property name="statusTip">
-               <string>Defines the maximum amount of elements held in the operation history. Once reached the maximum number the history is automatically cleaned.</string>
+               <string/>
               </property>
               <property name="minimum">
                <number>500</number>
@@ -466,28 +412,6 @@
                </size>
               </property>
              </spacer>
-            </item>
-            <item>
-             <widget class="QWidget" name="op_history_hint" native="true">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="minimumSize">
-               <size>
-                <width>22</width>
-                <height>22</height>
-               </size>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>22</width>
-                <height>22</height>
-               </size>
-              </property>
-             </widget>
             </item>
            </layout>
           </item>
@@ -529,8 +453,11 @@
                 <height>0</height>
                </size>
               </property>
+              <property name="toolTip">
+               <string>&lt;p&gt;Defines the vertical and horizontal grid size. This value affects the spacing of objects when using the feature that aligns the objects on the grid. &lt;/p&gt;</string>
+              </property>
               <property name="statusTip">
-               <string>Defines the vertical and horizontal grid size. This value affects the spacing of objects when using the feature that aligns the objects on the grid. </string>
+               <string/>
               </property>
               <property name="minimum">
                <number>10</number>
@@ -559,28 +486,6 @@
               </property>
              </spacer>
             </item>
-            <item>
-             <widget class="QWidget" name="grid_size_hint" native="true">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="minimumSize">
-               <size>
-                <width>22</width>
-                <height>22</height>
-               </size>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>22</width>
-                <height>22</height>
-               </size>
-              </property>
-             </widget>
-            </item>
            </layout>
           </item>
           <item row="7" column="0">
@@ -594,38 +499,16 @@
                </sizepolicy>
               </property>
               <property name="toolTip">
-               <string/>
+               <string>&lt;p&gt;Graphical objects (table, views and textboxes) will be created in a single step without the need to click on canvas &lt;/p&gt;</string>
               </property>
               <property name="statusTip">
-               <string>Graphical objects (table, views and textboxes) will be created in a single step without the need to click on canvas </string>
+               <string/>
               </property>
               <property name="text">
                <string>Simplify the creation of graphical objects</string>
               </property>
               <property name="checked">
                <bool>false</bool>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QWidget" name="simp_obj_creation_hint" native="true">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="minimumSize">
-               <size>
-                <width>22</width>
-                <height>22</height>
-               </size>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>22</width>
-                <height>22</height>
-               </size>
               </property>
              </widget>
             </item>
@@ -642,35 +525,13 @@
                </sizepolicy>
               </property>
               <property name="toolTip">
-               <string/>
+               <string>&lt;p&gt;When enabled this option creates a placeholder object at the previous table's position when starting to move it. This will cause graphical updates on relationship lines to be performed only when the drag &amp; drop action is done improving the performance. Disabling placeholders will cause those updates to be executed every time the table's position changes a single pixel (classical behavior).&lt;/p&gt;</string>
               </property>
               <property name="statusTip">
-               <string>When enabled this option creates a placeholder object at the previous table's position when starting to move it. This will cause graphical updates on relationship lines to be performed only when the drag &amp; drop action is done improving the performance. Disabling placeholders will cause those updates to be executed every time the table's position changes a single pixel (classical behavior).</string>
+               <string/>
               </property>
               <property name="text">
                <string>Use placeholders when moving tables</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QWidget" name="use_placeholders_hint" native="true">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="minimumSize">
-               <size>
-                <width>22</width>
-                <height>22</height>
-               </size>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>22</width>
-                <height>22</height>
-               </size>
               </property>
              </widget>
             </item>
@@ -687,35 +548,13 @@
                </sizepolicy>
               </property>
               <property name="toolTip">
-               <string/>
+               <string>&lt;p&gt;After loading the model the last zoom and position on canvas will be restored&lt;/p&gt;</string>
               </property>
               <property name="statusTip">
-               <string>After loading the model the last zoom and position on canvas will be restored</string>
+               <string/>
               </property>
               <property name="text">
                <string>Save and restore last position and zoom</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QWidget" name="save_last_pos_hint" native="true">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="minimumSize">
-               <size>
-                <width>22</width>
-                <height>22</height>
-               </size>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>22</width>
-                <height>22</height>
-               </size>
               </property>
              </widget>
             </item>
@@ -732,38 +571,16 @@
                </sizepolicy>
               </property>
               <property name="toolTip">
-               <string/>
+               <string>&lt;p&gt;By default the range selection is triggered with Shift + left click. By checking this option range selection will be activated only with a single click and move.&lt;/p&gt;</string>
               </property>
               <property name="statusTip">
-               <string>By default the range selection is triggered with Shift + left click. By checking this option range selection will be activated only with a single click and move.</string>
+               <string/>
               </property>
               <property name="text">
                <string>Trigger range selection with a single click</string>
               </property>
               <property name="checked">
                <bool>false</bool>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QWidget" name="invert_rangesel_hint" native="true">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="minimumSize">
-               <size>
-                <width>22</width>
-                <height>22</height>
-               </size>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>22</width>
-                <height>22</height>
-               </size>
               </property>
              </widget>
             </item>
@@ -780,35 +597,10 @@
                </sizepolicy>
               </property>
               <property name="toolTip">
-               <string/>
-              </property>
-              <property name="statusTip">
                <string>Hide the portion of table which represents triggers, indexes and rules.</string>
               </property>
               <property name="text">
                <string>Hide table extended attributes</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QWidget" name="hide_ext_attribs_hint" native="true">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="minimumSize">
-               <size>
-                <width>22</width>
-                <height>22</height>
-               </size>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>22</width>
-                <height>22</height>
-               </size>
               </property>
              </widget>
             </item>
@@ -825,35 +617,13 @@
                </sizepolicy>
               </property>
               <property name="toolTip">
-               <string/>
+               <string>Hide the object which represents the tag assigned to the table</string>
               </property>
               <property name="statusTip">
-               <string>Hide the object which represents the tag assigned to the table</string>
+               <string/>
               </property>
               <property name="text">
                <string>Hide table tags</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QWidget" name="hide_table_tags_hint" native="true">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="minimumSize">
-               <size>
-                <width>22</width>
-                <height>22</height>
-               </size>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>22</width>
-                <height>22</height>
-               </size>
               </property>
              </widget>
             </item>
@@ -870,35 +640,13 @@
                </sizepolicy>
               </property>
               <property name="toolTip">
-               <string/>
+               <string>Hide the object that represents the relationship name</string>
               </property>
               <property name="statusTip">
-               <string>Hide the object that represents the relationship name</string>
+               <string/>
               </property>
               <property name="text">
                <string>Hide relationship name</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QWidget" name="hide_rel_name_hint" native="true">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="minimumSize">
-               <size>
-                <width>22</width>
-                <height>22</height>
-               </size>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>22</width>
-                <height>22</height>
-               </size>
               </property>
              </widget>
             </item>
@@ -909,38 +657,16 @@
             <item>
              <widget class="QCheckBox" name="confirm_validation_chk">
               <property name="toolTip">
-               <string/>
+               <string>&lt;p&gt;Triggers a dialog asking the user to validate the model before a save, export or diff operation.&lt;/p&gt;</string>
               </property>
               <property name="statusTip">
-               <string>Triggers a dialog asking the user to validate the model before a save, export or diff operation.</string>
+               <string/>
               </property>
               <property name="text">
                <string>Validate before save, export or diff</string>
               </property>
               <property name="checked">
                <bool>false</bool>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QWidget" name="confirm_validation_hint" native="true">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="minimumSize">
-               <size>
-                <width>22</width>
-                <height>22</height>
-               </size>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>22</width>
-                <height>22</height>
-               </size>
               </property>
              </widget>
             </item>
@@ -957,38 +683,16 @@
                </sizepolicy>
               </property>
               <property name="toolTip">
-               <string/>
+               <string>Start move the canvas when the cursor is on the canvas edges</string>
               </property>
               <property name="statusTip">
-               <string>Start move the canvas when the cursor is on the canvas edges</string>
+               <string/>
               </property>
               <property name="text">
                <string>Move canvas by keeping the mouse on corners</string>
               </property>
               <property name="checked">
                <bool>false</bool>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QWidget" name="corner_move_hint" native="true">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="minimumSize">
-               <size>
-                <width>22</width>
-                <height>22</height>
-               </size>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>22</width>
-                <height>22</height>
-               </size>
               </property>
              </widget>
             </item>
@@ -1005,35 +709,13 @@
                </sizepolicy>
               </property>
               <property name="toolTip">
-               <string/>
+               <string>Replaces any straight line in relationship by curved ones in order to improve the model's visualization.</string>
               </property>
               <property name="statusTip">
-               <string>Replaces any straight line in relationship by curved ones in order to improve the model's visualization.</string>
+               <string/>
               </property>
               <property name="text">
                <string>Use curved lines for relationships</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QWidget" name="use_curved_lines_hint" native="true">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="minimumSize">
-               <size>
-                <width>22</width>
-                <height>22</height>
-               </size>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>22</width>
-                <height>22</height>
-               </size>
               </property>
              </widget>
             </item>
@@ -1050,35 +732,13 @@
                </sizepolicy>
               </property>
               <property name="toolTip">
-               <string/>
+               <string>Toggles the code completion in all fields that accepts the input of SQL commands.</string>
               </property>
               <property name="statusTip">
-               <string>Toggles the code completion in all fields that accepts the input of SQL commands.</string>
+               <string/>
               </property>
               <property name="text">
                <string>Enable SQL code completion</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QWidget" name="code_completion_hint" native="true">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="minimumSize">
-               <size>
-                <width>22</width>
-                <height>22</height>
-               </size>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>22</width>
-                <height>22</height>
-               </size>
               </property>
              </widget>
             </item>
@@ -1095,35 +755,13 @@
                </sizepolicy>
               </property>
               <property name="toolTip">
-               <string/>
+               <string>&lt;p&gt; Disable the antialiasing for lines and texts improving performance when handling huge models.&lt;/p&gt;</string>
               </property>
               <property name="statusTip">
-               <string> Disable the antialiasing for lines and texts improving performance when handling huge models.</string>
+               <string/>
               </property>
               <property name="text">
                <string>Disable render smoothness</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QWidget" name="disable_smooth_hint" native="true">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="minimumSize">
-               <size>
-                <width>22</width>
-                <height>22</height>
-               </size>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>22</width>
-                <height>22</height>
-               </size>
               </property>
              </widget>
             </item>
@@ -1140,35 +778,13 @@
                </sizepolicy>
               </property>
               <property name="toolTip">
-               <string/>
+               <string>&lt;p&gt;Forces the escaping of line breaks and tabulations in objects' comments during SQL code generation. This option produces a more compact SQL code since all comments will be presented in one line. Despite changing the presentation this option doesn't affect the final semantics of multilined comments.&lt;/p&gt;</string>
               </property>
               <property name="statusTip">
-               <string>Forces the escaping of line breaks and tabulations in objects' comments during SQL code generation. This option produces a more compact SQL code since all comments will be presented in one line. Despite changing the presentation this option doesn't affect the final semantics of multilined comments.</string>
+               <string/>
               </property>
               <property name="text">
                <string>Escape objects' comments in SQL code</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QWidget" name="escape_comments_hint" native="true">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="minimumSize">
-               <size>
-                <width>22</width>
-                <height>22</height>
-               </size>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>22</width>
-                <height>22</height>
-               </size>
               </property>
              </widget>
             </item>
@@ -1182,7 +798,7 @@
          <property name="title">
           <string>General</string>
          </property>
-         <layout class="QGridLayout" name="gridLayout_2">
+         <layout class="QGridLayout" name="general_grid">
           <property name="leftMargin">
            <number>4</number>
           </property>
@@ -1285,42 +901,10 @@
             </item>
            </layout>
           </item>
-          <item row="0" column="3">
-           <widget class="QWidget" name="ui_language_hint" native="true">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="minimumSize">
-             <size>
-              <width>22</width>
-              <height>22</height>
-             </size>
-            </property>
-            <property name="maximumSize">
-             <size>
-              <width>22</width>
-              <height>22</height>
-             </size>
-            </property>
-           </widget>
-          </item>
           <item row="4" column="1">
            <widget class="QLabel" name="label_4">
             <property name="text">
              <string>Souce code editor args:</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="2">
-           <widget class="QLineEdit" name="confs_dir_edt">
-            <property name="readOnly">
-             <bool>true</bool>
-            </property>
-            <property name="clearButtonEnabled">
-             <bool>false</bool>
             </property>
            </widget>
           </item>
@@ -1347,89 +931,6 @@
            <widget class="QLabel" name="label_3">
             <property name="text">
              <string>Souce code editor:</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="2">
-           <widget class="QComboBox" name="ui_language_cmb">
-            <property name="statusTip">
-             <string>Overrides the default user interface language defined by the system. Requires restarting the program. &lt;strong&gt;NOTE:&lt;/strong&gt; UI translations are third party collaborations thus any typo or mistake should be reported directly to their respective maintainers.</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="3">
-           <widget class="QToolButton" name="open_dir_tb">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="minimumSize">
-             <size>
-              <width>0</width>
-              <height>0</height>
-             </size>
-            </property>
-            <property name="maximumSize">
-             <size>
-              <width>16777215</width>
-              <height>16777215</height>
-             </size>
-            </property>
-            <property name="toolTip">
-             <string>Open in file manager</string>
-            </property>
-            <property name="text">
-             <string/>
-            </property>
-            <property name="icon">
-             <iconset resource="../res/resources.qrc">
-              <normaloff>:/icones/icones/abrir.png</normaloff>:/icones/icones/abrir.png</iconset>
-            </property>
-            <property name="iconSize">
-             <size>
-              <width>22</width>
-              <height>22</height>
-             </size>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="3">
-           <widget class="QToolButton" name="select_editor_btn">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="minimumSize">
-             <size>
-              <width>0</width>
-              <height>0</height>
-             </size>
-            </property>
-            <property name="maximumSize">
-             <size>
-              <width>16777215</width>
-              <height>16777215</height>
-             </size>
-            </property>
-            <property name="toolTip">
-             <string>Browse the source code editor application</string>
-            </property>
-            <property name="text">
-             <string/>
-            </property>
-            <property name="icon">
-             <iconset resource="../res/resources.qrc">
-              <normaloff>:/icones/icones/abrir.png</normaloff>:/icones/icones/abrir.png</iconset>
-            </property>
-            <property name="iconSize">
-             <size>
-              <width>22</width>
-              <height>22</height>
-             </size>
             </property>
            </widget>
           </item>
@@ -1593,19 +1094,6 @@
             </property>
            </widget>
           </item>
-          <item row="2" column="2">
-           <widget class="QLineEdit" name="source_editor_edt">
-            <property name="toolTip">
-             <string/>
-            </property>
-            <property name="readOnly">
-             <bool>false</bool>
-            </property>
-            <property name="clearButtonEnabled">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
           <item row="10" column="1">
            <widget class="QCheckBox" name="check_upd_chk">
             <property name="toolTip">
@@ -1623,33 +1111,14 @@
            <layout class="QHBoxLayout" name="horizontalLayout_23">
             <item>
              <widget class="QCheckBox" name="low_verbosity_chk">
+              <property name="toolTip">
+               <string>&lt;p&gt;Reduces the verbosity of the export, import and diff process causing only key info messages and errors to be displayed. This option causes less rendering operations to be performed when displaying progress messages and, as a consequence, it makes these processes run faster.&lt;/p&gt;</string>
+              </property>
               <property name="statusTip">
-               <string>Reduces the verbosity of the export, import and diff process causing only key info messages and errors to be displayed. This option causes less rendering operations to be performed when displaying progress messages and, as a consequence, it makes these processes run faster.</string>
+               <string/>
               </property>
               <property name="text">
                <string>Low verbosity for the export, import and diff processes</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QWidget" name="low_verbosity_hint" native="true">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="minimumSize">
-               <size>
-                <width>22</width>
-                <height>22</height>
-               </size>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>22</width>
-                <height>22</height>
-               </size>
               </property>
              </widget>
             </item>
@@ -1667,6 +1136,16 @@
              </spacer>
             </item>
            </layout>
+          </item>
+          <item row="0" column="2" colspan="2">
+           <widget class="QComboBox" name="ui_language_cmb">
+            <property name="toolTip">
+             <string>Overrides the default user interface language defined by the system. Requires restarting the program. &lt;strong&gt;NOTE:&lt;/strong&gt; UI translations are third party collaborations thus any typo or mistake should be reported directly to their respective maintainers.</string>
+            </property>
+            <property name="statusTip">
+             <string/>
+            </property>
+           </widget>
           </item>
          </layout>
         </widget>

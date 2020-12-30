@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -73,13 +73,13 @@ class ModelOverviewWidget: public QWidget, public Ui::ModelOverviewWidget {
 
 	public slots:
 		//! \brief Updates the overview (only if the widget is visible)
-		void updateOverview(void);
+		void updateOverview();
 
 		//! \brief Resizes the frame that represents the visualization window
-		void resizeWindowFrame(void);
+		void resizeWindowFrame();
 
 		//! \brief Resizes the whole overview widget
-		void resizeOverview(void);
+		void resizeOverview();
 
 		//! \brief Updates the overview zoom factor
 		void updateZoomFactor(double zoom);

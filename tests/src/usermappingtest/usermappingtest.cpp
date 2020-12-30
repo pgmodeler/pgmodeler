@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -18,19 +18,23 @@
 
 #include <QtTest/QtTest>
 #include "databasemodel.h"
+#include "pgmodelerunittest.h"
 
-class UserMappingTest: public QObject {
+class UserMappingTest: public QObject, public PgModelerUnitTest {
 	private:
 		Q_OBJECT
 
+	public:
+		UserMappingTest() : PgModelerUnitTest(SCHEMASDIR) {}
+
 	private slots:
-		void generatesNameCorrectly(void);
-		void codeGeneratedIsWellFormed(void);
-		void modelReturnsDepsAndRefsForUserMapping(void);
-		void modelCreatesUserMappingfromXMLandResultingXMLisEqual(void);
+		void generatesNameCorrectly();
+		void codeGeneratedIsWellFormed();
+		void modelReturnsDepsAndRefsForUserMapping();
+		void modelCreatesUserMappingfromXMLandResultingXMLisEqual();
 };
 
-void UserMappingTest::generatesNameCorrectly(void)
+void UserMappingTest::generatesNameCorrectly()
 {
 	ForeignDataWrapper fdw;
 	ForeignServer server;
@@ -44,20 +48,20 @@ void UserMappingTest::generatesNameCorrectly(void)
 	server.setOwner(&role);
 	server.setForeignDataWrapper(&fdw);
 
-	QCOMPARE(usr_mapping.getName(), "public@");
+	QCOMPARE(usr_mapping.getName(), QString("public@"));
 
 	usr_mapping.setForeignServer(&server);
-	QCOMPARE(usr_mapping.getName(), "public@server_test");
+	QCOMPARE(usr_mapping.getName(), QString("public@server_test"));
 
 	usr_mapping.setOwner(&role);
-	QCOMPARE(usr_mapping.getName(), "postgres@server_test");
+	QCOMPARE(usr_mapping.getName(), QString("postgres@server_test"));
 
 	usr_mapping.setOwner(nullptr);
 	usr_mapping.setForeignServer(nullptr);
-	QCOMPARE(usr_mapping.getName(), "public@");
+	QCOMPARE(usr_mapping.getName(), QString("public@"));
 }
 
-void UserMappingTest::codeGeneratedIsWellFormed(void)
+void UserMappingTest::codeGeneratedIsWellFormed()
 {
 	ForeignDataWrapper fdw;
 	ForeignServer server;
@@ -104,7 +108,7 @@ QString xml_code =QString(
 	}
 }
 
-void UserMappingTest::modelReturnsDepsAndRefsForUserMapping(void)
+void UserMappingTest::modelReturnsDepsAndRefsForUserMapping()
 {
 	DatabaseModel model;
 	ForeignDataWrapper fdw;
@@ -147,7 +151,7 @@ void UserMappingTest::modelReturnsDepsAndRefsForUserMapping(void)
 	}
 }
 
-void UserMappingTest::modelCreatesUserMappingfromXMLandResultingXMLisEqual(void)
+void UserMappingTest::modelCreatesUserMappingfromXMLandResultingXMLisEqual()
 {
 	DatabaseModel model;
 	ForeignDataWrapper fdw;
@@ -189,7 +193,7 @@ void UserMappingTest::modelCreatesUserMappingfromXMLandResultingXMLisEqual(void)
 		model.removeRole(&role);
 
 		if(usr_map)
-			delete(usr_map);
+			delete usr_map;
 
 		QCOMPARE(xml_code, res_xml_code);
 	}

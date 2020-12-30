@@ -1,0 +1,7 @@
+﻿<!--
+  CAUTION: Do not modify this file directly on it's code unless you know what you are doing.
+           Unexpected results may occur if the code is changed deliberately.
+-->
+<!ELEMENT transform (comment?, appended-sql?, prepended-sql?, type, language, function+)>
+<!ATTLIST transform protected (false|true) "false">
+<!ATTLIST transform sql-disabled (false|true) "false">

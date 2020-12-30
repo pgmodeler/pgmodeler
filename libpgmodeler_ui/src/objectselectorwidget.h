@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -58,16 +58,16 @@ class ObjectSelectorWidget: public QWidget, public Ui::ObjectSelectorWidget {
 	public:
 		ObjectSelectorWidget(ObjectType sel_obj_type, bool install_highlighter, QWidget * parent = nullptr);
 		ObjectSelectorWidget(vector<ObjectType> sel_obj_types, bool install_highlighter, QWidget * parent = nullptr);
-		~ObjectSelectorWidget(void);
+		virtual ~ObjectSelectorWidget();
 
 		//! \brief Enables the creation of new objects from withing the object selector dialog
 		void enableObjectCreation(bool value);
 
 		//! \brief Returns the reference to the selected object
-		BaseObject *getSelectedObject(void);
+		BaseObject *getSelectedObject();
 
 		//! \brief Returns the selected object formated name
-		QString getSelectedObjectName(void);
+		QString getSelectedObjectName();
 
 		//! \brief Defines the initial selected object to be show on the selector
 		void setSelectedObject(BaseObject *object);
@@ -82,17 +82,17 @@ class ObjectSelectorWidget: public QWidget, public Ui::ObjectSelectorWidget {
 		void showSelectedObject(BaseObject *obj_sel, bool=false);
 
 		//! \brief Shows the object view widget (picker)
-		void showObjectView(void);
+		void showObjectView();
 
 	public slots:
-		void clearSelector(void);
+		void clearSelector();
 
 	signals:
 		//! \brief Signal emitted when the user selects an object
-		void s_objectSelected(void);
+		void s_objectSelected();
 
 		//! \brief Signal emitted when the user clears the selector
-		void s_selectorCleared(void);
+		void s_selectorCleared();
 
 		/*! \brief Signal emitted when the user clears the selector or selects and object
 		 * The boolean param indicates if there's an object selected or not */

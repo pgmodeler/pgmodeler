@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -27,7 +27,6 @@
 
 #include <QtWidgets>
 #include "ui_pgsqltypewidget.h"
-#include "pgsqltypes.h"
 #include "syntaxhighlighter.h"
 #include "databasemodel.h"
 #include "messagebox.h"
@@ -47,7 +46,7 @@ class PgSQLTypeWidget: public QWidget, public Ui::PgSQLTypeWidget {
 		static const QString InvalidType;
 
 	public:
-		PgSQLTypeWidget(QWidget * parent = nullptr, const QString &label=QString());
+		PgSQLTypeWidget(QWidget * parent = nullptr, const QString &label="");
 
 		/*! \brief Lists the PostgreSQL types on the specified combo. The user can configure which types
 		must be shown using the last tree parameters. The DatabaseModel parameter is used to
@@ -57,7 +56,7 @@ class PgSQLTypeWidget: public QWidget, public Ui::PgSQLTypeWidget {
 								   bool oid_types=true, bool pseudo_types=true);
 
 	private slots:
-		void updateTypeFormat(void);
+		void updateTypeFormat();
 
 	public slots:
 		void setAttributes(PgSqlType type, DatabaseModel *model,
@@ -65,7 +64,7 @@ class PgSQLTypeWidget: public QWidget, public Ui::PgSQLTypeWidget {
 						   bool oid_types=true, bool pseudo_types=true);
 
 		//! \brief Returns the PostgreSQL type configured via form
-		PgSqlType getPgSQLType(void);
+		PgSqlType getPgSQLType();
 };
 
 #endif

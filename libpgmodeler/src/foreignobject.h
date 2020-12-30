@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -40,13 +40,13 @@ class ForeignObject {
 		static const QString OptionsSeparator;
 		static const QString OptionValueSeparator;
 
-		ForeignObject(void);
+		ForeignObject();
 
 		void setOption(const QString &opt, const QString &value);
 		void setOptions(const attribs_map &options);
 		void removeOption(const QString &opt);
-		void removeOptions(void);
-		attribs_map getOptions(void);
+		void removeOptions();
+		attribs_map getOptions();
 
 		void getAlteredAttributes(ForeignObject *object, attribs_map &fo_attribs);
 };

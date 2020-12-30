@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -24,23 +24,26 @@ ModelRestorationForm::ModelRestorationForm(QWidget *parent, Qt::WindowFlags f) :
 	setupUi(this);
 
 	PgModelerUiNs::configureWidgetFont(message_lbl, PgModelerUiNs::MediumFontFactor);
-	keep_models_ht=new HintTextWidget(keep_models_hint, this);
-	keep_models_ht->setText(keep_models_chk->statusTip());
 
-	connect(restore_btn, SIGNAL(clicked(void)), this, SLOT(accept(void)));
-	connect(cancel_btn, SIGNAL(clicked(void)), this, SLOT(reject(void)));
-	connect(tmp_files_tbw, SIGNAL(itemSelectionChanged()), this, SLOT(enableRestoration(void)));
+	connect(restore_btn, SIGNAL(clicked()), this, SLOT(accept()));
+	connect(cancel_btn, SIGNAL(clicked()), this, SLOT(reject()));
+	connect(tmp_files_tbw, SIGNAL(itemSelectionChanged()), this, SLOT(enableRestoration()));
 }
 
-QStringList ModelRestorationForm::getTemporaryModels(void)
+QStringList ModelRestorationForm::getTemporaryModels()
 {
 	//Returns if there is some .dbm file on the tmp dir
-	return(QDir(GlobalAttributes::TemporaryDir, QString("*.dbm"), QDir::Name, QDir::Files | QDir::NoDotAndDotDot).entryList());
+	QStringList list = QDir(GlobalAttributes::getTemporaryDir(), QString("*.dbm"), QDir::Time, QDir::Files | QDir::NoDotAndDotDot).entryList();
+
+	for(auto &file : ignored_files)
+		list.removeAll(file);
+
+	return list;
 }
 
-int ModelRestorationForm::exec(void)
+int ModelRestorationForm::exec()
 {
-	QStringList file_list=this->getTemporaryModels(), tmp_info;
+	QStringList file_list = this->getTemporaryModels(), tmp_info;
 	QFileInfo info;
 	QTableWidgetItem *item=nullptr;
 	QFile input;
@@ -50,8 +53,8 @@ int ModelRestorationForm::exec(void)
 
 	while(!file_list.isEmpty())
 	{
-		info.setFile(GlobalAttributes::TemporaryDir, file_list.front());
-		filename=GlobalAttributes::TemporaryDir + GlobalAttributes::DirSeparator + file_list.front();
+		info.setFile(GlobalAttributes::getTemporaryDir(), file_list.front());
+		filename=GlobalAttributes::getTemporaryFilePath(file_list.front());
 
 		input.setFileName(filename);
 		input.open(QFile::ReadOnly);
@@ -89,46 +92,51 @@ int ModelRestorationForm::exec(void)
 	tmp_files_tbw->resizeColumnsToContents();
 	tmp_files_tbw->resizeRowsToContents();
 
-	return(QDialog::exec());
+	return QDialog::exec();
 }
 
-bool ModelRestorationForm::hasTemporaryModels(void)
+void ModelRestorationForm::setIgnoredFiles(const QStringList &list)
 {
-	return(!this->getTemporaryModels().isEmpty());
+	ignored_files = list;
 }
 
-void ModelRestorationForm::removeTemporaryFiles(void)
+bool ModelRestorationForm::hasTemporaryModels()
+{
+	return !this->getTemporaryModels().isEmpty();
+}
+
+void ModelRestorationForm::removeTemporaryFiles()
 {
 	QDir tmp_file;
-	QStringList tmp_files = QDir(GlobalAttributes::TemporaryDir, QString("*.dbm;*.dbk;*.omf;*.sql;*.log"),
+	QStringList tmp_files = QDir(GlobalAttributes::getTemporaryDir(), QString("*.dbm;*.dbk;*.omf;*.sql;*.log"),
 															 QDir::Name, QDir::Files | QDir::NoDotAndDotDot).entryList();
 
 	for(auto &file : tmp_files)
-		tmp_file.remove(GlobalAttributes::TemporaryDir + GlobalAttributes::DirSeparator + file);
+		tmp_file.remove(GlobalAttributes::getTemporaryFilePath(file));
 }
 
-void ModelRestorationForm::removeTemporaryModels(void)
+void ModelRestorationForm::removeTemporaryModels()
 {
 	QStringList file_list=this->getTemporaryModels();
 	QDir tmp_file;
 
 	for(auto &file : file_list)
-		tmp_file.remove(GlobalAttributes::TemporaryDir + GlobalAttributes::DirSeparator + file);
+		tmp_file.remove(GlobalAttributes::getTemporaryFilePath(file));
 }
 
 void ModelRestorationForm::removeTemporaryModel(const QString &tmp_model)
 {
 	QDir tmp_file;
 	QString file=QFileInfo(tmp_model).fileName();
-	tmp_file.remove(GlobalAttributes::TemporaryDir + GlobalAttributes::DirSeparator + file);
+	tmp_file.remove(GlobalAttributes::getTemporaryFilePath(file));
 }
 
-void ModelRestorationForm::enableRestoration(void)
+void ModelRestorationForm::enableRestoration()
 {
 	restore_btn->setEnabled(!tmp_files_tbw->selectedItems().isEmpty());
 }
 
-QStringList ModelRestorationForm::getSelectedModels(void)
+QStringList ModelRestorationForm::getSelectedModels()
 {
 	QStringList list;
 	QList<QTableWidgetItem *> items;
@@ -142,6 +150,6 @@ QStringList ModelRestorationForm::getSelectedModels(void)
 	}
 
 	list.removeDuplicates();
-	return(list);
+	return list;
 }
 

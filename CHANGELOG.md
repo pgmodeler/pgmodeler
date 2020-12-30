@@ -1,5 +1,274 @@
-Change Log
+Changelog
 ---------
+
+v0.9.3
+------
+<em>Release date: December 30, 2020</em><br/>
+
+* [New] Added support to deterministic and provider attributes in collations.
+* [New] Added missing check constraints in the data dictionary.
+* [New] Added support to selecting all relationships of a table at once via right-click on a table > select relationships.
+* [New] Added extra search fields in ObjectFinderWidget. Now it's possible to search relationships by the involved tables (source and destination table), constraints by their columns (source and referenced columns), and relationships by the foreign keys related to them.
+* [Change] The warning message about the unchecked option related to drop missing objects now pops up only when there are partial diff filters configured.
+* [Change] Improved the extended fade in/out options for tables/views/foreign tables.
+* [Change] The partial diff filters generated from changelog will ignore table children objects in order to avoid the wrong generation of diff code.
+* [Change] Minor refactoring in DatabaseModel::addChangelogEntry in order to use new attributes to define changelog operations.
+* [Fix] Fixed a crash when trying to select children objects of a schema that has no rectangle defined.
+* [Fix] Fixed a crash during the importing of domain objects.
+* [Fix] Fixed a crash during the importing of objects into the current model in very specific cases when the model had some tables/views referencing columns added by relationship.
+* [Fix] Fixed the full diff switching when there are no filtered objects in ModelDatabaseDiffForm.
+* [Fix] Fixed a bug in DatabaseModel::addChangelogEntry that was causing the registration of empty signature for some objects.
+* [Fix] Fixed a bug in CLI that was not accepting the use of --list-conns parameter
+* [Fix] Fixed the data dictionary generation in such a way to include nextval(sequence) calls in the "default value" column.
+* [Fix] Fixed a bug when configuring spatial data types during reverse engineering/diff.
+* [Fix] Fixed a bug in Catalog::parseDefaultValues that was causing ARRAY[] values to be wrongly split.
+* [Fix] Fixed a bug that was causing infinite validation of imported sequences.
+
+v0.9.3-beta1
+------
+<em>Release date: October 5, 2020</em><br/>
+
+* [New] Added the version descriptor for PostgreSQL 13.
+* [New] Added support to procedures in design, import and diff processes.
+* [New] Added support to transforms in design, import and diff processes.
+* [New] Added an entry in NewObjectOverlayWidget for procedures.
+* [New] Added a custom version of addParameter to Procedure in order to validate the usage of out parameters.
+* [New] Added a tool button for transform objects in NewObjectOverlayWidget
+* [New] Added a unit test to verify schema files syntax (sql, xml, alter).
+* [New] Added the method Cast::setName to override the default behavior of BaseObject::setName.
+* [New] Added the class PgModelerUnitTest that must be inherited so the child test class can have access to schema files path.
+* [New] Added support to modifying attributes toggler colors from appearance settings.
+* [New] Tag objects now include attribute toggler colors.
+* [Change] Changed the behavior of the generation of SQL code for database object, now it'll respect the SQL disabled status of the object.
+* [Change] The ModelExportHelper will abort the export process if the SQL code of the database object is disabled.
+* [Change] The database model is now flagged as modified everytime the objects are swapped.
+* [Change] Improved the ObjectSelectorWidget in order to save/restore the geometry of internal ModelObjectsWidget instances.
+* [Change] Ajusted the Qt version check in QFontMetricsCompat and QPlainTextEditCompat in order to avoid deprecation warnings.
+* [Change] pgModeler will alert about a possible data/work loss if the user is trying to save a model in which there're other instances loaded other tabs.
+* [Change] Refactored FunctionWidget in such way to make it a subclass of BaseFunctionWidget.
+* [Change] Removing unused method DatabaseModel::removeObject(unsigned,ObjectType).
+* [Change] Moved the DTD defintion of parameter tag to a dedicated file to be shared betwen function.dtd and procedure.dtd.
+* [Change] Making the class Function be a direct child of BaseFunction.
+* [Change] Moved the common code between functions and procedures to a base class called BaseFunction.
+* [Change] Replaced the attributes PhysicalTable::DataSeparator and DatabaseExplorerWidget::ElemSeparator usages by PgModelerNs::DataSeparator.
+* [Change] Minor improvement on data dictionary in order to add the current year in the footer.
+* [Change] ModelExportHelper now is capable of indetifying a transform and procedure objects being exported.
+* [Change] Minor fields sizes adjustment in pgsqltypewidget.ui
+* [Change] Improved the schema files syntax tests to include all folder under / schemas.
+* [Change] Refactored the schema files in order to remove code duplication related to ddl-end token.
+* [Change] Minor improvement in ConfigurationForm by adding a splitter between config items (left) and settings page (right).
+* [Change] Minor improvements on objects rendering in order to consider screen dpi when configuring objects border sizes.
+* [Change] Minor refactoring in the parameter/signature generation in class Function.
+* [Change] Making the NewObjectOverlay less transparent in order to enhance reading.
+* [Fix] Fixed a bug in constraint.sch that was avoiding the correct importing of exclude of constraints.
+* [Fix] Fixed source file name for PgModelerCliApp.
+* [Fix] Minor fix in the SyntaxHighlighter in order to highlight correctly multline blocks (specially comments).
+* [Fix] Fixed a bug in DatabaseImportHelper that was causing failure when importing some objects' permissions.
+* [Fix] Minor fixes on the CLI menu.
+* [Fix] Fixed a bug on MainWindow that was wrongly showing the main menu bar in certain cases at startup.
+* [Fix] Minor fix in BaseFunction::createSignature in order to remove OUT keywords from signature.
+* [Fix] Fixed a bug when importing triggers in which functions arguments contain json/jsonb values. Now values are properly formatted.
+* [Fix] Fixed a bug in XmlParser::convertCharsToXMLEntities that was not converting json/jsonb default values correctly breaking the entire XML code of the database model.
+* [Fix] Fixed a bug in Parameter class that was causing default values to be ignored.
+* [Fix] Fixed a bug in SchemaParser related to exceptions being raised wrongly in expressions evaluation.
+* [Fix] Fixed the objects style template config files.
+* [Fix] Removed some deprecation warnings when building on Qt 5.15.1.
+* [Fix] Fixed a bug in ModelFixForm that was passing arguments to CLI in wrong format.
+* [Fix] Minor fix in some project files to remove unnused include paths.
+* [Fix] Fixed a bug in CLI that was ignoring input-db parameter when doing diff.
+* [Fix] Minor fix in the graphical objects rendering in 4k screens when QT_AUTO_SCREEN_SCALE_FACTOR is set to. Now they are rendered in acceptable proportions.
+* [Fix] Minor fix in ModelsDiffHelper in order to avoid generating ALTER...ADD COSTRAINT related to constraints (check and unique) in which parent table is also being created.
+
+
+v0.9.3-beta
+------
+<em>Release date: July 10, 2020</em><br/>
+
+* [New] Added GitHub actions scripts in order to test the building on each platform. On Linux and macOs the build will occur on all Qt versions from 5.15 to 5.9, on Windows the build happens only on Qt 5.15 (due to the usage of msys2 that uses the most recent version of the framework).
+* [New] Added default constructors in the form "Class(const &)" for Connection, Parameter and TypeAttribute in order to avoid deprecated-copy warnings on GCC9.
+* [New] The CLI now validates the mixing of options of different operation modes.
+* [New] Added support to partial diffs between a model and database or between two databases.
+* [New] Created an internal changelog on DatabaseModel to register object's modification over time being useful for partial diff operations.
+* [New] Added the widget called ChangelogWidget to control the model's internal changelog settings in the design view.
+* [New] Added support to save/load changelog from model file.
+* [New] The CLI now supports partial diffs too.
+* [New] Create the method ModelsDiffHelper::getRelationshipFilters.
+* [New] Added a warning message prior to the partial diff without using "Do not drop missing objects" option.
+* [New] Created a method ObjectsFilterWidget::setModelFilteringMode that disables some options when the filtering widget is being used to filter database model objects.
+* [New] Added cast and user mapping to the list of filterable objects.
+* [New] Added a hint text in ObjectsFilterWidget to inform about exact match searching.
+* [New] Added the methods Catalog::clearObjectFilter and Catalog::clearObjectFilters.
+* [New] Added support to DatabaseImportHelper to create a sequence assigned to a column via default value if automatic dependencies resolution is enabled.
+* [New] Created the namespace QtCompat that will reunite all the specific code that isn't compatible between different Qt versions. The goal of this namespace is to store in a central point all the code that uses QT_VERSION_CHECK to perform different operations depending on the current Qt version.
+* [New] Added the method SchemaParser::getExpressionResult in order to perform comparisons between QVariant values correctly due to the QVariant operators deprecation in Qt 5.15.
+* [New] Added the signal ObjectsFilterWidget::s_filtersRemoved that is emitted whenever all filters are removed.
+* [Change] Modified the script wingetdate.bat in order to return the build number based on the current local date correctly and renamed it to getbuildnum.bat.
+* [Change] Updated to 5.15 the Qt version used by default in linuxdeploy.sh and macdeploy.sh.
+* [Change] Replacing verbose QString() calls by "" for string initialization purposes.
+* [Change] Improved the sequences assignments to columns in DatabaseImportHelper::assignSequencesToColumns.
+* [Change] Improved the method ModelsDiffHelper::setFilteredObjects in order to treat tables/view/foreign tables properly by appending their children objects to the creation order list of filtered objects.
+* [Change] Adjusted the Catalog::setObjectFilters in order to configure exact match filters when any wildcard filter provided has no *.
+* [Change] Adjusted the partial diff process between a model and a database in which there's one or more many-to-many relationships filtered.
+* [Change] Minor adjustment on objects grids in SwapObjectsIdsWidget, DatabaseImportForm and ModelDatabaseDiffForm by changing the columns order.
+* [Change] Improved the method ModelsDiffHelper::setFilteredObjects in order to detect the proper creation order of the provided objects.
+* [Change] Minor change in ObjectsFilterWidget by making the action "Only matching" checked by default.
+* [Change] Minor improvement on CLI to accept the value "all" for the paramenter --force-children in order to force all table children at once.
+* [Change] BaseObject::configureSearchAttributes now configures the signature attribute as a formatted string.
+* [Change] Minor improvement on ObjectFinderWidget::updateObjectTable in order to optionally create checkable items in the first column.
+* [Change] Attributes related to object filters were moved from Catalog to PgModelerNs in order to be shared between Catalog and DatabaseModel classes.
+* [Change] Minor improvement in Connection::getConnectionId in order to return an optional HTML formatted string.
+* [Change] Isolated the method DatabaseImportForm::listFilteredObjects in a static one in order to reuse it on ModelDatabaseDiffForm.
+* [Change] Improved the objects filtering in such way to allow filter by name or signature.
+* [Change] Improved the UI of ObjectsFilterWidget by moving all options to a popup menu.
+* [Change] Several changes in all catalog queries in order to support signature matching.
+* [Change] Minor adjustemnt in Catalog::getFilterableObjectNames.
+* [Change] Adjusted the appimages building process.
+* [Change] Changing the default font size of graphical objects to 10pt in order to try to solve the intermittend issue of disappearing texts.
+* [Change] Updated the French translation.
+* [Fix] Fixed a regression in ObjectFinderWidget that was not opening objects form with double-click on an item on the results grid.
+* [Fix] Fixed a bug when drawing relationships in FK to PK connection mode. Now when one of the tables is collapsed the center points of both are used as connection points to the relationship.
+* [Fix] Fixed a crash in ModelDatabaseDiffForm while enabling/disabling the partial diff tab.
+* [Fix] Fixed the diff process for inheritance relationships created for two existing tables.
+* [Fix] Fixed a crash in LayersWidget when renaming a layer.
+* [Fix] Minor fix in DatabaseImportHelper::assignSequencesToColumns.
+* [Fix] Fixed a wrong comparison in Catalog::getObjectsOIDs.
+* [Fix] Minor fix in ConstraintWidget that was trying to validate FK relationships for generated tables of many-to-many relationships.
+* [Fix] Fixed a bug in Catalog::getObjectsOIDs that was executing a catalog query for a certain object when it was not being filtered.
+* [Fix] Minor fix in ModelDatabaseDiffForm tabs enabling/disabling steps.
+* [Fix] Fixed the QProcess usage in ModelFixForm due to QProcess::start() deprecation in Qt 5.15.
+* [Fix] Fixed a crash when trying to move several objects to a layer from the object finder widget and in the selected set one or more objects aren't graphical ones.
+
+v0.9.3-alpha1
+------
+<em>Release date: May 20, 2020</em><br/>
+
+* [New] Added support to creating initial configuration files from CLI.
+* [New] The CLI is now capable of using the objects filtering in reverse engineering.
+* [New] Added a warning message when trying to import a big database.
+* [New] Added support to object filtering in reverse engineering dialog.
+* [New] Adding support to AppImage building for Linux.
+* [New] Added support to importing PostgreSQL 12 generated columns.
+* [New] Adding support to PostgreSQL 12 generated columns.
+* [New] The ModelNavigationWidget now will display a save icon if the current model is pending a save operation.
+* [New] pgModeler now guesses if a FK relationship consists in a one-to-one based upon the foreign keys and unique keys settings.
+* [New] Improved the rendering of FK relationships. Now it recognizes the minimum cardinality by using the right crow's foot descriptor o|< or ||< in the destination entity.
+* [New] Added support to the conversion of 1-1 and 1-n relationships, allowing the user to perform modifications over objects generated by those relationships.
+* [New] Added "virtual" keyword in classes that inherit others so the destruction order can be followed correctly.
+* [New] Adding support to copy model validation widget output as text as well preview it as texts.
+* [New] Added support to show/hide all layers in LayersWidget.
+* [New] Added the paramenter application_name to Connection in order to indentify connections created by pgModeler when querying pg_stat_activity.
+* [New] Added support to save/restore Z value attribute in MetadataHandlingForm.
+* [New] Created an improved and reusable file selector widget.
+* [Change] Improvements done in DatabaseImportHelper in order to speed up the listing of types as well the importing user-defined types on demand.
+* [Change] Refactored the way default value fields states are setup by user's actions.
+* [Change] Adjusted the default size of DatabaseImportForm.
+* [Change] Avoiding retrieve all types (system and user defined) at once before the reverse engineering in DatabaseImportHelper (Experimental).
+* [Change] Minor improvement on DatabaseImportHelper in order to display the correct message while assingning sequences to columns.
+* [Change] Improved the catalog queries in order to retrive parent oids and type when using the list queries.
+* [Change] Minor updates on windeploy.sh and macdeploy.sh
+* [Change] Minor improvement on DatabaseImportHelper in order to speed up the objects creation.
+* [Change] Improved the execution time for the catalog query of data types.
+* [Change] Improved the catalog query for sequences.
+* [Change] Avoiding the diff process to generate default value changes for generated columns.
+* [Change] Minor improvement on DatabaseModel::validateRelationships.
+* [Change] Improved the ModelWidget::convertRelationship1N() in order to avoid segfaults in certain cases.
+* [Change] Minor adjustment in PhysicalTable::restoreRelObjectsIndexes in order to diminish memory usage.
+* [Change] Minor improvement on update icon.
+* [Change] Minor improvement in LayersWidget in order to allow manual resizing using the mouse.
+* [Change] Improved the following classess in order to use the new file selector widget: ModelExportForm, ModelFixForm, MetadataHandlingForm, ModelDatabaseDiffForm, GeneralConfigWidget, PluginsConfigWidget, CsvLoadWidget, CrashHandlerForm and BugReportForm.
+* [Fix] Minor fix in OperationList in order to update FK relationships related to FKs that contains the column being handled by the list.
+* [Fix] Fixed a bug when retrieving the refs to some objects in DatabaseModel.
+* [Fix] Minor fix in CLI menu and error messages.
+* [Fix] Fixed the role importing process. Now referenced roles are auto resolved.
+* [Fix] Fixed the dependency checking for user defined types in DatabaseModel.
+* [Fix] Fixed a bug when loading extension that has no schema specified.
+* [Fix] Minor fix in DatabaseImportHelper::createFunction in order to solve eventual duplicated parameter names when importing some functions.
+* [Fix] Fixed a bug that was causing global name patterns for relationships to never be used even if they were properly configured.
+* [Fix] Minor fix in ModelObjectsWidget and ModelWidget to provide the correct information about objects' selection in SceneInfoWidget.
+* [Fix] Fixed a bug in RelationshipWidget that was causing the cursor never to be restored to its original icon when an exception occurred during relationship editing.
+* [Fix] Fixed a crash in some situations when closing models.
+
+v0.9.3-alpha
+------
+<em>Release date: March 26, 2020</em><br/>
+
+* [New] Added support to multiselection in ModelObjectsWidget.
+* [New] Added an optional parameter in PgModelerNs::generateUniqueName to avoid comparing the input object.
+* [New] Added support to objects' bulk renaming.
+* [New] Added support to multiselection in ObjectFinderWidget.
+* [New] Added support to middle button click on source code panel in order to paste the selected code in the current open SQL execution widget.
+* [New] Using the CRTP (Curiosly Recurring Template Pattern) approach to create a template type based on BaseType in such way that the static member from that template but used on all derived classes of TemplateType can be unique for each derived class.
+* [New] Added a "Stacking" action in popup menu that is used to control the z value of graphical objects.
+* [New] Adding support to move objects on the Z stack up and down.
+* [New] Added support to CLI to write system wide mime database on Linux and Windows.
+* [New] Added a method GlobalAttributes::setSearchPath so the application can setup the path in which the internal folders (schemas, lang, etc) can be found.
+* [New] Added the ability to remove owners from objects from Quick Actions > Change owner.
+* [New] Added an fix step that removes IN keyword from functions signatures.
+* [Change] Refactored the method DatabaseModel::getObjectDependecies by splliting it into small portions that handles specific object types dependecies.
+* [Change] The DatabaseModel::getObjectReferences was splitted in other get[object]References() in order to facilitate maintainance.
+* [Change] Minor adjustments in order to make the objects listing a bit faster for large databases.
+* [Change] Minor improvement on ObjectRenameWidget in order to apply renaming in reverse id order of the object so objects invalidations (due to relationships revalidations) diminishes.
+* [Change] In DatabaseModel the invalidated special objects are now stored in a list which is destroyed only when the model is destroyed too. This will avoid segfaults in some cases when the objects in that list are still being referenced in the operation list (Experimental).
+* [Change] Minor adjustment in ModelObjectsWidget and ObjectFinderWidget in order to emit the signal ModelWidget::s_sceneInteracted so the left menu at MainWindow can be updated accordingly.
+* [Change] Minor change in PgModelerNs::generateUniqueName in order to remove quotes from names before perform the comparison.
+* [Change] Refactored ObjectRenameWidget in order to support multiple objects renaming.
+* [Change] Refectored all the classes derivated from BaseType moving them to dedicated sources files in order to make them reuse TemplateType class isolating the related keywords, improving maintainance.
+* [Change] Removed the class LanguageType since it was replaced by namespace DefaultLanguages namespace.
+* [Change] Isolated the default language names into a namespace called DefaultLanguages and removed any reference to LanguageType in the code.
+* [Change] Improved the DataManipulationForm in such way that the user can sort results by clicking the column names in the result grid. This will cause a new query to be performed by using the clicked column as sorting criteria.
+* [Change] The current model's popup menu is now used as the "More" actions menu at MainWindow > general toolbar.
+* [Change] Refactored the ModelWidget::configurePopupMenu separating some portions in new methods to make maintainance more easy.
+* [Change] Moved the 'Fix model' and 'Objects metadata' actions to the general toolbar (left) at main window under the menu "Fix".
+* [Change] The class HintTextWidget was removed and replaced by simple html QToolTips.
+* [Change] Small change in the icon related to new tab opening in SQLToolWidget.
+* [Change] Minor adjustment or rows resizing policy on datamanipulationform.ui.
+* [Change] Minor adjustment on updatenotifierwidget.ui to allow link opening.
+* [Change] Refined the installer wizard pages.
+* [Change] Improved the installer script to work better on Windows.
+* [Change] Improving the installer on Linux and Windows to select the installation for all users or current user.
+* [Change] Improved the linuxdeploy.sh in order to remove the need to use the startup scripts by the binaries in the installer.
+* [Change] Fixed the installscript.qs in order to correctly update the mime database on Linux.
+* [Change] Minor improvements on the usability of swap objects ids form.
+* [Change] Separated the code that handles mime db on linux and windows, using a  #ifdef switch to call the correct method depending on the platform.
+* [Change] Adjusting the linker options to make the executables search for libraries in PRIVATELIBDIR without forcing the usage of LD_LIBRARY_PATH.
+* [Change] The class Application was moved to libutils and has a basic implementation of just initialize the search path on GlobalAttributes.
+* [Change] Rename the classes Application and PgModelerCli to respectively PgModelerApp and PgModelerCliApp and they now inherits the new Application class in order to take advantage of the GlobalAttributes::setSearchPath.
+* [Change] The crash handler application is now executed under a Application instance not a QApplication anymore in order to use GlobalAttributes::setSearchPath.
+* [Change] Changed the namespace GlobalAttributes to a singleton in order try to solve problems with fallback paths.
+* [Change] Updated deployment scripts to use Qt 5.14.x
+* [Change] Changing the exposed main window from QMainWindow to MainWindow in PgModelerPlugin interface.
+* [Change] Moved the method SchemaParser::convertCharsToXMLEntities to XmlParser.
+* [Change] Minor buttons position adjustments on WelcomeWidget.
+* [Change] Minor refactoring on OperationListWidget in order to show a more compact text when displaying operations done over objects.
+* [Change] Removed the workaround code that disables the ALTER SET OWNER  when the role associated to it is disabled and the object itself not. The best approach is to dissociate the role from the object so the ALTER instruction is not generated.
+* [Fix] Fixed a shortcut duplication in DatabaseExplorerWidget
+* [Fix] Fixed the shortcut for partitioning relationships in new object overlay
+* [Fix] Fixed a minor bug in MainWindow that was causing the bottom widgets bar to be displayed even when object finder widget and model validation widget weren't visible.
+* [Fix] Fixed a bug that was causing copy options to stay hidden for copy relationships in the relationship form.
+* [Fix] Fixed the importing of extensions on PostgreSQL 9.4 and below.
+* [Fix] Fixed the name uniqueness generation when the name is truncated when exceeding 63 bytes.
+* [Fix] Fixed a bug that was preventing the recent menus cleaning to be persisted in the conf file.
+* [Fix] Fix a bug in the validation of collation objects.
+* [Fix] Fixed a crash in ObjectRenameWidget when renaming several objects in which there was the need to revalidate relationships;
+* [Fix] Fixed the method PgSqlType::getTypes in order to avoid returning the first (null) type.
+* [Fix] Fix the importing/diff of columns based on PostGiS data types.
+* [Fix] Fix a crash in UpdateNotifierWidget when compiling pgModeler using Qt 5.14.x.
+* [Fix] Minor fix in PgSQLTypeWidget to avoid show an error message box when the user types an invalid data type name.
+* [Fix] Additional fix on XmlParser::convertCharsToXMLEntities in order to replace special char to xml entities correctly.
+* [Fix] Minor fix in the update notifier widget display position.
+* [Fix] Minor fix in diff regarding to the comparison on column/domain default values. Now the values are compared in insensitive case.
+* [Fix] Fixed the Windows installer in order to create the start menu item  correctly (system wide).
+* [Fix] Minor fix on CLI in order to allocate export/import/diff helpers and config widgets only when they are required (when one of the options related are used).
+* [Fix] Fixed a bug that was allowing the applying changes of the forms on relationship added objects by hitting ENTER causing crashes.
+* [Fix] Fixed the bug that was causing model restoration to be displayed when the application was started from a double click on a model file.
+* [Fix] Fixed a bug in the metadata handling that was not restoring the collapse mode of tables.
+* [Fix] Fixed a crash on UpdateNotifierWidget after upgrading to 5.14. A wrong deletion was being performed where  deleteLater() needed to be used instead
+* [Fix] Removing lots of Qt 5.14 deprecation warnings in the code.
+* [Fix] Fix a bug that was causing wrong replacements during the reverse engineering of functions.
+* [Fix] Fixed the method XmlParser::convertCharsToXMLEntities in order to avoid chars replacements within <![CDATA entities.
+* [Fix] Fixed the oversized tooltips on Windows.
+* [Fix] Minor warning message fix on pgmodeler.pro.
+* [Fix] Fixed a bug in AppearanceConfigWidget and objects-style.sch that was causing problems while saving the objects styles.
 
 v0.9.2
 ------

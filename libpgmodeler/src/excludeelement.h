@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -31,14 +31,14 @@ class ExcludeElement: public Element {
 		Operator *_operator;
 
 	public:
-		ExcludeElement(void);
+		ExcludeElement();
 		virtual ~ExcludeElement(void) {}
 
 		//! \brief Defines the operator used by the exclude element
 		void setOperator(Operator *oper);
 
 		//! \brief Returns the operator used by the exclude element
-		Operator *getOperator(void);
+		Operator *getOperator();
 
 		virtual QString getCodeDefinition(unsigned def_type) final;
 

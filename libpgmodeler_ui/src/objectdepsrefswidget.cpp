@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -29,8 +29,8 @@ ObjectDepsRefsWidget::ObjectDepsRefsWidget(QWidget *parent): BaseObjectWidget(pa
 	model_wgt=nullptr;
 	alert_frm->setVisible(false);
 
-	connect(exc_ind_deps_chk,	SIGNAL(toggled(bool)), this, SLOT(updateObjectTables(void)));
-	connect(inc_ind_refs_chk,	SIGNAL(toggled(bool)), this, SLOT(updateObjectTables(void)));
+	connect(exc_ind_deps_chk,	SIGNAL(toggled(bool)), this, SLOT(updateObjectTables()));
+	connect(inc_ind_refs_chk,	SIGNAL(toggled(bool)), this, SLOT(updateObjectTables()));
 	connect(dependences_tbw, SIGNAL(itemDoubleClicked(QTableWidgetItem*)), this, SLOT(handleItemSelection(QTableWidgetItem*)));
 	connect(references_tbw, SIGNAL(itemDoubleClicked(QTableWidgetItem*)), this, SLOT(handleItemSelection(QTableWidgetItem*)));
 
@@ -62,12 +62,12 @@ void ObjectDepsRefsWidget::setAttributes(ModelWidget *model_wgt, BaseObject *obj
 	setAttributes(model_wgt->getDatabaseModel(), object, parent_obj);
 }
 
-void ObjectDepsRefsWidget::applyConfiguration(void)
+void ObjectDepsRefsWidget::applyConfiguration()
 {
 	emit s_closeRequested();
 }
 
-void ObjectDepsRefsWidget::clearTables(void)
+void ObjectDepsRefsWidget::clearTables()
 {
 	dependences_tbw->clearContents();
 	dependences_tbw->setRowCount(0);
@@ -76,7 +76,7 @@ void ObjectDepsRefsWidget::clearTables(void)
 	references_tbw->setRowCount(0);
 }
 
-void ObjectDepsRefsWidget::updateObjectTables(void)
+void ObjectDepsRefsWidget::updateObjectTables()
 {
 	vector<BaseObject *> objs;
 	model->getObjectDependecies(object, objs, !exc_ind_deps_chk->isChecked());

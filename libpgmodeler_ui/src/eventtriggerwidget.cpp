@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -34,7 +34,7 @@ EventTriggerWidget::EventTriggerWidget(QWidget *parent): BaseObjectWidget(parent
 									 ObjectsTableWidget::RemoveAllButton |
 									 ObjectsTableWidget::MoveButtons, false, this);
 	filter_tab->setColumnCount(1);
-	filter_tab->setHeaderLabel(trUtf8("Tag command"), 0);
+	filter_tab->setHeaderLabel(tr("Tag command"), 0);
 
 	eventtrigger_grid->addWidget(function_sel, 1, 1);
 	filter_layout->addWidget(filter_tab);
@@ -51,9 +51,7 @@ EventTriggerWidget::EventTriggerWidget(QWidget *parent): BaseObjectWidget(parent
 
 	configureTabOrder({ event_cmb, function_sel, tag_edt, filter_tab });
 
-	QStringList list;
-	EventTriggerType::getTypes(list);
-	event_cmb->addItems(list);
+	event_cmb->addItems(EventTriggerType::getTypes());
 
 	connect(filter_tab, SIGNAL(s_rowAdded(int)), this, SLOT(handleTagValue(int)));
 	connect(filter_tab, SIGNAL(s_rowUpdated(int)), this, SLOT(handleTagValue(int)));
@@ -103,7 +101,7 @@ void EventTriggerWidget::setAttributes(DatabaseModel *model, OperationList *op_l
 	filter_tab->setButtonsEnabled(ObjectsTableWidget::AddButton, false);
 }
 
-void EventTriggerWidget::applyConfiguration(void)
+void EventTriggerWidget::applyConfiguration()
 {
 	try
 	{

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -54,55 +54,55 @@ class PermissionWidget: public BaseObjectWidget, public Ui::PermissionWidget {
 
 	public:
 		PermissionWidget(QWidget * parent = nullptr);
-		~PermissionWidget(void);
+		virtual ~PermissionWidget();
 
 		void setAttributes(DatabaseModel *model, BaseObject *objeto_pai, BaseObject *object);
 
 	public slots:
-		void applyConfiguration(void);
+		void applyConfiguration();
 
 	private slots:
 		//! \brief Shows the object selection window
-		void selectRole(void);
+		void selectRole();
 
 		//! \brief Select a permission which the index is specified on parameter
 		void selectPermission(int perm_id);
 
 		//! \brief Adds the configured permission onto the model
-		void addPermission(void);
+		void addPermission();
 
 		//! \brief Configures a permission based upon the values assinged on the form
 		void configurePermission(Permission *perm);
 
 		//! \brief Fills the form with the selected permission attributes
-		void editPermission(void);
+		void editPermission();
 
 		//! \brief Removes the selected permission
 		void removePermission(int);
 
 		//! \brief Removes all permissions from the permissions table
-		void removePermissions(void);
+		void removePermissions();
 
 		//! \brief Updates the attributes of the currently edited permission
-		void updatePermission(void);
+		void updatePermission();
 
 		//! \brief Lists all permissions related to the object
-		void listPermissions(void);
+		void listPermissions();
 
 		//! \brief Cancel de permission's creation/edition cleaning the form and blocking the edition buttons
-		void cancelOperation(void);
+		void cancelOperation();
 
 		//! \brief Shows the selected role data on the role tables
-		void showSelectedRoleData(void);
+		void showSelectedRoleData();
 
 		//! \brief Updates the sql code for object's permissions
-		void updateCodePreview(void);
+		void updateCodePreview();
 
-		void enableEditButtons(void);
+		void enableEditButtons();
 
-		void checkPrivilege(void);
+		void checkPrivilege();
 
-		void disableGrantOptions(void);
+		void disableGrantOptions();
 };
 
 #endif

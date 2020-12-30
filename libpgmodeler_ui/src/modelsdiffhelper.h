@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -69,8 +69,11 @@ class ModelsDiffHelper: public QObject {
 		//! \brief Stores all temporary objects created during the diff process
 		vector<BaseObject *> tmp_objects;
 
+		//! \brief Stores all objects filtered by the partial diff filters
+		map<unsigned, BaseObject *> filtered_objs;
+
 		/*! note The parameter diff_type in any methods below is one of the values in
-		ObjectsDiffInfo::CREATE_OBJECT|ALTER_OBJECT|DROP_OBJECT */
+		ObjectsDiffInfo::CreateObject|AlterObject|DropObject */
 
 		//! \brief Compares two tables storing the diff between them in the diff_infos vector.
 		void diffTables(PhysicalTable *src_table, PhysicalTable *imp_table, unsigned diff_type);
@@ -82,12 +85,18 @@ class ModelsDiffHelper: public QObject {
 		model depending on the diff_type parameter. */
 		void diffTableObject(TableObject *tab_obj, unsigned diff_type);
 
+		/*! \brief Compares the two tables' columns and if needed generates the CREATE statments for the missing ones in child_tab.
+		 * This is used when a new inheritance relationship is detected between two tables that previously were not parent and child.
+		 * In that case, PostgreSQL obligates that the child has at least the same columns as the parent so the inheritance can be
+		 * created correctly. */
+		void diffColsInheritance(PhysicalTable *parent_tab, PhysicalTable *child_tab);
+
 		//! \brief Creates a diff info instance storing in o diff_infos vector
 		void generateDiffInfo(unsigned diff_type, BaseObject *object, BaseObject *old_object=nullptr);
 
 		/*! \brief Processes the generated diff infos resulting in a SQL buffer with the needed commands
 		to synchronize both model and database */
-		void processDiffInfos(void);
+		void processDiffInfos();
 
 		/*! \brief Generates the proper DROP and CREATE for the specified object and its references. This method
 		is used when the force_recreation is true and the object in the parameter is marked with an ALTER_OBJECT */
@@ -103,7 +112,7 @@ class ModelsDiffHelper: public QObject {
 		QString getCodeDefinition(BaseObject *object, bool drop_cmd);
 
 		//! \brief Destroy the temporary objects and clears the diff info list
-		void destroyTempObjects(void);
+		void destroyTempObjects();
 
 		BaseObject *getRelNNTable(const QString &obj_name, DatabaseModel *model);
 
@@ -117,7 +126,7 @@ class ModelsDiffHelper: public QObject {
 		OptForceRecreation=2,
 
 		//! \brief Recreates only objects that can't be modified using ALTER commands
-		OptRecreateUnchangeble=3,
+		OptRecreateUnmodifiable=3,
 
 		//! \brief Generate a TRUNCATE command for every table which columns was modified in their data types
 		OptTruncateTables=4,
@@ -144,13 +153,26 @@ class ModelsDiffHelper: public QObject {
 		except for columns and constraints. This option is only considered in the process when OPT_DONT_DROP_MISSING_OBJS is enabled. */
 		OptDropMissingColsConstr=9;
 
-		ModelsDiffHelper(void);
-		~ModelsDiffHelper(void);
+		ModelsDiffHelper();
+		virtual ~ModelsDiffHelper();
 
 		/*! \brief Configures the models to be compared. It is assumed that src_model is the reference model
 		from which all changes must be collected and applied to the database. The imp_model is the
 		database model that represents the current arrange of the database. */
 		void setModels(DatabaseModel *src_model, DatabaseModel *imp_model);
+
+		/*! \brief Specifies a list of filtered objects to be used in the partial diff
+		 * This is only useful when performing a partial diff between a model and a database.
+		 * This method makes extra treatment in the provided objects list in order to specify to the
+		 * diff process their correct creation order */
+		void setFilteredObjects(const vector<BaseObject *> &objects);
+
+		/*! \brief This utility method scans the provided list of filtered objects and produces filters
+		 * for peer tables related to inheritance/partitioning or the generated tables of many-to-many
+		 * relationships. The parameter use_signature indicates that the filter pattern should be constructed
+		 * based on the object's signatures instead their names. This is used by the diff form and cli to
+		 * perform partial diffs between a database model and a database. */
+		static QStringList getRelationshipFilters(const vector<BaseObject *> &objects, bool use_signature);
 
 		//! \brief Toggles a diff option throught the OPT_xxx constants
 		void setDiffOption(unsigned opt_id, bool value);
@@ -162,24 +184,24 @@ class ModelsDiffHelper: public QObject {
 		unsigned getDiffTypeCount(unsigned diff_type);
 
 		//! \brief Reset all the diff info counters in order to restart the diff process
-		void resetDiffCounter(void);
+		void resetDiffCounter();
 
 		//! \brief Returns the diff containing all the SQL commands needed to synchronize the model and database
-		QString getDiffDefinition(void);
+		QString getDiffDefinition();
 
 	public slots:
-		void diffModels(void);
-		void cancelDiff(void);
+		void diffModels();
+		void cancelDiff();
 
 	signals:
 		//! \brief This singal is emitted whenever the diff progress changes
 		void s_progressUpdated(int progress, QString msg, ObjectType obj_type=ObjectType::BaseObject);
 
 		//! \brief This signal is emited when the diff has finished
-		void s_diffFinished(void);
+		void s_diffFinished();
 
 		//! \brief This signal is emited when the diff has been canceled
-		void s_diffCanceled(void);
+		void s_diffCanceled();
 
 		//! \brief This signal is emited when the diffhas encountered a critical error (only in thread mode)
 		void s_diffAborted(Exception e);

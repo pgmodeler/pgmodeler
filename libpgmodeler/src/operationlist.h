@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -74,7 +74,7 @@ class OperationList: public QObject {
 		 If found any operation whose object is not in the pool it will be removed
 		 because an object outside the pool does not give a guarantee that is being
 		 referenced in the model. */
-		void validateOperations(void);
+		void validateOperations();
 
 		//! \brief Checks whether the passed object is in the pool
 		bool isObjectOnPool(BaseObject *object);
@@ -92,21 +92,21 @@ class OperationList: public QObject {
 		void executeOperation(Operation *operacao, bool redo);
 
 		//! \brief Returns the chain size from the current element
-		unsigned getChainSize(void);
+		unsigned getChainSize();
 
 	public:
 		OperationList(DatabaseModel *model);
-		~OperationList(void);
+		virtual ~OperationList();
 
 		/*! \brief Starts chaining operations.
 		 This means that all operations added after calling this
 		 method will be considered to be performed all at once
 		 with a single call to the redoOperation / undoOperation methods */
-		void startOperationChain(void);
+		void startOperationChain();
 
 		/*! \brief Finalizes the chaining marking the last operation on the list
 		 as the end of operation chain */
-		void finishOperationChain(void);
+		void finishOperationChain();
 
 		/*! \brief Cancels the execution of operations in the form of chaining,
 		 but if the list is open with chaining operations included will be chained too.
@@ -119,19 +119,19 @@ class OperationList: public QObject {
 		void ignoreOperationChain(bool value);
 
 		//! \brief Returns if the operation chaining where started
-		bool isOperationChainStarted(void);
+		bool isOperationChainStarted();
 
 		//! \brief Returns if an operation of the specified op_type is already registered for the object
 		bool isObjectRegistered(BaseObject *object, unsigned op_type);
 
 		//! \brief Undo the current operation on the list
-		void undoOperation(void);
+		void undoOperation();
 
 		//! \brief Redo the current operation on the list
-		void redoOperation(void);
+		void redoOperation();
 
 		//! \brief Removes all the operations from the list
-		void removeOperations(void);
+		void removeOperations();
 
 		//! \brief Gets the data from the operation with specified index
 		void getOperationData(unsigned oper_idx, unsigned &oper_type, QString &obj_name, ObjectType &obj_type);
@@ -151,19 +151,19 @@ class OperationList: public QObject {
 		int registerObject(BaseObject *object, unsigned op_type, int object_idx=-1, BaseObject *parent_obj=nullptr);
 
 		//! \brief Gets the maximum size for the operation list
-		unsigned getMaximumSize(void);
+		unsigned getMaximumSize();
 
 		//! \brief Gets the current size for the operation list
-		unsigned getCurrentSize(void);
+		unsigned getCurrentSize();
 
 		//! \brief Gets the current operation index
-		int getCurrentIndex(void);
+		int getCurrentIndex();
 
 		//! \brief Returns if the list is prepared to execute redo operations
-		bool isRedoAvailable(void);
+		bool isRedoAvailable();
 
 		//! \brief Returns if the list is prepared to execute undo operations
-		bool isUndoAvailable(void);
+		bool isUndoAvailable();
 
 		/*! \brief Removes the last operation from the list. This method should be used with
 		 care as it can break the chain of operations. It should be
@@ -174,7 +174,7 @@ class OperationList: public QObject {
 		 Warning: The execution of this method is different from the undo method because
 		 the objects are removed pool but their states prior to adding it to the list are not
 		 restored so this method can not be used deliberately. */
-		void removeLastOperation(void);
+		void removeLastOperation();
 
 		/*! \brief Updates the index of the object when it suffers a movement in the parente object.
 		 Generally this method need not be called manually but in the case of table objects

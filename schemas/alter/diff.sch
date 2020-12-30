@@ -3,6 +3,9 @@
 #          Code generation can be broken if incorrect changes are made.
 
 %if {has-changes} %then
+
+  %set {ddl-end} $br [-- ddl-end --] $br
+
   [-- Diff code generated with pgModeler (PostgreSQL Database Modeler)] $br
   [-- pgModeler version: ] {pgmodeler-ver} $br
   [-- Diff date: ] {date} $br
@@ -19,14 +22,14 @@
 
   %if {function} %then
     $br
-    [SET check_function_bodies = false;] $br
-    [-- ddl-end --] $br
+    [SET check_function_bodies = false;] 
+    {ddl-end} 
   %end
 
   %if {search-path} %then
     $br
-    [SET search_path=] {search-path} ; $br
-    [-- ddl-end --] $br
+    [SET search_path=] {search-path} ; 
+    {ddl-end} 
   %end
 
   %if {unset-perms} %then

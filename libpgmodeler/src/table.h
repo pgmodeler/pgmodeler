@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -55,8 +55,8 @@ class Table: public PhysicalTable {
 		with_oid;
 
 	public:
-		Table(void);
-		~Table(void);
+		Table();
+		virtual ~Table();
 
 		//! \brief Defines if the table is unlogged
 		void setUnlogged(bool value);
@@ -71,7 +71,7 @@ class Table: public PhysicalTable {
 		void setWithOIDs(bool value);
 
 		//! \brief Returns if the table is configured with oids
-		bool isWithOIDs(void);
+		bool isWithOIDs();
 
 		void addObject(BaseObject *object, int obj_idx = -1);
 
@@ -109,13 +109,13 @@ class Table: public PhysicalTable {
 		Policy *getPolicy(unsigned idx);
 
 		//! \brief Gets the index count
-		unsigned getIndexCount(void);
+		unsigned getIndexCount();
 
 		//! \brief Gets the rule count
-		unsigned getRuleCount(void);
+		unsigned getRuleCount();
 
 		//! \brief Gets the policy count
-		unsigned getPolicyCount(void);
+		unsigned getPolicyCount();
 
 		//! \brief Removes a index through its name
 		void removeIndex(const QString &name);
@@ -144,13 +144,13 @@ class Table: public PhysicalTable {
 		void getForeignKeys(vector<Constraint *> &fks, bool inc_added_by_rel=false, Table *ref_table=nullptr);
 
 		//! \brief Returns if the table is configured as unlogged
-		bool isUnlogged(void);
+		bool isUnlogged();
 
 		//! \brief Returns if RLS is enabled on the table
-		bool isRLSEnabled(void);
+		bool isRLSEnabled();
 
 		//! \brief Returns if RLS is forced on the table
-		bool isRLSForced(void);
+		bool isRLSForced();
 
 		//! \brief Copy the attributes between two tables
 		void operator = (Table &tabela);

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -26,7 +26,8 @@
 #define COLLATION_H
 
 #include "baseobject.h"
-#include "pgsqltypes.h"
+#include "pgsqltypes/encodingtype.h"
+#include "pgsqltypes/providertype.h"
 
 class Collation : public BaseObject {
 	private:
@@ -45,13 +46,23 @@ class Collation : public BaseObject {
 
 		/*! \brief This attribute sets at once the localization attribute. Using this attribute
 						user cannot change localization attributes */
-		locale;
+		locale,
+
+		//! \brief The modifier applied the collation. The modifier is the keyword after the @ in a collation name
+		modifier[3];
+
+		//! \brief The provider of the collation (mainly user when defining custom collations)
+		ProviderType provider;
+
+		//! \brief Indicates whether the collation is deterministic
+		bool is_deterministic;
 
 	public:
-		static constexpr unsigned LcCtype=0,
-		LcCollate=1;
+		static constexpr unsigned LcCtype = 0,
+		LcCollate = 1,
+		Locale = 2;
 
-		Collation(void);
+		Collation();
 
 		/*! \brief Sets the collation locale and the base encoding. This method specifies at once the LC_CTYPE
 		and LC_COLLATE attributes. When the user calls this method with 'locale' set the use of setLocalization()
@@ -61,6 +72,11 @@ class Collation : public BaseObject {
 		//! \brief Configures the LC_CTYPE and LC_COLLATE attributes and the default encoding for them.
 		void setLocalization(unsigned lc_id, QString lc_name);
 
+		/*! \brief Configures the modifier(@modeset) of the locale, LC_CTYPE and LC_COLLATE attributes.
+		 * The locale, LC_CTYPE and LC_COLLATE must be accessed by the related constants Locale, LcCtype and LcCollate */
+		void setModifier(unsigned lc_id, QString mods);
+		QString getModifier(unsigned lc_id);
+
 		/*! \brief Sets the collation from which this collation will copy attributes. The use of this method nullifies
 		all the other collation's attributes */
 		void setCollation(BaseObject *collation);
@@ -68,14 +84,19 @@ class Collation : public BaseObject {
 		//! \brief Defines the base encoding for the collation
 		void setEncoding(EncodingType encoding);
 
-		QString getLocale(void);
+		QString getLocale();
 		QString getLocalization(unsigned lc_id);
-		EncodingType getEncoding(void);
+		EncodingType getEncoding();
+
+		void setProvider(ProviderType type);
+		ProviderType getProvider();
+
+		void setDeterministic(bool value);
+		bool isDeterministic();
 
 		//! \brief Returns the SQL / XML definition for the collation.
 		virtual QString getCodeDefinition(unsigned def_type) final;
 		virtual QString getCodeDefinition(unsigned def_type, bool reduced_form) final;
-
 		virtual QString getAlterDefinition(BaseObject *object);
 };
 

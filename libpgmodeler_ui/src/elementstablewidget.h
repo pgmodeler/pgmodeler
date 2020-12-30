@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -71,7 +71,7 @@ class ElementsTableWidget: public QWidget {
 
 	public:
 		ElementsTableWidget(QWidget *parent = nullptr);
-		~ElementsTableWidget(void);
+		virtual ~ElementsTableWidget();
 
 		//! \brief Configures the grid based upon the template Class in use
 		template<class Class>
@@ -79,7 +79,7 @@ class ElementsTableWidget: public QWidget {
 		{
 			if(handled_elem && !dynamic_cast<Class *>(handled_elem))
 			{
-				delete(handled_elem);
+				delete handled_elem;
 				handled_elem = nullptr;
 			}
 

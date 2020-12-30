@@ -1,0 +1,10 @@
+<!--
+  CAUTION: Do not modify this file directly on it's code unless you know what you are doing.
+           Unexpected results may occur if the code is changed deliberately.
+-->
+<!ELEMENT procedure (schema?, role?, comment?, appended-sql?, prepended-sql?, language?, parameter*, definition*)>
+<!ATTLIST procedure name CDATA #IMPLIED>
+<!ATTLIST procedure security-type CDATA #IMPLIED>
+<!ATTLIST procedure signature CDATA #IMPLIED>
+<!ATTLIST procedure protected (false|true) "false">
+<!ATTLIST procedure sql-disabled (false|true) "false">

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -26,14 +26,11 @@
 #define CSV_LOAD_WIDGET_H
 
 #include "ui_csvloadwidget.h"
-#include "hinttextwidget.h"
-#include <QWidget>
+#include "fileselectorwidget.h"
 
 class CsvLoadWidget : public QWidget, Ui::CsvLoadWidget {
 	private:
 		Q_OBJECT
-
-		HintTextWidget *col_names_ht;
 
 		//! \brief Holds the names of columns extracted from the csv file
 		QStringList csv_columns;
@@ -41,19 +38,21 @@ class CsvLoadWidget : public QWidget, Ui::CsvLoadWidget {
 		//! \brief Holds the rows extracted from the csv file
 		QList<QStringList> csv_rows;
 
+		FileSelectorWidget *file_sel;
+
 	public:
 		CsvLoadWidget(QWidget * parent = nullptr, bool cols_in_first_row = true);
 
 		//! \brief Returns the extracted columns
-		QStringList getCsvColumns(void);
+		QStringList getCsvColumns();
 
 		//! \brief Returns the extracted rows
-		QList<QStringList> getCsvRows(void);
+		QList<QStringList> getCsvRows();
 
 		//! \brief Returns a formatted CSV buffer by specifying a custom separator and line break
 		QString getCsvBuffer(QString separator, QString line_break);
 
-		bool isColumnsInFirstRow(void);
+		bool isColumnsInFirstRow();
 
 		/*! \brief Loads a csv document from a buffer and stores the result in the internal csv_columns and csv_rows attributes for later usage.
 		 * The separator and text delimiter chars can be specified overriding the ones configured in the widget */
@@ -62,18 +61,17 @@ class CsvLoadWidget : public QWidget, Ui::CsvLoadWidget {
 		//! \brief Loads a csv document from a buffer and stores the result in the internal csv_columns and csv_rows attributes for later usage.
 		void loadCsvBuffer(const QString csv_buffer);
 
-		QString getSeparator(void);
+		QString getSeparator();
 
 		/*! \brief Loads a csv document from a buffer. The user can specify the value separator, text delimiter and an object which will store the column names.
 		 *  In that case, the column names are only extracted from the first row if the cols_in_first_row is true */
 		static QList<QStringList> loadCsvFromBuffer(const QString &csv_buffer, const QString &separator, const QString &text_delim, bool cols_in_first_row, QStringList &csv_cols);
 
 	private slots:
-		void selectCsvFile(void);
-		void loadCsvFile(void);
+		void loadCsvFile();
 
 	signals:
-		void s_csvFileLoaded(void);
+		void s_csvFileLoaded();
 };
 
 #endif

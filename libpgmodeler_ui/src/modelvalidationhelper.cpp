@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
 
 #include "modelvalidationhelper.h"
 
-ModelValidationHelper::ModelValidationHelper(void)
+ModelValidationHelper::ModelValidationHelper()
 {
 	warn_count=error_count=progress=0;
 	db_model=nullptr;
@@ -28,19 +28,19 @@ ModelValidationHelper::ModelValidationHelper(void)
 	export_thread=new QThread;
 	export_helper.moveToThread(export_thread);
 
-	connect(export_thread, SIGNAL(started(void)), &export_helper, SLOT(exportToDBMS(void)));
+	connect(export_thread, SIGNAL(started()), &export_helper, SLOT(exportToDBMS()));
 	connect(&export_helper, SIGNAL(s_progressUpdated(int,QString, ObjectType,QString,bool)),
 			this, SLOT(redirectExportProgress(int,QString,ObjectType,QString,bool)));
 
-	connect(&export_helper, SIGNAL(s_exportFinished(void)), this, SLOT(emitValidationFinished(void)));
+	connect(&export_helper, SIGNAL(s_exportFinished()), this, SLOT(emitValidationFinished()));
 	connect(&export_helper, SIGNAL(s_exportAborted(Exception)), this, SLOT(captureThreadError(Exception)));
 }
 
-ModelValidationHelper::~ModelValidationHelper(void)
+ModelValidationHelper::~ModelValidationHelper()
 {
 	export_thread->quit();
 	export_thread->wait();
-	delete(export_thread);
+	delete export_thread;
 }
 
 void ModelValidationHelper::generateValidationInfo(unsigned val_type, BaseObject *object, vector<BaseObject *> refs)
@@ -196,7 +196,8 @@ void  ModelValidationHelper::resolveConflict(ValidationInfo &info)
 		else if(info.getValidationType()==ValidationInfo::MissingExtension && !db_model->getExtension(QString("postgis")))
 		{
 			Extension *extension = new Extension();
-			extension->setName(QString("postgis"));
+			extension->setName("postgis");
+			extension->setSchema(db_model->getSchema("public"));
 			db_model->addExtension(extension);
 		}
 	}
@@ -206,19 +207,19 @@ void  ModelValidationHelper::resolveConflict(ValidationInfo &info)
 	}
 }
 
-bool ModelValidationHelper::isValidationCanceled(void)
+bool ModelValidationHelper::isValidationCanceled()
 {
-	return(valid_canceled);
+	return valid_canceled;
 }
 
-unsigned ModelValidationHelper::getWarningCount(void)
+unsigned ModelValidationHelper::getWarningCount()
 {
-	return(warn_count);
+	return warn_count;
 }
 
-unsigned ModelValidationHelper::getErrorCount(void)
+unsigned ModelValidationHelper::getErrorCount()
 {
-	return(error_count);
+	return error_count;
 }
 
 void ModelValidationHelper::redirectExportProgress(int prog, QString msg, ObjectType obj_type, QString cmd, bool is_code_gen)
@@ -254,26 +255,26 @@ void ModelValidationHelper::switchToFixMode(bool value)
 
 bool ModelValidationHelper::isInFixMode()
 {
-	return(fix_mode);
+	return fix_mode;
 }
 
-void ModelValidationHelper::validateModel(void)
+void ModelValidationHelper::validateModel()
 {
 	if(!db_model)
 		throw Exception(ErrorCode::OprNotAllocatedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	try
 	{
-		ObjectType types[]={ ObjectType::Role, ObjectType::Tablespace, ObjectType::Schema, ObjectType::Language, ObjectType::Function,
-												 ObjectType::Type, ObjectType::Domain, ObjectType::Sequence, ObjectType::Operator, ObjectType::OpFamily,
-												 ObjectType::OpClass, ObjectType::Collation, ObjectType::Table, ObjectType::Extension, ObjectType::View,
-												 ObjectType::Relationship, ObjectType::ForeignDataWrapper, ObjectType::ForeignServer, ObjectType::GenericSql,
-												 ObjectType::ForeignTable },
-				aux_types[]={ ObjectType::Table, ObjectType::ForeignTable, ObjectType::View },
-				tab_obj_types[]={ ObjectType::Constraint, ObjectType::Index },
-				obj_type;
-		unsigned i, i1, cnt, aux_cnt=sizeof(aux_types)/sizeof(ObjectType),
-				count=sizeof(types)/sizeof(ObjectType), count1=sizeof(tab_obj_types)/sizeof(ObjectType);
+		vector<ObjectType> types = { ObjectType::Role, ObjectType::Tablespace, ObjectType::Schema, ObjectType::Language, ObjectType::Function,
+																 ObjectType::Type, ObjectType::Domain, ObjectType::Sequence, ObjectType::Operator, ObjectType::OpFamily,
+																 ObjectType::OpClass, ObjectType::Collation, ObjectType::Table, ObjectType::Extension, ObjectType::View,
+																 ObjectType::Relationship, ObjectType::ForeignDataWrapper, ObjectType::ForeignServer, ObjectType::GenericSql,
+																 ObjectType::ForeignTable, ObjectType::Procedure, ObjectType::Transform },
+				aux_types = { ObjectType::Table, ObjectType::ForeignTable, ObjectType::View },
+				tab_obj_types = { ObjectType::Constraint, ObjectType::Index };
+
+		ObjectType	obj_type;
+		unsigned i = 0, i1 = 0, cnt = 0, aux_cnt = 0,	count = 0, count1 = 0;
 		BaseObject *object=nullptr, *refer_obj=nullptr;
 		vector<BaseObject *> refs, refs_aux, *obj_list=nullptr, aux_tables;
 		vector<BaseObject *>::iterator itr;
@@ -291,6 +292,10 @@ void ModelValidationHelper::validateModel(void)
 		warn_count=error_count=progress=0;
 		val_infos.clear();
 		valid_canceled=false;
+
+		aux_cnt = aux_types.size();
+		count = types.size();
+		count1 = tab_obj_types.size();
 
 		/* Step 1: Validating broken references. This situation happens when a object references another
 		 which id is smaller than the id of the first one. */
@@ -341,16 +346,18 @@ void ModelValidationHelper::validateModel(void)
 							constr=dynamic_cast<Constraint *>(tab_obj);
 							col=dynamic_cast<Column *>(tab_obj);
 
-							/* If the current referrer object has an id less than reference object's id
-							 * then it will be pushed into the list of invalid references. The only exception is
-							 * for foreign keys that are discarded from any validation since they are always created
-							 * at end of code defintion being free of any reference breaking. */
+							/*
+							 * If the current referrer object has an id less than reference object's id
+							 * then it will be pushed into the list of invalid references.
+							 * There's an exception which is that foreign keys are completely discarded from any validation
+							 * since they are always created at end of code definition being free of any reference breaking.
+							 */
 							if(object != refs.back() &&
-									(
-										((col || (constr && constr->getConstraintType()!=ConstraintType::ForeignKey)) &&
-										 (tab_obj->getParentTable()->getObjectId() <= object->getObjectId())) ||
-										(!constr && refs.back()->getObjectId() <= object->getObjectId()))
-									)
+								 (
+									 ((col || (constr && constr->getConstraintType() != ConstraintType::ForeignKey)) &&
+										(tab_obj->getParentTable()->getObjectId() <= object->getObjectId())) ||
+									 (!constr && !col && refs.back()->getObjectId() <= object->getObjectId()))
+								 )
 							{
 								if(col || constr)
 									refer_obj=tab_obj->getParentTable();
@@ -463,7 +470,7 @@ void ModelValidationHelper::validateModel(void)
 
 			//Emit a signal containing the validation progress
 			progress=((i+1)/static_cast<double>(count))*20;
-			emit s_progressUpdated(progress, QString());
+			emit s_progressUpdated(progress, "");
 		}
 
 
@@ -539,7 +546,7 @@ void ModelValidationHelper::validateModel(void)
 
 			//Emit a signal containing the validation progress
 			progress=20 + ((i/static_cast<double>(dup_objects.size()))*20);
-			emit s_progressUpdated(progress, QString());
+			emit s_progressUpdated(progress, "");
 
 			i++; mitr++;
 		}
@@ -617,7 +624,7 @@ void ModelValidationHelper::validateModel(void)
 				{
 					warn_count++;
 					emitValidationFinished();
-					emit s_validationInfoGenerated(ValidationInfo(trUtf8("There are pending errors! SQL validation will not be executed.")));
+					emit s_validationInfoGenerated(ValidationInfo(tr("There are pending errors! SQL validation will not be executed.")));
 				}
 			}
 		}
@@ -628,7 +635,7 @@ void ModelValidationHelper::validateModel(void)
 	}
 }
 
-void ModelValidationHelper::applyFixes(void)
+void ModelValidationHelper::applyFixes()
 {
 	if(fix_mode)
 	{
@@ -670,7 +677,7 @@ void ModelValidationHelper::applyFixes(void)
 	}
 }
 
-void ModelValidationHelper::cancelValidation(void)
+void ModelValidationHelper::cancelValidation()
 {
 	valid_canceled=true;
 	fix_mode=false;
@@ -696,16 +703,16 @@ void ModelValidationHelper::captureThreadError(Exception e)
 		emit s_validationFinished();
 }
 
-void ModelValidationHelper::emitValidationCanceled(void)
+void ModelValidationHelper::emitValidationCanceled()
 {
 	db_model->setInvalidated(!export_thread->isRunning());
 	export_thread->quit();
 	export_thread->wait();
-	emit s_validationInfoGenerated(ValidationInfo(trUtf8("Operation canceled by the user.")));
+	emit s_validationInfoGenerated(ValidationInfo(tr("Operation canceled by the user.")));
 	emit s_validationCanceled();
 }
 
-void ModelValidationHelper::emitValidationFinished(void)
+void ModelValidationHelper::emitValidationFinished()
 {
 	export_thread->quit();
 
@@ -715,5 +722,5 @@ void ModelValidationHelper::emitValidationFinished(void)
 	emit s_validationFinished();
 
 	progress=100;
-	emit s_progressUpdated(progress,QString());
+	emit s_progressUpdated(progress,"");
 }

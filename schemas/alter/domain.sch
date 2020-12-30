@@ -2,8 +2,10 @@
 # CAUTION: Do not modify this file unless you know what you are doing.
 #          Code generation can be broken if incorrect changes are made.
 
+%set {ddl-end} $br [-- ddl-end --] $br
+
 #Changing default value
-%if {default-value} %then
+%if {default-value} %then  
   [ALTER ] {sql-object} $sp {signature} 
 
   %if ({default-value} == "unset") %then
@@ -11,8 +13,9 @@
   %else
     [ SET DEFAULT ] {default-value}
   %end
-  ; $br
-  [-- ddl-end --] $br
+  ; 
+  
+  {ddl-end}
 %end
 
 #Changing NOT NULL constraint
@@ -25,8 +28,9 @@
     [ SET ]
   %end
   
-  [NOT NULL;] $br
-  [-- ddl-end --] $br
+  [NOT NULL;] 
+  
+  {ddl-end}
 %end
 
 #Changing CHECK expression

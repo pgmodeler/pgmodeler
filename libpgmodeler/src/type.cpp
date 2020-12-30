@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -17,41 +17,42 @@
 */
 
 #include "type.h"
+#include "defaultlanguages.h"
 
-Type::Type(void)
+Type::Type()
 {
 	obj_type=ObjectType::Type;
 	setConfiguration(EnumerationType);
 
-	attributes[Attributes::BaseType]=QString();
-	attributes[Attributes::CompositeType]=QString();
-	attributes[Attributes::RangeType]=QString();
-	attributes[Attributes::TypeAttribute]=QString();
-	attributes[Attributes::EnumType]=QString();
-	attributes[Attributes::Enumerations]=QString();
-	attributes[Attributes::InputFunc]=QString();
-	attributes[Attributes::OutputFunc]=QString();
-	attributes[Attributes::RecvFunc]=QString();
-	attributes[Attributes::SendFunc]=QString();
-	attributes[Attributes::TpmodInFunc]=QString();
-	attributes[Attributes::TpmodOutFunc]=QString();
-	attributes[Attributes::AnalyzeFunc]=QString();
-	attributes[Attributes::InternalLength]=QString();
-	attributes[Attributes::ByValue]=QString();
-	attributes[Attributes::Alignment]=QString();
-	attributes[Attributes::Storage]=QString();
-	attributes[Attributes::DefaultValue]=QString();
-	attributes[Attributes::Element]=QString();
-	attributes[Attributes::Delimiter]=QString();
-	attributes[Attributes::ReducedForm]=QString();
-	attributes[Attributes::Category]=QString();
-	attributes[Attributes::Preferred]=QString();
-	attributes[Attributes::LikeType]=QString();
-	attributes[Attributes::Collatable]=QString();
-	attributes[Attributes::Subtype]=QString();
-	attributes[Attributes::SubtypeDiffFunc]=QString();
-	attributes[Attributes::CanonicalFunc]=QString();
-	attributes[Attributes::OpClass]=QString();
+	attributes[Attributes::BaseType]="";
+	attributes[Attributes::CompositeType]="";
+	attributes[Attributes::RangeType]="";
+	attributes[Attributes::TypeAttribute]="";
+	attributes[Attributes::EnumType]="";
+	attributes[Attributes::Enumerations]="";
+	attributes[Attributes::InputFunc]="";
+	attributes[Attributes::OutputFunc]="";
+	attributes[Attributes::RecvFunc]="";
+	attributes[Attributes::SendFunc]="";
+	attributes[Attributes::TpmodInFunc]="";
+	attributes[Attributes::TpmodOutFunc]="";
+	attributes[Attributes::AnalyzeFunc]="";
+	attributes[Attributes::InternalLength]="";
+	attributes[Attributes::ByValue]="";
+	attributes[Attributes::Alignment]="";
+	attributes[Attributes::Storage]="";
+	attributes[Attributes::DefaultValue]="";
+	attributes[Attributes::Element]="";
+	attributes[Attributes::Delimiter]="";
+	attributes[Attributes::ReducedForm]="";
+	attributes[Attributes::Category]="";
+	attributes[Attributes::Preferred]="";
+	attributes[Attributes::LikeType]="";
+	attributes[Attributes::Collatable]="";
+	attributes[Attributes::Subtype]="";
+	attributes[Attributes::SubtypeDiffFunc]="";
+	attributes[Attributes::CanonicalFunc]="";
+	attributes[Attributes::OpClass]="";
 }
 
 void Type::setName(const QString &name)
@@ -91,7 +92,7 @@ int Type::getAttributeIndex(const QString &attrib_name)
 		itr++;
 	}
 
-	return(idx);
+	return idx;
 }
 
 void Type::addAttribute(TypeAttribute attrib)
@@ -121,7 +122,7 @@ void Type::removeAttribute(unsigned attrib_idx)
 	setCodeInvalidated(true);
 }
 
-void Type::removeAttributes(void)
+void Type::removeAttributes()
 {
 	type_attribs.clear();
 	setCodeInvalidated(true);
@@ -141,7 +142,7 @@ bool Type::isEnumerationExists(const QString &enum_name)
 		itr++;
 	}
 
-	return(found);
+	return found;
 }
 
 void Type::addEnumeration(const QString &enum_name)
@@ -173,7 +174,7 @@ void Type::removeEnumeration(unsigned enum_idx)
 	setCodeInvalidated(true);
 }
 
-void Type::removeEnumerations(void)
+void Type::removeEnumerations()
 {
 	enumerations.clear();
 	setCodeInvalidated(true);
@@ -210,8 +211,6 @@ void Type::setConfiguration(unsigned conf)
 void Type::setFunction(unsigned func_id, Function *func)
 {
 	unsigned param_count=0;
-	LanguageType lang;
-	lang=LanguageType::C;
 	unsigned funcs_len=sizeof(functions)/sizeof(Function *);
 
 	//Raises an error if the function id is invalid
@@ -239,8 +238,8 @@ void Type::setFunction(unsigned func_id, Function *func)
 		/* Raises an error if the function language is not C.
 		 Functions assigned to base type must be written in C */
 		if((func_id!=CanonicalFunc && func_id!=SubtypeDiffFunc) &&
-				func->getLanguage()->getName()!=~LanguageType(LanguageType::C) &&
-				func->getLanguage()->getName()!=~LanguageType(LanguageType::Internal))
+				func->getLanguage()->getName().toLower() != DefaultLanguages::C &&
+				func->getLanguage()->getName().toLower() != DefaultLanguages::Internal)
 			throw Exception(ErrorCode::AsgFunctionInvalidLanguage,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		/* Raises an error if the parameter count for INPUT and RECV functions
@@ -506,12 +505,12 @@ TypeAttribute Type::getAttribute(unsigned attrib_idx)
 	if(attrib_idx >= type_attribs.size())
 		throw Exception(ErrorCode::RefAttributeInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	return(type_attribs[attrib_idx]);
+	return type_attribs[attrib_idx];
 }
 
-unsigned Type::getAttributeCount(void)
+unsigned Type::getAttributeCount()
 {
-	return(type_attribs.size());
+	return type_attribs.size();
 }
 
 QString Type::getEnumeration(unsigned idx_enum)
@@ -519,12 +518,12 @@ QString Type::getEnumeration(unsigned idx_enum)
 	if(idx_enum >= enumerations.size())
 		throw Exception(ErrorCode::RefEnumerationInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	return(enumerations[idx_enum]);
+	return enumerations[idx_enum];
 }
 
-unsigned Type::getEnumerationCount(void)
+unsigned Type::getEnumerationCount()
 {
-	return(enumerations.size());
+	return enumerations.size();
 }
 
 Function *Type::getFunction(unsigned func_id)
@@ -532,88 +531,88 @@ Function *Type::getFunction(unsigned func_id)
 	if(func_id >= sizeof(functions)/sizeof(Function *))
 		throw Exception(ErrorCode::RefFunctionInvalidType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	return(functions[func_id]);
+	return functions[func_id];
 }
 
-unsigned Type::getInternalLength(void)
+unsigned Type::getInternalLength()
 {
-	return(internal_len);
+	return internal_len;
 }
 
-bool Type::isByValue(void)
+bool Type::isByValue()
 {
-	return(by_value);
+	return by_value;
 }
 
-PgSqlType Type::getAlignment(void)
+PgSqlType Type::getAlignment()
 {
-	return(alignment);
+	return alignment;
 }
 
-StorageType Type::getStorage(void)
+StorageType Type::getStorage()
 {
-	return(storage);
+	return storage;
 }
 
-QString Type::getDefaultValue(void)
+QString Type::getDefaultValue()
 {
-	return(default_value);
+	return default_value;
 }
 
-PgSqlType Type::getElement(void)
+PgSqlType Type::getElement()
 {
-	return(element);
+	return element;
 }
 
-char Type::getDelimiter(void)
+char Type::getDelimiter()
 {
-	return(delimiter);
+	return delimiter;
 }
 
-unsigned Type::getConfiguration(void)
+unsigned Type::getConfiguration()
 {
-	return(config);
+	return config;
 }
 
-CategoryType Type::getCategory(void)
+CategoryType Type::getCategory()
 {
-	return(category);
+	return category;
 }
 
-bool Type::isPreferred(void)
+bool Type::isPreferred()
 {
-	return(preferred);
+	return preferred;
 }
 
-bool Type::isCollatable(void)
+bool Type::isCollatable()
 {
-	return(collatable);
+	return collatable;
 }
 
-PgSqlType Type::getLikeType(void)
+PgSqlType Type::getLikeType()
 {
-	return(like_type);
+	return like_type;
 }
 
-PgSqlType Type::getSubtype(void)
+PgSqlType Type::getSubtype()
 {
-	return(subtype);
+	return subtype;
 }
 
-OperatorClass *Type::getSubtypeOpClass(void)
+OperatorClass *Type::getSubtypeOpClass()
 {
-	return(subtype_opclass);
+	return subtype_opclass;
 }
 
 QString Type::getCodeDefinition(unsigned def_type)
 {
-	return(this->getCodeDefinition(def_type, false));
+	return this->getCodeDefinition(def_type, false);
 }
 
 QString Type::getCodeDefinition(unsigned def_type, bool reduced_form)
 {
 	QString code_def=getCachedCode(def_type, reduced_form);
-	if(!code_def.isEmpty()) return(code_def);
+	if(!code_def.isEmpty()) return code_def;
 
 	if(config==EnumerationType)
 	{
@@ -651,7 +650,7 @@ QString Type::getCodeDefinition(unsigned def_type, bool reduced_form)
 		else
 			attributes[Attributes::InternalLength]=QString("%1").arg(internal_len);
 
-		attributes[Attributes::ByValue]=(by_value ? Attributes::True : QString());
+		attributes[Attributes::ByValue]=(by_value ? Attributes::True : "");
 		attributes[Attributes::Alignment]=(*alignment);
 		attributes[Attributes::Storage]=(~storage);
 		attributes[Attributes::DefaultValue]=default_value;
@@ -664,8 +663,8 @@ QString Type::getCodeDefinition(unsigned def_type, bool reduced_form)
 
 		attributes[Attributes::Category]=~(category);
 
-		attributes[Attributes::Preferred]=(preferred ? Attributes::True : QString());
-		attributes[Attributes::Collatable]=(collatable ? Attributes::True : QString());
+		attributes[Attributes::Preferred]=(preferred ? Attributes::True : "");
+		attributes[Attributes::Collatable]=(collatable ? Attributes::True : "");
 
 		if(like_type!=QString("\"any\""))
 		{
@@ -704,7 +703,7 @@ QString Type::getCodeDefinition(unsigned def_type, bool reduced_form)
 		}
 	}
 
-	return(BaseObject::getCodeDefinition(def_type, reduced_form));
+	return BaseObject::getCodeDefinition(def_type, reduced_form);
 }
 
 QString Type::getAlterDefinition(BaseObject *object)
@@ -730,7 +729,7 @@ QString Type::getAlterDefinition(BaseObject *object)
 				{
 					if(std::find(this->enumerations.begin(), this->enumerations.end(), enum_val)==this->enumerations.end())
 					{
-						attribs[Attributes::Before]=QString();
+						attribs[Attributes::Before]="";
 						if(prev_val.isEmpty())
 						{
 							attribs[Attributes::Before]=Attributes::True;
@@ -759,7 +758,7 @@ QString Type::getAlterDefinition(BaseObject *object)
 						copyAttributes(attribs);
 						alter_def+=BaseObject::getAlterDefinition(this->getSchemaName(), attributes, true, true);
 						attribs.clear();
-						attributes[Attributes::Drop]=QString();
+						attributes[Attributes::Drop]="";
 					}
 				}
 
@@ -772,7 +771,7 @@ QString Type::getAlterDefinition(BaseObject *object)
 					{
 						attribs[Attributes::Attribute]=attrib.getName(true);
 						attribs[Attributes::Type]=attrib.getType().getCodeDefinition(SchemaParser::SqlDefinition);
-						attribs[Attributes::Collation]=QString();
+						attribs[Attributes::Collation]="";
 
 						if(attrib.getCollation())
 							attribs[Attributes::Collation]=attrib.getCollation()->getName(true);
@@ -793,7 +792,7 @@ QString Type::getAlterDefinition(BaseObject *object)
 
 						copyAttributes(attribs);
 						alter_def+=BaseObject::getAlterDefinition(this->getSchemaName(), attributes, true, true);
-						attributes[Attributes::Change]=QString();
+						attributes[Attributes::Change]="";
 					}
 
 					attribs.clear();
@@ -801,7 +800,7 @@ QString Type::getAlterDefinition(BaseObject *object)
 			}
 		}
 
-		return(alter_def);
+		return alter_def;
 	}
 	catch(Exception &e)
 	{

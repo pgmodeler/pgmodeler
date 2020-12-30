@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -73,69 +73,69 @@ class ModelValidationHelper: public QObject {
 		void generateValidationInfo(unsigned val_type, BaseObject *object, vector<BaseObject *> refs);
 
 	public:
-		ModelValidationHelper(void);
-		~ModelValidationHelper(void);
+		ModelValidationHelper();
+		virtual ~ModelValidationHelper();
 
 		/*! \brief Validates the specified model. If a connection is specifies executes the
 		SQL validation directly on DBMS */
-		void setValidationParams(DatabaseModel *model, Connection *conn=nullptr, const QString &pgsql_ver=QString(), bool use_tmp_names=false);
+		void setValidationParams(DatabaseModel *model, Connection *conn=nullptr, const QString &pgsql_ver="", bool use_tmp_names=false);
 
 		//! \brief Switch the validator to fix mode
 		void switchToFixMode(bool value);
 
 		//! \brief Returns if the validator is on fix mode
-		bool isInFixMode(void);
+		bool isInFixMode();
 
 		//! \brief Returns the error count (only when executing SQL validation)
-		unsigned getErrorCount(void);
+		unsigned getErrorCount();
 
 		//! \brief Returns the warning count
-		unsigned getWarningCount(void);
+		unsigned getWarningCount();
 
 		//! \brief Try to resolve the conflict specified by validation info
 		void resolveConflict(ValidationInfo &info);
 
-		bool isValidationCanceled(void);
+		bool isValidationCanceled();
 
 	private slots:
 		void redirectExportProgress(int prog, QString msg, ObjectType obj_type, QString cmd, bool is_code_gen);
 		void captureThreadError(Exception e);
-		void emitValidationCanceled(void);
-		void emitValidationFinished(void);
+		void emitValidationCanceled();
+		void emitValidationFinished();
 
 	public slots:
-		void validateModel(void);
-		void applyFixes(void);
-		void cancelValidation(void);
+		void validateModel();
+		void applyFixes();
+		void cancelValidation();
 
 	signals:
 		//! \brief This signal is emitted when a validation info is generated
 		void s_validationInfoGenerated(ValidationInfo val_info);
 
 		//! \brief This signal is emitted when the validation progress changes
-		void s_progressUpdated(int prog, QString msg, ObjectType obj_type=ObjectType::BaseObject, QString cmd=QString(), bool is_code_gen=false);
+		void s_progressUpdated(int prog, QString msg, ObjectType obj_type=ObjectType::BaseObject, QString cmd="", bool is_code_gen=false);
 
 		//! \brief This signal is emitted when the object is processed by the validator
 		void s_objectProcessed(QString obj_name, ObjectType obj_type);
 
 		//! \brief This signal is emitted when the validation was sucessfully finished
-		void s_validationFinished(void);
+		void s_validationFinished();
 
 		//! \brief This signal is emitted when the validation was canceled by user
-		void s_validationCanceled(void);
+		void s_validationCanceled();
 
 		//! \brief This signal is emitted when the dbms export thread start to run
-		void s_sqlValidationStarted(void);
+		void s_sqlValidationStarted();
 
 		//! \brief This signal is emitted when the validator applied some fix on validation info
-		void s_fixApplied(void);
+		void s_fixApplied();
 
 		//! \brief This signal is emitted when the validator changes some objects id by swapping or update operations
 		void s_objectIdChanged(BaseObject *object);
 
 		/*! \brief This signal is emitted when the validator need the validation of relationship.
 		This process must be performed outside the current thread, this explains the usage of this signal */
-		void s_relsValidationRequested(void);
+		void s_relsValidationRequested();
 };
 
 #endif

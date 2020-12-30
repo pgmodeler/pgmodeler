@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -28,14 +28,14 @@ AggregateWidget::AggregateWidget(QWidget *parent): BaseObjectWidget(parent, Obje
 		QFrame *frame=nullptr;
 
 		initial_cond_hl=new SyntaxHighlighter(initial_cond_txt);
-		initial_cond_hl->loadConfiguration(GlobalAttributes::SQLHighlightConfPath);
+		initial_cond_hl->loadConfiguration(GlobalAttributes::getSQLHighlightConfPath());
 
 		final_func_sel=new ObjectSelectorWidget(ObjectType::Function, true, this);
 		transition_func_sel=new ObjectSelectorWidget(ObjectType::Function, true, this);
 		sort_op_sel=new ObjectSelectorWidget(ObjectType::Operator, true, this);
 
-		input_type=new PgSQLTypeWidget(this, trUtf8("Input Data Type"));
-		state_type=new PgSQLTypeWidget(this, trUtf8("State Data Type"));
+		input_type=new PgSQLTypeWidget(this, tr("Input Data Type"));
+		state_type=new PgSQLTypeWidget(this, tr("State Data Type"));
 
 		input_types_tab=new ObjectsTableWidget(ObjectsTableWidget::AllButtons ^
 											  ObjectsTableWidget::EditButton, true, this);
@@ -62,7 +62,7 @@ AggregateWidget::AggregateWidget(QWidget *parent): BaseObjectWidget(parent, Obje
 		connect(input_types_tab, SIGNAL(s_rowAdded(int)), this, SLOT(handleDataType(int)));
 		connect(input_types_tab, SIGNAL(s_rowUpdated(int)), this, SLOT(handleDataType(int)));
 
-		frame=generateInformationFrame(trUtf8("An aggregate function that accepts the types <em><strong>typeA</strong></em> and <em><strong>typeB</strong></em> as input types and which type of state is <em><strong>state_type</strong></em>, must obey the following rules: <br/><br/> <strong> &nbsp;&nbsp;&nbsp;• Final Function:</strong> <em>void final_function(<strong>state_type</strong>)</em><br/>  <strong> &nbsp;&nbsp;&nbsp;• Transition Function:</strong> <em><strong>state_type</strong> transition_function(<strong>state_type</strong>, <strong>typeA</strong>, <strong>typeB</strong>)</em>"));
+		frame=generateInformationFrame(tr("An aggregate function that accepts the types <em><strong>typeA</strong></em> and <em><strong>typeB</strong></em> as input types and which type of state is <em><strong>state_type</strong></em>, must obey the following rules: <br/><br/> <strong> &nbsp;&nbsp;&nbsp;• Final Function:</strong> <em>void final_function(<strong>state_type</strong>)</em><br/>  <strong> &nbsp;&nbsp;&nbsp;• Transition Function:</strong> <em><strong>state_type</strong> transition_function(<strong>state_type</strong>, <strong>typeA</strong>, <strong>typeB</strong>)</em>"));
 		funcaoagregacao_grid->addWidget(frame, funcaoagregacao_grid->count()+1, 0, 1, 2);
 		frame->setParent(this);
 
@@ -139,7 +139,7 @@ void AggregateWidget::handleDataType(int row)
 	}
 }
 
-void AggregateWidget::applyConfiguration(void)
+void AggregateWidget::applyConfiguration()
 {
 	try
 	{

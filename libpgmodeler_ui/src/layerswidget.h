@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -33,6 +33,12 @@ class LayersWidget : public QWidget, Ui::LayersWidget {
 	private:
 		Q_OBJECT
 
+		//! \brief Holds the last mouse position while moving the cursor over the widget (used during resize event filter)
+		QPoint old_pos;
+
+		//! \brief Holds the actions for the visibility toggler menu
+		QMenu visibility_menu;
+
 		//! \brief Model in which the layer widget will operate on
 		ModelWidget *model;
 
@@ -47,9 +53,9 @@ class LayersWidget : public QWidget, Ui::LayersWidget {
 		int curr_row;
 
 		//! \brief Configures the layers listing
-		void updateLayers(void);
+		void updateLayers();
 
-		bool eventFilter(QObject *watched, QEvent *event);
+		bool eventFilter(QObject *watched, QEvent *event) override;
 
 	public:
 		explicit LayersWidget(QWidget *parent = nullptr);
@@ -59,32 +65,34 @@ class LayersWidget : public QWidget, Ui::LayersWidget {
 
 	private slots:
 		//! \brief Add a new item (layer) to the listing. If the provided name is empty a default name is assigned
-		QListWidgetItem *addLayer(const QString &name = QString());
+		QListWidgetItem *addLayer(const QString &name = "");
 
 		//! \brief Triggers the renaming operation over a item
 		void startLayerRenaming(QListWidgetItem *item);
 
 		//! \brief Finishes the renaming operation over a item
-		void finishLayerRenaming(void);
+		void finishLayerRenaming();
 
 		//! \brief Updates the active layeres on the scene causing a redraw of the items
-		void updateActiveLayers(void);
+		void updateActiveLayers();
 
 		//! \brief Remove a layer from the listing. If 'clear' is true them all layers (except the default) are removed
 		void removeLayer(bool clear = false);
 
 		//! \brief Enables the control buttons according to the selection on the list
-		void enableButtons(void);
+		void enableButtons();
+
+		void setLayersVisible();
 
 	public slots:
-		void setVisible(bool value);
+		void setVisible(bool value) override;
 
 	signals:
 		//! \brief Signal emitted whenever the widget changes its visibility
 		void s_visibilityChanged(bool);
 
 		//! \brief Signal emitted whenever the current active layers change
-		void s_activeLayersChanged(void);
+		void s_activeLayersChanged();
 };
 
 #endif

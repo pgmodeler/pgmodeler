@@ -13,15 +13,8 @@
 <!ATTLIST function execution-cost CDATA #IMPLIED>
 <!ATTLIST function row-amount CDATA #IMPLIED>
 <!ATTLIST function signature CDATA #IMPLIED>
-<!ATTLIST function ref-type (none|validator|handler|inline|input|output|receive|send|tpmodin|tpmodout|analyze|canonical|subtypediff|join|restriction|final|transition|operfunc) "none">
+<!ATTLIST function ref-type (none|validator|handler|inline|input|output|receive|send|tpmodin|tpmodout|analyze|canonical|subtypediff|join|restriction|final|transition|operfunc|fromsql|tosql) "none">
 <!ATTLIST function protected (false|true) "false">
 <!ATTLIST function sql-disabled (false|true) "false">
-
-<!ELEMENT parameter (type)>
-<!ATTLIST parameter name CDATA #REQUIRED>
-<!ATTLIST parameter default-value CDATA #IMPLIED>
-<!ATTLIST parameter in (true|false) "false">
-<!ATTLIST parameter out (true|false) "false">
-<!ATTLIST parameter variadic (true|false) "false">
 
 <!ELEMENT return-type (type?,parameter*)>

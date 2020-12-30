@@ -1,17 +1,17 @@
-[![](https://img.shields.io/github/license/pgmodeler/pgmodeler.svg)](https://github.com/pgmodeler/pgmodeler/blob/master/LICENSE)
-[![](https://img.shields.io/github/issues-raw/pgmodeler/pgmodeler.svg)](https://github.com/pgmodeler/pgmodeler/issues)
-[![](https://img.shields.io/github/issues-closed-raw/pgmodeler/pgmodeler.svg)](https://github.com/pgmodeler/pgmodeler/issues?q=is%3Aissue+is%3Aclosed)
-<br/>
-![](https://img.shields.io/github/languages/code-size/pgmodeler/pgmodeler.svg)
-[![](https://img.shields.io/github/tag-date/pgmodeler/pgmodeler.svg)](https://github.com/pgmodeler/pgmodeler/tags)
-[![](https://img.shields.io/github/last-commit/pgmodeler/pgmodeler/master.svg)](https://github.com/pgmodeler/pgmodeler/commits/master)
+Building status
+---------------
+
+[![Linux build](https://github.com/pgmodeler/pgmodeler/workflows/Linux%20build/badge.svg)](https://github.com/pgmodeler/pgmodeler/actions?query=workflow%3A%22Linux+build%22)
+[![Windows build](https://github.com/pgmodeler/pgmodeler/workflows/Windows%20build/badge.svg)](https://github.com/pgmodeler/pgmodeler/actions?query=workflow%3A%22Windows+build%22)
+[![macOs build](https://github.com/pgmodeler/pgmodeler/workflows/macOs%20build/badge.svg)](https://github.com/pgmodeler/pgmodeler/actions?query=workflow%3A%22macOs+build%22)
+
 
 Introduction
 ------------
 
-pgModeler - PostgreSQL Database Modeler - is an open source data modeling tool designed for PostgreSQL. No more DDL commands written by hand let pgModeler do the job for you! This software reunites the concepts of entity-relationship diagrams and the features that PostgreSQL implements as extensions of SQL standards.
+pgModeler - PostgreSQL Database Modeler - is an open-source data-modeling tool designed for PostgreSQL. No more DDL commands written by hand, let pgModeler do the job for you! This software reunites the concepts of entity-relationship diagrams and the features that PostgreSQL implements as extensions of SQL standards.
 
-Please, let me know how the pgModeler is working on your system! Help to improve this project, give your feedback about the software or report any bug at [Issues](https://github.com/pgmodeler/pgmodeler/issues) page. Additionaly, follow the pgModeler profile on [Facebook](https://www.facebook.com/pgmodeler) or [Twitter](https://twitter.com/pgmodeler) and be up-to-date with new features, fixes and releases.
+Please, let me know how pgModeler is working on your system! Help improving this project, give your feedback about the software or report any bug at [Issues](https://github.com/pgmodeler/pgmodeler/issues) page. Additionaly, follow pgModeler on [Facebook](https://www.facebook.com/pgmodeler) or [Twitter](https://twitter.com/pgmodeler) and be up-to-date with new features, fixes and releases.
 
 Licensing
 ---------
@@ -25,31 +25,33 @@ See [LICENSE](https://github.com/pgmodeler/pgmodeler/blob/master/LICENSE) for de
 Donate to pgModeler
 -------------------
 
-Much effort, coffee, chocolate, time and knowledge is being devoted to this project so that a reliable and constantly improved product can be delivered to the community. If you liked pgModeler and think it deserves a contribution please donate any amount (via PayPal) at [project's official site](https://pgmodeler.io).
+Much effort, coffee, chocolate, time and knowledge is being devoted to this project so that a reliable and constantly improved product can be delivered to the community. If you liked pgModeler and think it deserves a contribution, please donate any amount (via PayPal) at [project's official site](https://pgmodeler.io).
 
 Developers and Reviewers wanted!
 --------------------------------
 
-pgModeler grown bigger and reached a state where its lonely developer cannot handle all the modifications and new features requests. So if you know C++ and Qt framework programming and wants to contribute with coding let me know! I'll be grateful for any help to the project!
+pgModeler has reached a state where its developer cannot handle all the modifications and new features requests alone anymore. So if you know C++ and Qt and want to contribute with coding let me know! I'll be grateful for any help to the project!
 
 Compiling/Installation
 ----------------------
 
-For details about installation process from source code visit the [Installation](https://www.pgmodeler.io/support/installation) section. If you don't want to compile pgModeler there are binaries available for purchase at [official site](http://www.pgmodeler.io/purchase).
+For details about the installation process from source code, visit the [Installation](https://www.pgmodeler.io/support/installation) section. If you don't want to compile pgModeler there are binaries available for purchase at [official site](http://www.pgmodeler.io/purchase).
+
+You might want to check out the [official plugin repository](https://github.com/pgmodeler/plugins) as well.
 
 Known Issues
 -----------
 
-* pgModeler can't handle correctly the importing of complex CSV files (multilined cell values) in data manipulation form or pasting CSV content of that complexity on that dialog.
-* Due to the CVS importing limitations any value copied or exported from pgModeler in CSV format will be automatically formatted in the proper way that the tool can handle (by escaping any special caracter like line breaks and tabulations). If you intend to use CSV files generated by the tool in other software you have to revert back that characters escaping so the file can be read properly by third party softwares.
-* Due to the usage of Qt's raster engine to draw objects, the process of handling objects on the canvas tends to get slower as lots of objects are created causing constant CPU usage. A heavy performance degradation can be noticed when dealing with models with ~500+ tables and/or relationships. There're plans to improve the speed of drawing operations for large models for future releases.
+* Due to the usage of Qt's raster engine to draw objects, the process of handling objects on the canvas tends to get slower as lots of objects are created causing constant CPU usage. A heavy performance degradation can be noticed when dealing with models with ~500+ tables and/or relationships. There're plans to improve the speed of drawing operations, for large models, in future releases. Changing the relationship connection mode and render smoothness options may help in the performance when handling big database models.
+* pgModeler can't handle correctly the importing of complex CSV files (multilined cell values) in data manipulation form, or pasting CSV content of that complexity on that dialog.
+* Due to the CSV importing limitations, any value copied or exported from pgModeler in CSV format will be automatically formatted in the proper way that the tool can handle (by escaping any special caracter like line breaks and tabulations). If you intend to use CSV files generated by the tool in other software you have to revert back that characters escaping so the file can be read properly by third party softwares.
 * The diff process still presents false-positive results due its limitations. Sometimes, there is the need to run the process twice to get the full changes.
 * pgModeler does not fully supports the [quoted identifier notation](http://www.postgresql.org/docs/current/static/sql-syntax-lexical.html#SQL-SYNTAX-IDENTIFIERS). When using quoted identifiers only the following characters are accepted in the middle of names: a-z A-Z 0-9 _ . @ $ - / \ space.
-* pgModeler is unusable in sandboxed Mac OS X installations. To workaround this issue you'll need to deactivate sandbox usage to run pgModeler properly. There is no planning to adapt this tool for sandbox feature in Mac OS X.
-* pgModeler can't be compiled in Microsoft Visual Studio due to use of some gcc/clang extensions.
-* Compiling the source using '-Wconversion' (disabled by Qt in its defaults) generates a lot of warnings. These warnings are harmless in 99% of times but we can't just ignore them but I don't plan to fix them in a near future.
-* pgModeler sometimes can crash during the export, import or validation process due to some threaded operations that, depending on size and arrange of the model, causes race conditions.
-* Due to particularities on executing bundles on MacOSX the file association does not work correctly on this system. So it's not possible to open a model file by clicking it on Finder.
+* pgModeler is unusable in sandboxed Mac OS X installations. To workaround this issue you'll need to deactivate sandbox usage to run pgModeler properly. There is no plan to support sandboxing in Mac OS X.
+* pgModeler can't be compiled with Microsoft Visual Studio due to use of some gcc/clang extensions.
+* Compiling the source using '-Wconversion' (disabled by Qt in its defaults) generates a lot of warnings. These warnings are 99% harmless, I don't plan to fix them in a near future.
+* pgModeler can sometimes crash during the export, import or validation process due to some threaded operations that, depending on the size and the arrangement of the model, cause race conditions.
+* Due to particularities on executing bundles on MacOSX, the file association does not work correctly on this system. So it's not possible to open a model file by clicking it on Finder.
 
 Change Log
 ----------

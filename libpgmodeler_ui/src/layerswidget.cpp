@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -22,9 +22,21 @@ LayersWidget::LayersWidget(QWidget *parent) : QWidget(parent)
 {
 	setupUi(this);
 	setModel(nullptr);
+
+	old_pos = QPoint(-1, -1);
 	curr_item = nullptr;
 	curr_row = -1;
+
 	layers_lst->installEventFilter(this);
+	frame->installEventFilter(this);
+
+	QAction *act = visibility_menu.addAction(tr("Show all"), this, SLOT(setLayersVisible()));
+	act->setData(true);
+
+	act = visibility_menu.addAction(tr("Hide all"), this, SLOT(setLayersVisible()));
+	act->setData(false);
+
+	visibility_tb->setMenu(&visibility_menu);
 
 	connect(hide_tb, SIGNAL(clicked(bool)), this, SIGNAL(s_visibilityChanged(bool)));
 	connect(layers_lst, SIGNAL(itemDoubleClicked(QListWidgetItem*)), this, SLOT(startLayerRenaming(QListWidgetItem*)));
@@ -38,7 +50,7 @@ LayersWidget::LayersWidget(QWidget *parent) : QWidget(parent)
 	});
 }
 
-void LayersWidget::updateLayers(void)
+void LayersWidget::updateLayers()
 {
 	QListWidgetItem *item = nullptr;
 
@@ -53,22 +65,54 @@ void LayersWidget::updateLayers(void)
 
 bool LayersWidget::eventFilter(QObject *watched, QEvent *event)
 {
-	if(watched == layers_lst && event->type() == QEvent::KeyPress)
+	if(watched == layers_lst)
 	{
-		QKeyEvent *k_event = dynamic_cast<QKeyEvent *>(event);
+		if(event->type() == QEvent::KeyPress)
+		{
+			QKeyEvent *k_event = dynamic_cast<QKeyEvent *>(event);
 
-		if(curr_item && (k_event->key() == Qt::Key_Enter || k_event->key() == Qt::Key_Return))
+			if(curr_item && (k_event->key() == Qt::Key_Enter || k_event->key() == Qt::Key_Return))
+				finishLayerRenaming();
+			else if(!curr_item && k_event->key() == Qt::Key_F2 && layers_lst->currentRow() > 0)
+				startLayerRenaming(layers_lst->currentItem());
+		}
+		else if(event->type() == QEvent::FocusIn && curr_item != layers_lst->currentItem())
+		{
 			finishLayerRenaming();
-		else if(!curr_item && k_event->key() == Qt::Key_F2 && layers_lst->currentRow() > 0)
-			startLayerRenaming(layers_lst->currentItem());
+		}
+	}
+	else if(watched == frame && (event->type()==QEvent::MouseMove || event->type()==QEvent::MouseButtonPress))
+	{
+		QMouseEvent *m_event=dynamic_cast<QMouseEvent *>(event);
+
+		if(event->type() == QEvent::MouseButtonPress)
+			old_pos = QPoint(-1,-1);
+		else
+		{
+			if(m_event->buttons() == Qt::LeftButton)
+			{
+				QPoint pnt = this->mapToParent(m_event->pos());
+				int w = 0, h = 0;
+
+				//Calculates the width and height based upon the delta between the points
+				w = this->width() + (pnt.x() - old_pos.x());
+				h = this->geometry().bottom() - pnt.y() + 1;
+
+				if(h >= this->minimumHeight() && h <= this->maximumHeight() &&
+					 w >= this->minimumWidth() && w <= this->maximumWidth())
+					this->setGeometry(this->pos().x(), pnt.y(), w, h);
+
+				old_pos = pnt;
+			}
+		}
 	}
 
-	return(false);
+	return false;
 }
 
-void LayersWidget::updateActiveLayers(void)
+void LayersWidget::updateActiveLayers()
 {
-	QStringList active_layers;
+	QList<unsigned> active_layers;
 	QListWidgetItem *item = nullptr;
 
 	for(int row = 0; row < layers_lst->count(); row++)
@@ -76,7 +120,7 @@ void LayersWidget::updateActiveLayers(void)
 		item = layers_lst->item(row);
 
 		if(item->checkState() == Qt::Checked)
-			active_layers.push_back(item->text());
+			active_layers.append(static_cast<unsigned>(row));
 	}
 
 	model->scene->setActiveLayers(active_layers);
@@ -89,10 +133,10 @@ void LayersWidget::removeLayer(bool clear)
 	Messagebox msg_box;
 
 	if(clear)
-		msg_box.show(trUtf8("This action will delete all layers (except the default one) and the objects in them will be moved to the default layer. Do you want to proceed?"),
+		msg_box.show(tr("This action will delete all layers (except the default one) and the objects in them will be moved to the default layer. Do you want to proceed?"),
 								 Messagebox::ConfirmIcon, Messagebox::YesNoButtons);
 	else
-		msg_box.show(trUtf8("Delete the selected layer will cause objects in it to be moved to the default layer. Do you want to proceed?"),
+		msg_box.show(tr("Delete the selected layer will cause objects in it to be moved to the default layer. Do you want to proceed?"),
 								 Messagebox::ConfirmIcon, Messagebox::YesNoButtons);
 
 	if(msg_box.result() == QDialog::Accepted)
@@ -104,7 +148,7 @@ void LayersWidget::removeLayer(bool clear)
 			while(layers_lst->count() > 1)
 			{
 				item = layers_lst->takeItem(layers_lst->count() - 1);
-				delete(item);
+				delete item;
 			}
 		}
 		else if(layers_lst->currentRow() > 0)
@@ -112,7 +156,7 @@ void LayersWidget::removeLayer(bool clear)
 			item = layers_lst->currentItem();
 			model->scene->removeLayer(item->text());
 			layers_lst->takeItem(layers_lst->currentRow());
-			delete(item);
+			delete item;
 		}
 
 		layers_lst->setCurrentRow(-1);
@@ -120,10 +164,24 @@ void LayersWidget::removeLayer(bool clear)
 	}
 }
 
-void LayersWidget::enableButtons(void)
+void LayersWidget::enableButtons()
 {
 	remove_tb->setEnabled(layers_lst->currentRow() > 0);
 	remove_all_tb->setEnabled(layers_lst->count() > 1);
+}
+
+void LayersWidget::setLayersVisible()
+{
+	QAction *act = qobject_cast<QAction *>(sender());
+	Qt::CheckState chk_state = act->data().toBool() ? Qt::Checked : Qt::Unchecked;
+
+	layers_lst->blockSignals(true);
+
+	for(auto &item : layers_lst->findItems("*", Qt::MatchWildcard))
+		item->setCheckState(chk_state);
+
+	layers_lst->blockSignals(false);
+	updateActiveLayers();
 }
 
 void LayersWidget::setVisible(bool value)
@@ -147,14 +205,19 @@ void LayersWidget::setModel(ModelWidget *model)
 QListWidgetItem *LayersWidget::addLayer(const QString &name)
 {
 	QListWidgetItem *item = nullptr;
-	QString aux_name = name.isEmpty() ? trUtf8("New layer") : name;
+	QString aux_name = name.isEmpty() ? tr("New layer") : name;
+	QStringList act_layers = 	model->scene->getLayers();
 
 	aux_name = model->scene->addLayer(aux_name);
 	item = new QListWidgetItem(aux_name);
+
+	item->setCheckState(Qt::Checked);
 	item->setFlags((item->flags() | Qt::ItemIsUserCheckable) ^ Qt::ItemIsEditable);
-	item->setCheckState(Qt::Unchecked);
 
 	layers_lst->addItem(item);
+
+	act_layers.prepend(aux_name);
+	model->scene->setActiveLayers(act_layers);
 
 	/* Reconfigure the model's menu if we have selected items so the new layer can
 	 * appear in the "Move to layer" quick action */
@@ -163,7 +226,7 @@ QListWidgetItem *LayersWidget::addLayer(const QString &name)
 
 	enableButtons();
 
-	return(item);
+	return item;
 }
 
 void LayersWidget::startLayerRenaming(QListWidgetItem *item)
@@ -177,7 +240,7 @@ void LayersWidget::startLayerRenaming(QListWidgetItem *item)
 	}
 }
 
-void LayersWidget::finishLayerRenaming(void)
+void LayersWidget::finishLayerRenaming()
 {
 	if(curr_item)
 	{

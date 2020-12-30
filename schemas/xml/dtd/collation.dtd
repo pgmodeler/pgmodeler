@@ -5,8 +5,13 @@
 <!ELEMENT collation (schema?,role?,comment?,appended-sql?,prepended-sql?)>
 <!ATTLIST collation name CDATA #REQUIRED>
 <!ATTLIST collation locale CDATA #IMPLIED>
+<!ATTLIST collation locale-mod CDATA #IMPLIED>
 <!ATTLIST collation encoding CDATA #IMPLIED>
 <!ATTLIST collation lc-ctype CDATA #IMPLIED>
+<!ATTLIST collation lc-ctype-mod CDATA #IMPLIED>
 <!ATTLIST collation lc-collate CDATA #IMPLIED>
+<!ATTLIST collation lc-collate-mod CDATA #IMPLIED>
 <!ATTLIST collation collation CDATA #IMPLIED>
+<!ATTLIST collation provider CDATA #IMPLIED>
 <!ATTLIST collation sql-disabled (false|true) "false">
+<!ATTLIST collation deterministic (false|true) "false">

@@ -3,13 +3,21 @@
 #          Code generation can be broken if incorrect changes are made.
 
 %if {list} %then
-[SELECT id.indexrelid AS oid, cl.relname AS name FROM pg_index AS id
-  LEFT JOIN pg_class AS cl ON cl.oid = id.indexrelid ]
+  
+  %set {parent-name} [ ns.nspname || '.' || tb.relname ]
+
+  %if {use-signature} %then
+    %set {signature} {parent-name} [ || '.' || ]
+  %end
+
+[SELECT id.indexrelid AS oid, cl.relname AS name, ] {parent-name} [ AS parent, 'table' AS parent_type
+  FROM pg_index AS id
+  LEFT JOIN pg_class AS cl ON cl.oid = id.indexrelid 
+  LEFT JOIN pg_class AS tb ON id.indrelid = tb.oid 
+  LEFT JOIN pg_namespace AS ns ON ns.oid = tb.relnamespace ]
 
  %if {schema} %then
-    [ LEFT JOIN pg_class AS tb ON id.indrelid = tb.oid
-      LEFT JOIN pg_namespace AS ns ON ns.oid = tb.relnamespace
-      WHERE nspname= ] '{schema}'
+    [ WHERE nspname= ] '{schema}'
 
    %if {table} %then
      [ AND ((tb.relkind = 'r' OR tb.relkind = 'm') AND tb.relname = ] '{table}' [)]
@@ -42,7 +50,15 @@
    %if {not-ext-object} %then
      [ AND ]( {not-ext-object} )
    %end
-
+   
+   %if {name-filter} %then
+     [ AND ] ( {signature} [ cl.relname ~* ] E'{name-filter}' )
+   %end
+   
+   %if {extra-condition} %then
+     [ AND ] ( {extra-condition} )
+   %end
+   
 %else
     %if {attribs} %then
       [SELECT id.indexrelid AS oid, cl.relname AS name,
@@ -58,7 +74,7 @@
       [       id.indkey::oid] $ob $cb [ AS columns,
 	      id.indclass::oid] $ob $cb [ AS opclasses,
 	      pg_get_expr(indexprs, indrelid) AS expressions,
-              pg_get_expr(indpred, indrelid, true) predicate, ]
+		  pg_get_expr(indpred, indrelid, true) predicate, ]
         
         ({comment}) [ AS comment ]
         

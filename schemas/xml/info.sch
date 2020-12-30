@@ -52,10 +52,10 @@ $tb [<info object=] "{name}" [ type=] "{type}"
     %if {rect-visible} %then [ rect-visible=] "{rect-visible}" %end
 %end
 
-%if {faded-out} %or {hide-ext-attribs} %then
+%if {faded-out} %or {collapse-mode} %then
     $br $tb $tb
     %if {faded-out} %then [ faded-out=] "{faded-out}" %end
-    %if {hide-ext-attribs} %then [ hide-ext-attribs=] "{hide-ext-attribs}" %end
+    %if {collapse-mode} %then [ collapse-mode=] "{collapse-mode}" %end
 %end
 
 %if {alias} %then
@@ -64,6 +64,9 @@ $tb [<info object=] "{name}" [ type=] "{type}"
     %if {table} %then [ table=] "{table}" %end
 %end
     
+%if {z-value} %then
+    $br $tb $tb [ z-value=] "{z-value}"
+%end
 
 %if {position} %or {appended-sql} %or {prepended-sql} %then
     > $br

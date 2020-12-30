@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -29,6 +29,7 @@
 #include "baseobject.h"
 #include "function.h"
 #include "role.h"
+#include "pgsqltypes/encodingtype.h"
 
 class Conversion: public BaseObject {
 	private:
@@ -48,7 +49,7 @@ class Conversion: public BaseObject {
 		static constexpr unsigned SrcEncoding=0,
 		DstEncoding=1;
 
-		Conversion(void);
+		Conversion();
 
 		//! \brief Defines whether the conversion is the default for the encodings
 		void setDefault(bool value);
@@ -63,10 +64,10 @@ class Conversion: public BaseObject {
 		EncodingType getEncoding(unsigned encoding_idx);
 
 		//! \brief Returns the current used conversion function
-		Function *getConversionFunction(void);
+		Function *getConversionFunction();
 
 		//! \brief Returns if the conversion is the default for the envolved encodings
-		bool isDefault(void);
+		bool isDefault();
 
 		//! \brief Returns the SQL/XML code definition for the conversion
 		virtual QString getCodeDefinition(unsigned def_type) final;

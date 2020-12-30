@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -27,8 +27,8 @@ CastWidget::CastWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Ca
 
 		Ui_CastWidget::setupUi(this);
 
-		src_datatype=new PgSQLTypeWidget(this, trUtf8("Source data type"));
-		trg_datatype=new PgSQLTypeWidget(this, trUtf8("Target data type"));
+		src_datatype=new PgSQLTypeWidget(this, tr("Source data type"));
+		trg_datatype=new PgSQLTypeWidget(this, tr("Target data type"));
 		conv_func_sel=new ObjectSelectorWidget(ObjectType::Function, true, this);
 
 		cast_grid->addWidget(conv_func_sel,1,1,1,4);
@@ -37,7 +37,7 @@ CastWidget::CastWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Ca
 
 		configureFormLayout(cast_grid, ObjectType::Cast);
 
-		frame=generateInformationFrame(trUtf8("The function to be assigned to a cast from <em><strong>typeA</strong></em> to <em><strong>typeB</strong></em> must have the following signature: <em><strong>typeB</strong> function(<strong>typeA</strong>, integer, boolean)</em>."));
+		frame=generateInformationFrame(tr("The function to be assigned to a cast from <em><strong>typeA</strong></em> to <em><strong>typeB</strong></em> must have the following signature: <em><strong>typeB</strong> function(<strong>typeA</strong>, integer, boolean)</em>."));
 		cast_grid->addItem(spacer, cast_grid->count()+1, 0, 1, 0);
 		cast_grid->addWidget(frame, cast_grid->count()+1, 0, 1, 0);
 		frame->setParent(this);		
@@ -79,7 +79,7 @@ void CastWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Cas
 	trg_datatype->setAttributes(trg_type,model);
 }
 
-void CastWidget::applyConfiguration(void)
+void CastWidget::applyConfiguration()
 {
 	try
 	{

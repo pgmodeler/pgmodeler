@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -64,14 +64,14 @@ class Aggregate: public BaseObject {
 		bool isValidFunction(unsigned func_idx, Function *func);
 
 	protected:
-		virtual void configureSearchAttributes(void);
+		virtual void configureSearchAttributes();
 
 	public:
 		//! \brief Constants used to reference the functions used by the aggregate
 		static constexpr unsigned FinalFunc=0,
 		TransitionFunc=1;
 
-		Aggregate(void);
+		Aggregate();
 
 		//! \brief Defines one of the functions used by the aggregate
 		void setFunction(unsigned func_idx, Function *func);
@@ -92,14 +92,14 @@ class Aggregate: public BaseObject {
 		void removeDataType(unsigned type_idx);
 
 		//! \brief Removes all accepted data types from aggregate
-		void removeDataTypes(void);
+		void removeDataTypes();
 
 		Function *getFunction(unsigned func_idx);
-		PgSqlType getStateType(void);
-		QString getInitialCondition(void);
-		Operator *getSortOperator(void);
+		PgSqlType getStateType();
+		QString getInitialCondition();
+		Operator *getSortOperator();
 		PgSqlType getDataType(unsigned type_idx);
-		unsigned getDataTypeCount(void);
+		unsigned getDataTypeCount();
 
 		//! \brief Returns the SQL / XML code definition for the aggregate
 		virtual QString getCodeDefinition(unsigned def_type) final;

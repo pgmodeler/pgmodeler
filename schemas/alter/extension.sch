@@ -6,7 +6,7 @@
   {alter-cmds}
  
   %if {new-version} %then
-   [ALTER ] {sql-object} $sp {signature} [ UPDATE TO ] '{new-version}' $br 
-   [-- ddl-end --] $br
+   [ALTER ] {sql-object} $sp {signature} [ UPDATE TO ] '{new-version}' 
+   $br [-- ddl-end --] $br
   %end
 %end

@@ -3,13 +3,16 @@
 #          Code generation can be broken if incorrect changes are made.
 
 [-- object: ] {name} [ | type: ] {sql-object} [ --] $br
-
 [-- ] {drop}
 
- %if {prepended-sql} %then
-   {prepended-sql}
-   $br [-- ddl-end --] $br $br
- %end
+# This is a special token that pgModeler recognizes as end of DDL command
+# when exporting models directly to DBMS. DO NOT REMOVE THIS TOKEN!
+%set {ddl-end} $br [-- ddl-end --] $br
+
+%if {prepended-sql} %then
+  {prepended-sql}
+  {ddl-end} $br
+%end
 
 [CREATE ] 
 %if {constraint} %then [CONSTRAINT ]%end
@@ -42,17 +45,15 @@ $tb [FOR EACH ] %if {per-line} %then ROW %else STATEMENT %end $br
 %if {condition} %then $tb WHEN $sp ({condition}) $br %end
 
 $tb [EXECUTE PROCEDURE ] {trigger-func}(
-%if {arguments} %then {arguments} %end ); $br
+%if {arguments} %then {arguments} %end ); 
 
-# This is a special token that pgModeler recognizes as end of DDL command
-# when exporting models directly to DBMS. DO NOT REMOVE THIS TOKEN!
-[-- ddl-end --] $br
+{ddl-end}
 
 %if {comment} %then {comment} %end
 
 %if {appended-sql} %then
  {appended-sql}
- $br [-- ddl-end --] $br
+ {ddl-end}
 %end
 
 $br

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -93,27 +93,27 @@ void BezierCurveItem::setLine(const QLineF &line, bool simple_curve, bool invert
 	this->setPath(path);
 }
 
-bool BezierCurveItem::isControlPointsInverted(void)
+bool BezierCurveItem::isControlPointsInverted()
 {
-	return(invert_cpoints);
+	return invert_cpoints;
 }
 
-bool BezierCurveItem::isSimpleCurve(void)
+bool BezierCurveItem::isSimpleCurve()
 {
-	return(simple_curve);
+	return simple_curve;
 }
 
-bool BezierCurveItem::isStraightLine(void)
+bool BezierCurveItem::isStraightLine()
 {
-	return(straight_line);
+	return straight_line;
 }
 
 bool BezierCurveItem::contains(const QPointF &pnt) const
 {
-	return(stroke.contains(pnt));
+	return stroke.contains(pnt);
 }
 
 bool BezierCurveItem::collidesWithPath(const QPainterPath &path, Qt::ItemSelectionMode) const
 {
-	return(stroke.intersects(path));
+	return stroke.intersects(path);
 }

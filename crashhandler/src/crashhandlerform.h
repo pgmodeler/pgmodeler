@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -40,22 +40,15 @@ class CrashHandlerForm: public BugReportForm {
 
 		QLabel *input_lbl;
 
-		//! \brief Display the path to input report file
-		QLineEdit *input_edt;
+		FileSelectorWidget *input_sel;
 
 		//! \brief Triggers the model saving to filesystem
-		QToolButton *save_tb,
-
-		//! \brief Triggers the report file loading
-		*load_tb;
-
-		//! \brief Load a report file showing its contents on the form
-		void loadReport(const QString &filename);
+		QToolButton *save_tb;
 
 		void setAnalysisMode(bool value);
 
 		//! \brief Generates a report buffer containing the issue details, model and stacktrace
-		QByteArray generateReportBuffer(void);
+		QByteArray generateReportBuffer();
 
 	public:
 		//! \brief Analysis mode argument
@@ -64,8 +57,10 @@ class CrashHandlerForm: public BugReportForm {
 		CrashHandlerForm(bool analysis_mode=false, QWidget * parent = nullptr, Qt::WindowFlags f = Qt::Widget);
 
 	private slots:
-		void loadReport(void);
-		void saveModel(void);
+		//! \brief Load a report file showing its contents on the form
+		void loadReport(QString filename);
+
+		void saveModel();
 };
 
 #endif

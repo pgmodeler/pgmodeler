@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -27,10 +27,7 @@ DonateWidget::DonateWidget(QWidget *parent) : QWidget(parent)
 	setupUi(this);
 	setWindowFlags(Qt::Widget | Qt::FramelessWindowHint);
 
-	QGraphicsDropShadowEffect * drop_shadow=new QGraphicsDropShadowEffect(this);
-	drop_shadow->setOffset(5,5);
-	drop_shadow->setBlurRadius(30);
-	this->setGraphicsEffect(drop_shadow);
+	PgModelerUiNs::createDropShadow(this, 5, 5, 30);
 
 	connect(hide_tb, &QToolButton::clicked,
 			[&](){

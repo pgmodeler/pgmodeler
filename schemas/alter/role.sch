@@ -70,5 +70,7 @@
   %if {connlimit} %then $br $tb [CONNECTION LIMIT ] {connlimit} %end
   %if {validity} %then $br $tb [VALID UNTIL ] '{validity}' %end
   
-  ; $br [-- ddl-end --] $br
+  ; 
+  
+  $br [-- ddl-end --] $br
 %end

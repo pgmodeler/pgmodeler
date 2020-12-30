@@ -42,8 +42,9 @@
 <!ATTLIST info default-collation CDATA #IMPLIED>
 <!ATTLIST info default-tablespace CDATA #IMPLIED>
 <!ATTLIST info faded-out (false|true) "false">
-<!ATTLIST info hide-ext-attribs (false|true) "false">
+<!ATTLIST info collapse-mode CDATA #IMPLIED>
 <!ATTLIST info alias CDATA #IMPLIED>
 <!ATTLIST info table CDATA #IMPLIED>
+<!ATTLIST info z-value CDATA #IMPLIED>
 
 <!ELEMENT metadata (textbox*, tag*, genericsql*, info*)>

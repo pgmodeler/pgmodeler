@@ -14,6 +14,7 @@
   %if {faded-out} %then [ faded-out=] "true" %end
   %if {max-obj-count} %then [ max-obj-count=] "{max-obj-count}" %end
   %if {options} %then [ options=] "{options}" %end
+  %if {z-value} %then [ z-value=] "{z-value}" %end
 > $br
 
  {schema}

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -30,9 +30,9 @@ void RoundedRectItem::setBorderRadius(double radius)
 	createPolygon();
 }
 
-double RoundedRectItem::getBorderRadius(void)
+double RoundedRectItem::getBorderRadius()
 {
-	return(radius);
+	return radius;
 }
 
 void RoundedRectItem::setRoundedCorners(unsigned corners)
@@ -44,14 +44,14 @@ void RoundedRectItem::setRoundedCorners(unsigned corners)
 	createPolygon();
 }
 
-unsigned RoundedRectItem::getRoundedCorners(void)
+unsigned RoundedRectItem::getRoundedCorners()
 {
-	return(corners);
+	return corners;
 }
 
 bool RoundedRectItem::isCornerRounded(unsigned corner)
 {
-	return((corners & corner)==corner);
+	return (corners & corner)==corner;
 }
 
 void RoundedRectItem::setRect(const QRectF &rect)
@@ -73,7 +73,7 @@ void RoundedRectItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *,
 		painter->drawPolygon(polygon);
 }
 
-void RoundedRectItem::createPolygon(void)
+void RoundedRectItem::createPolygon()
 {
 	polygon.clear();
 
@@ -122,5 +122,5 @@ QVector<QPointF> RoundedRectItem::calculatePoints(QPointF start_pnt, double star
 			 (inc < 0 && ang < end_angle));
 	}
 
-	return(points);
+	return points;
 }

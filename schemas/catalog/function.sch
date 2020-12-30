@@ -1,24 +1,31 @@
-# Catalog queries for
+# Catalog queries for functions
 # CAUTION: Do not modify this file unless you know what you are doing.
 #          Code generation can be broken if incorrect changes are made.
 
 %if ({pgsql-ver} <=f "10.0") %then
-    %set {is-not-agg} [pr.proisagg IS FALSE]
+    %set {is-not-agg-proc} [pr.proisagg IS FALSE]
     %set {window-func} [pr.proiswindow AS window_func_bool]
 %else
-    %set {is-not-agg} [pr.prokind <> 'a'] 
+    %set {is-not-agg-proc} [pr.prokind NOT IN ('a', 'p') ] 
     %set {window-func} [CASE pr.prokind WHEN 'w' THEN TRUE ELSE FALSE END AS window_func_bool]
 %end    
 
 %if {list} %then
-  [SELECT pr.oid,  proname || '(' || array_to_string(proargtypes::regtype] $ob $cb [,',') || ')' AS name
-    FROM pg_proc AS pr ]
+
+  %if {use-signature} %then
+     %set {signature} [ ns.nspname || '.' || ]
+  %end
+
+  [SELECT pr.oid, proname || '(' || array_to_string(proargtypes::regtype] $ob $cb [,',') || ')' AS name,
+    ns.nspname AS parent,
+    'schema' AS parent_type
+    FROM pg_proc AS pr 
+    LEFT JOIN pg_namespace AS ns ON pr.pronamespace = ns.oid ]
 
   %if {schema} %then
-   [ LEFT JOIN pg_namespace AS ns ON pr.pronamespace = ns.oid
-      WHERE ] {is-not-agg} [ AND ns.nspname = ] '{schema}'
+   [ WHERE ] {is-not-agg-proc} [ AND ns.nspname = ] '{schema}'
   %else
-   [ WHERE ] {is-not-agg}
+   [ WHERE ] {is-not-agg-proc}
   %end
 
   %if {last-sys-oid} %then
@@ -27,6 +34,10 @@
 
   %if {not-ext-object} %then
     [ AND ] ( {not-ext-object} )
+  %end
+  
+  %if {name-filter} %then
+    [ AND ] ( {signature} [ pr.proname ~* ] E'{name-filter}' )
   %end
 
 %else
@@ -88,7 +99,7 @@
 	 [ LEFT JOIN pg_namespace AS ns ON pr.pronamespace = ns.oid ]
 	%end
 
-	[ WHERE ] {is-not-agg} 
+	[ WHERE ] {is-not-agg-proc} 
 
 	%if {last-sys-oid} %then
 	  [ AND pr.oid ] {oid-filter-op} $sp {last-sys-oid}

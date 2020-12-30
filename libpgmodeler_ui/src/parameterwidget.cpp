@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -44,8 +44,8 @@ ParameterWidget::ParameterWidget(QWidget *parent): BaseObjectWidget(parent, Obje
 		configureFormLayout(parameter_grid, ObjectType::Parameter);
 		connect(param_variadic_chk, SIGNAL(toggled(bool)), param_in_chk, SLOT(setDisabled(bool)));
 		connect(param_variadic_chk, SIGNAL(toggled(bool)), param_out_chk, SLOT(setDisabled(bool)));
-		connect(param_in_chk, SIGNAL(toggled(bool)), this, SLOT(enableVariadic(void)));
-		connect(param_out_chk, SIGNAL(toggled(bool)), this, SLOT(enableVariadic(void)));
+		connect(param_in_chk, SIGNAL(toggled(bool)), this, SLOT(enableVariadic()));
+		connect(param_out_chk, SIGNAL(toggled(bool)), this, SLOT(enableVariadic()));
 
 		setMinimumSize(500, 200);
 	}
@@ -55,7 +55,7 @@ ParameterWidget::ParameterWidget(QWidget *parent): BaseObjectWidget(parent, Obje
 	}
 }
 
-void ParameterWidget::enableVariadic(void)
+void ParameterWidget::enableVariadic()
 {
 	param_variadic_chk->setEnabled(!param_in_chk->isChecked() &&
 																 !param_out_chk->isChecked());
@@ -77,7 +77,7 @@ void ParameterWidget::setAttributes(Parameter param, DatabaseModel *model)
 	BaseObjectWidget::setAttributes(model,&this->parameter, nullptr);
 }
 
-void ParameterWidget::applyConfiguration(void)
+void ParameterWidget::applyConfiguration()
 {
 	try
 	{
@@ -97,8 +97,8 @@ void ParameterWidget::applyConfiguration(void)
 	}
 }
 
-Parameter ParameterWidget::getParameter(void)
+Parameter ParameterWidget::getParameter()
 {
-	return(parameter);
+	return parameter;
 }
 

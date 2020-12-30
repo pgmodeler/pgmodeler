@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -163,7 +163,6 @@ QString Exception::messages[Exception::ErrorCount][2]={
 	{"InvConstratintNoColumns", QT_TR_NOOP("Constraints like primary key, foreign key or unique must have at least one column related to them! For foreign keys must be selected, in addition, the referenced columns!")},
 	{"ConfigurationNotLoaded", QT_TR_NOOP("Unable to load the configuration file `%1'! Please check if file exists in its folder and/or if it is not corrupted!")},
 	{"DefaultConfigNotRestored", QT_TR_NOOP("Could not find the default settings file `%1'! To restore default settings check the existence of the file and try again!")},
-	{"ExportFailure", QT_TR_NOOP("The export process failed due to an error triggered by the PostgreSQL server in an attempt to execute a SQL command. For more details about the error check the exception stack!\n\n** Executed SQL command: **\n\n%1")},
 	{"PluginNotLoaded", QT_TR_NOOP("Could not load the plugin `%1' from the library `%2'! Message returned by plugin manager: `%3'")},
 	{"PluginsNotLoaded", QT_TR_NOOP("One or more plugins were not activated due to errors during the loading process! Check the exception stack for more details.")},
 	{"InvalidSyntax", QT_TR_NOOP("Invalid syntax in file `%1', line %2, column %3!")},
@@ -223,7 +222,7 @@ QString Exception::messages[Exception::ErrorCount][2]={
 	{"InvAllocationFKRelationship", QT_TR_NOOP("The fk relationship `%1' cannot be created because the foreign-key that represents it was not created on table `%2'!")},
 	{"AsgInvalidNamePattern", QT_TR_NOOP("Assignement of an invalid object name pattern to the relationship `%1'!")},
 	{"RefInvalidNamePatternId", QT_TR_NOOP("Reference to an invalid object name pattern id on the relationship `%1'!")},
-	{"InvUsageVariadicParamMode", QT_TR_NOOP("Invalid use of variadic parameter mode! This mode can be used only with an array or \"any\" data type!")},
+	{"InvUsageVariadicParamMode", QT_TR_NOOP("Invalid use of `variadic' parameter mode! This mode can be used only with an array or \"any\" data type!")},
 	{"MixingIncompExportOptions", QT_TR_NOOP("Mixing incompatibles DBMS export modes: `ignore object duplications', `drop database' or `drop objects' cannot be used with `simulate export'!")},
 	{"MixingIncompDropOptions", QT_TR_NOOP("Mixing incompatibles DROP options: `drop database' and `drop objects' cannot be used at the same time!")},
 	{"InvIdSwapSameObject", QT_TR_NOOP("Invalid object id swapping operation! The objects involved are the same!")},
@@ -268,12 +267,18 @@ QString Exception::messages[Exception::ErrorCount][2]={
 	{"AsgInvalidObjectForeignTable", QT_TR_NOOP("The object `%1' (%2) can't be assigned to the foreign table `%3' because it's unsupported! Foreign tables only accepts columns, check constraints and triggers.")},
 	{"InvRelTypeForeignTable", QT_TR_NOOP("The creation of the relationship `%1' between the tables `%2' and `%3' can't be done because one of the entities is a foreign table. Foreign tables can only be part of a inheritance, copy or partitioning relationship!")},
 	{"InvCopyRelForeignTable", QT_TR_NOOP("The creation of the copy relationship `%1' between the tables `%2' and `%3' can't be done because a foreign table is not allowed to copy table columns!")},
-	{"InvDataDictDirectory", QT_TR_NOOP("Failed to save the data dictionary into `%1'! Make sure that the provided path points to a directory or if the user has write permissions over it!")}
+	{"InvDataDictDirectory", QT_TR_NOOP("Failed to save the data dictionary into `%1'! Make sure that the provided path points to a directory or if the user has write permissions over it!")},
+	{"InitialUserConfigNotCreated", QT_TR_NOOP("Failed to create initial configuration in `%1'! Check if the current user has write permission over that path and at least read permission over `%2'.")},
+	{"InvalidObjectFilter", QT_TR_NOOP("An invalid object filter was detected: `%1'! Filters should have the following format: `[object type]:[pattern]:[%2]'.")},
+	{"InvChildObjectTypeFilter", QT_TR_NOOP("The object type `%1' is not a valid table child object type!")},
+	{"InvChangelogEntryValues", QT_TR_NOOP("Trying to register a changelog entry with invalid values(s)!")},
+	{"InvProcedureParamOutMode", QT_TR_NOOP("Parameters using `out' mode are not supported by procedures! Use `inout' instead.") },
+	{"ExportFailureDbSQLDisabled", QT_TR_NOOP("The SQL code of the database `%1' is disabled! The export process can't proceed. Please, enable the SQL code of the mentioned object and try again.")}
 };
 
-Exception::Exception(void)
+Exception::Exception()
 {
-	configureException(QString(),ErrorCode::Custom,QString(),QString(),-1,QString());
+	configureException("",ErrorCode::Custom,"","",-1,"");
 }
 
 Exception::Exception(const QString &msg, const QString &method, const QString &file, int line, Exception *exception, const QString &extra_info)
@@ -356,9 +361,9 @@ void Exception::configureException(const QString &msg, ErrorCode error_code, con
 	this->extra_info=QString(extra_info);
 }
 
-QString Exception::getErrorMessage(void)
+QString Exception::getErrorMessage()
 {
-	return(error_msg);
+	return error_msg;
 }
 
 QString Exception::getErrorMessage(ErrorCode error_code)
@@ -367,42 +372,42 @@ QString Exception::getErrorMessage(ErrorCode error_code)
 		/* Because the Exception class is not derived from QObject the function tr() is inefficient to translate messages
 		 so the translation method is called  directly from the application specifying the
 		 context (Exception) in the ts file and the text to be translated */
-		return(QApplication::translate("Exception", messages[enum_cast(error_code)][ErrorMessage].toStdString().c_str(), "", -1));
+		return QApplication::translate("Exception", messages[enum_cast(error_code)][ErrorMessage].toStdString().c_str(), "", -1);
 	else
-		return(QString());
+		return "";
 }
 
 QString Exception::getErrorCode(ErrorCode error_code)
 {
 	if(enum_cast(error_code) < ErrorCount)
-		return(messages[enum_cast(error_code)][ErrorCodeId]);
+		return messages[enum_cast(error_code)][ErrorCodeId];
 	else
-		return(QString());
+		return "";
 }
 
-QString Exception::getMethod(void)
+QString Exception::getMethod()
 {
-	return(method);
+	return method;
 }
 
-QString Exception::getFile(void)
+QString Exception::getFile()
 {
-	return(file);
+	return file;
 }
 
-QString Exception::getLine(void)
+QString Exception::getLine()
 {
-	return(QString("%1").arg(line));
+	return QString("%1").arg(line);
 }
 
-ErrorCode Exception::getErrorCode(void)
+ErrorCode Exception::getErrorCode()
 {
-	return(error_code);
+	return error_code;
 }
 
-QString Exception::getExtraInfo(void)
+QString Exception::getExtraInfo()
 {
-	return(extra_info);
+	return extra_info;
 }
 
 void Exception::addException(Exception &exception)
@@ -430,7 +435,7 @@ void Exception::getExceptionsList(vector<Exception> &list)
 							 this->method,this->file,this->line,nullptr,this->extra_info));
 }
 
-QString Exception::getExceptionsText(void)
+QString Exception::getExceptionsText()
 {
 	vector<Exception> exceptions;
 	vector<Exception>::reverse_iterator itr, itr_end;
@@ -471,6 +476,6 @@ QString Exception::getExceptionsText(void)
 		}
 	}
 
-	return(exceptions_txt);
+	return exceptions_txt;
 }
 

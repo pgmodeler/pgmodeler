@@ -216,4 +216,8 @@ td, th, caption, .title {
 	border-right: 0;
 }
 
+.max-td-wth {
+    max-width: 500px;
+}
+
 ]

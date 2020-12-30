@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -35,8 +35,8 @@ class ObjectRenameWidget: public QDialog, public Ui::ObjectRenameWidget {
 	private:
 		Q_OBJECT
 
-		//! \brief Object to be renamed
-		BaseObject *object;
+		//! \brief Objects to be renamed
+		vector<BaseObject *> objects;
 
 		//! \brief Operation list used to register the modification over object
 		OperationList *op_list;
@@ -48,14 +48,13 @@ class ObjectRenameWidget: public QDialog, public Ui::ObjectRenameWidget {
 
 	public:
 		ObjectRenameWidget(QWidget *parent);
-
-		void setAttributes(BaseObject *object, DatabaseModel *model, OperationList *op_list);
+		void setAttributes(vector<BaseObject *> objs, DatabaseModel *model, OperationList *op_list);
 
 	public slots:
-		int exec(void);
+		int exec();
 
 	private slots:
-		void applyRenaming(void);
+		void applyRenaming();
 };
 
 #endif

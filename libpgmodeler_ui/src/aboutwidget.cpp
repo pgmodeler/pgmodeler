@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -26,14 +26,9 @@ AboutWidget::AboutWidget(QWidget *parent) : QWidget(parent)
 {
 	setupUi(this);
 
-	QGraphicsDropShadowEffect * drop_shadow=new QGraphicsDropShadowEffect(this);
-	drop_shadow->setOffset(5,5);
-	drop_shadow->setBlurRadius(30);
-	this->setGraphicsEffect(drop_shadow);
-
+	PgModelerUiNs::createDropShadow(this, 5, 5, 30);
 	PgModelerUiNs::configureWidgetFont(title_lbl, PgModelerUiNs::HugeFontFactor);
 	PgModelerUiNs::configureWidgetFont(pgmodeler_ver_lbl, PgModelerUiNs::HugeFontFactor);
-	PgModelerUiNs::configureWidgetFont(build_lbl, PgModelerUiNs::BigFontFactor);
 	PgModelerUiNs::configureWidgetFont(build_num_lbl, PgModelerUiNs::BigFontFactor);
 
 	pgmodeler_ver_lbl->setText(QString("v%1 ").arg(GlobalAttributes::PgModelerVersion));

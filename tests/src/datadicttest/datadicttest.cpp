@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -18,17 +18,21 @@
 
 #include <QtTest/QtTest>
 #include "databasemodel.h"
+#include "pgmodelerunittest.h"
 
-class DataDictTest: public QObject {
+class DataDictTest: public QObject, public PgModelerUnitTest {
 	private:
 		Q_OBJECT
 
+	public:
+		DataDictTest() : PgModelerUnitTest(SCHEMASDIR){}
+
 	private slots:
-		void generateASimpleDataDict(void);
-		void generateASplittedDataDictFromSampleModel(void);
+		void generateASimpleDataDict();
+		void generateASplittedDataDictFromSampleModel();
 };
 
-void DataDictTest::generateASimpleDataDict(void)
+void DataDictTest::generateASimpleDataDict()
 {	
 	DatabaseModel dbmodel;
 	Table *table = nullptr, *table1 = nullptr;
@@ -116,14 +120,13 @@ void DataDictTest::generateASimpleDataDict(void)
 	}
 }
 
-void DataDictTest::generateASplittedDataDictFromSampleModel(void)
+void DataDictTest::generateASplittedDataDictFromSampleModel()
 {
 	DatabaseModel dbmodel;
 	try
 	{
 		dbmodel.createSystemObjects(false);
-		//dbmodel.loadModel("../../../samples/demo.dbm");
-		dbmodel.loadModel("/home/raphael/alto_sapl_test.dbm");
+		dbmodel.loadModel(QString(SAMPLESDIR)+ "/demo.dbm");
 		dbmodel.saveDataDictionary("./dict_test.html", true, false);
 	}
 	catch (Exception &e)

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -40,14 +40,14 @@ ViewWidget::ViewWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Vi
 		code_txt=new NumberedTextEditor(this);
 		code_txt->setReadOnly(true);
 		code_hl=new SyntaxHighlighter(code_txt);
-		code_hl->loadConfiguration(GlobalAttributes::SQLHighlightConfPath);
+		code_hl->loadConfiguration(GlobalAttributes::getSQLHighlightConfPath());
 		vbox=new QVBoxLayout(code_prev_tab);
 		vbox->setContentsMargins(4,4,4,4);
 		vbox->addWidget(code_txt);
 
 		cte_expression_txt=new NumberedTextEditor(this, true);
 		cte_expression_hl=new SyntaxHighlighter(cte_expression_txt);
-		cte_expression_hl->loadConfiguration(GlobalAttributes::SQLHighlightConfPath);
+		cte_expression_hl->loadConfiguration(GlobalAttributes::getSQLHighlightConfPath());
 		vbox=new QVBoxLayout(cte_tab);
 		vbox->setContentsMargins(4,4,4,4);
 		vbox->addWidget(cte_expression_txt);
@@ -57,11 +57,11 @@ ViewWidget::ViewWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Vi
 
 		references_tab=new ObjectsTableWidget(ObjectsTableWidget::AllButtons ^ ObjectsTableWidget::UpdateButton, true, this);
 		references_tab->setColumnCount(5);
-		references_tab->setHeaderLabel(trUtf8("Col./Expr."), 0);
-		references_tab->setHeaderLabel(trUtf8("Table alias"), 1);
-		references_tab->setHeaderLabel(trUtf8("Column alias"), 2);
-		references_tab->setHeaderLabel(trUtf8("Flags: SF FW AW EX VD"), 3);
-		references_tab->setHeaderLabel(trUtf8("Reference alias"), 4);
+		references_tab->setHeaderLabel(tr("Col./Expr."), 0);
+		references_tab->setHeaderLabel(tr("Table alias"), 1);
+		references_tab->setHeaderLabel(tr("Column alias"), 2);
+		references_tab->setHeaderLabel(tr("Flags: SF FW AW EX VD"), 3);
+		references_tab->setHeaderLabel(tr("Reference alias"), 4);
 
 		vbox=new QVBoxLayout(tabWidget->widget(0));
 		vbox->setContentsMargins(4,4,4,4);
@@ -82,38 +82,38 @@ ViewWidget::ViewWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Vi
 			grid->setContentsMargins(4,4,4,4);
 			tabWidget->widget(tab_id)->setLayout(grid);
 
-			connect(tab, SIGNAL(s_rowsRemoved(void)), this, SLOT(removeObjects(void)));
+			connect(tab, SIGNAL(s_rowsRemoved()), this, SLOT(removeObjects()));
 			connect(tab, SIGNAL(s_rowRemoved(int)), this, SLOT(removeObject(int)));
-			connect(tab, SIGNAL(s_rowAdded(int)), this, SLOT(handleObject(void)));
-			connect(tab, SIGNAL(s_rowEdited(int)), this, SLOT(handleObject(void)));
+			connect(tab, SIGNAL(s_rowAdded(int)), this, SLOT(handleObject()));
+			connect(tab, SIGNAL(s_rowEdited(int)), this, SLOT(handleObject()));
 			connect(tab, SIGNAL(s_rowDuplicated(int,int)), this, SLOT(duplicateObject(int,int)));
 		}
 
 		objects_tab_map[ObjectType::Trigger]->setColumnCount(6);
-		objects_tab_map[ObjectType::Trigger]->setHeaderLabel(trUtf8("Name"), 0);
+		objects_tab_map[ObjectType::Trigger]->setHeaderLabel(tr("Name"), 0);
 		objects_tab_map[ObjectType::Trigger]->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("uid")),0);
-		objects_tab_map[ObjectType::Trigger]->setHeaderLabel(trUtf8("Refer. Table"), 1);
+		objects_tab_map[ObjectType::Trigger]->setHeaderLabel(tr("Refer. Table"), 1);
 		objects_tab_map[ObjectType::Trigger]->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("table")),1);
-		objects_tab_map[ObjectType::Trigger]->setHeaderLabel(trUtf8("Firing"), 2);
+		objects_tab_map[ObjectType::Trigger]->setHeaderLabel(tr("Firing"), 2);
 		objects_tab_map[ObjectType::Trigger]->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("trigger")),2);
-		objects_tab_map[ObjectType::Trigger]->setHeaderLabel(trUtf8("Events"), 3);
-		objects_tab_map[ObjectType::Trigger]->setHeaderLabel(trUtf8("Alias"), 4);
-		objects_tab_map[ObjectType::Trigger]->setHeaderLabel(trUtf8("Comment"), 5);
+		objects_tab_map[ObjectType::Trigger]->setHeaderLabel(tr("Events"), 3);
+		objects_tab_map[ObjectType::Trigger]->setHeaderLabel(tr("Alias"), 4);
+		objects_tab_map[ObjectType::Trigger]->setHeaderLabel(tr("Comment"), 5);
 
 		objects_tab_map[ObjectType::Index]->setColumnCount(4);
-		objects_tab_map[ObjectType::Index]->setHeaderLabel(trUtf8("Name"), 0);
+		objects_tab_map[ObjectType::Index]->setHeaderLabel(tr("Name"), 0);
 		objects_tab_map[ObjectType::Index]->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("uid")),0);
-		objects_tab_map[ObjectType::Index]->setHeaderLabel(trUtf8("Indexing"), 1);
-		objects_tab_map[ObjectType::Index]->setHeaderLabel(trUtf8("Alias"), 2);
-		objects_tab_map[ObjectType::Index]->setHeaderLabel(trUtf8("Comment"), 3);
+		objects_tab_map[ObjectType::Index]->setHeaderLabel(tr("Indexing"), 1);
+		objects_tab_map[ObjectType::Index]->setHeaderLabel(tr("Alias"), 2);
+		objects_tab_map[ObjectType::Index]->setHeaderLabel(tr("Comment"), 3);
 
 		objects_tab_map[ObjectType::Rule]->setColumnCount(5);
-		objects_tab_map[ObjectType::Rule]->setHeaderLabel(trUtf8("Name"), 0);
+		objects_tab_map[ObjectType::Rule]->setHeaderLabel(tr("Name"), 0);
 		objects_tab_map[ObjectType::Rule]->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("uid")),0);
-		objects_tab_map[ObjectType::Rule]->setHeaderLabel(trUtf8("Execution"), 1);
-		objects_tab_map[ObjectType::Rule]->setHeaderLabel(trUtf8("Event"), 2);
-		objects_tab_map[ObjectType::Rule]->setHeaderLabel(trUtf8("Alias"), 3);
-		objects_tab_map[ObjectType::Rule]->setHeaderLabel(trUtf8("Comment"), 4);
+		objects_tab_map[ObjectType::Rule]->setHeaderLabel(tr("Execution"), 1);
+		objects_tab_map[ObjectType::Rule]->setHeaderLabel(tr("Event"), 2);
+		objects_tab_map[ObjectType::Rule]->setHeaderLabel(tr("Alias"), 3);
+		objects_tab_map[ObjectType::Rule]->setHeaderLabel(tr("Comment"), 4);
 
 
 		tablespace_sel->setEnabled(false);
@@ -130,19 +130,19 @@ ViewWidget::ViewWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Vi
 		connect(references_tab, SIGNAL(s_rowAdded(int)), this, SLOT(addReference(int)));
 		connect(references_tab, SIGNAL(s_rowEdited(int)), this, SLOT(editReference(int)));
 		connect(references_tab, SIGNAL(s_rowDuplicated(int,int)), this, SLOT(duplicateReference(int,int)));
-		connect(tabWidget, SIGNAL(currentChanged(int)), this, SLOT(updateCodePreview(void)));
+		connect(tabWidget, SIGNAL(currentChanged(int)), this, SLOT(updateCodePreview()));
 
 		connect(materialized_rb, SIGNAL(toggled(bool)), with_no_data_chk, SLOT(setEnabled(bool)));
 		connect(materialized_rb, SIGNAL(toggled(bool)), tablespace_sel, SLOT(setEnabled(bool)));
 		connect(materialized_rb, SIGNAL(toggled(bool)), tablespace_lbl, SLOT(setEnabled(bool)));
 
-		connect(materialized_rb, SIGNAL(toggled(bool)), this, SLOT(updateCodePreview(void)));
-		connect(recursive_rb, SIGNAL(toggled(bool)),  this, SLOT(updateCodePreview(void)));
-		connect(with_no_data_chk, SIGNAL(toggled(bool)), this, SLOT(updateCodePreview(void)));
-		connect(tablespace_sel, SIGNAL(s_objectSelected(void)), this, SLOT(updateCodePreview(void)));
-		connect(tablespace_sel, SIGNAL(s_selectorCleared(void)), this, SLOT(updateCodePreview(void)));
-		connect(schema_sel, SIGNAL(s_objectSelected(void)), this, SLOT(updateCodePreview(void)));
-		connect(schema_sel, SIGNAL(s_selectorCleared(void)), this, SLOT(updateCodePreview(void)));
+		connect(materialized_rb, SIGNAL(toggled(bool)), this, SLOT(updateCodePreview()));
+		connect(recursive_rb, SIGNAL(toggled(bool)),  this, SLOT(updateCodePreview()));
+		connect(with_no_data_chk, SIGNAL(toggled(bool)), this, SLOT(updateCodePreview()));
+		connect(tablespace_sel, SIGNAL(s_objectSelected()), this, SLOT(updateCodePreview()));
+		connect(tablespace_sel, SIGNAL(s_selectorCleared()), this, SLOT(updateCodePreview()));
+		connect(schema_sel, SIGNAL(s_objectSelected()), this, SLOT(updateCodePreview()));
+		connect(schema_sel, SIGNAL(s_selectorCleared()), this, SLOT(updateCodePreview()));
 
 		configureTabOrder({ tag_sel, ordinary_rb, recursive_rb, with_no_data_chk, tabWidget });
 		setMinimumSize(660, 650);
@@ -156,9 +156,9 @@ ViewWidget::ViewWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Vi
 ObjectsTableWidget *ViewWidget::getObjectTable(ObjectType obj_type)
 {
 	if(objects_tab_map.count(obj_type) > 0)
-		return(objects_tab_map[obj_type]);
+		return objects_tab_map[obj_type];
 
-	return(nullptr);
+	return nullptr;
 }
 
 template<class Class, class WidgetClass>
@@ -171,10 +171,10 @@ int ViewWidget::openEditingForm(TableObject *object)
 														dynamic_cast<Class *>(object));
 	editing_form.setMainWidget(object_wgt);
 
-	return(editing_form.exec());
+	return editing_form.exec();
 }
 
-void ViewWidget::handleObject(void)
+void ViewWidget::handleObject()
 {
 	ObjectType obj_type=ObjectType::BaseObject;
 	TableObject *object=nullptr;
@@ -247,7 +247,7 @@ void ViewWidget::duplicateObject(int curr_row, int new_row)
 	}
 }
 
-void ViewWidget::removeObjects(void)
+void ViewWidget::removeObjects()
 {
 	View *view=nullptr;
 	unsigned count, op_count=0, i;
@@ -338,7 +338,7 @@ ObjectType ViewWidget::getObjectType(QObject *sender)
 		}
 	}
 
-	return(obj_type);
+	return obj_type;
 }
 
 void ViewWidget::showObjectData(TableObject *object, int row)
@@ -459,13 +459,16 @@ int ViewWidget::openReferenceForm(Reference ref, int row, bool update)
 	else if(!update)
 		references_tab->removeRow(row);
 
-	return(result);
+	return result;
 }
 
 unsigned ViewWidget::getReferenceFlag(int row)
 {
 	QString flags_str = references_tab->getCellText(row, 3);
 	unsigned ref_flags = 0;
+
+	if(flags_str.isEmpty())
+		return 0;
 
 	if(flags_str[4] == '1')
 		ref_flags = Reference::SqlViewDefinition;
@@ -484,7 +487,7 @@ unsigned ViewWidget::getReferenceFlag(int row)
 			ref_flags |= Reference::SqlReferEndExpr;
 	}
 
-	return(ref_flags);
+	return ref_flags;
 }
 
 void ViewWidget::editReference(int ref_idx)
@@ -542,7 +545,7 @@ void ViewWidget::showReferenceData(Reference refer, unsigned ref_flags, unsigned
 	references_tab->setRowData(QVariant::fromValue<Reference>(refer), row);
 }
 
-void ViewWidget::updateCodePreview(void)
+void ViewWidget::updateCodePreview()
 {
 	try
 	{
@@ -619,7 +622,7 @@ void ViewWidget::updateCodePreview(void)
 	{
 		QString str_aux;
 		//In case of error no code is outputed, showing a error message in the code preview widget
-		str_aux=trUtf8("/* Could not generate the SQL code. Make sure all attributes are correctly filled! ");
+		str_aux=tr("/* Could not generate the SQL code. Make sure all attributes are correctly filled! ");
 		str_aux+=QString("\n\n>> Returned error(s): \n\n%1*/").arg(e.getExceptionsText());
 		code_txt->setPlainText(str_aux);
 	}
@@ -694,7 +697,7 @@ void ViewWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Sch
 	listObjects(ObjectType::Index);
 }
 
-void ViewWidget::applyConfiguration(void)
+void ViewWidget::applyConfiguration()
 {
 	try
 	{
@@ -754,7 +757,7 @@ void ViewWidget::applyConfiguration(void)
 	}
 }
 
-void ViewWidget::cancelConfiguration(void)
+void ViewWidget::cancelConfiguration()
 {
 	BaseObjectWidget::cancelChainedOperation();
 }

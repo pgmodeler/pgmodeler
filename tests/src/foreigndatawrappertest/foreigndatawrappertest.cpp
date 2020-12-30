@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -18,20 +18,24 @@
 
 #include <QtTest/QtTest>
 #include "databasemodel.h"
+#include "pgmodelerunittest.h"
 
-class ForeignDataWrapperTest: public QObject {
+class ForeignDataWrapperTest: public QObject, public PgModelerUnitTest {
 	private:
 		Q_OBJECT
 
+	public:
+		ForeignDataWrapperTest() : PgModelerUnitTest(SCHEMASDIR) {}
+
 	private slots:
-		void assignValidFunctionDoesntRaiseException(void);
-		void assignInvalidFunctionRaisesException(void);
-		void codeGeneratedIsWellFormed(void);
-		void modelReturnsDepsAndRefsForFDW(void);
-		void modelCreatesFDWfromXMLandResultingXMLisEqual(void);
+		void assignValidFunctionDoesntRaiseException();
+		void assignInvalidFunctionRaisesException();
+		void codeGeneratedIsWellFormed();
+		void modelReturnsDepsAndRefsForFDW();
+		void modelCreatesFDWfromXMLandResultingXMLisEqual();
 };
 
-void ForeignDataWrapperTest::assignValidFunctionDoesntRaiseException(void)
+void ForeignDataWrapperTest::assignValidFunctionDoesntRaiseException()
 {
 	ForeignDataWrapper fdw;
 	Function func_handler, func_validator;
@@ -62,7 +66,7 @@ void ForeignDataWrapperTest::assignValidFunctionDoesntRaiseException(void)
 	}
 }
 
-void ForeignDataWrapperTest::assignInvalidFunctionRaisesException(void)
+void ForeignDataWrapperTest::assignInvalidFunctionRaisesException()
 {
 	ForeignDataWrapper fdw;
 	Function func_handler, func_validator;
@@ -122,7 +126,7 @@ void ForeignDataWrapperTest::assignInvalidFunctionRaisesException(void)
 	}
 }
 
-void ForeignDataWrapperTest::codeGeneratedIsWellFormed(void)
+void ForeignDataWrapperTest::codeGeneratedIsWellFormed()
 {
 	ForeignDataWrapper fdw;
 	Role owner;
@@ -138,7 +142,7 @@ OPTIONS (opt1 'value1',opt2 'value2'); \
 -- ddl-end -- \
 ALTER FOREIGN DATA WRAPPER fdw OWNER TO postgres; \
 	-- ddl-end -- \
-	COMMENT ON FOREIGN DATA WRAPPER fdw IS 'This is a test comment on FDW'; \
+	COMMENT ON FOREIGN DATA WRAPPER fdw IS E'This is a test comment on FDW'; \
 -- ddl-end -- ").simplified();
 
 	QString xml_code =QString(
@@ -184,7 +188,7 @@ ALTER FOREIGN DATA WRAPPER fdw OWNER TO postgres; \
 	}
 }
 
-void ForeignDataWrapperTest::modelReturnsDepsAndRefsForFDW(void)
+void ForeignDataWrapperTest::modelReturnsDepsAndRefsForFDW()
 {
 	DatabaseModel model;
 	Role owner;
@@ -254,7 +258,7 @@ void ForeignDataWrapperTest::modelReturnsDepsAndRefsForFDW(void)
 	}
 }
 
-void ForeignDataWrapperTest::modelCreatesFDWfromXMLandResultingXMLisEqual(void)
+void ForeignDataWrapperTest::modelCreatesFDWfromXMLandResultingXMLisEqual()
 {
 	DatabaseModel model;
 	Role owner;
@@ -312,10 +316,6 @@ void ForeignDataWrapperTest::modelCreatesFDWfromXMLandResultingXMLisEqual(void)
 
 		res_xml_code = fdw->getCodeDefinition(SchemaParser::XmlDefinition).simplified();
 		xml_code = xml_code.simplified();
-
-		if(fdw)
-			delete(fdw);
-
 		QCOMPARE(xml_code, res_xml_code);
 	}
 	catch (Exception &e)

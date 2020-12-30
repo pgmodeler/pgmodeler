@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -36,7 +36,7 @@ class TextPolygonItem : public QGraphicsPolygonItem {
 
 	public:
 		TextPolygonItem(QGraphicsItem *parent = nullptr);
-		~TextPolygonItem(void);
+		virtual ~TextPolygonItem();
 
 		//! \brief Defines the text displayed by the item
 		void setText(const QString &text);
@@ -52,12 +52,12 @@ class TextPolygonItem : public QGraphicsPolygonItem {
 		void setTextBrush(const QBrush &brush);
 
 		//! \brief Returns the bounding rect of the text item
-		QRectF getTextBoundingRect(void);
+		QRectF getTextBoundingRect();
 
 		//! \brief Sets the font used by the text item
 		void setFont(const QFont &fnt);
 
-		QFont getFont(void);
+		QFont getFont();
 
 		virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = nullptr);
 

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -46,13 +46,6 @@ FindReplaceWidget::FindReplaceWidget(QPlainTextEdit *txt_edit, QWidget *parent):
 		replace_tb->setEnabled(enable);
 		replace_all_tb->setEnabled(enable);
 		replace_find_tb->setEnabled(enable); });
-
-	//Disabling the regular expression checkbox if the Qt version in use is lower than 5.3
-#if (QT_VERSION < QT_VERSION_CHECK(5, 3, 0))
-	regexp_chk->setEnabled(false);
-	regexp_chk->setChecked(false);
-	regexp_chk->setVisible(false);
-#endif
 }
 
 void FindReplaceWidget::showEvent(QShowEvent *)
@@ -63,7 +56,7 @@ void FindReplaceWidget::showEvent(QShowEvent *)
 	replace_edt->setVisible(!text_edt->isReadOnly());
 }
 
-void FindReplaceWidget::replaceText(void)
+void FindReplaceWidget::replaceText()
 {
 	QTextCursor cursor=text_edt->textCursor();
 
@@ -74,7 +67,7 @@ void FindReplaceWidget::replaceText(void)
 	}
 }
 
-void FindReplaceWidget::replaceAll(void)
+void FindReplaceWidget::replaceAll()
 {
 	QTextCursor orig_cursor, cursor=text_edt->textCursor();
 
@@ -88,7 +81,7 @@ void FindReplaceWidget::replaceAll(void)
 	text_edt->setTextCursor(orig_cursor);
 }
 
-void FindReplaceWidget::replaceFindText(void)
+void FindReplaceWidget::replaceFindText()
 {
 	if(text_edt->textCursor().hasSelection())
 	{
@@ -97,23 +90,13 @@ void FindReplaceWidget::replaceFindText(void)
 	}
 }
 
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 3, 0))
 bool FindReplaceWidget::findText(const QString &text, bool regexp, QTextDocument::FindFlags flags)
-#else
-bool FindReplaceWidget::findText(const QString &text, bool, QTextDocument::FindFlags flags)
-#endif
 {
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 3, 0))
 	if(regexp)
-		return(text_edt->find(QRegExp(text,
-									  ((flags & QTextDocument::FindCaseSensitively)==QTextDocument::FindCaseSensitively ?
-										   Qt::CaseSensitive : Qt::CaseInsensitive)), flags));
+		return text_edt->find(QRegExp(text, ((flags & QTextDocument::FindCaseSensitively)==QTextDocument::FindCaseSensitively ?
+																					 Qt::CaseSensitive : Qt::CaseInsensitive)), flags);
 	else
-		return(text_edt->find(text, flags));
-#else
-#warning "Text find through regular expressions is available only in Qt 5.3 or above."
-	return(text_edt->find(text, flags));
-#endif
+		return text_edt->find(text, flags);
 }
 
 bool FindReplaceWidget::findText(bool backward, bool cyclic)
@@ -147,5 +130,5 @@ bool FindReplaceWidget::findText(bool backward, bool cyclic)
 		found=findText(find_edt->text(), regexp_chk->isChecked(), flags);
 	}
 
-	return(found);
+	return found;
 }

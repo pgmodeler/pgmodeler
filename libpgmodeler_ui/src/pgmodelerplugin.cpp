@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
 
 #include "pgmodelerplugin.h"
 
-PgModelerPlugin::PgModelerPlugin(void)
+PgModelerPlugin::PgModelerPlugin()
 {
 	QGridLayout *gridLayout=nullptr;
 	QSpacerItem *verticalSpacer=nullptr;
@@ -73,24 +73,24 @@ PgModelerPlugin::PgModelerPlugin(void)
 	plugin_info_frm->setMainWidget(widget);
 }
 
-PgModelerPlugin::~PgModelerPlugin(void)
+PgModelerPlugin::~PgModelerPlugin()
 {
-	delete(plugin_info_frm);
+	delete plugin_info_frm;
 }
 
-void PgModelerPlugin::initPlugin(QMainWindow *main_window)
+void PgModelerPlugin::initPlugin(MainWindow *main_window)
 {
 	this->main_window = main_window;
 }
 
-QKeySequence PgModelerPlugin::getPluginShortcut(void)
+QKeySequence PgModelerPlugin::getPluginShortcut()
 {
-	return(QKeySequence());
+	return QKeySequence();
 }
 
-bool PgModelerPlugin::hasMenuAction(void)
+bool PgModelerPlugin::hasMenuAction()
 {
-	return (true);
+	return true;
 }
 
 void PgModelerPlugin::configurePluginInfo(const QString &title, const QString &version, const QString &author,

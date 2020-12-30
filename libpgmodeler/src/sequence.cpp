@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -18,36 +18,36 @@
 
 #include "sequence.h"
 
-const QString Sequence::MaxPositiveValue=QString("+2147483647");
-const QString Sequence::MaxNegativeValue=QString("-2147483648");
-const QString Sequence::MaxSmallPositiveValue=QString("+32767");
-const QString Sequence::MaxSmallNegativeValue=QString("-32768");
-const QString Sequence::MaxBigPositiveValue=QString("+9223372036854775807");
-const QString Sequence::MaxBigNegativeValue=QString("-9223372036854775808");
+const QString Sequence::MaxPositiveValue("+2147483647");
+const QString Sequence::MaxNegativeValue("-2147483648");
+const QString Sequence::MaxSmallPositiveValue("+32767");
+const QString Sequence::MaxSmallNegativeValue("-32768");
+const QString Sequence::MaxBigPositiveValue("+9223372036854775807");
+const QString Sequence::MaxBigNegativeValue("-9223372036854775808");
 
-Sequence::Sequence(void)
+Sequence::Sequence()
 {
 	obj_type=ObjectType::Sequence;
 	cycle=false;
 	setDefaultValues(PgSqlType(QString("serial")));
 	owner_col=nullptr;
 
-	attributes[Attributes::Increment]=QString();
-	attributes[Attributes::MinValue]=QString();
-	attributes[Attributes::MaxValue]=QString();
-	attributes[Attributes::Start]=QString();
-	attributes[Attributes::Cache]=QString();
-	attributes[Attributes::Cycle]=QString();
-	attributes[Attributes::OwnerColumn]=QString();
-	attributes[Attributes::Table]=QString();
-	attributes[Attributes::Column]=QString();
-	attributes[Attributes::ColIsIdentity]=QString();
+	attributes[Attributes::Increment]="";
+	attributes[Attributes::MinValue]="";
+	attributes[Attributes::MaxValue]="";
+	attributes[Attributes::Start]="";
+	attributes[Attributes::Cache]="";
+	attributes[Attributes::Cycle]="";
+	attributes[Attributes::OwnerColumn]="";
+	attributes[Attributes::Table]="";
+	attributes[Attributes::Column]="";
+	attributes[Attributes::ColIsIdentity]="";
 }
 
 bool Sequence::isZeroValue(const QString &value)
 {
 	if(value.isEmpty())
-		return(false);
+		return false;
 
 	unsigned i, count;
 	bool is_zero;
@@ -62,18 +62,18 @@ bool Sequence::isZeroValue(const QString &value)
 		i++;
 	}
 
-	return(is_zero);
+	return is_zero;
 }
 
 bool Sequence::isValidValue(const QString &value)
 {
 	if(value.isEmpty())
-		return(false);
+		return false;
 
 	/* To be valid the value can be start with + or -, have only numbers and
 		it's length must not exceed the MAX_POSITIVE_VALUE length */
 	if(value.size() > MaxBigPositiveValue.size())
-		return(false);
+		return false;
 	else
 	{
 		unsigned i, count;
@@ -94,7 +94,7 @@ bool Sequence::isValidValue(const QString &value)
 		}
 
 		if(!is_num) is_valid=false;
-		return(is_valid);
+		return is_valid;
 	}
 }
 
@@ -125,13 +125,13 @@ QString Sequence::formatValue(const QString &value)
 		fmt_value+=value.mid(i, count);
 	}
 
-	return(fmt_value);
+	return fmt_value;
 }
 
 int Sequence::compareValues(QString value1, QString value2)
 {
 	if(value1==value2 || value1.isEmpty() || value2.isEmpty())
-		return(0);
+		return 0;
 	else
 	{
 		char ops[2]={'\0','\0'};
@@ -164,17 +164,17 @@ int Sequence::compareValues(QString value1, QString value2)
 				idx++;
 			}
 			(*vet_values[i])=aux_value;
-			aux_value=QString();
+			aux_value="";
 		}
 
 		if(ops[0]==ops[1] && value1==value2)
-			return(0);
+			return 0;
 		else if((ops[0]=='-' && ops[1]=='-' && value1 > value2) ||
 				(ops[0]=='+' && ops[1]=='+' && value1 < value2) ||
 				(ops[0]=='-' && ops[1]=='+'))
-			return(-1);
+			return -1;
 		else
-			return(1);
+			return 1;
 	}
 }
 
@@ -343,50 +343,50 @@ void Sequence::setOwnerColumn(Column *column)
 	setCodeInvalidated(true);
 }
 
-bool Sequence::isReferRelationshipAddedColumn(void)
+bool Sequence::isReferRelationshipAddedColumn()
 {
-	return(owner_col && owner_col->isAddedByRelationship());
+	return (owner_col && owner_col->isAddedByRelationship());
 }
 
-bool Sequence::isCycle(void)
+bool Sequence::isCycle()
 {
-	return(cycle);
+	return cycle;
 }
 
-QString Sequence::getMaxValue(void)
+QString Sequence::getMaxValue()
 {
-	return(max_value);
+	return max_value;
 }
 
-QString Sequence::getMinValue(void)
+QString Sequence::getMinValue()
 {
-	return(min_value);
+	return min_value;
 }
 
-QString Sequence::getCache(void)
+QString Sequence::getCache()
 {
-	return(cache);
+	return cache;
 }
 
-QString Sequence::getIncrement(void)
+QString Sequence::getIncrement()
 {
-	return(increment);
+	return increment;
 }
 
-QString Sequence::getStart(void)
+QString Sequence::getStart()
 {
-	return(start);
+	return start;
 }
 
-Column *Sequence::getOwnerColumn(void)
+Column *Sequence::getOwnerColumn()
 {
-	return(owner_col);
+	return owner_col;
 }
 
 QString Sequence::getCodeDefinition(unsigned def_type)
 {
 	QString code_def=getCachedCode(def_type, false);
-	if(!code_def.isEmpty()) return(code_def);
+	if(!code_def.isEmpty()) return code_def;
 
 	PhysicalTable *table=nullptr;
 
@@ -396,20 +396,20 @@ QString Sequence::getCodeDefinition(unsigned def_type)
 		table=dynamic_cast<PhysicalTable *>(owner_col->getParentTable());
 	}
 
-	attributes[Attributes::Table]=(table ? table->getName(true) : QString());
-	attributes[Attributes::Column]=(owner_col ? owner_col->getName(true) : QString());
+	attributes[Attributes::Table]=(table ? table->getName(true) : "");
+	attributes[Attributes::Column]=(owner_col ? owner_col->getName(true) : "");
 
 	attributes[Attributes::ColIsIdentity]=
-			(owner_col && owner_col->getIdentityType() != BaseType::Null ? Attributes::True : QString());
+			(owner_col && owner_col->getIdentityType() != BaseType::Null ? Attributes::True : "");
 
 	attributes[Attributes::Increment]=increment;
 	attributes[Attributes::MinValue]=min_value;
 	attributes[Attributes::MaxValue]=max_value;
 	attributes[Attributes::Start]=start;
 	attributes[Attributes::Cache]=cache;
-	attributes[Attributes::Cycle]=(cycle ? Attributes::True : QString());
+	attributes[Attributes::Cycle]=(cycle ? Attributes::True : "");
 
-	return(BaseObject::__getCodeDefinition(def_type));
+	return BaseObject::__getCodeDefinition(def_type);
 }
 
 QString Sequence::getAlterDefinition(BaseObject *object)
@@ -465,7 +465,7 @@ QString Sequence::getAlterDefinition(BaseObject *object)
 			attribs[Attributes::Cycle]=(seq->cycle ? Attributes::True : Attributes::Unset);
 
 		copyAttributes(attribs);
-		return(BaseObject::getAlterDefinition(this->getSchemaName(), attributes, false, true));
+		return BaseObject::getAlterDefinition(this->getSchemaName(), attributes, false, true);
 	}
 	catch(Exception &e)
 	{

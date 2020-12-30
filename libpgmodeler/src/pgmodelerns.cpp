@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -22,6 +22,9 @@
 #include <QHash>
 
 namespace PgModelerNs {
+	const QString
+	FilterWildcard("wildcard"),
+	FilterRegExp("regexp");
 
 	template <class Class>
 	void copyObject(BaseObject **psrc_obj, Class *copy_obj)
@@ -162,6 +165,12 @@ namespace PgModelerNs {
 			case ObjectType::ForeignTable:
 				copyObject(psrc_obj, dynamic_cast<ForeignTable *>(copy_obj));
 			break;
+			case ObjectType::Transform:
+				copyObject(psrc_obj, dynamic_cast<Transform *>(copy_obj));
+			break;
+			case ObjectType::Procedure:
+				copyObject(psrc_obj, dynamic_cast<Procedure *>(copy_obj));
+			break;
 			default:
 				throw Exception(ErrorCode::OprObjectInvalidType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		}
@@ -231,15 +240,15 @@ namespace PgModelerNs {
 		};
 
 		if(word.isEmpty())
-			return(false);
+			return false;
 		else
 		{
 			QChar chr=word.at(0).toUpper();
 
 			if(!keywords.contains(chr))
-				return(false);
+				return false;
 			else
-				return(keywords[chr].contains(word.toUpper()));
+				return keywords[chr].contains(word.toUpper());
 		}
 	}
 }

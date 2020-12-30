@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -26,17 +26,11 @@ ForeignDataWrapperWidget::ForeignDataWrapperWidget(QWidget *parent): BaseObjectW
 
 		Ui_ForeignDataWrapperWidget::setupUi(this);
 
-		func_handler_sel=nullptr;
-		func_validator_sel=nullptr;
-
-		func_handler_ht = new HintTextWidget(func_handler_hint, this);
-		func_handler_ht->setText(trUtf8("The handler function must have the following signature:  <strong>fdw_handler</strong> <em>function_name</em>()"));
-
-		func_validator_ht = new HintTextWidget(func_validator_hint, this);
-		func_validator_ht->setText(trUtf8("The validator function must have the following signature: <em>function_name</em>(<strong>text[]</strong>,<strong>oid</strong>). The return type of ths function is ignored."));
-
 		func_handler_sel=new ObjectSelectorWidget(ObjectType::Function, true, this);
 		func_validator_sel=new ObjectSelectorWidget(ObjectType::Function, true, this);
+
+		func_handler_sel->setToolTip(tr("The handler function must have the following signature:  <strong>fdw_handler</strong> <em>function_name</em>()"));
+		func_validator_sel->setToolTip(tr("The validator function must have the following signature: <em>function_name</em>(<strong>text[]</strong>,<strong>oid</strong>). The return type of ths function is ignored."));
 
 		hbox = new QHBoxLayout;
 		hbox->setContentsMargins(0,0,0,0);
@@ -52,8 +46,8 @@ ForeignDataWrapperWidget::ForeignDataWrapperWidget(QWidget *parent): BaseObjectW
 																				 (ObjectsTableWidget::EditButton | ObjectsTableWidget::UpdateButton), true, this);
 		options_tab->setCellsEditable(true);
 		options_tab->setColumnCount(2);
-		options_tab->setHeaderLabel(trUtf8("Option"), 0);
-		options_tab->setHeaderLabel(trUtf8("Value"), 1);
+		options_tab->setHeaderLabel(tr("Option"), 0);
+		options_tab->setHeaderLabel(tr("Value"), 1);
 
 		hbox = new QHBoxLayout;
 		hbox->setContentsMargins(4,4,4,4);
@@ -61,10 +55,7 @@ ForeignDataWrapperWidget::ForeignDataWrapperWidget(QWidget *parent): BaseObjectW
 		options_gb->setLayout(hbox);
 
 		configureFormLayout(fdw_grid, ObjectType::ForeignDataWrapper);
-
-		configureTabOrder({ func_handler_sel, func_handler_ht,
-												func_validator_sel, func_validator_ht,
-												options_tab });
+		configureTabOrder({ func_handler_sel, func_validator_sel, options_tab });
 
 		setMinimumSize(600, 420);
 	}
@@ -100,7 +91,7 @@ void ForeignDataWrapperWidget::setAttributes(DatabaseModel *model, OperationList
 	}
 }
 
-void ForeignDataWrapperWidget::applyConfiguration(void)
+void ForeignDataWrapperWidget::applyConfiguration()
 {
 	try
 	{

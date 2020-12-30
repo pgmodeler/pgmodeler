@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -22,7 +22,6 @@ IndexWidget::IndexWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::
 {
 	try
 	{
-		QStringList list;
 		QGridLayout *grid=nullptr;
 		map<QString, vector<QWidget *> > fields_map;
 		map<QWidget *, vector<QString> > values_map;
@@ -31,7 +30,7 @@ IndexWidget::IndexWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::
 		Ui_IndexWidget::setupUi(this);
 
 		predicate_hl=new SyntaxHighlighter(predicate_txt, false, true);
-		predicate_hl->loadConfiguration(GlobalAttributes::SQLHighlightConfPath);
+		predicate_hl->loadConfiguration(GlobalAttributes::getSQLHighlightConfPath());
 
 		elements_tab = new ElementsTableWidget(this);
 
@@ -41,9 +40,7 @@ IndexWidget::IndexWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::
 		tabWidget->widget(1)->setLayout(grid);
 
 		configureFormLayout(index_grid, ObjectType::Index);
-
-		IndexingType::getTypes(list);
-		indexing_cmb->addItems(list);
+		indexing_cmb->addItems(IndexingType::getTypes());
 
 		fields_map[BaseObjectWidget::generateVersionsInterval(BaseObjectWidget::AfterVersion, PgSqlVersions::PgSqlVersion92)].push_back(buffering_chk);
 		fields_map[BaseObjectWidget::generateVersionsInterval(BaseObjectWidget::AfterVersion, PgSqlVersions::PgSqlVersion95)].push_back(indexing_lbl);
@@ -54,9 +51,8 @@ IndexWidget::IndexWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::
 		grid=dynamic_cast<QGridLayout *>(tabWidget->widget(0)->layout());
 		grid->addWidget(frame, grid->count(), 0, 1, 5);
 
-		connect(indexing_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(selectIndexingType(void)));
+		connect(indexing_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(selectIndexingType()));
 		connect(fill_factor_chk, SIGNAL(toggled(bool)), fill_factor_sb, SLOT(setEnabled(bool)));
-		//connect(elements_tab, SIGNAL(s_elementHandled(int)), this, SLOT(enableSortingOptions()));
 
 		configureTabOrder();
 		selectIndexingType();
@@ -69,14 +65,14 @@ IndexWidget::IndexWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::
 	}
 }
 
-void IndexWidget::selectIndexingType(void)
+void IndexWidget::selectIndexingType()
 {
 	fast_update_chk->setEnabled(IndexingType(indexing_cmb->currentText())==IndexingType::Gin);
 	buffering_chk->setEnabled(IndexingType(indexing_cmb->currentText())==IndexingType::Gist);
 	fill_factor_sb->setEnabled(fill_factor_chk->isChecked() && fill_factor_chk->isEnabled());
 }
 
-/*void IndexWidget::enableSortingOptions(void)
+/*void IndexWidget::enableSortingOptions()
 {
 	elements_tab->sorting_chk->setEnabled(IndexingType(indexing_cmb->currentText())==IndexingType::btree);
 	elements_tab->ascending_rb->setEnabled(elements_tab->sorting_chk->isEnabled());
@@ -125,7 +121,7 @@ void IndexWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Ba
 	elements_tab->setElements<IndexElement>(idx_elems);
 }
 
-void IndexWidget::applyConfiguration(void)
+void IndexWidget::applyConfiguration()
 {
 	try
 	{

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -20,15 +20,16 @@
 #include "schemaparser.h"
 
 class SchemaParserTest: public QObject {
-  private:
-    Q_OBJECT
+	private:
+		Q_OBJECT
 
-  private slots:
-		void testExpressionEvaluationWithCasts(void);
-		void testSetOperationInIf(void);
+	private slots:
+		void testExpressionEvaluationWithCasts();
+		void testSetOperationInIf();
+		void testSetOperationUnderIfEvaluatedAsFalse();
 };
 
-void SchemaParserTest::testExpressionEvaluationWithCasts(void)
+void SchemaParserTest::testExpressionEvaluationWithCasts()
 {
 	SchemaParser schparser;
 	QString buffer;
@@ -52,7 +53,7 @@ void SchemaParserTest::testExpressionEvaluationWithCasts(void)
 	}
 }
 
-void SchemaParserTest::testSetOperationInIf(void)
+void SchemaParserTest::testSetOperationInIf()
 {
 	SchemaParser schparser;
 	QString buffer;
@@ -72,6 +73,36 @@ void SchemaParserTest::testSetOperationInIf(void)
 	{
 		schparser.loadBuffer(buffer);
 		QCOMPARE(schparser.getCodeDefinition(attribs) == "extract in else", true);
+	}
+	catch(Exception &e)
+	{
+		QFAIL(e.getExceptionsText().toStdString().c_str());
+	}
+}
+
+void SchemaParserTest::testSetOperationUnderIfEvaluatedAsFalse()
+{
+	SchemaParser schparser;
+	QString buffer;
+	attribs_map attribs;
+
+	attribs["val"] = "9.0";
+	buffer = "%if ({val} >=f \"9.5\") %then\n";
+	buffer += "\t%set {ver} 10.0\n";
+	buffer += "\t{ver}\n";
+	buffer += "\t\n%if ({ver} <=f \"9.3\") %then";
+	buffer += "\t\n [in if]";
+	buffer += "\t\n%else";
+	buffer += "\t\n [in else]";
+	buffer += "\t\n%end";
+	buffer += "\n%end\n";
+
+	try
+	{
+		//QTextStream out(stdout);
+		//out <<  buffer;
+		schparser.loadBuffer(buffer);
+		QCOMPARE(schparser.getCodeDefinition(attribs) == "", true);
 	}
 	catch(Exception &e)
 	{

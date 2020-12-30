@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
 
 TextboxView::TextboxView(Textbox *txtbox, bool override_style) : BaseObjectView(txtbox)
 {
-	connect(txtbox, SIGNAL(s_objectModified(void)), this, SLOT(configureObject(void)));
+	connect(txtbox, SIGNAL(s_objectModified()), this, SLOT(configureObject()));
 
 	box=new QGraphicsPolygonItem;
 	text=new QGraphicsSimpleTextItem;
@@ -42,10 +42,10 @@ TextboxView::TextboxView(Textbox *txtbox, bool override_style) : BaseObjectView(
 	this->configureObject();
 }
 
-TextboxView::~TextboxView(void)
+TextboxView::~TextboxView()
 {
 	this->removeFromGroup(text_item);
-	delete(text_item);
+	delete text_item;
 }
 
 void TextboxView::setColorStyle(const QBrush &fill_style, const QPen &border_style)
@@ -71,7 +71,7 @@ void TextboxView::setToolTip(const QString &tooltip)
 	txtbox_tooltip = tooltip;
 }
 
-void TextboxView::__configureObject(void)
+void TextboxView::__configureObject()
 {
 	Textbox *txtbox=dynamic_cast<Textbox *>(this->getUnderlyingObject());
 	QTextCharFormat fmt=font_config[Attributes::Global];
@@ -114,20 +114,21 @@ void TextboxView::__configureObject(void)
 	this->bounding_rect.setTopLeft(text_item->boundingRect().topLeft());
 	this->bounding_rect.setBottomRight(text_item->boundingRect().bottomRight());
 
+	this->setZValue(dynamic_cast<Textbox *>(getUnderlyingObject())->getZValue());
 	BaseObjectView::__configureObject();
 
 	if(!txtbox_tooltip.isEmpty())
 		this->BaseObjectView::setToolTip(txtbox_tooltip);
 }
 
-void TextboxView::configureObject(void)
+void TextboxView::configureObject()
 {
 	this->__configureObject();
 	this->configureObjectShadow();
 	this->configureObjectSelection();
 }
 
-void TextboxView::configureObjectShadow(void)
+void TextboxView::configureObjectShadow()
 {
 	QGraphicsPolygonItem *pol_item=dynamic_cast<QGraphicsPolygonItem *>(obj_shadow);
 
@@ -137,7 +138,7 @@ void TextboxView::configureObjectShadow(void)
 	pol_item->setPos(3.5,3.5);
 }
 
-void TextboxView::configureObjectSelection(void)
+void TextboxView::configureObjectSelection()
 {
 	QGraphicsPolygonItem *pol_item=dynamic_cast<QGraphicsPolygonItem *>(obj_selection);
 
@@ -145,4 +146,15 @@ void TextboxView::configureObjectSelection(void)
 	pol_item->setPos(0,0);
 	pol_item->setBrush(this->getFillStyle(Attributes::ObjSelection));
 	pol_item->setPen(this->getBorderStyle(Attributes::ObjSelection));
+}
+
+QVariant TextboxView::itemChange(GraphicsItemChange change, const QVariant &value)
+{
+	if(change == ItemZValueHasChanged)
+	{
+		Textbox *txtbox = dynamic_cast<Textbox *>(getUnderlyingObject());
+		txtbox->setZValue(zValue());
+	}
+
+	return BaseObjectView::itemChange(change, value);
 }

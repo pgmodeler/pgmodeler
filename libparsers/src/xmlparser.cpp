@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -19,13 +19,17 @@
 #include "xmlparser.h"
 #include <QUrl>
 
-const QString XmlParser::CharAmp=QString("&amp;");
-const QString XmlParser::CharLt=QString("&lt;");
-const QString XmlParser::CharGt=QString("&gt;");
-const QString XmlParser::CharQuot=QString("&quot;");
-const QString XmlParser::CharApos=QString("&apos;");
+const QString XmlParser::CharAmp("&amp;");
+const QString XmlParser::CharLt("&lt;");
+const QString XmlParser::CharGt("&gt;");
+const QString XmlParser::CharQuot("&quot;");
+const QString XmlParser::CharApos("&apos;");
+const QString XmlParser::CdataStart("<![CDATA[");
+const QString XmlParser::CdataEnd("]]>");
+const QString XmlParser::CommentStart("<!--");
+const QString XmlParser::CommentEnd("-->");
 
-XmlParser::XmlParser(void)
+XmlParser::XmlParser()
 {
 	root_elem=nullptr;
 	curr_elem=nullptr;
@@ -34,13 +38,13 @@ XmlParser::XmlParser(void)
 	xmlInitParser();
 }
 
-XmlParser::~XmlParser(void)
+XmlParser::~XmlParser()
 {
 	restartParser();
 	xmlCleanupParser();
 }
 
-void XmlParser::removeDTD(void)
+void XmlParser::removeDTD()
 {
 	int pos1=-1, pos2=-1, pos3=-1, len;
 
@@ -55,7 +59,7 @@ void XmlParser::removeDTD(void)
 		if(pos1 >=0 && (pos2 >=0 || pos3 >= 0))
 		{
 			len=((pos2 > pos3) ? (pos2-pos1)+3 :  (pos3-pos2)+3);
-			xml_buffer.replace(pos1,len,QString());
+			xml_buffer.replace(pos1,len,"");
 		}
 	}
 }
@@ -110,7 +114,7 @@ void XmlParser::loadXMLBuffer(const QString &xml_buf)
 		{
 			tam=(pos2-pos1)+3;
 			xml_decl=xml_buffer.mid(pos1, tam);
-			xml_buffer.replace(pos1,tam,QString());
+			xml_buffer.replace(pos1,tam,"");
 		}
 		else
 			xml_decl=QString("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
@@ -148,7 +152,7 @@ void XmlParser::setDTDFile(const QString &dtd_file, const QString &dtd_name)
 			 fmt_dtd_file + QString("\">\n");
 }
 
-void XmlParser::readBuffer(void)
+void XmlParser::readBuffer()
 {
 	QByteArray buffer;
 	QString msg, file;
@@ -158,7 +162,7 @@ void XmlParser::readBuffer(void)
 	if(!xml_buffer.isEmpty())
 	{
 		//Inserts the XML declaration
-		buffer+=xml_decl;
+		buffer+=xml_decl.toUtf8();
 
 		//Configures the parser, initially, to not validate the document against the dtd
 		parser_opt=( XML_PARSE_NOBLANKS | XML_PARSE_NONET | XML_PARSE_NOENT | XML_PARSE_BIG_LINES);
@@ -167,13 +171,13 @@ void XmlParser::readBuffer(void)
 		if(!dtd_decl.isEmpty())
 		{
 			//Inserts the default software DTD declarion into XML buffer
-			buffer+=dtd_decl;
+			buffer+=dtd_decl.toUtf8();
 
 			//Now configures the parser to validate the buffer against the DTD
 			parser_opt=(parser_opt | XML_PARSE_DTDLOAD | XML_PARSE_DTDVALID);
 		}
 
-		buffer+=xml_buffer;
+		buffer+=xml_buffer.toUtf8();
 
 		//Create an xml document from the buffer
 		xml_doc=xmlReadMemory(buffer.data(), buffer.size(),	nullptr, nullptr, parser_opt);
@@ -204,7 +208,7 @@ void XmlParser::readBuffer(void)
 	}
 }
 
-void XmlParser::savePosition(void)
+void XmlParser::savePosition()
 {
 	if(!root_elem)
 		throw Exception(ErrorCode::OprNotAllocatedElementTree,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -212,7 +216,7 @@ void XmlParser::savePosition(void)
 	elems_stack.push(curr_elem);
 }
 
-void XmlParser::restorePosition(void)
+void XmlParser::restorePosition()
 {
 	if(!root_elem)
 		throw Exception(ErrorCode::OprNotAllocatedElementTree,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -237,7 +241,7 @@ void XmlParser::restorePosition(const xmlNode *elem)
 	curr_elem=const_cast<xmlNode *>(elem);
 }
 
-void XmlParser::restartNavigation(void)
+void XmlParser::restartNavigation()
 {
 	if(!root_elem)
 		throw Exception(ErrorCode::OprNotAllocatedElementTree,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -248,7 +252,7 @@ void XmlParser::restartNavigation(void)
 		elems_stack.pop();
 }
 
-void XmlParser::restartParser(void)
+void XmlParser::restartParser()
 {
 	root_elem=curr_elem=nullptr;
 	curr_line = 0;
@@ -258,12 +262,12 @@ void XmlParser::restartParser(void)
 		xmlFreeDoc(xml_doc);
 		xml_doc=nullptr;
 	}
-	dtd_decl=xml_buffer=xml_decl=QString();
+	dtd_decl=xml_buffer=xml_decl="";
 
 	while(!elems_stack.empty())
 		elems_stack.pop();
 
-	xml_doc_filename=QString();
+	xml_doc_filename="";
 	xmlResetLastError();
 }
 
@@ -307,7 +311,7 @@ bool XmlParser::accessElement(unsigned elem_type)
 			curr_line = curr_elem->line;
 	}
 
-	return(has_elem);
+	return has_elem;
 }
 
 bool XmlParser::hasElement(unsigned elem_type, xmlElementType xml_node_type)
@@ -319,31 +323,31 @@ bool XmlParser::hasElement(unsigned elem_type, xmlElementType xml_node_type)
 		/* Returns the verification if the current element has a parent.
 		 The element must be different from the root, because the root element
 		 is not connected to a parent */
-		return(curr_elem!=root_elem && curr_elem->parent!=nullptr &&
-														  (xml_node_type==0 || (xml_node_type!=0 && curr_elem->parent->type==xml_node_type)));
+		return (curr_elem!=root_elem && curr_elem->parent!=nullptr &&
+						(xml_node_type==0 || (xml_node_type!=0 && curr_elem->parent->type==xml_node_type)));
 	else if(elem_type==ChildElement)
 		//Returns the verification if the current element has children
-		return(curr_elem->children!=nullptr &&
-									(xml_node_type==0 || (xml_node_type!=0 && curr_elem->children->type==xml_node_type)));
+		return (curr_elem->children!=nullptr &&
+						(xml_node_type==0 || (xml_node_type!=0 && curr_elem->children->type==xml_node_type)));
 	else if(elem_type==NextElement)
-		return(curr_elem->next!=nullptr &&
-								(xml_node_type==0 || (xml_node_type!=0 && curr_elem->next->type==xml_node_type)));
+		return (curr_elem->next!=nullptr &&
+						(xml_node_type==0 || (xml_node_type!=0 && curr_elem->next->type==xml_node_type)));
 	else
 		/* The second comparison in the expression is made for the root element
 		 because libxml2 places the previous element as the root itself */
-		return(curr_elem->prev!=nullptr && curr_elem->prev!=root_elem &&
+		return (curr_elem->prev!=nullptr && curr_elem->prev!=root_elem &&
 															(xml_node_type==0 || (xml_node_type!=0 && curr_elem->prev->type==xml_node_type)));
 }
 
-bool XmlParser::hasAttributes(void)
+bool XmlParser::hasAttributes()
 {
 	if(!root_elem)
 		throw Exception(ErrorCode::OprNotAllocatedElementTree,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	return(curr_elem->properties!=nullptr);
+	return (curr_elem->properties != nullptr);
 }
 
-QString XmlParser::getElementContent(void)
+QString XmlParser::getElementContent()
 {
 	if(!root_elem)
 		throw Exception(ErrorCode::OprNotAllocatedElementTree,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -351,31 +355,31 @@ QString XmlParser::getElementContent(void)
 	/* If the current element has  <![CDATA[]]> node returns the content of the CDATA instead
 	of return the content of the element itself */
 	if(curr_elem->next && curr_elem->next->type == XML_CDATA_SECTION_NODE)
-		return(QString(reinterpret_cast<char *>(curr_elem->next->content)));
+		return QString(reinterpret_cast<char *>(curr_elem->next->content));
 	else
 		//Return the content of the element when is not a CDATA node
-		return(QString(reinterpret_cast<char *>(curr_elem->content)));
+		return QString(reinterpret_cast<char *>(curr_elem->content));
 }
 
-QString XmlParser::getElementName(void)
+QString XmlParser::getElementName()
 {
 	if(!root_elem)
 		throw Exception(ErrorCode::OprNotAllocatedElementTree,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	return(QString(reinterpret_cast<const char *>(curr_elem->name)));
+	return QString(reinterpret_cast<const char *>(curr_elem->name));
 }
 
-xmlElementType XmlParser::getElementType(void)
+xmlElementType XmlParser::getElementType()
 {
 	if(!root_elem)
 		throw Exception(ErrorCode::OprNotAllocatedElementTree,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	return(curr_elem->type);
+	return curr_elem->type;
 }
 
-const xmlNode *XmlParser::getCurrentElement(void)
+const xmlNode *XmlParser::getCurrentElement()
 {
-	return(curr_elem);
+	return curr_elem;
 }
 
 void XmlParser::getElementAttributes(attribs_map &attributes)
@@ -408,25 +412,25 @@ void XmlParser::getElementAttributes(attribs_map &attributes)
 	}
 }
 
-QString XmlParser::getLoadedFilename(void)
+QString XmlParser::getLoadedFilename()
 {
-	return(xml_doc_filename);
+	return xml_doc_filename;
 }
 
-QString XmlParser::getXMLBuffer(void)
+QString XmlParser::getXMLBuffer()
 {
-	return(xml_buffer);
+	return xml_buffer;
 }
 
-int XmlParser::getCurrentBufferLine(void)
+int XmlParser::getCurrentBufferLine()
 {
 	if(curr_elem)
-		return(curr_line);
+		return curr_line;
 	else
-		return(0);
+		return 0;
 }
 
-int XmlParser::getBufferLineCount(void)
+int XmlParser::getBufferLineCount()
 {
 	if(xml_doc)
 	{
@@ -440,12 +444,107 @@ int XmlParser::getBufferLineCount(void)
 		{
 			char hex_value[10] = "";
 			sprintf(hex_value, "%p", xml_doc->last->last->psvi);
-			return(static_cast<int>(strtol(hex_value, nullptr, 16)));
+			return static_cast<int>(strtol(hex_value, nullptr, 16));
 		}
 
-		return(xml_doc->last->last->line);
+		return xml_doc->last->last->line;
 	}
 	else
-		return(0);
+		return 0;
 }
 
+QString XmlParser::convertCharsToXMLEntities(QString buf)
+{
+	QTextStream ts(&buf);
+	QRegExp attr_regexp=QRegExp("([a-z]|\\-|[0-9])+( )*(=\\\")"),
+			attr_end_regexp=QRegExp("(\\\")((\\t)+|(\\n)|((\\/\\>)|(\\>)))"),
+			next_attr_regexp=QRegExp(QString("(( )|(\\t))+%1").arg(attr_regexp.pattern()));
+	int attr_start=0, attr_end=0, count=0, cdata_start = -1,
+			cdata_end = -1, start = -1, end = -1, pos = 0;
+	QString value, fmt_buf, lin;
+
+	while(!ts.atEnd())
+	{
+		lin = ts.readLine();
+		lin += "\n";
+
+		// Ignoring the xml header
+		if(lin.indexOf("<?xml") >= 0)
+		{
+			fmt_buf += lin;
+			continue;
+		}
+
+		// Checking if the current line has at least one attribute in form (attr="value")
+		attr_start = -1;
+		attr_start = attr_regexp.indexIn(lin);
+
+		if(attr_start >= 0)
+		{
+			/* Checking the presence of <![[CDATA ]]> tag in the current line.
+			 * In case of finding it we need to perform specific operation to avoid
+			 * replacing contents within that tag */
+			cdata_start = lin.indexOf(CdataStart);
+			cdata_end = lin.indexOf(CdataEnd);
+			start = min<int>(cdata_start, cdata_end);
+			end = max<int>(cdata_start, cdata_end);
+
+			do
+			{
+				// First we try to find the next attribute so we can delimite the current attribute's value
+				attr_end = next_attr_regexp.indexIn(lin, attr_start + attr_regexp.matchedLength());
+
+				// Found the next attribute we decrement in 1 char the current attribute's value in order to eliminate the unneeded "
+				if(attr_end >= 0)
+					attr_end--;
+				else
+					// If there's no next attribute we try to match the end of the attribute's value at the end of the line/tag
+					attr_end = attr_end_regexp.indexIn(lin, attr_start + attr_regexp.matchedLength());
+
+				if(attr_start >= 0 && attr_end >= 0 &&
+					 //CDATA absent in the current line
+					 ((start < 0 && end < 0) ||
+						//The attribute is at left of the CDATA tag
+						(start >= 0 && attr_start < start && attr_end < start) ||
+						//The attribute is at right of the CDATA tag
+						(end >= 0 && attr_start > end && attr_end > end)))
+				{
+					// Calculates the initial position where the value to be  retrived is (in that case rigth after attrib=")
+					pos = attr_start + attr_regexp.matchedLength();
+					count = attr_end - pos;
+					value = lin.mid(pos, count);
+				}
+				else
+					break;
+
+				/* If the extracted value has one of the expected special chars
+				 * in order to perform the replacemnt to xml entities */
+				if(value.contains(QRegExp("(&|\\<|\\>|\")")))
+				{
+					if(!value.contains(CharQuot) && !value.contains(CharLt) &&
+						 !value.contains(CharGt) && !value.contains(CharAmp) &&
+						 !value.contains(CharApos) && value.contains('&'))
+							value.replace('&', CharAmp);
+
+						value.replace('"', CharQuot);
+						value.replace('<', CharLt);
+						value.replace('>', CharGt);
+
+					//Puts in the original XML definition the modified string
+					lin.replace(pos, count, value);
+				}
+
+				// Moving the position to the next attribute in the line (if existent)
+				pos += value.length() + 1;
+				attr_start = attr_regexp.indexIn(lin, pos);
+				value.clear();
+			}
+			while(attr_start >=0 && attr_start < lin.size());
+		}
+
+		fmt_buf += lin;
+		lin.clear();
+	}
+
+	return fmt_buf;
+}

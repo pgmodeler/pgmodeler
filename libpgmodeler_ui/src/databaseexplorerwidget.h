@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -28,7 +28,6 @@
 #include "ui_databaseexplorerwidget.h"
 #include "databaseimporthelper.h"
 #include "schemaparser.h"
-#include "hinttextwidget.h"
 
 class DatabaseExplorerWidget: public QWidget, public Ui::DatabaseExplorerWidget {
 	private:
@@ -36,7 +35,6 @@ class DatabaseExplorerWidget: public QWidget, public Ui::DatabaseExplorerWidget 
 		
 		static const QString DepNotDefined,
 		DepNotFound,
-		ElemSeparator,
 		DefaultSourceCode;
 		
 		//! \brief Stores the translations of all used attributes at properties panel
@@ -71,11 +69,9 @@ class DatabaseExplorerWidget: public QWidget, public Ui::DatabaseExplorerWidget 
 		
 		QTreeWidgetItem *rename_item;
 		
-		HintTextWidget *filter_ht;
+		int sort_column;
 
-		unsigned sort_column;
-
-		void configureImportHelper(void);
+		void configureImportHelper();
 		
 		//! \brief Drops the object represented by the specified item
 		void dropObject(QTreeWidgetItem *item, bool cascade);
@@ -90,11 +86,11 @@ class DatabaseExplorerWidget: public QWidget, public Ui::DatabaseExplorerWidget 
 		
 		/*! \brief Returns the properly format object name by querying it using its OID and type.
 		Optional schema and table names can be specified to filter the results */
-		QString getObjectName(ObjectType obj_type, const QString &oid, const QString &sch_name=QString(), const QString tab_name=QString());
+		QString getObjectName(ObjectType obj_type, const QString &oid, const QString &sch_name="", const QString tab_name="");
 		
 		/*! \brief Returns the properly format list of object names by querying them using their OIDs and type.
 		Optional schema and table names can be specified to filter the results */
-		QStringList getObjectsNames(ObjectType obj_type, const QStringList &oids, const QString &sch_name=QString(), const QString tab_name=QString());
+		QStringList getObjectsNames(ObjectType obj_type, const QStringList &oids, const QString &sch_name="", const QString tab_name="");
 		
 		//! \brief Format the object's name based upon the passed attributes
 		QString formatObjectName(attribs_map &attribs);
@@ -136,6 +132,8 @@ class DatabaseExplorerWidget: public QWidget, public Ui::DatabaseExplorerWidget 
 		void formatServerAttribs(attribs_map &attribs);
 		void formatUserMappingAttribs(attribs_map &attribs);
 		void handleSelectedSnippet(const QString &snip_id);
+		void formatBaseFunctionAttribs(attribs_map &attribs);
+		void formatProcedureAttribs(attribs_map &attribs);
 		
 		//! \brief Extract an attribute map containing the basic attributes for drop/rename commands
 		attribs_map extractAttributesFromItem(QTreeWidgetItem *item);
@@ -153,17 +151,17 @@ class DatabaseExplorerWidget: public QWidget, public Ui::DatabaseExplorerWidget 
 		void setConnection(Connection conn, const QString &default_db);
 		
 		//! \brief Returns a copy of the connection used by this explorer instance
-		Connection getConnection(void);
+		Connection getConnection();
 		
 		//! \brief Clears the object's properties table
-		void clearObjectProperties(void);
+		void clearObjectProperties();
 		
 		//! \brief Truncates a named table (in cascade mode or not) using the provided connection
 		static bool truncateTable(const QString &sch_name, const QString &obj_name, bool cascade, Connection connection);
 
 	public slots:
 		//! \brief Lists all objects for the current selected database
-		void listObjects(void);
+		void listObjects();
 		
 	private slots:
 		//! \brief Shows the menu to drop/show data
@@ -178,24 +176,24 @@ class DatabaseExplorerWidget: public QWidget, public Ui::DatabaseExplorerWidget 
 		void showObjectProperties(bool force_reload=false);
 		
 		//! \brief Executes the rename command on the database
-		void finishObjectRename(void);
+		void finishObjectRename();
 		
 		//! \brief Cancels the rename and restore the original item's name
-		void cancelObjectRename(void);
+		void cancelObjectRename();
 
 		//! \brief Show the widget to handle data in tables
-		void openDataGrid(const QString &schema=QString("public"), const QString &table=QString(), bool hide_views=true);
+		void openDataGrid(const QString &schema=QString("public"), const QString &table="", bool hide_views=true);
 
 		//! \brief Drop the database
-		void dropDatabase(void);
+		void dropDatabase();
 
-		void loadObjectSource(void);
+		void loadObjectSource();
 
-		void filterObjects(void);
+		void filterObjects();
 
 	signals:
 		//! \brief This signal is emmited to indicate that a sql execution widget need to be opened
-		void s_sqlExecutionRequested(void);
+		void s_sqlExecutionRequested();
 		
 		//! \brief This signal is emmited to indicate that the named database was dropped
 		void s_databaseDropped(QString dbname);

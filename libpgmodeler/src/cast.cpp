@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -18,17 +18,23 @@
 
 #include "cast.h"
 
-Cast::Cast(void)
+Cast::Cast()
 {
 	obj_type=ObjectType::Cast;
 	cast_function=nullptr;
 	cast_type=Explicit;
 	is_in_out=false;
-	attributes[Attributes::SourceType]=QString();
-	attributes[Attributes::DestType]=QString();
-	attributes[Attributes::CastType]=QString();
-	attributes[Attributes::IoCast]=QString();
-	attributes[Attributes::Function]=QString();
+	attributes[Attributes::SourceType]="";
+	attributes[Attributes::DestType]="";
+	attributes[Attributes::CastType]="";
+	attributes[Attributes::IoCast]="";
+	attributes[Attributes::Function]="";
+}
+
+void Cast::setName(const QString &)
+{
+	//Configures the cast name (in form of signature: cast(src_type, dst_type) )
+	this->obj_name=QString("cast(%1,%2)").arg(~types[SrcType]).arg(~types[DstType]);
 }
 
 void Cast::setDataType(unsigned type_idx, PgSqlType type)
@@ -50,8 +56,7 @@ void Cast::setDataType(unsigned type_idx, PgSqlType type)
 		//Raises an error if the type index is invalid
 		throw Exception(ErrorCode::RefTypeInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	//Configures the cast name (in form of signature: cast(src_type, dst_type) )
-	this->obj_name=QString("cast(%1,%2)").arg(~types[SrcType]).arg(~types[DstType]);
+	setName("");
 }
 
 void Cast::setCastType(unsigned cast_type)
@@ -135,34 +140,34 @@ PgSqlType Cast::getDataType(unsigned type_idx)
 	if(type_idx > DstType)
 		throw Exception(ErrorCode::RefTypeInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	return(this->types[type_idx]);
+	return this->types[type_idx];
 }
 
-bool Cast::isInOut(void)
+bool Cast::isInOut()
 {
-	return(is_in_out);
+	return is_in_out;
 }
 
-Function *Cast::getCastFunction(void)
+Function *Cast::getCastFunction()
 {
-	return(cast_function);
+	return cast_function;
 }
 
-unsigned Cast::getCastType(void)
+unsigned Cast::getCastType()
 {
-	return(cast_type);
+	return cast_type;
 }
 
 QString Cast::getDropDefinition(bool cascade)
 {
 	attributes[Attributes::Signature].replace(QString(","), QString(" AS "));
-	return(BaseObject::getDropDefinition(cascade));
+	return BaseObject::getDropDefinition(cascade);
 }
 
 QString Cast::getCodeDefinition(unsigned def_type)
 {
 	QString code_def=getCachedCode(def_type, false);
-	if(!code_def.isEmpty()) return(code_def);
+	if(!code_def.isEmpty()) return code_def;
 
 	if(def_type==SchemaParser::SqlDefinition)
 	{
@@ -183,28 +188,28 @@ QString Cast::getCodeDefinition(unsigned def_type)
 			attributes[Attributes::Function]=cast_function->getCodeDefinition(def_type, true);
 	}
 	else
-		attributes[Attributes::IoCast]=(is_in_out ? Attributes::True : QString());
+		attributes[Attributes::IoCast]=(is_in_out ? Attributes::True : "");
 
 	if(cast_type==Assignment)
 		attributes[Attributes::CastType]=Attributes::Assignment;
 	else if(cast_type==Implicit)
 		attributes[Attributes::CastType]=Attributes::Implicit;
 	else
-		attributes[Attributes::CastType]=QString();
+		attributes[Attributes::CastType]="";
 
 	if(def_type==SchemaParser::SqlDefinition)
 		attributes[Attributes::CastType]=attributes[Attributes::CastType].toUpper();
 
-	return(BaseObject::__getCodeDefinition(def_type));
+	return BaseObject::__getCodeDefinition(def_type);
 }
 
 QString Cast::getSignature(bool)
 {
 	attributes[Attributes::Signature]=this->getName().remove(QString("cast"));
-	return(BaseObject::getSignature(false));
+	return BaseObject::getSignature(false);
 }
 
-void Cast::configureSearchAttributes(void)
+void Cast::configureSearchAttributes()
 {
 	QStringList arg_types;
 

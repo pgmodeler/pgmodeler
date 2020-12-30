@@ -15,13 +15,13 @@ StyledTextboxView::StyledTextboxView(Textbox *txtbox, bool override_style) : Tex
 	this->configureObject();
 }
 
-StyledTextboxView::~StyledTextboxView(void)
+StyledTextboxView::~StyledTextboxView()
 {
 	this->removeFromGroup(fold);
-	delete(fold);
+	delete fold;
 }
 
-void StyledTextboxView::configureObject(void)
+void StyledTextboxView::configureObject()
 {
 	QRectF rect;
 	QPolygonF pol;

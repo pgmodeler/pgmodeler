@@ -1,13 +1,4 @@
 # This file contains the main variables settings to build pgModeler on all supported platforms.
-#
-# Thanks to Lisandro Damián Nicanor Pérez Meyer, pgModeler is able to be package in most of
-# Linux distros.
-#
-# Original version by: Lisandro Damián Nicanor Pérez Meyer <perezmeyer@gmail.com>
-# Original code: https://github.com/perezmeyer/pgmodeler/tree/shared_libs
-#
-# Refactored version by: Raphal Araújo e Silva <raphael@pgmodeler.com.br>
-# Refactored code: https://github.com/pgmodeler/pgmodeler
 
 # General Qt settings
 QT += core widgets printsupport network svg
@@ -28,10 +19,10 @@ defined(NO_UPDATE_CHECK, var): DEFINES+=NO_UPDATE_CHECK
 
 # Properly defining build number constant
 unix {
- BUILDNUM=$$system("date '+%Y%m%d'")
+ BUILDNUM=$$system("$$PWD/getbuildnum.sh")
  DEFINES+=BUILDNUM=\\\"$${BUILDNUM}\\\"
 } else {
- BUILDNUM=$$system('wingetdate.bat')
+ BUILDNUM=$$system("$$PWD/getbuildnum.bat")
  DEFINES+=BUILDNUM=\\\"$${BUILDNUM}\\\"
 }
 
@@ -57,22 +48,40 @@ unix {
 linux {
   CONFIG += x11
 
-  # Default configuration for package pgModeler.
-  # The default prefix is /usr/local
-  !defined(PREFIX, var):        PREFIX = /usr/local
-  !defined(BINDIR, var):        BINDIR = $$PREFIX/bin
-  !defined(PRIVATEBINDIR, var): PRIVATEBINDIR = $$PREFIX/lib/pgmodeler/bin
-  !defined(PRIVATELIBDIR, var): PRIVATELIBDIR = $$PREFIX/lib/pgmodeler
-  !defined(PLUGINSDIR, var):    PLUGINSDIR = $$PREFIX/lib/pgmodeler/plugins
-  !defined(SHAREDIR, var):      SHAREDIR = $$PREFIX/share/pgmodeler
-  !defined(CONFDIR, var):       CONFDIR = $$SHAREDIR/conf
-  !defined(DOCDIR, var):        DOCDIR = $$SHAREDIR
-  !defined(LANGDIR, var):       LANGDIR = $$SHAREDIR/lang
-  !defined(SAMPLESDIR, var):    SAMPLESDIR = $$SHAREDIR/samples
-  !defined(SCHEMASDIR, var):    SCHEMASDIR = $$SHAREDIR/schemas
+  # If the AppImage generation option is set
+  defined(APPIMAGE_BUILD, var):{
+	!defined(PREFIX, var): PREFIX = /usr/local/pgmodeler-appimage
+	BINDIR = $$PREFIX
+	PRIVATEBINDIR = $$PREFIX
+	PRIVATELIBDIR = $$PREFIX/lib
+	PLUGINSDIR = $$PREFIX/lib/pgmodeler/plugins
+	SHAREDIR = $$PREFIX
+	CONFDIR = $$SHAREDIR/conf
+	DOCDIR = $$SHAREDIR
+	LANGDIR = $$SHAREDIR/lang
+	SAMPLESDIR = $$SHAREDIR/samples
+	SCHEMASDIR = $$SHAREDIR/schemas
+  }
+
+  !defined(APPIMAGE_BUILD, var):{
+	# Default configuration for package pgModeler.
+	# The default prefix is /usr/local
+	!defined(PREFIX, var):        PREFIX = /usr/local
+	!defined(BINDIR, var):        BINDIR = $$PREFIX/bin
+	!defined(PRIVATEBINDIR, var): PRIVATEBINDIR = $$PREFIX/bin
+	!defined(PRIVATELIBDIR, var): PRIVATELIBDIR = $$PREFIX/lib/pgmodeler
+	!defined(PLUGINSDIR, var):    PLUGINSDIR = $$PREFIX/lib/pgmodeler/plugins
+	!defined(SHAREDIR, var):      SHAREDIR = $$PREFIX/share/pgmodeler
+	!defined(CONFDIR, var):       CONFDIR = $$SHAREDIR/conf
+	!defined(DOCDIR, var):        DOCDIR = $$SHAREDIR
+	!defined(LANGDIR, var):       LANGDIR = $$SHAREDIR/lang
+	!defined(SAMPLESDIR, var):    SAMPLESDIR = $$SHAREDIR/samples
+	!defined(SCHEMASDIR, var):    SCHEMASDIR = $$SHAREDIR/schemas
+ }
 
   # Specifies where to find the libraries at runtime
-  QMAKE_RPATHDIR += $$PRIVATELIBDIR
+  RELATIVE_PRIVATELIBDIR = $$relative_path($$PRIVATELIBDIR, $$BINDIR)
+  QMAKE_LFLAGS += "-Wl,-rpath,\'\$$ORIGIN\' -Wl,-rpath,\'\$$ORIGIN/$$RELATIVE_PRIVATELIBDIR\'"
 
   # Forcing the display of some warnings
   CONFIG(debug, debug|release): QMAKE_CXXFLAGS += "-Wall -Wextra -Wuninitialized"
@@ -103,7 +112,7 @@ macx {
   CONFIG -= app_bundle
 
   # The default prefix is ./build/pgmodeler.app/Contents
-  !defined(PREFIX, var):        PREFIX = /Applications/pgmodeler.app/Contents
+  !defined(PREFIX, var):        PREFIX = /Applications/pgModeler.app/Contents
   !defined(BINDIR, var):        BINDIR = $$PREFIX/MacOS
   !defined(PRIVATEBINDIR, var): PRIVATEBINDIR = $$BINDIR
   !defined(PRIVATELIBDIR, var): PRIVATELIBDIR = $$PREFIX/Frameworks
@@ -149,18 +158,18 @@ unix:!macx {
 }
 
 macx {
-  PGSQL_LIB = /Library/PostgreSQL/11/lib/libpq.dylib
-  PGSQL_INC = /Library/PostgreSQL/11/include
-  XML_INC = /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/libxml2
-  XML_LIB = /usr/lib/libxml2.dylib
+  !defined(PGSQL_LIB, var): PGSQL_LIB = /Library/PostgreSQL/12/lib/libpq.dylib
+  !defined(PGSQL_INC, var): PGSQL_INC = /Library/PostgreSQL/12/include
+  !defined(XML_INC, var): XML_INC = /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/libxml2
+  !defined(XML_LIB, var): XML_LIB = /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/lib/libxml2.tbd
   INCLUDEPATH += $$PGSQL_INC $$XML_INC
 }
 
 windows {
-  !defined(PGSQL_LIB, var): PGSQL_LIB = C:/msys_64/mingw64/bin/libpq.dll
-  !defined(PGSQL_INC, var): PGSQL_INC = C:/msys_64/mingw64/include
-  !defined(XML_INC, var): XML_INC = C:/msys_64/mingw64/include/libxml2
-  !defined(XML_LIB, var): XML_LIB = C:/msys_64/mingw64/bin/libxml2-2.dll
+  !defined(PGSQL_LIB, var): PGSQL_LIB = C:/msys64/mingw64/bin/libpq.dll
+  !defined(PGSQL_INC, var): PGSQL_INC = C:/msys64/mingw64/include
+  !defined(XML_INC, var): XML_INC = C:/msys64/mingw64/include/libxml2
+  !defined(XML_LIB, var): XML_LIB = C:/msys64/mingw64/bin/libxml2-2.dll
 
   # Workaround to solve bug of timespec struct on MingW + PostgreSQL < 9.4
   QMAKE_CXXFLAGS+="-DHAVE_STRUCT_TIMESPEC"

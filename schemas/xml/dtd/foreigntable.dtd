@@ -18,3 +18,4 @@
 <!ATTLIST foreigntable faded-out (false|true) "false">
 <!ATTLIST foreigntable max-obj-count CDATA #IMPLIED>
 <!ATTLIST foreigntable options CDATA #IMPLIED>
+<!ATTLIST foreigntable z-value CDATA #IMPLIED>

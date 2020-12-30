@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -23,37 +23,36 @@ PluginsConfigWidget::PluginsConfigWidget(QWidget *parent) : BaseConfigWidget(par
 	setupUi(this);
 
 	QGridLayout *grid=new QGridLayout(loaded_plugins_gb);
-	QDir dir=QDir(GlobalAttributes::PluginsDir);
+	QDir dir=QDir(GlobalAttributes::getPluginsDir());
 
-	root_dir_edt->setText(dir.absolutePath());
+	root_dir_sel = new FileSelectorWidget(this);
+	root_dir_sel->setToolTip(tr("pgModeler plugins directory"));
+	root_dir_sel->setReadOnly(true);
+	root_dir_sel->setFileMode(QFileDialog::Directory);
+	root_dir_sel->setSelectedFile(GlobalAttributes::getPluginsDir());
+	plugins_layout->insertWidget(1, root_dir_sel);
 
 	plugins_tab=new ObjectsTableWidget(ObjectsTableWidget::EditButton, false, this);
 	plugins_tab->setColumnCount(3);
-	plugins_tab->setHeaderLabel(trUtf8("Plugin"),0);
+	plugins_tab->setHeaderLabel(tr("Plugin"),0);
 	plugins_tab->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("plugins")),0);
-	plugins_tab->setHeaderLabel(trUtf8("Version"),1);
-	plugins_tab->setHeaderLabel(trUtf8("Library"),2);
+	plugins_tab->setHeaderLabel(tr("Version"),1);
+	plugins_tab->setHeaderLabel(tr("Library"),2);
 
 	connect(plugins_tab, SIGNAL(s_rowEdited(int)), this, SLOT(showPluginInfo(int)));
-	connect(open_fm_tb, SIGNAL(clicked(void)), this, SLOT(openRootPluginDiretory(void)));
 
 	grid->setContentsMargins(4,4,4,4);
 	grid->addWidget(plugins_tab,0,0,1,1);
 	loaded_plugins_gb->setLayout(grid);
 }
 
-PluginsConfigWidget::~PluginsConfigWidget(void)
+PluginsConfigWidget::~PluginsConfigWidget()
 {
 	while(!plugins.empty())
 	{
-		delete(plugins.back());
+		delete plugins.back();
 		plugins.pop_back();
 	}
-}
-
-void PluginsConfigWidget::openRootPluginDiretory(void)
-{
-	QDesktopServices::openUrl(QUrl(QString("file://") + root_dir_edt->text()));
 }
 
 void PluginsConfigWidget::showPluginInfo(int idx)
@@ -61,11 +60,11 @@ void PluginsConfigWidget::showPluginInfo(int idx)
 	plugins[idx]->showPluginInfo();
 }
 
-void PluginsConfigWidget::loadConfiguration(void)
+void PluginsConfigWidget::loadConfiguration()
 {
 	vector<Exception> errors;
 	QString lib, plugin_name,
-			dir_plugins=GlobalAttributes::PluginsDir +
+			dir_plugins=GlobalAttributes::getPluginsDir() +
 						GlobalAttributes::DirSeparator;
 	QPluginLoader plugin_loader;
 	QStringList dir_list;
@@ -163,13 +162,13 @@ void PluginsConfigWidget::installPluginsActions(QMenu *menu, QObject *recv, cons
 			if(menu)
 				menu->addAction(*itr);
 
-			connect(*itr, SIGNAL(triggered(void)), recv, slot);
+			connect(*itr, SIGNAL(triggered()), recv, slot);
 			itr++;
 		}
 	}
 }
 
-void PluginsConfigWidget::initPlugins(QMainWindow *main_window)
+void PluginsConfigWidget::initPlugins(MainWindow *main_window)
 {
 	for(auto &plugin : plugins)
 		plugin->initPlugin(main_window);

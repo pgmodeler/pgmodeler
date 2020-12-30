@@ -13,6 +13,11 @@ $tb [<column name=] "{name}"
 
  %if {default-value} %and %not {sequence} %then
   [ default-value=] "{default-value}"
+  
+  %if {generated} %then
+    [ generated=] "true"
+  %end
+  
  %end
 
  %if {sequence} %then

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>449</width>
-    <height>139</height>
+    <width>515</width>
+    <height>178</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -129,6 +129,16 @@
         </item>
         <item>
          <property name="text">
+          <string>Table: Attributes toggler buttons</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Table: Attributes toggler box</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
           <string>Rule: Name</string>
          </property>
         </item>
@@ -220,6 +230,16 @@
         <item>
          <property name="text">
           <string>View: Reference descriptor</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>View: Attributes toggler buttons</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>View: Attributes toggler box</string>
          </property>
         </item>
         <item>
@@ -350,6 +370,16 @@
         <item>
          <property name="text">
           <string>Foreign table: Title box</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Foreign table: Attributes toggler buttons</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Foreign table: Attributes toggler box</string>
          </property>
         </item>
        </widget>

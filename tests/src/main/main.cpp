@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -36,7 +36,7 @@ int main(int, char **argv)
   //Iterates over the list of tests retrieved from BINDIR/tests and run each of them
   for(auto &test : tests)
   {
-    result=QProcess::execute(test_dir + QString("/") + test);
+		result=QProcess::execute(test_dir + QString("/") + test, {});
 
     if(result == -2)
       qDebug() << "** Could not start test executable:" << test;
@@ -46,5 +46,5 @@ int main(int, char **argv)
     if(result!=0) break;
   }
 
-  return(result);
+	return result;
 }

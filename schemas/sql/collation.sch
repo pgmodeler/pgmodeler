@@ -4,54 +4,88 @@
 
 %if ({pgsql-ver} != "9.0") %then
 
- [-- object: ] {name} [ | type: ] {sql-object} [ --] $br
+    [-- object: ] {name} [ | type: ] {sql-object} [ --] $br
+    [-- ] {drop}
 
- [-- ] {drop}
+    # This is a special token that pgModeler recognizes as end of DDL command
+    # when exporting models directly to DBMS. DO NOT REMOVE THIS TOKEN!
+    %set {ddl-end} $br [-- ddl-end --] $br
+    %set {attr-sep} [,] $br
 
- %if {prepended-sql} %then
-   {prepended-sql}
-   $br [-- ddl-end --] $br $br
- %end
+    %if {prepended-sql} %then
+        {prepended-sql}
+        {ddl-end} $br
+    %end
 
- [CREATE COLLATION ] {name}
+    [CREATE COLLATION ] {name}
 
-  %if {collation} %then
-    [ FROM ] {collation}
-  %else
-    [ (]
-      %if {locale} %then
-		[LOCALE = ] '{locale}'
-      %else
+    %if {collation} %then
+        [ FROM ] {collation}
+    %else
+        [ (] $br
+        
+        %if {locale} %then
+            [   LOCALE = '] 
+            
+            {locale} 
+            
+            %if {locale-mod} %then
+                @ {locale-mod}
+            %end
+            
+            [']            
+        %else
+            %if {lc-ctype} %then
+                [   LC_CTYPE = '] 
+                
+                {lc-ctype} 
+                
+                %if {lc-ctype-mod} %then
+                    @ {lc-ctype-mod}
+                %end
+                
+                [']
+            %end
 
-        %if {lc-ctype} %then
-         [LC_CTYPE = ]'{lc-ctype}'
+            %if {lc-collate} %then
+                %if {lc-ctype} %then {attr-sep} %end
+                [   LC_COLLATE = '] 
+                
+                {lc-collate} 
+                
+                %if {lc-collate-mod} %then
+                    @ {lc-collate-mod}
+                %end
+                
+                [']
+            %end
         %end
 
-        %if {lc-ctype} %and {lc-collate} %then
-         [, ]
+        %if ({pgsql-ver} >=f "10.0") %then
+            %if {provider} %then
+                %if {locale} %or {lc-collate} %or {lc-ctype} %then {attr-sep} %end
+                [   PROVIDER =] '{provider}'
+            %end
         %end
 
-        %if {lc-collate} %then
-         [LC_COLLATE =] '{lc-collate}'
+        %if ({pgsql-ver} >=f "12.0") %then
+            %if {locale} %or {lc-collate} %or {lc-ctype} %or {provider} %then {attr-sep} %end
+            [   DETERMINISTIC = ] {deterministic}
         %end
         
-      %end
-    [)]
-  %end
+        $br [)]
+    %end
 
-  ; $br
+    ; 
 
-  # This is a special token that pgModeler recognizes as end of DDL command
-  # when exporting models directly to DBMS. DO NOT REMOVE THIS TOKEN!
-  [-- ddl-end --] $br
+    {ddl-end}
 
-  %if {owner} %then {owner} %end
-  %if {comment} %then {comment} %end
+    %if {owner} %then {owner} %end
+    %if {comment} %then {comment} %end
 
-  %if {appended-sql} %then
-    {appended-sql}
-    $br [-- ddl-end --] $br
-  %end
-
-  $br
+    %if {appended-sql} %then
+        {appended-sql}
+        {ddl-end}
+    %end
+    $br
 %end

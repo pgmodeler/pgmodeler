@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -43,8 +43,8 @@ TableWidget::TableWidget(QWidget *parent, ObjectType tab_type): BaseObjectWidget
 	edt_data_tb=new QPushButton(this);
 	QPixmap icon=QPixmap(PgModelerUiNs::getIconPath("editdata"));
 	edt_data_tb->setMinimumSize(edt_perms_tb->minimumSize());
-	edt_data_tb->setText(trUtf8("Edit data"));
-	edt_data_tb->setToolTip(trUtf8("Define initial data for the table"));
+	edt_data_tb->setText(tr("Edit data"));
+	edt_data_tb->setToolTip(tr("Define initial data for the table"));
 	edt_data_tb->setIcon(icon);
 	edt_data_tb->setIconSize(edt_perms_tb->iconSize());
 
@@ -62,11 +62,11 @@ TableWidget::TableWidget(QWidget *parent, ObjectType tab_type): BaseObjectWidget
 
 	parent_tables = new ObjectsTableWidget(ObjectsTableWidget::NoButtons, true, this);
 	parent_tables->setColumnCount(3);
-	parent_tables->setHeaderLabel(trUtf8("Name"), 0);
+	parent_tables->setHeaderLabel(tr("Name"), 0);
 	parent_tables->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("uid")),0);
-	parent_tables->setHeaderLabel(trUtf8("Schema"), 1);
+	parent_tables->setHeaderLabel(tr("Schema"), 1);
 	parent_tables->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("schema")),1);
-	parent_tables->setHeaderLabel(trUtf8("Type"), 2);
+	parent_tables->setHeaderLabel(tr("Type"), 2);
 	parent_tables->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("usertype")),2);
 
 	server_sel=nullptr;
@@ -81,8 +81,8 @@ TableWidget::TableWidget(QWidget *parent, ObjectType tab_type): BaseObjectWidget
 																			 (ObjectsTableWidget::EditButton | ObjectsTableWidget::UpdateButton), true, this);
 	options_tab->setCellsEditable(true);
 	options_tab->setColumnCount(2);
-	options_tab->setHeaderLabel(trUtf8("Option"), 0);
-	options_tab->setHeaderLabel(trUtf8("Value"), 1);
+	options_tab->setHeaderLabel(tr("Option"), 0);
+	options_tab->setHeaderLabel(tr("Value"), 1);
 
 	vbox = new QVBoxLayout;
 	vbox->setContentsMargins(4,4,4,4);
@@ -112,24 +112,24 @@ TableWidget::TableWidget(QWidget *parent, ObjectType tab_type): BaseObjectWidget
 		grid->setContentsMargins(4,4,4,4);
 		attributes_tbw->widget(i)->setLayout(grid);
 
-		connect(tab, SIGNAL(s_rowsRemoved(void)), this, SLOT(removeObjects(void)));
+		connect(tab, SIGNAL(s_rowsRemoved()), this, SLOT(removeObjects()));
 		connect(tab, SIGNAL(s_rowRemoved(int)), this, SLOT(removeObject(int)));
-		connect(tab, SIGNAL(s_rowAdded(int)), this, SLOT(handleObject(void)));
-		connect(tab, SIGNAL(s_rowEdited(int)), this, SLOT(handleObject(void)));
+		connect(tab, SIGNAL(s_rowAdded(int)), this, SLOT(handleObject()));
+		connect(tab, SIGNAL(s_rowEdited(int)), this, SLOT(handleObject()));
 		connect(tab, SIGNAL(s_rowDuplicated(int,int)), this, SLOT(duplicateObject(int,int)));
 		connect(tab, SIGNAL(s_rowsMoved(int,int)), this, SLOT(swapObjects(int,int)));
 	}
 
 	objects_tab_map[ObjectType::Column]->setColumnCount(7);
-	objects_tab_map[ObjectType::Column]->setHeaderLabel(trUtf8("PK"), 0);
-	objects_tab_map[ObjectType::Column]->setHeaderLabel(trUtf8("Name"), 1);
+	objects_tab_map[ObjectType::Column]->setHeaderLabel(tr("PK"), 0);
+	objects_tab_map[ObjectType::Column]->setHeaderLabel(tr("Name"), 1);
 	objects_tab_map[ObjectType::Column]->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("uid")),1);
-	objects_tab_map[ObjectType::Column]->setHeaderLabel(trUtf8("Type"), 2);
+	objects_tab_map[ObjectType::Column]->setHeaderLabel(tr("Type"), 2);
 	objects_tab_map[ObjectType::Column]->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("usertype")),2);
-	objects_tab_map[ObjectType::Column]->setHeaderLabel(trUtf8("Default Value"), 3);
-	objects_tab_map[ObjectType::Column]->setHeaderLabel(trUtf8("Attribute(s)"), 4);
-	objects_tab_map[ObjectType::Column]->setHeaderLabel(trUtf8("Alias"), 5);
-	objects_tab_map[ObjectType::Column]->setHeaderLabel(trUtf8("Comment"), 6);
+	objects_tab_map[ObjectType::Column]->setHeaderLabel(tr("Default Value"), 3);
+	objects_tab_map[ObjectType::Column]->setHeaderLabel(tr("Attribute(s)"), 4);
+	objects_tab_map[ObjectType::Column]->setHeaderLabel(tr("Alias"), 5);
+	objects_tab_map[ObjectType::Column]->setHeaderLabel(tr("Comment"), 6);
 	objects_tab_map[ObjectType::Column]->adjustColumnToContents(0);
 
 	connect(objects_tab_map[ObjectType::Column], &ObjectsTableWidget::s_cellClicked, [&](int row, int col){
@@ -140,68 +140,68 @@ TableWidget::TableWidget(QWidget *parent, ObjectType tab_type): BaseObjectWidget
 			Constraint *pk = table->getPrimaryKey();
 
 			if(pk && pk->isAddedByRelationship())
-				msg_box.show(trUtf8("It is not possible to mark a column as primary key when the table already has a primary key which was created by a relationship! This action should be done in the section <strong>Primary key</strong> of the relationship's editing form."), Messagebox::AlertIcon);
+				msg_box.show(tr("It is not possible to mark a column as primary key when the table already has a primary key which was created by a relationship! This action should be done in the section <strong>Primary key</strong> of the relationship's editing form."), Messagebox::AlertIcon);
 			else
-				msg_box.show(trUtf8("It is not possible to mark a column created by a relationship as primary key! This action should be done in the section <strong>Primary key</strong> of the relationship's editing form."), Messagebox::AlertIcon);
+				msg_box.show(tr("It is not possible to mark a column created by a relationship as primary key! This action should be done in the section <strong>Primary key</strong> of the relationship's editing form."), Messagebox::AlertIcon);
 		}
 	});
 
 	objects_tab_map[ObjectType::Constraint]->setColumnCount(6);
-	objects_tab_map[ObjectType::Constraint]->setHeaderLabel(trUtf8("Name"), 0);
+	objects_tab_map[ObjectType::Constraint]->setHeaderLabel(tr("Name"), 0);
 	objects_tab_map[ObjectType::Constraint]->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("uid")),0);
-	objects_tab_map[ObjectType::Constraint]->setHeaderLabel(trUtf8("Type"), 1);
+	objects_tab_map[ObjectType::Constraint]->setHeaderLabel(tr("Type"), 1);
 	objects_tab_map[ObjectType::Constraint]->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("usertype")),1);
-	objects_tab_map[ObjectType::Constraint]->setHeaderLabel(trUtf8("ON DELETE"), 2);
-	objects_tab_map[ObjectType::Constraint]->setHeaderLabel(trUtf8("ON UPDATE"), 3);
-	objects_tab_map[ObjectType::Constraint]->setHeaderLabel(trUtf8("Alias"), 4);
-	objects_tab_map[ObjectType::Constraint]->setHeaderLabel(trUtf8("Comment"), 5);
+	objects_tab_map[ObjectType::Constraint]->setHeaderLabel(tr("ON DELETE"), 2);
+	objects_tab_map[ObjectType::Constraint]->setHeaderLabel(tr("ON UPDATE"), 3);
+	objects_tab_map[ObjectType::Constraint]->setHeaderLabel(tr("Alias"), 4);
+	objects_tab_map[ObjectType::Constraint]->setHeaderLabel(tr("Comment"), 5);
 
 	objects_tab_map[ObjectType::Trigger]->setColumnCount(6);
-	objects_tab_map[ObjectType::Trigger]->setHeaderLabel(trUtf8("Name"), 0);
+	objects_tab_map[ObjectType::Trigger]->setHeaderLabel(tr("Name"), 0);
 	objects_tab_map[ObjectType::Trigger]->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("uid")),0);
-	objects_tab_map[ObjectType::Trigger]->setHeaderLabel(trUtf8("Refer. Table"), 1);
+	objects_tab_map[ObjectType::Trigger]->setHeaderLabel(tr("Refer. Table"), 1);
 	objects_tab_map[ObjectType::Trigger]->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("table")),1);
-	objects_tab_map[ObjectType::Trigger]->setHeaderLabel(trUtf8("Firing"), 2);
+	objects_tab_map[ObjectType::Trigger]->setHeaderLabel(tr("Firing"), 2);
 	objects_tab_map[ObjectType::Trigger]->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("trigger")),2);
-	objects_tab_map[ObjectType::Trigger]->setHeaderLabel(trUtf8("Events"), 3);
-	objects_tab_map[ObjectType::Trigger]->setHeaderLabel(trUtf8("Alias"), 4);
-	objects_tab_map[ObjectType::Trigger]->setHeaderLabel(trUtf8("Comment"), 5);
+	objects_tab_map[ObjectType::Trigger]->setHeaderLabel(tr("Events"), 3);
+	objects_tab_map[ObjectType::Trigger]->setHeaderLabel(tr("Alias"), 4);
+	objects_tab_map[ObjectType::Trigger]->setHeaderLabel(tr("Comment"), 5);
 
 	objects_tab_map[ObjectType::Rule]->setColumnCount(5);
-	objects_tab_map[ObjectType::Rule]->setHeaderLabel(trUtf8("Name"), 0);
+	objects_tab_map[ObjectType::Rule]->setHeaderLabel(tr("Name"), 0);
 	objects_tab_map[ObjectType::Rule]->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("uid")),0);
-	objects_tab_map[ObjectType::Rule]->setHeaderLabel(trUtf8("Execution"), 1);
-	objects_tab_map[ObjectType::Rule]->setHeaderLabel(trUtf8("Event"), 2);
-	objects_tab_map[ObjectType::Rule]->setHeaderLabel(trUtf8("Alias"), 3);
-	objects_tab_map[ObjectType::Rule]->setHeaderLabel(trUtf8("Comment"), 4);
+	objects_tab_map[ObjectType::Rule]->setHeaderLabel(tr("Execution"), 1);
+	objects_tab_map[ObjectType::Rule]->setHeaderLabel(tr("Event"), 2);
+	objects_tab_map[ObjectType::Rule]->setHeaderLabel(tr("Alias"), 3);
+	objects_tab_map[ObjectType::Rule]->setHeaderLabel(tr("Comment"), 4);
 
 	objects_tab_map[ObjectType::Index]->setColumnCount(4);
-	objects_tab_map[ObjectType::Index]->setHeaderLabel(trUtf8("Name"), 0);
+	objects_tab_map[ObjectType::Index]->setHeaderLabel(tr("Name"), 0);
 	objects_tab_map[ObjectType::Index]->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("uid")),0);
-	objects_tab_map[ObjectType::Index]->setHeaderLabel(trUtf8("Indexing"), 1);
-	objects_tab_map[ObjectType::Index]->setHeaderLabel(trUtf8("Alias"), 2);
-	objects_tab_map[ObjectType::Index]->setHeaderLabel(trUtf8("Comment"), 3);
+	objects_tab_map[ObjectType::Index]->setHeaderLabel(tr("Indexing"), 1);
+	objects_tab_map[ObjectType::Index]->setHeaderLabel(tr("Alias"), 2);
+	objects_tab_map[ObjectType::Index]->setHeaderLabel(tr("Comment"), 3);
 
 	objects_tab_map[ObjectType::Policy]->setColumnCount(8);
-	objects_tab_map[ObjectType::Policy]->setHeaderLabel(trUtf8("Name"), 0);
+	objects_tab_map[ObjectType::Policy]->setHeaderLabel(tr("Name"), 0);
 	objects_tab_map[ObjectType::Policy]->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("uid")),0);
-	objects_tab_map[ObjectType::Policy]->setHeaderLabel(trUtf8("Command"), 1);
+	objects_tab_map[ObjectType::Policy]->setHeaderLabel(tr("Command"), 1);
 	objects_tab_map[ObjectType::Policy]->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("keyword")),1);
-	objects_tab_map[ObjectType::Policy]->setHeaderLabel(trUtf8("Permissive"), 2);
-	objects_tab_map[ObjectType::Policy]->setHeaderLabel(trUtf8("USING expression"), 3);
-	objects_tab_map[ObjectType::Policy]->setHeaderLabel(trUtf8("CHECK expression"), 4);
-	objects_tab_map[ObjectType::Policy]->setHeaderLabel(trUtf8("Roles"), 5);
+	objects_tab_map[ObjectType::Policy]->setHeaderLabel(tr("Permissive"), 2);
+	objects_tab_map[ObjectType::Policy]->setHeaderLabel(tr("USING expression"), 3);
+	objects_tab_map[ObjectType::Policy]->setHeaderLabel(tr("CHECK expression"), 4);
+	objects_tab_map[ObjectType::Policy]->setHeaderLabel(tr("Roles"), 5);
 	objects_tab_map[ObjectType::Policy]->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("role")),5);
-	objects_tab_map[ObjectType::Policy]->setHeaderLabel(trUtf8("Alias"), 6);
-	objects_tab_map[ObjectType::Policy]->setHeaderLabel(trUtf8("Comment"), 7);
+	objects_tab_map[ObjectType::Policy]->setHeaderLabel(tr("Alias"), 6);
+	objects_tab_map[ObjectType::Policy]->setHeaderLabel(tr("Comment"), 7);
 
 	partition_keys_tab = new ElementsTableWidget;
 	partition_keys_tab->setEnabled(false);
 	grid = dynamic_cast<QGridLayout *>(attributes_tbw->widget(6)->layout());
 	grid->addWidget(partition_keys_tab, 1, 0, 1, 2);
 
-	PartitioningType::getTypes(part_types);
-	part_types.push_front(trUtf8("None"));
+	part_types = PartitioningType::getTypes();
+	part_types.push_front(tr("None"));
 	partitioning_type_cmb->addItems(part_types);
 
 	connect(partitioning_type_cmb, &QComboBox::currentTextChanged, [&](){
@@ -229,15 +229,15 @@ int TableWidget::openEditingForm(TableObject *object)
 	res = editing_form.exec();
 	GeneralConfigWidget::saveWidgetGeometry(&editing_form, object_wgt->metaObject()->className());
 
-	return(res);
+	return res;
 }
 
 ObjectsTableWidget *TableWidget::getObjectTable(ObjectType obj_type)
 {
 	if(objects_tab_map.count(obj_type) > 0)
-		return(objects_tab_map[obj_type]);
+		return objects_tab_map[obj_type];
 
-	return(nullptr);
+	return nullptr;
 }
 
 ObjectType TableWidget::getObjectType(QObject *sender)
@@ -260,7 +260,7 @@ ObjectType TableWidget::getObjectType(QObject *sender)
 		}
 	}
 
-	return(obj_type);
+	return obj_type;
 }
 
 void TableWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Schema *schema, Table *table, double pos_x, double pos_y)
@@ -344,7 +344,7 @@ void TableWidget::__setAttributes(DatabaseModel *model, OperationList *op_list, 
 			parent_tables->addRow();
 			parent_tables->setCellText(aux_tab->getName(), i, 0);
 			parent_tables->setCellText(aux_tab->getSchema()->getName(), i, 1);
-			parent_tables->setCellText(trUtf8("Parent"), i, 2);
+			parent_tables->setCellText(tr("Parent"), i, 2);
 		}
 
 		aux_tab=table->getCopyTable();
@@ -354,7 +354,7 @@ void TableWidget::__setAttributes(DatabaseModel *model, OperationList *op_list, 
 			parent_tables->addRow();
 			parent_tables->setCellText(aux_tab->getName(), i, 0);
 			parent_tables->setCellText(aux_tab->getSchema()->getName(), i, 1);
-			parent_tables->setCellText(trUtf8("Copy"), i, 2);
+			parent_tables->setCellText(tr("Copy"), i, 2);
 		}
 
 		aux_tab=table->getPartitionedTable();
@@ -364,7 +364,7 @@ void TableWidget::__setAttributes(DatabaseModel *model, OperationList *op_list, 
 			parent_tables->addRow();
 			parent_tables->setCellText(aux_tab->getName(), i, 0);
 			parent_tables->setCellText(aux_tab->getSchema()->getName(), i, 1);
-			parent_tables->setCellText(trUtf8("Partitioned"), i, 2);
+			parent_tables->setCellText(tr("Partitioned"), i, 2);
 		}
 
 		i = parent_tables->getRowCount();
@@ -373,7 +373,7 @@ void TableWidget::__setAttributes(DatabaseModel *model, OperationList *op_list, 
 			parent_tables->addRow();
 			parent_tables->setCellText(tab->getName(), i, 0);
 			parent_tables->setCellText(tab->getSchema()->getName(), i, 1);
-			parent_tables->setCellText(trUtf8("Partition"), i, 2);
+			parent_tables->setCellText(tr("Partition"), i, 2);
 			i++;
 		}
 
@@ -485,7 +485,7 @@ void TableWidget::listObjects(ObjectType obj_type)
 	}
 }
 
-void TableWidget::handleObject(void)
+void TableWidget::handleObject()
 {
 	ObjectType obj_type=ObjectType::BaseObject;
 	TableObject *object=nullptr;
@@ -685,7 +685,7 @@ void TableWidget::showObjectData(TableObject *object, int row)
 		tab->setCellText(~policy->getPolicyCommand(), row, 1);
 
 		//Column 2: Permissive
-		tab->setCellText(QString("%1").arg(policy->isPermissive() ? trUtf8("Yes") : trUtf8("No")), row, 2);
+		tab->setCellText(QString("%1").arg(policy->isPermissive() ? tr("Yes") : tr("No")), row, 2);
 
 		//Column 3: USING expression
 		tab->setCellText(policy->getUsingExpression(), row, 3);
@@ -718,7 +718,7 @@ void TableWidget::showObjectData(TableObject *object, int row)
 	tab->setRowData(QVariant::fromValue<void *>(object), row);
 }
 
-void TableWidget::removeObjects(void)
+void TableWidget::removeObjects()
 {
 	PhysicalTable *table=nullptr;
 	unsigned count, op_count=0, i;
@@ -894,7 +894,7 @@ void TableWidget::swapObjects(int idx1, int idx2)
 	}
 }
 
-void TableWidget::editData(void)
+void TableWidget::editData()
 {
 	BaseForm base_form(this);
 	TableDataWidget *tab_data_wgt=new TableDataWidget(this);
@@ -908,7 +908,7 @@ void TableWidget::editData(void)
 	GeneralConfigWidget::saveWidgetGeometry(&base_form, tab_data_wgt->metaObject()->className());
 }
 
-void TableWidget::applyConfiguration(void)
+void TableWidget::applyConfiguration()
 {
 	try
 	{
@@ -1066,7 +1066,7 @@ void TableWidget::applyConfiguration(void)
 	}
 }
 
-void TableWidget::cancelConfiguration(void)
+void TableWidget::cancelConfiguration()
 {
 	BaseObjectWidget::cancelChainedOperation();
 }

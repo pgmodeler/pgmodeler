@@ -3,7 +3,7 @@
 CAUTION: Do not modify this file unless you know what you are doing.
          Unexpected results may occur if the code is changed deliberately.
 -->
-<dbmodel pgmodeler-ver="0.9.2" author="Raphael Araújo e Silva" last-position="0,0" last-zoom="1" max-obj-count="6">
+<dbmodel pgmodeler-ver="0.9.3-beta1" use-changelog="false" author="Raphael Araújo e Silva" last-position="0,0" last-zoom="1.05" max-obj-count="6">
 <role name="roletest"
       inherit="true">
 </role>
@@ -18,6 +18,8 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<style id="table-name" colors="#ffffff"/>
 	<style id="table-schema-name" colors="#ffffff"/>
 	<style id="table-title" colors="#ff0000,#800000,#000000"/>
+	<style id="table-toggler-body" colors="#ffffff,#ffffff,#000000"/>
+	<style id="table-toggler-btns" colors="#fcfcfc,#fcfcfc,#808080"/>
 	<comment><![CDATA[this tag is a test]]></comment>
 </tag>
 <schema name="public" layer="0" protected="true" fill-color="#000000" sql-disabled="true">
@@ -40,10 +42,10 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<definition><![CDATA[SELECT 1+1;]]></definition>
 </function>
 
-<table name="table" layer="0" collapse-mode="2" max-obj-count="4">
+<table name="table" layer="0" collapse-mode="2" max-obj-count="4" z-value="0">
 	<schema name="public"/>
 	<tag name="sample tag"/>
-	<position x="20" y="20"/>
+	<position x="40" y="40"/>
 	<column name="column" not-null="true">
 		<type name="serial" length="1"/>
 	</column>
@@ -69,9 +71,9 @@ CAUTION: Do not modify this file unless you know what you are doing.
 		</idxelement>
 </index>
 
-<table name="table1" layer="0" collapse-mode="2" max-obj-count="4">
+<table name="table1" layer="0" collapse-mode="2" max-obj-count="4" z-value="0">
 	<schema name="public"/>
-	<position x="460" y="340"/>
+	<position x="660" y="560"/>
 	<column name="column" not-null="true">
 		<type name="serial" length="1"/>
 	</column>
@@ -114,21 +116,17 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 src-table="public.table1"
 	 dst-table="public.&quot;table&quot;"
 	 src-required="false" dst-required="false">
-	<line>
-		<position x="400" y="180"/>
-	<position x="300" y="180"/>
-	</line>
 	<label ref-type="name-label">
-		<position x="8.97422" y="6.08397"/>
+		<position x="164.369" y="161.148"/>
 	</label>
 	<column name="attribute">
 		<type name="integer" length="1"/>
 	</column>
 </relationship>
 
-<view name="view" layer="0" collapse-mode="2" max-obj-count="4">
+<view name="view" layer="0" collapse-mode="2" max-obj-count="4" z-value="0">
 	<schema name="public"/>
-	<position x="20" y="360"/>
+	<position x="40" y="580"/>
 	<reference table="public.&quot;table&quot;" column="column1" alias="t1" column-alias="col1"/>
 	<reference table="public.table1" column="column2" alias="t2" column-alias="col2"/>
 	<reference alias="expr">
@@ -153,19 +151,19 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</label>
 </relationship>
 
-<textbox name="textbox" layer="0" font-size="9">
-	<position x="320" y="380"/>
+<textbox name="textbox" layer="0" z-value="0" font-size="9">
+	<position x="300" y="620"/>
 	<comment><![CDATA[Selected Textbox]]></comment>
 </textbox>
 
-<textbox name="textbox1" layer="0" font-size="9" protected="true">
-	<position x="180" y="380"/>
+<textbox name="textbox1" layer="0" protected="true" z-value="0" font-size="9">
+	<position x="300" y="520"/>
 	<comment><![CDATA[Protected Textbox]]></comment>
 </textbox>
 
-<table name="table2" layer="0" oids="true" collapse-mode="2" max-obj-count="4" protected="true">
+<table name="table2" layer="0" oids="true" collapse-mode="2" max-obj-count="4" z-value="0">
 	<schema name="public"/>
-	<position x="460" y="20"/>
+	<position x="660" y="40"/>
 	<column name="column" not-null="true">
 		<type name="serial" length="1"/>
 	</column>
@@ -206,6 +204,16 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<foreigndatawrapper name="fdw_test"/>
 </foreignserver>
 
+<foreigntable name="foreign_table" layer="0" gen-alter-cmds="true" collapse-mode="2" max-obj-count="1" z-value="0">
+	<schema name="public"/>
+	<role name="roletest"/>
+	<foreignserver name="server_test"/>
+	<position x="660" y="400"/>
+	<column name="id" not-null="true">
+		<type name="smallint" length="0"/>
+	</column>
+</foreigntable>
+
 <constraint name="table2_fk" type="fk-constr" comparison-type="MATCH FULL"
 	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.&quot;table&quot;" table="public.table2">
 	<columns names="column2" ref-type="src-columns"/>
@@ -217,18 +225,8 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 dst-table="public.&quot;table&quot;" reference-fk="table2_fk"
 	 src-required="false" dst-required="false">
 	<label ref-type="name-label">
-		<position x="2.43432" y="-59.4485"/>
+		<position x="30.9966" y="-84.4807"/>
 	</label>
 </relationship>
-
-<foreigntable name="foreign_table" layer="0" gen-alter-cmds="true" collapse-mode="2" max-obj-count="0">
-	<schema name="public"/>
-	<role name="roletest"/>
-	<foreignserver name="server_test"/>
-	<position x="270" y="280"/>
-    <column name="id" not-null="true">
-		<type name="smallint" length="0"/>
-	</column>
-</foreigntable>
 
 </dbmodel>

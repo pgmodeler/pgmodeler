@@ -1,12 +1,3 @@
-# libpgmodeler.pro (reviewed version)
-#
-# Refactored by: Lisandro Damián Nicanor Pérez Meyer <perezmeyer@gmail.com>
-# Refactored code: https://github.com/perezmeyer/pgmodeler/tree/shared_libs
-# Reviewed by: Raphal Araújo e Silva <raphael@pgmodeler.com.br>
-#
-# NOTE: Reviewed code is not a direct merge from refactored version but based upon the
-# refactored code, containing almost all changes done by the refactoring author.
-
 include(../pgmodeler.pri)
 
 TEMPLATE = lib
@@ -14,7 +5,9 @@ TARGET = pgmodeler
 windows: DESTDIR = $$PWD
 
 HEADERS += src/textbox.h \
+	   src/basefunction.h \
 	   src/cast.h \
+	   src/defaultlanguages.h \
 	   src/function.h \
 	   src/language.h \
 	   src/operator.h \
@@ -25,15 +18,41 @@ HEADERS += src/textbox.h \
 	   src/aggregate.h \
 	   src/permission.h \
 	   src/databasemodel.h \
+	   src/pgsqltypes/actiontype.h \
+	   src/pgsqltypes/basetype.h \
+	   src/pgsqltypes/behaviortype.h \
+	   src/pgsqltypes/categorytype.h \
+	   src/pgsqltypes/constrainttype.h \
+	   src/pgsqltypes/deferraltype.h \
+	   src/pgsqltypes/encodingtype.h \
+	   src/pgsqltypes/eventtriggertype.h \
+	   src/pgsqltypes/eventtype.h \
+	   src/pgsqltypes/executiontype.h \
+	   src/pgsqltypes/firingtype.h \
+	   src/pgsqltypes/functiontype.h \
+	   src/pgsqltypes/identitytype.h \
+	   src/pgsqltypes/indexingtype.h \
+	   src/pgsqltypes/intervaltype.h \
+	   src/pgsqltypes/matchtype.h \
+	   src/pgsqltypes/partitioningtype.h \
+	   src/pgsqltypes/pgsqltype.h \
+	   src/pgsqltypes/policycmdtype.h \
+	   src/pgsqltypes/providertype.h \
+	   src/pgsqltypes/securitytype.h \
+	   src/pgsqltypes/spatialtype.h \
+	   src/pgsqltypes/storagetype.h \
+	   src/pgsqltypes/templatetype.h \
+	   src/pgsqltypes/usertypeconfig.h \
+	   src/procedure.h \
 	   src/role.h \
 	   src/constraint.h \
+	   src/transform.h \
 	   src/type.h \
 	   src/tablespace.h \
 	   src/trigger.h \
 	   src/baseobject.h \
 	   src/rule.h \
 	   src/sequence.h \
-	   src/pgsqltypes.h \
 	   src/conversion.h \
 	   src/schema.h \
 	   src/indexelement.h \
@@ -70,7 +89,33 @@ HEADERS += src/textbox.h \
 	   src/foreigntable.h
 
 SOURCES +=  src/textbox.cpp \
+	    src/basefunction.cpp \
 	    src/domain.cpp \
+	    src/pgsqltypes/actiontype.cpp \
+	    src/pgsqltypes/basetype.cpp \
+	    src/pgsqltypes/behaviortype.cpp \
+	    src/pgsqltypes/categorytype.cpp \
+	    src/pgsqltypes/constrainttype.cpp \
+	    src/pgsqltypes/deferraltype.cpp \
+	    src/pgsqltypes/encodingtype.cpp \
+	    src/pgsqltypes/eventtriggertype.cpp \
+	    src/pgsqltypes/eventtype.cpp \
+	    src/pgsqltypes/executiontype.cpp \
+	    src/pgsqltypes/firingtype.cpp \
+	    src/pgsqltypes/functiontype.cpp \
+	    src/pgsqltypes/identitytype.cpp \
+	    src/pgsqltypes/indexingtype.cpp \
+	    src/pgsqltypes/intervaltype.cpp \
+	    src/pgsqltypes/matchtype.cpp \
+	    src/pgsqltypes/partitioningtype.cpp \
+	    src/pgsqltypes/pgsqltype.cpp \
+	    src/pgsqltypes/policycmdtype.cpp \
+	    src/pgsqltypes/providertype.cpp \
+	    src/pgsqltypes/securitytype.cpp \
+	    src/pgsqltypes/spatialtype.cpp \
+	    src/pgsqltypes/storagetype.cpp \
+	    src/procedure.cpp \
+	    src/transform.cpp \
 	    src/trigger.cpp \
 	    src/basegraphicobject.cpp \
 	    src/baserelationship.cpp \
@@ -81,7 +126,6 @@ SOURCES +=  src/textbox.cpp \
 	    src/index.cpp \
 	    src/operator.cpp \
 	    src/constraint.cpp \
-	    src/pgsqltypes.cpp \
 	    src/schema.cpp \
 	    src/language.cpp \
 	    src/role.cpp \
@@ -129,7 +173,7 @@ unix|windows: LIBS += -L$$OUT_PWD/../libparsers/ -lparsers \
                     -L$$OUT_PWD/../libutils/ -lutils
 
 INCLUDEPATH += $$PWD/../libparsers/src \
-               $$PWD/../libutils/src
+			   $$PWD/../libutils/src
 
 DEPENDPATH += $$PWD/../libparsers \
               $$PWD/../libutils

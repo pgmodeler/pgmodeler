@@ -4,11 +4,12 @@
 
 # Extension exists only on PostgreSQL >= 9.1
 %if {list} %and ({pgsql-ver} != "9.0") %then
-   [SELECT ex.oid, extname AS name FROM pg_extension AS ex ]
+   [SELECT ex.oid, extname AS name, ns.nspname AS parent, 'schema' AS parent_type
+    FROM pg_extension AS ex 
+    LEFT JOIN pg_namespace AS ns ON ex.extnamespace = ns.oid ]
 
    %if {schema} %then
-    [ LEFT JOIN pg_namespace AS ns ON ex.extnamespace = ns.oid
-      WHERE ns.nspname = ] '{schema}'
+    [ WHERE ns.nspname = ] '{schema}'
    %end
 
   %if {last-sys-oid} %then
@@ -18,6 +19,16 @@
      [ WHERE ]
     %end
      [ ex.oid ] {oid-filter-op} $sp {last-sys-oid}
+  %end
+  
+  %if {name-filter} %then
+    %if {last-sys-oid} %or {schema} %then
+      [ AND ]
+    %else
+      [ WHERE ]
+    %end
+  
+    ( [ex.extname ~* ] E'{name-filter}' )
   %end
 
 %else
@@ -30,7 +41,15 @@
 		   END
 	    FROM pg_depend AS _dp
 	    LEFT JOIN pg_extension AS _ex ON _ex.oid=_dp.objid
-	    WHERE  _dp.refobjid = ex.oid AND _dp.objid::regtype::text SIMILAR TO '(' || ex.extnamespace::regnamespace::text || '.)?(' || ex.extname  || ')'
+	    WHERE  _dp.refobjid = ex.oid AND _dp.objid::regtype::text SIMILAR TO '(' || ]
+                
+        %if ({pgsql-ver} >=f "9.5") %then
+            ex.extnamespace::regnamespace::text 
+        %else
+            [ (SELECT nspname FROM pg_namespace WHERE oid = ex.extnamespace) ]
+        %end
+        
+      [ || '.)?(' || ex.extname  || ')'
 	    AND _dp.classid::regclass::text = 'pg_type') AS handles_type_bool, ]
 
 	  ({comment}) [ AS comment ]

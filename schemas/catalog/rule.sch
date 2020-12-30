@@ -3,21 +3,28 @@
 #          Code generation can be broken if incorrect changes are made.
 
 %if {list} %then
-[SELECT rl.oid, rl.rulename AS name
-  FROM ( SELECT rw.* ]
+
+    %set {parent-name} [ ns.nspname || '.' || cl.relname ]
+
+    %if {use-signature} %then
+        %set {signature} {parent-name} [ || '.' || ]
+    %end    
+
+[SELECT rl.oid, rl.rulename AS name, ] {parent-name} [ AS parent, 'table' AS parent_type
+ FROM ( SELECT rw.* ]
 	
   %if ({pgsql-ver} <=f "11.0") %then
     [ , rw.oid ] 
   %end
-    
-[   FROM pg_rewrite AS rw
+      
+[ FROM pg_rewrite AS rw
 	WHERE rw.ev_type <> '1'::"char"
   ) AS rl
-  LEFT JOIN pg_class cl ON cl.oid = rl.ev_class AND cl.relkind IN ('r','v','m') ]
+  LEFT JOIN pg_class cl ON cl.oid = rl.ev_class AND cl.relkind IN ('r','v','m') 
+  LEFT JOIN pg_namespace AS ns ON ns.oid = cl.relnamespace ]
 
   %if {schema} %then
-    [ LEFT JOIN pg_namespace AS ns ON ns.oid = cl.relnamespace
-      WHERE ns.nspname= ] '{schema}'
+    [ WHERE ns.nspname= ] '{schema}'
 
     %if {table} %then
      [ AND cl.relname=]'{table}'
@@ -42,7 +49,27 @@
     %end
       ( {not-ext-object} )
   %end
-
+  
+  %if {name-filter} %then
+    %if %not {last-sys-oid} %and %not {schema} %and %not {not-ext-object} %then
+      [ WHERE ]
+    %else
+      [ AND ]
+    %end
+    
+    ( {signature} [ rl.rulename ~* ] E'{name-filter}' )
+  %end
+  
+  %if {extra-condition} %then
+    %if %not {last-sys-oid} %and %not {schema} %and %not {not-ext-object} %and %not {name-filter} %then
+      [ WHERE ]
+    %else
+      [ AND ]
+    %end
+    
+    ( {extra-condition} )
+  %end
+  
 %else
     %if {attribs} %then
       [SELECT rl.oid, rl.rulename AS name, cl.oid as table,

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -29,14 +29,11 @@
 #include "baseconfigwidget.h"
 #include "connection.h"
 #include "messagebox.h"
-#include "hinttextwidget.h"
 
 class ConnectionsConfigWidget: public BaseConfigWidget, public Ui::ConnectionsConfigWidget {
 	private:
 		Q_OBJECT
 		
-		HintTextWidget *auto_browse_ht, *default_for_ops_ht, *other_params_ht;
-
 		static const QString DefaultFor;
 		
 		//! \brief Stores the connections created by the user
@@ -51,16 +48,16 @@ class ConnectionsConfigWidget: public BaseConfigWidget, public Ui::ConnectionsCo
 
 		void hideEvent(QHideEvent *);
 		void showEvent(QShowEvent *);
-		void updateConnectionsCombo(void);
+		void updateConnectionsCombo();
 		
 	public:
 		ConnectionsConfigWidget(QWidget * parent = nullptr);
-		~ConnectionsConfigWidget(void);
+		virtual ~ConnectionsConfigWidget();
 		
-		void saveConfiguration(void);
-		void loadConfiguration(void);
+		void saveConfiguration();
+		void loadConfiguration();
 		
-		static map<QString, attribs_map> getConfigurationParams(void);
+		static map<QString, attribs_map> getConfigurationParams();
 		
 		//! \brief Fills the passed map with all the loaded connections.
 		static void getConnections(map<QString, Connection *> &conns, bool inc_hosts=true);
@@ -78,20 +75,20 @@ class ConnectionsConfigWidget: public BaseConfigWidget, public Ui::ConnectionsCo
 		static Connection *getDefaultConnection(unsigned operation);
 		
 	protected:
-		void destroyConnections(void);
+		void destroyConnections();
 		
 	public slots:
-		void restoreDefaults(void);
+		void restoreDefaults();
 		
 	private slots:
-		void newConnection(void);
-		void duplicateConnection(void);
-		void handleConnection(void);
-		void editConnection(void);
-		void testConnection(void);
-		void removeConnection(void);
-		void enableCertificates(void);
-		void enableConnectionTest(void);
+		void newConnection();
+		void duplicateConnection();
+		void handleConnection();
+		void editConnection();
+		void testConnection();
+		void removeConnection();
+		void enableCertificates();
+		void enableConnectionTest();
 		void applyConfiguration(void){}
 		
 		friend class ConfigurationForm;

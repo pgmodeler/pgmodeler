@@ -1,12 +1,3 @@
-# main-cli.pro (reviewed version)
-#
-# Refactored by: Lisandro Damián Nicanor Pérez Meyer <perezmeyer@gmail.com>
-# Refactored code: https://github.com/perezmeyer/pgmodeler/tree/shared_libs
-# Reviewed by: Raphal Araújo e Silva <raphael@pgmodeler.com.br>
-#
-# NOTE: Reviewed code is not a direct merge from refactored version but based upon the
-# refactored code, containing almost all changes done by the refactoring author.
-
 include(../pgmodeler.pri)
 
 CONFIG += console
@@ -19,9 +10,10 @@ windows: RCC_DIR=src/
 windows: DESTDIR = $$PWD
 
 SOURCES += src/main.cpp \
-	   src/pgmodelercli.cpp
+    src/pgmodelercliapp.cpp
 
-HEADERS += src/pgmodelercli.h
+HEADERS += \
+    src/pgmodelercliapp.h
 
 unix|windows: LIBS += -L$$OUT_PWD/../libpgmodeler_ui/ -lpgmodeler_ui \
                     -L$$OUT_PWD/../libobjrenderer/ -lobjrenderer \
@@ -30,8 +22,7 @@ unix|windows: LIBS += -L$$OUT_PWD/../libpgmodeler_ui/ -lpgmodeler_ui \
                     -L$$OUT_PWD/../libparsers/ -lparsers \
                     -L$$OUT_PWD/../libutils/ -lutils
 
-INCLUDEPATH += $$PWD/../libpgmodeler_ui \
-               $$PWD/../libpgmodeler_ui/src \
+INCLUDEPATH += $$PWD/../libpgmodeler_ui/src \
                $$PWD/../libobjrenderer/src \
                $$PWD/../libpgconnector/src \
                $$PWD/../libpgmodeler/src \

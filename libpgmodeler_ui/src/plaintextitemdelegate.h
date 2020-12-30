@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -35,7 +35,7 @@ class PlainTextItemDelegate : public QStyledItemDelegate {
 
 	public:
 		explicit PlainTextItemDelegate(QObject * parent, bool read_only);
-		~PlainTextItemDelegate(void);
+		virtual ~PlainTextItemDelegate();
 
 	protected:
 		//! \brief Overrides the default implementation and set the editor as read only/disable to prevent change the item data

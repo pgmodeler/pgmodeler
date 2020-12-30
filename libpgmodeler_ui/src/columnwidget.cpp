@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -31,15 +31,14 @@ ColumnWidget::ColumnWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType
 		Ui_ColumnWidget::setupUi(this);
 		edit_seq_btn->setVisible(false);
 
-		IdentityType::getTypes(list);
-		identity_type_cmb->addItems(list);
+		identity_type_cmb->addItems(IdentityType::getTypes());
 
 		data_type=nullptr;
 		data_type=new PgSQLTypeWidget(this);
 
 		hl_default_value=nullptr;
 		hl_default_value=new SyntaxHighlighter(def_value_txt, true);
-		hl_default_value->loadConfiguration(GlobalAttributes::SQLHighlightConfPath);
+		hl_default_value->loadConfiguration(GlobalAttributes::getSQLHighlightConfPath());
 
 		sequence_sel=new ObjectSelectorWidget(ObjectType::Sequence, true, this);
 		sequence_sel->setEnabled(false);
@@ -55,44 +54,40 @@ ColumnWidget::ColumnWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType
 
 		map<QString, vector<QWidget *> > fields_map;
 		fields_map[generateVersionsInterval(AfterVersion, PgSqlVersions::PgSqlVersion100)].push_back(identity_rb);
+		fields_map[generateVersionsInterval(AfterVersion, PgSqlVersions::PgSqlVersion120)].push_back(generated_chk);
 		highlightVersionSpecificFields(fields_map);
 
-		connect(sequence_rb, &QRadioButton::clicked,
-				[&](){
-						sequence_sel->setEnabled(true);
-						def_value_txt->setEnabled(false);
-						identity_type_cmb->setEnabled(false);
-						notnull_chk->setEnabled(true);
-						edit_seq_btn->setVisible(false);
-				});
+		connect(expression_rb, SIGNAL(toggled(bool)), this, SLOT(enableDefaultValueFields()));
+		connect(sequence_rb, SIGNAL(toggled(bool)), this, SLOT(enableDefaultValueFields()));
+		connect(identity_rb, SIGNAL(toggled(bool)), this, SLOT(enableDefaultValueFields()));
 
-		connect(expression_rb, &QRadioButton::clicked,
-				[&](){
-						sequence_sel->setEnabled(false);
-						def_value_txt->setEnabled(true);
-						identity_type_cmb->setEnabled(false);
-						notnull_chk->setEnabled(true);
-						edit_seq_btn->setVisible(false);
-				});
-
-		connect(identity_rb, &QRadioButton::clicked,
-				[&](){
-						sequence_sel->setEnabled(false);
-						def_value_txt->setEnabled(false);
-						identity_type_cmb->setEnabled(true);
-						notnull_chk->setChecked(true);
-						notnull_chk->setEnabled(false);
-						edit_seq_btn->setVisible(true);
-				});
+		connect(generated_chk, &QCheckBox::toggled, [&](bool value){
+			notnull_chk->setDisabled(value);
+			notnull_chk->setChecked(false);
+		});
 
 		connect(edit_seq_btn, SIGNAL(clicked(bool)), this, SLOT(editSequenceAttributes()));
-
 		setMinimumSize(540, 480);
 	}
 	catch(Exception &e)
 	{
 		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
+}
+
+void ColumnWidget::enableDefaultValueFields()
+{
+	bool is_expr = sender() == expression_rb,
+			is_seq = sender() == sequence_rb,
+			is_ident = sender() == identity_rb;
+
+	sequence_sel->setEnabled(is_seq);
+	def_value_txt->setEnabled(is_expr);
+	identity_type_cmb->setEnabled(is_ident);
+	notnull_chk->setEnabled(is_expr || is_seq);
+	edit_seq_btn->setVisible(is_ident);
+	generated_chk->setEnabled(is_expr);
+	generated_chk->setChecked(false);
 }
 
 void ColumnWidget::setAttributes(DatabaseModel *model, OperationList *op_list, BaseObject *parent_obj, Column *column)
@@ -105,13 +100,14 @@ void ColumnWidget::setAttributes(DatabaseModel *model, OperationList *op_list, B
 	BaseObjectWidget::setAttributes(model, op_list, column, parent_obj);
 	sequence_sel->setModel(model);
 
-	ident_col_seq.setValues(QString(), QString(), QString(), QString(), QString());
+	ident_col_seq.setValues("", "", "", "", "");
 	ident_col_seq.setCycle(false);
 
 	if(column)
 	{
 		type=column->getType();
 		notnull_chk->setChecked(column->isNotNull());
+		generated_chk->setChecked(column->isGenerated());
 		def_value_txt->setPlainText(column->getDefaultValue());
 
 		if(column->getSequence())
@@ -135,7 +131,7 @@ void ColumnWidget::setAttributes(DatabaseModel *model, OperationList *op_list, B
 													 UserTypeConfig::DomainType | UserTypeConfig::ExtensionType, true,false);
 }
 
-void ColumnWidget::editSequenceAttributes(void)
+void ColumnWidget::editSequenceAttributes()
 {
 	Column *col = dynamic_cast<Column *>(this->object);
 	Schema *schema = nullptr;
@@ -148,7 +144,7 @@ void ColumnWidget::editSequenceAttributes(void)
 	else
 		schema = this->model->getSchema("public");
 
-	ident_col_seq.setName(QString("%1_%2_seq").arg(table ? table->getName() : QString()).arg(col ? col->getName() : QString("new_column")));
+	ident_col_seq.setName(QString("%1_%2_seq").arg(table ? table->getName() : "").arg(col ? col->getName() : QString("new_column")));
 	ident_col_seq.setName(PgModelerNs::generateUniqueName(&ident_col_seq, *model->getObjectList(ObjectType::Sequence), false));
 	ident_col_seq.setSchema(schema);
 
@@ -166,16 +162,20 @@ void ColumnWidget::editSequenceAttributes(void)
 	GeneralConfigWidget::saveWidgetGeometry(&editing_form, seq_wgt->metaObject()->className());
 }
 
-void ColumnWidget::applyConfiguration(void)
+void ColumnWidget::applyConfiguration()
 {
 	try
 	{
 		Column *column=nullptr;
-		Constraint *pk = nullptr;
+		Constraint *pk = nullptr, *constr = nullptr;
+		PhysicalTable *parent_tab = dynamic_cast<PhysicalTable *>(table);
+		vector<Constraint *> fks;
+		BaseRelationship *rel = nullptr;
 		startConfiguration<Column>();
 
 		column=dynamic_cast<Column *>(this->object);
 		column->setNotNull(notnull_chk->isChecked());
+		column->setGenerated(generated_chk->isChecked());
 		column->setType(data_type->getPgSQLType());
 
 		if(expression_rb->isChecked())
@@ -188,18 +188,42 @@ void ColumnWidget::applyConfiguration(void)
 		column->setIdSeqAttributes(ident_col_seq.getMinValue(), ident_col_seq.getMaxValue(), ident_col_seq.getIncrement(),
 															 ident_col_seq.getStart(), ident_col_seq.getCache(), ident_col_seq.isCycle());
 
-		if(table)
+		if(parent_tab)
 		{
-			pk = dynamic_cast<PhysicalTable *>(table)->getPrimaryKey();
+			pk = parent_tab->getPrimaryKey();
+
 			if(pk && pk->isColumnReferenced(column) && !notnull_chk->isChecked())
 				throw Exception(Exception::getErrorMessage(ErrorCode::NullPrimaryKeyColumn)
 												.arg(column->getName())
 												.arg(pk->getParentTable()->getSignature(true)),
 												ErrorCode::NullPrimaryKeyColumn,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+			// Separating fks in which the column is part so the fk relationships can be properly updated
+			for(unsigned idx = 0; idx < parent_tab->getConstraintCount(); idx++)
+			{
+				constr = parent_tab->getConstraint(idx);
+
+				if(constr && constr->getConstraintType() == ConstraintType::ForeignKey && constr->isColumnExists(column, Constraint::SourceCols))
+					fks.push_back(constr);
+			}
 		}
 
 		BaseObjectWidget::applyConfiguration();
-		model->updateViewsReferencingTable(dynamic_cast<PhysicalTable *>(table));
+		model->updateViewsReferencingTable(parent_tab);
+
+		/* Updating the mandatory state of destination tables on FK relationships
+		 * derived from the table's fk in which the column is part of based upon
+		 * notnull state of the column */
+		for(auto &fk : fks)
+		{
+			rel = model->getRelationship(fk->getParentTable(), fk->getReferencedTable(), fk);
+
+			if(rel)
+			{
+				rel->setMandatoryTable(BaseRelationship::DstTable, column->isNotNull());
+				rel->setModified(true);
+			}
+		}
 
 		finishConfiguration();
 	}

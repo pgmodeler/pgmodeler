@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -18,6 +18,7 @@
 
 #include "newobjectoverlaywidget.h"
 #include "modelwidget.h"
+#include "pgmodeleruins.h"
 
 NewObjectOverlayWidget::NewObjectOverlayWidget(ModelWidget *parent): QWidget(parent)
 {
@@ -29,46 +30,48 @@ NewObjectOverlayWidget::NewObjectOverlayWidget(ModelWidget *parent): QWidget(par
 	int action_idx=0;
 	QList<QAction *> rel_actions=parent->rels_menu->actions();
 	map<QToolButton *, tuple<QString, ObjectType>>  obj_shortcuts={
-										{ aggregate_tb,    std::make_tuple(trUtf8("A"), ObjectType::Aggregate)    },
-										{ cast_tb,         std::make_tuple(trUtf8("G"), ObjectType::Cast)         },
-										{ eventtrigger_tb, std::make_tuple(trUtf8("K"), ObjectType::EventTrigger)},
-										{ collation_tb,    std::make_tuple(trUtf8("H"), ObjectType::Collation)    },
-										{ conversion_tb,   std::make_tuple(trUtf8("J"), ObjectType::Conversion)   },
-										{ domain_tb,       std::make_tuple(trUtf8("D"), ObjectType::Domain)       },
-										{ extension_tb,    std::make_tuple(trUtf8("E"), ObjectType::Extension)    },
-										{ function_tb,     std::make_tuple(trUtf8("F"), ObjectType::Function)     },
-										{ language_tb,     std::make_tuple(trUtf8("L"), ObjectType::Language)     },
-										{ opclass_tb,      std::make_tuple(trUtf8("O"), ObjectType::OpClass)      },
-										{ operator_tb,     std::make_tuple(trUtf8("U"), ObjectType::Operator)     },
-										{ opfamily_tb,     std::make_tuple(trUtf8("I"), ObjectType::OpFamily)     },
-										{ role_tb,         std::make_tuple(trUtf8("R"), ObjectType::Role)         },
-										{ schema_tb,       std::make_tuple(trUtf8("S"), ObjectType::Schema)       },
-										{ sequence_tb,     std::make_tuple(trUtf8("Q"), ObjectType::Sequence)     },
-										{ table_tb,        std::make_tuple(trUtf8("T"), ObjectType::Table)        },
-										{ tablespace_tb,   std::make_tuple(trUtf8("P"), ObjectType::Tablespace)   },
-										{ textbox_tb,      std::make_tuple(trUtf8("M"), ObjectType::Textbox)      },
-										{ type_tb,         std::make_tuple(trUtf8("Y"), ObjectType::Type)         },
-										{ view_tb,         std::make_tuple(trUtf8("W"), ObjectType::View)         },
-										{ tag_tb,          std::make_tuple(trUtf8("9"), ObjectType::Tag)          },
-										{ constraint_tb,   std::make_tuple(trUtf8("Z"), ObjectType::Constraint)   },
-										{ index_tb,        std::make_tuple(trUtf8("X"), ObjectType::Index)        },
-										{ column_tb,       std::make_tuple(trUtf8("C"), ObjectType::Column)       },
-										{ rule_tb,         std::make_tuple(trUtf8("V"), ObjectType::Rule)         },
-										{ trigger_tb,      std::make_tuple(trUtf8("B"), ObjectType::Trigger)      },
-										{ policy_tb,       std::make_tuple(trUtf8("9"), ObjectType::Policy)       },
-										{ genericsql_tb,   std::make_tuple(trUtf8("8"), ObjectType::GenericSql)   },
-										{ fdw_tb,          std::make_tuple(trUtf8("7"), ObjectType::ForeignDataWrapper) },
-										{ server_tb,       std::make_tuple(trUtf8("6"), ObjectType::ForeignServer) },
-										{ user_mapping_tb, std::make_tuple(trUtf8("5"), ObjectType::UserMapping) },
-										{ foreigntable_tb, std::make_tuple(trUtf8("4"), ObjectType::ForeignTable) }};
+										{ aggregate_tb,    std::make_tuple(tr("A"), ObjectType::Aggregate) },
+										{ cast_tb,         std::make_tuple(tr("G"), ObjectType::Cast) },
+										{ eventtrigger_tb, std::make_tuple(tr("K"), ObjectType::EventTrigger) },
+										{ collation_tb,    std::make_tuple(tr("H"), ObjectType::Collation) },
+										{ conversion_tb,   std::make_tuple(tr("J"), ObjectType::Conversion) },
+										{ domain_tb,       std::make_tuple(tr("D"), ObjectType::Domain) },
+										{ extension_tb,    std::make_tuple(tr("E"), ObjectType::Extension) },
+										{ function_tb,     std::make_tuple(tr("F"), ObjectType::Function) },
+										{ language_tb,     std::make_tuple(tr("L"), ObjectType::Language) },
+										{ opclass_tb,      std::make_tuple(tr("O"), ObjectType::OpClass) },
+										{ operator_tb,     std::make_tuple(tr("U"), ObjectType::Operator) },
+										{ opfamily_tb,     std::make_tuple(tr("I"), ObjectType::OpFamily) },
+										{ role_tb,         std::make_tuple(tr("R"), ObjectType::Role) },
+										{ schema_tb,       std::make_tuple(tr("S"), ObjectType::Schema) },
+										{ sequence_tb,     std::make_tuple(tr("Q"), ObjectType::Sequence) },
+										{ table_tb,        std::make_tuple(tr("T"), ObjectType::Table) },
+										{ tablespace_tb,   std::make_tuple(tr("P"), ObjectType::Tablespace) },
+										{ textbox_tb,      std::make_tuple(tr("M"), ObjectType::Textbox) },
+										{ type_tb,         std::make_tuple(tr("Y"), ObjectType::Type) },
+										{ view_tb,         std::make_tuple(tr("W"), ObjectType::View) },
+										{ tag_tb,          std::make_tuple(tr("9"), ObjectType::Tag) },
+										{ constraint_tb,   std::make_tuple(tr("Z"), ObjectType::Constraint) },
+										{ index_tb,        std::make_tuple(tr("X"), ObjectType::Index) },
+										{ column_tb,       std::make_tuple(tr("C"), ObjectType::Column) },
+										{ rule_tb,         std::make_tuple(tr("V"), ObjectType::Rule) },
+										{ trigger_tb,      std::make_tuple(tr("B"), ObjectType::Trigger) },
+										{ policy_tb,       std::make_tuple(tr("9"), ObjectType::Policy) },
+										{ genericsql_tb,   std::make_tuple(tr("8"), ObjectType::GenericSql) },
+										{ fdw_tb,          std::make_tuple(tr("7"), ObjectType::ForeignDataWrapper) },
+										{ server_tb,       std::make_tuple(tr("6"), ObjectType::ForeignServer) },
+										{ user_mapping_tb, std::make_tuple(tr("5"), ObjectType::UserMapping) },
+										{ foreigntable_tb, std::make_tuple(tr("4"), ObjectType::ForeignTable) },
+										{ transform_tb,    std::make_tuple(tr("3"), ObjectType::Transform) },
+										{ procedure_tb,    std::make_tuple(tr("2"), ObjectType::Procedure) }};
 
 	map<QToolButton *, tuple<QString, int>> rel_shortcuts={
-										{ rel11_tb,  std::make_tuple(trUtf8("1"), 0) },
-										{ rel1n_tb,  std::make_tuple(trUtf8("2"), 1) },
-										{ relnn_tb,  std::make_tuple(trUtf8("3"), 2) },
-										{ reldep_tb, std::make_tuple(trUtf8("5"), 3) },
-										{ relgen_tb, std::make_tuple(trUtf8("4"), 4) },
-										{ relpart_tb, std::make_tuple(trUtf8("5"), 5) }};
+										{ rel11_tb,  std::make_tuple(tr("1"), 0) },
+										{ rel1n_tb,  std::make_tuple(tr("2"), 1) },
+										{ relnn_tb,  std::make_tuple(tr("3"), 2) },
+										{ reldep_tb, std::make_tuple(tr("5"), 3) },
+										{ relgen_tb, std::make_tuple(tr("4"), 4) },
+										{ relpart_tb, std::make_tuple(tr("6"), 5) }};
 
 	vector<QToolButton *> permission_btns={db_sch_perms_tb, tab_perms_tb };
 
@@ -78,6 +81,7 @@ NewObjectOverlayWidget::NewObjectOverlayWidget(ModelWidget *parent): QWidget(par
 		shortcut=std::get<0>(itr.second);
 		obj_type=std::get<1>(itr.second);
 
+		PgModelerUiNs::configureWidgetFont(button, PgModelerUiNs::BigFontFactor);
 		button->setText(shortcut + QString(": ") + button->text());
 		button->setShortcut(QKeySequence(shortcut));
 		connect(button, SIGNAL(clicked()), this, SLOT(hide()));
@@ -90,6 +94,7 @@ NewObjectOverlayWidget::NewObjectOverlayWidget(ModelWidget *parent): QWidget(par
 		shortcut=std::get<0>(itr.second);
 		action_idx=std::get<1>(itr.second);
 
+		PgModelerUiNs::configureWidgetFont(button, PgModelerUiNs::BigFontFactor);
 		button->setText(shortcut + QString(": ") + button->text());
 		button->setShortcut(QKeySequence(shortcut));
 
@@ -98,12 +103,13 @@ NewObjectOverlayWidget::NewObjectOverlayWidget(ModelWidget *parent): QWidget(par
 			connect(button, SIGNAL(clicked()), rel_actions[action_idx], SLOT(trigger()));
 	}
 
-	shortcut=trUtf8("0");
+	shortcut=tr("0");
 	for(auto &itr : permission_btns)
 	{
 		button=itr;
 		button->setText(shortcut + QString(": ") + button->text());
 		button->setShortcut(QKeySequence(shortcut));
+		PgModelerUiNs::configureWidgetFont(button, PgModelerUiNs::BigFontFactor);
 
 		connect(button, SIGNAL(clicked()), this, SLOT(hide()));
 		connect(button, SIGNAL(clicked()), parent->action_edit_perms, SLOT(trigger()));

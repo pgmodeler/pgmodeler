@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@
 */
 
 #include "crashhandlerform.h"
-#include <QApplication>
+#include "application.h"
 #include <QTranslator>
 #include "pgmodeleruins.h"
 
@@ -25,12 +25,12 @@ int main(int argc, char **argv)
 {
 	try
 	{
-		QApplication app(argc,argv);
-		QStringList args=app.arguments();
+		Application app(argc,argv);
+		QStringList args = app.arguments();
 		QTranslator translator;
 
 		//Loads the ui translation for crashhandler
-		translator.load(QLocale::system().name(), GlobalAttributes::LanguagesDir);
+		translator.load(QLocale::system().name(), GlobalAttributes::getLanguagesDir());
 		app.installTranslator(&translator);
 
 		CrashHandlerForm crashhandler(args.size() > 1 && args[1]==CrashHandlerForm::AnalysisMode);
@@ -38,12 +38,12 @@ int main(int argc, char **argv)
 		crashhandler.show();
 		app.exec();
 
-		return(0);
+		return 0;
 	}
 	catch(Exception &e)
 	{
 		QTextStream out(stdout);
 		out << e.getExceptionsText();
-		return(enum_cast(e.getErrorCode()));
+		return enum_cast(e.getErrorCode());
 	}
 }

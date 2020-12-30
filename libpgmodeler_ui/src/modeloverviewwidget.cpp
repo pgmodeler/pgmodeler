@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -54,22 +54,22 @@ void ModelOverviewWidget::show(ModelWidget *model)
 
 	if(this->model)
 	{
-		connect(this->model, SIGNAL(s_objectCreated(void)), this, SLOT(updateOverview(void)));
-		connect(this->model, SIGNAL(s_objectRemoved(void)), this, SLOT(updateOverview(void)));
-		connect(this->model, SIGNAL(s_objectsMoved(void)), this, SLOT(updateOverview(void)));
-		connect(this->model, SIGNAL(s_objectModified(void)), this, SLOT(updateOverview(void)));
+		connect(this->model, SIGNAL(s_objectCreated()), this, SLOT(updateOverview()));
+		connect(this->model, SIGNAL(s_objectRemoved()), this, SLOT(updateOverview()));
+		connect(this->model, SIGNAL(s_objectsMoved()), this, SLOT(updateOverview()));
+		connect(this->model, SIGNAL(s_objectModified()), this, SLOT(updateOverview()));
 		connect(this->model, SIGNAL(s_zoomModified(double)), this, SLOT(updateZoomFactor(double)));
 
-		connect(this->model, SIGNAL(s_modelResized(void)), this, SLOT(resizeOverview(void)));
-		connect(this->model, SIGNAL(s_modelResized(void)), this, SLOT(resizeWindowFrame(void)));
-		connect(this->model, SIGNAL(s_modelResized(void)), this, SLOT(updateOverview(void)));
+		connect(this->model, SIGNAL(s_modelResized()), this, SLOT(resizeOverview()));
+		connect(this->model, SIGNAL(s_modelResized()), this, SLOT(resizeWindowFrame()));
+		connect(this->model, SIGNAL(s_modelResized()), this, SLOT(updateOverview()));
 
-		connect(this->model->viewport->horizontalScrollBar(), SIGNAL(valueChanged(int)), this, SLOT(resizeWindowFrame(void)));
-		connect(this->model->viewport->verticalScrollBar(), SIGNAL(valueChanged(int)), this, SLOT(resizeWindowFrame(void)));
+		connect(this->model->viewport->horizontalScrollBar(), SIGNAL(valueChanged(int)), this, SLOT(resizeWindowFrame()));
+		connect(this->model->viewport->verticalScrollBar(), SIGNAL(valueChanged(int)), this, SLOT(resizeWindowFrame()));
 
-		connect(this->model->scene, SIGNAL(selectionChanged(void)), this, SLOT(updateOverview(void)));
-		connect(this->model->scene, SIGNAL(sceneRectChanged(QRectF)),this, SLOT(resizeOverview(void)));
-		connect(this->model->scene, SIGNAL(sceneRectChanged(QRectF)),this, SLOT(updateOverview(void)));
+		connect(this->model->scene, SIGNAL(selectionChanged()), this, SLOT(updateOverview()));
+		connect(this->model->scene, SIGNAL(sceneRectChanged(QRectF)),this, SLOT(resizeOverview()));
+		connect(this->model->scene, SIGNAL(sceneRectChanged(QRectF)),this, SLOT(updateOverview()));
 
 		this->resizeOverview();
 		this->updateZoomFactor(this->model->getCurrentZoom());
@@ -110,13 +110,13 @@ bool ModelOverviewWidget::eventFilter(QObject *object, QEvent *event)
 		else
 			model->applyZoom(model->getCurrentZoom() + ModelWidget::ZoomIncrement);
 
-		return(false);
+		return false;
 	}
 
-	return(QWidget::eventFilter(object, event));
+	return QWidget::eventFilter(object, event);
 }
 
-void ModelOverviewWidget::updateOverview(void)
+void ModelOverviewWidget::updateOverview()
 {
 	this->updateOverview(false);
 }
@@ -138,7 +138,7 @@ void ModelOverviewWidget::updateOverview(bool force_update)
 		if(!p.isActive())
 		{
 			label->setPixmap(QPixmap());
-			label->setText(trUtf8("Failed to generate the overview image.\nThe requested size %1 x %2 was too big and there was not enough memory to allocate!")
+			label->setText(tr("Failed to generate the overview image.\nThe requested size %1 x %2 was too big and there was not enough memory to allocate!")
 										 .arg(pixmap_size.width()).arg(pixmap_size.height()));
 			frame->setEnabled(false);
 		}
@@ -159,7 +159,7 @@ void ModelOverviewWidget::updateOverview(bool force_update)
 	}
 }
 
-void ModelOverviewWidget::resizeWindowFrame(void)
+void ModelOverviewWidget::resizeWindowFrame()
 {
 	if(this->model)
 	{
@@ -193,12 +193,12 @@ void ModelOverviewWidget::resizeWindowFrame(void)
 	}
 }
 
-void ModelOverviewWidget::resizeOverview(void)
+void ModelOverviewWidget::resizeOverview()
 {
 	if(this->model)
 	{
 		QDesktopWidget desktop;
-		QRect screen_rect=desktop.screenGeometry(desktop.primaryScreen());
+		QRect screen_rect=qApp->primaryScreen()->geometry();
 
 		//Make an initial calculation of the overview window size
 		scene_rect=this->model->scene->sceneRect();

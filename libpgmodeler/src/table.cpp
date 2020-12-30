@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -19,18 +19,18 @@
 #include "table.h"
 #include "pgmodelerns.h"
 
-Table::Table(void) : PhysicalTable()
+Table::Table() : PhysicalTable()
 {
 	obj_type = ObjectType::Table;
 	with_oid=unlogged=rls_enabled=rls_forced=false;
-	attributes[Attributes::Unlogged]=QString();
-	attributes[Attributes::RlsEnabled]=QString();
-	attributes[Attributes::RlsForced]=QString();
-	attributes[Attributes::Oids]=QString();
-	setName(trUtf8("new_table"));
+	attributes[Attributes::Unlogged]="";
+	attributes[Attributes::RlsEnabled]="";
+	attributes[Attributes::RlsForced]="";
+	attributes[Attributes::Oids]="";
+	setName(tr("new_table"));
 }
 
-Table::~Table(void)
+Table::~Table()
 {
 	destroyObjects();
 }
@@ -123,15 +123,15 @@ void Table::removeObject(BaseObject *obj)
 vector<TableObject *> *Table::getObjectList(ObjectType obj_type)
 {
 	if(obj_type==ObjectType::Rule)
-		return(&rules);
+		return &rules;
 
 	if(obj_type==ObjectType::Index)
-		return(&indexes);
+		return &indexes;
 
 	if(obj_type==ObjectType::Policy)
-		return(&policies);
+		return &policies;
 
-	return(PhysicalTable::getObjectList(obj_type));
+	return PhysicalTable::getObjectList(obj_type);
 }
 
 void Table::addIndex(Index *ind, int idx)
@@ -245,49 +245,49 @@ void Table::removePolicy(unsigned idx)
 Index *Table::getIndex(const QString &name)
 {
 	int idx;
-	return(dynamic_cast<Index *>(getObject(name,ObjectType::Index,idx)));
+	return dynamic_cast<Index *>(getObject(name,ObjectType::Index,idx));
 }
 
 Index *Table::getIndex(unsigned idx)
 {
-	return(dynamic_cast<Index *>(getObject(idx,ObjectType::Index)));
+	return dynamic_cast<Index *>(getObject(idx,ObjectType::Index));
 }
 
 Rule *Table::getRule(const QString &name)
 {
 	int idx;
-	return(dynamic_cast<Rule *>(getObject(name,ObjectType::Rule,idx)));
+	return dynamic_cast<Rule *>(getObject(name,ObjectType::Rule,idx));
 }
 
 Rule *Table::getRule(unsigned idx)
 {
-	return(dynamic_cast<Rule *>(getObject(idx,ObjectType::Rule)));
+	return dynamic_cast<Rule *>(getObject(idx,ObjectType::Rule));
 }
 
 Policy *Table::getPolicy(const QString &name)
 {
 	int idx;
-	return(dynamic_cast<Policy *>(getObject(name, ObjectType::Policy,idx)));
+	return dynamic_cast<Policy *>(getObject(name, ObjectType::Policy,idx));
 }
 
 Policy *Table::getPolicy(unsigned idx)
 {
-	return(dynamic_cast<Policy *>(getObject(idx, ObjectType::Policy)));
+	return dynamic_cast<Policy *>(getObject(idx, ObjectType::Policy));
 }
 
-unsigned Table::getIndexCount(void)
+unsigned Table::getIndexCount()
 {
-	return(indexes.size());
+	return indexes.size();
 }
 
-unsigned Table::getRuleCount(void)
+unsigned Table::getRuleCount()
 {
-	return(rules.size());
+	return rules.size();
 }
 
-unsigned Table::getPolicyCount(void)
+unsigned Table::getPolicyCount()
 {
-	return(policies.size());
+	return policies.size();
 }
 
 void Table::getForeignKeys(vector<Constraint *> &fks, bool inc_added_by_rel, Table *ref_table)
@@ -308,19 +308,19 @@ void Table::getForeignKeys(vector<Constraint *> &fks, bool inc_added_by_rel, Tab
 	}
 }
 
-bool Table::isUnlogged(void)
+bool Table::isUnlogged()
 {
-	return(unlogged);
+	return unlogged;
 }
 
-bool Table::isRLSEnabled(void)
+bool Table::isRLSEnabled()
 {
-	return(rls_enabled);
+	return rls_enabled;
 }
 
-bool Table::isRLSForced(void)
+bool Table::isRLSForced()
 {
-	return(rls_forced);
+	return rls_forced;
 }
 
 void Table::setWithOIDs(bool value)
@@ -329,9 +329,9 @@ void Table::setWithOIDs(bool value)
 	with_oid=value;
 }
 
-bool Table::isWithOIDs(void)
+bool Table::isWithOIDs()
 {
-	return(with_oid);
+	return with_oid;
 }
 
 bool Table::isReferTableOnForeignKey(Table *ref_tab)
@@ -349,31 +349,31 @@ bool Table::isReferTableOnForeignKey(Table *ref_tab)
 			   constr->getReferencedTable() == ref_tab);
 	}
 
-	return(found);
+	return found;
 }
 
 QString Table::__getCodeDefinition(unsigned def_type, bool incl_rel_added_objs)
 {
 	setTableAttributes(def_type, incl_rel_added_objs);
 
-	attributes[Attributes::Oids]=(with_oid ? Attributes::True : QString());
-	attributes[Attributes::Unlogged]=(unlogged ? Attributes::True : QString());
-	attributes[Attributes::RlsEnabled]=(rls_enabled ? Attributes::True : QString());
-	attributes[Attributes::RlsForced]=(rls_forced ? Attributes::True : QString());
-	attributes[Attributes::CopyTable]=QString();
+	attributes[Attributes::Oids]=(with_oid ? Attributes::True : "");
+	attributes[Attributes::Unlogged]=(unlogged ? Attributes::True : "");
+	attributes[Attributes::RlsEnabled]=(rls_enabled ? Attributes::True : "");
+	attributes[Attributes::RlsForced]=(rls_forced ? Attributes::True : "");
+	attributes[Attributes::CopyTable]="";
 
 	if(def_type==SchemaParser::SqlDefinition && copy_table)
 		attributes[Attributes::CopyTable]=copy_table->getName(true) + copy_op.getSQLDefinition();
 
-	return(BaseObject::__getCodeDefinition(def_type));
+	return BaseObject::__getCodeDefinition(def_type);
 }
 
 QString Table::getCodeDefinition(unsigned def_type)
 {
 	QString code_def=getCachedCode(def_type, false);
-	if(!code_def.isEmpty()) return(code_def);
+	if(!code_def.isEmpty()) return code_def;
 
-	return(__getCodeDefinition(def_type, false));
+	return __getCodeDefinition(def_type, false);
 }
 
 void Table::operator = (Table &tab)
@@ -428,8 +428,8 @@ QString Table::getTruncateDefinition(bool cascade)
 	try
 	{
 		BaseObject::setBasicAttributes(true);
-		attributes[Attributes::Cascade]=(cascade ? Attributes::True : QString());
-		return(BaseObject::getAlterDefinition(Attributes::TruncatePriv, attributes, false, false));
+		attributes[Attributes::Cascade]=(cascade ? Attributes::True : "");
+		return BaseObject::getAlterDefinition(Attributes::TruncatePriv, attributes, false, false);
 	}
 	catch(Exception &e)
 	{
@@ -449,7 +449,7 @@ QString Table::getAlterDefinition(BaseObject *object)
 		QString alter_def;
 		attribs_map attribs;
 
-		attribs[Attributes::Oids]=QString();
+		attribs[Attributes::Oids]="";
 		attribs[Attributes::AlterCmds]=BaseObject::getAlterDefinition(object, true);
 
 		if(this->getName()==tab->getName())
@@ -472,7 +472,7 @@ QString Table::getAlterDefinition(BaseObject *object)
 		copyAttributes(attribs);
 		alter_def=BaseObject::getAlterDefinition(this->getSchemaName(), attributes, false, true);
 
-		return(alter_def);
+		return alter_def;
 	}
 	catch(Exception &e)
 	{

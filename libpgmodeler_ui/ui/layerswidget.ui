@@ -6,9 +6,21 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>448</width>
-    <height>165</height>
+    <width>460</width>
+    <height>180</height>
    </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>460</width>
+    <height>180</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>650</width>
+    <height>500</height>
+   </size>
   </property>
   <property name="windowTitle">
    <string>Form</string>
@@ -34,7 +46,7 @@
      <property name="minimumSize">
       <size>
        <width>0</width>
-       <height>165</height>
+       <height>0</height>
       </size>
      </property>
      <property name="frameShape">
@@ -56,58 +68,7 @@
       <property name="bottomMargin">
        <number>4</number>
       </property>
-      <item row="0" column="2">
-       <widget class="QToolButton" name="remove_all_tb">
-        <property name="enabled">
-         <bool>false</bool>
-        </property>
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="minimumSize">
-         <size>
-          <width>0</width>
-          <height>0</height>
-         </size>
-        </property>
-        <property name="toolTip">
-         <string>Remove all layers</string>
-        </property>
-        <property name="text">
-         <string>Delete all</string>
-        </property>
-        <property name="icon">
-         <iconset resource="../res/resources.qrc">
-          <normaloff>:/icones/icones/clearlayers.png</normaloff>:/icones/icones/clearlayers.png</iconset>
-        </property>
-        <property name="iconSize">
-         <size>
-          <width>22</width>
-          <height>22</height>
-         </size>
-        </property>
-        <property name="shortcut">
-         <string>Shift+Del</string>
-        </property>
-        <property name="toolButtonStyle">
-         <enum>Qt::ToolButtonTextBesideIcon</enum>
-        </property>
-        <property name="autoRaise">
-         <bool>false</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="0" colspan="6">
-       <widget class="QListWidget" name="layers_lst">
-        <property name="alternatingRowColors">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="5">
+      <item row="0" column="8">
        <widget class="QToolButton" name="hide_tb">
         <property name="minimumSize">
          <size>
@@ -135,22 +96,6 @@
          <bool>true</bool>
         </property>
        </widget>
-      </item>
-      <item row="0" column="3" colspan="2">
-       <spacer name="horizontalSpacer">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="sizeType">
-         <enum>QSizePolicy::Expanding</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>20</width>
-          <height>20</height>
-         </size>
-        </property>
-       </spacer>
       </item>
       <item row="0" column="0">
        <widget class="QToolButton" name="add_tb">
@@ -239,6 +184,126 @@
          <bool>false</bool>
         </property>
        </widget>
+      </item>
+      <item row="0" column="2">
+       <widget class="QToolButton" name="remove_all_tb">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="toolTip">
+         <string>Remove all layers</string>
+        </property>
+        <property name="text">
+         <string>Delete all</string>
+        </property>
+        <property name="icon">
+         <iconset resource="../res/resources.qrc">
+          <normaloff>:/icones/icones/clearlayers.png</normaloff>:/icones/icones/clearlayers.png</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>22</width>
+          <height>22</height>
+         </size>
+        </property>
+        <property name="shortcut">
+         <string>Shift+Del</string>
+        </property>
+        <property name="toolButtonStyle">
+         <enum>Qt::ToolButtonTextBesideIcon</enum>
+        </property>
+        <property name="autoRaise">
+         <bool>false</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0" colspan="9">
+       <widget class="QListWidget" name="layers_lst">
+        <property name="alternatingRowColors">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="3">
+       <widget class="QToolButton" name="visibility_tb">
+        <property name="enabled">
+         <bool>true</bool>
+        </property>
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="toolTip">
+         <string>Add a new layer</string>
+        </property>
+        <property name="text">
+         <string>Visibility</string>
+        </property>
+        <property name="icon">
+         <iconset resource="../res/resources.qrc">
+          <normaloff>:/icones/icones/layervisibility.png</normaloff>:/icones/icones/layervisibility.png</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>22</width>
+          <height>22</height>
+         </size>
+        </property>
+        <property name="shortcut">
+         <string>Ins</string>
+        </property>
+        <property name="checkable">
+         <bool>false</bool>
+        </property>
+        <property name="checked">
+         <bool>false</bool>
+        </property>
+        <property name="popupMode">
+         <enum>QToolButton::InstantPopup</enum>
+        </property>
+        <property name="toolButtonStyle">
+         <enum>Qt::ToolButtonTextBesideIcon</enum>
+        </property>
+        <property name="autoRaise">
+         <bool>false</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="4" colspan="4">
+       <spacer name="horizontalSpacer">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeType">
+         <enum>QSizePolicy::Expanding</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>20</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
       </item>
      </layout>
     </widget>

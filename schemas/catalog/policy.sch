@@ -5,12 +5,20 @@
 %if ({pgsql-ver} >=f "9.5") %then
 
     %if {list} %then
-        [SELECT pl.oid, polname AS name FROM pg_policy AS pl ]
+    
+        %set {parent-name} [ ns.nspname || '.' || tb.relname ]
+
+        %if {use-signature} %then
+          %set {signature} {parent-name} [ || '.' || ]
+        %end
+    
+        [ SELECT pl.oid, polname AS name, ] {parent-name} [ AS parent, 'table' AS parent_type 
+         FROM pg_policy AS pl 
+         LEFT JOIN pg_class AS tb ON pl.polrelid = tb.oid
+         LEFT JOIN pg_namespace AS ns ON ns.oid = tb.relnamespace ]
 
         %if {schema} %then
-        [ LEFT JOIN pg_class AS tb ON pl.polrelid = tb.oid
-          LEFT JOIN pg_namespace AS ns ON ns.oid = tb.relnamespace
-          WHERE nspname= ] '{schema}'
+        [ WHERE nspname= ] '{schema}'
 
             %if {table} %then
                 [ AND tb.relkind='r' AND tb.relname=] '{table}'
@@ -36,7 +44,25 @@
             
             ( {not-ext-object} )
         %end
+    
+        %if {name-filter} %then
+       
+            %if {last-sys-oid} %or {not-ext-object} %then
+                [ AND ]
+            %end
+        
+            ( {signature} [ pl.polname ~* ] E'{name-filter}' )
+        %end
+        
+        %if {extra-condition} %then
 
+            %if {last-sys-oid} %or {not-ext-object} %or {name-filter} %then
+                [ AND ]
+            %end
+            
+            ( {extra-condition} )
+        %end
+        
     %else
         [SELECT pl.oid, pl.polname AS name, pl.polrelid AS table, ]
 

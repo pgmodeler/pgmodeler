@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -57,7 +57,7 @@ class Connection {
 		static QStringList notices;
 
 		//! \brief Generates the connection string based on the parameter map
-		void generateConnectionString(void);
+		void generateConnectionString();
 
 		/*! \brief This static method disable the notice messages when executing commands.
 		By default all connections are created with notice disabled. To enable it the user
@@ -91,11 +91,12 @@ class Connection {
 		/*! \brief Validates the connection status (command exec. timeout and connection status) and
 		raise errors in case of exceeded timeout or bad connection. This method is called prior any
 		command execution */
-		void validateConnectionStatus(void);
+		void validateConnectionStatus();
 
 	public:
 		//! \brief Constants used to reference the connections parameters
 		static const QString	ParamAlias,
+		ParamApplicationName,
 		ParamServerFqdn,
 		ParamServerIp,
 		ParamPort,
@@ -130,9 +131,10 @@ class Connection {
 		OpDiff=3,
 		OpNone=4;
 
-		Connection(void);
+		Connection();
+        Connection(const Connection &);
 		Connection(const attribs_map &params);
-		~Connection(void);
+		~Connection();
 
 		/*! \brief Set the maximum timeout that a connectio can be idle (without running commands)
 		Setting a zero value will cause not timemout checking */
@@ -142,13 +144,13 @@ class Connection {
 		static void setNoticeEnabled(bool value);
 
 		//! \brief Returns the current state for notice output
-		static bool isNoticeEnabled(void);
+		static bool isNoticeEnabled();
 
 		//! \brief Toggles the executed sql output for connections. By default any sql are omitted
 		static void setPrintSQL(bool value);
 
 		//! \brief Returns the current state for sql output
-		static bool isSQLPrinted(void);
+		static bool isSQLPrinted();
 
 		/*! \brief When calling this method with a true parameter any try to connect when the connection is already
 		opened will raise exceptions. If calling the method using false the issue mentioned will be reported on
@@ -156,7 +158,7 @@ class Connection {
 		static void setSilenceConnError(bool value);
 
 		//! \brief Returns the current state for silence connection errors
-		static bool isConnErrorSilenced(void);
+		static bool isConnErrorSilenced();
 
 		/*! \brief Sets one connection parameter. This method can only be called before
 		 the connection to the database */
@@ -169,16 +171,16 @@ class Connection {
 		void setAutoBrowseDB(bool value);
 
 		//! \brief Open the connection to the database.
-		void connect(void);
+		void connect();
 
 		//! \brief Resets the database connection
-		void reset(void);
+		void reset();
 
 		//! \brief Close the opened connection
-		void close(void);
+		void close();
 
 		//! \brief Request the cancel of the running command on a opened connection
-		void requestCancel(void);
+		void requestCancel();
 
 		//! \brief Returns the value of specified parameter name
 		QString getConnectionParam(const QString &param);
@@ -187,15 +189,16 @@ class Connection {
 		attribs_map getConnectionParams(void) const;
 
 		//! \brief Returns a map containing some server's info
-		attribs_map getServerInfo(void);
+		attribs_map getServerInfo();
 
 		//! \brief Returns the connection string used to connect to de database
-		QString getConnectionString(void);
+		QString getConnectionString();
 
 		/*! \brief Returns a string containing the following signature 'alias (host:port)' by default.
 			If host_port_only is true the signature will not contain the alias being in the form 'host:port'
-			If incl_db_name is true the database name will be prepended to the final signature 'dbname@host:port' */
-		QString getConnectionId(bool host_port_only = false, bool incl_db_name = false);
+			If incl_db_name is true the database name will be prepended to the final signature 'dbname@host:port'
+			If html_format s true the generated string will have the format <strong>db_name</strong>@<em>host:port (alias)</em>	*/
+		QString getConnectionId(bool host_port_only = false, bool incl_db_name = false, bool html_format = false);
 
 		/*! \brief Returns the DBMS version in format XX.YY[.ZZ]
 		If major_only is true only XX.YY portion is returned */
@@ -203,7 +206,7 @@ class Connection {
 
 		/*! Returns all notices/warnings produced by the command executions.
 		This method will return an empty list if notices/warnings are disabled in the connections */
-		static QStringList getNotices(void);
+		static QStringList getNotices();
 
 		/*! \brief Change the current database to the specified db name using the parameters from the current
 		stablished connection causing the connection to be reset and moved to the new database.
@@ -212,13 +215,13 @@ class Connection {
 		void switchToDatabase(const QString &dbname);
 
 		//! \brief Returns if the connection is stablished
-		bool isStablished(void);
+		bool isStablished();
 
 		//! \brief Returns if the connection is configured (has some attributes set)
-		bool isConfigured(void);
+		bool isConfigured();
 
 		//! \brief Returns if the db configured in the connection can be automatically browsed in SQLTool
-		bool isAutoBrowseDB(void);
+		bool isAutoBrowseDB();
 
 		/*! \brief Executes a DML command on the server using the opened connection.
 		 Its mandatory to specify the object to receive the returned resultset. */

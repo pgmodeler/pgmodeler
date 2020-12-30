@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -26,7 +26,6 @@
 #define MODEL_RESTORATION_FORM_H
 
 #include <QtWidgets>
-#include "hinttextwidget.h"
 #include "globalattributes.h"
 #include "ui_modelrestorationform.h"
 
@@ -34,34 +33,37 @@ class ModelRestorationForm: public QDialog, public Ui::ModelRestorationForm {
 	private:
 		Q_OBJECT
 
-		HintTextWidget * keep_models_ht;
+		QStringList ignored_files;
 
 	public:
 		ModelRestorationForm(QWidget * parent = nullptr, Qt::WindowFlags f = Qt::Widget);
 
 		//! \brief Returns the list of temporary files existant on tmp/ dir
-		QStringList getTemporaryModels(void);
+		QStringList getTemporaryModels();
 
 		//! \brief Returns the list of temporary files selected to be restored
-		QStringList getSelectedModels(void);
+		QStringList getSelectedModels();
 
 	public slots:
-		int exec(void);
+		int exec();
+
+		//! \brief List of files to be ignored by the restoration form
+		void setIgnoredFiles(const QStringList &list);
 
 		//! \brief Clears the tmp/ dir by removing all temporary files (*.dbm, *.dbk, *.omf, *.sql. *.log)
-		void removeTemporaryFiles(void);
+		void removeTemporaryFiles();
 
 		//! \brief Clears the tmp/ dir removing all temporary models (*.dbm)
-		void removeTemporaryModels(void);
+		void removeTemporaryModels();
 
 		//! \brief Remove only the specified temp model
 		void removeTemporaryModel(const QString &tmp_model);
 
 		//! \brief Checks if there is at least one temporary file on tmp/ dir
-		bool hasTemporaryModels(void);
+		bool hasTemporaryModels();
 
 	private slots:
-		void enableRestoration(void);
+		void enableRestoration();
 };
 
 #endif

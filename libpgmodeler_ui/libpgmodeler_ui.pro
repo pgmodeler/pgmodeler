@@ -1,12 +1,3 @@
-# libpgmodeler_ui.pro (reviewed version)
-#
-# Refactored by: Lisandro Damián Nicanor Pérez Meyer <perezmeyer@gmail.com>
-# Refactored code: https://github.com/perezmeyer/pgmodeler/tree/shared_libs
-# Reviewed by: Raphal Araújo e Silva <raphael@pgmodeler.com.br>
-#
-# NOTE: Reviewed code is not a direct merge from refactored version but based upon the
-# refactored code, containing almost all changes done by the refactoring author.
-
 include(../pgmodeler.pri)
 
 TEMPLATE = lib
@@ -16,8 +7,12 @@ windows:RCC_DIR += src
 windows:DESTDIR = $$PWD
 
 SOURCES += src/mainwindow.cpp \
+    src/basefunctionwidget.cpp \
+	src/changelogwidget.cpp \
+	src/fileselectorwidget.cpp \
 	   src/modelwidget.cpp \
 	   src/messagebox.cpp \
+    src/procedurewidget.cpp \
 	   src/textboxwidget.cpp \
 	   src/baseobjectwidget.cpp \
 	   src/operationlistwidget.cpp \
@@ -43,6 +38,7 @@ SOURCES += src/mainwindow.cpp \
 	   src/operatorwidget.cpp \
 	   src/operatorfamilywidget.cpp \
 	   src/operatorclasswidget.cpp \
+	   src/transformwidget.cpp \
 	   src/typewidget.cpp \
 	   src/viewwidget.cpp \
 	   src/columnwidget.cpp \
@@ -92,7 +88,6 @@ SOURCES += src/mainwindow.cpp \
            src/modeldatabasediffform.cpp \
            src/modelsdiffhelper.cpp \
            src/objectsdiffinfo.cpp \
-           src/hinttextwidget.cpp \
            src/databaseexplorerwidget.cpp \
            src/snippetsconfigwidget.cpp \
            src/pgmodeleruins.cpp \
@@ -120,13 +115,18 @@ SOURCES += src/mainwindow.cpp \
     src/layerswidget.cpp \
     src/foreigndatawrapperwidget.cpp \
     src/foreignserverwidget.cpp \
-    src/usermappingwidget.cpp
+	src/usermappingwidget.cpp \
+	src/objectsfilterwidget.cpp
 
 
 HEADERS += src/mainwindow.h \
+    src/basefunctionwidget.h \
+	src/changelogwidget.h \
+	src/fileselectorwidget.h \
 	   src/modelwidget.h \
 	   src/messagebox.h \
 	   src/baseobjectwidget.h \
+    src/procedurewidget.h \
 	   src/textboxwidget.h \
 	   src/operationlistwidget.h \
 	   src/modelobjectswidget.h \
@@ -151,6 +151,7 @@ HEADERS += src/mainwindow.h \
 	   src/operatorwidget.h \
 	   src/operatorfamilywidget.h \
 	   src/operatorclasswidget.h \
+    src/transformwidget.h \
 	   src/typewidget.h \
 	   src/viewwidget.h \
 	   src/columnwidget.h \
@@ -200,7 +201,6 @@ HEADERS += src/mainwindow.h \
            src/modeldatabasediffform.h \
            src/modelsdiffhelper.h \
            src/objectsdiffinfo.h \
-           src/hinttextwidget.h \
            src/databaseexplorerwidget.h \
            src/snippetsconfigwidget.h \
            src/pgmodeleruins.h \
@@ -228,9 +228,14 @@ HEADERS += src/mainwindow.h \
     src/layerswidget.h \
     src/foreigndatawrapperwidget.h \
     src/foreignserverwidget.h \
-    src/usermappingwidget.h
+	src/usermappingwidget.h \
+	src/objectsfilterwidget.h
 
 FORMS += ui/mainwindow.ui \
+    ui/basefunctionwidget.ui \
+	ui/changelogwidget.ui \
+	ui/fileselectorwidget.ui \
+	ui/objectsfilterwidget.ui \
 	 ui/textboxwidget.ui \
 	 ui/messagebox.ui \
 	 ui/operationlistwidget.ui \
@@ -255,6 +260,7 @@ FORMS += ui/mainwindow.ui \
 	 ui/operatorwidget.ui \
 	 ui/operatorfamilywidget.ui \
 	 ui/operatorclasswidget.ui \
+    ui/transformwidget.ui \
 	 ui/typewidget.ui \
 	 ui/viewwidget.ui \
 	 ui/columnwidget.ui \

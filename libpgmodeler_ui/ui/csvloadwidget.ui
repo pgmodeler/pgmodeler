@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>710</width>
+    <width>731</width>
     <height>100</height>
    </rect>
   </property>
@@ -43,7 +43,7 @@
      <property name="title">
       <string>Load CSV</string>
      </property>
-     <layout class="QGridLayout" name="gridLayout">
+     <layout class="QGridLayout" name="load_csv_grid">
       <property name="leftMargin">
        <number>4</number>
       </property>
@@ -60,42 +60,6 @@
        <widget class="QLabel" name="file_lbl">
         <property name="text">
          <string>CSV File:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="1" colspan="7">
-       <widget class="QLineEdit" name="file_edt">
-        <property name="clearButtonEnabled">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="8">
-       <widget class="QToolButton" name="select_file_tb">
-        <property name="enabled">
-         <bool>true</bool>
-        </property>
-        <property name="minimumSize">
-         <size>
-          <width>0</width>
-          <height>0</height>
-         </size>
-        </property>
-        <property name="toolTip">
-         <string>Select output file</string>
-        </property>
-        <property name="text">
-         <string>...</string>
-        </property>
-        <property name="icon">
-         <iconset resource="../res/resources.qrc">
-          <normaloff>:/icones/icones/abrir.png</normaloff>:/icones/icones/abrir.png</iconset>
-        </property>
-        <property name="iconSize">
-         <size>
-          <width>22</width>
-          <height>22</height>
-         </size>
         </property>
        </widget>
       </item>
@@ -129,36 +93,17 @@
         </property>
         <item>
          <widget class="QCheckBox" name="col_names_chk">
+          <property name="toolTip">
+           <string>&lt;p&gt;Use the first row as column names in the CSV file. By unchecking this option the first row is used as data.&lt;/p&gt;</string>
+          </property>
           <property name="statusTip">
-           <string>Use the first row as column names in the CSV file. By unchecking this option the first row is used as data.</string>
+           <string/>
           </property>
           <property name="text">
            <string>Columns in the first row</string>
           </property>
           <property name="checked">
            <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QWidget" name="col_names_hint" native="true">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="minimumSize">
-           <size>
-            <width>22</width>
-            <height>22</height>
-           </size>
-          </property>
-          <property name="maximumSize">
-           <size>
-            <width>22</width>
-            <height>22</height>
-           </size>
           </property>
          </widget>
         </item>

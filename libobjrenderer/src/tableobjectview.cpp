@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -38,17 +38,17 @@ TableObjectView::TableObjectView(TableObject *object) : BaseObjectView(object)
 		lables[i]=new QGraphicsSimpleTextItem;
 
 	if(obj_selection)
-		delete(obj_selection);
+		delete obj_selection;
 }
 
-TableObjectView::~TableObjectView(void)
+TableObjectView::~TableObjectView()
 {
-	delete(descriptor);
+	delete descriptor;
 
 	for(unsigned i=0; i < 3; i++)
-		delete(lables[i]);
+		delete lables[i];
 
-	delete(obj_selection);
+	delete obj_selection;
 }
 
 void TableObjectView::configureDescriptor(ConstraintType constr_type)
@@ -56,7 +56,8 @@ void TableObjectView::configureDescriptor(ConstraintType constr_type)
 	ObjectType obj_type=ObjectType::BaseObject;
 	Column *column=dynamic_cast<Column *>(this->getUnderlyingObject());
 	bool ellipse_desc=false;
-	double factor=(font_config[Attributes::Global].font().pointSizeF()/DefaultFontSize) * BaseObjectView::getScreenDpiFactor();
+
+	double factor=BaseObjectView::getFontFactor() * BaseObjectView::getScreenDpiFactor();
 	QPen pen;
 
 	//Based upon the source object type the descriptor is allocated
@@ -70,7 +71,7 @@ void TableObjectView::configureDescriptor(ConstraintType constr_type)
 	if(descriptor && ((ellipse_desc && !dynamic_cast<QGraphicsEllipseItem *>(descriptor)) ||
 										(!ellipse_desc && dynamic_cast<QGraphicsEllipseItem *>(descriptor))))
 	{
-		delete(descriptor);
+		delete descriptor;
 		descriptor=nullptr;
 	}
 
@@ -101,7 +102,7 @@ void TableObjectView::configureDescriptor(ConstraintType constr_type)
 			desc->setBrush(this->getFillStyle(attrib));
 
 			pen = this->getBorderStyle(attrib);
-			pen.setWidthF(ObjectBorderWidth * 1.15);
+			pen.setWidthF(pen.widthF() * 1.15);
 			desc->setPen(pen);
 		}
 		else
@@ -141,7 +142,7 @@ void TableObjectView::configureDescriptor(ConstraintType constr_type)
 			desc->setBrush(this->getFillStyle(attrib));
 
 			pen = this->getBorderStyle(attrib);
-			pen.setWidthF(ObjectBorderWidth * 1.15);
+			pen.setWidthF(pen.widthF() * 1.15);
 			desc->setPen(pen);
 		}
 	}
@@ -161,7 +162,7 @@ void TableObjectView::configureDescriptor(ConstraintType constr_type)
 		desc->setBrush(this->getFillStyle(tab_obj->getSchemaName()));
 
 		pen = this->getBorderStyle(tab_obj->getSchemaName());
-		pen.setWidthF(ObjectBorderWidth * 1.15);
+		pen.setWidthF(pen.widthF() * 1.15);
 		desc->setPen(pen);
 	}
 	else
@@ -172,12 +173,12 @@ void TableObjectView::configureDescriptor(ConstraintType constr_type)
 		desc->setBrush(this->getFillStyle(Attributes::Reference));
 
 		pen = this->getBorderStyle(Attributes::Reference);
-		pen.setWidthF(ObjectBorderWidth * 1.15);
+		pen.setWidthF(pen.widthF() * 1.15);
 		desc->setPen(pen);
 	}
 }
 
-void TableObjectView::configureObject(void)
+void TableObjectView::configureObject()
 {
 	if(this->getUnderlyingObject())
 	{
@@ -197,7 +198,7 @@ void TableObjectView::configureObject(void)
 		if(column)
 		{
 			if(column->isAddedByRelationship())
-				tooltip+=trUtf8("\nRelationship: %1").arg(column->getParentRelationship()->getName());
+				tooltip+=tr("\nRelationship: %1").arg(column->getParentRelationship()->getName());
 
 			str_constr=this->getConstraintString(column);
 
@@ -273,7 +274,7 @@ void TableObjectView::configureObject(void)
 		fmt=font_config[Attributes::ObjectType];
 
 		if(compact_view)
-			lables[1]->setText(QString());
+			lables[1]->setText("");
 		else
 		{
 			if(column)
@@ -290,7 +291,7 @@ void TableObjectView::configureObject(void)
 		//Configuring the constraints label
 		fmt=font_config[Attributes::Constraints];
 		if(compact_view)
-			lables[2]->setText(QString());
+			lables[2]->setText("");
 		else if(column)
 			lables[2]->setText(!str_constr.isEmpty() ? str_constr : QString(" "));
 		else
@@ -395,7 +396,7 @@ void TableObjectView::configureObject(void)
 								   str_constr + QString(" ") +
 								   ConstrDelimEnd);
 			else
-				lables[2]->setText(QString());
+				lables[2]->setText("");
 		}
 
 		if(!atribs_tip.isEmpty())
@@ -447,7 +448,7 @@ void TableObjectView::configureObject(Reference reference)
 
 		fmt=font_config[Attributes::RefColumn];
 		if(compact_view && !reference.getReferenceAlias().isEmpty())
-			lables[1]->setText(QString());
+			lables[1]->setText("");
 		else
 		{
 			if(reference.getColumn())
@@ -464,7 +465,7 @@ void TableObjectView::configureObject(Reference reference)
 	else
 	{
 		fmt=font_config[Attributes::RefTable];
-		str_aux = compact_view && !reference.getReferenceAlias().isEmpty() ? reference.getReferenceAlias() : QString();
+		str_aux = compact_view && !reference.getReferenceAlias().isEmpty() ? reference.getReferenceAlias() : "";
 
 		if(str_aux.isEmpty())
 		{
@@ -476,7 +477,7 @@ void TableObjectView::configureObject(Reference reference)
 		lables[0]->setText(str_aux);
 		lables[0]->setFont(fmt.font());
 		lables[0]->setBrush(fmt.foreground());
-		lables[1]->setText(QString());
+		lables[1]->setText("");
 		lables[0]->setPos(px, 0);
 		px+=lables[0]->boundingRect().width();
 	}
@@ -499,7 +500,7 @@ void TableObjectView::configureObject(Reference reference)
 		lables[2]->setPos(px, 0);
 	}
 	else
-		lables[2]->setText(QString());
+		lables[2]->setText("");
 
 	calculateBoundingRect();
 }
@@ -535,9 +536,9 @@ void TableObjectView::configureObject(const SimpleColumn &col)
 		px+=lables[1]->boundingRect().width() + (4 * HorizSpacing);
 	}
 	else
-		lables[1]->setText(QString());
+		lables[1]->setText("");
 
-	lables[2]->setText(QString());
+	lables[2]->setText("");
 	calculateBoundingRect();
 }
 
@@ -554,7 +555,7 @@ void TableObjectView::setChildObjectXPos(unsigned obj_idx, double px)
 	calculateBoundingRect();
 }
 
-void TableObjectView::calculateBoundingRect(void)
+void TableObjectView::calculateBoundingRect()
 {
 	double width = 0, height = 0, curr_w = 0, py = 0;
 
@@ -590,9 +591,9 @@ QGraphicsItem *TableObjectView::getChildObject(unsigned obj_idx)
 		throw Exception(ErrorCode::RefObjectInvalidIndex, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 
 	if(obj_idx == ObjDescriptor)
-		return(descriptor);
+		return descriptor;
 	else
-		return(lables[obj_idx - 1]);
+		return lables[obj_idx - 1];
 }
 
 QString TableObjectView::getConstraintString(Column *column)
@@ -639,9 +640,9 @@ QString TableObjectView::getConstraintString(Column *column)
 		if(!str_constr.isEmpty())
 			str_constr= ConstrDelimStart + ConstrSeparator + str_constr + ConstrDelimEnd;
 
-		return(str_constr);
+		return str_constr;
 	}
-	else return(QString());
+	else return "";
 }
 
 void TableObjectView::setFakeSelection(bool value)
@@ -663,12 +664,12 @@ void TableObjectView::setFakeSelection(bool value)
 	update();
 }
 
-bool TableObjectView::hasFakeSelection(void)
+bool TableObjectView::hasFakeSelection()
 {
-	return(fake_selection);
+	return fake_selection;
 }
 
-void TableObjectView::configureObjectSelection(void)
+void TableObjectView::configureObjectSelection()
 {
 	QGraphicsItem *parent = this->parentItem();
 	RoundedRectItem *rect_item=nullptr;
@@ -723,8 +724,8 @@ void TableObjectView::paint(QPainter *painter, const QStyleOptionGraphicsItem *o
 	}
 }
 
-QRectF TableObjectView::boundingRect(void) const
+QRectF TableObjectView::boundingRect() const
 {
-	return(bounding_rect);
+	return bounding_rect;
 }
 

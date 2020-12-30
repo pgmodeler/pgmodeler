@@ -3,6 +3,11 @@
 #          Code generation can be broken if incorrect changes are made.
 
 %if {list} %then
+
+  %if {use-signature} %then
+     %set {signature} [ ns.nspname || '.' || ]
+  %end
+
   [SELECT op.oid, oprname || '(' || 
   
     CASE 
@@ -17,11 +22,15 @@
         ELSE oprright::regtype::varchar
     END
         
-    || ')' AS name FROM pg_operator AS op ]
+    || ')' AS name, 
+    
+    ns.nspname AS parent, 'schema' AS parent_type
+    
+    FROM pg_operator AS op 
+    LEFT JOIN pg_namespace AS ns ON op.oprnamespace = ns.oid ]
 
   %if {schema} %then
-    [ LEFT JOIN pg_namespace AS ns ON op.oprnamespace = ns.oid
-       WHERE oprcode > 0 AND ns.nspname = ] '{schema}'
+    [ WHERE oprcode > 0 AND ns.nspname = ] '{schema}'
   %else
     [ WHERE oprcode > 0 ]
   %end
@@ -31,7 +40,11 @@
   %end
 
   %if {not-ext-object} %then
-   [ AND ] ( {not-ext-object} )
+    [ AND ] ( {not-ext-object} )
+  %end
+  
+  %if {name-filter} %then
+    [ AND ] ( {signature} [ op.oprname ~* ] E'{name-filter}' )
   %end
 
 %else

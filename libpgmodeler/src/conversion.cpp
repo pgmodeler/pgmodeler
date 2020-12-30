@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -18,15 +18,15 @@
 
 #include "conversion.h"
 
-Conversion::Conversion(void)
+Conversion::Conversion()
 {
 	obj_type=ObjectType::Conversion;
 	conversion_func=nullptr;
 	is_default=false;
-	attributes[Attributes::Default]=QString();
-	attributes[Attributes::SrcEncoding]=QString();
-	attributes[Attributes::DstEncoding]=QString();
-	attributes[Attributes::Function]=QString();
+	attributes[Attributes::Default]="";
+	attributes[Attributes::SrcEncoding]="";
+	attributes[Attributes::DstEncoding]="";
+	attributes[Attributes::Function]="";
 }
 
 void Conversion::setEncoding(unsigned encoding_idx, EncodingType encoding_type)
@@ -97,25 +97,25 @@ EncodingType Conversion::getEncoding(unsigned encoding_idx)
 	if(encoding_idx > DstEncoding)
 		throw Exception(ErrorCode::RefTypeInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	return(this->encodings[encoding_idx]);
+	return this->encodings[encoding_idx];
 }
 
-Function *Conversion::getConversionFunction(void)
+Function *Conversion::getConversionFunction()
 {
-	return(conversion_func);
+	return conversion_func;
 }
 
-bool Conversion::isDefault(void)
+bool Conversion::isDefault()
 {
-	return(is_default);
+	return is_default;
 }
 
 QString Conversion::getCodeDefinition(unsigned def_type)
 {
 	QString code_def=getCachedCode(def_type, false);
-	if(!code_def.isEmpty()) return(code_def);
+	if(!code_def.isEmpty()) return code_def;
 
-	attributes[Attributes::Default]=(is_default ? Attributes::True : QString());
+	attributes[Attributes::Default]=(is_default ? Attributes::True : "");
 	attributes[Attributes::SrcEncoding]=(~encodings[SrcEncoding]);
 	attributes[Attributes::DstEncoding]=(~encodings[DstEncoding]);
 
@@ -127,6 +127,6 @@ QString Conversion::getCodeDefinition(unsigned def_type)
 			attributes[Attributes::Function]=conversion_func->getCodeDefinition(def_type, true);
 	}
 
-	return(BaseObject::__getCodeDefinition(def_type));
+	return BaseObject::__getCodeDefinition(def_type);
 }
 

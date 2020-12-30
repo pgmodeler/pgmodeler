@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -85,10 +85,10 @@ class ViewWidget: public BaseObjectWidget, public Ui::ViewWidget {
 		void editReference(int ref_idx);
 
 		//! \brief Updates the sql code field of the view form
-		void updateCodePreview(void);
+		void updateCodePreview();
 
 		//! \brief Adds or edit a object on the object table that calls the slot
-		void handleObject(void);
+		void handleObject();
 
 		//! \brief Duplicates a object on the object table that calls the slot
 		void duplicateObject(int curr_row, int new_row);
@@ -97,7 +97,7 @@ class ViewWidget: public BaseObjectWidget, public Ui::ViewWidget {
 		void removeObject(int row);
 
 		//! \brief Removes all objects from the table that calls the slot
-		void removeObjects(void);
+		void removeObjects();
 
 		//! \brief Opens the reference form when a new row is added in the references grid
 		void addReference(int row);
@@ -106,8 +106,8 @@ class ViewWidget: public BaseObjectWidget, public Ui::ViewWidget {
 		void duplicateReference(int orig_row, int new_row);
 
 	public slots:
-		void applyConfiguration(void);
-		void cancelConfiguration(void);
+		void applyConfiguration();
+		void cancelConfiguration();
 };
 
 #endif

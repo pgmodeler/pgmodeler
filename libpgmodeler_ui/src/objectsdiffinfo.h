@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -42,14 +42,14 @@ class ObjectsDiffInfo {
 		IgnoreObject=3,
 		NoDifference=4;
 
-		ObjectsDiffInfo(void);
+		ObjectsDiffInfo();
 		ObjectsDiffInfo(unsigned diff_type, BaseObject *ref_object, BaseObject *old_object);
 
-		unsigned getDiffType(void);
-		QString getInfoMessage(void);
-		QString getDiffTypeString(void);
-		BaseObject *getObject(void);
-		BaseObject *getOldObject(void);
+		unsigned getDiffType();
+		QString getInfoMessage();
+		QString getDiffTypeString();
+		BaseObject *getObject();
+		BaseObject *getOldObject();
 
 		bool operator == (ObjectsDiffInfo &info);
 

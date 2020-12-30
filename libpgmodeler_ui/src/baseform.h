@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -47,11 +47,13 @@ class BaseForm: public QDialog, public Ui::BaseForm {
 	public:
 		BaseForm(QWidget * parent = nullptr, Qt::WindowFlags f = Qt::Widget);
 
-		void setButtonConfiguration(unsigned button_conf=Messagebox::OkCancelButtons);
+		void setButtonConfiguration(unsigned button_conf = Messagebox::OkCancelButtons);
 
 		/*! \brief Injects the specified object into the form and turns it the main widget.
-				The widget is reparented to the stack widget within the form */
-		void setMainWidget(QWidget *widget);
+		 * The widget is reparented to the stack widget within the form.
+		 * The accept_slot and reject_slot are the name of slots from the provided widget that can be
+		 * optionally used to replace the default accept() and reject() of the form's footer tool buttons. */
+		void setMainWidget(QWidget *widget, const char *accept_slot = nullptr, const char *reject_slot = nullptr);
 
 		/*! \brief Injects the specified object into the form and turns it the main widget.
 				The widget is reparented to the stack widget within the form. This version of method

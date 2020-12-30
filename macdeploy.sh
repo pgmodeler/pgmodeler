@@ -1,14 +1,14 @@
 #!/bin/bash
 
 USR=`whoami`
-PGSQL_ROOT=/Library/PostgreSQL/11
-QT_ROOT=/Users/$USR/Qt5.12.3/5.12.3/clang_64
+PGSQL_ROOT=/Library/PostgreSQL/12
+QT_ROOT=/Users/$USR/Qt/5.15.1/clang_64
 QMAKE_ARGS="-r CONFIG+=x86_64 CONFIG+=release -spec macx-clang"
 LOG=macdeploy.log
 
 # Detecting current pgModeler version
-DEPLOY_VER=`cat libutils/src/globalattributes.cpp | grep PgModelerVersion | sed 's/PgModelerVersion=QString("//g' | sed 's/")//g' | sed 's/^ *//g' | cut -s -f2`
-BUILD_NUM=$(date '+%Y%m%d')
+DEPLOY_VER=`cat libutils/src/globalattributes.cpp | grep PgModelerVersion | sed 's/.*PgModelerVersion=QString("//g' | sed 's/")\;//g' | sed 's/^ *//g'`
+BUILD_NUM=`date '+%Y%m%d'`
 
 DEMO_VERSION_OPT='-demo-version'
 DEMO_VERSION=0
@@ -42,14 +42,14 @@ BUNDLE="$INSTALL_ROOT/$APP_PREFIX/$APPNAME.app"
 
 clear
 echo
-echo "pgModeler Mac OSX deployment script"
+echo "pgModeler macOS deployment script"
 echo "PostgreSQL Database Modeler Project - pgmodeler.io"
-echo "Copyright 2006-2019 Raphael A. Silva <raphael@pgmodeler.io>"
+echo "Copyright 2006-2020 Raphael A. Silva <raphael@pgmodeler.io>"
 
 # Identifying System Qt version
 if [ -e "$QT_ROOT/bin/qmake" ]; then
   QT_VER=`$QT_ROOT/bin/qmake --version | grep -m 1 -o -E '[0-9]\.[0-9]+\.[0-9]+'`
-  QT_VER=${QT_VER:0:5}
+  QT_VER=${QT_VER:0:6}
 fi
 
 # If Qt was not found in system path
@@ -71,6 +71,7 @@ fi
 
 echo
 echo "Deploying version: $DEPLOY_VER"
+echo "Qt version detected: $QT_VER"
 
 if [ $SNAPSHOT = 1 ]; then
   echo "Building snapshot version. (Found $SNAPSHOT_OPT)"
@@ -124,9 +125,9 @@ cp $PGSQL_ROOT/lib/libssl.1.* $BUNDLE/Contents/Frameworks >> $LOG 2>&1
 cp $PGSQL_ROOT/lib/libcrypto.1.* $BUNDLE/Contents/Frameworks >> $LOG 2>&1
 
 # Fixing the support of ssl by forcing the usage of the bundled libpq
-install_name_tool -change "@loader_path/../lib/libcrypto.1.0.0.dylib" "@loader_path/../Frameworks/libcrypto.1.0.0.dylib" $BUNDLE/Contents/Frameworks/libssl.1.0.0.dylib >> $LOG 2>&1
-install_name_tool -change "@loader_path/../lib/libcrypto.1.0.0.dylib" "@loader_path/../Frameworks/libcrypto.1.0.0.dylib" $BUNDLE/Contents/Frameworks/libpq.5.dylib >> $LOG 2>&1
-install_name_tool -change "@loader_path/../lib/libssl.1.0.0.dylib" "@loader_path/../Frameworks/libssl.1.0.0.dylib" $BUNDLE/Contents/Frameworks/libpq.5.dylib >> $LOG 2>&1
+install_name_tool -change "@loader_path/../lib/libcrypto.1.1.dylib" "@loader_path/../Frameworks/libcrypto.1.1.dylib" $BUNDLE/Contents/Frameworks/libssl.1.1.dylib >> $LOG 2>&1
+install_name_tool -change "@loader_path/../lib/libcrypto.1.1.dylib" "@loader_path/../Frameworks/libcrypto.1.1.dylib" $BUNDLE/Contents/Frameworks/libpq.5.dylib >> $LOG 2>&1
+install_name_tool -change "@loader_path/../lib/libssl.1.1.dylib" "@loader_path/../Frameworks/libssl.1.1.dylib" $BUNDLE/Contents/Frameworks/libpq.5.dylib >> $LOG 2>&1
 install_name_tool -change libpq.5.dylib "@loader_path/../Frameworks/libpq.5.dylib" $BUNDLE/Contents/Frameworks/libpgconnector.dylib >> $LOG 2>&1
 
 # Creates an empty dmg file named

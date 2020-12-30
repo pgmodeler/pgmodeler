@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -73,7 +73,7 @@ class TableWidget: public BaseObjectWidget, public Ui::TableWidget {
 
 	private slots:
 		//! \brief Adds or edit a object on the object table that calls the slot
-		void handleObject(void);
+		void handleObject();
 
 		//! \brief Removes the selected object from the table that calls the slot
 		void removeObject(int row);
@@ -82,16 +82,16 @@ class TableWidget: public BaseObjectWidget, public Ui::TableWidget {
 		void duplicateObject(int sel_row, int new_row);
 
 		//! \brief Removes all objects from the table that calls the slot
-		void removeObjects(void);
+		void removeObjects();
 
 		//! \brief Swap the index between two rows of the table that calls the slot
 		void swapObjects(int idx1, int idx2);
 
-		void editData(void);
+		void editData();
 
 	public slots:
-		void applyConfiguration(void);
-		void cancelConfiguration(void);
+		void applyConfiguration();
+		void cancelConfiguration();
 };
 
 #endif

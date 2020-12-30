@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -102,7 +102,7 @@ class ModelExportHelper: public QObject {
 		void saveGenAtlerCmdsStatus(DatabaseModel *db_model);
 
 		//! \brief Retores the previous ALTER command generation state for table columns/constraints
-		void restoreGenAtlerCmdsStatus(void);
+		void restoreGenAtlerCmdsStatus();
 
 		//! \brief Revert the dbms export process, removing the created database, roles and tablespaces
 		void undoDBMSExport(DatabaseModel *db_model, Connection &conn, bool use_tmp_names);
@@ -113,7 +113,7 @@ class ModelExportHelper: public QObject {
 		void generateTempObjectNames(DatabaseModel *db_model);
 
 		//! \brief Restore the original name of the database, roles and tablespaces
-		void restoreObjectNames(void);
+		void restoreObjectNames();
 
 		//! \brief Exports the contents of the buffer to a previously opened connection
 		void exportBufferToDBMS(const QString &buffer, Connection &conn, bool drop_objs=false);
@@ -122,7 +122,7 @@ class ModelExportHelper: public QObject {
 		bool isDuplicationError(const QString &error_code);
 
 		//! \brief Restore the export parameters to their default values
-		void resetExportParams(void);
+		void resetExportParams();
 
 		/*! \brief Aborts the export process by redirecting the provided exception in form of a signal or
 		to the main loop, depending on the mode the helper is being used (in a thread or locally) */
@@ -161,7 +161,7 @@ class ModelExportHelper: public QObject {
 		version is optional, since the helper identifies the version from the server. The boolean parameter
 		make the helper to ignore object duplicity errors.
 		\note The params drop_db and drop_objs can't be true at the same time. */
-		void exportToDBMS(DatabaseModel *db_model, Connection conn, const QString &pgsql_ver=QString(), bool ignore_dup=false,
+		void exportToDBMS(DatabaseModel *db_model, Connection conn, const QString &pgsql_ver="", bool ignore_dup=false,
 											bool drop_db=false, bool drop_objs=false, bool simulate=false, bool use_tmp_names=false);
 
 		/*! \brief Exports the model to a named data dictionary. The options browsable and splitted indicate,
@@ -172,7 +172,7 @@ class ModelExportHelper: public QObject {
 		/*! \brief Configures the DBMS export params before start the export thread (when in thread mode).
 		This form receive a database model as input and the sql code to be exported will be generated from it.
 		\note The params drop_db and drop_objs can't be true at the same time. */
-		void setExportToDBMSParams(DatabaseModel *db_model, Connection *conn, const QString &pgsql_ver=QString(), bool ignore_dup=false,
+		void setExportToDBMSParams(DatabaseModel *db_model, Connection *conn, const QString &pgsql_ver="", bool ignore_dup=false,
 															 bool drop_db=false, bool drop_objs=false, bool simulate=false, bool use_tmp_names=false);
 
 		/*! \brief Configures the DBMS export params before start the export thread (when in thread mode).
@@ -198,13 +198,13 @@ class ModelExportHelper: public QObject {
 
 	signals:
 		//! \brief This singal is emitted whenever the export progress changes
-		void s_progressUpdated(int progress, QString msg, ObjectType obj_type=ObjectType::BaseObject, QString cmd=QString(), bool is_code_gen=false);
+		void s_progressUpdated(int progress, QString msg, ObjectType obj_type=ObjectType::BaseObject, QString cmd="", bool is_code_gen=false);
 
 		//! \brief This signal is emited when the export has finished
-		void s_exportFinished(void);
+		void s_exportFinished();
 
 		//! \brief This signal is emited when the export has been cancelled
-		void s_exportCanceled(void);
+		void s_exportCanceled();
 
 		//! \brief This signal is emited when the export has encountered a critical error (only in thread mode)
 		void s_exportAborted(Exception e);
@@ -213,12 +213,12 @@ class ModelExportHelper: public QObject {
 		void s_errorIgnored(QString err_code, QString err_msg, QString cmd);
 
 	public slots:
-		void exportToDBMS(void);
-		void exportToPNG(void);
-		void exportToSVG(void);
-		void exportToSQL(void);
-		void exportToDataDict(void);
-		void cancelExport(void);
+		void exportToDBMS();
+		void exportToPNG();
+		void exportToSVG();
+		void exportToSQL();
+		void exportToDataDict();
+		void cancelExport();
 
 	private slots:
 		//! \brief Updates the exporting progress with the internal progress of sql generation of objects

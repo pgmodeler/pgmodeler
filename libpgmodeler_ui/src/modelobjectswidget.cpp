@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@
 #include "modelobjectswidget.h"
 #include "databaseimportform.h"
 #include "pgmodeleruins.h"
+#include "generalconfigwidget.h"
 
 ModelObjectsWidget::ModelObjectsWidget(bool simplified_view, QWidget *parent) : QWidget(parent)
 {
@@ -37,44 +38,48 @@ ModelObjectsWidget::ModelObjectsWidget(bool simplified_view, QWidget *parent) : 
 	options_tb->setVisible(!simplified_view);
 	visibleobjects_grp->setVisible(false);
 	filter_wgt->setVisible(simplified_view);
-
-	selected_object=nullptr;
 	splitter->handle(1)->setEnabled(false);
 
-	connect(objectstree_tw,SIGNAL(itemPressed(QTreeWidgetItem*,int)),this, SLOT(selectObject(void)));
-	connect(objectslist_tbw,SIGNAL(itemPressed(QTableWidgetItem*)),this, SLOT(selectObject(void)));
-	connect(expand_all_tb, SIGNAL(clicked(void)), objectstree_tw, SLOT(expandAll(void)));
-	connect(collapse_all_tb, SIGNAL(clicked(void)), this, SLOT(collapseAll(void)));
+	connect(objectstree_tw, SIGNAL(itemPressed(QTreeWidgetItem*,int)), this, SLOT(selectObject()));
+	connect(objectstree_tw, SIGNAL(itemPressed(QTreeWidgetItem*,int)), this, SLOT(showObjectMenu()));
+	connect(objectslist_tbw, SIGNAL(itemPressed(QTableWidgetItem*)), this, SLOT(selectObject()));
+	connect(objectslist_tbw, SIGNAL(itemPressed(QTableWidgetItem*)), this, SLOT(showObjectMenu()));
+	connect(objectstree_tw,SIGNAL(itemSelectionChanged()),this, SLOT(selectObject()));
+	connect(objectslist_tbw,SIGNAL(itemSelectionChanged()),this, SLOT(selectObject()));
+	connect(expand_all_tb, SIGNAL(clicked()), objectstree_tw, SLOT(expandAll()));
+	connect(collapse_all_tb, SIGNAL(clicked()), this, SLOT(collapseAll()));
 
 	if(!simplified_view)
 	{
 		widgets_conf.setValue(QString("splitterSize"), splitter->saveState());
-		connect(options_tb,SIGNAL(clicked(void)),this,SLOT(changeObjectsView(void)));
+		connect(options_tb,SIGNAL(clicked()),this,SLOT(changeObjectsView()));
 		connect(visibleobjects_lst,SIGNAL(itemClicked(QListWidgetItem*)), this, SLOT(setObjectVisible(QListWidgetItem*)));
 		connect(select_all_tb,SIGNAL(clicked(bool)), this, SLOT(setAllObjectsVisible(bool)));
 		connect(clear_all_tb,SIGNAL(clicked(bool)), this, SLOT(setAllObjectsVisible(bool)));
-		connect(objectstree_tw,SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)),this, SLOT(editObject(void)));
-		connect(objectslist_tbw,SIGNAL(itemDoubleClicked(QTableWidgetItem*)),this, SLOT(editObject(void)));
-		connect(hide_tb, SIGNAL(clicked(bool)), this, SLOT(hide(void)));
+		connect(objectstree_tw,SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)),this, SLOT(editObject()));
+		connect(objectslist_tbw,SIGNAL(itemDoubleClicked(QTableWidgetItem*)),this, SLOT(editObject()));
+		connect(hide_tb, SIGNAL(clicked(bool)), this, SLOT(hide()));
 
 		ObjectFinderWidget::updateObjectTypeList(visibleobjects_lst);
 		setAllObjectsVisible(true);
 		objectslist_tbw->installEventFilter(this);
 		objectstree_tw->installEventFilter(this);
+		objectslist_tbw->setSelectionMode(QAbstractItemView::ExtendedSelection);
+		objectstree_tw->setSelectionMode(QAbstractItemView::ExtendedSelection);
 	}
 	else
 	{
 		setMinimumSize(250, 300);
 		setWindowModality(Qt::ApplicationModal);
 		setWindowFlags(Qt::Dialog | Qt::WindowCloseButtonHint | Qt::WindowTitleHint);
-		connect(objectstree_tw,SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)),this, SLOT(close(void)));
-		connect(objectslist_tbw,SIGNAL(itemDoubleClicked(QTableWidgetItem*)),this, SLOT(close(void)));
-		connect(select_tb,SIGNAL(clicked(void)),this,SLOT(close(void)));
-		connect(cancel_tb,SIGNAL(clicked(void)),this,SLOT(close(void)));
+		connect(objectstree_tw,SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)),this, SLOT(close()));
+		connect(objectslist_tbw,SIGNAL(itemDoubleClicked(QTableWidgetItem*)),this, SLOT(close()));
+		connect(select_tb,SIGNAL(clicked()),this,SLOT(close()));
+		connect(cancel_tb,SIGNAL(clicked()),this,SLOT(close()));
 	}
 
-	connect(tree_view_tb,SIGNAL(clicked(void)),this,SLOT(changeObjectsView(void)));
-	connect(list_view_tb,SIGNAL(clicked(void)),this,SLOT(changeObjectsView(void)));
+	connect(tree_view_tb,SIGNAL(clicked()),this,SLOT(changeObjectsView()));
+	connect(list_view_tb,SIGNAL(clicked()),this,SLOT(changeObjectsView()));
 	connect(filter_edt, SIGNAL(textChanged(QString)), this, SLOT(filterObjects()));
 	connect(by_id_chk, SIGNAL(toggled(bool)), this, SLOT(filterObjects()));
 }
@@ -82,48 +87,50 @@ ModelObjectsWidget::ModelObjectsWidget(bool simplified_view, QWidget *parent) : 
 bool ModelObjectsWidget::eventFilter(QObject *object, QEvent *event)
 {
 	if(event->type() == QEvent::FocusOut &&
-			(object==objectslist_tbw || object==objectstree_tw))
+		 (object==objectslist_tbw || object==objectstree_tw))
 	{
 		QFocusEvent *evnt=dynamic_cast<QFocusEvent *>(event);
 
 		if(evnt->reason()==Qt::MouseFocusReason)
 		{
-			objectslist_tbw->clearSelection();
-			objectstree_tw->clearSelection();
+			clearSelectedObject();
 
 			if(model_wgt)
-				model_wgt->configurePopupMenu({});
+				model_wgt->configurePopupMenu(nullptr);
 
-			return(true);
+			return true;
 		}
 	}
 
-	return(QWidget::eventFilter(object, event));
+	return QWidget::eventFilter(object, event);
 }
 
-void ModelObjectsWidget::hide(void)
+void ModelObjectsWidget::hide()
 {
 	QWidget::hide();
 	emit s_visibilityChanged(false);
 }
 
 
-void ModelObjectsWidget::showObjectMenu(void)
+void ModelObjectsWidget::showObjectMenu()
 {
-	if(selected_object && QApplication::mouseButtons()==Qt::RightButton && model_wgt && !simplified_view)
-		model_wgt->popup_menu.exec(QCursor::pos());
+	if(!selected_objs.empty() && QApplication::mouseButtons()==Qt::RightButton && model_wgt && !simplified_view)
+	{
+		model_wgt->showObjectMenu();
+		clearSelectedObject();
+	}
 }
 
-void ModelObjectsWidget::editObject(void)
+void ModelObjectsWidget::editObject()
 {
-	if(selected_object && model_wgt && !simplified_view)
+	if(selected_objs.size() == 1 && model_wgt && !simplified_view)
 	{
 		//If the user double-clicked the item "Permission (n)" on tree view
 		if(sender()==objectstree_tw && objectstree_tw->currentItem() &&
-				objectstree_tw->currentItem()->data(1, Qt::UserRole).toUInt() == enum_cast(ObjectType::Permission))
+			 objectstree_tw->currentItem()->data(1, Qt::UserRole).toUInt() == enum_cast(ObjectType::Permission))
 			model_wgt->showObjectForm(ObjectType::Permission, reinterpret_cast<BaseObject *>(objectstree_tw->currentItem()->data(0, Qt::UserRole).value<void *>()));
 		//If the user double-clicked a permission on  list view
-		else if(sender()==objectslist_tbw && objectslist_tbw->currentRow() >= 0)
+		else if(sender() == objectslist_tbw && objectslist_tbw->currentRow() >= 0)
 		{
 			BaseObject *obj=reinterpret_cast<Permission *>(objectslist_tbw->item(objectslist_tbw->currentRow(), 0)->data(Qt::UserRole).value<void *>());
 			Permission *perm=dynamic_cast<Permission *>(obj);
@@ -135,41 +142,54 @@ void ModelObjectsWidget::editObject(void)
 		}
 		else
 			model_wgt->editObject();
+
+		clearSelectedObject();
 	}
 }
 
-void ModelObjectsWidget::selectObject(void)
+void ModelObjectsWidget::selectObject()
 {
-	ObjectType obj_type=ObjectType::BaseObject;
-	ModelWidget *model_wgt=nullptr;
+	BaseObject *selected_obj = nullptr;
+	ObjectType obj_type = ObjectType::BaseObject;
+	ModelWidget *model_wgt = nullptr;
+
+	selected_objs.clear();
 
 	if(!simplified_view && this->model_wgt)
-		model_wgt=this->model_wgt;
+		model_wgt = this->model_wgt;
 	else if(simplified_view)
-		model_wgt=db_model->getModelWidget();
+		model_wgt = db_model->getModelWidget();
 
 	if(tree_view_tb->isChecked())
 	{
-		QTreeWidgetItem *tree_item=objectstree_tw->currentItem();
+		QTreeWidgetItem *tree_item = objectstree_tw->currentItem();
 
 		if(tree_item)
 		{
-			obj_type=static_cast<ObjectType>(tree_item->data(1,Qt::UserRole).toUInt());
-			selected_object=reinterpret_cast<BaseObject *>(tree_item->data(0,Qt::UserRole).value<void *>());
+			obj_type = static_cast<ObjectType>(tree_item->data(1,Qt::UserRole).toUInt());
+			selected_obj = reinterpret_cast<BaseObject *>(tree_item->data(0,Qt::UserRole).value<void *>());
+
+			for(auto &item : objectstree_tw->selectedItems())
+			{
+				selected_obj = reinterpret_cast<BaseObject *>(item->data(0,Qt::UserRole).value<void *>());
+
+				if(selected_obj)
+					selected_objs.push_back(selected_obj);
+			}
 		}
 
 		//If user select a group item popups a "New [OBJECT]" menu
 		if((!simplified_view || (simplified_view && enable_obj_creation)) &&
-				!selected_object && QApplication::mouseButtons()==Qt::RightButton &&
-				obj_type!=ObjectType::Column && obj_type!=ObjectType::Constraint && obj_type!=ObjectType::Rule &&
-				obj_type!=ObjectType::Index && obj_type!=ObjectType::Trigger && obj_type!=ObjectType::Permission)
+				!selected_obj && QApplication::mouseButtons() == Qt::RightButton &&
+				obj_type != ObjectType::Column && obj_type != ObjectType::Constraint && obj_type != ObjectType::Rule &&
+				obj_type != ObjectType::Index && obj_type != ObjectType::Trigger && obj_type != ObjectType::Permission)
 		{
 			QAction act(QPixmap(PgModelerUiNs::getIconPath(obj_type)),
-						trUtf8("New") + QString(" ") + BaseObject::getTypeName(obj_type), nullptr);
+									tr("New") + QString(" ") + BaseObject::getTypeName(obj_type), nullptr);
 			QMenu popup;
 
 			//If not a relationship, connect the action to the addNewObject method of the model wiget
-			if(obj_type!=ObjectType::Relationship)
+			if(obj_type != ObjectType::Relationship)
 			{
 				act.setData(QVariant(enum_cast(obj_type)));
 				connect(&act, SIGNAL(triggered()), model_wgt, SLOT(addNewObject()));
@@ -183,8 +203,8 @@ void ModelObjectsWidget::selectObject(void)
 
 			popup.addAction(&act);
 			popup.exec(QCursor::pos());
-			disconnect(&act,nullptr,model_wgt,nullptr);
-			disconnect(model_wgt->getDatabaseModel(),nullptr, this,nullptr);
+			disconnect(&act, nullptr, model_wgt, nullptr);
+			disconnect(model_wgt->getDatabaseModel(), nullptr, this, nullptr);
 		}
 	}
 	else
@@ -193,22 +213,33 @@ void ModelObjectsWidget::selectObject(void)
 
 		if(tab_item)
 		{
-			selected_object=reinterpret_cast<BaseObject *>(tab_item->data(Qt::UserRole).value<void *>());
-			obj_type=selected_object->getObjectType();
+			selected_obj = reinterpret_cast<BaseObject *>(tab_item->data(Qt::UserRole).value<void *>());
+			obj_type = selected_obj->getObjectType();
+
+			for(auto &item : objectslist_tbw->selectedItems())
+			{
+				if(item->column() !=0 )
+					continue;
+
+				selected_obj = reinterpret_cast<BaseObject *>(item->data(Qt::UserRole).value<void *>());
+
+				if(selected_obj)
+					selected_objs.push_back(selected_obj);
+			}
 		}
 	}
 
-	if(obj_type!=ObjectType::Permission && selected_object && !simplified_view)
+	if(obj_type != ObjectType::Permission && !selected_objs.empty() && !simplified_view)
 	{
 		model_wgt->scene->clearSelection();
-		model_wgt->configureObjectMenu(selected_object);
-		showObjectMenu();
+		model_wgt->configurePopupMenu(selected_objs);
+		model_wgt->emitSceneInteracted();
 	}
 }
 
 QVariant ModelObjectsWidget::generateItemValue(BaseObject *object)
 {
-	return(QVariant::fromValue(reinterpret_cast<void *>(object)));
+	return QVariant::fromValue(reinterpret_cast<void *>(object));
 }
 
 QTreeWidgetItem *ModelObjectsWidget::createItemForObject(BaseObject *object, QTreeWidgetItem *root, bool update_perms)
@@ -319,7 +350,7 @@ QTreeWidgetItem *ModelObjectsWidget::createItemForObject(BaseObject *object, QTr
 
 	item->setIcon(0, QPixmap(PgModelerUiNs::getIconPath(BaseObject::getSchemaName(obj_type) + str_aux)));
 
-	return(item);
+	return item;
 }
 
 void ModelObjectsWidget::setObjectVisible(ObjectType obj_type, bool visible)
@@ -379,7 +410,7 @@ void ModelObjectsWidget::setAllObjectsVisible(bool value)
 	updateObjectsView();
 }
 
-void ModelObjectsWidget::changeObjectsView(void)
+void ModelObjectsWidget::changeObjectsView()
 {
 	if(sender()==tree_view_tb || sender()==list_view_tb)
 	{
@@ -403,7 +434,7 @@ void ModelObjectsWidget::changeObjectsView(void)
 	collapse_all_tb->setEnabled(tree_view_tb->isChecked());
 }
 
-void ModelObjectsWidget::collapseAll(void)
+void ModelObjectsWidget::collapseAll()
 {
 	QTreeWidgetItem *root=objectstree_tw->topLevelItem(0);
 	objectstree_tw->collapseAll();
@@ -412,7 +443,7 @@ void ModelObjectsWidget::collapseAll(void)
 		root->setExpanded(true);
 }
 
-void ModelObjectsWidget::filterObjects(void)
+void ModelObjectsWidget::filterObjects()
 {
 	if(tree_view_tb->isChecked())
 	{
@@ -436,16 +467,17 @@ void ModelObjectsWidget::filterObjects(void)
 	}
 }
 
-void ModelObjectsWidget::updateObjectsView(void)
+void ModelObjectsWidget::updateObjectsView()
 {
-  updateDatabaseTree();
-  updateObjectsList();
+	selected_objs.clear();
+	updateDatabaseTree();
+	updateObjectsList();
 
-  if(!filter_edt->text().isEmpty())
-	filterObjects();
+	if(!filter_edt->text().isEmpty())
+		filterObjects();
 }
 
-void ModelObjectsWidget::updateObjectsList(void)
+void ModelObjectsWidget::updateObjectsList()
 {
 	vector<BaseObject *> objects;
 
@@ -459,10 +491,11 @@ void ModelObjectsWidget::updateObjectsList(void)
 				visible_types.push_back(tp.first);
 		}
 
-		objects=db_model->findObjects(QString(), visible_types, false, false, false);
+		objects = db_model->findObjects("", visible_types, false, false, false);
 	}
 
 	ObjectFinderWidget::updateObjectTable(objectslist_tbw, objects);
+	objectslist_tbw->clearSelection();
 }
 
 void ModelObjectsWidget::updateSchemaTree(QTreeWidgetItem *root)
@@ -705,7 +738,7 @@ void ModelObjectsWidget::updatePermissionTree(QTreeWidgetItem *root, BaseObject 
 	}
 }
 
-void ModelObjectsWidget::updateDatabaseTree(void)
+void ModelObjectsWidget::updateDatabaseTree()
 {
 	if(!db_model)
 		objectstree_tw->clear();
@@ -798,9 +831,12 @@ void ModelObjectsWidget::updateDatabaseTree(void)
 	}
 }
 
-BaseObject *ModelObjectsWidget::getSelectedObject(void)
+BaseObject *ModelObjectsWidget::getSelectedObject()
 {
-	return(selected_object);
+	if(!simplified_view || selected_objs.size() != 1)
+		return nullptr;
+
+	return selected_objs[0];
 }
 
 void ModelObjectsWidget::enableObjectCreation(bool value)
@@ -808,22 +844,26 @@ void ModelObjectsWidget::enableObjectCreation(bool value)
   enable_obj_creation=value;
 }
 
-void ModelObjectsWidget::close(void)
+void ModelObjectsWidget::close()
 {
 	QObject *obj_sender=sender();
 
-	if(obj_sender==cancel_tb)
-		selected_object=nullptr;
+	if(obj_sender == cancel_tb)
+		selected_objs.clear();
 	else
 	{
 		QVariant data;
+		BaseObject *selected_obj = nullptr;
 
 		if(tree_view_tb->isChecked() && objectstree_tw->currentItem())
-			data=objectstree_tw->currentItem()->data(0,Qt::UserRole);
+			data = objectstree_tw->currentItem()->data(0,Qt::UserRole);
 		else if(objectslist_tbw->currentItem())
-			data=objectslist_tbw->currentItem()->data(Qt::UserRole);
+			data = objectslist_tbw->currentItem()->data(Qt::UserRole);
 
-		selected_object=reinterpret_cast<BaseObject *>(data.value<void *>());
+		selected_obj = reinterpret_cast<BaseObject *>(data.value<void *>());
+
+		if(selected_obj && std::find(selected_objs.begin(), selected_objs.end(), selected_obj) == selected_objs.end())
+			selected_objs.push_back(selected_obj);
 	}
 
 	QWidget::close();
@@ -861,7 +901,7 @@ void ModelObjectsWidget::showEvent(QShowEvent *)
 {
 	if(simplified_view)
 	{
-		QWidget *wgt=QApplication::activeWindow();
+		QWidget *wgt = QApplication::activeWindow();
 
 		filter_edt->setFocus();
 		filter_edt->blockSignals(true);
@@ -871,12 +911,13 @@ void ModelObjectsWidget::showEvent(QShowEvent *)
 		filter_edt->blockSignals(false);
 		by_id_chk->blockSignals(false);
 
+		GeneralConfigWidget::restoreWidgetGeometry(this, this->metaObject()->className());
+
 		if(wgt)
 		{
-			int x, y;
-			x = wgt->pos().x() + abs((wgt->width() - this->width()) / 2);
-			y = wgt->pos().y() + abs((wgt->height() - this->height()) / 2);
-			this->setGeometry(QRect(QPoint(x,y), this->minimumSize()));
+			int x = wgt->pos().x() + abs((wgt->width() - this->width()) / 2),
+					y = wgt->pos().y() + abs((wgt->height() - this->height()) / 2);
+			this->move(x, y);
 		}
 	}
 }
@@ -896,10 +937,10 @@ void ModelObjectsWidget::closeEvent(QCloseEvent *)
 			itr++;
 		}
 
-		this->resize(this->minimumSize());
+		GeneralConfigWidget::saveWidgetGeometry(this, this->metaObject()->className());
 	}
 
-	emit s_visibilityChanged(selected_object, !this->isVisible());
+	emit s_visibilityChanged(getSelectedObject(), !this->isVisible());
 }
 
 void ModelObjectsWidget::mouseMoveEvent(QMouseEvent *)
@@ -913,7 +954,7 @@ void ModelObjectsWidget::mouseMoveEvent(QMouseEvent *)
 	{
 		QPoint pos_dif;
 		QDesktopWidget desktop;
-		QRect ret=desktop.screenGeometry();
+		QRect ret=qApp->screens().at(desktop.screenNumber(this))->geometry();
 		int px, py;
 
 		pos_dif=pos1-pos;
@@ -943,6 +984,19 @@ void ModelObjectsWidget::resizeEvent(QResizeEvent *)
 void ModelObjectsWidget::saveTreeState(bool value)
 {
 	save_tree_state=(!simplified_view && value);
+}
+
+void ModelObjectsWidget::clearSelectedObject()
+{
+	objectstree_tw->blockSignals(true);
+	objectslist_tbw->blockSignals(true);
+	objectstree_tw->clearSelection();
+	objectslist_tbw->clearSelection();
+	objectstree_tw->blockSignals(false);
+	objectslist_tbw->blockSignals(false);
+	selected_objs.clear();
+	model_wgt->configurePopupMenu(nullptr);
+	model_wgt->emitSceneInteracted();
 }
 
 void ModelObjectsWidget::saveTreeState(vector<BaseObject *> &tree_items)
@@ -1011,24 +1065,23 @@ QTreeWidgetItem *ModelObjectsWidget::getTreeItem(BaseObject *object)
 			++itr;
 		}
 
-		return(item);
+		return item;
 	}
 	else
-		return(nullptr);
+		return nullptr;
 }
 
 void ModelObjectsWidget::selectCreatedObject(BaseObject *obj)
 {
 	updateObjectsView();
-	QTreeWidgetItem *item=getTreeItem(obj);
+	QTreeWidgetItem *item = getTreeItem(obj);
 
 	if(item)
 	{
 		objectstree_tw->blockSignals(true);
-		objectstree_tw->setItemSelected(item, true);
+		item->setSelected(true);
 		objectstree_tw->setCurrentItem(item);
 		objectstree_tw->scrollToItem(item);
-		selected_object=obj;
 		select_tb->setFocus();
 		objectstree_tw->blockSignals(false);
 	}

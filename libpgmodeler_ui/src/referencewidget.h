@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -25,15 +25,12 @@
 #include "syntaxhighlighter.h"
 #include "codecompletionwidget.h"
 #include "objectselectorwidget.h"
-#include "hinttextwidget.h"
 #include "pgsqltypewidget.h"
 #include "objectstablewidget.h"
 
 class ReferenceWidget : public QWidget, Ui::ReferenceWidget {
 	private:
 		Q_OBJECT
-
-		HintTextWidget *ref_alias_ht, *used_in_ht, *ref_object_ht, *alias_ht;
 
 		NumberedTextEditor *expression_txt;
 
@@ -59,14 +56,14 @@ class ReferenceWidget : public QWidget, Ui::ReferenceWidget {
 		explicit ReferenceWidget(QWidget *parent = nullptr);
 
 		void setAttributes(Reference ref, unsigned ref_flags, DatabaseModel *model);
-		Reference getReference(void);
-		unsigned getReferenceFlags(void);
+		Reference getReference();
+		unsigned getReferenceFlags();
 
 	public slots:
-		void applyConfiguration(void);
+		void applyConfiguration();
 
 	private slots:
-		void selectReferenceType(void);
+		void selectReferenceType();
 		void addColumn(int row);
 		void addRefTable(int row);
 		void updateColumn(int row);
@@ -74,7 +71,7 @@ class ReferenceWidget : public QWidget, Ui::ReferenceWidget {
 		void duplicateColumn(int src_row, int new_row);
 
 	signals:
-		void s_closeRequested(void);
+		void s_closeRequested();
 };
 
 #endif

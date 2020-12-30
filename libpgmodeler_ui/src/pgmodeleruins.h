@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -82,8 +82,8 @@ namespace PgModelerUiNs {
 	//! brief Changes the values of the grid selection at once
 	extern void bulkDataEdit(QTableWidget *results_tbw);
 
-	//! \brief Creates drop shadown on a tool button that represents an QAction
-	extern void createDropShadow(QToolButton *btn, int x_offset = 2, int y_offset = 2, int radius = 5);
+	//! \brief Creates drop shadown on a widget
+	extern void createDropShadow(QWidget *wgt, int x_offset = 2, int y_offset = 2, int radius = 5);
 }
 
 #endif

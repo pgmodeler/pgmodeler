@@ -21,7 +21,8 @@
 <!ELEMENT object EMPTY>
 <!ATTLIST object fill-color CDATA #REQUIRED>
 <!ATTLIST object border-color CDATA #REQUIRED>
-<!ATTLIST object id (table-title|table-body|textbox|view-title|view-body|label|relationship|
-                     attribute|column|pk-column|uq-column|fk-column|nn-column|rule|trigger|index|constraint|
-                     locker-body|locker-arc|obj-selection|reference|view-ext-body|table-ext-body|
-                     pos-info|tag|placeholder|policy|foreigntable-title|foreigntable-body|foreigntable-ext-body) "table-title">
+<!ATTLIST object id (table-title|table-body|textbox|view-title|view-body|view-toggler-btns|view-toggler-body|
+                     label|relationship|attribute|column|pk-column|uq-column|fk-column|nn-column|rule|trigger|index|constraint|
+					 locker-body|locker-arc|obj-selection|reference|view-ext-body|table-ext-body|table-toggler-btns|
+					 table-toggler-body|pos-info|tag|placeholder|policy|foreigntable-title|foreigntable-body|
+					 foreigntable-ext-body|foreigntable-toggler-btns|foreigntable-toggler-body) "table-title">

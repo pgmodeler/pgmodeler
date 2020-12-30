@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -88,10 +88,10 @@ void LineNumbersWidget::paintEvent(QPaintEvent *event)
 
 		if(font.bold())
 		{
-			painter.setBrush(bg_color.dark(150));
+			painter.setBrush(bg_color.darker(150));
 			painter.setPen(Qt::transparent);
 			painter.drawRect(QRect(-1, y, this->width() + 1, height));
-			painter.setPen(font_color.light(180));
+			painter.setPen(font_color.lighter(180));
 		}
 		else
 			painter.setPen(font_color);
@@ -152,7 +152,7 @@ void LineNumbersWidget::mouseReleaseEvent(QMouseEvent *)
 	has_selection = false;
 }
 
-QColor LineNumbersWidget::getBackgroundColor(void)
+QColor LineNumbersWidget::getBackgroundColor()
 {
-	return(LineNumbersWidget::bg_color);
+	return LineNumbersWidget::bg_color;
 }

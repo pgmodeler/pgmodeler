@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
 
 #include "tabletitleview.h"
 
-TableTitleView::TableTitleView(void) : BaseObjectView(nullptr)
+TableTitleView::TableTitleView() : BaseObjectView(nullptr)
 {
 	schema_name=new QGraphicsSimpleTextItem;
 	schema_name->setZValue(1);
@@ -31,11 +31,11 @@ TableTitleView::TableTitleView(void) : BaseObjectView(nullptr)
 	box->setZValue(0);
 }
 
-TableTitleView::~TableTitleView(void)
+TableTitleView::~TableTitleView()
 {
-	delete(schema_name);
-	delete(obj_name);
-	delete(box);
+	delete schema_name;
+	delete obj_name;
+	delete box;
 }
 
 void TableTitleView::configureObject(BaseGraphicObject *object)

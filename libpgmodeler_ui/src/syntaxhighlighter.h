@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -111,7 +111,7 @@ class SyntaxHighlighter: public QSyntaxHighlighter {
 		QChar	completion_trigger;
 
 		//! \brief Configures the initial attributes of the highlighter
-		void configureAttributes(void);
+		void configureAttributes();
 
 		/*! \brief Indentifies the group which the word belongs to.  The other parameters indicates, respectively,
 	the lookahead char for the group, the current index (column) on the buffer, the initial match index and the
@@ -143,14 +143,14 @@ class SyntaxHighlighter: public QSyntaxHighlighter {
 		void loadConfiguration(const QString &filename);
 
 		//! \brief Returns if the configuration were successfully loaded
-		bool isConfigurationLoaded(void);
+		bool isConfigurationLoaded();
 
 		/*! \brief Returns the regexp vector of the specified group. The 'final_expr' bool parameter indicates
 		that the final expressions must be returned instead of initial expression (default) */
 		vector<QRegExp> getExpressions(const QString &group_name, bool final_expr=false);
 
 		//! \brief Returns the current configured code completion trigger char
-		QChar getCompletionTrigger(void);
+		QChar getCompletionTrigger();
 
 		//! \brief Sets the default font for all instances of this class
 		static void setDefaultFont(const QFont &fnt);
@@ -160,7 +160,7 @@ class SyntaxHighlighter: public QSyntaxHighlighter {
 		void highlightBlock(const QString &txt);
 
 		//! \brief Clears the loaded configuration
-		void clearConfiguration(void);
+		void clearConfiguration();
 };
 
 #endif

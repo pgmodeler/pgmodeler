@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -28,6 +28,7 @@
 
 #include "baseobject.h"
 #include "schema.h"
+#include "pgsqltypes/pgsqltype.h"
 
 class Domain: public BaseObject{
 	private:
@@ -44,13 +45,13 @@ class Domain: public BaseObject{
 		attribs_map chk_constrs;
 
 	public:
-		Domain(void);
+		Domain();
 
 		void addCheckConstraint(const QString &name, const QString &expr);
 
-		void removeCheckConstraints(void);
+		void removeCheckConstraints();
 
-		attribs_map getCheckConstraints(void);
+		attribs_map getCheckConstraints();
 
 		//! \brief Sets the default value of the domain
 		void setDefaultValue(const QString &default_val);
@@ -70,11 +71,11 @@ class Domain: public BaseObject{
 		void setSchema(BaseObject *schema);
 
 		//! \brief Methods to access domain's attributes
-		QString getConstraintName(void);
-		QString getExpression(void);
-		QString getDefaultValue(void);
-		bool isNotNull(void);
-		PgSqlType getType(void);
+		QString getConstraintName();
+		QString getExpression();
+		QString getDefaultValue();
+		bool isNotNull();
+		PgSqlType getType();
 
 		//! \brief Returns the SQL / XML code definition for the domain
 		virtual QString getCodeDefinition(unsigned def_type) final;

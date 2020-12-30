@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -35,14 +35,14 @@ class IndexElement: public Element {
 		Collation *collation;
 
 	public:
-		IndexElement(void);
+		IndexElement();
 		virtual ~IndexElement(void){}
 
 		//! \brief Defines the collation referenced by the element
 		void setCollation(Collation *collation);
 
 		//! \brief Get the collation referenced by the element
-		Collation *getCollation(void);
+		Collation *getCollation();
 
 		//! \brief Returns the SQL / XML code definition for the index element
 		virtual QString getCodeDefinition(unsigned def_type) final;
