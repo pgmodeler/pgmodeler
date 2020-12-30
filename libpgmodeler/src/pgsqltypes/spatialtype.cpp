@@ -53,7 +53,7 @@ SpatialType::SpatialType(const QString &type_name, int srid, unsigned variation_
 		name.remove(QString("Z"));
 	}
 
-	setType(type_name);
+	setType(name);
 	setVariation(variation_id);
 	setSRID(srid);
 }

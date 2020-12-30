@@ -750,8 +750,8 @@ ModelWidget *DatabaseImportForm::getModelWidget()
 {
 	if(create_model)
 		return model_wgt;
-	else
-		return nullptr;
+
+	return nullptr;
 }
 
 void DatabaseImportForm::listDatabases(DatabaseImportHelper &import_helper, QComboBox *dbcombo)

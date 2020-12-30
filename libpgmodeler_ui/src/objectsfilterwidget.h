@@ -68,7 +68,9 @@ class ObjectsFilterWidget : public QWidget, Ui::ObjectsFilterWidget {
 	private slots:
 		void addFilter();
 		void removeFilter();
-		void removeAllFilters();
+
+	public slots:
+		void clearFilters();
 
 	signals:
 		void s_filterApplyingRequested();

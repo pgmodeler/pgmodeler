@@ -1724,7 +1724,7 @@ unsigned PhysicalTable::getMaxObjectCount()
 	return max;
 }
 
-QString PhysicalTable::getDataDictionary(bool splitted, attribs_map extra_attribs)
+QString PhysicalTable::getDataDictionary(bool split, attribs_map extra_attribs)
 {
 	Column *column = nullptr;
 	Constraint *constr = nullptr;
@@ -1739,14 +1739,14 @@ QString PhysicalTable::getDataDictionary(bool splitted, attribs_map extra_attrib
 	attribs.insert(extra_attribs.begin(), extra_attribs.end());
 	attribs[Attributes::Type] = getTypeName();
 	attribs[Attributes::TypeClass] = getSchemaName();
-	attribs[Attributes::Splitted] = splitted ? Attributes::True : "";
+	attribs[Attributes::Split] = split ? Attributes::True : "";
 	attribs[Attributes::Name] = obj_name;
 	attribs[Attributes::Schema] = schema ? schema->getName() : "";
 	attribs[Attributes::Comment] = comment;
 	attribs[Attributes::Columns] = "";
 	attribs[Attributes::Constraints] = "";
 
-	aux_attrs[Attributes::Splitted] = attribs[Attributes::Splitted];
+	aux_attrs[Attributes::Split] = attribs[Attributes::Split];
 
 	// Gathering the acestor table names
 	for(auto &tab : ancestor_tables)
@@ -1779,7 +1779,7 @@ QString PhysicalTable::getDataDictionary(bool splitted, attribs_map extra_attrib
 		aux_attrs[Attributes::Parent] = getSchemaName();
 		aux_attrs[Attributes::Name] = column->getName();
 		aux_attrs[Attributes::Type] = *column->getType();
-		aux_attrs[Attributes::DefaultValue] = column->getDefaultValue();
+		aux_attrs[Attributes::DefaultValue] = column->getSequence() ? Column::NextValFuncTmpl.arg(column->getSequence()->getSignature()) : column->getDefaultValue();
 		aux_attrs[Attributes::Comment] = column->getComment();
 		aux_attrs[Attributes::NotNull] = column->isNotNull() ? check_mark : "";
 		aux_attrs[Attributes::PkConstr] = isConstraintRefColumn(column, ConstraintType::PrimaryKey) ? check_mark : "";
@@ -1795,11 +1795,12 @@ QString PhysicalTable::getDataDictionary(bool splitted, attribs_map extra_attrib
 	{
 		constr = dynamic_cast<Constraint *>(obj);
 
-		aux_attrs[Attributes::Splitted] = attribs[Attributes::Splitted];
+		aux_attrs[Attributes::Split] = attribs[Attributes::Split];
 		aux_attrs[Attributes::Name] = constr->getName();
 		aux_attrs[Attributes::Type] = ~constr->getConstraintType();
 		aux_attrs[Attributes::Comment] = constr->getComment();
 		aux_attrs[Attributes::RefTable] = constr->getReferencedTable() ? constr->getReferencedTable()->getSignature().remove(QChar('"')) : "";
+		aux_attrs[Attributes::Expression] = constr->getExpression();
 
 		// Retrieving the columns that composes the constraint
 		for(auto &col : constr->getColumns(Constraint::SourceCols))

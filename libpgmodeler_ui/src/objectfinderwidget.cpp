@@ -22,12 +22,17 @@
 const QStringList ObjectFinderWidget::search_attribs =
 { Attributes::Name, Attributes::Comment, Attributes::Signature,
 	Attributes::Schema, Attributes::Owner, Attributes::Tablespace,
-	Attributes::Type, Attributes::ReturnType };
+	Attributes::Type, Attributes::ReturnType, Attributes::SrcTable,
+	Attributes::DstTable, Attributes::RelatedForeignKey,
+	Attributes::SrcColumns, Attributes::RefColumns };
 
 const QStringList ObjectFinderWidget::search_attribs_i18n =
 { QT_TR_NOOP("Name"), QT_TR_NOOP("Comment"), QT_TR_NOOP("Signature"),
 	QT_TR_NOOP("Schema"), QT_TR_NOOP("Owner"), QT_TR_NOOP("Tablespace"),
-	QT_TR_NOOP("Data type"), QT_TR_NOOP("Return type")};
+	QT_TR_NOOP("Data type"), QT_TR_NOOP("Return type"),
+	QT_TR_NOOP("Source table"), QT_TR_NOOP("Destination table"),
+	QT_TR_NOOP("Related foreign key"),	QT_TR_NOOP("Source column(s)"),
+	QT_TR_NOOP("Referenced column(s)") };
 
 ObjectFinderWidget::ObjectFinderWidget(QWidget *parent) : QWidget(parent)
 {

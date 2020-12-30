@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>825</width>
-    <height>685</height>
+    <width>968</width>
+    <height>830</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -1443,7 +1443,7 @@
               <item>
                <layout class="QVBoxLayout" name="verticalLayout_10">
                 <item>
-                 <widget class="QCheckBox" name="by_date_chk">
+                 <widget class="QCheckBox" name="gen_filters_from_log_chk">
                   <property name="sizePolicy">
                    <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                     <horstretch>0</horstretch>
@@ -1451,10 +1451,10 @@
                    </sizepolicy>
                   </property>
                   <property name="toolTip">
-                   <string>&lt;p&gt;Filters the objects by querying the model's internal change log and comparing their modification date/time against the provided date/time interval.&lt;/p&gt;</string>
+                   <string>&lt;p&gt;Generate filters by querying the model's internal changelog and comparing their modification date/time against the provided date/time interval.&lt;/p&gt;</string>
                   </property>
                   <property name="text">
-                   <string>By modification date</string>
+                   <string>Generate filters from changelog</string>
                   </property>
                  </widget>
                 </item>
@@ -1473,58 +1473,28 @@
                       <number>4</number>
                      </property>
                      <property name="bottomMargin">
-                      <number>4</number>
+                      <number>15</number>
                      </property>
-                     <item row="0" column="0">
-                      <widget class="QCheckBox" name="start_date_chk">
-                       <property name="text">
-                        <string>Start date:</string>
-                       </property>
-                      </widget>
-                     </item>
-                     <item row="0" column="3" rowspan="2">
-                      <spacer name="horizontalSpacer_11">
-                       <property name="orientation">
-                        <enum>Qt::Horizontal</enum>
-                       </property>
-                       <property name="sizeHint" stdset="0">
-                        <size>
-                         <width>86</width>
-                         <height>68</height>
-                        </size>
-                       </property>
-                      </spacer>
-                     </item>
-                     <item row="1" column="2">
-                      <widget class="QToolButton" name="apply_by_date_tb">
+                     <item row="2" column="1">
+                      <widget class="QDateTimeEdit" name="end_date_dt">
                        <property name="enabled">
                         <bool>false</bool>
                        </property>
-                       <property name="toolTip">
-                        <string/>
+                       <property name="sizePolicy">
+                        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                         <horstretch>0</horstretch>
+                         <verstretch>0</verstretch>
+                        </sizepolicy>
                        </property>
-                       <property name="text">
-                        <string>Apply</string>
+                       <property name="displayFormat">
+                        <string>yyyy-MM-dd HH:mm</string>
                        </property>
-                       <property name="icon">
-                        <iconset resource="../res/resources.qrc">
-                         <normaloff>:/icones/icones/confirmar.png</normaloff>:/icones/icones/confirmar.png</iconset>
-                       </property>
-                       <property name="iconSize">
-                        <size>
-                         <width>22</width>
-                         <height>22</height>
-                        </size>
-                       </property>
-                       <property name="shortcut">
-                        <string>F5</string>
-                       </property>
-                       <property name="toolButtonStyle">
-                        <enum>Qt::ToolButtonTextBesideIcon</enum>
+                       <property name="calendarPopup">
+                        <bool>true</bool>
                        </property>
                       </widget>
                      </item>
-                     <item row="0" column="1">
+                     <item row="1" column="1">
                       <widget class="QDateTimeEdit" name="start_date_dt">
                        <property name="enabled">
                         <bool>false</bool>
@@ -1544,6 +1514,13 @@
                       </widget>
                      </item>
                      <item row="1" column="0">
+                      <widget class="QCheckBox" name="start_date_chk">
+                       <property name="text">
+                        <string>Start date:</string>
+                       </property>
+                      </widget>
+                     </item>
+                     <item row="2" column="0">
                       <widget class="QCheckBox" name="end_date_chk">
                        <property name="enabled">
                         <bool>true</bool>
@@ -1553,37 +1530,44 @@
                        </property>
                       </widget>
                      </item>
-                     <item row="1" column="1">
-                      <widget class="QDateTimeEdit" name="end_date_dt">
-                       <property name="enabled">
-                        <bool>false</bool>
-                       </property>
-                       <property name="sizePolicy">
-                        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                         <horstretch>0</horstretch>
-                         <verstretch>0</verstretch>
-                        </sizepolicy>
-                       </property>
-                       <property name="displayFormat">
-                        <string>yyyy-MM-dd HH:mm</string>
-                       </property>
-                       <property name="calendarPopup">
-                        <bool>true</bool>
-                       </property>
-                      </widget>
-                     </item>
-                     <item row="2" column="1">
-                      <spacer name="verticalSpacer_4">
+                     <item row="1" column="3" rowspan="2">
+                      <spacer name="horizontalSpacer_11">
                        <property name="orientation">
-                        <enum>Qt::Vertical</enum>
+                        <enum>Qt::Horizontal</enum>
                        </property>
                        <property name="sizeHint" stdset="0">
                         <size>
-                         <width>20</width>
-                         <height>40</height>
+                         <width>86</width>
+                         <height>68</height>
                         </size>
                        </property>
                       </spacer>
+                     </item>
+                     <item row="3" column="1">
+                      <widget class="QToolButton" name="generate_filters_tb">
+                       <property name="enabled">
+                        <bool>false</bool>
+                       </property>
+                       <property name="toolTip">
+                        <string/>
+                       </property>
+                       <property name="text">
+                        <string>Generate filters</string>
+                       </property>
+                       <property name="icon">
+                        <iconset resource="../res/resources.qrc">
+                         <normaloff>:/icones/icones/filter.png</normaloff>:/icones/icones/filter.png</iconset>
+                       </property>
+                       <property name="iconSize">
+                        <size>
+                         <width>22</width>
+                         <height>22</height>
+                        </size>
+                       </property>
+                       <property name="toolButtonStyle">
+                        <enum>Qt::ToolButtonTextBesideIcon</enum>
+                       </property>
+                      </widget>
                      </item>
                     </layout>
                    </widget>
@@ -1820,11 +1804,11 @@
             <attribute name="headerCascadingSectionResizes">
              <bool>true</bool>
             </attribute>
-            <attribute name="headerMinimumSectionSize">
-             <number>25</number>
-            </attribute>
             <attribute name="headerDefaultSectionSize">
              <number>100</number>
+            </attribute>
+            <attribute name="headerMinimumSectionSize">
+             <number>25</number>
             </attribute>
             <attribute name="headerStretchLastSection">
              <bool>true</bool>

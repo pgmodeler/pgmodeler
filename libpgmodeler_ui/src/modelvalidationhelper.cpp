@@ -265,16 +265,16 @@ void ModelValidationHelper::validateModel()
 
 	try
 	{
-		ObjectType types[]={ ObjectType::Role, ObjectType::Tablespace, ObjectType::Schema, ObjectType::Language, ObjectType::Function,
-												 ObjectType::Type, ObjectType::Domain, ObjectType::Sequence, ObjectType::Operator, ObjectType::OpFamily,
-												 ObjectType::OpClass, ObjectType::Collation, ObjectType::Table, ObjectType::Extension, ObjectType::View,
-												 ObjectType::Relationship, ObjectType::ForeignDataWrapper, ObjectType::ForeignServer, ObjectType::GenericSql,
-												 ObjectType::ForeignTable },
-				aux_types[]={ ObjectType::Table, ObjectType::ForeignTable, ObjectType::View },
-				tab_obj_types[]={ ObjectType::Constraint, ObjectType::Index },
-				obj_type;
-		unsigned i, i1, cnt, aux_cnt=sizeof(aux_types)/sizeof(ObjectType),
-				count=sizeof(types)/sizeof(ObjectType), count1=sizeof(tab_obj_types)/sizeof(ObjectType);
+		vector<ObjectType> types = { ObjectType::Role, ObjectType::Tablespace, ObjectType::Schema, ObjectType::Language, ObjectType::Function,
+																 ObjectType::Type, ObjectType::Domain, ObjectType::Sequence, ObjectType::Operator, ObjectType::OpFamily,
+																 ObjectType::OpClass, ObjectType::Collation, ObjectType::Table, ObjectType::Extension, ObjectType::View,
+																 ObjectType::Relationship, ObjectType::ForeignDataWrapper, ObjectType::ForeignServer, ObjectType::GenericSql,
+																 ObjectType::ForeignTable, ObjectType::Procedure, ObjectType::Transform },
+				aux_types = { ObjectType::Table, ObjectType::ForeignTable, ObjectType::View },
+				tab_obj_types = { ObjectType::Constraint, ObjectType::Index };
+
+		ObjectType	obj_type;
+		unsigned i = 0, i1 = 0, cnt = 0, aux_cnt = 0,	count = 0, count1 = 0;
 		BaseObject *object=nullptr, *refer_obj=nullptr;
 		vector<BaseObject *> refs, refs_aux, *obj_list=nullptr, aux_tables;
 		vector<BaseObject *>::iterator itr;
@@ -292,6 +292,10 @@ void ModelValidationHelper::validateModel()
 		warn_count=error_count=progress=0;
 		val_infos.clear();
 		valid_canceled=false;
+
+		aux_cnt = aux_types.size();
+		count = types.size();
+		count1 = tab_obj_types.size();
 
 		/* Step 1: Validating broken references. This situation happens when a object references another
 		 which id is smaller than the id of the first one. */
@@ -342,16 +346,18 @@ void ModelValidationHelper::validateModel()
 							constr=dynamic_cast<Constraint *>(tab_obj);
 							col=dynamic_cast<Column *>(tab_obj);
 
-							/* If the current referrer object has an id less than reference object's id
-							 * then it will be pushed into the list of invalid references. The only exception is
-							 * for foreign keys that are discarded from any validation since they are always created
-							 * at end of code defintion being free of any reference breaking. */
+							/*
+							 * If the current referrer object has an id less than reference object's id
+							 * then it will be pushed into the list of invalid references.
+							 * There's an exception which is that foreign keys are completely discarded from any validation
+							 * since they are always created at end of code definition being free of any reference breaking.
+							 */
 							if(object != refs.back() &&
-									(
-										((col || (constr && constr->getConstraintType()!=ConstraintType::ForeignKey)) &&
-										 (tab_obj->getParentTable()->getObjectId() <= object->getObjectId())) ||
-										(!constr && refs.back()->getObjectId() <= object->getObjectId()))
-									)
+								 (
+									 ((col || (constr && constr->getConstraintType() != ConstraintType::ForeignKey)) &&
+										(tab_obj->getParentTable()->getObjectId() <= object->getObjectId())) ||
+									 (!constr && !col && refs.back()->getObjectId() <= object->getObjectId()))
+								 )
 							{
 								if(col || constr)
 									refer_obj=tab_obj->getParentTable();

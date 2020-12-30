@@ -1107,7 +1107,7 @@ vector<BaseObject *> View::getObjects(const vector<ObjectType> &excl_types)
 	return list;
 }
 
-QString View::getDataDictionary(bool splitted, attribs_map extra_attribs)
+QString View::getDataDictionary(bool split, attribs_map extra_attribs)
 {
 	attribs_map attribs, aux_attrs;
 	QStringList tab_names, col_names;
@@ -1118,13 +1118,13 @@ QString View::getDataDictionary(bool splitted, attribs_map extra_attribs)
 	attribs.insert(extra_attribs.begin(), extra_attribs.end());
 	attribs[Attributes::Type] = getTypeName();
 	attribs[Attributes::TypeClass] = getSchemaName();
-	attribs[Attributes::Splitted] = splitted ? Attributes::True : "";
+	attribs[Attributes::Split] = split ? Attributes::True : "";
 	attribs[Attributes::Name] = obj_name;
 	attribs[Attributes::Schema] = schema ? schema->getName() : "";
 	attribs[Attributes::Comment] = comment;
 	attribs[Attributes::Columns] = "";
 
-	aux_attrs[Attributes::Splitted] = attribs[Attributes::Splitted];
+	aux_attrs[Attributes::Split] = attribs[Attributes::Split];
 
 	for(auto &ref : references)
 	{

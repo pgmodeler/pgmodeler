@@ -768,10 +768,10 @@ class DatabaseModel:  public QObject, public BaseObject {
 		virtual QString getAlterDefinition(BaseObject *object) final;
 
 		//! \brief Returns the data dictionary of all tables in a single HTML code
-		void getDataDictionary(attribs_map &datadict, bool browsable, bool splitted);
+		void getDataDictionary(attribs_map &datadict, bool browsable, bool split);
 
 		//! \brief Saves the data dictionary of all tables in a single HTML file or splitted in several files for each table
-		void saveDataDictionary(const QString &path, bool browsable, bool splitted);
+		void saveDataDictionary(const QString &path, bool browsable, bool split);
 
 		/*! \brief Save the graphical objects positions, custom colors and custom points (for relationship lines) to an special file
 				that can be loaded by another model in order to change their objects position */
@@ -782,8 +782,8 @@ class DatabaseModel:  public QObject, public BaseObject {
 
 		/*! \brief Returns a search filter from the objects in the change log.
 		 * It's possible to specify a date interval to contrain the entries
-		 * retrieved from changelog */
-		QStringList getFiltersFromChangeLog(QDateTime start, QDateTime end);
+		 * retrieved from changelog. */
+		QStringList getFiltersFromChangelog(QDateTime start, QDateTime end);
 
 		//! \brief Enable the persistence of the internal changelog
 		void setPersistedChangelog(bool persist);

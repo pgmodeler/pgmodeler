@@ -37,6 +37,7 @@ HEADERS += src/textbox.h \
 	   src/pgsqltypes/partitioningtype.h \
 	   src/pgsqltypes/pgsqltype.h \
 	   src/pgsqltypes/policycmdtype.h \
+	   src/pgsqltypes/providertype.h \
 	   src/pgsqltypes/securitytype.h \
 	   src/pgsqltypes/spatialtype.h \
 	   src/pgsqltypes/storagetype.h \
@@ -109,6 +110,7 @@ SOURCES +=  src/textbox.cpp \
 	    src/pgsqltypes/partitioningtype.cpp \
 	    src/pgsqltypes/pgsqltype.cpp \
 	    src/pgsqltypes/policycmdtype.cpp \
+	    src/pgsqltypes/providertype.cpp \
 	    src/pgsqltypes/securitytype.cpp \
 	    src/pgsqltypes/spatialtype.cpp \
 	    src/pgsqltypes/storagetype.cpp \

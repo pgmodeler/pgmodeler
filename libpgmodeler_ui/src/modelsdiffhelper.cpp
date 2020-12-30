@@ -259,6 +259,9 @@ void ModelsDiffHelper::cancelDiff()
 
 void ModelsDiffHelper::diffColsInheritance(PhysicalTable *parent_tab, PhysicalTable *child_tab)
 {
+	if(!parent_tab || !child_tab)
+		return;
+
 	Column *child_col = nullptr;
 
 	for(auto &parent_col : *parent_tab->getObjectList(ObjectType::Column))

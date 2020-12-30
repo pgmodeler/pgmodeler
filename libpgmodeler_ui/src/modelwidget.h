@@ -119,6 +119,10 @@ class ModelWidget: public QWidget {
 
 		fade_rels_menu,
 
+		fade_peer_tables_menu,
+
+		fade_both_objs_menu,
+
 		toggle_attrs_menu,
 
 		pagination_menu,
@@ -244,6 +248,7 @@ class ModelWidget: public QWidget {
 		*action_change_owner,
 		*action_quick_actions,
 		*action_sel_sch_children,
+		*action_sel_table_rels,
 		*action_sel_tagged_tabs,
 		*action_select_object,
 		*action_parent_rel,
@@ -263,6 +268,12 @@ class ModelWidget: public QWidget {
 		*action_fade_rels,
 		*action_fade_rels_in,
 		*action_fade_rels_out,
+		*action_fade_peer_tables,
+		*action_fade_peer_tables_in,
+		*action_fade_peer_tables_out,
+		*action_fade_both_objs,
+		*action_fade_both_objs_in,
+		*action_fade_both_objs_out,
 		*action_pagination,
 		*action_collapse_mode,
 		*action_collapse_ext_attribs,
@@ -452,6 +463,9 @@ class ModelWidget: public QWidget {
 
 		//! \brief Selects all the graphical objects under the selected schema
 		void selectSchemaChildren();
+
+		//! \brief Selects all the relationships connected to the selected table
+		void selectTableRelationships();
 
 		//! \brief Selects all the tables and views that references the selected tag
 		void selectTaggedTables();

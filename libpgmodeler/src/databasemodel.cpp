@@ -6757,12 +6757,16 @@ Collation *DatabaseModel::createCollation()
 
 		xmlparser.getElementAttributes(attribs);
 
-		encoding=EncodingType(attribs[Attributes::Encoding]);
-		collation->setEncoding(encoding);
+		collation->setEncoding(EncodingType(attribs[Attributes::Encoding]));
+		collation->setProvider(ProviderType(attribs[Attributes::Provider]));
+		collation->setDeterministic(attribs[Attributes::Deterministic] == Attributes::True);
 
 		//Creating a collation from a base locale
 		if(!attribs[Attributes::Locale].isEmpty())
+		{
 			collation->setLocale(attribs[Attributes::Locale]);
+			collation->setModifier(Collation::Locale, attribs[Attributes::LocaleMod]);
+		}
 		//Creating a collation from another collation
 		else if(!attribs[Attributes::Collation].isEmpty())
 		{
@@ -6786,6 +6790,8 @@ Collation *DatabaseModel::createCollation()
 		{
 			collation->setLocalization(Collation::LcCollate, attribs[Attributes::LcCollate]);
 			collation->setLocalization(Collation::LcCtype, attribs[Attributes::LcCtype]);
+			collation->setModifier(Collation::LcCtype, attribs[Attributes::LcCtypeMod]);
+			collation->setModifier(Collation::LcCollate, attribs[Attributes::LcCollateMod]);
 		}
 	}
 	catch(Exception &e)
@@ -11242,35 +11248,32 @@ void DatabaseModel::addChangelogEntry(BaseObject *object, unsigned op_type, Base
 	if(!object || (object && TableObject::isTableObject(object->getObjectType()) && !parent_obj))
 		throw Exception(ErrorCode::InvChangelogEntryValues, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 
-	QString action;
-	BaseObject *aux_obj = nullptr;
+	QString action, obj_signature;
 	QDateTime date_time = QDateTime::currentDateTime();
 
 	if(TableObject::isTableObject(object->getObjectType()))
 	{
-		aux_obj = parent_obj;
-		action = Attributes::UpdatePriv;
+		obj_signature = parent_obj->getSignature() + "." + object->getName();
+		changelog.push_back(std::make_tuple(date_time, parent_obj->getSignature(), parent_obj->getObjectType(), Attributes::Updated));
 	}
 	else
-	{
-		aux_obj = object;
+		obj_signature = object->getSignature();
 
-		if(op_type == Operation::ObjectCreated)
-			action = Attributes::CreatePriv;
-		else if(op_type == Operation::ObjectRemoved)
-			action = Attributes::DeletePriv;
-		else
-			action = Attributes::UpdatePriv;
-	}
+	if(op_type == Operation::ObjectCreated)
+		action = Attributes::Created;
+	else if(op_type == Operation::ObjectRemoved)
+		action = Attributes::Deleted;
+	else
+		action = Attributes::Updated;
 
-	changelog.push_back(std::make_tuple(date_time,aux_obj->getSignature(), aux_obj->getObjectType(), action));
+	changelog.push_back(std::make_tuple(date_time, obj_signature, object->getObjectType(), action));
 }
 
 void DatabaseModel::addChangelogEntry(const QString &signature, const QString &type, const QString &action, const QString &date)
 {
 	QDateTime date_time = QDateTime::fromString(date, Qt::ISODate);
 	ObjectType obj_type = BaseObject::getObjectType(type);
-	QStringList actions = { Attributes::CreatePriv, Attributes::DeletePriv, Attributes::UpdatePriv };
+	QStringList actions = { Attributes::Created, Attributes::Deleted, Attributes::Updated };
 
 	if(!BaseObject::isValidName(signature) || obj_type == ObjectType::BaseObject ||
 		 TableObject::isTableObject(obj_type) || !date_time.isValid() || !actions.contains(action))
@@ -11279,7 +11282,7 @@ void DatabaseModel::addChangelogEntry(const QString &signature, const QString &t
 	changelog.push_back(std::make_tuple(date_time, signature, obj_type, action));
 }
 
-QStringList DatabaseModel::getFiltersFromChangeLog(QDateTime start, QDateTime end)
+QStringList DatabaseModel::getFiltersFromChangelog(QDateTime start, QDateTime end)
 {
 	QStringList filters;
 	QString signature, action;
@@ -11301,9 +11304,9 @@ QStringList DatabaseModel::getFiltersFromChangeLog(QDateTime start, QDateTime en
 		type = std::get<LogObjectType>(entry);
 		action = std::get<LogAction>(entry);
 
-		if((start.isValid() && end.isValid() && date >= start && date <= end) ||
-			 (start.isValid() && !end.isValid() && date >= start) ||
-			 (!start.isValid() && end.isValid() && date <= end))
+		if(((start.isValid() && end.isValid() && date >= start && date <= end) ||
+				(start.isValid() && !end.isValid() && date >= start) ||
+				(!start.isValid() && end.isValid() && date <= end)))
 		{
 			filters.append(BaseObject::getSchemaName(type) +
 										 PgModelerNs::FilterSeparator +
@@ -11493,7 +11496,7 @@ TableClass *DatabaseModel::createPhysicalTable()
 	return table;
 }
 
-void DatabaseModel::getDataDictionary(attribs_map &datadict, bool browsable, bool splitted)
+void DatabaseModel::getDataDictionary(attribs_map &datadict, bool browsable, bool split)
 {
 	int idx = 0;
 	BaseObject *object = nullptr;
@@ -11538,11 +11541,11 @@ void DatabaseModel::getDataDictionary(attribs_map &datadict, bool browsable, boo
 	styles = schparser.getCodeDefinition(style_sch_file, attribs);
 	attribs[Attributes::Styles] = "";
 	attribs[Attributes::Index] = "";
-	attribs[Attributes::Splitted] = splitted ? Attributes::True : "";
+	attribs[Attributes::Split] = split ? Attributes::True : "";
 	attribs[Attributes::Year] = QString::number(QDate::currentDate().year());
 
 	// If the generation is a standalone HTML the css is embedded
-	if(!splitted)
+	if(!split)
 		attribs[Attributes::Styles] = styles;
 	else
 		// Otherwise we create a separated stylesheet file
@@ -11557,10 +11560,10 @@ void DatabaseModel::getDataDictionary(attribs_map &datadict, bool browsable, boo
 		aux_attribs[Attributes::Index] = browsable ? Attributes::True : "";
 		aux_attribs[Attributes::Previous] = idx - 1 >= 0 ? index_list.at(idx - 1) : "";
 		aux_attribs[Attributes::Next] = (++idx <= index_list.size() - 1) ? index_list.at(idx) : "";
-		attribs[Attributes::Objects] += dynamic_cast<BaseTable *>(object)->getDataDictionary(splitted, aux_attribs);
+		attribs[Attributes::Objects] += dynamic_cast<BaseTable *>(object)->getDataDictionary(split, aux_attribs);
 
 		// If the generation is configured to be splitted we generate a complete HTML file for the current table
-		if(splitted && !attribs[Attributes::Objects].isEmpty())
+		if(split && !attribs[Attributes::Objects].isEmpty())
 		{
 			id = itr.first + QString(".html");
 			schparser.ignoreEmptyAttributes(true);			
@@ -11582,22 +11585,22 @@ void DatabaseModel::getDataDictionary(attribs_map &datadict, bool browsable, boo
 		// Generating the index items
 		for(auto &item : index_list)
 		{
-			aux_attribs[Attributes::Splitted] = attribs[Attributes::Splitted];
+			aux_attribs[Attributes::Split] = attribs[Attributes::Split];
 			aux_attribs[Attributes::Item] = item;
 			idx_attribs[objs_map[item]->getSchemaName()] += schparser.getCodeDefinition(item_sch_file, aux_attribs);
 		}
 
 		idx_attribs[Attributes::Name] = this->obj_name;
-		idx_attribs[Attributes::Splitted] = attribs[Attributes::Splitted];
+		idx_attribs[Attributes::Split] = attribs[Attributes::Split];
 
 		schparser.ignoreEmptyAttributes(true);
 		index = schparser.getCodeDefinition(index_sch_file, idx_attribs);
 	}
 
 	// If the data dictionary is browsable and splitted the index goes into a separated file
-	if(splitted && browsable)
+	if(split && browsable)
 		datadict[Attributes::Index + QString(".html")] = index;
-	else if(!splitted)
+	else if(!split)
 	{
 		attribs[Attributes::Index] = index;
 		schparser.ignoreEmptyAttributes(true);
@@ -11605,7 +11608,7 @@ void DatabaseModel::getDataDictionary(attribs_map &datadict, bool browsable, boo
 	}
 }
 
-void DatabaseModel::saveDataDictionary(const QString &path, bool browsable, bool splitted)
+void DatabaseModel::saveDataDictionary(const QString &path, bool browsable, bool split)
 {
 	try
 	{
@@ -11615,7 +11618,7 @@ void DatabaseModel::saveDataDictionary(const QString &path, bool browsable, bool
 		QFileInfo finfo(path);
 		QDir dir;
 
-		if(splitted)
+		if(split)
 		{
 			if(finfo.exists() && !finfo.isDir())
 				throw Exception(Exception::getErrorMessage(ErrorCode::InvDataDictDirectory).arg(path),
@@ -11624,12 +11627,12 @@ void DatabaseModel::saveDataDictionary(const QString &path, bool browsable, bool
 				dir.mkpath(path);
 		}
 
-		getDataDictionary(datadict, browsable, splitted);
+		getDataDictionary(datadict, browsable, split);
 		output.setFileName(path);
 
 		for(auto &itr : datadict)
 		{
-			if(splitted)
+			if(split)
 				output.setFileName(path + GlobalAttributes::DirSeparator + itr.first);
 
 			output.open(QFile::WriteOnly);

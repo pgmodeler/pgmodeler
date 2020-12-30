@@ -55,7 +55,7 @@
 
 	  dm.typnotnull AS not_null_bool,
 	  _dm1.interval_type, _dm1.domain_default AS default_value,
-	  (select array_agg(conname || '•' || pg_get_constraintdef(oid)) from pg_constraint where contypid = dm.oid) as constraints,
+	  (select array_agg(conname || ' ' || pg_get_constraintdef(oid)) from pg_constraint where contypid = dm.oid) as constraints,
 	]
 
       ({comment}) [ AS comment ]

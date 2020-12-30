@@ -378,7 +378,8 @@ bool PgModelerCliApp::isOptionRecognized(QString &op, bool &accepts_val)
 void PgModelerCliApp::showMenu()
 {
 	out << QtCompat::endl;
-	out << QString("pgModeler ") << GlobalAttributes::PgModelerVersion << tr(" command line interface.") << QtCompat::endl;
+	out << tr("pgModeler command line interface.") << QtCompat::endl;
+	out << tr("Version ") << GlobalAttributes::PgModelerVersion << QString(" - %1 Qt %2").arg(GlobalAttributes::PgModelerBuildNumber).arg(QT_VERSION_STR) << QtCompat::endl;
 	out << tr("PostgreSQL Database Modeler Project - pgmodeler.io") << QtCompat::endl;
 	out << tr("Copyright 2006-%1 Raphael Araújo e Silva <raphael@pgmodeler.io>").arg(QDate::currentDate().year()) << QtCompat::endl;
 	out << QtCompat::endl;
@@ -642,13 +643,13 @@ void PgModelerCliApp::parseOptions(attribs_map &opts)
 		if(!fix_model && !upd_mime && exp_mode_cnt > 1)
 			throw Exception(tr("Multiple export mode was specified!"), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		
-		if(!upd_mime && !import_db && !diff && !create_configs && !opts.count(Input))
+		if(!list_conns && !upd_mime && !import_db && !diff && !create_configs && !opts.count(Input))
 			throw Exception(tr("No input file was specified!"), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		if(import_db && !opts.count(InputDb))
 			throw Exception(tr("No input database was specified!"), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-		if(!opts.count(ExportToDbms) && !upd_mime && !diff && !create_configs && !opts.count(Output))
+		if(!opts.count(ExportToDbms) && !upd_mime && !list_conns && !diff && !create_configs && !opts.count(Output))
 			throw Exception(tr("No output file was specified!"), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		
 		if(!opts.count(ExportToDbms) && !upd_mime && !import_db && !list_conns && !create_configs &&
@@ -1630,7 +1631,7 @@ void PgModelerCliApp::diffModelDatabase()
 
 			// Filtering by modification date always forces the signature matching
 			if(start_date.isValid() || end_date.isValid())
-				obj_filters.append(model->getFiltersFromChangeLog(start_date, end_date));
+				obj_filters.append(model->getFiltersFromChangelog(start_date, end_date));
 
 			filtered_objs = model->findObjects(obj_filters, search_attr);
 

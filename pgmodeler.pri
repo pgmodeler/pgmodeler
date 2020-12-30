@@ -19,10 +19,10 @@ defined(NO_UPDATE_CHECK, var): DEFINES+=NO_UPDATE_CHECK
 
 # Properly defining build number constant
 unix {
- BUILDNUM=$$system("date '+%Y%m%d'")
+ BUILDNUM=$$system("$$PWD/getbuildnum.sh")
  DEFINES+=BUILDNUM=\\\"$${BUILDNUM}\\\"
 } else {
- BUILDNUM=$$system('getbuildnum.bat')
+ BUILDNUM=$$system("$$PWD/getbuildnum.bat")
  DEFINES+=BUILDNUM=\\\"$${BUILDNUM}\\\"
 }
 
@@ -160,8 +160,8 @@ unix:!macx {
 macx {
   !defined(PGSQL_LIB, var): PGSQL_LIB = /Library/PostgreSQL/12/lib/libpq.dylib
   !defined(PGSQL_INC, var): PGSQL_INC = /Library/PostgreSQL/12/include
-  !defined(XML_INC, var): XML_INC = /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/libxml2
-  !defined(XML_LIB, var): XML_LIB = /usr/lib/libxml2.dylib
+  !defined(XML_INC, var): XML_INC = /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/libxml2
+  !defined(XML_LIB, var): XML_LIB = /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/lib/libxml2.tbd
   INCLUDEPATH += $$PGSQL_INC $$XML_INC
 }
 

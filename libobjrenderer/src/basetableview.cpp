@@ -618,3 +618,9 @@ void BaseTableView::configureCurrentPage(unsigned section_id, unsigned page)
 	finishGeometryUpdate();
 	emit s_currentPageChanged();
 }
+
+void BaseTableView::selectRelationships()
+{
+	for(auto &rel : connected_rels)
+		dynamic_cast<BaseObjectView *>(rel->getOverlyingObject())->setSelected(true);
+}
