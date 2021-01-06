@@ -45,16 +45,19 @@ $tb [COST ] {execution-cost} $br
 $tb [AS ]
 
 %if {library} %then
- '{library}'
+  '{library}'
 
- %if {symbol} %then
-   [, ] '{symbol}'
- %end
-
+  %if {symbol} %then
+    [, ] '{symbol}'
+  %end
 %else
-[$$]
-$br {definition} $br 
-[$$]
+  %if ({language} == "internal") %then
+     '{definition}'
+  %else
+    [$$]
+	$br {definition} $br
+	[$$]
+ %end
 %end
 
 ; 
