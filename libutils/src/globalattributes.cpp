@@ -19,7 +19,7 @@
 #include "globalattributes.h"
 #include <QDir>
 
-const QString GlobalAttributes::PgModelerVersion=QString("0.9.3");
+const QString GlobalAttributes::PgModelerVersion=QString("0.9.4-alpha");
 
 /* Appending the snapshot build number to the version number
  * when the external variable SNAPSHOT_BUILD is defined */
