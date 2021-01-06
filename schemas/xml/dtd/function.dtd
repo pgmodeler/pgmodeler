@@ -10,6 +10,7 @@
 <!ATTLIST function behavior-type CDATA #IMPLIED>
 <!ATTLIST function function-type CDATA #IMPLIED>
 <!ATTLIST function security-type CDATA #IMPLIED>
+<!ATTLIST function parallel-type CDATA #IMPLIED>
 <!ATTLIST function execution-cost CDATA #IMPLIED>
 <!ATTLIST function row-amount CDATA #IMPLIED>
 <!ATTLIST function signature CDATA #IMPLIED>

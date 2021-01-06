@@ -36,6 +36,7 @@ Function::Function() : BaseFunction()
 	attributes[Attributes::FunctionType]="";
 	attributes[Attributes::ReturnsSetOf]="";
 	attributes[Attributes::BehaviorType]="";
+	attributes[Attributes::ParallelType]="";
 	attributes[Attributes::RefType]="";
 	attributes[Attributes::WindowFunc]="";
 	attributes[Attributes::ReturnTable]="";
@@ -113,6 +114,12 @@ void Function::setReturnType(PgSqlType type)
 	ret_table_columns.clear();
 }
 
+void Function::setParalleType(ParallelType type)
+{
+	setCodeInvalidated(parallel_type != type);
+	parallel_type = type;
+}
+
 void Function::setFunctionType(FunctionType func_type)
 {
 	setCodeInvalidated(function_type != func_type);
@@ -147,6 +154,11 @@ void Function::setBehaviorType(BehaviorType behav_type)
 PgSqlType Function::getReturnType()
 {
 	return return_type;
+}
+
+ParallelType Function::getParallelType()
+{
+	return parallel_type;
 }
 
 FunctionType Function::getFunctionType()
@@ -235,6 +247,7 @@ QString Function::getCodeDefinition(unsigned def_type, bool reduced_form)
 	attributes[Attributes::ExecutionCost]=QString("%1").arg(execution_cost);
 	attributes[Attributes::RowAmount]=QString("%1").arg(row_amount);
 	attributes[Attributes::FunctionType]=(~function_type);
+	attributes[Attributes::ParallelType]=(~parallel_type);
 
 	if(def_type==SchemaParser::SqlDefinition)
 		attributes[Attributes::ReturnType]=(*return_type);
@@ -295,6 +308,9 @@ QString Function::getAlterDefinition(BaseObject *object)
 					 ((this->behavior_type==BehaviorType::Strict || this->behavior_type==BehaviorType::ReturnsNullOnNullInput) &&
 					  func->function_type==BehaviorType::CalledOnNullInput)))
 				attribs[Attributes::BehaviorType]=~func->behavior_type;
+
+			if(this->parallel_type!=func->parallel_type)
+				attribs[Attributes::ParallelType]=~func->parallel_type;
 		}
 
 		copyAttributes(attribs);

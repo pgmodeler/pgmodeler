@@ -23,10 +23,14 @@
 
     %if {behavior-type} %then
       $br $tb {behavior-type}
-    %end
+    %end  
 
     %if {security-type} %then
       $br $tb {security-type}
+    %end
+    
+    %if {parallel-type} %then
+      $br $tb {parallel-type}
     %end
 
     %if {execution-cost} %then

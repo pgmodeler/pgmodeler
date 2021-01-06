@@ -421,6 +421,7 @@ namespace Attributes {
 	PaperMargin,
 	PaperOrientation,
 	PaperType,
+	ParallelType,
 	Parameter,
 	Parameters,
 	ParamIn,

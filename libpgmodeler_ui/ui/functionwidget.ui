@@ -204,8 +204,8 @@
   <widget class="QCheckBox" name="window_func_chk">
    <property name="geometry">
     <rect>
-     <x>186</x>
-     <y>140</y>
+     <x>183</x>
+     <y>160</y>
      <width>217</width>
      <height>37</height>
     </rect>
@@ -217,14 +217,14 @@
     </sizepolicy>
    </property>
    <property name="text">
-    <string>Window Function</string>
+    <string>Window</string>
    </property>
   </widget>
   <widget class="QCheckBox" name="leakproof_chk">
    <property name="geometry">
     <rect>
-     <x>413</x>
-     <y>140</y>
+     <x>410</x>
+     <y>160</y>
      <width>144</width>
      <height>37</height>
     </rect>
@@ -236,8 +236,8 @@
   <widget class="QLabel" name="options_lbl">
    <property name="geometry">
     <rect>
-     <x>11</x>
-     <y>139</y>
+     <x>8</x>
+     <y>159</y>
      <width>88</width>
      <height>31</height>
     </rect>
@@ -437,6 +437,47 @@
    </property>
    <property name="autoExclusive">
     <bool>true</bool>
+   </property>
+  </widget>
+  <widget class="QComboBox" name="parallel_cmb">
+   <property name="geometry">
+    <rect>
+     <x>180</x>
+     <y>130</y>
+     <width>123</width>
+     <height>39</height>
+    </rect>
+   </property>
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
+  </widget>
+  <widget class="QLabel" name="parallel_lbl">
+   <property name="geometry">
+    <rect>
+     <x>16</x>
+     <y>118</y>
+     <width>98</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
+   <property name="maximumSize">
+    <size>
+     <width>16777215</width>
+     <height>16777215</height>
+    </size>
+   </property>
+   <property name="text">
+    <string>Parallel:</string>
    </property>
   </widget>
  </widget>

@@ -3993,6 +3993,9 @@ Function *DatabaseModel::createFunction()
 		if(!attribs[Attributes::SecurityType].isEmpty())
 			func->setSecurityType(SecurityType(attribs[Attributes::SecurityType]));
 
+		if(!attribs[Attributes::ParallelType].isEmpty())
+			func->setParalleType(ParallelType(attribs[Attributes::ParallelType]));
+
 		if(!attribs[Attributes::ExecutionCost].isEmpty())
 			func->setExecutionCost(attribs[Attributes::ExecutionCost].toInt());
 

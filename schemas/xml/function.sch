@@ -35,6 +35,7 @@
   $tb $tb behavior-type="{behavior-type}" $br
   $tb $tb function-type="{function-type}" $br
   $tb $tb security-type="{security-type}" $br
+  $tb $tb parallel-type="{parallel-type}" $br
   $tb $tb execution-cost="{execution-cost}" $br
   $tb $tb row-amount="{row-amount}"
   > $br

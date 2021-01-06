@@ -34,6 +34,7 @@ HEADERS += src/textbox.h \
 	   src/pgsqltypes/indexingtype.h \
 	   src/pgsqltypes/intervaltype.h \
 	   src/pgsqltypes/matchtype.h \
+	   src/pgsqltypes/paralleltype.h \
 	   src/pgsqltypes/partitioningtype.h \
 	   src/pgsqltypes/pgsqltype.h \
 	   src/pgsqltypes/policycmdtype.h \
@@ -107,6 +108,7 @@ SOURCES +=  src/textbox.cpp \
 	    src/pgsqltypes/indexingtype.cpp \
 	    src/pgsqltypes/intervaltype.cpp \
 	    src/pgsqltypes/matchtype.cpp \
+	    src/pgsqltypes/paralleltype.cpp \
 	    src/pgsqltypes/partitioningtype.cpp \
 	    src/pgsqltypes/pgsqltype.cpp \
 	    src/pgsqltypes/policycmdtype.cpp \

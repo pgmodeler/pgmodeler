@@ -90,6 +90,16 @@
 		%else
 		 [ pr.proleakproof AS leakproof_bool, ]
 		%end
+        
+        %if ({pgsql-ver} <=f "9.5") %then
+          [ NULL AS parallel_type, ]
+        %else
+          [ CASE
+		    WHEN pr.proparallel='u' THEN 'PARALLEL UNSAFE'
+            WHEN pr.proparallel='r' THEN 'PARALLEL RESTRICTED'
+		    ELSE 'PARALLEL SAFE'
+		  END AS parallel_type,]
+        %end
 
 	({comment}) [ AS comment ]
 
