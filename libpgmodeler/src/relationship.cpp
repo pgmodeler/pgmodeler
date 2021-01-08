@@ -346,7 +346,7 @@ void Relationship::createSpecialPrimaryKey()
 		//For generalization relationships generates the primary key in form of ALTER command
 		pk_special->setDeclaredInTable(this->getRelationshipType()!=RelationshipGen);
 
-		// Adding the collumns of the original primary key to the special one
+		// Adding the columns of the original primary key to the special one
 		for(i=0; pk_original && i < pk_original->getColumnCount(Constraint::SourceCols); i++)
 			pk_special->addColumn(pk_original->getColumn(i, Constraint::SourceCols), Constraint::SourceCols);
 
@@ -2644,6 +2644,7 @@ QString Relationship::getCodeDefinition(unsigned def_type)
 	{
 		unsigned count, i;
 		bool reduced_form;
+		QStringList sp_pk_cols;
 
 		setRelationshipAttributes();
 		attributes[Attributes::Identifier]=(identifier ? Attributes::True : "");
@@ -2694,13 +2695,9 @@ QString Relationship::getCodeDefinition(unsigned def_type)
 
 		count=column_ids_pk_rel.size();
 		for(i=0; i < count; i++)
-		{
-			if(!gen_columns.empty() && i < gen_columns.size())
-			{
-				attributes[Attributes::SpecialPkCols]+=QString("%1").arg(column_ids_pk_rel[i]);
-				if(i < count-1) attributes[Attributes::SpecialPkCols]+=",";
-			}
-		}
+			sp_pk_cols.append(QString::number(column_ids_pk_rel[i]));
+
+		attributes[Attributes::SpecialPkCols] = sp_pk_cols.join(',');
 
 		if(copy_options.getCopyMode()!=0)
 		{
