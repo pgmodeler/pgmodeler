@@ -25,7 +25,7 @@ jobs:
         version: ${{ matrix.qt }}      
 
     - name: Running qmake
-      run:  cd $GITHUB_WORKSPACE; qmake pgmodeler.pro -r PREFIX=$GITHUB_WORKSPACE/build
+      run:  cd $GITHUB_WORKSPACE; qmake pgmodeler.pro -r PREFIX=$GITHUB_WORKSPACE/build CONFIG+=debug
 
     - name: Building pgModeler
       run: make -j6

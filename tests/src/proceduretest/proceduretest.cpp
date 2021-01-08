@@ -313,8 +313,8 @@ void ProcedureTest::modelReturnsProcedureDepsRefs()
 		model.removeProcedure(&proc);
 		model.removeType(&type);
 
-		QCOMPARE(refs.size(), static_cast<unsigned>(0));
-		QCOMPARE(deps.size(),  static_cast<unsigned>(5));
+		QCOMPARE(refs.size(), static_cast<size_t>(0));
+		QCOMPARE(deps.size(),  static_cast<size_t>(5));
 	}
 	catch(Exception &e)
 	{
