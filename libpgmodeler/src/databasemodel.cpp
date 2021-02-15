@@ -5673,7 +5673,7 @@ Trigger *DatabaseModel::createTrigger()
 		trigger->setTransitionTableName(Trigger::OldTableName, attribs[Attributes::OldTableName]);
 		trigger->setTransitionTableName(Trigger::NewTableName, attribs[Attributes::NewTableName]);
 
-		trigger->addArguments(attribs[Attributes::Arguments].split(PgModelerNs::DataSeparator));
+		trigger->addArguments(attribs[Attributes::Arguments].split(PgModelerNs::DataSeparator, QtCompat::SkipEmptyParts));
 		trigger->setDeferrable(attribs[Attributes::Deferrable]==Attributes::True);
 
 		if(trigger->isDeferrable())
