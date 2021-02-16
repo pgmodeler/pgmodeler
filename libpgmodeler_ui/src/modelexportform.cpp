@@ -151,9 +151,9 @@ void ModelExportForm::handleErrorIgnored(QString err_code, QString err_msg, QStr
 																					 QPixmap(PgModelerUiNs::getIconPath("msgbox_alerta")), nullptr, false);
 
 	PgModelerUiNs::createOutputTreeItem(output_trw, PgModelerUiNs::formatMessage(err_msg),
-																			QPixmap(PgModelerUiNs::getIconPath("msgbox_alerta")),	item, false);
+																			QPixmap(PgModelerUiNs::getIconPath("msgbox_alerta")),	item, false, true);
 
-	PgModelerUiNs::createOutputTreeItem(output_trw, cmd, QPixmap(), item, false);
+	PgModelerUiNs::createOutputTreeItem(output_trw, cmd, QPixmap(), item, false, true);
 }
 
 void ModelExportForm::updateProgress(int progress, QString msg, ObjectType obj_type, QString cmd, bool is_code_gen)
