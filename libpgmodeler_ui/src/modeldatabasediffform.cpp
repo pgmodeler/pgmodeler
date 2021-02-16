@@ -927,11 +927,11 @@ void ModelDatabaseDiffForm::handleErrorIgnored(QString err_code, QString err_msg
 
 	PgModelerUiNs::createOutputTreeItem(output_trw, PgModelerUiNs::formatMessage(err_msg),
 										QPixmap(QString("msgbox_alerta")),
-										item, false);
+										item, false, true);
 
 	PgModelerUiNs::createOutputTreeItem(output_trw, cmd,
 										QPixmap(),
-										item, false);
+										item, false, true);
 }
 
 void ModelDatabaseDiffForm::updateProgress(int progress, QString msg, ObjectType obj_type, QString cmd)

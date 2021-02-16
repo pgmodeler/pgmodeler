@@ -13,7 +13,7 @@
    %if {collation} %and ({pgsql-ver} != "9.0") %then
     [ COLLATE ] {collation}
    %end
-
+   
    {ddl-end}
   %end
   
