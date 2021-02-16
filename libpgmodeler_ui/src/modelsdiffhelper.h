@@ -129,29 +129,29 @@ class ModelsDiffHelper: public QObject {
 		OptRecreateUnmodifiable=3,
 
 		//! \brief Generate a TRUNCATE command for every table which columns was modified in their data types
-		OptTruncateTables=4,
+		//OptTruncateTables=4,
 
 		//! \brief Indicates if permissions must be preserved on database
-		OptKeepObjectPerms=5,
+		OptKeepObjectPerms=4,
 
 		/*! \brief Indicates that existing sequences must be reused in serial columns. Since serial columns are converted
 		into integer and a new sequence created and assigned as nextval(sequence) default value for those columns,
 		if reuse is enabled, new sequences will not be created instead the ones which name matches the column's default
 		value will be reused */
-		OptReuseSequences=6,
+		OptReuseSequences=5,
 
 		//! \brief Indicates to not generate and execute commands to rename the destination database
-		OptPreserveDbName=7,
+		OptPreserveDbName=6,
 
 		/*! \brief Indicates to not generate and execute commands to drop missing objects. For instance, if user
 		try to diff a partial model against the original database DROP commands will be generated, this option
 		will avoid this situation and preserve the missing (not imported) objects. */
-		OptDontDropMissingObjs=8,
+		OptDontDropMissingObjs=7,
 
 		/*! \brief Indicates to generate and execute commands to drop missing columns and constraints. For instance, if user
 		try to diff a partial model against the original database and the OPT_DONT_DROP_MISSING_OBJS is set, DROP commands will not be generated,
 		except for columns and constraints. This option is only considered in the process when OPT_DONT_DROP_MISSING_OBJS is enabled. */
-		OptDropMissingColsConstr=9;
+		OptDropMissingColsConstr=8;
 
 		ModelsDiffHelper();
 		virtual ~ModelsDiffHelper();

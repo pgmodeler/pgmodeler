@@ -177,9 +177,8 @@ class PgModelerCliApp: public Application {
 		DropMissingObjs,
 		ForceDropColsConstrs,
 		RenameDb,
-		TruncOnColsTypeChange,
 		NoSequenceReuse,
-		NoCascadeDropTrunc,
+		NoCascadeDrop,
 		ForceRecreateObjs,
 		OnlyUnmodifiable,
 

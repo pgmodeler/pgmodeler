@@ -85,9 +85,9 @@ const QString PgModelerCliApp::RevokePermissions("--revoke-perms");
 const QString PgModelerCliApp::DropMissingObjs("--drop-missing");
 const QString PgModelerCliApp::ForceDropColsConstrs("--force-drop-cols");
 const QString PgModelerCliApp::RenameDb("--rename-db");
-const QString PgModelerCliApp::TruncOnColsTypeChange("--trunc-type-change");
+//const QString PgModelerCliApp::TruncOnColsTypeChange("--trunc-type-change");
 const QString PgModelerCliApp::NoSequenceReuse("--no-sequence-reuse");
-const QString PgModelerCliApp::NoCascadeDropTrunc("--no-cascade");
+const QString PgModelerCliApp::NoCascadeDrop("--no-cascade");
 const QString PgModelerCliApp::ForceRecreateObjs("--force-recreate-objs");
 const QString PgModelerCliApp::OnlyUnmodifiable("--only-unmodifiable");
 const QString PgModelerCliApp::CreateConfigs("--create-configs");
@@ -117,8 +117,8 @@ attribs_map PgModelerCliApp::short_opts = {
 	{ StartDate, "-st" },	{ EndDate, "-et" },	{ CompareTo, "-ct" },
 	{ SaveDiff, "-sd" },	{ ApplyDiff, "-ad" },	{ NoDiffPreview, "-np" },
 	{ DropClusterObjs, "-dc" },	{ RevokePermissions, "-rv" },	{ DropMissingObjs, "-dm" },
-	{ ForceDropColsConstrs, "-fd" },	{ RenameDb, "-rn" },	{ TruncOnColsTypeChange, "-tt" },
-	{ NoSequenceReuse, "-ns" },	{ NoCascadeDropTrunc, "-nd" },	{ ForceRecreateObjs, "-nf" },
+	{ ForceDropColsConstrs, "-fd" },	{ RenameDb, "-rn" },	/* { TruncOnColsTypeChange, "-tt" }, */
+	{ NoSequenceReuse, "-ns" },	{ NoCascadeDrop, "-nd" },	{ ForceRecreateObjs, "-nf" },
 	{ OnlyUnmodifiable, "-nu" },	{ NoIndex, "-ni" },	{ Split, "-sp" },
 	{ SystemWide, "-sw" },	{ CreateConfigs, "-cc" }, { ForceDiff, "-ff" }
 };
@@ -141,7 +141,7 @@ map<QString, bool> PgModelerCliApp::long_opts = {
 	{ CompareTo, true },	{ SaveDiff, false },	{ ApplyDiff, false },
 	{ NoDiffPreview, false },	{ DropClusterObjs, false },	{ RevokePermissions, false },
 	{ DropMissingObjs, false },	{ ForceDropColsConstrs, false },	{ RenameDb, false },
-	{ TruncOnColsTypeChange, false },	{ NoSequenceReuse, false },	{ NoCascadeDropTrunc, false },
+	{ NoSequenceReuse, false },	{ NoCascadeDrop, false },
 	{ ForceRecreateObjs, false },	{ OnlyUnmodifiable, false },	{ ExportToDict, false },
 	{ NoIndex, false },	{ Split, false },	{ SystemWide, false },
 	{ CreateConfigs, false }, { ForceDiff, false }
@@ -163,7 +163,7 @@ map<QString, QStringList> PgModelerCliApp::accepted_opts = {
 
 	{{ Diff }, { Input, PgSqlVer, IgnoreDuplicates, IgnoreErrorCodes, CompareTo, PartialDiff, ForceDiff,
 							 StartDate, EndDate, SaveDiff, ApplyDiff, NoDiffPreview, DropClusterObjs, RevokePermissions,
-							 DropMissingObjs, ForceDropColsConstrs, RenameDb, NoCascadeDropTrunc, TruncOnColsTypeChange,
+							 DropMissingObjs, ForceDropColsConstrs, RenameDb, NoCascadeDrop,
 							 NoSequenceReuse, ForceRecreateObjs, OnlyUnmodifiable }},
 
 	{{ DbmMimeType }, { SystemWide }},
@@ -468,8 +468,7 @@ void PgModelerCliApp::showMenu()
 	out << tr("  %1, %2\t\t    Drop missing objects. Generates DROP commands for objects that are present in the input model but not in the compared database.").arg(short_opts[DropMissingObjs]).arg(DropMissingObjs) << QtCompat::endl;
 	out << tr("  %1, %2\t    Force the drop of missing columns and constraints. Causes only columns and constraints to be dropped, other missing objects aren't removed.").arg(short_opts[ForceDropColsConstrs]).arg(ForceDropColsConstrs) << QtCompat::endl;
 	out << tr("  %1, %2\t\t    Rename the destination database when the names of the involved databases are different.").arg(short_opts[RenameDb]).arg(RenameDb) << QtCompat::endl;
-	out << tr("  %1, %2\t\t    Don't drop or truncate objects in cascade mode.").arg(short_opts[NoCascadeDropTrunc]).arg(NoCascadeDropTrunc) << QtCompat::endl;
-	out << tr("  %1, %2\t    Truncate tables prior to alter columns. Avoids errors related to type casting when the new type of a column isn't compatible to the old one.").arg(short_opts[TruncOnColsTypeChange]).arg(TruncOnColsTypeChange) << QtCompat::endl;
+	out << tr("  %1, %2\t\t    Don't drop objects in cascade mode.").arg(short_opts[NoCascadeDrop]).arg(NoCascadeDrop) << QtCompat::endl;
 	out << tr("  %1, %2\t    Don't reuse sequences on serial columns. Drop the old sequence assigned to a serial column and creates a new one.").arg(short_opts[NoSequenceReuse]).arg(NoSequenceReuse) << QtCompat::endl;
 	out << tr("  %1, %2\t    Force the recreating of objects. Instead of an ALTER command a DROP and CREATE commands are used to create a new version of the objects.").arg(short_opts[ForceRecreateObjs]).arg(ForceRecreateObjs) << QtCompat::endl;
 	out << tr("  %1, %2\t    Recreate only the unmodifiable objects. These objects are the ones which can't be changed via ALTER command.").arg(short_opts[OnlyUnmodifiable]).arg(OnlyUnmodifiable) << QtCompat::endl;
@@ -1675,8 +1674,7 @@ void PgModelerCliApp::diffModelDatabase()
 	diff_hlp->setModels(model, model_aux);
 	diff_hlp->setFilteredObjects(filtered_objs);
 	diff_hlp->setDiffOption(ModelsDiffHelper::OptKeepClusterObjs, !parsed_opts.count(DropClusterObjs));
-	diff_hlp->setDiffOption(ModelsDiffHelper::OptCascadeMode, !parsed_opts.count(NoCascadeDropTrunc));
-	diff_hlp->setDiffOption(ModelsDiffHelper::OptTruncateTables, parsed_opts.count(TruncOnColsTypeChange));
+	diff_hlp->setDiffOption(ModelsDiffHelper::OptCascadeMode, !parsed_opts.count(NoCascadeDrop));
 	diff_hlp->setDiffOption(ModelsDiffHelper::OptForceRecreation, parsed_opts.count(ForceRecreateObjs));
 	diff_hlp->setDiffOption(ModelsDiffHelper::OptRecreateUnmodifiable, parsed_opts.count(OnlyUnmodifiable));
 	diff_hlp->setDiffOption(ModelsDiffHelper::OptKeepObjectPerms, !parsed_opts.count(RevokePermissions));

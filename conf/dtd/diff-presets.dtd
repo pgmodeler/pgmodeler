@@ -18,7 +18,6 @@
 <!ATTLIST preset drop-missing-cols-constrs (false|true) "false">
 <!ATTLIST preset preserve-db-name (false|true) "false">
 <!ATTLIST preset drop-trunc-cascade (false|true) "true">
-<!ATTLIST preset trunc-cols-before-alter (false|true) "false">
 <!ATTLIST preset force-objs-recreation (false|true) "false">
 <!ATTLIST preset recreate-unmod-objs (false|true) "false">
 <!ATTLIST preset reuse-sequences (false|true) "false">

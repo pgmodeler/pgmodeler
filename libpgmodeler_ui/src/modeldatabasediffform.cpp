@@ -619,7 +619,6 @@ void ModelDatabaseDiffForm::diffModels()
 
 	diff_helper->setDiffOption(ModelsDiffHelper::OptKeepClusterObjs, keep_cluster_objs_chk->isChecked());
 	diff_helper->setDiffOption(ModelsDiffHelper::OptCascadeMode, cascade_mode_chk->isChecked());
-	diff_helper->setDiffOption(ModelsDiffHelper::OptTruncateTables, trunc_tables_chk->isChecked());
 	diff_helper->setDiffOption(ModelsDiffHelper::OptForceRecreation, force_recreation_chk->isChecked());
 	diff_helper->setDiffOption(ModelsDiffHelper::OptRecreateUnmodifiable, recreate_unmod_chk->isChecked());
 	diff_helper->setDiffOption(ModelsDiffHelper::OptKeepObjectPerms, keep_obj_perms_chk->isChecked());
@@ -1174,7 +1173,6 @@ void ModelDatabaseDiffForm::selectPreset()
 																					 conf[Attributes::DropMissingColsConstrs] == Attributes::True);
 	preserve_db_name_chk->setChecked(conf[Attributes::PreserveDbName] == Attributes::True);
 	cascade_mode_chk->setChecked(conf[Attributes::DropTruncCascade] == Attributes::True);
-	trunc_tables_chk->setChecked(conf[Attributes::TruncColsBeforeAlter] == Attributes::True);
 	reuse_sequences_chk->setChecked(conf[Attributes::ReuseSequences] == Attributes::True);
 	force_recreation_chk->setChecked(conf[Attributes::ForceObjsRecreation] == Attributes::True);
 	recreate_unmod_chk->setChecked(conf[Attributes::ForceObjsRecreation] == Attributes::True &&
@@ -1273,7 +1271,6 @@ void ModelDatabaseDiffForm::savePreset()
 	conf[Attributes::DropMissingColsConstrs] = drop_missing_cols_constr_chk->isChecked() ? Attributes::True : Attributes::False;
 	conf[Attributes::PreserveDbName] = preserve_db_name_chk->isChecked() ? Attributes::True : Attributes::False;
 	conf[Attributes::DropTruncCascade] = cascade_mode_chk->isChecked() ? Attributes::True : Attributes::False;
-	conf[Attributes::TruncColsBeforeAlter] = trunc_tables_chk->isChecked() ? Attributes::True : Attributes::False;
 	conf[Attributes::ReuseSequences] = reuse_sequences_chk->isChecked() ? Attributes::True : Attributes::False;
 	conf[Attributes::ForceObjsRecreation] = force_recreation_chk->isChecked() ? Attributes::True : Attributes::False;
 	conf[Attributes::RecreateUnmodObjs] = recreate_unmod_chk->isChecked() ? Attributes::True : Attributes::False;
