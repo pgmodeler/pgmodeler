@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -19,19 +19,21 @@
 #include "globalattributes.h"
 #include <QDir>
 
+/** Base version number **/
 const QString GlobalAttributes::PgModelerVersion=QString("0.9.4-alpha");
 
 /* Appending the snapshot build number to the version number
  * when the external variable SNAPSHOT_BUILD is defined */
 #if defined(SNAPSHOT_BUILD)
-		+ QString("_snapshot") + BUILDNUM
+	const QString GlobalAttributes::PgModelerBuildNumber(QString(BUILDNUM) + " (snapshot)");
+#else
+	const QString GlobalAttributes::PgModelerBuildNumber(BUILDNUM);
 #endif
 /****/
 
 const QString GlobalAttributes::PgModelerAppName("pgmodeler");
 const QString GlobalAttributes::PgModelerURI("pgmodeler.io");
 const QString GlobalAttributes::PgModelerReverseURI("io.pgmodeler");
-const QString GlobalAttributes::PgModelerBuildNumber(BUILDNUM);
 const QString GlobalAttributes::PgModelerSite("https://pgmodeler.io");
 const QString GlobalAttributes::PgModelerSupport("https://pgmodeler.io/support/docs");
 const QString GlobalAttributes::PgModelerSourceURL("https://github.com/pgmodeler/pgmodeler/releases");
