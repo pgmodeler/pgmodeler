@@ -87,7 +87,7 @@ fi
 QT_PLUGINS_ROOT="$QT_ROOT/share/qt5/plugins"
 QMAKE_ROOT=$MINGW_ROOT
 PGSQL_ROOT=$MINGW_ROOT
-QMAKE_ARGS="-r -spec win32-g++ CONFIG+=release \
+QMAKE_ARGS="pgmodeler.pro -r -spec win32-g++ CONFIG+=release \
 		  XML_INC+=$MINGW_ROOT/../include/libxml2 \
 		  XML_LIB+=$MINGW_ROOT/libxml2-2.dll \
 		  PGSQL_INC+=$MINGW_ROOT/../include \

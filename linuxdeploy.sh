@@ -16,10 +16,10 @@ case `uname -m` in
 esac
 
 # Uncomment this line if you want to compile using LLVM (clang) compiler tools
-# QMAKE_ARGS="-r -spec linux-clang"
+# QMAKE_ARGS="pgmodeler.pro -r -spec linux-clang"
 
 # Comment this one if you've decided to use LLVM
-QMAKE_ARGS="-r -spec linux-g++"
+QMAKE_ARGS="pgmodeler.pro -r -spec linux-g++"
 QMAKE_ROOT=/usr/bin
 QMAKE_CMD=qmake
 LOG="$PWD/linuxdeploy.log"
