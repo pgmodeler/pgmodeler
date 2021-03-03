@@ -17,16 +17,7 @@ defined(DEMO_VERSION, var): DEFINES+=DEMO_VERSION
 # Setting up the flag passed to compiler to disable all code related to update checking
 defined(NO_UPDATE_CHECK, var): DEFINES+=NO_UPDATE_CHECK
 
-# Properly defining build number constant
-#unix {
-# BUILDNUM=$$system("$$PWD/getbuildnum.sh")
-# BUILDDATE=$$system("date '+%Y%m%d'")
-# DEFINES+=BUILDNUM=\\\"$${BUILDNUM}\\\"
-# DEFINES+=BUILDDATE=\\\"$${BUILDDATE}\\\"
-#} else {
-# BUILDNUM=$$system("$$PWD/getbuildnum.bat")
-# DEFINES+=BUILDNUM=\\\"$${BUILDNUM}\\\"
-#}
+# Properly defining build number/date constant
 BUILDNUM=$$system("$$PWD/getbuildnum.sh")
 BUILDDATE=$$system("date '+%Y%m%d'")
 DEFINES+=BUILDNUM=\\\"$${BUILDNUM}\\\"
