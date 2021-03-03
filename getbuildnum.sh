@@ -11,11 +11,11 @@ for dir in $PATH; do
         if [ $? != 0 ]; then
             commit="";
         else
-            commit=`echo ".$commit" | cut -c1-9`
+            commit=`echo "$commit" | cut -c1-9`
         fi
 
         break
     fi
 done
 
-echo "${date}${commit}"
+echo "${commit}"

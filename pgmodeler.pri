@@ -18,13 +18,19 @@ defined(DEMO_VERSION, var): DEFINES+=DEMO_VERSION
 defined(NO_UPDATE_CHECK, var): DEFINES+=NO_UPDATE_CHECK
 
 # Properly defining build number constant
-unix {
- BUILDNUM=$$system("$$PWD/getbuildnum.sh")
- DEFINES+=BUILDNUM=\\\"$${BUILDNUM}\\\"
-} else {
- BUILDNUM=$$system("$$PWD/getbuildnum.bat")
- DEFINES+=BUILDNUM=\\\"$${BUILDNUM}\\\"
-}
+#unix {
+# BUILDNUM=$$system("$$PWD/getbuildnum.sh")
+# BUILDDATE=$$system("date '+%Y%m%d'")
+# DEFINES+=BUILDNUM=\\\"$${BUILDNUM}\\\"
+# DEFINES+=BUILDDATE=\\\"$${BUILDDATE}\\\"
+#} else {
+# BUILDNUM=$$system("$$PWD/getbuildnum.bat")
+# DEFINES+=BUILDNUM=\\\"$${BUILDNUM}\\\"
+#}
+BUILDNUM=$$system("$$PWD/getbuildnum.sh")
+BUILDDATE=$$system("date '+%Y%m%d'")
+DEFINES+=BUILDNUM=\\\"$${BUILDNUM}\\\"
+DEFINES+=BUILDDATE=\\\"$${BUILDDATE}\\\"
 
 # Below, the user can specify where all generated file can be placed
 # through a set of variables, being them:

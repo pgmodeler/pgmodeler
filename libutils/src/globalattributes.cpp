@@ -20,17 +20,17 @@
 #include <QDir>
 
 /** Base version number **/
-const QString GlobalAttributes::PgModelerVersion=QString("0.9.4-alpha");
+const QString GlobalAttributes::PgModelerVersion=QString("0.9.4-alpha")
 
 /* Appending the snapshot build number to the version number
  * when the external variable SNAPSHOT_BUILD is defined */
 #if defined(SNAPSHOT_BUILD)
-	const QString GlobalAttributes::PgModelerBuildNumber(QString(BUILDNUM) + " (snapshot)");
-#else
-	const QString GlobalAttributes::PgModelerBuildNumber(BUILDNUM);
+	+ QString("_snapshot%1").arg(BUILDDATE)
 #endif
+;
 /****/
 
+const QString GlobalAttributes::PgModelerBuildNumber(QString("%1.%2").arg(BUILDDATE).arg(BUILDNUM));
 const QString GlobalAttributes::PgModelerAppName("pgmodeler");
 const QString GlobalAttributes::PgModelerURI("pgmodeler.io");
 const QString GlobalAttributes::PgModelerReverseURI("io.pgmodeler");
