@@ -18,8 +18,14 @@ defined(DEMO_VERSION, var): DEFINES+=DEMO_VERSION
 defined(NO_UPDATE_CHECK, var): DEFINES+=NO_UPDATE_CHECK
 
 # Properly defining build number/date constant
-BUILDNUM=$$system("sh $$PWD/getbuildnum.sh")
-BUILDDATE=$$system("date '+%Y%m%d'")
+unix {
+ BUILDNUM=$$system("$$PWD/getbuildnum.sh")
+ BUILDDATE=$$system("date '+%Y%m%d'")
+} else {
+ BUILDNUM=$$system("$$PWD/getbuildnum.bat")
+ BUILDDATE=$$system("$$PWD/getbuildnum.bat")
+}
+
 DEFINES+=BUILDNUM=\\\"$${BUILDNUM}\\\"
 DEFINES+=BUILDDATE=\\\"$${BUILDDATE}\\\"
 
