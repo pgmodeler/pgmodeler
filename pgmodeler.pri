@@ -17,14 +17,17 @@ defined(DEMO_VERSION, var): DEFINES+=DEMO_VERSION
 # Setting up the flag passed to compiler to disable all code related to update checking
 defined(NO_UPDATE_CHECK, var): DEFINES+=NO_UPDATE_CHECK
 
-# Properly defining build number constant
+# Properly defining build number/date constant
 unix {
  BUILDNUM=$$system("$$PWD/getbuildnum.sh")
- DEFINES+=BUILDNUM=\\\"$${BUILDNUM}\\\"
+ BUILDDATE=$$system("date '+%Y%m%d'")
 } else {
  BUILDNUM=$$system("$$PWD/getbuildnum.bat")
- DEFINES+=BUILDNUM=\\\"$${BUILDNUM}\\\"
+ BUILDDATE=$$system("$$PWD/getbuildnum.bat")
 }
+
+DEFINES+=BUILDNUM=\\\"$${BUILDNUM}\\\"
+DEFINES+=BUILDDATE=\\\"$${BUILDDATE}\\\"
 
 # Below, the user can specify where all generated file can be placed
 # through a set of variables, being them:
