@@ -4629,7 +4629,9 @@ void ModelWidget::highlightObject()
 void ModelWidget::toggleNewObjectOverlay()
 {
 if(new_obj_overlay_wgt->isHidden() &&
-			(selected_objects.empty() || selected_objects[0]->getObjectType()!=ObjectType::BaseRelationship))
+			(selected_objects.empty() ||
+			 (selected_objects[0]->getObjectType()!=ObjectType::BaseRelationship &&
+			 selected_objects[0]->getObjectType()!=ObjectType::Textbox)))
 	{
 		new_obj_overlay_wgt->raise();
 		new_obj_overlay_wgt->show();
