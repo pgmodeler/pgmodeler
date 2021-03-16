@@ -53,8 +53,8 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 
 	fix_menu.addAction(action_fix_model);
 	fix_menu.addAction(action_handle_metadata);
+	action_fix->setMenu(&fix_menu);
 	QToolButton *tool_btn = qobject_cast<QToolButton *>(general_tb->widgetForAction(action_fix));
-	tool_btn->setMenu(&fix_menu);
 	tool_btn->setPopupMode(QToolButton::InstantPopup);
 
 	tool_btn = qobject_cast<QToolButton *>(control_tb->widgetForAction(action_arrange_objects));

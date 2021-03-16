@@ -747,7 +747,7 @@
      <x>0</x>
      <y>0</y>
      <width>1159</width>
-     <height>29</height>
+     <height>36</height>
     </rect>
    </property>
    <property name="autoFillBackground">
@@ -763,8 +763,7 @@
     <addaction name="action_new_model"/>
     <addaction name="action_load_model"/>
     <addaction name="action_recent_models"/>
-    <addaction name="action_fix_model"/>
-    <addaction name="action_handle_metadata"/>
+    <addaction name="action_fix"/>
     <addaction name="action_close_model"/>
     <addaction name="action_save_model"/>
     <addaction name="action_save_as"/>
@@ -1629,6 +1628,11 @@
     <iconset resource="../res/resources.qrc">
      <normaloff>:/icones/icones/fix.png</normaloff>:/icones/icones/fix.png</iconset>
    </property>
+   <property name="text">
+    <string>Fix</string>
+   </property>
+  </action>
+  <action name="actionFix">
    <property name="text">
     <string>Fix</string>
    </property>
