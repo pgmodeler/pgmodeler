@@ -183,6 +183,9 @@ class ObjectsScene: public QGraphicsScene {
 		//! \brief Returns true when the layer with the provided id is currenctly activated
 		bool isLayerActive(unsigned layer_id);
 
+		//! \brief Returns true when at least one of the layer ids in the list is currenctly activated
+		bool isLayersActive(const QList<unsigned> &list);
+
 		//! \brief Returns a list containing the names of the active layers
 		QStringList getActiveLayers();
 

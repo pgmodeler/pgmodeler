@@ -196,9 +196,9 @@ void ObjectsScene::removeLayers()
 	{
 		obj_view = dynamic_cast<BaseObjectView *>(item);
 
-		if(obj_view && !obj_view->parentItem() && obj_view->getLayer() != DefaultLayer)
+		if(obj_view && !obj_view->parentItem() /*&& obj_view->getLayer() != DefaultLayer*/)
 		{
-			obj_view->setLayer(DefaultLayer);
+			obj_view->resetLayers();
 			obj_view->setVisible(is_active);
 		}
 	}
@@ -238,10 +238,21 @@ void ObjectsScene::setActiveLayers(QList<unsigned> layers_idxs)
 		{
 			obj_view = dynamic_cast<BaseObjectView *>(item);
 
-			if(obj_view && !obj_view->parentItem() && obj_view->getLayer() < layer_cnt)
+			if(obj_view && !obj_view->parentItem() /* && obj_view->getLayer() < layer_cnt */)
 			{
 				sch_view = dynamic_cast<SchemaView *>(obj_view);
-				is_in_layer = layers_idxs.contains(obj_view->getLayer());
+				is_in_layer = false;
+
+				for(auto &idx : layers_idxs)
+				{
+					if(obj_view->isInLayer(idx))
+					{
+						is_in_layer = true;
+						break;
+					}
+				}
+
+				//is_in_layer = layers_idxs.contains(obj_view->getLayer());
 
 				if(!obj_view->isVisible() && is_in_layer)
 				{
@@ -286,9 +297,10 @@ void ObjectsScene::moveObjectsToLayer(unsigned old_layer, unsigned new_layer)
 	{
 		obj_view = dynamic_cast<BaseObjectView *>(item);
 
-		if(obj_view && !obj_view->parentItem() && obj_view->getLayer() == old_layer)
+		if(obj_view && !obj_view->parentItem() && obj_view->isInLayer(old_layer))
 		{
-			obj_view->setLayer(new_layer);
+			obj_view->removeFromLayer(old_layer);
+			obj_view->addToLayer(new_layer);
 			obj_view->setVisible(isLayerActive(layers[new_layer]));
 		}
 	}
@@ -307,6 +319,19 @@ bool ObjectsScene::isLayerActive(unsigned layer_id)
 		return false;
 
 	return active_layers.contains(layers[layer_id]);
+}
+
+bool ObjectsScene::isLayersActive(const QList<unsigned> &list)
+{
+	for(auto &id : list)
+	{
+		if(id < static_cast<unsigned>(layers.size()) && active_layers.contains(layers[id]))
+		{
+			return true;
+		}
+	}
+
+	return false;
 }
 
 QStringList ObjectsScene::getActiveLayers()
@@ -675,7 +700,7 @@ void ObjectsScene::addItem(QGraphicsItem *item)
 
 		if(obj)
 		{		
-			obj->setVisible(isLayerActive(obj->getLayer()));
+			obj->setVisible(isLayersActive(obj->getLayers()));
 
 			// Relationships and schemas don't have their z value changed
 			if(!rel && !dynamic_cast<SchemaView *>(item))

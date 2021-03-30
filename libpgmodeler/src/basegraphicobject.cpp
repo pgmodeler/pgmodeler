@@ -26,11 +26,11 @@ BaseGraphicObject::BaseGraphicObject()
 	attributes[Attributes::YPos]="";
 	attributes[Attributes::Position]="";
 	attributes[Attributes::FadedOut]="";
-	attributes[Attributes::Layer]="";
+	attributes[Attributes::Layers]="";
 	attributes[Attributes::ZValue]="";
 	receiver_object=nullptr;
-	layer = 0;	
 	z_value=0;
+	resetLayers();
 }
 
 void BaseGraphicObject::setProtected(bool value)
@@ -83,6 +83,16 @@ void BaseGraphicObject::setFadedOutAttribute()
 	attributes[Attributes::FadedOut]=(is_faded_out ? Attributes::True : "");
 }
 
+void BaseGraphicObject::setLayersAttribute()
+{
+	QStringList layers_str;
+
+	for(auto &id : layers)
+		layers_str.append(QString::number(id));
+
+	attributes[Attributes::Layers] = layers_str.join(',');
+}
+
 void BaseGraphicObject::setPositionAttribute()
 {
 	attributes[Attributes::XPos]=QString("%1").arg(position.x());
@@ -128,15 +138,46 @@ bool BaseGraphicObject::isGraphicObject(ObjectType type)
 				 type==ObjectType::ForeignTable);
 }
 
-void BaseGraphicObject::setLayer(unsigned layer)
+void BaseGraphicObject::addToLayer(unsigned layer_id)
 {
-	setCodeInvalidated(this->layer != layer);
-	this->layer = layer;
+	if(!layers.contains(layer_id))
+		layers.append(layer_id);
+
+	setCodeInvalidated(true);
 }
 
-unsigned BaseGraphicObject::getLayer()
+void BaseGraphicObject::removeFromLayer(unsigned layer_id)
 {
-	return layer;
+	layers.removeAll(layer_id);
+	setCodeInvalidated(true);
+}
+
+void BaseGraphicObject::resetLayers()
+{
+	layers.clear();
+	layers.append(0);
+}
+
+void BaseGraphicObject::setLayers(QStringList list)
+{
+	setCodeInvalidated(true);
+
+	//Sanitizing the string list by removing non-numbers
+	list.replaceInStrings(QRegExp("^(.)*(\\D)+(.)*$"), "0");
+	list.removeDuplicates();
+
+	for(auto &id : list)
+		addToLayer(id.toUInt());
+}
+
+QList<unsigned> BaseGraphicObject::getLayers()
+{
+	return layers;
+}
+
+bool BaseGraphicObject::isInLayer(unsigned layer_id)
+{
+	return layers.contains(layer_id);
 }
 
 void BaseGraphicObject::setZValue(int z_value)

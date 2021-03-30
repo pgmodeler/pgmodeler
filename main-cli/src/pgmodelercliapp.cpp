@@ -85,7 +85,6 @@ const QString PgModelerCliApp::RevokePermissions("--revoke-perms");
 const QString PgModelerCliApp::DropMissingObjs("--drop-missing");
 const QString PgModelerCliApp::ForceDropColsConstrs("--force-drop-cols");
 const QString PgModelerCliApp::RenameDb("--rename-db");
-//const QString PgModelerCliApp::TruncOnColsTypeChange("--trunc-type-change");
 const QString PgModelerCliApp::NoSequenceReuse("--no-sequence-reuse");
 const QString PgModelerCliApp::NoCascadeDrop("--no-cascade");
 const QString PgModelerCliApp::ForceRecreateObjs("--force-recreate-objs");
@@ -1380,6 +1379,10 @@ void PgModelerCliApp::fixObjectAttributes(QString &obj_xml)
 		obj_xml.insert(sig_idx, signature);
 		sig_idx = regexp.indexIn(obj_xml, sig_idx + len);
 	}
+
+	//Rename the attribute layer to layers
+	if(obj_xml.contains(QRegExp("(layer)( )*(=)")))
+		obj_xml.replace("layer", Attributes::Layers);
 
 	//Fix the references to op. classes and families if needed
 	fixOpClassesFamiliesReferences(obj_xml);

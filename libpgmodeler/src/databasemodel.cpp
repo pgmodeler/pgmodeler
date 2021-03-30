@@ -3869,7 +3869,7 @@ Schema *DatabaseModel::createSchema()
 		schema->setFillColor(QColor(attribs[Attributes::FillColor]));
 		schema->setRectVisible(attribs[Attributes::RectVisible]==Attributes::True);
 		schema->setFadedOut(attribs[Attributes::FadedOut]==Attributes::True);
-		schema->setLayer(attribs[Attributes::Layer].toUInt());
+		schema->setLayers(attribs[Attributes::Layers].split(','));
 	}
 	catch(Exception &e)
 	{
@@ -6551,7 +6551,7 @@ View *DatabaseModel::createView()
 		view->setCurrentPage(BaseTable::AttribsSection, attribs[Attributes::AttribsPage].toUInt());
 		view->setCurrentPage(BaseTable::ExtAttribsSection, attribs[Attributes::ExtAttribsPage].toUInt());
 		view->setFadedOut(attribs[Attributes::FadedOut]==Attributes::True);
-		view->setLayer(attribs[Attributes::Layer].toUInt());
+		view->setLayers(attribs[Attributes::Layers].split(','));
 
 		if(xmlparser.accessElement(XmlParser::ChildElement))
 		{
@@ -6881,7 +6881,7 @@ Textbox *DatabaseModel::createTextbox()
 		xmlparser.getElementAttributes(attribs);
 
 		txtbox->setFadedOut(attribs[Attributes::FadedOut]==Attributes::True);
-		txtbox->setLayer(attribs[Attributes::Layer].toUInt());
+		txtbox->setLayers(attribs[Attributes::Layers].split(','));
 		txtbox->setTextAttribute(Textbox::ItalicText, attribs[Attributes::Italic]==Attributes::True);
 		txtbox->setTextAttribute(Textbox::BoldText, attribs[Attributes::Bold]==Attributes::True);
 		txtbox->setTextAttribute(Textbox::UnderlineText, attribs[Attributes::Underline]==Attributes::True);
@@ -6912,7 +6912,8 @@ BaseRelationship *DatabaseModel::createRelationship()
 	bool src_mand, dst_mand, identifier, protect, deferrable, sql_disabled, single_pk_col, faded_out;
 	DeferralType defer_type;
 	ActionType del_action, upd_action;
-	unsigned rel_type=0, i = 0, layer = 0;
+	unsigned rel_type=0, i = 0;
+	QStringList layers;
 	ObjectType table_types[2]={ ObjectType::View, ObjectType::Table }, obj_rel_type;
 	QString str_aux, elem, tab_attribs[2]={ Attributes::SrcTable, Attributes::DstTable };
 	QColor custom_color=Qt::transparent;
@@ -6930,7 +6931,7 @@ BaseRelationship *DatabaseModel::createRelationship()
 		dst_mand=attribs[Attributes::DstRequired]==Attributes::True;
 		protect=(attribs[Attributes::Protected]==Attributes::True);
 		faded_out=(attribs[Attributes::FadedOut]==Attributes::True);
-		layer = attribs[Attributes::Layer].toUInt();
+		layers = attribs[Attributes::Layers].split(',');
 
 		if(!attribs[Attributes::CustomColor].isEmpty())
 			custom_color=QColor(attribs[Attributes::CustomColor]);
@@ -7196,7 +7197,7 @@ BaseRelationship *DatabaseModel::createRelationship()
 	base_rel->setFadedOut(faded_out);
 	base_rel->setProtected(protect);
 	base_rel->setCustomColor(custom_color);
-	base_rel->setLayer(layer);
+	base_rel->setLayers(layers);
 
 	/* If the FK relationship does not reference a foreign key (models generated in older versions)
 	 * we need to assign them to the respective relationships */
@@ -11376,7 +11377,7 @@ TableClass *DatabaseModel::createPhysicalTable()
 		table->setCurrentPage(BaseTable::AttribsSection, attribs[Attributes::AttribsPage].toUInt());
 		table->setCurrentPage(BaseTable::ExtAttribsSection, attribs[Attributes::ExtAttribsPage].toUInt());
 		table->setFadedOut(attribs[Attributes::FadedOut]==Attributes::True);
-		table->setLayer(attribs[Attributes::Layer].toUInt());
+		table->setLayers(attribs[Attributes::Layers].split(','));
 
 		if(xmlparser.accessElement(XmlParser::ChildElement))
 		{

@@ -343,7 +343,6 @@ void BaseRelationship::setRelationshipAttributes()
 							   Attributes::DstLabel,
 							   Attributes::NameLabel};
 
-	attributes[Attributes::Layer]=QString::number(layer);
 	attributes[Attributes::Type]=getRelTypeAttribute();
 	attributes[Attributes::SrcRequired]=(src_mandatory ? Attributes::True : "");
 	attributes[Attributes::DstRequired]=(dst_mandatory ? Attributes::True : "");
@@ -380,7 +379,9 @@ void BaseRelationship::setRelationshipAttributes()
 	attributes[Attributes::LabelsPos]=str_aux;
 	attributes[Attributes::CustomColor]=(custom_color!=Qt::transparent ? custom_color.name() : "");
 	attributes[Attributes::ReferenceFk]=(reference_fk ? reference_fk->getName() : "");
+
 	setFadedOutAttribute();
+	setLayersAttribute();
 }
 
 QString BaseRelationship::getCachedCode(unsigned def_type)

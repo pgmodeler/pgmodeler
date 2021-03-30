@@ -2295,7 +2295,8 @@ void ModelWidget::moveToLayer()
 		if(!graph_obj)
 			continue;
 
-		graph_obj->setLayer(layer_id);
+		//graph_obj->setLayer(layer_id);
+		graph_obj->addToLayer(layer_id);
 	}
 
 	QApplication::setOverrideCursor(Qt::WaitCursor);
@@ -3829,7 +3830,7 @@ void ModelWidget::fadeObjects(const vector<BaseObject *> &objects, bool fade_in)
 			obj_view->setOpacity(fade_in ? 1 : min_object_opacity);
 
 			//If the minimum opacity is zero the object hidden
-			obj_view->setVisible(scene->isLayerActive(obj_view->getLayer()) && (fade_in || (!fade_in && min_object_opacity > 0)));
+			obj_view->setVisible(scene->isLayersActive(obj_view->getLayers()) && (fade_in || (!fade_in && min_object_opacity > 0)));
 
 			setModified(true);
 		}

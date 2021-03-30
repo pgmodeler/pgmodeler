@@ -8,8 +8,8 @@
 /> $br
 %else
 
- %if {layer} %then
-    [ layer=]"{layer}"
+ %if {layers} %then
+    [ layers=]"{layers}"
  %end
 
  %if {alias} %then
