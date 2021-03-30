@@ -936,7 +936,7 @@ void PgModelerCliApp::extractObjectXML()
 		layers = aux_buf.mid(attr_start, attr_end - attr_start);
 		layers.remove(QRegExp(attr_expr.arg(Attributes::Layers)));
 		layers.remove('"');
-		model->setLayers(layers.trimmed().split(';', QtCompat::SkipEmptyParts));
+		model->setLayers(layers.trimmed().split(',', QtCompat::SkipEmptyParts));
 
 		//Active layers
 		attr_start = attr_end;

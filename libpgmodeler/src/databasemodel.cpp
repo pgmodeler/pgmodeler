@@ -3264,7 +3264,7 @@ void DatabaseModel::loadModel(const QString &filename)
 													 attribs[Attributes::AllowConns] == Attributes::True);
 
 			persist_changelog = attribs[Attributes::UseChangelog] == Attributes::True;
-			layers = attribs[Attributes::Layers].split(';', QtCompat::SkipEmptyParts);
+			layers = attribs[Attributes::Layers].split(',', QtCompat::SkipEmptyParts);
 			active_layers.clear();
 
 			/* Compatibility with models created prior the layers features:
@@ -3273,7 +3273,7 @@ void DatabaseModel::loadModel(const QString &filename)
 				active_layers.push_back(0);
 			else
 			{
-				for(auto &layer_id : attribs[Attributes::ActiveLayers].split(';', QtCompat::SkipEmptyParts))
+				for(auto &layer_id : attribs[Attributes::ActiveLayers].split(',', QtCompat::SkipEmptyParts))
 					active_layers.push_back(layer_id.toInt());
 			}
 
@@ -7629,8 +7629,8 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 			for(auto &layer_id : active_layers)
 				act_layers.push_back(QString::number(layer_id));
 
-			attribs_aux[Attributes::Layers]=layers.join(';');
-			attribs_aux[Attributes::ActiveLayers]=act_layers.join(';');
+			attribs_aux[Attributes::Layers]=layers.join(',');
+			attribs_aux[Attributes::ActiveLayers]=act_layers.join(',');
 			attribs_aux[Attributes::MaxObjCount]=QString::number(static_cast<unsigned>(getMaxObjectCount() * 1.20));
 			attribs_aux[Attributes::Protected]=(this->is_protected ? Attributes::True : "");
 			attribs_aux[Attributes::LastPosition]=QString("%1,%2").arg(last_pos.x()).arg(last_pos.y());
