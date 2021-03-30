@@ -267,8 +267,13 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	action_moveto_schema=new QAction(QIcon(PgModelerUiNs::getIconPath("movetoschema")), tr("Move to schema"), this);
 	action_moveto_schema->setMenu(&schemas_menu);
 
-	action_moveto_layer=new QAction(QIcon(PgModelerUiNs::getIconPath("movetolayer")), tr("Move to layer"), this);
+	action_moveto_layer=new QAction(QIcon(PgModelerUiNs::getIconPath("movetolayer")), tr("Set layers"), this);
 	action_moveto_layer->setMenu(&layers_menu);
+
+	layers_wgt = new LayersWidget(this);
+	wgt_action_layers = new QWidgetAction(this);
+	wgt_action_layers->setDefaultWidget(layers_wgt);
+	layers_menu.addAction(wgt_action_layers);
 
 	action_set_tag=new QAction(QIcon(PgModelerUiNs::getIconPath("tag")), tr("Set tag"), this);
 	action_set_tag->setMenu(&tags_menu);
@@ -540,6 +545,7 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	connect(scene, SIGNAL(s_objectSelected(BaseGraphicObject*,bool)), new_obj_overlay_wgt, SLOT(hide()));
 	connect(scene, SIGNAL(s_childrenSelectionChanged()), new_obj_overlay_wgt, SLOT(hide()));
 	connect(scene, SIGNAL(s_objectsScenePressed(Qt::MouseButtons)), new_obj_overlay_wgt, SLOT(hide()));
+	connect(layers_wgt, SIGNAL(s_objectsLayersChanged()), this, SLOT(updateObjectsLayers()));
 
 	viewport->installEventFilter(this);
 	viewport->horizontalScrollBar()->installEventFilter(this);
@@ -2282,23 +2288,8 @@ void ModelWidget::moveToSchema()
 	}
 }
 
-void ModelWidget::moveToLayer()
+void ModelWidget::updateObjectsLayers()
 {
-	QAction *act = dynamic_cast<QAction *>(sender());
-	BaseGraphicObject *graph_obj = nullptr;
-	unsigned layer_id = act->data().toUInt();
-
-	for(auto &obj : selected_objects)
-	{
-		graph_obj = dynamic_cast<BaseGraphicObject *>(obj);
-
-		if(!graph_obj)
-			continue;
-
-		//graph_obj->setLayer(layer_id);
-		graph_obj->addToLayer(layer_id);
-	}
-
 	QApplication::setOverrideCursor(Qt::WaitCursor);
 	scene->updateActiveLayers();
 	QApplication::restoreOverrideCursor();
@@ -3644,20 +3635,6 @@ void ModelWidget::configureQuickMenu(BaseObject *object)
 			}
 		}
 
-		// Configuring the layers menu
-		if(is_graph_obj)
-		{
-			unsigned layer_id = ObjectsScene::DefaultLayer;
-			layers_menu.clear();
-
-			for(auto &layer : scene->getLayers())
-			{
-				act = layers_menu.addAction(layer);
-				act->setData(layer_id++);
-				connect(act, SIGNAL(triggered(bool)), this, SLOT(moveToLayer()));
-			}
-		}
-
 		//Display the quick rename action is a single object is selected
 		if((object && obj_type != ObjectType::Cast) || (sel_objs.size() > 1))
 		{
@@ -3669,7 +3646,10 @@ void ModelWidget::configureQuickMenu(BaseObject *object)
 			quick_actions_menu.addAction(action_moveto_schema);
 
 		if(is_graph_obj)
+		{
 			quick_actions_menu.addAction(action_moveto_layer);
+			layers_wgt->setAttributes(scene->getLayers(), selected_objects);
+		}
 
 		if(accepts_owner)
 			quick_actions_menu.addAction(action_change_owner);

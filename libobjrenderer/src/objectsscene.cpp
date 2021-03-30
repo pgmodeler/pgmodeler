@@ -252,8 +252,6 @@ void ObjectsScene::setActiveLayers(QList<unsigned> layers_idxs)
 					}
 				}
 
-				//is_in_layer = layers_idxs.contains(obj_view->getLayer());
-
 				if(!obj_view->isVisible() && is_in_layer)
 				{
 					if(!sch_view ||

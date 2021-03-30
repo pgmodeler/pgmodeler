@@ -125,6 +125,7 @@ class BaseGraphicObject: public QObject, public BaseObject {
 
 		//! \brief Defines in which layers the object is visible
 		void setLayers(QStringList list);
+		void setLayers(QList<unsigned> list);
 
 		//! \brief Add the object to the layer specified by the id
 		void addToLayer(unsigned layer_id);

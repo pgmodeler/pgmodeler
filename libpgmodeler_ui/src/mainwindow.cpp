@@ -39,7 +39,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	pending_op=NoPendingOp;
 	central_wgt=nullptr;
 
-	layers_wgt = new LayersWidget(this);
+	layers_wgt = new LayersConfigWidget(this);
 	layers_wgt->setVisible(false);
 
 	changelog_wgt  = new ChangelogWidget(this);

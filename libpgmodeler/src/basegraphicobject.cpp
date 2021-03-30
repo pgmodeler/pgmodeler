@@ -170,6 +170,12 @@ void BaseGraphicObject::setLayers(QStringList list)
 		addToLayer(id.toUInt());
 }
 
+void BaseGraphicObject::setLayers(QList<unsigned> list)
+{
+	setCodeInvalidated(true);
+	layers = list;
+}
+
 QList<unsigned> BaseGraphicObject::getLayers()
 {
 	return layers;
