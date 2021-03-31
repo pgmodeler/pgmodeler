@@ -33,18 +33,23 @@ class LayersWidget : public QWidget, Ui::LayersWidget {
 	private:
 		Q_OBJECT
 
+		//! \brief The current object selection in a model widget that the layer widget will operate on.
 		vector<BaseGraphicObject *> selected_objs;
+
+		//! \brief Indicates if the user have interacted with the layers checkboxes changing objects layers.
+		bool layers_changed;
 
 	public:
 		explicit LayersWidget(QWidget *parent = nullptr);
 
+		//! \brief Configures the widget with layer names and a set of object selected in a model widget
 		void setAttributes(const QStringList &layers, const vector<BaseObject *> &selected_objs);
+
+		//! \brief Returns true if the layers of the selected object have been changed by the user.
+		bool isLayersChanged();
 
 	private slots:
 		void updateObjectsLayers();
-
-	signals:
-		void s_objectsLayersChanged();
 };
 
 #endif

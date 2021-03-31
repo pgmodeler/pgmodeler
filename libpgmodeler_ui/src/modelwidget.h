@@ -54,7 +54,7 @@ class ModelWidget: public QWidget {
 		//! \brief Indicates if the model was modified by some operation
 		bool modified,
 
-		//! brief Indicates if the panning mode was activated via event filter (see eventFilter())
+		//! \brief Indicates if the panning mode was activated via event filter (see eventFilter())
 		panning_mode;
 
 		/*! \brief Indicates if the cut operation is currently activated. This flag modifies

@@ -22,6 +22,8 @@ LayersWidget::LayersWidget(QWidget *parent) : QWidget(parent)
 {
 	setupUi(this);
 
+	layers_changed = false;
+
 	connect(layers_lst, SIGNAL(itemChanged(QListWidgetItem*)), this, SLOT(updateObjectsLayers()));
 }
 
@@ -32,6 +34,7 @@ void LayersWidget::setAttributes(const QStringList &layers, const vector<BaseObj
 	QList<unsigned> sel_layers;
 	unsigned layer_id = 0;
 
+	layers_changed = false;
 	selected_objs.clear();
 	layers_lst->clear();
 
@@ -57,6 +60,11 @@ void LayersWidget::setAttributes(const QStringList &layers, const vector<BaseObj
 	layers_lst->setEnabled(layers.size() > 1);
 }
 
+bool LayersWidget::isLayersChanged()
+{
+	return layers_changed;
+}
+
 void LayersWidget::updateObjectsLayers()
 {
 	QList<unsigned> sel_layers;
@@ -79,5 +87,5 @@ void LayersWidget::updateObjectsLayers()
 	for(auto &obj : selected_objs)
 		obj->setLayers(sel_layers);
 
-	emit s_objectsLayersChanged();
+	layers_changed = true;
 }

@@ -95,7 +95,7 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 																																		 ObjectType::BaseRelationship});
 
 	current_zoom=1;
-	modified=panning_mode=false;
+	modified = panning_mode = false;
 	new_obj_type=ObjectType::BaseObject;
 
 	//Generating a temporary file name for the model
@@ -545,7 +545,7 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	connect(scene, SIGNAL(s_objectSelected(BaseGraphicObject*,bool)), new_obj_overlay_wgt, SLOT(hide()));
 	connect(scene, SIGNAL(s_childrenSelectionChanged()), new_obj_overlay_wgt, SLOT(hide()));
 	connect(scene, SIGNAL(s_objectsScenePressed(Qt::MouseButtons)), new_obj_overlay_wgt, SLOT(hide()));
-	connect(layers_wgt, SIGNAL(s_objectsLayersChanged()), this, SLOT(updateObjectsLayers()));
+	connect(&popup_menu, SIGNAL(aboutToHide()), this, SLOT(updateObjectsLayers()));
 
 	viewport->installEventFilter(this);
 	viewport->horizontalScrollBar()->installEventFilter(this);
@@ -2290,6 +2290,9 @@ void ModelWidget::moveToSchema()
 
 void ModelWidget::updateObjectsLayers()
 {
+	if(!layers_wgt->isLayersChanged())
+		return;
+
 	QApplication::setOverrideCursor(Qt::WaitCursor);
 	scene->updateActiveLayers();
 	QApplication::restoreOverrideCursor();
