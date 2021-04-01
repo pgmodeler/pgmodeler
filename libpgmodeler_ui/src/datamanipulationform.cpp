@@ -207,7 +207,9 @@ void DataManipulationForm::setAttributes(Connection conn, const QString curr_sch
 	{
 		tmpl_conn_params=conn.getConnectionParams();
 
-		this->setWindowTitle(this->windowTitle() + QString(" - ") + conn.getConnectionId(true, true));
+		tmpl_window_title = windowTitle() + QString(" - %1") + conn.getConnectionId(true, true);
+		setWindowTitle(tmpl_window_title.arg(""));
+
 		db_name_lbl->setText(conn.getConnectionId(true, true, true));
 
 		schema_cmb->clear();
@@ -284,6 +286,7 @@ void DataManipulationForm::listTables()
 	table_lbl->setEnabled(table_cmb->count() > 0);
 	table_cmb->setEnabled(table_cmb->count() > 0);
 	result_info_wgt->setVisible(false);
+	setWindowTitle(tmpl_window_title.arg(""));
 }
 
 void DataManipulationForm::listColumns()
@@ -469,6 +472,7 @@ void DataManipulationForm::retrieveData()
 			results_tbw->resizeRowsToContents();
 
 		results_tbw->horizontalHeader()->blockSignals(false);
+		setWindowTitle(tmpl_window_title.arg(curr_table_name.isEmpty() ? "" : curr_table_name + " / "));
 	}
 	catch(Exception &e)
 	{
