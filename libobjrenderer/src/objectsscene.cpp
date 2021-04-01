@@ -172,7 +172,7 @@ void ObjectsScene::removeLayer(const QString &name)
 
 	if(idx > 0)
 	{
-		moveObjectsToLayer(idx, DefaultLayer);
+		validateLayerRemoval(idx);
 		layers.removeAll(name);
 		active_layers.removeAll(name);
 		emit s_layersChanged();
@@ -196,7 +196,7 @@ void ObjectsScene::removeLayers()
 	{
 		obj_view = dynamic_cast<BaseObjectView *>(item);
 
-		if(obj_view && !obj_view->parentItem() /*&& obj_view->getLayer() != DefaultLayer*/)
+		if(obj_view && !obj_view->parentItem())
 		{
 			obj_view->resetLayers();
 			obj_view->setVisible(is_active);
@@ -283,23 +283,43 @@ void ObjectsScene::setActiveLayers(QList<unsigned> layers_idxs)
 	emit s_activeLayersChanged();
 }
 
-void ObjectsScene::moveObjectsToLayer(unsigned old_layer, unsigned new_layer)
+void ObjectsScene::validateLayerRemoval(unsigned old_layer)
 {
 	BaseObjectView *obj_view = nullptr;
 	unsigned total_layers = layers.size();
+	QList<unsigned> obj_layers;
 
-	if(old_layer == new_layer || old_layer >= total_layers || new_layer >= total_layers)
+	if(old_layer == DefaultLayer || old_layer >= total_layers)
 		return;
 
 	for(auto &item : this->items())
 	{
 		obj_view = dynamic_cast<BaseObjectView *>(item);
 
-		if(obj_view && !obj_view->parentItem() && obj_view->isInLayer(old_layer))
+		if(obj_view && !obj_view->parentItem())
 		{
-			obj_view->removeFromLayer(old_layer);
-			obj_view->addToLayer(new_layer);
-			obj_view->setVisible(isLayerActive(layers[new_layer]));
+			// Remove the object from the layer to be deleted and add it to the default one
+			if(obj_view->isInLayer(old_layer))
+			{
+				obj_view->removeFromLayer(old_layer);
+				obj_view->addToLayer(DefaultLayer);
+				obj_view->setVisible(isLayerActive(layers[DefaultLayer]));
+			}
+
+			/* Shifting the remainging layers ids if the layer to be removed is
+			 * >= 1 or < layers.size(). For example, if we have the following layers:
+			 * (0, 1, 2, 3). If the layer 1 is to be deleted, then there's the need to
+			 * shift the ids (2, 3) to (1, 2) since after the delition of the layer 1
+			 * the id 3 is invalid */
+			obj_layers = obj_view->getLayers();
+
+			for(auto &layer_id : obj_layers)
+			{
+				if(layer_id > old_layer)
+					layer_id--;
+			}
+
+			obj_view->setLayers(obj_layers);
 		}
 	}
 

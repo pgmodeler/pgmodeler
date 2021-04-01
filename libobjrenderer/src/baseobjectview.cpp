@@ -590,7 +590,7 @@ double BaseObjectView::getFontFactor()
 	return font_config[Attributes::Global].font().pointSizeF()/DefaultFontSize;
 }
 
-void BaseObjectView::setLayers(const QStringList &list)
+void BaseObjectView::setLayers(const QList<unsigned> &list)
 {
 	BaseGraphicObject *graph_obj = dynamic_cast<BaseGraphicObject *>(this->getUnderlyingObject());
 

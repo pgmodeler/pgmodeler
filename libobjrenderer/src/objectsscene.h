@@ -146,6 +146,11 @@ class ObjectsScene: public QGraphicsScene {
 
 		void blockItemsSignals(bool block);
 
+		/*! \brief Move the objects from a deleted layer to the default one (0).
+		 * This method automatically shifts the objects layers in case the layer being removed is
+		 * greater than 0 or less than the maximum of layers minus 1, avoiding references to invalid layer ids. */
+		void validateLayerRemoval(unsigned old_layer);
+
 	public:
 		static constexpr unsigned DefaultLayer = 0,
 		InvalidLayer = UINT_MAX;
@@ -172,10 +177,6 @@ class ObjectsScene: public QGraphicsScene {
 
 		//! \brief Set the layers with the provided indexes as active. Activating a layer causes objects attached to it to be visible
 		void setActiveLayers(QList<unsigned> ids);
-
-		/*! \brief Move the objects from a layer to another. This method automatically hides/show the objects in the new layer
-		 * according to the activation status of the destination layer */
-		void moveObjectsToLayer(unsigned old_layer, unsigned new_layer);
 
 		//! \brief Returns true when the named layer is currenctly activated
 		bool isLayerActive(const QString &name);

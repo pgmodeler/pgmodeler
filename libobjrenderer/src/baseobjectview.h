@@ -114,7 +114,7 @@ class BaseObjectView: public QObject, public QGraphicsItemGroup {
 		void setSelectionOrder(bool selected);
 
 		//! \brief Defines in which layers the object is visible
-		void setLayers(const QStringList &list);
+		void setLayers(const QList<unsigned> &list);
 
 		//! \brief Add the object to the layer specified by the id
 		void addToLayer(unsigned layer_id);
