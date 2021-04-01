@@ -62,7 +62,17 @@ class GeneralConfigWidget: public BaseConfigWidget, public Ui::GeneralConfigWidg
 		UnitInches=2,
 		UnitCentimeters=3;
 
-		ColorPickerWidget *line_numbers_cp, *line_numbers_bg_cp, *line_highlight_cp;
+		ColorPickerWidget *line_numbers_cp,
+
+		*line_numbers_bg_cp,
+
+		*line_highlight_cp,
+
+		*grid_line_color_cp,
+
+		*grid_bg_color_cp,
+
+		*page_delim_color_cp;
 
 	public:
 		//! \brief Maximum number of files listed as recent models

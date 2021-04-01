@@ -69,6 +69,21 @@ GeneralConfigWidget::GeneralConfigWidget(QWidget * parent) : BaseConfigWidget(pa
 	line_highlight_cp=new ColorPickerWidget(1, this);
 	line_highlight_cp->setButtonToolTip(0, tr("Highlighted line color"));
 
+	QHBoxLayout *hbox = new QHBoxLayout(grid_line_color_wgt);
+	hbox->setContentsMargins(0,0,0,0);
+	grid_line_color_cp = new ColorPickerWidget(1, grid_line_color_wgt);
+	hbox->addWidget(grid_line_color_cp);
+
+	hbox = new QHBoxLayout(grid_bg_color_wgt);
+	hbox->setContentsMargins(0,0,0,0);
+	grid_bg_color_cp = new ColorPickerWidget(1, grid_bg_color_wgt);
+	hbox->addWidget(grid_bg_color_cp);
+
+	hbox = new QHBoxLayout(page_delim_color_wgt);
+	hbox->setContentsMargins(0,0,0,0);
+	page_delim_color_cp = new ColorPickerWidget(1, page_delim_color_wgt);
+	hbox->addWidget(page_delim_color_cp);
+
 	font_preview_txt=new NumberedTextEditor(this);
 	font_preview_txt->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
 	font_preview_txt->setPlainText(tr("The little brown fox jumps over the lazy dog") + QString("\n\ttext with tab «") + QString("\n0123456789\n.()[]{};"));

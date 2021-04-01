@@ -27,6 +27,9 @@ QPrinter::Orientation ObjectsScene::page_orientation=QPrinter::Landscape;
 QRectF ObjectsScene::page_margins=QRectF(2,2,2,2);
 QSizeF ObjectsScene::custom_paper_size=QSizeF(0,0);
 QBrush ObjectsScene::grid;
+QColor ObjectsScene::grid_line_color = QColor(225, 225, 225);
+QColor ObjectsScene::grid_bg_color = QColor(255, 255, 255);
+QColor ObjectsScene::page_delim_color = QColor(75,115,195);
 bool ObjectsScene::corner_move=true;
 bool ObjectsScene::invert_rangesel_trigger=false;
 
@@ -500,12 +503,12 @@ void ObjectsScene::setGridSize(unsigned size)
 
 		grid_size=size;
 		grid_img=QImage(img_w, img_h, QImage::Format_ARGB32);
-		grid_img.fill(Qt::white);
+		grid_img.fill(grid_bg_color);
 		painter.begin(&grid_img);
 
 		if(show_grid)
 		{
-			pen.setColor(QColor(225, 225, 225));
+			pen.setColor(grid_line_color);
 			painter.setPen(pen);
 
 			//Draws the grid
@@ -517,7 +520,7 @@ void ObjectsScene::setGridSize(unsigned size)
 		//Creates the page delimiter lines
 		if(show_page_delim)
 		{
-			pen.setColor(QColor(75,115,195));
+			pen.setColor(page_delim_color);
 			pen.setStyle(Qt::DashLine);
 			pen.setWidthF(1.0);
 			painter.setPen(pen);
@@ -848,6 +851,36 @@ void ObjectsScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
 
 		emit s_popupMenuRequested();
 	}
+}
+
+void ObjectsScene::setGridLineColor(const QColor &value)
+{
+	grid_line_color = value;
+}
+
+QColor ObjectsScene::getGridLineColor()
+{
+	return grid_line_color;
+}
+
+void ObjectsScene::setGridBackgroundColor(const QColor &value)
+{
+	grid_bg_color = value;
+}
+
+QColor ObjectsScene::getGridBackgroundColor()
+{
+	return grid_bg_color;
+}
+
+void ObjectsScene::setPageDelimiterColor(const QColor &value)
+{
+	page_delim_color = value;
+}
+
+QColor ObjectsScene::getPageDelimiterColor()
+{
+	return page_delim_color;
 }
 
 bool ObjectsScene::mouseIsAtCorner()
