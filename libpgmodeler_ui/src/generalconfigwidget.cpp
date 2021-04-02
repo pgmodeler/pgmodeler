@@ -69,6 +69,24 @@ GeneralConfigWidget::GeneralConfigWidget(QWidget * parent) : BaseConfigWidget(pa
 	line_highlight_cp=new ColorPickerWidget(1, this);
 	line_highlight_cp->setButtonToolTip(0, tr("Highlighted line color"));
 
+	QHBoxLayout *hbox = new QHBoxLayout(grid_color_wgt);
+	hbox->setContentsMargins(0,0,0,0);
+	grid_color_cp = new ColorPickerWidget(1, grid_color_wgt);
+	grid_color_cp->setButtonToolTip(0, tr("Define a custom color for the grid lines"));
+	hbox->addWidget(grid_color_cp);
+
+	hbox = new QHBoxLayout(canvas_color_wgt);
+	hbox->setContentsMargins(0,0,0,0);
+	canvas_color_cp = new ColorPickerWidget(1, canvas_color_wgt);
+	canvas_color_cp->setButtonToolTip(0, tr("Define a custom color for the canvas area"));
+	hbox->addWidget(canvas_color_cp);
+
+	hbox = new QHBoxLayout(delimiters_color_wgt);
+	hbox->setContentsMargins(0,0,0,0);
+	delimiters_color_cp = new ColorPickerWidget(1, delimiters_color_wgt);
+	delimiters_color_cp->setButtonToolTip(0, tr("Define a custom color for the page delimiter lines"));
+	hbox->addWidget(delimiters_color_cp);
+
 	font_preview_txt=new NumberedTextEditor(this);
 	font_preview_txt->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
 	font_preview_txt->setPlainText(tr("The little brown fox jumps over the lazy dog") + QString("\n\ttext with tab «") + QString("\n0123456789\n.()[]{};"));
@@ -303,6 +321,10 @@ void GeneralConfigWidget::loadConfiguration()
 		low_verbosity_chk->setChecked(config_params[Attributes::Configuration][Attributes::LowVerbosity]==Attributes::True);
 		escape_comments_chk->setChecked(config_params[Attributes::Configuration][Attributes::EscapeComment]==Attributes::True);
 
+		grid_color_cp->setColor(0, QColor(config_params[Attributes::Configuration][Attributes::GridColor]));
+		canvas_color_cp->setColor(0, QColor(config_params[Attributes::Configuration][Attributes::CanvasColor]));
+		delimiters_color_cp->setColor(0, QColor(config_params[Attributes::Configuration][Attributes::DelimitersColor]));
+
 		int ui_idx = ui_language_cmb->findData(config_params[Attributes::Configuration][Attributes::UiLanguage]);
 		ui_language_cmb->setCurrentIndex(ui_idx >= 0 ? ui_idx : 0);
 
@@ -506,6 +528,10 @@ void GeneralConfigWidget::saveConfiguration()
 		config_params[Attributes::Configuration][Attributes::LowVerbosity]=(low_verbosity_chk->isChecked() ? Attributes::True : "");
 		config_params[Attributes::Configuration][Attributes::EscapeComment]=(escape_comments_chk->isChecked() ? Attributes::True : "");
 
+		config_params[Attributes::Configuration][Attributes::GridColor] = grid_color_cp->getColor(0).name();
+		config_params[Attributes::Configuration][Attributes::CanvasColor] = canvas_color_cp->getColor(0).name();
+		config_params[Attributes::Configuration][Attributes::DelimitersColor] = delimiters_color_cp->getColor(0).name();
+
 		config_params[Attributes::Configuration][Attributes::File]="";
 		config_params[Attributes::Configuration][Attributes::RecentModels]="";
 
@@ -604,6 +630,10 @@ void GeneralConfigWidget::applyConfiguration()
 
 	ObjectsScene::setEnableCornerMove(corner_move_chk->isChecked());
 	ObjectsScene::setInvertRangeSelectionTrigger(invert_rangesel_chk->isChecked());
+
+	ObjectsScene::setCanvasColor(canvas_color_cp->getColor(0));
+	ObjectsScene::setGridColor(grid_color_cp->getColor(0));
+	ObjectsScene::setDelimitersColor(delimiters_color_cp->getColor(0));
 	ObjectsScene::setGridSize(grid_size_spb->value());
 
 	ObjectsScene::setGridOptions(config_params[Attributes::Configuration][Attributes::ShowCanvasGrid]==Attributes::True,
