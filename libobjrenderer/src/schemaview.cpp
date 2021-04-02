@@ -179,8 +179,8 @@ void SchemaView::configureObject()
 		QColor color;
 		QRectF rect;
 		QFont font;
-		double sp_h=0, sp_v=0, txt_h=0;
-		double x1=1000000, y1=1000000, x2=-1000000, y2=-1000000, width=0;
+		double sp_h=0, sp_v=0, txt_h=0,
+		x1=1000000, y1=1000000, x2=-1000000, y2=-1000000, width=0, height = 0;
 		QList<BaseObjectView *>::Iterator itr=children.begin();
 
 		//Configures the bounding rect based upon the children dimension
@@ -214,18 +214,19 @@ void SchemaView::configureObject()
 		txt_h=sch_name->boundingRect().height() + (2 * VertSpacing);
 
 		//Configures the box with the points calculated above
-		sp_h=(3 * HorizSpacing);
-		sp_v=(3 * VertSpacing) + txt_h;
+		sp_h=(4 * HorizSpacing);
+		sp_v=(4 * VertSpacing) + txt_h;
 
-		width=(x2-x1) + 1;
+		width = (x2-x1) + 1;
+		height = (y2-y1) + sp_v;
 
 		if(width < sch_name->boundingRect().width())
 			width=sch_name->boundingRect().width();
 
 		rect.setTopLeft(QPointF(-sp_h, 0));
 		rect.setTopRight(QPointF(width + sp_h, 0));
-		rect.setBottomRight(QPointF(width + sp_h, y2-y1 + sp_v));
-		rect.setBottomLeft(QPointF(-sp_h, y2-y1 + sp_v));
+		rect.setBottomRight(QPointF(width + sp_h,height));
+		rect.setBottomLeft(QPointF(-sp_h, height));
 		box->setRect(rect);
 
 		//Sets the schema view position
