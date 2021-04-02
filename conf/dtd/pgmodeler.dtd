@@ -7,6 +7,9 @@
 <!ELEMENT configuration EMPTY>
 <!ATTLIST configuration op-list-size CDATA #REQUIRED>
 <!ATTLIST configuration grid-size CDATA #REQUIRED>
+<!ATTLIST configuration grid-color CDATA #IMPLIED>
+<!ATTLIST configuration canvas-color CDATA #IMPLIED>
+<!ATTLIST configuration delimiters-color CDATA #IMPLIED>
 <!ATTLIST configuration autosave-interval CDATA #IMPLIED>
 <!ATTLIST configuration paper-type CDATA #IMPLIED>
 <!ATTLIST configuration paper-orientation (portrait|landscape) "landscape">

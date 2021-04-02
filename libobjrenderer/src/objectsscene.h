@@ -37,11 +37,11 @@ class ObjectsScene: public QGraphicsScene {
 	private:
 		Q_OBJECT
 
-		static QColor grid_line_color,
+		static QColor grid_color,
 
-		grid_bg_color,
+		canvas_color,
 
-		page_delim_color;
+		delimiters_color;
 
 		//! \brief Holds the names of the layers on the scene used to separate in the objects on the canvas
 		QStringList layers, active_layers;
@@ -253,14 +253,14 @@ class ObjectsScene: public QGraphicsScene {
 		QList<QGraphicsItem *> selectedItems(void) const;
 		bool hasOnlyTableChildrenSelection(void) const;
 
-		static void setGridLineColor(const QColor &value);
-		static QColor getGridLineColor();
+		static void setGridColor(const QColor &value);
+		static QColor getGridColor();
 
-		static void setGridBackgroundColor(const QColor &value);
-		static QColor getGridBackgroundColor();
+		static void setCanvasColor(const QColor &value);
+		static QColor getCanvasColor();
 
-		static void setPageDelimiterColor(const QColor &value);
-		static QColor getPageDelimiterColor();
+		static void setDelimitersColor(const QColor &value);
+		static QColor getDelimitersColor();
 
 	public slots:
 		void alignObjectsToGrid();

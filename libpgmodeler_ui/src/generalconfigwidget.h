@@ -68,11 +68,11 @@ class GeneralConfigWidget: public BaseConfigWidget, public Ui::GeneralConfigWidg
 
 		*line_highlight_cp,
 
-		*grid_line_color_cp,
+		*grid_color_cp,
 
-		*grid_bg_color_cp,
+		*canvas_color_cp,
 
-		*page_delim_color_cp;
+		*delimiters_color_cp;
 
 	public:
 		//! \brief Maximum number of files listed as recent models
