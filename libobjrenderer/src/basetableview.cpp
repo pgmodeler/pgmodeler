@@ -469,6 +469,7 @@ void BaseTableView::__configureObject(double width)
 
 	configureObjectSelection();
 	configureObjectShadow();
+	updateLayersRects();
 }
 
 double BaseTableView::calculateWidth()

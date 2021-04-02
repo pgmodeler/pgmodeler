@@ -34,9 +34,9 @@ bool ObjectsScene::corner_move=true;
 bool ObjectsScene::invert_rangesel_trigger=false;
 
 ObjectsScene::ObjectsScene()
-{
-	layers.push_back(tr("Default layer"));
-	active_layers.push_back(layers.at(0));
+{		
+	addLayer(tr("Default layer"));
+	active_layers.push_back(layers.at(DefaultLayer));
 
 	moving_objs=move_scene=false;
 	enable_range_sel=true;
@@ -115,6 +115,13 @@ ObjectsScene::~ObjectsScene()
 		}
 	}
 
+	while(!layers_paths.isEmpty())
+	{
+		removeItem(layers_paths.front());
+		delete layers_paths.front();
+		layers_paths.pop_front();
+	}
+
 	//The graphical representation of db objects must be destroyed in a sorted way
 	std::sort(removed_objs.begin(), removed_objs.end());
 	while(!removed_objs.empty())
@@ -150,8 +157,30 @@ QString ObjectsScene::addLayer(const QString &name)
 	if(name.isEmpty())
 		return "";
 
+	QGraphicsPathItem *layer_item = new QGraphicsPathItem;
 	QString fmt_name = formatLayerName(name);
+	random_device rand_seed;
+	default_random_engine rand_num_engine;
+	uniform_int_distribution<unsigned> dist(0,255);
+
+	rand_num_engine.seed(rand_seed());
+	QColor color = QColor(dist(rand_num_engine),
+												dist(rand_num_engine),
+												dist(rand_num_engine), 80);
+
 	layers.push_back(fmt_name);
+	layers_paths.append(layer_item);
+
+	layer_item->setZValue(-100 - layers.size());
+	/* layer_item->setFlag(QGraphicsItem::ItemIsSelectable, false);
+	layer_item->setFlag(QGraphicsItem::ItemIsMovable, false);
+	layer_item->setFlag(QGraphicsItem::ItemIsFocusable, false);
+	layer_item->setFlag(QGraphicsItem::ItemAcceptsInputMethod, false); */
+	layer_item->setEnabled(false);
+	layer_item->setVisible(false);
+	layer_item->setPen(color);
+	layer_item->setBrush(color);
+	addItem(layer_item);
 
 	emit s_layersChanged();
 	return fmt_name;
@@ -175,22 +204,40 @@ void ObjectsScene::removeLayer(const QString &name)
 
 	if(idx > 0)
 	{
+		QGraphicsPathItem *path_item = layers_paths.at(idx);
+
 		validateLayerRemoval(idx);
+
 		layers.removeAll(name);
 		active_layers.removeAll(name);
+		layers_paths.removeAt(idx);
+
+		removeItem(path_item);
+		delete path_item;
+
 		emit s_layersChanged();
 	}
 }
 
 void ObjectsScene::removeLayers()
 {
+	QGraphicsPathItem *layer_path = nullptr;
 	BaseObjectView *obj_view = nullptr;
 	QString def_layer = layers[DefaultLayer];
 	bool is_active = active_layers.contains(def_layer);
 
 	layers.clear();
 	active_layers.clear();
-	layers.push_back(def_layer);
+
+	while(layers_paths.size() > 1)
+	{
+		layer_path = layers_paths.back();
+		removeItem(layer_path);
+		delete(layer_path);
+		layers_paths.pop_back();
+	}
+
+	layers.append(def_layer);
 
 	if(is_active)
 		active_layers.push_back(def_layer);
@@ -241,7 +288,7 @@ void ObjectsScene::setActiveLayers(QList<unsigned> layers_idxs)
 		{
 			obj_view = dynamic_cast<BaseObjectView *>(item);
 
-			if(obj_view && !obj_view->parentItem() /* && obj_view->getLayer() < layer_cnt */)
+			if(obj_view && !obj_view->parentItem())
 			{
 				sch_view = dynamic_cast<SchemaView *>(obj_view);
 				is_in_layer = false;
@@ -283,7 +330,67 @@ void ObjectsScene::setActiveLayers(QList<unsigned> layers_idxs)
 		}
 	}
 
+	updateLayersRects();
 	emit s_activeLayersChanged();
+}
+
+void ObjectsScene::updateLayersRects()
+{
+	QList<QPainterPath> new_paths;
+	BaseObjectView *obj_view = nullptr;
+	ObjectType obj_type;
+	QRectF brect;
+	int idx = 0;
+
+	for(idx = 0; idx < layers_paths.length(); idx++)
+	{
+		new_paths.append(QPainterPath());
+		layers_paths.at(idx)->setVisible(false);
+	}
+
+	for(auto &item : this->items())
+	{
+		obj_view = dynamic_cast<BaseObjectView *>(item);
+
+		if(obj_view && !obj_view->parentItem())
+		{
+			obj_type = 	obj_view->getUnderlyingObject()->getObjectType();
+
+			/* Schemas and relationship are ignored when determining the paths for the layers
+			 * because since these objects can have big bounding rects it may polute. For now
+			 * only table-like objects and textboxes can display layer boxes. */
+			if(obj_type == ObjectType::Schema ||
+				 obj_type ==ObjectType::BaseRelationship ||
+				 obj_type ==ObjectType::Relationship)
+				continue;
+
+			double inc = 0, size = BaseObjectView::HorizSpacing * 8;
+			int idx = 0;
+			brect = obj_view->boundingRect();
+			brect.moveTo(obj_view->pos());
+
+			for(auto &layer_id : obj_view->getLayers())
+			{
+				if(static_cast<int>(layer_id) >= layers.size() ||
+					 !active_layers.contains(layers.at(layer_id)))
+					continue;
+
+				inc = (BaseObjectView::HorizSpacing * idx);
+				idx++;
+				brect.adjust(-size - inc, -size - inc, size + inc, size + inc);
+
+				new_paths[layer_id].addRoundedRect(brect, 10, 10);
+				new_paths[layer_id].setFillRule(Qt::WindingFill);
+			}
+		}
+	}
+
+	for(auto &layer_name : active_layers)
+	{
+		idx = layers.indexOf(layer_name);
+		layers_paths[idx]->setPath(new_paths[idx]);
+		layers_paths[idx]->setVisible(true);
+	}
 }
 
 void ObjectsScene::validateLayerRemoval(unsigned old_layer)
@@ -731,6 +838,7 @@ void ObjectsScene::addItem(QGraphicsItem *item)
 		}
 
 		QGraphicsScene::addItem(item);
+		updateLayersRects();
 	}
 }
 
@@ -750,6 +858,7 @@ void ObjectsScene::removeItem(QGraphicsItem *item)
 
 		if(object)
 		{
+			updateLayersRects();
 			disconnect(object, nullptr, this, nullptr);
 			disconnect(object, nullptr, dynamic_cast<BaseGraphicObject*>(object->getUnderlyingObject()), nullptr);
 			disconnect(dynamic_cast<BaseGraphicObject*>(object->getUnderlyingObject()), nullptr, object, nullptr);
@@ -1167,6 +1276,7 @@ void ObjectsScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 	if(!this->selectedItems().isEmpty() && moving_objs && event->button()==Qt::LeftButton/* && event->modifiers()==Qt::NoModifier */)
 	{
 		finishObjectsMove(event->scenePos());
+		updateLayersRects();
 	}
 	else if(selection_rect->isVisible() && event->button()==Qt::LeftButton)
 	{

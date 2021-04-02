@@ -46,6 +46,8 @@ class ObjectsScene: public QGraphicsScene {
 		//! \brief Holds the names of the layers on the scene used to separate in the objects on the canvas
 		QStringList layers, active_layers;
 
+		QList<QGraphicsPathItem *> layers_paths;
+
 		vector<BaseObjectView *> removed_objs;
 
 		//! \brief Holds the tables/views which have selected children objects
@@ -261,6 +263,8 @@ class ObjectsScene: public QGraphicsScene {
 
 		static void setDelimitersColor(const QColor &value);
 		static QColor getDelimitersColor();
+
+		void updateLayersRects();
 
 	public slots:
 		void alignObjectsToGrid();

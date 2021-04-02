@@ -622,6 +622,14 @@ void BaseObjectView::resetLayers()
 		graph_obj->resetLayers();
 }
 
+void BaseObjectView::updateLayersRects()
+{
+	ObjectsScene *obj_scene = dynamic_cast<ObjectsScene *>(this->scene());
+
+	if(obj_scene)
+		obj_scene->updateLayersRects();
+}
+
 QList<unsigned> BaseObjectView::getLayers()
 {
 	BaseGraphicObject *graph_obj = dynamic_cast<BaseGraphicObject *>(this->getUnderlyingObject());

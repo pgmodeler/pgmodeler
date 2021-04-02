@@ -125,6 +125,8 @@ class BaseObjectView: public QObject, public QGraphicsItemGroup {
 		//! \brief Clear all the ids and moves the object to default layer (0)
 		void resetLayers();
 
+		void updateLayersRects();
+
 	public:
 		static constexpr double VertSpacing=2.0,
 		HorizSpacing=2.0,

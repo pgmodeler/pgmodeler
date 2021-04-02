@@ -126,6 +126,7 @@ void TextboxView::configureObject()
 	this->__configureObject();
 	this->configureObjectShadow();
 	this->configureObjectSelection();
+	updateLayersRects();
 }
 
 void TextboxView::configureObjectShadow()
