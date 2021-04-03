@@ -86,6 +86,13 @@ ObjectsScene::~ObjectsScene()
 	delete selection_rect;
 	delete rel_line;
 
+	while(!layers_paths.isEmpty())
+	{
+		removeItem(layers_paths.front());
+		delete layers_paths.front();
+		layers_paths.pop_front();
+	}
+
 	//Destroy the objects in the order defined on obj_types vector
 	for(auto &type : obj_types)
 	{
@@ -113,13 +120,6 @@ ObjectsScene::~ObjectsScene()
 
 			items.pop_front();
 		}
-	}
-
-	while(!layers_paths.isEmpty())
-	{
-		removeItem(layers_paths.front());
-		delete layers_paths.front();
-		layers_paths.pop_front();
 	}
 
 	//The graphical representation of db objects must be destroyed in a sorted way
@@ -336,13 +336,16 @@ void ObjectsScene::setActiveLayers(QList<unsigned> layers_idxs)
 
 void ObjectsScene::updateLayersRects()
 {
+	if(layers_paths.isEmpty())
+		return;
+
 	QList<QPainterPath> new_paths;
 	BaseObjectView *obj_view = nullptr;
 	ObjectType obj_type;
 	QRectF brect;
 	int idx = 0;
 
-	for(idx = 0; idx < layers_paths.length(); idx++)
+	for(idx = 0; idx < layers_paths.size(); idx++)
 	{
 		new_paths.append(QPainterPath());
 		layers_paths.at(idx)->setVisible(false);
