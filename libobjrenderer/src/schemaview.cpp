@@ -182,12 +182,14 @@ void SchemaView::configureObject()
 		double sp_h=0, sp_v=0, txt_h=0,
 		x1=1000000, y1=1000000, x2=-1000000, y2=-1000000, width=0, height = 0;
 		QList<BaseObjectView *>::Iterator itr=children.begin();
+		BaseObjectView *obj_view = nullptr;
 
 		//Configures the bounding rect based upon the children dimension
 		while(itr!=children.end())
 		{
-			rect.setTopLeft((*itr)->pos());
-			rect.setSize((*itr)->boundingRect().size());
+			obj_view = dynamic_cast<BaseObjectView *>(*itr);
+			rect.setTopLeft(obj_view->pos());
+			rect.setSize(obj_view->boundingRect().size());
 
 			if(rect.left() < x1)
 				x1 = rect.left();

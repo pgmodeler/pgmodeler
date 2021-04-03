@@ -357,6 +357,8 @@ void ObjectsScene::updateLayersRects()
 
 		if(obj_view && !obj_view->parentItem())
 		{
+			double size = BaseObjectView::HorizSpacing * 5;
+
 			obj_type = 	obj_view->getUnderlyingObject()->getObjectType();
 
 			/* Schemas and relationship are ignored when determining the paths for the layers
@@ -367,8 +369,6 @@ void ObjectsScene::updateLayersRects()
 				 obj_type ==ObjectType::Relationship)
 				continue;
 
-			double inc = 0, size = BaseObjectView::HorizSpacing * 8;
-			int idx = 0;
 			brect = obj_view->boundingRect();
 			brect.moveTo(obj_view->pos());
 
@@ -378,9 +378,8 @@ void ObjectsScene::updateLayersRects()
 					 !active_layers.contains(layers.at(layer_id)))
 					continue;
 
-				inc = (BaseObjectView::HorizSpacing * idx);
-				idx++;
-				brect.adjust(-size - inc, -size - inc, size + inc, size + inc);
+				brect.adjust(-size, -size, size, size);
+				size += BaseObjectView::HorizSpacing / 2;
 
 				new_paths[layer_id].addRoundedRect(brect, 10, 10);
 				new_paths[layer_id].setFillRule(Qt::WindingFill);
