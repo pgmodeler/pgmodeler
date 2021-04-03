@@ -108,7 +108,10 @@ class ObjectsScene: public QGraphicsScene {
 		bool moving_objs,
 
 		//! \brief Indicates if the range selection (selection using a rectangle drawn on the canvas)
-		enable_range_sel;
+		enable_range_sel,
+
+		//! \brief Indicates if the layers rects around the object must be displayed
+		is_layers_rects_visible;
 
 		//! \brief Initial point of selection rectangle
 		QPointF sel_ini_pnt;
@@ -162,6 +165,8 @@ class ObjectsScene: public QGraphicsScene {
 	public:
 		static constexpr unsigned DefaultLayer = 0,
 		InvalidLayer = UINT_MAX;
+
+		static constexpr double LayerRectSpacing = BaseObjectView::HorizSpacing * 5;
 
 		ObjectsScene();
 		virtual ~ObjectsScene();
@@ -265,8 +270,10 @@ class ObjectsScene: public QGraphicsScene {
 		static QColor getDelimitersColor();
 
 		void updateLayersRects();
+		bool isLayersRectsVisible();
 
 	public slots:
+		void setLayersRectsVisible(bool value);
 		void alignObjectsToGrid();
 		void update();
 		void clearSelection();

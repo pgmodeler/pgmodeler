@@ -210,6 +210,8 @@ class BaseObjectView: public QObject, public QGraphicsItemGroup {
 		//! \brief Returns true if the object is in the provided layer
 		bool isInLayer(unsigned layer_id);
 
+		int getLayersCount();
+
 	protected slots:
 		//! \brief Make the basic object operations
 		void __configureObject();

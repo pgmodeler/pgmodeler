@@ -38,6 +38,7 @@ ObjectsScene::ObjectsScene()
 	addLayer(tr("Default layer"));
 	active_layers.push_back(layers.at(DefaultLayer));
 
+	is_layers_rects_visible=false;
 	moving_objs=move_scene=false;
 	enable_range_sel=true;
 	this->setBackgroundBrush(grid);
@@ -345,11 +346,14 @@ void ObjectsScene::updateLayersRects()
 	QRectF brect;
 	int idx = 0;
 
-	for(idx = 0; idx < layers_paths.size(); idx++)
+	for(auto &path : layers_paths)
 	{
 		new_paths.append(QPainterPath());
-		layers_paths.at(idx)->setVisible(false);
+		path->setVisible(false);
 	}
+
+	if(!is_layers_rects_visible)
+		return;
 
 	for(auto &item : this->items())
 	{
@@ -357,8 +361,7 @@ void ObjectsScene::updateLayersRects()
 
 		if(obj_view && !obj_view->parentItem())
 		{
-			double size = BaseObjectView::HorizSpacing * 5;
-
+			double size = LayerRectSpacing;
 			obj_type = 	obj_view->getUnderlyingObject()->getObjectType();
 
 			/* Schemas and relationship are ignored when determining the paths for the layers
@@ -393,6 +396,17 @@ void ObjectsScene::updateLayersRects()
 		layers_paths[idx]->setPath(new_paths[idx]);
 		layers_paths[idx]->setVisible(true);
 	}
+}
+
+void ObjectsScene::setLayersRectsVisible(bool value)
+{
+	is_layers_rects_visible = value;
+	updateLayersRects();
+}
+
+bool ObjectsScene::isLayersRectsVisible()
+{
+	return is_layers_rects_visible;
 }
 
 void ObjectsScene::validateLayerRemoval(unsigned old_layer)

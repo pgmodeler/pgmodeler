@@ -186,6 +186,11 @@ bool BaseGraphicObject::isInLayer(unsigned layer_id)
 	return layers.contains(layer_id);
 }
 
+int BaseGraphicObject::getLayersCount()
+{
+	return layers.size();
+}
+
 void BaseGraphicObject::setZValue(int z_value)
 {
 	if(z_value < MinZValue)

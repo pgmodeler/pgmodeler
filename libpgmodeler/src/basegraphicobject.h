@@ -142,6 +142,8 @@ class BaseGraphicObject: public QObject, public BaseObject {
 		//! \brief Returns true if the object is in the provided layer
 		bool isInLayer(unsigned layer_id);
 
+		int getLayersCount();
+
 		virtual void setZValue(int z_value);
 
 		int getZValue();

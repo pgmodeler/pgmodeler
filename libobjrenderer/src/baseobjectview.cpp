@@ -640,6 +640,16 @@ QList<unsigned> BaseObjectView::getLayers()
 	return {0};
 }
 
+int BaseObjectView::getLayersCount()
+{
+	BaseGraphicObject *graph_obj = dynamic_cast<BaseGraphicObject *>(this->getUnderlyingObject());
+
+	if(graph_obj)
+		return graph_obj->getLayersCount();
+
+	return 0;
+}
+
 bool BaseObjectView::isInLayer(unsigned layer_id)
 {
 	BaseGraphicObject *graph_obj = dynamic_cast<BaseGraphicObject *>(this->getUnderlyingObject());

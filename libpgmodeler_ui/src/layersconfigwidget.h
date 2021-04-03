@@ -53,7 +53,7 @@ class LayersConfigWidget : public QWidget, Ui::LayersConfigWidget {
 		int curr_row;
 
 		//! \brief Configures the layers listing
-		void updateLayers();
+		void updateLayersList();
 
 		bool eventFilter(QObject *watched, QEvent *event) override;
 
@@ -82,10 +82,11 @@ class LayersConfigWidget : public QWidget, Ui::LayersConfigWidget {
 		//! \brief Enables the control buttons according to the selection on the list
 		void enableButtons();
 
-		void setLayersVisible();
+		void setLayersActive();
 
 	public slots:
 		void setVisible(bool value) override;
+		void toggleLayersRects();
 
 	signals:
 		//! \brief Signal emitted whenever the widget changes its visibility

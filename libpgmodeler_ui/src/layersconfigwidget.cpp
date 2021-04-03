@@ -30,14 +30,15 @@ LayersConfigWidget::LayersConfigWidget(QWidget *parent) : QWidget(parent)
 	layers_lst->installEventFilter(this);
 	frame->installEventFilter(this);
 
-	QAction *act = visibility_menu.addAction(tr("Show all"), this, SLOT(setLayersVisible()));
+	QAction *act = visibility_menu.addAction(tr("Show all"), this, SLOT(setLayersActive()));
 	act->setData(true);
 
-	act = visibility_menu.addAction(tr("Hide all"), this, SLOT(setLayersVisible()));
+	act = visibility_menu.addAction(tr("Hide all"), this, SLOT(setLayersActive()));
 	act->setData(false);
 
 	visibility_tb->setMenu(&visibility_menu);
 
+	connect(toggle_layers_rects_chk, SIGNAL(toggled(bool)), this, SLOT(toggleLayersRects()));
 	connect(hide_tb, SIGNAL(clicked(bool)), this, SIGNAL(s_visibilityChanged(bool)));
 	connect(layers_lst, SIGNAL(itemDoubleClicked(QListWidgetItem*)), this, SLOT(startLayerRenaming(QListWidgetItem*)));
 	connect(layers_lst, SIGNAL(itemChanged(QListWidgetItem*)), this, SLOT(updateActiveLayers()));
@@ -50,7 +51,7 @@ LayersConfigWidget::LayersConfigWidget(QWidget *parent) : QWidget(parent)
 	});
 }
 
-void LayersConfigWidget::updateLayers()
+void LayersConfigWidget::updateLayersList()
 {
 	QListWidgetItem *item = nullptr;
 
@@ -170,7 +171,7 @@ void LayersConfigWidget::enableButtons()
 	remove_all_tb->setEnabled(layers_lst->count() > 1);
 }
 
-void LayersConfigWidget::setLayersVisible()
+void LayersConfigWidget::setLayersActive()
 {
 	QAction *act = qobject_cast<QAction *>(sender());
 	Qt::CheckState chk_state = act->data().toBool() ? Qt::Checked : Qt::Unchecked;
@@ -190,6 +191,16 @@ void LayersConfigWidget::setVisible(bool value)
 	emit s_visibilityChanged(value);
 }
 
+void LayersConfigWidget::toggleLayersRects()
+{
+	if(!model)
+		return;
+
+	model->getObjectsScene()->setLayersRectsVisible(toggle_layers_rects_chk->isChecked());
+	model->setModified(true);
+	model->getDatabaseModel()->setObjectsModified({ ObjectType::Schema });
+}
+
 void LayersConfigWidget::setModel(ModelWidget *model)
 {
 	bool enable = model != nullptr;
@@ -199,7 +210,13 @@ void LayersConfigWidget::setModel(ModelWidget *model)
 	add_tb->setEnabled(enable);
 
 	if(model)
-		updateLayers();
+	{
+		toggle_layers_rects_chk->blockSignals(true);
+		toggle_layers_rects_chk->setChecked(model->getObjectsScene()->isLayersRectsVisible());
+		toggle_layers_rects_chk->blockSignals(false);
+
+		updateLayersList();
+	}
 }
 
 QListWidgetItem *LayersConfigWidget::addLayer(const QString &name)

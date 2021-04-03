@@ -180,16 +180,20 @@ void SchemaView::configureObject()
 		QRectF rect;
 		QFont font;
 		double sp_h=0, sp_v=0, txt_h=0,
-		x1=1000000, y1=1000000, x2=-1000000, y2=-1000000, width=0, height = 0;
+		x1=1000000, y1=1000000, x2=-1000000, y2=-1000000, width=0,
+		height = 0, size_inc = 0;
 		QList<BaseObjectView *>::Iterator itr=children.begin();
 		BaseObjectView *obj_view = nullptr;
+		ObjectsScene *scene = dynamic_cast<ObjectsScene *>(this->scene());
 
 		//Configures the bounding rect based upon the children dimension
 		while(itr!=children.end())
 		{
 			obj_view = dynamic_cast<BaseObjectView *>(*itr);
-			rect.setTopLeft(obj_view->pos());
-			rect.setSize(obj_view->boundingRect().size());
+			size_inc = (scene && scene->isLayersRectsVisible() ? ObjectsScene::LayerRectSpacing * obj_view->getLayersCount() : 0);
+
+			rect.setTopLeft(obj_view->pos() - QPointF(size_inc, size_inc));
+			rect.setSize(obj_view->boundingRect().size() + QSizeF(2 * size_inc, 2 * size_inc));
 
 			if(rect.left() < x1)
 				x1 = rect.left();
@@ -219,15 +223,15 @@ void SchemaView::configureObject()
 		sp_h=(4 * HorizSpacing);
 		sp_v=(4 * VertSpacing) + txt_h;
 
-		width = (x2-x1) + 1;
-		height = (y2-y1) + sp_v;
+		width = (x2 - x1) + 1;
+		height = (y2 - y1) + sp_v;
 
 		if(width < sch_name->boundingRect().width())
 			width=sch_name->boundingRect().width();
 
 		rect.setTopLeft(QPointF(-sp_h, 0));
 		rect.setTopRight(QPointF(width + sp_h, 0));
-		rect.setBottomRight(QPointF(width + sp_h,height));
+		rect.setBottomRight(QPointF(width + sp_h, height));
 		rect.setBottomLeft(QPointF(-sp_h, height));
 		box->setRect(rect);
 
@@ -246,8 +250,6 @@ void SchemaView::configureObject()
 		box->setPen(QPen(color, 1 * BaseObjectView::getScreenDpiFactor(), Qt::SolidLine));
 
 		this->bounding_rect=rect;
-
-		ObjectsScene *scene = dynamic_cast<ObjectsScene *>(this->scene());
 		this->setVisible(scene && scene->isLayersActive(schema->getLayers()));
 
 		this->setToolTip(schema->getName(true) +
@@ -255,8 +257,8 @@ void SchemaView::configureObject()
 										 QString("\nId: %1").arg(schema->getObjectId()));
 		sch_name->setToolTip(this->toolTip());
 
-		this->protected_icon->setPos(QPointF( sch_name->boundingRect().width() + sp_h,
-											  sch_name->pos().y() + VertSpacing ));
+		this->protected_icon->setPos(QPointF(sch_name->boundingRect().width() + sp_h ,
+																				 sch_name->pos().y() + VertSpacing));
 
 		this->configureObjectSelection();
 		this->configureProtectedIcon();
