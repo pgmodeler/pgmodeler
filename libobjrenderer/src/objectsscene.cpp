@@ -158,7 +158,7 @@ QString ObjectsScene::addLayer(const QString &name)
 	if(name.isEmpty())
 		return "";
 
-	QGraphicsPathItem *layer_item = new QGraphicsPathItem;
+	LayerPathItem *layer_item = new LayerPathItem;
 	QString fmt_name = formatLayerName(name);
 	random_device rand_seed;
 	default_random_engine rand_num_engine;
@@ -193,9 +193,17 @@ QString ObjectsScene::renameLayer(unsigned idx, const QString &name)
 		return "";
 
 	if(name != layers[idx])
-		layers[idx] = formatLayerName(name);
+	{
+		QString old_name = layers[idx],
+				new_name = formatLayerName(name);
 
+		layers[idx] = new_name;
+		active_layers.replaceInStrings(old_name, new_name);
+	}
+
+	updateLayersRects();
 	emit s_layersChanged();
+
 	return layers[idx];
 }
 
@@ -205,7 +213,7 @@ void ObjectsScene::removeLayer(const QString &name)
 
 	if(idx > 0)
 	{
-		QGraphicsPathItem *path_item = layers_paths.at(idx);
+		LayerPathItem *path_item = layers_paths.at(idx);
 
 		validateLayerRemoval(idx);
 
@@ -216,13 +224,14 @@ void ObjectsScene::removeLayer(const QString &name)
 		removeItem(path_item);
 		delete path_item;
 
+		updateLayersRects();
 		emit s_layersChanged();
 	}
 }
 
 void ObjectsScene::removeLayers()
 {
-	QGraphicsPathItem *layer_path = nullptr;
+	LayerPathItem *layer_path = nullptr;
 	BaseObjectView *obj_view = nullptr;
 	QString def_layer = layers[DefaultLayer];
 	bool is_active = active_layers.contains(def_layer);
@@ -344,7 +353,7 @@ void ObjectsScene::updateLayersRects()
 	BaseObjectView *obj_view = nullptr;
 	ObjectType obj_type;
 	QRectF brect;
-	int idx = 0;
+	int idx = 0, act_layer_idx = 0;
 
 	for(auto &path : layers_paths)
 	{
@@ -361,7 +370,6 @@ void ObjectsScene::updateLayersRects()
 
 		if(obj_view && !obj_view->parentItem())
 		{
-			double size = LayerRectSpacing;
 			obj_type = 	obj_view->getUnderlyingObject()->getObjectType();
 
 			/* Schemas and relationship are ignored when determining the paths for the layers
@@ -381,8 +389,8 @@ void ObjectsScene::updateLayersRects()
 					 !active_layers.contains(layers.at(layer_id)))
 					continue;
 
-				brect.adjust(-size, -size, size, size);
-				size += BaseObjectView::HorizSpacing / 2;
+				brect.adjust(-LayerPathItem::LayerRectSpacing, -LayerPathItem::LayerRectSpacing * 1.5,
+										 LayerPathItem::LayerRectSpacing, LayerPathItem::LayerRectSpacing);
 
 				new_paths[layer_id].addRoundedRect(brect, 10, 10);
 				new_paths[layer_id].setFillRule(Qt::WindingFill);
@@ -395,6 +403,9 @@ void ObjectsScene::updateLayersRects()
 		idx = layers.indexOf(layer_name);
 		layers_paths[idx]->setPath(new_paths[idx]);
 		layers_paths[idx]->setVisible(true);
+		layers_paths[idx]->setTextAlignment(act_layer_idx % 2 == 0 ? Qt::AlignLeft : Qt::AlignRight);
+		layers_paths[idx]->setText(layer_name);
+		act_layer_idx++;
 	}
 }
 

@@ -32,6 +32,7 @@
 #include "tableview.h"
 #include "schemaview.h"
 #include "styledtextboxview.h"
+#include "layerpathitem.h"
 
 class ObjectsScene: public QGraphicsScene {
 	private:
@@ -46,7 +47,7 @@ class ObjectsScene: public QGraphicsScene {
 		//! \brief Holds the names of the layers on the scene used to separate in the objects on the canvas
 		QStringList layers, active_layers;
 
-		QList<QGraphicsPathItem *> layers_paths;
+		QList<LayerPathItem *> layers_paths;
 
 		vector<BaseObjectView *> removed_objs;
 
@@ -165,8 +166,6 @@ class ObjectsScene: public QGraphicsScene {
 	public:
 		static constexpr unsigned DefaultLayer = 0,
 		InvalidLayer = UINT_MAX;
-
-		static constexpr double LayerRectSpacing = BaseObjectView::HorizSpacing * 5;
 
 		ObjectsScene();
 		virtual ~ObjectsScene();
