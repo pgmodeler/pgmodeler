@@ -112,7 +112,10 @@ class ObjectsScene: public QGraphicsScene {
 		enable_range_sel,
 
 		//! \brief Indicates if the layers rects around the object must be displayed
-		is_layers_rects_visible;
+		is_layer_rects_visible,
+
+		//! \brief Indicates if the layers names in the rects around the object must be displayed
+		is_layer_names_visible;
 
 		//! \brief Initial point of selection rectangle
 		QPointF sel_ini_pnt;
@@ -268,11 +271,13 @@ class ObjectsScene: public QGraphicsScene {
 		static void setDelimitersColor(const QColor &value);
 		static QColor getDelimitersColor();
 
-		void updateLayersRects();
-		bool isLayersRectsVisible();
+		void updateLayerRects();
+		bool isLayerRectsVisible();
+		bool isLayerNamesVibible();
 
 	public slots:
-		void setLayersRectsVisible(bool value);
+		void setLayerRectsVisible(bool value);
+		void setLayerNamesVisible(bool value);
 		void alignObjectsToGrid();
 		void update();
 		void clearSelection();

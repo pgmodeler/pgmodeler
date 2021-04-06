@@ -39,6 +39,9 @@ LayersConfigWidget::LayersConfigWidget(QWidget *parent) : QWidget(parent)
 	visibility_tb->setMenu(&visibility_menu);
 
 	connect(toggle_layers_rects_chk, SIGNAL(toggled(bool)), this, SLOT(toggleLayersRects()));
+	connect(toggle_layers_rects_chk, SIGNAL(toggled(bool)), toggle_layers_names_chk, SLOT(setEnabled(bool)));
+	connect(toggle_layers_names_chk, SIGNAL(toggled(bool)), this, SLOT(toggleLayersRects()));
+
 	connect(hide_tb, SIGNAL(clicked(bool)), this, SIGNAL(s_visibilityChanged(bool)));
 	connect(layers_lst, SIGNAL(itemDoubleClicked(QListWidgetItem*)), this, SLOT(startLayerRenaming(QListWidgetItem*)));
 	connect(layers_lst, SIGNAL(itemChanged(QListWidgetItem*)), this, SLOT(updateActiveLayers()));
@@ -46,6 +49,7 @@ LayersConfigWidget::LayersConfigWidget(QWidget *parent) : QWidget(parent)
 	connect(layers_lst, SIGNAL(itemSelectionChanged()), this, SLOT(enableButtons()));
 	connect(add_tb, SIGNAL(clicked(bool)), this, SLOT(addLayer()));
 	connect(remove_tb, SIGNAL(clicked(bool)), this, SLOT(removeLayer(bool)));
+
 	connect(remove_all_tb, &QToolButton::clicked, [&](){
 		removeLayer(true);
 	});
@@ -196,7 +200,8 @@ void LayersConfigWidget::toggleLayersRects()
 	if(!model)
 		return;
 
-	model->getObjectsScene()->setLayersRectsVisible(toggle_layers_rects_chk->isChecked());
+	model->getObjectsScene()->setLayerRectsVisible(toggle_layers_rects_chk->isChecked());
+	model->getObjectsScene()->setLayerNamesVisible(toggle_layers_names_chk->isChecked());
 	model->setModified(true);
 	model->getDatabaseModel()->setObjectsModified({ ObjectType::Schema });
 }
@@ -212,7 +217,7 @@ void LayersConfigWidget::setModel(ModelWidget *model)
 	if(model)
 	{
 		toggle_layers_rects_chk->blockSignals(true);
-		toggle_layers_rects_chk->setChecked(model->getObjectsScene()->isLayersRectsVisible());
+		toggle_layers_rects_chk->setChecked(model->getObjectsScene()->isLayerRectsVisible());
 		toggle_layers_rects_chk->blockSignals(false);
 
 		updateLayersList();

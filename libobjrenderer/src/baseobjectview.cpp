@@ -627,7 +627,7 @@ void BaseObjectView::updateLayersRects()
 	ObjectsScene *obj_scene = dynamic_cast<ObjectsScene *>(this->scene());
 
 	if(obj_scene)
-		obj_scene->updateLayersRects();
+		obj_scene->updateLayerRects();
 }
 
 QList<unsigned> BaseObjectView::getLayers()

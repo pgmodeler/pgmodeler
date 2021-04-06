@@ -17,13 +17,9 @@
 */
 
 #include "layerpathitem.h"
+#include "baseobjectview.h"
 
 LayerPathItem::LayerPathItem(QGraphicsItem *parent) : QGraphicsPathItem(parent)
-{
-
-}
-
-LayerPathItem::~LayerPathItem()
 {
 
 }
@@ -48,31 +44,38 @@ void LayerPathItem::setText(const QString &txt)
 	text = txt;
 }
 
+void LayerPathItem::setFont(const QFont &fnt)
+{
+	font = fnt;
+}
+
 void LayerPathItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
-	QFont fnt = painter->font();
-	QFontMetrics fm(fnt);
-	QPointF pnt;
-
 	painter->save();
 	QGraphicsPathItem::paint(painter, option, widget);
 	painter->restore();
+
+	if(text.isEmpty())
+		return;
+
+	QFontMetrics fm(font);
+	QPointF pnt;
+	double dy = fm.height() * 0.75;
 
 	painter->save();
 	painter->translate(0,0);
 	painter->setPen(QColor(0,0,0));
 	painter->setBrush(QColor(0,0,0));
-
-	fnt.setPointSizeF(fnt.pointSizeF() * 0.50);
-	painter->setFont(fnt);
+	painter->setFont(font);
 
 	for(auto &brect : path_brects)
 	{
 		if(text_align == Qt::AlignLeft)
-			pnt = brect.topLeft() + QPointF(LayerRectSpacing, LayerRectSpacing);
+			pnt.setX(brect.left() + LayerPadding);
 		else
-			pnt = brect.topRight() - QPointF(LayerRectSpacing + (fm.horizontalAdvance(text)/2) , -LayerRectSpacing);
+			pnt.setX(brect.right() - (LayerPadding + fm.horizontalAdvance(text)));
 
+		pnt.setY(brect.top() + dy);
 		painter->drawText(pnt, text);
 	}
 

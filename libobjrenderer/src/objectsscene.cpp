@@ -38,7 +38,7 @@ ObjectsScene::ObjectsScene()
 	addLayer(tr("Default layer"));
 	active_layers.push_back(layers.at(DefaultLayer));
 
-	is_layers_rects_visible=false;
+	is_layer_rects_visible=is_layer_names_visible=false;
 	moving_objs=move_scene=false;
 	enable_range_sel=true;
 	this->setBackgroundBrush(grid);
@@ -201,7 +201,7 @@ QString ObjectsScene::renameLayer(unsigned idx, const QString &name)
 		active_layers.replaceInStrings(old_name, new_name);
 	}
 
-	updateLayersRects();
+	updateLayerRects();
 	emit s_layersChanged();
 
 	return layers[idx];
@@ -224,7 +224,7 @@ void ObjectsScene::removeLayer(const QString &name)
 		removeItem(path_item);
 		delete path_item;
 
-		updateLayersRects();
+		updateLayerRects();
 		emit s_layersChanged();
 	}
 }
@@ -340,20 +340,16 @@ void ObjectsScene::setActiveLayers(QList<unsigned> layers_idxs)
 		}
 	}
 
-	updateLayersRects();
+	updateLayerRects();
 	emit s_activeLayersChanged();
 }
 
-void ObjectsScene::updateLayersRects()
+void ObjectsScene::updateLayerRects()
 {
 	if(layers_paths.isEmpty())
 		return;
 
 	QList<QPainterPath> new_paths;
-	BaseObjectView *obj_view = nullptr;
-	ObjectType obj_type;
-	QRectF brect;
-	int idx = 0, act_layer_idx = 0;
 
 	for(auto &path : layers_paths)
 	{
@@ -361,8 +357,18 @@ void ObjectsScene::updateLayersRects()
 		path->setVisible(false);
 	}
 
-	if(!is_layers_rects_visible)
+	if(!is_layer_rects_visible)
 		return;
+
+	QMap<int, QList<QRectF>> rects;
+	BaseObjectView *obj_view = nullptr;
+	ObjectType obj_type;
+	QRectF brect;
+	QFont layer_fnt = BaseObjectView::getFontStyle(Attributes::Global).font();
+	QFontMetricsF fm(layer_fnt);
+	int idx = 0, act_layer_idx = 0;
+
+	layer_fnt.setPointSizeF(layer_fnt.pointSizeF() * 0.50);
 
 	for(auto &item : this->items())
 	{
@@ -389,8 +395,10 @@ void ObjectsScene::updateLayersRects()
 					 !active_layers.contains(layers.at(layer_id)))
 					continue;
 
-				brect.adjust(-LayerPathItem::LayerRectSpacing, -LayerPathItem::LayerRectSpacing * 1.5,
-										 LayerPathItem::LayerRectSpacing, LayerPathItem::LayerRectSpacing);
+				brect.adjust(-LayerPathItem::LayerPadding,
+										 (is_layer_names_visible ? -(fm.height()/2) : -LayerPathItem::LayerPadding),
+										 LayerPathItem::LayerPadding,
+										 LayerPathItem::LayerPadding);
 
 				new_paths[layer_id].addRoundedRect(brect, 10, 10);
 				new_paths[layer_id].setFillRule(Qt::WindingFill);
@@ -401,23 +409,35 @@ void ObjectsScene::updateLayersRects()
 	for(auto &layer_name : active_layers)
 	{
 		idx = layers.indexOf(layer_name);
-		layers_paths[idx]->setPath(new_paths[idx]);
-		layers_paths[idx]->setVisible(true);
+		layers_paths[idx]->setPath(new_paths[idx].simplified());
 		layers_paths[idx]->setTextAlignment(act_layer_idx % 2 == 0 ? Qt::AlignLeft : Qt::AlignRight);
-		layers_paths[idx]->setText(layer_name);
+		layers_paths[idx]->setText(is_layer_names_visible ? layer_name : "");
+		layers_paths[idx]->setFont(layer_fnt);
+		layers_paths[idx]->setVisible(true);
 		act_layer_idx++;
 	}
 }
 
-void ObjectsScene::setLayersRectsVisible(bool value)
+void ObjectsScene::setLayerRectsVisible(bool value)
 {
-	is_layers_rects_visible = value;
-	updateLayersRects();
+	is_layer_rects_visible = value;
+	updateLayerRects();
 }
 
-bool ObjectsScene::isLayersRectsVisible()
+void ObjectsScene::setLayerNamesVisible(bool value)
 {
-	return is_layers_rects_visible;
+	is_layer_names_visible = value && is_layer_rects_visible;
+	updateLayerRects();
+}
+
+bool ObjectsScene::isLayerRectsVisible()
+{
+	return is_layer_rects_visible;
+}
+
+bool ObjectsScene::isLayerNamesVibible()
+{
+	return is_layer_names_visible;
 }
 
 void ObjectsScene::validateLayerRemoval(unsigned old_layer)
@@ -865,7 +885,7 @@ void ObjectsScene::addItem(QGraphicsItem *item)
 		}
 
 		QGraphicsScene::addItem(item);
-		updateLayersRects();
+		updateLayerRects();
 	}
 }
 
@@ -885,7 +905,7 @@ void ObjectsScene::removeItem(QGraphicsItem *item)
 
 		if(object)
 		{
-			updateLayersRects();
+			updateLayerRects();
 			disconnect(object, nullptr, this, nullptr);
 			disconnect(object, nullptr, dynamic_cast<BaseGraphicObject*>(object->getUnderlyingObject()), nullptr);
 			disconnect(dynamic_cast<BaseGraphicObject*>(object->getUnderlyingObject()), nullptr, object, nullptr);
@@ -1303,7 +1323,7 @@ void ObjectsScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 	if(!this->selectedItems().isEmpty() && moving_objs && event->button()==Qt::LeftButton/* && event->modifiers()==Qt::NoModifier */)
 	{
 		finishObjectsMove(event->scenePos());
-		updateLayersRects();
+		updateLayerRects();
 	}
 	else if(selection_rect->isVisible() && event->button()==Qt::LeftButton)
 	{

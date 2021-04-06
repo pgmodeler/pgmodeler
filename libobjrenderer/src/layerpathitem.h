@@ -28,7 +28,6 @@
 #include <QGraphicsPathItem>
 #include <QPainter>
 #include <QStyleOptionGraphicsItem>
-#include <QTextItem>
 
 class LayerPathItem : public QGraphicsPathItem {
 	private:
@@ -38,20 +37,22 @@ class LayerPathItem : public QGraphicsPathItem {
 
 		QString text;
 
+		QFont font;
+
 	public:
-		static constexpr double LayerRectSpacing = 10.0;
+		static constexpr double LayerPadding = 10.0;
 
 		LayerPathItem(QGraphicsItem *parent = nullptr);
 
-		virtual ~LayerPathItem();
-
-		virtual void setPath(const QPainterPath &path);
+		void setPath(const QPainterPath &path);
 
 		void setTextAlignment(Qt::Alignment align);
 
 		void setText(const QString &txt);
 
-		virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = nullptr);
+		void setFont(const QFont &fnt);
+
+		void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = nullptr) override;
 };
 
 #endif
