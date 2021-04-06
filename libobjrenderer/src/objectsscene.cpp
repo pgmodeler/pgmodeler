@@ -158,7 +158,7 @@ QString ObjectsScene::addLayer(const QString &name)
 	if(name.isEmpty())
 		return "";
 
-	LayerPathItem *layer_item = new LayerPathItem;
+	LayerItem *layer_item = new LayerItem;
 	QString fmt_name = formatLayerName(name);
 	random_device rand_seed;
 	default_random_engine rand_num_engine;
@@ -173,10 +173,6 @@ QString ObjectsScene::addLayer(const QString &name)
 	layers_paths.append(layer_item);
 
 	layer_item->setZValue(-100 - layers.size());
-	/* layer_item->setFlag(QGraphicsItem::ItemIsSelectable, false);
-	layer_item->setFlag(QGraphicsItem::ItemIsMovable, false);
-	layer_item->setFlag(QGraphicsItem::ItemIsFocusable, false);
-	layer_item->setFlag(QGraphicsItem::ItemAcceptsInputMethod, false); */
 	layer_item->setEnabled(false);
 	layer_item->setVisible(false);
 	layer_item->setPen(color);
@@ -198,7 +194,7 @@ QString ObjectsScene::renameLayer(unsigned idx, const QString &name)
 				new_name = formatLayerName(name);
 
 		layers[idx] = new_name;
-		active_layers.replaceInStrings(old_name, new_name);
+		active_layers.replaceInStrings(QRegExp(QString("^(%1)$").arg(old_name)), new_name);
 	}
 
 	updateLayerRects();
@@ -213,7 +209,7 @@ void ObjectsScene::removeLayer(const QString &name)
 
 	if(idx > 0)
 	{
-		LayerPathItem *path_item = layers_paths.at(idx);
+		LayerItem *path_item = layers_paths.at(idx);
 
 		validateLayerRemoval(idx);
 
@@ -231,7 +227,7 @@ void ObjectsScene::removeLayer(const QString &name)
 
 void ObjectsScene::removeLayers()
 {
-	LayerPathItem *layer_path = nullptr;
+	LayerItem *layer_path = nullptr;
 	BaseObjectView *obj_view = nullptr;
 	QString def_layer = layers[DefaultLayer];
 	bool is_active = active_layers.contains(def_layer);
@@ -349,26 +345,18 @@ void ObjectsScene::updateLayerRects()
 	if(layers_paths.isEmpty())
 		return;
 
-	QList<QPainterPath> new_paths;
-
 	for(auto &path : layers_paths)
-	{
-		new_paths.append(QPainterPath());
 		path->setVisible(false);
-	}
 
 	if(!is_layer_rects_visible)
 		return;
 
-	QMap<int, QList<QRectF>> rects;
+	int idx = 0, act_layer_idx = 0;
 	BaseObjectView *obj_view = nullptr;
 	ObjectType obj_type;
 	QRectF brect;
-	QFont layer_fnt = BaseObjectView::getFontStyle(Attributes::Global).font();
-	QFontMetricsF fm(layer_fnt);
-	int idx = 0, act_layer_idx = 0;
-
-	layer_fnt.setPointSizeF(layer_fnt.pointSizeF() * 0.50);
+	QMap<int, QList<QRectF>> rects;
+	QFontMetricsF fm(LayerItem::getDefaultFont());
 
 	for(auto &item : this->items())
 	{
@@ -395,24 +383,27 @@ void ObjectsScene::updateLayerRects()
 					 !active_layers.contains(layers.at(layer_id)))
 					continue;
 
-				brect.adjust(-LayerPathItem::LayerPadding,
-										 (is_layer_names_visible ? -(fm.height()/2) : -LayerPathItem::LayerPadding),
-										 LayerPathItem::LayerPadding,
-										 LayerPathItem::LayerPadding);
+				/* We need to adjust the bounding rect dimension in such a way
+				 * to take into account the font height (if the layer names are visible)
+				 * as well as a default padding so the rectangles doesn't have the same size
+				 * of the object's bounding rect */
+				brect.adjust(-LayerItem::LayerPadding,
+										 (is_layer_names_visible ? -fm.height() : -LayerItem::LayerPadding),
+										 LayerItem::LayerPadding,
+										 LayerItem::LayerPadding);
 
-				new_paths[layer_id].addRoundedRect(brect, 10, 10);
-				new_paths[layer_id].setFillRule(Qt::WindingFill);
+				rects[layer_id].append(brect);
 			}
 		}
 	}
 
+	//Based the active layers we reconfigure the graphical items of each layer
 	for(auto &layer_name : active_layers)
 	{
 		idx = layers.indexOf(layer_name);
-		layers_paths[idx]->setPath(new_paths[idx].simplified());
 		layers_paths[idx]->setTextAlignment(act_layer_idx % 2 == 0 ? Qt::AlignLeft : Qt::AlignRight);
 		layers_paths[idx]->setText(is_layer_names_visible ? layer_name : "");
-		layers_paths[idx]->setFont(layer_fnt);
+		layers_paths[idx]->setRects(rects[idx]);
 		layers_paths[idx]->setVisible(true);
 		act_layer_idx++;
 	}
@@ -501,9 +492,7 @@ bool ObjectsScene::isLayersActive(const QList<unsigned> &list)
 	for(auto &id : list)
 	{
 		if(id < static_cast<unsigned>(layers.size()) && active_layers.contains(layers[id]))
-		{
 			return true;
-		}
 	}
 
 	return false;
@@ -527,12 +516,6 @@ QList<unsigned> ObjectsScene::getActiveLayersIds()
 QStringList ObjectsScene::getLayers()
 {
 	return layers;
-}
-
-unsigned ObjectsScene::getLayerId(const QString &name)
-{
-	int idx = layers.contains(name);
-	return idx < 0 ? InvalidLayer : static_cast<unsigned>(idx);
 }
 
 void ObjectsScene::updateActiveLayers()

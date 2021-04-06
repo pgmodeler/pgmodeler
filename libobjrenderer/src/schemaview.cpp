@@ -190,7 +190,7 @@ void SchemaView::configureObject()
 		while(itr!=children.end())
 		{
 			obj_view = dynamic_cast<BaseObjectView *>(*itr);
-			size_inc = (scene && scene->isLayerRectsVisible() ? LayerPathItem::LayerPadding * obj_view->getLayersCount() : 0);
+			size_inc = (scene && scene->isLayerRectsVisible() ? LayerItem::LayerPadding * obj_view->getLayersCount() : 0);
 
 			rect.setTopLeft(obj_view->pos() - QPointF(size_inc, size_inc));
 			rect.setSize(obj_view->boundingRect().size() + QSizeF(2 * size_inc, 2 * size_inc));

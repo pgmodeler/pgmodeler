@@ -14,7 +14,7 @@ TARGET = objrenderer
 windows: DESTDIR = $$PWD
 
 HEADERS +=  src/baseobjectview.h \
-	src/layerpathitem.h \
+	src/layeritem.h \
 	    src/textboxview.h \
 	    src/tableview.h \
 	    src/graphicalview.h \
@@ -31,7 +31,7 @@ HEADERS +=  src/baseobjectview.h \
     src/attributestoggleritem.h
 
 SOURCES +=  src/baseobjectview.cpp \
-	src/layerpathitem.cpp \
+	src/layeritem.cpp \
 	    src/textboxview.cpp \
 	    src/tableview.cpp \
 	    src/graphicalview.cpp \

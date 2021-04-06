@@ -32,22 +32,29 @@
 #include "tableview.h"
 #include "schemaview.h"
 #include "styledtextboxview.h"
-#include "layerpathitem.h"
+#include "layeritem.h"
 
 class ObjectsScene: public QGraphicsScene {
 	private:
 		Q_OBJECT
 
+		//! \brief Stores the grid line color
 		static QColor grid_color,
 
+		//! \brief Stores the canvas background color
 		canvas_color,
 
+		//! \brief Stores the page delimiter lines color
 		delimiters_color;
 
 		//! \brief Holds the names of the layers on the scene used to separate in the objects on the canvas
-		QStringList layers, active_layers;
+		QStringList layers,
 
-		QList<LayerPathItem *> layers_paths;
+		//! \brief Holds the names of the layers currently active (visible) in the canvas
+		active_layers;
+
+		//! \brief Stores the items used to represent layers around objects
+		QList<LayerItem *> layers_paths;
 
 		vector<BaseObjectView *> removed_objs;
 
@@ -167,8 +174,7 @@ class ObjectsScene: public QGraphicsScene {
 		void validateLayerRemoval(unsigned old_layer);
 
 	public:
-		static constexpr unsigned DefaultLayer = 0,
-		InvalidLayer = UINT_MAX;
+		static constexpr unsigned DefaultLayer = 0;
 
 		ObjectsScene();
 		virtual ~ObjectsScene();
@@ -210,9 +216,6 @@ class ObjectsScene: public QGraphicsScene {
 
 		//! \brief Returns a list containing the names of all layers in the scene
 		QStringList getLayers();
-
-		//! \brief Returns the id of the named layer. If the layer does not exist the constant ObjectsScene::InvalidLayer is returned
-		unsigned getLayerId(const QString &name);
 
 		//! \brief This method causes objects in the active layers to have their visibility state updated.
 		void updateActiveLayers();
@@ -271,13 +274,15 @@ class ObjectsScene: public QGraphicsScene {
 		static void setDelimitersColor(const QColor &value);
 		static QColor getDelimitersColor();
 
+		//! \brief Force the update of all layer rectangles
 		void updateLayerRects();
-		bool isLayerRectsVisible();
+
+		bool isLayerRectsVisible();		
 		bool isLayerNamesVibible();
 
 	public slots:
 		void setLayerRectsVisible(bool value);
-		void setLayerNamesVisible(bool value);
+		void setLayerNamesVisible(bool value);		
 		void alignObjectsToGrid();
 		void update();
 		void clearSelection();

@@ -16,40 +16,37 @@
 # Also, you can get the complete GNU General Public License at <http://www.gnu.org/licenses/>
 */
 
-#include "layerpathitem.h"
+#include "layeritem.h"
 #include "baseobjectview.h"
 
-LayerPathItem::LayerPathItem(QGraphicsItem *parent) : QGraphicsPathItem(parent)
+LayerItem::LayerItem(QGraphicsItem *parent) : QGraphicsPathItem(parent)
 {
 
 }
 
-void LayerPathItem::setPath(const QPainterPath &path)
+void LayerItem::setRects(const QList<QRectF> &rects)
 {
+	QPainterPath path;
+	layer_rects = rects;
+
+	for(auto &rect : rects)
+		path.addRoundedRect(rect, 10, 10);
+
+	path.setFillRule(Qt::WindingFill);
 	QGraphicsPathItem::setPath(path);
-
-	path_brects.clear();
-
-	for(auto &pol : path.toFillPolygons())
-		path_brects.append(pol.boundingRect());
 }
 
-void LayerPathItem::setTextAlignment(Qt::Alignment align)
+void LayerItem::setTextAlignment(Qt::Alignment align)
 {
 	text_align = align;
 }
 
-void LayerPathItem::setText(const QString &txt)
+void LayerItem::setText(const QString &txt)
 {
 	text = txt;
 }
 
-void LayerPathItem::setFont(const QFont &fnt)
-{
-	font = fnt;
-}
-
-void LayerPathItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
+void LayerItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
 	painter->save();
 	QGraphicsPathItem::paint(painter, option, widget);
@@ -58,17 +55,18 @@ void LayerPathItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *opt
 	if(text.isEmpty())
 		return;
 
+	QFont font = getDefaultFont();
 	QFontMetrics fm(font);
 	QPointF pnt;
-	double dy = fm.height() * 0.75;
+	double dy = fm.height() * 0.72;
 
 	painter->save();
 	painter->translate(0,0);
+	painter->setFont(font);
 	painter->setPen(QColor(0,0,0));
 	painter->setBrush(QColor(0,0,0));
-	painter->setFont(font);
 
-	for(auto &brect : path_brects)
+	for(auto &brect : layer_rects)
 	{
 		if(text_align == Qt::AlignLeft)
 			pnt.setX(brect.left() + LayerPadding);
@@ -80,4 +78,14 @@ void LayerPathItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *opt
 	}
 
 	painter->restore();
+}
+
+QFont LayerItem::getDefaultFont()
+{
+	QFont font = BaseObjectView::getFontStyle(Attributes::Global).font();
+
+	font.setItalic(false);
+	font.setPointSizeF(font.pointSizeF() * 0.60);
+
+	return font;
 }
