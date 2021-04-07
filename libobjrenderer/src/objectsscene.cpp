@@ -195,10 +195,10 @@ QString ObjectsScene::renameLayer(unsigned idx, const QString &name)
 
 		layers[idx] = new_name;
 		active_layers.replaceInStrings(QRegExp(QString("^(%1)$").arg(old_name)), new_name);
-	}
 
-	updateLayerRects();
-	emit s_layersChanged();
+		updateLayerRects();
+		emit s_layersChanged();
+	}
 
 	return layers[idx];
 }

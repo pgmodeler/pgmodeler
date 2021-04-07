@@ -17,6 +17,7 @@
 */
 
 #include "layersconfigwidget.h"
+#include "colorpickerwidget.h"
 
 LayersConfigWidget::LayersConfigWidget(QWidget *parent) : QWidget(parent)
 {
@@ -25,9 +26,10 @@ LayersConfigWidget::LayersConfigWidget(QWidget *parent) : QWidget(parent)
 
 	old_pos = QPoint(-1, -1);
 	curr_item = nullptr;
+	curr_item = nullptr;
 	curr_row = -1;
 
-	layers_lst->installEventFilter(this);
+	layers_tab->installEventFilter(this);
 	frame->installEventFilter(this);
 
 	QAction *act = visibility_menu.addAction(tr("Show all"), this, SLOT(setLayersActive()));
@@ -43,34 +45,22 @@ LayersConfigWidget::LayersConfigWidget(QWidget *parent) : QWidget(parent)
 	connect(toggle_layers_names_chk, SIGNAL(toggled(bool)), this, SLOT(toggleLayersRects()));
 
 	connect(hide_tb, SIGNAL(clicked(bool)), this, SIGNAL(s_visibilityChanged(bool)));
-	connect(layers_lst, SIGNAL(itemDoubleClicked(QListWidgetItem*)), this, SLOT(startLayerRenaming(QListWidgetItem*)));
-	connect(layers_lst, SIGNAL(itemChanged(QListWidgetItem*)), this, SLOT(updateActiveLayers()));
-	connect(layers_lst, SIGNAL(itemSelectionChanged()), this, SLOT(finishLayerRenaming()));
-	connect(layers_lst, SIGNAL(itemSelectionChanged()), this, SLOT(enableButtons()));
 	connect(add_tb, SIGNAL(clicked(bool)), this, SLOT(addLayer()));
 	connect(remove_tb, SIGNAL(clicked(bool)), this, SLOT(removeLayer(bool)));
+
+	connect(layers_tab, SIGNAL(itemDoubleClicked(QTableWidgetItem*)), this, SLOT(startLayerRenaming()));
+	connect(layers_tab, SIGNAL(itemChanged(QTableWidgetItem*)), this, SLOT(updateActiveLayers()));
+	connect(layers_tab, SIGNAL(itemSelectionChanged()), this, SLOT(finishLayerRenaming()));
+	connect(layers_tab, SIGNAL(itemSelectionChanged()), this, SLOT(enableButtons()));
 
 	connect(remove_all_tb, &QToolButton::clicked, [&](){
 		removeLayer(true);
 	});
 }
 
-void LayersConfigWidget::updateLayersList()
-{
-	QListWidgetItem *item = nullptr;
-
-	for(auto &layer : model->scene->getLayers())
-	{
-		item = new QListWidgetItem(layer);
-		item->setFlags(item->flags() | Qt::ItemIsUserCheckable);
-		item->setCheckState(model->scene->isLayerActive(layer) ? Qt::Checked : Qt::Unchecked);
-		layers_lst->addItem(item);
-	}
-}
-
 bool LayersConfigWidget::eventFilter(QObject *watched, QEvent *event)
 {
-	if(watched == layers_lst)
+	if(watched == layers_tab)
 	{
 		if(event->type() == QEvent::KeyPress)
 		{
@@ -78,13 +68,11 @@ bool LayersConfigWidget::eventFilter(QObject *watched, QEvent *event)
 
 			if(curr_item && (k_event->key() == Qt::Key_Enter || k_event->key() == Qt::Key_Return))
 				finishLayerRenaming();
-			else if(!curr_item && k_event->key() == Qt::Key_F2 && layers_lst->currentRow() > 0)
-				startLayerRenaming(layers_lst->currentItem());
+			//else if(!curr_item && k_event->key() == Qt::Key_F2 && layers_tab->currentRow() > 0)
+			//	startLayerRenaming();
 		}
-		else if(event->type() == QEvent::FocusIn && curr_item != layers_lst->currentItem())
-		{
+		else if(event->type() == QEvent::FocusIn && curr_item && curr_item != layers_tab->currentItem())
 			finishLayerRenaming();
-		}
 	}
 	else if(watched == frame && (event->type()==QEvent::MouseMove || event->type()==QEvent::MouseButtonPress))
 	{
@@ -118,11 +106,11 @@ bool LayersConfigWidget::eventFilter(QObject *watched, QEvent *event)
 void LayersConfigWidget::updateActiveLayers()
 {
 	QList<unsigned> active_layers;
-	QListWidgetItem *item = nullptr;
+	QTableWidgetItem *item = nullptr;
 
-	for(int row = 0; row < layers_lst->count(); row++)
+	for(int row = 0; row < layers_tab->rowCount(); row++)
 	{
-		item = layers_lst->item(row);
+		item = layers_tab->item(row, 0);
 
 		if(item->checkState() == Qt::Checked)
 			active_layers.append(static_cast<unsigned>(row));
@@ -134,7 +122,7 @@ void LayersConfigWidget::updateActiveLayers()
 
 void LayersConfigWidget::removeLayer(bool clear)
 {
-	QListWidgetItem *item = nullptr;
+	QTableWidgetItem *item = nullptr;
 	Messagebox msg_box;
 
 	if(clear)
@@ -148,31 +136,27 @@ void LayersConfigWidget::removeLayer(bool clear)
 	{
 		if(clear)
 		{
-			model->scene->removeLayers();
+			model->scene->removeLayers();			
 
-			while(layers_lst->count() > 1)
-			{
-				item = layers_lst->takeItem(layers_lst->count() - 1);
-				delete item;
-			}
+			while(layers_tab->rowCount() > 1)
+				layers_tab->setRowCount(layers_tab->rowCount() - 1);
 		}
-		else if(layers_lst->currentRow() > 0)
+		else if(layers_tab->currentRow() > 0)
 		{
-			item = layers_lst->currentItem();
+			item = layers_tab->item(layers_tab->currentRow(), 0);
 			model->scene->removeLayer(item->text());
-			layers_lst->takeItem(layers_lst->currentRow());
-			delete item;
+			layers_tab->removeRow(layers_tab->currentRow());
 		}
 
-		layers_lst->setCurrentRow(-1);
+		layers_tab->clearSelection();
 		enableButtons();
 	}
 }
 
 void LayersConfigWidget::enableButtons()
 {
-	remove_tb->setEnabled(layers_lst->currentRow() > 0);
-	remove_all_tb->setEnabled(layers_lst->count() > 1);
+	remove_tb->setEnabled(layers_tab->currentRow() > 0);
+	remove_all_tb->setEnabled(layers_tab->rowCount() > 1);
 }
 
 void LayersConfigWidget::setLayersActive()
@@ -180,12 +164,12 @@ void LayersConfigWidget::setLayersActive()
 	QAction *act = qobject_cast<QAction *>(sender());
 	Qt::CheckState chk_state = act->data().toBool() ? Qt::Checked : Qt::Unchecked;
 
-	layers_lst->blockSignals(true);
+	layers_tab->blockSignals(true);
 
-	for(auto &item : layers_lst->findItems("*", Qt::MatchWildcard))
+	for(auto &item : layers_tab->findItems("*", Qt::MatchWildcard))
 		item->setCheckState(chk_state);
 
-	layers_lst->blockSignals(false);
+	layers_tab->blockSignals(false);
 	updateActiveLayers();
 }
 
@@ -211,7 +195,7 @@ void LayersConfigWidget::setModel(ModelWidget *model)
 	bool enable = model != nullptr;
 
 	this->model = model;
-	layers_lst->clear();
+	layers_tab->setRowCount(0);
 	add_tb->setEnabled(enable);
 
 	if(model)
@@ -220,53 +204,78 @@ void LayersConfigWidget::setModel(ModelWidget *model)
 		toggle_layers_rects_chk->setChecked(model->getObjectsScene()->isLayerRectsVisible());
 		toggle_layers_rects_chk->blockSignals(false);
 
-		updateLayersList();
+		layers_tab->blockSignals(true);
+
+		for(auto &layer : model->scene->getLayers())
+			__addLayer(layer);
+
+		layers_tab->blockSignals(false);
 	}
 }
 
-QListWidgetItem *LayersConfigWidget::addLayer(const QString &name)
+void LayersConfigWidget::__addLayer(const QString &name)
 {
-	QListWidgetItem *item = nullptr;
-	QString aux_name = name.isEmpty() ? tr("New layer") : name;
-	QStringList act_layers = 	model->scene->getLayers();
+	ColorPickerWidget *color_picker = nullptr;
+	QTableWidgetItem *item = nullptr;
 
-	aux_name = model->scene->addLayer(aux_name);
-	item = new QListWidgetItem(aux_name);
+	int row = layers_tab->rowCount();
+	layers_tab->insertRow(row);
 
+	item = new QTableWidgetItem;
+	item->setText(name);
+	item->setFlags(item->flags() | Qt::ItemIsUserCheckable);
 	item->setCheckState(Qt::Checked);
-	item->setFlags((item->flags() | Qt::ItemIsUserCheckable) ^ Qt::ItemIsEditable);
 
-	layers_lst->addItem(item);
+	color_picker = new ColorPickerWidget(2, layers_tab);
+	color_picker->setButtonToolTip(0, tr("Layer name color"));
+	color_picker->setButtonToolTip(1, tr("Layer rectangle color"));
+	color_picker->layout()->setContentsMargins(5,5,5,5);
+	color_picker->generateRandomColors();
 
-	act_layers.prepend(aux_name);
+	layers_tab->setItem(row, 0, item);
+	layers_tab->setCellWidget(row, 1, color_picker);
+	layers_tab->resizeRowsToContents();
+
+	enableButtons();
+}
+
+void LayersConfigWidget::addLayer(const QString &name)
+{
+	QString fmt_name = name.isEmpty() ? tr("New layer") : name;
+	QStringList act_layers = model->scene->getLayers();
+
+	fmt_name = model->scene->addLayer(fmt_name);
+	__addLayer(fmt_name);
+	act_layers.prepend(fmt_name);
 	model->scene->setActiveLayers(act_layers);
 
 	/* Reconfigure the model's menu if we have selected items so the new layer can
 	 * appear in the "Move to layer" quick action */
 	if(!model->scene->selectedItems().isEmpty())
 		model->configureObjectSelection();
-
-	enableButtons();
-
-	return item;
 }
 
-void LayersConfigWidget::startLayerRenaming(QListWidgetItem *item)
+void LayersConfigWidget::startLayerRenaming()
 {
-	if(layers_lst->item(0) != item)
-	{
-		curr_item = item;
-		curr_text = item->text();
-		curr_row = layers_lst->currentRow();
-		layers_lst->openPersistentEditor(item);
-	}
+	if(layers_tab->currentRow() <= 0)
+		return;
+
+	QTableWidgetItem *item = layers_tab->item(layers_tab->currentRow(), 0);
+
+	curr_item = item;
+	curr_text = item->text();
+	curr_row = layers_tab->currentRow();
+	layers_tab->openPersistentEditor(item);
 }
 
 void LayersConfigWidget::finishLayerRenaming()
 {
+	if(layers_tab->currentRow() < 0)
+		return;
+
 	if(curr_item)
 	{
-		layers_lst->closePersistentEditor(curr_item);
+		layers_tab->closePersistentEditor(curr_item);
 
 		if(curr_item->text().isEmpty())
 			curr_item->setText(curr_text);

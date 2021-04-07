@@ -42,9 +42,9 @@ class LayersConfigWidget : public QWidget, Ui::LayersConfigWidget {
 		//! \brief Model in which the layer widget will operate on
 		ModelWidget *model;
 
-		/*! \brief The current selected item in the layers list. We need to store it in a separated attribute
+		/*! \brief The current selected item in the layers grid. We need to store it in a separated attribute
 		 * for renaming purposes */
-		QListWidgetItem *curr_item;
+		QTableWidgetItem *curr_item;
 
 		//! \brief Stores the current's item text (layer name) to revert the renaming if the user aborts it
 		QString curr_text;
@@ -52,10 +52,10 @@ class LayersConfigWidget : public QWidget, Ui::LayersConfigWidget {
 		//! \brief Stores the current's item row
 		int curr_row;
 
-		//! \brief Configures the layers listing
-		void updateLayersList();
-
 		bool eventFilter(QObject *watched, QEvent *event) override;
+
+		//! \brief Add a new item (layer) to the listing. If the provided name is empty a default name is assigned
+		void __addLayer(const QString &name = "");
 
 	public:
 		explicit LayersConfigWidget(QWidget *parent = nullptr);
@@ -64,11 +64,12 @@ class LayersConfigWidget : public QWidget, Ui::LayersConfigWidget {
 		void setModel(ModelWidget *model);
 
 	private slots:
-		//! \brief Add a new item (layer) to the listing. If the provided name is empty a default name is assigned
-		QListWidgetItem *addLayer(const QString &name = "");
+		/*! \brief This slot adds an item to the layers grid and performs the need operations
+		 * to make the new layer available to the scene and model widget */
+		void addLayer(const QString &name = "");
 
 		//! \brief Triggers the renaming operation over a item
-		void startLayerRenaming(QListWidgetItem *item);
+		void startLayerRenaming();
 
 		//! \brief Finishes the renaming operation over a item
 		void finishLayerRenaming();

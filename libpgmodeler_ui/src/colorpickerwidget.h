@@ -56,7 +56,7 @@ class ColorPickerWidget: public QWidget, public Ui::ColorPickerWidget {
 		static constexpr int MaxColorButtons=20;
 		
 		explicit ColorPickerWidget(int color_count, QWidget * parent = nullptr);
-		
+
 		void setColor(int color_idx, const QColor &color);
 		QColor getColor(int color_idx);
 		unsigned getColorCount();
