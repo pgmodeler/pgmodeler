@@ -123,10 +123,16 @@ void TextboxView::__configureObject()
 
 void TextboxView::configureObject()
 {
+	double old_width = bounding_rect.width(),
+			old_height = bounding_rect.height();
+
 	this->__configureObject();
 	this->configureObjectShadow();
 	this->configureObjectSelection();
-	updateLayersRects();
+
+	if((old_width != 0 && bounding_rect.width() != old_width) ||
+		 (old_height != 0 && bounding_rect.height()!= old_height))
+		emit s_objectDimensionChanged();
 }
 
 void TextboxView::configureObjectShadow()

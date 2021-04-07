@@ -2142,7 +2142,7 @@ void ModelWidget::showObjectForm(ObjectType obj_type, BaseObject *object, BaseOb
 		if(res==QDialog::Accepted)
 		{
 			setModified(true);
-			this->db_model->setInvalidated(true);
+			db_model->setInvalidated(true);
 			emit s_objectManipulated();
 		}
 		else
@@ -3921,6 +3921,7 @@ void ModelWidget::setAllCollapseMode(CollapseMode mode)
 	this->scene->clearSelection();
 	objects.assign(db_model->getObjectList(ObjectType::Table)->begin(), db_model->getObjectList(ObjectType::Table)->end());
 	objects.insert(objects.end(), db_model->getObjectList(ObjectType::View)->begin(), db_model->getObjectList(ObjectType::View)->end());
+	objects.insert(objects.end(), db_model->getObjectList(ObjectType::ForeignTable)->begin(), db_model->getObjectList(ObjectType::ForeignTable)->end());
 
 	for(auto obj : objects)
 	{

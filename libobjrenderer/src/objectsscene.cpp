@@ -843,6 +843,7 @@ void ObjectsScene::addItem(QGraphicsItem *item)
 		RelationshipView *rel=dynamic_cast<RelationshipView *>(item);
 		BaseTableView *tab=dynamic_cast<BaseTableView *>(item);
 		BaseObjectView *obj=dynamic_cast<BaseObjectView *>(item);
+		TextboxView *txtbox=dynamic_cast<TextboxView *>(item);
 
 		if(rel)
 			connect(rel, SIGNAL(s_relationshipModified(BaseGraphicObject*)), this, SIGNAL(s_objectModified(BaseGraphicObject*)));
@@ -865,10 +866,15 @@ void ObjectsScene::addItem(QGraphicsItem *item)
 				obj->setZValue(dynamic_cast<BaseGraphicObject *>(obj->getUnderlyingObject())->getZValue());
 
 			connect(obj, SIGNAL(s_objectSelected(BaseGraphicObject*,bool)), this, SLOT(handleObjectSelection(BaseGraphicObject*,bool)));
+
+			// Tables and textboxes are observed for dimension changes so the layers they are in are correctly updated
+			if(tab || txtbox)
+				connect(obj, SIGNAL(s_objectDimensionChanged()), this, SLOT(updateLayerRects()));
+
+			updateLayerRects();
 		}
 
 		QGraphicsScene::addItem(item);
-		updateLayerRects();
 	}
 }
 
@@ -889,6 +895,7 @@ void ObjectsScene::removeItem(QGraphicsItem *item)
 		if(object)
 		{
 			updateLayerRects();
+
 			disconnect(object, nullptr, this, nullptr);
 			disconnect(object, nullptr, dynamic_cast<BaseGraphicObject*>(object->getUnderlyingObject()), nullptr);
 			disconnect(dynamic_cast<BaseGraphicObject*>(object->getUnderlyingObject()), nullptr, object, nullptr);

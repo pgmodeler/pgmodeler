@@ -274,13 +274,13 @@ class ObjectsScene: public QGraphicsScene {
 		static void setDelimitersColor(const QColor &value);
 		static QColor getDelimitersColor();
 
-		//! \brief Force the update of all layer rectangles
-		void updateLayerRects();
-
 		bool isLayerRectsVisible();		
 		bool isLayerNamesVibible();
 
 	public slots:
+		//! \brief Force the update of all layer rectangles
+		void updateLayerRects();
+
 		void setLayerRectsVisible(bool value);
 		void setLayerNamesVisible(bool value);		
 		void alignObjectsToGrid();
