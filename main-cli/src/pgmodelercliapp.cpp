@@ -1466,16 +1466,35 @@ void PgModelerCliApp::fixModel()
 	printMessage(tr("Model successfully fixed!"));
 }
 
-void PgModelerCliApp::exportModel()
+void PgModelerCliApp::loadModel()
 {
-	printMessage(tr("Starting model export..."));
-	printMessage(tr("Loading input file: %1").arg(parsed_opts[Input]));
-
 	//Create the systems objects on model before loading it
 	model->createSystemObjects(false);
 
 	//Load the model file
 	model->loadModel(parsed_opts[Input]);
+
+	scene->blockSignals(true);
+
+	scene->addLayers(model->getLayers());
+	scene->setActiveLayers(model->getActiveLayers());
+	scene->setLayerColors(ObjectsScene::LayerNameColor, model->getLayerNameColors());
+	scene->setLayerColors(ObjectsScene::LayerRectColor, model->getLayerRectColors());
+	scene->setLayerNamesVisible(model->isLayerNamesVisible());
+	scene->setLayerRectsVisible(model->isLayerRectsVisible());
+
+	if(model->isLayerRectsVisible())
+		model->setObjectsModified({ ObjectType::Schema });
+
+	scene->blockSignals(false);
+}
+
+void PgModelerCliApp::exportModel()
+{
+	printMessage(tr("Starting model export..."));
+	printMessage(tr("Loading input file: %1").arg(parsed_opts[Input]));
+
+	loadModel();
 
 	//Export to PNG
 	if(parsed_opts.count(ExportToPng))
@@ -1624,8 +1643,7 @@ void PgModelerCliApp::diffModelDatabase()
 	if(!parsed_opts[Input].isEmpty())
 	{
 		printMessage(tr("Loading input model..."));
-		model->createSystemObjects(false);
-		model->loadModel(parsed_opts[Input]);
+		loadModel();
 
 		if(parsed_opts.count(PartialDiff))
 		{

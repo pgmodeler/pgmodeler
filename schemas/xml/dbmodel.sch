@@ -55,12 +55,22 @@
     $br $tb
     [ layers]="{layers}"
     
-    [ active-layers]=
+    $br $tb [ active-layers]=
     %if {active-layers} %then 
         "{active-layers}" 
     %else
         "" 
     %end 
+
+    $br $tb
+    [ layer-name-colors]="{layer-name-colors}"
+
+    $br $tb
+    [ layer-rect-colors]="{layer-rect-colors}"
+
+    $br $tb
+    [ show-layer-names]="{show-layer-names}"
+    [ show-layer-rects]="{show-layer-rects}"
  %end
 
  > $br

@@ -35,9 +35,6 @@ bool ObjectsScene::invert_rangesel_trigger=false;
 
 ObjectsScene::ObjectsScene()
 {		
-	addLayer(tr("Default layer"));
-	active_layers.push_back(layers.at(DefaultLayer));
-
 	is_layer_rects_visible=is_layer_names_visible=false;
 	moving_objs=move_scene=false;
 	enable_range_sel=true;
@@ -160,14 +157,6 @@ QString ObjectsScene::addLayer(const QString &name)
 
 	LayerItem *layer_item = new LayerItem;
 	QString fmt_name = formatLayerName(name);
-	random_device rand_seed;
-	default_random_engine rand_num_engine;
-	uniform_int_distribution<unsigned> dist(0,255);
-
-	rand_num_engine.seed(rand_seed());
-	QColor color = QColor(dist(rand_num_engine),
-												dist(rand_num_engine),
-												dist(rand_num_engine), 80);
 
 	layers.push_back(fmt_name);
 	layers_paths.append(layer_item);
@@ -175,12 +164,16 @@ QString ObjectsScene::addLayer(const QString &name)
 	layer_item->setZValue(-100 - layers.size());
 	layer_item->setEnabled(false);
 	layer_item->setVisible(false);
-	layer_item->setPen(color);
-	layer_item->setBrush(color);
 	addItem(layer_item);
 
 	emit s_layersChanged();
 	return fmt_name;
+}
+
+void ObjectsScene::addLayers(const QStringList &names)
+{
+	for(auto &name : names)
+		addLayer(name);
 }
 
 QString ObjectsScene::renameLayer(unsigned idx, const QString &name)
@@ -195,10 +188,10 @@ QString ObjectsScene::renameLayer(unsigned idx, const QString &name)
 
 		layers[idx] = new_name;
 		active_layers.replaceInStrings(QRegExp(QString("^(%1)$").arg(old_name)), new_name);
-	}
 
-	updateLayerRects();
-	emit s_layersChanged();
+		updateLayerRects();
+		emit s_layersChanged();
+	}
 
 	return layers[idx];
 }
@@ -417,7 +410,7 @@ void ObjectsScene::setLayerRectsVisible(bool value)
 
 void ObjectsScene::setLayerNamesVisible(bool value)
 {
-	is_layer_names_visible = value && is_layer_rects_visible;
+	is_layer_names_visible = value;
 	updateLayerRects();
 }
 
@@ -426,7 +419,7 @@ bool ObjectsScene::isLayerRectsVisible()
 	return is_layer_rects_visible;
 }
 
-bool ObjectsScene::isLayerNamesVibible()
+bool ObjectsScene::isLayerNamesVisible()
 {
 	return is_layer_names_visible;
 }
@@ -521,6 +514,62 @@ QStringList ObjectsScene::getLayers()
 void ObjectsScene::updateActiveLayers()
 {
 	setActiveLayers(active_layers);
+}
+
+QStringList ObjectsScene::getLayerColorNames(unsigned color_id)
+{
+	if(color_id > LayerRectColor)
+		return {};
+
+	QStringList colors;
+
+	for(auto &path : layers_paths)
+		colors.append(color_id == LayerNameColor ? path->getTextColor().name() : path->brush().color().name());
+
+	return colors;
+}
+
+void ObjectsScene::setLayerColors(int layer_id, QColor txt_color, QColor bg_color)
+{
+	if(layer_id >= layers_paths.size())
+		return;
+
+	layers_paths[layer_id]->setTextColor(txt_color);
+	layers_paths[layer_id]->setPen(QPen(bg_color, BaseObjectView::ObjectBorderWidth * BaseObjectView::getScreenDpiFactor()));
+
+	bg_color.setAlpha(BaseObjectView::ObjectAlphaChannel * 0.80);
+	layers_paths[layer_id]->setBrush(bg_color);
+
+	layers_paths[layer_id]->update();
+}
+
+void ObjectsScene::setLayerColors(unsigned layer_attr_id, const QStringList &colors)
+{
+	if(layer_attr_id > LayerRectColor)
+		return;
+
+	int idx = 0;
+	QColor color;
+
+	for(auto &cl_name : colors)
+	{
+		if(idx >= layers_paths.size())
+			break;
+
+		color = QColor(cl_name);
+
+		if(layer_attr_id == LayerNameColor)
+			layers_paths[idx]->setTextColor(color);
+		else
+		{
+			layers_paths[idx]->setPen(QPen(color, BaseObjectView::ObjectBorderWidth * BaseObjectView::getScreenDpiFactor()));
+
+			color.setAlpha(BaseObjectView::ObjectAlphaChannel * 0.80);
+			layers_paths[idx]->setBrush(color);
+		}
+
+		idx++;
+	}
 }
 
 void ObjectsScene::setEnableCornerMove(bool enable)

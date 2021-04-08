@@ -174,7 +174,9 @@ class ObjectsScene: public QGraphicsScene {
 		void validateLayerRemoval(unsigned old_layer);
 
 	public:
-		static constexpr unsigned DefaultLayer = 0;
+		static constexpr unsigned DefaultLayer = 0,
+		LayerNameColor = 0,
+		LayerRectColor = 1;
 
 		ObjectsScene();
 		virtual ~ObjectsScene();
@@ -182,6 +184,7 @@ class ObjectsScene: public QGraphicsScene {
 		/*! \brief Add a new layer to the scene. In case of duplicated name this method
 		 * automatically does the desambiguation. The name of the new layer is returned. */
 		QString addLayer(const QString &name);
+		void addLayers(const QStringList &names);
 
 		/*! \brief Rename the layer of the provided index. In case of duplicated name this method
 		 * 	automatically does the desambiguation. */
@@ -219,6 +222,17 @@ class ObjectsScene: public QGraphicsScene {
 
 		//! \brief This method causes objects in the active layers to have their visibility state updated.
 		void updateActiveLayers();
+
+		//! \brief Retuns a list of the layers colors names. The color ids must be LayerNameColor or LayerRectColor
+		QStringList getLayerColorNames(unsigned color_id);
+
+		/*! \brief This method sets up the text and background color of the layer referenced by the id.
+		 * This method adjust the alpha channel for the background color to a make it semi transparent */
+		void setLayerColors(int layer_id, QColor txt_color, QColor bg_color);
+
+		/*! \brief This method sets up the layers name/rect colors. The layer_attr_id is either LayerNameColor or LayerRectColor.
+		 * This method adjust the alpha channel for the background color to a make it semi transparent */
+		void setLayerColors(unsigned layer_attr_id, const QStringList &colors);
 
 		static void setEnableCornerMove(bool enable);
 		static void setInvertRangeSelectionTrigger(bool invert);
@@ -274,15 +288,15 @@ class ObjectsScene: public QGraphicsScene {
 		static void setDelimitersColor(const QColor &value);
 		static QColor getDelimitersColor();
 
-		bool isLayerRectsVisible();		
-		bool isLayerNamesVibible();
+		bool isLayerRectsVisible();
+		bool isLayerNamesVisible();
 
 	public slots:
 		//! \brief Force the update of all layer rectangles
 		void updateLayerRects();
 
 		void setLayerRectsVisible(bool value);
-		void setLayerNamesVisible(bool value);		
+		void setLayerNamesVisible(bool value);
 		void alignObjectsToGrid();
 		void update();
 		void clearSelection();

@@ -287,11 +287,11 @@
          <attribute name="horizontalHeaderCascadingSectionResizes">
           <bool>false</bool>
          </attribute>
-         <attribute name="horizontalHeaderHighlightSections">
-          <bool>true</bool>
-         </attribute>
          <attribute name="horizontalHeaderMinimumSectionSize">
           <number>30</number>
+         </attribute>
+         <attribute name="horizontalHeaderHighlightSections">
+          <bool>true</bool>
          </attribute>
          <attribute name="horizontalHeaderShowSortIndicator" stdset="0">
           <bool>true</bool>
@@ -305,11 +305,11 @@
          <attribute name="verticalHeaderCascadingSectionResizes">
           <bool>false</bool>
          </attribute>
-         <attribute name="verticalHeaderDefaultSectionSize">
-          <number>28</number>
-         </attribute>
          <attribute name="verticalHeaderMinimumSectionSize">
-          <number>25</number>
+          <number>38</number>
+         </attribute>
+         <attribute name="verticalHeaderDefaultSectionSize">
+          <number>38</number>
          </attribute>
          <attribute name="verticalHeaderShowSortIndicator" stdset="0">
           <bool>false</bool>
