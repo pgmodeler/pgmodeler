@@ -199,7 +199,7 @@ void GlobalAttributes::setSearchPath(const QString &search_path)
 	LanguagesDir=GlobalAttributes::getPathFromEnv("PGMODELER_LANG_DIR", LANGDIR, QString("%1/lang").arg(search_path));
 	SamplesDir=getPathFromEnv("PGMODELER_SAMPLES_DIR", SAMPLESDIR, QString("%1/samples").arg(search_path));
 	TmplConfigurationDir=getPathFromEnv("PGMODELER_TMPL_CONF_DIR", CONFDIR, QString("%1/conf").arg(search_path));
-	PluginsDir=getenv("PGMODELER_PLUGINS_DIR") ? QString(getenv("PGMODELER_PLUGINS_DIR")).replace('\\','/') : PLUGINSDIR;
+	PluginsDir=getPathFromEnv("PGMODELER_PLUGINS_DIR", PLUGINSDIR, QString("%1/plugins").arg(search_path));
 
 	#if defined(Q_OS_MAC)
 		ConfigurationsDir=getPathFromEnv("PGMODELER_CONF_DIR", QStandardPaths::writableLocation(QStandardPaths::ConfigLocation) + QString("/%1").arg(PgModelerReverseURI));
