@@ -222,6 +222,8 @@ void LayersConfigWidget::toggleLayersRects()
 	model->getObjectsScene()->setLayerNamesVisible(toggle_layers_names_chk->isChecked());
 	model->updateModelLayersInfo();
 	model->getDatabaseModel()->setObjectsModified({ ObjectType::Schema });
+
+	emit s_activeLayersChanged();
 }
 
 void LayersConfigWidget::setModel(ModelWidget *model)
