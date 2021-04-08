@@ -225,6 +225,9 @@ class ModelWidget: public QWidget {
 		 * The direction is defined by the constants BringToTop or SendToBottom. */
 		void moveObjectsInZStack(int direction);
 
+		//! \brief Applies the layer settings from the internal database model to the scene object
+		void updateSceneLayers();
+
 	protected:
 		static constexpr unsigned BreakVertNinetyDegrees=0, //Break vertically the line in one 90° angle
 		BreakHorizNinetyDegrees=1, //Break horizontally the line in one 90° angle
@@ -261,7 +264,7 @@ class ModelWidget: public QWidget {
 		*action_break_rel_line,
 		*action_remove_rel_points,
 		*action_set_tag,
-		*action_moveto_layer,
+		*action_set_layer,
 		*action_disable_sql,
 		*action_enable_sql,
 		*action_duplicate,

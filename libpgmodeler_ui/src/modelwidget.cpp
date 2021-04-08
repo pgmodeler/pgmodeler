@@ -267,8 +267,8 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	action_moveto_schema=new QAction(QIcon(PgModelerUiNs::getIconPath("movetoschema")), tr("Move to schema"), this);
 	action_moveto_schema->setMenu(&schemas_menu);
 
-	action_moveto_layer=new QAction(QIcon(PgModelerUiNs::getIconPath("movetolayer")), tr("Set layers"), this);
-	action_moveto_layer->setMenu(&layers_menu);
+	action_set_layer=new QAction(QIcon(PgModelerUiNs::getIconPath("movetolayer")), tr("Set layers"), this);
+	action_set_layer->setMenu(&layers_menu);
 
 	layers_wgt = new LayersWidget(this);
 	wgt_action_layers = new QWidgetAction(this);
@@ -550,6 +550,8 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	viewport->installEventFilter(this);
 	viewport->horizontalScrollBar()->installEventFilter(this);
 	viewport->verticalScrollBar()->installEventFilter(this);
+
+	updateSceneLayers();
 }
 
 ModelWidget::~ModelWidget()
@@ -1618,21 +1620,9 @@ void ModelWidget::loadModel(const QString &filename)
 
 		db_model->loadModel(filename);
 		this->filename=filename;
-		this->adjustSceneSize();
-		this->updateObjectsOpacity();
-
-		scene->blockSignals(true);
-		scene->addLayers(db_model->getLayers());
-		scene->setActiveLayers(db_model->getActiveLayers());
-		scene->setLayerColors(ObjectsScene::LayerNameColor, db_model->getLayerNameColors());
-		scene->setLayerColors(ObjectsScene::LayerRectColor, db_model->getLayerRectColors());
-		scene->setLayerNamesVisible(db_model->isLayerNamesVisible());
-		scene->setLayerRectsVisible(db_model->isLayerRectsVisible());
-
-		if(db_model->isLayerRectsVisible())
-			db_model->setObjectsModified({ ObjectType::Schema });
-
-		scene->blockSignals(false);
+		adjustSceneSize();
+		updateObjectsOpacity();
+		updateSceneLayers();
 
 		task_prog_wgt.close();
 		protected_model_frm->setVisible(db_model->isProtected());
@@ -1644,6 +1634,21 @@ void ModelWidget::loadModel(const QString &filename)
 		setModified(false);
 		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
+}
+
+void ModelWidget::updateSceneLayers()
+{
+	scene->blockSignals(true);
+	scene->addLayers(db_model->getLayers());
+	scene->setActiveLayers(db_model->getActiveLayers());
+	scene->setLayerColors(ObjectsScene::LayerNameColor, db_model->getLayerNameColors());
+	scene->setLayerColors(ObjectsScene::LayerRectColor, db_model->getLayerRectColors());
+	scene->setLayerNamesVisible(db_model->isLayerNamesVisible());
+	scene->setLayerRectsVisible(db_model->isLayerRectsVisible());
+
+	if(db_model->isLayerRectsVisible())
+		db_model->setObjectsModified({ ObjectType::Schema });
+	scene->blockSignals(false);
 }
 
 void ModelWidget::adjustSceneSize()
@@ -3655,7 +3660,7 @@ void ModelWidget::configureQuickMenu(BaseObject *object)
 
 		if(is_graph_obj)
 		{
-			quick_actions_menu.addAction(action_moveto_layer);
+			quick_actions_menu.addAction(action_set_layer);
 			layers_wgt->setAttributes(scene->getLayers(), selected_objects);
 		}
 

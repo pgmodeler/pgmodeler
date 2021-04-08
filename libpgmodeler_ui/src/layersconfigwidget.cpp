@@ -242,7 +242,10 @@ void LayersConfigWidget::setModel(ModelWidget *model)
 
 		layers_tab->blockSignals(true);
 		for(auto &layer : model->scene->getLayers())
-			__addLayer(layer);
+		{
+			__addLayer(layer,
+								 model->scene->isLayerActive(layer) ? Qt::Checked : Qt::Unchecked);
+		}
 		layers_tab->blockSignals(false);
 
 		int idx = 0, p_idx = 0;
@@ -283,7 +286,7 @@ void LayersConfigWidget::setModel(ModelWidget *model)
 	}
 }
 
-void LayersConfigWidget::__addLayer(const QString &name)
+void LayersConfigWidget::__addLayer(const QString &name, Qt::CheckState chk_state)
 {
 	ColorPickerWidget *color_picker = nullptr;
 	QTableWidgetItem *item = nullptr;
@@ -294,7 +297,7 @@ void LayersConfigWidget::__addLayer(const QString &name)
 	item = new QTableWidgetItem;
 	item->setText(name);
 	item->setFlags(item->flags() | Qt::ItemIsUserCheckable);
-	item->setCheckState(Qt::Checked);
+	item->setCheckState(chk_state);
 	layers_tab->setItem(row, 0, item);
 
 	color_picker = new ColorPickerWidget(1, layers_tab);
@@ -315,8 +318,10 @@ void LayersConfigWidget::__addLayer(const QString &name)
 	connect(color_picker, SIGNAL(s_colorsChanged()), this, SLOT(updateLayerColors()));
 	layers_tab->setCellWidget(row, 2, color_picker);
 
+	layers_tab->horizontalHeader()->setStretchLastSection(false);
 	layers_tab->resizeRowsToContents();
 	layers_tab->resizeColumnsToContents();
+	layers_tab->horizontalHeader()->setStretchLastSection(true);
 	layers_tab->clearSelection();
 
 	enableButtons();

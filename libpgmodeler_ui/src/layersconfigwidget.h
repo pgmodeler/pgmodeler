@@ -60,7 +60,7 @@ class LayersConfigWidget : public QWidget, Ui::LayersConfigWidget {
 		bool eventFilter(QObject *watched, QEvent *event) override;
 
 		//! \brief Add a new item (layer) to the listing. If the provided name is empty a default name is assigned
-		void __addLayer(const QString &name = "");
+		void __addLayer(const QString &name = "", Qt::CheckState chk_state = Qt::Checked);
 
 	public:
 		explicit LayersConfigWidget(QWidget *parent = nullptr);

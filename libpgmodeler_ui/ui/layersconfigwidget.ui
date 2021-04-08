@@ -285,9 +285,6 @@
         <attribute name="verticalHeaderHighlightSections">
          <bool>true</bool>
         </attribute>
-        <attribute name="verticalHeaderStretchLastSection">
-         <bool>false</bool>
-        </attribute>
         <column>
          <property name="text">
           <string>Layer</string>

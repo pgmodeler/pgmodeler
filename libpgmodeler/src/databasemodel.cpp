@@ -33,6 +33,11 @@ DatabaseModel::DatabaseModel()
 	object_id=DatabaseModel::dbmodel_id++;
 	obj_type=ObjectType::Database;
 
+	layers.append(tr("Default layer"));
+	active_layers.push_back(0);
+	layer_name_colors.append(QColor(0,0,0).name());
+	layer_rect_colors.append(QColor(180,180,180).name());
+
 	is_layer_names_visible = is_layer_rects_visible = false;
 	persist_changelog = false;
 	is_template = false;
@@ -3306,10 +3311,24 @@ void DatabaseModel::loadModel(const QString &filename)
 			active_layers.clear();
 
 			for(auto &layer_id : attribs[Attributes::ActiveLayers].split(',', QtCompat::SkipEmptyParts))
+			{
+				if(layer_id.toInt() >= layers.size())
+					continue;
+
 				active_layers.push_back(layer_id.toInt());
+			}
 
 			if(active_layers.isEmpty())
 				active_layers.push_back(0);
+
+			/* Perfoming size validations between the layer color lists and the layers lists
+			 * The excessive items from both list are removed until their sizes matches
+			 * the layers list */
+			while(layer_name_colors.size() > layers.size())
+				layer_name_colors.removeLast();
+
+			while(layer_rect_colors.size() > layers.size())
+				layer_rect_colors.removeLast();
 
 			protected_model=(attribs[Attributes::Protected]==Attributes::True);
 
