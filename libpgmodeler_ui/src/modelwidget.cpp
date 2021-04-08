@@ -1639,6 +1639,7 @@ void ModelWidget::loadModel(const QString &filename)
 void ModelWidget::updateSceneLayers()
 {
 	scene->blockSignals(true);
+
 	scene->addLayers(db_model->getLayers());
 	scene->setActiveLayers(db_model->getActiveLayers());
 	scene->setLayerColors(ObjectsScene::LayerNameColor, db_model->getLayerNameColors());
@@ -1648,6 +1649,7 @@ void ModelWidget::updateSceneLayers()
 
 	if(db_model->isLayerRectsVisible())
 		db_model->setObjectsModified({ ObjectType::Schema });
+
 	scene->blockSignals(false);
 }
 
