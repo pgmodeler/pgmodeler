@@ -3267,7 +3267,6 @@ void DatabaseModel::loadModel(const QString &filename)
 
 			persist_changelog = attribs[Attributes::UseChangelog] == Attributes::True;
 			layers = attribs[Attributes::Layers].split(',', QtCompat::SkipEmptyParts);
-			active_layers.clear();
 
 			layer_name_colors = attribs[Attributes::LayerNameColors].split(',', QtCompat::SkipEmptyParts);
 			layer_rect_colors = attribs[Attributes::LayerRectColors].split(',', QtCompat::SkipEmptyParts);
@@ -3275,10 +3274,14 @@ void DatabaseModel::loadModel(const QString &filename)
 			is_layer_names_visible = attribs[Attributes::ShowLayerNames] == Attributes::True;
 			is_layer_rects_visible = attribs[Attributes::ShowLayerRects] == Attributes::True;
 
-
 			/*  Compatibility with models created prior the layers features:
 			 * If the layer rect colors is empty (probably a model generated in an older version)
 			 * we create random colors as fallback */
+
+			// Forcing the creation of the default layer is not present
+			if(layers.isEmpty())
+				layers.push_back(tr("Default layer"));
+
 			if(layer_rect_colors.isEmpty())
 			{
 				random_device rand_seed;
@@ -3300,13 +3303,13 @@ void DatabaseModel::loadModel(const QString &filename)
 
 			/* Compatibility with models created prior the layers features:
 			 * If the "active-layers" is absent we make the default layer always visible */
-			if(!attribs.count(Attributes::ActiveLayers))
+			active_layers.clear();
+
+			for(auto &layer_id : attribs[Attributes::ActiveLayers].split(',', QtCompat::SkipEmptyParts))
+				active_layers.push_back(layer_id.toInt());
+
+			if(active_layers.isEmpty())
 				active_layers.push_back(0);
-			else
-			{
-				for(auto &layer_id : attribs[Attributes::ActiveLayers].split(',', QtCompat::SkipEmptyParts))
-					active_layers.push_back(layer_id.toInt());
-			}
 
 			protected_model=(attribs[Attributes::Protected]==Attributes::True);
 

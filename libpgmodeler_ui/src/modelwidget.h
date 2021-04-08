@@ -555,7 +555,9 @@ class ModelWidget: public QWidget {
 
 		void editTableData();
 
-		void updateModelLayers();
+		/*! \brief Update all the information about layer in the internal database model
+		 * so the correct info is written into the xml code of the model file */
+		void updateModelLayersInfo();
 
 	public slots:
 		void loadModel(const QString &filename);

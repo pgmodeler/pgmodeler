@@ -183,7 +183,7 @@ void LayersConfigWidget::updateLayerColors()
 		model->scene->setLayerColors(picker_idx,
 																 name_color_pickers[picker_idx]->getColor(0),
 																 rect_color_pickers[picker_idx]->getColor(0));
-		model->updateModelLayers();
+		model->updateModelLayersInfo();
 	}
 }
 
@@ -220,7 +220,7 @@ void LayersConfigWidget::toggleLayersRects()
 
 	model->getObjectsScene()->setLayerRectsVisible(toggle_layers_rects_chk->isChecked());
 	model->getObjectsScene()->setLayerNamesVisible(toggle_layers_names_chk->isChecked());
-	model->updateModelLayers();
+	model->updateModelLayersInfo();
 	model->getDatabaseModel()->setObjectsModified({ ObjectType::Schema });
 }
 
@@ -260,7 +260,7 @@ void LayersConfigWidget::setModel(ModelWidget *model)
 
 			for(auto &cl : cl_list)
 			{
-				if(idx > pickers[p_idx]->size())
+				if(idx >= pickers[p_idx]->size())
 					break;
 
 				pickers[p_idx]->at(idx)->blockSignals(true);
@@ -316,6 +316,7 @@ void LayersConfigWidget::__addLayer(const QString &name)
 	layers_tab->setCellWidget(row, 2, color_picker);
 
 	layers_tab->resizeRowsToContents();
+	layers_tab->resizeColumnsToContents();
 	layers_tab->clearSelection();
 
 	enableButtons();
@@ -339,7 +340,7 @@ void LayersConfigWidget::addLayer(const QString &name)
 
 void LayersConfigWidget::startLayerRenaming()
 {
-	if(layers_tab->currentRow() <= 0)
+	if(layers_tab->currentRow() < 0)
 		return;
 
 	QTableWidgetItem *item = layers_tab->item(layers_tab->currentRow(), 0);

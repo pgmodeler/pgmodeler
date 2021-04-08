@@ -35,9 +35,6 @@ bool ObjectsScene::invert_rangesel_trigger=false;
 
 ObjectsScene::ObjectsScene()
 {		
-	addLayer(tr("Default layer"));
-	active_layers.push_back(layers.at(DefaultLayer));
-
 	is_layer_rects_visible=is_layer_names_visible=false;
 	moving_objs=move_scene=false;
 	enable_range_sel=true;
@@ -537,10 +534,12 @@ void ObjectsScene::setLayerColors(int layer_id, QColor txt_color, QColor bg_colo
 	if(layer_id >= layers_paths.size())
 		return;
 
+	layers_paths[layer_id]->setTextColor(txt_color);
+	layers_paths[layer_id]->setPen(QPen(bg_color, BaseObjectView::ObjectBorderWidth * BaseObjectView::getScreenDpiFactor()));
+
 	bg_color.setAlpha(BaseObjectView::ObjectAlphaChannel * 0.80);
 	layers_paths[layer_id]->setBrush(bg_color);
-	layers_paths[layer_id]->setPen(bg_color);
-	layers_paths[layer_id]->setTextColor(txt_color);
+
 	layers_paths[layer_id]->update();
 }
 
@@ -563,9 +562,10 @@ void ObjectsScene::setLayerColors(unsigned layer_attr_id, const QStringList &col
 			layers_paths[idx]->setTextColor(color);
 		else
 		{
+			layers_paths[idx]->setPen(QPen(color, BaseObjectView::ObjectBorderWidth * BaseObjectView::getScreenDpiFactor()));
+
 			color.setAlpha(BaseObjectView::ObjectAlphaChannel * 0.80);
 			layers_paths[idx]->setBrush(color);
-			layers_paths[idx]->setPen(color);
 		}
 
 		idx++;

@@ -538,8 +538,8 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	connect(scene, &ObjectsScene::s_paginationToggled, [&](){ setModified(true); });
 	connect(scene, &ObjectsScene::s_currentPageChanged, [&](){ setModified(true); });
 	connect(scene, &ObjectsScene::s_objectsMovedLayer, [&](){ setModified(true); });
-	connect(scene, SIGNAL(s_layersChanged()), this, SLOT(updateModelLayers()));
-	connect(scene, SIGNAL(s_activeLayersChanged()), this, SLOT(updateModelLayers()));
+	connect(scene, SIGNAL(s_layersChanged()), this, SLOT(updateModelLayersInfo()));
+	connect(scene, SIGNAL(s_activeLayersChanged()), this, SLOT(updateModelLayersInfo()));
 	connect(scene, SIGNAL(s_popupMenuRequested(BaseObject*)), new_obj_overlay_wgt, SLOT(hide()));
 	connect(scene, SIGNAL(s_popupMenuRequested()), new_obj_overlay_wgt, SLOT(hide()));
 	connect(scene, SIGNAL(s_objectSelected(BaseGraphicObject*,bool)), new_obj_overlay_wgt, SLOT(hide()));
@@ -5031,11 +5031,10 @@ void ModelWidget::editTableData()
 	emit s_objectManipulated();
 }
 
-void ModelWidget::updateModelLayers()
+void ModelWidget::updateModelLayersInfo()
 {
 	QStringList layers = scene->getLayers();
 
-	layers.removeAt(0);
 	db_model->setLayers(layers);
 	db_model->setActiveLayers(scene->getActiveLayersIds());
 	db_model->setLayerNameColors(scene->getLayerColorNames(ObjectsScene::LayerNameColor));

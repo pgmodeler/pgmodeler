@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>843</width>
+    <width>1057</width>
     <height>349</height>
    </rect>
   </property>
@@ -855,11 +855,14 @@
                    <attribute name="horizontalHeaderStretchLastSection">
                     <bool>true</bool>
                    </attribute>
-                   <attribute name="verticalHeaderDefaultSectionSize">
-                    <number>26</number>
+                   <attribute name="verticalHeaderCascadingSectionResizes">
+                    <bool>false</bool>
                    </attribute>
                    <attribute name="verticalHeaderMinimumSectionSize">
-                    <number>25</number>
+                    <number>38</number>
+                   </attribute>
+                   <attribute name="verticalHeaderDefaultSectionSize">
+                    <number>38</number>
                    </attribute>
                   </widget>
                  </item>
