@@ -170,7 +170,7 @@ QString ObjectsScene::addLayer(const QString &name)
 	return fmt_name;
 }
 
-void ObjectsScene::addLayers(const QStringList &names)
+void ObjectsScene::addLayers(QStringList names)
 {
 	for(auto &name : names)
 		addLayer(name);
@@ -220,6 +220,9 @@ void ObjectsScene::removeLayer(const QString &name)
 
 void ObjectsScene::removeLayers()
 {
+	if(layers.isEmpty())
+		return;
+
 	LayerItem *layer_path = nullptr;
 	BaseObjectView *obj_view = nullptr;
 	QString def_layer = layers[DefaultLayer];
@@ -228,7 +231,7 @@ void ObjectsScene::removeLayers()
 	layers.clear();
 	active_layers.clear();
 
-	while(layers_paths.size() > 1)
+	while(!layers_paths.empty())
 	{
 		layer_path = layers_paths.back();
 		removeItem(layer_path);
@@ -919,11 +922,12 @@ void ObjectsScene::addItem(QGraphicsItem *item)
 			// Tables and textboxes are observed for dimension changes so the layers they are in are correctly updated
 			if(tab || txtbox)
 				connect(obj, SIGNAL(s_objectDimensionChanged()), this, SLOT(updateLayerRects()));
-
-			updateLayerRects();
 		}
 
 		QGraphicsScene::addItem(item);
+
+		if(tab || txtbox)
+			updateLayerRects();
 	}
 }
 
@@ -931,7 +935,7 @@ void ObjectsScene::removeItem(QGraphicsItem *item)
 {
 	if(item)
 	{
-		BaseObjectView *object=dynamic_cast<BaseObjectView *>(item);
+		BaseObjectView *obj_view=dynamic_cast<BaseObjectView *>(item);
 		RelationshipView *rel=dynamic_cast<RelationshipView *>(item);
 
 		if(rel)
@@ -941,14 +945,18 @@ void ObjectsScene::removeItem(QGraphicsItem *item)
 		item->setActive(false);
 		QGraphicsScene::removeItem(item);
 
-		if(object)
+		if(obj_view)
 		{
-			updateLayerRects();
+			BaseObject *obj = obj_view->getUnderlyingObject();
 
-			disconnect(object, nullptr, this, nullptr);
-			disconnect(object, nullptr, dynamic_cast<BaseGraphicObject*>(object->getUnderlyingObject()), nullptr);
-			disconnect(dynamic_cast<BaseGraphicObject*>(object->getUnderlyingObject()), nullptr, object, nullptr);
-			removed_objs.push_back(object);
+			if(BaseTable::isBaseTable(obj->getObjectType()) ||
+				 obj->getObjectType() == ObjectType::Textbox)
+				updateLayerRects();
+
+			disconnect(obj_view, nullptr, this, nullptr);
+			disconnect(obj_view, nullptr, dynamic_cast<BaseGraphicObject*>(obj_view->getUnderlyingObject()), nullptr);
+			disconnect(dynamic_cast<BaseGraphicObject*>(obj_view->getUnderlyingObject()), nullptr, obj_view, nullptr);
+			removed_objs.push_back(obj_view);
 		}
 	}
 }
@@ -1362,7 +1370,6 @@ void ObjectsScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 	if(!this->selectedItems().isEmpty() && moving_objs && event->button()==Qt::LeftButton/* && event->modifiers()==Qt::NoModifier */)
 	{
 		finishObjectsMove(event->scenePos());
-		updateLayerRects();
 	}
 	else if(selection_rect->isVisible() && event->button()==Qt::LeftButton)
 	{
@@ -1559,6 +1566,8 @@ void ObjectsScene::finishObjectsMove(const QPointF &pnt_end)
 	moving_objs=false;
 	sel_ini_pnt.setX(DNaN);
 	sel_ini_pnt.setY(DNaN);
+
+	updateLayerRects();
 }
 
 void ObjectsScene::alignObjectsToGrid()

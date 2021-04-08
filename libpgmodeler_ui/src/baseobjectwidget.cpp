@@ -813,6 +813,13 @@ void BaseObjectWidget::finishConfiguration()
 			TableObject *tab_obj=dynamic_cast<TableObject *>(this->object);
 			vector<BaseObject *> ref_objs;
 
+			// If the new object is a graphica one, we assign the postion prior to its addtion to the parent
+			if(graph_obj && !std::isnan(object_px) && !std::isnan(object_py))
+			{
+				graph_obj->setPosition(QPointF(object_px, object_py));
+				graph_obj->setModified(true);
+			}
+
 			if(new_object)
 			{
 				//If the object is a table object and the parent table is specified, adds it to table
@@ -860,13 +867,6 @@ void BaseObjectWidget::finishConfiguration()
 
 					graph_obj->setModified(true);
 					graph_obj->setCodeInvalidated(true);
-				}
-				else if(graph_obj)
-				{
-					if(!std::isnan(object_px) && !std::isnan(object_py))
-						graph_obj->setPosition(QPointF(object_px, object_py));
-
-					graph_obj->setModified(true);
 				}
 
 				/* Updates the visual schemas when the objects is moved to another or a

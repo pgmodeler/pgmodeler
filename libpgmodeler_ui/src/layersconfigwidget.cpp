@@ -169,20 +169,21 @@ void LayersConfigWidget::removeLayer(bool clear)
 	}
 }
 
-void LayersConfigWidget::updateLayerColors()
+void LayersConfigWidget::updateLayerColors(int layer_idx)
 {
-	int picker_idx = -1;
-
-	picker_idx = rect_color_pickers.indexOf(dynamic_cast<ColorPickerWidget *>(sender()));
-
-	if(picker_idx < 0)
-		picker_idx = name_color_pickers.indexOf(dynamic_cast<ColorPickerWidget *>(sender()));
-
-	if(picker_idx >= 0)
+	if(layer_idx < 0)
 	{
-		model->scene->setLayerColors(picker_idx,
-																 name_color_pickers[picker_idx]->getColor(0),
-																 rect_color_pickers[picker_idx]->getColor(0));
+		layer_idx = rect_color_pickers.indexOf(dynamic_cast<ColorPickerWidget *>(sender()));
+
+		if(layer_idx < 0)
+			layer_idx = name_color_pickers.indexOf(dynamic_cast<ColorPickerWidget *>(sender()));
+	}
+
+	if(layer_idx >= 0 && layer_idx < layers_tab->rowCount())
+	{
+		model->scene->setLayerColors(layer_idx,
+																 name_color_pickers[layer_idx]->getColor(0),
+																 rect_color_pickers[layer_idx]->getColor(0));
 		model->updateModelLayersInfo();
 	}
 }
@@ -305,7 +306,7 @@ void LayersConfigWidget::__addLayer(const QString &name, Qt::CheckState chk_stat
 	color_picker = new ColorPickerWidget(1, layers_tab);
 	color_picker->setButtonToolTip(0, tr("Layer name color"));
 	color_picker->layout()->setContentsMargins(5,5,5,5);
-	color_picker->generateRandomColors();
+	color_picker->setColor(0, QColor(0,0,0));
 	name_color_pickers.append(color_picker);
 	connect(color_picker, SIGNAL(s_colorChanged(unsigned, QColor)), this, SLOT(updateLayerColors()));
 	connect(color_picker, SIGNAL(s_colorsChanged()), this, SLOT(updateLayerColors()));
@@ -335,8 +336,11 @@ void LayersConfigWidget::addLayer(const QString &name)
 	QStringList act_layers = model->scene->getLayers();
 
 	fmt_name = model->scene->addLayer(fmt_name);
+
 	__addLayer(fmt_name);
 	act_layers.prepend(fmt_name);
+
+	updateLayerColors(layers_tab->rowCount() - 1);
 	model->scene->setActiveLayers(act_layers);
 
 	/* Reconfigure the model's menu if we have selected items so the new layer can

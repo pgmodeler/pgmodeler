@@ -550,8 +550,6 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	viewport->installEventFilter(this);
 	viewport->horizontalScrollBar()->installEventFilter(this);
 	viewport->verticalScrollBar()->installEventFilter(this);
-
-	updateSceneLayers();
 }
 
 ModelWidget::~ModelWidget()

@@ -18,6 +18,7 @@
 
 #include "layeritem.h"
 #include "baseobjectview.h"
+#include "qtcompat/qfontmetricscompat.h"
 
 LayerItem::LayerItem(QGraphicsItem *parent) : QGraphicsPathItem(parent)
 {
@@ -81,7 +82,7 @@ void LayerItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
 		if(text_align == Qt::AlignLeft)
 			pnt.setX(brect.left() + LayerPadding);
 		else
-			pnt.setX(brect.right() - (LayerPadding + fm.horizontalAdvance(text)));
+			pnt.setX(brect.right() - (LayerPadding + QtCompat::horizontalAdvance(font, text)));
 
 		pnt.setY(brect.top() + dy);
 		painter->drawText(pnt, text);

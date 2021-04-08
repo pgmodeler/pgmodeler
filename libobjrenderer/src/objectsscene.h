@@ -184,7 +184,7 @@ class ObjectsScene: public QGraphicsScene {
 		/*! \brief Add a new layer to the scene. In case of duplicated name this method
 		 * automatically does the desambiguation. The name of the new layer is returned. */
 		QString addLayer(const QString &name);
-		void addLayers(const QStringList &names);
+		void addLayers(QStringList names);
 
 		/*! \brief Rename the layer of the provided index. In case of duplicated name this method
 		 * 	automatically does the desambiguation. */

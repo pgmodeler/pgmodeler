@@ -29,4 +29,15 @@ namespace QtCompat {
 			return fm.horizontalAdvance(chr);
 		#endif
 	}
+
+	int horizontalAdvance(const QFont &font, const QString &str)
+	{
+		QFontMetrics fm(font);
+
+		#if (QT_VERSION < QT_VERSION_CHECK(5, 13, 0))
+			return fm.width(str);
+		#else
+			return fm.horizontalAdvance(str);
+		#endif
+	}
 }

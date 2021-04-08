@@ -86,7 +86,7 @@ class LayersConfigWidget : public QWidget, Ui::LayersConfigWidget {
 		void removeLayer(bool clear = false);
 
 		//! \brief Updates the colors of a layer that is associated with the calling color picker widget.
-		void updateLayerColors();
+		void updateLayerColors(int layer_idx = -1);
 
 		//! \brief Enables the control buttons according to the selection on the list
 		void enableButtons();

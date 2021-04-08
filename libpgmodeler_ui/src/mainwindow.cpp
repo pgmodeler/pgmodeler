@@ -935,7 +935,9 @@ void MainWindow::addModel(const QString &filename)
 		//Creating the system objects (public schema and languages C, SQL and pgpgsql)
 		model_tab->db_model->createSystemObjects(filename.isEmpty());
 
-		if(!filename.isEmpty())
+		if(filename.isEmpty())
+			model_tab->updateSceneLayers();
+		else
 		{
 			try
 			{
