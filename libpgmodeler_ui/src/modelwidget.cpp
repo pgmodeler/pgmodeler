@@ -1622,11 +1622,16 @@ void ModelWidget::loadModel(const QString &filename)
 		this->updateObjectsOpacity();
 
 		scene->blockSignals(true);
-
-		for(auto &layer : db_model->getLayers())
-			scene->addLayer(layer);
-
+		scene->addLayers(db_model->getLayers());
 		scene->setActiveLayers(db_model->getActiveLayers());
+		scene->setLayerColors(ObjectsScene::LayerNameColor, db_model->getLayerNameColors());
+		scene->setLayerColors(ObjectsScene::LayerRectColor, db_model->getLayerRectColors());
+		scene->setLayerNamesVisible(db_model->isLayerNamesVisible());
+		scene->setLayerRectsVisible(db_model->isLayerRectsVisible());
+
+		if(db_model->isLayerRectsVisible())
+			db_model->setObjectsModified({ ObjectType::Schema });
+
 		scene->blockSignals(false);
 
 		task_prog_wgt.close();
@@ -5033,6 +5038,10 @@ void ModelWidget::updateModelLayers()
 	layers.removeAt(0);
 	db_model->setLayers(layers);
 	db_model->setActiveLayers(scene->getActiveLayersIds());
+	db_model->setLayerNameColors(scene->getLayerColorNames(ObjectsScene::LayerNameColor));
+	db_model->setLayerRectColors(scene->getLayerColorNames(ObjectsScene::LayerRectColor));
+	db_model->setLayerNamesVisible(scene->isLayerNamesVisible());
+	db_model->setLayerRectsVisible(scene->isLayerRectsVisible());
 	setModified(true);
 }
 

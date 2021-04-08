@@ -68,8 +68,6 @@ bool LayersConfigWidget::eventFilter(QObject *watched, QEvent *event)
 
 			if(curr_item && (k_event->key() == Qt::Key_Enter || k_event->key() == Qt::Key_Return))
 				finishLayerRenaming();
-			//else if(!curr_item && k_event->key() == Qt::Key_F2 && layers_tab->currentRow() > 0)
-			//	startLayerRenaming();
 		}
 		else if(event->type() == QEvent::FocusIn && curr_item && curr_item != layers_tab->currentItem())
 			finishLayerRenaming();
@@ -117,6 +115,7 @@ void LayersConfigWidget::updateActiveLayers()
 	}
 
 	model->scene->setActiveLayers(active_layers);
+	model->getDatabaseModel()->setObjectsModified({ ObjectType::Schema });
 	emit s_activeLayersChanged();
 }
 
@@ -136,20 +135,55 @@ void LayersConfigWidget::removeLayer(bool clear)
 	{
 		if(clear)
 		{
-			model->scene->removeLayers();			
+			model->scene->removeLayers();
 
 			while(layers_tab->rowCount() > 1)
+			{
+				disconnect(rect_color_pickers.last(), nullptr, nullptr, nullptr);
+				rect_color_pickers.removeLast();
+
+				disconnect(name_color_pickers.last(), nullptr, nullptr, nullptr);
+				name_color_pickers.removeLast();
+
 				layers_tab->setRowCount(layers_tab->rowCount() - 1);
+			}
 		}
 		else if(layers_tab->currentRow() > 0)
 		{
+			int row = layers_tab->currentRow();
+
 			item = layers_tab->item(layers_tab->currentRow(), 0);
 			model->scene->removeLayer(item->text());
-			layers_tab->removeRow(layers_tab->currentRow());
+
+			disconnect(rect_color_pickers.at(row), nullptr, nullptr, nullptr);
+			rect_color_pickers.removeAt(row);
+
+			disconnect(name_color_pickers.at(row), nullptr, nullptr, nullptr);
+			name_color_pickers.removeAt(row);
+
+			layers_tab->removeRow(row);
 		}
 
 		layers_tab->clearSelection();
 		enableButtons();
+	}
+}
+
+void LayersConfigWidget::updateLayerColors()
+{
+	int picker_idx = -1;
+
+	picker_idx = rect_color_pickers.indexOf(dynamic_cast<ColorPickerWidget *>(sender()));
+
+	if(picker_idx < 0)
+		picker_idx = name_color_pickers.indexOf(dynamic_cast<ColorPickerWidget *>(sender()));
+
+	if(picker_idx >= 0)
+	{
+		model->scene->setLayerColors(picker_idx,
+																 name_color_pickers[picker_idx]->getColor(0),
+																 rect_color_pickers[picker_idx]->getColor(0));
+		model->updateModelLayers();
 	}
 }
 
@@ -166,8 +200,8 @@ void LayersConfigWidget::setLayersActive()
 
 	layers_tab->blockSignals(true);
 
-	for(auto &item : layers_tab->findItems("*", Qt::MatchWildcard))
-		item->setCheckState(chk_state);
+	for(int row = 0; row < layers_tab->rowCount(); row++)
+		layers_tab->item(row, 0)->setCheckState(chk_state);
 
 	layers_tab->blockSignals(false);
 	updateActiveLayers();
@@ -186,7 +220,7 @@ void LayersConfigWidget::toggleLayersRects()
 
 	model->getObjectsScene()->setLayerRectsVisible(toggle_layers_rects_chk->isChecked());
 	model->getObjectsScene()->setLayerNamesVisible(toggle_layers_names_chk->isChecked());
-	model->setModified(true);
+	model->updateModelLayers();
 	model->getDatabaseModel()->setObjectsModified({ ObjectType::Schema });
 }
 
@@ -196,6 +230,8 @@ void LayersConfigWidget::setModel(ModelWidget *model)
 
 	this->model = model;
 	layers_tab->setRowCount(0);
+	name_color_pickers.clear();
+	rect_color_pickers.clear();
 	add_tb->setEnabled(enable);
 
 	if(model)
@@ -205,11 +241,45 @@ void LayersConfigWidget::setModel(ModelWidget *model)
 		toggle_layers_rects_chk->blockSignals(false);
 
 		layers_tab->blockSignals(true);
-
 		for(auto &layer : model->scene->getLayers())
 			__addLayer(layer);
-
 		layers_tab->blockSignals(false);
+
+		int idx = 0, p_idx = 0;
+		QList<QStringList> colors_lists = {
+			model->getDatabaseModel()->getLayerNameColors(),
+			model->getDatabaseModel()->getLayerRectColors()
+		};
+
+		QList<QList<ColorPickerWidget*>*> pickers = { &name_color_pickers,
+																									&rect_color_pickers };
+
+		for(auto &cl_list : colors_lists)
+		{
+			idx = 0;
+
+			for(auto &cl : cl_list)
+			{
+				if(idx > pickers[p_idx]->size())
+					break;
+
+				pickers[p_idx]->at(idx)->blockSignals(true);
+				pickers[p_idx]->at(idx)->setColor(0, QColor(cl));
+				pickers[p_idx]->at(idx)->blockSignals(false);
+				idx++;
+			}
+
+			p_idx++;
+		}
+
+		toggle_layers_names_chk->blockSignals(true);
+		toggle_layers_names_chk->setChecked(model->getDatabaseModel()->isLayerNamesVisible());
+		toggle_layers_names_chk->setEnabled(model->getDatabaseModel()->isLayerNamesVisible());
+		toggle_layers_names_chk->blockSignals(false);
+
+		toggle_layers_rects_chk->blockSignals(true);
+		toggle_layers_rects_chk->setChecked(model->getDatabaseModel()->isLayerRectsVisible());
+		toggle_layers_rects_chk->blockSignals(false);
 	}
 }
 
@@ -225,16 +295,28 @@ void LayersConfigWidget::__addLayer(const QString &name)
 	item->setText(name);
 	item->setFlags(item->flags() | Qt::ItemIsUserCheckable);
 	item->setCheckState(Qt::Checked);
+	layers_tab->setItem(row, 0, item);
 
-	color_picker = new ColorPickerWidget(2, layers_tab);
+	color_picker = new ColorPickerWidget(1, layers_tab);
 	color_picker->setButtonToolTip(0, tr("Layer name color"));
-	color_picker->setButtonToolTip(1, tr("Layer rectangle color"));
 	color_picker->layout()->setContentsMargins(5,5,5,5);
 	color_picker->generateRandomColors();
-
-	layers_tab->setItem(row, 0, item);
+	name_color_pickers.append(color_picker);
+	connect(color_picker, SIGNAL(s_colorChanged(unsigned, QColor)), this, SLOT(updateLayerColors()));
+	connect(color_picker, SIGNAL(s_colorsChanged()), this, SLOT(updateLayerColors()));
 	layers_tab->setCellWidget(row, 1, color_picker);
+
+	color_picker = new ColorPickerWidget(1, layers_tab);
+	color_picker->setButtonToolTip(0, tr("Layer rectangle color"));
+	color_picker->layout()->setContentsMargins(5,5,5,5);
+	color_picker->generateRandomColors();
+	rect_color_pickers.append(color_picker);
+	connect(color_picker, SIGNAL(s_colorChanged(unsigned, QColor)), this, SLOT(updateLayerColors()));
+	connect(color_picker, SIGNAL(s_colorsChanged()), this, SLOT(updateLayerColors()));
+	layers_tab->setCellWidget(row, 2, color_picker);
+
 	layers_tab->resizeRowsToContents();
+	layers_tab->clearSelection();
 
 	enableButtons();
 }

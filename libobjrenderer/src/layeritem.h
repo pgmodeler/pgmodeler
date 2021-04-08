@@ -31,6 +31,9 @@
 
 class LayerItem : public QGraphicsPathItem {
 	private:
+		//! \brief Stores the text color of the item
+		QColor txt_color;
+
 		//! \brief Stores the rects used to generate the path that represents the layer
 		QList<QRectF> layer_rects;
 
@@ -62,6 +65,10 @@ class LayerItem : public QGraphicsPathItem {
 
 		//! \brief The text that is displayed o every rectagle of the layer
 		void setText(const QString &txt);
+
+		void setTextColor(const QColor &color);
+
+		QColor getTextColor(void);
 
 		void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = nullptr) override;
 

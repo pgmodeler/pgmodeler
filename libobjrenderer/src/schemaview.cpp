@@ -181,19 +181,42 @@ void SchemaView::configureObject()
 		QFont font;
 		double sp_h=0, sp_v=0, txt_h=0,
 		x1=1000000, y1=1000000, x2=-1000000, y2=-1000000, width=0,
-		height = 0, size_inc = 0;
+		height = 0, size_inc = 0, left_inc = 0, top_inc = 0;
 		QList<BaseObjectView *>::Iterator itr=children.begin();
 		BaseObjectView *obj_view = nullptr;
 		ObjectsScene *scene = dynamic_cast<ObjectsScene *>(this->scene());
+		QFontMetricsF fm(LayerItem::getDefaultFont());
+		QList<unsigned> act_layers = scene->getActiveLayersIds();
+		int num_layers = 0;
 
 		//Configures the bounding rect based upon the children dimension
 		while(itr!=children.end())
 		{
 			obj_view = dynamic_cast<BaseObjectView *>(*itr);
-			size_inc = (scene && scene->isLayerRectsVisible() ? LayerItem::LayerPadding * obj_view->getLayersCount() : 0);
 
-			rect.setTopLeft(obj_view->pos() - QPointF(size_inc, size_inc));
-			rect.setSize(obj_view->boundingRect().size() + QSizeF(2 * size_inc, 2 * size_inc));
+			if(scene)
+			{
+				num_layers = 0;
+
+				/* Determining the amount of visible layers of the object
+				 * in order to generated the correct bounding rect dimension */
+				for(auto &layer_id : obj_view->getLayers())
+				{
+					if(act_layers.contains(layer_id))
+						num_layers++;
+				}
+
+				size_inc = left_inc = top_inc = 0;
+
+				if(scene->isLayerRectsVisible())
+					size_inc = left_inc = top_inc = LayerItem::LayerPadding * num_layers;
+
+				if(scene->isLayerRectsVisible() && scene->isLayerNamesVisible())
+					top_inc = fm.height() * num_layers;
+			}
+
+			rect.setTopLeft(obj_view->pos() - QPointF(left_inc, top_inc));
+			rect.setSize(obj_view->boundingRect().size() + QSizeF(2 * size_inc, size_inc + top_inc));
 
 			if(rect.left() < x1)
 				x1 = rect.left();

@@ -125,7 +125,12 @@
         </column>
         <column>
          <property name="text">
-          <string>Colors</string>
+          <string>Text color</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>Rectangle color</string>
          </property>
         </column>
        </widget>

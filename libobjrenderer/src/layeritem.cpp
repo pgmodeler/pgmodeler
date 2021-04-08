@@ -46,6 +46,16 @@ void LayerItem::setText(const QString &txt)
 	text = txt;
 }
 
+void LayerItem::setTextColor(const QColor &color)
+{
+	txt_color = color;
+}
+
+QColor LayerItem::getTextColor()
+{
+	return txt_color;
+}
+
 void LayerItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
 	painter->save();
@@ -63,8 +73,8 @@ void LayerItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
 	painter->save();
 	painter->translate(0,0);
 	painter->setFont(font);
-	painter->setPen(QColor(0,0,0));
-	painter->setBrush(QColor(0,0,0));
+	painter->setPen(txt_color);
+	painter->setBrush(txt_color);
 
 	for(auto &brect : layer_rects)
 	{

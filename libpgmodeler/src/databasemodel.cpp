@@ -23,6 +23,7 @@
 #include <QtDebug>
 #include "qtcompat/splitbehaviorcompat.h"
 #include "qtcompat/qtextstreamcompat.h"
+#include <random>
 
 unsigned DatabaseModel::dbmodel_id=2000;
 
@@ -32,6 +33,7 @@ DatabaseModel::DatabaseModel()
 	object_id=DatabaseModel::dbmodel_id++;
 	obj_type=ObjectType::Database;
 
+	is_layer_names_visible = is_layer_rects_visible = false;
 	persist_changelog = false;
 	is_template = false;
 	allow_conns = true;
@@ -3266,6 +3268,35 @@ void DatabaseModel::loadModel(const QString &filename)
 			persist_changelog = attribs[Attributes::UseChangelog] == Attributes::True;
 			layers = attribs[Attributes::Layers].split(',', QtCompat::SkipEmptyParts);
 			active_layers.clear();
+
+			layer_name_colors = attribs[Attributes::LayerNameColors].split(',', QtCompat::SkipEmptyParts);
+			layer_rect_colors = attribs[Attributes::LayerRectColors].split(',', QtCompat::SkipEmptyParts);
+
+			is_layer_names_visible = attribs[Attributes::ShowLayerNames] == Attributes::True;
+			is_layer_rects_visible = attribs[Attributes::ShowLayerRects] == Attributes::True;
+
+
+			/*  Compatibility with models created prior the layers features:
+			 * If the layer rect colors is empty (probably a model generated in an older version)
+			 * we create random colors as fallback */
+			if(layer_rect_colors.isEmpty())
+			{
+				random_device rand_seed;
+				default_random_engine rand_num_engine;
+				uniform_int_distribution<unsigned> dist(0,255);
+
+				layer_name_colors.clear();
+				rand_num_engine.seed(rand_seed());
+
+				for(int i =0; i <= layers.size(); i++)
+				{
+					layer_rect_colors.append(QColor(dist(rand_num_engine),
+																					dist(rand_num_engine),
+																					dist(rand_num_engine)).name());
+
+					layer_name_colors.append(QColor(0,0,0).name());
+				}
+			}
 
 			/* Compatibility with models created prior the layers features:
 			 * If the "active-layers" is absent we make the default layer always visible */
@@ -7631,6 +7662,10 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 
 			attribs_aux[Attributes::Layers]=layers.join(',');
 			attribs_aux[Attributes::ActiveLayers]=act_layers.join(',');
+			attribs_aux[Attributes::LayerNameColors]=layer_name_colors.join(',');
+			attribs_aux[Attributes::LayerRectColors]=layer_rect_colors.join(',');
+			attribs_aux[Attributes::ShowLayerNames]=(is_layer_names_visible ? Attributes::True : Attributes::False);
+			attribs_aux[Attributes::ShowLayerRects]=(is_layer_rects_visible ? Attributes::True : Attributes::False);
 			attribs_aux[Attributes::MaxObjCount]=QString::number(static_cast<unsigned>(getMaxObjectCount() * 1.20));
 			attribs_aux[Attributes::Protected]=(this->is_protected ? Attributes::True : "");
 			attribs_aux[Attributes::LastPosition]=QString("%1,%2").arg(last_pos.x()).arg(last_pos.y());
@@ -11242,6 +11277,46 @@ void DatabaseModel::setActiveLayers(const QList<unsigned> &layers)
 QList<unsigned> DatabaseModel::getActiveLayers()
 {
 	return active_layers;
+}
+
+void DatabaseModel::setLayerNameColors(const QStringList &color_names)
+{
+	layer_name_colors = color_names;
+}
+
+QStringList DatabaseModel::getLayerNameColors()
+{
+	return layer_name_colors;
+}
+
+void DatabaseModel::setLayerRectColors(const QStringList &color_names)
+{
+	layer_rect_colors = color_names;
+}
+
+void DatabaseModel::setLayerNamesVisible(bool value)
+{
+	is_layer_names_visible = value;
+}
+
+void DatabaseModel::setLayerRectsVisible(bool value)
+{
+	is_layer_rects_visible = value;
+}
+
+QStringList DatabaseModel::getLayerRectColors()
+{
+	return layer_rect_colors;
+}
+
+bool DatabaseModel::isLayerNamesVisible()
+{
+	return is_layer_names_visible;
+}
+
+bool DatabaseModel::isLayerRectsVisible()
+{
+	return is_layer_rects_visible;
 }
 
 void DatabaseModel::addChangelogEntry(BaseObject *object, unsigned op_type, BaseObject *parent_obj)

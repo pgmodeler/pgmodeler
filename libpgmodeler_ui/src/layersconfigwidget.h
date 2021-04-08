@@ -28,6 +28,7 @@
 #include <QWidget>
 #include "ui_layersconfigwidget.h"
 #include "modelwidget.h"
+#include "colorpickerwidget.h"
 
 class LayersConfigWidget : public QWidget, Ui::LayersConfigWidget {
 	private:
@@ -51,6 +52,10 @@ class LayersConfigWidget : public QWidget, Ui::LayersConfigWidget {
 
 		//! \brief Stores the current's item row
 		int curr_row;
+
+		QList<ColorPickerWidget *> rect_color_pickers,
+
+		name_color_pickers;
 
 		bool eventFilter(QObject *watched, QEvent *event) override;
 
@@ -79,6 +84,9 @@ class LayersConfigWidget : public QWidget, Ui::LayersConfigWidget {
 
 		//! \brief Remove a layer from the listing. If 'clear' is true them all layers (except the default) are removed
 		void removeLayer(bool clear = false);
+
+		//! \brief Updates the colors of a layer that is associated with the calling color picker widget.
+		void updateLayerColors();
 
 		//! \brief Enables the control buttons according to the selection on the list
 		void enableButtons();
