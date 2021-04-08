@@ -113,8 +113,17 @@ class BaseObjectView: public QObject, public QGraphicsItemGroup {
 
 		void setSelectionOrder(bool selected);
 
-		//! \brief Defines in which layer the object is visible
-		void setLayer(unsigned layer);
+		//! \brief Defines in which layers the object is visible
+		void setLayers(const QList<unsigned> &list);
+
+		//! \brief Add the object to the layer specified by the id
+		void addToLayer(unsigned layer_id);
+
+		//! \brief Remove the object from the layer specified by the id
+		void removeFromLayer(unsigned layer_id);
+
+		//! \brief Clear all the ids and moves the object to default layer (0)
+		void resetLayers();
 
 	public:
 		static constexpr double VertSpacing=2.0,
@@ -193,8 +202,13 @@ class BaseObjectView: public QObject, public QGraphicsItemGroup {
 		//! \brief Returns the current factor between the default font size and the current defined one
 		static double getFontFactor();
 
-		//! \brief Returns the layer in which the object is visible
-		unsigned getLayer();
+		//! \brief Returns the layers in which the object is visible
+		QList<unsigned> getLayers();
+
+		//! \brief Returns true if the object is in the provided layer
+		bool isInLayer(unsigned layer_id);
+
+		int getLayersCount();
 
 	protected slots:
 		//! \brief Make the basic object operations

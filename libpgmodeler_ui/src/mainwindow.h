@@ -50,7 +50,7 @@
 #include "configurationform.h"
 #include "donatewidget.h"
 #include "sceneinfowidget.h"
-#include "layerswidget.h"
+#include "layersconfigwidget.h"
 #include "changelogwidget.h"
 
 class MainWindow: public QMainWindow, public Ui::MainWindow {
@@ -85,7 +85,7 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 		SceneInfoWidget *scene_info_wgt;
 
 		//! \brief Layers management widget
-		LayersWidget *layers_wgt;
+		LayersConfigWidget *layers_wgt;
 
 		//! \brief Layers management widget
 		ChangelogWidget *changelog_wgt;

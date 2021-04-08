@@ -27,14 +27,15 @@ QPrinter::Orientation ObjectsScene::page_orientation=QPrinter::Landscape;
 QRectF ObjectsScene::page_margins=QRectF(2,2,2,2);
 QSizeF ObjectsScene::custom_paper_size=QSizeF(0,0);
 QBrush ObjectsScene::grid;
+QColor ObjectsScene::grid_color = QColor(225, 225, 225);
+QColor ObjectsScene::canvas_color = QColor(255, 255, 255);
+QColor ObjectsScene::delimiters_color = QColor(75,115,195);
 bool ObjectsScene::corner_move=true;
 bool ObjectsScene::invert_rangesel_trigger=false;
 
 ObjectsScene::ObjectsScene()
-{
-	layers.push_back(tr("Default layer"));
-	active_layers.push_back(layers.at(0));
-
+{		
+	is_layer_rects_visible=is_layer_names_visible=false;
 	moving_objs=move_scene=false;
 	enable_range_sel=true;
 	this->setBackgroundBrush(grid);
@@ -82,6 +83,13 @@ ObjectsScene::~ObjectsScene()
 
 	delete selection_rect;
 	delete rel_line;
+
+	while(!layers_paths.isEmpty())
+	{
+		removeItem(layers_paths.front());
+		delete layers_paths.front();
+		layers_paths.pop_front();
+	}
 
 	//Destroy the objects in the order defined on obj_types vector
 	for(auto &type : obj_types)
@@ -147,11 +155,25 @@ QString ObjectsScene::addLayer(const QString &name)
 	if(name.isEmpty())
 		return "";
 
+	LayerItem *layer_item = new LayerItem;
 	QString fmt_name = formatLayerName(name);
+
 	layers.push_back(fmt_name);
+	layers_paths.append(layer_item);
+
+	layer_item->setZValue(-100 - layers.size());
+	layer_item->setEnabled(false);
+	layer_item->setVisible(false);
+	addItem(layer_item);
 
 	emit s_layersChanged();
 	return fmt_name;
+}
+
+void ObjectsScene::addLayers(const QStringList &names)
+{
+	for(auto &name : names)
+		addLayer(name);
 }
 
 QString ObjectsScene::renameLayer(unsigned idx, const QString &name)
@@ -160,9 +182,17 @@ QString ObjectsScene::renameLayer(unsigned idx, const QString &name)
 		return "";
 
 	if(name != layers[idx])
-		layers[idx] = formatLayerName(name);
+	{
+		QString old_name = layers[idx],
+				new_name = formatLayerName(name);
 
-	emit s_layersChanged();
+		layers[idx] = new_name;
+		active_layers.replaceInStrings(QRegExp(QString("^(%1)$").arg(old_name)), new_name);
+
+		updateLayerRects();
+		emit s_layersChanged();
+	}
+
 	return layers[idx];
 }
 
@@ -172,22 +202,41 @@ void ObjectsScene::removeLayer(const QString &name)
 
 	if(idx > 0)
 	{
-		moveObjectsToLayer(idx, DefaultLayer);
+		LayerItem *path_item = layers_paths.at(idx);
+
+		validateLayerRemoval(idx);
+
 		layers.removeAll(name);
 		active_layers.removeAll(name);
+		layers_paths.removeAt(idx);
+
+		removeItem(path_item);
+		delete path_item;
+
+		updateLayerRects();
 		emit s_layersChanged();
 	}
 }
 
 void ObjectsScene::removeLayers()
 {
+	LayerItem *layer_path = nullptr;
 	BaseObjectView *obj_view = nullptr;
 	QString def_layer = layers[DefaultLayer];
 	bool is_active = active_layers.contains(def_layer);
 
 	layers.clear();
 	active_layers.clear();
-	layers.push_back(def_layer);
+
+	while(layers_paths.size() > 1)
+	{
+		layer_path = layers_paths.back();
+		removeItem(layer_path);
+		delete(layer_path);
+		layers_paths.pop_back();
+	}
+
+	layers.append(def_layer);
 
 	if(is_active)
 		active_layers.push_back(def_layer);
@@ -196,9 +245,9 @@ void ObjectsScene::removeLayers()
 	{
 		obj_view = dynamic_cast<BaseObjectView *>(item);
 
-		if(obj_view && !obj_view->parentItem() && obj_view->getLayer() != DefaultLayer)
+		if(obj_view && !obj_view->parentItem())
 		{
-			obj_view->setLayer(DefaultLayer);
+			obj_view->resetLayers();
 			obj_view->setVisible(is_active);
 		}
 	}
@@ -238,10 +287,19 @@ void ObjectsScene::setActiveLayers(QList<unsigned> layers_idxs)
 		{
 			obj_view = dynamic_cast<BaseObjectView *>(item);
 
-			if(obj_view && !obj_view->parentItem() && obj_view->getLayer() < layer_cnt)
+			if(obj_view && !obj_view->parentItem())
 			{
 				sch_view = dynamic_cast<SchemaView *>(obj_view);
-				is_in_layer = layers_idxs.contains(obj_view->getLayer());
+				is_in_layer = false;
+
+				for(auto &idx : layers_idxs)
+				{
+					if(obj_view->isInLayer(idx))
+					{
+						is_in_layer = true;
+						break;
+					}
+				}
 
 				if(!obj_view->isVisible() && is_in_layer)
 				{
@@ -271,25 +329,138 @@ void ObjectsScene::setActiveLayers(QList<unsigned> layers_idxs)
 		}
 	}
 
+	updateLayerRects();
 	emit s_activeLayersChanged();
 }
 
-void ObjectsScene::moveObjectsToLayer(unsigned old_layer, unsigned new_layer)
+void ObjectsScene::updateLayerRects()
+{
+	if(layers_paths.isEmpty())
+		return;
+
+	for(auto &path : layers_paths)
+		path->setVisible(false);
+
+	if(!is_layer_rects_visible)
+		return;
+
+	int idx = 0, act_layer_idx = 0;
+	BaseObjectView *obj_view = nullptr;
+	ObjectType obj_type;
+	QRectF brect;
+	QMap<int, QList<QRectF>> rects;
+	QFontMetricsF fm(LayerItem::getDefaultFont());
+
+	for(auto &item : this->items())
+	{
+		obj_view = dynamic_cast<BaseObjectView *>(item);
+
+		if(obj_view && !obj_view->parentItem())
+		{
+			obj_type = 	obj_view->getUnderlyingObject()->getObjectType();
+
+			/* Schemas and relationship are ignored when determining the paths for the layers
+			 * because since these objects can have big bounding rects it may polute. For now
+			 * only table-like objects and textboxes can display layer boxes. */
+			if(obj_type == ObjectType::Schema ||
+				 obj_type ==ObjectType::BaseRelationship ||
+				 obj_type ==ObjectType::Relationship)
+				continue;
+
+			brect = obj_view->boundingRect();
+			brect.moveTo(obj_view->pos());
+
+			for(auto &layer_id : obj_view->getLayers())
+			{
+				if(static_cast<int>(layer_id) >= layers.size() ||
+					 !active_layers.contains(layers.at(layer_id)))
+					continue;
+
+				/* We need to adjust the bounding rect dimension in such a way
+				 * to take into account the font height (if the layer names are visible)
+				 * as well as a default padding so the rectangles doesn't have the same size
+				 * of the object's bounding rect */
+				brect.adjust(-LayerItem::LayerPadding,
+										 (is_layer_names_visible ? -fm.height() : -LayerItem::LayerPadding),
+										 LayerItem::LayerPadding,
+										 LayerItem::LayerPadding);
+
+				rects[layer_id].append(brect);
+			}
+		}
+	}
+
+	//Based the active layers we reconfigure the graphical items of each layer
+	for(auto &layer_name : active_layers)
+	{
+		idx = layers.indexOf(layer_name);
+		layers_paths[idx]->setTextAlignment(act_layer_idx % 2 == 0 ? Qt::AlignLeft : Qt::AlignRight);
+		layers_paths[idx]->setText(is_layer_names_visible ? layer_name : "");
+		layers_paths[idx]->setRects(rects[idx]);
+		layers_paths[idx]->setVisible(true);
+		act_layer_idx++;
+	}
+}
+
+void ObjectsScene::setLayerRectsVisible(bool value)
+{
+	is_layer_rects_visible = value;
+	updateLayerRects();
+}
+
+void ObjectsScene::setLayerNamesVisible(bool value)
+{
+	is_layer_names_visible = value;
+	updateLayerRects();
+}
+
+bool ObjectsScene::isLayerRectsVisible()
+{
+	return is_layer_rects_visible;
+}
+
+bool ObjectsScene::isLayerNamesVisible()
+{
+	return is_layer_names_visible;
+}
+
+void ObjectsScene::validateLayerRemoval(unsigned old_layer)
 {
 	BaseObjectView *obj_view = nullptr;
 	unsigned total_layers = layers.size();
+	QList<unsigned> obj_layers;
 
-	if(old_layer == new_layer || old_layer >= total_layers || new_layer >= total_layers)
+	if(old_layer == DefaultLayer || old_layer >= total_layers)
 		return;
 
 	for(auto &item : this->items())
 	{
 		obj_view = dynamic_cast<BaseObjectView *>(item);
 
-		if(obj_view && !obj_view->parentItem() && obj_view->getLayer() == old_layer)
+		if(obj_view && !obj_view->parentItem())
 		{
-			obj_view->setLayer(new_layer);
-			obj_view->setVisible(isLayerActive(layers[new_layer]));
+			// Remove the object from the layer to be deleted and add it to the default one
+			if(obj_view->isInLayer(old_layer))
+			{
+				obj_view->removeFromLayer(old_layer);
+				obj_view->addToLayer(DefaultLayer);
+				obj_view->setVisible(isLayerActive(layers[DefaultLayer]));
+			}
+
+			/* Shifting the remainging layers ids if the layer to be removed is
+			 * >= 1 or < layers.size(). For example, if we have the following layers:
+			 * (0, 1, 2, 3). If the layer 1 is to be deleted, then there's the need to
+			 * shift the ids (2, 3) to (1, 2) since after the delition of the layer 1
+			 * the id 3 is invalid */
+			obj_layers = obj_view->getLayers();
+
+			for(auto &layer_id : obj_layers)
+			{
+				if(layer_id > old_layer)
+					layer_id--;
+			}
+
+			obj_view->setLayers(obj_layers);
 		}
 	}
 
@@ -307,6 +478,17 @@ bool ObjectsScene::isLayerActive(unsigned layer_id)
 		return false;
 
 	return active_layers.contains(layers[layer_id]);
+}
+
+bool ObjectsScene::isLayersActive(const QList<unsigned> &list)
+{
+	for(auto &id : list)
+	{
+		if(id < static_cast<unsigned>(layers.size()) && active_layers.contains(layers[id]))
+			return true;
+	}
+
+	return false;
 }
 
 QStringList ObjectsScene::getActiveLayers()
@@ -329,15 +511,65 @@ QStringList ObjectsScene::getLayers()
 	return layers;
 }
 
-unsigned ObjectsScene::getLayerId(const QString &name)
-{
-	int idx = layers.contains(name);
-	return idx < 0 ? InvalidLayer : static_cast<unsigned>(idx);
-}
-
 void ObjectsScene::updateActiveLayers()
 {
 	setActiveLayers(active_layers);
+}
+
+QStringList ObjectsScene::getLayerColorNames(unsigned color_id)
+{
+	if(color_id > LayerRectColor)
+		return {};
+
+	QStringList colors;
+
+	for(auto &path : layers_paths)
+		colors.append(color_id == LayerNameColor ? path->getTextColor().name() : path->brush().color().name());
+
+	return colors;
+}
+
+void ObjectsScene::setLayerColors(int layer_id, QColor txt_color, QColor bg_color)
+{
+	if(layer_id >= layers_paths.size())
+		return;
+
+	layers_paths[layer_id]->setTextColor(txt_color);
+	layers_paths[layer_id]->setPen(QPen(bg_color, BaseObjectView::ObjectBorderWidth * BaseObjectView::getScreenDpiFactor()));
+
+	bg_color.setAlpha(BaseObjectView::ObjectAlphaChannel * 0.80);
+	layers_paths[layer_id]->setBrush(bg_color);
+
+	layers_paths[layer_id]->update();
+}
+
+void ObjectsScene::setLayerColors(unsigned layer_attr_id, const QStringList &colors)
+{
+	if(layer_attr_id > LayerRectColor)
+		return;
+
+	int idx = 0;
+	QColor color;
+
+	for(auto &cl_name : colors)
+	{
+		if(idx >= layers_paths.size())
+			break;
+
+		color = QColor(cl_name);
+
+		if(layer_attr_id == LayerNameColor)
+			layers_paths[idx]->setTextColor(color);
+		else
+		{
+			layers_paths[idx]->setPen(QPen(color, BaseObjectView::ObjectBorderWidth * BaseObjectView::getScreenDpiFactor()));
+
+			color.setAlpha(BaseObjectView::ObjectAlphaChannel * 0.80);
+			layers_paths[idx]->setBrush(color);
+		}
+
+		idx++;
+	}
 }
 
 void ObjectsScene::setEnableCornerMove(bool enable)
@@ -457,12 +689,12 @@ void ObjectsScene::setGridSize(unsigned size)
 
 		grid_size=size;
 		grid_img=QImage(img_w, img_h, QImage::Format_ARGB32);
-		grid_img.fill(Qt::white);
+		grid_img.fill(canvas_color);
 		painter.begin(&grid_img);
 
 		if(show_grid)
 		{
-			pen.setColor(QColor(225, 225, 225));
+			pen.setColor(grid_color);
 			painter.setPen(pen);
 
 			//Draws the grid
@@ -474,7 +706,7 @@ void ObjectsScene::setGridSize(unsigned size)
 		//Creates the page delimiter lines
 		if(show_page_delim)
 		{
-			pen.setColor(QColor(75,115,195));
+			pen.setColor(delimiters_color);
 			pen.setStyle(Qt::DashLine);
 			pen.setWidthF(1.0);
 			painter.setPen(pen);
@@ -660,6 +892,7 @@ void ObjectsScene::addItem(QGraphicsItem *item)
 		RelationshipView *rel=dynamic_cast<RelationshipView *>(item);
 		BaseTableView *tab=dynamic_cast<BaseTableView *>(item);
 		BaseObjectView *obj=dynamic_cast<BaseObjectView *>(item);
+		TextboxView *txtbox=dynamic_cast<TextboxView *>(item);
 
 		if(rel)
 			connect(rel, SIGNAL(s_relationshipModified(BaseGraphicObject*)), this, SIGNAL(s_objectModified(BaseGraphicObject*)));
@@ -675,13 +908,19 @@ void ObjectsScene::addItem(QGraphicsItem *item)
 
 		if(obj)
 		{		
-			obj->setVisible(isLayerActive(obj->getLayer()));
+			obj->setVisible(isLayersActive(obj->getLayers()));
 
 			// Relationships and schemas don't have their z value changed
 			if(!rel && !dynamic_cast<SchemaView *>(item))
 				obj->setZValue(dynamic_cast<BaseGraphicObject *>(obj->getUnderlyingObject())->getZValue());
 
 			connect(obj, SIGNAL(s_objectSelected(BaseGraphicObject*,bool)), this, SLOT(handleObjectSelection(BaseGraphicObject*,bool)));
+
+			// Tables and textboxes are observed for dimension changes so the layers they are in are correctly updated
+			if(tab || txtbox)
+				connect(obj, SIGNAL(s_objectDimensionChanged()), this, SLOT(updateLayerRects()));
+
+			updateLayerRects();
 		}
 
 		QGraphicsScene::addItem(item);
@@ -704,6 +943,8 @@ void ObjectsScene::removeItem(QGraphicsItem *item)
 
 		if(object)
 		{
+			updateLayerRects();
+
 			disconnect(object, nullptr, this, nullptr);
 			disconnect(object, nullptr, dynamic_cast<BaseGraphicObject*>(object->getUnderlyingObject()), nullptr);
 			disconnect(dynamic_cast<BaseGraphicObject*>(object->getUnderlyingObject()), nullptr, object, nullptr);
@@ -805,6 +1046,36 @@ void ObjectsScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
 
 		emit s_popupMenuRequested();
 	}
+}
+
+void ObjectsScene::setGridColor(const QColor &value)
+{
+	grid_color = value;
+}
+
+QColor ObjectsScene::getGridColor()
+{
+	return grid_color;
+}
+
+void ObjectsScene::setCanvasColor(const QColor &value)
+{
+	canvas_color = value;
+}
+
+QColor ObjectsScene::getCanvasColor()
+{
+	return canvas_color;
+}
+
+void ObjectsScene::setDelimitersColor(const QColor &value)
+{
+	delimiters_color = value;
+}
+
+QColor ObjectsScene::getDelimitersColor()
+{
+	return delimiters_color;
 }
 
 bool ObjectsScene::mouseIsAtCorner()
@@ -1091,6 +1362,7 @@ void ObjectsScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 	if(!this->selectedItems().isEmpty() && moving_objs && event->button()==Qt::LeftButton/* && event->modifiers()==Qt::NoModifier */)
 	{
 		finishObjectsMove(event->scenePos());
+		updateLayerRects();
 	}
 	else if(selection_rect->isVisible() && event->button()==Qt::LeftButton)
 	{

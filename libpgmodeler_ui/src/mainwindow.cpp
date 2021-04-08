@@ -39,7 +39,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	pending_op=NoPendingOp;
 	central_wgt=nullptr;
 
-	layers_wgt = new LayersWidget(this);
+	layers_wgt = new LayersConfigWidget(this);
 	layers_wgt->setVisible(false);
 
 	changelog_wgt  = new ChangelogWidget(this);
@@ -1003,7 +1003,6 @@ void MainWindow::addModel(ModelWidget *model_wgt)
 			throw Exception(ErrorCode::AsgWidgetAlreadyHasParent,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		model_nav_wgt->addModel(model_wgt);
-
 		models_tbw->blockSignals(true);
 		models_tbw->addTab(model_wgt, model_wgt->getDatabaseModel()->getName());
 		models_tbw->setCurrentIndex(models_tbw->count()-1);

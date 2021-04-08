@@ -74,7 +74,7 @@ RelationshipView::RelationshipView(BaseRelationship *rel) : BaseObjectView(rel)
 		this->addToGroup(line_circles[i]);
 	}
 
-	this->setZValue(-99);
+	this->setZValue(-50);
 	this->configureObject();
 }
 

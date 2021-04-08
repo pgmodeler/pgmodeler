@@ -200,6 +200,9 @@ class PgModelerCliApp: public Application {
 		//! \brief Returns if the specified options exists on short options map
 		bool isOptionRecognized(QString &op, bool &accepts_val);
 
+		//! \brief Loads the input model and perform all tasks needed to configure the graphical objects
+		void loadModel();
+
 		/*! \brief Extracts the xml defintions from the input model and store them on obj_xml list
 		in order to be parsed by the recreateObjects() method */
 		void extractObjectXML();

@@ -56,8 +56,8 @@ class BaseGraphicObject: public QObject, public BaseObject {
 		QObject *receiver_object;
 
 	protected:
-		//! \brief This attributes holds the layer in which the object is visible.
-		unsigned layer;
+		//! \brief This attribute holds the layers in which the object is visible.
+		QList<unsigned> layers;
 
 		//! \brief Stores the table's Z position in the canvas
 		int z_value;
@@ -70,6 +70,8 @@ class BaseGraphicObject: public QObject, public BaseObject {
 		void setReceiverObject(QObject *obj);
 
 		void setFadedOutAttribute();
+
+		void setLayersAttribute();
 
 	public:
 		static constexpr int MaxZValue = 50,
@@ -121,11 +123,26 @@ class BaseGraphicObject: public QObject, public BaseObject {
 		//! \brief Returns if the passed type one that has a graphical representation (table, view, schema, relationship or textbox)
 		static bool isGraphicObject(ObjectType type);
 
-		//! \brief Defines in which layer the object is visible
-		void setLayer(unsigned layer);
+		//! \brief Defines in which layers the object is visible
+		void setLayers(QStringList list);
+		void setLayers(QList<unsigned> list);
 
-		//! \brief Returns the layer in which the object is visible
-		unsigned getLayer();
+		//! \brief Add the object to the layer specified by the id
+		void addToLayer(unsigned layer_id);
+
+		//! \brief Remove the object from the layer specified by the id
+		void removeFromLayer(unsigned layer_id);
+
+		//! \brief Clear all the ids and moves the object to default layer (0)
+		void resetLayers();
+
+		//! \brief Returns the layers that the object is visible
+		QList<unsigned> getLayers();
+
+		//! \brief Returns true if the object is in the provided layer
+		bool isInLayer(unsigned layer_id);
+
+		int getLayersCount();
 
 		virtual void setZValue(int z_value);
 
@@ -134,6 +151,7 @@ class BaseGraphicObject: public QObject, public BaseObject {
 	signals:
 		//! \brief Signal emitted when the user calls the setModified() method
 		void s_objectModified();
+
 		//! \brief Signal emitted when the user calls the setProtected() method
 		void s_objectProtected(bool);
 

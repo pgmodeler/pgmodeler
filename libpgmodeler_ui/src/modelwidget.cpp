@@ -95,7 +95,7 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 																																		 ObjectType::BaseRelationship});
 
 	current_zoom=1;
-	modified=panning_mode=false;
+	modified = panning_mode = false;
 	new_obj_type=ObjectType::BaseObject;
 
 	//Generating a temporary file name for the model
@@ -267,8 +267,13 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	action_moveto_schema=new QAction(QIcon(PgModelerUiNs::getIconPath("movetoschema")), tr("Move to schema"), this);
 	action_moveto_schema->setMenu(&schemas_menu);
 
-	action_moveto_layer=new QAction(QIcon(PgModelerUiNs::getIconPath("movetolayer")), tr("Move to layer"), this);
-	action_moveto_layer->setMenu(&layers_menu);
+	action_set_layer=new QAction(QIcon(PgModelerUiNs::getIconPath("movetolayer")), tr("Set layers"), this);
+	action_set_layer->setMenu(&layers_menu);
+
+	layers_wgt = new LayersWidget(this);
+	wgt_action_layers = new QWidgetAction(this);
+	wgt_action_layers->setDefaultWidget(layers_wgt);
+	layers_menu.addAction(wgt_action_layers);
 
 	action_set_tag=new QAction(QIcon(PgModelerUiNs::getIconPath("tag")), tr("Set tag"), this);
 	action_set_tag->setMenu(&tags_menu);
@@ -533,17 +538,20 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	connect(scene, &ObjectsScene::s_paginationToggled, [&](){ setModified(true); });
 	connect(scene, &ObjectsScene::s_currentPageChanged, [&](){ setModified(true); });
 	connect(scene, &ObjectsScene::s_objectsMovedLayer, [&](){ setModified(true); });
-	connect(scene, SIGNAL(s_layersChanged()), this, SLOT(updateModelLayers()));
-	connect(scene, SIGNAL(s_activeLayersChanged()), this, SLOT(updateModelLayers()));
+	connect(scene, SIGNAL(s_layersChanged()), this, SLOT(updateModelLayersInfo()));
+	connect(scene, SIGNAL(s_activeLayersChanged()), this, SLOT(updateModelLayersInfo()));
 	connect(scene, SIGNAL(s_popupMenuRequested(BaseObject*)), new_obj_overlay_wgt, SLOT(hide()));
 	connect(scene, SIGNAL(s_popupMenuRequested()), new_obj_overlay_wgt, SLOT(hide()));
 	connect(scene, SIGNAL(s_objectSelected(BaseGraphicObject*,bool)), new_obj_overlay_wgt, SLOT(hide()));
 	connect(scene, SIGNAL(s_childrenSelectionChanged()), new_obj_overlay_wgt, SLOT(hide()));
 	connect(scene, SIGNAL(s_objectsScenePressed(Qt::MouseButtons)), new_obj_overlay_wgt, SLOT(hide()));
+	connect(&popup_menu, SIGNAL(aboutToHide()), this, SLOT(updateObjectsLayers()));
 
 	viewport->installEventFilter(this);
 	viewport->horizontalScrollBar()->installEventFilter(this);
 	viewport->verticalScrollBar()->installEventFilter(this);
+
+	updateSceneLayers();
 }
 
 ModelWidget::~ModelWidget()
@@ -1612,16 +1620,9 @@ void ModelWidget::loadModel(const QString &filename)
 
 		db_model->loadModel(filename);
 		this->filename=filename;
-		this->adjustSceneSize();
-		this->updateObjectsOpacity();
-
-		scene->blockSignals(true);
-
-		for(auto &layer : db_model->getLayers())
-			scene->addLayer(layer);
-
-		scene->setActiveLayers(db_model->getActiveLayers());
-		scene->blockSignals(false);
+		adjustSceneSize();
+		updateObjectsOpacity();
+		updateSceneLayers();
 
 		task_prog_wgt.close();
 		protected_model_frm->setVisible(db_model->isProtected());
@@ -1633,6 +1634,23 @@ void ModelWidget::loadModel(const QString &filename)
 		setModified(false);
 		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
+}
+
+void ModelWidget::updateSceneLayers()
+{
+	scene->blockSignals(true);
+
+	scene->addLayers(db_model->getLayers());
+	scene->setActiveLayers(db_model->getActiveLayers());
+	scene->setLayerColors(ObjectsScene::LayerNameColor, db_model->getLayerNameColors());
+	scene->setLayerColors(ObjectsScene::LayerRectColor, db_model->getLayerRectColors());
+	scene->setLayerNamesVisible(db_model->isLayerNamesVisible());
+	scene->setLayerRectsVisible(db_model->isLayerRectsVisible());
+
+	if(db_model->isLayerRectsVisible())
+		db_model->setObjectsModified({ ObjectType::Schema });
+
+	scene->blockSignals(false);
 }
 
 void ModelWidget::adjustSceneSize()
@@ -2136,7 +2154,7 @@ void ModelWidget::showObjectForm(ObjectType obj_type, BaseObject *object, BaseOb
 		if(res==QDialog::Accepted)
 		{
 			setModified(true);
-			this->db_model->setInvalidated(true);
+			db_model->setInvalidated(true);
 			emit s_objectManipulated();
 		}
 		else
@@ -2282,21 +2300,10 @@ void ModelWidget::moveToSchema()
 	}
 }
 
-void ModelWidget::moveToLayer()
+void ModelWidget::updateObjectsLayers()
 {
-	QAction *act = dynamic_cast<QAction *>(sender());
-	BaseGraphicObject *graph_obj = nullptr;
-	unsigned layer_id = act->data().toUInt();
-
-	for(auto &obj : selected_objects)
-	{
-		graph_obj = dynamic_cast<BaseGraphicObject *>(obj);
-
-		if(!graph_obj)
-			continue;
-
-		graph_obj->setLayer(layer_id);
-	}
+	if(!layers_wgt->isLayersChanged())
+		return;
 
 	QApplication::setOverrideCursor(Qt::WaitCursor);
 	scene->updateActiveLayers();
@@ -3643,20 +3650,6 @@ void ModelWidget::configureQuickMenu(BaseObject *object)
 			}
 		}
 
-		// Configuring the layers menu
-		if(is_graph_obj)
-		{
-			unsigned layer_id = ObjectsScene::DefaultLayer;
-			layers_menu.clear();
-
-			for(auto &layer : scene->getLayers())
-			{
-				act = layers_menu.addAction(layer);
-				act->setData(layer_id++);
-				connect(act, SIGNAL(triggered(bool)), this, SLOT(moveToLayer()));
-			}
-		}
-
 		//Display the quick rename action is a single object is selected
 		if((object && obj_type != ObjectType::Cast) || (sel_objs.size() > 1))
 		{
@@ -3668,7 +3661,10 @@ void ModelWidget::configureQuickMenu(BaseObject *object)
 			quick_actions_menu.addAction(action_moveto_schema);
 
 		if(is_graph_obj)
-			quick_actions_menu.addAction(action_moveto_layer);
+		{
+			quick_actions_menu.addAction(action_set_layer);
+			layers_wgt->setAttributes(scene->getLayers(), selected_objects);
+		}
 
 		if(accepts_owner)
 			quick_actions_menu.addAction(action_change_owner);
@@ -3829,7 +3825,7 @@ void ModelWidget::fadeObjects(const vector<BaseObject *> &objects, bool fade_in)
 			obj_view->setOpacity(fade_in ? 1 : min_object_opacity);
 
 			//If the minimum opacity is zero the object hidden
-			obj_view->setVisible(scene->isLayerActive(obj_view->getLayer()) && (fade_in || (!fade_in && min_object_opacity > 0)));
+			obj_view->setVisible(scene->isLayersActive(obj_view->getLayers()) && (fade_in || (!fade_in && min_object_opacity > 0)));
 
 			setModified(true);
 		}
@@ -3937,6 +3933,7 @@ void ModelWidget::setAllCollapseMode(CollapseMode mode)
 	this->scene->clearSelection();
 	objects.assign(db_model->getObjectList(ObjectType::Table)->begin(), db_model->getObjectList(ObjectType::Table)->end());
 	objects.insert(objects.end(), db_model->getObjectList(ObjectType::View)->begin(), db_model->getObjectList(ObjectType::View)->end());
+	objects.insert(objects.end(), db_model->getObjectList(ObjectType::ForeignTable)->begin(), db_model->getObjectList(ObjectType::ForeignTable)->end());
 
 	for(auto obj : objects)
 	{
@@ -5041,13 +5038,16 @@ void ModelWidget::editTableData()
 	emit s_objectManipulated();
 }
 
-void ModelWidget::updateModelLayers()
+void ModelWidget::updateModelLayersInfo()
 {
 	QStringList layers = scene->getLayers();
 
-	layers.removeAt(0);
 	db_model->setLayers(layers);
 	db_model->setActiveLayers(scene->getActiveLayersIds());
+	db_model->setLayerNameColors(scene->getLayerColorNames(ObjectsScene::LayerNameColor));
+	db_model->setLayerRectColors(scene->getLayerColorNames(ObjectsScene::LayerRectColor));
+	db_model->setLayerNamesVisible(scene->isLayerNamesVisible());
+	db_model->setLayerRectsVisible(scene->isLayerRectsVisible());
 	setModified(true);
 }
 

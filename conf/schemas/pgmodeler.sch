@@ -9,6 +9,9 @@
 <pgmodeler> $br
 $sp [<configuration op-list-size="] {op-list-size} ["] $br
 [               grid-size="] {grid-size} ["] $br
+[               grid-color="] {grid-color} ["] $br
+[               canvas-color="] {canvas-color} ["] $br
+[               delimiters-color="] {delimiters-color} ["] $br
 [               autosave-interval="] {autosave-interval} ["] $br
 [               paper-type="] {paper-type} ["] $br
 [               paper-orientation="] {paper-orientation} ["] $br

@@ -85,7 +85,6 @@ const QString PgModelerCliApp::RevokePermissions("--revoke-perms");
 const QString PgModelerCliApp::DropMissingObjs("--drop-missing");
 const QString PgModelerCliApp::ForceDropColsConstrs("--force-drop-cols");
 const QString PgModelerCliApp::RenameDb("--rename-db");
-//const QString PgModelerCliApp::TruncOnColsTypeChange("--trunc-type-change");
 const QString PgModelerCliApp::NoSequenceReuse("--no-sequence-reuse");
 const QString PgModelerCliApp::NoCascadeDrop("--no-cascade");
 const QString PgModelerCliApp::ForceRecreateObjs("--force-recreate-objs");
@@ -937,7 +936,7 @@ void PgModelerCliApp::extractObjectXML()
 		layers = aux_buf.mid(attr_start, attr_end - attr_start);
 		layers.remove(QRegExp(attr_expr.arg(Attributes::Layers)));
 		layers.remove('"');
-		model->setLayers(layers.trimmed().split(';', QtCompat::SkipEmptyParts));
+		model->setLayers(layers.trimmed().split(',', QtCompat::SkipEmptyParts));
 
 		//Active layers
 		attr_start = attr_end;
@@ -1381,6 +1380,10 @@ void PgModelerCliApp::fixObjectAttributes(QString &obj_xml)
 		sig_idx = regexp.indexIn(obj_xml, sig_idx + len);
 	}
 
+	//Rename the attribute layer to layers
+	if(obj_xml.contains(QRegExp("(layer)( )*(=)")))
+		obj_xml.replace("layer", Attributes::Layers);
+
 	//Fix the references to op. classes and families if needed
 	fixOpClassesFamiliesReferences(obj_xml);
 }
@@ -1463,16 +1466,35 @@ void PgModelerCliApp::fixModel()
 	printMessage(tr("Model successfully fixed!"));
 }
 
-void PgModelerCliApp::exportModel()
+void PgModelerCliApp::loadModel()
 {
-	printMessage(tr("Starting model export..."));
-	printMessage(tr("Loading input file: %1").arg(parsed_opts[Input]));
-
 	//Create the systems objects on model before loading it
 	model->createSystemObjects(false);
 
 	//Load the model file
 	model->loadModel(parsed_opts[Input]);
+
+	scene->blockSignals(true);
+
+	scene->addLayers(model->getLayers());
+	scene->setActiveLayers(model->getActiveLayers());
+	scene->setLayerColors(ObjectsScene::LayerNameColor, model->getLayerNameColors());
+	scene->setLayerColors(ObjectsScene::LayerRectColor, model->getLayerRectColors());
+	scene->setLayerNamesVisible(model->isLayerNamesVisible());
+	scene->setLayerRectsVisible(model->isLayerRectsVisible());
+
+	if(model->isLayerRectsVisible())
+		model->setObjectsModified({ ObjectType::Schema });
+
+	scene->blockSignals(false);
+}
+
+void PgModelerCliApp::exportModel()
+{
+	printMessage(tr("Starting model export..."));
+	printMessage(tr("Loading input file: %1").arg(parsed_opts[Input]));
+
+	loadModel();
 
 	//Export to PNG
 	if(parsed_opts.count(ExportToPng))
@@ -1621,8 +1643,7 @@ void PgModelerCliApp::diffModelDatabase()
 	if(!parsed_opts[Input].isEmpty())
 	{
 		printMessage(tr("Loading input model..."));
-		model->createSystemObjects(false);
-		model->loadModel(parsed_opts[Input]);
+		loadModel();
 
 		if(parsed_opts.count(PartialDiff))
 		{

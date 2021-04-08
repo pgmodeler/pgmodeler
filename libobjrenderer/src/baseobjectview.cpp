@@ -590,22 +590,66 @@ double BaseObjectView::getFontFactor()
 	return font_config[Attributes::Global].font().pointSizeF()/DefaultFontSize;
 }
 
-void BaseObjectView::setLayer(unsigned layer)
+void BaseObjectView::setLayers(const QList<unsigned> &list)
 {
 	BaseGraphicObject *graph_obj = dynamic_cast<BaseGraphicObject *>(this->getUnderlyingObject());
 
 	if(graph_obj)
-		graph_obj->setLayer(layer);
+		graph_obj->setLayers(list);
 }
 
-unsigned BaseObjectView::getLayer()
+void BaseObjectView::addToLayer(unsigned layer_id)
 {
 	BaseGraphicObject *graph_obj = dynamic_cast<BaseGraphicObject *>(this->getUnderlyingObject());
 
 	if(graph_obj)
-		return graph_obj->getLayer();
+		graph_obj->addToLayer(layer_id);
+}
+
+void BaseObjectView::removeFromLayer(unsigned layer_id)
+{
+	BaseGraphicObject *graph_obj = dynamic_cast<BaseGraphicObject *>(this->getUnderlyingObject());
+
+	if(graph_obj)
+		graph_obj->removeFromLayer(layer_id);
+}
+
+void BaseObjectView::resetLayers()
+{
+	BaseGraphicObject *graph_obj = dynamic_cast<BaseGraphicObject *>(this->getUnderlyingObject());
+
+	if(graph_obj)
+		graph_obj->resetLayers();
+}
+
+QList<unsigned> BaseObjectView::getLayers()
+{
+	BaseGraphicObject *graph_obj = dynamic_cast<BaseGraphicObject *>(this->getUnderlyingObject());
+
+	if(graph_obj)
+		return graph_obj->getLayers();
+
+	return {0};
+}
+
+int BaseObjectView::getLayersCount()
+{
+	BaseGraphicObject *graph_obj = dynamic_cast<BaseGraphicObject *>(this->getUnderlyingObject());
+
+	if(graph_obj)
+		return graph_obj->getLayersCount();
 
 	return 0;
+}
+
+bool BaseObjectView::isInLayer(unsigned layer_id)
+{
+	BaseGraphicObject *graph_obj = dynamic_cast<BaseGraphicObject *>(this->getUnderlyingObject());
+
+	if(graph_obj)
+		return graph_obj->isInLayer(layer_id);
+
+	return false;
 }
 
 double BaseObjectView::getScreenDpiFactor()

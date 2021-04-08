@@ -32,6 +32,7 @@
 #include "objectsscene.h"
 #include "taskprogresswidget.h"
 #include "newobjectoverlaywidget.h"
+#include "layerswidget.h"
 
 class ModelWidget: public QWidget {
 	private:
@@ -45,13 +46,15 @@ class ModelWidget: public QWidget {
 
 		NewObjectOverlayWidget *new_obj_overlay_wgt;
 
+		LayersWidget *layers_wgt;
+
 		//! \brief Current zoom aplied to the scene
 		double current_zoom;
 
 		//! \brief Indicates if the model was modified by some operation
 		bool modified,
 
-		//! brief Indicates if the panning mode was activated via event filter (see eventFilter())
+		//! \brief Indicates if the panning mode was activated via event filter (see eventFilter())
 		panning_mode;
 
 		/*! \brief Indicates if the cut operation is currently activated. This flag modifies
@@ -222,6 +225,9 @@ class ModelWidget: public QWidget {
 		 * The direction is defined by the constants BringToTop or SendToBottom. */
 		void moveObjectsInZStack(int direction);
 
+		//! \brief Applies the layer settings from the internal database model to the scene object
+		void updateSceneLayers();
+
 	protected:
 		static constexpr unsigned BreakVertNinetyDegrees=0, //Break vertically the line in one 90° angle
 		BreakHorizNinetyDegrees=1, //Break horizontally the line in one 90° angle
@@ -258,7 +264,7 @@ class ModelWidget: public QWidget {
 		*action_break_rel_line,
 		*action_remove_rel_points,
 		*action_set_tag,
-		*action_moveto_layer,
+		*action_set_layer,
 		*action_disable_sql,
 		*action_enable_sql,
 		*action_duplicate,
@@ -290,6 +296,8 @@ class ModelWidget: public QWidget {
 		*action_bring_to_front,
 		*action_send_to_back,
 		*action_stacking;
+
+		QWidgetAction *wgt_action_layers;
 
 		//! \brief Actions used to create new objects on the model
 		map<ObjectType, QAction *> actions_new_objects;
@@ -449,8 +457,8 @@ class ModelWidget: public QWidget {
 		//! \brief Move the selected object to a schema (selectable via menu)
 		void moveToSchema();
 
-		//! \brief Move the selected object to a layer (selectable via menu)
-		void moveToLayer();
+		//! \brief Update objects visibility according to the layers visibility
+		void updateObjectsLayers();
 
 		//! \brief Quickly changes the object's owner via popup menu
 		void changeOwner();
@@ -550,7 +558,9 @@ class ModelWidget: public QWidget {
 
 		void editTableData();
 
-		void updateModelLayers();
+		/*! \brief Update all the information about layer in the internal database model
+		 * so the correct info is written into the xml code of the model file */
+		void updateModelLayersInfo();
 
 	public slots:
 		void loadModel(const QString &filename);
@@ -605,7 +615,7 @@ class ModelWidget: public QWidget {
 		friend class DatabaseImportForm;
 		friend class ObjectFinderWidget;
 		friend class NewObjectOverlayWidget;
-		friend class LayersWidget;
+		friend class LayersConfigWidget;
 };
 
 #endif

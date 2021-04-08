@@ -23,6 +23,7 @@
 #include <QtDebug>
 #include "qtcompat/splitbehaviorcompat.h"
 #include "qtcompat/qtextstreamcompat.h"
+#include <random>
 
 unsigned DatabaseModel::dbmodel_id=2000;
 
@@ -32,6 +33,12 @@ DatabaseModel::DatabaseModel()
 	object_id=DatabaseModel::dbmodel_id++;
 	obj_type=ObjectType::Database;
 
+	layers.append(tr("Default layer"));
+	active_layers.push_back(0);
+	layer_name_colors.append(QColor(0,0,0).name());
+	layer_rect_colors.append(QColor(180,180,180).name());
+
+	is_layer_names_visible = is_layer_rects_visible = false;
 	persist_changelog = false;
 	is_template = false;
 	allow_conns = true;
@@ -3264,18 +3271,64 @@ void DatabaseModel::loadModel(const QString &filename)
 													 attribs[Attributes::AllowConns] == Attributes::True);
 
 			persist_changelog = attribs[Attributes::UseChangelog] == Attributes::True;
-			layers = attribs[Attributes::Layers].split(';', QtCompat::SkipEmptyParts);
-			active_layers.clear();
+			layers = attribs[Attributes::Layers].split(',', QtCompat::SkipEmptyParts);
+
+			layer_name_colors = attribs[Attributes::LayerNameColors].split(',', QtCompat::SkipEmptyParts);
+			layer_rect_colors = attribs[Attributes::LayerRectColors].split(',', QtCompat::SkipEmptyParts);
+
+			is_layer_names_visible = attribs[Attributes::ShowLayerNames] == Attributes::True;
+			is_layer_rects_visible = attribs[Attributes::ShowLayerRects] == Attributes::True;
+
+			/*  Compatibility with models created prior the layers features:
+			 * If the layer rect colors is empty (probably a model generated in an older version)
+			 * we create random colors as fallback */
+
+			// Forcing the creation of the default layer is not present
+			if(layers.isEmpty())
+				layers.push_back(tr("Default layer"));
+
+			if(layer_rect_colors.isEmpty())
+			{
+				random_device rand_seed;
+				default_random_engine rand_num_engine;
+				uniform_int_distribution<unsigned> dist(0,255);
+
+				layer_name_colors.clear();
+				rand_num_engine.seed(rand_seed());
+
+				for(int i =0; i <= layers.size(); i++)
+				{
+					layer_rect_colors.append(QColor(dist(rand_num_engine),
+																					dist(rand_num_engine),
+																					dist(rand_num_engine)).name());
+
+					layer_name_colors.append(QColor(0,0,0).name());
+				}
+			}
 
 			/* Compatibility with models created prior the layers features:
 			 * If the "active-layers" is absent we make the default layer always visible */
-			if(!attribs.count(Attributes::ActiveLayers))
-				active_layers.push_back(0);
-			else
+			active_layers.clear();
+
+			for(auto &layer_id : attribs[Attributes::ActiveLayers].split(',', QtCompat::SkipEmptyParts))
 			{
-				for(auto &layer_id : attribs[Attributes::ActiveLayers].split(';', QtCompat::SkipEmptyParts))
-					active_layers.push_back(layer_id.toInt());
+				if(layer_id.toInt() >= layers.size())
+					continue;
+
+				active_layers.push_back(layer_id.toInt());
 			}
+
+			if(active_layers.isEmpty())
+				active_layers.push_back(0);
+
+			/* Perfoming size validations between the layer color lists and the layers lists
+			 * The excessive items from both list are removed until their sizes matches
+			 * the layers list */
+			while(layer_name_colors.size() > layers.size())
+				layer_name_colors.removeLast();
+
+			while(layer_rect_colors.size() > layers.size())
+				layer_rect_colors.removeLast();
 
 			protected_model=(attribs[Attributes::Protected]==Attributes::True);
 
@@ -3869,7 +3922,7 @@ Schema *DatabaseModel::createSchema()
 		schema->setFillColor(QColor(attribs[Attributes::FillColor]));
 		schema->setRectVisible(attribs[Attributes::RectVisible]==Attributes::True);
 		schema->setFadedOut(attribs[Attributes::FadedOut]==Attributes::True);
-		schema->setLayer(attribs[Attributes::Layer].toUInt());
+		schema->setLayers(attribs[Attributes::Layers].split(','));
 	}
 	catch(Exception &e)
 	{
@@ -6551,7 +6604,7 @@ View *DatabaseModel::createView()
 		view->setCurrentPage(BaseTable::AttribsSection, attribs[Attributes::AttribsPage].toUInt());
 		view->setCurrentPage(BaseTable::ExtAttribsSection, attribs[Attributes::ExtAttribsPage].toUInt());
 		view->setFadedOut(attribs[Attributes::FadedOut]==Attributes::True);
-		view->setLayer(attribs[Attributes::Layer].toUInt());
+		view->setLayers(attribs[Attributes::Layers].split(','));
 
 		if(xmlparser.accessElement(XmlParser::ChildElement))
 		{
@@ -6881,7 +6934,7 @@ Textbox *DatabaseModel::createTextbox()
 		xmlparser.getElementAttributes(attribs);
 
 		txtbox->setFadedOut(attribs[Attributes::FadedOut]==Attributes::True);
-		txtbox->setLayer(attribs[Attributes::Layer].toUInt());
+		txtbox->setLayers(attribs[Attributes::Layers].split(','));
 		txtbox->setTextAttribute(Textbox::ItalicText, attribs[Attributes::Italic]==Attributes::True);
 		txtbox->setTextAttribute(Textbox::BoldText, attribs[Attributes::Bold]==Attributes::True);
 		txtbox->setTextAttribute(Textbox::UnderlineText, attribs[Attributes::Underline]==Attributes::True);
@@ -6912,7 +6965,8 @@ BaseRelationship *DatabaseModel::createRelationship()
 	bool src_mand, dst_mand, identifier, protect, deferrable, sql_disabled, single_pk_col, faded_out;
 	DeferralType defer_type;
 	ActionType del_action, upd_action;
-	unsigned rel_type=0, i = 0, layer = 0;
+	unsigned rel_type=0, i = 0;
+	QStringList layers;
 	ObjectType table_types[2]={ ObjectType::View, ObjectType::Table }, obj_rel_type;
 	QString str_aux, elem, tab_attribs[2]={ Attributes::SrcTable, Attributes::DstTable };
 	QColor custom_color=Qt::transparent;
@@ -6930,7 +6984,7 @@ BaseRelationship *DatabaseModel::createRelationship()
 		dst_mand=attribs[Attributes::DstRequired]==Attributes::True;
 		protect=(attribs[Attributes::Protected]==Attributes::True);
 		faded_out=(attribs[Attributes::FadedOut]==Attributes::True);
-		layer = attribs[Attributes::Layer].toUInt();
+		layers = attribs[Attributes::Layers].split(',');
 
 		if(!attribs[Attributes::CustomColor].isEmpty())
 			custom_color=QColor(attribs[Attributes::CustomColor]);
@@ -7196,7 +7250,7 @@ BaseRelationship *DatabaseModel::createRelationship()
 	base_rel->setFadedOut(faded_out);
 	base_rel->setProtected(protect);
 	base_rel->setCustomColor(custom_color);
-	base_rel->setLayer(layer);
+	base_rel->setLayers(layers);
 
 	/* If the FK relationship does not reference a foreign key (models generated in older versions)
 	 * we need to assign them to the respective relationships */
@@ -7628,8 +7682,12 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 			for(auto &layer_id : active_layers)
 				act_layers.push_back(QString::number(layer_id));
 
-			attribs_aux[Attributes::Layers]=layers.join(';');
-			attribs_aux[Attributes::ActiveLayers]=act_layers.join(';');
+			attribs_aux[Attributes::Layers]=layers.join(',');
+			attribs_aux[Attributes::ActiveLayers]=act_layers.join(',');
+			attribs_aux[Attributes::LayerNameColors]=layer_name_colors.join(',');
+			attribs_aux[Attributes::LayerRectColors]=layer_rect_colors.join(',');
+			attribs_aux[Attributes::ShowLayerNames]=(is_layer_names_visible ? Attributes::True : Attributes::False);
+			attribs_aux[Attributes::ShowLayerRects]=(is_layer_rects_visible ? Attributes::True : Attributes::False);
 			attribs_aux[Attributes::MaxObjCount]=QString::number(static_cast<unsigned>(getMaxObjectCount() * 1.20));
 			attribs_aux[Attributes::Protected]=(this->is_protected ? Attributes::True : "");
 			attribs_aux[Attributes::LastPosition]=QString("%1,%2").arg(last_pos.x()).arg(last_pos.y());
@@ -11243,6 +11301,46 @@ QList<unsigned> DatabaseModel::getActiveLayers()
 	return active_layers;
 }
 
+void DatabaseModel::setLayerNameColors(const QStringList &color_names)
+{
+	layer_name_colors = color_names;
+}
+
+QStringList DatabaseModel::getLayerNameColors()
+{
+	return layer_name_colors;
+}
+
+void DatabaseModel::setLayerRectColors(const QStringList &color_names)
+{
+	layer_rect_colors = color_names;
+}
+
+void DatabaseModel::setLayerNamesVisible(bool value)
+{
+	is_layer_names_visible = value;
+}
+
+void DatabaseModel::setLayerRectsVisible(bool value)
+{
+	is_layer_rects_visible = value;
+}
+
+QStringList DatabaseModel::getLayerRectColors()
+{
+	return layer_rect_colors;
+}
+
+bool DatabaseModel::isLayerNamesVisible()
+{
+	return is_layer_names_visible;
+}
+
+bool DatabaseModel::isLayerRectsVisible()
+{
+	return is_layer_rects_visible;
+}
+
 void DatabaseModel::addChangelogEntry(BaseObject *object, unsigned op_type, BaseObject *parent_obj)
 {
 	if(op_type == Operation::NoOperation || op_type == Operation::ObjectMoved)
@@ -11376,7 +11474,7 @@ TableClass *DatabaseModel::createPhysicalTable()
 		table->setCurrentPage(BaseTable::AttribsSection, attribs[Attributes::AttribsPage].toUInt());
 		table->setCurrentPage(BaseTable::ExtAttribsSection, attribs[Attributes::ExtAttribsPage].toUInt());
 		table->setFadedOut(attribs[Attributes::FadedOut]==Attributes::True);
-		table->setLayer(attribs[Attributes::Layer].toUInt());
+		table->setLayers(attribs[Attributes::Layers].split(','));
 
 		if(xmlparser.accessElement(XmlParser::ChildElement))
 		{

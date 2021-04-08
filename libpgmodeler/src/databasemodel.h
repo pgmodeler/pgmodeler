@@ -90,7 +90,13 @@ class DatabaseModel:  public QObject, public BaseObject {
 		XmlParser xmlparser;
 
 		//! \brief Stores the layers names and active layer to write them on XML code
-		QStringList layers;
+		QStringList layers,
+
+		//! \brief Stores the name colors of each layer to write them on XML code
+		layer_name_colors,
+
+		//! \brief Stores the rect colors of each layer to write them on XML code
+		layer_rect_colors;
 
 		QList<unsigned> active_layers;
 
@@ -122,7 +128,11 @@ class DatabaseModel:  public QObject, public BaseObject {
 		allow_conns,
 
 		//! \brief Indicates if the internal changelog must be saved to the dbm file
-		persist_changelog;
+		persist_changelog,
+
+		is_layer_names_visible,
+
+		is_layer_rects_visible;
 
 		//! \brief Vectors that stores all the objects types
 		vector<BaseObject *> textboxes,
@@ -259,10 +269,23 @@ class DatabaseModel:  public QObject, public BaseObject {
 		void getTransformDependencies(BaseObject *object, vector<BaseObject *> &deps, bool inc_indirect_deps);
 
 	protected:
+		//! \brief Set the layer names (only to be written in the XML definition)
 		void setLayers(const QStringList &layers);
+
+		//! \brief Set the active layer ids (only to be written in the XML definition)
 		void setActiveLayers(const QList<unsigned> &layers);
-		QStringList getLayers();
-		QList<unsigned> getActiveLayers();
+
+		//! \brief Set the layer name colors (only to be written in the XML definition)
+		void setLayerNameColors(const QStringList &color_names);
+
+		//! \brief Set the layer rect colors (only to be written in the XML definition)
+		void setLayerRectColors(const QStringList &color_names);
+
+		//! \brief Set the layer names visibility (only to be written in the XML definition)
+		void setLayerNamesVisible(bool value);
+
+		//! \brief Set the layer rects visibility (only to be written in the XML definition)
+		void setLayerRectsVisible(bool value);
 
 		/*! \brief Register an object change in the internal changelog.
 		 * If the provided object is derived from TableObject then the parent is registered instead.
@@ -799,6 +822,14 @@ class DatabaseModel:  public QObject, public BaseObject {
 
 		//! \brief Returns the amount of entries in the changelog
 		unsigned getChangelogLength();
+
+		QStringList getLayers();
+		QStringList getLayerNameColors();
+		QList<unsigned> getActiveLayers();
+		QStringList getLayerRectColors();
+
+		bool isLayerNamesVisible();
+		bool isLayerRectsVisible();
 
 	signals:
 		//! \brief Signal emitted when a new object is added to the model

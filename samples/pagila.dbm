@@ -9,7 +9,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<tablespace name="pg_default"/>
 </database>
 
-<schema name="public" layer="0" protected="true" fill-color="#e1e1e1" sql-disabled="true">
+<schema name="public" layers="0" protected="true" fill-color="#e1e1e1" sql-disabled="true">
 </schema>
 
 <sequence name="actor_actor_id_seq" cycle="false" start="1" increment="1" min-value="1" max-value="9223372036854775807" cache="1">
@@ -17,7 +17,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<role name="postgres"/>
 </sequence>
 
-<table name="actor" layer="0" collapse-mode="2" max-obj-count="4" z-value="0">
+<table name="actor" layers="0" collapse-mode="2" max-obj-count="4" z-value="0">
 	<schema name="public"/>
 	<role name="postgres"/>
 	<position x="4480" y="1460"/>
@@ -95,7 +95,7 @@ END
 	<role name="postgres"/>
 </sequence>
 
-<table name="category" layer="0" collapse-mode="2" max-obj-count="3" z-value="0">
+<table name="category" layers="0" collapse-mode="2" max-obj-count="3" z-value="0">
 	<schema name="public"/>
 	<role name="postgres"/>
 	<position x="4220" y="880"/>
@@ -118,7 +118,7 @@ END
 	<role name="postgres"/>
 </sequence>
 
-<table name="film" layer="0" collapse-mode="2" max-obj-count="16" z-value="0">
+<table name="film" layers="0" collapse-mode="2" max-obj-count="16" z-value="0">
 	<schema name="public"/>
 	<role name="postgres"/>
 	<position x="3580" y="1180"/>
@@ -169,7 +169,7 @@ END
 	</constraint>
 </table>
 
-<table name="film_actor" layer="0" collapse-mode="2" max-obj-count="3" z-value="0">
+<table name="film_actor" layers="0" collapse-mode="2" max-obj-count="3" z-value="0">
 	<schema name="public"/>
 	<role name="postgres"/>
 	<position x="4220" y="1120"/>
@@ -187,7 +187,7 @@ END
 	</constraint>
 </table>
 
-<table name="film_category" layer="0" collapse-mode="2" max-obj-count="3" z-value="0">
+<table name="film_category" layers="0" collapse-mode="2" max-obj-count="3" z-value="0">
 	<schema name="public"/>
 	<role name="postgres"/>
 	<position x="3660" y="700"/>
@@ -205,7 +205,7 @@ END
 	</constraint>
 </table>
 
-<view name="actor_info" layer="0" collapse-mode="2" max-obj-count="1" z-value="0">
+<view name="actor_info" layers="0" collapse-mode="2" max-obj-count="1" z-value="0">
 	<schema name="public"/>
 	<role name="postgres"/>
 	<position x="3140" y="1700"/>
@@ -232,7 +232,7 @@ END
 	<role name="postgres"/>
 </sequence>
 
-<table name="address" layer="0" collapse-mode="2" max-obj-count="9" z-value="0">
+<table name="address" layers="0" collapse-mode="2" max-obj-count="9" z-value="0">
 	<schema name="public"/>
 	<role name="postgres"/>
 	<position x="1860" y="400"/>
@@ -270,7 +270,7 @@ END
 	<role name="postgres"/>
 </sequence>
 
-<table name="city" layer="0" collapse-mode="2" max-obj-count="4" z-value="0">
+<table name="city" layers="0" collapse-mode="2" max-obj-count="4" z-value="0">
 	<schema name="public"/>
 	<role name="postgres"/>
 	<position x="2600" y="260"/>
@@ -296,7 +296,7 @@ END
 	<role name="postgres"/>
 </sequence>
 
-<table name="country" layer="0" collapse-mode="2" max-obj-count="3" z-value="0">
+<table name="country" layers="0" collapse-mode="2" max-obj-count="3" z-value="0">
 	<schema name="public"/>
 	<role name="postgres"/>
 	<position x="2220" y="540"/>
@@ -319,7 +319,7 @@ END
 	<role name="postgres"/>
 </sequence>
 
-<table name="customer" layer="0" collapse-mode="2" max-obj-count="12" z-value="0">
+<table name="customer" layers="0" collapse-mode="2" max-obj-count="12" z-value="0">
 	<schema name="public"/>
 	<role name="postgres"/>
 	<position x="1100" y="1120"/>
@@ -358,7 +358,7 @@ END
 	</constraint>
 </table>
 
-<view name="customer_list" layer="0" collapse-mode="2" max-obj-count="1" z-value="0">
+<view name="customer_list" layers="0" collapse-mode="2" max-obj-count="1" z-value="0">
 	<schema name="public"/>
 	<role name="postgres"/>
 	<position x="3480" y="1860"/>
@@ -382,7 +382,7 @@ END
 	</reference>
 </view>
 
-<view name="film_list" layer="0" collapse-mode="2" max-obj-count="1" z-value="0">
+<view name="film_list" layers="0" collapse-mode="2" max-obj-count="1" z-value="0">
 	<schema name="public"/>
 	<role name="postgres"/>
 	<position x="3160" y="1840"/>
@@ -409,7 +409,7 @@ END
 	<role name="postgres"/>
 </sequence>
 
-<table name="inventory" layer="0" collapse-mode="2" max-obj-count="4" z-value="0">
+<table name="inventory" layers="0" collapse-mode="2" max-obj-count="4" z-value="0">
 	<schema name="public"/>
 	<role name="postgres"/>
 	<position x="3140" y="840"/>
@@ -435,7 +435,7 @@ END
 	<role name="postgres"/>
 </sequence>
 
-<table name="language" layer="0" collapse-mode="2" max-obj-count="4" z-value="0">
+<table name="language" layers="0" collapse-mode="2" max-obj-count="4" z-value="0">
 	<schema name="public"/>
 	<role name="postgres"/>
 	<position x="4100" y="1660"/>
@@ -456,7 +456,7 @@ END
 	</constraint>
 </table>
 
-<view name="nicer_but_slower_film_list" layer="0" collapse-mode="2" max-obj-count="1" z-value="0">
+<view name="nicer_but_slower_film_list" layers="0" collapse-mode="2" max-obj-count="1" z-value="0">
 	<schema name="public"/>
 	<role name="postgres"/>
 	<position x="3480" y="1960"/>
@@ -483,7 +483,7 @@ END
 	<role name="postgres"/>
 </sequence>
 
-<table name="payment" layer="0" collapse-mode="2" max-obj-count="7" z-value="0">
+<table name="payment" layers="0" collapse-mode="2" max-obj-count="7" z-value="0">
 	<schema name="public"/>
 	<role name="postgres"/>
 	<position x="340" y="1360"/>
@@ -510,7 +510,7 @@ END
 	</constraint>
 </table>
 
-<table name="payment_p2007_01" layer="0" collapse-mode="2" max-obj-count="7" z-value="0">
+<table name="payment_p2007_01" layers="0" collapse-mode="2" max-obj-count="7" z-value="0">
 	<schema name="public"/>
 	<role name="postgres"/>
 	<position x="340" y="1980"/>
@@ -537,7 +537,7 @@ END
 	</constraint>
 </table>
 
-<table name="payment_p2007_02" layer="0" collapse-mode="2" max-obj-count="7" z-value="0">
+<table name="payment_p2007_02" layers="0" collapse-mode="2" max-obj-count="7" z-value="0">
 	<schema name="public"/>
 	<role name="postgres"/>
 	<position x="360" y="700"/>
@@ -564,7 +564,7 @@ END
 	</constraint>
 </table>
 
-<table name="payment_p2007_03" layer="0" collapse-mode="2" max-obj-count="7" z-value="0">
+<table name="payment_p2007_03" layers="0" collapse-mode="2" max-obj-count="7" z-value="0">
 	<schema name="public"/>
 	<role name="postgres"/>
 	<position x="2420" y="1240"/>
@@ -591,7 +591,7 @@ END
 	</constraint>
 </table>
 
-<table name="payment_p2007_04" layer="0" collapse-mode="2" max-obj-count="7" z-value="0">
+<table name="payment_p2007_04" layers="0" collapse-mode="2" max-obj-count="7" z-value="0">
 	<schema name="public"/>
 	<role name="postgres"/>
 	<position x="2980" y="1240"/>
@@ -618,7 +618,7 @@ END
 	</constraint>
 </table>
 
-<table name="payment_p2007_05" layer="0" collapse-mode="2" max-obj-count="7" z-value="0">
+<table name="payment_p2007_05" layers="0" collapse-mode="2" max-obj-count="7" z-value="0">
 	<schema name="public"/>
 	<role name="postgres"/>
 	<position x="2640" y="1960"/>
@@ -645,7 +645,7 @@ END
 	</constraint>
 </table>
 
-<table name="payment_p2007_06" layer="0" collapse-mode="2" max-obj-count="7" z-value="0">
+<table name="payment_p2007_06" layers="0" collapse-mode="2" max-obj-count="7" z-value="0">
 	<schema name="public"/>
 	<role name="postgres"/>
 	<position x="2060" y="2120"/>
@@ -677,7 +677,7 @@ END
 	<role name="postgres"/>
 </sequence>
 
-<table name="rental" layer="0" collapse-mode="2" max-obj-count="8" z-value="0">
+<table name="rental" layers="0" collapse-mode="2" max-obj-count="8" z-value="0">
 	<schema name="public"/>
 	<role name="postgres"/>
 	<position x="1100" y="580"/>
@@ -707,7 +707,7 @@ END
 	</constraint>
 </table>
 
-<view name="sales_by_film_category" layer="0" collapse-mode="2" max-obj-count="1" z-value="0">
+<view name="sales_by_film_category" layers="0" collapse-mode="2" max-obj-count="1" z-value="0">
 	<schema name="public"/>
 	<role name="postgres"/>
 	<position x="3480" y="2100"/>
@@ -730,7 +730,7 @@ END
 	<role name="postgres"/>
 </sequence>
 
-<table name="staff" layer="0" collapse-mode="2" max-obj-count="13" z-value="0">
+<table name="staff" layers="0" collapse-mode="2" max-obj-count="13" z-value="0">
 	<schema name="public"/>
 	<role name="postgres"/>
 	<position x="1020" y="2020"/>
@@ -777,7 +777,7 @@ END
 	<role name="postgres"/>
 </sequence>
 
-<table name="store" layer="0" collapse-mode="2" max-obj-count="4" z-value="0">
+<table name="store" layers="0" collapse-mode="2" max-obj-count="4" z-value="0">
 	<schema name="public"/>
 	<role name="postgres"/>
 	<position x="3040" y="480"/>
@@ -798,7 +798,7 @@ END
 	</constraint>
 </table>
 
-<view name="sales_by_store" layer="0" collapse-mode="2" max-obj-count="1" z-value="0">
+<view name="sales_by_store" layers="0" collapse-mode="2" max-obj-count="1" z-value="0">
 	<schema name="public"/>
 	<role name="postgres"/>
 	<position x="3160" y="1960"/>
@@ -819,7 +819,7 @@ END
 	</reference>
 </view>
 
-<view name="staff_list" layer="0" collapse-mode="2" max-obj-count="1" z-value="0">
+<view name="staff_list" layers="0" collapse-mode="2" max-obj-count="1" z-value="0">
 	<schema name="public"/>
 	<role name="postgres"/>
 	<position x="3160" y="2100"/>
@@ -6592,43 +6592,43 @@ END
 		<function signature="public.last_updated()"/>
 </trigger>
 
-<relationship name="payment_p2007_01_inherits_payment" type="relgen" layer="0"
+<relationship name="payment_p2007_01_inherits_payment" type="relgen" layers="0"
 	 pk-pattern="{dt}_pk"
 	 custom-color="#ac2cbc"
 	 src-table="public.payment_p2007_01"
 	 dst-table="public.payment"/>
 
-<relationship name="payment_p2007_02_inherits_payment" type="relgen" layer="0"
+<relationship name="payment_p2007_02_inherits_payment" type="relgen" layers="0"
 	 pk-pattern="{dt}_pk"
 	 custom-color="#168844"
 	 src-table="public.payment_p2007_02"
 	 dst-table="public.payment"/>
 
-<relationship name="payment_p2007_03_inherits_payment" type="relgen" layer="0"
+<relationship name="payment_p2007_03_inherits_payment" type="relgen" layers="0"
 	 pk-pattern="{dt}_pk"
 	 custom-color="#ddc2d5"
 	 src-table="public.payment_p2007_03"
 	 dst-table="public.payment"/>
 
-<relationship name="payment_p2007_04_inherits_payment" type="relgen" layer="0"
+<relationship name="payment_p2007_04_inherits_payment" type="relgen" layers="0"
 	 pk-pattern="{dt}_pk"
 	 custom-color="#e7c791"
 	 src-table="public.payment_p2007_04"
 	 dst-table="public.payment"/>
 
-<relationship name="payment_p2007_05_inherits_payment" type="relgen" layer="0"
+<relationship name="payment_p2007_05_inherits_payment" type="relgen" layers="0"
 	 pk-pattern="{dt}_pk"
 	 custom-color="#87bbf0"
 	 src-table="public.payment_p2007_05"
 	 dst-table="public.payment"/>
 
-<relationship name="payment_p2007_06_inherits_payment" type="relgen" layer="0"
+<relationship name="payment_p2007_06_inherits_payment" type="relgen" layers="0"
 	 pk-pattern="{dt}_pk"
 	 custom-color="#2b0aa0"
 	 src-table="public.payment_p2007_06"
 	 dst-table="public.payment"/>
 
-<textbox name="pagila_desc" layer="0" z-value="0" font-size="11">
+<textbox name="pagila_desc" layers="0" z-value="0" font-size="11">
 	<position x="340" y="280"/>
 	<comment><![CDATA[[ pagila sample database ]
 
@@ -6881,72 +6881,72 @@ on this link: http://pgfoundry.org/projects/dbsamples]]></comment>
 	<columns names="staff_id" ref-type="dst-columns"/>
 </constraint>
 
-<relationship name="rel_film_language" type="relfk" layer="0"
+<relationship name="rel_film_language" type="relfk" layers="0"
 	 custom-color="#26b51d"
 	 src-table="public.film"
 	 dst-table="public.language" reference-fk="film_language_id_fkey"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_film_actor_actor" type="relfk" layer="0"
+<relationship name="rel_film_actor_actor" type="relfk" layers="0"
 	 custom-color="#091daa"
 	 src-table="public.film_actor"
 	 dst-table="public.actor" reference-fk="film_actor_actor_id_fkey"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_film_actor_film" type="relfk" layer="0"
+<relationship name="rel_film_actor_film" type="relfk" layers="0"
 	 custom-color="#7500d6"
 	 src-table="public.film_actor"
 	 dst-table="public.film" reference-fk="film_actor_film_id_fkey"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_film_category_category" type="relfk" layer="0"
+<relationship name="rel_film_category_category" type="relfk" layers="0"
 	 custom-color="#7a382a"
 	 src-table="public.film_category"
 	 dst-table="public.category" reference-fk="film_category_category_id_fkey"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_film_category_film" type="relfk" layer="0"
+<relationship name="rel_film_category_film" type="relfk" layers="0"
 	 custom-color="#0e4789"
 	 src-table="public.film_category"
 	 dst-table="public.film" reference-fk="film_category_film_id_fkey"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_address_city" type="relfk" layer="0"
+<relationship name="rel_address_city" type="relfk" layers="0"
 	 src-table="public.address"
 	 dst-table="public.city" reference-fk="address_city_id_fkey"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_city_country" type="relfk" layer="0"
+<relationship name="rel_city_country" type="relfk" layers="0"
 	 custom-color="#66bb68"
 	 src-table="public.city"
 	 dst-table="public.country" reference-fk="city_country_id_fkey"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_customer_address" type="relfk" layer="0"
+<relationship name="rel_customer_address" type="relfk" layers="0"
 	 custom-color="#d165b8"
 	 src-table="public.customer"
 	 dst-table="public.address" reference-fk="customer_address_id_fkey"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_customer_store" type="relfk" layer="0"
+<relationship name="rel_customer_store" type="relfk" layers="0"
 	 custom-color="#83a4c1"
 	 src-table="public.customer"
 	 dst-table="public.store" reference-fk="customer_store_id_fkey"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_inventory_film" type="relfk" layer="0"
+<relationship name="rel_inventory_film" type="relfk" layers="0"
 	 custom-color="#7f121b"
 	 src-table="public.inventory"
 	 dst-table="public.film" reference-fk="inventory_film_id_fkey"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_inventory_store" type="relfk" layer="0"
+<relationship name="rel_inventory_store" type="relfk" layers="0"
 	 custom-color="#1d0b32"
 	 src-table="public.inventory"
 	 dst-table="public.store" reference-fk="inventory_store_id_fkey"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_payment_customer" type="relfk" layer="0"
+<relationship name="rel_payment_customer" type="relfk" layers="0"
 	 custom-color="#d6538b"
 	 src-table="public.payment"
 	 dst-table="public.customer" reference-fk="payment_customer_id_fkey"
@@ -6956,19 +6956,19 @@ on this link: http://pgfoundry.org/projects/dbsamples]]></comment>
 	</label>
 </relationship>
 
-<relationship name="rel_payment_rental" type="relfk" layer="0"
+<relationship name="rel_payment_rental" type="relfk" layers="0"
 	 custom-color="#36a493"
 	 src-table="public.payment"
 	 dst-table="public.rental" reference-fk="payment_rental_id_fkey"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_payment_staff" type="relfk" layer="0"
+<relationship name="rel_payment_staff" type="relfk" layers="0"
 	 custom-color="#4f996e"
 	 src-table="public.payment"
 	 dst-table="public.staff" reference-fk="payment_staff_id_fkey"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_payment_p2007_01_customer" type="relfk" layer="0"
+<relationship name="rel_payment_p2007_01_customer" type="relfk" layers="0"
 	 custom-color="#bd1cdb"
 	 src-table="public.payment_p2007_01"
 	 dst-table="public.customer" reference-fk="payment_p2007_01_customer_id_fkey"
@@ -6978,43 +6978,43 @@ on this link: http://pgfoundry.org/projects/dbsamples]]></comment>
 	</label>
 </relationship>
 
-<relationship name="rel_payment_p2007_01_rental" type="relfk" layer="0"
+<relationship name="rel_payment_p2007_01_rental" type="relfk" layers="0"
 	 custom-color="#b1ce9e"
 	 src-table="public.payment_p2007_01"
 	 dst-table="public.rental" reference-fk="payment_p2007_01_rental_id_fkey"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_payment_p2007_01_staff" type="relfk" layer="0"
+<relationship name="rel_payment_p2007_01_staff" type="relfk" layers="0"
 	 custom-color="#e4e019"
 	 src-table="public.payment_p2007_01"
 	 dst-table="public.staff" reference-fk="payment_p2007_01_staff_id_fkey"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_payment_p2007_02_customer" type="relfk" layer="0"
+<relationship name="rel_payment_p2007_02_customer" type="relfk" layers="0"
 	 custom-color="#5b8079"
 	 src-table="public.payment_p2007_02"
 	 dst-table="public.customer" reference-fk="payment_p2007_02_customer_id_fkey"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_payment_p2007_02_rental" type="relfk" layer="0"
+<relationship name="rel_payment_p2007_02_rental" type="relfk" layers="0"
 	 custom-color="#b24ded"
 	 src-table="public.payment_p2007_02"
 	 dst-table="public.rental" reference-fk="payment_p2007_02_rental_id_fkey"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_payment_p2007_02_staff" type="relfk" layer="0"
+<relationship name="rel_payment_p2007_02_staff" type="relfk" layers="0"
 	 custom-color="#5074d4"
 	 src-table="public.payment_p2007_02"
 	 dst-table="public.staff" reference-fk="payment_p2007_02_staff_id_fkey"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_payment_p2007_03_customer" type="relfk" layer="0"
+<relationship name="rel_payment_p2007_03_customer" type="relfk" layers="0"
 	 custom-color="#30065e"
 	 src-table="public.payment_p2007_03"
 	 dst-table="public.customer" reference-fk="payment_p2007_03_customer_id_fkey"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_payment_p2007_03_rental" type="relfk" layer="0"
+<relationship name="rel_payment_p2007_03_rental" type="relfk" layers="0"
 	 custom-color="#60580f"
 	 src-table="public.payment_p2007_03"
 	 dst-table="public.rental" reference-fk="payment_p2007_03_rental_id_fkey"
@@ -7024,7 +7024,7 @@ on this link: http://pgfoundry.org/projects/dbsamples]]></comment>
 	</label>
 </relationship>
 
-<relationship name="rel_payment_p2007_03_staff" type="relfk" layer="0"
+<relationship name="rel_payment_p2007_03_staff" type="relfk" layers="0"
 	 custom-color="#8f57b5"
 	 src-table="public.payment_p2007_03"
 	 dst-table="public.staff" reference-fk="payment_p2007_03_staff_id_fkey"
@@ -7034,7 +7034,7 @@ on this link: http://pgfoundry.org/projects/dbsamples]]></comment>
 	</label>
 </relationship>
 
-<relationship name="rel_payment_p2007_04_customer" type="relfk" layer="0"
+<relationship name="rel_payment_p2007_04_customer" type="relfk" layers="0"
 	 custom-color="#99b174"
 	 src-table="public.payment_p2007_04"
 	 dst-table="public.customer" reference-fk="payment_p2007_04_customer_id_fkey"
@@ -7044,7 +7044,7 @@ on this link: http://pgfoundry.org/projects/dbsamples]]></comment>
 	</label>
 </relationship>
 
-<relationship name="rel_payment_p2007_04_rental" type="relfk" layer="0"
+<relationship name="rel_payment_p2007_04_rental" type="relfk" layers="0"
 	 custom-color="#35a037"
 	 src-table="public.payment_p2007_04"
 	 dst-table="public.rental" reference-fk="payment_p2007_04_rental_id_fkey"
@@ -7054,7 +7054,7 @@ on this link: http://pgfoundry.org/projects/dbsamples]]></comment>
 	</label>
 </relationship>
 
-<relationship name="rel_payment_p2007_04_staff" type="relfk" layer="0"
+<relationship name="rel_payment_p2007_04_staff" type="relfk" layers="0"
 	 custom-color="#dc6da2"
 	 src-table="public.payment_p2007_04"
 	 dst-table="public.staff" reference-fk="payment_p2007_04_staff_id_fkey"
@@ -7064,7 +7064,7 @@ on this link: http://pgfoundry.org/projects/dbsamples]]></comment>
 	</label>
 </relationship>
 
-<relationship name="rel_payment_p2007_05_customer" type="relfk" layer="0"
+<relationship name="rel_payment_p2007_05_customer" type="relfk" layers="0"
 	 custom-color="#79242c"
 	 src-table="public.payment_p2007_05"
 	 dst-table="public.customer" reference-fk="payment_p2007_05_customer_id_fkey"
@@ -7074,7 +7074,7 @@ on this link: http://pgfoundry.org/projects/dbsamples]]></comment>
 	</label>
 </relationship>
 
-<relationship name="rel_payment_p2007_05_rental" type="relfk" layer="0"
+<relationship name="rel_payment_p2007_05_rental" type="relfk" layers="0"
 	 custom-color="#62c5ee"
 	 src-table="public.payment_p2007_05"
 	 dst-table="public.rental" reference-fk="payment_p2007_05_rental_id_fkey"
@@ -7084,7 +7084,7 @@ on this link: http://pgfoundry.org/projects/dbsamples]]></comment>
 	</label>
 </relationship>
 
-<relationship name="rel_payment_p2007_05_staff" type="relfk" layer="0"
+<relationship name="rel_payment_p2007_05_staff" type="relfk" layers="0"
 	 custom-color="#79bf2c"
 	 src-table="public.payment_p2007_05"
 	 dst-table="public.staff" reference-fk="payment_p2007_05_staff_id_fkey"
@@ -7094,7 +7094,7 @@ on this link: http://pgfoundry.org/projects/dbsamples]]></comment>
 	</label>
 </relationship>
 
-<relationship name="rel_payment_p2007_06_customer" type="relfk" layer="0"
+<relationship name="rel_payment_p2007_06_customer" type="relfk" layers="0"
 	 custom-color="#ab2ffe"
 	 src-table="public.payment_p2007_06"
 	 dst-table="public.customer" reference-fk="payment_p2007_06_customer_id_fkey"
@@ -7104,7 +7104,7 @@ on this link: http://pgfoundry.org/projects/dbsamples]]></comment>
 	</label>
 </relationship>
 
-<relationship name="rel_payment_p2007_06_rental" type="relfk" layer="0"
+<relationship name="rel_payment_p2007_06_rental" type="relfk" layers="0"
 	 custom-color="#fc430a"
 	 src-table="public.payment_p2007_06"
 	 dst-table="public.rental" reference-fk="payment_p2007_06_rental_id_fkey"
@@ -7114,7 +7114,7 @@ on this link: http://pgfoundry.org/projects/dbsamples]]></comment>
 	</label>
 </relationship>
 
-<relationship name="rel_payment_p2007_06_staff" type="relfk" layer="0"
+<relationship name="rel_payment_p2007_06_staff" type="relfk" layers="0"
 	 custom-color="#9637d2"
 	 src-table="public.payment_p2007_06"
 	 dst-table="public.staff" reference-fk="payment_p2007_06_staff_id_fkey"
@@ -7124,7 +7124,7 @@ on this link: http://pgfoundry.org/projects/dbsamples]]></comment>
 	</label>
 </relationship>
 
-<relationship name="rel_rental_customer" type="relfk" layer="0"
+<relationship name="rel_rental_customer" type="relfk" layers="0"
 	 custom-color="#413a57"
 	 src-table="public.rental"
 	 dst-table="public.customer" reference-fk="rental_customer_id_fkey"
@@ -7134,42 +7134,42 @@ on this link: http://pgfoundry.org/projects/dbsamples]]></comment>
 	</label>
 </relationship>
 
-<relationship name="rel_rental_inventory" type="relfk" layer="0"
+<relationship name="rel_rental_inventory" type="relfk" layers="0"
 	 custom-color="#8c700c"
 	 src-table="public.rental"
 	 dst-table="public.inventory" reference-fk="rental_inventory_id_fkey"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_rental_staff" type="relfk" layer="0"
+<relationship name="rel_rental_staff" type="relfk" layers="0"
 	 custom-color="#ba8ccc"
 	 src-table="public.rental"
 	 dst-table="public.staff" reference-fk="rental_staff_id_fkey"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_staff_address" type="relfk" layer="0"
+<relationship name="rel_staff_address" type="relfk" layers="0"
 	 custom-color="#8828b6"
 	 src-table="public.staff"
 	 dst-table="public.address" reference-fk="staff_address_id_fkey"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_staff_store" type="relfk" layer="0"
+<relationship name="rel_staff_store" type="relfk" layers="0"
 	 custom-color="#3e8d1f"
 	 src-table="public.staff"
 	 dst-table="public.store" reference-fk="staff_store_id_fkey"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_store_address" type="relfk" layer="0"
+<relationship name="rel_store_address" type="relfk" layers="0"
 	 custom-color="#31dbf0"
 	 src-table="public.store"
 	 dst-table="public.address" reference-fk="store_address_id_fkey"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_film_language1" type="relfk" layer="0"
+<relationship name="rel_film_language1" type="relfk" layers="0"
 	 src-table="public.film"
 	 dst-table="public.language" reference-fk="film_original_language_id_fkey"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_store_staff" type="relfk" layer="0"
+<relationship name="rel_store_staff" type="relfk" layers="0"
 	 src-table="public.store"
 	 dst-table="public.staff" reference-fk="store_manager_staff_id_fkey"
 	 src-required="false" dst-required="true"/>

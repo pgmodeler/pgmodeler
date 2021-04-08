@@ -10,6 +10,8 @@ SOURCES += src/mainwindow.cpp \
     src/basefunctionwidget.cpp \
 	src/changelogwidget.cpp \
 	src/fileselectorwidget.cpp \
+    src/layersconfigwidget.cpp \
+    src/layerswidget.cpp \
 	   src/modelwidget.cpp \
 	   src/messagebox.cpp \
     src/procedurewidget.cpp \
@@ -112,7 +114,6 @@ SOURCES += src/mainwindow.cpp \
     src/sqlexecutionhelper.cpp \
     src/elementstablewidget.cpp \
     src/elementwidget.cpp \
-    src/layerswidget.cpp \
     src/foreigndatawrapperwidget.cpp \
     src/foreignserverwidget.cpp \
 	src/usermappingwidget.cpp \
@@ -123,6 +124,8 @@ HEADERS += src/mainwindow.h \
     src/basefunctionwidget.h \
 	src/changelogwidget.h \
 	src/fileselectorwidget.h \
+    src/layersconfigwidget.h \
+    src/layerswidget.h \
 	   src/modelwidget.h \
 	   src/messagebox.h \
 	   src/baseobjectwidget.h \
@@ -225,7 +228,6 @@ HEADERS += src/mainwindow.h \
     src/sqlexecutionhelper.h \
     src/elementstablewidget.h \
     src/elementwidget.h \
-    src/layerswidget.h \
     src/foreigndatawrapperwidget.h \
     src/foreignserverwidget.h \
 	src/usermappingwidget.h \
@@ -235,6 +237,8 @@ FORMS += ui/mainwindow.ui \
     ui/basefunctionwidget.ui \
 	ui/changelogwidget.ui \
 	ui/fileselectorwidget.ui \
+    ui/layersconfigwidget.ui \
+    ui/layerswidget.ui \
 	ui/objectsfilterwidget.ui \
 	 ui/textboxwidget.ui \
 	 ui/messagebox.ui \
@@ -319,7 +323,6 @@ FORMS += ui/mainwindow.ui \
     ui/objectstablewidget.ui \
     ui/referencewidget.ui \
     ui/elementwidget.ui \
-    ui/layerswidget.ui \
     ui/foreigndatawrapperwidget.ui \
     ui/foreignserverwidget.ui \
     ui/usermappingwidget.ui

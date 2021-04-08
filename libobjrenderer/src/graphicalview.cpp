@@ -52,13 +52,16 @@ void GraphicalView::configureObject()
 	RoundedRectItem *bodies[]={ body, ext_attribs_body };
 	QString attribs[]={ Attributes::ViewBody, Attributes::ViewExtBody },
 			tag_attribs[]={ Attributes::TableBody, Attributes::TableExtBody };
-	double width, type_width=0, px=0;
+	double width, type_width=0, px=0, old_width = 0, old_height;
 	TableObjectView *col_item=nullptr;
 	QList<TableObjectView *> col_items;
 	TableObject *tab_obj=nullptr;
 	Tag *tag=view->getTag();
 	CollapseMode collapse_mode = view->getCollapseMode();
 	bool has_col_pag = false, has_ext_pag = false;
+
+	old_width = bounding_rect.width();
+	old_height = bounding_rect.height();
 
 	// Clear the selected children objects vector since we'll (re)configure the whole view
 	sel_child_objs.clear();
@@ -319,5 +322,9 @@ void GraphicalView::configureObject()
 	configureTag();
 	configureSQLDisabledInfo();
 	requestRelationshipsUpdate();
+
+	if((old_width != 0 && this->bounding_rect.width() != old_width) ||
+		 (old_height != 0 && this->bounding_rect.height()!= old_height))
+		emit s_objectDimensionChanged();
 }
 

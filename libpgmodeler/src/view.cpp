@@ -633,13 +633,13 @@ QString View::getCodeDefinition(unsigned def_type)
 	attributes[Attributes::WithNoData]=(with_no_data ? Attributes::True : "");
 	attributes[Attributes::Columns]="";
 	attributes[Attributes::Tag]="";
-	attributes[Attributes::Layer]=QString::number(layer);
 	attributes[Attributes::Pagination]=(pagination_enabled ? Attributes::True : "");
 	attributes[Attributes::CollapseMode]=QString::number(enum_cast(collapse_mode));
 	attributes[Attributes::AttribsPage]=(pagination_enabled ? QString::number(curr_page[AttribsSection]) : "");
 	attributes[Attributes::ExtAttribsPage]=(pagination_enabled ? QString::number(curr_page[ExtAttribsSection]) : "");
 
 	setSQLObjectAttribute();
+	setLayersAttribute();
 
 	// We use column names only if the view has references that aren't its whole definition (Reference::SqlViewDefinition)
 	if(recursive && !hasDefinitionExpression())
@@ -1078,7 +1078,7 @@ void View::operator = (View &view)
 	(*dynamic_cast<BaseTable *>(this))=reinterpret_cast<BaseTable &>(view);
 
 	this->pagination_enabled = view.pagination_enabled;
-	this->layer = view.layer;
+	this->layers = view.layers;
 	this->references=view.references;
 	this->exp_select=view.exp_select;
 	this->exp_from=view.exp_from;
