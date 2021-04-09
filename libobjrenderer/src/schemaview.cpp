@@ -189,6 +189,8 @@ void SchemaView::configureObject()
 		QList<unsigned> act_layers = scene->getActiveLayersIds();
 		int num_layers = 0;
 
+		last_pos = schema->getPosition();
+
 		//Configures the bounding rect based upon the children dimension
 		while(itr!=children.end())
 		{
