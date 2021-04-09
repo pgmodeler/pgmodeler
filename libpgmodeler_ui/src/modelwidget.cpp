@@ -2304,6 +2304,7 @@ void ModelWidget::updateObjectsLayers()
 
 	QApplication::setOverrideCursor(Qt::WaitCursor);
 	scene->updateActiveLayers();
+	db_model->setObjectsModified({ ObjectType::Schema });
 	QApplication::restoreOverrideCursor();
 }
 
