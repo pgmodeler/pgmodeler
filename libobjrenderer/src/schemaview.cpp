@@ -194,7 +194,7 @@ void SchemaView::configureObject()
 		{
 			obj_view = dynamic_cast<BaseObjectView *>(*itr);
 
-			if(scene)
+			if(scene && scene->isLayerRectsVisible())
 			{
 				num_layers = 0;
 
@@ -206,12 +206,9 @@ void SchemaView::configureObject()
 						num_layers++;
 				}
 
-				size_inc = left_inc = top_inc = 0;
+				size_inc = left_inc = top_inc = LayerItem::LayerPadding * num_layers;
 
-				if(scene->isLayerRectsVisible())
-					size_inc = left_inc = top_inc = LayerItem::LayerPadding * num_layers;
-
-				if(scene->isLayerRectsVisible() && scene->isLayerNamesVisible())
+				if(scene->isLayerNamesVisible())
 					top_inc = fm.height() * num_layers;
 			}
 
