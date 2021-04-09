@@ -9,14 +9,14 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1159</width>
+    <width>1364</width>
     <height>768</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
-    <width>1024</width>
-    <height>768</height>
+    <width>640</width>
+    <height>480</height>
    </size>
   </property>
   <property name="mouseTracking">
@@ -746,7 +746,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1159</width>
+     <width>1364</width>
      <height>36</height>
     </rect>
    </property>
