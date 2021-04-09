@@ -639,7 +639,7 @@ bool ModelWidget::eventFilter(QObject *object, QEvent *event)
 	{
 		if(event->type() == QEvent::MouseMove)
 			updateMagnifierArea();
-		else if(k_event->modifiers() == (Qt::ControlModifier | Qt::AltModifier))
+		else if(k_event->modifiers() == Qt::ControlModifier  && k_event->key() == Qt::AltModifier)
 			showMagnifierArea(false);
 
 		return true;
@@ -724,7 +724,6 @@ bool ModelWidget::eventFilter(QObject *object, QEvent *event)
 
 void ModelWidget::keyPressEvent(QKeyEvent *event)
 {
-	//Cancels the insertion action when ESC is pressed
 	if(event->key()==Qt::Key_Escape)
 	{
 		if(new_obj_overlay_wgt->isVisible())
@@ -741,7 +740,7 @@ void ModelWidget::keyPressEvent(QKeyEvent *event)
 	{
 		toggleNewObjectOverlay();
 	}
-	else if(event->modifiers() == (Qt::ControlModifier | Qt::AltModifier) && current_zoom < 1)
+	else if(event->modifiers() == Qt::ControlModifier && event->key() == Qt::Key_Alt && current_zoom < 1)
 	{
 		showMagnifierArea(true);
 	}
@@ -749,7 +748,7 @@ void ModelWidget::keyPressEvent(QKeyEvent *event)
 
 void ModelWidget::keyReleaseEvent(QKeyEvent *event)
 {
-	if(event->key() == Qt::Key_Control || event->key() == Qt::Key_Shift)
+	if(event->key() == Qt::Key_Control || event->key() == Qt::Key_Alt)
 	{
 		showMagnifierArea(false);
 	}
