@@ -38,6 +38,10 @@ LayersConfigWidget::LayersConfigWidget(QWidget *parent) : QWidget(parent)
 	act = visibility_menu.addAction(tr("Hide all"), this, SLOT(setLayersActive()));
 	act->setData(false);
 
+	add_tb->setToolTip(add_tb->toolTip() + QString(" (%1)").arg(add_tb->shortcut().toString()));
+	remove_tb->setToolTip(remove_tb->toolTip() + QString(" (%1)").arg(remove_tb->shortcut().toString()));
+	remove_all_tb->setToolTip(remove_all_tb->toolTip() + QString(" (%1)").arg(remove_all_tb->shortcut().toString()));
+
 	visibility_tb->setMenu(&visibility_menu);
 
 	connect(toggle_layers_rects_chk, SIGNAL(toggled(bool)), this, SLOT(toggleLayersRects()));
