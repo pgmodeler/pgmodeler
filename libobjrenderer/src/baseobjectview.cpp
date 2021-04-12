@@ -370,7 +370,7 @@ QVariant BaseObjectView::itemChange(GraphicsItemChange change, const QVariant &v
 
 		if(graph_obj && !graph_obj->isProtected())
 		{
-			if(ObjectsScene::isAlignObjectsToGrid())
+			if(ObjectsScene::isAlignObjectsToGrid() && this->isSelected())
 				this->setPos(ObjectsScene::alignPointToGrid(this->scenePos()));
 
 			graph_obj->setPosition(this->scenePos());
