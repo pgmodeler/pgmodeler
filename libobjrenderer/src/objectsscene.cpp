@@ -231,7 +231,8 @@ void ObjectsScene::removeLayers()
 	layers.clear();
 	active_layers.clear();
 
-	while(!layers_paths.empty())
+	// Deleting all layer paths except the one related to the default layer
+	while(layers_paths.size() > 1)
 	{
 		layer_path = layers_paths.back();
 		removeItem(layer_path);
@@ -1339,7 +1340,8 @@ void ObjectsScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 			//If the alignment to grid is active, adjust the event scene position
 			if(align_objs_grid && !selection_rect->isVisible() && sel_items_count <= 1)
 				event->setScenePos(this->alignPointToGrid(event->scenePos()));
-			else if(selection_rect->isVisible())
+			else
+			if(selection_rect->isVisible())
 			{
 				QPolygonF pol;
 				pol.append(sel_ini_pnt);
@@ -1626,6 +1628,8 @@ void ObjectsScene::alignObjectsToGrid()
 		schemas.back()->setModified(true);
 		schemas.pop_back();
 	}
+
+	updateLayerRects();
 }
 
 void ObjectsScene::update()
