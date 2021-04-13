@@ -178,6 +178,15 @@ class ObjectsScene: public QGraphicsScene {
 		LayerNameColor = 0,
 		LayerRectColor = 1;
 
+		//! \brief Stores the default grid line color
+		static const QColor DefaultGridColor,
+
+		//! \brief Stores the default grid line color
+		DefaultCanvasColor,
+
+		//! \brief Stores the default page delimiter lines color
+		DefaultDelimitersColor;
+
 		ObjectsScene();
 		virtual ~ObjectsScene();
 

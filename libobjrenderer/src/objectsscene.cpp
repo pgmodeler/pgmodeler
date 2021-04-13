@@ -22,14 +22,22 @@ bool ObjectsScene::align_objs_grid=false;
 bool ObjectsScene::show_grid=true;
 bool ObjectsScene::show_page_delim=true;
 unsigned ObjectsScene::grid_size=20;
+
 QPrinter::PageSize ObjectsScene::paper_size=QPrinter::A4;
 QPrinter::Orientation ObjectsScene::page_orientation=QPrinter::Landscape;
+
 QRectF ObjectsScene::page_margins=QRectF(2,2,2,2);
 QSizeF ObjectsScene::custom_paper_size=QSizeF(0,0);
 QBrush ObjectsScene::grid;
-QColor ObjectsScene::grid_color = QColor(225, 225, 225);
-QColor ObjectsScene::canvas_color = QColor(255, 255, 255);
-QColor ObjectsScene::delimiters_color = QColor(75,115,195);
+
+const QColor ObjectsScene::DefaultGridColor = QColor(225, 225, 225);
+const QColor ObjectsScene::DefaultCanvasColor = QColor(255, 255, 255);
+const QColor ObjectsScene::DefaultDelimitersColor = QColor(75,115,195);
+
+QColor ObjectsScene::grid_color = ObjectsScene::DefaultGridColor;
+QColor ObjectsScene::canvas_color = ObjectsScene::DefaultCanvasColor;
+QColor ObjectsScene::delimiters_color = ObjectsScene::DefaultDelimitersColor;
+
 bool ObjectsScene::corner_move=true;
 bool ObjectsScene::invert_rangesel_trigger=false;
 

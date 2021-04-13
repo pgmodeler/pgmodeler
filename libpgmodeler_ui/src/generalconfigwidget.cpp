@@ -321,9 +321,22 @@ void GeneralConfigWidget::loadConfiguration()
 		low_verbosity_chk->setChecked(config_params[Attributes::Configuration][Attributes::LowVerbosity]==Attributes::True);
 		escape_comments_chk->setChecked(config_params[Attributes::Configuration][Attributes::EscapeComment]==Attributes::True);
 
-		grid_color_cp->setColor(0, QColor(config_params[Attributes::Configuration][Attributes::GridColor]));
-		canvas_color_cp->setColor(0, QColor(config_params[Attributes::Configuration][Attributes::CanvasColor]));
-		delimiters_color_cp->setColor(0, QColor(config_params[Attributes::Configuration][Attributes::DelimitersColor]));
+		/* If we can't identify at least one of the colors that compose the grid then we use default colors
+		 * avoiding black canvas or black grid color */
+		if(config_params[Attributes::Configuration].count(Attributes::GridColor) == 0 ||
+			 config_params[Attributes::Configuration].count(Attributes::CanvasColor) == 0 ||
+			 config_params[Attributes::Configuration].count(Attributes::DelimitersColor) == 0)
+		{
+			grid_color_cp->setColor(0, ObjectsScene::DefaultGridColor);
+			canvas_color_cp->setColor(0, ObjectsScene::DefaultCanvasColor);
+			delimiters_color_cp->setColor(0, ObjectsScene::DefaultDelimitersColor);
+		}
+		else
+		{
+			grid_color_cp->setColor(0, QColor(config_params[Attributes::Configuration][Attributes::GridColor]));
+			canvas_color_cp->setColor(0, QColor(config_params[Attributes::Configuration][Attributes::CanvasColor]));
+			delimiters_color_cp->setColor(0, QColor(config_params[Attributes::Configuration][Attributes::DelimitersColor]));
+		}
 
 		int ui_idx = ui_language_cmb->findData(config_params[Attributes::Configuration][Attributes::UiLanguage]);
 		ui_language_cmb->setCurrentIndex(ui_idx >= 0 ? ui_idx : 0);
