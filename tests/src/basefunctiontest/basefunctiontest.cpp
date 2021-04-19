@@ -34,8 +34,10 @@ class BaseFunctionTest: public QObject, public PgModelerUnitTest {
 		void doesntAddDuplicatedTransformType();
 		void functionHasTransformTypesInSQL();
 		void procedureHasTransformTypesInSQL();
-		//void functionHasTransformTypesInXML();
-		//void procedureHasTransformTypesInXML();
+		void functionHasTransformTypesInXML();
+		void procedureHasTransformTypesInXML();
+		//void modelCreatesFunctionWithTransformTypes();
+		//void modelCreatesProcedureWithTransformTypes();
 };
 
 void BaseFunctionTest::doesntAddDuplicatedTransformType()
@@ -132,6 +134,87 @@ void BaseFunctionTest::procedureHasTransformTypesInSQL()
  -- ddl-end --").simplified();
 
 		QString generated_code = proc.getCodeDefinition(SchemaParser::SqlDefinition).simplified();
+		QCOMPARE(expected_code, generated_code);
+	}
+	catch (Exception &e)
+	{
+		QFAIL(e.getExceptionsText().toStdString().c_str());
+	}
+}
+
+void BaseFunctionTest::functionHasTransformTypesInXML()
+{
+	try
+	{
+		Function func;
+		Schema sch;
+		Language lang;
+
+		sch.BaseObject::setName("public");
+		lang.BaseObject::setName(DefaultLanguages::Sql);
+
+		func.setName("funct_test");
+		func.setSchema(&sch);
+		func.setLanguage(&lang);
+		func.setReturnType(PgSqlType("integer"));
+		func.addTransformType(PgSqlType("varchar"));
+		func.addTransformType(PgSqlType("text"));
+		func.addTransformType(PgSqlType("numeric", 1, 6, 2));
+		func.setSourceCode("return 0;");
+
+		QString expected_code =
+				QString("<function name=\"funct_test\" window-func=\"false\" \
+returns-setof=\"false\" behavior-type=\"CALLED ON NULL INPUT\" \
+function-type=\"VOLATILE\" security-type=\"SECURITY INVOKER\" \
+parallel-type=\"PARALLEL UNSAFE\" execution-cost=\"100\" \
+row-amount=\"1000\"> \
+<schema name=\"public\"/> \
+<language name=\"sql\"/> \
+<return-type> \
+<type name=\"integer\" length=\"0\"/> \
+</return-type> \
+<transform-types names=\"varchar,text,numeric\"/> \
+<definition><![CDATA[return 0;]]></definition> \
+</function>").simplified();
+
+		QString generated_code = func.getCodeDefinition(SchemaParser::XmlDefinition).simplified();
+		QCOMPARE(expected_code, generated_code);
+	}
+	catch (Exception &e)
+	{
+		QFAIL(e.getExceptionsText().toStdString().c_str());
+	}
+}
+
+void BaseFunctionTest::procedureHasTransformTypesInXML()
+{
+	try
+	{
+		Procedure proc;
+		Schema sch;
+		Language lang;
+
+		sch.BaseObject::setName("public");
+		lang.BaseObject::setName(DefaultLanguages::Sql);
+
+		proc.setName("proc_test");
+		proc.setSchema(&sch);
+		proc.setLanguage(&lang);
+		proc.addTransformType(PgSqlType("varchar"));
+		proc.addTransformType(PgSqlType("text"));
+		proc.addTransformType(PgSqlType("numeric", 1, 6, 2));
+		proc.setSourceCode("return 0;");
+
+		QString expected_code =
+				QString("<procedure name=\"proc_test\" \
+security-type=\"SECURITY INVOKER\"> \
+<schema name=\"public\"/> \
+<language name=\"sql\"/> \
+<transform-types names=\"varchar,text,numeric\"/> \
+<definition><![CDATA[return 0;]]></definition> \
+</procedure>").simplified();
+
+		QString generated_code = proc.getCodeDefinition(SchemaParser::XmlDefinition).simplified();
 		QCOMPARE(expected_code, generated_code);
 	}
 	catch (Exception &e)

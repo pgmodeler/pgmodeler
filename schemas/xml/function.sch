@@ -55,6 +55,10 @@
         %end
   $tb </return-type> $br
   
+  %if {transform-types} %then
+    $tb [<transform-types names=] "{transform-types}" /> $br
+  %end
+  
   %if {parameters} %then {parameters} %end
 
 

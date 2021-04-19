@@ -23,3 +23,6 @@
 
 <!ELEMENT appended-sql (#PCDATA)>
 <!ELEMENT prepended-sql (#PCDATA)>
+
+<!ELEMENT transform-types>
+<!ATTLIST transform-types names CDATA #REQUIRED>

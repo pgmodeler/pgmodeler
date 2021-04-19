@@ -33,7 +33,7 @@ BaseFunction::BaseFunction()
 	attributes[Attributes::ReturnTable]="";
 	attributes[Attributes::Library]="";
 	attributes[Attributes::Symbol]="";
-	attributes[Attributes::Transform]="";
+	attributes[Attributes::TransformTypes]="";
 }
 
 void BaseFunction::setName(const QString &name)
@@ -115,20 +115,19 @@ void BaseFunction::setBasicFunctionAttributes(unsigned def_type)
 	QStringList types;
 
 	for(auto &type : transform_types)
-		types.append(QString("%1%2").arg(PgModelerNs::DataSeparator).arg(~type));
+	{
+		types.append(QString("%1%2")
+								 .arg(def_type == SchemaParser::SqlDefinition ? PgModelerNs::DataSeparator : "")
+								 .arg(~type));
+	}
 
 	if(def_type==SchemaParser::SqlDefinition)
-	{
 		types.replaceInStrings(PgModelerNs::DataSeparator, QString(" FOR TYPE "));
-		attributes[Attributes::Transform] = types.join(',');
-	}
-	else
-	{
-		attributes[Attributes::Transform] = "";
-	}
 
+	attributes[Attributes::TransformTypes] = types.join(',');
 	attributes[Attributes::SecurityType]=~security_type;
 	attributes[Attributes::Definition]=source_code;
+
 	attributes[Attributes::Signature]=signature;
 }
 

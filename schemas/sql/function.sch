@@ -28,8 +28,8 @@ $br
 
 $tb [LANGUAGE ] {language} $br
 
-%if {transform} %then
- $tb TRANSFORM {transform} $br
+%if {transform-types} %then
+ $tb TRANSFORM {transform-types} $br
 %end
 
 %if {window-func} %then
