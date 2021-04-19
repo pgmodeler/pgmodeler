@@ -54,6 +54,9 @@ class BaseFunction: public BaseObject {
 		//! \brief Function security type. It can be SECURITY [INVOKER | DEFINER]
 		SecurityType security_type;
 
+		//! \brief Transforms types that are applied to this function
+		vector<PgSqlType> transform_types;
+
 		//! \brief Formats the function parameter attribute to be used by the SchemaParser
 		void setParametersAttribute(unsigned def_type);
 
@@ -89,6 +92,9 @@ class BaseFunction: public BaseObject {
 		//! \brief Defines the security type of the function
 		void setSecurityType(SecurityType sec_type);
 
+		//! \brief Add a transform type to the function
+		void addTransformType(PgSqlType type);
+
 		//! \brief Returns the function's source code
 		QString getSourceCode();
 
@@ -110,6 +116,9 @@ class BaseFunction: public BaseObject {
 		//! \brief Returns the security type used by the function
 		SecurityType getSecurityType();
 
+		//! \brief Returns the transform types of the function
+		vector<PgSqlType> getTransformTypes();
+
 		//! \brief Removes a parameter using its name and type
 		void removeParameter(const QString &name, PgSqlType type);
 
@@ -118,6 +127,12 @@ class BaseFunction: public BaseObject {
 
 		//! \brief Removes all the parameters from the function
 		void removeParameters();
+
+		//! \brief Removes all the transform types from the function
+		void removeTransformTypes();
+
+		//! \brief Returns true when a transform type is already in use by the function
+		bool isTransformTypeExists(PgSqlType type);
 
 		//! \brief Returns the complete function signature
 		virtual QString getSignature(bool=true);

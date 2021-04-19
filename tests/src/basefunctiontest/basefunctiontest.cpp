@@ -1,0 +1,144 @@
+/*
+# PostgreSQL Database Modeler (pgModeler)
+#
+# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation version 3.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# The complete text of GPLv3 is at LICENSE file on source code root directory.
+# Also, you can get the complete GNU General Public License at <http://www.gnu.org/licenses/>
+*/
+
+#include <QtTest/QtTest>
+#include "databasemodel.h"
+#include "globalattributes.h"
+#include "pgmodelerunittest.h"
+#include "defaultlanguages.h"
+#include "qtcompat/qtextstreamcompat.h"
+
+class BaseFunctionTest: public QObject, public PgModelerUnitTest {
+	private:
+		Q_OBJECT
+
+	public:
+		BaseFunctionTest() : PgModelerUnitTest(SCHEMASDIR) {}
+
+	private slots:
+		void doesntAddDuplicatedTransformType();
+		void functionHasTransformTypesInSQL();
+		void procedureHasTransformTypesInSQL();
+		//void functionHasTransformTypesInXML();
+		//void procedureHasTransformTypesInXML();
+};
+
+void BaseFunctionTest::doesntAddDuplicatedTransformType()
+{
+	Function func;
+	vector<PgSqlType> types, types_aux;
+
+	func.addTransformType(PgSqlType("integer"));
+	func.addTransformType(PgSqlType("text"));
+	types = func.getTransformTypes();
+
+	func.addTransformType(PgSqlType("integer"));
+	func.addTransformType(PgSqlType("text"));
+	types_aux = func.getTransformTypes();
+
+	QVERIFY(types.size() == types_aux.size());
+}
+
+void BaseFunctionTest::functionHasTransformTypesInSQL()
+{
+	try
+	{
+		Function func;
+		Schema sch;
+		Language lang;
+
+		sch.BaseObject::setName("public");
+		lang.BaseObject::setName(DefaultLanguages::Sql);
+
+		func.setName("funct_test");
+		func.setSchema(&sch);
+		func.setLanguage(&lang);
+		func.setReturnType(PgSqlType("integer"));
+		func.addTransformType(PgSqlType("varchar"));
+		func.addTransformType(PgSqlType("text"));
+		func.addTransformType(PgSqlType("numeric", 1, 6, 2));
+		func.setSourceCode("return 0;");
+
+		QString expected_code =
+				QString("-- object: public.funct_test | type: FUNCTION --\
+ -- DROP FUNCTION IF EXISTS public.funct_test() CASCADE;\
+ CREATE FUNCTION public.funct_test ()\
+ RETURNS integer\
+ LANGUAGE sql\
+ TRANSFORM FOR TYPE varchar, FOR TYPE text, FOR TYPE numeric\
+ VOLATILE \
+ CALLED ON NULL INPUT\
+ SECURITY INVOKER\
+ PARALLEL UNSAFE\
+ COST 100\
+ AS $$\
+	return 0;\
+ $$;\
+ -- ddl-end --").simplified();
+
+		QString generated_code = func.getCodeDefinition(SchemaParser::SqlDefinition).simplified();
+		QCOMPARE(expected_code, generated_code);
+	}
+	catch (Exception &e)
+	{
+		QFAIL(e.getExceptionsText().toStdString().c_str());
+	}
+}
+
+void BaseFunctionTest::procedureHasTransformTypesInSQL()
+{
+	try
+	{
+		Procedure proc;
+		Schema sch;
+		Language lang;
+
+		sch.BaseObject::setName("public");
+		lang.BaseObject::setName(DefaultLanguages::Sql);
+
+		proc.setName("proc_test");
+		proc.setSchema(&sch);
+		proc.setLanguage(&lang);
+		proc.addTransformType(PgSqlType("varchar"));
+		proc.addTransformType(PgSqlType("text"));
+		proc.addTransformType(PgSqlType("numeric", 1, 6, 2));
+		proc.setSourceCode("return 0;");
+
+		QString expected_code =
+				QString("-- object: public.proc_test | type: PROCEDURE --\
+ -- DROP PROCEDURE IF EXISTS public.proc_test() CASCADE;\
+ CREATE PROCEDURE public.proc_test ()\
+ LANGUAGE sql\
+ TRANSFORM FOR TYPE varchar, FOR TYPE text, FOR TYPE numeric\
+ SECURITY INVOKER\
+ AS $$\
+	return 0;\
+ $$;\
+ -- ddl-end --").simplified();
+
+		QString generated_code = proc.getCodeDefinition(SchemaParser::SqlDefinition).simplified();
+		QCOMPARE(expected_code, generated_code);
+	}
+	catch (Exception &e)
+	{
+		QFAIL(e.getExceptionsText().toStdString().c_str());
+	}
+}
+
+QTEST_MAIN(BaseFunctionTest)
+#include "basefunctiontest.moc"

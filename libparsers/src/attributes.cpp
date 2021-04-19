@@ -606,6 +606,7 @@ namespace Attributes {
 	ToSqlFunc("tosql"),
 	TpmodInFunc("tpmodin"),
 	TpmodOutFunc("tpmodout"),
+	Transform("transform"),
 	TransitionFunc("transition"),
 	TriggerFunc("trigger-func"),
 	TriggerPriv("trigger"),

@@ -624,6 +624,7 @@ namespace Attributes {
 	ToSqlFunc,
 	TpmodInFunc,
 	TpmodOutFunc,
+	Transform,
 	TransitionFunc,
 	TriggerFunc,
 	TriggerPriv,

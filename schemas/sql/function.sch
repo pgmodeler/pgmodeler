@@ -28,6 +28,10 @@ $br
 
 $tb [LANGUAGE ] {language} $br
 
+%if {transform} %then
+ $tb TRANSFORM {transform} $br
+%end
+
 %if {window-func} %then
  $tb WINDOW $br
 %end

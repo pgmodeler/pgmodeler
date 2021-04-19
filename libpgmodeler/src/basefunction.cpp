@@ -18,6 +18,7 @@
 
 #include "basefunction.h"
 #include "defaultlanguages.h"
+#include "pgmodelerns.h"
 
 BaseFunction::BaseFunction()
 {
@@ -32,6 +33,7 @@ BaseFunction::BaseFunction()
 	attributes[Attributes::ReturnTable]="";
 	attributes[Attributes::Library]="";
 	attributes[Attributes::Symbol]="";
+	attributes[Attributes::Transform]="";
 }
 
 void BaseFunction::setName(const QString &name)
@@ -109,6 +111,22 @@ void BaseFunction::setBasicFunctionAttributes(unsigned def_type)
 		}
 	}
 
+
+	QStringList types;
+
+	for(auto &type : transform_types)
+		types.append(QString("%1%2").arg(PgModelerNs::DataSeparator).arg(~type));
+
+	if(def_type==SchemaParser::SqlDefinition)
+	{
+		types.replaceInStrings(PgModelerNs::DataSeparator, QString(" FOR TYPE "));
+		attributes[Attributes::Transform] = types.join(',');
+	}
+	else
+	{
+		attributes[Attributes::Transform] = "";
+	}
+
 	attributes[Attributes::SecurityType]=~security_type;
 	attributes[Attributes::Definition]=source_code;
 	attributes[Attributes::Signature]=signature;
@@ -167,6 +185,15 @@ void BaseFunction::setSecurityType(SecurityType sec_type)
 	security_type=sec_type;
 }
 
+void BaseFunction::addTransformType(PgSqlType type)
+{
+	if(!isTransformTypeExists(type))
+	{
+		transform_types.push_back(type);
+		setCodeInvalidated(true);
+	}
+}
+
 void BaseFunction::setSourceCode(const QString &src_code)
 {
 	if(language && language->getName().toLower() == DefaultLanguages::C)
@@ -191,6 +218,11 @@ unsigned BaseFunction::getParameterCount()
 SecurityType BaseFunction::getSecurityType()
 {
 	return security_type;
+}
+
+vector<PgSqlType> BaseFunction::getTransformTypes()
+{
+	return transform_types;
 }
 
 QString BaseFunction::getSourceCode()
@@ -221,6 +253,17 @@ void BaseFunction::removeParameters()
 {
 	parameters.clear();
 	createSignature();
+}
+
+void BaseFunction::removeTransformTypes()
+{
+	transform_types.clear();
+	setCodeInvalidated(true);
+}
+
+bool BaseFunction::isTransformTypeExists(PgSqlType type)
+{
+	return std::find(transform_types.begin(), transform_types.end(), type) != transform_types.end();
 }
 
 void BaseFunction::removeParameter(const QString &name, PgSqlType type)

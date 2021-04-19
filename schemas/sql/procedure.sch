@@ -17,6 +17,11 @@
 
     [CREATE PROCEDURE ] {name} $sp ( %if {parameters} %then {parameters} %end ) $br
     $tb [LANGUAGE ] {language} $br
+    
+    %if {transform} %then
+        $tb TRANSFORM {transform} $br
+    %end
+    
     $tb {security-type} $br
     $tb [AS ]
 
