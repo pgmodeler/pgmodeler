@@ -37,7 +37,7 @@ class BaseFunctionTest: public QObject, public PgModelerUnitTest {
 		void functionHasTransformTypesInXML();
 		void procedureHasTransformTypesInXML();
 		void modelCreatesFunctionWithTransformTypes();
-		//void modelCreatesProcedureWithTransformTypes();
+		void modelCreatesProcedureWithTransformTypes();
 };
 
 void BaseFunctionTest::doesntAddDuplicatedTransformType()
@@ -256,6 +256,42 @@ row-amount=\"1000\"> \
 
 		QVERIFY(nullptr != func);
 		QString generated_code = func->getCodeDefinition(SchemaParser::XmlDefinition).simplified();
+		QCOMPARE(xml_code, generated_code);
+	}
+	catch (Exception &e)
+	{
+		QFAIL(e.getExceptionsText().toStdString().c_str());
+	}
+}
+
+void BaseFunctionTest::modelCreatesProcedureWithTransformTypes()
+{
+	try
+	{
+	DatabaseModel dbmodel;
+	Procedure *proc = nullptr;
+
+	QString xml_code =
+			QString("<procedure name=\"proc_test\" \
+security-type=\"SECURITY INVOKER\"> \
+<schema name=\"public\"/> \
+<language name=\"sql\"/> \
+<transform-types names=\"varchar,text,numeric\"/> \
+<definition><![CDATA[return 0;]]></definition> \
+</procedure>").simplified();
+
+		dbmodel.createSystemObjects(true);
+		dbmodel.getXMLParser()->setDTDFile(GlobalAttributes::getSchemasRootDir() +
+																			 GlobalAttributes::DirSeparator +
+																			 GlobalAttributes::XMLSchemaDir +
+																			 GlobalAttributes::DirSeparator +
+																			 "dtd" + GlobalAttributes::DirSeparator + "dbmodel.dtd",
+																			 BaseObject::getSchemaName(ObjectType::Procedure));
+		dbmodel.getXMLParser()->loadXMLBuffer(xml_code);
+		proc = dbmodel.createProcedure();
+
+		QVERIFY(nullptr != proc);
+		QString generated_code = proc->getCodeDefinition(SchemaParser::XmlDefinition).simplified();
 		QCOMPARE(xml_code, generated_code);
 	}
 	catch (Exception &e)
