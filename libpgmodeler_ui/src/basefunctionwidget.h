@@ -48,7 +48,13 @@ class BaseFunctionWidget: public BaseObjectWidget, public Ui::BaseFunctionWidget
 		CodeCompletionWidget *source_code_cp;
 
 		//! \brief Table used to store the function's parameters
-		ObjectsTableWidget *parameters_tab;
+		ObjectsTableWidget *parameters_tab,
+
+		//! \brief Table used to store the function's transform types
+		*transform_types_tab;
+
+		//! \brief Widget used to select transform types of the function's
+		PgSQLTypeWidget *transform_type_wgt;
 
 		//! \brief Returns a parameter configured based upon the specified table and line
 		Parameter getParameter(ObjectsTableWidget *params_tab, unsigned row, bool set_param_modes);

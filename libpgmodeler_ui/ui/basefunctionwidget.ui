@@ -160,6 +160,11 @@
        <string>Parameters</string>
       </attribute>
      </widget>
+     <widget class="QWidget" name="tab">
+      <attribute name="title">
+       <string>Transform types</string>
+      </attribute>
+     </widget>
      <widget class="QWidget" name="definition_tab">
       <attribute name="title">
        <string>Definition</string>

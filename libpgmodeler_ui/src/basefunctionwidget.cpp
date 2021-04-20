@@ -49,6 +49,20 @@ BaseFunctionWidget::BaseFunctionWidget(QWidget *parent, ObjectType obj_type) : B
 		func_config_twg->widget(1)->setLayout(grid);
 		security_cmb->addItems(SecurityType::getTypes());
 
+
+		transform_type_wgt = new PgSQLTypeWidget(this);
+		transform_types_tab = new ObjectsTableWidget(ObjectsTableWidget::AllButtons ^
+																								 ObjectsTableWidget::UpdateButton, true, this);
+		transform_types_tab->setColumnCount(1);
+		transform_types_tab->setHeaderLabel(tr("Type"), 0);
+		transform_types_tab->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("usertype")), 0);
+
+		grid = new QGridLayout;
+		grid->addWidget(transform_type_wgt, 0, 0, 1, 1);
+		grid->addWidget(transform_types_tab, 1, 0, 1, 1);
+		grid->setContentsMargins(4, 4, 4, 4);
+		func_config_twg->widget(2)->setLayout(grid);
+
 		connect(language_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(selectLanguage()));
 		setRequiredField(language_lbl);
 		setRequiredField(symbol_lbl);
@@ -191,6 +205,9 @@ void BaseFunctionWidget::setAttributes(DatabaseModel *model, OperationList *op_l
 	language_cmb->addItems(list);
 	language_cmb->setCurrentText(DefaultLanguages::Sql);
 
+	transform_type_wgt->setAttributes(PgSqlType(), model);
+	transform_types_tab->removeRows();
+
 	if(func)
 	{
 		language_cmb->setCurrentIndex(language_cmb->findText(func->getLanguage()->getName()));
@@ -216,6 +233,14 @@ void BaseFunctionWidget::setAttributes(DatabaseModel *model, OperationList *op_l
 		}
 		else
 			source_code_txt->setPlainText(func->getSourceCode());
+
+		for(auto &type : func->getTransformTypes())
+		{
+			transform_types_tab->addRow();
+			transform_types_tab->setCellText(~type, transform_types_tab->getRowCount() - 1, 0);
+		}
+
+		transform_types_tab->clearSelection();
 	}
 }
 
