@@ -8240,6 +8240,14 @@ void DatabaseModel::getProcedureDependencies(BaseObject *object, vector<BaseObje
 		if(usr_type)
 			getObjectDependecies(usr_type, deps, inc_indirect_deps);
 	}
+
+	for(auto &type : base_func->getTransformTypes())
+	{
+		usr_type = getObjectPgSQLType(type);
+
+		if(usr_type)
+			getObjectDependecies(usr_type, deps, inc_indirect_deps);
+	}
 }
 
 void DatabaseModel::getFunctionDependencies(BaseObject *object, vector<BaseObject *> &deps, bool inc_indirect_deps)
@@ -9285,27 +9293,40 @@ void DatabaseModel::getUserDefTypesReferences(BaseObject *object, vector<BaseObj
 				}
 			}
 		}
-		else if(obj_types[i]==ObjectType::Function)
+		else if(obj_types[i] == ObjectType::Function ||
+						obj_types[i] == ObjectType::Procedure)
 		{
+			BaseFunction *base_func = nullptr;
+
 			while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
 			{
-				func=dynamic_cast<Function *>(*itr);
+				base_func = dynamic_cast<BaseFunction *>(*itr);
+				func = dynamic_cast<Function *>(*itr);
 				itr++;
 
-				if(func->getReturnType()==ptr_pgsqltype)
+				if(func && func->getReturnType()==ptr_pgsqltype)
 				{
-					refer=true;
+					refer = true;
 					refs.push_back(func);
 				}
 				else
 				{
-					count=func->getParameterCount();
+					count = base_func->getParameterCount();
 					for(i1=0; i1 < count && (!exclusion_mode || (exclusion_mode && !refer)); i1++)
 					{
-						if(func->getParameter(i1).getType()==ptr_pgsqltype)
+						if(base_func->getParameter(i1).getType()==ptr_pgsqltype)
 						{
-							refer=true;
-							refs.push_back(func);
+							refer = true;
+							refs.push_back(base_func);
+						}
+					}
+
+					for(auto &type : base_func->getTransformTypes())
+					{
+						if(type == ptr_pgsqltype)
+						{
+							refer = true;
+							refs.push_back(base_func);
 						}
 					}
 				}
