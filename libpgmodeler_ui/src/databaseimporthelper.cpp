@@ -1103,7 +1103,7 @@ void DatabaseImportHelper::configureBaseFunctionAttribs(attribs_map &attribs)
 		param_modes = Catalog::parseArrayValues(attribs[Attributes::ArgModes]);
 		param_def_vals = Catalog::parseDefaultValues(attribs[Attributes::ArgDefaults]);
 
-		transform_types = Catalog::parseDefaultValues(attribs[Attributes::TransformTypes]);
+		transform_types = getTypes(attribs[Attributes::TransformTypes], false);
 		attribs[Attributes::TransformTypes] = transform_types.join(',');
 
 		for(int i=0; i < param_types.size(); i++)
