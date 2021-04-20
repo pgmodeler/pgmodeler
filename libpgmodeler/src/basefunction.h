@@ -95,6 +95,11 @@ class BaseFunction: public BaseObject {
 		//! \brief Add a transform type to the function
 		void addTransformType(PgSqlType type);
 
+		/*! \brief Add a set of transform types to the function. The type names in the list
+		 * must not contain any length, dimension or any other specialization of a type,
+		 * just the correct type name */
+		void addTransformTypes(const QStringList &types);
+
 		//! \brief Returns the function's source code
 		QString getSourceCode();
 

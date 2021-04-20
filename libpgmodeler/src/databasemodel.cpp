@@ -4140,6 +4140,13 @@ Function *DatabaseModel::createFunction()
 
 						xmlparser.restorePosition();
 					}
+					else if(xmlparser.getElementName() == Attributes::TransformTypes)
+					{
+						xmlparser.savePosition();
+						xmlparser.getElementAttributes(attribs_aux);
+						func->addTransformTypes(attribs_aux[Attributes::Names].split(',', QtCompat::SkipEmptyParts));
+						xmlparser.restorePosition();
+					}
 				}
 			}
 			while(xmlparser.accessElement(XmlParser::NextElement));

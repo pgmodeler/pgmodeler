@@ -111,7 +111,6 @@ void BaseFunction::setBasicFunctionAttributes(unsigned def_type)
 		}
 	}
 
-
 	QStringList types;
 
 	for(auto &type : transform_types)
@@ -127,7 +126,6 @@ void BaseFunction::setBasicFunctionAttributes(unsigned def_type)
 	attributes[Attributes::TransformTypes] = types.join(',');
 	attributes[Attributes::SecurityType]=~security_type;
 	attributes[Attributes::Definition]=source_code;
-
 	attributes[Attributes::Signature]=signature;
 }
 
@@ -190,6 +188,19 @@ void BaseFunction::addTransformType(PgSqlType type)
 	{
 		transform_types.push_back(type);
 		setCodeInvalidated(true);
+	}
+}
+
+void BaseFunction::addTransformTypes(const QStringList &types)
+{
+	try
+	{
+		for(auto &type : types)
+			addTransformType(PgSqlType(type));
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorCode(), __PRETTY_FUNCTION__, __FILE__, __LINE__, &e);
 	}
 }
 

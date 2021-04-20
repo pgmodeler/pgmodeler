@@ -36,7 +36,7 @@ class BaseFunctionTest: public QObject, public PgModelerUnitTest {
 		void procedureHasTransformTypesInSQL();
 		void functionHasTransformTypesInXML();
 		void procedureHasTransformTypesInXML();
-		//void modelCreatesFunctionWithTransformTypes();
+		void modelCreatesFunctionWithTransformTypes();
 		//void modelCreatesProcedureWithTransformTypes();
 };
 
@@ -216,6 +216,47 @@ security-type=\"SECURITY INVOKER\"> \
 
 		QString generated_code = proc.getCodeDefinition(SchemaParser::XmlDefinition).simplified();
 		QCOMPARE(expected_code, generated_code);
+	}
+	catch (Exception &e)
+	{
+		QFAIL(e.getExceptionsText().toStdString().c_str());
+	}
+}
+
+void BaseFunctionTest::modelCreatesFunctionWithTransformTypes()
+{
+	try
+	{
+		DatabaseModel dbmodel;
+		Function *func = nullptr;
+		QString xml_code =
+				QString("<function name=\"funct_test\" window-func=\"false\" \
+returns-setof=\"false\" behavior-type=\"CALLED ON NULL INPUT\" \
+function-type=\"VOLATILE\" security-type=\"SECURITY INVOKER\" \
+parallel-type=\"PARALLEL UNSAFE\" execution-cost=\"100\" \
+row-amount=\"1000\"> \
+<schema name=\"public\"/> \
+<language name=\"sql\"/> \
+<return-type> \
+<type name=\"integer\" length=\"0\"/> \
+</return-type> \
+<transform-types names=\"varchar,text,numeric\"/> \
+<definition><![CDATA[return 0;]]></definition> \
+</function>").simplified();
+
+		dbmodel.createSystemObjects(true);
+		dbmodel.getXMLParser()->setDTDFile(GlobalAttributes::getSchemasRootDir() +
+																			 GlobalAttributes::DirSeparator +
+																			 GlobalAttributes::XMLSchemaDir +
+																			 GlobalAttributes::DirSeparator +
+																			 "dtd" + GlobalAttributes::DirSeparator + "dbmodel.dtd",
+																			 BaseObject::getSchemaName(ObjectType::Function));
+		dbmodel.getXMLParser()->loadXMLBuffer(xml_code);
+		func = dbmodel.createFunction();
+
+		QVERIFY(nullptr != func);
+		QString generated_code = func->getCodeDefinition(SchemaParser::XmlDefinition).simplified();
+		QCOMPARE(xml_code, generated_code);
 	}
 	catch (Exception &e)
 	{
