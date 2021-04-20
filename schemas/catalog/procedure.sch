@@ -50,6 +50,7 @@
                   pg_get_expr(proargdefaults, 'pg_class'::regclass) AS arg_defaults,
                   pr.prosrc AS definition,
                   pr.probin AS library,
+                  pr.protrftypes AS transform_types, 
 
                   CASE
                      WHEN pr.prosecdef  THEN 'SECURITY DEFINER'
