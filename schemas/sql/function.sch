@@ -28,7 +28,7 @@ $br
 
 $tb [LANGUAGE ] {language} $br
 
-%if {transform-types} %then
+%if ({pgsql-ver} >=f "9.5") %and {transform-types} %then
  $tb TRANSFORM {transform-types} $br
 %end
 
