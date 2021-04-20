@@ -52,7 +52,9 @@ BaseFunctionWidget::BaseFunctionWidget(QWidget *parent, ObjectType obj_type) : B
 
 		transform_type_wgt = new PgSQLTypeWidget(this);
 		transform_types_tab = new ObjectsTableWidget(ObjectsTableWidget::AllButtons ^
-																								 ObjectsTableWidget::UpdateButton, true, this);
+																								 (ObjectsTableWidget::UpdateButton |
+																									ObjectsTableWidget::EditButton |
+																									ObjectsTableWidget::ResizeColsButton), true, this);
 		transform_types_tab->setColumnCount(1);
 		transform_types_tab->setHeaderLabel(tr("Type"), 0);
 		transform_types_tab->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("usertype")), 0);
