@@ -274,7 +274,8 @@ QString Exception::messages[Exception::ErrorCount][2]={
 	{"InvChangelogEntryValues", QT_TR_NOOP("Trying to register a changelog entry with invalid values(s)!")},
 	{"InvProcedureParamOutMode", QT_TR_NOOP("Parameters using `out' mode are not supported by procedures! Use `inout' instead.") },
 	{"ExportFailureDbSQLDisabled", QT_TR_NOOP("The SQL code of the database `%1' is disabled! The export process can't proceed. Please, enable the SQL code of the mentioned object and try again.")},
-	{"InvConfigParameterName", QT_TR_NOOP("Invalid configuration parameter `%1' name assigned to the function `%2'!")}
+	{"InvConfigParameterName", QT_TR_NOOP("Invalid configuration parameter `%1' assigned to the function `%2'!")},
+	{"EmptyConfigParameterValue", QT_TR_NOOP("Empty value assigned to the configuration parameter `%1' in the function `%2'!")}
 };
 
 Exception::Exception()

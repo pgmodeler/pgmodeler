@@ -460,7 +460,7 @@
            </font>
           </property>
           <property name="text">
-           <string>Use this tab to define custom configuration parameters for the function. The values specified in the above table will be attached to the function's SQL code. Empty values assigned to parameters will be converted into &lt;strong&gt;DEFAULT&lt;/strong&gt;.</string>
+           <string>Use this tab to define custom configuration parameters for the function. The parameters specified will be attached to the function's SQL code via &lt;strong&gt;SET config_param = value&lt;/strong&gt;. Attention to the values formatting since pgModeler &lt;strong&gt;will not&lt;/strong&gt; perform any formatting.</string>
           </property>
           <property name="wordWrap">
            <bool>true</bool>

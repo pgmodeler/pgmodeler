@@ -33,6 +33,7 @@ class BaseFunctionTest: public QObject, public PgModelerUnitTest {
 	private slots:
 		void doesntAddDuplicatedTransformType();
 		void raiseExceptionWhenSettingInvalidConfigParam();
+		void raiseExceptionWhenSettingEmptyConfigParamValue();
 
 		void functionHasTransformTypesAndConfigParamsInSQL();
 		void functionHasTransformTypesAndConfigParamsInXML();
@@ -75,6 +76,21 @@ void BaseFunctionTest::raiseExceptionWhenSettingInvalidConfigParam()
 	}
 }
 
+void BaseFunctionTest::raiseExceptionWhenSettingEmptyConfigParamValue()
+{
+	Function func;
+
+	try
+	{
+		func.setConfigurationParam("test_param", "");
+		QFAIL("No exception was raised even specifying an empty value to the configuration parameter!");
+	}
+	catch(Exception &e)
+	{
+		QCOMPARE(ErrorCode::EmptyConfigParameterValue, e.getErrorCode());
+	}
+}
+
 void BaseFunctionTest::functionHasTransformTypesAndConfigParamsInSQL()
 {
 	try
@@ -95,7 +111,7 @@ void BaseFunctionTest::functionHasTransformTypesAndConfigParamsInSQL()
 		func.addTransformType(PgSqlType("numeric", 1, 6, 2));
 		func.setSourceCode("return 0;");
 		func.setConfigurationParam("search_path", "public,foo,bar");
-		func.setConfigurationParam("log_statement_stats", "");
+		func.setConfigurationParam("log_statement_stats", "DEFAULT");
 
 		QString expected_code =
 				QString("-- object: public.funct_test | type: FUNCTION --\
@@ -145,7 +161,7 @@ void BaseFunctionTest::functionHasTransformTypesAndConfigParamsInXML()
 		func.addTransformType(PgSqlType("numeric", 1, 6, 2));
 		func.setSourceCode("return 0;");
 		func.setConfigurationParam("search_path", "public,foo,bar");
-		func.setConfigurationParam("log_statement_stats", "");
+		func.setConfigurationParam("log_statement_stats", "DEFAULT");
 
 		QString expected_code =
 				QString("<function name=\"funct_test\" window-func=\"false\" \
@@ -159,7 +175,7 @@ row-amount=\"1000\"> \
 <type name=\"integer\" length=\"0\"/> \
 </return-type> \
 <transform-types names=\"varchar,text,numeric\"/> \
-<configuration name=\"log_statement_stats\" value=\"\"/> \
+<configuration name=\"log_statement_stats\" value=\"DEFAULT\"/> \
 <configuration name=\"search_path\" value=\"public,foo,bar\"/> \
 <definition><![CDATA[return 0;]]></definition> \
 </function>").simplified();
@@ -192,7 +208,7 @@ void BaseFunctionTest::procedureHasTransformTypesInSQL()
 		proc.addTransformType(PgSqlType("numeric", 1, 6, 2));
 		proc.setSourceCode("return 0;");
 		proc.setConfigurationParam("search_path", "public,foo,bar");
-		proc.setConfigurationParam("log_statement_stats", "");
+		proc.setConfigurationParam("log_statement_stats", "DEFAULT");
 
 		QString expected_code =
 				QString("-- object: public.proc_test | type: PROCEDURE --\
@@ -236,7 +252,7 @@ void BaseFunctionTest::procedureHasTransformTypesInXML()
 		proc.addTransformType(PgSqlType("numeric", 1, 6, 2));
 		proc.setSourceCode("return 0;");
 		proc.setConfigurationParam("search_path", "public,foo,bar");
-		proc.setConfigurationParam("log_statement_stats", "");
+		proc.setConfigurationParam("log_statement_stats", "DEFAULT");
 
 		QString expected_code =
 				QString("<procedure name=\"proc_test\" \
@@ -244,7 +260,7 @@ security-type=\"SECURITY INVOKER\"> \
 <schema name=\"public\"/> \
 <language name=\"sql\"/> \
 <transform-types names=\"varchar,text,numeric\"/> \
-<configuration name=\"log_statement_stats\" value=\"\"/> \
+<configuration name=\"log_statement_stats\" value=\"DEFAULT\"/> \
 <configuration name=\"search_path\" value=\"public,foo,bar\"/> \
 <definition><![CDATA[return 0;]]></definition> \
 </procedure>").simplified();
@@ -276,7 +292,7 @@ row-amount=\"1000\"> \
 <type name=\"integer\" length=\"0\"/> \
 </return-type> \
 <transform-types names=\"varchar,text,numeric\"/> \
-<configuration name=\"log_statement_stats\" value=\"\"/> \
+<configuration name=\"log_statement_stats\" value=\"DEFAULT\"/> \
 <configuration name=\"search_path\" value=\"public,foo,bar\"/> \
 <definition><![CDATA[return 0;]]></definition> \
 </function>").simplified();
@@ -314,7 +330,7 @@ security-type=\"SECURITY INVOKER\"> \
 <schema name=\"public\"/> \
 <language name=\"sql\"/> \
 <transform-types names=\"varchar,text,numeric\"/> \
-<configuration name=\"log_statement_stats\" value=\"\"/> \
+<configuration name=\"log_statement_stats\" value=\"DEFAULT\"/> \
 <configuration name=\"search_path\" value=\"public,foo,bar\"/> \
 <definition><![CDATA[return 0;]]></definition> \
 </procedure>").simplified();

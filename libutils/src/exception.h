@@ -300,12 +300,13 @@ enum class ErrorCode: unsigned {
 	InvChangelogEntryValues,
 	InvProcedureParamOutMode,
 	ExportFailureDbSQLDisabled,
-	InvConfigParameterName
+	InvConfigParameterName,
+	EmptyConfigParameterValue
 };
 
 class Exception {
 	private:
-		static constexpr unsigned ErrorCount=256;
+		static constexpr unsigned ErrorCount=257;
 
 		/*! \brief Stores other exceptions before raise the 'this' exception.
 		 This structure can be used to simulate a stack trace to improve the debug */

@@ -134,8 +134,6 @@ void BaseFunction::setBasicFunctionAttributes(unsigned def_type)
 		{
 			attribs[Attributes::Name] = cfg_param.first;
 			attribs[Attributes::Value] = cfg_param.second;
-
-			schparser.ignoreEmptyAttributes(true);
 			attributes[Attributes::ConfigParams] += schparser.getCodeDefinition(Attributes::ConfigParam, attribs, def_type);
 		}
 
@@ -230,6 +228,12 @@ void BaseFunction::setConfigurationParam(const QString &cfg_param, const QString
 	{
 		throw Exception(Exception::getErrorMessage(ErrorCode::InvConfigParameterName).arg(cfg_param).arg(signature),
 										ErrorCode::InvConfigParameterName, __PRETTY_FUNCTION__,__FILE__,__LINE__);
+	}
+
+	if(value.isEmpty())
+	{
+		throw Exception(Exception::getErrorMessage(ErrorCode::EmptyConfigParameterValue).arg(cfg_param).arg(signature),
+										ErrorCode::EmptyConfigParameterValue, __PRETTY_FUNCTION__,__FILE__,__LINE__);
 	}
 
 	config_params[cfg_param] = value;
