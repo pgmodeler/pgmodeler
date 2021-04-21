@@ -32,12 +32,16 @@ class BaseFunctionTest: public QObject, public PgModelerUnitTest {
 
 	private slots:
 		void doesntAddDuplicatedTransformType();
-		void functionHasTransformTypesInSQL();
+		void raiseExceptionWhenSettingInvalidConfigParam();
+
+		void functionHasTransformTypesAndConfigParamsInSQL();
+		void functionHasTransformTypesAndConfigParamsInXML();
+
 		void procedureHasTransformTypesInSQL();
-		void functionHasTransformTypesInXML();
 		void procedureHasTransformTypesInXML();
-		void modelCreatesFunctionWithTransformTypes();
-		void modelCreatesProcedureWithTransformTypes();
+
+		void modelCreatesFunctionWithTransformTypesAndConfigParams();
+		void modelCreatesProcedureWithTransformTypesAndConfigParams();
 };
 
 void BaseFunctionTest::doesntAddDuplicatedTransformType()
@@ -56,7 +60,22 @@ void BaseFunctionTest::doesntAddDuplicatedTransformType()
 	QVERIFY(types.size() == types_aux.size());
 }
 
-void BaseFunctionTest::functionHasTransformTypesInSQL()
+void BaseFunctionTest::raiseExceptionWhenSettingInvalidConfigParam()
+{
+	Function func;
+
+	try
+	{
+		func.setConfigurationParam("foo*test--param", "");
+		QFAIL("No exception was raised even specifying an invalid configuration parameter!");
+	}
+	catch(Exception &e)
+	{
+		QCOMPARE(ErrorCode::AsgInvalidNameObject, e.getErrorCode());
+	}
+}
+
+void BaseFunctionTest::functionHasTransformTypesAndConfigParamsInSQL()
 {
 	try
 	{
@@ -75,6 +94,8 @@ void BaseFunctionTest::functionHasTransformTypesInSQL()
 		func.addTransformType(PgSqlType("text"));
 		func.addTransformType(PgSqlType("numeric", 1, 6, 2));
 		func.setSourceCode("return 0;");
+		func.setConfigurationParam("search_path", "public,foo,bar");
+		func.setConfigurationParam("log_statement_stats", "");
 
 		QString expected_code =
 				QString("-- object: public.funct_test | type: FUNCTION --\
@@ -88,12 +109,62 @@ void BaseFunctionTest::functionHasTransformTypesInSQL()
  SECURITY INVOKER\
  PARALLEL UNSAFE\
  COST 100\
+ SET log_statement_stats = DEFAULT\
+ SET search_path = public,foo,bar\
  AS $$\
 	return 0;\
  $$;\
  -- ddl-end --").simplified();
 
 		QString generated_code = func.getCodeDefinition(SchemaParser::SqlDefinition).simplified();
+		QCOMPARE(expected_code, generated_code);
+	}
+	catch (Exception &e)
+	{
+		QFAIL(e.getExceptionsText().toStdString().c_str());
+	}
+}
+
+void BaseFunctionTest::functionHasTransformTypesAndConfigParamsInXML()
+{
+	try
+	{
+		Function func;
+		Schema sch;
+		Language lang;
+
+		sch.BaseObject::setName("public");
+		lang.BaseObject::setName(DefaultLanguages::Sql);
+
+		func.setName("funct_test");
+		func.setSchema(&sch);
+		func.setLanguage(&lang);
+		func.setReturnType(PgSqlType("integer"));
+		func.addTransformType(PgSqlType("varchar"));
+		func.addTransformType(PgSqlType("text"));
+		func.addTransformType(PgSqlType("numeric", 1, 6, 2));
+		func.setSourceCode("return 0;");
+		func.setConfigurationParam("search_path", "public,foo,bar");
+		func.setConfigurationParam("log_statement_stats", "");
+
+		QString expected_code =
+				QString("<function name=\"funct_test\" window-func=\"false\" \
+returns-setof=\"false\" behavior-type=\"CALLED ON NULL INPUT\" \
+function-type=\"VOLATILE\" security-type=\"SECURITY INVOKER\" \
+parallel-type=\"PARALLEL UNSAFE\" execution-cost=\"100\" \
+row-amount=\"1000\"> \
+<schema name=\"public\"/> \
+<language name=\"sql\"/> \
+<return-type> \
+<type name=\"integer\" length=\"0\"/> \
+</return-type> \
+<transform-types names=\"varchar,text,numeric\"/> \
+<configuration name=\"log_statement_stats\" value=\"\"/> \
+<configuration name=\"search_path\" value=\"public,foo,bar\"/> \
+<definition><![CDATA[return 0;]]></definition> \
+</function>").simplified();
+
+		QString generated_code = func.getCodeDefinition(SchemaParser::XmlDefinition).simplified();
 		QCOMPARE(expected_code, generated_code);
 	}
 	catch (Exception &e)
@@ -120,6 +191,8 @@ void BaseFunctionTest::procedureHasTransformTypesInSQL()
 		proc.addTransformType(PgSqlType("text"));
 		proc.addTransformType(PgSqlType("numeric", 1, 6, 2));
 		proc.setSourceCode("return 0;");
+		proc.setConfigurationParam("search_path", "public,foo,bar");
+		proc.setConfigurationParam("log_statement_stats", "");
 
 		QString expected_code =
 				QString("-- object: public.proc_test | type: PROCEDURE --\
@@ -128,56 +201,14 @@ void BaseFunctionTest::procedureHasTransformTypesInSQL()
  LANGUAGE sql\
  TRANSFORM FOR TYPE varchar, FOR TYPE text, FOR TYPE numeric\
  SECURITY INVOKER\
+ SET log_statement_stats = DEFAULT\
+ SET search_path = public,foo,bar\
  AS $$\
 	return 0;\
  $$;\
  -- ddl-end --").simplified();
 
 		QString generated_code = proc.getCodeDefinition(SchemaParser::SqlDefinition).simplified();
-		QCOMPARE(expected_code, generated_code);
-	}
-	catch (Exception &e)
-	{
-		QFAIL(e.getExceptionsText().toStdString().c_str());
-	}
-}
-
-void BaseFunctionTest::functionHasTransformTypesInXML()
-{
-	try
-	{
-		Function func;
-		Schema sch;
-		Language lang;
-
-		sch.BaseObject::setName("public");
-		lang.BaseObject::setName(DefaultLanguages::Sql);
-
-		func.setName("funct_test");
-		func.setSchema(&sch);
-		func.setLanguage(&lang);
-		func.setReturnType(PgSqlType("integer"));
-		func.addTransformType(PgSqlType("varchar"));
-		func.addTransformType(PgSqlType("text"));
-		func.addTransformType(PgSqlType("numeric", 1, 6, 2));
-		func.setSourceCode("return 0;");
-
-		QString expected_code =
-				QString("<function name=\"funct_test\" window-func=\"false\" \
-returns-setof=\"false\" behavior-type=\"CALLED ON NULL INPUT\" \
-function-type=\"VOLATILE\" security-type=\"SECURITY INVOKER\" \
-parallel-type=\"PARALLEL UNSAFE\" execution-cost=\"100\" \
-row-amount=\"1000\"> \
-<schema name=\"public\"/> \
-<language name=\"sql\"/> \
-<return-type> \
-<type name=\"integer\" length=\"0\"/> \
-</return-type> \
-<transform-types names=\"varchar,text,numeric\"/> \
-<definition><![CDATA[return 0;]]></definition> \
-</function>").simplified();
-
-		QString generated_code = func.getCodeDefinition(SchemaParser::XmlDefinition).simplified();
 		QCOMPARE(expected_code, generated_code);
 	}
 	catch (Exception &e)
@@ -204,6 +235,8 @@ void BaseFunctionTest::procedureHasTransformTypesInXML()
 		proc.addTransformType(PgSqlType("text"));
 		proc.addTransformType(PgSqlType("numeric", 1, 6, 2));
 		proc.setSourceCode("return 0;");
+		proc.setConfigurationParam("search_path", "public,foo,bar");
+		proc.setConfigurationParam("log_statement_stats", "");
 
 		QString expected_code =
 				QString("<procedure name=\"proc_test\" \
@@ -211,6 +244,8 @@ security-type=\"SECURITY INVOKER\"> \
 <schema name=\"public\"/> \
 <language name=\"sql\"/> \
 <transform-types names=\"varchar,text,numeric\"/> \
+<configuration name=\"log_statement_stats\" value=\"\"/> \
+<configuration name=\"search_path\" value=\"public,foo,bar\"/> \
 <definition><![CDATA[return 0;]]></definition> \
 </procedure>").simplified();
 
@@ -223,7 +258,7 @@ security-type=\"SECURITY INVOKER\"> \
 	}
 }
 
-void BaseFunctionTest::modelCreatesFunctionWithTransformTypes()
+void BaseFunctionTest::modelCreatesFunctionWithTransformTypesAndConfigParams()
 {
 	try
 	{
@@ -241,6 +276,8 @@ row-amount=\"1000\"> \
 <type name=\"integer\" length=\"0\"/> \
 </return-type> \
 <transform-types names=\"varchar,text,numeric\"/> \
+<configuration name=\"log_statement_stats\" value=\"\"/> \
+<configuration name=\"search_path\" value=\"public,foo,bar\"/> \
 <definition><![CDATA[return 0;]]></definition> \
 </function>").simplified();
 
@@ -264,7 +301,7 @@ row-amount=\"1000\"> \
 	}
 }
 
-void BaseFunctionTest::modelCreatesProcedureWithTransformTypes()
+void BaseFunctionTest::modelCreatesProcedureWithTransformTypesAndConfigParams()
 {
 	try
 	{
@@ -277,6 +314,8 @@ security-type=\"SECURITY INVOKER\"> \
 <schema name=\"public\"/> \
 <language name=\"sql\"/> \
 <transform-types names=\"varchar,text,numeric\"/> \
+<configuration name=\"log_statement_stats\" value=\"\"/> \
+<configuration name=\"search_path\" value=\"public,foo,bar\"/> \
 <definition><![CDATA[return 0;]]></definition> \
 </procedure>").simplified();
 

@@ -23,6 +23,11 @@
     %end
     
     $tb {security-type} $br
+    
+    %if {config-params} %then
+        {config-params}
+    %end
+    
     $tb [AS ]
 
     %if {library} %then

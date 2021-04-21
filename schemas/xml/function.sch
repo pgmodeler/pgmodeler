@@ -59,6 +59,10 @@
     $tb [<transform-types names=] "{transform-types}" /> $br
   %end
   
+  %if {config-params} %then
+    {config-params}
+  %end
+  
   %if {parameters} %then {parameters} %end
 
 

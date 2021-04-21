@@ -32,7 +32,7 @@
 #include "pgsqltypes/securitytype.h"
 
 class BaseFunction: public BaseObject {
-	protected:
+	protected:	
 		//! \brief Function unique signature
 		QString signature;
 
@@ -57,6 +57,9 @@ class BaseFunction: public BaseObject {
 		//! \brief Transforms types that are applied to this function
 		vector<PgSqlType> transform_types;
 
+		//! \brief The user-defined configuration parameters of the function
+		attribs_map config_params;
+
 		//! \brief Formats the function parameter attribute to be used by the SchemaParser
 		void setParametersAttribute(unsigned def_type);
 
@@ -66,6 +69,8 @@ class BaseFunction: public BaseObject {
 		virtual void configureSearchAttributes();
 
 	public:
+		static const QRegExp ConfigParamPattern;
+
 		BaseFunction();
 
 		//! \brief Sets the function name updating its signature
@@ -99,6 +104,18 @@ class BaseFunction: public BaseObject {
 		 * must not contain any length, dimension or any other specialization of a type,
 		 * just the correct type name */
 		void addTransformTypes(const QStringList &types);
+
+		/*! \brief Defines a value to the provided configuration parameter. The configuration parameter name is
+		 * validated according to PostgreSQL naming convention and the method will raise an exception in case of
+		 * a invalid name is being used. Empty values are considered setting the default value for the provided
+		 * configuration parameter in the SQL code (e.g.: SET config_param = DEFAULT). */
+		void setConfigurationParam(const QString &cfg_param, const QString &value);
+
+		//! \brief Clears all the configuration parameters
+		void removeConfigurationParams();
+
+		//! \brief Returns the current configuration paramenters
+		attribs_map getConfigurationParams();
 
 		//! \brief Returns the function's source code
 		QString getSourceCode();

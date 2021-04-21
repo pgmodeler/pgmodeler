@@ -2,7 +2,7 @@
   CAUTION: Do not modify this file directly on it's code unless you know what you are doing.
            Unexpected results may occur if the code is changed deliberately.
 -->
-<!ELEMENT procedure (schema?, role?, comment?, appended-sql?, prepended-sql?, language?, transform-types?, parameter*, definition*)>
+<!ELEMENT procedure (schema?, role?, comment?, appended-sql?, prepended-sql?, language?, transform-types?, configuration*, parameter*, definition*)>
 <!ATTLIST procedure name CDATA #IMPLIED>
 <!ATTLIST procedure security-type CDATA #IMPLIED>
 <!ATTLIST procedure signature CDATA #IMPLIED>

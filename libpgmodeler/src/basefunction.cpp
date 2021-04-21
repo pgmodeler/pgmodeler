@@ -20,6 +20,8 @@
 #include "defaultlanguages.h"
 #include "pgmodelerns.h"
 
+const QRegExp BaseFunction::ConfigParamPattern("([a-z]+)([a-z]|(_))*", Qt::CaseInsensitive);
+
 BaseFunction::BaseFunction()
 {
 	language=nullptr;
@@ -34,6 +36,7 @@ BaseFunction::BaseFunction()
 	attributes[Attributes::Library]="";
 	attributes[Attributes::Symbol]="";
 	attributes[Attributes::TransformTypes]="";
+	attributes[Attributes::ConfigParams]="";
 }
 
 void BaseFunction::setName(const QString &name)
@@ -95,38 +98,55 @@ void BaseFunction::setParametersAttribute(unsigned def_type)
 
 void BaseFunction::setBasicFunctionAttributes(unsigned def_type)
 {
-	setParametersAttribute(def_type);
-
-	if(language)
+	try
 	{
-		if(def_type==SchemaParser::SqlDefinition)
-			attributes[Attributes::Language]=language->getName(false);
-		else
-			attributes[Attributes::Language]=language->getCodeDefinition(def_type, true);
+		attribs_map attribs;
+		setParametersAttribute(def_type);
 
-		if(language->getName().toLower() == DefaultLanguages::C)
+		if(language)
 		{
-			attributes[Attributes::Symbol]=symbol;
-			attributes[Attributes::Library]=library;
+			if(def_type==SchemaParser::SqlDefinition)
+				attributes[Attributes::Language]=language->getName(false);
+			else
+				attributes[Attributes::Language]=language->getCodeDefinition(def_type, true);
+
+			if(language->getName().toLower() == DefaultLanguages::C)
+			{
+				attributes[Attributes::Symbol]=symbol;
+				attributes[Attributes::Library]=library;
+			}
 		}
+
+		QStringList types;
+		for(auto &type : transform_types)
+		{
+			types.append(QString("%1%2")
+									 .arg(def_type == SchemaParser::SqlDefinition ? PgModelerNs::DataSeparator : "")
+									 .arg(~type));
+		}
+
+		if(def_type==SchemaParser::SqlDefinition)
+			types.replaceInStrings(PgModelerNs::DataSeparator, QString(" FOR TYPE "));
+
+		attributes[Attributes::TransformTypes] = types.join(',');
+
+		for(auto &cfg_param : config_params)
+		{
+			attribs[Attributes::Name] = cfg_param.first;
+			attribs[Attributes::Value] = cfg_param.second;
+
+			schparser.ignoreEmptyAttributes(true);
+			attributes[Attributes::ConfigParams] += schparser.getCodeDefinition(Attributes::ConfigParam, attribs, def_type);
+		}
+
+		attributes[Attributes::SecurityType]=~security_type;
+		attributes[Attributes::Definition]=source_code;
+		attributes[Attributes::Signature]=signature;
 	}
-
-	QStringList types;
-
-	for(auto &type : transform_types)
+	catch(Exception &e)
 	{
-		types.append(QString("%1%2")
-								 .arg(def_type == SchemaParser::SqlDefinition ? PgModelerNs::DataSeparator : "")
-								 .arg(~type));
+		throw Exception(e.getErrorMessage(), e.getErrorCode(), __PRETTY_FUNCTION__, __FILE__, __LINE__, &e);
 	}
-
-	if(def_type==SchemaParser::SqlDefinition)
-		types.replaceInStrings(PgModelerNs::DataSeparator, QString(" FOR TYPE "));
-
-	attributes[Attributes::TransformTypes] = types.join(',');
-	attributes[Attributes::SecurityType]=~security_type;
-	attributes[Attributes::Definition]=source_code;
-	attributes[Attributes::Signature]=signature;
 }
 
 void BaseFunction::configureSearchAttributes()
@@ -202,6 +222,26 @@ void BaseFunction::addTransformTypes(const QStringList &types)
 	{
 		throw Exception(e.getErrorMessage(), e.getErrorCode(), __PRETTY_FUNCTION__, __FILE__, __LINE__, &e);
 	}
+}
+
+void BaseFunction::setConfigurationParam(const QString &cfg_param, const QString &value)
+{
+	if(!ConfigParamPattern.exactMatch(cfg_param))
+		throw Exception(ErrorCode::AsgInvalidNameObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+	config_params[cfg_param] = value;
+	setCodeInvalidated(true);
+}
+
+void BaseFunction::removeConfigurationParams()
+{
+	config_params.clear();
+	setCodeInvalidated(true);
+}
+
+attribs_map BaseFunction::getConfigurationParams()
+{
+	return config_params;
 }
 
 void BaseFunction::setSourceCode(const QString &src_code)

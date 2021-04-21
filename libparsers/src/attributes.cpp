@@ -101,6 +101,7 @@ namespace Attributes {
 	Concurrent("concurrent"),
 	Condition("condition"),
 	ConfigFile("config-file"),
+	ConfigParam("confparam"),
 	ConfigParams("config-params"),
 	Configuration("configuration"),
 	ConfirmValidation("confirm-validation"),

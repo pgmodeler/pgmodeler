@@ -51,6 +51,10 @@ $tb [COST ] {execution-cost} $br
  $tb [ROWS ] {row-amount} $br
 %end
 
+%if {config-params} %then
+ {config-params}
+%end
+
 $tb [AS ]
 
 %if {library} %then

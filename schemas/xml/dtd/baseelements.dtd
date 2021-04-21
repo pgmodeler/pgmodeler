@@ -26,3 +26,7 @@
 
 <!ELEMENT transform-types EMPTY>
 <!ATTLIST transform-types names CDATA #REQUIRED>
+
+<!ELEMENT configuration EMPTY>
+<!ATTLIST configuration name CDATA #REQUIRED>
+<!ATTLIST configuration value CDATA #REQUIRED>

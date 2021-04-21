@@ -4085,6 +4085,13 @@ void DatabaseModel::setBasicFunctionAttributes(BaseFunction *func)
 						func->addTransformTypes(attribs_aux[Attributes::Names].split(',', QtCompat::SkipEmptyParts));
 						xmlparser.restorePosition();
 					}
+					else if(xmlparser.getElementName() == Attributes::Configuration)
+					{
+						xmlparser.savePosition();
+						xmlparser.getElementAttributes(attribs_aux);
+						func->setConfigurationParam(attribs_aux[Attributes::Name], attribs_aux[Attributes::Value]);
+						xmlparser.restorePosition();
+					}
 				}
 			}
 			while(xmlparser.accessElement(XmlParser::NextElement));
