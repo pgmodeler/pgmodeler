@@ -71,7 +71,7 @@ void BaseFunctionTest::raiseExceptionWhenSettingInvalidConfigParam()
 	}
 	catch(Exception &e)
 	{
-		QCOMPARE(ErrorCode::AsgInvalidNameObject, e.getErrorCode());
+		QCOMPARE(ErrorCode::InvConfigParameterName, e.getErrorCode());
 	}
 }
 

@@ -227,7 +227,10 @@ void BaseFunction::addTransformTypes(const QStringList &types)
 void BaseFunction::setConfigurationParam(const QString &cfg_param, const QString &value)
 {
 	if(!ConfigParamPattern.exactMatch(cfg_param))
-		throw Exception(ErrorCode::AsgInvalidNameObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+	{
+		throw Exception(Exception::getErrorMessage(ErrorCode::InvConfigParameterName).arg(cfg_param).arg(signature),
+										ErrorCode::InvConfigParameterName, __PRETTY_FUNCTION__,__FILE__,__LINE__);
+	}
 
 	config_params[cfg_param] = value;
 	setCodeInvalidated(true);

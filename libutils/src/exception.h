@@ -299,12 +299,13 @@ enum class ErrorCode: unsigned {
 	InvChildObjectTypeFilter,
 	InvChangelogEntryValues,
 	InvProcedureParamOutMode,
-	ExportFailureDbSQLDisabled
+	ExportFailureDbSQLDisabled,
+	InvConfigParameterName
 };
 
 class Exception {
 	private:
-		static constexpr unsigned ErrorCount=255;
+		static constexpr unsigned ErrorCount=256;
 
 		/*! \brief Stores other exceptions before raise the 'this' exception.
 		 This structure can be used to simulate a stack trace to improve the debug */

@@ -51,7 +51,10 @@ class BaseFunctionWidget: public BaseObjectWidget, public Ui::BaseFunctionWidget
 		ObjectsTableWidget *parameters_tab,
 
 		//! \brief Table used to store the function's transform types
-		*transform_types_tab;
+		*transform_types_tab,
+
+		//! \brief Table used to store the function's configuration parameters
+		*config_params_tab;
 
 		//! \brief Widget used to select transform types of the function's
 		PgSQLTypeWidget *transform_type_wgt;
