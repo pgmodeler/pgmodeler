@@ -66,6 +66,11 @@ BaseFunctionWidget::BaseFunctionWidget(QWidget *parent, ObjectType obj_type) : B
 		func_config_twg->widget(2)->setLayout(grid);
 
 		connect(language_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(selectLanguage()));
+
+		connect(transform_types_tab, &ObjectsTableWidget::s_rowAdded, [&](int row){
+			transform_types_tab->setCellText(~transform_type_wgt->getPgSQLType(), row, 0);
+		});
+
 		setRequiredField(language_lbl);
 		setRequiredField(symbol_lbl);
 		setRequiredField(library_lbl);
@@ -276,7 +281,7 @@ void BaseFunctionWidget::applyBasicConfiguration(BaseFunction *func)
 {
 	try
 	{
-		unsigned count = 0, i = 0;
+		unsigned count = 0, row = 0;
 		Parameter param;
 		QString param_modes;
 
@@ -286,19 +291,25 @@ void BaseFunctionWidget::applyBasicConfiguration(BaseFunction *func)
 
 		count=parameters_tab->getRowCount();
 
-		for(i=0; i < count; i++)
+		for(row=0; row < count; row++)
 		{
-			param.setName(parameters_tab->getCellText(i,0));
-			param.setType(parameters_tab->getRowData(i).value<PgSqlType>());
+			param.setName(parameters_tab->getCellText(row,0));
+			param.setType(parameters_tab->getRowData(row).value<PgSqlType>());
 
-			param_modes = parameters_tab->getCellText(i,2);
+			param_modes = parameters_tab->getCellText(row,2);
 			param.setIn(param_modes.indexOf("IN") >= 0);
 			param.setOut(param_modes.indexOf("OUT") >= 0);
 			param.setVariadic(param_modes.indexOf("VARIADIC") >= 0);
-			param.setDefaultValue(parameters_tab->getCellText(i, 3));
+			param.setDefaultValue(parameters_tab->getCellText(row, 3));
 
 			func->addParameter(param);
 		}
+
+		func->removeTransformTypes();
+		count = transform_types_tab->getRowCount();
+
+		for(row = 0; row < count; row++)
+			func->addTransformType(PgSqlType(transform_types_tab->getCellText(row, 0)));
 
 		if(language_cmb->currentText() == DefaultLanguages::C)
 		{
