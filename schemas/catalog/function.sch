@@ -49,7 +49,8 @@
 		pr.proname AS name,
 		pr.prolang AS language,
 		pr.procost AS execution_cost,
-		pr.prorows AS row_amount, ]
+		pr.prorows AS row_amount, 
+        array_to_string(pr.proconfig, '•', '') AS config_params, ]
 		
 		{window-func},
 		

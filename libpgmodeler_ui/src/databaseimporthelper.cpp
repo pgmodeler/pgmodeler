@@ -1092,7 +1092,7 @@ void DatabaseImportHelper::configureBaseFunctionAttribs(attribs_map &attribs)
 	PgSqlType type;
 	unsigned dim = 0;
 	QStringList param_types, param_names, param_modes,
-			param_def_vals, param_xmls, used_names, transform_types;
+			param_def_vals, param_xmls, used_names, transform_types, config_params;
 	QString param_tmpl_name = QString("_param%1"), pname;
 	vector<Parameter> parameters;
 
@@ -1105,6 +1105,8 @@ void DatabaseImportHelper::configureBaseFunctionAttribs(attribs_map &attribs)
 
 		transform_types = getTypes(attribs[Attributes::TransformTypes], false);
 		attribs[Attributes::TransformTypes] = transform_types.join(',');
+
+		config_params = attribs[Attributes::ConfigParams].split(PgModelerNs::DataSeparator, QtCompat::SkipEmptyParts);
 
 		for(int i=0; i < param_types.size(); i++)
 		{

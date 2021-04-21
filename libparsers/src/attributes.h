@@ -116,6 +116,7 @@ namespace Attributes {
 	Concurrent,
 	Condition,
 	ConfigFile,
+	ConfigParams,
 	Configuration,
 	ConfirmValidation,
 	ConnectCenterPnts,

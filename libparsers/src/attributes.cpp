@@ -101,6 +101,7 @@ namespace Attributes {
 	Concurrent("concurrent"),
 	Condition("condition"),
 	ConfigFile("config-file"),
+	ConfigParams("config-params"),
 	Configuration("configuration"),
 	ConfirmValidation("confirm-validation"),
 	ConnectCenterPnts("center-pnts"),
