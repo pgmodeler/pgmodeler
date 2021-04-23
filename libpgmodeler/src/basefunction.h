@@ -66,6 +66,9 @@ class BaseFunction: public BaseObject {
 		//! \brief Formats the basic function's attributes to used in the code generation
 		void setBasicFunctionAttributes(unsigned def_type);
 
+		//! \brief Returns a code snippet that is used to configure atler commands in order to change configuration parameters
+		attribs_map getAlterDefinitionAttributes(BaseFunction *func);
+
 		virtual void configureSearchAttributes();
 
 	public:

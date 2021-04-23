@@ -274,8 +274,7 @@ QString Function::getAlterDefinition(BaseObject *object)
 	try
 	{
 		attribs_map attribs;
-
-		attributes[Attributes::AlterCmds]=BaseObject::getAlterDefinition(object);
+		attribs = BaseFunction::getAlterDefinitionAttributes(func);
 
 		if(this->source_code.simplified() != func->source_code.simplified() ||
 			 this->library!=func->library || this->symbol!=func->symbol)
@@ -299,9 +298,6 @@ QString Function::getAlterDefinition(BaseObject *object)
 
 			if(this->is_leakproof!=func->is_leakproof)
 				attribs[Attributes::LeakProof]=(func->is_leakproof ? Attributes::True : Attributes::Unset);
-
-			if(this->security_type!=func->security_type)
-				attribs[Attributes::SecurityType]=~func->security_type;
 
 			if((this->behavior_type!=func->behavior_type) &&
 					((this->behavior_type==BehaviorType::CalledOnNullInput) ||

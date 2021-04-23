@@ -390,3 +390,48 @@ void BaseFunction::createSignature(bool format, bool prepend_schema)
 	signature=this->getName(format, prepend_schema) + QString("(") + fmt_params.join(",") + QString(")");
 	this->setCodeInvalidated(true);
 }
+
+attribs_map BaseFunction::getAlterDefinitionAttributes(BaseFunction *func)
+{
+	attribs_map attribs,
+			cfg_params, aux_attrs;
+
+	try
+	{
+		attributes[Attributes::AlterCmds] = BaseObject::getAlterDefinition(func);
+
+		if(this->security_type != func->security_type)
+			attribs[Attributes::SecurityType] = ~func->security_type;
+
+		cfg_params = func->getConfigurationParams();
+
+		// Checking if we need to create/update the configuration parameters
+		for(auto &cfg : cfg_params)
+		{
+			if(config_params.count(cfg.first) == 0 ||
+				 (config_params.count(cfg.first) && config_params[cfg.first] != cfg.second))
+			{
+				aux_attrs[Attributes::Name] = cfg.first;
+				aux_attrs[Attributes::Value] = cfg.second;
+				attribs[Attributes::ConfigParams] += BaseObject::getAlterDefinition(Attributes::ConfigParam, aux_attrs, false, true);
+			}
+		}
+
+		// Resetting configuration parameter individually
+		for(auto &cfg : config_params)
+		{
+			if(cfg_params.count(cfg.first) == 0)
+			{
+				aux_attrs[Attributes::Name] = cfg.first;
+				aux_attrs[Attributes::Value] = Attributes::Unset;
+				attribs[Attributes::ConfigParams] += BaseObject::getAlterDefinition(Attributes::ConfigParam, aux_attrs, false, true);
+			}
+		}
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorCode(), __PRETTY_FUNCTION__, __FILE__, __LINE__, &e);
+	}
+
+	return attribs;
+}
