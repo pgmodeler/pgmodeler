@@ -15,4 +15,5 @@ src/datadicttest \
 src/fileselectortest \
 src/transformtest \
 src/xmlparsertest \
-src/proceduretest
+src/proceduretest \
+src/basefunctiontest

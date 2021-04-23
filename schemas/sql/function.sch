@@ -28,6 +28,10 @@ $br
 
 $tb [LANGUAGE ] {language} $br
 
+%if ({pgsql-ver} >=f "9.5") %and {transform-types} %then
+ $tb TRANSFORM {transform-types} $br
+%end
+
 %if {window-func} %then
  $tb WINDOW $br
 %end
@@ -45,6 +49,10 @@ $tb [COST ] {execution-cost} $br
 
 %if {returns-setof} %then
  $tb [ROWS ] {row-amount} $br
+%end
+
+%if {config-params} %then
+ {config-params}
 %end
 
 $tb [AS ]

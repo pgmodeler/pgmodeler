@@ -116,6 +116,9 @@
             <property name="insertPolicy">
              <enum>QComboBox::InsertAtBottom</enum>
             </property>
+            <property name="sizeAdjustPolicy">
+             <enum>QComboBox::AdjustToContents</enum>
+            </property>
             <property name="iconSize">
              <size>
               <width>16</width>
@@ -152,7 +155,7 @@
              <enum>QComboBox::InsertAtBottom</enum>
             </property>
             <property name="sizeAdjustPolicy">
-             <enum>QComboBox::AdjustToContentsOnFirstShow</enum>
+             <enum>QComboBox::AdjustToContents</enum>
             </property>
             <property name="iconSize">
              <size>

@@ -13,6 +13,10 @@
         %if {security-type} %then
             $br $tb {security-type}
         %end
+        
+        %if {config-params} %then
+            {config-params}
+        %end
 
         ;
         

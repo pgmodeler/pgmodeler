@@ -18,6 +18,9 @@
 
 #include "basefunction.h"
 #include "defaultlanguages.h"
+#include "pgmodelerns.h"
+
+const QRegExp BaseFunction::ConfigParamPattern("([a-z]+)([a-z]|(_))*", Qt::CaseInsensitive);
 
 BaseFunction::BaseFunction()
 {
@@ -32,6 +35,8 @@ BaseFunction::BaseFunction()
 	attributes[Attributes::ReturnTable]="";
 	attributes[Attributes::Library]="";
 	attributes[Attributes::Symbol]="";
+	attributes[Attributes::TransformTypes]="";
+	attributes[Attributes::ConfigParams]="";
 }
 
 void BaseFunction::setName(const QString &name)
@@ -93,25 +98,53 @@ void BaseFunction::setParametersAttribute(unsigned def_type)
 
 void BaseFunction::setBasicFunctionAttributes(unsigned def_type)
 {
-	setParametersAttribute(def_type);
-
-	if(language)
+	try
 	{
-		if(def_type==SchemaParser::SqlDefinition)
-			attributes[Attributes::Language]=language->getName(false);
-		else
-			attributes[Attributes::Language]=language->getCodeDefinition(def_type, true);
+		attribs_map attribs;
+		setParametersAttribute(def_type);
 
-		if(language->getName().toLower() == DefaultLanguages::C)
+		if(language)
 		{
-			attributes[Attributes::Symbol]=symbol;
-			attributes[Attributes::Library]=library;
-		}
-	}
+			if(def_type==SchemaParser::SqlDefinition)
+				attributes[Attributes::Language]=language->getName(false);
+			else
+				attributes[Attributes::Language]=language->getCodeDefinition(def_type, true);
 
-	attributes[Attributes::SecurityType]=~security_type;
-	attributes[Attributes::Definition]=source_code;
-	attributes[Attributes::Signature]=signature;
+			if(language->getName().toLower() == DefaultLanguages::C)
+			{
+				attributes[Attributes::Symbol]=symbol;
+				attributes[Attributes::Library]=library;
+			}
+		}
+
+		QStringList types;
+		for(auto &type : transform_types)
+		{
+			types.append(QString("%1%2")
+									 .arg(def_type == SchemaParser::SqlDefinition ? PgModelerNs::DataSeparator : "")
+									 .arg(~type));
+		}
+
+		if(def_type==SchemaParser::SqlDefinition)
+			types.replaceInStrings(PgModelerNs::DataSeparator, QString(" FOR TYPE "));
+
+		attributes[Attributes::TransformTypes] = types.join(',');
+
+		for(auto &cfg_param : config_params)
+		{
+			attribs[Attributes::Name] = cfg_param.first;
+			attribs[Attributes::Value] = cfg_param.second;
+			attributes[Attributes::ConfigParams] += schparser.getCodeDefinition(Attributes::ConfigParam, attribs, def_type);
+		}
+
+		attributes[Attributes::SecurityType]=~security_type;
+		attributes[Attributes::Definition]=source_code;
+		attributes[Attributes::Signature]=signature;
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorCode(), __PRETTY_FUNCTION__, __FILE__, __LINE__, &e);
+	}
 }
 
 void BaseFunction::configureSearchAttributes()
@@ -167,6 +200,57 @@ void BaseFunction::setSecurityType(SecurityType sec_type)
 	security_type=sec_type;
 }
 
+void BaseFunction::addTransformType(PgSqlType type)
+{
+	if(!isTransformTypeExists(type))
+	{
+		transform_types.push_back(type);
+		setCodeInvalidated(true);
+	}
+}
+
+void BaseFunction::addTransformTypes(const QStringList &types)
+{
+	try
+	{
+		for(auto &type : types)
+			addTransformType(PgSqlType(type));
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorCode(), __PRETTY_FUNCTION__, __FILE__, __LINE__, &e);
+	}
+}
+
+void BaseFunction::setConfigurationParam(const QString &cfg_param, const QString &value)
+{
+	if(!ConfigParamPattern.exactMatch(cfg_param))
+	{
+		throw Exception(Exception::getErrorMessage(ErrorCode::InvConfigParameterName).arg(cfg_param).arg(signature),
+										ErrorCode::InvConfigParameterName, __PRETTY_FUNCTION__,__FILE__,__LINE__);
+	}
+
+	if(value.isEmpty())
+	{
+		throw Exception(Exception::getErrorMessage(ErrorCode::EmptyConfigParameterValue).arg(cfg_param).arg(signature),
+										ErrorCode::EmptyConfigParameterValue, __PRETTY_FUNCTION__,__FILE__,__LINE__);
+	}
+
+	config_params[cfg_param] = value;
+	setCodeInvalidated(true);
+}
+
+void BaseFunction::removeConfigurationParams()
+{
+	config_params.clear();
+	setCodeInvalidated(true);
+}
+
+attribs_map BaseFunction::getConfigurationParams()
+{
+	return config_params;
+}
+
 void BaseFunction::setSourceCode(const QString &src_code)
 {
 	if(language && language->getName().toLower() == DefaultLanguages::C)
@@ -191,6 +275,11 @@ unsigned BaseFunction::getParameterCount()
 SecurityType BaseFunction::getSecurityType()
 {
 	return security_type;
+}
+
+vector<PgSqlType> BaseFunction::getTransformTypes()
+{
+	return transform_types;
 }
 
 QString BaseFunction::getSourceCode()
@@ -221,6 +310,17 @@ void BaseFunction::removeParameters()
 {
 	parameters.clear();
 	createSignature();
+}
+
+void BaseFunction::removeTransformTypes()
+{
+	transform_types.clear();
+	setCodeInvalidated(true);
+}
+
+bool BaseFunction::isTransformTypeExists(PgSqlType type)
+{
+	return std::find(transform_types.begin(), transform_types.end(), type) != transform_types.end();
 }
 
 void BaseFunction::removeParameter(const QString &name, PgSqlType type)
@@ -289,4 +389,49 @@ void BaseFunction::createSignature(bool format, bool prepend_schema)
 	//Signature format NAME(IN|OUT PARAM1_TYPE,IN|OUT PARAM2_TYPE,...,IN|OUT PARAMn_TYPE)
 	signature=this->getName(format, prepend_schema) + QString("(") + fmt_params.join(",") + QString(")");
 	this->setCodeInvalidated(true);
+}
+
+attribs_map BaseFunction::getAlterDefinitionAttributes(BaseFunction *func)
+{
+	attribs_map attribs,
+			cfg_params, aux_attrs;
+
+	try
+	{
+		attributes[Attributes::AlterCmds] = BaseObject::getAlterDefinition(func);
+
+		if(this->security_type != func->security_type)
+			attribs[Attributes::SecurityType] = ~func->security_type;
+
+		cfg_params = func->getConfigurationParams();
+
+		// Checking if we need to create/update the configuration parameters
+		for(auto &cfg : cfg_params)
+		{
+			if(config_params.count(cfg.first) == 0 ||
+				 (config_params.count(cfg.first) && config_params[cfg.first] != cfg.second))
+			{
+				aux_attrs[Attributes::Name] = cfg.first;
+				aux_attrs[Attributes::Value] = cfg.second;
+				attribs[Attributes::ConfigParams] += BaseObject::getAlterDefinition(Attributes::ConfigParam, aux_attrs, false, true);
+			}
+		}
+
+		// Resetting configuration parameter individually
+		for(auto &cfg : config_params)
+		{
+			if(cfg_params.count(cfg.first) == 0)
+			{
+				aux_attrs[Attributes::Name] = cfg.first;
+				aux_attrs[Attributes::Value] = Attributes::Unset;
+				attribs[Attributes::ConfigParams] += BaseObject::getAlterDefinition(Attributes::ConfigParam, aux_attrs, false, true);
+			}
+		}
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorCode(), __PRETTY_FUNCTION__, __FILE__, __LINE__, &e);
+	}
+
+	return attribs;
 }

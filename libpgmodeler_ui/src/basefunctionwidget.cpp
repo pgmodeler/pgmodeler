@@ -49,7 +49,43 @@ BaseFunctionWidget::BaseFunctionWidget(QWidget *parent, ObjectType obj_type) : B
 		func_config_twg->widget(1)->setLayout(grid);
 		security_cmb->addItems(SecurityType::getTypes());
 
+
+		transform_type_wgt = new PgSQLTypeWidget(this);
+		transform_types_tab = new ObjectsTableWidget(ObjectsTableWidget::AllButtons ^
+																								 (ObjectsTableWidget::UpdateButton |
+																									ObjectsTableWidget::EditButton |
+																									ObjectsTableWidget::ResizeColsButton), true, this);
+		transform_types_tab->setColumnCount(1);
+		transform_types_tab->setHeaderLabel(tr("Type"), 0);
+		transform_types_tab->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("usertype")), 0);
+
+		grid = new QGridLayout;
+		grid->addWidget(transform_type_wgt, 0, 0, 1, 1);
+		grid->addWidget(transform_types_tab, 1, 0, 1, 1);
+		grid->setContentsMargins(4, 4, 4, 4);
+		func_config_twg->widget(2)->setLayout(grid);
+
+
+		config_params_tab = new ObjectsTableWidget(ObjectsTableWidget::AllButtons ^
+																								 (ObjectsTableWidget::UpdateButton |
+																									ObjectsTableWidget::EditButton), true, this);
+		config_params_tab->setColumnCount(2);
+		config_params_tab->setHeaderLabel(tr("Parameter"), 0);
+		config_params_tab->setHeaderLabel(tr("Value"), 1);
+		config_params_tab->setCellsEditable(true);
+
+		grid = new QGridLayout;
+		grid->addWidget(config_params_tab, 0, 0, 1, 1);
+		grid->addWidget(hint_frm, 1, 0, 1, 1);
+		grid->setContentsMargins(4, 4, 4, 4);
+		func_config_twg->widget(4)->setLayout(grid);
+
 		connect(language_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(selectLanguage()));
+
+		connect(transform_types_tab, &ObjectsTableWidget::s_rowAdded, [&](int row){
+			transform_types_tab->setCellText(~transform_type_wgt->getPgSQLType(), row, 0);
+		});
+
 		setRequiredField(language_lbl);
 		setRequiredField(symbol_lbl);
 		setRequiredField(library_lbl);
@@ -191,6 +227,9 @@ void BaseFunctionWidget::setAttributes(DatabaseModel *model, OperationList *op_l
 	language_cmb->addItems(list);
 	language_cmb->setCurrentText(DefaultLanguages::Sql);
 
+	transform_type_wgt->setAttributes(PgSqlType(), model);
+	transform_types_tab->removeRows();
+
 	if(func)
 	{
 		language_cmb->setCurrentIndex(language_cmb->findText(func->getLanguage()->getName()));
@@ -216,6 +255,22 @@ void BaseFunctionWidget::setAttributes(DatabaseModel *model, OperationList *op_l
 		}
 		else
 			source_code_txt->setPlainText(func->getSourceCode());
+
+		for(auto &type : func->getTransformTypes())
+		{
+			transform_types_tab->addRow();
+			transform_types_tab->setCellText(~type, transform_types_tab->getRowCount() - 1, 0);
+		}
+
+		for(auto &cfg_param : func->getConfigurationParams())
+		{
+			config_params_tab->addRow();
+			config_params_tab->setCellText(cfg_param.first, config_params_tab->getRowCount() - 1, 0);
+			config_params_tab->setCellText(cfg_param.second, config_params_tab->getRowCount() - 1, 1);
+		}
+
+		transform_types_tab->clearSelection();
+		config_params_tab->clearSelection();
 	}
 }
 
@@ -249,7 +304,7 @@ void BaseFunctionWidget::applyBasicConfiguration(BaseFunction *func)
 {
 	try
 	{
-		unsigned count = 0, i = 0;
+		unsigned count = 0, row = 0;
 		Parameter param;
 		QString param_modes;
 
@@ -259,19 +314,31 @@ void BaseFunctionWidget::applyBasicConfiguration(BaseFunction *func)
 
 		count=parameters_tab->getRowCount();
 
-		for(i=0; i < count; i++)
+		for(row=0; row < count; row++)
 		{
-			param.setName(parameters_tab->getCellText(i,0));
-			param.setType(parameters_tab->getRowData(i).value<PgSqlType>());
+			param.setName(parameters_tab->getCellText(row,0));
+			param.setType(parameters_tab->getRowData(row).value<PgSqlType>());
 
-			param_modes = parameters_tab->getCellText(i,2);
+			param_modes = parameters_tab->getCellText(row,2);
 			param.setIn(param_modes.indexOf("IN") >= 0);
 			param.setOut(param_modes.indexOf("OUT") >= 0);
 			param.setVariadic(param_modes.indexOf("VARIADIC") >= 0);
-			param.setDefaultValue(parameters_tab->getCellText(i, 3));
+			param.setDefaultValue(parameters_tab->getCellText(row, 3));
 
 			func->addParameter(param);
 		}
+
+		func->removeTransformTypes();
+		count = transform_types_tab->getRowCount();
+
+		for(row = 0; row < count; row++)
+			func->addTransformType(PgSqlType(transform_types_tab->getCellText(row, 0)));
+
+		func->removeConfigurationParams();
+		count = config_params_tab->getRowCount();
+
+		for(row = 0; row < count; row++)
+			func->setConfigurationParam(config_params_tab->getCellText(row, 0), config_params_tab->getCellText(row, 1));
 
 		if(language_cmb->currentText() == DefaultLanguages::C)
 		{

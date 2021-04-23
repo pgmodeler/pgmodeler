@@ -4009,20 +4009,120 @@ Language *DatabaseModel::createLanguage()
 	return lang;
 }
 
-Function *DatabaseModel::createFunction()
+void DatabaseModel::setBasicFunctionAttributes(BaseFunction *func)
 {
-	attribs_map attribs, attribs_aux;
-	Function *func=nullptr;
-	ObjectType obj_type;
-	BaseObject *object=nullptr;
-	PgSqlType type;
-	Parameter param;
-	QString str_aux, elem;
+	if(!func)
+		throw Exception(ErrorCode::OprNotAllocatedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	try
 	{
-		func=new Function;
+		attribs_map attribs, attribs_aux;
+		QString elem;
+		BaseObject *object = nullptr;
+		Parameter param;
+		ObjectType obj_type;
+
 		setBasicAttributes(func);
+		xmlparser.getElementAttributes(attribs);
+
+		if(!attribs[Attributes::SecurityType].isEmpty())
+			func->setSecurityType(SecurityType(attribs[Attributes::SecurityType]));
+
+		xmlparser.savePosition();
+
+		if(xmlparser.accessElement(XmlParser::ChildElement))
+		{
+			do
+			{
+				if(xmlparser.getElementType()==XML_ELEMENT_NODE)
+				{
+					elem = xmlparser.getElementName();
+					obj_type = BaseObject::getObjectType(elem);
+
+					//Gets the function language
+					if(obj_type==ObjectType::Language)
+					{
+						xmlparser.getElementAttributes(attribs);
+						object = getObject(attribs[Attributes::Name], obj_type);
+
+						//Raises an error if the function doesn't exisits
+						if(!object)
+							throw Exception(Exception::getErrorMessage(ErrorCode::RefObjectInexistsModel)
+											.arg(func->getName())
+											.arg(func->getTypeName())
+											.arg(attribs[Attributes::Name])
+								.arg(BaseObject::getTypeName(ObjectType::Language)),
+								ErrorCode::RefObjectInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+						func->setLanguage(dynamic_cast<Language *>(object));
+					}
+					//Gets a function parameter
+					else if(xmlparser.getElementName()==Attributes::Parameter)
+					{
+						param = createParameter();
+						func->addParameter(param);
+					}
+					//Gets the function code definition
+					else if(xmlparser.getElementName()==Attributes::Definition)
+					{
+						xmlparser.savePosition();
+						xmlparser.getElementAttributes(attribs_aux);
+
+						if(!attribs_aux[Attributes::Library].isEmpty())
+						{
+							func->setLibrary(attribs_aux[Attributes::Library]);
+							func->setSymbol(attribs_aux[Attributes::Symbol]);
+						}
+						else if(xmlparser.accessElement(XmlParser::ChildElement))
+							func->setSourceCode(xmlparser.getElementContent());
+
+						xmlparser.restorePosition();
+					}
+					else if(xmlparser.getElementName() == Attributes::TransformTypes)
+					{
+						xmlparser.savePosition();
+						xmlparser.getElementAttributes(attribs_aux);
+						func->addTransformTypes(attribs_aux[Attributes::Names].split(',', QtCompat::SkipEmptyParts));
+						xmlparser.restorePosition();
+					}
+					else if(xmlparser.getElementName() == Attributes::Configuration)
+					{
+						xmlparser.savePosition();
+						xmlparser.getElementAttributes(attribs_aux);
+						func->setConfigurationParam(attribs_aux[Attributes::Name], attribs_aux[Attributes::Value]);
+						xmlparser.restorePosition();
+					}
+				}
+			}
+			while(xmlparser.accessElement(XmlParser::NextElement));
+		}
+
+		xmlparser.restorePosition();
+	}
+	catch(Exception &e)
+	{
+		if(e.getErrorCode()==ErrorCode::RefUserTypeInexistsModel)
+			throw Exception(Exception::getErrorMessage(ErrorCode::AsgObjectInvalidDefinition)
+							.arg(func->getName())
+							.arg(func->getTypeName()),
+							ErrorCode::AsgObjectInvalidDefinition,__PRETTY_FUNCTION__,__FILE__,__LINE__,&e, getErrorExtraInfo());
+
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, getErrorExtraInfo());
+	}
+}
+
+Function *DatabaseModel::createFunction()
+{
+	attribs_map attribs, attribs_aux;
+	Function *func = nullptr;
+	PgSqlType type;
+	QString str_aux;
+	Parameter param;
+
+	try
+	{
+		func = new Function;
+		setBasicFunctionAttributes(func);
 		xmlparser.getElementAttributes(attribs);
 
 		if(!attribs[Attributes::ReturnsSetOf].isEmpty())
@@ -4043,9 +4143,6 @@ Function *DatabaseModel::createFunction()
 		if(!attribs[Attributes::FunctionType].isEmpty())
 			func->setFunctionType(FunctionType(attribs[Attributes::FunctionType]));
 
-		if(!attribs[Attributes::SecurityType].isEmpty())
-			func->setSecurityType(SecurityType(attribs[Attributes::SecurityType]));
-
 		if(!attribs[Attributes::ParallelType].isEmpty())
 			func->setParalleType(ParallelType(attribs[Attributes::ParallelType]));
 
@@ -4061,11 +4158,8 @@ Function *DatabaseModel::createFunction()
 			{
 				if(xmlparser.getElementType()==XML_ELEMENT_NODE)
 				{
-					elem=xmlparser.getElementName();
-					obj_type=BaseObject::getObjectType(elem);
-
 					//Gets the function return type from the XML
-					if(elem==Attributes::ReturnType)
+					if(xmlparser.getElementName() == Attributes::ReturnType)
 					{
 						xmlparser.savePosition();
 
@@ -4086,7 +4180,7 @@ Function *DatabaseModel::createFunction()
 									//when the element found is a PARAMETER indicates that the function return type is a table
 									else if(xmlparser.getElementName()==Attributes::Parameter)
 									{
-										param=createParameter();
+										param = createParameter();
 										func->addReturnedTableColumn(param.getName(), param.getType());
 									}
 								}
@@ -4101,45 +4195,6 @@ Function *DatabaseModel::createFunction()
 							throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 						}
 					}
-					//Gets the function language
-					else if(obj_type==ObjectType::Language)
-					{
-						xmlparser.getElementAttributes(attribs);
-						object=getObject(attribs[Attributes::Name], obj_type);
-
-						//Raises an error if the function doesn't exisits
-						if(!object)
-							throw Exception(Exception::getErrorMessage(ErrorCode::RefObjectInexistsModel)
-											.arg(func->getName())
-											.arg(func->getTypeName())
-											.arg(attribs[Attributes::Name])
-								.arg(BaseObject::getTypeName(ObjectType::Language)),
-								ErrorCode::RefObjectInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-
-						func->setLanguage(dynamic_cast<Language *>(object));
-					}
-					//Gets a function parameter
-					else if(xmlparser.getElementName()==Attributes::Parameter)
-					{
-						param=createParameter();
-						func->addParameter(param);
-					}
-					//Gets the function code definition
-					else if(xmlparser.getElementName()==Attributes::Definition)
-					{
-						xmlparser.savePosition();
-						xmlparser.getElementAttributes(attribs_aux);
-
-						if(!attribs_aux[Attributes::Library].isEmpty())
-						{
-							func->setLibrary(attribs_aux[Attributes::Library]);
-							func->setSymbol(attribs_aux[Attributes::Symbol]);
-						}
-						else if(xmlparser.accessElement(XmlParser::ChildElement))
-							func->setSourceCode(xmlparser.getElementContent());
-
-						xmlparser.restorePosition();
-					}
 				}
 			}
 			while(xmlparser.accessElement(XmlParser::NextElement));
@@ -4149,7 +4204,7 @@ Function *DatabaseModel::createFunction()
 	{
 		if(func)
 		{
-			str_aux=func->getName(true);
+			str_aux = func->getName();
 			delete func;
 		}
 
@@ -6380,89 +6435,17 @@ Transform *DatabaseModel::createTransform()
 
 Procedure *DatabaseModel::createProcedure()
 {
-	attribs_map attribs, def_attribs;
-	Procedure *proc=nullptr;
-	ObjectType obj_type;
-	BaseObject *object=nullptr;
+	Procedure *proc = nullptr;
 
 	try
 	{
 		proc = new Procedure;
-		setBasicAttributes(proc);
-		xmlparser.getElementAttributes(attribs);
-
-		if(!attribs[Attributes::SecurityType].isEmpty())
-			proc->setSecurityType(SecurityType(attribs[Attributes::SecurityType]));
-
-		if(xmlparser.accessElement(XmlParser::ChildElement))
-		{
-			do
-			{
-				if(xmlparser.getElementType()==XML_ELEMENT_NODE)
-				{
-					obj_type=BaseObject::getObjectType(xmlparser.getElementName());
-
-					if(obj_type==ObjectType::Language)
-					{
-						xmlparser.getElementAttributes(attribs);
-						object = getObject(attribs[Attributes::Name], obj_type);
-
-						//Raises an error if the function doesn't exisits
-						if(!object)
-						{
-							throw Exception(Exception::getErrorMessage(ErrorCode::RefObjectInexistsModel)
-															.arg(proc->getName())
-															.arg(proc->getTypeName())
-															.arg(attribs[Attributes::Name])
-															.arg(BaseObject::getTypeName(ObjectType::Language)),
-															ErrorCode::RefObjectInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-						}
-
-						proc->setLanguage(dynamic_cast<Language *>(object));
-					}
-					else if(xmlparser.getElementName()==Attributes::Parameter)
-					{
-						proc->addParameter(createParameter());
-					}
-					else if(xmlparser.getElementName()==Attributes::Definition)
-					{
-						xmlparser.savePosition();
-						xmlparser.getElementAttributes(def_attribs);
-
-						if(!def_attribs[Attributes::Library].isEmpty())
-						{
-							proc->setLibrary(def_attribs[Attributes::Library]);
-							proc->setSymbol(def_attribs[Attributes::Symbol]);
-						}
-						else if(xmlparser.accessElement(XmlParser::ChildElement))
-							proc->setSourceCode(xmlparser.getElementContent());
-
-						xmlparser.restorePosition();
-					}
-				}
-			}
-			while(xmlparser.accessElement(XmlParser::NextElement));
-		}
+		setBasicFunctionAttributes(proc);
 	}
 	catch(Exception &e)
 	{
-		QString proc_name;
-
-		if(proc)
-		{
-			proc_name = proc->getName();
-			delete proc;
-		}
-
-		if(e.getErrorCode()==ErrorCode::RefUserTypeInexistsModel)
-		{
-			throw Exception(Exception::getErrorMessage(ErrorCode::AsgObjectInvalidDefinition)
-											.arg(proc_name)
-											.arg(BaseObject::getTypeName(ObjectType::Procedure)),
-											ErrorCode::AsgObjectInvalidDefinition,__PRETTY_FUNCTION__,__FILE__,__LINE__,&e, getErrorExtraInfo());
-		}
-		else
-			throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, getErrorExtraInfo());
+		if(proc) delete proc;
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, getErrorExtraInfo());
 	}
 
 	return proc;
@@ -8264,6 +8247,14 @@ void DatabaseModel::getProcedureDependencies(BaseObject *object, vector<BaseObje
 		if(usr_type)
 			getObjectDependecies(usr_type, deps, inc_indirect_deps);
 	}
+
+	for(auto &type : base_func->getTransformTypes())
+	{
+		usr_type = getObjectPgSQLType(type);
+
+		if(usr_type)
+			getObjectDependecies(usr_type, deps, inc_indirect_deps);
+	}
 }
 
 void DatabaseModel::getFunctionDependencies(BaseObject *object, vector<BaseObject *> &deps, bool inc_indirect_deps)
@@ -9309,27 +9300,40 @@ void DatabaseModel::getUserDefTypesReferences(BaseObject *object, vector<BaseObj
 				}
 			}
 		}
-		else if(obj_types[i]==ObjectType::Function)
+		else if(obj_types[i] == ObjectType::Function ||
+						obj_types[i] == ObjectType::Procedure)
 		{
+			BaseFunction *base_func = nullptr;
+
 			while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
 			{
-				func=dynamic_cast<Function *>(*itr);
+				base_func = dynamic_cast<BaseFunction *>(*itr);
+				func = dynamic_cast<Function *>(*itr);
 				itr++;
 
-				if(func->getReturnType()==ptr_pgsqltype)
+				if(func && func->getReturnType()==ptr_pgsqltype)
 				{
-					refer=true;
+					refer = true;
 					refs.push_back(func);
 				}
 				else
 				{
-					count=func->getParameterCount();
+					count = base_func->getParameterCount();
 					for(i1=0; i1 < count && (!exclusion_mode || (exclusion_mode && !refer)); i1++)
 					{
-						if(func->getParameter(i1).getType()==ptr_pgsqltype)
+						if(base_func->getParameter(i1).getType()==ptr_pgsqltype)
 						{
-							refer=true;
-							refs.push_back(func);
+							refer = true;
+							refs.push_back(base_func);
+						}
+					}
+
+					for(auto &type : base_func->getTransformTypes())
+					{
+						if(type == ptr_pgsqltype)
+						{
+							refer = true;
+							refs.push_back(base_func);
 						}
 					}
 				}

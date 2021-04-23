@@ -133,7 +133,8 @@ const attribs_map DatabaseExplorerWidget::attribs_i18n {
 	{Attributes::Partitioning, QT_TR_NOOP("Partitioning")}, {Attributes::Options, QT_TR_NOOP("Options")},
 	{Attributes::Fdw, QT_TR_NOOP("Foreign data wrapper")}, 	{Attributes::Server, QT_TR_NOOP("Server")},
 	{Attributes::BypassRls, QT_TR_NOOP("Bypass RLS")}, {Attributes::FromSqlFunc, QT_TR_NOOP("From SQL Func.")},
-	{Attributes::ToSqlFunc, QT_TR_NOOP("To SQL Func.")}
+	{Attributes::ToSqlFunc, QT_TR_NOOP("To SQL Func.")} , {Attributes::TransformTypes, QT_TR_NOOP("Transform types")},
+	{Attributes::ConfigParams, QT_TR_NOOP("Config. parameters")}
 };
 
 DatabaseExplorerWidget::DatabaseExplorerWidget(QWidget *parent): QWidget(parent)
@@ -517,6 +518,7 @@ void DatabaseExplorerWidget::formatBaseFunctionAttribs(attribs_map &attribs)
 	attribs[Attributes::ArgNames]=Catalog::parseArrayValues(attribs[Attributes::ArgNames]).join(PgModelerNs::DataSeparator);
 	attribs[Attributes::ArgModes]=Catalog::parseArrayValues(attribs[Attributes::ArgModes]).join(PgModelerNs::DataSeparator);
 	attribs[Attributes::ArgDefaults]=Catalog::parseArrayValues(attribs[Attributes::ArgDefaults]).join(PgModelerNs::DataSeparator);
+	attribs[Attributes::TransformTypes]=getObjectsNames(ObjectType::Type, Catalog::parseArrayValues(attribs[Attributes::TransformTypes])).join(PgModelerNs::DataSeparator);
 
 	formatOidAttribs(attribs, { Attributes::ArgTypes }, ObjectType::Type, true);
 	attribs[Attributes::Signature]=(QString("%1(%2)")

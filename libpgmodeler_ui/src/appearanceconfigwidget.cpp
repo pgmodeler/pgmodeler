@@ -220,6 +220,7 @@ void AppearanceConfigWidget::loadExampleModel()
 			placeholder->setRect(QRectF(400, 280, 200, 150));
 			updatePlaceholderItem();
 			scene->addItem(placeholder);
+			scene->setActiveLayers(QList<unsigned>({0}));
 		}
 	}
 	catch(Exception &e)

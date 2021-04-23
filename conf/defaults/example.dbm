@@ -3,7 +3,12 @@
 CAUTION: Do not modify this file unless you know what you are doing.
          Unexpected results may occur if the code is changed deliberately.
 -->
-<dbmodel pgmodeler-ver="0.9.3-beta1" use-changelog="false" author="Raphael Araújo e Silva" last-position="0,0" last-zoom="1.05" max-obj-count="6">
+<dbmodel pgmodeler-ver="0.9.4-alpha" use-changelog="false" author="Raphael Araújo e Silva" last-position="0,0" last-zoom="1.05" max-obj-count="6"
+	 layers="Default layer"
+	 active-layers="0"
+	 layer-name-colors="#000000"
+	 layer-rect-colors="#6c849e"
+	 show-layer-names="false" show-layer-rects="false">
 <role name="roletest"
       inherit="true">
 </role>
@@ -25,17 +30,18 @@ CAUTION: Do not modify this file unless you know what you are doing.
 <schema name="public" layers="0" protected="true" fill-color="#000000" sql-disabled="true">
 </schema>
 
-	<language name="testlang" protected="true"/>
+	<language name="testlang"/>
 <function name="trigger_func"
 		window-func="false"
 		returns-setof="false"
 		behavior-type="CALLED ON NULL INPUT"
 		function-type="IMMUTABLE"
 		security-type="SECURITY DEFINER"
+		parallel-type="PARALLEL UNSAFE"
 		execution-cost="20"
 		row-amount="2500">
 	<schema name="public"/>
-	<language name="testlang" protected="true"/>
+	<language name="testlang"/>
 	<return-type>
 	<type name="trigger" length="1"/>
 	</return-type>
@@ -73,7 +79,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 
 <table name="table1" layers="0" collapse-mode="2" max-obj-count="4" z-value="0">
 	<schema name="public"/>
-	<position x="660" y="560"/>
+	<position x="680" y="560"/>
 	<column name="column" not-null="true">
 		<type name="serial" length="1"/>
 	</column>
@@ -126,7 +132,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 
 <view name="view" layers="0" collapse-mode="2" max-obj-count="4" z-value="0">
 	<schema name="public"/>
-	<position x="40" y="580"/>
+	<position x="40" y="600"/>
 	<reference table="public.&quot;table&quot;" column="column1" alias="t1" column-alias="col1"/>
 	<reference table="public.table1" column="column2" alias="t2" column-alias="col2"/>
 	<reference alias="expr">
@@ -152,7 +158,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 </relationship>
 
 <textbox name="textbox" layers="0" z-value="0" font-size="9">
-	<position x="300" y="620"/>
+	<position x="320" y="640"/>
 	<comment><![CDATA[Selected Textbox]]></comment>
 </textbox>
 
@@ -163,7 +169,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 
 <table name="table2" layers="0" oids="true" collapse-mode="2" max-obj-count="4" z-value="0">
 	<schema name="public"/>
-	<position x="660" y="40"/>
+	<position x="680" y="40"/>
 	<column name="column" not-null="true">
 		<type name="serial" length="1"/>
 	</column>
@@ -208,7 +214,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<schema name="public"/>
 	<role name="roletest"/>
 	<foreignserver name="server_test"/>
-	<position x="660" y="400"/>
+	<position x="680" y="400"/>
 	<column name="id" not-null="true">
 		<type name="smallint" length="0"/>
 	</column>

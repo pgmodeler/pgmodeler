@@ -301,6 +301,12 @@ class DatabaseModel:  public QObject, public BaseObject {
 		//! \brief Returns the XML code for the changelog
 		QString getChangelogDefinition();
 
+		//! \brief Loads the basic attributes, common between all children of BaseObject, from XML code
+		void setBasicAttributes(BaseObject *object);
+
+		//! \brief Loads the basic attributes, common between all children of BaseFunction, from XML code
+		void setBasicFunctionAttributes(BaseFunction *func);
+
 	public:
 		static constexpr unsigned MetaDbAttributes=1,	//! \brief Handle database model attribute when save/load metadata file
 		MetaObjsPositioning=2,	//! \brief Handle objects' positioning when save/load metadata file
@@ -649,8 +655,6 @@ class DatabaseModel:  public QObject, public BaseObject {
 
 		//! \brief Returns the object searching by its name and type
 		BaseObject *getObject(const QString &name, ObjectType obj_type);
-
-		void setBasicAttributes(BaseObject *object);
 
 		void configureDatabase(attribs_map &attribs);
 		PgSqlType createPgSQLType();

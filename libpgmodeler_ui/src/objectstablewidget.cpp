@@ -85,6 +85,8 @@ void ObjectsTableWidget::setButtonConfiguration(unsigned button_conf)
 	update_tb->setVisible((button_conf & UpdateButton) == UpdateButton);
 	duplicate_tb->setVisible((button_conf & DuplicateButton) == DuplicateButton);
 
+	resize_cols_tb->setVisible((button_conf & ResizeColsButton) == ResizeColsButton);
+
 	//Disabling the horizontal spacers when no buttons are visible
 	if(button_conf==NoButtons)
 	{

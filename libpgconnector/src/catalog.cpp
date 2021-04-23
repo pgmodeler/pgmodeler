@@ -984,9 +984,9 @@ QStringList Catalog::parseArrayValues(const QString &array_val)
 		QString value=array_val.mid(start, (end - start)+1);
 
 		if(value.contains('"'))
-			list=parseDefaultValues(value, QString("\""), QString(","));
+			list = parseDefaultValues(value, QString("\""), QString(","));
 		else
-			list=value.split(',', QtCompat::SkipEmptyParts);
+			list = value.split(',', QtCompat::SkipEmptyParts);
 	}
 
 	return list;
