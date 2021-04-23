@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1250</width>
+    <width>1318</width>
     <height>282</height>
    </rect>
   </property>
@@ -525,7 +525,7 @@
          <string>PostgreSQL version</string>
         </property>
         <property name="sizeAdjustPolicy">
-         <enum>QComboBox::AdjustToMinimumContentsLengthWithIcon</enum>
+         <enum>QComboBox::AdjustToContents</enum>
         </property>
         <property name="iconSize">
          <size>
@@ -591,7 +591,7 @@
          <string>Connection to be used in the SQL validation</string>
         </property>
         <property name="sizeAdjustPolicy">
-         <enum>QComboBox::AdjustToMinimumContentsLengthWithIcon</enum>
+         <enum>QComboBox::AdjustToContents</enum>
         </property>
         <property name="iconSize">
          <size>
