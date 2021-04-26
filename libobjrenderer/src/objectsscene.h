@@ -173,6 +173,16 @@ class ObjectsScene: public QGraphicsScene {
 		 * greater than 0 or less than the maximum of layers minus 1, avoiding references to invalid layer ids. */
 		void validateLayerRemoval(unsigned old_layer);
 
+		/*! \brief Add a several layers at once. This method will resolve name conflicts automatically.
+		 * This method removes all the current layers (except the first) and add the new ones.
+		 * The parameter reset_objs_layers is used to define if the objects should be moved to the default
+		 * layer or not. */
+		void addLayers(QStringList names, bool reset_objs_layers);
+
+		/*! \brief Destroy all layers (except the default one).
+		 * The parameter reset_objs_layers is used to define if the objects should be moved to the default layer or not. */
+		void removeLayers(bool reset_obj_layers);
+
 	public:
 		static constexpr unsigned DefaultLayer = 0,
 		LayerNameColor = 0,
@@ -193,7 +203,6 @@ class ObjectsScene: public QGraphicsScene {
 		/*! \brief Add a new layer to the scene. In case of duplicated name this method
 		 * automatically does the desambiguation. The name of the new layer is returned. */
 		QString addLayer(const QString &name);
-		void addLayers(QStringList names);
 
 		/*! \brief Rename the layer of the provided index. In case of duplicated name this method
 		 * 	automatically does the desambiguation. */
@@ -377,6 +386,7 @@ class ObjectsScene: public QGraphicsScene {
 		void s_childrenSelectionChanged();
 
 		friend class ModelWidget;
+		friend class PgModelerCliApp;
 };
 
 #endif
