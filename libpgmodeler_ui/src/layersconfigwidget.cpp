@@ -231,6 +231,61 @@ void LayersConfigWidget::toggleLayersRects()
 	emit s_activeLayersChanged();
 }
 
+void LayersConfigWidget::updateLayersList()
+{
+	if(!model)
+		return;
+
+	toggle_layers_rects_chk->blockSignals(true);
+	toggle_layers_rects_chk->setChecked(model->getObjectsScene()->isLayerRectsVisible());
+	toggle_layers_rects_chk->blockSignals(false);
+
+	layers_tab->blockSignals(true);
+	for(auto &layer : model->scene->getLayers())
+	{
+		__addLayer(layer,
+							 model->scene->isLayerActive(layer) ? Qt::Checked : Qt::Unchecked);
+	}
+	layers_tab->blockSignals(false);
+
+	int idx = 0, p_idx = 0;
+	QList<QStringList> colors_lists = {
+		model->getDatabaseModel()->getLayerNameColors(),
+		model->getDatabaseModel()->getLayerRectColors()
+	};
+
+	QList<QList<ColorPickerWidget*>*> pickers = { &name_color_pickers,
+																								&rect_color_pickers };
+
+	for(auto &cl_list : colors_lists)
+	{
+		idx = 0;
+
+		for(auto &cl : cl_list)
+		{
+			if(idx >= pickers[p_idx]->size())
+				break;
+
+			pickers[p_idx]->at(idx)->blockSignals(true);
+			pickers[p_idx]->at(idx)->setColor(0, QColor(cl));
+			pickers[p_idx]->at(idx)->blockSignals(false);
+			idx++;
+		}
+
+		p_idx++;
+	}
+
+	toggle_layers_names_chk->blockSignals(true);
+	toggle_layers_names_chk->setChecked(model->getDatabaseModel()->isLayerNamesVisible());
+	toggle_layers_names_chk->setEnabled(model->getDatabaseModel()->isLayerNamesVisible());
+	toggle_layers_names_chk->blockSignals(false);
+
+	toggle_layers_rects_chk->blockSignals(true);
+	toggle_layers_rects_chk->setChecked(model->getDatabaseModel()->isLayerRectsVisible());
+	toggle_layers_rects_chk->blockSignals(false);
+
+}
+
 void LayersConfigWidget::setModel(ModelWidget *model)
 {
 	bool enable = model != nullptr;
@@ -240,57 +295,7 @@ void LayersConfigWidget::setModel(ModelWidget *model)
 	name_color_pickers.clear();
 	rect_color_pickers.clear();
 	add_tb->setEnabled(enable);
-
-	if(model)
-	{
-		toggle_layers_rects_chk->blockSignals(true);
-		toggle_layers_rects_chk->setChecked(model->getObjectsScene()->isLayerRectsVisible());
-		toggle_layers_rects_chk->blockSignals(false);
-
-		layers_tab->blockSignals(true);
-		for(auto &layer : model->scene->getLayers())
-		{
-			__addLayer(layer,
-								 model->scene->isLayerActive(layer) ? Qt::Checked : Qt::Unchecked);
-		}
-		layers_tab->blockSignals(false);
-
-		int idx = 0, p_idx = 0;
-		QList<QStringList> colors_lists = {
-			model->getDatabaseModel()->getLayerNameColors(),
-			model->getDatabaseModel()->getLayerRectColors()
-		};
-
-		QList<QList<ColorPickerWidget*>*> pickers = { &name_color_pickers,
-																									&rect_color_pickers };
-
-		for(auto &cl_list : colors_lists)
-		{
-			idx = 0;
-
-			for(auto &cl : cl_list)
-			{
-				if(idx >= pickers[p_idx]->size())
-					break;
-
-				pickers[p_idx]->at(idx)->blockSignals(true);
-				pickers[p_idx]->at(idx)->setColor(0, QColor(cl));
-				pickers[p_idx]->at(idx)->blockSignals(false);
-				idx++;
-			}
-
-			p_idx++;
-		}
-
-		toggle_layers_names_chk->blockSignals(true);
-		toggle_layers_names_chk->setChecked(model->getDatabaseModel()->isLayerNamesVisible());
-		toggle_layers_names_chk->setEnabled(model->getDatabaseModel()->isLayerNamesVisible());
-		toggle_layers_names_chk->blockSignals(false);
-
-		toggle_layers_rects_chk->blockSignals(true);
-		toggle_layers_rects_chk->setChecked(model->getDatabaseModel()->isLayerRectsVisible());
-		toggle_layers_rects_chk->blockSignals(false);
-	}
+	updateLayersList();
 }
 
 void LayersConfigWidget::__addLayer(const QString &name, Qt::CheckState chk_state)

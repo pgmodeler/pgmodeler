@@ -1637,7 +1637,7 @@ void ModelWidget::updateSceneLayers()
 {
 	scene->blockSignals(true);
 
-	scene->addLayers(db_model->getLayers());
+	scene->addLayers(db_model->getLayers(), false);
 	scene->setActiveLayers(db_model->getActiveLayers());
 	scene->setLayerColors(ObjectsScene::LayerNameColor, db_model->getLayerNameColors());
 	scene->setLayerColors(ObjectsScene::LayerRectColor, db_model->getLayerRectColors());
