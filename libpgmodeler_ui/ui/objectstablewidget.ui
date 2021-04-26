@@ -493,10 +493,10 @@
       <bool>false</bool>
      </attribute>
      <attribute name="verticalHeaderMinimumSectionSize">
-      <number>38</number>
+      <number>34</number>
      </attribute>
      <attribute name="verticalHeaderDefaultSectionSize">
-      <number>38</number>
+      <number>34</number>
      </attribute>
      <attribute name="verticalHeaderHighlightSections">
       <bool>true</bool>
