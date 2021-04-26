@@ -1009,6 +1009,7 @@ void MainWindow::addModel(ModelWidget *model_wgt)
 		models_tbw->addTab(model_wgt, model_wgt->getDatabaseModel()->getName());
 		models_tbw->setCurrentIndex(models_tbw->count()-1);
 		models_tbw->blockSignals(false);
+
 		setCurrentModel();
 		models_tbw->currentWidget()->layout()->setContentsMargins(3,3,0,3);
 
@@ -1548,11 +1549,14 @@ void MainWindow::importDatabase()
 	stopTimers(true);
 
 	connect(&db_import_form, &DatabaseImportForm::s_connectionsUpdateRequest, [&](){ updateConnections(true); });
+
 	db_import_form.setModelWidget(current_model);
 	PgModelerUiNs::resizeDialog(&db_import_form);
+
 	GeneralConfigWidget::restoreWidgetGeometry(&db_import_form);
 	db_import_form.exec();
 	GeneralConfigWidget::saveWidgetGeometry(&db_import_form);
+
 	stopTimers(false);
 
 	if(db_import_form.result()==QDialog::Accepted && db_import_form.getModelWidget())

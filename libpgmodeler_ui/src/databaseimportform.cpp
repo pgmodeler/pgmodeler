@@ -317,6 +317,7 @@ void DatabaseImportForm::importDatabase()
 		{
 			model_wgt=new ModelWidget;
 			model_wgt->getDatabaseModel()->createSystemObjects(true);
+			model_wgt->updateSceneLayers();
 		}
 
 		model_wgt->setUpdatesEnabled(false);
@@ -896,26 +897,6 @@ void DatabaseImportForm::listObjects(DatabaseImportHelper &import_helper, QTreeW
 					sch_items.pop_back();
 				}
 			}
-
-			/*if(checkable_items)
-			{
-				map<ObjectType, QStringList> objs_filter = import_helper.getObjectFilters();
-
-				// If we have filters configured only the items matching the object types are checked (and their parents too)
-				if(!objs_filter.empty())
-				{
-					ObjectType obj_type;
-					QList<QTreeWidgetItem *> list = tree_wgt->findItems("*", Qt::MatchWrap | Qt::MatchWildcard | Qt::MatchRecursive);
-
-					for(auto &item : list)
-					{
-						obj_type = static_cast<ObjectType>(item->data(ObjectTypeId, Qt::UserRole).toUInt());
-
-						if(!item->isDisabled() && objs_filter.count(obj_type))
-							item->setCheckState(0, Qt::Checked);
-					}
-				}
-			}*/
 
 			tree_wgt->sortItems(sort_by, Qt::AscendingOrder);
 
