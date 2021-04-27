@@ -98,7 +98,8 @@
     [ CASE partstrat
         WHEN 'l' then 'LIST'
         WHEN 'r' then 'RANGE'
-        ELSE 'HASH'
+	WHEN 'h' then 'HASH'
+	ELSE NULL
       END AS partitioning,
       pg_get_expr(partexprs, partrelid) AS part_key_exprs,
       partattrs::oid] $ob $cb [ AS part_key_cols, 
