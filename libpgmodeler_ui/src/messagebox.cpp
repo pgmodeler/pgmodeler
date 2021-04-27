@@ -173,28 +173,30 @@ void Messagebox::show(const QString &title, const QString &msg, unsigned icon_ty
 
 	msg_lbl->setText(msg);
 
-	this->setWindowTitle(aux_title);
-	this->objs_group_wgt->setCurrentIndex(0);
-	this->show_errors_tb->setChecked(false);
+	setWindowTitle(aux_title);
+	objs_group_wgt->setCurrentIndex(0);
+	show_errors_tb->setChecked(false);
 	show_errors_tb->setVisible((exceptions_trw->topLevelItemCount() > 0));
 	showExceptionList();
 
-	this->resize(this->minimumWidth(), this->minimumHeight());
-
 	QFontMetrics fm(msg_lbl->font());
-	QString aux_msg=msg;
-	aux_msg.replace(QRegExp(QString("(<)(br)(/)?(>)"), Qt::CaseInsensitive), QString("\n"));
-	QSize size=QSize(msg_lbl->width(), fm.height() * (aux_msg.count('\n') + 1));
-	int max_h=msg_lbl->minimumHeight() * 3;
+	QString aux_msg = QString(msg).replace(QRegExp(QString("(<)(br)(/)?(>)"), Qt::CaseInsensitive), QString("\n"));
+	QSize size = QSize(msg_lbl->width(), fm.height() * (aux_msg.count('\n') + 1));
+	double factor = BaseObjectView::getScreenDpiFactor();
+	int max_h = msg_lbl->minimumHeight() * 3, btn_h = fm.height() * factor;
+
+	//Forcing the footer buttons to have the minimum height attached to the screen's dpi/font size
+	yes_ok_btn->setMinimumHeight(btn_h);
+	no_btn->setMinimumHeight(btn_h);
+	cancel_btn->setMinimumHeight(btn_h);
+	show_errors_tb->setMinimumHeight(btn_h);
 
 	//Resizing the message box if the text height is greater than the default size
 	if(size.height() > msg_lbl->minimumHeight() && size.height() < max_h)
-		this->setMinimumHeight((size.height() + (size.height() * 0.25))  + show_errors_tb->height() + name_lbl->height() + 30);
+		setMinimumHeight((size.height() * 1.25)  + show_errors_tb->height() + yes_ok_btn->height());
 	else if(size.height() >= max_h)
-		this->setMinimumHeight(max_h);
+		setMinimumHeight(max_h);
 
-	double factor = BaseObjectView::getScreenDpiFactor();
-	this->resize(this->minimumWidth() * factor, this->minimumHeight() * factor);
-
+	resize(minimumWidth() * factor, minimumHeight() * factor);
 	QDialog::exec();
 }
