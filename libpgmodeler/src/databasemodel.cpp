@@ -11022,7 +11022,7 @@ void DatabaseModel::loadObjectsMetadata(const QString &filename, unsigned option
 							 GlobalAttributes::DirSeparator;
 	attribs_map attribs, aux_attrib;
 	ObjectType obj_type;
-	BaseObject *object=nullptr, *new_object=nullptr;
+	BaseObject *object=nullptr, *new_object=nullptr, *aux_obj = nullptr;
 	BaseTable *src_tab=nullptr, *dst_tab=nullptr, *base_tab=nullptr;
 	vector<QPointF> points;
 	map<QString, unsigned> labels_attrs;
@@ -11035,7 +11035,7 @@ void DatabaseModel::loadObjectsMetadata(const QString &filename, unsigned option
 			load_objs_sqldis=false, load_textboxes=false, load_tags=false,
 			load_custom_sql=false, load_custom_colors=false, load_fadeout=false,
 			load_collapse_mode=false, load_genericsqls=false, load_objs_aliases=false,
-			load_objs_z_value=false, load_objs_layers_cfg=false;
+			load_objs_z_value=false, load_objs_layers_cfg=false, merge_dup_objs=false;
 
 	load_db_attribs=(MetaDbAttributes & options) == MetaDbAttributes;
 	load_objs_pos=(MetaObjsPositioning & options) == MetaObjsPositioning;
@@ -11051,6 +11051,7 @@ void DatabaseModel::loadObjectsMetadata(const QString &filename, unsigned option
 	load_objs_aliases=(MetaObjsAliases & options) == MetaObjsAliases;
 	load_objs_z_value=(MetaObjsZStackValue & options) == MetaObjsZStackValue;
 	load_objs_layers_cfg=(MetaObjsLayersConfig & options) == MetaObjsLayersConfig;
+	merge_dup_objs=(MetaMergeDuplicatedObjs & options) == MetaMergeDuplicatedObjs;
 
 	try
 	{
@@ -11072,32 +11073,42 @@ void DatabaseModel::loadObjectsMetadata(const QString &filename, unsigned option
 			{
 				if(xmlparser.getElementType()==XML_ELEMENT_NODE)
 				{
-					elem_name=xmlparser.getElementName();
+					elem_name = xmlparser.getElementName();
+					obj_type = BaseObject::getObjectType(elem_name);
 
-					if((elem_name==BaseObject::getSchemaName(ObjectType::Tag) && load_tags) ||
-						 (elem_name==BaseObject::getSchemaName(ObjectType::Textbox) && load_textboxes) ||
-						 (elem_name==BaseObject::getSchemaName(ObjectType::GenericSql) && load_genericsqls))
+					xmlparser.getElementAttributes(attribs);
+
+					//Trying to create tag/textbox/generic sql object
+					if((obj_type == ObjectType::Tag && load_tags) ||
+						 (obj_type == ObjectType::Textbox && load_textboxes) ||
+						 (obj_type == ObjectType::GenericSql && load_genericsqls))
 					{
 						xmlparser.savePosition();
-						obj_type=BaseObject::getObjectType(elem_name);
-						new_object=createObject(obj_type);
+						aux_obj = getObject(attribs[Attributes::Name], obj_type);
+						new_object = createObject(obj_type);
 
-						#warning "Fix me: the textbox exist we just need to replace the parameters like zvalue and layers"
-
-						if(getObjectIndex(new_object->getName(), obj_type) < 0)
+						if(!aux_obj)
 						{
 							emit s_objectLoaded(progress, tr("Creating object `%1' (%2)")
-																	.arg(new_object->getName()).arg(new_object->getTypeName()), enum_cast(obj_type));
+																	.arg(attribs[Attributes::Name])
+																	.arg(BaseObject::getTypeName(obj_type)), enum_cast(obj_type));
+
 							addObject(new_object);
 						}
 						else
 						{
-							emit s_objectLoaded(progress, tr("Object `%1' (%2) already exists. Ignoring.")
-																	.arg(new_object->getName()).arg(new_object->getTypeName()), enum_cast(ObjectType::BaseObject));
+							emit s_objectLoaded(progress,
+																	tr("Object `%1' (%2) already exists. %1.").arg(merge_dup_objs ? tr("Merging") : tr("Ignoring"))
+																	.arg(attribs[Attributes::Name])
+																	.arg(BaseObject::getTypeName(obj_type)), enum_cast(ObjectType::BaseObject));
+
+							if(merge_dup_objs)
+								PgModelerNs::copyObject(&aux_obj, new_object, obj_type);
+
 							delete new_object;
+							new_object = nullptr;
 						}
 
-						new_object=nullptr;
 						xmlparser.restorePosition();
 					}
 					else if(elem_name==Attributes::Info)
