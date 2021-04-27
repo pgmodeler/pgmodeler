@@ -1476,7 +1476,7 @@ void PgModelerCliApp::loadModel()
 
 	scene->blockSignals(true);
 
-	scene->addLayers(model->getLayers());
+	scene->addLayers(model->getLayers(), false);
 	scene->setActiveLayers(model->getActiveLayers());
 	scene->setLayerColors(ObjectsScene::LayerNameColor, model->getLayerNameColors());
 	scene->setLayerColors(ObjectsScene::LayerRectColor, model->getLayerRectColors());

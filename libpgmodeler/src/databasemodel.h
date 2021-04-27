@@ -321,7 +321,9 @@ class DatabaseModel:  public QObject, public BaseObject {
 		MetaGenericSqlObjs=1024,	//! \brief Handle generic sql object when save/load metadata file
 		MetaObjsAliases=2048,	//! \brief Handle the object's aliases (graphical objects and table children objects) when save/load metadata file
 		MetaObjsZStackValue=4096,	//! \brief Handle the object's Z stack value
-		MetaAllInfo=8191;	//! \brief Handle all metadata information about objects when save/load metadata file
+		MetaObjsLayersConfig=8192,	//! \brief Handle all the configuration related to layers
+		MetaMergeDuplicatedObjs=16384,	//! \brief Merges duplicated textboxes, tags and generic SQL objects
+		MetaAllInfo=32767;	//! \brief Handle all metadata information about objects when save/load metadata file
 
 		DatabaseModel();
 

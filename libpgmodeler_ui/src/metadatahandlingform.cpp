@@ -58,6 +58,11 @@ MetadataHandlingForm::MetadataHandlingForm(QWidget *parent, Qt::WindowFlags f) :
 
 void MetadataHandlingForm::enableMetadataHandling()
 {
+	merge_dup_objs_chk->setEnabled(!extract_only_rb->isChecked());
+
+	if(extract_only_rb->isChecked())
+		merge_dup_objs_chk->setChecked(false);
+
 	extract_from_cmb->setVisible(!restore_rb->isChecked());
 	extract_from_lbl->setVisible(!restore_rb->isChecked());
 	apply_to_lbl->setVisible(!extract_only_rb->isChecked());
@@ -140,6 +145,8 @@ void MetadataHandlingForm::handleObjectsMetada()
 		options+=(generic_sql_objs_chk->isChecked() ? DatabaseModel::MetaGenericSqlObjs : 0);
 		options+=(objs_aliases_chk->isChecked() ? DatabaseModel::MetaObjsAliases : 0);
 		options+=(objs_z_stack_value_chk->isChecked() ? DatabaseModel::MetaObjsZStackValue : 0);
+		options+=(objs_layers_config_chk->isChecked() ? DatabaseModel::MetaObjsLayersConfig : 0);
+		options+=(merge_dup_objs_chk->isChecked() ? DatabaseModel::MetaMergeDuplicatedObjs : 0);
 
 		connect(model_wgt->getDatabaseModel(), SIGNAL(s_objectLoaded(int,QString,unsigned)), this, SLOT(updateProgress(int,QString,unsigned)), Qt::UniqueConnection);
 
@@ -197,6 +204,7 @@ void MetadataHandlingForm::handleObjectsMetada()
 			model_wgt->setUpdatesEnabled(false);
 			model_wgt->getDatabaseModel()->loadObjectsMetadata(metadata_file, options);
 			model_wgt->adjustSceneSize();
+			model_wgt->updateSceneLayers();
 			model_wgt->restoreLastCanvasPosition();
 			model_wgt->setUpdatesEnabled(true);
 			model_wgt->setModified(true);

@@ -96,6 +96,7 @@ class LayersConfigWidget : public QWidget, Ui::LayersConfigWidget {
 	public slots:
 		void setVisible(bool value) override;
 		void toggleLayersRects();
+		void updateLayersList();
 
 	signals:
 		//! \brief Signal emitted whenever the widget changes its visibility

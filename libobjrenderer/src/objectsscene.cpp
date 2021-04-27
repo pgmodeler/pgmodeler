@@ -178,8 +178,24 @@ QString ObjectsScene::addLayer(const QString &name)
 	return fmt_name;
 }
 
-void ObjectsScene::addLayers(QStringList names)
+void ObjectsScene::addLayers(QStringList names, bool reset_objs_layers)
 {
+	if(names.isEmpty())
+		return;
+
+	removeLayers(reset_objs_layers);
+
+	if(!layers.isEmpty())
+	{
+		/* Since we can't remove the default layer we set its name
+		 * as the first item of layer names list */
+		if(layers.at(DefaultLayer) != names.at(DefaultLayer))
+			renameLayer(DefaultLayer, names.at(0));
+
+		// Discarding the first element of the name lists in order to avoid duplication names
+		names.removeFirst();
+	}
+
 	for(auto &name : names)
 		addLayer(name);
 }
@@ -228,6 +244,11 @@ void ObjectsScene::removeLayer(const QString &name)
 
 void ObjectsScene::removeLayers()
 {
+	removeLayers(true);
+}
+
+void ObjectsScene::removeLayers(bool reset_obj_layers)
+{
 	if(layers.isEmpty())
 		return;
 
@@ -253,14 +274,17 @@ void ObjectsScene::removeLayers()
 	if(is_active)
 		active_layers.push_back(def_layer);
 
-	for(auto &item : this->items())
+	if(reset_obj_layers)
 	{
-		obj_view = dynamic_cast<BaseObjectView *>(item);
-
-		if(obj_view && !obj_view->parentItem())
+		for(auto &item : this->items())
 		{
-			obj_view->resetLayers();
-			obj_view->setVisible(is_active);
+			obj_view = dynamic_cast<BaseObjectView *>(item);
+
+			if(obj_view && !obj_view->parentItem())
+			{
+				obj_view->resetLayers();
+				obj_view->setVisible(is_active);
+			}
 		}
 	}
 

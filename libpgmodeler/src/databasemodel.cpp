@@ -10640,6 +10640,7 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned option
 	QFile output(filename);
 	QByteArray buf;
 	QString objs_def;
+	QStringList layer_ids;
 	vector<BaseObject *> objects, tab_objs;
 	attribs_map attribs;
 	BaseGraphicObject *graph_obj=nullptr;
@@ -10654,7 +10655,7 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned option
 			save_objs_sqldis=false, save_textboxes=false, save_tags=false,
 			save_custom_sql=false, save_custom_colors=false, save_fadeout=false,
 			save_collapsemode=false, save_genericsqls=false, save_objs_aliases=false,
-			save_objs_z_value=false;
+			save_objs_z_value=false, save_objs_layers_cfg=false;
 	QStringList labels_attrs={ Attributes::SrcLabel,
 														 Attributes::DstLabel,
 														 Attributes::NameLabel };
@@ -10672,6 +10673,7 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned option
 	save_genericsqls=(MetaGenericSqlObjs & options) == MetaGenericSqlObjs;
 	save_objs_aliases=(MetaObjsAliases & options) == MetaObjsAliases;
 	save_objs_z_value=(MetaObjsZStackValue & options) == MetaObjsZStackValue;
+	save_objs_layers_cfg=(MetaObjsLayersConfig & options) == MetaObjsLayersConfig;
 
 	output.open(QFile::WriteOnly);
 
@@ -10700,6 +10702,7 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned option
 		{
 			objects.insert(objects.end(), schemas.begin(), schemas.end());
 			objects.insert(objects.end(), tables.begin(), tables.end());
+			objects.insert(objects.end(), foreign_tables.begin(), foreign_tables.end());
 			objects.insert(objects.end(), views.begin(), views.end());
 			objects.insert(objects.end(), relationships.begin(), relationships.end());
 			objects.insert(objects.end(), base_relationships.begin(), base_relationships.end());
@@ -10798,6 +10801,16 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned option
 			attribs[Attributes::FadedOut]=(save_fadeout && graph_obj && graph_obj->isFadedOut() ? Attributes::True : "");
 			attribs[Attributes::CollapseMode]=(save_collapsemode && base_tab ? QString::number(enum_cast(base_tab->getCollapseMode())) : "");
 
+			//Saving layers information
+			if(graph_obj && save_objs_layers_cfg)
+			{
+				for(auto &layer_id : graph_obj->getLayers())
+					layer_ids.append(QString::number(layer_id));
+
+				attribs[Attributes::Layers]=layer_ids.join(',');
+				layer_ids.clear();
+			}
+
 			if(TableObject::isTableObject(obj_type))
 			{
 				base_tab = dynamic_cast<TableObject *>(object)->getParentTable();
@@ -10820,6 +10833,21 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned option
 				attribs[Attributes::DefaultSchema]=(default_objs[ObjectType::Schema] ? default_objs[ObjectType::Schema]->getSignature() : "");
 				attribs[Attributes::DefaultTablespace]=(default_objs[ObjectType::Tablespace] ? default_objs[ObjectType::Tablespace]->getSignature() : "");
 				attribs[Attributes::DefaultOwner]=(default_objs[ObjectType::Role] ? default_objs[ObjectType::Role]->getSignature() : "");
+			}
+
+			//Saving database model layers information
+			if(save_objs_layers_cfg && object==this)
+			{
+				for(auto &layer_id : active_layers)
+					layer_ids.append(QString::number(layer_id));
+
+				attribs[Attributes::ActiveLayers]= layer_ids.join(',');
+				attribs[Attributes::Layers] = layers.join(',');
+				attribs[Attributes::ShowLayerNames] = is_layer_names_visible ? Attributes::True : Attributes::False;
+				attribs[Attributes::ShowLayerRects] = is_layer_rects_visible ? Attributes::True : Attributes::False;
+				attribs[Attributes::LayerRectColors] = layer_rect_colors.join(',');
+				attribs[Attributes::LayerNameColors] = layer_name_colors.join(',');
+				layer_ids.clear();
 			}
 
 			/* If the object is a graphic one and has Z stack value (currently only for tables/view/foreign tables,
@@ -10941,7 +10969,8 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned option
 				 (save_fadeout && !attribs[Attributes::FadedOut].isEmpty()) ||
 				 (save_collapsemode && !attribs[Attributes::CollapseMode].isEmpty()) ||
 				 (save_objs_aliases && !attribs[Attributes::Alias].isEmpty()) ||
-				 (save_objs_z_value && !attribs[Attributes::ZValue].isEmpty()))
+				 (save_objs_z_value && !attribs[Attributes::ZValue].isEmpty()) ||
+				 (save_objs_layers_cfg && !attribs[Attributes::Layers].isEmpty()))
 			{
 				emit s_objectLoaded(((idx++)/static_cast<double>(objects.size()))*100,
 														tr("Saving metadata of the object `%1' (%2)")
@@ -10993,7 +11022,7 @@ void DatabaseModel::loadObjectsMetadata(const QString &filename, unsigned option
 							 GlobalAttributes::DirSeparator;
 	attribs_map attribs, aux_attrib;
 	ObjectType obj_type;
-	BaseObject *object=nullptr, *new_object=nullptr;
+	BaseObject *object=nullptr, *new_object=nullptr, *aux_obj = nullptr;
 	BaseTable *src_tab=nullptr, *dst_tab=nullptr, *base_tab=nullptr;
 	vector<QPointF> points;
 	map<QString, unsigned> labels_attrs;
@@ -11006,7 +11035,7 @@ void DatabaseModel::loadObjectsMetadata(const QString &filename, unsigned option
 			load_objs_sqldis=false, load_textboxes=false, load_tags=false,
 			load_custom_sql=false, load_custom_colors=false, load_fadeout=false,
 			load_collapse_mode=false, load_genericsqls=false, load_objs_aliases=false,
-			load_objs_z_value=false;
+			load_objs_z_value=false, load_objs_layers_cfg=false, merge_dup_objs=false;
 
 	load_db_attribs=(MetaDbAttributes & options) == MetaDbAttributes;
 	load_objs_pos=(MetaObjsPositioning & options) == MetaObjsPositioning;
@@ -11021,6 +11050,8 @@ void DatabaseModel::loadObjectsMetadata(const QString &filename, unsigned option
 	load_genericsqls=(MetaGenericSqlObjs & options) == MetaGenericSqlObjs;
 	load_objs_aliases=(MetaObjsAliases & options) == MetaObjsAliases;
 	load_objs_z_value=(MetaObjsZStackValue & options) == MetaObjsZStackValue;
+	load_objs_layers_cfg=(MetaObjsLayersConfig & options) == MetaObjsLayersConfig;
+	merge_dup_objs=(MetaMergeDuplicatedObjs & options) == MetaMergeDuplicatedObjs;
 
 	try
 	{
@@ -11042,30 +11073,42 @@ void DatabaseModel::loadObjectsMetadata(const QString &filename, unsigned option
 			{
 				if(xmlparser.getElementType()==XML_ELEMENT_NODE)
 				{
-					elem_name=xmlparser.getElementName();
+					elem_name = xmlparser.getElementName();
+					obj_type = BaseObject::getObjectType(elem_name);
 
-					if((elem_name==BaseObject::getSchemaName(ObjectType::Tag) && load_tags) ||
-						 (elem_name==BaseObject::getSchemaName(ObjectType::Textbox) && load_textboxes) ||
-						 (elem_name==BaseObject::getSchemaName(ObjectType::GenericSql) && load_genericsqls))
+					xmlparser.getElementAttributes(attribs);
+
+					//Trying to create tag/textbox/generic sql object
+					if((obj_type == ObjectType::Tag && load_tags) ||
+						 (obj_type == ObjectType::Textbox && load_textboxes) ||
+						 (obj_type == ObjectType::GenericSql && load_genericsqls))
 					{
 						xmlparser.savePosition();
-						obj_type=BaseObject::getObjectType(elem_name);
-						new_object=createObject(obj_type);
+						aux_obj = getObject(attribs[Attributes::Name], obj_type);
+						new_object = createObject(obj_type);
 
-						if(getObjectIndex(new_object->getName(), obj_type) < 0)
+						if(!aux_obj)
 						{
 							emit s_objectLoaded(progress, tr("Creating object `%1' (%2)")
-																	.arg(new_object->getName()).arg(new_object->getTypeName()), enum_cast(obj_type));
+																	.arg(attribs[Attributes::Name])
+																	.arg(BaseObject::getTypeName(obj_type)), enum_cast(obj_type));
+
 							addObject(new_object);
 						}
 						else
 						{
-							emit s_objectLoaded(progress, tr("Object `%1' (%2) already exists. Ignoring.")
-																	.arg(new_object->getName()).arg(new_object->getTypeName()), enum_cast(ObjectType::BaseObject));
+							emit s_objectLoaded(progress,
+																	tr("Object `%1' (%2) already exists. %1.").arg(merge_dup_objs ? tr("Merging") : tr("Ignoring"))
+																	.arg(attribs[Attributes::Name])
+																	.arg(BaseObject::getTypeName(obj_type)), enum_cast(ObjectType::BaseObject));
+
+							if(merge_dup_objs)
+								PgModelerNs::copyObject(&aux_obj, new_object, obj_type);
+
 							delete new_object;
+							new_object = nullptr;
 						}
 
-						new_object=nullptr;
 						xmlparser.restorePosition();
 					}
 					else if(elem_name==Attributes::Info)
@@ -11092,6 +11135,22 @@ void DatabaseModel::loadObjectsMetadata(const QString &filename, unsigned option
 
 								if(pos.size()>=2)
 									last_pos=QPoint(pos[0].toInt(), pos[1].toInt());
+							}
+
+							if(load_objs_layers_cfg && !attribs[Attributes::Layers].isEmpty() &&
+								 !attribs[Attributes::LayerNameColors].isEmpty() && !attribs[Attributes::LayerRectColors].isEmpty() &&
+								 !attribs[Attributes::ShowLayerNames].isEmpty() && !attribs[Attributes::ShowLayerRects].isEmpty())
+							{
+								active_layers.clear();
+
+								for(auto &layer_id : attribs[Attributes::ActiveLayers].split(',', QtCompat::SkipEmptyParts))
+									active_layers.append(layer_id.toInt());
+
+								layers = attribs[Attributes::Layers].split(',', QtCompat::SkipEmptyParts);
+								layer_name_colors = attribs[Attributes::LayerNameColors].split(',', QtCompat::SkipEmptyParts);
+								layer_rect_colors = attribs[Attributes::LayerRectColors].split(',', QtCompat::SkipEmptyParts);
+								is_layer_names_visible = attribs[Attributes::ShowLayerNames] == Attributes::True;
+								is_layer_rects_visible = attribs[Attributes::ShowLayerRects] == Attributes::True;
 							}
 
 							object=this;
@@ -11146,7 +11205,8 @@ void DatabaseModel::loadObjectsMetadata(const QString &filename, unsigned option
 								if(tag)
 									dynamic_cast<BaseTable *>(object)->setTag(tag);
 							}
-							else if(BaseTable::isBaseTable(obj_type) && load_objs_z_value && !attribs[Attributes::ZValue].isEmpty())
+							else if((BaseTable::isBaseTable(obj_type) || obj_type == ObjectType::Textbox) &&
+											load_objs_z_value && !attribs[Attributes::ZValue].isEmpty())
 							{
 								dynamic_cast<BaseTable *>(object)->setZValue(attribs[Attributes::ZValue].toInt());
 							}
@@ -11161,6 +11221,9 @@ void DatabaseModel::loadObjectsMetadata(const QString &filename, unsigned option
 
 							if(load_objs_aliases && !attribs[Attributes::Alias].isEmpty())
 								object->setAlias(attribs[Attributes::Alias]);
+
+							if(load_objs_layers_cfg && BaseGraphicObject::isGraphicObject(obj_type) && !attribs[Attributes::Layers].isEmpty())
+								dynamic_cast<BaseGraphicObject *>(object)->setLayers(attribs[Attributes::Layers].split(',', QtCompat::SkipEmptyParts));
 
 							if(xmlparser.accessElement(XmlParser::ChildElement))
 							{

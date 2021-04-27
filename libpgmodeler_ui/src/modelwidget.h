@@ -616,6 +616,7 @@ class ModelWidget: public QWidget {
 		friend class ObjectFinderWidget;
 		friend class NewObjectOverlayWidget;
 		friend class LayersConfigWidget;
+		friend class MetadataHandlingForm;
 };
 
 #endif

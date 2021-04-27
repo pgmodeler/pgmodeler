@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>671</width>
-    <height>665</height>
+    <width>898</width>
+    <height>895</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -321,7 +321,51 @@
              <property name="horizontalSpacing">
               <number>10</number>
              </property>
-             <item row="13" column="0" colspan="2">
+             <item row="7" column="0">
+              <widget class="QCheckBox" name="objs_aliases_chk">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="toolTip">
+                <string>&lt;p&gt;Handles the objects' aliases  in the metadata file. Only for graphical objects and table's children objects.&lt;/p&gt;</string>
+               </property>
+               <property name="statusTip">
+                <string/>
+               </property>
+               <property name="text">
+                <string>Objects' aliases</string>
+               </property>
+               <property name="checked">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="3" column="0">
+              <widget class="QCheckBox" name="objs_z_stack_value_chk">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="toolTip">
+                <string>Handles the objects' z stack value in the metadata file.</string>
+               </property>
+               <property name="statusTip">
+                <string/>
+               </property>
+               <property name="text">
+                <string>Objects' Z stack value</string>
+               </property>
+               <property name="checked">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="14" column="0" colspan="2">
               <widget class="QWidget" name="widget" native="true">
                <property name="minimumSize">
                 <size>
@@ -400,50 +444,6 @@
                </layout>
               </widget>
              </item>
-             <item row="1" column="1">
-              <widget class="QCheckBox" name="objs_collapse_mode_chk">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="toolTip">
-                <string>Handles the tables' and views' collapsing mode in the metadata file.</string>
-               </property>
-               <property name="statusTip">
-                <string/>
-               </property>
-               <property name="text">
-                <string>Tables and views collpsing mode</string>
-               </property>
-               <property name="checked">
-                <bool>true</bool>
-               </property>
-              </widget>
-             </item>
-             <item row="3" column="0">
-              <widget class="QCheckBox" name="custom_colors_chk">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="toolTip">
-                <string>&lt;p&gt;Handles the objects' custom colors in the metadata file. Currently available only for relationships and schemas.&lt;/p&gt;</string>
-               </property>
-               <property name="statusTip">
-                <string/>
-               </property>
-               <property name="text">
-                <string>Custom object's colors</string>
-               </property>
-               <property name="checked">
-                <bool>true</bool>
-               </property>
-              </widget>
-             </item>
              <item row="0" column="0">
               <widget class="QCheckBox" name="db_metadata_chk">
                <property name="sizePolicy">
@@ -466,21 +466,8 @@
                </property>
               </widget>
              </item>
-             <item row="14" column="0" colspan="2">
-              <spacer name="verticalSpacer">
-               <property name="orientation">
-                <enum>Qt::Vertical</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>20</width>
-                 <height>40</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
-             <item row="0" column="1">
-              <widget class="QCheckBox" name="objs_protection_chk">
+             <item row="5" column="0">
+              <widget class="QCheckBox" name="objs_sql_disabled_chk">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
                  <horstretch>0</horstretch>
@@ -488,20 +475,42 @@
                 </sizepolicy>
                </property>
                <property name="toolTip">
-                <string>Handles the objects' protection status in the metadata file.</string>
+                <string>Handles the objects' SQL disabled status in the metadata file.</string>
                </property>
                <property name="statusTip">
                 <string/>
                </property>
                <property name="text">
-                <string>Objects' protection status</string>
+                <string>Objects' SQL disabled status</string>
                </property>
                <property name="checked">
                 <bool>true</bool>
                </property>
               </widget>
              </item>
-             <item row="5" column="0">
+             <item row="1" column="1">
+              <widget class="QCheckBox" name="objs_collapse_mode_chk">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="toolTip">
+                <string>Handles the tables' and views' collapsing mode in the metadata file.</string>
+               </property>
+               <property name="statusTip">
+                <string/>
+               </property>
+               <property name="text">
+                <string>Tables and views collapsing mode</string>
+               </property>
+               <property name="checked">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="6" column="0">
               <widget class="QCheckBox" name="objs_fadedout_chk">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -523,8 +532,8 @@
                </property>
               </widget>
              </item>
-             <item row="6" column="0">
-              <widget class="QCheckBox" name="objs_aliases_chk">
+             <item row="4" column="0">
+              <widget class="QCheckBox" name="custom_colors_chk">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
                  <horstretch>0</horstretch>
@@ -532,18 +541,31 @@
                 </sizepolicy>
                </property>
                <property name="toolTip">
-                <string>&lt;p&gt;Handles the objects' aliases  in the metadata file. Only for graphical objects and table's children objects.&lt;/p&gt;</string>
+                <string>&lt;p&gt;Handles the objects' custom colors in the metadata file. Currently available only for relationships and schemas.&lt;/p&gt;</string>
                </property>
                <property name="statusTip">
                 <string/>
                </property>
                <property name="text">
-                <string>Objects' aliases</string>
+                <string>Custom object's colors</string>
                </property>
                <property name="checked">
                 <bool>true</bool>
                </property>
               </widget>
+             </item>
+             <item row="15" column="0" colspan="2">
+              <spacer name="verticalSpacer">
+               <property name="orientation">
+                <enum>Qt::Vertical</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>20</width>
+                 <height>40</height>
+                </size>
+               </property>
+              </spacer>
              </item>
              <item row="1" column="0">
               <widget class="QCheckBox" name="objs_positioning_chk">
@@ -567,8 +589,8 @@
                </property>
               </widget>
              </item>
-             <item row="4" column="0">
-              <widget class="QCheckBox" name="objs_sql_disabled_chk">
+             <item row="8" column="0">
+              <widget class="QCheckBox" name="objs_protection_chk">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
                  <horstretch>0</horstretch>
@@ -576,42 +598,33 @@
                 </sizepolicy>
                </property>
                <property name="toolTip">
-                <string>Handles the objects' SQL disabled status in the metadata file.</string>
+                <string>Handles the objects' protection status in the metadata file.</string>
                </property>
                <property name="statusTip">
                 <string/>
                </property>
                <property name="text">
-                <string>Objects' SQL disabled status</string>
+                <string>Objects' protection status</string>
                </property>
                <property name="checked">
                 <bool>true</bool>
                </property>
               </widget>
              </item>
-             <item row="2" column="0">
-              <widget class="QCheckBox" name="objs_z_stack_value_chk">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
+             <item row="0" column="1">
+              <widget class="QCheckBox" name="objs_layers_config_chk">
                <property name="toolTip">
-                <string>Handles the objects' z stack value in the metadata file.</string>
-               </property>
-               <property name="statusTip">
-                <string/>
+                <string>Handles the objects' layers attributes in the metadata file.</string>
                </property>
                <property name="text">
-                <string>Objects' Z stack value</string>
+                <string>Objects' layers configuration</string>
                </property>
                <property name="checked">
                 <bool>true</bool>
                </property>
               </widget>
              </item>
-             <item row="2" column="1">
+             <item row="3" column="1">
               <widget class="QCheckBox" name="custom_sql_chk">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -633,7 +646,7 @@
                </property>
               </widget>
              </item>
-             <item row="3" column="1">
+             <item row="4" column="1">
               <widget class="QCheckBox" name="textbox_objs_chk">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -655,7 +668,7 @@
                </property>
               </widget>
              </item>
-             <item row="4" column="1">
+             <item row="5" column="1">
               <widget class="QCheckBox" name="tag_objs_chk">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -677,7 +690,7 @@
                </property>
               </widget>
              </item>
-             <item row="5" column="1">
+             <item row="6" column="1">
               <widget class="QCheckBox" name="generic_sql_objs_chk">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -696,6 +709,16 @@
                </property>
                <property name="checked">
                 <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="7" column="1">
+              <widget class="QCheckBox" name="merge_dup_objs_chk">
+               <property name="toolTip">
+                <string>&lt;p&gt;Textboxes, tags, and generic SQL objects from the metadata file will be merged into the ones that already exist in the database model.&lt;/p&gt;</string>
+               </property>
+               <property name="text">
+                <string>Merge duplicated objects</string>
                </property>
               </widget>
              </item>
