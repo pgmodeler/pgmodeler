@@ -46,7 +46,7 @@ void BaseForm::resizeForm(QWidget *widget)
 			screen_id = qApp->desktop()->screenNumber(qApp->activeWindow());
 	QScreen *screen=qApp->screens().at(screen_id);
 	double dpi_factor = 0;
-  double pixel_ratio = 0;
+	double pixel_ratio = 0;
 
 	max_w = screen->size().width() * 0.70;
 	max_h = screen->size().height() * 0.70;

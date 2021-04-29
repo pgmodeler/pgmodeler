@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>625</width>
-    <height>255</height>
+    <height>252</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -154,7 +154,7 @@
             <property name="minimumSize">
              <size>
               <width>0</width>
-              <height>175</height>
+              <height>100</height>
              </size>
             </property>
             <property name="maximumSize">
@@ -281,6 +281,12 @@
               </property>
               <item>
                <widget class="QTreeWidget" name="exceptions_trw">
+                <property name="minimumSize">
+                 <size>
+                  <width>0</width>
+                  <height>100</height>
+                 </size>
+                </property>
                 <property name="lineWidth">
                  <number>1</number>
                 </property>

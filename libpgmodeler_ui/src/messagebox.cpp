@@ -176,12 +176,12 @@ void Messagebox::show(const QString &title, const QString &msg, unsigned icon_ty
 	setWindowTitle(aux_title);
 	objs_group_wgt->setCurrentIndex(0);
 	show_errors_tb->setChecked(false);
-	show_errors_tb->setVisible((exceptions_trw->topLevelItemCount() > 0));
+	show_errors_tb->setVisible(exceptions_trw->topLevelItemCount() > 0);
 	showExceptionList();
 
 	QFontMetrics fm(msg_lbl->font());
 	QString aux_msg = QString(msg).replace(QRegExp(QString("(<)(br)(/)?(>)"), Qt::CaseInsensitive), QString("\n"));
-	QSize size = QSize(msg_lbl->width(), fm.height() * (aux_msg.count('\n') + 1));
+	QSize size = QSize(msg_lbl->width(), fm.height() * (aux_msg.trimmed().count('\n') + 1));
 	double factor = BaseObjectView::getScreenDpiFactor();
 	int max_h = msg_lbl->minimumHeight() * 3, btn_h = fm.height() * factor;
 
@@ -197,6 +197,6 @@ void Messagebox::show(const QString &title, const QString &msg, unsigned icon_ty
 	else if(size.height() >= max_h)
 		setMinimumHeight(max_h);
 
-	resize(minimumWidth() * factor, minimumHeight() * factor);
+	resize(minimumWidth() * factor, minimumHeight());
 	QDialog::exec();
 }
