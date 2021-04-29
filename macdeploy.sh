@@ -1,8 +1,8 @@
 #!/bin/bash
 
 USR=`whoami`
-PGSQL_ROOT=/Library/PostgreSQL/12
-QT_ROOT=/Users/$USR/Qt/5.15.1/clang_64
+PGSQL_ROOT=/Library/PostgreSQL/13
+QT_ROOT=/Users/$USR/Qt/5.15.2/clang_64
 QMAKE_ARGS="pgmodeler.pro -r CONFIG+=x86_64 CONFIG+=release -spec macx-clang"
 LOG=macdeploy.log
 
