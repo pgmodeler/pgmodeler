@@ -3271,7 +3271,13 @@ void DatabaseModel::loadModel(const QString &filename)
 													 attribs[Attributes::AllowConns] == Attributes::True);
 
 			persist_changelog = attribs[Attributes::UseChangelog] == Attributes::True;
-			layers = attribs[Attributes::Layers].split(',', QtCompat::SkipEmptyParts);
+
+			/* Compatibility with models created prior the multiple layers features:
+			 * We need to replace semi-colon by comma in the attribute Layers in order to split the
+			 * string correctly, otherwise, the model will have only one layer no matter the amount of
+			 * layers created preivously (in an older version) */
+			layers = attribs[Attributes::Layers].replace(';',',').split(',', QtCompat::SkipEmptyParts);
+			attribs[Attributes::ActiveLayers].replace(';',',');
 
 			layer_name_colors = attribs[Attributes::LayerNameColors].split(',', QtCompat::SkipEmptyParts);
 			layer_rect_colors = attribs[Attributes::LayerRectColors].split(',', QtCompat::SkipEmptyParts);
