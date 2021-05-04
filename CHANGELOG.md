@@ -1,6 +1,78 @@
 Changelog
 ---------
 
+v0.9.4-alpha
+------
+<em>Release date: May 12, 2021</em><br/>
+
+* [New] Added compatibility code that allows loading models created in versions before 0.9.4-alpha without losing layers and active layers information.
+* [New] Added an option to the metadata handling operation that serves to indicate if duplicated objects (textboxes, tags, generic sql) must be merged or not.
+* [New] Added support to configuration parameters and transform types on functions and procedures.
+* [New] Added the compatibility method QtCompat::horizontalAdvance(QFont, QString).
+* [New] Added the ability to rename the default layer.
+* [New] DatabaseModel now stores in XML code all the new settings related to layers (rect and name colors, rect and names display status).
+* [New] Added several methods in ObjectsScene to handle layer colors that helps to save and restore colors from database model files.
+* [New] Add support to custom layer colors in LayerConfigWidget.
+* [New] Added the class LayerItem to create custom items for displaying layout rects in canvas.
+* [New] Added an option to toggle layers rectangles and names from LayerConfigWidget.
+* [New] Added support to setup, in general settings, the custom color for grid lines, canvas area and page delimiter lines.
+* [New] Added support to multiple layers on the model.
+* [New] Added support to PARALLEL attribute to functions.
+* [Change] Adjusted the default Qt version to 5.15.2 in the deployment scripts.
+* [Change] Minor adjustments on Messagebox resizing during first display.
+* [Change] Minor improvement on Messagebox in order to display the stack trace toggle button in a more intuitive way.
+* [Change] Changed the behaviour of the method ObjectsScene::removeLayers, now it'll allow the resetting or not the layers of the objects.
+* [Change] Minor adjustment on QTableWidget vertical header size on DataManipulationForm, ObjectsTableWidget and SqlExecultionWidget.
+* [Change] Minor size adjustment policy in the comboboxes in DataManipulationForm, ModelNavigationWidget and ModelValidationWidget.
+* [Change] Minor improvement in DatabaseImportHelper::setBaseFunctionAttribs in such a way to discover the name of the functions transform types from their oids.
+* [Change] Isolated the duplicated code in DatabaseModel::createFunction and DatabaseModel::createProcedure in the method DatabaseModel::setBasicFunctionAttributes.
+* [Change] Adjusted the minimum size of the main window to 640x480 so it can fit in smaller screens.
+* [Change] Minor refactoring on SchemaView::configureObject to avoid unecessary calculations when the layers are not visible.
+* [Change] Added forced updates of schema rectangles after setting layers to children objects.
+* [Change] Change on the search path for PluginsDir to use getPathFromEnv().
+* [Change] LayersConfigWidget will now emit a signal when toggling layer rects/names so the overview widget on mainwindow is properly updated.
+* [Change] DatabaseModel will now create a default layer in the constructor.
+* [Change] The database model will add the default layer to the loaded model if there isn't a single layer identified.
+* [Change] DatabaseModel when loading older database model files will generate random layer colors.
+* [Change] The scene now will update layer rects when catching the signal s_objectDimensionChanged from tables and textboxes.
+* [Change] Adjust the ObjectsScene to resize layer rects when one or more layers are removed.
+* [Change] Improved the window title of DataManipulationForm in sucha a way to display the currently browsed table.
+* [Change] Improved the selection of layers to be associated to object in context menu (Quick > Set layers). Now a floating widget is use to select multiple layers for the object selection in the canvas area.
+* [Change] Updated the sample models to use "layers" attributes on graphical objects.
+* [Change] Changed the value separator for attributes layers and active-layers on <dbmodel> from semi-colon to comma.
+* [Change] pgModeler CLI will now rename "layer" attributes to "layers" in order to reflect the multiple layers support for older models.
+* [Change] Minor copyright updates.
+* [Change] The option "Truncate before alter columns" in the diff process was removed since its use is discouraged and dangerous in some situations.
+* [Fix] Minor fix in the table's catalog query in order to avoid setting up a partitioning strategy when the table is not a partitioned one.
+* [Fix] Minor fix in database import in such a way to update scene layers info before adding it to the main window.
+* [Fix] Fixed the layers configuration of example.dbm.
+* [Fix] Minor fix in function.sch in order to generate transform types only for PostgreSQL >= 9.5.
+* [Fix] Fixed DatabaseModel::getUserDefTypesReferences in such a way to detect that procedures and functions are referencing a user-defined type from their list of transform types.
+* [Fix] Fixed ObjectsTableWidget in such a way to control whether the ResizeColsButton can be displayed or not via ObjectsTableWidget::setButtonConfiguration.
+* [Fix] Minor fix to avoid black canvas when using settings from 0.9.3 or below on 0.9.4-alpha.
+* [Fix] Minor fix in BaseObjectView in such way to avoid the adjustment of its position to the scene grid when the object is not selected. This can avoid undesired adjustment when moving a schema box and having only a portion of its children selected.
+* [Fix] Minor fix in ObjectsScene in such a way to update layer rects when the grid alignment option is toggled.
+* [Fix] Fixed the buttons shortcuts on LayerConfigWidget.
+* [Fix] Minor fix on SchemaView to compute the last position any time the object is reconfigured.
+* [Fix] Minor fix in BaseObjectWidget to avoid mark the object as modified in finishConfiguration() before adding it to the parent.
+* [Fix] Fixed the key combination to trigger the magnifier tool.
+* [Fix] Fixed LayerItem in order to build in Qt 5.9.
+* [Fix] Minor fixes in ModelWidget, MainWindow to update scene layer settings correctly.
+* [Fix] Fixed the CLI in such a way to update scene layer settings so the exporting processes can generate graphical files correctly.
+* [Fix] Minor fix in LayersConfigWidget in such a way to mark the correct active layers when setting up the model to operate on.
+* [Fix] Fixed a bug in the layers removal process that was causing objects to be placed in a incorrect layer index after the removal.
+* [Fix] Fixed the "Fix" menu in main tool bar.
+* [Fix] Fixed a bug in ModelWidget that was causing overlay to be displayed when a textbox object was selected.
+* [Fix] Fixed wrong text in collationwidget.ui.
+* [Fix] Fixed a bug during the loading of changelog entries.
+* [Fix] Fixed the display of warnings during export in ModelExportForm.
+* [Fix] Fixed the display of warning messages during export in ModelDatabaseDiffForm.
+* [Fix] Fixed a malformed SQL code for triggers.
+* [Fix] Fixed typos in README.md.
+* [Fix] Fixed the broken build on Qt 5.9.x.
+* [Fix] Fixed a bug that was preventing special PKs to be properly configured.
+* [Fix] Fixed the SQL generation of functions based on internal language.
+
 v0.9.3
 ------
 <em>Release date: December 30, 2020</em><br/>

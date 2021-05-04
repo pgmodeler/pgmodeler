@@ -53,10 +53,10 @@ Known Issues
 * pgModeler can sometimes crash during the export, import or validation process due to some threaded operations that, depending on the size and the arrangement of the model, cause race conditions.
 * Due to particularities on executing bundles on MacOSX, the file association does not work correctly on this system. So it's not possible to open a model file by clicking it on Finder.
 
-Change Log
+Changelog
 ----------
 
-The detailed log of changes can be seen on [CHANGELOG.md](https://github.com/pgmodeler/pgmodeler/blob/master/CHANGELOG.md) file.
+The detailed changelog can be seen on [CHANGELOG.md](https://github.com/pgmodeler/pgmodeler/blob/master/CHANGELOG.md) file.
 
 Older Releases/Code
 -------------------
