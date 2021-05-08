@@ -24,7 +24,6 @@
 ObjectsFilterWidget::ObjectsFilterWidget(QWidget *parent) : QWidget(parent)
 {
 	vector<ObjectType> types = BaseObject::getChildObjectTypes(ObjectType::Table);
-	QAction *act = nullptr;
 
 	setupUi(this);
 
@@ -37,15 +36,29 @@ is present has the same effect as performing an exact match searching on the nam
 	clear_all_tb->setToolTip(clear_all_tb->toolTip() + QString(" (%1)").arg(clear_all_tb->shortcut().toString()));
 	apply_tb->setToolTip(apply_tb->toolTip() + QString(" (%1)").arg(apply_tb->shortcut().toString()));
 
+	frame = new QFrame(this);
+	tab_objs_lst = new QListWidget(this);
+
+	QVBoxLayout *vbox = new QVBoxLayout;
+	vbox->addWidget(tab_objs_lst);
+	vbox->setContentsMargins(4,4,4,4);
+	frame->setLayout(vbox);
+
+	wgt_act_forced_filter = new QWidgetAction(this);
+	wgt_act_forced_filter->setDefaultWidget(frame);
+	tab_objs_menu.addAction(wgt_act_forced_filter);
+
 	types.erase(std::find(types.begin(), types.end(), ObjectType::Column));
+	QListWidgetItem *item = nullptr;
 
 	for(auto &type : types)
 	{
-		act = tab_objs_menu.addAction(BaseObject::getTypeName(type));
-		act->setIcon(QIcon(PgModelerUiNs::getIconPath(type)));
-		act->setData(BaseObject::getSchemaName(type));
-		act->setCheckable(true);
-		act->setChecked(true);
+		item = new QListWidgetItem(BaseObject::getTypeName(type));
+		item->setIcon(QIcon(PgModelerUiNs::getIconPath(type)));
+		item->setData(Qt::UserRole, BaseObject::getSchemaName(type));
+		item->setFlags(item->flags() | Qt::ItemIsUserCheckable);
+		item->setCheckState(Qt::Checked);
+		tab_objs_lst->addItem(item);
 	}
 
 	action_only_matching = new QAction(tr("Only macthing"));
@@ -78,8 +91,8 @@ is present has the same effect as performing an exact match searching on the nam
 
 void ObjectsFilterWidget::setModelFilteringMode(bool value, const vector<ObjectType> &extra_types)
 {
-	for(auto &act : tab_objs_menu.actions())
-		act->setChecked(true);
+	for(auto &item : tab_objs_lst->findItems("*", Qt::MatchWildcard))
+		item->setCheckState(Qt::Checked);
 
 	action_forced_filter->setDisabled(value);
 	action_only_matching->setChecked(true);
@@ -190,10 +203,10 @@ QStringList ObjectsFilterWidget::getForceObjectsFilter()
 
 	if(action_only_matching->isChecked())
 	{
-		for(auto &act : tab_objs_menu.actions())
+		for(auto &item : tab_objs_lst->findItems("*", Qt::MatchWildcard))
 		{
-			if(act->isChecked())
-				types.append(act->data().toString());
+			if(item->checkState() == Qt::Checked)
+				types.append(item->data(Qt::UserRole).toString());
 		}
 	}
 

@@ -28,6 +28,8 @@
 #include <QWidget>
 #include <QComboBox>
 #include <QMenu>
+#include <QWidgetAction>
+#include <QListWidget>
 #include "baseobject.h"
 #include "ui_objectsfilterwidget.h"
 
@@ -40,6 +42,12 @@ class ObjectsFilterWidget : public QWidget, Ui::ObjectsFilterWidget {
 		QMenu tab_objs_menu, options_menu;
 
 		QAction *action_only_matching, *action_match_signature, *action_forced_filter;
+
+		QWidgetAction *wgt_act_forced_filter;
+
+		QListWidget *tab_objs_lst;
+
+		QFrame *frame;
 
 		//! \brief Creates a combobox of the objects' types accepted in the filter
 		QComboBox *createObjectsCombo();

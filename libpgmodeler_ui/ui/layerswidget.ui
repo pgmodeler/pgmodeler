@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>600</width>
-    <height>180</height>
+    <width>336</width>
+    <height>159</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -59,7 +59,7 @@
       <item row="0" column="0" colspan="2">
        <widget class="QListWidget" name="layers_lst">
         <property name="alternatingRowColors">
-         <bool>true</bool>
+         <bool>false</bool>
         </property>
        </widget>
       </item>
