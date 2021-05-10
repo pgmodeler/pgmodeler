@@ -6,13 +6,13 @@ v0.9.4-alpha
 
 <strong>Attention:</strong> the database model file structure has changed since the last stable 0.9.3. Models created in older releases will certainly fail to load due to incompatibilities because some attributes in the XML code don't exist anymore or have changed during the development of 0.9.4-alpha. Before loading your database models in this new release, please, make sure to have a backup of all of them and follow the steps presented by the model fix tool to correct the documents' structure. Not paying attention to this situation may cause irreversible data loss! If the fix procedures aren't enough to make your database models loadable again, please, ask for help at the official support channels!<br/>
 
-<strong>Summary:</strong> it took almost half-year to conclude the first alpha release of 0.9.4 due to several problems I was facing. Anyway, I kept working on pgModeler at a slower pace and releasing snapshot buildings until we have reached an acceptable state of maturity for an alpha release.<br/>
+<strong>Summary:</strong> it took almost half-year to conclude the first alpha release of 0.9.4 due to several problems I was facing. Anyway, I kept working on pgModeler at a slower pace and releasing snapshot buildings until we had reached an acceptable state of maturity for an alpha release.<br/>
 
-Attending to some requests, I dedicated some time to bring the support to multiple layers. Basically, pgModeler now allows graphical objects to be in different layers which can be toggled in a dedicated widget in order to denote a custom context depending on the user's need. Additionally to multiple layers support, it was added support to display layers rectangles around the objects in order to demonstrate in which layer an object is in. The CLI also has been patched in such a way to fix models created in an older version (until 0.9.3) so they can support multiple layers correctly.<br/>
+Attending to some requests, I dedicated some time to bring the support for multiple layers. Basically, pgModeler now allows graphical objects to be in different layers which can be toggled in a dedicated widget in order to denote a custom context depending on the user's need. Additionally to multiple layers support, it was added support for displaying layers rectangles around the objects in order to demonstrate in which layer an object is in. The CLI also has been patched in such a way to fix models created in an older version (until 0.9.3) so they can support multiple layers correctly.<br/>
 
 The metadata handling was improved in such a way to allow the manipulation of layers' information. Another improvement on this feature was the addition of a new option that allows the merging of duplicated text boxes, generic SQL objects, and tags. By default, duplicated objects of those kinds are ignored.<br/>
 
-This release also brings support to configuration parameters and transform types on functions and procedures, and the support to PARALLEL attribute on functions. The import and diff processes were also improved to support the mentioned attributes on functions and procedures.<br/>
+This release also brings support for configuration parameters and transform types on functions and procedures, and the support for PARALLEL attribute on functions. The import and diff processes were also improved to support the mentioned attributes on functions and procedures.<br/>
 
 There were other improvements in the general usage of the tool. For instance, the main window can now be resized to a minimum of 640x480 attending to the requests of those who work on smaller screens. In the design view, now it's possible to change the color of the grid lines, canvas background, and page delimiter lines on the general settings.<br/>
 
@@ -22,11 +22,11 @@ Finally, the whole set of changes of this release has 67 entries being 13 new fe
 
 * [New] Added compatibility code that allows loading models created in versions before 0.9.4-alpha without losing layers and active layers information.
 * [New] Added an option to the metadata handling operation that serves to indicate if duplicated objects (textboxes, tags, generic sql) must be merged or not.
-* [New] Added support to configuration parameters and transform types on functions and procedures.
+* [New] Added support for configuration parameters and transform types on functions and procedures.
 * [New] Added the ability to rename the default layer.
-* [New] Added support to setup, in general settings, the custom color for grid lines, canvas area and page delimiter lines.
-* [New] Added support to multiple layers on the model.
-* [New] Added support to PARALLEL attribute to functions.
+* [New] Added support for setup, in general settings, the custom color for grid lines, canvas area and page delimiter lines.
+* [New] Added support for multiple layers on the model.
+* [New] Added support for PARALLEL attribute to functions.
 * [Change] Minor adjustments on Messagebox resizing during first display.
 * [Change] Minor improvement on Messagebox in order to display the stack trace toggle button in a more intuitive way.
 * [Change] Changed the behaviour of the method ObjectsScene::removeLayers, now it'll allow the resetting or not the layers of the objects.
