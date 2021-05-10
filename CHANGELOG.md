@@ -18,6 +18,7 @@ v0.9.4-alpha
 * [New] Added support to setup, in general settings, the custom color for grid lines, canvas area and page delimiter lines.
 * [New] Added support to multiple layers on the model.
 * [New] Added support to PARALLEL attribute to functions.
+* [Change] Minor improvement on "Forced filtering" option on ObjectsFilterWidget in order to use a list widget instead of single actions for each object type.
 * [Change] Adjusted the default Qt version to 5.15.2 in the deployment scripts.
 * [Change] Minor adjustments on Messagebox resizing during first display.
 * [Change] Minor improvement on Messagebox in order to display the stack trace toggle button in a more intuitive way.
