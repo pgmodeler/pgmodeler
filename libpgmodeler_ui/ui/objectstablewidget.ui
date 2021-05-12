@@ -492,14 +492,14 @@
      <attribute name="verticalHeaderCascadingSectionResizes">
       <bool>false</bool>
      </attribute>
+     <attribute name="verticalHeaderMinimumSectionSize">
+      <number>34</number>
+     </attribute>
      <attribute name="verticalHeaderDefaultSectionSize">
-      <number>26</number>
+      <number>34</number>
      </attribute>
      <attribute name="verticalHeaderHighlightSections">
       <bool>true</bool>
-     </attribute>
-     <attribute name="verticalHeaderMinimumSectionSize">
-      <number>25</number>
      </attribute>
      <attribute name="verticalHeaderStretchLastSection">
       <bool>false</bool>

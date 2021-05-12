@@ -97,5 +97,9 @@
 <!ATTLIST dbmodel default-tablespace CDATA #IMPLIED>
 <!ATTLIST dbmodel max-obj-count CDATA #IMPLIED>
 <!ATTLIST dbmodel layers CDATA #IMPLIED>
+<!ATTLIST dbmodel layer-name-colors CDATA #IMPLIED>
+<!ATTLIST dbmodel layer-rect-colors CDATA #IMPLIED>
 <!ATTLIST dbmodel active-layers CDATA #IMPLIED>
+<!ATTLIST dbmodel show-layer-names (false|true) "false">
+<!ATTLIST dbmodel show-layer-rects (false|true) "false">
 <!ATTLIST dbmodel use-changelog (false|true) "false">

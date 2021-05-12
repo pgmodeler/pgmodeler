@@ -35,6 +35,7 @@
   $tb $tb behavior-type="{behavior-type}" $br
   $tb $tb function-type="{function-type}" $br
   $tb $tb security-type="{security-type}" $br
+  $tb $tb parallel-type="{parallel-type}" $br
   $tb $tb execution-cost="{execution-cost}" $br
   $tb $tb row-amount="{row-amount}"
   > $br
@@ -53,6 +54,14 @@
           {return-type}
         %end
   $tb </return-type> $br
+  
+  %if {transform-types} %then
+    $tb [<transform-types names=] "{transform-types}" /> $br
+  %end
+  
+  %if {config-params} %then
+    {config-params}
+  %end
   
   %if {parameters} %then {parameters} %end
 

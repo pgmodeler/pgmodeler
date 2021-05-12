@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -19,19 +19,21 @@
 #include "globalattributes.h"
 #include <QDir>
 
-const QString GlobalAttributes::PgModelerVersion=QString("0.9.3");
+/** Base version number **/
+const QString GlobalAttributes::PgModelerVersion=QString("0.9.4-alpha")
 
 /* Appending the snapshot build number to the version number
  * when the external variable SNAPSHOT_BUILD is defined */
 #if defined(SNAPSHOT_BUILD)
-		+ QString("_snapshot") + BUILDNUM
+	+ QString("_snapshot%1").arg(BUILDDATE)
 #endif
+;
 /****/
 
+const QString GlobalAttributes::PgModelerBuildNumber(QString("%1.%2").arg(BUILDDATE).arg(BUILDNUM));
 const QString GlobalAttributes::PgModelerAppName("pgmodeler");
 const QString GlobalAttributes::PgModelerURI("pgmodeler.io");
 const QString GlobalAttributes::PgModelerReverseURI("io.pgmodeler");
-const QString GlobalAttributes::PgModelerBuildNumber(BUILDNUM);
 const QString GlobalAttributes::PgModelerSite("https://pgmodeler.io");
 const QString GlobalAttributes::PgModelerSupport("https://pgmodeler.io/support/docs");
 const QString GlobalAttributes::PgModelerSourceURL("https://github.com/pgmodeler/pgmodeler/releases");
@@ -197,7 +199,7 @@ void GlobalAttributes::setSearchPath(const QString &search_path)
 	LanguagesDir=GlobalAttributes::getPathFromEnv("PGMODELER_LANG_DIR", LANGDIR, QString("%1/lang").arg(search_path));
 	SamplesDir=getPathFromEnv("PGMODELER_SAMPLES_DIR", SAMPLESDIR, QString("%1/samples").arg(search_path));
 	TmplConfigurationDir=getPathFromEnv("PGMODELER_TMPL_CONF_DIR", CONFDIR, QString("%1/conf").arg(search_path));
-	PluginsDir=getenv("PGMODELER_PLUGINS_DIR") ? QString(getenv("PGMODELER_PLUGINS_DIR")).replace('\\','/') : PLUGINSDIR;
+	PluginsDir=getPathFromEnv("PGMODELER_PLUGINS_DIR", PLUGINSDIR, QString("%1/plugins").arg(search_path));
 
 	#if defined(Q_OS_MAC)
 		ConfigurationsDir=getPathFromEnv("PGMODELER_CONF_DIR", QStandardPaths::writableLocation(QStandardPaths::ConfigLocation) + QString("/%1").arg(PgModelerReverseURI));

@@ -4,7 +4,7 @@
 -->
 <!ELEMENT foreigntable (schema,role?,comment?,foreignserver?,tag?,appended-sql?,prepended-sql?,position,column*,constraint*,customidxs*,partitioning?,initial-data?)>
 <!ATTLIST foreigntable name CDATA #REQUIRED>
-<!ATTLIST foreigntable layer CDATA #IMPLIED>
+<!ATTLIST foreigntable layers CDATA #IMPLIED>
 <!ATTLIST foreigntable alias CDATA #IMPLIED>
 <!ATTLIST foreigntable gen-alter-cmds (true | false) "false">
 <!ATTLIST foreigntable protected (false|true) "false">

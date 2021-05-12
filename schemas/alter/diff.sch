@@ -18,7 +18,6 @@
   [-- Dropped objects: ] {drop} $br
   [-- Created objects: ] {create} $br
   [-- Changed objects: ] {change} $br
-  [-- Truncated tables: ] {truncate} $br
 
   %if {function} %then
     $br
@@ -48,12 +47,6 @@
     $br $br
     [-- ] $ob [ Created objects ] $cb [ --] $br   
     {create-cmds}
-  %end
-  
-  %if {truncate-cmds} %then
-    $br $br
-    [-- ] $ob [ Truncated tables ] $cb [ --] $br
-    {truncate-cmds}
   %end
 
   %if {alter-cmds} %then

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -62,7 +62,9 @@ class DataManipulationForm: public QDialog, public Ui::DataManipulationForm {
 		pk_col_names;
 
 		//! \brief Stores the current table's name (schema.table)
-		QString curr_table_name;
+		QString curr_table_name,
+
+		tmpl_window_title;
 
 		/*! \brief Stores the current opened table's oid. This attribute is filled only the table has an primary
 		and it is used to retrieve all foreign keys that references the current table */

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -123,9 +123,16 @@ void TextboxView::__configureObject()
 
 void TextboxView::configureObject()
 {
+	double old_width = bounding_rect.width(),
+			old_height = bounding_rect.height();
+
 	this->__configureObject();
 	this->configureObjectShadow();
 	this->configureObjectSelection();
+
+	if((old_width != 0 && bounding_rect.width() != old_width) ||
+		 (old_height != 0 && bounding_rect.height()!= old_height))
+		emit s_objectDimensionChanged();
 }
 
 void TextboxView::configureObjectShadow()

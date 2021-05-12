@@ -1,13 +1,86 @@
 Changelog
 ---------
 
+v0.9.4-alpha
+------
+<em>Release date: May 12, 2021</em><br/>
+
+* [New] Added compatibility code that allows loading models created in versions before 0.9.4-alpha without losing layers and active layers information.
+* [New] Added an option to the metadata handling operation that serves to indicate if duplicated objects (textboxes, tags, generic sql) must be merged or not.
+* [New] Added support for configuration parameters and transform types on functions and procedures.
+* [New] Added the compatibility method QtCompat::horizontalAdvance(QFont, QString).
+* [New] Added the ability to rename the default layer.
+* [New] DatabaseModel now stores in XML code all the new settings related to layers (rect and name colors, rect and names display status).
+* [New] Added several methods in ObjectsScene to handle layer colors that helps to save and restore colors from database model files.
+* [New] Add support for custom layer colors in LayerConfigWidget.
+* [New] Added the class LayerItem to create custom items for displaying layout rects in canvas.
+* [New] Added an option to toggle layers rectangles and names from LayerConfigWidget.
+* [New] Added support for setup, in general settings, the custom color for grid lines, canvas area and page delimiter lines.
+* [New] Added support for multiple layers on the model.
+* [New] Added support for PARALLEL attribute to functions.
+* [Change] Minor improvement on "Forced filtering" option on ObjectsFilterWidget in order to use a list widget instead of single actions for each object type.
+* [Change] Adjusted the default Qt version to 5.15.2 in the deployment scripts.
+* [Change] Minor adjustments on Messagebox resizing during first display.
+* [Change] Minor improvement on Messagebox in order to display the stack trace toggle button in a more intuitive way.
+* [Change] Changed the behaviour of the method ObjectsScene::removeLayers, now it'll allow the resetting or not the layers of the objects.
+* [Change] Minor adjustment on QTableWidget vertical header size on DataManipulationForm, ObjectsTableWidget and SqlExecultionWidget.
+* [Change] Minor size adjustment policy in the comboboxes in DataManipulationForm, ModelNavigationWidget and ModelValidationWidget.
+* [Change] Minor improvement in DatabaseImportHelper::setBaseFunctionAttribs in such a way to discover the name of the functions transform types from their oids.
+* [Change] Isolated the duplicated code in DatabaseModel::createFunction and DatabaseModel::createProcedure in the method DatabaseModel::setBasicFunctionAttributes.
+* [Change] Adjusted the minimum size of the main window to 640x480 so it can fit in smaller screens.
+* [Change] Minor refactoring on SchemaView::configureObject to avoid unecessary calculations when the layers are not visible.
+* [Change] Added forced updates of schema rectangles after setting layers to children objects.
+* [Change] Change on the search path for PluginsDir to use getPathFromEnv().
+* [Change] LayersConfigWidget will now emit a signal when toggling layer rects/names so the overview widget on mainwindow is properly updated.
+* [Change] DatabaseModel will now create a default layer in the constructor.
+* [Change] The database model will add the default layer to the loaded model if there isn't a single layer identified.
+* [Change] DatabaseModel when loading older database model files will generate random layer colors.
+* [Change] The scene now will update layer rects when catching the signal s_objectDimensionChanged from tables and textboxes.
+* [Change] Adjust the ObjectsScene to resize layer rects when one or more layers are removed.
+* [Change] Improved the window title of DataManipulationForm in sucha a way to display the currently browsed table.
+* [Change] Improved the selection of layers to be associated to object in context menu (Quick > Set layers). Now a floating widget is use to select multiple layers for the object selection in the canvas area.
+* [Change] Updated the sample models to use "layers" attributes on graphical objects.
+* [Change] Changed the value separator for attributes layers and active-layers on <dbmodel> from semi-colon to comma.
+* [Change] pgModeler CLI will now rename "layer" attributes to "layers" in order to reflect the multiple layers support for older models.
+* [Change] Minor copyright updates.
+* [Change] The option "Truncate before alter columns" in the diff process was removed since its use is discouraged and dangerous in some situations.
+* [Fix] Minor fix in the table's catalog query in order to avoid setting up a partitioning strategy when the table is not a partitioned one.
+* [Fix] Minor fix in database import in such a way to update scene layers info before adding it to the main window.
+* [Fix] Fixed the layers configuration of example.dbm.
+* [Fix] Minor fix in function.sch in order to generate transform types only for PostgreSQL >= 9.5.
+* [Fix] Fixed DatabaseModel::getUserDefTypesReferences in such a way to detect that procedures and functions are referencing a user-defined type from their list of transform types.
+* [Fix] Fixed ObjectsTableWidget in such a way to control whether the ResizeColsButton can be displayed or not via ObjectsTableWidget::setButtonConfiguration.
+* [Fix] Minor fix to avoid black canvas when using settings from 0.9.3 or below on 0.9.4-alpha.
+* [Fix] Minor fix in BaseObjectView in such way to avoid the adjustment of its position to the scene grid when the object is not selected. This can avoid undesired adjustment when moving a schema box and having only a portion of its children selected.
+* [Fix] Minor fix in ObjectsScene in such a way to update layer rects when the grid alignment option is toggled.
+* [Fix] Fixed the buttons shortcuts on LayerConfigWidget.
+* [Fix] Minor fix on SchemaView to compute the last position any time the object is reconfigured.
+* [Fix] Minor fix in BaseObjectWidget to avoid mark the object as modified in finishConfiguration() before adding it to the parent.
+* [Fix] Fixed the key combination to trigger the magnifier tool.
+* [Fix] Fixed LayerItem in order to build in Qt 5.9.
+* [Fix] Minor fixes in ModelWidget, MainWindow to update scene layer settings correctly.
+* [Fix] Fixed the CLI in such a way to update scene layer settings so the exporting processes can generate graphical files correctly.
+* [Fix] Minor fix in LayersConfigWidget in such a way to mark the correct active layers when setting up the model to operate on.
+* [Fix] Fixed a bug in the layers removal process that was causing objects to be placed in a incorrect layer index after the removal.
+* [Fix] Fixed the "Fix" menu in main tool bar.
+* [Fix] Fixed a bug in ModelWidget that was causing overlay to be displayed when a textbox object was selected.
+* [Fix] Fixed wrong text in collationwidget.ui.
+* [Fix] Fixed a bug during the loading of changelog entries.
+* [Fix] Fixed the display of warnings during export in ModelExportForm.
+* [Fix] Fixed the display of warning messages during export in ModelDatabaseDiffForm.
+* [Fix] Fixed a malformed SQL code for triggers.
+* [Fix] Fixed typos in README.md.
+* [Fix] Fixed the broken build on Qt 5.9.x.
+* [Fix] Fixed a bug that was preventing special PKs to be properly configured.
+* [Fix] Fixed the SQL generation of functions based on internal language.
+
 v0.9.3
 ------
 <em>Release date: December 30, 2020</em><br/>
 
-* [New] Added support to deterministic and provider attributes in collations.
+* [New] Added support for deterministic and provider attributes in collations.
 * [New] Added missing check constraints in the data dictionary.
-* [New] Added support to selecting all relationships of a table at once via right-click on a table > select relationships.
+* [New] Added support for selecting all relationships of a table at once via right-click on a table > select relationships.
 * [New] Added extra search fields in ObjectFinderWidget. Now it's possible to search relationships by the involved tables (source and destination table), constraints by their columns (source and referenced columns), and relationships by the foreign keys related to them.
 * [Change] The warning message about the unchecked option related to drop missing objects now pops up only when there are partial diff filters configured.
 * [Change] Improved the extended fade in/out options for tables/views/foreign tables.
@@ -29,15 +102,15 @@ v0.9.3-beta1
 <em>Release date: October 5, 2020</em><br/>
 
 * [New] Added the version descriptor for PostgreSQL 13.
-* [New] Added support to procedures in design, import and diff processes.
-* [New] Added support to transforms in design, import and diff processes.
+* [New] Added support for procedures in design, import and diff processes.
+* [New] Added support for transforms in design, import and diff processes.
 * [New] Added an entry in NewObjectOverlayWidget for procedures.
 * [New] Added a custom version of addParameter to Procedure in order to validate the usage of out parameters.
 * [New] Added a tool button for transform objects in NewObjectOverlayWidget
 * [New] Added a unit test to verify schema files syntax (sql, xml, alter).
 * [New] Added the method Cast::setName to override the default behavior of BaseObject::setName.
 * [New] Added the class PgModelerUnitTest that must be inherited so the child test class can have access to schema files path.
-* [New] Added support to modifying attributes toggler colors from appearance settings.
+* [New] Added support for modifying attributes toggler colors from appearance settings.
 * [New] Tag objects now include attribute toggler colors.
 * [Change] Changed the behavior of the generation of SQL code for database object, now it'll respect the SQL disabled status of the object.
 * [Change] The ModelExportHelper will abort the export process if the SQL code of the database object is disabled.
@@ -87,10 +160,10 @@ v0.9.3-beta
 * [New] Added GitHub actions scripts in order to test the building on each platform. On Linux and macOs the build will occur on all Qt versions from 5.15 to 5.9, on Windows the build happens only on Qt 5.15 (due to the usage of msys2 that uses the most recent version of the framework).
 * [New] Added default constructors in the form "Class(const &)" for Connection, Parameter and TypeAttribute in order to avoid deprecated-copy warnings on GCC9.
 * [New] The CLI now validates the mixing of options of different operation modes.
-* [New] Added support to partial diffs between a model and database or between two databases.
+* [New] Added support for partial diffs between a model and database or between two databases.
 * [New] Created an internal changelog on DatabaseModel to register object's modification over time being useful for partial diff operations.
 * [New] Added the widget called ChangelogWidget to control the model's internal changelog settings in the design view.
-* [New] Added support to save/load changelog from model file.
+* [New] Added support for save/load changelog from model file.
 * [New] The CLI now supports partial diffs too.
 * [New] Create the method ModelsDiffHelper::getRelationshipFilters.
 * [New] Added a warning message prior to the partial diff without using "Do not drop missing objects" option.
@@ -98,7 +171,7 @@ v0.9.3-beta
 * [New] Added cast and user mapping to the list of filterable objects.
 * [New] Added a hint text in ObjectsFilterWidget to inform about exact match searching.
 * [New] Added the methods Catalog::clearObjectFilter and Catalog::clearObjectFilters.
-* [New] Added support to DatabaseImportHelper to create a sequence assigned to a column via default value if automatic dependencies resolution is enabled.
+* [New] Added support for DatabaseImportHelper to create a sequence assigned to a column via default value if automatic dependencies resolution is enabled.
 * [New] Created the namespace QtCompat that will reunite all the specific code that isn't compatible between different Qt versions. The goal of this namespace is to store in a central point all the code that uses QT_VERSION_CHECK to perform different operations depending on the current Qt version.
 * [New] Added the method SchemaParser::getExpressionResult in order to perform comparisons between QVariant values correctly due to the QVariant operators deprecation in Qt 5.15.
 * [New] Added the signal ObjectsFilterWidget::s_filtersRemoved that is emitted whenever all filters are removed.
@@ -142,22 +215,22 @@ v0.9.3-alpha1
 ------
 <em>Release date: May 20, 2020</em><br/>
 
-* [New] Added support to creating initial configuration files from CLI.
+* [New] Added support for creating initial configuration files from CLI.
 * [New] The CLI is now capable of using the objects filtering in reverse engineering.
 * [New] Added a warning message when trying to import a big database.
-* [New] Added support to object filtering in reverse engineering dialog.
-* [New] Adding support to AppImage building for Linux.
-* [New] Added support to importing PostgreSQL 12 generated columns.
-* [New] Adding support to PostgreSQL 12 generated columns.
+* [New] Added support for object filtering in reverse engineering dialog.
+* [New] Adding support for AppImage building for Linux.
+* [New] Added support for importing PostgreSQL 12 generated columns.
+* [New] Adding support for PostgreSQL 12 generated columns.
 * [New] The ModelNavigationWidget now will display a save icon if the current model is pending a save operation.
 * [New] pgModeler now guesses if a FK relationship consists in a one-to-one based upon the foreign keys and unique keys settings.
 * [New] Improved the rendering of FK relationships. Now it recognizes the minimum cardinality by using the right crow's foot descriptor o|< or ||< in the destination entity.
-* [New] Added support to the conversion of 1-1 and 1-n relationships, allowing the user to perform modifications over objects generated by those relationships.
+* [New] Added support for the conversion of 1-1 and 1-n relationships, allowing the user to perform modifications over objects generated by those relationships.
 * [New] Added "virtual" keyword in classes that inherit others so the destruction order can be followed correctly.
-* [New] Adding support to copy model validation widget output as text as well preview it as texts.
-* [New] Added support to show/hide all layers in LayersWidget.
+* [New] Adding support for copy model validation widget output as text as well preview it as texts.
+* [New] Added support for show/hide all layers in LayersWidget.
 * [New] Added the paramenter application_name to Connection in order to indentify connections created by pgModeler when querying pg_stat_activity.
-* [New] Added support to save/restore Z value attribute in MetadataHandlingForm.
+* [New] Added support for save/restore Z value attribute in MetadataHandlingForm.
 * [New] Created an improved and reusable file selector widget.
 * [Change] Improvements done in DatabaseImportHelper in order to speed up the listing of types as well the importing user-defined types on demand.
 * [Change] Refactored the way default value fields states are setup by user's actions.
@@ -192,15 +265,15 @@ v0.9.3-alpha
 ------
 <em>Release date: March 26, 2020</em><br/>
 
-* [New] Added support to multiselection in ModelObjectsWidget.
+* [New] Added support for multiselection in ModelObjectsWidget.
 * [New] Added an optional parameter in PgModelerNs::generateUniqueName to avoid comparing the input object.
-* [New] Added support to objects' bulk renaming.
-* [New] Added support to multiselection in ObjectFinderWidget.
-* [New] Added support to middle button click on source code panel in order to paste the selected code in the current open SQL execution widget.
+* [New] Added support for objects' bulk renaming.
+* [New] Added support for multiselection in ObjectFinderWidget.
+* [New] Added support for middle button click on source code panel in order to paste the selected code in the current open SQL execution widget.
 * [New] Using the CRTP (Curiosly Recurring Template Pattern) approach to create a template type based on BaseType in such way that the static member from that template but used on all derived classes of TemplateType can be unique for each derived class.
 * [New] Added a "Stacking" action in popup menu that is used to control the z value of graphical objects.
-* [New] Adding support to move objects on the Z stack up and down.
-* [New] Added support to CLI to write system wide mime database on Linux and Windows.
+* [New] Adding support for move objects on the Z stack up and down.
+* [New] Added support for CLI to write system wide mime database on Linux and Windows.
 * [New] Added a method GlobalAttributes::setSearchPath so the application can setup the path in which the internal folders (schemas, lang, etc) can be found.
 * [New] Added the ability to remove owners from objects from Quick Actions > Change owner.
 * [New] Added an fix step that removes IN keyword from functions signatures.
@@ -274,7 +347,7 @@ v0.9.2
 ------
 <em>Release date: December 26, 2019</em><br/>
 
-* [New] Add support to data dictionaries generation in HTML format in ModelExportForm.
+* [New] Add support for data dictionaries generation in HTML format in ModelExportForm.
 * [New] Added options to control data dictionary generation in CLI.
 * [New] Plugins now can optionally be associated to a menu action or not. Generally, an plugin not associated to a menu action is automatilly executed during the startup (see PgModelerPlugin::initPlugin).
 * [New] Added a missing model fix step on CLI that removes the IN keyword from functions signatures.
@@ -296,20 +369,20 @@ v0.9.2-beta2
 ------
 <em>Release date: November 1st, 2019</em><br/>
 
-* [New] Added support to foreign tables.
+* [New] Added support for foreign tables.
 * [New] Added the method DatabaseModel::getObject(QString,vector<ObjectType>) to return the first ocurrency in the lists related to the provided types.
-* [New] Added support to select all foreign tables in ModelWidget.
+* [New] Added support for select all foreign tables in ModelWidget.
 * [New] Created the method BaseTable::isBaseTable to help determining if an object type is of Table, View or ForeignTable.
-* [New] Added extra support to foreign tables on DatabaseExplorerWidget and DataManipulationForm.
+* [New] Added extra support for foreign tables on DatabaseExplorerWidget and DataManipulationForm.
 * [New] Added the method DatabaseImportHelper::createColumns in order to isolate the code to create table/foreign table columns during reverse engineering.
-* [New] Added support to foreign table importing as well its children objects (columns, constraints, triggers).
+* [New] Added support for foreign table importing as well its children objects (columns, constraints, triggers).
 * [New] Added server and options fields on TableWidget for foreign table.
 * [New] TableWidget now fully supporting the edition of foreign tables.
 * [New] Added the ability to TableView to render ForeignTable objects.
-* [New] Added support to swap objects ids using arrow keys by changing creation order between two close objects on the grid.
-* [New] Added support to save diff settings in form of presets.
+* [New] Added support for swap objects ids using arrow keys by changing creation order between two close objects on the grid.
+* [New] Added support for save diff settings in form of presets.
 * [New] Added an option to BaseObject to force the comment escaping making multilined comments be presented as single lines but without changing their semantics.
-* [New] Adding support to parse escaped text delimiters and value separators in CSVLoadWidget.
+* [New] Adding support for parse escaped text delimiters and value separators in CSVLoadWidget.
 * [Change] Avoiding the usage of "Generate ALTER commands" option when the table is a partition or partitioned.
 * [Change] Avoid unchecking PK checkboxes on TableWidget when adding a new column.
 * [Change] Validating the dialogs geometry regarding to screens geometry in order to avoid their appearance in an invalid position (out of range).
@@ -391,9 +464,9 @@ v0.9.2-beta1
 * [New] Enabling/disabling the save model action according to the model's modified status.
 * [New] The main window instance is now exposed to plugins to make the extra features development more flexible.
 * [New] Avoiding selecting table items in BaseTableView::mousePressEvent which doens't contain an underlying (source) object.
-* [New] Adding support to duplicate several table objects at once.
-* [New] Added support to table children multiselection by using Ctrl+Shift+Click on them.
-* [New] Added support to load the generated diff code in the SQL tool and automatically browsing the destination server for manual diff applying.
+* [New] Adding support for duplicate several table objects at once.
+* [New] Added support for table children multiselection by using Ctrl+Shift+Click on them.
+* [New] Added support for load the generated diff code in the SQL tool and automatically browsing the destination server for manual diff applying.
 * [New] Added a button to create a new data manipulation form from within another data manipulation form.
 * [New] Added a confirmation message before closing a database explorer widget.
 * [Change] Minor adjustments in PgModelerUiNs::createOutputListItem and PgModelerUiNs::createOutputTreeItem to better display formatted messages.
@@ -431,27 +504,27 @@ v0.9.2-beta
 ------
 <em>Release date: May 31, 2019</em><br/>
 
-* [New] Added support to user mapping.
-* [New] Added support to foreign server.
-* [New] Added support to foreign data wrapper.
-* [New] Added support to reduced verbosity on diff, export and import processes in order to improve performance.
+* [New] Added support for user mapping.
+* [New] Added support for foreign server.
+* [New] Added support for foreign data wrapper.
+* [New] Added support for reduced verbosity on diff, export and import processes in order to improve performance.
 * [New] Adding missing tootip on ObjectFinderWidget.
 * [New] Generic SQL objects now support dynamic references to objects which can be used in the definition code.
-* [New] Added support to compare foreign servers on diff process.
+* [New] Added support for compare foreign servers on diff process.
 * [New] Created a generic getAlterDefinition on ForeignObject.
 * [New] Added ForeignServer toolbutton in NewObjectOverlayWidget.
-* [New] Added support to the reverse engineering user mapping objects.
-* [New] Added support to the reverse engineering foreign server objects.
+* [New] Added support for the reverse engineering user mapping objects.
+* [New] Added support for the reverse engineering foreign server objects.
 * [New] Added code snippets for foreign data wrapper and foreign server.
-* [New] Added support to diff user mapping.
-* [New] Added support to diff foreign data wrappers.
-* [New] Added support to set permissions to foreign data wrapper.
+* [New] Added support for diff user mapping.
+* [New] Added support for diff foreign data wrappers.
+* [New] Added support for set permissions to foreign data wrapper.
 * [New] Added the WRAPPER, SERVER and MAPPING key words to sql-highlight.conf.
 * [New] Added the method PgSqlType::isExactTo in order to do a full comparison (all attributes) between two data types.
 * [New] Added the ability to view references to store referenced tables. This feature will cause relationships to be created between the view and the referenced tables. This is useful when we're using reverse engineering feature in which, in previous versions, couldn't determine the tables that were linked to a view. Now, with this feature a relationship is created between the view and all involved tables.
 * [New] Added missing data type macaddr8.
 * [New] Enabling quick clear button on several input fields.
-* [New] Added support to result set filtering in the SQL execution widget.
+* [New] Added support for result set filtering in the SQL execution widget.
 * [New] Adding a column labeled "Comment" in TableWidget and ViewWidget to hold comments of children objects.
 * [Change] Changed the shortcut of run SQL action in SQLExecutionWidget to F5.
 * [Change] Changed the shortcut of tree update action in DatabaseExplorerWidget to F6.
@@ -503,32 +576,32 @@ v0.9.2-alpha1
 ------
 <em>Release date: December 17, 2018</em><br/>
 
-* [New] Added support to scene layers.
-* [New] Added support to view's columns importing in DatabaseImportHelper. 
+* [New] Added support for scene layers.
+* [New] Added support for view's columns importing in DatabaseImportHelper. 
 * [New] Added the ability to load view columns from database model file in DatabaseModel::createView.
 * [New] Added a tab "Columns" in ReferenceWidget where the user will be able to insert columns to be used as view columns.
-* [New] Added support to pagination of tables and views columns pagination.
+* [New] Added support for pagination of tables and views columns pagination.
 * [New] Added a pagination toggler action on context menu at ModelWidget.
 * [New] Added a fix step on CLI to remove the deprecated attribute hide-ext-attribs from tables and views xml code.
 * [New] Added a configuration option to control attributes per pages in tables and views.
-* [New] Added support to save collapsing states and current attributes pages to the database model file.
+* [New] Added support for save collapsing states and current attributes pages to the database model file.
 * [New] Added constants to reference child objects of TableObjectView.
 * [New] Added the class TextPolygonItem which can be used to draw a text over a background polygon.
-* [New] Added support to OLD/NEW tables aliases on triggers.
+* [New] Added support for OLD/NEW tables aliases on triggers.
 * [New] Added a hint text on RelationshipWidget to document the correct usage of default partitions.
 * [New] Added support for partition attaching/detaching detection in diff process.
 * [New] Added auxiliary methods in Table class in order to add/remove and retrieve partition tables.
-* [New] Added support to importing partitioned/partition tables on DatabaseImportHelper.
+* [New] Added support for importing partitioned/partition tables on DatabaseImportHelper.
 * [New] Added a missing validation in Relationship to avoid creating other types of relationships involving partitioned or partition tables.
-* [New] Added support to specify partition bounding expression on partitioning relationships.
-* [New] Added support to resize grid cells to fit contents on ObjectsTableWidget.
+* [New] Added support for specify partition bounding expression on partitioning relationships.
+* [New] Added support for resize grid cells to fit contents on ObjectsTableWidget.
 * [New] Added a tab "Partition keys" that will handle partitioning configuration on TableWidget.
 * [New] Added a method in ObjectsTableWidget to hide some horizontal header sections.
 * [New] Added some validations when creating partitioning relationships.
-* [New] Added support to hide columns on data manipulation dialog.
+* [New] Added support for hide columns on data manipulation dialog.
 * [New] Added a transient attribute to objects DatabaseModel, Table and View in order to give a hint on the maximum count of objects held. This attribute is used to preallocate the vectors which store the children objects in order to avoid excessive memory allocation/deallocation due to vector resizing.
 * [New] Added a column labeled "Alias" on all objects tables in TableWidget so the aliases of children can be displayed.
-* [New] Added support to adding tabs via shortcut or corner button in the SQL Execution panel.
+* [New] Added support for adding tabs via shortcut or corner button in the SQL Execution panel.
 * [Change] Minor adjustments on MainWindow to make the overview widget to update its contents whenever the active layers change on the current model.
 * [Change] Minor adjusment in ObjectsScene::addItem to make the item (in)visible according to the visibility of its related layer.
 * [Change] Minor fix in AttributesTogglerItem in order to consider the parent's opacity during painting.
@@ -618,15 +691,15 @@ v0.9.2-alpha
 ------
 <em>Release date: August 20, 2018</em><br/>
 
-* [New] Added the support to cancelling SQL execution in SQLExecutionWidget.
-* [New] Added support to save/restore the dialogs sizes and positions.
-* [New] Added support to truncate tables in DataManipulationForm.
-* [New] Added support to aliases on some graphical objects that is used in the compact view mode.
-* [New] Added support to save/load object's metadata containing aliases information.
-* [New] Added support to compact view of the model where graphical objects can have a more friendly name for a reduced view as well for those who don't need to see details about tables (clients of the business, for instance).
-* [New] Added support to sequence options for identity columns.
+* [New] Added the support for cancelling SQL execution in SQLExecutionWidget.
+* [New] Added support for save/restore the dialogs sizes and positions.
+* [New] Added support for truncate tables in DataManipulationForm.
+* [New] Added support for aliases on some graphical objects that is used in the compact view mode.
+* [New] Added support for save/load object's metadata containing aliases information.
+* [New] Added support for compact view of the model where graphical objects can have a more friendly name for a reduced view as well for those who don't need to see details about tables (clients of the business, for instance).
+* [New] Added support for sequence options for identity columns.
 * [New] Added the ability to paste CSV text from clipboard into the TableDataWidget.
-* [New] Added support to bulk data edit in TableDataWidget.
+* [New] Added support for bulk data edit in TableDataWidget.
 * [Change] Added missing copy options on copy relationships.
 * [Change] Minor adjustments on the item delegates in order draw text in the right alignment.
 * [Change] Minor adjustment on buttons style in DatabaseExplorerWidget, DataManipulationForm and SQLExecutionWidget.
@@ -670,12 +743,12 @@ v0.9.1
 ------
 <em>Release date: May 14, 2018</em><br/>
 
-* [New] Added support to line selection by clicking and moving the mouse over the line numbers widget in any source code field.
+* [New] Added support for line selection by clicking and moving the mouse over the line numbers widget in any source code field.
 * [New] The validator now checks if the model has columns referencing spatial data types and creates the postgis extension automatically when fixing the model.
-* [New] Added support to RESTART IDENTITY on truncate tables in DatabaseExplorerWidget.
+* [New] Added support for RESTART IDENTITY on truncate tables in DatabaseExplorerWidget.
 * [New] Added an custom option checkbox in Messagebox for general purpose usage.
-* [New] Added support to diff operation in CLI.
-* [New] Added support to import database from CLI.
+* [New] Added support for diff operation in CLI.
+* [New] Added support for import database from CLI.
 * [New] Adding missing types regrole and regnamespace.
 * [Change] Improved the copy/duplicate operation in order to copy rules, index, trigger and policies together to their parents.
 * [Change] Added column names to the code completion widget used in the filter widget at DataManipulationForm.
@@ -722,21 +795,21 @@ v0.9.1-beta1
 * [New] Added the ability to create multiples one-to-many and many-to-many relatationships between the same pair of tables.
 * [New] Added the ability to use more special ascii chars in the middle of object names.
 * [New] Added missing SQL keywords into sql-highlight.conf
-* [New] Added support to multi line comments in UI.
+* [New] Added support for multi line comments in UI.
 * [New] Added code snippets for CREATE and ALTER policy.
-* [New] Added full support to row level security (RLS), including export, import and diff of this kind of object.
+* [New] Added full support for row level security (RLS), including export, import and diff of this kind of object.
 * [New] Added the method DatabaseExplorerWidget::formatPolicyAttribs in order to display some attributes values correctly.
-* [New] Added support to bulk data editing in DataManipulationForm.
+* [New] Added support for bulk data editing in DataManipulationForm.
 * [New] Added an option to diff process to force the generation of DROP commands for columns and constraints even if the missing objects need to be preserved. This is useful to work with partial models and the user need to remove columns/constraints and preserve the rest of objects.
 * [New] Added the ability to generate diff code to Enable/Force RLS attribute of tables.
-* [New] Added support to RLS on tables.
-* [New] Added the support to detect identity columns in diff.
-* [New] Added support to identity columns (PostgreSQL 10).
-* [New] Added the support to BYPASSRLS option on roles.
-* [New] Added support to IS_TEMPLATE and ALLOW_CONNECTIONS options in database object.
+* [New] Added support for RLS on tables.
+* [New] Added the support for detect identity columns in diff.
+* [New] Added support for identity columns (PostgreSQL 10).
+* [New] Added the support for BYPASSRLS option on roles.
+* [New] Added support for IS_TEMPLATE and ALLOW_CONNECTIONS options in database object.
 * [New] Added the procedures to fix old style domains in CLI.
-* [New] Added support to multiple check constraint in domains.
-* [New] Added support to sort items alphabetically (ascending) or by oid in DatabaseExplorerWidget.
+* [New] Added support for multiple check constraint in domains.
+* [New] Added support for sort items alphabetically (ascending) or by oid in DatabaseExplorerWidget.
 * [Change] Changed the input mode of the password field in ConnectionsConfigWidget in order to hide the passwords in the form. NOTE: the passwords are still in plain text in the config file.
 * [Change] Moved extensions from schema level to database level in order to reproduce better the PostgreSQL's behavior.
 * [Change] The filter widget is now toggled in DatabaseExplorerWidget via filter menu.
@@ -771,7 +844,7 @@ v0.9.1-beta
 ------
 <em>Release date: January 26, 2018</em><br/>
 
-* [New] Added support to GROUP BY/HAVING clauses in Views by adding a new kind of reference. Proper changes done in ViewWidget to allow configuring those clauses.
+* [New] Added support for GROUP BY/HAVING clauses in Views by adding a new kind of reference. Proper changes done in ViewWidget to allow configuring those clauses.
 * [New] Added the method Catalog::isSystemObject(oid) which indicates if the provided OID is related to a system object.
 * [Change] Minor adjustment in the copy/paste operation to generate suffix in the pasted objects only when there're conflics.
 * [Change] Removed the port range limitation in connection configuration dialog.
@@ -794,7 +867,7 @@ v0.9.1-alpha1
 * [New] Improved the data manipulation dialog in such way that when dealing with deletes in tables without PK, tuples with NULL values can be correctly considered.
 * [New] Improved the validations on ResultSet class.
 * [New] Added a method to indicate if a column value is null in ResultSet.
-* [New] Added support to fade in/out objects in object finder in order to highlight the graphical objects retrieved from the search.
+* [New] Added support for fade in/out objects in object finder in order to highlight the graphical objects retrieved from the search.
 * [New] Added an attribute in pgmodeler.conf to store the current status of the "Fade in" button in object finder widget.
 * [Change] Minor improvement in the diff generated metadata.
 * [Change] Increased the maximum allowed amount of lines in command history.
@@ -807,14 +880,14 @@ v0.9.1-alpha
 ------
 <em>Release date: October 20, 2017</em><br/>
 
-* [New] Added support to crow's foot notation.
+* [New] Added support for crow's foot notation.
 * [New] Added the crow's foot notation switch in RelationshipConfigWidget.
 * [New] Added the grid arrangement in the arrangment menu at MainWindow.
 * [New] Added the schema arrangement (scattered).
 * [New] Added an action to toggle schemas rectangle on ModelWidget.
 * [New] CLI now loads the relationship and general settings to reflect relationship styles in export modes.
-* [New] Added support to connect relatinship on tables' edges when using classical notation.
-* [New] Added support to apostrophes in the middle of object's name.
+* [New] Added support for connect relatinship on tables' edges when using classical notation.
+* [New] Added support for apostrophes in the middle of object's name.
 * [Change] Removed the controls related to arragement in DatabaseImportForm.
 * [Change] Minor adjustments in tables' spacing in auto arrangement process.
 * [Change] Minor improvement on SQLExecutionWidget and DataManipulationForm in order to make possible to paste csv buffer from SQLExecutionWidget to DataManipulationForm.
@@ -853,8 +926,8 @@ v0.9.0
 * [New] Created the method CsvLoadWidget::loadCsvFromBuffer to make the code that extract csv document from string buffer reusable by other classes.
 * [New] Added a new sample model donated by the maintainers of 3D City DB project.
 * [New] Added the language "internal" to the set of system languages available when creating a new model.
-* [New] Added support to override the default language settings via GeneralConfigWidget.
-* [New] Added support to toggle curved relationship lines in GeneralConfigWidget.
+* [New] Added support for override the default language settings via GeneralConfigWidget.
+* [New] Added support for toggle curved relationship lines in GeneralConfigWidget.
 * [Change] Improved the MetadataHandlingForm enabling user to only extract metada to a backup file.
 * [Change] Small update on sample models.
 * [Change] Minor adjustments in the graphical points when relationships are selected.
@@ -889,11 +962,11 @@ v0.9.0-beta2
 * [New] Added a widget that shows some info about the canvas and the selected objects at the bottom of main window in design view.
 * [New] Enabled the usage of snippets in other portions of the software like GenericSQLWidget, FunctionWidget, ViewWidget, CustomSQLWidget.
 * [New] Added the ability to quickly jump to the tables related to a relationship.
-* [New] Added support to select all objects in the canvas by type (table, view, textbox, schema, relationship).
-* [New] Added support to bulk relationship points removal.
+* [New] Added support for select all objects in the canvas by type (table, view, textbox, schema, relationship).
+* [New] Added support for bulk relationship points removal.
 * [New] Added a magnifier tool so the user can visualize objects when the zoom is too small. This tool allows the user to click to select or activate the context menu over the objects.
-* [New] Added support to generic sql objects that serve as an improved way to use custom SQL.
-* [New] Added support to handle metadata related to generic sql objects.
+* [New] Added support for generic sql objects that serve as an improved way to use custom SQL.
+* [New] Added support for handle metadata related to generic sql objects.
 * [New] Added the first object auto-arrange algorithm.
 * [Change] pgModeler will now accept (connect) to a PostgreSQL server even if the version of the server is not supported falling back to the most recent supported.
 * [Change] Minor improvements on DatabaseImportForm, ModelExportForm, ModelDatabaseDiffForm and MetadataHandlingForm to toggle uniformRowsHeight of the output tree at the start and the end of each process to avoid slowdowns and allow the items to be resized correctly when expanded.
@@ -921,7 +994,7 @@ v0.9.0-beta1
 
 * [New] Added the ability to standalone dialogs like import, diff, export and others to be resized according to the screen dpi and resolution.
 * [New] Added an experimental routine that will resize windows according to the current screen resolution and font dpi.
-* [New] Added support to browse referrer and referenced in DataManipulationForm.
+* [New] Added support for browse referrer and referenced in DataManipulationForm.
 * [New] Added an item under table items that stores the referrer tables in the DatabaseExplorerWidget.
 * [New] Added the method BaseObjectView::getScreenDpiFactor to help resize scene objects according to the screen dpi/resolution.
 * [Change] Minor adjustment on readonly items regarding to referenced and referrer tables in DatabaseExplorerWidget.
@@ -942,8 +1015,8 @@ v0.9.0-beta
 ------
 <em>Release date: April 4, 2017</em><br/>
 
-* [New] Added support to indexes in Views.
-* [New] Added the support to edit/load the source code in NumberedTextEditor in external application.
+* [New] Added support for indexes in Views.
+* [New] Added the support for edit/load the source code in NumberedTextEditor in external application.
 * [New] Added the ability to save/load metadata related to fade out status and extended attributes display status.
 * [New] Added the ability toggle the extended attributes area in tables and views. The toggle status is persisted in the model file and restores during loading
 * [New] Added constraints to the extended attributes section in the tables at canvas area in order to improve the quick access to these objects.
@@ -951,7 +1024,7 @@ v0.9.0-beta
 * [New] Fade status is now persisted in the dbm file and restored during loading.
 * [New] Added the ability to control zoom factor from overview widget.
 * [New] Added a shortcut for "Duplicate" action in design view.
-* [New] Added support to (back)slash char in object's names.
+* [New] Added support for (back)slash char in object's names.
 * [New] Enabled the usage of NewObjectOverlayWidget for views.
 * [Change] Changed the default characters used to escape values in DataManipulationForm and TableDataWidget from {} to // due to problems with json data.
 * [Change] Improved the file manipulation in SQLExecutionWidget. Added option to save the commands to the current file or in another file (save as).
@@ -961,7 +1034,7 @@ v0.9.0-beta
 * [Change] Improved the diff between the complete database and a partial model representing it.
 * [Fix] Minor fix in AppearanceConfigWidget in order to set the font color correctly.
 * [Fix] Minor fix in the default file objects-style.conf
-* [Fix] Added the missing support to drop event triggers from database model.
+* [Fix] Added the missing support for drop event triggers from database model.
 * [Fix] Fixed the drop cast command generation.
 * [Fix] Minor fix in windows deploy script to use newer PostgreSQL.
 * [Fix] Minor fix in template connections.conf file.
@@ -978,21 +1051,21 @@ v0.9.0-alpha1
 ------
 <em>Release date: February 07, 2017</em><br/>
 
-* [New] Added support to object moving via arrow keys in canvas area.
-* [New] Added support to easily create primary keys just by checking the desired columns in table's editing form.
-* [New] Added support to use middle button to handle panning mode.
+* [New] Added support for object moving via arrow keys in canvas area.
+* [New] Added support for easily create primary keys just by checking the desired columns in table's editing form.
+* [New] Added support for use middle button to handle panning mode.
 * [New] Added a more user friendly message at startup whenever a missing or corrupted configuration file is detected. The user is now presented to an option to restore default settings for the problematic file.
 * [New] Now any default file restored in ConfigurationForm has a backup saved into the directory 'backups' inside the configuration storage.
-* [New] Added support to hide the database explorer widget in SQL tool via splitter handler.
+* [New] Added support for hide the database explorer widget in SQL tool via splitter handler.
 * [New] Added a method to disable the custom context menu of the class NumberedTextEditor.
-* [New] Added support to object fading in ModelWidget.
-* [New] Added the support to persist the object opacity factor in config file.
+* [New] Added support for object fading in ModelWidget.
+* [New] Added the support for persist the object opacity factor in config file.
 * [New] Added the method PgModelerUiNS::getIconPath() in order to retrieve icons from resource.
-* [New] Added support to column, constraint, trigger, rule and index duplication in TableWidget.
-* [New] Added support to item duplication in ObjectTableWidget.
+* [New] Added support for column, constraint, trigger, rule and index duplication in TableWidget.
+* [New] Added support for item duplication in ObjectTableWidget.
 * [New] Added a loading cursor when the user opens the DataManipulationForm.
 * [New] The database explorer now creates the root item in the tree as the server itself which contains data related to this latter.
-* [New] Added the support to parenthesis in the middle of objects' names.
+* [New] Added the support for parenthesis in the middle of objects' names.
 * [Change] Improvements done in the SQL history at SQL execution widget. Now the command history is saved into a specific file and restored when the application starts.
 * [Change] Minor improvement in DataManipulationForm to show a wait cursor while filtering results.
 * [Change] Minor improvements in GeneralConfigWidget. Added an readonly input that exposes the path to the current user's configuration storage.
@@ -1058,7 +1131,7 @@ v0.8.2
 
 * [New] Created the PlainTextItemDelegate replacing the ReadOnlyItemDelegate where needed.
 * [New] Added the ability to the table to create insert commands from the initial data buffer.
-* [New] Added the support to interpret initial-data tag in DatabaseModel::createTable.
+* [New] Added the support for interpret initial-data tag in DatabaseModel::createTable.
 * [New] Create the attribute initial-data for Table in order to store the initial set of values in a CSV-like buffer.
 * [New] Created the form to handle table's initial data.
 * [New] Added the ability to duplicate rows in DataManipulationForm.
@@ -1066,12 +1139,12 @@ v0.8.2
 * [New] Added the ability to clear and copy text from history to the sql command input field using middle mouse button in SQL tool.
 * [New] Added the ability to set the default connection for operations import, export, diff and validation in ConnectionsConfigWidget.
 * [New] Added the usage of default connections in ModelValidationWidget.
-* [New] Added support to save/load default connections in the ConnectionsConfigWidget.
+* [New] Added support for save/load default connections in the ConnectionsConfigWidget.
 * [New] Added attributes to the Connection class in order to control wheter the connection is the default for export, import, diff or validation operations.
 * [New] Added the ability to save the current grid options to the pgmodeler.conf file.
 * [New] Added a reference the svg library to the deployment scripts.
-* [New] Added support to export model to SVG file in UI and CLI.
-* [New] Added the support to change case and identation of the selected text in NumberedTextEditor using context menu or shortcuts.
+* [New] Added support for export model to SVG file in UI and CLI.
+* [New] Added the support for change case and identation of the selected text in NumberedTextEditor using context menu or shortcuts.
 * [New] Added a method PgModelerUiNS::createOutputListItem which created list items with an icon and text.
 * [New] Connections now can have a timeout between command executions. When this timeout exceeds the next command is not executed. This is a workaround to avoid the crash of the program due to connections being (unexpectedly or not) closed by the server.
 * [New] Added the ability to show connections notice/warning in SQL tool.
@@ -1133,7 +1206,7 @@ v0.8.2-beta1
 * [New] Created a signal BaseObjectWidget::s_closeRequested to tell the parent form close after successfuly edit an object.
 * [New] Created template methods in RelationshipWidget and ViewWidget to handle child object manipulation.
 * [New] Created a template method TableWidget::openEditingForm to handle the editing form for children objects.
-* [New] Added support to placeholder objects when moving graphical objects improving performance mainly when moving tables and relationships avoiding excessive update operations.
+* [New] Added support for placeholder objects when moving graphical objects improving performance mainly when moving tables and relationships avoiding excessive update operations.
 * [New] Added an option to protect schema's children when protecting the schema itself.
 * [New] Added the abitily to diff partial models without drop the not imported ones from the original database.
 * [Change] CentralWidget renamed to WelcomeWidget.
@@ -1241,8 +1314,8 @@ v0.8.2-beta
 <em>Release date: January 12, 2016</em><br/>
 
 * [New] Added version descriptor for PostgreSQL 9.5 enabling pgModeler to connect to it.
-* [New] Added access method BRIN for indexes, operator classes and operator families as an initial support to PostgreSQL 9.5.
-* [New] Added event "table_rewrite" for event triggers as an initial support to PostgreSQL 9.5.
+* [New] Added access method BRIN for indexes, operator classes and operator families as an initial support for PostgreSQL 9.5.
+* [New] Added event "table_rewrite" for event triggers as an initial support for PostgreSQL 9.5.
 * [New] Added "Diff" action to File menu.
 * [Change] Minor improvement in DataManipulationForm adding the shortcut of "Copy selection" button to its tooltip.
 * [Change] Improvements on DataManipulationForm on how pk columns are handled and used in the generated DML commands for UPDATE and DELETE.
@@ -1559,7 +1632,7 @@ v0.8.0
 <em>Codename: <strong>Faithful Elephant</strong></em><br/>
 <em>Release date: February 28, 2015</em><br/>
 
-* [New] Added support to multiple SQL execution widget instances for the same browsed database in SQL tool.
+* [New] Added support for multiple SQL execution widget instances for the same browsed database in SQL tool.
 * [New] Added truncate table actions on DatabaseExplorerWidget.
 * [Change] Minor adjustments on ModelValidationHelper.
 * [Change] Minor adjustments on CustomSQLWidget.
@@ -1600,7 +1673,7 @@ v0.8.0-beta2
 * [New] Created missing getters and setters for Operation class.
 * [New] Added the ability to set owner, schema and tag for several objects at once through the quick actions menu.
 * [New] Added an option to diff process to reuse sequences if the source model has serial columns in which the generated sequence name matches a sequence's name on the imported model.
-* [New] Added the support to per-user configuration. Now each user on the system will have his separated configuration folder.
+* [New] Added the support for per-user configuration. Now each user on the system will have his separated configuration folder.
 * [New] Added a bug report form on main window to give user the chance to report a bug without use crash handler.
 * [New] Added action to enable/disable an object's sql from quick actions menu at ModelWidget.
 * [New] Created a new namespace PgModelerUiNS to store shared constants and function in libpgmodeler_ui subproject.
@@ -1875,7 +1948,7 @@ v0.8.0-alpha1
 * [New] Added a field on all object's editing form to expose the object's internal id.
 * [New] Added an option on the database import process to generate random colors for relationships.
 * [New] The model objects widget gained a filtering field that is capable to list objects by their name or internal id.
-* [New] Added support to custom SQL for rules, indexes and triggers.
+* [New] Added support for custom SQL for rules, indexes and triggers.
 * [New] Added two new sample models.
 * [Change] Changed the shortcut for "About pgModeler" to F4 key.
 * [Change] Minor update on shortcuts and tooltips of buttons on bottom control bar at main window.
@@ -1922,7 +1995,7 @@ v0.8.0-alpha
 <em>Codename: <strong>Faithful Elephant</strong></em><br/>
 <em>Release date: July 21, 2014</em><br/>
 
-* [New] Added support to using global settings for relationships on the editing form of those objects.
+* [New] Added support for using global settings for relationships on the editing form of those objects.
 * [New] A new section was created on settings dialog to manage global configurations for relationships.
 * [New] Enabled the movement of schema objects without the need to select their children. This operation does not applies to protected or system schemas like public, pg_catalog.
 * [New] Created a more elaborated central widget with some basic operations like create, load, load recent models and restore previous session.
@@ -2010,11 +2083,11 @@ v0.7.2-alpha1
 
 * [New] Introduced a "new object" overlay widget which gives user a quick access to actions that create objects.
 * [New] Added a step to fix indexes with old <condition> tag on command line interface.
-* [New] Added support to item interaction on "object's dependencies and references" dialog.
-* [New] Added support to generate temporary names for database, roles and tablespaces when running validation process. This will avoid errors if the original database and the other objects already exists on the server.
+* [New] Added support for item interaction on "object's dependencies and references" dialog.
+* [New] Added support for generate temporary names for database, roles and tablespaces when running validation process. This will avoid errors if the original database and the other objects already exists on the server.
 * [New] Updated the CLI to include the option to generate temporary object's names.
 * [New] Added suppport to save and restore the last position and zoom on the canvas. This behavior can be deactivated on general settings.
-* [New] Added support to prepend SQL commands on object's definition.
+* [New] Added support for prepend SQL commands on object's definition.
 * [New] Added zoom info popup that appears whenever the user changes the current zoom factor.
 * [Change] Renamed the methods setCheckExpression and getCheckExpression methods to setExpression and getExpression because the expression is used either for check and exclude constraints.
 * [Change] Renamed the attribute "condition" to "predicate" on index class.
@@ -2057,7 +2130,7 @@ v0.7.1
 <em>Release date: April 15, 2014</em><br/>
 
 * [New] Added option to invert panning mode and range selection triggers.
-* [New] Added support to use relationship attributes as special primary keys.
+* [New] Added support for use relationship attributes as special primary keys.
 * [Change] Improvement on unique name generation for columns and constraints when connecting relatioships.
 * [Change] Improvement on copy / paste operations.
 * [Change] Minor workaround in order to try to fix the crash due to thread conflict mainly on Windows system.
@@ -2082,7 +2155,7 @@ v0.7.1-beta
 <em>Release date: April 6, 2014</em><br/>
 
 * [New] Created a small interface to pgmodeler-cli that enables the user to fix a broken model inside pgModeler GUI.
-* [New] Added support to assign a sequence as default value of a column. The sequence will be converted to "nextval('seqname'::regclass) and the validation process will check if the sequence is correctly referenced by the table that owns the column.
+* [New] Added support for assign a sequence as default value of a column. The sequence will be converted to "nextval('seqname'::regclass) and the validation process will check if the sequence is correctly referenced by the table that owns the column.
 * [Change] Changed the default behavior of left click on blank areas of canvas. Instead of create a range selection the user will move the viewport (panning mode). To enable range selection user must press SHIFT and click/move to draw the selection rectangle.
 * [Fix] Minor fix on connection class in order to accept empty passwords as well passwords that contains spaces.
 * [Fix] Fixed the column listing on constraint editing form after remove one or more columns.
@@ -2121,10 +2194,10 @@ v0.7.0
 
 * [New] Addded a  catalog attribute "hide-postgres-db" in order to avoid listing "postgres" maintainance DB on import operations.
 * [New] Added options to hide system/extension objects on SQL tool improving the object listing performance.
-* [New] Added support to custom compilation output directory through qmake variables BINDIR, LIBDIR and RESDIR.
-* [New] Added support to deferrable unique, exclude and primary key constraints.
-* [New] Added support to custom colors on tables and views through tag objects.
-* [New] Added support to export models to png image page by page.
+* [New] Added support for custom compilation output directory through qmake variables BINDIR, LIBDIR and RESDIR.
+* [New] Added support for deferrable unique, exclude and primary key constraints.
+* [New] Added support for custom colors on tables and views through tag objects.
+* [New] Added support for export models to png image page by page.
 * [New] Canvas can now be moved using Control + Arrow keys. If the shift is pressed the movement factor is increased.
 * [New] Introduced the SQL tool that permits the execution of arbitrary SQL commands direclty on a server.
 * [New] Added methods getType, getTypeId to BaseType and getSQLTypeName to PgSQLType as an alternative to call operators ~, ! and *.
@@ -2134,11 +2207,11 @@ v0.7.0
 * [New] Added a build number on about dialog. This number is the compilation date in format yyyymmdd.
 * [New] Added support for materialized and recursive views (PostgreSQL 9.3 feature).
 * [New] Added pgModeler version information on generated sql scripts as well .dbm files for debugging purpose.
-* [New] Added support to custom delete/update actions for relationship generated foreign keys.
-* [New] Added support to move the canvas by positioning the mouse over corners.
+* [New] Added support for custom delete/update actions for relationship generated foreign keys.
+* [New] Added support for move the canvas by positioning the mouse over corners.
 * [New] Added a configuration parameter to control font style for any source code highlight field.
 * [New] Added additional PostGiS types: geomval, addbandarg, rastbandarg, raster, reclassarg, unionarg, TopoGeometry, getfaceedges_returntype, validatetopology_returntype.
-* [Change] Added support to on-demand updates on sql tool object's tree.
+* [Change] Added support for on-demand updates on sql tool object's tree.
 * [Change] Improved the tab navigation experience on editing forms.
 * [Change] Minor change on SQL tool to ommit binary data values.
 * [Change] Dropped the navigation through object using Alt + <left|right> due to the difficulty to understand the order in which objects are highlighted.
@@ -2388,7 +2461,7 @@ v0.5.2
 * [New] Introduced an experimental code completion on fields that permits code input.
 * [New] User can create default sequences from serial columns. This feature does not apply to columns generated by relationships.
 * [New] Introduced a feature to break relationship lines in straight angles and to remove all user added points.
-* [New] Added support to change font size on textboxes.
+* [New] Added support for change font size on textboxes.
 * [Change] Removed the code "OIDs=FALSE" from table's SQL.
 * [Fix] Minor fix on Mac OSX deployment script.
 
@@ -2423,7 +2496,7 @@ v0.5.1
 * [New] pgModeler is now capable of associate dbm files to its executable being possible opening a model from file manager by clicking it (except for MacOSX, see MacOSX notes).
 * [New] Added support for loading models by calling pgModeler gui executable from terminal (e.g. pgmodeler model1.dbm model2.dbm)
 * [New] pgModeler logo redesign.
-* [New] Added special primary keys support to one-to-one and one-to-many relationships.
+* [New] Added special primary keys support for one-to-one and one-to-many relationships.
 * [New] Relationships now supports patterns to define generated objects names. The manual suffix and auto-suffix generation are deprecated.
 * [New] Columns/constraints generated by relationship can have position changed on parent table.
 * [New] Added smallserial built-in datatype.
@@ -2452,16 +2525,16 @@ v0.5.0
 * [New] Added an option to list available configured connections on pgmodeler-cli.
 * [New] pgModeler now alerts the user when he try to save an invalidated model.
 * [New] pgModeler now aborts app closing when the user wants to do a last saving on modified models.
-* [New] Added support to hide relationship labels and table extended attributes on configuration dialog.
+* [New] Added support for hide relationship labels and table extended attributes on configuration dialog.
 * [New] Added "Recent Models" menu.
 * [New] Introduced the Xml2Object plugin to help on develpment testings.
-* [New] Added partial support to PostgreSQL Extensions objects.
+* [New] Added partial support for PostgreSQL Extensions objects.
 * [New] Added JSON datatype.
 * [New] Added support for rules and trigger on views.
 * [New] Added support for user defined range types.
 * [New] Added support for collations on composite types (user defined).
 * [New] Added built-in range types.
-* [New] Added support to INCLUDING/EXCLUDING options when dealing with copy relationships.
+* [New] Added support for INCLUDING/EXCLUDING options when dealing with copy relationships.
 * [New] Added support for EXCLUDE constraint support
 * [New] Added NO INHERIT option to check constraints.
 * [New] Added REPLICATION option to roles.

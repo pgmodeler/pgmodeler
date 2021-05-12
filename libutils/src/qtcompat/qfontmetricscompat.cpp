@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -27,6 +27,17 @@ namespace QtCompat {
 			return fm.width(chr);
 		#else
 			return fm.horizontalAdvance(chr);
+		#endif
+	}
+
+	int horizontalAdvance(const QFont &font, const QString &str)
+	{
+		QFontMetrics fm(font);
+
+		#if (QT_VERSION < QT_VERSION_CHECK(5, 13, 0))
+			return fm.width(str);
+		#else
+			return fm.horizontalAdvance(str);
 		#endif
 	}
 }

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -32,13 +32,29 @@
 #include "tableview.h"
 #include "schemaview.h"
 #include "styledtextboxview.h"
+#include "layeritem.h"
 
 class ObjectsScene: public QGraphicsScene {
 	private:
 		Q_OBJECT
 
+		//! \brief Stores the grid line color
+		static QColor grid_color,
+
+		//! \brief Stores the canvas background color
+		canvas_color,
+
+		//! \brief Stores the page delimiter lines color
+		delimiters_color;
+
 		//! \brief Holds the names of the layers on the scene used to separate in the objects on the canvas
-		QStringList layers, active_layers;
+		QStringList layers,
+
+		//! \brief Holds the names of the layers currently active (visible) in the canvas
+		active_layers;
+
+		//! \brief Stores the items used to represent layers around objects
+		QList<LayerItem *> layers_paths;
 
 		vector<BaseObjectView *> removed_objs;
 
@@ -100,7 +116,13 @@ class ObjectsScene: public QGraphicsScene {
 		bool moving_objs,
 
 		//! \brief Indicates if the range selection (selection using a rectangle drawn on the canvas)
-		enable_range_sel;
+		enable_range_sel,
+
+		//! \brief Indicates if the layers rects around the object must be displayed
+		is_layer_rects_visible,
+
+		//! \brief Indicates if the layers names in the rects around the object must be displayed
+		is_layer_names_visible;
 
 		//! \brief Initial point of selection rectangle
 		QPointF sel_ini_pnt;
@@ -146,9 +168,34 @@ class ObjectsScene: public QGraphicsScene {
 
 		void blockItemsSignals(bool block);
 
+		/*! \brief Move the objects from a deleted layer to the default one (0).
+		 * This method automatically shifts the objects layers in case the layer being removed is
+		 * greater than 0 or less than the maximum of layers minus 1, avoiding references to invalid layer ids. */
+		void validateLayerRemoval(unsigned old_layer);
+
+		/*! \brief Add a several layers at once. This method will resolve name conflicts automatically.
+		 * This method removes all the current layers (except the first) and add the new ones.
+		 * The parameter reset_objs_layers is used to define if the objects should be moved to the default
+		 * layer or not. */
+		void addLayers(QStringList names, bool reset_objs_layers);
+
+		/*! \brief Destroy all layers (except the default one).
+		 * The parameter reset_objs_layers is used to define if the objects should be moved to the default layer or not. */
+		void removeLayers(bool reset_obj_layers);
+
 	public:
 		static constexpr unsigned DefaultLayer = 0,
-		InvalidLayer = UINT_MAX;
+		LayerNameColor = 0,
+		LayerRectColor = 1;
+
+		//! \brief Stores the default grid line color
+		static const QColor DefaultGridColor,
+
+		//! \brief Stores the default grid line color
+		DefaultCanvasColor,
+
+		//! \brief Stores the default page delimiter lines color
+		DefaultDelimitersColor;
 
 		ObjectsScene();
 		virtual ~ObjectsScene();
@@ -173,15 +220,14 @@ class ObjectsScene: public QGraphicsScene {
 		//! \brief Set the layers with the provided indexes as active. Activating a layer causes objects attached to it to be visible
 		void setActiveLayers(QList<unsigned> ids);
 
-		/*! \brief Move the objects from a layer to another. This method automatically hides/show the objects in the new layer
-		 * according to the activation status of the destination layer */
-		void moveObjectsToLayer(unsigned old_layer, unsigned new_layer);
-
 		//! \brief Returns true when the named layer is currenctly activated
 		bool isLayerActive(const QString &name);
 
 		//! \brief Returns true when the layer with the provided id is currenctly activated
 		bool isLayerActive(unsigned layer_id);
+
+		//! \brief Returns true when at least one of the layer ids in the list is currenctly activated
+		bool isLayersActive(const QList<unsigned> &list);
 
 		//! \brief Returns a list containing the names of the active layers
 		QStringList getActiveLayers();
@@ -192,11 +238,19 @@ class ObjectsScene: public QGraphicsScene {
 		//! \brief Returns a list containing the names of all layers in the scene
 		QStringList getLayers();
 
-		//! \brief Returns the id of the named layer. If the layer does not exist the constant ObjectsScene::InvalidLayer is returned
-		unsigned getLayerId(const QString &name);
-
 		//! \brief This method causes objects in the active layers to have their visibility state updated.
 		void updateActiveLayers();
+
+		//! \brief Retuns a list of the layers colors names. The color ids must be LayerNameColor or LayerRectColor
+		QStringList getLayerColorNames(unsigned color_id);
+
+		/*! \brief This method sets up the text and background color of the layer referenced by the id.
+		 * This method adjust the alpha channel for the background color to a make it semi transparent */
+		void setLayerColors(int layer_id, QColor txt_color, QColor bg_color);
+
+		/*! \brief This method sets up the layers name/rect colors. The layer_attr_id is either LayerNameColor or LayerRectColor.
+		 * This method adjust the alpha channel for the background color to a make it semi transparent */
+		void setLayerColors(unsigned layer_attr_id, const QStringList &colors);
 
 		static void setEnableCornerMove(bool enable);
 		static void setInvertRangeSelectionTrigger(bool invert);
@@ -243,7 +297,24 @@ class ObjectsScene: public QGraphicsScene {
 		QList<QGraphicsItem *> selectedItems(void) const;
 		bool hasOnlyTableChildrenSelection(void) const;
 
+		static void setGridColor(const QColor &value);
+		static QColor getGridColor();
+
+		static void setCanvasColor(const QColor &value);
+		static QColor getCanvasColor();
+
+		static void setDelimitersColor(const QColor &value);
+		static QColor getDelimitersColor();
+
+		bool isLayerRectsVisible();
+		bool isLayerNamesVisible();
+
 	public slots:
+		//! \brief Force the update of all layer rectangles
+		void updateLayerRects();
+
+		void setLayerRectsVisible(bool value);
+		void setLayerNamesVisible(bool value);
 		void alignObjectsToGrid();
 		void update();
 		void clearSelection();
@@ -315,6 +386,7 @@ class ObjectsScene: public QGraphicsScene {
 		void s_childrenSelectionChanged();
 
 		friend class ModelWidget;
+		friend class PgModelerCliApp;
 };
 
 #endif

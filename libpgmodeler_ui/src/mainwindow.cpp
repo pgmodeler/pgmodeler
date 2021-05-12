@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -39,7 +39,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	pending_op=NoPendingOp;
 	central_wgt=nullptr;
 
-	layers_wgt = new LayersWidget(this);
+	layers_wgt = new LayersConfigWidget(this);
 	layers_wgt->setVisible(false);
 
 	changelog_wgt  = new ChangelogWidget(this);
@@ -53,8 +53,8 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 
 	fix_menu.addAction(action_fix_model);
 	fix_menu.addAction(action_handle_metadata);
+	action_fix->setMenu(&fix_menu);
 	QToolButton *tool_btn = qobject_cast<QToolButton *>(general_tb->widgetForAction(action_fix));
-	tool_btn->setMenu(&fix_menu);
 	tool_btn->setPopupMode(QToolButton::InstantPopup);
 
 	tool_btn = qobject_cast<QToolButton *>(control_tb->widgetForAction(action_arrange_objects));
@@ -935,7 +935,9 @@ void MainWindow::addModel(const QString &filename)
 		//Creating the system objects (public schema and languages C, SQL and pgpgsql)
 		model_tab->db_model->createSystemObjects(filename.isEmpty());
 
-		if(!filename.isEmpty())
+		if(filename.isEmpty())
+			model_tab->updateSceneLayers();
+		else
 		{
 			try
 			{
@@ -1003,11 +1005,11 @@ void MainWindow::addModel(ModelWidget *model_wgt)
 			throw Exception(ErrorCode::AsgWidgetAlreadyHasParent,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		model_nav_wgt->addModel(model_wgt);
-
 		models_tbw->blockSignals(true);
 		models_tbw->addTab(model_wgt, model_wgt->getDatabaseModel()->getName());
 		models_tbw->setCurrentIndex(models_tbw->count()-1);
 		models_tbw->blockSignals(false);
+
 		setCurrentModel();
 		models_tbw->currentWidget()->layout()->setContentsMargins(3,3,0,3);
 
@@ -1547,11 +1549,14 @@ void MainWindow::importDatabase()
 	stopTimers(true);
 
 	connect(&db_import_form, &DatabaseImportForm::s_connectionsUpdateRequest, [&](){ updateConnections(true); });
+
 	db_import_form.setModelWidget(current_model);
 	PgModelerUiNs::resizeDialog(&db_import_form);
+
 	GeneralConfigWidget::restoreWidgetGeometry(&db_import_form);
 	db_import_form.exec();
 	GeneralConfigWidget::saveWidgetGeometry(&db_import_form);
+
 	stopTimers(false);
 
 	if(db_import_form.result()==QDialog::Accepted && db_import_form.getModelWidget())
@@ -2080,9 +2085,12 @@ void MainWindow::removeOperations()
 void MainWindow::handleObjectsMetadata()
 {
 	MetadataHandlingForm objs_meta_frm(nullptr, Qt::Dialog | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint);
+
 	objs_meta_frm.setModelWidget(current_model);
 	objs_meta_frm.setModelWidgets(model_nav_wgt->getModelWidgets());
+
 	connect(&objs_meta_frm, SIGNAL(s_metadataHandled()), model_objs_wgt, SLOT(updateObjectsView()));
+	connect(&objs_meta_frm, SIGNAL(s_metadataHandled()), layers_wgt, SLOT(updateLayersList()));
 
 	PgModelerUiNs::resizeDialog(&objs_meta_frm);
 	GeneralConfigWidget::restoreWidgetGeometry(&objs_meta_frm);

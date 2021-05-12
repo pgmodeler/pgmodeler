@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -67,10 +67,11 @@ QString Schema::getCodeDefinition(unsigned def_type)
 	QString code_def=getCachedCode(def_type, false);
 	if(!code_def.isEmpty()) return code_def;
 
-	attributes[Attributes::Layer]=QString::number(layer);
 	attributes[Attributes::FillColor]=fill_color.name();
 	attributes[Attributes::RectVisible]=(rect_visible ? Attributes::True : "");
+
 	setFadedOutAttribute();
+	setLayersAttribute();
 
 	return BaseObject::__getCodeDefinition(def_type);
 }

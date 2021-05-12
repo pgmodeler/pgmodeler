@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -162,8 +162,8 @@ void TransformTest::generatesNameAndSignatureCorrectly()
 
 	try
 	{
-		QCOMPARE(transf.getName(), "smallint_undefined");
-		QCOMPARE(transf.getSignature(), "FOR smallint LANGUAGE undefined");
+		QCOMPARE(transf.getName(), QString("smallint_undefined"));
+		QCOMPARE(transf.getSignature(), QString("FOR smallint LANGUAGE undefined"));
 
 		lang.setName(DefaultLanguages::PlPgsql);
 		transf.setLanguage(&lang);
@@ -177,16 +177,16 @@ void TransformTest::generatesNameAndSignatureCorrectly()
 		from_sql_func.setReturnType(PgSqlType("internal"));
 		transf.setFunction(&from_sql_func, Transform::FromSqlFunc);
 
-		QCOMPARE(transf.getName(), "varchar_plpgsql");
-		QCOMPARE(transf.getSignature(), "FOR varchar LANGUAGE plpgsql");
+		QCOMPARE(transf.getName(), QString("varchar_plpgsql"));
+		QCOMPARE(transf.getSignature(), QString("FOR varchar LANGUAGE plpgsql"));
 
 		transf.setFunction(nullptr, Transform::ToSqlFunc);
 		to_sql_func.setReturnType(PgSqlType::parseString("timestamp with time zone"));
 		transf.setType(PgSqlType::parseString("timestamp with time zone"));
 		transf.setFunction(&to_sql_func, Transform::ToSqlFunc);
 
-		QCOMPARE(transf.getName(), "timestamp_with_time_zone_plpgsql");
-		QCOMPARE(transf.getSignature(), "FOR timestamp with time zone LANGUAGE plpgsql");
+		QCOMPARE(transf.getName(), QString("timestamp_with_time_zone_plpgsql"));
+		QCOMPARE(transf.getSignature(), QString("FOR timestamp with time zone LANGUAGE plpgsql"));
 	}
 	catch(Exception &e)
 	{

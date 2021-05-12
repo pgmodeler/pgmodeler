@@ -28,6 +28,10 @@ $br
 
 $tb [LANGUAGE ] {language} $br
 
+%if ({pgsql-ver} >=f "9.5") %and {transform-types} %then
+ $tb TRANSFORM {transform-types} $br
+%end
+
 %if {window-func} %then
  $tb WINDOW $br
 %end
@@ -36,25 +40,37 @@ $tb {function-type} $sp %if {leakproof} %then LEAKPROOF %end $br
 
 $tb {behavior-type} $br
 $tb {security-type} $br
+
+%if ({pgsql-ver} >=f "9.6") %then
+  $tb {parallel-type} $br
+%end
+
 $tb [COST ] {execution-cost} $br
 
 %if {returns-setof} %then
  $tb [ROWS ] {row-amount} $br
 %end
 
+%if {config-params} %then
+ {config-params}
+%end
+
 $tb [AS ]
 
 %if {library} %then
- '{library}'
+  '{library}'
 
- %if {symbol} %then
-   [, ] '{symbol}'
- %end
-
+  %if {symbol} %then
+    [, ] '{symbol}'
+  %end
 %else
-[$$]
-$br {definition} $br 
-[$$]
+  %if ({language} == "internal") %then
+     '{definition}'
+  %else
+    [$$]
+	$br {definition} $br
+	[$$]
+ %end
 %end
 
 ; 

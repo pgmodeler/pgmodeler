@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -29,11 +29,7 @@ Messagebox::Messagebox(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 	connect(no_btn,SIGNAL(clicked()),this,SLOT(handleNoCancelClick()));
 	connect(cancel_btn,SIGNAL(clicked()),this,SLOT(handleNoCancelClick()));
 	connect(show_errors_tb,SIGNAL(clicked()),this,SLOT(showExceptionList()));
-	connect(show_errors_tb,SIGNAL(toggled(bool)),show_raw_info_tb,SLOT(setVisible(bool)));
-	connect(show_raw_info_tb,SIGNAL(toggled(bool)),this,SLOT(showExceptionList()));
-
-	show_raw_info_tb->setVisible(false);
-	error_show_btns_wgt->setVisible(false);
+	show_errors_tb->setVisible(false);
 	custom_option_chk->setVisible(false);
 }
 
@@ -77,34 +73,13 @@ bool Messagebox::isCustomOptionChecked()
 
 void Messagebox::showExceptionList()
 {
-	if(show_errors_tb->isChecked())
-	{
-		show_errors_tb->setIcon(QPixmap(PgModelerUiNs::getIconPath("desfazer")));
-
-		if(show_raw_info_tb->isChecked())
-			objs_group_wgt->setCurrentIndex(2);
-		else
-			objs_group_wgt->setCurrentIndex(1);
-	}
-	else if(!show_errors_tb->isVisible() && show_raw_info_tb->isChecked())
-	{
-		objs_group_wgt->setCurrentIndex(2);
-	}
-	else
-	{
-		show_errors_tb->setIcon(QPixmap(PgModelerUiNs::getIconPath("refazer")));
-		objs_group_wgt->setCurrentIndex(0);
-	}
+	objs_group_wgt->setCurrentIndex(show_errors_tb->isChecked() ? 1 : 0);
 }
 
 void Messagebox::show(Exception e, const QString &msg, unsigned icon_type, unsigned buttons, const QString &yes_lbl, const QString &no_lbl, const QString &cancel_lbl,
 					  const QString &yes_ico, const QString &no_ico, const QString &cancel_ico)
 {
 	QString str_aux, title;
-
-	show_raw_info_tb->blockSignals(true);
-	show_raw_info_tb->setChecked(false);
-	show_raw_info_tb->blockSignals(false);
 
 	raw_info_txt->setPlainText(e.getExceptionsText());
 	PgModelerUiNs::createExceptionsTree(exceptions_trw, e, nullptr);
@@ -198,28 +173,30 @@ void Messagebox::show(const QString &title, const QString &msg, unsigned icon_ty
 
 	msg_lbl->setText(msg);
 
-	this->setWindowTitle(aux_title);
-	this->objs_group_wgt->setCurrentIndex(0);
-	this->show_errors_tb->setChecked(false);
-	error_show_btns_wgt->setVisible((exceptions_trw->topLevelItemCount() > 0));
+	setWindowTitle(aux_title);
+	objs_group_wgt->setCurrentIndex(0);
+	show_errors_tb->setChecked(false);
+	show_errors_tb->setVisible(exceptions_trw->topLevelItemCount() > 0);
 	showExceptionList();
 
-	this->resize(this->minimumWidth(), this->minimumHeight());
-
 	QFontMetrics fm(msg_lbl->font());
-	QString aux_msg=msg;
-	aux_msg.replace(QRegExp(QString("(<)(br)(/)?(>)"), Qt::CaseInsensitive), QString("\n"));
-	QSize size=QSize(msg_lbl->width(), fm.height() * (aux_msg.count('\n') + 1));
-	int max_h=msg_lbl->minimumHeight() * 3;
+	QString aux_msg = QString(msg).replace(QRegExp(QString("(<)(br)(/)?(>)"), Qt::CaseInsensitive), QString("\n"));
+	QSize size = QSize(msg_lbl->width(), fm.height() * (aux_msg.trimmed().count('\n') + 1));
+	double factor = BaseObjectView::getScreenDpiFactor();
+	int max_h = msg_lbl->minimumHeight() * 3, btn_h = fm.height() * factor;
+
+	//Forcing the footer buttons to have the minimum height attached to the screen's dpi/font size
+	yes_ok_btn->setMinimumHeight(btn_h);
+	no_btn->setMinimumHeight(btn_h);
+	cancel_btn->setMinimumHeight(btn_h);
+	show_errors_tb->setMinimumHeight(btn_h);
 
 	//Resizing the message box if the text height is greater than the default size
 	if(size.height() > msg_lbl->minimumHeight() && size.height() < max_h)
-		this->setMinimumHeight((size.height() + (size.height() * 0.25))  + show_raw_info_tb->height() + name_lbl->height() + 30);
+		setMinimumHeight((size.height() * 1.25)  + show_errors_tb->height() + yes_ok_btn->height());
 	else if(size.height() >= max_h)
-		this->setMinimumHeight(max_h);
+		setMinimumHeight(max_h);
 
-	double factor = BaseObjectView::getScreenDpiFactor();
-	this->resize(this->minimumWidth() * factor, this->minimumHeight() * factor);
-
+	resize(minimumWidth() * factor, minimumHeight());
 	QDialog::exec();
 }

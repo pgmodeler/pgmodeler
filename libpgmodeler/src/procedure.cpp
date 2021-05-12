@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -56,19 +56,13 @@ QString Procedure::getAlterDefinition(BaseObject *object)
 	try
 	{
 		attribs_map attribs;
-
-		attributes[Attributes::AlterCmds]=BaseObject::getAlterDefinition(object);
+		attribs = BaseFunction::getAlterDefinitionAttributes(proc);
 
 		if(this->source_code.simplified() != proc->source_code.simplified() ||
 			 this->library != proc->library || this->symbol != proc->symbol)
 		{
 			attribs[Attributes::Definition] = proc->getCodeDefinition(SchemaParser::SqlDefinition);
 			attribs[Attributes::Definition].replace(QString("CREATE PROCEDURE").arg(this->getSQLName()), QString("CREATE OR REPLACE PROCEDURE"));
-		}
-		else
-		{
-			if(this->security_type != proc->security_type)
-				attribs[Attributes::SecurityType] = ~proc->security_type;
 		}
 
 		copyAttributes(attribs);

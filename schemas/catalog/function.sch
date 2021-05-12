@@ -49,7 +49,8 @@
 		pr.proname AS name,
 		pr.prolang AS language,
 		pr.procost AS execution_cost,
-		pr.prorows AS row_amount, ]
+		pr.prorows AS row_amount, 
+        array_to_string(pr.proconfig, '•', '') AS config_params, ]
 		
 		{window-func},
 		
@@ -90,6 +91,19 @@
 		%else
 		 [ pr.proleakproof AS leakproof_bool, ]
 		%end
+        
+        %if ({pgsql-ver} <=f "9.5") %then
+          [ NULL AS parallel_type, 
+            NULL AS transform_types, ]
+        %else
+          [ CASE
+		      WHEN pr.proparallel='u' THEN 'PARALLEL UNSAFE'
+              WHEN pr.proparallel='r' THEN 'PARALLEL RESTRICTED'
+		      ELSE 'PARALLEL SAFE'
+		    END AS parallel_type,
+            
+            pr.protrftypes AS transform_types, ]
+        %end
 
 	({comment}) [ AS comment ]
 

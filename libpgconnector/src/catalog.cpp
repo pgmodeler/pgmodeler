@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -984,9 +984,9 @@ QStringList Catalog::parseArrayValues(const QString &array_val)
 		QString value=array_val.mid(start, (end - start)+1);
 
 		if(value.contains('"'))
-			list=parseDefaultValues(value, QString("\""), QString(","));
+			list = parseDefaultValues(value, QString("\""), QString(","));
 		else
-			list=value.split(',', QtCompat::SkipEmptyParts);
+			list = value.split(',', QtCompat::SkipEmptyParts);
 	}
 
 	return list;

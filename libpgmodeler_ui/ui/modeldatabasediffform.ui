@@ -1034,35 +1034,16 @@
                   <bool>true</bool>
                  </property>
                  <property name="toolTip">
-                  <string>&lt;p&gt;For DROP command, the objects that depends on an object to be dropped will be deleted as well. For TRUNCATE command, tables that are linked to a table to be truncated will be truncate too. &lt;strong&gt;NOTE:&lt;/strong&gt; this option can affect more objects than listed in the output or diff preview.&lt;/p&gt;</string>
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The objects that depends on an object to be dropped will be dropped too. &lt;span style=&quot; font-weight:600;&quot;&gt;NOTE:&lt;/span&gt; this option can affect more objects than listed in the output or diff preview.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                  </property>
                  <property name="statusTip">
                   <string/>
                  </property>
                  <property name="text">
-                  <string>Drop or truncate in cascade mode</string>
+                  <string>Drop objects in cascade mode</string>
                  </property>
                  <property name="checked">
                   <bool>true</bool>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QCheckBox" name="trunc_tables_chk">
-                 <property name="sizePolicy">
-                  <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-                   <horstretch>0</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
-                 </property>
-                 <property name="toolTip">
-                  <string>&lt;p&gt;Clears the data of all tables which will have columns modified. This is useful to avoid errors related to type casting. &lt;strong&gt;WARNING:&lt;/strong&gt; DO NOT use this option on production servers and always make a backup before use it.&lt;/p&gt;</string>
-                 </property>
-                 <property name="statusTip">
-                  <string/>
-                 </property>
-                 <property name="text">
-                  <string>Truncate tables before alter columns</string>
                  </property>
                 </widget>
                </item>
@@ -1804,11 +1785,11 @@
             <attribute name="headerCascadingSectionResizes">
              <bool>true</bool>
             </attribute>
-            <attribute name="headerDefaultSectionSize">
-             <number>100</number>
-            </attribute>
             <attribute name="headerMinimumSectionSize">
              <number>25</number>
+            </attribute>
+            <attribute name="headerDefaultSectionSize">
+             <number>100</number>
             </attribute>
             <attribute name="headerStretchLastSection">
              <bool>true</bool>

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -177,9 +177,8 @@ class PgModelerCliApp: public Application {
 		DropMissingObjs,
 		ForceDropColsConstrs,
 		RenameDb,
-		TruncOnColsTypeChange,
 		NoSequenceReuse,
-		NoCascadeDropTrunc,
+		NoCascadeDrop,
 		ForceRecreateObjs,
 		OnlyUnmodifiable,
 
@@ -200,6 +199,9 @@ class PgModelerCliApp: public Application {
 
 		//! \brief Returns if the specified options exists on short options map
 		bool isOptionRecognized(QString &op, bool &accepts_val);
+
+		//! \brief Loads the input model and perform all tasks needed to configure the graphical objects
+		void loadModel();
 
 		/*! \brief Extracts the xml defintions from the input model and store them on obj_xml list
 		in order to be parsed by the recreateObjects() method */

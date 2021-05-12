@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -33,7 +33,8 @@ namespace QtCompat {
 	/*! \brief Prior to Qt 5.14 QFontMetrics had the method width, after
 	 * that release, the method is called horizontalAdvance. This utility function
 	 * just calls the correct method according to the current Qt version */
-	extern int horizontalAdvance(const QFont &font, QChar chr);
+	extern int horizontalAdvance(const QFont &font, QChar chr);	
+	extern int horizontalAdvance(const QFont &font, const QString &str);
 };
 
 #endif

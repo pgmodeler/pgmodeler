@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -43,7 +43,7 @@ ModelsDiffHelper::ModelsDiffHelper()
 
 	diff_opts[OptKeepClusterObjs]=true;
 	diff_opts[OptCascadeMode]=true;
-	diff_opts[OptTruncateTables]=false;
+	//diff_opts[OptTruncateTables]=false;
 	diff_opts[OptForceRecreation]=true;
 	diff_opts[OptRecreateUnmodifiable]=true;
 	diff_opts[OptKeepObjectPerms]=true;
@@ -984,23 +984,6 @@ void ModelsDiffHelper::processDiffInfos()
 					if(!alter_def.isEmpty())
 					{
 						alter_objs[object->getObjectId()]=alter_def;
-
-						/* If the object is a column checks if the types of the columns are differents,
-							generating a TRUNCATE TABLE for the parent table */
-						if(obj_type==ObjectType::Column && diff_opts[OptTruncateTables])
-						{
-							Column *src_col=dynamic_cast<Column *>(object),
-									*old_col=dynamic_cast<Column *>(diff.getOldObject());
-							Table *tab=dynamic_cast<Table *>(src_col->getParentTable());
-
-							if(tab &&
-								 ((old_col->getType().isSerialType() && !src_col->getType().isEquivalentTo(old_col->getType().getAliasType())) ||
-									(!old_col->getType().isSerialType() && !src_col->getType().isEquivalentTo(old_col->getType()))) &&
-								 truncate_tabs.count(tab->getObjectId())==0)
-							{
-								truncate_tabs[tab->getObjectId()]=tab->getTruncateDefinition(diff_opts[OptCascadeMode]);
-							}
-						}
 					}
 				}
 			}
@@ -1045,11 +1028,9 @@ void ModelsDiffHelper::processDiffInfos()
 			attribs[Attributes::Change]=QString::number(alter_objs.size());
 			attribs[Attributes::Create]=QString::number(create_objs_count);
 			attribs[Attributes::Drop]=QString::number(drop_objs.size());
-			attribs[Attributes::Truncate]=QString::number(truncate_tabs.size());
 			attribs[Attributes::AlterCmds]="";
 			attribs[Attributes::DropCmds]="";
 			attribs[Attributes::CreateCmds]="";
-			attribs[Attributes::TruncateCmds]="";
 			attribs[Attributes::ConstrDefs]="";
 			attribs[Attributes::FkDefs]="";
 			attribs[Attributes::UnsetPerms]=unset_perms;
@@ -1081,9 +1062,6 @@ void ModelsDiffHelper::processDiffInfos()
 
 			for(auto &itr : create_fks)
 				attribs[Attributes::FkDefs]+=itr.second;
-
-			for(auto &itr : truncate_tabs)
-				attribs[Attributes::TruncateCmds]+=itr.second;
 
 			for(auto &itr : alter_objs)
 				attribs[Attributes::AlterCmds]+=itr.second;

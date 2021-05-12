@@ -27,7 +27,6 @@
 {spacer} drop-missing-cols-constrs="{drop-missing-cols-constrs}"
 {spacer} preserve-db-name="{preserve-db-name}"
 {spacer} drop-trunc-cascade="{drop-trunc-cascade}"
-{spacer} trunc-cols-before-alter="{trunc-cols-before-alter}"
 {spacer} force-objs-recreation="{force-objs-recreation}"
 {spacer} recreate-unmod-objs="{recreate-unmod-objs}"
 {spacer} import-sys-objs="{import-sys-objs}"

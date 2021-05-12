@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -51,8 +51,10 @@ FunctionWidget::FunctionWidget(QWidget *parent): BaseFunctionWidget(parent, Obje
 	function_grid->addWidget(behavior_cmb, 2, 1, 1, 1);
 	function_grid->addWidget(exec_cost_lbl, 2, 2, 1, 1);
 	function_grid->addWidget(exec_cost_spb, 2, 3, 1, 1);
-	function_grid->addWidget(options_lbl, 3, 0, 1, 1);
-	function_grid->addLayout(options_hbox, 3, 1, 1, 1);
+	function_grid->addWidget(parallel_lbl, 3, 0, 1, 1);
+	function_grid->addWidget(parallel_cmb, 3, 1, 1, 1);
+	function_grid->addWidget(options_lbl, 3, 2, 1, 1);
+	function_grid->addLayout(options_hbox, 3, 3, 1, 1);
 	function_grid->addWidget(hline1_frm, 4, 0, 1, 4);
 	function_grid->addWidget(ret_method_lbl, 5, 0, 1, 1);
 	function_grid->addWidget(ret_table_gb, 6, 0, 1, 4);
@@ -84,6 +86,7 @@ FunctionWidget::FunctionWidget(QWidget *parent): BaseFunctionWidget(parent, Obje
 	attributes_vbox->addLayout(function_grid);
 
 	fields_map[generateVersionsInterval(AfterVersion, PgSqlVersions::PgSqlVersion92)].push_back(leakproof_chk);
+	fields_map[generateVersionsInterval(AfterVersion, PgSqlVersions::PgSqlVersion96)].push_back(parallel_lbl);
 	frame = generateVersionWarningFrame(fields_map, &value_map);
 	base_function_grid->addWidget(frame, base_function_grid->count() + 1, 0);
 	frame->setParent(this);
@@ -92,6 +95,7 @@ FunctionWidget::FunctionWidget(QWidget *parent): BaseFunctionWidget(parent, Obje
 
 	func_type_cmb->addItems(FunctionType::getTypes());
 	behavior_cmb->addItems(BehaviorType::getTypes());
+	parallel_cmb->addItems(ParallelType::getTypes());
 
 	connect(simple_rb, SIGNAL(clicked(bool)), this, SLOT(alternateReturnTypes()));
 	connect(set_rb, SIGNAL(clicked(bool)), this, SLOT(alternateReturnTypes()));
@@ -154,6 +158,7 @@ void FunctionWidget::setAttributes(DatabaseModel *model, OperationList *op_list,
 		exec_cost_spb->setValue(func->getExecutionCost());
 		rows_ret_spb->setValue(func->getRowAmount());
 		behavior_cmb->setCurrentIndex(behavior_cmb->findText(~func->getBehaviorType()));
+		parallel_cmb->setCurrentIndex(parallel_cmb->findText(~func->getParallelType()));
 
 		if(func->isReturnSetOf())
 			set_rb->setChecked(true);
@@ -350,6 +355,7 @@ void FunctionWidget::applyConfiguration()
 		func->setExecutionCost(exec_cost_spb->value());
 		func->setRowAmount(rows_ret_spb->value());
 		func->setBehaviorType(behavior_cmb->currentText());
+		func->setParalleType(parallel_cmb->currentText());
 
 		if(simple_rb->isChecked() || set_rb->isChecked())
 		{

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -84,6 +84,8 @@ void ObjectsTableWidget::setButtonConfiguration(unsigned button_conf)
 	remove_tb->setVisible((button_conf & RemoveButton) == RemoveButton);
 	update_tb->setVisible((button_conf & UpdateButton) == UpdateButton);
 	duplicate_tb->setVisible((button_conf & DuplicateButton) == DuplicateButton);
+
+	resize_cols_tb->setVisible((button_conf & ResizeColsButton) == ResizeColsButton);
 
 	//Disabling the horizontal spacers when no buttons are visible
 	if(button_conf==NoButtons)

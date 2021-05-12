@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -48,7 +48,16 @@ class BaseFunctionWidget: public BaseObjectWidget, public Ui::BaseFunctionWidget
 		CodeCompletionWidget *source_code_cp;
 
 		//! \brief Table used to store the function's parameters
-		ObjectsTableWidget *parameters_tab;
+		ObjectsTableWidget *parameters_tab,
+
+		//! \brief Table used to store the function's transform types
+		*transform_types_tab,
+
+		//! \brief Table used to store the function's configuration parameters
+		*config_params_tab;
+
+		//! \brief Widget used to select transform types of the function's
+		PgSQLTypeWidget *transform_type_wgt;
 
 		//! \brief Returns a parameter configured based upon the specified table and line
 		Parameter getParameter(ObjectsTableWidget *params_tab, unsigned row, bool set_param_modes);

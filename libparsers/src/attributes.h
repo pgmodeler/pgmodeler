@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -76,6 +76,7 @@ namespace Attributes {
 	ByValue,
 	Cache,
 	CanonicalFunc,
+	CanvasColor,
 	CanvasCornerMove,
 	Cascade,
 	CaseSensitive,
@@ -115,6 +116,8 @@ namespace Attributes {
 	Concurrent,
 	Condition,
 	ConfigFile,
+	ConfigParam,
+	ConfigParams,
 	Configuration,
 	ConfirmValidation,
 	ConnectCenterPnts,
@@ -173,6 +176,7 @@ namespace Attributes {
 	DeletePriv,
 	DelEvent,
 	Delimiter,
+	DelimitersColor,
 	DestType,
 	Deterministic,
 	Diff,
@@ -268,6 +272,7 @@ namespace Attributes {
 	Global,
 	GrantOp,
 	GridSize,
+	GridColor,
 	Group,
 	HandlerFunc,
 	HandlesType,
@@ -337,6 +342,8 @@ namespace Attributes {
 	LastValue,
 	LastZoom,
 	Layer,
+	LayerNameColors,
+	LayerRectColors,
 	Layers,
 	LcCollate,
 	LcCollateMod,
@@ -421,6 +428,7 @@ namespace Attributes {
 	PaperMargin,
 	PaperOrientation,
 	PaperType,
+	ParallelType,
 	Parameter,
 	Parameters,
 	ParamIn,
@@ -468,7 +476,6 @@ namespace Attributes {
 	PrependedSql,
 	PreserveDbName,
 	PrependSchema,
-	Preset,
 	Preset,
 	Previous,
 	PrintGrid,
@@ -552,6 +559,8 @@ namespace Attributes {
 	ShellTypes,
 	ShowAttributesGrid,
 	ShowCanvasGrid,
+	ShowLayerNames,
+	ShowLayerRects,
 	ShowMainMenu,
 	ShowPageDelimiters,
 	ShowSourcePane,
@@ -616,15 +625,14 @@ namespace Attributes {
 	ToSqlFunc,
 	TpmodInFunc,
 	TpmodOutFunc,
+	TransformTypes,
 	TransitionFunc,
 	TriggerFunc,
 	TriggerPriv,
 	Triggers,
 	True,
 	Truncate,
-	TruncateCmds,
 	TruncatePriv,
-	TruncColsBeforeAlter,
 	TruncEvent,
 	Trusted,
 	TuplesDel,

@@ -3,7 +3,7 @@
 #          Code generation can be broken if incorrect changes are made.
 [<view name=] "{name}"
 
- %if {layer} %then [ layer=]"{layer}" %end
+ %if {layers} %then [ layers=]"{layers}" %end
  %if {alias} %then [ alias=]"{alias}" %end
  %if {protected} %then [ protected=] "true" %end
  %if {materialized} %then [ materialized=] "true" %end

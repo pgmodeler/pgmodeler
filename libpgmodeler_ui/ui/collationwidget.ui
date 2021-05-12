@@ -303,7 +303,7 @@
    <item row="2" column="2" colspan="2">
     <widget class="QGroupBox" name="groupBox_2">
      <property name="title">
-      <string>LC_COLLATE</string>
+      <string>LC_CTYPE</string>
      </property>
      <layout class="QGridLayout" name="gridLayout_2">
       <property name="leftMargin">

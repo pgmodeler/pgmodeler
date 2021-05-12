@@ -1,13 +1,13 @@
 #!/bin/bash
 
 USR=`whoami`
-PGSQL_ROOT=/Library/PostgreSQL/12
-QT_ROOT=/Users/$USR/Qt/5.15.1/clang_64
-QMAKE_ARGS="-r CONFIG+=x86_64 CONFIG+=release -spec macx-clang"
+PGSQL_ROOT=/Library/PostgreSQL/13
+QT_ROOT=/Users/$USR/Qt/5.15.2/clang_64
+QMAKE_ARGS="pgmodeler.pro -r CONFIG+=x86_64 CONFIG+=release -spec macx-clang"
 LOG=macdeploy.log
 
 # Detecting current pgModeler version
-DEPLOY_VER=`cat libutils/src/globalattributes.cpp | grep PgModelerVersion | sed 's/.*PgModelerVersion=QString("//g' | sed 's/")\;//g' | sed 's/^ *//g'`
+DEPLOY_VER=`cat libutils/src/globalattributes.cpp | grep PgModelerVersion | sed 's/.*PgModelerVersion=QString("//g' | sed 's/")//g' | sed 's/^ *//g'`
 BUILD_NUM=`date '+%Y%m%d'`
 
 DEMO_VERSION_OPT='-demo-version'
@@ -44,7 +44,7 @@ clear
 echo
 echo "pgModeler macOS deployment script"
 echo "PostgreSQL Database Modeler Project - pgmodeler.io"
-echo "Copyright 2006-2020 Raphael A. Silva <raphael@pgmodeler.io>"
+echo "Copyright 2006-2021 Raphael A. Silva <raphael@pgmodeler.io>"
 
 # Identifying System Qt version
 if [ -e "$QT_ROOT/bin/qmake" ]; then

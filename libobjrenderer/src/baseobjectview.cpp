@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -370,7 +370,7 @@ QVariant BaseObjectView::itemChange(GraphicsItemChange change, const QVariant &v
 
 		if(graph_obj && !graph_obj->isProtected())
 		{
-			if(ObjectsScene::isAlignObjectsToGrid())
+			if(ObjectsScene::isAlignObjectsToGrid() && this->isSelected())
 				this->setPos(ObjectsScene::alignPointToGrid(this->scenePos()));
 
 			graph_obj->setPosition(this->scenePos());
@@ -590,22 +590,66 @@ double BaseObjectView::getFontFactor()
 	return font_config[Attributes::Global].font().pointSizeF()/DefaultFontSize;
 }
 
-void BaseObjectView::setLayer(unsigned layer)
+void BaseObjectView::setLayers(const QList<unsigned> &list)
 {
 	BaseGraphicObject *graph_obj = dynamic_cast<BaseGraphicObject *>(this->getUnderlyingObject());
 
 	if(graph_obj)
-		graph_obj->setLayer(layer);
+		graph_obj->setLayers(list);
 }
 
-unsigned BaseObjectView::getLayer()
+void BaseObjectView::addToLayer(unsigned layer_id)
 {
 	BaseGraphicObject *graph_obj = dynamic_cast<BaseGraphicObject *>(this->getUnderlyingObject());
 
 	if(graph_obj)
-		return graph_obj->getLayer();
+		graph_obj->addToLayer(layer_id);
+}
+
+void BaseObjectView::removeFromLayer(unsigned layer_id)
+{
+	BaseGraphicObject *graph_obj = dynamic_cast<BaseGraphicObject *>(this->getUnderlyingObject());
+
+	if(graph_obj)
+		graph_obj->removeFromLayer(layer_id);
+}
+
+void BaseObjectView::resetLayers()
+{
+	BaseGraphicObject *graph_obj = dynamic_cast<BaseGraphicObject *>(this->getUnderlyingObject());
+
+	if(graph_obj)
+		graph_obj->resetLayers();
+}
+
+QList<unsigned> BaseObjectView::getLayers()
+{
+	BaseGraphicObject *graph_obj = dynamic_cast<BaseGraphicObject *>(this->getUnderlyingObject());
+
+	if(graph_obj)
+		return graph_obj->getLayers();
+
+	return {0};
+}
+
+int BaseObjectView::getLayersCount()
+{
+	BaseGraphicObject *graph_obj = dynamic_cast<BaseGraphicObject *>(this->getUnderlyingObject());
+
+	if(graph_obj)
+		return graph_obj->getLayersCount();
 
 	return 0;
+}
+
+bool BaseObjectView::isInLayer(unsigned layer_id)
+{
+	BaseGraphicObject *graph_obj = dynamic_cast<BaseGraphicObject *>(this->getUnderlyingObject());
+
+	if(graph_obj)
+		return graph_obj->isInLayer(layer_id);
+
+	return false;
 }
 
 double BaseObjectView::getScreenDpiFactor()

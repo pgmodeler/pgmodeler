@@ -38,7 +38,8 @@
         
             [ SELECT pr.oid, pronamespace AS schema, pr.proowner AS owner,
                      pr.proacl AS permission, pr.proname AS name, pr.prolang AS language,
-                     pr.pronargs AS arg_count, pr.pronargdefaults AS arg_def_count, ]
+                     pr.pronargs AS arg_count, pr.pronargdefaults AS arg_def_count, 
+                     array_to_string(pr.proconfig, '•', '') AS config_params, ]
 
                 [ CASE
                      WHEN proallargtypes IS NOT NULL THEN proallargtypes
@@ -50,6 +51,7 @@
                   pg_get_expr(proargdefaults, 'pg_class'::regclass) AS arg_defaults,
                   pr.prosrc AS definition,
                   pr.probin AS library,
+                  pr.protrftypes AS transform_types, 
 
                   CASE
                      WHEN pr.prosecdef  THEN 'SECURITY DEFINER'

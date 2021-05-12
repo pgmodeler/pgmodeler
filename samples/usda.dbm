@@ -9,10 +9,10 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<tablespace name="pg_default"/>
 </database>
 
-<schema name="public" layer="0" rect-visible="true" fill-color="#e1e1e1" sql-disabled="true">
+<schema name="public" layers="0" rect-visible="true" fill-color="#e1e1e1" sql-disabled="true">
 </schema>
 
-<table name="data_src" layer="0" collapse-mode="2" max-obj-count="10" z-value="0">
+<table name="data_src" layers="0" collapse-mode="2" max-obj-count="10" z-value="0">
 	<schema name="public"/>
 	<role name="postgres"/>
 	<position x="60" y="480"/>
@@ -48,7 +48,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 </table>
 
-<table name="datsrcln" layer="0" collapse-mode="2" max-obj-count="3" z-value="0">
+<table name="datsrcln" layers="0" collapse-mode="2" max-obj-count="3" z-value="0">
 	<schema name="public"/>
 	<role name="postgres"/>
 	<position x="480" y="540"/>
@@ -66,7 +66,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 </table>
 
-<table name="deriv_cd" layer="0" collapse-mode="2" max-obj-count="2" z-value="0">
+<table name="deriv_cd" layers="0" collapse-mode="2" max-obj-count="2" z-value="0">
 	<schema name="public"/>
 	<role name="postgres"/>
 	<position x="40" y="940"/>
@@ -81,7 +81,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 </table>
 
-<table name="fd_group" layer="0" collapse-mode="2" max-obj-count="2" z-value="0">
+<table name="fd_group" layers="0" collapse-mode="2" max-obj-count="2" z-value="0">
 	<schema name="public"/>
 	<role name="postgres"/>
 	<position x="1080" y="660"/>
@@ -96,7 +96,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 </table>
 
-<table name="food_des" layer="0" collapse-mode="2" max-obj-count="16" z-value="0">
+<table name="food_des" layers="0" collapse-mode="2" max-obj-count="16" z-value="0">
 	<schema name="public"/>
 	<role name="postgres"/>
 	<position x="1520" y="580"/>
@@ -147,7 +147,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 </table>
 
-<table name="footnote" layer="0" collapse-mode="2" max-obj-count="6" z-value="0">
+<table name="footnote" layers="0" collapse-mode="2" max-obj-count="6" z-value="0">
 	<schema name="public"/>
 	<role name="postgres"/>
 	<position x="1420" y="1360"/>
@@ -168,7 +168,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</column>
 </table>
 
-<table name="nut_data" layer="0" collapse-mode="2" max-obj-count="20" z-value="0">
+<table name="nut_data" layers="0" collapse-mode="2" max-obj-count="20" z-value="0">
 	<schema name="public"/>
 	<role name="postgres"/>
 	<position x="340" y="940"/>
@@ -228,7 +228,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 </table>
 
-<table name="nutr_def" layer="0" collapse-mode="2" max-obj-count="7" z-value="0">
+<table name="nutr_def" layers="0" collapse-mode="2" max-obj-count="7" z-value="0">
 	<schema name="public"/>
 	<role name="postgres"/>
 	<position x="800" y="1360"/>
@@ -255,7 +255,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 </table>
 
-<table name="src_cd" layer="0" collapse-mode="2" max-obj-count="2" z-value="0">
+<table name="src_cd" layers="0" collapse-mode="2" max-obj-count="2" z-value="0">
 	<schema name="public"/>
 	<role name="postgres"/>
 	<position x="940" y="480"/>
@@ -270,7 +270,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 </table>
 
-<table name="weight" layer="0" collapse-mode="2" max-obj-count="8" z-value="0">
+<table name="weight" layers="0" collapse-mode="2" max-obj-count="8" z-value="0">
 	<schema name="public"/>
 	<role name="postgres"/>
 	<position x="1040" y="1100"/>
@@ -351,7 +351,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 		</idxelement>
 </index>
 
-<textbox name="usda_desc" layer="0" z-value="0" font-size="11">
+<textbox name="usda_desc" layers="0" z-value="0" font-size="11">
 	<position x="20" y="20"/>
 	<comment><![CDATA[[ usda sample database ]
 
@@ -426,19 +426,19 @@ them as the source of the data and when possible they would like to see the prod
 	<columns names="ndb_no" ref-type="dst-columns"/>
 </constraint>
 
-<relationship name="rel_datsrcln_data_src" type="relfk" layer="0"
+<relationship name="rel_datsrcln_data_src" type="relfk" layers="0"
 	 custom-color="#97b81e"
 	 src-table="public.datsrcln"
 	 dst-table="public.data_src" reference-fk="datsrcln_datasrc_id_fkey"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_datsrcln_nut_data" type="relfk" layer="0"
+<relationship name="rel_datsrcln_nut_data" type="relfk" layers="0"
 	 custom-color="#ee2638"
 	 src-table="public.datsrcln"
 	 dst-table="public.nut_data" reference-fk="datsrcln_ndb_no_fkey"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_food_des_fd_group" type="relfk" layer="0"
+<relationship name="rel_food_des_fd_group" type="relfk" layers="0"
 	 custom-color="#daa378"
 	 src-table="public.food_des"
 	 dst-table="public.fd_group" reference-fk="food_des_fdgrp_cd_fkey"
@@ -448,19 +448,19 @@ them as the source of the data and when possible they would like to see the prod
 	</label>
 </relationship>
 
-<relationship name="rel_footnote_food_des" type="relfk" layer="0"
+<relationship name="rel_footnote_food_des" type="relfk" layers="0"
 	 custom-color="#9a2eb2"
 	 src-table="public.footnote"
 	 dst-table="public.food_des" reference-fk="footnote_ndb_no_fkey"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_footnote_nutr_def" type="relfk" layer="0"
+<relationship name="rel_footnote_nutr_def" type="relfk" layers="0"
 	 custom-color="#3e33b8"
 	 src-table="public.footnote"
 	 dst-table="public.nutr_def" reference-fk="footnote_nutr_no_fkey"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_nut_data_deriv_cd" type="relfk" layer="0"
+<relationship name="rel_nut_data_deriv_cd" type="relfk" layers="0"
 	 custom-color="#e250f2"
 	 src-table="public.nut_data"
 	 dst-table="public.deriv_cd" reference-fk="nut_data_deriv_cd_fkey"
@@ -470,25 +470,25 @@ them as the source of the data and when possible they would like to see the prod
 	</label>
 </relationship>
 
-<relationship name="rel_nut_data_food_des" type="relfk" layer="0"
+<relationship name="rel_nut_data_food_des" type="relfk" layers="0"
 	 custom-color="#b4007d"
 	 src-table="public.nut_data"
 	 dst-table="public.food_des" reference-fk="nut_data_ndb_no_fkey"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_nut_data_nutr_def" type="relfk" layer="0"
+<relationship name="rel_nut_data_nutr_def" type="relfk" layers="0"
 	 custom-color="#770084"
 	 src-table="public.nut_data"
 	 dst-table="public.nutr_def" reference-fk="nut_data_nutr_no_fkey"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_nut_data_src_cd" type="relfk" layer="0"
+<relationship name="rel_nut_data_src_cd" type="relfk" layers="0"
 	 custom-color="#ad1a09"
 	 src-table="public.nut_data"
 	 dst-table="public.src_cd" reference-fk="nut_data_src_cd_fkey"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_weight_food_des" type="relfk" layer="0"
+<relationship name="rel_weight_food_des" type="relfk" layers="0"
 	 custom-color="#9b3058"
 	 src-table="public.weight"
 	 dst-table="public.food_des" reference-fk="weight_ndb_no_fkey"

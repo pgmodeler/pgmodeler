@@ -1,7 +1,7 @@
 ﻿/*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -62,7 +62,17 @@ class GeneralConfigWidget: public BaseConfigWidget, public Ui::GeneralConfigWidg
 		UnitInches=2,
 		UnitCentimeters=3;
 
-		ColorPickerWidget *line_numbers_cp, *line_numbers_bg_cp, *line_highlight_cp;
+		ColorPickerWidget *line_numbers_cp,
+
+		*line_numbers_bg_cp,
+
+		*line_highlight_cp,
+
+		*grid_color_cp,
+
+		*canvas_color_cp,
+
+		*delimiters_color_cp;
 
 	public:
 		//! \brief Maximum number of files listed as recent models

@@ -3,7 +3,12 @@
 CAUTION: Do not modify this file unless you know what you are doing.
          Unexpected results may occur if the code is changed deliberately.
 -->
-<dbmodel pgmodeler-ver="0.9.3-beta1" use-changelog="false" author="Raphael Araújo e Silva" last-position="0,0" last-zoom="1.05" max-obj-count="6">
+<dbmodel pgmodeler-ver="0.9.4-alpha" use-changelog="false" author="Raphael Araújo e Silva" last-position="0,0" last-zoom="1.05" max-obj-count="6"
+	 layers="Default layer"
+	 active-layers="0"
+	 layer-name-colors="#000000"
+	 layer-rect-colors="#6c849e"
+	 show-layer-names="false" show-layer-rects="false">
 <role name="roletest"
       inherit="true">
 </role>
@@ -22,27 +27,28 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<style id="table-toggler-btns" colors="#fcfcfc,#fcfcfc,#808080"/>
 	<comment><![CDATA[this tag is a test]]></comment>
 </tag>
-<schema name="public" layer="0" protected="true" fill-color="#000000" sql-disabled="true">
+<schema name="public" layers="0" protected="true" fill-color="#000000" sql-disabled="true">
 </schema>
 
-	<language name="testlang" protected="true"/>
+	<language name="testlang"/>
 <function name="trigger_func"
 		window-func="false"
 		returns-setof="false"
 		behavior-type="CALLED ON NULL INPUT"
 		function-type="IMMUTABLE"
 		security-type="SECURITY DEFINER"
+		parallel-type="PARALLEL UNSAFE"
 		execution-cost="20"
 		row-amount="2500">
 	<schema name="public"/>
-	<language name="testlang" protected="true"/>
+	<language name="testlang"/>
 	<return-type>
 	<type name="trigger" length="1"/>
 	</return-type>
 	<definition><![CDATA[SELECT 1+1;]]></definition>
 </function>
 
-<table name="table" layer="0" collapse-mode="2" max-obj-count="4" z-value="0">
+<table name="table" layers="0" collapse-mode="2" max-obj-count="4" z-value="0">
 	<schema name="public"/>
 	<tag name="sample tag"/>
 	<position x="40" y="40"/>
@@ -71,9 +77,9 @@ CAUTION: Do not modify this file unless you know what you are doing.
 		</idxelement>
 </index>
 
-<table name="table1" layer="0" collapse-mode="2" max-obj-count="4" z-value="0">
+<table name="table1" layers="0" collapse-mode="2" max-obj-count="4" z-value="0">
 	<schema name="public"/>
-	<position x="660" y="560"/>
+	<position x="680" y="560"/>
 	<column name="column" not-null="true">
 		<type name="serial" length="1"/>
 	</column>
@@ -109,7 +115,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 		<function signature="public.trigger_func()"/>
 </trigger>
 
-<relationship name="table1_has_many_table" type="rel1n" layer="0"
+<relationship name="table1_has_many_table" type="rel1n" layers="0"
 	 src-col-pattern="{sc}_{st}"
 	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
 	 src-fk-pattern="{st}_fk"
@@ -124,9 +130,9 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</column>
 </relationship>
 
-<view name="view" layer="0" collapse-mode="2" max-obj-count="4" z-value="0">
+<view name="view" layers="0" collapse-mode="2" max-obj-count="4" z-value="0">
 	<schema name="public"/>
-	<position x="40" y="580"/>
+	<position x="40" y="600"/>
 	<reference table="public.&quot;table&quot;" column="column1" alias="t1" column-alias="col1"/>
 	<reference table="public.table1" column="column2" alias="t2" column-alias="col2"/>
 	<reference alias="expr">
@@ -137,12 +143,12 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<expression type="from-exp">3,0</expression>
 </view>
 
-<relationship name="rel_view_table" type="reltv" layer="0"
+<relationship name="rel_view_table" type="reltv" layers="0"
 	 src-table="public.view"
 	 dst-table="public.&quot;table&quot;"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_view_table1" type="reltv" layer="0"
+<relationship name="rel_view_table1" type="reltv" layers="0"
 	 src-table="public.view"
 	 dst-table="public.table1"
 	 src-required="false" dst-required="false">
@@ -151,19 +157,19 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</label>
 </relationship>
 
-<textbox name="textbox" layer="0" z-value="0" font-size="9">
-	<position x="300" y="620"/>
+<textbox name="textbox" layers="0" z-value="0" font-size="9">
+	<position x="320" y="640"/>
 	<comment><![CDATA[Selected Textbox]]></comment>
 </textbox>
 
-<textbox name="textbox1" layer="0" protected="true" z-value="0" font-size="9">
+<textbox name="textbox1" layers="0" protected="true" z-value="0" font-size="9">
 	<position x="300" y="520"/>
 	<comment><![CDATA[Protected Textbox]]></comment>
 </textbox>
 
-<table name="table2" layer="0" oids="true" collapse-mode="2" max-obj-count="4" z-value="0">
+<table name="table2" layers="0" oids="true" collapse-mode="2" max-obj-count="4" z-value="0">
 	<schema name="public"/>
-	<position x="660" y="40"/>
+	<position x="680" y="40"/>
 	<column name="column" not-null="true">
 		<type name="serial" length="1"/>
 	</column>
@@ -204,11 +210,11 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<foreigndatawrapper name="fdw_test"/>
 </foreignserver>
 
-<foreigntable name="foreign_table" layer="0" gen-alter-cmds="true" collapse-mode="2" max-obj-count="1" z-value="0">
+<foreigntable name="foreign_table" layers="0" gen-alter-cmds="true" collapse-mode="2" max-obj-count="1" z-value="0">
 	<schema name="public"/>
 	<role name="roletest"/>
 	<foreignserver name="server_test"/>
-	<position x="660" y="400"/>
+	<position x="680" y="400"/>
 	<column name="id" not-null="true">
 		<type name="smallint" length="0"/>
 	</column>
@@ -220,7 +226,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<columns names="column" ref-type="dst-columns"/>
 </constraint>
 
-<relationship name="rel_table2_table" type="relfk" layer="0"
+<relationship name="rel_table2_table" type="relfk" layers="0"
 	 src-table="public.table2"
 	 dst-table="public.&quot;table&quot;" reference-fk="table2_fk"
 	 src-required="false" dst-required="false">

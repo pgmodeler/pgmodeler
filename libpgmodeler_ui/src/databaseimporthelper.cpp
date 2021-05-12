@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -1092,9 +1092,11 @@ void DatabaseImportHelper::configureBaseFunctionAttribs(attribs_map &attribs)
 	PgSqlType type;
 	unsigned dim = 0;
 	QStringList param_types, param_names, param_modes,
-			param_def_vals, param_xmls, used_names;
+			param_def_vals, param_xmls, used_names, transform_types,
+			config_params, list;
 	QString param_tmpl_name = QString("_param%1"), pname;
 	vector<Parameter> parameters;
+	attribs_map cfg_attrs;
 
 	try
 	{
@@ -1102,6 +1104,25 @@ void DatabaseImportHelper::configureBaseFunctionAttribs(attribs_map &attribs)
 		param_names = Catalog::parseArrayValues(attribs[Attributes::ArgNames]);
 		param_modes = Catalog::parseArrayValues(attribs[Attributes::ArgModes]);
 		param_def_vals = Catalog::parseDefaultValues(attribs[Attributes::ArgDefaults]);
+
+		transform_types = getTypes(attribs[Attributes::TransformTypes], false);
+		attribs[Attributes::TransformTypes] = transform_types.join(',');
+
+		config_params = attribs[Attributes::ConfigParams].split(PgModelerNs::DataSeparator, QtCompat::SkipEmptyParts);
+		attribs[Attributes::ConfigParams] = "";
+
+		for(auto &cfg : config_params)
+		{
+			list = cfg.split('=');
+
+			if(list.size() < 2)
+				continue;
+
+			cfg_attrs[Attributes::Name] = list[0];
+			cfg_attrs[Attributes::Value] = list[1];
+			attribs[Attributes::ConfigParams] +=	schparser.getCodeDefinition(Attributes::ConfigParam, cfg_attrs, SchemaParser::XmlDefinition);
+		}
+
 
 		for(int i=0; i < param_types.size(); i++)
 		{

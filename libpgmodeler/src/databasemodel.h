@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -90,7 +90,13 @@ class DatabaseModel:  public QObject, public BaseObject {
 		XmlParser xmlparser;
 
 		//! \brief Stores the layers names and active layer to write them on XML code
-		QStringList layers;
+		QStringList layers,
+
+		//! \brief Stores the name colors of each layer to write them on XML code
+		layer_name_colors,
+
+		//! \brief Stores the rect colors of each layer to write them on XML code
+		layer_rect_colors;
 
 		QList<unsigned> active_layers;
 
@@ -122,7 +128,11 @@ class DatabaseModel:  public QObject, public BaseObject {
 		allow_conns,
 
 		//! \brief Indicates if the internal changelog must be saved to the dbm file
-		persist_changelog;
+		persist_changelog,
+
+		is_layer_names_visible,
+
+		is_layer_rects_visible;
 
 		//! \brief Vectors that stores all the objects types
 		vector<BaseObject *> textboxes,
@@ -259,10 +269,23 @@ class DatabaseModel:  public QObject, public BaseObject {
 		void getTransformDependencies(BaseObject *object, vector<BaseObject *> &deps, bool inc_indirect_deps);
 
 	protected:
+		//! \brief Set the layer names (only to be written in the XML definition)
 		void setLayers(const QStringList &layers);
+
+		//! \brief Set the active layer ids (only to be written in the XML definition)
 		void setActiveLayers(const QList<unsigned> &layers);
-		QStringList getLayers();
-		QList<unsigned> getActiveLayers();
+
+		//! \brief Set the layer name colors (only to be written in the XML definition)
+		void setLayerNameColors(const QStringList &color_names);
+
+		//! \brief Set the layer rect colors (only to be written in the XML definition)
+		void setLayerRectColors(const QStringList &color_names);
+
+		//! \brief Set the layer names visibility (only to be written in the XML definition)
+		void setLayerNamesVisible(bool value);
+
+		//! \brief Set the layer rects visibility (only to be written in the XML definition)
+		void setLayerRectsVisible(bool value);
 
 		/*! \brief Register an object change in the internal changelog.
 		 * If the provided object is derived from TableObject then the parent is registered instead.
@@ -278,6 +301,12 @@ class DatabaseModel:  public QObject, public BaseObject {
 		//! \brief Returns the XML code for the changelog
 		QString getChangelogDefinition();
 
+		//! \brief Loads the basic attributes, common between all children of BaseObject, from XML code
+		void setBasicAttributes(BaseObject *object);
+
+		//! \brief Loads the basic attributes, common between all children of BaseFunction, from XML code
+		void setBasicFunctionAttributes(BaseFunction *func);
+
 	public:
 		static constexpr unsigned MetaDbAttributes=1,	//! \brief Handle database model attribute when save/load metadata file
 		MetaObjsPositioning=2,	//! \brief Handle objects' positioning when save/load metadata file
@@ -292,7 +321,9 @@ class DatabaseModel:  public QObject, public BaseObject {
 		MetaGenericSqlObjs=1024,	//! \brief Handle generic sql object when save/load metadata file
 		MetaObjsAliases=2048,	//! \brief Handle the object's aliases (graphical objects and table children objects) when save/load metadata file
 		MetaObjsZStackValue=4096,	//! \brief Handle the object's Z stack value
-		MetaAllInfo=8191;	//! \brief Handle all metadata information about objects when save/load metadata file
+		MetaObjsLayersConfig=8192,	//! \brief Handle all the configuration related to layers
+		MetaMergeDuplicatedObjs=16384,	//! \brief Merges duplicated textboxes, tags and generic SQL objects
+		MetaAllInfo=32767;	//! \brief Handle all metadata information about objects when save/load metadata file
 
 		DatabaseModel();
 
@@ -627,8 +658,6 @@ class DatabaseModel:  public QObject, public BaseObject {
 		//! \brief Returns the object searching by its name and type
 		BaseObject *getObject(const QString &name, ObjectType obj_type);
 
-		void setBasicAttributes(BaseObject *object);
-
 		void configureDatabase(attribs_map &attribs);
 		PgSqlType createPgSQLType();
 		BaseObject *createObject(ObjectType obj_type);
@@ -799,6 +828,14 @@ class DatabaseModel:  public QObject, public BaseObject {
 
 		//! \brief Returns the amount of entries in the changelog
 		unsigned getChangelogLength();
+
+		QStringList getLayers();
+		QStringList getLayerNameColors();
+		QList<unsigned> getActiveLayers();
+		QStringList getLayerRectColors();
+
+		bool isLayerNamesVisible();
+		bool isLayerRectsVisible();
 
 	signals:
 		//! \brief Signal emitted when a new object is added to the model

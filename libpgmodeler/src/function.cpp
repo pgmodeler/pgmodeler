@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -36,6 +36,7 @@ Function::Function() : BaseFunction()
 	attributes[Attributes::FunctionType]="";
 	attributes[Attributes::ReturnsSetOf]="";
 	attributes[Attributes::BehaviorType]="";
+	attributes[Attributes::ParallelType]="";
 	attributes[Attributes::RefType]="";
 	attributes[Attributes::WindowFunc]="";
 	attributes[Attributes::ReturnTable]="";
@@ -113,6 +114,12 @@ void Function::setReturnType(PgSqlType type)
 	ret_table_columns.clear();
 }
 
+void Function::setParalleType(ParallelType type)
+{
+	setCodeInvalidated(parallel_type != type);
+	parallel_type = type;
+}
+
 void Function::setFunctionType(FunctionType func_type)
 {
 	setCodeInvalidated(function_type != func_type);
@@ -147,6 +154,11 @@ void Function::setBehaviorType(BehaviorType behav_type)
 PgSqlType Function::getReturnType()
 {
 	return return_type;
+}
+
+ParallelType Function::getParallelType()
+{
+	return parallel_type;
 }
 
 FunctionType Function::getFunctionType()
@@ -235,6 +247,7 @@ QString Function::getCodeDefinition(unsigned def_type, bool reduced_form)
 	attributes[Attributes::ExecutionCost]=QString("%1").arg(execution_cost);
 	attributes[Attributes::RowAmount]=QString("%1").arg(row_amount);
 	attributes[Attributes::FunctionType]=(~function_type);
+	attributes[Attributes::ParallelType]=(~parallel_type);
 
 	if(def_type==SchemaParser::SqlDefinition)
 		attributes[Attributes::ReturnType]=(*return_type);
@@ -261,8 +274,7 @@ QString Function::getAlterDefinition(BaseObject *object)
 	try
 	{
 		attribs_map attribs;
-
-		attributes[Attributes::AlterCmds]=BaseObject::getAlterDefinition(object);
+		attribs = BaseFunction::getAlterDefinitionAttributes(func);
 
 		if(this->source_code.simplified() != func->source_code.simplified() ||
 			 this->library!=func->library || this->symbol!=func->symbol)
@@ -287,14 +299,14 @@ QString Function::getAlterDefinition(BaseObject *object)
 			if(this->is_leakproof!=func->is_leakproof)
 				attribs[Attributes::LeakProof]=(func->is_leakproof ? Attributes::True : Attributes::Unset);
 
-			if(this->security_type!=func->security_type)
-				attribs[Attributes::SecurityType]=~func->security_type;
-
 			if((this->behavior_type!=func->behavior_type) &&
 					((this->behavior_type==BehaviorType::CalledOnNullInput) ||
 					 ((this->behavior_type==BehaviorType::Strict || this->behavior_type==BehaviorType::ReturnsNullOnNullInput) &&
 					  func->function_type==BehaviorType::CalledOnNullInput)))
 				attribs[Attributes::BehaviorType]=~func->behavior_type;
+
+			if(this->parallel_type!=func->parallel_type)
+				attribs[Attributes::ParallelType]=~func->parallel_type;
 		}
 
 		copyAttributes(attribs);

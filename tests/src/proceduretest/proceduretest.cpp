@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -313,8 +313,8 @@ void ProcedureTest::modelReturnsProcedureDepsRefs()
 		model.removeProcedure(&proc);
 		model.removeType(&type);
 
-		QCOMPARE(refs.size(), static_cast<unsigned>(0));
-		QCOMPARE(deps.size(),  static_cast<unsigned>(5));
+		QCOMPARE(refs.size(), static_cast<size_t>(0));
+		QCOMPARE(deps.size(),  static_cast<size_t>(5));
 	}
 	catch(Exception &e)
 	{

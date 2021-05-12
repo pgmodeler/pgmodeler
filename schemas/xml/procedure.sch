@@ -15,6 +15,15 @@
 %if {appended-sql} %then {appended-sql} %end
 %if {prepended-sql} %then {prepended-sql} %end
 %if {language} %then {language} %end
+
+%if {transform-types} %then
+    $tb [<transform-types names=] "{transform-types}" /> $br
+%end
+
+%if {config-params} %then
+    {config-params}
+%end
+
 %if {parameters} %then {parameters} %end
 
 %if {library} %then

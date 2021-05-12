@@ -3,7 +3,7 @@
 #          Code generation can be broken if incorrect changes are made.
 [<relationship name=] "{name}" [ type=] "{type}" 
 
-  %if {layer} %then [ layer=]"{layer}" %end
+  %if {layers} %then [ layers=]"{layers}" %end
   
   %if {alias} %then
    $sp alias="{alias}"

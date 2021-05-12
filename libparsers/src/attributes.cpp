@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -61,6 +61,7 @@ namespace Attributes {
 	ByValue("by-value"),
 	Cache("cache"),
 	CanonicalFunc("canonical"),
+	CanvasColor("canvas-color"),
 	CanvasCornerMove("canvas-corner-move"),
 	Cascade("cascade"),
 	CaseSensitive("case-sensitive"),
@@ -100,6 +101,8 @@ namespace Attributes {
 	Concurrent("concurrent"),
 	Condition("condition"),
 	ConfigFile("config-file"),
+	ConfigParam("confparam"),
+	ConfigParams("config-params"),
 	Configuration("configuration"),
 	ConfirmValidation("confirm-validation"),
 	ConnectCenterPnts("center-pnts"),
@@ -157,6 +160,7 @@ namespace Attributes {
 	DeletePriv("delete"),
 	DelEvent("del-event"),
 	Delimiter("delimiter"),
+	DelimitersColor("delimiters-color"),
 	DestType("destiny-type"),
 	Deterministic("deterministic"),
 	Diff("diff"),
@@ -252,6 +256,7 @@ namespace Attributes {
 	Global("global"),
 	GrantOp("grant-op"),
 	GridSize("grid-size"),
+	GridColor("grid-color"),
 	Group("group"),
 	HandlerFunc("handler"),
 	HandlesType("handles-type"),
@@ -320,6 +325,8 @@ namespace Attributes {
 	LastValue("last-value"),
 	LastZoom("last-zoom"),
 	Layer("layer"),
+	LayerNameColors("layer-name-colors"),
+	LayerRectColors("layer-rect-colors"),
 	Layers("layers"),
 	LcCollate("lc-collate"),
 	LcCtype("lc-ctype"),
@@ -404,6 +411,7 @@ namespace Attributes {
 	PaperMargin("paper-margin"),
 	PaperOrientation("paper-orientation"),
 	PaperType("paper-type"),
+	ParallelType("parallel-type"),
 	Parameter("parameter"),
 	Parameters("parameters"),
 	ParamIn("in"),
@@ -534,6 +542,8 @@ namespace Attributes {
 	ShellTypes("shell-types"),
 	ShowAttributesGrid("show-attributes-grid"),
 	ShowCanvasGrid("show-canvas-grid"),
+	ShowLayerNames("show-layer-names"),
+	ShowLayerRects("show-layer-rects"),
 	ShowMainMenu("show-main-menu"),
 	ShowPageDelimiters("show-page-delimiters"),
 	ShowSourcePane("show-source-pane"),
@@ -598,15 +608,14 @@ namespace Attributes {
 	ToSqlFunc("tosql"),
 	TpmodInFunc("tpmodin"),
 	TpmodOutFunc("tpmodout"),
+	TransformTypes("transform-types"),
 	TransitionFunc("transition"),
 	TriggerFunc("trigger-func"),
 	TriggerPriv("trigger"),
 	Triggers("triggers"),
 	True("true"),
 	Truncate("truncate"),
-	TruncateCmds("truncate-cmds"),
 	TruncatePriv("truncate"),
-	TruncColsBeforeAlter="trunc-cols-before-alter",
 	TruncEvent("trunc-event"),
 	Trusted("trusted"),
 	TuplesDel("tuples-del"),

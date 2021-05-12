@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -23,6 +23,7 @@
 #include <QtDebug>
 #include "qtcompat/splitbehaviorcompat.h"
 #include "qtcompat/qtextstreamcompat.h"
+#include <random>
 
 unsigned DatabaseModel::dbmodel_id=2000;
 
@@ -32,6 +33,12 @@ DatabaseModel::DatabaseModel()
 	object_id=DatabaseModel::dbmodel_id++;
 	obj_type=ObjectType::Database;
 
+	layers.append(tr("Default layer"));
+	active_layers.push_back(0);
+	layer_name_colors.append(QColor(0,0,0).name());
+	layer_rect_colors.append(QColor(180,180,180).name());
+
+	is_layer_names_visible = is_layer_rects_visible = false;
 	persist_changelog = false;
 	is_template = false;
 	allow_conns = true;
@@ -3264,18 +3271,70 @@ void DatabaseModel::loadModel(const QString &filename)
 													 attribs[Attributes::AllowConns] == Attributes::True);
 
 			persist_changelog = attribs[Attributes::UseChangelog] == Attributes::True;
-			layers = attribs[Attributes::Layers].split(';', QtCompat::SkipEmptyParts);
-			active_layers.clear();
+
+			/* Compatibility with models created prior the multiple layers features:
+			 * We need to replace semi-colon by comma in the attribute Layers in order to split the
+			 * string correctly, otherwise, the model will have only one layer no matter the amount of
+			 * layers created preivously (in an older version) */
+			layers = attribs[Attributes::Layers].replace(';',',').split(',', QtCompat::SkipEmptyParts);
+			attribs[Attributes::ActiveLayers].replace(';',',');
+
+			layer_name_colors = attribs[Attributes::LayerNameColors].split(',', QtCompat::SkipEmptyParts);
+			layer_rect_colors = attribs[Attributes::LayerRectColors].split(',', QtCompat::SkipEmptyParts);
+
+			is_layer_names_visible = attribs[Attributes::ShowLayerNames] == Attributes::True;
+			is_layer_rects_visible = attribs[Attributes::ShowLayerRects] == Attributes::True;
+
+			/*  Compatibility with models created prior the layers features:
+			 * If the layer rect colors is empty (probably a model generated in an older version)
+			 * we create random colors as fallback */
+
+			// Forcing the creation of the default layer is not present
+			if(layers.isEmpty())
+				layers.push_back(tr("Default layer"));
+
+			if(layer_rect_colors.isEmpty())
+			{
+				random_device rand_seed;
+				default_random_engine rand_num_engine;
+				uniform_int_distribution<unsigned> dist(0,255);
+
+				layer_name_colors.clear();
+				rand_num_engine.seed(rand_seed());
+
+				for(int i =0; i <= layers.size(); i++)
+				{
+					layer_rect_colors.append(QColor(dist(rand_num_engine),
+																					dist(rand_num_engine),
+																					dist(rand_num_engine)).name());
+
+					layer_name_colors.append(QColor(0,0,0).name());
+				}
+			}
 
 			/* Compatibility with models created prior the layers features:
 			 * If the "active-layers" is absent we make the default layer always visible */
-			if(!attribs.count(Attributes::ActiveLayers))
-				active_layers.push_back(0);
-			else
+			active_layers.clear();
+
+			for(auto &layer_id : attribs[Attributes::ActiveLayers].split(',', QtCompat::SkipEmptyParts))
 			{
-				for(auto &layer_id : attribs[Attributes::ActiveLayers].split(';', QtCompat::SkipEmptyParts))
-					active_layers.push_back(layer_id.toInt());
+				if(layer_id.toInt() >= layers.size())
+					continue;
+
+				active_layers.push_back(layer_id.toInt());
 			}
+
+			if(active_layers.isEmpty())
+				active_layers.push_back(0);
+
+			/* Perfoming size validations between the layer color lists and the layers lists
+			 * The excessive items from both list are removed until their sizes matches
+			 * the layers list */
+			while(layer_name_colors.size() > layers.size())
+				layer_name_colors.removeLast();
+
+			while(layer_rect_colors.size() > layers.size())
+				layer_rect_colors.removeLast();
 
 			protected_model=(attribs[Attributes::Protected]==Attributes::True);
 
@@ -3869,7 +3928,7 @@ Schema *DatabaseModel::createSchema()
 		schema->setFillColor(QColor(attribs[Attributes::FillColor]));
 		schema->setRectVisible(attribs[Attributes::RectVisible]==Attributes::True);
 		schema->setFadedOut(attribs[Attributes::FadedOut]==Attributes::True);
-		schema->setLayer(attribs[Attributes::Layer].toUInt());
+		schema->setLayers(attribs[Attributes::Layers].split(','));
 	}
 	catch(Exception &e)
 	{
@@ -3956,20 +4015,120 @@ Language *DatabaseModel::createLanguage()
 	return lang;
 }
 
-Function *DatabaseModel::createFunction()
+void DatabaseModel::setBasicFunctionAttributes(BaseFunction *func)
 {
-	attribs_map attribs, attribs_aux;
-	Function *func=nullptr;
-	ObjectType obj_type;
-	BaseObject *object=nullptr;
-	PgSqlType type;
-	Parameter param;
-	QString str_aux, elem;
+	if(!func)
+		throw Exception(ErrorCode::OprNotAllocatedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	try
 	{
-		func=new Function;
+		attribs_map attribs, attribs_aux;
+		QString elem;
+		BaseObject *object = nullptr;
+		Parameter param;
+		ObjectType obj_type;
+
 		setBasicAttributes(func);
+		xmlparser.getElementAttributes(attribs);
+
+		if(!attribs[Attributes::SecurityType].isEmpty())
+			func->setSecurityType(SecurityType(attribs[Attributes::SecurityType]));
+
+		xmlparser.savePosition();
+
+		if(xmlparser.accessElement(XmlParser::ChildElement))
+		{
+			do
+			{
+				if(xmlparser.getElementType()==XML_ELEMENT_NODE)
+				{
+					elem = xmlparser.getElementName();
+					obj_type = BaseObject::getObjectType(elem);
+
+					//Gets the function language
+					if(obj_type==ObjectType::Language)
+					{
+						xmlparser.getElementAttributes(attribs);
+						object = getObject(attribs[Attributes::Name], obj_type);
+
+						//Raises an error if the function doesn't exisits
+						if(!object)
+							throw Exception(Exception::getErrorMessage(ErrorCode::RefObjectInexistsModel)
+											.arg(func->getName())
+											.arg(func->getTypeName())
+											.arg(attribs[Attributes::Name])
+								.arg(BaseObject::getTypeName(ObjectType::Language)),
+								ErrorCode::RefObjectInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+						func->setLanguage(dynamic_cast<Language *>(object));
+					}
+					//Gets a function parameter
+					else if(xmlparser.getElementName()==Attributes::Parameter)
+					{
+						param = createParameter();
+						func->addParameter(param);
+					}
+					//Gets the function code definition
+					else if(xmlparser.getElementName()==Attributes::Definition)
+					{
+						xmlparser.savePosition();
+						xmlparser.getElementAttributes(attribs_aux);
+
+						if(!attribs_aux[Attributes::Library].isEmpty())
+						{
+							func->setLibrary(attribs_aux[Attributes::Library]);
+							func->setSymbol(attribs_aux[Attributes::Symbol]);
+						}
+						else if(xmlparser.accessElement(XmlParser::ChildElement))
+							func->setSourceCode(xmlparser.getElementContent());
+
+						xmlparser.restorePosition();
+					}
+					else if(xmlparser.getElementName() == Attributes::TransformTypes)
+					{
+						xmlparser.savePosition();
+						xmlparser.getElementAttributes(attribs_aux);
+						func->addTransformTypes(attribs_aux[Attributes::Names].split(',', QtCompat::SkipEmptyParts));
+						xmlparser.restorePosition();
+					}
+					else if(xmlparser.getElementName() == Attributes::Configuration)
+					{
+						xmlparser.savePosition();
+						xmlparser.getElementAttributes(attribs_aux);
+						func->setConfigurationParam(attribs_aux[Attributes::Name], attribs_aux[Attributes::Value]);
+						xmlparser.restorePosition();
+					}
+				}
+			}
+			while(xmlparser.accessElement(XmlParser::NextElement));
+		}
+
+		xmlparser.restorePosition();
+	}
+	catch(Exception &e)
+	{
+		if(e.getErrorCode()==ErrorCode::RefUserTypeInexistsModel)
+			throw Exception(Exception::getErrorMessage(ErrorCode::AsgObjectInvalidDefinition)
+							.arg(func->getName())
+							.arg(func->getTypeName()),
+							ErrorCode::AsgObjectInvalidDefinition,__PRETTY_FUNCTION__,__FILE__,__LINE__,&e, getErrorExtraInfo());
+
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, getErrorExtraInfo());
+	}
+}
+
+Function *DatabaseModel::createFunction()
+{
+	attribs_map attribs, attribs_aux;
+	Function *func = nullptr;
+	PgSqlType type;
+	QString str_aux;
+	Parameter param;
+
+	try
+	{
+		func = new Function;
+		setBasicFunctionAttributes(func);
 		xmlparser.getElementAttributes(attribs);
 
 		if(!attribs[Attributes::ReturnsSetOf].isEmpty())
@@ -3990,8 +4149,8 @@ Function *DatabaseModel::createFunction()
 		if(!attribs[Attributes::FunctionType].isEmpty())
 			func->setFunctionType(FunctionType(attribs[Attributes::FunctionType]));
 
-		if(!attribs[Attributes::SecurityType].isEmpty())
-			func->setSecurityType(SecurityType(attribs[Attributes::SecurityType]));
+		if(!attribs[Attributes::ParallelType].isEmpty())
+			func->setParalleType(ParallelType(attribs[Attributes::ParallelType]));
 
 		if(!attribs[Attributes::ExecutionCost].isEmpty())
 			func->setExecutionCost(attribs[Attributes::ExecutionCost].toInt());
@@ -4005,11 +4164,8 @@ Function *DatabaseModel::createFunction()
 			{
 				if(xmlparser.getElementType()==XML_ELEMENT_NODE)
 				{
-					elem=xmlparser.getElementName();
-					obj_type=BaseObject::getObjectType(elem);
-
 					//Gets the function return type from the XML
-					if(elem==Attributes::ReturnType)
+					if(xmlparser.getElementName() == Attributes::ReturnType)
 					{
 						xmlparser.savePosition();
 
@@ -4030,7 +4186,7 @@ Function *DatabaseModel::createFunction()
 									//when the element found is a PARAMETER indicates that the function return type is a table
 									else if(xmlparser.getElementName()==Attributes::Parameter)
 									{
-										param=createParameter();
+										param = createParameter();
 										func->addReturnedTableColumn(param.getName(), param.getType());
 									}
 								}
@@ -4045,45 +4201,6 @@ Function *DatabaseModel::createFunction()
 							throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 						}
 					}
-					//Gets the function language
-					else if(obj_type==ObjectType::Language)
-					{
-						xmlparser.getElementAttributes(attribs);
-						object=getObject(attribs[Attributes::Name], obj_type);
-
-						//Raises an error if the function doesn't exisits
-						if(!object)
-							throw Exception(Exception::getErrorMessage(ErrorCode::RefObjectInexistsModel)
-											.arg(func->getName())
-											.arg(func->getTypeName())
-											.arg(attribs[Attributes::Name])
-								.arg(BaseObject::getTypeName(ObjectType::Language)),
-								ErrorCode::RefObjectInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-
-						func->setLanguage(dynamic_cast<Language *>(object));
-					}
-					//Gets a function parameter
-					else if(xmlparser.getElementName()==Attributes::Parameter)
-					{
-						param=createParameter();
-						func->addParameter(param);
-					}
-					//Gets the function code definition
-					else if(xmlparser.getElementName()==Attributes::Definition)
-					{
-						xmlparser.savePosition();
-						xmlparser.getElementAttributes(attribs_aux);
-
-						if(!attribs_aux[Attributes::Library].isEmpty())
-						{
-							func->setLibrary(attribs_aux[Attributes::Library]);
-							func->setSymbol(attribs_aux[Attributes::Symbol]);
-						}
-						else if(xmlparser.accessElement(XmlParser::ChildElement))
-							func->setSourceCode(xmlparser.getElementContent());
-
-						xmlparser.restorePosition();
-					}
 				}
 			}
 			while(xmlparser.accessElement(XmlParser::NextElement));
@@ -4093,7 +4210,7 @@ Function *DatabaseModel::createFunction()
 	{
 		if(func)
 		{
-			str_aux=func->getName(true);
+			str_aux = func->getName();
 			delete func;
 		}
 
@@ -5670,7 +5787,7 @@ Trigger *DatabaseModel::createTrigger()
 		trigger->setTransitionTableName(Trigger::OldTableName, attribs[Attributes::OldTableName]);
 		trigger->setTransitionTableName(Trigger::NewTableName, attribs[Attributes::NewTableName]);
 
-		trigger->addArguments(attribs[Attributes::Arguments].split(PgModelerNs::DataSeparator));
+		trigger->addArguments(attribs[Attributes::Arguments].split(PgModelerNs::DataSeparator, QtCompat::SkipEmptyParts));
 		trigger->setDeferrable(attribs[Attributes::Deferrable]==Attributes::True);
 
 		if(trigger->isDeferrable())
@@ -6324,89 +6441,17 @@ Transform *DatabaseModel::createTransform()
 
 Procedure *DatabaseModel::createProcedure()
 {
-	attribs_map attribs, def_attribs;
-	Procedure *proc=nullptr;
-	ObjectType obj_type;
-	BaseObject *object=nullptr;
+	Procedure *proc = nullptr;
 
 	try
 	{
 		proc = new Procedure;
-		setBasicAttributes(proc);
-		xmlparser.getElementAttributes(attribs);
-
-		if(!attribs[Attributes::SecurityType].isEmpty())
-			proc->setSecurityType(SecurityType(attribs[Attributes::SecurityType]));
-
-		if(xmlparser.accessElement(XmlParser::ChildElement))
-		{
-			do
-			{
-				if(xmlparser.getElementType()==XML_ELEMENT_NODE)
-				{
-					obj_type=BaseObject::getObjectType(xmlparser.getElementName());
-
-					if(obj_type==ObjectType::Language)
-					{
-						xmlparser.getElementAttributes(attribs);
-						object = getObject(attribs[Attributes::Name], obj_type);
-
-						//Raises an error if the function doesn't exisits
-						if(!object)
-						{
-							throw Exception(Exception::getErrorMessage(ErrorCode::RefObjectInexistsModel)
-															.arg(proc->getName())
-															.arg(proc->getTypeName())
-															.arg(attribs[Attributes::Name])
-															.arg(BaseObject::getTypeName(ObjectType::Language)),
-															ErrorCode::RefObjectInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-						}
-
-						proc->setLanguage(dynamic_cast<Language *>(object));
-					}
-					else if(xmlparser.getElementName()==Attributes::Parameter)
-					{
-						proc->addParameter(createParameter());
-					}
-					else if(xmlparser.getElementName()==Attributes::Definition)
-					{
-						xmlparser.savePosition();
-						xmlparser.getElementAttributes(def_attribs);
-
-						if(!def_attribs[Attributes::Library].isEmpty())
-						{
-							proc->setLibrary(def_attribs[Attributes::Library]);
-							proc->setSymbol(def_attribs[Attributes::Symbol]);
-						}
-						else if(xmlparser.accessElement(XmlParser::ChildElement))
-							proc->setSourceCode(xmlparser.getElementContent());
-
-						xmlparser.restorePosition();
-					}
-				}
-			}
-			while(xmlparser.accessElement(XmlParser::NextElement));
-		}
+		setBasicFunctionAttributes(proc);
 	}
 	catch(Exception &e)
 	{
-		QString proc_name;
-
-		if(proc)
-		{
-			proc_name = proc->getName();
-			delete proc;
-		}
-
-		if(e.getErrorCode()==ErrorCode::RefUserTypeInexistsModel)
-		{
-			throw Exception(Exception::getErrorMessage(ErrorCode::AsgObjectInvalidDefinition)
-											.arg(proc_name)
-											.arg(BaseObject::getTypeName(ObjectType::Procedure)),
-											ErrorCode::AsgObjectInvalidDefinition,__PRETTY_FUNCTION__,__FILE__,__LINE__,&e, getErrorExtraInfo());
-		}
-		else
-			throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, getErrorExtraInfo());
+		if(proc) delete proc;
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, getErrorExtraInfo());
 	}
 
 	return proc;
@@ -6548,7 +6593,7 @@ View *DatabaseModel::createView()
 		view->setCurrentPage(BaseTable::AttribsSection, attribs[Attributes::AttribsPage].toUInt());
 		view->setCurrentPage(BaseTable::ExtAttribsSection, attribs[Attributes::ExtAttribsPage].toUInt());
 		view->setFadedOut(attribs[Attributes::FadedOut]==Attributes::True);
-		view->setLayer(attribs[Attributes::Layer].toUInt());
+		view->setLayers(attribs[Attributes::Layers].split(','));
 
 		if(xmlparser.accessElement(XmlParser::ChildElement))
 		{
@@ -6878,7 +6923,7 @@ Textbox *DatabaseModel::createTextbox()
 		xmlparser.getElementAttributes(attribs);
 
 		txtbox->setFadedOut(attribs[Attributes::FadedOut]==Attributes::True);
-		txtbox->setLayer(attribs[Attributes::Layer].toUInt());
+		txtbox->setLayers(attribs[Attributes::Layers].split(','));
 		txtbox->setTextAttribute(Textbox::ItalicText, attribs[Attributes::Italic]==Attributes::True);
 		txtbox->setTextAttribute(Textbox::BoldText, attribs[Attributes::Bold]==Attributes::True);
 		txtbox->setTextAttribute(Textbox::UnderlineText, attribs[Attributes::Underline]==Attributes::True);
@@ -6909,7 +6954,8 @@ BaseRelationship *DatabaseModel::createRelationship()
 	bool src_mand, dst_mand, identifier, protect, deferrable, sql_disabled, single_pk_col, faded_out;
 	DeferralType defer_type;
 	ActionType del_action, upd_action;
-	unsigned rel_type=0, i = 0, layer = 0;
+	unsigned rel_type=0, i = 0;
+	QStringList layers;
 	ObjectType table_types[2]={ ObjectType::View, ObjectType::Table }, obj_rel_type;
 	QString str_aux, elem, tab_attribs[2]={ Attributes::SrcTable, Attributes::DstTable };
 	QColor custom_color=Qt::transparent;
@@ -6927,7 +6973,7 @@ BaseRelationship *DatabaseModel::createRelationship()
 		dst_mand=attribs[Attributes::DstRequired]==Attributes::True;
 		protect=(attribs[Attributes::Protected]==Attributes::True);
 		faded_out=(attribs[Attributes::FadedOut]==Attributes::True);
-		layer = attribs[Attributes::Layer].toUInt();
+		layers = attribs[Attributes::Layers].split(',');
 
 		if(!attribs[Attributes::CustomColor].isEmpty())
 			custom_color=QColor(attribs[Attributes::CustomColor]);
@@ -7193,7 +7239,7 @@ BaseRelationship *DatabaseModel::createRelationship()
 	base_rel->setFadedOut(faded_out);
 	base_rel->setProtected(protect);
 	base_rel->setCustomColor(custom_color);
-	base_rel->setLayer(layer);
+	base_rel->setLayers(layers);
 
 	/* If the FK relationship does not reference a foreign key (models generated in older versions)
 	 * we need to assign them to the respective relationships */
@@ -7625,8 +7671,12 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 			for(auto &layer_id : active_layers)
 				act_layers.push_back(QString::number(layer_id));
 
-			attribs_aux[Attributes::Layers]=layers.join(';');
-			attribs_aux[Attributes::ActiveLayers]=act_layers.join(';');
+			attribs_aux[Attributes::Layers]=layers.join(',');
+			attribs_aux[Attributes::ActiveLayers]=act_layers.join(',');
+			attribs_aux[Attributes::LayerNameColors]=layer_name_colors.join(',');
+			attribs_aux[Attributes::LayerRectColors]=layer_rect_colors.join(',');
+			attribs_aux[Attributes::ShowLayerNames]=(is_layer_names_visible ? Attributes::True : Attributes::False);
+			attribs_aux[Attributes::ShowLayerRects]=(is_layer_rects_visible ? Attributes::True : Attributes::False);
 			attribs_aux[Attributes::MaxObjCount]=QString::number(static_cast<unsigned>(getMaxObjectCount() * 1.20));
 			attribs_aux[Attributes::Protected]=(this->is_protected ? Attributes::True : "");
 			attribs_aux[Attributes::LastPosition]=QString("%1,%2").arg(last_pos.x()).arg(last_pos.y());
@@ -8199,6 +8249,14 @@ void DatabaseModel::getProcedureDependencies(BaseObject *object, vector<BaseObje
 	for(i = 0; i < count; i++)
 	{
 		usr_type = getObjectPgSQLType(base_func->getParameter(i).getType());
+
+		if(usr_type)
+			getObjectDependecies(usr_type, deps, inc_indirect_deps);
+	}
+
+	for(auto &type : base_func->getTransformTypes())
+	{
+		usr_type = getObjectPgSQLType(type);
 
 		if(usr_type)
 			getObjectDependecies(usr_type, deps, inc_indirect_deps);
@@ -9248,27 +9306,40 @@ void DatabaseModel::getUserDefTypesReferences(BaseObject *object, vector<BaseObj
 				}
 			}
 		}
-		else if(obj_types[i]==ObjectType::Function)
+		else if(obj_types[i] == ObjectType::Function ||
+						obj_types[i] == ObjectType::Procedure)
 		{
+			BaseFunction *base_func = nullptr;
+
 			while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
 			{
-				func=dynamic_cast<Function *>(*itr);
+				base_func = dynamic_cast<BaseFunction *>(*itr);
+				func = dynamic_cast<Function *>(*itr);
 				itr++;
 
-				if(func->getReturnType()==ptr_pgsqltype)
+				if(func && func->getReturnType()==ptr_pgsqltype)
 				{
-					refer=true;
+					refer = true;
 					refs.push_back(func);
 				}
 				else
 				{
-					count=func->getParameterCount();
+					count = base_func->getParameterCount();
 					for(i1=0; i1 < count && (!exclusion_mode || (exclusion_mode && !refer)); i1++)
 					{
-						if(func->getParameter(i1).getType()==ptr_pgsqltype)
+						if(base_func->getParameter(i1).getType()==ptr_pgsqltype)
 						{
-							refer=true;
-							refs.push_back(func);
+							refer = true;
+							refs.push_back(base_func);
+						}
+					}
+
+					for(auto &type : base_func->getTransformTypes())
+					{
+						if(type == ptr_pgsqltype)
+						{
+							refer = true;
+							refs.push_back(base_func);
 						}
 					}
 				}
@@ -10575,6 +10646,7 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned option
 	QFile output(filename);
 	QByteArray buf;
 	QString objs_def;
+	QStringList layer_ids;
 	vector<BaseObject *> objects, tab_objs;
 	attribs_map attribs;
 	BaseGraphicObject *graph_obj=nullptr;
@@ -10589,7 +10661,7 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned option
 			save_objs_sqldis=false, save_textboxes=false, save_tags=false,
 			save_custom_sql=false, save_custom_colors=false, save_fadeout=false,
 			save_collapsemode=false, save_genericsqls=false, save_objs_aliases=false,
-			save_objs_z_value=false;
+			save_objs_z_value=false, save_objs_layers_cfg=false;
 	QStringList labels_attrs={ Attributes::SrcLabel,
 														 Attributes::DstLabel,
 														 Attributes::NameLabel };
@@ -10607,6 +10679,7 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned option
 	save_genericsqls=(MetaGenericSqlObjs & options) == MetaGenericSqlObjs;
 	save_objs_aliases=(MetaObjsAliases & options) == MetaObjsAliases;
 	save_objs_z_value=(MetaObjsZStackValue & options) == MetaObjsZStackValue;
+	save_objs_layers_cfg=(MetaObjsLayersConfig & options) == MetaObjsLayersConfig;
 
 	output.open(QFile::WriteOnly);
 
@@ -10635,6 +10708,7 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned option
 		{
 			objects.insert(objects.end(), schemas.begin(), schemas.end());
 			objects.insert(objects.end(), tables.begin(), tables.end());
+			objects.insert(objects.end(), foreign_tables.begin(), foreign_tables.end());
 			objects.insert(objects.end(), views.begin(), views.end());
 			objects.insert(objects.end(), relationships.begin(), relationships.end());
 			objects.insert(objects.end(), base_relationships.begin(), base_relationships.end());
@@ -10733,6 +10807,16 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned option
 			attribs[Attributes::FadedOut]=(save_fadeout && graph_obj && graph_obj->isFadedOut() ? Attributes::True : "");
 			attribs[Attributes::CollapseMode]=(save_collapsemode && base_tab ? QString::number(enum_cast(base_tab->getCollapseMode())) : "");
 
+			//Saving layers information
+			if(graph_obj && save_objs_layers_cfg)
+			{
+				for(auto &layer_id : graph_obj->getLayers())
+					layer_ids.append(QString::number(layer_id));
+
+				attribs[Attributes::Layers]=layer_ids.join(',');
+				layer_ids.clear();
+			}
+
 			if(TableObject::isTableObject(obj_type))
 			{
 				base_tab = dynamic_cast<TableObject *>(object)->getParentTable();
@@ -10755,6 +10839,21 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned option
 				attribs[Attributes::DefaultSchema]=(default_objs[ObjectType::Schema] ? default_objs[ObjectType::Schema]->getSignature() : "");
 				attribs[Attributes::DefaultTablespace]=(default_objs[ObjectType::Tablespace] ? default_objs[ObjectType::Tablespace]->getSignature() : "");
 				attribs[Attributes::DefaultOwner]=(default_objs[ObjectType::Role] ? default_objs[ObjectType::Role]->getSignature() : "");
+			}
+
+			//Saving database model layers information
+			if(save_objs_layers_cfg && object==this)
+			{
+				for(auto &layer_id : active_layers)
+					layer_ids.append(QString::number(layer_id));
+
+				attribs[Attributes::ActiveLayers]= layer_ids.join(',');
+				attribs[Attributes::Layers] = layers.join(',');
+				attribs[Attributes::ShowLayerNames] = is_layer_names_visible ? Attributes::True : Attributes::False;
+				attribs[Attributes::ShowLayerRects] = is_layer_rects_visible ? Attributes::True : Attributes::False;
+				attribs[Attributes::LayerRectColors] = layer_rect_colors.join(',');
+				attribs[Attributes::LayerNameColors] = layer_name_colors.join(',');
+				layer_ids.clear();
 			}
 
 			/* If the object is a graphic one and has Z stack value (currently only for tables/view/foreign tables,
@@ -10876,7 +10975,8 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned option
 				 (save_fadeout && !attribs[Attributes::FadedOut].isEmpty()) ||
 				 (save_collapsemode && !attribs[Attributes::CollapseMode].isEmpty()) ||
 				 (save_objs_aliases && !attribs[Attributes::Alias].isEmpty()) ||
-				 (save_objs_z_value && !attribs[Attributes::ZValue].isEmpty()))
+				 (save_objs_z_value && !attribs[Attributes::ZValue].isEmpty()) ||
+				 (save_objs_layers_cfg && !attribs[Attributes::Layers].isEmpty()))
 			{
 				emit s_objectLoaded(((idx++)/static_cast<double>(objects.size()))*100,
 														tr("Saving metadata of the object `%1' (%2)")
@@ -10928,7 +11028,7 @@ void DatabaseModel::loadObjectsMetadata(const QString &filename, unsigned option
 							 GlobalAttributes::DirSeparator;
 	attribs_map attribs, aux_attrib;
 	ObjectType obj_type;
-	BaseObject *object=nullptr, *new_object=nullptr;
+	BaseObject *object=nullptr, *new_object=nullptr, *aux_obj = nullptr;
 	BaseTable *src_tab=nullptr, *dst_tab=nullptr, *base_tab=nullptr;
 	vector<QPointF> points;
 	map<QString, unsigned> labels_attrs;
@@ -10941,7 +11041,7 @@ void DatabaseModel::loadObjectsMetadata(const QString &filename, unsigned option
 			load_objs_sqldis=false, load_textboxes=false, load_tags=false,
 			load_custom_sql=false, load_custom_colors=false, load_fadeout=false,
 			load_collapse_mode=false, load_genericsqls=false, load_objs_aliases=false,
-			load_objs_z_value=false;
+			load_objs_z_value=false, load_objs_layers_cfg=false, merge_dup_objs=false;
 
 	load_db_attribs=(MetaDbAttributes & options) == MetaDbAttributes;
 	load_objs_pos=(MetaObjsPositioning & options) == MetaObjsPositioning;
@@ -10956,6 +11056,8 @@ void DatabaseModel::loadObjectsMetadata(const QString &filename, unsigned option
 	load_genericsqls=(MetaGenericSqlObjs & options) == MetaGenericSqlObjs;
 	load_objs_aliases=(MetaObjsAliases & options) == MetaObjsAliases;
 	load_objs_z_value=(MetaObjsZStackValue & options) == MetaObjsZStackValue;
+	load_objs_layers_cfg=(MetaObjsLayersConfig & options) == MetaObjsLayersConfig;
+	merge_dup_objs=(MetaMergeDuplicatedObjs & options) == MetaMergeDuplicatedObjs;
 
 	try
 	{
@@ -10977,30 +11079,42 @@ void DatabaseModel::loadObjectsMetadata(const QString &filename, unsigned option
 			{
 				if(xmlparser.getElementType()==XML_ELEMENT_NODE)
 				{
-					elem_name=xmlparser.getElementName();
+					elem_name = xmlparser.getElementName();
+					obj_type = BaseObject::getObjectType(elem_name);
 
-					if((elem_name==BaseObject::getSchemaName(ObjectType::Tag) && load_tags) ||
-						 (elem_name==BaseObject::getSchemaName(ObjectType::Textbox) && load_textboxes) ||
-						 (elem_name==BaseObject::getSchemaName(ObjectType::GenericSql) && load_genericsqls))
+					xmlparser.getElementAttributes(attribs);
+
+					//Trying to create tag/textbox/generic sql object
+					if((obj_type == ObjectType::Tag && load_tags) ||
+						 (obj_type == ObjectType::Textbox && load_textboxes) ||
+						 (obj_type == ObjectType::GenericSql && load_genericsqls))
 					{
 						xmlparser.savePosition();
-						obj_type=BaseObject::getObjectType(elem_name);
-						new_object=createObject(obj_type);
+						aux_obj = getObject(attribs[Attributes::Name], obj_type);
+						new_object = createObject(obj_type);
 
-						if(getObjectIndex(new_object->getName(), obj_type) < 0)
+						if(!aux_obj)
 						{
 							emit s_objectLoaded(progress, tr("Creating object `%1' (%2)")
-																	.arg(new_object->getName()).arg(new_object->getTypeName()), enum_cast(obj_type));
+																	.arg(attribs[Attributes::Name])
+																	.arg(BaseObject::getTypeName(obj_type)), enum_cast(obj_type));
+
 							addObject(new_object);
 						}
 						else
 						{
-							emit s_objectLoaded(progress, tr("Object `%1' (%2) already exists. Ignoring.")
-																	.arg(new_object->getName()).arg(new_object->getTypeName()), enum_cast(ObjectType::BaseObject));
+							emit s_objectLoaded(progress,
+																	tr("Object `%1' (%2) already exists. %1.").arg(merge_dup_objs ? tr("Merging") : tr("Ignoring"))
+																	.arg(attribs[Attributes::Name])
+																	.arg(BaseObject::getTypeName(obj_type)), enum_cast(ObjectType::BaseObject));
+
+							if(merge_dup_objs)
+								PgModelerNs::copyObject(&aux_obj, new_object, obj_type);
+
 							delete new_object;
+							new_object = nullptr;
 						}
 
-						new_object=nullptr;
 						xmlparser.restorePosition();
 					}
 					else if(elem_name==Attributes::Info)
@@ -11027,6 +11141,22 @@ void DatabaseModel::loadObjectsMetadata(const QString &filename, unsigned option
 
 								if(pos.size()>=2)
 									last_pos=QPoint(pos[0].toInt(), pos[1].toInt());
+							}
+
+							if(load_objs_layers_cfg && !attribs[Attributes::Layers].isEmpty() &&
+								 !attribs[Attributes::LayerNameColors].isEmpty() && !attribs[Attributes::LayerRectColors].isEmpty() &&
+								 !attribs[Attributes::ShowLayerNames].isEmpty() && !attribs[Attributes::ShowLayerRects].isEmpty())
+							{
+								active_layers.clear();
+
+								for(auto &layer_id : attribs[Attributes::ActiveLayers].split(',', QtCompat::SkipEmptyParts))
+									active_layers.append(layer_id.toInt());
+
+								layers = attribs[Attributes::Layers].split(',', QtCompat::SkipEmptyParts);
+								layer_name_colors = attribs[Attributes::LayerNameColors].split(',', QtCompat::SkipEmptyParts);
+								layer_rect_colors = attribs[Attributes::LayerRectColors].split(',', QtCompat::SkipEmptyParts);
+								is_layer_names_visible = attribs[Attributes::ShowLayerNames] == Attributes::True;
+								is_layer_rects_visible = attribs[Attributes::ShowLayerRects] == Attributes::True;
 							}
 
 							object=this;
@@ -11081,7 +11211,8 @@ void DatabaseModel::loadObjectsMetadata(const QString &filename, unsigned option
 								if(tag)
 									dynamic_cast<BaseTable *>(object)->setTag(tag);
 							}
-							else if(BaseTable::isBaseTable(obj_type) && load_objs_z_value && !attribs[Attributes::ZValue].isEmpty())
+							else if((BaseTable::isBaseTable(obj_type) || obj_type == ObjectType::Textbox) &&
+											load_objs_z_value && !attribs[Attributes::ZValue].isEmpty())
 							{
 								dynamic_cast<BaseTable *>(object)->setZValue(attribs[Attributes::ZValue].toInt());
 							}
@@ -11096,6 +11227,9 @@ void DatabaseModel::loadObjectsMetadata(const QString &filename, unsigned option
 
 							if(load_objs_aliases && !attribs[Attributes::Alias].isEmpty())
 								object->setAlias(attribs[Attributes::Alias]);
+
+							if(load_objs_layers_cfg && BaseGraphicObject::isGraphicObject(obj_type) && !attribs[Attributes::Layers].isEmpty())
+								dynamic_cast<BaseGraphicObject *>(object)->setLayers(attribs[Attributes::Layers].split(',', QtCompat::SkipEmptyParts));
 
 							if(xmlparser.accessElement(XmlParser::ChildElement))
 							{
@@ -11240,6 +11374,46 @@ QList<unsigned> DatabaseModel::getActiveLayers()
 	return active_layers;
 }
 
+void DatabaseModel::setLayerNameColors(const QStringList &color_names)
+{
+	layer_name_colors = color_names;
+}
+
+QStringList DatabaseModel::getLayerNameColors()
+{
+	return layer_name_colors;
+}
+
+void DatabaseModel::setLayerRectColors(const QStringList &color_names)
+{
+	layer_rect_colors = color_names;
+}
+
+void DatabaseModel::setLayerNamesVisible(bool value)
+{
+	is_layer_names_visible = value;
+}
+
+void DatabaseModel::setLayerRectsVisible(bool value)
+{
+	is_layer_rects_visible = value;
+}
+
+QStringList DatabaseModel::getLayerRectColors()
+{
+	return layer_rect_colors;
+}
+
+bool DatabaseModel::isLayerNamesVisible()
+{
+	return is_layer_names_visible;
+}
+
+bool DatabaseModel::isLayerRectsVisible()
+{
+	return is_layer_rects_visible;
+}
+
 void DatabaseModel::addChangelogEntry(BaseObject *object, unsigned op_type, BaseObject *parent_obj)
 {
 	if(op_type == Operation::NoOperation || op_type == Operation::ObjectMoved)
@@ -11276,7 +11450,7 @@ void DatabaseModel::addChangelogEntry(const QString &signature, const QString &t
 	QStringList actions = { Attributes::Created, Attributes::Deleted, Attributes::Updated };
 
 	if(!BaseObject::isValidName(signature) || obj_type == ObjectType::BaseObject ||
-		 TableObject::isTableObject(obj_type) || !date_time.isValid() || !actions.contains(action))
+		 !date_time.isValid() || !actions.contains(action))
 		throw Exception(ErrorCode::InvChangelogEntryValues, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 
 	changelog.push_back(std::make_tuple(date_time, signature, obj_type, action));
@@ -11373,7 +11547,7 @@ TableClass *DatabaseModel::createPhysicalTable()
 		table->setCurrentPage(BaseTable::AttribsSection, attribs[Attributes::AttribsPage].toUInt());
 		table->setCurrentPage(BaseTable::ExtAttribsSection, attribs[Attributes::ExtAttribsPage].toUInt());
 		table->setFadedOut(attribs[Attributes::FadedOut]==Attributes::True);
-		table->setLayer(attribs[Attributes::Layer].toUInt());
+		table->setLayers(attribs[Attributes::Layers].split(','));
 
 		if(xmlparser.accessElement(XmlParser::ChildElement))
 		{

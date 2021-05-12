@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -41,6 +41,7 @@ QString Textbox::getCodeDefinition(unsigned def_type)
 
 		setPositionAttribute();
 		setFadedOutAttribute();
+		setLayersAttribute();
 
 		if(text_attributes[ItalicText])
 			attributes[Attributes::Italic]=Attributes::True;
@@ -55,7 +56,6 @@ QString Textbox::getCodeDefinition(unsigned def_type)
 			attributes[Attributes::Color]=text_color.name();
 
 		attributes[Attributes::FontSize]=QString("%1").arg(font_size);
-		attributes[Attributes::Layer]=QString::number(layer);
 		attributes[Attributes::ZValue]=QString::number(z_value);
 
 		return this->BaseObject::__getCodeDefinition(SchemaParser::XmlDefinition);
@@ -71,7 +71,7 @@ void Textbox::operator = (Textbox &txtbox)
 	this->text_attributes[2]=txtbox.text_attributes[2];
 	this->text_color=txtbox.text_color;
 	this->font_size=txtbox.font_size;
-	this->layer = txtbox.layer;
+	this->layers = txtbox.layers;
 }
 
 void Textbox::setTextAttribute(unsigned attrib, bool value)

@@ -60,18 +60,18 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<comment><![CDATA[comentario no banco de dados teste]]></comment>
 </database>
 
-<schema name="public" layer="0" rect-visible="true" fill-color="#ffc0c0" sql-disabled="true">
+<schema name="public" layers="0" rect-visible="true" fill-color="#ffc0c0" sql-disabled="true">
 </schema>
 
-<schema name="schema_B" layer="0" rect-visible="true" fill-color="#c0c0ff">
+<schema name="schema_B" layers="0" rect-visible="true" fill-color="#c0c0ff">
 	<role name="admin1"/>
 	<comment><![CDATA[comentario no esquema]]></comment>
 </schema>
 
-<schema name="schema_A" layer="0" rect-visible="true" fill-color="#00c0c0">
+<schema name="schema_A" layers="0" rect-visible="true" fill-color="#00c0c0">
 </schema>
 
-<schema name="schema_C" layer="0" rect-visible="true" fill-color="#ffdca8">
+<schema name="schema_C" layers="0" rect-visible="true" fill-color="#ffdca8">
 </schema>
 
 <function name="funcao_validator"
@@ -547,7 +547,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<type name="text" length="1"/>
 </domain>
 
-<table name="table_A1" layer="0" collapse-mode="2" max-obj-count="6" z-value="0">
+<table name="table_A1" layers="0" collapse-mode="2" max-obj-count="6" z-value="0">
 	<schema name="&quot;schema_A&quot;"/>
 	<position x="220" y="1160"/>
 	<column name="coluna_B_" not-null="true">
@@ -576,7 +576,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 </table>
 
-<table name="table_A2" layer="0" collapse-mode="2" max-obj-count="7" z-value="0">
+<table name="table_A2" layers="0" collapse-mode="2" max-obj-count="7" z-value="0">
 	<schema name="&quot;schema_A&quot;"/>
 	<position x="80" y="1540"/>
 	<column name="њcoluna_Bњ" not-null="true">
@@ -602,7 +602,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 </table>
 
-<table name="table_C1" layer="0" collapse-mode="2" max-obj-count="4" z-value="0">
+<table name="table_C1" layers="0" collapse-mode="2" max-obj-count="4" z-value="0">
 	<schema name="&quot;schema_C&quot;"/>
 	<position x="1980" y="740"/>
 	<column name="coluna_B" not-null="true">
@@ -628,7 +628,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 </table>
 
-<table name="tabela_B_4a" layer="0" protected="true" collapse-mode="2" max-obj-count="6" z-value="0">
+<table name="tabela_B_4a" layers="0" protected="true" collapse-mode="2" max-obj-count="6" z-value="0">
 	<schema name="public"/>
 	<position x="1021" y="949"/>
 	<column name="coluna_B" not-null="true" protected="true">
@@ -654,7 +654,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 </table>
 
-<table name="table_B1" layer="0" collapse-mode="2" max-obj-count="4" z-value="0">
+<table name="table_B1" layers="0" collapse-mode="2" max-obj-count="4" z-value="0">
 	<schema name="&quot;schema_B&quot;"/>
 	<position x="880" y="740"/>
 	<column name="coluna_B" not-null="true">
@@ -680,7 +680,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 </table>
 
-<table name="tabela_B_4c" layer="0" collapse-mode="2" max-obj-count="9" z-value="0">
+<table name="tabela_B_4c" layers="0" collapse-mode="2" max-obj-count="9" z-value="0">
 	<schema name="public"/>
 	<position x="1340" y="1640"/>
 	<column name="coluna_B" not-null="true">
@@ -706,7 +706,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 </table>
 
-<table name="table_C2" layer="0" collapse-mode="2" max-obj-count="7" z-value="0">
+<table name="table_C2" layers="0" collapse-mode="2" max-obj-count="7" z-value="0">
 	<schema name="&quot;schema_C&quot;"/>
 	<position x="1300" y="180"/>
 	<column name="coluna_B">
@@ -729,7 +729,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 </table>
 
-<table name="table_A3" layer="0" collapse-mode="2" max-obj-count="6" z-value="0">
+<table name="table_A3" layers="0" collapse-mode="2" max-obj-count="6" z-value="0">
 	<schema name="&quot;schema_A&quot;"/>
 	<position x="700" y="1520"/>
 	<column name="coluna_B" not-null="true">
@@ -758,7 +758,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 </table>
 
-<table name="table_C3" layer="0" collapse-mode="2" max-obj-count="4" z-value="0">
+<table name="table_C3" layers="0" collapse-mode="2" max-obj-count="4" z-value="0">
 	<schema name="&quot;schema_C&quot;"/>
 	<position x="2160" y="200"/>
 	<column name="coluna_B" not-null="true">
@@ -784,7 +784,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 </table>
 
-<table name="table_A4" layer="0" collapse-mode="2" max-obj-count="6" z-value="0">
+<table name="table_A4" layers="0" collapse-mode="2" max-obj-count="6" z-value="0">
 	<schema name="&quot;schema_A&quot;"/>
 	<position x="720" y="1140"/>
 	<column name="coluna_B" not-null="true">
@@ -813,7 +813,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 </table>
 
-<table name="table_C4" layer="0" collapse-mode="2" max-obj-count="9" z-value="0">
+<table name="table_C4" layers="0" collapse-mode="2" max-obj-count="9" z-value="0">
 	<schema name="&quot;schema_C&quot;"/>
 	<position x="1260" y="700"/>
 	<column name="coluna_B" not-null="true">
@@ -839,7 +839,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 </table>
 
-<table name="table_B2" layer="0" collapse-mode="2" max-obj-count="6" z-value="0">
+<table name="table_B2" layers="0" collapse-mode="2" max-obj-count="6" z-value="0">
 	<schema name="&quot;schema_B&quot;"/>
 	<position x="480" y="720"/>
 	<column name="coluna_B" not-null="true">
@@ -865,7 +865,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 </table>
 
-<table name="table_B4" layer="0" collapse-mode="2" max-obj-count="4" z-value="0">
+<table name="table_B4" layers="0" collapse-mode="2" max-obj-count="4" z-value="0">
 	<schema name="&quot;schema_B&quot;"/>
 	<position x="100" y="760"/>
 	<column name="coluna_B" not-null="true">
@@ -891,7 +891,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 </table>
 
-<table name="table_B3" layer="0" collapse-mode="2" max-obj-count="4" z-value="0">
+<table name="table_B3" layers="0" collapse-mode="2" max-obj-count="4" z-value="0">
 	<schema name="&quot;schema_B&quot;"/>
 	<position x="660" y="320"/>
 	<column name="coluna_B" not-null="true">
@@ -918,7 +918,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 </table>
 
-<table name="tabela_B_4z" layer="0" oids="true" collapse-mode="2" max-obj-count="6" z-value="0">
+<table name="tabela_B_4z" layers="0" oids="true" collapse-mode="2" max-obj-count="6" z-value="0">
 	<schema name="public"/>
 	<position x="1780" y="1380"/>
 	<column name="coluna_B" not-null="true">
@@ -941,7 +941,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 </table>
 
-<view name="view_B1" layer="0" collapse-mode="2" max-obj-count="4" z-value="0">
+<view name="view_B1" layers="0" collapse-mode="2" max-obj-count="4" z-value="0">
 	<schema name="&quot;schema_B&quot;"/>
 	<comment><![CDATA[comentario na visao teste]]></comment>
 	<position x="80" y="320"/>
@@ -955,30 +955,30 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<expression type="from-exp">3,0</expression>
 </view>
 
-<relationship name="&quot;rel_visao_teste_tabela_B_4k&quot;" type="reltv" layer="0"
+<relationship name="&quot;rel_visao_teste_tabela_B_4k&quot;" type="reltv" layers="0"
 	 custom-color="#9fdf3a"
 	 src-table="&quot;schema_B&quot;.&quot;view_B1&quot;"
 	 dst-table="&quot;schema_B&quot;.&quot;table_B3&quot;"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="&quot;rel_visao_teste_tabela_B_4j&quot;" type="reltv" layer="0"
+<relationship name="&quot;rel_visao_teste_tabela_B_4j&quot;" type="reltv" layers="0"
 	 custom-color="#0f30f0"
 	 src-table="&quot;schema_B&quot;.&quot;view_B1&quot;"
 	 dst-table="&quot;schema_B&quot;.&quot;table_B4&quot;"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="&quot;rel_visao_teste_tabela_B_4i&quot;" type="reltv" layer="0"
+<relationship name="&quot;rel_visao_teste_tabela_B_4i&quot;" type="reltv" layers="0"
 	 custom-color="#af3c3b"
 	 src-table="&quot;schema_B&quot;.&quot;view_B1&quot;"
 	 dst-table="&quot;schema_B&quot;.&quot;table_B2&quot;"
 	 src-required="false" dst-required="false"/>
 
-<textbox name="caixa_texto_Teste" layer="0" italic="true" z-value="0" font-size="9">
+<textbox name="caixa_texto_Teste" layers="0" italic="true" z-value="0" font-size="9">
 	<position x="480" y="480"/>
 	<comment><![CDATA[Caixa X:0 Y:0]]></comment>
 </textbox>
 
-<relationship name="table_A1_has_one_table_A2" type="rel11" layer="0"
+<relationship name="table_A1_has_one_table_A2" type="rel11" layers="0"
 	 src-col-pattern="{sc}_{st}"
 	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
 	 src-fk-pattern="{st}_fk"
@@ -987,7 +987,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 dst-table="&quot;schema_A&quot;.&quot;table_A1&quot;"
 	 src-required="false" dst-required="true"/>
 
-<relationship name="table_B2_has_one_table_B2" type="rel11" layer="0"
+<relationship name="table_B2_has_one_table_B2" type="rel11" layers="0"
 	 src-col-pattern="{sc}_{st}"
 	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
 	 src-fk-pattern="{st}_fk"
@@ -1002,7 +1002,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</line>
 </relationship>
 
-<relationship name="table_A3_has_many_table_A2" type="rel1n" layer="0"
+<relationship name="table_A3_has_many_table_A2" type="rel1n" layers="0"
 	 src-col-pattern="{sc}_{st}"
 	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
 	 src-fk-pattern="{st}_fk"
@@ -1011,7 +1011,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 dst-table="&quot;schema_A&quot;.&quot;table_A2&quot;"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="table_C1_has_many_table_C2" type="rel1n" layer="0"
+<relationship name="table_C1_has_many_table_C2" type="rel1n" layers="0"
 	 src-col-pattern="{sc}_{st}"
 	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
 	 src-fk-pattern="{st}_fk"
@@ -1022,7 +1022,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 identifier="true"
 />
 
-<relationship name="table_C2_has_many_table_C4" type="rel1n" layer="0"
+<relationship name="table_C2_has_many_table_C4" type="rel1n" layers="0"
 	 src-col-pattern="{sc}_{st}"
 	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
 	 src-fk-pattern="{st}_fk"
@@ -1044,7 +1044,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</column>
 </relationship>
 
-<relationship name="table_A2_has_many_tabela_B_4c" type="rel1n" layer="0"
+<relationship name="table_A2_has_many_tabela_B_4c" type="rel1n" layers="0"
 	 src-col-pattern="{sc}_{st}"
 	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
 	 src-fk-pattern="{st}_fk"
@@ -1067,7 +1067,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</column>
 </relationship>
 
-<relationship name="tabela_B_4c_has_many_tabela_B_4a" type="rel1n" layer="0"
+<relationship name="tabela_B_4c_has_many_tabela_B_4a" type="rel1n" layers="0"
 	 src-col-pattern="{sc}_{st}"
 	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
 	 src-fk-pattern="{st}_fk"
@@ -1077,7 +1077,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 src-required="false" dst-required="false"
 	 deferrable="true" defer-type="INITIALLY IMMEDIATE"/>
 
-<relationship name="many_table_B1_has_many_table_B3" type="relnn" layer="0"
+<relationship name="many_table_B1_has_many_table_B3" type="relnn" layers="0"
 	 src-col-pattern="{sc}_{st}" dst-col-pattern="{sc}_{dt}"
 	 pk-pattern="{gt}_pk" uq-pattern="{gt}_uq"
 	 src-fk-pattern="{st}_fk" dst-fk-pattern="{dt}_fk"
@@ -1088,7 +1088,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 src-required="false" dst-required="false"
 	 table-name="tabela_REL_NN"/>
 
-<relationship name="table_C3_has_many_table_C2" type="rel1n" layer="0"
+<relationship name="table_C3_has_many_table_C2" type="rel1n" layers="0"
 	 src-col-pattern="{sc}_{st}"
 	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
 	 src-fk-pattern="{st}_fk"
@@ -1145,7 +1145,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 		<function signature="public.funcao_teste()"/>
 </trigger>
 
-<textbox name="pagila_desc" layer="0" z-value="0" font-size="11">
+<textbox name="pagila_desc" layers="0" z-value="0" font-size="11">
 	<position x="80" y="0"/>
 	<comment><![CDATA[[ sampledb database ]
 

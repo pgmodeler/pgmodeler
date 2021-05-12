@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -28,6 +28,7 @@
 #include "basefunction.h"
 #include "pgsqltypes/behaviortype.h"
 #include "pgsqltypes/functiontype.h"
+#include "pgsqltypes/paralleltype.h"
 
 class Function: public BaseFunction {
 	private:
@@ -48,6 +49,9 @@ class Function: public BaseFunction {
 
 		//! \brief Function return type
 		PgSqlType return_type;
+
+		//! \brief The parallelism type used by the function
+		ParallelType parallel_type;
 
 		/*! \brief Stores the table columns returned by the clause RETURNS TABLE. This clause instead
 		 of return a specific element returns a whole table. This structure is available
@@ -96,6 +100,9 @@ class Function: public BaseFunction {
 		//! \brief Defines the function return type
 		void setReturnType(PgSqlType type);
 
+		//! \brief Defines the function's parallelism type
+		void setParalleType(ParallelType type);
+
 		//! \brief Returns the returned table column count
 		unsigned getReturnedTableColumnCount();
 
@@ -122,6 +129,9 @@ class Function: public BaseFunction {
 
 		//! \brief Returns the function returned type
 		PgSqlType getReturnType();
+
+		//! \brief Returns the function's parallelism type
+		ParallelType getParallelType();
 
 		//! \brief Returns the function's execution cost
 		unsigned getExecutionCost();

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -151,9 +151,9 @@ void ModelExportForm::handleErrorIgnored(QString err_code, QString err_msg, QStr
 																					 QPixmap(PgModelerUiNs::getIconPath("msgbox_alerta")), nullptr, false);
 
 	PgModelerUiNs::createOutputTreeItem(output_trw, PgModelerUiNs::formatMessage(err_msg),
-																			QPixmap(PgModelerUiNs::getIconPath("msgbox_alerta")),	item, false);
+																			QPixmap(PgModelerUiNs::getIconPath("msgbox_alerta")),	item, false, true);
 
-	PgModelerUiNs::createOutputTreeItem(output_trw, cmd, QPixmap(), item, false);
+	PgModelerUiNs::createOutputTreeItem(output_trw, cmd, QPixmap(), item, false, true);
 }
 
 void ModelExportForm::updateProgress(int progress, QString msg, ObjectType obj_type, QString cmd, bool is_code_gen)

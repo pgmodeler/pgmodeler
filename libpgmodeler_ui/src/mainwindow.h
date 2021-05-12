@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -50,7 +50,7 @@
 #include "configurationform.h"
 #include "donatewidget.h"
 #include "sceneinfowidget.h"
-#include "layerswidget.h"
+#include "layersconfigwidget.h"
 #include "changelogwidget.h"
 
 class MainWindow: public QMainWindow, public Ui::MainWindow {
@@ -85,7 +85,7 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 		SceneInfoWidget *scene_info_wgt;
 
 		//! \brief Layers management widget
-		LayersWidget *layers_wgt;
+		LayersConfigWidget *layers_wgt;
 
 		//! \brief Layers management widget
 		ChangelogWidget *changelog_wgt;

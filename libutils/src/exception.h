@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -299,12 +299,14 @@ enum class ErrorCode: unsigned {
 	InvChildObjectTypeFilter,
 	InvChangelogEntryValues,
 	InvProcedureParamOutMode,
-	ExportFailureDbSQLDisabled
+	ExportFailureDbSQLDisabled,
+	InvConfigParameterName,
+	EmptyConfigParameterValue
 };
 
 class Exception {
 	private:
-		static constexpr unsigned ErrorCount=255;
+		static constexpr unsigned ErrorCount=257;
 
 		/*! \brief Stores other exceptions before raise the 'this' exception.
 		 This structure can be used to simulate a stack trace to improve the debug */

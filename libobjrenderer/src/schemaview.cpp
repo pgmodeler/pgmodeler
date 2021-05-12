@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -36,7 +36,7 @@ SchemaView::SchemaView(Schema *schema) : BaseObjectView(schema)
 
 	this->addToGroup(box);
 	this->addToGroup(sch_name);
-	this->setZValue(-100);
+	this->setZValue(-200);
 
 	this->configureObject();
 	all_selected=false;
@@ -179,15 +179,43 @@ void SchemaView::configureObject()
 		QColor color;
 		QRectF rect;
 		QFont font;
-		double sp_h=0, sp_v=0, txt_h=0;
-		double x1=1000000, y1=1000000, x2=-1000000, y2=-1000000, width=0;
+		double sp_h=0, sp_v=0, txt_h=0,
+		x1=1000000, y1=1000000, x2=-1000000, y2=-1000000, width=0,
+		height = 0, size_inc = 0, left_inc = 0, top_inc = 0;
 		QList<BaseObjectView *>::Iterator itr=children.begin();
+		BaseObjectView *obj_view = nullptr;
+		ObjectsScene *scene = dynamic_cast<ObjectsScene *>(this->scene());
+		QFontMetricsF fm(LayerItem::getDefaultFont());
+		QList<unsigned> act_layers = scene->getActiveLayersIds();
+		int num_layers = 0;
+
+		last_pos = schema->getPosition();
 
 		//Configures the bounding rect based upon the children dimension
 		while(itr!=children.end())
 		{
-			rect.setTopLeft((*itr)->pos());
-			rect.setSize((*itr)->boundingRect().size());
+			obj_view = dynamic_cast<BaseObjectView *>(*itr);
+
+			if(scene && scene->isLayerRectsVisible())
+			{
+				num_layers = 0;
+
+				/* Determining the amount of visible layers of the object
+				 * in order to generated the correct bounding rect dimension */
+				for(auto &layer_id : obj_view->getLayers())
+				{
+					if(act_layers.contains(layer_id))
+						num_layers++;
+				}
+
+				size_inc = left_inc = top_inc = LayerItem::LayerPadding * num_layers;
+
+				if(scene->isLayerNamesVisible())
+					top_inc = fm.height() * num_layers;
+			}
+
+			rect.setTopLeft(obj_view->pos() - QPointF(left_inc, top_inc));
+			rect.setSize(obj_view->boundingRect().size() + QSizeF(2 * size_inc, size_inc + top_inc));
 
 			if(rect.left() < x1)
 				x1 = rect.left();
@@ -214,18 +242,19 @@ void SchemaView::configureObject()
 		txt_h=sch_name->boundingRect().height() + (2 * VertSpacing);
 
 		//Configures the box with the points calculated above
-		sp_h=(3 * HorizSpacing);
-		sp_v=(3 * VertSpacing) + txt_h;
+		sp_h=(4 * HorizSpacing);
+		sp_v=(4 * VertSpacing) + txt_h;
 
-		width=(x2-x1) + 1;
+		width = (x2 - x1) + 1;
+		height = (y2 - y1) + sp_v;
 
 		if(width < sch_name->boundingRect().width())
 			width=sch_name->boundingRect().width();
 
 		rect.setTopLeft(QPointF(-sp_h, 0));
 		rect.setTopRight(QPointF(width + sp_h, 0));
-		rect.setBottomRight(QPointF(width + sp_h, y2-y1 + sp_v));
-		rect.setBottomLeft(QPointF(-sp_h, y2-y1 + sp_v));
+		rect.setBottomRight(QPointF(width + sp_h, height));
+		rect.setBottomLeft(QPointF(-sp_h, height));
 		box->setRect(rect);
 
 		//Sets the schema view position
@@ -243,17 +272,15 @@ void SchemaView::configureObject()
 		box->setPen(QPen(color, 1 * BaseObjectView::getScreenDpiFactor(), Qt::SolidLine));
 
 		this->bounding_rect=rect;
-
-		ObjectsScene *scene = dynamic_cast<ObjectsScene *>(this->scene());
-		this->setVisible(scene && scene->isLayerActive(schema->getLayer()));
+		this->setVisible(scene && scene->isLayersActive(schema->getLayers()));
 
 		this->setToolTip(schema->getName(true) +
 										 QString(" (") + schema->getTypeName() + QString(")") +
 										 QString("\nId: %1").arg(schema->getObjectId()));
 		sch_name->setToolTip(this->toolTip());
 
-		this->protected_icon->setPos(QPointF( sch_name->boundingRect().width() + sp_h,
-											  sch_name->pos().y() + VertSpacing ));
+		this->protected_icon->setPos(QPointF(sch_name->boundingRect().width() + sp_h ,
+																				 sch_name->pos().y() + VertSpacing));
 
 		this->configureObjectSelection();
 		this->configureProtectedIcon();

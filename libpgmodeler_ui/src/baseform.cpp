@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -46,7 +46,7 @@ void BaseForm::resizeForm(QWidget *widget)
 			screen_id = qApp->desktop()->screenNumber(qApp->activeWindow());
 	QScreen *screen=qApp->screens().at(screen_id);
 	double dpi_factor = 0;
-  double pixel_ratio = 0;
+	double pixel_ratio = 0;
 
 	max_w = screen->size().width() * 0.70;
 	max_h = screen->size().height() * 0.70;

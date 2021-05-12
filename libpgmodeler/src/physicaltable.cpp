@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -1354,6 +1354,7 @@ void PhysicalTable::updateAlterCmdsStatus()
 void PhysicalTable::setTableAttributes(unsigned def_type, bool incl_rel_added_objs)
 {
 	QStringList part_keys_code;
+
 	attributes[Attributes::GenAlterCmds]=(gen_alter_cmds ? Attributes::True : "");
 	attributes[Attributes::AncestorTable]="";
 	attributes[Attributes::PartitionedTable]="";
@@ -1361,7 +1362,6 @@ void PhysicalTable::setTableAttributes(unsigned def_type, bool incl_rel_added_ob
 	attributes[Attributes::Partitioning]=~partitioning_type;
 	attributes[Attributes::PartitionKey]="";
 	attributes[Attributes::PartitionBoundExpr]=part_bounding_expr;
-	attributes[Attributes::Layer]=QString::number(layer);
 	attributes[Attributes::Pagination]=(pagination_enabled ? Attributes::True : "");
 	attributes[Attributes::CollapseMode]=QString::number(enum_cast(collapse_mode));
 	attributes[Attributes::AttribsPage]=(pagination_enabled ? QString::number(curr_page[AttribsSection]) : "");
@@ -1390,6 +1390,7 @@ void PhysicalTable::setTableAttributes(unsigned def_type, bool incl_rel_added_ob
 		setRelObjectsIndexesAttribute();
 		setPositionAttribute();
 		setFadedOutAttribute();
+		setLayersAttribute();
 		attributes[Attributes::InitialData]=initial_data;
 		attributes[Attributes::MaxObjCount]=QString::number(static_cast<unsigned>(getMaxObjectCount() * 1.20));
 		attributes[Attributes::ZValue]=QString::number(z_value);
@@ -1404,7 +1405,7 @@ void PhysicalTable::operator = (PhysicalTable &table)
 
 	(*dynamic_cast<BaseTable *>(this))=dynamic_cast<BaseTable &>(table);
 
-	this->layer = table.layer;
+	this->layers = table.layers;
 	this->col_indexes=table.col_indexes;
 	this->constr_indexes=table.constr_indexes;
 	this->partitioning_type=table.partitioning_type;
