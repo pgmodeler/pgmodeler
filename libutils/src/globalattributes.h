@@ -89,6 +89,7 @@ class GlobalAttributes {
 		BugReportEmail,
 		BugReportFile,
 		StacktraceFile,
+		LastModelFile,
 
 		DirSeparator,
 		DefaultConfsDir,  //! \brief Directory name which holds the default pgModeler configuration

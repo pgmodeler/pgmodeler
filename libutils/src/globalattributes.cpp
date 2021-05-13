@@ -43,6 +43,7 @@ const QString GlobalAttributes::PgModelerUpdateCheckURL=QString("%1/checkupdate?
 const QString GlobalAttributes::BugReportEmail("bug@pgmodeler.io");
 const QString GlobalAttributes::BugReportFile("pgmodeler%1.bug");
 const QString GlobalAttributes::StacktraceFile(".stacktrace");
+const QString GlobalAttributes::LastModelFile("lastmodel");
 
 const QString GlobalAttributes::DirSeparator("/");
 const QString GlobalAttributes::DefaultConfsDir("defaults");

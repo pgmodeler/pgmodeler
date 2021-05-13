@@ -52,6 +52,9 @@ class BugReportForm : public QDialog, public Ui::BugReportForm {
 	public:
 		BugReportForm(QWidget * parent = nullptr, Qt::WindowFlags f = Qt::Widget);
 		
+		//! \brief Attach the provided file in the bug report
+		void attachModel(const QString &filename);
+
 	public slots:
 		void generateReport();
 		

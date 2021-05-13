@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>550</width>
-    <height>515</height>
+    <width>820</width>
+    <height>737</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -504,7 +504,7 @@
              <string>Attach a different database model</string>
             </property>
             <property name="text">
-             <string>...</string>
+             <string/>
             </property>
             <property name="icon">
              <iconset resource="../res/resources.qrc">
@@ -515,6 +515,9 @@
               <width>22</width>
               <height>22</height>
              </size>
+            </property>
+            <property name="toolButtonStyle">
+             <enum>Qt::ToolButtonIconOnly</enum>
             </property>
            </widget>
           </item>

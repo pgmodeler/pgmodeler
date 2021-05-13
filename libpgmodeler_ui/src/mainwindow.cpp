@@ -1075,8 +1075,20 @@ void MainWindow::setCurrentModel()
 	current_model=dynamic_cast<ModelWidget *>(models_tbw->currentWidget());
 	action_arrange_objects->setEnabled(current_model != nullptr);
 
+	QFile::remove(GlobalAttributes::getTemporaryFilePath(GlobalAttributes::LastModelFile));
+
 	if(current_model)
 	{
+		/* Each time the current model is changed we have to change the last model link so the
+		 * so the crash handler and bug report form can indentify the last modified model after
+		 * their execution */
+		#ifdef Q_OS_WIN
+			// On Windows, since there's no symbolic links like Linux/macOs we forcibly create a copy of the current model as the last model
+			QFile::copy(current_model->getTempFilename(), GlobalAttributes::getTemporaryFilePath(GlobalAttributes::LastModelFile));
+		#else
+			QFile::link(current_model->getTempFilename(), GlobalAttributes::getTemporaryFilePath(GlobalAttributes::LastModelFile));
+		#endif
+
 		QToolButton *tool_btn=nullptr;
 		QList<QToolButton *> btns;
 		QFont font;

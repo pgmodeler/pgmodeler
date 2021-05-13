@@ -50,21 +50,22 @@ BugReportForm::BugReportForm(QWidget *parent, Qt::WindowFlags f) : QDialog(paren
 	hl_model_txt=new SyntaxHighlighter(model_txt);
 	hl_model_txt->loadConfiguration(GlobalAttributes::getXMLHighlightConfPath());
 
-	QDir tmp_dir = QDir(GlobalAttributes::getTemporaryDir(), QString("*.dbm"), QDir::Name, QDir::Files | QDir::NoDotAndDotDot);
-	tmp_dir.setSorting(QDir::Time);
-	QStringList list = tmp_dir.entryList();
+	attachModel(GlobalAttributes::getTemporaryFilePath(GlobalAttributes::LastModelFile));
+}
 
-	if(!list.isEmpty())
-	{
-		QFile input;
+void BugReportForm::attachModel(const QString &filename)
+{
+	QFile input;
 
-		//Opens the last modified model file showing it on the proper widget
-		input.setFileName(GlobalAttributes::getTemporaryFilePath(list[0]));
+	input.setFileName(filename);
+	input.open(QFile::ReadOnly);
 
-		input.open(QFile::ReadOnly);
-		model_txt->setPlainText(QString(input.readAll()));
-		input.close();
-	}
+	if(QFile::exists(filename) && !input.isOpen())
+		throw Exception(Exception::getErrorMessage(ErrorCode::FileDirectoryNotAccessed).arg(filename),
+										ErrorCode::FileDirectoryNotAccessed,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+	model_txt->setPlainText(QString(input.readAll()));
+	input.close();
 }
 
 QByteArray BugReportForm::generateReportBuffer()
@@ -140,20 +141,7 @@ void BugReportForm::attachModel()
 		file_dlg.setModal(true);
 
 		if(file_dlg.exec()==QFileDialog::Accepted)
-		{
-			QFile input(file_dlg.selectedFiles().at(0));
-			QByteArray buf;
-
-			input.open(QFile::ReadOnly);
-
-			if(!input.isOpen())
-				throw Exception(Exception::getErrorMessage(ErrorCode::FileDirectoryNotAccessed).arg(file_dlg.selectedFiles().at(0)),
-												ErrorCode::FileDirectoryNotAccessed,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-
-			buf = input.readAll();
-			model_txt->setPlainText(QString(buf));
-			input.close();
-		}
+			attachModel(file_dlg.selectedFiles().at(0));
 	}
 	catch(Exception &e)
 	{

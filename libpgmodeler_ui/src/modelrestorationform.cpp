@@ -108,7 +108,7 @@ bool ModelRestorationForm::hasTemporaryModels()
 void ModelRestorationForm::removeTemporaryFiles()
 {
 	QDir tmp_file;
-	QStringList tmp_files = QDir(GlobalAttributes::getTemporaryDir(), QString("*.dbm;*.dbk;*.omf;*.sql;*.log"),
+	QStringList tmp_files = QDir(GlobalAttributes::getTemporaryDir(), QString("*"),
 															 QDir::Name, QDir::Files | QDir::NoDotAndDotDot).entryList();
 
 	for(auto &file : tmp_files)
