@@ -376,6 +376,7 @@ namespace PgModelerUiNs {
 
 		base_frm.setMainWidget(bulkedit_wgt);
 		base_frm.setButtonConfiguration(Messagebox::OkCancelButtons);
+		base_frm.apply_ok_btn->setShortcut(QKeySequence("Ctrl+Return"));
 
 		if(base_frm.exec() == QDialog::Accepted)
 		{

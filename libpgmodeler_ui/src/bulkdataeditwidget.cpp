@@ -20,6 +20,7 @@
 BulkDataEditWidget::BulkDataEditWidget(QWidget *parent) : QWidget(parent)
 {
 	setupUi(this);
+	value_edt->installEventFilter(this);
 }
 
 void BulkDataEditWidget::showEvent(QShowEvent *)

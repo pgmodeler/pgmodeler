@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>897</width>
-    <height>650</height>
+    <height>1005</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -399,6 +399,19 @@
                <property name="bottomMargin">
                 <number>4</number>
                </property>
+               <item row="0" column="0">
+                <widget class="QLabel" name="column_lbl">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="text">
+                  <string>Column:</string>
+                 </property>
+                </widget>
+               </item>
                <item row="2" column="0" colspan="4">
                 <widget class="QListWidget" name="ord_columns_lst">
                  <property name="sizePolicy">
@@ -406,6 +419,26 @@
                    <horstretch>0</horstretch>
                    <verstretch>0</verstretch>
                   </sizepolicy>
+                 </property>
+                </widget>
+               </item>
+               <item row="3" column="0">
+                <widget class="QLabel" name="limit_in_lbl">
+                 <property name="text">
+                  <string>Limit in:</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="3" column="3">
+                <widget class="QLabel" name="results_lbl">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="text">
+                  <string>results (Use &lt;strong&gt;0&lt;/strong&gt; for no limit)</string>
                  </property>
                 </widget>
                </item>
@@ -614,61 +647,6 @@
                  </item>
                 </layout>
                </item>
-               <item row="3" column="1" colspan="2">
-                <widget class="QSpinBox" name="limit_spb">
-                 <property name="sizePolicy">
-                  <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-                   <horstretch>0</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
-                 </property>
-                 <property name="minimum">
-                  <number>0</number>
-                 </property>
-                 <property name="maximum">
-                  <number>1000000</number>
-                 </property>
-                 <property name="singleStep">
-                  <number>50</number>
-                 </property>
-                 <property name="value">
-                  <number>1000</number>
-                 </property>
-                </widget>
-               </item>
-               <item row="0" column="0">
-                <widget class="QLabel" name="column_lbl">
-                 <property name="sizePolicy">
-                  <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
-                   <horstretch>0</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
-                 </property>
-                 <property name="text">
-                  <string>Column:</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="3" column="3">
-                <widget class="QLabel" name="results_lbl">
-                 <property name="sizePolicy">
-                  <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-                   <horstretch>0</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
-                 </property>
-                 <property name="text">
-                  <string>results (Use &lt;strong&gt;0&lt;/strong&gt; for no limit)</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="3" column="0">
-                <widget class="QLabel" name="limit_in_lbl">
-                 <property name="text">
-                  <string>Limit in:</string>
-                 </property>
-                </widget>
-               </item>
                <item row="0" column="1" colspan="3">
                 <layout class="QHBoxLayout" name="horizontalLayout_8">
                  <item>
@@ -714,6 +692,28 @@
                   </widget>
                  </item>
                 </layout>
+               </item>
+               <item row="3" column="1" colspan="2">
+                <widget class="QSpinBox" name="limit_spb">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="minimum">
+                  <number>0</number>
+                 </property>
+                 <property name="maximum">
+                  <number>1000000</number>
+                 </property>
+                 <property name="singleStep">
+                  <number>50</number>
+                 </property>
+                 <property name="value">
+                  <number>1000</number>
+                 </property>
+                </widget>
                </item>
               </layout>
              </widget>
@@ -881,7 +881,10 @@
             </font>
            </property>
            <property name="text">
-            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Empty values are assumed as &lt;span style=&quot; font-weight:600;&quot;&gt;DEFAULT&lt;/span&gt;. To use special values like &lt;span style=&quot; font-weight:600;&quot;&gt;NULL&lt;/span&gt;, a function call like &lt;span style=&quot; font-weight:600;&quot;&gt;now()&lt;/span&gt; or a specific data escaping, enclose values in two slashes, e.g., &lt;span style=&quot; font-weight:600;&quot;&gt;/value/&lt;/span&gt;. To use a slash as part of the value prepend the backslash character, e.g., &lt;span style=&quot; font-weight:600;&quot;&gt;\/&lt;/span&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            <string>Empty values are assumed as &lt;strong&gt;DEFAULT&lt;/strong&gt;. To use special values like &lt;strong&gt;NULL&lt;/strong&gt;, a function call like &lt;strong&gt;now()&lt;/strong&gt; or a specific data escaping, enclose values in two slashes, e.g., &lt;strong&gt;/value/&lt;/strong&gt;. To use a slash as part of the value prepend the backslash character, e.g., &lt;strong&gt;\/&lt;/strong&gt;.</string>
+           </property>
+           <property name="textFormat">
+            <enum>Qt::AutoText</enum>
            </property>
            <property name="wordWrap">
             <bool>true</bool>

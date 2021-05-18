@@ -127,6 +127,8 @@ class DataManipulationForm: public QDialog, public Ui::DataManipulationForm {
 
 		void sortResults(int column, Qt::SortOrder order);
 
+		void selectColumn(int column, Qt::SortOrder order);
+
 		//! \brief List the tables based upon the current schema
 		void listTables();
 		

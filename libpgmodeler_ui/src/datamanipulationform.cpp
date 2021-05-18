@@ -198,7 +198,14 @@ DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f):
 
 	connect(results_tbw, SIGNAL(itemSelectionChanged()), this, SLOT(enableRowControlButtons()));
 	connect(csv_load_wgt, SIGNAL(s_csvFileLoaded()), this, SLOT(loadDataFromCsv()));
-	connect(results_tbw->horizontalHeader(), SIGNAL(sortIndicatorChanged(int,Qt::SortOrder)), this, SLOT(sortResults(int,Qt::SortOrder)));
+
+	connect(results_tbw->horizontalHeader(), &QHeaderView::sortIndicatorChanged, [&](int section, Qt::SortOrder sort_order){
+		// Applying the sorting on the clicked column when the Control key is pressed
+		if(qApp->keyboardModifiers() == Qt::ControlModifier)
+			sortResults(section, sort_order);
+		else
+			selectColumn(section, sort_order);
+	});
 }
 
 void DataManipulationForm::setAttributes(Connection conn, const QString curr_schema, const QString curr_table, const QString &filter)
@@ -266,6 +273,22 @@ void DataManipulationForm::sortResults(int column, Qt::SortOrder order)
 	retrieveData();
 	results_tbw->horizontalHeader()->setSortIndicator(column, order);
 	results_tbw->horizontalHeader()->setSortIndicatorShown(true);
+}
+
+void DataManipulationForm::selectColumn(int column, Qt::SortOrder order)
+{
+	/* If the column was clicked but the Control key was not pressed
+	 * then whe reset to sorting settings and then apply a column selection */
+	clearSortColumnList();
+
+	/* Since the sorting order was changed by clicking the column we revert the sorting order to the previous value (before the click)
+	 * so the next time the user uses Ctrl+Click the sort is applied correctly based on the sort indicatior */
+	results_tbw->horizontalHeader()->blockSignals(true);
+	results_tbw->horizontalHeader()->setSortIndicator(column, order == Qt::AscendingOrder ? Qt::DescendingOrder : Qt::AscendingOrder);
+	results_tbw->horizontalHeader()->setSortIndicatorShown(false);
+	results_tbw->horizontalHeader()->blockSignals(false);
+
+	results_tbw->selectColumn(column);
 }
 
 void DataManipulationForm::listTables()
