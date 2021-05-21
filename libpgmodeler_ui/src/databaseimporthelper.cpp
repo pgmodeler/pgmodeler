@@ -2912,6 +2912,8 @@ void DatabaseImportHelper::__createTableInheritances()
 				}
 				catch(Exception &e)
 				{
+					dbmodel->removeRelationship(rel);
+
 					if(rel) delete rel;
 
 					if(ignore_errors)
