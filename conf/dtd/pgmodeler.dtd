@@ -53,6 +53,7 @@
 <!ATTLIST configuration save-restore-geometry (false|true) "false">
 <!ATTLIST configuration low-verbosity (false|true) "false">
 <!ATTLIST configuration escape-comment (false|true) "false">
+<!ATTLIST configuration hide-schema-names-of-types (false|true) "false">
 
 <!ELEMENT session (file+)>
 <!ELEMENT recent-models (file+)>

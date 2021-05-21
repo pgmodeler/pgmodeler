@@ -304,6 +304,7 @@ void GeneralConfigWidget::loadConfiguration()
 		hide_ext_attribs_chk->setChecked(config_params[Attributes::Configuration][Attributes::HideExtAttribs]==Attributes::True);
 		hide_rel_name_chk->setChecked(config_params[Attributes::Configuration][Attributes::HideRelName]==Attributes::True);
 		hide_table_tags_chk->setChecked(config_params[Attributes::Configuration][Attributes::HideTableTags]==Attributes::True);
+		hide_sch_name_usr_types_chk->setChecked(config_params[Attributes::Configuration][Attributes::HideSchNameUserTypes]==Attributes::True);
 
 		font_cmb->setCurrentFont(QFont(config_params[Attributes::Configuration][Attributes::CodeFont]));
 		font_size_spb->setValue(config_params[Attributes::Configuration][Attributes::CodeFontSize].toDouble());
@@ -523,6 +524,7 @@ void GeneralConfigWidget::saveConfiguration()
 		config_params[Attributes::Configuration][Attributes::HideExtAttribs]=(hide_ext_attribs_chk->isChecked() ? Attributes::True : "");
 		config_params[Attributes::Configuration][Attributes::HideRelName]=(hide_rel_name_chk->isChecked() ? Attributes::True : "");
 		config_params[Attributes::Configuration][Attributes::HideTableTags]=(hide_table_tags_chk->isChecked() ? Attributes::True : "");
+		config_params[Attributes::Configuration][Attributes::HideSchNameUserTypes]=(hide_sch_name_usr_types_chk->isChecked() ? Attributes::True : "");
 
 		config_params[Attributes::Configuration][Attributes::CodeFont]=font_cmb->currentText();
 		config_params[Attributes::Configuration][Attributes::CodeFontSize]=QString::number(font_size_spb->value());
@@ -660,6 +662,7 @@ void GeneralConfigWidget::applyConfiguration()
 	BaseTableView::setAttributesPerPage(BaseTable::ExtAttribsSection, ext_attribs_per_page_spb->value());
 	RelationshipView::setHideNameLabel(hide_rel_name_chk->isChecked());
 	RelationshipView::setCurvedLines(use_curved_lines_chk->isChecked());
+	TableObjectView::setSchemaNameUserType(hide_sch_name_usr_types_chk->isChecked());
 	ModelWidget::setSaveLastCanvasPosition(save_last_pos_chk->isChecked());
 	ModelWidget::setRenderSmoothnessDisabled(disable_smooth_chk->isChecked());
 	ModelWidget::setSimplifiedObjectCreation(simple_obj_creation_chk->isChecked());

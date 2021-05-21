@@ -56,6 +56,7 @@ $sp [<configuration op-list-size="] {op-list-size} ["] $br
 [               save-restore-geometry="] %if {save-restore-geometry} %then true %else false %end ["] $br
 [               low-verbosity="] %if {low-verbosity} %then true %else false %end ["] $br
 [               escape-comment="] %if {escape-comment} %then true %else false %end ["] $br
+[               hide-schema-names-of-types="] %if {hide-schema-names-of-types} %then true %else false %end ["] $br
 
 %if {source-editor-app} %then
 [               source-editor-app="] {source-editor-app} ["] $br

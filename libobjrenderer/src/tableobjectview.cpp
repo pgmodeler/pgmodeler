@@ -18,6 +18,7 @@
 
 #include "tableobjectview.h"
 
+bool TableObjectView::hide_sch_name_usr_type = false;
 const QString TableObjectView::TypeSeparator=QString(" ");
 const QString TableObjectView::ConstrSeparator=QString(" ");
 const QString TableObjectView::TextUnique=QString("uq");
@@ -178,6 +179,19 @@ void TableObjectView::configureDescriptor(ConstraintType constr_type)
 	}
 }
 
+QString TableObjectView::formatUserTypeName(PgSqlType type)
+{
+	QString fmt_type_name = *type;
+
+	if(type.isUserType() && type.getUserTypeReference() && hide_sch_name_usr_type)
+	{
+		BaseObject *obj = reinterpret_cast<BaseObject *>(type.getUserTypeReference());
+		fmt_type_name.remove(obj->getSchema()->getName() + ".");
+	}
+
+	return fmt_type_name;
+}
+
 void TableObjectView::configureObject()
 {
 	if(this->getUnderlyingObject())
@@ -278,7 +292,7 @@ void TableObjectView::configureObject()
 		else
 		{
 			if(column)
-				lables[1]->setText(TypeSeparator + (*column->getType()));
+				lables[1]->setText(TypeSeparator + formatUserTypeName(column->getType()));
 			else
 				lables[1]->setText(TypeSeparator + tab_obj->getSchemaName());
 		}
@@ -529,7 +543,12 @@ void TableObjectView::configureObject(const SimpleColumn &col)
 	if(!compact_view && !col.type.isEmpty())
 	{
 		fmt=font_config[Attributes::ObjectType];
-		lables[1]->setText(col.type);
+
+		if(col.type == Attributes::Expression)
+			lables[1]->setText(col.type);
+		else
+			lables[1]->setText(formatUserTypeName(PgSqlType::parseString(col.type)));
+
 		lables[1]->setFont(fmt.font());
 		lables[1]->setBrush(fmt.foreground());
 		lables[1]->setPos(px, 0);
@@ -667,6 +686,16 @@ void TableObjectView::setFakeSelection(bool value)
 bool TableObjectView::hasFakeSelection()
 {
 	return fake_selection;
+}
+
+void TableObjectView::setSchemaNameUserType(bool value)
+{
+	hide_sch_name_usr_type = value;
+}
+
+bool TableObjectView::isHideSchemaNameUserType()
+{
+	return hide_sch_name_usr_type;
 }
 
 void TableObjectView::configureObjectSelection()

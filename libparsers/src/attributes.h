@@ -282,6 +282,7 @@ namespace Attributes {
 	Height,
 	HideExtAttribs,
 	HideRelName,
+	HideSchNameUserTypes,
 	HideTableTags,
 	HighlightLines,
 	HighlightOrder,

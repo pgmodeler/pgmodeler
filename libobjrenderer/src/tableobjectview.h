@@ -29,10 +29,11 @@
 #include "table.h"
 #include "baseobjectview.h"
 
-class TableObjectView: public BaseObjectView
-{
+class TableObjectView: public BaseObjectView {
 	private:
 		Q_OBJECT
+
+		static bool hide_sch_name_usr_type;
 
 		//! \brief Table object descriptor
 		QGraphicsItem *descriptor;
@@ -54,6 +55,10 @@ class TableObjectView: public BaseObjectView
 		}
 
 		void calculateBoundingRect();
+
+		/*! \brief Returns the type name either schema-qualified or not depending on the flag hide_sch_name_usr_type
+		 * and if the provider type is an user-defined one */
+		QString formatUserTypeName(PgSqlType type);
 
 	public:
 		static const QString	ConstrDelimEnd,
@@ -96,6 +101,9 @@ class TableObjectView: public BaseObjectView
 
 		void setFakeSelection(bool value);
 		bool hasFakeSelection();
+
+		static void setSchemaNameUserType(bool value);
+		static bool isHideSchemaNameUserType();
 
 		virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = nullptr);
 

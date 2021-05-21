@@ -316,7 +316,7 @@ unsigned PgSqlType::getUserTypeConfig()
 	if(this->isUserType())
 		return (user_types[this->type_idx - (PseudoEnd + 1)].type_conf);
 	else
-		return 0;
+		return PgSqlType::Null;
 }
 
 unsigned PgSqlType::getTypeId()

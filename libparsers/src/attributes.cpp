@@ -266,6 +266,7 @@ namespace Attributes {
 	Height("height"),
 	HideExtAttribs("hide-ext-attribs"),
 	HideRelName("hide-rel-name"),
+	HideSchNameUserTypes("hide-schema-names-of-types"),
 	HideTableTags("hide-table-tags"),
 	HighlightLines("highlight-lines"),
 	HighlightOrder("highlight-order"),
