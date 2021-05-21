@@ -1116,7 +1116,7 @@ void PgModelerCliApp::recreateObjects()
 					list=extractForeignKeys(xml_def);
 
 					/* If fks were extracted insert them on the main constraints list
-		  and restarts the XMLParser with the modified buffer */
+					 * and restarts the XMLParser with the modified buffer */
 					if(!list.isEmpty())
 					{
 						constr.append(list);

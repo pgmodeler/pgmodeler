@@ -18,9 +18,9 @@ void Extension::setName(const QString &name)
 	{
 		QString prev_name, new_name;
 
-		prev_name=this->getName(true);
+		prev_name = getName(true, true);
 		BaseObject::setName(name);
-		new_name=this->getName(true);
+		new_name = getName(true, true);
 
 		//Renames the PostgreSQL type represented by the extension
 		PgSqlType::renameUserType(prev_name, this, new_name);
@@ -33,16 +33,12 @@ void Extension::setSchema(BaseObject *schema)
 		this->schema = schema;
 	else
 	{
+		QString prev_name = getName(true, true);
 		BaseObject::setSchema(schema);
 
+		//Renames the PostgreSQL type represented by the extension
 		if(handles_type)
-		{
-			QString prev_name;
-			prev_name=this->getName(true);
-
-			//Renames the PostgreSQL type represented by the extension
-			PgSqlType::renameUserType(prev_name, this, this->getName(true));
-		}
+			PgSqlType::renameUserType(prev_name, this, getName(true, true));
 	}
 }
 
@@ -51,9 +47,9 @@ void Extension::setHandlesType(bool value)
 	/* Raises an error if the extension is already registered as a data type and the
 	try to change the attribute value. This cannot be done to avoid cascade reference breaking
 	on table columns/functions or any other objects that references PgSQLType */
-	if(!value && PgSqlType::getUserTypeIndex(this->getName(true), this) != BaseType::Null)
+	if(!value && PgSqlType::getUserTypeIndex(getName(true, true), this) != BaseType::Null)
 		throw Exception(Exception::getErrorMessage(ErrorCode::ExtensionHandlingTypeImmutable)
-						.arg(this->getName(true)),
+						.arg(getName(true)),
 						ErrorCode::ExtensionHandlingTypeImmutable,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	this->handles_type=value;
@@ -86,7 +82,7 @@ QString Extension::getCodeDefinition(unsigned def_type)
 	QString code_def=getCachedCode(def_type, false);
 	if(!code_def.isEmpty()) return code_def;
 
-	attributes[Attributes::Name]=this->getName(def_type==SchemaParser::SqlDefinition, false);
+	attributes[Attributes::Name]=getName(def_type==SchemaParser::SqlDefinition, false);
 	attributes[Attributes::HandlesType]=(handles_type ? Attributes::True : "");
 	attributes[Attributes::CurVersion]=versions[CurVersion];
 	attributes[Attributes::OldVersion]=versions[OldVersion];
@@ -120,23 +116,23 @@ QString Extension::getAlterDefinition(BaseObject *object)
 
 QString Extension::getDropDefinition(bool cascade)
 {
-	attributes[Attributes::Name] = this->getName(true);
+	attributes[Attributes::Name] = getName(true);
 	return BaseObject::getDropDefinition(cascade);
 }
 
 QString Extension::getSignature(bool format)
 {
-	return this->getName(format, false);
+	return getName(format, false);
 }
 
-QString Extension::getName(bool format, bool)
+QString Extension::getName(bool format, bool prepend_schema)
 {
-	return BaseObject::getName(format, false);
+	return BaseObject::getName(format, prepend_schema);
 }
 
 void Extension::operator = (Extension &ext)
 {
-	QString prev_name=this->getName(true);
+	QString prev_name=getName(true, true);
 
 	*(dynamic_cast<BaseObject *>(this))=dynamic_cast<BaseObject &>(ext);
 	this->versions[CurVersion]=ext.versions[CurVersion];
@@ -144,5 +140,5 @@ void Extension::operator = (Extension &ext)
 	this->handles_type=ext.handles_type;
 
 	if(this->handles_type)
-		PgSqlType::renameUserType(prev_name, this, this->getName(true));
+		PgSqlType::renameUserType(prev_name, this, getName(true, true));
 }

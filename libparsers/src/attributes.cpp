@@ -260,7 +260,6 @@ namespace Attributes {
 	Group("group"),
 	HandlerFunc("handler"),
 	HandlesType("handles-type"),
-	HandledByExtension("handled-by-extension"),
 	HasChanges("has-changes"),
 	Hashes("hashes"),
 	HbaFile("hba-file"),

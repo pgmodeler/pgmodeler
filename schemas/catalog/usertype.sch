@@ -139,18 +139,8 @@
 	END AS collatable_bool, ]
      %end
      
-    ({comment}) [ AS comment, ]
+    ({comment}) [ AS comment ]
     
-    # Flagging the type if its handled by an extension
-    # This is used by the import process to avoid appending schema names in data type names related to extension
-    [(SELECT 
-        CASE 
-            WHEN count(objid) > 0 THEN true 
-            ELSE false 
-        END
-        FROM pg_depend WHERE objid = tp.oid AND 
-             classid = 'pg_type'::regclass::oid AND deptype = 'e') AS handled_by_extension_bool ]
-
     [ FROM pg_type AS tp
       LEFT JOIN pg_class AS cl ON cl.oid = tp.typrelid
       LEFT JOIN pg_namespace AS ns ON tp.typnamespace = ns.oid ]

@@ -48,6 +48,8 @@ PgSQLTypeWidget::PgSQLTypeWidget(QWidget *parent, const QString &label) : QWidge
 		spatial_cmb->addItems(spatial_lst);
 
 		type_cmb->installEventFilter(this);
+		type_cmb->completer()->setFilterMode(Qt::MatchContains);
+		type_cmb->completer()->setCompletionMode(QCompleter::PopupCompletion);
 
 		connect(type_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(updateTypeFormat()));
 		connect(precision_sb, SIGNAL(valueChanged(int)), this, SLOT(updateTypeFormat()));

@@ -134,7 +134,7 @@ const attribs_map DatabaseExplorerWidget::attribs_i18n {
 	{Attributes::Fdw, QT_TR_NOOP("Foreign data wrapper")}, 	{Attributes::Server, QT_TR_NOOP("Server")},
 	{Attributes::BypassRls, QT_TR_NOOP("Bypass RLS")}, {Attributes::FromSqlFunc, QT_TR_NOOP("From SQL Func.")},
 	{Attributes::ToSqlFunc, QT_TR_NOOP("To SQL Func.")} , {Attributes::TransformTypes, QT_TR_NOOP("Transform types")},
-	{Attributes::ConfigParams, QT_TR_NOOP("Config. parameters")}, {Attributes::HandledByExtension, QT_TR_NOOP("Handled by extension")}
+	{Attributes::ConfigParams, QT_TR_NOOP("Config. parameters")}
 };
 
 DatabaseExplorerWidget::DatabaseExplorerWidget(QWidget *parent): QWidget(parent)
@@ -646,8 +646,7 @@ void DatabaseExplorerWidget::formatTypeAttribs(attribs_map &attribs)
 
 	formatBooleanAttribs(attribs, { Attributes::ByValue,
 									Attributes::Collatable,
-									Attributes::Preferred,
-									Attributes::HandledByExtension });
+									Attributes::Preferred });
 	formatOidAttribs(attribs, { Attributes::AnalyzeFunc,
 								Attributes::InputFunc,
 								Attributes::OutputFunc,

@@ -912,7 +912,7 @@ void DatabaseModel::addExtension(Extension *extension, int obj_idx)
 		__addObject(extension, obj_idx);
 
 		if(extension->handlesType())
-			PgSqlType::addUserType(extension->getName(true), extension, this, UserTypeConfig::ExtensionType);
+			PgSqlType::addUserType(extension->getName(true, true), extension, this, UserTypeConfig::ExtensionType);
 	}
 	catch(Exception &e)
 	{

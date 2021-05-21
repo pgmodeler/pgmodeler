@@ -70,7 +70,10 @@ class Extension: public BaseObject {
 
 		virtual QString getSignature(bool format = true) final;
 
-		virtual QString getName(bool format = false, bool = false) final;
+		/*! \brief Returns the extension name. This method was overriden from BaseObject::getName() to make the prepend_schema
+		 * to be false by default (instead of true in BaseObject::getName) so the SQL code definition of the
+		 * extension can be created correctly since the CREATE EXTENSION does not allow the schema name appended to the object's name */
+		virtual QString getName(bool format = false, bool prepend_schema = false) final;
 
 		void operator = (Extension &ext);
 };

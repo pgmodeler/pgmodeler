@@ -275,7 +275,6 @@ namespace Attributes {
 	GridColor,
 	Group,
 	HandlerFunc,
-	HandledByExtension,
 	HandlesType,
 	HasChanges,
 	Hashes,
