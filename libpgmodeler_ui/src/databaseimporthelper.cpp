@@ -2685,11 +2685,12 @@ void DatabaseImportHelper::createColumns(attribs_map &attribs, vector<unsigned> 
 					QString aux_name = types[type_oid][Attributes::Name].remove(QString("[]"));
 					type_name+=BaseObject::formatName(aux_name, false);
 					type_name+=QString("[]").repeated(dim);
+					type_name.prepend(sch_name);
 				}
 				else
-					type_name+=BaseObject::formatName(types[type_oid][Attributes::Name], false);
-
-				type_name.prepend(sch_name);
+					type_name = getType(QString::number(type_oid), false);
+				//type_name+=BaseObject::formatName(types[type_oid][Attributes::Name], false);
+				//type_name.prepend(sch_name);
 				is_type_registered=PgSqlType::isRegistered(type_name, dbmodel);
 			}
 		}
@@ -3174,15 +3175,16 @@ QString DatabaseImportHelper::getType(const QString &oid_str, bool generate_xml,
 			if(obj_name.startsWith(QString("timestamp")) || obj_name.startsWith(QString("time")))
 				obj_name.remove(QString(" without time zone"));
 
-			/* Prepend the schema name only if it is not a system schema ('pg_catalog' or 'information_schema') and
-		 if the schema's names is already present in the type's name (in case of table types) */
+			/* Prepend the schema name only if the type is not handled by an extension or it is not in a system schema ('pg_catalog' or 'information_schema')
+			 * and if the schema's names is already present in the type's name (in case of table types) */
 			sch_name = getObjectName(type_attr[Attributes::Schema]);
-			if(!sch_name.isEmpty() &&
-				 (is_derivated_from_obj ||
-					(sch_name != QString("pg_catalog") && sch_name!=QString("information_schema")) ||
-					 type_oid > catalog.getLastSysObjectOID()) &&
+			if(type_attr[Attributes::HandledByExtension].isEmpty() && !sch_name.isEmpty() &&
+				 (is_derivated_from_obj || (sch_name != QString("pg_catalog") && sch_name != QString("information_schema")) ||
+					type_oid > catalog.getLastSysObjectOID()) &&
 				 !obj_name.contains(QRegExp(QString("^(\\\")?(%1)(\\\")?(\\.)").arg(sch_name))))
+			{
 				obj_name.prepend(sch_name + QString("."));
+			}
 
 			/* In case of auto resolve dependencies, if the type is a user defined one and is not derivated from table/view/sequence and
 			 was not created in the database model but its attributes were retrieved, the object will be created to avoid reference errors */
