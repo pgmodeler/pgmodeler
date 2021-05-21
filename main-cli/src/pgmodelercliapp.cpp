@@ -1066,11 +1066,11 @@ void PgModelerCliApp::extractObjectXML()
 void PgModelerCliApp::recreateObjects()
 {
 	QStringList fail_objs, constr, list;
-	QString xml_def, aux_def, start_tag="<%1", end_tag="</%1>", aux_tag;
+	QString xml_def, aux_def, start_tag = "<%1", end_tag = "</%1>", aux_tag, type_tag = "<type name=\"%1\"";
 	BaseObject *object=nullptr;
 	ObjectType obj_type=ObjectType::BaseObject;
 	vector<ObjectType> types={ ObjectType::Index, ObjectType::Trigger, ObjectType::Rule };
-	attribs_map attribs;
+	attribs_map attribs, fmt_ext_names;
 	bool use_fail_obj=false;
 	unsigned tries=0, max_tries=parsed_opts[FixTries].toUInt();
 	int start_pos=-1, end_pos=-1, len=0;
@@ -1097,6 +1097,11 @@ void PgModelerCliApp::recreateObjects()
 			objs_xml.pop_front();
 			fixObjectAttributes(xml_def);
 		}
+
+		/* Replacing the tags [<type name="extension_type"] by [<type name="schema.extension_type"]
+		 * in order to avoid reference breaking when loading the model in pgModeler 0.9.4-alpha1 or above. */
+		for(auto &ext_name : fmt_ext_names)
+			xml_def.replace(type_tag.arg(ext_name.first), type_tag.arg(ext_name.second));
 
 		try
 		{
@@ -1135,6 +1140,16 @@ void PgModelerCliApp::recreateObjects()
 					{
 						if(!dynamic_cast<TableObject *>(object) && obj_type!=ObjectType::Relationship && obj_type!=ObjectType::BaseRelationship)
 							model->addObject(object);
+
+						/* Special case for extensions:
+						 * Before pgModeler 0.9.4-alpha1 the types handled by extension (for example hstore, ltree, etc) were
+						 * registered in the PgSqlType as user-defined data type without their schemas names prepended. This
+						 * was causing lot of troubles importing databases in which extension data types were being used. The
+						 * solution was to adjust the extension type names in such a way to prepend schema names. So here we
+						 * store the schema-qualified extension name in a special map where the key is the name of the extension
+						 * without the schema name, this way search the tags [<type name="extension"] and replace by [<type name="schema.extension"] */
+						if(object->getObjectType() == ObjectType::Extension && dynamic_cast<Extension *>(object)->handlesType())
+							fmt_ext_names[object->getName()] = object->getName(true, true);
 					}
 
 					//For each sucessful created object the method will try to create a failed one

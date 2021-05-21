@@ -282,7 +282,7 @@ unsigned PgSqlType::setType(const QString &type_name)
 	unsigned type_id = Null, usr_type_id = Null;
 
 	type_id = getBaseTypeIndex(type_name);
-	usr_type_id=getUserTypeIndex(type_name, nullptr);
+	usr_type_id = getUserTypeIndex(type_name, nullptr);
 
 	if(type_id == Null && usr_type_id == Null)
 		throw Exception(ErrorCode::AsgInvalidTypeObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
