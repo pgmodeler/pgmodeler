@@ -978,8 +978,8 @@ void DatabaseImportHelper::createSchema(attribs_map &attribs)
 	{
 		attribs[Attributes::RectVisible]="";
 		attribs[Attributes::FillColor]=QColor(dist(rand_num_engine),
-													  dist(rand_num_engine),
-													  dist(rand_num_engine)).name();
+																					dist(rand_num_engine),
+																					dist(rand_num_engine)).name();
 		loadObjectXML(ObjectType::Schema, attribs);
 
 		schema=dbmodel->createSchema();

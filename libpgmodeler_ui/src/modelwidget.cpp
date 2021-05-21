@@ -4917,17 +4917,8 @@ void ModelWidget::rearrangeSchemasInGrid(unsigned tabs_per_row, unsigned sch_per
 		}
 	}
 
-	objects=db_model->getObjectList(ObjectType::Relationship);
-	for(BaseObject *obj : *objects)
-	{
-		dynamic_cast<BaseRelationship *>(obj)->setModified(true);
-	}
-
-	objects=db_model->getObjectList(ObjectType::BaseRelationship);
-	for(BaseObject *obj : *objects)
-	{
-		dynamic_cast<BaseRelationship *>(obj)->setModified(true);
-	}
+	db_model->setObjectsModified({ ObjectType::Table, ObjectType::ForeignTable, ObjectType::View,
+																 ObjectType::BaseRelationship, ObjectType::Relationship});
 
 	//Adjust the whole scene size due to table/schema repositioning
 	this->adjustSceneSize();
