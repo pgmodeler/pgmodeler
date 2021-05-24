@@ -21,10 +21,15 @@
 #include "snippetsconfigwidget.h"
 #include "connectionsconfigwidget.h"
 #include "pgmodeleruins.h"
+#include "deletableitemdelegate.h"
 
 SQLToolWidget::SQLToolWidget(QWidget * parent) : QWidget(parent)
 {
 	setupUi(this);
+
+	DeletableItemDelegate *combo_del = new DeletableItemDelegate(database_cmb, tr("Delete this database"));
+	database_cmb->setItemDelegate(combo_del);
+	connect(combo_del, SIGNAL(s_itemDeleteRequested(int)), this, SLOT(dropDatabase(int)));
 
 	h_splitter->setSizes({315, 10000});
 	h_splitter->handle(1)->installEventFilter(this);
@@ -178,7 +183,7 @@ void SQLToolWidget::connectToServer()
 
 			if(conn)
 			{
-				import_helper.setConnection(*conn);
+				import_helper.setConnection(*conn);								
 				DatabaseImportForm::listDatabases(import_helper, database_cmb);
 				import_helper.closeConnection();
 
@@ -233,28 +238,6 @@ void SQLToolWidget::disconnectFromDatabases()
 	}
 }
 
-void SQLToolWidget::handleDatabaseDropped(const QString &dbname)
-{
-		try
-		{
-			//Closing tabs related to the database to be dropped
-			for(int i=0; i < databases_tbw->count(); i++)
-			{
-				if(databases_tbw->tabText(i).remove('&') == dbname)
-				{
-					closeDatabaseExplorer(i);
-					i=-1;
-				}
-			}
-
-			connectToServer();
-		}
-		catch(Exception &e)
-		{
-			throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
-		}
-}
-
 DatabaseExplorerWidget *SQLToolWidget::browseDatabase()
 {
 	try
@@ -277,10 +260,10 @@ DatabaseExplorerWidget *SQLToolWidget::browseDatabase()
 			databases_tbw->setTabToolTip(databases_tbw->count() - 1, db_explorer_wgt->getConnection().getConnectionId(true, true));
 			databases_tbw->setCurrentWidget(db_explorer_wgt);
 
-			connect(db_explorer_wgt, SIGNAL(s_databaseDropped(QString)), this, SLOT(handleDatabaseDropped(QString)));
 			connect(db_explorer_wgt, SIGNAL(s_sqlExecutionRequested()), this, SLOT(addSQLExecutionTab()));
 			connect(db_explorer_wgt, SIGNAL(s_snippetShowRequested(QString)), this, SLOT(showSnippet(QString)));
 			connect(db_explorer_wgt, SIGNAL(s_sourceCodeShowRequested(QString)), sourcecode_txt, SLOT(setPlainText(QString)));
+			connect(db_explorer_wgt, SIGNAL(s_databaseDropRequested(QString)), this, SLOT(dropDatabase(QString)));
 
 			connect(attributes_tb, SIGNAL(toggled(bool)), db_explorer_wgt->attributes_wgt, SLOT(setVisible(bool)));
 			db_explorer_wgt->attributes_wgt->setVisible(attributes_tb->isChecked());
@@ -443,4 +426,57 @@ void SQLToolWidget::showSnippet(const QString &snip)
 bool SQLToolWidget::hasDatabasesBrowsed()
 {
 	return (databases_tbw->count() > 0);
+}
+
+void SQLToolWidget::dropDatabase(int database_idx)
+{
+	if(connections_cmb->currentIndex() <= 0 || database_idx <= 0)
+		return;
+
+	Connection *tmpl_conn = reinterpret_cast<Connection *>(connections_cmb->itemData(connections_cmb->currentIndex()).value<void *>());
+	Messagebox msg_box;
+	QString dbname = database_cmb->itemText(database_idx),
+			maintanance_db = tmpl_conn->getConnectionParam(Connection::ParamDbName);
+	Connection conn = Connection(tmpl_conn->getConnectionParams());
+
+	msg_box.show(tr("Warning"),
+				 tr("<strong>CAUTION:</strong> You are about to drop the entire database <strong>%1</strong> from the server <strong>%2</strong>! All data will be completely wiped out. Do you really want to proceed?")
+						.arg(dbname).arg(tmpl_conn->getConnectionId(true)),
+				 Messagebox::AlertIcon, Messagebox::YesNoButtons);
+
+	if(msg_box.result()==QDialog::Accepted)
+	{
+		try
+		{
+			conn.connect();
+			conn.executeDDLCommand(QString("DROP DATABASE \"%1\";").arg(dbname));
+			conn.close();
+
+			//Closing tabs related to the database to be dropped
+			for(int i=0; i < databases_tbw->count(); i++)
+			{
+				if(databases_tbw->tabText(i).remove('&') == dbname)
+				{
+					closeDatabaseExplorer(i);
+					i=-1;
+				}
+			}
+
+			connectToServer();
+		}
+		catch(Exception &e)
+		{
+			if(conn.getConnectionParam(Connection::ParamDbName) == maintanance_db)
+				throw Exception(Exception::getErrorMessage(ErrorCode::DropCurrentDBDefault)
+												.arg(dbname).arg(conn.getConnectionParam(Connection::ParamAlias)),
+												ErrorCode::DropCurrentDBDefault,__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+			else
+				throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		}
+	}
+}
+
+void SQLToolWidget::dropDatabase(const QString &dbname)
+{
+	dropDatabase(database_cmb->findText(dbname));
 }

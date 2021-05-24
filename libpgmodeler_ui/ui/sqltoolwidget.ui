@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>658</width>
+    <width>692</width>
     <height>469</height>
    </rect>
   </property>
@@ -126,8 +126,8 @@
               </property>
               <property name="iconSize">
                <size>
-                <width>18</width>
-                <height>18</height>
+                <width>22</width>
+                <height>22</height>
                </size>
               </property>
              </widget>
@@ -187,8 +187,8 @@
               </property>
               <property name="iconSize">
                <size>
-                <width>18</width>
-                <height>18</height>
+                <width>22</width>
+                <height>22</height>
                </size>
               </property>
              </widget>

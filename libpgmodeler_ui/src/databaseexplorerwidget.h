@@ -184,9 +184,6 @@ class DatabaseExplorerWidget: public QWidget, public Ui::DatabaseExplorerWidget 
 		//! \brief Show the widget to handle data in tables
 		void openDataGrid(const QString &schema=QString("public"), const QString &table="", bool hide_views=true);
 
-		//! \brief Drop the database
-		void dropDatabase();
-
 		void loadObjectSource();
 
 		void filterObjects();
@@ -195,8 +192,8 @@ class DatabaseExplorerWidget: public QWidget, public Ui::DatabaseExplorerWidget 
 		//! \brief This signal is emmited to indicate that a sql execution widget need to be opened
 		void s_sqlExecutionRequested();
 		
-		//! \brief This signal is emmited to indicate that the named database was dropped
-		void s_databaseDropped(QString dbname);
+		//! \brief This signal is emmited to indicate that the named database need to be dropped
+		void s_databaseDropRequested(QString dbname);
 		
 		//! \brief This signal is emmited containing the processed snippet to be shown in an input field
 		void s_snippetShowRequested(QString snippet);

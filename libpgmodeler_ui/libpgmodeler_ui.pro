@@ -9,6 +9,7 @@ windows:DESTDIR = $$PWD
 SOURCES += src/mainwindow.cpp \
     src/basefunctionwidget.cpp \
 	src/changelogwidget.cpp \
+	src/deletableitemdelegate.cpp \
 	src/fileselectorwidget.cpp \
     src/layersconfigwidget.cpp \
     src/layerswidget.cpp \
@@ -123,6 +124,7 @@ SOURCES += src/mainwindow.cpp \
 HEADERS += src/mainwindow.h \
     src/basefunctionwidget.h \
 	src/changelogwidget.h \
+	src/deletableitemdelegate.h \
 	src/fileselectorwidget.h \
     src/layersconfigwidget.h \
     src/layerswidget.h \

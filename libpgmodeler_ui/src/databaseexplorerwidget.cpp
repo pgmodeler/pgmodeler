@@ -151,6 +151,7 @@ DatabaseExplorerWidget::DatabaseExplorerWidget(QWidget *parent): QWidget(parent)
 
 	data_grid_tb->setToolTip(data_grid_tb->toolTip() + QString(" (%1)").arg(data_grid_tb->shortcut().toString()));
 	runsql_tb->setToolTip(runsql_tb->toolTip() + QString(" (%1)").arg(runsql_tb->shortcut().toString()));
+	drop_db_tb->setToolTip(drop_db_tb->toolTip() + QString(" (%1)").arg(drop_db_tb->shortcut().toString()));
 
 	QAction *act = nullptr;
 
@@ -207,10 +208,12 @@ DatabaseExplorerWidget::DatabaseExplorerWidget(QWidget *parent): QWidget(parent)
 	connect(objects_trw, SIGNAL(itemExpanded(QTreeWidgetItem*)), this, SLOT(cancelObjectRename()));
 
 	connect(data_grid_tb, SIGNAL(clicked(bool)), this, SLOT(openDataGrid()));
-	connect(drop_db_tb, SIGNAL(clicked(bool)), this, SLOT(dropDatabase()));
 	connect(collapse_all_tb, SIGNAL(clicked(bool)), objects_trw, SLOT(collapseAll()));
 	connect(by_oid_chk, SIGNAL(toggled(bool)), this, SLOT(filterObjects()));
 	connect(filter_edt, SIGNAL(textChanged(QString)), this, SLOT(filterObjects()));
+
+	connect(drop_db_tb,  &QToolButton::clicked,
+			[&]() { emit s_databaseDropRequested(connection.getConnectionParam(Connection::ParamDbName)); });
 
 	connect(runsql_tb, &QToolButton::clicked,
 			[&]() { emit s_sqlExecutionRequested(); });
@@ -2016,38 +2019,4 @@ void DatabaseExplorerWidget::openDataGrid(const QString &schema, const QString &
 	PgModelerUiNs::resizeDialog(data_manip);
 	GeneralConfigWidget::restoreWidgetGeometry(data_manip);
 	data_manip->show();
-}
-
-void DatabaseExplorerWidget::dropDatabase()
-{
-	Messagebox msg_box;
-	QString dbname = connection.getConnectionParam(Connection::ParamDbName);
-
-	msg_box.show(tr("Warning"),
-				 tr("<strong>CAUTION:</strong> You are about to drop the entire database <strong>%1</strong> from the server <strong>%2</strong>! All data will be completely wiped out. Do you really want to proceed?")
-							 .arg(dbname).arg(connection.getConnectionId(true)),
-				 Messagebox::AlertIcon, Messagebox::YesNoButtons);
-
-	if(msg_box.result()==QDialog::Accepted)
-	{
-		try
-		{
-			Connection conn=Connection(connection.getConnectionParams());
-			conn.setConnectionParam(Connection::ParamDbName, default_db);
-			conn.connect();
-			conn.executeDDLCommand(QString("DROP DATABASE \"%1\";").arg(dbname));
-			conn.close();
-			this->setEnabled(false);
-			emit s_databaseDropped(dbname);
-		}
-		catch(Exception &e)
-		{
-			if(connection.getConnectionParam(Connection::ParamDbName) == default_db)
-				throw Exception(Exception::getErrorMessage(ErrorCode::DropCurrentDBDefault)
-												.arg(dbname).arg(connection.getConnectionParam(Connection::ParamAlias)),
-												ErrorCode::DropCurrentDBDefault,__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
-			else
-				throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
-		}
-	}
 }

@@ -84,9 +84,6 @@ class SQLToolWidget: public QWidget, public Ui::SQLToolWidget {
 		//! \brief Disconnect from server and close any opened database explorer or sql execution tab
 		void disconnectFromDatabases();
 
-		//! \brief Removes all DatabaseExplorerWidget instances linked to the dropped database
-		void handleDatabaseDropped(const QString &dbname);
-
 		//! \brief Open the current database in a database explorer instance
 		DatabaseExplorerWidget *browseDatabase();
 
@@ -98,6 +95,10 @@ class SQLToolWidget: public QWidget, public Ui::SQLToolWidget {
 
 		//! \brief Close the SQL execution tab specified by its index
 		void closeSQLExecutionTab(int idx);
+
+		//! \brief Drops the database selected in the database combo
+		void dropDatabase(int database_idx);
+		void dropDatabase(const QString &dbname);
 
 	signals:
 		/*! \brief This signal is emitted whenever the user changes the connections settings

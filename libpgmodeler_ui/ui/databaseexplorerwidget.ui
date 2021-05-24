@@ -230,6 +230,9 @@
          <height>22</height>
         </size>
        </property>
+       <property name="shortcut">
+        <string>Ctrl+Shift+Del</string>
+       </property>
        <property name="autoRaise">
         <bool>true</bool>
        </property>
@@ -595,7 +598,7 @@
           <bool>false</bool>
          </attribute>
          <attribute name="verticalHeaderDefaultSectionSize">
-          <number>28</number>
+          <number>37</number>
          </attribute>
          <attribute name="verticalHeaderStretchLastSection">
           <bool>false</bool>
