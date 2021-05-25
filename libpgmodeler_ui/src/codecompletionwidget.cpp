@@ -34,7 +34,7 @@ CodeCompletionWidget::CodeCompletionWidget(QPlainTextEdit *code_field_txt, bool 
 
 	name_list=new QListWidget(completion_wgt);
 	name_list->setSpacing(2);
-	name_list->setIconSize(QSize(16,16));
+	name_list->setIconSize(QSize(20,20));
 	name_list->setSortingEnabled(false);
 
 	persistent_chk=new QCheckBox(completion_wgt);

@@ -218,8 +218,8 @@
         </property>
         <property name="iconSize">
          <size>
-          <width>14</width>
-          <height>14</height>
+          <width>20</width>
+          <height>20</height>
          </size>
         </property>
         <property name="indentation">

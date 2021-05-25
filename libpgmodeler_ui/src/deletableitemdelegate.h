@@ -23,8 +23,8 @@
 This button is used to trigger a delete action via signal.
 */
 
-#ifndef COMBO_DELEGATE_H
-#define COMBO_DELEGATE_H
+#ifndef DELETABLE_ITEM_DELEGATE_H
+#define DELETABLE_ITEM_DELEGATE_H
 
 #include <QStyledItemDelegate>
 #include <QToolButton>
@@ -42,8 +42,6 @@ class DeletableItemDelegate: public QStyledItemDelegate {
 	public:
 		//! \brief This class can be constructed only with combo boxes. One can specify custom tooltips and custom shortcut keys for the delete action
 		DeletableItemDelegate(QComboBox *parent, const QString &tooltip = QString(), QKeySequence shortcut = QKeySequence("Ctrl+Shift+Delete"));
-
-		~DeletableItemDelegate();
 
 		void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const override;
 

@@ -36,11 +36,6 @@ DeletableItemDelegate::DeletableItemDelegate(QComboBox *parent, const QString &t
 	});
 }
 
-DeletableItemDelegate::~DeletableItemDelegate()
-{
-
-}
-
 void DeletableItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
 	painter->save();
