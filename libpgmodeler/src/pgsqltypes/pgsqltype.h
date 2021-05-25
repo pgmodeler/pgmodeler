@@ -178,6 +178,7 @@ class PgSqlType: public TemplateType<PgSqlType>{
 		bool isRangeType();
 		bool isSerialType();
 		bool isDateTimeType();
+		bool isTimezoneType();
 		bool isNumericType();
 		bool isIntegerType();
 		bool isCharacterType();

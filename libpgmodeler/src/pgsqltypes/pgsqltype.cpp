@@ -274,7 +274,9 @@ unsigned PgSqlType::setType(unsigned type_id)
 	if(type_id >= static_cast<unsigned>(type_names.size()))
 		return setUserType(type_id);
 
-	return TemplateType<PgSqlType>::setType(type_id);
+	unsigned tp_idx = TemplateType<PgSqlType>::setType(type_id);
+
+	return tp_idx;
 }
 
 unsigned PgSqlType::setType(const QString &type_name)
@@ -432,7 +434,7 @@ void PgSqlType::setSpatialType(SpatialType spat_type)
 
 void PgSqlType::setWithTimezone(bool with_tz)
 {
-	this->with_timezone=with_tz;
+	this->with_timezone = with_tz && !isTimezoneType();
 }
 
 unsigned PgSqlType::setUserType(unsigned type_id)
@@ -726,9 +728,17 @@ bool PgSqlType::isDateTimeType()
 	QString curr_type=(!isUserType() ? type_names[this->type_idx] : "");
 
 	return (!isUserType() &&
-					(curr_type==QString("time") || curr_type==QString("timestamp") ||
-					 curr_type==QString("interval") || curr_type==QString("date") ||
-					 curr_type==QString("timetz") || curr_type==QString("timestamptz")));
+					(isTimezoneType() ||
+						(curr_type==QString("time") || curr_type==QString("timestamp") ||
+						 curr_type==QString("interval") || curr_type==QString("date"))));
+}
+
+bool PgSqlType::isTimezoneType()
+{
+	QString curr_type=(!isUserType() ? type_names[this->type_idx] : "");
+
+	return (!isUserType() &&
+					(curr_type==QString("timetz") || curr_type==QString("timestamptz")));
 }
 
 bool PgSqlType::isNumericType()
@@ -829,7 +839,8 @@ bool PgSqlType::isEquivalentTo(PgSqlType type)
 																		{QString("oid"),QString("regproc"),QString("regprocedure"),
 																		 QString("regoper"),QString("regoperator"),QString("regclass"),
 																		 QString("regtype"),QString("regconfig"),QString("regdictionary")},
-																		{QString("timestamptz"),QString("timestamp with time zone")}};
+																		{QString("timestamptz"),QString("timestamp with time zone")},
+																		{QString("timestamp"),QString("timestamp without time zone")}};
 
 	//If the types are equal there is no need to perform further operations
 	if(*this==type)
