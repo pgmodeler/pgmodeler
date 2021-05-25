@@ -84,36 +84,33 @@ NewObjectOverlayWidget::NewObjectOverlayWidget(ModelWidget *parent): QWidget(par
 		PgModelerUiNs::configureWidgetFont(button, PgModelerUiNs::BigFontFactor);
 		button->setText(shortcut + QString(": ") + button->text());
 		button->setShortcut(QKeySequence(shortcut));
-		connect(button, SIGNAL(clicked()), this, SLOT(hide()));
-		connect(button, SIGNAL(clicked()), parent->actions_new_objects[obj_type], SLOT(trigger()));
+		btn_actions[button] = parent->actions_new_objects[obj_type];
 	}
 
 	for(auto &itr : rel_shortcuts)
 	{
-		button=itr.first;
+		button = itr.first;
 		shortcut=std::get<0>(itr.second);
 		action_idx=std::get<1>(itr.second);
 
 		PgModelerUiNs::configureWidgetFont(button, PgModelerUiNs::BigFontFactor);
 		button->setText(shortcut + QString(": ") + button->text());
 		button->setShortcut(QKeySequence(shortcut));
-
-		connect(button, SIGNAL(clicked()), this, SLOT(hide()));
-		if(action_idx < rel_actions.size())
-			connect(button, SIGNAL(clicked()), rel_actions[action_idx], SLOT(trigger()));
+		btn_actions[button] = rel_actions[action_idx];
 	}
 
 	shortcut=tr("0");
 	for(auto &itr : permission_btns)
 	{
-		button=itr;
+		button = itr;
 		button->setText(shortcut + QString(": ") + button->text());
 		button->setShortcut(QKeySequence(shortcut));
 		PgModelerUiNs::configureWidgetFont(button, PgModelerUiNs::BigFontFactor);
-
-		connect(button, SIGNAL(clicked()), this, SLOT(hide()));
-		connect(button, SIGNAL(clicked()), parent->action_edit_perms, SLOT(trigger()));
+		btn_actions[button] = parent->action_edit_perms;
 	}
+
+	for(auto &itr : btn_actions)
+		connect(itr.first, SIGNAL(clicked()), this, SLOT(executeAction()), Qt::QueuedConnection);
 }
 
 void NewObjectOverlayWidget::setSelectedObjects(vector<BaseObject *> &sel_objs)
@@ -141,4 +138,19 @@ void NewObjectOverlayWidget::setSelectedObjects(vector<BaseObject *> &sel_objs)
 
 	overlay_frm->adjustSize();
 	this->adjustSize();
+}
+
+void NewObjectOverlayWidget::executeAction()
+{
+	static bool exec_action = false;
+
+	if(exec_action)
+		return;
+
+	QToolButton *btn = qobject_cast<QToolButton *>(sender());
+
+	exec_action = true;
+	hide();
+	btn_actions[btn]->trigger();
+	exec_action = false;
 }

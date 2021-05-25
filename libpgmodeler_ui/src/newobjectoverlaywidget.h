@@ -37,10 +37,19 @@ class NewObjectOverlayWidget: public QWidget, public Ui::NewObjectOverlayWidget 
 	private:
 		Q_OBJECT
 
+		//! \brief Store the actions in the ModelWidget corresponding to each button the in overlay
+		map<QToolButton *, QAction *> btn_actions;
+
 	public:
 		explicit NewObjectOverlayWidget(ModelWidget * parent);
 		void setSelectedObjects(vector<BaseObject *> &sel_objs);
 		void configureOverlayButtons();
+
+	private slots:
+		/*! \brief Execute the action related to the triggered button.
+		 * This method executes only one action at a time. If the user presses two or more
+		 * buttons via shortcut then only the first one will be considered, the rest is discard */
+		void executeAction();
 };
 
 #endif

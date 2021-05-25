@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>596</width>
-    <height>1171</height>
+    <width>604</width>
+    <height>1206</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -162,6 +162,9 @@
                 <height>32</height>
                </size>
               </property>
+              <property name="autoExclusive">
+               <bool>false</bool>
+              </property>
               <property name="popupMode">
                <enum>QToolButton::InstantPopup</enum>
               </property>
@@ -207,6 +210,9 @@
                 <width>32</width>
                 <height>32</height>
                </size>
+              </property>
+              <property name="autoExclusive">
+               <bool>false</bool>
               </property>
               <property name="popupMode">
                <enum>QToolButton::InstantPopup</enum>
@@ -254,6 +260,9 @@
                 <height>32</height>
                </size>
               </property>
+              <property name="autoExclusive">
+               <bool>false</bool>
+              </property>
               <property name="popupMode">
                <enum>QToolButton::InstantPopup</enum>
               </property>
@@ -299,6 +308,9 @@
                 <width>32</width>
                 <height>32</height>
                </size>
+              </property>
+              <property name="autoExclusive">
+               <bool>false</bool>
               </property>
               <property name="popupMode">
                <enum>QToolButton::InstantPopup</enum>
@@ -346,6 +358,9 @@
                 <height>32</height>
                </size>
               </property>
+              <property name="autoExclusive">
+               <bool>false</bool>
+              </property>
               <property name="popupMode">
                <enum>QToolButton::InstantPopup</enum>
               </property>
@@ -391,6 +406,9 @@
                 <width>32</width>
                 <height>32</height>
                </size>
+              </property>
+              <property name="autoExclusive">
+               <bool>false</bool>
               </property>
               <property name="popupMode">
                <enum>QToolButton::InstantPopup</enum>
@@ -438,6 +456,9 @@
                 <height>32</height>
                </size>
               </property>
+              <property name="autoExclusive">
+               <bool>false</bool>
+              </property>
               <property name="popupMode">
                <enum>QToolButton::InstantPopup</enum>
               </property>
@@ -483,6 +504,9 @@
                 <width>32</width>
                 <height>32</height>
                </size>
+              </property>
+              <property name="autoExclusive">
+               <bool>false</bool>
               </property>
               <property name="popupMode">
                <enum>QToolButton::InstantPopup</enum>
@@ -533,6 +557,9 @@
               <property name="shortcut">
                <string>A</string>
               </property>
+              <property name="autoExclusive">
+               <bool>false</bool>
+              </property>
               <property name="popupMode">
                <enum>QToolButton::InstantPopup</enum>
               </property>
@@ -578,6 +605,9 @@
                 <width>32</width>
                 <height>32</height>
                </size>
+              </property>
+              <property name="autoExclusive">
+               <bool>false</bool>
               </property>
               <property name="popupMode">
                <enum>QToolButton::InstantPopup</enum>
@@ -625,6 +655,9 @@
                 <height>32</height>
                </size>
               </property>
+              <property name="autoExclusive">
+               <bool>false</bool>
+              </property>
               <property name="popupMode">
                <enum>QToolButton::InstantPopup</enum>
               </property>
@@ -670,6 +703,9 @@
                 <width>32</width>
                 <height>32</height>
                </size>
+              </property>
+              <property name="autoExclusive">
+               <bool>false</bool>
               </property>
               <property name="popupMode">
                <enum>QToolButton::InstantPopup</enum>
@@ -717,6 +753,9 @@
                 <height>32</height>
                </size>
               </property>
+              <property name="autoExclusive">
+               <bool>false</bool>
+              </property>
               <property name="popupMode">
                <enum>QToolButton::InstantPopup</enum>
               </property>
@@ -763,6 +802,9 @@
                 <height>32</height>
                </size>
               </property>
+              <property name="autoExclusive">
+               <bool>false</bool>
+              </property>
               <property name="popupMode">
                <enum>QToolButton::InstantPopup</enum>
               </property>
@@ -808,6 +850,9 @@
                 <width>32</width>
                 <height>32</height>
                </size>
+              </property>
+              <property name="autoExclusive">
+               <bool>false</bool>
               </property>
               <property name="popupMode">
                <enum>QToolButton::InstantPopup</enum>
