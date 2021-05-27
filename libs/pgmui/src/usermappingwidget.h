@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup libpgmodeler_ui
+\ingroup pgmui
 \class UserMappingWidget
 \brief Implements the operations to create/edit user mappings via form.
 */

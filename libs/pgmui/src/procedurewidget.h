@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup libpgmodeler_ui
+\ingroup pgmui
 \class ProcedureWidget
 \brief Implements the operations to create/edit procedures via form.
 */

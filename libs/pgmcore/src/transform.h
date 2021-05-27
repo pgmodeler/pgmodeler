@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup libpgmodeler
+\ingroup pgmcore
 \class Transform
 \brief Implements the operations to manipulate transform object on the database
 */

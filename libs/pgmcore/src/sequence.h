@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup libpgmodeler
+\ingroup pgmcore
 \class Sequence
 \brief Implements the operations to manipulate sequences on the database.
 \note <strong>Creation date:</strong> 26/04/2008

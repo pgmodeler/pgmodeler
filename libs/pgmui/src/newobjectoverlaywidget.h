@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup libpgmodeler_ui
+\ingroup pgmui
 \class NewObjectOverlayWidget
 \brief Implements the a basic overlay to quicly trigger action to create new objects.
 */

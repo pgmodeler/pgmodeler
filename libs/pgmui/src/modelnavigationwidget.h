@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup libpgmodeler_ui
+\ingroup pgmui
 \class ModelNavigationWidget
 \brief Implements the operations to navigate through openend models without use tabs.
 */

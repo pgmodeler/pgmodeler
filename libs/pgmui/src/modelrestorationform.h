@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup libpgmodeler_ui
+\ingroup pgmui
 \class ModelRestorationForm
 \brief Implements the operation to retore models before a unexpected crash.
 */

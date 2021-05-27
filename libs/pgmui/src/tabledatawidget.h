@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup libpgmodeler_ui
+\ingroup pgmui
 \class TableDataWidget
 \brief Form used to add initial data for tables.
 */

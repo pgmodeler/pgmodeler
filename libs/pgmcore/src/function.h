@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup libpgmodeler
+\ingroup pgmcore
 \brief Implements the operations to manipulate stored procedures (function) on the database.
 \note <strong>Creation date:</strong> 28/09/2006
 */

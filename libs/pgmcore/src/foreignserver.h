@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup libpgmodeler
+\ingroup pgmcore
 \class Server
 \brief Implements the operations to manipulate foreign servers on the database.
 */

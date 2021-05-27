@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup libpgmodeler_ui
+\ingroup pgmui
 \class FunctionWidget
 \brief Implements the operations to create/edit functions via form.
 */

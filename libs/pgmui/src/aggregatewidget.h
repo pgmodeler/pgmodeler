@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup libpgmodeler_ui
+\ingroup pgmui
 \class AggregateWidget
 \brief Implements the operations to create/edit aggregates via form.
 */

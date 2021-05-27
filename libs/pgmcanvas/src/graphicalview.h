@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup libobjrenderer
+\ingroup pgmcanvas
 \class GraphicalView
 \brief Implements the graphical representation for Views
 */

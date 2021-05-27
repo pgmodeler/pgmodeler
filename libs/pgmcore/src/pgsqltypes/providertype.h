@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup libpgmodeler/pgsqltypes
+\ingroup pgmcore/pgsqltypes
 \class ProviderType
 \brief Implements the operations to manipulate collation provider types.
 **/

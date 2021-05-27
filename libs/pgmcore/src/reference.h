@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup libpgmodeler
+\ingroup pgmcore
 \class Reference
 \brief This auxiliary class is used to define SQL/XML for views
 \note <strong>Creation date:</strong> 05/09/2008

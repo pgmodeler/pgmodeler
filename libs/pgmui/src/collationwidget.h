@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup libpgmodeler_ui
+\ingroup pgmui
 \class CollationWidget
 \brief Implements the operations to create/edit collations via form.
 */

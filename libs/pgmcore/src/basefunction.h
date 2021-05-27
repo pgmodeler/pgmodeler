@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup libpgmodeler
+\ingroup pgmcore
 \brief Implements the basic operations to manipulate functions/stored procedures on the database.
 */
 

@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup libpgmodeler/pgsqltypes
+\ingroup pgmcore/pgsqltypes
 \class PartitioningType
 \brief Implements the operations to manipulate table partitining types.
 **/

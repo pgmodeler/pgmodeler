@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup libpgmodeler/pgsqltypes
+\ingroup pgmcore/pgsqltypes
 \class PgSqlType
 \brief Implements the operations to manipulate PostgreSQL built-in data types.
 **/

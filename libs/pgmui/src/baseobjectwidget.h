@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup libpgmodeler_ui
+\ingroup pgmui
 \class BaseObjectWidget
 \brief Implements the basic operations to create/edit database objects via form.
 */

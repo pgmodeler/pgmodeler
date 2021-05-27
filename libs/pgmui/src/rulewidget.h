@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup libpgmodeler_ui
+\ingroup pgmui
 \class RuleWidget
 \brief Implements the operations to create/edit rules via form.
 */

@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup libpgmodeler
+\ingroup pgmcore
 \brief Implements the basic attributes and operations shared by tables and foreign tables.
 */
 

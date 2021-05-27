@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup libpgmodeler_ui
+\ingroup pgmui
 \class ModelValidationWidget
 \brief Implements the operations to display to the user the validation operation performed by ValidationHelper
 */

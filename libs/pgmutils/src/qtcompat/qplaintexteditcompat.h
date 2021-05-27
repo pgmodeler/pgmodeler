@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup libutils
+\ingroup pgmutils
 \namespace QtCompat
 \brief Reunites in form of utility functions and constants all code that is not compatible between major Qt versions.
 The main purpose of this approach is to make pgModeler backward compatible to Qt 5.15, 5.14, 5.13 and so on (restricted to Qt 5.9) without major problems.

@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup libpgmodeler_ui
+\ingroup pgmui
 \class EventTriggerWidget
 \brief Implements the operations to create/edit event triggers via form.
 */

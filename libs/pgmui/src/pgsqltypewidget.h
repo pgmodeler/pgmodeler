@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup libpgmodeler_ui
+\ingroup pgmui
 \class PgSQLTypeWidget
 \brief Implements the operations to configure PostgreSQL types via form.
 */

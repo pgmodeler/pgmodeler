@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup libpgmodeler_ui
+\ingroup pgmui
 \class ModelOverviewWidget
 \brief Implements the model overview widget operations.
 */

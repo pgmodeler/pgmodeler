@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup libpgmodeler_ui
+\ingroup pgmui
 \class TextboxWidget
 \brief Implements the operations to create/edit textboxes via form.
 */

@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup libpgmodeler_ui
+\ingroup pgmui
 \class ColorPìckerWidget
 \brief Implements a basic widget to handle color selection.
 */

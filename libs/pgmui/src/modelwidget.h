@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup libpgmodeler_ui
+\ingroup pgmui
 \class ModelWidget
 \brief Implements the widget that permits the direct user interation over the database model.
 */

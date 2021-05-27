@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup libpgmodeler_ui
+\ingroup pgmui
 \class TaskProgressWidget
 \brief Implements a widget that shows the progress of executed operations (e.g. loading a model file, generation source code)
 */

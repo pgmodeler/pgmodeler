@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup libpgmodeler_ui
+\ingroup pgmui
 \class ConfigurationForm
 \brief Reunites in a single form all available configuration widgets.
 */

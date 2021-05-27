@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup libpgmodeler
+\ingroup pgmcore
 \class OperatorFamily
 \brief Implements the operations to manipulate operator family on the database.
 \note <strong>Creation date:</strong> 08/07/2008

@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup libpgmodeler/pgsqltypes
+\ingroup pgmcore/pgsqltypes
 \class ExecutionType
 \brief Implements the operations to manipulate rule execution modes.
 **/

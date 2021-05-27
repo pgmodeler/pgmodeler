@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup libobjrenderer
+\ingroup pgmcanvas
 \class RelationshipView
 \brief Implements the graphical representation for relationships
 */

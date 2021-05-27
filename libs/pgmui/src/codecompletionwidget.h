@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup libpgmodeler_ui
+\ingroup pgmui
 \class CodeCompletionWidget
 \brief Widget that handles the code completion (keywords and model object names) on a field that has
 the syntax highlighter installed on it.

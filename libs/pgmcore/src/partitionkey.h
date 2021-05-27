@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup libpgmodeler
+\ingroup pgmcore
 \brief Implements the operations to manipulate partition key elements.
 */
 

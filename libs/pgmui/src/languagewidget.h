@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup libpgmodeler_ui
+\ingroup pgmui
 \class LanguageWidget
 \brief Implements the operations to create/edit languages via form.
 */

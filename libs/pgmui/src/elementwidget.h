@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup libpgmodeler_ui
+\ingroup pgmui
 \class ElementWidget
 \brief Implements the operations to create/edit constraints (exclude) and indexes elements, and partition keys via form.
 */

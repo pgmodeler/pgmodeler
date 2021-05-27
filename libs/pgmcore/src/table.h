@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup libpgmodeler
+\ingroup pgmcore
 \brief Implements the operations to manipulate tables on the database.
 \note <strong>Creation date:</strong> 17/09/2006
 */

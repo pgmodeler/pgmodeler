@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup libpgmodeler_ui
+\ingroup pgmui
 \class ObjectSelectorWidget
 \brief Implements a simple object picker based upon the object view widget.
 */

@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup libpgmodeler_ui
+\ingroup pgmui
 \class TagWidget
 \brief Implements the operations to create/edit tags via form.
 */

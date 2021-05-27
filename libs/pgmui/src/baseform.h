@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup libpgmodeler_ui
+\ingroup pgmui
 \class BaseForm
 \brief A basic form implementation, contains only an apply and a cancel button.
 */

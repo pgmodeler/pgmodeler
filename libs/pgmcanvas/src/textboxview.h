@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup libobjrenderer
+\ingroup pgmcanvas
 \class TextboxView
 \brief Represents the textbox in a graphical way on the object scene
 */

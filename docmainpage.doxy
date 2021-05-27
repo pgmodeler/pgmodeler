@@ -1,13 +1,14 @@
 /** 
- * \defgroup libpgmodeler Core library (libpgmodeler)
- * \defgroup libutils Shared utility classes / namespaces library (libutils)
- * \defgroup libparsers Schema file and XML parsers library (libparsers)
- * \defgroup libobjrenderer Graphical objects renderer library (libobjrenderer)
- * \defgroup libpgmodeler_ui pgModeler user interface library (libpgmodeler_ui)
- * \defgroup libpgconnector Database connection and query library (libpgconnector)
- * \defgroup main pgModeler main executable
+ * \defgroup pgmcore Core library (libpgmodeler)
+ * \defgroup pgmutils Shared utility classes / namespaces library (libutils)
+ * \defgroup pgmparsers Schema file and XML parsers library (libparsers)
+ * \defgroup pgmcanvas Graphical objects renderer library (libobjrenderer)
+ * \defgroup pgmui pgModeler user interface library (libpgmodeler_ui)
+ * \defgroup pgmconnector Database connection and query library (libpgconnector)
+ * \defgroup gui pgModeler main executable
+ * \defgroup cli pgModeler command-line interface executable
  * \defgroup crashhandler pgModeler crash handler
- * \defgroup dummyplugin Dummy plugin
+ * \defgroup dummy Dummy plugin
  * 
  * 
  * \mainpage

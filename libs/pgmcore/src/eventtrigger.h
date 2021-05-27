@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup libpgmodeler
+\ingroup pgmcore
 \class EventTrigger
 \brief Implements the operations to manipulate event triggers on the database.
 */

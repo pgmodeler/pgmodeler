@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup libpgmodeler_ui
+\ingroup pgmui
 \class DeletableItemDelegate
 \brief Implements a custom item delegate exclusively for combo boxes which draws items with a tool button aside of them.
 This button is used to trigger a delete action via signal.

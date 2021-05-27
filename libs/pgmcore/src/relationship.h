@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup libpgmodeler
+\ingroup pgmcore
 \class Relationship
 \brief This class implements the operations to create relationship between tables
 also generates the SQL code definition to represente the table link on PostgreSQL.

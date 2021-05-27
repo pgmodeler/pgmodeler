@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup libpgmodeler_ui
+\ingroup pgmui
 \class ViewWidget
 \brief Implements the operations to create/edit views via form.
 */

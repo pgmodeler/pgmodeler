@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup libpgmodeler_ui
+\ingroup pgmui
 \class PluginsConfigWidget
 \brief Implements the operations to manage plugins.
 */

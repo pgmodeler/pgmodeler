@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup libpgmodeler_ui
+\ingroup pgmui
 \class LineNumbersWidget
 \brief Implements a simple line number widget that expose the current highlighted line in a text editor
 */

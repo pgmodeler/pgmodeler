@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup libpgmodeler_ui
+\ingroup pgmui
 \class SnippetsConfigWidget
 \brief Implements the operations to manage sql snippets configuration.
 */

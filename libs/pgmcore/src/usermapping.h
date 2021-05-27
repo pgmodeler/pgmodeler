@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup libpgmodeler
+\ingroup pgmcore
 \class Server
 \brief Implements the operations to manipulate user mappings on the database.
 */

@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup libpgmodeler_ui
+\ingroup pgmui
 \class ObjectRenameWidget
 \brief Widget used to quickly rename objects without open the editing form
 */

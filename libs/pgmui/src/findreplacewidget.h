@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup libpgmodeler_ui
+\ingroup pgmui
 \class FindReplaceWidget
 \brief Implements the operations to find and replace text on a QTextEdit
 */

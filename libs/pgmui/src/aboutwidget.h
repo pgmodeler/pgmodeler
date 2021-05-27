@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup libpgmodeler_ui
+\ingroup pgmui
 \class AboutForm
 \brief Form that contains information about software authoring and licensing.
 */

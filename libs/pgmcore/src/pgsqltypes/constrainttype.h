@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup libpgmodeler/pgsqltypes
+\ingroup pgmcore/pgsqltypes
 \class ConstraintType
 \brief Implements the operations to manipulate constraint types.
 **/

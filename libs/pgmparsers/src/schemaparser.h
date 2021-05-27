@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup libparsers
+\ingroup pgmparsers
 \brief ParserEsquema class definition used to create SQL definition for model objects from schemas files (stored on disk).
 \note <strong>Creation date:</strong> 19/06/2008
 */

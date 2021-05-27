@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup libpgmodeler
+\ingroup pgmcore
 \class Collation
 \brief Implements the operations to manipulate collations on the database.
 **/

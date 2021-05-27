@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup libpgmodeler_ui
+\ingroup pgmui
 \class OperatorWidget
 \brief Implements the operations to create/edit operators via form.
 */

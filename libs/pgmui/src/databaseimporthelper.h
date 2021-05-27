@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup libpgmodeler_ui
+\ingroup pgmui
 \class DatabaseImportHelper
 \brief Implements the base operations to import existing databases into model (reverse engineering)
 */

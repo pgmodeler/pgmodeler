@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup libpgmodeler_ui
+\ingroup pgmui
 \class TransformWidget
 \brief Implements the operations to create/edit transforms via form.
 */

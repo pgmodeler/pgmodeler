@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup libpgmodeler_ui
+\ingroup pgmui
 \class BaseConfigWidget
 \brief Implements base operations to load/save XML based configuration files. This class reunites basic methods to perform
 	   the load and save operation. Each subclass must satisfy the contract (implement abstract methods) and have their own

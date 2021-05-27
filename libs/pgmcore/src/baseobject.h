@@ -19,7 +19,7 @@
 \class BaseObject
 \brief Implements the most important operations to define, maintain and generate code (SQL or XML) of database objects
 \note <strong>Creation date:</strong> 12/09/2006
-\ingroup libpgmodeler
+\ingroup pgmcore
 */
 
 #ifndef BASE_OBJECT_H

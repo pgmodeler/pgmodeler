@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup libpgmodeler
+\ingroup pgmcore
 \class Index
 \brief Implements the operations to manipulate indexes on the database.
 \note <strong>Creation date:</strong> 23/09/2006

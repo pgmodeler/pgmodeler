@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup libpgmodeler_ui
+\ingroup pgmui
 \class AppearanceConfigWidget
 \brief Implements the operations to manage graphical objects appearance configuration.
 */

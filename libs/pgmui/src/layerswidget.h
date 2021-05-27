@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup libpgmodeler_ui
+\ingroup pgmui
 \class LayersWidget
 \brief Implements the widget that allows the user to quickly setup object's layers
 */

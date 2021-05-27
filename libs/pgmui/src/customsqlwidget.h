@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup libpgmodeler_ui
+\ingroup pgmui
 \class CustomSQLWidget
 \brief Widget that handles insertion of free SQL commands into object's definition
 */

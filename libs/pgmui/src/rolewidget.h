@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup libpgmodeler_ui
+\ingroup pgmui
 \class RoleWidget
 \brief Implements the operations to create/edit roles via form.
 */

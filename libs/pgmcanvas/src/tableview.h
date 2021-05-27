@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup libobjrenderer
+\ingroup pgmcanvas
 \class TableView
 \brief Implements the graphical representation for tables.
 */

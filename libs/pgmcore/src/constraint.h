@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup libpgmodeler
+\ingroup pgmcore
 \class Constraint
 \brief Implements the operations to manipulate table constraints (primary keys, foreign key, unique and check).
 \note <strong>Creation date:</strong> 17/09/2006

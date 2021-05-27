@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup libpgmodeler_ui
+\ingroup pgmui
 \class DonateWidget
 \brief Implements a basic dialog to ask for donations shown as a popup widget on main window.
 */

@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup libpgmodeler
+\ingroup pgmcore
 \class TableObject
 \brief This class serves as a base class for objects that are embedded on tables
 like columns, rules, triggers, indexes, constraints.

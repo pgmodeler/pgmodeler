@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup libpgmodeler/pgsqltypes
+\ingroup pgmcore/pgsqltypes
 \class DeferralType
 \brief Implements the operations to manipulate constraints defferal modes/types.
 **/

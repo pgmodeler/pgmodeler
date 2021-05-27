@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup libpgmodeler_ui
+\ingroup pgmui
 \class ObjectDepsRefsWidget
 \brief Implements the form to show the object's dependeces and references
 */

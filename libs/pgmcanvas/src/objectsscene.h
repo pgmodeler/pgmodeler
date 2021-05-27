@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup libobjrenderer
+\ingroup pgmcanvas
 \class ObjectsScene
 \brief Implements the basic operations to visualize and manipulate the graphical objects.
 */

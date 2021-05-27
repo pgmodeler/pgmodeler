@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup libobjrenderer
+\ingroup pgmcanvas
 \class RoundedRectItem
 \brief Represents a rounded rectangle item
 */

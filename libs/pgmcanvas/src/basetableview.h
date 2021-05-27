@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup libobjrenderer
+\ingroup pgmcanvas
 \class BaseTableView
 \brief Base class shared by the classes TableView and GraphicalView
 */

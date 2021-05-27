@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup libobjrenderer
+\ingroup pgmcanvas
 \class LayerItem
 \brief This specialization of QGraphicsPathItem draws rects and texts on custom positions in a path item mainly to denote layer boxes in a canvas.
 */

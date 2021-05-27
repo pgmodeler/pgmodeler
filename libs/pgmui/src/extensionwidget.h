@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup libpgmodeler_ui
+\ingroup pgmui
 \class SchemaWidget
 \brief Implements the operations to create/edit extensions via form.
 */

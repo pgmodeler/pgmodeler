@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup libpgmodeler/pgsqltypes
+\ingroup pgmcore/pgsqltypes
 \class StorageType
 \brief Implements the operations to manipulate base type storage modes.
 **/

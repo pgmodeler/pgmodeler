@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup libpgmodeler_ui
+\ingroup pgmui
 \class SceneInfoWidget
 \brief Implements an widget to show info about canvas (scene) and selected objects
 */

@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup libpgmodeler_ui
+\ingroup pgmui
 \class ObjectsMetadataForm
 \brief Implements an interface to the feature to extract and restore objects metadata in a model.
 */

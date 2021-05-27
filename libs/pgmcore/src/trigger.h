@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup libpgmodeler
+\ingroup pgmcore
 \class Trigger
 \brief Implements the operations to manipulate triggers on the database.
 \note <strong>Creation date:</strong> 11/10/2006

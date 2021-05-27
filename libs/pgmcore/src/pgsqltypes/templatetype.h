@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup libpgmodeler/pgsqltypes
+\ingroup pgmcore/pgsqltypes
 \class TemplateBaseType
 \brief Implements the basic operations to handle specialized types derived from BaseType.
 

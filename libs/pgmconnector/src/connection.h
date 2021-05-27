@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup libpgconnector
+\ingroup pgmconnector
 \class Connection
 \brief This class encapsulates some connection manipulation functions implemented by the PostgreSQL libpq
 \note <strong>Creation date:</strong> 13/07/2009

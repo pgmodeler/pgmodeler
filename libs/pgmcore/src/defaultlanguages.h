@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup libutils
+\ingroup pgmutils
 \namespace GlobalAttributes
 \brief Definition of DefaultLanguages namespace which stores the default language names on a PostgreSQL installation.
 */

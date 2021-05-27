@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup libpgmodeler
+\ingroup pgmcore
 \class Textbox
 \brief This class is used to represent informative textboxes over the
 model also used to represent relationship labels.

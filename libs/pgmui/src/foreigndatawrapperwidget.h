@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup libpgmodeler_ui
+\ingroup pgmui
 \class ForeignDataWrapperWidget
 \brief Implements the operations to create/edit foreign data wrappers via form.
 */

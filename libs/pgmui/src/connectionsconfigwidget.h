@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup libpgmodeler_ui
+\ingroup pgmui
 \class ConnectionsConfigWidget
 \brief Implements the operations to manage database connections.
 */

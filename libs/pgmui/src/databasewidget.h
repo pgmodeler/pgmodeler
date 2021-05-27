@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup libpgmodeler_ui
+\ingroup pgmui
 \class DatabaseWidget
 \brief Implements the operations to create/edit database attributes via form.
 */

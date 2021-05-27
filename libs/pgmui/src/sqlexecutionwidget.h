@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup libpgmodeler_ui
+\ingroup pgmui
 \class SQLExecutionWidget
 \brief Implements the operations that permit user to perform basic SQL commands directly on a server
 */

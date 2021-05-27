@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup libpgmodeler
+\ingroup pgmcore
 \class OperatorClassElement
 \brief Implements the operations to manipulate operator class
  elements (storage, operator, function).

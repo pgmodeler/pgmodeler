@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup libpgmodeler_ui
+\ingroup pgmui
 \class ObjectFinderWidget
 \brief Implements the operations to find objects over the model
 */

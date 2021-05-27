@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup libpgmodeler_ui
+\ingroup pgmui
 \class IndexWidget
 \brief Implements the operations to create/edit indexes via form.
 */

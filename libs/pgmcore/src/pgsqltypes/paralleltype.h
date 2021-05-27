@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup libpgmodeler/pgsqltypes
+\ingroup pgmcore/pgsqltypes
 \class ParallelType
 \brief Implements the operations to manipulate parallel function types.
 **/

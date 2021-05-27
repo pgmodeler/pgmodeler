@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup libpgmodeler_ui
+\ingroup pgmui
 \class ConversionWidget
 \brief Implements the operations to create/edit encoding conversions via form.
 */

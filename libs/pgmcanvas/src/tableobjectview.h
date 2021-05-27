@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup libobjrenderer
+\ingroup pgmcanvas
 \class TableObjectView
 \brief implements the graphical representation for table objects (columns, constraints, triggers, rules, indexes) as well the view references
 */

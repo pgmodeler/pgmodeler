@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup libpgmodeler
+\ingroup pgmcore
 \class GenericSQL
 \brief This class is used to represent generic sql commands as database objects
 */

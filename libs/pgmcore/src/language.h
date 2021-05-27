@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup libpgmodeler
+\ingroup pgmcore
 \class Language
 \brief Implements the operations to manipulate procedural languages on the database.
 \note <strong>Creation date:</strong> 19/05/2008

@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup libpgmodeler
+\ingroup pgmcore
 \class Domain
 \brief Implements the operations to manipulate domains on the database.
 \note <strong>Creation date:</strong> 07/04/2008

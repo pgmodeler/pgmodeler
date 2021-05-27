@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup libpgmodeler_ui
+\ingroup pgmui
 \class SourceCodeWidget
 \brief Implements the operation to visualize object's source code.
 */

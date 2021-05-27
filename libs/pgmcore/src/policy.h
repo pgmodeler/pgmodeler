@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup libpgmodeler
+\ingroup pgmcore
 \class Policy
 \brief Implements the operations to manipulate row level security (RLS).
 */

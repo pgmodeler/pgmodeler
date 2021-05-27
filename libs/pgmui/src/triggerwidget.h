@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup libpgmodeler_ui
+\ingroup pgmui
 \class TriggerWidget
 \brief Implements the operations to create/edit triggers via form.
 */

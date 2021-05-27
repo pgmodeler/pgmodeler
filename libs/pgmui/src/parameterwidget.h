@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup libpgmodeler_ui
+\ingroup pgmui
 \class ParameterWidget
 \brief Implements the operations to create/edit function parameters via form.
 */

@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup libobjrenderer
+\ingroup pgmcanvas
 \class TextPolygonItem
 \brief This specialization of QGraphicsPolygonItem allows a text to be drawn over a polygonal element
 */

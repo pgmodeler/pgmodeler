@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup libpgmodeler
+\ingroup pgmcore
 \class BaseTable
 \brief Base class used to define table like objects (views and tables)
 \note <strong>Creation date:</strong> 09/04/2008

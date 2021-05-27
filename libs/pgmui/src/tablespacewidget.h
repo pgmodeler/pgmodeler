@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup libpgmodeler_ui
+\ingroup pgmui
 \class TablespaceWidget
 \brief Implements the operations to create/edit tablespaces via form.
 */

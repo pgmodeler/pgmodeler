@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup libpgmodeler_ui
+\ingroup pgmui
 \class NumberedTextEditor
 \brief Implements a simple text editor with a line number block attached to it. This class is
 based upon the code editor example provided by Qt

@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup libpgmodeler
+\ingroup pgmcore
 \class BaseRelationship
 \brief Implements the basic operations to manipulate relationships between tables
 \note <strong>Creation date:</strong> 09/04/2008

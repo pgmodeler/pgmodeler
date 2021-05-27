@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup libpgmodeler_ui
+\ingroup pgmui
 \class ConstraintWidget
 \brief Implements the operations to create/edit constraints via form.
 */

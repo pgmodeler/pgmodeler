@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup libpgmodeler_ui
+\ingroup pgmui
 \class UpdateNotifierWidget
 \brief Implements a basic update notifier shown as a popup widget on main window.
 

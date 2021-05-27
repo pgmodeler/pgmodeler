@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup libpgmodeler_ui
+\ingroup pgmui
 \class ModelExportHelper
 \brief Implements the base operations to export models (forward engineering)
 */

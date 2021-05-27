@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup libpgmodeler
+\ingroup pgmcore
 \class OperatorClass
 \brief This class is used to generate the XML/SQL code related to PostgreSQL
 operator classes. This type of object indicates to RDBMS how a data type

@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup libpgmodeler
+\ingroup pgmcore
 \namespace PgModelerUiNS
 \brief This namespace is used to organize all functions or constants used in the libpgmodeler_ui package.
 */

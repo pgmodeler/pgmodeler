@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup libpgmodeler_ui
+\ingroup pgmui
 \class ForeignServerWidget
 \brief Implements the operations to create/edit foreign servers via form.
 */

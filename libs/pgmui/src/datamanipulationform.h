@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup libpgmodeler_ui
+\ingroup pgmui
 \class DataGridForm
 \brief Implements the operations to handle table's data
 */

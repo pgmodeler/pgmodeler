@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup libpgmodeler_ui
+\ingroup pgmui
 \class ModelDatabaseDiffForm
 \brief Implements the operations to compare and generate a diff between model and database via form.
 */

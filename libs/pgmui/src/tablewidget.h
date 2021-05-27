@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup libpgmodeler_ui
+\ingroup pgmui
 \class TableWidget
 \brief  Implements the operations to create/edit tables via form.
 */

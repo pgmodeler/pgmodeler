@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup libpgmodeler
+\ingroup pgmcore
 \class Type
 \brief Implements the operations to manipulate user defined types on database.
 \note <strong>Creation date:</strong> 05/06/2008

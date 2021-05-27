@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup libpgmodeler/pgsqltypes
+\ingroup pgmcore/pgsqltypes
 \class FiringType
 \brief Implements the operations to manipulate triggers firing modes.
 **/

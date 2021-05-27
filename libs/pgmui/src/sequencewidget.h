@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup libpgmodeler_ui
+\ingroup pgmui
 \class SequenceWidget
 \brief Implements the operations to create/edit sequences via form.
 */

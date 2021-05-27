@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup libpgmodeler
+\ingroup pgmcore
 \class Operation
 \brief Implements the class that stores operations executed over an object
 */

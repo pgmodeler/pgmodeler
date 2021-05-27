@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup libpgmodeler
+\ingroup pgmcore
 \class DatabaseModel
 \brief This class reunites and manages all the other object types.
 Additionally, this class, saves, loads and generates the XML/SQL definition of a complete database.

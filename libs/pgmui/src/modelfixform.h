@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup libpgmodeler_ui
+\ingroup pgmui
 \class ModelFixForm
 \brief Implements an interface to pgmodeler-cli --fix-model command.
 */

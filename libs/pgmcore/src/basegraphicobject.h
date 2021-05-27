@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup libpgmodeler
+\ingroup pgmcore
 \class BaseGraphicObject
 \brief This is a basic implementation to control graphical objects such as tables, relationships, textboxes, views.
 The full graphical representation of these objects are made in an separated layer

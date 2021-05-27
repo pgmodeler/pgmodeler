@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup libpgmodeler_ui
+\ingroup pgmui
 \class FileSelectorWidget
 \brief Implements a simple file/directory picker with customizable behavior.
 */

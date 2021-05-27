@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup libpgmodeler/pgsqltypes
+\ingroup pgmcore/pgsqltypes
 \class IdentityType
 \brief Implements the operations to manipulate identity columns behavior.
 **/

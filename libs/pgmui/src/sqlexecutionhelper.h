@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup libpgmodeler_ui
+\ingroup pgmui
 \class SQLExecutionHelper
 \brief Implements a command execution helper that permit the execution of SQL commands in a thread
 */

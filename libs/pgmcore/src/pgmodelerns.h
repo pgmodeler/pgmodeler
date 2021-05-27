@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup libpgmodeler
+\ingroup pgmcore
 \namespace PgModelerNS
 \brief This namespace is used to organize all functions or constants used in the libpgmodeler package.
 */

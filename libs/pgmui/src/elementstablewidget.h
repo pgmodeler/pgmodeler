@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup libpgmodeler_ui
+\ingroup pgmui
 \class ElementsTableWidget
 \brief Implements the operations to create/edit constraints (exclude), indexes and partition keys elements via form storing them on a objects table (grid).
 */

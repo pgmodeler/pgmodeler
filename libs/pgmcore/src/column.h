@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup libpgmodeler
+\ingroup pgmcore
 \class Column
 \brief Implements basic operations to manipulate table columns.
 \note <strong>Creation date:</strong> 12/09/2006

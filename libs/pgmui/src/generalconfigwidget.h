@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup libpgmodeler_ui
+\ingroup pgmui
 \class GeneralConfigWidget
 \brief Implements the operations to manage general configurations.
 */

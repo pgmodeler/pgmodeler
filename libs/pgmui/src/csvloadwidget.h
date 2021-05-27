@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup libpgmodeler_ui
+\ingroup pgmui
 \class CsvLoadWidget
 \brief Implements basic features to load csv files and return the loaded buffer to the application
 */
