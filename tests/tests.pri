@@ -3,30 +3,53 @@ include(../pgmodeler.pri)
 TEMPLATE = app
 QT += testlib
 
-unix|win32: LIBS += -L$$OUT_PWD/../../../libpgmodeler_ui/ -lpgmodeler_ui \
-                    -L$$OUT_PWD/../../../libobjrenderer/ -lobjrenderer \
-                    -L$$OUT_PWD/../../../libpgconnector/ -lpgconnector \
-                    -L$$OUT_PWD/../../../libpgmodeler/ -lpgmodeler \
-                    -L$$OUT_PWD/../../../libparsers/ -lparsers \
-                    -L$$OUT_PWD/../../../libutils/ -lutils
+unix|windows: LIBS += $$PGMUI_LIB \
+		      $$PGMCANVAS_LIB \
+		      $$PGMCONNECTOR_LIB \
+		      $$PGMCORE_LIB \
+		      $$PGMPARSERS_LIB \
+		      $$PGMUTILS_LIB
 
-INCLUDEPATH += $$PWD/../libpgmodeler_ui/src \
-               $$PWD/../libobjrenderer/src \
-               $$PWD/../libpgconnector/src \
-               $$PWD/../libpgmodeler/src \
-               $$PWD/../libparsers/src \
-               $$PWD/../libutils/src \
-               $$PWD/../main/src \
-               $$PWD/src
+INCLUDEPATH += $$PGMUI_INC \
+	       $$PGMCANVAS_INC \
+	       $$PGMCONNECTOR_INC \
+	       $$PGMCORE_INC \
+	       $$PGMPARSERS_INC \
+	       $$PGMUTILS_INC \
+	       $$PWD/src
 
-DEPENDPATH += $$PWD/../libpgmodeler_ui \
-              $$PWD/../libobjrenderer \
-              $$PWD/../libpgconnector \
-              $$PWD/../libpgmodeler \
-              $$PWD/../libparsers \
-              $$PWD/../libutils \
-			  $$PWD/../main \
-              $$PWD/src
+DEPENDPATH += $$PGMUI_ROOT \
+	      $$PGMCANVAS_ROOT \
+	      $$PGMCONNECTOR_ROOT \
+	      $$PGMCORE_ROOT \
+	      $$PGMPARSERS_ROOT \
+	      $$PGMUTILS_ROOT \
+	      $$PWD/src
+
+#unix|win32: LIBS += -L$$OUT_PWD/../../../libs/pgmui/ -lpgmui \
+#		    -L$$OUT_PWD/../../../libs/pgmcanvas/ -lpgmcanvas \
+#		    -L$$OUT_PWD/../../../libs/pgmconnector/ -lpgmconnector \
+#		    -L$$OUT_PWD/../../../libs/pgmcore/ -lpgmcore \
+#		    -L$$OUT_PWD/../../../libs/pgmparsers/ -lpgmparsers \
+#		    -L$$OUT_PWD/../../../libs/pgmutils/ -lpgmutils
+
+#INCLUDEPATH += $$PWD/../libs/pgmui/src \
+#	       $$PWD/../libs/pgmcanvas/src \
+#	       $$PWD/../libs/pgmconnector/src \
+#	       $$PWD/../libs/pgmcore/src \
+#	       $$PWD/../libs/pgmparsers/src \
+#	       $$PWD/../libs/pgmutils/src \
+#	       $$PWD/../apps/gui/src \
+#               $$PWD/src
+
+#DEPENDPATH += $$PWD/../libs/pgmui \
+#	      $$PWD/../libs/pgmcanvas \
+#	      $$PWD/../libs/pgmconnector \
+#	      $$PWD/../libs/pgmcore \
+#	      $$PWD/../libs/pgmparsers \
+#	      $$PWD/../libs/pgmutils \
+#	      $$PWD/../apps/gui \
+#              $$PWD/src
 
 HEADERS += $$PWD/src/pgmodelerunittest.h
 

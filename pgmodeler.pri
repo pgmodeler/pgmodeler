@@ -8,6 +8,40 @@ MOC_DIR = moc
 OBJECTS_DIR = obj
 UI_DIR = src
 
+# Store the absolute paths to library subprojects to be referenced in other .pro files
+# *_ROOT -> the path to the root folder of the subproject
+# *_LIB -> the libary flags (-L -l) (LIBS on qmake) passed to the compiler that points to the library generated from a subproject
+# *_INC -> the path to the source code folder (src), used by the flag -I (INCLUDEPATH on qmake) passed to the compiler
+PGMCANVAS = pgmcanvas
+PGMCANVAS_ROOT = $$absolute_path($$PWD/libs/$$PGMCANVAS)
+PGMCANVAS_LIB = -L$$PGMCANVAS_ROOT -l$$PGMCANVAS
+PGMCANVAS_INC = $$PGMCANVAS_ROOT/src
+
+PGMCONNECTOR = pgmconnector
+PGMCONNECTOR_ROOT = $$absolute_path($$PWD/libs/$$PGMCONNECTOR)
+PGMCONNECTOR_LIB = -L$$PGMCONNECTOR_ROOT -l$$PGMCONNECTOR
+PGMCONNECTOR_INC = $$PGMCONNECTOR_ROOT/src
+
+PGMCORE = pgmcore
+PGMCORE_ROOT = $$absolute_path($$PWD/libs/$$PGMCORE)
+PGMCORE_LIB = -L$$PGMCORE_ROOT -l$$PGMCORE
+PGMCORE_INC = $$PGMCORE_ROOT/src
+
+PGMPARSERS = pgmparsers
+PGMPARSERS_ROOT = $$absolute_path($$PWD/libs/$$PGMPARSERS)
+PGMPARSERS_LIB = -L$$PGMPARSERS_ROOT -l$$PGMPARSERS
+PGMPARSERS_INC = $$PGMPARSERS_ROOT/src
+
+PGMUI = pgmui
+PGMUI_ROOT = $$absolute_path($$PWD/libs/$$PGMUI)
+PGMUI_LIB = -L$$PGMUI_ROOT -l$$PGMUI
+PGMUI_INC = $$PGMUI_ROOT/src
+
+PGMUTILS = pgmutils
+PGMUTILS_ROOT = $$absolute_path($$PWD/libs/$$PGMUTILS)
+PGMUTILS_LIB = -L$$PGMUTILS_ROOT -l$$PGMUTILS
+PGMUTILS_INC = $$PGMUTILS_ROOT/src
+
 # Setting up the flag passed to compiler to indicate a snapshot build
 defined(SNAPSHOT_BUILD, var): DEFINES+=SNAPSHOT_BUILD
 
