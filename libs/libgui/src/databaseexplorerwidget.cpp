@@ -172,28 +172,28 @@ DatabaseExplorerWidget::DatabaseExplorerWidget(QWidget *parent): QWidget(parent)
 	toggle_display_tb->setMenu(&toggle_disp_menu);
 
 	snippets_menu.setTitle(tr("Snippets"));
-	snippets_menu.setIcon(QIcon(QString(":icones/icones/codesnippet.png")));
+	snippets_menu.setIcon(QIcon(PgModelerUiNs::getIconPath("codesnippet")));
 
-	drop_action=new QAction(QIcon(QString(":icones/icones/excluir.png")), tr("Drop object"), &handle_menu);
+	drop_action=new QAction(QIcon(PgModelerUiNs::getIconPath("delete")), tr("Drop object"), &handle_menu);
 	drop_action->setShortcut(QKeySequence(Qt::Key_Delete));
 
-	drop_cascade_action=new QAction(QIcon(QString(":icones/icones/delcascade.png")), tr("Drop cascade"), &handle_menu);
+	drop_cascade_action=new QAction(QIcon(PgModelerUiNs::getIconPath("delcascade")), tr("Drop cascade"), &handle_menu);
 	drop_cascade_action->setShortcut(QKeySequence("Shift+Del"));
 
-	truncate_action=new QAction(QIcon(QString(":icones/icones/truncate.png")), tr("Truncate"), &handle_menu);
-	trunc_cascade_action=new QAction(QIcon(QString(":icones/icones/trunccascade.png")), tr("Trunc. cascade"), &handle_menu);
+	truncate_action=new QAction(QIcon(PgModelerUiNs::getIconPath("truncate")), tr("Truncate"), &handle_menu);
+	trunc_cascade_action=new QAction(QIcon(PgModelerUiNs::getIconPath("trunccascade")), tr("Trunc. cascade"), &handle_menu);
 
-	show_data_action=new QAction(QIcon(QString(":icones/icones/result.png")), tr("Show data"), &handle_menu);
+	show_data_action=new QAction(QIcon(PgModelerUiNs::getIconPath("result")), tr("Show data"), &handle_menu);
 	show_data_action->setShortcut(QKeySequence(Qt::Key_Space));
-	properties_action=new QAction(QIcon(QString(":icones/icones/editar.png")), tr("Reload properties"), &handle_menu);
+	properties_action=new QAction(QIcon(PgModelerUiNs::getIconPath("edit")), tr("Reload properties"), &handle_menu);
 
-	refresh_action=new QAction(QIcon(QString(":icones/icones/atualizar.png")), tr("Update"), &handle_menu);
+	refresh_action=new QAction(QIcon(PgModelerUiNs::getIconPath("refresh")), tr("Update"), &handle_menu);
 	refresh_action->setShortcut(QKeySequence(Qt::Key_F6));
 
-	rename_action=new QAction(QIcon(QString(":icones/icones/rename.png")), tr("Rename"), &handle_menu);
+	rename_action=new QAction(QIcon(PgModelerUiNs::getIconPath("rename")), tr("Rename"), &handle_menu);
 	rename_action->setShortcut(QKeySequence(Qt::Key_F2));
 
-	source_action=new QAction(QIcon(QString(":icones/icones/codigosql.png")), tr("Source code"), &handle_menu);
+	source_action=new QAction(QIcon(PgModelerUiNs::getIconPath("sqlcode")), tr("Source code"), &handle_menu);
 	source_action->setShortcut(QKeySequence(Qt::Key_F7));
 
 	objects_trw->installEventFilter(this);

@@ -145,19 +145,19 @@ void Messagebox::show(const QString &title, const QString &msg, unsigned icon_ty
 	switch(icon_type)
 	{
 		case ErrorIcon:
-			icon_name=QString("msgbox_erro");
+			icon_name=QString("error");
 		break;
 
 		case InfoIcon:
-			icon_name=QString("msgbox_info");
+			icon_name=QString("info");
 		break;
 
 		case AlertIcon:
-			icon_name=QString("msgbox_alerta");
+			icon_name=QString("alert");
 		break;
 
 		case ConfirmIcon:
-			icon_name=QString("msgbox_quest");
+			icon_name=QString("question");
 		break;
 
 		default:

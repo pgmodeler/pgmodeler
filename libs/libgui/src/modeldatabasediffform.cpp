@@ -925,7 +925,7 @@ void ModelDatabaseDiffForm::handleErrorIgnored(QString err_code, QString err_msg
 											 export_item, false);
 
 	PgModelerUiNs::createOutputTreeItem(output_trw, PgModelerUiNs::formatMessage(err_msg),
-										QPixmap(QString("msgbox_alerta")),
+										QPixmap(QString("alert")),
 										item, false, true);
 
 	PgModelerUiNs::createOutputTreeItem(output_trw, cmd,

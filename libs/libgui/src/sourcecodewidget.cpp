@@ -65,9 +65,9 @@ void SourceCodeWidget::setSourceCodeTab(int)
 	ObjectType obj_type=object->getObjectType();
 
 	if(sourcecode_twg->currentIndex()==0)
-		code_icon=QString("codigosql");
+		code_icon=QString("sqlcode");
 	else
-		code_icon=QString("codigoxml");
+		code_icon=QString("xmlcode");
 
 	enabled=(sourcecode_twg->currentIndex()==0 &&
 			 ((obj_type==ObjectType::BaseRelationship &&

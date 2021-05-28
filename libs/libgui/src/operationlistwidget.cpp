@@ -106,22 +106,22 @@ void OperationListWidget::updateOperationList()
 
 			if(op_type==Operation::ObjectCreated)
 			{
-				op_icon=QString("criado");
+				op_icon=QString("criated");
 				op_name=tr("created");
 			}
 			else if(op_type==Operation::ObjectRemoved)
 			{
-				op_icon=QString("removido");
+				op_icon=QString("removed");
 				op_name=tr("removed");
 			}
 			else if(op_type==Operation::ObjectModified)
 			{
-				op_icon=QString("modificado");
+				op_icon=QString("modified");
 				op_name=tr("modified");
 			}
 			else if(op_type==Operation::ObjectMoved)
 			{
-				op_icon=QString("movimentado");
+				op_icon=QString("moved");
 				op_name=tr("moved");
 			}
 
