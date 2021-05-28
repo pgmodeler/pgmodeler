@@ -12,35 +12,35 @@ UI_DIR = src
 # *_ROOT -> the path to the root folder of the subproject
 # *_LIB -> the libary flags (-L -l) (LIBS on qmake) passed to the compiler that points to the library generated from a subproject
 # *_INC -> the path to the source code folder (src), used by the flag -I (INCLUDEPATH on qmake) passed to the compiler
-PGMCANVAS = pgmcanvas
-PGMCANVAS_ROOT = $$absolute_path($$PWD/libs/$$PGMCANVAS)
-PGMCANVAS_LIB = -L$$PGMCANVAS_ROOT -l$$PGMCANVAS
-PGMCANVAS_INC = $$PGMCANVAS_ROOT/src
+LIBCANVAS = libcanvas
+LIBCANVAS_ROOT = $$absolute_path($$PWD/libs/$$LIBCANVAS)
+LIBCANVAS_LIB = -L$$LIBCANVAS_ROOT -lcanvas
+LIBCANVAS_INC = $$LIBCANVAS_ROOT/src
 
-PGMCONNECTOR = pgmconnector
-PGMCONNECTOR_ROOT = $$absolute_path($$PWD/libs/$$PGMCONNECTOR)
-PGMCONNECTOR_LIB = -L$$PGMCONNECTOR_ROOT -l$$PGMCONNECTOR
-PGMCONNECTOR_INC = $$PGMCONNECTOR_ROOT/src
+LIBCONNECTOR = libconnector
+LIBCONNECTOR_ROOT = $$absolute_path($$PWD/libs/$$LIBCONNECTOR)
+LIBCONNECTOR_LIB = -L$$LIBCONNECTOR_ROOT -lconnector
+LIBCONNECTOR_INC = $$LIBCONNECTOR_ROOT/src
 
-PGMCORE = pgmcore
-PGMCORE_ROOT = $$absolute_path($$PWD/libs/$$PGMCORE)
-PGMCORE_LIB = -L$$PGMCORE_ROOT -l$$PGMCORE
-PGMCORE_INC = $$PGMCORE_ROOT/src
+LIBCORE = libcore
+LIBCORE_ROOT = $$absolute_path($$PWD/libs/$$LIBCORE)
+LIBCORE_LIB = -L$$LIBCORE_ROOT -lcore
+LIBCORE_INC = $$LIBCORE_ROOT/src
 
-PGMPARSERS = pgmparsers
-PGMPARSERS_ROOT = $$absolute_path($$PWD/libs/$$PGMPARSERS)
-PGMPARSERS_LIB = -L$$PGMPARSERS_ROOT -l$$PGMPARSERS
-PGMPARSERS_INC = $$PGMPARSERS_ROOT/src
+LIBPARSERS = libparsers
+LIBPARSERS_ROOT = $$absolute_path($$PWD/libs/$$LIBPARSERS)
+LIBPARSERS_LIB = -L$$LIBPARSERS_ROOT -lparsers
+LIBPARSERS_INC = $$LIBPARSERS_ROOT/src
 
-PGMUI = pgmui
-PGMUI_ROOT = $$absolute_path($$PWD/libs/$$PGMUI)
-PGMUI_LIB = -L$$PGMUI_ROOT -l$$PGMUI
-PGMUI_INC = $$PGMUI_ROOT/src
+LIBGUI = libgui
+LIBGUI_ROOT = $$absolute_path($$PWD/libs/$$LIBGUI)
+LIBGUI_LIB = -L$$LIBGUI_ROOT -lgui
+LIBGUI_INC = $$LIBGUI_ROOT/src
 
-PGMUTILS = pgmutils
-PGMUTILS_ROOT = $$absolute_path($$PWD/libs/$$PGMUTILS)
-PGMUTILS_LIB = -L$$PGMUTILS_ROOT -l$$PGMUTILS
-PGMUTILS_INC = $$PGMUTILS_ROOT/src
+LIBUTILS = libutils
+LIBUTILS_ROOT = $$absolute_path($$PWD/libs/$$LIBUTILS)
+LIBUTILS_LIB = -L$$LIBUTILS_ROOT -lutils
+LIBUTILS_INC = $$LIBUTILS_ROOT/src
 
 # Setting up the flag passed to compiler to indicate a snapshot build
 defined(SNAPSHOT_BUILD, var): DEFINES+=SNAPSHOT_BUILD

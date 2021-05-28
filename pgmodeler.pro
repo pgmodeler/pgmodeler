@@ -2,12 +2,12 @@
 include(pgmodeler.pri)
 
 # Subprojects (libraries only)
-SUBDIRS = libs/pgmutils \
-	  libs/pgmparsers \
-	  libs/pgmcore \
-	  libs/pgmconnector \
-	  libs/pgmcanvas \
-	  libs/pgmui
+SUBDIRS = libs/$$LIBUTILS \
+	  libs/$$LIBPARSERS \
+	  libs/$$LIBCORE \
+	  libs/$$LIBCONNECTOR \
+	  libs/$$LIBCANVAS \
+	  libs/$$LIBGUI
 
 # Include the tests subprojects only on debug mode
 CONFIG(debug, debug|release): SUBDIRS += tests
