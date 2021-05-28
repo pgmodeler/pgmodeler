@@ -3,7 +3,7 @@
 LOG=windeploy.log
 
 # Detecting current pgModeler version
-DEPLOY_VER=`cat libs/pgmutils/src/globalattributes.cpp | grep PgModelerVersion | sed 's/.\+PgModelerVersion=QString("//g' | sed 's/")//g'`
+DEPLOY_VER=`cat libs/libutils/src/globalattributes.cpp | grep PgModelerVersion | sed 's/.\+PgModelerVersion=QString("//g' | sed 's/")//g'`
 DEPLOY_VER=${DEPLOY_VER/PGMODELER_VERSION=\"/}
 DEPLOY_VER=`echo ${DEPLOY_VER/\",/} | tr -d ' '`
 

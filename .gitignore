@@ -15,7 +15,6 @@ moc_*.cpp
 moc_*.h
 qrc_resources.cpp
 ui_*.h
-windows_ico.qrc
 windeploy.log
 Makefile
 

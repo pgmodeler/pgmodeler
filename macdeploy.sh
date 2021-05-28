@@ -7,7 +7,7 @@ QMAKE_ARGS="pgmodeler.pro -r CONFIG+=x86_64 CONFIG+=release -spec macx-clang"
 LOG=macdeploy.log
 
 # Detecting current pgModeler version
-DEPLOY_VER=`cat libs/pgmutils/src/globalattributes.cpp | grep PgModelerVersion | sed 's/.*PgModelerVersion=QString("//g' | sed 's/")//g' | sed 's/^ *//g'`
+DEPLOY_VER=`cat libs/libutils/src/globalattributes.cpp | grep PgModelerVersion | sed 's/.*PgModelerVersion=QString("//g' | sed 's/")//g' | sed 's/^ *//g'`
 BUILD_NUM=`date '+%Y%m%d'`
 
 DEMO_VERSION_OPT='-demo-version'
