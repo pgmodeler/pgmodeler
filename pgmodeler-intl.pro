@@ -1,19 +1,19 @@
 TEMPLATE = subdirs
 
-SUBDIRS = libutils \
-	  libparsers \
-	  libdbconnect \
-	  libpgmodeler \
-	  libobjrenderer \
-	  libpgmodeler_ui \
-	  crashhandler \
-	  main \
-	  main-cli
+SUBDIRS = pgmutils \
+	  pgmparsers \
+	  pgmconnector \
+	  pgmcore \
+	  pgmcanvas \
+	  pgmui \
+	  apps/crashhandler \
+	  apps/gui \
+	  app/cli
 
-TRANSLATIONS = lang/pt_BR.ts \
-               lang/zh_CN.ts \
-               lang/fr_FR.ts \
-               lang/es_ES.ts \
-               lang/nl_NL.ts
+TRANSLATIONS = assets/lang/pt_BR.ts \
+               assets/lang/zh_CN.ts \
+               assets/lang/fr_FR.ts \
+               assets/lang/es_ES.ts \
+               assets/lang/nl_NL.ts
 
 CODECFORTR = UTF8
