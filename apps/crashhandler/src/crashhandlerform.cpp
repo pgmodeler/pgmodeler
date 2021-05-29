@@ -40,7 +40,7 @@ CrashHandlerForm::CrashHandlerForm(bool analysis_mode, QWidget *parent, Qt::Wind
 	layout->setContentsMargins(4,4,4,4);
 	wgt->setLayout(layout);
 
-	logo_lbl->setPixmap(QPixmap(QString(":/imagens/imagens/crashhandler.png")));
+	logo_lbl->setPixmap(QPixmap(QString(":/images/images/crashhandler.png")));
 	report_twg->addTab(wgt, tr("Stack trace"));
 
 	//Open for reading the stack trace file generated on the last crash

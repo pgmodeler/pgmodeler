@@ -222,7 +222,7 @@ void ConnectionsConfigWidget::duplicateConnection()
 		connections.push_back(new_conn);
 
 		new_conn->setConnectionParam(Connection::ParamAlias, QString("cp_%1").arg(conn->getConnectionParam(Connection::ParamAlias)));
-		connections_cmb->addItem(QIcon(QString(":icones/icones/server.png")), new_conn->getConnectionId());
+		connections_cmb->addItem(QIcon(QString(":icons/icons/server.png")), new_conn->getConnectionId());
 		connections_cmb->setCurrentIndex(connections_cmb->count()-1);
 		setConfigurationChanged(true);
 	}
@@ -245,7 +245,7 @@ void ConnectionsConfigWidget::handleConnection()
 		{
 			conn=new Connection;
 			this->configureConnection(conn);
-			connections_cmb->addItem(QIcon(QString(":icones/icones/server.png")), conn->getConnectionId());
+			connections_cmb->addItem(QIcon(QString(":icons/icons/server.png")), conn->getConnectionId());
 			connections.push_back(conn);
 		}
 		else
@@ -568,7 +568,7 @@ void ConnectionsConfigWidget::fillConnectionsComboBox(QComboBox *combo, bool inc
 	}
 
 	if(incl_placeholder)
-		combo->addItem(QIcon(QString(":icones/icones/conexaobd.png")), tr("Edit connections"));
+		combo->addItem(QIcon(QString(":icons/icons/connection.png")), tr("Edit connections"));
 
 	if(def_conn)
 		combo->setCurrentText(def_conn->getConnectionId());
