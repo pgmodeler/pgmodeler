@@ -11210,14 +11210,14 @@ Relationship: %1</source>
     </message>
     <message>
         <source>Indexing</source>
-        <translation type="unfinished">Indexação</translation>
+        <translation>Indexando</translation>
     </message>
 </context>
 <context>
     <name>WelcomeWidget</name>
     <message>
         <source>Form</source>
-        <translation type="unfinished">Formulário</translation>
+        <translation>Formulário</translation>
     </message>
     <message>
         <source>New model</source>
