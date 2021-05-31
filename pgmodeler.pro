@@ -22,10 +22,12 @@ exists($$PLUGINS_SRC_ROOT) {
    SUBDIRS += plugins
 }
 
-# Including executables subprojects (libraries only)
+# Including executables subprojects
 SUBDIRS += apps/crashhandler \
 	   apps/cli \
 	   apps/gui
+
+CONFIG(debug, debug|release): SUBDIRS += apps/scheditor
 
 # Deployment settings
 samples.files = assets/samples/*

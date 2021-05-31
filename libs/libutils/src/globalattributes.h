@@ -60,6 +60,7 @@ class GlobalAttributes {
 		ConfigurationsDir,
 		SQLHighlightConfPath,
 		XMLHighlightConfPath,
+		SchHighlightConfPath,
 		PgModelerCHandlerPath,
 		PgModelerCLIPath,
 		PgModelerAppPath;
@@ -92,7 +93,7 @@ class GlobalAttributes {
 		LastModelFile,
 
 		DirSeparator,
-		DefaultConfsDir,  //! \brief Directory name which holds the default pgModeler configuration
+		DefaultConfsDir,
 		ConfsBackupsDir,  //! \brief Directory name which holds the pgModeler configuration backups
 		SchemasDir,        //! \brief Default name for the schemas directory
 		SQLSchemaDir,     //! \brief Default name for the sql schemas directory
@@ -100,12 +101,12 @@ class GlobalAttributes {
 		CatalogSchemasDir,//! \brief Default name for the catalog schemas directory
 		DataDictSchemaDir,//! \brief Default name for the data dictionary schemas directory
 		AlterSchemaDir,   //! \brief Default name for the alter schemas directory
-		SchemaExt,         //! \brief Default extension for schema files
+		SchemaExt,        //! \brief Default extension for schema files
 		ObjectDTDDir,     //! \brief Default directory for dtd files
 		ObjectDTDExt,     //! \brief Default extension for dtd files
-		RootDTD,           //! \brief Root DTD of model xml files
-		MetadataDTD,				//! \brief Root DTD of objects metadata xml files
-		ConfigurationExt,  //! \brief Default extension for configuration files
+		RootDTD,          //! \brief Root DTD of model xml files
+		MetadataDTD,			//! \brief Root DTD of objects metadata xml files
+		ConfigurationExt, //! \brief Default extension for configuration files
 		HighlightFileSuffix, //! \brief Suffix of language highlight configuration files
 
 		CodeHighlightConf,  //! \brief Default name for the language highlight dtd
@@ -118,6 +119,7 @@ class GlobalAttributes {
 
 		SQLHighlightConf, //! \brief Configuration file for SQL language highlight
 		XMLHighlightConf, //! \brief Configuration file for XML language highlight
+		SchHighlightConf, //! \brief Configuration file for Schema micro-language highlight
 		PatternHighlightConf, //! \brief Configuration file for name patterns highlight (relationship editing form)
 		SQLHistoryConf,		//! \brief Default name for the SQL commands history configuration file
 
@@ -178,6 +180,9 @@ class GlobalAttributes {
 
 		//! \brief Returns the path to the "xml-highlight.conf" file in user's local storage
 		static QString getXMLHighlightConfPath();
+
+		//! \brief Returns the path to the "sch-highlight.conf" file in user's local storage
+		static QString getSchHighlightConfPath();
 
 		//! \brief Returns the path to the "pgmodeler-ch" (crash handler) executable
 		static QString getPgModelerCHandlerPath();

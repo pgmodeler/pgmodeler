@@ -73,6 +73,7 @@ const QString GlobalAttributes::DiffPresetsConf("diff-presets");
 
 const QString GlobalAttributes::SQLHighlightConf("sql-highlight");
 const QString GlobalAttributes::XMLHighlightConf("xml-highlight");
+const QString GlobalAttributes::SchHighlightConf("sch-highlight");
 const QString GlobalAttributes::PatternHighlightConf("pattern-highlight");
 
 const QString GlobalAttributes::ExampleModel("example.dbm");
@@ -90,6 +91,7 @@ QString GlobalAttributes::ConfigurationsDir;
 QString GlobalAttributes::TemporaryDir;
 QString GlobalAttributes::SQLHighlightConfPath;
 QString GlobalAttributes::XMLHighlightConfPath;
+QString GlobalAttributes::SchHighlightConfPath;
 QString GlobalAttributes::PgModelerCLIPath;
 QString GlobalAttributes::PgModelerAppPath;
 QString GlobalAttributes::PgModelerCHandlerPath;
@@ -179,6 +181,11 @@ QString GlobalAttributes::getXMLHighlightConfPath()
 	return XMLHighlightConfPath;
 }
 
+QString GlobalAttributes::getSchHighlightConfPath()
+{
+	return SchHighlightConfPath;
+}
+
 QString GlobalAttributes::getPgModelerCHandlerPath()
 {
 	return PgModelerCHandlerPath;
@@ -215,6 +222,7 @@ void GlobalAttributes::setSearchPath(const QString &search_path)
 
 	SQLHighlightConfPath=ConfigurationsDir + DirSeparator + SQLHighlightConf + ConfigurationExt;
 	XMLHighlightConfPath=ConfigurationsDir + DirSeparator + XMLHighlightConf + ConfigurationExt;
+	SchHighlightConfPath=ConfigurationsDir + DirSeparator + SchHighlightConf + ConfigurationExt;
 
 	#if defined(Q_OS_UNIX)
 		#if defined(Q_OS_MAC)
