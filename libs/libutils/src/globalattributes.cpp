@@ -95,6 +95,8 @@ QString GlobalAttributes::SchHighlightConfPath;
 QString GlobalAttributes::PgModelerCLIPath;
 QString GlobalAttributes::PgModelerAppPath;
 QString GlobalAttributes::PgModelerCHandlerPath;
+QString GlobalAttributes::PgModelerSchEditorPath;
+
 
 QString GlobalAttributes::getPathFromEnv(const QString &varname, const QString &default_val, const QString &fallback_val)
 {
@@ -201,6 +203,11 @@ QString GlobalAttributes::getPgModelerAppPath()
 	return PgModelerAppPath;
 }
 
+QString GlobalAttributes::getPgModelerSchEditorPath()
+{
+	return PgModelerSchEditorPath;
+}
+
 void GlobalAttributes::setSearchPath(const QString &search_path)
 {
 	SchemasRootDir=GlobalAttributes::getPathFromEnv("PGMODELER_SCHEMAS_DIR", SCHEMASDIR, QString("%1/schemas").arg(search_path));
@@ -234,10 +241,12 @@ void GlobalAttributes::setSearchPath(const QString &search_path)
 
 		PgModelerCLIPath=getPathFromEnv("PGMODELER_CLI_PATH", QString("%1/pgmodeler-cli").arg(BINDIR), QString("%1/pgmodeler-cli").arg(search_path));
 		PgModelerAppPath=getPathFromEnv("PGMODELER_APP_PATH", QString("%1/pgmodeler").arg(BINDIR), QString("%1/pgmodeler").arg(search_path));
+		PgModelerSchEditorPath=getPathFromEnv("PGMODELER_SCHEDITOR_PATH", QString("%1/scheditor").arg(BINDIR), QString("%1/scheditor").arg(search_path));
 
 	#else
 		PgModelerCHandlerPath=getPathFromEnv("PGMODELER_CHANDLER_PATH", QString("%1\\pgmodeler-ch.exe").arg(PRIVATEBINDIR), QString("%1\\pgmodeler-ch.exe").arg(search_path));
 		PgModelerCLIPath=getPathFromEnv("PGMODELER_CLI_PATH", QString("%1\\pgmodeler-cli.exe").arg(PRIVATEBINDIR), QString("%1\\pgmodeler-cli.exe").arg(search_path));
 		PgModelerAppPath=getPathFromEnv("PGMODELER_APP_PATH", QString("%1\\pgmodeler.exe").arg(BINDIR), QString("%1\\pgmodeler.exe").arg(search_path));
+		PgModelerSchEditorPath=getPathFromEnv("PGMODELER_SCHEDITOR_PATH", QString("%1\\scheditor.exe").arg(BINDIR), QString("%1\\scheditor.exe").arg(search_path));
 	#endif
 }

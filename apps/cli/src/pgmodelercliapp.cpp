@@ -1918,6 +1918,8 @@ void PgModelerCliApp::handleLinuxMimeDatabase(bool uninstall, bool system_wide)
 			//Configures the path to the document logo
 			dbm_icon=GlobalAttributes::getTmplConfigurationFilePath("", "pgmodeler_dbm.png"),
 
+			sch_icon=GlobalAttributes::getTmplConfigurationFilePath("", "pgmodeler_sch.png"),
+
 			//Path to directory that register mime types
 			mime_db_dir=QString("%1/mime").arg(share_path),
 
@@ -1926,42 +1928,54 @@ void PgModelerCliApp::handleLinuxMimeDatabase(bool uninstall, bool system_wide)
 
 			//Files generated after update file association (application-dbm.xml and pgModeler.desktop)
 			files[] = { QString("%1/applications/pgModeler.desktop").arg(share_path),
-									mime_db_dir + QString("/packages/application-dbm.xml") },
+									QString("%1/applications/pgModelerSchEditor.desktop").arg(share_path),
+									mime_db_dir + QString("/packages/application-dbm.xml"),
+									mime_db_dir + QString("/packages/application-sch.xml")},
 
 			schemas[] = { GlobalAttributes::getTmplConfigurationFilePath(GlobalAttributes::SchemasDir, QString("desktop") + GlobalAttributes::SchemaExt),
-										GlobalAttributes::getTmplConfigurationFilePath(GlobalAttributes::SchemasDir, QString("application-dbm") + GlobalAttributes::SchemaExt) };
+										GlobalAttributes::getTmplConfigurationFilePath(GlobalAttributes::SchemasDir, QString("desktop-sch") + GlobalAttributes::SchemaExt),
+										GlobalAttributes::getTmplConfigurationFilePath(GlobalAttributes::SchemasDir, QString("application-dbm") + GlobalAttributes::SchemaExt),
+										GlobalAttributes::getTmplConfigurationFilePath(GlobalAttributes::SchemasDir, QString("application-sch") + GlobalAttributes::SchemaExt)};
 
 	QByteArray buf, buf_aux;
 	QFile out;
 
-	//When installing, check if the necessary file exists. If exists, raises an error and abort.
-	if(!uninstall && (QFileInfo(files[0]).exists() || QFileInfo(files[1]).exists()))
+	for(unsigned i=0; i < 4; i++)
 	{
-		throw Exception(MsgFileAssociated, ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		//When installing, check if the necessary file exists. If exists, raises an error and abort.
+		if(!uninstall && QFileInfo(files[i]).exists())
+			throw Exception(MsgFileAssociated, ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+		if(uninstall && !QFileInfo(files[i]).exists())
+			throw Exception(MsgNoFileAssociation, ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	}
-	else if(uninstall && (!QFileInfo(files[0]).exists() && !QFileInfo(files[1]).exists()))
-	{
-		throw Exception(MsgNoFileAssociation, ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-	}
-	else if(!uninstall)
-	{
+
+	if(!uninstall)
 		attribs[Attributes::WorkingDir]=QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
-		attribs[Attributes::Application]=GlobalAttributes::getPgModelerAppPath();
-		attribs[Attributes::Icon]=exec_icon;
-	}
 
 	try
 	{
-		for(unsigned i=0; i < 2; i++)
+		for(unsigned i=0; i < 4; i++)
 		{
 			if(uninstall)
 			{
 				if(!QFile(files[i]).remove())
+				{
 					throw Exception(tr("Can't erase the file %1! Check if the current user has permissions to delete it and if the file exists.").arg(files[i]),
 													ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+				}
 			}
 			else
 			{
+				attribs[Attributes::Application]=(i == 0 ? GlobalAttributes::getPgModelerAppPath() : GlobalAttributes::getPgModelerSchEditorPath());
+
+				if(i <= 1)
+					attribs[Attributes::Icon]=exec_icon;
+				else if(i == 2)
+					attribs[Attributes::Icon]=dbm_icon;
+				else
+					attribs[Attributes::Icon]=sch_icon;
+
 				schparser.loadFile(schemas[i]);
 				buf.append(schparser.getCodeDefinition(attribs).toUtf8());
 				QDir(QString(".")).mkpath(QFileInfo(files[i]).absolutePath());
@@ -1976,7 +1990,6 @@ void PgModelerCliApp::handleLinuxMimeDatabase(bool uninstall, bool system_wide)
 				out.write(buf.data(), buf.size());
 				out.close();
 				buf.clear();
-				attribs[Attributes::Icon]=dbm_icon;
 			}
 		}
 
@@ -1988,6 +2001,8 @@ void PgModelerCliApp::handleLinuxMimeDatabase(bool uninstall, bool system_wide)
 			out.open(QFile::WriteOnly);
 			out.write(QByteArray("[Added Associations]\napplication/dbm=pgModeler.desktop;\n"));
 			out.write(QByteArray("\n[Default Applications]\napplication/dbm=pgModeler.desktop;\n"));
+			out.write(QByteArray("\n[Added Associations]\napplication/sch=pgModelerSchEditor.desktop;\n"));
+			out.write(QByteArray("\n[Default Applications]\napplication/sch=pgModelerSchEditor.desktop;\n"));
 			out.close();
 		}
 		else

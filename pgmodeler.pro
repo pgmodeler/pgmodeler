@@ -25,9 +25,8 @@ exists($$PLUGINS_SRC_ROOT) {
 # Including executables subprojects
 SUBDIRS += apps/crashhandler \
 	   apps/cli \
-	   apps/gui
-
-CONFIG(debug, debug|release): SUBDIRS += apps/scheditor
+	   apps/gui \
+	   apps/scheditor
 
 # Deployment settings
 samples.files = assets/samples/*

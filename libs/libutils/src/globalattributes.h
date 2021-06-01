@@ -63,7 +63,8 @@ class GlobalAttributes {
 		SchHighlightConfPath,
 		PgModelerCHandlerPath,
 		PgModelerCLIPath,
-		PgModelerAppPath;
+		PgModelerAppPath,
+		PgModelerSchEditorPath;
 
 		/*! \brief Returns the current value for an environment variable. If the current value is a path and the same does not
 			exists then the function will return 'default_value' if it exists. Finally, if both current value and default
@@ -192,6 +193,9 @@ class GlobalAttributes {
 
 		//! \brief Returns the path to the "pgmodeler" (main application) executable
 		static QString getPgModelerAppPath();
+
+		//! \brief Returns the path to the "scheditor" executable
+		static QString getPgModelerSchEditorPath();
 
 		friend class Application;
 		friend class PgModelerUnitTest;
