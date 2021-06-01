@@ -29,8 +29,8 @@ SchemaEditorForm::SchemaEditorForm(QWidget *parent) : QWidget(parent)
 	general_conf_wgt.loadConfiguration();
 
 	syntax_txt = PgModelerUiNs::createNumberedTextEditor(syntax_wgt);
-	syntax_hl = new SyntaxHighlighter(syntax_txt);
-	syntax_hl->loadConfiguration(GlobalAttributes::getXMLHighlightConfPath());
+	//syntax_hl = new SyntaxHighlighter(syntax_txt);
+	//syntax_hl->loadConfiguration(GlobalAttributes::getXMLHighlightConfPath());
 
 	syntax_conf_sel = new FileSelectorWidget(syntax_conf_wgt);
 

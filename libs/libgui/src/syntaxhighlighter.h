@@ -41,8 +41,7 @@ class SyntaxHighlighter: public QSyntaxHighlighter {
 		class BlockInfo: public QTextBlockUserData {
 			public:
 				QString group;
-				bool has_exprs;
-				bool is_expr_closed;
+				bool is_multi_expr, is_closed, closed_once;
 
 				BlockInfo(void)
 				{
@@ -52,8 +51,9 @@ class SyntaxHighlighter: public QSyntaxHighlighter {
 				void resetBlockInfo(void)
 				{
 					group.clear();
-					has_exprs=false;
-					is_expr_closed=false;
+					is_multi_expr=false;
+					is_closed=false;
+					closed_once=false;
 				}
 		};
 

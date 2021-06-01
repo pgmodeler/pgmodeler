@@ -114,8 +114,8 @@ void SyntaxHighlighter::highlightBlock(const QString &txt)
 		 (currentBlockState() == OpenExprBlock || (txt.isEmpty() && currentBlockState() < 0)))
 	{
 		info->group=prev_info->group;
-		info->has_exprs=prev_info->has_exprs;
-		info->is_expr_closed=false;
+		info->is_multi_expr=prev_info->is_multi_expr;
+		info->is_closed=false;
 		setCurrentBlockState(OpenExprBlock);
 	}
 
@@ -197,7 +197,7 @@ void SyntaxHighlighter::highlightBlock(const QString &txt)
 					this because the final expression of the group contains the word delimiter '. In order to force the highlight stop
 					in the last ' we include it in the current evaluated word and increment the position in the text so the next
 					word starts without the word delimiter. */
-					if(i < len && word_delimiters.contains(text[i]) && prev_info && !prev_info->group.isEmpty() && prev_info->has_exprs)
+					if(i < len && word_delimiters.contains(text[i]) && prev_info && !prev_info->group.isEmpty() && prev_info->is_multi_expr)
 					{
 						for(auto exp : final_exprs[prev_info->group])
 						{
@@ -234,7 +234,7 @@ void SyntaxHighlighter::highlightBlock(const QString &txt)
 					setFormat(start_col, match_len, group);
 				}
 
-				if(info->has_exprs && !info->is_expr_closed && hasInitialAndFinalExprs(group))
+				if(info->is_multi_expr && !info->is_closed && hasInitialAndFinalExprs(group))
 					setCurrentBlockState(OpenExprBlock);
 				else
 					setCurrentBlockState(SimpleBlock);
@@ -253,14 +253,65 @@ void SyntaxHighlighter::highlightBlock(const QString &txt)
 QString SyntaxHighlighter::identifyWordGroup(const QString &word, const QChar &lookahead_chr, int &match_idx, int &match_len)
 {
 	QString group;
-	bool match=false;
-	BlockInfo *info=dynamic_cast<BlockInfo *>(currentBlockUserData()),
-			*prev_info=dynamic_cast<BlockInfo *>(currentBlock().previous().userData());
+	bool match = false;
+	BlockInfo *info = dynamic_cast<BlockInfo *>(currentBlockUserData()),
+			*prev_info = dynamic_cast<BlockInfo *>(currentBlock().previous().userData());
 
-	if((info->has_exprs && !info->is_expr_closed && hasInitialAndFinalExprs(info->group)) ||
-			(prev_info && !info->has_exprs && prev_info->has_exprs && !prev_info->is_expr_closed))
+	int block_st = currentBlockState();
+	bool match_final_expr= block_st == OpenExprBlock;
+
+	for(auto &itr_group : groups_order)
 	{
-		if(prev_info && !info->has_exprs)
+		if(isWordMatchGroup(word, itr_group, match_final_expr, lookahead_chr, match_idx, match_len))
+		{
+			group = itr_group;
+			match = true;
+			break;
+		}
+	}
+
+	if(!match || (match && block_st == OpenExprBlock && info->group != group))
+	{
+		match_idx=0;
+		match_len=word.length();
+
+		if(!info->group.isEmpty() && info->is_multi_expr && !info->is_closed)
+		{
+			return info->group;
+		}
+		else if((group.isEmpty() && info->closed_once) || word == QChar::LineFeed || (!info->group.isEmpty() && info->is_multi_expr && info->is_closed))
+		{
+			info->group = "unformatted";
+			info->is_multi_expr = true;
+			info->is_closed = true;
+			return info->group;
+		}
+		else if(prev_info && !prev_info->group.isEmpty() && prev_info->is_multi_expr && !prev_info->is_closed)
+		{
+			info->group = prev_info->group;
+			info->is_multi_expr = true;
+			info->is_closed = false;
+			return info->group;
+		}
+
+		return info->group;
+	}
+	else
+	{
+		info->group = group;
+		info->is_multi_expr = hasInitialAndFinalExprs(group);
+		info->is_closed = match && match_final_expr;
+
+		if(!info->closed_once && info->is_closed)
+			info->closed_once = true;
+
+		return group;
+	}
+
+	/* if((info->is_multi_expr && !info->is_closed && hasInitialAndFinalExprs(info->group)) ||
+			(prev_info && !info->is_multi_expr && prev_info->is_multi_expr && !prev_info->is_closed))
+	{
+		if(prev_info && !info->is_multi_expr)
 			group=prev_info->group;
 		else
 			group=info->group;
@@ -269,14 +320,14 @@ QString SyntaxHighlighter::identifyWordGroup(const QString &word, const QChar &l
 
 		//If the word match one final expression marks the current block info as closed
 		if(match)
-			info->is_expr_closed=true;
+			info->is_closed=true;
 		else
 		{
 			match_idx=0;
 			match_len=word.length();
 		}
 
-		info->has_exprs=hasInitialAndFinalExprs(group);
+		info->is_multi_expr=hasInitialAndFinalExprs(group);
 		info->group=group;
 
 		return group;
@@ -300,12 +351,12 @@ QString SyntaxHighlighter::identifyWordGroup(const QString &word, const QChar &l
 			info->group=group;
 
 			//if(!info->has_exprs)
-			info->has_exprs=hasInitialAndFinalExprs(group);
+			info->is_multi_expr=hasInitialAndFinalExprs(group);
 
-			info->is_expr_closed=false;
+			info->is_closed=false;
 			return group;
 		}
-	}
+	} */
 }
 
 bool SyntaxHighlighter::isWordMatchGroup(const QString &word, const QString &group, bool use_final_expr, const QChar &lookahead_chr, int &match_idx, int &match_len)
