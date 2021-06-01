@@ -58,7 +58,7 @@ SnippetsConfigWidget::SnippetsConfigWidget(QWidget * parent) : BaseConfigWidget(
 	try
 	{
 		snippet_hl=new SyntaxHighlighter(snippet_txt);
-		snippet_hl->loadConfiguration(GlobalAttributes::getSQLHighlightConfPath());
+		snippet_hl->loadConfiguration(GlobalAttributes::getSchHighlightConfPath());
 	}
 	catch(Exception &e)
 	{
