@@ -66,6 +66,7 @@ SchemaEditorForm::~SchemaEditorForm()
 
 void SchemaEditorForm::showEvent(QShowEvent *)
 {
+	splitter->setSizes({ width()/2, width()/3});
 	loadSyntaxConfig();
 }
 

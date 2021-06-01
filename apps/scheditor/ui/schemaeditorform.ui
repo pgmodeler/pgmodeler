@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
-    <height>600</height>
+    <width>1646</width>
+    <height>1334</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -23,7 +23,7 @@
    <iconset resource="../../../libs/libgui/res/resources.qrc">
     <normaloff>:/icons/icons/pgsqlModeler48x48.png</normaloff>:/icons/icons/pgsqlModeler48x48.png</iconset>
   </property>
-  <layout class="QGridLayout" name="gridLayout">
+  <layout class="QGridLayout" name="gridLayout_3">
    <property name="leftMargin">
     <number>6</number>
    </property>
@@ -36,19 +36,19 @@
    <property name="bottomMargin">
     <number>6</number>
    </property>
-   <property name="horizontalSpacing">
-    <number>10</number>
-   </property>
    <item row="0" column="0">
-    <widget class="QTabWidget" name="tabWidget">
-     <property name="currentIndex">
-      <number>0</number>
+    <widget class="QSplitter" name="splitter">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
      </property>
-     <widget class="QWidget" name="tab">
-      <attribute name="title">
+     <property name="childrenCollapsible">
+      <bool>false</bool>
+     </property>
+     <widget class="QGroupBox" name="groupBox">
+      <property name="title">
        <string>Editor</string>
-      </attribute>
-      <layout class="QGridLayout" name="gridLayout_2">
+      </property>
+      <layout class="QGridLayout" name="gridLayout">
        <property name="leftMargin">
         <number>6</number>
        </property>
@@ -69,6 +69,26 @@
          <property name="icon">
           <iconset resource="../../../libs/libgui/res/resources.qrc">
            <normaloff>:/icons/icons/new.png</normaloff>:/icons/icons/new.png</iconset>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>22</width>
+           <height>22</height>
+          </size>
+         </property>
+         <property name="toolButtonStyle">
+          <enum>Qt::ToolButtonTextBesideIcon</enum>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QToolButton" name="load_sch_tb">
+         <property name="text">
+          <string>Load</string>
+         </property>
+         <property name="icon">
+          <iconset resource="../../../libs/libgui/res/resources.qrc">
+           <normaloff>:/icons/icons/open.png</normaloff>:/icons/icons/open.png</iconset>
          </property>
          <property name="iconSize">
           <size>
@@ -104,16 +124,6 @@
          </property>
         </widget>
        </item>
-       <item row="1" column="0" colspan="5">
-        <widget class="QTabWidget" name="editors_tbw">
-         <property name="tabPosition">
-          <enum>QTabWidget::South</enum>
-         </property>
-         <property name="tabsClosable">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
        <item row="0" column="3">
         <widget class="QToolButton" name="save_as_sch_tb">
          <property name="enabled">
@@ -144,39 +154,29 @@
          </property>
          <property name="sizeHint" stdset="0">
           <size>
-           <width>322</width>
+           <width>377</width>
            <height>20</height>
           </size>
          </property>
         </spacer>
        </item>
-       <item row="0" column="1">
-        <widget class="QToolButton" name="load_sch_tb">
-         <property name="text">
-          <string>Load</string>
+       <item row="1" column="0" colspan="5">
+        <widget class="QTabWidget" name="editors_tbw">
+         <property name="tabPosition">
+          <enum>QTabWidget::North</enum>
          </property>
-         <property name="icon">
-          <iconset resource="../../../libs/libgui/res/resources.qrc">
-           <normaloff>:/icons/icons/open.png</normaloff>:/icons/icons/open.png</iconset>
-         </property>
-         <property name="iconSize">
-          <size>
-           <width>22</width>
-           <height>22</height>
-          </size>
-         </property>
-         <property name="toolButtonStyle">
-          <enum>Qt::ToolButtonTextBesideIcon</enum>
+         <property name="tabsClosable">
+          <bool>true</bool>
          </property>
         </widget>
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="tab_2">
-      <attribute name="title">
+     <widget class="QGroupBox" name="groupBox_2">
+      <property name="title">
        <string>Syntax</string>
-      </attribute>
-      <layout class="QGridLayout" name="gridLayout_3">
+      </property>
+      <layout class="QGridLayout" name="gridLayout_2">
        <property name="leftMargin">
         <number>6</number>
        </property>
@@ -188,9 +188,6 @@
        </property>
        <property name="bottomMargin">
         <number>6</number>
-       </property>
-       <property name="spacing">
-        <number>10</number>
        </property>
        <item row="0" column="0">
         <widget class="QWidget" name="syntax_conf_wgt" native="true">
@@ -258,11 +255,6 @@
         <widget class="QWidget" name="syntax_wgt" native="true"/>
        </item>
       </layout>
-     </widget>
-     <widget class="QWidget" name="tab_3">
-      <attribute name="title">
-       <string>Settings</string>
-      </attribute>
      </widget>
     </widget>
    </item>

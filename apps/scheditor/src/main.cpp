@@ -33,8 +33,7 @@ int main(int argc, char **argv)
 		app.installTranslator(&translator);
 
 		SchemaEditorForm scheditor;
-		PgModelerUiNs::resizeDialog(&scheditor);
-		scheditor.show();
+		scheditor.showMaximized();
 		app.exec();
 
 		return 0;
