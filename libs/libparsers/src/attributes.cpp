@@ -585,6 +585,7 @@ namespace Attributes {
 	StorageParams("stg-params"),
 	StoreInFile="store-in-file",
 	StrategyNum("stg-number"),
+	Stikeout("strikeout"),
 	Style("style"),
 	Styles("styles"),
 	Subtype("subtype"),

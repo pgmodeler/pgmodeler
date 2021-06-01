@@ -602,6 +602,7 @@ namespace Attributes {
 	StorageParams,
 	StoreInFile,
 	StrategyNum,
+	Stikeout,
 	Style,
 	Styles,
 	Subtype,

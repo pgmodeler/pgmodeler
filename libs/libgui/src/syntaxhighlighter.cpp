@@ -299,8 +299,8 @@ QString SyntaxHighlighter::identifyWordGroup(const QString &word, const QChar &l
 		{
 			info->group=group;
 
-			if(!info->has_exprs)
-				info->has_exprs=hasInitialAndFinalExprs(group);
+			//if(!info->has_exprs)
+			info->has_exprs=hasInitialAndFinalExprs(group);
 
 			info->is_expr_closed=false;
 			return group;
@@ -376,7 +376,7 @@ void SyntaxHighlighter::loadConfiguration(const QString &filename)
 		attribs_map attribs;
 		QString elem, expr_type, group;
 		bool groups_decl=false, chr_sensitive=false,
-				bold=false, italic=false,
+				bold=false, italic=false, strikeout = false,
 				underline=false, partial_match=false;
 		QTextCharFormat format;
 		QRegExp regexp;
@@ -491,7 +491,8 @@ void SyntaxHighlighter::loadConfiguration(const QString &filename)
 								italic=(attribs[Attributes::Italic]==Attributes::True);
 								bold=(attribs[Attributes::Bold]==Attributes::True);
 								underline=(attribs[Attributes::Underline]==Attributes::True);
-								partial_match=(attribs[Attributes::PartialMatch]==Attributes::True);
+								strikeout=(attribs[Attributes::Stikeout]==Attributes::True);
+								partial_match=(attribs[Attributes::PartialMatch]==Attributes::True);								
 								fg_color.setNamedColor(attribs[Attributes::ForegroundColor]);
 
 								//If the attribute isn't defined the bg color will be transparent
@@ -507,6 +508,7 @@ void SyntaxHighlighter::loadConfiguration(const QString &filename)
 								format.setFontPointSize(default_font.pointSizeF());
 								format.setFontItalic(italic);
 								format.setFontUnderline(underline);
+								format.setFontStrikeOut(strikeout);
 
 								if(bold)
 									format.setFontWeight(QFont::Bold);
