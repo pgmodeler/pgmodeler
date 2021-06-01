@@ -55,6 +55,7 @@ SchemaEditorForm::SchemaEditorForm(QWidget *parent) : QWidget(parent)
 	});
 
 	connect(new_sch_tb, SIGNAL(clicked(bool)), this, SLOT(addEditorTab()));
+	connect(load_sch_tb, SIGNAL(clicked(bool)), this, SLOT(loadSchemaFile()));
 	connect(editors_tbw, SIGNAL(tabCloseRequested(int)), this, SLOT(closeEditorTab(int)));
 }
 
@@ -137,6 +138,41 @@ void SchemaEditorForm::clearSyntaxConfig()
 	apply_conf_tb->setEnabled(false);
 }
 
+void SchemaEditorForm::loadSchemaFile()
+{
+	QFileDialog file_dlg;
+
+	try
+	{
+		file_dlg.setNameFilter(tr("Schema micro-language file (*.sch)"));
+		file_dlg.setWindowIcon(QPixmap(PgModelerUiNs::getIconPath("pgsqlModeler48x48")));
+		file_dlg.setWindowTitle(tr("Load schema file"));
+		file_dlg.setFileMode(QFileDialog::ExistingFiles);
+		file_dlg.setAcceptMode(QFileDialog::AcceptOpen);
+
+		if(file_dlg.exec() == QFileDialog::Accepted)
+			loadSchemaFiles(file_dlg.selectedFiles());
+	}
+	catch(Exception &e)
+	{
+		Messagebox msg_box;
+		msg_box.show(e);
+	}
+}
+
+void SchemaEditorForm::loadSchemaFiles(const QStringList &filenames)
+{
+	try
+	{
+		for(auto &file : filenames)
+			addEditorTab(file);
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorCode(), __PRETTY_FUNCTION__, __FILE__, __LINE__, &e);
+	}
+}
+
 void SchemaEditorForm::addEditorTab(const QString &filename)
 {
 	NumberedTextEditor *editor_txt = nullptr;
@@ -144,6 +180,23 @@ void SchemaEditorForm::addEditorTab(const QString &filename)
 	QWidget *page_wgt = nullptr;
 	QVBoxLayout *vbox = nullptr;
 	QFileInfo fi(filename);
+	QFile input;
+	QByteArray buffer;
+
+	if(!filename.isEmpty())
+	{
+		input.setFileName(filename);
+		input.open(QFile::ReadOnly);
+
+		if(!input.isOpen())
+		{
+			throw Exception(Exception::getErrorMessage(ErrorCode::FileDirectoryNotAccessed).arg(filename),
+											ErrorCode::FileDirectoryNotAccessed, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+		}
+
+		buffer = input.readAll();
+		input.close();
+	}
 
 	page_wgt = new QWidget;
 	vbox = new QVBoxLayout(page_wgt);
@@ -158,15 +211,18 @@ void SchemaEditorForm::addEditorTab(const QString &filename)
 		if(!syntax_conf_sel->getSelectedFile().isEmpty())
 			editor_hl->loadConfiguration(syntax_conf_sel->getSelectedFile());
 
+		editor_txt->setPlainText(buffer);
 		highlighters.append(editor_hl);
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(), e.getErrorCode(), __PRETTY_FUNCTION__, __FILE__, __LINE__, &e);
+		Messagebox msgbox;
+		msgbox.show(e);
 	}
 
 	editors_tbw->addTab(page_wgt, filename.isEmpty() ? tr("(unsaved)") : fi.baseName());
 	editors_tbw->setTabToolTip(editors_tbw->count() - 1, filename.isEmpty() ? "" : fi.absoluteFilePath());
+	editors_tbw->setCurrentIndex(editors_tbw->count() - 1);
 }
 
 void SchemaEditorForm::closeEditorTab(int idx)

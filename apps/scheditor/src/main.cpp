@@ -33,6 +33,8 @@ int main(int argc, char **argv)
 		app.installTranslator(&translator);
 
 		SchemaEditorForm scheditor;
+		args.pop_front();
+		scheditor.loadSchemaFiles(args);
 		scheditor.showMaximized();
 		app.exec();
 

@@ -44,12 +44,14 @@ class SchemaEditorForm : public QWidget, public Ui::SchemaEditorForm {
 
 		QList<SyntaxHighlighter *> highlighters;
 
-	protected:
 		void showEvent(QShowEvent *) override;
 
 	public:
 		explicit SchemaEditorForm(QWidget *parent = nullptr);
+
 		~SchemaEditorForm();
+
+		void loadSchemaFiles(const QStringList &filenames);
 
 	private slots:
 		void loadSyntaxConfig();
@@ -57,7 +59,8 @@ class SchemaEditorForm : public QWidget, public Ui::SchemaEditorForm {
 		void saveSyntaxConfig();
 		void clearSyntaxConfig();
 		void addEditorTab(const QString &filename = "");
-		void closeEditorTab(int idx);
+		void closeEditorTab(int idx);	
+		void loadSchemaFile();
 
 	signals:
 
