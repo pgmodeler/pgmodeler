@@ -15,6 +15,7 @@
 <!ATTLIST group bold (false|true) "false">
 <!ATTLIST group italic (false|true) "false">
 <!ATTLIST group underline (false|true) "false">
+<!ATTLIST group strikeout (false|true) "false">
 <!ATTLIST group partial-match (false|true) "false">
 
 <!ELEMENT word-delimiters EMPTY>
