@@ -1,0 +1,205 @@
+/*
+# PostgreSQL Database Modeler (pgModeler)
+#
+# Copyright 2006-2013 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation version 3.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# The complete text of GPLv3 is at LICENSE file on source code root directory.
+# Also, you can get the complete GNU General Public License at <http://www.gnu.org/licenses/>
+*/
+
+#include "application.h"
+#include "globalattributes.h"
+#include <QTranslator>
+#include <QTextStream>
+
+//Creates an standard out to handles QStrings
+QTextStream out(stdout);
+
+//Stores the long option names. The boolean indicates if the option accepts a value
+map<QString, bool> long_opts;
+
+//Stores the short option names.
+map<QString, QString> short_opts;
+
+//Option names constants
+QString INPUT="-input",
+OUTPUT="-output",
+EXPORT_TO_FILE="-export-to-file",
+EXPORT_TO_PNG="-export-to-png",
+EXPORT_TO_DBMS="-export-to-dbms",
+PGSQL_VER="-pgsql-ver",
+HELP="-help",
+SHOW_GRID="-show-grid",
+SHOW_DELIMITERS="-show-delimiters",
+IGNORE_DUPLICATES="-ignore-duplicates",
+CONN_ALIAS="-conn-alias",
+HOST="-host",
+USER="-user",
+PASSWD="-passwd",
+INITIAL_DB="-initial-db";
+
+void initializeOptions(void)
+{
+	long_opts[INPUT]=true;
+	long_opts[OUTPUT]=true;
+	long_opts[EXPORT_TO_FILE]=false;
+	long_opts[EXPORT_TO_PNG]=false;
+	long_opts[EXPORT_TO_DBMS]=false;
+	long_opts[PGSQL_VER]=true;
+	long_opts[HELP]=false;
+	long_opts[SHOW_GRID]=false;
+	long_opts[SHOW_DELIMITERS]=false;
+	long_opts[IGNORE_DUPLICATES]=false;
+	long_opts[CONN_ALIAS]=true;
+	long_opts[HOST]=true;
+	long_opts[USER]=true;
+	long_opts[PASSWD]=true;
+	long_opts[INITIAL_DB]=true;
+
+	short_opts[INPUT]="-i";
+	short_opts[OUTPUT]="-o";
+	short_opts[EXPORT_TO_FILE]="-f";
+	short_opts[EXPORT_TO_PNG]="-p";
+	short_opts[EXPORT_TO_DBMS]="-d";
+	short_opts[PGSQL_VER]="-v";
+	short_opts[HELP]="-h";
+	short_opts[SHOW_GRID]="-g";
+	short_opts[SHOW_DELIMITERS]="-l";
+	short_opts[IGNORE_DUPLICATES]="-I";
+	short_opts[CONN_ALIAS]="-c";
+	short_opts[HOST]="-H";
+	short_opts[USER]="-u";
+	short_opts[PASSWD]="-P";
+	short_opts[INITIAL_DB]="-D";
+}
+
+//Returns if the specified options exists on short options map
+bool isOptionRecognized(const QString &op, bool &accepts_val)
+{
+	map<QString, QString>::iterator itr=short_opts.begin();
+	bool found=false;
+
+	while(itr!=short_opts.end() && !found)
+	{
+		found=(op==itr->first || op==itr->second);
+		accepts_val=(found && long_opts[itr->first]);
+		itr++;
+	}
+
+	return(found);
+}
+
+void showMenu(void)
+{
+	out << endl;
+	out << "Usage: pgmodeler-cli [OPTIONS]" << endl;
+	out << "pgModeler " << GlobalAttributes::PGMODELER_VERSION << " command line interface." << endl;
+	out << "PostgreSQL Database Modeler Project" << endl;
+	out << "Copyright 2006-2013 Raphael A. Silva <rkhaotix@gmail.com>" << endl;
+	out << endl;
+	out << "This tool provides a way to export pgModeler's database models without" << endl;
+	out << "the need to load them on graphical interface. All available exporting" << endl;
+	out << "modes are described below." << endl;
+	out << endl;
+	out << "Options: " << endl;
+	out << QString("   %1, %2=[FILE]\t Input model file (.dbm).\n").arg(short_opts[INPUT]).arg(INPUT);
+	out << QString("   %1, %2=[FILE]\t Output file. Available only on export to file or png.\n").arg(short_opts[OUTPUT]).arg(OUTPUT);
+	out << QString("   %1, %2\t Export to a sql script file.\n").arg(short_opts[EXPORT_TO_FILE]).arg(EXPORT_TO_FILE);
+	out << QString("   %1, %2\t Export to a png image.\n").arg(short_opts[EXPORT_TO_PNG]).arg(EXPORT_TO_PNG);
+	out << QString("   %1, %2\t Export directly to a PostgreSQL server.\n").arg(short_opts[EXPORT_TO_DBMS]).arg(EXPORT_TO_DBMS);
+	out << QString("   %1, %2\t\t Version of generated SQL code. Only for file or dbms export.\n").arg(short_opts[PGSQL_VER]).arg(PGSQL_VER);
+	out << QString("   %1, %2\t\t Show this help menu.\n").arg(short_opts[HELP]).arg(HELP);
+	out << endl;
+	out << "PNG export options: " << endl;
+	out << QString("   %1, %2\t\t Draws the grid on the exported png image.\n").arg(short_opts[SHOW_GRID]).arg(SHOW_GRID);
+	out << QString("   %1, %2\t Draws the page delimiters on the exported png image.\n").arg(short_opts[SHOW_DELIMITERS]).arg(SHOW_DELIMITERS);
+	out << endl;
+	out << "DBMS export options: " << endl;
+	out << QString("   %1, %2\t Ignores errors related to duplicated objects that eventually exists on server side.\n").arg(short_opts[IGNORE_DUPLICATES]).arg(IGNORE_DUPLICATES);
+	out << QString("   %1, %2=[ALIAS]\t Connection configuration alias to be used.\n").arg(short_opts[CONN_ALIAS]).arg(CONN_ALIAS);
+	out << QString("   %1, %2=[HOST]\t\t PostgreSQL host which export will operate.\n").arg(short_opts[HOST]).arg(HOST);
+	out << QString("   %1, %2=[USER]\t\t PosrgreSQL username.\n").arg(short_opts[USER]).arg(USER);
+	out << QString("   %1, %2=[PASSWORD]\t PosrgreSQL user password.\n").arg(short_opts[PASSWD]).arg(PASSWD);
+	out << QString("   %1, %2=[DBNAME]\t Connection's initial database.\n").arg(short_opts[INITIAL_DB]).arg(INITIAL_DB);
+	out << endl;
+}
+
+//Parsers the options and executes the action specified by them
+void parserOptions(map<QString, QString> &opts)
+{
+	if(opts.empty() || opts.count(HELP) > 0)
+		showMenu();
+	else
+	{
+		if(opts.count(EXPORT_TO_FILE)==0 && opts.count(EXPORT_TO_PNG)==0 &&
+			 opts.count(EXPORT_TO_DBMS)==0)
+			throw Exception("No export mode specified!", ERR_CUSTOM,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+	}
+}
+
+int main(int argc, char **argv)
+{
+	try
+	{
+		QCoreApplication app(argc, argv);
+
+		QString op, value;
+		bool accepts_val=false;
+		initializeOptions();
+		map<QString, QString> opts;
+
+		app.exec();
+		app.
+
+		if(argc > 1)
+		{
+			for(int i=1; i < argc; i++)
+			{
+				op=argv[i];
+
+				//If the retrieved option starts with - it will be treated as a command option
+				if(op[0]=='-')
+				{
+					value.clear();
+
+					//Raises an error if the option is not recognized
+					if(!isOptionRecognized(op, accepts_val))
+						throw Exception(QString("Unrecognized option '%1'.").arg(op), ERR_CUSTOM,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+					//If the option accepts a value
+					if(accepts_val)
+					{
+						//If the next option does not starts with '-', is considered a value
+						if(i < argc-1 && argv[i+1][0]!='-')
+							value=argv[++i];
+
+						//Raises an error if the value is empty
+						if(value.isEmpty())
+							throw Exception(QString("Value not specified for option '%1'.").arg(op), ERR_CUSTOM,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+					}
+
+					opts[op]=value;
+				}
+			}
+		}
+
+		//Validates and executes the options
+		parserOptions(opts);
+		return(0);
+	}
+	catch(Exception &e)
+	{
+		out << e.getExceptionsText();
+		out << "** pgmodeler-cli aborted due critical error(s). **\n";
+		return(1);
+	}
+}

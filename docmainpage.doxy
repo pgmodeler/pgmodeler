@@ -1,13 +1,14 @@
 /** 
- * \defgroup pgmcore Core library (libpgmodeler)
- * \defgroup pgmutils Shared utility classes / namespaces library (libutils)
- * \defgroup pgmparsers Schema file and XML parsers library (libparsers)
- * \defgroup pgmcanvas Graphical objects renderer library (libobjrenderer)
- * \defgroup pgmui pgModeler user interface library (libpgmodeler_ui)
- * \defgroup pgmconnector Database connection and query library (libpgconnector)
- * \defgroup gui pgModeler main executable
- * \defgroup cli pgModeler command-line interface executable
- * \defgroup crashhandler pgModeler crash handler
+ * \defgroup libcore Core library (libpgmodeler)
+ * \defgroup libutils Shared utility classes / namespaces library (libutils)
+ * \defgroup libparsers Schema file and XML parsers library (libparsers)
+ * \defgroup libcanvas Graphical objects renderer library (libobjrenderer)
+ * \defgroup libgui pgModeler user interface library (libpgmodeler_ui)
+ * \defgroup libconnector Database connection and query library (libpgconnector)
+ * \defgroup pgmodeler pgModeler main executable
+ * \defgroup pgmodeler-cli pgModeler command-line interface executable
+ * \defgroup pgmodeler-ch pgModeler crash handler
+ * \defgroup pgmodeler-sce pgModeler syntax checker
  * \defgroup dummy Dummy plugin
  * 
  * 
@@ -29,6 +30,6 @@
  * 
  * If any of this sounds or exciting to you, drop us a line.
  * <em><strong>Raphael A. Silva</strong></em><br/>
- * <em>raphael@pgmodeler.com.br</em>
+ * <em>raphael@pgmodeler.io</em>
  */ 
 

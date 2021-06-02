@@ -28,3 +28,11 @@ obj/*
 plugins
 plugins/*
 release/*
+apps/pgmodeler/pgmodeler*
+apps/pgmodeler/build/*
+apps/pgmodeler-cli/pgmodeler-cli*
+apps/pgmodeler-cli/build/*
+apps/pgmodeler-ch/pgmodeler-ch*
+apps/pgmodeler-ch/build/*
+apps/pgmodeler-sce/pgmodeler-sce*
+apps/pgmodeler-sce/build/*

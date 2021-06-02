@@ -17,22 +17,22 @@
 */
 
 /**
-\ingroup scheditor
-\class SchemaEditorForm
+\ingroup pgmodeler-sce
+\class SyntaxCheckerForm
 \brief Implements the pgModeler's schema files editor.
 */
 
-#ifndef SCHEMA_EDITOR_FORM_H
-#define SCHEMA_EDITOR_FORM_H
+#ifndef SYNTAX_CHECKER_FORM_H
+#define SYNTAX_CHECKER_FORM_H
 
 #include <QObject>
 #include <QWidget>
-#include "ui_schemaeditorform.h"
+#include "ui_syntaxcheckerform.h"
 #include "numberedtexteditor.h"
 #include "syntaxhighlighter.h"
 #include "fileselectorwidget.h"
 
-class SchemaEditorForm : public QWidget, public Ui::SchemaEditorForm {
+class SyntaxCheckerForm : public QWidget, public Ui::SyntaxCheckerForm {
 	private:
 		Q_OBJECT
 
@@ -47,9 +47,9 @@ class SchemaEditorForm : public QWidget, public Ui::SchemaEditorForm {
 		void showEvent(QShowEvent *) override;
 
 	public:
-		explicit SchemaEditorForm(QWidget *parent = nullptr);
+		explicit SyntaxCheckerForm(QWidget *parent = nullptr);
 
-		~SchemaEditorForm();
+		~SyntaxCheckerForm();
 
 		void loadSchemaFiles(const QStringList &filenames);
 

@@ -16,12 +16,12 @@
 # Also, you can get the complete GNU General Public License at <http://www.gnu.org/licenses/>
 */
 
-#include "schemaeditorform.h"
+#include "syntaxcheckerform.h"
 #include "pgmodeleruins.h"
 #include "globalattributes.h"
 #include "generalconfigwidget.h"
 
-SchemaEditorForm::SchemaEditorForm(QWidget *parent) : QWidget(parent)
+SyntaxCheckerForm::SyntaxCheckerForm(QWidget *parent) : QWidget(parent)
 {
 	setupUi(this);
 
@@ -59,19 +59,19 @@ SchemaEditorForm::SchemaEditorForm(QWidget *parent) : QWidget(parent)
 	connect(editors_tbw, SIGNAL(tabCloseRequested(int)), this, SLOT(closeEditorTab(int)));
 }
 
-SchemaEditorForm::~SchemaEditorForm()
+SyntaxCheckerForm::~SyntaxCheckerForm()
 {
 	while(editors_tbw->count() > 0)
 		closeEditorTab(0);
 }
 
-void SchemaEditorForm::showEvent(QShowEvent *)
+void SyntaxCheckerForm::showEvent(QShowEvent *)
 {
 	splitter->setSizes({ width()/2, width()/3});
 	loadSyntaxConfig();
 }
 
-void SchemaEditorForm::loadSyntaxConfig()
+void SyntaxCheckerForm::loadSyntaxConfig()
 {
 	QFile input;
 	Messagebox msgbox;
@@ -92,7 +92,7 @@ void SchemaEditorForm::loadSyntaxConfig()
 	}
 }
 
-void SchemaEditorForm::applySyntaxConfig()
+void SyntaxCheckerForm::applySyntaxConfig()
 {
 	for(auto &hl : highlighters)
 	{
@@ -113,7 +113,7 @@ void SchemaEditorForm::applySyntaxConfig()
 	}
 }
 
-void SchemaEditorForm::saveSyntaxConfig()
+void SyntaxCheckerForm::saveSyntaxConfig()
 {
 	QFile input;
 	Messagebox msgbox;
@@ -131,14 +131,14 @@ void SchemaEditorForm::saveSyntaxConfig()
 	}
 }
 
-void SchemaEditorForm::clearSyntaxConfig()
+void SyntaxCheckerForm::clearSyntaxConfig()
 {
 	syntax_txt->clear();
 	save_conf_tb->setEnabled(false);
 	apply_conf_tb->setEnabled(false);
 }
 
-void SchemaEditorForm::loadSchemaFile()
+void SyntaxCheckerForm::loadSchemaFile()
 {
 	QFileDialog file_dlg;
 
@@ -160,7 +160,7 @@ void SchemaEditorForm::loadSchemaFile()
 	}
 }
 
-void SchemaEditorForm::loadSchemaFiles(const QStringList &filenames)
+void SyntaxCheckerForm::loadSchemaFiles(const QStringList &filenames)
 {
 	try
 	{
@@ -173,7 +173,7 @@ void SchemaEditorForm::loadSchemaFiles(const QStringList &filenames)
 	}
 }
 
-void SchemaEditorForm::addEditorTab(const QString &filename)
+void SyntaxCheckerForm::addEditorTab(const QString &filename)
 {
 	NumberedTextEditor *editor_txt = nullptr;
 	SyntaxHighlighter *editor_hl = nullptr;
@@ -225,7 +225,7 @@ void SchemaEditorForm::addEditorTab(const QString &filename)
 	editors_tbw->setCurrentIndex(editors_tbw->count() - 1);
 }
 
-void SchemaEditorForm::closeEditorTab(int idx)
+void SyntaxCheckerForm::closeEditorTab(int idx)
 {
 	QWidget *page = editors_tbw->widget(idx);
 	editors_tbw->removeTab(idx);
