@@ -307,5 +307,6 @@
         <file>images/rel_center_pnts.png</file>
         <file>images/rel_fk_to_pk.png</file>
         <file>images/rel_tab_edges.png</file>
+        <file>images/schemafile.png</file>
     </qresource>
 </RCC>

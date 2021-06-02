@@ -20,17 +20,14 @@
 #include <QTranslator>
 #include "pgmodeleruins.h"
 #include "syntaxcheckerform.h"
+#include "pgmodelerapp.h"
 
 int main(int argc, char **argv)
 {
 	try
 	{
-		Application app(argc,argv);
+		PgModelerApp app(argc,argv);
 		QStringList args = app.arguments();
-		QTranslator translator;
-
-		translator.load(QLocale::system().name(), GlobalAttributes::getLanguagesDir());
-		app.installTranslator(&translator);
 
 		SyntaxCheckerForm syntaxchk;
 		args.pop_front();

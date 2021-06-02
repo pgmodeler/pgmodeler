@@ -23,7 +23,22 @@
 
 SyntaxCheckerForm::SyntaxCheckerForm(QWidget *parent) : QWidget(parent)
 {
+	QToolButton *btn = nullptr;
+	QFont fnt;
+
 	setupUi(this);
+
+	for(auto &obj : bnts_parent_wgt->children())
+	{
+		btn = dynamic_cast<QToolButton *>(obj);
+		if(!btn) continue;
+
+		fnt = btn->font();
+		fnt.setBold(true);
+		btn->setFont(fnt);
+		PgModelerUiNs::createDropShadow(btn);
+		PgModelerUiNs::configureWidgetFont(btn, PgModelerUiNs::SmallFontFactor);
+	}
 
 	GeneralConfigWidget general_conf_wgt;
 	general_conf_wgt.loadConfiguration();
@@ -54,8 +69,8 @@ SyntaxCheckerForm::SyntaxCheckerForm(QWidget *parent) : QWidget(parent)
 		applySyntaxConfig();
 	});
 
-	connect(new_sch_tb, SIGNAL(clicked(bool)), this, SLOT(addEditorTab()));
-	connect(load_sch_tb, SIGNAL(clicked(bool)), this, SLOT(loadSchemaFile()));
+	connect(new_tb, SIGNAL(clicked(bool)), this, SLOT(addEditorTab()));
+	connect(load_tb, SIGNAL(clicked(bool)), this, SLOT(loadSchemaFile()));
 	connect(editors_tbw, SIGNAL(tabCloseRequested(int)), this, SLOT(closeEditorTab(int)));
 }
 
