@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup pgmcore/pgsqltypes
+\ingroup libcore/pgsqltypes
 \class IndexingType
 \brief Implements the operations to manipulate index access methods (indexing types).
 **/

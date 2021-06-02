@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup pgmcore
+\ingroup libcore
 \class Permission
 \brief Implements the operations to manipulate object permissions.
 \note <strong>Creation date:</strong> 16/09/2010

@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup pgmconnector
+\ingroup libconnector
 \class Catalog
 \brief \brief Implements the operations to read data from information_schema as well from pg_catalog schema.
 This class is the basis for the reverse engineering feature.

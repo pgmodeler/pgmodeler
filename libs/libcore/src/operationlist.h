@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup pgmcore
+\ingroup libcore
 \class OperationList
 \brief Implements the operations to maintain a list of modifications made
 by the user on database model objects. This class permits that user

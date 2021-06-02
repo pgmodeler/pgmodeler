@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup pgmui
+\ingroup libgui
 \class FunctionWidget
 \brief Implements the operations to create/edit functions via form.
 */

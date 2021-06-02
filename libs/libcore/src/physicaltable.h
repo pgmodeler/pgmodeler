@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup pgmcore
+\ingroup libcore
 \brief Implements the basic attributes and operations shared by tables and foreign tables.
 */
 

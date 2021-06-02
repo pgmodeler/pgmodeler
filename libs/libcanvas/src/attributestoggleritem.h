@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup pgmcanvas
+\ingroup libcanvas
 \class AttributesTogglerItem
 \brief Implements a basic table's attributes toggler/pagination used by BaseTableView.
 */

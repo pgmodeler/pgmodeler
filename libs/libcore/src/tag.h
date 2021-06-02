@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup pgmcore
+\ingroup libcore
 \class Tag
 \brief Implements a way to separate tables and views via tags. Each tag contain custom colors
 that replaces the original colors of tables/views that owns them.

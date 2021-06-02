@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup pgmcore
+\ingroup libcore
 \class TypeArgument
 \brief Implements the operations to manipulate user defined types arguments.
 */

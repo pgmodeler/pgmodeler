@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup pgmui
+\ingroup libgui
 \class ObjectSelectorWidget
 \brief Implements a simple object picker based upon the object view widget.
 */

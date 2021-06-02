@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup pgmcanvas
+\ingroup libcanvas
 \class ObjectsScene
 \brief Implements the basic operations to visualize and manipulate the graphical objects.
 */

@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup pgmcore
+\ingroup libcore
 \class ForeignObject
 \brief Implements the basic operations to handle common attributes of foreign data wrapper, foreign servers and foreign tables.
 */

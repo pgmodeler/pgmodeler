@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup pgmui
+\ingroup libgui
 \class CsvLoadWidget
 \brief Implements basic features to load csv files and return the loaded buffer to the application
 */

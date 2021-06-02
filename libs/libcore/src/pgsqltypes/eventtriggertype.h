@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup pgmcore/pgsqltypes
+\ingroup libcore/pgsqltypes
 \class EventTriggerType
 \brief Implements the operations to manipulate event trigger types/modes.
 **/

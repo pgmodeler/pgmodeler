@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup pgmutils
+\ingroup libutils
 \namespace PgSQLVersions
 \brief Definition of PgSQLVersions namespace wich stores a series of static strings constants used
  to reference the supported PostgreSQL version.

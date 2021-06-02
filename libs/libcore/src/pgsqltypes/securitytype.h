@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup pgmcore/pgsqltypes
+\ingroup libcore/pgsqltypes
 \class SecurityType
 \brief Implements the operations to manipulate function's security types.
 **/

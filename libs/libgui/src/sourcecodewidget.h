@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup pgmui
+\ingroup libgui
 \class SourceCodeWidget
 \brief Implements the operation to visualize object's source code.
 */

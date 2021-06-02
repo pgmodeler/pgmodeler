@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup pgmui
+\ingroup libgui
 \class DataGridForm
 \brief Implements the operations to handle table's data
 */

@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup pgmcanvas
+\ingroup libcanvas
 \class GraphicalView
 \brief Implements the graphical representation for Views
 */

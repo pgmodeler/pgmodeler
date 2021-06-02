@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup pgmui
+\ingroup libgui
 \class AppearanceConfigWidget
 \brief Implements the operations to manage graphical objects appearance configuration.
 */

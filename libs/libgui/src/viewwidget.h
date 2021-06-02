@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup pgmui
+\ingroup libgui
 \class ViewWidget
 \brief Implements the operations to create/edit views via form.
 */

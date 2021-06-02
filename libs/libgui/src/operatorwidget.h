@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup pgmui
+\ingroup libgui
 \class OperatorWidget
 \brief Implements the operations to create/edit operators via form.
 */

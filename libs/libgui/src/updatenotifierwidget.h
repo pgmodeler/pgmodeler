@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup pgmui
+\ingroup libgui
 \class UpdateNotifierWidget
 \brief Implements a basic update notifier shown as a popup widget on main window.
 

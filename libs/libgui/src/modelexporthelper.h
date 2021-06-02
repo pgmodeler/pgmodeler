@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup pgmui
+\ingroup libgui
 \class ModelExportHelper
 \brief Implements the base operations to export models (forward engineering)
 */

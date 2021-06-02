@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup pgmui
+\ingroup libgui
 \class SnippetsConfigWidget
 \brief Implements the operations to manage sql snippets configuration.
 */

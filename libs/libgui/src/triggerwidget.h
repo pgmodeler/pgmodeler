@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup pgmui
+\ingroup libgui
 \class TriggerWidget
 \brief Implements the operations to create/edit triggers via form.
 */

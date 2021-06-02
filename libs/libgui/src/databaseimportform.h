@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup pgmui
+\ingroup libgui
 \class DatabaseImportForm
 \brief Implements the form to execute the reverse engineering operations
 */

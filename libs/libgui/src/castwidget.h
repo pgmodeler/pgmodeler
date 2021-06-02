@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup pgmui
+\ingroup libgui
 \class CastWidget
 \brief Implements the operations to create/edit type casts via form.
 */

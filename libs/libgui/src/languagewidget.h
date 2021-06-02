@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup pgmui
+\ingroup libgui
 \class LanguageWidget
 \brief Implements the operations to create/edit languages via form.
 */

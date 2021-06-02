@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup pgmui
+\ingroup libgui
 \class DatabaseImportHelper
 \brief Implements the base operations to import existing databases into model (reverse engineering)
 */

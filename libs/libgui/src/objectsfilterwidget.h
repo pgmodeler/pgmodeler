@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup pgmui
+\ingroup libgui
 \class ObjectsFilterWidget
 \brief Implements the operations to generated filter patterns for reverse engineering process.
 */

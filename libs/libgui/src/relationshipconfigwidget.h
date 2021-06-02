@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup pgmui
+\ingroup libgui
 \class RelationshipConfigWidget
 \brief Implements the operations to manage global settings for relationship objects.
 */

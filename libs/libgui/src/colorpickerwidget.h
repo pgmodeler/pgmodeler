@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup pgmui
+\ingroup libgui
 \class ColorPìckerWidget
 \brief Implements a basic widget to handle color selection.
 */

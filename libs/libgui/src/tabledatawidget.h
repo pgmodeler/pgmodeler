@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup pgmui
+\ingroup libgui
 \class TableDataWidget
 \brief Form used to add initial data for tables.
 */

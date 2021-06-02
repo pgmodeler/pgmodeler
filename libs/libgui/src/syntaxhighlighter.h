@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup pgmui
+\ingroup libgui
 \class SyntaxHighlighter
 \brief Implements a syntax hightlighter with user-defined markup patterns (xml configuration).
 */

@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup pgmcore
+\ingroup libcore
 \class ForeignDataWrapper
 \brief Implements the operations to manipulate foreign data wrappers on the database.
 */

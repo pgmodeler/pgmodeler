@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup pgmparsers
+\ingroup libparsers
 \typedef attribs_map
 \brief This typedef is used to replace maps with the signature map<QString,QString> commonly used
 to store objects attributes and used by SchemaParser, XMLParser and several other classes

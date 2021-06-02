@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup pgmui
+\ingroup libgui
 \class ColumnWidget
 \brief Implements the operations to create/edit columns via form.
 */

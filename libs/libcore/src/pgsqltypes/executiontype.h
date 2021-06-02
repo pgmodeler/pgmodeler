@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup pgmcore/pgsqltypes
+\ingroup libcore/pgsqltypes
 \class ExecutionType
 \brief Implements the operations to manipulate rule execution modes.
 **/

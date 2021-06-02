@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup pgmcore
+\ingroup libcore
 \brief Implements the operations to manipulate operators on the database.
 \note <strong>Creation date:</strong> 16/04/2008
 */

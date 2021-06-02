@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup pgmui
+\ingroup libgui
 \class CollationWidget
 \brief Implements the operations to create/edit collations via form.
 */

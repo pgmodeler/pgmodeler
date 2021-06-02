@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup pgmcanvas
+\ingroup libcanvas
 \class SchemaView
 \brief Represents the schema in a graphical way on the object scene
 */

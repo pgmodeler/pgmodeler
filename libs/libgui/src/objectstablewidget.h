@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup pgmui
+\ingroup libgui
 \class ObjectsTableWidget
 \brief Implements a basic table (grid) which can be used commonly to store
 objects references and show information about them on it's rows. This

@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup pgmui
+\ingroup libgui
 \class HtmlItemDelegate
 \brief Implements a custom item delegate used in treewidget to paint items that contains html as text
 */

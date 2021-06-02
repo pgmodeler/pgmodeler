@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup pgmcore/pgsqltypes
+\ingroup libcore/pgsqltypes
 \class BaseType
 \brief Implements the basic operations to manipulate PostgreSQL types based upon reserved keywords.
 **/

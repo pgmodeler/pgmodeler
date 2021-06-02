@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup pgmui
+\ingroup libgui
 \class FileSelectorWidget
 \brief Implements a simple file/directory picker with customizable behavior.
 */

@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup pgmui
+\ingroup libgui
 \class ModelObjectsWidget
 \brief Implements a widget that permits an tree and list view of all model objects.
 */

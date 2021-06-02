@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup pgmcore
+\ingroup libcore
 \class EventTrigger
 \brief Implements the operations to manipulate event triggers on the database.
 */

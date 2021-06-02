@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup pgmutils
+\ingroup libutils
 \namespace GlobalAttributes
 \brief Definition of GlobalAttributes class which stores a series of static strings constants used
  to reference the global configuration attributes of the software.

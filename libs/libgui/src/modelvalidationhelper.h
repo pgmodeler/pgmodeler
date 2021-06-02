@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup pgmui
+\ingroup libgui
 \class ModelValidationHelper
 \brief Implements the base operations to validate models
 */

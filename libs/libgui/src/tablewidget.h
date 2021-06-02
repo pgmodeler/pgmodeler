@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup pgmui
+\ingroup libgui
 \class TableWidget
 \brief  Implements the operations to create/edit tables via form.
 */

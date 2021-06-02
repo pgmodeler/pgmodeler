@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup pgmui
+\ingroup libgui
 \class PlainTextItemDelegate
 \brief Implements a custom item delegate based upon a QPlainTextEdit to help edit long texts with line breaks
 */

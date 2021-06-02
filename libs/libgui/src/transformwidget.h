@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup pgmui
+\ingroup libgui
 \class TransformWidget
 \brief Implements the operations to create/edit transforms via form.
 */

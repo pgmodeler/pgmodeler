@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup pgmcore
+\ingroup libcore
 \class Tablespace
 \brief Implements the operations to manipulate tablespace on the database.
 \note <strong>Creation date:</strong> 05/06/2008

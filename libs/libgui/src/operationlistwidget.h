@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup pgmui
+\ingroup libgui
 \class OperationListWidget
 \brief Implements the widget representation for the operation list, giving access to the undo/redo action over the model.
 */

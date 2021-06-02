@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup pgmui
+\ingroup libgui
 \class ChangelogWidget
 \brief Implements the widget that allows the user to handle model's changelog
 */

@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup pgmui
+\ingroup libgui
 \class LayersConfigWidget
 \brief Implements the widget that allows the user to handle scene layers
 */

@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup pgmui
+\ingroup libgui
 \class BaseFunctionWidget
 \brief Implements the operations to create/edit functions/procedure via form.
 This widget is specialized in FunctionWidget and ProcedureWidget in order to

@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup pgmui
+\ingroup libgui
 \class TablespaceWidget
 \brief Implements the operations to create/edit tablespaces via form.
 */

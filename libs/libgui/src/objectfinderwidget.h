@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup pgmui
+\ingroup libgui
 \class ObjectFinderWidget
 \brief Implements the operations to find objects over the model
 */

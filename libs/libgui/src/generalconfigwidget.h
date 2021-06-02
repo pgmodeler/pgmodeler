@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup pgmui
+\ingroup libgui
 \class GeneralConfigWidget
 \brief Implements the operations to manage general configurations.
 */

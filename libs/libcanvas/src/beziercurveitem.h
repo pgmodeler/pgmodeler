@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup pgmcanvas
+\ingroup libcanvas
 \class BezierCurveItem
 \brief Represents a simple bezier curve item used by relationships to draw curved lines
 */

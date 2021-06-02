@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup pgmcore/pgsqltypes
+\ingroup libcore/pgsqltypes
 \class EncodingType
 \brief Implements the operations to manipulate database enconding types.
 **/

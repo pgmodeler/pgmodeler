@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup pgmparsers
+\ingroup libparsers
 \namespace Attributes
 \brief Definition of parsers attributes namespace which stores a series of static strings constants used
  to reference the attributes of objects in SQL/XML generation methods.

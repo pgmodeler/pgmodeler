@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup pgmui
+\ingroup libgui
 \class MainWindow
 \brief Implements the pgModeler main window. Reuniting all the resources implemented by the libraries.
 */

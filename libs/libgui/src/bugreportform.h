@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup pgmui
+\ingroup libgui
 \class BugReportForm
 \brief Implements operations to permit user generate bug reports without use the crash handler application.
 */

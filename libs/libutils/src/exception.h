@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup pgmutils
+\ingroup libutils
 \class Exception
 \brief Catalogs all the errors raised by pgModeler
 \note <strong>Creation date:</strong> 10/07/2006

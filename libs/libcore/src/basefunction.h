@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup pgmcore
+\ingroup libcore
 \brief Implements the basic operations to manipulate functions/stored procedures on the database.
 */
 

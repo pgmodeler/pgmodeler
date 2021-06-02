@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup pgmui
+\ingroup libgui
 \class ForeignServerWidget
 \brief Implements the operations to create/edit foreign servers via form.
 */

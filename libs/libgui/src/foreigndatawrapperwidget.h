@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup pgmui
+\ingroup libgui
 \class ForeignDataWrapperWidget
 \brief Implements the operations to create/edit foreign data wrappers via form.
 */

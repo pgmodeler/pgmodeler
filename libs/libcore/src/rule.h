@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup pgmcore
+\ingroup libcore
 \class Rule
 \brief Implements the operations to manipulate table rules.
 \note <strong>Creation date:</strong> 26/09/2006

@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup pgmcore/pgsqltypes
+\ingroup libcore/pgsqltypes
 \class SpatialType
 \brief Implements the operations to manipulate geospatial (postgis) data types.
 **/

@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup pgmcanvas
+\ingroup libcanvas
 \class RelationshipView
 \brief Implements the graphical representation for relationships
 */

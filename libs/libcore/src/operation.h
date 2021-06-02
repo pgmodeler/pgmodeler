@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup pgmcore
+\ingroup libcore
 \class Operation
 \brief Implements the class that stores operations executed over an object
 */
