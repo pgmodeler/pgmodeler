@@ -19,6 +19,7 @@
 #include "syntaxhighlighter.h"
 #include "numberedtexteditor.h"
 #include "qtcompat/qplaintexteditcompat.h"
+#include "textblockinfo.h"
 
 QFont SyntaxHighlighter::default_font = QFont(QString("Source Code Pro"), 10);
 const QString SyntaxHighlighter::UnformattedGroup = QString("__unformatted__");
@@ -89,19 +90,19 @@ void SyntaxHighlighter::configureAttributes()
 
 void SyntaxHighlighter::highlightBlock(const QString &txt)
 {
-	BlockInfo *info=nullptr;
-	BlockInfo *prev_info=dynamic_cast<BlockInfo *>(currentBlock().previous().userData());
+	TextBlockInfo *info=nullptr;
+	TextBlockInfo *prev_info=dynamic_cast<TextBlockInfo *>(currentBlock().previous().userData());
 
 	if(!currentBlockUserData())
 	{
-		info=new BlockInfo;
+		info=new TextBlockInfo;
 		setCurrentBlockUserData(info);
 	}
 	else
 	{
 		//Reset the block's info to permit the rehighlighting
-		info=dynamic_cast<BlockInfo *>(currentBlockUserData());
-		info->resetBlockInfo();
+		info=dynamic_cast<TextBlockInfo *>(currentBlockUserData());
+		info->reset();
 		setCurrentBlockState(SimpleBlock);
 	}
 
@@ -114,9 +115,9 @@ void SyntaxHighlighter::highlightBlock(const QString &txt)
 	if(prev_info && currentBlock().previous().userState()==OpenExprBlock &&
 		 (currentBlockState() == OpenExprBlock || (txt.isEmpty() && currentBlockState() < 0)))
 	{
-		info->group=prev_info->group;
-		info->is_multi_expr=prev_info->is_multi_expr;
-		info->is_closed=false;
+		info->setGroup(prev_info->getGroup());
+		info->setMultiExpr(prev_info->isMultiExpr());
+		info->setClosed(false);
 		setCurrentBlockState(OpenExprBlock);
 	}
 
@@ -169,7 +170,7 @@ void SyntaxHighlighter::highlightBlock(const QString &txt)
 				}
 				else
 				{
-					BlockInfo *prev_info = dynamic_cast<BlockInfo *>(currentBlock().previous().userData());
+					TextBlockInfo *prev_info = dynamic_cast<TextBlockInfo *>(currentBlock().previous().userData());
 
 					while(i < len &&
 						  !word_separators.contains(text[i]) &&
@@ -198,9 +199,10 @@ void SyntaxHighlighter::highlightBlock(const QString &txt)
 					this because the final expression of the group contains the word delimiter '. In order to force the highlight stop
 					in the last ' we include it in the current evaluated word and increment the position in the text so the next
 					word starts without the word delimiter. */
-					if(i < len && word_delimiters.contains(text[i]) && prev_info && !prev_info->group.isEmpty() && prev_info->is_multi_expr)
+					if(i < len && word_delimiters.contains(text[i]) &&
+						 prev_info && !prev_info->getGroup().isEmpty() && prev_info->isMultiExpr())
 					{
-						for(auto exp : final_exprs[prev_info->group])
+						for(auto exp : final_exprs[prev_info->getGroup()])
 						{
 							if(exp.pattern().contains(text[i]))
 							{
@@ -235,7 +237,7 @@ void SyntaxHighlighter::highlightBlock(const QString &txt)
 					setFormat(start_col, match_len, group);
 				}
 
-				if(info->is_multi_expr && !info->is_closed && hasInitialAndFinalExprs(group))
+				if(info->isMultiExpr() && !info->isClosed() && hasInitialAndFinalExprs(group))
 					setCurrentBlockState(OpenExprBlock);
 				else
 					setCurrentBlockState(SimpleBlock);
@@ -255,8 +257,8 @@ QString SyntaxHighlighter::identifyWordGroup(const QString &word, const QChar &l
 {
 	QString group;
 	bool match = false;
-	BlockInfo *info = dynamic_cast<BlockInfo *>(currentBlockUserData()),
-			*prev_info = dynamic_cast<BlockInfo *>(currentBlock().previous().userData());
+	TextBlockInfo *info = dynamic_cast<TextBlockInfo *>(currentBlockUserData()),
+			*prev_info = dynamic_cast<TextBlockInfo *>(currentBlock().previous().userData());
 
 	int block_st = currentBlockState();
 	bool match_final_expr= block_st == OpenExprBlock;
@@ -271,56 +273,49 @@ QString SyntaxHighlighter::identifyWordGroup(const QString &word, const QChar &l
 		}
 	}
 
-	if(!match || (match && block_st == OpenExprBlock && info->group != group))
+	if(!match || (match && block_st == OpenExprBlock && info->getGroup() != group))
 	{
 		match_idx=0;
 		match_len=word.length();
 
-		if(!info->group.isEmpty() && info->is_multi_expr && !info->is_closed)
+		if(!info->getGroup().isEmpty() && info->isMultiExpr() && !info->isClosed())
 		{
-			return info->group;
+			return info->getGroup();
 		}
-		else if((word == QChar::LineFeed && prev_info && !prev_info->group.isEmpty() && prev_info->is_multi_expr && prev_info->is_closed) ||
-						(group.isEmpty() && info->closed_once) ||
-						(!info->group.isEmpty() && info->is_multi_expr && info->is_closed))
+		else if((word == QChar::LineFeed && prev_info &&
+						 !prev_info->getGroup().isEmpty() && prev_info->isMultiExpr() && prev_info->isClosed()) ||
+						(group.isEmpty() && info->isClosedOnce()) ||
+						(!info->getGroup().isEmpty() && info->isMultiExpr() && info->isClosed()))
 		{
-			info->group = UnformattedGroup;
-			info->is_multi_expr = true;
-			info->is_closed = true;
-			return info->group;
+			info->setGroup(UnformattedGroup);
+			info->setMultiExpr(true);
+			info->setClosed(true);
+			return info->getGroup();
 		}
-		else if(prev_info && !prev_info->group.isEmpty() && prev_info->is_multi_expr && !prev_info->is_closed)
+		else if(prev_info && !prev_info->getGroup().isEmpty() && prev_info->isMultiExpr() && !prev_info->isClosed())
 		{
-			info->group = prev_info->group;
-			info->is_multi_expr = true;
-			info->is_closed = isWordMatchGroup(word,  prev_info->group, true, lookahead_chr, match_idx, match_len);
-
-			if(!info->closed_once && info->is_closed)
-				info->closed_once = true;
-
-			return info->group;
+			info->setGroup(prev_info->getGroup());
+			info->setMultiExpr(true);
+			info->setClosed(isWordMatchGroup(word,  prev_info->getGroup(), true, lookahead_chr, match_idx, match_len));
+			return info->getGroup();
 		}
 
-		return info->group;
+		return info->getGroup();
 	}
 	else
 	{
-		if(!group.isEmpty() && info->group.isEmpty() &&
-			 prev_info && prev_info->is_multi_expr && !prev_info->is_closed)
+		if(!group.isEmpty() && info->getGroup().isEmpty() &&
+			 prev_info && prev_info->isMultiExpr() && !prev_info->isClosed())
 		{
-			info->group = prev_info->group;
-			info->is_multi_expr = true;
-			info->is_closed = false;
-			return info->group;
+			info->setGroup(prev_info->getGroup());
+			info->setMultiExpr(true);
+			info->setClosed(false);
+			return info->getGroup();
 		}
 
-		info->group = group;
-		info->is_multi_expr = hasInitialAndFinalExprs(group);
-		info->is_closed = match && match_final_expr;
-
-		if(!info->closed_once && info->is_closed)
-			info->closed_once = true;
-
+		info->setGroup(group);
+		info->setMultiExpr(hasInitialAndFinalExprs(group));
+		info->setClosed(match && match_final_expr);
 		return group;
 	}
 
