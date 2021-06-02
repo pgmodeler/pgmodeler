@@ -97,6 +97,7 @@ void SyntaxHighlighter::highlightBlock(const QString &txt)
 	{
 		info=new TextBlockInfo;
 		setCurrentBlockUserData(info);
+		setCurrentBlockState(currentBlock().previous().userState());
 	}
 	else
 	{
