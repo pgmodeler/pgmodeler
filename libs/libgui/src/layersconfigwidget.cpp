@@ -342,7 +342,7 @@ void LayersConfigWidget::__addLayer(const QString &name, Qt::CheckState chk_stat
 void LayersConfigWidget::addLayer(const QString &name)
 {
 	QString fmt_name = name.isEmpty() ? tr("New layer") : name;
-	QStringList act_layers = model->scene->getLayers();
+	QStringList act_layers = model->scene->getActiveLayers();
 
 	fmt_name = model->scene->addLayer(fmt_name);
 
