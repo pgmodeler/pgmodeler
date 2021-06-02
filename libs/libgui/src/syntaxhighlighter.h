@@ -57,6 +57,11 @@ class SyntaxHighlighter: public QSyntaxHighlighter {
 				}
 		};
 
+		/*! \brief The default name of the group related to unformatted words.
+		 * This is just a dummy group and just serves to force the non-formatting of
+		 * any word that doesn't fit the configured groups */
+		static const QString UnformattedGroup;
+
 		//! \brief XML parser used to parse configuration files
 		XmlParser xmlparser;
 

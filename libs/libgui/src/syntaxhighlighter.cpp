@@ -20,7 +20,8 @@
 #include "numberedtexteditor.h"
 #include "qtcompat/qplaintexteditcompat.h"
 
-QFont SyntaxHighlighter::default_font=QFont(QString("Source Code Pro"), 10);
+QFont SyntaxHighlighter::default_font = QFont(QString("Source Code Pro"), 10);
+const QString SyntaxHighlighter::UnformattedGroup = QString("__unformatted__");
 
 SyntaxHighlighter::SyntaxHighlighter(QPlainTextEdit *parent, bool single_line_mode, bool use_custom_tab_width) : QSyntaxHighlighter(parent)
 {
@@ -279,9 +280,11 @@ QString SyntaxHighlighter::identifyWordGroup(const QString &word, const QChar &l
 		{
 			return info->group;
 		}
-		else if((group.isEmpty() && info->closed_once) || word == QChar::LineFeed || (!info->group.isEmpty() && info->is_multi_expr && info->is_closed))
+		else if((word == QChar::LineFeed && prev_info && !prev_info->group.isEmpty() && prev_info->is_multi_expr && prev_info->is_closed) ||
+						(group.isEmpty() && info->closed_once) ||
+						(!info->group.isEmpty() && info->is_multi_expr && info->is_closed))
 		{
-			info->group = "unformatted";
+			info->group = UnformattedGroup;
 			info->is_multi_expr = true;
 			info->is_closed = true;
 			return info->group;
@@ -290,7 +293,11 @@ QString SyntaxHighlighter::identifyWordGroup(const QString &word, const QChar &l
 		{
 			info->group = prev_info->group;
 			info->is_multi_expr = true;
-			info->is_closed = false;
+			info->is_closed = isWordMatchGroup(word,  prev_info->group, true, lookahead_chr, match_idx, match_len);
+
+			if(!info->closed_once && info->is_closed)
+				info->closed_once = true;
+
 			return info->group;
 		}
 
@@ -298,6 +305,15 @@ QString SyntaxHighlighter::identifyWordGroup(const QString &word, const QChar &l
 	}
 	else
 	{
+		if(!group.isEmpty() && info->group.isEmpty() &&
+			 prev_info && prev_info->is_multi_expr && !prev_info->is_closed)
+		{
+			info->group = prev_info->group;
+			info->is_multi_expr = true;
+			info->is_closed = false;
+			return info->group;
+		}
+
 		info->group = group;
 		info->is_multi_expr = hasInitialAndFinalExprs(group);
 		info->is_closed = match && match_final_expr;
