@@ -29,8 +29,8 @@ SchemaEditorForm::SchemaEditorForm(QWidget *parent) : QWidget(parent)
 	general_conf_wgt.loadConfiguration();
 
 	syntax_txt = PgModelerUiNs::createNumberedTextEditor(syntax_wgt);
-	//syntax_hl = new SyntaxHighlighter(syntax_txt);
-	//syntax_hl->loadConfiguration(GlobalAttributes::getXMLHighlightConfPath());
+	syntax_hl = new SyntaxHighlighter(syntax_txt);
+	syntax_hl->loadConfiguration(GlobalAttributes::getXMLHighlightConfPath());
 
 	syntax_conf_sel = new FileSelectorWidget(syntax_conf_wgt);
 
@@ -39,7 +39,7 @@ SchemaEditorForm::SchemaEditorForm(QWidget *parent) : QWidget(parent)
 	vbox->setContentsMargins(0, 0, 0, 0);
 
 	syntax_conf_sel->setSelectedFile(GlobalAttributes::getSchHighlightConfPath());
-	syntax_conf_sel->setNameFilters({ tr("Schema micro-language syntax file (%1.conf)").arg(GlobalAttributes::SchHighlightConf) });
+	syntax_conf_sel->setNameFilters({ tr("Syntax highlight config file (*.conf)") });
 
 	connect(syntax_conf_sel, SIGNAL(s_selectorChanged(bool)), this, SLOT(loadSyntaxConfig()));
 	connect(syntax_conf_sel, SIGNAL(s_selectorCleared()), this, SLOT(clearSyntaxConfig()));
@@ -144,9 +144,9 @@ void SchemaEditorForm::loadSchemaFile()
 
 	try
 	{
-		file_dlg.setNameFilter(tr("Schema micro-language file (*.sch)"));
+		file_dlg.setNameFilter(tr("Schema micro-language file (*.sch);; All files (*.*)"));
 		file_dlg.setWindowIcon(QPixmap(PgModelerUiNs::getIconPath("pgsqlModeler48x48")));
-		file_dlg.setWindowTitle(tr("Load schema file"));
+		file_dlg.setWindowTitle(tr("Load file"));
 		file_dlg.setFileMode(QFileDialog::ExistingFiles);
 		file_dlg.setAcceptMode(QFileDialog::AcceptOpen);
 
