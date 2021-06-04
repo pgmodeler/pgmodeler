@@ -3,9 +3,8 @@ include(../../pgmodeler.pri)
 CONFIG += console
 TEMPLATE = app
 TARGET = pgmodeler-cli
-INCLUDEPATH += ../gui/src
 
-windows:RC_FILE=../gui/res/windows_ico.qrc
+windows:RC_FILE=../$$LIBGUI/res/windows_ico.qrc
 windows: RCC_DIR=src/
 windows: DESTDIR = $$PWD
 
