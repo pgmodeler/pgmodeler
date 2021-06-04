@@ -4,8 +4,8 @@ CONFIG += console
 TEMPLATE = app
 TARGET = pgmodeler-cli
 
-windows:RC_FILE=../$$LIBGUI/res/windows_ico.qrc
-windows: RCC_DIR=src/
+windows:RC_FILE = $$LIBGUI_ROOT/res/windows_ico.qrc
+windows: RCC_DIR = src/
 windows: DESTDIR = $$PWD
 
 SOURCES += src/main.cpp \
