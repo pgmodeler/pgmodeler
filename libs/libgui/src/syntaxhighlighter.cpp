@@ -333,7 +333,7 @@ QString SyntaxHighlighter::identifyWordGroup(const QString &word, const QChar &l
 			/* We force the current info to be a multi expression one (like the previous)
 			 * and close it only if the word is a closing token of the group */
 			info->setMultiExpr(true);
-			info->setClosed(isWordMatchGroup(word,  prev_info->getGroup(), true, lookahead_chr, match_idx, match_len));
+			info->setClosed(isWordMatchGroup(word, prev_info->getGroup(), true, lookahead_chr, match_idx, match_len));
 
 			return info->getGroup();
 		}
@@ -350,13 +350,18 @@ QString SyntaxHighlighter::identifyWordGroup(const QString &word, const QChar &l
 		{
 			info->setGroup(prev_info->getGroup());
 			info->setMultiExpr(true);
-			info->setClosed(false);
+
+			/* We try to check if the current work matches a final expression of the previous block group
+			 * if so, the current block info will be automatically closed */
+			info->setClosed(isWordMatchGroup(word, prev_info->getGroup(), true, lookahead_chr, match_idx, match_len));
+
 			return info->getGroup();
 		}
 
 		info->setGroup(group);
 		info->setMultiExpr(hasInitialAndFinalExprs(group));
 		info->setClosed(match && match_final_expr);
+
 		return group;
 	}
 }

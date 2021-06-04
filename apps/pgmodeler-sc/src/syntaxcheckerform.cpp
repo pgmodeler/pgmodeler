@@ -43,6 +43,8 @@ SyntaxCheckerForm::SyntaxCheckerForm(QWidget *parent) : QWidget(parent)
 	GeneralConfigWidget general_conf_wgt;
 	general_conf_wgt.loadConfiguration();
 
+	alert_frm->setVisible(false);
+
 	syntax_txt = PgModelerUiNs::createNumberedTextEditor(syntax_wgt);
 	syntax_hl = new SyntaxHighlighter(syntax_txt);
 	syntax_hl->loadConfiguration(GlobalAttributes::getXMLHighlightConfPath());
@@ -58,22 +60,22 @@ SyntaxCheckerForm::SyntaxCheckerForm(QWidget *parent) : QWidget(parent)
 	syntax_conf_sel->setNameFilters({ tr("Syntax highlight config file (*.conf)") });
 
 	QAction *act = nullptr;
-	QActionGroup *act_group = new QActionGroup(&syntax_cfg_menu);
+	stx_action_grp = new QActionGroup(&syntax_cfg_menu);
 
 	act = syntax_cfg_menu.addAction(tr("SCH"), this, SLOT(loadSyntaxConfig()));
-	act_group->addAction(act);
+	stx_action_grp->addAction(act);
 	act->setCheckable(true);
 	act->setChecked(true);
 	act->setData(GlobalAttributes::getSchHighlightConfPath());
 
 	act = syntax_cfg_menu.addAction(tr("XML"), this, SLOT(loadSyntaxConfig()));
-	act_group->addAction(act);
+	stx_action_grp->addAction(act);
 	act->setCheckable(true);
 	act->setChecked(false);
 	act->setData(GlobalAttributes::getXMLHighlightConfPath());
 
 	act = syntax_cfg_menu.addAction(tr("SQL"), this, SLOT(loadSyntaxConfig()));
-	act_group->addAction(act);
+	stx_action_grp->addAction(act);
 	act->setData(GlobalAttributes::getSQLHighlightConfPath());
 	act->setCheckable(true);
 	act->setChecked(false);
@@ -85,22 +87,13 @@ subcontrol-position: right center; }");
 
 	syntax_cfg_menu.installEventFilter(this);
 
-	//connect(syntax_conf_sel, SIGNAL(s_selectorChanged(bool)), this, SLOT(loadSyntaxConfig()));
-	//connect(syntax_conf_sel, SIGNAL(s_selectorCleared()), this, SLOT(clearSyntaxConfig()));
-
-	connect(apply_conf_tb, &QToolButton::clicked, [&](){
-		//saveSyntaxConfig();
-		//applySyntaxConfig();
-	});
-
-	connect(save_conf_tb, &QToolButton::clicked, [&](){
-		//saveSyntaxConfig();
-		//applySyntaxConfig();
-	});
-
+	connect(apply_conf_tb, SIGNAL(clicked(bool)), this, SLOT(applySyntaxConfig()));
+	connect(save_conf_tb, SIGNAL(clicked(bool)), this, SLOT(saveSyntaxConfig()));
+	connect(syntax_txt, SIGNAL(undoAvailable(bool)), alert_frm, SLOT(setVisible(bool)));
 	connect(new_tb, SIGNAL(clicked(bool)), this, SLOT(addEditorTab()));
 	connect(load_tb, SIGNAL(clicked(bool)), this, SLOT(loadFile()));
 	connect(editors_tbw, SIGNAL(tabCloseRequested(int)), this, SLOT(closeEditorTab(int)));
+	connect(exit_tb, SIGNAL(clicked(bool)), this, SLOT(close()));
 }
 
 SyntaxCheckerForm::~SyntaxCheckerForm()
@@ -113,6 +106,19 @@ void SyntaxCheckerForm::showEvent(QShowEvent *)
 {
 	splitter->setSizes({ width()/2, width()/3});
 	loadSyntaxConfig();
+}
+
+void SyntaxCheckerForm::closeEvent(QCloseEvent *event)
+{
+	if(alert_frm->isVisible())
+	{
+		Messagebox msgbox;
+
+		msgbox.show(tr("There are modified files! Do you want to exit without saving them?"), Messagebox::ConfirmIcon, Messagebox::YesNoButtons);
+
+		if(msgbox.result() == QDialog::Rejected)
+			event->ignore();
+	}
 }
 
 bool SyntaxCheckerForm::eventFilter(QObject *object, QEvent *event)
@@ -129,72 +135,101 @@ bool SyntaxCheckerForm::eventFilter(QObject *object, QEvent *event)
 
 void SyntaxCheckerForm::loadSyntaxConfig()
 {
-	QAction *act = dynamic_cast<QAction *>(sender());
+	QAction *act = stx_action_grp->checkedAction();
 	QFile input;
-	Messagebox msgbox;
 	QString filename = !act ? GlobalAttributes::getSchHighlightConfPath() : act->data().toString();
 
-	input.setFileName(filename);
-	input.open(QFile::ReadOnly);
-
-	if(!input.isOpen())
-		msgbox.show(Exception::getErrorMessage(ErrorCode::FileDirectoryNotAccessed).arg(filename), Messagebox::ErrorIcon);
-	else
+	try
 	{
+		input.setFileName(filename);
+		input.open(QFile::ReadOnly);
+
+		if(!input.isOpen())
+		{
+			throw Exception(Exception::getErrorMessage(ErrorCode::FileDirectoryNotAccessed).arg(filename),
+											ErrorCode::FileDirectoryNotAccessed, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+		}
+
 		syntax_txt->setPlainText(input.readAll());
 		input.close();
+
 		syntax_conf_sel->setSelectedFile(filename);
 		save_conf_tb->setEnabled(true);
 		apply_conf_tb->setEnabled(true);
+		reload_conf_tb->setEnabled(true);
+		alert_frm->setVisible(false);
 
-		applySyntaxConfig();
+		applySyntaxConfig(false);
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorCode(), __PRETTY_FUNCTION__, __FILE__, __LINE__, &e);
 	}
 }
 
-void SyntaxCheckerForm::applySyntaxConfig()
+void SyntaxCheckerForm::applySyntaxConfig(bool from_temp_file)
 {
-	for(auto &hl : highlighters)
+	QTemporaryFile tmp_file;
+	QString filename;
+
+	if(from_temp_file)
 	{
-		try
+		tmp_file.setAutoRemove(false);
+		tmp_file.setFileTemplate(GlobalAttributes::getTemporaryFilePath("temp_XXXXXX.conf"));
+		tmp_file.open();
+		filename = tmp_file.fileName();
+
+		if(!tmp_file.isOpen())
 		{
-			if(!syntax_conf_sel->getSelectedFile().isEmpty())
-			{
-				hl->loadConfiguration(syntax_conf_sel->getSelectedFile());
-				hl->rehighlight();
-			}
+			throw Exception(Exception::getErrorMessage(ErrorCode::FileDirectoryNotAccessed).arg(filename),
+											ErrorCode::FileDirectoryNotAccessed, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 		}
-		catch(Exception &e)
+
+		tmp_file.write(syntax_txt->toPlainText().toUtf8());
+		tmp_file.close();
+	}
+	else if(stx_action_grp->checkedAction())
+		filename = stx_action_grp->checkedAction()->data().toString();
+
+	try
+	{
+		/* Testing the temp file contents against a dummy syntax highlighter before
+		 * applying to the open editors */
+		QPlainTextEdit dummy_txt;
+		SyntaxHighlighter stx_hl(&dummy_txt);
+		stx_hl.loadConfiguration(filename);
+
+		for(auto &hl : highlighters)
 		{
-			Messagebox msg;
-			msg.show(e);
-			break;
+			hl->loadConfiguration(filename);
+			hl->rehighlight();
 		}
 	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorCode(), __PRETTY_FUNCTION__, __FILE__, __LINE__, &e);
+	}
+
+	if(from_temp_file)
+		tmp_file.remove();
 }
 
 void SyntaxCheckerForm::saveSyntaxConfig()
 {
 	QFile input;
-	Messagebox msgbox;
 	QString filename = syntax_conf_sel->getSelectedFile();
 
 	input.setFileName(filename);
 	input.open(QFile::WriteOnly);
 
 	if(!input.isOpen())
-		msgbox.show(Exception::getErrorMessage(ErrorCode::FileDirectoryNotAccessed).arg(filename), Messagebox::ErrorIcon);
-	else
 	{
-		input.write(syntax_txt->toPlainText().toUtf8());
-		input.close();
+		throw Exception(Exception::getErrorMessage(ErrorCode::FileDirectoryNotAccessed).arg(filename),
+										ErrorCode::FileDirectoryNotAccessed, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 	}
-}
 
-void SyntaxCheckerForm::clearSyntaxConfig()
-{
-	syntax_txt->clear();
-	save_conf_tb->setEnabled(false);
-	apply_conf_tb->setEnabled(false);
+	input.write(syntax_txt->toPlainText().toUtf8());
+	input.close();
 }
 
 void SyntaxCheckerForm::loadFile()
@@ -221,8 +256,7 @@ void SyntaxCheckerForm::loadFile()
 	}
 	catch(Exception &e)
 	{
-		Messagebox msg_box;
-		msg_box.show(e);
+		throw Exception(e.getErrorMessage(), e.getErrorCode(), __PRETTY_FUNCTION__, __FILE__, __LINE__, &e);
 	}
 }
 

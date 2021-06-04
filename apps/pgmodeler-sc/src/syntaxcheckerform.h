@@ -44,9 +44,13 @@ class SyntaxCheckerForm : public QWidget, public Ui::SyntaxCheckerForm {
 
 		QList<SyntaxHighlighter *> highlighters;
 
-		void showEvent(QShowEvent *) override;
+		QActionGroup *stx_action_grp;
 
 		QMenu syntax_cfg_menu;
+
+		void showEvent(QShowEvent *) override;
+
+		void closeEvent(QCloseEvent *event) override;
 
 		bool eventFilter(QObject *object, QEvent *event) override;
 
@@ -59,9 +63,8 @@ class SyntaxCheckerForm : public QWidget, public Ui::SyntaxCheckerForm {
 
 	private slots:
 		void loadSyntaxConfig();
-		void applySyntaxConfig();
+		void applySyntaxConfig(bool from_temp_file = true);
 		void saveSyntaxConfig();
-		void clearSyntaxConfig();
 		void addEditorTab(const QString &filename = "");
 		void closeEditorTab(int idx);	
 		void loadFile();
