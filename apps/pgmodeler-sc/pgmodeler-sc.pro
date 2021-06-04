@@ -1,7 +1,7 @@
 include(../../pgmodeler.pri)
 
 TEMPLATE = app
-TARGET = pgmodeler-sce
+TARGET = pgmodeler-sc
 
 windows:RC_FILE=res/windows_ico.qrc
 windows:RCC_DIR=src/

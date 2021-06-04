@@ -1,7 +1,7 @@
 $ob Desktop $sp Entry $cb $br
-[Comment=Edit pgModeler schema files] $br
+[Comment=Edit and check the syntax of pgModeler schema files] $br
 [Exec=]{application} $br
-[GenericName=pgModeler Schema Editor] $br
+[GenericName=pgModeler Syntax Checker] $br
 [Icon=]{icon} $br
 [MimeType=application/sch] $br
 [Name=pgModeler Schema Editor] $br

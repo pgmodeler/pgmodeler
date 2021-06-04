@@ -179,6 +179,12 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 		 * the current button toggle state. */
 		bool isToolButtonsChecked(QHBoxLayout *layout, const QWidgetList &ignored_wgts = QWidgetList());
 
+		/*! \brief Resizes the buttons of the general toolbar (the one positioned at the left portion of main window)
+		 * The resizing is performed through stylesheet and is related to the minimum width of the general_tb plus
+		 * a size factor that is applied if there are models opened (which expands/enlarges the toolbar a little
+		 * more due to the labels of the actions added during model loading ) */
+		void resizeGeneralToolbarButtons();
+
 	public:
 		MainWindow(QWidget *parent = nullptr, Qt::WindowFlags flags = Qt::Widget);
 		virtual ~MainWindow();

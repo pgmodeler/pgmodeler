@@ -48,6 +48,7 @@ SyntaxCheckerForm::SyntaxCheckerForm(QWidget *parent) : QWidget(parent)
 	syntax_hl->loadConfiguration(GlobalAttributes::getXMLHighlightConfPath());
 
 	syntax_conf_sel = new FileSelectorWidget(syntax_conf_wgt);
+	syntax_conf_sel->setReadOnly(true);
 
 	QVBoxLayout *vbox = new QVBoxLayout(syntax_conf_wgt);
 	vbox->addWidget(syntax_conf_sel);
@@ -56,21 +57,49 @@ SyntaxCheckerForm::SyntaxCheckerForm(QWidget *parent) : QWidget(parent)
 	syntax_conf_sel->setSelectedFile(GlobalAttributes::getSchHighlightConfPath());
 	syntax_conf_sel->setNameFilters({ tr("Syntax highlight config file (*.conf)") });
 
-	connect(syntax_conf_sel, SIGNAL(s_selectorChanged(bool)), this, SLOT(loadSyntaxConfig()));
-	connect(syntax_conf_sel, SIGNAL(s_selectorCleared()), this, SLOT(clearSyntaxConfig()));
+	QAction *act = nullptr;
+	QActionGroup *act_group = new QActionGroup(&syntax_cfg_menu);
+
+	act = syntax_cfg_menu.addAction(tr("SCH"), this, SLOT(loadSyntaxConfig()));
+	act_group->addAction(act);
+	act->setCheckable(true);
+	act->setChecked(true);
+	act->setData(GlobalAttributes::getSchHighlightConfPath());
+
+	act = syntax_cfg_menu.addAction(tr("XML"), this, SLOT(loadSyntaxConfig()));
+	act_group->addAction(act);
+	act->setCheckable(true);
+	act->setChecked(false);
+	act->setData(GlobalAttributes::getXMLHighlightConfPath());
+
+	act = syntax_cfg_menu.addAction(tr("SQL"), this, SLOT(loadSyntaxConfig()));
+	act_group->addAction(act);
+	act->setData(GlobalAttributes::getSQLHighlightConfPath());
+	act->setCheckable(true);
+	act->setChecked(false);
+
+	syntax_tb->setMenu(&syntax_cfg_menu);
+	syntax_tb->setStyleSheet("QToolButton::menu-indicator { \
+image: url(':/styles/styles/h_menu_indicator.png'); \
+subcontrol-position: right center; }");
+
+	syntax_cfg_menu.installEventFilter(this);
+
+	//connect(syntax_conf_sel, SIGNAL(s_selectorChanged(bool)), this, SLOT(loadSyntaxConfig()));
+	//connect(syntax_conf_sel, SIGNAL(s_selectorCleared()), this, SLOT(clearSyntaxConfig()));
 
 	connect(apply_conf_tb, &QToolButton::clicked, [&](){
-		saveSyntaxConfig();
-		applySyntaxConfig();
+		//saveSyntaxConfig();
+		//applySyntaxConfig();
 	});
 
 	connect(save_conf_tb, &QToolButton::clicked, [&](){
-		saveSyntaxConfig();
-		applySyntaxConfig();
+		//saveSyntaxConfig();
+		//applySyntaxConfig();
 	});
 
 	connect(new_tb, SIGNAL(clicked(bool)), this, SLOT(addEditorTab()));
-	connect(load_tb, SIGNAL(clicked(bool)), this, SLOT(loadSchemaFile()));
+	connect(load_tb, SIGNAL(clicked(bool)), this, SLOT(loadFile()));
 	connect(editors_tbw, SIGNAL(tabCloseRequested(int)), this, SLOT(closeEditorTab(int)));
 }
 
@@ -86,11 +115,24 @@ void SyntaxCheckerForm::showEvent(QShowEvent *)
 	loadSyntaxConfig();
 }
 
+bool SyntaxCheckerForm::eventFilter(QObject *object, QEvent *event)
+{
+	if(object == &syntax_cfg_menu && event->type() == QEvent::Show)
+	{
+		syntax_cfg_menu.move(mapToGlobal(syntax_tb->pos() + QPoint(syntax_tb->width(), 0)));
+		syntax_cfg_menu.show();
+		return true;
+	}
+
+	return QWidget::eventFilter(object, event);
+}
+
 void SyntaxCheckerForm::loadSyntaxConfig()
 {
+	QAction *act = dynamic_cast<QAction *>(sender());
 	QFile input;
 	Messagebox msgbox;
-	QString filename = syntax_conf_sel->getSelectedFile();
+	QString filename = !act ? GlobalAttributes::getSchHighlightConfPath() : act->data().toString();
 
 	input.setFileName(filename);
 	input.open(QFile::ReadOnly);
@@ -101,9 +143,11 @@ void SyntaxCheckerForm::loadSyntaxConfig()
 	{
 		syntax_txt->setPlainText(input.readAll());
 		input.close();
-
+		syntax_conf_sel->setSelectedFile(filename);
 		save_conf_tb->setEnabled(true);
 		apply_conf_tb->setEnabled(true);
+
+		applySyntaxConfig();
 	}
 }
 
@@ -153,14 +197,21 @@ void SyntaxCheckerForm::clearSyntaxConfig()
 	apply_conf_tb->setEnabled(false);
 }
 
-void SyntaxCheckerForm::loadSchemaFile()
+void SyntaxCheckerForm::loadFile()
 {
 	QFileDialog file_dlg;
 
 	try
 	{
-		file_dlg.setNameFilter(tr("Schema micro-language file (*.sch);; All files (*.*)"));
-		file_dlg.setWindowIcon(QPixmap(PgModelerUiNs::getIconPath("pgsqlModeler48x48")));
+		file_dlg.setNameFilters({ tr("Schema file (*.sch)"),
+															tr("Database model file (*.dbm)"),
+															tr("pgModeler config file (*.conf)"),
+															tr("Objects metadata file (*.omf)"),
+															tr("SQL script file (*.sql)"),
+															tr("XML file (*.xml)"),
+															tr("All files (*.*)") });
+
+		file_dlg.setWindowIcon(QPixmap(PgModelerUiNs::getIconPath("pgmodeler_sch.png")));
 		file_dlg.setWindowTitle(tr("Load file"));
 		file_dlg.setFileMode(QFileDialog::ExistingFiles);
 		file_dlg.setAcceptMode(QFileDialog::AcceptOpen);
@@ -235,7 +286,7 @@ void SyntaxCheckerForm::addEditorTab(const QString &filename)
 		msgbox.show(e);
 	}
 
-	editors_tbw->addTab(page_wgt, filename.isEmpty() ? tr("(unsaved)") : fi.baseName());
+	editors_tbw->addTab(page_wgt, filename.isEmpty() ? tr("(unsaved)") : fi.fileName());
 	editors_tbw->setTabToolTip(editors_tbw->count() - 1, filename.isEmpty() ? "" : fi.absoluteFilePath());
 	editors_tbw->setCurrentIndex(editors_tbw->count() - 1);
 }

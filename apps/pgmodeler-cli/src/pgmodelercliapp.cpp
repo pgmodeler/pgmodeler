@@ -1928,7 +1928,7 @@ void PgModelerCliApp::handleLinuxMimeDatabase(bool uninstall, bool system_wide)
 
 			//Files generated after update file association (application-dbm.xml and pgModeler.desktop)
 			files[] = { QString("%1/applications/pgModeler.desktop").arg(share_path),
-									QString("%1/applications/pgModelerSchEditor.desktop").arg(share_path),
+									QString("%1/applications/pgModelerStxChecker.desktop").arg(share_path),
 									mime_db_dir + QString("/packages/application-dbm.xml"),
 									mime_db_dir + QString("/packages/application-sch.xml")},
 
@@ -1967,7 +1967,7 @@ void PgModelerCliApp::handleLinuxMimeDatabase(bool uninstall, bool system_wide)
 			}
 			else
 			{
-				attribs[Attributes::Application]=(i == 0 ? GlobalAttributes::getPgModelerAppPath() : GlobalAttributes::getPgModelerSchEditorPath());
+				attribs[Attributes::Application]=(i == 0 ? GlobalAttributes::getPgModelerAppPath() : GlobalAttributes::getPgModelerSyntaxCheckerPath());
 
 				if(i <= 1)
 					attribs[Attributes::Icon]=exec_icon;
@@ -2001,8 +2001,8 @@ void PgModelerCliApp::handleLinuxMimeDatabase(bool uninstall, bool system_wide)
 			out.open(QFile::WriteOnly);
 			out.write(QByteArray("[Added Associations]\napplication/dbm=pgModeler.desktop;\n"));
 			out.write(QByteArray("\n[Default Applications]\napplication/dbm=pgModeler.desktop;\n"));
-			out.write(QByteArray("\n[Added Associations]\napplication/sch=pgModelerSchEditor.desktop;\n"));
-			out.write(QByteArray("\n[Default Applications]\napplication/sch=pgModelerSchEditor.desktop;\n"));
+			out.write(QByteArray("\n[Added Associations]\napplication/sch=pgModelerStxEditor.desktop;\n"));
+			out.write(QByteArray("\n[Default Applications]\napplication/sch=pgModelerStxEditor.desktop;\n"));
 			out.close();
 		}
 		else
@@ -2060,34 +2060,50 @@ void PgModelerCliApp::handleLinuxMimeDatabase(bool uninstall, bool system_wide)
 void PgModelerCliApp::handleWindowsMimeDatabase(bool uninstall, bool system_wide)
 {
 	SchemaParser schparser;
-    QString base_reg_key = system_wide ? QString("HKEY_LOCAL_MACHINE\\SOFTWARE") : QString("HKEY_CURRENT_USER\\Software");
+	QString base_reg_key = system_wide ? QString("HKEY_LOCAL_MACHINE\\SOFTWARE") : QString("HKEY_CURRENT_USER\\Software");
 
 	//Checking if the .dbm registry key exists
-    QSettings dbm_ext(QString("%1\\Classes\\.dbm").arg(base_reg_key), QSettings::NativeFormat);
-	QString exe_path=QDir::toNativeSeparators(GlobalAttributes::getPgModelerAppPath());
+		QSettings dbm_ext(QString("%1\\Classes\\.dbm").arg(base_reg_key), QSettings::NativeFormat),
+				sch_ext(QString("%1\\Classes\\.sch").arg(base_reg_key), QSettings::NativeFormat);
+	QString exe_path=QDir::toNativeSeparators(GlobalAttributes::getPgModelerAppPath()),
+			sc_exe_path=QDir::toNativeSeparators(GlobalAttributes::getPgModelerSyntaxCheckerPath());
 
-	//If there is no value assigned to .dbm/Default key and the user wants to uninstall file association, raises an error
-	if(uninstall && dbm_ext.value(QString("Default")).toString().isEmpty())
+	//If there is no value assigned to (.dbm | .sch)/Default key and the user wants to uninstall file association, raises an error
+	if(uninstall &&
+		 (dbm_ext.value(QString("Default")).toString().isEmpty() ||
+			sch_ext.value(QString("Default")).toString().isEmpty()))
 		throw Exception(MsgNoFileAssociation, ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-	else if(!uninstall && !dbm_ext.value(QString("Default")).toString().isEmpty())
+
+	if(!uninstall &&
+		 (!dbm_ext.value(QString("Default")).toString().isEmpty() ||
+			!sch_ext.value(QString("Default")).toString().isEmpty()))
 		throw Exception(MsgFileAssociated, ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+	if(!uninstall)
+	{
+		//Write the default value for .dbm registry key
+		dbm_ext.setValue(QString("Default"), QString("dbm_auto_file"));
+		sch_ext.setValue(QString("Default"), QString("sch_auto_file"));
+	}
 	else
 	{
-		if(!uninstall)
-			//Write the default value for .dbm registry key
-			dbm_ext.setValue(QString("Default"), QString("dbm_auto_file"));
-		else
-			dbm_ext.remove("");
-
-		dbm_ext.sync();
+		dbm_ext.remove("");
+		sch_ext.remove("");
 	}
+
+	dbm_ext.sync();
+	sch_ext.sync();
 
 	//Other registry keys values
 	map<QString, QStringList> confs = {
-        { QString("\\%1\\Classes\\dbm_auto_file").arg(base_reg_key), { QString("FriendlyTypeName") , QString("pgModeler Database Model") } },
-        { QString("\\%1\\Classes\\dbm_auto_file\\DefaultIcon").arg(base_reg_key), { QString("Default") , QString("%1,1").arg(exe_path) } },
-        { QString("\\%1\\Classes\\dbm_auto_file\\shell\\open\\command").arg(base_reg_key), { QString("Default") , QString("\"%1\" \"%2\"").arg(exe_path).arg("%1") } },
-        { QString("\\%1\\Microsoft\\Windows\\CurrentVersion\\Explorer\\FileExts\\.dbm").arg(base_reg_key), { QString("OpenWithList/a"), QString("pgmodeler.exe"), QString("OpenWithList/MRUList"), QString("a")} }
+				{ QString("\\%1\\Classes\\dbm_auto_file").arg(base_reg_key), { QString("FriendlyTypeName") , QString("pgModeler Database Model") } },
+				{ QString("\\%1\\Classes\\dbm_auto_file\\DefaultIcon").arg(base_reg_key), { QString("Default") , QString("%1,1").arg(exe_path) } },
+				{ QString("\\%1\\Classes\\dbm_auto_file\\shell\\open\\command").arg(base_reg_key), { QString("Default") , QString("\"%1\" \"%2\"").arg(exe_path).arg("%1") } },
+				{ QString("\\%1\\Microsoft\\Windows\\CurrentVersion\\Explorer\\FileExts\\.dbm").arg(base_reg_key), { QString("OpenWithList/a"), QString("pgmodeler.exe"), QString("OpenWithList/MRUList"), QString("a")} },
+				{ QString("\\%1\\Classes\\sch_auto_file").arg(base_reg_key), { QString("FriendlyTypeName") , QString("pgModeler Schema File") } },
+				{ QString("\\%1\\Classes\\sch_auto_file\\DefaultIcon").arg(base_reg_key), { QString("Default") , QString("%1,1").arg(sc_exe_path) } },
+				{ QString("\\%1\\Classes\\sch_auto_file\\shell\\open\\command").arg(base_reg_key), { QString("Default") , QString("\"%1\" \"%2\"").arg(sc_exe_path).arg("%1") } },
+				{ QString("\\%1\\Microsoft\\Windows\\CurrentVersion\\Explorer\\FileExts\\.sch").arg(base_reg_key), { QString("OpenWithList/a"), QString("pgmodeler-sc.exe"), QString("OpenWithList/MRUList"), QString("a")} }
 	};
 
 	map<QString, QStringList>::iterator itr;

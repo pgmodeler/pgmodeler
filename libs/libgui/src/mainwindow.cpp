@@ -389,6 +389,9 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 		}
 	}
 
+	general_tb->setMinimumWidth(general_tb->width());
+	resizeGeneralToolbarButtons();
+
 #ifdef Q_OS_MAC
 	control_tb->removeAction(action_main_menu);
 	action_main_menu->setEnabled(false);
@@ -555,6 +558,20 @@ bool MainWindow::isToolButtonsChecked(QHBoxLayout *layout, const QWidgetList &ig
 	}
 
 	return false;
+}
+
+void MainWindow::resizeGeneralToolbarButtons()
+{
+	QToolButton *btn = nullptr;
+
+	for(auto &act : general_tb->actions())
+	{
+		btn = qobject_cast<QToolButton *>(general_tb->widgetForAction(act));
+		if(!btn) continue;
+
+		btn->setStyleSheet(QString("QToolButton { min-width: %1px; margin-top: 2px; }")
+											 .arg(models_tbw->count() == 0 ? general_tb->minimumWidth() : general_tb->minimumWidth() * 1.15));
+	}
 }
 
 void MainWindow::showRightWidgetsBar()
@@ -1197,6 +1214,8 @@ void MainWindow::setCurrentModel()
 		model_objs_wgt->restoreTreeState(model_tree_states[current_model]);
 
 	model_objs_wgt->saveTreeState(true);
+
+	resizeGeneralToolbarButtons();
 
 	emit s_currentModelChanged(current_model);
 }

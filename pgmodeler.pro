@@ -26,7 +26,7 @@ exists($$PLUGINS_SRC_ROOT) {
 SUBDIRS += apps/pgmodeler \
 	   apps/pgmodeler-cli \
 	   apps/pgmodeler-ch \
-	   apps/pgmodeler-sce
+	   apps/pgmodeler-sc
 
 # Deployment settings
 samples.files = assets/samples/*

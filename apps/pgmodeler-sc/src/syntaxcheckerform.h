@@ -46,6 +46,10 @@ class SyntaxCheckerForm : public QWidget, public Ui::SyntaxCheckerForm {
 
 		void showEvent(QShowEvent *) override;
 
+		QMenu syntax_cfg_menu;
+
+		bool eventFilter(QObject *object, QEvent *event) override;
+
 	public:
 		explicit SyntaxCheckerForm(QWidget *parent = nullptr);
 
@@ -60,7 +64,7 @@ class SyntaxCheckerForm : public QWidget, public Ui::SyntaxCheckerForm {
 		void clearSyntaxConfig();
 		void addEditorTab(const QString &filename = "");
 		void closeEditorTab(int idx);	
-		void loadSchemaFile();
+		void loadFile();
 
 	signals:
 
