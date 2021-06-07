@@ -338,7 +338,8 @@ QString SyntaxHighlighter::identifyWordGroup(const QString &word, const QChar &l
 			return info->getGroup();
 		}
 
-		return info->getGroup();
+		//return info->getGroup();
+		return UnformattedGroup;
 	}
 	else
 	{
