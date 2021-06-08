@@ -43,6 +43,9 @@ SyntaxCheckerForm::SyntaxCheckerForm(QWidget *parent) : QWidget(parent)
 		btn->setFont(fnt);
 		PgModelerUiNs::createDropShadow(btn);
 		PgModelerUiNs::configureWidgetFont(btn, PgModelerUiNs::SmallFontFactor);
+
+		if(!btn->toolTip().isEmpty() && !btn->shortcut().toString().isEmpty())
+			btn->setToolTip(btn->toolTip() + QString(" (%1)").arg(btn->shortcut().toString()));
 	}
 
 	GeneralConfigWidget general_conf_wgt;
@@ -258,8 +261,10 @@ void SyntaxCheckerForm::saveFile(bool save_as)
 	{
 		QStringList files = showFileDialog(true);
 
-		if(!files.isEmpty())
-			filename = files.at(0);
+		if(files.isEmpty())
+			return;
+
+		filename = files.at(0);
 	}
 
 	input.setFileName(filename);
@@ -275,8 +280,10 @@ void SyntaxCheckerForm::saveFile(bool save_as)
 	input.close();
 
 	QFileInfo fi(filename);
-	editors_tbw->setTabText(editors_tbw->currentIndex(), fi.baseName());
+
+	editors_tbw->setTabText(editors_tbw->currentIndex(), fi.fileName());
 	editors_tbw->setTabToolTip(editors_tbw->currentIndex(), fi.absoluteFilePath());
+	validate_tb->setEnabled(filename.endsWith(GlobalAttributes::SchemaExt));
 }
 
 QStringList SyntaxCheckerForm::showFileDialog(bool save_mode)
