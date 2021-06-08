@@ -36,6 +36,10 @@ class SyntaxCheckerForm : public QWidget, public Ui::SyntaxCheckerForm {
 	private:
 		Q_OBJECT
 
+		static const QString UntitledFile;
+
+		static QPalette def_editor_pal;
+
 		NumberedTextEditor *syntax_txt;
 
 		SyntaxHighlighter *syntax_hl;
@@ -54,20 +58,25 @@ class SyntaxCheckerForm : public QWidget, public Ui::SyntaxCheckerForm {
 
 		bool eventFilter(QObject *object, QEvent *event) override;
 
+		QStringList showFileDialog(bool save_mode);
+
 	public:
 		explicit SyntaxCheckerForm(QWidget *parent = nullptr);
 
 		~SyntaxCheckerForm();
 
-		void loadSchemaFiles(const QStringList &filenames);
+		void loadFiles(const QStringList &filenames);
 
 	private slots:
 		void loadSyntaxConfig();
 		void applySyntaxConfig(bool from_temp_file = true);
 		void saveSyntaxConfig();
 		void addEditorTab(const QString &filename = "");
-		void closeEditorTab(int idx);	
+		void closeEditorTab(int idx);
 		void loadFile();
+		void validateSyntax();
+		void restoreEditorPalette();
+		void saveFile(bool save_as = false);
 
 	signals:
 

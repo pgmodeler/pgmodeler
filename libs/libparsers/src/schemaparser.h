@@ -215,7 +215,7 @@ class SchemaParser {
 		/*! \brief Generic method that interprets a pre-specified buffer (see loadBuffer()) and for a given map
 		 of attributes this method returns the data of the buffer analyzed and filled with the values ​​of the
 		 attributes map */
-		QString getCodeDefinition(attribs_map &attribs);
+		QString getCodeDefinition(const attribs_map &attribs);
 
 		//! \brief Loads the buffer with a string
 		void loadBuffer(const QString &buf);
@@ -237,6 +237,12 @@ class SchemaParser {
 
 		//! \brief Extracts the attributes names from the currently loaded buffer
 		QStringList extractAttributes();
+
+		//! \brief Returns the current line where the parser is reading
+		int getCurrentLine();
+
+		//! \brief Returns the current columnm of the current line where the parser is reading
+		int getCurrentColumn();
 };
 
 #endif

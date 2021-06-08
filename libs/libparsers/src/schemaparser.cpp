@@ -123,6 +123,16 @@ QStringList SchemaParser::extractAttributes()
 	return attribs;
 }
 
+int SchemaParser::getCurrentLine()
+{
+	return line + comment_count + 1;
+}
+
+int SchemaParser::getCurrentColumn()
+{
+	return column + 1;
+}
+
 void SchemaParser::restartParser()
 {
 	/* Clears the buffer and resets the counters for line,
@@ -267,13 +277,13 @@ QString SchemaParser::getAttribute()
 	if(error)
 	{
 		throw Exception(Exception::getErrorMessage(ErrorCode::InvalidSyntax)
-						.arg(filename).arg((line + comment_count + 1)).arg((column+1)),
+						.arg(filename).arg(getCurrentLine()).arg(getCurrentColumn()),
 						ErrorCode::InvalidSyntax,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	}
 	else if(!AttribRegExp.exactMatch(atrib))
 	{
 		throw Exception(Exception::getErrorMessage(ErrorCode::InvalidAttribute)
-						.arg(atrib).arg(filename).arg((line + comment_count + 1)).arg((column+1)),
+						.arg(atrib).arg(filename).arg(getCurrentLine()).arg(getCurrentColumn()),
 						ErrorCode::InvalidAttribute,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	}
 
@@ -352,7 +362,7 @@ QString SchemaParser::getPureText()
 	if(error)
 	{
 		throw Exception(Exception::getErrorMessage(ErrorCode::InvalidSyntax)
-						.arg(filename).arg((line + comment_count + 1)).arg((column+1)),
+						.arg(filename).arg(getCurrentLine()).arg(getCurrentColumn()),
 						ErrorCode::InvalidSyntax,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	}
 
@@ -391,7 +401,7 @@ QString SchemaParser::getConditional()
 	if(error)
 	{
 		throw Exception(Exception::getErrorMessage(ErrorCode::InvalidSyntax)
-						.arg(filename).arg(line + comment_count + 1).arg(column+1),
+						.arg(filename).arg(getCurrentLine()).arg(getCurrentColumn()),
 						ErrorCode::InvalidSyntax,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	}
 
@@ -428,7 +438,7 @@ QString SchemaParser::getMetaCharacter()
 	if(error)
 	{
 		throw Exception(Exception::getErrorMessage(ErrorCode::InvalidSyntax)
-						.arg(filename).arg(line + comment_count + 1).arg(column+1),
+						.arg(filename).arg(getCurrentLine()).arg(getCurrentColumn()),
 						ErrorCode::InvalidSyntax,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	}
 
@@ -507,13 +517,13 @@ bool SchemaParser::evaluateComparisonExpr()
 					else if(!opers.contains(QString(oper).remove('f').remove('i')))
 					{
 						throw Exception(Exception::getErrorMessage(ErrorCode::InvalidOperatorInExpression)
-										.arg(oper).arg(filename).arg((line + comment_count + 1)).arg((column+1)),
+										.arg(oper).arg(filename).arg(getCurrentLine()).arg(getCurrentColumn()),
 										ErrorCode::InvalidOperatorInExpression,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 					}
 					else if(attributes.count(attrib)==0 && !ignore_unk_atribs)
 					{
 						throw Exception(Exception::getErrorMessage(ErrorCode::UnkownAttribute)
-										.arg(attrib).arg(filename).arg((line + comment_count +1)).arg((column+1)),
+										.arg(attrib).arg(filename).arg(getCurrentLine()).arg(getCurrentColumn()),
 										ErrorCode::UnkownAttribute,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 					}
 					else
@@ -572,7 +582,7 @@ bool SchemaParser::evaluateComparisonExpr()
 
 	if(error)
 		throw Exception(Exception::getErrorMessage(ErrorCode::InvalidSyntax)
-						.arg(filename).arg((line + comment_count + 1)).arg((column+1)),
+						.arg(filename).arg(getCurrentLine()).arg(getCurrentColumn()),
 						ErrorCode::InvalidSyntax,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	return expr_is_true;
@@ -623,7 +633,7 @@ void SchemaParser::defineAttribute()
 						if(attributes.count(attrib)==0 && !ignore_unk_atribs)
 						{
 							throw Exception(Exception::getErrorMessage(ErrorCode::UnkownAttribute)
-											.arg(attrib).arg(filename).arg((line + comment_count +1)).arg((column+1)),
+											.arg(attrib).arg(filename).arg(getCurrentLine()).arg(getCurrentColumn()),
 											ErrorCode::UnkownAttribute,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 						}
 
@@ -662,7 +672,7 @@ void SchemaParser::defineAttribute()
 		if(!AttribRegExp.exactMatch(attrib))
 		{
 			throw Exception(Exception::getErrorMessage(ErrorCode::InvalidAttribute)
-							.arg(attrib).arg(filename).arg((line + comment_count + 1)).arg((column+1)),
+							.arg(attrib).arg(filename).arg(getCurrentLine()).arg(getCurrentColumn()),
 							ErrorCode::InvalidAttribute,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		}
 
@@ -672,7 +682,7 @@ void SchemaParser::defineAttribute()
 	}
 	else
 		throw Exception(Exception::getErrorMessage(ErrorCode::InvalidSyntax)
-						.arg(filename).arg((line + comment_count + 1)).arg((column+1)),
+						.arg(filename).arg(getCurrentLine()).arg(getCurrentColumn()),
 						ErrorCode::InvalidSyntax,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 }
 
@@ -701,13 +711,13 @@ void SchemaParser::unsetAttribute()
 					if(attributes.count(attrib)==0 && !ignore_unk_atribs)
 					{
 						throw Exception(Exception::getErrorMessage(ErrorCode::UnkownAttribute)
-										.arg(attrib).arg(filename).arg((line + comment_count +1)).arg((column+1)),
+										.arg(attrib).arg(filename).arg(getCurrentLine()).arg(getCurrentColumn()),
 										ErrorCode::UnkownAttribute,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 					}
 					else if(!AttribRegExp.exactMatch(attrib))
 					{
 						throw Exception(Exception::getErrorMessage(ErrorCode::InvalidAttribute)
-										.arg(attrib).arg(filename).arg((line + comment_count + 1)).arg((column+1)),
+										.arg(attrib).arg(filename).arg(getCurrentLine()).arg(getCurrentColumn()),
 										ErrorCode::InvalidAttribute,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 					}
 
@@ -716,7 +726,7 @@ void SchemaParser::unsetAttribute()
 
 				default:
 					throw Exception(Exception::getErrorMessage(ErrorCode::InvalidSyntax)
-									.arg(filename).arg((line + comment_count + 1)).arg((column+1)),
+									.arg(filename).arg(getCurrentLine()).arg(getCurrentColumn()),
 									ErrorCode::InvalidSyntax,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 			}
 		}
@@ -794,7 +804,7 @@ bool SchemaParser::evaluateExpression()
 					if(attributes.count(attrib)==0 && !ignore_unk_atribs)
 					{
 						throw Exception(Exception::getErrorMessage(ErrorCode::UnkownAttribute)
-										.arg(attrib).arg(filename).arg((line + comment_count +1)).arg((column+1)),
+										.arg(attrib).arg(filename).arg(getCurrentLine()).arg(getCurrentColumn()),
 										ErrorCode::UnkownAttribute,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 					}
 
@@ -860,7 +870,7 @@ bool SchemaParser::evaluateExpression()
 	if(error)
 	{
 		throw Exception(Exception::getErrorMessage(ErrorCode::InvalidSyntax)
-						.arg(filename).arg((line + comment_count + 1)).arg((column+1)),
+						.arg(filename).arg(getCurrentLine()).arg(getCurrentColumn()),
 						ErrorCode::InvalidSyntax,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	}
 
@@ -887,7 +897,7 @@ char SchemaParser::translateMetaCharacter(const QString &meta)
 	if(metas.count(meta)==0)
 	{
 		throw Exception(Exception::getErrorMessage(ErrorCode::InvalidMetacharacter)
-						.arg(meta).arg(filename).arg(line + comment_count +1).arg(column+1),
+						.arg(meta).arg(filename).arg(getCurrentLine()).arg(getCurrentColumn()),
 						ErrorCode::InvalidMetacharacter,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	}
 
@@ -931,7 +941,7 @@ void SchemaParser::ignoreEmptyAttributes(bool ignore)
 	ignore_empty_atribs=ignore;
 }
 
-QString SchemaParser::getCodeDefinition(attribs_map &attribs)
+QString SchemaParser::getCodeDefinition(const attribs_map &attribs)
 {
 	QString object_def;
 	unsigned end_cnt, if_cnt;
@@ -981,7 +991,7 @@ QString SchemaParser::getCodeDefinition(attribs_map &attribs)
 					if(if_level>=0 && vet_tk_if[if_level] && !vet_tk_then[if_level])
 					{
 						throw Exception(Exception::getErrorMessage(ErrorCode::InvalidSyntax)
-										.arg(filename).arg(line + comment_count +1).arg(column+1),
+										.arg(filename).arg(getCurrentLine()).arg(getCurrentColumn()),
 										ErrorCode::InvalidSyntax,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 					}
 					else
@@ -1025,7 +1035,7 @@ QString SchemaParser::getCodeDefinition(attribs_map &attribs)
 						if(!ignore_unk_atribs)
 						{
 							throw Exception(Exception::getErrorMessage(ErrorCode::UnkownAttribute)
-											.arg(atrib).arg(filename).arg((line + comment_count +1)).arg((column+1)),
+											.arg(atrib).arg(filename).arg(getCurrentLine()).arg(getCurrentColumn()),
 											ErrorCode::UnkownAttribute,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 						}
 						else
@@ -1062,7 +1072,7 @@ QString SchemaParser::getCodeDefinition(attribs_map &attribs)
 						if(attributes[atrib].isEmpty() && !ignore_empty_atribs)
 						{
 							throw Exception(Exception::getErrorMessage(ErrorCode::UndefinedAttributeValue)
-											.arg(atrib).arg(filename).arg(line + comment_count +1).arg(column+1),
+											.arg(atrib).arg(filename).arg(getCurrentLine()).arg(getCurrentColumn()),
 											ErrorCode::UndefinedAttributeValue,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 						}
 
@@ -1085,7 +1095,7 @@ QString SchemaParser::getCodeDefinition(attribs_map &attribs)
 							cond!=TokenUnset)
 					{
 						throw Exception(Exception::getErrorMessage(ErrorCode::InvalidInstruction)
-										.arg(cond).arg(filename).arg(line + comment_count +1).arg(column+1),
+										.arg(cond).arg(filename).arg(getCurrentLine()).arg(getCurrentColumn()),
 										ErrorCode::InvalidInstruction,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 					}
 					else if(cond==TokenSet || cond==TokenUnset)
@@ -1246,7 +1256,7 @@ QString SchemaParser::getCodeDefinition(attribs_map &attribs)
 										if(word.isEmpty() && !ignore_empty_atribs)
 										{
 											throw Exception(Exception::getErrorMessage(ErrorCode::UndefinedAttributeValue)
-															.arg(atrib).arg(filename).arg(line + comment_count +1).arg(column+1),
+															.arg(atrib).arg(filename).arg(getCurrentLine()).arg(getCurrentColumn()),
 															ErrorCode::UndefinedAttributeValue,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 										}
 									}
@@ -1296,7 +1306,7 @@ QString SchemaParser::getCodeDefinition(attribs_map &attribs)
 						if(error)
 						{
 							throw Exception(Exception::getErrorMessage(ErrorCode::InvalidSyntax)
-											.arg(filename).arg(line + comment_count +1).arg(column+1),
+											.arg(filename).arg(getCurrentLine()).arg(getCurrentColumn()),
 											ErrorCode::InvalidSyntax,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 						}
 					}
@@ -1318,7 +1328,7 @@ QString SchemaParser::getCodeDefinition(attribs_map &attribs)
 						if(vet_tk_if[if_level] && !vet_tk_then[if_level])
 						{
 							throw Exception(Exception::getErrorMessage(ErrorCode::InvalidSyntax)
-											.arg(filename).arg(line + comment_count +1).arg(column+1),
+											.arg(filename).arg(getCurrentLine()).arg(getCurrentColumn()),
 											ErrorCode::InvalidSyntax,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 						}
 						//Case the parser is in 'if' section
@@ -1343,7 +1353,7 @@ QString SchemaParser::getCodeDefinition(attribs_map &attribs)
 		if(if_cnt!=end_cnt)
 		{
 			throw Exception(Exception::getErrorMessage(ErrorCode::InvalidSyntax)
-							.arg(filename).arg(line + comment_count +1).arg(column+1),
+							.arg(filename).arg(getCurrentLine()).arg(getCurrentColumn()),
 							ErrorCode::InvalidSyntax,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		}
 	}

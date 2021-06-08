@@ -31,7 +31,7 @@ int main(int argc, char **argv)
 
 		SyntaxCheckerForm syntaxchk;
 		args.pop_front();
-		syntaxchk.loadSchemaFiles(args);
+		syntaxchk.loadFiles(args);
 		syntaxchk.showMaximized();
 		app.exec();
 
