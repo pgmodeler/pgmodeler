@@ -36,7 +36,7 @@ OperationListWidget::OperationListWidget(QWidget *parent) : QWidget(parent)
 void OperationListWidget::hide()
 {
 	QWidget::hide();
-	emit s_visibilityChanged(false);
+	emit s_hideRequested();
 }
 
 void OperationListWidget::selectItem(QTreeWidgetItem *item, int)

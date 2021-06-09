@@ -31,15 +31,15 @@ DonateWidget::DonateWidget(QWidget *parent) : QWidget(parent)
 
 	connect(hide_tb, &QToolButton::clicked,
 			[&](){
-		this->close();
-		emit s_visibilityChanged(false);
+		hide();
+		emit s_hideRequested();
 	});
 
 	connect(donate_tb, &QToolButton::clicked,
 			[&](){
 		QDesktopServices::openUrl(QUrl(GlobalAttributes::PgModelerDonateURL));
-		this->close();
-		emit s_visibilityChanged(false);
+		hide();
+		emit s_hideRequested();
 	});
 
 	PgModelerUiNs::configureWidgetFont(title_lbl, PgModelerUiNs::BigFontFactor);

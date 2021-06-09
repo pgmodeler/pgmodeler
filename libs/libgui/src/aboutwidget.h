@@ -38,7 +38,7 @@ class AboutWidget: public QWidget, public Ui::AboutWidget {
 		AboutWidget(QWidget *parent = nullptr);
 		
 	signals:
-		void s_visibilityChanged(bool value);
+		void s_hideRequested();
 };
 
 #endif

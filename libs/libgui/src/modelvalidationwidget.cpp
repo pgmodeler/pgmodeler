@@ -166,7 +166,7 @@ void ModelValidationWidget::destroyThread(bool force)
 void ModelValidationWidget::hide()
 {
 	QWidget::hide();
-	emit s_visibilityChanged(false);
+	emit s_hideRequested();
 }
 
 void ModelValidationWidget::reenableValidation()

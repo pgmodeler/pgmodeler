@@ -75,7 +75,7 @@ class ObjectFinderWidget : public QWidget, public Ui::ObjectFinderWidget {
 		void setModel(ModelWidget *model_wgt);
 
 	signals:
-		void s_visibilityChanged(bool);
+		void s_hideRequested();
 		
 	public slots:
 		void hide();

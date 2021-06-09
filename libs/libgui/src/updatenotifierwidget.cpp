@@ -38,8 +38,8 @@ UpdateNotifierWidget::UpdateNotifierWidget(QWidget *parent) : QWidget(parent)
 
 
 	connect(hide_tb, &QToolButton::clicked, this,	[&](){
-		this->close();
-		emit s_visibilityChanged(false);
+		hide();
+		emit s_hideRequested();
 	});
 
 	PgModelerUiNs::configureWidgetFont(changelog_txt, PgModelerUiNs::MediumFontFactor);
@@ -86,8 +86,8 @@ bool UpdateNotifierWidget::eventFilter(QObject *obj, QEvent *event)
 void UpdateNotifierWidget::activateLink(const QString &link)
 {
 	QDesktopServices::openUrl(QUrl(link));
-	this->close();
-	emit s_visibilityChanged(false);
+	hide();
+	emit s_hideRequested();
 }
 
 void UpdateNotifierWidget::checkForUpdate()

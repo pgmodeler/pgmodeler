@@ -90,7 +90,7 @@ bool ObjectFinderWidget::eventFilter(QObject *object, QEvent *event)
 void ObjectFinderWidget::hide()
 {
 	QWidget::hide();
-	emit s_visibilityChanged(false);
+	emit s_hideRequested();
 }
 
 void ObjectFinderWidget::showEvent(QShowEvent *)

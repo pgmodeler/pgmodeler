@@ -56,7 +56,7 @@ class OperationListWidget: public QWidget, public Ui::OperationListWidget {
 	signals:
 		void s_operationExecuted();
 		void s_operationListUpdated();
-		void s_visibilityChanged(bool);
+		void s_hideRequested();
 };
 
 #endif
