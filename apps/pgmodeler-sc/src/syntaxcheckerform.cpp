@@ -21,10 +21,11 @@
 #include "globalattributes.h"
 #include "generalconfigwidget.h"
 #include "pgmodeleruins.h"
+#include "sourceeditorwidget.h"
 
 const QString SyntaxCheckerForm::UntitledFile = QT_TR_NOOP("(untitled)");
 
-QPalette SyntaxCheckerForm::def_editor_pal;
+//QPalette SyntaxCheckerForm::def_editor_pal;
 
 SyntaxCheckerForm::SyntaxCheckerForm(QWidget *parent) : QWidget(parent)
 {
@@ -56,6 +57,8 @@ SyntaxCheckerForm::SyntaxCheckerForm(QWidget *parent) : QWidget(parent)
 	syntax_txt = PgModelerUiNs::createNumberedTextEditor(syntax_wgt);
 	syntax_hl = new SyntaxHighlighter(syntax_txt);
 	syntax_hl->loadConfiguration(GlobalAttributes::getXMLHighlightConfPath());
+
+	SourceEditorWidget::setDefaultEditorPalette(syntax_txt->palette());
 
 	syntax_conf_sel = new FileSelectorWidget(syntax_conf_wgt);
 	syntax_conf_sel->setReadOnly(true);
@@ -102,18 +105,11 @@ subcontrol-position: right center; }");
 	connect(new_tb, SIGNAL(clicked(bool)), this, SLOT(addEditorTab()));
 	connect(load_tb, SIGNAL(clicked(bool)), this, SLOT(loadFile()));
 	connect(exit_tb, SIGNAL(clicked(bool)), this, SLOT(close()));
-	connect(validate_tb, SIGNAL(clicked(bool)), this, SLOT(validateSyntax()));
 	connect(save_tb, SIGNAL(clicked(bool)), this, SLOT(saveFile()));
 	connect(editors_tbw, SIGNAL(tabCloseRequested(int)), this, SLOT(closeEditorTab(int)));
 
 	connect(save_as_tb, &QToolButton::clicked, [&](){
 		saveFile(true);
-	});
-
-	connect(editors_tbw, &QTabWidget::currentChanged, [&](){
-		validate_tb->setEnabled(
-				editors_tbw->tabText(editors_tbw->currentIndex()) == UntitledFile ||
-				editors_tbw->tabText(editors_tbw->currentIndex()).endsWith(GlobalAttributes::SchemaExt));
 	});
 }
 
@@ -219,10 +215,11 @@ void SyntaxCheckerForm::applySyntaxConfig(bool from_temp_file)
 		SyntaxHighlighter stx_hl(&dummy_txt);
 		stx_hl.loadConfiguration(filename);
 
-		for(auto &hl : highlighters)
+		SourceEditorWidget *editor = nullptr;
+		for(int tab = 0; tab < editors_tbw->count(); tab++)
 		{
-			hl->loadConfiguration(filename);
-			hl->rehighlight();
+			editor = dynamic_cast<SourceEditorWidget *>(editors_tbw->widget(tab));
+			editor->loadSyntaxConfig(filename);
 		}
 	}
 	catch(Exception &e)
@@ -254,8 +251,8 @@ void SyntaxCheckerForm::saveSyntaxConfig()
 
 void SyntaxCheckerForm::saveFile(bool save_as)
 {
-	QFile input;
-	QString filename = editors_tbw->tabToolTip(editors_tbw->currentIndex());
+	SourceEditorWidget *editor = dynamic_cast<SourceEditorWidget *>(editors_tbw->widget(editors_tbw->currentIndex()));
+	QString filename = editor->getFilename();
 
 	if(save_as || filename.isEmpty())
 	{
@@ -267,23 +264,10 @@ void SyntaxCheckerForm::saveFile(bool save_as)
 		filename = files.at(0);
 	}
 
-	input.setFileName(filename);
-	input.open(QFile::WriteOnly);
-
-	if(!input.isOpen())
-	{
-		throw Exception(Exception::getErrorMessage(ErrorCode::FileDirectoryNotAccessed).arg(filename),
-										ErrorCode::FileDirectoryNotAccessed, __PRETTY_FUNCTION__, __FILE__, __LINE__);
-	}
-
-	input.write(syntax_txt->toPlainText().toUtf8());
-	input.close();
-
+	editor->saveFile(filename);
 	QFileInfo fi(filename);
-
 	editors_tbw->setTabText(editors_tbw->currentIndex(), fi.fileName());
 	editors_tbw->setTabToolTip(editors_tbw->currentIndex(), fi.absoluteFilePath());
-	validate_tb->setEnabled(filename.endsWith(GlobalAttributes::SchemaExt));
 }
 
 QStringList SyntaxCheckerForm::showFileDialog(bool save_mode)
@@ -335,48 +319,6 @@ void SyntaxCheckerForm::loadFile()
 	}
 }
 
-void SyntaxCheckerForm::validateSyntax()
-{
-	SchemaParser schparser;
-	int tab_idx = editors_tbw->currentIndex();
-	NumberedTextEditor *editor_txt = dynamic_cast<NumberedTextEditor *>(highlighters[tab_idx]->parent());
-	Messagebox msgbox;
-
-	try
-	{
-		editor_txt->setPalette(def_editor_pal);
-		schparser.ignoreEmptyAttributes(true);
-		schparser.ignoreUnkownAttributes(true);
-		schparser.loadBuffer(editor_txt->toPlainText());
-		schparser.getCodeDefinition({});
-
-		msgbox.show(tr("No lexical or sytactical errors found."), Messagebox::InfoIcon);
-	}
-	catch(Exception &e)
-	{
-		QTextCursor cursor(editor_txt->document()->findBlockByLineNumber(schparser.getCurrentLine() - 1));
-		cursor.movePosition(QTextCursor::StartOfLine);
-		cursor.movePosition(QTextCursor::NextCharacter, QTextCursor::KeepAnchor, schparser.getCurrentColumn() - 1);
-
-		editor_txt->blockSignals(true);
-		editor_txt->setTextCursor(cursor);
-		editor_txt->blockSignals(false);
-
-		QPalette pal = editor_txt->palette();
-		pal.setColor(QPalette::Highlight, QColor("#f00000"));
-		pal.setColor(QPalette::HighlightedText, QColor("#ffffff"));
-		editor_txt->setPalette(pal);
-
-		msgbox.show(e);
-	}
-}
-
-void SyntaxCheckerForm::restoreEditorPalette()
-{
-	NumberedTextEditor *editor = dynamic_cast<NumberedTextEditor *>(sender());
-	editor->setPalette(def_editor_pal);
-}
-
 void SyntaxCheckerForm::loadFiles(const QStringList &filenames)
 {
 	try
@@ -392,56 +334,24 @@ void SyntaxCheckerForm::loadFiles(const QStringList &filenames)
 
 void SyntaxCheckerForm::addEditorTab(const QString &filename)
 {
-	NumberedTextEditor *editor_txt = nullptr;
-	SyntaxHighlighter *editor_hl = nullptr;
-	QWidget *page_wgt = nullptr;
-	QVBoxLayout *vbox = nullptr;
+	SourceEditorWidget *editor_wgt = nullptr;
 	QFileInfo fi(filename);
-	QFile input;
-	QByteArray buffer;
-
-	if(!filename.isEmpty())
-	{
-		input.setFileName(filename);
-		input.open(QFile::ReadOnly);
-
-		if(!input.isOpen())
-		{
-			throw Exception(Exception::getErrorMessage(ErrorCode::FileDirectoryNotAccessed).arg(filename),
-											ErrorCode::FileDirectoryNotAccessed, __PRETTY_FUNCTION__, __FILE__, __LINE__);
-		}
-
-		buffer = input.readAll();
-		input.close();
-	}
-
-	page_wgt = new QWidget;
-	vbox = new QVBoxLayout(page_wgt);
-	vbox->setContentsMargins(4,4,4,4);
-
-	editor_txt = PgModelerUiNs::createNumberedTextEditor(page_wgt);
-	editor_hl = new SyntaxHighlighter(editor_txt);
-	vbox->addWidget(editor_txt);
-	def_editor_pal = editor_txt->palette();
 
 	try
 	{
-		if(!syntax_conf_sel->getSelectedFile().isEmpty())
-			editor_hl->loadConfiguration(syntax_conf_sel->getSelectedFile());
+		editor_wgt = new SourceEditorWidget;
+		editor_wgt->loadSyntaxConfig(syntax_conf_sel->getSelectedFile());
 
-		editor_txt->setPlainText(buffer);		
-		highlighters.append(editor_hl);
-
-		connect(editor_txt, SIGNAL(modificationChanged(bool)), this, SLOT(restoreEditorPalette()));
-		connect(editor_txt, SIGNAL(cursorPositionChanged()), this, SLOT(restoreEditorPalette()));
+		if(!filename.isEmpty())
+			editor_wgt->loadFile(filename);
 	}
 	catch(Exception &e)
 	{
-		Messagebox msgbox;
-		msgbox.show(e);
+		delete editor_wgt;
+		throw Exception(e.getErrorMessage(), e.getErrorCode(), __PRETTY_FUNCTION__, __FILE__, __LINE__, &e);
 	}
 
-	editors_tbw->addTab(page_wgt, filename.isEmpty() ? UntitledFile : fi.fileName());
+	editors_tbw->addTab(editor_wgt, filename.isEmpty() ? UntitledFile : fi.fileName());
 	editors_tbw->setTabToolTip(editors_tbw->count() - 1, filename.isEmpty() ? "" : fi.absoluteFilePath());
 	editors_tbw->setCurrentIndex(editors_tbw->count() - 1);
 	save_as_tb->setEnabled(true);
@@ -450,14 +360,12 @@ void SyntaxCheckerForm::addEditorTab(const QString &filename)
 
 void SyntaxCheckerForm::closeEditorTab(int idx)
 {
-	QWidget *page = editors_tbw->widget(idx);
+	SourceEditorWidget *editor_wgt = dynamic_cast<SourceEditorWidget *>(editors_tbw->widget(idx));
 
 	editors_tbw->removeTab(idx);
-	highlighters.removeAt(idx);
-	delete(page);
+	delete(editor_wgt);
 
 	bool enable = editors_tbw->count() > 0;
 	save_as_tb->setEnabled(enable);
 	save_tb->setEnabled(enable);
-	validate_tb->setEnabled(enable);
 }

@@ -37,8 +37,7 @@ UpdateNotifierWidget::UpdateNotifierWidget(QWidget *parent) : QWidget(parent)
 	connect(get_binary_tb, &QToolButton::clicked, this, [&](){ activateLink(GlobalAttributes::PgModelerDownloadURL); });
 
 
-	connect(hide_tb, &QToolButton::clicked, this,
-			[&](){
+	connect(hide_tb, &QToolButton::clicked, this,	[&](){
 		this->close();
 		emit s_visibilityChanged(false);
 	});

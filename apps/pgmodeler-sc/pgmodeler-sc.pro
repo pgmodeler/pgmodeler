@@ -8,11 +8,14 @@ windows:RCC_DIR=src/
 
 SOURCES += src/main.cpp \
 	   src/syntaxcheckerform.cpp \
-	   ../pgmodeler/src/pgmodelerapp.cpp
+	   src/sourceeditorwidget.cpp \
+	   ../pgmodeler/src/pgmodelerapp.cpp \
 
-FORMS += ui/syntaxcheckerform.ui
+FORMS += ui/syntaxcheckerform.ui \
+	 ui/sourceeditorwidget.ui
 
-HEADERS += src/syntaxcheckerform.h
+HEADERS += src/syntaxcheckerform.h \
+	   src/sourceeditorwidget.h
 
 unix|windows: LIBS += $$LIBGUI_LIB \
 		      $$LIBCANVAS_LIB \

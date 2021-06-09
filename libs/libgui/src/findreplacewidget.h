@@ -51,6 +51,9 @@ class FindReplaceWidget: public QWidget, public Ui::FindReplaceWidget {
 		void replaceText();
 		void replaceAll();
 		void replaceFindText();
+
+	signals:
+		void s_hideRequested();
 };
 
 #endif

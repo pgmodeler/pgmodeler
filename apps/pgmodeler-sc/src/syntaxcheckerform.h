@@ -31,22 +31,19 @@
 #include "numberedtexteditor.h"
 #include "syntaxhighlighter.h"
 #include "fileselectorwidget.h"
+#include "findreplacewidget.h"
 
-class SyntaxCheckerForm : public QWidget, public Ui::SyntaxCheckerForm {
+class SyntaxCheckerForm: public QWidget, public Ui::SyntaxCheckerForm {
 	private:
 		Q_OBJECT
 
 		static const QString UntitledFile;
-
-		static QPalette def_editor_pal;
 
 		NumberedTextEditor *syntax_txt;
 
 		SyntaxHighlighter *syntax_hl;
 
 		FileSelectorWidget *syntax_conf_sel;
-
-		QList<SyntaxHighlighter *> highlighters;
 
 		QActionGroup *stx_action_grp;
 
@@ -74,12 +71,7 @@ class SyntaxCheckerForm : public QWidget, public Ui::SyntaxCheckerForm {
 		void addEditorTab(const QString &filename = "");
 		void closeEditorTab(int idx);
 		void loadFile();
-		void validateSyntax();
-		void restoreEditorPalette();
 		void saveFile(bool save_as = false);
-
-	signals:
-
 };
 
 #endif
