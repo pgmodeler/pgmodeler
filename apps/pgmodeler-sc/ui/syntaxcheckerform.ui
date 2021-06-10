@@ -275,7 +275,7 @@
              </font>
             </property>
             <property name="text">
-             <string>The syntax settings below have changed. Click &lt;strong&gt;Save&lt;/strong&gt; to persit the modifications to file, &lt;strong&gt;Apply&lt;/strong&gt; to use the settings on-the-fly on open editors without save the new syntax to the configuration file or &lt;strong&gt;Reload&lt;/strong&gt; to reload the file from the last time that it was saved.</string>
+             <string>The syntax settings below have changed. Click &lt;strong&gt;Save&lt;/strong&gt; to persit the modifications to file, &lt;strong&gt;Apply&lt;/strong&gt; to use the settings on-the-fly on open editors without save the new syntax to the configuration file or &lt;strong&gt;Reload&lt;/strong&gt; to load the file again from the last time that it was saved.</string>
             </property>
             <property name="wordWrap">
              <bool>true</bool>
