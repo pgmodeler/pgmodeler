@@ -193,6 +193,9 @@ namespace PgModelerUiNs {
 				end_tags={ QString("</strong>"), QString(")</em>") };
 		int pos=-1, pos1=-1;
 
+		fmt_msg.replace('<', XmlParser::CharLt);
+		fmt_msg.replace('>', XmlParser::CharGt);
+
 		// Replacing the form `' by <strong></strong> and () by <em></em>
 		for(int chr_idx=0; chr_idx < 2; chr_idx++)
 		{

@@ -193,7 +193,7 @@ QString GenericSQL::getCodeDefinition(unsigned def_type)
 	if(!code_def.isEmpty()) return code_def;
 
 	QString fmt_definition = definition,
-			name_attr = QString("%1%2%3").arg(SchemaParser::CharIniAttribute)
+			name_attr = QString("%1%2%3").arg(SchemaParser::CharStartAttribute)
 																	 .arg(Attributes::Name)
 																	 .arg(SchemaParser::CharEndAttribute);
 
@@ -219,7 +219,7 @@ QString GenericSQL::getCodeDefinition(unsigned def_type)
 			{
 				/* In order to use a reference name in the object's SQL code, the reference should be writter in the for
 				 * {ref_name} so it can be replaced by the corresponding value in the SQL code */
-				ref_name = QString("%1%2%3").arg(SchemaParser::CharIniAttribute)
+				ref_name = QString("%1%2%3").arg(SchemaParser::CharStartAttribute)
 									 .arg(ref.ref_name)
 									 .arg(SchemaParser::CharEndAttribute);
 

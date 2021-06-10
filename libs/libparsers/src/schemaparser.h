@@ -115,7 +115,7 @@ class SchemaParser {
 		QString getWord();
 
 		//! \brief Gets a pure text, ignoring elements of the language
-		QString getPureText();
+		QString getPlainText();
 
 		/*! \brief Returns whether a character is special i.e. indicators of attributes
 		 or conditional instructions */
@@ -150,13 +150,13 @@ class SchemaParser {
 		CharLineEnd,	//! \brief Character that indicates end of line
 		CharSpace,		//! \brief Character that indicates spacing
 		CharTabulation,	//! \brief Character that indicates tabulation
-		CharIniAttribute,	//! \brief Character that indicates a reference to an attribute
+		CharStartAttribute,	//! \brief Character that indicates a reference to an attribute
 		CharEndAttribute,	//! \brief Character that delimits on the right the attribute name
-		CharIniConditional,	//! \brief Character that starts a conditional instruction
-		CharIniMetachar,	//! \brief Character that starts a metacharacter
-		CharIniPlainText,	//! \brief Character that starts a plain text
+		CharStartConditional,	//! \brief Character that starts a conditional instruction
+		CharStartMetachar,	//! \brief Character that starts a metacharacter
+		CharStartPlainText,	//! \brief Character that starts a plain text
 		CharEndPlainText,	//! \brief Character that ends a plain text
-		CharIniCompExpr,	//! \brief Character that starts a comparison expression
+		CharStartCompExpr,	//! \brief Character that starts a comparison expression
 		CharEndCompExpr,	//! \brief Character that ends a comparison expression
 		CharValueDelim,	//! \brief Character that delimiters a value (string)
 		CharValueOf;	/*! \brief Character that is used on %set instructions to

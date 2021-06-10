@@ -101,7 +101,7 @@ void SourceEditorWidget::validateSyntax()
 	{
 		QTextCursor cursor(editor_txt->document()->findBlockByLineNumber(schparser.getCurrentLine() - 1));
 		cursor.movePosition(QTextCursor::StartOfLine);
-		cursor.movePosition(QTextCursor::NextCharacter, QTextCursor::KeepAnchor, schparser.getCurrentColumn() - 1);
+		cursor.movePosition(QTextCursor::NextCharacter, QTextCursor::KeepAnchor, schparser.getCurrentColumn());
 
 		editor_txt->blockSignals(true);
 		editor_txt->setTextCursor(cursor);
