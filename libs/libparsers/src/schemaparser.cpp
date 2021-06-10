@@ -499,7 +499,7 @@ bool SchemaParser::evaluateComparisonExpr()
 						{
 							value += curr_line[column++];
 
-							if(value.back() == CharValueDelim)
+							if(value.at(value.size() - 1) == CharValueDelim)
 								break;
 						}
 					}
