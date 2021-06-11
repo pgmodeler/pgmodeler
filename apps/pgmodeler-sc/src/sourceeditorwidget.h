@@ -21,6 +21,10 @@ class SourceEditorWidget: public QWidget, public Ui::SourceEditorWidget {
 
 		QString filename;
 
+		QAction *act_break_inline_ifs, *act_preserve_comments;
+
+		QMenu indent_opts_menu;
+
 	public:
 		explicit SourceEditorWidget(QWidget *parent = nullptr);
 
@@ -28,10 +32,13 @@ class SourceEditorWidget: public QWidget, public Ui::SourceEditorWidget {
 
 		QString getFilename();
 
-	public slots:
-		void loadFile(const QString &filename);
+	private slots:
 		void validateSyntax();
 		void restoreEditorPalette();
+		void applyIndentation();
+
+	public slots:
+		void loadFile(const QString &filename);
 		void saveFile(const QString &filename);
 		void loadSyntaxConfig(const QString &filename);
 };

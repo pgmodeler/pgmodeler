@@ -101,12 +101,15 @@ subcontrol-position: right center; }");
 	connect(apply_conf_tb, SIGNAL(clicked(bool)), this, SLOT(applySyntaxConfig()));
 	connect(save_conf_tb, SIGNAL(clicked(bool)), this, SLOT(saveSyntaxConfig()));
 	connect(reload_conf_tb, SIGNAL(clicked(bool)), this, SLOT(loadSyntaxConfig()));
-	connect(syntax_txt, SIGNAL(undoAvailable(bool)), alert_frm, SLOT(setVisible(bool)));
 	connect(new_tb, SIGNAL(clicked(bool)), this, SLOT(addEditorTab()));
 	connect(load_tb, SIGNAL(clicked(bool)), this, SLOT(loadFile()));
 	connect(exit_tb, SIGNAL(clicked(bool)), this, SLOT(close()));
 	connect(save_tb, SIGNAL(clicked(bool)), this, SLOT(saveFile()));
 	connect(editors_tbw, SIGNAL(tabCloseRequested(int)), this, SLOT(closeEditorTab(int)));
+
+	connect(syntax_txt, &NumberedTextEditor::textChanged, [&](){
+		alert_frm->setVisible(true);
+	});
 
 	connect(save_as_tb, &QToolButton::clicked, [&](){
 		saveFile(true);
@@ -247,6 +250,8 @@ void SyntaxCheckerForm::saveSyntaxConfig()
 
 	input.write(syntax_txt->toPlainText().toUtf8());
 	input.close();
+	alert_frm->setVisible(false);
+	applySyntaxConfig(true);
 }
 
 void SyntaxCheckerForm::saveFile(bool save_as)

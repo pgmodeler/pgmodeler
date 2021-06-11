@@ -156,11 +156,8 @@
             <property name="enabled">
              <bool>false</bool>
             </property>
-            <property name="toolTip">
-             <string>Save the changes in syntax highlighting settings to the conf file.</string>
-            </property>
             <property name="text">
-             <string>Save</string>
+             <string>Save &amp;&amp; apply</string>
             </property>
             <property name="icon">
              <iconset resource="../../../libs/libgui/res/resources.qrc">
@@ -210,11 +207,8 @@
             <property name="enabled">
              <bool>false</bool>
             </property>
-            <property name="toolTip">
-             <string>Apply the loaded settings to the open editors.</string>
-            </property>
             <property name="text">
-             <string>Apply</string>
+             <string>Apply only</string>
             </property>
             <property name="icon">
              <iconset resource="../../../libs/libgui/res/resources.qrc">
@@ -235,9 +229,6 @@
            <widget class="QToolButton" name="reload_conf_tb">
             <property name="enabled">
              <bool>false</bool>
-            </property>
-            <property name="toolTip">
-             <string>Reload the syntax highlighting settings from the conf file.</string>
             </property>
             <property name="text">
              <string>Reload</string>
@@ -275,7 +266,7 @@
              </font>
             </property>
             <property name="text">
-             <string>The syntax settings below have changed. Click &lt;strong&gt;Save&lt;/strong&gt; to persit the modifications to file, &lt;strong&gt;Apply&lt;/strong&gt; to use the settings on-the-fly on open editors without save the new syntax to the configuration file or &lt;strong&gt;Reload&lt;/strong&gt; to load the file again from the last time that it was saved.</string>
+             <string>The syntax settings below have changed. Click &lt;strong&gt;Save &amp; apply&lt;/strong&gt; to persit the modifications to file and apply them to the open editor; &lt;strong&gt;Apply only&lt;/strong&gt; to use the modified settings on-the-fly on open editors without save them to the configuration file; or &lt;strong&gt;Reload&lt;/strong&gt; to load the file again from the last time that it was saved.</string>
             </property>
             <property name="wordWrap">
              <bool>true</bool>
