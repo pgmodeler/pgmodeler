@@ -1,6 +1,7 @@
 #include "sourceeditorwidget.h"
 #include "messagebox.h"
 #include "pgmodeleruins.h"
+#include "qtcompat/splitbehaviorcompat.h"
 
 QPalette SourceEditorWidget::def_editor_pal;
 
@@ -23,10 +24,6 @@ SourceEditorWidget::SourceEditorWidget(QWidget *parent) : QWidget(parent)
 	act_break_inline_ifs = indent_opts_menu.addAction(tr("Break inline ifs"));
 	act_break_inline_ifs->setCheckable(true);
 	act_break_inline_ifs->setChecked(true);
-
-	act_preserve_comments = indent_opts_menu.addAction(tr("Preserve comments formatting"));
-	act_preserve_comments->setCheckable(true);
-	act_preserve_comments->setChecked(true);
 
 	connect(find_wgt, SIGNAL(s_hideRequested()), find_tb, SLOT(toggle()));
 	connect(validate_tb, SIGNAL(clicked(bool)), this, SLOT(validateSyntax()));
@@ -135,8 +132,8 @@ void SourceEditorWidget::restoreEditorPalette()
 void SourceEditorWidget::applyIndentation()
 {
 	QStringList buffer = editor_txt->toPlainText().split(QChar::LineFeed);
-	int if_level = 0, comment_pos = -1, line_count = buffer.size(), tk_pos = -1;
-	bool found_cond = false;
+	int if_level = 0, comment_pos = -1, line_count = buffer.size();
+	bool found_cond = false, found_if = false;
 	QString cond_pattern = QString("^(( )|(\\t))*(%1)"), line,
 			tk_if = SchemaParser::CharStartConditional + SchemaParser::TokenIf,
 			tk_then = SchemaParser::CharStartConditional + SchemaParser::TokenThen,
@@ -146,11 +143,12 @@ void SourceEditorWidget::applyIndentation()
 	for(int ln_idx = 0; ln_idx < line_count; ln_idx++)
 	{
 		line = buffer[ln_idx];
+		comment_pos = line.indexOf(SchemaParser::CharComment);
 
 		if(line.contains(QRegExp(cond_pattern.arg(tk_if))))
 		{
 			if_level++;
-			found_cond = true;
+			found_if = found_cond = true;
 		}
 		else if(line.contains(QRegExp(cond_pattern.arg(tk_else))) ||
 						line.contains(QRegExp(cond_pattern.arg(tk_end))))
@@ -158,65 +156,77 @@ void SourceEditorWidget::applyIndentation()
 
 		if(act_break_inline_ifs->isChecked() && line.contains(QRegExp(QString("(%1)(.)+(%2)").arg(tk_if).arg(tk_end))))
 		{
-			tk_pos = line.indexOf(tk_if);
-			if(!line.contains(QRegExp(cond_pattern.arg(tk_if))) && tk_pos > 0)
-				line.insert(tk_pos, QString().fill(QChar::LineFeed, 2));
-
-			tk_pos = line.indexOf(tk_then);
-			if(tk_pos > 0 && (tk_pos + tk_then.size() < line.size()))
-				line.insert(tk_pos + tk_then.size(), QChar::LineFeed);
-
-			tk_pos = line.indexOf(tk_else);
-			if(!line.contains(QRegExp(cond_pattern.arg(tk_else))) && tk_pos > 0)
-			{
-				line.insert(tk_pos, QChar::LineFeed);
-				line.insert(tk_pos + tk_else.size() + 1, QChar::LineFeed);
-			}
-
-			tk_pos = line.indexOf(tk_end);
-			if(!line.contains(QRegExp(cond_pattern.arg(tk_end))) && tk_pos > 0)
-			{
-				line.insert(tk_pos, QChar::LineFeed);
-				line.insert(tk_pos + tk_end.size() + 1, QChar::LineFeed);
-			}
+			line.replace(tk_if, QChar::LineFeed + tk_if);
+			line.replace(tk_then, tk_then + QChar::LineFeed);
+			line.replace(tk_else, QChar::LineFeed + tk_else + QChar::LineFeed);
+			line.replace(tk_end, QChar::LineFeed + tk_end + QChar::LineFeed );
 
 			if(line.contains(QChar::LineFeed))
 			{
-				QStringList buf_aux = line.split(QChar::LineFeed);
+				QStringList buf_aux = line.split(QChar::LineFeed, QtCompat::SkipEmptyParts);
 				buffer.removeAt(ln_idx);
 
 				for(auto itr = buf_aux.rbegin(); itr != buf_aux.rend(); itr++)
 					buffer.insert(ln_idx, *itr);
 
-				ln_idx--;
+				ln_idx = 0;
+				found_cond = found_if = false;
+				if_level = 0;
 				line_count = buffer.size();
 				continue;
 			}
 		}
 
-		comment_pos = line.indexOf(SchemaParser::CharComment);
-
-		if(comment_pos >= 0 && act_preserve_comments->isChecked())
-		{
-			QString comment = line.mid(comment_pos);
-
-			if(line.size() != comment.size())
-			{
-				line = line.mid(0, comment_pos).simplified();
-				line += " " + comment;
-			}
-		}
-		else
-			line = line.simplified();
+		line = line.simplified();
 
 		if(!line.isEmpty())
 		{
-			line = line.rightJustified(line.size() + if_level + (found_cond ? -1 : 0), '\t');
+			line = line.rightJustified(line.size() + if_level + (found_cond ? -1 : 0), QChar::Tabulation);
 			if_level -= line.mid(0, comment_pos).count(QString("%1%2").arg(SchemaParser::CharStartConditional).arg(SchemaParser::TokenEnd));
 		}
 
 		buffer[ln_idx] = line;
-		found_cond = false;
+		found_cond = found_if = false;
+	}
+
+	QRegExp cond_tk_regexp(QString("(%1)[a-z]+").arg(SchemaParser::CharStartConditional));
+	QString prev_line, next_line,
+			tk_set = SchemaParser::CharStartConditional + SchemaParser::TokenSet,
+			tk_unset = SchemaParser::CharStartConditional + SchemaParser::TokenUnset;
+
+	buffer.removeAll("");
+
+	for(int ln_idx = 0; ln_idx < buffer.count() - 1; ln_idx++)
+	{
+		// Capturing the previous, current and next lines without comment portion
+		prev_line = ln_idx > 0 ? buffer[ln_idx - 1].mid(0, buffer[ln_idx - 1].indexOf(SchemaParser::CharComment)) : "";
+		line = buffer[ln_idx].mid(0, buffer[ln_idx].indexOf(SchemaParser::CharComment));
+		next_line = ln_idx < buffer.count() - 1 ? buffer[ln_idx + 1].mid(0, buffer[ln_idx + 1].indexOf(SchemaParser::CharComment)) : "";
+
+		// Separating an end token from any conditional token in the next line
+		if(line.contains(tk_end) &&
+			 !next_line.isEmpty() &&
+			 !next_line.contains(cond_tk_regexp))
+			buffer[ln_idx].append(QChar::LineFeed);
+
+		// Separating an closed plain text from the next line
+		else if(line.endsWith(SchemaParser::CharEndPlainText) &&
+						!next_line.isEmpty() &&
+						!next_line.contains(cond_tk_regexp))
+			buffer[ln_idx].append(QChar::LineFeed);
+
+		// If the current line has an %if and the previous is not a conditional instruction %
+		else if(line.contains(tk_if) &&
+						!prev_line.isEmpty() &&
+						!prev_line.contains(cond_tk_regexp))
+			buffer[ln_idx].prepend(QChar::LineFeed);
+
+		// Separating an if token from previous end, set and unset
+		else if(line.contains(tk_if) &&
+						(prev_line.contains(tk_end) ||
+						 prev_line.contains(tk_set) ||
+						 prev_line.contains(tk_unset)))
+			buffer[ln_idx].prepend(QChar::LineFeed);
 	}
 
 	/* Replacing the current code with the formatted one in such a way to preserve

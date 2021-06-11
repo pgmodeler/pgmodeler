@@ -21,7 +21,7 @@ class SourceEditorWidget: public QWidget, public Ui::SourceEditorWidget {
 
 		QString filename;
 
-		QAction *act_break_inline_ifs, *act_preserve_comments;
+		QAction *act_break_inline_ifs;
 
 		QMenu indent_opts_menu;
 
