@@ -389,7 +389,6 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 		}
 	}
 
-	general_tb->setMinimumWidth(general_tb->width());
 	resizeGeneralToolbarButtons();
 
 #ifdef Q_OS_MAC
@@ -563,6 +562,9 @@ bool MainWindow::isToolButtonsChecked(QHBoxLayout *layout, const QWidgetList &ig
 void MainWindow::resizeGeneralToolbarButtons()
 {
 	QToolButton *btn = nullptr;
+
+	if(general_tb->minimumWidth() == 0)
+		general_tb->setMinimumWidth(general_tb->width() * 0.70);
 
 	for(auto &act : general_tb->actions())
 	{
