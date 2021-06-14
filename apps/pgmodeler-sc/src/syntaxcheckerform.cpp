@@ -78,17 +78,17 @@ SyntaxCheckerForm::SyntaxCheckerForm(QWidget *parent) : QWidget(parent)
 	stx_action_grp->addAction(act);
 	act->setCheckable(true);
 	act->setChecked(true);
-	act->setData(GlobalAttributes::getSchHighlightConfPath());
+	act->setData(GlobalAttributes::SchHighlightConf);
 
 	act = syntax_cfg_menu.addAction("XML script", this, SLOT(loadSyntaxConfig()));
 	stx_action_grp->addAction(act);
 	act->setCheckable(true);
 	act->setChecked(false);
-	act->setData(GlobalAttributes::getXMLHighlightConfPath());
+	act->setData(GlobalAttributes::XMLHighlightConf);
 
 	act = syntax_cfg_menu.addAction("SQL script", this, SLOT(loadSyntaxConfig()));
 	stx_action_grp->addAction(act);
-	act->setData(GlobalAttributes::getSQLHighlightConfPath());
+	act->setData(GlobalAttributes::SQLHighlightConf);
 	act->setCheckable(true);
 	act->setChecked(false);
 
@@ -107,6 +107,7 @@ subcontrol-position: right center; }");
 	connect(exit_tb, SIGNAL(clicked(bool)), this, SLOT(close()));
 	connect(save_tb, SIGNAL(clicked(bool)), this, SLOT(saveFile()));
 	connect(editors_tbw, SIGNAL(tabCloseRequested(int)), this, SLOT(closeEditorTab(int)));
+	connect(use_tmpl_file_chk, SIGNAL(toggled(bool)), this, SLOT(loadSyntaxConfig()));
 
 	connect(syntax_txt, &NumberedTextEditor::textChanged, [&](){
 		alert_frm->setVisible(true);
@@ -179,7 +180,17 @@ void SyntaxCheckerForm::loadSyntaxConfig()
 {
 	QAction *act = stx_action_grp->checkedAction();
 	QFile input;
-	QString filename = !act ? GlobalAttributes::getSchHighlightConfPath() : act->data().toString();
+	QString filename;
+
+	if(!act)
+		filename = GlobalAttributes::getSchHighlightConfPath();
+	else
+	{
+		if(!use_tmpl_file_chk->isChecked())
+			filename = GlobalAttributes::getConfigurationFilePath(act->data().toString());
+		else
+			filename = GlobalAttributes::getTmplConfigurationFilePath("", act->data().toString() + GlobalAttributes::ConfigurationExt);
+	}
 
 	try
 	{
@@ -230,7 +241,12 @@ void SyntaxCheckerForm::applySyntaxConfig(bool from_temp_file)
 		tmp_file.close();
 	}
 	else if(stx_action_grp->checkedAction())
-		filename = stx_action_grp->checkedAction()->data().toString();
+	{
+		if(!use_tmpl_file_chk->isChecked())
+			filename = GlobalAttributes::getConfigurationFilePath(stx_action_grp->checkedAction()->data().toString());
+		else
+			filename = GlobalAttributes::getTmplConfigurationFilePath("", stx_action_grp->checkedAction()->data().toString() + GlobalAttributes::ConfigurationExt);
+	}
 
 	try
 	{
@@ -322,7 +338,6 @@ QStringList SyntaxCheckerForm::showFileDialog(bool save_mode)
 														tr("XML file (*.xml)"),
 														tr("All files (*.*)") });
 
-	file_dlg.setWindowIcon(QPixmap(PgModelerUiNs::getIconPath("pgmodeler_sch.png")));
 	file_dlg.setWindowTitle(save_mode ? tr("Save file") : tr("Load file"));
 	file_dlg.setFileMode(save_mode ? QFileDialog::AnyFile : QFileDialog::ExistingFiles);
 	file_dlg.setAcceptMode(save_mode ? QFileDialog::AcceptSave : QFileDialog::AcceptOpen);

@@ -30,8 +30,4 @@ AboutWidget::AboutWidget(QWidget *parent) : QWidget(parent)
 
 	pgmodeler_ver_lbl->setText(QString("v%1 ").arg(GlobalAttributes::PgModelerVersion));
 	build_num_lbl->setText(QString("%1 Qt %2").arg(GlobalAttributes::PgModelerBuildNumber).arg(QT_VERSION_STR));
-
-	double factor = BaseObjectView::getScreenDpiFactor();
-	this->adjustSize();
-	this->resize(this->minimumWidth() * factor, this->minimumHeight() * factor);
 }

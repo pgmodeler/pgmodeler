@@ -115,7 +115,30 @@
          </property>
         </widget>
        </item>
-       <item row="1" column="0" colspan="5">
+       <item row="0" column="0">
+        <widget class="QLabel" name="label_2">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="text">
+          <string>Syntax file:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="5">
+        <widget class="QCheckBox" name="use_tmpl_file_chk">
+         <property name="toolTip">
+          <string>&lt;p&gt;Instead of loading the configuration file at user's local storage, loads the template one inside the pgModeler's installation folder.&lt;/p&gt;</string>
+         </property>
+         <property name="text">
+          <string>Use template configuration file</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0" colspan="6">
         <widget class="QFrame" name="alert_frm">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -289,7 +312,7 @@
          </layout>
         </widget>
        </item>
-       <item row="2" column="0" colspan="5">
+       <item row="2" column="0" colspan="6">
         <widget class="QWidget" name="syntax_wgt" native="true">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
@@ -302,19 +325,6 @@
            <width>16777215</width>
            <height>16777215</height>
           </size>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="0">
-        <widget class="QLabel" name="label_2">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="text">
-          <string>Syntax file:</string>
          </property>
         </widget>
        </item>
