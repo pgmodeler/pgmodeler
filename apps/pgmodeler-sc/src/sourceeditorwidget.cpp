@@ -9,6 +9,8 @@ SourceEditorWidget::SourceEditorWidget(QWidget *parent) : QWidget(parent)
 {
 	setupUi(this);
 
+	is_modified = false;
+
 	editor_txt = PgModelerUiNs::createNumberedTextEditor(editor_parent);
 	def_editor_pal = editor_txt->palette();
 
@@ -29,6 +31,7 @@ SourceEditorWidget::SourceEditorWidget(QWidget *parent) : QWidget(parent)
 	connect(validate_tb, SIGNAL(clicked(bool)), this, SLOT(validateSyntax()));
 	connect(indent_tb, SIGNAL(clicked(bool)), this, SLOT(	applyIndentation()));
 	connect(editor_txt, SIGNAL(modificationChanged(bool)), this, SLOT(restoreEditorPalette()));
+	connect(editor_txt, SIGNAL(undoAvailable(bool)), this, SLOT(setModified(bool)));
 	connect(editor_txt, SIGNAL(cursorPositionChanged()), this, SLOT(restoreEditorPalette()));
 	connect(find_tb, SIGNAL(toggled(bool)), find_parent, SLOT(setVisible(bool)));
 }
@@ -241,6 +244,12 @@ void SourceEditorWidget::applyIndentation()
 	editor_txt->moveCursor(QTextCursor::Start);
 }
 
+void SourceEditorWidget::setModified(bool value)
+{
+	is_modified = value;
+	emit s_editorModified(value);
+}
+
 void SourceEditorWidget::setDefaultEditorPalette(const QPalette &pal)
 {
 	def_editor_pal = pal;
@@ -249,4 +258,9 @@ void SourceEditorWidget::setDefaultEditorPalette(const QPalette &pal)
 QString SourceEditorWidget::getFilename()
 {
 	return filename;
+}
+
+bool SourceEditorWidget::isModified()
+{
+	return is_modified;
 }

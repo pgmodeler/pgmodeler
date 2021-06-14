@@ -7,14 +7,17 @@ windows:RC_FILE=res/windows_ico.qrc
 windows:RCC_DIR=src/
 
 SOURCES += src/main.cpp \
+	src/aboutwidget.cpp \
 	   src/syntaxcheckerform.cpp \
 	   src/sourceeditorwidget.cpp \
 	   ../pgmodeler/src/pgmodelerapp.cpp \
 
 FORMS += ui/syntaxcheckerform.ui \
+	 ui/aboutwidget.ui \
 	 ui/sourceeditorwidget.ui
 
 HEADERS += src/syntaxcheckerform.h \
+	   src/aboutwidget.h \
 	   src/sourceeditorwidget.h
 
 unix|windows: LIBS += $$LIBGUI_LIB \

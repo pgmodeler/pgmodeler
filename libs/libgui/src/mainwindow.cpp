@@ -564,7 +564,7 @@ void MainWindow::resizeGeneralToolbarButtons()
 	QToolButton *btn = nullptr;
 
 	if(general_tb->minimumWidth() == 0)
-		general_tb->setMinimumWidth(general_tb->width() * 0.70);
+		general_tb->setMinimumWidth(general_tb->width());
 
 	for(auto &act : general_tb->actions())
 	{
@@ -572,7 +572,7 @@ void MainWindow::resizeGeneralToolbarButtons()
 		if(!btn) continue;
 
 		btn->setStyleSheet(QString("QToolButton { min-width: %1px; margin-top: 2px; }")
-											 .arg(models_tbw->count() == 0 ? general_tb->minimumWidth() : general_tb->minimumWidth() * 1.15));
+											 .arg(models_tbw->count() == 0 ? general_tb->minimumWidth() : general_tb->minimumWidth() * 1.10));
 	}
 }
 

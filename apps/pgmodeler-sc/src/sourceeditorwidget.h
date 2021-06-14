@@ -25,6 +25,8 @@ class SourceEditorWidget: public QWidget, public Ui::SourceEditorWidget {
 
 		QMenu indent_opts_menu;
 
+		bool is_modified;
+
 	public:
 		explicit SourceEditorWidget(QWidget *parent = nullptr);
 
@@ -32,15 +34,21 @@ class SourceEditorWidget: public QWidget, public Ui::SourceEditorWidget {
 
 		QString getFilename();
 
+		bool isModified();
+
 	private slots:
 		void validateSyntax();
 		void restoreEditorPalette();
 		void applyIndentation();
 
 	public slots:
+		void setModified(bool value);
 		void loadFile(const QString &filename);
 		void saveFile(const QString &filename);
 		void loadSyntaxConfig(const QString &filename);
+
+	signals:
+		void s_editorModified(bool value);
 };
 
 #endif

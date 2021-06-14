@@ -22,10 +22,10 @@
 #include "generalconfigwidget.h"
 #include "pgmodeleruins.h"
 #include "sourceeditorwidget.h"
+#include "aboutwidget.h"
+#include "baseform.h"
 
 const QString SyntaxCheckerForm::UntitledFile = QT_TR_NOOP("(untitled)");
-
-//QPalette SyntaxCheckerForm::def_editor_pal;
 
 SyntaxCheckerForm::SyntaxCheckerForm(QWidget *parent) : QWidget(parent)
 {
@@ -33,6 +33,7 @@ SyntaxCheckerForm::SyntaxCheckerForm(QWidget *parent) : QWidget(parent)
 	QFont fnt;
 
 	setupUi(this);
+	setWindowTitle(windowTitle() + " " + GlobalAttributes::PgModelerVersion);
 
 	for(auto &obj : bnts_parent_wgt->children())
 	{
@@ -114,12 +115,19 @@ subcontrol-position: right center; }");
 	connect(save_as_tb, &QToolButton::clicked, [&](){
 		saveFile(true);
 	});
+
+	connect(about_tb, &QToolButton::clicked, [&](){
+		AboutWidget *info_wgt = new AboutWidget;
+		BaseForm base_frm;
+		base_frm.setMainWidget(info_wgt);
+		base_frm.exec();
+	});
 }
 
 SyntaxCheckerForm::~SyntaxCheckerForm()
 {
 	while(editors_tbw->count() > 0)
-		closeEditorTab(0);
+		closeEditorTab(0, false);
 }
 
 void SyntaxCheckerForm::showEvent(QShowEvent *)
@@ -130,7 +138,21 @@ void SyntaxCheckerForm::showEvent(QShowEvent *)
 
 void SyntaxCheckerForm::closeEvent(QCloseEvent *event)
 {
-	if(alert_frm->isVisible())
+	bool editors_modified = false;
+	SourceEditorWidget *editor = nullptr;
+
+	for(int tab = 0; tab < editors_tbw->count(); tab++)
+	{
+		editor = dynamic_cast<SourceEditorWidget *>(editors_tbw->widget(tab));
+
+		if(editor->isModified())
+		{
+			editors_modified = true;
+			break;
+		}
+	}
+
+	if(alert_frm->isVisible() || editors_modified)
 	{
 		Messagebox msgbox;
 
@@ -275,6 +297,18 @@ void SyntaxCheckerForm::saveFile(bool save_as)
 	editors_tbw->setTabToolTip(editors_tbw->currentIndex(), fi.absoluteFilePath());
 }
 
+void SyntaxCheckerForm::setTabModified(bool modified)
+{
+	QString tab_text = editors_tbw->tabText(editors_tbw->currentIndex());
+
+	if(modified)
+		tab_text += '*';
+	else
+		tab_text.remove('*');
+
+	editors_tbw->setTabText(editors_tbw->currentIndex(), tab_text);
+}
+
 QStringList SyntaxCheckerForm::showFileDialog(bool save_mode)
 {
 	QFileDialog file_dlg;
@@ -349,6 +383,8 @@ void SyntaxCheckerForm::addEditorTab(const QString &filename)
 
 		if(!filename.isEmpty())
 			editor_wgt->loadFile(filename);
+
+		connect(editor_wgt, SIGNAL(s_editorModified(bool)), this, SLOT(setTabModified(bool)));
 	}
 	catch(Exception &e)
 	{
@@ -363,9 +399,16 @@ void SyntaxCheckerForm::addEditorTab(const QString &filename)
 	save_tb->setEnabled(true);
 }
 
-void SyntaxCheckerForm::closeEditorTab(int idx)
+void SyntaxCheckerForm::closeEditorTab(int idx, bool confirm_close)
 {
 	SourceEditorWidget *editor_wgt = dynamic_cast<SourceEditorWidget *>(editors_tbw->widget(idx));
+	Messagebox msgbox;
+
+	if(editor_wgt->isModified() && confirm_close)
+		msgbox.show(tr("The code was modified! Do you really want to close it without save?"), Messagebox::ConfirmIcon, Messagebox::YesNoButtons);
+
+	if(confirm_close && msgbox.result() == QDialog::Rejected)
+		return;
 
 	editors_tbw->removeTab(idx);
 	delete(editor_wgt);

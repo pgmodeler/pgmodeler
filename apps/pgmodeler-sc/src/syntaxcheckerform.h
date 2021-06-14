@@ -69,9 +69,10 @@ class SyntaxCheckerForm: public QWidget, public Ui::SyntaxCheckerForm {
 		void applySyntaxConfig(bool from_temp_file = true);
 		void saveSyntaxConfig();
 		void addEditorTab(const QString &filename = "");
-		void closeEditorTab(int idx);
+		void closeEditorTab(int idx, bool confirm_close = true);
 		void loadFile();
 		void saveFile(bool save_as = false);
+		void setTabModified(bool modified);
 };
 
 #endif
