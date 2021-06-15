@@ -23,6 +23,7 @@
 
 <!ELEMENT word-separators EMPTY>
 <!ATTLIST word-separators value CDATA #IMPLIED>
+<!ATTLIST word-separators capture-nearby (false|true) "false">
 
 <!ELEMENT ignored-chars EMPTY>
 <!ATTLIST ignored-chars value CDATA #IMPLIED>
