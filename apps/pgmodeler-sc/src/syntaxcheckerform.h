@@ -70,6 +70,8 @@ class SyntaxCheckerForm: public QWidget, public Ui::SyntaxCheckerForm {
 		void loadFile();
 		void saveFile(bool save_as = false);
 		void setTabModified(bool modified);
+		void indentAll();
+		void saveAll();
 };
 
 #endif

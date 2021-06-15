@@ -271,12 +271,15 @@ void SourceEditorWidget::applyIndentation()
 	 * the undo/redo stack. This is achieved by selecting the whole text document
 	 * and inserting the new text using the cursor. Using QPlainTextEdit::setPlainText
 	 * will clear the stack. */
+	editor_txt->blockSignals(true);
 	QTextCursor cursor = editor_txt->textCursor();
 	cursor.movePosition(QTextCursor::Start);
 	cursor.movePosition(QTextCursor::End, QTextCursor::KeepAnchor);
 	cursor.insertText(buffer.join(QChar::LineFeed));
 	cursor = editor_txt->textCursor();
 	editor_txt->moveCursor(QTextCursor::Start);
+	editor_txt->blockSignals(false);
+	setModified(true);
 }
 
 void SourceEditorWidget::setModified(bool value)
