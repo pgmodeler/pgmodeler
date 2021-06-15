@@ -110,6 +110,7 @@ subcontrol-position: right center; }");
 	connect(use_tmpl_file_chk, SIGNAL(toggled(bool)), this, SLOT(loadSyntaxConfig()));
 	connect(indent_all_tb, SIGNAL(clicked(bool)), this, SLOT(indentAll()));
 	connect(save_all_tb, SIGNAL(clicked(bool)), this, SLOT(saveAll()));
+	connect(close_all_tb, SIGNAL(clicked(bool)), this, SLOT(closeAll()));
 
 	connect(syntax_txt, &NumberedTextEditor::textChanged, [&](){
 		alert_frm->setVisible(true);
@@ -129,11 +130,11 @@ subcontrol-position: right center; }");
 
 void SyntaxCheckerForm::showEvent(QShowEvent *)
 {
-	h_splitter->setSizes({ width()/2, width()/3});
+	h_splitter->setSizes({ width(), width()/2});
 	loadSyntaxConfig();
 }
 
-void SyntaxCheckerForm::closeEvent(QCloseEvent *event)
+bool SyntaxCheckerForm::hasModifiedEditors()
 {
 	bool editors_modified = false;
 	SourceEditorWidget *editor = nullptr;
@@ -149,7 +150,12 @@ void SyntaxCheckerForm::closeEvent(QCloseEvent *event)
 		}
 	}
 
-	if(alert_frm->isVisible() || editors_modified)
+	return editors_modified;
+}
+
+void SyntaxCheckerForm::closeEvent(QCloseEvent *event)
+{
+	if(alert_frm->isVisible() || hasModifiedEditors())
 	{
 		Messagebox msgbox;
 
@@ -342,8 +348,34 @@ void SyntaxCheckerForm::saveAll()
 	for(int tab = 0; tab < editors_tbw->count(); tab++)
 	{
 		editors_tbw->setCurrentIndex(tab);
-		saveFile();
+
+		try
+		{
+			saveFile();
+		}
+		catch(Exception &e)
+		{
+			Messagebox msgbox;
+			msgbox.show(e);
+			break;
+		}
 	}
+}
+
+void SyntaxCheckerForm::closeAll()
+{
+	Messagebox msgbox;
+
+	if(hasModifiedEditors())
+	{
+		msgbox.show(tr("There are modified files! Do you want to close them without save?"), Messagebox::ConfirmIcon, Messagebox::YesNoButtons);
+
+		if(msgbox.result() == QDialog::Rejected)
+			return;
+	}
+
+	while(editors_tbw->count() > 0)
+		closeEditorTab(0, false);
 }
 
 QStringList SyntaxCheckerForm::showFileDialog(bool save_mode)
@@ -435,6 +467,7 @@ void SyntaxCheckerForm::addEditorTab(const QString &filename)
 	save_tb->setEnabled(true);
 	indent_all_tb->setEnabled(true);
 	save_all_tb->setEnabled(true);
+	close_all_tb->setEnabled(true);
 }
 
 void SyntaxCheckerForm::closeEditorTab(int idx, bool confirm_close)
@@ -458,4 +491,5 @@ void SyntaxCheckerForm::closeEditorTab(int idx, bool confirm_close)
 	save_tb->setEnabled(enable);
 	indent_all_tb->setEnabled(enable);
 	save_all_tb->setEnabled(enable);
+	close_all_tb->setEnabled(enable);
 }

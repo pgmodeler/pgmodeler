@@ -118,7 +118,7 @@ class CodeCompletionWidget: public QWidget
 		//! \brief Inserts several custom named item on the list with a custom icon. Custom item will always appear at the beggining of the list
 		void insertCustomItems(const QStringList &names, const QStringList &tooltips, const QPixmap &icon);
 
-//! \brief Inserts several custom named items on the list with an icon related to the obj_type. Custom item will always appear at the beggining of the list
+		//! \brief Inserts several custom named items on the list with an icon related to the obj_type. Custom item will always appear at the beggining of the list
 		void insertCustomItems(const QStringList &names, const QString &tooltip, ObjectType obj_type);
 		
 		//! \brief Clear the custom added items
