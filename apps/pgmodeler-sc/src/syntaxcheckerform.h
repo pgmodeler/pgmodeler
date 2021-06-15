@@ -17,9 +17,9 @@
 */
 
 /**
-\ingroup pgmodeler-sce
+\ingroup pgmodeler-sc
 \class SyntaxCheckerForm
-\brief Implements the pgModeler's schema files editor.
+\brief Implements the pgModeler's schema files editor and syntax checker.
 */
 
 #ifndef SYNTAX_CHECKER_FORM_H
@@ -59,9 +59,6 @@ class SyntaxCheckerForm: public QWidget, public Ui::SyntaxCheckerForm {
 
 	public:
 		explicit SyntaxCheckerForm(QWidget *parent = nullptr);
-
-		~SyntaxCheckerForm();
-
 		void loadFiles(const QStringList &filenames);
 
 	private slots:

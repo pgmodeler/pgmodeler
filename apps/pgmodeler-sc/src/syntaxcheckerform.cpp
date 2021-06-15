@@ -125,12 +125,6 @@ subcontrol-position: right center; }");
 	});
 }
 
-SyntaxCheckerForm::~SyntaxCheckerForm()
-{
-	while(editors_tbw->count() > 0)
-		closeEditorTab(0, false);
-}
-
 void SyntaxCheckerForm::showEvent(QShowEvent *)
 {
 	h_splitter->setSizes({ width()/2, width()/3});
@@ -224,6 +218,8 @@ void SyntaxCheckerForm::applySyntaxConfig(bool from_temp_file)
 	QTemporaryFile tmp_file;
 	QString filename;
 
+	/* When applying the syntax on-the-fly we save the syntax conf code to a temporary file
+	 * and use it as configuration for in the open editors */
 	if(from_temp_file)
 	{
 		tmp_file.setAutoRemove(false);
@@ -420,10 +416,12 @@ void SyntaxCheckerForm::closeEditorTab(int idx, bool confirm_close)
 	Messagebox msgbox;
 
 	if(editor_wgt->isModified() && confirm_close)
-		msgbox.show(tr("The code was modified! Do you really want to close it without save?"), Messagebox::ConfirmIcon, Messagebox::YesNoButtons);
+	{
+		msgbox.show(tr("The source code was modified! Do you really want to close it without save?"), Messagebox::ConfirmIcon, Messagebox::YesNoButtons);
 
-	if(confirm_close && msgbox.result() == QDialog::Rejected)
-		return;
+		if(msgbox.result() == QDialog::Rejected)
+			return;
+	}
 
 	editors_tbw->removeTab(idx);
 	delete(editor_wgt);

@@ -1,17 +1,46 @@
-#ifndef SOURCEEDITORWIDGET_H
-#define SOURCEEDITORWIDGET_H
+/*
+# PostgreSQL Database Modeler (pgModeler)
+#
+# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation version 3.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# The complete text of GPLv3 is at LICENSE file on source code root directory.
+# Also, you can get the complete GNU General Public License at <http://www.gnu.org/licenses/>
+*/
+
+/**
+\ingroup pgmodeler-sc
+\class SourceEditorWidget
+\brief Implements the basic source code editor with minimal code completion for schema files.
+*/
+
+#ifndef SOURCE_EDITOR_WIDGET_H
+#define SOURCE_EDITOR_WIDGET_H
 
 #include <QWidget>
 #include "ui_sourceeditorwidget.h"
 #include "numberedtexteditor.h"
 #include "syntaxhighlighter.h"
 #include "findreplacewidget.h"
+#include "codecompletionwidget.h"
 
 class SourceEditorWidget: public QWidget, public Ui::SourceEditorWidget {
 	private:
 		Q_OBJECT
 
+		static attribs_map snippets;
+
 		static QPalette def_editor_pal;
+
+		CodeCompletionWidget *code_compl_wgt;
 
 		NumberedTextEditor *editor_txt;
 
@@ -30,16 +59,30 @@ class SourceEditorWidget: public QWidget, public Ui::SourceEditorWidget {
 	public:
 		explicit SourceEditorWidget(QWidget *parent = nullptr);
 
+		/*! \brief Defines the default pallete for text editor.
+		 * This is used to restore the colors of the editor after an error is raised
+		 * during syntax validation and the text selection color is changed to point the
+		 * error location */
 		static void setDefaultEditorPalette(const QPalette &pal);
 
+		//! \brief Returns the file being handled by the editor
 		QString getFilename();
 
+		//! \brief Returns the current modification status of the editor
 		bool isModified();
 
 	private slots:
+		//! \brief Validates the syntax of the editor's content (only for schema micro-language code)
 		void validateSyntax();
+
+		//! \brief Restores the editor default colors after highlighting an syntax error in a portion of the text
 		void restoreEditorPalette();
+
+		//! \brief Applies a custom identation on the editor's content (only for schema micro-language code)
 		void applyIndentation();
+
+		//! \brief Insert the selected snippet into the editors (only for schema micro-language code)
+		void handleSelectedSnippet(const QString &snippet);
 
 	public slots:
 		void setModified(bool value);

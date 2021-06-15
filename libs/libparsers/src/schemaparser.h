@@ -243,6 +243,7 @@ class SchemaParser {
 
 		//! \brief Returns the current columnm of the current line where the parser is reading
 		int getCurrentColumn();
+
 };
 
 #endif

@@ -5,6 +5,17 @@
 
 QPalette SourceEditorWidget::def_editor_pal;
 
+attribs_map SourceEditorWidget::snippets = {
+	{"ifend", "%if {} %then\n\n%end\n"},
+	{"ifelseend", "%if {} %then\n\n%else\n\n%end\n"},
+	{"ifexpr", "%if ({}) %then\n\n%end\n"},
+	{"ifexprelse", "%if ({}) %then\n\n%else\n\n%end\n"},
+	{"setattrstr", "%set {} \"\"\n"},
+	{"setattrtxt", "%set {} [ ]\n"},
+	{"unsetattr", "%unset {}\n"},
+	{"unsetattr", "%unset {}\n"},
+};
+
 SourceEditorWidget::SourceEditorWidget(QWidget *parent) : QWidget(parent)
 {
 	setupUi(this);
@@ -18,6 +29,14 @@ SourceEditorWidget::SourceEditorWidget(QWidget *parent) : QWidget(parent)
 	find_wgt = new FindReplaceWidget(editor_txt, find_parent);
 	find_parent->setVisible(false);
 
+	code_compl_wgt = new CodeCompletionWidget(editor_txt);
+	code_compl_wgt->configureCompletion(nullptr, editor_hl);
+
+	QStringList snippets_id;
+
+	for(auto &itr : snippets)
+		code_compl_wgt->insertCustomItem(itr.first, itr.second, QPixmap(PgModelerUiNs::getIconPath("codesnippet")));
+
 	QVBoxLayout *vbox = new QVBoxLayout(find_parent);
 	vbox->setContentsMargins(0, 0, 0, 4);
 	vbox->addWidget(find_wgt);
@@ -27,6 +46,7 @@ SourceEditorWidget::SourceEditorWidget(QWidget *parent) : QWidget(parent)
 	act_break_inline_ifs->setCheckable(true);
 	act_break_inline_ifs->setChecked(true);
 
+	connect(code_compl_wgt, SIGNAL(s_wordSelected(QString)), this, SLOT(handleSelectedSnippet(QString)));
 	connect(find_wgt, SIGNAL(s_hideRequested()), find_tb, SLOT(toggle()));
 	connect(validate_tb, SIGNAL(clicked(bool)), this, SLOT(validateSyntax()));
 	connect(indent_tb, SIGNAL(clicked(bool)), this, SLOT(	applyIndentation()));
@@ -71,6 +91,14 @@ void SourceEditorWidget::loadSyntaxConfig(const QString &filename)
 	}
 }
 
+void SourceEditorWidget::handleSelectedSnippet(const QString &snippet)
+{
+	QTextCursor tc = editor_txt->textCursor();
+	tc.movePosition(QTextCursor::PreviousWord, QTextCursor::KeepAnchor);
+	tc.removeSelectedText();
+	tc.insertText(snippets[snippet]);
+}
+
 void SourceEditorWidget::loadFile(const QString &filename)
 {
 	if(filename.isEmpty())
@@ -86,9 +114,11 @@ void SourceEditorWidget::loadFile(const QString &filename)
 										ErrorCode::FileDirectoryNotAccessed, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 	}
 
+	bool enable = filename.endsWith(GlobalAttributes::SchemaExt);
 	editor_txt->setPlainText(input.readAll());
-	validate_tb->setEnabled(filename.endsWith(GlobalAttributes::SchemaExt));
-	indent_tb->setEnabled(filename.endsWith(GlobalAttributes::SchemaExt));
+	validate_tb->setEnabled(enable);
+	indent_tb->setEnabled(enable);
+	code_compl_wgt->setEnabled(enable);
 	this->filename = filename;
 	input.close();
 }
@@ -110,6 +140,7 @@ void SourceEditorWidget::validateSyntax()
 	}
 	catch(Exception &e)
 	{
+		// When founding an error we try to highlight the exact portion of the document where to problem is
 		QTextCursor cursor(editor_txt->document()->findBlockByLineNumber(schparser.getCurrentLine() - 1));
 		cursor.movePosition(QTextCursor::StartOfLine);
 		cursor.movePosition(QTextCursor::NextCharacter, QTextCursor::KeepAnchor, schparser.getCurrentColumn());
@@ -118,6 +149,7 @@ void SourceEditorWidget::validateSyntax()
 		editor_txt->setTextCursor(cursor);
 		editor_txt->blockSignals(false);
 
+		// Changing the text selection color so the user can see where the problem is
 		QPalette pal = editor_txt->palette();
 		pal.setColor(QPalette::Highlight, QColor("#f00000"));
 		pal.setColor(QPalette::HighlightedText, QColor("#ffffff"));
@@ -157,6 +189,7 @@ void SourceEditorWidget::applyIndentation()
 						line.contains(QRegExp(cond_pattern.arg(tk_end))))
 			found_cond = true;
 
+		// If the current line is an inline if: %if ... %then ... %end, we break it
 		if(act_break_inline_ifs->isChecked() && line.contains(QRegExp(QString("(%1)(.)+(%2)").arg(tk_if).arg(tk_end))))
 		{
 			line.replace(tk_if, QChar::LineFeed + tk_if);
@@ -164,6 +197,8 @@ void SourceEditorWidget::applyIndentation()
 			line.replace(tk_else, QChar::LineFeed + tk_else + QChar::LineFeed);
 			line.replace(tk_end, QChar::LineFeed + tk_end + QChar::LineFeed );
 
+			/* If the line was broke ( presence of \n) we split the resulting string
+			 * and insert the new lines in the buffer and restart the indentation process */
 			if(line.contains(QChar::LineFeed))
 			{
 				QStringList buf_aux = line.split(QChar::LineFeed, QtCompat::SkipEmptyParts);
