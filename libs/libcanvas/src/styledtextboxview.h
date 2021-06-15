@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup pgmcanvas
+\ingroup libcanvas
 \class StyledTextboxView
 \brief This class is only a styled representation of the TextboxView class
 */

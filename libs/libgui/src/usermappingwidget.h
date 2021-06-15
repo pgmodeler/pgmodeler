@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup pgmui
+\ingroup libgui
 \class UserMappingWidget
 \brief Implements the operations to create/edit user mappings via form.
 */

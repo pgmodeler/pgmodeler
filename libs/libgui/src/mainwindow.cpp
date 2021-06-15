@@ -189,16 +189,16 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 #ifndef NO_UPDATE_CHECK
 	connect(update_notifier_wgt, SIGNAL(s_updateAvailable(bool)), action_update_found, SLOT(setVisible(bool)), Qt::QueuedConnection);
 	connect(update_notifier_wgt, SIGNAL(s_updateAvailable(bool)), action_update_found, SLOT(setChecked(bool)), Qt::QueuedConnection);
-	connect(update_notifier_wgt, SIGNAL(s_visibilityChanged(bool)), action_update_found, SLOT(setChecked(bool)), Qt::QueuedConnection);
+	connect(update_notifier_wgt, SIGNAL(s_hideRequested()), action_update_found, SLOT(toggle()), Qt::QueuedConnection);
 	connect(action_update_found,SIGNAL(toggled(bool)),this,SLOT(toggleUpdateNotifier(bool)), Qt::QueuedConnection);
 	connect(action_check_update,SIGNAL(triggered()), update_notifier_wgt, SLOT(checkForUpdate()));
 #endif
 
 	connect(action_about,SIGNAL(toggled(bool)),this,SLOT(toggleAboutWidget(bool)));
-	connect(about_wgt, SIGNAL(s_visibilityChanged(bool)), action_about, SLOT(setChecked(bool)));
+	connect(about_wgt, SIGNAL(s_hideRequested()), action_about, SLOT(toggle()));
 
 	connect(action_donate, SIGNAL(toggled(bool)),this,SLOT(toggleDonateWidget(bool)));
-	connect(donate_wgt, SIGNAL(s_visibilityChanged(bool)), action_donate, SLOT(setChecked(bool)));
+	connect(donate_wgt, SIGNAL(s_hideRequested()), action_donate, SLOT(toggle()));
 
 	connect(action_restore_session,SIGNAL(triggered(bool)),this,SLOT(restoreLastSession()));
 	connect(action_exit,SIGNAL(triggered(bool)),this,SLOT(close()));
@@ -314,20 +314,20 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	connect(operations_btn, SIGNAL(toggled(bool)), oper_list_parent, SLOT(setVisible(bool)));
 	connect(operations_btn, SIGNAL(toggled(bool)), oper_list_wgt, SLOT(setVisible(bool)));
 	connect(operations_btn, SIGNAL(toggled(bool)), this, SLOT(showRightWidgetsBar()));
-	connect(oper_list_wgt, SIGNAL(s_visibilityChanged(bool)), operations_btn, SLOT(setChecked(bool)));
-	connect(oper_list_wgt, SIGNAL(s_visibilityChanged(bool)), this, SLOT(showRightWidgetsBar()));
+	connect(oper_list_wgt, SIGNAL(s_hideRequested()), operations_btn, SLOT(toggle()));
+	connect(oper_list_wgt, SIGNAL(s_hideRequested()), this, SLOT(showRightWidgetsBar()));
 
 	connect(validation_btn, SIGNAL(toggled(bool)), model_valid_parent, SLOT(setVisible(bool)));
 	connect(validation_btn, SIGNAL(toggled(bool)), model_valid_wgt, SLOT(setVisible(bool)));
 	connect(validation_btn, SIGNAL(toggled(bool)), this, SLOT(showBottomWidgetsBar()));
-	connect(model_valid_wgt, SIGNAL(s_visibilityChanged(bool)), validation_btn, SLOT(setChecked(bool)));
-	connect(model_valid_wgt, SIGNAL(s_visibilityChanged(bool)), this, SLOT(showBottomWidgetsBar()));
+	connect(model_valid_wgt, SIGNAL(s_hideRequested()), validation_btn, SLOT(toggle()));
+	connect(model_valid_wgt, SIGNAL(s_hideRequested()), this, SLOT(showBottomWidgetsBar()));
 
 	connect(find_obj_btn, SIGNAL(toggled(bool)), obj_finder_parent, SLOT(setVisible(bool)));
 	connect(find_obj_btn, SIGNAL(toggled(bool)), obj_finder_wgt, SLOT(setVisible(bool)));
 	connect(find_obj_btn, SIGNAL(toggled(bool)), this, SLOT(showBottomWidgetsBar()));
-	connect(obj_finder_wgt, SIGNAL(s_visibilityChanged(bool)), find_obj_btn, SLOT(setChecked(bool)));
-	connect(obj_finder_wgt, SIGNAL(s_visibilityChanged(bool)), this, SLOT(showBottomWidgetsBar()));
+	connect(obj_finder_wgt, SIGNAL(s_hideRequested()), find_obj_btn, SLOT(toggle()));
+	connect(obj_finder_wgt, SIGNAL(s_hideRequested()), this, SLOT(showBottomWidgetsBar()));
 
 	connect(model_valid_wgt, SIGNAL(s_validationInProgress(bool)), this->main_menu_mb, SLOT(setDisabled(bool)));
 	connect(model_valid_wgt, SIGNAL(s_validationInProgress(bool)), control_tb, SLOT(setDisabled(bool)));
@@ -388,6 +388,8 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 			PgModelerUiNs::createDropShadow(btn);
 		}
 	}
+
+	resizeGeneralToolbarButtons();
 
 #ifdef Q_OS_MAC
 	control_tb->removeAction(action_main_menu);
@@ -555,6 +557,23 @@ bool MainWindow::isToolButtonsChecked(QHBoxLayout *layout, const QWidgetList &ig
 	}
 
 	return false;
+}
+
+void MainWindow::resizeGeneralToolbarButtons()
+{
+	QToolButton *btn = nullptr;
+
+	if(general_tb->minimumWidth() == 0)
+		general_tb->setMinimumWidth(general_tb->width());
+
+	for(auto &act : general_tb->actions())
+	{
+		btn = qobject_cast<QToolButton *>(general_tb->widgetForAction(act));
+		if(!btn) continue;
+
+		btn->setStyleSheet(QString("QToolButton { min-width: %1px; margin-top: 2px; }")
+											 .arg(models_tbw->count() == 0 ? general_tb->minimumWidth() : general_tb->minimumWidth() * 1.10));
+	}
 }
 
 void MainWindow::showRightWidgetsBar()
@@ -1197,6 +1216,8 @@ void MainWindow::setCurrentModel()
 		model_objs_wgt->restoreTreeState(model_tree_states[current_model]);
 
 	model_objs_wgt->saveTreeState(true);
+
+	resizeGeneralToolbarButtons();
 
 	emit s_currentModelChanged(current_model);
 }

@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup pgmui
+\ingroup libgui
 \class DatabaseExplorerWidge
 \brief Implements the operations to browse and manipulate database instances
 */

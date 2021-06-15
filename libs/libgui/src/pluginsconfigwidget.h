@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup pgmui
+\ingroup libgui
 \class PluginsConfigWidget
 \brief Implements the operations to manage plugins.
 */

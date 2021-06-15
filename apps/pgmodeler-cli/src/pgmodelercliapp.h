@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup cli
+\ingroup pgmodeler-cli
 \class PgModelerCliApp
 \brief Implements the operations export models whitout use the graphical interface
 */

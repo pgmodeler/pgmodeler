@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup pgmui
+\ingroup libgui
 \class ParameterWidget
 \brief Implements the operations to create/edit function parameters via form.
 */

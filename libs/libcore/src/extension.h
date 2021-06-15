@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup pgmcore
+\ingroup libcore
 \class Extension
 \brief Implements the operations to manipulate extensions on the database.
 **/

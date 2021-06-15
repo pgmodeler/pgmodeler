@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup pgmui
+\ingroup libgui
 \class ModelDatabaseDiffForm
 \brief Implements the operations to compare and generate a diff between model and database via form.
 */

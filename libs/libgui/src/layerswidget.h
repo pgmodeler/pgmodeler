@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup pgmui
+\ingroup libgui
 \class LayersWidget
 \brief Implements the widget that allows the user to quickly setup object's layers
 */

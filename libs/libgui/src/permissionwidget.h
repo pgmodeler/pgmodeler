@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup pgmui
+\ingroup libgui
 \class PermissionWidget
 \brief Implements the operations to create/edit permissions via form.
 */

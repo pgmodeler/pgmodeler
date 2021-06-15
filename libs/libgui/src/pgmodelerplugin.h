@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup pgmui
+\ingroup libgui
 \class PgModelerPlugin
 \brief Implements the basic operations to create third party plugins based upon shared libraries.
 */

@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup pgmcore
+\ingroup libcore
 \class Role
 \brief Implements the operations to manipulate roles on the database.
 \note <strong>Creation date:</strong> 12/05/2008

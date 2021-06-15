@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup pgmcore
+\ingroup libcore
 \class CopyOptions
 \brief Auxiliary class that helps to control LIKE (Copy tables) options
 */

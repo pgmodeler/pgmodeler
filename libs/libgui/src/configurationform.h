@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup pgmui
+\ingroup libgui
 \class ConfigurationForm
 \brief Reunites in a single form all available configuration widgets.
 */

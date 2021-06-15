@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup pgmui
+\ingroup libgui
 \class ObjectDepsRefsWidget
 \brief Implements the form to show the object's dependeces and references
 */

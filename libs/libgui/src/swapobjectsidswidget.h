@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup pgmui
+\ingroup libgui
 \class ChangeObjectOrderWidget
 \brief Implements the operations to swap objects ids to cover the cases where model validation cannot reach.
 */

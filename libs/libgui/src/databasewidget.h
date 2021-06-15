@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup pgmui
+\ingroup libgui
 \class DatabaseWidget
 \brief Implements the operations to create/edit database attributes via form.
 */

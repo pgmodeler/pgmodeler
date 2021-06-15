@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup pgmcanvas
+\ingroup libcanvas
 \class BaseTableView
 \brief Base class shared by the classes TableView and GraphicalView
 */

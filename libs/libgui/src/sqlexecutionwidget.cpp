@@ -52,7 +52,6 @@ SQLExecutionWidget::SQLExecutionWidget(QWidget * parent) : QWidget(parent)
 	layout->addWidget(find_history_wgt);
 	find_history_parent->setLayout(layout);
 	find_history_parent->setVisible(false);
-	connect(find_history_wgt->hide_tb, SIGNAL(clicked(bool)), find_history_parent, SLOT(hide()));
 
 	sql_cmd_hl=new SyntaxHighlighter(sql_cmd_txt, false);
 	sql_cmd_hl->loadConfiguration(GlobalAttributes::getSQLHighlightConfPath());
@@ -76,7 +75,6 @@ SQLExecutionWidget::SQLExecutionWidget(QWidget * parent) : QWidget(parent)
 	hbox->setContentsMargins(0,0,0,0);
 	hbox->addWidget(find_replace_wgt);
 	find_wgt_parent->setVisible(false);
-	connect(find_replace_wgt->hide_tb, SIGNAL(clicked(bool)), find_tb, SLOT(toggle()));
 
 	run_sql_tb->setToolTip(run_sql_tb->toolTip() + QString(" (%1)").arg(run_sql_tb->shortcut().toString()));
 	stop_tb->setToolTip(stop_tb->toolTip() + QString(" (%1)").arg(stop_tb->shortcut().toString()));
@@ -130,8 +128,11 @@ SQLExecutionWidget::SQLExecutionWidget(QWidget * parent) : QWidget(parent)
 	connect(clear_btn, SIGNAL(clicked()), this, SLOT(clearAll()));
 	connect(sql_cmd_txt, SIGNAL(textChanged()), this, SLOT(enableCommandButtons()));
 	connect(run_sql_tb, SIGNAL(clicked()), this, SLOT(runSQLCommand()));
-	connect(find_tb, SIGNAL(toggled(bool)), find_wgt_parent, SLOT(setVisible(bool)));
 	connect(output_tb, SIGNAL(toggled(bool)), this, SLOT(toggleOutputPane(bool)));
+
+	connect(find_tb, SIGNAL(toggled(bool)), find_wgt_parent, SLOT(setVisible(bool)));
+	connect(find_replace_wgt, SIGNAL(s_hideRequested()), find_tb, SLOT(toggle()));
+	connect(find_history_wgt, SIGNAL(s_hideRequested()), find_history_parent, SLOT(hide()));
 
 	//Signal handling with C++11 lambdas Slots
 	connect(results_tbw, &QTableView::pressed,

@@ -23,10 +23,10 @@ exists($$PLUGINS_SRC_ROOT) {
 }
 
 # Including executables subprojects
-SUBDIRS += apps/crashhandler \
-	   apps/cli \
-	   apps/gui \
-	   apps/scheditor
+SUBDIRS += apps/pgmodeler \
+	   apps/pgmodeler-cli \
+	   apps/pgmodeler-ch \
+	   apps/pgmodeler-sc
 
 # Deployment settings
 samples.files = assets/samples/*

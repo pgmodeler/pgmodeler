@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup pgmui
+\ingroup libgui
 \class BaseForm
 \brief A basic form implementation, contains only an apply and a cancel button.
 */

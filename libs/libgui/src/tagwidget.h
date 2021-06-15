@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup pgmui
+\ingroup libgui
 \class TagWidget
 \brief Implements the operations to create/edit tags via form.
 */

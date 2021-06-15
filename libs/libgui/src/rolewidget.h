@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup pgmui
+\ingroup libgui
 \class RoleWidget
 \brief Implements the operations to create/edit roles via form.
 */

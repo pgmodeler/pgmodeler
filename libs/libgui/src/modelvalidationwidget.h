@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup pgmui
+\ingroup libgui
 \class ModelValidationWidget
 \brief Implements the operations to display to the user the validation operation performed by ValidationHelper
 */
@@ -111,7 +111,7 @@ class ModelValidationWidget: public QWidget, public Ui::ModelValidationWidget {
 		void validateModel();
 
 	signals:
-		void s_visibilityChanged(bool);
+		void s_hideRequested();
 		void s_validationInProgress(bool);
 		void s_validationFinished(bool);
 		void s_validationCanceled();

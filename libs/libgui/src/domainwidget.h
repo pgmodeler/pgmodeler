@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup pgmui
+\ingroup libgui
 \class DomainWidget
 \brief Implements the operations to create/edit domains via form.
 */

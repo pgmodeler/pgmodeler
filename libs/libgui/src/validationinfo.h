@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup pgmui
+\ingroup libgui
 \class ValidationInfo
 \brief Stores information of a single object when model is being validated. Instances of this class
 are emitted during the validation process on ModelValidationHelper class.

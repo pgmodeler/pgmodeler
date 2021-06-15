@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup pgmui
+\ingroup libgui
 \class ConstraintWidget
 \brief Implements the operations to create/edit constraints via form.
 */

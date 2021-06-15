@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup pgmcanvas
+\ingroup libcanvas
 \class RoundedRectItem
 \brief Represents a rounded rectangle item
 */

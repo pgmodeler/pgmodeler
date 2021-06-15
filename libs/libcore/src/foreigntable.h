@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup pgmcore
+\ingroup libcore
 \brief Implements the operations to manipulate foreign tables on the database.
 */
 

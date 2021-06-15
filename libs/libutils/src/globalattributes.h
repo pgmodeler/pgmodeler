@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup pgmutils
+\ingroup libutils
 \namespace GlobalAttributes
 \brief Definition of GlobalAttributes class which stores a series of static strings constants used
  to reference the global configuration attributes of the software.
@@ -64,7 +64,7 @@ class GlobalAttributes {
 		PgModelerCHandlerPath,
 		PgModelerCLIPath,
 		PgModelerAppPath,
-		PgModelerSchEditorPath;
+		PgModelerSyntaxCheckerPath;
 
 		/*! \brief Returns the current value for an environment variable. If the current value is a path and the same does not
 			exists then the function will return 'default_value' if it exists. Finally, if both current value and default
@@ -195,7 +195,7 @@ class GlobalAttributes {
 		static QString getPgModelerAppPath();
 
 		//! \brief Returns the path to the "scheditor" executable
-		static QString getPgModelerSchEditorPath();
+		static QString getPgModelerSyntaxCheckerPath();
 
 		friend class Application;
 		friend class PgModelerUnitTest;

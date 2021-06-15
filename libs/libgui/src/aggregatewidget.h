@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup pgmui
+\ingroup libgui
 \class AggregateWidget
 \brief Implements the operations to create/edit aggregates via form.
 */

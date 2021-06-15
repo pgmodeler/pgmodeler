@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup pgmui
+\ingroup libgui
 \class ModelWidget
 \brief Implements the widget that permits the direct user interation over the database model.
 */

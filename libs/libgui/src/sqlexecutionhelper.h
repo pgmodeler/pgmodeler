@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup pgmui
+\ingroup libgui
 \class SQLExecutionHelper
 \brief Implements a command execution helper that permit the execution of SQL commands in a thread
 */

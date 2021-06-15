@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup pgmparsers
+\ingroup libparsers
 \class XMLParser
 \brief This class implements basic operations of a xml analyzer encapsulating some functions implemented by libxml2 library
 \note <strong>Creation date:</strong> 02/04/2008

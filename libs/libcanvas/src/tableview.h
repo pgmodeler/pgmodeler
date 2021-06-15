@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup pgmcanvas
+\ingroup libcanvas
 \class TableView
 \brief Implements the graphical representation for tables.
 */

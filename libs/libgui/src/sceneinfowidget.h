@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup pgmui
+\ingroup libgui
 \class SceneInfoWidget
 \brief Implements an widget to show info about canvas (scene) and selected objects
 */

@@ -1,16 +1,24 @@
 include(../../pgmodeler.pri)
 
 TEMPLATE = app
-TARGET = pgmodeler
+TARGET = pgmodeler-sc
 
 windows:RC_FILE=res/windows_ico.qrc
 windows:RCC_DIR=src/
-windows: DESTDIR = $$PWD
-
-HEADERS += src/pgmodelerapp.h
 
 SOURCES += src/main.cpp \
-	src/pgmodelerapp.cpp
+	src/aboutwidget.cpp \
+	   src/syntaxcheckerform.cpp \
+	   src/sourceeditorwidget.cpp \
+	   ../pgmodeler/src/pgmodelerapp.cpp \
+
+FORMS += ui/syntaxcheckerform.ui \
+	 ui/aboutwidget.ui \
+	 ui/sourceeditorwidget.ui
+
+HEADERS += src/syntaxcheckerform.h \
+	   src/aboutwidget.h \
+	   src/sourceeditorwidget.h
 
 unix|windows: LIBS += $$LIBGUI_LIB \
 		      $$LIBCANVAS_LIB \
@@ -24,28 +32,20 @@ INCLUDEPATH += $$LIBGUI_INC \
 	       $$LIBCONNECTOR_INC \
 	       $$LIBCORE_INC \
 	       $$LIBPARSERS_INC \
-	       $$LIBUTILS_INC
+	       $$LIBUTILS_INC \
+	       ../pgmodeler/src
 
 DEPENDPATH += $$LIBGUI_ROOT \
 	      $$LIBCANVAS_ROOT \
 	      $$LIBCONNECTOR_ROOT \
 	      $$LIBCORE_ROOT \
 	      $$LIBPARSERS_ROOT \
-	      $$LIBUTILS_ROOT
+	      $$LIBUTILS_ROOT \
+	      ../pgmodeler
 
 # Deployment settings
-target.path = $$BINDIR
+target.path = $$PRIVATEBINDIR
 INSTALLS = target
-
-macx {
-  macdeps.files = $$PWD/res/Resources $$PWD/res/Info.plist $$PWD/res/PkgInfo
-  macdeps.path = $$PREFIX
-
-  macscript.files = $$PWD/res/startapp
-  macscript.path = $$BINDIR
-
-  INSTALLS += macdeps macscript
-}
 
 # Print the current build settins (see pgmodeler.pri)
 printBuildDetails()

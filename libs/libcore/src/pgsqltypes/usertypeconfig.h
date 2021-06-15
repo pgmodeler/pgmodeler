@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup pgmcore/pgsqltypes
+\ingroup libcore/pgsqltypes
 \class UserTypeConfig
 \brief Implements the operations to manipulate user-defined data type configurations (used by PgSqlType).
 **/

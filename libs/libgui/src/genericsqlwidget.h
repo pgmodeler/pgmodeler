@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup pgmui
+\ingroup libgui
 \class GenericSQLWidget
 \brief Implements the operations to create/edit generic sql objects via form.
 */

@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup pgmcore/pgsqltypes
+\ingroup libcore/pgsqltypes
 \class ActionType
 \brief Implements the operations to manipulate constraint actions.
 **/

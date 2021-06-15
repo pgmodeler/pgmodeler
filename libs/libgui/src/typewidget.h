@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup pgmui
+\ingroup libgui
 \class TypeWidget
 \brief Implements the operations to create/edit user defined data types via form.
 */

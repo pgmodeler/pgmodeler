@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup pgmui
+\ingroup libgui
 \class FindReplaceWidget
 \brief Implements the operations to find and replace text on a QTextEdit
 */
@@ -51,6 +51,9 @@ class FindReplaceWidget: public QWidget, public Ui::FindReplaceWidget {
 		void replaceText();
 		void replaceAll();
 		void replaceFindText();
+
+	signals:
+		void s_hideRequested();
 };
 
 #endif

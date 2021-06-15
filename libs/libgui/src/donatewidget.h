@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup pgmui
+\ingroup libgui
 \class DonateWidget
 \brief Implements a basic dialog to ask for donations shown as a popup widget on main window.
 */
@@ -37,7 +37,7 @@ class DonateWidget: public QWidget, public Ui::DonateWidget {
 		DonateWidget(QWidget *parent = nullptr);
 		
 	signals:
-		void s_visibilityChanged(bool value);
+		void s_hideRequested();
 };
 
 #endif

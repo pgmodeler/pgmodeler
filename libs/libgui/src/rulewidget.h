@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup pgmui
+\ingroup libgui
 \class RuleWidget
 \brief Implements the operations to create/edit rules via form.
 */

@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup pgmui
+\ingroup libgui
 \class DatabaseModelsDiffHelper
 \brief Implements the operations to compare and generate a diff between two database models.
 */

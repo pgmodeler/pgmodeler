@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup pgmui
+\ingroup libgui
 \class SyntaxHighlighter
 \brief Implements a syntax hightlighter with user-defined markup patterns (xml configuration).
 */
@@ -38,24 +38,10 @@ class SyntaxHighlighter: public QSyntaxHighlighter {
 	private:
 		Q_OBJECT
 
-		class BlockInfo: public QTextBlockUserData {
-			public:
-				QString group;
-				bool has_exprs;
-				bool is_expr_closed;
-
-				BlockInfo(void)
-				{
-					resetBlockInfo();
-				}
-
-				void resetBlockInfo(void)
-				{
-					group.clear();
-					has_exprs=false;
-					is_expr_closed=false;
-				}
-		};
+		/*! \brief The default name of the group related to unformatted words.
+		 * This is just a dummy group and just serves to force the non-formatting of
+		 * any word that doesn't fit the configured groups */
+		static const QString UnformattedGroup;
 
 		//! \brief XML parser used to parse configuration files
 		XmlParser xmlparser;

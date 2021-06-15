@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup pgmutils
+\ingroup libutils
 \class Application
 \brief This class inherits from QApplication and just sets up a search path in order to initialize GlobalAttribute static class
 \note <strong>Creation date:</strong> 30/08/2007

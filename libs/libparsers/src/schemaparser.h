@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup pgmparsers
+\ingroup libparsers
 \brief ParserEsquema class definition used to create SQL definition for model objects from schemas files (stored on disk).
 \note <strong>Creation date:</strong> 19/06/2008
 */
@@ -115,7 +115,7 @@ class SchemaParser {
 		QString getWord();
 
 		//! \brief Gets a pure text, ignoring elements of the language
-		QString getPureText();
+		QString getPlainText();
 
 		/*! \brief Returns whether a character is special i.e. indicators of attributes
 		 or conditional instructions */
@@ -150,13 +150,13 @@ class SchemaParser {
 		CharLineEnd,	//! \brief Character that indicates end of line
 		CharSpace,		//! \brief Character that indicates spacing
 		CharTabulation,	//! \brief Character that indicates tabulation
-		CharIniAttribute,	//! \brief Character that indicates a reference to an attribute
+		CharStartAttribute,	//! \brief Character that indicates a reference to an attribute
 		CharEndAttribute,	//! \brief Character that delimits on the right the attribute name
-		CharIniConditional,	//! \brief Character that starts a conditional instruction
-		CharIniMetachar,	//! \brief Character that starts a metacharacter
-		CharIniPlainText,	//! \brief Character that starts a plain text
+		CharStartConditional,	//! \brief Character that starts a conditional instruction
+		CharStartMetachar,	//! \brief Character that starts a metacharacter
+		CharStartPlainText,	//! \brief Character that starts a plain text
 		CharEndPlainText,	//! \brief Character that ends a plain text
-		CharIniCompExpr,	//! \brief Character that starts a comparison expression
+		CharStartCompExpr,	//! \brief Character that starts a comparison expression
 		CharEndCompExpr,	//! \brief Character that ends a comparison expression
 		CharValueDelim,	//! \brief Character that delimiters a value (string)
 		CharValueOf;	/*! \brief Character that is used on %set instructions to
@@ -215,7 +215,7 @@ class SchemaParser {
 		/*! \brief Generic method that interprets a pre-specified buffer (see loadBuffer()) and for a given map
 		 of attributes this method returns the data of the buffer analyzed and filled with the values ​​of the
 		 attributes map */
-		QString getCodeDefinition(attribs_map &attribs);
+		QString getCodeDefinition(const attribs_map &attribs);
 
 		//! \brief Loads the buffer with a string
 		void loadBuffer(const QString &buf);
@@ -237,6 +237,13 @@ class SchemaParser {
 
 		//! \brief Extracts the attributes names from the currently loaded buffer
 		QStringList extractAttributes();
+
+		//! \brief Returns the current line where the parser is reading
+		int getCurrentLine();
+
+		//! \brief Returns the current columnm of the current line where the parser is reading
+		int getCurrentColumn();
+
 };
 
 #endif

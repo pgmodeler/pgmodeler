@@ -16,25 +16,31 @@
 # Also, you can get the complete GNU General Public License at <http://www.gnu.org/licenses/>
 */
 
-/**
-\ingroup gui
-\class PgModelerApp
-\brief This class inherits from QApplication and has the notify() method modified
- to treat the exceptions raised by pgModeler components.
-*/
-
-#ifndef PGMODELER_APP_H
-#define PGMODELER_APP_H
-
 #include "application.h"
-#include <QTextStream>
 #include <QTranslator>
-#include <QFile>
+#include "pgmodeleruins.h"
+#include "syntaxcheckerform.h"
+#include "pgmodelerapp.h"
 
-class PgModelerApp: public Application {
-	public:
-		PgModelerApp(int & argc, char ** argv);
-		bool notify(QObject * receiver, QEvent * event);
-};
+int main(int argc, char **argv)
+{
+	try
+	{
+		PgModelerApp app(argc,argv);
+		QStringList args = app.arguments();
 
-#endif
+		SyntaxCheckerForm syntaxchk;
+		args.pop_front();
+		syntaxchk.loadFiles(args);
+		syntaxchk.showMaximized();
+		app.exec();
+
+		return 0;
+	}
+	catch(Exception &e)
+	{
+		QTextStream out(stdout);
+		out << e.getExceptionsText();
+		return enum_cast(e.getErrorCode());
+	}
+}

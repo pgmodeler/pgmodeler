@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup pgmutils
+\ingroup libutils
 \brief Definition of a shortcut to double NAN used by some portions of pgModeler mainly when dealing with graphical operations
 */
 

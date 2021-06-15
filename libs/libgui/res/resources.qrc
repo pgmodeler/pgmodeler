@@ -226,7 +226,6 @@
         <file>icons/removepoints.png</file>
         <file>icons/rename.png</file>
         <file>icons/resizecols.png</file>
-        <file>icons/resources.qrc</file>
         <file>icons/restore.png</file>
         <file>icons/result.png</file>
         <file>icons/role.png</file>
@@ -289,6 +288,8 @@
         <file>icons/view_grp.png</file>
         <file>icons/xmlcode.png</file>
         <file>icons/validity.png</file>
+        <file>icons/validatesch.png</file>
+        <file>icons/ident.png</file>
     </qresource>
     <qresource prefix="/images">
         <file>images/brazil_flag.png</file>
@@ -307,5 +308,6 @@
         <file>images/rel_center_pnts.png</file>
         <file>images/rel_fk_to_pk.png</file>
         <file>images/rel_tab_edges.png</file>
+        <file>images/schemafile.png</file>
     </qresource>
 </RCC>

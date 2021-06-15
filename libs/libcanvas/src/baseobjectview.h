@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup pgmcanvas
+\ingroup libcanvas
 \class BaseObjectView
 \brief Implements the basic routines to graphically represent the objects: table, relationship, textbox, view.
 */

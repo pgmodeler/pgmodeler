@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup pgmcore
+\ingroup libcore
 \class Conversion
 \brief Implements the operations to manipulate character encoding conversion on the database
 \note <strong>Creation date:</strong> 04/06/2008

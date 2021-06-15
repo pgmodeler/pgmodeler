@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup pgmcanvas
+\ingroup libcanvas
 \class TableTitleView
 \brief Implements the graphical representation for table title
 */

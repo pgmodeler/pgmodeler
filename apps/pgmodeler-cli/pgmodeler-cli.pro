@@ -1,13 +1,17 @@
 include(../../pgmodeler.pri)
 
+CONFIG += console
 TEMPLATE = app
-TARGET = scheditor
+TARGET = pgmodeler-cli
 
-#windows:RC_FILE=res/windows_ico.qrc
-#windows:RCC_DIR=src/
+windows:RC_FILE = res/windows_ico.qrc
+windows: RCC_DIR = src/
+windows: DESTDIR = $$PWD
 
 SOURCES += src/main.cpp \
-	src/schemaeditorform.cpp
+	   src/pgmodelercliapp.cpp
+
+HEADERS += src/pgmodelercliapp.h
 
 unix|windows: LIBS += $$LIBGUI_LIB \
 		      $$LIBCANVAS_LIB \
@@ -31,11 +35,5 @@ DEPENDPATH += $$LIBGUI_ROOT \
 	      $$LIBUTILS_ROOT
 
 # Deployment settings
-target.path = $$PRIVATEBINDIR
+target.path = $$BINDIR
 INSTALLS = target
-
-FORMS += \
-	ui/schemaeditorform.ui
-
-HEADERS += \
-	src/schemaeditorform.h

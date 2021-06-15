@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup pgmcore
+\ingroup libcore
 \class Aggregate
 \brief Implements the operations to manipulate aggregates on the database.
 \note <strong>Creation date:</strong> 16/04/2008

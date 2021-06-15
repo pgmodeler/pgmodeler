@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup pgmui
+\ingroup libgui
 \class ObjectsDiffInfo
 \brief Stores information about difference between two objects when the models are being compared. Instances of this class
 are emitted during the diff process on ModelsDiffHelper class.

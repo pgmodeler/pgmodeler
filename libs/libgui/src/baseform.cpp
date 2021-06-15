@@ -147,6 +147,7 @@ void BaseForm::setMainWidget(QWidget *widget, const char *accept_slot, const cha
 	if(!widget)	return;
 
 	setWindowTitle(widget->windowTitle());
+	setWindowIcon(widget->windowIcon());
 	resizeForm(widget);
 	setButtonConfiguration(Messagebox::OkButton);
 

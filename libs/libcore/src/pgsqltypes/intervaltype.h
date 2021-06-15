@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup pgmcore/pgsqltypes
+\ingroup libcore/pgsqltypes
 \class IntervalType
 \brief Implements the operations to manipulate time interval types.
 **/

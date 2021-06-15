@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup pgmcore/pgsqltypes
+\ingroup libcore/pgsqltypes
 \class PgSqlType
 \brief Implements the operations to manipulate policy command types.
 **/

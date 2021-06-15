@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup pgmcore
+\ingroup libcore
 \class OperatorClassElement
 \brief Implements the operations to manipulate operator class
  elements (storage, operator, function).

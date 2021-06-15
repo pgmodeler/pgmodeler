@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup pgmcore/pgsqltypes
+\ingroup libcore/pgsqltypes
 \class FunctionType
 \brief Implements the operations to manipulate function types.
 **/

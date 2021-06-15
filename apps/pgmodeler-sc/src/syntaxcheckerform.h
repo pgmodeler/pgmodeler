@@ -17,24 +17,27 @@
 */
 
 /**
-\ingroup scheditor
-\class SchemaEditorForm
-\brief Implements the pgModeler's schema files editor.
+\ingroup pgmodeler-sc
+\class SyntaxCheckerForm
+\brief Implements the pgModeler's schema files editor and syntax checker.
 */
 
-#ifndef SCHEMA_EDITOR_FORM_H
-#define SCHEMA_EDITOR_FORM_H
+#ifndef SYNTAX_CHECKER_FORM_H
+#define SYNTAX_CHECKER_FORM_H
 
 #include <QObject>
 #include <QWidget>
-#include "ui_schemaeditorform.h"
+#include "ui_syntaxcheckerform.h"
 #include "numberedtexteditor.h"
 #include "syntaxhighlighter.h"
 #include "fileselectorwidget.h"
+#include "findreplacewidget.h"
 
-class SchemaEditorForm : public QWidget, public Ui::SchemaEditorForm {
+class SyntaxCheckerForm: public QWidget, public Ui::SyntaxCheckerForm {
 	private:
 		Q_OBJECT
+
+		static const QString UntitledFile;
 
 		NumberedTextEditor *syntax_txt;
 
@@ -42,28 +45,31 @@ class SchemaEditorForm : public QWidget, public Ui::SchemaEditorForm {
 
 		FileSelectorWidget *syntax_conf_sel;
 
-		QList<SyntaxHighlighter *> highlighters;
+		QActionGroup *stx_action_grp;
+
+		QMenu syntax_cfg_menu;
 
 		void showEvent(QShowEvent *) override;
 
+		void closeEvent(QCloseEvent *event) override;
+
+		bool eventFilter(QObject *object, QEvent *event) override;
+
+		QStringList showFileDialog(bool save_mode);
+
 	public:
-		explicit SchemaEditorForm(QWidget *parent = nullptr);
-
-		~SchemaEditorForm();
-
-		void loadSchemaFiles(const QStringList &filenames);
+		explicit SyntaxCheckerForm(QWidget *parent = nullptr);
+		void loadFiles(const QStringList &filenames);
 
 	private slots:
 		void loadSyntaxConfig();
-		void applySyntaxConfig();
+		void applySyntaxConfig(bool from_temp_file = true);
 		void saveSyntaxConfig();
-		void clearSyntaxConfig();
 		void addEditorTab(const QString &filename = "");
-		void closeEditorTab(int idx);	
-		void loadSchemaFile();
-
-	signals:
-
+		void closeEditorTab(int idx, bool confirm_close = true);
+		void loadFile();
+		void saveFile(bool save_as = false);
+		void setTabModified(bool modified);
 };
 
 #endif

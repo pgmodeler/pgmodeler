@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup pgmcore
+\ingroup libcore
 \class Policy
 \brief Implements the operations to manipulate row level security (RLS).
 */

@@ -34,10 +34,9 @@ AboutWidget::AboutWidget(QWidget *parent) : QWidget(parent)
 	pgmodeler_ver_lbl->setText(QString("v%1 ").arg(GlobalAttributes::PgModelerVersion));
 	build_num_lbl->setText(QString("%1 Qt %2").arg(GlobalAttributes::PgModelerBuildNumber).arg(QT_VERSION_STR));
 
-	connect(hide_tb, &QToolButton::clicked, this,
-			[&](){
-		this->close();
-		emit s_visibilityChanged(false);
+	connect(hide_tb, &QToolButton::clicked, this, [&](){
+		hide();
+		emit s_hideRequested();
 	});
 
 	double factor = BaseObjectView::getScreenDpiFactor();

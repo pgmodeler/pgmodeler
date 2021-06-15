@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup pgmui
+\ingroup libgui
 \class ChangelogWidget
 \brief Implements the widget that allows the user to handle model's changelog
 */
@@ -47,8 +47,7 @@ class ChangelogWidget : public QWidget, Ui::ChangelogWidget {
 		void clearChangelog();
 
 	signals:
-		//! \brief Signal emitted whenever the widget changes its visibility
-		void s_visibilityChanged(bool);
+		void s_visibilityChanged(bool value);
 };
 
 #endif

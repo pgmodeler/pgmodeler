@@ -46,6 +46,8 @@ FindReplaceWidget::FindReplaceWidget(QPlainTextEdit *txt_edit, QWidget *parent):
 		replace_tb->setEnabled(enable);
 		replace_all_tb->setEnabled(enable);
 		replace_find_tb->setEnabled(enable); });
+
+	connect(hide_tb, SIGNAL(clicked()), this, SIGNAL(s_hideRequested()));
 }
 
 void FindReplaceWidget::showEvent(QShowEvent *)

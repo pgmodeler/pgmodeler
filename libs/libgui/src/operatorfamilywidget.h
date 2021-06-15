@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup pgmui
+\ingroup libgui
 \class OperatorFamilyWidget
 \brief Implements the operations to create/edit operator family via form.
 */

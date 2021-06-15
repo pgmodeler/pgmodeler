@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup pgmui
+\ingroup libgui
 \class ResultSetModel
 \brief Implements a model representation of ResultSet class which can be used to show large amount of data in instances of QTableView.
 */

@@ -19,8 +19,10 @@
 #include "syntaxhighlighter.h"
 #include "numberedtexteditor.h"
 #include "qtcompat/qplaintexteditcompat.h"
+#include "textblockinfo.h"
 
-QFont SyntaxHighlighter::default_font=QFont(QString("Source Code Pro"), 10);
+QFont SyntaxHighlighter::default_font = QFont(QString("Source Code Pro"), 10);
+const QString SyntaxHighlighter::UnformattedGroup = QString("__unformatted__");
 
 SyntaxHighlighter::SyntaxHighlighter(QPlainTextEdit *parent, bool single_line_mode, bool use_custom_tab_width) : QSyntaxHighlighter(parent)
 {
@@ -88,19 +90,20 @@ void SyntaxHighlighter::configureAttributes()
 
 void SyntaxHighlighter::highlightBlock(const QString &txt)
 {
-	BlockInfo *info=nullptr;
-	BlockInfo *prev_info=dynamic_cast<BlockInfo *>(currentBlock().previous().userData());
+	TextBlockInfo *info=nullptr;
+	TextBlockInfo *prev_info=dynamic_cast<TextBlockInfo *>(currentBlock().previous().userData());
 
 	if(!currentBlockUserData())
 	{
-		info=new BlockInfo;
+		info=new TextBlockInfo;
 		setCurrentBlockUserData(info);
+		setCurrentBlockState(currentBlock().previous().userState());
 	}
 	else
 	{
 		//Reset the block's info to permit the rehighlighting
-		info=dynamic_cast<BlockInfo *>(currentBlockUserData());
-		info->resetBlockInfo();
+		info=dynamic_cast<TextBlockInfo *>(currentBlockUserData());
+		info->reset();
 		setCurrentBlockState(SimpleBlock);
 	}
 
@@ -113,9 +116,9 @@ void SyntaxHighlighter::highlightBlock(const QString &txt)
 	if(prev_info && currentBlock().previous().userState()==OpenExprBlock &&
 		 (currentBlockState() == OpenExprBlock || (txt.isEmpty() && currentBlockState() < 0)))
 	{
-		info->group=prev_info->group;
-		info->has_exprs=prev_info->has_exprs;
-		info->is_expr_closed=false;
+		info->setGroup(prev_info->getGroup());
+		info->setMultiExpr(prev_info->isMultiExpr());
+		info->setClosed(false);
 		setCurrentBlockState(OpenExprBlock);
 	}
 
@@ -168,7 +171,7 @@ void SyntaxHighlighter::highlightBlock(const QString &txt)
 				}
 				else
 				{
-					BlockInfo *prev_info = dynamic_cast<BlockInfo *>(currentBlock().previous().userData());
+					TextBlockInfo *prev_info = dynamic_cast<TextBlockInfo *>(currentBlock().previous().userData());
 
 					while(i < len &&
 						  !word_separators.contains(text[i]) &&
@@ -197,9 +200,10 @@ void SyntaxHighlighter::highlightBlock(const QString &txt)
 					this because the final expression of the group contains the word delimiter '. In order to force the highlight stop
 					in the last ' we include it in the current evaluated word and increment the position in the text so the next
 					word starts without the word delimiter. */
-					if(i < len && word_delimiters.contains(text[i]) && prev_info && !prev_info->group.isEmpty() && prev_info->has_exprs)
+					if(i < len && word_delimiters.contains(text[i]) &&
+						 prev_info && !prev_info->getGroup().isEmpty() && prev_info->isMultiExpr())
 					{
-						for(auto exp : final_exprs[prev_info->group])
+						for(auto exp : final_exprs[prev_info->getGroup()])
 						{
 							if(exp.pattern().contains(text[i]))
 							{
@@ -234,7 +238,7 @@ void SyntaxHighlighter::highlightBlock(const QString &txt)
 					setFormat(start_col, match_len, group);
 				}
 
-				if(info->has_exprs && !info->is_expr_closed && hasInitialAndFinalExprs(group))
+				if(info->isMultiExpr() && !info->isClosed() && hasInitialAndFinalExprs(group))
 					setCurrentBlockState(OpenExprBlock);
 				else
 					setCurrentBlockState(SimpleBlock);
@@ -253,58 +257,112 @@ void SyntaxHighlighter::highlightBlock(const QString &txt)
 QString SyntaxHighlighter::identifyWordGroup(const QString &word, const QChar &lookahead_chr, int &match_idx, int &match_len)
 {
 	QString group;
-	bool match=false;
-	BlockInfo *info=dynamic_cast<BlockInfo *>(currentBlockUserData()),
-			*prev_info=dynamic_cast<BlockInfo *>(currentBlock().previous().userData());
+	bool match = false;
+	int block_st = currentBlockState();
+	bool match_final_expr= block_st == OpenExprBlock;
+	TextBlockInfo *info = dynamic_cast<TextBlockInfo *>(currentBlockUserData()),
+			*prev_info = dynamic_cast<TextBlockInfo *>(currentBlock().previous().userData());
 
-	if((info->has_exprs && !info->is_expr_closed && hasInitialAndFinalExprs(info->group)) ||
-			(prev_info && !info->has_exprs && prev_info->has_exprs && !prev_info->is_expr_closed))
+	/* Trying to match the word against the gropus
+	 * If the block is marked as OpenExprBlock we'll match the word agains final expression
+	 * in order to check if the word is token that closes a multi line expression */
+	for(auto &itr_group : groups_order)
 	{
-		if(prev_info && !info->has_exprs)
-			group=prev_info->group;
-		else
-			group=info->group;
-
-		match=isWordMatchGroup(word, group, true, lookahead_chr, match_idx, match_len);
-
-		//If the word match one final expression marks the current block info as closed
-		if(match)
-			info->is_expr_closed=true;
-		else
+		if(isWordMatchGroup(word, itr_group, match_final_expr, lookahead_chr, match_idx, match_len))
 		{
-			match_idx=0;
-			match_len=word.length();
+			group = itr_group;
+			match = true;
+			break;
+		}
+	}
+
+	/* If the word doesn't match any group or it matches but the found group is differnt
+	 * from the current block info group, we need to return a group name that considers
+	 * the state of the previous block (which can be previous line or previous word in the current line) */
+	if(!match || (match && block_st == OpenExprBlock && info->getGroup() != group))
+	{
+		match_idx = 0;
+		match_len = word.length();
+
+		/* If the current block info is a multi expression one and it is not closed yet (the closing
+		 * expresion wasn't found previously) we automatically return the info's group to enforce the
+		 * highlighting of the word using the formatting of the info's group no matter if the
+		 * word was matched against another group. The fact of the current info is a multi line expression
+		 * that is still open has precedence over any other situation. */
+		if(!info->getGroup().isEmpty() && info->isMultiExpr() && !info->isClosed())
+		{
+			return info->getGroup();
+		}
+		/* If the word is a simple line feed (\n) and the previous block info is a multi expression one
+		 * that is closed we force the current block to be unformatted. This will avoid that the next line
+		 * starts with the formatting of the previous block info. */
+		else if((word == QChar::LineFeed && prev_info &&
+						 !prev_info->getGroup().isEmpty() && prev_info->isMultiExpr() && prev_info->isClosed()) ||
+
+						/* If the word doens't match any group and the current block info was closed at least once
+						 * in the current line we also need to force the unformatted mode so the next words in the
+						 * line can be correctly highlighted. For example, supposing the following line in XML syntax:
+						 *  <!-- comment --> <tag>
+						 * Without forcing the format reseting after the token '-->' the next one '<tag>' would receive
+						 * the same highlighting as a XML comment which is not desired. */
+						(group.isEmpty() && info->isClosedOnce()) ||
+						(!info->getGroup().isEmpty() && info->isMultiExpr() && info->isClosed()))
+		{
+			/* We force unformmated group to stay closed so in the next interaction (word extraction / validation)
+			 * the group that matches the word can be properly found */
+			info->setGroup(UnformattedGroup);
+			info->setMultiExpr(true);
+			info->setClosed(true);
+			return info->getGroup();
+		}
+		/* In case of the word doesn't match no group and none of the conditions regarding the current block info are
+		 * met we force the inheritance of formatting style of the previous block (if existent) and if the previous
+		 * block is a multi expression one and is already open. An example of this situation would be adding a new
+		 * text inside a multi line comment:
+		 *
+		 * <!--
+		 *  some comment
+		 * -->
+		 *
+		 * In this case the words "some comment" don't match any group this way they need to be commented since
+		 * they were placed between the comment tokens */
+		else if(prev_info && !prev_info->getGroup().isEmpty() && prev_info->isMultiExpr() && !prev_info->isClosed())
+		{
+			info->setGroup(prev_info->getGroup());
+
+			/* We force the current info to be a multi expression one (like the previous)
+			 * and close it only if the word is a closing token of the group */
+			info->setMultiExpr(true);
+			info->setClosed(isWordMatchGroup(word, prev_info->getGroup(), true, lookahead_chr, match_idx, match_len));
+
+			return info->getGroup();
 		}
 
-		info->has_exprs=hasInitialAndFinalExprs(group);
-		info->group=group;
-
-		return group;
+		return UnformattedGroup;
 	}
 	else
 	{
-		for(auto &itr_group : groups_order)
+		/* If no group is found related to the word we inherit the previous block
+		 * formatting if and only if the previous block is a multi line expressoin that
+		 * is not closed */
+		if(!group.isEmpty() && info->getGroup().isEmpty() &&
+			 prev_info && prev_info->isMultiExpr() && !prev_info->isClosed())
 		{
-			group=itr_group;
-			if(isWordMatchGroup(word, group, false, lookahead_chr, match_idx, match_len))
-			{
-				match=true;
-				break;
-			}
+			info->setGroup(prev_info->getGroup());
+			info->setMultiExpr(true);
+
+			/* We try to check if the current work matches a final expression of the previous block group
+			 * if so, the current block info will be automatically closed */
+			info->setClosed(isWordMatchGroup(word, prev_info->getGroup(), true, lookahead_chr, match_idx, match_len));
+
+			return info->getGroup();
 		}
 
-		if(!match)
-			return "";
-		else
-		{
-			info->group=group;
+		info->setGroup(group);
+		info->setMultiExpr(hasInitialAndFinalExprs(group));
+		info->setClosed(match && match_final_expr);
 
-			//if(!info->has_exprs)
-			info->has_exprs=hasInitialAndFinalExprs(group);
-
-			info->is_expr_closed=false;
-			return group;
-		}
+		return group;
 	}
 }
 

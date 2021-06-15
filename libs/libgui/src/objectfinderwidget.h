@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup pgmui
+\ingroup libgui
 \class ObjectFinderWidget
 \brief Implements the operations to find objects over the model
 */
@@ -75,7 +75,7 @@ class ObjectFinderWidget : public QWidget, public Ui::ObjectFinderWidget {
 		void setModel(ModelWidget *model_wgt);
 
 	signals:
-		void s_visibilityChanged(bool);
+		void s_hideRequested();
 		
 	public slots:
 		void hide();

@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup pgmcore
+\ingroup libcore
 \brief Implements base operations to handle index/constraint(exclude) elements
 */
 

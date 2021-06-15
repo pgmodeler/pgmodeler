@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup pgmcore
+\ingroup libcore
 \class Cast
 \brief Implements the operations to manipulate data type cast on the database
 \note <strong>Creation date:</strong> 03/06/2008

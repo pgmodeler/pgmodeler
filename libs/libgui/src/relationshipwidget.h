@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup pgmui
+\ingroup libgui
 \class RelationshipWidget
 \brief Implements the operations to create/edit relationships via form.
 */

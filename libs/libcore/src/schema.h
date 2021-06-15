@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup pgmcore
+\ingroup libcore
 \class Schema
 \brief Implements the operations to manipulate schemas on the database.
 \note <strong>Creation date:</strong> 07/04/2008

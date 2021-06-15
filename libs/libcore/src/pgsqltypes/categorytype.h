@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup pgmcore/pgsqltypes
+\ingroup libcore/pgsqltypes
 \class CategoryType
 \brief Implements the operations to manipulate base types categories.
 **/

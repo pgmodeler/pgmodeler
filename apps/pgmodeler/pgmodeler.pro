@@ -1,18 +1,16 @@
 include(../../pgmodeler.pri)
 
-CONFIG += console
 TEMPLATE = app
-TARGET = pgmodeler-cli
-INCLUDEPATH += ../gui/src
+TARGET = pgmodeler
 
-windows:RC_FILE=../gui/res/windows_ico.qrc
-windows: RCC_DIR=src/
+windows:RC_FILE=res/windows_ico.qrc
+windows:RCC_DIR=src/
 windows: DESTDIR = $$PWD
 
-SOURCES += src/main.cpp \
-	   src/pgmodelercliapp.cpp
+HEADERS += src/pgmodelerapp.h
 
-HEADERS += src/pgmodelercliapp.h
+SOURCES += src/main.cpp \
+	src/pgmodelerapp.cpp
 
 unix|windows: LIBS += $$LIBGUI_LIB \
 		      $$LIBCANVAS_LIB \
@@ -38,3 +36,15 @@ DEPENDPATH += $$LIBGUI_ROOT \
 # Deployment settings
 target.path = $$BINDIR
 INSTALLS = target
+
+macx {
+  macdeps.files = $$PWD/res/Resources $$PWD/res/Info.plist $$PWD/res/PkgInfo
+  macdeps.path = $$PREFIX
+
+  macscript.files = $$PWD/res/startapp
+  macscript.path = $$BINDIR
+
+  INSTALLS += macdeps macscript
+}
+
+

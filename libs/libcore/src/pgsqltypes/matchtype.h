@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup pgmcore/pgsqltypes
+\ingroup libcore/pgsqltypes
 \class MatchType
 \brief Implements the operations to manipulate constraints matching mode.
 **/

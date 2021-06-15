@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup pgmui
+\ingroup libgui
 \class TextboxWidget
 \brief Implements the operations to create/edit textboxes via form.
 */

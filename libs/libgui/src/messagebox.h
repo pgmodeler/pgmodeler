@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup pgmui
+\ingroup libgui
 \class MessageBox
 \brief Implements the message box to show errors / alerts / infos to the user.
 */

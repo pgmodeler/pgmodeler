@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup pgmui
+\ingroup libgui
 \class BaseObjectWidget
 \brief Implements the basic operations to create/edit database objects via form.
 */

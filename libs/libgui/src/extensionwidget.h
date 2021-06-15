@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup pgmui
+\ingroup libgui
 \class SchemaWidget
 \brief Implements the operations to create/edit extensions via form.
 */

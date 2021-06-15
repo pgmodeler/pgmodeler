@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup pgmui
+\ingroup libgui
 \class AboutForm
 \brief Form that contains information about software authoring and licensing.
 */
@@ -38,7 +38,7 @@ class AboutWidget: public QWidget, public Ui::AboutWidget {
 		AboutWidget(QWidget *parent = nullptr);
 		
 	signals:
-		void s_visibilityChanged(bool value);
+		void s_hideRequested();
 };
 
 #endif

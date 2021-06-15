@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup pgmcore
+\ingroup libcore
 \class Server
 \brief Implements the operations to manipulate user mappings on the database.
 */

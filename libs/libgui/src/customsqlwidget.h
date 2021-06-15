@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup pgmui
+\ingroup libgui
 \class CustomSQLWidget
 \brief Widget that handles insertion of free SQL commands into object's definition
 */

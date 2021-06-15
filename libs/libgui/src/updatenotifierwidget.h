@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup pgmui
+\ingroup libgui
 \class UpdateNotifierWidget
 \brief Implements a basic update notifier shown as a popup widget on main window.
 
@@ -85,7 +85,7 @@ class UpdateNotifierWidget: public QWidget, public Ui::UpdateNotifierWidget {
 
 	signals:
 		void s_updateAvailable(bool value);
-		void s_visibilityChanged(bool visible);
+		void s_hideRequested();
 };
 
 #endif

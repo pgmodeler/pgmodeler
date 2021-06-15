@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup pgmui
+\ingroup libgui
 \class ModelExportForm
 \brief Implements the operations to export a model to a file, image or directly to DBMS.
 */

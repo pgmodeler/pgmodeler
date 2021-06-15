@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup pgmui
+\ingroup libgui
 \class SQLExecutionWidget
 \brief Implements the operations that permit user to perform basic SQL commands directly on a server
 */

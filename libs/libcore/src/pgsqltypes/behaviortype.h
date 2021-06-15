@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup pgmcore/pgsqltypes
+\ingroup libcore/pgsqltypes
 \class BehaviorType
 \brief Implements the operations to manipulate functions call behavior types.
 **/
