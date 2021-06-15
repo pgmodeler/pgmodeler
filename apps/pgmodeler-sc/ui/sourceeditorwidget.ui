@@ -30,6 +30,16 @@
     <number>4</number>
    </property>
    <item>
+    <widget class="QWidget" name="source_file_parent" native="true">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+    </widget>
+   </item>
+   <item>
     <widget class="QWidget" name="editor_parent" native="true">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
@@ -214,7 +224,7 @@
        </property>
        <property name="sizeHint" stdset="0">
         <size>
-         <width>918</width>
+         <width>40</width>
          <height>20</height>
         </size>
        </property>
