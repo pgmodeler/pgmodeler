@@ -31,6 +31,7 @@
 #include "syntaxhighlighter.h"
 #include "findreplacewidget.h"
 #include "codecompletionwidget.h"
+#include "fileselectorwidget.h"
 
 class SourceEditorWidget: public QWidget, public Ui::SourceEditorWidget {
 	private:
@@ -41,6 +42,8 @@ class SourceEditorWidget: public QWidget, public Ui::SourceEditorWidget {
 		static QPalette def_editor_pal;
 
 		CodeCompletionWidget *code_compl_wgt;
+
+		FileSelectorWidget *source_file_sel;
 
 		NumberedTextEditor *editor_txt;
 

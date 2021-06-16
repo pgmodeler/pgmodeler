@@ -60,6 +60,7 @@ class SyntaxCheckerForm: public QWidget, public Ui::SyntaxCheckerForm {
 	public:
 		explicit SyntaxCheckerForm(QWidget *parent = nullptr);
 		void loadFiles(const QStringList &filenames);
+		bool hasModifiedEditors();
 
 	private slots:
 		void loadSyntaxConfig();
@@ -72,6 +73,7 @@ class SyntaxCheckerForm: public QWidget, public Ui::SyntaxCheckerForm {
 		void setTabModified(bool modified);
 		void indentAll();
 		void saveAll();
+		void closeAll();
 };
 
 #endif

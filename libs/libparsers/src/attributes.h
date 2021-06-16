@@ -78,6 +78,7 @@ namespace Attributes {
 	CanonicalFunc,
 	CanvasColor,
 	CanvasCornerMove,
+	CaptureNearby,
 	Cascade,
 	CaseSensitive,
 	CastType,

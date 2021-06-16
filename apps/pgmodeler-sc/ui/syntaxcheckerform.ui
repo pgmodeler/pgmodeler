@@ -130,6 +130,12 @@
        </item>
        <item row="0" column="5">
         <widget class="QCheckBox" name="use_tmpl_file_chk">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
          <property name="toolTip">
           <string>&lt;p&gt;Instead of loading the configuration file at user's local storage, loads the template one inside the pgModeler's installation folder.&lt;/p&gt;</string>
          </property>
