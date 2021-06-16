@@ -336,15 +336,21 @@ void SyntaxCheckerForm::indentAll()
 {
 	SourceEditorWidget *editor = nullptr;
 
+	QApplication::setOverrideCursor(Qt::WaitCursor);
+
 	for(int tab = 0; tab < editors_tbw->count(); tab++)
 	{
 		editor = dynamic_cast<SourceEditorWidget *>(editors_tbw->widget(tab));
 		editor->indent_tb->click();
 	}
+
+	QApplication::restoreOverrideCursor();
 }
 
 void SyntaxCheckerForm::saveAll()
 {
+	QApplication::setOverrideCursor(Qt::WaitCursor);
+
 	for(int tab = 0; tab < editors_tbw->count(); tab++)
 	{
 		editors_tbw->setCurrentIndex(tab);
@@ -360,6 +366,8 @@ void SyntaxCheckerForm::saveAll()
 			break;
 		}
 	}
+
+	QApplication::restoreOverrideCursor();
 }
 
 void SyntaxCheckerForm::closeAll()
@@ -374,8 +382,12 @@ void SyntaxCheckerForm::closeAll()
 			return;
 	}
 
+	QApplication::setOverrideCursor(Qt::WaitCursor);
+
 	while(editors_tbw->count() > 0)
 		closeEditorTab(0, false);
+
+	QApplication::restoreOverrideCursor();
 }
 
 QStringList SyntaxCheckerForm::showFileDialog(bool save_mode)
@@ -430,11 +442,16 @@ void SyntaxCheckerForm::loadFiles(const QStringList &filenames)
 {
 	try
 	{
+		QApplication::setOverrideCursor(Qt::WaitCursor);
+
 		for(auto &file : filenames)
 			addEditorTab(file);
+
+		QApplication::restoreOverrideCursor();
 	}
 	catch(Exception &e)
 	{
+		QApplication::restoreOverrideCursor();
 		throw Exception(e.getErrorMessage(), e.getErrorCode(), __PRETTY_FUNCTION__, __FILE__, __LINE__, &e);
 	}
 }
