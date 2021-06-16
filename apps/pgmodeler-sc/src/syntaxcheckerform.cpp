@@ -322,11 +322,11 @@ void SyntaxCheckerForm::setTabModified(bool modified)
 {
 	SourceEditorWidget *editor = dynamic_cast<SourceEditorWidget *>(sender());
 	int idx = editors_tbw->indexOf(editor);
-	QString tab_text = editors_tbw->tabText(idx);
+	QString tab_text = editors_tbw->tabText(idx);	
 
-	if(modified)
+	if(modified && !tab_text.endsWith('*'))
 		tab_text += '*';
-	else
+	else if(!modified)
 		tab_text.remove('*');
 
 	editors_tbw->setTabText(idx, tab_text);
