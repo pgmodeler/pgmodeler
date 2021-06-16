@@ -59,6 +59,11 @@ SyntaxCheckerForm::SyntaxCheckerForm(QWidget *parent) : QWidget(parent)
 	syntax_hl = new SyntaxHighlighter(syntax_txt);
 	syntax_hl->loadConfiguration(GlobalAttributes::getXMLHighlightConfPath());
 
+	dtd_txt = PgModelerUiNs::createNumberedTextEditor(dtd_wgt);
+	dtd_txt->setReadOnly(true);
+	dtd_hl = new SyntaxHighlighter(dtd_txt);
+	dtd_hl->loadConfiguration(GlobalAttributes::getXMLHighlightConfPath());
+
 	SourceEditorWidget::setDefaultEditorPalette(syntax_txt->palette());
 
 	syntax_conf_sel = new FileSelectorWidget(syntax_conf_wgt);
@@ -207,8 +212,26 @@ void SyntaxCheckerForm::loadSyntaxConfig()
 
 		syntax_txt->setPlainText(input.readAll());
 		input.close();
-
 		syntax_conf_sel->setSelectedFile(filename);
+
+		if(dtd_txt->toPlainText().isEmpty())
+		{
+			filename = GlobalAttributes::getTmplConfigurationFilePath(GlobalAttributes::ObjectDTDDir,
+																																GlobalAttributes::CodeHighlightConf +
+																																GlobalAttributes::ObjectDTDExt);
+			input.setFileName(filename);
+			input.open(QFile::ReadOnly);
+
+			if(!input.isOpen())
+			{
+				throw Exception(Exception::getErrorMessage(ErrorCode::FileDirectoryNotAccessed).arg(filename),
+												ErrorCode::FileDirectoryNotAccessed, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+			}
+
+			dtd_txt->setPlainText(input.readAll());
+			input.close();
+		}
+
 		save_conf_tb->setEnabled(true);
 		apply_conf_tb->setEnabled(true);
 		reload_conf_tb->setEnabled(true);

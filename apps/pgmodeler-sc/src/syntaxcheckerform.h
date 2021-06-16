@@ -39,9 +39,9 @@ class SyntaxCheckerForm: public QWidget, public Ui::SyntaxCheckerForm {
 
 		static const QString UntitledFile;
 
-		NumberedTextEditor *syntax_txt;
+		NumberedTextEditor *syntax_txt, *dtd_txt;
 
-		SyntaxHighlighter *syntax_hl;
+		SyntaxHighlighter *syntax_hl, *dtd_hl;
 
 		FileSelectorWidget *syntax_conf_sel;
 
