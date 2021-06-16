@@ -63,6 +63,7 @@ namespace Attributes {
 	CanonicalFunc("canonical"),
 	CanvasColor("canvas-color"),
 	CanvasCornerMove("canvas-corner-move"),
+	CaptureNearby("capture-nearby"),
 	Cascade("cascade"),
 	CaseSensitive("case-sensitive"),
 	CastType("cast-type"),

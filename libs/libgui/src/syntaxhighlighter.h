@@ -82,7 +82,15 @@ class SyntaxHighlighter: public QSyntaxHighlighter {
 
 		/*! \brief This causes the highlighter to ignores any RETURN/ENTER press on QTextEdit causing
 							the text to be in a single line. */
-		single_line_mode;
+		single_line_mode,
+
+		/*! \brief Indicates that nearby (contiguous) word separators must be captured
+		 * The default behavior is to stop character capture when the first word separator
+		 * is found. Setting this flag to true causes all the contiguous word separators
+		 * to be appended to the detected word. An example of contigous capture is for
+		 * SQL comment in the for /(slash)*(asterisk) if the nearby capture is not enabled
+		 * then the highlighting will not be able to identify multi line comments properly. */
+		capt_nearby_separators;
 
 		//! \brief Stores the chars that indicates word separators
 		QString word_separators,

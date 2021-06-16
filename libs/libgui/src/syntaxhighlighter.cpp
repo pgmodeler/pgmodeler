@@ -29,6 +29,7 @@ SyntaxHighlighter::SyntaxHighlighter(QPlainTextEdit *parent, bool single_line_mo
 	if(!parent)
 		throw Exception(ErrorCode::AsgNotAllocattedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
+	capt_nearby_separators = false;
 	this->setDocument(parent->document());
 	this->single_line_mode=single_line_mode;
 	configureAttributes();
@@ -149,6 +150,11 @@ void SyntaxHighlighter::highlightBlock(const QString &txt)
 					{
 						word += text[i];
 						i++;
+
+						/* If the nearby separators capture is not enabled we must
+						 * stop the char capture in order to return the currently formed word */
+						if(!capt_nearby_separators)
+							break;
 					}
 				}
 				//If the char is a word delimiter
@@ -464,6 +470,7 @@ void SyntaxHighlighter::loadConfiguration(const QString &filename)
 						{
 							xmlparser.getElementAttributes(attribs);
 							word_separators=attribs[Attributes::Value];
+							capt_nearby_separators = attribs[Attributes::CaptureNearby] == Attributes::True;
 						}
 						else if(elem==Attributes::WordDelimiters)
 						{
