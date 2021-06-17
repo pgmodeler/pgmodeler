@@ -27,9 +27,9 @@
 
 #include <QtWidgets>
 #include "ui_metadatahandlingform.h"
-#include "modelwidget.h"
-#include "htmlitemdelegate.h"
-#include "fileselectorwidget.h"
+#include "widgets/modelwidget.h"
+#include "utils/htmlitemdelegate.h"
+#include "widgets/fileselectorwidget.h"
 
 class MetadataHandlingForm: public QDialog, public Ui::MetadataHandlingForm {
 	private:

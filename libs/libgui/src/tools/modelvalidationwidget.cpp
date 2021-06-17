@@ -17,7 +17,7 @@
 */
 
 #include "modelvalidationwidget.h"
-#include "configurationform.h"
+#include "settings/configurationform.h"
 #include "guiutilsns.h"
 
 ModelValidationWidget::ModelValidationWidget(QWidget *parent): QWidget(parent)

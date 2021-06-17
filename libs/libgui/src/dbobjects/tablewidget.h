@@ -27,7 +27,7 @@
 
 #include "baseobjectwidget.h"
 #include "ui_tablewidget.h"
-#include "objectstablewidget.h"
+#include "widgets/objectstablewidget.h"
 #include "tableview.h"
 #include "elementstablewidget.h"
 

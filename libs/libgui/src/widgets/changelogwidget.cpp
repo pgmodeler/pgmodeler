@@ -17,7 +17,7 @@
 */
 
 #include "changelogwidget.h"
-#include "generalconfigwidget.h"
+#include "settings/generalconfigwidget.h"
 
 ChangelogWidget::ChangelogWidget(QWidget *parent) : QWidget(parent)
 {

@@ -27,7 +27,7 @@
 
 #include "baseobjectwidget.h"
 #include "ui_triggerwidget.h"
-#include "objectstablewidget.h"
+#include "widgets/objectstablewidget.h"
 
 class TriggerWidget: public BaseObjectWidget, public Ui::TriggerWidget {
 	private:

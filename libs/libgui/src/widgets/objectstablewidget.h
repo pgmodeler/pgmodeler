@@ -30,7 +30,7 @@ of rows on the table.
 
 #include "ui_objectstablewidget.h"
 #include "messagebox.h"
-#include "baseobjectwidget.h"
+#include "dbobjects/baseobjectwidget.h"
 
 class ObjectsTableWidget: public QWidget, public Ui::ObjectsTableWidget {
 	private:

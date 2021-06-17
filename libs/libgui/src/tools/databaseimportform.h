@@ -27,8 +27,8 @@
 
 #include "ui_databaseimportform.h"
 #include "databaseimporthelper.h"
-#include "htmlitemdelegate.h"
-#include "objectsfilterwidget.h"
+#include "utils/htmlitemdelegate.h"
+#include "widgets/objectsfilterwidget.h"
 #include <QTimer>
 
 class DatabaseImportForm: public QDialog, public Ui::DatabaseImportForm {

@@ -28,7 +28,7 @@
 #include <QObject>
 #include <QThread>
 #include "catalog.h"
-#include "modelwidget.h"
+#include "widgets/modelwidget.h"
 #include <random>
 
 class DatabaseImportHelper: public QObject {

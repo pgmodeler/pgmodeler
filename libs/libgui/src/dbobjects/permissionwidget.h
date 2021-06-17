@@ -27,8 +27,8 @@
 
 #include "baseobjectwidget.h"
 #include "ui_permissionwidget.h"
-#include "objectstablewidget.h"
-#include "modelobjectswidget.h"
+#include "widgets/objectstablewidget.h"
+#include "widgets/modelobjectswidget.h"
 
 class PermissionWidget: public BaseObjectWidget, public Ui::PermissionWidget {
 	private:

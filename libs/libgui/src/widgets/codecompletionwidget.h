@@ -27,7 +27,7 @@ the syntax highlighter installed on it.
 #define CODE_COMPLETION_WIDGET_H
 
 #include <QWidget>
-#include "syntaxhighlighter.h"
+#include "utils/syntaxhighlighter.h"
 #include "databasemodel.h"
 
 class CodeCompletionWidget: public QWidget

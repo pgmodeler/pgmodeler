@@ -26,7 +26,7 @@
 #define SCHEMA_WIDGET_H
 
 #include "baseobjectwidget.h"
-#include "colorpickerwidget.h"
+#include "widgets/colorpickerwidget.h"
 #include "ui_schemawidget.h"
 
 class SchemaWidget: public BaseObjectWidget, public Ui::SchemaWidget {

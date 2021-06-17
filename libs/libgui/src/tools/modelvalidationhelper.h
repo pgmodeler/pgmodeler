@@ -29,7 +29,7 @@
 #include "validationinfo.h"
 #include "databasemodel.h"
 #include "connection.h"
-#include "modelexporthelper.h"
+#include "tools/modelexporthelper.h"
 
 class ModelValidationHelper: public QObject {
 	private:

@@ -29,12 +29,12 @@
 #include "modelsdiffhelper.h"
 #include "databaseimporthelper.h"
 #include "modelexporthelper.h"
-#include "syntaxhighlighter.h"
-#include "htmlitemdelegate.h"
-#include "numberedtexteditor.h"
-#include "baseconfigwidget.h"
-#include "fileselectorwidget.h"
-#include "objectsfilterwidget.h"
+#include "utils/syntaxhighlighter.h"
+#include "utils/htmlitemdelegate.h"
+#include "widgets/numberedtexteditor.h"
+#include "settings/baseconfigwidget.h"
+#include "widgets/fileselectorwidget.h"
+#include "widgets/objectsfilterwidget.h"
 #include <QThread>
 
 class ModelDatabaseDiffForm: public BaseConfigWidget, public Ui::ModelDatabaseDiffForm {

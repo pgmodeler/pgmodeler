@@ -29,10 +29,10 @@ treat other attribute of those classes.
 
 #include "baseobjectwidget.h"
 #include "ui_basefunctionwidget.h"
-#include "objectstablewidget.h"
+#include "widgets/objectstablewidget.h"
 #include "codecompletionwidget.h"
 #include "parameterwidget.h"
-#include "numberedtexteditor.h"
+#include "widgets/numberedtexteditor.h"
 
 class BaseFunctionWidget: public BaseObjectWidget, public Ui::BaseFunctionWidget  {
 	private:

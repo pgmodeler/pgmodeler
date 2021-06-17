@@ -27,11 +27,11 @@
 
 #include <QWidget>
 #include "ui_sourceeditorwidget.h"
-#include "numberedtexteditor.h"
-#include "syntaxhighlighter.h"
-#include "findreplacewidget.h"
-#include "codecompletionwidget.h"
-#include "fileselectorwidget.h"
+#include "widgets/numberedtexteditor.h"
+#include "utils/syntaxhighlighter.h"
+#include "widgets/findreplacewidget.h"
+#include "widgets/codecompletionwidget.h"
+#include "widgets/fileselectorwidget.h"
 
 class SourceEditorWidget: public QWidget, public Ui::SourceEditorWidget {
 	private:

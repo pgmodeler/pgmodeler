@@ -17,7 +17,7 @@
 */
 
 #include "modelfixform.h"
-#include "configurationform.h"
+#include "settings/configurationform.h"
 #include <iostream>
 #include "guiutilsns.h"
 

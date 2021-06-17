@@ -27,7 +27,7 @@
 
 #include "ui_relationshipconfigwidget.h"
 #include "baseconfigwidget.h"
-#include "syntaxhighlighter.h"
+#include "utils/syntaxhighlighter.h"
 #include "relationshipview.h"
 
 class RelationshipConfigWidget:  public BaseConfigWidget, public Ui::RelationshipConfigWidget {

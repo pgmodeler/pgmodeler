@@ -23,9 +23,9 @@
 #include "indexwidget.h"
 #include "triggerwidget.h"
 #include "baseform.h"
-#include "tabledatawidget.h"
+#include "widgets/tabledatawidget.h"
 #include "policywidget.h"
-#include "generalconfigwidget.h"
+#include "settings/generalconfigwidget.h"
 
 TableWidget::TableWidget(QWidget *parent, ObjectType tab_type): BaseObjectWidget(parent, tab_type)
 {

@@ -27,8 +27,8 @@
 
 #include <QDialog>
 #include "ui_bugreportform.h"
-#include "syntaxhighlighter.h"
-#include "fileselectorwidget.h"
+#include "utils/syntaxhighlighter.h"
+#include "widgets/fileselectorwidget.h"
 
 class BugReportForm : public QDialog, public Ui::BugReportForm {
 	private:

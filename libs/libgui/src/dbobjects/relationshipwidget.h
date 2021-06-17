@@ -27,8 +27,8 @@
 
 #include "baseobjectwidget.h"
 #include "ui_relationshipwidget.h"
-#include "objectstablewidget.h"
-#include "colorpickerwidget.h"
+#include "widgets/objectstablewidget.h"
+#include "widgets/colorpickerwidget.h"
 
 class RelationshipWidget: public BaseObjectWidget, public Ui::RelationshipWidget {
 	private:

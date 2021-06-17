@@ -27,7 +27,7 @@
 
 #include <QtWidgets>
 #include "ui_pgsqltypewidget.h"
-#include "syntaxhighlighter.h"
+#include "utils/syntaxhighlighter.h"
 #include "databasemodel.h"
 #include "messagebox.h"
 

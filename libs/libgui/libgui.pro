@@ -53,6 +53,7 @@ src/dbobjects/databasewidget.cpp \
 src/dbobjects/indexwidget.cpp \
 src/dbobjects/procedurewidget.cpp \
 src/dbobjects/tagwidget.cpp \
+src/dbobjects/elementstablewidget.cpp \
 src/settings/appearanceconfigwidget.cpp \
 src/settings/configurationform.cpp \
 src/settings/generalconfigwidget.cpp \
@@ -77,6 +78,10 @@ src/tools/metadatahandlingform.cpp \
 src/tools/modelexporthelper.cpp \
 src/tools/modelsdiffhelper.cpp \
 src/tools/sqlexecutionwidget.cpp \
+src/tools/validationinfo.cpp \
+src/tools/modelvalidationhelper.cpp \
+src/tools/swapobjectsidswidget.cpp \
+src/tools/modelvalidationwidget.cpp \
 src/utils/deletableitemdelegate.cpp \
 src/utils/htmlitemdelegate.cpp \
 src/utils/plaintextitemdelegate.cpp \
@@ -88,9 +93,7 @@ src/widgets/donatewidget.cpp \
 src/widgets/modelnavigationwidget.cpp \
 src/widgets/numberedtexteditor.cpp \
 src/widgets/operationlistwidget.cpp \
-src/widgets/validationinfo.cpp \
 src/widgets/bulkdataeditwidget.cpp \
-src/widgets/elementstablewidget.cpp \
 src/widgets/modelobjectswidget.cpp \
 src/widgets/objectdepsrefswidget.cpp \
 src/widgets/sceneinfowidget.cpp \
@@ -102,12 +105,9 @@ src/widgets/objectfinderwidget.cpp \
 src/widgets/sourcecodewidget.cpp \
 src/widgets/codecompletionwidget.cpp \
 src/widgets/findreplacewidget.cpp \
-src/widgets/modelvalidationhelper.cpp \
 src/widgets/objectrenamewidget.cpp \
-src/widgets/swapobjectsidswidget.cpp \
 src/widgets/colorpickerwidget.cpp \
 src/widgets/layersconfigwidget.cpp \
-src/widgets/modelvalidationwidget.cpp \
 src/widgets/objectselectorwidget.cpp \
 src/widgets/tabledatawidget.cpp \
 src/widgets/csvloadwidget.cpp \
@@ -169,6 +169,7 @@ src/dbobjects/databasewidget.h \
 src/dbobjects/indexwidget.h \
 src/dbobjects/procedurewidget.h \
 src/dbobjects/tagwidget.h \
+src/dbobjects/elementstablewidget.h \
 src/settings/appearanceconfigwidget.h \
 src/settings/configurationform.h \
 src/settings/generalconfigwidget.h \
@@ -193,6 +194,10 @@ src/tools/metadatahandlingform.h \
 src/tools/modelexporthelper.h \
 src/tools/modelsdiffhelper.h \
 src/tools/sqlexecutionwidget.h \
+src/tools/validationinfo.h \
+src/tools/modelvalidationhelper.h \
+src/tools/swapobjectsidswidget.h \
+src/tools/modelvalidationwidget.h \
 src/utils/deletableitemdelegate.h \
 src/utils/htmlitemdelegate.h \
 src/utils/plaintextitemdelegate.h \
@@ -204,9 +209,7 @@ src/widgets/donatewidget.h \
 src/widgets/modelnavigationwidget.h \
 src/widgets/numberedtexteditor.h \
 src/widgets/operationlistwidget.h \
-src/widgets/validationinfo.h \
 src/widgets/bulkdataeditwidget.h \
-src/widgets/elementstablewidget.h \
 src/widgets/modelobjectswidget.h \
 src/widgets/objectdepsrefswidget.h \
 src/widgets/sceneinfowidget.h \
@@ -218,12 +221,9 @@ src/widgets/objectfinderwidget.h \
 src/widgets/sourcecodewidget.h \
 src/widgets/codecompletionwidget.h \
 src/widgets/findreplacewidget.h \
-src/widgets/modelvalidationhelper.h \
 src/widgets/objectrenamewidget.h \
-src/widgets/swapobjectsidswidget.h \
 src/widgets/colorpickerwidget.h \
 src/widgets/layersconfigwidget.h \
-src/widgets/modelvalidationwidget.h \
 src/widgets/objectselectorwidget.h \
 src/widgets/tabledatawidget.h \
 src/widgets/csvloadwidget.h \
@@ -299,6 +299,8 @@ ui/tools/sqltoolwidget.ui \
 ui/tools/databaseimportform.ui \
 ui/tools/modeldatabasediffform.ui \
 ui/tools/modelrestorationform.ui \
+ui/tools/swapobjectsidswidget.ui \
+ui/tools/modelvalidationwidget.ui \
 ui/widgets/aboutwidget.ui \
 ui/widgets/donatewidget.ui \
 ui/widgets/modelobjectswidget.ui \
@@ -308,10 +310,8 @@ ui/widgets/bulkdataeditwidget.ui \
 ui/widgets/fileselectorwidget.ui \
 ui/widgets/modeloverviewwidget.ui \
 ui/widgets/objectselectorwidget.ui \
-ui/widgets/swapobjectsidswidget.ui \
 ui/widgets/changelogwidget.ui \
 ui/widgets/findreplacewidget.ui \
-ui/widgets/modelvalidationwidget.ui \
 ui/widgets/objectsfilterwidget.ui \
 ui/widgets/tabledatawidget.ui \
 ui/widgets/colorpickerwidget.ui \
@@ -340,7 +340,12 @@ INCLUDEPATH += $$LIBCANVAS_INC \
 	       $$LIBCONNECTOR_INC \
 	       $$LIBCORE_INC \
 	       $$LIBPARSERS_INC \
-	       $$LIBUTILS_INC
+	       $$LIBUTILS_INC \
+	       $$PWD/src/dbobjects \
+	       $$PWD/src/settings \
+	       $$PWD/src/tools \
+	       $$PWD/src/utils \
+	       $$PWD/src/widgets
 
 DEPENDPATH += $$LIBCANVAS_ROOT \
 	      $$LIBCONNECTOR_ROOT \

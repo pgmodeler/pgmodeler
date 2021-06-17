@@ -26,7 +26,7 @@
 #define OBJECT_DEPS_REFS_WIDGET_H
 
 #include "ui_objectdepsrefswidget.h"
-#include "baseobjectwidget.h"
+#include "dbobjects/baseobjectwidget.h"
 #include "baseobjectview.h"
 
 class ObjectDepsRefsWidget: public BaseObjectWidget, public Ui::ObjectDepsRefsWidget {

@@ -17,8 +17,8 @@
 */
 
 #include "modelexportform.h"
-#include "taskprogresswidget.h"
-#include "configurationform.h"
+#include "widgets/taskprogresswidget.h"
+#include "settings/configurationform.h"
 #include "guiutilsns.h"
 
 bool ModelExportForm::low_verbosity = false;

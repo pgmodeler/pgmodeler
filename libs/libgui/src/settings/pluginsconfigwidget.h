@@ -27,9 +27,9 @@
 
 #include "baseconfigwidget.h"
 #include "ui_pluginsconfigwidget.h"
-#include "objectstablewidget.h"
+#include "widgets/objectstablewidget.h"
 #include "pgmodelerplugin.h"
-#include "fileselectorwidget.h"
+#include "widgets/fileselectorwidget.h"
 
 class PluginsConfigWidget: public BaseConfigWidget, public Ui::PluginsConfigWidget {
 	private:

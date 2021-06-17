@@ -28,8 +28,8 @@
 #include "ui_genericsqlwidget.h"
 #include "baseobjectwidget.h"
 #include "codecompletionwidget.h"
-#include "objectstablewidget.h"
-#include "objectselectorwidget.h"
+#include "widgets/objectstablewidget.h"
+#include "widgets/objectselectorwidget.h"
 
 class GenericSQLWidget: public BaseObjectWidget, public Ui::GenericSQLWidget {
 	private:

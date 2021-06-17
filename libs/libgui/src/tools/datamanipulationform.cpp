@@ -20,11 +20,11 @@
 #include "sqlexecutionwidget.h"
 #include "guiutilsns.h"
 #include "coreutilsns.h"
-#include "plaintextitemdelegate.h"
+#include "utils/plaintextitemdelegate.h"
 #include "baseform.h"
-#include "bulkdataeditwidget.h"
+#include "widgets/bulkdataeditwidget.h"
 #include "databaseexplorerwidget.h"
-#include "generalconfigwidget.h"
+#include "settings/generalconfigwidget.h"
 
 const QColor DataManipulationForm::RowColors[3]={ QColor(QString("#C0FFC0")), QColor(QString("#FFFFC0")), QColor(QString("#FFC0C0"))  };
 constexpr unsigned DataManipulationForm::NoOperation;

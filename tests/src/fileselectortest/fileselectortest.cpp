@@ -17,7 +17,7 @@
 */
 
 #include <QtTest/QtTest>
-#include "fileselectorwidget.h"
+#include "widgets/fileselectorwidget.h"
 
 class FileSelectorTest: public QObject {
   private:

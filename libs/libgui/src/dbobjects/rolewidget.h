@@ -27,7 +27,7 @@
 
 #include "baseobjectwidget.h"
 #include "ui_rolewidget.h"
-#include "objectstablewidget.h"
+#include "widgets/objectstablewidget.h"
 
 class RoleWidget: public BaseObjectWidget, public Ui::RoleWidget {
 	private:

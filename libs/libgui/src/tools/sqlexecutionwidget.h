@@ -26,14 +26,14 @@
 #define SQL_EXECUTION_WIDGET_H
 
 #include "ui_sqlexecutionwidget.h"
-#include "syntaxhighlighter.h"
+#include "utils/syntaxhighlighter.h"
 #include "connection.h"
 #include "databaseimportform.h"
-#include "findreplacewidget.h"
-#include "codecompletionwidget.h"
-#include "numberedtexteditor.h"
-#include "findreplacewidget.h"
-#include "resultsetmodel.h"
+#include "widgets/findreplacewidget.h"
+#include "widgets/codecompletionwidget.h"
+#include "widgets/numberedtexteditor.h"
+#include "widgets/findreplacewidget.h"
+#include "utils/resultsetmodel.h"
 #include "sqlexecutionhelper.h"
 
 class SQLExecutionWidget: public QWidget, public Ui::SQLExecutionWidget {

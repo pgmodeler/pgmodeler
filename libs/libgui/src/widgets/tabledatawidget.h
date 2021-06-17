@@ -25,7 +25,7 @@
 #ifndef TABLE_DATA_WIDGET_H
 #define TABLE_DATA_WIDGET_H
 
-#include "baseobjectwidget.h"
+#include "dbobjects/baseobjectwidget.h"
 #include "ui_tabledatawidget.h"
 #include "csvloadwidget.h"
 

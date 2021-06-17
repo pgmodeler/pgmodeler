@@ -27,7 +27,7 @@
 
 #include "baseobjectwidget.h"
 #include "ui_foreignserverwidget.h"
-#include "objectstablewidget.h"
+#include "widgets/objectstablewidget.h"
 
 class ForeignServerWidget: public BaseObjectWidget, public Ui::ForeignServerWidget {
 	private:

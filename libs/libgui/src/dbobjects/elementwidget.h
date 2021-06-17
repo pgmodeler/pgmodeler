@@ -27,8 +27,8 @@
 
 #include <QtWidgets>
 #include "ui_elementwidget.h"
-#include "objectstablewidget.h"
-#include "objectselectorwidget.h"
+#include "widgets/objectstablewidget.h"
+#include "widgets/objectselectorwidget.h"
 #include "partitionkey.h"
 
 class ElementWidget: public QWidget, public Ui::ElementWidget {

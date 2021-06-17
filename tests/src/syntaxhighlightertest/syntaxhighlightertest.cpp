@@ -17,7 +17,7 @@
 */
 
 #include <QtTest/QtTest>
-#include "syntaxhighlighter.h"
+#include "utils/syntaxhighlighter.h"
 #include "pgmodelerunittest.h"
 
 class SyntaxHighlighterTest: public QObject, public PgModelerUnitTest {

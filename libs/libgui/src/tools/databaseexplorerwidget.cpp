@@ -20,10 +20,10 @@
 #include "databaseimportform.h"
 #include "sqltoolwidget.h"
 #include "sqlexecutionwidget.h"
-#include "snippetsconfigwidget.h"
-#include "plaintextitemdelegate.h"
+#include "settings/snippetsconfigwidget.h"
+#include "utils/plaintextitemdelegate.h"
 #include "guiutilsns.h"
-#include "generalconfigwidget.h"
+#include "settings/generalconfigwidget.h"
 #include "qtcompat/splitbehaviorcompat.h"
 
 const QString DatabaseExplorerWidget::DepNotDefined;

@@ -27,7 +27,7 @@
 
 #include "ui_appearanceconfigwidget.h"
 #include "baseconfigwidget.h"
-#include "colorpickerwidget.h"
+#include "widgets/colorpickerwidget.h"
 #include "objectsscene.h"
 #include "databasemodel.h"
 #include <algorithm>

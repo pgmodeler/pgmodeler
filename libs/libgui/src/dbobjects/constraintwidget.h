@@ -27,7 +27,7 @@
 
 #include "baseobjectwidget.h"
 #include "ui_constraintwidget.h"
-#include "objectstablewidget.h"
+#include "widgets/objectstablewidget.h"
 #include "messagebox.h"
 #include "elementstablewidget.h"
 

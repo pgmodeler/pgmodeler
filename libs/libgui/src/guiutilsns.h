@@ -30,7 +30,7 @@
 #include <QTableWidget>
 #include <QPixmap>
 #include "baseobject.h"
-#include "numberedtexteditor.h"
+#include "widgets/numberedtexteditor.h"
 
 namespace GuiUtilsNs {
 	static constexpr unsigned SmallFontFactor = 0,

@@ -21,8 +21,8 @@
 #include "columnwidget.h"
 #include "tablewidget.h"
 #include "baseform.h"
-#include "relationshipconfigwidget.h"
-#include "generalconfigwidget.h"
+#include "settings/relationshipconfigwidget.h"
+#include "settings/generalconfigwidget.h"
 
 RelationshipWidget::RelationshipWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Relationship)
 {

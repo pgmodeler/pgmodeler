@@ -28,7 +28,7 @@
 #include <QtWidgets>
 #include "globalattributes.h"
 #include "ui_modelfixform.h"
-#include "fileselectorwidget.h"
+#include "widgets/fileselectorwidget.h"
 
 class ModelFixForm: public QDialog, public Ui::ModelFixForm {
 	private:

@@ -26,7 +26,7 @@
 #define SOURCE_CODE_WIDGET_H
 
 #include "ui_sourcecodewidget.h"
-#include "baseobjectwidget.h"
+#include "dbobjects/baseobjectwidget.h"
 #include "numberedtexteditor.h"
 
 class SourceCodeWidget: public BaseObjectWidget, public Ui::SourceCodeWidget {

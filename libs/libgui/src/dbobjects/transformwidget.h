@@ -27,7 +27,7 @@
 
 #include "baseobjectwidget.h"
 #include "pgsqltypewidget.h"
-#include "objectselectorwidget.h"
+#include "widgets/objectselectorwidget.h"
 #include "ui_transformwidget.h"
 
 class TransformWidget: public BaseObjectWidget, public Ui::TransformWidget {

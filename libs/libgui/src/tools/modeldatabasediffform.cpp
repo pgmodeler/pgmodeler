@@ -17,7 +17,7 @@
 */
 
 #include "modeldatabasediffform.h"
-#include "configurationform.h"
+#include "settings/configurationform.h"
 #include "databaseimportform.h"
 #include "guiutilsns.h"
 #include <QTemporaryFile>

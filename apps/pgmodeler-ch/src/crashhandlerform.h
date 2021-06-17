@@ -26,7 +26,7 @@
 #define CRASH_HANDLER_H
 
 #include <QDialog>
-#include "bugreportform.h"
+#include "tools/bugreportform.h"
 
 class CrashHandlerForm: public BugReportForm {
 	private:

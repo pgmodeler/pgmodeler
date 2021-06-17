@@ -17,7 +17,7 @@
 */
 
 #include "syntaxhighlighter.h"
-#include "numberedtexteditor.h"
+#include "widgets/numberedtexteditor.h"
 #include "qtcompat/qplaintexteditcompat.h"
 #include "textblockinfo.h"
 

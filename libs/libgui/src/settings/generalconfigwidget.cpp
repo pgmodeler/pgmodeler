@@ -18,16 +18,16 @@
 
 #include "generalconfigwidget.h"
 #include "objectsscene.h"
-#include "modelwidget.h"
+#include "widgets/modelwidget.h"
 #include "operationlist.h"
-#include "syntaxhighlighter.h"
+#include "utils/syntaxhighlighter.h"
 #include "mainwindow.h"
-#include "numberedtexteditor.h"
-#include "linenumberswidget.h"
-#include "sqlexecutionwidget.h"
-#include "modeldatabasediffform.h"
-#include "databaseimportform.h"
-#include "modelexportform.h"
+#include "widgets/numberedtexteditor.h"
+#include "widgets/linenumberswidget.h"
+#include "tools/sqlexecutionwidget.h"
+#include "tools/modeldatabasediffform.h"
+#include "tools/databaseimportform.h"
+#include "tools/modelexportform.h"
 
 map<QString, attribs_map> GeneralConfigWidget::config_params;
 map<QString, GeneralConfigWidget::WidgetState> GeneralConfigWidget::widgets_geom;

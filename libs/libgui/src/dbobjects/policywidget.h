@@ -23,8 +23,8 @@
 #include "baseobjectwidget.h"
 #include "ui_policywidget.h"
 #include "policy.h"
-#include "objectstablewidget.h"
-#include "modelobjectswidget.h"
+#include "widgets/objectstablewidget.h"
+#include "widgets/modelobjectswidget.h"
 
 class PolicyWidget : public BaseObjectWidget, Ui::PolicyWidget {
 	private:

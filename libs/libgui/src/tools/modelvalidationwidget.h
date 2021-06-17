@@ -27,10 +27,10 @@
 
 #include "ui_modelvalidationwidget.h"
 #include "connection.h"
-#include "modelwidget.h"
+#include "widgets/modelwidget.h"
 #include "modelvalidationhelper.h"
 #include "swapobjectsidswidget.h"
-#include "htmlitemdelegate.h"
+#include "utils/htmlitemdelegate.h"
 
 /* Declaring the ValidationInfo class as a Qt metatype in order to permit
 	 that instances of the class be used as data of QVariant and QMetaType */

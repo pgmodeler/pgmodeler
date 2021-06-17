@@ -25,7 +25,7 @@
 #ifndef MODEL_EXPORT_HELPER_H
 #define MODEL_EXPORT_HELPER_H
 
-#include "modelwidget.h"
+#include "widgets/modelwidget.h"
 #include "connection.h"
 
 class ModelExportHelper: public QObject {

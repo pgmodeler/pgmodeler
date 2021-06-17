@@ -29,7 +29,7 @@
 #include "ui_baseform.h"
 #include "exception.h"
 #include "messagebox.h"
-#include "baseobjectwidget.h"
+#include "dbobjects/baseobjectwidget.h"
 
 class BaseForm: public QDialog, public Ui::BaseForm {
 	private:

@@ -17,9 +17,9 @@
 */
 
 #include "codecompletionwidget.h"
-#include "generalconfigwidget.h"
+#include "settings/generalconfigwidget.h"
 #include "guiutilsns.h"
-#include "snippetsconfigwidget.h"
+#include "settings/snippetsconfigwidget.h"
 
 CodeCompletionWidget::CodeCompletionWidget(QPlainTextEdit *code_field_txt, bool enable_snippets) :	QWidget(dynamic_cast<QWidget *>(code_field_txt))
 {

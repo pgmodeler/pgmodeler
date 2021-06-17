@@ -25,7 +25,7 @@
 #ifndef CUSTOM_SQL_WIDGET_H
 #define CUSTOM_SQL_WIDGET_H
 
-#include "baseobjectwidget.h"
+#include "dbobjects/baseobjectwidget.h"
 #include "codecompletionwidget.h"
 #include "ui_customsqlwidget.h"
 

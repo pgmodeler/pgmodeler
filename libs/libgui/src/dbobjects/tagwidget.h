@@ -26,7 +26,7 @@
 #define TAG_WIDGET_H
 
 #include "baseobjectwidget.h"
-#include "colorpickerwidget.h"
+#include "widgets/colorpickerwidget.h"
 #include "ui_tagwidget.h"
 
 class TagWidget: public BaseObjectWidget, public Ui::TagWidget {

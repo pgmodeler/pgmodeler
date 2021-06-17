@@ -18,9 +18,9 @@
 
 #include "baseobjectwidget.h"
 #include "permissionwidget.h"
-#include "customsqlwidget.h"
+#include "widgets/customsqlwidget.h"
 #include "baseform.h"
-#include "generalconfigwidget.h"
+#include "settings/generalconfigwidget.h"
 
 const QColor BaseObjectWidget::ProtRowBgColor=QColor(255,180,180);
 const QColor BaseObjectWidget::ProtRowFgColor=QColor(80,80,80);

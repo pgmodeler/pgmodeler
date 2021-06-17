@@ -18,7 +18,7 @@
 
 /**
 \ingroup libgui
-\class DataGridForm
+\class DataManipulationForm
 \brief Implements the operations to handle table's data
 */
 
@@ -27,9 +27,9 @@
 
 #include "ui_datamanipulationform.h"
 #include "catalog.h"
-#include "syntaxhighlighter.h"
-#include "codecompletionwidget.h"
-#include "csvloadwidget.h"
+#include "utils/syntaxhighlighter.h"
+#include "widgets/codecompletionwidget.h"
+#include "widgets/csvloadwidget.h"
 
 class DataManipulationForm: public QDialog, public Ui::DataManipulationForm {
 	private:

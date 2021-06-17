@@ -27,7 +27,7 @@
 
 #include "baseobjectwidget.h"
 #include "ui_foreigndatawrapperwidget.h"
-#include "objectstablewidget.h"
+#include "widgets/objectstablewidget.h"
 
 class ForeignDataWrapperWidget: public BaseObjectWidget, public Ui::ForeignDataWrapperWidget {
 	private:

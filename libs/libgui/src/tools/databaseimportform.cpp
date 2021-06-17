@@ -17,9 +17,9 @@
 */
 
 #include "databaseimportform.h"
-#include "taskprogresswidget.h"
-#include "configurationform.h"
-#include "taskprogresswidget.h"
+#include "widgets/taskprogresswidget.h"
+#include "settings/configurationform.h"
+#include "widgets/taskprogresswidget.h"
 #include "guiutilsns.h"
 #include "coreutilsns.h"
 #include "defaultlanguages.h"

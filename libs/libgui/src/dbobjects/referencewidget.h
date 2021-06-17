@@ -21,12 +21,12 @@
 
 #include <QWidget>
 #include "ui_referencewidget.h"
-#include "numberedtexteditor.h"
-#include "syntaxhighlighter.h"
+#include "widgets/numberedtexteditor.h"
+#include "utils/syntaxhighlighter.h"
 #include "codecompletionwidget.h"
-#include "objectselectorwidget.h"
+#include "widgets/objectselectorwidget.h"
 #include "pgsqltypewidget.h"
-#include "objectstablewidget.h"
+#include "widgets/objectstablewidget.h"
 
 class ReferenceWidget : public QWidget, Ui::ReferenceWidget {
 	private:

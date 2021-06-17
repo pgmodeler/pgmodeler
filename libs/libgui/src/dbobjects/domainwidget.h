@@ -28,7 +28,7 @@
 #include "baseobjectwidget.h"
 #include "ui_domainwidget.h"
 #include "pgsqltypewidget.h"
-#include "objectstablewidget.h"
+#include "widgets/objectstablewidget.h"
 
 class DomainWidget: public BaseObjectWidget, public Ui::DomainWidget {
 	private:

@@ -26,13 +26,13 @@
 #define SQL_TOOL_WIDGET_H
 
 #include "ui_sqltoolwidget.h"
-#include "syntaxhighlighter.h"
+#include "utils/syntaxhighlighter.h"
 #include "connection.h"
 #include "databaseimportform.h"
 #include "datamanipulationform.h"
-#include "findreplacewidget.h"
-#include "codecompletionwidget.h"
-#include "numberedtexteditor.h"
+#include "widgets/findreplacewidget.h"
+#include "widgets/codecompletionwidget.h"
+#include "widgets/numberedtexteditor.h"
 #include "databaseexplorerwidget.h"
 #include "sqlexecutionwidget.h"
 

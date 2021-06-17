@@ -27,7 +27,7 @@
 
 #include "baseobjectwidget.h"
 #include "ui_usermappingwidget.h"
-#include "objectstablewidget.h"
+#include "widgets/objectstablewidget.h"
 
 class UserMappingWidget: public BaseObjectWidget, public Ui::UserMappingWidget {
 	private:

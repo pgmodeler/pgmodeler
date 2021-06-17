@@ -28,9 +28,9 @@
 #include <QtWidgets>
 #include "baseobjectwidget.h"
 #include "ui_viewwidget.h"
-#include "objectstablewidget.h"
+#include "widgets/objectstablewidget.h"
 #include "codecompletionwidget.h"
-#include "numberedtexteditor.h"
+#include "widgets/numberedtexteditor.h"
 
 /* Declaring the Reference class as a Qt metatype in order to permit
 	 that instances of the class be used as data of QVariant and QMetaType */

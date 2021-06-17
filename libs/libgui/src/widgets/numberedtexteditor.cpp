@@ -17,7 +17,7 @@
 */
 
 #include "numberedtexteditor.h"
-#include "generalconfigwidget.h"
+#include "settings/generalconfigwidget.h"
 #include <QTextBlock>
 #include <QScrollBar>
 #include <QDebug>

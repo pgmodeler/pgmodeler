@@ -27,10 +27,10 @@
 
 #include "ui_modelexportform.h"
 #include "schemaparser.h"
-#include "modelwidget.h"
+#include "widgets/modelwidget.h"
 #include "modelexporthelper.h"
-#include "htmlitemdelegate.h"
-#include "fileselectorwidget.h"
+#include "utils/htmlitemdelegate.h"
+#include "widgets/fileselectorwidget.h"
 
 class ModelExportForm: public QDialog, public Ui::ModelExportForm {
 	private:

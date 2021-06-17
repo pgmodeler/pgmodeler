@@ -17,9 +17,9 @@
 */
 
 #include "modelobjectswidget.h"
-#include "databaseimportform.h"
+#include "tools/databaseimportform.h"
 #include "guiutilsns.h"
-#include "generalconfigwidget.h"
+#include "settings/generalconfigwidget.h"
 
 ModelObjectsWidget::ModelObjectsWidget(bool simplified_view, QWidget *parent) : QWidget(parent)
 {

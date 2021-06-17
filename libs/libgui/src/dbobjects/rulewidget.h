@@ -27,7 +27,7 @@
 
 #include "baseobjectwidget.h"
 #include "ui_rulewidget.h"
-#include "objectstablewidget.h"
+#include "widgets/objectstablewidget.h"
 #include "codecompletionwidget.h"
 
 class RuleWidget: public BaseObjectWidget, public Ui::RuleWidget {

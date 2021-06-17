@@ -29,7 +29,7 @@
 #include "baseobjectwidget.h"
 #include "ui_aggregatewidget.h"
 #include "pgsqltypewidget.h"
-#include "objectstablewidget.h"
+#include "widgets/objectstablewidget.h"
 
 class AggregateWidget: public BaseObjectWidget, public Ui::AggregateWidget {
 	private:

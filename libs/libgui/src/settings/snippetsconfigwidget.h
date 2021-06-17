@@ -27,9 +27,9 @@
 
 #include "ui_snippetsconfigwidget.h"
 #include "baseconfigwidget.h"
-#include "syntaxhighlighter.h"
+#include "utils/syntaxhighlighter.h"
 #include "baseobject.h"
-#include "numberedtexteditor.h"
+#include "widgets/numberedtexteditor.h"
 
 class SnippetsConfigWidget: public BaseConfigWidget, public Ui::SnippetsConfigWidget {
 	private:

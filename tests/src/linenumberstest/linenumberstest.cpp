@@ -17,7 +17,7 @@
 */
 
 #include <QtTest/QtTest>
-#include "numberedtexteditor.h"
+#include "widgets/numberedtexteditor.h"
 #include <QHBoxLayout>
 #include <QDialog>
 

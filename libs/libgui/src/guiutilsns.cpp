@@ -3,9 +3,9 @@
 #include "guiutilsns.h"
 #include "messagebox.h"
 #include "databasemodel.h"
-#include "numberedtexteditor.h"
+#include "widgets/numberedtexteditor.h"
 #include "baseform.h"
-#include "bulkdataeditwidget.h"
+#include "widgets/bulkdataeditwidget.h"
 
 namespace GuiUtilsNs {
 

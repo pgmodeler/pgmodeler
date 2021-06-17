@@ -27,7 +27,7 @@
 
 #include <QtWidgets>
 #include "databasemodel.h"
-#include "syntaxhighlighter.h"
+#include "utils/syntaxhighlighter.h"
 #include "modelobjectswidget.h"
 #include "ui_objectselectorwidget.h"
 

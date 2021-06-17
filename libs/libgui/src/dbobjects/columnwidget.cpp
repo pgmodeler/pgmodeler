@@ -19,7 +19,7 @@
 #include "columnwidget.h"
 #include "sequencewidget.h"
 #include "baseform.h"
-#include "generalconfigwidget.h"
+#include "settings/generalconfigwidget.h"
 
 ColumnWidget::ColumnWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Column)
 {

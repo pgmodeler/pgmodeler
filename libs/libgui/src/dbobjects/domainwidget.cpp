@@ -17,7 +17,7 @@
 */
 
 #include "domainwidget.h"
-#include "numberedtexteditor.h"
+#include "widgets/numberedtexteditor.h"
 
 DomainWidget::DomainWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Domain)
 {

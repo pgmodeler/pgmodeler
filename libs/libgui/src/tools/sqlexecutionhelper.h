@@ -28,7 +28,7 @@
 #include <QObject>
 #include <QTableWidget>
 #include "connection.h"
-#include "resultsetmodel.h"
+#include "utils/resultsetmodel.h"
 
 class SQLExecutionHelper : public QObject {
 	private:

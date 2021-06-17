@@ -28,9 +28,9 @@
 #include "ui_generalconfigwidget.h"
 #include "baseconfigwidget.h"
 #include "messagebox.h"
-#include "colorpickerwidget.h"
-#include "numberedtexteditor.h"
-#include "fileselectorwidget.h"
+#include "widgets/colorpickerwidget.h"
+#include "widgets/numberedtexteditor.h"
+#include "widgets/fileselectorwidget.h"
 
 class GeneralConfigWidget: public BaseConfigWidget, public Ui::GeneralConfigWidget {
 	private:

@@ -28,7 +28,7 @@
 #include "baseobjectwidget.h"
 #include "ui_operatorclasswidget.h"
 #include "pgsqltypewidget.h"
-#include "objectstablewidget.h"
+#include "widgets/objectstablewidget.h"
 
 /* Declaring the OperatorClassElement class as a Qt metatype in order to permit
 	 that instances of the class be used as data of QVariant and QMetaType */

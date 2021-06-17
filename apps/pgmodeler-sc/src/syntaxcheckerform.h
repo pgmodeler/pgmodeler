@@ -28,10 +28,10 @@
 #include <QObject>
 #include <QWidget>
 #include "ui_syntaxcheckerform.h"
-#include "numberedtexteditor.h"
-#include "syntaxhighlighter.h"
-#include "fileselectorwidget.h"
-#include "findreplacewidget.h"
+#include "widgets/numberedtexteditor.h"
+#include "utils/syntaxhighlighter.h"
+#include "widgets/fileselectorwidget.h"
+#include "widgets/findreplacewidget.h"
 
 class SyntaxCheckerForm: public QWidget, public Ui::SyntaxCheckerForm {
 	private:
