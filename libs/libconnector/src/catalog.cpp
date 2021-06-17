@@ -16,7 +16,7 @@
 # Also, you can get the complete GNU General Public License at <http://www.gnu.org/licenses/>
 */
 #include "catalog.h"
-#include "pgmodelerns.h"
+#include "coreutilsns.h"
 #include "qtcompat/splitbehaviorcompat.h"
 
 const QString Catalog::QueryList("list");
@@ -167,7 +167,7 @@ void Catalog::setObjectFilters(QStringList filters, bool only_matching, bool mat
 
 	ObjectType obj_type;
 	QString pattern, mode, aux_filter, parent_alias_ref, tab_filter = "^(%1)(.)+", _tmpl_filter;
-	QStringList values,	modes = { PgModelerNs::FilterWildcard, PgModelerNs::FilterRegExp };
+	QStringList values,	modes = { CoreUtilsNs::FilterWildcard, CoreUtilsNs::FilterRegExp };
 	map<ObjectType, QStringList> tab_patterns;
 	map<ObjectType, QStringList> parsed_filters;
 	attribs_map fmt_filter;
@@ -224,7 +224,7 @@ void Catalog::setObjectFilters(QStringList filters, bool only_matching, bool mat
 
 	for(auto &filter : filters)
 	{
-		values = filter.split(PgModelerNs::FilterSeparator);
+		values = filter.split(CoreUtilsNs::FilterSeparator);
 
 		// Raises an error if the filter has an invalid field count
 		if(values.size() != 3)
@@ -245,14 +245,14 @@ void Catalog::setObjectFilters(QStringList filters, bool only_matching, bool mat
 		}
 
 		// Converting wildcard patterns into regexp syntax
-		if(mode == PgModelerNs::FilterWildcard)
+		if(mode == CoreUtilsNs::FilterWildcard)
 		{
 			pattern.replace('.', "\\.");
 
 			// If the pattern has wildcard chars we replace them by (.)*
-			if(pattern.contains(PgModelerNs::WildcardChar))
+			if(pattern.contains(CoreUtilsNs::WildcardChar))
 			{
-				QStringList list = pattern.split(PgModelerNs::WildcardChar, QtCompat::KeepEmptyParts);
+				QStringList list = pattern.split(CoreUtilsNs::WildcardChar, QtCompat::KeepEmptyParts);
 				QString any_str = "(.)*";
 				pattern.clear();
 
@@ -1022,7 +1022,7 @@ QStringList Catalog::parseDefaultValues(const QString &def_values, const QString
 				idx = aux_def_vals.indexOf(']', pos + 1);
 
 			array_val = aux_def_vals.mid(pos, (idx - pos) + 1);
-			array_val.replace(",", PgModelerNs::DataSeparator);
+			array_val.replace(",", CoreUtilsNs::DataSeparator);
 			aux_def_vals.replace(pos, array_val.size(), array_val);
 		}
 	}
@@ -1081,7 +1081,7 @@ QStringList Catalog::parseDefaultValues(const QString &def_values, const QString
 	for(auto &val : values)
 	{
 		if(val.contains(array_expr))
-			val.replace(PgModelerNs::DataSeparator, ",");
+			val.replace(CoreUtilsNs::DataSeparator, ",");
 	}
 
 	return values;

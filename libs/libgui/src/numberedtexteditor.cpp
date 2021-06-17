@@ -23,7 +23,7 @@
 #include <QDebug>
 #include <QFileDialog>
 #include <QTemporaryFile>
-#include "pgmodeleruins.h"
+#include "guiutilsns.h"
 #include "qtcompat/qplaintexteditcompat.h"
 #include "qtcompat/qfontmetricscompat.h"
 
@@ -66,7 +66,7 @@ NumberedTextEditor::NumberedTextEditor(QWidget * parent, bool handle_ext_files) 
 		msg_lbl->setTextInteractionFlags(Qt::TextSelectableByMouse);
 
 		ico->setMaximumSize(22,22);
-		ico->setPixmap(QPixmap(PgModelerUiNs::getIconPath("alert")));
+		ico->setPixmap(QPixmap(GuiUtilsNs::getIconPath("alert")));
 		ico->setScaledContents(true);
 
 		editor_alert_wgt = new QWidget(this);
@@ -80,7 +80,7 @@ NumberedTextEditor::NumberedTextEditor(QWidget * parent, bool handle_ext_files) 
 		hbox->addSpacerItem(new QSpacerItem(10,10, QSizePolicy::Expanding));
 
 		load_file_btn = new QToolButton(top_widget);
-		load_file_btn->setIcon(QPixmap(PgModelerUiNs::getIconPath("open")));
+		load_file_btn->setIcon(QPixmap(GuiUtilsNs::getIconPath("open")));
 		load_file_btn->setIconSize(QSize(20,20));
 		load_file_btn->setAutoRaise(true);
 		load_file_btn->setText(tr("Load"));
@@ -91,7 +91,7 @@ NumberedTextEditor::NumberedTextEditor(QWidget * parent, bool handle_ext_files) 
 		connect(load_file_btn, SIGNAL(clicked(bool)), this, SLOT(loadFile()));
 
 		edit_src_btn = new QToolButton(top_widget);
-		edit_src_btn->setIcon(QPixmap(PgModelerUiNs::getIconPath("edit")));
+		edit_src_btn->setIcon(QPixmap(GuiUtilsNs::getIconPath("edit")));
 		edit_src_btn->setIconSize(QSize(20,20));
 		edit_src_btn->setAutoRaise(true);
 		edit_src_btn->setText(tr("Edit"));
@@ -102,7 +102,7 @@ NumberedTextEditor::NumberedTextEditor(QWidget * parent, bool handle_ext_files) 
 		connect(edit_src_btn, SIGNAL(clicked(bool)), this, SLOT(editSource()));
 
 		clear_btn = new QToolButton(top_widget);
-		clear_btn->setIcon(QPixmap(PgModelerUiNs::getIconPath("cleartext")));
+		clear_btn->setIcon(QPixmap(GuiUtilsNs::getIconPath("cleartext")));
 		clear_btn->setIconSize(QSize(20,20));
 		clear_btn->setAutoRaise(true);
 		clear_btn->setText(tr("Clear"));
@@ -429,7 +429,7 @@ void NumberedTextEditor::handleProcessStart()
 {
 	if(src_editor_proc.state() == QProcess::Running)
 	{
-		msg_lbl->setText(PgModelerUiNs::formatMessage(tr("The source editor `%1' is running on `pid: %2'.")
+		msg_lbl->setText(GuiUtilsNs::formatMessage(tr("The source editor `%1' is running on `pid: %2'.")
 																									.arg(src_editor_proc.program()).arg(src_editor_proc.processId())));
 		editor_alert_wgt->setVisible(true);
 		load_file_btn->setEnabled(false);
@@ -444,7 +444,7 @@ void NumberedTextEditor::handleProcessError()
 	Messagebox msg_box;
 	QStringList errors = { src_editor_proc.errorString(),  src_editor_proc.readAllStandardError() };
 
-	msg_box.show(PgModelerUiNs::formatMessage(tr("Failed to the source code editor <strong>%1</strong>! Make to sure that the source editor path points to a valid executable and the current user has permission to run the application. Error message returned: <strong>%2</strong>")
+	msg_box.show(GuiUtilsNs::formatMessage(tr("Failed to the source code editor <strong>%1</strong>! Make to sure that the source editor path points to a valid executable and the current user has permission to run the application. Error message returned: <strong>%2</strong>")
 																						.arg(src_editor_proc.program())
 																						.arg(errors.join(QString("\n\n")))), Messagebox::ErrorIcon);
 

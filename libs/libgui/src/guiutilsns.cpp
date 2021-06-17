@@ -1,15 +1,13 @@
-#include "pgmodeleruins.h"
-#include "messagebox.h"
-#include "databasemodel.h"
 #include <QLabel>
 #include <QGraphicsDropShadowEffect>
+#include "guiutilsns.h"
+#include "messagebox.h"
+#include "databasemodel.h"
 #include "numberedtexteditor.h"
-#include <QScreen>
-#include <QDesktopWidget>
 #include "baseform.h"
 #include "bulkdataeditwidget.h"
 
-namespace PgModelerUiNs {
+namespace GuiUtilsNs {
 
 	NumberedTextEditor *createNumberedTextEditor(QWidget *parent, bool handle_ext_files)
 	{

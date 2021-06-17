@@ -52,7 +52,7 @@
 #include "customsqlwidget.h"
 #include "tagwidget.h"
 #include "eventtriggerwidget.h"
-#include "pgmodeleruins.h"
+#include "guiutilsns.h"
 #include "swapobjectsidswidget.h"
 #include "genericsqlwidget.h"
 #include "policywidget.h"
@@ -119,7 +119,7 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	label->setMinimumSize(QSize(20, 20));
 	label->setMaximumSize(QSize(20, 20));
 	label->setScaledContents(true);
-	label->setPixmap(QPixmap(PgModelerUiNs::getIconPath("alert")));
+	label->setPixmap(QPixmap(GuiUtilsNs::getIconPath("alert")));
 
 	grid=new QGridLayout;
 	grid->addWidget(label, 0, 0, 1, 1);
@@ -135,7 +135,7 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	label->setFont(font);
 	label->setWordWrap(true);
 	label->setText(tr("<strong>ATTENTION:</strong> The database model is protected! Operations that could modify it are disabled!"));
-	PgModelerUiNs::configureWidgetFont(label, PgModelerUiNs::MediumFontFactor);
+	GuiUtilsNs::configureWidgetFont(label, GuiUtilsNs::MediumFontFactor);
 
 	grid->addWidget(label, 0, 1, 1, 1);
 	protected_model_frm->setLayout(grid);
@@ -210,64 +210,64 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	zoom_info_lbl->setVisible(false);
 	zoom_info_timer.setInterval(3000);
 
-	action_edit_data=new QAction(QIcon(PgModelerUiNs::getIconPath("editdata")), tr("Edit data"), this);
+	action_edit_data=new QAction(QIcon(GuiUtilsNs::getIconPath("editdata")), tr("Edit data"), this);
 
-	action_source_code=new QAction(QIcon(PgModelerUiNs::getIconPath("sqlcode")), tr("Source"), this);
+	action_source_code=new QAction(QIcon(GuiUtilsNs::getIconPath("sqlcode")), tr("Source"), this);
 	action_source_code->setShortcut(QKeySequence(tr("Alt+S")));
 	action_source_code->setToolTip(tr("Show object source code"));
 
-	action_edit=new QAction(QIcon(PgModelerUiNs::getIconPath("edit")), tr("Properties"), this);
+	action_edit=new QAction(QIcon(GuiUtilsNs::getIconPath("edit")), tr("Properties"), this);
 	action_edit->setShortcut(QKeySequence(tr("Space")));
 	action_edit->setToolTip(tr("Edit the object properties"));
 
-	action_protect=new QAction(QIcon(PgModelerUiNs::getIconPath("protect")), tr("Protect"), this);
-	action_unprotect=new QAction(QIcon(PgModelerUiNs::getIconPath("unprotect")), tr("Unprotect"), this);
+	action_protect=new QAction(QIcon(GuiUtilsNs::getIconPath("protect")), tr("Protect"), this);
+	action_unprotect=new QAction(QIcon(GuiUtilsNs::getIconPath("unprotect")), tr("Unprotect"), this);
 	action_protect->setToolTip(tr("Protects object(s) from modifications"));
 
-	action_remove=new QAction(QIcon(PgModelerUiNs::getIconPath("delete")), tr("Delete"), this);
+	action_remove=new QAction(QIcon(GuiUtilsNs::getIconPath("delete")), tr("Delete"), this);
 	action_remove->setShortcut(QKeySequence(tr("Del")));
 	action_remove->setMenuRole(QAction::NoRole);
 
-	action_cascade_del=new QAction(QIcon(PgModelerUiNs::getIconPath("delcascade")), tr("Del. cascade"), this);
+	action_cascade_del=new QAction(QIcon(GuiUtilsNs::getIconPath("delcascade")), tr("Del. cascade"), this);
 	action_cascade_del->setShortcut(QKeySequence(tr("Shift+Del")));
 	action_cascade_del->setMenuRole(QAction::NoRole);
 
-	action_select_all=new QAction(QIcon(PgModelerUiNs::getIconPath("selectall")), tr("Select all"), this);
+	action_select_all=new QAction(QIcon(GuiUtilsNs::getIconPath("selectall")), tr("Select all"), this);
 	action_select_all->setToolTip(tr("Selects all the graphical objects in the model"));
 	action_select_all->setMenu(&select_all_menu);
 
-	action_convert_relnn=new QAction(QIcon(PgModelerUiNs::getIconPath("convrelnn")), tr("Convert"), this);
-	action_convert_rel1n=new QAction(QIcon(PgModelerUiNs::getIconPath("convrel1n")), tr("Convert"), this);
+	action_convert_relnn=new QAction(QIcon(GuiUtilsNs::getIconPath("convrelnn")), tr("Convert"), this);
+	action_convert_rel1n=new QAction(QIcon(GuiUtilsNs::getIconPath("convrel1n")), tr("Convert"), this);
 
-	action_copy=new QAction(QIcon(PgModelerUiNs::getIconPath("copy")), tr("Copy"), this);
+	action_copy=new QAction(QIcon(GuiUtilsNs::getIconPath("copy")), tr("Copy"), this);
 	action_copy->setShortcut(QKeySequence(tr("Ctrl+C")));
 	action_copy->setMenuRole(QAction::NoRole);
 
-	action_paste=new QAction(QIcon(PgModelerUiNs::getIconPath("paste")), tr("Paste"), this);
+	action_paste=new QAction(QIcon(GuiUtilsNs::getIconPath("paste")), tr("Paste"), this);
 	action_paste->setShortcut(QKeySequence(tr("Ctrl+V")));
 	action_paste->setMenuRole(QAction::NoRole);
 
-	action_cut=new QAction(QIcon(PgModelerUiNs::getIconPath("cut")), tr("Cut"), this);
+	action_cut=new QAction(QIcon(GuiUtilsNs::getIconPath("cut")), tr("Cut"), this);
 	action_cut->setShortcut(QKeySequence(tr("Ctrl+X")));
 	action_cut->setMenuRole(QAction::NoRole);
 
-	action_deps_refs=new QAction(QIcon(PgModelerUiNs::getIconPath("depsrefs")), tr("Deps && Referrers"), this);
+	action_deps_refs=new QAction(QIcon(GuiUtilsNs::getIconPath("depsrefs")), tr("Deps && Referrers"), this);
 
-	action_new_object=new QAction(QIcon(PgModelerUiNs::getIconPath("newobject")), tr("New"), this);
+	action_new_object=new QAction(QIcon(GuiUtilsNs::getIconPath("newobject")), tr("New"), this);
 	action_new_object->setToolTip(tr("Add a new object in the model"));
 
-	action_quick_actions=new QAction(QIcon(PgModelerUiNs::getIconPath("quickactions")), tr("Quick"), this);
+	action_quick_actions=new QAction(QIcon(GuiUtilsNs::getIconPath("quickactions")), tr("Quick"), this);
 	action_quick_actions->setToolTip(tr("Quick action for the selected object"));
 	action_quick_actions->setMenu(&quick_actions_menu);
 
-	action_rename=new QAction(QIcon(PgModelerUiNs::getIconPath("rename")), tr("Rename"), this);
+	action_rename=new QAction(QIcon(GuiUtilsNs::getIconPath("rename")), tr("Rename"), this);
 	action_rename->setShortcut(QKeySequence(tr("F2")));
 	action_rename->setToolTip(tr("Quick rename the object"));
 
-	action_moveto_schema=new QAction(QIcon(PgModelerUiNs::getIconPath("movetoschema")), tr("Move to schema"), this);
+	action_moveto_schema=new QAction(QIcon(GuiUtilsNs::getIconPath("movetoschema")), tr("Move to schema"), this);
 	action_moveto_schema->setMenu(&schemas_menu);
 
-	action_set_layer=new QAction(QIcon(PgModelerUiNs::getIconPath("movetolayer")), tr("Set layers"), this);
+	action_set_layer=new QAction(QIcon(GuiUtilsNs::getIconPath("movetolayer")), tr("Set layers"), this);
 	action_set_layer->setMenu(&layers_menu);
 
 	layers_wgt = new LayersWidget(this);
@@ -275,40 +275,40 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	wgt_action_layers->setDefaultWidget(layers_wgt);
 	layers_menu.addAction(wgt_action_layers);
 
-	action_set_tag=new QAction(QIcon(PgModelerUiNs::getIconPath("tag")), tr("Set tag"), this);
+	action_set_tag=new QAction(QIcon(GuiUtilsNs::getIconPath("tag")), tr("Set tag"), this);
 	action_set_tag->setMenu(&tags_menu);
 
-	action_edit_perms=new QAction(QIcon(PgModelerUiNs::getIconPath("permission")), tr("Edit permissions"), this);
+	action_edit_perms=new QAction(QIcon(GuiUtilsNs::getIconPath("permission")), tr("Edit permissions"), this);
 	action_edit_perms->setShortcut(QKeySequence(tr("Ctrl+E")));
 
-	action_change_owner=new QAction(QIcon(PgModelerUiNs::getIconPath("changeowner")), tr("Change owner"), this);
+	action_change_owner=new QAction(QIcon(GuiUtilsNs::getIconPath("changeowner")), tr("Change owner"), this);
 	action_change_owner->setMenu(&owners_menu);
 
-	action_sel_sch_children=new QAction(QIcon(PgModelerUiNs::getIconPath("selectall")), tr("Select children"), this);
-	action_sel_tagged_tabs=new QAction(QIcon(PgModelerUiNs::getIconPath("selectall")), tr("Select tagged"), this);
-	action_sel_table_rels=new QAction(QIcon(PgModelerUiNs::getIconPath("selectall")), tr("Select relationships"), this);
+	action_sel_sch_children=new QAction(QIcon(GuiUtilsNs::getIconPath("selectall")), tr("Select children"), this);
+	action_sel_tagged_tabs=new QAction(QIcon(GuiUtilsNs::getIconPath("selectall")), tr("Select tagged"), this);
+	action_sel_table_rels=new QAction(QIcon(GuiUtilsNs::getIconPath("selectall")), tr("Select relationships"), this);
 
-	action_select_object=new QAction(QIcon(PgModelerUiNs::getIconPath("moved")), tr("Select"), this);
-	action_parent_rel=new QAction(QIcon(PgModelerUiNs::getIconPath("relationship")), tr("Open relationship"), this);
+	action_select_object=new QAction(QIcon(GuiUtilsNs::getIconPath("moved")), tr("Select"), this);
+	action_parent_rel=new QAction(QIcon(GuiUtilsNs::getIconPath("relationship")), tr("Open relationship"), this);
 
-	action_append_sql=new QAction(QIcon(PgModelerUiNs::getIconPath("sqlappend")), tr("Custom SQL"), this);
+	action_append_sql=new QAction(QIcon(GuiUtilsNs::getIconPath("sqlappend")), tr("Custom SQL"), this);
 	action_append_sql->setShortcut(QKeySequence(tr("Alt+Q")));
 
-	action_create_seq_col=new QAction(QIcon(PgModelerUiNs::getIconPath("sequence")), tr("Convert to sequence"), this);
-	action_conv_int_serial=new QAction(QIcon(PgModelerUiNs::getIconPath("sequence")), tr("Convert to serial"), this);
+	action_create_seq_col=new QAction(QIcon(GuiUtilsNs::getIconPath("sequence")), tr("Convert to sequence"), this);
+	action_conv_int_serial=new QAction(QIcon(GuiUtilsNs::getIconPath("sequence")), tr("Convert to serial"), this);
 
-	action_break_rel_line=new QAction(QIcon(PgModelerUiNs::getIconPath("breakrelline")), tr("Break line"), this);
+	action_break_rel_line=new QAction(QIcon(GuiUtilsNs::getIconPath("breakrelline")), tr("Break line"), this);
 
-	action_remove_rel_points=new QAction(QIcon(PgModelerUiNs::getIconPath("removepoints")), tr("Remove points"), this);
+	action_remove_rel_points=new QAction(QIcon(GuiUtilsNs::getIconPath("removepoints")), tr("Remove points"), this);
 
-	action_enable_sql=new QAction(QIcon(PgModelerUiNs::getIconPath("sqlcode")), tr("Enable SQL"), this);
-	action_disable_sql=new QAction(QIcon(PgModelerUiNs::getIconPath("disablesql")), tr("Disable SQL"), this);
+	action_enable_sql=new QAction(QIcon(GuiUtilsNs::getIconPath("sqlcode")), tr("Enable SQL"), this);
+	action_disable_sql=new QAction(QIcon(GuiUtilsNs::getIconPath("disablesql")), tr("Disable SQL"), this);
 
-	action_duplicate=new QAction(QIcon(PgModelerUiNs::getIconPath("duplicate")), tr("Duplicate"), this);
+	action_duplicate=new QAction(QIcon(GuiUtilsNs::getIconPath("duplicate")), tr("Duplicate"), this);
 	action_duplicate->setShortcut(QKeySequence(tr("Ctrl+D")));
 	action_duplicate->setMenuRole(QAction::NoRole);
 
-	action_pagination=new QAction(QIcon(PgModelerUiNs::getIconPath("pagination")), tr("Pagination"), this);
+	action_pagination=new QAction(QIcon(GuiUtilsNs::getIconPath("pagination")), tr("Pagination"), this);
 	action_pagination->setMenu(&pagination_menu);
 
 	action = pagination_menu.addAction(tr("Enable"));
@@ -319,7 +319,7 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	action->setData(false);
 	connect(action, SIGNAL(triggered(bool)), this, SLOT(togglePagination()));
 
-	action_collapse_mode=new QAction(QIcon(PgModelerUiNs::getIconPath("collapse")), tr("Collapse"), this);
+	action_collapse_mode=new QAction(QIcon(GuiUtilsNs::getIconPath("collapse")), tr("Collapse"), this);
 	action_no_collapse_attribs=new QAction(tr("Not collapsed"), this);
 	action_no_collapse_attribs->setData(enum_cast(CollapseMode::NotCollapsed));
 	action_collapse_ext_attribs=new QAction(tr("Extended attributes"), this);
@@ -327,7 +327,7 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	action_collpase_all_attribs=new QAction(tr("All attributes"), this);
 	action_collpase_all_attribs->setData(enum_cast(CollapseMode::AllAttribsCollapsed));
 
-	action_jump_to_table=new QAction(QIcon(PgModelerUiNs::getIconPath("jumptotable")), tr("Jump to table"), this);
+	action_jump_to_table=new QAction(QIcon(GuiUtilsNs::getIconPath("jumptotable")), tr("Jump to table"), this);
 	action_jump_to_table->setMenu(&jump_to_tab_menu);
 
 	toggle_attrs_menu.addAction(action_no_collapse_attribs);
@@ -335,28 +335,28 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	toggle_attrs_menu.addAction(action_collpase_all_attribs);
 	action_collapse_mode->setMenu(&toggle_attrs_menu);
 
-	action_schemas_rects=new QAction(QIcon(PgModelerUiNs::getIconPath("schemarect")), tr("Schemas rectangles"), this);
+	action_schemas_rects=new QAction(QIcon(GuiUtilsNs::getIconPath("schemarect")), tr("Schemas rectangles"), this);
 	action_show_schemas_rects=new QAction(tr("Show"), this);
 	action_hide_schemas_rects=new QAction(tr("Hide"), this);
 	toggle_sch_rects_menu.addAction(action_show_schemas_rects);
 	toggle_sch_rects_menu.addAction(action_hide_schemas_rects);
 	action_schemas_rects->setMenu(&toggle_sch_rects_menu);
 
-	action_fade=new QAction(QIcon(PgModelerUiNs::getIconPath("fade")), tr("Fade in/out"), this);
-	action_fade_in=new QAction(QIcon(PgModelerUiNs::getIconPath("fadein")), tr("Fade in"), this);
-	action_fade_out=new QAction(QIcon(PgModelerUiNs::getIconPath("fadeout")), tr("Fade out"), this);
+	action_fade=new QAction(QIcon(GuiUtilsNs::getIconPath("fade")), tr("Fade in/out"), this);
+	action_fade_in=new QAction(QIcon(GuiUtilsNs::getIconPath("fadein")), tr("Fade in"), this);
+	action_fade_out=new QAction(QIcon(GuiUtilsNs::getIconPath("fadeout")), tr("Fade out"), this);
 
-	action_fade_rels=new QAction(QIcon(PgModelerUiNs::getIconPath("relationship_grp")), tr("Relationships"), this);
-	action_fade_rels_in=new QAction(QIcon(PgModelerUiNs::getIconPath("fadein")), tr("Fade in"), this);
-	action_fade_rels_out=new QAction(QIcon(PgModelerUiNs::getIconPath("fadeout")), tr("Fade out"), this);
+	action_fade_rels=new QAction(QIcon(GuiUtilsNs::getIconPath("relationship_grp")), tr("Relationships"), this);
+	action_fade_rels_in=new QAction(QIcon(GuiUtilsNs::getIconPath("fadein")), tr("Fade in"), this);
+	action_fade_rels_out=new QAction(QIcon(GuiUtilsNs::getIconPath("fadeout")), tr("Fade out"), this);
 
-	action_fade_peer_tables = new QAction(QIcon(PgModelerUiNs::getIconPath("table_grp")), tr("Peer tables"), this);
-	action_fade_peer_tables_in = new QAction(QIcon(PgModelerUiNs::getIconPath("fadein")), tr("Fade in"), this);
-	action_fade_peer_tables_out = new QAction(QIcon(PgModelerUiNs::getIconPath("fadeout")), tr("Fade out"), this);
+	action_fade_peer_tables = new QAction(QIcon(GuiUtilsNs::getIconPath("table_grp")), tr("Peer tables"), this);
+	action_fade_peer_tables_in = new QAction(QIcon(GuiUtilsNs::getIconPath("fadein")), tr("Fade in"), this);
+	action_fade_peer_tables_out = new QAction(QIcon(GuiUtilsNs::getIconPath("fadeout")), tr("Fade out"), this);
 
 	action_fade_both_objs = new QAction(tr("Both"), this);
-	action_fade_both_objs_in = new QAction(QIcon(PgModelerUiNs::getIconPath("fadein")), tr("Fade in"), this);
-	action_fade_both_objs_out = new QAction(QIcon(PgModelerUiNs::getIconPath("fadeout")), tr("Fade out"), this);
+	action_fade_both_objs_in = new QAction(QIcon(GuiUtilsNs::getIconPath("fadein")), tr("Fade in"), this);
+	action_fade_both_objs_out = new QAction(QIcon(GuiUtilsNs::getIconPath("fadeout")), tr("Fade out"), this);
 
 	fade_rels_menu.addAction(action_fade_rels_in);
 	fade_rels_menu.addAction(action_fade_rels_out);
@@ -374,26 +374,26 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	action_fade_in->setMenu(&fade_in_menu);
 	action_fade_out->setMenu(&fade_out_menu);
 
-	action_edit_creation_order=new QAction(QIcon(PgModelerUiNs::getIconPath("swapobjs")), tr("Swap ids"), this);
+	action_edit_creation_order=new QAction(QIcon(GuiUtilsNs::getIconPath("swapobjs")), tr("Swap ids"), this);
 	action_edit_creation_order->setToolTip(tr("Edit the objects creation order by swapping their ids"));
 	connect(action_edit_creation_order, SIGNAL(triggered(bool)), this, SLOT(swapObjectsIds()));
 
-	action=new QAction(QIcon(PgModelerUiNs::getIconPath("breakline_90dv")), tr("90° (vertical)"), this);
+	action=new QAction(QIcon(GuiUtilsNs::getIconPath("breakline_90dv")), tr("90° (vertical)"), this);
 	connect(action, SIGNAL(triggered(bool)), this, SLOT(breakRelationshipLine()));
 	action->setData(QVariant::fromValue<unsigned>(BreakVertNinetyDegrees));
 	break_rel_menu.addAction(action);
 
-	action=new QAction(QIcon(PgModelerUiNs::getIconPath("breakline_90dh")), tr("90° (horizontal)"), this);
+	action=new QAction(QIcon(GuiUtilsNs::getIconPath("breakline_90dh")), tr("90° (horizontal)"), this);
 	connect(action, SIGNAL(triggered(bool)), this, SLOT(breakRelationshipLine()));
 	action->setData(QVariant::fromValue<unsigned>(BreakHorizNinetyDegrees));
 	break_rel_menu.addAction(action);
 
-	action=new QAction(QIcon(PgModelerUiNs::getIconPath("breakline_290dv")), tr("90° + 90° (vertical)"), this);
+	action=new QAction(QIcon(GuiUtilsNs::getIconPath("breakline_290dv")), tr("90° + 90° (vertical)"), this);
 	connect(action, SIGNAL(triggered(bool)), this, SLOT(breakRelationshipLine()));
 	action->setData(QVariant::fromValue<unsigned>(BreakVert2NinetyDegrees));
 	break_rel_menu.addAction(action);
 
-	action=new QAction(QIcon(PgModelerUiNs::getIconPath("breakline_290dh")), tr("90° + 90° (horizontal)"), this);
+	action=new QAction(QIcon(GuiUtilsNs::getIconPath("breakline_290dh")), tr("90° + 90° (horizontal)"), this);
 	connect(action, SIGNAL(triggered(bool)), this, SLOT(breakRelationshipLine()));
 	action->setData(QVariant::fromValue<unsigned>(BreakHoriz2NinetyDegrees));
 	break_rel_menu.addAction(action);
@@ -403,13 +403,13 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	//Alocatting the object creation actions
 	for(auto &type : types_vect)
 	{
-		actions_new_objects[type]=new QAction(QIcon(PgModelerUiNs::getIconPath(type)), BaseObject::getTypeName(type), this);
+		actions_new_objects[type]=new QAction(QIcon(GuiUtilsNs::getIconPath(type)), BaseObject::getTypeName(type), this);
 		actions_new_objects[type]->setData(QVariant(enum_cast(type)));
 		connect(actions_new_objects[type], SIGNAL(triggered(bool)), this, SLOT(addNewObject()));
 	}
 
 	// Configuring the submenu of database level objects
-	action_database_category = new QAction(QIcon(PgModelerUiNs::getIconPath(ObjectType::Database)), tr("Database object"), this);
+	action_database_category = new QAction(QIcon(GuiUtilsNs::getIconPath(ObjectType::Database)), tr("Database object"), this);
 	action_database_category->setMenu(&database_category_menu);
 	types_vect = BaseObject::getChildObjectTypes(ObjectType::Database);
 
@@ -417,7 +417,7 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 		database_category_menu.addAction(actions_new_objects[type]);
 
 	// Configuring the submenu of schema level objects
-	action_schema_category = new QAction(QIcon(PgModelerUiNs::getIconPath(ObjectType::Schema)), tr("Schema object"), this);
+	action_schema_category = new QAction(QIcon(GuiUtilsNs::getIconPath(ObjectType::Schema)), tr("Schema object"), this);
 	action_schema_category->setMenu(&schema_category_menu);
 	types_vect = BaseObject::getChildObjectTypes(ObjectType::Schema);
 
@@ -432,7 +432,7 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	{
 		str_ico=BaseObject::getSchemaName(ObjectType::Relationship) + rel_types_cod[i];
 
-		action=new QAction(QIcon(PgModelerUiNs::getIconPath(str_ico)),
+		action=new QAction(QIcon(GuiUtilsNs::getIconPath(str_ico)),
 						   BaseRelationship::getRelationshipTypeName(rel_types_id[i], false), this);
 
 		//Storing a unique identifier for the relationship type
@@ -445,7 +445,7 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	new_obj_overlay_wgt=new NewObjectOverlayWidget(this);
 	new_obj_overlay_wgt->setObjectName(QString("new_obj_overlay_wgt"));
 	new_obj_overlay_wgt->setVisible(false);
-	PgModelerUiNs::createDropShadow(new_obj_overlay_wgt, 5, 5, 20);
+	GuiUtilsNs::createDropShadow(new_obj_overlay_wgt, 5, 5, 20);
 
 	vector<ObjectType> graph_types = { ObjectType::BaseObject, ObjectType::Schema, ObjectType::Table, ObjectType::ForeignTable,
 																		 ObjectType::View, ObjectType::Relationship, ObjectType::Textbox };
@@ -464,7 +464,7 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 		}
 		else
 		{
-			action=new QAction(QIcon(PgModelerUiNs::getIconPath(BaseObject::getSchemaName(obj_type) + QString("_grp"))), labels[i++], this);
+			action=new QAction(QIcon(GuiUtilsNs::getIconPath(BaseObject::getSchemaName(obj_type) + QString("_grp"))), labels[i++], this);
 			select_all_menu.addAction(action);
 		}
 
@@ -472,9 +472,9 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 		connect(action, SIGNAL(triggered(bool)), this, SLOT(selectAllObjects()));
 	}
 
-	action_stacking=new QAction(QIcon(PgModelerUiNs::getIconPath("stacking")), tr("Stacking"), this);
-	action_send_to_back=new QAction(QIcon(PgModelerUiNs::getIconPath("sendtoback")), tr("Send to back"), this);
-	action_bring_to_front=new QAction(QIcon(PgModelerUiNs::getIconPath("bringtofront")), tr("Bring to front"), this);
+	action_stacking=new QAction(QIcon(GuiUtilsNs::getIconPath("stacking")), tr("Stacking"), this);
+	action_send_to_back=new QAction(QIcon(GuiUtilsNs::getIconPath("sendtoback")), tr("Send to back"), this);
+	action_bring_to_front=new QAction(QIcon(GuiUtilsNs::getIconPath("bringtofront")), tr("Bring to front"), this);
 	stacking_menu.addAction(action_send_to_back);
 	stacking_menu.addAction(action_bring_to_front);
 	action_stacking->setMenu(&stacking_menu);
@@ -1357,7 +1357,7 @@ void ModelWidget::convertRelationshipNN()
 
 					//Renames the table if there is other with the same name on the model avoiding conflicts
 					tab->setName(tab_name);
-					tab->setName(PgModelerNs::generateUniqueName(tab, *db_model->getObjectList(ObjectType::Table)));
+					tab->setName(CoreUtilsNs::generateUniqueName(tab, *db_model->getObjectList(ObjectType::Table)));
 
 					op_list->startOperationChain();
 
@@ -1393,7 +1393,7 @@ void ModelWidget::convertRelationshipNN()
 							for(QString pk_col : pk_cols)
 								aux_constr->addColumn(tab->getColumn(pk_col), Constraint::SourceCols);
 
-							aux_constr->setName(PgModelerNs::generateUniqueName(tab, *tab->getObjectList(ObjectType::Constraint), false, QString("_pk")));
+							aux_constr->setName(CoreUtilsNs::generateUniqueName(tab, *tab->getObjectList(ObjectType::Constraint), false, QString("_pk")));
 							tab->addConstraint(aux_constr);
 
 							op_list->registerObject(aux_constr, Operation::ObjectCreated, -1, tab);
@@ -1611,7 +1611,7 @@ void ModelWidget::loadModel(const QString &filename)
 	try
 	{
 		connect(db_model, SIGNAL(s_objectLoaded(int,QString,unsigned)), &task_prog_wgt, SLOT(updateProgress(int,QString,unsigned)));
-		task_prog_wgt.addIcon(enum_cast(ObjectType::BaseObject), QPixmap(PgModelerUiNs::getIconPath("design")));
+		task_prog_wgt.addIcon(enum_cast(ObjectType::BaseObject), QPixmap(GuiUtilsNs::getIconPath("design")));
 		task_prog_wgt.setWindowTitle(tr("Loading database model"));
 		task_prog_wgt.show();
 
@@ -2780,14 +2780,14 @@ void ModelWidget::pasteObjects(bool duplicate_mode)
 					if(obj_type==ObjectType::Function)
 					{
 						func=dynamic_cast<Function *>(object);
-						func->setName(PgModelerNs::generateUniqueName(func, (*db_model->getObjectList(ObjectType::Function)), false, QString("_cp")));
+						func->setName(CoreUtilsNs::generateUniqueName(func, (*db_model->getObjectList(ObjectType::Function)), false, QString("_cp")));
 						copy_obj_name=func->getName();
 						func->setName(orig_obj_names[object]);
 					}
 					else if(obj_type==ObjectType::Operator)
 					{
 						oper=dynamic_cast<Operator *>(object);
-						oper->setName(PgModelerNs::generateUniqueName(oper, (*db_model->getObjectList(ObjectType::Operator))));
+						oper->setName(CoreUtilsNs::generateUniqueName(oper, (*db_model->getObjectList(ObjectType::Operator))));
 						copy_obj_name=oper->getName();
 						oper->setName(orig_obj_names[object]);
 					}
@@ -2796,12 +2796,12 @@ void ModelWidget::pasteObjects(bool duplicate_mode)
 						if(tab_obj)
 						{
 							if(sel_table)
-								tab_obj->setName(PgModelerNs::generateUniqueName(tab_obj, (*sel_table->getObjectList(tab_obj->getObjectType())), false, QString("_cp"), true));
+								tab_obj->setName(CoreUtilsNs::generateUniqueName(tab_obj, (*sel_table->getObjectList(tab_obj->getObjectType())), false, QString("_cp"), true));
 							else
-								tab_obj->setName(PgModelerNs::generateUniqueName(tab_obj, (*sel_view->getObjectList(tab_obj->getObjectType())), false, QString("_cp"), true));
+								tab_obj->setName(CoreUtilsNs::generateUniqueName(tab_obj, (*sel_view->getObjectList(tab_obj->getObjectType())), false, QString("_cp"), true));
 						}
 						else
-							object->setName(PgModelerNs::generateUniqueName(object, (*db_model->getObjectList(object->getObjectType())), false, QString("_cp"), true));
+							object->setName(CoreUtilsNs::generateUniqueName(object, (*db_model->getObjectList(object->getObjectType())), false, QString("_cp"), true));
 
 						copy_obj_name=object->getName();
 						object->setName(orig_obj_names[object]);
@@ -2948,7 +2948,7 @@ void ModelWidget::pasteObjects(bool duplicate_mode)
 				if(object && !tab_obj && !dynamic_cast<Relationship *>(object))
 				{
 					if(db_model->getObjectIndex(object->getSignature(), object->getObjectType()) >= 0)
-						object->setName(PgModelerNs::generateUniqueName(object, *db_model->getObjectList(object->getObjectType()), false, QString("_cp")));
+						object->setName(CoreUtilsNs::generateUniqueName(object, *db_model->getObjectList(object->getObjectType()), false, QString("_cp")));
 
 					db_model->addObject(object);
 				}
@@ -3059,12 +3059,12 @@ void ModelWidget::duplicateObject()
 				obj_type = tab_obj->getObjectType();
 				table = dynamic_cast<TableObject *>(tab_obj)->getParentTable();
 				schema = dynamic_cast<Schema *>(table->getSchema());
-				PgModelerNs::copyObject(&dup_object, tab_obj, obj_type);
+				CoreUtilsNs::copyObject(&dup_object, tab_obj, obj_type);
 
 				if(PhysicalTable::isPhysicalTable(table->getObjectType()))
-					dup_object->setName(PgModelerNs::generateUniqueName(dup_object, *dynamic_cast<PhysicalTable *>(table)->getObjectList(obj_type), false, QString("_cp")));
+					dup_object->setName(CoreUtilsNs::generateUniqueName(dup_object, *dynamic_cast<PhysicalTable *>(table)->getObjectList(obj_type), false, QString("_cp")));
 				else
-					dup_object->setName(PgModelerNs::generateUniqueName(dup_object, *dynamic_cast<View *>(table)->getObjectList(obj_type), false, QString("_cp")));
+					dup_object->setName(CoreUtilsNs::generateUniqueName(dup_object, *dynamic_cast<View *>(table)->getObjectList(obj_type), false, QString("_cp")));
 
 				op_id=op_list->registerObject(dup_object, Operation::ObjectCreated, -1, table);
 				table->addObject(dup_object);
@@ -3610,7 +3610,7 @@ void ModelWidget::configureQuickMenu(BaseObject *object)
 						while(!obj_list.empty())
 						{
 							act=new QAction(obj_list.back()->getName(), menus[i]);
-							act->setIcon(QPixmap(PgModelerUiNs::getIconPath(types[i])));
+							act->setIcon(QPixmap(GuiUtilsNs::getIconPath(types[i])));
 
 							/* Check the current action only if there is only one selected object and the object representing
 								 the action is assigned to the selected object */
@@ -3728,13 +3728,13 @@ void ModelWidget::configureFadeMenu()
 
 			for(ObjectType type : types)
 			{
-				action = new QAction(QPixmap(PgModelerUiNs::getIconPath(BaseObject::getSchemaName(type) + QString("_grp"))),
+				action = new QAction(QPixmap(GuiUtilsNs::getIconPath(BaseObject::getSchemaName(type) + QString("_grp"))),
 																		 labels[id], &fade_in_menu);
 				action->setData(enum_cast(type));
 				fade_in_menu.addAction(action);
 				connect(action, SIGNAL(triggered(bool)), this, SLOT(fadeObjectsIn()));
 
-				action = new QAction(QPixmap(PgModelerUiNs::getIconPath(BaseObject::getSchemaName(type) + QString("_grp"))),
+				action = new QAction(QPixmap(GuiUtilsNs::getIconPath(BaseObject::getSchemaName(type) + QString("_grp"))),
 																		 labels[id], &fade_out_menu);
 				action->setData(enum_cast(type));
 				fade_out_menu.addAction(action);
@@ -4142,18 +4142,18 @@ void ModelWidget::configureConstraintsMenu(TableObject *tab_obj)
 
 				//For each constaint is created a menu with the edit, source code, protect/unprotect and delete actions
 				submenu=new QMenu(&popup_menu);
-				submenu->setIcon(QPixmap(PgModelerUiNs::getIconPath(BaseObject::getSchemaName(ObjectType::Constraint) + str_aux)));
+				submenu->setIcon(QPixmap(GuiUtilsNs::getIconPath(BaseObject::getSchemaName(ObjectType::Constraint) + str_aux)));
 				submenu->setTitle(constr->getName());
 
 				action=new QAction(dynamic_cast<QObject *>(submenu));
-				action->setIcon(QPixmap(PgModelerUiNs::getIconPath("edit")));
+				action->setIcon(QPixmap(GuiUtilsNs::getIconPath("edit")));
 				action->setText(tr("Properties"));
 				action->setData(QVariant::fromValue<void *>(dynamic_cast<BaseObject *>(constr)));
 				connect(action, SIGNAL(triggered(bool)), this, SLOT(editObject()));
 				submenu->addAction(action);
 
 				action=new QAction(dynamic_cast<QObject *>(submenu));
-				action->setIcon(QPixmap(PgModelerUiNs::getIconPath("sqlcode")));
+				action->setIcon(QPixmap(GuiUtilsNs::getIconPath("sqlcode")));
 				action->setText(tr("Source code"));
 				action->setData(QVariant::fromValue<void *>(dynamic_cast<BaseObject *>(constr)));
 				connect(action, SIGNAL(triggered(bool)), this, SLOT(showSourceCode()));
@@ -4170,25 +4170,25 @@ void ModelWidget::configureConstraintsMenu(TableObject *tab_obj)
 
 						if(constr->isProtected())
 						{
-							action->setIcon(QPixmap(PgModelerUiNs::getIconPath("unprotect")));
+							action->setIcon(QPixmap(GuiUtilsNs::getIconPath("unprotect")));
 							action->setText(tr("Unprotect"));
 						}
 						else
 						{
-							action->setIcon(QPixmap(PgModelerUiNs::getIconPath("protect")));
+							action->setIcon(QPixmap(GuiUtilsNs::getIconPath("protect")));
 							action->setText(tr("Protect"));
 						}
 					}
 
 					action=new QAction(dynamic_cast<QObject *>(submenu));
-					action->setIcon(QPixmap(PgModelerUiNs::getIconPath("delete")));
+					action->setIcon(QPixmap(GuiUtilsNs::getIconPath("delete")));
 					action->setData(QVariant::fromValue<void *>(dynamic_cast<BaseObject *>(constr)));
 					action->setText(tr("Delete"));
 					submenu->addAction(action);
 					connect(action, SIGNAL(triggered()), this, SLOT(removeObjects()));
 
 					action=new QAction(dynamic_cast<QObject *>(submenu));
-					action->setIcon(QPixmap(PgModelerUiNs::getIconPath("delcascade")));
+					action->setIcon(QPixmap(GuiUtilsNs::getIconPath("delcascade")));
 					action->setData(QVariant::fromValue<void *>(dynamic_cast<BaseObject *>(constr)));
 					action->setText(tr("Del. cascade"));
 					submenu->addAction(action);
@@ -4203,7 +4203,7 @@ void ModelWidget::configureConstraintsMenu(TableObject *tab_obj)
 		{
 			submenu=new QMenu(&popup_menu);
 			submenu->setTitle(tr("Constraints"));
-			submenu->setIcon(QPixmap(PgModelerUiNs::getIconPath(BaseObject::getSchemaName(ObjectType::Constraint) + QString("_grp"))));
+			submenu->setIcon(QPixmap(GuiUtilsNs::getIconPath(BaseObject::getSchemaName(ObjectType::Constraint) + QString("_grp"))));
 
 			for(auto &menu : submenus)
 				submenu->addMenu(menu);
@@ -4285,11 +4285,11 @@ void ModelWidget::configureBasicActions(BaseObject *obj)
 				popup_menu.addAction(action_jump_to_table);
 				jump_to_tab_menu.clear();
 
-				action = jump_to_tab_menu.addAction(QIcon(PgModelerUiNs::getIconPath(rel->getTable(BaseRelationship::SrcTable)->getObjectType())),
+				action = jump_to_tab_menu.addAction(QIcon(GuiUtilsNs::getIconPath(rel->getTable(BaseRelationship::SrcTable)->getObjectType())),
 																						rel->getTable(BaseRelationship::SrcTable)->getSignature(), this, SLOT(jumpToTable()));
 				action->setData(QVariant::fromValue<void *>(reinterpret_cast<void *>(rel->getTable(BaseRelationship::SrcTable))));
 
-				action = jump_to_tab_menu.addAction(QIcon(PgModelerUiNs::getIconPath(rel->getTable(BaseRelationship::DstTable)->getObjectType())),
+				action = jump_to_tab_menu.addAction(QIcon(GuiUtilsNs::getIconPath(rel->getTable(BaseRelationship::DstTable)->getObjectType())),
 																						rel->getTable(BaseRelationship::DstTable)->getSignature(), this, SLOT(jumpToTable()));
 				action->setData(QVariant::fromValue<void *>(reinterpret_cast<void *>(rel->getTable(BaseRelationship::DstTable))));
 			}
@@ -4653,7 +4653,7 @@ void ModelWidget::toggleObjectSQL()
 	if(action)
 	{
 		BaseObject *object=reinterpret_cast<BaseObject *>(action->data().value<void *>());
-		PgModelerUiNs::disableObjectSQL(object, !object->isSQLDisabled());
+		GuiUtilsNs::disableObjectSQL(object, !object->isSQLDisabled());
 		setModified(true);
 		emit s_objectModified();
 	}
@@ -4673,7 +4673,7 @@ void ModelWidget::createSequenceFromColumn()
 		//Creates a sequence which name is like the ones auto generated by PostgreSQL
 		seq=new Sequence;
 		seq->setName(BaseObject::formatName(tab->getName() + QString("_") + col->getName() + QString("_seq")));
-		seq->setName(PgModelerNs::generateUniqueName(seq, *db_model->getObjectList(ObjectType::Sequence), false));
+		seq->setName(CoreUtilsNs::generateUniqueName(seq, *db_model->getObjectList(ObjectType::Sequence), false));
 
 		seq->setSchema(tab->getSchema());
 		seq->setDefaultValues(col->getType());
@@ -4992,7 +4992,7 @@ void ModelWidget::swapObjectsIds()
 	parent_form.setMainWidget(swap_ids_wgt, SLOT(swapObjectsIds()));
 	parent_form.setButtonConfiguration(Messagebox::OkCancelButtons);
 	parent_form.apply_ok_btn->setEnabled(false);
-	parent_form.apply_ok_btn->setIcon(QPixmap(PgModelerUiNs::getIconPath("swapobjs")));
+	parent_form.apply_ok_btn->setIcon(QPixmap(GuiUtilsNs::getIconPath("swapobjs")));
 	parent_form.apply_ok_btn->setText(tr("Swap ids"));
 	connect(swap_ids_wgt, SIGNAL(s_objectsIdsSwapReady(bool)), parent_form.apply_ok_btn, SLOT(setEnabled(bool)));
 

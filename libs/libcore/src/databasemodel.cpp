@@ -17,7 +17,7 @@
 */
 
 #include "databasemodel.h"
-#include "pgmodelerns.h"
+#include "coreutilsns.h"
 #include "defaultlanguages.h"
 #include "operation.h"
 #include <QtDebug>
@@ -1388,7 +1388,7 @@ void DatabaseModel::updateTableFKRelationships(Table *table)
 					 name so it`s necessary to check if a relationship with the same name already exists. If exists changes
 					 the name of the new one */
 				if(getObjectIndex(rel->getName(), ObjectType::BaseRelationship) >= 0)
-					rel->setName(PgModelerNs::generateUniqueName(rel, base_relationships));
+					rel->setName(CoreUtilsNs::generateUniqueName(rel, base_relationships));
 
 				addRelationship(rel);
 			}
@@ -1503,7 +1503,7 @@ void DatabaseModel::updateViewRelationships(View *view, bool force_rel_removal)
 			if(!rel)
 			{
 				rel=new BaseRelationship(BaseRelationship::RelationshipDep, view, tab, false, false);
-				rel->setName(PgModelerNs::generateUniqueName(rel, base_relationships));
+				rel->setName(CoreUtilsNs::generateUniqueName(rel, base_relationships));
 				addRelationship(rel);
 			}
 		}
@@ -5787,7 +5787,7 @@ Trigger *DatabaseModel::createTrigger()
 		trigger->setTransitionTableName(Trigger::OldTableName, attribs[Attributes::OldTableName]);
 		trigger->setTransitionTableName(Trigger::NewTableName, attribs[Attributes::NewTableName]);
 
-		trigger->addArguments(attribs[Attributes::Arguments].split(PgModelerNs::DataSeparator, QtCompat::SkipEmptyParts));
+		trigger->addArguments(attribs[Attributes::Arguments].split(CoreUtilsNs::DataSeparator, QtCompat::SkipEmptyParts));
 		trigger->setDeferrable(attribs[Attributes::Deferrable]==Attributes::True);
 
 		if(trigger->isDeferrable())
@@ -10442,13 +10442,13 @@ vector<BaseObject *> DatabaseModel::findObjects(const QStringList &filters, cons
 {
 	vector<BaseObject *> objects, aux_objs;
 	QString pattern, mode;
-	QStringList values, modes = { PgModelerNs::FilterWildcard, PgModelerNs::FilterRegExp };
+	QStringList values, modes = { CoreUtilsNs::FilterWildcard, CoreUtilsNs::FilterRegExp };
 	ObjectType obj_type;
 	bool exact_match = false;
 
 	for(auto &filter : filters)
 	{
-		values = filter.split(PgModelerNs::FilterSeparator);
+		values = filter.split(CoreUtilsNs::FilterSeparator);
 
 		// Raises an error if the filter has an invalid field count
 		if(values.size() != 3)
@@ -10460,7 +10460,7 @@ vector<BaseObject *> DatabaseModel::findObjects(const QStringList &filters, cons
 		obj_type = BaseObject::getObjectType(values[0]);
 		pattern = values[1];
 		mode = values[2];
-		exact_match = (mode == PgModelerNs::FilterWildcard && !pattern.contains(PgModelerNs::WildcardChar));
+		exact_match = (mode == CoreUtilsNs::FilterWildcard && !pattern.contains(CoreUtilsNs::WildcardChar));
 
 		// Raises an error if the filter has an invalid object type, pattern or mode
 		if(obj_type == ObjectType::BaseObject || pattern.isEmpty() || !modes.contains(mode))
@@ -10469,7 +10469,7 @@ vector<BaseObject *> DatabaseModel::findObjects(const QStringList &filters, cons
 											ErrorCode::InvalidObjectFilter,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		}
 
-		aux_objs = findObjects(pattern, { obj_type }, false, mode == PgModelerNs::FilterRegExp, exact_match, search_attr);
+		aux_objs = findObjects(pattern, { obj_type }, false, mode == CoreUtilsNs::FilterRegExp, exact_match, search_attr);
 		objects.insert(objects.end(), aux_objs.begin(), aux_objs.end());
 	}
 
@@ -11109,7 +11109,7 @@ void DatabaseModel::loadObjectsMetadata(const QString &filename, unsigned option
 																	.arg(BaseObject::getTypeName(obj_type)), enum_cast(ObjectType::BaseObject));
 
 							if(merge_dup_objs)
-								PgModelerNs::copyObject(&aux_obj, new_object, obj_type);
+								CoreUtilsNs::copyObject(&aux_obj, new_object, obj_type);
 
 							delete new_object;
 							new_object = nullptr;
@@ -11483,10 +11483,10 @@ QStringList DatabaseModel::getFiltersFromChangelog(QDateTime start, QDateTime en
 				(!start.isValid() && end.isValid() && date <= end)))
 		{
 			filters.append(BaseObject::getSchemaName(type) +
-										 PgModelerNs::FilterSeparator +
+										 CoreUtilsNs::FilterSeparator +
 										 signature +
-										 PgModelerNs::FilterSeparator +
-										 PgModelerNs::FilterWildcard);
+										 CoreUtilsNs::FilterSeparator +
+										 CoreUtilsNs::FilterWildcard);
 		}
 	}
 

@@ -17,9 +17,9 @@
 */
 
 #include "objectsfilterwidget.h"
-#include "pgmodeleruins.h"
+#include "guiutilsns.h"
 #include "catalog.h"
-#include "pgmodelerns.h"
+#include "coreutilsns.h"
 
 ObjectsFilterWidget::ObjectsFilterWidget(QWidget *parent) : QWidget(parent)
 {
@@ -29,8 +29,8 @@ ObjectsFilterWidget::ObjectsFilterWidget(QWidget *parent) : QWidget(parent)
 
 	hint_lbl->setText(tr("Using a pattern in <strong>%1</strong> mode in which no wildcard character <strong>%2</strong> \
 is present has the same effect as performing an exact match searching on the names or signatures.")
-											 .arg(PgModelerNs::FilterWildcard)
-											 .arg(PgModelerNs::WildcardChar));
+											 .arg(CoreUtilsNs::FilterWildcard)
+											 .arg(CoreUtilsNs::WildcardChar));
 
 	add_tb->setToolTip(add_tb->toolTip() + QString(" (%1)").arg(add_tb->shortcut().toString()));
 	clear_all_tb->setToolTip(clear_all_tb->toolTip() + QString(" (%1)").arg(clear_all_tb->shortcut().toString()));
@@ -54,7 +54,7 @@ is present has the same effect as performing an exact match searching on the nam
 	for(auto &type : types)
 	{
 		item = new QListWidgetItem(BaseObject::getTypeName(type));
-		item->setIcon(QIcon(PgModelerUiNs::getIconPath(type)));
+		item->setIcon(QIcon(GuiUtilsNs::getIconPath(type)));
 		item->setData(Qt::UserRole, BaseObject::getSchemaName(type));
 		item->setFlags(item->flags() | Qt::ItemIsUserCheckable);
 		item->setCheckState(Qt::Checked);
@@ -118,7 +118,7 @@ void ObjectsFilterWidget::addFilters(const QStringList &filters)
 
 	for(auto &filter : filters)
 	{
-		values = filter.split(PgModelerNs::FilterSeparator);
+		values = filter.split(CoreUtilsNs::FilterSeparator);
 
 		// Rejecting invalid filters: malformed (< 3 fields), empty values or invalid object types
 		if(values.size() != 3 || values.indexOf("") >= 0 || !types.contains(values[0]))
@@ -144,7 +144,7 @@ QComboBox *ObjectsFilterWidget::createObjectsCombo()
 
 	for(auto &obj_type : obj_types)
 	{
-		combo->addItem(QIcon(PgModelerUiNs::getIconPath(obj_type)),
+		combo->addItem(QIcon(GuiUtilsNs::getIconPath(obj_type)),
 												 BaseObject::getTypeName(obj_type),
 												 obj_type);
 	}
@@ -153,7 +153,7 @@ QComboBox *ObjectsFilterWidget::createObjectsCombo()
 	{
 		if(combo->findText(BaseObject::getTypeName(obj_type)) < 0)
 		{
-			combo->addItem(QIcon(PgModelerUiNs::getIconPath(obj_type)),
+			combo->addItem(QIcon(GuiUtilsNs::getIconPath(obj_type)),
 													 BaseObject::getTypeName(obj_type),
 													 BaseObject::getSchemaName(obj_type));
 		}
@@ -168,7 +168,7 @@ QStringList ObjectsFilterWidget::getObjectFilters()
 {
 	QStringList filters,
 			curr_filter,
-			modes = { PgModelerNs::FilterWildcard, PgModelerNs::FilterRegExp };
+			modes = { CoreUtilsNs::FilterWildcard, CoreUtilsNs::FilterRegExp };
 	QString pattern, mode, type_name;
 	QComboBox *mode_cmb = nullptr, *object_cmb = nullptr;
 
@@ -190,7 +190,7 @@ QStringList ObjectsFilterWidget::getObjectFilters()
 		curr_filter.append(filters_tbw->item(row, 1)->text());
 		curr_filter.append(modes[mode_cmb->currentIndex()]);
 
-		filters.append(curr_filter.join(PgModelerNs::FilterSeparator));
+		filters.append(curr_filter.join(CoreUtilsNs::FilterSeparator));
 		curr_filter.clear();
 	}
 
@@ -248,7 +248,7 @@ void ObjectsFilterWidget::addFilter()
 	filters_tbw->setCellWidget(row, 2, combo);
 
 	rem_tb = new QToolButton;
-	rem_tb->setIcon(QIcon(PgModelerUiNs::getIconPath("delete")));
+	rem_tb->setIcon(QIcon(GuiUtilsNs::getIconPath("delete")));
 	rem_tb->setToolTip(tr("Remove filter"));
 	rem_tb->setAutoRaise(true);
 	connect(rem_tb, SIGNAL(clicked(bool)), this, SLOT(removeFilter()));

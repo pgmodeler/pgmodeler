@@ -18,7 +18,7 @@
 
 #include "modelobjectswidget.h"
 #include "databaseimportform.h"
-#include "pgmodeleruins.h"
+#include "guiutilsns.h"
 #include "generalconfigwidget.h"
 
 ModelObjectsWidget::ModelObjectsWidget(bool simplified_view, QWidget *parent) : QWidget(parent)
@@ -184,7 +184,7 @@ void ModelObjectsWidget::selectObject()
 				obj_type != ObjectType::Column && obj_type != ObjectType::Constraint && obj_type != ObjectType::Rule &&
 				obj_type != ObjectType::Index && obj_type != ObjectType::Trigger && obj_type != ObjectType::Permission)
 		{
-			QAction act(QPixmap(PgModelerUiNs::getIconPath(obj_type)),
+			QAction act(QPixmap(GuiUtilsNs::getIconPath(obj_type)),
 									tr("New") + QString(" ") + BaseObject::getTypeName(obj_type), nullptr);
 			QMenu popup;
 
@@ -348,7 +348,7 @@ QTreeWidgetItem *ModelObjectsWidget::createItemForObject(BaseObject *object, QTr
 			str_aux=QString("_%1").arg(TableObjectView::TextExclude);
 	}
 
-	item->setIcon(0, QPixmap(PgModelerUiNs::getIconPath(BaseObject::getSchemaName(obj_type) + str_aux)));
+	item->setIcon(0, QPixmap(GuiUtilsNs::getIconPath(BaseObject::getSchemaName(obj_type) + str_aux)));
 
 	return item;
 }
@@ -508,7 +508,7 @@ void ModelObjectsWidget::updateSchemaTree(QTreeWidgetItem *root)
 		QTreeWidgetItem *item=nullptr, *item1=nullptr, *item2=nullptr, *item3=nullptr;
 		vector<ObjectType> types = BaseObject::getChildObjectTypes(ObjectType::Schema);
 		int count = 0, count2 = 0, i = 0;
-		QPixmap group_icon=QPixmap(PgModelerUiNs::getIconPath(QString(BaseObject::getSchemaName(ObjectType::Schema)) + QString("_grp")));
+		QPixmap group_icon=QPixmap(GuiUtilsNs::getIconPath(QString(BaseObject::getSchemaName(ObjectType::Schema)) + QString("_grp")));
 
 		//Removing the ObjectType::Table and ObjectType::View types since they are handled separetedly
 		types.erase(std::find(types.begin(), types.end(), ObjectType::Table));
@@ -559,7 +559,7 @@ void ModelObjectsWidget::updateSchemaTree(QTreeWidgetItem *root)
 					if(visible_objs_map[type])
 					{
 						item3=new QTreeWidgetItem(item2);
-						item3->setIcon(0,QPixmap(PgModelerUiNs::getIconPath(BaseObject::getSchemaName(type) + QString("_grp"))));
+						item3->setIcon(0,QPixmap(GuiUtilsNs::getIconPath(BaseObject::getSchemaName(type) + QString("_grp"))));
 
 						//Get the objects that belongs to the current schema
 						obj_list=db_model->getObjects(type, schema);
@@ -594,7 +594,7 @@ void ModelObjectsWidget::updateTableTree(QTreeWidgetItem *root, BaseObject *sche
 		QTreeWidgetItem *item=nullptr, *item1=nullptr, *item2=nullptr;
 		QFont font;
 		vector<ObjectType> types = BaseObject::getChildObjectTypes(table_type);
-		QPixmap group_icon=QPixmap(PgModelerUiNs::getIconPath(BaseObject::getSchemaName(table_type) + QString("_grp")));
+		QPixmap group_icon=QPixmap(GuiUtilsNs::getIconPath(BaseObject::getSchemaName(table_type) + QString("_grp")));
 
 		try
 		{
@@ -623,7 +623,7 @@ void ModelObjectsWidget::updateTableTree(QTreeWidgetItem *root, BaseObject *sche
 					if(visible_objs_map[type])
 					{
 						item2=new QTreeWidgetItem(item1);
-						item2->setIcon(0,QPixmap(PgModelerUiNs::getIconPath(BaseObject::getSchemaName(type) + QString("_grp"))));
+						item2->setIcon(0,QPixmap(GuiUtilsNs::getIconPath(BaseObject::getSchemaName(type) + QString("_grp"))));
 						font=item2->font(0);
 						font.setItalic(true);
 						item2->setFont(0, font);
@@ -654,7 +654,7 @@ void ModelObjectsWidget::updateViewTree(QTreeWidgetItem *root, BaseObject *schem
 		QFont font;
 		vector<ObjectType> types = BaseObject::getChildObjectTypes(ObjectType::View);
 		int count = 0, count1 = 0, i = 0, i2 = 0;
-		QPixmap group_icon=QPixmap(PgModelerUiNs::getIconPath(QString(BaseObject::getSchemaName(ObjectType::View)) + QString("_grp")));
+		QPixmap group_icon=QPixmap(GuiUtilsNs::getIconPath(QString(BaseObject::getSchemaName(ObjectType::View)) + QString("_grp")));
 
 		try
 		{
@@ -684,7 +684,7 @@ void ModelObjectsWidget::updateViewTree(QTreeWidgetItem *root, BaseObject *schem
 					if(visible_objs_map[type])
 					{
 						item2=new QTreeWidgetItem(item1);
-						item2->setIcon(0,QPixmap(PgModelerUiNs::getIconPath(BaseObject::getSchemaName(type) + QString("_grp"))));
+						item2->setIcon(0,QPixmap(GuiUtilsNs::getIconPath(BaseObject::getSchemaName(type) + QString("_grp"))));
 						font=item2->font(0);
 						font.setItalic(true);
 						item2->setFont(0, font);
@@ -720,7 +720,7 @@ void ModelObjectsWidget::updatePermissionTree(QTreeWidgetItem *root, BaseObject 
 			QFont font=item->font(0);
 
 			db_model->getPermissions(object, perms);
-			item->setIcon(0,QPixmap(PgModelerUiNs::getIconPath("permission_grp")));
+			item->setIcon(0,QPixmap(GuiUtilsNs::getIconPath("permission_grp")));
 
 			font.setItalic(true);
 			item->setFont(0, font);
@@ -780,7 +780,7 @@ void ModelObjectsWidget::updateDatabaseTree()
 						item1=new QTreeWidgetItem(root);
 						str_aux=QString(BaseObject::getSchemaName(type));
 
-						item1->setIcon(0,QPixmap(PgModelerUiNs::getIconPath(str_aux + QString("_grp"))));
+						item1->setIcon(0,QPixmap(GuiUtilsNs::getIconPath(str_aux + QString("_grp"))));
 						item1->setData(1, Qt::UserRole, QVariant(enum_cast(type)));
 
 						obj_list=(*db_model->getObjectList(type));

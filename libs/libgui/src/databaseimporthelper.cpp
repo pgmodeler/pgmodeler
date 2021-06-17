@@ -1108,7 +1108,7 @@ void DatabaseImportHelper::configureBaseFunctionAttribs(attribs_map &attribs)
 		transform_types = getTypes(attribs[Attributes::TransformTypes], false);
 		attribs[Attributes::TransformTypes] = transform_types.join(',');
 
-		config_params = attribs[Attributes::ConfigParams].split(PgModelerNs::DataSeparator, QtCompat::SkipEmptyParts);
+		config_params = attribs[Attributes::ConfigParams].split(CoreUtilsNs::DataSeparator, QtCompat::SkipEmptyParts);
 		attribs[Attributes::ConfigParams] = "";
 
 		for(auto &cfg : config_params)
@@ -2002,7 +2002,7 @@ void DatabaseImportHelper::createTrigger(attribs_map &attribs)
 		attribs[Attributes::TriggerFunc]=getDependencyObject(attribs[Attributes::TriggerFunc], ObjectType::Function, true, true);
 
 		args = attribs[Attributes::Arguments].split(Catalog::EscapedNullChar, QtCompat::SkipEmptyParts);
-		attribs[Attributes::Arguments] = args.join(PgModelerNs::DataSeparator);
+		attribs[Attributes::Arguments] = args.join(CoreUtilsNs::DataSeparator);
 
 		loadObjectXML(ObjectType::Trigger, attribs);
 		dbmodel->createTrigger();
@@ -2906,7 +2906,7 @@ void DatabaseImportHelper::__createTableInheritances()
 
 					//Create the inheritance relationship
 					rel=new Relationship(Relationship::RelationshipGen, child_tab, parent_tab);
-					rel->setName(PgModelerNs::generateUniqueName(rel, (*dbmodel->getObjectList(ObjectType::Relationship))));
+					rel->setName(CoreUtilsNs::generateUniqueName(rel, (*dbmodel->getObjectList(ObjectType::Relationship))));
 
 					dbmodel->addRelationship(rel);
 					rel=nullptr;

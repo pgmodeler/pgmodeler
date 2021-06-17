@@ -17,14 +17,14 @@
 */
 
 #include "objectdepsrefswidget.h"
-#include "pgmodeleruins.h"
+#include "guiutilsns.h"
 
 ObjectDepsRefsWidget::ObjectDepsRefsWidget(QWidget *parent): BaseObjectWidget(parent)
 {
 	Ui_ObjectDepsRefsWidget::setupUi(this);
 	configureFormLayout(objectdepsrefs_grid, ObjectType::BaseObject);
 
-	PgModelerUiNs::configureWidgetFont(message_lbl, PgModelerUiNs::MediumFontFactor);
+	GuiUtilsNs::configureWidgetFont(message_lbl, GuiUtilsNs::MediumFontFactor);
 
 	model_wgt=nullptr;
 	alert_frm->setVisible(false);
@@ -49,7 +49,7 @@ void ObjectDepsRefsWidget::setAttributes(DatabaseModel *model, BaseObject *objec
 	this->protected_obj_frm->setVisible(false);
 	this->comment_edt->setVisible(false);
 	this->comment_lbl->setVisible(false);
-	obj_icon_lbl->setPixmap(QPixmap(PgModelerUiNs::getIconPath(object->getObjectType())));
+	obj_icon_lbl->setPixmap(QPixmap(GuiUtilsNs::getIconPath(object->getObjectType())));
 	updateObjectTables();
 }
 

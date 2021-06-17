@@ -27,12 +27,12 @@ PolicyWidget::PolicyWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType
 		model_objs_wgt = new ModelObjectsWidget(true, this);
 		model_objs_wgt->setObjectVisible(ObjectType::Role, true);
 
-		using_edt = PgModelerUiNs::createNumberedTextEditor(using_wgt);
+		using_edt = GuiUtilsNs::createNumberedTextEditor(using_wgt);
 		using_edt->setTabChangesFocus(true);
 		using_hl = new SyntaxHighlighter(using_edt);
 		using_hl->loadConfiguration(GlobalAttributes::getSQLHighlightConfPath());
 
-		check_edt = PgModelerUiNs::createNumberedTextEditor(check_wgt);
+		check_edt = GuiUtilsNs::createNumberedTextEditor(check_wgt);
 		check_edt->setTabChangesFocus(true);
 		check_hl = new SyntaxHighlighter(check_edt);
 		check_hl->loadConfiguration(GlobalAttributes::getSQLHighlightConfPath());
@@ -43,7 +43,7 @@ PolicyWidget::PolicyWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType
 																				ObjectsTableWidget::EditButton), true, this);
 		roles_tab->setColumnCount(1);
 		roles_tab->setHeaderLabel(tr("Name"), 0);
-		roles_tab->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("uid")), 0);
+		roles_tab->setHeaderIcon(QPixmap(GuiUtilsNs::getIconPath("uid")), 0);
 
 		QVBoxLayout *vbox = new QVBoxLayout;
 		vbox->addWidget(roles_tab);

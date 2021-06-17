@@ -77,7 +77,6 @@ HEADERS += src/textbox.h \
 	   src/copyoptions.h \
 	   src/typeattribute.h \
 	   src/extension.h \
-	   src/pgmodelerns.h \
 	   src/tag.h \
 	   src/eventtrigger.h \
 	   src/genericsql.h \
@@ -87,7 +86,8 @@ HEADERS += src/textbox.h \
 	   src/foreignobject.h \
 	   src/foreignserver.h \
 	   src/physicaltable.h \
-	   src/foreigntable.h
+	   src/foreigntable.h \
+    src/coreutilsns.h
 
 SOURCES +=  src/textbox.cpp \
 	    src/basefunction.cpp \
@@ -158,7 +158,6 @@ SOURCES +=  src/textbox.cpp \
 	    src/copyoptions.cpp \
 	    src/typeattribute.cpp \
 	    src/extension.cpp \
-	    src/pgmodelerns.cpp \
 	    src/tag.cpp \
 	    src/eventtrigger.cpp \
 	    src/operation.cpp \
@@ -169,7 +168,8 @@ SOURCES +=  src/textbox.cpp \
 	    src/foreignobject.cpp \
 	    src/foreignserver.cpp \
 	    src/physicaltable.cpp \
-	    src/foreigntable.cpp
+	    src/foreigntable.cpp \
+    src/coreutilsns.cpp
 
 unix|windows: LIBS += $$LIBPARSERS_LIB \
 		      $$LIBUTILS_LIB

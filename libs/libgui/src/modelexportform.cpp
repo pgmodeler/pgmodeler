@@ -19,7 +19,7 @@
 #include "modelexportform.h"
 #include "taskprogresswidget.h"
 #include "configurationform.h"
-#include "pgmodeleruins.h"
+#include "guiutilsns.h"
 
 bool ModelExportForm::low_verbosity = false;
 
@@ -147,40 +147,40 @@ void ModelExportForm::handleErrorIgnored(QString err_code, QString err_msg, QStr
 {
 	QTreeWidgetItem *item=nullptr;
 
-	item=PgModelerUiNs::createOutputTreeItem(output_trw, tr("Error code <strong>%1</strong> found and ignored. Proceeding with export.").arg(err_code),
-																					 QPixmap(PgModelerUiNs::getIconPath("alert")), nullptr, false);
+	item=GuiUtilsNs::createOutputTreeItem(output_trw, tr("Error code <strong>%1</strong> found and ignored. Proceeding with export.").arg(err_code),
+																					 QPixmap(GuiUtilsNs::getIconPath("alert")), nullptr, false);
 
-	PgModelerUiNs::createOutputTreeItem(output_trw, PgModelerUiNs::formatMessage(err_msg),
-																			QPixmap(PgModelerUiNs::getIconPath("alert")),	item, false, true);
+	GuiUtilsNs::createOutputTreeItem(output_trw, GuiUtilsNs::formatMessage(err_msg),
+																			QPixmap(GuiUtilsNs::getIconPath("alert")),	item, false, true);
 
-	PgModelerUiNs::createOutputTreeItem(output_trw, cmd, QPixmap(), item, false, true);
+	GuiUtilsNs::createOutputTreeItem(output_trw, cmd, QPixmap(), item, false, true);
 }
 
 void ModelExportForm::updateProgress(int progress, QString msg, ObjectType obj_type, QString cmd, bool is_code_gen)
 {
 	QTreeWidgetItem *item=nullptr;
-	QString text=PgModelerUiNs::formatMessage(msg);
+	QString text=GuiUtilsNs::formatMessage(msg);
 	QPixmap ico;
 
 	progress_lbl->setText(text);
 	progress_pb->setValue(progress);
 
 	if(obj_type!=ObjectType::BaseObject)
-		ico=QPixmap(PgModelerUiNs::getIconPath(obj_type));
+		ico=QPixmap(GuiUtilsNs::getIconPath(obj_type));
 	else if(!cmd.isEmpty())
-		ico=QPixmap(PgModelerUiNs::getIconPath("sqlcode"));
+		ico=QPixmap(GuiUtilsNs::getIconPath("sqlcode"));
 	else
-		ico=QPixmap(PgModelerUiNs::getIconPath("info"));
+		ico=QPixmap(GuiUtilsNs::getIconPath("info"));
 
 	ico_lbl->setPixmap(ico);
 
 	// If low_verbosity is set only messages hinted by obj_type == BaseObject are show because they hold key info messages
 	if(!is_code_gen && (!low_verbosity || (low_verbosity && obj_type == ObjectType::BaseObject && cmd.isEmpty())))
 	{
-		item=PgModelerUiNs::createOutputTreeItem(output_trw, text, ico, nullptr, false);
+		item=GuiUtilsNs::createOutputTreeItem(output_trw, text, ico, nullptr, false);
 
 		if(!cmd.isEmpty())
-			PgModelerUiNs::createOutputTreeItem(output_trw, cmd, QPixmap(), item, false);
+			GuiUtilsNs::createOutputTreeItem(output_trw, cmd, QPixmap(), item, false);
 	}
 }
 
@@ -216,8 +216,8 @@ void ModelExportForm::exportModel()
 			progress_lbl->setText(tr("Initializing model export..."));
 
 			if(low_verbosity)
-				PgModelerUiNs::createOutputTreeItem(output_trw, tr("<strong>Low verbosity is set:</strong> only key informations and errors will be displayed."),
-																						QPixmap(PgModelerUiNs::getIconPath("alert")), nullptr, false);
+				GuiUtilsNs::createOutputTreeItem(output_trw, tr("<strong>Low verbosity is set:</strong> only key informations and errors will be displayed."),
+																						QPixmap(GuiUtilsNs::getIconPath("alert")), nullptr, false);
 
 			//Exporting to sql file
 			if(export_to_file_rb->isChecked())
@@ -281,12 +281,12 @@ void ModelExportForm::selectExportMode()
 
 void ModelExportForm::captureThreadError(Exception e)
 {
-	QTreeWidgetItem *item=PgModelerUiNs::createOutputTreeItem(output_trw, PgModelerUiNs::formatMessage(e.getErrorMessage()),
-																														QPixmap(PgModelerUiNs::getIconPath("error")), nullptr, false, true);
+	QTreeWidgetItem *item=GuiUtilsNs::createOutputTreeItem(output_trw, GuiUtilsNs::formatMessage(e.getErrorMessage()),
+																														QPixmap(GuiUtilsNs::getIconPath("error")), nullptr, false, true);
 
-	PgModelerUiNs::createExceptionsTree(output_trw, e, item);
+	GuiUtilsNs::createExceptionsTree(output_trw, e, item);
 
-	ico_lbl->setPixmap(QPixmap(PgModelerUiNs::getIconPath("error")));
+	ico_lbl->setPixmap(QPixmap(GuiUtilsNs::getIconPath("error")));
 	finishExport(tr("Exporting process aborted!"));
 
 	throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
@@ -300,22 +300,22 @@ void ModelExportForm::cancelExport()
 
 void ModelExportForm::handleExportCanceled()
 {
-	QPixmap ico=QPixmap(PgModelerUiNs::getIconPath("alert"));
+	QPixmap ico=QPixmap(GuiUtilsNs::getIconPath("alert"));
 	QString msg=tr("Exporting process canceled by user!");
 
 	finishExport(msg);
 	ico_lbl->setPixmap(ico);
-	PgModelerUiNs::createOutputTreeItem(output_trw, msg, ico);
+	GuiUtilsNs::createOutputTreeItem(output_trw, msg, ico);
 }
 
 void ModelExportForm::handleExportFinished()
 {
-	QPixmap ico=QPixmap(PgModelerUiNs::getIconPath("info"));
+	QPixmap ico=QPixmap(GuiUtilsNs::getIconPath("info"));
 	QString msg=tr("Exporting process sucessfully ended!");
 
 	finishExport(msg);
 	ico_lbl->setPixmap(ico);
-	PgModelerUiNs::createOutputTreeItem(output_trw, msg, ico);
+	GuiUtilsNs::createOutputTreeItem(output_trw, msg, ico);
 }
 
 void ModelExportForm::finishExport(const QString &msg)

@@ -20,8 +20,8 @@
 #include "taskprogresswidget.h"
 #include "configurationform.h"
 #include "taskprogresswidget.h"
-#include "pgmodeleruins.h"
-#include "pgmodelerns.h"
+#include "guiutilsns.h"
+#include "coreutilsns.h"
 #include "defaultlanguages.h"
 
 bool DatabaseImportForm::low_verbosity = false;
@@ -185,7 +185,7 @@ void DatabaseImportForm::listFilteredObjects(DatabaseImportHelper &import_hlp, Q
 			item = new QTableWidgetItem;
 			obj_type = static_cast<ObjectType>(attr[Attributes::ObjectType].toUInt());
 			item->setText(BaseObject::getTypeName(obj_type));
-			item->setIcon(QIcon(PgModelerUiNs::getIconPath(obj_type)));
+			item->setIcon(QIcon(GuiUtilsNs::getIconPath(obj_type)));
 			item->setData(Qt::UserRole, enum_cast(obj_type));
 			flt_objects_tbw->setItem(row, 1, item);
 
@@ -204,7 +204,7 @@ void DatabaseImportForm::listFilteredObjects(DatabaseImportHelper &import_hlp, Q
 			item = new QTableWidgetItem;
 			obj_type = BaseObject::getObjectType(attr[Attributes::ParentType]);
 			item->setText(BaseObject::getTypeName(obj_type));
-			item->setIcon(QIcon(PgModelerUiNs::getIconPath(obj_type)));
+			item->setIcon(QIcon(GuiUtilsNs::getIconPath(obj_type)));
 			flt_objects_tbw->setItem(row, 4, item);
 
 			row++;
@@ -227,19 +227,19 @@ void DatabaseImportForm::updateProgress(int progress, QString msg, ObjectType ob
 {
 	QPixmap ico;
 
-	msg=PgModelerUiNs::formatMessage(msg);
+	msg=GuiUtilsNs::formatMessage(msg);
 	progress_lbl->setText(msg);
 	progress_pb->setValue(progress);
 
 	if(obj_type!=ObjectType::BaseObject)
-		ico=QPixmap(PgModelerUiNs::getIconPath(obj_type));
+		ico=QPixmap(GuiUtilsNs::getIconPath(obj_type));
 	else
-		ico=QPixmap(PgModelerUiNs::getIconPath("info"));
+		ico=QPixmap(GuiUtilsNs::getIconPath("info"));
 
 	ico_lbl->setPixmap(ico);
 
 	if(!low_verbosity)
-		PgModelerUiNs::createOutputTreeItem(output_trw, msg, ico);
+		GuiUtilsNs::createOutputTreeItem(output_trw, msg, ico);
 }
 
 void DatabaseImportForm::setItemCheckState(QTreeWidgetItem *item, int)
@@ -307,8 +307,8 @@ void DatabaseImportForm::importDatabase()
 		settings_tbw->setCurrentIndex(1);
 
 		if(low_verbosity)
-			PgModelerUiNs::createOutputTreeItem(output_trw, tr("<strong>Low verbosity is set:</strong> only key informations and errors will be displayed."),
-																					QPixmap(PgModelerUiNs::getIconPath("alert")), nullptr, false);
+			GuiUtilsNs::createOutputTreeItem(output_trw, tr("<strong>Low verbosity is set:</strong> only key informations and errors will be displayed."),
+																					QPixmap(GuiUtilsNs::getIconPath("alert")), nullptr, false);
 
 		getObjectToImport(obj_oids, col_oids);
 		obj_oids[ObjectType::Database].push_back(database_cmb->itemData(database_cmb->currentIndex()).value<unsigned>());
@@ -576,11 +576,11 @@ void DatabaseImportForm::captureThreadError(Exception e)
 	destroyModelWidget();
 	finishImport(tr("Importing process aborted!"));
 
-	ico=QPixmap(PgModelerUiNs::getIconPath("error"));
+	ico=QPixmap(GuiUtilsNs::getIconPath("error"));
 	ico_lbl->setPixmap(ico);
 
-	item=PgModelerUiNs::createOutputTreeItem(output_trw, PgModelerUiNs::formatMessage(e.getErrorMessage()), ico, nullptr, false, true);
-	PgModelerUiNs::createExceptionsTree(output_trw, e, item);
+	item=GuiUtilsNs::createOutputTreeItem(output_trw, GuiUtilsNs::formatMessage(e.getErrorMessage()), ico, nullptr, false, true);
+	GuiUtilsNs::createExceptionsTree(output_trw, e, item);
 
 	//Destroy the current import thread and helper to avoid reuse
 	destroyThread();
@@ -684,7 +684,7 @@ void DatabaseImportForm::destroyModelWidget()
 
 void DatabaseImportForm::handleImportCanceled()
 {
-	QPixmap ico=QPixmap(PgModelerUiNs::getIconPath("alert"));
+	QPixmap ico=QPixmap(GuiUtilsNs::getIconPath("alert"));
 	QString msg=tr("Importing process canceled by user!");
 
 	if(!create_model)
@@ -694,7 +694,7 @@ void DatabaseImportForm::handleImportCanceled()
 	finishImport(msg);
 	ico_lbl->setPixmap(ico);
 
-	PgModelerUiNs::createOutputTreeItem(output_trw, msg, ico);
+	GuiUtilsNs::createOutputTreeItem(output_trw, msg, ico);
 }
 
 void DatabaseImportForm::handleImportFinished(Exception e)
@@ -708,7 +708,7 @@ void DatabaseImportForm::handleImportFinished(Exception e)
 	model_wgt->rearrangeSchemasInGrid();
 	model_wgt->getDatabaseModel()->setInvalidated(false);
 
-	ico_lbl->setPixmap(QPixmap(PgModelerUiNs::getIconPath("info")));
+	ico_lbl->setPixmap(QPixmap(GuiUtilsNs::getIconPath("info")));
 	finishImport(tr("Importing process sucessfuly ended!"));
 
 	import_helper->closeConnection();
@@ -787,7 +787,7 @@ void DatabaseImportForm::listDatabases(DatabaseImportHelper &import_helper, QCom
 
 				for(int i=0; i < list.count(); i++)
 				{
-					dbcombo->setItemIcon(i, QPixmap(PgModelerUiNs::getIconPath(ObjectType::Database)));
+					dbcombo->setItemIcon(i, QPixmap(GuiUtilsNs::getIconPath(ObjectType::Database)));
 					dbcombo->setItemData(i, oids[list[i]]);
 				}
 
@@ -835,7 +835,7 @@ void DatabaseImportForm::listObjects(DatabaseImportHelper &import_helper, QTreeW
 				//Creating database item
 				db_item=new QTreeWidgetItem;
 				db_item->setText(0, import_helper.getCurrentDatabase());
-				db_item->setIcon(0, QPixmap(PgModelerUiNs::getIconPath(ObjectType::Database)));
+				db_item->setIcon(0, QPixmap(GuiUtilsNs::getIconPath(ObjectType::Database)));
 				attribs=catalog.getObjectsAttributes(ObjectType::Database, "", "", {}, {{Attributes::Name, import_helper.getCurrentDatabase()}});
 
 				db_item->setData(ObjectId, Qt::UserRole, attribs[0].at(Attributes::Oid).toUInt());
@@ -950,7 +950,7 @@ vector<QTreeWidgetItem *> DatabaseImportForm::updateObjectsTree(DatabaseImportHe
 			{
 				//Create a group item for the current type
 				group=new QTreeWidgetItem(root);
-				group->setIcon(0, QPixmap(PgModelerUiNs::getIconPath(BaseObject::getSchemaName(grp_type) + QString("_grp"))));
+				group->setIcon(0, QPixmap(GuiUtilsNs::getIconPath(BaseObject::getSchemaName(grp_type) + QString("_grp"))));
 				group->setFont(0, grp_fnt);
 
 				//Group items does contains a zero valued id to indicate that is not a valide object
@@ -989,7 +989,7 @@ vector<QTreeWidgetItem *> DatabaseImportForm::updateObjectsTree(DatabaseImportHe
 				}
 
 				item=new QTreeWidgetItem(group);
-				item->setIcon(0, QPixmap(PgModelerUiNs::getIconPath(obj_type)));
+				item->setIcon(0, QPixmap(GuiUtilsNs::getIconPath(obj_type)));
 				item->setText(0, label);
 				item->setText(ObjectId, attribs[Attributes::Oid].rightJustified(10, '0'));
 				item->setData(ObjectId, Qt::UserRole, attribs[Attributes::Oid].toUInt());

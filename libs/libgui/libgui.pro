@@ -94,7 +94,6 @@ SOURCES += src/mainwindow.cpp \
            src/objectsdiffinfo.cpp \
            src/databaseexplorerwidget.cpp \
            src/snippetsconfigwidget.cpp \
-           src/pgmodeleruins.cpp \
            src/bugreportform.cpp \
            src/sqlexecutionwidget.cpp \
            src/htmlitemdelegate.cpp \
@@ -119,7 +118,8 @@ SOURCES += src/mainwindow.cpp \
     src/foreigndatawrapperwidget.cpp \
     src/foreignserverwidget.cpp \
 	src/usermappingwidget.cpp \
-	src/objectsfilterwidget.cpp
+	src/objectsfilterwidget.cpp \
+    src/guiutilsns.cpp
 
 
 HEADERS += src/mainwindow.h \
@@ -210,7 +210,6 @@ HEADERS += src/mainwindow.h \
            src/objectsdiffinfo.h \
            src/databaseexplorerwidget.h \
            src/snippetsconfigwidget.h \
-           src/pgmodeleruins.h \
            src/bugreportform.h \
            src/sqlexecutionwidget.h \
            src/htmlitemdelegate.h \
@@ -235,7 +234,8 @@ HEADERS += src/mainwindow.h \
     src/foreigndatawrapperwidget.h \
     src/foreignserverwidget.h \
 	src/usermappingwidget.h \
-	src/objectsfilterwidget.h
+	src/objectsfilterwidget.h \
+    src/guiutilsns.h
 
 FORMS += ui/mainwindow.ui \
     ui/basefunctionwidget.ui \

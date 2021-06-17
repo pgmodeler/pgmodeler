@@ -18,18 +18,18 @@
 
 /**
 \ingroup libcore
-\namespace PgModelerNS
-\brief This namespace is used to organize all functions or constants used in the libpgmodeler package.
+\namespace CoreUtilsNs
+\brief This namespace is used to organize all functions or constants used in the libcore package.
 */
 
-#ifndef PGMODELER_NS_H
-#define PGMODELER_NS_H
+#ifndef CORE_UTILS_NS_H
+#define CORE_UTILS_NS_H
 
 #include "baseobject.h"
 #include "tableobject.h"
 #include <QCryptographicHash>
 
-namespace PgModelerNs {
+namespace CoreUtilsNs {
 	//! \brief Default char for data/value separator for special usage
 	static const QString DataSeparator("•");
 

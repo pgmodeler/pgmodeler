@@ -18,12 +18,12 @@
 
 /**
 \ingroup libcore
-\namespace PgModelerUiNS
-\brief This namespace is used to organize all functions or constants used in the libpgmodeler_ui package.
+\namespace GuiUtilsNs
+\brief This namespace is used to organize all functions or constants used in the libgui package.
 */
 
-#ifndef PGMODELER_UI_NS_H
-#define PGMODELER_UI_NS_H
+#ifndef GUI_UTILS_NS_H
+#define GUI_UTILS_NS_H
 
 #include <QTreeWidget>
 #include <QListWidget>
@@ -32,7 +32,7 @@
 #include "baseobject.h"
 #include "numberedtexteditor.h"
 
-namespace PgModelerUiNs {
+namespace GuiUtilsNs {
 	static constexpr unsigned SmallFontFactor = 0,
 	MediumFontFactor = 1,
 	BigFontFactor = 2,

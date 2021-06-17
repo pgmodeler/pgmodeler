@@ -17,7 +17,7 @@
 */
 
 #include "welcomewidget.h"
-#include "pgmodeleruins.h"
+#include "guiutilsns.h"
 
 WelcomeWidget::WelcomeWidget(QWidget *parent): QWidget(parent)
 {
@@ -27,10 +27,10 @@ WelcomeWidget::WelcomeWidget(QWidget *parent): QWidget(parent)
 
 	for(auto &btn : btns)
 	{
-		PgModelerUiNs::createDropShadow(btn, 3, 3, 10);
+		GuiUtilsNs::createDropShadow(btn, 3, 3, 10);
 
 #ifdef Q_OS_LINUX
-	PgModelerUiNs::__configureWidgetFont(btn, 1.30);
+	GuiUtilsNs::__configureWidgetFont(btn, 1.30);
 #else
 		PgModelerUiNs::__configureWidgetFont(btn, 1.50);
 #endif

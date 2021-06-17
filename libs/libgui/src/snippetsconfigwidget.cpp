@@ -19,7 +19,7 @@
 #include "snippetsconfigwidget.h"
 #include "baseobject.h"
 #include "messagebox.h"
-#include "pgmodeleruins.h"
+#include "guiutilsns.h"
 
 map<QString, attribs_map> SnippetsConfigWidget::config_params;
 
@@ -41,7 +41,7 @@ SnippetsConfigWidget::SnippetsConfigWidget(QWidget * parent) : BaseConfigWidget(
 	//Creates a combo with the accepted object type
 	for(auto &itr : types_map)
 	{
-		ico.load(PgModelerUiNs::getIconPath(itr.second));
+		ico.load(GuiUtilsNs::getIconPath(itr.second));
 		applies_to_cmb->addItem(ico, itr.first, enum_cast(itr.second));
 		filter_cmb->addItem(ico, itr.first, enum_cast(itr.second));
 	}
@@ -53,7 +53,7 @@ SnippetsConfigWidget::SnippetsConfigWidget(QWidget * parent) : BaseConfigWidget(
 	filter_cmb->insertItem(0, tr("All snippets"));
 	filter_cmb->setCurrentIndex(0);
 
-	snippet_txt=PgModelerUiNs::createNumberedTextEditor(snippet_wgt);
+	snippet_txt=GuiUtilsNs::createNumberedTextEditor(snippet_wgt);
 
 	try
 	{
@@ -522,7 +522,7 @@ void SnippetsConfigWidget::configureSnippetsMenu(QMenu *snip_menu, vector<Object
 				type_name=tr("General");
 			}
 			else
-				ico=QPixmap(PgModelerUiNs::getIconPath(object));
+				ico=QPixmap(GuiUtilsNs::getIconPath(object));
 
 			menu=new QMenu(type_name, snip_menu);
 			menu->setIcon(ico);
@@ -536,7 +536,7 @@ void SnippetsConfigWidget::configureSnippetsMenu(QMenu *snip_menu, vector<Object
 		}
 
 		//Creating the action for the current snippet
-		act=new QAction(QPixmap(PgModelerUiNs::getIconPath("codesnippet")), snip_id, submenus[object]);
+		act=new QAction(QPixmap(GuiUtilsNs::getIconPath("codesnippet")), snip_id, submenus[object]);
 		act->setToolTip(snip[Attributes::Label]);
 		submenus[object]->addAction(act);
 	}

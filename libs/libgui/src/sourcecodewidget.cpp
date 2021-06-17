@@ -18,7 +18,7 @@
 
 #include "sourcecodewidget.h"
 #include "taskprogresswidget.h"
-#include "pgmodeleruins.h"
+#include "guiutilsns.h"
 
 SourceCodeWidget::SourceCodeWidget(QWidget *parent): BaseObjectWidget(parent)
 {
@@ -32,10 +32,10 @@ SourceCodeWidget::SourceCodeWidget(QWidget *parent): BaseObjectWidget(parent)
 		hl_sqlcode=nullptr;
 		hl_xmlcode=nullptr;
 
-		sqlcode_txt=PgModelerUiNs::createNumberedTextEditor(sqlcode_wgt);
+		sqlcode_txt=GuiUtilsNs::createNumberedTextEditor(sqlcode_wgt);
 		sqlcode_txt->setReadOnly(true);
 
-		xmlcode_txt=PgModelerUiNs::createNumberedTextEditor(xmlcode_wgt);
+		xmlcode_txt=GuiUtilsNs::createNumberedTextEditor(xmlcode_wgt);
 		xmlcode_txt->setReadOnly(true);
 
 		name_edt->setReadOnly(true);
@@ -74,7 +74,7 @@ void SourceCodeWidget::setSourceCodeTab(int)
 			   dynamic_cast<BaseRelationship *>(object)->getRelationshipType()==BaseRelationship::RelationshipFk)
 			  || (obj_type!=ObjectType::BaseRelationship && obj_type!=ObjectType::Textbox)));
 
-	icone=QPixmap(PgModelerUiNs::getIconPath(code_icon));
+	icone=QPixmap(GuiUtilsNs::getIconPath(code_icon));
 	icon_lbl->setPixmap(icone);
 	version_cmb->setEnabled(enabled);
 	pgsql_lbl->setEnabled(enabled);
@@ -233,7 +233,7 @@ void SourceCodeWidget::setAttributes(DatabaseModel *model, BaseObject *object)
 			code_options_cmb->setEnabled(false);
 #endif
 
-			obj_icon_lbl->setPixmap(QPixmap(PgModelerUiNs::getIconPath(object->getObjectType())));
+			obj_icon_lbl->setPixmap(QPixmap(GuiUtilsNs::getIconPath(object->getObjectType())));
 
 			if(!hl_sqlcode->isConfigurationLoaded())
 				hl_sqlcode->loadConfiguration(GlobalAttributes::getSQLHighlightConfPath());

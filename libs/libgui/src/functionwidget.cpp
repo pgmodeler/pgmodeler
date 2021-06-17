@@ -73,9 +73,9 @@ FunctionWidget::FunctionWidget(QWidget *parent): BaseFunctionWidget(parent, Obje
 																			ObjectsTableWidget::UpdateButton, true, this);
 	return_tab->setColumnCount(2);
 	return_tab->setHeaderLabel(tr("Column"), 0);
-	return_tab->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("column")), 0);
+	return_tab->setHeaderIcon(QPixmap(GuiUtilsNs::getIconPath("column")), 0);
 	return_tab->setHeaderLabel(tr("Type"), 1);
-	return_tab->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("usertype")), 1);
+	return_tab->setHeaderIcon(QPixmap(GuiUtilsNs::getIconPath("usertype")), 1);
 
 	vbox = new QVBoxLayout;
 	vbox->addWidget(return_tab);

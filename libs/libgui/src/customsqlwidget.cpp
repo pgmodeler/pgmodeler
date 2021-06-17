@@ -17,7 +17,7 @@
 */
 
 #include "customsqlwidget.h"
-#include "pgmodeleruins.h"
+#include "guiutilsns.h"
 
 CustomSQLWidget::CustomSQLWidget(QWidget *parent) : BaseObjectWidget(parent)
 {
@@ -28,8 +28,8 @@ CustomSQLWidget::CustomSQLWidget(QWidget *parent) : BaseObjectWidget(parent)
 		Ui_CustomSQLWidget::setupUi(this);
 		configureFormLayout(sqlappend_grid, ObjectType::BaseObject);
 
-		append_sql_txt=PgModelerUiNs::createNumberedTextEditor(append_sql_wgt, true);
-		prepend_sql_txt=PgModelerUiNs::createNumberedTextEditor(prepend_sql_wgt, true);
+		append_sql_txt=GuiUtilsNs::createNumberedTextEditor(append_sql_wgt, true);
+		prepend_sql_txt=GuiUtilsNs::createNumberedTextEditor(prepend_sql_wgt, true);
 
 		append_sql_hl=new SyntaxHighlighter(append_sql_txt);
 		append_sql_hl->loadConfiguration(GlobalAttributes::getSQLHighlightConfPath());
@@ -43,7 +43,7 @@ CustomSQLWidget::CustomSQLWidget(QWidget *parent) : BaseObjectWidget(parent)
 		comment_edt->setVisible(false);
 		comment_lbl->setVisible(false);
 
-		PgModelerUiNs::configureWidgetFont(message_lbl, PgModelerUiNs::MediumFontFactor);
+		GuiUtilsNs::configureWidgetFont(message_lbl, GuiUtilsNs::MediumFontFactor);
 
 		action_gen_insert=new QAction(tr("Generic INSERT"), this);
 		action_gen_insert->setObjectName(QString("action_gen_insert"));
@@ -152,7 +152,7 @@ void CustomSQLWidget::setAttributes(DatabaseModel *model, BaseObject *object)
 		begin_of_model_chk->setVisible(object->getObjectType()==ObjectType::Database);
 
 		obj_id_lbl->setVisible(false);
-		obj_icon_lbl->setPixmap(QPixmap(PgModelerUiNs::getIconPath(object->getObjectType())));
+		obj_icon_lbl->setPixmap(QPixmap(GuiUtilsNs::getIconPath(object->getObjectType())));
 
 		configureMenus();
 	}

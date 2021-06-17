@@ -17,7 +17,7 @@
 */
 
 #include "sceneinfowidget.h"
-#include "pgmodeleruins.h"
+#include "guiutilsns.h"
 #include "relationshipview.h"
 
 SceneInfoWidget::SceneInfoWidget(QWidget *parent): QWidget(parent)
@@ -38,7 +38,7 @@ void SceneInfoWidget::updateSelectedObject(BaseObjectView *object)
 {
 	if(!object)
 	{
-		obj_icon_lbl->setPixmap(QPixmap(PgModelerUiNs::getIconPath("close1")));
+		obj_icon_lbl->setPixmap(QPixmap(GuiUtilsNs::getIconPath("close1")));
 		obj_name_lbl->setText(tr("No selection"));
 		obj_pos_info_lbl->setText(tr("N/A"));
 	}
@@ -51,7 +51,7 @@ void SceneInfoWidget::updateSelectedObject(BaseObjectView *object)
 																		object->boundingRect().width(),
 																		object->boundingRect().height());
 
-		obj_icon_lbl->setPixmap(PgModelerUiNs::getIconPath(object->getUnderlyingObject()->getSchemaName()));
+		obj_icon_lbl->setPixmap(GuiUtilsNs::getIconPath(object->getUnderlyingObject()->getSchemaName()));
 		obj_name_lbl->setText(QString("<strong>%1</strong> <em>(%2)</em>").arg(object->getUnderlyingObject()->getSignature()).arg(object->getUnderlyingObject()->getTypeName()));
 		obj_pos_info_lbl->setText(QString("(%1, %2) [w: %3, h: %4]")
 															.arg(round(rect.left()))
@@ -68,7 +68,7 @@ void SceneInfoWidget::updateSelectedObjects(int obj_count, const QRectF &objs_re
 	if(!rect.isValid())
 		rect = QRect(0,0,0,0);
 
-	obj_icon_lbl->setPixmap(QPixmap(PgModelerUiNs::getIconPath("selectall")));
+	obj_icon_lbl->setPixmap(QPixmap(GuiUtilsNs::getIconPath("selectall")));
 	obj_name_lbl->setText(tr("Sel. objects: %1").arg(obj_count));
 	obj_pos_info_lbl->setText(QString("(%1, %2) [w: %3, h: %4]")
 														.arg(rect.left())

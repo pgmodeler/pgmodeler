@@ -17,16 +17,16 @@
 */
 
 #include "aboutwidget.h"
-#include "pgmodeleruins.h"
+#include "guiutilsns.h"
 #include "baseobjectview.h"
 
 AboutWidget::AboutWidget(QWidget *parent) : QWidget(parent)
 {
 	setupUi(this);
 
-	PgModelerUiNs::configureWidgetFont(title_lbl, PgModelerUiNs::HugeFontFactor);
-	PgModelerUiNs::configureWidgetFont(pgmodeler_ver_lbl, PgModelerUiNs::HugeFontFactor);
-	PgModelerUiNs::configureWidgetFont(build_num_lbl, PgModelerUiNs::BigFontFactor);
+	GuiUtilsNs::configureWidgetFont(title_lbl, GuiUtilsNs::HugeFontFactor);
+	GuiUtilsNs::configureWidgetFont(pgmodeler_ver_lbl, GuiUtilsNs::HugeFontFactor);
+	GuiUtilsNs::configureWidgetFont(build_num_lbl, GuiUtilsNs::BigFontFactor);
 
 	pgmodeler_ver_lbl->setText(QString("v%1 ").arg(GlobalAttributes::PgModelerVersion));
 	build_num_lbl->setText(QString("%1 Qt %2").arg(GlobalAttributes::PgModelerBuildNumber).arg(QT_VERSION_STR));

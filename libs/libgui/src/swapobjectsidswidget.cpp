@@ -1,5 +1,5 @@
 #include "swapobjectsidswidget.h"
-#include "pgmodeleruins.h"
+#include "guiutilsns.h"
 
 const QString SwapObjectsIdsWidget::IdLabel("ID: <strong>%1</strong>");
 
@@ -13,7 +13,7 @@ SwapObjectsIdsWidget::SwapObjectsIdsWidget(QWidget *parent, Qt::WindowFlags f) :
 																															 ObjectType::Column, ObjectType::Constraint });
 		setupUi(this);
 
-		PgModelerUiNs::configureWidgetFont(message_lbl, PgModelerUiNs::MediumFontFactor);
+		GuiUtilsNs::configureWidgetFont(message_lbl, GuiUtilsNs::MediumFontFactor);
 
 		selector_idx = 0;
 		src_object_sel=nullptr;
@@ -207,7 +207,7 @@ void SwapObjectsIdsWidget::showObjectId()
 	if(sel_obj)
 	{
 		id_lbl->setText(IdLabel.arg(sel_obj->getObjectId()));
-		ico_lbl->setPixmap(QPixmap(PgModelerUiNs::getIconPath(sel_obj->getObjectType())));
+		ico_lbl->setPixmap(QPixmap(GuiUtilsNs::getIconPath(sel_obj->getObjectType())));
 		ico_lbl->setToolTip(sel_obj->getTypeName());
 
 		id_lbl->setVisible(true);

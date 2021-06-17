@@ -91,25 +91,25 @@ ViewWidget::ViewWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Vi
 
 		objects_tab_map[ObjectType::Trigger]->setColumnCount(6);
 		objects_tab_map[ObjectType::Trigger]->setHeaderLabel(tr("Name"), 0);
-		objects_tab_map[ObjectType::Trigger]->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("uid")),0);
+		objects_tab_map[ObjectType::Trigger]->setHeaderIcon(QPixmap(GuiUtilsNs::getIconPath("uid")),0);
 		objects_tab_map[ObjectType::Trigger]->setHeaderLabel(tr("Refer. Table"), 1);
-		objects_tab_map[ObjectType::Trigger]->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("table")),1);
+		objects_tab_map[ObjectType::Trigger]->setHeaderIcon(QPixmap(GuiUtilsNs::getIconPath("table")),1);
 		objects_tab_map[ObjectType::Trigger]->setHeaderLabel(tr("Firing"), 2);
-		objects_tab_map[ObjectType::Trigger]->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("trigger")),2);
+		objects_tab_map[ObjectType::Trigger]->setHeaderIcon(QPixmap(GuiUtilsNs::getIconPath("trigger")),2);
 		objects_tab_map[ObjectType::Trigger]->setHeaderLabel(tr("Events"), 3);
 		objects_tab_map[ObjectType::Trigger]->setHeaderLabel(tr("Alias"), 4);
 		objects_tab_map[ObjectType::Trigger]->setHeaderLabel(tr("Comment"), 5);
 
 		objects_tab_map[ObjectType::Index]->setColumnCount(4);
 		objects_tab_map[ObjectType::Index]->setHeaderLabel(tr("Name"), 0);
-		objects_tab_map[ObjectType::Index]->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("uid")),0);
+		objects_tab_map[ObjectType::Index]->setHeaderIcon(QPixmap(GuiUtilsNs::getIconPath("uid")),0);
 		objects_tab_map[ObjectType::Index]->setHeaderLabel(tr("Indexing"), 1);
 		objects_tab_map[ObjectType::Index]->setHeaderLabel(tr("Alias"), 2);
 		objects_tab_map[ObjectType::Index]->setHeaderLabel(tr("Comment"), 3);
 
 		objects_tab_map[ObjectType::Rule]->setColumnCount(5);
 		objects_tab_map[ObjectType::Rule]->setHeaderLabel(tr("Name"), 0);
-		objects_tab_map[ObjectType::Rule]->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("uid")),0);
+		objects_tab_map[ObjectType::Rule]->setHeaderIcon(QPixmap(GuiUtilsNs::getIconPath("uid")),0);
 		objects_tab_map[ObjectType::Rule]->setHeaderLabel(tr("Execution"), 1);
 		objects_tab_map[ObjectType::Rule]->setHeaderLabel(tr("Event"), 2);
 		objects_tab_map[ObjectType::Rule]->setHeaderLabel(tr("Alias"), 3);
@@ -223,8 +223,8 @@ void ViewWidget::duplicateObject(int curr_row, int new_row)
 		if(curr_row >= 0)
 			object = reinterpret_cast<BaseObject *>(obj_table->getRowData(curr_row).value<void *>());
 
-		PgModelerNs::copyObject(&dup_object, object, obj_type);
-		dup_object->setName(PgModelerNs::generateUniqueName(dup_object, *view->getObjectList(obj_type), false, QString("_cp")));
+		CoreUtilsNs::copyObject(&dup_object, object, obj_type);
+		dup_object->setName(CoreUtilsNs::generateUniqueName(dup_object, *view->getObjectList(obj_type), false, QString("_cp")));
 
 		op_id=op_list->registerObject(dup_object, Operation::ObjectCreated, new_row, this->object);
 

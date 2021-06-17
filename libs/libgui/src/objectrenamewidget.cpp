@@ -17,7 +17,7 @@
 */
 
 #include "objectrenamewidget.h"
-#include "pgmodeleruins.h"
+#include "guiutilsns.h"
 
 ObjectRenameWidget::ObjectRenameWidget(QWidget * parent) : QDialog(parent)
 {
@@ -58,13 +58,13 @@ void ObjectRenameWidget::setAttributes(vector<BaseObject *> objs, DatabaseModel 
 
 	if(objs.size() == 1)
 	{
-		obj_icon_lbl->setPixmap(QPixmap(PgModelerUiNs::getIconPath(objs[0]->getSchemaName())));
+		obj_icon_lbl->setPixmap(QPixmap(GuiUtilsNs::getIconPath(objs[0]->getSchemaName())));
 		obj_icon_lbl->setToolTip(objs[0]->getTypeName());
 		obj_name_lbl->setText(objs[0]->getName());
 	}
 	else
 	{
-		obj_icon_lbl->setPixmap(QPixmap(PgModelerUiNs::getIconPath("selectall")));
+		obj_icon_lbl->setPixmap(QPixmap(GuiUtilsNs::getIconPath("selectall")));
 		obj_icon_lbl->setToolTip("");
 		rename_lbl->setText(tr("Rename <strong>%1</strong> object(s) to:").arg(objs.size()));
 		to_lbl->setVisible(false);
@@ -149,7 +149,7 @@ void ObjectRenameWidget::applyRenaming()
 					if(tab_obj)
 					{
 						tab_objs = *dynamic_cast<PhysicalTable *>(tab_obj->getParentTable())->getObjectList(obj_type);
-						new_name = PgModelerNs::generateUniqueName<TableObject>(object, tab_objs, false, "", false, true);
+						new_name = CoreUtilsNs::generateUniqueName<TableObject>(object, tab_objs, false, "", false, true);
 					}
 					//For database child object, generate an unique name among the other objects of the same type in the database
 					else
@@ -169,7 +169,7 @@ void ObjectRenameWidget::applyRenaming()
 																model->getObjectList(ObjectType::ForeignTable)->end());
 						}
 
-						new_name = PgModelerNs::generateUniqueName<BaseObject>(object,
+						new_name = CoreUtilsNs::generateUniqueName<BaseObject>(object,
 																																	 BaseTable::isBaseTable(obj_type) ? obj_map[ObjectType::BaseTable] : obj_map[obj_type],
 																																	 true, "", false, true);
 					}

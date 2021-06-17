@@ -47,9 +47,9 @@ ReferenceWidget::ReferenceWidget(QWidget *parent) : QWidget(parent)
 	columns_tab = new ObjectsTableWidget(ObjectsTableWidget::AllButtons, true, this);
 	columns_tab->setColumnCount(3);
 	columns_tab->setHeaderLabel(tr("Name"), 0);
-	columns_tab->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("uid")),0);
+	columns_tab->setHeaderIcon(QPixmap(GuiUtilsNs::getIconPath("uid")),0);
 	columns_tab->setHeaderLabel(tr("Type"), 1);
-	columns_tab->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("usertype")),1);
+	columns_tab->setHeaderIcon(QPixmap(GuiUtilsNs::getIconPath("usertype")),1);
 	columns_tab->setHeaderLabel(tr("Alias"), 2);
 
 	QFrame *info_frm=BaseObjectWidget::generateInformationFrame(tr("This tab can be used to inform the columns that the view owns. This is just a convenience to make the visualization of this kind of object more intuitive. If no column is specified here the columns of the view displayed in the canvas will be a fragment of the expression defined in the previous tab."));
@@ -66,9 +66,9 @@ ReferenceWidget::ReferenceWidget(QWidget *parent) : QWidget(parent)
 																																				ObjectsTableWidget::EditButton), true, this);
 	ref_tables_tab->setColumnCount(3);
 	ref_tables_tab->setHeaderLabel(tr("Name"), 0);
-	ref_tables_tab->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("uid")),0);
+	ref_tables_tab->setHeaderIcon(QPixmap(GuiUtilsNs::getIconPath("uid")),0);
 	ref_tables_tab->setHeaderLabel(tr("Schema"), 1);
-	ref_tables_tab->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("schema")),1);
+	ref_tables_tab->setHeaderIcon(QPixmap(GuiUtilsNs::getIconPath("schema")),1);
 
 	ref_table_sel=new ObjectSelectorWidget({ ObjectType::Table, ObjectType::ForeignTable }, true, this);
 	ref_table_sel->enableObjectCreation(false);

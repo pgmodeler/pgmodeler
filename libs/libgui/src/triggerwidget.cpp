@@ -44,9 +44,9 @@ TriggerWidget::TriggerWidget(QWidget *parent): BaseObjectWidget(parent, ObjectTy
 
 		columns_tab->setColumnCount(2);
 		columns_tab->setHeaderLabel(tr("Column"), 0);
-		columns_tab->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("column")),0);
+		columns_tab->setHeaderIcon(QPixmap(GuiUtilsNs::getIconPath("column")),0);
 		columns_tab->setHeaderLabel(tr("Type"), 1);
-		columns_tab->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("usertype")),1);
+		columns_tab->setHeaderIcon(QPixmap(GuiUtilsNs::getIconPath("usertype")),1);
 
 		dynamic_cast<QGridLayout *>(arg_cols_tbw->widget(1)->layout())->addWidget(columns_tab, 1,0,1,3);
 		dynamic_cast<QGridLayout *>(arg_cols_tbw->widget(0)->layout())->addWidget(arguments_tab, 1,0,1,3);

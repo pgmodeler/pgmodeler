@@ -18,7 +18,7 @@
 
 #include "operationlistwidget.h"
 #include "taskprogresswidget.h"
-#include "pgmodeleruins.h"
+#include "guiutilsns.h"
 
 OperationListWidget::OperationListWidget(QWidget *parent) : QWidget(parent)
 {
@@ -98,7 +98,7 @@ void OperationListWidget::updateOperationList()
 			if(obj_type==ObjectType::BaseRelationship)
 				str_aux+=QString("tv");
 
-			item->setIcon(0,QPixmap(PgModelerUiNs::getIconPath(str_aux)));
+			item->setIcon(0,QPixmap(GuiUtilsNs::getIconPath(str_aux)));
 
 			operations_tw->insertTopLevelItem(i,item);
 			item->setFont(0,font);
@@ -126,7 +126,7 @@ void OperationListWidget::updateOperationList()
 			}
 
 			item1=new QTreeWidgetItem(item);
-			item1->setIcon(0,QPixmap(PgModelerUiNs::getIconPath(op_icon)));
+			item1->setIcon(0,QPixmap(GuiUtilsNs::getIconPath(op_icon)));
 			item1->setFont(0,font);
 			item1->setText(0,op_name);
 

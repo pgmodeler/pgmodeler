@@ -20,14 +20,14 @@
 #include "globalattributes.h"
 #include <QDesktopServices>
 #include <QUrl>
-#include "pgmodeleruins.h"
+#include "guiutilsns.h"
 
 DonateWidget::DonateWidget(QWidget *parent) : QWidget(parent)
 {
 	setupUi(this);
 	setWindowFlags(Qt::Widget | Qt::FramelessWindowHint);
 
-	PgModelerUiNs::createDropShadow(this, 5, 5, 30);
+	GuiUtilsNs::createDropShadow(this, 5, 5, 30);
 
 	connect(hide_tb, &QToolButton::clicked,
 			[&](){
@@ -42,6 +42,6 @@ DonateWidget::DonateWidget(QWidget *parent) : QWidget(parent)
 		emit s_hideRequested();
 	});
 
-	PgModelerUiNs::configureWidgetFont(title_lbl, PgModelerUiNs::BigFontFactor);
+	GuiUtilsNs::configureWidgetFont(title_lbl, GuiUtilsNs::BigFontFactor);
 	this->adjustSize();
 }

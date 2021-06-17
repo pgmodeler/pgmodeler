@@ -17,7 +17,7 @@
 */
 
 #include "updatenotifierwidget.h"
-#include "pgmodeleruins.h"
+#include "guiutilsns.h"
 
 UpdateNotifierWidget::UpdateNotifierWidget(QWidget *parent) : QWidget(parent)
 {
@@ -28,7 +28,7 @@ UpdateNotifierWidget::UpdateNotifierWidget(QWidget *parent) : QWidget(parent)
 	update_chk_reply=nullptr;
 	old_pos=QPoint(-1,-1);
 	frame->installEventFilter(this);
-	PgModelerUiNs::createDropShadow(this, 5, 5, 30);
+	GuiUtilsNs::createDropShadow(this, 5, 5, 30);
 
 	connect(&update_chk_manager, SIGNAL(finished(QNetworkReply*)), this, SLOT(handleUpdateChecked(QNetworkReply*)));
 
@@ -42,9 +42,9 @@ UpdateNotifierWidget::UpdateNotifierWidget(QWidget *parent) : QWidget(parent)
 		emit s_hideRequested();
 	});
 
-	PgModelerUiNs::configureWidgetFont(changelog_txt, PgModelerUiNs::MediumFontFactor);
-	PgModelerUiNs::configureWidgetFont(ver_num_lbl, PgModelerUiNs::BigFontFactor);
-	PgModelerUiNs::configureWidgetFont(title_lbl, PgModelerUiNs::BigFontFactor);
+	GuiUtilsNs::configureWidgetFont(changelog_txt, GuiUtilsNs::MediumFontFactor);
+	GuiUtilsNs::configureWidgetFont(ver_num_lbl, GuiUtilsNs::BigFontFactor);
+	GuiUtilsNs::configureWidgetFont(title_lbl, GuiUtilsNs::BigFontFactor);
 	this->adjustSize();
 }
 

@@ -18,7 +18,7 @@
 
 #include "application.h"
 #include <QTranslator>
-#include "pgmodeleruins.h"
+#include "guiutilsns.h"
 #include "syntaxcheckerform.h"
 #include "pgmodelerapp.h"
 

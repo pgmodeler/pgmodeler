@@ -52,7 +52,7 @@ BaseObjectWidget::BaseObjectWidget(QWidget *parent, ObjectType obj_type): QWidge
 		tablespace_sel=nullptr;
 		object_protected = false;
 
-		PgModelerUiNs::configureWidgetFont(protected_obj_lbl, PgModelerUiNs::MediumFontFactor);
+		GuiUtilsNs::configureWidgetFont(protected_obj_lbl, GuiUtilsNs::MediumFontFactor);
 
 		connect(edt_perms_tb, SIGNAL(clicked(bool)),this, SLOT(editPermissions()));
 		connect(append_sql_tb, SIGNAL(clicked(bool)),this, SLOT(editCustomSQL()));
@@ -474,7 +474,7 @@ void BaseObjectWidget::configureFormLayout(QGridLayout *grid, ObjectType obj_typ
 
 	if(obj_type!=ObjectType::BaseObject)
 	{
-		obj_icon_lbl->setPixmap(QPixmap(PgModelerUiNs::getIconPath(obj_type)));
+		obj_icon_lbl->setPixmap(QPixmap(GuiUtilsNs::getIconPath(obj_type)));
 		obj_icon_lbl->setToolTip(BaseObject::getTypeName(obj_type));
 
 		if(obj_type != ObjectType::Permission && obj_type != ObjectType::Cast &&
@@ -549,7 +549,7 @@ QFrame *BaseObjectWidget::generateInformationFrame(const QString &msg)
 	font.setBold(false);
 	info_frm->setFont(font);
 
-	PgModelerUiNs::configureWidgetFont(info_frm, PgModelerUiNs::MediumFontFactor);
+	GuiUtilsNs::configureWidgetFont(info_frm, GuiUtilsNs::MediumFontFactor);
 
 	info_frm->setObjectName("info_frm");
 	info_frm->setFrameShape(QFrame::StyledPanel);
@@ -565,7 +565,7 @@ QFrame *BaseObjectWidget::generateInformationFrame(const QString &msg)
 	ico_lbl->setMinimumSize(QSize(24, 24));
 	ico_lbl->setMaximumSize(QSize(24, 24));
 	ico_lbl->setScaledContents(true);
-	ico_lbl->setPixmap(QPixmap(PgModelerUiNs::getIconPath("info")));
+	ico_lbl->setPixmap(QPixmap(GuiUtilsNs::getIconPath("info")));
 	ico_lbl->setAlignment(Qt::AlignLeft|Qt::AlignTop);
 
 	grid->addWidget(ico_lbl, 0, 0, 1, 1);
@@ -628,7 +628,7 @@ QFrame *BaseObjectWidget::generateVersionWarningFrame(map<QString, vector<QWidge
 	font.setItalic(false);
 	font.setBold(false);
 
-	PgModelerUiNs::configureWidgetFont(alert_frm, PgModelerUiNs::MediumFontFactor);
+	GuiUtilsNs::configureWidgetFont(alert_frm, GuiUtilsNs::MediumFontFactor);
 
 	alert_frm->setObjectName("alerta_frm");
 	alert_frm->setFrameShape(QFrame::StyledPanel);
@@ -643,7 +643,7 @@ QFrame *BaseObjectWidget::generateVersionWarningFrame(map<QString, vector<QWidge
 	ico_lbl->setMinimumSize(QSize(24, 24));
 	ico_lbl->setMaximumSize(QSize(24, 24));
 	ico_lbl->setScaledContents(true);
-	ico_lbl->setPixmap(QPixmap(PgModelerUiNs::getIconPath("alert")));
+	ico_lbl->setPixmap(QPixmap(GuiUtilsNs::getIconPath("alert")));
 	ico_lbl->setAlignment(Qt::AlignLeft|Qt::AlignTop);
 
 	grid->addWidget(ico_lbl, 0, 0, 1, 1);
@@ -792,7 +792,7 @@ void BaseObjectWidget::applyConfiguration()
 			}
 
 			if(!object->isProtected() && !object->isSystemObject())
-				PgModelerUiNs::disableObjectSQL(object, disable_sql_chk->isChecked());
+				GuiUtilsNs::disableObjectSQL(object, disable_sql_chk->isChecked());
 		}
 		catch(Exception &e)
 		{

@@ -17,7 +17,7 @@
 */
 
 #include "relationship.h"
-#include "pgmodelerns.h"
+#include "coreutilsns.h"
 #include <QApplication>
 
 const QString Relationship::SuffixSeparator("_");
@@ -851,7 +851,7 @@ void Relationship::addConstraints(PhysicalTable *recv_tab)
 
 			if(constr->getConstraintType()!=ConstraintType::PrimaryKey)
 			{
-				constr->setName(PgModelerNs::generateUniqueName(constr, (*recv_tab->getObjectList(ObjectType::Constraint))));
+				constr->setName(CoreUtilsNs::generateUniqueName(constr, (*recv_tab->getObjectList(ObjectType::Constraint))));
 				recv_tab->addConstraint(constr);
 			}
 			else
@@ -1390,7 +1390,7 @@ void Relationship::addUniqueKey(PhysicalTable *recv_tab)
 
 		uq->setName(generateObjectName(UqPattern));
 		uq->setAlias(generateObjectName(UqPattern, nullptr, true));
-		uq->setName(PgModelerNs::generateUniqueName(uq, (*recv_tab->getObjectList(ObjectType::Constraint))));
+		uq->setName(CoreUtilsNs::generateUniqueName(uq, (*recv_tab->getObjectList(ObjectType::Constraint))));
 		recv_tab->addConstraint(uq);
 	}
 	catch(Exception &e)
@@ -1518,7 +1518,7 @@ void Relationship::addForeignKey(PhysicalTable *ref_tab, PhysicalTable *recv_tab
 
 		fk->setName(name);
 		fk->setAlias(fk_alias);
-		fk->setName(PgModelerNs::generateUniqueName(fk, (*recv_tab->getObjectList(ObjectType::Constraint))));
+		fk->setName(CoreUtilsNs::generateUniqueName(fk, (*recv_tab->getObjectList(ObjectType::Constraint))));
 		recv_tab->addConstraint(fk);
 	}
 	catch(Exception &e)
@@ -1552,7 +1552,7 @@ void Relationship::addAttributes(PhysicalTable *recv_tab)
 			if(column->getParentTable())
 				break;
 
-			column->setName(PgModelerNs::generateUniqueName(column, (*recv_tab->getObjectList(ObjectType::Column))));
+			column->setName(CoreUtilsNs::generateUniqueName(column, (*recv_tab->getObjectList(ObjectType::Column))));
 			column->setAddedByLinking(true);
 			column->setParentRelationship(this);
 			recv_tab->addColumn(column);
@@ -1651,7 +1651,7 @@ void Relationship::copyColumns(PhysicalTable *ref_tab, PhysicalTable *recv_tab, 
 				column->setType(PgSqlType(QString("smallint")));
 
 			column->setName(name);
-			name=PgModelerNs::generateUniqueName(column, (*recv_tab->getObjectList(ObjectType::Column)));
+			name=CoreUtilsNs::generateUniqueName(column, (*recv_tab->getObjectList(ObjectType::Column)));
 			column->setName(name);
 
 			if(!prev_name.isEmpty())

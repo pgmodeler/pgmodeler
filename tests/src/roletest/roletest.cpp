@@ -17,7 +17,7 @@
 */
 
 #include <QtTest/QtTest>
-#include "pgmodelerns.h"
+#include "coreutilsns.h"
 #include "role.h"
 #include "pgmodelerunittest.h"
 

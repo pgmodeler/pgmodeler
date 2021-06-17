@@ -17,7 +17,7 @@
 */
 
 #include "mainwindow.h"
-#include "pgmodeleruins.h"
+#include "guiutilsns.h"
 #include "bugreportform.h"
 #include "metadatahandlingform.h"
 #include "sqlexecutionwidget.h"
@@ -88,7 +88,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 		views_stw->widget(ManageView)->setLayout(grid);
 
 		configuration_form=new ConfigurationForm(nullptr, Qt::WindowTitleHint | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint);
-		PgModelerUiNs::resizeDialog(configuration_form);
+		GuiUtilsNs::resizeDialog(configuration_form);
 		configuration_form->loadConfiguration();
 
 		plugins_conf_wgt=dynamic_cast<PluginsConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::PluginsConfWgt));
@@ -381,11 +381,11 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 
 		if(btn)
 		{
-			PgModelerUiNs::configureWidgetFont(btn, static_cast<unsigned>(PgModelerUiNs::MediumFontFactor));
+			GuiUtilsNs::configureWidgetFont(btn, static_cast<unsigned>(GuiUtilsNs::MediumFontFactor));
 			font = btn->font();
 			font.setBold(true);
 			btn->setFont(font);
-			PgModelerUiNs::createDropShadow(btn);
+			GuiUtilsNs::createDropShadow(btn);
 		}
 	}
 
@@ -492,7 +492,7 @@ void MainWindow::restoreTemporaryModels()
 	for(int idx = 0; idx < models_tbw->count(); idx++)
 		ignored_files += QFileInfo(dynamic_cast<ModelWidget *>(models_tbw->widget(idx))->getTempFilename()).fileName();
 
-	PgModelerUiNs::resizeDialog(restoration_form);
+	GuiUtilsNs::resizeDialog(restoration_form);
 	restoration_form->setIgnoredFiles(ignored_files);
 
 	//Restore temporary models (if exists)
@@ -646,7 +646,7 @@ void MainWindow::fixModel(const QString &filename)
 		model_fix_form.output_file_sel->setSelectedFile(fi.absolutePath() + GlobalAttributes::DirSeparator + fi.baseName() + QString("_fixed.") + fi.suffix());
 	}
 
-	PgModelerUiNs::resizeDialog(&model_fix_form);
+	GuiUtilsNs::resizeDialog(&model_fix_form);
 	GeneralConfigWidget::restoreWidgetGeometry(&model_fix_form);
 	model_fix_form.exec();
 	GeneralConfigWidget::saveWidgetGeometry(&model_fix_form);
@@ -1144,11 +1144,11 @@ void MainWindow::setCurrentModel()
 
 		for(QToolButton *btn : btns)
 		{
-			PgModelerUiNs::configureWidgetFont(btn, static_cast<unsigned>(PgModelerUiNs::MediumFontFactor));
+			GuiUtilsNs::configureWidgetFont(btn, static_cast<unsigned>(GuiUtilsNs::MediumFontFactor));
 			font = btn->font();
 			font.setBold(true);
 			btn->setFont(font);
-			PgModelerUiNs::createDropShadow(btn);
+			GuiUtilsNs::createDropShadow(btn);
 		}
 
 		edit_menu->addAction(current_model->action_copy);
@@ -1448,7 +1448,7 @@ void MainWindow::saveModel(ModelWidget *model)
 							 tr(" <strong>WARNING:</strong> The model <strong>%1</strong> is invalidated! It's recommended to validate it before save in order to create a consistent model otherwise the generated file will be broken demanding manual fixes to be loadable again!").arg(db_model->getName()),
 							 Messagebox::AlertIcon, Messagebox::AllButtons,
 							 tr("Validate"), tr("Save anyway"), "",
-								PgModelerUiNs::getIconPath("validation"), PgModelerUiNs::getIconPath("save"));
+								GuiUtilsNs::getIconPath("validation"), GuiUtilsNs::getIconPath("save"));
 
 				//If the user cancel the saving force the stopping of autosave timer to give user the chance to validate the model
 				if(msg_box.isCancelled())
@@ -1550,7 +1550,7 @@ void MainWindow::exportModel()
 					 tr(" <strong>WARNING:</strong> The model <strong>%1</strong> is invalidated! Before run the export process it's recommended to validate in order to correctly create the objects on database server!").arg(db_model->getName()),
 					 Messagebox::AlertIcon, Messagebox::AllButtons,
 					 tr("Validate"), tr("Export anyway"), "",
-					 PgModelerUiNs::getIconPath("validation"), PgModelerUiNs::getIconPath("export"));
+					 GuiUtilsNs::getIconPath("validation"), GuiUtilsNs::getIconPath("export"));
 
 		if(msg_box.result()==QDialog::Accepted)
 		{
@@ -1566,7 +1566,7 @@ void MainWindow::exportModel()
 		stopTimers(true);
 		connect(&model_export_form, &ModelExportForm::s_connectionsUpdateRequest, [&](){ updateConnections(true); });
 
-		PgModelerUiNs::resizeDialog(&model_export_form);
+		GuiUtilsNs::resizeDialog(&model_export_form);
 		GeneralConfigWidget::restoreWidgetGeometry(&model_export_form);
 		model_export_form.exec(current_model);
 		GeneralConfigWidget::saveWidgetGeometry(&model_export_form);
@@ -1584,7 +1584,7 @@ void MainWindow::importDatabase()
 	connect(&db_import_form, &DatabaseImportForm::s_connectionsUpdateRequest, [&](){ updateConnections(true); });
 
 	db_import_form.setModelWidget(current_model);
-	PgModelerUiNs::resizeDialog(&db_import_form);
+	GuiUtilsNs::resizeDialog(&db_import_form);
 
 	GeneralConfigWidget::restoreWidgetGeometry(&db_import_form);
 	db_import_form.exec();
@@ -1613,7 +1613,7 @@ void MainWindow::diffModelDatabase()
 					 tr(" <strong>WARNING:</strong> The model <strong>%1</strong> is invalidated! Before run the diff process it's recommended to validate in order to correctly analyze and generate the difference between the model and a database!").arg(db_model->getName()),
 					 Messagebox::AlertIcon, Messagebox::AllButtons,
 					 tr("Validate"), tr("Diff anyway"), "",
-					 PgModelerUiNs::getIconPath("validation"), PgModelerUiNs::getIconPath("diff"));
+					 GuiUtilsNs::getIconPath("validation"), GuiUtilsNs::getIconPath("diff"));
 
 		if(msg_box.result()==QDialog::Accepted)
 		{
@@ -1707,7 +1707,7 @@ void MainWindow::loadModel()
 	try
 	{
 		file_dlg.setNameFilter(tr("Database model (*.dbm);;All files (*.*)"));
-		file_dlg.setWindowIcon(QPixmap(PgModelerUiNs::getIconPath("pgsqlModeler48x48")));
+		file_dlg.setWindowIcon(QPixmap(GuiUtilsNs::getIconPath("pgsqlModeler48x48")));
 		file_dlg.setWindowTitle(tr("Load model"));
 		file_dlg.setFileMode(QFileDialog::ExistingFiles);
 		file_dlg.setAcceptMode(QFileDialog::AcceptOpen);
@@ -1760,7 +1760,7 @@ void MainWindow::showFixMessage(Exception &e, const QString &filename)
 							 tr("Could not load the database model file `%1'. Check the error stack to see details. You can try to fix it in order to make it loadable again.").arg(filename),
 							 Messagebox::ErrorIcon, Messagebox::YesNoButtons,
 							 tr("Fix model"), tr("Cancel"), "",
-							 PgModelerUiNs::getIconPath("fixobject"), PgModelerUiNs::getIconPath("error"));
+							 GuiUtilsNs::getIconPath("fixobject"), GuiUtilsNs::getIconPath("error"));
 
 	if(msg_box.result()==QDialog::Accepted)
 		fixModel(filename);
@@ -2019,7 +2019,7 @@ void MainWindow::executePendingOperation(bool valid_error)
 		static const QString op_names[]={ "", QT_TR_NOOP("save"), QT_TR_NOOP("save"),
 																			QT_TR_NOOP("export"), QT_TR_NOOP("diff") };
 
-		PgModelerUiNs::createOutputTreeItem(model_valid_wgt->output_trw,
+		GuiUtilsNs::createOutputTreeItem(model_valid_wgt->output_trw,
 											tr("Executing pending <strong>%1</strong> operation...").arg(op_names[pending_op]));
 
 		if(pending_op==PendingSaveOp || pending_op==PendingSaveAsOp)
@@ -2099,7 +2099,7 @@ void MainWindow::changeCurrentView(bool checked)
 void MainWindow::reportBug()
 {
 	BugReportForm bugrep_frm;
-	PgModelerUiNs::resizeDialog(&bugrep_frm);
+	GuiUtilsNs::resizeDialog(&bugrep_frm);
 	GeneralConfigWidget::restoreWidgetGeometry(&bugrep_frm);
 	bugrep_frm.exec();
 	GeneralConfigWidget::saveWidgetGeometry(&bugrep_frm);
@@ -2125,7 +2125,7 @@ void MainWindow::handleObjectsMetadata()
 	connect(&objs_meta_frm, SIGNAL(s_metadataHandled()), model_objs_wgt, SLOT(updateObjectsView()));
 	connect(&objs_meta_frm, SIGNAL(s_metadataHandled()), layers_wgt, SLOT(updateLayersList()));
 
-	PgModelerUiNs::resizeDialog(&objs_meta_frm);
+	GuiUtilsNs::resizeDialog(&objs_meta_frm);
 	GeneralConfigWidget::restoreWidgetGeometry(&objs_meta_frm);
 	objs_meta_frm.exec();
 	GeneralConfigWidget::saveWidgetGeometry(&objs_meta_frm);

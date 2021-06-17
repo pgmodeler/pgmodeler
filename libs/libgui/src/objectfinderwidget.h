@@ -26,7 +26,7 @@
 #define OBJECT_FINDER_WIDGET_H
 
 #include "ui_objectfinderwidget.h"
-#include "pgmodelerns.h"
+#include "coreutilsns.h"
 #include "modelwidget.h"
 #include <QWidget>
 

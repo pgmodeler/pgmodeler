@@ -17,7 +17,7 @@
 */
 
 #include "messagebox.h"
-#include "pgmodeleruins.h"
+#include "guiutilsns.h"
 #include "baseobjectview.h"
 
 Messagebox::Messagebox(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
@@ -82,14 +82,14 @@ void Messagebox::show(Exception e, const QString &msg, unsigned icon_type, unsig
 	QString str_aux, title;
 
 	raw_info_txt->setPlainText(e.getExceptionsText());
-	PgModelerUiNs::createExceptionsTree(exceptions_trw, e, nullptr);
+	GuiUtilsNs::createExceptionsTree(exceptions_trw, e, nullptr);
 	exceptions_trw->expandAll();
 	exceptions_trw->scrollToTop();
 
 	if(msg.isEmpty())
-		str_aux=PgModelerUiNs::formatMessage(e.getErrorMessage());
+		str_aux=GuiUtilsNs::formatMessage(e.getErrorMessage());
 	else
-		str_aux=PgModelerUiNs::formatMessage(msg);
+		str_aux=GuiUtilsNs::formatMessage(msg);
 
 	this->show(title, str_aux, icon_type, buttons, yes_lbl, no_lbl, cancel_lbl, yes_ico, no_ico, cancel_ico);
 }
@@ -109,13 +109,13 @@ void Messagebox::show(const QString &title, const QString &msg, unsigned icon_ty
 	else
 		yes_ok_btn->setText(buttons==OkButton ? tr("&Ok") : tr("&Yes"));
 
-	yes_ok_btn->setIcon(!yes_ico.isEmpty() ? QIcon(yes_ico) : QPixmap(PgModelerUiNs::getIconPath("confirm")));
+	yes_ok_btn->setIcon(!yes_ico.isEmpty() ? QIcon(yes_ico) : QPixmap(GuiUtilsNs::getIconPath("confirm")));
 
 	no_btn->setText(!no_lbl.isEmpty() ? no_lbl : tr("&No"));
-	no_btn->setIcon(!no_ico.isEmpty() ? QIcon(no_ico) : QPixmap(PgModelerUiNs::getIconPath("close1")));
+	no_btn->setIcon(!no_ico.isEmpty() ? QIcon(no_ico) : QPixmap(GuiUtilsNs::getIconPath("close1")));
 
 	cancel_btn->setText(!cancel_lbl.isEmpty() ? cancel_lbl : tr("&Cancel"));
-	cancel_btn->setIcon(!cancel_ico.isEmpty() ? QIcon(cancel_ico) : QPixmap(PgModelerUiNs::getIconPath("cancel")));
+	cancel_btn->setIcon(!cancel_ico.isEmpty() ? QIcon(cancel_ico) : QPixmap(GuiUtilsNs::getIconPath("cancel")));
 
 	no_btn->setVisible(buttons==YesNoButtons || buttons==AllButtons);
 	cancel_btn->setVisible(buttons==OkCancelButtons || buttons==AllButtons);
@@ -169,7 +169,7 @@ void Messagebox::show(const QString &title, const QString &msg, unsigned icon_ty
 	icon_lbl->setVisible(!icon_name.isEmpty());
 
 	if(!icon_name.isEmpty())
-		icon_lbl->setPixmap(QPixmap(PgModelerUiNs::getIconPath(icon_name)));
+		icon_lbl->setPixmap(QPixmap(GuiUtilsNs::getIconPath(icon_name)));
 
 	msg_lbl->setText(msg);
 

@@ -17,7 +17,7 @@
 */
 
 #include "metadatahandlingform.h"
-#include "pgmodeleruins.h"
+#include "guiutilsns.h"
 
 MetadataHandlingForm::MetadataHandlingForm(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 {
@@ -171,18 +171,18 @@ void MetadataHandlingForm::handleObjectsMetada()
 
 			connect(extract_model, SIGNAL(s_objectLoaded(int,QString,unsigned)), this, SLOT(updateProgress(int,QString,unsigned)), Qt::UniqueConnection);
 
-			root_item=PgModelerUiNs::createOutputTreeItem(output_trw,
-																										PgModelerUiNs::formatMessage(tr("Extracting metadata to file `%1'").arg(metadata_file)),
-																										QPixmap(PgModelerUiNs::getIconPath("info")), nullptr);
+			root_item=GuiUtilsNs::createOutputTreeItem(output_trw,
+																										GuiUtilsNs::formatMessage(tr("Extracting metadata to file `%1'").arg(metadata_file)),
+																										QPixmap(GuiUtilsNs::getIconPath("info")), nullptr);
 
 			extract_model->saveObjectsMetadata(metadata_file, options);
 
 			if(extract_restore_rb->isChecked() && !backup_file_sel->getSelectedFile().isEmpty())
 			{
 				root_item->setExpanded(false);
-				root_item=PgModelerUiNs::createOutputTreeItem(output_trw,
-																											PgModelerUiNs::formatMessage(tr("Saving backup metadata to file `%1'").arg(backup_file_sel->getSelectedFile())),
-																											QPixmap(PgModelerUiNs::getIconPath("info")), nullptr);
+				root_item=GuiUtilsNs::createOutputTreeItem(output_trw,
+																											GuiUtilsNs::formatMessage(tr("Saving backup metadata to file `%1'").arg(backup_file_sel->getSelectedFile())),
+																											QPixmap(GuiUtilsNs::getIconPath("info")), nullptr);
 
 				model_wgt->getDatabaseModel()->saveObjectsMetadata(backup_file_sel->getSelectedFile());
 			}
@@ -197,9 +197,9 @@ void MetadataHandlingForm::handleObjectsMetada()
 
 		if(!extract_only_rb->isChecked())
 		{
-			root_item=PgModelerUiNs::createOutputTreeItem(output_trw,
-																										PgModelerUiNs::formatMessage(tr("Applying metadata from file `%1'").arg(metadata_file)),
-																										QPixmap(PgModelerUiNs::getIconPath("info")), nullptr);
+			root_item=GuiUtilsNs::createOutputTreeItem(output_trw,
+																										GuiUtilsNs::formatMessage(tr("Applying metadata from file `%1'").arg(metadata_file)),
+																										QPixmap(GuiUtilsNs::getIconPath("info")), nullptr);
 
 			model_wgt->setUpdatesEnabled(false);
 			model_wgt->getDatabaseModel()->loadObjectsMetadata(metadata_file, options);
@@ -220,15 +220,15 @@ void MetadataHandlingForm::handleObjectsMetada()
 	}
 	catch(Exception &e)
 	{
-		QPixmap icon=QPixmap(PgModelerUiNs::getIconPath("error"));
+		QPixmap icon=QPixmap(GuiUtilsNs::getIconPath("error"));
 
 		disconnect(model_wgt->getDatabaseModel(), nullptr, this, nullptr);
 
 		if(extract_model)
 			disconnect(extract_model, nullptr, this, nullptr);
 
-		PgModelerUiNs::createOutputTreeItem(output_trw,
-																				PgModelerUiNs::formatMessage(e.getErrorMessage()),
+		GuiUtilsNs::createOutputTreeItem(output_trw,
+																				GuiUtilsNs::formatMessage(e.getErrorMessage()),
 																				icon, nullptr);
 
 		ico_lbl->setPixmap(icon);
@@ -266,20 +266,20 @@ void MetadataHandlingForm::configureSelector()
 void MetadataHandlingForm::updateProgress(int progress, QString msg, unsigned int type_id)
 {
 	ObjectType obj_type=static_cast<ObjectType>(type_id);
-	QString fmt_msg=PgModelerUiNs::formatMessage(msg);
+	QString fmt_msg=GuiUtilsNs::formatMessage(msg);
 	QPixmap icon;
 
 	if(obj_type==ObjectType::BaseObject)
 	{
 		if(progress==100)
-			icon=QPixmap(PgModelerUiNs::getIconPath("info"));
+			icon=QPixmap(GuiUtilsNs::getIconPath("info"));
 		else
-			icon=QPixmap(PgModelerUiNs::getIconPath("alert"));
+			icon=QPixmap(GuiUtilsNs::getIconPath("alert"));
 	}
 	else
-		icon=QPixmap(PgModelerUiNs::getIconPath(obj_type));
+		icon=QPixmap(GuiUtilsNs::getIconPath(obj_type));
 
-	PgModelerUiNs::createOutputTreeItem(output_trw, fmt_msg, icon, root_item);
+	GuiUtilsNs::createOutputTreeItem(output_trw, fmt_msg, icon, root_item);
 	progress_lbl->setText(fmt_msg);
 	ico_lbl->setPixmap(icon);
 	progress_pb->setValue(progress);

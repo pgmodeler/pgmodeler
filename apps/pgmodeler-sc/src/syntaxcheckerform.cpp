@@ -17,10 +17,10 @@
 */
 
 #include "syntaxcheckerform.h"
-#include "pgmodeleruins.h"
+#include "guiutilsns.h"
 #include "globalattributes.h"
 #include "generalconfigwidget.h"
-#include "pgmodeleruins.h"
+#include "guiutilsns.h"
 #include "sourceeditorwidget.h"
 #include "aboutwidget.h"
 #include "baseform.h"
@@ -43,8 +43,8 @@ SyntaxCheckerForm::SyntaxCheckerForm(QWidget *parent) : QWidget(parent)
 		fnt = btn->font();
 		fnt.setBold(true);
 		btn->setFont(fnt);
-		PgModelerUiNs::createDropShadow(btn);
-		PgModelerUiNs::configureWidgetFont(btn, PgModelerUiNs::SmallFontFactor);
+		GuiUtilsNs::createDropShadow(btn);
+		GuiUtilsNs::configureWidgetFont(btn, GuiUtilsNs::SmallFontFactor);
 
 		if(!btn->toolTip().isEmpty() && !btn->shortcut().toString().isEmpty())
 			btn->setToolTip(btn->toolTip() + QString(" (%1)").arg(btn->shortcut().toString()));
@@ -55,11 +55,11 @@ SyntaxCheckerForm::SyntaxCheckerForm(QWidget *parent) : QWidget(parent)
 
 	alert_frm->setVisible(false);
 
-	syntax_txt = PgModelerUiNs::createNumberedTextEditor(syntax_wgt);
+	syntax_txt = GuiUtilsNs::createNumberedTextEditor(syntax_wgt);
 	syntax_hl = new SyntaxHighlighter(syntax_txt);
 	syntax_hl->loadConfiguration(GlobalAttributes::getXMLHighlightConfPath());
 
-	dtd_txt = PgModelerUiNs::createNumberedTextEditor(dtd_wgt);
+	dtd_txt = GuiUtilsNs::createNumberedTextEditor(dtd_wgt);
 	dtd_txt->setReadOnly(true);
 	dtd_hl = new SyntaxHighlighter(dtd_txt);
 	dtd_hl->loadConfiguration(GlobalAttributes::getXMLHighlightConfPath());

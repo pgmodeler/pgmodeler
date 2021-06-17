@@ -20,7 +20,7 @@
 #include "taskprogresswidget.h"
 #include "snippetsconfigwidget.h"
 #include "connectionsconfigwidget.h"
-#include "pgmodeleruins.h"
+#include "guiutilsns.h"
 #include "deletableitemdelegate.h"
 
 SQLToolWidget::SQLToolWidget(QWidget * parent) : QWidget(parent)
@@ -36,7 +36,7 @@ SQLToolWidget::SQLToolWidget(QWidget * parent) : QWidget(parent)
 	v_splitter->setSizes({1000, 400});
 
 	sql_exec_corner_btn = new QToolButton;
-	sql_exec_corner_btn->setIcon(QPixmap(PgModelerUiNs::getIconPath("newtab")));
+	sql_exec_corner_btn->setIcon(QPixmap(GuiUtilsNs::getIconPath("newtab")));
 	sql_exec_corner_btn->setIconSize(QSize(22, 22));
 	sql_exec_corner_btn->setToolTip(tr("Add a new execution tab for the current database (%1)").arg(QKeySequence("Ctrl+T").toString()));
 

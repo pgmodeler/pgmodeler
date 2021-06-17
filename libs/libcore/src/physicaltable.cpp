@@ -17,7 +17,7 @@
 */
 
 #include "physicaltable.h"
-#include "pgmodelerns.h"
+#include "coreutilsns.h"
 
 const QString PhysicalTable::DataLineBreak = QString("%1%2").arg("⸣").arg('\n');
 
@@ -1611,7 +1611,7 @@ QString PhysicalTable::getInitialDataCommands()
 		int curr_col=0;
 		QList<int> ignored_cols;
 
-		col_names=(buffer.at(0)).split(PgModelerNs::DataSeparator);
+		col_names=(buffer.at(0)).split(CoreUtilsNs::DataSeparator);
 		col_names.removeDuplicates();
 		buffer.removeFirst();
 
@@ -1631,7 +1631,7 @@ QString PhysicalTable::getInitialDataCommands()
 			curr_col=0;
 
 			//Filtering the invalid columns' values
-			for(QString value : buf_row.split(PgModelerNs::DataSeparator))
+			for(QString value : buf_row.split(CoreUtilsNs::DataSeparator))
 			{
 				if(ignored_cols.contains(curr_col))
 					continue;
@@ -1666,7 +1666,7 @@ QString PhysicalTable::createInsertCommand(const QStringList &col_names, const Q
 			value=QString("DEFAULT");
 		}
 		//Unescaped values will not be enclosed in quotes
-		else if(value.startsWith(PgModelerNs::UnescValueStart) && value.endsWith(PgModelerNs::UnescValueEnd))
+		else if(value.startsWith(CoreUtilsNs::UnescValueStart) && value.endsWith(CoreUtilsNs::UnescValueEnd))
 		{
 			value.remove(0,1);
 			value.remove(value.length()-1, 1);
@@ -1674,8 +1674,8 @@ QString PhysicalTable::createInsertCommand(const QStringList &col_names, const Q
 		//Quoting value
 		else
 		{
-			value.replace(QString("\\") + PgModelerNs::UnescValueStart, PgModelerNs::UnescValueStart);
-			value.replace(QString("\\") + PgModelerNs::UnescValueEnd, PgModelerNs::UnescValueEnd);
+			value.replace(QString("\\") + CoreUtilsNs::UnescValueStart, CoreUtilsNs::UnescValueStart);
+			value.replace(QString("\\") + CoreUtilsNs::UnescValueEnd, CoreUtilsNs::UnescValueEnd);
 			value.replace(QString("\'"), QString("''"));
 			value.replace(QChar(QChar::LineFeed), QString("\\n"));
 			value=QString("E'") + value + QString("'");

@@ -17,7 +17,7 @@
 */
 
 #include "connectionsconfigwidget.h"
-#include "pgmodeleruins.h"
+#include "guiutilsns.h"
 #include "baseform.h"
 
 vector<Connection *> ConnectionsConfigWidget::connections;
@@ -72,7 +72,7 @@ void ConnectionsConfigWidget::updateConnectionsCombo()
 	connections_cmb->clear();
 
 	for(auto &conn : connections)
-		connections_cmb->addItem(QIcon(PgModelerUiNs::getIconPath("server")), conn->getConnectionId());
+		connections_cmb->addItem(QIcon(GuiUtilsNs::getIconPath("server")), conn->getConnectionId());
 }
 
 void ConnectionsConfigWidget::destroyConnections()
@@ -413,7 +413,7 @@ void ConnectionsConfigWidget::testConnection()
 		conn.connect();
 		srv_info=conn.getServerInfo();
 		msg_box.show(tr("Success"),
-					 PgModelerUiNs::formatMessage(tr("Connection successfully established!\n\nServer details:\n\nPID: `%1'\nProtocol: `%2'\nVersion: `%3'"))
+					 GuiUtilsNs::formatMessage(tr("Connection successfully established!\n\nServer details:\n\nPID: `%1'\nProtocol: `%2'\nVersion: `%3'"))
 					 .arg(srv_info[Connection::ServerPid])
 				.arg(srv_info[Connection::ServerProtocol])
 				.arg(srv_info[Connection::ServerVersion]), Messagebox::InfoIcon);
@@ -561,7 +561,7 @@ void ConnectionsConfigWidget::fillConnectionsComboBox(QComboBox *combo, bool inc
 
 	for(auto &itr : connections)
 	{
-		combo->addItem(QIcon(PgModelerUiNs::getIconPath("server")), itr.first, QVariant::fromValue<void *>(itr.second));
+		combo->addItem(QIcon(GuiUtilsNs::getIconPath("server")), itr.first, QVariant::fromValue<void *>(itr.second));
 
 		if(!def_conn && itr.second->isDefaultForOperation(check_def_for))
 			def_conn=itr.second;

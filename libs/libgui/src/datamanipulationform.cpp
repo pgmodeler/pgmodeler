@@ -18,8 +18,8 @@
 
 #include "datamanipulationform.h"
 #include "sqlexecutionwidget.h"
-#include "pgmodeleruins.h"
-#include "pgmodelerns.h"
+#include "guiutilsns.h"
+#include "coreutilsns.h"
 #include "plaintextitemdelegate.h"
 #include "baseform.h"
 #include "bulkdataeditwidget.h"
@@ -49,13 +49,13 @@ DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f):
 		fnt = btn->font();
 		fnt.setBold(true);
 		btn->setFont(fnt);
-		PgModelerUiNs::createDropShadow(btn);
-		PgModelerUiNs::configureWidgetFont(btn, PgModelerUiNs::SmallFontFactor);
+		GuiUtilsNs::createDropShadow(btn);
+		GuiUtilsNs::configureWidgetFont(btn, GuiUtilsNs::SmallFontFactor);
 	}
 
 	table_oid=0;
-	PgModelerUiNs::configureWidgetFont(hint_lbl, PgModelerUiNs::MediumFontFactor);
-	PgModelerUiNs::configureWidgetFont(warning_lbl, PgModelerUiNs::MediumFontFactor);
+	GuiUtilsNs::configureWidgetFont(hint_lbl, GuiUtilsNs::MediumFontFactor);
+	GuiUtilsNs::configureWidgetFont(warning_lbl, GuiUtilsNs::MediumFontFactor);
 
 	filter_hl=new SyntaxHighlighter(filter_txt);
 	filter_hl->loadConfiguration(GlobalAttributes::getSQLHighlightConfPath());
@@ -97,8 +97,8 @@ DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f):
 
 	paste_tb->setMenu(&paste_menu);
 	truncate_tb->setMenu(&truncate_menu);
-	truncate_menu.addAction(QIcon(PgModelerUiNs::getIconPath("truncate")), tr("Truncate"), this, SLOT(truncateTable()), QKeySequence("Ctrl+Del"))->setData(QVariant::fromValue<bool>(false));
-	truncate_menu.addAction(QIcon(PgModelerUiNs::getIconPath("trunccascade")), tr("Truncate cascade"), this, SLOT(truncateTable()), QKeySequence("Ctrl+Shift+Del"))->setData(QVariant::fromValue<bool>(true));
+	truncate_menu.addAction(QIcon(GuiUtilsNs::getIconPath("truncate")), tr("Truncate"), this, SLOT(truncateTable()), QKeySequence("Ctrl+Del"))->setData(QVariant::fromValue<bool>(false));
+	truncate_menu.addAction(QIcon(GuiUtilsNs::getIconPath("trunccascade")), tr("Truncate cascade"), this, SLOT(truncateTable()), QKeySequence("Ctrl+Shift+Del"))->setData(QVariant::fromValue<bool>(true));
 
 	copy_tb->setMenu(&copy_menu);
 	refresh_tb->setToolTip(refresh_tb->toolTip() + QString(" (%1)").arg(refresh_tb->shortcut().toString()));
@@ -176,7 +176,7 @@ DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f):
 	connect(new_window_tb, SIGNAL(clicked(bool)), this, SLOT(openNewWindow()));
 
 	connect(bulkedit_tb, &QToolButton::clicked, [&](){
-		PgModelerUiNs::bulkDataEdit(results_tbw);
+		GuiUtilsNs::bulkDataEdit(results_tbw);
 	});
 
 	connect(filter_tb, &QToolButton::toggled,
@@ -334,7 +334,7 @@ void DataManipulationForm::listColumns()
 			{
 				col_names.push_back(col[Attributes::Name]);
 				code_compl_wgt->insertCustomItem(col[Attributes::Name], {},
-				QPixmap(PgModelerUiNs::getIconPath("column")));
+				QPixmap(GuiUtilsNs::getIconPath("column")));
 			}
 
 			ord_column_cmb->addItems(col_names);
@@ -767,7 +767,7 @@ void DataManipulationForm::listObjects(QComboBox *combo, vector<ObjectType> obj_
 
 			for(; idx < count; idx++)
 			{
-				combo->setItemIcon(idx, QPixmap(PgModelerUiNs::getIconPath(obj_type)));
+				combo->setItemIcon(idx, QPixmap(GuiUtilsNs::getIconPath(obj_type)));
 				combo->setItemData(idx, enum_cast(obj_type));
 			}
 
@@ -890,7 +890,7 @@ void DataManipulationForm::retrieveFKColumns(const QString &schema, const QStrin
 			QStringList name_list;
 
 			submenu = new QMenu(this);
-			fks_menu.addAction(QPixmap(PgModelerUiNs::getIconPath("referenced")), tr("Referenced tables"))->setMenu(submenu);
+			fks_menu.addAction(QPixmap(GuiUtilsNs::getIconPath("referenced")), tr("Referenced tables"))->setMenu(submenu);
 
 			if(fks.empty())
 				submenu->addAction(tr("(none)"))->setEnabled(false);
@@ -907,7 +907,7 @@ void DataManipulationForm::retrieveFKColumns(const QString &schema, const QStrin
 				//Store the referenced schema and table names
 				fk_infos[fk_name][Attributes::RefTable] = aux_table[Attributes::Name];
 				fk_infos[fk_name][Attributes::Schema] = aux_schema[Attributes::Name];
-				action = submenu->addAction(QPixmap(PgModelerUiNs::getIconPath("table")),
+				action = submenu->addAction(QPixmap(GuiUtilsNs::getIconPath("table")),
 																		QString("%1.%2 (%3)").arg(aux_schema[Attributes::Name])
 																													.arg(aux_table[Attributes::Name])
 																													.arg(fk[Attributes::Name]), this, SLOT(browseReferencedTable()));
@@ -923,7 +923,7 @@ void DataManipulationForm::retrieveFKColumns(const QString &schema, const QStrin
 				for(auto &col : catalog.getObjectsAttributes(ObjectType::Column, schema, table, col_ids))
 					name_list.push_back(BaseObject::formatName(col[Attributes::Name]));
 
-				fk_infos[fk_name][Attributes::SrcColumns] = name_list.join(PgModelerNs::DataSeparator);
+				fk_infos[fk_name][Attributes::SrcColumns] = name_list.join(CoreUtilsNs::DataSeparator);
 
 				col_ids.clear();
 				name_list.clear();
@@ -935,11 +935,11 @@ void DataManipulationForm::retrieveFKColumns(const QString &schema, const QStrin
 				for(auto &col : catalog.getObjectsAttributes(ObjectType::Column, aux_schema[Attributes::Name], aux_table[Attributes::Name], col_ids))
 					name_list.push_back(BaseObject::formatName(col[Attributes::Name]));
 
-				fk_infos[fk_name][Attributes::DstColumns] = name_list.join(PgModelerNs::DataSeparator);
+				fk_infos[fk_name][Attributes::DstColumns] = name_list.join(CoreUtilsNs::DataSeparator);
 			}
 
 			submenu = new QMenu(this);
-			fks_menu.addAction(QPixmap(PgModelerUiNs::getIconPath("referrer")), tr("Referrer tables"))->setMenu(submenu);
+			fks_menu.addAction(QPixmap(GuiUtilsNs::getIconPath("referrer")), tr("Referrer tables"))->setMenu(submenu);
 
 			if(ref_fks.empty())
 				submenu->addAction(tr("(none)"))->setEnabled(false);
@@ -963,13 +963,13 @@ void DataManipulationForm::retrieveFKColumns(const QString &schema, const QStrin
 				for(auto &col : catalog.getObjectsAttributes(ObjectType::Column, aux_schema[Attributes::Name], aux_table[Attributes::Name], col_ids))
 					name_list.push_back(BaseObject::formatName(col[Attributes::Name]));
 
-				action = submenu->addAction(QPixmap(PgModelerUiNs::getIconPath("table")),
+				action = submenu->addAction(QPixmap(GuiUtilsNs::getIconPath("table")),
 																		QString("%1.%2 (%3)").arg(aux_schema[Attributes::Name])
 																													.arg(aux_table[Attributes::Name])
 																													.arg(fk[Attributes::Name]), this, SLOT(browseReferrerTable()));
 				action->setData(fk_name);
 
-				ref_fk_infos[fk_name][Attributes::SrcColumns] = name_list.join(PgModelerNs::DataSeparator);
+				ref_fk_infos[fk_name][Attributes::SrcColumns] = name_list.join(CoreUtilsNs::DataSeparator);
 				ref_fk_infos[fk_name][Attributes::Table] = aux_table[Attributes::Name];
 				ref_fk_infos[fk_name][Attributes::Schema] = aux_schema[Attributes::Name];
 			}
@@ -1229,14 +1229,14 @@ void DataManipulationForm::browseTable(const QString &fk_name, bool browse_ref_t
 	if(browse_ref_tab)
 	{
 		src_cols =  pk_col_names;
-		ref_cols = ref_fk_infos[fk_name][Attributes::SrcColumns].split(PgModelerNs::DataSeparator);
+		ref_cols = ref_fk_infos[fk_name][Attributes::SrcColumns].split(CoreUtilsNs::DataSeparator);
 		schema = ref_fk_infos[fk_name][Attributes::Schema];
 		table = ref_fk_infos[fk_name][Attributes::Table];
 	}
 	else
 	{
-		src_cols =  fk_infos[fk_name][Attributes::SrcColumns].split(PgModelerNs::DataSeparator);
-		ref_cols = fk_infos[fk_name][Attributes::DstColumns].split(PgModelerNs::DataSeparator);
+		src_cols =  fk_infos[fk_name][Attributes::SrcColumns].split(CoreUtilsNs::DataSeparator);
+		ref_cols = fk_infos[fk_name][Attributes::DstColumns].split(CoreUtilsNs::DataSeparator);
 		schema = fk_infos[fk_name][Attributes::Schema];
 		table = fk_infos[fk_name][Attributes::RefTable];
 	}
@@ -1257,7 +1257,7 @@ void DataManipulationForm::browseTable(const QString &fk_name, bool browse_ref_t
 	data_manip->setAttribute(Qt::WA_DeleteOnClose, true);
 	data_manip->setAttributes(conn, schema, table, filter.join(QString("AND")));
 
-	PgModelerUiNs::resizeDialog(data_manip);
+	GuiUtilsNs::resizeDialog(data_manip);
 	data_manip->show();
 }
 
@@ -1469,9 +1469,9 @@ QString DataManipulationForm::getDMLCommand(int row)
 				if(op_type==OpInsert || (op_type==OpUpdate && value!=item->data(Qt::UserRole)))
 				{
 					//Checking if the value is a malformed unescaped value, e.g., {value, value}, {value\}
-					if((value.startsWith(PgModelerNs::UnescValueStart) && value.endsWith(QString("\\") + PgModelerNs::UnescValueEnd)) ||
-							(value.startsWith(PgModelerNs::UnescValueStart) && !value.endsWith(PgModelerNs::UnescValueEnd)) ||
-							(!value.startsWith(PgModelerNs::UnescValueStart) && !value.endsWith(QString("\\") + PgModelerNs::UnescValueEnd) && value.endsWith(PgModelerNs::UnescValueEnd)))
+					if((value.startsWith(CoreUtilsNs::UnescValueStart) && value.endsWith(QString("\\") + CoreUtilsNs::UnescValueEnd)) ||
+							(value.startsWith(CoreUtilsNs::UnescValueStart) && !value.endsWith(CoreUtilsNs::UnescValueEnd)) ||
+							(!value.startsWith(CoreUtilsNs::UnescValueStart) && !value.endsWith(QString("\\") + CoreUtilsNs::UnescValueEnd) && value.endsWith(CoreUtilsNs::UnescValueEnd)))
 						throw Exception(Exception::getErrorMessage(ErrorCode::MalformedUnescapedValue)
 										.arg(row + 1).arg(col_name),
 										ErrorCode::MalformedUnescapedValue,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -1484,7 +1484,7 @@ QString DataManipulationForm::getDMLCommand(int row)
 						value=QString("DEFAULT");
 					}
 					//Unescaped values will not be enclosed in quotes
-					else if(value.startsWith(PgModelerNs::UnescValueStart) && value.endsWith(PgModelerNs::UnescValueEnd))
+					else if(value.startsWith(CoreUtilsNs::UnescValueStart) && value.endsWith(CoreUtilsNs::UnescValueEnd))
 					{
 						value.remove(0,1);
 						value.remove(value.length()-1, 1);
@@ -1492,8 +1492,8 @@ QString DataManipulationForm::getDMLCommand(int row)
 					//Quoting value
 					else
 					{
-						value.replace(QString("\\") + PgModelerNs::UnescValueStart, PgModelerNs::UnescValueStart);
-						value.replace(QString("\\") + PgModelerNs::UnescValueEnd, PgModelerNs::UnescValueEnd);
+						value.replace(QString("\\") + CoreUtilsNs::UnescValueStart, CoreUtilsNs::UnescValueStart);
+						value.replace(QString("\\") + CoreUtilsNs::UnescValueEnd, CoreUtilsNs::UnescValueEnd);
 						value.replace("\'","''");
 						value=QString("E'") + value + QString("'");
 					}
@@ -1612,14 +1612,14 @@ void DataManipulationForm::showPopupMenu()
 		QAction *act = nullptr;
 		ObjectType obj_type=static_cast<ObjectType>(table_cmb->currentData().toUInt());
 
-		act = item_menu.addAction(QIcon(PgModelerUiNs::getIconPath("copy")), tr("Copy items"));
+		act = item_menu.addAction(QIcon(GuiUtilsNs::getIconPath("copy")), tr("Copy items"));
 		act->setMenu(&copy_menu);
 
-		act = item_menu.addAction(QIcon(PgModelerUiNs::getIconPath("paste")), tr("Pase items"));
+		act = item_menu.addAction(QIcon(GuiUtilsNs::getIconPath("paste")), tr("Pase items"));
 		act->setMenu(&paste_menu);
 		act->setEnabled(paste_tb->isEnabled());
 
-		act = item_menu.addAction(QIcon(PgModelerUiNs::getIconPath("cleartext")), tr("Clear items"), this, SLOT(clearItemsText()));
+		act = item_menu.addAction(QIcon(GuiUtilsNs::getIconPath("cleartext")), tr("Clear items"), this, SLOT(clearItemsText()));
 		act->setEnabled(!results_tbw->selectedRanges().isEmpty());
 
 		if(obj_type == ObjectType::Table)

@@ -17,7 +17,7 @@
 */
 
 #include "modelnavigationwidget.h"
-#include "pgmodeleruins.h"
+#include "guiutilsns.h"
 
 ModelNavigationWidget::ModelNavigationWidget(QWidget *parent): QWidget(parent)
 {
@@ -103,7 +103,7 @@ void ModelNavigationWidget::setCurrentModelModified(bool modified)
 		return;
 
 	models_cmb->setItemIcon(models_cmb->currentIndex(),
-													modified ? QIcon(PgModelerUiNs::getIconPath("save")) : QIcon());
+													modified ? QIcon(GuiUtilsNs::getIconPath("save")) : QIcon());
 }
 
 void ModelNavigationWidget::removeModel(int idx)

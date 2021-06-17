@@ -17,7 +17,7 @@
 */
 
 #include "baseobject.h"
-#include "pgmodelerns.h"
+#include "coreutilsns.h"
 #include <QApplication>
 
 const QByteArray BaseObject::special_chars = QByteArray("'_-.@ $:()/<>+*\\=~!#%^&|?{}[]`;");
@@ -234,7 +234,7 @@ QString BaseObject::formatName(const QString &name, bool is_operator)
 
 		}
 
-		if(needs_fmt || PgModelerNs::isReservedKeyword(name))
+		if(needs_fmt || CoreUtilsNs::isReservedKeyword(name))
 			frmt_name=QString("\"%1\"").arg(name);
 		else
 			frmt_name=name;

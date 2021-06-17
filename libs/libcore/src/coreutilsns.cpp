@@ -16,12 +16,12 @@
 # Also, you can get the complete GNU General Public License at <http://www.gnu.org/licenses/>
 */
 
-#include "pgmodelerns.h"
+#include "coreutilsns.h"
 #include "databasemodel.h"
 #include <QDebug>
 #include <QHash>
 
-namespace PgModelerNs {
+namespace CoreUtilsNs {
 	const QString
 	FilterWildcard("wildcard"),
 	FilterRegExp("regexp");

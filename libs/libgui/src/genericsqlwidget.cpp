@@ -29,7 +29,7 @@ GenericSQLWidget::GenericSQLWidget(QWidget *parent): BaseObjectWidget(parent, Ob
 	Ui_GenericSQLWidget::setupUi(this);
 	configureFormLayout(genericsql_grid, ObjectType::GenericSql);
 
-	definition_txt = PgModelerUiNs::createNumberedTextEditor(attribs_tbw->widget(0), true);
+	definition_txt = GuiUtilsNs::createNumberedTextEditor(attribs_tbw->widget(0), true);
 	definition_hl = new SyntaxHighlighter(definition_txt);
 	definition_hl->loadConfiguration(GlobalAttributes::getSQLHighlightConfPath());
 	definition_cp=new CodeCompletionWidget(definition_txt, true);
@@ -37,7 +37,7 @@ GenericSQLWidget::GenericSQLWidget(QWidget *parent): BaseObjectWidget(parent, Ob
 	comment_edt->setVisible(false);
 	comment_lbl->setVisible(false);
 
-	preview_txt = PgModelerUiNs::createNumberedTextEditor(attribs_tbw->widget(2), false);
+	preview_txt = GuiUtilsNs::createNumberedTextEditor(attribs_tbw->widget(2), false);
 	preview_txt->setReadOnly(true);
 	preview_hl = new SyntaxHighlighter(preview_txt);
 	preview_hl->loadConfiguration(GlobalAttributes::getSQLHighlightConfPath());
@@ -62,13 +62,13 @@ GenericSQLWidget::GenericSQLWidget(QWidget *parent): BaseObjectWidget(parent, Ob
 
 	objects_refs_tab->setColumnCount(5);
 	objects_refs_tab->setHeaderLabel(tr("Ref. name"), 0);
-	objects_refs_tab->setHeaderIcon(QIcon(PgModelerUiNs::getIconPath("uid")), 0);
+	objects_refs_tab->setHeaderIcon(QIcon(GuiUtilsNs::getIconPath("uid")), 0);
 
 	objects_refs_tab->setHeaderLabel(tr("Object"), 1);
-	objects_refs_tab->setHeaderIcon(QIcon(PgModelerUiNs::getIconPath(BaseObject::getSchemaName(ObjectType::Table))), 1);
+	objects_refs_tab->setHeaderIcon(QIcon(GuiUtilsNs::getIconPath(BaseObject::getSchemaName(ObjectType::Table))), 1);
 
 	objects_refs_tab->setHeaderLabel(tr("Type"), 2);
-	objects_refs_tab->setHeaderIcon(QIcon(PgModelerUiNs::getIconPath(BaseObject::getSchemaName(ObjectType::Type))), 2);
+	objects_refs_tab->setHeaderIcon(QIcon(GuiUtilsNs::getIconPath(BaseObject::getSchemaName(ObjectType::Type))), 2);
 
 	objects_refs_tab->setHeaderLabel(tr("Signature"), 3);
 	objects_refs_tab->setHeaderLabel(tr("Format name"), 4);
@@ -76,7 +76,7 @@ GenericSQLWidget::GenericSQLWidget(QWidget *parent): BaseObjectWidget(parent, Ob
 	setMinimumSize(700, 500);
 
 	connect(object_sel, &ObjectSelectorWidget::s_selectorChanged, [&](bool selected){
-			sel_obj_icon_lbl->setPixmap(selected ? PgModelerUiNs::getIconPath(object_sel->getSelectedObject()->getSchemaName()) : QPixmap());
+			sel_obj_icon_lbl->setPixmap(selected ? GuiUtilsNs::getIconPath(object_sel->getSelectedObject()->getSchemaName()) : QPixmap());
 			sel_obj_icon_lbl->setToolTip(selected ? object_sel->getSelectedObject()->getTypeName() : "");
 	});
 

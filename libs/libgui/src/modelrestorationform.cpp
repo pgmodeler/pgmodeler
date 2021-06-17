@@ -17,13 +17,13 @@
 */
 
 #include "modelrestorationform.h"
-#include "pgmodeleruins.h"
+#include "guiutilsns.h"
 
 ModelRestorationForm::ModelRestorationForm(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 {
 	setupUi(this);
 
-	PgModelerUiNs::configureWidgetFont(message_lbl, PgModelerUiNs::MediumFontFactor);
+	GuiUtilsNs::configureWidgetFont(message_lbl, GuiUtilsNs::MediumFontFactor);
 
 	connect(restore_btn, SIGNAL(clicked()), this, SLOT(accept()));
 	connect(cancel_btn, SIGNAL(clicked()), this, SLOT(reject()));

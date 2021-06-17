@@ -28,7 +28,7 @@ TableDataWidget::TableDataWidget(QWidget *parent): BaseObjectWidget(parent, Obje
 	Ui_TableDataWidget::setupUi(this);
 	configureFormLayout(tabledata_grid, ObjectType::BaseObject);
 
-	obj_icon_lbl->setPixmap(QPixmap(PgModelerUiNs::getIconPath(ObjectType::Table)));
+	obj_icon_lbl->setPixmap(QPixmap(GuiUtilsNs::getIconPath(ObjectType::Table)));
 
 	comment_lbl->setVisible(false);
 	comment_edt->setVisible(false);
@@ -73,18 +73,18 @@ TableDataWidget::TableDataWidget(QWidget *parent): BaseObjectWidget(parent, Obje
 	connect(csv_load_tb, SIGNAL(toggled(bool)), csv_load_parent, SLOT(setVisible(bool)));
 
 	connect(csv_load_wgt, &CsvLoadWidget::s_csvFileLoaded, [&](){
-		populateDataGrid(csv_load_wgt->getCsvBuffer(PgModelerNs::DataSeparator, Table::DataLineBreak));
+		populateDataGrid(csv_load_wgt->getCsvBuffer(CoreUtilsNs::DataSeparator, Table::DataLineBreak));
 	});
 
 	connect(paste_tb, &QToolButton::clicked, [&](){
 		csv_load_wgt->loadCsvBuffer(qApp->clipboard()->text(), QString(";"), QString("\""), true);
-		populateDataGrid(csv_load_wgt->getCsvBuffer(PgModelerNs::DataSeparator, Table::DataLineBreak));
+		populateDataGrid(csv_load_wgt->getCsvBuffer(CoreUtilsNs::DataSeparator, Table::DataLineBreak));
 		qApp->clipboard()->clear();
 		paste_tb->setEnabled(false);
 	});
 
 	connect(bulkedit_tb, &QToolButton::clicked, [&](){
-		PgModelerUiNs::bulkDataEdit(data_tbw);
+		GuiUtilsNs::bulkDataEdit(data_tbw);
 	});
 
 	connect(copy_tb, &QToolButton::clicked, [&](){
@@ -351,7 +351,7 @@ void TableDataWidget::populateDataGrid(const QString &data)
 
 		//The first line of the buffer always has the column names
 		if(!buffer.isEmpty() && !buffer[0].isEmpty())
-			columns.append(buffer[0].split(PgModelerNs::DataSeparator));
+			columns.append(buffer[0].split(CoreUtilsNs::DataSeparator));
 	}
 	else
 	{
@@ -392,7 +392,7 @@ void TableDataWidget::populateDataGrid(const QString &data)
 	for(QString buf_row : buffer)
 	{
 		addRow();
-		values = buf_row.split(PgModelerNs::DataSeparator);
+		values = buf_row.split(CoreUtilsNs::DataSeparator);
 		col = 0;
 
 		for(QString val : values)
@@ -482,7 +482,7 @@ QString TableDataWidget::generateDataBuffer()
 		col_names.push_back(data_tbw->horizontalHeaderItem(col)->text());
 
 	//The first line of the buffer consists in the column names
-	buffer.push_back(col_names.join(PgModelerNs::DataSeparator));
+	buffer.push_back(col_names.join(CoreUtilsNs::DataSeparator));
 
 	for(int row = 0; row < data_tbw->rowCount(); row++)
 	{
@@ -491,9 +491,9 @@ QString TableDataWidget::generateDataBuffer()
 			value = data_tbw->item(row, col)->text();
 
 			//Checking if the value is a malformed unescaped value, e.g., {value, value}, {value\}
-			if((value.startsWith(PgModelerNs::UnescValueStart) && value.endsWith(QString("\\") + PgModelerNs::UnescValueEnd)) ||
-					(value.startsWith(PgModelerNs::UnescValueStart) && !value.endsWith(PgModelerNs::UnescValueEnd)) ||
-					(!value.startsWith(PgModelerNs::UnescValueStart) && !value.endsWith(QString("\\") + PgModelerNs::UnescValueEnd) && value.endsWith(PgModelerNs::UnescValueEnd)))
+			if((value.startsWith(CoreUtilsNs::UnescValueStart) && value.endsWith(QString("\\") + CoreUtilsNs::UnescValueEnd)) ||
+					(value.startsWith(CoreUtilsNs::UnescValueStart) && !value.endsWith(CoreUtilsNs::UnescValueEnd)) ||
+					(!value.startsWith(CoreUtilsNs::UnescValueStart) && !value.endsWith(QString("\\") + CoreUtilsNs::UnescValueEnd) && value.endsWith(CoreUtilsNs::UnescValueEnd)))
 				throw Exception(Exception::getErrorMessage(ErrorCode::MalformedUnescapedValue)
 												.arg(row + 1).arg(col_names[col]),
 												ErrorCode::MalformedUnescapedValue,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -501,7 +501,7 @@ QString TableDataWidget::generateDataBuffer()
 			val_list.push_back(value);
 		}
 
-		buffer.push_back(val_list.join(PgModelerNs::DataSeparator));
+		buffer.push_back(val_list.join(CoreUtilsNs::DataSeparator));
 		val_list.clear();
 	}
 

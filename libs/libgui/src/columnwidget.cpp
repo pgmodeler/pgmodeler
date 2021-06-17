@@ -145,7 +145,7 @@ void ColumnWidget::editSequenceAttributes()
 		schema = this->model->getSchema("public");
 
 	ident_col_seq.setName(QString("%1_%2_seq").arg(table ? table->getName() : "").arg(col ? col->getName() : QString("new_column")));
-	ident_col_seq.setName(PgModelerNs::generateUniqueName(&ident_col_seq, *model->getObjectList(ObjectType::Sequence), false));
+	ident_col_seq.setName(CoreUtilsNs::generateUniqueName(&ident_col_seq, *model->getObjectList(ObjectType::Sequence), false));
 	ident_col_seq.setSchema(schema);
 
 	if(col)

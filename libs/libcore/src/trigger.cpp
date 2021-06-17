@@ -17,7 +17,7 @@
 */
 
 #include "trigger.h"
-#include "pgmodelerns.h"
+#include "coreutilsns.h"
 
 Trigger::Trigger()
 {
@@ -77,7 +77,7 @@ void Trigger::setArgumentAttribute(unsigned def_type)
 			str_args.append(arg);
 	}
 
-	attributes[Attributes::Arguments] = str_args.join(def_type == SchemaParser::SqlDefinition ? "," : PgModelerNs::DataSeparator);
+	attributes[Attributes::Arguments] = str_args.join(def_type == SchemaParser::SqlDefinition ? "," : CoreUtilsNs::DataSeparator);
 }
 
 void Trigger::setFiringType(FiringType firing_type)

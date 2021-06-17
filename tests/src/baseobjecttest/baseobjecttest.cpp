@@ -17,7 +17,7 @@
 */
 
 #include <QtTest/QtTest>
-#include "pgmodelerns.h"
+#include "coreutilsns.h"
 #include "table.h"
 
 class BaseObjectTest: public QObject {

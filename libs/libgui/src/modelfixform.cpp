@@ -19,7 +19,7 @@
 #include "modelfixform.h"
 #include "configurationform.h"
 #include <iostream>
-#include "pgmodeleruins.h"
+#include "guiutilsns.h"
 
 const QString ModelFixForm::PgModelerCli("pgmodeler-cli");
 
@@ -55,8 +55,8 @@ ModelFixForm::ModelFixForm(QWidget *parent, Qt::WindowFlags f) : QDialog(parent,
 	pgmodeler_cli_sel->setVisible(false);
 	model_fix_grid->addWidget(pgmodeler_cli_sel, 1, 2);
 
-	PgModelerUiNs::configureWidgetFont(message_lbl, PgModelerUiNs::MediumFontFactor);
-	PgModelerUiNs::configureWidgetFont(not_found_lbl, PgModelerUiNs::MediumFontFactor);
+	GuiUtilsNs::configureWidgetFont(message_lbl, GuiUtilsNs::MediumFontFactor);
+	GuiUtilsNs::configureWidgetFont(not_found_lbl, GuiUtilsNs::MediumFontFactor);
 
 	//Configuring font style for output widget
 	if(!confs[Attributes::Configuration][Attributes::CodeFont].isEmpty())

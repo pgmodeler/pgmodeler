@@ -165,7 +165,7 @@ void OperationList::addToPool(BaseObject *object, unsigned op_type)
 			BaseObject *copy_obj=nullptr;
 
 			if(obj_type!=ObjectType::BaseObject && obj_type!=ObjectType::Database)
-				PgModelerNs::copyObject(&copy_obj, object, obj_type);
+				CoreUtilsNs::copyObject(&copy_obj, object, obj_type);
 			else
 				throw Exception(ErrorCode::AsgObjectInvalidType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
@@ -776,13 +776,13 @@ void OperationList::executeOperation(Operation *oper, bool redo)
 		previous values restored with the existing copy on the pool. After restoring the object
 		on the pool will have the same attributes as the object before being restored
 		to enable redo operations */
-			PgModelerNs::copyObject(reinterpret_cast<BaseObject **>(&bkp_obj), orig_obj, obj_type);
-			PgModelerNs::copyObject(reinterpret_cast<BaseObject **>(&orig_obj), object, obj_type);
-			PgModelerNs::copyObject(reinterpret_cast<BaseObject **>(&object), bkp_obj, obj_type);
+			CoreUtilsNs::copyObject(reinterpret_cast<BaseObject **>(&bkp_obj), orig_obj, obj_type);
+			CoreUtilsNs::copyObject(reinterpret_cast<BaseObject **>(&orig_obj), object, obj_type);
+			CoreUtilsNs::copyObject(reinterpret_cast<BaseObject **>(&object), bkp_obj, obj_type);
 			object=orig_obj;
 
 			if(aux_obj)
-				PgModelerNs::copyObject(reinterpret_cast<BaseObject **>(&object), aux_obj, obj_type);
+				CoreUtilsNs::copyObject(reinterpret_cast<BaseObject **>(&object), aux_obj, obj_type);
 
 			//For pk constraint, after restore the previous configuration, check the not-null flag of the new source columns
 			if(obj_type==ObjectType::Constraint)
@@ -797,7 +797,7 @@ void OperationList::executeOperation(Operation *oper, bool redo)
 				(op_type==Operation::ObjectCreated && redo))
 		{
 			if(aux_obj)
-				PgModelerNs::copyObject(reinterpret_cast<BaseObject **>(&object), aux_obj, obj_type);
+				CoreUtilsNs::copyObject(reinterpret_cast<BaseObject **>(&object), aux_obj, obj_type);
 
 			if(parent_tab)
 			{

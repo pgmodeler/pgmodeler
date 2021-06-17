@@ -20,7 +20,7 @@
 #include "exception.h"
 #include "globalattributes.h"
 #include "messagebox.h"
-#include "pgmodeleruins.h"
+#include "guiutilsns.h"
 
 BugReportForm::BugReportForm(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 {
@@ -37,7 +37,7 @@ BugReportForm::BugReportForm(QWidget *parent, Qt::WindowFlags f) : QDialog(paren
 	output_sel->setSelectedFile(GlobalAttributes::getTemporaryDir());
 
 	output_lt->addWidget(output_sel);
-	PgModelerUiNs::configureWidgetFont(hint_lbl, PgModelerUiNs::MediumFontFactor);
+	GuiUtilsNs::configureWidgetFont(hint_lbl, GuiUtilsNs::MediumFontFactor);
 
 	connect(cancel_btn, SIGNAL(clicked()), this, SLOT(close()));
 	connect(create_btn, SIGNAL(clicked()), this, SLOT(generateReport()));

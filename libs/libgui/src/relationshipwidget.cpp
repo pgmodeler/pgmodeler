@@ -64,21 +64,21 @@ RelationshipWidget::RelationshipWidget(QWidget *parent): BaseObjectWidget(parent
 
 		attributes_tab->setColumnCount(2);
 		attributes_tab->setHeaderLabel(tr("Attribute"), 0);
-		attributes_tab->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("column")),0);
+		attributes_tab->setHeaderIcon(QPixmap(GuiUtilsNs::getIconPath("column")),0);
 		attributes_tab->setHeaderLabel(tr("Type"), 1);
-		attributes_tab->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("usertype")),1);
+		attributes_tab->setHeaderIcon(QPixmap(GuiUtilsNs::getIconPath("usertype")),1);
 
 		constraints_tab->setColumnCount(2);
 		constraints_tab->setHeaderLabel(tr("Constraint"), 0);
-		constraints_tab->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("constraint")),0);
+		constraints_tab->setHeaderIcon(QPixmap(GuiUtilsNs::getIconPath("constraint")),0);
 		constraints_tab->setHeaderLabel(tr("Type"), 1);
-		constraints_tab->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("usertype")),1);
+		constraints_tab->setHeaderIcon(QPixmap(GuiUtilsNs::getIconPath("usertype")),1);
 
 		advanced_objs_tab->setColumnCount(2);
 		advanced_objs_tab->setHeaderLabel(tr("Name"), 0);
-		advanced_objs_tab->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("column")),0);
+		advanced_objs_tab->setHeaderIcon(QPixmap(GuiUtilsNs::getIconPath("column")),0);
 		advanced_objs_tab->setHeaderLabel(tr("Type"), 1);
-		advanced_objs_tab->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("usertype")),1);
+		advanced_objs_tab->setHeaderIcon(QPixmap(GuiUtilsNs::getIconPath("usertype")),1);
 
 		connect(advanced_objs_tab, SIGNAL(s_rowEdited(int)), this, SLOT(showAdvancedObject(int)));
 
@@ -237,7 +237,7 @@ void RelationshipWidget::setAttributes(DatabaseModel *model, OperationList *op_l
 
 	rel_type=base_rel->getRelationshipType();
 	rel_type_name_lbl->setText(base_rel->getRelationshipTypeName());
-	rel_icon_lbl->setPixmap(PgModelerUiNs::getIconPath(base_rel->getRelTypeAttribute().replace("rel", "relationship")));
+	rel_icon_lbl->setPixmap(GuiUtilsNs::getIconPath(base_rel->getRelTypeAttribute().replace("rel", "relationship")));
 
 	aux_rel=dynamic_cast<Relationship *>(base_rel);
 	has_foreign_tab = (base_rel->getTable(BaseRelationship::SrcTable)->getObjectType() == ObjectType::ForeignTable ||
@@ -796,8 +796,8 @@ void RelationshipWidget::duplicateObject(int curr_row, int new_row)
 		if(curr_row >= 0)
 			object = reinterpret_cast<BaseObject *>(tab->getRowData(curr_row).value<void *>());
 
-		PgModelerNs::copyObject(&dup_object, object, obj_type);
-		dup_object->setName(PgModelerNs::generateUniqueName(dup_object, obj_list, false, QString("_cp")));
+		CoreUtilsNs::copyObject(&dup_object, object, obj_type);
+		dup_object->setName(CoreUtilsNs::generateUniqueName(dup_object, obj_list, false, QString("_cp")));
 
 		op_id=op_list->registerObject(dup_object, Operation::ObjectCreated, new_row, rel);
 

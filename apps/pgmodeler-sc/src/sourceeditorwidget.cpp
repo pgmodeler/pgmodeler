@@ -1,6 +1,6 @@
 #include "sourceeditorwidget.h"
 #include "messagebox.h"
-#include "pgmodeleruins.h"
+#include "guiutilsns.h"
 #include "qtcompat/splitbehaviorcompat.h"
 
 QPalette SourceEditorWidget::def_editor_pal;
@@ -22,7 +22,7 @@ SourceEditorWidget::SourceEditorWidget(QWidget *parent) : QWidget(parent)
 
 	is_modified = false;
 
-	editor_txt = PgModelerUiNs::createNumberedTextEditor(editor_parent);
+	editor_txt = GuiUtilsNs::createNumberedTextEditor(editor_parent);
 	def_editor_pal = editor_txt->palette();
 
 	editor_hl = new SyntaxHighlighter(editor_txt);
@@ -43,7 +43,7 @@ SourceEditorWidget::SourceEditorWidget(QWidget *parent) : QWidget(parent)
 	QStringList snippets_id;
 
 	for(auto &itr : snippets)
-		code_compl_wgt->insertCustomItem(itr.first, itr.second, QPixmap(PgModelerUiNs::getIconPath("codesnippet")));
+		code_compl_wgt->insertCustomItem(itr.first, itr.second, QPixmap(GuiUtilsNs::getIconPath("codesnippet")));
 
 	vbox = new QVBoxLayout(find_parent);
 	vbox->setContentsMargins(0, 0, 0, 4);

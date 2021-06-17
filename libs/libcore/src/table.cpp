@@ -17,7 +17,7 @@
 */
 
 #include "table.h"
-#include "pgmodelerns.h"
+#include "coreutilsns.h"
 
 Table::Table() : PhysicalTable()
 {

@@ -17,7 +17,7 @@
 */
 
 #include "objectfinderwidget.h"
-#include "pgmodeleruins.h"
+#include "guiutilsns.h"
 
 const QStringList ObjectFinderWidget::search_attribs =
 { Attributes::Name, Attributes::Comment, Attributes::Signature,
@@ -407,7 +407,7 @@ void ObjectFinderWidget::updateObjectTable(QTableWidget *tab_wgt, vector<BaseObj
 			fnt=tab_item->font();
 
 			tab_item->setText(objs[i]->getName());
-			tab_item->setIcon(QPixmap(PgModelerUiNs::getIconPath(BaseObject::getSchemaName(objs[i]->getObjectType()) + str_aux)));
+			tab_item->setIcon(QPixmap(GuiUtilsNs::getIconPath(BaseObject::getSchemaName(objs[i]->getObjectType()) + str_aux)));
 			if(new_row) tab_wgt->setItem(lin_idx, 0, tab_item);
 			if(checkable_items)	tab_item->setCheckState(Qt::Checked);
 
@@ -482,7 +482,7 @@ void ObjectFinderWidget::updateObjectTable(QTableWidget *tab_wgt, vector<BaseObj
 					}
 
 					tab_item->setFont(fnt);
-					tab_item->setIcon(QPixmap(PgModelerUiNs::getIconPath(parent_obj->getObjectType())));
+					tab_item->setIcon(QPixmap(GuiUtilsNs::getIconPath(parent_obj->getObjectType())));
 				}
 			}
 
@@ -548,7 +548,7 @@ void ObjectFinderWidget::updateObjectTypeList(QListWidget *list_wgt)
 			else
 				str_aux=QString(BaseObject::getSchemaName(types[type_id]));
 
-			icon=QPixmap(PgModelerUiNs::getIconPath(str_aux));
+			icon=QPixmap(GuiUtilsNs::getIconPath(str_aux));
 
 			item->setText(BaseObject::getTypeName(types[type_id]));
 			item->setIcon(icon);

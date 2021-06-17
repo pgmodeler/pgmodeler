@@ -57,19 +57,19 @@ RoleWidget::RoleWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Ro
 		obj_tab->setColumnCount(5);
 
 		obj_tab->setHeaderLabel(tr("Role"),0);
-		obj_tab->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("role")),0);
+		obj_tab->setHeaderIcon(QPixmap(GuiUtilsNs::getIconPath("role")),0);
 
 		obj_tab->setHeaderLabel(tr("Validity"),1);
-		obj_tab->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("validity")),1);
+		obj_tab->setHeaderIcon(QPixmap(GuiUtilsNs::getIconPath("validity")),1);
 
 		obj_tab->setHeaderLabel(tr("Member of"),2);
-		obj_tab->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("role")),2);
+		obj_tab->setHeaderIcon(QPixmap(GuiUtilsNs::getIconPath("role")),2);
 
 		obj_tab->setHeaderLabel(tr("Members"),3);
-		obj_tab->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("role")),3);
+		obj_tab->setHeaderIcon(QPixmap(GuiUtilsNs::getIconPath("role")),3);
 
 		obj_tab->setHeaderLabel(tr("Members (Admin.)"),4);
-		obj_tab->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("role")),4);
+		obj_tab->setHeaderIcon(QPixmap(GuiUtilsNs::getIconPath("role")),4);
 
 		grid=new QGridLayout;
 		grid->addWidget(obj_tab,0,0,1,1);

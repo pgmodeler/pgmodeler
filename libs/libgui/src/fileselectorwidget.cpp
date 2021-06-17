@@ -17,14 +17,14 @@
 */
 
 #include "fileselectorwidget.h"
-#include "pgmodeleruins.h"
+#include "guiutilsns.h"
 
 FileSelectorWidget::FileSelectorWidget(QWidget *parent) : QWidget(parent)
 {
 	setupUi(this);
 	allow_filename_input = read_only = false;
 
-	file_dlg.setWindowIcon(QPixmap(PgModelerUiNs::getIconPath("pgsqlModeler48x48")));
+	file_dlg.setWindowIcon(QPixmap(GuiUtilsNs::getIconPath("pgsqlModeler48x48")));
 
 	filename_edt->setReadOnly(true);
 	filename_edt->installEventFilter(this);
@@ -35,7 +35,7 @@ FileSelectorWidget::FileSelectorWidget(QWidget *parent) : QWidget(parent)
 	warn_ico_lbl->setMaximumSize(warn_ico_lbl->minimumSize());
 	warn_ico_lbl->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 	warn_ico_lbl->setScaledContents(true);
-	warn_ico_lbl->setPixmap(QPixmap(PgModelerUiNs::getIconPath("alert")));
+	warn_ico_lbl->setPixmap(QPixmap(GuiUtilsNs::getIconPath("alert")));
 	warn_ico_lbl->setToolTip(tr("No such file or directory!"));
 
 	connect(sel_file_tb, SIGNAL(clicked(bool)), this, SLOT(openFileDialog()));

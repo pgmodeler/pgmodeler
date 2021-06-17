@@ -17,7 +17,7 @@
 */
 
 #include "deletableitemdelegate.h"
-#include "pgmodeleruins.h"
+#include "guiutilsns.h"
 #include <QPainter>
 
 DeletableItemDelegate::DeletableItemDelegate(QComboBox *parent, const QString &tooltip, QKeySequence shortcut) : QStyledItemDelegate(parent)
@@ -25,7 +25,7 @@ DeletableItemDelegate::DeletableItemDelegate(QComboBox *parent, const QString &t
 	combo = parent;
 	del_btn = new QToolButton(combo->view());
 	del_btn->setVisible(false);
-	del_btn->setIcon(QIcon(PgModelerUiNs::getIconPath("delete")));
+	del_btn->setIcon(QIcon(GuiUtilsNs::getIconPath("delete")));
 	del_btn->setIconSize(parent->iconSize());
 	del_btn->setAutoRaise(true);
 	del_btn->setShortcut(shortcut);
