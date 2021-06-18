@@ -1,6 +1,6 @@
 # SQL definition for procedural languages
 # CAUTION: Do not modify this file unless you know what you are doing.
-#          Code generation can be broken if incorrect changes are made.
+# Code generation can be broken if incorrect changes are made.
 
 [-- object: ] {name} [ | type: ] {sql-object} [ --] $br
 [-- ] {drop}
@@ -10,31 +10,34 @@
 %set {ddl-end} $br [-- ddl-end --] $br
 
 %if {prepended-sql} %then
-  {prepended-sql}
-  {ddl-end} $br
+	{prepended-sql}
+	{ddl-end} $br
 %end
 
-[CREATE ] 
-  %if {trusted} %then 
-    %if {handler} %then
-      [TRUSTED ]
-    %end
-  %end
+[CREATE ]
+
+%if {trusted} %then
+
+	%if {handler} %then
+		[TRUSTED ]
+	%end
+%end
+
 [ LANGUAGE ] {name}
 
 %if {handler} %then
- $br $tb [HANDLER ] {handler}
+	$br $tb [HANDLER ] {handler}
 %end
 
 %if {validator} %then
- $br [VALIDATOR ] {validator}
+	$br [VALIDATOR ] {validator}
 %end
 
 %if {inline} %then
- $br [INLINE ] {inline}
+	$br [INLINE ] {inline}
 %end
 
-; 
+;
 
 {ddl-end}
 
@@ -42,8 +45,8 @@
 %if {comment} %then {comment} %end
 
 %if {appended-sql} %then
- {appended-sql}
- {ddl-end}
+	{appended-sql}
+	{ddl-end}
 %end
 
 $br

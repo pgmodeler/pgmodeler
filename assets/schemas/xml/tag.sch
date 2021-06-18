@@ -1,28 +1,27 @@
 # XML definition for object tag
 # CAUTION: Do not modify this file unless you know what you are doing.
-#          Code generation can be broken if incorrect changes are made.
+# Code generation can be broken if incorrect changes are made.
 
 %if {reduced-form} %then
- $tb
+	$tb
 %end
 
 [<tag name=] "{name}"
 
 %if {reduced-form} %then
- /> $br
+	/> $br
 %else
+	%if {protected} %then
+		[ protected=] "true"
+	%end
 
- %if {protected} %then
-  [ protected=] "true"
- %end
+	> $br
 
- > $br
+	{styles}
 
- {styles}
+	%if {comment} %then
+		{comment}
+	%end
 
- %if {comment} %then
-    {comment}
- %end
-
-</tag> $br
+	</tag> $br
 %end

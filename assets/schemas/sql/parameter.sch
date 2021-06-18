@@ -1,21 +1,22 @@
 # SQL definition for function parameters
 # CAUTION: Do not modify this file unless you know what you are doing.
-#          Code generation can be broken if incorrect changes are made.
+# Code generation can be broken if incorrect changes are made.
 
 %if {variadic} %then
- VARIADIC $sp 
+	VARIADIC $sp
 %else
-  %if {in} %then IN $sp %end
-  %if {out} %then OUT $sp %end
+	%if {in} %then IN $sp %end
+	%if {out} %then OUT $sp %end
 %end
 
 %if {reduced-form} %then
- {type}, $sp
+	{type}, $sp
 %else
- {name} $sp {type}
+	{name} $sp {type}
 
- %if {default-value} %then
-  [ DEFAULT ] {default-value}
- %end
- , $sp
+	%if {default-value} %then
+		[ DEFAULT ] {default-value}
+	%end
+
+	, $sp
 %end

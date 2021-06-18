@@ -1,24 +1,25 @@
-%set {spacer} $br [            ]
+%set {spacer} $br [ ]
 
-[    <preset ] name="{name}"
-%if {current-model} %then               
-    {spacer} current-model="true"
+[ <preset ] name="{name}"
+
+%if {current-model} %then
+	{spacer} current-model="true"
 %else
-    {spacer} input-db="{input-db}"
+	{spacer} input-db="{input-db}"
 %end
 
 %if {compare-to-db} %then
-    {spacer} compare-to-db="{compare-to-db}"
+	{spacer} compare-to-db="{compare-to-db}"
 %end
 
 %if {version} %then
-    {spacer} version="{version}"
+	{spacer} version="{version}"
 %end
 
 %if {store-in-file} %then
-    {spacer} store-in-file="true"
+	{spacer} store-in-file="true"
 %else
-    {spacer} apply-on-server="true"
+	{spacer} apply-on-server="true"
 %end
 
 {spacer} keep-cluster-objs="{keep-cluster-objs}"
@@ -36,7 +37,7 @@
 {spacer} ignore-duplic-errors="{ignore-duplic-errors}"
 
 %if {ignore-error-codes} %then
-    {spacer} ignore-error-codes="{ignore-error-codes}"
+	{spacer} ignore-error-codes="{ignore-error-codes}"
 %end
 
 /> $br $br

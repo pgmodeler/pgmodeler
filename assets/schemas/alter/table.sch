@@ -1,61 +1,61 @@
 # SQL definition for table's attributes change
 # CAUTION: Do not modify this file unless you know what you are doing.
-#          Code generation can be broken if incorrect changes are made.
+# Code generation can be broken if incorrect changes are made.
 
 {alter-cmds}
 
 %if {has-changes} %then
-  %set {alter}   ALTER $sp {sql-object} $sp {signature}
-  %set {rls}     [ROW LEVEL SECURITY]
-  %set {ddl-end} ; $br [-- ddl-end --] $br
+	%set {alter} ALTER $sp {sql-object} $sp {signature}
+	%set {rls} [ROW LEVEL SECURITY]
+	%set {ddl-end} ; $br [-- ddl-end --] $br
 
-  %if ({pgsql-ver} <=f "11.0") %and {oids} %then
-    {alter} [ SET ]
+	%if ({pgsql-ver} <=f "11.0") %and {oids} %then
+		{alter} [ SET ]
 
-    %if ({oids}=="unset") %then
-      WITHOUT
-    %else
-      WITH
-    %end
+		%if ({oids}=="unset") %then
+			WITHOUT
+		%else
+			WITH
+		%end
 
-    [ OIDS]
-    {ddl-end}
-  %end
+		[ OIDS]
 
-  %if {unlogged} %then
-    {alter} [ SET ]
+		{ddl-end}
+	%end
 
-    %if ({unlogged}=="unset") %then
-      [LOGGED]
-    %else
-      [UNLOGGED]
-    %end
+	%if {unlogged} %then
+		{alter} [ SET ]
 
-    {ddl-end}
-  %end
+		%if ({unlogged}=="unset") %then
+			[LOGGED]
+		%else
+			[UNLOGGED]
+		%end
 
-  %if {rls-enabled} %then
-    {alter} 
+		{ddl-end}
+	%end
 
-    %if ({rls-enabled}=="unset") %then
-      [ DISABLE ]
-    %else
-      [ ENABLE ]
-    %end
+	%if {rls-enabled} %then
+		{alter}
 
-    {rls}
-    {ddl-end}
-  %end
+		%if ({rls-enabled}=="unset") %then
+			[ DISABLE ]
+		%else
+			[ ENABLE ]
+		%end
 
-  %if {rls-forced} %then
-    {alter}
+		{rls}
+		{ddl-end}
+	%end
 
-    %if ({rls-forced}=="unset") %then
-      [ NO]
-    %end
+	%if {rls-forced} %then
+		{alter}
 
-    [ FORCE ] {rls}
-    {ddl-end}
-  %end
+		%if ({rls-forced}=="unset") %then
+			[ NO]
+		%end
 
+		[ FORCE ] {rls}
+		{ddl-end}
+	%end
 %end

@@ -1,9 +1,9 @@
 # SQL definition for relationships
 # CAUTION: Do not modify this file unless you know what you are doing.
-#          Code generation can be broken if incorrect changes are made.
+# Code generation can be broken if incorrect changes are made.
 
 %if {rel1n} %then
- {constraints}
+	{constraints}
 %end
 
 #%if {relgen} %then
@@ -11,7 +11,7 @@
 #%end
 
 %if {relnn} %then
- {table}
- {constraints}
+	{table}
+	{constraints}
 %end
 

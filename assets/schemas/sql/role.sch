@@ -1,6 +1,6 @@
 # SQL definition for type roles
 # CAUTION: Do not modify this file unless you know what you are doing.
-#          Code generation can be broken if incorrect changes are made.
+# Code generation can be broken if incorrect changes are made.
 
 [-- object: ] {name} [ | type: ] {sql-object} [ --] $br
 [-- ] {drop}
@@ -10,8 +10,8 @@
 %set {ddl-end} $br [-- ddl-end --] $br
 
 %if {prepended-sql} %then
-  {prepended-sql}
-  {ddl-end} $br
+	{prepended-sql}
+	{ddl-end} $br
 %end
 
 [CREATE ROLE ] {name} [ WITH ]
@@ -26,13 +26,15 @@
 %if {bypassrls} %and ({pgsql-ver} >=f "9.5") %then $br $tb BYPASSRLS %end
 
 %if {password} %then
- $br $tb
- %if {encrypted} %then
-   ENCRYPTED
- %else
-   UNENCRYPTED
- %end
- [ PASSWORD ] '{password}'
+	$br $tb
+
+	%if {encrypted} %then
+		ENCRYPTED
+	%else
+		UNENCRYPTED
+	%end
+
+	[ PASSWORD ] '{password}'
 %end
 
 %if {connlimit} %then $br $tb [CONNECTION LIMIT ] {connlimit} %end
@@ -41,15 +43,15 @@
 %if {ref-roles} %then $br $tb [IN ROLE ] {ref-roles} %end
 %if {member-roles} %then $br $tb [ROLE ] {member-roles} %end
 %if {admin-roles} %then $br $tb [ADMIN ] {admin-roles} %end
-; 
+;
 
 {ddl-end}
 
 %if {comment} %then {comment} %end
 
 %if {appended-sql} %then
- {appended-sql}
- {ddl-end}
+	{appended-sql}
+	{ddl-end}
 %end
 
 $br

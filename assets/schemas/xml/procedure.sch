@@ -1,6 +1,6 @@
 # XML definition for procedures
 # CAUTION: Do not modify this file unless you know what you are doing.
-#          Code generation can be broken if incorrect changes are made.
+# Code generation can be broken if incorrect changes are made.
 
 <procedure [ name=] "{name}"
 
@@ -8,7 +8,7 @@
 %if {sql-disabled} %then [ sql-disabled=] "true" %end
 [ security-type=] "{security-type}" > $br
 
-{schema} 
+{schema}
 
 %if {owner} %then {owner} %end
 %if {comment} %then {comment} %end
@@ -17,25 +17,25 @@
 %if {language} %then {language} %end
 
 %if {transform-types} %then
-    $tb [<transform-types names=] "{transform-types}" /> $br
+	$tb [<transform-types names=] "{transform-types}" /> $br
 %end
 
 %if {config-params} %then
-    {config-params}
+	{config-params}
 %end
 
 %if {parameters} %then {parameters} %end
 
 %if {library} %then
-    $tb [<definition library=] "{library}"
+	$tb [<definition library=] "{library}"
 
-    %if {symbol} %then
-        [ symbol=] "{symbol}"
-    %end
+	%if {symbol} %then
+		[ symbol=] "{symbol}"
+	%end
 
-    /> $br
+	/> $br
 %else
-    $tb <definition><! $ob CDATA $ob {definition} $cb $cb ></definition> $br
+	$tb <definition><! $ob CDATA $ob {definition} $cb $cb ></definition> $br
 %end
 
-</procedure> $br $br 
+</procedure> $br $br
