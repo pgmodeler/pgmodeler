@@ -73,7 +73,7 @@ const QString PgModelerCliApp::MatchByName("--match-by-name");
 const QString PgModelerCliApp::ForceChildren("--force-children");
 const QString PgModelerCliApp::OnlyMatching("--only-matching");
 const QString PgModelerCliApp::PartialDiff("--partial");
-const QString PgModelerCliApp::ForceDiff("--force");
+const QString PgModelerCliApp::Force("--force");
 const QString PgModelerCliApp::StartDate("--start-date");
 const QString PgModelerCliApp::EndDate("--end-date");
 const QString PgModelerCliApp::CompareTo("--compare-to");
@@ -90,6 +90,7 @@ const QString PgModelerCliApp::NoCascadeDrop("--no-cascade");
 const QString PgModelerCliApp::ForceRecreateObjs("--force-recreate-objs");
 const QString PgModelerCliApp::OnlyUnmodifiable("--only-unmodifiable");
 const QString PgModelerCliApp::CreateConfigs("--create-configs");
+const QString PgModelerCliApp::MissingOnly("--missing-only");
 
 const QString PgModelerCliApp::TagExpr("<%1");
 const QString PgModelerCliApp::EndTagExpr("</%1");
@@ -116,10 +117,10 @@ attribs_map PgModelerCliApp::short_opts = {
 	{ StartDate, "-st" },	{ EndDate, "-et" },	{ CompareTo, "-ct" },
 	{ SaveDiff, "-sd" },	{ ApplyDiff, "-ad" },	{ NoDiffPreview, "-np" },
 	{ DropClusterObjs, "-dc" },	{ RevokePermissions, "-rv" },	{ DropMissingObjs, "-dm" },
-	{ ForceDropColsConstrs, "-fd" },	{ RenameDb, "-rn" },	/* { TruncOnColsTypeChange, "-tt" }, */
+	{ ForceDropColsConstrs, "-fd" },	{ RenameDb, "-rn" },
 	{ NoSequenceReuse, "-ns" },	{ NoCascadeDrop, "-nd" },	{ ForceRecreateObjs, "-nf" },
 	{ OnlyUnmodifiable, "-nu" },	{ NoIndex, "-ni" },	{ Split, "-sp" },
-	{ SystemWide, "-sw" },	{ CreateConfigs, "-cc" }, { ForceDiff, "-ff" }
+	{ SystemWide, "-sw" },	{ CreateConfigs, "-cc" }, { Force, "-ff" }, { MissingOnly, "-mo" }
 };
 
 map<QString, bool> PgModelerCliApp::long_opts = {
@@ -143,7 +144,7 @@ map<QString, bool> PgModelerCliApp::long_opts = {
 	{ NoSequenceReuse, false },	{ NoCascadeDrop, false },
 	{ ForceRecreateObjs, false },	{ OnlyUnmodifiable, false },	{ ExportToDict, false },
 	{ NoIndex, false },	{ Split, false },	{ SystemWide, false },
-	{ CreateConfigs, false }, { ForceDiff, false }
+	{ CreateConfigs, false }, { Force, false }, { MissingOnly, false }
 };
 
 map<QString, QStringList> PgModelerCliApp::accepted_opts = {
@@ -160,7 +161,7 @@ map<QString, QStringList> PgModelerCliApp::accepted_opts = {
 									 FilterObjects, OnlyMatching, MatchByName, ForceChildren, DebugMode, ConnAlias,
 									 Host, Port, User, Passwd, InitialDb }},
 
-	{{ Diff }, { Input, PgSqlVer, IgnoreDuplicates, IgnoreErrorCodes, CompareTo, PartialDiff, ForceDiff,
+	{{ Diff }, { Input, PgSqlVer, IgnoreDuplicates, IgnoreErrorCodes, CompareTo, PartialDiff, Force,
 							 StartDate, EndDate, SaveDiff, ApplyDiff, NoDiffPreview, DropClusterObjs, RevokePermissions,
 							 DropMissingObjs, ForceDropColsConstrs, RenameDb, NoCascadeDrop,
 							 NoSequenceReuse, ForceRecreateObjs, OnlyUnmodifiable }},
@@ -168,7 +169,7 @@ map<QString, QStringList> PgModelerCliApp::accepted_opts = {
 	{{ DbmMimeType }, { SystemWide }},
 	{{ FixModel },	{ Input, Output, FixTries }},
 	{{ ListConns }, {}},
-	{{ CreateConfigs }, {}}
+	{{ CreateConfigs }, {MissingOnly, Force}}
 };
 
 PgModelerCliApp::PgModelerCliApp(int argc, char **argv) : Application(argc, argv)
@@ -242,8 +243,8 @@ PgModelerCliApp::PgModelerCliApp(int argc, char **argv) : Application(argc, argv
 			//If the export is to png or svg loads additional configurations
 			if(parsed_opts.count(ExportToPng) || parsed_opts.count(ExportToSvg) || parsed_opts.count(ImportDb))
 			{
-				connect(model, SIGNAL(s_objectAdded(BaseObject*)), this, SLOT(handleObjectAddition(BaseObject *)));
-				connect(model, SIGNAL(s_objectRemoved(BaseObject*)), this, SLOT(handleObjectRemoval(BaseObject *)));
+				connect(model, SIGNAL(s_objectAdded(BaseObject *)), this, SLOT(handleObjectAddition(BaseObject *)));
+				connect(model, SIGNAL(s_objectRemoved(BaseObject *)), this, SLOT(handleObjectRemoval(BaseObject *)));
 
 				//Creates a scene to
 				scene=new ObjectsScene;
@@ -456,7 +457,7 @@ void PgModelerCliApp::showMenu()
 	out << tr("Diff options: ") << QtCompat::endl;
 	out << tr("  %1, %2 [DBNAME]\t    The database used in the comparison. All the SQL code generated is applied to it.").arg(short_opts[CompareTo]).arg(CompareTo) << QtCompat::endl;
 	out << tr("  %1, %2\t\t    Toggles the partial diff operation. A set of objects filters should be provided using the import option %3.").arg(short_opts[PartialDiff]).arg(PartialDiff).arg(FilterObjects) << QtCompat::endl;
-	out << tr("  %1, %2\t\t\t    Forces a full diff if the provided filters were not able to retrieve objects for a partial diff operation.").arg(short_opts[ForceDiff]).arg(ForceDiff) << QtCompat::endl;
+	out << tr("  %1, %2\t\t\t    Forces a full diff if the provided filters were not able to retrieve objects for a partial diff operation.").arg(short_opts[Force]).arg(Force) << QtCompat::endl;
 	out << tr("  %1, %2\t\t    Matches all database model objects in which modification date starts in the specified date. (Only for partial diff)").arg(short_opts[StartDate]).arg(StartDate) << QtCompat::endl;
 	out << tr("  %1, %2\t\t    Matches all database model objects in which modification date ends in the specified date. (Only for partial diff)").arg(short_opts[EndDate]).arg(EndDate) << QtCompat::endl;
 	out << tr("  %1, %2\t\t\t    Save the generated diff code to output file.").arg(short_opts[SaveDiff]).arg(SaveDiff) << QtCompat::endl;
@@ -482,6 +483,11 @@ void PgModelerCliApp::showMenu()
 	out << tr("  %1, %2\t\t    The file association to .dbm files will be applied in a system wide level instead of to the current user.").arg(short_opts[SystemWide]).arg(SystemWide) << QtCompat::endl;
 	out << QtCompat::endl;
 #endif
+
+	out << tr("Config files creation options: ") << QtCompat::endl;
+	out << tr("  %1, %2 \t\t    Copy only missing configuration files to the user's local storage.").arg(short_opts[MissingOnly]).arg(MissingOnly) << QtCompat::endl;
+	out << tr("  %1, %2 \t\t\t    Forces the recreation of all configuration files. This option implies the backup of the current settings.").arg(short_opts[Force]).arg(Force) << QtCompat::endl;
+	out << QtCompat::endl;
 
 	out << QtCompat::endl;
 	out << tr("** The FILTER value in %1 option has the form type:pattern:mode. ").arg(FilterObjects) << QtCompat::endl;
@@ -664,6 +670,9 @@ void PgModelerCliApp::parseOptions(attribs_map &opts)
 		
 		if(upd_mime && opts[DbmMimeType]!=Install && opts[DbmMimeType]!=Uninstall)
 			throw Exception(tr("Invalid action specified to update mime option!"), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+		if(create_configs && opts.count(Force) && opts.count(MissingOnly))
+			throw Exception(tr("The options `%1' and `%2' can't be used together when handling configuration files!").arg(Force).arg(MissingOnly), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		if(diff)
 		{
@@ -1678,9 +1687,9 @@ void PgModelerCliApp::diffModelDatabase()
 			{
 				printMessage(tr("No object was retrieved using the provided filter(s)."));
 
-				if(!parsed_opts.count(ForceDiff))
+				if(!parsed_opts.count(Force))
 				{
-					printMessage(tr("Use the option `%1' to force a full diff in this case.").arg(ForceDiff));
+					printMessage(tr("Use the option `%1' to force a full diff in this case.").arg(Force));
 					printMessage(tr("The diff process will not continue!\n"));
 					return;
 				}
@@ -2129,15 +2138,31 @@ void PgModelerCliApp::handleWindowsMimeDatabase(bool uninstall, bool system_wide
 
 void PgModelerCliApp::createConfigurations()
 {
-	printMessage(tr("Creating configuration files..."));
-	printMessage(tr("Destination path: %1").arg(GlobalAttributes::getConfigurationsDir()));
+	QString conf_dir = GlobalAttributes::getConfigurationsDir();
 
-	if(QDir(GlobalAttributes::getConfigurationsDir()).exists())
+	printMessage(tr("Creating configuration files..."));
+	printMessage(tr("Destination path: %1").arg(conf_dir));
+
+	bool missing_only = parsed_opts.count(MissingOnly) > 0,
+			force = parsed_opts.count(Force) > 0;
+
+	if(!missing_only && !force && QDir(GlobalAttributes::getConfigurationsDir()).exists())
 		throw Exception(tr("Configuration files already exist!"), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	try
 	{
-		createUserConfiguration();
+		if(force)
+		{
+			QDir dir;
+			QString bkp_conf_dir = conf_dir + QDateTime::currentDateTime().toString("_yyyyMMd_hhmmss");
+
+			printMessage(tr("Configuration files already exist! Creating a backup..."));
+
+			if(!dir.rename(conf_dir, bkp_conf_dir))
+				throw Exception(tr("Failed to create a backup of the configuration files!"), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		}
+
+		createUserConfiguration(missing_only);
 		printMessage(tr("Configuration files successfully created!\n"));
 	}
 	catch (Exception &e)

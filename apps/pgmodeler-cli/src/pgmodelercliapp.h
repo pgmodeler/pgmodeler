@@ -165,7 +165,7 @@ class PgModelerCliApp: public Application {
 		AllChildren,
 
 		PartialDiff,
-		ForceDiff,
+		Force,
 		StartDate,
 		EndDate,
 		CompareTo,
@@ -183,6 +183,7 @@ class PgModelerCliApp: public Application {
 		OnlyUnmodifiable,
 
 		CreateConfigs,
+		MissingOnly,
 
 		TagExpr,
 		EndTagExpr,

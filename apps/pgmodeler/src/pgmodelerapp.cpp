@@ -33,7 +33,7 @@ PgModelerApp::PgModelerApp(int &argc, char **argv) : Application(argc,argv)
 	try
 	{
 		//Creating the initial user's configuration
-		createUserConfiguration();
+		createUserConfiguration(false);
 	}
 	catch(Exception &e)
 	{
