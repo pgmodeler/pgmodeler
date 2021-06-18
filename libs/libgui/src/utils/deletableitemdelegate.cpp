@@ -26,7 +26,7 @@ DeletableItemDelegate::DeletableItemDelegate(QComboBox *parent, const QString &t
 	del_btn = new QToolButton(combo->view());
 	del_btn->setVisible(false);
 	del_btn->setIcon(QIcon(GuiUtilsNs::getIconPath("delete")));
-	del_btn->setIconSize(parent->iconSize());
+	del_btn->setIconSize(QSize(parent->iconSize().width() * 0.80, parent->iconSize().height() * 0.80));
 	del_btn->setAutoRaise(true);
 	del_btn->setShortcut(shortcut);
 	del_btn->setToolTip(tooltip + QString(" (%1)").arg(del_btn->shortcut().toString()));
@@ -49,11 +49,10 @@ void DeletableItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem 
 		 (option.state == sel_state ||
 			option.state == (sel_state | QStyle::State_MouseOver)))
 	{
-		del_btn->setMinimumHeight(option.rect.height());
-		del_btn->setMinimumWidth(option.rect.height());
+		del_btn->resize(option.rect.height(), option.rect.height());
 		del_btn->move(option.rect.width() - del_btn->width(), option.rect.top());
 		del_btn->setVisible(true);
 	}
-	else
+	else if(option.state == (QStyle::State_Active | QStyle::State_Enabled))
 		del_btn->setVisible(false);
 }
