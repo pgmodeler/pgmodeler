@@ -18,9 +18,9 @@
 
 #include "mainwindow.h"
 #include "guiutilsns.h"
-#include "bugreportform.h"
-#include "metadatahandlingform.h"
-#include "sqlexecutionwidget.h"
+#include "tools/bugreportform.h"
+#include "tools/metadatahandlingform.h"
+#include "tools/sqlexecutionwidget.h"
 
 bool MainWindow::confirm_validation=true;
 int MainWindow::GeneralActionsCount=0;

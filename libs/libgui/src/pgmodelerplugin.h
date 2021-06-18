@@ -25,7 +25,7 @@
 #ifndef PGMODELER_PLUGIN_H
 #define PGMODELER_PLUGIN_H
 
-#include "modelwidget.h"
+#include "widgets/modelwidget.h"
 #include "baseform.h"
 
 /*	The plugins in pgModeler must be within the "plugins" folder in its own

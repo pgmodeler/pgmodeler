@@ -19,7 +19,7 @@
 #include "syntaxcheckerform.h"
 #include "guiutilsns.h"
 #include "globalattributes.h"
-#include "generalconfigwidget.h"
+#include "settings/generalconfigwidget.h"
 #include "guiutilsns.h"
 #include "sourceeditorwidget.h"
 #include "aboutwidget.h"

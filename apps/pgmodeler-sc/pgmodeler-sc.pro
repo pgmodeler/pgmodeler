@@ -7,7 +7,7 @@ windows:RC_FILE=res/windows_ico.qrc
 windows:RCC_DIR=src/
 
 SOURCES += src/main.cpp \
-	src/aboutwidget.cpp \
+	   src/aboutwidget.cpp \
 	   src/syntaxcheckerform.cpp \
 	   src/sourceeditorwidget.cpp \
 	   ../pgmodeler/src/pgmodelerapp.cpp \

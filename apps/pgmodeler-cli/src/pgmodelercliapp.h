@@ -31,14 +31,14 @@
 #include <QCoreApplication>
 #include "exception.h"
 #include "globalattributes.h"
-#include "modelwidget.h"
-#include "modelexporthelper.h"
-#include "generalconfigwidget.h"
-#include "connectionsconfigwidget.h"
-#include "relationshipconfigwidget.h"
-#include "generalconfigwidget.h"
-#include "databaseimporthelper.h"
-#include "modelsdiffhelper.h"
+#include "widgets/modelwidget.h"
+#include "tools/modelexporthelper.h"
+#include "settings/generalconfigwidget.h"
+#include "settings/connectionsconfigwidget.h"
+#include "settings/relationshipconfigwidget.h"
+#include "settings/generalconfigwidget.h"
+#include "tools/databaseimporthelper.h"
+#include "tools/modelsdiffhelper.h"
 
 class PgModelerCliApp: public Application {
 	private:
