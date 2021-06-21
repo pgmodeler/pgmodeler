@@ -1,6 +1,6 @@
-%set {spacer} $br [ ]
+%set {spacer} $br $tb $tb
 
-[ <preset ] name="{name}"
+$tb [<preset ] name="{name}"
 
 %if {current-model} %then
 	{spacer} current-model="true"
