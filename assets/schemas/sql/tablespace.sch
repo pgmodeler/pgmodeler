@@ -1,6 +1,6 @@
 # SQL definition for tablespaces
 # CAUTION: Do not modify this file unless you know what you are doing.
-#          Code generation can be broken if incorrect changes are made.
+# Code generation can be broken if incorrect changes are made.
 
 [-- object: ] {name} [ | type: ] {sql-object} [ --] $br
 [-- ] {drop}
@@ -10,14 +10,14 @@
 %set {ddl-end} $br [-- ddl-end --] $br
 
 %if {prepended-sql} %then
-   {prepended-sql}
-   {ddl-end} $br
+	{prepended-sql}
+	{ddl-end} $br
 %end
 
 [CREATE TABLESPACE ] {name} $br
 
 %if {owner} %then
-$tb [OWNER ] {owner} $br
+	$tb [OWNER ] {owner} $br
 %end
 
 $tb [LOCATION ] {directory}; $br
@@ -27,8 +27,8 @@ $tb [LOCATION ] {directory}; $br
 %if {comment} %then {comment} %end
 
 %if {appended-sql} %then
- {appended-sql}
- {ddl-end}
+	{appended-sql}
+	{ddl-end}
 %end
 
 $br

@@ -24,17 +24,21 @@ Application::Application(int &argc, char **argv) : QApplication(argc,argv)
 	GlobalAttributes::setSearchPath(this->applicationDirPath());
 }
 
-void Application::createUserConfiguration()
+void Application::createUserConfiguration(bool missing_only)
 {
 	QDir config_dir(GlobalAttributes::getConfigurationsDir());
 
 	try
 	{
-		//If the directory not exists or is empty
-		if(!config_dir.exists() ||
-				config_dir.entryList({QString("*%1").arg(GlobalAttributes::ConfigurationExt)},
-									 QDir::Files | QDir::NoDotAndDotDot).isEmpty())
-			copyFilesRecursively(GlobalAttributes::getTmplConfigurationDir(), GlobalAttributes::getConfigurationsDir());
+		//If the directory not exists
+		if(!config_dir.exists() || missing_only ||
+			 // If the overwrite flag is not set we'll copy the files only if the directory is empty
+			(!missing_only &&
+			 config_dir.entryList({QString("*%1").arg(GlobalAttributes::ConfigurationExt)},
+														QDir::Files | QDir::NoDotAndDotDot).isEmpty()))
+		{
+			copyFilesRecursively(GlobalAttributes::getTmplConfigurationDir(), GlobalAttributes::getConfigurationsDir(), missing_only);
+		}
 	}
 	catch(Exception &e)
 	{
@@ -42,7 +46,7 @@ void Application::createUserConfiguration()
 	}
 }
 
-void Application::copyFilesRecursively(const QString &src_path, const QString &dst_path)
+void Application::copyFilesRecursively(const QString &src_path, const QString &dst_path, bool missing_only)
 {
 	QFileInfo src_file(src_path);
 
@@ -64,20 +68,22 @@ void Application::copyFilesRecursively(const QString &src_path, const QString &d
 		filenames = src_dir.entryList({QString("*%1").arg(GlobalAttributes::ConfigurationExt)},
 										QDir::Files | QDir::NoDotAndDotDot);
 
-		for(QString filename : filenames)
+		for(auto &filename : filenames)
 		{
-			//Avoiding the copy of ui-style.conf file
-			if(!filename.contains(GlobalAttributes::UiStyleConf))
-			{
-				new_src_path = src_path + src_dir.separator() + filename;
-				new_dst_path = dst_path + dst_dir.separator() + filename;
-				copyFilesRecursively(new_src_path, new_dst_path);
-			}
+			new_src_path = src_path + src_dir.separator() + filename;
+			new_dst_path = dst_path + dst_dir.separator() + filename;
+
+			if(filename.contains(GlobalAttributes::UiStyleConf) ||
+				 (missing_only && QFileInfo::exists(new_dst_path)))
+				continue;
+
+			copyFilesRecursively(new_src_path, new_dst_path, missing_only);
 		}
 	}
-	else if(!QFile::exists(dst_path) && !QFile::copy(src_path, dst_path))
+	else
 	{
-		throw Exception(Exception::getErrorMessage(ErrorCode::FileDirectoryNotWritten).arg(dst_path),
-						__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		if(!QFile::copy(src_path, dst_path))
+			throw Exception(Exception::getErrorMessage(ErrorCode::FileDirectoryNotWritten).arg(dst_path),
+											__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	}
 }

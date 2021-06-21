@@ -1,6 +1,6 @@
 # SQL definition for aggregate functions
 # CAUTION: Do not modify this file unless you know what you are doing.
-#          Code generation can be broken if incorrect changes are made.
+# Code generation can be broken if incorrect changes are made.
 
 [-- object: ] {name} [ | type: ] {sql-object} [ --] $br
 [-- ] {drop}
@@ -10,8 +10,8 @@
 %set {ddl-end} $br [-- ddl-end --] $br
 
 %if {prepended-sql} %then
- {prepended-sql}
- {ddl-end} $br
+	{prepended-sql}
+	{ddl-end} $br
 %end
 
 [CREATE AGGREGATE ] {name} [ (]{types}[) (] $br
@@ -20,7 +20,7 @@ $tb [STYPE = ] {state-type} $br
 %if {final} %then $tb [,FINALFUNC = ] {final} $br %end
 %if {initial-cond} %then $tb [,INITCOND = ] {initial-cond} $br %end
 %if {sort-op} %then $tb [,SORTOP = ] {sort-op} $br %end
-); 
+);
 
 {ddl-end}
 
@@ -28,8 +28,8 @@ $tb [STYPE = ] {state-type} $br
 %if {comment} %then {comment} %end
 
 %if {appended-sql} %then
- {appended-sql}
- {ddl-end}
+	{appended-sql}
+	{ddl-end}
 %end
 
 $br

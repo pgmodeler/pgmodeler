@@ -1,19 +1,19 @@
 # SQL definition for partition key elements
 # CAUTION: Do not modify this file unless you know what you are doing.
-#          Code generation can be broken if incorrect changes are made.
+# Code generation can be broken if incorrect changes are made.
 
 %if {column} %then
- {column}
-%else 
-  %if {expression} %then
-    ({expression})
-  %end
+	{column}
+%else
+	%if {expression} %then
+		({expression})
+	%end
 %end
 
 %if {collation} %then
-  [ COLLATE ] {collation}
+	[ COLLATE ] {collation}
 %end
 
 %if {opclass} %then
-  $sp {opclass}
+	$sp {opclass}
 %end

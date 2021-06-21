@@ -1,6 +1,6 @@
 # SQL definition for domains
 # CAUTION: Do not modify this file unless you know what you are doing.
-#          Code generation can be broken if incorrect changes are made.
+# Code generation can be broken if incorrect changes are made.
 
 [-- object: ] {name} [ | type: ] {sql-object} [ --] $br
 [-- ] {drop}
@@ -10,26 +10,26 @@
 %set {ddl-end} $br [-- ddl-end --] $br
 
 %if {prepended-sql} %then
-  {prepended-sql}
-  {ddl-end} $br
+	{prepended-sql}
+	{ddl-end} $br
 %end
 
 [CREATE DOMAIN ] {name} [ AS ] {type}
 
 %if ({pgsql-ver} != "9.0") %and {collation} %then
- $br $tb [COLLATE ] {collation}
+	$br $tb [COLLATE ] {collation}
 %end
 
 %if {default-value} %then
- $br $tb [DEFAULT ] {default-value}
+	$br $tb [DEFAULT ] {default-value}
 %end
 
 %if {not-null} %then
- $br $tb [NOT NULL]
+	$br $tb [NOT NULL]
 %end
 
 %if {constraints} %then
-  {constraints}
+	{constraints}
 %end
 
 ;
@@ -40,8 +40,8 @@
 %if {comment} %then {comment} %end
 
 %if {appended-sql} %then
- {appended-sql}
- {ddl-end}
+	{appended-sql}
+	{ddl-end}
 %end
 
 $br

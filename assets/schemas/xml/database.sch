@@ -1,6 +1,6 @@
 # XML definition for tablespaces
 # CAUTION: Do not modify this file unless you know what you are doing.
-#          Code generation can be broken if incorrect changes are made.
+# Code generation can be broken if incorrect changes are made.
 [<database name=] "{name}"
 
 %if {encoding} %then [ encoding=] "{encoding}" %end
@@ -12,15 +12,15 @@
 %if {allow-conns} %then [ allow-conns=] "{allow-conns}" %end
 
 %if {sql-disabled} %then
-[ sql-disabled=] "true"
+	[ sql-disabled=] "true"
 %end
 
 %if {append-at-eod} %then
-[ append-at-eod=] "true"
+	[ append-at-eod=] "true"
 %end
 
 %if {prepend-at-bod} %then
-[ prepend-at-bod=] "true"
+	[ prepend-at-bod=] "true"
 %end
 
 > $br
@@ -31,4 +31,4 @@
 %if {appended-sql} %then {appended-sql} %end
 %if {prepended-sql} %then {prepended-sql} %end
 
-</database>  $br $br
+</database> $br $br

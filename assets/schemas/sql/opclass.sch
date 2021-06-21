@@ -1,6 +1,6 @@
 # SQL definition for operator classes
 # CAUTION: Do not modify this file unless you know what you are doing.
-#          Code generation can be broken if incorrect changes are made.
+# Code generation can be broken if incorrect changes are made.
 
 [-- object: ] {name} [ | type: ] {sql-object} [ --] $br
 [-- ] {drop}
@@ -10,11 +10,11 @@
 %set {ddl-end} $br [-- ddl-end --] $br
 
 %if {prepended-sql} %then
-  {prepended-sql}
-  {ddl-end} $br
+	{prepended-sql}
+	{ddl-end} $br
 %end
 
-[CREATE OPERATOR CLASS ] {name} 
+[CREATE OPERATOR CLASS ] {name}
 %if {default} %then [ DEFAULT ] %end
 
 [ FOR TYPE ] {type} $br
@@ -31,8 +31,8 @@
 %if {comment} %then {comment} %end
 
 %if {appended-sql} %then
- {appended-sql}
- {ddl-end}
+	{appended-sql}
+	{ddl-end}
 %end
 
 $br

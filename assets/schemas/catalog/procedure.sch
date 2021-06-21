@@ -1,90 +1,89 @@
 # Catalog queries for procedures
 # CAUTION: Do not modify this file unless you know what you are doing.
-#          Code generation can be broken if incorrect changes are made.
+# Code generation can be broken if incorrect changes are made.
 
 %if ({pgsql-ver} >=f "11.0") %then
+	%set {is-procedure} [pr.prokind = 'p']
 
-    %set {is-procedure} [pr.prokind = 'p'] 
+	%if {list} %then
+		%if {use-signature} %then
+			%set {signature} [ ns.nspname || '.' || ]
+		%end
 
-    %if {list} %then
-        %if {use-signature} %then
-            %set {signature} [ ns.nspname || '.' || ]
-        %end
+		[ SELECT pr.oid, proname || '(' || array_to_string(proargtypes::regtype] $ob $cb [,',') || ')' AS name,
+		ns.nspname AS parent, 'schema' AS parent_type
+		FROM pg_proc AS pr
+		LEFT JOIN pg_namespace AS ns ON pr.pronamespace = ns.oid ]
 
-        [ SELECT pr.oid, proname || '(' || array_to_string(proargtypes::regtype] $ob $cb [,',') || ')' AS name,
-                 ns.nspname AS parent, 'schema' AS parent_type
-          FROM pg_proc AS pr 
-          LEFT JOIN pg_namespace AS ns ON pr.pronamespace = ns.oid ]
+		%if {schema} %then
+			[ WHERE ] {is-procedure} [ AND ns.nspname = ] '{schema}'
+		%else
+			[ WHERE ] {is-procedure}
+		%end
 
-        %if {schema} %then
-            [ WHERE ] {is-procedure} [ AND ns.nspname = ] '{schema}'
-        %else
-            [ WHERE ] {is-procedure}
-        %end
+		%if {last-sys-oid} %then
+			[ AND pr.oid ] {oid-filter-op} $sp {last-sys-oid}
+		%end
 
-        %if {last-sys-oid} %then
-            [ AND pr.oid ] {oid-filter-op} $sp {last-sys-oid}
-        %end
+		%if {not-ext-object} %then
+			[ AND ] ( {not-ext-object} )
+		%end
 
-        %if {not-ext-object} %then
-            [ AND ] ( {not-ext-object} )
-        %end
-    
-        %if {name-filter} %then
-            [ AND ] ( {signature} [ pr.proname ~* ] E'{name-filter}' )
-        %end
-    %else
-        %if {attribs} %then
-        
-            [ SELECT pr.oid, pronamespace AS schema, pr.proowner AS owner,
-                     pr.proacl AS permission, pr.proname AS name, pr.prolang AS language,
-                     pr.pronargs AS arg_count, pr.pronargdefaults AS arg_def_count, 
-                     array_to_string(pr.proconfig, '•', '') AS config_params, ]
+		%if {name-filter} %then
+			[ AND ] ( {signature} [ pr.proname ~* ] E'{name-filter}' )
+		%end
+	%else
+		%if {attribs} %then
 
-                [ CASE
-                     WHEN proallargtypes IS NOT NULL THEN proallargtypes
-                     ELSE proargtypes::oid ] $ob $cb
-                [ END AS arg_types,
+			[ SELECT pr.oid, pronamespace AS schema, pr.proowner AS owner,
+			pr.proacl AS permission, pr.proname AS name, pr.prolang AS language,
+			pr.pronargs AS arg_count, pr.pronargdefaults AS arg_def_count,
+			array_to_string(pr.proconfig, '•', '') AS config_params, ]
 
-                  pr.proargmodes AS arg_modes,
-                  pr.proargnames AS arg_names,
-                  pg_get_expr(proargdefaults, 'pg_class'::regclass) AS arg_defaults,
-                  pr.prosrc AS definition,
-                  pr.probin AS library,
-                  pr.protrftypes AS transform_types, 
+			[ CASE
+			WHEN proallargtypes IS NOT NULL THEN proallargtypes
+			ELSE proargtypes::oid ] $ob $cb
+			[ END AS arg_types,
 
-                  CASE
-                     WHEN pr.prosecdef  THEN 'SECURITY DEFINER'
-                     ELSE 'SECURITY INVOKER'
-                  END AS security_type, ]
+			pr.proargmodes AS arg_modes,
+			pr.proargnames AS arg_names,
+			pg_get_expr(proargdefaults, 'pg_class'::regclass) AS arg_defaults,
+			pr.prosrc AS definition,
+			pr.probin AS library,
+			pr.protrftypes AS transform_types,
 
-            ({comment}) [ AS comment ]
+			CASE
+			WHEN pr.prosecdef THEN 'SECURITY DEFINER'
+			ELSE 'SECURITY INVOKER'
+			END AS security_type, ]
 
-            [ FROM pg_proc AS pr ]
+			({comment}) [ AS comment ]
 
-            %if {schema} %then
-                [ LEFT JOIN pg_namespace AS ns ON pr.pronamespace = ns.oid ]
-            %end
+			[ FROM pg_proc AS pr ]
 
-            [ WHERE ] {is-procedure} 
+			%if {schema} %then
+				[ LEFT JOIN pg_namespace AS ns ON pr.pronamespace = ns.oid ]
+			%end
 
-            %if {last-sys-oid} %then
-                [ AND pr.oid ] {oid-filter-op} $sp {last-sys-oid}
-            %end
+			[ WHERE ] {is-procedure}
 
-            %if {not-ext-object} %then
-                [ AND ] ( {not-ext-object} )
-            %end
+			%if {last-sys-oid} %then
+				[ AND pr.oid ] {oid-filter-op} $sp {last-sys-oid}
+			%end
 
-            %if {filter-oids} %or {schema} %then
-                %if {filter-oids} %then
-                    [ AND pr.oid IN (] {filter-oids} )
-                %end
+			%if {not-ext-object} %then
+				[ AND ] ( {not-ext-object} )
+			%end
 
-                %if {schema} %then
-                    [ AND  ns.nspname = ] '{schema}'
-                %end
-            %end
-        %end
-    %end
+			%if {filter-oids} %or {schema} %then
+				%if {filter-oids} %then
+					[ AND pr.oid IN (] {filter-oids} )
+				%end
+
+				%if {schema} %then
+					[ AND ns.nspname = ] '{schema}'
+				%end
+			%end
+		%end
+	%end
 %end
