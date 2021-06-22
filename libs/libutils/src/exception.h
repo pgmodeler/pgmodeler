@@ -293,7 +293,7 @@ enum class ErrorCode: unsigned {
 	AsgInvalidObjectForeignTable,
 	InvRelTypeForeignTable,
 	InvCopyRelForeignTable,
-	InvDataDictDirectory,
+	InvOutputDirectory,
 	InitialUserConfigNotCreated,
 	InvalidObjectFilter,
 	InvChildObjectTypeFilter,

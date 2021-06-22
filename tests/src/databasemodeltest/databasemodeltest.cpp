@@ -31,6 +31,7 @@ class DatabaseModelTest: public QObject, public PgModelerUnitTest {
 	private slots:
 		void saveObjectsMetadata();
 		void loadObjectsMetadata();
+		void saveSplitSQLDefinition();
 };
 
 void DatabaseModelTest::saveObjectsMetadata()
@@ -70,6 +71,26 @@ void DatabaseModelTest::loadObjectsMetadata()
 		dbmodel.loadModel(input_dbm);
 		dbmodel.loadObjectsMetadata(input_opf);
 		dbmodel.saveModel(output, SchemaParser::XmlDefinition);
+		QCOMPARE(true, true);
+	}
+	catch (Exception &e)
+	{
+		out << e.getExceptionsText() << QtCompat::endl;
+		QCOMPARE(false, true);
+	}
+}
+
+void DatabaseModelTest::saveSplitSQLDefinition()
+{
+	DatabaseModel dbmodel;
+	QTextStream out(stdout);
+	QString output=QFileInfo(BINDIR).absolutePath(),
+			input_dbm=SAMPLESDIR + GlobalAttributes::DirSeparator + QString("demo.dbm");
+
+	try
+	{
+		dbmodel.loadModel(input_dbm);
+		dbmodel.saveSplitSQLDefinition(output);
 		QCOMPARE(true, true);
 	}
 	catch (Exception &e)

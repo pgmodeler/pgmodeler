@@ -455,6 +455,11 @@ class DatabaseModel:  public QObject, public BaseObject {
 		//! \brief Saves the specified code definition for the model on the specified filename
 		void saveModel(const QString &filename, unsigned def_type);
 
+		/*! \brief Saves the model's SQL code definition by creating separated files for each object
+		 *  The provided path must be a directory. If it does not exists then the method will create
+		 *  it prior to the generation of the files. */
+		void saveSplitSQLDefinition(const QString &path);
+
 		/*! \brief Returns the complete SQL/XML defintion for the entire model (including all the other objects).
 		 The parameter 'export_file' is used to format the generated code in a way that can be saved
 		 in na SQL file and executed later on the DBMS server. This parameter is only used for SQL definition. */

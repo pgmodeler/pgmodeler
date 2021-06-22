@@ -7854,7 +7854,7 @@ map<unsigned, BaseObject *> DatabaseModel::getCreationOrder(unsigned def_type, b
 		vet_aux.insert(vet_aux.end(), tables.begin(),tables.end());
 		vet_aux.insert(vet_aux.end(), foreign_tables.begin(),foreign_tables.end());
 		vet_aux.insert(vet_aux.end(), sequences.begin(),sequences.end());
-		vet_aux.insert(vet_aux.end(), views.begin(),views.end());;
+		vet_aux.insert(vet_aux.end(), views.begin(),views.end());
 		itr=vet_aux.begin();
 		itr_end=vet_aux.end();
 
@@ -8174,6 +8174,49 @@ void DatabaseModel::saveModel(const QString &filename, unsigned def_type)
 		throw Exception(Exception::getErrorMessage(ErrorCode::FileNotWrittenInvalidDefinition).arg(filename),
 										ErrorCode::FileNotWrittenInvalidDefinition,__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
+}
+
+void DatabaseModel::saveSplitSQLDefinition(const QString &path)
+{
+	QFileInfo fi(path);
+	QDir dir;
+
+	if(fi.exists() && !fi.isDir())
+		throw Exception(Exception::getErrorMessage(ErrorCode::InvOutputDirectory).arg(path),
+										ErrorCode::InvOutputDirectory,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+	if(!fi.exists())
+		dir.mkdir(path);
+
+	map<unsigned, BaseObject *> objects = getCreationOrder(SchemaParser::SqlDefinition, true, true);
+	int pad_size = 0;
+
+	for(auto &itr : objects)
+	{
+
+	}
+
+	/* QFile output;
+	output.setFileName(path);
+
+	for(auto &itr : datadict)
+	{
+		if(split)
+			output.setFileName(path + GlobalAttributes::DirSeparator + itr.first);
+
+		output.open(QFile::WriteOnly);
+
+		if(!output.isOpen())
+		{
+			throw Exception(Exception::getErrorMessage(ErrorCode::FileDirectoryNotWritten).arg(output.fileName()),
+											ErrorCode::FileDirectoryNotWritten,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		}
+
+		buffer.append(itr.second.toUtf8());
+		output.write(buffer);
+		output.close();
+		buffer.clear();
+	} */
 }
 
 void DatabaseModel::getOpClassDependencies(BaseObject *object, vector<BaseObject *> &deps, bool inc_indirect_deps)
@@ -11795,9 +11838,10 @@ void DatabaseModel::saveDataDictionary(const QString &path, bool browsable, bool
 		if(split)
 		{
 			if(finfo.exists() && !finfo.isDir())
-				throw Exception(Exception::getErrorMessage(ErrorCode::InvDataDictDirectory).arg(path),
-												ErrorCode::InvDataDictDirectory,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-			else if(!finfo.exists())
+				throw Exception(Exception::getErrorMessage(ErrorCode::InvOutputDirectory).arg(path),
+												ErrorCode::InvOutputDirectory,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+			if(!finfo.exists())
 				dir.mkpath(path);
 		}
 
