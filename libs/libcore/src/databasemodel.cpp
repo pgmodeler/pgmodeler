@@ -8188,22 +8188,34 @@ void DatabaseModel::saveSplitSQLDefinition(const QString &path)
 	if(!fi.exists())
 		dir.mkdir(path);
 
+	QFile output;
+	QByteArray buffer;
 	map<unsigned, BaseObject *> objects = getCreationOrder(SchemaParser::SqlDefinition, true, true);
-	int pad_size = 0;
+	int pad_size = QString::number(objects.size()).size(), idx = 0;
+	QString filename, name;
+	BaseObject *obj = nullptr;
 
 	for(auto &itr : objects)
 	{
+		obj = itr.second;
+		buffer.append(itr.second->getCodeDefinition(SchemaParser::SqlDefinition).toUtf8());
 
-	}
+		if(buffer.isEmpty())
+			continue;
 
-	/* QFile output;
-	output.setFileName(path);
+		/* The name of the generated file will be:
+		 * [creation order id]_[name]_[type]_[internal id].sql
+		 * Note: the name portion of the file is treated to remove special char (non word chars) that may break
+		 * the filename on some filesystems. The internal id is used for desambiguation purposes. */
+		name = obj->getName().replace(QRegExp("(?!\\-)(\\W)"), "_");
 
-	for(auto &itr : datadict)
-	{
-		if(split)
-			output.setFileName(path + GlobalAttributes::DirSeparator + itr.first);
+		filename = QString("%1_%2_%3_%4.sql")
+							 .arg(QString::number(idx++).rightJustified(pad_size, '0'))
+							 .arg(name)
+							 .arg(obj->getSchemaName())
+							 .arg(obj->getObjectId());
 
+		output.setFileName(path + GlobalAttributes::DirSeparator + filename);
 		output.open(QFile::WriteOnly);
 
 		if(!output.isOpen())
@@ -8212,11 +8224,10 @@ void DatabaseModel::saveSplitSQLDefinition(const QString &path)
 											ErrorCode::FileDirectoryNotWritten,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		}
 
-		buffer.append(itr.second.toUtf8());
 		output.write(buffer);
 		output.close();
 		buffer.clear();
-	} */
+	}
 }
 
 void DatabaseModel::getOpClassDependencies(BaseObject *object, vector<BaseObject *> &deps, bool inc_indirect_deps)
@@ -11147,9 +11158,10 @@ void DatabaseModel::loadObjectsMetadata(const QString &filename, unsigned option
 						else
 						{
 							emit s_objectLoaded(progress,
-																	tr("Object `%1' (%2) already exists. %1.").arg(merge_dup_objs ? tr("Merging") : tr("Ignoring"))
+																	tr("Object `%1' (%2) already exists. %3.")
 																	.arg(attribs[Attributes::Name])
-																	.arg(BaseObject::getTypeName(obj_type)), enum_cast(ObjectType::BaseObject));
+																	.arg(BaseObject::getTypeName(obj_type))
+																	.arg(merge_dup_objs ? tr("Merging") : tr("Ignoring")), enum_cast(ObjectType::BaseObject));
 
 							if(merge_dup_objs)
 								CoreUtilsNs::copyObject(&aux_obj, new_object, obj_type);

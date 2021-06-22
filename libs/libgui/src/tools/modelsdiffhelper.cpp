@@ -43,7 +43,6 @@ ModelsDiffHelper::ModelsDiffHelper()
 
 	diff_opts[OptKeepClusterObjs]=true;
 	diff_opts[OptCascadeMode]=true;
-	//diff_opts[OptTruncateTables]=false;
 	diff_opts[OptForceRecreation]=true;
 	diff_opts[OptRecreateUnmodifiable]=true;
 	diff_opts[OptKeepObjectPerms]=true;

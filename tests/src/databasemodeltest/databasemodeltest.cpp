@@ -84,11 +84,14 @@ void DatabaseModelTest::saveSplitSQLDefinition()
 {
 	DatabaseModel dbmodel;
 	QTextStream out(stdout);
-	QString output=QFileInfo(BINDIR).absolutePath(),
+	QString output=QFileInfo(BINDIR).absolutePath() + GlobalAttributes::DirSeparator + "demo_split_test",
 			input_dbm=SAMPLESDIR + GlobalAttributes::DirSeparator + QString("demo.dbm");
 
 	try
 	{
+		QDir dir(output);
+		dir.removeRecursively();
+		dbmodel.createSystemObjects(false);
 		dbmodel.loadModel(input_dbm);
 		dbmodel.saveSplitSQLDefinition(output);
 		QCOMPARE(true, true);
