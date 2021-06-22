@@ -35,7 +35,7 @@
    <string>Model restoration</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="../res/resources.qrc">
+   <iconset resource="../../res/resources.qrc">
     <normaloff>:/icons/icons/pgsqlModeler48x48.png</normaloff>:/icons/icons/pgsqlModeler48x48.png</iconset>
   </property>
   <layout class="QGridLayout" name="gridLayout_3">
@@ -78,7 +78,7 @@
       <string>&amp;Restore</string>
      </property>
      <property name="icon">
-      <iconset resource="../res/resources.qrc">
+      <iconset resource="../../res/resources.qrc">
        <normaloff>:/icons/icons/restore.png</normaloff>:/icons/icons/restore.png</iconset>
      </property>
      <property name="iconSize">
@@ -104,7 +104,7 @@
       <string/>
      </property>
      <property name="pixmap">
-      <pixmap resource="../res/resources.qrc">:/images/images/pgmodeler_name.png</pixmap>
+      <pixmap resource="../../res/resources.qrc">:/images/images/pgmodeler_name.png</pixmap>
      </property>
     </widget>
    </item>
@@ -192,7 +192,7 @@
             <enum>Qt::AutoText</enum>
            </property>
            <property name="pixmap">
-            <pixmap resource="../res/resources.qrc">:/icons/icons/alert.png</pixmap>
+            <pixmap resource="../../res/resources.qrc">:/icons/icons/alert.png</pixmap>
            </property>
            <property name="scaledContents">
             <bool>true</bool>
@@ -278,7 +278,7 @@
           <set>AlignLeading|AlignVCenter</set>
          </property>
          <property name="icon">
-          <iconset resource="../res/resources.qrc">
+          <iconset resource="../../res/resources.qrc">
            <normaloff>:/icons/icons/database.png</normaloff>:/icons/icons/database.png</iconset>
          </property>
         </column>
@@ -290,7 +290,7 @@
           <set>AlignLeading|AlignVCenter</set>
          </property>
          <property name="icon">
-          <iconset resource="../res/resources.qrc">
+          <iconset resource="../../res/resources.qrc">
            <normaloff>:/icons/icons/sourcecode.png</normaloff>:/icons/icons/sourcecode.png</iconset>
          </property>
         </column>
@@ -302,7 +302,7 @@
           <set>AlignLeading|AlignVCenter</set>
          </property>
          <property name="icon">
-          <iconset resource="../res/resources.qrc">
+          <iconset resource="../../res/resources.qrc">
            <normaloff>:/icons/icons/validity.png</normaloff>:/icons/icons/validity.png</iconset>
          </property>
         </column>
@@ -343,7 +343,7 @@
       <string>&amp;Cancel</string>
      </property>
      <property name="icon">
-      <iconset resource="../res/resources.qrc">
+      <iconset resource="../../res/resources.qrc">
        <normaloff>:/icons/icons/error.png</normaloff>:/icons/icons/error.png</iconset>
      </property>
      <property name="iconSize">
@@ -373,7 +373,7 @@
   </layout>
  </widget>
  <resources>
-  <include location="../res/resources.qrc"/>
+  <include location="../../res/resources.qrc"/>
  </resources>
  <connections/>
 </ui>

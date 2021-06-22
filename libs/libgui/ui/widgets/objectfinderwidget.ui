@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>715</width>
+    <width>922</width>
     <height>316</height>
    </rect>
   </property>
@@ -62,7 +62,7 @@
       <string>Filter</string>
      </property>
      <property name="icon">
-      <iconset resource="../res/resources.qrc">
+      <iconset resource="../../res/resources.qrc">
        <normaloff>:/icons/icons/filter.png</normaloff>:/icons/icons/filter.png</iconset>
      </property>
      <property name="iconSize">
@@ -141,7 +141,7 @@
       <string>Select</string>
      </property>
      <property name="icon">
-      <iconset resource="../res/resources.qrc">
+      <iconset resource="../../res/resources.qrc">
        <normaloff>:/icons/icons/selectmove.png</normaloff>:/icons/icons/selectmove.png</iconset>
      </property>
      <property name="iconSize">
@@ -201,7 +201,7 @@
       <string>Clear</string>
      </property>
      <property name="icon">
-      <iconset resource="../res/resources.qrc">
+      <iconset resource="../../res/resources.qrc">
        <normaloff>:/icons/icons/cleartext.png</normaloff>:/icons/icons/cleartext.png</iconset>
      </property>
      <property name="iconSize">
@@ -233,7 +233,7 @@
       <string>Find</string>
      </property>
      <property name="icon">
-      <iconset resource="../res/resources.qrc">
+      <iconset resource="../../res/resources.qrc">
        <normaloff>:/icons/icons/objselect.png</normaloff>:/icons/icons/objselect.png</iconset>
      </property>
      <property name="iconSize">
@@ -268,7 +268,7 @@
       <string>...</string>
      </property>
      <property name="icon">
-      <iconset resource="../res/resources.qrc">
+      <iconset resource="../../res/resources.qrc">
        <normaloff>:/icons/icons/close1.png</normaloff>:/icons/icons/close1.png</iconset>
      </property>
      <property name="autoRaise">
@@ -300,7 +300,7 @@
       <string>Fade out</string>
      </property>
      <property name="icon">
-      <iconset resource="../res/resources.qrc">
+      <iconset resource="../../res/resources.qrc">
        <normaloff>:/icons/icons/fadeout.png</normaloff>:/icons/icons/fadeout.png</iconset>
      </property>
      <property name="iconSize">
@@ -630,7 +630,7 @@
         <set>AlignLeading|AlignVCenter</set>
        </property>
        <property name="icon">
-        <iconset resource="../res/resources.qrc">
+        <iconset resource="../../res/resources.qrc">
          <normaloff>:/icons/icons/table.png</normaloff>:/icons/icons/table.png</iconset>
        </property>
       </column>
@@ -642,7 +642,7 @@
         <set>AlignLeading|AlignVCenter</set>
        </property>
        <property name="icon">
-        <iconset resource="../res/resources.qrc">
+        <iconset resource="../../res/resources.qrc">
          <normaloff>:/icons/icons/usertype.png</normaloff>:/icons/icons/usertype.png</iconset>
        </property>
       </column>
@@ -654,7 +654,7 @@
         <set>AlignLeading|AlignVCenter</set>
        </property>
        <property name="icon">
-        <iconset resource="../res/resources.qrc">
+        <iconset resource="../../res/resources.qrc">
          <normaloff>:/icons/icons/uid.png</normaloff>:/icons/icons/uid.png</iconset>
        </property>
       </column>
@@ -666,7 +666,7 @@
         <set>AlignLeading|AlignVCenter</set>
        </property>
        <property name="icon">
-        <iconset resource="../res/resources.qrc">
+        <iconset resource="../../res/resources.qrc">
          <normaloff>:/icons/icons/schema.png</normaloff>:/icons/icons/schema.png</iconset>
        </property>
       </column>
@@ -678,7 +678,7 @@
         <set>AlignLeading|AlignVCenter</set>
        </property>
        <property name="icon">
-        <iconset resource="../res/resources.qrc">
+        <iconset resource="../../res/resources.qrc">
          <normaloff>:/icons/icons/usertype.png</normaloff>:/icons/icons/usertype.png</iconset>
        </property>
       </column>
@@ -734,7 +734,7 @@
   <tabstop>hide_tb</tabstop>
  </tabstops>
  <resources>
-  <include location="../res/resources.qrc"/>
+  <include location="../../res/resources.qrc"/>
  </resources>
  <connections/>
 </ui>

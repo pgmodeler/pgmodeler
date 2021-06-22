@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>832</width>
-    <height>379</height>
+    <width>985</width>
+    <height>389</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -55,7 +55,7 @@
         <string/>
        </property>
        <property name="pixmap">
-        <pixmap resource="../res/resources.qrc">:/styles/styles/pgmodeler_bg_logo.png</pixmap>
+        <pixmap resource="../../res/resources.qrc">:/styles/styles/pgmodeler_bg_logo.png</pixmap>
        </property>
        <property name="alignment">
         <set>Qt::AlignCenter</set>
@@ -106,7 +106,7 @@
           <string>Recent models</string>
          </property>
          <property name="icon">
-          <iconset resource="../res/resources.qrc">
+          <iconset resource="../../res/resources.qrc">
            <normaloff>:/icons/icons/recent_big.png</normaloff>:/icons/icons/recent_big.png</iconset>
          </property>
          <property name="iconSize">
@@ -151,7 +151,7 @@
           <string>Support</string>
          </property>
          <property name="icon">
-          <iconset resource="../res/resources.qrc">
+          <iconset resource="../../res/resources.qrc">
            <normaloff>:/icons/icons/help_big.png</normaloff>:/icons/icons/help_big.png</iconset>
          </property>
          <property name="iconSize">
@@ -189,7 +189,7 @@
           <string>Open model</string>
          </property>
          <property name="icon">
-          <iconset resource="../res/resources.qrc">
+          <iconset resource="../../res/resources.qrc">
            <normaloff>:/icons/icons/open_big.png</normaloff>:/icons/icons/open_big.png</iconset>
          </property>
          <property name="iconSize">
@@ -227,7 +227,7 @@
           <string>New model</string>
          </property>
          <property name="icon">
-          <iconset resource="../res/resources.qrc">
+          <iconset resource="../../res/resources.qrc">
            <normaloff>:/icons/icons/new_big.png</normaloff>:/icons/icons/new_big.png</iconset>
          </property>
          <property name="iconSize">
@@ -269,7 +269,7 @@
           <string>Last session</string>
          </property>
          <property name="icon">
-          <iconset resource="../res/resources.qrc">
+          <iconset resource="../../res/resources.qrc">
            <normaloff>:/icons/icons/last_session_big.png</normaloff>:/icons/icons/last_session_big.png</iconset>
          </property>
          <property name="iconSize">
@@ -310,7 +310,7 @@
           <string>Sample models</string>
          </property>
          <property name="icon">
-          <iconset resource="../res/resources.qrc">
+          <iconset resource="../../res/resources.qrc">
            <normaloff>:/icons/icons/samples_big.png</normaloff>:/icons/icons/samples_big.png</iconset>
          </property>
          <property name="iconSize">
@@ -337,7 +337,7 @@
   </layout>
  </widget>
  <resources>
-  <include location="../res/resources.qrc"/>
+  <include location="../../res/resources.qrc"/>
  </resources>
  <connections/>
 </ui>

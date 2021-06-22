@@ -119,7 +119,7 @@
                <enum>Qt::PlainText</enum>
               </property>
               <property name="pixmap">
-               <pixmap resource="../res/resources.qrc">:/images/images/crows_foot_notation.png</pixmap>
+               <pixmap resource="../../res/resources.qrc">:/images/images/crows_foot_notation.png</pixmap>
               </property>
               <property name="textInteractionFlags">
                <set>Qt::NoTextInteraction</set>
@@ -194,7 +194,7 @@
                <enum>Qt::PlainText</enum>
               </property>
               <property name="pixmap">
-               <pixmap resource="../res/resources.qrc">:/images/images/rel_tab_edges.png</pixmap>
+               <pixmap resource="../../res/resources.qrc">:/images/images/rel_tab_edges.png</pixmap>
               </property>
               <property name="textInteractionFlags">
                <set>Qt::NoTextInteraction</set>
@@ -263,7 +263,7 @@
                <enum>Qt::PlainText</enum>
               </property>
               <property name="pixmap">
-               <pixmap resource="../res/resources.qrc">:/images/images/rel_fk_to_pk.png</pixmap>
+               <pixmap resource="../../res/resources.qrc">:/images/images/rel_fk_to_pk.png</pixmap>
               </property>
               <property name="textInteractionFlags">
                <set>Qt::NoTextInteraction</set>
@@ -335,7 +335,7 @@
                <enum>Qt::PlainText</enum>
               </property>
               <property name="pixmap">
-               <pixmap resource="../res/resources.qrc">:/images/images/rel_center_pnts.png</pixmap>
+               <pixmap resource="../../res/resources.qrc">:/images/images/rel_center_pnts.png</pixmap>
               </property>
               <property name="textInteractionFlags">
                <set>Qt::NoTextInteraction</set>
@@ -909,7 +909,7 @@
   <tabstop>pk_col_pattern_txt</tabstop>
  </tabstops>
  <resources>
-  <include location="../res/resources.qrc"/>
+  <include location="../../res/resources.qrc"/>
  </resources>
  <connections/>
 </ui>

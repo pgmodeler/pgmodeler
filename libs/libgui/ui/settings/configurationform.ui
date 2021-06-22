@@ -29,7 +29,7 @@
    <string>pgModeler Configuration</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="../res/resources.qrc">
+   <iconset resource="../../res/resources.qrc">
     <normaloff>:/icons/icons/pgsqlModeler48x48.png</normaloff>:/icons/icons/pgsqlModeler48x48.png</iconset>
   </property>
   <layout class="QGridLayout" name="gridLayout_2">
@@ -200,7 +200,7 @@
            <set>AlignLeading|AlignVCenter</set>
           </property>
           <property name="icon">
-           <iconset resource="../res/resources.qrc">
+           <iconset resource="../../res/resources.qrc">
             <normaloff>:/icons/icons/config.png</normaloff>:/icons/icons/config.png</iconset>
           </property>
           <property name="flags">
@@ -212,7 +212,7 @@
            <string>Relationships</string>
           </property>
           <property name="icon">
-           <iconset resource="../res/resources.qrc">
+           <iconset resource="../../res/resources.qrc">
             <normaloff>:/icons/icons/relationshiptv.png</normaloff>:/icons/icons/relationshiptv.png</iconset>
           </property>
           <property name="flags">
@@ -227,7 +227,7 @@
            <set>AlignLeading|AlignVCenter</set>
           </property>
           <property name="icon">
-           <iconset resource="../res/resources.qrc">
+           <iconset resource="../../res/resources.qrc">
             <normaloff>:/icons/icons/appearance.png</normaloff>:/icons/icons/appearance.png</iconset>
           </property>
           <property name="flags">
@@ -242,7 +242,7 @@
            <set>AlignLeading|AlignVCenter</set>
           </property>
           <property name="icon">
-           <iconset resource="../res/resources.qrc">
+           <iconset resource="../../res/resources.qrc">
             <normaloff>:/icons/icons/connection.png</normaloff>:/icons/icons/connection.png</iconset>
           </property>
           <property name="flags">
@@ -254,7 +254,7 @@
            <string>Snippets</string>
           </property>
           <property name="icon">
-           <iconset resource="../res/resources.qrc">
+           <iconset resource="../../res/resources.qrc">
             <normaloff>:/icons/icons/codesnippet.png</normaloff>:/icons/icons/codesnippet.png</iconset>
           </property>
           <property name="flags">
@@ -269,7 +269,7 @@
            <set>AlignLeading|AlignVCenter</set>
           </property>
           <property name="icon">
-           <iconset resource="../res/resources.qrc">
+           <iconset resource="../../res/resources.qrc">
             <normaloff>:/icons/icons/plugins.png</normaloff>:/icons/icons/plugins.png</iconset>
           </property>
           <property name="flags">
@@ -356,7 +356,7 @@
         <string>Defaults</string>
        </property>
        <property name="icon">
-        <iconset resource="../res/resources.qrc">
+        <iconset resource="../../res/resources.qrc">
          <normaloff>:/icons/icons/defaults.png</normaloff>:/icons/icons/defaults.png</iconset>
        </property>
        <property name="iconSize">
@@ -397,7 +397,7 @@
         <string>&amp;Apply</string>
        </property>
        <property name="icon">
-        <iconset resource="../res/resources.qrc">
+        <iconset resource="../../res/resources.qrc">
          <normaloff>:/icons/icons/confirm.png</normaloff>:/icons/icons/confirm.png</iconset>
        </property>
        <property name="iconSize">
@@ -435,7 +435,7 @@
         <string>&amp;Cancel</string>
        </property>
        <property name="icon">
-        <iconset resource="../res/resources.qrc">
+        <iconset resource="../../res/resources.qrc">
          <normaloff>:/icons/icons/close1.png</normaloff>:/icons/icons/close1.png</iconset>
        </property>
        <property name="iconSize">
@@ -463,14 +463,14 @@
       <string/>
      </property>
      <property name="pixmap">
-      <pixmap resource="../res/resources.qrc">:/images/images/pgmodeler_name.png</pixmap>
+      <pixmap resource="../../res/resources.qrc">:/images/images/pgmodeler_name.png</pixmap>
      </property>
     </widget>
    </item>
   </layout>
  </widget>
  <resources>
-  <include location="../res/resources.qrc"/>
+  <include location="../../res/resources.qrc"/>
  </resources>
  <connections/>
 </ui>

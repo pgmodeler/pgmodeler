@@ -35,7 +35,7 @@
    <string>Executed Operations</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="../res/resources.qrc">
+   <iconset resource="../../res/resources.qrc">
     <normaloff>:/icons/icons/pgsqlModeler48x48.png</normaloff>:/icons/icons/pgsqlModeler48x48.png</iconset>
   </property>
   <property name="styleSheet">
@@ -127,7 +127,7 @@
          <string>...</string>
         </property>
         <property name="icon">
-         <iconset resource="../res/resources.qrc">
+         <iconset resource="../../res/resources.qrc">
           <normaloff>:/icons/icons/close1.png</normaloff>:/icons/icons/close1.png</iconset>
         </property>
         <property name="autoRaise">
@@ -321,7 +321,7 @@
            <string/>
           </property>
           <property name="icon">
-           <iconset resource="../res/resources.qrc">
+           <iconset resource="../../res/resources.qrc">
             <normaloff>:/icons/icons/delete.png</normaloff>:/icons/icons/delete.png</iconset>
           </property>
           <property name="iconSize">
@@ -347,7 +347,7 @@
            <string/>
           </property>
           <property name="icon">
-           <iconset resource="../res/resources.qrc">
+           <iconset resource="../../res/resources.qrc">
             <normaloff>:/icons/icons/undo.png</normaloff>:/icons/icons/undo.png</iconset>
           </property>
           <property name="iconSize">
@@ -373,7 +373,7 @@
            <string/>
           </property>
           <property name="icon">
-           <iconset resource="../res/resources.qrc">
+           <iconset resource="../../res/resources.qrc">
             <normaloff>:/icons/icons/redo.png</normaloff>:/icons/icons/redo.png</iconset>
           </property>
           <property name="iconSize">
@@ -402,7 +402,7 @@
   <tabstop>hide_tb</tabstop>
  </tabstops>
  <resources>
-  <include location="../res/resources.qrc"/>
+  <include location="../../res/resources.qrc"/>
  </resources>
  <connections/>
 </ui>

@@ -73,7 +73,7 @@
         <string/>
        </property>
        <property name="pixmap">
-        <pixmap resource="../res/resources.qrc">:/icons/icons/select.png</pixmap>
+        <pixmap resource="../../res/resources.qrc">:/icons/icons/select.png</pixmap>
        </property>
        <property name="scaledContents">
         <bool>true</bool>
@@ -148,7 +148,7 @@
         <string/>
        </property>
        <property name="pixmap">
-        <pixmap resource="../res/resources.qrc">:/icons/icons/objselect.png</pixmap>
+        <pixmap resource="../../res/resources.qrc">:/icons/icons/objselect.png</pixmap>
        </property>
        <property name="scaledContents">
         <bool>true</bool>
@@ -223,7 +223,7 @@
         <string/>
        </property>
        <property name="pixmap">
-        <pixmap resource="../res/resources.qrc">:/icons/icons/table.png</pixmap>
+        <pixmap resource="../../res/resources.qrc">:/icons/icons/table.png</pixmap>
        </property>
        <property name="scaledContents">
         <bool>true</bool>
@@ -298,7 +298,7 @@
         <string/>
        </property>
        <property name="pixmap">
-        <pixmap resource="../res/resources.qrc">:/icons/icons/bndrect.png</pixmap>
+        <pixmap resource="../../res/resources.qrc">:/icons/icons/bndrect.png</pixmap>
        </property>
        <property name="scaledContents">
         <bool>true</bool>
@@ -338,7 +338,7 @@
   </layout>
  </widget>
  <resources>
-  <include location="../res/resources.qrc"/>
+  <include location="../../res/resources.qrc"/>
  </resources>
  <connections/>
 </ui>

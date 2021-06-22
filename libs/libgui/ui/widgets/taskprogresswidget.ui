@@ -35,7 +35,7 @@
    <string>Executing tasks</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="../res/resources.qrc">
+   <iconset resource="../../res/resources.qrc">
     <normaloff>:/icons/icons/pgsqlModeler48x48.png</normaloff>:/icons/icons/pgsqlModeler48x48.png</iconset>
   </property>
   <property name="autoFillBackground">
@@ -108,7 +108,7 @@
          <enum>Qt::PlainText</enum>
         </property>
         <property name="pixmap">
-         <pixmap resource="../res/resources.qrc">:/images/images/pgmodeler_logo.png</pixmap>
+         <pixmap resource="../../res/resources.qrc">:/images/images/pgmodeler_logo.png</pixmap>
         </property>
         <property name="scaledContents">
          <bool>true</bool>
@@ -193,7 +193,7 @@
   </layout>
  </widget>
  <resources>
-  <include location="../res/resources.qrc"/>
+  <include location="../../res/resources.qrc"/>
  </resources>
  <connections/>
 </ui>

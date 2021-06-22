@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>277</width>
-    <height>32</height>
+    <height>39</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -77,7 +77,7 @@
       <string/>
      </property>
      <property name="icon">
-      <iconset resource="../res/resources.qrc">
+      <iconset resource="../../res/resources.qrc">
        <normaloff>:/icons/icons/cleartext.png</normaloff>:/icons/icons/cleartext.png</iconset>
      </property>
      <property name="iconSize">
@@ -115,7 +115,7 @@
       <string/>
      </property>
      <property name="icon">
-      <iconset resource="../res/resources.qrc">
+      <iconset resource="../../res/resources.qrc">
        <normaloff>:/icons/icons/open.png</normaloff>:/icons/icons/open.png</iconset>
      </property>
      <property name="iconSize">
@@ -129,7 +129,7 @@
   </layout>
  </widget>
  <resources>
-  <include location="../res/resources.qrc"/>
+  <include location="../../res/resources.qrc"/>
  </resources>
  <connections/>
 </ui>

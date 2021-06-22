@@ -82,10 +82,10 @@
      <attribute name="verticalHeaderCascadingSectionResizes">
       <bool>false</bool>
      </attribute>
-     <attribute name="verticalHeaderDefaultSectionSize">
+     <attribute name="verticalHeaderMinimumSectionSize">
       <number>25</number>
      </attribute>
-     <attribute name="verticalHeaderMinimumSectionSize">
+     <attribute name="verticalHeaderDefaultSectionSize">
       <number>25</number>
      </attribute>
     </widget>
@@ -113,7 +113,7 @@
       <string>Copy</string>
      </property>
      <property name="icon">
-      <iconset resource="../res/resources.qrc">
+      <iconset resource="../../res/resources.qrc">
        <normaloff>:/icons/icons/copy.png</normaloff>:/icons/icons/copy.png</iconset>
      </property>
      <property name="iconSize">
@@ -148,7 +148,7 @@
       <string>Add row</string>
      </property>
      <property name="icon">
-      <iconset resource="../res/resources.qrc">
+      <iconset resource="../../res/resources.qrc">
        <normaloff>:/icons/icons/addrow.png</normaloff>:/icons/icons/addrow.png</iconset>
      </property>
      <property name="iconSize">
@@ -183,7 +183,7 @@
       <string>Delete column</string>
      </property>
      <property name="icon">
-      <iconset resource="../res/resources.qrc">
+      <iconset resource="../../res/resources.qrc">
        <normaloff>:/icons/icons/delcol.png</normaloff>:/icons/icons/delcol.png</iconset>
      </property>
      <property name="iconSize">
@@ -223,7 +223,7 @@
       <string>Paste</string>
      </property>
      <property name="icon">
-      <iconset resource="../res/resources.qrc">
+      <iconset resource="../../res/resources.qrc">
        <normaloff>:/icons/icons/paste.png</normaloff>:/icons/icons/paste.png</iconset>
      </property>
      <property name="iconSize">
@@ -258,7 +258,7 @@
       <string>Fills the grid using a CSV file</string>
      </property>
      <property name="icon">
-      <iconset resource="../res/resources.qrc">
+      <iconset resource="../../res/resources.qrc">
        <normaloff>:/icons/icons/loadcsv.png</normaloff>:/icons/icons/loadcsv.png</iconset>
      </property>
      <property name="iconSize">
@@ -332,7 +332,7 @@
          <enum>Qt::AutoText</enum>
         </property>
         <property name="pixmap">
-         <pixmap resource="../res/resources.qrc">:/icons/icons/alert.png</pixmap>
+         <pixmap resource="../../res/resources.qrc">:/icons/icons/alert.png</pixmap>
         </property>
         <property name="scaledContents">
          <bool>true</bool>
@@ -385,7 +385,7 @@
       <string>Add column</string>
      </property>
      <property name="icon">
-      <iconset resource="../res/resources.qrc">
+      <iconset resource="../../res/resources.qrc">
        <normaloff>:/icons/icons/addcol.png</normaloff>:/icons/icons/addcol.png</iconset>
      </property>
      <property name="iconSize">
@@ -420,7 +420,7 @@
       <string>Duplicate rows</string>
      </property>
      <property name="icon">
-      <iconset resource="../res/resources.qrc">
+      <iconset resource="../../res/resources.qrc">
        <normaloff>:/icons/icons/duprow.png</normaloff>:/icons/icons/duprow.png</iconset>
      </property>
      <property name="iconSize">
@@ -473,7 +473,7 @@
       <string>Bulk data edit</string>
      </property>
      <property name="icon">
-      <iconset resource="../res/resources.qrc">
+      <iconset resource="../../res/resources.qrc">
        <normaloff>:/icons/icons/bulkedit.png</normaloff>:/icons/icons/bulkedit.png</iconset>
      </property>
      <property name="iconSize">
@@ -547,7 +547,7 @@
       <string>Delete all columns</string>
      </property>
      <property name="icon">
-      <iconset resource="../res/resources.qrc">
+      <iconset resource="../../res/resources.qrc">
        <normaloff>:/icons/icons/delcols.png</normaloff>:/icons/icons/delcols.png</iconset>
      </property>
      <property name="iconSize">
@@ -582,7 +582,7 @@
       <string>Delete rows</string>
      </property>
      <property name="icon">
-      <iconset resource="../res/resources.qrc">
+      <iconset resource="../../res/resources.qrc">
        <normaloff>:/icons/icons/delrow.png</normaloff>:/icons/icons/delrow.png</iconset>
      </property>
      <property name="iconSize">
@@ -653,7 +653,7 @@
          <enum>Qt::AutoText</enum>
         </property>
         <property name="pixmap">
-         <pixmap resource="../res/resources.qrc">:/icons/icons/info.png</pixmap>
+         <pixmap resource="../../res/resources.qrc">:/icons/icons/info.png</pixmap>
         </property>
         <property name="scaledContents">
          <bool>true</bool>
@@ -706,7 +706,7 @@
       <string>Delete all rows</string>
      </property>
      <property name="icon">
-      <iconset resource="../res/resources.qrc">
+      <iconset resource="../../res/resources.qrc">
        <normaloff>:/icons/icons/delrows.png</normaloff>:/icons/icons/delrows.png</iconset>
      </property>
      <property name="iconSize">
@@ -757,7 +757,7 @@
   <zorder>paste_tb</zorder>
  </widget>
  <resources>
-  <include location="../res/resources.qrc"/>
+  <include location="../../res/resources.qrc"/>
  </resources>
  <connections/>
 </ui>

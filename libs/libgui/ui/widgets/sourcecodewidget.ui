@@ -239,7 +239,7 @@
             <string>Save SQL</string>
            </property>
            <property name="icon">
-            <iconset resource="../res/resources.qrc">
+            <iconset resource="../../res/resources.qrc">
              <normaloff>:/icons/icons/save.png</normaloff>:/icons/icons/save.png</iconset>
            </property>
            <property name="iconSize">
@@ -301,7 +301,7 @@
   <tabstop>sourcecode_twg</tabstop>
  </tabstops>
  <resources>
-  <include location="../res/resources.qrc"/>
+  <include location="../../res/resources.qrc"/>
  </resources>
  <connections/>
 </ui>

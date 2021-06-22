@@ -35,7 +35,7 @@
    <string>About pgModeler</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="../res/resources.qrc">
+   <iconset resource="../../res/resources.qrc">
     <normaloff>:/icons/icons/pgsqlModeler48x48.png</normaloff>:/icons/icons/pgsqlModeler48x48.png</iconset>
   </property>
   <layout class="QGridLayout" name="gridLayout_3">
@@ -303,7 +303,7 @@
          <string>...</string>
         </property>
         <property name="icon">
-         <iconset resource="../res/resources.qrc">
+         <iconset resource="../../res/resources.qrc">
           <normaloff>:/icons/icons/close1.png</normaloff>:/icons/icons/close1.png</iconset>
         </property>
         <property name="autoRaise">
@@ -394,7 +394,7 @@ p, li { white-space: pre-wrap; }
            <string/>
           </property>
           <property name="pixmap">
-           <pixmap resource="../res/resources.qrc">:/images/images/brazil_flag.png</pixmap>
+           <pixmap resource="../../res/resources.qrc">:/images/images/brazil_flag.png</pixmap>
           </property>
           <property name="alignment">
            <set>Qt::AlignHCenter|Qt::AlignTop</set>
@@ -449,7 +449,7 @@ p, li { white-space: pre-wrap; }
          <string/>
         </property>
         <property name="pixmap">
-         <pixmap resource="../res/resources.qrc">:/images/images/pgmodeler_logo.png</pixmap>
+         <pixmap resource="../../res/resources.qrc">:/images/images/pgmodeler_logo.png</pixmap>
         </property>
         <property name="scaledContents">
          <bool>true</bool>
@@ -462,7 +462,7 @@ p, li { white-space: pre-wrap; }
   </layout>
  </widget>
  <resources>
-  <include location="../res/resources.qrc"/>
+  <include location="../../res/resources.qrc"/>
  </resources>
  <connections/>
 </ui>

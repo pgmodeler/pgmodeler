@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>350</width>
-    <height>106</height>
+    <width>414</width>
+    <height>130</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -98,7 +98,7 @@
          <string>Clear</string>
         </property>
         <property name="icon">
-         <iconset resource="../res/resources.qrc">
+         <iconset resource="../../res/resources.qrc">
           <normaloff>:/icons/icons/cleartext.png</normaloff>:/icons/icons/cleartext.png</iconset>
         </property>
         <property name="iconSize">
@@ -197,7 +197,7 @@
          <string>...</string>
         </property>
         <property name="icon">
-         <iconset resource="../res/resources.qrc">
+         <iconset resource="../../res/resources.qrc">
           <normaloff>:/icons/icons/close1.png</normaloff>:/icons/icons/close1.png</iconset>
         </property>
         <property name="autoRaise">
@@ -211,7 +211,7 @@
   </layout>
  </widget>
  <resources>
-  <include location="../res/resources.qrc"/>
+  <include location="../../res/resources.qrc"/>
  </resources>
  <connections/>
 </ui>

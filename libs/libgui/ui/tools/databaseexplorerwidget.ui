@@ -54,7 +54,7 @@
         <string>Filter</string>
        </property>
        <property name="icon">
-        <iconset resource="../res/resources.qrc">
+        <iconset resource="../../res/resources.qrc">
          <normaloff>:/icons/icons/filter.png</normaloff>:/icons/icons/filter.png</iconset>
        </property>
        <property name="iconSize">
@@ -91,7 +91,7 @@
         <string>Sort alphabetically</string>
        </property>
        <property name="icon">
-        <iconset resource="../res/resources.qrc">
+        <iconset resource="../../res/resources.qrc">
          <normaloff>:/icons/icons/sortasc.png</normaloff>:/icons/icons/sortasc.png</iconset>
        </property>
        <property name="iconSize">
@@ -134,7 +134,7 @@
         <string>Data &amp;Grid</string>
        </property>
        <property name="icon">
-        <iconset resource="../res/resources.qrc">
+        <iconset resource="../../res/resources.qrc">
          <normaloff>:/icons/icons/result.png</normaloff>:/icons/icons/result.png</iconset>
        </property>
        <property name="iconSize">
@@ -166,7 +166,7 @@
         <string>...</string>
        </property>
        <property name="icon">
-        <iconset resource="../res/resources.qrc">
+        <iconset resource="../../res/resources.qrc">
          <normaloff>:/icons/icons/newtab.png</normaloff>:/icons/icons/newtab.png</iconset>
        </property>
        <property name="iconSize">
@@ -195,7 +195,7 @@
         <string>...</string>
        </property>
        <property name="icon">
-        <iconset resource="../res/resources.qrc">
+        <iconset resource="../../res/resources.qrc">
          <normaloff>:/icons/icons/refreshdb.png</normaloff>:/icons/icons/refreshdb.png</iconset>
        </property>
        <property name="iconSize">
@@ -221,7 +221,7 @@
         <string>...</string>
        </property>
        <property name="icon">
-        <iconset resource="../res/resources.qrc">
+        <iconset resource="../../res/resources.qrc">
          <normaloff>:/icons/icons/delete.png</normaloff>:/icons/icons/delete.png</iconset>
        </property>
        <property name="iconSize">
@@ -403,7 +403,7 @@
                <string>...</string>
               </property>
               <property name="icon">
-               <iconset resource="../res/resources.qrc">
+               <iconset resource="../../res/resources.qrc">
                 <normaloff>:/icons/icons/add.png</normaloff>:/icons/icons/add.png</iconset>
               </property>
               <property name="iconSize">
@@ -435,7 +435,7 @@
                <string>...</string>
               </property>
               <property name="icon">
-               <iconset resource="../res/resources.qrc">
+               <iconset resource="../../res/resources.qrc">
                 <normaloff>:/icons/icons/remove.png</normaloff>:/icons/icons/remove.png</iconset>
               </property>
               <property name="iconSize">
@@ -631,7 +631,7 @@
   </layout>
  </widget>
  <resources>
-  <include location="../res/resources.qrc"/>
+  <include location="../../res/resources.qrc"/>
  </resources>
  <connections/>
 </ui>

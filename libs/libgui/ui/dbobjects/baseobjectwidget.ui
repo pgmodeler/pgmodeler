@@ -190,7 +190,7 @@
     <string>Edit permissions</string>
    </property>
    <property name="icon">
-    <iconset resource="../res/resources.qrc">
+    <iconset resource="../../res/resources.qrc">
      <normaloff>:/icons/icons/permission.png</normaloff>:/icons/icons/permission.png</iconset>
    </property>
    <property name="iconSize">
@@ -261,7 +261,7 @@
        <enum>Qt::AutoText</enum>
       </property>
       <property name="pixmap">
-       <pixmap resource="../res/resources.qrc">:/icons/icons/alert.png</pixmap>
+       <pixmap resource="../../res/resources.qrc">:/icons/icons/alert.png</pixmap>
       </property>
       <property name="scaledContents">
        <bool>true</bool>
@@ -371,7 +371,7 @@ This will disable the code of all child and referrer objects.</string>
     <string>Custom SQL</string>
    </property>
    <property name="icon">
-    <iconset resource="../res/resources.qrc">
+    <iconset resource="../../res/resources.qrc">
      <normaloff>:/icons/icons/sqlappend.png</normaloff>:/icons/icons/sqlappend.png</iconset>
    </property>
    <property name="iconSize">
@@ -584,7 +584,7 @@ This will disable the code of all child and referrer objects.</string>
   <tabstop>disable_sql_chk</tabstop>
  </tabstops>
  <resources>
-  <include location="../res/resources.qrc"/>
+  <include location="../../res/resources.qrc"/>
  </resources>
  <connections/>
 </ui>

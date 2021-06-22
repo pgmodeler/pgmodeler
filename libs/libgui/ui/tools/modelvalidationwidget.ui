@@ -68,7 +68,7 @@
       <string>Options</string>
      </property>
      <property name="icon">
-      <iconset resource="../res/resources.qrc">
+      <iconset resource="../../res/resources.qrc">
        <normaloff>:/icons/icons/config.png</normaloff>:/icons/icons/config.png</iconset>
      </property>
      <property name="iconSize">
@@ -109,7 +109,7 @@
       <string>Output</string>
      </property>
      <property name="icon">
-      <iconset resource="../res/resources.qrc">
+      <iconset resource="../../res/resources.qrc">
        <normaloff>:/icons/icons/outputpane.png</normaloff>:/icons/icons/outputpane.png</iconset>
      </property>
      <property name="iconSize">
@@ -199,7 +199,7 @@
       <string>...</string>
      </property>
      <property name="icon">
-      <iconset resource="../res/resources.qrc">
+      <iconset resource="../../res/resources.qrc">
        <normaloff>:/icons/icons/close1.png</normaloff>:/icons/icons/close1.png</iconset>
      </property>
      <property name="autoRaise">
@@ -266,7 +266,7 @@
            <enum>Qt::AutoText</enum>
           </property>
           <property name="pixmap">
-           <pixmap resource="../res/resources.qrc">:/icons/icons/alert.png</pixmap>
+           <pixmap resource="../../res/resources.qrc">:/icons/icons/alert.png</pixmap>
           </property>
           <property name="scaledContents">
            <bool>true</bool>
@@ -348,7 +348,7 @@
            <string/>
           </property>
           <property name="pixmap">
-           <pixmap resource="../res/resources.qrc">:/icons/icons/error.png</pixmap>
+           <pixmap resource="../../res/resources.qrc">:/icons/icons/error.png</pixmap>
           </property>
           <property name="scaledContents">
            <bool>true</bool>
@@ -619,7 +619,7 @@
       <string>Swap ids</string>
      </property>
      <property name="icon">
-      <iconset resource="../res/resources.qrc">
+      <iconset resource="../../res/resources.qrc">
        <normaloff>:/icons/icons/swapobjs.png</normaloff>:/icons/icons/swapobjs.png</iconset>
      </property>
      <property name="iconSize">
@@ -651,7 +651,7 @@
       <string>Va&amp;lidate</string>
      </property>
      <property name="icon">
-      <iconset resource="../res/resources.qrc">
+      <iconset resource="../../res/resources.qrc">
        <normaloff>:/icons/icons/validation.png</normaloff>:/icons/icons/validation.png</iconset>
      </property>
      <property name="iconSize">
@@ -683,7 +683,7 @@
       <string>Cancel</string>
      </property>
      <property name="icon">
-      <iconset resource="../res/resources.qrc">
+      <iconset resource="../../res/resources.qrc">
        <normaloff>:/icons/icons/error.png</normaloff>:/icons/icons/error.png</iconset>
      </property>
      <property name="iconSize">
@@ -724,7 +724,7 @@
       <string>Apply fixes</string>
      </property>
      <property name="icon">
-      <iconset resource="../res/resources.qrc">
+      <iconset resource="../../res/resources.qrc">
        <normaloff>:/icons/icons/fixobject.png</normaloff>:/icons/icons/fixobject.png</iconset>
      </property>
      <property name="iconSize">
@@ -756,7 +756,7 @@
   <tabstop>hide_tb</tabstop>
  </tabstops>
  <resources>
-  <include location="../res/resources.qrc"/>
+  <include location="../../res/resources.qrc"/>
  </resources>
  <connections/>
 </ui>

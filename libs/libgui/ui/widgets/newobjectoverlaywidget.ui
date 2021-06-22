@@ -153,7 +153,7 @@
                <string>Generic SQL</string>
               </property>
               <property name="icon">
-               <iconset resource="../res/resources.qrc">
+               <iconset resource="../../res/resources.qrc">
                 <normaloff>:/icons/icons/genericsql.png</normaloff>:/icons/icons/genericsql.png</iconset>
               </property>
               <property name="iconSize">
@@ -202,7 +202,7 @@
                <string>Extension</string>
               </property>
               <property name="icon">
-               <iconset resource="../res/resources.qrc">
+               <iconset resource="../../res/resources.qrc">
                 <normaloff>:/icons/icons/extension.png</normaloff>:/icons/icons/extension.png</iconset>
               </property>
               <property name="iconSize">
@@ -251,7 +251,7 @@
                <string>Data Wrapper</string>
               </property>
               <property name="icon">
-               <iconset resource="../res/resources.qrc">
+               <iconset resource="../../res/resources.qrc">
                 <normaloff>:/icons/icons/foreigndatawrapper.png</normaloff>:/icons/icons/foreigndatawrapper.png</iconset>
               </property>
               <property name="iconSize">
@@ -300,7 +300,7 @@
                <string>Role</string>
               </property>
               <property name="icon">
-               <iconset resource="../res/resources.qrc">
+               <iconset resource="../../res/resources.qrc">
                 <normaloff>:/icons/icons/role.png</normaloff>:/icons/icons/role.png</iconset>
               </property>
               <property name="iconSize">
@@ -349,7 +349,7 @@
                <string>Server</string>
               </property>
               <property name="icon">
-               <iconset resource="../res/resources.qrc">
+               <iconset resource="../../res/resources.qrc">
                 <normaloff>:/icons/icons/foreignserver.png</normaloff>:/icons/icons/foreignserver.png</iconset>
               </property>
               <property name="iconSize">
@@ -398,7 +398,7 @@
                <string>Schema</string>
               </property>
               <property name="icon">
-               <iconset resource="../res/resources.qrc">
+               <iconset resource="../../res/resources.qrc">
                 <normaloff>:/icons/icons/schema.png</normaloff>:/icons/icons/schema.png</iconset>
               </property>
               <property name="iconSize">
@@ -447,7 +447,7 @@
                <string>Event Trigger</string>
               </property>
               <property name="icon">
-               <iconset resource="../res/resources.qrc">
+               <iconset resource="../../res/resources.qrc">
                 <normaloff>:/icons/icons/eventtrigger.png</normaloff>:/icons/icons/eventtrigger.png</iconset>
               </property>
               <property name="iconSize">
@@ -496,7 +496,7 @@
                <string>Language</string>
               </property>
               <property name="icon">
-               <iconset resource="../res/resources.qrc">
+               <iconset resource="../../res/resources.qrc">
                 <normaloff>:/icons/icons/language.png</normaloff>:/icons/icons/language.png</iconset>
               </property>
               <property name="iconSize">
@@ -545,7 +545,7 @@
                <string>Cast</string>
               </property>
               <property name="icon">
-               <iconset resource="../res/resources.qrc">
+               <iconset resource="../../res/resources.qrc">
                 <normaloff>:/icons/icons/cast.png</normaloff>:/icons/icons/cast.png</iconset>
               </property>
               <property name="iconSize">
@@ -597,7 +597,7 @@
                <string>Tablespace</string>
               </property>
               <property name="icon">
-               <iconset resource="../res/resources.qrc">
+               <iconset resource="../../res/resources.qrc">
                 <normaloff>:/icons/icons/tablespace.png</normaloff>:/icons/icons/tablespace.png</iconset>
               </property>
               <property name="iconSize">
@@ -646,7 +646,7 @@
                <string>Tag</string>
               </property>
               <property name="icon">
-               <iconset resource="../res/resources.qrc">
+               <iconset resource="../../res/resources.qrc">
                 <normaloff>:/icons/icons/tag.png</normaloff>:/icons/icons/tag.png</iconset>
               </property>
               <property name="iconSize">
@@ -695,7 +695,7 @@
                <string>Textbox</string>
               </property>
               <property name="icon">
-               <iconset resource="../res/resources.qrc">
+               <iconset resource="../../res/resources.qrc">
                 <normaloff>:/icons/icons/textbox.png</normaloff>:/icons/icons/textbox.png</iconset>
               </property>
               <property name="iconSize">
@@ -744,7 +744,7 @@
                <string>User mapping</string>
               </property>
               <property name="icon">
-               <iconset resource="../res/resources.qrc">
+               <iconset resource="../../res/resources.qrc">
                 <normaloff>:/icons/icons/usermapping.png</normaloff>:/icons/icons/usermapping.png</iconset>
               </property>
               <property name="iconSize">
@@ -793,7 +793,7 @@
                <string>Permissions</string>
               </property>
               <property name="icon">
-               <iconset resource="../res/resources.qrc">
+               <iconset resource="../../res/resources.qrc">
                 <normaloff>:/icons/icons/permission.png</normaloff>:/icons/icons/permission.png</iconset>
               </property>
               <property name="iconSize">
@@ -842,7 +842,7 @@
                <string>Transform</string>
               </property>
               <property name="icon">
-               <iconset resource="../res/resources.qrc">
+               <iconset resource="../../res/resources.qrc">
                 <normaloff>:/icons/icons/transform.png</normaloff>:/icons/icons/transform.png</iconset>
               </property>
               <property name="iconSize">
@@ -939,7 +939,7 @@
                <string>Op. Class</string>
               </property>
               <property name="icon">
-               <iconset resource="../res/resources.qrc">
+               <iconset resource="../../res/resources.qrc">
                 <normaloff>:/icons/icons/opclass.png</normaloff>:/icons/icons/opclass.png</iconset>
               </property>
               <property name="iconSize">
@@ -985,7 +985,7 @@
                <string>Function</string>
               </property>
               <property name="icon">
-               <iconset resource="../res/resources.qrc">
+               <iconset resource="../../res/resources.qrc">
                 <normaloff>:/icons/icons/function.png</normaloff>:/icons/icons/function.png</iconset>
               </property>
               <property name="iconSize">
@@ -1031,7 +1031,7 @@
                <string>Conversion</string>
               </property>
               <property name="icon">
-               <iconset resource="../res/resources.qrc">
+               <iconset resource="../../res/resources.qrc">
                 <normaloff>:/icons/icons/conversion.png</normaloff>:/icons/icons/conversion.png</iconset>
               </property>
               <property name="iconSize">
@@ -1077,7 +1077,7 @@
                <string>Collation</string>
               </property>
               <property name="icon">
-               <iconset resource="../res/resources.qrc">
+               <iconset resource="../../res/resources.qrc">
                 <normaloff>:/icons/icons/collation.png</normaloff>:/icons/icons/collation.png</iconset>
               </property>
               <property name="iconSize">
@@ -1123,7 +1123,7 @@
                <string>Foreign Table</string>
               </property>
               <property name="icon">
-               <iconset resource="../res/resources.qrc">
+               <iconset resource="../../res/resources.qrc">
                 <normaloff>:/icons/icons/foreigntable.png</normaloff>:/icons/icons/foreigntable.png</iconset>
               </property>
               <property name="iconSize">
@@ -1169,7 +1169,7 @@
                <string>Op. Family</string>
               </property>
               <property name="icon">
-               <iconset resource="../res/resources.qrc">
+               <iconset resource="../../res/resources.qrc">
                 <normaloff>:/icons/icons/opfamily.png</normaloff>:/icons/icons/opfamily.png</iconset>
               </property>
               <property name="iconSize">
@@ -1215,7 +1215,7 @@
                <string>Operator</string>
               </property>
               <property name="icon">
-               <iconset resource="../res/resources.qrc">
+               <iconset resource="../../res/resources.qrc">
                 <normaloff>:/icons/icons/operator.png</normaloff>:/icons/icons/operator.png</iconset>
               </property>
               <property name="iconSize">
@@ -1261,7 +1261,7 @@
                <string>Domain</string>
               </property>
               <property name="icon">
-               <iconset resource="../res/resources.qrc">
+               <iconset resource="../../res/resources.qrc">
                 <normaloff>:/icons/icons/domain.png</normaloff>:/icons/icons/domain.png</iconset>
               </property>
               <property name="iconSize">
@@ -1307,7 +1307,7 @@
                <string>Aggregate</string>
               </property>
               <property name="icon">
-               <iconset resource="../res/resources.qrc">
+               <iconset resource="../../res/resources.qrc">
                 <normaloff>:/icons/icons/aggregate.png</normaloff>:/icons/icons/aggregate.png</iconset>
               </property>
               <property name="iconSize">
@@ -1353,7 +1353,7 @@
                <string>Sequence</string>
               </property>
               <property name="icon">
-               <iconset resource="../res/resources.qrc">
+               <iconset resource="../../res/resources.qrc">
                 <normaloff>:/icons/icons/sequence.png</normaloff>:/icons/icons/sequence.png</iconset>
               </property>
               <property name="iconSize">
@@ -1399,7 +1399,7 @@
                <string>View</string>
               </property>
               <property name="icon">
-               <iconset resource="../res/resources.qrc">
+               <iconset resource="../../res/resources.qrc">
                 <normaloff>:/icons/icons/view.png</normaloff>:/icons/icons/view.png</iconset>
               </property>
               <property name="iconSize">
@@ -1445,7 +1445,7 @@
                <string>Procedure</string>
               </property>
               <property name="icon">
-               <iconset resource="../res/resources.qrc">
+               <iconset resource="../../res/resources.qrc">
                 <normaloff>:/icons/icons/procedure.png</normaloff>:/icons/icons/procedure.png</iconset>
               </property>
               <property name="iconSize">
@@ -1491,7 +1491,7 @@
                <string>Type</string>
               </property>
               <property name="icon">
-               <iconset resource="../res/resources.qrc">
+               <iconset resource="../../res/resources.qrc">
                 <normaloff>:/icons/icons/usertype.png</normaloff>:/icons/icons/usertype.png</iconset>
               </property>
               <property name="iconSize">
@@ -1537,7 +1537,7 @@
                <string>Table</string>
               </property>
               <property name="icon">
-               <iconset resource="../res/resources.qrc">
+               <iconset resource="../../res/resources.qrc">
                 <normaloff>:/icons/icons/table.png</normaloff>:/icons/icons/table.png</iconset>
               </property>
               <property name="iconSize">
@@ -1631,7 +1631,7 @@
                <string>Constraint</string>
               </property>
               <property name="icon">
-               <iconset resource="../res/resources.qrc">
+               <iconset resource="../../res/resources.qrc">
                 <normaloff>:/icons/icons/constraint.png</normaloff>:/icons/icons/constraint.png</iconset>
               </property>
               <property name="iconSize">
@@ -1677,7 +1677,7 @@
                <string>Column</string>
               </property>
               <property name="icon">
-               <iconset resource="../res/resources.qrc">
+               <iconset resource="../../res/resources.qrc">
                 <normaloff>:/icons/icons/column.png</normaloff>:/icons/icons/column.png</iconset>
               </property>
               <property name="iconSize">
@@ -1723,7 +1723,7 @@
                <string>Permissions</string>
               </property>
               <property name="icon">
-               <iconset resource="../res/resources.qrc">
+               <iconset resource="../../res/resources.qrc">
                 <normaloff>:/icons/icons/permission.png</normaloff>:/icons/icons/permission.png</iconset>
               </property>
               <property name="iconSize">
@@ -1769,7 +1769,7 @@
                <string>Index</string>
               </property>
               <property name="icon">
-               <iconset resource="../res/resources.qrc">
+               <iconset resource="../../res/resources.qrc">
                 <normaloff>:/icons/icons/index.png</normaloff>:/icons/icons/index.png</iconset>
               </property>
               <property name="iconSize">
@@ -1815,7 +1815,7 @@
                <string>Rule</string>
               </property>
               <property name="icon">
-               <iconset resource="../res/resources.qrc">
+               <iconset resource="../../res/resources.qrc">
                 <normaloff>:/icons/icons/rule.png</normaloff>:/icons/icons/rule.png</iconset>
               </property>
               <property name="iconSize">
@@ -1861,7 +1861,7 @@
                <string>Trigger</string>
               </property>
               <property name="icon">
-               <iconset resource="../res/resources.qrc">
+               <iconset resource="../../res/resources.qrc">
                 <normaloff>:/icons/icons/trigger.png</normaloff>:/icons/icons/trigger.png</iconset>
               </property>
               <property name="iconSize">
@@ -1907,7 +1907,7 @@
                <string>Policy</string>
               </property>
               <property name="icon">
-               <iconset resource="../res/resources.qrc">
+               <iconset resource="../../res/resources.qrc">
                 <normaloff>:/icons/icons/policy.png</normaloff>:/icons/icons/policy.png</iconset>
               </property>
               <property name="iconSize">
@@ -2004,7 +2004,7 @@
                <string>Many-to-many</string>
               </property>
               <property name="icon">
-               <iconset resource="../res/resources.qrc">
+               <iconset resource="../../res/resources.qrc">
                 <normaloff>:/icons/icons/relationshipnn.png</normaloff>:/icons/icons/relationshipnn.png</iconset>
               </property>
               <property name="iconSize">
@@ -2050,7 +2050,7 @@
                <string>One-to-many</string>
               </property>
               <property name="icon">
-               <iconset resource="../res/resources.qrc">
+               <iconset resource="../../res/resources.qrc">
                 <normaloff>:/icons/icons/relationship1n.png</normaloff>:/icons/icons/relationship1n.png</iconset>
               </property>
               <property name="iconSize">
@@ -2096,7 +2096,7 @@
                <string>One-to-one</string>
               </property>
               <property name="icon">
-               <iconset resource="../res/resources.qrc">
+               <iconset resource="../../res/resources.qrc">
                 <normaloff>:/icons/icons/relationship11.png</normaloff>:/icons/icons/relationship11.png</iconset>
               </property>
               <property name="iconSize">
@@ -2142,7 +2142,7 @@
                <string>Inheritance</string>
               </property>
               <property name="icon">
-               <iconset resource="../res/resources.qrc">
+               <iconset resource="../../res/resources.qrc">
                 <normaloff>:/icons/icons/relationshipgen.png</normaloff>:/icons/icons/relationshipgen.png</iconset>
               </property>
               <property name="iconSize">
@@ -2188,7 +2188,7 @@
                <string>Copy</string>
               </property>
               <property name="icon">
-               <iconset resource="../res/resources.qrc">
+               <iconset resource="../../res/resources.qrc">
                 <normaloff>:/icons/icons/relationshipdep.png</normaloff>:/icons/icons/relationshipdep.png</iconset>
               </property>
               <property name="iconSize">
@@ -2234,7 +2234,7 @@
                <string>Partitioning</string>
               </property>
               <property name="icon">
-               <iconset resource="../res/resources.qrc">
+               <iconset resource="../../res/resources.qrc">
                 <normaloff>:/icons/icons/relationshippart.png</normaloff>:/icons/icons/relationshippart.png</iconset>
               </property>
               <property name="iconSize">
@@ -2276,7 +2276,7 @@
   </layout>
  </widget>
  <resources>
-  <include location="../res/resources.qrc"/>
+  <include location="../../res/resources.qrc"/>
  </resources>
  <connections/>
 </ui>
