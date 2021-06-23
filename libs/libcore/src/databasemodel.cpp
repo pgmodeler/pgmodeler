@@ -7531,7 +7531,7 @@ QString DatabaseModel::__getCodeDefinition(unsigned def_type)
 	}
 }
 
-QString DatabaseModel::configureShellTypes(bool gen_shell_defs, bool restore_func_params)
+QString DatabaseModel::configureShellTypes(bool reset_config)
 {
 	QString shell_types_def;
 	Type *usr_type = nullptr;
@@ -7542,10 +7542,10 @@ QString DatabaseModel::configureShellTypes(bool gen_shell_defs, bool restore_fun
 
 		if(usr_type->getConfiguration()==Type::BaseType)
 		{
-			usr_type->convertFunctionParameters(!restore_func_params);
+			usr_type->convertFunctionParameters(!reset_config);
 
 			//Generating the shell type declaration (only for base types)
-			if(gen_shell_defs)
+			if(!reset_config)
 				shell_types_def += usr_type->getCodeDefinition(SchemaParser::SqlDefinition, true);
 
 			/* Forcing the code invalidation for the type so the complete definition can be
@@ -7608,7 +7608,7 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 //				}
 //			}
 
-			attribs_aux[Attributes::ShellTypes] = configureShellTypes(true, false);
+			attribs_aux[Attributes::ShellTypes] = configureShellTypes(false);
 		}
 		else
 		{
@@ -7726,7 +7726,7 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 				}
 			} */
 
-			configureShellTypes(false, true);
+			configureShellTypes(true);
 		}
 	}
 	catch(Exception &e)
@@ -7743,7 +7743,7 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 				}
 			} */
 
-			configureShellTypes(false, true);
+			configureShellTypes(true);
 		}
 		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
@@ -8229,7 +8229,7 @@ void DatabaseModel::saveSplitSQLDefinition(const QString &path)
 
 	try
 	{
-		shell_types = configureShellTypes(true, false);
+		shell_types = configureShellTypes(false);
 
 		for(auto &itr : objects)
 		{
@@ -8272,11 +8272,11 @@ void DatabaseModel::saveSplitSQLDefinition(const QString &path)
 			buffer.clear();
 		}
 
-		configureShellTypes(false, true);
+		configureShellTypes(true);
 	}
 	catch (Exception &e)
 	{
-		configureShellTypes(false, true);
+		configureShellTypes(true);
 		throw Exception(e.getErrorMessage(), e.getErrorCode(), __PRETTY_FUNCTION__, __FILE__, __LINE__, &e);
 	}
 }

@@ -268,15 +268,10 @@ class DatabaseModel:  public QObject, public BaseObject {
 		void getGenericSQLDependencies(BaseObject *object, vector<BaseObject *> &deps, bool inc_indirect_deps);
 		void getTransformDependencies(BaseObject *object, vector<BaseObject *> &deps, bool inc_indirect_deps);
 
-		/*! \brief Configures all the shell types related to base user-defined base. This method is only
-		 * useful when generating SQL code for the database model. The parameter gen_shell_defs will
-		 * cause the method to generate and return the SQL code of all shell types. The parameter
-		 * restore_func_params causes the method to restore the functions parameter types to their
-		 * original configuration. */
-		QString configureShellTypes(bool gen_shell_defs, bool restore_func_params);
-
-		//QString configureShellTypes();
-		//void resetShellTypes();
+		/*! \brief Configures all the shell types related to base user-defined base. By default, this method will convert
+		 * parameters of functions that are part of a user defined type and return the shell types SQL code. If the parameter reset_config
+		 * the method will only restore the original configuration of the functions and return an empty string. */
+		QString configureShellTypes(bool reset_config);
 
 	protected:
 		//! \brief Set the layer names (only to be written in the XML definition)
