@@ -16,7 +16,7 @@ void ModelExportHelper::resetExportParams()
 	connection=nullptr;
 	scene=nullptr;
 	zoom=100;
-	show_grid=show_delim=page_by_page=splitted=browsable=false;
+	show_grid=show_delim=page_by_page=split=browsable=false;
 	viewp=nullptr;
 }
 
@@ -59,7 +59,7 @@ void ModelExportHelper::setIgnoredErrors(const QStringList &err_codes)
 	}
 }
 
-void ModelExportHelper::exportToSQL(DatabaseModel *db_model, const QString &filename, const QString &pgsql_ver)
+void ModelExportHelper::exportToSQL(DatabaseModel *db_model, const QString &filename, const QString &pgsql_ver, bool split)
 {
 	if(!db_model)
 		throw Exception(ErrorCode::AsgNotAllocattedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -74,9 +74,19 @@ void ModelExportHelper::exportToSQL(DatabaseModel *db_model, const QString &file
 							   tr("Generating SQL code for PostgreSQL `%1'").arg(BaseObject::getPgSQLVersion()),
 							   ObjectType::BaseObject);
 		progress=1;
-		db_model->saveModel(filename, SchemaParser::SqlDefinition);
 
-		emit s_progressUpdated(100, tr("Output SQL file `%1' successfully written.").arg(filename), ObjectType::BaseObject);
+		if(!split)
+		{
+			db_model->saveModel(filename, SchemaParser::SqlDefinition);
+			emit s_progressUpdated(100, tr("Output SQL file `%1' successfully written.").arg(filename), ObjectType::BaseObject);
+		}
+		else
+		{
+			db_model->saveSplitSQLDefinition(filename);
+			emit s_progressUpdated(100, tr("Output SQL files successfully written into `%1'.").arg(filename), ObjectType::BaseObject);
+		}
+
+
 		emit s_exportFinished();
 	}
 	catch(Exception &e)
@@ -581,7 +591,7 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
 	}
 }
 
-void ModelExportHelper::exportToDataDict(DatabaseModel *db_model, const QString &path, bool browsable, bool splitted)
+void ModelExportHelper::exportToDataDict(DatabaseModel *db_model, const QString &path, bool browsable, bool split)
 {
 	if(!db_model)
 		throw Exception(ErrorCode::AsgNotAllocattedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -595,7 +605,7 @@ void ModelExportHelper::exportToDataDict(DatabaseModel *db_model, const QString 
 													 tr("Starting data dictionary generation..."),
 													 ObjectType::BaseObject);
 		progress=1;
-		db_model->saveDataDictionary(path, browsable, splitted);
+		db_model->saveDataDictionary(path, browsable, split);
 
 		emit s_progressUpdated(100, tr("Data dictionary successfully saved into `%1'.").arg(path), ObjectType::BaseObject);
 		emit s_exportFinished();
@@ -1106,11 +1116,12 @@ void ModelExportHelper::setExportToDBMSParams(const QString &sql_buffer, Connect
 	this->errors.clear();
 }
 
-void ModelExportHelper::setExportToSQLParams(DatabaseModel *db_model, const QString &filename, const QString &pgsql_ver)
+void ModelExportHelper::setExportToSQLParams(DatabaseModel *db_model, const QString &filename, const QString &pgsql_ver, bool split)
 {
 	this->db_model=db_model;
 	this->filename=filename;
 	this->pgsql_ver=pgsql_ver;
+	this->split=split;
 }
 
 void ModelExportHelper::setExportToPNGParams(ObjectsScene *scene, QGraphicsView *viewp, const QString &filename, double zoom, bool show_grid, bool show_delim, bool page_by_page)
@@ -1132,12 +1143,12 @@ void ModelExportHelper::setExportToSVGParams(ObjectsScene *scene, const QString 
 	this->show_delim=show_delim;
 }
 
-void ModelExportHelper::setExportToDataDictParams(DatabaseModel *db_model, const QString &path, bool browsable, bool splitted)
+void ModelExportHelper::setExportToDataDictParams(DatabaseModel *db_model, const QString &path, bool browsable, bool split)
 {
 	this->db_model=db_model;
 	this->filename=path;
 	this->browsable=browsable;
-	this->splitted=splitted;
+	this->split=split;
 }
 
 void ModelExportHelper::exportToDBMS()
@@ -1191,7 +1202,7 @@ void ModelExportHelper::exportToSQL()
 {
 	try
 	{
-		exportToSQL(db_model, filename, pgsql_ver);
+		exportToSQL(db_model, filename, pgsql_ver, split);
 		resetExportParams();
 	}
 	catch(Exception &e)
@@ -1204,7 +1215,7 @@ void ModelExportHelper::exportToDataDict()
 {
 	try
 	{
-		exportToDataDict(db_model, filename, browsable, splitted);
+		exportToDataDict(db_model, filename, browsable, split);
 		resetExportParams();
 	}
 	catch(Exception &e)

@@ -7531,6 +7531,32 @@ QString DatabaseModel::__getCodeDefinition(unsigned def_type)
 	}
 }
 
+QString DatabaseModel::configureShellTypes(bool gen_shell_defs, bool restore_func_params)
+{
+	QString shell_types_def;
+	Type *usr_type = nullptr;
+
+	for(auto &type : types)
+	{
+		usr_type=dynamic_cast<Type *>(type);
+
+		if(usr_type->getConfiguration()==Type::BaseType)
+		{
+			usr_type->convertFunctionParameters(!restore_func_params);
+
+			//Generating the shell type declaration (only for base types)
+			if(gen_shell_defs)
+				shell_types_def += usr_type->getCodeDefinition(SchemaParser::SqlDefinition, true);
+
+			/* Forcing the code invalidation for the type so the complete definition can be
+			 * generated in the below iteration */
+			usr_type->setCodeInvalidated(true);
+		}
+	}
+
+	return shell_types_def;
+}
+
 QString DatabaseModel::getCodeDefinition(unsigned def_type)
 {
 	return this->getCodeDefinition(def_type, true);
@@ -7565,22 +7591,24 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 		{
 			attribs_aux[Attributes::Function]=(!functions.empty() ? Attributes::True : "");
 
-			for(auto &type : types)
-			{
-				usr_type=dynamic_cast<Type *>(type);
+//			for(auto &type : types)
+//			{
+//				usr_type=dynamic_cast<Type *>(type);
 
-				if(usr_type->getConfiguration()==Type::BaseType)
-				{
-					usr_type->convertFunctionParameters();
+//				if(usr_type->getConfiguration()==Type::BaseType)
+//				{
+//					usr_type->convertFunctionParameters();
 
-					//Generating the shell type declaration (only for base types)
-					attribs_aux[Attributes::ShellTypes] += usr_type->getCodeDefinition(def_type, true);
+//					//Generating the shell type declaration (only for base types)
+//					attribs_aux[Attributes::ShellTypes] += usr_type->getCodeDefinition(def_type, true);
 
-					/* Forcing the code invalidation for the type so the complete definition can be
-					 * generated in the below iteration */
-					usr_type->setCodeInvalidated(true);
-				}
-			}
+//					/* Forcing the code invalidation for the type so the complete definition can be
+//					 * generated in the below iteration */
+//					usr_type->setCodeInvalidated(true);
+//				}
+//			}
+
+			attribs_aux[Attributes::ShellTypes] = configureShellTypes(true, false);
 		}
 		else
 		{
@@ -7688,30 +7716,34 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 		}
 		else
 		{
-			for(auto &type : types)
+			/* for(auto &type : types)
 			{
 				usr_type=dynamic_cast<Type *>(type);
 				if(usr_type->getConfiguration()==Type::BaseType)
 				{
-					attribs_aux[attrib]+=usr_type->getCodeDefinition(def_type);
+					//attribs_aux[attrib]+=usr_type->getCodeDefinition(def_type);
 					usr_type->convertFunctionParameters(true);
 				}
-			}
+			} */
+
+			configureShellTypes(false, true);
 		}
 	}
 	catch(Exception &e)
 	{
 		if(def_type==SchemaParser::SqlDefinition)
 		{
-			for(auto &type : types)
+			/* for(auto &type : types)
 			{
 				usr_type=dynamic_cast<Type *>(type);
 				if(usr_type->getConfiguration()==Type::BaseType)
 				{
-					attribs_aux[attrib]+=usr_type->getCodeDefinition(def_type);
+					//attribs_aux[attrib]+=usr_type->getCodeDefinition(def_type);
 					usr_type->convertFunctionParameters(true);
 				}
-			}
+			} */
+
+			configureShellTypes(false, true);
 		}
 		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
@@ -8190,43 +8222,62 @@ void DatabaseModel::saveSplitSQLDefinition(const QString &path)
 
 	QFile output;
 	QByteArray buffer;
-	map<unsigned, BaseObject *> objects = getCreationOrder(SchemaParser::SqlDefinition, true, true);
+	map<unsigned, BaseObject *> objects = getCreationOrder(SchemaParser::SqlDefinition);
 	int pad_size = QString::number(objects.size()).size(), idx = 0;
-	QString filename, name;
+	QString filename, name, shell_types;
 	BaseObject *obj = nullptr;
 
-	for(auto &itr : objects)
+	try
 	{
-		obj = itr.second;
-		buffer.append(itr.second->getCodeDefinition(SchemaParser::SqlDefinition).toUtf8());
+		shell_types = configureShellTypes(true, false);
 
-		if(buffer.isEmpty())
-			continue;
-
-		/* The name of the generated file will be:
-		 * [creation order id]_[name]_[type]_[internal id].sql
-		 * Note: the name portion of the file is treated to remove special char (non word chars) that may break
-		 * the filename on some filesystems. The internal id is used for desambiguation purposes. */
-		name = obj->getName().replace(QRegExp("(?!\\-)(\\W)"), "_");
-
-		filename = QString("%1_%2_%3_%4.sql")
-							 .arg(QString::number(idx++).rightJustified(pad_size, '0'))
-							 .arg(name)
-							 .arg(obj->getSchemaName())
-							 .arg(obj->getObjectId());
-
-		output.setFileName(path + GlobalAttributes::DirSeparator + filename);
-		output.open(QFile::WriteOnly);
-
-		if(!output.isOpen())
+		for(auto &itr : objects)
 		{
-			throw Exception(Exception::getErrorMessage(ErrorCode::FileDirectoryNotWritten).arg(output.fileName()),
-											ErrorCode::FileDirectoryNotWritten,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			obj = itr.second;
+
+			if(obj->isSystemObject())
+				continue;
+
+			if(obj == this)
+				buffer.append(this->__getCodeDefinition(SchemaParser::SqlDefinition).toUtf8());
+			else
+				buffer.append(obj->getCodeDefinition(SchemaParser::SqlDefinition).toUtf8());
+
+			if(buffer.isEmpty())
+				continue;
+
+			/* The name of the generated file will be:
+			 * [creation order id]_[name]_[type]_[internal id].sql
+			 * Note: the name portion of the file is treated to remove special char (non word chars) that may break
+			 * the filename on some filesystems. The internal id is used for desambiguation purposes. */
+			name = obj->getSignature(true).replace('"', "").replace(QRegExp("(?!\\-)(\\W)"), "_");
+
+			filename = QString("%1_%2_%3_%4.sql")
+								 .arg(QString::number(idx++).rightJustified(pad_size, '0'))
+								 .arg(name)
+								 .arg(obj->getSchemaName())
+								 .arg(obj->getObjectId());
+
+			output.setFileName(path + GlobalAttributes::DirSeparator + filename);
+			output.open(QFile::WriteOnly);
+
+			if(!output.isOpen())
+			{
+				throw Exception(Exception::getErrorMessage(ErrorCode::FileDirectoryNotWritten).arg(output.fileName()),
+												ErrorCode::FileDirectoryNotWritten,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			}
+
+			output.write(buffer);
+			output.close();
+			buffer.clear();
 		}
 
-		output.write(buffer);
-		output.close();
-		buffer.clear();
+		configureShellTypes(false, true);
+	}
+	catch (Exception &e)
+	{
+		configureShellTypes(false, true);
+		throw Exception(e.getErrorMessage(), e.getErrorCode(), __PRETTY_FUNCTION__, __FILE__, __LINE__, &e);
 	}
 }
 

@@ -149,7 +149,7 @@ map<QString, bool> PgModelerCliApp::long_opts = {
 
 map<QString, QStringList> PgModelerCliApp::accepted_opts = {
 	{{ Attributes::Connection }, { ConnAlias, Host, Port, User, Passwd, InitialDb }},
-	{{ ExportToFile }, { Input, Output, PgSqlVer }},
+	{{ ExportToFile }, { Input, Output, PgSqlVer, Split }},
 	{{ ExportToPng },  { Input, Output, ShowGrid, ShowDelimiters, PageByPage, ZoomFactor }},
 	{{ ExportToSvg },  { Input, Output, ShowGrid, ShowDelimiters }},
 	{{ ExportToDict }, { Input, Output, Split, NoIndex }},
@@ -389,7 +389,7 @@ void PgModelerCliApp::showMenu()
 	out << QtCompat::endl;
 
 	out << tr("Operation mode options: ") << QtCompat::endl;
-	out << tr("  %1, %2\t\t    Export the input model to a sql script file.").arg(short_opts[ExportToFile]).arg(ExportToFile)<< QtCompat::endl;
+	out << tr("  %1, %2\t\t    Export the input model to sql script file(s).").arg(short_opts[ExportToFile]).arg(ExportToFile)<< QtCompat::endl;
 	out << tr("  %1, %2\t\t    Export the input model to a png image.").arg(short_opts[ExportToPng]).arg(ExportToPng) << QtCompat::endl;
 	out << tr("  %1, %2\t\t    Export the input model to a svg file.").arg(short_opts[ExportToSvg]).arg(ExportToSvg) << QtCompat::endl;
 	out << tr("  %1, %2\t\t    Export the input model to a data directory in HTML format.").arg(short_opts[ExportToDict]).arg(ExportToDict) << QtCompat::endl;
@@ -412,6 +412,10 @@ void PgModelerCliApp::showMenu()
 	out << tr("  %1, %2\t\t    Force the PostgreSQL version syntax when generating SQL code.").arg(short_opts[PgSqlVer]).arg(PgSqlVer) << QtCompat::endl;
 	out << tr("  %1, %2\t\t\t    Silent execution. Only critical messages and errors are shown during process.").arg(short_opts[Silent]).arg(Silent) << QtCompat::endl;
 	out << QtCompat::endl;	
+
+	out << tr("SQL file export options: ") << QtCompat::endl;
+	out << tr("  %1, %2\t\t\t    The SQL file is generated per object. The files will be named in such a way to reflect the correct creation order of the objects.").arg(short_opts[Split]).arg(Split) << QtCompat::endl;
+	out << QtCompat::endl;
 
 	out << tr("PNG and SVG export options: ") << QtCompat::endl;
 	out << tr("  %1, %2\t\t    Draws the grid in the exported image.").arg(short_opts[ShowGrid]).arg(ShowGrid) << QtCompat::endl;
@@ -1543,7 +1547,7 @@ void PgModelerCliApp::exportModel()
 	else if(parsed_opts.count(ExportToFile))
 	{
 		printMessage(tr("Export to SQL script file: %1").arg(parsed_opts[Output]));
-		export_hlp->exportToSQL(model, parsed_opts[Output], parsed_opts[PgSqlVer]);
+		export_hlp->exportToSQL(model, parsed_opts[Output], parsed_opts[PgSqlVer],  parsed_opts.count(Split) > 0);
 	}
 	//Export data dictionary
 	else if(parsed_opts.count(ExportToDict))
