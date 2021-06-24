@@ -727,22 +727,13 @@ void ModelDatabaseDiffForm::loadDiffInSQLTool()
 			filename = file_sel->getSelectedFile();
 	else
 	{
-			tmp_sql_file.setFileTemplate(GlobalAttributes::getTemporaryFilePath(QString("diff_%1_XXXXXX.sql").arg(database)));
+		tmp_sql_file.setFileTemplate(GlobalAttributes::getTemporaryFilePath(QString("diff_%1_XXXXXX.sql").arg(database)));
 
-			tmp_sql_file.open();
-			filename = tmp_sql_file.fileName();
-			tmp_sql_file.close();
+		tmp_sql_file.open();
+		filename = tmp_sql_file.fileName();
+		tmp_sql_file.close();
 
-			out_tmp_file.setFileName(filename);
-			out_tmp_file.open(QFile::WriteOnly);
-
-			if(!out_tmp_file.isOpen())
-				throw Exception(Exception::getErrorMessage(ErrorCode::FileDirectoryNotWritten).arg(out_tmp_file.fileName()),
-												ErrorCode::FileDirectoryNotWritten,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-
-			buffer.append(sqlcode_txt->toPlainText().toUtf8());
-			out_tmp_file.write(buffer);
-			out_tmp_file.close();
+		CoreUtilsNs::saveFile(filename, sqlcode_txt->toPlainText().toUtf8());
 	}
 
 	emit s_loadDiffInSQLTool(conn.getConnectionId(), database, filename);
@@ -763,22 +754,13 @@ void ModelDatabaseDiffForm::saveDiffToFile()
 {
 	if(!sqlcode_txt->toPlainText().isEmpty())
 	{
-		QFile output;
-
 		step_lbl->setText(tr("Saving diff to file <strong>%1</strong>").arg(file_sel->getSelectedFile()));
 		step_ico_lbl->setPixmap(QPixmap(GuiUtilsNs::getIconPath("save")));
 		import_item=GuiUtilsNs::createOutputTreeItem(output_trw, step_lbl->text(), QtCompat::pixmap(step_ico_lbl), nullptr);
 		step_pb->setValue(90);
 		progress_pb->setValue(100);
 
-		output.setFileName(file_sel->getSelectedFile());
-
-		if(!output.open(QFile::WriteOnly))
-			captureThreadError(Exception(Exception::getErrorMessage(ErrorCode::FileDirectoryNotWritten).arg(file_sel->getSelectedFile()),
-																	 ErrorCode::FileDirectoryNotWritten, __PRETTY_FUNCTION__,__FILE__,__LINE__));
-
-		output.write(sqlcode_txt->toPlainText().toUtf8());
-		output.close();
+		CoreUtilsNs::saveFile(file_sel->getSelectedFile(), sqlcode_txt->toPlainText().toUtf8());
 	}
 
 	finishDiff();

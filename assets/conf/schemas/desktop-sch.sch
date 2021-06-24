@@ -4,7 +4,7 @@ $ob Desktop $sp Entry $cb $br
 [GenericName=pgModeler Syntax Checker] $br
 [Icon=]{icon} $br
 [MimeType=application/sch] $br
-[Name=pgModeler Schema Editor] $br
+[Name=pgModeler Syntax Checker] $br
 [NoDisplay=false] $br
 [Path=]{working-dir} $br
 [StartupNotify=false] $br

@@ -19,6 +19,7 @@
 #include "baseconfigwidget.h"
 #include "messagebox.h"
 #include <QDate>
+#include "coreutilsns.h"
 
 BaseConfigWidget::BaseConfigWidget(QWidget *parent) : QWidget(parent)
 {
@@ -48,7 +49,7 @@ bool BaseConfigWidget::isConfigurationChanged()
 
 void BaseConfigWidget::saveConfiguration(const QString &conf_id, map<QString, attribs_map> &config_params)
 {
-	QByteArray buf;
+	//QByteArray buf;
 
 	//Configures the schema filename for the configuration
 	QString	sch_filename=GlobalAttributes::getTmplConfigurationFilePath(GlobalAttributes::SchemasDir,
@@ -57,7 +58,7 @@ void BaseConfigWidget::saveConfiguration(const QString &conf_id, map<QString, at
 			//Cofnigures the filename for the configuration file
 			cfg_filename = GlobalAttributes::getConfigurationFilePath(conf_id);
 
-	QFile output(cfg_filename);
+	//QFile output(cfg_filename);
 	attribs_map attribs;
 	map<QString, attribs_map >::iterator itr, itr_end;
 
@@ -74,21 +75,14 @@ void BaseConfigWidget::saveConfiguration(const QString &conf_id, map<QString, at
 
 		//Generates the configuration from the schema file
 		schparser.ignoreEmptyAttributes(true);
-		buf.append(XmlParser::convertCharsToXMLEntities(schparser.getCodeDefinition(sch_filename, attribs)).toUtf8());
-		output.open(QFile::WriteOnly);
+		CoreUtilsNs::saveFile(cfg_filename,
+													XmlParser::convertCharsToXMLEntities(schparser.getCodeDefinition(sch_filename, attribs)).toUtf8());
 
-		if(!output.isOpen())
-			throw Exception(Exception::getErrorMessage(ErrorCode::FileDirectoryNotWritten).arg(cfg_filename),
-											ErrorCode::FileDirectoryNotWritten,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-
-		//Writes the generated configuration to the output file
-		output.write(buf.data(), buf.size());
-		output.close();
 		config_params.erase(conf_id);
 	}
 	catch(Exception &e)
 	{
-		if(output.isOpen()) output.close();
+		//if(output.isOpen()) output.close();
 		throw Exception(Exception::getErrorMessage(ErrorCode::FileNotWrittenInvalidDefinition).arg(cfg_filename),
 										ErrorCode::FileNotWrittenInvalidDefinition,__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}

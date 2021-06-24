@@ -2,6 +2,7 @@
 #include "messagebox.h"
 #include "guiutilsns.h"
 #include "qtcompat/splitbehaviorcompat.h"
+#include "coreutilsns.h"
 
 QPalette SourceEditorWidget::def_editor_pal;
 
@@ -66,19 +67,7 @@ SourceEditorWidget::SourceEditorWidget(QWidget *parent) : QWidget(parent)
 
 void SourceEditorWidget::saveFile(const QString &filename)
 {
-	QFile input;
-
-	input.setFileName(filename);
-	input.open(QFile::WriteOnly);
-
-	if(!input.isOpen())
-	{
-		throw Exception(Exception::getErrorMessage(ErrorCode::FileDirectoryNotAccessed).arg(filename),
-										ErrorCode::FileDirectoryNotAccessed, __PRETTY_FUNCTION__, __FILE__, __LINE__);
-	}
-
-	input.write(editor_txt->toPlainText().toUtf8());
-	input.close();
+	CoreUtilsNs::saveFile(filename, editor_txt->toPlainText().toUtf8());
 
 	QFileInfo fi(filename);
 	validate_tb->setEnabled(filename.endsWith(GlobalAttributes::SchemaExt));

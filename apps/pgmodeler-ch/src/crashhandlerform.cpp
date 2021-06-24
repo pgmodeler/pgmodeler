@@ -19,6 +19,7 @@
 #include "crashhandlerform.h"
 #include "messagebox.h"
 #include "guiutilsns.h"
+#include "coreutilsns.h"
 
 const QString CrashHandlerForm::AnalysisMode("-analysis-mode");
 
@@ -177,20 +178,7 @@ void CrashHandlerForm::saveModel()
 		file_dlg.setModal(true);
 
 		if(file_dlg.exec()==QFileDialog::Accepted)
-		{
-			QFile output(file_dlg.selectedFiles().at(0));
-			QByteArray buf;
-
-			output.open(QFile::WriteOnly);
-
-			if(!output.isOpen())
-				throw Exception(Exception::getErrorMessage(ErrorCode::FileDirectoryNotWritten).arg(file_dlg.selectedFiles().at(0)),
-												ErrorCode::FileDirectoryNotWritten,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-
-			buf.append(model_txt->toPlainText().toUtf8());
-			output.write(buf.data(),buf.size());
-			output.close();
-		}
+			CoreUtilsNs::saveFile(file_dlg.selectedFiles().at(0), model_txt->toPlainText().toUtf8());
 	}
 	catch(Exception &e)
 	{

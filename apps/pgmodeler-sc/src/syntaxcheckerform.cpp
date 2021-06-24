@@ -301,20 +301,7 @@ void SyntaxCheckerForm::applySyntaxConfig(bool from_temp_file)
 
 void SyntaxCheckerForm::saveSyntaxConfig()
 {
-	QFile input;
-	QString filename = syntax_conf_sel->getSelectedFile();
-
-	input.setFileName(filename);
-	input.open(QFile::WriteOnly);
-
-	if(!input.isOpen())
-	{
-		throw Exception(Exception::getErrorMessage(ErrorCode::FileDirectoryNotAccessed).arg(filename),
-										ErrorCode::FileDirectoryNotAccessed, __PRETTY_FUNCTION__, __FILE__, __LINE__);
-	}
-
-	input.write(syntax_txt->toPlainText().toUtf8());
-	input.close();
+	CoreUtilsNs::saveFile(syntax_conf_sel->getSelectedFile(), syntax_txt->toPlainText().toUtf8());
 	alert_frm->setVisible(false);
 	applySyntaxConfig(true);
 }

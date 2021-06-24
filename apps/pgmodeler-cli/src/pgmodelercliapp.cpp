@@ -1750,16 +1750,8 @@ void PgModelerCliApp::diffModelDatabase()
 	{
 		if(parsed_opts.count(SaveDiff))
 		{
-			QFile output;
-
 			printMessage(tr("Saving diff to file `%1'").arg(parsed_opts[Output]));
-			output.setFileName(parsed_opts[Output]);
-
-			if(!output.open(QFile::WriteOnly))
-				throw Exception(Exception::getErrorMessage(ErrorCode::FileDirectoryNotWritten).arg(parsed_opts[Output]),
-												ErrorCode::FileDirectoryNotWritten, __PRETTY_FUNCTION__,__FILE__,__LINE__);
-			output.write(diff_hlp->getDiffDefinition().toUtf8());
-			output.close();
+			CoreUtilsNs::saveFile(parsed_opts[Output], diff_hlp->getDiffDefinition().toUtf8());
 		}
 		else
 		{
@@ -1993,15 +1985,7 @@ void PgModelerCliApp::handleLinuxMimeDatabase(bool uninstall, bool system_wide)
 				buf.append(schparser.getCodeDefinition(attribs).toUtf8());
 				QDir(QString(".")).mkpath(QFileInfo(files[i]).absolutePath());
 
-				out.setFileName(files[i]);
-				out.open(QFile::WriteOnly);
-
-				if(!out.isOpen())
-					throw Exception(Exception::getErrorMessage(ErrorCode::FileDirectoryNotWritten).arg(files[i]),
-													ErrorCode::FileDirectoryNotWritten,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-
-				out.write(buf.data(), buf.size());
-				out.close();
+				CoreUtilsNs::saveFile(files[i], buf);
 				buf.clear();
 			}
 		}

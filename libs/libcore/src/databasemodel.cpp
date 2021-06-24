@@ -8154,27 +8154,13 @@ vector<BaseObject *> DatabaseModel::getCreationOrder(BaseObject *object, bool on
 
 void DatabaseModel::saveModel(const QString &filename, unsigned def_type)
 {
-	QFile output(filename);
-	QByteArray buf;
-
-	output.open(QFile::WriteOnly);
-
-	if(!output.isOpen())
-		throw Exception(Exception::getErrorMessage(ErrorCode::FileDirectoryNotWritten).arg(filename),
-										ErrorCode::FileDirectoryNotWritten,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-
 	try
 	{
-		buf.append(this->getCodeDefinition(def_type).toUtf8());
-
 		if(!cancel_saving)
-			output.write(buf);
-
-		output.close();
+			CoreUtilsNs::saveFile(filename, this->getCodeDefinition(def_type).toUtf8());
 	}
 	catch(Exception &e)
 	{
-		if(output.isOpen()) output.close();
 		throw Exception(Exception::getErrorMessage(ErrorCode::FileNotWrittenInvalidDefinition).arg(filename),
 										ErrorCode::FileNotWrittenInvalidDefinition,__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
