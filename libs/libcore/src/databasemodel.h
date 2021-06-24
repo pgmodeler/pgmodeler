@@ -281,6 +281,10 @@ class DatabaseModel:  public QObject, public BaseObject {
 		 * the method will only restore the original configuration of the functions and return an empty string. */
 		QString configureShellTypes(bool reset_config);
 
+		/*! \brief Saves the appended/prepended code of the database model to a separated file.
+		 * The parameter save_appended tells the method to save appended code instead of prepended code.
+		 * The parameter path is where the file will be saved. The file_prefix is a string that is prepended
+		 * to the filename */
 		void saveSplitCustomSQL(bool save_appended, const QString &path, const QString &file_prefix);
 
 	protected:

@@ -556,6 +556,7 @@ namespace Attributes {
 	ServerPid,
 	ServerProtocol,
 	ServerVersion,
+	SessionOpts,
 	SetPerms,
 	SharedObj,
 	ShellTypes,

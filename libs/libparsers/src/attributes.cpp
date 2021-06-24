@@ -539,6 +539,7 @@ namespace Attributes {
 	ServerPid("server-pid"),
 	ServerProtocol("server-protocol"),
 	ServerVersion("server-version"),
+	SessionOpts("sessionopts"),
 	SetPerms("set-perms"),
 	SharedObj("shared-obj"),
 	ShellTypes("shell-types"),

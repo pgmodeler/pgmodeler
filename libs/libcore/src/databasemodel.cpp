@@ -8168,7 +8168,7 @@ void DatabaseModel::saveModel(const QString &filename, unsigned def_type)
 		buf.append(this->getCodeDefinition(def_type).toUtf8());
 
 		if(!cancel_saving)
-			output.write(buf.data(),buf.size());
+			output.write(buf);
 
 		output.close();
 	}
@@ -8198,12 +8198,11 @@ void DatabaseModel::saveSplitCustomSQL(bool save_appended, const QString &path, 
 		buffer.append((appended_sql + QChar('\n') + Attributes::DdlEndToken).toUtf8());
 	}
 
-	emit s_objectLoaded(!save_appended ? 0 : 100, msg, enum_cast(ObjectType::Database));
-
 	if(!buffer.isEmpty())
 	{
 		QFile file;
 
+		emit s_objectLoaded(!save_appended ? 0 : 100, msg, enum_cast(ObjectType::Database));
 		file.setFileName(path + GlobalAttributes::DirSeparator + filename);
 		file.open(QFile::WriteOnly);
 
@@ -8234,6 +8233,7 @@ void DatabaseModel::saveSplitSQLDefinition(const QString &path)
 	int pad_size = QString::number(objects.size()).size(), idx = 0;
 	QString filename, name, shell_types;
 	BaseObject *obj = nullptr;
+	QStringList sch_names;
 	unsigned 	gen_defs_idx = 0, general_obj_cnt = 0;
 
 	try
@@ -8250,6 +8250,10 @@ void DatabaseModel::saveSplitSQLDefinition(const QString &path)
 				break;
 
 			obj = itr.second;
+
+			if(obj->getObjectType() == ObjectType::Schema)
+				sch_names.append(obj->getName(true));
+
 			gen_defs_idx++;
 
 			if(obj->isSystemObject())
@@ -8298,6 +8302,10 @@ void DatabaseModel::saveSplitSQLDefinition(const QString &path)
 
 		saveSplitCustomSQL(true, path, QString::number(idx).rightJustified(pad_size, '0'));
 		configureShellTypes(true);
+
+		//attribs_map attribs;
+		//attribs[Attributes::SearchPath] = sch_names.join(',');
+		//attribs[Attributes::Function] = !functions.empty() ? Attributes::True : "";
 	}
 	catch (Exception &e)
 	{
