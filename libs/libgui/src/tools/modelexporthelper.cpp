@@ -86,8 +86,10 @@ void ModelExportHelper::exportToSQL(DatabaseModel *db_model, const QString &file
 			emit s_progressUpdated(100, tr("Output SQL files successfully written into `%1'.").arg(filename), ObjectType::BaseObject);
 		}
 
-
-		emit s_exportFinished();
+		if(export_canceled)
+			emit s_exportCanceled();
+		else
+			emit s_exportFinished();
 	}
 	catch(Exception &e)
 	{
@@ -1083,10 +1085,14 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
 
 void ModelExportHelper::updateProgress(int prog, QString object_id, unsigned obj_type)
 {
-	int aux_prog=progress + (prog/progress);
-	sql_gen_progress=prog;
-	if(aux_prog > 100) aux_prog=100;
-	emit s_progressUpdated(aux_prog, object_id, static_cast<ObjectType>(obj_type), "", sender()==db_model);
+	int aux_prog = progress + (prog/progress);
+
+	sql_gen_progress = prog;
+
+	if(aux_prog > 100)
+		aux_prog=100;
+
+	emit s_progressUpdated(aux_prog, object_id, static_cast<ObjectType>(obj_type), "");
 }
 
 void ModelExportHelper::setExportToDBMSParams(DatabaseModel *db_model, Connection *conn, const QString &pgsql_ver, bool ignore_dup, bool drop_db, bool drop_objs, bool simulate, bool use_rand_names)
@@ -1226,5 +1232,6 @@ void ModelExportHelper::exportToDataDict()
 
 void ModelExportHelper::cancelExport()
 {
-	export_canceled=true;
+	db_model->setCancelSaving(true);
+	export_canceled = true;
 }

@@ -94,7 +94,7 @@ ModelExportForm::ModelExportForm(QWidget *parent, Qt::WindowFlags f) : QDialog(p
 		output_trw->setUniformRowHeights(false);
 	});
 
-	connect(&export_hlp, SIGNAL(s_progressUpdated(int,QString,ObjectType,QString,bool)), this, SLOT(updateProgress(int,QString,ObjectType,QString,bool)), Qt::BlockingQueuedConnection);
+	connect(&export_hlp, SIGNAL(s_progressUpdated(int,QString,ObjectType,QString)), this, SLOT(updateProgress(int,QString,ObjectType,QString)), Qt::BlockingQueuedConnection);
 	connect(&export_hlp, SIGNAL(s_exportFinished()), this, SLOT(handleExportFinished()));
 	connect(&export_hlp, SIGNAL(s_exportCanceled()), this, SLOT(handleExportCanceled()));
 	connect(&export_hlp, SIGNAL(s_errorIgnored(QString,QString,QString)), this, SLOT(handleErrorIgnored(QString,QString,QString)));
@@ -158,7 +158,7 @@ void ModelExportForm::handleErrorIgnored(QString err_code, QString err_msg, QStr
 	GuiUtilsNs::createOutputTreeItem(output_trw, cmd, QPixmap(), item, false, true);
 }
 
-void ModelExportForm::updateProgress(int progress, QString msg, ObjectType obj_type, QString cmd, bool is_code_gen)
+void ModelExportForm::updateProgress(int progress, QString msg, ObjectType obj_type, QString cmd)
 {
 	QTreeWidgetItem *item=nullptr;
 	QString text=GuiUtilsNs::formatMessage(msg);
@@ -177,7 +177,7 @@ void ModelExportForm::updateProgress(int progress, QString msg, ObjectType obj_t
 	ico_lbl->setPixmap(ico);
 
 	// If low_verbosity is set only messages hinted by obj_type == BaseObject are show because they hold key info messages
-	if(!is_code_gen && (!low_verbosity || (low_verbosity && obj_type == ObjectType::BaseObject && cmd.isEmpty())))
+	if(!low_verbosity || (low_verbosity && obj_type == ObjectType::BaseObject && cmd.isEmpty()))
 	{
 		item=GuiUtilsNs::createOutputTreeItem(output_trw, text, ico, nullptr, false);
 

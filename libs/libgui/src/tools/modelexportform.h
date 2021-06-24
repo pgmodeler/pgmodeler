@@ -76,7 +76,7 @@ class ModelExportForm: public QDialog, public Ui::ModelExportForm {
 	private slots:
 		void selectExportMode();
 		void exportModel();
-		void updateProgress(int progress, QString msg, ObjectType obj_type, QString cmd, bool is_code_gen);
+		void updateProgress(int progress, QString msg, ObjectType obj_type, QString cmd);
 		void captureThreadError(Exception e);
 		void cancelExport();
 		void handleExportFinished();

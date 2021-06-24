@@ -755,7 +755,7 @@
                      </sizepolicy>
                     </property>
                     <property name="toolTip">
-                     <string>&lt;strong&gt;Standalone:&lt;/strong&gt; pgModeler will generate a single HTML file containing the data dictionaries of all tables in the database model. </string>
+                     <string>&lt;strong&gt;Standalone:&lt;/strong&gt; pgModeler will generate a single SQL file containing all the code that defines the whole database. </string>
                     </property>
                     <property name="statusTip">
                      <string/>
@@ -777,7 +777,7 @@
                      </sizepolicy>
                     </property>
                     <property name="toolTip">
-                     <string>&lt;strong&gt;Split:&lt;/strong&gt; the data dictionaries are generated in separated files inside the selected directory. In this mode the files are named &lt;em&gt;schema.table.html&lt;/em&gt;.</string>
+                     <string>&lt;strong&gt;Split:&lt;/strong&gt; the SQL definition of each object is generated in separated files inside the selected directory. In this mode the files are named in such a way to reflect the correct creation order.</string>
                     </property>
                     <property name="statusTip">
                      <string/>
