@@ -24,6 +24,7 @@
 #include "utils/plaintextitemdelegate.h"
 #include "datamanipulationform.h"
 #include "qtcompat/qplaintexteditcompat.h"
+#include "utilsns.h"
 
 map<QString, QString> SQLExecutionWidget::cmd_history;
 
@@ -650,7 +651,7 @@ void SQLExecutionWidget::saveCommands()
 
 	if(!filename.isEmpty())
 	{
-		CoreUtilsNs::saveFile(filename, sql_cmd_txt->toPlainText().toUtf8());
+		UtilsNs::saveFile(filename, sql_cmd_txt->toPlainText().toUtf8());
 		filename_edt->setText(filename);
 		filename_wgt->setVisible(true);
 	}
@@ -664,17 +665,8 @@ void SQLExecutionWidget::loadCommands()
 
 	if(sql_file_dlg.result()==QDialog::Accepted)
 	{
-		QFile file;
-		file.setFileName(sql_file_dlg.selectedFiles().at(0));
-
-		if(!file.open(QFile::ReadOnly))
-			throw Exception(Exception::getErrorMessage(ErrorCode::FileDirectoryNotAccessed)
-											.arg(sql_file_dlg.selectedFiles().at(0)),
-											ErrorCode::FileDirectoryNotAccessed ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-
 		sql_cmd_txt->clear();
-		sql_cmd_txt->setPlainText(file.readAll());
-		file.close();
+		sql_cmd_txt->setPlainText(UtilsNs::loadFile(sql_file_dlg.selectedFiles().at(0)));
 
 		filename_edt->setText(sql_file_dlg.selectedFiles().at(0));
 		filename_wgt->setVisible(true);
@@ -703,7 +695,7 @@ void SQLExecutionWidget::exportResults(QTableView *results_tbw)
 		results_tbw->blockSignals(true);
 		results_tbw->selectAll();
 
-		CoreUtilsNs::saveFile(csv_file_dlg.selectedFiles().at(0), generateCSVBuffer(results_tbw));
+		UtilsNs::saveFile(csv_file_dlg.selectedFiles().at(0), generateCSVBuffer(results_tbw));
 
 		results_tbw->clearSelection();
 		results_tbw->blockSignals(false);
@@ -932,8 +924,8 @@ void SQLExecutionWidget::saveSQLHistory()
 		attribs.clear();
 		attribs[Attributes::Commands] = commands;
 
-		CoreUtilsNs::saveFile(GlobalAttributes::getConfigurationFilePath(GlobalAttributes::SQLHistoryConf),
-													schparser.getCodeDefinition(attribs).toUtf8());
+		UtilsNs::saveFile(GlobalAttributes::getConfigurationFilePath(GlobalAttributes::SQLHistoryConf),
+											schparser.getCodeDefinition(attribs).toUtf8());
 	}
 	catch(Exception &e)
 	{

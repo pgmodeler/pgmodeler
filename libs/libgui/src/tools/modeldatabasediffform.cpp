@@ -22,6 +22,7 @@
 #include "guiutilsns.h"
 #include <QTemporaryFile>
 #include "qtcompat/qlabelcompat.h"
+#include "utilsns.h"
 
 bool ModelDatabaseDiffForm::low_verbosity = false;
 map<QString, attribs_map> ModelDatabaseDiffForm::config_params;
@@ -733,7 +734,7 @@ void ModelDatabaseDiffForm::loadDiffInSQLTool()
 		filename = tmp_sql_file.fileName();
 		tmp_sql_file.close();
 
-		CoreUtilsNs::saveFile(filename, sqlcode_txt->toPlainText().toUtf8());
+		UtilsNs::saveFile(filename, sqlcode_txt->toPlainText().toUtf8());
 	}
 
 	emit s_loadDiffInSQLTool(conn.getConnectionId(), database, filename);
@@ -760,7 +761,7 @@ void ModelDatabaseDiffForm::saveDiffToFile()
 		step_pb->setValue(90);
 		progress_pb->setValue(100);
 
-		CoreUtilsNs::saveFile(file_sel->getSelectedFile(), sqlcode_txt->toPlainText().toUtf8());
+		UtilsNs::saveFile(file_sel->getSelectedFile(), sqlcode_txt->toPlainText().toUtf8());
 	}
 
 	finishDiff();

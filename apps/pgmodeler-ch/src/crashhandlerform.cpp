@@ -19,7 +19,7 @@
 #include "crashhandlerform.h"
 #include "messagebox.h"
 #include "guiutilsns.h"
-#include "coreutilsns.h"
+#include "utilsns.h"
 
 const QString CrashHandlerForm::AnalysisMode("-analysis-mode");
 
@@ -178,7 +178,7 @@ void CrashHandlerForm::saveModel()
 		file_dlg.setModal(true);
 
 		if(file_dlg.exec()==QFileDialog::Accepted)
-			CoreUtilsNs::saveFile(file_dlg.selectedFiles().at(0), model_txt->toPlainText().toUtf8());
+			UtilsNs::saveFile(file_dlg.selectedFiles().at(0), model_txt->toPlainText().toUtf8());
 	}
 	catch(Exception &e)
 	{

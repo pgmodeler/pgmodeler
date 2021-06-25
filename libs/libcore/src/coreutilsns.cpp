@@ -251,36 +251,4 @@ namespace CoreUtilsNs {
 				return keywords[chr].contains(word.toUpper());
 		}
 	}
-
-	void saveFile(const QString &filename, const QByteArray &buffer)
-	{
-		QFile output;
-
-		output.setFileName(filename);
-		output.open(QFile::WriteOnly);
-
-		if(!output.isOpen())
-			throw Exception(Exception::getErrorMessage(ErrorCode::FileDirectoryNotWritten).arg(output.fileName()),
-											ErrorCode::FileDirectoryNotWritten,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-
-		output.write(buffer);
-		output.close();
-	}
-
-	QByteArray loadFile(const QString &filename)
-	{
-		QFile input;
-
-		input.setFileName(filename);
-		input.open(QFile::ReadOnly);
-
-		if(!input.isOpen())
-			throw Exception(Exception::getErrorMessage(ErrorCode::FileDirectoryNotAccessed).arg(input.fileName()),
-											ErrorCode::FileDirectoryNotAccessed,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-
-		/* In order to avoid storing the contents of the file in a local variable
-		 * and returning it making two copies we just return the result of readAll().
-		 * The file descriptor will be closed in the destructor of QFile */
-		return input.readAll();
-	}
 }

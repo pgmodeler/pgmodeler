@@ -19,6 +19,7 @@
 #include "pgmodelercliapp.h"
 #include "qtcompat/qtextstreamcompat.h"
 #include "qtcompat/splitbehaviorcompat.h"
+#include "utilsns.h"
 
 QTextStream PgModelerCliApp::out(stdout);
 
@@ -903,7 +904,6 @@ void PgModelerCliApp::handleObjectRemoval(BaseObject *object)
 
 void PgModelerCliApp::extractObjectXML()
 {
-	QFile input;
 	QString buf, lin, def_xml, end_tag;
 	QTextStream ts;
 	QRegExp regexp(QString("^(\\<\\?xml)(.)*(\\<%1)( )*").arg(Attributes::DbModel)),
@@ -918,15 +918,7 @@ void PgModelerCliApp::extractObjectXML()
 
 	printMessage(tr("Extracting objects' XML..."));
 
-	input.setFileName(parsed_opts[Input]);
-	input.open(QFile::ReadOnly);
-
-	if(!input.isOpen())
-		throw Exception(Exception::getErrorMessage(ErrorCode::FileDirectoryNotAccessed).arg(parsed_opts[Input]),
-										ErrorCode::FileDirectoryNotAccessed,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-
-	buf.append(input.readAll());
-	input.close();
+	buf.append(UtilsNs::loadFile(parsed_opts[Input]));
 
 	//Check if the file contains a valid header (for .dbm file)
 	start=regexp.indexIn(buf);
@@ -1756,7 +1748,7 @@ void PgModelerCliApp::diffModelDatabase()
 		if(parsed_opts.count(SaveDiff))
 		{
 			printMessage(tr("Saving diff to file `%1'").arg(parsed_opts[Output]));
-			CoreUtilsNs::saveFile(parsed_opts[Output], diff_hlp->getDiffDefinition().toUtf8());
+			UtilsNs::saveFile(parsed_opts[Output], diff_hlp->getDiffDefinition().toUtf8());
 		}
 		else
 		{
@@ -1990,7 +1982,7 @@ void PgModelerCliApp::handleLinuxMimeDatabase(bool uninstall, bool system_wide)
 				buf.append(schparser.getCodeDefinition(attribs).toUtf8());
 				QDir(QString(".")).mkpath(QFileInfo(files[i]).absolutePath());
 
-				CoreUtilsNs::saveFile(files[i], buf);
+				UtilsNs::saveFile(files[i], buf);
 				buf.clear();
 			}
 		}

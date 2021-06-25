@@ -21,6 +21,7 @@
 #include "exception.h"
 #include <QTextStream>
 #include "qtcompat/splitbehaviorcompat.h"
+#include "utilsns.h"
 
 CsvLoadWidget::CsvLoadWidget(QWidget * parent, bool cols_in_first_row) : QWidget(parent)
 {
@@ -142,19 +143,11 @@ QList<QStringList> CsvLoadWidget::loadCsvFromBuffer(const QString &csv_buffer, c
 
 void CsvLoadWidget::loadCsvFile()
 {
-	QFile file;
 	QString csv_buffer;
 
-	file.setFileName(file_sel->getSelectedFile());
-
-	if(!file.open(QFile::ReadOnly))
-		throw Exception(Exception::getErrorMessage(ErrorCode::FileDirectoryNotAccessed).arg(file_sel->getSelectedFile()),
-										ErrorCode::FileDirectoryNotAccessed,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-
+	csv_buffer.append(UtilsNs::loadFile(file_sel->getSelectedFile()));
 	csv_columns.clear();
 	csv_rows.clear();
-
-	csv_buffer.append(file.readAll());
 
 	if(!csv_buffer.isEmpty())
 	{

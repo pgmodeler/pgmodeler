@@ -24,6 +24,7 @@
 #include "qtcompat/splitbehaviorcompat.h"
 #include "qtcompat/qtextstreamcompat.h"
 #include <random>
+#include "utilsns.h"
 
 unsigned DatabaseModel::dbmodel_id=2000;
 
@@ -8157,7 +8158,7 @@ void DatabaseModel::saveModel(const QString &filename, unsigned def_type)
 	try
 	{
 		if(!cancel_saving)
-			CoreUtilsNs::saveFile(filename, this->getCodeDefinition(def_type).toUtf8());
+			UtilsNs::saveFile(filename, this->getCodeDefinition(def_type).toUtf8());
 	}
 	catch(Exception &e)
 	{

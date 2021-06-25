@@ -65,14 +65,6 @@ namespace CoreUtilsNs {
 	//! \brief Returns true if the specified word is a PostgreSQL reserved word.
 	extern bool isReservedKeyword(const QString &word);
 
-	/*! \brief Writes the provided buffer to the file specified by its filename
-	 * Raises an exception in case of the file couldn,t be open */
-	extern void saveFile(const QString &filename, const QByteArray &buffer);
-
-	/*! \brief Read the contents of the file specified by its filename returning its contents.
-	 * Raises an exception in case of the file couldn,t be open */
-	extern QByteArray loadFile(const QString &filenname);
-
 	/*! \brief Generates a unique name based upon the specified object and the list of objects of the same type.
 	 * User can specify a suffix for the generated name as well if the comparison inside the method must be done with
 	 * formated names. The optinal parameter use_suf_on_conflict indicates that the suffix should be used only in case of conflicts.

@@ -17,6 +17,7 @@
 */
 #include "catalog.h"
 #include "coreutilsns.h"
+#include "utilsns.h"
 #include "qtcompat/splitbehaviorcompat.h"
 
 const QString Catalog::QueryList("list");
@@ -352,17 +353,7 @@ bool Catalog::isExtensionObject(unsigned oid)
 void Catalog::loadCatalogQuery(const QString &qry_id)
 {
 	if(catalog_queries.count(qry_id)==0)
-	{
-		QFile input;
-		input.setFileName(GlobalAttributes::getSchemaFilePath(GlobalAttributes::CatalogSchemasDir, qry_id));
-
-		if(!input.open(QFile::ReadOnly))
-			throw Exception(Exception::getErrorMessage(ErrorCode::FileDirectoryNotAccessed).arg(input.fileName()),
-											ErrorCode::FileDirectoryNotAccessed,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-
-		catalog_queries[qry_id]=QString(input.readAll());
-		input.close();
-	}
+		catalog_queries[qry_id] = UtilsNs::loadFile(GlobalAttributes::getSchemaFilePath(GlobalAttributes::CatalogSchemasDir, qry_id));
 
 	schparser.loadBuffer(catalog_queries[qry_id]);
 }

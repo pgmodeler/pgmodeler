@@ -21,6 +21,7 @@
 #include "globalattributes.h"
 #include "messagebox.h"
 #include "guiutilsns.h"
+#include "utilsns.h"
 
 BugReportForm::BugReportForm(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 {
@@ -55,17 +56,7 @@ BugReportForm::BugReportForm(QWidget *parent, Qt::WindowFlags f) : QDialog(paren
 
 void BugReportForm::attachModel(const QString &filename)
 {
-	QFile input;
-
-	input.setFileName(filename);
-	input.open(QFile::ReadOnly);
-
-	if(QFile::exists(filename) && !input.isOpen())
-		throw Exception(Exception::getErrorMessage(ErrorCode::FileDirectoryNotAccessed).arg(filename),
-										ErrorCode::FileDirectoryNotAccessed,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-
-	model_txt->setPlainText(QString(input.readAll()));
-	input.close();
+	model_txt->setPlainText(UtilsNs::loadFile(filename));
 }
 
 QByteArray BugReportForm::generateReportBuffer()

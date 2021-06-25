@@ -19,7 +19,7 @@
 #include "baseconfigwidget.h"
 #include "messagebox.h"
 #include <QDate>
-#include "coreutilsns.h"
+#include "utilsns.h"
 
 BaseConfigWidget::BaseConfigWidget(QWidget *parent) : QWidget(parent)
 {
@@ -75,8 +75,8 @@ void BaseConfigWidget::saveConfiguration(const QString &conf_id, map<QString, at
 
 		//Generates the configuration from the schema file
 		schparser.ignoreEmptyAttributes(true);
-		CoreUtilsNs::saveFile(cfg_filename,
-													XmlParser::convertCharsToXMLEntities(schparser.getCodeDefinition(sch_filename, attribs)).toUtf8());
+		UtilsNs::saveFile(cfg_filename,
+											XmlParser::convertCharsToXMLEntities(schparser.getCodeDefinition(sch_filename, attribs)).toUtf8());
 
 		config_params.erase(conf_id);
 	}
