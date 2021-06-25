@@ -1092,7 +1092,7 @@ void ModelExportHelper::updateProgress(int prog, QString object_id, unsigned obj
 	if(aux_prog > 100)
 		aux_prog=100;
 
-	emit s_progressUpdated(aux_prog, object_id, static_cast<ObjectType>(obj_type), "");
+	emit s_progressUpdated(aux_prog, object_id, static_cast<ObjectType>(obj_type), "", sender() == db_model);
 }
 
 void ModelExportHelper::setExportToDBMSParams(DatabaseModel *db_model, Connection *conn, const QString &pgsql_ver, bool ignore_dup, bool drop_db, bool drop_objs, bool simulate, bool use_rand_names)

@@ -8187,18 +8187,8 @@ void DatabaseModel::saveSplitCustomSQL(bool save_appended, const QString &path, 
 
 	if(!buffer.isEmpty())
 	{
-		QFile file;
-
 		emit s_objectLoaded(!save_appended ? 0 : 100, msg, enum_cast(ObjectType::Database));
-		file.setFileName(path + GlobalAttributes::DirSeparator + filename);
-		file.open(QFile::WriteOnly);
-
-		if(!file.isOpen())
-			throw Exception(Exception::getErrorMessage(ErrorCode::FileDirectoryNotWritten).arg(file.fileName()),
-											ErrorCode::FileDirectoryNotWritten,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-
-		file.write(buffer);
-		file.close();
+		UtilsNs::saveFile(path + GlobalAttributes::DirSeparator + filename, buffer);
 	}
 }
 
