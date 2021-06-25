@@ -1502,19 +1502,24 @@ void PgModelerCliApp::loadModel()
 	//Load the model file
 	model->loadModel(parsed_opts[Input]);
 
-	scene->blockSignals(true);
+	/* The scene object is created only when some options are used
+	 * so we need to check it if is not null to avoid segfaults */
+	if(scene)
+	{
+		scene->blockSignals(true);
 
-	scene->addLayers(model->getLayers(), false);
-	scene->setActiveLayers(model->getActiveLayers());
-	scene->setLayerColors(ObjectsScene::LayerNameColor, model->getLayerNameColors());
-	scene->setLayerColors(ObjectsScene::LayerRectColor, model->getLayerRectColors());
-	scene->setLayerNamesVisible(model->isLayerNamesVisible());
-	scene->setLayerRectsVisible(model->isLayerRectsVisible());
+		scene->addLayers(model->getLayers(), false);
+		scene->setActiveLayers(model->getActiveLayers());
+		scene->setLayerColors(ObjectsScene::LayerNameColor, model->getLayerNameColors());
+		scene->setLayerColors(ObjectsScene::LayerRectColor, model->getLayerRectColors());
+		scene->setLayerNamesVisible(model->isLayerNamesVisible());
+		scene->setLayerRectsVisible(model->isLayerRectsVisible());
 
-	if(model->isLayerRectsVisible())
-		model->setObjectsModified({ ObjectType::Schema });
+		if(model->isLayerRectsVisible())
+			model->setObjectsModified({ ObjectType::Schema });
 
-	scene->blockSignals(false);
+		scene->blockSignals(false);
+	}
 }
 
 void PgModelerCliApp::exportModel()
