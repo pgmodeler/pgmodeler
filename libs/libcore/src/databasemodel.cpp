@@ -11913,10 +11913,10 @@ void DatabaseModel::saveDataDictionary(const QString &path, bool browsable, bool
 	try
 	{
 		attribs_map datadict;
-		QFile output;
 		QByteArray buffer;
 		QFileInfo finfo(path);
 		QDir dir;
+		QString filename;
 
 		if(split)
 		{
@@ -11929,24 +11929,15 @@ void DatabaseModel::saveDataDictionary(const QString &path, bool browsable, bool
 		}
 
 		getDataDictionary(datadict, browsable, split);
-		output.setFileName(path);
+		filename = path;
 
 		for(auto &itr : datadict)
 		{
 			if(split)
-				output.setFileName(path + GlobalAttributes::DirSeparator + itr.first);
-
-			output.open(QFile::WriteOnly);
-
-			if(!output.isOpen())
-			{
-				throw Exception(Exception::getErrorMessage(ErrorCode::FileDirectoryNotWritten).arg(output.fileName()),
-												ErrorCode::FileDirectoryNotWritten,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-			}
+				filename = path + GlobalAttributes::DirSeparator + itr.first;
 
 			buffer.append(itr.second.toUtf8());
-			output.write(buffer);
-			output.close();
+			UtilsNs::saveFile(filename, buffer);
 			buffer.clear();
 		}
 	}
