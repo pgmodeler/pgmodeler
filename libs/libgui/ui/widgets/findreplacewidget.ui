@@ -71,7 +71,7 @@
         <string/>
        </property>
        <property name="icon">
-        <iconset resource="../res/resources.qrc">
+        <iconset resource="../../res/resources.qrc">
          <normaloff>:/icons/icons/previous.png</normaloff>:/icons/icons/previous.png</iconset>
        </property>
        <property name="iconSize">
@@ -105,7 +105,7 @@
         <string/>
        </property>
        <property name="icon">
-        <iconset resource="../res/resources.qrc">
+        <iconset resource="../../res/resources.qrc">
          <normaloff>:/icons/icons/next.png</normaloff>:/icons/icons/next.png</iconset>
        </property>
        <property name="iconSize">
@@ -195,7 +195,7 @@
         <string>...</string>
        </property>
        <property name="icon">
-        <iconset resource="../res/resources.qrc">
+        <iconset resource="../../res/resources.qrc">
          <normaloff>:/icons/icons/close1.png</normaloff>:/icons/icons/close1.png</iconset>
        </property>
        <property name="autoRaise">
@@ -344,7 +344,7 @@
   <tabstop>replace_find_tb</tabstop>
  </tabstops>
  <resources>
-  <include location="../res/resources.qrc"/>
+  <include location="../../res/resources.qrc"/>
  </resources>
  <connections/>
 </ui>

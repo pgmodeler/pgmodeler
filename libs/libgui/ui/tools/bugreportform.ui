@@ -35,7 +35,7 @@
    <string>Bug Report</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="../res/resources.qrc">
+   <iconset resource="../../res/resources.qrc">
     <normaloff>:/icons/icons/pgsqlModeler48x48.png</normaloff>:/icons/icons/pgsqlModeler48x48.png</iconset>
   </property>
   <layout class="QGridLayout" name="gridLayout">
@@ -78,7 +78,7 @@
       <string/>
      </property>
      <property name="pixmap">
-      <pixmap resource="../res/resources.qrc">:/images/images/bugreport.png</pixmap>
+      <pixmap resource="../../res/resources.qrc">:/images/images/bugreport.png</pixmap>
      </property>
      <property name="scaledContents">
       <bool>true</bool>
@@ -146,7 +146,7 @@
         <string>&amp;Cancel</string>
        </property>
        <property name="icon">
-        <iconset resource="../res/resources.qrc">
+        <iconset resource="../../res/resources.qrc">
          <normaloff>:/icons/icons/error.png</normaloff>:/icons/icons/error.png</iconset>
        </property>
        <property name="iconSize">
@@ -203,7 +203,7 @@
         <string>Create</string>
        </property>
        <property name="icon">
-        <iconset resource="../res/resources.qrc">
+        <iconset resource="../../res/resources.qrc">
          <normaloff>:/icons/icons/save.png</normaloff>:/icons/icons/save.png</iconset>
        </property>
        <property name="iconSize">
@@ -406,7 +406,7 @@
              <enum>Qt::AutoText</enum>
             </property>
             <property name="pixmap">
-             <pixmap resource="../res/resources.qrc">:/icons/icons/info.png</pixmap>
+             <pixmap resource="../../res/resources.qrc">:/icons/icons/info.png</pixmap>
             </property>
             <property name="scaledContents">
              <bool>true</bool>
@@ -507,7 +507,7 @@
              <string/>
             </property>
             <property name="icon">
-             <iconset resource="../res/resources.qrc">
+             <iconset resource="../../res/resources.qrc">
               <normaloff>:/icons/icons/adddata.png</normaloff>:/icons/icons/adddata.png</iconset>
             </property>
             <property name="iconSize">
@@ -550,7 +550,7 @@
   </layout>
  </widget>
  <resources>
-  <include location="../res/resources.qrc"/>
+  <include location="../../res/resources.qrc"/>
  </resources>
  <connections/>
 </ui>

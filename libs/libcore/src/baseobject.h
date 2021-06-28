@@ -507,9 +507,8 @@ class BaseObject {
 		//! \brief Returns true when the child_type is in the list of children types of the parent_type
 		static bool isChildObjectType(ObjectType parent_type, ObjectType child_type);
 
-		/*! \brief Sets the default version when generating the SQL code. This affects all instances of classes that
-				is based upon this one */
-		static void setPgSQLVersion(const QString &ver);
+		//! \brief Sets the default version when generating the SQL code. This affects all instances of classes that is based upon this one
+		static void setPgSQLVersion(const QString &version);
 
 		//! \brief Returns the current version for SQL code generation
 		static QString getPgSQLVersion();

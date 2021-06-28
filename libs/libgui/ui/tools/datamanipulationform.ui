@@ -26,7 +26,7 @@
    <string>Data Manipulation</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="../res/resources.qrc">
+   <iconset resource="../../res/resources.qrc">
     <normaloff>:/icons/icons/pgsqlModeler48x48.png</normaloff>:/icons/icons/pgsqlModeler48x48.png</iconset>
   </property>
   <property name="modal">
@@ -206,7 +206,7 @@
              <string/>
             </property>
             <property name="pixmap">
-             <pixmap resource="../res/resources.qrc">:/icons/icons/database.png</pixmap>
+             <pixmap resource="../../res/resources.qrc">:/icons/icons/database.png</pixmap>
             </property>
             <property name="scaledContents">
              <bool>true</bool>
@@ -481,7 +481,7 @@
                     <string/>
                    </property>
                    <property name="icon">
-                    <iconset resource="../res/resources.qrc">
+                    <iconset resource="../../res/resources.qrc">
                      <normaloff>:/icons/icons/add.png</normaloff>:/icons/icons/add.png</iconset>
                    </property>
                    <property name="iconSize">
@@ -516,7 +516,7 @@
                     <string/>
                    </property>
                    <property name="icon">
-                    <iconset resource="../res/resources.qrc">
+                    <iconset resource="../../res/resources.qrc">
                      <normaloff>:/icons/icons/remove.png</normaloff>:/icons/icons/remove.png</iconset>
                    </property>
                    <property name="iconSize">
@@ -551,7 +551,7 @@
                     <string/>
                    </property>
                    <property name="icon">
-                    <iconset resource="../res/resources.qrc">
+                    <iconset resource="../../res/resources.qrc">
                      <normaloff>:/icons/icons/cleartext.png</normaloff>:/icons/icons/cleartext.png</iconset>
                    </property>
                    <property name="iconSize">
@@ -586,7 +586,7 @@
                     <string/>
                    </property>
                    <property name="icon">
-                    <iconset resource="../res/resources.qrc">
+                    <iconset resource="../../res/resources.qrc">
                      <normaloff>:/icons/icons/moveup.png</normaloff>:/icons/icons/moveup.png</iconset>
                    </property>
                    <property name="iconSize">
@@ -621,7 +621,7 @@
                     <string/>
                    </property>
                    <property name="icon">
-                    <iconset resource="../res/resources.qrc">
+                    <iconset resource="../../res/resources.qrc">
                      <normaloff>:/icons/icons/movedown.png</normaloff>:/icons/icons/movedown.png</iconset>
                    </property>
                    <property name="iconSize">
@@ -856,7 +856,7 @@
             <enum>Qt::AutoText</enum>
            </property>
            <property name="pixmap">
-            <pixmap resource="../res/resources.qrc">:/icons/icons/info.png</pixmap>
+            <pixmap resource="../../res/resources.qrc">:/icons/icons/info.png</pixmap>
            </property>
            <property name="scaledContents">
             <bool>true</bool>
@@ -1023,7 +1023,7 @@
             <enum>Qt::AutoText</enum>
            </property>
            <property name="pixmap">
-            <pixmap resource="../res/resources.qrc">:/icons/icons/alert.png</pixmap>
+            <pixmap resource="../../res/resources.qrc">:/icons/icons/alert.png</pixmap>
            </property>
            <property name="scaledContents">
             <bool>true</bool>
@@ -1090,7 +1090,7 @@
          <string>Add</string>
         </property>
         <property name="icon">
-         <iconset resource="../res/resources.qrc">
+         <iconset resource="../../res/resources.qrc">
           <normaloff>:/icons/icons/addrow.png</normaloff>:/icons/icons/addrow.png</iconset>
         </property>
         <property name="iconSize">
@@ -1134,7 +1134,7 @@
          <string>Clear</string>
         </property>
         <property name="icon">
-         <iconset resource="../res/resources.qrc">
+         <iconset resource="../../res/resources.qrc">
           <normaloff>:/icons/icons/cleartext.png</normaloff>:/icons/icons/cleartext.png</iconset>
         </property>
         <property name="iconSize">
@@ -1188,7 +1188,7 @@
          <string>Edit</string>
         </property>
         <property name="icon">
-         <iconset resource="../res/resources.qrc">
+         <iconset resource="../../res/resources.qrc">
           <normaloff>:/icons/icons/bulkedit.png</normaloff>:/icons/icons/bulkedit.png</iconset>
         </property>
         <property name="iconSize">
@@ -1232,7 +1232,7 @@
          <string>Browse</string>
         </property>
         <property name="icon">
-         <iconset resource="../res/resources.qrc">
+         <iconset resource="../../res/resources.qrc">
           <normaloff>:/icons/icons/browsetable.png</normaloff>:/icons/icons/browsetable.png</iconset>
         </property>
         <property name="iconSize">
@@ -1276,7 +1276,7 @@
          <string>Load CSV</string>
         </property>
         <property name="icon">
-         <iconset resource="../res/resources.qrc">
+         <iconset resource="../../res/resources.qrc">
           <normaloff>:/icons/icons/loadcsv.png</normaloff>:/icons/icons/loadcsv.png</iconset>
         </property>
         <property name="iconSize">
@@ -1323,7 +1323,7 @@
          <string>Copy</string>
         </property>
         <property name="icon">
-         <iconset resource="../res/resources.qrc">
+         <iconset resource="../../res/resources.qrc">
           <normaloff>:/icons/icons/copy.png</normaloff>:/icons/icons/copy.png</iconset>
         </property>
         <property name="iconSize">
@@ -1367,7 +1367,7 @@
          <string>Duplicate</string>
         </property>
         <property name="icon">
-         <iconset resource="../res/resources.qrc">
+         <iconset resource="../../res/resources.qrc">
           <normaloff>:/icons/icons/duprow.png</normaloff>:/icons/icons/duprow.png</iconset>
         </property>
         <property name="iconSize">
@@ -1418,7 +1418,7 @@
          <string>Filter</string>
         </property>
         <property name="icon">
-         <iconset resource="../res/resources.qrc">
+         <iconset resource="../../res/resources.qrc">
           <normaloff>:/icons/icons/filter.png</normaloff>:/icons/icons/filter.png</iconset>
         </property>
         <property name="iconSize">
@@ -1465,7 +1465,7 @@
          <string>Delete</string>
         </property>
         <property name="icon">
-         <iconset resource="../res/resources.qrc">
+         <iconset resource="../../res/resources.qrc">
           <normaloff>:/icons/icons/delrow.png</normaloff>:/icons/icons/delrow.png</iconset>
         </property>
         <property name="iconSize">
@@ -1529,7 +1529,7 @@
          <string>New </string>
         </property>
         <property name="icon">
-         <iconset resource="../res/resources.qrc">
+         <iconset resource="../../res/resources.qrc">
           <normaloff>:/icons/icons/newobject.png</normaloff>:/icons/icons/newobject.png</iconset>
         </property>
         <property name="iconSize">
@@ -1580,7 +1580,7 @@
          <string>Paste</string>
         </property>
         <property name="icon">
-         <iconset resource="../res/resources.qrc">
+         <iconset resource="../../res/resources.qrc">
           <normaloff>:/icons/icons/paste.png</normaloff>:/icons/icons/paste.png</iconset>
         </property>
         <property name="iconSize">
@@ -1624,7 +1624,7 @@
          <string>Save</string>
         </property>
         <property name="icon">
-         <iconset resource="../res/resources.qrc">
+         <iconset resource="../../res/resources.qrc">
           <normaloff>:/icons/icons/save.png</normaloff>:/icons/icons/save.png</iconset>
         </property>
         <property name="iconSize">
@@ -1668,7 +1668,7 @@
          <string>Undo</string>
         </property>
         <property name="icon">
-         <iconset resource="../res/resources.qrc">
+         <iconset resource="../../res/resources.qrc">
           <normaloff>:/icons/icons/undo.png</normaloff>:/icons/icons/undo.png</iconset>
         </property>
         <property name="iconSize">
@@ -1712,7 +1712,7 @@
          <string>Export</string>
         </property>
         <property name="icon">
-         <iconset resource="../res/resources.qrc">
+         <iconset resource="../../res/resources.qrc">
           <normaloff>:/icons/icons/exportdata.png</normaloff>:/icons/icons/exportdata.png</iconset>
         </property>
         <property name="iconSize">
@@ -1756,7 +1756,7 @@
          <string>Refresh</string>
         </property>
         <property name="icon">
-         <iconset resource="../res/resources.qrc">
+         <iconset resource="../../res/resources.qrc">
           <normaloff>:/icons/icons/refresh.png</normaloff>:/icons/icons/refresh.png</iconset>
         </property>
         <property name="iconSize">
@@ -1800,7 +1800,7 @@
          <string>Truncate</string>
         </property>
         <property name="icon">
-         <iconset resource="../res/resources.qrc">
+         <iconset resource="../../res/resources.qrc">
           <normaloff>:/icons/icons/truncate.png</normaloff>:/icons/icons/truncate.png</iconset>
         </property>
         <property name="iconSize">
@@ -1864,7 +1864,7 @@
         <enum>Qt::PlainText</enum>
        </property>
        <property name="pixmap">
-        <pixmap resource="../res/resources.qrc">:/images/images/pgmodeler_name.png</pixmap>
+        <pixmap resource="../../res/resources.qrc">:/images/images/pgmodeler_name.png</pixmap>
        </property>
       </widget>
      </item>
@@ -1898,7 +1898,7 @@
         <string>&amp;Close</string>
        </property>
        <property name="icon">
-        <iconset resource="../res/resources.qrc">
+        <iconset resource="../../res/resources.qrc">
          <normaloff>:/icons/icons/close1.png</normaloff>:/icons/icons/close1.png</iconset>
        </property>
        <property name="iconSize">
@@ -1939,7 +1939,7 @@
   <tabstop>close_btn</tabstop>
  </tabstops>
  <resources>
-  <include location="../res/resources.qrc"/>
+  <include location="../../res/resources.qrc"/>
  </resources>
  <connections/>
 </ui>

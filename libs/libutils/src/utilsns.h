@@ -17,36 +17,24 @@
 */
 
 /**
-\ingroup libcore
-\class Schema
-\brief Implements the operations to manipulate schemas on the database.
-\note <strong>Creation date:</strong> 07/04/2008
+\ingroup libutils
+\namespace UtilsNs
+\brief This namespace is used to reunite all functions or constants that can be used globally by all subprojects.
 */
 
-#ifndef SCHEMA_H
-#define SCHEMA_H
+#ifndef UTILS_NS_H
+#define UTILS_NS_H
 
-#include "basegraphicobject.h"
-#include <QColor>
+#include <QString>
 
-class Schema: public BaseGraphicObject {
-	private:
-		static unsigned schema_id;
-		QColor fill_color;
-		bool rect_visible;
+namespace UtilsNs {
+	/*! \brief Writes the provided buffer to the file specified by its filename
+	 * Raises an exception in case of the file couldn,t be open */
+	extern void saveFile(const QString &filename, const QByteArray &buffer);
 
-	public:
-		Schema();
-
-		void setName(const QString &name);
-
-		void setFillColor(const QColor &color);
-		QColor getFillColor();
-
-		void setRectVisible(bool value);
-		bool isRectVisible();
-
-		virtual QString getCodeDefinition(unsigned def_type) final;
-};
+	/*! \brief Read the contents of the file specified by its filename returning its contents.
+	 * Raises an exception in case of the file couldn,t be open */
+	extern QByteArray loadFile(const QString &filename);
+}
 
 #endif

@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>858</width>
-    <height>1278</height>
+    <height>1415</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -567,7 +567,7 @@
                <string>Generate expression</string>
               </property>
               <property name="icon">
-               <iconset resource="../res/resources.qrc">
+               <iconset resource="../../res/resources.qrc">
                 <normaloff>:/icons/icons/sqlcode.png</normaloff>:/icons/icons/sqlcode.png</iconset>
               </property>
               <property name="iconSize">
@@ -1401,7 +1401,7 @@
   <tabstop>rel_columns_lst</tabstop>
  </tabstops>
  <resources>
-  <include location="../res/resources.qrc"/>
+  <include location="../../res/resources.qrc"/>
  </resources>
  <connections/>
 </ui>

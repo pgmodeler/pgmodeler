@@ -14,7 +14,8 @@ HEADERS += src/exception.h \
 	src/qtcompat/qlinefcompat.h \
 	src/qtcompat/qplaintexteditcompat.h \
 	src/qtcompat/qtextstreamcompat.h \
-	src/qtcompat/splitbehaviorcompat.h
+	src/qtcompat/splitbehaviorcompat.h \
+	src/utilsns.h
 
 SOURCES += src/exception.cpp \
            src/globalattributes.cpp \
@@ -24,7 +25,8 @@ SOURCES += src/exception.cpp \
 	src/qtcompat/qlabelcompat.cpp \
 	src/qtcompat/qlinefcompat.cpp \
 	src/qtcompat/qplaintexteditcompat.cpp \
-	src/qtcompat/qtextstreamcompat.cpp
+	src/qtcompat/qtextstreamcompat.cpp \
+	src/utilsns.cpp
 
 # Deployment settings
 target.path = $$PRIVATELIBDIR

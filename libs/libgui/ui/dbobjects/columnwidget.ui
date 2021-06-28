@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>585</width>
-    <height>250</height>
+    <width>670</width>
+    <height>264</height>
    </rect>
   </property>
   <layout class="QGridLayout" name="column_grid">
@@ -154,7 +154,7 @@
          <string>Edit sequence</string>
         </property>
         <property name="icon">
-         <iconset resource="../res/resources.qrc">
+         <iconset resource="../../res/resources.qrc">
           <normaloff>:/icons/icons/sequence.png</normaloff>:/icons/icons/sequence.png</iconset>
         </property>
        </widget>
@@ -183,7 +183,7 @@
   <tabstop>sequence_rb</tabstop>
  </tabstops>
  <resources>
-  <include location="../res/resources.qrc"/>
+  <include location="../../res/resources.qrc"/>
  </resources>
  <connections/>
 </ui>

@@ -18,7 +18,7 @@
 
 #include "tag.h"
 
-unsigned Tag::tag_id=3000;
+unsigned Tag::tag_id=4000;
 
 Tag::Tag()
 {

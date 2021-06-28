@@ -24,6 +24,7 @@
 #include "utils/plaintextitemdelegate.h"
 #include "datamanipulationform.h"
 #include "qtcompat/qplaintexteditcompat.h"
+#include "utilsns.h"
 
 map<QString, QString> SQLExecutionWidget::cmd_history;
 
@@ -650,16 +651,7 @@ void SQLExecutionWidget::saveCommands()
 
 	if(!filename.isEmpty())
 	{
-		QFile file;
-		file.setFileName(filename);
-
-		if(!file.open(QFile::WriteOnly))
-			throw Exception(Exception::getErrorMessage(ErrorCode::FileDirectoryNotAccessed).arg(filename),
-											ErrorCode::FileDirectoryNotAccessed ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-
-		file.write(sql_cmd_txt->toPlainText().toUtf8());
-		file.close();
-
+		UtilsNs::saveFile(filename, sql_cmd_txt->toPlainText().toUtf8());
 		filename_edt->setText(filename);
 		filename_wgt->setVisible(true);
 	}
@@ -673,17 +665,8 @@ void SQLExecutionWidget::loadCommands()
 
 	if(sql_file_dlg.result()==QDialog::Accepted)
 	{
-		QFile file;
-		file.setFileName(sql_file_dlg.selectedFiles().at(0));
-
-		if(!file.open(QFile::ReadOnly))
-			throw Exception(Exception::getErrorMessage(ErrorCode::FileDirectoryNotAccessed)
-											.arg(sql_file_dlg.selectedFiles().at(0)),
-											ErrorCode::FileDirectoryNotAccessed ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-
 		sql_cmd_txt->clear();
-		sql_cmd_txt->setPlainText(file.readAll());
-		file.close();
+		sql_cmd_txt->setPlainText(UtilsNs::loadFile(sql_file_dlg.selectedFiles().at(0)));
 
 		filename_edt->setText(sql_file_dlg.selectedFiles().at(0));
 		filename_wgt->setVisible(true);
@@ -703,26 +686,16 @@ void SQLExecutionWidget::exportResults(QTableView *results_tbw)
 	csv_file_dlg.setNameFilter(tr("Comma-separated values file (*.csv);;All files (*.*)"));
 	csv_file_dlg.setModal(true);
 	csv_file_dlg.setAcceptMode(QFileDialog::AcceptSave);
-
 	csv_file_dlg.exec();
 
 	if(csv_file_dlg.result()==QDialog::Accepted)
 	{
-		QFile file;
-		file.setFileName(csv_file_dlg.selectedFiles().at(0));
-
-		if(!file.open(QFile::WriteOnly))
-			throw Exception(Exception::getErrorMessage(ErrorCode::FileDirectoryNotAccessed)
-											.arg(csv_file_dlg.selectedFiles().at(0)),
-											ErrorCode::FileDirectoryNotAccessed ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-
 		QApplication::setOverrideCursor(Qt::WaitCursor);
 		results_tbw->setUpdatesEnabled(false);
 		results_tbw->blockSignals(true);
 		results_tbw->selectAll();
 
-		file.write(generateCSVBuffer(results_tbw));
-		file.close();
+		UtilsNs::saveFile(csv_file_dlg.selectedFiles().at(0), generateCSVBuffer(results_tbw));
 
 		results_tbw->clearSelection();
 		results_tbw->blockSignals(false);
@@ -933,8 +906,6 @@ void SQLExecutionWidget::saveSQLHistory()
 		SchemaParser schparser;
 		attribs_map attribs;
 		QString commands;
-		QByteArray buffer;
-		QFile file;
 
 		for(auto hist : cmd_history)
 		{
@@ -952,17 +923,9 @@ void SQLExecutionWidget::saveSQLHistory()
 
 		attribs.clear();
 		attribs[Attributes::Commands] = commands;
-		buffer.append(schparser.getCodeDefinition(attribs).toUtf8());
 
-
-		file.setFileName(GlobalAttributes::getConfigurationFilePath(GlobalAttributes::SQLHistoryConf));
-
-		if(!file.open(QFile::WriteOnly))
-			throw Exception(Exception::getErrorMessage(ErrorCode::FileDirectoryNotAccessed).arg(file.fileName()),
-											ErrorCode::FileDirectoryNotAccessed, __PRETTY_FUNCTION__, __FILE__ ,__LINE__);
-
-		file.write(buffer);
-		file.close();
+		UtilsNs::saveFile(GlobalAttributes::getConfigurationFilePath(GlobalAttributes::SQLHistoryConf),
+											schparser.getCodeDefinition(attribs).toUtf8());
 	}
 	catch(Exception &e)
 	{

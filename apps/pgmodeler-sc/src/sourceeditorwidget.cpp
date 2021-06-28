@@ -2,6 +2,7 @@
 #include "messagebox.h"
 #include "guiutilsns.h"
 #include "qtcompat/splitbehaviorcompat.h"
+#include "utilsns.h"
 
 QPalette SourceEditorWidget::def_editor_pal;
 
@@ -66,19 +67,7 @@ SourceEditorWidget::SourceEditorWidget(QWidget *parent) : QWidget(parent)
 
 void SourceEditorWidget::saveFile(const QString &filename)
 {
-	QFile input;
-
-	input.setFileName(filename);
-	input.open(QFile::WriteOnly);
-
-	if(!input.isOpen())
-	{
-		throw Exception(Exception::getErrorMessage(ErrorCode::FileDirectoryNotAccessed).arg(filename),
-										ErrorCode::FileDirectoryNotAccessed, __PRETTY_FUNCTION__, __FILE__, __LINE__);
-	}
-
-	input.write(editor_txt->toPlainText().toUtf8());
-	input.close();
+	UtilsNs::saveFile(filename, editor_txt->toPlainText().toUtf8());
 
 	QFileInfo fi(filename);
 	validate_tb->setEnabled(filename.endsWith(GlobalAttributes::SchemaExt));
@@ -114,25 +103,16 @@ void SourceEditorWidget::loadFile(const QString &filename)
 	if(filename.isEmpty())
 		return;
 
-	QFile input;
-	input.setFileName(filename);
-	input.open(QFile::ReadOnly);
-
-	if(!input.isOpen())
-	{
-		throw Exception(Exception::getErrorMessage(ErrorCode::FileDirectoryNotAccessed).arg(filename),
-										ErrorCode::FileDirectoryNotAccessed, __PRETTY_FUNCTION__, __FILE__, __LINE__);
-	}
-
 	bool enable = filename.endsWith(GlobalAttributes::SchemaExt);
-	editor_txt->setPlainText(input.readAll());
+
+	editor_txt->setPlainText(UtilsNs::loadFile(filename));
+
 	validate_tb->setEnabled(enable);
 	indent_tb->setEnabled(enable);
 	code_compl_wgt->setEnabled(enable);
 	this->filename = filename;
 	source_file_sel->setSelectedFile(filename);
 	source_file_parent->setVisible(true);
-	input.close();
 }
 
 void SourceEditorWidget::validateSyntax()

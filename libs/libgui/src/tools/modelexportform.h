@@ -85,7 +85,8 @@ class ModelExportForm: public QDialog, public Ui::ModelExportForm {
 		void editConnections();
 		void enableExport();
 		void selectImageFormat();
-		void selectDataDictType();
+		void selectDataDictMode();
+		void selectSQLExportMode();
 
 	signals:
 		/*! \brief This signal is emitted whenever the user changes the connections settings

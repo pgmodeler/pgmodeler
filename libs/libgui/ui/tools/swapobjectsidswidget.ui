@@ -242,7 +242,7 @@
        <enum>Qt::AutoText</enum>
       </property>
       <property name="pixmap">
-       <pixmap resource="../res/resources.qrc">:/icons/icons/alert.png</pixmap>
+       <pixmap resource="../../res/resources.qrc">:/icons/icons/alert.png</pixmap>
       </property>
       <property name="scaledContents">
        <bool>true</bool>
@@ -316,7 +316,7 @@
     <string>Swap values</string>
    </property>
    <property name="icon">
-    <iconset resource="../res/resources.qrc">
+    <iconset resource="../../res/resources.qrc">
      <normaloff>:/icons/icons/swapvals.png</normaloff>:/icons/icons/swapvals.png</iconset>
    </property>
    <property name="iconSize">
@@ -478,7 +478,7 @@
      <set>AlignLeading|AlignVCenter</set>
     </property>
     <property name="icon">
-     <iconset resource="../res/resources.qrc">
+     <iconset resource="../../res/resources.qrc">
       <normaloff>:/icons/icons/table.png</normaloff>:/icons/icons/table.png</iconset>
     </property>
    </column>
@@ -490,7 +490,7 @@
      <set>AlignLeading|AlignVCenter</set>
     </property>
     <property name="icon">
-     <iconset resource="../res/resources.qrc">
+     <iconset resource="../../res/resources.qrc">
       <normaloff>:/icons/icons/usertype.png</normaloff>:/icons/icons/usertype.png</iconset>
     </property>
    </column>
@@ -502,7 +502,7 @@
      <set>AlignLeading|AlignVCenter</set>
     </property>
     <property name="icon">
-     <iconset resource="../res/resources.qrc">
+     <iconset resource="../../res/resources.qrc">
       <normaloff>:/icons/icons/uid.png</normaloff>:/icons/icons/uid.png</iconset>
     </property>
    </column>
@@ -514,7 +514,7 @@
      <set>AlignLeading|AlignVCenter</set>
     </property>
     <property name="icon">
-     <iconset resource="../res/resources.qrc">
+     <iconset resource="../../res/resources.qrc">
       <normaloff>:/icons/icons/schema.png</normaloff>:/icons/icons/schema.png</iconset>
     </property>
    </column>
@@ -526,7 +526,7 @@
      <set>AlignLeading|AlignVCenter</set>
     </property>
     <property name="icon">
-     <iconset resource="../res/resources.qrc">
+     <iconset resource="../../res/resources.qrc">
       <normaloff>:/icons/icons/usertype.png</normaloff>:/icons/icons/usertype.png</iconset>
     </property>
    </column>
@@ -562,7 +562,7 @@
     <string>Filter</string>
    </property>
    <property name="icon">
-    <iconset resource="../res/resources.qrc">
+    <iconset resource="../../res/resources.qrc">
      <normaloff>:/icons/icons/filter.png</normaloff>:/icons/icons/filter.png</iconset>
    </property>
    <property name="iconSize">
@@ -580,7 +580,7 @@
   </widget>
  </widget>
  <resources>
-  <include location="../res/resources.qrc"/>
+  <include location="../../res/resources.qrc"/>
  </resources>
  <connections/>
 </ui>

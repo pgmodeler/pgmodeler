@@ -35,7 +35,7 @@
    <string>Import database</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="../res/resources.qrc">
+   <iconset resource="../../res/resources.qrc">
     <normaloff>:/icons/icons/pgsqlModeler48x48.png</normaloff>:/icons/icons/pgsqlModeler48x48.png</iconset>
   </property>
   <layout class="QGridLayout" name="gridLayout_24">
@@ -461,7 +461,7 @@
                     <string>...</string>
                    </property>
                    <property name="icon">
-                    <iconset resource="../res/resources.qrc">
+                    <iconset resource="../../res/resources.qrc">
                      <normaloff>:/icons/icons/selectall.png</normaloff>:/icons/icons/selectall.png</iconset>
                    </property>
                    <property name="iconSize">
@@ -499,7 +499,7 @@
                     <string>...</string>
                    </property>
                    <property name="icon">
-                    <iconset resource="../res/resources.qrc">
+                    <iconset resource="../../res/resources.qrc">
                      <normaloff>:/icons/icons/clearobjsel.png</normaloff>:/icons/icons/clearobjsel.png</iconset>
                    </property>
                    <property name="iconSize">
@@ -537,7 +537,7 @@
                     <string>...</string>
                    </property>
                    <property name="icon">
-                    <iconset resource="../res/resources.qrc">
+                    <iconset resource="../../res/resources.qrc">
                      <normaloff>:/icons/icons/add.png</normaloff>:/icons/icons/add.png</iconset>
                    </property>
                    <property name="iconSize">
@@ -575,7 +575,7 @@
                     <string>...</string>
                    </property>
                    <property name="icon">
-                    <iconset resource="../res/resources.qrc">
+                    <iconset resource="../../res/resources.qrc">
                      <normaloff>:/icons/icons/remove.png</normaloff>:/icons/icons/remove.png</iconset>
                    </property>
                    <property name="iconSize">
@@ -824,7 +824,7 @@
                       <set>AlignLeading|AlignVCenter</set>
                      </property>
                      <property name="icon">
-                      <iconset resource="../res/resources.qrc">
+                      <iconset resource="../../res/resources.qrc">
                        <normaloff>:/icons/icons/table.png</normaloff>:/icons/icons/table.png</iconset>
                      </property>
                     </column>
@@ -836,7 +836,7 @@
                       <set>AlignLeading|AlignVCenter</set>
                      </property>
                      <property name="icon">
-                      <iconset resource="../res/resources.qrc">
+                      <iconset resource="../../res/resources.qrc">
                        <normaloff>:/icons/icons/usertype.png</normaloff>:/icons/icons/usertype.png</iconset>
                      </property>
                     </column>
@@ -845,7 +845,7 @@
                       <string>ID</string>
                      </property>
                      <property name="icon">
-                      <iconset resource="../res/resources.qrc">
+                      <iconset resource="../../res/resources.qrc">
                        <normaloff>:/icons/icons/uid.png</normaloff>:/icons/icons/uid.png</iconset>
                      </property>
                     </column>
@@ -857,7 +857,7 @@
                       <set>AlignLeading|AlignVCenter</set>
                      </property>
                      <property name="icon">
-                      <iconset resource="../res/resources.qrc">
+                      <iconset resource="../../res/resources.qrc">
                        <normaloff>:/icons/icons/schema.png</normaloff>:/icons/icons/schema.png</iconset>
                      </property>
                     </column>
@@ -869,7 +869,7 @@
                       <set>AlignLeading|AlignVCenter</set>
                      </property>
                      <property name="icon">
-                      <iconset resource="../res/resources.qrc">
+                      <iconset resource="../../res/resources.qrc">
                        <normaloff>:/icons/icons/usertype.png</normaloff>:/icons/icons/usertype.png</iconset>
                      </property>
                     </column>
@@ -994,7 +994,7 @@
                <string>Cancel</string>
               </property>
               <property name="icon">
-               <iconset resource="../res/resources.qrc">
+               <iconset resource="../../res/resources.qrc">
                 <normaloff>:/icons/icons/error.png</normaloff>:/icons/icons/error.png</iconset>
               </property>
               <property name="iconSize">
@@ -1092,7 +1092,7 @@
         <string/>
        </property>
        <property name="pixmap">
-        <pixmap resource="../res/resources.qrc">:/images/images/pgmodeler_name.png</pixmap>
+        <pixmap resource="../../res/resources.qrc">:/images/images/pgmodeler_name.png</pixmap>
        </property>
       </widget>
      </item>
@@ -1136,7 +1136,7 @@
         <string>&amp;Import</string>
        </property>
        <property name="icon">
-        <iconset resource="../res/resources.qrc">
+        <iconset resource="../../res/resources.qrc">
          <normaloff>:/icons/icons/import.png</normaloff>:/icons/icons/import.png</iconset>
        </property>
        <property name="iconSize">
@@ -1174,7 +1174,7 @@
         <string>&amp;Close</string>
        </property>
        <property name="icon">
-        <iconset resource="../res/resources.qrc">
+        <iconset resource="../../res/resources.qrc">
          <normaloff>:/icons/icons/close1.png</normaloff>:/icons/icons/close1.png</iconset>
        </property>
        <property name="iconSize">
@@ -1206,7 +1206,7 @@
   <tabstop>close_btn</tabstop>
  </tabstops>
  <resources>
-  <include location="../res/resources.qrc"/>
+  <include location="../../res/resources.qrc"/>
  </resources>
  <connections/>
 </ui>

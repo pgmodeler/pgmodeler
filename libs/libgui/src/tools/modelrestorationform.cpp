@@ -18,6 +18,7 @@
 
 #include "modelrestorationform.h"
 #include "guiutilsns.h"
+#include "utilsns.h"
 
 ModelRestorationForm::ModelRestorationForm(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 {
@@ -46,7 +47,6 @@ int ModelRestorationForm::exec()
 	QStringList file_list = this->getTemporaryModels(), tmp_info;
 	QFileInfo info;
 	QTableWidgetItem *item=nullptr;
-	QFile input;
 	QString buffer, filename;
 	QRegExp regexp=QRegExp("(\\<database)( )+(name)(=)(\")");
 	int start=-1, end=-1, col=0;
@@ -56,10 +56,7 @@ int ModelRestorationForm::exec()
 		info.setFile(GlobalAttributes::getTemporaryDir(), file_list.front());
 		filename=GlobalAttributes::getTemporaryFilePath(file_list.front());
 
-		input.setFileName(filename);
-		input.open(QFile::ReadOnly);
-		buffer.append(input.readAll());
-		input.close();
+		buffer.append(UtilsNs::loadFile(filename));
 
 		start=regexp.indexIn(buffer) + regexp.matchedLength();
 		end=buffer.indexOf("\"", start);

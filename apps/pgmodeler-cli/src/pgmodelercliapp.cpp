@@ -19,6 +19,7 @@
 #include "pgmodelercliapp.h"
 #include "qtcompat/qtextstreamcompat.h"
 #include "qtcompat/splitbehaviorcompat.h"
+#include "utilsns.h"
 
 QTextStream PgModelerCliApp::out(stdout);
 
@@ -149,7 +150,7 @@ map<QString, bool> PgModelerCliApp::long_opts = {
 
 map<QString, QStringList> PgModelerCliApp::accepted_opts = {
 	{{ Attributes::Connection }, { ConnAlias, Host, Port, User, Passwd, InitialDb }},
-	{{ ExportToFile }, { Input, Output, PgSqlVer }},
+	{{ ExportToFile }, { Input, Output, PgSqlVer, Split }},
 	{{ ExportToPng },  { Input, Output, ShowGrid, ShowDelimiters, PageByPage, ZoomFactor }},
 	{{ ExportToSvg },  { Input, Output, ShowGrid, ShowDelimiters }},
 	{{ ExportToDict }, { Input, Output, Split, NoIndex }},
@@ -389,7 +390,7 @@ void PgModelerCliApp::showMenu()
 	out << QtCompat::endl;
 
 	out << tr("Operation mode options: ") << QtCompat::endl;
-	out << tr("  %1, %2\t\t    Export the input model to a sql script file.").arg(short_opts[ExportToFile]).arg(ExportToFile)<< QtCompat::endl;
+	out << tr("  %1, %2\t\t    Export the input model to sql script file(s).").arg(short_opts[ExportToFile]).arg(ExportToFile)<< QtCompat::endl;
 	out << tr("  %1, %2\t\t    Export the input model to a png image.").arg(short_opts[ExportToPng]).arg(ExportToPng) << QtCompat::endl;
 	out << tr("  %1, %2\t\t    Export the input model to a svg file.").arg(short_opts[ExportToSvg]).arg(ExportToSvg) << QtCompat::endl;
 	out << tr("  %1, %2\t\t    Export the input model to a data directory in HTML format.").arg(short_opts[ExportToDict]).arg(ExportToDict) << QtCompat::endl;
@@ -408,10 +409,14 @@ void PgModelerCliApp::showMenu()
 	out << tr("General options: ") << QtCompat::endl;
 	out << tr("  %1, %2 [FILE]\t\t    Input model file (.dbm). This is mandatory for export and fix operations.").arg(short_opts[Input]).arg(Input) << QtCompat::endl;
 	out << tr("  %1, %2 [DBNAME]\t    Input database name. This is mandatory for import operation.").arg(short_opts[InputDb]).arg(InputDb) << QtCompat::endl;
-	out << tr("  %1, %2 [FILE]\t\t    Output file. This is mandatory for fixing model or exporting to file, png or svg.").arg(short_opts[Output]).arg(Output) << QtCompat::endl;
-	out << tr("  %1, %2\t\t    Force the PostgreSQL version syntax when generating SQL code.").arg(short_opts[PgSqlVer]).arg(PgSqlVer) << QtCompat::endl;
+	out << tr("  %1, %2 [FILE|DIRECTORY]    Output file or directory. This is mandatory for fixing model or exporting to file, png or svg.").arg(short_opts[Output]).arg(Output) << QtCompat::endl;
+	out << tr("  %1, %2\t\t    Force the PostgreSQL syntax to the specified version when generating SQL code. The version string must be in form major.minor.").arg(short_opts[PgSqlVer]).arg(PgSqlVer) << QtCompat::endl;
 	out << tr("  %1, %2\t\t\t    Silent execution. Only critical messages and errors are shown during process.").arg(short_opts[Silent]).arg(Silent) << QtCompat::endl;
 	out << QtCompat::endl;	
+
+	out << tr("SQL file export options: ") << QtCompat::endl;
+	out << tr("  %1, %2\t\t\t    The SQL file is generated per object. The files will be named in such a way to reflect the correct creation order of the objects.").arg(short_opts[Split]).arg(Split) << QtCompat::endl;
+	out << QtCompat::endl;
 
 	out << tr("PNG and SVG export options: ") << QtCompat::endl;
 	out << tr("  %1, %2\t\t    Draws the grid in the exported image.").arg(short_opts[ShowGrid]).arg(ShowGrid) << QtCompat::endl;
@@ -899,7 +904,6 @@ void PgModelerCliApp::handleObjectRemoval(BaseObject *object)
 
 void PgModelerCliApp::extractObjectXML()
 {
-	QFile input;
 	QString buf, lin, def_xml, end_tag;
 	QTextStream ts;
 	QRegExp regexp(QString("^(\\<\\?xml)(.)*(\\<%1)( )*").arg(Attributes::DbModel)),
@@ -914,15 +918,7 @@ void PgModelerCliApp::extractObjectXML()
 
 	printMessage(tr("Extracting objects' XML..."));
 
-	input.setFileName(parsed_opts[Input]);
-	input.open(QFile::ReadOnly);
-
-	if(!input.isOpen())
-		throw Exception(Exception::getErrorMessage(ErrorCode::FileDirectoryNotAccessed).arg(parsed_opts[Input]),
-										ErrorCode::FileDirectoryNotAccessed,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-
-	buf.append(input.readAll());
-	input.close();
+	buf.append(UtilsNs::loadFile(parsed_opts[Input]));
 
 	//Check if the file contains a valid header (for .dbm file)
 	start=regexp.indexIn(buf);
@@ -1498,19 +1494,24 @@ void PgModelerCliApp::loadModel()
 	//Load the model file
 	model->loadModel(parsed_opts[Input]);
 
-	scene->blockSignals(true);
+	/* The scene object is created only when some options are used
+	 * so we need to check it if is not null to avoid segfaults */
+	if(scene)
+	{
+		scene->blockSignals(true);
 
-	scene->addLayers(model->getLayers(), false);
-	scene->setActiveLayers(model->getActiveLayers());
-	scene->setLayerColors(ObjectsScene::LayerNameColor, model->getLayerNameColors());
-	scene->setLayerColors(ObjectsScene::LayerRectColor, model->getLayerRectColors());
-	scene->setLayerNamesVisible(model->isLayerNamesVisible());
-	scene->setLayerRectsVisible(model->isLayerRectsVisible());
+		scene->addLayers(model->getLayers(), false);
+		scene->setActiveLayers(model->getActiveLayers());
+		scene->setLayerColors(ObjectsScene::LayerNameColor, model->getLayerNameColors());
+		scene->setLayerColors(ObjectsScene::LayerRectColor, model->getLayerRectColors());
+		scene->setLayerNamesVisible(model->isLayerNamesVisible());
+		scene->setLayerRectsVisible(model->isLayerRectsVisible());
 
-	if(model->isLayerRectsVisible())
-		model->setObjectsModified({ ObjectType::Schema });
+		if(model->isLayerRectsVisible())
+			model->setObjectsModified({ ObjectType::Schema });
 
-	scene->blockSignals(false);
+		scene->blockSignals(false);
+	}
 }
 
 void PgModelerCliApp::exportModel()
@@ -1543,7 +1544,7 @@ void PgModelerCliApp::exportModel()
 	else if(parsed_opts.count(ExportToFile))
 	{
 		printMessage(tr("Export to SQL script file: %1").arg(parsed_opts[Output]));
-		export_hlp->exportToSQL(model, parsed_opts[Output], parsed_opts[PgSqlVer]);
+		export_hlp->exportToSQL(model, parsed_opts[Output], parsed_opts[PgSqlVer],  parsed_opts.count(Split) > 0);
 	}
 	//Export data dictionary
 	else if(parsed_opts.count(ExportToDict))
@@ -1746,16 +1747,8 @@ void PgModelerCliApp::diffModelDatabase()
 	{
 		if(parsed_opts.count(SaveDiff))
 		{
-			QFile output;
-
 			printMessage(tr("Saving diff to file `%1'").arg(parsed_opts[Output]));
-			output.setFileName(parsed_opts[Output]);
-
-			if(!output.open(QFile::WriteOnly))
-				throw Exception(Exception::getErrorMessage(ErrorCode::FileDirectoryNotWritten).arg(parsed_opts[Output]),
-												ErrorCode::FileDirectoryNotWritten, __PRETTY_FUNCTION__,__FILE__,__LINE__);
-			output.write(diff_hlp->getDiffDefinition().toUtf8());
-			output.close();
+			UtilsNs::saveFile(parsed_opts[Output], diff_hlp->getDiffDefinition().toUtf8());
 		}
 		else
 		{
@@ -1989,15 +1982,7 @@ void PgModelerCliApp::handleLinuxMimeDatabase(bool uninstall, bool system_wide)
 				buf.append(schparser.getCodeDefinition(attribs).toUtf8());
 				QDir(QString(".")).mkpath(QFileInfo(files[i]).absolutePath());
 
-				out.setFileName(files[i]);
-				out.open(QFile::WriteOnly);
-
-				if(!out.isOpen())
-					throw Exception(Exception::getErrorMessage(ErrorCode::FileDirectoryNotWritten).arg(files[i]),
-													ErrorCode::FileDirectoryNotWritten,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-
-				out.write(buf.data(), buf.size());
-				out.close();
+				UtilsNs::saveFile(files[i], buf);
 				buf.clear();
 			}
 		}

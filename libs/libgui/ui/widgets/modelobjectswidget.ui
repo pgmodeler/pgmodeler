@@ -35,7 +35,7 @@
    <string>Model Objects</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="../res/resources.qrc">
+   <iconset resource="../../res/resources.qrc">
     <normaloff>:/icons/icons/pgsqlModeler48x48.png</normaloff>:/icons/icons/pgsqlModeler48x48.png</iconset>
   </property>
   <property name="floating" stdset="0">
@@ -295,7 +295,7 @@
               <bool>false</bool>
              </attribute>
              <attribute name="verticalHeaderDefaultSectionSize">
-              <number>28</number>
+              <number>37</number>
              </attribute>
              <attribute name="verticalHeaderHighlightSections">
               <bool>false</bool>
@@ -314,7 +314,7 @@
                <set>AlignLeading|AlignVCenter</set>
               </property>
               <property name="icon">
-               <iconset resource="../res/resources.qrc">
+               <iconset resource="../../res/resources.qrc">
                 <normaloff>:/icons/icons/uid.png</normaloff>:/icons/icons/uid.png</iconset>
               </property>
              </column>
@@ -326,7 +326,7 @@
                <set>AlignLeading|AlignVCenter</set>
               </property>
               <property name="icon">
-               <iconset resource="../res/resources.qrc">
+               <iconset resource="../../res/resources.qrc">
                 <normaloff>:/icons/icons/table.png</normaloff>:/icons/icons/table.png</iconset>
               </property>
              </column>
@@ -338,7 +338,7 @@
                <set>AlignLeading|AlignVCenter</set>
               </property>
               <property name="icon">
-               <iconset resource="../res/resources.qrc">
+               <iconset resource="../../res/resources.qrc">
                 <normaloff>:/icons/icons/usertype.png</normaloff>:/icons/icons/usertype.png</iconset>
               </property>
              </column>
@@ -350,7 +350,7 @@
                <set>AlignLeading|AlignVCenter</set>
               </property>
               <property name="icon">
-               <iconset resource="../res/resources.qrc">
+               <iconset resource="../../res/resources.qrc">
                 <normaloff>:/icons/icons/schema.png</normaloff>:/icons/icons/schema.png</iconset>
               </property>
              </column>
@@ -362,7 +362,7 @@
                <set>AlignLeading|AlignVCenter</set>
               </property>
               <property name="icon">
-               <iconset resource="../res/resources.qrc">
+               <iconset resource="../../res/resources.qrc">
                 <normaloff>:/icons/icons/usertype.png</normaloff>:/icons/icons/usertype.png</iconset>
               </property>
              </column>
@@ -570,7 +570,7 @@
          <string>...</string>
         </property>
         <property name="icon">
-         <iconset resource="../res/resources.qrc">
+         <iconset resource="../../res/resources.qrc">
           <normaloff>:/icons/icons/close1.png</normaloff>:/icons/icons/close1.png</iconset>
         </property>
         <property name="autoRaise">
@@ -677,7 +677,7 @@
         <string/>
        </property>
        <property name="icon">
-        <iconset resource="../res/resources.qrc">
+        <iconset resource="../../res/resources.qrc">
          <normaloff>:/icons/icons/confirm.png</normaloff>:/icons/icons/confirm.png</iconset>
        </property>
        <property name="iconSize">
@@ -712,7 +712,7 @@
         <string/>
        </property>
        <property name="icon">
-        <iconset resource="../res/resources.qrc">
+        <iconset resource="../../res/resources.qrc">
          <normaloff>:/icons/icons/close1.png</normaloff>:/icons/icons/close1.png</iconset>
        </property>
        <property name="iconSize">
@@ -750,7 +750,7 @@
         <string>...</string>
        </property>
        <property name="icon">
-        <iconset resource="../res/resources.qrc">
+        <iconset resource="../../res/resources.qrc">
          <normaloff>:/icons/icons/treeview.png</normaloff>:/icons/icons/treeview.png</iconset>
        </property>
        <property name="iconSize">
@@ -788,7 +788,7 @@
         <string>...</string>
        </property>
        <property name="icon">
-        <iconset resource="../res/resources.qrc">
+        <iconset resource="../../res/resources.qrc">
          <normaloff>:/icons/icons/listview.png</normaloff>:/icons/icons/listview.png</iconset>
        </property>
        <property name="iconSize">
@@ -823,7 +823,7 @@
         <string>...</string>
        </property>
        <property name="icon">
-        <iconset resource="../res/resources.qrc">
+        <iconset resource="../../res/resources.qrc">
          <normaloff>:/icons/icons/filter.png</normaloff>:/icons/icons/filter.png</iconset>
        </property>
        <property name="iconSize">
@@ -861,7 +861,7 @@
         <string>...</string>
        </property>
        <property name="icon">
-        <iconset resource="../res/resources.qrc">
+        <iconset resource="../../res/resources.qrc">
          <normaloff>:/icons/icons/add.png</normaloff>:/icons/icons/add.png</iconset>
        </property>
        <property name="iconSize">
@@ -896,7 +896,7 @@
         <string>...</string>
        </property>
        <property name="icon">
-        <iconset resource="../res/resources.qrc">
+        <iconset resource="../../res/resources.qrc">
          <normaloff>:/icons/icons/remove.png</normaloff>:/icons/icons/remove.png</iconset>
        </property>
        <property name="iconSize">
@@ -930,7 +930,7 @@
   <tabstop>hide_tb</tabstop>
  </tabstops>
  <resources>
-  <include location="../res/resources.qrc"/>
+  <include location="../../res/resources.qrc"/>
  </resources>
  <connections/>
 </ui>

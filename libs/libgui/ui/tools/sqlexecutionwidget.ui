@@ -74,7 +74,7 @@
          <string>...</string>
         </property>
         <property name="icon">
-         <iconset resource="../res/resources.qrc">
+         <iconset resource="../../res/resources.qrc">
           <normaloff>:/icons/icons/close.png</normaloff>:/icons/icons/close.png</iconset>
         </property>
         <property name="iconSize">
@@ -154,7 +154,7 @@
         <string>Run</string>
        </property>
        <property name="icon">
-        <iconset resource="../res/resources.qrc">
+        <iconset resource="../../res/resources.qrc">
          <normaloff>:/icons/icons/run.png</normaloff>:/icons/icons/run.png</iconset>
        </property>
        <property name="iconSize">
@@ -198,7 +198,7 @@
         <string>Stop</string>
        </property>
        <property name="icon">
-        <iconset resource="../res/resources.qrc">
+        <iconset resource="../../res/resources.qrc">
          <normaloff>:/icons/icons/stop.png</normaloff>:/icons/icons/stop.png</iconset>
        </property>
        <property name="iconSize">
@@ -236,7 +236,7 @@
         <string>&amp;Script</string>
        </property>
        <property name="icon">
-        <iconset resource="../res/resources.qrc">
+        <iconset resource="../../res/resources.qrc">
          <normaloff>:/icons/icons/sqlcode.png</normaloff>:/icons/icons/sqlcode.png</iconset>
        </property>
        <property name="iconSize">
@@ -283,7 +283,7 @@
         <string>Fi&amp;nd</string>
        </property>
        <property name="icon">
-        <iconset resource="../res/resources.qrc">
+        <iconset resource="../../res/resources.qrc">
          <normaloff>:/icons/icons/findtext.png</normaloff>:/icons/icons/findtext.png</iconset>
        </property>
        <property name="iconSize">
@@ -330,7 +330,7 @@
         <string>Clear All</string>
        </property>
        <property name="icon">
-        <iconset resource="../res/resources.qrc">
+        <iconset resource="../../res/resources.qrc">
          <normaloff>:/icons/icons/cleartext.png</normaloff>:/icons/icons/cleartext.png</iconset>
        </property>
        <property name="iconSize">
@@ -365,7 +365,7 @@
         <string>Snippe&amp;ts</string>
        </property>
        <property name="icon">
-        <iconset resource="../res/resources.qrc">
+        <iconset resource="../../res/resources.qrc">
          <normaloff>:/icons/icons/codesnippet.png</normaloff>:/icons/icons/codesnippet.png</iconset>
        </property>
        <property name="iconSize">
@@ -412,7 +412,7 @@
         <string>E&amp;xport</string>
        </property>
        <property name="icon">
-        <iconset resource="../res/resources.qrc">
+        <iconset resource="../../res/resources.qrc">
          <normaloff>:/icons/icons/exportdata.png</normaloff>:/icons/icons/exportdata.png</iconset>
        </property>
        <property name="iconSize">
@@ -456,7 +456,7 @@
         <string>F&amp;ilter</string>
        </property>
        <property name="icon">
-        <iconset resource="../res/resources.qrc">
+        <iconset resource="../../res/resources.qrc">
          <normaloff>:/icons/icons/filter.png</normaloff>:/icons/icons/filter.png</iconset>
        </property>
        <property name="iconSize">
@@ -500,7 +500,7 @@
         <string>&amp;Output</string>
        </property>
        <property name="icon">
-        <iconset resource="../res/resources.qrc">
+        <iconset resource="../../res/resources.qrc">
          <normaloff>:/icons/icons/outputpane.png</normaloff>:/icons/icons/outputpane.png</iconset>
        </property>
        <property name="iconSize">
@@ -568,7 +568,7 @@
           <string/>
          </property>
          <property name="pixmap">
-          <pixmap resource="../res/resources.qrc">:/icons/icons/database.png</pixmap>
+          <pixmap resource="../../res/resources.qrc">:/icons/icons/database.png</pixmap>
          </property>
          <property name="scaledContents">
           <bool>true</bool>
@@ -809,7 +809,7 @@
                     <string>...</string>
                    </property>
                    <property name="icon">
-                    <iconset resource="../res/resources.qrc">
+                    <iconset resource="../../res/resources.qrc">
                      <normaloff>:/icons/icons/close1.png</normaloff>:/icons/icons/close1.png</iconset>
                    </property>
                    <property name="autoRaise">
@@ -962,7 +962,7 @@
   </layout>
  </widget>
  <resources>
-  <include location="../res/resources.qrc"/>
+  <include location="../../res/resources.qrc"/>
  </resources>
  <connections/>
 </ui>

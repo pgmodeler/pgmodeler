@@ -63,7 +63,22 @@ class ModelExportHelper: public QObject {
 		//! \brief Indicates if the exporting thread was canceled by the user (only in thread mode)
 		export_canceled,
 
-		db_sql_reenabled;
+		db_sql_reenabled,
+
+		//! \brief Indicates if the grid should be displayed during exporting to graphical format
+		show_grid,
+
+		//! \brief Indicates if the page delimiters should be displayed during exporting to graphical format
+		show_delim,
+
+		//! \brief Indicates if the export to png should be done pageby page
+		page_by_page,
+
+		//! \brief Indicates if the data dictionary or sql export should be split into separated files
+		split,
+
+		//! \brief Indicates if the data dictionary should be browsable (include an index)
+		browsable;
 
 		//! \brief Database model used as reference on export operation (only in thread mode)
 		DatabaseModel *db_model;
@@ -95,8 +110,6 @@ class ModelExportHelper: public QObject {
 		QString filename;
 
 		double zoom;
-
-		bool show_grid, show_delim, page_by_page,	splitted, browsable;
 
 		//! \brief Saves the current state of ALTER command generaton for table columns/constraints
 		void saveGenAtlerCmdsStatus(DatabaseModel *db_model);
@@ -144,7 +157,7 @@ class ModelExportHelper: public QObject {
 		void setIgnoredErrors(const QStringList &err_codes);
 
 		//! \brief Exports the model to a named SQL file. The PostgreSQL version syntax must be specified.
-		void exportToSQL(DatabaseModel *db_model, const QString &filename, const QString &pgsql_ver);
+		void exportToSQL(DatabaseModel *db_model, const QString &filename, const QString &pgsql_ver, bool split);
 
 		/*! \brief Exports the model to a named PNG image. The boolean parameters controls the grid exhibition
 		as well the page delimiters on the output image. The zoom parameter controls the zoom applied to the viewport
@@ -165,9 +178,9 @@ class ModelExportHelper: public QObject {
 											bool drop_db=false, bool drop_objs=false, bool simulate=false, bool use_tmp_names=false);
 
 		/*! \brief Exports the model to a named data dictionary. The options browsable and splitted indicate,
-		 * respectively, that the data dictionary should have an object index and the dictionary should be splitted
+		 * respectively, that the data dictionary should have an object index and the dictionary should be split
 		 * in different files per table */
-		void exportToDataDict(DatabaseModel *db_model, const QString &path, bool browsable, bool splitted);
+		void exportToDataDict(DatabaseModel *db_model, const QString &path, bool browsable, bool split);
 
 		/*! \brief Configures the DBMS export params before start the export thread (when in thread mode).
 		This form receive a database model as input and the sql code to be exported will be generated from it.
@@ -181,7 +194,7 @@ class ModelExportHelper: public QObject {
 
 		/*! \brief Configures the SQL export params before start the export thread (when in thread mode).
 		This form receive the model, output filename and pgsql version to be used */
-		void setExportToSQLParams(DatabaseModel *db_model, const QString &filename, const QString &pgsql_ver);
+		void setExportToSQLParams(DatabaseModel *db_model, const QString &filename, const QString &pgsql_ver, bool split);
 
 		/*! \brief Configures the PNG export params before start the export thread (when in thread mode).
 		This form receive the objects scene, a viewport, the output filename, zoom factor, grid options and page by page export options */
@@ -193,12 +206,12 @@ class ModelExportHelper: public QObject {
 		void setExportToSVGParams(ObjectsScene *scene, const QString &filename, bool show_grid, bool show_delim);
 
 		/*! \brief Configures the Data Dictionary export params before start the export thread (when in thread mode).
-		This form receive the database model, the output path and browsabe and splitted options. */
-		void setExportToDataDictParams(DatabaseModel *db_model, const QString &path, bool browsable, bool splitted);
+		This form receive the database model, the output path and browsabe and split options. */
+		void setExportToDataDictParams(DatabaseModel *db_model, const QString &path, bool browsable, bool split);
 
 	signals:
 		//! \brief This singal is emitted whenever the export progress changes
-		void s_progressUpdated(int progress, QString msg, ObjectType obj_type=ObjectType::BaseObject, QString cmd="", bool is_code_gen=false);
+		void s_progressUpdated(int progress, QString msg, ObjectType obj_type=ObjectType::BaseObject, QString cmd="", bool is_code_gen = false);
 
 		//! \brief This signal is emited when the export has finished
 		void s_exportFinished();

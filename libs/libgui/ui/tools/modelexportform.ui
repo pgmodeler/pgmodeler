@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>886</width>
-    <height>835</height>
+    <height>702</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -35,7 +35,7 @@
    <string>Export model</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="../res/resources.qrc">
+   <iconset resource="../../res/resources.qrc">
     <normaloff>:/icons/icons/pgsqlModeler48x48.png</normaloff>:/icons/icons/pgsqlModeler48x48.png</iconset>
   </property>
   <layout class="QGridLayout" name="gridLayout_6">
@@ -202,7 +202,7 @@
                      <string/>
                     </property>
                     <property name="pixmap">
-                     <pixmap resource="../res/resources.qrc">:/images/images/model2sgdb.png</pixmap>
+                     <pixmap resource="../../res/resources.qrc">:/images/images/model2sgdb.png</pixmap>
                     </property>
                     <property name="scaledContents">
                      <bool>true</bool>
@@ -578,6 +578,12 @@
                  <verstretch>0</verstretch>
                 </sizepolicy>
                </property>
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>0</height>
+                </size>
+               </property>
                <layout class="QGridLayout" name="export_to_file_grid">
                 <property name="leftMargin">
                  <number>4</number>
@@ -591,29 +597,7 @@
                 <property name="bottomMargin">
                  <number>4</number>
                 </property>
-                <item row="0" column="1">
-                 <widget class="QLabel" name="file_lbl">
-                  <property name="enabled">
-                   <bool>true</bool>
-                  </property>
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                  <property name="minimumSize">
-                   <size>
-                    <width>0</width>
-                    <height>0</height>
-                   </size>
-                  </property>
-                  <property name="text">
-                   <string>File:</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="0" column="0" rowspan="2">
+                <item row="0" column="0" rowspan="3">
                  <widget class="QLabel" name="model_sql_lbl">
                   <property name="enabled">
                    <bool>true</bool>
@@ -640,14 +624,85 @@
                    <string/>
                   </property>
                   <property name="pixmap">
-                   <pixmap resource="../res/resources.qrc">:/images/images/model2sql.png</pixmap>
+                   <pixmap resource="../../res/resources.qrc">:/images/images/model2sql.png</pixmap>
                   </property>
                   <property name="scaledContents">
                    <bool>true</bool>
                   </property>
                  </widget>
                 </item>
-                <item row="1" column="2">
+                <item row="0" column="1">
+                 <widget class="QLabel" name="mode_lbl">
+                  <property name="enabled">
+                   <bool>true</bool>
+                  </property>
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="minimumSize">
+                   <size>
+                    <width>0</width>
+                    <height>0</height>
+                   </size>
+                  </property>
+                  <property name="statusTip">
+                   <string/>
+                  </property>
+                  <property name="text">
+                   <string>Mode:</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="1" column="1">
+                 <widget class="QLabel" name="output_lbl">
+                  <property name="enabled">
+                   <bool>true</bool>
+                  </property>
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="minimumSize">
+                   <size>
+                    <width>0</width>
+                    <height>0</height>
+                   </size>
+                  </property>
+                  <property name="text">
+                   <string>Output:</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="2" column="1">
+                 <widget class="QLabel" name="pgsql_lbl">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="minimumSize">
+                   <size>
+                    <width>0</width>
+                    <height>0</height>
+                   </size>
+                  </property>
+                  <property name="font">
+                   <font>
+                    <italic>false</italic>
+                   </font>
+                  </property>
+                  <property name="text">
+                   <string>PostgreSQL:</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="2" column="2">
                  <layout class="QHBoxLayout" name="horizontalLayout_5">
                   <item>
                    <widget class="QComboBox" name="pgsqlvers_cmb">
@@ -689,29 +744,50 @@
                   </item>
                  </layout>
                 </item>
-                <item row="1" column="1">
-                 <widget class="QLabel" name="pgsql_lbl">
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                  <property name="minimumSize">
-                   <size>
-                    <width>0</width>
-                    <height>0</height>
-                   </size>
-                  </property>
-                  <property name="font">
-                   <font>
-                    <italic>false</italic>
-                   </font>
-                  </property>
-                  <property name="text">
-                   <string>PostgreSQL:</string>
-                  </property>
-                 </widget>
+                <item row="0" column="2">
+                 <layout class="QHBoxLayout" name="horizontalLayout">
+                  <item>
+                   <widget class="QRadioButton" name="sql_standalone_rb">
+                    <property name="sizePolicy">
+                     <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                      <horstretch>0</horstretch>
+                      <verstretch>0</verstretch>
+                     </sizepolicy>
+                    </property>
+                    <property name="toolTip">
+                     <string>&lt;strong&gt;Standalone:&lt;/strong&gt; pgModeler will generate a single SQL file containing all the code that defines the whole database. </string>
+                    </property>
+                    <property name="statusTip">
+                     <string/>
+                    </property>
+                    <property name="text">
+                     <string>Standalone</string>
+                    </property>
+                    <property name="checked">
+                     <bool>true</bool>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QRadioButton" name="sql_split_rb">
+                    <property name="sizePolicy">
+                     <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                      <horstretch>0</horstretch>
+                      <verstretch>0</verstretch>
+                     </sizepolicy>
+                    </property>
+                    <property name="toolTip">
+                     <string>&lt;strong&gt;Split:&lt;/strong&gt; the SQL definition of each object is generated in separated files inside the selected directory. In this mode the files are named in such a way to reflect the correct creation order.</string>
+                    </property>
+                    <property name="statusTip">
+                     <string/>
+                    </property>
+                    <property name="text">
+                     <string>Split</string>
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
                 </item>
                </layout>
               </widget>
@@ -743,6 +819,25 @@
              <property name="bottomMargin">
               <number>4</number>
              </property>
+             <item row="0" column="0" rowspan="2">
+              <widget class="QRadioButton" name="export_to_img_rb">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="text">
+                <string/>
+               </property>
+               <property name="checked">
+                <bool>false</bool>
+               </property>
+               <property name="autoExclusive">
+                <bool>false</bool>
+               </property>
+              </widget>
+             </item>
              <item row="0" column="2" rowspan="2">
               <widget class="QWidget" name="export_to_img_wgt" native="true">
                <property name="enabled">
@@ -818,7 +913,7 @@
                      <string/>
                     </property>
                     <property name="pixmap">
-                     <pixmap resource="../res/resources.qrc">:/images/images/model2png.png</pixmap>
+                     <pixmap resource="../../res/resources.qrc">:/images/images/model2png.png</pixmap>
                     </property>
                     <property name="scaledContents">
                      <bool>true</bool>
@@ -1024,25 +1119,6 @@
                </layout>
               </widget>
              </item>
-             <item row="0" column="0" rowspan="2">
-              <widget class="QRadioButton" name="export_to_img_rb">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="text">
-                <string/>
-               </property>
-               <property name="checked">
-                <bool>false</bool>
-               </property>
-               <property name="autoExclusive">
-                <bool>false</bool>
-               </property>
-              </widget>
-             </item>
             </layout>
            </widget>
           </item>
@@ -1070,6 +1146,25 @@
              <property name="bottomMargin">
               <number>4</number>
              </property>
+             <item row="0" column="0" rowspan="2">
+              <widget class="QRadioButton" name="export_to_dict_rb">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="text">
+                <string/>
+               </property>
+               <property name="checked">
+                <bool>false</bool>
+               </property>
+               <property name="autoExclusive">
+                <bool>false</bool>
+               </property>
+              </widget>
+             </item>
              <item row="0" column="2" rowspan="2">
               <widget class="QWidget" name="export_to_dict_wgt" native="true">
                <property name="enabled">
@@ -1100,6 +1195,31 @@
                 <property name="bottomMargin">
                  <number>4</number>
                 </property>
+                <item row="0" column="5">
+                 <widget class="QCheckBox" name="incl_index_chk">
+                  <property name="enabled">
+                   <bool>true</bool>
+                  </property>
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="toolTip">
+                   <string>pgModeler will generate an index to help navigate through the data dictionary. If splitted mode is set then a separated file named &lt;em&gt;index.html&lt;/em&gt; will be saved into the destination folder.</string>
+                  </property>
+                  <property name="statusTip">
+                   <string/>
+                  </property>
+                  <property name="text">
+                   <string>Include index</string>
+                  </property>
+                  <property name="checked">
+                   <bool>true</bool>
+                  </property>
+                 </widget>
+                </item>
                 <item row="0" column="0" rowspan="3">
                  <layout class="QVBoxLayout" name="verticalLayout_4">
                   <item>
@@ -1129,7 +1249,7 @@
                      <string/>
                     </property>
                     <property name="pixmap">
-                     <pixmap resource="../res/resources.qrc">:/images/images/model2datadict.png</pixmap>
+                     <pixmap resource="../../res/resources.qrc">:/images/images/model2datadict.png</pixmap>
                     </property>
                     <property name="scaledContents">
                      <bool>true</bool>
@@ -1138,65 +1258,21 @@
                   </item>
                  </layout>
                 </item>
-                <item row="0" column="4">
-                 <spacer name="horizontalSpacer_7">
+                <item row="0" column="6">
+                 <spacer name="horizontalSpacer_5">
                   <property name="orientation">
                    <enum>Qt::Horizontal</enum>
                   </property>
-                  <property name="sizeType">
-                   <enum>QSizePolicy::Fixed</enum>
-                  </property>
                   <property name="sizeHint" stdset="0">
                    <size>
-                    <width>5</width>
+                    <width>40</width>
                     <height>20</height>
                    </size>
                   </property>
                  </spacer>
                 </item>
-                <item row="1" column="1">
-                 <widget class="QLabel" name="image_lbl_4">
-                  <property name="enabled">
-                   <bool>true</bool>
-                  </property>
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                  <property name="minimumSize">
-                   <size>
-                    <width>0</width>
-                    <height>0</height>
-                   </size>
-                  </property>
-                  <property name="text">
-                   <string>Output:</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="0" column="3">
-                 <widget class="QRadioButton" name="splitted_rb">
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                  <property name="toolTip">
-                   <string>&lt;strong&gt;Split:&lt;/strong&gt; the data dictionaries are generated in separated files inside the selected directory. In this mode the files are named &lt;em&gt;schema.table.html&lt;/em&gt;.</string>
-                  </property>
-                  <property name="statusTip">
-                   <string/>
-                  </property>
-                  <property name="text">
-                   <string>Split</string>
-                  </property>
-                 </widget>
-                </item>
                 <item row="0" column="1">
-                 <widget class="QLabel" name="image_lbl_3">
+                 <widget class="QLabel" name="data_dict_mode_lbl">
                   <property name="enabled">
                    <bool>true</bool>
                   </property>
@@ -1220,46 +1296,8 @@
                   </property>
                  </widget>
                 </item>
-                <item row="0" column="5">
-                 <widget class="QCheckBox" name="incl_index_chk">
-                  <property name="enabled">
-                   <bool>true</bool>
-                  </property>
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                  <property name="toolTip">
-                   <string>pgModeler will generate an index to help navigate through the data dictionary. If splitted mode is set then a separated file named &lt;em&gt;index.html&lt;/em&gt; will be saved into the destination folder.</string>
-                  </property>
-                  <property name="statusTip">
-                   <string/>
-                  </property>
-                  <property name="text">
-                   <string>Include index</string>
-                  </property>
-                  <property name="checked">
-                   <bool>true</bool>
-                  </property>
-                 </widget>
-                </item>
-                <item row="0" column="6">
-                 <spacer name="horizontalSpacer_5">
-                  <property name="orientation">
-                   <enum>Qt::Horizontal</enum>
-                  </property>
-                  <property name="sizeHint" stdset="0">
-                   <size>
-                    <width>40</width>
-                    <height>20</height>
-                   </size>
-                  </property>
-                 </spacer>
-                </item>
                 <item row="0" column="2">
-                 <widget class="QRadioButton" name="standalone_rb">
+                 <widget class="QRadioButton" name="dict_standalone_rb">
                   <property name="toolTip">
                    <string>&lt;strong&gt;Standalone:&lt;/strong&gt; pgModeler will generate a single HTML file containing the data dictionaries of all tables in the database model. </string>
                   </property>
@@ -1274,26 +1312,64 @@
                   </property>
                  </widget>
                 </item>
+                <item row="0" column="4">
+                 <spacer name="horizontalSpacer_7">
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
+                  </property>
+                  <property name="sizeType">
+                   <enum>QSizePolicy::Fixed</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>5</width>
+                    <height>20</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+                <item row="1" column="1">
+                 <widget class="QLabel" name="data_dict_ouput_lbl">
+                  <property name="enabled">
+                   <bool>true</bool>
+                  </property>
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="minimumSize">
+                   <size>
+                    <width>0</width>
+                    <height>0</height>
+                   </size>
+                  </property>
+                  <property name="text">
+                   <string>Output:</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="0" column="3">
+                 <widget class="QRadioButton" name="dict_split_rb">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="toolTip">
+                   <string>&lt;strong&gt;Split:&lt;/strong&gt; the data dictionaries are generated in separated files inside the selected directory. In this mode the files are named &lt;em&gt;schema.table.html&lt;/em&gt;.</string>
+                  </property>
+                  <property name="statusTip">
+                   <string/>
+                  </property>
+                  <property name="text">
+                   <string>Split</string>
+                  </property>
+                 </widget>
+                </item>
                </layout>
-              </widget>
-             </item>
-             <item row="0" column="0" rowspan="2">
-              <widget class="QRadioButton" name="export_to_dict_rb">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="text">
-                <string/>
-               </property>
-               <property name="checked">
-                <bool>false</bool>
-               </property>
-               <property name="autoExclusive">
-                <bool>false</bool>
-               </property>
               </widget>
              </item>
             </layout>
@@ -1405,7 +1481,7 @@
                 <string>Cancel</string>
                </property>
                <property name="icon">
-                <iconset resource="../res/resources.qrc">
+                <iconset resource="../../res/resources.qrc">
                  <normaloff>:/icons/icons/error.png</normaloff>:/icons/icons/error.png</iconset>
                </property>
                <property name="iconSize">
@@ -1504,7 +1580,7 @@
         <string/>
        </property>
        <property name="pixmap">
-        <pixmap resource="../res/resources.qrc">:/images/images/pgmodeler_name.png</pixmap>
+        <pixmap resource="../../res/resources.qrc">:/images/images/pgmodeler_name.png</pixmap>
        </property>
       </widget>
      </item>
@@ -1545,7 +1621,7 @@
         <string>&amp;Export</string>
        </property>
        <property name="icon">
-        <iconset resource="../res/resources.qrc">
+        <iconset resource="../../res/resources.qrc">
          <normaloff>:/icons/icons/export.png</normaloff>:/icons/icons/export.png</iconset>
        </property>
        <property name="iconSize">
@@ -1583,7 +1659,7 @@
         <string>&amp;Close</string>
        </property>
        <property name="icon">
-        <iconset resource="../res/resources.qrc">
+        <iconset resource="../../res/resources.qrc">
          <normaloff>:/icons/icons/close1.png</normaloff>:/icons/icons/close1.png</iconset>
        </property>
        <property name="iconSize">
@@ -1616,7 +1692,7 @@
   <tabstop>close_btn</tabstop>
  </tabstops>
  <resources>
-  <include location="../res/resources.qrc"/>
+  <include location="../../res/resources.qrc"/>
  </resources>
  <connections/>
 </ui>

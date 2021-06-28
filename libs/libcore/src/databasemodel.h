@@ -132,7 +132,11 @@ class DatabaseModel:  public QObject, public BaseObject {
 
 		is_layer_names_visible,
 
-		is_layer_rects_visible;
+		is_layer_rects_visible,
+
+		/*! \brief This flag is used to notify the model to break the code generation/saving.
+		 *  This is only used by the export helper to cancel a running export to file process */
+		cancel_saving;
 
 		//! \brief Vectors that stores all the objects types
 		vector<BaseObject *> textboxes,
@@ -226,6 +230,10 @@ class DatabaseModel:  public QObject, public BaseObject {
 		 * calling this method, the user is obligated to call the methdo setObjectsModified() to force the graphical objects rendering. */
 		void setLoadingModel(bool value);
 
+		/*! \brief This method forces the breaking of the code generation/saving in the methods getCodeDefinition, saveModel and saveSplitModel.
+		 *  This method is used only by the export helper in such a way to allow the user to abort any export to file in a threaded operation. */
+		void setCancelSaving(bool value);
+
 		//! \brief Set the initial capacity of the objects list for a optimized memory usage
 		void setObjectListsCapacity(unsigned capacity);
 
@@ -267,6 +275,17 @@ class DatabaseModel:  public QObject, public BaseObject {
 		void getViewDependencies(BaseObject *object, vector<BaseObject *> &deps, bool inc_indirect_deps);
 		void getGenericSQLDependencies(BaseObject *object, vector<BaseObject *> &deps, bool inc_indirect_deps);
 		void getTransformDependencies(BaseObject *object, vector<BaseObject *> &deps, bool inc_indirect_deps);
+
+		/*! \brief Configures all the shell types related to base user-defined base. By default, this method will convert
+		 * parameters of functions that are part of a user defined type and return the shell types SQL code. If the parameter reset_config
+		 * the method will only restore the original configuration of the functions and return an empty string. */
+		QString configureShellTypes(bool reset_config);
+
+		/*! \brief Saves the appended/prepended code of the database model to a separated file.
+		 * The parameter save_appended tells the method to save appended code instead of prepended code.
+		 * The parameter path is where the file will be saved. The file_prefix is a string that is prepended
+		 * to the filename. Returns true when the file could be saved. */
+		bool saveSplitCustomSQL(bool save_appended, const QString &path, const QString &file_prefix);
 
 	protected:
 		//! \brief Set the layer names (only to be written in the XML definition)
@@ -454,6 +473,11 @@ class DatabaseModel:  public QObject, public BaseObject {
 
 		//! \brief Saves the specified code definition for the model on the specified filename
 		void saveModel(const QString &filename, unsigned def_type);
+
+		/*! \brief Saves the model's SQL code definition by creating separated files for each object
+		 *  The provided path must be a directory. If it does not exists then the method will create
+		 *  it prior to the generation of the files. */
+		void saveSplitSQLDefinition(const QString &path);
 
 		/*! \brief Returns the complete SQL/XML defintion for the entire model (including all the other objects).
 		 The parameter 'export_file' is used to format the generated code in a way that can be saved
@@ -848,6 +872,7 @@ class DatabaseModel:  public QObject, public BaseObject {
 		void s_objectLoaded(int progress, QString object_id, unsigned obj_type);
 
 	friend class DatabaseImportHelper;
+	friend class ModelExportHelper;
 	friend class ModelWidget;
 	friend class PgModelerCliApp;
 	friend class OperationList;

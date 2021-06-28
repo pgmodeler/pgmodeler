@@ -34,7 +34,7 @@ ModelExportForm::ModelExportForm(QWidget *parent, Qt::WindowFlags f) : QDialog(p
 	sql_file_sel->setMimeTypeFilters({"application/sql", "application/octet-stream"});
 	sql_file_sel->setDefaultSuffix("sql");
 	sql_file_sel->setAcceptMode(QFileDialog::AcceptSave);
-	export_to_file_grid->addWidget(sql_file_sel, 0, 2);
+	export_to_file_grid->addWidget(sql_file_sel, 1, 2);
 
 	img_file_sel = new FileSelectorWidget(this);
 	img_file_sel->setFileDialogTitle(tr("Export model to graphics file"));
@@ -107,8 +107,10 @@ ModelExportForm::ModelExportForm(QWidget *parent, Qt::WindowFlags f) : QDialog(p
 	connect(svg_rb, SIGNAL(toggled(bool)), this, SLOT(selectImageFormat()));
 	connect(png_rb, SIGNAL(toggled(bool)), this, SLOT(selectImageFormat()));
 	connect(ignore_error_codes_chk, SIGNAL(toggled(bool)), error_codes_edt, SLOT(setEnabled(bool)));
-	connect(standalone_rb, SIGNAL(toggled(bool)), this, SLOT(selectDataDictType()));
-	connect(splitted_rb, SIGNAL(toggled(bool)), this, SLOT(selectDataDictType()));
+	connect(dict_standalone_rb, SIGNAL(toggled(bool)), this, SLOT(selectDataDictMode()));
+	connect(dict_split_rb, SIGNAL(toggled(bool)), this, SLOT(selectDataDictMode()));
+	connect(sql_standalone_rb, SIGNAL(toggled(bool)), this, SLOT(selectSQLExportMode()));
+	connect(sql_split_rb, SIGNAL(toggled(bool)), this, SLOT(selectSQLExportMode()));
 
 	pgsqlvers_cmb->addItems(PgSqlVersions::AllVersions);
 	pgsqlvers1_cmb->addItems(PgSqlVersions::AllVersions);
@@ -124,7 +126,7 @@ ModelExportForm::ModelExportForm(QWidget *parent, Qt::WindowFlags f) : QDialog(p
 	settings_tbw->setTabEnabled(1, false);
 
 	selectImageFormat();
-	selectDataDictType();
+	selectDataDictMode();
 }
 
 void ModelExportForm::setLowVerbosity(bool value)
@@ -223,12 +225,12 @@ void ModelExportForm::exportModel()
 			if(export_to_file_rb->isChecked())
 			{
 				progress_lbl->setText(tr("Saving file '%1'").arg(sql_file_sel->getSelectedFile()));
-				export_hlp.setExportToSQLParams(model->db_model, sql_file_sel->getSelectedFile(), pgsqlvers_cmb->currentText());
+				export_hlp.setExportToSQLParams(model->db_model, sql_file_sel->getSelectedFile(), pgsqlvers_cmb->currentText(), sql_split_rb->isChecked());
 				export_thread->start();
 			}
 			else if(export_to_dict_rb->isChecked())
 			{
-				export_hlp.setExportToDataDictParams(model->db_model, dict_file_sel->getSelectedFile(), incl_index_chk->isChecked(), splitted_rb->isChecked());
+				export_hlp.setExportToDataDictParams(model->db_model, dict_file_sel->getSelectedFile(), incl_index_chk->isChecked(), dict_split_rb->isChecked());
 				export_thread->start();
 			}
 			//Exporting directly to DBMS
@@ -397,10 +399,18 @@ void ModelExportForm::selectImageFormat()
 	}
 }
 
-void ModelExportForm::selectDataDictType()
+void ModelExportForm::selectDataDictMode()
 {
-	if(standalone_rb->isChecked())
+	if(dict_standalone_rb->isChecked())
 		dict_file_sel->setFileMode(QFileDialog::AnyFile);
 	else
 		dict_file_sel->setFileMode(QFileDialog::Directory);
+}
+
+void ModelExportForm::selectSQLExportMode()
+{
+	if(sql_standalone_rb->isChecked())
+		sql_file_sel->setFileMode(QFileDialog::AnyFile);
+	else
+		sql_file_sel->setFileMode(QFileDialog::Directory);
 }

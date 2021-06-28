@@ -92,7 +92,7 @@
          <string>Add</string>
         </property>
         <property name="icon">
-         <iconset resource="../res/resources.qrc">
+         <iconset resource="../../res/resources.qrc">
           <normaloff>:/icons/icons/addlayer.png</normaloff>:/icons/icons/addlayer.png</iconset>
         </property>
         <property name="iconSize">
@@ -136,7 +136,7 @@
          <string>Visibility</string>
         </property>
         <property name="icon">
-         <iconset resource="../res/resources.qrc">
+         <iconset resource="../../res/resources.qrc">
           <normaloff>:/icons/icons/layervisibility.png</normaloff>:/icons/icons/layervisibility.png</iconset>
         </property>
         <property name="iconSize">
@@ -186,7 +186,7 @@
          <string>Delete</string>
         </property>
         <property name="icon">
-         <iconset resource="../res/resources.qrc">
+         <iconset resource="../../res/resources.qrc">
           <normaloff>:/icons/icons/dellayer.png</normaloff>:/icons/icons/dellayer.png</iconset>
         </property>
         <property name="iconSize">
@@ -227,7 +227,7 @@
          <string>...</string>
         </property>
         <property name="icon">
-         <iconset resource="../res/resources.qrc">
+         <iconset resource="../../res/resources.qrc">
           <normaloff>:/icons/icons/close1.png</normaloff>:/icons/icons/close1.png</iconset>
         </property>
         <property name="autoRaise">
@@ -339,7 +339,7 @@
          <string>Delete all</string>
         </property>
         <property name="icon">
-         <iconset resource="../res/resources.qrc">
+         <iconset resource="../../res/resources.qrc">
           <normaloff>:/icons/icons/clearlayers.png</normaloff>:/icons/icons/clearlayers.png</iconset>
         </property>
         <property name="iconSize">
@@ -398,7 +398,7 @@
   </layout>
  </widget>
  <resources>
-  <include location="../res/resources.qrc"/>
+  <include location="../../res/resources.qrc"/>
  </resources>
  <connections/>
 </ui>

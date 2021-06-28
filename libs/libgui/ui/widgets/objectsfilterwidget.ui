@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>379</width>
+    <width>492</width>
     <height>550</height>
    </rect>
   </property>
@@ -49,7 +49,7 @@
         <string>Add</string>
        </property>
        <property name="icon">
-        <iconset resource="../res/resources.qrc">
+        <iconset resource="../../res/resources.qrc">
          <normaloff>:/icons/icons/adddata.png</normaloff>:/icons/icons/adddata.png</iconset>
        </property>
        <property name="iconSize">
@@ -84,7 +84,7 @@
         <string>Clear all</string>
        </property>
        <property name="icon">
-        <iconset resource="../res/resources.qrc">
+        <iconset resource="../../res/resources.qrc">
          <normaloff>:/icons/icons/cleartext.png</normaloff>:/icons/icons/cleartext.png</iconset>
        </property>
        <property name="iconSize">
@@ -116,7 +116,7 @@
         <string>Options</string>
        </property>
        <property name="icon">
-        <iconset resource="../res/resources.qrc">
+        <iconset resource="../../res/resources.qrc">
          <normaloff>:/icons/icons/config.png</normaloff>:/icons/icons/config.png</iconset>
        </property>
        <property name="iconSize">
@@ -145,7 +145,7 @@
         <string>Apply</string>
        </property>
        <property name="icon">
-        <iconset resource="../res/resources.qrc">
+        <iconset resource="../../res/resources.qrc">
          <normaloff>:/icons/icons/confirm.png</normaloff>:/icons/icons/confirm.png</iconset>
        </property>
        <property name="iconSize">
@@ -253,7 +253,7 @@
        <set>AlignLeading|AlignVCenter</set>
       </property>
       <property name="icon">
-       <iconset resource="../res/resources.qrc">
+       <iconset resource="../../res/resources.qrc">
         <normaloff>:/icons/icons/table.png</normaloff>:/icons/icons/table.png</iconset>
       </property>
      </column>
@@ -265,7 +265,7 @@
        <set>AlignLeading|AlignVCenter</set>
       </property>
       <property name="icon">
-       <iconset resource="../res/resources.qrc">
+       <iconset resource="../../res/resources.qrc">
         <normaloff>:/icons/icons/textbox.png</normaloff>:/icons/icons/textbox.png</iconset>
       </property>
      </column>
@@ -277,7 +277,7 @@
        <set>AlignLeading|AlignVCenter</set>
       </property>
       <property name="icon">
-       <iconset resource="../res/resources.qrc">
+       <iconset resource="../../res/resources.qrc">
         <normaloff>:/icons/icons/filter.png</normaloff>:/icons/icons/filter.png</iconset>
       </property>
      </column>
@@ -342,7 +342,7 @@
          <enum>Qt::AutoText</enum>
         </property>
         <property name="pixmap">
-         <pixmap resource="../res/resources.qrc">:/icons/icons/info.png</pixmap>
+         <pixmap resource="../../res/resources.qrc">:/icons/icons/info.png</pixmap>
         </property>
         <property name="scaledContents">
          <bool>true</bool>
@@ -380,7 +380,7 @@
   </layout>
  </widget>
  <resources>
-  <include location="../res/resources.qrc"/>
+  <include location="../../res/resources.qrc"/>
  </resources>
  <connections/>
 </ui>
