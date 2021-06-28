@@ -1926,18 +1926,20 @@ void PgModelerCliApp::handleLinuxMimeDatabase(bool uninstall, bool system_wide)
 			mime_db_dir=QString("%1/mime").arg(share_path),
 
 			//Path to the file that associates apps to mimetypes
-			mimeapps=QString("%1/applications/mimeapps.list").arg(share_path),
+			mimeapps=QString("%1/applications/mimeapps.list").arg(share_path);
 
-			//Files generated after update file association (application-dbm.xml and pgModeler.desktop)
-			files[] = { QString("%1/applications/pgModeler.desktop").arg(share_path),
-									QString("%1/applications/pgModelerStxChecker.desktop").arg(share_path),
-									mime_db_dir + QString("/packages/application-dbm.xml"),
-									mime_db_dir + QString("/packages/application-sch.xml")},
+		//Files generated after update file association (application-dbm.xml and pgModeler.desktop)
+		QStringList	files = { QString("%1/applications/pgModeler.desktop").arg(share_path),
+													QString("%1/applications/pgModelerStxChecker.desktop").arg(share_path),
+													mime_db_dir + QString("/packages/application-dbm.xml"),
+													mime_db_dir + QString("/packages/application-sch.xml")},
 
-			schemas[] = { GlobalAttributes::getTmplConfigurationFilePath(GlobalAttributes::SchemasDir, QString("desktop") + GlobalAttributes::SchemaExt),
-										GlobalAttributes::getTmplConfigurationFilePath(GlobalAttributes::SchemasDir, QString("desktop-sch") + GlobalAttributes::SchemaExt),
-										GlobalAttributes::getTmplConfigurationFilePath(GlobalAttributes::SchemasDir, QString("application-dbm") + GlobalAttributes::SchemaExt),
-										GlobalAttributes::getTmplConfigurationFilePath(GlobalAttributes::SchemasDir, QString("application-sch") + GlobalAttributes::SchemaExt)};
+			schemas = { GlobalAttributes::getTmplConfigurationFilePath(GlobalAttributes::SchemasDir, QString("desktop") + GlobalAttributes::SchemaExt),
+									GlobalAttributes::getTmplConfigurationFilePath(GlobalAttributes::SchemasDir, QString("desktop-sch") + GlobalAttributes::SchemaExt),
+									GlobalAttributes::getTmplConfigurationFilePath(GlobalAttributes::SchemasDir, QString("application-dbm") + GlobalAttributes::SchemaExt),
+									GlobalAttributes::getTmplConfigurationFilePath(GlobalAttributes::SchemasDir, QString("application-sch") + GlobalAttributes::SchemaExt) },
+
+			icons = { exec_icon, sch_icon, dbm_icon, sch_icon };
 
 	QByteArray buf, buf_aux;
 	QFile out;
@@ -1970,13 +1972,7 @@ void PgModelerCliApp::handleLinuxMimeDatabase(bool uninstall, bool system_wide)
 			else
 			{
 				attribs[Attributes::Application]=(i == 0 ? GlobalAttributes::getPgModelerAppPath() : GlobalAttributes::getPgModelerSyntaxCheckerPath());
-
-				if(i <= 1)
-					attribs[Attributes::Icon]=exec_icon;
-				else if(i == 2)
-					attribs[Attributes::Icon]=dbm_icon;
-				else
-					attribs[Attributes::Icon]=sch_icon;
+				attribs[Attributes::Icon] = icons[i];
 
 				schparser.loadFile(schemas[i]);
 				buf.append(schparser.getCodeDefinition(attribs).toUtf8());
