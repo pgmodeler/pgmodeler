@@ -18,6 +18,7 @@
 
 #include "schemaparser.h"
 #include "attributes.h"
+#include "utilsns.h"
 
 const char SchemaParser::CharComment='#';
 const char SchemaParser::CharLineEnd='\n';
@@ -210,21 +211,7 @@ void SchemaParser::loadFile(const QString &filename)
 {
 	if(!filename.isEmpty())
 	{
-		QFile input;
-		QString buf;
-
-		//Open the file for reading
-		input.setFileName(filename);
-		input.open(QFile::ReadOnly);
-
-		if(!input.isOpen())
-			throw Exception(Exception::getErrorMessage(ErrorCode::FileDirectoryNotAccessed).arg(filename),
-							ErrorCode::FileDirectoryNotAccessed,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-
-		buf=input.readAll();
-		input.close();
-
-		//Loads the parser buffer
+		QString buf(UtilsNs::loadFile(filename));
 		loadBuffer(buf);
 		SchemaParser::filename=filename;
 	}

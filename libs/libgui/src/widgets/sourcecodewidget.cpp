@@ -19,6 +19,7 @@
 #include "sourcecodewidget.h"
 #include "taskprogresswidget.h"
 #include "guiutilsns.h"
+#include "utilsns.h"
 
 SourceCodeWidget::SourceCodeWidget(QWidget *parent): BaseObjectWidget(parent)
 {
@@ -93,24 +94,8 @@ void SourceCodeWidget::saveSQLCode()
 	file_dlg.setNameFilter(tr("SQL code (*.sql);;All files (*.*)"));
 	file_dlg.selectFile(QString("%1-%2.sql").arg(object->getSchemaName()).arg(object->getName()));
 
-	if(file_dlg.exec()==QFileDialog::Accepted)
-	{
-		QFile out;
-		QByteArray buf;
-
-		if(!file_dlg.selectedFiles().isEmpty())
-		{
-			out.setFileName(file_dlg.selectedFiles().at(0));
-
-			if(!out.open(QFile::WriteOnly))
-				throw Exception(Exception::getErrorMessage(ErrorCode::FileDirectoryNotWritten).arg(file_dlg.selectedFiles().at(0)),
-												ErrorCode::FileDirectoryNotWritten,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-
-			buf.append(sqlcode_txt->toPlainText().toUtf8());
-			out.write(buf.data(), buf.size());
-			out.close();
-		}
-	}
+	if(file_dlg.exec() == QFileDialog::Accepted && !file_dlg.selectedFiles().isEmpty())
+		UtilsNs::saveFile(file_dlg.selectedFiles().at(0), sqlcode_txt->toPlainText().toUtf8());
 }
 
 void SourceCodeWidget::generateSourceCode(int)

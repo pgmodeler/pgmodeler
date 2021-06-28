@@ -19,6 +19,7 @@
 #include "pgmodelercliapp.h"
 #include "qtcompat/qtextstreamcompat.h"
 #include "qtcompat/splitbehaviorcompat.h"
+#include "utilsns.h"
 
 QTextStream PgModelerCliApp::out(stdout);
 
@@ -903,7 +904,6 @@ void PgModelerCliApp::handleObjectRemoval(BaseObject *object)
 
 void PgModelerCliApp::extractObjectXML()
 {
-	QFile input;
 	QString buf, lin, def_xml, end_tag;
 	QTextStream ts;
 	QRegExp regexp(QString("^(\\<\\?xml)(.)*(\\<%1)( )*").arg(Attributes::DbModel)),
@@ -918,15 +918,7 @@ void PgModelerCliApp::extractObjectXML()
 
 	printMessage(tr("Extracting objects' XML..."));
 
-	input.setFileName(parsed_opts[Input]);
-	input.open(QFile::ReadOnly);
-
-	if(!input.isOpen())
-		throw Exception(Exception::getErrorMessage(ErrorCode::FileDirectoryNotAccessed).arg(parsed_opts[Input]),
-										ErrorCode::FileDirectoryNotAccessed,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-
-	buf.append(input.readAll());
-	input.close();
+	buf.append(UtilsNs::loadFile(parsed_opts[Input]));
 
 	//Check if the file contains a valid header (for .dbm file)
 	start=regexp.indexIn(buf);
@@ -1502,19 +1494,24 @@ void PgModelerCliApp::loadModel()
 	//Load the model file
 	model->loadModel(parsed_opts[Input]);
 
-	scene->blockSignals(true);
+	/* The scene object is created only when some options are used
+	 * so we need to check it if is not null to avoid segfaults */
+	if(scene)
+	{
+		scene->blockSignals(true);
 
-	scene->addLayers(model->getLayers(), false);
-	scene->setActiveLayers(model->getActiveLayers());
-	scene->setLayerColors(ObjectsScene::LayerNameColor, model->getLayerNameColors());
-	scene->setLayerColors(ObjectsScene::LayerRectColor, model->getLayerRectColors());
-	scene->setLayerNamesVisible(model->isLayerNamesVisible());
-	scene->setLayerRectsVisible(model->isLayerRectsVisible());
+		scene->addLayers(model->getLayers(), false);
+		scene->setActiveLayers(model->getActiveLayers());
+		scene->setLayerColors(ObjectsScene::LayerNameColor, model->getLayerNameColors());
+		scene->setLayerColors(ObjectsScene::LayerRectColor, model->getLayerRectColors());
+		scene->setLayerNamesVisible(model->isLayerNamesVisible());
+		scene->setLayerRectsVisible(model->isLayerRectsVisible());
 
-	if(model->isLayerRectsVisible())
-		model->setObjectsModified({ ObjectType::Schema });
+		if(model->isLayerRectsVisible())
+			model->setObjectsModified({ ObjectType::Schema });
 
-	scene->blockSignals(false);
+		scene->blockSignals(false);
+	}
 }
 
 void PgModelerCliApp::exportModel()
@@ -1750,16 +1747,8 @@ void PgModelerCliApp::diffModelDatabase()
 	{
 		if(parsed_opts.count(SaveDiff))
 		{
-			QFile output;
-
 			printMessage(tr("Saving diff to file `%1'").arg(parsed_opts[Output]));
-			output.setFileName(parsed_opts[Output]);
-
-			if(!output.open(QFile::WriteOnly))
-				throw Exception(Exception::getErrorMessage(ErrorCode::FileDirectoryNotWritten).arg(parsed_opts[Output]),
-												ErrorCode::FileDirectoryNotWritten, __PRETTY_FUNCTION__,__FILE__,__LINE__);
-			output.write(diff_hlp->getDiffDefinition().toUtf8());
-			output.close();
+			UtilsNs::saveFile(parsed_opts[Output], diff_hlp->getDiffDefinition().toUtf8());
 		}
 		else
 		{
@@ -1993,15 +1982,7 @@ void PgModelerCliApp::handleLinuxMimeDatabase(bool uninstall, bool system_wide)
 				buf.append(schparser.getCodeDefinition(attribs).toUtf8());
 				QDir(QString(".")).mkpath(QFileInfo(files[i]).absolutePath());
 
-				out.setFileName(files[i]);
-				out.open(QFile::WriteOnly);
-
-				if(!out.isOpen())
-					throw Exception(Exception::getErrorMessage(ErrorCode::FileDirectoryNotWritten).arg(files[i]),
-													ErrorCode::FileDirectoryNotWritten,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-
-				out.write(buf.data(), buf.size());
-				out.close();
+				UtilsNs::saveFile(files[i], buf);
 				buf.clear();
 			}
 		}

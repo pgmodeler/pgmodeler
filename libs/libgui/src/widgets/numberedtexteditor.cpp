@@ -26,6 +26,7 @@
 #include "guiutilsns.h"
 #include "qtcompat/qplaintexteditcompat.h"
 #include "qtcompat/qfontmetricscompat.h"
+#include "utilsns.h"
 
 bool NumberedTextEditor::line_nums_visible=true;
 bool NumberedTextEditor::highlight_lines=true;
@@ -339,19 +340,11 @@ void NumberedTextEditor::loadFile()
 
 	if(sql_file_dlg.result()==QDialog::Accepted)
 	{
-		QFile file;
-		file.setFileName(sql_file_dlg.selectedFiles().at(0));
+		QByteArray buf;
 
-		if(!file.open(QFile::ReadOnly))
-			throw Exception(Exception::getErrorMessage(ErrorCode::FileDirectoryNotAccessed)
-											.arg(sql_file_dlg.selectedFiles().at(0)),
-											ErrorCode::FileDirectoryNotAccessed ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-
+		buf.append(UtilsNs::loadFile(sql_file_dlg.selectedFiles().at(0)));
 		this->clear();
-		this->setPlainText(file.readAll());
-		file.close();
-
-
+		this->setPlainText(buf);
 		clear_btn->setEnabled(!this->toPlainText().isEmpty());
 	}
 }

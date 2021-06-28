@@ -24,6 +24,7 @@
 #include "qtcompat/splitbehaviorcompat.h"
 #include "qtcompat/qtextstreamcompat.h"
 #include <random>
+#include "utilsns.h"
 
 unsigned DatabaseModel::dbmodel_id=2000;
 
@@ -8154,27 +8155,13 @@ vector<BaseObject *> DatabaseModel::getCreationOrder(BaseObject *object, bool on
 
 void DatabaseModel::saveModel(const QString &filename, unsigned def_type)
 {
-	QFile output(filename);
-	QByteArray buf;
-
-	output.open(QFile::WriteOnly);
-
-	if(!output.isOpen())
-		throw Exception(Exception::getErrorMessage(ErrorCode::FileDirectoryNotWritten).arg(filename),
-										ErrorCode::FileDirectoryNotWritten,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-
 	try
 	{
-		buf.append(this->getCodeDefinition(def_type).toUtf8());
-
 		if(!cancel_saving)
-			output.write(buf);
-
-		output.close();
+			UtilsNs::saveFile(filename, this->getCodeDefinition(def_type).toUtf8());
 	}
 	catch(Exception &e)
 	{
-		if(output.isOpen()) output.close();
 		throw Exception(Exception::getErrorMessage(ErrorCode::FileNotWrittenInvalidDefinition).arg(filename),
 										ErrorCode::FileNotWrittenInvalidDefinition,__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
@@ -8200,18 +8187,8 @@ void DatabaseModel::saveSplitCustomSQL(bool save_appended, const QString &path, 
 
 	if(!buffer.isEmpty())
 	{
-		QFile file;
-
 		emit s_objectLoaded(!save_appended ? 0 : 100, msg, enum_cast(ObjectType::Database));
-		file.setFileName(path + GlobalAttributes::DirSeparator + filename);
-		file.open(QFile::WriteOnly);
-
-		if(!file.isOpen())
-			throw Exception(Exception::getErrorMessage(ErrorCode::FileDirectoryNotWritten).arg(file.fileName()),
-											ErrorCode::FileDirectoryNotWritten,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-
-		file.write(buffer);
-		file.close();
+		UtilsNs::saveFile(path + GlobalAttributes::DirSeparator + filename, buffer);
 	}
 }
 
@@ -11926,10 +11903,10 @@ void DatabaseModel::saveDataDictionary(const QString &path, bool browsable, bool
 	try
 	{
 		attribs_map datadict;
-		QFile output;
 		QByteArray buffer;
 		QFileInfo finfo(path);
 		QDir dir;
+		QString filename;
 
 		if(split)
 		{
@@ -11942,24 +11919,15 @@ void DatabaseModel::saveDataDictionary(const QString &path, bool browsable, bool
 		}
 
 		getDataDictionary(datadict, browsable, split);
-		output.setFileName(path);
+		filename = path;
 
 		for(auto &itr : datadict)
 		{
 			if(split)
-				output.setFileName(path + GlobalAttributes::DirSeparator + itr.first);
-
-			output.open(QFile::WriteOnly);
-
-			if(!output.isOpen())
-			{
-				throw Exception(Exception::getErrorMessage(ErrorCode::FileDirectoryNotWritten).arg(output.fileName()),
-												ErrorCode::FileDirectoryNotWritten,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-			}
+				filename = path + GlobalAttributes::DirSeparator + itr.first;
 
 			buffer.append(itr.second.toUtf8());
-			output.write(buffer);
-			output.close();
+			UtilsNs::saveFile(filename, buffer);
 			buffer.clear();
 		}
 	}

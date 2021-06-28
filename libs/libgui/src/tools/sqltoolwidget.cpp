@@ -22,6 +22,7 @@
 #include "settings/connectionsconfigwidget.h"
 #include "guiutilsns.h"
 #include "utils/deletableitemdelegate.h"
+#include "utilsns.h"
 
 SQLToolWidget::SQLToolWidget(QWidget * parent) : QWidget(parent)
 {
@@ -314,7 +315,7 @@ void SQLToolWidget::addSQLExecutionTab(const QString &conn_id, const QString &da
 	map<QString, Connection *> conns;
 	SQLExecutionWidget *sql_exec_wgt = nullptr;
 	DatabaseExplorerWidget *db_explorer_wgt = nullptr;
-	QFile file;
+	QByteArray buf;
 
 	if(!ConnectionsConfigWidget::getConnection(conn_id))
 	{
@@ -322,11 +323,8 @@ void SQLToolWidget::addSQLExecutionTab(const QString &conn_id, const QString &da
 										.arg(sql_file).arg(conn_id),
 										ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	}
-	else if(!QFileInfo(sql_file).exists())
-	{
-		throw Exception(Exception::getErrorMessage(ErrorCode::FileDirectoryNotAccessed).arg(sql_file),
-										ErrorCode::FileDirectoryNotAccessed,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-	}
+
+	buf.append(UtilsNs::loadFile(sql_file));
 
 	// Connect to the server using the provided connection id
 	connections_cmb->setCurrentText(conn_id);
@@ -339,11 +337,7 @@ void SQLToolWidget::addSQLExecutionTab(const QString &conn_id, const QString &da
 	/* Now we get the sql execution widget created from the previous operation
 	 * in order to load the sql file there */
 	sql_exec_wgt = dynamic_cast<SQLExecutionWidget *>(sql_exec_wgts[db_explorer_wgt].at(0));
-
-	file.setFileName(sql_file);
-	file.open(QFile::ReadOnly);
-	sql_exec_wgt->setSQLCommand(file.readAll());
-	file.close();
+	sql_exec_wgt->setSQLCommand(buf);
 }
 
 void SQLToolWidget::closeDatabaseExplorer(int idx)

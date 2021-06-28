@@ -18,6 +18,7 @@
 
 #include "xmlparser.h"
 #include <QUrl>
+#include "utilsns.h"
 
 const QString XmlParser::CharAmp("&amp;");
 const QString XmlParser::CharLt("&lt;");
@@ -68,25 +69,9 @@ void XmlParser::loadXMLFile(const QString &filename)
 {
 	try
 	{
-		QFile input;
-		QString buffer;
-
 		if(!filename.isEmpty())
 		{
-			//Opens a file stream using the file name
-			input.setFileName(filename);
-			input.open(QFile::ReadOnly);
-
-			//Case the file opening was not sucessful
-			if(!input.isOpen())
-			{
-				throw Exception(Exception::getErrorMessage(ErrorCode::FileDirectoryNotAccessed).arg(filename),
-								ErrorCode::FileDirectoryNotAccessed,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-			}
-
-			buffer=input.readAll();
-			input.close();
-
+			QString buffer(UtilsNs::loadFile(filename));
 			xml_doc_filename=filename;
 			loadXMLBuffer(buffer);
 		}
