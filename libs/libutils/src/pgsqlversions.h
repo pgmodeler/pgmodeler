@@ -44,6 +44,13 @@ namespace PgSqlVersions {
 	DefaulVersion;
 
 	extern const QStringList AllVersions;
+
+	/*! \brief Parses and checks a string contaning a PostgreSQL version in the form [major.minor]
+	 * This method will raise an error if an invalid version is provided. An invalid version
+	 * is considered any string in incorrect format or a valid string but that is for a
+	 * obsolete version (< 9.0). If an invalid major version is proveded then the function
+	 * will return the DefaultVersion as a fallback. */
+	extern QString parseString(const QString &pgsql_ver);
 }
 
 #endif

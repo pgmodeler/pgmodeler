@@ -70,10 +70,10 @@ const QString BaseObject::objs_sql[BaseObject::ObjectTypeCount]={
 
 /* Initializes the global id which is shared between instances
 	 of classes derived from the this class. The value of global_id
-	 starts at 40k because the id ranges 0, 1k, 2k, 3k
+	 starts at 4k because the id ranges 0, 1k, 2k, 3k, 4k
 	 are respectively assigned to objects of classes Role, Tablespace
-   DatabaseModel, Tag */
-unsigned BaseObject::global_id=4000;
+	 DatabaseModel, Schema, Tag */
+unsigned BaseObject::global_id=5000;
 
 QString BaseObject::pgsql_ver=PgSqlVersions::DefaulVersion;
 bool BaseObject::use_cached_code=true;
@@ -1040,9 +1040,16 @@ bool BaseObject::isChildObjectType(ObjectType parent_type, ObjectType child_type
 	return std::find(types.begin(), types.end(), child_type) != types.end();
 }
 
-void BaseObject::setPgSQLVersion(const QString &ver)
+void BaseObject::setPgSQLVersion(const QString &version)
 {
-	pgsql_ver=ver;
+	try
+	{
+		pgsql_ver = PgSqlVersions::parseString(version);
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorCode(), __PRETTY_FUNCTION__, __FILE__, __LINE__, &e);
+	}
 }
 
 QString BaseObject::getPgSQLVersion()

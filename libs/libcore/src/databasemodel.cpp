@@ -8167,7 +8167,7 @@ void DatabaseModel::saveModel(const QString &filename, unsigned def_type)
 	}
 }
 
-void DatabaseModel::saveSplitCustomSQL(bool save_appended, const QString &path, const QString &file_prefix)
+bool DatabaseModel::saveSplitCustomSQL(bool save_appended, const QString &path, const QString &file_prefix)
 {
 	QString filename, msg;
 	QByteArray buffer;
@@ -8189,7 +8189,10 @@ void DatabaseModel::saveSplitCustomSQL(bool save_appended, const QString &path, 
 	{
 		emit s_objectLoaded(!save_appended ? 0 : 100, msg, enum_cast(ObjectType::Database));
 		UtilsNs::saveFile(path + GlobalAttributes::DirSeparator + filename, buffer);
+		return true;
 	}
+
+	return false;
 }
 
 void DatabaseModel::saveSplitSQLDefinition(const QString &path)
@@ -8207,9 +8210,10 @@ void DatabaseModel::saveSplitSQLDefinition(const QString &path)
 	QFile output;
 	QByteArray buffer;
 	map<unsigned, BaseObject *> objects = getCreationOrder(SchemaParser::SqlDefinition);
-	int pad_size = QString::number(objects.size()).size(), idx = 0;
+	int pad_size = QString::number(objects.size()).size(), idx = 1;
 	QString filename, name, shell_types;
 	BaseObject *obj = nullptr;
+	Relationship *rel = nullptr;
 	QStringList sch_names;
 	unsigned 	gen_defs_idx = 0, general_obj_cnt = 0;
 
@@ -8219,7 +8223,10 @@ void DatabaseModel::saveSplitSQLDefinition(const QString &path)
 		general_obj_cnt = objects.size();
 		shell_types = configureShellTypes(false);
 
-		saveSplitCustomSQL(false, path, QString::number(idx++).rightJustified(pad_size, '0'));
+		/* We try to save prepended code as the first script. In case of success increment the script index
+		 * to keep generating the other scripts in the right order */
+		if(saveSplitCustomSQL(false, path, QString::number(idx).rightJustified(pad_size, '0')))
+			idx++;
 
 		for(auto &itr : objects)
 		{
@@ -8236,6 +8243,25 @@ void DatabaseModel::saveSplitSQLDefinition(const QString &path)
 			if(obj->isSystemObject())
 				continue;
 
+			// Saving the shell types before we start generating the files of other objects
+			if(!shell_types.isEmpty() &&
+				 obj->getObjectType() != ObjectType::Role && obj->getObjectType() != ObjectType::Tablespace &&
+				 obj->getObjectType() != ObjectType::Database  && obj->getObjectType() != ObjectType::Schema)
+			{
+				filename = QString("%1_%2.sql")
+									 .arg(QString::number(idx++).rightJustified(pad_size, '0'))
+									 .arg(Attributes::ShellTypes.toLower().replace('-', '_'));
+
+				emit s_objectLoaded((gen_defs_idx/static_cast<double>(general_obj_cnt)) * 100,
+									tr("Saving SQL of shell types to file `%1'.").arg(filename),
+									enum_cast(ObjectType::Type));
+
+				buffer.append(shell_types.toUtf8());
+				UtilsNs::saveFile(path + GlobalAttributes::DirSeparator + filename, buffer);
+				buffer.clear();
+				shell_types.clear();
+			}
+
 			if(obj == this)
 				buffer.append(this->__getCodeDefinition(SchemaParser::SqlDefinition).toUtf8());
 			else
@@ -8244,11 +8270,42 @@ void DatabaseModel::saveSplitSQLDefinition(const QString &path)
 			if(buffer.isEmpty())
 				continue;
 
+			rel = dynamic_cast<Relationship *>(obj);
+			/* If the object is a 1-1, 1-n or n-n relationship we name the output file
+			 * after the generated table or foreign key in order to avoid to generate
+			 * a file with the relationship's name. */
+			if(rel &&
+				 (rel->getRelationshipType() == BaseRelationship::Relationship11 ||
+					rel->getRelationshipType() == BaseRelationship::Relationship1n ||
+					rel->getRelationshipType() == BaseRelationship::RelationshipNn))
+			{
+				if(rel->getGeneratedTable())
+					obj = rel->getGeneratedTable();
+				else
+				{
+					for(auto &constr : rel->getGeneratedConstraints())
+					{
+						if(constr->getConstraintType() == ConstraintType::ForeignKey)
+						{
+							obj = constr;
+							break;
+						}
+					}
+				}
+			}
+
 			/* The name of the generated file will be:
 			 * [creation order id]_[name]_[type]_[internal id].sql
 			 * Note: the name portion of the file is treated to remove special char (non word chars) that may break
 			 * the filename in some filesystems. The internal id is used for desambiguation purposes. */
-			name = obj->getName(true).replace('"', "").replace(QRegExp("(?!\\-)(\\W)"), "_");
+
+			// If the object is a table child object we use its signature instead of name
+			if(TableObject::isTableObject(obj->getObjectType()))
+				name = dynamic_cast<TableObject *>(obj)->TableObject::getSignature(true);
+			else
+				name = obj->getName(true);
+
+			name.replace('"', "").replace(QRegExp("(?!\\-)(\\W)"), "_");
 
 			filename = QString("%1_%2_%3_%4.sql")
 								 .arg(QString::number(idx++).rightJustified(pad_size, '0'))
@@ -8263,26 +8320,28 @@ void DatabaseModel::saveSplitSQLDefinition(const QString &path)
 								.arg(filename),
 								enum_cast(obj->getObjectType()));
 
-			output.setFileName(path + GlobalAttributes::DirSeparator + filename);
-			output.open(QFile::WriteOnly);
-
-			if(!output.isOpen())
-			{
-				throw Exception(Exception::getErrorMessage(ErrorCode::FileDirectoryNotWritten).arg(output.fileName()),
-												ErrorCode::FileDirectoryNotWritten,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-			}
-
-			output.write(buffer);
-			output.close();
+			UtilsNs::saveFile(path + GlobalAttributes::DirSeparator + filename, buffer);
 			buffer.clear();
 		}
 
 		saveSplitCustomSQL(true, path, QString::number(idx).rightJustified(pad_size, '0'));
 		configureShellTypes(true);
 
-		//attribs_map attribs;
-		//attribs[Attributes::SearchPath] = sch_names.join(',');
-		//attribs[Attributes::Function] = !functions.empty() ? Attributes::True : "";
+		// Saving the _sessionopts.sql containg session options like search_path and check_function_bodies
+		attribs_map attribs;
+		attribs[Attributes::SearchPath] = sch_names.join(',');
+		attribs[Attributes::Function] = !functions.empty() ? Attributes::True : "";
+
+		filename = path + GlobalAttributes::DirSeparator +
+							 QString("%1_%2.sql")
+							 .arg(QString::number(0).rightJustified(pad_size, '0'))
+							 .arg(Attributes::SessionOpts);
+
+		emit s_objectLoaded(100, tr("Saving session options file `%1'.").arg(filename),
+							enum_cast(ObjectType::Type));
+
+		buffer.append(schparser.getCodeDefinition(Attributes::SessionOpts, attribs, SchemaParser::SqlDefinition).toUtf8());
+		UtilsNs::saveFile(filename, buffer);
 	}
 	catch (Exception &e)
 	{

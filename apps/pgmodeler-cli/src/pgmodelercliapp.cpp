@@ -410,7 +410,7 @@ void PgModelerCliApp::showMenu()
 	out << tr("  %1, %2 [FILE]\t\t    Input model file (.dbm). This is mandatory for export and fix operations.").arg(short_opts[Input]).arg(Input) << QtCompat::endl;
 	out << tr("  %1, %2 [DBNAME]\t    Input database name. This is mandatory for import operation.").arg(short_opts[InputDb]).arg(InputDb) << QtCompat::endl;
 	out << tr("  %1, %2 [FILE|DIRECTORY]    Output file or directory. This is mandatory for fixing model or exporting to file, png or svg.").arg(short_opts[Output]).arg(Output) << QtCompat::endl;
-	out << tr("  %1, %2\t\t    Force the PostgreSQL version syntax when generating SQL code.").arg(short_opts[PgSqlVer]).arg(PgSqlVer) << QtCompat::endl;
+	out << tr("  %1, %2\t\t    Force the PostgreSQL syntax to the specified version when generating SQL code. The version string must be in form major.minor.").arg(short_opts[PgSqlVer]).arg(PgSqlVer) << QtCompat::endl;
 	out << tr("  %1, %2\t\t\t    Silent execution. Only critical messages and errors are shown during process.").arg(short_opts[Silent]).arg(Silent) << QtCompat::endl;
 	out << QtCompat::endl;	
 

@@ -71,21 +71,14 @@ SchemaParser::SchemaParser()
 
 void SchemaParser::setPgSQLVersion(const QString &pgsql_ver)
 {
-	unsigned curr_ver = QString(pgsql_ver).remove('.').toUInt(),
-			version90 = QString(PgSqlVersions::PgSqlVersion90).remove('.').toUInt(),
-			default_ver = QString(PgSqlVersions::DefaulVersion).remove('.').toUInt();
-
-	if(curr_ver != 0 && (curr_ver < version90))
-		throw Exception(Exception::getErrorMessage(ErrorCode::InvPostgreSQLVersion)
-						.arg(pgsql_ver)
-						.arg(PgSqlVersions::PgSqlVersion90)
-						.arg(PgSqlVersions::DefaulVersion),
-						ErrorCode::InvPostgreSQLVersion,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-
-	if(curr_ver > 0 && curr_ver <= default_ver)
-		pgsql_version=pgsql_ver;
-	else
-		pgsql_version=PgSqlVersions::DefaulVersion;
+	try
+	{
+		pgsql_version = PgSqlVersions::parseString(pgsql_ver);
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorCode(), __PRETTY_FUNCTION__, __FILE__, __LINE__, &e);
+	}
 }
 
 QString SchemaParser::getPgSQLVersion()

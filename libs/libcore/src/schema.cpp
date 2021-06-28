@@ -18,20 +18,23 @@
 
 #include "schema.h"
 
+unsigned Schema::schema_id = 3000;
+
 Schema::Schema()
 {
-	obj_type=ObjectType::Schema;
-	fill_color=QColor(225,225,225, 80);
-	rect_visible=false;
-	attributes[Attributes::FillColor]="";
-	attributes[Attributes::RectVisible]="";
+	object_id = Schema::schema_id++;
+	obj_type = ObjectType::Schema;
+	fill_color = QColor(225,225,225, 80);
+	rect_visible = false;
+	attributes[Attributes::FillColor] = "";
+	attributes[Attributes::RectVisible] = "";
 }
 
 void Schema::setName(const QString &name)
 {
 	/* Schema names starting with pg_ is reserved to PostgreSQL if its the case
 		raises an error */
-	if(name.mid(0,3)==QString("pg_"))
+	if(name.startsWith("pg_"))
 		throw Exception(Exception::getErrorMessage(ErrorCode::AsgReservedName)
 						.arg(this->getName())
 						.arg(BaseObject::getTypeName(ObjectType::Schema)),

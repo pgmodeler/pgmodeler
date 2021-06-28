@@ -284,8 +284,8 @@ class DatabaseModel:  public QObject, public BaseObject {
 		/*! \brief Saves the appended/prepended code of the database model to a separated file.
 		 * The parameter save_appended tells the method to save appended code instead of prepended code.
 		 * The parameter path is where the file will be saved. The file_prefix is a string that is prepended
-		 * to the filename */
-		void saveSplitCustomSQL(bool save_appended, const QString &path, const QString &file_prefix);
+		 * to the filename. Returns true when the file could be saved. */
+		bool saveSplitCustomSQL(bool save_appended, const QString &path, const QString &file_prefix);
 
 	protected:
 		//! \brief Set the layer names (only to be written in the XML definition)

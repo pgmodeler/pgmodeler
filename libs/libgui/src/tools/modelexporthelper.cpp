@@ -71,19 +71,19 @@ void ModelExportHelper::exportToSQL(DatabaseModel *db_model, const QString &file
 		progress=sql_gen_progress=0;
 		BaseObject::setPgSQLVersion(pgsql_ver);
 		emit s_progressUpdated(progress,
-							   tr("Generating SQL code for PostgreSQL `%1'").arg(BaseObject::getPgSQLVersion()),
-							   ObjectType::BaseObject);
+													 tr("Generating SQL code for PostgreSQL `%1'").arg(BaseObject::getPgSQLVersion()),
+													 ObjectType::BaseObject);
 		progress=1;
 
 		if(!split)
 		{
 			db_model->saveModel(filename, SchemaParser::SqlDefinition);
-			emit s_progressUpdated(100, tr("Output SQL file `%1' successfully written.").arg(filename), ObjectType::BaseObject);
+			emit s_progressUpdated(100, tr("SQL file `%1' successfully written.").arg(filename), ObjectType::BaseObject);
 		}
 		else
 		{
 			db_model->saveSplitSQLDefinition(filename);
-			emit s_progressUpdated(100, tr("Output SQL files successfully written into `%1'.").arg(filename), ObjectType::BaseObject);
+			emit s_progressUpdated(100, tr("SQL files successfully written in `%1'.").arg(filename), ObjectType::BaseObject);
 		}
 
 		if(export_canceled)
