@@ -597,40 +597,6 @@
                 <property name="bottomMargin">
                  <number>4</number>
                 </property>
-                <item row="0" column="0" rowspan="3">
-                 <widget class="QLabel" name="model_sql_lbl">
-                  <property name="enabled">
-                   <bool>true</bool>
-                  </property>
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                  <property name="minimumSize">
-                   <size>
-                    <width>30</width>
-                    <height>60</height>
-                   </size>
-                  </property>
-                  <property name="maximumSize">
-                   <size>
-                    <width>30</width>
-                    <height>60</height>
-                   </size>
-                  </property>
-                  <property name="text">
-                   <string/>
-                  </property>
-                  <property name="pixmap">
-                   <pixmap resource="../../res/resources.qrc">:/images/images/model2sql.png</pixmap>
-                  </property>
-                  <property name="scaledContents">
-                   <bool>true</bool>
-                  </property>
-                 </widget>
-                </item>
                 <item row="0" column="1">
                  <widget class="QLabel" name="mode_lbl">
                   <property name="enabled">
@@ -655,6 +621,48 @@
                    <string>Mode:</string>
                   </property>
                  </widget>
+                </item>
+                <item row="2" column="2">
+                 <layout class="QHBoxLayout" name="horizontalLayout_5">
+                  <item>
+                   <widget class="QComboBox" name="pgsqlvers_cmb">
+                    <property name="enabled">
+                     <bool>true</bool>
+                    </property>
+                    <property name="minimumSize">
+                     <size>
+                      <width>0</width>
+                      <height>0</height>
+                     </size>
+                    </property>
+                    <property name="maximumSize">
+                     <size>
+                      <width>16777215</width>
+                      <height>16777215</height>
+                     </size>
+                    </property>
+                    <property name="toolTip">
+                     <string>PostgreSQL version in which the SQL code should be generated</string>
+                    </property>
+                    <property name="insertPolicy">
+                     <enum>QComboBox::InsertAtBottom</enum>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <spacer name="horizontalSpacer">
+                    <property name="orientation">
+                     <enum>Qt::Horizontal</enum>
+                    </property>
+                    <property name="sizeHint" stdset="0">
+                     <size>
+                      <width>158</width>
+                      <height>20</height>
+                     </size>
+                    </property>
+                   </spacer>
+                  </item>
+                 </layout>
                 </item>
                 <item row="1" column="1">
                  <widget class="QLabel" name="output_lbl">
@@ -702,48 +710,6 @@
                   </property>
                  </widget>
                 </item>
-                <item row="2" column="2">
-                 <layout class="QHBoxLayout" name="horizontalLayout_5">
-                  <item>
-                   <widget class="QComboBox" name="pgsqlvers_cmb">
-                    <property name="enabled">
-                     <bool>true</bool>
-                    </property>
-                    <property name="minimumSize">
-                     <size>
-                      <width>0</width>
-                      <height>0</height>
-                     </size>
-                    </property>
-                    <property name="maximumSize">
-                     <size>
-                      <width>16777215</width>
-                      <height>16777215</height>
-                     </size>
-                    </property>
-                    <property name="toolTip">
-                     <string>PostgreSQL version in which the SQL code should be generated</string>
-                    </property>
-                    <property name="insertPolicy">
-                     <enum>QComboBox::InsertAtBottom</enum>
-                    </property>
-                   </widget>
-                  </item>
-                  <item>
-                   <spacer name="horizontalSpacer">
-                    <property name="orientation">
-                     <enum>Qt::Horizontal</enum>
-                    </property>
-                    <property name="sizeHint" stdset="0">
-                     <size>
-                      <width>158</width>
-                      <height>20</height>
-                     </size>
-                    </property>
-                   </spacer>
-                  </item>
-                 </layout>
-                </item>
                 <item row="0" column="2">
                  <layout class="QHBoxLayout" name="horizontalLayout">
                   <item>
@@ -771,7 +737,7 @@
                   <item>
                    <widget class="QRadioButton" name="sql_split_rb">
                     <property name="sizePolicy">
-                     <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                     <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                       <horstretch>0</horstretch>
                       <verstretch>0</verstretch>
                      </sizepolicy>
@@ -787,7 +753,57 @@
                     </property>
                    </widget>
                   </item>
+                  <item>
+                   <widget class="QCheckBox" name="gen_script_chk">
+                    <property name="sizePolicy">
+                     <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                      <horstretch>0</horstretch>
+                      <verstretch>0</verstretch>
+                     </sizepolicy>
+                    </property>
+                    <property name="toolTip">
+                     <string>&lt;p&gt;Generates an export script that can be used to automate the execution of all created SQL files directly on a database server.&lt;/p&gt;</string>
+                    </property>
+                    <property name="text">
+                     <string>Generate export script</string>
+                    </property>
+                   </widget>
+                  </item>
                  </layout>
+                </item>
+                <item row="0" column="0" rowspan="3">
+                 <widget class="QLabel" name="model_sql_lbl">
+                  <property name="enabled">
+                   <bool>true</bool>
+                  </property>
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="minimumSize">
+                   <size>
+                    <width>30</width>
+                    <height>60</height>
+                   </size>
+                  </property>
+                  <property name="maximumSize">
+                   <size>
+                    <width>30</width>
+                    <height>60</height>
+                   </size>
+                  </property>
+                  <property name="text">
+                   <string/>
+                  </property>
+                  <property name="pixmap">
+                   <pixmap resource="../../res/resources.qrc">:/images/images/model2sql.png</pixmap>
+                  </property>
+                  <property name="scaledContents">
+                   <bool>true</bool>
+                  </property>
+                 </widget>
                 </item>
                </layout>
               </widget>

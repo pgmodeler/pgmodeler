@@ -93,7 +93,7 @@ void DatabaseModelTest::saveSplitSQLDefinition()
 		dir.removeRecursively();
 		dbmodel.createSystemObjects(false);
 		dbmodel.loadModel(input_dbm);
-		dbmodel.saveSplitSQLDefinition(output);
+		dbmodel.saveSplitSQLDefinition(output, true);
 		QCOMPARE(true, true);
 	}
 	catch (Exception &e)

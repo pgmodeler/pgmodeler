@@ -225,7 +225,9 @@ void ModelExportForm::exportModel()
 			if(export_to_file_rb->isChecked())
 			{
 				progress_lbl->setText(tr("Saving file '%1'").arg(sql_file_sel->getSelectedFile()));
-				export_hlp.setExportToSQLParams(model->db_model, sql_file_sel->getSelectedFile(), pgsqlvers_cmb->currentText(), sql_split_rb->isChecked());
+				export_hlp.setExportToSQLParams(model->db_model, sql_file_sel->getSelectedFile(),
+																				pgsqlvers_cmb->currentText(), sql_split_rb->isChecked(),
+																				gen_script_chk->isChecked());
 				export_thread->start();
 			}
 			else if(export_to_dict_rb->isChecked())

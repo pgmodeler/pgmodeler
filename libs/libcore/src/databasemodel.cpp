@@ -8195,7 +8195,7 @@ bool DatabaseModel::saveSplitCustomSQL(bool save_appended, const QString &path, 
 	return false;
 }
 
-void DatabaseModel::saveSplitSQLDefinition(const QString &path)
+void DatabaseModel::saveSplitSQLDefinition(const QString &path, bool gen_export_script)
 {
 	QFileInfo fi(path);
 	QDir dir;
@@ -8215,6 +8215,7 @@ void DatabaseModel::saveSplitSQLDefinition(const QString &path)
 	BaseObject *obj = nullptr;
 	Relationship *rel = nullptr;
 	QStringList sch_names;
+	QRegExp name_fmt_regexp("(?!\\-)(\\W)");
 	unsigned 	gen_defs_idx = 0, general_obj_cnt = 0;
 
 	try
@@ -8305,7 +8306,7 @@ void DatabaseModel::saveSplitSQLDefinition(const QString &path)
 			else
 				name = obj->getName(true);
 
-			name.replace('"', "").replace(QRegExp("(?!\\-)(\\W)"), "_");
+			name.replace('"', "").replace(name_fmt_regexp, "_");
 
 			filename = QString("%1_%2_%3_%4.sql")
 								 .arg(QString::number(idx++).rightJustified(pad_size, '0'))
@@ -8338,10 +8339,26 @@ void DatabaseModel::saveSplitSQLDefinition(const QString &path)
 							 .arg(Attributes::SessionOpts);
 
 		emit s_objectLoaded(100, tr("Saving session options file `%1'.").arg(filename),
-							enum_cast(ObjectType::Type));
+												enum_cast(ObjectType::Database));
 
 		buffer.append(schparser.getCodeDefinition(Attributes::SessionOpts, attribs, SchemaParser::SqlDefinition).toUtf8());
 		UtilsNs::saveFile(filename, buffer);
+
+		if(gen_export_script)
+		{
+			buffer.clear();
+
+			filename = QString("%1.sh").arg(getName().replace(name_fmt_regexp, "_"));
+
+			emit s_objectLoaded(100, tr("Saving export script `%1'.").arg(filename),
+													enum_cast(ObjectType::Database));
+
+			buffer.append(UtilsNs::loadFile(GlobalAttributes::getSchemasRootDir() +
+																			GlobalAttributes::DirSeparator +
+																			GlobalAttributes::TmplSqlExportScript));
+
+			UtilsNs::saveFile(path + GlobalAttributes::DirSeparator +	filename, buffer);
+		}
 	}
 	catch (Exception &e)
 	{

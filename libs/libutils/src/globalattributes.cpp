@@ -76,6 +76,7 @@ const QString GlobalAttributes::XMLHighlightConf("xml-highlight");
 const QString GlobalAttributes::SchHighlightConf("sch-highlight");
 const QString GlobalAttributes::PatternHighlightConf("pattern-highlight");
 
+const QString GlobalAttributes::TmplSqlExportScript("sqlexport.tmpl");
 const QString GlobalAttributes::ExampleModel("example.dbm");
 const QString GlobalAttributes::UiStyleConf("ui-style");
 
@@ -96,7 +97,6 @@ QString GlobalAttributes::PgModelerCLIPath;
 QString GlobalAttributes::PgModelerAppPath;
 QString GlobalAttributes::PgModelerCHandlerPath;
 QString GlobalAttributes::PgModelerSyntaxCheckerPath;
-
 
 QString GlobalAttributes::getPathFromEnv(const QString &varname, const QString &default_val, const QString &fallback_val)
 {
