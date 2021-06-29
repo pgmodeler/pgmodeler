@@ -180,7 +180,11 @@ class SchemaParser {
 		TokenMetaOb,// $ob (open square bracket '[')
 		TokenMetaCb,// $cb (close square bracket ']')
 		TokenMetaOc,// $ob (open curly bracket '{')
-		TokenMetaCc;// $cb (close curly bracket '}')
+		TokenMetaCc,// $cb (close curly bracket '}')
+		TokenMetaDs,// $ds (dollar sign '$')
+		TokenMetaHs,// $ds (hash/number sign '#')
+		TokenMetaPs,// $ps (percentage sign '%')
+		TokenMetaAt;// $at (at character '@')
 
 		//! \brief Tokens related to comparison expressions
 		static const QString	TokenEqOper,// == (equal)

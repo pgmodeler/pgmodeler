@@ -52,6 +52,10 @@ const QString SchemaParser::TokenMetaOb=QString("ob");
 const QString SchemaParser::TokenMetaCb=QString("cb");
 const QString SchemaParser::TokenMetaOc=QString("oc");
 const QString SchemaParser::TokenMetaCc=QString("cc");
+const QString SchemaParser::TokenMetaDs=QString("ds");
+const QString SchemaParser::TokenMetaPs=QString("ps");
+const QString SchemaParser::TokenMetaHs=QString("hs");
+const QString SchemaParser::TokenMetaAt=QString("at");
 
 const QString SchemaParser::TokenEqOper=QString("==");
 const QString SchemaParser::TokenNeOper=QString("!=");
@@ -880,7 +884,11 @@ char SchemaParser::translateMetaCharacter(const QString &meta)
 									 { TokenMetaOb, CharStartPlainText },
 									 { TokenMetaCb, CharEndPlainText },
 									 { TokenMetaOc, CharStartAttribute },
-									 { TokenMetaCc, CharEndAttribute }};
+									 { TokenMetaCc, CharEndAttribute },
+									 { TokenMetaDs, CharStartMetachar },
+									 { TokenMetaHs, CharComment },
+									 { TokenMetaPs, CharStartConditional },
+									 { TokenMetaAt, CharValueOf }};
 
 	if(metas.count(meta)==0)
 	{
