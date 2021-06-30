@@ -8195,7 +8195,7 @@ bool DatabaseModel::saveSplitCustomSQL(bool save_appended, const QString &path, 
 	return false;
 }
 
-void DatabaseModel::saveSplitSQLDefinition(const QString &path, bool gen_export_script)
+void DatabaseModel::saveSplitSQLDefinition(const QString &path)
 {
 	QFileInfo fi(path);
 	QDir dir;
@@ -8217,6 +8217,7 @@ void DatabaseModel::saveSplitSQLDefinition(const QString &path, bool gen_export_
 	QStringList sch_names;
 	QRegExp name_fmt_regexp("(?!\\-)(\\W)");
 	unsigned 	gen_defs_idx = 0, general_obj_cnt = 0;
+	attribs_map attribs;
 
 	try
 	{
@@ -8323,42 +8324,31 @@ void DatabaseModel::saveSplitSQLDefinition(const QString &path, bool gen_export_
 
 			UtilsNs::saveFile(path + GlobalAttributes::DirSeparator + filename, buffer);
 			buffer.clear();
+
+			/* If the current object is the database itself, we need to save the sessionopts
+			 * right before the saving of the database creation script */
+			if(obj == this)
+			{
+				// Saving the sessionopts.sql containg session options like search_path and check_function_bodies
+				attribs[Attributes::SearchPath] = sch_names.join(',');
+				attribs[Attributes::Function] = !functions.empty() ? Attributes::True : "";
+
+				filename = QString("%1_%2.sql")
+									 .arg(QString::number(idx++).rightJustified(pad_size, '0'))
+									 .arg(Attributes::SessionOpts);
+
+				emit s_objectLoaded((gen_defs_idx/static_cast<double>(general_obj_cnt)) * 100, tr("Saving session options file `%1'.").arg(filename),
+														enum_cast(ObjectType::Database));
+
+				buffer.append(schparser.getCodeDefinition(Attributes::SessionOpts, attribs, SchemaParser::SqlDefinition).toUtf8());
+				UtilsNs::saveFile( path + GlobalAttributes::DirSeparator + filename, buffer);
+				buffer.clear();
+			}
 		}
 
+		// Saving the prepended sql file
 		saveSplitCustomSQL(true, path, QString::number(idx).rightJustified(pad_size, '0'));
 		configureShellTypes(true);
-
-		// Saving the _sessionopts.sql containg session options like search_path and check_function_bodies
-		attribs_map attribs;
-		attribs[Attributes::SearchPath] = sch_names.join(',');
-		attribs[Attributes::Function] = !functions.empty() ? Attributes::True : "";
-
-		filename = path + GlobalAttributes::DirSeparator +
-							 QString("%1_%2.sql")
-							 .arg(QString::number(0).rightJustified(pad_size, '0'))
-							 .arg(Attributes::SessionOpts);
-
-		emit s_objectLoaded(100, tr("Saving session options file `%1'.").arg(filename),
-												enum_cast(ObjectType::Database));
-
-		buffer.append(schparser.getCodeDefinition(Attributes::SessionOpts, attribs, SchemaParser::SqlDefinition).toUtf8());
-		UtilsNs::saveFile(filename, buffer);
-
-		if(gen_export_script)
-		{
-			buffer.clear();
-
-			filename = QString("%1.sh").arg(getName().replace(name_fmt_regexp, "_"));
-
-			emit s_objectLoaded(100, tr("Saving export script `%1'.").arg(filename),
-													enum_cast(ObjectType::Database));
-
-			buffer.append(UtilsNs::loadFile(GlobalAttributes::getSchemasRootDir() +
-																			GlobalAttributes::DirSeparator +
-																			GlobalAttributes::TmplSqlExportScript));
-
-			UtilsNs::saveFile(path + GlobalAttributes::DirSeparator +	filename, buffer);
-		}
 	}
 	catch (Exception &e)
 	{

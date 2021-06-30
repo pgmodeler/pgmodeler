@@ -92,7 +92,6 @@ const QString PgModelerCliApp::ForceRecreateObjs("--force-recreate-objs");
 const QString PgModelerCliApp::OnlyUnmodifiable("--only-unmodifiable");
 const QString PgModelerCliApp::CreateConfigs("--create-configs");
 const QString PgModelerCliApp::MissingOnly("--missing-only");
-const QString PgModelerCliApp::CreateScript("--create-script");
 
 const QString PgModelerCliApp::TagExpr("<%1");
 const QString PgModelerCliApp::EndTagExpr("</%1");
@@ -122,8 +121,7 @@ attribs_map PgModelerCliApp::short_opts = {
 	{ ForceDropColsConstrs, "-fd" },	{ RenameDb, "-rn" },
 	{ NoSequenceReuse, "-ns" },	{ NoCascadeDrop, "-nd" },	{ ForceRecreateObjs, "-nf" },
 	{ OnlyUnmodifiable, "-nu" },	{ NoIndex, "-ni" },	{ Split, "-sp" },
-	{ SystemWide, "-sw" },	{ CreateConfigs, "-cc" }, { Force, "-ff" },
-	{ MissingOnly, "-mo" }, { CreateScript, "-cs"}
+	{ SystemWide, "-sw" },	{ CreateConfigs, "-cc" }, { Force, "-ff" }, { MissingOnly, "-mo" }
 };
 
 map<QString, bool> PgModelerCliApp::long_opts = {
@@ -147,12 +145,12 @@ map<QString, bool> PgModelerCliApp::long_opts = {
 	{ NoSequenceReuse, false },	{ NoCascadeDrop, false },
 	{ ForceRecreateObjs, false },	{ OnlyUnmodifiable, false },	{ ExportToDict, false },
 	{ NoIndex, false },	{ Split, false },	{ SystemWide, false },
-	{ CreateConfigs, false }, { Force, false }, { MissingOnly, false }, { CreateScript, false }
+	{ CreateConfigs, false }, { Force, false }, { MissingOnly, false }
 };
 
 map<QString, QStringList> PgModelerCliApp::accepted_opts = {
 	{{ Attributes::Connection }, { ConnAlias, Host, Port, User, Passwd, InitialDb }},
-	{{ ExportToFile }, { Input, Output, PgSqlVer, Split, CreateScript }},
+	{{ ExportToFile }, { Input, Output, PgSqlVer, Split }},
 	{{ ExportToPng },  { Input, Output, ShowGrid, ShowDelimiters, PageByPage, ZoomFactor }},
 	{{ ExportToSvg },  { Input, Output, ShowGrid, ShowDelimiters }},
 	{{ ExportToDict }, { Input, Output, Split, NoIndex }},
@@ -418,7 +416,6 @@ void PgModelerCliApp::showMenu()
 
 	out << tr("SQL file export options: ") << QtCompat::endl;
 	out << tr("  %1, %2\t\t\t    The SQL file is generated per object. The files will be named in such a way to reflect the correct creation order of the objects.").arg(short_opts[Split]).arg(Split) << QtCompat::endl;
-	out << tr("  %1, %2\t\t\t    Generates an export script that can be used to automate the execution of all created SQL files directly on a database server.").arg(short_opts[CreateScript]).arg(CreateScript) << QtCompat::endl;
 	out << QtCompat::endl;
 
 	out << tr("PNG and SVG export options: ") << QtCompat::endl;
@@ -1547,8 +1544,7 @@ void PgModelerCliApp::exportModel()
 	else if(parsed_opts.count(ExportToFile))
 	{
 		printMessage(tr("Export to SQL script file: %1").arg(parsed_opts[Output]));
-		export_hlp->exportToSQL(model, parsed_opts[Output], parsed_opts[PgSqlVer],
-														parsed_opts.count(Split) > 0,  parsed_opts.count(CreateScript) > 0);
+		export_hlp->exportToSQL(model, parsed_opts[Output], parsed_opts[PgSqlVer], parsed_opts.count(Split) > 0);
 	}
 	//Export data dictionary
 	else if(parsed_opts.count(ExportToDict))

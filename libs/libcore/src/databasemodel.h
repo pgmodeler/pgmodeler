@@ -476,10 +476,8 @@ class DatabaseModel:  public QObject, public BaseObject {
 
 		/*! \brief Saves the model's SQL code definition by creating separated files for each object
 		 * The provided path must be a directory. If it does not exists then the method will create
-		 * it prior to the generation of the files. The parameter gen_export_script causes an export
-		 * script to be created in the provided path. This export script can be used to automate the
-		 * execution of all generated sql files. */
-		void saveSplitSQLDefinition(const QString &path, bool gen_export_script);
+		 * it prior to the generation of the files. */
+		void saveSplitSQLDefinition(const QString &path);
 
 		/*! \brief Returns the complete SQL/XML defintion for the entire model (including all the other objects).
 		 The parameter 'export_file' is used to format the generated code in a way that can be saved

@@ -124,7 +124,6 @@ class GlobalAttributes {
 		PatternHighlightConf, //! \brief Configuration file for name patterns highlight (relationship editing form)
 		SQLHistoryConf,		//! \brief Default name for the SQL commands history configuration file
 
-		TmplSqlExportScript, //! \brief Default name for the template script used to export split sql files
 		ExampleModel, //! \brief Default name for the sample model loaded on appearence configuration form
 		UiStyleConf, //! \brief Configuration file ui style
 

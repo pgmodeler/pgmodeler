@@ -77,9 +77,6 @@ class ModelExportHelper: public QObject {
 		//! \brief Indicates if the data dictionary or sql export should be split into separated files
 		split,
 
-		//! \brief Indicates if the export script must be generated (only for split sql generation)
-		gen_script,
-
 		//! \brief Indicates if the data dictionary should be browsable (include an index)
 		browsable;
 
@@ -160,7 +157,7 @@ class ModelExportHelper: public QObject {
 		void setIgnoredErrors(const QStringList &err_codes);
 
 		//! \brief Exports the model to a named SQL file. The PostgreSQL version syntax must be specified.
-		void exportToSQL(DatabaseModel *db_model, const QString &filename, const QString &pgsql_ver, bool split, bool gen_script);
+		void exportToSQL(DatabaseModel *db_model, const QString &filename, const QString &pgsql_ver, bool split);
 
 		/*! \brief Exports the model to a named PNG image. The boolean parameters controls the grid exhibition
 		as well the page delimiters on the output image. The zoom parameter controls the zoom applied to the viewport
@@ -197,7 +194,7 @@ class ModelExportHelper: public QObject {
 
 		/*! \brief Configures the SQL export params before start the export thread (when in thread mode).
 		This form receive the model, output filename and pgsql version to be used */
-		void setExportToSQLParams(DatabaseModel *db_model, const QString &filename, const QString &pgsql_ver, bool split, bool gen_script);
+		void setExportToSQLParams(DatabaseModel *db_model, const QString &filename, const QString &pgsql_ver, bool split);
 
 		/*! \brief Configures the PNG export params before start the export thread (when in thread mode).
 		This form receive the objects scene, a viewport, the output filename, zoom factor, grid options and page by page export options */

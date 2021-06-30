@@ -76,7 +76,6 @@ const QString GlobalAttributes::XMLHighlightConf("xml-highlight");
 const QString GlobalAttributes::SchHighlightConf("sch-highlight");
 const QString GlobalAttributes::PatternHighlightConf("pattern-highlight");
 
-const QString GlobalAttributes::TmplSqlExportScript("sqlexport.tmpl");
 const QString GlobalAttributes::ExampleModel("example.dbm");
 const QString GlobalAttributes::UiStyleConf("ui-style");
 

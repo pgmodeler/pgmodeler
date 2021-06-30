@@ -16,7 +16,7 @@ void ModelExportHelper::resetExportParams()
 	connection=nullptr;
 	scene=nullptr;
 	zoom=100;
-	show_grid=show_delim=page_by_page=split=browsable=gen_script=false;
+	show_grid=show_delim=page_by_page=split=browsable=false;
 	viewp=nullptr;
 }
 
@@ -59,7 +59,7 @@ void ModelExportHelper::setIgnoredErrors(const QStringList &err_codes)
 	}
 }
 
-void ModelExportHelper::exportToSQL(DatabaseModel *db_model, const QString &filename, const QString &pgsql_ver, bool split, bool gen_script)
+void ModelExportHelper::exportToSQL(DatabaseModel *db_model, const QString &filename, const QString &pgsql_ver, bool split)
 {
 	if(!db_model)
 		throw Exception(ErrorCode::AsgNotAllocattedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -82,7 +82,7 @@ void ModelExportHelper::exportToSQL(DatabaseModel *db_model, const QString &file
 		}
 		else
 		{
-			db_model->saveSplitSQLDefinition(filename, gen_script);
+			db_model->saveSplitSQLDefinition(filename);
 			emit s_progressUpdated(100, tr("SQL files successfully written in `%1'.").arg(filename), ObjectType::BaseObject);
 		}
 
@@ -1122,13 +1122,12 @@ void ModelExportHelper::setExportToDBMSParams(const QString &sql_buffer, Connect
 	this->errors.clear();
 }
 
-void ModelExportHelper::setExportToSQLParams(DatabaseModel *db_model, const QString &filename, const QString &pgsql_ver, bool split, bool gen_script)
+void ModelExportHelper::setExportToSQLParams(DatabaseModel *db_model, const QString &filename, const QString &pgsql_ver, bool split)
 {
 	this->db_model=db_model;
 	this->filename=filename;
 	this->pgsql_ver=pgsql_ver;
 	this->split=split;
-	this->gen_script=gen_script;
 }
 
 void ModelExportHelper::setExportToPNGParams(ObjectsScene *scene, QGraphicsView *viewp, const QString &filename, double zoom, bool show_grid, bool show_delim, bool page_by_page)
@@ -1209,7 +1208,7 @@ void ModelExportHelper::exportToSQL()
 {
 	try
 	{
-		exportToSQL(db_model, filename, pgsql_ver, split, gen_script);
+		exportToSQL(db_model, filename, pgsql_ver, split);
 		resetExportParams();
 	}
 	catch(Exception &e)

@@ -754,20 +754,17 @@
                    </widget>
                   </item>
                   <item>
-                   <widget class="QCheckBox" name="gen_script_chk">
-                    <property name="sizePolicy">
-                     <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-                      <horstretch>0</horstretch>
-                      <verstretch>0</verstretch>
-                     </sizepolicy>
+                   <spacer name="horizontalSpacer_8">
+                    <property name="orientation">
+                     <enum>Qt::Horizontal</enum>
                     </property>
-                    <property name="toolTip">
-                     <string>&lt;p&gt;Generates an export script that can be used to automate the execution of all created SQL files directly on a database server.&lt;/p&gt;</string>
+                    <property name="sizeHint" stdset="0">
+                     <size>
+                      <width>158</width>
+                      <height>20</height>
+                     </size>
                     </property>
-                    <property name="text">
-                     <string>Generate export script</string>
-                    </property>
-                   </widget>
+                   </spacer>
                   </item>
                  </layout>
                 </item>
