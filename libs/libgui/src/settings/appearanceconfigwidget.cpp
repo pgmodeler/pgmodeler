@@ -113,10 +113,7 @@ AppearanceConfigWidget::AppearanceConfigWidget(QWidget * parent) : BaseConfigWid
 	placeholder=new RoundedRectItem;
 
 	viewp=new QGraphicsView(scene);
-	viewp->setEnabled(false);
 	viewp->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-	viewp->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-	viewp->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 	viewp->setRenderHint(QPainter::Antialiasing);
 	viewp->setRenderHint(QPainter::TextAntialiasing);
 	viewp->setRenderHint(QPainter::SmoothPixmapTransform);
@@ -168,6 +165,7 @@ void AppearanceConfigWidget::loadExampleModel()
 		TableView *tab=nullptr;
 		GraphicalView *view=nullptr;
 		unsigned count, i;
+		QList<BaseObjectView *> graph_objs;
 
 		if(model->getObjectCount()==0)
 		{
@@ -179,6 +177,7 @@ void AppearanceConfigWidget::loadExampleModel()
 				tab=new TableView(model->getTable(i));
 				tab->setSelected(i==1);
 				scene->addItem(tab);
+				graph_objs.append(tab);
 			}
 
 			count=model->getObjectCount(ObjectType::ForeignTable);
@@ -186,6 +185,7 @@ void AppearanceConfigWidget::loadExampleModel()
 			{
 				tab=new TableView(model->getForeignTable(i));
 				scene->addItem(tab);
+				graph_objs.append(tab);
 			}
 
 			count=model->getObjectCount(ObjectType::View);
@@ -193,6 +193,7 @@ void AppearanceConfigWidget::loadExampleModel()
 			{
 				view=new GraphicalView(model->getView(i));
 				scene->addItem(view);
+				graph_objs.append(view);
 			}
 
 			count=model->getObjectCount(ObjectType::Relationship);
@@ -200,6 +201,7 @@ void AppearanceConfigWidget::loadExampleModel()
 			{
 				rel=new RelationshipView(model->getRelationship(i, ObjectType::Relationship));
 				scene->addItem(rel);
+				graph_objs.append(rel);
 			}
 
 			count=model->getObjectCount(ObjectType::BaseRelationship);
@@ -207,6 +209,7 @@ void AppearanceConfigWidget::loadExampleModel()
 			{
 				rel=new RelationshipView(model->getRelationship(i, ObjectType::BaseRelationship));
 				scene->addItem(rel);
+				graph_objs.append(rel);
 			}
 
 			count=model->getObjectCount(ObjectType::Textbox);
@@ -215,12 +218,20 @@ void AppearanceConfigWidget::loadExampleModel()
 				txtbox=new StyledTextboxView(model->getTextbox(i));
 				txtbox->setSelected(i==0);
 				scene->addItem(txtbox);
+				graph_objs.append(txtbox);
+			}
+
+			for(auto &obj : graph_objs)
+			{
+				obj->setFlag(QGraphicsItem::ItemIsSelectable, false);
+				obj->setFlag(QGraphicsItem::ItemIsMovable, false);
 			}
 
 			placeholder->setRect(QRectF(400, 280, 200, 150));
 			updatePlaceholderItem();
 			scene->addItem(placeholder);
 			scene->setActiveLayers(QList<unsigned>({0}));
+			scene->setSceneRect(scene->itemsBoundingRect(false));
 		}
 	}
 	catch(Exception &e)
