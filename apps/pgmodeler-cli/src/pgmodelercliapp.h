@@ -223,7 +223,7 @@ class PgModelerCliApp: public Application {
 
 		/*! \brief Install the .dbm file association in the mime database (default behaviour).
 		The paramenter 'uninstall' is used to clean up any file association done previously. */
-		void handleMimeDatabase(bool uninstall, bool system_wide);
+		void handleMimeDatabase(bool uninstall, bool system_wide, bool force);
 
 		/*! \brief Fixes the references to opertor classes and families by replacing tags like
 		<opclass name="name"/> by <opclass signature="name USING index_method"/>. This method operates
@@ -238,8 +238,8 @@ class PgModelerCliApp: public Application {
 		void configureConnection(bool extra_conn);
 		void importDatabase(DatabaseModel *model, Connection conn);
 		void printMessage(const QString &msg);
-		void handleLinuxMimeDatabase(bool uninstall, bool system_wide);
-		void handleWindowsMimeDatabase(bool uninstall, bool system_wide);
+		void handleLinuxMimeDatabase(bool uninstall, bool system_wide, bool force);
+		void handleWindowsMimeDatabase(bool uninstall, bool system_wide, bool force);
 		void createConfigurations();
 		void listConnections();
 

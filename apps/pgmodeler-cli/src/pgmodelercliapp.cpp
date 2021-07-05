@@ -97,8 +97,8 @@ const QString PgModelerCliApp::TagExpr("<%1");
 const QString PgModelerCliApp::EndTagExpr("</%1");
 const QString PgModelerCliApp::AttributeExpr("(%1)( )*(=)(\")(\\w|\\d|,|\\.|\\&|\\;|\\)|\\(| )+(\")");
 
-const QString PgModelerCliApp::MsgFileAssociated(QT_TR_NOOP("Database model files (.dbm) are already associated to pgModeler!"));
-const QString PgModelerCliApp::MsgNoFileAssociation(QT_TR_NOOP("There is no file association related to pgModeler and .dbm files!"));
+const QString PgModelerCliApp::MsgFileAssociated(tr("Database model files (*.dbm) are already associated to pgModeler! Try use the option `%1' to install the file association anyway.").arg(Force));
+const QString PgModelerCliApp::MsgNoFileAssociation(tr("There is no file association related to pgModeler and *.dbm files! Try use the option `%1' to uninstall the file association anyway.").arg(Force));
 
 attribs_map PgModelerCliApp::short_opts = {
 	{ Input, "-if" },		{ Output, "-of" },	{ InputDb, "-id" },
@@ -167,7 +167,7 @@ map<QString, QStringList> PgModelerCliApp::accepted_opts = {
 							 DropMissingObjs, ForceDropColsConstrs, RenameDb, NoCascadeDrop,
 							 NoSequenceReuse, ForceRecreateObjs, OnlyUnmodifiable }},
 
-	{{ DbmMimeType }, { SystemWide }},
+	{{ DbmMimeType }, { SystemWide, Force }},
 	{{ FixModel },	{ Input, Output, FixTries }},
 	{{ ListConns }, {}},
 	{{ CreateConfigs }, {MissingOnly, Force}}
@@ -486,6 +486,7 @@ void PgModelerCliApp::showMenu()
 #ifndef Q_OS_MAC
 	out << tr("File association options: ") << QtCompat::endl;
 	out << tr("  %1, %2\t\t    The file association to .dbm files will be applied in a system wide level instead of to the current user.").arg(short_opts[SystemWide]).arg(SystemWide) << QtCompat::endl;
+	out << tr("  %1, %2 \t\t    Forces the mime type install or uninstall. ").arg(short_opts[Force]).arg(Force) << QtCompat::endl;
 	out << QtCompat::endl;
 #endif
 
@@ -1827,7 +1828,7 @@ void PgModelerCliApp::updateMimeType()
 	{
 		printMessage(tr("Starting mime update..."));
 
-		handleMimeDatabase(parsed_opts[DbmMimeType]==Uninstall, parsed_opts.count(SystemWide) != 0);
+		handleMimeDatabase(parsed_opts[DbmMimeType]==Uninstall, parsed_opts.count(SystemWide) != 0, parsed_opts.count(Force) != 0);
 
 		printMessage(tr("Mime database successfully updated!\n"));
 	}
@@ -1893,20 +1894,20 @@ bool PgModelerCliApp::containsRelAttributes(const QString &str)
 	return found;
 }
 
-void PgModelerCliApp::handleMimeDatabase(bool uninstall, bool system_wide)
+void PgModelerCliApp::handleMimeDatabase(bool uninstall, bool system_wide, bool force)
 {
 	printMessage(tr("Mime database operation: %1").arg(uninstall ? QString("uninstall") : QString("install")));
 
 	#ifdef Q_OS_LINUX
-		handleLinuxMimeDatabase(uninstall, system_wide);
+		handleLinuxMimeDatabase(uninstall, system_wide, force);
 	#else
 		#ifdef Q_OS_WIN
-			handleWindowsMimeDatabase(uninstall, system_wide);
+			handleWindowsMimeDatabase(uninstall, system_wide, force);
 		#endif
 	#endif
 }
 
-void PgModelerCliApp::handleLinuxMimeDatabase(bool uninstall, bool system_wide)
+void PgModelerCliApp::handleLinuxMimeDatabase(bool uninstall, bool system_wide, bool force)
 {
 	SchemaParser schparser;
 	attribs_map attribs;
@@ -1947,10 +1948,10 @@ void PgModelerCliApp::handleLinuxMimeDatabase(bool uninstall, bool system_wide)
 	for(unsigned i=0; i < 4; i++)
 	{
 		//When installing, check if the necessary file exists. If exists, raises an error and abort.
-		if(!uninstall && QFileInfo(files[i]).exists())
+		if(!uninstall && QFileInfo(files[i]).exists() && !force)
 			throw Exception(MsgFileAssociated, ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-		if(uninstall && !QFileInfo(files[i]).exists())
+		if(uninstall && !QFileInfo(files[i]).exists() && !force)
 			throw Exception(MsgNoFileAssociation, ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	}
 
@@ -1963,7 +1964,7 @@ void PgModelerCliApp::handleLinuxMimeDatabase(bool uninstall, bool system_wide)
 		{
 			if(uninstall)
 			{
-				if(!QFile(files[i]).remove())
+				if(!QFile(files[i]).remove() && !force)
 				{
 					throw Exception(tr("Can't erase the file %1! Check if the current user has permissions to delete it and if the file exists.").arg(files[i]),
 													ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -2047,7 +2048,7 @@ void PgModelerCliApp::handleLinuxMimeDatabase(bool uninstall, bool system_wide)
 	}
 }
 
-void PgModelerCliApp::handleWindowsMimeDatabase(bool uninstall, bool system_wide)
+void PgModelerCliApp::handleWindowsMimeDatabase(bool uninstall, bool system_wide, bool force)
 {
 	SchemaParser schparser;
 	QString base_reg_key = system_wide ? QString("HKEY_LOCAL_MACHINE\\SOFTWARE") : QString("HKEY_CURRENT_USER\\Software");
@@ -2059,12 +2060,12 @@ void PgModelerCliApp::handleWindowsMimeDatabase(bool uninstall, bool system_wide
 			sc_exe_path=QDir::toNativeSeparators(GlobalAttributes::getPgModelerSchemaEditorPath());
 
 	//If there is no value assigned to (.dbm | .sch)/Default key and the user wants to uninstall file association, raises an error
-	if(uninstall &&
+	if(uninstall && !force &&
 		 (dbm_ext.value(QString("Default")).toString().isEmpty() ||
 			sch_ext.value(QString("Default")).toString().isEmpty()))
 		throw Exception(MsgNoFileAssociation, ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	if(!uninstall &&
+	if(!uninstall && !force &&
 		 (!dbm_ext.value(QString("Default")).toString().isEmpty() ||
 			!sch_ext.value(QString("Default")).toString().isEmpty()))
 		throw Exception(MsgFileAssociated, ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
