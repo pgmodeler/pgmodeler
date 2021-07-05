@@ -52,6 +52,7 @@ PgSQLTypeWidget::PgSQLTypeWidget(QWidget *parent, const QString &label) : QWidge
 		type_cmb->completer()->setCompletionMode(QCompleter::PopupCompletion);
 
 		connect(type_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(updateTypeFormat()));
+		connect(type_cmb, SIGNAL(currentTextChanged(QString)), this, SLOT(updateTypeFormat()));
 		connect(precision_sb, SIGNAL(valueChanged(int)), this, SLOT(updateTypeFormat()));
 		connect(length_sb, SIGNAL(valueChanged(int)), this, SLOT(updateTypeFormat()));
 		connect(dimension_sb, SIGNAL(valueChanged(int)), this, SLOT(updateTypeFormat()));
