@@ -1930,7 +1930,7 @@ void PgModelerCliApp::handleLinuxMimeDatabase(bool uninstall, bool system_wide)
 
 		//Files generated after update file association (application-dbm.xml and pgModeler.desktop)
 		QStringList	files = { QString("%1/applications/pgModeler.desktop").arg(share_path),
-													QString("%1/applications/pgModelerStxChecker.desktop").arg(share_path),
+													QString("%1/applications/pgModelerSchEditor.desktop").arg(share_path),
 													mime_db_dir + QString("/packages/application-dbm.xml"),
 													mime_db_dir + QString("/packages/application-sch.xml")},
 
@@ -1971,7 +1971,7 @@ void PgModelerCliApp::handleLinuxMimeDatabase(bool uninstall, bool system_wide)
 			}
 			else
 			{
-				attribs[Attributes::Application]=(i == 0 ? GlobalAttributes::getPgModelerAppPath() : GlobalAttributes::getPgModelerSyntaxCheckerPath());
+				attribs[Attributes::Application]=(i == 0 ? GlobalAttributes::getPgModelerAppPath() : GlobalAttributes::getPgModelerSchemaEditorPath());
 				attribs[Attributes::Icon] = icons[i];
 
 				schparser.loadFile(schemas[i]);
@@ -2056,7 +2056,7 @@ void PgModelerCliApp::handleWindowsMimeDatabase(bool uninstall, bool system_wide
 		QSettings dbm_ext(QString("%1\\Classes\\.dbm").arg(base_reg_key), QSettings::NativeFormat),
 				sch_ext(QString("%1\\Classes\\.sch").arg(base_reg_key), QSettings::NativeFormat);
 	QString exe_path=QDir::toNativeSeparators(GlobalAttributes::getPgModelerAppPath()),
-			sc_exe_path=QDir::toNativeSeparators(GlobalAttributes::getPgModelerSyntaxCheckerPath());
+			sc_exe_path=QDir::toNativeSeparators(GlobalAttributes::getPgModelerSchemaEditorPath());
 
 	//If there is no value assigned to (.dbm | .sch)/Default key and the user wants to uninstall file association, raises an error
 	if(uninstall &&

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>SyntaxCheckerForm</class>
- <widget class="QWidget" name="SyntaxCheckerForm">
+ <class>SchemaEditorForm</class>
+ <widget class="QWidget" name="SchemaEditorForm">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -17,7 +17,7 @@
    </size>
   </property>
   <property name="windowTitle">
-   <string>pgModeler Syntax Checker</string>
+   <string>pgModeler Schema Editor</string>
   </property>
   <property name="windowIcon">
    <iconset resource="../../../libs/libgui/res/resources.qrc">

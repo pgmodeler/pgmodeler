@@ -46,9 +46,10 @@ class GlobalAttributes {
 		 Additional vars are used to specify where to find crash handler, command line interface
 		 and main application.
 
-		 PGMODELER_CHANDLER_PATH --> Full path to pgmodeler-ch executable
-		 PGMODELER_CLI_PATH      --> Full path to pgmodeler-cli executable
-		 PGMDOELER_APP_PATH      --> Full path to pgmodeler executable */
+		 PGMODELER_CH_PATH  --> Full path to pgmodeler-ch executable
+		 PGMODELER_CLI_PATH --> Full path to pgmodeler-cli executable
+		 PGMODELER_SE_PATH  --> Full path to pgmodeler-se executable
+		 PGMDOELER_PATH     --> Full path to pgmodeler executable */
 
 		static QString
 		SchemasRootDir,
@@ -64,7 +65,7 @@ class GlobalAttributes {
 		PgModelerCHandlerPath,
 		PgModelerCLIPath,
 		PgModelerAppPath,
-		PgModelerSyntaxCheckerPath;
+		PgModelerSchemaEditorPath;
 
 		/*! \brief Returns the current value for an environment variable. If the current value is a path and the same does not
 			exists then the function will return 'default_value' if it exists. Finally, if both current value and default
@@ -194,8 +195,8 @@ class GlobalAttributes {
 		//! \brief Returns the path to the "pgmodeler" (main application) executable
 		static QString getPgModelerAppPath();
 
-		//! \brief Returns the path to the "scheditor" executable
-		static QString getPgModelerSyntaxCheckerPath();
+		//! \brief Returns the path to the "pgmodeler-se" executable
+		static QString getPgModelerSchemaEditorPath();
 
 		friend class Application;
 		friend class PgModelerUnitTest;

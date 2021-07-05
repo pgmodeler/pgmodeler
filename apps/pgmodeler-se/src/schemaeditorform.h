@@ -17,13 +17,13 @@
 */
 
 /**
-\ingroup pgmodeler-sc
-\class SyntaxCheckerForm
+\ingroup pgmodeler-se
+\class SchemaEditorForm
 \brief Implements the pgModeler's schema files editor and syntax checker.
 */
 
-#ifndef SYNTAX_CHECKER_FORM_H
-#define SYNTAX_CHECKER_FORM_H
+#ifndef SCHEMA_EDITOR_FORM_H
+#define SCHEMA_EDITOR_FORM_H
 
 #include <QObject>
 #include <QWidget>
@@ -33,7 +33,7 @@
 #include "widgets/fileselectorwidget.h"
 #include "widgets/findreplacewidget.h"
 
-class SyntaxCheckerForm: public QWidget, public Ui::SyntaxCheckerForm {
+class SchemaEditorForm: public QWidget, public Ui::SchemaEditorForm {
 	private:
 		Q_OBJECT
 
@@ -58,7 +58,7 @@ class SyntaxCheckerForm: public QWidget, public Ui::SyntaxCheckerForm {
 		QStringList showFileDialog(bool save_mode);
 
 	public:
-		explicit SyntaxCheckerForm(QWidget *parent = nullptr);
+		explicit SchemaEditorForm(QWidget *parent = nullptr);
 		void loadFiles(const QStringList &filenames);
 		bool hasModifiedEditors();
 

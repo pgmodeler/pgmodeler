@@ -19,7 +19,7 @@
 #include "application.h"
 #include <QTranslator>
 #include "guiutilsns.h"
-#include "syntaxcheckerform.h"
+#include "schemaeditorform.h"
 #include "pgmodelerapp.h"
 
 int main(int argc, char **argv)
@@ -29,7 +29,7 @@ int main(int argc, char **argv)
 		PgModelerApp app(argc,argv);
 		QStringList args = app.arguments();
 
-		SyntaxCheckerForm syntaxchk;
+		SchemaEditorForm syntaxchk;
 		args.pop_front();
 		syntaxchk.loadFiles(args);
 		syntaxchk.showMaximized();

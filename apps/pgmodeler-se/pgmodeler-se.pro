@@ -1,14 +1,14 @@
 include(../../pgmodeler.pri)
 
 TEMPLATE = app
-TARGET = pgmodeler-sc
+TARGET = pgmodeler-se
 
 windows:RC_FILE=res/windows_ico.qrc
 windows:RCC_DIR=src/
 
 SOURCES += src/main.cpp \
 	   src/aboutwidget.cpp \
-	   src/syntaxcheckerform.cpp \
+	src/schemaeditorform.cpp \
 	   src/sourceeditorwidget.cpp \
 	   ../pgmodeler/src/pgmodelerapp.cpp \
 
@@ -16,8 +16,9 @@ FORMS += ui/syntaxcheckerform.ui \
 	 ui/aboutwidget.ui \
 	 ui/sourceeditorwidget.ui
 
-HEADERS += src/syntaxcheckerform.h \
+HEADERS += \
 	   src/aboutwidget.h \
+	   src/schemaeditorform.h \
 	   src/sourceeditorwidget.h
 
 unix|windows: LIBS += $$LIBGUI_LIB \

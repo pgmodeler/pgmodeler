@@ -95,7 +95,7 @@ QString GlobalAttributes::SchHighlightConfPath;
 QString GlobalAttributes::PgModelerCLIPath;
 QString GlobalAttributes::PgModelerAppPath;
 QString GlobalAttributes::PgModelerCHandlerPath;
-QString GlobalAttributes::PgModelerSyntaxCheckerPath;
+QString GlobalAttributes::PgModelerSchemaEditorPath;
 
 QString GlobalAttributes::getPathFromEnv(const QString &varname, const QString &default_val, const QString &fallback_val)
 {
@@ -202,9 +202,9 @@ QString GlobalAttributes::getPgModelerAppPath()
 	return PgModelerAppPath;
 }
 
-QString GlobalAttributes::getPgModelerSyntaxCheckerPath()
+QString GlobalAttributes::getPgModelerSchemaEditorPath()
 {
-	return PgModelerSyntaxCheckerPath;
+	return PgModelerSchemaEditorPath;
 }
 
 void GlobalAttributes::setSearchPath(const QString &search_path)
@@ -233,19 +233,19 @@ void GlobalAttributes::setSearchPath(const QString &search_path)
 	#if defined(Q_OS_UNIX)
 		#if defined(Q_OS_MAC)
 			//For MacOSX the crash handler path is fixed (inside bundle)
-			PgModelerCHandlerPath=getPathFromEnv("PGMODELER_CHANDLER_PATH", QString("%1/pgmodeler-ch").arg(BINDIR), QString("%1/pgmodeler-ch").arg(search_path));
+			PgModelerCHandlerPath=getPathFromEnv("PGMODELER_CH_PATH", QString("%1/pgmodeler-ch").arg(BINDIR), QString("%1/pgmodeler-ch").arg(search_path));
 		#else
-			PgModelerCHandlerPath=getPathFromEnv("PGMODELER_CHANDLER_PATH", QString("%1/pgmodeler-ch").arg(PRIVATEBINDIR), QString("%1/pgmodeler-ch").arg(search_path));
+			PgModelerCHandlerPath=getPathFromEnv("PGMODELER_CH_PATH", QString("%1/pgmodeler-ch").arg(PRIVATEBINDIR), QString("%1/pgmodeler-ch").arg(search_path));
 		#endif
 
 		PgModelerCLIPath=getPathFromEnv("PGMODELER_CLI_PATH", QString("%1/pgmodeler-cli").arg(BINDIR), QString("%1/pgmodeler-cli").arg(search_path));
-		PgModelerAppPath=getPathFromEnv("PGMODELER_APP_PATH", QString("%1/pgmodeler").arg(BINDIR), QString("%1/pgmodeler").arg(search_path));
-		PgModelerSyntaxCheckerPath=getPathFromEnv("PGMODELER_SYNTAXCHECKER_PATH", QString("%1/pgmodeler-sc").arg(BINDIR), QString("%1/pgmodeler-sc").arg(search_path));
+		PgModelerAppPath=getPathFromEnv("PGMODELER_PATH", QString("%1/pgmodeler").arg(BINDIR), QString("%1/pgmodeler").arg(search_path));
+		PgModelerSchemaEditorPath=getPathFromEnv("PGMODELER_SE_PATH", QString("%1/pgmodeler-se").arg(BINDIR), QString("%1/pgmodeler-sc").arg(search_path));
 
 	#else
-		PgModelerCHandlerPath=getPathFromEnv("PGMODELER_CHANDLER_PATH", QString("%1\\pgmodeler-ch.exe").arg(PRIVATEBINDIR), QString("%1\\pgmodeler-ch.exe").arg(search_path));
+		PgModelerCHandlerPath=getPathFromEnv("PGMODELER_CH_PATH", QString("%1\\pgmodeler-ch.exe").arg(PRIVATEBINDIR), QString("%1\\pgmodeler-ch.exe").arg(search_path));
 		PgModelerCLIPath=getPathFromEnv("PGMODELER_CLI_PATH", QString("%1\\pgmodeler-cli.exe").arg(PRIVATEBINDIR), QString("%1\\pgmodeler-cli.exe").arg(search_path));
-		PgModelerAppPath=getPathFromEnv("PGMODELER_APP_PATH", QString("%1\\pgmodeler.exe").arg(BINDIR), QString("%1\\pgmodeler.exe").arg(search_path));
-		PgModelerSyntaxCheckerPath=getPathFromEnv("PGMODELER_SYNTAXCHECKER_PATH", QString("%1/pgmodeler-sc.exe").arg(BINDIR), QString("%1/pgmodeler-sc.exe").arg(search_path));
+		PgModelerAppPath=getPathFromEnv("PGMODELER_PATH", QString("%1\\pgmodeler.exe").arg(BINDIR), QString("%1\\pgmodeler.exe").arg(search_path));
+		PgModelerSchemaEditorPath=getPathFromEnv("PGMODELER_SE_PATH", QString("%1/pgmodeler-se.exe").arg(BINDIR), QString("%1/pgmodeler-sc.exe").arg(search_path));
 	#endif
 }

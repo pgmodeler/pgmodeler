@@ -16,7 +16,7 @@
 # Also, you can get the complete GNU General Public License at <http://www.gnu.org/licenses/>
 */
 
-#include "syntaxcheckerform.h"
+#include "schemaeditorform.h"
 #include "guiutilsns.h"
 #include "globalattributes.h"
 #include "settings/generalconfigwidget.h"
@@ -26,9 +26,9 @@
 #include "baseform.h"
 #include "utilsns.h"
 
-const QString SyntaxCheckerForm::UntitledFile = QT_TR_NOOP("(untitled)");
+const QString SchemaEditorForm::UntitledFile = QT_TR_NOOP("(untitled)");
 
-SyntaxCheckerForm::SyntaxCheckerForm(QWidget *parent) : QWidget(parent)
+SchemaEditorForm::SchemaEditorForm(QWidget *parent) : QWidget(parent)
 {
 	QToolButton *btn = nullptr;
 	QFont fnt;
@@ -134,13 +134,13 @@ subcontrol-position: right center; }");
 	});
 }
 
-void SyntaxCheckerForm::showEvent(QShowEvent *)
+void SchemaEditorForm::showEvent(QShowEvent *)
 {
 	h_splitter->setSizes({ width(), width()/2});
 	loadSyntaxConfig();
 }
 
-bool SyntaxCheckerForm::hasModifiedEditors()
+bool SchemaEditorForm::hasModifiedEditors()
 {
 	bool editors_modified = false;
 	SourceEditorWidget *editor = nullptr;
@@ -159,7 +159,7 @@ bool SyntaxCheckerForm::hasModifiedEditors()
 	return editors_modified;
 }
 
-void SyntaxCheckerForm::closeEvent(QCloseEvent *event)
+void SchemaEditorForm::closeEvent(QCloseEvent *event)
 {
 	if(alert_frm->isVisible() || hasModifiedEditors())
 	{
@@ -172,7 +172,7 @@ void SyntaxCheckerForm::closeEvent(QCloseEvent *event)
 	}
 }
 
-bool SyntaxCheckerForm::eventFilter(QObject *object, QEvent *event)
+bool SchemaEditorForm::eventFilter(QObject *object, QEvent *event)
 {
 	if(object == &syntax_cfg_menu && event->type() == QEvent::Show)
 	{
@@ -184,7 +184,7 @@ bool SyntaxCheckerForm::eventFilter(QObject *object, QEvent *event)
 	return QWidget::eventFilter(object, event);
 }
 
-void SyntaxCheckerForm::loadSyntaxConfig()
+void SchemaEditorForm::loadSyntaxConfig()
 {
 	QAction *act = stx_action_grp->checkedAction();
 	QFile input;
@@ -226,7 +226,7 @@ void SyntaxCheckerForm::loadSyntaxConfig()
 	}
 }
 
-void SyntaxCheckerForm::applySyntaxConfig(bool from_temp_file)
+void SchemaEditorForm::applySyntaxConfig(bool from_temp_file)
 {
 	QTemporaryFile tmp_file;
 	QString filename;
@@ -281,14 +281,14 @@ void SyntaxCheckerForm::applySyntaxConfig(bool from_temp_file)
 		tmp_file.remove();
 }
 
-void SyntaxCheckerForm::saveSyntaxConfig()
+void SchemaEditorForm::saveSyntaxConfig()
 {
 	UtilsNs::saveFile(syntax_conf_sel->getSelectedFile(), syntax_txt->toPlainText().toUtf8());
 	alert_frm->setVisible(false);
 	applySyntaxConfig(true);
 }
 
-void SyntaxCheckerForm::saveFile(bool save_as)
+void SchemaEditorForm::saveFile(bool save_as)
 {
 	SourceEditorWidget *editor = dynamic_cast<SourceEditorWidget *>(editors_tbw->widget(editors_tbw->currentIndex()));
 	QString filename = editor->getFilename();
@@ -310,7 +310,7 @@ void SyntaxCheckerForm::saveFile(bool save_as)
 	editors_tbw->setTabToolTip(editors_tbw->currentIndex(), fi.absoluteFilePath());
 }
 
-void SyntaxCheckerForm::setTabModified(bool modified)
+void SchemaEditorForm::setTabModified(bool modified)
 {
 	SourceEditorWidget *editor = dynamic_cast<SourceEditorWidget *>(sender());
 	int idx = editors_tbw->indexOf(editor);
@@ -324,7 +324,7 @@ void SyntaxCheckerForm::setTabModified(bool modified)
 	editors_tbw->setTabText(idx, tab_text);
 }
 
-void SyntaxCheckerForm::indentAll()
+void SchemaEditorForm::indentAll()
 {
 	SourceEditorWidget *editor = nullptr;
 
@@ -339,7 +339,7 @@ void SyntaxCheckerForm::indentAll()
 	QApplication::restoreOverrideCursor();
 }
 
-void SyntaxCheckerForm::saveAll()
+void SchemaEditorForm::saveAll()
 {
 	QApplication::setOverrideCursor(Qt::WaitCursor);
 
@@ -362,7 +362,7 @@ void SyntaxCheckerForm::saveAll()
 	QApplication::restoreOverrideCursor();
 }
 
-void SyntaxCheckerForm::closeAll()
+void SchemaEditorForm::closeAll()
 {
 	Messagebox msgbox;
 
@@ -382,7 +382,7 @@ void SyntaxCheckerForm::closeAll()
 	QApplication::restoreOverrideCursor();
 }
 
-QStringList SyntaxCheckerForm::showFileDialog(bool save_mode)
+QStringList SchemaEditorForm::showFileDialog(bool save_mode)
 {
 	QFileDialog file_dlg;
 	QStringList files;
@@ -415,7 +415,7 @@ QStringList SyntaxCheckerForm::showFileDialog(bool save_mode)
 	return files;
 }
 
-void SyntaxCheckerForm::loadFile()
+void SchemaEditorForm::loadFile()
 {
 	try
 	{
@@ -430,7 +430,7 @@ void SyntaxCheckerForm::loadFile()
 	}
 }
 
-void SyntaxCheckerForm::loadFiles(const QStringList &filenames)
+void SchemaEditorForm::loadFiles(const QStringList &filenames)
 {
 	try
 	{
@@ -448,7 +448,7 @@ void SyntaxCheckerForm::loadFiles(const QStringList &filenames)
 	}
 }
 
-void SyntaxCheckerForm::addEditorTab(const QString &filename)
+void SchemaEditorForm::addEditorTab(const QString &filename)
 {
 	SourceEditorWidget *editor_wgt = nullptr;
 	QFileInfo fi(filename);
@@ -479,7 +479,7 @@ void SyntaxCheckerForm::addEditorTab(const QString &filename)
 	close_all_tb->setEnabled(true);
 }
 
-void SyntaxCheckerForm::closeEditorTab(int idx, bool confirm_close)
+void SchemaEditorForm::closeEditorTab(int idx, bool confirm_close)
 {
 	SourceEditorWidget *editor_wgt = dynamic_cast<SourceEditorWidget *>(editors_tbw->widget(idx));
 	Messagebox msgbox;
