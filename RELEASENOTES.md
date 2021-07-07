@@ -1,24 +1,14 @@
-v0.9.4-alpha
+v0.9.4-alpha1
 ------
 
-<em>Release date: May 12, 2021</em><br/>
-<em>Changes since: <strong>v0.9.3</strong></em><br/>
+<em>Release date: July 15, 2021</em><br/>
+<em>Changes since: <strong>v0.9.4-alpha</strong></em><br/>
 
 <strong>Attention:</strong> the database model file structure has changed since the last stable 0.9.3. Models created in older releases will certainly fail to load due to incompatibilities because some attributes in the XML code don't exist anymore or have changed during the development of 0.9.4-alpha. Before loading your database models in this new release, please, make sure to have a backup of all of them and follow the steps presented by the model fix tool to correct the documents' structure. Not paying attention to this situation may cause irreversible data loss! If the fix procedures aren't enough to make your database models loadable again, please, ask for help at the official support channels!<br/>
 
-<strong>Summary:</strong> it took almost half-year to conclude the first alpha release of 0.9.4 due to several problems I was facing. Anyway, I kept working on pgModeler at a slower pace and releasing snapshot buildings until we had reached an acceptable state of maturity for an alpha release.<br/>
+<strong>Summary:</strong> <br/>
 
-Attending to some requests, I dedicated some time to bring the support for multiple layers. Basically, pgModeler now allows graphical objects to be in different layers which can be toggled in a dedicated widget in order to denote a custom context depending on the user's need. Additionally to multiple layers support, it was added support for displaying layers rectangles around the objects in order to demonstrate in which layer an object is in. The CLI also has been patched in such a way to fix models created in an older version (until 0.9.3) so they can support multiple layers correctly.<br/>
-
-The metadata handling was improved in such a way to allow the manipulation of layers' information. Another improvement on this feature was the addition of a new option that allows the merging of duplicated text boxes, generic SQL objects, and tags. By default, duplicated objects of those kinds are ignored.<br/>
-
-This release also brings support for configuration parameters and transform types on functions and procedures, and the support for PARALLEL attribute on functions. The import and diff processes were also improved to support the mentioned attributes on functions and procedures.<br/>
-
-There were other improvements in the general usage of the tool. For instance, the main window can now be resized to a minimum of 640x480 attending to the requests of those who work on smaller screens. In the design view, now it's possible to change the color of the grid lines, canvas background, and page delimiter lines on the general settings.<br/>
-
-Other fixes and improvements that are worth mentioning: the removal of the diff option "Trucante before alter columns" due to the risk of data loss in very specific use cases. The database model loading process was fixed and now it loads correctly the model's changelog entries without raising errors. Several fixes were also applied to the code generation to avoid malformed SQL code. <br/>
-
-Finally, the whole set of changes of this release has 67 entries being 13 new features, 25 changes/improvements, and 29 bug fixes. Below, some key changes are highlighted. For the complete list of changes, please, take a look at the CHANGELOG.md. <br/>
+Finally, the whole set of changes of this release has 76 entries being 21 new features, 34 changes/improvements, and 21 bug fixes. Below, some key changes are highlighted. For the complete list of changes, please, take a look at the CHANGELOG.md. <br/>
 
 * [New] Added compatibility code that allows loading models created in versions before 0.9.4-alpha without losing layers and active layers information.
 * [New] Added an option to the metadata handling operation that serves to indicate if duplicated objects (textboxes, tags, generic sql) must be merged or not.
