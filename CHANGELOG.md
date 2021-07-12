@@ -3,7 +3,7 @@ Changelog
 
 v0.9.4-alpha1
 ------
-<em>Release date: July 15, 2021</em><br/>
+<em>Release date: July 19, 2021</em><br/>
 
 * [New] The bulk editing form now can be confirmed by Ctrl+Return shortcut.
 * [New] The CLI now is capable of fixing models created before 0.9.4-alpha1 that have columns, functions and other objects that reference extension types with simple names instead of schema-qualified names.
@@ -17,7 +17,7 @@ v0.9.4-alpha1
 * [New] Added a specific icon for CLI on Windows.
 * [New] Added the methods SchemaParser::getCurrentColumn and SchemaParser::getCurrentLine.
 * [New] Added signal s_hideRequested to FindReplaceWidget to notify connected slots that the close button on that widget was clicked.
-* [New] Added an attribute capture-nearby to <word-separators> tag that is read by SchemaParser to indicate if word separators must be capture altogether in the same word if they appear continguously.
+* [New] Added an attribute capture-nearby to the word-separators tag that is read by SchemaParser to indicate if word separators must be capture altogether in the same word if they appear continguously.
 * [New] Added options to create only missing config files or recreate all config file in CLI.
 * [New] Added support for saving SQL definition in split files.
 * [New] Added support for split SQL generation in CLI.
@@ -60,7 +60,7 @@ v0.9.4-alpha1
 * [Change] Replaced duplicated code that saves files and raises exception by UtilsNs::saveFile
 * [Change] The class Schema now has its own id interval (4000 - 4999) in order to make the split code generation to be done properly.
 * [Change] Minor adjustment in AppearanceConfigWidget to enable scrollbars in the viewport so users in small screen can see the entire model.
-* [Fix] Fixed the crash handler and bug report form in such a way to load the last modified model opened before their execution. (issue #1541)
+* [Fix] Fixed the crash handler and bug report form in such a way to load the last modified model opened before their execution.
 * [Fix] Fixed the column positions in ObjectDepsRefsWidget.
 * [Fix] Fixed a crash when the database import process fails to create an inheritance relationship somehow.
 * [Fix] Fixed a bug in database import process that not correctly setting up the data type name of columns when the types were handled by extensions. Types handled by extension don't need to have the schema name prepended.
