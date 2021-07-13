@@ -157,7 +157,7 @@ void GenericSQL::updateObjectReference(const QString &ref_name, BaseObject *obje
 		vector<ObjectRefConfig>::iterator itr = objects_refs.begin() + idx;
 		int idx_aux = getObjectRefNameIndex(new_ref_name);
 
-		if(idx_aux != idx)
+		if(idx_aux >= 0 && idx_aux != idx)
 			throw Exception(Exception::getErrorMessage(ErrorCode::InsDuplicatedObjectReference).arg(new_ref_name),
 											ErrorCode::InsDuplicatedObjectReference,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 

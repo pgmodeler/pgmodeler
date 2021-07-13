@@ -564,7 +564,8 @@ void MainWindow::resizeGeneralToolbarButtons()
 	QToolButton *btn = nullptr;
 
 	if(general_tb->minimumWidth() == 0)
-		general_tb->setMinimumWidth(general_tb->width() * (round(BaseObjectView::getScreenDpiFactor()) <= 1 ? 0.60 : 0.90));
+		general_tb->setMinimumWidth(general_tb->width() *
+																(BaseObjectView::getScreenDpiFactor() < BaseObjectView::MaxDpiFactor ? 0.60 : 0.90));
 
 	for(auto &act : general_tb->actions())
 	{
