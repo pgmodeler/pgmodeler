@@ -198,6 +198,9 @@ class PgModelerCliApp: public Application {
 		//! \brief Shows the options menu
 		void showMenu();
 
+		//! \brief Shows the version info
+		void showVersionInfo();
+
 		//! \brief Returns if the specified options exists on short options map
 		bool isOptionRecognized(QString &op, bool &accepts_val);
 
@@ -237,7 +240,14 @@ class PgModelerCliApp: public Application {
 		void updateMimeType();
 		void configureConnection(bool extra_conn);
 		void importDatabase(DatabaseModel *model, Connection conn);
-		void printMessage(const QString &msg);
+
+		/*! \brief Prints to the stdout the provided text appending a \n on the string
+		 * even if the silent mode is active. */
+		void printText(const QString &txt = "");
+
+		//! \brief Prints to the stdout only if the silent mode is not active
+		void printMessage(const QString &txt = "");
+
 		void handleLinuxMimeDatabase(bool uninstall, bool system_wide, bool force);
 		void handleWindowsMimeDatabase(bool uninstall, bool system_wide, bool force);
 		void createConfigurations();
