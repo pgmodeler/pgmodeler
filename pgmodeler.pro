@@ -2,12 +2,12 @@
 include(pgmodeler.pri)
 
 # Subprojects (libraries only)
-SUBDIRS = libutils \
-          libparsers \
-          libpgmodeler \
-          libpgconnector \
-          libobjrenderer \
-          libpgmodeler_ui
+SUBDIRS = libs/$$LIBUTILS \
+	  libs/$$LIBPARSERS \
+	  libs/$$LIBCORE \
+	  libs/$$LIBCONNECTOR \
+	  libs/$$LIBCANVAS \
+	  libs/$$LIBGUI
 
 # Include the tests subprojects only on debug mode
 CONFIG(debug, debug|release): SUBDIRS += tests
@@ -22,22 +22,23 @@ exists($$PLUGINS_SRC_ROOT) {
    SUBDIRS += plugins
 }
 
-# Including executables subprojects (libraries only)
-SUBDIRS += crashhandler \
-           main-cli \
-           main
+# Including executables subprojects
+SUBDIRS += apps/pgmodeler \
+	   apps/pgmodeler-cli \
+	   apps/pgmodeler-ch \
+	   apps/pgmodeler-se
 
 # Deployment settings
-samples.files = samples/*
+samples.files = assets/samples/*
 samples.path = $$SAMPLESDIR
 
-schemas.files = schemas/*
+schemas.files = assets/schemas/*
 schemas.path = $$SCHEMASDIR
 
-lang.files = lang/*
+lang.files = assets/lang/*
 lang.path = $$LANGDIR
 
-conf.files = conf/*
+conf.files = assets/conf/*
 conf.path = $$CONFDIR
 
 doc.files = README.md CHANGELOG.md LICENSE RELEASENOTES.md
@@ -45,5 +46,4 @@ doc.path = $$DOCDIR
 
 INSTALLS += samples schemas lang conf doc
 
-CONFIG += qt \
-	qt
+CONFIG += qt

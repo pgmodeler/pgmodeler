@@ -26,7 +26,7 @@ LOG="$PWD/linuxdeploy.log"
 QT_IFW_ROOT=/opt/qt/Tools/QtInstallerFramework/3.2
 
 # Detecting current pgModeler version
-DEPLOY_VER=`cat libutils/src/globalattributes.cpp | grep PgModelerVersion | sed 's/.\+PgModelerVersion=QString("//g' | sed 's/")//g' | sed 's/^ *//g'`
+DEPLOY_VER=`cat libs/libutils/src/globalattributes.cpp | grep PgModelerVersion | sed 's/.\+PgModelerVersion=QString("//g' | sed 's/")//g' | sed 's/^ *//g'`
 
 BUILD_DIR="$PWD/build"
 DIST_DIR="$PWD/dist"

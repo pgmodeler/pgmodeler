@@ -10,12 +10,12 @@
 *.run
 *.Debug
 *.Release
+*.old
 
 moc_*.cpp
 moc_*.h
 qrc_resources.cpp
 ui_*.h
-windows_ico.qrc
 windeploy.log
 Makefile
 
@@ -29,3 +29,7 @@ obj/*
 plugins
 plugins/*
 release/*
+apps/pgmodeler/build/*
+apps/pgmodeler-cli/build/*
+apps/pgmodeler-ch/build/*
+apps/pgmodeler-sce/build/*

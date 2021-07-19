@@ -1,6 +1,87 @@
 Changelog
 ---------
 
+v0.9.4-alpha1
+------
+<em>Release date: July 19, 2021</em><br/>
+
+* [New] The bulk editing form now can be confirmed by the Ctrl+Return shortcut.
+* [New] The CLI now is capable of fixing models created before 0.9.4-alpha1 that have columns, functions, and other objects that reference extension types with simple names instead of schema-qualified names.
+* [New] Added an option to GeneralConfigWidget to toggle the displaying of schema names of columns data types on design view. This option affects only the rendering of objects, the code generation will keep displaying user-defined type names in a schema-qualified way.
+* [New] Created the DeletableItemDelegate which draws a delete button aside combobox items.
+* [New] Added the ability to drop databases from the database listing in SQLToolWidget.
+* [New] Added support to strikeout attribute in SyntaxHighlighter.
+* [New] Created an auxiliary tool called pgModeler Schema Editor in order to help to edit *.sch files as well as validate their syntax.
+* [New] GeneralConfigWidget now restores the sch-highlight.conf to default.
+* [New] Added the environment variable name for schema editor app in GlobalAttributes.
+* [New] Added a specific icon for CLI on Windows.
+* [New] Added the methods SchemaParser::getCurrentColumn and SchemaParser::getCurrentLine.
+* [New] Added signal s_hideRequested to FindReplaceWidget to notify connected slots that the close button on that widget was clicked.
+* [New] Added an attribute capture-nearby to the word-separators tag that is read by SchemaParser to indicate if word separators must be capture altogether in the same word if they appear contiguously.
+* [New] Added options to create only missing config files or recreate all config file in CLI.
+* [New] Added support for saving SQL definition in split files.
+* [New] Added support for split SQL generation in CLI.
+* [New] Added the ability to cancel the SQL file export process in GUI.
+* [New] Created the methods UtilsNs::saveFile and UtilsNs::loadFile in order to replace repetitive save/load code by them.
+* [New] Created the function PgSqlVersions::parseString that checks the forced PostgreSQL version is valid, returning a fallback version when needed or raising an error if the version is malformed or is unsupported.
+* [New] Added new metacharacter to SchemaParser: $hs for #, $ps for %, $at for @, $ds for $.
+* [New] Added the option --force to the mime type handling operation on CLI.
+* [Change] Changed the behavior of column click on DataManipulationForm. Now, the sorting is triggered by holding control and clicking the desired column. Clicking a column without holding control will select all the items in that column.
+* [Change] Changed the behavior of extension types registration, now they will be forcibly registered with complete name (schema.name) in order to follow the same rule of user-defined data types so the reverse engineering can work properly for both types handled by extensions and those not.
+* [Change] Improved the type searching on PgSqlTypeWidget in such a way to display a popup with the data types matching the text typed by the user.
+* [Change] Improved TableObjectView to be rendered with/without schema names appended to user-defined data type names.
+* [Change] Minor adjustment on icon size of QTreeWidget instances.
+* [Change] Improved the NewObjectOverlayWidget in such a way to allow only one action to be executed at a time.
+* [Change] Several clean-ups in the source code root. Removed unused files.
+* [Change] The subproject libpgmodeler was renamed to libcore and now moved to libs/
+* [Change] The subproject libpgmodeler_ui was renamed to libgui and now moved to libs/
+* [Change] The subproject libobjrenderer was renamed to libcanvas and now moved to libs/
+* [Change] The main executable subproject was renamed to pgmodeler and now moved to apps/
+* [Change] The main-cli executable subproject was renamed to pgmodeler-cli and moved to apps/
+* [Change] The crashhandler subproject was renamed to pgmodeler-ch and moved to apps/
+* [Change] Created a subfolder called "assets" to store all deployed files that aren't libraries or executables: conf, lang, schemas, samples, etc.
+* [Change] Refactored all .pro/.pri files in order to reference pgModeler libraries from variables $$LIB[LIBNAME] instead of relative paths.
+* [Change] Renamed all icons that were in Portuguese to English.
+* [Change] In SnippetsConfigWidget replaced the SQL highlight by Schema micro-language highlighting.
+* [Change] Renamed BlockInfo class to TextBlockInfo and moved to a dedicated source file.
+* [Change] Changed the workflows to build any *fix, *change, *support branches.
+* [Change] Minor improvement on QMainWindow to resize general toolbar buttons.
+* [Change] Widgets that were emitting the signal s_visibilityChanged(bool) only on hide event no emit s_hideRequested instead. The s_visibilityChanged(bool) is now reserved to widgets that need to notify visibility changes passing the current state to slots (hidden/displayed) in for of a bool parameter.
+* [Change] Minor hint text typos fixes.
+* [Change] Improved the syntax error messages in SchemaParser.
+* [Change] Minor adjustment in the minimum width of the general toolbar when resizing the buttons.
+* [Change] BaseForm::setMainWidget(QWidget *) version will use the same icon as the widget being inserted.
+* [Change] Adjusting the general toolbar width according to the screen DPI.
+* [Change] Renamed the namespace PgModelerUiNs to GuiUtilsNs.
+* [Change] Renamed the namespace PgModelerNs to CoreUtilsNs
+* [Change] Source files and ui files in libgui were reorganized by contexts (widgets, tools, settings, utils, dbobjects)
+* [Change] Applied an automatic indentation to all schema files.
+* [Change] pgModeler will now create missing config files in the startup.
+* [Change] Replaced duplicated code that saves files and raises exception by UtilsNs::saveFile
+* [Change] The class Schema now has its own id interval (4000 - 4999) in order to make the split code generation be done properly.
+* [Change] Minor adjustment in AppearanceConfigWidget to enable scrollbars in the viewport so users on small screens can see the entire model.
+* [Fix] Fixed the crash handler and bug report form in such a way to load the last modified model opened before their execution.
+* [Fix] Fixed the column positions in ObjectDepsRefsWidget.
+* [Fix] Fixed a crash when the database import process fails to create an inheritance relationship somehow.
+* [Fix] Fixed a bug in the database import process that not correctly setting up the data type name of columns when the types were handled by extensions. Types handled by extension don't need to have the schema name prepended.
+* [Fix] Minor fix in database import process in such a way to properly update the table rendering to hide schema names from title box.
+* [Fix] Fixed a malformed SQL code when configuring timestamptz in PgSqlType.
+* [Fix] Fixed the reference to libutils in deploy scripts.
+* [Fix] Fixed doxygen references for libraries and executables.
+* [Fix] Fixed the path to globalattributes.cpp in deploy scripts.
+* [Fix] Added missing file windows_ico.qrc.
+* [Fix] Fixed a bug in SyntaxHighlighter that was wrongly highlighting the entire document when a multiline group had a line break as the final expression.
+* [Fix] Fixed the syntax highligting files (xml, sql).
+* [Fix] Minor fix in CLI in order to associate .sch files to the scheditor.
+* [Fix] Fixed a bug that was causing all layers to be active even if there was some inactive (invisible) when adding a new layer.
+* [Fix] Fixed the method PgModelerCliApp::handleWindowsMimeDatabase to properly insert sch file association in Windows registry.
+* [Fix] Fixed the "iCCP: CRC error" in PNGS at libs/libgui/res/icons
+* [Fix] Minor fix in SyntaxHighlighter in order to return unformatted word when the group can't be forcibly defined in all exception cases when the word doesn't match any group.
+* [Fix] Fixed the description of the option --output in CLI.
+* [Fix] Fixed a bug in CLI that could lead to segfault when using diff option and a database model as input.
+* [Fix] Fix broken build on Qt 5.11.x.
+* [Fix] Minor fix in PgSQLTypeWidget to capture the text changing signal on data type combo so the type format input can be properly updated when the user types the desire data type.
+
 v0.9.4-alpha
 ------
 <em>Release date: May 12, 2021</em><br/>

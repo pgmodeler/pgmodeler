@@ -1,62 +1,74 @@
-v0.9.4-alpha
+v0.9.4-alpha1
 ------
 
-<em>Release date: May 12, 2021</em><br/>
-<em>Changes since: <strong>v0.9.3</strong></em><br/>
+<em>Release date: July 19, 2021</em><br/>
+<em>Changes since: <strong>v0.9.4-alpha</strong></em><br/>
 
-<strong>Attention:</strong> the database model file structure has changed since the last stable 0.9.3. Models created in older releases will certainly fail to load due to incompatibilities because some attributes in the XML code don't exist anymore or have changed during the development of 0.9.4-alpha. Before loading your database models in this new release, please, make sure to have a backup of all of them and follow the steps presented by the model fix tool to correct the documents' structure. Not paying attention to this situation may cause irreversible data loss! If the fix procedures aren't enough to make your database models loadable again, please, ask for help at the official support channels!<br/>
+<strong>Attention:</strong> the database model file structure has changed since the last stable 0.9.3. Models created in older releases will certainly fail to load due to incompatibilities because some attributes in the XML code don't exist anymore or have changed during the development of 0.9.4-alpha1. Before loading your database models in this new release, please, make sure to have a backup of them all and follow the steps presented by the model fix tool to patch the documents' structure. Not paying attention to this situation may cause irreversible data loss! If the fix procedures aren't enough to make your database models loadable again, please, ask for help at the official support channels!<br/>
 
-<strong>Summary:</strong> it took almost half-year to conclude the first alpha release of 0.9.4 due to several problems I was facing. Anyway, I kept working on pgModeler at a slower pace and releasing snapshot buildings until we had reached an acceptable state of maturity for an alpha release.<br/>
+<strong>Summary:</strong> after two months of intense work, we finally made it! The last alpha release for 0.9.4 is ready bringing some important fixes, changes, and interesting new features which I will briefly describe further.<br/>
 
-Attending to some requests, I dedicated some time to bring the support for multiple layers. Basically, pgModeler now allows graphical objects to be in different layers which can be toggled in a dedicated widget in order to denote a custom context depending on the user's need. Additionally to multiple layers support, it was added support for displaying layers rectangles around the objects in order to demonstrate in which layer an object is in. The CLI also has been patched in such a way to fix models created in an older version (until 0.9.3) so they can support multiple layers correctly.<br/>
+The first new feature in 0.9.4-alpha1 is the ability of export the database model in split SQL scripts. In this mode, pgModeler will create a single SQL file for each database object in the model. This is useful if you need to deploy your database in a custom way differently from that made by the tool. This feature is avaliable in GUI as well as in CLI.<br/>
 
-The metadata handling was improved in such a way to allow the manipulation of layers' information. Another improvement on this feature was the addition of a new option that allows the merging of duplicated text boxes, generic SQL objects, and tags. By default, duplicated objects of those kinds are ignored.<br/>
+Due to the introduction of a new syntax highlighting configuration file (for code snippets configuration), pgModeler will, from now on, create missing configuration files at startup. This will avoid breaking the tool's execution when it detects the absence of any configuration file. <br/>
 
-This release also brings support for configuration parameters and transform types on functions and procedures, and the support for PARALLEL attribute on functions. The import and diff processes were also improved to support the mentioned attributes on functions and procedures.<br/>
+pgModeler 0.9.4-alpha1 also brings the ability to drop databases quickly from the databases listing in SQL tool. Previously, there was the need to browse the database first and then drop it. <br/>
 
-There were other improvements in the general usage of the tool. For instance, the main window can now be resized to a minimum of 640x480 attending to the requests of those who work on smaller screens. In the design view, now it's possible to change the color of the grid lines, canvas background, and page delimiter lines on the general settings.<br/>
+This release also introduces a new auxiliary tool which is called pgModeler Schema Editor (pgmodeler-se). In this tool, it's possible to edit and validate *.sch files as well as tweak syntax highlighting configuration files. You can use this tool to modify the SQL generation template files, for instance, so the generated syntax fits your needs. <br/>
 
-Other fixes and improvements that are worth mentioning: the removal of the diff option "Trucante before alter columns" due to the risk of data loss in very specific use cases. The database model loading process was fixed and now it loads correctly the model's changelog entries without raising errors. Several fixes were also applied to the code generation to avoid malformed SQL code. <br/>
+In data manipulation form, the sorting operation performed when clicking columns was adjusted. Now, the sorting will be triggered by holding the control key and clicking the desired column, and if the user only clicks a column without holding the control key will cause the entire column to be selected in the grid. </br>
 
-Finally, the whole set of changes of this release has 67 entries being 13 new features, 25 changes/improvements, and 29 bug fixes. Below, some key changes are highlighted. For the complete list of changes, please, take a look at the CHANGELOG.md. <br/>
+The command-line interface was patched in such a way that now doesn't chash anymore when performing a diff operation in which a database model is used as input. Another improvement to CLI is the introduction of the option --force in the mime type handling operation.<br/>
 
-* [New] Added compatibility code that allows loading models created in versions before 0.9.4-alpha without losing layers and active layers information.
-* [New] Added an option to the metadata handling operation that serves to indicate if duplicated objects (textboxes, tags, generic sql) must be merged or not.
-* [New] Added support for configuration parameters and transform types on functions and procedures.
-* [New] Added the ability to rename the default layer.
-* [New] Added support for setup, in general settings, the custom color for grid lines, canvas area and page delimiter lines.
-* [New] Added support for multiple layers on the model.
-* [New] Added support for PARALLEL attribute to functions.
-* [Change] Minor adjustments on Messagebox resizing during first display.
-* [Change] Minor improvement on Messagebox in order to display the stack trace toggle button in a more intuitive way.
-* [Change] Changed the behaviour of the method ObjectsScene::removeLayers, now it'll allow the resetting or not the layers of the objects.
-* [Change] Adjusted the minimum size of the main window to 640x480 so it can fit in smaller screens.
-* [Change] Change on the search path for PluginsDir to use getPathFromEnv().
-* [Change] DatabaseModel will now create a default layer in the constructor.
-* [Change] The database model will add the default layer to the loaded model if there isn't a single layer identified.
-* [Change] DatabaseModel when loading older database model files will generate random layer colors.
-* [Change] Improved the window title of DataManipulationForm in sucha a way to display the currently browsed table.
-* [Change] Improved the selection of layers to be associated to object in context menu (Quick > Set layers). Now a floating widget is use to select multiple layers for the object selection in the canvas area.
-* [Change] Updated the sample models to use "layers" attributes on graphical objects.
-* [Change] pgModeler CLI will now rename "layer" attributes to "layers" in order to reflect the multiple layers support for older models.
-* [Change] The option "Truncate before alter columns" in the diff process was removed since its use is discouraged and dangerous in some situations.
-* [Fix] Minor fix in the table's catalog query in order to avoid setting up a partitioning strategy when the table is not a partitioned one.
-* [Fix] Minor fix in function.sch in order to generate transform types only for PostgreSQL >= 9.5.
-* [Fix] Minor fix to avoid black canvas when using settings from 0.9.3 or below on 0.9.4-alpha.
-* [Fix] Minor fix in ObjectsScene in such a way to update layer rects when the grid alignment option is toggled.
-* [Fix] Fixed the buttons shortcuts on LayerConfigWidget.
-* [Fix] Minor fix on SchemaView to compute the last position any time the object is reconfigured.
-* [Fix] Fixed the key combination to trigger the magnifier tool.
-* [Fix] Minor fixes in ModelWidget, MainWindow to update scene layer settings correctly.
-* [Fix] Fixed the CLI in such a way to update scene layer settings so the exporting processes can generate graphical files correctly.
-* [Fix] Fixed a bug in the layers removal process that was causing objects to be placed in a incorrect layer index after the removal.
-* [Fix] Fixed the "Fix" menu in main tool bar.
-* [Fix] Fixed a bug in ModelWidget that was causing overlay to be displayed when a textbox object was selected.
-* [Fix] Fixed wrong text in collationwidget.ui.
-* [Fix] Fixed a bug during the loading of changelog entries.
-* [Fix] Fixed the display of warnings during export in ModelExportForm.
-* [Fix] Fixed the display of warning messages during export in ModelDatabaseDiffForm.
-* [Fix] Fixed a malformed SQL code for triggers.
-* [Fix] Fixed the broken build on Qt 5.9.x.
-* [Fix] Fixed a bug that was preventing special PKs to be properly configured.
-* [Fix] Fixed the SQL generation of functions based on internal language.
+The data type configuration widget received a simple improvement which adds a significant reduction in the time spent to configure a column data type for instance. Now, the user can just type the name of the desired data type to be used instead of selecting it by using the mouse. After typing the data type name just hit tab key to jump to the next field and the data type will be automatically configured. <br/>
+
+In preparation for pgModeler 1.0, a lot of changes were made in the files structure. The libraries subprojects were moved to the folder "libs", all the executables subprojects move to "apps" folder, and all the assets that are deployed with libraries and executables were moved to "assets" folder. Additionally to that reorganization, some libraries were renamed in order to give a better semantics.<br/>
+
+Finally, the whole set of changes of this release has 76 entries being 21 new features, 34 changes/improvements, and 21 bug fixes. Below, some key changes are highlighted. For the complete list of changes, please, take a look at the CHANGELOG.md. <br/>
+
+* [New] The bulk editing form now can be confirmed by Ctrl+Return shortcut.
+* [New] The CLI now is capable of fixing models created before 0.9.4-alpha1 that have columns, functions and other objects that reference extension types with simple names instead of schema-qualified names.
+* [New] Added an option to GeneralConfigWidget to toggle the displaying of schema names of columns data types on design view. This option affects only the rendering of objects, the code generation will keep displaying user-defined type names a in schema-qualified way.
+* [New] Added the ability to drop databases from the database listing in SQLToolWidget.
+* [New] Created an auxiliary tool called pgModeler Schema Editor in order to help to edit *.sch files as well as validate their syntax.
+* [New] GeneralConfigWidget now restores the sch-highlight.conf to default.
+* [New] Added the enviroment variable name for schema editor app in GlobalAttributes.
+* [New] Added options to create only missing config files or recreate all config file in CLI.
+* [New] Added support for saving SQL definition in split files.
+* [New] Added support for split SQL generation in CLI.
+* [New] Added the ability to cancel the SQL file export process in GUI.
+* [New] Added new metacharacter to SchemaParser: $hs for #, $ps for %, $at for @, $ds for $.
+* [New] Added the option --force to the mime type handling operation on CLI.
+* [Change] Changed the behaviour of column click on DataManipulationForm. Now, the sorting is triggered by holding control and clicking the desired column. Clicking a column without holding control will select all the item in that column.
+* [Change] Changed the behavior of extension types registration, now they will be forcibly registered with complete name (schema.name) in order to follow the same rule of user-defined data types so the reverse engineering can work properly for both types handled by extensions and those not.
+* [Change] Improved the type searching on PgSqlTypeWidget in such a way to display a popup with the data types matching the text typed by the user.
+* [Change] Improved the NewObjectOverlayWidget in such a way to allow only one action to be executed at a time.
+* [Change] Several clean ups in the source code root. Removed unused files.
+* [Change] The subproject libpgmodeler was renamed to libcore and now moved to libs/
+* [Change] The subproject libpgmodeler_ui was renamed to libgui and now moved to libs/
+* [Change] The subproject libobjrenderer was renamed to libcanvas and now moved to libs/
+* [Change] The main executable subproject was renamed to pgmodeler and now moved to apps/
+* [Change] The main-cli executable subproject was renamed to pgmodeler-cli and moved to apps/
+* [Change] The crashhandler subproject was renamed to pgmodeler-ch and moved to apps/
+* [Change] Created a subfolder called "assets" to store all deployed files that aren't libraries or executables: conf, lang, schemas, samples, etc.
+* [Change] Refactored all .pro/.pri files in order to reference pgModeler libraries from variables $$LIB[LIBNAME] instead of relative paths.
+* [Change] Renamed all icons that was in Portuguese to English.
+* [Change] In SnippetsConfigWidget replaced the SQL highlight by Schema micro-language highlighting.
+* [Change] Improved the syntax error messages in SchemaParser.
+* [Change] Adjusting the general toolbar width according to the screen DPI.
+* [Change] Source files and ui files in libgui were reorganized by contexts (widgets, tools, settings, utils, dbobjects)
+* [Change] pgModeler will now create missing config files in the startup.
+* [Change] Minor adjustment in AppearanceConfigWidget to enable scrollbars in the viewport so users in small screen can see the entire model.
+* [Fix] Fixed the crash handler and bug report form in such a way to load the last modified model opened before their execution.
+* [Fix] Fixed a crash when the database import process fails to create an inheritance relationship somehow.
+* [Fix] Fixed a bug in database import process that was not correctly setting up the data type name of columns when the types were handled by extensions. Types handled by extension don't need to have the schema name prepended.
+* [Fix] Minor fix in database import process in such a way to properly update the table rendering to hide schema names from title box.
+* [Fix] Fixed a malformed SQL code when configuring timestamptz in PgSqlType.
+* [Fix] Fixed a bug in SyntaxHighlighter that was wrongly highlighting the entire document when a multiline group had a line break as final expression.
+* [Fix] Fixed the syntax highligting files (xml, sql).
+* [Fix] Minor fix in CLI in order to associate .sch files to the schema editor.
+* [Fix] Fixed a bug that was causing all layers to be active even if there was some inactive (invisible) when adding a new layer.
+* [Fix] Minor fix in SyntaxHighlighter in order to return unformatted word when the group can't be forcibly defined in all exception cases when the word doesn't match any group.
+* [Fix] Fixed the description of the option --output in CLI.
+* [Fix] Fixed a bug in CLI that could lead to segfault when using diff option and a database model as input.
+* [Fix] Minor fix in PgSQLTypeWidget to capture the text changing signal on data type combo so the type format input can be properly updated when the user types the desire data type.
