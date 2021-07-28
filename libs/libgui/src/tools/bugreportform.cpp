@@ -51,7 +51,11 @@ BugReportForm::BugReportForm(QWidget *parent, Qt::WindowFlags f) : QDialog(paren
 	hl_model_txt=new SyntaxHighlighter(model_txt);
 	hl_model_txt->loadConfiguration(GlobalAttributes::getXMLHighlightConfPath());
 
-	attachModel(GlobalAttributes::getTemporaryFilePath(GlobalAttributes::LastModelFile));
+	try
+	{
+		attachModel(GlobalAttributes::getTemporaryFilePath(GlobalAttributes::LastModelFile));
+	}
+	catch(Exception &){}
 }
 
 void BugReportForm::attachModel(const QString &filename)
