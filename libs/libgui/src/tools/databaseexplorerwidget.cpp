@@ -235,7 +235,7 @@ DatabaseExplorerWidget::DatabaseExplorerWidget(QWidget *parent): QWidget(parent)
 
 				if((obj_type==ObjectType::Schema || BaseTable::isBaseTable(obj_type)) && oid > 0 && item->childCount() <= 1)
 				{
-					updateItem(item);
+					updateItem(item, false);
 				}
 			});
 
@@ -286,7 +286,7 @@ bool DatabaseExplorerWidget::eventFilter(QObject *object, QEvent *event)
 				}
 			}
 			else if(k_event->key()==Qt::Key_F6)
-				updateItem(objects_trw->currentItem());
+				updateItem(objects_trw->currentItem(), true);
 			else if(k_event->key()==Qt::Key_F2)
 				startObjectRename(objects_trw->currentItem());
 			else if(k_event->key()==Qt::Key_F7)
@@ -1020,6 +1020,7 @@ void DatabaseExplorerWidget::listObjects()
 		configureImportHelper();
 		objects_trw->blockSignals(true);
 
+		saveTreeState();
 		clearObjectProperties();
 
 		if(quick_refresh)
@@ -1042,6 +1043,8 @@ void DatabaseExplorerWidget::listObjects()
 		root->setExpanded(true);
 		root->setSelected(true);
 		objects_trw->setCurrentItem(root);
+
+		restoreTreeState();
 
 		QApplication::restoreOverrideCursor();
 		objects_trw->blockSignals(false);
@@ -1073,7 +1076,7 @@ void DatabaseExplorerWidget::handleObject(QTreeWidgetItem *item, int)
 {
 	if(item->data(DatabaseImportForm::ObjectOtherData, Qt::UserRole).toInt() < 0)
 	{
-		updateItem(item->parent());
+		updateItem(item->parent(), true);
 	}
 	else if(QApplication::mouseButtons()==Qt::MiddleButton && item->data(DatabaseImportForm::ObjectId, Qt::UserRole).toInt() >= 0)
 	{
@@ -1128,7 +1131,7 @@ void DatabaseExplorerWidget::handleObject(QTreeWidgetItem *item, int)
 		else if(exec_action==truncate_action || exec_action==trunc_cascade_action)
 			truncateTable(item,  exec_action==trunc_cascade_action);
 		else if(exec_action==refresh_action)
-			updateItem(objects_trw->currentItem());
+			updateItem(objects_trw->currentItem(), true);
 		else if(exec_action==rename_action)
 			startObjectRename(item);
 		else if(exec_action==properties_action)
@@ -1400,6 +1403,58 @@ bool DatabaseExplorerWidget::truncateTable(const QString &sch_name, const QStrin
 	}
 }
 
+void DatabaseExplorerWidget::saveTreeState()
+{
+	QTreeWidgetItemIterator itr(objects_trw);
+	QTreeWidgetItem *item = nullptr;
+	int oid = 0, grp_id = 0;
+
+	while(*itr)
+	{
+		item = *itr;
+		oid = item->data(DatabaseImportForm::ObjectId, Qt::UserRole).toInt();
+		grp_id = item->data(DatabaseImportForm::ObjectGroupId, Qt::UserRole).toInt();
+		items_state.append(QString("%1:%2").arg(oid > 0 ? oid : grp_id).arg(item->isExpanded()));
+		++itr;
+	}
+}
+
+void DatabaseExplorerWidget::restoreTreeState()
+{
+	if(items_state.isEmpty())
+		return;
+
+	QTreeWidgetItemIterator itr(objects_trw);
+	QTreeWidgetItem *item = nullptr;	
+	QStringList st_info;
+	int oid = 0, grp_id = 0, idx = 0;
+
+	objects_trw->setUpdatesEnabled(false);
+
+	while(*itr)
+	{
+		item = *itr;
+		oid = item->data(DatabaseImportForm::ObjectId, Qt::UserRole).toInt();
+		grp_id = item->data(DatabaseImportForm::ObjectGroupId, Qt::UserRole).toInt();
+
+		if(grp_id < 0)
+			idx = items_state.indexOf(QRegExp(QString("(%1)(\\:)(.)+").arg(grp_id)));
+		else
+			idx = items_state.indexOf(QRegExp(QString("(%1)(\\:)(.)+").arg(oid)));
+
+		if(idx >= 0)
+		{
+			st_info = items_state.at(idx).split(':');
+			item->setExpanded(st_info[1].toInt() == 1);
+		}
+
+		++itr;
+	}
+
+	objects_trw->setUpdatesEnabled(true);
+	items_state.clear();
+}
+
 void DatabaseExplorerWidget::truncateTable(QTreeWidgetItem *item, bool cascade)
 {
 	try
@@ -1419,7 +1474,7 @@ void DatabaseExplorerWidget::truncateTable(QTreeWidgetItem *item, bool cascade)
 	}
 }
 
-void DatabaseExplorerWidget::updateItem(QTreeWidgetItem *item)
+void DatabaseExplorerWidget::updateItem(QTreeWidgetItem *item, bool restore_tree_state)
 {
 	if(item && item->data(DatabaseImportForm::ObjectId, Qt::UserRole).toInt() >= 0)
 	{
@@ -1430,6 +1485,9 @@ void DatabaseExplorerWidget::updateItem(QTreeWidgetItem *item)
 		vector<QTreeWidgetItem *> gen_items;
 
 		QApplication::setOverrideCursor(Qt::WaitCursor);
+
+		if(restore_tree_state)
+			saveTreeState();
 
 		if(obj_type==ObjectType::Database)
 			listObjects();
@@ -1501,6 +1559,9 @@ void DatabaseExplorerWidget::updateItem(QTreeWidgetItem *item)
 				objects_trw->blockSignals(false);
 			}
 		}
+
+		if(restore_tree_state)
+			restoreTreeState();
 
 		QApplication::restoreOverrideCursor();
 	}

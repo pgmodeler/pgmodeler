@@ -937,7 +937,6 @@ vector<QTreeWidgetItem *> DatabaseImportForm::updateObjectsTree(DatabaseImportHe
 		QList<QTreeWidgetItem*> groups_list;
 		unsigned oid=0;
 		int start=-1, end=-1;
-		//bool has_obj_filters = !import_helper.getObjectFilters().empty();
 
 		grp_fnt.setItalic(true);
 		tree_wgt->blockSignals(true);
@@ -959,6 +958,7 @@ vector<QTreeWidgetItem *> DatabaseImportForm::updateObjectsTree(DatabaseImportHe
 				group->setData(ObjectCount, Qt::UserRole, 0);
 				group->setData(ObjectSchema, Qt::UserRole, schema);
 				group->setData(ObjectTable, Qt::UserRole, table);
+				group->setData(ObjectGroupId, Qt::UserRole, -(root->data(ObjectId, 0).toUInt() + enum_cast(grp_type)));
 
 				gen_groups[grp_type]=group;
 				groups_list.push_back(group);

@@ -32,7 +32,14 @@
 class DatabaseExplorerWidget: public QWidget, public Ui::DatabaseExplorerWidget {
 	private:
 		Q_OBJECT
-		
+
+		/*! \brief Stores the expanded status of all items in the tree.
+		 * The elements in this list have the form (oid|groupid):(0|1).
+		 * The first part is the id/group id of the tree item and the second (after :)
+		 * is the expanded status (0->false, 1->true).
+		 * This attribute is used by saveTreeState() and restoreTreeState() */
+		QStringList items_state;
+
 		static const QString DepNotDefined,
 		DepNotFound,
 		DefaultSourceCode;
@@ -139,7 +146,7 @@ class DatabaseExplorerWidget: public QWidget, public Ui::DatabaseExplorerWidget 
 		attribs_map extractAttributesFromItem(QTreeWidgetItem *item);
 
 		//! \brief Updates the selected tree item
-		void updateItem(QTreeWidgetItem *item);
+		void updateItem(QTreeWidgetItem *item, bool restore_tree_state);
 		
 		//! \brief Generate the SQL code for the specified object appending the permissions code for it as well
 		QString getObjectSource(BaseObject *object, DatabaseModel *dbmodel);
@@ -158,6 +165,12 @@ class DatabaseExplorerWidget: public QWidget, public Ui::DatabaseExplorerWidget 
 		
 		//! \brief Truncates a named table (in cascade mode or not) using the provided connection
 		static bool truncateTable(const QString &sch_name, const QString &obj_name, bool cascade, Connection connection);
+
+		//! \brief Saves the current state of all items in the database tree.
+		void saveTreeState();
+
+		//! \brief Restores a previous saved state of all items in the database tree
+		void restoreTreeState();
 
 	public slots:
 		//! \brief Lists all objects for the current selected database
