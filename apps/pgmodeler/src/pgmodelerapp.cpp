@@ -47,9 +47,6 @@ PgModelerApp::PgModelerApp(int &argc, char **argv) : Application(argc,argv)
 	for(int i=0; i < argc && !using_style; i++)
 		using_style=QString(argv[i]).contains("-style");
 
-	PgModelerApp::setAttribute(Qt::AA_UseHighDpiPixmaps);
-	PgModelerApp::setAttribute(Qt::AA_EnableHighDpiScaling);
-
 	//If no custom style is specified we force the usage of Fusion (the default for Qt and pgModeler)
 	if(!using_style)
 		setStyle(GlobalAttributes::DefaultQtStyle);
