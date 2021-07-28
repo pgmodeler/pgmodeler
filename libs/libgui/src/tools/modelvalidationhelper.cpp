@@ -501,6 +501,7 @@ void ModelValidationHelper::validateModel()
 
 					//Configures the full name of the object including the parent name
 					name=tab_obj->getParentTable()->getSchema()->getName(true) + QString(".") + tab_obj->getName(true);
+					//name=tab_obj->TableObject::getSignature(true);
 					name.remove('"');
 
 					//Trying to convert the object to constraint
@@ -525,7 +526,7 @@ void ModelValidationHelper::validateModel()
 			itr=obj_list->begin();
 			while(itr!=obj_list->end() && !valid_canceled)
 			{
-				dup_objects[(*itr)->getName(true).remove('"')].push_back(*itr);
+				dup_objects[(*itr)->getSignature(true).remove('"')].push_back(*itr);
 				itr++;
 			}
 		}
