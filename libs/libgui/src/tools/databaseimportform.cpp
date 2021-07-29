@@ -958,7 +958,7 @@ vector<QTreeWidgetItem *> DatabaseImportForm::updateObjectsTree(DatabaseImportHe
 				group->setData(ObjectCount, Qt::UserRole, 0);
 				group->setData(ObjectSchema, Qt::UserRole, schema);
 				group->setData(ObjectTable, Qt::UserRole, table);
-				group->setData(ObjectGroupId, Qt::UserRole, -(root->data(ObjectId, 0).toUInt() + enum_cast(grp_type)));
+				group->setData(ObjectGroupId, Qt::UserRole, -(enum_cast(grp_type) + (root ? root->data(ObjectId, 0).toUInt() : 0)));
 
 				gen_groups[grp_type]=group;
 				groups_list.push_back(group);

@@ -96,7 +96,7 @@ class DatabaseImportForm: public QDialog, public Ui::DatabaseImportForm {
 		ObjectCount=8,		
 		ObjectSource=9,
 
-		/* Special field that stores an internal group id in the form -(object type code + root item id).
+		/* Special field that stores an internal group id in the form -(object type code + root item id [if not null]).
 		 * This is use to save and restore tree state */
 		ObjectGroupId=10;
 
