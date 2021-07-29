@@ -86,7 +86,7 @@ bool Aggregate::isValidFunction(unsigned func_idx, Function *func)
 			qtd=func->getParameterCount();
 			for(i=1 ; i < qtd && cond2; i++)
 				cond2=(func->getParameter(i).getType().isPolymorphicType() ||
-							 func->getParameter(i).getType().canCastTo(data_types[i-1]));
+							 ((i-1) < data_types.size() && func->getParameter(i).getType().canCastTo(data_types[i-1])));
 
 			return (cond1 && cond2);
 		}
