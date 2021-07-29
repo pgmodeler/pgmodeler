@@ -226,11 +226,10 @@ QString Aggregate::getCodeDefinition(unsigned def_type)
 	if(functions[TransitionFunc])
 	{
 		if(def_type==SchemaParser::SqlDefinition)
-			attributes[Attributes::TransitionFunc]=functions[TransitionFunc]->getSignature();
+			attributes[Attributes::TransitionFunc]=functions[TransitionFunc]->getName(true);
 		else
 		{
-			functions[TransitionFunc]->setAttribute(Attributes::RefType,
-													 Attributes::TransitionFunc);
+			functions[TransitionFunc]->setAttribute(Attributes::RefType, Attributes::TransitionFunc);
 			attributes[Attributes::TransitionFunc]=functions[TransitionFunc]->getCodeDefinition(def_type,true);
 		}
 	}
@@ -238,7 +237,7 @@ QString Aggregate::getCodeDefinition(unsigned def_type)
 	if(functions[FinalFunc])
 	{
 		if(def_type==SchemaParser::SqlDefinition)
-			attributes[Attributes::FinalFunc]=functions[FinalFunc]->getSignature();
+			attributes[Attributes::FinalFunc]=functions[FinalFunc]->getName(true);
 		else
 		{
 			functions[FinalFunc]->setAttribute(Attributes::RefType,
