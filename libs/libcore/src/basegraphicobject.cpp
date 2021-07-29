@@ -165,6 +165,7 @@ void BaseGraphicObject::setLayers(QStringList list)
 	//Sanitizing the string list by removing non-numbers
 	list.replaceInStrings(QRegExp("^(.)*(\\D)+(.)*$"), "0");
 	list.removeDuplicates();
+	layers.clear();
 
 	for(auto &id : list)
 		addToLayer(id.toUInt());
