@@ -33,6 +33,10 @@ class DatabaseExplorerWidget: public QWidget, public Ui::DatabaseExplorerWidget 
 	private:
 		Q_OBJECT
 
+		/*! \brief Holds the current vertical scrollbar position/value before the tree state saving is executed.
+		 * When the tree state is restored this value is used to return the scrollbar value to its original */
+		int curr_scroll_value;
+
 		/*! \brief Stores the expanded status of all items in the tree.
 		 * The elements in this list have the form (oid|groupid):(0|1).
 		 * The first part is the id/group id of the tree item and the second (after :)

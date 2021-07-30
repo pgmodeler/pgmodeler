@@ -141,8 +141,8 @@ DatabaseExplorerWidget::DatabaseExplorerWidget(QWidget *parent): QWidget(parent)
 {
 	setupUi(this);
 
+	curr_scroll_value = 0;
 	filter_parent->setVisible(false);
-
 	sort_column = 0;
 	splitter->setSizes({ 80, 20 });
 
@@ -1417,6 +1417,8 @@ void DatabaseExplorerWidget::saveTreeState()
 		items_state.append(QString("%1:%2").arg(oid > 0 ? oid : grp_id).arg(item->isExpanded()));
 		++itr;
 	}
+
+	curr_scroll_value = objects_trw->verticalScrollBar()->value();
 }
 
 void DatabaseExplorerWidget::restoreTreeState()
@@ -1452,7 +1454,8 @@ void DatabaseExplorerWidget::restoreTreeState()
 	}
 
 	objects_trw->setUpdatesEnabled(true);
-	items_state.clear();
+	items_state.clear();	
+	objects_trw->verticalScrollBar()->setValue(curr_scroll_value);
 }
 
 void DatabaseExplorerWidget::truncateTable(QTreeWidgetItem *item, bool cascade)
