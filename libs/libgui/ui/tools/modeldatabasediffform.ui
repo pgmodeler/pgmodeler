@@ -2480,6 +2480,9 @@
          <height>22</height>
         </size>
        </property>
+       <property name="shortcut">
+        <string>Return</string>
+       </property>
        <property name="autoDefault">
         <bool>true</bool>
        </property>
@@ -2536,6 +2539,9 @@
          <width>22</width>
          <height>22</height>
         </size>
+       </property>
+       <property name="shortcut">
+        <string>Esc</string>
        </property>
        <property name="autoDefault">
         <bool>true</bool>
