@@ -32,6 +32,7 @@ $tb $tb [code-tab-width="] {code-tab-width} ["] $br
 $tb $tb [canvas-corner-move="] %if {canvas-corner-move} %then true %else false %end ["] $br
 $tb $tb [invert-rangesel-trigger="] %if {invert-rangesel-trigger} %then true %else false %end ["] $br
 $tb $tb [check-update="] %if {check-update} %then true %else false %end ["] $br
+$tb $tb [check-versions="] {check-versions} ["] $br
 $tb $tb [save-last-position="] %if {save-last-position} %then true %else false %end ["] $br
 $tb $tb [show-main-menu="] %if {show-main-menu} %then true %else false %end ["] $br
 $tb $tb [disable-smoothness="] %if {disable-smoothness} %then true %else false %end ["] $br

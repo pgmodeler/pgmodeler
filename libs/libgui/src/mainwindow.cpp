@@ -462,7 +462,9 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 #else
 	//Enabling update check at startup
 	if(confs[Attributes::Configuration][Attributes::CheckUpdate]==Attributes::True)
-		QTimer::singleShot(10000, update_notifier_wgt, SLOT(checkForUpdate()));
+		QTimer::singleShot(10000, [&](){
+			update_notifier_wgt->checkForUpdate(confs[Attributes::Configuration][Attributes::CheckVersions]);
+		});
 #endif
 
 #ifdef DEMO_VERSION

@@ -78,7 +78,7 @@ class UpdateNotifierWidget: public QWidget, public Ui::UpdateNotifierWidget {
 		UpdateNotifierWidget(QWidget * parent = nullptr);
 
 	public slots:
-		void checkForUpdate();
+		void checkForUpdate(const QString &check_ver = Attributes::AllVersions);
 
 	private slots:
 		void handleUpdateChecked(QNetworkReply *reply);

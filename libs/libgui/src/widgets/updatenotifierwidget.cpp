@@ -90,9 +90,9 @@ void UpdateNotifierWidget::activateLink(const QString &link)
 	emit s_hideRequested();
 }
 
-void UpdateNotifierWidget::checkForUpdate()
+void UpdateNotifierWidget::checkForUpdate(const QString &check_ver)
 {
-	QUrl url(GlobalAttributes::PgModelerUpdateCheckURL + GlobalAttributes::PgModelerVersion);
+	QUrl url(GlobalAttributes::PgModelerUpdateCheckURL.arg(GlobalAttributes::PgModelerVersion, check_ver));
 	QNetworkRequest req(url);
 
 	req.setRawHeader("User-Agent", "pgModelerUpdateCheck");
