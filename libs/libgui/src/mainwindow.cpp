@@ -461,10 +461,10 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 #warning "NO UPDATE CHECK: Update checking is disabled."
 #else
 	//Enabling update check at startup
-	if(confs[Attributes::Configuration][Attributes::CheckUpdate]==Attributes::True)
-		QTimer::singleShot(10000, [&](){
-			update_notifier_wgt->checkForUpdate(confs[Attributes::Configuration][Attributes::CheckVersions]);
-		});
+	if(confs[Attributes::Configuration][Attributes::CheckUpdate]==Attributes::True) {
+		update_notifier_wgt->setCheckVersions(confs[Attributes::Configuration][Attributes::CheckVersions]);
+		QTimer::singleShot(10000, update_notifier_wgt, SLOT(checkForUpdate()));
+	}
 #endif
 
 #ifdef DEMO_VERSION
