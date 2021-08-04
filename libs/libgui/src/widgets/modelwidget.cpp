@@ -1615,7 +1615,7 @@ void ModelWidget::loadModel(const QString &filename)
 		task_prog_wgt.setWindowTitle(tr("Loading database model"));
 		task_prog_wgt.show();
 
-		db_model->loadModel(filename);
+		db_model->loadModel(filename);		
 		this->filename=filename;
 		adjustSceneSize();
 		updateObjectsOpacity();
@@ -1643,9 +1643,7 @@ void ModelWidget::updateSceneLayers()
 	scene->setLayerColors(ObjectsScene::LayerRectColor, db_model->getLayerRectColors());
 	scene->setLayerNamesVisible(db_model->isLayerNamesVisible());
 	scene->setLayerRectsVisible(db_model->isLayerRectsVisible());
-
-	if(db_model->isLayerRectsVisible())
-		db_model->setObjectsModified({ ObjectType::Schema });
+	db_model->setObjectsModified({ ObjectType::Schema });
 
 	scene->blockSignals(false);
 }
