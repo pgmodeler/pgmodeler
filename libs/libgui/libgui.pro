@@ -54,6 +54,7 @@ src/dbobjects/indexwidget.cpp \
 src/dbobjects/procedurewidget.cpp \
 src/dbobjects/tagwidget.cpp \
 src/dbobjects/elementstablewidget.cpp \
+src/dbobjects/columnpickerwidget.cpp \
 src/settings/appearanceconfigwidget.cpp \
 src/settings/configurationform.cpp \
 src/settings/generalconfigwidget.cpp \
@@ -119,8 +120,7 @@ src/widgets/customsqlwidget.cpp \
 src/widgets/linenumberswidget.cpp \
 src/widgets/newobjectoverlaywidget.cpp \
 src/widgets/objectstablewidget.cpp \
-src/widgets/updatenotifierwidget.cpp
-
+src/widgets/updatenotifierwidget.cpp \
 
 HEADERS += src/baseform.h \
 src/guiutilsns.h \
@@ -170,6 +170,7 @@ src/dbobjects/indexwidget.h \
 src/dbobjects/procedurewidget.h \
 src/dbobjects/tagwidget.h \
 src/dbobjects/elementstablewidget.h \
+src/dbobjects/columnpickerwidget.h \
 src/settings/appearanceconfigwidget.h \
 src/settings/configurationform.h \
 src/settings/generalconfigwidget.h \
@@ -235,9 +236,10 @@ src/widgets/customsqlwidget.h \
 src/widgets/linenumberswidget.h \
 src/widgets/newobjectoverlaywidget.h \
 src/widgets/objectstablewidget.h \
-src/widgets/updatenotifierwidget.h
+src/widgets/updatenotifierwidget.h \
 
 FORMS += ui/baseform.ui \
+ui/dbobjects/columnpickerwidget.ui \
 ui/mainwindow.ui \
 ui/messagebox.ui \
 ui/dbobjects/aggregatewidget.ui \

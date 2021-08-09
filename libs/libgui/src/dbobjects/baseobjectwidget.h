@@ -46,11 +46,6 @@ class BaseObjectWidget: public QWidget, public Ui::BaseObjectWidget {
 	protected:
 		static constexpr int MaxObjectSize=16777215;
 
-		static const QColor ProtRowBgColor,
-		ProtRowFgColor,
-		RelAddedRowBgColor,
-		RelAddedRowFgColor;
-
 		bool object_protected;
 
 		QHBoxLayout *misc_btns_lt;

@@ -30,33 +30,26 @@
 #include "widgets/objectstablewidget.h"
 #include "messagebox.h"
 #include "elementstablewidget.h"
+#include "columnpickerwidget.h"
 
 class ConstraintWidget: public BaseObjectWidget, public Ui::ConstraintWidget {
 	private:
 		Q_OBJECT
 		
+		ColumnPickerWidget *col_picker_wgt, *ref_col_picker_wgt;
+
 		QFrame *info_frm, *warn_frm;
 		
 		SyntaxHighlighter *expression_hl;
 		
 		ElementsTableWidget *excl_elems_tab;
 		
-		/*! \brief Table widgets used to store the columns that forms the constraint as well the
-		referenced columns (only for foreign keys) */
-		ObjectsTableWidget *columns_tab,
-		*ref_columns_tab;
-		
 		//! \brief Referenced table selector
 		ObjectSelectorWidget *ref_table_sel;
-		
-		//! \brief Updates the column combo according to the column id. (Constraint::[SOURCE_COLS | REFERENCED_COLS])
-		void updateColumnsCombo(unsigned col_id);
-		
-		//! \brief Adds the column to the column's table at the specified row
-		void addColumn(Column *column, unsigned col_id, int row);
-		
+				
 	public:
 		ConstraintWidget(QWidget * parent = nullptr);
+
 		void setAttributes(DatabaseModel *model, OperationList *op_list, BaseObject *parent_obj, Constraint *constr);
 		
 	private slots:
@@ -65,10 +58,6 @@ class ConstraintWidget: public BaseObjectWidget, public Ui::ConstraintWidget {
 		
 		//! \brief Selects the referenced table as well updates the combo containing the referenced table columns
 		void selectReferencedTable();
-		
-		void addColumn(int row);
-		void removeColumn(int);
-		void removeColumns();
 		
 	public slots:
 		void applyConfiguration();

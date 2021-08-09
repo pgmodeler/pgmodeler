@@ -109,6 +109,10 @@ class Constraint: public TableObject{
 		 constants SOURCE_COLS or REFERENCED_COLS */
 		void addColumn(Column *column, unsigned col_type);
 
+		/*! \brief Adds columns to the internal column list referenced by the
+		 constants SOURCE_COLS or REFERENCED_COLS. Previously columns added are removed. */
+		void addColumns(const vector<Column *> &cols, unsigned col_type);
+
 		//! \brief Adds several elements to the constraint using a defined vector
 		void addExcludeElements(vector<ExcludeElement> &elems);
 
