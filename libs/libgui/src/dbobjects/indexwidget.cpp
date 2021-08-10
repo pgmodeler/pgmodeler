@@ -88,8 +88,8 @@ void IndexWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Ba
 
 	incl_cols_picker_wgt->setParentObject(parent_obj);
 
-	// If the parent object is a view we hide the included columns tab since this isn't supported yet.
-	attributes_tbw->setTabVisible(2, parent_obj->getObjectType() != ObjectType::View);
+	// If the parent object is a view we disable the included columns tab since this isn't supported yet.
+	attributes_tbw->setTabEnabled(2, parent_obj->getObjectType() != ObjectType::View);
 
 	if(index)
 	{
