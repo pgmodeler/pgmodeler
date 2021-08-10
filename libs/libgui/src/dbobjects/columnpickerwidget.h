@@ -47,7 +47,7 @@ class ColumnPickerWidget: public QWidget, public Ui::ColumnPickerWidget {
 
 		/*! \brief Specifies the parent table or relationship in which the columns are retrived
 		 * If a null object is specified the widget will be disabled, if an non-null object is assigned
-		 * but is not a table or relationship and exception is raised. */
+		 * but is not a table or relationship the form will also be disabled. */
 		void setParentObject(BaseObject *p_obj);
 
 		/*! \brief Fills the columns grid with the elements in the vector.

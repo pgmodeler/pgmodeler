@@ -304,6 +304,7 @@ namespace Attributes {
 	ImportExtObjs,
 	ImportSysObjs,
 	Increment,
+	IncludeCols,
 	Index,
 	IndexElement,
 	Indexes,

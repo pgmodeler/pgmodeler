@@ -40,16 +40,18 @@ ColumnPickerWidget::ColumnPickerWidget(QWidget *parent) :	QWidget(parent)
 	connect(columns_tab, SIGNAL(s_rowAdded(int)), this, SLOT(addColumn(int)));
 	connect(columns_tab, &ObjectsTableWidget::s_rowRemoved, [&](int){ 	updateColumnsCombo(); });
 	connect(columns_tab, &ObjectsTableWidget::s_rowsRemoved, [&](){ 	updateColumnsCombo(); });
+
+	setParentObject(nullptr);
 }
 
 void ColumnPickerWidget::setParentObject(BaseObject *p_obj)
 {
+	/* Currently, column picker supports only tables and relatinoships.
+	 * Since views can't handle columns yet they will be ignored */
 	if(p_obj &&
-		 !PhysicalTable::isPhysicalTable(p_obj->getObjectType()) &&
+		 p_obj->getObjectType() != ObjectType::Table &&
 		 p_obj->getObjectType() != ObjectType::Relationship)
-	{
-		throw Exception(ErrorCode::AsgObjectInvalidType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-	}
+		p_obj = nullptr;
 
 	parent_obj = p_obj;
 	setEnabled(p_obj != nullptr);

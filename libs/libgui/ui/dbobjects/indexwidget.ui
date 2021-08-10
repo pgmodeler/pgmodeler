@@ -33,7 +33,7 @@
     <number>6</number>
    </property>
    <item row="0" column="0">
-    <widget class="QTabWidget" name="tabWidget">
+    <widget class="QTabWidget" name="attributes_tbw">
      <property name="currentIndex">
       <number>0</number>
      </property>
@@ -357,12 +357,17 @@
        <string>Elements</string>
       </attribute>
      </widget>
+     <widget class="QWidget" name="tab">
+      <attribute name="title">
+       <string>Include columns</string>
+      </attribute>
+     </widget>
     </widget>
    </item>
   </layout>
  </widget>
  <tabstops>
-  <tabstop>tabWidget</tabstop>
+  <tabstop>attributes_tbw</tabstop>
   <tabstop>indexing_cmb</tabstop>
   <tabstop>fill_factor_chk</tabstop>
   <tabstop>fill_factor_sb</tabstop>

@@ -293,6 +293,7 @@ namespace Attributes {
 	Indexes("indexes"),
 	IndexType("index-type"),
 	Info("info"),
+	IncludeCols("include-cols"),
 	InhColumn("inh-column"),
 	InhColumns("inh-columns"),
 	Inherit("inherit"),

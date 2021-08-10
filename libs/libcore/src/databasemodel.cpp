@@ -5638,6 +5638,12 @@ Index *DatabaseModel::createIndex()
 						xmlparser.restorePosition();
 						index->setPredicate(str_aux);
 					}
+					else if(elem == Attributes::Columns)
+					{
+						xmlparser.getElementAttributes(attribs);
+						for(auto &col : attribs[Attributes::Names].split(',', QtCompat::SkipEmptyParts))
+							index->addIncludeColumn(dynamic_cast<Column *>(table->getObject(col, ObjectType::Column)));
+					}
 				}
 			}
 			while(xmlparser.accessElement(XmlParser::NextElement));
@@ -8607,7 +8613,7 @@ void DatabaseModel::getTriggerDependencies(BaseObject *object, vector<BaseObject
 void DatabaseModel::getIndexDependencies(BaseObject *object, vector<BaseObject *> &deps, bool inc_indirect_deps)
 {
 	Index *index=dynamic_cast<Index *>(object);
-	BaseObject *usr_type=nullptr;
+	//BaseObject *usr_type=nullptr;
 	unsigned i, count=index->getIndexElementCount();
 
 	for(i=0; i < count; i++)
@@ -8617,14 +8623,26 @@ void DatabaseModel::getIndexDependencies(BaseObject *object, vector<BaseObject *
 
 		if(index->getIndexElement(i).getColumn())
 		{
-			usr_type=getObjectPgSQLType(index->getIndexElement(i).getColumn()->getType());
+			/*usr_type=getObjectPgSQLType(index->getIndexElement(i).getColumn()->getType());
 
 			if(usr_type)
-				getObjectDependecies(usr_type, deps, inc_indirect_deps);
+				getObjectDependecies(usr_type, deps, inc_indirect_deps); */
+
+			getObjectDependecies(index->getIndexElement(i).getColumn(), deps, inc_indirect_deps);
 		}
 
 		if(index->getIndexElement(i).getCollation())
 			getObjectDependecies(index->getIndexElement(i).getCollation(), deps, inc_indirect_deps);
+	}
+
+	for(auto &col : index->getIncludeColumns())
+	{
+		/* usr_type=getObjectPgSQLType(col->getType());
+
+		if(usr_type)
+			getObjectDependecies(usr_type, deps, inc_indirect_deps); */
+
+		getObjectDependecies(col, deps, inc_indirect_deps);
 	}
 }
 

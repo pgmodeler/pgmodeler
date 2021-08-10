@@ -39,4 +39,8 @@ $br $tb
 	$tb <predicate> <! $ob CDATA $ob {predicate} $cb $cb > </predicate> $br
 %end
 
+%if {include-cols} %then
+	$tb [<columns names="] {include-cols} ["/>] $br
+%end
+
 </index> $br $br

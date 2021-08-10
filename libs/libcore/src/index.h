@@ -34,6 +34,9 @@ class Index: public TableObject{
 		//! \brief Stores the elements that defines the index
 		vector<IndexElement> idx_elements;
 
+		//! \brief Stores the non-key columns associated to the INCLUDE clause in the index
+		vector<Column *> include_cols;
+
 		//! \brief Predicate expression for the index
 		QString predicate;
 
@@ -137,10 +140,19 @@ class Index: public TableObject{
 		vector<Column *> getRelationshipAddedColumns();
 
 		//! \brief Returns if some index element is referencing the specified collation
-		bool isReferCollation(Collation *collation);
+		bool isReferCollation(Collation *coll);
 
 		//! \brief Returns if some index element is referencing the specified column
 		bool isReferColumn(Column *column);
+
+		//! \brief Defines the non-key columns (INCLUDE clause) of the index.
+		void setIncludeColumns(const vector<Column *> &cols);
+
+		//! \brief Adds a single non-key column (INCLUDE clause) to the index.
+		void addIncludeColumn(Column *col);
+
+		//! \brief Returns the non-key columns (INCLUDE clause) of the index
+		vector<Column *> getIncludeColumns();
 };
 
 #endif

@@ -37,7 +37,12 @@ IndexWidget::IndexWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::
 		grid=new QGridLayout;
 		grid->setContentsMargins(4,4,4,4);
 		grid->addWidget(elements_tab,0,0);
-		tabWidget->widget(1)->setLayout(grid);
+		attributes_tbw->widget(1)->setLayout(grid);
+
+		incl_cols_picker_wgt = new ColumnPickerWidget(this);
+		QVBoxLayout *vbox = new QVBoxLayout(attributes_tbw->widget(2));
+		vbox->setContentsMargins(4, 4, 4, 4);
+		vbox->addWidget(incl_cols_picker_wgt);
 
 		configureFormLayout(index_grid, ObjectType::Index);
 		indexing_cmb->addItems(IndexingType::getTypes());
@@ -48,7 +53,7 @@ IndexWidget::IndexWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::
 
 		frame=BaseObjectWidget::generateVersionWarningFrame(fields_map, &values_map);
 		frame->setParent(this);
-		grid=dynamic_cast<QGridLayout *>(tabWidget->widget(0)->layout());
+		grid=dynamic_cast<QGridLayout *>(attributes_tbw->widget(0)->layout());
 		grid->addWidget(frame, grid->count(), 0, 1, 5);
 
 		connect(indexing_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(selectIndexingType()));
@@ -72,20 +77,6 @@ void IndexWidget::selectIndexingType()
 	fill_factor_sb->setEnabled(fill_factor_chk->isChecked() && fill_factor_chk->isEnabled());
 }
 
-/*void IndexWidget::enableSortingOptions()
-{
-	elements_tab->sorting_chk->setEnabled(IndexingType(indexing_cmb->currentText())==IndexingType::btree);
-	elements_tab->ascending_rb->setEnabled(elements_tab->sorting_chk->isEnabled());
-	elements_tab->descending_rb->setEnabled(elements_tab->sorting_chk->isEnabled());
-	elements_tab->nulls_first_chk->setEnabled(elements_tab->sorting_chk->isEnabled());
-
-	if(!elements_tab->sorting_chk->isEnabled())
-	{
-		elements_tab->sorting_chk->setChecked(false);
-		elements_tab->nulls_first_chk->setChecked(false);
-	}
-}*/
-
 void IndexWidget::setAttributes(DatabaseModel *model, OperationList *op_list, BaseTable *parent_obj, Index *index)
 {
 	vector<IndexElement> idx_elems;
@@ -95,10 +86,16 @@ void IndexWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Ba
 
 	BaseObjectWidget::setAttributes(model, op_list, index, parent_obj);
 
+	incl_cols_picker_wgt->setParentObject(parent_obj);
+
+	// If the parent object is a view we hide the included columns tab since this isn't supported yet.
+	attributes_tbw->setTabVisible(2, parent_obj->getObjectType() != ObjectType::View);
+
 	if(index)
 	{
-		idx_elems = index->getIndexElements();
+		incl_cols_picker_wgt->setColumns(index->getIncludeColumns());
 
+		idx_elems = index->getIndexElements();
 		indexing_cmb->setCurrentIndex(indexing_cmb->findText(~index->getIndexingType()));
 
 		fill_factor_chk->setChecked(index->getFillFactor() >= 10);
@@ -149,6 +146,7 @@ void IndexWidget::applyConfiguration()
 		elements_tab->getElements<IndexElement>(idx_elems);
 		index->addIndexElements(idx_elems);
 
+		index->setIncludeColumns(incl_cols_picker_wgt->getColumns());
 		finishConfiguration();
 	}
 	catch(Exception &e)

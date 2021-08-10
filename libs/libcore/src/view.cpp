@@ -746,6 +746,9 @@ int View::getObjectIndex(BaseObject *obj)
 		vector<TableObject *> *obj_list=getObjectList(obj->getObjectType());
 		bool found=false;
 
+		if(!obj_list)
+			return -1;
+
 		itr=obj_list->begin();
 		itr_end=obj_list->end();
 
@@ -757,8 +760,8 @@ int View::getObjectIndex(BaseObject *obj)
 
 		if(found)
 			return (itr - obj_list->begin());
-		else
-			return -1;
+
+		return -1;
 	}
 }
 
@@ -772,6 +775,9 @@ int View::getObjectIndex(const QString &name, ObjectType obj_type)
 		vector<TableObject *> *obj_list=getObjectList(obj_type);
 		bool found=false, format=name.contains('"');
 
+		if(!obj_list)
+			return -1;
+
 		itr=obj_list->begin();
 		itr_end=obj_list->end();
 
@@ -783,8 +789,8 @@ int View::getObjectIndex(const QString &name, ObjectType obj_type)
 
 		if(found)
 			return (itr - obj_list->begin());
-		else
-			return -1;
+
+		return -1;
 	}
 }
 
