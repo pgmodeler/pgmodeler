@@ -50,6 +50,7 @@ void ColumnPickerWidget::setParentObject(BaseObject *p_obj)
 	 * Since views can't handle columns yet they will be ignored */
 	if(p_obj &&
 		 p_obj->getObjectType() != ObjectType::Table &&
+		 p_obj->getObjectType() != ObjectType::View &&
 		 p_obj->getObjectType() != ObjectType::Relationship)
 		p_obj = nullptr;
 
@@ -86,31 +87,65 @@ void ColumnPickerWidget::setColumns(const vector<Column *> &cols)
 	columns_tab->blockSignals(false);
 }
 
+void ColumnPickerWidget::setColumns(const vector<SimpleColumn> &cols)
+{
+	int row = 0;
+
+	columns_tab->blockSignals(true);
+	columns_tab->removeRows();
+
+	for(auto &col : cols)
+	{
+		if(parent_obj)
+		{
+			columns_tab->addRow();
+			addColumn(col, row++);
+			columns_cmb->removeItem(columns_cmb->findData(QVariant::fromValue<SimpleColumn>(col)));
+		}
+	}
+
+	columns_tab->clearSelection();
+	columns_tab->blockSignals(false);
+}
+
 void ColumnPickerWidget::updateColumnsCombo()
 {
 	try
 	{
 		Column *column=nullptr;
 		vector<TableObject *> columns;
-		PhysicalTable *table = dynamic_cast<PhysicalTable *>(parent_obj);
+		vector<SimpleColumn> simple_cols;
+		Table *table = dynamic_cast<Table *>(parent_obj);
+		View *view = dynamic_cast<View *>(parent_obj);
 		Relationship *relationship = dynamic_cast<Relationship *>(parent_obj);
 
 		if(table)
 			columns = *table->getObjectList(ObjectType::Column);
 		else if(relationship)
 			columns = relationship->getAttributes();
+		else if(view)
+			simple_cols = view->getColumns();
 
 		columns_cmb->clear();
 
-		for(auto &col : columns)
+		if(!view)
 		{
-			column = dynamic_cast<Column *>(col);
-
-			//If the column does not exists on the column's table, adds it
-			if(columns_tab->getRowIndex(QVariant::fromValue<void *>(column)) < 0)
+			for(auto &col : columns)
 			{
-				columns_cmb->addItem(QString("%1 (%2)").arg(column->getName(), ~column->getType()),
-														 QVariant::fromValue<void *>(column));
+				column = dynamic_cast<Column *>(col);
+
+				//If the column does not exists on the column's table, adds it
+				if(columns_tab->getRowIndex(QVariant::fromValue<void *>(column)) < 0)
+					columns_cmb->addItem(QString("%1 (%2)").arg(column->getName(), ~column->getType()), QVariant::fromValue<void *>(column));
+			}
+		}
+		else
+		{
+			for(auto &col : simple_cols)
+			{
+				//If the column does not exists on the column's table, adds it
+				if(columns_tab->getRowIndex(QVariant::fromValue<SimpleColumn>(col)) < 0)
+					columns_cmb->addItem(QString("%1 (%2)").arg(col.name, col.type), QVariant::fromValue<SimpleColumn>(col));
 			}
 		}
 
@@ -124,20 +159,20 @@ void ColumnPickerWidget::updateColumnsCombo()
 
 void ColumnPickerWidget::addColumn(int row)
 {
-	Column *column=nullptr;
-
 	try
 	{
-		//Gets the reference to the selected column
-		column = reinterpret_cast<Column *>(columns_cmb->itemData(columns_cmb->currentIndex(), Qt::UserRole).value<void *>());
+		if(parent_obj->getObjectType() == ObjectType::View)
+		{
+			SimpleColumn simple_col = columns_cmb->itemData(columns_cmb->currentIndex(), Qt::UserRole).value<SimpleColumn>();
+			addColumn(simple_col, row);
+		}
+		else
+		{
+			Column *column = reinterpret_cast<Column *>(columns_cmb->itemData(columns_cmb->currentIndex(), Qt::UserRole).value<void *>());
+			addColumn(column, row);
+		}
 
-		//When the column is selected it will be removed from combo
 		columns_cmb->removeItem(columns_cmb->currentIndex());
-
-		//Adds the column into table
-		addColumn(column, row);
-
-		//When there is no items con the combo the insert button of the table is disabled
 		columns_tab->setButtonsEnabled(ObjectsTableWidget::AddButton, (columns_cmb->count()!=0));
 	}
 	catch(Exception &e)
@@ -170,12 +205,35 @@ void ColumnPickerWidget::addColumn(Column *column, int row)
 	}
 }
 
+void ColumnPickerWidget::addColumn(const SimpleColumn &column, int row)
+{
+	if(column.name.isEmpty() || row < 0)
+		return;
+
+	columns_tab->setCellText(column.name, row, 0);
+	columns_tab->setCellText(column.type, row, 1);
+	columns_tab->setRowData(QVariant::fromValue<SimpleColumn>(column), row);
+}
+
 vector<Column *> ColumnPickerWidget::getColumns()
 {
 	vector<Column *> cols;
 
 	for(unsigned row = 0; row < columns_tab->getRowCount(); row++)
 		cols.push_back(reinterpret_cast<Column *>(columns_tab->getRowData(row).value<void *>()));
+
+	return cols;
+}
+
+vector<SimpleColumn> ColumnPickerWidget::getSimpleColumns()
+{
+	if(parent_obj && parent_obj->getObjectType() != ObjectType::View)
+		return {};
+
+	vector<SimpleColumn> cols;
+
+	for(unsigned row = 0; row < columns_tab->getRowCount(); row++)
+		cols.push_back(columns_tab->getRowData(row).value<SimpleColumn>());
 
 	return cols;
 }

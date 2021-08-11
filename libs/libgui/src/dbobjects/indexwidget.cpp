@@ -88,12 +88,12 @@ void IndexWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Ba
 
 	incl_cols_picker_wgt->setParentObject(parent_obj);
 
-	// If the parent object is a view we disable the included columns tab since this isn't supported yet.
-	attributes_tbw->setTabEnabled(2, parent_obj->getObjectType() != ObjectType::View);
-
 	if(index)
 	{
-		incl_cols_picker_wgt->setColumns(index->getIncludeColumns());
+		if(parent_obj->getObjectType() == ObjectType::View)
+			incl_cols_picker_wgt->setColumns(index->getSimpleColumns());
+		else
+			incl_cols_picker_wgt->setColumns(index->getColumns());
 
 		idx_elems = index->getIndexElements();
 		indexing_cmb->setCurrentIndex(indexing_cmb->findText(~index->getIndexingType()));
@@ -146,7 +146,11 @@ void IndexWidget::applyConfiguration()
 		elements_tab->getElements<IndexElement>(idx_elems);
 		index->addIndexElements(idx_elems);
 
-		index->setIncludeColumns(incl_cols_picker_wgt->getColumns());
+		if(table && table->getObjectType() == ObjectType::View)
+			index->setSimpleColumns(incl_cols_picker_wgt->getSimpleColumns());
+		else
+			index->setColumns(incl_cols_picker_wgt->getColumns());
+
 		finishConfiguration();
 	}
 	catch(Exception &e)

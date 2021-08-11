@@ -261,7 +261,7 @@ bool Index::isReferRelationshipAddedColumn()
 			return true;
 	}
 
-	for(auto &col : include_cols)
+	for(auto &col : included_cols)
 	{
 		if(col->isAddedByRelationship())
 			return true;
@@ -283,7 +283,7 @@ vector<Column *> Index::getRelationshipAddedColumns()
 			cols.push_back(col);
 	}
 
-	for(auto &col : include_cols)
+	for(auto &col : included_cols)
 	{
 		if(col->isAddedByRelationship())
 			cols.push_back(col);
@@ -323,7 +323,7 @@ bool Index::isReferColumn(Column *column)
 			return true;
 	}
 
-	for(auto &col : include_cols)
+	for(auto &col : included_cols)
 	{
 		if(col == column)
 			return true;
@@ -332,7 +332,7 @@ bool Index::isReferColumn(Column *column)
 	return false;
 }
 
-void Index::addIncludeColumn(Column *col)
+void Index::addColumn(Column *col)
 {
 	if(!col)
 	{
@@ -341,16 +341,37 @@ void Index::addIncludeColumn(Column *col)
 	}
 
 	// We ignore the column if it alread exits in the list
-	if(std::find(include_cols.begin(), include_cols.end(), col) == include_cols.end())
-		include_cols.push_back(col);
+	if(std::find(included_cols.begin(), included_cols.end(), col) == included_cols.end())
+	{
+		incl_simple_cols.clear();
+		included_cols.push_back(col);
+		setCodeInvalidated(true);
+	}
 }
 
-void Index::setIncludeColumns(const vector<Column *> &cols)
+void Index::addSimpleColumn(const SimpleColumn &col)
+{
+	if(!BaseObject::isValidName(col.name))
+	{
+		throw Exception(Exception::getErrorMessage(ErrorCode::AsgInvalidNameObject),
+										ErrorCode::AsgInvalidNameObject, __PRETTY_FUNCTION__,__FILE__,__LINE__);
+	}
+
+	// We ignore the column if it alread exits in the list
+	if(std::find(incl_simple_cols.begin(), incl_simple_cols.end(), col) == incl_simple_cols.end())
+	{
+		included_cols.clear();
+		incl_simple_cols.push_back(col);
+		setCodeInvalidated(true);
+	}
+}
+
+void Index::setColumns(const vector<Column *> &cols)
 {
 	try
 	{
 		for(auto &col : cols)
-			addIncludeColumn(col);
+			addColumn(col);
 	}
 	catch(Exception &e)
 	{
@@ -358,9 +379,27 @@ void Index::setIncludeColumns(const vector<Column *> &cols)
 	}
 }
 
-vector<Column *> Index::getIncludeColumns()
+void Index::setSimpleColumns(const vector<SimpleColumn> &cols)
 {
-	return include_cols;
+	try
+	{
+		for(auto &col : cols)
+			addSimpleColumn(col);
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorCode(), __PRETTY_FUNCTION__, __FILE__, __LINE__, &e);
+	}
+}
+
+vector<Column *> Index::getColumns()
+{
+	return included_cols;
+}
+
+vector<SimpleColumn> Index::getSimpleColumns()
+{
+	return incl_simple_cols;
 }
 
 QString Index::getCodeDefinition(unsigned def_type)
@@ -399,8 +438,11 @@ QString Index::getCodeDefinition(unsigned def_type)
 
 	QStringList incl_cols;
 
-	for(auto &col : include_cols)
+	for(auto &col : included_cols)
 		incl_cols.append(col->getName(true));
+
+	for(auto &col : incl_simple_cols)
+		incl_cols.append(BaseObject::formatName(col.name));
 
 	attributes[Attributes::IncludeCols] = incl_cols.join(',');
 

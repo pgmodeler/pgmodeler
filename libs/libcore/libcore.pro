@@ -47,6 +47,7 @@ HEADERS += src/textbox.h \
 	   src/procedure.h \
 	   src/role.h \
 	   src/constraint.h \
+	src/simplecolumn.h \
 	   src/transform.h \
 	   src/type.h \
 	   src/tablespace.h \

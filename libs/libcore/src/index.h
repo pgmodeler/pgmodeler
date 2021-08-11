@@ -28,14 +28,18 @@
 
 #include "tableobject.h"
 #include "indexelement.h"
+#include "simplecolumn.h"
 
 class Index: public TableObject{
 	private:
 		//! \brief Stores the elements that defines the index
 		vector<IndexElement> idx_elements;
 
-		//! \brief Stores the non-key columns associated to the INCLUDE clause in the index
-		vector<Column *> include_cols;
+		//! \brief Stores the non-key (included) table columns associated with the INCLUDE clause in the index's DDL
+		vector<Column *> included_cols;
+
+		//! \brief Stores the non-key (included) view columns associated with the INCLUDE clause in the index's DDL
+		vector<SimpleColumn> incl_simple_cols;
 
 		//! \brief Predicate expression for the index
 		QString predicate;
@@ -145,14 +149,23 @@ class Index: public TableObject{
 		//! \brief Returns if some index element is referencing the specified column
 		bool isReferColumn(Column *column);
 
-		//! \brief Defines the non-key columns (INCLUDE clause) of the index.
-		void setIncludeColumns(const vector<Column *> &cols);
+		//! \brief Defines the non-key table columns (INCLUDE clause) of the index.
+		void setColumns(const vector<Column *> &cols);
+
+		//! \brief Defines the non-key view columns (INCLUDE clause) of the index.
+		void setSimpleColumns(const vector<SimpleColumn> &cols);
 
 		//! \brief Adds a single non-key column (INCLUDE clause) to the index.
-		void addIncludeColumn(Column *col);
+		void addColumn(Column *col);
 
-		//! \brief Returns the non-key columns (INCLUDE clause) of the index
-		vector<Column *> getIncludeColumns();
+		//! \brief Adds a single non-key view column (INCLUDE clause) to the index.
+		void addSimpleColumn(const SimpleColumn &col);
+
+		//! \brief Returns the non-key table columns (INCLUDE clause) of the index
+		vector<Column *> getColumns();
+
+		//! \brief Returns the non-key view columns (INCLUDE clause) of the index
+		vector<SimpleColumn> getSimpleColumns();
 };
 
 #endif

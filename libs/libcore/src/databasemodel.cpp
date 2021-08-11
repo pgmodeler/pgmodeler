@@ -5641,8 +5641,16 @@ Index *DatabaseModel::createIndex()
 					else if(elem == Attributes::Columns)
 					{
 						xmlparser.getElementAttributes(attribs);
-						for(auto &col : attribs[Attributes::Names].split(',', QtCompat::SkipEmptyParts))
-							index->addIncludeColumn(dynamic_cast<Column *>(table->getObject(col, ObjectType::Column)));
+
+						if(table->getObjectType() == ObjectType::Table)
+						{
+							for(auto &col : attribs[Attributes::Names].split(',', QtCompat::SkipEmptyParts))
+								index->addColumn(dynamic_cast<Column *>(table->getObject(col, ObjectType::Column)));
+						}
+						else
+						{
+							View *view = dynamic_cast<View *>(table);
+						}
 					}
 				}
 			}
@@ -8622,28 +8630,14 @@ void DatabaseModel::getIndexDependencies(BaseObject *object, vector<BaseObject *
 			getObjectDependecies(index->getIndexElement(i).getOperatorClass(), deps, inc_indirect_deps);
 
 		if(index->getIndexElement(i).getColumn())
-		{
-			/*usr_type=getObjectPgSQLType(index->getIndexElement(i).getColumn()->getType());
-
-			if(usr_type)
-				getObjectDependecies(usr_type, deps, inc_indirect_deps); */
-
 			getObjectDependecies(index->getIndexElement(i).getColumn(), deps, inc_indirect_deps);
-		}
 
 		if(index->getIndexElement(i).getCollation())
 			getObjectDependecies(index->getIndexElement(i).getCollation(), deps, inc_indirect_deps);
 	}
 
-	for(auto &col : index->getIncludeColumns())
-	{
-		/* usr_type=getObjectPgSQLType(col->getType());
-
-		if(usr_type)
-			getObjectDependecies(usr_type, deps, inc_indirect_deps); */
-
+	for(auto &col : index->getColumns())
 		getObjectDependecies(col, deps, inc_indirect_deps);
-	}
 }
 
 void DatabaseModel::getPolicyDependencies(BaseObject *object, vector<BaseObject *> &deps, bool inc_indirect_deps)
