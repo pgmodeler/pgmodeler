@@ -40,7 +40,7 @@ Index::Index()
 	attributes[Attributes::FastUpdate]="";
 	attributes[Attributes::Buffering]="";
 	attributes[Attributes::StorageParams]="";
-	attributes[Attributes::IncludeCols]="";
+	attributes[Attributes::IncludedCols]="";
 }
 
 void Index::setIndexElementsAttribute(unsigned def_type)
@@ -445,7 +445,7 @@ QString Index::getCodeDefinition(unsigned def_type)
 	for(auto &col : incl_simple_cols)
 		incl_cols.append(BaseObject::formatName(col.name));
 
-	attributes[Attributes::IncludeCols] = incl_cols.join(',');
+	attributes[Attributes::IncludedCols] = incl_cols.join(',');
 
 	/* Case the index doesn't referece some column added by relationship it will be declared
 		inside the parent table construction by the use of 'decl-in-table' schema attribute */

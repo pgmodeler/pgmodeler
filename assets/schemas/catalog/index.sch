@@ -76,9 +76,9 @@
 		pg_get_expr(indpred, indrelid, true) predicate, ]
 
 		%if ({pgsql-ver} >=f "11.0") %then
-			[ id.indnkeyatts AS key_cols_count, ]
+			[ id.indnkeyatts AS elements_count, ]
 		%else
-			[ id.indnatts AS key_cols_count, ]
+			[ id.indnatts AS elements_count, ]
 		%end
 
 		({comment}) [ AS comment ]

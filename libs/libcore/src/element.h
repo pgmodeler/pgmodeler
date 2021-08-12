@@ -32,15 +32,15 @@
 class Element {
 	private:
 		/*! \brief Column referenced by the  element. This attribute is
-		 mutually exclusive with the expression attribute, this means,
-		 when one is set the other has empty (null) value */
+		 mutually exclusive with the expression attribute and simple column */
 		Column *column;
 
+		/*! \brief View column referenced by the element. This attribute is
+		 mutually exclusive with the expression attribute and column */
 		SimpleColumn simple_col;
 
 		/*! \brief Expression referenced by the  element. This attribute is
-		 mutually exclusive with the column attribute, this means
-		 when one is set the other has empty (null) value */
+		 mutually exclusive with the column and simple column attributes */
 		QString expression;
 
 		//! \brief Operator class used by the  element

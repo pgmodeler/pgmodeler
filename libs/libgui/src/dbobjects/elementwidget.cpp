@@ -92,6 +92,7 @@ void ElementWidget::setAttributes(DatabaseModel *model, BaseObject *parent_obj, 
 		ExcludeElement *exc_elem = dynamic_cast<ExcludeElement *>(elem);
 		PartitionKey *part_key = dynamic_cast<PartitionKey *>(elem);
 		Column *column = elem->getColumn();
+		SimpleColumn simple_col = elem->getSimpleColumn();
 
 		setAttributes(model, parent_obj);
 
@@ -102,13 +103,16 @@ void ElementWidget::setAttributes(DatabaseModel *model, BaseObject *parent_obj, 
 		else
 			setPartitionKey(part_key);
 
-		if(parent_obj->getObjectType() == ObjectType::Table &&
-			 (column || (!column && elem->getExpression().isEmpty())))
+		if(BaseTable::isBaseTable(parent_obj->getObjectType()) &&
+			 (column || simple_col.isValid() ||
+				(!column && !simple_col.isValid() && elem->getExpression().isEmpty())))
 		{
 			column_rb->setChecked(true);
 
 			if(column)
 				column_cmb->setCurrentIndex(column_cmb->findText(column->getName()));
+			else if(simple_col.isValid())
+				column_cmb->setCurrentIndex(column_cmb->findText(simple_col.name));
 		}
 		else
 		{

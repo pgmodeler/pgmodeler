@@ -29,30 +29,37 @@ Element::Element()
 
 void Element::setColumn(Column *column)
 {
-	if(column)
-	{
-		this->column=column;
-		this->expression="";
-	}
+	if(!column)
+		return;
+
+	this->column=column;
+	expression="";
+	simple_col = SimpleColumn();
 }
 
 void Element::setExpression(const QString &expression)
 {
-	if(!expression.isEmpty())
-	{
-		this->expression=expression;
-		this->column=nullptr;
-	}
+	if(expression.isEmpty())
+		return;
+
+	this->expression=expression;
+	column = nullptr;
+	simple_col = SimpleColumn();
 }
 
 void Element::setOperatorClass(OperatorClass *oper_class)
 {
-	this->operator_class=oper_class;
+	operator_class = oper_class;
 }
 
 void Element::setSimpleColumn(const SimpleColumn &col)
 {
+	if(!col.isValid())
+		return;
+
 	simple_col = col;
+	column = nullptr;
+	expression = "";
 }
 
 void Element::setSortingAttribute(unsigned attrib, bool value)

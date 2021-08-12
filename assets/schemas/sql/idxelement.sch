@@ -1,7 +1,7 @@
 # SQL definition for index elements
 # CAUTION: Do not modify this file unless you know what you are doing.
 # Code generation can be broken if incorrect changes are made.
-$br $tb $sp $sp
+$br $tb
 
 %if {column} %then
 	{column}
