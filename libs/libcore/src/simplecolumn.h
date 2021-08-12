@@ -44,8 +44,14 @@ struct SimpleColumn {
 			alias = _alias;
 		}
 
-		bool operator == (const SimpleColumn &col) {
+		bool operator == (const SimpleColumn &col)
+		{
 			return name == col.name && type == col.type && alias == col.alias;
+		}
+
+		bool isValid()
+		{
+			return !name.isEmpty() && !type.isEmpty() && !alias.isEmpty();
 		}
 };
 

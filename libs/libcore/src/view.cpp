@@ -125,6 +125,17 @@ bool View::isWithNoData()
 	return with_no_data;
 }
 
+SimpleColumn View::getColumn(const QString &name)
+{
+	for(auto &col : columns)
+	{
+		if(col.name == name)
+			return col;
+	}
+
+	return SimpleColumn();
+}
+
 void View::setCommomTableExpression(const QString &expr)
 {
 	setCodeInvalidated(cte_expression != expr);

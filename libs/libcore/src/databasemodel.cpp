@@ -5641,15 +5641,25 @@ Index *DatabaseModel::createIndex()
 					else if(elem == Attributes::Columns)
 					{
 						xmlparser.getElementAttributes(attribs);
+						QStringList col_names =  attribs[Attributes::Names].split(',', QtCompat::SkipEmptyParts);
 
 						if(table->getObjectType() == ObjectType::Table)
 						{
-							for(auto &col : attribs[Attributes::Names].split(',', QtCompat::SkipEmptyParts))
-								index->addColumn(dynamic_cast<Column *>(table->getObject(col, ObjectType::Column)));
+							for(auto &name : col_names)
+								index->addColumn(dynamic_cast<Column *>(table->getObject(name, ObjectType::Column)));
 						}
 						else
 						{
 							View *view = dynamic_cast<View *>(table);
+							SimpleColumn col;
+
+							for(auto &name : col_names)
+							{
+								col = view->getColumn(name);
+
+								if(col.isValid())
+									index->addSimpleColumn(col);
+							}
 						}
 					}
 				}
