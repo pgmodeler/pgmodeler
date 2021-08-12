@@ -92,6 +92,7 @@ void ElementWidget::setAttributes(DatabaseModel *model, BaseObject *parent_obj, 
 		ExcludeElement *exc_elem = dynamic_cast<ExcludeElement *>(elem);
 		PartitionKey *part_key = dynamic_cast<PartitionKey *>(elem);
 		Column *column = elem->getColumn();
+		SimpleColumn simple_col = elem->getSimpleColumn();
 
 		setAttributes(model, parent_obj);
 
@@ -102,13 +103,16 @@ void ElementWidget::setAttributes(DatabaseModel *model, BaseObject *parent_obj, 
 		else
 			setPartitionKey(part_key);
 
-		if(parent_obj->getObjectType() == ObjectType::Table &&
-			 (column || (!column && elem->getExpression().isEmpty())))
+		if(BaseTable::isBaseTable(parent_obj->getObjectType()) &&
+			 (column || simple_col.isValid() ||
+				(!column && !simple_col.isValid() && elem->getExpression().isEmpty())))
 		{
 			column_rb->setChecked(true);
 
 			if(column)
 				column_cmb->setCurrentIndex(column_cmb->findText(column->getName()));
+			else if(simple_col.isValid())
+				column_cmb->setCurrentIndex(column_cmb->findText(simple_col.name));
 		}
 		else
 		{
@@ -148,11 +152,11 @@ void ElementWidget::setAttributes(DatabaseModel *model, BaseObject *parent_obj)
 	collation_sel->setModel(model);
 	operator_sel->setModel(model);
 
-	cols_combo_parent->setVisible(parent_obj->getObjectType() == ObjectType::Table);
-	column_rb->setVisible(parent_obj->getObjectType() == ObjectType::Table);
+	cols_combo_parent->setVisible(BaseTable::isBaseTable(parent_obj->getObjectType()));
+	column_rb->setVisible(BaseTable::isBaseTable(parent_obj->getObjectType()));
 	expression_rb->setChecked(parent_obj->getObjectType() == ObjectType::View);
 
-	if(parent_obj->getObjectType() == ObjectType::Table)
+	if(BaseTable::isBaseTable(parent_obj->getObjectType()))
 		updateColumnsCombo();
 }
 
@@ -204,13 +208,19 @@ void ElementWidget::applyConfiguration()
 	if(expression_rb->isChecked())
 		element->setExpression(elem_expr_txt->toPlainText().toUtf8());
 	else
-		element->setColumn(reinterpret_cast<Column *>(column_cmb->itemData(column_cmb->currentIndex()).value<void *>()));
+	{
+		if(parent_obj->getObjectType() == ObjectType::Table)
+			element->setColumn(reinterpret_cast<Column *>(column_cmb->itemData(column_cmb->currentIndex()).value<void *>()));
+		else if(parent_obj->getObjectType() == ObjectType::View)
+			element->setSimpleColumn(column_cmb->itemData(column_cmb->currentIndex()).value<SimpleColumn>());
+	}
 }
 
 void ElementWidget::updateColumnsCombo()
 {
 	Table *table = dynamic_cast<Table *>(parent_obj);
 	Relationship *rel = dynamic_cast<Relationship *>(parent_obj);
+	View *view = dynamic_cast<View *>(parent_obj);
 	Column *column=nullptr;
 	unsigned i, col_count=0;
 
@@ -226,9 +236,13 @@ void ElementWidget::updateColumnsCombo()
 			for(i=0; i < col_count; i++)
 			{
 				column=table->getColumn(i);
-				column_cmb->addItem(column->getName(),
-														QVariant::fromValue<void *>(column));
+				column_cmb->addItem(column->getName(), QVariant::fromValue<void *>(column));
 			}
+		}
+		else if(view)
+		{
+			for(auto &col : view->getColumns())
+				column_cmb->addItem(col.name, QVariant::fromValue<SimpleColumn>(col));
 		}
 		else if(rel)
 		{
@@ -236,8 +250,7 @@ void ElementWidget::updateColumnsCombo()
 			for(i=0; i < col_count; i++)
 			{
 				column=rel->getAttribute(i);
-				column_cmb->addItem(column->getName(),
-														QVariant::fromValue<void *>(column));
+				column_cmb->addItem(column->getName(), QVariant::fromValue<void *>(column));
 			}
 		}
 	}

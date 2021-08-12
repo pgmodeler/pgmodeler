@@ -28,14 +28,7 @@
 
 #include "table.h"
 #include "schema.h"
-
-/*! \brief This simple struct acts like a rudimentary column used by Reference and Views to represent columns
- * Note that, as intended, the struct expects that all received values are validated since they are immutable */
-struct SimpleColumn {
-	QString name, type, alias;
-	SimpleColumn(const QString &_name, const QString &_type, const QString &_alias) :
-		name(_name), type(_type), alias(_alias) {}
-};
+#include "simplecolumn.h"
 
 class Reference {
 	private:

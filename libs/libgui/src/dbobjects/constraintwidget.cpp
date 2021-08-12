@@ -38,34 +38,16 @@ ConstraintWidget::ConstraintWidget(QWidget *parent): BaseObjectWidget(parent, Ob
 		expression_hl=new SyntaxHighlighter(expression_txt, false, true);
 		expression_hl->loadConfiguration(GlobalAttributes::getSQLHighlightConfPath());
 
-		columns_tab=new ObjectsTableWidget(ObjectsTableWidget::AllButtons ^
-										  (ObjectsTableWidget::EditButton |
-											 ObjectsTableWidget::UpdateButton |
-											 ObjectsTableWidget::DuplicateButton), true, this);
-
-		ref_columns_tab=new ObjectsTableWidget(ObjectsTableWidget::AllButtons ^
-											  (ObjectsTableWidget::EditButton |
-												 ObjectsTableWidget::UpdateButton |
-												ObjectsTableWidget::DuplicateButton), true, this);
-
 		ref_table_sel=new ObjectSelectorWidget(ObjectType::Table, true, this);
+		col_picker_wgt = new ColumnPickerWidget(this);
+		ref_col_picker_wgt = new ColumnPickerWidget(this);
 
-		columns_tab->setColumnCount(2);
-		columns_tab->setHeaderLabel(tr("Column"), 0);
-		columns_tab->setHeaderIcon(QPixmap(GuiUtilsNs::getIconPath("column")),0);
-		columns_tab->setHeaderLabel(tr("Type"), 1);
-		columns_tab->setHeaderIcon(QPixmap(GuiUtilsNs::getIconPath("usertype")),1);
+		QVBoxLayout *vbox = new QVBoxLayout(columns_tbw->widget(0));
+		vbox->addWidget(col_picker_wgt);
+		vbox->setContentsMargins(4,4,4,4);
 
-		ref_columns_tab->setEnabled(false);
-		ref_columns_tab->setColumnCount(2);
-		ref_columns_tab->setHeaderLabel(tr("Column"), 0);
-		ref_columns_tab->setHeaderIcon(QPixmap(GuiUtilsNs::getIconPath("column")),0);
-		ref_columns_tab->setHeaderLabel(tr("Type"), 1);
-		ref_columns_tab->setHeaderIcon(QPixmap(GuiUtilsNs::getIconPath("usertype")),1);
-
-		dynamic_cast<QGridLayout *>(columns_tbw->widget(0)->layout())->addWidget(columns_tab, 1,0,1,3);
 		dynamic_cast<QGridLayout *>(columns_tbw->widget(1)->layout())->addWidget(ref_table_sel, 0,1,1,2);
-		dynamic_cast<QGridLayout *>(columns_tbw->widget(1)->layout())->addWidget(ref_columns_tab, 3,0,1,3);
+		dynamic_cast<QGridLayout *>(columns_tbw->widget(1)->layout())->addWidget(ref_col_picker_wgt, 3,0,1,3);
 
 		configureFormLayout(constraint_grid, ObjectType::Constraint);
 
@@ -94,172 +76,13 @@ ConstraintWidget::ConstraintWidget(QWidget *parent): BaseObjectWidget(parent, Ob
 		connect(deferrable_chk, SIGNAL(toggled(bool)), deferral_cmb, SLOT(setEnabled(bool)));
 		connect(deferrable_chk, SIGNAL(toggled(bool)), deferral_lbl, SLOT(setEnabled(bool)));
 		connect(indexing_chk, SIGNAL(toggled(bool)), indexing_cmb, SLOT(setEnabled(bool)));
-		connect(columns_tab, SIGNAL(s_rowAdded(int)), this, SLOT(addColumn(int)));
-		connect(columns_tab, SIGNAL(s_rowRemoved(int)), this, SLOT(removeColumn(int)));
-		connect(columns_tab, SIGNAL(s_rowsRemoved()), this, SLOT(removeColumns()));
-		connect(ref_columns_tab, SIGNAL(s_rowAdded(int)), this, SLOT(addColumn(int)));
-		connect(ref_columns_tab, SIGNAL(s_rowRemoved(int)), this, SLOT(removeColumn(int)));
-		connect(ref_columns_tab, SIGNAL(s_rowsRemoved()), this, SLOT(removeColumns()));
 		connect(ref_table_sel, SIGNAL(s_selectorCleared()), this, SLOT(selectReferencedTable()));
 		connect(ref_table_sel, SIGNAL(s_objectSelected()), this, SLOT(selectReferencedTable()));
 		connect(fill_factor_chk, SIGNAL(toggled(bool)), fill_factor_sb, SLOT(setEnabled(bool)));
 
 		selectConstraintType();
 		configureTabOrder();
-
 		setMinimumSize(540, 600);
-	}
-	catch(Exception &e)
-	{
-		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
-	}
-}
-
-void ConstraintWidget::addColumn(int row)
-{
-	QObject *sender_obj=sender();
-	ObjectsTableWidget *aux_col_tab=nullptr;
-	QComboBox *combo=nullptr;
-	Column *column=nullptr;
-	unsigned col_id;
-
-	try
-	{
-		if(sender_obj==columns_tab)
-		{
-			aux_col_tab=columns_tab;
-			combo=column_cmb;
-			col_id=Constraint::SourceCols;
-		}
-		else
-		{
-			aux_col_tab=ref_columns_tab;
-			combo=ref_column_cmb;
-			col_id=Constraint::ReferencedCols;
-		}
-
-		//Gets the reference to the selected column
-		column=reinterpret_cast<Column *>(combo->itemData(combo->currentIndex(),Qt::UserRole).value<void *>());
-
-		//When the column is selected it will be removed from combo
-		combo->removeItem(combo->currentIndex());
-
-		//Adds the column into table
-		addColumn(column, col_id, row);
-
-		//When there is no items con the combo the insert button of the table is disabled
-		aux_col_tab->setButtonsEnabled(ObjectsTableWidget::AddButton, (combo->count()!=0));
-	}
-	catch(Exception &e)
-	{
-		aux_col_tab->removeRow(row);
-		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
-	}
-}
-
-void ConstraintWidget::removeColumn(int)
-{
-	if(sender()==columns_tab)
-		updateColumnsCombo(Constraint::SourceCols);
-	else
-		updateColumnsCombo(Constraint::ReferencedCols);
-}
-
-void ConstraintWidget::removeColumns()
-{
-	if(sender()==columns_tab)
-		updateColumnsCombo(Constraint::SourceCols);
-	else
-		updateColumnsCombo(Constraint::ReferencedCols);
-}
-
-void ConstraintWidget::addColumn(Column *column, unsigned col_id, int row)
-{
-	ObjectsTableWidget *table_wgt=nullptr;
-
-	if(column && row >= 0)
-	{
-		if(col_id==Constraint::SourceCols)
-			table_wgt=columns_tab;
-		else
-			table_wgt=ref_columns_tab;
-
-		table_wgt->setCellText(column->getName(),row,0);
-		table_wgt->setCellText(~column->getType(),row,1);
-		table_wgt->setRowData(QVariant::fromValue<void *>(column), row);
-
-		//Change the table row background color if the column is protected or added by relationship
-		if(column->isAddedByRelationship() || column->isProtected())
-		{
-			QFont fonte;
-			fonte=table_wgt->font();
-			fonte.setItalic(true);
-
-			if(column->isProtected())
-				table_wgt->setRowFont(row, fonte, ProtRowFgColor, ProtRowBgColor);
-			else
-				table_wgt->setRowFont(row, fonte, RelAddedRowFgColor, RelAddedRowBgColor);
-		}
-	}
-}
-
-void ConstraintWidget::updateColumnsCombo(unsigned col_id)
-{
-	ObjectsTableWidget *aux_col_tab=nullptr;
-	Column *column=nullptr;
-	PhysicalTable *table=nullptr;
-	QComboBox *combo=nullptr;
-	Relationship *rel=nullptr;
-	unsigned i, count=0;
-
-	try
-	{
-		if(col_id==Constraint::SourceCols)
-		{
-			combo=column_cmb;
-			aux_col_tab=columns_tab;
-
-			/* If the column to be edited does not belongs to a relationship
-			means that the column is from a table */
-			if(!this->relationship)
-			{
-				table=dynamic_cast<PhysicalTable *>(this->table);
-				count=table->getColumnCount();
-			}
-			else
-			{
-				rel=this->relationship;
-				count=rel->getAttributeCount();
-			}
-		}
-		else
-		{
-			combo=ref_column_cmb;
-			aux_col_tab=ref_columns_tab;
-			table=dynamic_cast<PhysicalTable *>(ref_table_sel->getSelectedObject());
-
-			if(table)
-				count=table->getColumnCount();
-		}
-
-		combo->clear();
-
-		for(i=0; i < count; i++)
-		{
-			if(rel)
-				column=rel->getAttribute(i);
-			else
-				column=table->getColumn(i);
-
-			//If the column does not exists on the column's table, adds it
-			if(aux_col_tab->getRowIndex(QVariant::fromValue<void *>(column)) < 0)
-				combo->addItem(column->getName() +
-							   QString(" (") +
-							   ~column->getType() +
-							   QString(")"), QVariant::fromValue<void *>(column));
-		}
-
-		aux_col_tab->setButtonsEnabled(ObjectsTableWidget::AddButton, (combo->count()!=0));
 	}
 	catch(Exception &e)
 	{
@@ -269,23 +92,7 @@ void ConstraintWidget::updateColumnsCombo(unsigned col_id)
 
 void ConstraintWidget::selectReferencedTable()
 {
-	Table *table=dynamic_cast<Table *>(ref_table_sel->getSelectedObject());
-
-	if(!table || (this->object && dynamic_cast<Constraint *>(this->object)->getReferencedTable() != table))
-	{
-		ref_columns_tab->blockSignals(true);
-		ref_columns_tab->removeRows();
-		ref_columns_tab->setEnabled(false);
-		ref_columns_tab->blockSignals(false);
-	}
-
-	if(!table)
-		ref_column_cmb->clear();
-	else
-	{
-		ref_columns_tab->setEnabled(true);
-		updateColumnsCombo(Constraint::ReferencedCols);
-	}
+	ref_col_picker_wgt->setParentObject(ref_table_sel->getSelectedObject());
 }
 
 void ConstraintWidget::selectConstraintType()
@@ -345,8 +152,6 @@ void ConstraintWidget::selectConstraintType()
 void ConstraintWidget::setAttributes(DatabaseModel *model, OperationList *op_list,  BaseObject *parent_obj, Constraint *constr)
 {
 	ObjectType obj_type;
-	unsigned row = 0;
-	Table *ref_table=nullptr;
 	vector<ExcludeElement> excl_elems;
 
 	if(!parent_obj)
@@ -359,25 +164,9 @@ void ConstraintWidget::setAttributes(DatabaseModel *model, OperationList *op_lis
 
 	BaseObjectWidget::setAttributes(model, op_list, constr, parent_obj);
 
-	info_frm->setVisible(this->table!=nullptr);
+	info_frm->setVisible(this->table != nullptr);
 	ref_table_sel->setModel(model);
-
-	columns_tab->blockSignals(true);
-
-	if(constr)
-	{
-		row = 0;
-		for(auto column : constr->getColumns(Constraint::SourceCols))
-		{
-			columns_tab->addRow();
-			addColumn(column, Constraint::SourceCols, row);
-			row++;
-		}
-	}
-
-	updateColumnsCombo(Constraint::SourceCols);
-	columns_tab->setButtonsEnabled(ObjectsTableWidget::AddButton, (column_cmb->count()!=0));
-	columns_tab->blockSignals(false);
+	col_picker_wgt->setParentObject(parent_obj);
 
 	if(constr)
 	{
@@ -402,24 +191,9 @@ void ConstraintWidget::setAttributes(DatabaseModel *model, OperationList *op_lis
 		if(fill_factor_chk->isChecked())
 			fill_factor_sb->setValue(constr->getFillFactor());
 
-		ref_table=dynamic_cast<Table *>(constr->getReferencedTable());
-		if(ref_table)
-		{
-			ref_columns_tab->blockSignals(true);
-			ref_table_sel->setSelectedObject(ref_table);
-
-			row = 0;
-			for(auto column : constr->getColumns(Constraint::ReferencedCols))
-			{
-				ref_columns_tab->addRow();
-				addColumn(column, Constraint::ReferencedCols, row);
-				row++;
-			}
-
-			updateColumnsCombo(Constraint::ReferencedCols);
-			ref_columns_tab->setButtonsEnabled(ObjectsTableWidget::AddButton, (column_cmb->count()!=0));
-			ref_columns_tab->blockSignals(false);
-		}
+		ref_table_sel->setSelectedObject(constr->getReferencedTable());
+		col_picker_wgt->setColumns(constr->getColumns(Constraint::SourceCols));
+		ref_col_picker_wgt->setColumns(constr->getColumns(Constraint::ReferencedCols));
 	}
 
 	excl_elems_tab->setAttributes<ExcludeElement>(model, parent_obj);
@@ -430,10 +204,7 @@ void ConstraintWidget::applyConfiguration()
 {
 	try
 	{
-		Constraint *constr=nullptr;
-		unsigned i, col_id, count;
-		Column *column=nullptr;
-		ObjectsTableWidget *aux_col_tab=nullptr;
+		Constraint *constr = nullptr;
 		vector<ExcludeElement> excl_elems;
 
 		startConfiguration<Constraint>();
@@ -462,18 +233,8 @@ void ConstraintWidget::applyConfiguration()
 		if(constr->getConstraintType()==ConstraintType::ForeignKey)
 			constr->setReferencedTable(dynamic_cast<BaseTable *>(ref_table_sel->getSelectedObject()));
 
-		constr->removeColumns();
-		for(col_id=Constraint::SourceCols; col_id <= Constraint::ReferencedCols; col_id++)
-		{
-			aux_col_tab=(col_id==Constraint::SourceCols ? columns_tab : ref_columns_tab);
-
-			count=aux_col_tab->getRowCount();
-			for(i=0; i < count; i++)
-			{
-				column=reinterpret_cast<Column *>(aux_col_tab->getRowData(i).value<void *>());
-				constr->addColumn(column, col_id);
-			}
-		}
+		constr->addColumns(col_picker_wgt->getColumns(), Constraint::SourceCols);
+		constr->addColumns(ref_col_picker_wgt->getColumns(), Constraint::ReferencedCols);
 
 		excl_elems_tab->getElements<ExcludeElement>(excl_elems);
 		constr->addExcludeElements(excl_elems);

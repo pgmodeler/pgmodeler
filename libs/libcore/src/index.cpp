@@ -40,6 +40,7 @@ Index::Index()
 	attributes[Attributes::FastUpdate]="";
 	attributes[Attributes::Buffering]="";
 	attributes[Attributes::StorageParams]="";
+	attributes[Attributes::IncludedCols]="";
 }
 
 void Index::setIndexElementsAttribute(unsigned def_type)
@@ -75,7 +76,8 @@ void Index::addIndexElement(IndexElement elem)
 {
 	if(getElementIndex(elem) >= 0)
 		throw Exception(ErrorCode::InsDuplicatedElement,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-	else if(elem.getExpression().isEmpty() && !elem.getColumn())
+
+	if(elem.getExpression().isEmpty() && !elem.getColumn() && !elem.getSimpleColumn().isValid())
 		throw Exception(ErrorCode::AsgInvalidExpressionObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	idx_elements.push_back(elem);
@@ -252,46 +254,51 @@ QString Index::getPredicate()
 
 bool Index::isReferRelationshipAddedColumn()
 {
-	vector<IndexElement>::iterator itr, itr_end;
-	Column *col=nullptr;
-	bool found=false;
-
-	itr=idx_elements.begin();
-	itr_end=idx_elements.end();
-
 	//Checks if some of the elements if referencing columns added by relationship
-	while(itr!=itr_end && !found)
+	for(auto &elem : idx_elements)
 	{
-		col=(*itr).getColumn();
-		found=(col && col->isAddedByRelationship());
-		itr++;
+		if(elem.getColumn() &&
+			 elem.getColumn()->isAddedByRelationship())
+			return true;
 	}
 
-	return found;
+	for(auto &col : included_cols)
+	{
+		if(col->isAddedByRelationship())
+			return true;
+	}
+
+	return false;
 }
 
 vector<Column *> Index::getRelationshipAddedColumns()
 {
 	vector<Column *> cols;
-	Column *col=nullptr;
+	Column *col = nullptr;
 
 	for(auto &elem : idx_elements)
 	{
-		col=elem.getColumn();
+		col = elem.getColumn();
 
 		if(col && col->isAddedByRelationship())
+			cols.push_back(col);
+	}
+
+	for(auto &col : included_cols)
+	{
+		if(col->isAddedByRelationship())
 			cols.push_back(col);
 	}
 
 	return cols;
 }
 
-bool Index::isReferCollation(Collation *collation)
+bool Index::isReferCollation(Collation *coll)
 {
 	vector<IndexElement>::iterator itr, itr_end;
 	bool found=false;
 
-	if(!collation) return false;
+	if(!coll) return false;
 
 	itr=idx_elements.begin();
 	itr_end=idx_elements.end();
@@ -299,7 +306,7 @@ bool Index::isReferCollation(Collation *collation)
 	//Checks if some of the elements is referencing the collation
 	while(itr!=itr_end && !found)
 	{
-		found=((*itr).getCollation()==collation);
+		found=((*itr).getCollation()==coll);
 		itr++;
 	}
 
@@ -308,21 +315,92 @@ bool Index::isReferCollation(Collation *collation)
 
 bool Index::isReferColumn(Column *column)
 {
-	vector<IndexElement>::iterator itr, itr_end;
-	bool found=false;
+	if(!column)
+		return false;
 
-	if(!column) return false;
-
-	itr=idx_elements.begin();
-	itr_end=idx_elements.end();
-
-	while(itr!=itr_end && !found)
+	for(auto &elem : idx_elements)
 	{
-		found=((*itr).getColumn()==column);
-		itr++;
+		if(elem.getColumn() == column)
+			return true;
 	}
 
-	return found;
+	for(auto &col : included_cols)
+	{
+		if(col == column)
+			return true;
+	}
+
+	return false;
+}
+
+void Index::addColumn(Column *col)
+{
+	if(!col)
+	{
+		throw Exception(Exception::getErrorMessage(ErrorCode::AsgNotAllocatedColumn).arg(getName(), getTypeName()),
+										ErrorCode::AsgNotAllocatedColumn, __PRETTY_FUNCTION__,__FILE__,__LINE__);
+	}
+
+	// We ignore the column if it alread exits in the list
+	if(std::find(included_cols.begin(), included_cols.end(), col) == included_cols.end())
+	{
+		incl_simple_cols.clear();
+		included_cols.push_back(col);
+		setCodeInvalidated(true);
+	}
+}
+
+void Index::addSimpleColumn(const SimpleColumn &col)
+{
+	if(!col.isValid())
+	{
+		throw Exception(Exception::getErrorMessage(ErrorCode::AsgNotAllocatedColumn).arg(getName(), getTypeName()),
+										ErrorCode::AsgNotAllocatedColumn, __PRETTY_FUNCTION__,__FILE__,__LINE__);
+	}
+
+	// We ignore the column if it alread exits in the list
+	if(std::find(incl_simple_cols.begin(), incl_simple_cols.end(), col) == incl_simple_cols.end())
+	{
+		included_cols.clear();
+		incl_simple_cols.push_back(col);
+		setCodeInvalidated(true);
+	}
+}
+
+void Index::setColumns(const vector<Column *> &cols)
+{
+	try
+	{
+		for(auto &col : cols)
+			addColumn(col);
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorCode(), __PRETTY_FUNCTION__, __FILE__, __LINE__, &e);
+	}
+}
+
+void Index::setSimpleColumns(const vector<SimpleColumn> &cols)
+{
+	try
+	{
+		for(auto &col : cols)
+			addSimpleColumn(col);
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorCode(), __PRETTY_FUNCTION__, __FILE__, __LINE__, &e);
+	}
+}
+
+vector<Column *> Index::getColumns()
+{
+	return included_cols;
+}
+
+vector<SimpleColumn> Index::getSimpleColumns()
+{
+	return incl_simple_cols;
 }
 
 QString Index::getCodeDefinition(unsigned def_type)
@@ -358,6 +436,16 @@ QString Index::getCodeDefinition(unsigned def_type)
 	}
 	else if(def_type==SchemaParser::XmlDefinition)
 		attributes[Attributes::Factor]=QString("0");
+
+	QStringList incl_cols;
+
+	for(auto &col : included_cols)
+		incl_cols.append(col->getName(true));
+
+	for(auto &col : incl_simple_cols)
+		incl_cols.append(BaseObject::formatName(col.name));
+
+	attributes[Attributes::IncludedCols] = incl_cols.join(',');
 
 	/* Case the index doesn't referece some column added by relationship it will be declared
 		inside the parent table construction by the use of 'decl-in-table' schema attribute */

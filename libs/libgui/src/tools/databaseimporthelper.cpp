@@ -2018,13 +2018,13 @@ void DatabaseImportHelper::createIndex(attribs_map &attribs)
 {
 	try
 	{
-		QStringList cols, opclasses, collations, exprs;
+		QStringList cols, opclasses, collations, exprs, incl_cols;
 		IndexElement elem;
 		BaseTable *parent_tab=nullptr;
 		Collation *coll=nullptr;
 		OperatorClass *opclass=nullptr;
 		QString tab_name, coll_name, opc_name;
-		int i;
+		int i = 0, elem_cnt = 0;
 
 		attribs[Attributes::Factor]=QString("90");
 		tab_name=getDependencyObject(attribs[Attributes::Table], ObjectType::Table, true, auto_resolve_deps, false);
@@ -2046,17 +2046,18 @@ void DatabaseImportHelper::createIndex(attribs_map &attribs)
 		collations=Catalog::parseArrayValues(attribs[Attributes::Collations]);
 		opclasses=Catalog::parseArrayValues(attribs[Attributes::OpClasses]);
 		exprs = Catalog::parseIndexExpressions(attribs[Attributes::Expressions]);
+		elem_cnt = attribs[Attributes::ElementsCount].toInt();
 
-		for(i=0; i < cols.size(); i++)
+		for(i=0; i < elem_cnt; i++)
 		{
 			elem=IndexElement();
 
-			if(cols[i]!=QString("0"))
+			if(cols[i] != "0")
 			{
 				if(parent_tab->getObjectType() == ObjectType::Table)
 					elem.setColumn(dynamic_cast<Table *>(parent_tab)->getColumn(getColumnName(attribs[Attributes::Table], cols[i])));
-				else
-					elem.setExpression(getColumnName(attribs[Attributes::Table], cols[i]));
+				else if(parent_tab->getObjectType() == ObjectType::View)
+					elem.setSimpleColumn(dynamic_cast<View *>(parent_tab)->getColumn(getColumnName(attribs[Attributes::Table], cols[i])));
 			}
 			else if(!exprs.isEmpty())
 			{
@@ -2084,11 +2085,16 @@ void DatabaseImportHelper::createIndex(attribs_map &attribs)
 					elem.setOperatorClass(opclass);
 			}
 
-			if(elem.getColumn() || !elem.getExpression().isEmpty())
+			if(elem.getColumn() || elem.getSimpleColumn().isValid() || !elem.getExpression().isEmpty())
 				attribs[Attributes::Elements]+=elem.getCodeDefinition(SchemaParser::XmlDefinition);
 		}
 
+		for(i = elem_cnt; i < cols.size(); i++)
+			incl_cols.append(getColumnName(attribs[Attributes::Table], cols[i]));
+
+		attribs[Attributes::IncludedCols] = incl_cols.join(',');
 		attribs[Attributes::Table]=tab_name;
+
 		loadObjectXML(ObjectType::Index, attribs);
 		dbmodel->createIndex();
 	}

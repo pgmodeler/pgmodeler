@@ -23,17 +23,21 @@
 {name} [ ON ] {table}
 
 %if {index-type} %then
-	$br $tb [USING ] {index-type}
+	$br [USING ] {index-type}
 %end
 
-$br $tb ( {elements} $br $tb )
+$br ( {elements} $br )
 
 %if {expression} %then
-	$tb ({expression}) $sp
+	$br ({expression}) $sp
+%end
+
+%if ({pgsql-ver} >=f "11.0") %and {include-cols} %then
+	$br [INCLUDE ] ({include-cols})
 %end
 
 %if {stg-params} %then
-	$br $tb [WITH (]
+	$br [WITH (]
 
 	%if {factor} %then
 		[FILLFACTOR = ] {factor}
@@ -53,11 +57,11 @@ $br $tb ( {elements} $br $tb )
 %end
 
 %if {tablespace} %then
-	$br $tb [TABLESPACE ] {tablespace}
+	$br [TABLESPACE ] {tablespace}
 %end
 
 %if {predicate} %then
-	$br $tb [WHERE (] {predicate} [)]
+	$br [WHERE (] {predicate} [)]
 %end
 
 ;

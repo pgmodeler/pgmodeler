@@ -393,6 +393,7 @@ QStringList SchemaEditorForm::showFileDialog(bool save_mode)
 														tr("Objects metadata file (*.omf)"),
 														tr("SQL script file (*.sql)"),
 														tr("XML file (*.xml)"),
+														tr("DTD file (*.dtd)"),
 														tr("All files (*.*)") });
 
 	file_dlg.setWindowTitle(save_mode ? tr("Save file") : tr("Load file"));

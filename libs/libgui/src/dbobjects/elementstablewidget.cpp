@@ -78,6 +78,11 @@ void ElementsTableWidget::showElementData(Element *elem, int elem_idx)
 		elements_tab->setCellText(elem->getColumn()->getName(), elem_idx, 0);
 		elements_tab->setCellText(elem->getColumn()->getTypeName(), elem_idx, 1);
 	}
+	else if(elem->getSimpleColumn().isValid())
+	{
+		elements_tab->setCellText(elem->getSimpleColumn().name, elem_idx, 0);
+		elements_tab->setCellText(BaseObject::getTypeName(ObjectType::Column), elem_idx, 1);
+	}
 	else
 	{
 		elements_tab->setCellText(elem->getExpression(), elem_idx, 0);

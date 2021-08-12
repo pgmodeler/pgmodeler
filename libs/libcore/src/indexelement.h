@@ -28,6 +28,7 @@
 #include "operatorclass.h"
 #include "collation.h"
 #include "element.h"
+#include "simplecolumn.h"
 
 class IndexElement: public Element {
 	private:
@@ -36,6 +37,7 @@ class IndexElement: public Element {
 
 	public:
 		IndexElement();
+
 		virtual ~IndexElement(void){}
 
 		//! \brief Defines the collation referenced by the element

@@ -38,6 +38,11 @@ namespace GuiUtilsNs {
 	BigFontFactor = 2,
 	HugeFontFactor = 3;
 
+	static const QColor ProtRowBgColor(255,180,180),
+	ProtRowFgColor(80,80,80),
+	RelAddedRowBgColor(164,249,176),
+	RelAddedRowFgColor(80,80,80);
+
 	extern void configureWidgetFont(QWidget *widget, unsigned factor_id);
 	extern void __configureWidgetFont(QWidget *widget, double factor);
 
