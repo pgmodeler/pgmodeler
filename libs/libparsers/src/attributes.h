@@ -335,6 +335,7 @@ namespace Attributes {
 	JoinFunc,
 	KeepClusterObjs,
 	KeepObjsPerms,
+	KeyColsCount,
 	Label,
 	LabelsPos,
 	Landscape,

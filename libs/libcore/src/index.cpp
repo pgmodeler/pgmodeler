@@ -76,7 +76,8 @@ void Index::addIndexElement(IndexElement elem)
 {
 	if(getElementIndex(elem) >= 0)
 		throw Exception(ErrorCode::InsDuplicatedElement,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-	else if(elem.getExpression().isEmpty() && !elem.getColumn())
+
+	if(elem.getExpression().isEmpty() && !elem.getColumn() && !elem.getSimpleColumn().isValid())
 		throw Exception(ErrorCode::AsgInvalidExpressionObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	idx_elements.push_back(elem);
@@ -351,10 +352,10 @@ void Index::addColumn(Column *col)
 
 void Index::addSimpleColumn(const SimpleColumn &col)
 {
-	if(!BaseObject::isValidName(col.name))
+	if(!col.isValid())
 	{
-		throw Exception(Exception::getErrorMessage(ErrorCode::AsgInvalidNameObject),
-										ErrorCode::AsgInvalidNameObject, __PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(Exception::getErrorMessage(ErrorCode::AsgNotAllocatedColumn).arg(getName(), getTypeName()),
+										ErrorCode::AsgNotAllocatedColumn, __PRETTY_FUNCTION__,__FILE__,__LINE__);
 	}
 
 	// We ignore the column if it alread exits in the list

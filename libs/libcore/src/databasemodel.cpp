@@ -5487,20 +5487,31 @@ void DatabaseModel::createElement(Element &elem, TableObject *tab_obj, BaseObjec
 				{
 					xmlparser.getElementAttributes(attribs);
 
-					if(parent_obj->getObjectType()==ObjectType::Table)
+					if(parent_obj->getObjectType() == ObjectType::Table)
 					{
-						column=dynamic_cast<Table *>(parent_obj)->getColumn(attribs[Attributes::Name]);
+						Table *table = dynamic_cast<Table *>(parent_obj);
+
+						column = table->getColumn(attribs[Attributes::Name]);
 
 						if(!column)
-							column=dynamic_cast<Table *>(parent_obj)->getColumn(attribs[Attributes::Name], true);
+							column = table->getColumn(attribs[Attributes::Name], true);
+
+						elem.setColumn(column);
+					}
+					else if(parent_obj->getObjectType() == ObjectType::View)
+					{
+						View *view = dynamic_cast<View *>(parent_obj);
+						elem.setSimpleColumn(view->getColumn(attribs[Attributes::Name]));
 					}
 					else
 					{
-						column=dynamic_cast<Column *>(dynamic_cast<Relationship *>(parent_obj)->getObject(attribs[Attributes::Name], ObjectType::Column));
+						column = dynamic_cast<Column *>(dynamic_cast<Relationship *>(parent_obj)->getObject(attribs[Attributes::Name], ObjectType::Column));
+						elem.setColumn(column);
 					}
 
 					//Raises an error if the column doesn't exists
-					if(!column)
+					if((!elem.getColumn() && parent_obj->getObjectType() == ObjectType::Table) ||
+						 (!elem.getSimpleColumn().isValid() && parent_obj->getObjectType() == ObjectType::View))
 					{
 						if(!is_part_key)
 						{
@@ -5520,8 +5531,6 @@ void DatabaseModel::createElement(Element &elem, TableObject *tab_obj, BaseObjec
 									ErrorCode::RefObjectInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 						}
 					}
-
-					elem.setColumn(column);
 				}
 				else if(xml_elem==Attributes::Expression)
 				{
@@ -5654,12 +5663,7 @@ Index *DatabaseModel::createIndex()
 							SimpleColumn col;
 
 							for(auto &name : col_names)
-							{
-								col = view->getColumn(name);
-
-								if(col.isValid())
-									index->addSimpleColumn(col);
-							}
+								index->addSimpleColumn(view->getColumn(name));
 						}
 					}
 				}

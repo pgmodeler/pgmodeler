@@ -75,6 +75,12 @@
 		pg_get_expr(indexprs, indrelid) AS expressions,
 		pg_get_expr(indpred, indrelid, true) predicate, ]
 
+		%if ({pgsql-ver} >=f "11.0") %then
+			[ id.indnkeyatts AS key_cols_count, ]
+		%else
+			[ id.indnatts AS key_cols_count, ]
+		%end
+
 		({comment}) [ AS comment ]
 
 		[

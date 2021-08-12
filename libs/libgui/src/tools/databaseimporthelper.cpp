@@ -2055,6 +2055,8 @@ void DatabaseImportHelper::createIndex(attribs_map &attribs)
 			{
 				if(parent_tab->getObjectType() == ObjectType::Table)
 					elem.setColumn(dynamic_cast<Table *>(parent_tab)->getColumn(getColumnName(attribs[Attributes::Table], cols[i])));
+				else if(parent_tab->getObjectType() == ObjectType::View)
+					elem.setSimpleColumn(dynamic_cast<View *>(parent_tab)->getColumn(getColumnName(attribs[Attributes::Table], cols[i])));
 				else
 					elem.setExpression(getColumnName(attribs[Attributes::Table], cols[i]));
 			}
@@ -2084,7 +2086,7 @@ void DatabaseImportHelper::createIndex(attribs_map &attribs)
 					elem.setOperatorClass(opclass);
 			}
 
-			if(elem.getColumn() || !elem.getExpression().isEmpty())
+			if(elem.getColumn() || elem.getSimpleColumn().isValid() || !elem.getExpression().isEmpty())
 				attribs[Attributes::Elements]+=elem.getCodeDefinition(SchemaParser::XmlDefinition);
 		}
 
