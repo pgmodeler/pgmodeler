@@ -1973,8 +1973,8 @@ void DatabaseExplorerWidget::loadObjectSource()
 						//Generating the code for table child object
 						if(TableObject::isTableObject(obj_type) || is_column)
 						{
-							PhysicalTable *table=nullptr;
-							table=dynamic_cast<PhysicalTable *>(dbmodel.getObject(tab_name, {ObjectType::Table, ObjectType::ForeignTable}));
+							BaseTable *table=nullptr;
+							table = dynamic_cast<BaseTable *>(dbmodel.getObject(tab_name, {ObjectType::Table, ObjectType::ForeignTable, ObjectType::View}));
 							QTreeWidgetItem *table_item=nullptr;
 
 							//If the table was imported then the source code of it will be placed on the respective item
@@ -1987,9 +1987,11 @@ void DatabaseExplorerWidget::loadObjectSource()
 								sch_item=table_item->parent()->parent();
 								schema=table->getSchema();
 
-								//Generate the code of table children objects as ALTER commands
-								table->setGenerateAlterCmds(true);
-								object=table->getObject(name, (is_column ? ObjectType::Column : obj_type));
+								//Generate the code of table children objects as ALTER commands (only for columns and constraints)
+								if(table->getObjectType() != ObjectType::View)
+									dynamic_cast<PhysicalTable *>(table)->setGenerateAlterCmds(true);
+
+								object = table->getObject(name, (is_column ? ObjectType::Column : obj_type));
 							}
 						}
 						else
