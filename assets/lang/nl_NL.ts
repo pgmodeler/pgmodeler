@@ -7569,7 +7569,7 @@ Het bericht dat terugkwam van de DBMS is: `%1&apos;</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="1938"/>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Objects marked with an &lt;span style=&quot; font-weight:600;&quot;&gt;ALTER&lt;/span&gt; may not be effectively changed unless that the differences detected are in attributes that can be modified through ALTER commands otherwise no operationwill be performed or, if the force recreation is checked, the object will be dropped and created again.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Objects marked with an &lt;span style=&quot; font-weight:600;&quot;&gt;ALTER&lt;/span&gt; may not be effectively changed unless that the differences detected are in attributes that can be modified through ALTER commands otherwise no operation will be performed or, if the force recreation is checked, the object will be dropped and created again.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Objecten die zijn aangeduid met &lt;span style=&quot; font-weight:600;&quot;&gt;ALTER&lt;/span&gt; kunnen mogelijkerwijs niet worden aangepast tenzij de gedetecteerde verschillen in de attribute liggen die kunnen worden aangepast via een ALTER commando; in alle andere gevallen zal geen actie worden ondernomen of, indien &apos;Forceer het heraanmaken van objecten&apos; is aangevinkt, zal het object worden verwijderd en heraangemaakt.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
