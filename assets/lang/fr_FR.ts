@@ -8480,7 +8480,7 @@ Message renvoyé par le SGBD : `%1&apos;</translation>
     </message>
     <message>
         <location line="+81"/>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Objects marked with an &lt;span style=&quot; font-weight:600;&quot;&gt;ALTER&lt;/span&gt; may not be effectively changed unless that the differences detected are in attributes that can be modified through ALTER commands otherwise no operationwill be performed or, if the force recreation is checked, the object will be dropped and created again.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Objects marked with an &lt;span style=&quot; font-weight:600;&quot;&gt;ALTER&lt;/span&gt; may not be effectively changed unless that the differences detected are in attributes that can be modified through ALTER commands otherwise no operation will be performed or, if the force recreation is checked, the object will be dropped and created again.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Les objets marqués d&apos;un &lt;span style=&quot;font-weight : 600;&quot;&gt;ALTER&lt;/span&gt; ne peuvent être modifiés efficacement que si les différences détectées sont dans les attributs qui peuvent être modifié à l&apos;aide des commandes ALTER. Dans le cas contraire, aucune opération ne sera effectuée ou, si la recréation de force est vérifiée, l&apos;objet sera supprimé et créé à nouveau.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>

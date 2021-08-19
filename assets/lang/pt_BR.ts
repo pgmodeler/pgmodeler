@@ -5979,7 +5979,7 @@ Message returned by the DBMS: `%1&apos;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Objects marked with an &lt;span style=&quot; font-weight:600;&quot;&gt;ALTER&lt;/span&gt; may not be effectively changed unless that the differences detected are in attributes that can be modified through ALTER commands otherwise no operationwill be performed or, if the force recreation is checked, the object will be dropped and created again.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Objects marked with an &lt;span style=&quot; font-weight:600;&quot;&gt;ALTER&lt;/span&gt; may not be effectively changed unless that the differences detected are in attributes that can be modified through ALTER commands otherwise no operation will be performed or, if the force recreation is checked, the object will be dropped and created again.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
