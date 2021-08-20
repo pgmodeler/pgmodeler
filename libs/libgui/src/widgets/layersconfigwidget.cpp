@@ -218,6 +218,15 @@ void LayersConfigWidget::setVisible(bool value)
 	emit s_visibilityChanged(value);
 }
 
+void LayersConfigWidget::updateLayersRects()
+{
+	if(!model)
+		return;
+
+	model->getObjectsScene()->clearSelection();
+	model->getObjectsScene()->updateLayerRects();
+}
+
 void LayersConfigWidget::toggleLayersRects()
 {
 	if(!model)

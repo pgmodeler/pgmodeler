@@ -39,8 +39,8 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	pending_op=NoPendingOp;
 	central_wgt=nullptr;
 
-	layers_wgt = new LayersConfigWidget(this);
-	layers_wgt->setVisible(false);
+	layers_cfg_wgt = new LayersConfigWidget(this);
+	layers_cfg_wgt->setVisible(false);
 
 	changelog_wgt  = new ChangelogWidget(this);
 	changelog_wgt->setVisible(false);
@@ -233,7 +233,8 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	});
 
 	connect(oper_list_wgt, SIGNAL(s_operationExecuted()), overview_wgt, SLOT(updateOverview()));
-	connect(layers_wgt, SIGNAL(s_activeLayersChanged()), overview_wgt, SLOT(updateOverview()));
+	connect(oper_list_wgt, SIGNAL(s_operationExecuted()), layers_cfg_wgt, SLOT(updateLayersRects()));
+	connect(layers_cfg_wgt, SIGNAL(s_activeLayersChanged()), overview_wgt, SLOT(updateOverview()));
 
 	connect(configuration_form, SIGNAL(finished(int)), this, SLOT(applyConfigurations()));
 	connect(configuration_form, SIGNAL(rejected()), this, SLOT(updateConnections()));
@@ -339,7 +340,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	connect(model_valid_wgt, SIGNAL(s_validationInProgress(bool)), models_tbw, SLOT(setDisabled(bool)));
 	connect(model_valid_wgt, SIGNAL(s_validationInProgress(bool)), this, SLOT(stopTimers(bool)));
 	connect(model_valid_wgt, SIGNAL(s_validationInProgress(bool)), layers_btn, SLOT(setDisabled(bool)));
-	connect(model_valid_wgt, SIGNAL(s_validationInProgress(bool)), layers_wgt, SLOT(close()));
+	connect(model_valid_wgt, SIGNAL(s_validationInProgress(bool)), layers_cfg_wgt, SLOT(close()));
 
 	connect(model_valid_wgt, &ModelValidationWidget::s_validationCanceled, [&](){ pending_op=NoPendingOp; });
 	connect(model_valid_wgt, SIGNAL(s_validationFinished(bool)), this, SLOT(executePendingOperation(bool)));
@@ -347,7 +348,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	connect(model_valid_wgt, SIGNAL(s_graphicalObjectsUpdated()), model_objs_wgt, SLOT(updateObjectsView()), Qt::QueuedConnection);
 
 	connect(layers_btn, SIGNAL(toggled(bool)), this, SLOT(toggleLayersWidget(bool)));
-	connect(layers_wgt, SIGNAL(s_visibilityChanged(bool)), layers_btn, SLOT(setChecked(bool)));
+	connect(layers_cfg_wgt, SIGNAL(s_visibilityChanged(bool)), layers_btn, SLOT(setChecked(bool)));
 
 	connect(changelog_btn, SIGNAL(toggled(bool)), this, SLOT(toggleChangelogWidget(bool)));
 	connect(changelog_wgt, SIGNAL(s_visibilityChanged(bool)), changelog_btn, SLOT(setChecked(bool)));
@@ -669,7 +670,7 @@ void MainWindow::resizeEvent(QResizeEvent *)
 	action_donate->setChecked(false);
 	action_update_found->setChecked(false);
 
-	toggleLayersWidget(layers_wgt->isVisible());
+	toggleLayersWidget(layers_cfg_wgt->isVisible());
 	toggleChangelogWidget(changelog_wgt->isVisible());
 }
 
@@ -1070,7 +1071,7 @@ void MainWindow::showMainMenu()
 
 void MainWindow::setCurrentModel()
 {
-	layers_wgt->setVisible(false);
+	layers_cfg_wgt->setVisible(false);
 	models_tbw->setVisible(models_tbw->count() > 0);
 	action_design->setEnabled(models_tbw->count() > 0);
 
@@ -1115,7 +1116,7 @@ void MainWindow::setCurrentModel()
 		QList<QToolButton *> btns;
 		QFont font;
 
-		layers_wgt->setModel(current_model);
+		layers_cfg_wgt->setModel(current_model);
 		current_model->setFocus(Qt::OtherFocusReason);
 		current_model->cancelObjectAddition();
 		general_tb->addSeparator();
@@ -2039,7 +2040,7 @@ void MainWindow::changeCurrentView(bool checked)
 {
 	QAction *curr_act=qobject_cast<QAction *>(sender());
 
-	layers_wgt->setVisible(false);
+	layers_cfg_wgt->setVisible(false);
 	changelog_wgt->setVisible(false);
 
 	if(checked)
@@ -2125,7 +2126,7 @@ void MainWindow::handleObjectsMetadata()
 	objs_meta_frm.setModelWidgets(model_nav_wgt->getModelWidgets());
 
 	connect(&objs_meta_frm, SIGNAL(s_metadataHandled()), model_objs_wgt, SLOT(updateObjectsView()));
-	connect(&objs_meta_frm, SIGNAL(s_metadataHandled()), layers_wgt, SLOT(updateLayersList()));
+	connect(&objs_meta_frm, SIGNAL(s_metadataHandled()), layers_cfg_wgt, SLOT(updateLayersList()));
 
 	GuiUtilsNs::resizeDialog(&objs_meta_frm);
 	GeneralConfigWidget::restoreWidgetGeometry(&objs_meta_frm);
@@ -2185,8 +2186,8 @@ void MainWindow::toggleCompactView()
 
 void MainWindow::toggleLayersWidget(bool show)
 {
-	setBottomFloatingWidgetPos(layers_wgt, layers_btn);
-	layers_wgt->setVisible(show);
+	setBottomFloatingWidgetPos(layers_cfg_wgt, layers_btn);
+	layers_cfg_wgt->setVisible(show);
 
 	changelog_btn->blockSignals(true);
 	changelog_btn->setChecked(false);
@@ -2201,7 +2202,7 @@ void MainWindow::toggleChangelogWidget(bool show)
 
 	layers_btn->blockSignals(true);
 	layers_btn->setChecked(false);
-	layers_wgt->setVisible(false);
+	layers_cfg_wgt->setVisible(false);
 	layers_btn->blockSignals(false);
 }
 

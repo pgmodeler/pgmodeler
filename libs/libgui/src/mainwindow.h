@@ -85,7 +85,7 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 		SceneInfoWidget *scene_info_wgt;
 
 		//! \brief Layers management widget
-		LayersConfigWidget *layers_wgt;
+		LayersConfigWidget *layers_cfg_wgt;
 
 		//! \brief Layers management widget
 		ChangelogWidget *changelog_wgt;
