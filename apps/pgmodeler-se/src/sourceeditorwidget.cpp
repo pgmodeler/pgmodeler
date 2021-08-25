@@ -22,6 +22,7 @@ SourceEditorWidget::SourceEditorWidget(QWidget *parent) : QWidget(parent)
 	setupUi(this);
 
 	is_modified = false;
+	curr_sytax_cfg = GlobalAttributes::SchHighlightConf;
 
 	editor_txt = GuiUtilsNs::createNumberedTextEditor(editor_parent);
 	def_editor_pal = editor_txt->palette();
@@ -82,7 +83,8 @@ void SourceEditorWidget::loadSyntaxConfig(const QString &filename)
 	try
 	{
 		editor_hl->loadConfiguration(filename);
-		editor_hl->rehighlight();
+		editor_hl->rehighlight();		
+		curr_sytax_cfg = QFileInfo(filename).baseName();
 	}
 	catch(Exception &e)
 	{
@@ -98,6 +100,11 @@ void SourceEditorWidget::handleSelectedSnippet(const QString &snippet)
 	tc.insertText(snippets[snippet]);
 }
 
+QString SourceEditorWidget::getCurrentSyntaxConfig()
+{
+	return curr_sytax_cfg;
+}
+
 void SourceEditorWidget::loadFile(const QString &filename)
 {
 	if(filename.isEmpty())
@@ -106,13 +113,21 @@ void SourceEditorWidget::loadFile(const QString &filename)
 	bool enable = filename.endsWith(GlobalAttributes::SchemaExt);
 
 	editor_txt->setPlainText(UtilsNs::loadFile(filename));
-
 	validate_tb->setEnabled(enable);
 	indent_tb->setEnabled(enable);
 	code_compl_wgt->setEnabled(enable);
 	this->filename = filename;
 	source_file_sel->setSelectedFile(filename);
 	source_file_parent->setVisible(true);
+
+	QString ext = QFileInfo(filename).suffix();
+
+	if(ext == "dbm" || ext == "xml" || ext == "conf" || ext == "omf")
+		curr_sytax_cfg = GlobalAttributes::XMLHighlightConf;
+	else if(ext == "sql")
+		curr_sytax_cfg = GlobalAttributes::SQLHighlightConf;
+	else
+		curr_sytax_cfg = GlobalAttributes::SchHighlightConf;
 }
 
 void SourceEditorWidget::validateSyntax()

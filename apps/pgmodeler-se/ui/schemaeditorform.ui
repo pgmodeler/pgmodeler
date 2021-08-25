@@ -88,7 +88,10 @@
        </item>
       </layout>
      </widget>
-     <widget class="QFrame" name="frame_2">
+     <widget class="QFrame" name="syntax_cfg_edit_frm">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
       <layout class="QGridLayout" name="gridLayout_2">
        <property name="leftMargin">
         <number>0</number>
@@ -279,7 +282,7 @@
              </font>
             </property>
             <property name="text">
-             <string>The syntax settings below have changed. Click &lt;strong&gt;Save &amp; apply&lt;/strong&gt; to persit the modifications to file and apply them to the open editor; &lt;strong&gt;Apply only&lt;/strong&gt; to use the modified settings on-the-fly on open editors without save them to the configuration file; or &lt;strong&gt;Reload&lt;/strong&gt; to load the file again from the last time that it was saved.</string>
+             <string>The syntax settings below have changed. Click &lt;strong&gt;Save &amp; apply&lt;/strong&gt; to persit the modifications to config file and apply them; &lt;strong&gt;Apply only&lt;/strong&gt; to use the modified settings on-the-fly on the current editor without save the changes to the configuration file; or &lt;strong&gt;Reload&lt;/strong&gt; to load the file again from the last time that it was saved. &lt;strong&gt;NOTE:&lt;/strong&gt; switching to another editor tab will cause all modifications below to be lost.</string>
             </property>
             <property name="wordWrap">
              <bool>true</bool>
@@ -717,7 +720,7 @@
       <item row="7" column="0">
        <widget class="QToolButton" name="syntax_tb">
         <property name="enabled">
-         <bool>true</bool>
+         <bool>false</bool>
         </property>
         <property name="sizePolicy">
          <sizepolicy hsizetype="Preferred" vsizetype="Fixed">

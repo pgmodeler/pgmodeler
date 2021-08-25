@@ -27,7 +27,7 @@
 
 #include <QObject>
 #include <QWidget>
-#include "ui_syntaxcheckerform.h"
+#include "ui_schemaeditorform.h"
 #include "widgets/numberedtexteditor.h"
 #include "utils/syntaxhighlighter.h"
 #include "widgets/fileselectorwidget.h"
@@ -74,6 +74,7 @@ class SchemaEditorForm: public QWidget, public Ui::SchemaEditorForm {
 		void indentAll();
 		void saveAll();
 		void closeAll();
+		void loadSyntaxFromCurrentTab();
 };
 
 #endif

@@ -74,7 +74,6 @@ SchemaEditorForm::SchemaEditorForm(QWidget *parent) : QWidget(parent)
 	vbox->addWidget(syntax_conf_sel);
 	vbox->setContentsMargins(0, 0, 0, 0);
 
-	syntax_conf_sel->setSelectedFile(GlobalAttributes::getSchHighlightConfPath());
 	syntax_conf_sel->setNameFilters({ tr("Syntax highlight config file (*.conf)") });
 
 	QAction *act = nullptr;
@@ -113,6 +112,7 @@ subcontrol-position: right center; }");
 	connect(exit_tb, SIGNAL(clicked(bool)), this, SLOT(close()));
 	connect(save_tb, SIGNAL(clicked(bool)), this, SLOT(saveFile()));
 	connect(editors_tbw, SIGNAL(tabCloseRequested(int)), this, SLOT(closeEditorTab(int)));
+	connect(editors_tbw, SIGNAL(currentChanged(int)), this, SLOT(loadSyntaxFromCurrentTab()));
 	connect(use_tmpl_file_chk, SIGNAL(toggled(bool)), this, SLOT(loadSyntaxConfig()));
 	connect(indent_all_tb, SIGNAL(clicked(bool)), this, SLOT(indentAll()));
 	connect(save_all_tb, SIGNAL(clicked(bool)), this, SLOT(saveAll()));
@@ -137,7 +137,6 @@ subcontrol-position: right center; }");
 void SchemaEditorForm::showEvent(QShowEvent *)
 {
 	h_splitter->setSizes({ width(), width()/2});
-	loadSyntaxConfig();
 }
 
 bool SchemaEditorForm::hasModifiedEditors()
@@ -182,6 +181,28 @@ bool SchemaEditorForm::eventFilter(QObject *object, QEvent *event)
 	}
 
 	return QWidget::eventFilter(object, event);
+}
+
+void SchemaEditorForm::loadSyntaxFromCurrentTab()
+{
+	SourceEditorWidget *editor = dynamic_cast<SourceEditorWidget *>(editors_tbw->currentWidget());
+
+	if(!editor)
+		return;
+
+	stx_action_grp->blockSignals(true);
+
+	for(auto &act : stx_action_grp->actions())
+	{
+		if(act->data().toString() == editor->getCurrentSyntaxConfig())
+		{
+			act->setChecked(true);
+			loadSyntaxConfig();
+			break;
+		}
+	}
+
+	stx_action_grp->blockSignals(true);
 }
 
 void SchemaEditorForm::loadSyntaxConfig()
@@ -265,12 +286,10 @@ void SchemaEditorForm::applySyntaxConfig(bool from_temp_file)
 		SyntaxHighlighter stx_hl(&dummy_txt);
 		stx_hl.loadConfiguration(filename);
 
-		SourceEditorWidget *editor = nullptr;
-		for(int tab = 0; tab < editors_tbw->count(); tab++)
-		{
-			editor = dynamic_cast<SourceEditorWidget *>(editors_tbw->widget(tab));
+		SourceEditorWidget *editor = dynamic_cast<SourceEditorWidget *>(editors_tbw->currentWidget());
+
+		if(editor)
 			editor->loadSyntaxConfig(filename);
-		}
 	}
 	catch(Exception &e)
 	{
@@ -457,12 +476,11 @@ void SchemaEditorForm::addEditorTab(const QString &filename)
 	try
 	{
 		editor_wgt = new SourceEditorWidget;
-		editor_wgt->loadSyntaxConfig(syntax_conf_sel->getSelectedFile());
 
 		if(!filename.isEmpty())
 			editor_wgt->loadFile(filename);
 
-		connect(editor_wgt, SIGNAL(s_editorModified(bool)), this, SLOT(setTabModified(bool)));
+		connect(editor_wgt, SIGNAL(s_editorModified(bool)), this, SLOT(setTabModified(bool)));		
 	}
 	catch(Exception &e)
 	{
@@ -478,6 +496,8 @@ void SchemaEditorForm::addEditorTab(const QString &filename)
 	indent_all_tb->setEnabled(true);
 	save_all_tb->setEnabled(true);
 	close_all_tb->setEnabled(true);
+	syntax_cfg_edit_frm->setEnabled(true);
+	syntax_tb->setEnabled(true);
 }
 
 void SchemaEditorForm::closeEditorTab(int idx, bool confirm_close)
@@ -502,4 +522,19 @@ void SchemaEditorForm::closeEditorTab(int idx, bool confirm_close)
 	indent_all_tb->setEnabled(enable);
 	save_all_tb->setEnabled(enable);
 	close_all_tb->setEnabled(enable);
+	syntax_cfg_edit_frm->setEnabled(enable);
+	syntax_tb->setEnabled(enable);
+
+	if(!enable)
+	{
+		syntax_txt->blockSignals(true);
+		syntax_conf_sel->blockSignals(true);
+
+		syntax_txt->clear();
+		syntax_conf_sel->clearSelector();
+		alert_frm->setVisible(false);
+
+		syntax_txt->blockSignals(false);
+		syntax_conf_sel->blockSignals(false);
+	}
 }
