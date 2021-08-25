@@ -404,16 +404,21 @@ void SchemaEditorForm::closeAll()
 QStringList SchemaEditorForm::showFileDialog(bool save_mode)
 {
 	QFileDialog file_dlg;
-	QStringList files;
+	QStringList files, filters= {
+		tr("Schema file (*.sch)"),
+		tr("Database model file (*.dbm)"),
+		tr("pgModeler config file (*.conf)"),
+		tr("Objects metadata file (*.omf)"),
+		tr("SQL script file (*.sql)"),
+		tr("XML file (*.xml)"),
+		tr("DTD file (*.dtd)"),
+		tr("All files (*.*)")
+	};
 
-	file_dlg.setNameFilters({ tr("Schema file (*.sch)"),
-														tr("Database model file (*.dbm)"),
-														tr("pgModeler config file (*.conf)"),
-														tr("Objects metadata file (*.omf)"),
-														tr("SQL script file (*.sql)"),
-														tr("XML file (*.xml)"),
-														tr("DTD file (*.dtd)"),
-														tr("All files (*.*)") });
+	if(!save_mode)
+		filters.prepend(tr("All supported files (*.sch *.dbm *.conf *.omf *.sql *.xml *.dtd)"));
+
+	file_dlg.setNameFilters(filters);
 
 	file_dlg.setWindowTitle(save_mode ? tr("Save file") : tr("Load file"));
 	file_dlg.setFileMode(save_mode ? QFileDialog::AnyFile : QFileDialog::ExistingFiles);
