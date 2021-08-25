@@ -1969,8 +1969,10 @@ void PgModelerCliApp::handleLinuxMimeDatabase(bool uninstall, bool system_wide, 
 			throw Exception(MsgNoFileAssociation, ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	}
 
-	if(!uninstall)
+	if(!uninstall && !system_wide)
 		attribs[Attributes::WorkingDir]=QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
+	else
+		attribs[Attributes::WorkingDir]="";
 
 	try
 	{
@@ -1990,6 +1992,7 @@ void PgModelerCliApp::handleLinuxMimeDatabase(bool uninstall, bool system_wide, 
 				attribs[Attributes::Icon] = icons[i];
 
 				schparser.loadFile(schemas[i]);
+				schparser.ignoreEmptyAttributes(true);
 				buf.append(schparser.getCodeDefinition(attribs).toUtf8());
 				QDir(QString(".")).mkpath(QFileInfo(files[i]).absolutePath());
 
