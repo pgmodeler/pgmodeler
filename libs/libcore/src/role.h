@@ -57,6 +57,8 @@ class Role: public BaseObject {
 		//! \brief Formats the role attribute to be used by the SchemaParser
 		void setRoleAttribute(unsigned role_type);
 
+		vector<Role *> *getRoleList(unsigned role_type);
+
 	public:
 		//! \brief Constants used to reference the available options for the role
 		static constexpr unsigned OpSuperuser=0,
@@ -103,8 +105,11 @@ class Role: public BaseObject {
 		 the object by its index */
 		Role *getRole(unsigned role_type, unsigned role_idx);
 
-		//! \brief Returns whether the role exists on the internal lists (Via ???_ROLE constants)
+		//! \brief Returns whether the role exists in the internal lists (Via ???_ROLE constants)
 		bool isRoleExists(unsigned role_type, Role *role);
+
+		//! \brief Returns whether the role name exists in the internal lists (Via ???_ROLE constants)
+		bool isRoleExists(unsigned role_type, const QString &rl_name);
 
 		//! \brief Gets the role count on the specified internal list (Via ???_ROLE constants)
 		unsigned getRoleCount(unsigned role_type);
