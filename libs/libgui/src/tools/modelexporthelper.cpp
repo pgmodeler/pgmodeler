@@ -440,12 +440,12 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
 				{
 					if(!object->isSQLDisabled())
 					{
+						sql_cmd=object->getCodeDefinition(SchemaParser::SqlDefinition);
+
 						//Emits a signal indicating that the object is being exported
 						emit s_progressUpdated(progress,
 																	 tr("Creating object `%1' (%2)").arg(object->getName()).arg(object->getTypeName()),
-																	 object->getObjectType());
-
-						sql_cmd=object->getCodeDefinition(SchemaParser::SqlDefinition);
+																	 object->getObjectType(), sql_cmd);
 
 						if(types[type_id] == ObjectType::Tablespace)
 						{
@@ -483,11 +483,6 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
 			{
 				comm_regexp = QRegExp(tmpl_comm_regexp.arg(db_model->getSQLName()));
 
-				//Creating the database on the DBMS
-				emit s_progressUpdated(progress,
-															 tr("Creating database `%1'").arg(db_model->getName()),
-															 ObjectType::Database);
-
 				sql_cmd=db_model->__getCodeDefinition(SchemaParser::SqlDefinition);
 				pos = comm_regexp.indexIn(sql_cmd);
 
@@ -498,6 +493,11 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
 					sql_cmd_comment = sql_cmd.mid(pos, comm_regexp.matchedLength());
 					sql_cmd.remove(pos, comm_regexp.matchedLength());
 				}
+
+				//Creating the database on the DBMS
+				emit s_progressUpdated(progress,
+															 tr("Creating database `%1'").arg(db_model->getName()),
+															 ObjectType::Database, sql_cmd);
 
 				conn.executeDDLCommand(sql_cmd);
 				db_created=true;
