@@ -74,3 +74,11 @@
 
 	$br [-- ddl-end --] $br
 %end
+
+%if {member-roles} %then
+	{member-roles}
+%end
+
+%if {admin-roles} %then
+	{admin-roles}
+%end

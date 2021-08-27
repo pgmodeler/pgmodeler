@@ -159,35 +159,21 @@ void Role::setPassword(const QString &passwd)
 
 void Role::setRoleAttribute(unsigned role_type)
 {
-	QString str_roles, attrib;
-	unsigned i, count;
-	vector<Role *>  *roles_vect=nullptr;
+	QString attrib;
+	QStringList rol_names;
+	vector<Role *> *roles_vect = getRoleList(role_type);
 
-	switch(role_type)
-	{
-		case MemberRole:
-			roles_vect=&member_roles;
-			attrib=Attributes::MemberRoles;
-		break;
-		case AdminRole:
-			roles_vect=&admin_roles;
-			attrib=Attributes::AdminRoles;
-		break;
-		case RefRole:
-		default:
-			roles_vect=&ref_roles;
-			attrib=Attributes::RefRoles;
-		break;
-	}
+	if(role_type == MemberRole)
+		attrib = Attributes::MemberRoles;
+	else if(role_type == AdminRole)
+		attrib = Attributes::AdminRoles;
+	else
+		attrib = Attributes::RefRoles;
 
-	count=roles_vect->size();
-	for(i=0; i < count; i++)
-	{
-		str_roles+=roles_vect->at(i)->getName(true);
-		if(i < (count-1)) str_roles+=QString(",");
-	}
+	for(auto &rl : *roles_vect)
+		rol_names.append(rl->getName(true));
 
-	attributes[attrib]=str_roles;
+	attributes[attrib]= rol_names.join(',');
 }
 
 vector<Role *> *Role::getRoleList(unsigned role_type)
@@ -334,7 +320,6 @@ QString Role::getAlterDefinition(BaseObject *object, bool ignore_name_diff)
 
 	try
 	{
-		QStringList rl_names;
 		attribs_map attribs;
 		QString op_attribs[]={ Attributes::Superuser, Attributes::CreateDb,
 							   Attributes::CreateRole, Attributes::Inherit,
@@ -364,23 +349,25 @@ QString Role::getAlterDefinition(BaseObject *object, bool ignore_name_diff)
 				rl_names.append(rl->getName(true));
 		} */
 
-		for(auto &rl : role->member_roles)
+		unsigned idx = 0, role_types[3] = { RefRole, MemberRole, AdminRole };
+		QStringList cmds, role_attrs = { Attributes::RefRoles, Attributes::MemberRoles, Attributes::AdminRoles };
+
+		for(auto &rl_type : role_types)
 		{
-			if(!isRoleExists(MemberRole, rl->getName()))
-				rl_names.append(rl->getName(true));
+			for(auto &rl : *role->getRoleList(rl_type))
+			{
+				if(!isRoleExists(rl_type, rl->getName()))
+				{
+					if(rl_type == RefRole)
+						cmds.append(QString("GRANT %1 TO %2%3;\n").arg(rl->getName(true), role->getName(true)));
+					else
+						cmds.append(QString("GRANT %1 TO %2%3;\n").arg(role->getName(true), rl->getName(true), rl_type == AdminRole ? " WITH ADMIN OPTION" : ""));
+				}
+			}
+
+			attributes[role_attrs[idx++]] = cmds.join('\n');
+			cmds.clear();
 		}
-
-		attributes[Attributes::MemberRoles] = rl_names.join(',');
-		rl_names.clear();
-
-		for(auto &rl : role->admin_roles)
-		{
-			if(!isRoleExists(AdminRole, rl->getName()))
-				rl_names.append(rl->getName(true));
-		}
-
-		attributes[Attributes::AdminRoles] = rl_names.join(',');
-		rl_names.clear();
 
 		copyAttributes(attribs);
 

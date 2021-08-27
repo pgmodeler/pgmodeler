@@ -45,13 +45,13 @@ class Role: public BaseObject {
 		//! \brief Authentication password
 		password;
 
-		//! \brief Roles that has the 'this' role as member
+		//! \brief Roles that have the 'this' role as a member
 		vector<Role *> ref_roles, //! \brief IN ROLE
 
 		//! \brief Member roles of 'this' role
 		member_roles, //! \brief ROLE
 
-		//! \brief Member roles of 'this' role whit admin privileges
+		//! \brief Member roles of 'this' role with admin privileges
 		admin_roles; //! \brief ADMIN
 
 		//! \brief Formats the role attribute to be used by the SchemaParser
