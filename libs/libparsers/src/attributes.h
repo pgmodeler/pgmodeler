@@ -541,6 +541,7 @@ namespace Attributes {
 	RlsForced,
 	Role,
 	Roles,
+	RoleMembers,
 	RoleType,
 	RowAmount,
 	Rules,

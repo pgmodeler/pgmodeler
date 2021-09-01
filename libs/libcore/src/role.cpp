@@ -365,7 +365,7 @@ QString Role::getAlterDefinition(BaseObject *object, bool ignore_name_diff)
 				}
 			}
 
-			attributes[role_attrs[idx++]] = cmds.join('\n');
+			attribs[role_attrs[idx++]] = cmds.join('\n');
 			cmds.clear();
 		}
 
