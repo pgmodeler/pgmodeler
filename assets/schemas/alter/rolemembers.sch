@@ -12,7 +12,7 @@
 	[GRANT ]
 %end
 
-{roles}
+{role}
 
 %if {revoke} %then
 	[ FROM ]
@@ -20,15 +20,18 @@
 	[ TO ] 
 %end
 
-{role}
+{roles}
 
 %if %not {revoke} %and {admin-option} %then 
-	[ WITH ADMIN OPTION ]
+	[ WITH ADMIN OPTION]
 %end
 
 %if {revoke} %and {cascade} %then 
 	[ CASCADE] 
 %end
+
+; $br [-- ddl-end --] $br
+
 
 #GRANT role_name [, ...] TO role_specification [, ...]
 #    [ WITH ADMIN OPTION ]

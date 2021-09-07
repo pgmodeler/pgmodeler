@@ -343,30 +343,32 @@ QString Role::getAlterDefinition(BaseObject *object, bool ignore_name_diff)
 				attribs[op_attribs[i]]=(role->options[i] ? Attributes::True : Attributes::Unset);
 		}
 
-/*	for(auto &rl : role->ref_roles)
-		{
-			if(!isRoleExists(RefRole, rl->getName()))
-				rl_names.append(rl->getName(true));
-		} */
-
-		unsigned idx = 0, role_types[3] = { RefRole, MemberRole, AdminRole };
-		QStringList cmds, role_attrs = { Attributes::RefRoles, Attributes::MemberRoles, Attributes::AdminRoles };
+		unsigned role_types[3] = { RefRole, MemberRole, AdminRole };
+		QStringList cmds, rl_names, role_attrs = { Attributes::RefRoles, Attributes::MemberRoles, Attributes::AdminRoles };
+		attribs_map member_attrs;
 
 		for(auto &rl_type : role_types)
 		{
 			for(auto &rl : *role->getRoleList(rl_type))
 			{
 				if(!isRoleExists(rl_type, rl->getName()))
-				{
-					if(rl_type == RefRole)
-						cmds.append(QString("GRANT %1 TO %2%3;\n").arg(rl->getName(true), role->getName(true)));
-					else
-						cmds.append(QString("GRANT %1 TO %2%3;\n").arg(role->getName(true), rl->getName(true), rl_type == AdminRole ? " WITH ADMIN OPTION" : ""));
-				}
+					rl_names.append(rl->getName(true));
 			}
 
-			attribs[role_attrs[idx++]] = cmds.join('\n');
-			cmds.clear();
+			if(!rl_names.isEmpty())
+			{
+				member_attrs[Attributes::Revoke] = "";
+				member_attrs[Attributes::Cascade] = "";
+				member_attrs[Attributes::Role] = (rl_type == RefRole ? rl_names.join(',') : role->getName(true));
+				member_attrs[Attributes::Roles] = (rl_type == RefRole ? role->getName(true) : rl_names.join(','));
+				member_attrs[Attributes::AdminOption] = (rl_type == AdminRole ? Attributes::True : "");
+
+				attributes[role_attrs[rl_type]] = schparser.getCodeDefinition(
+																					GlobalAttributes::getSchemaFilePath(GlobalAttributes::AlterSchemaDir, Attributes::RoleMembers),
+																					member_attrs);
+				member_attrs.clear();
+				rl_names.clear();
+			}
 		}
 
 		copyAttributes(attribs);

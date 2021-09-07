@@ -71,9 +71,9 @@ class Role: public BaseObject {
 		OpBypassRls=7;
 
 		//! \brief Constants used to reference the internal role lists of the class
-		static constexpr unsigned RefRole=10,
-		MemberRole=20,
-		AdminRole=30;
+		static constexpr unsigned RefRole=0,
+		MemberRole=1,
+		AdminRole=2;
 
 		Role();
 
