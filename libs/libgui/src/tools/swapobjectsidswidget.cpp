@@ -9,8 +9,9 @@ SwapObjectsIdsWidget::SwapObjectsIdsWidget(QWidget *parent, Qt::WindowFlags f) :
 	{
 		QGridLayout *swap_objs_grid=new QGridLayout(this);
 		vector<ObjectType> types=BaseObject::getObjectTypes(true, {ObjectType::Permission,
-																															 ObjectType::Role, ObjectType::Textbox,
-																															 ObjectType::Column, ObjectType::Constraint });
+																															 ObjectType::Textbox,
+																															 ObjectType::Column,
+																															 ObjectType::Constraint });
 		setupUi(this);
 
 		GuiUtilsNs::configureWidgetFont(message_lbl, GuiUtilsNs::MediumFontFactor);
@@ -69,7 +70,6 @@ SwapObjectsIdsWidget::SwapObjectsIdsWidget(QWidget *parent, Qt::WindowFlags f) :
 
 		setMinimumSize(640,480);
 
-		//connect(swap_ids_tb, SIGNAL(clicked(bool)), this, SLOT(swapObjectsIds()));
 		connect(filter_edt, SIGNAL(textChanged(QString)), this, SLOT(filterObjects()));
 		connect(hide_rels_chk, SIGNAL(toggled(bool)), this, SLOT(filterObjects()));
 		connect(hide_sys_objs_chk, SIGNAL(toggled(bool)), this, SLOT(filterObjects()));
@@ -168,7 +168,7 @@ bool SwapObjectsIdsWidget::eventFilter(QObject *object, QEvent *event)
 
 				// Breaking if we've reached the top or down limits (avoiding swap ids with null objects)
 				if((key_code == Qt::Key_Down && row >= objects_tbw->rowCount() - 1) ||
-					 (key_code == Qt::Key_Up && row <= 0))
+					 (key_code == Qt::Key_Up && row == 1))
 					break;
 			}
 
@@ -233,10 +233,11 @@ void SwapObjectsIdsWidget::swapObjectsIds()
 	BaseGraphicObject *graph_src_obj=dynamic_cast<BaseGraphicObject *>(src_obj),
 			*graph_dst_obj=dynamic_cast<BaseGraphicObject *>(dst_obj);
 
-	if(!src_obj && !dst_obj)
-		throw Exception(ErrorCode::OprNotAllocatedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+	if(!src_obj || !dst_obj)
+		return;
+
 	//Raise an exception if the user try to swap an id of relationship by other object of different kind
-	else if((src_obj->getObjectType()==ObjectType::Relationship || dst_obj->getObjectType()==ObjectType::Relationship) &&
+	if((src_obj->getObjectType()==ObjectType::Relationship || dst_obj->getObjectType()==ObjectType::Relationship) &&
 					(src_obj->getObjectType() != dst_obj->getObjectType()))
 		throw Exception(ErrorCode::InvRelationshipIdSwap,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 

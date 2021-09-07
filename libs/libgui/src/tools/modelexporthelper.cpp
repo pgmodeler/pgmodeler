@@ -1232,6 +1232,8 @@ void ModelExportHelper::exportToDataDict()
 
 void ModelExportHelper::cancelExport()
 {
-	db_model->setCancelSaving(true);
+	if(db_model)
+		db_model->setCancelSaving(true);
+
 	export_canceled = true;
 }

@@ -936,31 +936,42 @@ void BaseObject::swapObjectsIds(BaseObject *obj1, BaseObject *obj2, bool enable_
 	//Raises an error if some of the objects aren't allocated
 	if(!obj1 || !obj2)
 		throw Exception(ErrorCode::OprNotAllocatedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
 	//Raises an error if the involved objects are the same
-	else if(obj1==obj2)
+	if(obj1==obj2)
 		throw Exception(ErrorCode::InvIdSwapSameObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
 	//Raises an error if the some of the objects are system objects
-	else if(obj1->isSystemObject())
+	if(obj1->isSystemObject())
+	{
 		throw Exception(Exception::getErrorMessage(ErrorCode::OprReservedObject)
 						.arg(obj1->getName())
 						.arg(obj1->getTypeName()),
 						ErrorCode::OprReservedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-	else if(obj2->isSystemObject())
+	}
+
+	if(obj2->isSystemObject())
+	{
 		throw Exception(Exception::getErrorMessage(ErrorCode::OprReservedObject)
 						.arg(obj2->getName())
 						.arg(obj2->getTypeName()),
 						ErrorCode::OprReservedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-	//Raises an error if the object is object is cluster level and the swap of these types isn't enabled
-	else if(!enable_cl_obj_swap &&
-			(obj1->getObjectType()==ObjectType::Database || obj1->getObjectType()==ObjectType::Tablespace || obj1->getObjectType()==ObjectType::Role ||
-			 obj2->getObjectType()==ObjectType::Database || obj2->getObjectType()==ObjectType::Tablespace || obj2->getObjectType()==ObjectType::Role))
-		throw Exception(ErrorCode::InvIdSwapInvalidObjectType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-	else
-	{
-		unsigned id_bkp=obj1->object_id;
-		obj1->object_id=obj2->object_id;
-		obj2->object_id=id_bkp;
 	}
+
+	//Raises an error if the object is object is cluster level and the swap of these types isn't enabled
+	if(!enable_cl_obj_swap &&
+		 (obj1->getObjectType()==ObjectType::Database ||
+			obj1->getObjectType()==ObjectType::Tablespace ||
+			obj1->getObjectType()==ObjectType::Role) &&
+
+		 obj1->getObjectType() != obj2->getObjectType())
+	{
+		throw Exception(ErrorCode::InvIdSwapInvalidObjectType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+	}
+
+	unsigned id_bkp=obj1->object_id;
+	obj1->object_id=obj2->object_id;
+	obj2->object_id=id_bkp;
 }
 
 void BaseObject::updateObjectId(BaseObject *obj)
@@ -1113,7 +1124,7 @@ bool BaseObject::isCodeInvalidated()
 	return (use_cached_code && code_invalidated);
 }
 
-bool BaseObject::isCodeDiffersFrom(const QString &xml_def1, const QString &xml_def2, const vector<QString> &ignored_attribs, const vector<QString> &ignored_tags)
+bool BaseObject::isCodeDiffersFrom(const QString &xml_def1, const QString &xml_def2, const QStringList &ignored_attribs, const QStringList &ignored_tags)
 {
 	QString xml, tag=QString("<%1").arg(this->getSchemaName()),
 			attr_regex=QString("(%1=\")"),
@@ -1127,7 +1138,7 @@ bool BaseObject::isCodeDiffersFrom(const QString &xml_def1, const QString &xml_d
 		xml=xml_defs[i].simplified();
 
 		//Removing ignored attributes
-		for(QString attr : ignored_attribs)
+		for(auto &attr : ignored_attribs)
 		{
 			do
 			{
@@ -1155,7 +1166,7 @@ bool BaseObject::isCodeDiffersFrom(const QString &xml_def1, const QString &xml_d
 	return (xml_defs[0]!=xml_defs[1]);
 }
 
-bool BaseObject::isCodeDiffersFrom(BaseObject *object, const vector<QString> &ignored_attribs, const vector<QString> &ignored_tags)
+bool BaseObject::isCodeDiffersFrom(BaseObject *object, const QStringList &ignored_attribs, const QStringList &ignored_tags)
 {
 	if(!object)
 		throw Exception(ErrorCode::OprNotAllocatedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -1257,7 +1268,7 @@ void BaseObject::copyAttributes(attribs_map &attribs)
 
 QString BaseObject::getAlterDefinition(BaseObject *object)
 {
-	return getAlterDefinition(object, false);
+	return BaseObject::getAlterDefinition(object, false);
 }
 
 QString BaseObject::getAlterDefinition(BaseObject *object, bool ignore_name_diff)

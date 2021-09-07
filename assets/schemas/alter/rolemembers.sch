@@ -6,7 +6,7 @@
 	[REVOKE ]
 
 	%if {admin-option} %then 
-		[ADMIN OPTION ]
+		[ADMIN OPTION FOR ]
 	%end
 %else
 	[GRANT ]
@@ -26,18 +26,8 @@
 	[ WITH ADMIN OPTION]
 %end
 
-%if {revoke} %and {cascade} %then 
+%if {revoke} %then 
 	[ CASCADE] 
 %end
 
 ; $br [-- ddl-end --] $br
-
-
-#GRANT role_name [, ...] TO role_specification [, ...]
-#    [ WITH ADMIN OPTION ]
-#    [ GRANTED BY role_specification ]
-
-#REVOKE [ ADMIN OPTION FOR ]
-#    role_name [, ...] FROM role_specification [, ...]
-#    [ GRANTED BY role_specification ]
- #   [ CASCADE | RESTRICT ]

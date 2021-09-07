@@ -63,80 +63,50 @@ void Role::addRole(unsigned role_type, Role *role)
 	//Raises an error if the role to be added is not allocated
 	if(!role)
 		throw Exception(ErrorCode::AsgNotAllocattedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
 	//Raises an error if the role to be added is the 'this' role
-	else if(role && this==role)
+	if(role && this==role)
+	{
 		throw Exception(Exception::getErrorMessage(ErrorCode::AsgRoleMemberItself)
 						.arg(role->getName()),
 						ErrorCode::AsgRoleMemberItself,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-	else
-	{
-		bool role_ref, role_mem, role_adm,
-				role_ref1, role_mem1, role_adm1;
-
-		//Check if the role to be added already exists in one of the internal role list
-		role_ref=this->isRoleExists(RefRole, role);
-		role_mem=this->isRoleExists(MemberRole, role);
-		role_adm=this->isRoleExists(AdminRole, role);
-
-		/* Check if the role 'this' is referenced in one of the internal role list
-		 of the role to be added */
-		role_ref1=role->isRoleExists(RefRole, this);
-		role_mem1=role->isRoleExists(MemberRole, this);
-		role_adm1=role->isRoleExists(AdminRole, this);
-
-		//Raises an error if the role already exists in one of the internal list
-		if((role_type==RefRole && role_ref) ||
-				(role_type==MemberRole && (role_mem || role_adm)) ||
-				(role_type==AdminRole && (role_adm || role_mem)))
-			throw Exception(Exception::getErrorMessage(ErrorCode::InsDuplicatedRole)
-							.arg(role->getName())
-							.arg(this->getName()),
-							ErrorCode::InsDuplicatedRole,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-
-		/* Checking for redundant reference between roles.
-			A redundant reference can happen when:
-
-			1) The role 'this' is already part of the 'ref_roles' list of 'role' object and
-				 the user try to add the object 'role' (from parameter) as an element
-				 of 'ref_roles' list of role 'this'
-
-			2) The role 'this' is already part of the 'member_roles' list of 'role' object
-				 and the user try to add the object 'role' (from parameter) as an element
-				 of the 'member_roles' of role 'this'
-
-			3) The role 'this' is already part of the 'admin_roles' list of 'role' object and
-				 the user try to add the 'role' object (from parameter) as an element
-				 of 'admin_roles' list of role 'this'
-
-			4) The role 'role' (from parameter) is already part of the 'member_roles' or 'admin_roles' list of
-				 the 'this' role and the user try to add the object 'role' as an element of
-				 the 'ref_roles' of the role 'this'
-
-			5) The role 'role' (from parameter) is already part of the 'ref_roles' list of role 'this'
-				 and the user try to add the object 'role' as an element of the 'member_roles' list
-				 of the role 'this' */
-		else if((role_type==RefRole && ((role_mem || role_adm) || role_ref1)) ||
-				(role_type==MemberRole && ((role_mem1 || role_adm1) || role_ref)) ||
-				(role_type==AdminRole &&  ((role_mem1 || role_adm1) || role_ref)))
-			throw Exception(Exception::getErrorMessage(ErrorCode::AsgRoleReferenceRedundancy)
-							.arg(this->getName())
-							.arg(role->getName()),
-							ErrorCode::AsgRoleReferenceRedundancy,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-		else
-		{
-			switch(role_type)
-			{
-				case MemberRole: member_roles.push_back(role); break;
-				case AdminRole:  admin_roles.push_back(role); break;
-				case RefRole:
-				default:
-					ref_roles.push_back(role);
-				break;
-			}
-
-			setCodeInvalidated(true);
-		}
 	}
+
+	bool role_ref = false, role_mem = false, role_adm = false,
+			role_ref1 = false, role_mem1 = false, role_adm1 = false;
+
+	//Check if the role to be added already exists in one of the internal role list
+	role_ref=this->isRoleExists(RefRole, role);
+	role_mem=this->isRoleExists(MemberRole, role);
+	role_adm=this->isRoleExists(AdminRole, role);
+
+	/* Check if the role 'this' is referenced in one of the internal role list
+	 of the role to be added */
+	role_ref1=role->isRoleExists(RefRole, this);
+	role_mem1=role->isRoleExists(MemberRole, this);
+	role_adm1=role->isRoleExists(AdminRole, this);
+
+	//Raises an error if the role already exists in one of the internal list
+	if((role_type==RefRole && role_ref) ||
+			(role_type==MemberRole && (role_mem || role_adm)) ||
+			(role_type==AdminRole && (role_adm || role_mem)))
+	{
+		throw Exception(Exception::getErrorMessage(ErrorCode::InsDuplicatedRole)
+						.arg(role->getName())
+						.arg(this->getName()),
+						ErrorCode::InsDuplicatedRole,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+	}
+
+	// Checking for redundant reference between roles.
+	if(role_ref1 || role_mem1 || role_adm1)
+	{
+		throw Exception(Exception::getErrorMessage(ErrorCode::AsgRoleReferenceRedundancy)
+						.arg(role->getName(), this->getName(), this->getName(), role->getName()),
+						ErrorCode::AsgRoleReferenceRedundancy,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+	}
+
+	getRoleList(role_type)->push_back(role);
+	setCodeInvalidated(true);
 }
 
 void Role::setConnectionLimit(int limit)
@@ -311,7 +281,51 @@ QString Role::getCodeDefinition(unsigned def_type, bool reduced_form)
 	return BaseObject::getCodeDefinition(def_type, reduced_form);
 }
 
-QString Role::getAlterDefinition(BaseObject *object, bool ignore_name_diff)
+QString Role::getAlterMembershipCommands(Role *imp_role, Role *ref_role, bool revoke)
+{
+	unsigned role_types[3] = { RefRole, MemberRole, AdminRole };
+	QStringList rl_names, role_attrs = { Attributes::RefRoles, Attributes::MemberRoles, Attributes::AdminRoles };
+	attribs_map member_attrs;
+	QString cmds;
+
+	if(!imp_role || !ref_role)
+		throw Exception(ErrorCode::OprNotAllocatedObject, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+
+	for(auto &rl_type : role_types)
+	{
+		for(auto &rl : *ref_role->getRoleList(rl_type))
+		{
+			if(!imp_role->isRoleExists(rl_type, rl->getName()))
+				rl_names.append(rl->getName(true));
+		}
+
+		if(!rl_names.isEmpty())
+		{
+			member_attrs[Attributes::Revoke] = (revoke ? Attributes::True : "");
+			member_attrs[Attributes::Role] = (rl_type == RefRole ? rl_names.join(',') : ref_role->getName(true));
+			member_attrs[Attributes::Roles] = (rl_type == RefRole ? ref_role->getName(true) : rl_names.join(','));
+			member_attrs[Attributes::AdminOption] = (rl_type == AdminRole ? Attributes::True : "");
+
+			try
+			{
+				cmds += schparser.getCodeDefinition(
+									GlobalAttributes::getSchemaFilePath(GlobalAttributes::AlterSchemaDir, Attributes::RoleMembers),
+									member_attrs);
+			}
+			catch(Exception &e)
+			{
+				throw Exception(e.getErrorMessage(), e.getErrorCode(), __PRETTY_FUNCTION__, __FILE__, __LINE__, &e);
+			}
+
+			member_attrs.clear();
+			rl_names.clear();
+		}
+	}
+
+	return cmds;
+}
+
+QString Role::getAlterDefinition(BaseObject *object)
 {
 	Role *role=dynamic_cast<Role *>(object);
 
@@ -326,7 +340,7 @@ QString Role::getAlterDefinition(BaseObject *object, bool ignore_name_diff)
 							   Attributes::Login, Attributes::Encrypted,
 								 Attributes::Replication, Attributes::BypassRls };
 
-		attributes[Attributes::AlterCmds]=BaseObject::getAlterDefinition(object, ignore_name_diff);
+		attributes[Attributes::AlterCmds]=BaseObject::getAlterDefinition(object);
 
 		if(this->password!=role->password)
 		{
@@ -343,33 +357,8 @@ QString Role::getAlterDefinition(BaseObject *object, bool ignore_name_diff)
 				attribs[op_attribs[i]]=(role->options[i] ? Attributes::True : Attributes::Unset);
 		}
 
-		unsigned role_types[3] = { RefRole, MemberRole, AdminRole };
-		QStringList cmds, rl_names, role_attrs = { Attributes::RefRoles, Attributes::MemberRoles, Attributes::AdminRoles };
-		attribs_map member_attrs;
-
-		for(auto &rl_type : role_types)
-		{
-			for(auto &rl : *role->getRoleList(rl_type))
-			{
-				if(!isRoleExists(rl_type, rl->getName()))
-					rl_names.append(rl->getName(true));
-			}
-
-			if(!rl_names.isEmpty())
-			{
-				member_attrs[Attributes::Revoke] = "";
-				member_attrs[Attributes::Cascade] = "";
-				member_attrs[Attributes::Role] = (rl_type == RefRole ? rl_names.join(',') : role->getName(true));
-				member_attrs[Attributes::Roles] = (rl_type == RefRole ? role->getName(true) : rl_names.join(','));
-				member_attrs[Attributes::AdminOption] = (rl_type == AdminRole ? Attributes::True : "");
-
-				attributes[role_attrs[rl_type]] = schparser.getCodeDefinition(
-																					GlobalAttributes::getSchemaFilePath(GlobalAttributes::AlterSchemaDir, Attributes::RoleMembers),
-																					member_attrs);
-				member_attrs.clear();
-				rl_names.clear();
-			}
-		}
+		attributes[Attributes::MemberRoles] = getAlterMembershipCommands(this, role, false);
+		attributes[Attributes::MemberRoles] += getAlterMembershipCommands(role, this, true);
 
 		copyAttributes(attribs);
 

@@ -59,6 +59,8 @@ class Role: public BaseObject {
 
 		vector<Role *> *getRoleList(unsigned role_type);
 
+		QString getAlterMembershipCommands(Role *imp_role, Role *ref_role, bool revoke);
+
 	public:
 		//! \brief Constants used to reference the available options for the role
 		static constexpr unsigned OpSuperuser=0,
@@ -127,7 +129,7 @@ class Role: public BaseObject {
 		virtual QString getCodeDefinition(unsigned def_type) final;
 		virtual QString getCodeDefinition(unsigned def_type, bool reduced_form) final;
 
-		virtual QString getAlterDefinition(BaseObject *object, bool ignore_name_diff=false) final;
+		virtual QString getAlterDefinition(BaseObject *object) final;
 };
 
 #endif

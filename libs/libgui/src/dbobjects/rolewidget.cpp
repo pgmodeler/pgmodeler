@@ -209,21 +209,7 @@ void RoleWidget::showSelectedRoleData()
 	if(obj_sel)
 		idx_lin=members_tab[idx_tab]->getRowIndex(QVariant::fromValue<void *>(dynamic_cast<void *>(obj_sel)));
 
-	//Raises an error if the user try to assign the role as member of itself
-	if(obj_sel && obj_sel==this->object)
-	{
-		/* If the current row does not has a value indicates that it is recently added and does not have
-			 data, in this case it will be removed */
-		if(!members_tab[idx_tab]->getRowData(lin).value<void *>())
-			members_tab[idx_tab]->removeRow(lin);
-
-		msg_box.show(Exception(Exception::getErrorMessage(ErrorCode::AsgRoleReferenceRedundancy)
-													 .arg(obj_sel->getName())
-													 .arg(name_edt->text()),
-													 ErrorCode::AsgRoleReferenceRedundancy,__PRETTY_FUNCTION__,__FILE__,__LINE__));
-	}
-	//If the role does not exist on table, show its data
-	else if(obj_sel && idx_lin < 0)
+	if(obj_sel && idx_lin < 0)
 		showRoleData(dynamic_cast<Role *>(obj_sel), idx_tab, lin);
 	else
 	{

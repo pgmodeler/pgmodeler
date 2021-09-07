@@ -75,14 +75,7 @@
 	$br [-- ddl-end --] $br
 %end
 
-%if {ref-roles} %then
-	{ref-roles}
-%end
-
 %if {member-roles} %then
 	{member-roles}
 %end
 
-%if {admin-roles} %then
-	{admin-roles}
-%end

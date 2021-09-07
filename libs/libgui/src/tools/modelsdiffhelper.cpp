@@ -22,17 +22,21 @@
 #include <QDate>
 #include "catalog.h"
 
-const vector<QString> ModelsDiffHelper::TableObjsIgnoredAttribs = { Attributes::Alias };
+const QStringList ModelsDiffHelper::TableObjsIgnoredAttribs = { Attributes::Alias };
 
-const vector<QString> ModelsDiffHelper::ObjectsIgnoredAttribs = {
+const QStringList ModelsDiffHelper::ObjectsIgnoredAttribs = {
 	Attributes::MaxObjCount, Attributes::Protected, Attributes::SqlDisabled,
 	Attributes::RectVisible, Attributes::FillColor, Attributes::FadedOut,
 	Attributes::CollapseMode,	Attributes::AttribsPage, Attributes::ExtAttribsPage,
 	Attributes::Pagination,	Attributes::Alias };
 
-const vector<QString> ModelsDiffHelper::ObjectsIgnoredTags = {
+const QStringList ModelsDiffHelper::ObjectsIgnoredTags = {
 	Attributes::Role, Attributes::Tablespace, Attributes::Collation,
 	Attributes::Position,	Attributes::AppendedSql,	Attributes::PrependedSql };
+
+const QStringList ModelsDiffHelper::RolesIgnoredTags = {
+	Attributes::AppendedSql,	Attributes::PrependedSql
+};
 
 ModelsDiffHelper::ModelsDiffHelper()
 {
@@ -491,7 +495,10 @@ void ModelsDiffHelper::diffModels(unsigned diff_type)
 
 							//If the objects does not differ, try to compare their XML definition
 							if(!objs_differs)
-								xml_differs=object->isCodeDiffersFrom(aux_object,	ObjectsIgnoredAttribs, ObjectsIgnoredTags);
+							{
+								xml_differs = object->isCodeDiffersFrom(aux_object,	ObjectsIgnoredAttribs,
+																												obj_type != ObjectType::Role ? ObjectsIgnoredTags : RolesIgnoredTags);
+							}
 
 							//If a difference was detected between the objects
 							if(objs_differs || xml_differs)
