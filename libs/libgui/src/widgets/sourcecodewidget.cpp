@@ -147,7 +147,7 @@ void SourceCodeWidget::generateSourceCode(int)
 -- When exporting or generating the SQL for the whole database model\n\
 -- all objects will be placed at their original positions.\n\n\n") + aux_def;
 
-								   sqlcode_txt->setPlainText(sqlcode_txt->toPlainText() + aux_def);
+					sqlcode_txt->setPlainText(sqlcode_txt->toPlainText() + aux_def);
 				}
 			}
 
@@ -155,15 +155,22 @@ void SourceCodeWidget::generateSourceCode(int)
 #warning "DEMO VERSION: SQL code preview truncated."
 			if(!sqlcode_txt->toPlainText().isEmpty())
 			{
-				QString code=sqlcode_txt->toPlainText();
-				code=code.mid(0, code.size()/2);
-				code+=tr("\n\n-- SQL code purposely truncated at this point in demo version!");
+				int factor = obj_type == ObjectType::Database ? 4 : 2;
+				QString code = sqlcode_txt->toPlainText();
+				code = code.mid(0, code.size()/factor);
+				code += tr("\n\n-- SQL code purposely truncated at this point in demo version!");
 				sqlcode_txt->setPlainText(code);
+
+				sqlcode_txt->setCustomContextMenuEnabled(false);
+				sqlcode_txt->setContextMenuPolicy(Qt::NoContextMenu);
+				save_sql_tb->setEnabled(false);
 			}
 #endif
 		}
 
+#ifndef DEMO_VERSION
 		save_sql_tb->setEnabled(!sqlcode_txt->toPlainText().isEmpty());
+#endif
 
 		if(sqlcode_txt->toPlainText().isEmpty())
 			sqlcode_txt->setPlainText(tr("-- SQL code unavailable for this type of object --"));

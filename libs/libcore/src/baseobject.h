@@ -230,7 +230,7 @@ class BaseObject {
 
 		/*! \brief Compares two xml buffers and returns if they differs from each other. The user can specify which attributes
 	and tags must be ignored when makin the comparison. NOTE: only the name for attributes and tags must be informed */
-		bool isCodeDiffersFrom(const QString &xml_def1, const QString &xml_def2, const vector<QString> &ignored_attribs, const vector<QString> &ignored_tags);
+		bool isCodeDiffersFrom(const QString &xml_def1, const QString &xml_def2, const QStringList &ignored_attribs, const QStringList &ignored_tags);
 
 		/*! \brief Copies the non-empty attributes on the map at parameter to the own object attributes map. This method is used
 		as an auxiliary when generating alter definition for some objects. When one or more attributes are copied an especial
@@ -483,7 +483,7 @@ class BaseObject {
 
 		/*! \brief Compares the xml code between the "this" object and another one. The user can specify which attributes
 		and tags must be ignored when makin the comparison. NOTE: only the name for attributes and tags must be informed */
-		virtual bool isCodeDiffersFrom(BaseObject *object, const vector<QString> &ignored_attribs={}, const vector<QString> &ignored_tags={});
+		virtual bool isCodeDiffersFrom(BaseObject *object, const QStringList &ignored_attribs={}, const QStringList &ignored_tags={});
 
 		/*! \brief Enable/disable the use of cached sql/xml code. When enabled the code generation speed is hugely increased
 				but the downward is an increasing on memory usage. Make sure to every time when an attribute of any instance derivated

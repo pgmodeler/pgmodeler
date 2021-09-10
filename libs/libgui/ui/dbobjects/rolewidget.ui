@@ -183,12 +183,12 @@
      </property>
      <widget class="QWidget" name="members_tab">
       <attribute name="title">
-       <string>Members</string>
+       <string>Member of</string>
       </attribute>
      </widget>
      <widget class="QWidget" name="member_of_tab">
       <attribute name="title">
-       <string>Member of</string>
+       <string>Members</string>
       </attribute>
      </widget>
      <widget class="QWidget" name="adm_members_tab">

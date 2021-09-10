@@ -263,7 +263,7 @@ DatabaseExplorerWidget *SQLToolWidget::browseDatabase()
 
 			connect(db_explorer_wgt, SIGNAL(s_sqlExecutionRequested()), this, SLOT(addSQLExecutionTab()));
 			connect(db_explorer_wgt, SIGNAL(s_snippetShowRequested(QString)), this, SLOT(showSnippet(QString)));
-			connect(db_explorer_wgt, SIGNAL(s_sourceCodeShowRequested(QString)), sourcecode_txt, SLOT(setPlainText(QString)));
+			connect(db_explorer_wgt, SIGNAL(s_sourceCodeShowRequested(QString)), this, SLOT(showSourceCode(QString)));
 			connect(db_explorer_wgt, SIGNAL(s_databaseDropRequested(QString)), this, SLOT(dropDatabase(QString)));
 
 			connect(attributes_tb, SIGNAL(toggled(bool)), db_explorer_wgt->attributes_wgt, SLOT(setVisible(bool)));
@@ -415,6 +415,21 @@ void SQLToolWidget::showSnippet(const QString &snip)
 		sql_exec_wgt->sql_cmd_txt->appendPlainText(snip);
 		sql_exec_wgt->sql_cmd_txt->setTextCursor(cursor);
 	}
+}
+
+void SQLToolWidget::showSourceCode(const QString &source)
+{
+#ifdef DEMO_VERSION
+#warning "DEMO VERSION: SQL code preview truncated."
+	if(!source.isEmpty())
+	{
+		QString trunc_code = source.mid(0, source.size() / 2);
+		trunc_code += tr("\n\n-- SQL code purposely truncated at this point in demo version!");
+		sourcecode_txt->setPlainText(trunc_code);
+	}
+#else
+	sourcecode_txt->setPlainText(source);
+#endif
 }
 
 bool SQLToolWidget::hasDatabasesBrowsed()

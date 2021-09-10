@@ -8561,14 +8561,14 @@ void DatabaseModel::getOperatorDependencies(BaseObject *object, vector<BaseObjec
 void DatabaseModel::getRoleDependencies(BaseObject *object, vector<BaseObject *> &deps, bool inc_indirect_deps)
 {
 	Role *role=dynamic_cast<Role *>(object);
-	unsigned i, i1, count,
-			role_types[3]={ Role::RefRole, Role::MemberRole, Role::AdminRole };
+	unsigned rl_type = 0, idx = 0, count = 0;
 
-	for(i=0; i < 3; i++)
+	for(rl_type = Role::RefRole; rl_type <= Role::AdminRole; rl_type++)
 	{
-		count=role->getRoleCount(role_types[i]);
-		for(i1=0; i1 < count; i1++)
-			getObjectDependecies(role->getRole(role_types[i], i1), deps, inc_indirect_deps);
+		count=role->getRoleCount(rl_type);
+
+		for(idx=0; idx < count; idx++)
+			getObjectDependecies(role->getRole(rl_type, idx), deps, inc_indirect_deps);
 	}
 }
 
@@ -9597,10 +9597,9 @@ void DatabaseModel::getRoleReferences(BaseObject *object, vector<BaseObject *> &
 								ObjectType::Type, ObjectType::OpFamily, ObjectType::OpClass,
 								ObjectType::UserMapping };
 	vector<ObjectType>::iterator itr_tp, itr_tp_end;
-	unsigned i,i1, count;
+	unsigned i, count;
 	Role *role_aux=nullptr;
 	Role *role=dynamic_cast<Role *>(object);
-	unsigned role_types[3]={Role::RefRole, Role::MemberRole, Role::AdminRole};
 	Permission *perm=nullptr;
 
 	//Check if the role is being referencend by permissions
@@ -9626,12 +9625,12 @@ void DatabaseModel::getRoleReferences(BaseObject *object, vector<BaseObject *> &
 		role_aux=dynamic_cast<Role *>(*itr);
 		itr++;
 
-		for(i1=0; i1 < 3 && (!exclusion_mode || (exclusion_mode && !refer)); i1++)
+		for(unsigned rl_type = Role::RefRole; rl_type <= Role::AdminRole && (!exclusion_mode || (exclusion_mode && !refer)); rl_type++)
 		{
-			count=role_aux->getRoleCount(role_types[i1]);
+			count = role_aux->getRoleCount(rl_type);
 			for(i=0; i < count && !refer; i++)
 			{
-				if(role_aux->getRole(role_types[i1], i)==role)
+				if(role_aux->getRole(rl_type, i)==role)
 				{
 					refer=true;
 					refs.push_back(role_aux);

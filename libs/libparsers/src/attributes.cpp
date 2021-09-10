@@ -524,6 +524,7 @@ namespace Attributes {
 	RlsForced("rls-forced"),
 	Role("role"),
 	Roles("roles"),
+	RoleMembers("rolemembers"),
 	RoleType("role-type"),
 	RowAmount("row-amount"),
 	Rules("rules"),
