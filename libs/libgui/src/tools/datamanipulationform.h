@@ -114,6 +114,8 @@ class DataManipulationForm: public QDialog, public Ui::DataManipulationForm {
 
 		void setColumnsCheckState(Qt::CheckState state);
 
+		bool eventFilter(QObject *object, QEvent *event);
+
 	public:
 		DataManipulationForm(QWidget * parent = nullptr, Qt::WindowFlags f = Qt::Widget);
 		

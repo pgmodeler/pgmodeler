@@ -129,13 +129,15 @@ DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f):
 	csv_load_parent->setLayout(layout);
 	csv_load_parent->setMinimumSize(csv_load_wgt->minimumSize());
 
-	connect(columns_lst, &QListWidget::itemDoubleClicked, [&](QListWidgetItem *item){
-	  if(item->checkState() == Qt::Checked)
-		item->setCheckState(Qt::Unchecked);
-	  else
-		item->setCheckState(Qt::Checked);
+	columns_lst->installEventFilter(this);
 
-	  toggleColumnDisplay(item);
+	connect(columns_lst, &QListWidget::itemDoubleClicked, [&](QListWidgetItem *item){
+		if(item->checkState() == Qt::Checked)
+			item->setCheckState(Qt::Unchecked);
+		else
+			item->setCheckState(Qt::Checked);
+
+		toggleColumnDisplay(item);
 	});
 
 	connect(select_all_tb, &QToolButton::clicked, [&](){
@@ -1547,18 +1549,28 @@ void DataManipulationForm::closeEvent(QCloseEvent *)
 
 void DataManipulationForm::setColumnsCheckState(Qt::CheckState state)
 {
-  QListWidgetItem *item = nullptr;
+	QListWidgetItem *item = nullptr;
 
-  results_tbw->blockSignals(true);
+	for(int idx = 0; idx < columns_lst->count(); idx++)
+	{
+		item = columns_lst->item(idx);
+		item->setCheckState(state);
+		toggleColumnDisplay(item);
+	}
+}
 
-  for(int idx = 0; idx < columns_lst->count(); idx++)
-  {
-	item = columns_lst->item(idx);
-	item->setCheckState(state);
-	toggleColumnDisplay(item);
-  }
+bool DataManipulationForm::eventFilter(QObject *object, QEvent *event)
+{
+	if(object == columns_lst)
+	{
+		if((event->type() == QEvent::KeyRelease &&
+				dynamic_cast<QKeyEvent *>(event)->key() == Qt::Key_Space))
+		{
+			toggleColumnDisplay(columns_lst->currentItem());
+		}
+	}
 
-  results_tbw->blockSignals(false);
+	return QDialog::eventFilter(object, event);
 }
 
 void DataManipulationForm::truncateTable()
@@ -1593,7 +1605,7 @@ void DataManipulationForm::toggleColumnDisplay(QListWidgetItem *item)
 		results_tbw->horizontalHeader()->setSectionHidden(idx, hide);
 		item->setCheckState(hide ? Qt::Unchecked : Qt::Checked);
 		item->setData(Qt::UserRole, item->checkState());
-		results_tbw->resizeRowsToContents();
+		//results_tbw->resizeRowsToContents();
 	}
 }
 
