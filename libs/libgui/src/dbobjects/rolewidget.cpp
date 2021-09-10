@@ -54,7 +54,7 @@ RoleWidget::RoleWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Ro
 																	(ObjectsTableWidget::UpdateButton | ObjectsTableWidget::DuplicateButton), true, this);
 		members_tab[i]=obj_tab;
 
-		obj_tab->setColumnCount(5);
+		obj_tab->setColumnCount(4);
 
 		obj_tab->setHeaderLabel(tr("Role"),0);
 		obj_tab->setHeaderIcon(QPixmap(GuiUtilsNs::getIconPath("role")),0);
@@ -62,14 +62,11 @@ RoleWidget::RoleWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Ro
 		obj_tab->setHeaderLabel(tr("Validity"),1);
 		obj_tab->setHeaderIcon(QPixmap(GuiUtilsNs::getIconPath("validity")),1);
 
-		obj_tab->setHeaderLabel(tr("Member of"),2);
+		obj_tab->setHeaderLabel(tr("Members"),2);
 		obj_tab->setHeaderIcon(QPixmap(GuiUtilsNs::getIconPath("role")),2);
 
-		obj_tab->setHeaderLabel(tr("Members"),3);
+		obj_tab->setHeaderLabel(tr("Members (Admin.)"),3);
 		obj_tab->setHeaderIcon(QPixmap(GuiUtilsNs::getIconPath("role")),3);
-
-		obj_tab->setHeaderLabel(tr("Members (Admin.)"),4);
-		obj_tab->setHeaderIcon(QPixmap(GuiUtilsNs::getIconPath("role")),4);
 
 		grid=new QGridLayout;
 		grid->addWidget(obj_tab,0,0,1,1);
@@ -128,7 +125,7 @@ void RoleWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Rol
 	}
 
 	BaseObjectWidget::setAttributes(model, op_list, role);
-
+	op_list->startOperationChain();
 	fillMembersTable();
 	configureRoleSelection();
 }
@@ -148,7 +145,7 @@ void RoleWidget::showRoleData(Role *role, unsigned table_id, unsigned row)
 		members_tab[table_id]->setCellText(role->getName(), row, 0);
 		members_tab[table_id]->setCellText(role->getValidity(), row, 1);
 
-		for(type_id = Role::RefRole; type_id <= Role::AdminRole; type_id++)
+		for(type_id = Role::MemberRole; type_id <= Role::AdminRole; type_id++)
 		{
 			count=role->getRoleCount(type_id);
 
@@ -174,7 +171,7 @@ void RoleWidget::fillMembersTable()
 
 		role=dynamic_cast<Role *>(this->object);
 
-		for(type_id = Role::RefRole; type_id <= Role::AdminRole; type_id++)
+		for(type_id = Role::MemberRole; type_id <= Role::AdminRole; type_id++)
 		{
 			count=role->getRoleCount(type_id);
 			members_tab[type_id]->blockSignals(true);
@@ -232,7 +229,7 @@ void RoleWidget::showSelectedRoleData()
 void RoleWidget::applyConfiguration()
 {
 	Role *role=nullptr, *aux_role=nullptr;
-	unsigned count, i, type_id;
+	unsigned count, i, rl_type;
 
 	try
 	{
@@ -256,19 +253,31 @@ void RoleWidget::applyConfiguration()
 		role->setOption(Role::OpReplication, can_replicate_chk->isChecked());
 		role->setOption(Role::OpBypassRls, bypass_rls_chk->isChecked());
 
-		for(type_id = Role::RefRole; type_id <= Role::AdminRole; type_id++)
+		for(rl_type = Role::MemberRole; rl_type <= Role::AdminRole; rl_type++)
 		{
-			count = members_tab[type_id]->getRowCount();
-			role->removeRoles(type_id);
+			count = members_tab[rl_type]->getRowCount();
+			role->removeRoles(rl_type);
 
-			for(i=0; i < count; i++)
+			for(i = 0; i < count; i++)
 			{
-				aux_role=reinterpret_cast<Role *>(members_tab[type_id]->getRowData(i).value<void *>());
-				role->addRole(type_id, aux_role);
+				aux_role=reinterpret_cast<Role *>(members_tab[rl_type]->getRowData(i).value<void *>());
+				role->addRole(rl_type, aux_role);
 			}
 		}
 
+		/* Special case for Member Of tab, here we try to add the role being edited
+		 * as a member of the the roles in the table */
+		count = members_tab[2]->getRowCount();
+
+		for(i = 0; i < count; i++)
+		{
+			aux_role = reinterpret_cast<Role *>(members_tab[rl_type]->getRowData(i).value<void *>());
+			op_list->registerObject(aux_role, Operation::ObjectModified);
+			aux_role->addRole(Role::MemberRole, role);
+		}
+
 		BaseObjectWidget::applyConfiguration();
+		op_list->finishOperationChain();
 		finishConfiguration();
 	}
 	catch(Exception &e)

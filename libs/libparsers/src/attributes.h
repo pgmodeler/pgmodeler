@@ -510,7 +510,6 @@ namespace Attributes {
 	ReferencesPriv,
 	Referrers,
 	RefName,
-	RefRoles,
 	RefTable,
 	RefTables,
 	RefTableTag,

@@ -47,9 +47,7 @@
 
 		(SELECT array_agg(rl.oid) AS admin_roles FROM pg_auth_members AS am
 		LEFT JOIN pg_roles AS rl ON rl.oid=am.member
-		WHERE am.roleid=rl1.oid AND am.admin_option IS TRUE),
-
-		NULL AS ref_roles, ]
+		WHERE am.roleid=rl1.oid AND am.admin_option IS TRUE), ]
 
 		({comment}) [ AS comment
 

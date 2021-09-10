@@ -39,7 +39,6 @@ Role::Role()
 	attributes[Attributes::Password]="";
 	attributes[Attributes::Encrypted]="";
 	attributes[Attributes::Validity]="";
-	attributes[Attributes::RefRoles]="";
 	attributes[Attributes::MemberRoles]="";
 	attributes[Attributes::AdminRoles]="";
 	attributes[Attributes::Replication]="";
@@ -72,23 +71,20 @@ void Role::addRole(unsigned role_type, Role *role)
 						ErrorCode::AsgRoleMemberItself,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	}
 
-	bool role_ref = false, role_mem = false, role_adm = false,
-			role_ref1 = false, role_mem1 = false, role_adm1 = false;
+	bool role_mem = false, role_adm = false,
+			role_mem1 = false, role_adm1 = false;
 
 	//Check if the role to be added already exists in one of the internal role list
-	role_ref=this->isRoleExists(RefRole, role);
 	role_mem=this->isRoleExists(MemberRole, role);
 	role_adm=this->isRoleExists(AdminRole, role);
 
 	/* Check if the role 'this' is referenced in one of the internal role list
 	 of the role to be added */
-	role_ref1=role->isRoleExists(RefRole, this);
 	role_mem1=role->isRoleExists(MemberRole, this);
 	role_adm1=role->isRoleExists(AdminRole, this);
 
 	//Raises an error if the role already exists in one of the internal list
-	if((role_type==RefRole && role_ref) ||
-			(role_type==MemberRole && (role_mem || role_adm)) ||
+	if((role_type==MemberRole && (role_mem || role_adm)) ||
 			(role_type==AdminRole && (role_adm || role_mem)))
 	{
 		throw Exception(Exception::getErrorMessage(ErrorCode::InsDuplicatedRole)
@@ -98,7 +94,7 @@ void Role::addRole(unsigned role_type, Role *role)
 	}
 
 	// Checking for redundant reference between roles.
-	if(role_ref1 || role_mem1 || role_adm1)
+	if(role_mem1 || role_adm1)
 	{
 		throw Exception(Exception::getErrorMessage(ErrorCode::AsgRoleReferenceRedundancy)
 						.arg(role->getName(), this->getName(), this->getName(), role->getName()),
@@ -135,10 +131,8 @@ void Role::setRoleAttribute(unsigned role_type)
 
 	if(role_type == MemberRole)
 		attrib = Attributes::MemberRoles;
-	else if(role_type == AdminRole)
-		attrib = Attributes::AdminRoles;
 	else
-		attrib = Attributes::RefRoles;
+		attrib = Attributes::AdminRoles;
 
 	for(auto &rl : *roles_vect)
 		rol_names.append(rl->getName(true));
@@ -148,9 +142,6 @@ void Role::setRoleAttribute(unsigned role_type)
 
 vector<Role *> *Role::getRoleList(unsigned role_type)
 {
-	if(role_type == RefRole)
-		return &ref_roles;
-
 	if(role_type == MemberRole)
 	 return &member_roles;
 
@@ -265,7 +256,6 @@ QString Role::getCodeDefinition(unsigned def_type, bool reduced_form)
 						   Attributes::Login, Attributes::Encrypted,
 							 Attributes::Replication, Attributes::BypassRls };
 
-	setRoleAttribute(RefRole);
 	setRoleAttribute(MemberRole);
 	setRoleAttribute(AdminRole);
 
@@ -283,8 +273,8 @@ QString Role::getCodeDefinition(unsigned def_type, bool reduced_form)
 
 QString Role::getAlterMembershipCommands(Role *imp_role, Role *ref_role, bool revoke)
 {
-	unsigned role_types[3] = { RefRole, MemberRole, AdminRole };
-	QStringList rl_names, role_attrs = { Attributes::RefRoles, Attributes::MemberRoles, Attributes::AdminRoles };
+	unsigned role_types[2] = { MemberRole, AdminRole };
+	QStringList rl_names, role_attrs = { Attributes::MemberRoles, Attributes::AdminRoles };
 	attribs_map member_attrs;
 	QString cmds;
 
@@ -302,8 +292,8 @@ QString Role::getAlterMembershipCommands(Role *imp_role, Role *ref_role, bool re
 		if(!rl_names.isEmpty())
 		{
 			member_attrs[Attributes::Revoke] = (revoke ? Attributes::True : "");
-			member_attrs[Attributes::Role] = (rl_type == RefRole ? rl_names.join(',') : ref_role->getName(true));
-			member_attrs[Attributes::Roles] = (rl_type == RefRole ? ref_role->getName(true) : rl_names.join(','));
+			member_attrs[Attributes::Role] = ref_role->getName(true);
+			member_attrs[Attributes::Roles] = rl_names.join(',');
 			member_attrs[Attributes::AdminOption] = (rl_type == AdminRole ? Attributes::True : "");
 
 			try

@@ -493,7 +493,6 @@ namespace Attributes {
 	ReferencesPriv("references"),
 	Referrers("referrers"),
 	RefName("ref-name"),
-	RefRoles("ref-roles"),
 	RefTable("ref-table"),
 	RefTables("ref-tables"),
 	RefTableTag("reftable"),
