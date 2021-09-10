@@ -1,6 +1,49 @@
 Changelog
 ---------
 
+v0.9.4-beta
+------
+<em>Release date: September 17, 2021</em><br/>
+
+* [New] Added support for the generation of GRANT/REVOKE commands to control roles memberships via the diff process.
+* [New] Added support for included columns on indexes. 
+* [New] Added the ability to reference view columns on indexes.
+* [New] Added support to use view's SimpleColumn in ColumnPickerWidget as well as Index.
+* [New] Added .dtd extension to SchemaEditorForm::showFileDialog.
+* [New] Created the widget ColumnPickerWidget by isolating the code that handles constraint columns in ConstraintWidget for reusing in other portions of the tool.
+* [New] Added the method Constraint::addColumns().
+* [New] Added support for toggling update notifications for alpha/beta versions.
+* [New] Added support for save and restore the tree state in DatabaseExplorerWidget.
+* [Change] Restored the file pgmodeler.appdata.xml.
+* [Change] Refactored BaseObject::isCodeDiffersFrom (and its variants in children classes) to use QStringList instead of vector<QString> as parameters.
+* [Change] Allowing swap cluster level object ids in SwapObjectsIdsWidget when the objects are of the same kind.
+* [Change] Minor refactoring in RoleWidget, Role and DatabaseModel to use Role::RefRole, Role::MemberRole and Rele::AdminRole constants as loop indexes.
+* [Change] Minor adjustment in demo features.
+* [Change] Minor refactoring in Role::setRoleAttribute.
+* [Change] Minor improvement in ModelExportHelper::exportToDbms to send the SQL command via a signal when creating roles and the database.
+* [Change] Improvements in pgmodeler-se in such a way to control syntax highlighting settings per open editor.
+* [Change] Avoided the use of a working dir in .desktop file when installing mime types system-wide.
+* [Change] Improved the way layers rectangles are updated after undoing/redoing operations in OperationListWidget.
+* [Change] Isolated SimpleColumn struct on its own file for reusing in other modules.
+* [Change] Moved the constants ProtRowBgColor, ProtRowFgColor, RelAddedRowBgColor, RelAddedRowFgColor from BaseObjectWidget to GuiUtilsNs.
+* [Change] Changed the default match type in foreign key constraint to MATCH SIMPLE.
+* [Change] Minor adjustment in the ModelWidget::updateSceneLayers to force the update of all schemas.
+* [Change] Avoided a lambda function call when checking updates to prevent segfaults.
+* [Change] Exceptions raised in BugReportForm when the "lastmodel" file isn't found are now ignored.
+* [Change] Minor change in ModelValidationHelper to use table's signature instead of name during the name validation process.
+* [Change] Avoided calling the functions xmlInitParser() and xmlCleanupParser() more than once per app execution in XmlParser class to avoid unexpected behavior.
+* [Fix] The attributes Qt::AA_UseHighDpiPixmaps and Qt::AA_EnableHighDpiScaling are now correctly set before the instantiation of Application based classes.
+* [Fix] Fixed a crash in diff process caused by the ModelExportHelper instance when canceling the export to DBMS when an exception was raised.
+* [Fix] Fixed a crash in SwapObjectsIdsWidget when the user tried to swap objects using arrow keys.
+* [Fix] Fixed the tab names in RoleWidget.
+* [Fix] Minor fix in DatabaseExplorerWidget to display view's children source code.
+* [Fix] Fixed the building of IndexWidget on Qt 5.14 and below.
+* [Fix] Fixed the problem on ModelDatabaseDiffForm that was not accepting pressing Return/Esc to respectively run the diff and close the dialog due to a conflict with the event loop instance in ModelDatabaseDiffForm::exec().
+* [Fix] Minor fix in the configuration of ObjectGroupId element in DatabaseImportForm::updateObjectsTree in order to avoid crashes when no root element is specified.
+* [Fix] Fixed the generation of aggregate functions when they use functions that contain parameters in which data type have spaces (double precision, character varying).
+* [Fix] Fixed a segfault that can happen when changing the number of parameters of a function already associated with an aggregate.
+* [Fix] Additional fix for layers not being correctly loaded from dbm file.
+
 v0.9.4-alpha1
 ------
 <em>Release date: July 19, 2021</em><br/>
