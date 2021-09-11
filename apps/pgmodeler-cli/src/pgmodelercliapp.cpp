@@ -1249,6 +1249,41 @@ void PgModelerCliApp::recreateObjects()
 			}
 		}
 	}
+
+	// Fixing the roles memberships.
+	Role *role = nullptr, *mem_role = nullptr;
+	bool member_fixed = false;
+
+	for(auto &rl : member_roles)
+	{
+		role = model->getRole(rl.first);
+
+		if(!role)
+		{
+			printMessage(tr("WARNING: Could not find the role `%1'! Ignoring it...").arg(rl.first));
+			continue;
+		}
+
+		for(auto &name : rl.second)
+		{
+			mem_role = model->getRole(name);
+
+			if(!mem_role)
+			{
+				printMessage(tr("WARNING: Could not find the role `%1' of `%2`! Igorning it...").arg(name, rl.first));
+				continue;
+			}
+
+			role->addRole(Role::MemberRole, mem_role);
+			member_fixed = true;
+		}
+	}
+
+	if(member_fixed)
+	{
+		printMessage(tr("WARNING: Roles memberships were fixed but their creation order is not guaranteed!"));
+		printMessage(tr("         It may be necessary to run the fix tool again now on the file `%1'.").arg(parsed_opts[Output]));
+	}
 }
 
 void PgModelerCliApp::fixObjectAttributes(QString &obj_xml)
@@ -1322,9 +1357,39 @@ void PgModelerCliApp::fixObjectAttributes(QString &obj_xml)
 	if(obj_xml.contains(TagExpr.arg(BaseObject::getSchemaName(ObjectType::Sequence))))
 		obj_xml.replace(QRegExp(QString("(%1)( )*(=)(\")").arg(Attributes::Owner)), QString("%1 = \"").arg(Attributes::OwnerColumn));
 
-	//Remove sysid attribute from <role> tags.
+	/* Remove sysid attribute from <role> tags and storing the referenced roles (ref-roles)
+	 * for later re-assignment. */
 	if(obj_xml.contains(TagExpr.arg(BaseObject::getSchemaName(ObjectType::Role))))
+	{
 		obj_xml.remove(QRegExp(AttributeExpr.arg(QString("sysid"))));
+
+		QRegExp ref_roles_expr = QRegExp(QString("(\\<%1)(.)+(%2)( )*(=)(\")(%3)(\")(.)+(\\/\\>)").arg(Attributes::Roles, Attributes::RoleType, Attributes::Refer));
+		int pos = ref_roles_expr.indexIn(obj_xml);
+
+		if(pos >= 0)
+		{
+			QString buf = obj_xml.mid(pos, ref_roles_expr.matchedLength()),
+					name_attr = QString("name=\""), role_name;
+			int start_idx = 0, end_idx = 0;
+
+			// Extracting the role name
+			start_idx = obj_xml.indexOf(name_attr);
+			end_idx = obj_xml.indexOf("\"", start_idx + name_attr.size());
+			role_name = obj_xml.mid(start_idx, end_idx - start_idx).remove(name_attr);
+
+			// Removing the element <roles ... role-type="refer"/>
+			obj_xml.remove(pos, ref_roles_expr.matchedLength());
+
+			// Retrieve the name of the ref-roles
+			buf.remove(QRegExp("^(.)+(names=\")"));
+			buf.remove(buf.indexOf("\""), buf.size());
+
+			/* Storing the association between the current role and the ref-roles
+			 * in a map for further processing */
+			for(auto &rl_name : buf.split(',', QtCompat::SkipEmptyParts))
+				member_roles[rl_name].append(role_name);
+		}
+	}
 
 	//Replace <parameter> tag by <typeattrib> on <usertype> tags.
 	if(obj_xml.contains(TagExpr.arg(QString("usertype"))))
