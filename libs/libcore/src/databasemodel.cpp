@@ -3861,9 +3861,11 @@ Role *DatabaseModel::createRole()
 						len=list.size();
 
 						//Identifying the member role type
-						if(attribs_aux[Attributes::RoleType]==Attributes::Refer)
+						/* if(attribs_aux[Attributes::RoleType]==Attributes::Refer)
 							role_type=Role::RefRole;
-						else if(attribs_aux[Attributes::RoleType]==Attributes::Member)
+						else */
+
+						if(attribs_aux[Attributes::RoleType]==Attributes::Member)
 							role_type=Role::MemberRole;
 						else
 							role_type=Role::AdminRole;
@@ -8563,7 +8565,7 @@ void DatabaseModel::getRoleDependencies(BaseObject *object, vector<BaseObject *>
 	Role *role=dynamic_cast<Role *>(object);
 	unsigned rl_type = 0, idx = 0, count = 0;
 
-	for(rl_type = Role::RefRole; rl_type <= Role::AdminRole; rl_type++)
+	for(rl_type = Role::MemberRole; rl_type <= Role::AdminRole; rl_type++)
 	{
 		count=role->getRoleCount(rl_type);
 
@@ -9625,7 +9627,7 @@ void DatabaseModel::getRoleReferences(BaseObject *object, vector<BaseObject *> &
 		role_aux=dynamic_cast<Role *>(*itr);
 		itr++;
 
-		for(unsigned rl_type = Role::RefRole; rl_type <= Role::AdminRole && (!exclusion_mode || (exclusion_mode && !refer)); rl_type++)
+		for(unsigned rl_type = Role::MemberRole; rl_type <= Role::AdminRole && (!exclusion_mode || (exclusion_mode && !refer)); rl_type++)
 		{
 			count = role_aux->getRoleCount(rl_type);
 			for(i=0; i < count && !refer; i++)

@@ -111,6 +111,10 @@ class PgModelerCliApp: public Application {
 		//! \brief End date used for filter changelog of the input database model (partial diff)
 		end_date;
 
+		/*! \brief Stores the member of role names that appear in deprecated tags <roles ... role-type="refer">
+		 * This map is used to reconfigure the role memberships after all objects are created */
+		map<QString, QStringList> member_roles;
+
 		static const QRegExp PasswordRegExp;
 		static const QString PasswordPlaceholder;
 

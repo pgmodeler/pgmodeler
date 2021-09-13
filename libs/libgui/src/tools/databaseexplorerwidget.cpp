@@ -73,7 +73,7 @@ const attribs_map DatabaseExplorerWidget::attribs_i18n {
 	{Attributes::Password, QT_TR_NOOP("Password")},	{Attributes::Permission, QT_TR_NOOP("Permissions")},
 	{Attributes::Precision, QT_TR_NOOP("Precision")},	{Attributes::Preferred, QT_TR_NOOP("Preferred")},
 	{Attributes::RangeAttribs, QT_TR_NOOP("Range attributes")},	{Attributes::RecvFunc, QT_TR_NOOP("Receive func.")},
-	{Attributes::RefRoles, QT_TR_NOOP("Ref. roles")},	{Attributes::Replication, QT_TR_NOOP("Replication")},
+	{Attributes::Replication, QT_TR_NOOP("Replication")},
 	{Attributes::RestrictionFunc, QT_TR_NOOP("Restriction func.")},	{Attributes::ReturnType, QT_TR_NOOP("Return type")},
 	{Attributes::ReturnsSetOf, QT_TR_NOOP("Returns SETOF")},	{Attributes::RightType, QT_TR_NOOP("Right type")},
 	{Attributes::RowAmount, QT_TR_NOOP("Rows amount")},	{Attributes::Schema, QT_TR_NOOP("Schema")},
@@ -484,13 +484,12 @@ void DatabaseExplorerWidget::formatLanguageAttribs(attribs_map &attribs)
 void DatabaseExplorerWidget::formatRoleAttribs(attribs_map &attribs)
 {
 	formatOidAttribs(attribs, { Attributes::AdminRoles,
-								Attributes::MemberRoles,
-								Attributes::RefRoles }, ObjectType::Role, true);
+															Attributes::MemberRoles }, ObjectType::Role, true);
 
 	formatBooleanAttribs(attribs, { Attributes::Superuser, Attributes::Inherit,
-									Attributes::CreateRole, Attributes::CreateDb,
-									Attributes::Login, Attributes::Encrypted,
-									Attributes::Replication });
+																	Attributes::CreateRole, Attributes::CreateDb,
+																	Attributes::Login, Attributes::Encrypted,
+																	Attributes::Replication });
 }
 
 void DatabaseExplorerWidget::formatConversionAttribs(attribs_map &attribs)

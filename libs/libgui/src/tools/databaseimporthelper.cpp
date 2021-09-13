@@ -999,8 +999,7 @@ void DatabaseImportHelper::createRole(attribs_map &attribs)
 
 	try
 	{
-		QStringList rl_oids, rl_names, role_types={ Attributes::RefRoles,
-																								Attributes::AdminRoles,
+		QStringList rl_oids, rl_names, role_types={ Attributes::AdminRoles,
 																								Attributes::MemberRoles };
 
 		for(auto &rl_type : role_types)

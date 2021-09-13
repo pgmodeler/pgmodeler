@@ -10,13 +10,22 @@ v0.9.4-beta
 
 One new feature brought is the ability to generate GRANT and REVOKE commands to setup new role memberships through the diff process. Another addition is the support for included columns also known as non-key columns on indexes. <br/>
 
+Due to that improvement on diff, the original behavior of "Member of" tab on role editing form was changed in such a way to make the code generated from the comparison between two roles more precise. <br/>
 
+This release also brings several improvements in the database design process. For example, the default match mode for FK constraints was changed to MATCH SIMPLE in compliance to the PostgreSQL docs. The layers feature was also patched and now the layers rectangles are correctly updated in certain circumstances.<br/>
+
+Now, in the database browser in SQL tool, the tree items collapse state is saved and restored after any updates requested by the user, improving the overall experience on that module. <br/>
+
+Finally, the whole set of changes of this release has 41 entries being 10 new features, 20 changes/improvements, and 11 bug fixes. Below, some key changes are highlighted. For the complete list of changes, please, take a look at the CHANGELOG.md. <br/>
 
 * [New] Added support for the generation of GRANT/REVOKE commands to control roles memberships via diff process.
+* [New] Added a fix step to reconfigure roles membership considering the deprecation of Role:RefRole attribute.
 * [New] Added support for included columns on indexes. 
 * [New] Added the ability for referencing view columns on indexes.
 * [New] Added support for toggling update notifications for alpha/beta versions.
 * [New] Added support for save and restore the tree state in DatabaseExplorerWidget.
+* [Change] Dropped the support for MemberOf (Role::RefRoles) in order to make the diff between two roles more precise.
+* [Change] In RoleWidget the tab "Member Of" now works only as a convenience feature that adds the role being edited to the ones listed in that tab.
 * [Change] Restored the file pgmodeler.appdata.xml.
 * [Change] Allowing swap cluster level object ids in SwapObjectsIdsWidget when the objects are of the same kind.
 * [Change] Improvements in pgmodeler-se in such a way to control syntax highlighting settings per open editor.

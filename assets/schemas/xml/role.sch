@@ -33,7 +33,6 @@
 	%if {appended-sql} %then {appended-sql} %end
 	%if {prepended-sql} %then {prepended-sql} %end
 
-	%if {ref-roles} %then $tb [<roles names=] "{ref-roles}" [ role-type="refer" />] $br %end
 	%if {member-roles} %then $tb [<roles names=] "{member-roles}" [ role-type="member" />] $br %end
 	%if {admin-roles} %then $tb [<roles names=] "{admin-roles}" [ role-type="admin" />] $br %end
 
