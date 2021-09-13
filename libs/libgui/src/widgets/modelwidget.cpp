@@ -152,9 +152,15 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	updateRenderHints();
 	viewport->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
+	/* Since we constantly work with objects (re)configuration which leads to bounding
+	 * rectangle changes, the viewport area update is done by using bounding rects
+	 * as reference in order to perform updates on the areas covered by the modified
+	 * objects bounding rects. */
+	viewport->setViewportUpdateMode(QGraphicsView::BoundingRectViewportUpdate);
+
 	//Force the scene to be drawn from the left to right and from top to bottom
 	viewport->setAlignment(Qt::AlignLeft | Qt::AlignTop);
-	viewport->setViewportUpdateMode(QGraphicsView::MinimalViewportUpdate);
+
 	viewport->setCacheMode(QGraphicsView::CacheBackground);
 	viewport->centerOn(0,0);
 	viewport->setMouseTracking(true);
@@ -1067,11 +1073,10 @@ void ModelWidget::handleObjectModification(BaseGraphicObject *object)
 {
 	op_list->registerObject(object, Operation::ObjectModified);
 	setModified(true);
-
-	if(object->getSchema())
-		dynamic_cast<Schema *>(object->getSchema())->setModified(true);
-
 	emit s_objectModified();
+
+	/*	if(object->getSchema())
+			dynamic_cast<Schema *>(object->getSchema())->setModified(true); */
 }
 
 void ModelWidget::emitSceneInteracted()
