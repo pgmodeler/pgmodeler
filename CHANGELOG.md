@@ -6,6 +6,7 @@ v0.9.4-beta
 <em>Release date: September 17, 2021</em><br/>
 
 * [New] Added support for the generation of GRANT/REVOKE commands to control roles memberships via the diff process.
+* [New] Added a fix step to reconfigure roles membership considering the deprecation of Role:RefRole attribute.
 * [New] Added support for included columns on indexes. 
 * [New] Added the ability to reference view columns on indexes.
 * [New] Added support to use view's SimpleColumn in ColumnPickerWidget as well as Index.
@@ -14,6 +15,8 @@ v0.9.4-beta
 * [New] Added the method Constraint::addColumns().
 * [New] Added support for toggling update notifications for alpha/beta versions.
 * [New] Added support for save and restore the tree state in DatabaseExplorerWidget.
+* [Change] Dropped the support for MemberOf (Role::RefRoles) in order to make the diff between two roles more precise.
+* [Change] In RoleWidget the tab "Member Of" now works only as a convenience feature that adds the role being edited to the ones listed in that tab.
 * [Change] Restored the file pgmodeler.appdata.xml.
 * [Change] Refactored BaseObject::isCodeDiffersFrom (and its variants in children classes) to use QStringList instead of vector<QString> as parameters.
 * [Change] Allowing swap cluster level object ids in SwapObjectsIdsWidget when the objects are of the same kind.
