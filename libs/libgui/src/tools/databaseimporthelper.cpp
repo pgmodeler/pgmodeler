@@ -3106,7 +3106,7 @@ QString DatabaseImportHelper::getType(const QString &oid_str, bool generate_xml,
 		QString xml_def, sch_name, obj_name, aux_name;
 		unsigned type_oid=oid_str.toUInt(), elem_tp_oid = 0,
 				dimension=0, object_id=0;
-		bool is_derivated_from_obj = false;
+		bool is_derivated_from_obj = false, is_postgis_type = false;
 
 		if(type_oid > 0)
 		{
@@ -3179,22 +3179,29 @@ QString DatabaseImportHelper::getType(const QString &oid_str, bool generate_xml,
 			if(obj_name.startsWith(QString("timestamp")) || obj_name.startsWith(QString("time")))
 				obj_name.remove(QString(" without time zone"));
 
-			/* Prepend the schema name only if the type it is not in a system schema ('pg_catalog' or 'information_schema')
-			 * and if the schema's names is already present in the type's name (in case of table types) */
+			/* Prepend the schema name only if the type it is not in a system schema ('pg_catalog' or 'information_schema'),
+			 * if the schema's names is already present in the type's name (in case of table types) or if the type being
+			 * retrieved is not a PostGiS one (because, despite the type being from extension PostGiS, it is considered
+			 * a built-in type in pgModeler so there's no need to use schema qualified name) */
+			is_postgis_type = catalog.isExtensionObject(type_oid, "postgis");
 			sch_name = getObjectName(type_attr[Attributes::Schema]);
-			if(!sch_name.isEmpty() &&
-				 (is_derivated_from_obj || (sch_name != QString("pg_catalog") && sch_name != QString("information_schema")) ||
+
+			if(!sch_name.isEmpty() && !is_postgis_type &&
+				 (is_derivated_from_obj ||
+					(sch_name != QString("pg_catalog") && sch_name != QString("information_schema")) ||
 					type_oid > catalog.getLastSysObjectOID()) &&
 				 !obj_name.contains(QRegExp(QString("^(\\\")?(%1)(\\\")?(\\.)").arg(sch_name))))
 			{
 				obj_name.prepend(sch_name + QString("."));
 			}
 
-			/* In case of auto resolve dependencies, if the type is a user defined one and is not derivated from table/view/sequence and
-			 was not created in the database model but its attributes were retrieved, the object will be created to avoid reference errors */
+			/* In case of auto resolve dependencies, if the type is a user defined one and is
+			 * not derivated from table/view/sequence, is not from the postgis extension  and
+			 * was not created in the database model but its attributes were retrieved, the object
+			 * will be created to avoid reference errors */
 			aux_name = obj_name;
 			aux_name.remove(QString("[]"));
-			if(auto_resolve_deps && !type_attr.empty() && !is_derivated_from_obj &&
+			if(auto_resolve_deps && !type_attr.empty() && !is_derivated_from_obj && !is_postgis_type &&
 				 type_oid > catalog.getLastSysObjectOID() && !dbmodel->getType(aux_name))
 			{
 				//If the type is not an array one we simply use the current type attributes map

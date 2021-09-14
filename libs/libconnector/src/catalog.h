@@ -53,9 +53,16 @@ class Catalog {
 
 		AliasPlaceholder;
 
+		/*! \brief Stores the oid of objects that are created by extension.
+		 * The keys of this map are the names of the extensions that hold objects in the database,
+		 * The values of this map are the list of objects oids. This is used to speed up the checking
+		 * if an certain object is owned by a certain extension (see isExtensionObject()) */
+		map<QString, QStringList> ext_objects;
+
 		/*! \brief Stores in comma seperated way the oids of all objects created by extensions. This
-		attribute is use when filtering objects that are created by extensions */
-		QString ext_obj_oids;
+		 * 	attribute is use to create the catalog query that filters objects that are created or not
+		 *  by extensions. */
+		QString ext_objs_oids;
 
 		//! \brief Stores the name filters for each type of object. (See setObjectFilters())
 		map<ObjectType, QString> obj_filters;
@@ -197,8 +204,10 @@ class Catalog {
 		//! \brief Returns if the specified oid is amongst the system objects' oids
 		bool isSystemObject(unsigned oid);
 
-		//! \brief Returns if the specified oid is amongst the extension created objects' oids
-		bool isExtensionObject(unsigned oid);
+		/*! \brief Returns if the specified oid is amongst the extension created objects' oids
+		 * It is possible to check if the oid is owned by a specific extension by passing the extension name
+		 * in the second parameter. */
+		bool isExtensionObject(unsigned oid, const QString &ext_name = "");
 
 		/*! \brief Returns the count for the specified object type. A schema name can be specified
 		in order to filter only objects of the specifed schema */
