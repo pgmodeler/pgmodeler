@@ -23,9 +23,6 @@ TextboxView::TextboxView(Textbox *txtbox, bool override_style) : BaseObjectView(
 {
 	connect(txtbox, SIGNAL(s_objectModified()), this, SLOT(configureObject()));
 
-	box=new QGraphicsPolygonItem;
-	text=new QGraphicsSimpleTextItem;
-
 	text_item = new TextPolygonItem;
 	this->addToGroup(text_item);
 

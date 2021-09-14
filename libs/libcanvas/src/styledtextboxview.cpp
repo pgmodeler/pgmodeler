@@ -2,15 +2,7 @@
 
 StyledTextboxView::StyledTextboxView(Textbox *txtbox, bool override_style) : TextboxView(txtbox, override_style)
 {
-	QPolygonF pol;
-
-	pol.append(QPointF(0,0));
-	pol.append(QPointF(20,0));
-	pol.append(QPointF(0,20));
-
 	fold=new QGraphicsPolygonItem;
-	fold->setPolygon(pol);
-
 	this->addToGroup(fold);
 	this->configureObject();
 }
@@ -28,8 +20,14 @@ void StyledTextboxView::configureObject()
 	QPointF pnt;
 
 	this->__configureObject();
+
+	pol.append(QPointF(0,0));
+	pol.append(QPointF(20,0));
+	pol.append(QPointF(0,20));
+
 	fold->setBrush(text_item->brush());
 	fold->setPen(text_item->pen());
+	fold->setPolygon(pol);
 
 	rect = text_item->boundingRect();
 	pol = text_item->polygon();

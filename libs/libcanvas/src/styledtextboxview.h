@@ -39,7 +39,7 @@ class StyledTextboxView: public TextboxView {
 		virtual ~StyledTextboxView();
 
 	protected slots:
-		void configureObject();
+		virtual void configureObject() override;
 };
 
 #endif

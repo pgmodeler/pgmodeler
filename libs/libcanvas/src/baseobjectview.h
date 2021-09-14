@@ -77,12 +77,6 @@ class BaseObjectView: public QObject, public QGraphicsItemGroup {
 		//! \brief Graphical object that represents the placeholder when the object is being moved
 		RoundedRectItem *placeholder;
 
-		//! \brief Graphical object of the sql disabled info
-		QGraphicsRectItem *sql_disabled_box;
-
-		//! \brief Graphical text for the sql disabled info
-		QGraphicsSimpleTextItem *sql_disabled_txt;
-
 		//! \brief This items is used to display the sql disabled status of the object
 		TextPolygonItem *sql_disabled_item;
 
