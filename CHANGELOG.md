@@ -3,7 +3,7 @@ Changelog
 
 v0.9.4-beta
 ------
-<em>Release date: September 17, 2021</em><br/>
+<em>Release date: September 20, 2021</em><br/>
 
 * [New] Added support for the generation of GRANT/REVOKE commands to control roles memberships via the diff process.
 * [New] Added a fix step to reconfigure roles membership considering the deprecation of Role:RefRole attribute.
@@ -13,6 +13,7 @@ v0.9.4-beta
 * [New] Added .dtd extension to SchemaEditorForm::showFileDialog.
 * [New] Created the widget ColumnPickerWidget by isolating the code that handles constraint columns in ConstraintWidget for reusing in other portions of the tool.
 * [New] Added the method Constraint::addColumns().
+* [New] Two buttons were added aside the date input fields in partial diff tab (ModelDatabaseDiffForm) in order to allow the quick assignment of the first and last modification dates.
 * [New] Added support for toggling update notifications for alpha/beta versions.
 * [New] Added support for save and restore the tree state in DatabaseExplorerWidget.
 * [Change] Dropped the support for MemberOf (Role::RefRoles) in order to make the diff between two roles more precise.
@@ -35,6 +36,12 @@ v0.9.4-beta
 * [Change] Exceptions raised in BugReportForm when the "lastmodel" file isn't found are now ignored.
 * [Change] Minor change in ModelValidationHelper to use table's signature instead of name during the name validation process.
 * [Change] Avoided calling the functions xmlInitParser() and xmlCleanupParser() more than once per app execution in XmlParser class to avoid unexpected behavior.
+* [Change] Minor adjustment in viewport drawing mode in order to redraw objects by bounding rect changes.
+* [Change] Minor improvements in the changelog widget in order to display the first modification date.
+* [Change] Refactored Connection::requestCancel in order to avoid using PQrequestCancel which is deprecated.
+* [Fix] Fixed a glitch when drawing StyledTextboxView instaces.
+* [Fix] Fix the diff between columns using PostGiS datatypes.
+* [Fix] Minor fix in Connection in order to request a cancel in commands running before closing a connection.
 * [Fix] The attributes Qt::AA_UseHighDpiPixmaps and Qt::AA_EnableHighDpiScaling are now correctly set before the instantiation of Application based classes.
 * [Fix] Fixed a crash in diff process caused by the ModelExportHelper instance when canceling the export to DBMS when an exception was raised.
 * [Fix] Fixed a crash in SwapObjectsIdsWidget when the user tried to swap objects using arrow keys.
