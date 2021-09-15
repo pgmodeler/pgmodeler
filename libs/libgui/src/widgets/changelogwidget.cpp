@@ -51,6 +51,7 @@ void ChangelogWidget::updateChangelogInfo()
 	{
 		info_lbl->setText(entries_text.arg('-'));
 		last_change_lbl->setText(last_change_text.arg('-'));
+		first_change_lbl->setText(first_change_text.arg('-'));
 	}
 	else
 	{
