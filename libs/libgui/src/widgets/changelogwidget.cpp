@@ -43,13 +43,14 @@ void ChangelogWidget::setVisible(bool value)
 void ChangelogWidget::updateChangelogInfo()
 {
 	QString entries_text = tr("Changelog entries: <strong>%1</strong>"),
-			last_mod_text = tr("Last modified: <strong>%1</strong>");
+			last_change_text = tr("Last modified: <strong>%1</strong>"),
+			first_change_text = tr("First modified: <strong>%1</strong>");
 	unsigned log_len = !model ? 0 : model->getDatabaseModel()->getChangelogLength();
 
 	if(log_len == 0)
 	{
 		info_lbl->setText(entries_text.arg('-'));
-		last_mod_lbl->setText(last_mod_text.arg('-'));
+		last_change_lbl->setText(last_change_text.arg('-'));
 	}
 	else
 	{
@@ -62,7 +63,8 @@ void ChangelogWidget::updateChangelogInfo()
 		dt_format.remove("dddd,"); //Removing month's full name info
 
 		info_lbl->setText(entries_text.arg(log_len));
-		last_mod_lbl->setText(last_mod_text.arg(locale.toString(model->getDatabaseModel()->getLastChangelogDate(), dt_format)));
+		last_change_lbl->setText(last_change_text.arg(locale.toString(model->getDatabaseModel()->getLastChangelogDate(), dt_format)));
+		first_change_lbl->setText(first_change_text.arg(locale.toString(model->getDatabaseModel()->getFirstChangelogDate(), dt_format)));
 	}
 
 	clear_tb->setEnabled(log_len > 0);

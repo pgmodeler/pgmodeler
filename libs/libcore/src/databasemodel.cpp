@@ -11724,6 +11724,12 @@ QDateTime DatabaseModel::getLastChangelogDate()
 				 QDateTime() : std::get<LogDate>(changelog.back());
 }
 
+QDateTime DatabaseModel::getFirstChangelogDate()
+{
+	return changelog.empty() ?
+				 QDateTime() : std::get<LogDate>(changelog.front());
+}
+
 unsigned DatabaseModel::getChangelogLength()
 {
 	return changelog.size();
