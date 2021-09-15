@@ -271,8 +271,11 @@ void Connection::close()
 	if(connection)
 	{
 		//Finalizes the connection if the status is OK
-		if(PQstatus(connection)==CONNECTION_OK)
+		if(PQstatus(connection) == CONNECTION_OK)
+		{
+			requestCancel();
 			PQfinish(connection);
+		}
 
 		connection=nullptr;
 		last_cmd_execution=QDateTime();
@@ -544,5 +547,12 @@ void Connection::requestCancel()
 	if(!connection)
 		throw Exception(ErrorCode::OprNotAllocatedConnection, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 
-	PQrequestCancel(connection);
+	PGcancel *cancel = PQgetCancel(connection);
+
+	if(cancel)
+	{
+		char errbuf[256] = "";
+		PQcancel(cancel, errbuf, 256);
+		PQfreeCancel(cancel);
+	}
 }
