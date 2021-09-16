@@ -272,10 +272,7 @@ void Connection::close()
 	{
 		//Finalizes the connection if the status is OK
 		if(PQstatus(connection) == CONNECTION_OK)
-		{
-			requestCancel();
 			PQfinish(connection);
-		}
 
 		connection=nullptr;
 		last_cmd_execution=QDateTime();
