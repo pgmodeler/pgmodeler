@@ -6,13 +6,13 @@ v0.9.4-beta
 
 <strong>Attention:</strong> the database model file structure has changed since the last stable 0.9.3. Models created in older releases will certainly fail to load due to incompatibilities because some attributes in the XML code don't exist anymore or have changed during the development of 0.9.4-beta. Before loading your database models in this new release, please, make sure to have a backup of them all and follow the steps presented by the model fix tool to patch the documents' structure. Not paying attention to this situation may cause irreversible data loss! If the fix procedures aren't enough to make your database models loadable again, please, ask for help at the official support channels!<br/>
 
-<strong>Summary:</strong> this release took a bit more to be released than expected but it's finally here. As any other beta version, this one brings few new features since it is more focused on polishing all that was made on alpha stages in preparation for the stable version. <br/>
+<strong>Summary:</strong> this release took a bit more to be released than expected but it's finally here. As with any other beta version, this one brings few new features since it is more focused on polishing all that was made on alpha stages in preparation for the stable version. <br/>
 
 One new feature brought is the ability to generate GRANT and REVOKE commands to setup new role memberships through the diff process. Another addition is the support for included columns also known as non-key columns on indexes. <br/>
 
-Due to that improvement on diff, the original behavior of "Member of" tab on role editing form was changed in such a way to make the code generated from the comparison between two roles more precise. <br/>
+Due to that improvement on diff, the original behavior of "Member of" tab on the role editing form was changed in such a way to make the code generated from the comparison between two roles more precise. <br/>
 
-This release also brings several improvements in the database design process. For example, the default match mode for FK constraints was changed to MATCH SIMPLE in compliance to the PostgreSQL docs. The layers feature was also patched and now the layers rectangles are correctly updated in certain circumstances.<br/>
+This release also brings several improvements in the database design process. For example, the default match mode for FK constraints was changed to MATCH SIMPLE in compliance with the PostgreSQL docs. The layers feature was also patched and now the layers rectangles are correctly updated in certain circumstances.<br/>
 
 Now, in the database browser in SQL tool, the tree items collapse state is saved and restored after any updates requested by the user, improving the overall experience on that module. <br/>
 
@@ -29,7 +29,7 @@ Finally, the whole set of changes of this release has 50 entries being 12 new fe
 * [Change] Restored the file pgmodeler.appdata.xml.
 * [Change] Allowing swap cluster level object ids in SwapObjectsIdsWidget when the objects are of the same kind.
 * [Change] Improvements in pgmodeler-se in such a way to control syntax highlighting settings per open editor.
-* [Change] Avoided the use of a working dir in .desktop file when installing mime types system wide.
+* [Change] Avoided the use of a working dir in .desktop file when installing mime types system-wide.
 * [Change] Improved the way layers rectangles are updated after undoing/redoing operations in OperationListWidget.
 * [Change] Changed the default match type in foreign key constraint to MATCH SIMPLE.
 * [Change] Minor adjustment in the ModelWidget::updateSceneLayers in order to force the update of all schemas.
@@ -43,4 +43,4 @@ Finally, the whole set of changes of this release has 50 entries being 12 new fe
 * [Fix] Minor fix in the configuration of ObjectGroupId element in DatabaseImportForm::updateObjectsTree in order to avoid crashes when no root element is specified.
 * [Fix] Fixed the generation of aggregate functions when they use functions that contain parameters in which data type have spaces (double precision, character varying).
 * [Fix] Fixed a segfault that can happen when changing the number of parameters of a function already associated with an aggregate.
-* [Fix] Additional fix for layes not being correctly loaded from dbm file.
+* [Fix] Additional fix for layers not being correctly loaded from dbm file.
