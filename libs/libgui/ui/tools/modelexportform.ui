@@ -1491,7 +1491,7 @@
                 <bool>false</bool>
                </property>
                <property name="text">
-                <string>Cancel</string>
+                <string>&amp;Cancel</string>
                </property>
                <property name="icon">
                 <iconset resource="../../res/resources.qrc">
