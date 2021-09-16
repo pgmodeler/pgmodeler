@@ -5,6 +5,7 @@ v0.9.4-beta
 ------
 <em>Release date: September 20, 2021</em><br/>
 
+* [New] Added the shortcut Alt+C to trigger the cancel action in DatabaseImportForm ModelDatabaseDiffForm and ModelExportForm.
 * [New] Added support for the generation of GRANT/REVOKE commands to control roles memberships via the diff process.
 * [New] Added a fix step to reconfigure roles membership considering the deprecation of Role:RefRole attribute.
 * [New] Added support for included columns on indexes. 
@@ -16,6 +17,8 @@ v0.9.4-beta
 * [New] Two buttons were added aside the date input fields in partial diff tab (ModelDatabaseDiffForm) in order to allow the quick assignment of the first and last modification dates.
 * [New] Added support for toggling update notifications for alpha/beta versions.
 * [New] Added support for save and restore the tree state in DatabaseExplorerWidget.
+* [Change] Minor improvement in ModelsExportHelper by adding more breaking points related to export canceled.
+* [Change] Minor improvement in ObjectRenameWidget in such a way to fill the new name field with the object's name in the first show when a single object is selected for renaming.
 * [Change] Dropped the support for MemberOf (Role::RefRoles) in order to make the diff between two roles more precise.
 * [Change] In RoleWidget the tab "Member Of" now works only as a convenience feature that adds the role being edited to the ones listed in that tab.
 * [Change] Restored the file pgmodeler.appdata.xml.

@@ -16,7 +16,7 @@ This release also brings several improvements in the database design process. Fo
 
 Now, in the database browser in SQL tool, the tree items collapse state is saved and restored after any updates requested by the user, improving the overall experience on that module. <br/>
 
-Finally, the whole set of changes of this release has 47 entries being 11 new features, 22 changes/improvements, and 14 bug fixes. Below, some key changes are highlighted. For the complete list of changes, please, take a look at the CHANGELOG.md. <br/>
+Finally, the whole set of changes of this release has 50 entries being 12 new features, 24 changes/improvements, and 14 bug fixes. Below, some key changes are highlighted. For the complete list of changes, please, take a look at the CHANGELOG.md. <br/>
 
 * [New] Added support for the generation of GRANT/REVOKE commands to control roles memberships via diff process.
 * [New] Added a fix step to reconfigure roles membership considering the deprecation of Role:RefRole attribute.
