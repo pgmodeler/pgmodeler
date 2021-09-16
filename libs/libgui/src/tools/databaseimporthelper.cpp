@@ -2693,8 +2693,7 @@ void DatabaseImportHelper::createColumns(attribs_map &attribs, vector<unsigned> 
 				}
 				else
 					type_name = getType(QString::number(type_oid), false);
-				//type_name+=BaseObject::formatName(types[type_oid][Attributes::Name], false);
-				//type_name.prepend(sch_name);
+
 				is_type_registered=PgSqlType::isRegistered(type_name, dbmodel);
 			}
 		}
