@@ -157,7 +157,7 @@ QString Exception::messages[Exception::ErrorCount][2]={
 	{"InvGroupDeclarationNotDefined", QT_TR_NOOP("The group `%1' has been declared but not built!")},
 	{"RefColObjectTabInvalidIndex", QT_TR_NOOP("Reference to a column of the objects table with invalid index!")},
 	{"RefRowObjectTabInvalidIndex", QT_TR_NOOP("Reference to a row of the objects table with invalid index!")},
-	{"OprReservedObject", QT_TR_NOOP("The object `%1' (%2) can not be manipulated because it is reserved to PostgreSQL! This object is present in the database model only as a reference!")},
+	{"OprReservedObject", QT_TR_NOOP("The object `%1' (%2) can't be manipulated because it is reserved to PostgreSQL! This object is present in the database model only as a reference!")},
 	{"InvFuncConfigInvalidatesObject", QT_TR_NOOP("The new configuration of the function invalidates the object `%1' (%2)! In this case it is needed to undo the relationship between the affected object and function in order to the new configuration to take effect!")},
 	{"InvSQLScopeViewReference", QT_TR_NOOP("A view reference should be used in at least one of these SQL scopes: View Definition, SELECT, FROM, WHERE or GROUP/HAVING!")},
 	{"InvConstratintNoColumns", QT_TR_NOOP("Constraints like primary key, foreign key or unique must have at least one column related to them! For foreign keys must be selected, in addition, the referenced columns!")},

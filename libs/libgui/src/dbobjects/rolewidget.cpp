@@ -272,6 +272,16 @@ void RoleWidget::applyConfiguration()
 		for(i = 0; i < count; i++)
 		{
 			aux_role = reinterpret_cast<Role *>(members_tab[rl_type]->getRowData(i).value<void *>());
+
+			/* Raises an error if the role to be added is the postgres one
+			 * For now, there is no way to assign roles direct to the postgres role due to
+			 * its permanet protection status. May be changed in future releases */
+			if(aux_role->isSystemObject())
+			{
+				throw Exception(Exception::getErrorMessage(ErrorCode::OprReservedObject).arg(role->getName(), role->getTypeName()),
+												ErrorCode::OprReservedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			}
+
 			op_list->registerObject(aux_role, Operation::ObjectModified);
 			aux_role->addRole(Role::MemberRole, role);
 		}
