@@ -65,7 +65,7 @@ RoleWidget::RoleWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Ro
 		obj_tab->setHeaderLabel(tr("Members"),2);
 		obj_tab->setHeaderIcon(QPixmap(GuiUtilsNs::getIconPath("role")),2);
 
-		obj_tab->setHeaderLabel(tr("Members (Admin.)"),3);
+		obj_tab->setHeaderLabel(tr("Admin option"),3);
 		obj_tab->setHeaderIcon(QPixmap(GuiUtilsNs::getIconPath("role")),3);
 
 		grid=new QGridLayout;
