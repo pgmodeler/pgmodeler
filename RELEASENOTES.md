@@ -6,7 +6,7 @@ v0.9.4-beta
 
 <strong>Attention:</strong> the database model file structure has changed since the last stable 0.9.3. Models created in older releases will certainly fail to load due to incompatibilities because some attributes in the XML code don't exist anymore or have changed during the development of 0.9.4-beta. Before loading your database models in this new release, please, make sure to have a backup of them all and follow the steps presented by the model fix tool to patch the documents' structure. Not paying attention to this situation may cause irreversible data loss! If the fix procedures aren't enough to make your database models loadable again, please, ask for help at the official support channels!<br/>
 
-<strong>Summary:</strong> this release took a bit more to be released than expected but it's finally here. As with any other beta version, this one brings few new features since it is more focused on polishing all that was made on alpha stages in preparation for the stable version. <br/>
+<strong>Summary:</strong> this version took a bit more to be released than expected but it's finally here. As with any other beta version, this one brings few new features since it is more focused on polishing all that was made on alpha stages in preparation for the stable version. <br/>
 
 One new feature brought is the ability to generate GRANT and REVOKE commands to setup new role memberships through the diff process. Another addition is the support for included columns also known as non-key columns on indexes. <br/>
 

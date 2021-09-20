@@ -44,7 +44,6 @@ v0.9.4-beta
 * [Change] Refactored Connection::requestCancel in order to avoid using PQrequestCancel which is deprecated.
 * [Fix] Fixed a glitch when drawing StyledTextboxView instaces.
 * [Fix] Fix the diff between columns using PostGiS datatypes.
-* [Fix] Minor fix in Connection in order to request a cancel in commands running before closing a connection.
 * [Fix] The attributes Qt::AA_UseHighDpiPixmaps and Qt::AA_EnableHighDpiScaling are now correctly set before the instantiation of Application based classes.
 * [Fix] Fixed a crash in diff process caused by the ModelExportHelper instance when canceling the export to DBMS when an exception was raised.
 * [Fix] Fixed a crash in SwapObjectsIdsWidget when the user tried to swap objects using arrow keys.
