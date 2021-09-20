@@ -23,6 +23,7 @@
 <!ATTLIST configuration canvas-corner-move (false|true) "true">
 <!ATTLIST configuration invert-rangesel-trigger (false|true) "false">
 <!ATTLIST configuration check-update (false|true) "false">
+<!ATTLIST configuration check-versions (all|stablebeta|stableonly) "all">
 <!ATTLIST configuration save-last-position (false|true) "false">
 <!ATTLIST configuration show-main-menu (false|true) "false">
 <!ATTLIST configuration disable-smoothness (false|true) "false">

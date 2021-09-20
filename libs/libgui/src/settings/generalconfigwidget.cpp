@@ -49,7 +49,7 @@ GeneralConfigWidget::GeneralConfigWidget(QWidget * parent) : BaseConfigWidget(pa
 	confs_dir_sel->setReadOnly(true);
 	confs_dir_sel->setFileMode(QFileDialog::Directory);
 	confs_dir_sel->setSelectedFile(GlobalAttributes::getConfigurationsDir());
-	general_grid->addWidget(confs_dir_sel, 1, 2, 1, 2);
+	general_grid->addWidget(confs_dir_sel, 1, 1, 1, 1);
 
 	source_editor_sel = new FileSelectorWidget(this);
 	source_editor_sel->setToolTip(tr("pgModeler configurations directory for the current user"));
@@ -58,7 +58,7 @@ GeneralConfigWidget::GeneralConfigWidget(QWidget * parent) : BaseConfigWidget(pa
 	source_editor_sel->setAcceptMode(QFileDialog::AcceptOpen);
 	source_editor_sel->setWindowTitle(tr("Select application"));
 	source_editor_sel->setToolTip(tr("External source code editor application"));
-	general_grid->addWidget(source_editor_sel, 2, 2, 1, 2);
+	general_grid->addWidget(source_editor_sel, 2, 1, 1, 1);
 
 	line_numbers_cp=new ColorPickerWidget(1, this);
 	line_numbers_cp->setButtonToolTip(0, tr("Line numbers' font color"));
@@ -102,6 +102,12 @@ GeneralConfigWidget::GeneralConfigWidget(QWidget * parent) : BaseConfigWidget(pa
 
 	for(int i=0; i < count; i++)
 		paper_cmb->setItemData(i, QVariant(paper_ids[i]));
+
+	check_versions_cmb->setItemData(0, Attributes::AllVersions);
+	check_versions_cmb->setItemData(1, Attributes::StableBeta);
+	check_versions_cmb->setItemData(2, Attributes::StableOnly);
+
+	connect(check_update_chk, SIGNAL(toggled(bool)), check_versions_cmb, SLOT(setEnabled(bool)));
 
 	connect(unity_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(convertMarginUnity()));
 	connect(autosave_interv_chk, SIGNAL(toggled(bool)), autosave_interv_spb, SLOT(setEnabled(bool)));
@@ -148,6 +154,7 @@ GeneralConfigWidget::GeneralConfigWidget(QWidget * parent) : BaseConfigWidget(pa
 	config_params[Attributes::Configuration][Attributes::CanvasCornerMove]="";
 	config_params[Attributes::Configuration][Attributes::InvertRangeSelTrigger]="";
 	config_params[Attributes::Configuration][Attributes::CheckUpdate]="";
+	config_params[Attributes::Configuration][Attributes::CheckVersions]="";
 	config_params[Attributes::Configuration][Attributes::SaveLastPosition]="";
 	config_params[Attributes::Configuration][Attributes::ShowMainMenu]="";
 	config_params[Attributes::Configuration][Attributes::DisableSmoothness]="";
@@ -245,7 +252,7 @@ void GeneralConfigWidget::loadConfiguration()
 		QStringList margin, custom_size;
 		vector<QString> key_attribs;
 		unsigned interv=0;
-		int tab_width=0, x=0, y=0, w=0, h=0;
+		int tab_width=0, x=0, y=0, w=0, h=0, idx = -1;
 
 		for(QWidget *wgt : child_wgts)
 			wgt->blockSignals(true);
@@ -270,7 +277,12 @@ void GeneralConfigWidget::loadConfiguration()
 
 		corner_move_chk->setChecked(config_params[Attributes::Configuration][Attributes::CanvasCornerMove]==Attributes::True);
 		invert_rangesel_chk->setChecked(config_params[Attributes::Configuration][Attributes::InvertRangeSelTrigger]==Attributes::True);
-		check_upd_chk->setChecked(config_params[Attributes::Configuration][Attributes::CheckUpdate]==Attributes::True);
+
+		check_update_chk->setChecked(config_params[Attributes::Configuration][Attributes::CheckUpdate]==Attributes::True);
+		idx = check_versions_cmb->findData(config_params[Attributes::Configuration][Attributes::CheckVersions]);
+		check_versions_cmb->setCurrentIndex(idx < 0 ? 0 : idx);
+		check_versions_cmb->setEnabled(check_update_chk->isChecked());
+
 		save_last_pos_chk->setChecked(config_params[Attributes::Configuration][Attributes::SaveLastPosition]==Attributes::True);
 		disable_smooth_chk->setChecked(config_params[Attributes::Configuration][Attributes::DisableSmoothness]==Attributes::True);
 		simple_obj_creation_chk->setChecked(config_params[Attributes::Configuration][Attributes::SimplifiedObjCreation]==Attributes::True);
@@ -489,7 +501,8 @@ void GeneralConfigWidget::saveConfiguration()
 		config_params[Attributes::Configuration][Attributes::PaperOrientation]=(portrait_rb->isChecked() ? Attributes::Portrait : Attributes::Landscape);
 		config_params[Attributes::Configuration][Attributes::CanvasCornerMove]=(corner_move_chk->isChecked() ? Attributes::True : "");
 		config_params[Attributes::Configuration][Attributes::InvertRangeSelTrigger]=(invert_rangesel_chk->isChecked() ? Attributes::True : "");
-		config_params[Attributes::Configuration][Attributes::CheckUpdate]=(check_upd_chk->isChecked() ? Attributes::True : "");
+		config_params[Attributes::Configuration][Attributes::CheckUpdate]=(check_update_chk->isChecked() ? Attributes::True : "");
+		config_params[Attributes::Configuration][Attributes::CheckVersions]=check_versions_cmb->currentData().toString();
 		config_params[Attributes::Configuration][Attributes::SaveLastPosition]=(save_last_pos_chk->isChecked() ? Attributes::True : "");
 		config_params[Attributes::Configuration][Attributes::DisableSmoothness]=(disable_smooth_chk->isChecked() ? Attributes::True : "");
 		config_params[Attributes::Configuration][Attributes::SimplifiedObjCreation]=(simple_obj_creation_chk->isChecked() ? Attributes::True : "");

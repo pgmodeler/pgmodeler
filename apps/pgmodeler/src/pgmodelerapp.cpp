@@ -41,6 +41,16 @@ PgModelerApp::PgModelerApp(int &argc, char **argv) : Application(argc,argv)
 		msgbox.show(e);
 	}
 
+	//Checking if the user specified another widget style using the -style param
+	bool using_style=false;
+
+	for(int i=0; i < argc && !using_style; i++)
+		using_style=QString(argv[i]).contains("-style");
+
+	//If no custom style is specified we force the usage of Fusion (the default for Qt and pgModeler)
+	if(!using_style)
+		setStyle(GlobalAttributes::DefaultQtStyle);
+
 	//Changing the current working dir to the executable's directory in
 	QDir::setCurrent(this->applicationDirPath());
 

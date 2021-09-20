@@ -40,12 +40,6 @@ class TextboxView: public BaseObjectView {
 		QString txtbox_tooltip;
 
 	protected:
-		//! \brief Graphical item that represent the box
-		QGraphicsPolygonItem *box;
-
-		//! \brief Graphical item that represent the text
-		QGraphicsSimpleTextItem *text;
-
 		TextPolygonItem *text_item;
 
 		//! \brief Configures the shadow for the textbox
@@ -74,7 +68,7 @@ class TextboxView: public BaseObjectView {
 		QVariant itemChange(GraphicsItemChange change, const QVariant &value);
 
 	protected slots:
-		virtual void configureObject();
+		virtual void configureObject() override;
 };
 
 #endif

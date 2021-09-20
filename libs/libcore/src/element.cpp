@@ -29,25 +29,37 @@ Element::Element()
 
 void Element::setColumn(Column *column)
 {
-	if(column)
-	{
-		this->column=column;
-		this->expression="";
-	}
+	if(!column)
+		return;
+
+	this->column=column;
+	expression="";
+	simple_col = SimpleColumn();
 }
 
 void Element::setExpression(const QString &expression)
 {
-	if(!expression.isEmpty())
-	{
-		this->expression=expression;
-		this->column=nullptr;
-	}
+	if(expression.isEmpty())
+		return;
+
+	this->expression=expression;
+	column = nullptr;
+	simple_col = SimpleColumn();
 }
 
 void Element::setOperatorClass(OperatorClass *oper_class)
 {
-	this->operator_class=oper_class;
+	operator_class = oper_class;
+}
+
+void Element::setSimpleColumn(const SimpleColumn &col)
+{
+	if(!col.isValid())
+		return;
+
+	simple_col = col;
+	column = nullptr;
+	expression = "";
 }
 
 void Element::setSortingAttribute(unsigned attrib, bool value)
@@ -91,6 +103,11 @@ OperatorClass *Element::getOperatorClass()
 	return operator_class;
 }
 
+SimpleColumn Element::getSimpleColumn()
+{
+	return simple_col;
+}
+
 void Element::configureAttributes(attribs_map &attributes, unsigned def_type)
 {
 	attributes[Attributes::Column]="";
@@ -100,16 +117,22 @@ void Element::configureAttributes(attribs_map &attributes, unsigned def_type)
 	attributes[Attributes::NullsFirst]=(this->sorting_enabled && this->sorting_attibs[NullsFirst] ? Attributes::True : "");
 	attributes[Attributes::AscOrder]=(this->sorting_enabled && this->sorting_attibs[AscOrder] ? Attributes::True : "");
 
-
 	if(column)
-		attributes[Attributes::Column]=column->getName(true);
+		attributes[Attributes::Column]=column->getName(def_type == SchemaParser::SqlDefinition);
+	else if(simple_col.isValid())
+	{
+		if(def_type == SchemaParser::SqlDefinition)
+			attributes[Attributes::Column] = BaseObject::formatName(simple_col.name);
+		else
+			attributes[Attributes::Column] = simple_col.name;
+	}
 	else
 		attributes[Attributes::Expression]=expression;
 
 	if(operator_class)
 	{
 		if(def_type==SchemaParser::SqlDefinition)
-			attributes[Attributes::OpClass]=operator_class->getName(true);
+			attributes[Attributes::OpClass]=operator_class->getName(def_type == SchemaParser::SqlDefinition);
 		else
 			attributes[Attributes::OpClass]=operator_class->getCodeDefinition(def_type, true);
 	}
@@ -118,6 +141,7 @@ void Element::configureAttributes(attribs_map &attributes, unsigned def_type)
 bool Element::isEqualsTo(Element &elem)
 {
   return (this->column == elem.column &&
+					this->simple_col == elem.simple_col &&
 		 this->expression == elem.expression &&
 		 this->operator_class == elem.operator_class &&
 		 this->sorting_enabled == elem.sorting_enabled &&

@@ -320,9 +320,15 @@ PgModelerCliApp::~PgModelerCliApp()
 		delete general_conf;
 }
 
-void PgModelerCliApp::printMessage(const QString &msg)
+void PgModelerCliApp::printText(const QString &txt)
 {
-	if(!silent_mode) out << msg << QtCompat::endl;
+	out << txt << QtCompat::endl;
+}
+
+void PgModelerCliApp::printMessage(const QString &txt)
+{
+	if(!silent_mode)
+		printText(txt);
 }
 
 void PgModelerCliApp::configureConnection(bool extra_conn)
@@ -376,128 +382,133 @@ bool PgModelerCliApp::isOptionRecognized(QString &op, bool &accepts_val)
 	return found;
 }
 
+void PgModelerCliApp::showVersionInfo()
+{
+	printMessage();
+	printMessage(tr("pgModeler command line interface.") );
+	printMessage(tr("Version ") + GlobalAttributes::PgModelerVersion + QString(" - %1 Qt %2").arg(GlobalAttributes::PgModelerBuildNumber).arg(QT_VERSION_STR));
+	printMessage(tr("PostgreSQL Database Modeler Project - pgmodeler.io") );
+	printMessage(tr("Copyright 2006-%1 Raphael Araújo e Silva <raphael@pgmodeler.io>").arg(QDate::currentDate().year()));
+	printMessage();
+}
+
 void PgModelerCliApp::showMenu()
 {
-	out << QtCompat::endl;
-	out << tr("pgModeler command line interface.") << QtCompat::endl;
-	out << tr("Version ") << GlobalAttributes::PgModelerVersion << QString(" - %1 Qt %2").arg(GlobalAttributes::PgModelerBuildNumber).arg(QT_VERSION_STR) << QtCompat::endl;
-	out << tr("PostgreSQL Database Modeler Project - pgmodeler.io") << QtCompat::endl;
-	out << tr("Copyright 2006-%1 Raphael Araújo e Silva <raphael@pgmodeler.io>").arg(QDate::currentDate().year()) << QtCompat::endl;
-	out << QtCompat::endl;
+	showVersionInfo();
 
-	out << tr("Usage: pgmodeler-cli [OPTIONS]") << QtCompat::endl << QtCompat::endl;
-	out << tr("This CLI tool provides several operations over models and databases without the need to perform them\nin pgModeler's graphical interface. All available options are described below.") << QtCompat::endl;
-	out << QtCompat::endl;
+	printText(tr("Usage: pgmodeler-cli [OPTIONS]"));
+	printText(tr("This CLI tool provides several operations over models and databases without the need to perform them\nin pgModeler's graphical interface. All available options are described below."));
+	printText();
 
-	out << tr("Operation mode options: ") << QtCompat::endl;
-	out << tr("  %1, %2\t\t    Export the input model to sql script file(s).").arg(short_opts[ExportToFile]).arg(ExportToFile)<< QtCompat::endl;
-	out << tr("  %1, %2\t\t    Export the input model to a png image.").arg(short_opts[ExportToPng]).arg(ExportToPng) << QtCompat::endl;
-	out << tr("  %1, %2\t\t    Export the input model to a svg file.").arg(short_opts[ExportToSvg]).arg(ExportToSvg) << QtCompat::endl;
-	out << tr("  %1, %2\t\t    Export the input model to a data directory in HTML format.").arg(short_opts[ExportToDict]).arg(ExportToDict) << QtCompat::endl;
-	out << tr("  %1, %2\t\t    Export the input model directly to a PostgreSQL server.").arg(short_opts[ExportToDbms]).arg(ExportToDbms) << QtCompat::endl;
-	out << tr("  %1, %2\t\t    List available connections in file %3.").arg(short_opts[ListConns]).arg(ListConns).arg(GlobalAttributes::ConnectionsConf + GlobalAttributes::ConfigurationExt) << QtCompat::endl;
-	out << tr("  %1, %2\t\t    Import a database to an output file.").arg(short_opts[ImportDb]).arg(ImportDb) << QtCompat::endl;
-	out << tr("  %1, %2\t\t\t    Compares a model and a database or two databases generating the SQL script to sync the latter in relation to the first.").arg(short_opts[Diff]).arg(Diff) << QtCompat::endl;
-	out << tr("  %1, %2\t\t    Try to fix the structure of the input model file in order to make it loadable again.").arg(short_opts[FixModel]).arg(FixModel) << QtCompat::endl;
-	out << tr("  %1, %2\t\t    Create the pgModeler's configuration folder and files in the user's local storage.").arg(short_opts[CreateConfigs]).arg(CreateConfigs) << QtCompat::endl;
+	printText(tr("Operation mode options: "));
+	printText(tr("  %1, %2\t\t    Export the input model to sql script file(s).").arg(short_opts[ExportToFile]).arg(ExportToFile));
+	printText(tr("  %1, %2\t\t    Export the input model to a png image.").arg(short_opts[ExportToPng]).arg(ExportToPng) );
+	printText(tr("  %1, %2\t\t    Export the input model to a svg file.").arg(short_opts[ExportToSvg]).arg(ExportToSvg) );
+	printText(tr("  %1, %2\t\t    Export the input model to a data directory in HTML format.").arg(short_opts[ExportToDict]).arg(ExportToDict));
+	printText(tr("  %1, %2\t\t    Export the input model directly to a PostgreSQL server.").arg(short_opts[ExportToDbms]).arg(ExportToDbms));
+	printText(tr("  %1, %2\t\t    List available connections in file %3.").arg(short_opts[ListConns]).arg(ListConns).arg(GlobalAttributes::ConnectionsConf + GlobalAttributes::ConfigurationExt));
+	printText(tr("  %1, %2\t\t    Import a database to an output file.").arg(short_opts[ImportDb]).arg(ImportDb));
+	printText(tr("  %1, %2\t\t\t    Compares a model and a database or two databases generating the SQL script to sync the latter in relation to the first.").arg(short_opts[Diff]).arg(Diff));
+	printText(tr("  %1, %2\t\t    Try to fix the structure of the input model file in order to make it loadable again.").arg(short_opts[FixModel]).arg(FixModel));
+	printText(tr("  %1, %2\t\t    Create the pgModeler's configuration folder and files in the user's local storage.").arg(short_opts[CreateConfigs]).arg(CreateConfigs));
 #ifndef Q_OS_MAC
-	out << tr("  %1, %2 [ACTION]\t    Handles the file association to .dbm files. The ACTION can be [%3 | %4].").arg(short_opts[DbmMimeType]).arg(DbmMimeType).arg(Install).arg(Uninstall) << QtCompat::endl;
+	printText(tr("  %1, %2 [ACTION]\t    Handles the file association to .dbm files. The ACTION can be [%3 | %4].").arg(short_opts[DbmMimeType]).arg(DbmMimeType).arg(Install).arg(Uninstall));
 #endif
-	out << tr("  %1, %2\t\t\t    Show this help menu.").arg(short_opts[Help]).arg(Help) << QtCompat::endl;
-	out << QtCompat::endl;
+	printText(tr("  %1, %2\t\t\t    Show this help menu.").arg(short_opts[Help]).arg(Help));
+	printText();
 
-	out << tr("General options: ") << QtCompat::endl;
-	out << tr("  %1, %2 [FILE]\t\t    Input model file (.dbm). This is mandatory for export and fix operations.").arg(short_opts[Input]).arg(Input) << QtCompat::endl;
-	out << tr("  %1, %2 [DBNAME]\t    Input database name. This is mandatory for import operation.").arg(short_opts[InputDb]).arg(InputDb) << QtCompat::endl;
-	out << tr("  %1, %2 [FILE|DIRECTORY]    Output file or directory. This is mandatory for fixing model or exporting to file, png or svg.").arg(short_opts[Output]).arg(Output) << QtCompat::endl;
-	out << tr("  %1, %2\t\t    Force the PostgreSQL syntax to the specified version when generating SQL code. The version string must be in form major.minor.").arg(short_opts[PgSqlVer]).arg(PgSqlVer) << QtCompat::endl;
-	out << tr("  %1, %2\t\t\t    Silent execution. Only critical messages and errors are shown during process.").arg(short_opts[Silent]).arg(Silent) << QtCompat::endl;
-	out << QtCompat::endl;	
+	printText(tr("General options: "));
+	printText(tr("  %1, %2 [FILE]\t\t    Input model file (.dbm). This is mandatory for export and fix operations.").arg(short_opts[Input]).arg(Input));
+	printText(tr("  %1, %2 [DBNAME]\t    Input database name. This is mandatory for import operation.").arg(short_opts[InputDb]).arg(InputDb));
+	printText(tr("  %1, %2 [FILE|DIRECTORY]    Output file or directory. This is mandatory for fixing model or exporting to file, png or svg.").arg(short_opts[Output]).arg(Output));
+	printText(tr("  %1, %2\t\t    Force the PostgreSQL syntax to the specified version when generating SQL code. The version string must be in form major.minor.").arg(short_opts[PgSqlVer]).arg(PgSqlVer));
+	printText(tr("  %1, %2\t\t\t    Silent execution. Only critical messages and errors are shown during process.").arg(short_opts[Silent]).arg(Silent));
+	printText();
 
-	out << tr("SQL file export options: ") << QtCompat::endl;
-	out << tr("  %1, %2\t\t\t    The SQL file is generated per object. The files will be named in such a way to reflect the correct creation order of the objects.").arg(short_opts[Split]).arg(Split) << QtCompat::endl;
-	out << QtCompat::endl;
+	printText(tr("SQL file export options: "));
+	printText(tr("  %1, %2\t\t\t    The SQL file is generated per object. The files will be named in such a way to reflect the correct creation order of the objects.").arg(short_opts[Split]).arg(Split));
+	printText();
 
-	out << tr("PNG and SVG export options: ") << QtCompat::endl;
-	out << tr("  %1, %2\t\t    Draws the grid in the exported image.").arg(short_opts[ShowGrid]).arg(ShowGrid) << QtCompat::endl;
-	out << tr("  %1, %2\t    Draws the page delimiters in the exported image.").arg(short_opts[ShowDelimiters]).arg(ShowDelimiters) << QtCompat::endl;
-	out << tr("  %1, %2\t\t    Each page will be exported in a separated png image. (Only for PNG images)").arg(short_opts[PageByPage]).arg(PageByPage) << QtCompat::endl;
-	out << tr("  %1, %2 [FACTOR]\t\t    Applies a zoom (in percent) before export to png image. Accepted zoom interval: %3-%4 (Only for PNG images)").arg(short_opts[ZoomFactor]).arg(ZoomFactor).arg(ModelWidget::MinimumZoom*100).arg(ModelWidget::MaximumZoom*100) << QtCompat::endl;
-	out << QtCompat::endl;
+	printText(tr("PNG and SVG export options: "));
+	printText(tr("  %1, %2\t\t    Draws the grid in the exported image.").arg(short_opts[ShowGrid]).arg(ShowGrid));
+	printText(tr("  %1, %2\t    Draws the page delimiters in the exported image.").arg(short_opts[ShowDelimiters]).arg(ShowDelimiters));
+	printText(tr("  %1, %2\t\t    Each page will be exported in a separated png image. (Only for PNG images)").arg(short_opts[PageByPage]).arg(PageByPage));
+	printText(tr("  %1, %2 [FACTOR]\t\t    Applies a zoom (in percent) before export to png image. Accepted zoom interval: %3-%4 (Only for PNG images)").arg(short_opts[ZoomFactor]).arg(ZoomFactor).arg(ModelWidget::MinimumZoom*100).arg(ModelWidget::MaximumZoom*100));
+	printText();
 
-	out << tr("Data dictionary export options: ") << QtCompat::endl;
-	out << tr("  %1, %2\t\t\t    The data dictionaries are generated in separated files inside the selected output directory.").arg(short_opts[Split]).arg(Split) << QtCompat::endl;
-	out << tr("  %1, %2\t\t    Avoids the generation of the index that is used to help navigating through the data dictionary.").arg(short_opts[NoIndex]).arg(NoIndex) << QtCompat::endl;
-	out << QtCompat::endl;
+	printText(tr("Data dictionary export options: "));
+	printText(tr("  %1, %2\t\t\t    The data dictionaries are generated in separated files inside the selected output directory.").arg(short_opts[Split]).arg(Split));
+	printText(tr("  %1, %2\t\t    Avoids the generation of the index that is used to help navigating through the data dictionary.").arg(short_opts[NoIndex]).arg(NoIndex));
+	printText();
 
-	out << tr("Connection options: ") << QtCompat::endl;
-	out << tr("  %1, %2 [ALIAS]\t    Connection configuration alias to be used.").arg(short_opts[ConnAlias]).arg(ConnAlias) << QtCompat::endl;
-	out << tr("  %1, %2 [HOST]\t\t    PostgreSQL host in which a task will operate.").arg(short_opts[Host]).arg(Host) << QtCompat::endl;
-	out << tr("  %1, %2 [PORT]\t\t    PostgreSQL host listening port.").arg(short_opts[Port]).arg(Port) << QtCompat::endl;
-	out << tr("  %1, %2 [USER]\t\t    PostgreSQL username.").arg(short_opts[User]).arg(User) << QtCompat::endl;
-	out << tr("  %1, %2 [PASSWORD]\t    PostgreSQL user password.").arg(short_opts[Passwd]).arg(Passwd) << QtCompat::endl;
-	out << tr("  %1, %2 [DBNAME]\t    Connection's initial database.").arg(short_opts[InitialDb]).arg(InitialDb) << QtCompat::endl;
-	out << QtCompat::endl;
+	printText(tr("Connection options: "));
+	printText(tr("  %1, %2 [ALIAS]\t    Connection configuration alias to be used.").arg(short_opts[ConnAlias]).arg(ConnAlias));
+	printText(tr("  %1, %2 [HOST]\t\t    PostgreSQL host in which a task will operate.").arg(short_opts[Host]).arg(Host));
+	printText(tr("  %1, %2 [PORT]\t\t    PostgreSQL host listening port.").arg(short_opts[Port]).arg(Port));
+	printText(tr("  %1, %2 [USER]\t\t    PostgreSQL username.").arg(short_opts[User]).arg(User));
+	printText(tr("  %1, %2 [PASSWORD]\t    PostgreSQL user password.").arg(short_opts[Passwd]).arg(Passwd));
+	printText(tr("  %1, %2 [DBNAME]\t    Connection's initial database.").arg(short_opts[InitialDb]).arg(InitialDb));
+	printText();
 
-	out << tr("DBMS export options: ") << QtCompat::endl;
-	out << tr("  %1, %2\t    Ignores errors related to duplicated objects that eventually exist in the server.").arg(short_opts[IgnoreDuplicates]).arg(IgnoreDuplicates) << QtCompat::endl;
-	out << tr("  %1, %2 [CODES] Ignores additional errors by their codes. A comma-separated list of alphanumeric codes should be provided.").arg(short_opts[IgnoreErrorCodes]).arg(IgnoreErrorCodes) << QtCompat::endl;
-	out << tr("  %1, %2\t\t    Drop the database before execute a export process.").arg(short_opts[DropDatabase]).arg(DropDatabase) << QtCompat::endl;
-	out << tr("  %1, %2\t\t    Runs the DROP commands attached to SQL-enabled objects.").arg(short_opts[DropObjects]).arg(DropObjects) << QtCompat::endl;
-	out << tr("  %1, %2\t\t    Simulates an export process by executing all steps but undoing any modification in the end.").arg(short_opts[Simulate]).arg(Simulate) << QtCompat::endl;
-	out << tr("  %1, %2\t\t    Generates temporary names for database, roles and tablespaces when in simulation mode.").arg(short_opts[UseTmpNames]).arg(UseTmpNames) << QtCompat::endl;
-	out << QtCompat::endl;
+	printText(tr("DBMS export options: "));
+	printText(tr("  %1, %2\t    Ignores errors related to duplicated objects that eventually exist in the server.").arg(short_opts[IgnoreDuplicates]).arg(IgnoreDuplicates));
+	printText(tr("  %1, %2 [CODES] Ignores additional errors by their codes. A comma-separated list of alphanumeric codes should be provided.").arg(short_opts[IgnoreErrorCodes]).arg(IgnoreErrorCodes));
+	printText(tr("  %1, %2\t\t    Drop the database before execute a export process.").arg(short_opts[DropDatabase]).arg(DropDatabase));
+	printText(tr("  %1, %2\t\t    Runs the DROP commands attached to SQL-enabled objects.").arg(short_opts[DropObjects]).arg(DropObjects));
+	printText(tr("  %1, %2\t\t    Simulates an export process by executing all steps but undoing any modification in the end.").arg(short_opts[Simulate]).arg(Simulate));
+	printText(tr("  %1, %2\t\t    Generates temporary names for database, roles and tablespaces when in simulation mode.").arg(short_opts[UseTmpNames]).arg(UseTmpNames));
+	printText();
 
-	out << tr("Database import options: ") << QtCompat::endl;
-	out << tr("  %1, %2\t\t    Ignore all errors and try to create as many as possible objects.").arg(short_opts[IgnoreImportErrors]).arg(IgnoreImportErrors) << QtCompat::endl;
-	out << tr("  %1, %2\t    Import system built-in objects. This option causes the model bloating due to the importing of unneeded objects.").arg(short_opts[ImportSystemObjs]).arg(ImportSystemObjs) << QtCompat::endl;
-	out << tr("  %1, %2\t    Import extension objects. This option causes the model bloating due to the importing of unneeded objects.").arg(short_opts[ImportExtensionObjs]).arg(ImportExtensionObjs) << QtCompat::endl;
-	out << tr("  %1, %2 [FILTER]    Causes the import process to import only those objects matching the filter(s). The FILTER should be in the form type:pattern:mode.").arg(short_opts[FilterObjects]).arg(FilterObjects) << QtCompat::endl;
-	out << tr("  %1, %2\t\t    Causes only objects matching the provided filter(s) to be imported. Those not matching filter(s) are discarded.").arg(short_opts[OnlyMatching]).arg(OnlyMatching) << QtCompat::endl;
-	out << tr("  %1, %2\t\t    Causes the objects matching to be performed over their names instead of their signature ([schema].[name]).").arg(short_opts[MatchByName]).arg(MatchByName) << QtCompat::endl;
-	out << tr("  %1, %2 [OBJECTS]   Forces the importing of children objects related to tables/views/foreign tables matched by the filter(s). The OBJECTS is a comma separated list types.").arg(short_opts[ForceChildren]).arg(ForceChildren) << QtCompat::endl;
-	out << tr("  %1, %2\t\t    Run import in debug mode printing all queries executed in the server.").arg(short_opts[DebugMode]).arg(DebugMode) << QtCompat::endl;
-	out << QtCompat::endl;
+	printText(tr("Database import options: "));
+	printText(tr("  %1, %2\t\t    Ignore all errors and try to create as many as possible objects.").arg(short_opts[IgnoreImportErrors]).arg(IgnoreImportErrors));
+	printText(tr("  %1, %2\t    Import system built-in objects. This option causes the model bloating due to the importing of unneeded objects.").arg(short_opts[ImportSystemObjs]).arg(ImportSystemObjs));
+	printText(tr("  %1, %2\t    Import extension objects. This option causes the model bloating due to the importing of unneeded objects.").arg(short_opts[ImportExtensionObjs]).arg(ImportExtensionObjs));
+	printText(tr("  %1, %2 [FILTER]    Causes the import process to import only those objects matching the filter(s). The FILTER should be in the form type:pattern:mode.").arg(short_opts[FilterObjects]).arg(FilterObjects));
+	printText(tr("  %1, %2\t\t    Causes only objects matching the provided filter(s) to be imported. Those not matching filter(s) are discarded.").arg(short_opts[OnlyMatching]).arg(OnlyMatching));
+	printText(tr("  %1, %2\t\t    Causes the objects matching to be performed over their names instead of their signature ([schema].[name]).").arg(short_opts[MatchByName]).arg(MatchByName));
+	printText(tr("  %1, %2 [OBJECTS]   Forces the importing of children objects related to tables/views/foreign tables matched by the filter(s). The OBJECTS is a comma separated list types.").arg(short_opts[ForceChildren]).arg(ForceChildren));
+	printText(tr("  %1, %2\t\t    Run import in debug mode printing all queries executed in the server.").arg(short_opts[DebugMode]).arg(DebugMode));
+	printText();
 
-	out << tr("Diff options: ") << QtCompat::endl;
-	out << tr("  %1, %2 [DBNAME]\t    The database used in the comparison. All the SQL code generated is applied to it.").arg(short_opts[CompareTo]).arg(CompareTo) << QtCompat::endl;
-	out << tr("  %1, %2\t\t    Toggles the partial diff operation. A set of objects filters should be provided using the import option %3.").arg(short_opts[PartialDiff]).arg(PartialDiff).arg(FilterObjects) << QtCompat::endl;
-	out << tr("  %1, %2\t\t\t    Forces a full diff if the provided filters were not able to retrieve objects for a partial diff operation.").arg(short_opts[Force]).arg(Force) << QtCompat::endl;
-	out << tr("  %1, %2\t\t    Matches all database model objects in which modification date starts in the specified date. (Only for partial diff)").arg(short_opts[StartDate]).arg(StartDate) << QtCompat::endl;
-	out << tr("  %1, %2\t\t    Matches all database model objects in which modification date ends in the specified date. (Only for partial diff)").arg(short_opts[EndDate]).arg(EndDate) << QtCompat::endl;
-	out << tr("  %1, %2\t\t\t    Save the generated diff code to output file.").arg(short_opts[SaveDiff]).arg(SaveDiff) << QtCompat::endl;
-	out << tr("  %1, %2\t\t\t    Apply the generated diff code on the database server.").arg(short_opts[ApplyDiff]).arg(ApplyDiff) << QtCompat::endl;
-	out << tr("  %1, %2\t\t    Don't preview the generated diff code when applying it to the server.").arg(short_opts[NoDiffPreview]).arg(NoDiffPreview) << QtCompat::endl;
-	out << tr("  %1, %2\t    Drop cluster level objects like roles and tablespaces.").arg(short_opts[DropClusterObjs]).arg(DropClusterObjs) << QtCompat::endl;
-	out << tr("  %1, %2\t\t    Revoke permissions already set on the database. New permissions configured in the input model are still applied.").arg(short_opts[RevokePermissions]).arg(RevokePermissions) << QtCompat::endl;
-	out << tr("  %1, %2\t\t    Drop missing objects. Generates DROP commands for objects that are present in the input model but not in the compared database.").arg(short_opts[DropMissingObjs]).arg(DropMissingObjs) << QtCompat::endl;
-	out << tr("  %1, %2\t    Force the drop of missing columns and constraints. Causes only columns and constraints to be dropped, other missing objects aren't removed.").arg(short_opts[ForceDropColsConstrs]).arg(ForceDropColsConstrs) << QtCompat::endl;
-	out << tr("  %1, %2\t\t    Rename the destination database when the names of the involved databases are different.").arg(short_opts[RenameDb]).arg(RenameDb) << QtCompat::endl;
-	out << tr("  %1, %2\t\t    Don't drop objects in cascade mode.").arg(short_opts[NoCascadeDrop]).arg(NoCascadeDrop) << QtCompat::endl;
-	out << tr("  %1, %2\t    Don't reuse sequences on serial columns. Drop the old sequence assigned to a serial column and creates a new one.").arg(short_opts[NoSequenceReuse]).arg(NoSequenceReuse) << QtCompat::endl;
-	out << tr("  %1, %2\t    Force the recreating of objects. Instead of an ALTER command a DROP and CREATE commands are used to create a new version of the objects.").arg(short_opts[ForceRecreateObjs]).arg(ForceRecreateObjs) << QtCompat::endl;
-	out << tr("  %1, %2\t    Recreate only the unmodifiable objects. These objects are the ones which can't be changed via ALTER command.").arg(short_opts[OnlyUnmodifiable]).arg(OnlyUnmodifiable) << QtCompat::endl;
-	out << QtCompat::endl;
+	printText(tr("Diff options: "));
+	printText(tr("  %1, %2 [DBNAME]\t    The database used in the comparison. All the SQL code generated is applied to it.").arg(short_opts[CompareTo]).arg(CompareTo));
+	printText(tr("  %1, %2\t\t    Toggles the partial diff operation. A set of objects filters should be provided using the import option %3.").arg(short_opts[PartialDiff]).arg(PartialDiff).arg(FilterObjects));
+	printText(tr("  %1, %2\t\t\t    Forces a full diff if the provided filters were not able to retrieve objects for a partial diff operation.").arg(short_opts[Force]).arg(Force));
+	printText(tr("  %1, %2\t\t    Matches all database model objects in which modification date starts in the specified date. (Only for partial diff)").arg(short_opts[StartDate]).arg(StartDate));
+	printText(tr("  %1, %2\t\t    Matches all database model objects in which modification date ends in the specified date. (Only for partial diff)").arg(short_opts[EndDate]).arg(EndDate));
+	printText(tr("  %1, %2\t\t\t    Save the generated diff code to output file.").arg(short_opts[SaveDiff]).arg(SaveDiff));
+	printText(tr("  %1, %2\t\t\t    Apply the generated diff code on the database server.").arg(short_opts[ApplyDiff]).arg(ApplyDiff));
+	printText(tr("  %1, %2\t\t    Don't preview the generated diff code when applying it to the server.").arg(short_opts[NoDiffPreview]).arg(NoDiffPreview));
+	printText(tr("  %1, %2\t    Drop cluster level objects like roles and tablespaces.").arg(short_opts[DropClusterObjs]).arg(DropClusterObjs));
+	printText(tr("  %1, %2\t\t    Revoke permissions already set on the database. New permissions configured in the input model are still applied.").arg(short_opts[RevokePermissions]).arg(RevokePermissions));
+	printText(tr("  %1, %2\t\t    Drop missing objects. Generates DROP commands for objects that are present in the input model but not in the compared database.").arg(short_opts[DropMissingObjs]).arg(DropMissingObjs));
+	printText(tr("  %1, %2\t    Force the drop of missing columns and constraints. Causes only columns and constraints to be dropped, other missing objects aren't removed.").arg(short_opts[ForceDropColsConstrs]).arg(ForceDropColsConstrs));
+	printText(tr("  %1, %2\t\t    Rename the destination database when the names of the involved databases are different.").arg(short_opts[RenameDb]).arg(RenameDb));
+	printText(tr("  %1, %2\t\t    Don't drop objects in cascade mode.").arg(short_opts[NoCascadeDrop]).arg(NoCascadeDrop));
+	printText(tr("  %1, %2\t    Don't reuse sequences on serial columns. Drop the old sequence assigned to a serial column and creates a new one.").arg(short_opts[NoSequenceReuse]).arg(NoSequenceReuse));
+	printText(tr("  %1, %2\t    Force the recreating of objects. Instead of an ALTER command a DROP and CREATE commands are used to create a new version of the objects.").arg(short_opts[ForceRecreateObjs]).arg(ForceRecreateObjs));
+	printText(tr("  %1, %2\t    Recreate only the unmodifiable objects. These objects are the ones which can't be changed via ALTER command.").arg(short_opts[OnlyUnmodifiable]).arg(OnlyUnmodifiable));
+	printText();
 
-	out << tr("Model fix options: ") << QtCompat::endl;
-	out << tr("  %1, %2 [NUMBER]\t    Model fix tries. When reaching the maximum count the invalid objects will be discarded.").arg(short_opts[FixTries]).arg(FixTries) << QtCompat::endl;
-	out << QtCompat::endl;
+	printText(tr("Model fix options: ") );
+	printText(tr("  %1, %2 [NUMBER]\t    Model fix tries. When reaching the maximum count the invalid objects will be discarded.").arg(short_opts[FixTries]).arg(FixTries));
+	printText();
 
 #ifndef Q_OS_MAC
-	out << tr("File association options: ") << QtCompat::endl;
-	out << tr("  %1, %2\t\t    The file association to .dbm files will be applied in a system wide level instead of to the current user.").arg(short_opts[SystemWide]).arg(SystemWide) << QtCompat::endl;
-	out << tr("  %1, %2 \t\t    Forces the mime type install or uninstall. ").arg(short_opts[Force]).arg(Force) << QtCompat::endl;
-	out << QtCompat::endl;
+	printText(tr("File association options: "));
+	printText(tr("  %1, %2\t\t    The file association to .dbm files will be applied in a system wide level instead of to the current user.").arg(short_opts[SystemWide]).arg(SystemWide));
+	printText(tr("  %1, %2 \t\t\t    Forces the mime type install or uninstall. ").arg(short_opts[Force]).arg(Force));
+	printText();
 #endif
 
-	out << tr("Config files creation options: ") << QtCompat::endl;
-	out << tr("  %1, %2 \t\t    Copy only missing configuration files to the user's local storage.").arg(short_opts[MissingOnly]).arg(MissingOnly) << QtCompat::endl;
-	out << tr("  %1, %2 \t\t\t    Forces the recreation of all configuration files. This option implies the backup of the current settings.").arg(short_opts[Force]).arg(Force) << QtCompat::endl;
-	out << QtCompat::endl;
+	printText(tr("Config files creation options: "));
+	printText(tr("  %1, %2 \t\t    Copy only missing configuration files to the user's local storage.").arg(short_opts[MissingOnly]).arg(MissingOnly));
+	printText(tr("  %1, %2 \t\t\t    Forces the recreation of all configuration files. This option implies the backup of the current settings.").arg(short_opts[Force]).arg(Force));
+	printText();
 
-	out << QtCompat::endl;
-	out << tr("** The FILTER value in %1 option has the form type:pattern:mode. ").arg(FilterObjects) << QtCompat::endl;
-	out << tr("   * The `type' is the type of object to be filtered and accepts the following values (invalid types ignored): ") << QtCompat::endl;
+	printText();
+	printText(tr("** The FILTER value in %1 option has the form type:pattern:mode. ").arg(FilterObjects));
+	printText(tr("   * The `type' is the type of object to be filtered and accepts the following values (invalid types ignored): "));
 
 	QStringList list;
 	QString child_list;
@@ -526,35 +537,35 @@ void PgModelerCliApp::showMenu()
 			fmt_types.clear();
 		}
 	}
-	out << lines.join('\n') << QtCompat::endl;
+	printText(lines.join('\n'));
 
-	out << QtCompat::endl;
-	out << tr("   * The `pattern' is the text pattern which is matched against the objects names.") << QtCompat::endl;
-	out << QtCompat::endl;
-	out << tr("   * The `mode' is the way the pattern is matched. This one accepts two values: ") << QtCompat::endl;
-	out << tr("     > `%1' causes the pattern to be used as a wildcard string while matching objects names.").arg(CoreUtilsNs::FilterWildcard) << QtCompat::endl;
-	out << tr("     > `%1' causes the pattern to be treated as a POSIX regular expression while matching objects names.").arg(CoreUtilsNs::FilterRegExp) << QtCompat::endl;
-	out << QtCompat::endl;
-	out << tr("   * The option %1 has effect only when used with %2 and will avoid discarding children of matched tables.").arg(ForceChildren).arg(OnlyMatching) << QtCompat::endl;
-	out << tr("     Other tables eventually imported which are dependencies of the matched objects will have their children discarded.") << QtCompat::endl;
-	out << tr("     The comma separated list of table children objects accepts the values:") << QtCompat::endl;
-	out << tr("     > %1").arg(child_list)  << QtCompat::endl;
-	out << tr("     > Use the special keyword `%1' to force all children objects.").arg(AllChildren)  << QtCompat::endl;
-	out << QtCompat::endl;
-	out << tr("   * NOTES: all comparisons during filtering process are case insensitive.") << QtCompat::endl;
-	out << tr("     Using the filtering options may cause the importing of additional objects due to the automatic dependency resolution.") << QtCompat::endl;
-	out << QtCompat::endl;
-	out << tr("** The diff process allows the usage all options related to the import operation.") << QtCompat::endl;
-	out << tr("   It also accepts the following export operation options: `%1', `%2'").arg(IgnoreDuplicates).arg(IgnoreErrorCodes) << QtCompat::endl;
-	out << QtCompat::endl;
-	out << tr("** The partial diff operation will always force the options %1 and %2 = %3 for more reliable results.").arg(OnlyMatching).arg(ForceChildren).arg(AllChildren) << QtCompat::endl;
-	out << tr("   * The options %1 and %2 accepts the ISO8601 date/time format: yyyy-MM-dd hh:mm:ss").arg(StartDate).arg(EndDate) << QtCompat::endl;
-	out << QtCompat::endl;
-	out << tr("** When running the diff using two databases (%1 and %2) there's the option to specify two separated connections/aliases.").arg(InputDb).arg(CompareTo) << QtCompat::endl;
-	out << tr("   If only one connection is set then it will be used to import the input database as well to retrieve the database used in the comparison.") << QtCompat::endl;
-	out << tr("   A second connection can be specified by appending a 1 to any connection configuration parameter listed above.") << QtCompat::endl;
-	out << tr("   This causes the connection to be associated to %1 exclusively.").arg(CompareTo) << QtCompat::endl;
-	out << QtCompat::endl;
+	printText();
+	printText(tr("   * The `pattern' is the text pattern which is matched against the objects names."));
+	printText();
+	printText(tr("   * The `mode' is the way the pattern is matched. This one accepts two values: "));
+	printText(tr("     > `%1' causes the pattern to be used as a wildcard string while matching objects names.").arg(CoreUtilsNs::FilterWildcard));
+	printText(tr("     > `%1' causes the pattern to be treated as a POSIX regular expression while matching objects names.").arg(CoreUtilsNs::FilterRegExp));
+	printText();
+	printText(tr("   * The option %1 has effect only when used with %2 and will avoid discarding children of matched tables.").arg(ForceChildren).arg(OnlyMatching));
+	printText(tr("     Other tables eventually imported which are dependencies of the matched objects will have their children discarded."));
+	printText(tr("     The comma separated list of table children objects accepts the values:"));
+	printText(tr("     > %1").arg(child_list) );
+	printText(tr("     > Use the special keyword `%1' to force all children objects.").arg(AllChildren) );
+	printText();
+	printText(tr("   * NOTES: all comparisons during filtering process are case insensitive."));
+	printText(tr("     Using the filtering options may cause the importing of additional objects due to the automatic dependency resolution."));
+	printText();
+	printText(tr("** The diff process allows the usage all options related to the import operation."));
+	printText(tr("   It also accepts the following export operation options: `%1', `%2'").arg(IgnoreDuplicates).arg(IgnoreErrorCodes));
+	printText();
+	printText(tr("** The partial diff operation will always force the options %1 and %2 = %3 for more reliable results.").arg(OnlyMatching).arg(ForceChildren).arg(AllChildren));
+	printText(tr("   * The options %1 and %2 accepts the ISO8601 date/time format: yyyy-MM-dd hh:mm:ss").arg(StartDate).arg(EndDate));
+	printText();
+	printText(tr("** When running the diff using two databases (%1 and %2) there's the option to specify two separated connections/aliases.").arg(InputDb).arg(CompareTo));
+	printText(tr("   If only one connection is set then it will be used to import the input database as well to retrieve the database used in the comparison."));
+	printText(tr("   A second connection can be specified by appending a 1 to any connection configuration parameter listed above."));
+	printText(tr("   This causes the connection to be associated to %1 exclusively.").arg(CompareTo));
+	printText();
 }
 
 void PgModelerCliApp::listConnections()
@@ -562,20 +573,21 @@ void PgModelerCliApp::listConnections()
 	map<QString, Connection *>::iterator itr=connections.begin();
 
 	if(connections.empty())
-		out << QtCompat::endl <<  tr("There are no connections configured.") << QtCompat::endl << QtCompat::endl;
+		printText(tr("There are no connections configured."));
 	else
 	{
 		unsigned id=0;
 
-		out << QtCompat::endl << tr("Available connections (alias : connection string)") << QtCompat::endl;
+		printText(tr("Available connections (alias : connection string)"));
+
 		while(itr != connections.end())
 		{
-			out << QString("[") << id++ <<  QString("] ") << itr->first << QString(" : ") <<
-						 itr->second->getConnectionString().replace(PasswordRegExp, PasswordPlaceholder) << QtCompat::endl;
-
+			printText(QString("[") + QString::number(id++) + QString("] ") + itr->first + QString(" : ") +
+								itr->second->getConnectionString().replace(PasswordRegExp, PasswordPlaceholder));
 			itr++;
 		}
-		out << QtCompat::endl;
+
+		printText();
 	}
 }
 
@@ -800,7 +812,7 @@ int PgModelerCliApp::exec()
 	{
 		if(!parsed_opts.empty())
 		{
-			printMessage(QString("\npgModeler %1 %2").arg(GlobalAttributes::PgModelerVersion).arg(tr("command line interface.")));
+			showVersionInfo();
 
 			if(parsed_opts.count(ListConns))
 				 listConnections();
@@ -829,18 +841,18 @@ int PgModelerCliApp::exec()
 void PgModelerCliApp::updateProgress(int progress, QString msg, ObjectType)
 {
 	if(progress > 0)
-		out << QString("[%1%] ").arg(progress > 100 ? 100 : progress) << msg << QtCompat::endl;
+		printText(QString("[%1%] ").arg(progress > 100 ? 100 : progress) + msg);
 	else
-		out << msg << QtCompat::endl;
+		printText(msg);
 }
 
 void PgModelerCliApp::printIgnoredError(QString err_cod, QString err_msg, QString cmd)
 {
-	out << QtCompat::endl;
-	out << tr("** Error code `%1' found and ignored. Proceeding with export.").arg(err_cod) << QtCompat::endl;
-	out << tr("** Command: %1").arg(cmd) << QtCompat::endl;
-	out << err_msg << QtCompat::endl;
-	out << QtCompat::endl;
+	printText();
+	printText(tr("** Error code `%1' found and ignored. Proceeding with export.").arg(err_cod));
+	printText(tr("** Command: %1").arg(cmd));
+	printText(err_msg);
+	printText();
 }
 
 void PgModelerCliApp::handleObjectAddition(BaseObject *object)
@@ -1081,7 +1093,7 @@ void PgModelerCliApp::recreateObjects()
 	unsigned tries=0, max_tries=parsed_opts[FixTries].toUInt();
 	int start_pos=-1, end_pos=-1, len=0;
 
-	printMessage(tr("Recreating objects..."));
+	printText(tr("Recreating objects..."));
 
 	if(max_tries==0)
 		max_tries=1;
@@ -1215,10 +1227,12 @@ void PgModelerCliApp::recreateObjects()
 			if(tries > max_tries)
 			{
 				//Outputs the code of the objects that wasn't created
-				out << tr("\n** Object(s) that couldn't fixed: ") << QtCompat::endl;
+				printText();
+				printText(tr("** Object(s) that couldn't fixed: "));
+
 				while(!fail_objs.isEmpty())
 				{
-					out << fail_objs.front() << QtCompat::endl;
+					printText(fail_objs.front());
 					fail_objs.pop_front();
 				}
 
@@ -1234,6 +1248,41 @@ void PgModelerCliApp::recreateObjects()
 				constr.clear();
 			}
 		}
+	}
+
+	// Fixing the roles memberships.
+	Role *role = nullptr, *mem_role = nullptr;
+	bool member_fixed = false;
+
+	for(auto &rl : member_roles)
+	{
+		role = model->getRole(rl.first);
+
+		if(!role)
+		{
+			printMessage(tr("WARNING: Could not find the role `%1'! Ignoring it...").arg(rl.first));
+			continue;
+		}
+
+		for(auto &name : rl.second)
+		{
+			mem_role = model->getRole(name);
+
+			if(!mem_role)
+			{
+				printMessage(tr("WARNING: Could not find the role `%1' of `%2`! Igorning it...").arg(name, rl.first));
+				continue;
+			}
+
+			role->addRole(Role::MemberRole, mem_role);
+			member_fixed = true;
+		}
+	}
+
+	if(member_fixed)
+	{
+		printMessage(tr("WARNING: Roles memberships were fixed but their creation order is not guaranteed!"));
+		printMessage(tr("         It may be necessary to run the fix tool again now on the file `%1'.").arg(parsed_opts[Output]));
 	}
 }
 
@@ -1308,9 +1357,39 @@ void PgModelerCliApp::fixObjectAttributes(QString &obj_xml)
 	if(obj_xml.contains(TagExpr.arg(BaseObject::getSchemaName(ObjectType::Sequence))))
 		obj_xml.replace(QRegExp(QString("(%1)( )*(=)(\")").arg(Attributes::Owner)), QString("%1 = \"").arg(Attributes::OwnerColumn));
 
-	//Remove sysid attribute from <role> tags.
+	/* Remove sysid attribute from <role> tags and storing the referenced roles (ref-roles)
+	 * for later re-assignment. */
 	if(obj_xml.contains(TagExpr.arg(BaseObject::getSchemaName(ObjectType::Role))))
+	{
 		obj_xml.remove(QRegExp(AttributeExpr.arg(QString("sysid"))));
+
+		QRegExp ref_roles_expr = QRegExp(QString("(\\<%1)(.)+(%2)( )*(=)(\")(%3)(\")(.)+(\\/\\>)").arg(Attributes::Roles, Attributes::RoleType, Attributes::Refer));
+		int pos = ref_roles_expr.indexIn(obj_xml);
+
+		if(pos >= 0)
+		{
+			QString buf = obj_xml.mid(pos, ref_roles_expr.matchedLength()),
+					name_attr = QString("name=\""), role_name;
+			int start_idx = 0, end_idx = 0;
+
+			// Extracting the role name
+			start_idx = obj_xml.indexOf(name_attr);
+			end_idx = obj_xml.indexOf("\"", start_idx + name_attr.size());
+			role_name = obj_xml.mid(start_idx, end_idx - start_idx).remove(name_attr);
+
+			// Removing the element <roles ... role-type="refer"/>
+			obj_xml.remove(pos, ref_roles_expr.matchedLength());
+
+			// Retrieve the name of the ref-roles
+			buf.remove(QRegExp("^(.)+(names=\")"));
+			buf.remove(buf.indexOf("\""), buf.size());
+
+			/* Storing the association between the current role and the ref-roles
+			 * in a map for further processing */
+			for(auto &rl_name : buf.split(',', QtCompat::SkipEmptyParts))
+				member_roles[rl_name].append(role_name);
+		}
+	}
 
 	//Replace <parameter> tag by <typeattrib> on <usertype> tags.
 	if(obj_xml.contains(TagExpr.arg(QString("usertype"))))
@@ -1955,8 +2034,10 @@ void PgModelerCliApp::handleLinuxMimeDatabase(bool uninstall, bool system_wide, 
 			throw Exception(MsgNoFileAssociation, ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	}
 
-	if(!uninstall)
+	if(!uninstall && !system_wide)
 		attribs[Attributes::WorkingDir]=QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
+	else
+		attribs[Attributes::WorkingDir]="";
 
 	try
 	{
@@ -1976,6 +2057,7 @@ void PgModelerCliApp::handleLinuxMimeDatabase(bool uninstall, bool system_wide, 
 				attribs[Attributes::Icon] = icons[i];
 
 				schparser.loadFile(schemas[i]);
+				schparser.ignoreEmptyAttributes(true);
 				buf.append(schparser.getCodeDefinition(attribs).toUtf8());
 				QDir(QString(".")).mkpath(QFileInfo(files[i]).absolutePath());
 

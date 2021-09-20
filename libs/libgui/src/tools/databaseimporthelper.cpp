@@ -999,19 +999,17 @@ void DatabaseImportHelper::createRole(attribs_map &attribs)
 
 	try
 	{
-		QString role_types[]={ Attributes::RefRoles,
-													 Attributes::AdminRoles,
-													 Attributes::MemberRoles };
-		QStringList rl_oids, rl_names;
+		QStringList rl_oids, rl_names, role_types={ Attributes::AdminRoles,
+																								Attributes::MemberRoles };
 
-		for(unsigned i=0; i < 3; i++)
+		for(auto &rl_type : role_types)
 		{
-			rl_oids = Catalog::parseArrayValues(attribs[role_types[i]]);
+			rl_oids = Catalog::parseArrayValues(attribs[rl_type]);
 
 			for(auto &rl_oid : rl_oids)
 				rl_names.append(getDependencyObject(rl_oid, ObjectType::Role, false, auto_resolve_deps, false));
 
-			attribs[role_types[i]]=rl_names.join(',');
+			attribs[rl_type] = rl_names.join(',');
 			rl_names.clear();
 		}
 
@@ -2018,13 +2016,13 @@ void DatabaseImportHelper::createIndex(attribs_map &attribs)
 {
 	try
 	{
-		QStringList cols, opclasses, collations, exprs;
+		QStringList cols, opclasses, collations, exprs, incl_cols;
 		IndexElement elem;
 		BaseTable *parent_tab=nullptr;
 		Collation *coll=nullptr;
 		OperatorClass *opclass=nullptr;
 		QString tab_name, coll_name, opc_name;
-		int i;
+		int i = 0, elem_cnt = 0;
 
 		attribs[Attributes::Factor]=QString("90");
 		tab_name=getDependencyObject(attribs[Attributes::Table], ObjectType::Table, true, auto_resolve_deps, false);
@@ -2046,17 +2044,18 @@ void DatabaseImportHelper::createIndex(attribs_map &attribs)
 		collations=Catalog::parseArrayValues(attribs[Attributes::Collations]);
 		opclasses=Catalog::parseArrayValues(attribs[Attributes::OpClasses]);
 		exprs = Catalog::parseIndexExpressions(attribs[Attributes::Expressions]);
+		elem_cnt = attribs[Attributes::ElementsCount].toInt();
 
-		for(i=0; i < cols.size(); i++)
+		for(i=0; i < elem_cnt; i++)
 		{
 			elem=IndexElement();
 
-			if(cols[i]!=QString("0"))
+			if(cols[i] != "0")
 			{
 				if(parent_tab->getObjectType() == ObjectType::Table)
 					elem.setColumn(dynamic_cast<Table *>(parent_tab)->getColumn(getColumnName(attribs[Attributes::Table], cols[i])));
-				else
-					elem.setExpression(getColumnName(attribs[Attributes::Table], cols[i]));
+				else if(parent_tab->getObjectType() == ObjectType::View)
+					elem.setSimpleColumn(dynamic_cast<View *>(parent_tab)->getColumn(getColumnName(attribs[Attributes::Table], cols[i])));
 			}
 			else if(!exprs.isEmpty())
 			{
@@ -2084,11 +2083,16 @@ void DatabaseImportHelper::createIndex(attribs_map &attribs)
 					elem.setOperatorClass(opclass);
 			}
 
-			if(elem.getColumn() || !elem.getExpression().isEmpty())
+			if(elem.getColumn() || elem.getSimpleColumn().isValid() || !elem.getExpression().isEmpty())
 				attribs[Attributes::Elements]+=elem.getCodeDefinition(SchemaParser::XmlDefinition);
 		}
 
+		for(i = elem_cnt; i < cols.size(); i++)
+			incl_cols.append(getColumnName(attribs[Attributes::Table], cols[i]));
+
+		attribs[Attributes::IncludedCols] = incl_cols.join(',');
 		attribs[Attributes::Table]=tab_name;
+
 		loadObjectXML(ObjectType::Index, attribs);
 		dbmodel->createIndex();
 	}
@@ -2689,8 +2693,7 @@ void DatabaseImportHelper::createColumns(attribs_map &attribs, vector<unsigned> 
 				}
 				else
 					type_name = getType(QString::number(type_oid), false);
-				//type_name+=BaseObject::formatName(types[type_oid][Attributes::Name], false);
-				//type_name.prepend(sch_name);
+
 				is_type_registered=PgSqlType::isRegistered(type_name, dbmodel);
 			}
 		}
@@ -3102,7 +3105,7 @@ QString DatabaseImportHelper::getType(const QString &oid_str, bool generate_xml,
 		QString xml_def, sch_name, obj_name, aux_name;
 		unsigned type_oid=oid_str.toUInt(), elem_tp_oid = 0,
 				dimension=0, object_id=0;
-		bool is_derivated_from_obj = false;
+		bool is_derivated_from_obj = false, is_postgis_type = false;
 
 		if(type_oid > 0)
 		{
@@ -3175,22 +3178,29 @@ QString DatabaseImportHelper::getType(const QString &oid_str, bool generate_xml,
 			if(obj_name.startsWith(QString("timestamp")) || obj_name.startsWith(QString("time")))
 				obj_name.remove(QString(" without time zone"));
 
-			/* Prepend the schema name only if the type it is not in a system schema ('pg_catalog' or 'information_schema')
-			 * and if the schema's names is already present in the type's name (in case of table types) */
+			/* Prepend the schema name only if the type it is not in a system schema ('pg_catalog' or 'information_schema'),
+			 * if the schema's names is already present in the type's name (in case of table types) or if the type being
+			 * retrieved is not a PostGiS one (because, despite the type being from extension PostGiS, it is considered
+			 * a built-in type in pgModeler so there's no need to use schema qualified name) */
+			is_postgis_type = catalog.isExtensionObject(type_oid, "postgis");
 			sch_name = getObjectName(type_attr[Attributes::Schema]);
-			if(!sch_name.isEmpty() &&
-				 (is_derivated_from_obj || (sch_name != QString("pg_catalog") && sch_name != QString("information_schema")) ||
+
+			if(!sch_name.isEmpty() && !is_postgis_type &&
+				 (is_derivated_from_obj ||
+					(sch_name != QString("pg_catalog") && sch_name != QString("information_schema")) ||
 					type_oid > catalog.getLastSysObjectOID()) &&
 				 !obj_name.contains(QRegExp(QString("^(\\\")?(%1)(\\\")?(\\.)").arg(sch_name))))
 			{
 				obj_name.prepend(sch_name + QString("."));
 			}
 
-			/* In case of auto resolve dependencies, if the type is a user defined one and is not derivated from table/view/sequence and
-			 was not created in the database model but its attributes were retrieved, the object will be created to avoid reference errors */
+			/* In case of auto resolve dependencies, if the type is a user defined one and is
+			 * not derivated from table/view/sequence, is not from the postgis extension  and
+			 * was not created in the database model but its attributes were retrieved, the object
+			 * will be created to avoid reference errors */
 			aux_name = obj_name;
 			aux_name.remove(QString("[]"));
-			if(auto_resolve_deps && !type_attr.empty() && !is_derivated_from_obj &&
+			if(auto_resolve_deps && !type_attr.empty() && !is_derivated_from_obj && !is_postgis_type &&
 				 type_oid > catalog.getLastSysObjectOID() && !dbmodel->getType(aux_name))
 			{
 				//If the type is not an array one we simply use the current type attributes map

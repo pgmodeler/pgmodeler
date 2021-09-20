@@ -91,12 +91,20 @@ class LayersConfigWidget : public QWidget, Ui::LayersConfigWidget {
 		//! \brief Enables the control buttons according to the selection on the list
 		void enableButtons();
 
+		//! \brief Checks the items in the layers grid reflecting the active layers in the model performs a full update (slower) in the layers rects
 		void setLayersActive();
 
 	public slots:
 		void setVisible(bool value) override;
+
 		void toggleLayersRects();
+
 		void updateLayersList();
+
+		/*! \brief Performs a simple layers rect update by only recalculating the their size and position
+		 * based on the current layers state. This method is useful when you only need to update/redraw the
+		 * scene layers without force the update of other graphical objects. */
+		void updateLayersRects();
 
 	signals:
 		//! \brief Signal emitted whenever the widget changes its visibility

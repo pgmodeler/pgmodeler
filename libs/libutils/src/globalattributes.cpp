@@ -20,7 +20,7 @@
 #include <QDir>
 
 /** Base version number **/
-const QString GlobalAttributes::PgModelerVersion=QString("0.9.4-alpha1")
+const QString GlobalAttributes::PgModelerVersion=QString("0.9.4-beta")
 
 /* Appending the snapshot build number to the version number
  * when the external variable SNAPSHOT_BUILD is defined */
@@ -37,9 +37,9 @@ const QString GlobalAttributes::PgModelerReverseURI("io.pgmodeler");
 const QString GlobalAttributes::PgModelerSite("https://pgmodeler.io");
 const QString GlobalAttributes::PgModelerSupport("https://pgmodeler.io/support/docs");
 const QString GlobalAttributes::PgModelerSourceURL("https://github.com/pgmodeler/pgmodeler/releases");
-const QString GlobalAttributes::PgModelerDownloadURL=QString("%1/download").arg(PgModelerSite);
-const QString GlobalAttributes::PgModelerDonateURL=QString("%1/#donationForm").arg(PgModelerSite);
-const QString GlobalAttributes::PgModelerUpdateCheckURL=QString("%1/checkupdate?version=").arg(PgModelerSite);
+const QString GlobalAttributes::PgModelerDownloadURL=PgModelerSite + "/download";
+const QString GlobalAttributes::PgModelerDonateURL=PgModelerSite + "/#donationForm";
+const QString GlobalAttributes::PgModelerUpdateCheckURL=PgModelerSite + "/checkupdate?version=%1&mode=%2";
 const QString GlobalAttributes::BugReportEmail("bug@pgmodeler.io");
 const QString GlobalAttributes::BugReportFile("pgmodeler%1.bug");
 const QString GlobalAttributes::StacktraceFile(".stacktrace");

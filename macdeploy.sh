@@ -119,7 +119,7 @@ fi
 echo "Packaging installation..."
 
 # Deploy the Qt libraries onto app bundle
-$QT_ROOT/bin/macdeployqt $BUNDLE -executable=$BUNDLE/Contents/MacOS/pgmodeler-ch -executable=$BUNDLE/Contents/MacOS/pgmodeler-cli >> $LOG 2>&1
+$QT_ROOT/bin/macdeployqt $BUNDLE -executable=$BUNDLE/Contents/MacOS/pgmodeler-ch -executable=$BUNDLE/Contents/MacOS/pgmodeler-cli -executable=$BUNDLE/Contents/MacOS/pgmodeler-se >> $LOG 2>&1
 cp $PGSQL_ROOT/lib/libpq.5.dylib $BUNDLE/Contents/Frameworks >> $LOG 2>&1
 cp $PGSQL_ROOT/lib/libssl.1.* $BUNDLE/Contents/Frameworks >> $LOG 2>&1
 cp $PGSQL_ROOT/lib/libcrypto.1.* $BUNDLE/Contents/Frameworks >> $LOG 2>&1
@@ -128,7 +128,7 @@ cp $PGSQL_ROOT/lib/libcrypto.1.* $BUNDLE/Contents/Frameworks >> $LOG 2>&1
 install_name_tool -change "@loader_path/../lib/libcrypto.1.1.dylib" "@loader_path/../Frameworks/libcrypto.1.1.dylib" $BUNDLE/Contents/Frameworks/libssl.1.1.dylib >> $LOG 2>&1
 install_name_tool -change "@loader_path/../lib/libcrypto.1.1.dylib" "@loader_path/../Frameworks/libcrypto.1.1.dylib" $BUNDLE/Contents/Frameworks/libpq.5.dylib >> $LOG 2>&1
 install_name_tool -change "@loader_path/../lib/libssl.1.1.dylib" "@loader_path/../Frameworks/libssl.1.1.dylib" $BUNDLE/Contents/Frameworks/libpq.5.dylib >> $LOG 2>&1
-install_name_tool -change libpq.5.dylib "@loader_path/../Frameworks/libpq.5.dylib" $BUNDLE/Contents/Frameworks/libpgconnector.dylib >> $LOG 2>&1
+install_name_tool -change libpq.5.dylib "@loader_path/../Frameworks/libpq.5.dylib" $BUNDLE/Contents/Frameworks/libconnector.dylib >> $LOG 2>&1
 
 # Creates an empty dmg file named
 cp installer/macosx/installer_icon.icns $INSTALL_ROOT/.VolumeIcon.icns >> $LOG 2>&1

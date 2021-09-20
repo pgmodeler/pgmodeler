@@ -48,6 +48,11 @@ UpdateNotifierWidget::UpdateNotifierWidget(QWidget *parent) : QWidget(parent)
 	this->adjustSize();
 }
 
+void UpdateNotifierWidget::setCheckVersions(const QString &chk_versions)
+{
+	check_versions = chk_versions;
+}
+
 bool UpdateNotifierWidget::eventFilter(QObject *obj, QEvent *event)
 {
 	if(obj==frame && (event->type()==QEvent::MouseMove || event->type()==QEvent::MouseButtonPress))
@@ -92,7 +97,7 @@ void UpdateNotifierWidget::activateLink(const QString &link)
 
 void UpdateNotifierWidget::checkForUpdate()
 {
-	QUrl url(GlobalAttributes::PgModelerUpdateCheckURL + GlobalAttributes::PgModelerVersion);
+	QUrl url(GlobalAttributes::PgModelerUpdateCheckURL.arg(GlobalAttributes::PgModelerVersion, check_versions));
 	QNetworkRequest req(url);
 
 	req.setRawHeader("User-Agent", "pgModelerUpdateCheck");

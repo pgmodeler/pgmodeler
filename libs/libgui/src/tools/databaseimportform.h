@@ -93,8 +93,12 @@ class DatabaseImportForm: public QDialog, public Ui::DatabaseImportForm {
 		ObjectTable=5,
 		ObjectAttribs=6, //Stores the object's attributes returned by catalog query
 		ObjectOtherData=7, //General purpose usage
-		ObjectCount=8,
-		ObjectSource=9; //Only for gropus
+		ObjectCount=8,		
+		ObjectSource=9,
+
+		/* Special field that stores an internal group id in the form -(object type code + root item id [if not null]).
+		 * This is use to save and restore tree state */
+		ObjectGroupId=10;
 
 		/*! \brief This constant holds the maximum amount of objects in a database to be imported
 		 * which will not generate an alert message about the possible slowdowns in the process

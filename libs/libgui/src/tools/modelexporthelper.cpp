@@ -440,12 +440,12 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
 				{
 					if(!object->isSQLDisabled())
 					{
+						sql_cmd=object->getCodeDefinition(SchemaParser::SqlDefinition);
+
 						//Emits a signal indicating that the object is being exported
 						emit s_progressUpdated(progress,
 																	 tr("Creating object `%1' (%2)").arg(object->getName()).arg(object->getTypeName()),
-																	 object->getObjectType());
-
-						sql_cmd=object->getCodeDefinition(SchemaParser::SqlDefinition);
+																	 object->getObjectType(), sql_cmd);
 
 						if(types[type_id] == ObjectType::Tablespace)
 						{
@@ -483,11 +483,6 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
 			{
 				comm_regexp = QRegExp(tmpl_comm_regexp.arg(db_model->getSQLName()));
 
-				//Creating the database on the DBMS
-				emit s_progressUpdated(progress,
-															 tr("Creating database `%1'").arg(db_model->getName()),
-															 ObjectType::Database);
-
 				sql_cmd=db_model->__getCodeDefinition(SchemaParser::SqlDefinition);
 				pos = comm_regexp.indexIn(sql_cmd);
 
@@ -498,6 +493,11 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
 					sql_cmd_comment = sql_cmd.mid(pos, comm_regexp.matchedLength());
 					sql_cmd.remove(pos, comm_regexp.matchedLength());
 				}
+
+				//Creating the database on the DBMS
+				emit s_progressUpdated(progress,
+															 tr("Creating database `%1'").arg(db_model->getName()),
+															 ObjectType::Database, sql_cmd);
 
 				conn.executeDDLCommand(sql_cmd);
 				db_created=true;
@@ -1046,11 +1046,12 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
 				}
 
 				//Executes the extracted SQL command
-				if(!sql_cmd.isEmpty())
+				if(!sql_cmd.isEmpty() && !export_canceled)
 				{
 					if(obj_type != ObjectType::Database)
 						conn.executeDDLCommand(sql_cmd);
 					else
+						//If it's a database level command (e.g. ALTER DATABASE ... RENAME TO ...)
 						db_sql_cmds.push_back(sql_cmd);
 				}
 
@@ -1058,7 +1059,8 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
 				ddl_tk_found=false;
 			}
 
-			if(ts.atEnd() && !db_sql_cmds.empty())
+			//Executing the pending database level commands
+			if(ts.atEnd() && !db_sql_cmds.empty() && !export_canceled)
 			{
 				conn.close();
 				aux_conn=conn;
@@ -1078,9 +1080,6 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
 			sql_cmd.clear();
 		}
 	}
-
-	if(!db_name.isEmpty())
-		emit s_exportFinished();
 }
 
 void ModelExportHelper::updateProgress(int prog, QString object_id, unsigned obj_type)
@@ -1168,6 +1167,11 @@ void ModelExportHelper::exportToDBMS()
 			try
 			{
 				exportBufferToDBMS(sql_buffer, *connection);
+
+				if(export_canceled)
+					emit s_exportCanceled();
+				else
+					emit s_exportFinished();
 			}
 			catch(Exception &e)
 			{
@@ -1232,6 +1236,8 @@ void ModelExportHelper::exportToDataDict()
 
 void ModelExportHelper::cancelExport()
 {
-	db_model->setCancelSaving(true);
+	if(db_model)
+		db_model->setCancelSaving(true);
+
 	export_canceled = true;
 }

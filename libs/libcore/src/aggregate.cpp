@@ -86,7 +86,7 @@ bool Aggregate::isValidFunction(unsigned func_idx, Function *func)
 			qtd=func->getParameterCount();
 			for(i=1 ; i < qtd && cond2; i++)
 				cond2=(func->getParameter(i).getType().isPolymorphicType() ||
-							 func->getParameter(i).getType().canCastTo(data_types[i-1]));
+							 ((i-1) < data_types.size() && func->getParameter(i).getType().canCastTo(data_types[i-1])));
 
 			return (cond1 && cond2);
 		}
@@ -226,11 +226,10 @@ QString Aggregate::getCodeDefinition(unsigned def_type)
 	if(functions[TransitionFunc])
 	{
 		if(def_type==SchemaParser::SqlDefinition)
-			attributes[Attributes::TransitionFunc]=functions[TransitionFunc]->getSignature();
+			attributes[Attributes::TransitionFunc]=functions[TransitionFunc]->getName(true);
 		else
 		{
-			functions[TransitionFunc]->setAttribute(Attributes::RefType,
-													 Attributes::TransitionFunc);
+			functions[TransitionFunc]->setAttribute(Attributes::RefType, Attributes::TransitionFunc);
 			attributes[Attributes::TransitionFunc]=functions[TransitionFunc]->getCodeDefinition(def_type,true);
 		}
 	}
@@ -238,7 +237,7 @@ QString Aggregate::getCodeDefinition(unsigned def_type)
 	if(functions[FinalFunc])
 	{
 		if(def_type==SchemaParser::SqlDefinition)
-			attributes[Attributes::FinalFunc]=functions[FinalFunc]->getSignature();
+			attributes[Attributes::FinalFunc]=functions[FinalFunc]->getName(true);
 		else
 		{
 			functions[FinalFunc]->setAttribute(Attributes::RefType,

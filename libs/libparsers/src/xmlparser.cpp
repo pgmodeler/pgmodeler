@@ -20,6 +20,7 @@
 #include <QUrl>
 #include "utilsns.h"
 
+int XmlParser::parser_instances = 0;
 const QString XmlParser::CharAmp("&amp;");
 const QString XmlParser::CharLt("&lt;");
 const QString XmlParser::CharGt("&gt;");
@@ -36,13 +37,23 @@ XmlParser::XmlParser()
 	curr_elem=nullptr;
 	xml_doc=nullptr;
 	curr_line = 0;
-	xmlInitParser();
+
+	if(parser_instances == 0)
+		xmlInitParser();
+
+	parser_instances++;
 }
 
 XmlParser::~XmlParser()
 {
 	restartParser();
-	xmlCleanupParser();
+	parser_instances--;
+
+	if(parser_instances <= 0)
+	{
+		xmlCleanupParser();
+		parser_instances = 0;
+	}
 }
 
 void XmlParser::removeDTD()

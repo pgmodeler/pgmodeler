@@ -55,6 +55,8 @@ class UpdateNotifierWidget: public QWidget, public Ui::UpdateNotifierWidget {
 	private:
 		Q_OBJECT
 
+		QString check_versions;
+
 		//! \brief Object responsible to make request to server
 		QNetworkAccessManager update_chk_manager;
 
@@ -76,6 +78,8 @@ class UpdateNotifierWidget: public QWidget, public Ui::UpdateNotifierWidget {
 
 	public:
 		UpdateNotifierWidget(QWidget * parent = nullptr);
+
+		void setCheckVersions(const QString &chk_versions);
 
 	public slots:
 		void checkForUpdate();

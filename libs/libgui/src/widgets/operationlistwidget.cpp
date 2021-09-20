@@ -156,7 +156,6 @@ void OperationListWidget::undoOperation()
 		QApplication::setOverrideCursor(Qt::WaitCursor);
 		model_wgt->op_list->undoOperation();
 		notifyUpdateOnModel();
-		model_wgt->scene->clearSelection();
 		QApplication::restoreOverrideCursor();
 	}
 	catch(Exception &e)
@@ -181,7 +180,6 @@ void OperationListWidget::redoOperation()
 		QApplication::setOverrideCursor(Qt::WaitCursor);
 		model_wgt->op_list->redoOperation();
 		notifyUpdateOnModel();
-		model_wgt->scene->clearSelection();
 		QApplication::restoreOverrideCursor();
 	}
 	catch(Exception &e)

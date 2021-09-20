@@ -51,7 +51,7 @@ class SourceEditorWidget: public QWidget, public Ui::SourceEditorWidget {
 
 		FindReplaceWidget *find_wgt;
 
-		QString filename;
+		QString filename, curr_sytax_cfg;
 
 		QAction *act_break_inline_ifs;
 
@@ -73,6 +73,8 @@ class SourceEditorWidget: public QWidget, public Ui::SourceEditorWidget {
 
 		//! \brief Returns the current modification status of the editor
 		bool isModified();
+
+		QString getCurrentSyntaxConfig();
 
 	private slots:
 		//! \brief Validates the syntax of the editor's content (only for schema micro-language code)

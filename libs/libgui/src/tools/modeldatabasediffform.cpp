@@ -88,10 +88,17 @@ ModelDatabaseDiffForm::ModelDatabaseDiffForm(QWidget *parent, Qt::WindowFlags fl
 		default_presets_tb->setToolTip(default_presets_tb->toolTip() + QString(" (%1)").arg(default_presets_tb->shortcut().toString()));
 
 		connect(gen_filters_from_log_chk, SIGNAL(toggled(bool)), dates_wgt, SLOT(setVisible(bool)));
-		//connect(gen_filters_from_log_chk, SIGNAL(toggled(bool)), pd_filter_wgt, SLOT(setHidden(bool)));
 		connect(start_date_chk, SIGNAL(toggled(bool)), this, SLOT(enableFilterByDate()));
 		connect(end_date_chk, SIGNAL(toggled(bool)), this, SLOT(enableFilterByDate()));
 		connect(generate_filters_tb, SIGNAL(clicked()), this, SLOT(generateFiltersFromChangelog()));
+
+		connect(first_change_dt_tb, &QToolButton::clicked, [&](){
+			start_date_dt->setDateTime(loaded_model->getFirstChangelogDate());
+		});
+
+		connect(last_change_dt_tb, &QToolButton::clicked, [&](){
+			end_date_dt->setDateTime(loaded_model->getLastChangelogDate());
+		});
 
 		connect(cancel_btn, &QToolButton::clicked, [&](){ cancelOperation(true); });
 		connect(pgsql_ver_chk, SIGNAL(toggled(bool)), pgsql_ver_cmb, SLOT(setEnabled(bool)));
@@ -1304,7 +1311,9 @@ void ModelDatabaseDiffForm::enableFilterByDate()
 {
 	generate_filters_tb->setEnabled(start_date_chk->isChecked() || end_date_chk->isChecked());
 	start_date_dt->setEnabled(start_date_chk->isChecked());
+	first_change_dt_tb->setEnabled(start_date_chk->isChecked());
 	end_date_dt->setEnabled(end_date_chk->isChecked());
+	last_change_dt_tb->setEnabled(end_date_chk->isChecked());
 }
 
 void ModelDatabaseDiffForm::applyPartialDiffFilters()

@@ -25,19 +25,22 @@
 #define ELEMENT_H
 
 #include "column.h"
+#include "simplecolumn.h"
 #include "operatorclass.h"
 #include "collation.h"
 
 class Element {
 	private:
 		/*! \brief Column referenced by the  element. This attribute is
-		 mutually exclusive with the expression attribute, this means,
-		 when one is set the other has empty (null) value */
+		 mutually exclusive with the expression attribute and simple column */
 		Column *column;
 
+		/*! \brief View column referenced by the element. This attribute is
+		 mutually exclusive with the expression attribute and column */
+		SimpleColumn simple_col;
+
 		/*! \brief Expression referenced by the  element. This attribute is
-		 mutually exclusive with the column attribute, this means
-		 when one is set the other has empty (null) value */
+		 mutually exclusive with the column and simple column attributes */
 		QString expression;
 
 		//! \brief Operator class used by the  element
@@ -72,6 +75,7 @@ class Element {
 		virtual void setOperatorClass(OperatorClass *oper_class);
 		virtual void setCollation(Collation *){}
 		virtual void setOperator(Operator *){}
+		virtual void setSimpleColumn(const SimpleColumn &col);
 		void setSortingEnabled(bool value);
 
 		//! \brief Sets the state of one of the element sorting method
@@ -85,6 +89,7 @@ class Element {
 		OperatorClass *getOperatorClass();
 		virtual Collation *getCollation(void){ return nullptr; }
 		virtual Operator *getOperator(void){ return nullptr; }
+		SimpleColumn getSimpleColumn();
 
 		bool isSortingEnabled();
 

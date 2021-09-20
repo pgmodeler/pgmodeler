@@ -12,8 +12,9 @@ SOURCES += src/main.cpp \
 	   src/sourceeditorwidget.cpp \
 	   ../pgmodeler/src/pgmodelerapp.cpp \
 
-FORMS += ui/syntaxcheckerform.ui \
+FORMS += \
 	 ui/aboutwidget.ui \
+	 ui/schemaeditorform.ui \
 	 ui/sourceeditorwidget.ui
 
 HEADERS += \

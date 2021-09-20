@@ -23,9 +23,9 @@ QStringList MatchType::TemplateType<MatchType>::type_names =
 {
 	"", // Reserved for BaseType::null
 
+	"MATCH SIMPLE",
 	"MATCH FULL",
-	"MATCH PARTIAL",
-	"MATCH SIMPLE"
+	"MATCH PARTIAL"
 };
 
 MatchType::MatchType()

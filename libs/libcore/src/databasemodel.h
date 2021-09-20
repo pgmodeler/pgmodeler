@@ -850,6 +850,9 @@ class DatabaseModel:  public QObject, public BaseObject {
 		//! \brief Returns the last changelog entry date
 		QDateTime getLastChangelogDate();
 
+		//! \brief Returns the first changelog entry date
+		QDateTime getFirstChangelogDate();
+
 		//! \brief Returns the amount of entries in the changelog
 		unsigned getChangelogLength();
 

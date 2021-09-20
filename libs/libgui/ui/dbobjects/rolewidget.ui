@@ -181,19 +181,19 @@
      <property name="currentIndex">
       <number>0</number>
      </property>
-     <widget class="QWidget" name="members_tab">
+     <widget class="QWidget" name="member_of_tab">
       <attribute name="title">
        <string>Members</string>
       </attribute>
      </widget>
-     <widget class="QWidget" name="member_of_tab">
-      <attribute name="title">
-       <string>Member of</string>
-      </attribute>
-     </widget>
      <widget class="QWidget" name="adm_members_tab">
       <attribute name="title">
-       <string>Members (Admin.)</string>
+       <string>Admin option</string>
+      </attribute>
+     </widget>
+     <widget class="QWidget" name="members_tab">
+      <attribute name="title">
+       <string>Member of</string>
       </attribute>
      </widget>
     </widget>

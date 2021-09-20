@@ -34,12 +34,15 @@ class ModelsDiffHelper: public QObject {
 		Q_OBJECT
 
 		//! \brief List of attributes ignored when comparing XML code of table children objects
-		static const vector<QString> TableObjsIgnoredAttribs,
+		static const QStringList TableObjsIgnoredAttribs,
 
-		//! \brief List of attributes ignored when comparing XML code of database objects
+		//! \brief List of tags ignored when comparing XML code of roles specifically
+		RolesIgnoredTags,
+
+		//! \brief List of attributes ignored when comparing XML code of other database objects
 		ObjectsIgnoredAttribs,
 
-		//! \brief List of tags ignored when comparing XML code of database objects
+		//! \brief List of tags ignored when comparing XML code of other database objects
 		ObjectsIgnoredTags;
 
 		//! \brief Stores the SQL code that represents the diff between model and database

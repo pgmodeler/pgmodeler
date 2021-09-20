@@ -94,6 +94,11 @@ class View: public BaseTable {
 		bool isRecursive();
 		bool isWithNoData();
 
+		/*! \brief Returns a simple column by searching by the name
+		 *  This method will return an invalid SimpleColumn instance if there's
+		 *  no matching column in the view */
+		SimpleColumn getColumn(const QString &name);
+
 		/*! \brief Adds a reference to the view specifying the SQL expression type for it
 		 (refer to class Reference::SQL_??? constants). The 'expr_id' parameter is the
 		 index where the reference must be inserted. By defaul the method always adds

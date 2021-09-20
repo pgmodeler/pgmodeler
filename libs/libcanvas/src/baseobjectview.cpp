@@ -667,8 +667,8 @@ double BaseObjectView::getScreenDpiFactor()
 	/* Special case for 4K or superior screens: we need to cap the dpi factor
 	 * to 1.4 since on this kind of screen the dpi_factor results in a value of 2 or more
 	 * and this can cause a super resizing of graphical objects */
-	if(dpi_factor > 1.4)
-		return 1.4;
+	if(dpi_factor > MaxDpiFactor)
+		return MaxDpiFactor;
 
 	return dpi_factor;
 }

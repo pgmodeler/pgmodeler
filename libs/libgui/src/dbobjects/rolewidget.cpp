@@ -54,7 +54,7 @@ RoleWidget::RoleWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Ro
 																	(ObjectsTableWidget::UpdateButton | ObjectsTableWidget::DuplicateButton), true, this);
 		members_tab[i]=obj_tab;
 
-		obj_tab->setColumnCount(5);
+		obj_tab->setColumnCount(4);
 
 		obj_tab->setHeaderLabel(tr("Role"),0);
 		obj_tab->setHeaderIcon(QPixmap(GuiUtilsNs::getIconPath("role")),0);
@@ -62,14 +62,11 @@ RoleWidget::RoleWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Ro
 		obj_tab->setHeaderLabel(tr("Validity"),1);
 		obj_tab->setHeaderIcon(QPixmap(GuiUtilsNs::getIconPath("validity")),1);
 
-		obj_tab->setHeaderLabel(tr("Member of"),2);
+		obj_tab->setHeaderLabel(tr("Members"),2);
 		obj_tab->setHeaderIcon(QPixmap(GuiUtilsNs::getIconPath("role")),2);
 
-		obj_tab->setHeaderLabel(tr("Members"),3);
+		obj_tab->setHeaderLabel(tr("Admin option"),3);
 		obj_tab->setHeaderIcon(QPixmap(GuiUtilsNs::getIconPath("role")),3);
-
-		obj_tab->setHeaderLabel(tr("Members (Admin.)"),4);
-		obj_tab->setHeaderIcon(QPixmap(GuiUtilsNs::getIconPath("role")),4);
 
 		grid=new QGridLayout;
 		grid->addWidget(obj_tab,0,0,1,1);
@@ -128,7 +125,7 @@ void RoleWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Rol
 	}
 
 	BaseObjectWidget::setAttributes(model, op_list, role);
-
+	op_list->startOperationChain();
 	fillMembersTable();
 	configureRoleSelection();
 }
@@ -139,8 +136,7 @@ void RoleWidget::showRoleData(Role *role, unsigned table_id, unsigned row)
 	{
 		QString str_aux;
 		Role *aux_role=nullptr;
-		unsigned count, i, type_id,
-				role_types[3]={ Role::RefRole, Role::MemberRole, Role::AdminRole };
+		unsigned count, i, type_id;
 
 		if(table_id > 3)
 			throw Exception(ErrorCode::RefObjectInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -149,13 +145,13 @@ void RoleWidget::showRoleData(Role *role, unsigned table_id, unsigned row)
 		members_tab[table_id]->setCellText(role->getName(), row, 0);
 		members_tab[table_id]->setCellText(role->getValidity(), row, 1);
 
-		for(type_id=0; type_id < 3; type_id++)
+		for(type_id = Role::MemberRole; type_id <= Role::AdminRole; type_id++)
 		{
-			count=role->getRoleCount(role_types[type_id]);
+			count=role->getRoleCount(type_id);
 
 			for(i=0; i < count; i++)
 			{
-				aux_role=role->getRole(role_types[type_id], i);
+				aux_role=role->getRole(type_id, i);
 				str_aux+=aux_role->getName();
 				if(i < count-1) str_aux+=QString(", ");
 			}
@@ -171,19 +167,18 @@ void RoleWidget::fillMembersTable()
 	if(this->object)
 	{
 		Role *aux_role=nullptr, *role=nullptr;
-		unsigned count, i, type_id,
-				role_types[3]={ Role::RefRole, Role::MemberRole, Role::AdminRole };
+		unsigned count, i, type_id;
 
 		role=dynamic_cast<Role *>(this->object);
 
-		for(type_id=0; type_id < 3; type_id++)
+		for(type_id = Role::MemberRole; type_id <= Role::AdminRole; type_id++)
 		{
-			count=role->getRoleCount(role_types[type_id]);
+			count=role->getRoleCount(type_id);
 			members_tab[type_id]->blockSignals(true);
 
 			for(i=0; i < count; i++)
 			{
-				aux_role=role->getRole(role_types[type_id], i);
+				aux_role=role->getRole(type_id, i);
 				members_tab[type_id]->addRow();
 				showRoleData(aux_role, type_id, i);
 			}
@@ -211,21 +206,7 @@ void RoleWidget::showSelectedRoleData()
 	if(obj_sel)
 		idx_lin=members_tab[idx_tab]->getRowIndex(QVariant::fromValue<void *>(dynamic_cast<void *>(obj_sel)));
 
-	//Raises an error if the user try to assign the role as member of itself
-	if(obj_sel && obj_sel==this->object)
-	{
-		/* If the current row does not has a value indicates that it is recently added and does not have
-			 data, in this case it will be removed */
-		if(!members_tab[idx_tab]->getRowData(lin).value<void *>())
-			members_tab[idx_tab]->removeRow(lin);
-
-		msg_box.show(Exception(Exception::getErrorMessage(ErrorCode::AsgRoleReferenceRedundancy)
-													 .arg(obj_sel->getName())
-													 .arg(name_edt->text()),
-													 ErrorCode::AsgRoleReferenceRedundancy,__PRETTY_FUNCTION__,__FILE__,__LINE__));
-	}
-	//If the role does not exist on table, show its data
-	else if(obj_sel && idx_lin < 0)
+	if(obj_sel && idx_lin < 0)
 		showRoleData(dynamic_cast<Role *>(obj_sel), idx_tab, lin);
 	else
 	{
@@ -248,8 +229,7 @@ void RoleWidget::showSelectedRoleData()
 void RoleWidget::applyConfiguration()
 {
 	Role *role=nullptr, *aux_role=nullptr;
-	unsigned count, i, type_id,
-			role_types[3]={ Role::RefRole, Role::MemberRole, Role::AdminRole };
+	unsigned count, i, rl_type;
 
 	try
 	{
@@ -273,19 +253,41 @@ void RoleWidget::applyConfiguration()
 		role->setOption(Role::OpReplication, can_replicate_chk->isChecked());
 		role->setOption(Role::OpBypassRls, bypass_rls_chk->isChecked());
 
-		for(type_id=0; type_id < 3; type_id++)
+		for(rl_type = Role::MemberRole; rl_type <= Role::AdminRole; rl_type++)
 		{
-			count = members_tab[type_id]->getRowCount();
-			role->removeRoles(role_types[type_id]);
+			count = members_tab[rl_type]->getRowCount();
+			role->removeRoles(rl_type);
 
-			for(i=0; i < count; i++)
+			for(i = 0; i < count; i++)
 			{
-				aux_role=reinterpret_cast<Role *>(members_tab[type_id]->getRowData(i).value<void *>());
-				role->addRole(role_types[type_id], aux_role);
+				aux_role=reinterpret_cast<Role *>(members_tab[rl_type]->getRowData(i).value<void *>());
+				role->addRole(rl_type, aux_role);
 			}
 		}
 
+		/* Special case for Member Of tab, here we try to add the role being edited
+		 * as a member of the the roles in the table */
+		count = members_tab[2]->getRowCount();
+
+		for(i = 0; i < count; i++)
+		{
+			aux_role = reinterpret_cast<Role *>(members_tab[rl_type]->getRowData(i).value<void *>());
+
+			/* Raises an error if the role to be added is the postgres one
+			 * For now, there is no way to assign roles direct to the postgres role due to
+			 * its permanet protection status. May be changed in future releases */
+			if(aux_role->isSystemObject())
+			{
+				throw Exception(Exception::getErrorMessage(ErrorCode::OprReservedObject).arg(role->getName(), role->getTypeName()),
+												ErrorCode::OprReservedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			}
+
+			op_list->registerObject(aux_role, Operation::ObjectModified);
+			aux_role->addRole(Role::MemberRole, role);
+		}
+
 		BaseObjectWidget::applyConfiguration();
+		op_list->finishOperationChain();
 		finishConfiguration();
 	}
 	catch(Exception &e)

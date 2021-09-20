@@ -179,7 +179,7 @@ class Connection {
 		//! \brief Close the opened connection
 		void close();
 
-		//! \brief Request the cancel of the running command on a opened connection
+		//! \brief Request the cancel of the running commands on a opened connection
 		void requestCancel();
 
 		//! \brief Returns the value of specified parameter name

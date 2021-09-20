@@ -84,9 +84,9 @@ void startCrashHandler(int signal)
 int main(int argc, char **argv)
 {
 	try
-	{
+	{		
 		/* Registering the below classes as metatypes in order to make
-		 * them liable to be sent through signal parameters. */
+		 * them liable to be sent through signal parameters */
 		qRegisterMetaType<ObjectType>("ObjectType");
 		qRegisterMetaType<Exception>("Exception");
 		qRegisterMetaType<ValidationInfo>("ValidationInfo");
@@ -96,21 +96,10 @@ int main(int argc, char **argv)
 		signal(SIGSEGV, startCrashHandler);
 		signal(SIGABRT, startCrashHandler);
 
-		//Checking if the user specified another widget style using the -style param
-		bool using_style=false;
-
-		for(int i=0; i < argc && !using_style; i++)
-			using_style=QString(argv[i]).contains("-style");
-
 		PgModelerApp::setAttribute(Qt::AA_UseHighDpiPixmaps);
-		Application::setAttribute(Qt::AA_EnableHighDpiScaling);
-
+		PgModelerApp::setAttribute(Qt::AA_EnableHighDpiScaling);
 		PgModelerApp app(argc,argv);
 		int res=0;
-
-		//If no custom style is specified we force the usage of Fusion (the default for Qt and pgModeler)
-		if(!using_style)
-			app.setStyle(GlobalAttributes::DefaultQtStyle);
 
 		//Loading the application splash screen
 		QSplashScreen splash;

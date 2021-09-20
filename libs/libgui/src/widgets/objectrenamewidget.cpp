@@ -61,6 +61,7 @@ void ObjectRenameWidget::setAttributes(vector<BaseObject *> objs, DatabaseModel 
 		obj_icon_lbl->setPixmap(QPixmap(GuiUtilsNs::getIconPath(objs[0]->getSchemaName())));
 		obj_icon_lbl->setToolTip(objs[0]->getTypeName());
 		obj_name_lbl->setText(objs[0]->getName());
+		new_name_edt->setText(objs[0]->getName());
 	}
 	else
 	{

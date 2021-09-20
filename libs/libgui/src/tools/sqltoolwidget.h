@@ -90,6 +90,9 @@ class SQLToolWidget: public QWidget, public Ui::SQLToolWidget {
 		//! \brief Show the selected snippet on the current opened SQL execution tab
 		void showSnippet(const QString &snip);
 
+		//! \brief Show the provided code in the source panel
+		void showSourceCode(const QString &source);
+
 		//! \brief Close the database explorer specified by its index. Also, closes any SQL exec. tab related to it
 		void closeDatabaseExplorer(int idx);
 

@@ -40,7 +40,6 @@
 %if {connlimit} %then $br $tb [CONNECTION LIMIT ] {connlimit} %end
 %if {validity} %then $br $tb [VALID UNTIL ] '{validity}' %end
 
-%if {ref-roles} %then $br $tb [IN ROLE ] {ref-roles} %end
 %if {member-roles} %then $br $tb [ROLE ] {member-roles} %end
 %if {admin-roles} %then $br $tb [ADMIN ] {admin-roles} %end
 ;

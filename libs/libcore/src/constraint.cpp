@@ -182,6 +182,24 @@ void Constraint::addColumn(Column *column, unsigned col_type)
 	}
 }
 
+void Constraint::addColumns(const vector<Column *> &cols, unsigned col_type)
+{
+	try
+	{
+		if(col_type == ReferencedCols)
+			ref_columns.clear();
+		else
+			columns.clear();
+
+		for(auto &col : cols)
+			addColumn(col, col_type);
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorCode(), __PRETTY_FUNCTION__, __FILE__, __LINE__, &e);
+	}
+}
+
 void Constraint::setTablespace(BaseObject *tabspc)
 {
 	try
@@ -772,7 +790,7 @@ QString Constraint::getSignature(bool format)
 	return QString("%1 ON %2 ").arg(this->getName(format)).arg(getParentTable()->getSignature(true));
 }
 
-bool Constraint::isCodeDiffersFrom(BaseObject *object, const vector<QString> &ignored_attribs, const vector<QString> &ignored_tags)
+bool Constraint::isCodeDiffersFrom(BaseObject *object, const QStringList &ignored_attribs, const QStringList &ignored_tags)
 {
 	if(!object)
 		throw Exception(ErrorCode::OprNotAllocatedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);

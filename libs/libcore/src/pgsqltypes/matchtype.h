@@ -29,9 +29,9 @@
 
 class MatchType: public TemplateType<MatchType>{
 	public:
-		static constexpr unsigned Full = 1,
-		Partial = 2,
-		Simple = 3;
+		static constexpr unsigned Simple = 1,
+		Full = 2,
+		Partial = 3;
 
 		MatchType(unsigned type_id);
 		MatchType(const QString &type_name);

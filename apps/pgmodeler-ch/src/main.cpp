@@ -25,6 +25,8 @@ int main(int argc, char **argv)
 {
 	try
 	{
+		Application::setAttribute(Qt::AA_UseHighDpiPixmaps);
+		Application::setAttribute(Qt::AA_EnableHighDpiScaling);
 		Application app(argc,argv);
 		QStringList args = app.arguments();
 		QTranslator translator;

@@ -271,7 +271,7 @@ void Connection::close()
 	if(connection)
 	{
 		//Finalizes the connection if the status is OK
-		if(PQstatus(connection)==CONNECTION_OK)
+		if(PQstatus(connection) == CONNECTION_OK)
 			PQfinish(connection);
 
 		connection=nullptr;
@@ -544,5 +544,12 @@ void Connection::requestCancel()
 	if(!connection)
 		throw Exception(ErrorCode::OprNotAllocatedConnection, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 
-	PQrequestCancel(connection);
+	PGcancel *cancel = PQgetCancel(connection);
+
+	if(cancel)
+	{
+		char errbuf[256] = "";
+		PQcancel(cancel, errbuf, 256);
+		PQfreeCancel(cancel);
+	}
 }

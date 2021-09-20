@@ -1456,6 +1456,55 @@
                      <property name="bottomMargin">
                       <number>15</number>
                      </property>
+                     <item row="1" column="1">
+                      <widget class="QDateTimeEdit" name="start_date_dt">
+                       <property name="enabled">
+                        <bool>false</bool>
+                       </property>
+                       <property name="sizePolicy">
+                        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                         <horstretch>0</horstretch>
+                         <verstretch>0</verstretch>
+                        </sizepolicy>
+                       </property>
+                       <property name="accelerated">
+                        <bool>false</bool>
+                       </property>
+                       <property name="showGroupSeparator" stdset="0">
+                        <bool>false</bool>
+                       </property>
+                       <property name="minimumDate">
+                        <date>
+                         <year>1752</year>
+                         <month>9</month>
+                         <day>20</day>
+                        </date>
+                       </property>
+                       <property name="displayFormat">
+                        <string>yyyy-MM-dd HH:mm</string>
+                       </property>
+                       <property name="calendarPopup">
+                        <bool>true</bool>
+                       </property>
+                      </widget>
+                     </item>
+                     <item row="2" column="0">
+                      <widget class="QCheckBox" name="end_date_chk">
+                       <property name="enabled">
+                        <bool>true</bool>
+                       </property>
+                       <property name="text">
+                        <string>End date:</string>
+                       </property>
+                      </widget>
+                     </item>
+                     <item row="1" column="0">
+                      <widget class="QCheckBox" name="start_date_chk">
+                       <property name="text">
+                        <string>Start date:</string>
+                       </property>
+                      </widget>
+                     </item>
                      <item row="2" column="1">
                       <widget class="QDateTimeEdit" name="end_date_dt">
                        <property name="enabled">
@@ -1474,55 +1523,6 @@
                         <bool>true</bool>
                        </property>
                       </widget>
-                     </item>
-                     <item row="1" column="1">
-                      <widget class="QDateTimeEdit" name="start_date_dt">
-                       <property name="enabled">
-                        <bool>false</bool>
-                       </property>
-                       <property name="sizePolicy">
-                        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                         <horstretch>0</horstretch>
-                         <verstretch>0</verstretch>
-                        </sizepolicy>
-                       </property>
-                       <property name="displayFormat">
-                        <string>yyyy-MM-dd HH:mm</string>
-                       </property>
-                       <property name="calendarPopup">
-                        <bool>true</bool>
-                       </property>
-                      </widget>
-                     </item>
-                     <item row="1" column="0">
-                      <widget class="QCheckBox" name="start_date_chk">
-                       <property name="text">
-                        <string>Start date:</string>
-                       </property>
-                      </widget>
-                     </item>
-                     <item row="2" column="0">
-                      <widget class="QCheckBox" name="end_date_chk">
-                       <property name="enabled">
-                        <bool>true</bool>
-                       </property>
-                       <property name="text">
-                        <string>End date:</string>
-                       </property>
-                      </widget>
-                     </item>
-                     <item row="1" column="3" rowspan="2">
-                      <spacer name="horizontalSpacer_11">
-                       <property name="orientation">
-                        <enum>Qt::Horizontal</enum>
-                       </property>
-                       <property name="sizeHint" stdset="0">
-                        <size>
-                         <width>86</width>
-                         <height>68</height>
-                        </size>
-                       </property>
-                      </spacer>
                      </item>
                      <item row="3" column="1">
                       <widget class="QToolButton" name="generate_filters_tb">
@@ -1547,6 +1547,77 @@
                        </property>
                        <property name="toolButtonStyle">
                         <enum>Qt::ToolButtonTextBesideIcon</enum>
+                       </property>
+                      </widget>
+                     </item>
+                     <item row="1" column="3" rowspan="2">
+                      <spacer name="horizontalSpacer_11">
+                       <property name="orientation">
+                        <enum>Qt::Horizontal</enum>
+                       </property>
+                       <property name="sizeHint" stdset="0">
+                        <size>
+                         <width>86</width>
+                         <height>68</height>
+                        </size>
+                       </property>
+                      </spacer>
+                     </item>
+                     <item row="1" column="2">
+                      <widget class="QToolButton" name="first_change_dt_tb">
+                       <property name="enabled">
+                        <bool>false</bool>
+                       </property>
+                       <property name="toolTip">
+                        <string>Use the first change date of the changelog</string>
+                       </property>
+                       <property name="text">
+                        <string/>
+                       </property>
+                       <property name="icon">
+                        <iconset resource="../../res/resources.qrc">
+                         <normaloff>:/icons/icons/changelog.png</normaloff>:/icons/icons/changelog.png</iconset>
+                       </property>
+                       <property name="iconSize">
+                        <size>
+                         <width>22</width>
+                         <height>22</height>
+                        </size>
+                       </property>
+                       <property name="toolButtonStyle">
+                        <enum>Qt::ToolButtonIconOnly</enum>
+                       </property>
+                       <property name="autoRaise">
+                        <bool>false</bool>
+                       </property>
+                      </widget>
+                     </item>
+                     <item row="2" column="2">
+                      <widget class="QToolButton" name="last_change_dt_tb">
+                       <property name="enabled">
+                        <bool>false</bool>
+                       </property>
+                       <property name="toolTip">
+                        <string>Use the last change date of the changelog</string>
+                       </property>
+                       <property name="text">
+                        <string/>
+                       </property>
+                       <property name="icon">
+                        <iconset resource="../../res/resources.qrc">
+                         <normaloff>:/icons/icons/changelog.png</normaloff>:/icons/icons/changelog.png</iconset>
+                       </property>
+                       <property name="iconSize">
+                        <size>
+                         <width>22</width>
+                         <height>22</height>
+                        </size>
+                       </property>
+                       <property name="toolButtonStyle">
+                        <enum>Qt::ToolButtonIconOnly</enum>
+                       </property>
+                       <property name="autoRaise">
+                        <bool>false</bool>
                        </property>
                       </widget>
                      </item>
@@ -1887,7 +1958,7 @@
                 </size>
                </property>
                <property name="text">
-                <string>Cancel</string>
+                <string>&amp;Cancel</string>
                </property>
                <property name="icon">
                 <iconset resource="../../res/resources.qrc">
@@ -2049,7 +2120,7 @@
                 </font>
                </property>
                <property name="text">
-                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Objects marked with an &lt;span style=&quot; font-weight:600;&quot;&gt;ALTER&lt;/span&gt; may not be effectively changed unless that the differences detected are in attributes that can be modified through ALTER commands otherwise no operationwill be performed or, if the force recreation is checked, the object will be dropped and created again.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Objects marked with an &lt;span style=&quot; font-weight:600;&quot;&gt;ALTER&lt;/span&gt; may not be effectively changed unless that the differences detected are in attributes that can be modified through ALTER commands otherwise no operation will be performed or, if the force recreation is checked, the object will be dropped and created again.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                </property>
                <property name="wordWrap">
                 <bool>true</bool>
@@ -2480,6 +2551,9 @@
          <height>22</height>
         </size>
        </property>
+       <property name="shortcut">
+        <string>Return</string>
+       </property>
        <property name="autoDefault">
         <bool>true</bool>
        </property>
@@ -2536,6 +2610,9 @@
          <width>22</width>
          <height>22</height>
         </size>
+       </property>
+       <property name="shortcut">
+        <string>Esc</string>
        </property>
        <property name="autoDefault">
         <bool>true</bool>

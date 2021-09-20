@@ -26,12 +26,14 @@ const QString Catalog::PgSqlTrue("t");
 const QString Catalog::PgSqlFalse("f");
 const QString Catalog::BoolField("_bool");
 const QString Catalog::ArrayPattern("((\\[)[0-9]+(\\:)[0-9]+(\\])=)?(\\{)((.)+(,)*)*(\\})$");
-const QString Catalog::GetExtensionObjsSql("SELECT objid AS oid FROM pg_depend WHERE objid > 0 AND refobjid > 0 AND deptype='e'");
 const QString Catalog::PgModelerTempDbObj("__pgmodeler_tmp");
 const QString Catalog::InvFilterPattern("__invalid__pattern__");
 const QString Catalog::AliasPlaceholder("$alias$");
 const QString Catalog::EscapedNullChar("\\000");
-
+const QString Catalog::GetExtensionObjsSql("SELECT d.objid AS oid, e.extname AS name FROM pg_depend AS d \
+																					 LEFT JOIN pg_extension AS e ON e.oid = d.refobjid \
+																					 WHERE objid > 0 AND refobjid > 0 AND deptype='e'\
+																					 ORDER BY extname;");
 attribs_map Catalog::catalog_queries;
 
 map<ObjectType, QString> Catalog::oid_fields=
@@ -95,7 +97,7 @@ void Catalog::setConnection(Connection &conn)
 	try
 	{
 		ResultSet res;
-		QStringList ext_obj;
+		QStringList obj_oids;
 
 		connection.close();
 		connection.setConnectionParams(conn.getConnectionParams());
@@ -112,16 +114,20 @@ void Catalog::setConnection(Connection &conn)
 		}
 
 		//Retrieving the list of objects created by extensions
+		ext_objects.clear();
+		ext_objs_oids = "";
 		this->connection.executeDMLCommand(GetExtensionObjsSql, res);
+
 		if(res.accessTuple(ResultSet::FirstTuple))
 		{
 			do
 			{
-				ext_obj.push_back(res.getColumnValue(QString("oid")));
+				obj_oids.append(res.getColumnValue(Attributes::Oid));
+				ext_objects[res.getColumnValue(Attributes::Name)].append(res.getColumnValue(Attributes::Oid));
 			}
 			while(res.accessTuple(ResultSet::NextTuple));
 
-			ext_obj_oids=ext_obj.join(',');
+			ext_objs_oids = obj_oids.join(',');
 		}
 	}
 	catch(Exception &e)
@@ -345,9 +351,23 @@ bool Catalog::isSystemObject(unsigned oid)
 	return (oid <= last_sys_oid);
 }
 
-bool Catalog::isExtensionObject(unsigned oid)
+bool Catalog::isExtensionObject(unsigned oid, const QString &ext_name)
 {
-	return ext_obj_oids.contains(QString::number(oid));
+	if(!ext_name.isEmpty() && ext_objects.count(ext_name) == 0)
+		return false;
+
+	if(ext_name.isEmpty())
+	{
+		for(auto &itr : ext_objects)
+		{
+			if(itr.second.contains(QString::number(oid)))
+				return true;
+		}
+
+		return false;
+	}
+
+	return ext_objects[ext_name].contains(QString::number(oid));
 }
 
 void Catalog::loadCatalogQuery(const QString &qry_id)
@@ -764,7 +784,7 @@ QString Catalog::getNotExtObjectQuery(const QString &oid_field)
 	try
 	{
 		attribs_map attribs={{Attributes::Oid, oid_field},
-							 {Attributes::ExtObjOids, ext_obj_oids}};
+												 {Attributes::ExtObjOids, ext_objs_oids}};
 
 
 		loadCatalogQuery(query_id);
@@ -1183,7 +1203,8 @@ void Catalog::operator = (const Catalog &catalog)
 {
 	try
 	{
-		this->ext_obj_oids=catalog.ext_obj_oids;
+		this->ext_objects=catalog.ext_objects;
+		this->ext_objs_oids=catalog.ext_objs_oids;
 		this->connection.setConnectionParams(catalog.connection.getConnectionParams());
 		this->last_sys_oid=catalog.last_sys_oid;
 		this->filter=catalog.filter;

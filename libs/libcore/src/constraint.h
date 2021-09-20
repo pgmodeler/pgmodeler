@@ -109,6 +109,10 @@ class Constraint: public TableObject{
 		 constants SOURCE_COLS or REFERENCED_COLS */
 		void addColumn(Column *column, unsigned col_type);
 
+		/*! \brief Adds columns to the internal column list referenced by the
+		 constants SOURCE_COLS or REFERENCED_COLS. Previously columns added are removed. */
+		void addColumns(const vector<Column *> &cols, unsigned col_type);
+
 		//! \brief Adds several elements to the constraint using a defined vector
 		void addExcludeElements(vector<ExcludeElement> &elems);
 
@@ -267,7 +271,7 @@ class Constraint: public TableObject{
 
 		/*! \brief Compares two constratins XML definition and returns if they differs. This methods varies a little from
 		BaseObject::isCodeDiffersFrom() because here we need to generate xml code including relationship added columns */
-		virtual bool isCodeDiffersFrom(BaseObject *object, const vector<QString> &ignored_attribs={}, const vector<QString> &ignored_tags={});
+		virtual bool isCodeDiffersFrom(BaseObject *object, const QStringList &ignored_attribs={}, const QStringList &ignored_tags={});
 };
 
 #endif
