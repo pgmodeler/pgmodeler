@@ -343,9 +343,66 @@ QString PgSqlType::getTypeName(bool incl_dimension)
 	return ~(*this);
 }
 
-QString PgSqlType::getSQLTypeName()
+QString PgSqlType::getSQLTypeName(bool full_format)
 {
-	return *(*this);
+	QString fmt_type, type, aux;
+	unsigned idx;
+
+	type = ~(*this);
+	fmt_type = type;
+
+	if(full_format)
+	{
+		//Generation the definition for the spatial types (PostGiS)
+		if(type==QString("geometry") || type==QString("geography"))
+			fmt_type=type + (*spatial_type);
+		else if(hasVariableLength())
+		{
+			//Configuring the precision
+			if((type==QString("numeric") || type==QString("decimal")) && length >= 1 && precision>=0 && precision<=static_cast<int>(length))
+				aux=QString("%1(%2,%3)").arg(type_names[type_idx]).arg(length).arg(precision);
+			//Configuring the length for the type
+			else if(length >= 1)
+				aux=QString("%1(%2)").arg(type_names[type_idx]).arg(length);
+			else
+				aux=type;
+
+			fmt_type=aux;
+		}
+		else if(type!=QString("numeric") && type!=QString("decimal") && acceptsPrecision())
+		{
+			if(type!=QString("interval"))
+			{
+				aux = type_names[type_idx];
+
+				if(precision >= 0)
+					aux+=QString("(%1)").arg(precision);
+
+				if(with_timezone)
+					aux+=QString(" with time zone");
+			}
+			else
+			{
+				aux = type_names[type_idx];
+
+				if(interval_type!=BaseType::Null)
+					aux+=QString(" %1 ").arg(~interval_type);
+
+				if(precision >= 0)
+					aux+=QString("(%1)").arg(precision);
+			}
+
+			fmt_type=aux;
+		}
+	}
+
+	if(type!=QString("void") && dimension > 0)
+	{
+		for(idx=0; idx < dimension; idx++)
+			fmt_type+=QString("[]");
+	}
+
+	return fmt_type;
 }
 
 bool PgSqlType::isRegistered(const QString &type, void *pmodel)
@@ -994,61 +1051,5 @@ QString PgSqlType::getCodeDefinition(unsigned def_type,QString ref_type)
 
 QString PgSqlType::operator * ()
 {
-	QString fmt_type, type, aux;
-	unsigned idx;
-
-	type=~(*this);
-
-	//Generation the definition for the spatial types (PostGiS)
-	if(type==QString("geometry") || type==QString("geography"))
-		fmt_type=type + (*spatial_type);
-	else if(hasVariableLength())
-	{
-		//Configuring the precision
-		if((type==QString("numeric") || type==QString("decimal")) && length >= 1 && precision>=0 && precision<=static_cast<int>(length))
-			aux=QString("%1(%2,%3)").arg(type_names[type_idx]).arg(length).arg(precision);
-		//Configuring the length for the type
-		else if(length >= 1)
-			aux=QString("%1(%2)").arg(type_names[type_idx]).arg(length);
-		else
-			aux=type;
-
-		fmt_type=aux;
-	}
-	else if(type!=QString("numeric") && type!=QString("decimal") && acceptsPrecision())
-	{
-		if(type!=QString("interval"))
-		{
-			aux = type_names[type_idx];
-
-			if(precision >= 0)
-				aux+=QString("(%1)").arg(precision);
-
-			if(with_timezone)
-				aux+=QString(" with time zone");
-		}
-		else
-		{
-			aux = type_names[type_idx];
-
-			if(interval_type!=BaseType::Null)
-				aux+=QString(" %1 ").arg(~interval_type);
-
-			if(precision >= 0)
-				aux+=QString("(%1)").arg(precision);
-		}
-
-		fmt_type=aux;
-	}
-	else
-		fmt_type=type;
-
-
-	if(type!=QString("void") && dimension > 0)
-	{
-		for(idx=0; idx < dimension; idx++)
-			fmt_type+=QString("[]");
-	}
-
-	return fmt_type;
+	return getSQLTypeName();
 }

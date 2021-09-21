@@ -206,7 +206,7 @@ class PgSqlType: public TemplateType<PgSqlType>{
 		QString getCodeDefinition(unsigned def_type, QString ref_type="");
 		virtual QString operator ~ ();
 
-		//! \brief Returns the SQL definition for the type
+		//! \brief Returns the complet SQL definition for the type (same as calling getSQLTypeName(true))
 		QString operator * ();
 
 		unsigned operator << (void *ptype);
@@ -243,8 +243,10 @@ class PgSqlType: public TemplateType<PgSqlType>{
 		 * Other attributes of the type are discarded. */
 		QString getTypeName(bool incl_dimension);
 
-		//! \brief Returns the name of the type in SQL form including length, precision and other parameters. This is equivalent to call *type
-		QString getSQLTypeName();
+		/*! \brief Returns the name of the type in SQL form.
+		 * The full_format, when true, force the inclusion of length, precision and other quantifiers of the type.
+		 * This method will always append the dimension quantifier [] even the full_format = false */
+		QString getSQLTypeName(bool full_format = true);
 
 		friend class Type;
 		friend class Domain;
