@@ -66,18 +66,18 @@ DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f):
 	results_tbw->setItemDelegate(new PlainTextItemDelegate(this, false));
 	browse_tabs_tb->setMenu(&fks_menu);
 
-	act = copy_menu.addAction(tr("Copy as CSV"));
+	act = copy_menu.addAction(tr("Copy as text"));
 	act->setShortcut(QKeySequence("Ctrl+C"));
-
-	connect(act, &QAction::triggered, [&](){
-		SQLExecutionWidget::copySelection(results_tbw, false, true);
+	connect(act, &QAction::triggered,	[&](){
+		SQLExecutionWidget::copySelection(results_tbw, false, false);
 		paste_tb->setEnabled(true);
 	});
 
-	act = copy_menu.addAction(tr("Copy as text"));
+	act = copy_menu.addAction(tr("Copy as CSV"));
 	act->setShortcut(QKeySequence("Ctrl+Shift+C"));
-	connect(act, &QAction::triggered,	[&](){
-		SQLExecutionWidget::copySelection(results_tbw, false, false);
+
+	connect(act, &QAction::triggered, [&](){
+		SQLExecutionWidget::copySelection(results_tbw, false, true);
 		paste_tb->setEnabled(true);
 	});
 
@@ -1627,7 +1627,7 @@ void DataManipulationForm::showPopupMenu()
 		act = item_menu.addAction(QIcon(GuiUtilsNs::getIconPath("copy")), tr("Copy items"));
 		act->setMenu(&copy_menu);
 
-		act = item_menu.addAction(QIcon(GuiUtilsNs::getIconPath("paste")), tr("Pase items"));
+		act = item_menu.addAction(QIcon(GuiUtilsNs::getIconPath("paste")), tr("Paste items"));
 		act->setMenu(&paste_menu);
 		act->setEnabled(paste_tb->isEnabled());
 
