@@ -244,9 +244,8 @@ class PgSqlType: public TemplateType<PgSqlType>{
 		QString getTypeName(bool incl_dimension);
 
 		/*! \brief Returns the name of the type in SQL form.
-		 * The full_format, when true, force the inclusion of length, precision and other quantifiers of the type.
-		 * This method will always append the dimension quantifier [] even the full_format = false */
-		QString getSQLTypeName(bool full_format = true);
+		 * Includes the length, precision and other quantifiers of the type. */
+		QString getSQLTypeName();
 
 		friend class Type;
 		friend class Domain;

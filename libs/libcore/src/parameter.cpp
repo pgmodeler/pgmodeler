@@ -138,10 +138,5 @@ QString Parameter::getCodeDefinition(unsigned def_type, bool reduced_form)
 	attributes[Attributes::DefaultValue]=default_value;
 	attributes[Attributes::Type]=type.getCodeDefinition(def_type);
 
-	if(def_type == SchemaParser::XmlDefinition)
-		attributes[Attributes::Type]=type.getCodeDefinition(def_type);
-	else
-		attributes[Attributes::Type]=type.getSQLTypeName(false);
-
 	return BaseObject::getCodeDefinition(def_type, reduced_form);
 }
