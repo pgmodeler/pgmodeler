@@ -90,8 +90,8 @@ void AggregateWidget::setAttributes(DatabaseModel *model, OperationList *op_list
 
 	BaseObjectWidget::setAttributes(model,op_list, aggregate, schema);
 
-	input_type->setAttributes(type, model);
-	state_type->setAttributes(type, model);
+	input_type->setAttributes(type, model, false);
+	state_type->setAttributes(type, model, false);
 	final_func_sel->setModel(model);
 	transition_func_sel->setModel(model);
 	sort_op_sel->setModel(model);
@@ -116,7 +116,7 @@ void AggregateWidget::setAttributes(DatabaseModel *model, OperationList *op_list
 		input_types_tab->blockSignals(false);
 		input_types_tab->clearSelection();
 
-		state_type->setAttributes(aggregate->getStateType(), model);
+		state_type->setAttributes(aggregate->getStateType(), model, false);
 	}
 }
 

@@ -75,8 +75,8 @@ void CastWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Cas
 		assignment_rb->setChecked(cast->getCastType()==Cast::Assignment);
 	}
 
-	src_datatype->setAttributes(src_type,model);
-	trg_datatype->setAttributes(trg_type,model);
+	src_datatype->setAttributes(src_type, model, false);
+	trg_datatype->setAttributes(trg_type, model, false);
 }
 
 void CastWidget::applyConfiguration()

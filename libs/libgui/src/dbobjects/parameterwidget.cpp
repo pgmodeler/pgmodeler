@@ -72,7 +72,7 @@ void ParameterWidget::setAttributes(Parameter param, DatabaseModel *model)
 	param_out_chk->setChecked(param.isOut());
 	param_variadic_chk->setChecked(param.isVariadic());
 	default_value_edt->setText(param.getDefaultValue());
-	data_type->setAttributes(param.getType(), model);
+	data_type->setAttributes(param.getType(), model, false);
 
 	BaseObjectWidget::setAttributes(model,&this->parameter, nullptr);
 }

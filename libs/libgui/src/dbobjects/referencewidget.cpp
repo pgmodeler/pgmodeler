@@ -127,7 +127,7 @@ void ReferenceWidget::setAttributes(Reference ref, unsigned ref_flags, DatabaseM
 	this->reference = ref;
 	this->model = model;
 
-	pgsqltype_wgt->setAttributes(PgSqlType(), model,
+	pgsqltype_wgt->setAttributes(PgSqlType(), model, true,
 															 UserTypeConfig::AllUserTypes ^ UserTypeConfig::SequenceType, true, false);
 
 	expression_cp->configureCompletion(model, expression_hl);
@@ -308,7 +308,7 @@ void ReferenceWidget::editColumn(int row)
 {
 	name_edt->setText(columns_tab->getCellText(row, 0));
 	alias_edt->setText(columns_tab->getCellText(row, 2));
-	pgsqltype_wgt->setAttributes(columns_tab->getRowData(row).value<PgSqlType>(), model,
+	pgsqltype_wgt->setAttributes(columns_tab->getRowData(row).value<PgSqlType>(), model, true,
 															 UserTypeConfig::AllUserTypes ^ UserTypeConfig::SequenceType, true, false);
 }
 

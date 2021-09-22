@@ -64,7 +64,7 @@ void TransformWidget::setAttributes(DatabaseModel *model, OperationList *op_list
 	language_sel->setModel(model);
 	from_sql_func_sel->setModel(model);
 	to_sql_func_sel->setModel(model);
-	type_wgt->setAttributes(type, model, UserTypeConfig::AllUserTypes, false, false);
+	type_wgt->setAttributes(type, model, false, UserTypeConfig::AllUserTypes, false, false);
 }
 
 void TransformWidget::applyConfiguration()

@@ -106,8 +106,8 @@ void OperatorWidget::setAttributes(DatabaseModel *model, OperationList *op_list,
 		right_type=oper->getArgumentType(Operator::RightArg);
 	}
 
-	arg_types[0]->setAttributes(left_type, model);
-	arg_types[1]->setAttributes(right_type, model);
+	arg_types[0]->setAttributes(left_type, model, false);
+	arg_types[1]->setAttributes(right_type, model, false);
 }
 
 void OperatorWidget::applyConfiguration()

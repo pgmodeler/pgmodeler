@@ -149,10 +149,10 @@ void BaseObjectWidget::setRequiredField(QWidget *widget)
 			if(lbl)
 				lbl->setText(str_aux + lbl->text());
 
-			if(!grp)
+			if(pgtype || grp)
+				widget->setStyleSheet(QString("QGroupBox {	font-weight: bold; }"));
+			else if(lbl)
 				widget->setStyleSheet(QString("QWidget {	font-weight: bold; }"));
-			else
-				grp->setStyleSheet(QString("QGroupBox {	font-weight: bold; }"));
 		}
 		else if(edt || txt || sel)
 		{
