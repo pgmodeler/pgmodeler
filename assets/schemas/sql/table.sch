@@ -52,8 +52,8 @@
 		%end
 	%end
 	
-	$br )
-
+	%if %not {constraints} %then $br %end
+)
 %else
 	%if %not {gen-alter-cmds} %and {partitioned-table} %and {constraints} %then
 		[ (] $br {constraints} $br [)]

@@ -265,10 +265,10 @@ void PhysicalTable::setColumnsAttribute(unsigned def_type, bool incl_rel_added_c
 				//If the last line starts with -- indicates that sql code for the column is disabled
 				if(cols[i].startsWith("--") && i > 0)
 					//Removes the comma from the above line in order to avoid bad sql
-					cols[i - 1].remove(cols[i-1].lastIndexOf(","), 2);
+					cols[i - 1].remove(cols[i-1].lastIndexOf(","), 1);
 				else
 					//Otherwise removes the comma from the last line
-					cols[i].remove(cols[i].lastIndexOf(","), 2);
+					cols[i].remove(cols[i].lastIndexOf(","), 1);
 			}
 		}
 
@@ -336,10 +336,10 @@ void PhysicalTable::setConstraintsAttribute(unsigned def_type)
 			//If the last line starts with -- indicates that sql code for the constraint is disable
 			if(lines[i].startsWith("--") && i > 0)
 				//Removes the comma from the above line in order to avoid bad sql
-				lines[i-1].remove(lines[i-1].lastIndexOf(','),1);
+				lines[i-1].remove(lines[i-1].lastIndexOf(','), 1);
 			else
 				//Otherwise removes the comma from the last line
-				lines[i].remove(lines[i].lastIndexOf(','),1);
+				lines[i].remove(lines[i].lastIndexOf(','), 1);
 
 			for(i=0; i < lines.size(); i++)
 			{
