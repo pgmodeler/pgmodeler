@@ -202,6 +202,8 @@ void BaseFunction::setSecurityType(SecurityType sec_type)
 
 void BaseFunction::addTransformType(PgSqlType type)
 {
+	type.reset();
+
 	if(!isTransformTypeExists(type))
 	{
 		transform_types.push_back(type);

@@ -2672,7 +2672,7 @@ void DatabaseImportHelper::createColumns(attribs_map &attribs, vector<unsigned> 
 			/* Special verification for PostGiS types: if the current type is a gis based one
 			 * (geometry, geography, box3d or box2d) we override the usage of the current type
 			 * and force the use of the pgModeler built-in one. */
-			if((PgSqlType::isGiSType(types[type_oid][Attributes::Name]) ||
+			if((PgSqlType::isGeoType(types[type_oid][Attributes::Name]) ||
 					PgSqlType::isBoxType(types[type_oid][Attributes::Name])) &&
 				 types[type_oid][Attributes::Configuration] == Attributes::BaseType &&
 				 types[type_oid][Attributes::Category] == ~CategoryType(CategoryType::UserDefined))

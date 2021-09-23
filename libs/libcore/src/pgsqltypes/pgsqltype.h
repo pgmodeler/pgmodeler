@@ -33,13 +33,17 @@
 
 class PgSqlType: public TemplateType<PgSqlType>{
 	private:
+		//! \brief Offset for all PostGiS types
+		static constexpr unsigned PostGiSStart = 63,
+		PostGiSEnd = 81;
+
 		//! \brief Offset for oid types
-		static constexpr unsigned OidStart = 83,
-		OidEnd = 97;
+		static constexpr unsigned OidStart = 88,
+		OidEnd = 102;
 
 		//! \brief Offset for pseudo types
-		static constexpr unsigned PseudoStart = 98,
-		PseudoEnd = 112;
+		static constexpr unsigned PseudoStart = 103,
+		PseudoEnd = 117;
 
 		//! \brief Configuration for user defined types
 		static vector<UserTypeConfig> user_types;
@@ -169,11 +173,13 @@ class PgSqlType: public TemplateType<PgSqlType>{
 		bool isUserType();
 		bool isArrayType();
 
-		bool isGiSType();
-		static bool isGiSType(const QString &type_name);
+		bool isGeoType();
+		static bool isGeoType(const QString &type_name);
 
 		bool isBoxType();
 		static bool isBoxType(const QString &type_name);
+
+		bool isPostGiSType();
 
 		bool isRangeType();
 		bool isSerialType();
@@ -186,6 +192,13 @@ class PgSqlType: public TemplateType<PgSqlType>{
 		bool isPolymorphicType();
 		bool hasVariableLength();
 		bool acceptsPrecision();
+
+		/*! \brief Resets the length, precision, interval and spatial attributes of the type to their default values.
+		 * If the all_attrs is true then the dimension and timezone info is reset too.
+		 * This method preserves the dimension attribute and the name (idx) and is useful when you want to grantee that
+		 * type being associated to an object need to have only name and dimesion info discarding everything else.
+		 * Example of such objects are function parameters, casts, operators, aggregates and many others. */
+		void reset(bool all_attrs = false);
 
 		//! \brief Indicates if the 'this' type can be casted to 'type'
 		bool canCastTo(PgSqlType type);

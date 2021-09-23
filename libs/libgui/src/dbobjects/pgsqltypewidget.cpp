@@ -106,19 +106,19 @@ void PgSQLTypeWidget::updateTypeFormat()
 		interval_cmb->setEnabled(allow_qualifiers);
 
 		spatial_cmb->setEnabled(allow_qualifiers);
-		spatial_cmb->setVisible(type.isGiSType());
-		spatial_lbl->setVisible(type.isGiSType());
-		variation_lbl->setVisible(type.isGiSType());
+		spatial_cmb->setVisible(type.isGeoType());
+		spatial_lbl->setVisible(type.isGeoType());
+		variation_lbl->setVisible(type.isGeoType());
 
-		srid_lbl->setVisible(type.isGiSType());
+		srid_lbl->setVisible(type.isGeoType());
 		srid_spb->setEnabled(allow_qualifiers);
-		srid_spb->setVisible(type.isGiSType());
+		srid_spb->setVisible(type.isGeoType());
 
 		var_m_chk->setEnabled(allow_qualifiers);
-		var_m_chk->setVisible(type.isGiSType());
+		var_m_chk->setVisible(type.isGeoType());
 
 		var_z_chk->setEnabled(allow_qualifiers);
-		var_z_chk->setVisible(type.isGiSType());
+		var_z_chk->setVisible(type.isGeoType());
 
 		if(spatial_cmb->isVisible())
 		{

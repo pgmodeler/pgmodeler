@@ -199,6 +199,7 @@ void  ModelValidationHelper::resolveConflict(ValidationInfo &info)
 			extension->setName("postgis");
 			extension->setSchema(db_model->getSchema("public"));
 			db_model->addExtension(extension);
+
 		}
 	}
 	catch(Exception &e)
@@ -575,7 +576,7 @@ void ModelValidationHelper::validateModel()
 				{
 					col = dynamic_cast<Column *>(obj);
 
-					if(col->getType().isGiSType())
+					if(col->getType().isPostGiSType())
 						generateValidationInfo(ValidationInfo::MissingExtension, col, {});
 				}
 

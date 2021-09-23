@@ -61,6 +61,7 @@ void Transform::setType(PgSqlType tp)
 		if(functions[ToSqlFunc])
 			validateFunction(functions[ToSqlFunc], ToSqlFunc);
 
+		tp.reset();
 		setCodeInvalidated(type != tp);
 		type = tp;
 		setName("");

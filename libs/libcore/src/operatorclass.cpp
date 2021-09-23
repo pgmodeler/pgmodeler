@@ -41,6 +41,7 @@ void OperatorClass::setDataType(PgSqlType data_type)
 	if(data_type==PgSqlType::Null)
 		throw Exception(ErrorCode::AsgInvalidTypeObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
+	data_type.reset();
 	setCodeInvalidated(this->data_type != data_type);
 	this->data_type=data_type;
 }

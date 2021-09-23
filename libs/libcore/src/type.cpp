@@ -406,6 +406,7 @@ void Type::setElement(PgSqlType elem)
 		throw Exception(Exception::getErrorMessage(ErrorCode::AsgInvalidElementType).arg(this->getName(true)),
 						ErrorCode::AsgInvalidElementType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
+	elem.reset();
 	setCodeInvalidated(element != elem);
 	this->element=elem;
 }
@@ -474,6 +475,7 @@ void Type::setLikeType(PgSqlType like_type)
 		throw Exception(Exception::getErrorMessage(ErrorCode::InvUserTypeSelfReference).arg(this->getName(true)),
 						ErrorCode::InvUserTypeSelfReference,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
+	like_type.reset();
 	setCodeInvalidated(this->like_type != like_type);
 	this->like_type=like_type;
 }
@@ -484,6 +486,7 @@ void Type::setSubtype(PgSqlType subtype)
 		throw Exception(Exception::getErrorMessage(ErrorCode::InvUserTypeSelfReference).arg(this->getName(true)),
 						ErrorCode::InvUserTypeSelfReference,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
+	subtype.reset();
 	setCodeInvalidated(this->subtype != subtype);
 	this->subtype=subtype;
 }
