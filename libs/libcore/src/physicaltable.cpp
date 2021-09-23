@@ -214,52 +214,70 @@ void PhysicalTable::setRelObjectsIndexesAttribute()
 
 void PhysicalTable::setColumnsAttribute(unsigned def_type, bool incl_rel_added_cols)
 {
-	QString str_cols, inh_cols;
-	unsigned i, count;
+	QStringList cols, inh_cols;
 
-	count=columns.size();
-	for(i=0; i < count; i++)
+	for(auto &col : columns)
 	{
 		/* Do not generates the column code definition when it is not included by
 		 relatoinship, in case of XML definition. */
-		if((def_type==SchemaParser::SqlDefinition && !columns[i]->isAddedByCopy() && !columns[i]->isAddedByGeneralization()) ||
-			 /* (def_type==SchemaParser::SqlDefinition && columns[i]->isAddedByCopy() && this->isPartition()) || */
-			 (def_type==SchemaParser::XmlDefinition && (!columns[i]->isAddedByRelationship() || (incl_rel_added_cols && columns[i]->isAddedByRelationship()))))
+		if((def_type==SchemaParser::SqlDefinition && !col->isAddedByCopy() && !col->isAddedByGeneralization()) ||
+			 (def_type==SchemaParser::XmlDefinition && (!col->isAddedByRelationship() || (incl_rel_added_cols && col->isAddedByRelationship()))))
 		{
-			str_cols+=columns[i]->getCodeDefinition(def_type);
+			cols.append(col->getCodeDefinition(def_type));
 
 			if(def_type==SchemaParser::SqlDefinition)
-				setCommentAttribute(columns[i]);
+				setCommentAttribute(col);
 		}
-		else if(def_type==SchemaParser::SqlDefinition && columns[i]->isAddedByGeneralization() && !gen_alter_cmds)
+		else if(def_type==SchemaParser::SqlDefinition && col->isAddedByGeneralization() && !gen_alter_cmds)
 		{
-			inh_cols+=QString("-- ") + columns[i]->getCodeDefinition(def_type);
+			inh_cols.append("-- " + col->getCodeDefinition(def_type));
 		}
 	}
 
-	if(def_type==SchemaParser::SqlDefinition)
+	if(def_type == SchemaParser::SqlDefinition)
 	{
-		if(!str_cols.isEmpty()  && !gen_alter_cmds)
+		if(!cols.isEmpty())
 		{
-			count = str_cols.size();
+			/* Check if some column has its sql disabled. If so,
+			 * its necessary to make some tweaks in order to not
+			 * generate bad sql code */
+			unsigned i = cols.size()-1;
+			bool has_constr_enabled = false;
+			Constraint *constr = nullptr;
 
-			// Removing the last comma from the columns SQL in order to avoid syntax errors
-			if(str_cols[count-2] == ',' || str_cols[count-2] == '\n')
-				str_cols.remove(count - 2, 2);
+			/* Checking if we have some primary key or check constraint enabled
+			 * so we can determine if the last comma in the column definition must be removed */
+			for(auto &obj : constraints)
+			{
+				constr = dynamic_cast<Constraint *>(obj);
 
-			/* Special case: if we have the last column's SQL disabled we need to remove
-			 * the comma from the last line (the enabled one) in order to avoid syntax error */
-			int disabled_col_idx = str_cols.lastIndexOf(QString("-- ")),
-					last_comma_idx = str_cols.lastIndexOf(',', disabled_col_idx);
+				if(!constr->isSQLDisabled() &&
+					 (constr->getConstraintType() == ConstraintType::PrimaryKey ||
+						constr->getConstraintType() == ConstraintType::Check))
+				{
+					has_constr_enabled = true;
+					break;
+				}
+			}
 
-			if(last_comma_idx >= 0 && last_comma_idx < disabled_col_idx)
-				str_cols.remove(last_comma_idx, 1);
+			if(!has_constr_enabled)
+			{
+				//If the last line starts with -- indicates that sql code for the column is disabled
+				if(cols[i].startsWith("--") && i > 0)
+					//Removes the comma from the above line in order to avoid bad sql
+					cols[i - 1].remove(cols[i-1].lastIndexOf(","), 2);
+				else
+					//Otherwise removes the comma from the last line
+					cols[i].remove(cols[i].lastIndexOf(","), 2);
+			}
 		}
 
-		attributes[Attributes::InhColumns]=inh_cols;
+		for(auto &inh : inh_cols)
+			attributes[Attributes::InhColumns] += inh;
 	}
 
-	attributes[Attributes::Columns]=str_cols;
+	for(auto &col : cols)
+		attributes[Attributes::Columns] += col;
 }
 
 void PhysicalTable::setConstraintsAttribute(unsigned def_type)
@@ -316,7 +334,7 @@ void PhysicalTable::setConstraintsAttribute(unsigned def_type)
 			unsigned dis_sql_cnt=0;
 
 			//If the last line starts with -- indicates that sql code for the constraint is disable
-			if(lines[i].startsWith(QLatin1String("--")) && i > 0)
+			if(lines[i].startsWith("--") && i > 0)
 				//Removes the comma from the above line in order to avoid bad sql
 				lines[i-1].remove(lines[i-1].lastIndexOf(','),1);
 			else
@@ -325,7 +343,7 @@ void PhysicalTable::setConstraintsAttribute(unsigned def_type)
 
 			for(i=0; i < lines.size(); i++)
 			{
-				if(lines[i].startsWith(QLatin1String("--"))) dis_sql_cnt++;
+				if(lines[i].startsWith("--")) dis_sql_cnt++;
 				str_constr+=lines[i];
 			}
 
