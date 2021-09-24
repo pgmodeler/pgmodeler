@@ -18,6 +18,7 @@
 
 #include "objectfinderwidget.h"
 #include "guiutilsns.h"
+#include "coreutilsns.h"
 
 const QStringList ObjectFinderWidget::search_attribs =
 { Attributes::Name, Attributes::Comment, Attributes::Signature,

@@ -19,7 +19,7 @@
 #include "objectsfilterwidget.h"
 #include "guiutilsns.h"
 #include "catalog.h"
-#include "coreutilsns.h"
+#include "utilsns.h"
 
 ObjectsFilterWidget::ObjectsFilterWidget(QWidget *parent) : QWidget(parent)
 {
@@ -29,8 +29,8 @@ ObjectsFilterWidget::ObjectsFilterWidget(QWidget *parent) : QWidget(parent)
 
 	hint_lbl->setText(tr("Using a pattern in <strong>%1</strong> mode in which no wildcard character <strong>%2</strong> \
 is present has the same effect as performing an exact match searching on the names or signatures.")
-											 .arg(CoreUtilsNs::FilterWildcard)
-											 .arg(CoreUtilsNs::WildcardChar));
+											 .arg(UtilsNs::FilterWildcard)
+											 .arg(UtilsNs::WildcardChar));
 
 	add_tb->setToolTip(add_tb->toolTip() + QString(" (%1)").arg(add_tb->shortcut().toString()));
 	clear_all_tb->setToolTip(clear_all_tb->toolTip() + QString(" (%1)").arg(clear_all_tb->shortcut().toString()));
@@ -118,7 +118,7 @@ void ObjectsFilterWidget::addFilters(const QStringList &filters)
 
 	for(auto &filter : filters)
 	{
-		values = filter.split(CoreUtilsNs::FilterSeparator);
+		values = filter.split(UtilsNs::FilterSeparator);
 
 		// Rejecting invalid filters: malformed (< 3 fields), empty values or invalid object types
 		if(values.size() != 3 || values.indexOf("") >= 0 || !types.contains(values[0]))
@@ -168,7 +168,7 @@ QStringList ObjectsFilterWidget::getObjectFilters()
 {
 	QStringList filters,
 			curr_filter,
-			modes = { CoreUtilsNs::FilterWildcard, CoreUtilsNs::FilterRegExp };
+			modes = { UtilsNs::FilterWildcard, UtilsNs::FilterRegExp };
 	QString pattern, mode, type_name;
 	QComboBox *mode_cmb = nullptr, *object_cmb = nullptr;
 
@@ -190,7 +190,7 @@ QStringList ObjectsFilterWidget::getObjectFilters()
 		curr_filter.append(filters_tbw->item(row, 1)->text());
 		curr_filter.append(modes[mode_cmb->currentIndex()]);
 
-		filters.append(curr_filter.join(CoreUtilsNs::FilterSeparator));
+		filters.append(curr_filter.join(UtilsNs::FilterSeparator));
 		curr_filter.clear();
 	}
 

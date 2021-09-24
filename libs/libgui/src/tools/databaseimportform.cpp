@@ -535,11 +535,13 @@ void DatabaseImportForm::listDatabases()
 			DatabaseImportForm::listDatabases(*import_helper, database_cmb);
 		}
 		else
+		{
 			database_cmb->clear();
+			buttons_wgt->setEnabled(false);
+		}
 
 		db_objects_tw->clear();
 		database_cmb->setEnabled(database_cmb->count() > 1);
-
 	}
 	catch(Exception &e)
 	{

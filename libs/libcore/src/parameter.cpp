@@ -48,12 +48,7 @@ void Parameter::setType(PgSqlType type)
 	if(!type.isArrayType() && !type.isPolymorphicType() && is_variadic)
 		throw Exception(ErrorCode::InvUsageVariadicParamMode ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	// Parameter types ignores any qualifier except the dimension
-	type.setIntervalType(BaseType::Null);
-	type.setSpatialType(SpatialType());
-	type.setPrecision(-1);
-	type.setLength(0);
-
+	type.reset();
 	setCodeInvalidated(this->type != type);
 	this->type=type;
 }

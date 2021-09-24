@@ -28,6 +28,27 @@
 #include <QString>
 
 namespace UtilsNs {
+	//! \brief Default char for data/value separator for special usage
+	static const QString DataSeparator("•");
+
+	//! \brief Default char used as unescaped value start delimiter
+	static const QChar UnescValueStart='/';
+
+	//! \brief Default char used as unescaped value end delimiter
+	static const QChar	UnescValueEnd='/';
+
+	//! \brief Indicates the default wildcard character expected to be found in wildcard patterns
+	static const QChar WildcardChar('*');
+
+	//! \brief Indicates the character used to separate filter fields in the filtering string
+	static const QChar FilterSeparator = ':';
+
+	//! \brief Indicates the wildcard filtering mode in the object listing
+	static const QString FilterWildcard("wildcard"),
+
+	//! \brief Indicates the regexp (POSIX) filtering mode in the object listing
+	FilterRegExp("regexp");
+
 	/*! \brief Writes the provided buffer to the file specified by its filename
 	 * Raises an exception in case of the file couldn,t be open */
 	extern void saveFile(const QString &filename, const QByteArray &buffer);

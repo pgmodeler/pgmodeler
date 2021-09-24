@@ -86,6 +86,7 @@ void OperatorClassElement::setStorage(PgSqlType storage)
 	this->strategy_number=0;
 
 	//Configure the attributes that belongs to the element type
+	storage.reset();
 	this->storage=storage;
 	this->element_type=StorageElem;
 }

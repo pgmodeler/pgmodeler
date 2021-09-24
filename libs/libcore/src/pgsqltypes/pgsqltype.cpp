@@ -46,22 +46,23 @@ QStringList PgSqlType::TemplateType<PgSqlType>::type_names =
 	"reltime", "tinterval", "tsquery", "tsvector", "txid_snapshot",
 
 	//Spatial type specifics for the PostGiS extension
-	//offsets 63 to 76
-	"box2d","box3d","geometry",
-	"geometry_dump","geography",
+	//offsets 63 to 81
+	"box2d","box3d","box2df","box3df",
+	"geometry", "geometry_dump","geography",
 	"geomval", "addbandarg", "rastbandarg",
 	"raster", "reclassarg",  "unionarg",
 	"\"TopoGeometry\"",
 	"getfaceedges_returntype",
 	"validatetopology_returntype",
+	"gidx", "spheroid", "valid_detail",
 
 	//Range-types
-	//offsets 77 to 82
+	//offsets 82 to 87
 	"int4range", "int8range", "numrange",
 	"tsrange","tstzrange","daterange",
 
 	//Object Identification type (OID)
-	//offsets 83 to 97
+	//offsets 88 to 102
 	"oid", "regproc", "regprocedure",
 	"regoper", "regoperator", "regclass",
 	"regrole", "regnamespace", "regtype",
@@ -69,7 +70,7 @@ QStringList PgSqlType::TemplateType<PgSqlType>::type_names =
 	"tid", "oidvector",
 
 	//Pseudo-types
-	//offsets 98 to 112
+	//offsets 103 to 117
 	"\"any\"","anyarray","anyelement","anyenum",
 	"anynonarray", "anyrange", "cstring","internal","language_handler",
 	"record","trigger","void","opaque", "fdw_handler", "event_trigger"
@@ -78,10 +79,7 @@ QStringList PgSqlType::TemplateType<PgSqlType>::type_names =
 PgSqlType::PgSqlType()
 {
 	type_idx = type_names.indexOf("smallint");
-	length = 0;
-	precision=-1;
-	dimension=0;
-	with_timezone=false;
+	reset(true);
 }
 
 PgSqlType::PgSqlType(const QString &type_name) : PgSqlType()
@@ -733,7 +731,7 @@ bool PgSqlType::isNetworkType()
 					curr_type==QString("macaddr8")));
 }
 
-bool PgSqlType::isGiSType(const QString &type_name)
+bool PgSqlType::isGeoType(const QString &type_name)
 {
 	return (type_name==QString("geography") ||
 					type_name==QString("geometry") ||
@@ -748,14 +746,19 @@ bool PgSqlType::isBoxType()
 
 bool PgSqlType::isBoxType(const QString &type_name)
 {
-	return (type_name==QString("box2d") ||
-					type_name==QString("box3d"));
+	return (type_name==QString("box2d") || type_name==QString("box3d") ||
+					type_name==QString("box2df") || type_name==QString("box3df"));
 }
 
-bool PgSqlType::isGiSType()
+bool PgSqlType::isPostGiSType()
+{
+	return (type_idx >= PostGiSStart && type_idx <= PostGiSEnd);
+}
+
+bool PgSqlType::isGeoType()
 {
 	QString curr_type=(!isUserType() ? type_names[type_idx] : "");
-	return (!isUserType() && isGiSType(curr_type));
+	return (!isUserType() && isGeoType(curr_type));
 }
 
 bool PgSqlType::isRangeType()
@@ -848,6 +851,20 @@ bool PgSqlType::acceptsPrecision()
 {
 	return (isNumericType() ||
 					(!isUserType() && type_names[this->type_idx]!=QString("date") && isDateTimeType()));
+}
+
+void PgSqlType::reset(bool all_attrs)
+{
+	setIntervalType(BaseType::Null);
+	setSpatialType(SpatialType());
+	setPrecision(-1);
+	setLength(0);
+
+	if(all_attrs)
+	{
+		setWithTimezone(false);
+		setDimension(0);
+	}
 }
 
 bool PgSqlType::canCastTo(PgSqlType type)
@@ -1032,7 +1049,7 @@ QString PgSqlType::getCodeDefinition(unsigned def_type,QString ref_type)
 	if(interval_type != BaseType::Null)
 		attribs[Attributes::IntervalType]=(~interval_type);
 
-	if(isGiSType())
+	if(isGeoType())
 	{
 		attribs[Attributes::SpatialType]=(~spatial_type);
 		attribs[Attributes::Variation]=QString("%1").arg(spatial_type.getVariation());

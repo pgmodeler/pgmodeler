@@ -96,6 +96,7 @@ bool Aggregate::isValidFunction(unsigned func_idx, Function *func)
 
 void Aggregate::setStateType(PgSqlType state_type)
 {
+	state_type.reset();
 	setCodeInvalidated(this->state_type != state_type);
 	this->state_type=state_type;
 }
@@ -157,6 +158,7 @@ void Aggregate::setTypesAttribute(unsigned def_type)
 
 void Aggregate::addDataType(PgSqlType type)
 {
+	type.reset();
 	data_types.push_back(type);
 	setCodeInvalidated(true);
 }

@@ -108,7 +108,7 @@ class SchemaParser {
 		void ignoreBlankChars(const QString &line);
 
 		//! \brief Translates the meta char token to the real character
-		char translateMetaCharacter(const QString &meta);
+		QString translateMetaCharacter(const QString &meta);
 
 		/*! \brief Get an word from the buffer on the current position (word is any string that isn't
 		 a conditional instruction or comment) */
@@ -159,8 +159,7 @@ class SchemaParser {
 		CharStartCompExpr,	//! \brief Character that starts a comparison expression
 		CharEndCompExpr,	//! \brief Character that ends a comparison expression
 		CharValueDelim,	//! \brief Character that delimiters a value (string)
-		CharValueOf;	/*! \brief Character that is used on %set instructions to
-										create an attribute name based upon another attribute value */
+		CharValueOf;	//! \brief Character that is used on %set instructions to create an attribute name based upon another attribute value
 
 		//! \brief Tokens related to conditional instructions and operators
 		static const QString	TokenIf,  // %if
@@ -179,12 +178,13 @@ class SchemaParser {
 		TokenMetaTb,// $tb (tabulation)
 		TokenMetaOb,// $ob (open square bracket '[')
 		TokenMetaCb,// $cb (close square bracket ']')
-		TokenMetaOc,// $ob (open curly bracket '{')
-		TokenMetaCc,// $cb (close curly bracket '}')
-		TokenMetaDs,// $ds (dollar sign '$')
-		TokenMetaHs,// $ds (hash/number sign '#')
+		TokenMetaOc,// $oc (open curly bracket '{')
+		TokenMetaCc,// $cc (close curly bracket '}')
+		TokenMetaMs,// $ms (money sign '$')
+		TokenMetaHs,// $hs (hash/number sign '#')
 		TokenMetaPs,// $ps (percentage sign '%')
-		TokenMetaAt;// $at (at character '@')
+		TokenMetaAt,// $at (at character '@')
+		TokenMetaDs;// $ds (special data separator character '•')
 
 		//! \brief Tokens related to comparison expressions
 		static const QString	TokenEqOper,// == (equal)

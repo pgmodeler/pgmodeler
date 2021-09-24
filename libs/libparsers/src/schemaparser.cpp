@@ -52,10 +52,11 @@ const QString SchemaParser::TokenMetaOb=QString("ob");
 const QString SchemaParser::TokenMetaCb=QString("cb");
 const QString SchemaParser::TokenMetaOc=QString("oc");
 const QString SchemaParser::TokenMetaCc=QString("cc");
-const QString SchemaParser::TokenMetaDs=QString("ds");
+const QString SchemaParser::TokenMetaMs=QString("ms");
 const QString SchemaParser::TokenMetaPs=QString("ps");
 const QString SchemaParser::TokenMetaHs=QString("hs");
 const QString SchemaParser::TokenMetaAt=QString("at");
+const QString SchemaParser::TokenMetaDs=QString("ds");
 
 const QString SchemaParser::TokenEqOper=QString("==");
 const QString SchemaParser::TokenNeOper=QString("!=");
@@ -638,7 +639,7 @@ void SchemaParser::defineAttribute()
 				break;
 
 				case CharStartMetachar:
-					value+=translateMetaCharacter(getMetaCharacter());
+					value += translateMetaCharacter(getMetaCharacter());
 				break;
 
 				default:
@@ -876,19 +877,20 @@ void SchemaParser::ignoreBlankChars(const QString &line)
 		   line[column]==CharTabulation)) column++;
 }
 
-char SchemaParser::translateMetaCharacter(const QString &meta)
+QString SchemaParser::translateMetaCharacter(const QString &meta)
 {
-	static map<QString, char> metas={{ TokenMetaSp, CharSpace },
-									 { TokenMetaTb, CharTabulation },
-									 { TokenMetaBr, CharLineEnd },
-									 { TokenMetaOb, CharStartPlainText },
-									 { TokenMetaCb, CharEndPlainText },
-									 { TokenMetaOc, CharStartAttribute },
-									 { TokenMetaCc, CharEndAttribute },
-									 { TokenMetaDs, CharStartMetachar },
-									 { TokenMetaHs, CharComment },
-									 { TokenMetaPs, CharStartConditional },
-									 { TokenMetaAt, CharValueOf }};
+	static attribs_map metas={{ TokenMetaSp, QChar(CharSpace) },
+														{ TokenMetaTb, QChar(CharTabulation) },
+														{ TokenMetaBr, QChar(CharLineEnd) },
+														{ TokenMetaOb, QChar(CharStartPlainText) },
+														{ TokenMetaCb, QChar(CharEndPlainText) },
+														{ TokenMetaOc, QChar(CharStartAttribute) },
+														{ TokenMetaCc, QChar(CharEndAttribute) },
+														{ TokenMetaMs, QChar(CharStartMetachar) },
+														{ TokenMetaHs, QChar(CharComment) },
+														{ TokenMetaPs, QChar(CharStartConditional) },
+														{ TokenMetaAt, QChar(CharValueOf) },
+														{ TokenMetaDs, UtilsNs::DataSeparator } };
 
 	if(metas.count(meta)==0)
 	{
@@ -993,9 +995,10 @@ QString SchemaParser::getCodeDefinition(const attribs_map &attribs)
 					else
 					{
 						//Converting the metacharacter drawn to the character that represents this
-						chr=translateMetaCharacter(meta);
-						meta="";
-						meta+=chr;
+						//chr=translateMetaCharacter(meta);
+						//meta="";
+						//meta+=chr;
+						meta = translateMetaCharacter(meta);
 
 						//If the parser is inside an 'if / else' extracting tokens
 						if(if_level>=0)

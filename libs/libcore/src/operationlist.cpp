@@ -17,6 +17,7 @@
 */
 
 #include "operationlist.h"
+#include "coreutilsns.h"
 
 unsigned OperationList::max_size=500;
 

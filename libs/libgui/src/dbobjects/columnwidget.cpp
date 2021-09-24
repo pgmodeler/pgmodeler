@@ -20,6 +20,7 @@
 #include "sequencewidget.h"
 #include "baseform.h"
 #include "settings/generalconfigwidget.h"
+#include "coreutilsns.h"
 
 ColumnWidget::ColumnWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Column)
 {

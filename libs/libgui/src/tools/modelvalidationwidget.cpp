@@ -316,7 +316,7 @@ void ModelValidationWidget::updateValidation(ValidationInfo val_info)
 	{
 		Column *col = dynamic_cast<Column *>(val_info.getObject());
 
-		label->setText(tr("The column <strong>%1</strong> on <strong>%2</strong> <em>(%3)</em> is referencing the geospatial data type <strong>%4</strong> but the <strong>postgis</strong> extension is not present in the model!")
+		label->setText(tr("The column <strong>%1</strong> on <strong>%2</strong> <em>(%3)</em> is referencing the data type <strong>%4</strong> which is part of the <strong>postgis</strong> extension, but the extension itself is not present in the model!")
 									 .arg(col->getName())
 									 .arg(col->getParentTable()->getSignature(true))
 									 .arg(BaseObject::getTypeName(ObjectType::Table))
