@@ -18,7 +18,7 @@
 
 #include "basefunction.h"
 #include "defaultlanguages.h"
-#include "coreutilsns.h"
+#include "utilsns.h"
 
 const QRegExp BaseFunction::ConfigParamPattern("([a-z]+)([a-z]|(_))*", Qt::CaseInsensitive);
 
@@ -121,12 +121,12 @@ void BaseFunction::setBasicFunctionAttributes(unsigned def_type)
 		for(auto &type : transform_types)
 		{
 			types.append(QString("%1%2")
-									 .arg(def_type == SchemaParser::SqlDefinition ? CoreUtilsNs::DataSeparator : "")
+									 .arg(def_type == SchemaParser::SqlDefinition ? UtilsNs::DataSeparator : "")
 									 .arg(~type));
 		}
 
 		if(def_type==SchemaParser::SqlDefinition)
-			types.replaceInStrings(CoreUtilsNs::DataSeparator, QString(" FOR TYPE "));
+			types.replaceInStrings(UtilsNs::DataSeparator, QString(" FOR TYPE "));
 
 		attributes[Attributes::TransformTypes] = types.join(',');
 

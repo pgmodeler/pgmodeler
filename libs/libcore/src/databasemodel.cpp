@@ -5824,7 +5824,7 @@ Trigger *DatabaseModel::createTrigger()
 		trigger->setTransitionTableName(Trigger::OldTableName, attribs[Attributes::OldTableName]);
 		trigger->setTransitionTableName(Trigger::NewTableName, attribs[Attributes::NewTableName]);
 
-		trigger->addArguments(attribs[Attributes::Arguments].split(CoreUtilsNs::DataSeparator, QtCompat::SkipEmptyParts));
+		trigger->addArguments(attribs[Attributes::Arguments].split(UtilsNs::DataSeparator, QtCompat::SkipEmptyParts));
 		trigger->setDeferrable(attribs[Attributes::Deferrable]==Attributes::True);
 
 		if(trigger->isDeferrable())
@@ -10673,13 +10673,13 @@ vector<BaseObject *> DatabaseModel::findObjects(const QStringList &filters, cons
 {
 	vector<BaseObject *> objects, aux_objs;
 	QString pattern, mode;
-	QStringList values, modes = { CoreUtilsNs::FilterWildcard, CoreUtilsNs::FilterRegExp };
+	QStringList values, modes = { UtilsNs::FilterWildcard, UtilsNs::FilterRegExp };
 	ObjectType obj_type;
 	bool exact_match = false;
 
 	for(auto &filter : filters)
 	{
-		values = filter.split(CoreUtilsNs::FilterSeparator);
+		values = filter.split(UtilsNs::FilterSeparator);
 
 		// Raises an error if the filter has an invalid field count
 		if(values.size() != 3)
@@ -10691,7 +10691,7 @@ vector<BaseObject *> DatabaseModel::findObjects(const QStringList &filters, cons
 		obj_type = BaseObject::getObjectType(values[0]);
 		pattern = values[1];
 		mode = values[2];
-		exact_match = (mode == CoreUtilsNs::FilterWildcard && !pattern.contains(CoreUtilsNs::WildcardChar));
+		exact_match = (mode == UtilsNs::FilterWildcard && !pattern.contains(UtilsNs::WildcardChar));
 
 		// Raises an error if the filter has an invalid object type, pattern or mode
 		if(obj_type == ObjectType::BaseObject || pattern.isEmpty() || !modes.contains(mode))
@@ -10700,7 +10700,7 @@ vector<BaseObject *> DatabaseModel::findObjects(const QStringList &filters, cons
 											ErrorCode::InvalidObjectFilter,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		}
 
-		aux_objs = findObjects(pattern, { obj_type }, false, mode == CoreUtilsNs::FilterRegExp, exact_match, search_attr);
+		aux_objs = findObjects(pattern, { obj_type }, false, mode == UtilsNs::FilterRegExp, exact_match, search_attr);
 		objects.insert(objects.end(), aux_objs.begin(), aux_objs.end());
 	}
 
@@ -11715,10 +11715,10 @@ QStringList DatabaseModel::getFiltersFromChangelog(QDateTime start, QDateTime en
 				(!start.isValid() && end.isValid() && date <= end)))
 		{
 			filters.append(BaseObject::getSchemaName(type) +
-										 CoreUtilsNs::FilterSeparator +
+										 UtilsNs::FilterSeparator +
 										 signature +
-										 CoreUtilsNs::FilterSeparator +
-										 CoreUtilsNs::FilterWildcard);
+										 UtilsNs::FilterSeparator +
+										 UtilsNs::FilterWildcard);
 		}
 	}
 

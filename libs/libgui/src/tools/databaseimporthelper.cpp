@@ -20,6 +20,8 @@
 #include "defaultlanguages.h"
 #include "qtcompat/qtextstreamcompat.h"
 #include "qtcompat/splitbehaviorcompat.h"
+#include "utilsns.h"
+#include "coreutilsns.h"
 
 const QString DatabaseImportHelper::UnkownObjectOidXml("\t<!--[ unknown object OID=%1 ]-->\n");
 
@@ -1034,21 +1036,17 @@ void DatabaseImportHelper::createDomain(attribs_map &attribs)
 
 	try
 	{
-		constraints = Catalog::parseArrayValues(attribs[Attributes::Constraints]);
+		constraints = attribs[Attributes::Constraints].split(UtilsNs::DataSeparator, QtCompat::SkipEmptyParts);
 		attribs[Attributes::Constraints].clear();
 
-		for(auto constr : constraints)
+		for(auto &constr : constraints)
 		{
-			constr.remove(0, 1);
-			constr.remove(constr.length() - 1, 1);
-			constr_attrs = constr.split(" CHECK (");
-
+			constr_attrs = constr.split(" CHECK ");
 			aux_attribs[Attributes::Name] = constr_attrs.at(0).trimmed();
-
 			expr = constr_attrs.at(1).trimmed();
-			expr.remove(expr.length() - 1,1);
+			expr.remove(expr.indexOf('('), 1);
+			expr.remove(expr.lastIndexOf(')'), 1);
 			aux_attribs[Attributes::Expression] = expr;
-
 			attribs[Attributes::Constraints]+= schparser.getCodeDefinition(Attributes::DomConstraint, aux_attribs, SchemaParser::XmlDefinition);
 		}
 
@@ -1106,7 +1104,7 @@ void DatabaseImportHelper::configureBaseFunctionAttribs(attribs_map &attribs)
 		transform_types = getTypes(attribs[Attributes::TransformTypes], false);
 		attribs[Attributes::TransformTypes] = transform_types.join(',');
 
-		config_params = attribs[Attributes::ConfigParams].split(CoreUtilsNs::DataSeparator, QtCompat::SkipEmptyParts);
+		config_params = attribs[Attributes::ConfigParams].split(UtilsNs::DataSeparator, QtCompat::SkipEmptyParts);
 		attribs[Attributes::ConfigParams] = "";
 
 		for(auto &cfg : config_params)
@@ -2000,7 +1998,7 @@ void DatabaseImportHelper::createTrigger(attribs_map &attribs)
 		attribs[Attributes::TriggerFunc]=getDependencyObject(attribs[Attributes::TriggerFunc], ObjectType::Function, true, true);
 
 		args = attribs[Attributes::Arguments].split(Catalog::EscapedNullChar, QtCompat::SkipEmptyParts);
-		attribs[Attributes::Arguments] = args.join(CoreUtilsNs::DataSeparator);
+		attribs[Attributes::Arguments] = args.join(UtilsNs::DataSeparator);
 
 		loadObjectXML(ObjectType::Trigger, attribs);
 		dbmodel->createTrigger();

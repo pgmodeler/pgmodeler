@@ -63,6 +63,7 @@
 #include "dbobjects/usermappingwidget.h"
 #include "dbobjects/transformwidget.h"
 #include "dbobjects/procedurewidget.h"
+#include "coreutilsns.h"
 
 vector<BaseObject *> ModelWidget::copied_objects;
 vector<BaseObject *> ModelWidget::cutted_objects;

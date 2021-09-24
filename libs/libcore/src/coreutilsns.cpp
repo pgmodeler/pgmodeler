@@ -22,10 +22,6 @@
 #include <QHash>
 
 namespace CoreUtilsNs {
-	const QString
-	FilterWildcard("wildcard"),
-	FilterRegExp("regexp");
-
 	template <class Class>
 	void copyObject(BaseObject **psrc_obj, Class *copy_obj)
 	{

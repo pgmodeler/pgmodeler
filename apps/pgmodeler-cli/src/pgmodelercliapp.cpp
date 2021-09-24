@@ -543,8 +543,8 @@ void PgModelerCliApp::showMenu()
 	printText(tr("   * The `pattern' is the text pattern which is matched against the objects names."));
 	printText();
 	printText(tr("   * The `mode' is the way the pattern is matched. This one accepts two values: "));
-	printText(tr("     > `%1' causes the pattern to be used as a wildcard string while matching objects names.").arg(CoreUtilsNs::FilterWildcard));
-	printText(tr("     > `%1' causes the pattern to be treated as a POSIX regular expression while matching objects names.").arg(CoreUtilsNs::FilterRegExp));
+	printText(tr("     > `%1' causes the pattern to be used as a wildcard string while matching objects names.").arg(UtilsNs::FilterWildcard));
+	printText(tr("     > `%1' causes the pattern to be treated as a POSIX regular expression while matching objects names.").arg(UtilsNs::FilterRegExp));
 	printText();
 	printText(tr("   * The option %1 has effect only when used with %2 and will avoid discarding children of matched tables.").arg(ForceChildren).arg(OnlyMatching));
 	printText(tr("     Other tables eventually imported which are dependencies of the matched objects will have their children discarded."));

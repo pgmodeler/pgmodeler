@@ -48,7 +48,7 @@
 		pr.prolang AS language,
 		pr.procost AS execution_cost,
 		pr.prorows AS row_amount,
-		array_to_string(pr.proconfig, '•', '') AS config_params, ]
+		array_to_string(pr.proconfig, '] $ds [', '') AS config_params, ]
 
 		{window-func},
 

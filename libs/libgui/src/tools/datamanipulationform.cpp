@@ -19,7 +19,7 @@
 #include "datamanipulationform.h"
 #include "sqlexecutionwidget.h"
 #include "guiutilsns.h"
-#include "coreutilsns.h"
+#include "utilsns.h"
 #include "utils/plaintextitemdelegate.h"
 #include "baseform.h"
 #include "widgets/bulkdataeditwidget.h"
@@ -925,7 +925,7 @@ void DataManipulationForm::retrieveFKColumns(const QString &schema, const QStrin
 				for(auto &col : catalog.getObjectsAttributes(ObjectType::Column, schema, table, col_ids))
 					name_list.push_back(BaseObject::formatName(col[Attributes::Name]));
 
-				fk_infos[fk_name][Attributes::SrcColumns] = name_list.join(CoreUtilsNs::DataSeparator);
+				fk_infos[fk_name][Attributes::SrcColumns] = name_list.join(UtilsNs::DataSeparator);
 
 				col_ids.clear();
 				name_list.clear();
@@ -937,7 +937,7 @@ void DataManipulationForm::retrieveFKColumns(const QString &schema, const QStrin
 				for(auto &col : catalog.getObjectsAttributes(ObjectType::Column, aux_schema[Attributes::Name], aux_table[Attributes::Name], col_ids))
 					name_list.push_back(BaseObject::formatName(col[Attributes::Name]));
 
-				fk_infos[fk_name][Attributes::DstColumns] = name_list.join(CoreUtilsNs::DataSeparator);
+				fk_infos[fk_name][Attributes::DstColumns] = name_list.join(UtilsNs::DataSeparator);
 			}
 
 			submenu = new QMenu(this);
@@ -971,7 +971,7 @@ void DataManipulationForm::retrieveFKColumns(const QString &schema, const QStrin
 																													.arg(fk[Attributes::Name]), this, SLOT(browseReferrerTable()));
 				action->setData(fk_name);
 
-				ref_fk_infos[fk_name][Attributes::SrcColumns] = name_list.join(CoreUtilsNs::DataSeparator);
+				ref_fk_infos[fk_name][Attributes::SrcColumns] = name_list.join(UtilsNs::DataSeparator);
 				ref_fk_infos[fk_name][Attributes::Table] = aux_table[Attributes::Name];
 				ref_fk_infos[fk_name][Attributes::Schema] = aux_schema[Attributes::Name];
 			}
@@ -1231,14 +1231,14 @@ void DataManipulationForm::browseTable(const QString &fk_name, bool browse_ref_t
 	if(browse_ref_tab)
 	{
 		src_cols =  pk_col_names;
-		ref_cols = ref_fk_infos[fk_name][Attributes::SrcColumns].split(CoreUtilsNs::DataSeparator);
+		ref_cols = ref_fk_infos[fk_name][Attributes::SrcColumns].split(UtilsNs::DataSeparator);
 		schema = ref_fk_infos[fk_name][Attributes::Schema];
 		table = ref_fk_infos[fk_name][Attributes::Table];
 	}
 	else
 	{
-		src_cols =  fk_infos[fk_name][Attributes::SrcColumns].split(CoreUtilsNs::DataSeparator);
-		ref_cols = fk_infos[fk_name][Attributes::DstColumns].split(CoreUtilsNs::DataSeparator);
+		src_cols =  fk_infos[fk_name][Attributes::SrcColumns].split(UtilsNs::DataSeparator);
+		ref_cols = fk_infos[fk_name][Attributes::DstColumns].split(UtilsNs::DataSeparator);
 		schema = fk_infos[fk_name][Attributes::Schema];
 		table = fk_infos[fk_name][Attributes::RefTable];
 	}
@@ -1471,9 +1471,9 @@ QString DataManipulationForm::getDMLCommand(int row)
 				if(op_type==OpInsert || (op_type==OpUpdate && value!=item->data(Qt::UserRole)))
 				{
 					//Checking if the value is a malformed unescaped value, e.g., {value, value}, {value\}
-					if((value.startsWith(CoreUtilsNs::UnescValueStart) && value.endsWith(QString("\\") + CoreUtilsNs::UnescValueEnd)) ||
-							(value.startsWith(CoreUtilsNs::UnescValueStart) && !value.endsWith(CoreUtilsNs::UnescValueEnd)) ||
-							(!value.startsWith(CoreUtilsNs::UnescValueStart) && !value.endsWith(QString("\\") + CoreUtilsNs::UnescValueEnd) && value.endsWith(CoreUtilsNs::UnescValueEnd)))
+					if((value.startsWith(UtilsNs::UnescValueStart) && value.endsWith(QString("\\") + UtilsNs::UnescValueEnd)) ||
+							(value.startsWith(UtilsNs::UnescValueStart) && !value.endsWith(UtilsNs::UnescValueEnd)) ||
+							(!value.startsWith(UtilsNs::UnescValueStart) && !value.endsWith(QString("\\") + UtilsNs::UnescValueEnd) && value.endsWith(UtilsNs::UnescValueEnd)))
 						throw Exception(Exception::getErrorMessage(ErrorCode::MalformedUnescapedValue)
 										.arg(row + 1).arg(col_name),
 										ErrorCode::MalformedUnescapedValue,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -1486,7 +1486,7 @@ QString DataManipulationForm::getDMLCommand(int row)
 						value=QString("DEFAULT");
 					}
 					//Unescaped values will not be enclosed in quotes
-					else if(value.startsWith(CoreUtilsNs::UnescValueStart) && value.endsWith(CoreUtilsNs::UnescValueEnd))
+					else if(value.startsWith(UtilsNs::UnescValueStart) && value.endsWith(UtilsNs::UnescValueEnd))
 					{
 						value.remove(0,1);
 						value.remove(value.length()-1, 1);
@@ -1494,8 +1494,8 @@ QString DataManipulationForm::getDMLCommand(int row)
 					//Quoting value
 					else
 					{
-						value.replace(QString("\\") + CoreUtilsNs::UnescValueStart, CoreUtilsNs::UnescValueStart);
-						value.replace(QString("\\") + CoreUtilsNs::UnescValueEnd, CoreUtilsNs::UnescValueEnd);
+						value.replace(QString("\\") + UtilsNs::UnescValueStart, UtilsNs::UnescValueStart);
+						value.replace(QString("\\") + UtilsNs::UnescValueEnd, UtilsNs::UnescValueEnd);
 						value.replace("\'","''");
 						value=QString("E'") + value + QString("'");
 					}

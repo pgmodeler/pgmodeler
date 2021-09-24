@@ -18,7 +18,7 @@
 
 #include "modelsdiffhelper.h"
 #include <QThread>
-#include "coreutilsns.h"
+#include "utilsns.h"
 #include <QDate>
 #include "catalog.h"
 
@@ -185,32 +185,32 @@ QStringList ModelsDiffHelper::getRelationshipFilters(const vector<BaseObject *> 
 			if(rel->getRelationshipType() == Relationship::RelationshipNn && rel->getGeneratedTable())
 			{
 				filters.append(BaseObject::getSchemaName(ObjectType::Table) +
-													CoreUtilsNs::FilterSeparator +
+													UtilsNs::FilterSeparator +
 													(use_signature ?
 														 rel->getGeneratedTable()->getSignature() :
 														 rel->getGeneratedTable()->getName()) +
-													CoreUtilsNs::FilterSeparator +
-													CoreUtilsNs::FilterWildcard);
+													UtilsNs::FilterSeparator +
+													UtilsNs::FilterWildcard);
 			}
 			// Creating a filter to force the retrieval of the peer tables (inheritance and partitioning)
 			else if(rel->getRelationshipType() == Relationship::RelationshipGen ||
 							rel->getRelationshipType() == Relationship::RelationshipPart)
 			{
 				filters.append(BaseObject::getSchemaName(ObjectType::Table) +
-													CoreUtilsNs::FilterSeparator +
+													UtilsNs::FilterSeparator +
 													(use_signature ?
 														 rel->getReceiverTable()->getSignature() :
 														 rel->getReceiverTable()->getName()) +
-													CoreUtilsNs::FilterSeparator +
-													CoreUtilsNs::FilterWildcard);
+													UtilsNs::FilterSeparator +
+													UtilsNs::FilterWildcard);
 
 				filters.append(BaseObject::getSchemaName(ObjectType::Table) +
-													CoreUtilsNs::FilterSeparator +
+													UtilsNs::FilterSeparator +
 													(use_signature ?
 														 rel->getReferenceTable()->getSignature() :
 														 rel->getReferenceTable()->getName()) +
-													CoreUtilsNs::FilterSeparator +
-													CoreUtilsNs::FilterWildcard);
+													UtilsNs::FilterSeparator +
+													UtilsNs::FilterWildcard);
 			}
 		}
 	}
