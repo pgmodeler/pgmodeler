@@ -18,6 +18,7 @@
 
 #include "type.h"
 #include "defaultlanguages.h"
+#include "utilsns.h"
 
 Type::Type()
 {
@@ -154,7 +155,7 @@ void Type::addEnumeration(const QString &enum_name)
 	else if(enum_name.size() > BaseObject::ObjectNameMaxLength)
 		throw Exception(Exception::getErrorMessage(ErrorCode::AsgEnumLongName).arg(enum_name).arg(this->getName(true)),
 						ErrorCode::AsgEnumLongName,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-	else if(enum_name.contains(QChar(',')))
+	else if(enum_name.contains(UtilsNs::DataSeparator))
 		throw Exception(Exception::getErrorMessage(ErrorCode::AsgEnumInvalidChars).arg(enum_name).arg(this->getName(true)),
 						ErrorCode::AsgEnumInvalidChars,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	//Raises an error if the enumeration already exists
@@ -434,21 +435,17 @@ void Type::setElementsAttribute(unsigned def_type)
 
 void Type::setEnumerationsAttribute(unsigned def_type)
 {
-	QString str_enum;
-	unsigned i, count;
+	QStringList str_enum;
 
-	count=enumerations.size();
-	for(i=0; i < count; i++)
+	for(auto &enum_attr : enumerations)
 	{
-		if(def_type==SchemaParser::SqlDefinition)
-			str_enum+=QString("'") + enumerations[i] + QString("'");
+		if(def_type == SchemaParser::SqlDefinition)
+			str_enum.append("'" + enum_attr + "'");
 		else
-			str_enum+=enumerations[i];
-
-		if(i < (count-1)) str_enum+=QString(",");
+			str_enum.append(enum_attr);
 	}
 
-	attributes[Attributes::Enumerations]=str_enum;
+	attributes[Attributes::Enumerations] = str_enum.join(def_type == SchemaParser::SqlDefinition ? "," : UtilsNs::DataSeparator);
 }
 
 void Type::setCategory(CategoryType categ)

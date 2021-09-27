@@ -1663,12 +1663,7 @@ void DatabaseImportHelper::createType(attribs_map &attribs)
 	{
 		attribs[attribs[Attributes::Configuration]]=Attributes::True;
 
-		if(!attribs[Attributes::EnumType].isEmpty())
-		{
-			attribs[Attributes::Enumerations]=Catalog::parseArrayValues(attribs[Attributes::Enumerations]).join(',');
-			attribs[Attributes::Enumerations].remove('"');
-		}
-		else if(!attribs[Attributes::CompositeType].isEmpty())
+		if(!attribs[Attributes::CompositeType].isEmpty())
 		{
 			QStringList comp_attribs, values;
 			TypeAttribute type_attrib;

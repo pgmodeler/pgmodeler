@@ -4406,7 +4406,6 @@ Type *DatabaseModel::createType()
 	attribs_map attribs;
 	map<QString, unsigned> func_types;
 	Type *type=nullptr;
-	int count, i;
 	QStringList enums;
 	QString elem, str_aux;
 	BaseObject *func=nullptr, *collation=nullptr;
@@ -4480,11 +4479,9 @@ Type *DatabaseModel::createType()
 					if(elem==Attributes::EnumType)
 					{
 						xmlparser.getElementAttributes(attribs);
-						enums=attribs[Attributes::Values].split(',');
-
-						count=enums.size();
-						for(i=0; i < count; i++)
-							type->addEnumeration(enums[i]);
+						enums = attribs[Attributes::Values].split(UtilsNs::DataSeparator);
+						for(auto &en : enums)
+							type->addEnumeration(en);
 					}
 					//Specific operations for COMPOSITE types
 					else if(elem==Attributes::TypeAttribute)

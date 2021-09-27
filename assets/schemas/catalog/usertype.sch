@@ -80,7 +80,9 @@
 		END AS configuration, ]
 
 		# Retrieve the enumaration labels (is null when the type is not an enumeration)
-		[ CASE WHEN typtype = 'e' THEN (SELECT array_agg(enumlabel) FROM pg_enum WHERE enumtypid=tp.oid)
+		[ CASE WHEN typtype = 'e' THEN 
+			(SELECT array_to_string(array_agg(enumlabel),'] $ds [', '') 
+			FROM pg_enum WHERE enumtypid=tp.oid)
 		END AS enumerations, ]
 
 		%if ({pgsql-ver} >=f "9.3") %then
