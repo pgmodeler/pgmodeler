@@ -28,7 +28,7 @@ QStringList PgSqlType::TemplateType<PgSqlType>::type_names =
 	"", // Reserved for BaseType::null
 
 	//Types used by the class PgSQLType
-	//offsets 1 to 62
+	//offsets 1 to 63
 	//Note: the type char is different from "char" (with quotes)
 	//Reference: http://www.postgresql.org/docs/9.2/static/datatype-character.html
 
@@ -43,10 +43,10 @@ QStringList PgSqlType::TemplateType<PgSqlType>::type_names =
 	"macaddr", "macaddr8", "bit", "bit varying", "varbit", "uuid", "xml", "json", "jsonb",
 	"smallserial", "int2vector", "int2", "int4", "int8", "float4", "float8",
 	"bpchar", "name", "abstime", "aclitem", "gtsvector", "refcursor",
-	"reltime", "tinterval", "tsquery", "tsvector", "txid_snapshot",
+	"reltime", "tinterval", "tsquery", "tsvector", "txid_snapshot", "pg_lsn",
 
 	//Spatial type specifics for the PostGiS extension
-	//offsets 63 to 81
+	//offsets 64 to 82
 	"box2d","box3d","box2df","box3df",
 	"geometry", "geometry_dump","geography",
 	"geomval", "addbandarg", "rastbandarg",
@@ -57,12 +57,12 @@ QStringList PgSqlType::TemplateType<PgSqlType>::type_names =
 	"gidx", "spheroid", "valid_detail",
 
 	//Range-types
-	//offsets 82 to 87
+	//offsets 83 to 88
 	"int4range", "int8range", "numrange",
 	"tsrange","tstzrange","daterange",
 
 	//Object Identification type (OID)
-	//offsets 88 to 102
+	//offsets 89 to 103
 	"oid", "regproc", "regprocedure",
 	"regoper", "regoperator", "regclass",
 	"regrole", "regnamespace", "regtype",
@@ -70,7 +70,7 @@ QStringList PgSqlType::TemplateType<PgSqlType>::type_names =
 	"tid", "oidvector",
 
 	//Pseudo-types
-	//offsets 103 to 117
+	//offsets 104 to 118
 	"\"any\"","anyarray","anyelement","anyenum",
 	"anynonarray", "anyrange", "cstring","internal","language_handler",
 	"record","trigger","void","opaque", "fdw_handler", "event_trigger"

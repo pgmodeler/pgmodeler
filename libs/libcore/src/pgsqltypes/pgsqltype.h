@@ -34,16 +34,16 @@
 class PgSqlType: public TemplateType<PgSqlType>{
 	private:
 		//! \brief Offset for all PostGiS types
-		static constexpr unsigned PostGiSStart = 63,
-		PostGiSEnd = 81;
+		static constexpr unsigned PostGiSStart = 64,
+		PostGiSEnd = 82;
 
 		//! \brief Offset for oid types
-		static constexpr unsigned OidStart = 88,
-		OidEnd = 102;
+		static constexpr unsigned OidStart = 89,
+		OidEnd = 103;
 
 		//! \brief Offset for pseudo types
-		static constexpr unsigned PseudoStart = 103,
-		PseudoEnd = 117;
+		static constexpr unsigned PseudoStart = 104,
+		PseudoEnd = 118;
 
 		//! \brief Configuration for user defined types
 		static vector<UserTypeConfig> user_types;
