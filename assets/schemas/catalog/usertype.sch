@@ -17,7 +17,7 @@
 		[ WHERE ]
 	%end
 
-	[ typtype IN ('p','b','c','e','r') AND typname NOT LIKE 'pg_%' ]
+	[ (typtype IN ('p','b','c','e','r') AND (typname = 'pg_lsn' OR typname NOT LIKE 'pg_%')) ]
 
 	#Excluding types related to tables/views/sequeces/materialized views/foreign tables
 
@@ -168,7 +168,7 @@
 		%end
 
 		#Excluding types related to tables/views/sequeces
-		[ WHERE typtype IN ('p','b','c','e','r', 'd') AND typname NOT LIKE 'pg_%' ]
+		[ WHERE typtype IN ('p','b','c','e','r', 'd') AND (typname = 'pg_lsn' OR typname NOT LIKE 'pg_%') ]
 
 		#Excluding types related to tables/views/sequeces/materialized views
 

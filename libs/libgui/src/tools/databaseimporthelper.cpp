@@ -3164,6 +3164,14 @@ QString DatabaseImportHelper::getType(const QString &oid_str, bool generate_xml,
 				if(!user_objs.count(object_id) && !system_objs.count(object_id))
 					getDependencyObject(QString::number(object_id), obj_type, true, true, false);
 			}
+			/* Special case for the built-in pseudo-type any. We double-quote it in the first usage/reference
+			 * in order to avoid reference breaking and malformed SQL code */
+			else if(type_attr[Attributes::Configuration] == "pseudo" && obj_name == "any")
+			{
+				obj_name.prepend('"');
+				obj_name.append('"');
+				types[type_oid][Attributes::Name] = obj_name;
+			}
 
 			/* Removing the optional modifier "without time zone" from date/time types.
 				 Since the class PgSQLTypes ommits the modifier it is necessary to reproduce
