@@ -1948,7 +1948,6 @@ void DatabaseImportHelper::createView(attribs_map &attribs)
 
 void DatabaseImportHelper::createRule(attribs_map &attribs)
 {
-	Rule *rule=nullptr;
 	QString cmds=attribs[Attributes::Commands];
 	int start=-1;
 	QRegExp cond_regexp(QString("(WHERE)(.)+(DO)"));
@@ -1971,11 +1970,11 @@ void DatabaseImportHelper::createRule(attribs_map &attribs)
 		attribs[Attributes::Table]=getDependencyObject(attribs[Attributes::Table], table_type, true, auto_resolve_deps, false);
 
 		loadObjectXML(ObjectType::Rule, attribs);
-		rule=dbmodel->createRule();
+		Rule *rule = dbmodel->createRule();
+		rule->setSQLDisabled(rule->getParentTable()->isSQLDisabled());
 	}
 	catch(Exception &e)
 	{
-		if(rule) delete rule;
 		throw Exception(e.getErrorMessage(), e.getErrorCode(),
 						__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, xmlparser->getXMLBuffer());
 	}
@@ -1996,7 +1995,9 @@ void DatabaseImportHelper::createTrigger(attribs_map &attribs)
 		attribs[Attributes::Arguments] = args.join(UtilsNs::DataSeparator);
 
 		loadObjectXML(ObjectType::Trigger, attribs);
-		dbmodel->createTrigger();
+
+		Trigger *trig = dbmodel->createTrigger();
+		trig->setSQLDisabled(trig->getParentTable()->isSQLDisabled());
 	}
 	catch(Exception &e)
 	{
@@ -2087,7 +2088,8 @@ void DatabaseImportHelper::createIndex(attribs_map &attribs)
 		attribs[Attributes::Table]=tab_name;
 
 		loadObjectXML(ObjectType::Index, attribs);
-		dbmodel->createIndex();
+		Index *index = dbmodel->createIndex();
+		index->setSQLDisabled(index->getParentTable()->isSQLDisabled());
 	}
 	catch(Exception &e)
 	{
@@ -2202,6 +2204,7 @@ void DatabaseImportHelper::createConstraint(attribs_map &attribs)
 
 			loadObjectXML(ObjectType::Constraint, attribs);
 			constr=dbmodel->createConstraint(nullptr);
+			constr->setSQLDisabled(table->isSQLDisabled());
 
 			if(table &&  constr->getConstraintType()==ConstraintType::PrimaryKey)
 				table->addConstraint(constr);
@@ -2223,7 +2226,9 @@ void DatabaseImportHelper::createPolicy(attribs_map &attribs)
 		attribs[Attributes::Table]=getDependencyObject(attribs[Attributes::Table], ObjectType::Table, true, auto_resolve_deps, false);
 		attribs[Attributes::Roles]=getObjectNames(attribs[Attributes::Roles]).join(',');
 		loadObjectXML(ObjectType::Policy, attribs);
-		dbmodel->createPolicy();
+
+		Policy *pol = dbmodel->createPolicy();
+		pol->setSQLDisabled(pol->getParentTable()->isSQLDisabled());
 	}
 	catch(Exception &e)
 	{
