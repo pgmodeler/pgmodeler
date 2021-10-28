@@ -315,7 +315,7 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 		void toggleAboutWidget(bool show);
 		void toggleDonateWidget(bool show);
 		void removeModelActions();
-		void showDemoVersionWarning();
+		void showDemoVersionWarning(bool exit_msg = false);
 		void changeCurrentView(bool checked);
 		void reportBug();
 		void removeOperations();

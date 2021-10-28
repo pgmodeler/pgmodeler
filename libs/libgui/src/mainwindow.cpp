@@ -723,6 +723,8 @@ void MainWindow::closeEvent(QCloseEvent *event)
 					event->ignore();
 			}
 		}
+#else
+		showDemoVersionWarning(true);
 #endif
 
 		if(event->isAccepted())
@@ -2002,16 +2004,28 @@ void MainWindow::restoreDockWidgetsSettings()
 	}
 }
 
-void MainWindow::showDemoVersionWarning()
+void MainWindow::showDemoVersionWarning(bool exit_msg)
 {
 #ifdef DEMO_VERSION
 	Messagebox msg_box;
-	msg_box.show(tr("Warning"),
-				 tr("You're running a demonstration version! Note that you'll be able to create only <strong>%1</strong> instances \
-						of each type of object and some key features will be disabled or limited!<br/><br/>You can purchase a full binary copy or get the source code at <a href='https://pgmodeler.io'>https://pgmodeler.io</a>.\
-						<strong>NOTE:</strong> pgModeler is an open source software, but purchasing binary copies or providing some donations will support the project and keep the development alive and at full speed!<br/><br/>\
-						<strong>HINT:</strong> in order to test all features it's recommended to use the <strong>demo.dbm</strong> model located in </strong>Sample models</strong> at <strong>Welcome</strong> view.<br/><br/><br/><br/>").arg(GlobalAttributes::MaxObjectCount),
-						Messagebox::AlertIcon, Messagebox::OkButton);
+
+	if(!exit_msg)
+	{
+		msg_box.show(tr("Warning"),
+					 tr("You're running a demonstration version of pgModeler! Note that you are able to create only <strong>%1</strong> instances \
+							of each type of object and some key features will be disabled or limited!<br/><br/>Please, support this project <a href='%2'>buying a full binary copy</a>, use the promo code <strong>DEMOTESTER</strong> and receive a special discount on any purchase. You can also get the <a href='%3'>source code</a> and compile it yourself.\
+							<strong>NOTE:</strong> pgModeler is open-source software, but purchasing binary copies or providing a donation of any amount will support the project and keep its development alive!<br/><br/>\
+							<strong>HINT:</strong> in order to test all features it's recommended to use the <strong>demo.dbm</strong> model located in </strong>Sample models</strong> at <strong>Welcome</strong> view.")
+							.arg(GlobalAttributes::MaxObjectCount).arg(GlobalAttributes::PgModelerDownloadURL + "?purchase=true&promocode=DEMOTESTER", GlobalAttributes::PgModelerDownloadURL + "?source=true"),
+							Messagebox::AlertIcon, Messagebox::OkButton);
+	}
+	else
+	{
+		msg_box.show(tr("Info"),
+					 tr("Thank you for testing pgModeler! Don't forget that you can support this project by <a href='%2'>buying a full binary copy</a> using the promo code <strong>DEMOTESTER</strong> to receive a special discount. Also, you can get the <a href='%3'>source code</a> and compile it yourself, instructions on the site.")
+							.arg(GlobalAttributes::PgModelerDownloadURL + "?purchase=true&promocode=DEMOTESTER", GlobalAttributes::PgModelerDownloadURL + "?source=true"),
+							Messagebox::InfoIcon, Messagebox::OkButton);
+	}
 #endif
 }
 
