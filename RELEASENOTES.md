@@ -1,46 +1,42 @@
-v0.9.4-beta
+v0.9.4-beta1
 ------
 
 <em>Release date: September 20, 2021</em><br/>
-<em>Changes since: <strong>v0.9.4-alpha1</strong></em><br/>
+<em>Changes since: <strong>v0.9.4-beta</strong></em><br/>
 
-<strong>Attention:</strong> the database model file structure has changed since the last stable 0.9.3. Models created in older releases will certainly fail to load due to incompatibilities because some attributes in the XML code don't exist anymore or have changed during the development of 0.9.4-beta. Before loading your database models in this new release, please, make sure to have a backup of them all and follow the steps presented by the model fix tool to patch the documents' structure. Not paying attention to this situation may cause irreversible data loss! If the fix procedures aren't enough to make your database models loadable again, please, ask for help at the official support channels!<br/>
+<strong>Attention:</strong> the database model file structure has changed since the last stable 0.9.3. Models created in older releases will certainly fail to load due to incompatibilities because some attributes in the XML code don't exist anymore or have changed during the development of 0.9.4-beta1. Before loading your database models in this new release, please, make sure to have a backup of them all and follow the steps presented by the model fix tool to patch the documents' structure. Not paying attention to this situation may cause irreversible data loss! If the fix procedures aren't enough to make your database models loadable again, please, ask for help at the official support channels!<br/>
 
-<strong>Summary:</strong> this version took a bit more to be released than expected but it's finally here. As with any other beta version, this one brings few new features since it is more focused on polishing all that was made on alpha stages in preparation for the stable version. <br/>
+<strong>Summary:</strong> in preparation for the next major pgModeler release, the goal of this version was to bring only improvements and fixes to what was implemented until 0.9.4-beta and thus was done. <br/>
 
-One new feature brought is the ability to generate GRANT and REVOKE commands to setup new role memberships through the diff process. Another addition is the support for included columns also known as non-key columns on indexes. <br/>
+pgModeler 0.9.4-beta1 brings a few entries in its changelog since we didn't have serious bugs reported in the past two months. So, I decided to make some polishing in several portions of the tool. <br/>
 
-Due to that improvement on diff, the original behavior of "Member of" tab on the role editing form was changed in such a way to make the code generated from the comparison between two roles more precise. <br/>
+Anyway, the improvement that is worth mentioning in this release is the experimental support for timescaledb in reverse engineering. So, now pgModeler is capable of generating models from databases that make use of that PostgreSQL extension without major issues. For pgModeler 0.9.4, we expect that any problem that eventually appears regarding the importing of timescaledb-based databases can be solved. 
+<br/>
 
-This release also brings several improvements in the database design process. For example, the default match mode for FK constraints was changed to MATCH SIMPLE in compliance with the PostgreSQL docs. The layers feature was also patched and now the layers rectangles are correctly updated in certain circumstances.<br/>
+Below, the changelog entries of this version:<br/>
 
-Now, in the database browser in SQL tool, the tree items collapse state is saved and restored after any updates requested by the user, improving the overall experience on that module. <br/>
-
-Finally, the whole set of changes of this release has 50 entries being 12 new features, 24 changes/improvements, and 14 bug fixes. Below, some key changes are highlighted. For the complete list of changes, please, take a look at the CHANGELOG.md. <br/>
-
-* [New] Added support for the generation of GRANT/REVOKE commands to control roles memberships via diff process.
-* [New] Added a fix step to reconfigure roles membership considering the deprecation of Role:RefRole attribute.
-* [New] Added support for included columns on indexes. 
-* [New] Added the ability for referencing view columns on indexes.
-* [New] Added support for toggling update notifications for alpha/beta versions.
-* [New] Added support for save and restore the tree state in DatabaseExplorerWidget.
-* [Change] Dropped the support for MemberOf (Role::RefRoles) in order to make the diff between two roles more precise.
-* [Change] In RoleWidget the tab "Member Of" now works only as a convenience feature that adds the role being edited to the ones listed in that tab.
-* [Change] Restored the file pgmodeler.appdata.xml.
-* [Change] Allowing swap cluster level object ids in SwapObjectsIdsWidget when the objects are of the same kind.
-* [Change] Improvements in pgmodeler-se in such a way to control syntax highlighting settings per open editor.
-* [Change] Avoided the use of a working dir in .desktop file when installing mime types system-wide.
-* [Change] Improved the way layers rectangles are updated after undoing/redoing operations in OperationListWidget.
-* [Change] Changed the default match type in foreign key constraint to MATCH SIMPLE.
-* [Change] Minor adjustment in the ModelWidget::updateSceneLayers in order to force the update of all schemas.
-* [Change] Exceptions raised in BugReportForm when the "lastmodel" file isn't found are now ignored.
-* [Change] Minor change in ModelValidationHelper in order to use table's signature instead of name during name validation process.
-* [Fix] Fixed a crash in diff process caused by the ModelExportHelper instance when canceling the export to DBMS when an exception was raised.
-* [Fix] Fixed a crash in SwapObjectsIdsWidget when the user tried to swap objects using arrow keys.
-* [Fix] Minor fix in DatabaseExplorerWidget in order to display view's children source code.
-* [Fix] Fixed the building of IndexWidget on Qt 5.14 and below.
-* [Fix] Fixed the problem on ModelDatabaseDiffForm that was not accepting pressing Return/Esc to respectively run the diff and close the dialog due to a conflict with the event loop instance in ModelDatabaseDiffForm::exec().
-* [Fix] Minor fix in the configuration of ObjectGroupId element in DatabaseImportForm::updateObjectsTree in order to avoid crashes when no root element is specified.
-* [Fix] Fixed the generation of aggregate functions when they use functions that contain parameters in which data type have spaces (double precision, character varying).
-* [Fix] Fixed a segfault that can happen when changing the number of parameters of a function already associated with an aggregate.
-* [Fix] Additional fix for layers not being correctly loaded from dbm file.
+* [New] Added extra PostGiS data types to PgSQLType.
+* [New] Created the method PgSqlType::isPostGiSType() which returns true if the current type is a PostGiS one.
+* [New] Created the method PgSqlType::reset() that clears some attributes of the type.
+* [New] Added the built-in type pg_lsn in order to make databases using timescaledb extension to be imported correctly.
+* [Change] Minor adjustment in windowsdeploy.sh to create zip packages.
+* [Change] Minor adjustment in demo version warning messages.
+* [Change] Adjusted the catalog query filters in ModelDatabaseDiffForm to retrieve system and extension objects according to the checkboxes "Import system objects" and "Import extension objects".
+* [Change] Adjusted the reverse engineering in such a way that the table children will follow the SQL disabled state of their parent tables.
+* [Change] Allowing importing pg_lsn attributes in usertype.sch.
+* [Change] Allowing the use of commas in enum type labels.
+* [Change] Improved the output of model fix operation in CLI.
+* [Change] The constants DataSeparator, UnescValueStart, UnescValueEnd, WildcardChar, FilterSeparator, FilterWildcard, FilterRegExp were moved from CoreUtilsNs to UtilsNs in order to be used in the parsers module.
+* [Change] In SchemaParser the meta char $ds (dollar sign) was renamed to $ms (money sign). Also, a new meta char $ds (data separator) was added and translates to the special data separator character UtilsNs::DataSeparator.
+* [Change] Minor adjustments in table.sch and foreigntable.sch schema files.
+* [Change] Improved DatabaseModel::getUserDefTypesReferences in order to get all references to postgis data types.
+* [Change] Improved ModelValidationHelper in order to set postgis extension a default comment when automatically creating it.
+* [Change] PgSQLTypeWidget now can be configured in such a way to disallow the configuration of type qualifiers like length, precision, interval, and some other. This is useful when configuring data types for objects that don't require such attributes in the data type like parameter, aggregates, transforms, casts, operators.
+* [Change] Changed the behavior of Parameter::getCodeDefinition when generating SQL code. Now, any type qualifier (except dimension descriptor []) will be discarded.
+* [Fix] Fixed the catalog query that lists policies.
+* [Fix] Added a minor workaround in DatabaseImportHelper::getType in order to treat the "any" pseudo-type correctly.
+* [Fix] Minor fix in DatabaseImportForm in order to disable option buttons when no connection is selected.
+* [Fix] Fixed a segfault when importing domains with long expressions.
+* [Fix] Fixed the broken SQL generation for tables with columns/constraints disabled.
+* [Fix] Fix the name of the checkbox related to updates checking to avoid breaking the building when enabling NO_UPDATE_CHECK via qmake.
+* [Fix] Fixed the shortcuts of Copy/Paste actions in DataManipulationForm.
