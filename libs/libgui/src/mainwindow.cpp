@@ -2004,9 +2004,9 @@ void MainWindow::restoreDockWidgetsSettings()
 	}
 }
 
+#ifdef DEMO_VERSION
 void MainWindow::showDemoVersionWarning(bool exit_msg)
 {
-#ifdef DEMO_VERSION
 	Messagebox msg_box;
 
 	if(!exit_msg)
@@ -2026,8 +2026,8 @@ void MainWindow::showDemoVersionWarning(bool exit_msg)
 							.arg(GlobalAttributes::PgModelerDownloadURL + "?purchase=true&promocode=DEMOTESTER", GlobalAttributes::PgModelerDownloadURL + "?source=true"),
 							Messagebox::InfoIcon, Messagebox::OkButton);
 	}
-#endif
 }
+#endif
 
 void MainWindow::executePendingOperation(bool valid_error)
 {
