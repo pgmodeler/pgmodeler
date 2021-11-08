@@ -3,7 +3,7 @@ Changelog
 
 v0.9.4-beta1
 ------
-<em>Release date: September 17, 2021</em><br/>
+<em>Release date: November 10, 2021</em><br/>
 
 * [New] Added extra PostGiS data types to PgSQLType.
 * [New] Created the method PgSqlType::isPostGiSType() which returns true if the current type is a PostGiS one.

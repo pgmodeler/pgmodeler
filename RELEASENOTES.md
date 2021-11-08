@@ -1,7 +1,7 @@
 v0.9.4-beta1
 ------
 
-<em>Release date: September 20, 2021</em><br/>
+<em>Release date: November 10, 2021</em><br/>
 <em>Changes since: <strong>v0.9.4-beta</strong></em><br/>
 
 <strong>Attention:</strong> the database model file structure has changed since the last stable 0.9.3. Models created in older releases will certainly fail to load due to incompatibilities because some attributes in the XML code don't exist anymore or have changed during the development of 0.9.4-beta1. Before loading your database models in this new release, please, make sure to have a backup of them all and follow the steps presented by the model fix tool to patch the documents' structure. Not paying attention to this situation may cause irreversible data loss! If the fix procedures aren't enough to make your database models loadable again, please, ask for help at the official support channels!<br/>
