@@ -126,7 +126,7 @@ void OperatorClassWidget::editElement(int lin_idx)
 	function_sel->setSelectedObject(elem.getFunction());
 	operator_sel->setSelectedObject(elem.getOperator());
 	stg_num_sb->setValue(elem.getStrategyNumber());
-	storage_type->setAttributes(elem.getStorage(),this->model);
+	storage_type->setAttributes(elem.getStorage(), this->model, false);
 }
 
 void OperatorClassWidget::showElementData(OperatorClassElement elem, int lin_idx)
@@ -212,7 +212,7 @@ void OperatorClassWidget::setAttributes(DatabaseModel *model, OperationList *op_
 	function_sel->setModel(model);
 	operator_sel->setModel(model);
 	elem_family_sel->setModel(model);
-	storage_type->setAttributes(type, model);
+	storage_type->setAttributes(type, model, false);
 
 	if(op_class)
 	{
@@ -232,7 +232,7 @@ void OperatorClassWidget::setAttributes(DatabaseModel *model, OperationList *op_
 		elements_tab->clearSelection();
 	}
 
-	data_type->setAttributes(type, model);
+	data_type->setAttributes(type, model, false);
 }
 
 void OperatorClassWidget::applyConfiguration()

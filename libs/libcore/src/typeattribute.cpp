@@ -25,9 +25,9 @@ TypeAttribute::TypeAttribute()
 
 TypeAttribute::TypeAttribute(const TypeAttribute &type_attr) : TypeAttribute()
 {
-    type = type_attr.type;
-    obj_name = type_attr.obj_name;
-    collation = type_attr.collation;
+	type = type_attr.type;
+	obj_name = type_attr.obj_name;
+	collation = type_attr.collation;
 }
 
 void TypeAttribute::setType(PgSqlType type)

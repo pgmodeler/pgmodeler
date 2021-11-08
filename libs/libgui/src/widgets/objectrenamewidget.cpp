@@ -18,6 +18,7 @@
 
 #include "objectrenamewidget.h"
 #include "guiutilsns.h"
+#include "coreutilsns.h"
 
 ObjectRenameWidget::ObjectRenameWidget(QWidget * parent) : QDialog(parent)
 {

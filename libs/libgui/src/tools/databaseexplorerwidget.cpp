@@ -22,6 +22,7 @@
 #include "sqlexecutionwidget.h"
 #include "settings/snippetsconfigwidget.h"
 #include "utils/plaintextitemdelegate.h"
+#include "utilsns.h"
 #include "guiutilsns.h"
 #include "settings/generalconfigwidget.h"
 #include "qtcompat/splitbehaviorcompat.h"
@@ -362,7 +363,7 @@ attribs_map DatabaseExplorerWidget::formatObjectAttribs(attribs_map &attribs)
 
 
 		if(attribs.count(Attributes::Permission)!=0)
-			attribs[Attributes::Permission]=Catalog::parseArrayValues(attribs[Attributes::Permission]).join(CoreUtilsNs::DataSeparator);
+			attribs[Attributes::Permission]=Catalog::parseArrayValues(attribs[Attributes::Permission]).join(UtilsNs::DataSeparator);
 
 		//Removing system schemas from object's name
 		if(attribs.count(Attributes::Name)!=0 &&
@@ -432,7 +433,7 @@ void DatabaseExplorerWidget::formatOidAttribs(attribs_map &attribs, QStringList 
 			for(QString attr : oid_attrs)
 			{
 				names=getObjectsNames(obj_type, Catalog::parseArrayValues(attribs[attr]));
-				attribs[attr]=names.join(CoreUtilsNs::DataSeparator);
+				attribs[attr]=names.join(UtilsNs::DataSeparator);
 			}
 		}
 	}
@@ -454,7 +455,7 @@ void DatabaseExplorerWidget::formatCastAttribs(attribs_map &attribs)
 
 void DatabaseExplorerWidget::formatEventTriggerAttribs(attribs_map &attribs)
 {
-	attribs[Attributes::Values]=Catalog::parseArrayValues(attribs[Attributes::Values]).join(CoreUtilsNs::DataSeparator);
+	attribs[Attributes::Values]=Catalog::parseArrayValues(attribs[Attributes::Values]).join(UtilsNs::DataSeparator);
 	attribs[Attributes::Function]=getObjectName(ObjectType::Function, attribs[Attributes::Function]);
 }
 
@@ -466,11 +467,11 @@ void DatabaseExplorerWidget::formatAggregateAttribs(attribs_map &attribs)
 	formatOidAttribs(attribs, { Attributes::Types }, ObjectType::Type, true);
 	attribs[Attributes::Signature]=(QString("%1(%2)")
 											 .arg(BaseObject::formatName(attribs[Attributes::Name]))
-											.arg(attribs[Attributes::Types])).replace(CoreUtilsNs::DataSeparator, QString(","));
+											.arg(attribs[Attributes::Types])).replace(UtilsNs::DataSeparator, QString(","));
 
 	attribs[Attributes::StateType]=getObjectName(ObjectType::Type, attribs[Attributes::StateType]);
 	attribs[Attributes::SortOp]=getObjectName(ObjectType::Operator, attribs[Attributes::SortOp]);
-	attribs[Attributes::InitialCond]=Catalog::parseArrayValues(attribs[Attributes::InitialCond]).join(CoreUtilsNs::DataSeparator);
+	attribs[Attributes::InitialCond]=Catalog::parseArrayValues(attribs[Attributes::InitialCond]).join(UtilsNs::DataSeparator);
 }
 
 void DatabaseExplorerWidget::formatLanguageAttribs(attribs_map &attribs)
@@ -502,8 +503,8 @@ void DatabaseExplorerWidget::formatDomainAttribs(attribs_map &attribs)
 {
 	QStringList contrs = Catalog::parseArrayValues(attribs[Attributes::Constraints]);
 
-	contrs.replaceInStrings(CoreUtilsNs::DataSeparator, QChar(':'));
-	attribs[Attributes::Constraints] =  contrs.join(CoreUtilsNs::DataSeparator);
+	contrs.replaceInStrings(UtilsNs::DataSeparator, QChar(':'));
+	attribs[Attributes::Constraints] =  contrs.join(UtilsNs::DataSeparator);
 
 	formatBooleanAttribs(attribs, { Attributes::NotNull });
 	attribs[Attributes::Type]=getObjectName(ObjectType::Type, attribs[Attributes::Type]);
@@ -517,15 +518,15 @@ void DatabaseExplorerWidget::formatExtensionAttribs(attribs_map &attribs)
 void DatabaseExplorerWidget::formatBaseFunctionAttribs(attribs_map &attribs)
 {
 	attribs[Attributes::Language]=getObjectName(ObjectType::Language, attribs[Attributes::Language]);
-	attribs[Attributes::ArgNames]=Catalog::parseArrayValues(attribs[Attributes::ArgNames]).join(CoreUtilsNs::DataSeparator);
-	attribs[Attributes::ArgModes]=Catalog::parseArrayValues(attribs[Attributes::ArgModes]).join(CoreUtilsNs::DataSeparator);
-	attribs[Attributes::ArgDefaults]=Catalog::parseArrayValues(attribs[Attributes::ArgDefaults]).join(CoreUtilsNs::DataSeparator);
-	attribs[Attributes::TransformTypes]=getObjectsNames(ObjectType::Type, Catalog::parseArrayValues(attribs[Attributes::TransformTypes])).join(CoreUtilsNs::DataSeparator);
+	attribs[Attributes::ArgNames]=Catalog::parseArrayValues(attribs[Attributes::ArgNames]).join(UtilsNs::DataSeparator);
+	attribs[Attributes::ArgModes]=Catalog::parseArrayValues(attribs[Attributes::ArgModes]).join(UtilsNs::DataSeparator);
+	attribs[Attributes::ArgDefaults]=Catalog::parseArrayValues(attribs[Attributes::ArgDefaults]).join(UtilsNs::DataSeparator);
+	attribs[Attributes::TransformTypes]=getObjectsNames(ObjectType::Type, Catalog::parseArrayValues(attribs[Attributes::TransformTypes])).join(UtilsNs::DataSeparator);
 
 	formatOidAttribs(attribs, { Attributes::ArgTypes }, ObjectType::Type, true);
 	attribs[Attributes::Signature]=(QString("%1(%2)")
 																	.arg(BaseObject::formatName(attribs[Attributes::Name]))
-																	.arg(attribs[Attributes::ArgTypes])).replace(CoreUtilsNs::DataSeparator, QString(","));
+																	.arg(attribs[Attributes::ArgTypes])).replace(UtilsNs::DataSeparator, QString(","));
 }
 
 void DatabaseExplorerWidget::formatProcedureAttribs(attribs_map &attribs)
@@ -561,7 +562,7 @@ void DatabaseExplorerWidget::formatOperatorAttribs(attribs_map &attribs)
 	attribs[Attributes::Signature]=(QString("%1(%2,%3)")
 											 .arg(BaseObject::formatName(attribs[Attributes::Name], true))
 											.arg(attribs[Attributes::LeftType])
-			.arg(attribs[Attributes::RightType])).replace(CoreUtilsNs::DataSeparator, QString(","));
+			.arg(attribs[Attributes::RightType])).replace(UtilsNs::DataSeparator, QString(","));
 }
 
 void DatabaseExplorerWidget::formatTableAttribs(attribs_map &attribs)
@@ -579,12 +580,12 @@ void DatabaseExplorerWidget::formatTableAttribs(attribs_map &attribs)
 	part_keys.push_back(getObjectsNames(ObjectType::Column,
 																			Catalog::parseArrayValues(attribs[Attributes::PartKeyCols]),
 																			getObjectName(ObjectType::Schema, attribs[Attributes::Schema]),
-																			attribs[Attributes::Name]).join(CoreUtilsNs::DataSeparator));
+																			attribs[Attributes::Name]).join(UtilsNs::DataSeparator));
 
-	part_keys.push_back(Catalog::parseArrayValues(attribs[Attributes::Expressions]).join(CoreUtilsNs::DataSeparator));
+	part_keys.push_back(Catalog::parseArrayValues(attribs[Attributes::Expressions]).join(UtilsNs::DataSeparator));
 	part_keys.removeAll("");
 
-	attribs[Attributes::PartitionKey] = part_keys.join(CoreUtilsNs::DataSeparator);
+	attribs[Attributes::PartitionKey] = part_keys.join(UtilsNs::DataSeparator);
 	attribs.erase(Attributes::PartKeyColls);
 	attribs.erase(Attributes::PartKeyOpCls);
 	attribs.erase(Attributes::PartKeyExprs);
@@ -661,7 +662,7 @@ void DatabaseExplorerWidget::formatTypeAttribs(attribs_map &attribs)
 	if(attribs[Attributes::Enumerations].isEmpty())
 		attribs.erase(Attributes::Enumerations);
 	else
-		attribs[Attributes::Enumerations]=Catalog::parseArrayValues(attribs[Attributes::Enumerations]).join(CoreUtilsNs::DataSeparator);
+		attribs[Attributes::Enumerations]=Catalog::parseArrayValues(attribs[Attributes::Enumerations]).join(UtilsNs::DataSeparator);
 
 	attribs.erase(Attributes::RangeAttribs);
 	if(!range_attr.isEmpty())
@@ -684,7 +685,7 @@ void DatabaseExplorerWidget::formatTypeAttribs(attribs_map &attribs)
 			fmt_attribs.push_back(list.join(QLatin1String(" ")));
 		}
 
-		attribs[Attributes::TypeAttribute]=fmt_attribs.join(CoreUtilsNs::DataSeparator);
+		attribs[Attributes::TypeAttribute]=fmt_attribs.join(UtilsNs::DataSeparator);
 	}
 	else
 		attribs.erase(Attributes::TypeAttribute);
@@ -709,7 +710,7 @@ void DatabaseExplorerWidget::formatOperatorClassAttribs(attribs_map &attribs)
 			elems.push_back(QString("[%1] %2").arg(list[0], getObjectName(ObjectType::Function, list[1])));
 		}
 
-		attribs[Attributes::Function]=elems.join(CoreUtilsNs::DataSeparator);
+		attribs[Attributes::Function]=elems.join(UtilsNs::DataSeparator);
 		elems.clear();
 	}
 
@@ -726,7 +727,7 @@ void DatabaseExplorerWidget::formatOperatorClassAttribs(attribs_map &attribs)
 					getObjectName(ObjectType::Operator, list[2])));
 		}
 
-		attribs[Attributes::Operator]=elems.join(CoreUtilsNs::DataSeparator);
+		attribs[Attributes::Operator]=elems.join(UtilsNs::DataSeparator);
 		elems.clear();
 	}
 }
@@ -742,8 +743,8 @@ void DatabaseExplorerWidget::formatTriggerAttribs(attribs_map &attribs)
 									Attributes::TruncEvent });
 
 	attribs[Attributes::TriggerFunc]=getObjectName(ObjectType::Function, attribs[Attributes::TriggerFunc]);
-	attribs[Attributes::Arguments]=attribs[Attributes::Arguments].split(Catalog::EscapedNullChar, QtCompat::SkipEmptyParts).join(CoreUtilsNs::DataSeparator);
-	attribs[Attributes::Columns]=Catalog::parseArrayValues(attribs[Attributes::Columns]).join(CoreUtilsNs::DataSeparator);
+	attribs[Attributes::Arguments]=attribs[Attributes::Arguments].split(Catalog::EscapedNullChar, QtCompat::SkipEmptyParts).join(UtilsNs::DataSeparator);
+	attribs[Attributes::Columns]=Catalog::parseArrayValues(attribs[Attributes::Columns]).join(UtilsNs::DataSeparator);
 }
 
 void DatabaseExplorerWidget::formatRuleAttribs(attribs_map &attribs)
@@ -775,10 +776,10 @@ void DatabaseExplorerWidget::formatConstraintAttribs(attribs_map &attribs)
 									Attributes::NoInherit });
 	attribs[Attributes::Type]=~types[attribs[Attributes::Type]];
 	attribs[Attributes::OpClasses]=getObjectsNames(ObjectType::OpClass,
-															 Catalog::parseArrayValues(attribs[Attributes::OpClasses])).join(CoreUtilsNs::DataSeparator);
+															 Catalog::parseArrayValues(attribs[Attributes::OpClasses])).join(UtilsNs::DataSeparator);
 	attribs[Attributes::SrcColumns]=getObjectsNames(ObjectType::Column,
 															Catalog::parseArrayValues(attribs[Attributes::SrcColumns]),
-			names[0], names[1]).join(CoreUtilsNs::DataSeparator);
+			names[0], names[1]).join(UtilsNs::DataSeparator);
 
 	if(constr_type==ConstraintType::ForeignKey)
 	{
@@ -786,7 +787,7 @@ void DatabaseExplorerWidget::formatConstraintAttribs(attribs_map &attribs)
 		names=attribs[Attributes::RefTable].split('.');
 		attribs[Attributes::DstColumns]=getObjectsNames(ObjectType::Column,
 																Catalog::parseArrayValues(attribs[Attributes::DstColumns]),
-				names[0], names[1]).join(CoreUtilsNs::DataSeparator);
+				names[0], names[1]).join(UtilsNs::DataSeparator);
 	}
 	else
 	{
@@ -807,9 +808,9 @@ void DatabaseExplorerWidget::formatConstraintAttribs(attribs_map &attribs)
 
 	if(constr_type==ConstraintType::Exclude)
 	{
-		attribs[Attributes::Expressions]=Catalog::parseArrayValues(attribs[Attributes::Expressions]).join(CoreUtilsNs::DataSeparator);
+		attribs[Attributes::Expressions]=Catalog::parseArrayValues(attribs[Attributes::Expressions]).join(UtilsNs::DataSeparator);
 		attribs[Attributes::Operators]=getObjectsNames(ObjectType::Operator,
-																Catalog::parseArrayValues(attribs[Attributes::Operators])).join(CoreUtilsNs::DataSeparator);
+																Catalog::parseArrayValues(attribs[Attributes::Operators])).join(UtilsNs::DataSeparator);
 	}
 	else
 	{
@@ -828,38 +829,38 @@ void DatabaseExplorerWidget::formatIndexAttribs(attribs_map &attribs)
 
 	formatBooleanAttribs(attribs, { Attributes::Unique });
 
-	attribs[Attributes::Expressions]=Catalog::parseIndexExpressions(attribs[Attributes::Expressions]).join(CoreUtilsNs::DataSeparator);
+	attribs[Attributes::Expressions]=Catalog::parseIndexExpressions(attribs[Attributes::Expressions]).join(UtilsNs::DataSeparator);
 
 	attribs[Attributes::Collations]=getObjectsNames(ObjectType::Collation,
-															 Catalog::parseArrayValues(attribs[Attributes::Collations])).join(CoreUtilsNs::DataSeparator);
+															 Catalog::parseArrayValues(attribs[Attributes::Collations])).join(UtilsNs::DataSeparator);
 
 	attribs[Attributes::OpClasses]=getObjectsNames(ObjectType::OpClass,
-															 Catalog::parseArrayValues(attribs[Attributes::OpClasses])).join(CoreUtilsNs::DataSeparator);
+															 Catalog::parseArrayValues(attribs[Attributes::OpClasses])).join(UtilsNs::DataSeparator);
 
 	attribs[Attributes::Columns]=getObjectsNames(ObjectType::Column,
-														Catalog::parseArrayValues(attribs[Attributes::Columns]),	names[0], names[1]).join(CoreUtilsNs::DataSeparator);
+														Catalog::parseArrayValues(attribs[Attributes::Columns]),	names[0], names[1]).join(UtilsNs::DataSeparator);
 }
 
 void DatabaseExplorerWidget::formatPolicyAttribs(attribs_map &attribs)
 {
-	attribs[Attributes::Roles] = getObjectsNames(ObjectType::Role, Catalog::parseArrayValues(attribs[Attributes::Roles])).join(CoreUtilsNs::DataSeparator);
+	attribs[Attributes::Roles] = getObjectsNames(ObjectType::Role, Catalog::parseArrayValues(attribs[Attributes::Roles])).join(UtilsNs::DataSeparator);
 }
 
 void DatabaseExplorerWidget::formatForeignDataWrapperAttribs(attribs_map &attribs)
 {
-	attribs[Attributes::Options]=Catalog::parseArrayValues(attribs[Attributes::Options]).join(CoreUtilsNs::DataSeparator);
+	attribs[Attributes::Options]=Catalog::parseArrayValues(attribs[Attributes::Options]).join(UtilsNs::DataSeparator);
 	formatOidAttribs(attribs, { Attributes::ValidatorFunc, Attributes::HandlerFunc }, ObjectType::Function, false);
 }
 
 void DatabaseExplorerWidget::formatServerAttribs(attribs_map &attribs)
 {
-	attribs[Attributes::Options]=Catalog::parseArrayValues(attribs[Attributes::Options]).join(CoreUtilsNs::DataSeparator);
+	attribs[Attributes::Options]=Catalog::parseArrayValues(attribs[Attributes::Options]).join(UtilsNs::DataSeparator);
 	formatOidAttribs(attribs, { Attributes::Fdw }, ObjectType::ForeignDataWrapper, false);
 }
 
 void DatabaseExplorerWidget::formatUserMappingAttribs(attribs_map &attribs)
 {
-	attribs[Attributes::Options]=Catalog::parseArrayValues(attribs[Attributes::Options]).join(CoreUtilsNs::DataSeparator);
+	attribs[Attributes::Options]=Catalog::parseArrayValues(attribs[Attributes::Options]).join(UtilsNs::DataSeparator);
 	formatOidAttribs(attribs, { Attributes::Owner }, ObjectType::Role, false);
 	formatOidAttribs(attribs, { Attributes::Server }, ObjectType::ForeignServer, false);
 }
@@ -1189,8 +1190,8 @@ void DatabaseExplorerWidget::handleSelectedSnippet(const QString &snip_id)
 
 	for(auto &attr : attribs)
 	{
-		if(attr.second.contains(CoreUtilsNs::DataSeparator))
-			attribs[attr.first]=attr.second.replace(CoreUtilsNs::DataSeparator,QString(","));
+		if(attr.second.contains(UtilsNs::DataSeparator))
+			attribs[attr.first]=attr.second.replace(UtilsNs::DataSeparator,QString(","));
 	}
 
 	emit s_snippetShowRequested(SnippetsConfigWidget::getParsedSnippet(snip_id, attribs));
@@ -1236,7 +1237,7 @@ attribs_map DatabaseExplorerWidget::extractAttributesFromItem(QTreeWidgetItem *i
 	}
 	//For operators and functions there must exist the signature attribute
 	else if(obj_type==ObjectType::Operator || obj_type==ObjectType::Function)
-		attribs[Attributes::Signature]=attribs[Attributes::Schema] + QString(".") + attribs[Attributes::Name] + QString("(%1)").arg(types.join(CoreUtilsNs::DataSeparator));
+		attribs[Attributes::Signature]=attribs[Attributes::Schema] + QString(".") + attribs[Attributes::Name] + QString("(%1)").arg(types.join(UtilsNs::DataSeparator));
 	else if(obj_type==ObjectType::Cast)
 		attribs[Attributes::Signature]=QString("(%1 AS %2)").arg(types[0]).arg(types[1]);
 	else if(obj_type==ObjectType::OpFamily || obj_type==ObjectType::OpClass)
@@ -1312,7 +1313,7 @@ void DatabaseExplorerWidget::dropObject(QTreeWidgetItem *item, bool cascade)
 				attribs=extractAttributesFromItem(item);
 
 				if(obj_type==ObjectType::Operator || obj_type==ObjectType::Function)
-						attribs[Attributes::Signature].replace(CoreUtilsNs::DataSeparator, QChar(','));
+						attribs[Attributes::Signature].replace(UtilsNs::DataSeparator, QChar(','));
 
 				//Generate the drop command
 				schparser.ignoreEmptyAttributes(true);
@@ -1614,7 +1615,7 @@ void DatabaseExplorerWidget::loadObjectProperties(bool force_reload)
 						}
 
 						if(!tab_list.isEmpty())
-							orig_attribs[Attributes::Referrers] = tab_list.join(CoreUtilsNs::DataSeparator);
+							orig_attribs[Attributes::Referrers] = tab_list.join(UtilsNs::DataSeparator);
 					}
 				}
 				else
@@ -1692,7 +1693,7 @@ void DatabaseExplorerWidget::showObjectProperties(bool force_reload)
 					tab_item->setIcon(QPixmap(GuiUtilsNs::getIconPath("attribute")));
 					properties_tbw->setItem(row, 0, tab_item);
 
-					values=attrib.second.split(CoreUtilsNs::DataSeparator);
+					values=attrib.second.split(UtilsNs::DataSeparator);
 
 					//Creating the value item
 					if(values.size() >= 2)
@@ -1752,7 +1753,7 @@ void DatabaseExplorerWidget::showObjectProperties(bool force_reload)
 					else if(cached_attribs[Attributes::Type]==~ConstraintType(ConstraintType::Unique) ||
 									cached_attribs[Attributes::Type]==~ConstraintType(ConstraintType::PrimaryKey))
 					{
-						QStringList columns=cached_attribs[Attributes::SrcColumns].split(CoreUtilsNs::DataSeparator);
+						QStringList columns=cached_attribs[Attributes::SrcColumns].split(UtilsNs::DataSeparator);
 
 						for(auto &col : columns)
 						{
@@ -1768,7 +1769,7 @@ void DatabaseExplorerWidget::showObjectProperties(bool force_reload)
 								!cached_attribs[Attributes::Referrers].isEmpty() && item->childCount() == 5)
 				{
 					QTreeWidgetItem *refs_item=nullptr, *tab_item=nullptr;
-					QStringList ref_tab_names = cached_attribs[Attributes::Referrers].split(CoreUtilsNs::DataSeparator);
+					QStringList ref_tab_names = cached_attribs[Attributes::Referrers].split(UtilsNs::DataSeparator);
 					QFont font;
 
 					refs_item=new QTreeWidgetItem(item);

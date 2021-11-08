@@ -28,7 +28,7 @@ QStringList PgSqlType::TemplateType<PgSqlType>::type_names =
 	"", // Reserved for BaseType::null
 
 	//Types used by the class PgSQLType
-	//offsets 1 to 62
+	//offsets 1 to 63
 	//Note: the type char is different from "char" (with quotes)
 	//Reference: http://www.postgresql.org/docs/9.2/static/datatype-character.html
 
@@ -43,25 +43,26 @@ QStringList PgSqlType::TemplateType<PgSqlType>::type_names =
 	"macaddr", "macaddr8", "bit", "bit varying", "varbit", "uuid", "xml", "json", "jsonb",
 	"smallserial", "int2vector", "int2", "int4", "int8", "float4", "float8",
 	"bpchar", "name", "abstime", "aclitem", "gtsvector", "refcursor",
-	"reltime", "tinterval", "tsquery", "tsvector", "txid_snapshot",
+	"reltime", "tinterval", "tsquery", "tsvector", "txid_snapshot", "pg_lsn",
 
 	//Spatial type specifics for the PostGiS extension
-	//offsets 63 to 76
-	"box2d","box3d","geometry",
-	"geometry_dump","geography",
+	//offsets 64 to 82
+	"box2d","box3d","box2df","box3df",
+	"geometry", "geometry_dump","geography",
 	"geomval", "addbandarg", "rastbandarg",
 	"raster", "reclassarg",  "unionarg",
 	"\"TopoGeometry\"",
 	"getfaceedges_returntype",
 	"validatetopology_returntype",
+	"gidx", "spheroid", "valid_detail",
 
 	//Range-types
-	//offsets 77 to 82
+	//offsets 83 to 88
 	"int4range", "int8range", "numrange",
 	"tsrange","tstzrange","daterange",
 
 	//Object Identification type (OID)
-	//offsets 83 to 97
+	//offsets 89 to 103
 	"oid", "regproc", "regprocedure",
 	"regoper", "regoperator", "regclass",
 	"regrole", "regnamespace", "regtype",
@@ -69,7 +70,7 @@ QStringList PgSqlType::TemplateType<PgSqlType>::type_names =
 	"tid", "oidvector",
 
 	//Pseudo-types
-	//offsets 98 to 112
+	//offsets 104 to 118
 	"\"any\"","anyarray","anyelement","anyenum",
 	"anynonarray", "anyrange", "cstring","internal","language_handler",
 	"record","trigger","void","opaque", "fdw_handler", "event_trigger"
@@ -78,10 +79,7 @@ QStringList PgSqlType::TemplateType<PgSqlType>::type_names =
 PgSqlType::PgSqlType()
 {
 	type_idx = type_names.indexOf("smallint");
-	length = 0;
-	precision=-1;
-	dimension=0;
-	with_timezone=false;
+	reset(true);
 }
 
 PgSqlType::PgSqlType(const QString &type_name) : PgSqlType()
@@ -345,7 +343,62 @@ QString PgSqlType::getTypeName(bool incl_dimension)
 
 QString PgSqlType::getSQLTypeName()
 {
-	return *(*this);
+	QString fmt_type, type, aux;
+	unsigned idx;
+
+	type = ~(*this);
+	fmt_type = type;
+
+	//Generation the definition for the spatial types (PostGiS)
+	if(type==QString("geometry") || type==QString("geography"))
+		fmt_type=type + (*spatial_type);
+	else if(hasVariableLength())
+	{
+		//Configuring the precision
+		if((type==QString("numeric") || type==QString("decimal")) && length >= 1 && precision>=0 && precision<=static_cast<int>(length))
+			aux=QString("%1(%2,%3)").arg(type_names[type_idx]).arg(length).arg(precision);
+		//Configuring the length for the type
+		else if(length >= 1)
+			aux=QString("%1(%2)").arg(type_names[type_idx]).arg(length);
+		else
+			aux=type;
+
+		fmt_type=aux;
+	}
+	else if(type!=QString("numeric") && type!=QString("decimal") && acceptsPrecision())
+	{
+		if(type!=QString("interval"))
+		{
+			aux = type_names[type_idx];
+
+			if(precision >= 0)
+				aux+=QString("(%1)").arg(precision);
+
+			if(with_timezone)
+				aux+=QString(" with time zone");
+		}
+		else
+		{
+			aux = type_names[type_idx];
+
+			if(interval_type!=BaseType::Null)
+				aux+=QString(" %1 ").arg(~interval_type);
+
+			if(precision >= 0)
+				aux+=QString("(%1)").arg(precision);
+		}
+
+		fmt_type=aux;
+		}
+
+
+	if(type!=QString("void") && dimension > 0)
+	{
+		for(idx=0; idx < dimension; idx++)
+			fmt_type+=QString("[]");
+	}
+
+	return fmt_type;
 }
 
 bool PgSqlType::isRegistered(const QString &type, void *pmodel)
@@ -678,7 +731,7 @@ bool PgSqlType::isNetworkType()
 					curr_type==QString("macaddr8")));
 }
 
-bool PgSqlType::isGiSType(const QString &type_name)
+bool PgSqlType::isGeoType(const QString &type_name)
 {
 	return (type_name==QString("geography") ||
 					type_name==QString("geometry") ||
@@ -693,14 +746,19 @@ bool PgSqlType::isBoxType()
 
 bool PgSqlType::isBoxType(const QString &type_name)
 {
-	return (type_name==QString("box2d") ||
-					type_name==QString("box3d"));
+	return (type_name==QString("box2d") || type_name==QString("box3d") ||
+					type_name==QString("box2df") || type_name==QString("box3df"));
 }
 
-bool PgSqlType::isGiSType()
+bool PgSqlType::isPostGiSType()
+{
+	return (type_idx >= PostGiSStart && type_idx <= PostGiSEnd);
+}
+
+bool PgSqlType::isGeoType()
 {
 	QString curr_type=(!isUserType() ? type_names[type_idx] : "");
-	return (!isUserType() && isGiSType(curr_type));
+	return (!isUserType() && isGeoType(curr_type));
 }
 
 bool PgSqlType::isRangeType()
@@ -793,6 +851,20 @@ bool PgSqlType::acceptsPrecision()
 {
 	return (isNumericType() ||
 					(!isUserType() && type_names[this->type_idx]!=QString("date") && isDateTimeType()));
+}
+
+void PgSqlType::reset(bool all_attrs)
+{
+	setIntervalType(BaseType::Null);
+	setSpatialType(SpatialType());
+	setPrecision(-1);
+	setLength(0);
+
+	if(all_attrs)
+	{
+		setWithTimezone(false);
+		setDimension(0);
+	}
 }
 
 bool PgSqlType::canCastTo(PgSqlType type)
@@ -950,105 +1022,47 @@ int PgSqlType::getPrecision()
 QString PgSqlType::getCodeDefinition(unsigned def_type,QString ref_type)
 {
 	if(def_type==SchemaParser::SqlDefinition)
-		return *(*this);
-	else
+		return getSQLTypeName();
+
+	attribs_map attribs;
+	SchemaParser schparser;
+
+	attribs[Attributes::Length]="";
+	attribs[Attributes::Dimension]="";
+	attribs[Attributes::Precision]="";
+	attribs[Attributes::WithTimezone]="";
+	attribs[Attributes::IntervalType]="";
+	attribs[Attributes::SpatialType]="";
+	attribs[Attributes::Variation]="";
+	attribs[Attributes::Srid]="";
+	attribs[Attributes::RefType]=ref_type;
+
+	attribs[Attributes::Name]=(~(*this));
+	attribs[Attributes::Length]=QString("%1").arg(this->length);
+
+	if(dimension > 0)
+		attribs[Attributes::Dimension]=QString("%1").arg(this->dimension);
+
+	if(precision >= 0)
+		attribs[Attributes::Precision]=QString("%1").arg(this->precision);
+
+	if(interval_type != BaseType::Null)
+		attribs[Attributes::IntervalType]=(~interval_type);
+
+	if(isGeoType())
 	{
-		attribs_map attribs;
-		SchemaParser schparser;
-
-		attribs[Attributes::Length]="";
-		attribs[Attributes::Dimension]="";
-		attribs[Attributes::Precision]="";
-		attribs[Attributes::WithTimezone]="";
-		attribs[Attributes::IntervalType]="";
-		attribs[Attributes::SpatialType]="";
-		attribs[Attributes::Variation]="";
-		attribs[Attributes::Srid]="";
-		attribs[Attributes::RefType]=ref_type;
-
-		attribs[Attributes::Name]=(~(*this));
-		attribs[Attributes::Length]=QString("%1").arg(this->length);
-
-		if(dimension > 0)
-			attribs[Attributes::Dimension]=QString("%1").arg(this->dimension);
-
-		if(precision >= 0)
-			attribs[Attributes::Precision]=QString("%1").arg(this->precision);
-
-		if(interval_type != BaseType::Null)
-			attribs[Attributes::IntervalType]=(~interval_type);
-
-		if(isGiSType())
-		{
-			attribs[Attributes::SpatialType]=(~spatial_type);
-			attribs[Attributes::Variation]=QString("%1").arg(spatial_type.getVariation());
-			attribs[Attributes::Srid]=QString("%1").arg(spatial_type.getSRID());
-		}
-
-		if(with_timezone)
-			attribs[Attributes::WithTimezone]=Attributes::True;
-
-		return schparser.getCodeDefinition(Attributes::PgSqlBaseType, attribs, def_type);
+		attribs[Attributes::SpatialType]=(~spatial_type);
+		attribs[Attributes::Variation]=QString("%1").arg(spatial_type.getVariation());
+		attribs[Attributes::Srid]=QString("%1").arg(spatial_type.getSRID());
 	}
+
+	if(with_timezone)
+		attribs[Attributes::WithTimezone]=Attributes::True;
+
+	return schparser.getCodeDefinition(Attributes::PgSqlBaseType, attribs, def_type);
 }
 
 QString PgSqlType::operator * ()
 {
-	QString fmt_type, type, aux;
-	unsigned idx;
-
-	type=~(*this);
-
-	//Generation the definition for the spatial types (PostGiS)
-	if(type==QString("geometry") || type==QString("geography"))
-		fmt_type=type + (*spatial_type);
-	else if(hasVariableLength())
-	{
-		//Configuring the precision
-		if((type==QString("numeric") || type==QString("decimal")) && length >= 1 && precision>=0 && precision<=static_cast<int>(length))
-			aux=QString("%1(%2,%3)").arg(type_names[type_idx]).arg(length).arg(precision);
-		//Configuring the length for the type
-		else if(length >= 1)
-			aux=QString("%1(%2)").arg(type_names[type_idx]).arg(length);
-		else
-			aux=type;
-
-		fmt_type=aux;
-	}
-	else if(type!=QString("numeric") && type!=QString("decimal") && acceptsPrecision())
-	{
-		if(type!=QString("interval"))
-		{
-			aux = type_names[type_idx];
-
-			if(precision >= 0)
-				aux+=QString("(%1)").arg(precision);
-
-			if(with_timezone)
-				aux+=QString(" with time zone");
-		}
-		else
-		{
-			aux = type_names[type_idx];
-
-			if(interval_type!=BaseType::Null)
-				aux+=QString(" %1 ").arg(~interval_type);
-
-			if(precision >= 0)
-				aux+=QString("(%1)").arg(precision);
-		}
-
-		fmt_type=aux;
-	}
-	else
-		fmt_type=type;
-
-
-	if(type!=QString("void") && dimension > 0)
-	{
-		for(idx=0; idx < dimension; idx++)
-			fmt_type+=QString("[]");
-	}
-
-	return fmt_type;
+	return getSQLTypeName();
 }

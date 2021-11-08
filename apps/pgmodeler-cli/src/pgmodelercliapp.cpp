@@ -543,8 +543,8 @@ void PgModelerCliApp::showMenu()
 	printText(tr("   * The `pattern' is the text pattern which is matched against the objects names."));
 	printText();
 	printText(tr("   * The `mode' is the way the pattern is matched. This one accepts two values: "));
-	printText(tr("     > `%1' causes the pattern to be used as a wildcard string while matching objects names.").arg(CoreUtilsNs::FilterWildcard));
-	printText(tr("     > `%1' causes the pattern to be treated as a POSIX regular expression while matching objects names.").arg(CoreUtilsNs::FilterRegExp));
+	printText(tr("     > `%1' causes the pattern to be used as a wildcard string while matching objects names.").arg(UtilsNs::FilterWildcard));
+	printText(tr("     > `%1' causes the pattern to be treated as a POSIX regular expression while matching objects names.").arg(UtilsNs::FilterRegExp));
 	printText();
 	printText(tr("   * The option %1 has effect only when used with %2 and will avoid discarding children of matched tables.").arg(ForceChildren).arg(OnlyMatching));
 	printText(tr("     Other tables eventually imported which are dependencies of the matched objects will have their children discarded."));
@@ -841,9 +841,9 @@ int PgModelerCliApp::exec()
 void PgModelerCliApp::updateProgress(int progress, QString msg, ObjectType)
 {
 	if(progress > 0)
-		printText(QString("[%1%] ").arg(progress > 100 ? 100 : progress) + msg);
+		printMessage(QString("[%1%] ").arg(progress > 100 ? 100 : progress) + msg);
 	else
-		printText(msg);
+		printMessage(msg);
 }
 
 void PgModelerCliApp::printIgnoredError(QString err_cod, QString err_msg, QString cmd)
@@ -1091,9 +1091,9 @@ void PgModelerCliApp::recreateObjects()
 	attribs_map attribs, fmt_ext_names;
 	bool use_fail_obj=false;
 	unsigned tries=0, max_tries=parsed_opts[FixTries].toUInt();
-	int start_pos=-1, end_pos=-1, len=0;
+	int start_pos=-1, end_pos=-1, len=0, obj_id = 0, obj_cnt = objs_xml.count();
 
-	printText(tr("Recreating objects..."));
+	printMessage(tr("Recreating objects..."));
 
 	if(max_tries==0)
 		max_tries=1;
@@ -1159,6 +1159,10 @@ void PgModelerCliApp::recreateObjects()
 						if(!dynamic_cast<TableObject *>(object) && obj_type!=ObjectType::Relationship && obj_type!=ObjectType::BaseRelationship)
 							model->addObject(object);
 
+						printMessage(QString("[%1%] %2")
+												 .arg(static_cast<int>((++obj_id/static_cast<double>(obj_cnt)) * 100))
+												 .arg(tr("Object recreated: `%1' (%2)").arg(object->getName(true), object->getTypeName())));
+
 						/* Special case for extensions:
 						 * Before pgModeler 0.9.4-alpha1 the types handled by extension (for example hstore, ltree, etc) were
 						 * registered in the PgSqlType as user-defined data type without their schemas names prepended. This
@@ -1214,7 +1218,10 @@ void PgModelerCliApp::recreateObjects()
 		catch(Exception &e)
 		{
 			if(obj_type!=ObjectType::Database)
+			{
 				fail_objs.push_back(xml_def);
+				printText(tr("** Failed to recreate object!"));
+			}
 			else
 				throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 		}
@@ -1240,7 +1247,7 @@ void PgModelerCliApp::recreateObjects()
 			}
 			else
 			{
-				printMessage(tr("WARNING: There are objects that maybe can't be fixed. Trying again... (tries %1/%2)").arg(tries).arg(max_tries));
+				printMessage(tr("** WARNING: There are objects that maybe can't be fixed. Trying again... (tries %1/%2)").arg(tries).arg(max_tries));
 				model->validateRelationships();
 				objs_xml=fail_objs;
 				objs_xml.append(constr);
@@ -1260,7 +1267,7 @@ void PgModelerCliApp::recreateObjects()
 
 		if(!role)
 		{
-			printMessage(tr("WARNING: Could not find the role `%1'! Ignoring it...").arg(rl.first));
+			printMessage(tr("** WARNING: Could not find the role `%1'! Ignoring it...").arg(rl.first));
 			continue;
 		}
 
@@ -1270,7 +1277,7 @@ void PgModelerCliApp::recreateObjects()
 
 			if(!mem_role)
 			{
-				printMessage(tr("WARNING: Could not find the role `%1' of `%2`! Igorning it...").arg(name, rl.first));
+				printMessage(tr("** WARNING: Could not find the role `%1' of `%2`! Igorning it...").arg(name, rl.first));
 				continue;
 			}
 
@@ -1281,8 +1288,8 @@ void PgModelerCliApp::recreateObjects()
 
 	if(member_fixed)
 	{
-		printMessage(tr("WARNING: Roles memberships were fixed but their creation order is not guaranteed!"));
-		printMessage(tr("         It may be necessary to run the fix tool again now on the file `%1'.").arg(parsed_opts[Output]));
+		printMessage(tr("** WARNING: Roles memberships were fixed but their creation order is not guaranteed!"));
+		printMessage(tr("            It may be necessary to run the fix tool again but now on the file `%1'.").arg(parsed_opts[Output]));
 	}
 }
 
@@ -1560,7 +1567,11 @@ void PgModelerCliApp::fixModel()
 
 	extractObjectXML();
 	recreateObjects();
+
+	printMessage(tr("Updating relationships..."));
 	model->updateTablesFKRelationships();
+
+	printMessage(tr("Saving fixed output model..."));
 	model->saveModel(parsed_opts[Output], SchemaParser::XmlDefinition);
 
 	printMessage(tr("Model successfully fixed!"));

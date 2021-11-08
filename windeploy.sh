@@ -269,7 +269,7 @@ for plug in $DEP_PLUGINS; do
 	fi
 done
 
-echo "Packaging installation..."
+echo "Generating installer..."
 
 rm -r $INSTALLER_DATA_DIR >> $LOG 2>&1
 ln -sf "$INSTALL_ROOT" $INSTALLER_DATA_DIR >> $LOG 2>&1
@@ -310,6 +310,20 @@ if [ $? -ne 0 ]; then
 fi
 
 echo "File created: dist/$PKGNAME.exe"
+
+echo "Generating zip package..."
+cd build/
+zip -r -5 "$DIST_ROOT/$PKGNAME.zip" * >> $LOG 2>&1
+cd ..
+
+if [ $? -ne 0 ]; then
+    echo
+    echo "** Failed to create zip package!"
+    echo
+    exit 1
+fi
+
+echo "File created: dist/$PKGNAME.zip"
 
 echo "pgModeler successfully deployed!"
 echo

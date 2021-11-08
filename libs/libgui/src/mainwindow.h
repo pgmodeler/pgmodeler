@@ -315,7 +315,6 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 		void toggleAboutWidget(bool show);
 		void toggleDonateWidget(bool show);
 		void removeModelActions();
-		void showDemoVersionWarning();
 		void changeCurrentView(bool checked);
 		void reportBug();
 		void removeOperations();
@@ -325,6 +324,10 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 		void toggleCompactView();
 		void toggleLayersWidget(bool show);
 		void toggleChangelogWidget(bool show);
+
+		#ifdef	DEMO_VERSION
+		void showDemoVersionWarning(bool exit_msg = false);
+		#endif
 
 	signals:
 		void s_currentModelChanged(ModelWidget *model_wgt);

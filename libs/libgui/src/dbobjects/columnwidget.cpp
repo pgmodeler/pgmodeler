@@ -20,6 +20,7 @@
 #include "sequencewidget.h"
 #include "baseform.h"
 #include "settings/generalconfigwidget.h"
+#include "coreutilsns.h"
 
 ColumnWidget::ColumnWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Column)
 {
@@ -125,10 +126,10 @@ void ColumnWidget::setAttributes(DatabaseModel *model, OperationList *op_list, B
 		}
 	}
 
-	data_type->setAttributes(type, model,
+	data_type->setAttributes(type, model, true,
 													 UserTypeConfig::BaseType | UserTypeConfig::TableType |
 													 UserTypeConfig::ViewType | UserTypeConfig::ForeignTableType |
-													 UserTypeConfig::DomainType | UserTypeConfig::ExtensionType, true,false);
+													 UserTypeConfig::DomainType | UserTypeConfig::ExtensionType, true, false);
 }
 
 void ColumnWidget::editSequenceAttributes()

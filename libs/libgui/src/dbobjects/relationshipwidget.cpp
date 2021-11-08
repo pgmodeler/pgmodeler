@@ -23,6 +23,7 @@
 #include "baseform.h"
 #include "settings/relationshipconfigwidget.h"
 #include "settings/generalconfigwidget.h"
+#include "coreutilsns.h"
 
 RelationshipWidget::RelationshipWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Relationship)
 {

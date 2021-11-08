@@ -17,7 +17,7 @@
 		[ WHERE ]
 	%end
 
-	[ typtype IN ('p','b','c','e','r') AND typname NOT LIKE 'pg_%' ]
+	[ (typtype IN ('p','b','c','e','r') AND (typname = 'pg_lsn' OR typname NOT LIKE 'pg_%')) ]
 
 	#Excluding types related to tables/views/sequeces/materialized views/foreign tables
 
@@ -80,7 +80,9 @@
 		END AS configuration, ]
 
 		# Retrieve the enumaration labels (is null when the type is not an enumeration)
-		[ CASE WHEN typtype = 'e' THEN (SELECT array_agg(enumlabel) FROM pg_enum WHERE enumtypid=tp.oid)
+		[ CASE WHEN typtype = 'e' THEN 
+			(SELECT array_to_string(array_agg(enumlabel),'] $ds [', '') 
+			FROM pg_enum WHERE enumtypid=tp.oid)
 		END AS enumerations, ]
 
 		%if ({pgsql-ver} >=f "9.3") %then
@@ -166,7 +168,7 @@
 		%end
 
 		#Excluding types related to tables/views/sequeces
-		[ WHERE typtype IN ('p','b','c','e','r', 'd') AND typname NOT LIKE 'pg_%' ]
+		[ WHERE typtype IN ('p','b','c','e','r', 'd') AND (typname = 'pg_lsn' OR typname NOT LIKE 'pg_%') ]
 
 		#Excluding types related to tables/views/sequeces/materialized views
 

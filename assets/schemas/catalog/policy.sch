@@ -26,7 +26,9 @@
 				[ AND ]
 			%end
 		%else
-			[ WHERE ]
+			%if {last-sys-oid} %or {not-ext-object} %or {name-filter} %or {extra-condition} %then
+				[ WHERE ]
+			%end
 		%end
 
 		%if {last-sys-oid} %then

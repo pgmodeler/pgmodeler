@@ -4406,7 +4406,6 @@ Type *DatabaseModel::createType()
 	attribs_map attribs;
 	map<QString, unsigned> func_types;
 	Type *type=nullptr;
-	int count, i;
 	QStringList enums;
 	QString elem, str_aux;
 	BaseObject *func=nullptr, *collation=nullptr;
@@ -4480,11 +4479,9 @@ Type *DatabaseModel::createType()
 					if(elem==Attributes::EnumType)
 					{
 						xmlparser.getElementAttributes(attribs);
-						enums=attribs[Attributes::Values].split(',');
-
-						count=enums.size();
-						for(i=0; i < count; i++)
-							type->addEnumeration(enums[i]);
+						enums = attribs[Attributes::Values].split(UtilsNs::DataSeparator);
+						for(auto &en : enums)
+							type->addEnumeration(en);
 					}
 					//Specific operations for COMPOSITE types
 					else if(elem==Attributes::TypeAttribute)
@@ -5824,7 +5821,7 @@ Trigger *DatabaseModel::createTrigger()
 		trigger->setTransitionTableName(Trigger::OldTableName, attribs[Attributes::OldTableName]);
 		trigger->setTransitionTableName(Trigger::NewTableName, attribs[Attributes::NewTableName]);
 
-		trigger->addArguments(attribs[Attributes::Arguments].split(CoreUtilsNs::DataSeparator, QtCompat::SkipEmptyParts));
+		trigger->addArguments(attribs[Attributes::Arguments].split(UtilsNs::DataSeparator, QtCompat::SkipEmptyParts));
 		trigger->setDeferrable(attribs[Attributes::Deferrable]==Attributes::True);
 
 		if(trigger->isDeferrable())
@@ -9347,10 +9344,11 @@ void DatabaseModel::getUserDefTypesReferences(BaseObject *object, vector<BaseObj
 {
 	vector<BaseObject *> *obj_list=nullptr;
 	vector<BaseObject *>::iterator itr, itr_end;
-	ObjectType obj_types[]={ObjectType::Table, ObjectType::ForeignTable, ObjectType::OpClass,
-													ObjectType::Cast,	ObjectType::Domain, ObjectType::Function, ObjectType::Aggregate,
-													ObjectType::Operator, ObjectType::Type, ObjectType::Relationship };
-	unsigned i, i1, count, tp_count = sizeof(obj_types)/sizeof(ObjectType);
+	vector<ObjectType> obj_types={ObjectType::Table, ObjectType::ForeignTable, ObjectType::OpClass,
+																ObjectType::Cast,	ObjectType::Domain, ObjectType::Function,
+																ObjectType::Aggregate, ObjectType::Procedure,
+																ObjectType::Operator, ObjectType::Type, ObjectType::Relationship };
+	unsigned i, i1, count, tp_count = obj_types.size();
 	OperatorClass *op_class=nullptr;
 	OperatorClassElement elem;
 	PhysicalTable *tab=nullptr;
@@ -9364,31 +9362,35 @@ void DatabaseModel::getUserDefTypesReferences(BaseObject *object, vector<BaseObj
 	Relationship *rel=nullptr;
 	void *ptr_pgsqltype=nullptr;
 	ObjectType obj_type = object->getObjectType();
+	bool check_gis_type = false;
 
-	switch(obj_type)
+	if(obj_type == ObjectType::Type)
+		ptr_pgsqltype = dynamic_cast<Type*>(object);
+	else if(obj_type == ObjectType::Domain)
+		ptr_pgsqltype = dynamic_cast<Domain*>(object);
+	else if(obj_type == ObjectType::Sequence)
+		ptr_pgsqltype = dynamic_cast<Sequence*>(object);
+	else if(obj_type == ObjectType::View)
+		ptr_pgsqltype = dynamic_cast<View*>(object);
+	else if(obj_type == ObjectType::ForeignTable)
+		ptr_pgsqltype = dynamic_cast<ForeignTable*>(object);
+	else if(obj_type == ObjectType::Extension)
 	{
-		case ObjectType::Type:
-			ptr_pgsqltype=dynamic_cast<Type*>(object);
-		break;
-		case ObjectType::Domain:
-			ptr_pgsqltype=dynamic_cast<Domain*>(object);
-		break;
-		case ObjectType::Sequence:
-			ptr_pgsqltype=dynamic_cast<Sequence*>(object);
-		break;
-		case ObjectType::Extension:
-			ptr_pgsqltype=dynamic_cast<Extension*>(object);
-		break;
-		case ObjectType::View:
-			ptr_pgsqltype=dynamic_cast<View*>(object);
-		break;
-		case ObjectType::ForeignTable:
-			ptr_pgsqltype=dynamic_cast<ForeignTable*>(object);
-		break;
-		default:
-			ptr_pgsqltype=dynamic_cast<Table*>(object);
-		break;
+		ptr_pgsqltype = dynamic_cast<Extension*>(object);
+
+		/* Special case for postgis extension:
+		 *
+		 * pgModeler uses postgis data types as built-in
+		 * so when checking the references to the extension postgis
+		 * we need to verify if one or more objects (and their children) are
+		 * referencing PostGiS data types. So the flag below forces
+		 * this checking only in non exclusion mode. This way, in the validation
+		 * process pgModeler can check if the extension object is missing or
+		 * is being created after its references */
+		check_gis_type = object->getName() == "postgis";
 	}
+	else
+		ptr_pgsqltype = dynamic_cast<Table*>(object);
 
 	for(i=0; i < tp_count && (!exclusion_mode || (exclusion_mode && !refer)); i++)
 	{
@@ -9411,7 +9413,8 @@ void DatabaseModel::getUserDefTypesReferences(BaseObject *object, vector<BaseObj
 				{
 					col=rel->getAttribute(i1);
 
-					if(col->getType()==ptr_pgsqltype)
+					if(col->getType() == ptr_pgsqltype ||
+						 (!exclusion_mode && check_gis_type && col->getType().isPostGiSType()))
 					{
 						added=refer=true;
 						refs.push_back(rel);
@@ -9432,9 +9435,8 @@ void DatabaseModel::getUserDefTypesReferences(BaseObject *object, vector<BaseObj
 					col=tab->getColumn(i1);
 
 					if(!col->isAddedByRelationship() &&
-						 (col->getType()==ptr_pgsqltype ||
-							//Special case for postgis extension
-							(obj_type == ObjectType::Extension && object->getName() == QString("postgis") && col->getType().isGiSType())))
+						 (col->getType() == ptr_pgsqltype ||
+							(!exclusion_mode && check_gis_type && col->getType().isPostGiSType())))
 					{
 						refer=true;
 						refs.push_back(col);
@@ -9449,7 +9451,8 @@ void DatabaseModel::getUserDefTypesReferences(BaseObject *object, vector<BaseObj
 				op_class=dynamic_cast<OperatorClass *>(*itr);
 				itr++;
 
-				if(op_class->getDataType()==ptr_pgsqltype)
+				if(op_class->getDataType() == ptr_pgsqltype ||
+					 (!exclusion_mode && check_gis_type && op_class->getDataType().isPostGiSType()))
 				{
 					refer=true;
 					refs.push_back(op_class);
@@ -9458,7 +9461,8 @@ void DatabaseModel::getUserDefTypesReferences(BaseObject *object, vector<BaseObj
 				for(i1=0; i1 < op_class->getElementCount() && (!exclusion_mode || (exclusion_mode && !refer)); i1++)
 				{
 					elem=op_class->getElement(i1);
-					if(elem.getStorage()==ptr_pgsqltype)
+					if(elem.getStorage() == ptr_pgsqltype ||
+							(!exclusion_mode && check_gis_type && elem.getStorage().isPostGiSType()))
 					{
 						refer=true;
 						refs.push_back(op_class);
@@ -9473,7 +9477,8 @@ void DatabaseModel::getUserDefTypesReferences(BaseObject *object, vector<BaseObj
 				dom=dynamic_cast<Domain *>(*itr);
 				itr++;
 
-				if(dom->getType()==ptr_pgsqltype)
+				if(dom->getType() == ptr_pgsqltype ||
+					 (!exclusion_mode && check_gis_type && dom->getType().isPostGiSType()))
 				{
 					refer=true;
 					refs.push_back(dom);
@@ -9487,10 +9492,12 @@ void DatabaseModel::getUserDefTypesReferences(BaseObject *object, vector<BaseObj
 				type=dynamic_cast<Type *>(*itr);
 				itr++;
 
-				if(type->getAlignment()==ptr_pgsqltype ||
-						type->getElement()==ptr_pgsqltype ||
-						type->getLikeType()==ptr_pgsqltype ||
-						type->getSubtype()==ptr_pgsqltype)
+				if((type->getAlignment() == ptr_pgsqltype || type->getElement() == ptr_pgsqltype ||
+						type->getLikeType() == ptr_pgsqltype || type->getSubtype() == ptr_pgsqltype) ||
+
+					 (!exclusion_mode && check_gis_type &&
+						(type->getAlignment().isPostGiSType() || type->getElement().isPostGiSType() ||
+						 type->getLikeType().isPostGiSType() ||	 type->getSubtype().isPostGiSType())))
 				{
 					refer=true;
 					refs.push_back(type);
@@ -9507,7 +9514,8 @@ void DatabaseModel::getUserDefTypesReferences(BaseObject *object, vector<BaseObj
 				count=aggreg->getDataTypeCount();
 				for(i1=0; i1 < count  && (!exclusion_mode || (exclusion_mode && !refer)); i1++)
 				{
-					if(aggreg->getDataType(i1)==ptr_pgsqltype)
+					if(aggreg->getDataType(i1) == ptr_pgsqltype ||
+						 (!exclusion_mode && check_gis_type && aggreg->getDataType(i1).isPostGiSType()))
 					{
 						refer=true;
 						refs.push_back(aggreg);
@@ -9526,7 +9534,9 @@ void DatabaseModel::getUserDefTypesReferences(BaseObject *object, vector<BaseObj
 				func = dynamic_cast<Function *>(*itr);
 				itr++;
 
-				if(func && func->getReturnType()==ptr_pgsqltype)
+				if(func &&
+					 (func->getReturnType() == ptr_pgsqltype ||
+						(!exclusion_mode && check_gis_type && func->getReturnType().isPostGiSType())))
 				{
 					refer = true;
 					refs.push_back(func);
@@ -9536,7 +9546,8 @@ void DatabaseModel::getUserDefTypesReferences(BaseObject *object, vector<BaseObj
 					count = base_func->getParameterCount();
 					for(i1=0; i1 < count && (!exclusion_mode || (exclusion_mode && !refer)); i1++)
 					{
-						if(base_func->getParameter(i1).getType()==ptr_pgsqltype)
+						if(base_func->getParameter(i1).getType() == ptr_pgsqltype ||
+							 (!exclusion_mode && check_gis_type && base_func->getParameter(i1).getType().isPostGiSType()))
 						{
 							refer = true;
 							refs.push_back(base_func);
@@ -9545,7 +9556,8 @@ void DatabaseModel::getUserDefTypesReferences(BaseObject *object, vector<BaseObj
 
 					for(auto &type : base_func->getTransformTypes())
 					{
-						if(type == ptr_pgsqltype)
+						if(type == ptr_pgsqltype ||
+							 (!exclusion_mode && check_gis_type && type.isPostGiSType()))
 						{
 							refer = true;
 							refs.push_back(base_func);
@@ -9561,8 +9573,12 @@ void DatabaseModel::getUserDefTypesReferences(BaseObject *object, vector<BaseObj
 				oper=dynamic_cast<Operator *>(*itr);
 				itr++;
 
-				if(oper->getArgumentType(Operator::LeftArg)==ptr_pgsqltype ||
-						oper->getArgumentType(Operator::RightArg)==ptr_pgsqltype)
+				if((oper->getArgumentType(Operator::LeftArg) == ptr_pgsqltype ||
+						oper->getArgumentType(Operator::RightArg) == ptr_pgsqltype) ||
+
+					 (!exclusion_mode && check_gis_type &&
+						(oper->getArgumentType(Operator::LeftArg).isPostGiSType() ||
+							oper->getArgumentType(Operator::RightArg).isPostGiSType())))
 				{
 					refer=true;
 					refs.push_back(oper);
@@ -9576,8 +9592,12 @@ void DatabaseModel::getUserDefTypesReferences(BaseObject *object, vector<BaseObj
 				cast=dynamic_cast<Cast *>(*itr);
 				itr++;
 
-				if(cast->getDataType(Cast::SrcType)==ptr_pgsqltype ||
-						cast->getDataType(Cast::DstType)==ptr_pgsqltype)
+				if((cast->getDataType(Cast::SrcType) == ptr_pgsqltype ||
+						cast->getDataType(Cast::DstType) == ptr_pgsqltype) ||
+
+					 (!exclusion_mode && check_gis_type &&
+						(cast->getDataType(Cast::SrcType).isPostGiSType() ||
+						 cast->getDataType(Cast::DstType).isPostGiSType())))
 				{
 					refer=true;
 					refs.push_back(cast);
@@ -10650,13 +10670,13 @@ vector<BaseObject *> DatabaseModel::findObjects(const QStringList &filters, cons
 {
 	vector<BaseObject *> objects, aux_objs;
 	QString pattern, mode;
-	QStringList values, modes = { CoreUtilsNs::FilterWildcard, CoreUtilsNs::FilterRegExp };
+	QStringList values, modes = { UtilsNs::FilterWildcard, UtilsNs::FilterRegExp };
 	ObjectType obj_type;
 	bool exact_match = false;
 
 	for(auto &filter : filters)
 	{
-		values = filter.split(CoreUtilsNs::FilterSeparator);
+		values = filter.split(UtilsNs::FilterSeparator);
 
 		// Raises an error if the filter has an invalid field count
 		if(values.size() != 3)
@@ -10668,7 +10688,7 @@ vector<BaseObject *> DatabaseModel::findObjects(const QStringList &filters, cons
 		obj_type = BaseObject::getObjectType(values[0]);
 		pattern = values[1];
 		mode = values[2];
-		exact_match = (mode == CoreUtilsNs::FilterWildcard && !pattern.contains(CoreUtilsNs::WildcardChar));
+		exact_match = (mode == UtilsNs::FilterWildcard && !pattern.contains(UtilsNs::WildcardChar));
 
 		// Raises an error if the filter has an invalid object type, pattern or mode
 		if(obj_type == ObjectType::BaseObject || pattern.isEmpty() || !modes.contains(mode))
@@ -10677,7 +10697,7 @@ vector<BaseObject *> DatabaseModel::findObjects(const QStringList &filters, cons
 											ErrorCode::InvalidObjectFilter,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		}
 
-		aux_objs = findObjects(pattern, { obj_type }, false, mode == CoreUtilsNs::FilterRegExp, exact_match, search_attr);
+		aux_objs = findObjects(pattern, { obj_type }, false, mode == UtilsNs::FilterRegExp, exact_match, search_attr);
 		objects.insert(objects.end(), aux_objs.begin(), aux_objs.end());
 	}
 
@@ -11692,10 +11712,10 @@ QStringList DatabaseModel::getFiltersFromChangelog(QDateTime start, QDateTime en
 				(!start.isValid() && end.isValid() && date <= end)))
 		{
 			filters.append(BaseObject::getSchemaName(type) +
-										 CoreUtilsNs::FilterSeparator +
+										 UtilsNs::FilterSeparator +
 										 signature +
-										 CoreUtilsNs::FilterSeparator +
-										 CoreUtilsNs::FilterWildcard);
+										 UtilsNs::FilterSeparator +
+										 UtilsNs::FilterWildcard);
 		}
 	}
 

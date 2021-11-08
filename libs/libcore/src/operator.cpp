@@ -157,6 +157,7 @@ void Operator::setArgumentType(PgSqlType arg_type, unsigned arg_id)
 	if(arg_id > RightArg)
 		throw Exception(ErrorCode::RefOperatorArgumentInvalidType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
+	arg_type.reset();
 	setCodeInvalidated(argument_types[arg_id] != arg_type);
 	argument_types[arg_id]=arg_type;
 }

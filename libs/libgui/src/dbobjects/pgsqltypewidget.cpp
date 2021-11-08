@@ -28,6 +28,8 @@ PgSQLTypeWidget::PgSQLTypeWidget(QWidget *parent, const QString &label) : QWidge
 
 		setupUi(this);
 
+		allow_qualifiers = true;
+
 		if(!label.isEmpty())
 			groupBox->setTitle(label);
 
@@ -93,21 +95,30 @@ void PgSQLTypeWidget::updateTypeFormat()
 			//Case the index is greated than zero indicates that the type is a user-defined one
 			type=data.toUInt();
 
-		length_sb->setEnabled(type.hasVariableLength());
+		length_sb->setEnabled(allow_qualifiers && type.hasVariableLength());
 		timezone_chk->setVisible(type==QString("timestamp") || type==QString("time"));
 		timezone_lbl->setVisible(type==QString("timestamp") || type==QString("time"));
-		precision_sb->setEnabled(type.acceptsPrecision());
+		precision_sb->setEnabled(allow_qualifiers && type.acceptsPrecision());
 		dimension_sb->setEnabled(type!=QString("void"));
+
 		interval_cmb->setVisible(type==QString("interval"));
 		interval_lbl->setVisible(interval_cmb->isVisible());
+		interval_cmb->setEnabled(allow_qualifiers);
 
-		spatial_cmb->setVisible(type.isGiSType());
-		spatial_lbl->setVisible(type.isGiSType());
-		variation_lbl->setVisible(type.isGiSType());
-		srid_lbl->setVisible(type.isGiSType());
-		srid_spb->setVisible(type.isGiSType());
-		var_m_chk->setVisible(type.isGiSType());
-		var_z_chk->setVisible(type.isGiSType());
+		spatial_cmb->setEnabled(allow_qualifiers);
+		spatial_cmb->setVisible(type.isGeoType());
+		spatial_lbl->setVisible(type.isGeoType());
+		variation_lbl->setVisible(type.isGeoType());
+
+		srid_lbl->setVisible(type.isGeoType());
+		srid_spb->setEnabled(allow_qualifiers);
+		srid_spb->setVisible(type.isGeoType());
+
+		var_m_chk->setEnabled(allow_qualifiers);
+		var_m_chk->setVisible(type.isGeoType());
+
+		var_z_chk->setEnabled(allow_qualifiers);
+		var_z_chk->setVisible(type.isGeoType());
 
 		if(spatial_cmb->isVisible())
 		{
@@ -163,12 +174,14 @@ void PgSQLTypeWidget::listPgSQLTypes(QComboBox *combo, DatabaseModel *model, uns
 	}
 }
 
-void PgSQLTypeWidget::setAttributes(PgSqlType type, DatabaseModel *model,  unsigned usr_type_conf, bool oid_types, bool pseudo_types)
+void PgSQLTypeWidget::setAttributes(PgSqlType type, DatabaseModel *model, bool allow_qualifiers,  unsigned usr_type_conf, bool oid_types, bool pseudo_types)
 {
 	try
 	{
 		int idx;
 		QString type_name;
+
+		this->allow_qualifiers = allow_qualifiers;
 
 		type_cmb->blockSignals(true);
 		listPgSQLTypes(type_cmb, model, usr_type_conf, oid_types, pseudo_types);
@@ -185,7 +198,6 @@ void PgSQLTypeWidget::setAttributes(PgSqlType type, DatabaseModel *model,  unsig
 		length_sb->setValue(type.getLength());
 		precision_sb->setValue(type.getPrecision());
 		dimension_sb->setValue(type.getDimension());
-
 
 		idx=interval_cmb->findText(~(type.getIntervalType()));
 		interval_cmb->setCurrentIndex(idx);

@@ -33,13 +33,17 @@
 
 class PgSqlType: public TemplateType<PgSqlType>{
 	private:
+		//! \brief Offset for all PostGiS types
+		static constexpr unsigned PostGiSStart = 64,
+		PostGiSEnd = 82;
+
 		//! \brief Offset for oid types
-		static constexpr unsigned OidStart = 83,
-		OidEnd = 97;
+		static constexpr unsigned OidStart = 89,
+		OidEnd = 103;
 
 		//! \brief Offset for pseudo types
-		static constexpr unsigned PseudoStart = 98,
-		PseudoEnd = 112;
+		static constexpr unsigned PseudoStart = 104,
+		PseudoEnd = 118;
 
 		//! \brief Configuration for user defined types
 		static vector<UserTypeConfig> user_types;
@@ -169,11 +173,13 @@ class PgSqlType: public TemplateType<PgSqlType>{
 		bool isUserType();
 		bool isArrayType();
 
-		bool isGiSType();
-		static bool isGiSType(const QString &type_name);
+		bool isGeoType();
+		static bool isGeoType(const QString &type_name);
 
 		bool isBoxType();
 		static bool isBoxType(const QString &type_name);
+
+		bool isPostGiSType();
 
 		bool isRangeType();
 		bool isSerialType();
@@ -186,6 +192,13 @@ class PgSqlType: public TemplateType<PgSqlType>{
 		bool isPolymorphicType();
 		bool hasVariableLength();
 		bool acceptsPrecision();
+
+		/*! \brief Resets the length, precision, interval and spatial attributes of the type to their default values.
+		 * If the all_attrs is true then the dimension and timezone info is reset too.
+		 * This method preserves the dimension attribute and the name (idx) and is useful when you want to grantee that
+		 * type being associated to an object need to have only name and dimesion info discarding everything else.
+		 * Example of such objects are function parameters, casts, operators, aggregates and many others. */
+		void reset(bool all_attrs = false);
 
 		//! \brief Indicates if the 'this' type can be casted to 'type'
 		bool canCastTo(PgSqlType type);
@@ -206,7 +219,7 @@ class PgSqlType: public TemplateType<PgSqlType>{
 		QString getCodeDefinition(unsigned def_type, QString ref_type="");
 		virtual QString operator ~ ();
 
-		//! \brief Returns the SQL definition for the type
+		//! \brief Returns the complet SQL definition for the type (same as calling getSQLTypeName(true))
 		QString operator * ();
 
 		unsigned operator << (void *ptype);
@@ -243,7 +256,8 @@ class PgSqlType: public TemplateType<PgSqlType>{
 		 * Other attributes of the type are discarded. */
 		QString getTypeName(bool incl_dimension);
 
-		//! \brief Returns the name of the type in SQL form including length, precision and other parameters. This is equivalent to call *type
+		/*! \brief Returns the name of the type in SQL form.
+		 * Includes the length, precision and other quantifiers of the type. */
 		QString getSQLTypeName();
 
 		friend class Type;

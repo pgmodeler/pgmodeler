@@ -41,6 +41,8 @@ class PgSQLTypeWidget: public QWidget, public Ui::PgSQLTypeWidget {
 		//! \brief Syntax highlighter used on the format field
 		SyntaxHighlighter *format_hl;
 
+		bool allow_qualifiers;
+
 		bool eventFilter(QObject *watched, QEvent *event);
 
 		static const QString InvalidType;
@@ -59,9 +61,15 @@ class PgSQLTypeWidget: public QWidget, public Ui::PgSQLTypeWidget {
 		void updateTypeFormat();
 
 	public slots:
+		/*! \brief Configures the widget with the provided data type
+		 *  The parameter allow_qualifiers indicates if length, preciosion, interval and other details of the type can be handled
+		 *  The usr_type_conf indicates which data types must be handled by the widget
+		 *  The oid_types indicates if oid data types are allowed
+		 *  The pseudo_types indicates if pseudo data types are allowed */
 		void setAttributes(PgSqlType type, DatabaseModel *model,
-						   unsigned usr_type_conf=UserTypeConfig::AllUserTypes,
-						   bool oid_types=true, bool pseudo_types=true);
+											 bool allow_qualifiers = true,
+											 unsigned usr_type_conf=UserTypeConfig::AllUserTypes,
+											 bool oid_types=true, bool pseudo_types=true);
 
 		//! \brief Returns the PostgreSQL type configured via form
 		PgSqlType getPgSQLType();

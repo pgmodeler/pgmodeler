@@ -197,7 +197,7 @@ void FunctionWidget::setAttributes(DatabaseModel *model, OperationList *op_list,
 		}
 	}
 
-	ret_type->setAttributes(aux_type, model);
+	ret_type->setAttributes(aux_type, model, false);
 }
 
 void FunctionWidget::alternateReturnTypes()

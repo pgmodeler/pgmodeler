@@ -227,7 +227,7 @@ void BaseFunctionWidget::setAttributes(DatabaseModel *model, OperationList *op_l
 	language_cmb->addItems(list);
 	language_cmb->setCurrentText(DefaultLanguages::Sql);
 
-	transform_type_wgt->setAttributes(PgSqlType(), model);
+	transform_type_wgt->setAttributes(PgSqlType(), model, false);
 	transform_types_tab->removeRows();
 
 	if(func)

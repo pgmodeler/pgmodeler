@@ -52,6 +52,7 @@ void Function::addReturnedTableColumn(const QString &name, PgSqlType type)
 	vector<Parameter>::iterator itr,itr_end;
 	bool found=false;
 
+	type.reset();
 	itr=ret_table_columns.begin();
 	itr_end=ret_table_columns.end();
 
@@ -109,6 +110,7 @@ void Function::setRowAmount(unsigned row_amount)
 
 void Function::setReturnType(PgSqlType type)
 {
+	type.reset();
 	setCodeInvalidated(return_type != type);
 	return_type=type;
 	ret_table_columns.clear();

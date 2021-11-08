@@ -39,6 +39,8 @@ void Cast::setName(const QString &)
 
 void Cast::setDataType(unsigned type_idx, PgSqlType type)
 {
+	type.reset();
+
 	//Check if the type index is valid
 	if(type_idx<=DstType)
 	{

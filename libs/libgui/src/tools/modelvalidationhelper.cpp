@@ -195,9 +195,10 @@ void  ModelValidationHelper::resolveConflict(ValidationInfo &info)
 		//Resolving the absence of postgis extension
 		else if(info.getValidationType()==ValidationInfo::MissingExtension && !db_model->getExtension(QString("postgis")))
 		{
-			Extension *extension = new Extension();
+			Extension *extension = new Extension();			
 			extension->setName("postgis");
 			extension->setSchema(db_model->getSchema("public"));
+			extension->setComment("PostGIS geometry, geography, and raster spatial types and functions");
 			db_model->addExtension(extension);
 		}
 	}
@@ -575,7 +576,7 @@ void ModelValidationHelper::validateModel()
 				{
 					col = dynamic_cast<Column *>(obj);
 
-					if(col->getType().isGiSType())
+					if(col->getType().isPostGiSType())
 						generateValidationInfo(ValidationInfo::MissingExtension, col, {});
 				}
 

@@ -20,6 +20,8 @@
 #include "defaultlanguages.h"
 #include "qtcompat/qtextstreamcompat.h"
 #include "qtcompat/splitbehaviorcompat.h"
+#include "utilsns.h"
+#include "coreutilsns.h"
 
 const QString DatabaseImportHelper::UnkownObjectOidXml("\t<!--[ unknown object OID=%1 ]-->\n");
 
@@ -1034,21 +1036,17 @@ void DatabaseImportHelper::createDomain(attribs_map &attribs)
 
 	try
 	{
-		constraints = Catalog::parseArrayValues(attribs[Attributes::Constraints]);
+		constraints = attribs[Attributes::Constraints].split(UtilsNs::DataSeparator, QtCompat::SkipEmptyParts);
 		attribs[Attributes::Constraints].clear();
 
-		for(auto constr : constraints)
+		for(auto &constr : constraints)
 		{
-			constr.remove(0, 1);
-			constr.remove(constr.length() - 1, 1);
-			constr_attrs = constr.split(" CHECK (");
-
+			constr_attrs = constr.split(" CHECK ");
 			aux_attribs[Attributes::Name] = constr_attrs.at(0).trimmed();
-
 			expr = constr_attrs.at(1).trimmed();
-			expr.remove(expr.length() - 1,1);
+			expr.remove(expr.indexOf('('), 1);
+			expr.remove(expr.lastIndexOf(')'), 1);
 			aux_attribs[Attributes::Expression] = expr;
-
 			attribs[Attributes::Constraints]+= schparser.getCodeDefinition(Attributes::DomConstraint, aux_attribs, SchemaParser::XmlDefinition);
 		}
 
@@ -1106,7 +1104,7 @@ void DatabaseImportHelper::configureBaseFunctionAttribs(attribs_map &attribs)
 		transform_types = getTypes(attribs[Attributes::TransformTypes], false);
 		attribs[Attributes::TransformTypes] = transform_types.join(',');
 
-		config_params = attribs[Attributes::ConfigParams].split(CoreUtilsNs::DataSeparator, QtCompat::SkipEmptyParts);
+		config_params = attribs[Attributes::ConfigParams].split(UtilsNs::DataSeparator, QtCompat::SkipEmptyParts);
 		attribs[Attributes::ConfigParams] = "";
 
 		for(auto &cfg : config_params)
@@ -1665,12 +1663,7 @@ void DatabaseImportHelper::createType(attribs_map &attribs)
 	{
 		attribs[attribs[Attributes::Configuration]]=Attributes::True;
 
-		if(!attribs[Attributes::EnumType].isEmpty())
-		{
-			attribs[Attributes::Enumerations]=Catalog::parseArrayValues(attribs[Attributes::Enumerations]).join(',');
-			attribs[Attributes::Enumerations].remove('"');
-		}
-		else if(!attribs[Attributes::CompositeType].isEmpty())
+		if(!attribs[Attributes::CompositeType].isEmpty())
 		{
 			QStringList comp_attribs, values;
 			TypeAttribute type_attrib;
@@ -1955,7 +1948,6 @@ void DatabaseImportHelper::createView(attribs_map &attribs)
 
 void DatabaseImportHelper::createRule(attribs_map &attribs)
 {
-	Rule *rule=nullptr;
 	QString cmds=attribs[Attributes::Commands];
 	int start=-1;
 	QRegExp cond_regexp(QString("(WHERE)(.)+(DO)"));
@@ -1978,11 +1970,11 @@ void DatabaseImportHelper::createRule(attribs_map &attribs)
 		attribs[Attributes::Table]=getDependencyObject(attribs[Attributes::Table], table_type, true, auto_resolve_deps, false);
 
 		loadObjectXML(ObjectType::Rule, attribs);
-		rule=dbmodel->createRule();
+		Rule *rule = dbmodel->createRule();
+		rule->setSQLDisabled(rule->getParentTable()->isSQLDisabled());
 	}
 	catch(Exception &e)
 	{
-		if(rule) delete rule;
 		throw Exception(e.getErrorMessage(), e.getErrorCode(),
 						__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, xmlparser->getXMLBuffer());
 	}
@@ -2000,10 +1992,12 @@ void DatabaseImportHelper::createTrigger(attribs_map &attribs)
 		attribs[Attributes::TriggerFunc]=getDependencyObject(attribs[Attributes::TriggerFunc], ObjectType::Function, true, true);
 
 		args = attribs[Attributes::Arguments].split(Catalog::EscapedNullChar, QtCompat::SkipEmptyParts);
-		attribs[Attributes::Arguments] = args.join(CoreUtilsNs::DataSeparator);
+		attribs[Attributes::Arguments] = args.join(UtilsNs::DataSeparator);
 
 		loadObjectXML(ObjectType::Trigger, attribs);
-		dbmodel->createTrigger();
+
+		Trigger *trig = dbmodel->createTrigger();
+		trig->setSQLDisabled(trig->getParentTable()->isSQLDisabled());
 	}
 	catch(Exception &e)
 	{
@@ -2094,7 +2088,8 @@ void DatabaseImportHelper::createIndex(attribs_map &attribs)
 		attribs[Attributes::Table]=tab_name;
 
 		loadObjectXML(ObjectType::Index, attribs);
-		dbmodel->createIndex();
+		Index *index = dbmodel->createIndex();
+		index->setSQLDisabled(index->getParentTable()->isSQLDisabled());
 	}
 	catch(Exception &e)
 	{
@@ -2209,6 +2204,7 @@ void DatabaseImportHelper::createConstraint(attribs_map &attribs)
 
 			loadObjectXML(ObjectType::Constraint, attribs);
 			constr=dbmodel->createConstraint(nullptr);
+			constr->setSQLDisabled(table->isSQLDisabled());
 
 			if(table &&  constr->getConstraintType()==ConstraintType::PrimaryKey)
 				table->addConstraint(constr);
@@ -2230,7 +2226,9 @@ void DatabaseImportHelper::createPolicy(attribs_map &attribs)
 		attribs[Attributes::Table]=getDependencyObject(attribs[Attributes::Table], ObjectType::Table, true, auto_resolve_deps, false);
 		attribs[Attributes::Roles]=getObjectNames(attribs[Attributes::Roles]).join(',');
 		loadObjectXML(ObjectType::Policy, attribs);
-		dbmodel->createPolicy();
+
+		Policy *pol = dbmodel->createPolicy();
+		pol->setSQLDisabled(pol->getParentTable()->isSQLDisabled());
 	}
 	catch(Exception &e)
 	{
@@ -2672,7 +2670,7 @@ void DatabaseImportHelper::createColumns(attribs_map &attribs, vector<unsigned> 
 			/* Special verification for PostGiS types: if the current type is a gis based one
 			 * (geometry, geography, box3d or box2d) we override the usage of the current type
 			 * and force the use of the pgModeler built-in one. */
-			if((PgSqlType::isGiSType(types[type_oid][Attributes::Name]) ||
+			if((PgSqlType::isGeoType(types[type_oid][Attributes::Name]) ||
 					PgSqlType::isBoxType(types[type_oid][Attributes::Name])) &&
 				 types[type_oid][Attributes::Configuration] == Attributes::BaseType &&
 				 types[type_oid][Attributes::Category] == ~CategoryType(CategoryType::UserDefined))
@@ -3170,6 +3168,14 @@ QString DatabaseImportHelper::getType(const QString &oid_str, bool generate_xml,
 
 				if(!user_objs.count(object_id) && !system_objs.count(object_id))
 					getDependencyObject(QString::number(object_id), obj_type, true, true, false);
+			}
+			/* Special case for the built-in pseudo-type any. We double-quote it in the first usage/reference
+			 * in order to avoid reference breaking and malformed SQL code */
+			else if(type_attr[Attributes::Configuration] == "pseudo" && obj_name == "any")
+			{
+				obj_name.prepend('"');
+				obj_name.append('"');
+				types[type_oid][Attributes::Name] = obj_name;
 			}
 
 			/* Removing the optional modifier "without time zone" from date/time types.

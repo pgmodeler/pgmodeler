@@ -573,9 +573,13 @@ void ModelDatabaseDiffForm::importDatabase(unsigned thread_id)
 															 pd_filter_wgt->getForceObjectsFilter());
 		}
 
-		//The import process will exclude built-in array array types, system and extension objects
+		/* The import process will exclude built-in array types by default.
+		 * But it will include/exclude extension and system objects retrieval
+		 * according to the related check boxes state, this will produce a more
+		 * complete imported model, diminishing false-positive results. */
 		catalog.setQueryFilter(Catalog::ListAllObjects | Catalog::ExclBuiltinArrayTypes |
-													 Catalog::ExclExtensionObjs | Catalog::ExclSystemObjs);
+							   (!import_ext_objs_chk->isChecked() ? Catalog::ExclExtensionObjs : 0) |
+							   (!import_sys_objs_chk->isChecked() ? Catalog::ExclSystemObjs : 0));
 
 		catalog.getObjectsOIDs(obj_oids, col_oids, {{Attributes::FilterTableTypes, Attributes::True}});
 		obj_oids[ObjectType::Database].push_back(db_cmb->currentData().value<unsigned>());
