@@ -20,7 +20,7 @@
 #include <QDir>
 
 /** Base version number **/
-const QString GlobalAttributes::PgModelerVersion=QString("0.9.4-beta1")
+const QString GlobalAttributes::PgModelerVersion=QString("0.9.4")
 
 /* Appending the snapshot build number to the version number
  * when the external variable SNAPSHOT_BUILD is defined */
