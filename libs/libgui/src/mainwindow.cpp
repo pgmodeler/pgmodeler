@@ -2013,7 +2013,7 @@ void MainWindow::showDemoVersionWarning(bool exit_msg)
 	{
 		msg_box.show(tr("Warning"),
 					 tr("You're running a demonstration version of pgModeler! Note that you are able to create only <strong>%1</strong> instances \
-							of each type of object and some key features will be disabled or limited!<br/><br/>Please, support this project <a href='%2'>buying a full binary copy</a>, use the promo code <strong>DEMOTESTER</strong> and receive a special discount on any purchase. You can also get the <a href='%3'>source code</a> and compile it yourself.\
+							of each type of object and some key features like <strong>saving the model</strong>, <strong>code generation</strong>, and some others will be disabled or limited!<br/><br/>Please, support this project <a href='%2'>buying a full binary copy</a>, use the promo code <strong>DEMOTESTER</strong> and receive a special discount on any purchase. You can also get the <a href='%3'>source code</a> and compile it yourself.\
 							<strong>NOTE:</strong> pgModeler is open-source software, but purchasing binary copies or providing a donation of any amount will support the project and keep its development alive!<br/><br/>\
 							<strong>HINT:</strong> in order to test all features it's recommended to use the <strong>demo.dbm</strong> model located in </strong>Sample models</strong> at <strong>Welcome</strong> view.")
 							.arg(GlobalAttributes::MaxObjectCount).arg(GlobalAttributes::PgModelerDownloadURL + "?purchase=true&promocode=DEMOTESTER", GlobalAttributes::PgModelerDownloadURL + "?source=true"),
