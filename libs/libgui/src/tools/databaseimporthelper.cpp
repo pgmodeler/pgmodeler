@@ -1658,12 +1658,21 @@ void DatabaseImportHelper::createAggregate(attribs_map &attribs)
 void DatabaseImportHelper::createType(attribs_map &attribs)
 {
 	Type *type=nullptr;
+	attribs_map aux_attribs;
 
 	try
 	{
 		attribs[attribs[Attributes::Configuration]]=Attributes::True;
 
-		if(!attribs[Attributes::CompositeType].isEmpty())
+		if(!attribs[Attributes::EnumType].isEmpty())
+		{
+			for(auto &label : attribs[Attributes::Labels].split(UtilsNs::DataSeparator, QtCompat::SkipEmptyParts))
+			{
+				aux_attribs[Attributes::Label] = label;
+				attribs[Attributes::Labels] += schparser.getCodeDefinition(Attributes::EnumType, aux_attribs, SchemaParser::XmlDefinition);
+			}
+		}
+		else if(!attribs[Attributes::CompositeType].isEmpty())
 		{
 			QStringList comp_attribs, values;
 			TypeAttribute type_attrib;

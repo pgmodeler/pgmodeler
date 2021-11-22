@@ -30,7 +30,7 @@ Type::Type()
 	attributes[Attributes::RangeType]="";
 	attributes[Attributes::TypeAttribute]="";
 	attributes[Attributes::EnumType]="";
-	attributes[Attributes::Enumerations]="";
+	attributes[Attributes::Labels]="";
 	attributes[Attributes::InputFunc]="";
 	attributes[Attributes::OutputFunc]="";
 	attributes[Attributes::RecvFunc]="";

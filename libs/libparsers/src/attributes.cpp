@@ -195,7 +195,6 @@ namespace Attributes {
 	Encoding("encoding"),
 	Encrypted("encrypted"),
 	EndExp("end-exp"),
-	Enumerations("enumerations"),
 	EnumType("enumeration"),
 	Entry("entry"),
 	EscapeComment("escape-comment"),

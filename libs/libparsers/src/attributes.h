@@ -211,7 +211,6 @@ namespace Attributes {
 	Encoding,
 	Encrypted,
 	EndExp,
-	Enumerations,
 	EnumType,
 	Entry,
 	EscapeComment,
