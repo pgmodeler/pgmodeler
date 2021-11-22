@@ -4479,9 +4479,7 @@ Type *DatabaseModel::createType()
 					if(elem==Attributes::EnumType)
 					{
 						xmlparser.getElementAttributes(attribs);
-						enums = attribs[Attributes::Values].split(UtilsNs::DataSeparator);
-						for(auto &en : enums)
-							type->addEnumeration(en);
+						type->addEnumeration(attribs[Attributes::Label]);
 					}
 					//Specific operations for COMPOSITE types
 					else if(elem==Attributes::TypeAttribute)

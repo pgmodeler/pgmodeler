@@ -320,6 +320,7 @@ namespace Attributes {
 	KeepClusterObjs="keep-cluster-objs",
 	KeepObjsPerms="keep-objs-perms",
 	Label("label"),
+	Labels("labels"),
 	LabelsPos("labels-pos"),
 	Landscape("landscape"),
 	Language("language"),

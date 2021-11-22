@@ -337,6 +337,7 @@ namespace Attributes {
 	KeepClusterObjs,
 	KeepObjsPerms,
 	Label,
+	Labels,
 	LabelsPos,
 	Landscape,
 	Language,
