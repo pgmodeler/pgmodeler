@@ -46,6 +46,9 @@ class PgModelerCliApp: public Application {
 
 		XmlParser *xmlparser;
 
+		//! \brief Holds the pgModeler version in which the model was construted (used by the fix operation)
+		QString model_version;
+
 		//! \brief Export helper object
 		ModelExportHelper *export_hlp;
 

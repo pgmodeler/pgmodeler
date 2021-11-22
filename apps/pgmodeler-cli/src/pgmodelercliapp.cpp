@@ -95,7 +95,7 @@ const QString PgModelerCliApp::MissingOnly("--missing-only");
 
 const QString PgModelerCliApp::TagExpr("<%1");
 const QString PgModelerCliApp::EndTagExpr("</%1");
-const QString PgModelerCliApp::AttributeExpr("(%1)( )*(=)(\")(\\w|\\d|,|\\.|\\&|\\;|\\)|\\(| )+(\")");
+const QString PgModelerCliApp::AttributeExpr("(%1)( )*(=)(\")(\\w|\\d|,|\\.|\\&|\\;|\\)|\\(|\\-| )+(\")");
 
 const QString PgModelerCliApp::MsgFileAssociated(tr("Database model files (*.dbm) are already associated to pgModeler! Try use the option `%1' to install the file association anyway.").arg(Force));
 const QString PgModelerCliApp::MsgNoFileAssociation(tr("There is no file association related to pgModeler and *.dbm files! Try use the option `%1' to uninstall the file association anyway.").arg(Force));
@@ -917,7 +917,7 @@ void PgModelerCliApp::handleObjectRemoval(BaseObject *object)
 
 void PgModelerCliApp::extractObjectXML()
 {
-	QString buf, lin, def_xml, end_tag;
+	QString buf, lin, def_xml, end_tag, pgmodeler_ver;
 	QTextStream ts;
 	QRegExp regexp(QString("^(\\<\\?xml)(.)*(\\<%1)( )*").arg(Attributes::DbModel)),
 
@@ -932,6 +932,20 @@ void PgModelerCliApp::extractObjectXML()
 	printMessage(tr("Extracting objects' XML..."));
 
 	buf.append(UtilsNs::loadFile(parsed_opts[Input]));
+
+	// Extracting pgModeler version from input model
+	QRegExp ver_expr(AttributeExpr.arg(Attributes::PgModelerVersion));
+	start = ver_expr.indexIn(buf);
+	model_version = buf.mid(start, ver_expr.matchedLength());
+	model_version.remove(Attributes::PgModelerVersion);
+	model_version.remove(QRegExp("(\\\"|\\=| )+"));
+
+	if(!model_version.contains(QRegExp("(\\d\\.\\d\\.\\d)((\\-)(alpha|beta)(\\d))?")))
+	{
+		printMessage(tr("** WARNING: Could't determine the pgModeler version in which the input model was created!"));
+		printMessage(tr("            Some fix actions that depend on the model version will not be applied!"));
+		model_version.clear();
+	}
 
 	//Check if the file contains a valid header (for .dbm file)
 	start=regexp.indexIn(buf);
@@ -1403,6 +1417,33 @@ void PgModelerCliApp::fixObjectAttributes(QString &obj_xml)
 	{
 		obj_xml.replace(TagExpr.arg(Attributes::Parameter), TagExpr.arg(Attributes::TypeAttribute));
 		obj_xml.replace(EndTagExpr.arg(Attributes::Parameter), EndTagExpr.arg(Attributes::TypeAttribute));
+
+		// Fixing the enumeration type labels
+		if(!model_version.isEmpty() && model_version <= "0.9.4-beta1")
+		{
+			/* Until pgModeler 0.9.3, enum labels separators where commas.
+			 * In pgModeler 0.9.4, enum labels separators where UtilsNs::DataSeparator */
+			QString sep = (model_version == "0.9.4-beta1" ? UtilsNs::DataSeparator : ","),
+					values, labels;
+			QRegExp enum_start_expr("(" + TagExpr.arg("enumerations") + ")( )*(values)( )*(=)( )*(\\\")"),
+					enum_end_expr("(\\\")( )*(\\/>)"),
+					enum_tag_expr("(" + TagExpr.arg("enumerations") + ")(.)+(/>)");
+			int start = -1, end = -1;
+
+			// Extracting the values of the <enumerations> tag
+			start = enum_start_expr.indexIn(obj_xml) + enum_start_expr.matchedLength();
+			end = enum_end_expr.indexIn(obj_xml, start);
+			values = obj_xml.mid(start, end - start);
+
+			if(!values.isEmpty())
+			{
+				// Converting each value extract into a separated <enumeration> tag
+				for(auto &label : values.split(sep, QtCompat::SkipEmptyParts))
+					labels.append(QString("\t<%1 label=\"%2\"/>\n").arg(Attributes::EnumType, label));
+
+				obj_xml.replace(enum_tag_expr, labels);
+			}
+		}
 	}
 
 	if(obj_xml.contains(TagExpr.arg(BaseObject::getSchemaName(ObjectType::Relationship))))
