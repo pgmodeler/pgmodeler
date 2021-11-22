@@ -90,11 +90,10 @@ void Application::copyFilesRecursively(const QString &src_path, const QString &d
 		else
 		{
 			// Set write permissions when copying file with read-only permissions
-			QFile qconfig(dst_path);
-			if (!(qconfig.permissions() & QFileDevice::WriteOwner))
-			{
-				qconfig.setPermissions(qconfig.permissions() | QFileDevice::WriteOwner);
-			}
+			QFile file(dst_path);
+
+			if(!file.permissions().testFlag(QFile::WriteOwner))
+				file.setPermissions(file.permissions() | QFileDevice::WriteOwner);
 		}
 	}
 }

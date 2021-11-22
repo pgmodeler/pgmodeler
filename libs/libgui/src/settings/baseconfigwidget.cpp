@@ -117,11 +117,10 @@ void BaseConfigWidget::restoreDefaults(const QString &conf_id, bool silent)
 		QFile::copy(default_file, current_file);
 
 		// Set write permissions when copying file with read-only permissions
-		QFile qconfig(current_file);
-		if (!(qconfig.permissions() & QFileDevice::WriteOwner))
-		{
-			qconfig.setPermissions(qconfig.permissions() | QFileDevice::WriteOwner);
-		}
+		QFile file(current_file);
+
+		if(!file.permissions().testFlag(QFile::WriteOwner))
+			file.setPermissions(file.permissions() | QFileDevice::WriteOwner);
 
 		if(bkp_saved && !silent)
 		{
