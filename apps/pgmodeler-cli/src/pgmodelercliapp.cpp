@@ -1234,7 +1234,7 @@ void PgModelerCliApp::recreateObjects()
 			if(obj_type!=ObjectType::Database)
 			{
 				fail_objs.push_back(xml_def);
-				printText(tr("** Failed to recreate object!"));
+				printText(tr("** WARNING: Failed to recreate an object!"));
 			}
 			else
 				throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
@@ -1425,12 +1425,12 @@ void PgModelerCliApp::fixObjectAttributes(QString &obj_xml)
 			 * In pgModeler 0.9.4, enum labels separators where UtilsNs::DataSeparator */
 			QString sep = (model_version == "0.9.4-beta1" ? UtilsNs::DataSeparator : ","),
 					values, labels;
-			QRegExp enum_start_expr("(" + TagExpr.arg("enumerations") + ")( )*(values)( )*(=)( )*(\\\")"),
+			QRegExp enum_start_expr("(" + TagExpr.arg(Attributes::EnumType) + ")( )*(values)( )*(=)( )*(\\\")"),
 					enum_end_expr("(\\\")( )*(\\/>)"),
-					enum_tag_expr("(" + TagExpr.arg("enumerations") + ")(.)+(/>)");
+					enum_tag_expr("(" + TagExpr.arg(Attributes::EnumType) + ")(.)+(/>)");
 			int start = -1, end = -1;
 
-			// Extracting the values of the <enumerations> tag
+			// Extracting the values of the <enumeration> tag
 			start = enum_start_expr.indexIn(obj_xml) + enum_start_expr.matchedLength();
 			end = enum_end_expr.indexIn(obj_xml, start);
 			values = obj_xml.mid(start, end - start);
