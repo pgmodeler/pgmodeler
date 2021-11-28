@@ -182,9 +182,9 @@ else
            libQt5Core.so.5 \
            libQt5XcbQpa.so.5 \
            libQt5Svg.so.5 \
-           libicui18n.so.5* \
-           libicuuc.so.5* \
-           libicudata.so.5*"
+           libicui18n.so.* \
+           libicuuc.so.* \
+           libicudata.so.*"
 fi
 
 clear 
