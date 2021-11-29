@@ -360,7 +360,7 @@ QString Permission::parsePermissionString(QString perm_str, vector<unsigned> &pr
 void Permission::generatePermissionId()
 {
 	QStringList values;
-	QString hash_id = object->getName();
+	QString hash_id = object->getSignature(true);
 	QCryptographicHash hash(QCryptographicHash::Md5);
 
 	for(auto &role : roles)
