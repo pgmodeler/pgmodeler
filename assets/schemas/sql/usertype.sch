@@ -30,8 +30,8 @@
 	%end
 
 	%if {enumeration} %then
-		[ ENUM ] (
-		%if {enumerations} %then {enumerations} %end
+		[ENUM ] (
+		%if {labels} %then {labels} %end
 		[);]
 	%end
 

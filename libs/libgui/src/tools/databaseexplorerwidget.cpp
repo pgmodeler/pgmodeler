@@ -49,7 +49,7 @@ const attribs_map DatabaseExplorerWidget::attribs_i18n {
 	{Attributes::DestType, QT_TR_NOOP("Dest. type")},	{Attributes::Dimension, QT_TR_NOOP("Dimension")},
 	{Attributes::Directory, QT_TR_NOOP("Directory")},	{Attributes::DstEncoding, QT_TR_NOOP("Dest. encoding")},
 	{Attributes::Element, QT_TR_NOOP("Element")},	{Attributes::Encoding, QT_TR_NOOP("Encoding")},
-	{Attributes::Encrypted, QT_TR_NOOP("Encrypted")},	{Attributes::Enumerations, QT_TR_NOOP("Enumerations")},
+	{Attributes::Encrypted, QT_TR_NOOP("Encrypted")},	{Attributes::Labels, QT_TR_NOOP("Labels")},
 	{Attributes::ExecutionCost, QT_TR_NOOP("Exec. cost")},	{Attributes::Expression, QT_TR_NOOP("Expression")},
 	{Attributes::Family, QT_TR_NOOP("Op. family")},	{Attributes::FinalFunc, QT_TR_NOOP("Final func.")},
 	{Attributes::Function, QT_TR_NOOP("Function")},	{Attributes::FunctionType, QT_TR_NOOP("Func. type")},
@@ -659,10 +659,10 @@ void DatabaseExplorerWidget::formatTypeAttribs(attribs_map &attribs)
 								Attributes::TpmodOutFunc }, ObjectType::Function, false);
 	attribs[Attributes::Element]=getObjectName(ObjectType::Type, attribs[Attributes::Element]);
 
-	if(attribs[Attributes::Enumerations].isEmpty())
-		attribs.erase(Attributes::Enumerations);
+	if(attribs[Attributes::Labels].isEmpty())
+		attribs.erase(Attributes::Labels);
 	else
-		attribs[Attributes::Enumerations]=Catalog::parseArrayValues(attribs[Attributes::Enumerations]).join(UtilsNs::DataSeparator);
+		attribs[Attributes::Labels]=Catalog::parseArrayValues(attribs[Attributes::Labels]).join(UtilsNs::DataSeparator);
 
 	attribs.erase(Attributes::RangeAttribs);
 	if(!range_attr.isEmpty())

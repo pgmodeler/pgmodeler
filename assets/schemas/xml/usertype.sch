@@ -63,10 +63,8 @@ $sp
 %if {appended-sql} %then {appended-sql} %end
 %if {prepended-sql} %then {prepended-sql} %end
 
-%if {enumeration} %then
-	%if {enumerations} %then
-		$tb [<enumeration values=] "{enumerations}" /> $br
-	%end
+%if {enumeration} %and {labels} %then
+	{labels}
 %end
 
 %if {typeattrib} %then {typeattrib} %end

@@ -30,7 +30,7 @@ Type::Type()
 	attributes[Attributes::RangeType]="";
 	attributes[Attributes::TypeAttribute]="";
 	attributes[Attributes::EnumType]="";
-	attributes[Attributes::Enumerations]="";
+	attributes[Attributes::Labels]="";
 	attributes[Attributes::InputFunc]="";
 	attributes[Attributes::OutputFunc]="";
 	attributes[Attributes::RecvFunc]="";
@@ -129,23 +129,6 @@ void Type::removeAttributes()
 	setCodeInvalidated(true);
 }
 
-bool Type::isEnumerationExists(const QString &enum_name)
-{
-	vector<QString>::iterator itr, itr_end;
-	bool found=false;
-
-	itr=enumerations.begin();
-	itr_end=enumerations.end();
-
-	while(itr!=itr_end && !found)
-	{
-		found=((*itr)==enum_name);
-		itr++;
-	}
-
-	return found;
-}
-
 void Type::addEnumeration(const QString &enum_name)
 {
 	//Raises an error if the enumaration name is empty
@@ -155,23 +138,20 @@ void Type::addEnumeration(const QString &enum_name)
 	else if(enum_name.size() > BaseObject::ObjectNameMaxLength)
 		throw Exception(Exception::getErrorMessage(ErrorCode::AsgEnumLongName).arg(enum_name).arg(this->getName(true)),
 						ErrorCode::AsgEnumLongName,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-	else if(enum_name.contains(UtilsNs::DataSeparator))
-		throw Exception(Exception::getErrorMessage(ErrorCode::AsgEnumInvalidChars).arg(enum_name).arg(this->getName(true)),
-						ErrorCode::AsgEnumInvalidChars,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	//Raises an error if the enumeration already exists
-	else if(isEnumerationExists(enum_name))
+	else if(enumerations.contains(enum_name))
 		throw Exception(ErrorCode::InsDuplicatedEnumerationItem,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	enumerations.push_back(enum_name);
+	enumerations.append(enum_name);
 	setCodeInvalidated(true);
 }
 
 void Type::removeEnumeration(unsigned enum_idx)
 {
-	if(enum_idx >= enumerations.size())
+	if(enum_idx >= static_cast<unsigned>(enumerations.size()))
 		throw Exception(ErrorCode::RefEnumerationInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	enumerations.erase(enumerations.begin() + enum_idx);
+	enumerations.removeAt(enum_idx);
 	setCodeInvalidated(true);
 }
 
@@ -436,16 +416,20 @@ void Type::setElementsAttribute(unsigned def_type)
 void Type::setEnumerationsAttribute(unsigned def_type)
 {
 	QStringList str_enum;
+	attribs_map attribs;
 
 	for(auto &enum_attr : enumerations)
 	{
 		if(def_type == SchemaParser::SqlDefinition)
 			str_enum.append("'" + enum_attr + "'");
 		else
-			str_enum.append(enum_attr);
+		{
+			attribs[Attributes::Label] = enum_attr;
+			str_enum.append(schparser.getCodeDefinition(Attributes::EnumType, attribs, def_type));
+		}
 	}
 
-	attributes[Attributes::Enumerations] = str_enum.join(def_type == SchemaParser::SqlDefinition ? "," : UtilsNs::DataSeparator);
+	attributes[Attributes::Labels] = str_enum.join(def_type == SchemaParser::SqlDefinition ? "," : "");
 }
 
 void Type::setCategory(CategoryType categ)
@@ -515,7 +499,7 @@ unsigned Type::getAttributeCount()
 
 QString Type::getEnumeration(unsigned idx_enum)
 {
-	if(idx_enum >= enumerations.size())
+	if(idx_enum >= static_cast<unsigned>(enumerations.size()))
 		throw Exception(ErrorCode::RefEnumerationInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	return enumerations[idx_enum];
@@ -725,9 +709,9 @@ QString Type::getAlterDefinition(BaseObject *object)
 		{
 			if(config==EnumerationType)
 			{
-				for(QString enum_val : type->enumerations)
+				for(auto &enum_val : type->enumerations)
 				{
-					if(std::find(this->enumerations.begin(), this->enumerations.end(), enum_val)==this->enumerations.end())
+					if(!enumerations.contains(enum_val))
 					{
 						attribs[Attributes::Before]="";
 						if(prev_val.isEmpty())
