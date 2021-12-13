@@ -3,7 +3,7 @@ Changelog
 
 v0.9.4
 ------
-<em>Release date: December 20, 2021</em><br/>
+<em>Release date: December 17, 2021</em><br/>
 
 * [New] Added a fix step in CLI to reconstruct enum types XML code in new format.
 * [Change] Changed the way XML code for enum types is generated and loaded.
