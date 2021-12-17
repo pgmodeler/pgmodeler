@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -31,6 +31,7 @@ class DatabaseModelTest: public QObject, public PgModelerUnitTest {
 	private slots:
 		void saveObjectsMetadata();
 		void loadObjectsMetadata();
+		void saveSplitSQLDefinition();
 };
 
 void DatabaseModelTest::saveObjectsMetadata()
@@ -70,6 +71,29 @@ void DatabaseModelTest::loadObjectsMetadata()
 		dbmodel.loadModel(input_dbm);
 		dbmodel.loadObjectsMetadata(input_opf);
 		dbmodel.saveModel(output, SchemaParser::XmlDefinition);
+		QCOMPARE(true, true);
+	}
+	catch (Exception &e)
+	{
+		out << e.getExceptionsText() << QtCompat::endl;
+		QCOMPARE(false, true);
+	}
+}
+
+void DatabaseModelTest::saveSplitSQLDefinition()
+{
+	DatabaseModel dbmodel;
+	QTextStream out(stdout);
+	QString output=QFileInfo(BINDIR).absolutePath() + GlobalAttributes::DirSeparator + "demo_split_test",
+			input_dbm=SAMPLESDIR + GlobalAttributes::DirSeparator + QString("demo.dbm");
+
+	try
+	{
+		QDir dir(output);
+		dir.removeRecursively();
+		dbmodel.createSystemObjects(false);
+		dbmodel.loadModel(input_dbm);
+		dbmodel.saveSplitSQLDefinition(output);
 		QCOMPARE(true, true);
 	}
 	catch (Exception &e)

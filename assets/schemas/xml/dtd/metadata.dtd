@@ -1,0 +1,57 @@
+<!--
+  CAUTION: Do not modify this file directly on it's code unless you know what you are doing.
+           Unexpected results may occur if the code is changed deliberately.
+-->
+<!ENTITY % baseelements SYSTEM "baseelements.dtd">
+%baseelements;
+
+<!ENTITY % label SYSTEM "label.dtd">
+%label;
+
+<!ENTITY % textbox SYSTEM "textbox.dtd">
+%textbox;
+
+<!ENTITY % tag SYSTEM "tag.dtd">
+%tag;
+
+<!ENTITY % object SYSTEM "object.dtd">
+%object;
+
+<!ENTITY % genericsql SYSTEM "genericsql.dtd">
+%genericsql;
+
+<!ELEMENT info (position*, label*, appended-sql?, prepended-sql?)>
+<!ATTLIST info object CDATA #REQUIRED>
+<!ATTLIST info type CDATA #IMPLIED>
+<!ATTLIST info src-table CDATA #IMPLIED>
+<!ATTLIST info dst-table CDATA #IMPLIED>
+<!ATTLIST info src-type (table|view) "table">
+<!ATTLIST info dst-type (table|view) "table">
+<!ATTLIST info custom-color CDATA #IMPLIED>
+<!ATTLIST info rect-visible (false|true) "false">
+<!ATTLIST info append-at-eod (false|true) "false">
+<!ATTLIST info prepend-at-bod (false|true) "false">
+<!ATTLIST info tag CDATA #IMPLIED>
+<!ATTLIST info author CDATA #IMPLIED>
+<!ATTLIST info protected (false|true) "false">
+<!ATTLIST info sql-disabled (false|true) "false">
+<!ATTLIST info last-position CDATA #IMPLIED>
+<!ATTLIST info last-zoom CDATA #IMPLIED>
+<!ATTLIST info default-schema CDATA #IMPLIED>
+<!ATTLIST info default-owner CDATA #IMPLIED>
+<!ATTLIST info default-collation CDATA #IMPLIED>
+<!ATTLIST info default-tablespace CDATA #IMPLIED>
+<!ATTLIST info faded-out (false|true) "false">
+<!ATTLIST info collapse-mode CDATA #IMPLIED>
+<!ATTLIST info alias CDATA #IMPLIED>
+<!ATTLIST info table CDATA #IMPLIED>
+<!ATTLIST info z-value CDATA #IMPLIED>
+<!ATTLIST info layers CDATA #IMPLIED>
+<!ATTLIST info layer-name-colors CDATA #IMPLIED>
+<!ATTLIST info layer-rect-colors CDATA #IMPLIED>
+<!ATTLIST info active-layers CDATA #IMPLIED>
+<!ATTLIST info show-layer-names (false|true) "false">
+<!ATTLIST info show-layer-rects (false|true) "false">
+<!ATTLIST info use-changelog (false|true) "false">
+
+<!ELEMENT metadata (textbox*, tag*, genericsql*, info*)>

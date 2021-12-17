@@ -1,0 +1,1161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+CAUTION: Do not modify this file unless you know what you are doing.
+         Unexpected results may occur if the code is changed deliberately.
+-->
+<dbmodel pgmodeler-ver="0.9.3-beta" last-position="0,0" last-zoom="0.5" max-obj-count="19"
+	 default-owner="postgres">
+<role name="admin1"
+      superuser="true"
+      connlimit="500"
+      validity="2008-10-10 10:00"
+      password="123456">
+	<comment><![CDATA[comentario no papel teste]]></comment>
+</role>
+
+<role name="user3"
+      superuser="true"
+      connlimit="500"
+      validity="2008-10-10 13:00"
+      password="123456">
+	<comment><![CDATA[comentario no papel teste]]></comment>
+</role>
+
+<role name="user2"
+      superuser="true"
+      connlimit="500"
+      validity="2008-10-10 15:00"
+      password="123456">
+	<comment><![CDATA[comentario no papel teste]]></comment>
+</role>
+
+<role name="user1"
+      superuser="true"
+      connlimit="500"
+      validity="2008-10-10 23:59"
+      password="123456">
+	<comment><![CDATA[comentario no papel teste]]></comment>
+	<roles names="admin1" role-type="member" />
+</role>
+
+<role name="user4"
+      superuser="true"
+      connlimit="500"
+      validity="2008-10-10 09:00"
+      password="123456">
+	<comment><![CDATA[comentario no papel teste]]></comment>
+	<roles names="user3,user2" role-type="refer" />
+	<roles names="admin1" role-type="member" />
+	<roles names="user1" role-type="admin" />
+</role>
+
+<tablespace name="espaco_tabelaњљ" directory="'/home/postgres/tbspace'">
+	<role name="admin1"/>
+	<comment><![CDATA[comentario no espaco tabela teste]]></comment>
+</tablespace>
+
+<database name="sampledb" encoding="UTF8" template="template1" connlimit="10" lc-collate="pt_BR" lc-ctype="pt_BR" is-template="false" allow-conns="true">
+	<role name="admin1"/>
+	<tablespace name="&quot;espaco_tabelaњљ&quot;"/>
+	<comment><![CDATA[comentario no banco de dados teste]]></comment>
+</database>
+
+<schema name="public" layers="0" rect-visible="true" fill-color="#ffc0c0" sql-disabled="true">
+</schema>
+
+<schema name="schema_B" layers="0" rect-visible="true" fill-color="#c0c0ff">
+	<role name="admin1"/>
+	<comment><![CDATA[comentario no esquema]]></comment>
+</schema>
+
+<schema name="schema_A" layers="0" rect-visible="true" fill-color="#00c0c0">
+</schema>
+
+<schema name="schema_C" layers="0" rect-visible="true" fill-color="#ffdca8">
+</schema>
+
+<function name="funcao_validator"
+		window-func="false"
+		returns-setof="false"
+		behavior-type="CALLED ON NULL INPUT"
+		function-type="VOLATILE"
+		security-type="SECURITY INVOKER"
+		execution-cost="100"
+		row-amount="1000">
+	<schema name="&quot;schema_B&quot;"/>
+	<role name="admin1"/>
+	<comment><![CDATA[Comentário na função  validator]]></comment>
+	<language name="c" sql-disabled="true"/>
+	<return-type>
+	<type name="void" length="1"/>
+	</return-type>
+	<parameter name="param1">
+		<type name="oid" length="1"/>
+	</parameter>
+	<definition library="/usr/local/lib/funcoes.so" symbol="funcao_validator"/>
+</function>
+
+<function name="funcao_handler"
+		window-func="false"
+		returns-setof="false"
+		behavior-type="CALLED ON NULL INPUT"
+		function-type="VOLATILE"
+		security-type="SECURITY INVOKER"
+		execution-cost="100"
+		row-amount="1000">
+	<schema name="&quot;schema_B&quot;"/>
+	<role name="admin1"/>
+	<comment><![CDATA[Comentário na função handler]]></comment>
+	<language name="c" sql-disabled="true"/>
+	<return-type>
+	<type name="language_handler" length="1"/>
+	</return-type>
+	<definition library="/usr/local/lib/funcoes.so" symbol="funcao_handler"/>
+</function>
+
+<function name="funcao_input"
+		window-func="false"
+		returns-setof="false"
+		behavior-type="CALLED ON NULL INPUT"
+		function-type="VOLATILE"
+		security-type="SECURITY INVOKER"
+		execution-cost="100"
+		row-amount="1000">
+	<schema name="&quot;schema_B&quot;"/>
+	<role name="admin1"/>
+	<comment><![CDATA[Comentário na função input]]></comment>
+	<language name="c" sql-disabled="true"/>
+	<return-type>
+	<type name="&quot;any&quot;" length="1"/>
+	</return-type>
+	<parameter name="param1">
+		<type name="cstring" length="1"/>
+	</parameter>
+	<parameter name="param2">
+		<type name="oid" length="1"/>
+	</parameter>
+	<parameter name="param3">
+		<type name="integer" length="1"/>
+	</parameter>
+	<definition library="/usr/local/lib/funcoes.so" symbol="funcao_handler"/>
+</function>
+
+<function name="funcao_output"
+		window-func="false"
+		returns-setof="false"
+		behavior-type="CALLED ON NULL INPUT"
+		function-type="VOLATILE"
+		security-type="SECURITY INVOKER"
+		execution-cost="100"
+		row-amount="1000">
+	<schema name="&quot;schema_B&quot;"/>
+	<role name="admin1"/>
+	<comment><![CDATA[Comentário na função output]]></comment>
+	<language name="c" sql-disabled="true"/>
+	<return-type>
+	<type name="cstring" length="1"/>
+	</return-type>
+	<parameter name="param1">
+		<type name="&quot;any&quot;" length="1"/>
+	</parameter>
+	<definition library="/usr/local/lib/funcoes.so" symbol="funcao_handler"/>
+</function>
+
+<function name="funcao_recv"
+		window-func="false"
+		returns-setof="false"
+		behavior-type="CALLED ON NULL INPUT"
+		function-type="VOLATILE"
+		security-type="SECURITY INVOKER"
+		execution-cost="100"
+		row-amount="1000">
+	<schema name="&quot;schema_B&quot;"/>
+	<role name="admin1"/>
+	<comment><![CDATA[Comentário na função recv]]></comment>
+	<language name="c" sql-disabled="true"/>
+	<return-type>
+	<type name="&quot;any&quot;" length="1"/>
+	</return-type>
+	<parameter name="param1">
+		<type name="internal" length="1"/>
+	</parameter>
+	<parameter name="param2">
+		<type name="oid" length="1"/>
+	</parameter>
+	<parameter name="param3">
+		<type name="integer" length="1"/>
+	</parameter>
+	<definition library="/usr/local/lib/funcoes.so" symbol="funcao_handler"/>
+</function>
+
+<function name="funcao_send"
+		window-func="false"
+		returns-setof="false"
+		behavior-type="CALLED ON NULL INPUT"
+		function-type="VOLATILE"
+		security-type="SECURITY INVOKER"
+		execution-cost="100"
+		row-amount="1000">
+	<schema name="&quot;schema_B&quot;"/>
+	<role name="admin1"/>
+	<comment><![CDATA[Comentário na função send]]></comment>
+	<language name="c" sql-disabled="true"/>
+	<return-type>
+	<type name="bytea" length="1"/>
+	</return-type>
+	<parameter name="param1">
+		<type name="&quot;any&quot;" length="1"/>
+	</parameter>
+	<definition library="/usr/local/lib/funcoes.so" symbol="funcao_handler"/>
+</function>
+
+<function name="funcao_tpmodin"
+		window-func="false"
+		returns-setof="false"
+		behavior-type="CALLED ON NULL INPUT"
+		function-type="VOLATILE"
+		security-type="SECURITY INVOKER"
+		execution-cost="100"
+		row-amount="1000">
+	<schema name="&quot;schema_B&quot;"/>
+	<role name="admin1"/>
+	<comment><![CDATA[Comentário na função tpmodin]]></comment>
+	<language name="c" sql-disabled="true"/>
+	<return-type>
+	<type name="integer" length="1"/>
+	</return-type>
+	<parameter name="param1">
+		<type name="cstring" length="1" dimension="1"/>
+	</parameter>
+	<definition library="/usr/local/lib/funcoes.so" symbol="funcao_handler"/>
+</function>
+
+<function name="funcao_tpmodout"
+		window-func="false"
+		returns-setof="false"
+		behavior-type="CALLED ON NULL INPUT"
+		function-type="VOLATILE"
+		security-type="SECURITY INVOKER"
+		execution-cost="100"
+		row-amount="1000">
+	<schema name="&quot;schema_B&quot;"/>
+	<role name="admin1"/>
+	<comment><![CDATA[Comentário na função tpmodout]]></comment>
+	<language name="c" sql-disabled="true"/>
+	<return-type>
+	<type name="cstring" length="1"/>
+	</return-type>
+	<parameter name="param1">
+		<type name="integer" length="1"/>
+	</parameter>
+	<definition library="/usr/local/lib/funcoes.so" symbol="funcao_handler"/>
+</function>
+
+<function name="funcao_analyze"
+		window-func="false"
+		returns-setof="false"
+		behavior-type="CALLED ON NULL INPUT"
+		function-type="VOLATILE"
+		security-type="SECURITY INVOKER"
+		execution-cost="100"
+		row-amount="1000">
+	<schema name="&quot;schema_B&quot;"/>
+	<role name="admin1"/>
+	<comment><![CDATA[Comentário na função analyze]]></comment>
+	<language name="c" sql-disabled="true"/>
+	<return-type>
+	<type name="boolean" length="1"/>
+	</return-type>
+	<parameter name="param1">
+		<type name="internal" length="1"/>
+	</parameter>
+	<definition library="/usr/local/lib/funcoes.so" symbol="funcao_handler"/>
+</function>
+
+<function name="funcao_cast"
+		window-func="false"
+		returns-setof="false"
+		behavior-type="CALLED ON NULL INPUT"
+		function-type="VOLATILE"
+		security-type="SECURITY INVOKER"
+		execution-cost="100"
+		row-amount="1000">
+	<schema name="&quot;schema_B&quot;"/>
+	<role name="admin1"/>
+	<comment><![CDATA[Comentário na função cast]]></comment>
+	<language name="plpgsql" sql-disabled="true"/>
+	<return-type>
+	<type name="float" length="1"/>
+	</return-type>
+	<parameter name="param1">
+		<type name="integer" length="1"/>
+	</parameter>
+	<parameter name="param2">
+		<type name="integer" length="1"/>
+	</parameter>
+	<parameter name="param31">
+		<type name="boolean" length="1"/>
+	</parameter>
+	<definition><![CDATA[SELECT * FROM BLA]]></definition>
+</function>
+
+<function name="funcao_conversion"
+		window-func="false"
+		returns-setof="false"
+		behavior-type="CALLED ON NULL INPUT"
+		function-type="VOLATILE"
+		security-type="SECURITY INVOKER"
+		execution-cost="100"
+		row-amount="1000">
+	<schema name="&quot;schema_B&quot;"/>
+	<role name="admin1"/>
+	<comment><![CDATA[Comentário na função conversion]]></comment>
+	<language name="c" sql-disabled="true"/>
+	<return-type>
+	<type name="void" length="1"/>
+	</return-type>
+	<parameter name="param1">
+		<type name="integer" length="1"/>
+	</parameter>
+	<parameter name="param2">
+		<type name="integer" length="1"/>
+	</parameter>
+	<parameter name="param3">
+		<type name="cstring" length="1"/>
+	</parameter>
+	<parameter name="param4">
+		<type name="internal" length="1"/>
+	</parameter>
+	<parameter name="param5">
+		<type name="integer" length="1"/>
+	</parameter>
+	<definition library="/usr/local/lib/funcoes.so" symbol="funcao_handler"/>
+</function>
+
+<function name="funcao_operator"
+		window-func="false"
+		returns-setof="false"
+		behavior-type="CALLED ON NULL INPUT"
+		function-type="VOLATILE"
+		security-type="SECURITY INVOKER"
+		execution-cost="100"
+		row-amount="1000">
+	<schema name="&quot;schema_B&quot;"/>
+	<role name="admin1"/>
+	<comment><![CDATA[Comentário na função operator]]></comment>
+	<language name="c" sql-disabled="true"/>
+	<return-type>
+	<type name="void" length="1"/>
+	</return-type>
+	<parameter name="param1">
+		<type name="integer" length="1"/>
+	</parameter>
+	<parameter name="param2">
+		<type name="text" length="1"/>
+	</parameter>
+	<definition library="/usr/local/lib/funcoes.so" symbol="funcao_handler"/>
+</function>
+
+<function name="funcao_operator_1"
+		window-func="false"
+		returns-setof="false"
+		behavior-type="CALLED ON NULL INPUT"
+		function-type="VOLATILE"
+		security-type="SECURITY INVOKER"
+		execution-cost="100"
+		row-amount="1000">
+	<schema name="&quot;schema_B&quot;"/>
+	<role name="admin1"/>
+	<comment><![CDATA[Comentário na função operator]]></comment>
+	<language name="c" sql-disabled="true"/>
+	<return-type>
+	<type name="void" length="1"/>
+	</return-type>
+	<parameter name="param1">
+		<type name="text" length="1"/>
+	</parameter>
+	<parameter name="param2">
+		<type name="integer" length="1"/>
+	</parameter>
+	<definition library="/usr/local/lib/funcoes.so" symbol="funcao_handler"/>
+</function>
+
+<function name="funcao_transition"
+		window-func="false"
+		returns-setof="false"
+		behavior-type="CALLED ON NULL INPUT"
+		function-type="VOLATILE"
+		security-type="SECURITY INVOKER"
+		execution-cost="100"
+		row-amount="1000">
+	<schema name="&quot;schema_B&quot;"/>
+	<role name="admin1"/>
+	<comment><![CDATA[Comentário na função operator]]></comment>
+	<language name="c" sql-disabled="true"/>
+	<return-type>
+	<type name="integer" length="1"/>
+	</return-type>
+	<parameter name="param0">
+		<type name="integer" length="1"/>
+	</parameter>
+	<parameter name="param1">
+		<type name="text" length="1"/>
+	</parameter>
+	<parameter name="param2">
+		<type name="varchar" length="0"/>
+	</parameter>
+	<parameter name="param3">
+		<type name="char" length="0"/>
+	</parameter>
+	<definition library="/usr/local/lib/funcoes.so" symbol="funcao_handler"/>
+</function>
+
+<function name="funcao_final"
+		window-func="false"
+		returns-setof="false"
+		behavior-type="CALLED ON NULL INPUT"
+		function-type="VOLATILE"
+		security-type="SECURITY INVOKER"
+		execution-cost="100"
+		row-amount="1000">
+	<schema name="&quot;schema_B&quot;"/>
+	<role name="admin1"/>
+	<comment><![CDATA[Comentário na função final]]></comment>
+	<language name="c" sql-disabled="true"/>
+	<return-type>
+	<type name="integer" length="1"/>
+	</return-type>
+	<parameter name="param1">
+		<type name="integer" length="1"/>
+	</parameter>
+	<definition library="/usr/local/lib/funcoes.so" symbol="funcao_handler"/>
+</function>
+
+<function name="funcao_teste"
+		window-func="false"
+		returns-setof="false"
+		behavior-type="CALLED ON NULL INPUT"
+		function-type="IMMUTABLE"
+		security-type="SECURITY DEFINER"
+		execution-cost="20"
+		row-amount="2500">
+	<schema name="public"/>
+	<comment><![CDATA[Função teste que retorna strings.]]></comment>
+	<language name="plpgsql" sql-disabled="true"/>
+	<return-type>
+	<type name="trigger" length="1"/>
+	</return-type>
+	<definition><![CDATA[SELECT /* */ FROM]]></definition>
+</function>
+
+<usertype name="tipo_usr_base" configuration="base"
+ internal-length="0" by-value="true"
+ alignment="integer" storage="plain"
+ element="integer" delimiter=","
+ default-value="1000" category="U">
+	<schema name="&quot;schema_B&quot;"/>
+	<role name="admin1"/>
+	<comment><![CDATA[Coment�rio no tipo_usr_base]]></comment>
+	<function ref-type="input" signature="&quot;schema_B&quot;.funcao_input(cstring,oid,integer)"/>
+	<function ref-type="output" signature="&quot;schema_B&quot;.funcao_output(&quot;any&quot;)"/>
+	<function ref-type="receive" signature="&quot;schema_B&quot;.funcao_recv(internal,oid,integer)"/>
+	<function ref-type="send" signature="&quot;schema_B&quot;.funcao_send(&quot;any&quot;)"/>
+	<function ref-type="tpmodin" signature="&quot;schema_B&quot;.funcao_tpmodin(cstring[])"/>
+	<function ref-type="tpmodout" signature="&quot;schema_B&quot;.funcao_tpmodout(integer)"/>
+	<function ref-type="analyze" signature="&quot;schema_B&quot;.funcao_analyze(internal)"/>
+</usertype>
+
+<language name="lingteste" trusted="true">
+	<role name="admin1"/>
+	<comment><![CDATA[comentario na lingteste]]></comment>
+	<function ref-type="handler" signature="&quot;schema_B&quot;.funcao_handler()"/>
+	<function ref-type="validator" signature="&quot;schema_B&quot;.funcao_validator(oid)"/>
+</language>
+
+<cast  cast-type="assignment">
+	<comment><![CDATA[comentario na conversao]]></comment>
+	<type name="integer" length="1"/>
+	<type name="float" length="1"/>
+	<function signature="&quot;schema_B&quot;.funcao_cast(integer,integer,boolean)"/>
+</cast>
+
+<conversion name="conversao_teste" src-encoding="UTF8" dst-encoding="BIG5">
+	<schema name="&quot;schema_B&quot;"/>
+	<role name="admin1"/>
+	<comment><![CDATA[comentario na conversao teste]]></comment>
+	<function signature="&quot;schema_B&quot;.funcao_conversion(integer,integer,cstring,internal,integer)"/>
+</conversion>
+
+<operator name="%?!*-/!%=">
+	<schema name="&quot;schema_B&quot;"/>
+	<role name="admin1"/>
+	<comment><![CDATA[comentario no operador teste]]></comment>
+	<type name="integer" length="1" ref-type="left-type"/>
+	<type name="text" length="1" ref-type="right-type"/>
+	<function ref-type="operfunc" signature="&quot;schema_B&quot;.funcao_operator(integer,text)"/>
+</operator>
+
+<operator name="-?==">
+	<schema name="&quot;schema_B&quot;"/>
+	<role name="admin1"/>
+	<comment><![CDATA[comentario no operador teste1]]></comment>
+	<type name="text" length="1" ref-type="left-type"/>
+	<type name="integer" length="1" ref-type="right-type"/>
+	<operator ref-type="commutator-op" signature="&quot;schema_B&quot;.%?!*-/!%=(integer,text)"/>
+	<function ref-type="operfunc" signature="&quot;schema_B&quot;.funcao_operator_1(text,integer)"/>
+</operator>
+
+<opfamily name="familia_teste" index-type="btree">
+	<schema name="&quot;schema_B&quot;"/>
+	<role name="admin1"/>
+	<comment><![CDATA[comentario na familia de operadores teste1]]></comment>
+</opfamily>
+
+<opclass  name="classeop_teste" index-type="gist" default="true">
+	<schema name="&quot;schema_B&quot;"/>
+	<role name="admin1"/>
+	<comment><![CDATA[comentario na classe de operadores teste1]]></comment>
+	<opfamily signature="&quot;schema_B&quot;.familia_teste USING btree"/>
+	<type name="text" length="1"/>
+	<element type="function" stg-number="1">
+		<function ref-type="operfunc" signature="&quot;schema_B&quot;.funcao_operator(integer,text)"/>
+	</element>
+	<element type="operator" stg-number="2">
+		<operator ref-type="commutator-op" signature="&quot;schema_B&quot;.%?!*-/!%=(integer,text)"/>
+	</element>
+	<element type="storage">
+		<type name="integer" length="1"/>
+	</element>
+</opclass>
+
+<aggregate name="funcao_agregada_teste" initial-cond="0">
+	<schema name="&quot;schema_B&quot;"/>
+	<role name="admin1"/>
+	<comment><![CDATA[comentario na funcao agregada teste]]></comment>
+	<type name="text" length="1"/>
+	<type name="varchar" length="50"/>
+	<type name="char" length="1"/>
+	<type name="integer" length="1" ref-type="state-type"/>
+	<function ref-type="transition" signature="&quot;schema_B&quot;.funcao_transition(integer,text,varchar,char)"/>
+	<function ref-type="final" signature="&quot;schema_B&quot;.funcao_final(integer)"/>
+</aggregate>
+
+<domain name="dominio_teste" not-null="true">
+	<schema name="&quot;schema_B&quot;"/>
+	<role name="admin1"/>
+	<comment><![CDATA[comentario no " dominio teste]]></comment>
+	<type name="text" length="1"/>
+</domain>
+
+<table name="table_A1" layers="0" collapse-mode="2" max-obj-count="6" z-value="0">
+	<schema name="&quot;schema_A&quot;"/>
+	<position x="220" y="1160"/>
+	<column name="coluna_B_" not-null="true">
+		<type name="serial" length="1"/>
+	</column>
+	<column name="coluna_B1_">
+		<type name="integer" length="1"/>
+	</column>
+	<column name="coluna_B2_" not-null="true">
+		<type name="text" length="1"/>
+	</column>
+	<column name="coluna_B3_">
+		<type name="float" length="1"/>
+	</column>
+	<column name="coluna_Teste">
+		<type name="float" length="1"/>
+	</column>
+	<constraint name="tabela_B_pk" type="pk-constr" factor="100" table="&quot;schema_A&quot;.&quot;table_A1&quot;">
+		<columns names="coluna_B_" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="tabela_B_uq" type="uq-constr" factor="100" table="&quot;schema_A&quot;.&quot;table_A1&quot;">
+		<columns names="coluna_B2_" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="tabela_B_ck" type="ck-constr" table="&quot;schema_A&quot;.&quot;table_A1&quot;">
+			<expression><![CDATA[ "coluna_B2" > 0 ]]></expression>
+	</constraint>
+</table>
+
+<table name="table_A2" layers="0" collapse-mode="2" max-obj-count="7" z-value="0">
+	<schema name="&quot;schema_A&quot;"/>
+	<position x="80" y="1540"/>
+	<column name="њcoluna_Bњ" not-null="true">
+		<type name="serial" length="1"/>
+	</column>
+	<column name="њcoluna_B1њ">
+		<type name="integer" length="1"/>
+	</column>
+	<column name="њcoluna_B2њ" not-null="true">
+		<type name="text" length="1"/>
+	</column>
+	<column name="њcoluna_B3њ">
+		<type name="float" length="1"/>
+	</column>
+	<constraint name="tabela_B_pk" type="pk-constr" factor="100" table="&quot;schema_A&quot;.&quot;table_A2&quot;">
+		<columns names="њcoluna_Bњ" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="tabela_B_uq" type="uq-constr" factor="100" table="&quot;schema_A&quot;.&quot;table_A2&quot;">
+		<columns names="њcoluna_B2њ" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="tabela_B_ck" type="ck-constr" table="&quot;schema_A&quot;.&quot;table_A2&quot;">
+			<expression><![CDATA[ "Ɽcoluna_B2Ɽ" > 0 ]]></expression>
+	</constraint>
+</table>
+
+<table name="table_C1" layers="0" collapse-mode="2" max-obj-count="4" z-value="0">
+	<schema name="&quot;schema_C&quot;"/>
+	<position x="1980" y="740"/>
+	<column name="coluna_B" not-null="true">
+		<type name="serial" length="1"/>
+	</column>
+	<column name="coluna_B1">
+		<type name="integer" length="1"/>
+	</column>
+	<column name="coluna_B2" not-null="true">
+		<type name="text" length="1"/>
+	</column>
+	<column name="coluna_B3">
+		<type name="float" length="1"/>
+	</column>
+	<constraint name="tabela_B_pk" type="pk-constr" factor="100" table="&quot;schema_C&quot;.&quot;table_C1&quot;">
+		<columns names="coluna_B" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="tabela_B_uq" type="uq-constr" factor="100" table="&quot;schema_C&quot;.&quot;table_C1&quot;">
+		<columns names="coluna_B2" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="tabela_B_ck" type="ck-constr" table="&quot;schema_C&quot;.&quot;table_C1&quot;">
+			<expression><![CDATA[ "coluna_B2" > 0 ]]></expression>
+	</constraint>
+</table>
+
+<table name="tabela_B_4a" layers="0" protected="true" collapse-mode="2" max-obj-count="6" z-value="0">
+	<schema name="public"/>
+	<position x="1021" y="949"/>
+	<column name="coluna_B" not-null="true" protected="true">
+		<type name="serial" length="1"/>
+	</column>
+	<column name="coluna_B1" protected="true">
+		<type name="integer" length="1"/>
+	</column>
+	<column name="coluna_B2" not-null="true" protected="true">
+		<type name="text" length="1"/>
+	</column>
+	<column name="coluna_B3" protected="true">
+		<type name="float" length="1"/>
+	</column>
+	<constraint name="tabela_B_pk" type="pk-constr" factor="100" protected="true" table="public.&quot;tabela_B_4a&quot;">
+		<columns names="coluna_B" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="tabela_B_uq" type="uq-constr" factor="100" protected="true" table="public.&quot;tabela_B_4a&quot;">
+		<columns names="coluna_B2" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="tabela_B_ck" type="ck-constr" protected="true" table="public.&quot;tabela_B_4a&quot;">
+			<expression><![CDATA[ "coluna_B2" > 0 ]]></expression>
+	</constraint>
+</table>
+
+<table name="table_B1" layers="0" collapse-mode="2" max-obj-count="4" z-value="0">
+	<schema name="&quot;schema_B&quot;"/>
+	<position x="880" y="740"/>
+	<column name="coluna_B" not-null="true">
+		<type name="serial" length="1"/>
+	</column>
+	<column name="coluna_B1">
+		<type name="integer" length="1"/>
+	</column>
+	<column name="coluna_B2" not-null="true">
+		<type name="text" length="1"/>
+	</column>
+	<column name="coluna_B3">
+		<type name="float" length="1"/>
+	</column>
+	<constraint name="tabela_B_pk" type="pk-constr" factor="100" table="&quot;schema_B&quot;.&quot;table_B1&quot;">
+		<columns names="coluna_B" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="tabela_B_uq" type="uq-constr" factor="100" table="&quot;schema_B&quot;.&quot;table_B1&quot;">
+		<columns names="coluna_B2" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="tabela_B_ck" type="ck-constr" table="&quot;schema_B&quot;.&quot;table_B1&quot;">
+			<expression><![CDATA[ "coluna_B2" > 0 ]]></expression>
+	</constraint>
+</table>
+
+<table name="tabela_B_4c" layers="0" collapse-mode="2" max-obj-count="9" z-value="0">
+	<schema name="public"/>
+	<position x="1340" y="1640"/>
+	<column name="coluna_B" not-null="true">
+		<type name="serial" length="1"/>
+	</column>
+	<column name="coluna_B1">
+		<type name="integer" length="1"/>
+	</column>
+	<column name="coluna_B2" not-null="true">
+		<type name="text" length="1"/>
+	</column>
+	<column name="coluna_B3">
+		<type name="float" length="1"/>
+	</column>
+	<constraint name="tabela_B_pk" type="pk-constr" factor="100" table="public.&quot;tabela_B_4c&quot;">
+		<columns names="coluna_B" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="tabela_B_uq" type="uq-constr" factor="100" table="public.&quot;tabela_B_4c&quot;">
+		<columns names="coluna_B2" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="tabela_B_ck" type="ck-constr" table="public.&quot;tabela_B_4c&quot;">
+			<expression><![CDATA[ "coluna_B2" > 0 ]]></expression>
+	</constraint>
+</table>
+
+<table name="table_C2" layers="0" collapse-mode="2" max-obj-count="7" z-value="0">
+	<schema name="&quot;schema_C&quot;"/>
+	<position x="1300" y="180"/>
+	<column name="coluna_B">
+		<type name="serial" length="1"/>
+	</column>
+	<column name="coluna_B1">
+		<type name="integer" length="1"/>
+	</column>
+	<column name="coluna_B2" not-null="true">
+		<type name="text" length="1"/>
+	</column>
+	<column name="coluna_B3">
+		<type name="float" length="1"/>
+	</column>
+	<constraint name="tabela_B_uq" type="uq-constr" factor="100" table="&quot;schema_C&quot;.&quot;table_C2&quot;">
+		<columns names="coluna_B2" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="tabela_B_ck" type="ck-constr" table="&quot;schema_C&quot;.&quot;table_C2&quot;">
+			<expression><![CDATA[ "coluna_B2" > 0 ]]></expression>
+	</constraint>
+</table>
+
+<table name="table_A3" layers="0" collapse-mode="2" max-obj-count="6" z-value="0">
+	<schema name="&quot;schema_A&quot;"/>
+	<position x="700" y="1520"/>
+	<column name="coluna_B" not-null="true">
+		<type name="serial" length="1"/>
+	</column>
+	<column name="coluna_B1">
+		<type name="integer" length="1"/>
+	</column>
+	<column name="coluna_B2" not-null="true">
+		<type name="text" length="1"/>
+	</column>
+	<column name="coluna_B3">
+		<type name="float" length="1"/>
+	</column>
+	<column name="coluna_Teste">
+		<type name="float" length="1"/>
+	</column>
+	<constraint name="tabela_B_pk" type="pk-constr" factor="100" table="&quot;schema_A&quot;.&quot;table_A3&quot;">
+		<columns names="coluna_B" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="tabela_B_uq" type="uq-constr" factor="100" table="&quot;schema_A&quot;.&quot;table_A3&quot;">
+		<columns names="coluna_B2" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="tabela_B_ck" type="ck-constr" table="&quot;schema_A&quot;.&quot;table_A3&quot;">
+			<expression><![CDATA[ "coluna_B2" > 0 ]]></expression>
+	</constraint>
+</table>
+
+<table name="table_C3" layers="0" collapse-mode="2" max-obj-count="4" z-value="0">
+	<schema name="&quot;schema_C&quot;"/>
+	<position x="2160" y="200"/>
+	<column name="coluna_B" not-null="true">
+		<type name="serial" length="1"/>
+	</column>
+	<column name="coluna_B1">
+		<type name="integer" length="1"/>
+	</column>
+	<column name="coluna_B2" not-null="true">
+		<type name="text" length="1"/>
+	</column>
+	<column name="coluna_B3">
+		<type name="float" length="1"/>
+	</column>
+	<constraint name="tabela_B_pk" type="pk-constr" factor="100" table="&quot;schema_C&quot;.&quot;table_C3&quot;">
+		<columns names="coluna_B" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="tabela_B_uq" type="uq-constr" factor="100" table="&quot;schema_C&quot;.&quot;table_C3&quot;">
+		<columns names="coluna_B2" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="tabela_B_ck" type="ck-constr" table="&quot;schema_C&quot;.&quot;table_C3&quot;">
+			<expression><![CDATA[ "coluna_B2" > 0 ]]></expression>
+	</constraint>
+</table>
+
+<table name="table_A4" layers="0" collapse-mode="2" max-obj-count="6" z-value="0">
+	<schema name="&quot;schema_A&quot;"/>
+	<position x="720" y="1140"/>
+	<column name="coluna_B" not-null="true">
+		<type name="serial" length="1"/>
+	</column>
+	<column name="coluna_B1">
+		<type name="integer" length="1"/>
+	</column>
+	<column name="coluna_B2" not-null="true">
+		<type name="text" length="1"/>
+	</column>
+	<column name="coluna_B3">
+		<type name="float" length="1"/>
+	</column>
+	<column name="coluna_Teste">
+		<type name="float" length="1"/>
+	</column>
+	<constraint name="tabela_B_pk" type="pk-constr" factor="100" table="&quot;schema_A&quot;.&quot;table_A4&quot;">
+		<columns names="coluna_B" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="tabela_B_uq" type="uq-constr" factor="100" table="&quot;schema_A&quot;.&quot;table_A4&quot;">
+		<columns names="coluna_B2" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="tabela_B_ck" type="ck-constr" table="&quot;schema_A&quot;.&quot;table_A4&quot;">
+			<expression><![CDATA[ "coluna_B2" > 0 ]]></expression>
+	</constraint>
+</table>
+
+<table name="table_C4" layers="0" collapse-mode="2" max-obj-count="9" z-value="0">
+	<schema name="&quot;schema_C&quot;"/>
+	<position x="1260" y="700"/>
+	<column name="coluna_B" not-null="true">
+		<type name="serial" length="1"/>
+	</column>
+	<column name="coluna_B1">
+		<type name="integer" length="1"/>
+	</column>
+	<column name="coluna_B2" not-null="true">
+		<type name="text" length="1"/>
+	</column>
+	<column name="coluna_B3">
+		<type name="float" length="1"/>
+	</column>
+	<constraint name="tabela_B_pk" type="pk-constr" factor="100" table="&quot;schema_C&quot;.&quot;table_C4&quot;">
+		<columns names="coluna_B" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="tabela_B_uq" type="uq-constr" factor="100" table="&quot;schema_C&quot;.&quot;table_C4&quot;">
+		<columns names="coluna_B2" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="tabela_B_ck" type="ck-constr" table="&quot;schema_C&quot;.&quot;table_C4&quot;">
+			<expression><![CDATA[ "coluna_B2" > 0 ]]></expression>
+	</constraint>
+</table>
+
+<table name="table_B2" layers="0" collapse-mode="2" max-obj-count="6" z-value="0">
+	<schema name="&quot;schema_B&quot;"/>
+	<position x="480" y="720"/>
+	<column name="coluna_B" not-null="true">
+		<type name="serial" length="1"/>
+	</column>
+	<column name="coluna_B1">
+		<type name="integer" length="1"/>
+	</column>
+	<column name="coluna_B2" not-null="true">
+		<type name="text" length="1"/>
+	</column>
+	<column name="coluna_B3">
+		<type name="float" length="1"/>
+	</column>
+	<constraint name="tabela_B_pk" type="pk-constr" factor="100" table="&quot;schema_B&quot;.&quot;table_B2&quot;">
+		<columns names="coluna_B" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="tabela_B_uq" type="uq-constr" factor="100" table="&quot;schema_B&quot;.&quot;table_B2&quot;">
+		<columns names="coluna_B2" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="tabela_B_ck" type="ck-constr" table="&quot;schema_B&quot;.&quot;table_B2&quot;">
+			<expression><![CDATA[ "coluna_B2" > 0 ]]></expression>
+	</constraint>
+</table>
+
+<table name="table_B4" layers="0" collapse-mode="2" max-obj-count="4" z-value="0">
+	<schema name="&quot;schema_B&quot;"/>
+	<position x="100" y="760"/>
+	<column name="coluna_B" not-null="true">
+		<type name="serial" length="1"/>
+	</column>
+	<column name="coluna_B1">
+		<type name="integer" length="1"/>
+	</column>
+	<column name="coluna_B2" not-null="true">
+		<type name="text" length="1"/>
+	</column>
+	<column name="coluna_B3">
+		<type name="float" length="1"/>
+	</column>
+	<constraint name="tabela_B_pk" type="pk-constr" factor="100" table="&quot;schema_B&quot;.&quot;table_B4&quot;">
+		<columns names="coluna_B" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="tabela_B_uq" type="uq-constr" factor="100" table="&quot;schema_B&quot;.&quot;table_B4&quot;">
+		<columns names="coluna_B2" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="tabela_B_ck" type="ck-constr" table="&quot;schema_B&quot;.&quot;table_B4&quot;">
+			<expression><![CDATA[ "coluna_B2" > 0 ]]></expression>
+	</constraint>
+</table>
+
+<table name="table_B3" layers="0" collapse-mode="2" max-obj-count="4" z-value="0">
+	<schema name="&quot;schema_B&quot;"/>
+	<position x="660" y="320"/>
+	<column name="coluna_B" not-null="true">
+		<type name="serial" length="1"/>
+	</column>
+	<column name="coluna_B1">
+		<type name="integer" length="1"/>
+	</column>
+	<column name="coluna_B2" not-null="true">
+		<type name="text" length="1"/>
+	</column>
+	<column name="coluna_B3">
+		<type name="float" length="1"/>
+	</column>
+	<constraint name="tabela_B_pk" type="pk-constr" factor="100" table="&quot;schema_B&quot;.&quot;table_B3&quot;">
+		<tablespace name="&quot;espaco_tabelaњљ&quot;"/>
+		<columns names="coluna_B" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="tabela_B_uq" type="uq-constr" factor="100" table="&quot;schema_B&quot;.&quot;table_B3&quot;">
+		<columns names="coluna_B2" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="tabela_B_ck" type="ck-constr" table="&quot;schema_B&quot;.&quot;table_B3&quot;">
+			<expression><![CDATA[ "coluna_B2" > 0 ]]></expression>
+	</constraint>
+</table>
+
+<table name="tabela_B_4z" layers="0" oids="true" collapse-mode="2" max-obj-count="6" z-value="0">
+	<schema name="public"/>
+	<position x="1780" y="1380"/>
+	<column name="coluna_B" not-null="true">
+		<type name="serial" length="1"/>
+	</column>
+	<column name="coluna_B1">
+		<type name="integer" length="1"/>
+	</column>
+	<column name="coluna_B2" not-null="true">
+		<type name="text" length="1"/>
+	</column>
+	<column name="coluna_B3">
+		<type name="float" length="1"/>
+	</column>
+	<column name="coluna_USR_TESTE">
+		<type name="&quot;schema_B&quot;.tipo_usr_base" length="1"/>
+	</column>
+	<constraint name="tabela_B_4z_pk" type="pk-constr" factor="10" table="public.&quot;tabela_B_4z&quot;">
+		<columns names="coluna_B" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<view name="view_B1" layers="0" collapse-mode="2" max-obj-count="4" z-value="0">
+	<schema name="&quot;schema_B&quot;"/>
+	<comment><![CDATA[comentario na visao teste]]></comment>
+	<position x="80" y="320"/>
+	<reference table="&quot;schema_B&quot;.&quot;table_B3&quot;" column="coluna_B" alias="tp" column-alias="codusr"/>
+	<reference table="&quot;schema_B&quot;.&quot;table_B4&quot;" column="coluna_B3" alias="tp" column-alias="dtemiss"/>
+	<reference alias="conta">
+		<expression><![CDATA[now() + ((1+2) * 5) + extract(month from now())]]></expression>
+	</reference>
+	<reference table="&quot;schema_B&quot;.&quot;table_B2&quot;" alias="tt" column-alias="cod"/>
+	<expression type="select-exp">0,1,2,3</expression>
+	<expression type="from-exp">3,0</expression>
+</view>
+
+<relationship name="&quot;rel_visao_teste_tabela_B_4k&quot;" type="reltv" layers="0"
+	 custom-color="#9fdf3a"
+	 src-table="&quot;schema_B&quot;.&quot;view_B1&quot;"
+	 dst-table="&quot;schema_B&quot;.&quot;table_B3&quot;"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="&quot;rel_visao_teste_tabela_B_4j&quot;" type="reltv" layers="0"
+	 custom-color="#0f30f0"
+	 src-table="&quot;schema_B&quot;.&quot;view_B1&quot;"
+	 dst-table="&quot;schema_B&quot;.&quot;table_B4&quot;"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="&quot;rel_visao_teste_tabela_B_4i&quot;" type="reltv" layers="0"
+	 custom-color="#af3c3b"
+	 src-table="&quot;schema_B&quot;.&quot;view_B1&quot;"
+	 dst-table="&quot;schema_B&quot;.&quot;table_B2&quot;"
+	 src-required="false" dst-required="false"/>
+
+<textbox name="caixa_texto_Teste" layers="0" italic="true" z-value="0" font-size="9">
+	<position x="480" y="480"/>
+	<comment><![CDATA[Caixa X:0 Y:0]]></comment>
+</textbox>
+
+<relationship name="table_A1_has_one_table_A2" type="rel11" layers="0"
+	 src-col-pattern="{sc}_{st}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#657535"
+	 src-table="&quot;schema_A&quot;.&quot;table_A2&quot;"
+	 dst-table="&quot;schema_A&quot;.&quot;table_A1&quot;"
+	 src-required="false" dst-required="true"/>
+
+<relationship name="table_B2_has_one_table_B2" type="rel11" layers="0"
+	 src-col-pattern="{sc}_{st}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#0cbc0f"
+	 src-table="&quot;schema_B&quot;.&quot;table_B2&quot;"
+	 dst-table="&quot;schema_B&quot;.&quot;table_B2&quot;"
+	 src-required="false" dst-required="false">
+	<line>
+		<position x="810.3" y="824.637"/>
+	<position x="810.3" y="697"/>
+	<position x="684.867" y="697"/>
+	</line>
+</relationship>
+
+<relationship name="table_A3_has_many_table_A2" type="rel1n" layers="0"
+	 src-col-pattern="{sc}_{st}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#f91566"
+	 src-table="&quot;schema_A&quot;.&quot;table_A3&quot;"
+	 dst-table="&quot;schema_A&quot;.&quot;table_A2&quot;"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="table_C1_has_many_table_C2" type="rel1n" layers="0"
+	 src-col-pattern="{sc}_{st}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#6dbc20"
+	 src-table="&quot;schema_C&quot;.&quot;table_C1&quot;"
+	 dst-table="&quot;schema_C&quot;.&quot;table_C2&quot;"
+	 src-required="true" dst-required="false"
+	 identifier="true"
+/>
+
+<relationship name="table_C2_has_many_table_C4" type="rel1n" layers="0"
+	 src-col-pattern="{sc}_{st}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#881a4b"
+	 src-table="&quot;schema_C&quot;.&quot;table_C2&quot;"
+	 dst-table="&quot;schema_C&quot;.&quot;table_C4&quot;"
+	 src-required="true" dst-required="false"
+	 identifier="true"
+
+	 deferrable="true" defer-type="INITIALLY IMMEDIATE">
+	<column name="coluna_Teste1">
+		<type name="integer" length="1"/>
+	</column>
+	<column name="coluna_Teste2">
+		<type name="integer" length="1"/>
+	</column>
+	<column name="__coluna_Teste3">
+		<type name="integer" length="1"/>
+	</column>
+</relationship>
+
+<relationship name="table_A2_has_many_tabela_B_4c" type="rel1n" layers="0"
+	 src-col-pattern="{sc}_{st}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#a65f9c"
+	 src-table="&quot;schema_A&quot;.&quot;table_A2&quot;"
+	 dst-table="public.&quot;tabela_B_4c&quot;"
+	 src-required="false" dst-required="false"
+	 deferrable="true" defer-type="INITIALLY IMMEDIATE">
+	<label ref-type="name-label">
+		<position x="24.6257" y="36.4514"/>
+	</label>
+	<column name="coluna_B11">
+		<type name="integer" length="1"/>
+	</column>
+	<column name="coluna_Teste2">
+		<type name="integer" length="1"/>
+	</column>
+	<column name="coluna_Teste3">
+		<type name="integer" length="1"/>
+	</column>
+</relationship>
+
+<relationship name="tabela_B_4c_has_many_tabela_B_4a" type="rel1n" layers="0"
+	 src-col-pattern="{sc}_{st}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#43ae98"
+	 src-table="public.&quot;tabela_B_4c&quot;"
+	 dst-table="public.&quot;tabela_B_4a&quot;"
+	 src-required="false" dst-required="false"
+	 deferrable="true" defer-type="INITIALLY IMMEDIATE"/>
+
+<relationship name="many_table_B1_has_many_table_B3" type="relnn" layers="0"
+	 src-col-pattern="{sc}_{st}" dst-col-pattern="{sc}_{dt}"
+	 pk-pattern="{gt}_pk" uq-pattern="{gt}_uq"
+	 src-fk-pattern="{st}_fk" dst-fk-pattern="{dt}_fk"
+	 pk-col-pattern="id"
+	 custom-color="#f73e5c"
+	 src-table="&quot;schema_B&quot;.&quot;table_B1&quot;"
+	 dst-table="&quot;schema_B&quot;.&quot;table_B3&quot;"
+	 src-required="false" dst-required="false"
+	 table-name="tabela_REL_NN"/>
+
+<relationship name="table_C3_has_many_table_C2" type="rel1n" layers="0"
+	 src-col-pattern="{sc}_{st}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#27277e"
+	 src-table="&quot;schema_C&quot;.&quot;table_C3&quot;"
+	 dst-table="&quot;schema_C&quot;.&quot;table_C2&quot;"
+	 src-required="false" dst-required="false"
+	 deferrable="true" defer-type="INITIALLY IMMEDIATE">
+	<label ref-type="name-label">
+		<position x="-11.8743" y="-78.1485"/>
+	</label>
+</relationship>
+
+<trigger name="gatilho_restricao_teste_4c" firing-type="AFTER" per-line="true" constraint="false"
+	 ins-event="false" del-event="false" upd-event="true" trunc-event="false"
+	 table="public.&quot;tabela_B_4c&quot;">
+		<comment><![CDATA[Gatilho teste na tabela teste]]></comment>
+		<function signature="public.funcao_teste()"/>
+	<columns names="&quot;coluna_Teste2&quot;"/>
+</trigger>
+
+<rule name="regra_teste" event-type="ON INSERT" exec-type="ALSO"
+ table="&quot;schema_A&quot;.&quot;table_A2&quot;">
+		<comment><![CDATA[comentario teste  " na regra]]></comment>
+		<condition><![CDATA[bla= "ble"]]></condition>
+		<commands><![CDATA[SELECT 1+2 AS "CONTA";SELECT (1+2 * 5) AS "CONTA1"]]></commands>
+</rule>
+
+<rule name="regra_teste1" event-type="ON INSERT" exec-type="ALSO"
+ table="&quot;schema_A&quot;.&quot;table_A2&quot;">
+		<comment><![CDATA[comentario teste  " na regra]]></comment>
+		<condition><![CDATA[bla= "ble"]]></condition>
+		<commands><![CDATA[SELECT 1+2 AS "CONTA";SELECT (1+2 * 5) AS "CONTA1"]]></commands>
+</rule>
+
+<trigger name="gatilho_teste" firing-type="BEFORE" per-line="false" constraint="false"
+	 ins-event="true" del-event="true" upd-event="true" trunc-event="false" arguments="10,15,20,25"
+	 table="&quot;schema_A&quot;.&quot;table_A2&quot;">
+		<comment><![CDATA[Gatilho teste na tabela teste]]></comment>
+		<function signature="public.funcao_teste()"/>
+</trigger>
+
+<trigger name="gatilho_teste1" firing-type="BEFORE" per-line="false" constraint="false"
+	 ins-event="true" del-event="true" upd-event="true" trunc-event="false" arguments="10,15,20,25"
+	 table="&quot;schema_A&quot;.&quot;table_A2&quot;">
+		<comment><![CDATA[Gatilho teste na tabela teste]]></comment>
+		<function signature="public.funcao_teste()"/>
+</trigger>
+
+<trigger name="gatilho_teste2" firing-type="BEFORE" per-line="false" constraint="false"
+	 ins-event="true" del-event="true" upd-event="true" trunc-event="false" arguments="10,15,20,25"
+	 table="&quot;schema_A&quot;.&quot;table_A2&quot;">
+		<comment><![CDATA[Gatilho teste na tabela teste]]></comment>
+		<function signature="public.funcao_teste()"/>
+</trigger>
+
+<textbox name="pagila_desc" layers="0" z-value="0" font-size="11">
+	<position x="80" y="0"/>
+	<comment><![CDATA[[ sampledb database ]
+
+This database model is here just for historical (or nostalgic) reason,
+being heavily used on initial versions of pgModeler to test the integration
+between the objects.
+
+It does not represent any specific context and export it to a database server 
+will generate several errors since they are arbitrarily connected and, furthermore,
+some other dependency objects are purposely mal-formed to provoke SQL errors.]]></comment>
+</textbox>
+
+</dbmodel>

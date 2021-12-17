@@ -1,0 +1,31 @@
+﻿<!--
+  CAUTION: Do not modify this file directly on it's code unless you know what you are doing.
+           Unexpected results may occur if the code is changed deliberately.
+-->
+<!ELEMENT view (schema,role?,tablespace?,comment?,tag?, appended-sql?,prepended-sql?,position,reference+,expression*)>
+<!ATTLIST view name CDATA #REQUIRED>
+<!ATTLIST view layers CDATA #IMPLIED>
+<!ATTLIST view alias CDATA #IMPLIED>
+<!ATTLIST view protected (false|true) "false">
+<!ATTLIST view materialized (false|true) "false">
+<!ATTLIST view recursive (false|true) "false">
+<!ATTLIST view with-no-data (false|true) "true">
+<!ATTLIST view sql-disabled (false|true) "false">
+<!ATTLIST view collapse-mode CDATA #IMPLIED>
+<!ATTLIST view faded-out (false|true) "false">
+<!ATTLIST view pagination (false|true) "false">
+<!ATTLIST view attribs-page CDATA #IMPLIED>
+<!ATTLIST view ext-attribs-page CDATA #IMPLIED>
+<!ATTLIST view max-obj-count CDATA #IMPLIED>
+<!ATTLIST view z-value CDATA #IMPLIED>
+
+<!ELEMENT reftable EMPTY>
+<!ATTLIST reftable name CDATA #REQUIRED>
+
+<!ELEMENT reference (expression?, column*, reftable*)>
+<!ATTLIST reference ref-alias CDATA #IMPLIED>
+<!ATTLIST reference alias CDATA #IMPLIED>
+<!ATTLIST reference column-alias CDATA #IMPLIED>
+<!ATTLIST reference column CDATA #IMPLIED>
+<!ATTLIST reference table CDATA #IMPLIED>
+<!ATTLIST reference ref-tables CDATA #IMPLIED>

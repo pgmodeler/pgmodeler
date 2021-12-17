@@ -1,0 +1,36 @@
+﻿<!--
+  CAUTION: Do not modify this file directly on it's code unless you know what you are doing.
+           Unexpected results may occur if the code is changed deliberately.
+-->
+<!ENTITY % column SYSTEM "column.dtd">
+%column;
+<!ENTITY % constraint SYSTEM "constraint.dtd">
+%constraint;
+
+<!ELEMENT initial-data (#PCDATA)>
+<!ELEMENT partitionkey (column?, expression?, collation?, opclass?)>
+
+<!ELEMENT partitioning (partitionkey+)>
+<!ATTLIST partitioning type CDATA #REQUIRED>
+
+<!ELEMENT table (schema,role?,tablespace?,comment?,tag?, appended-sql?,prepended-sql?,position,column*,constraint*,customidxs*,partitioning?,initial-data?)>
+<!ATTLIST table name CDATA #REQUIRED>
+<!ATTLIST table layers CDATA #IMPLIED>
+<!ATTLIST table alias CDATA #IMPLIED>
+<!ATTLIST table oids (true | false) "false">
+<!ATTLIST table gen-alter-cmds (true | false) "false">
+<!ATTLIST table unlogged (false|true) "false">
+<!ATTLIST table protected (false|true) "false">
+<!ATTLIST table sql-disabled (false|true) "false">
+<!ATTLIST table collapse-mode CDATA #IMPLIED>
+<!ATTLIST table pagination (false|true) "false">
+<!ATTLIST table attribs-page CDATA #IMPLIED>
+<!ATTLIST table ext-attribs-page CDATA #IMPLIED>
+<!ATTLIST table col-indexes CDATA #IMPLIED>
+<!ATTLIST table constr-indexes CDATA #IMPLIED>
+<!ATTLIST table faded-out (false|true) "false">
+<!ATTLIST table rls-enabled (false|true) "false">
+<!ATTLIST table rls-forced (false|true) "false">
+<!ATTLIST table max-obj-count CDATA #IMPLIED>
+<!ATTLIST table partitioning-type CDATA #IMPLIED>
+<!ATTLIST table z-value CDATA #IMPLIED>

@@ -6,6 +6,7 @@
 	<name>pgmodeler</name>
 	<summary>PostgreSQL Database Modeler</summary>
 	<summary xml:lang="ru">Инструмент ER проектирования БД для PostgreSQL</summary>
+	<summary xml:lang="fr">Modélisateur de base de données PostgreSQL</summary>
 	<description>
 		<p>
 			pgModeler - PostgreSQL Database Modeler - is an open source data modeling tool designed for PostgreSQL. No more DDL commands written by hand let pgModeler do the job for you! This software reunites the concepts of entity-relationship diagrams and the features that PostgreSQL implements as extensions of SQL standards.
@@ -13,19 +14,14 @@
 		<p xml:lang="ru">
 			PostgreSQL Database Modeler, или просто, pgModeler является свободным инструментом для моделирования баз данных. Он объединяет в себе классическую концепцию entity-relationship (ER) диаграмм с некоторыми осоденностями, реализованными только в PostgreSQL. Модели, созданные пользователем могут быть автоматически транслированы в SQL код и применены к БД на кластер (версии 9.*).
 		</p>
+        <p xml:lang="fr">
+            pgModeler - Modélisateur de bases de données PostgreSQL - est un outil open source de modélisation conçu pour PostgreSQL. Plus de commandes DDL écrites à la main, laissez pgModeler faire le travail pour vous! Ce logiciel réconcilie les concepts des diagrammes entité-relation et les fonctionnalités que PostgreSQL fournit en tant qu'extensions au standard SQL.
+		</p>
 	</description>
 	<screenshots>
-		<screenshot type="default">http://pgmodeler.com.br/assets/img/ss/ss1.png</screenshot>
-		<screenshot>http://pgmodeler.com.br/assets/img/ss/ss2.png</screenshot>
-		<screenshot>http://pgmodeler.com.br/assets/img/ss/ss3.png</screenshot>
-		<screenshot>http://pgmodeler.com.br/assets/img/ss/ss4.png</screenshot>
-		<screenshot>http://pgmodeler.com.br/assets/img/ss/ss5.png</screenshot>
-		<screenshot>http://pgmodeler.com.br/assets/img/ss/ss6.png</screenshot>
-		<screenshot>http://pgmodeler.com.br/assets/img/ss/ss7.png</screenshot>
-		<screenshot>http://pgmodeler.com.br/assets/img/ss/ss8.png</screenshot>
-		<screenshot>http://pgmodeler.com.br/assets/img/ss/ss9.png</screenshot>
-		<screenshot>http://pgmodeler.com.br/assets/img/ss/ss10.png</screenshot>
+		<screenshot type="default">https://pgmodeler.io/img/carousel1.png</screenshot>
+		<screenshot>https://pgmodeler.io/img/carousel2.png</screenshot>
+		<screenshot>https://pgmodeler.io/img/carousel3.png</screenshot>
 	</screenshots>
-	<url type="homepage">http://pgmodeler.com.br/</url>
-	<updatecontact>pahan_at_hubbitus.info</updatecontact>
+	<url type="homepage">https://pgmodeler.io/</url>
 </application>

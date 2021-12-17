@@ -8,6 +8,40 @@ MOC_DIR = moc
 OBJECTS_DIR = obj
 UI_DIR = src
 
+# Store the absolute paths to library subprojects to be referenced in other .pro files
+# *_ROOT -> the path to the root folder of the subproject
+# *_LIB -> the libary flags (-L -l) (LIBS on qmake) passed to the compiler that points to the library generated from a subproject
+# *_INC -> the path to the source code folder (src), used by the flag -I (INCLUDEPATH on qmake) passed to the compiler
+LIBCANVAS = libcanvas
+LIBCANVAS_ROOT = $$absolute_path($$PWD/libs/$$LIBCANVAS)
+LIBCANVAS_LIB = -L$$LIBCANVAS_ROOT -lcanvas
+LIBCANVAS_INC = $$LIBCANVAS_ROOT/src
+
+LIBCONNECTOR = libconnector
+LIBCONNECTOR_ROOT = $$absolute_path($$PWD/libs/$$LIBCONNECTOR)
+LIBCONNECTOR_LIB = -L$$LIBCONNECTOR_ROOT -lconnector
+LIBCONNECTOR_INC = $$LIBCONNECTOR_ROOT/src
+
+LIBCORE = libcore
+LIBCORE_ROOT = $$absolute_path($$PWD/libs/$$LIBCORE)
+LIBCORE_LIB = -L$$LIBCORE_ROOT -lcore
+LIBCORE_INC = $$LIBCORE_ROOT/src
+
+LIBPARSERS = libparsers
+LIBPARSERS_ROOT = $$absolute_path($$PWD/libs/$$LIBPARSERS)
+LIBPARSERS_LIB = -L$$LIBPARSERS_ROOT -lparsers
+LIBPARSERS_INC = $$LIBPARSERS_ROOT/src
+
+LIBGUI = libgui
+LIBGUI_ROOT = $$absolute_path($$PWD/libs/$$LIBGUI)
+LIBGUI_LIB = -L$$LIBGUI_ROOT -lgui
+LIBGUI_INC = $$LIBGUI_ROOT/src
+
+LIBUTILS = libutils
+LIBUTILS_ROOT = $$absolute_path($$PWD/libs/$$LIBUTILS)
+LIBUTILS_LIB = -L$$LIBUTILS_ROOT -lutils
+LIBUTILS_INC = $$LIBUTILS_ROOT/src
+
 # Setting up the flag passed to compiler to indicate a snapshot build
 defined(SNAPSHOT_BUILD, var): DEFINES+=SNAPSHOT_BUILD
 
@@ -17,14 +51,17 @@ defined(DEMO_VERSION, var): DEFINES+=DEMO_VERSION
 # Setting up the flag passed to compiler to disable all code related to update checking
 defined(NO_UPDATE_CHECK, var): DEFINES+=NO_UPDATE_CHECK
 
-# Properly defining build number constant
+# Properly defining build number/date constant
 unix {
  BUILDNUM=$$system("$$PWD/getbuildnum.sh")
- DEFINES+=BUILDNUM=\\\"$${BUILDNUM}\\\"
+ BUILDDATE=$$system("date '+%Y%m%d'")
 } else {
  BUILDNUM=$$system("$$PWD/getbuildnum.bat")
- DEFINES+=BUILDNUM=\\\"$${BUILDNUM}\\\"
+ BUILDDATE=$$system("$$PWD/getbuildnum.bat")
 }
+
+DEFINES+=BUILDNUM=\\\"$${BUILDNUM}\\\"
+DEFINES+=BUILDDATE=\\\"$${BUILDDATE}\\\"
 
 # Below, the user can specify where all generated file can be placed
 # through a set of variables, being them:

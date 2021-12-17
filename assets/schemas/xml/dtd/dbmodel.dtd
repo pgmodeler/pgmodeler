@@ -1,0 +1,105 @@
+<!--
+  CAUTION: Do not modify this file directly on it's code unless you know what you are doing.
+           Unexpected results may occur if the code is changed deliberately.
+-->
+<!ENTITY % baseelements SYSTEM "baseelements.dtd">
+%baseelements;
+<!ENTITY % basetype SYSTEM "basetype.dtd">
+%basetype;
+<!ENTITY % object SYSTEM "object.dtd">
+%object;
+<!ENTITY % role SYSTEM "role.dtd">
+%role;
+<!ENTITY % tablespace SYSTEM "tablespace.dtd">
+%tablespace;
+<!ENTITY % database SYSTEM "database.dtd">
+%database;
+<!ENTITY % schema SYSTEM "schema.dtd">
+%schema;
+<!ENTITY % language SYSTEM "language.dtd">
+%language;
+<!ENTITY % parameter SYSTEM "parameter.dtd">
+%parameter;
+<!ENTITY % function SYSTEM "function.dtd">
+%function;
+<!ENTITY % usertype SYSTEM "usertype.dtd">
+%usertype;
+<!ENTITY % cast SYSTEM "cast.dtd">
+%cast;
+<!ENTITY % conversion SYSTEM "conversion.dtd">
+%conversion;
+<!ENTITY % operator SYSTEM "operator.dtd">
+%operator;
+<!ENTITY % opfamily SYSTEM "opfamily.dtd">
+%opfamily;
+<!ENTITY % opclass SYSTEM "opclass.dtd">
+%opclass;
+<!ENTITY % aggregate SYSTEM "aggregate.dtd">
+%aggregate;
+<!ENTITY % domain SYSTEM "domain.dtd">
+%domain;
+<!ENTITY % index SYSTEM "index.dtd">
+%index;
+<!ENTITY % rule SYSTEM "rule.dtd">
+%rule;
+<!ENTITY % trigger SYSTEM "trigger.dtd">
+%trigger;
+<!ENTITY % table SYSTEM "table.dtd">
+%table;
+<!ENTITY % sequence SYSTEM "sequence.dtd">
+%sequence;
+<!ENTITY % view SYSTEM "view.dtd">
+%view;
+<!ENTITY % textbox SYSTEM "textbox.dtd">
+%textbox;
+<!ENTITY % relationship SYSTEM "relationship.dtd">
+%relationship;
+<!ENTITY % permission SYSTEM "permission.dtd">
+%permission;
+<!ENTITY % collation SYSTEM "collation.dtd">
+%collation;
+<!ENTITY % extension SYSTEM "extension.dtd">
+%extension;
+<!ENTITY % tag SYSTEM "tag.dtd">
+%tag;
+<!ENTITY % customidxs SYSTEM "customidxs.dtd">
+%customidxs;
+<!ENTITY % eventtrigger SYSTEM "eventtrigger.dtd">
+%eventtrigger;
+<!ENTITY % genericsql SYSTEM "genericsql.dtd">
+%genericsql;
+<!ENTITY % policy SYSTEM "policy.dtd">
+%policy;
+<!ENTITY % foreigndatawrapper SYSTEM "foreigndatawrapper.dtd">
+%foreigndatawrapper;
+<!ENTITY % foreignserver SYSTEM "foreignserver.dtd">
+%foreignserver;
+<!ENTITY % usermapping SYSTEM "usermapping.dtd">
+%usermapping;
+<!ENTITY % foreigntable SYSTEM "foreigntable.dtd">
+%foreigntable;
+<!ENTITY % transform SYSTEM "transform.dtd">
+%transform;
+<!ENTITY % procedure SYSTEM "procedure.dtd">
+%procedure;
+<!ENTITY % changelog SYSTEM "changelog.dtd">
+%changelog;
+
+<!ELEMENT dbmodel ANY>
+<!ATTLIST dbmodel author CDATA #IMPLIED>
+<!ATTLIST dbmodel pgmodeler-ver CDATA #IMPLIED>
+<!ATTLIST dbmodel protected (false|true) "false">
+<!ATTLIST dbmodel last-position CDATA #IMPLIED>
+<!ATTLIST dbmodel last-zoom CDATA #IMPLIED>
+<!ATTLIST dbmodel default-schema CDATA #IMPLIED>
+<!ATTLIST dbmodel default-owner CDATA #IMPLIED>
+<!ATTLIST dbmodel default-collation CDATA #IMPLIED>
+<!ATTLIST dbmodel default-tablespace CDATA #IMPLIED>
+<!ATTLIST dbmodel max-obj-count CDATA #IMPLIED>
+<!ATTLIST dbmodel layers CDATA #IMPLIED>
+<!ATTLIST dbmodel layer-name-colors CDATA #IMPLIED>
+<!ATTLIST dbmodel layer-rect-colors CDATA #IMPLIED>
+<!ATTLIST dbmodel active-layers CDATA #IMPLIED>
+<!ATTLIST dbmodel show-layer-names (false|true) "false">
+<!ATTLIST dbmodel show-layer-rects (false|true) "false">
+<!ATTLIST dbmodel use-changelog (false|true) "false">

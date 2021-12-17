@@ -3,7 +3,7 @@
 LOG=windeploy.log
 
 # Detecting current pgModeler version
-DEPLOY_VER=`cat libutils/src/globalattributes.cpp | grep PgModelerVersion | sed 's/.\+PgModelerVersion=QString("//g' | sed 's/")\;//g'`
+DEPLOY_VER=`cat libs/libutils/src/globalattributes.cpp | grep PgModelerVersion | sed 's/.\+PgModelerVersion=QString("//g' | sed 's/")//g'`
 DEPLOY_VER=${DEPLOY_VER/PGMODELER_VERSION=\"/}
 DEPLOY_VER=`echo ${DEPLOY_VER/\",/} | tr -d ' '`
 
@@ -28,7 +28,7 @@ INSTALLER_CONFIG="config.xml"
 INSTALLER_TMPL_PKG_CONFIG="package.xml.tmpl"
 INSTALLER_PKG_CONFIG="package.xml"
 BUILD_DATE=`date '+%Y-%m-%d'`
-BUILD_NUM=`date '+%y%m%d'`
+BUILD_NUM=`date '+%Y%m%d'`
 
 # Setting key paths according to the arch build (x86|x64)
 # If none of the build type parameter is specified, the default is tu use x86
@@ -87,7 +87,7 @@ fi
 QT_PLUGINS_ROOT="$QT_ROOT/share/qt5/plugins"
 QMAKE_ROOT=$MINGW_ROOT
 PGSQL_ROOT=$MINGW_ROOT
-QMAKE_ARGS="-r -spec win32-g++ CONFIG+=release \
+QMAKE_ARGS="pgmodeler.pro -r -spec win32-g++ CONFIG+=release \
 		  XML_INC+=$MINGW_ROOT/../include/libxml2 \
 		  XML_LIB+=$MINGW_ROOT/libxml2-2.dll \
 		  PGSQL_INC+=$MINGW_ROOT/../include \
@@ -160,7 +160,7 @@ clear
 echo
 echo "pgModeler Windows deployment script"
 echo "PostgreSQL Database Modeler Project - pgmodeler.io"
-echo "Copyright 2006-2020 Raphael A. Silva <raphael@pgmodeler.io>"
+echo "Copyright 2006-2021 Raphael A. Silva <raphael@pgmodeler.io>"
 
 # Identifying Qt version
 if [ -e "$QMAKE_ROOT/qmake" ]; then
@@ -269,7 +269,7 @@ for plug in $DEP_PLUGINS; do
 	fi
 done
 
-echo "Packaging installation..."
+echo "Generating installer..."
 
 rm -r $INSTALLER_DATA_DIR >> $LOG 2>&1
 ln -sf "$INSTALL_ROOT" $INSTALLER_DATA_DIR >> $LOG 2>&1
@@ -310,6 +310,20 @@ if [ $? -ne 0 ]; then
 fi
 
 echo "File created: dist/$PKGNAME.exe"
+
+echo "Generating zip package..."
+cd build/
+zip -r -5 "$DIST_ROOT/$PKGNAME.zip" * >> $LOG 2>&1
+cd ..
+
+if [ $? -ne 0 ]; then
+    echo
+    echo "** Failed to create zip package!"
+    echo
+    exit 1
+fi
+
+echo "File created: dist/$PKGNAME.zip"
 
 echo "pgModeler successfully deployed!"
 echo

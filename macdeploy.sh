@@ -1,13 +1,13 @@
 #!/bin/bash
 
 USR=`whoami`
-PGSQL_ROOT=/Library/PostgreSQL/12
-QT_ROOT=/Users/$USR/Qt/5.15.1/clang_64
-QMAKE_ARGS="-r CONFIG+=x86_64 CONFIG+=release -spec macx-clang"
+PGSQL_ROOT=/Library/PostgreSQL/13
+QT_ROOT=/Users/$USR/Qt/5.15.2/clang_64
+QMAKE_ARGS="pgmodeler.pro -r CONFIG+=x86_64 CONFIG+=release -spec macx-clang"
 LOG=macdeploy.log
 
 # Detecting current pgModeler version
-DEPLOY_VER=`cat libutils/src/globalattributes.cpp | grep PgModelerVersion | sed 's/.*PgModelerVersion=QString("//g' | sed 's/")\;//g' | sed 's/^ *//g'`
+DEPLOY_VER=`cat libs/libutils/src/globalattributes.cpp | grep PgModelerVersion | sed 's/.*PgModelerVersion=QString("//g' | sed 's/")//g' | sed 's/^ *//g'`
 BUILD_NUM=`date '+%Y%m%d'`
 
 DEMO_VERSION_OPT='-demo-version'
@@ -44,7 +44,7 @@ clear
 echo
 echo "pgModeler macOS deployment script"
 echo "PostgreSQL Database Modeler Project - pgmodeler.io"
-echo "Copyright 2006-2020 Raphael A. Silva <raphael@pgmodeler.io>"
+echo "Copyright 2006-2021 Raphael A. Silva <raphael@pgmodeler.io>"
 
 # Identifying System Qt version
 if [ -e "$QT_ROOT/bin/qmake" ]; then
@@ -119,7 +119,7 @@ fi
 echo "Packaging installation..."
 
 # Deploy the Qt libraries onto app bundle
-$QT_ROOT/bin/macdeployqt $BUNDLE -executable=$BUNDLE/Contents/MacOS/pgmodeler-ch -executable=$BUNDLE/Contents/MacOS/pgmodeler-cli >> $LOG 2>&1
+$QT_ROOT/bin/macdeployqt $BUNDLE -executable=$BUNDLE/Contents/MacOS/pgmodeler-ch -executable=$BUNDLE/Contents/MacOS/pgmodeler-cli -executable=$BUNDLE/Contents/MacOS/pgmodeler-se >> $LOG 2>&1
 cp $PGSQL_ROOT/lib/libpq.5.dylib $BUNDLE/Contents/Frameworks >> $LOG 2>&1
 cp $PGSQL_ROOT/lib/libssl.1.* $BUNDLE/Contents/Frameworks >> $LOG 2>&1
 cp $PGSQL_ROOT/lib/libcrypto.1.* $BUNDLE/Contents/Frameworks >> $LOG 2>&1
@@ -128,7 +128,7 @@ cp $PGSQL_ROOT/lib/libcrypto.1.* $BUNDLE/Contents/Frameworks >> $LOG 2>&1
 install_name_tool -change "@loader_path/../lib/libcrypto.1.1.dylib" "@loader_path/../Frameworks/libcrypto.1.1.dylib" $BUNDLE/Contents/Frameworks/libssl.1.1.dylib >> $LOG 2>&1
 install_name_tool -change "@loader_path/../lib/libcrypto.1.1.dylib" "@loader_path/../Frameworks/libcrypto.1.1.dylib" $BUNDLE/Contents/Frameworks/libpq.5.dylib >> $LOG 2>&1
 install_name_tool -change "@loader_path/../lib/libssl.1.1.dylib" "@loader_path/../Frameworks/libssl.1.1.dylib" $BUNDLE/Contents/Frameworks/libpq.5.dylib >> $LOG 2>&1
-install_name_tool -change libpq.5.dylib "@loader_path/../Frameworks/libpq.5.dylib" $BUNDLE/Contents/Frameworks/libpgconnector.dylib >> $LOG 2>&1
+install_name_tool -change libpq.5.dylib "@loader_path/../Frameworks/libpq.5.dylib" $BUNDLE/Contents/Frameworks/libconnector.dylib >> $LOG 2>&1
 
 # Creates an empty dmg file named
 cp installer/macosx/installer_icon.icns $INSTALL_ROOT/.VolumeIcon.icns >> $LOG 2>&1

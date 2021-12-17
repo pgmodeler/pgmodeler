@@ -1,0 +1,42 @@
+<!--
+  CAUTION: Do not modify this file directly on it's code unless you know what you are doing.
+           Unexpected results may occur if the code is changed deliberately.
+-->
+<!ENTITY % label SYSTEM "label.dtd">
+%label;
+
+<!ELEMENT relationship (line*,label*,column*,constraint*,special-pk-cols?,expression?)>
+<!ATTLIST relationship name CDATA #REQUIRED>
+<!ATTLIST relationship layers CDATA #IMPLIED>
+<!ATTLIST relationship alias CDATA #IMPLIED>
+<!ATTLIST relationship src-required (false|true) "false">
+<!ATTLIST relationship dst-required (false|true) "false">
+<!ATTLIST relationship type (rel11|rel1n|relnn|relgen|reldep|reltv|relfk|relpart) "rel11">
+<!ATTLIST relationship protected (false|true) "false">
+<!ATTLIST relationship src-table CDATA #REQUIRED>
+<!ATTLIST relationship dst-table CDATA #REQUIRED>
+<!ATTLIST relationship table-name CDATA #IMPLIED>
+<!ATTLIST relationship identifier (false|true) "false">
+<!ATTLIST relationship deferrable (true |false) "false">
+<!ATTLIST relationship defer-type CDATA #IMPLIED>
+<!ATTLIST relationship copy-mode CDATA #IMPLIED>
+<!ATTLIST relationship copy-options CDATA #IMPLIED>
+<!ATTLIST relationship sql-disabled (false|true) "false">
+<!ATTLIST relationship src-col-pattern CDATA #IMPLIED>
+<!ATTLIST relationship dst-col-pattern CDATA #IMPLIED>
+<!ATTLIST relationship pk-pattern CDATA #IMPLIED>
+<!ATTLIST relationship uq-pattern CDATA #IMPLIED>
+<!ATTLIST relationship src-fk-pattern CDATA #IMPLIED>
+<!ATTLIST relationship dst-fk-pattern CDATA #IMPLIED>
+<!ATTLIST relationship pk-col-pattern CDATA #IMPLIED>
+<!ATTLIST relationship upd-action CDATA #IMPLIED>
+<!ATTLIST relationship del-action CDATA #IMPLIED>
+<!ATTLIST relationship custom-color CDATA #IMPLIED>
+<!ATTLIST relationship single-pk-col CDATA #IMPLIED>
+<!ATTLIST relationship reference-fk CDATA #IMPLIED>
+<!ATTLIST relationship faded-out (false|true) "false">
+
+<!ELEMENT line (position+)>
+
+<!ELEMENT special-pk-cols EMPTY>
+<!ATTLIST special-pk-cols indexes CDATA #REQUIRED>

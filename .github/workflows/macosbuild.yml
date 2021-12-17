@@ -2,7 +2,7 @@ name: macOs build
 
 on:
   push:
-    branches: [ master, develop, 0.9.* ]
+    branches: [ master, develop, 0.9.*, '*fix*', '*change*', '*support*' ]
     tags: 0.9.*
     
   pull_request:
@@ -25,7 +25,7 @@ jobs:
         version: ${{ matrix.qt }}
 
     - name: Running qmake
-      run:  cd $GITHUB_WORKSPACE; qmake pgmodeler.pro -r PREFIX=/Applications/pgModeler.app/Contents PGSQL_INC=`pg_config --includedir` PGSQL_LIB=`pg_config --libdir`/libpq.dylib
+      run:  cd $GITHUB_WORKSPACE; qmake pgmodeler.pro -r PREFIX=/Applications/pgModeler.app/Contents PGSQL_INC=`pg_config --includedir` PGSQL_LIB=`pg_config --libdir`/libpq.dylib CONFIG+=debug
     
     - name: Building pgModeler
       run: make -j6
