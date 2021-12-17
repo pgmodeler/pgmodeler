@@ -33,6 +33,12 @@ int main(int argc, char **argv)
 #else
 	try
 	{
+		#ifdef Q_OS_LINUX
+			/* Workaround to make the CLI work on Linux systems without graphical interface.
+			 * Details at https://github.com/pgmodeler/pgmodeler/issues/1604 */
+			qputenv("QT_QPA_PLATFORM", "offscreen");
+		#endif
+
 		PgModelerCliApp pgmodeler_cli(argc, argv);
 		QTranslator translator(&pgmodeler_cli);
 

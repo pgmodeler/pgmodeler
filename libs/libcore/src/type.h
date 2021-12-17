@@ -44,7 +44,7 @@ class Type: public BaseObject {
 		vector<TypeAttribute> type_attribs;
 
 		//! \brief Enumerations of enumeration type
-		vector<QString> enumerations;
+		QStringList enumerations;
 
 		//! \brief Functions used by the base type
 		Function *functions[9];
@@ -90,9 +90,6 @@ class Type: public BaseObject {
 
 		//! \brief Checks if the named attribute exists
 		int getAttributeIndex(const QString &attrib_name);
-
-		//! \brief Checks if the named enumeration exists
-		bool isEnumerationExists(const QString &enum_name);
 
 		//! \brief Formats the elements string used by the SchemaParser
 		void setElementsAttribute(unsigned def_type);

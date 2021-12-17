@@ -83,7 +83,7 @@
 		[ CASE WHEN typtype = 'e' THEN 
 			(SELECT array_to_string(array_agg(enumlabel),'] $ds [', '') 
 			FROM pg_enum WHERE enumtypid=tp.oid)
-		END AS enumerations, ]
+		END AS labels, ]
 
 		%if ({pgsql-ver} >=f "9.3") %then
 			[ ta.typeattrib, ]

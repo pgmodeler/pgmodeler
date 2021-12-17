@@ -1,42 +1,25 @@
-v0.9.4-beta1
+v0.9.4
 ------
 
-<em>Release date: November 08, 2021</em><br/>
-<em>Changes since: <strong>v0.9.4-beta</strong></em><br/>
+<em>Release date: December 17, 2021</em><br/>
+<em>Changes since: <strong>v0.9.3</strong></em><br/>
 
-<strong>Attention:</strong> the database model file structure has changed since the last stable 0.9.3. Models created in older releases will certainly fail to load due to incompatibilities because some attributes in the XML code don't exist anymore or have changed during the development of 0.9.4-beta1. Before loading your database models in this new release, please, make sure to have a backup of them all and follow the steps presented by the model fix tool to patch the documents' structure. Not paying attention to this situation may cause irreversible data loss! If the fix procedures aren't enough to make your database models loadable again, please, ask for help at the official support channels!<br/>
+<strong>Attention:</strong> the database model file structure has changed since the last stable 0.9.3. Models created in older releases will certainly fail to load due to incompatibilities because some attributes in the XML code don't exist anymore or have changed during the development of 0.9.4. Before loading your database models in this new release, please, make sure to have a backup of them all and follow the steps presented by the model fix tool to patch the documents' structure. Not paying attention to this situation may cause irreversible data loss! If the fix procedures aren't enough to make your database models loadable again, please, ask for help at the official support channels! <br/>
 
-<strong>Summary:</strong> in preparation for the next major pgModeler release, the goal of this version was to bring only improvements and fixes to what was implemented until 0.9.4-beta and thus was done. <br/>
+<strong>Summary:</strong> it was quite a challenge to develop version 0.9.4 during the year 2021 but we finally made it, the last pgModeler of the series 0.9.x is ready! This one has a vast set of improvements over 0.9.3, being 51 new features, 104 enhancements, and 73 bug fixes that will make a big difference in the overall usage of the tool. <br/>
 
-pgModeler 0.9.4-beta1 brings a few entries in its changelog since we didn't have serious bugs reported in the past two months. So, I decided to make some polishing in several portions of the tool. <br/>
+The first improvement in 0.9.4 is the ability to put objects in multiple layers which was not possible in previous versions. The user has now the ability to set up custom colors and labels for each layer enhancing the database model visualization and semantics. Still in the database model design, one can now define a custom color for canvas, grid lines, and page delimiter lines which can help a lot those who aren't comfortable with the excessive glare produced by the default color schema.<br/>
 
-Anyway, the improvement that is worth mentioning in this release is the experimental support for timescaledb in reverse engineering. So, now pgModeler is capable of generating models from databases that make use of that PostgreSQL extension without major issues. For pgModeler 0.9.4, we expect that any problem that eventually appears regarding the importing of timescaledb-based databases can be solved. 
-<br/>
+This release also improves the support for some PostgreSQL objects by bringing the configuration parameters and transform types to functions and procedures, adding the support for PARALLEL attribute on functions, and the support for included columns also known as non-key columns on indexes. It's worth mentioning that the import and diff processes were also improved to support all the mentioned improvements in those objects. Besides, the diff process is now capable of generating GRANT and REVOKE commands to set up new role memberships. <br/>
 
-Below, the changelog entries of this version:<br/>
+The data type configuration widget received a simple improvement which adds a significant reduction in the time spent to configure a data type. Now, the user can just type the name of the desired data type to be used instead of selecting it by using the mouse. After typing the data type name just hit the tab key to jump to the next field and the data type will be automatically configured. Seems a silly fix but it adds speed when you need to repeatedly create columns in a table, for example. <br/>
 
-* [New] Added extra PostGiS data types to PgSQLType.
-* [New] Created the method PgSqlType::isPostGiSType() which returns true if the current type is a PostGiS one.
-* [New] Created the method PgSqlType::reset() that clears some attributes of the type.
-* [New] Added the built-in type pg_lsn in order to make databases using timescaledb extension to be imported correctly.
-* [Change] Minor adjustment in windowsdeploy.sh to create zip packages.
-* [Change] Minor adjustment in demo version warning messages.
-* [Change] Adjusted the catalog query filters in ModelDatabaseDiffForm to retrieve system and extension objects according to the checkboxes "Import system objects" and "Import extension objects".
-* [Change] Adjusted the reverse engineering in such a way that the table children will follow the SQL disabled state of their parent tables.
-* [Change] Allowing importing pg_lsn attributes in usertype.sch.
-* [Change] Allowing the use of commas in enum type labels.
-* [Change] Improved the output of model fix operation in CLI.
-* [Change] The constants DataSeparator, UnescValueStart, UnescValueEnd, WildcardChar, FilterSeparator, FilterWildcard, FilterRegExp were moved from CoreUtilsNs to UtilsNs in order to be used in the parsers module.
-* [Change] In SchemaParser the meta char $ds (dollar sign) was renamed to $ms (money sign). Also, a new meta char $ds (data separator) was added and translates to the special data separator character UtilsNs::DataSeparator.
-* [Change] Minor adjustments in table.sch and foreigntable.sch schema files.
-* [Change] Improved DatabaseModel::getUserDefTypesReferences in order to get all references to postgis data types.
-* [Change] Improved ModelValidationHelper in order to set postgis extension a default comment when automatically creating it.
-* [Change] PgSQLTypeWidget now can be configured in such a way to disallow the configuration of type qualifiers like length, precision, interval, and some other. This is useful when configuring data types for objects that don't require such attributes in the data type like parameter, aggregates, transforms, casts, operators.
-* [Change] Changed the behavior of Parameter::getCodeDefinition when generating SQL code. Now, any type qualifier (except dimension descriptor []) will be discarded.
-* [Fix] Fixed the catalog query that lists policies.
-* [Fix] Added a minor workaround in DatabaseImportHelper::getType in order to treat the "any" pseudo-type correctly.
-* [Fix] Minor fix in DatabaseImportForm in order to disable option buttons when no connection is selected.
-* [Fix] Fixed a segfault when importing domains with long expressions.
-* [Fix] Fixed the broken SQL generation for tables with columns/constraints disabled.
-* [Fix] Fix the name of the checkbox related to updates checking to avoid breaking the building when enabling NO_UPDATE_CHECK via qmake.
-* [Fix] Fixed the shortcuts of Copy/Paste actions in DataManipulationForm.
+In the SQL tool, is now possible to drop databases quickly from the databases listing. Previously, there was the need to browse the database first and then drop it. In the database browser widget, the tree items collapse state is saved and restored after any updates requested by the user, improving the overall experience on that module. In data manipulation form, the sorting operation performed when clicking columns was adjusted. Now, the sorting will be triggered by holding the control key and clicking the desired column, and if the user only clicks a column without holding the control key will cause the entire column to be selected in the grid. <br/>
+
+Attending to some requests, pgModeler is now capable of exporting the database model in split SQL files instead of generating a single SQL file representing the entire database. In this export mode, the files are named in such a way to represent the proper order of creation, which means that running the scripts one after another will create the whole database like it was created from a single file. <br/>
+
+Due to the introduction of a new syntax highlighting configuration file (for code snippets configuration), pgModeler will, from now on, create missing configuration files at startup. This will avoid breaking the tool's execution when it detects the absence of any configuration file. Also, during the copy of these files, pgModeler will enforce the write permission over them to avoid access problems on some systems that store template settings on read-only paths. <br/>
+
+The command-line interface was patched in such a way that now doesn't crash anymore when performing a diff operation in which a database model is used as input. Another improvement to the CLI is the introduction of the option --force in the mime type handling operation.  Also, a patch was made in such a way to avoid the usage of option '-platform offscreen' explicitly when calling the application. <br/>
+
+Finally, there is a bunch of other new features and bug fixes implemented in almost all parts of the tool which improves stability and reliability. I kindly invite you to read the CHANGELOG.md file of the 0.9.4 development timeline to know everything in detail. <br/>

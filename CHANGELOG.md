@@ -1,6 +1,20 @@
 Changelog
 ---------
 
+v0.9.4
+------
+<em>Release date: December 17, 2021</em><br/>
+
+* [New] Added a fix step in CLI to reconstruct enum types XML code in new format.
+* [Change] Changed the way XML code for enum types is generated and loaded.
+* [Change] Minor improvement in reverse engineering to import enum types in the new format.
+* [Change] Minor adjust in the demo version warning message.
+* [Change] Minor adjustment in permission id generation. Now the object's signature is used instead of name.
+* [Change] Minor refactor in the reconstruction of XML related to enum types in CLI.
+* [Fix] Minor fix in deployment script to support new libicui versions.
+* [Fix] Minor fix in order to set read/write permissions when copying configuration files with read-only permissions.
+* [Fix] Minor fix in CLI to avoid the usage of '-platform offscreen' when calling the application.
+
 v0.9.4-beta1
 ------
 <em>Release date: November 08, 2021</em><br/>

@@ -116,6 +116,12 @@ void BaseConfigWidget::restoreDefaults(const QString &conf_id, bool silent)
 		bkp_saved = QFile::rename(current_file, bkp_filename);
 		QFile::copy(default_file, current_file);
 
+		// Set write permissions when copying file with read-only permissions
+		QFile file(current_file);
+
+		if(!file.permissions().testFlag(QFile::WriteOwner))
+			file.setPermissions(file.permissions() | QFileDevice::WriteOwner);
+
 		if(bkp_saved && !silent)
 		{
 			Messagebox msg_box;

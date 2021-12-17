@@ -83,7 +83,17 @@ void Application::copyFilesRecursively(const QString &src_path, const QString &d
 	else
 	{
 		if(!QFile::copy(src_path, dst_path))
+		{
 			throw Exception(Exception::getErrorMessage(ErrorCode::FileDirectoryNotWritten).arg(dst_path),
 											__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		}
+		else
+		{
+			// Set write permissions when copying file with read-only permissions
+			QFile file(dst_path);
+
+			if(!file.permissions().testFlag(QFile::WriteOwner))
+				file.setPermissions(file.permissions() | QFileDevice::WriteOwner);
+		}
 	}
 }

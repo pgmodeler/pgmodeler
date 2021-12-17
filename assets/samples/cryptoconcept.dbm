@@ -1,0 +1,1235 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+CAUTION: Do not modify this file unless you know what you are doing.
+ Unexpected results may occur if the code is changed deliberately.
+-->
+<dbmodel pgmodeler-ver="0.9.4" use-changelog="false" last-position="0,0" last-zoom="1" max-obj-count="25"
+	 default-schema="public" default-owner="postgres"
+	 layers="Default layer"
+	 active-layers="0"
+	 layer-name-colors="#000000"
+	 layer-rect-colors="#b4b4b4"
+	 show-layer-names="false" show-layer-rects="false">
+<database name="cryptoconcept" encoding="UTF8" is-template="false" allow-conns="true">
+</database>
+
+<role name="cryptoapi"
+ login="true">
+</role>
+
+<schema name="public" layers="0" fill-color="#e1e1e1" sql-disabled="true">
+</schema>
+
+<schema name="economy" layers="0" rect-visible="true" fill-color="#9fcbc3">
+	<role name="cryptoapi"/>
+</schema>
+
+<schema name="people" layers="0" rect-visible="true" fill-color="#b6abc6">
+	<role name="cryptoapi"/>
+</schema>
+
+<extension name="pgcrypto">
+	<schema name="public"/>
+</extension>
+
+<table name="markets" layers="0" collapse-mode="2" max-obj-count="9" z-value="0">
+	<schema name="economy"/>
+	<role name="cryptoapi"/>
+	<position x="200" y="880"/>
+	<column name="id" not-null="true" default-value="encode(gen_random_bytes(6), 'hex');">
+		<type name="varchar" length="12"/>
+	</column>
+	<column name="name" not-null="true">
+		<type name="varchar" length="100"/>
+	</column>
+	<column name="abbrev">
+		<type name="varchar" length="20"/>
+	</column>
+	<column name="description">
+		<type name="text" length="0"/>
+	</column>
+	<column name="endpoints">
+		<type name="jsonb" length="0"/>
+		<comment><![CDATA[{"web": "webpage_url", "api": "uri_for_api_calls"}]]></comment>
+	</column>
+	<column name="more">
+		<type name="jsonb" length="0"/>
+	</column>
+	<column name="last_mod_by" not-null="true">
+		<type name="varchar" length="100"/>
+	</column>
+	<column name="last_mod_time" not-null="true" default-value="now()">
+		<type name="timestamptz" length="0"/>
+	</column>
+	<constraint name="markets_pk" type="pk-constr" table="economy.markets">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="sales" layers="0" collapse-mode="2" max-obj-count="20" z-value="0">
+	<schema name="economy"/>
+	<role name="cryptoapi"/>
+	<position x="880" y="860"/>
+	<column name="id" not-null="true" default-value="encode(gen_random_bytes(6), 'hex');">
+		<type name="varchar" length="12"/>
+	</column>
+	<column name="summary" not-null="true">
+		<type name="varchar" length="255"/>
+	</column>
+	<column name="asset" not-null="true">
+		<type name="varchar" length="50"/>
+		<comment><![CDATA[token type, like 'Penguin']]></comment>
+	</column>
+	<column name="quantity" not-null="true">
+		<type name="decimal" length="18" precision="9"/>
+	</column>
+	<column name="currency" not-null="true">
+		<type name="varchar" length="10"/>
+		<comment><![CDATA[symbol, like: 'SOL']]></comment>
+	</column>
+	<column name="price" not-null="true">
+		<type name="decimal" length="18" precision="9"/>
+		<comment><![CDATA[ask price before the sale, sale price after]]></comment>
+	</column>
+	<column name="fees">
+		<type name="decimal" length="18" precision="9"/>
+	</column>
+	<column name="royalties">
+		<type name="decimal" length="18" precision="9"/>
+	</column>
+	<column name="status" not-null="true">
+		<type name="varchar" length="20"/>
+		<comment><![CDATA[in ('preliminary', 'open', 'pending', 'completed', 'cancelled', 'invalid')]]></comment>
+	</column>
+	<column name="status_time" not-null="true">
+		<type name="timestamptz" length="0"/>
+	</column>
+	<column name="currency_exchange_rate">
+		<type name="decimal" length="14" precision="4"/>
+		<comment><![CDATA[Fiat $ per unit of the currency used for this purchase when completes]]></comment>
+	</column>
+	<column name="market_uid">
+		<type name="varchar" length="100"/>
+		<comment><![CDATA[The unique identifier for this transaction on this market.]]></comment>
+	</column>
+	<column name="endpoints">
+		<type name="jsonb" length="0"/>
+		<comment><![CDATA[{"web": "webpage_url", "api": "uri_for_api_calls"}]]></comment>
+	</column>
+	<column name="more">
+		<type name="jsonb" length="0"/>
+	</column>
+	<column name="last_mod_by" not-null="true">
+		<type name="varchar" length="100"/>
+	</column>
+	<column name="last_mod_time" not-null="true" default-value="now()">
+		<type name="timestamptz" length="0"/>
+	</column>
+	<constraint name="sales_pk" type="pk-constr" table="economy.sales">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="sales_constr_status" type="ck-constr" table="economy.sales">
+			<expression><![CDATA[status in ('preliminary', 'open', 'pending', 'completed', 'cancelled', 'invalid')]]></expression>
+	</constraint>
+
+	<customidxs object-type="column">
+		<object name="markets_id" index="1"/>
+	</customidxs>
+
+	<customidxs object-type="constraint">
+		<object name="markets_fk" index="1"/>
+	</customidxs>
+</table>
+
+<table name="users" layers="0" collapse-mode="2" max-obj-count="10" z-value="0">
+	<schema name="people"/>
+	<role name="cryptoapi"/>
+	<position x="2840" y="340"/>
+	<column name="id" not-null="true" default-value="encode(gen_random_bytes(6), 'hex');">
+		<type name="varchar" length="12"/>
+	</column>
+	<column name="first_name">
+		<type name="varchar" length="0"/>
+	</column>
+	<column name="middle">
+		<type name="varchar" length="100"/>
+	</column>
+	<column name="last_name">
+		<type name="varchar" length="100"/>
+	</column>
+	<column name="suffix">
+		<type name="varchar" length="10"/>
+	</column>
+	<column name="status" not-null="true">
+		<type name="varchar" length="20"/>
+		<comment><![CDATA[in ('active', 'suspended', 'cancelled', 'blocked')]]></comment>
+	</column>
+	<column name="more">
+		<type name="jsonb" length="0"/>
+	</column>
+	<column name="last_mod_by" not-null="true">
+		<type name="varchar" length="100"/>
+	</column>
+	<column name="last_mod_time" not-null="true" default-value="now()">
+		<type name="timestamptz" length="0"/>
+	</column>
+	<constraint name="users_pk" type="pk-constr" table="people.users">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="users_constr_status" type="ck-constr" table="people.users">
+			<expression><![CDATA[status in ('active', 'suspended', 'cancelled', 'blocked')]]></expression>
+	</constraint>
+</table>
+
+<table name="wallets" layers="0" collapse-mode="2" max-obj-count="8" z-value="0">
+	<schema name="economy"/>
+	<role name="cryptoapi"/>
+	<position x="1540" y="1060"/>
+	<column name="id" not-null="true" default-value="encode(gen_random_bytes(6), 'hex');">
+		<type name="varchar" length="12"/>
+	</column>
+	<column name="title">
+		<type name="varchar" length="100"/>
+	</column>
+	<column name="description">
+		<type name="text" length="0"/>
+	</column>
+	<column name="more">
+		<type name="jsonb" length="0"/>
+	</column>
+	<column name="last_mod_by" not-null="true">
+		<type name="varchar" length="100"/>
+	</column>
+	<column name="last_mod_time" not-null="true" default-value="now()">
+		<type name="timestamptz" length="0"/>
+	</column>
+	<constraint name="wallets_pk" type="pk-constr" table="economy.wallets">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+
+	<customidxs object-type="column">
+		<object name="users_id" index="1"/>
+	</customidxs>
+
+	<customidxs object-type="constraint">
+		<object name="users_fk" index="1"/>
+	</customidxs>
+</table>
+
+<table name="assets" layers="0" collapse-mode="2" max-obj-count="9" z-value="0">
+	<schema name="economy"/>
+	<role name="cryptoapi"/>
+	<position x="1780" y="1900"/>
+	<column name="id" not-null="true" default-value="encode(gen_random_bytes(6), 'hex');">
+		<type name="varchar" length="12"/>
+	</column>
+	<column name="uid">
+		<type name="varchar" length="100"/>
+		<comment><![CDATA[key, uuid, upc, etc.]]></comment>
+	</column>
+	<column name="catalog_code">
+		<type name="varchar" length="50"/>
+	</column>
+	<column name="description">
+		<type name="text" length="0"/>
+	</column>
+	<column name="more">
+		<type name="jsonb" length="0"/>
+	</column>
+	<column name="last_mod_by" not-null="true">
+		<type name="varchar" length="100"/>
+	</column>
+	<column name="last_mod_time" not-null="true" default-value="now()">
+		<type name="timestamptz" length="0"/>
+	</column>
+	<constraint name="tokens_pk" type="pk-constr" table="economy.assets">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="assets_constr_uid" type="uq-constr" table="economy.assets">
+		<columns names="uid" ref-type="src-columns"/>
+	</constraint>
+
+	<customidxs object-type="column">
+		<object name="collections_id" index="1"/>
+	</customidxs>
+
+	<customidxs object-type="constraint">
+		<object name="collections_fk" index="1"/>
+	</customidxs>
+</table>
+
+<table name="exchanges" layers="0" collapse-mode="2" pagination="true" attribs-page="0" ext-attribs-page="0" max-obj-count="10" z-value="0">
+	<schema name="economy"/>
+	<role name="cryptoapi"/>
+	<position x="220" y="380"/>
+	<column name="id" not-null="true" default-value="encode(gen_random_bytes(6), 'hex');">
+		<type name="varchar" length="12"/>
+	</column>
+	<column name="name" not-null="true">
+		<type name="varchar" length="100"/>
+	</column>
+	<column name="abbrev">
+		<type name="varchar" length="0"/>
+	</column>
+	<column name="description">
+		<type name="text" length="0"/>
+	</column>
+	<column name="web_endpoints">
+		<type name="jsonb" length="0"/>
+	</column>
+	<column name="api_endpoints">
+		<type name="jsonb" length="0"/>
+	</column>
+	<column name="more">
+		<type name="jsonb" length="0"/>
+	</column>
+	<column name="last_mod_by" not-null="true">
+		<type name="varchar" length="100"/>
+	</column>
+	<column name="last_mod_time" not-null="true" default-value="now()">
+		<type name="timestamptz" length="0"/>
+	</column>
+	<constraint name="exchanges_pk" type="pk-constr" table="economy.exchanges">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="prices" layers="0" collapse-mode="2" max-obj-count="7" z-value="0">
+	<schema name="economy"/>
+	<role name="cryptoapi"/>
+	<position x="820" y="380"/>
+	<column name="id" not-null="true" default-value="encode(gen_random_bytes(6), 'hex');">
+		<type name="varchar" length="12"/>
+	</column>
+	<column name="more">
+		<type name="jsonb" length="0"/>
+	</column>
+	<column name="last_mod_by" not-null="true">
+		<type name="varchar" length="100"/>
+	</column>
+	<column name="last_mod_time" not-null="true" default-value="now()">
+		<type name="timestamptz" length="0"/>
+	</column>
+	<constraint name="prices_pk" type="pk-constr" table="economy.prices">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+
+	<customidxs object-type="column">
+		<object name="currencies_id" index="1"/>
+		<object name="exchanges_id" index="2"/>
+	</customidxs>
+
+	<customidxs object-type="constraint">
+		<object name="currencies_fk" index="1"/>
+		<object name="exchanges_fk" index="2"/>
+	</customidxs>
+</table>
+
+<table name="currencies" layers="0" collapse-mode="2" max-obj-count="8" z-value="0">
+	<schema name="economy"/>
+	<role name="cryptoapi"/>
+	<position x="1460" y="340"/>
+	<column name="id" not-null="true" default-value="encode(gen_random_bytes(6), 'hex');">
+		<type name="varchar" length="12"/>
+	</column>
+	<column name="symbol" not-null="true">
+		<type name="varchar" length="10"/>
+	</column>
+	<column name="title" not-null="true">
+		<type name="varchar" length="100"/>
+	</column>
+	<column name="description">
+		<type name="text" length="0"/>
+	</column>
+	<column name="more">
+		<type name="jsonb" length="0"/>
+	</column>
+	<column name="last_mod_by" not-null="true">
+		<type name="varchar" length="100"/>
+	</column>
+	<column name="last_mod_time" not-null="true" default-value="now()">
+		<type name="timestamptz" length="0"/>
+	</column>
+	<constraint name="currencies_pk" type="pk-constr" table="economy.currencies">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="currencies_constr_symbols" type="uq-constr" table="economy.currencies">
+		<columns names="symbol" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="currencies_constr_title" type="uq-constr" table="economy.currencies">
+		<columns names="title" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="wallet_entries" layers="0" unlogged="true" collapse-mode="2" max-obj-count="12" z-value="0">
+	<schema name="economy"/>
+	<role name="cryptoapi"/>
+	<position x="940" y="1880"/>
+	<column name="id" not-null="true" default-value="encode(gen_random_bytes(6), 'hex');">
+		<type name="varchar" length="12"/>
+	</column>
+	<column name="category" not-null="true">
+		<type name="varchar" length="20"/>
+		<comment><![CDATA[in ('opening', 'credit', 'debit', 'adjustment'')]]></comment>
+	</column>
+	<column name="title">
+		<type name="varchar" length="100"/>
+	</column>
+	<column name="quantity" not-null="true">
+		<type name="decimal" length="18" precision="9"/>
+	</column>
+	<column name="entry_time">
+		<type name="timestamptz" length="0"/>
+	</column>
+	<column name="comments">
+		<type name="text" length="0"/>
+	</column>
+	<column name="more">
+		<type name="jsonb" length="0"/>
+	</column>
+	<column name="last_mod_by" not-null="true">
+		<type name="varchar" length="100"/>
+	</column>
+	<column name="last_mod_time" not-null="true" default-value="now()">
+		<type name="timestamptz" length="0"/>
+	</column>
+	<constraint name="wallet_entries_pk" type="pk-constr" table="economy.wallet_entries">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="ledger_entries_cnstr_category" type="ck-constr" table="economy.wallet_entries">
+			<expression><![CDATA[category in ('opening', 'credit', 'debit', 'adjustment')]]></expression>
+	</constraint>
+
+	<customidxs object-type="column">
+		<object name="wallets_id" index="1"/>
+	</customidxs>
+
+	<customidxs object-type="constraint">
+		<object name="wallets_fk" index="2"/>
+	</customidxs>
+</table>
+
+<table name="sellers" layers="0" collapse-mode="2" max-obj-count="7" z-value="0">
+	<schema name="economy"/>
+	<role name="cryptoapi"/>
+	<position x="100" y="1940"/>
+	<column name="id" not-null="true" default-value="encode(gen_random_bytes(6), 'hex');">
+		<type name="varchar" length="12"/>
+	</column>
+	<column name="more">
+		<type name="jsonb" length="0"/>
+	</column>
+	<column name="last_mod_by" not-null="true">
+		<type name="varchar" length="100"/>
+	</column>
+	<column name="last_mod_time" not-null="true" default-value="now()">
+		<type name="timestamptz" length="0"/>
+	</column>
+	<constraint name="sellers_pk" type="pk-constr" table="economy.sellers">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+
+	<customidxs object-type="column">
+		<object name="sales_id" index="1"/>
+		<object name="wallet_entries_id" index="2"/>
+	</customidxs>
+
+	<customidxs object-type="constraint">
+		<object name="sales_fk" index="1"/>
+		<object name="wallet_entries_fk" index="2"/>
+	</customidxs>
+</table>
+
+<table name="media" layers="0" collapse-mode="2" max-obj-count="7" z-value="0">
+	<schema name="people"/>
+	<role name="cryptoapi"/>
+	<position x="4240" y="1640"/>
+	<column name="id" not-null="true" default-value="encode(gen_random_bytes(6), 'hex');">
+		<type name="varchar" length="12"/>
+	</column>
+	<column name="name" not-null="true">
+		<type name="varchar" length="100"/>
+		<comment><![CDATA[Twitter, Discord, etc.]]></comment>
+	</column>
+	<column name="endpoints">
+		<type name="jsonb" length="0"/>
+		<comment><![CDATA[{"web": "webpage_url", "api": "uri_for_api_calls"}]]></comment>
+	</column>
+	<column name="more">
+		<type name="jsonb" length="0"/>
+	</column>
+	<column name="last_mod_by" not-null="true">
+		<type name="varchar" length="100"/>
+	</column>
+	<column name="last_mod_time" not-null="true" default-value="now()">
+		<type name="timestamptz" length="0"/>
+	</column>
+	<constraint name="media_pk" type="pk-constr" table="people.media">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="identities" layers="0" collapse-mode="2" max-obj-count="15" z-value="0">
+	<schema name="people"/>
+	<role name="cryptoapi"/>
+	<position x="3480" y="400"/>
+	<column name="id" not-null="true" default-value="encode(gen_random_bytes(6), 'hex');">
+		<type name="varchar" length="12"/>
+	</column>
+	<column name="username" not-null="true">
+		<type name="varchar" length="100"/>
+	</column>
+	<column name="role" not-null="true" default-value="'user'">
+		<type name="varchar" length="100"/>
+	</column>
+	<column name="status" not-null="true">
+		<type name="varchar" length="20"/>
+		<comment><![CDATA[in ('active', 'suspended', 'forgot_password', 'cancelled', 'blocked')]]></comment>
+	</column>
+	<column name="email" not-null="true">
+		<type name="varchar" length="100"/>
+	</column>
+	<column name="phone">
+		<type name="varchar" length="50"/>
+	</column>
+	<column name="password_hash">
+		<type name="varchar" length="512"/>
+	</column>
+	<column name="temp_password_expires">
+		<type name="timestamptz" length="0"/>
+	</column>
+	<column name="keys">
+		<type name="jsonb" length="0"/>
+		<comment><![CDATA[store any number of keys as our design evolves]]></comment>
+	</column>
+	<column name="more">
+		<type name="jsonb" length="0"/>
+	</column>
+	<column name="last_mod_by" not-null="true">
+		<type name="varchar" length="100"/>
+	</column>
+	<column name="last_mod_time" not-null="true" default-value="now()">
+		<type name="timestamptz" length="0"/>
+	</column>
+	<constraint name="identities_pk" type="pk-constr" table="people.identities">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="identities_constr_email" type="uq-constr" table="people.identities">
+		<columns names="email" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="identities_constr_status" type="ck-constr" table="people.identities">
+			<expression><![CDATA[status in ('active', 'suspended', 'forgot_password', 'cancelled', 'blocked')]]></expression>
+	</constraint>
+	<constraint name="identities_constr_roles" type="ck-constr" table="people.identities">
+			<expression><![CDATA[role in ('user', 'partner', 'admin',  'owner')]]></expression>
+	</constraint>
+
+	<customidxs object-type="column">
+		<object name="users_id" index="1"/>
+	</customidxs>
+
+	<customidxs object-type="constraint">
+		<object name="users_fk" index="1"/>
+	</customidxs>
+</table>
+
+<table name="sessions" layers="0" collapse-mode="2" max-obj-count="10" z-value="0">
+	<schema name="people"/>
+	<role name="cryptoapi"/>
+	<position x="4220" y="340"/>
+	<column name="id" not-null="true" default-value="encode(gen_random_bytes(6), 'hex');">
+		<type name="varchar" length="12"/>
+	</column>
+	<column name="status" not-null="true">
+		<type name="varchar" length="20"/>
+		<comment><![CDATA[in ('active', 'suspended', 'cancelled', 'blocked')]]></comment>
+	</column>
+	<column name="begin_time" not-null="true">
+		<type name="timestamptz" length="0"/>
+	</column>
+	<column name="last_activity_time" not-null="true">
+		<type name="timestamptz" length="0"/>
+	</column>
+	<column name="key">
+		<type name="varchar" length="512"/>
+	</column>
+	<column name="more">
+		<type name="jsonb" length="0"/>
+	</column>
+	<column name="last_mod_by" not-null="true">
+		<type name="varchar" length="100"/>
+	</column>
+	<column name="last_mod_time" not-null="true" default-value="now()">
+		<type name="timestamptz" length="0"/>
+	</column>
+	<constraint name="sessions_pk" type="pk-constr" table="people.sessions">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="sessions_constr_status" type="ck-constr" table="people.sessions">
+			<expression><![CDATA[status in ('active', 'suspended', 'cancelled', 'blocked')]]></expression>
+	</constraint>
+
+	<customidxs object-type="column">
+		<object name="identities_id" index="1"/>
+	</customidxs>
+
+	<customidxs object-type="constraint">
+		<object name="identities_fk" index="1"/>
+	</customidxs>
+</table>
+
+<relationship name="users_has_many_wallets" type="rel1n" layers="0"
+	 src-col-pattern="{st}_{sc}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#a448dd"
+	 src-table="people.users"
+	 dst-table="economy.wallets"
+	 src-required="false" dst-required="false">
+	<label ref-type="name-label">
+		<position x="171.378" y="36.8853"/>
+	</label>
+</relationship>
+
+<relationship name="currencies_has_many_prices" type="rel1n" layers="0"
+	 src-col-pattern="{st}_{sc}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#7196b4"
+	 src-table="economy.currencies"
+	 dst-table="economy.prices"
+	 src-required="false" dst-required="false">
+	<label ref-type="name-label">
+		<position x="63.5343" y="15.219"/>
+	</label>
+</relationship>
+
+<relationship name="exchanges_has_many_prices" type="rel1n" layers="0"
+	 src-col-pattern="{st}_{sc}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#f55b5d"
+	 src-table="economy.exchanges"
+	 dst-table="economy.prices"
+	 src-required="true" dst-required="false">
+	<label ref-type="name-label">
+		<position x="81.5447" y="-3.58829"/>
+	</label>
+</relationship>
+
+<relationship name="markets_has_many_transactions" type="rel1n" layers="0"
+	 src-col-pattern="{st}_{sc}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#1d24a5"
+	 src-table="economy.markets"
+	 dst-table="economy.sales"
+	 src-required="true" dst-required="false">
+	<label ref-type="name-label">
+		<position x="1.08374" y="-0.958641"/>
+	</label>
+</relationship>
+
+<index name="sales_fkidx_markets" table="economy.sales"
+	 concurrent="false" unique="false" fast-update="false" buffering="false"
+	 index-type="btree" factor="0">
+		<idxelement use-sorting="false">
+			<column name="markets_id"/>
+		</idxelement>
+</index>
+
+<index name="prices_fkidx_exchanges" table="economy.prices"
+	 concurrent="false" unique="false" fast-update="false" buffering="false"
+	 index-type="btree" factor="0">
+		<idxelement use-sorting="false">
+			<column name="exchanges_id"/>
+		</idxelement>
+</index>
+
+<index name="wallets_fk_users_idx" table="economy.wallets"
+	 concurrent="false" unique="false" fast-update="false" buffering="false"
+	 index-type="btree" factor="0">
+		<idxelement use-sorting="false">
+			<column name="users_id"/>
+		</idxelement>
+</index>
+
+<table name="collections" layers="0" collapse-mode="2" pagination="true" attribs-page="0" ext-attribs-page="0" max-obj-count="9" z-value="0">
+	<schema name="people"/>
+	<role name="cryptoapi"/>
+	<position x="2840" y="1640"/>
+	<column name="id" not-null="true" default-value="encode(gen_random_bytes(6), 'hex');">
+		<type name="varchar" length="12"/>
+	</column>
+	<column name="name" not-null="true">
+		<type name="varchar" length="100"/>
+	</column>
+	<column name="abbrev">
+		<type name="varchar" length="20"/>
+	</column>
+	<column name="description">
+		<type name="text" length="0"/>
+	</column>
+	<column name="endpoints">
+		<type name="jsonb" length="0"/>
+		<comment><![CDATA[object {foo: bar, foo2: bar2, ...} of related URLs]]></comment>
+	</column>
+	<column name="more">
+		<type name="jsonb" length="0"/>
+	</column>
+	<column name="last_mod_by" not-null="true">
+		<type name="varchar" length="100"/>
+	</column>
+	<column name="last_mod_time" not-null="true" default-value="now()">
+		<type name="timestamptz" length="0"/>
+	</column>
+	<constraint name="collections_pk" type="pk-constr" table="people.collections">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<relationship name="collections_has_many_tokens" type="rel1n" layers="0"
+	 src-col-pattern="{st}_{sc}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#816213"
+	 src-table="people.collections"
+	 dst-table="economy.assets"
+	 src-required="true" dst-required="false">
+	<label ref-type="name-label">
+		<position x="0" y="0"/>
+	</label>
+</relationship>
+
+<index name="assets_fkidx_collections" table="economy.assets"
+	 concurrent="false" unique="false" fast-update="false" buffering="false"
+	 index-type="btree" factor="0">
+		<idxelement use-sorting="false">
+			<column name="collections_id"/>
+		</idxelement>
+</index>
+
+<table name="contacts" layers="0" collapse-mode="2" max-obj-count="9" z-value="0">
+	<schema name="people"/>
+	<role name="cryptoapi"/>
+	<position x="2820" y="980"/>
+	<column name="id" not-null="true" default-value="encode(gen_random_bytes(6), 'hex');">
+		<type name="varchar" length="12"/>
+	</column>
+	<column name="nickname">
+		<type name="varchar" length="100"/>
+	</column>
+	<column name="email">
+		<type name="varchar" length="100"/>
+	</column>
+	<column name="more">
+		<type name="jsonb" length="0"/>
+	</column>
+	<column name="last_mod_by" not-null="true">
+		<type name="varchar" length="100"/>
+	</column>
+	<column name="last_mod_time" not-null="true" default-value="now()">
+		<type name="timestamptz" length="0"/>
+	</column>
+	<constraint name="contacts_pk" type="pk-constr" table="people.contacts">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+
+	<customidxs object-type="column">
+		<object name="collections_id" index="2"/>
+		<object name="users_id" index="1"/>
+	</customidxs>
+
+	<customidxs object-type="constraint">
+		<object name="collections_fk" index="1"/>
+		<object name="users_fk" index="2"/>
+	</customidxs>
+</table>
+
+<relationship name="collections_has_many_contacts" type="rel1n" layers="0"
+	 src-col-pattern="{st}_{sc}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#cf042e"
+	 src-table="people.collections"
+	 dst-table="people.contacts"
+	 src-required="true" dst-required="false">
+	<label ref-type="name-label">
+		<position x="53.8216" y="-21.7265"/>
+	</label>
+</relationship>
+
+<relationship name="users_has_many_contacts" type="rel1n" layers="0"
+	 src-col-pattern="{st}_{sc}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#8b5181"
+	 src-table="people.users"
+	 dst-table="people.contacts"
+	 src-required="true" dst-required="false"/>
+
+<index name="contacts_fk_users_idx" table="people.contacts"
+	 concurrent="false" unique="false" fast-update="false" buffering="false"
+	 index-type="btree" factor="0">
+		<idxelement use-sorting="false">
+			<column name="users_id"/>
+		</idxelement>
+</index>
+
+<index name="contacts_fk_collections_idx" table="people.contacts"
+	 concurrent="false" unique="false" fast-update="false" buffering="false"
+	 index-type="btree" factor="0">
+		<idxelement use-sorting="false">
+			<column name="collections_id"/>
+		</idxelement>
+</index>
+
+<table name="collection_media" layers="0" collapse-mode="2" max-obj-count="12" z-value="0">
+	<schema name="people"/>
+	<role name="cryptoapi"/>
+	<position x="3480" y="1340"/>
+	<column name="id" not-null="true" default-value="encode(gen_random_bytes(6), 'hex');">
+		<type name="varchar" length="12"/>
+	</column>
+	<column name="name" not-null="true">
+		<type name="varchar" length="100"/>
+		<comment><![CDATA[ex: name of the group on Discord]]></comment>
+	</column>
+	<column name="abbrev">
+		<type name="varchar" length="20"/>
+	</column>
+	<column name="description">
+		<type name="text" length="0"/>
+	</column>
+	<column name="endpoints">
+		<type name="jsonb" length="0"/>
+		<comment><![CDATA[object {foo: bar, foo2: bar2, ...} of related URLs]]></comment>
+	</column>
+	<column name="more">
+		<type name="jsonb" length="0"/>
+	</column>
+	<column name="last_mod_by" not-null="true">
+		<type name="varchar" length="100"/>
+	</column>
+	<column name="last_mod_time" not-null="true" default-value="now()">
+		<type name="timestamptz" length="0"/>
+	</column>
+	<constraint name="collection_platforms_pk" type="pk-constr" table="people.collection_media">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+
+	<customidxs object-type="column">
+		<object name="collections_id" index="1"/>
+		<object name="media_id" index="2"/>
+	</customidxs>
+
+	<customidxs object-type="constraint">
+		<object name="collections_fk" index="1"/>
+		<object name="media_fk" index="2"/>
+	</customidxs>
+</table>
+
+<relationship name="collections_has_many_collection_platforms" type="rel1n" layers="0"
+	 src-col-pattern="{st}_{sc}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#38c278"
+	 src-table="people.collections"
+	 dst-table="people.collection_media"
+	 src-required="true" dst-required="false"/>
+
+<relationship name="platforms_has_many_collection_platforms" type="rel1n" layers="0"
+	 src-col-pattern="{st}_{sc}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#96c91d"
+	 src-table="people.media"
+	 dst-table="people.collection_media"
+	 src-required="true" dst-required="false"/>
+
+<index name="collection_platforms_fk_platforms_idx" table="people.collection_media"
+	 concurrent="false" unique="false" fast-update="false" buffering="false"
+	 index-type="btree" factor="0">
+		<idxelement use-sorting="false">
+			<column name="media_id"/>
+		</idxelement>
+</index>
+
+<index name="collection_platforms_fk_collections_idx" table="people.collection_media"
+	 concurrent="false" unique="false" fast-update="false" buffering="false"
+	 index-type="btree" factor="0">
+		<idxelement use-sorting="false">
+			<column name="collections_id"/>
+		</idxelement>
+</index>
+
+<relationship name="users_has_many_identities" type="rel1n" layers="0"
+	 src-col-pattern="{st}_{sc}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#70c4a3"
+	 src-table="people.users"
+	 dst-table="people.identities"
+	 src-required="true" dst-required="false">
+	<label ref-type="name-label">
+		<position x="0" y="0"/>
+	</label>
+</relationship>
+
+<relationship name="identities_has_many_sessions" type="rel1n" layers="0"
+	 src-col-pattern="{st}_{sc}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#cb3610"
+	 src-table="people.identities"
+	 dst-table="people.sessions"
+	 src-required="true" dst-required="false">
+	<label ref-type="name-label">
+		<position x="0" y="0"/>
+	</label>
+</relationship>
+
+<table name="asset_totals" layers="0" collapse-mode="2" max-obj-count="8" z-value="0">
+	<schema name="economy"/>
+	<role name="cryptoapi"/>
+	<position x="2140" y="1100"/>
+	<column name="id" not-null="true" default-value="encode(gen_random_bytes(6), 'hex');">
+		<type name="varchar" length="12"/>
+	</column>
+	<column name="total">
+		<type name="decimal" length="18" precision="9"/>
+	</column>
+	<column name="more">
+		<type name="jsonb" length="0"/>
+	</column>
+	<column name="last_mod_by" not-null="true">
+		<type name="varchar" length="100"/>
+	</column>
+	<column name="last_mod_time" not-null="true" default-value="now()">
+		<type name="timestamptz" length="0"/>
+	</column>
+	<constraint name="asset_totals_pk" type="pk-constr" table="economy.asset_totals">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+
+	<customidxs object-type="column">
+		<object name="assets_id" index="2"/>
+		<object name="wallets_id" index="1"/>
+	</customidxs>
+
+	<customidxs object-type="constraint">
+		<object name="assets_fk" index="1"/>
+		<object name="wallets_fk" index="2"/>
+	</customidxs>
+</table>
+
+<relationship name="assets_has_many_asset_totals" type="rel1n" layers="0"
+	 src-col-pattern="{st}_{sc}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#549004"
+	 src-table="economy.assets"
+	 dst-table="economy.asset_totals"
+	 src-required="true" dst-required="false">
+	<label ref-type="name-label">
+		<position x="96.1504" y="17.1735"/>
+	</label>
+</relationship>
+
+<relationship name="wallets_has_many_asset_totals" type="rel1n" layers="0"
+	 src-col-pattern="{st}_{sc}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#763519"
+	 src-table="economy.wallets"
+	 dst-table="economy.asset_totals"
+	 src-required="true" dst-required="false"/>
+
+<table name="currency_totals" layers="0" collapse-mode="2" max-obj-count="8" z-value="0">
+	<schema name="economy"/>
+	<role name="cryptoapi"/>
+	<position x="2080" y="380"/>
+	<column name="id" not-null="true" default-value="encode(gen_random_bytes(6), 'hex');">
+		<type name="varchar" length="12"/>
+	</column>
+	<column name="wallets_id" alias="wallets_id" not-null="true">
+		<type name="varchar" length="12"/>
+	</column>
+	<column name="total">
+		<type name="decimal" length="18" precision="9"/>
+	</column>
+	<column name="more">
+		<type name="jsonb" length="0"/>
+	</column>
+	<column name="last_mod_by" not-null="true">
+		<type name="varchar" length="100"/>
+	</column>
+	<column name="last_mod_time" not-null="true" default-value="now()">
+		<type name="timestamptz" length="0"/>
+	</column>
+	<constraint name="currency_totals_pk" type="pk-constr" table="economy.currency_totals">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+
+	<customidxs object-type="column">
+		<object name="currencies_id" index="2"/>
+	</customidxs>
+
+	<customidxs object-type="constraint">
+		<object name="currencies_fk" index="2"/>
+	</customidxs>
+</table>
+
+<relationship name="currencies_has_many_currency_totals" type="rel1n" layers="0"
+	 src-col-pattern="{st}_{sc}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#d4b02f"
+	 src-table="economy.currencies"
+	 dst-table="economy.currency_totals"
+	 src-required="true" dst-required="false"/>
+
+<table name="buyers" layers="0" collapse-mode="2" max-obj-count="7" z-value="0">
+	<schema name="economy"/>
+	<role name="cryptoapi"/>
+	<position x="100" y="1340"/>
+	<column name="id" not-null="true" default-value="encode(gen_random_bytes(6), 'hex');">
+		<type name="varchar" length="12"/>
+	</column>
+	<column name="more">
+		<type name="jsonb" length="0"/>
+	</column>
+	<column name="last_mod_by" not-null="true">
+		<type name="varchar" length="100"/>
+	</column>
+	<column name="last_mod_time" not-null="true" default-value="now()">
+		<type name="timestamptz" length="0"/>
+	</column>
+	<constraint name="buyers_pk" type="pk-constr" table="economy.buyers">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+
+	<customidxs object-type="column">
+		<object name="sales_id" index="1"/>
+		<object name="wallet_entries_id" index="2"/>
+	</customidxs>
+
+	<customidxs object-type="constraint">
+		<object name="sales_fk" index="1"/>
+		<object name="wallet_entries_fk" index="2"/>
+	</customidxs>
+</table>
+
+<relationship name="sales_has_many_sellers" type="rel1n" layers="0"
+	 src-col-pattern="{st}_{sc}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#f94eb5"
+	 src-table="economy.sales"
+	 dst-table="economy.sellers"
+	 src-required="false" dst-required="false">
+	<label ref-type="name-label">
+		<position x="0" y="0"/>
+	</label>
+</relationship>
+
+<relationship name="sales_has_many_buyers" type="rel1n" layers="0"
+	 src-col-pattern="{st}_{sc}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#e8194a"
+	 src-table="economy.sales"
+	 dst-table="economy.buyers"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="wallet_entries_has_many_sellers" type="rel1n" layers="0"
+	 src-col-pattern="{st}_{sc}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#0b6131"
+	 src-table="economy.wallet_entries"
+	 dst-table="economy.sellers"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="wallet_entries_has_many_buyers" type="rel1n" layers="0"
+	 src-col-pattern="{st}_{sc}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#2549f8"
+	 src-table="economy.wallet_entries"
+	 dst-table="economy.buyers"
+	 src-required="false" dst-required="false">
+	<label ref-type="name-label">
+		<position x="0" y="0"/>
+	</label>
+</relationship>
+
+<index name="sellers_fkidx_wallet_entries" table="economy.sellers"
+	 concurrent="false" unique="false" fast-update="false" buffering="false"
+	 index-type="btree" factor="0">
+		<idxelement use-sorting="false">
+			<column name="wallet_entries_id"/>
+		</idxelement>
+</index>
+
+<index name="sellers_fkidx_sales" table="economy.sellers"
+	 concurrent="false" unique="false" fast-update="false" buffering="false"
+	 index-type="btree" factor="0">
+		<idxelement use-sorting="false">
+			<column name="sales_id"/>
+		</idxelement>
+</index>
+
+<index name="buyers_fkidx_wallet_entries" table="economy.buyers"
+	 concurrent="false" unique="false" fast-update="false" buffering="false"
+	 index-type="btree" factor="0">
+		<idxelement use-sorting="false">
+			<column name="wallet_entries_id"/>
+		</idxelement>
+</index>
+
+<index name="buyers_fkidx_sales" table="economy.buyers"
+	 concurrent="false" unique="false" fast-update="false" buffering="false"
+	 index-type="btree" factor="0">
+		<idxelement use-sorting="false">
+			<column name="sales_id"/>
+		</idxelement>
+</index>
+
+<relationship name="wallets_has_many_wallet_entries" type="rel1n" layers="0"
+	 src-col-pattern="{st}_{sc}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#680e04"
+	 src-table="economy.wallets"
+	 dst-table="economy.wallet_entries"
+	 src-required="true" dst-required="false">
+	<label ref-type="name-label">
+		<position x="0" y="0"/>
+	</label>
+</relationship>
+
+<index name="wallet_entries_fkidx_wallets" table="economy.wallet_entries"
+	 concurrent="false" unique="false" fast-update="false" buffering="false"
+	 index-type="btree" factor="0">
+		<idxelement use-sorting="false">
+			<column name="wallets_id"/>
+		</idxelement>
+</index>
+
+<index name="prices_fkidx_currencies" table="economy.prices"
+	 concurrent="false" unique="false" fast-update="false" buffering="false"
+	 index-type="btree" factor="0">
+		<idxelement use-sorting="false">
+			<column name="currencies_id"/>
+		</idxelement>
+</index>
+
+<table name="media_identities" layers="0" collapse-mode="2" max-obj-count="9" z-value="0">
+	<schema name="people"/>
+	<role name="cryptoapi"/>
+	<position x="4240" y="1000"/>
+	<column name="id" not-null="true" default-value="encode(gen_random_bytes(6), 'hex');">
+		<type name="varchar" length="12"/>
+	</column>
+	<column name="handle" not-null="true">
+		<type name="varchar" length="100"/>
+	</column>
+	<column name="endpoints">
+		<type name="jsonb" length="0"/>
+		<comment><![CDATA[object {foo: bar, foo2: bar2, ...} of related URLs]]></comment>
+	</column>
+	<column name="more">
+		<type name="jsonb" length="0"/>
+	</column>
+	<column name="last_mod_by" not-null="true">
+		<type name="varchar" length="100"/>
+	</column>
+	<column name="last_mod_time" not-null="true" default-value="now()">
+		<type name="timestamptz" length="0"/>
+	</column>
+	<constraint name="media_identities_pk" type="pk-constr" table="people.media_identities">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+
+	<customidxs object-type="column">
+		<object name="identities_id" index="1"/>
+		<object name="media_id" index="2"/>
+	</customidxs>
+
+	<customidxs object-type="constraint">
+		<object name="identities_fk" index="2"/>
+		<object name="media_fk" index="1"/>
+	</customidxs>
+</table>
+
+<relationship name="media_has_many_media_identities" type="rel1n" layers="0"
+	 src-col-pattern="{st}_{sc}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#0da862"
+	 src-table="people.media"
+	 dst-table="people.media_identities"
+	 src-required="true" dst-required="false">
+	<label ref-type="name-label">
+		<position x="17.9563" y="-19.1265"/>
+	</label>
+</relationship>
+
+<relationship name="identities_has_many_media_identities" type="rel1n" layers="0"
+	 src-col-pattern="{st}_{sc}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#344de0"
+	 src-table="people.identities"
+	 dst-table="people.media_identities"
+	 src-required="true" dst-required="false"/>
+
+<index name="identities_fkidx_users" table="people.identities"
+	 concurrent="false" unique="false" fast-update="false" buffering="false"
+	 index-type="btree" factor="0">
+		<idxelement use-sorting="false">
+			<column name="users_id"/>
+		</idxelement>
+</index>
+
+<index name="sessions_idx_last_active" table="people.sessions"
+	 concurrent="false" unique="false" fast-update="false" buffering="false"
+	 index-type="btree" factor="0">
+		<idxelement use-sorting="true" nulls-first="false" asc-order="false">
+			<column name="last_activity_time"/>
+		</idxelement>
+</index>
+
+<index name="sessions_idx_key" table="people.sessions"
+	 concurrent="false" unique="false" fast-update="false" buffering="false"
+	 index-type="btree" factor="0">
+		<idxelement use-sorting="false">
+			<column name="key"/>
+		</idxelement>
+</index>
+
+<textbox name="cryptoconcept_desc" layers="0" z-value="0" font-size="11">
+	<position x="100" y="40"/>
+	<comment><![CDATA[[ cryptoconcept database ]
+
+Database sample kindly provided by Peter Pierce at truenorth.us.]]></comment>
+</textbox>
+
+<constraint name="currency_totals_fk_wallets" type="fk-constr" alias="wallets_fk" comparison-type="MATCH FULL"
+	 upd-action="CASCADE" del-action="RESTRICT" ref-table="economy.wallets" table="economy.currency_totals">
+	<columns names="wallets_id" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<relationship name="rel_asset_totals_cp_wallets" type="relfk" layers="0"
+	 custom-color="#1c38f0"
+	 src-table="economy.currency_totals"
+	 dst-table="economy.wallets" reference-fk="currency_totals_fk_wallets"
+	 src-required="false" dst-required="true">
+	<label ref-type="name-label">
+		<position x="0" y="0"/>
+	</label>
+</relationship>
+
+</dbmodel>
