@@ -406,6 +406,7 @@ void ModelExportForm::selectDataDictMode()
 	}
 	else
 	{
+		dict_file_sel->setDefaultSuffix("");
 		dict_file_sel->setFileMode(QFileDialog::Directory);
 		dict_file_sel->setAcceptMode(QFileDialog::AcceptOpen);
 	}
@@ -422,6 +423,7 @@ void ModelExportForm::selectSQLExportMode()
 	}
 	else
 	{
+		sql_file_sel->setDefaultSuffix("");
 		sql_file_sel->setAcceptMode(QFileDialog::AcceptOpen);
 		sql_file_sel->setFileMode(QFileDialog::Directory);
 	}
