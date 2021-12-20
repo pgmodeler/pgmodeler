@@ -81,8 +81,6 @@ void FileSelectorWidget::setFileMode(QFileDialog::FileMode file_mode)
 	// Forcing the ExistingFile (single file selection) if multiple file selection is provided
 	if(file_mode == QFileDialog::ExistingFiles)
 		file_mode = QFileDialog::ExistingFile;
-	else if(file_mode == QFileDialog::Directory)
-		file_mode = QFileDialog::DirectoryOnly;
 
 	file_dlg.setFileMode(file_mode);
 	validateSelectedFile();
@@ -212,13 +210,13 @@ void FileSelectorWidget::validateSelectedFile()
 
 	if(!filename_edt->text().isEmpty())
 	{
-		if(fi.exists() && fi.isDir() && file_dlg.fileMode() != QFileDialog::DirectoryOnly)
+		if(fi.exists() && fi.isDir() && file_dlg.fileMode() != QFileDialog::Directory)
 			warn_ico_lbl->setToolTip(tr("The provided path is not a file!"));
-		else if(fi.exists() && fi.isFile() && file_dlg.fileMode() == QFileDialog::DirectoryOnly)
+		else if(fi.exists() && fi.isFile() && file_dlg.fileMode() == QFileDialog::Directory)
 			warn_ico_lbl->setToolTip(tr("The provided path is not a directory!"));
 		else if(!fi.exists() && file_dlg.fileMode() != QFileDialog::AnyFile)
 		{
-			if(file_dlg.fileMode() == QFileDialog::DirectoryOnly)
+			if(file_dlg.fileMode() == QFileDialog::Directory)
 				warn_ico_lbl->setToolTip(tr("No such directory!"));
 			else
 				warn_ico_lbl->setToolTip(tr("No such file!"));
