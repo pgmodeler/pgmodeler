@@ -31,9 +31,6 @@ ModelExportForm::ModelExportForm(QWidget *parent, Qt::WindowFlags f) : QDialog(p
 
 	sql_file_sel = new FileSelectorWidget(this);
 	sql_file_sel->setFileDialogTitle(tr("Export model to SQL file"));
-	sql_file_sel->setMimeTypeFilters({"application/sql", "application/octet-stream"});
-	sql_file_sel->setDefaultSuffix("sql");
-	sql_file_sel->setAcceptMode(QFileDialog::AcceptSave);
 	export_to_file_grid->addWidget(sql_file_sel, 1, 2);
 
 	img_file_sel = new FileSelectorWidget(this);
@@ -43,9 +40,6 @@ ModelExportForm::ModelExportForm(QWidget *parent, Qt::WindowFlags f) : QDialog(p
 
 	dict_file_sel = new FileSelectorWidget(this);
 	dict_file_sel->setFileDialogTitle(tr("Export model to data dictionary"));
-	dict_file_sel->setMimeTypeFilters({"text/html", "application/octet-stream"});
-	dict_file_sel->setDefaultSuffix("html");
-	dict_file_sel->setAcceptMode(QFileDialog::AcceptSave);
 	export_to_dict_grid->addWidget(dict_file_sel, 1, 2, 1, 5);
 
 	htmlitem_del=new HtmlItemDelegate(this);
@@ -127,6 +121,7 @@ ModelExportForm::ModelExportForm(QWidget *parent, Qt::WindowFlags f) : QDialog(p
 
 	selectImageFormat();
 	selectDataDictMode();
+	selectSQLExportMode();
 }
 
 void ModelExportForm::setLowVerbosity(bool value)
@@ -403,15 +398,33 @@ void ModelExportForm::selectImageFormat()
 void ModelExportForm::selectDataDictMode()
 {
 	if(dict_standalone_rb->isChecked())
+	{
+		dict_file_sel->setMimeTypeFilters({"text/html", "application/octet-stream"});
+		dict_file_sel->setDefaultSuffix("html");
+		dict_file_sel->setAcceptMode(QFileDialog::AcceptSave);
 		dict_file_sel->setFileMode(QFileDialog::AnyFile);
+	}
 	else
+	{
+		dict_file_sel->setDefaultSuffix("");
 		dict_file_sel->setFileMode(QFileDialog::Directory);
+		dict_file_sel->setAcceptMode(QFileDialog::AcceptOpen);
+	}
 }
 
 void ModelExportForm::selectSQLExportMode()
 {
 	if(sql_standalone_rb->isChecked())
+	{
+		sql_file_sel->setMimeTypeFilters({"application/sql", "application/octet-stream"});
+		sql_file_sel->setDefaultSuffix("sql");
 		sql_file_sel->setFileMode(QFileDialog::AnyFile);
+		sql_file_sel->setAcceptMode(QFileDialog::AcceptSave);
+	}
 	else
+	{
+		sql_file_sel->setDefaultSuffix("");
+		sql_file_sel->setAcceptMode(QFileDialog::AcceptOpen);
 		sql_file_sel->setFileMode(QFileDialog::Directory);
+	}
 }
