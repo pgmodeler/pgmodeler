@@ -14,6 +14,7 @@ v0.9.4
 * [Fix] Minor fix in deployment script to support new libicui versions.
 * [Fix] Minor fix in order to set read/write permissions when copying configuration files with read-only permissions.
 * [Fix] Minor fix in CLI to avoid the usage of '-platform offscreen' when calling the application.
+* [Fix] Fixed a bug in file selectors on ModelExportForm that was not allowing to select output folders on Windows and macOs. 
 
 v0.9.4-beta1
 ------
