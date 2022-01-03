@@ -81,8 +81,8 @@ DEFINES+=BUILDDATE=\\\"$${BUILDDATE}\\\"
 # The values of each variable changes between supported platforms and are describe as follow
 
 
-# Linux custom variables settings
-linux {
+# UNIX custom variables settings
+unix:!macx {
   CONFIG += x11
 
   # If the AppImage generation option is set
