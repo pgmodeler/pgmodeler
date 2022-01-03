@@ -17,7 +17,8 @@ unix|windows: LIBS += $$LIBGUI_LIB \
 		      $$LIBCONNECTOR_LIB \
 		      $$LIBCORE_LIB \
 		      $$LIBPARSERS_LIB \
-		      $$LIBUTILS_LIB
+		      $$LIBUTILS_LIB \
+		      $$QMAKE_LIBS_EXECINFO
 
 INCLUDEPATH += $$LIBGUI_INC \
 	       $$LIBCANVAS_INC \
