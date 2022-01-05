@@ -927,7 +927,7 @@ void PgModelerCliApp::extractObjectXML()
 			//[,]OUT [schema].[type]
 			out_param=QRegExp(QString("(,)?(OUT )([a-z]|[0-9]|(\\.)|(\\_)|(\\-)|( )|(\\[)|(\\])|(&quot;))+((\\()([0-9])+(\\)))?"));
 	int start=-1, end=-1;
-	bool open_tag=false, close_tag=false, is_rel=false, short_tag=false, end_extract_rel;
+	bool open_tag=false, close_tag=false, is_rel=false, short_tag=false, end_extract_rel=false, is_change_log=false;
 
 	printMessage(tr("Extracting objects' XML..."));
 
@@ -1004,6 +1004,21 @@ void PgModelerCliApp::extractObjectXML()
 		{
 			lin=ts.readLine();
 
+			/* Collecting changelog entries if present and storing in a separated buffer
+			 * so it can be restored in the fixed model during objects' reconstruction */
+			if(!is_change_log && lin.contains(TagExpr.arg(Attributes::Changelog)))
+				is_change_log = true;
+
+			if(is_change_log)
+			{
+				changelog.append(lin);
+
+				if(lin.contains(EndTagExpr.arg(Attributes::Changelog)))
+					is_change_log = false;
+				else
+					continue;
+			}
+
 			/*  Special case for empty tags like <language />, they will be converted to
 		  <language></language> in order to be correctly extracted further. Currently only language has this
 		  behaviour, so additional object may be added in the future. */
@@ -1019,7 +1034,6 @@ void PgModelerCliApp::extractObjectXML()
 		 to remove them if the current line contains a valid signature with parameters. */
 			else if(lin.contains(func_signature))
 				lin.remove(out_param);
-
 
 			if(is_rel && (((short_tag && lin.contains(QString("/>"))) ||
 										 (lin.contains(QString("[a-z]+")) && !containsRelAttributes(lin)))))
@@ -1304,6 +1318,24 @@ void PgModelerCliApp::recreateObjects()
 	{
 		printMessage(tr("** WARNING: Roles memberships were fixed but their creation order is not guaranteed!"));
 		printMessage(tr("            It may be necessary to run the fix tool again but now on the file `%1'.").arg(parsed_opts[Output]));
+	}
+
+	// Reconstructing the persisted change log if present
+	if(!changelog.isEmpty())
+	{
+		model->setPersistedChangelog(true);
+		xmlparser->loadXMLBuffer(changelog);
+
+		if(xmlparser->accessElement(XmlParser::ChildElement))
+		{
+			do
+			{
+				xmlparser->getElementAttributes(attribs);
+				model->addChangelogEntry(attribs[Attributes::Signature], attribs[Attributes::Type],
+																 attribs[Attributes::Action], attribs[Attributes::Date]);
+			}
+			while(xmlparser->accessElement(XmlParser::NextElement));
+		}
 	}
 }
 

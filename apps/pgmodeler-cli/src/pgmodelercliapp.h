@@ -118,6 +118,9 @@ class PgModelerCliApp: public Application {
 		 * This map is used to reconfigure the role memberships after all objects are created */
 		map<QString, QStringList> member_roles;
 
+		//! \brief Stores the changelog of the model that is being fixed to reproduce it in the output model
+		QString changelog;
+
 		static const QRegExp PasswordRegExp;
 		static const QString PasswordPlaceholder;
 
