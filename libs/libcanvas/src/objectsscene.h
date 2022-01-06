@@ -283,8 +283,12 @@ class ObjectsScene: public QGraphicsScene {
 		If the paramenter selected_only is true only selected objects will have the bounding rect calculated.
 		Currently this parameter is ignored when using seek_only_db_objs = false
 
+		If the parameter incl_layer_rects is true the layer rects (when visible) will be considered when calculating the items bounding rects.
+		This is useful only when determining the brect during exporting to graphics file avoiding cutting layer rects at the edges of the
+		resulting	image.
+
 		Note: using this method with seek_only_db_objs=true can be time expensive depending on the size of the model so use it wisely. */
-		QRectF itemsBoundingRect(bool seek_only_db_objs=false, bool selected_only = false);
+		QRectF itemsBoundingRect(bool seek_only_db_objs=false, bool selected_only = false, bool incl_layer_rects = false);
 
 		//! \brief Returns a vector containing all the page rects.
 		vector<QRectF> getPagesForPrinting(const QSizeF &paper_size, const QSizeF &margin, unsigned &h_page_cnt, unsigned &v_page_cnt);

@@ -639,7 +639,7 @@ void ObjectsScene::setSceneRect(const QRectF &rect)
 	QGraphicsScene::setSceneRect(0, 0, rect.width(), rect.height());
 }
 
-QRectF ObjectsScene::itemsBoundingRect(bool seek_only_db_objs, bool selected_only)
+QRectF ObjectsScene::itemsBoundingRect(bool seek_only_db_objs, bool selected_only, bool incl_layer_rects)
 {
 	if(!seek_only_db_objs)
 		return QGraphicsScene::itemsBoundingRect();
@@ -651,6 +651,8 @@ QRectF ObjectsScene::itemsBoundingRect(bool seek_only_db_objs, bool selected_onl
 		BaseObjectView *obj_view=nullptr;
 		QPointF pnt;
 		BaseGraphicObject *graph_obj=nullptr;
+		QFontMetricsF fm(LayerItem::getDefaultFont());
+		ObjectType obj_type;
 
 		for(auto &item : items)
 		{
@@ -662,9 +664,19 @@ QRectF ObjectsScene::itemsBoundingRect(bool seek_only_db_objs, bool selected_onl
 
 				if(graph_obj)
 				{
-					if(graph_obj->getObjectType()!=ObjectType::Relationship &&
-							graph_obj->getObjectType()!=ObjectType::BaseRelationship)
-						pnt=graph_obj->getPosition();
+					obj_type = graph_obj->getObjectType();
+
+					if(obj_type != ObjectType::Relationship && obj_type != ObjectType::BaseRelationship)
+					{
+						pnt = graph_obj->getPosition();
+
+						// Including the object's layer rects top-left dimension in the brect calculation (only for tables and textboxes)
+						if(incl_layer_rects && is_layer_rects_visible && obj_type != ObjectType::Schema)
+						{
+							pnt += QPointF(-LayerItem::LayerPadding * graph_obj->getLayersCount(),
+														 (is_layer_names_visible ? -fm.height() : -LayerItem::LayerPadding) * graph_obj->getLayersCount());
+						}
+					}
 					else
 						pnt=dynamic_cast<RelationshipView *>(obj_view)->__boundingRect().topLeft();
 
@@ -676,9 +688,17 @@ QRectF ObjectsScene::itemsBoundingRect(bool seek_only_db_objs, bool selected_onl
 
 					if(selected_only)
 					{
-						if(graph_obj->getObjectType()!=ObjectType::Relationship &&
-							 graph_obj->getObjectType()!=ObjectType::BaseRelationship)
+						if(obj_type != ObjectType::Relationship && obj_type != ObjectType::BaseRelationship)
+						{
 							pnt = pnt + dynamic_cast<BaseObjectView *>(obj_view)->boundingRect().bottomRight();
+
+							// Including the object's layer rects bottom-right dimension in the brect calculation (only for tables and textboxes)
+							if(incl_layer_rects && is_layer_rects_visible && obj_type != ObjectType::Schema)
+							{
+								pnt += QPointF(LayerItem::LayerPadding * graph_obj->getLayersCount(),
+															 LayerItem::LayerPadding * graph_obj->getLayersCount());
+							}
+						}
 						else
 							pnt = pnt +  dynamic_cast<RelationshipView *>(obj_view)->__boundingRect().bottomRight();
 
