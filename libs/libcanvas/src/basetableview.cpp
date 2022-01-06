@@ -39,11 +39,11 @@ BaseTableView::BaseTableView(BaseTable *base_tab) : BaseObjectView(base_tab)
 
 	ext_attribs=new QGraphicsItemGroup;
 	ext_attribs->setZValue(1);
-	ext_attribs->setFlag(QGraphicsItem::ItemClipsChildrenToShape);
+	//ext_attribs->setFlag(QGraphicsItem::ItemClipsChildrenToShape);
 
 	columns=new QGraphicsItemGroup;
 	columns->setZValue(1);
-	columns->setFlag(QGraphicsItem::ItemClipsChildrenToShape);
+	//columns->setFlag(QGraphicsItem::ItemClipsChildrenToShape);
 
 	tag_item = new TextPolygonItem;
 	tag_item->setZValue(3);
