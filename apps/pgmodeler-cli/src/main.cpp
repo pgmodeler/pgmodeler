@@ -35,8 +35,13 @@ int main(int argc, char **argv)
 	{
 		#ifdef Q_OS_LINUX
 			/* Workaround to make the CLI work on Linux systems without graphical interface.
+			 * In that case, we just check if there's a DISPLAY env var defined. If not defined
+			 * we force the usage of the "offscreen" plugin via QT_QPA_PLATFORM so the portions of
+			 * the application that contains GUI elements can work properly.
+			 *
 			 * Details at https://github.com/pgmodeler/pgmodeler/issues/1604 */
-			qputenv("QT_QPA_PLATFORM", "offscreen");
+			if(qgetenv("DISPLAY").isEmpty())
+				qputenv("QT_QPA_PLATFORM", "offscreen");
 		#endif
 
 		PgModelerCliApp pgmodeler_cli(argc, argv);

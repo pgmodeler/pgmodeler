@@ -247,17 +247,16 @@ PgModelerCliApp::PgModelerCliApp(int argc, char **argv) : Application(argc, argv
 				connect(model, SIGNAL(s_objectAdded(BaseObject *)), this, SLOT(handleObjectAddition(BaseObject *)));
 				connect(model, SIGNAL(s_objectRemoved(BaseObject *)), this, SLOT(handleObjectRemoval(BaseObject *)));
 
-				//Creates a scene to
-				scene=new ObjectsScene;
-				scene->setParent(this);
-				scene->setSceneRect(QRectF(0,0,2000,2000));
-
 				//Load the general configuration including grid and delimiter options
 				GeneralConfigWidget conf_wgt;
 				conf_wgt.loadConfiguration();
 
 				//Load the objects styles
 				BaseObjectView::loadObjectsStyle();
+
+				scene=new ObjectsScene;
+				scene->setParent(this);
+				scene->setSceneRect(QRectF(0,0,2000,2000));
 			}
 
 			if(parsed_opts.count(ExportToDbms) || parsed_opts.count(ImportDb) || parsed_opts.count(Diff))
