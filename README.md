@@ -9,7 +9,7 @@ Building status
 Introduction
 ------------
 
-pgModeler - PostgreSQL Database Modeler - is an open-source data-modeling tool designed for PostgreSQL. No more DDL commands written by hand, let pgModeler do the job for you! This software reunites the concepts of entity-relationship diagrams and the features that PostgreSQL implements as extensions of SQL standards.
+pgModeler - PostgreSQL Database Modeler - is an open source data modeling tool designed for PostgreSQL. No more DDL commands written by hand, let pgModeler do the job for you! This software reunites the concepts of entity-relationship diagrams and the features that PostgreSQL implements as extensions of SQL standards.
 
 Please, let me know how pgModeler is working on your system! Help improving this project, give your feedback about the software or report any bug at [Issues](https://github.com/pgmodeler/pgmodeler/issues) page. Additionally, follow pgModeler on [Twitter](https://twitter.com/pgmodeler) and be up-to-date with new features, fixes and releases.
 
