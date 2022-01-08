@@ -11,7 +11,14 @@ Introduction
 
 pgModeler - PostgreSQL Database Modeler - is an open-source data-modeling tool designed for PostgreSQL. No more DDL commands written by hand, let pgModeler do the job for you! This software reunites the concepts of entity-relationship diagrams and the features that PostgreSQL implements as extensions of SQL standards.
 
-Please, let me know how pgModeler is working on your system! Help improving this project, give your feedback about the software or report any bug at [Issues](https://github.com/pgmodeler/pgmodeler/issues) page. Additionally, follow pgModeler on [Facebook](https://www.facebook.com/pgmodeler) or [Twitter](https://twitter.com/pgmodeler) and be up-to-date with new features, fixes and releases.
+Please, let me know how pgModeler is working on your system! Help improving this project, give your feedback about the software or report any bug at [Issues](https://github.com/pgmodeler/pgmodeler/issues) page. Additionally, follow pgModeler on [Twitter](https://twitter.com/pgmodeler) and be up-to-date with new features, fixes and releases.
+
+Compiling/Installation
+----------------------
+
+For details about the installation process from source code, visit the [Installation](https://www.pgmodeler.io/support/installation) section. Now, if you don't want to compile pgModeler there are binaries available for purchase at [official site](http://www.pgmodeler.io/purchase).
+
+You might want to check out the [official plugin repository](https://github.com/pgmodeler/plugins) as well.
 
 Licensing
 ---------
@@ -25,19 +32,12 @@ See [LICENSE](https://github.com/pgmodeler/pgmodeler/blob/master/LICENSE) for de
 Donate to pgModeler
 -------------------
 
-Much effort, coffee, chocolate, time and knowledge is being devoted to this project so that a reliable and constantly improved product can be delivered to the community. If you liked pgModeler and think it deserves a contribution, please donate any amount (via PayPal) at [project's official site](https://pgmodeler.io).
+Much effort, coffee, chocolate, time and knowledge is being devoted to this project so that a reliable and constantly improved product can be delivered to the community. If you liked pgModeler and think it deserves a contribution, please donate any amount at [project's official site](https://pgmodeler.io).
 
 Developers and Reviewers wanted!
 --------------------------------
 
 pgModeler has reached a state where its developer cannot handle all the modifications and new features requests alone anymore. So if you know C++ and Qt and want to contribute with coding let me know! I'll be grateful for any help to the project!
-
-Compiling/Installation
-----------------------
-
-For details about the installation process from source code, visit the [Installation](https://www.pgmodeler.io/support/installation) section. If you don't want to compile pgModeler there are binaries available for purchase at [official site](http://www.pgmodeler.io/purchase).
-
-You might want to check out the [official plugin repository](https://github.com/pgmodeler/plugins) as well.
 
 Known Issues
 -----------
