@@ -1,19 +1,15 @@
-Building status
----------------
+![pgmodeler_readme_img](https://user-images.githubusercontent.com/2205476/148689123-4ed65f6f-f3c1-49f2-95e4-33baea60e8a5.png)
 
 [![Linux build](https://github.com/pgmodeler/pgmodeler/workflows/Linux%20build/badge.svg)](https://github.com/pgmodeler/pgmodeler/actions?query=workflow%3A%22Linux+build%22)
 [![Windows build](https://github.com/pgmodeler/pgmodeler/workflows/Windows%20build/badge.svg)](https://github.com/pgmodeler/pgmodeler/actions?query=workflow%3A%22Windows+build%22)
 [![macOs build](https://github.com/pgmodeler/pgmodeler/workflows/macOs%20build/badge.svg)](https://github.com/pgmodeler/pgmodeler/actions?query=workflow%3A%22macOs+build%22)
 
-
 Introduction
 ------------
 
-pgModeler - PostgreSQL Database Modeler - is an open-source data modeling tool designed for PostgreSQL. No more typing DDL commands. Let pgModeler do the work for you! This software unites the concepts of entity-relationship diagrams and the features that PostgreSQL implements as extensions of SQL standards.
+pgModeler - PostgreSQL Database Modeler - is an open-source data modeling tool designed for PostgreSQL. No more typing DDL commands. Let pgModeler do the work for you! This software unites the concepts of entity-relationship diagrams and the features that PostgreSQL implements as extensions of SQL standards. It also counts with a minimalist but functional database server administration module which allows the execution of any sort of SQL commands, database objects browsing, and data handling in a simple and intuitive UI. For more details about additional features, screenshots, and other useful information, please, visit the [project's official website](https://pgmodeler.io).
 
 Please let me know how pgModeler is working on your system. Help improve this project, give your feedback about the software or report any bugs on the [Issues](https://github.com/pgmodeler/pgmodeler/issues) page. Additionally, follow pgModeler on [Twitter](https://twitter.com/pgmodeler) and be up-to-date with new features, fixes, and releases.
-
-For more details about features, screenshots, and other useful information, please, visit the [project's official website](https://pgmodeler.io).
 
 Compiling/Installation
 ----------------------
