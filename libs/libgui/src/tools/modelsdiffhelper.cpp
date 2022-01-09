@@ -674,6 +674,7 @@ void ModelsDiffHelper::generateDiffInfo(unsigned diff_type, BaseObject *object, 
 					seq->setName(seq_name);
 					seq->setOwner(tab->getOwner());
 					seq->setSchema(tab->getSchema());
+					seq->setDefaultValues(col->getType().getAliasType());
 
 					//Configure an auxiliary column with the same values of the original one
 					(*aux_col)=(*col);
@@ -683,13 +684,19 @@ void ModelsDiffHelper::generateDiffInfo(unsigned diff_type, BaseObject *object, 
 					//Assigns the sequence to the column in order to configure the default value correctly
 					aux_col->setSequence(seq);
 
-					/* Creates a new ALTER info with the created column onlly if we don't need to reuse sequences
-					 * or if the sequence reusing is enabled but the type of the columns aren't equivalent or even
-					 * the types are equivalent but the sequences used by each columns aren't the same */
+					/* Creates a new ALTER info with the created column only if we don't need to reuse sequences or if one of the conditions is met:
+					 *
+					 * 1) if the sequence reusing is enabled but the type of the columns aren't equivalent
+					 * 2) the types of columns are equivalent but the sequences used by each columns aren't the same (different name)
+					 * 3) the original column (old_col) has not sequence assigned
+					 *
+					 * The ALTER info will change the columns type as well as define a the default value for the column
+					 * as being nextval(seq_name) */
 					if(!diff_opts[OptReuseSequences] ||
 						 (diff_opts[OptReuseSequences] &&
 							(!col->getType().getAliasType().isEquivalentTo(old_col->getType()) ||
-								(old_col->getSequence() && old_col->getSequence()->getSignature() != seq->getSignature()))))
+							 !old_col->getSequence() ||
+							 (old_col->getSequence() && old_col->getSequence()->getSignature() != seq->getSignature()))))
 					{
 						diff_info=ObjectsDiffInfo(ObjectsDiffInfo::AlterObject, aux_col, col);
 						diff_infos.push_back(diff_info);
