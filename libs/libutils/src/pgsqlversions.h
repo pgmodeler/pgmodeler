@@ -41,6 +41,7 @@ namespace PgSqlVersions {
 	PgSqlVersion110,
 	PgSqlVersion120,
 	PgSqlVersion130,
+	PgSqlVersion140,
 	DefaulVersion;
 
 	extern const QStringList AllVersions;
