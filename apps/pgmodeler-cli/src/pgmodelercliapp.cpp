@@ -1530,11 +1530,12 @@ void PgModelerCliApp::fixObjectAttributes(QString &obj_xml)
 		obj_xml.insert(end_idx + EndTagExpr.arg(Attributes::Expression).length() + 1, QString("\n\t</constraint>\n"));
 	}
 
-	//Remove the deprecated attribute hide-ext-attribs from <table> and <views>
+	//Replace the deprecated attribute hide-ext-attribs="false|true" from <table> and <views> by collapse-mode="0|1"
 	if(obj_xml.contains(TagExpr.arg(BaseObject::getSchemaName(ObjectType::Table))) ||
 		 obj_xml.contains(TagExpr.arg(BaseObject::getSchemaName(ObjectType::View))))
 	{
-		obj_xml.replace(QRegExp(AttributeExpr.arg(Attributes::HideExtAttribs)), "");
+		obj_xml.replace(QString("%1=\"false\"").arg(Attributes::HideExtAttribs), QString("%1=\"0\"").arg(Attributes::CollapseMode));
+		obj_xml.replace(QString("%1=\"true\"").arg(Attributes::HideExtAttribs), QString("%1=\"1\"").arg(Attributes::CollapseMode));
 	}
 
 	//Remove the usage of IN keyword in functions' signatures since it is the default if absent
