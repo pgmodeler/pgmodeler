@@ -723,7 +723,7 @@ vector<Constraint *> Relationship::getGeneratedConstraints()
 void Relationship::configureSearchAttributes()
 {
 	BaseRelationship::configureSearchAttributes();
-	search_attribs[Attributes::RelatedForeignKey] = fk_rel1n ? fk_rel1n->getName() : "";
+	search_attribs[Attributes::RelatedForeignKey] = fk_rel1n ? fk_rel1n->getSignature(true) : "";
 }
 
 TableObject *Relationship::getObject(unsigned obj_idx, ObjectType obj_type)

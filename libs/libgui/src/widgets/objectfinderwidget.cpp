@@ -500,6 +500,7 @@ void ObjectFinderWidget::updateObjectTable(QTableWidget *tab_wgt, vector<BaseObj
 			//Sixth column: object comment
 			if(tab_wgt->columnCount() > 5)
 			{				
+				attribs_map search_attribs = objs[i]->getSearchAttributes();
 				tab_item=(new_row ? new QTableWidgetItem : tab_wgt->item(lin_idx, 5));
 				fnt.setItalic(false);
 				tab_item->setFont(fnt);
@@ -507,7 +508,7 @@ void ObjectFinderWidget::updateObjectTable(QTableWidget *tab_wgt, vector<BaseObj
 				if(search_attr != Attributes::Name &&
 					 search_attr != Attributes::Schema &&
 					 search_attr != Attributes::Comment)
-					tab_item->setText(objs[i]->getSearchAttributes().at(search_attr));
+					tab_item->setText(search_attribs[search_attr]);
 				else
 					tab_item->setText(objs[i]->getComment());
 

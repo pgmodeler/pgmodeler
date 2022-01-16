@@ -410,7 +410,7 @@ void BaseRelationship::configureSearchAttributes()
 {
 	search_attribs[Attributes::SrcTable] = src_table->getSignature();
 	search_attribs[Attributes::DstTable] = dst_table->getSignature();
-	search_attribs[Attributes::RelatedForeignKey] = reference_fk ? reference_fk->getName() : "";
+	search_attribs[Attributes::RelatedForeignKey] = reference_fk ? reference_fk->getSignature(true) : "";
 	BaseGraphicObject::configureSearchAttributes();
 }
 

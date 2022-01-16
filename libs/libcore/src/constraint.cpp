@@ -695,7 +695,7 @@ void Constraint::configureSearchAttributes()
 		src_col_names.append(col->getName());
 
 	for(auto &col : ref_columns)
-		ref_col_names.append(col->getName());
+		ref_col_names.append(col->getSignature());
 
 	search_attribs[Attributes::SrcColumns] = src_col_names.join(", ");
 	search_attribs[Attributes::RefColumns] = ref_col_names.join(", ");
