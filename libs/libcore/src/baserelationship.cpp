@@ -424,14 +424,13 @@ bool BaseRelationship::canSimulateRelationship11()
 	if(rel_type != BaseRelationship::RelationshipFk)
 		return false;
 
-	bool fake_rel11 = false;
 	PhysicalTable *table = dynamic_cast<PhysicalTable *>(getTable(BaseRelationship::SrcTable));
 
 	if(table)
 	{
 		Constraint *constr = nullptr, *uq_constr = nullptr;
 
-		for(unsigned idx = 0; idx < table->getConstraintCount() && !fake_rel11; idx++)
+		for(unsigned idx = 0; idx < table->getConstraintCount(); idx++)
 		{
 			constr = table->getConstraint(idx);
 
@@ -442,17 +441,16 @@ bool BaseRelationship::canSimulateRelationship11()
 					uq_constr = table->getConstraint(idx1);
 
 					if(uq_constr->getConstraintType() == ConstraintType::Unique &&
-						 uq_constr->isColumnsExist(constr->getColumns(Constraint::SourceCols), Constraint::SourceCols))
+						 uq_constr->isColumnsExist(constr->getColumns(Constraint::SourceCols), Constraint::SourceCols, true))
 					{
-						fake_rel11 = true;
-						break;
+						return true;
 					}
 				}
 			}
 		}
 	}
 
-	return fake_rel11;
+	return false;
 }
 
 QString BaseRelationship::getCodeDefinition(unsigned def_type)

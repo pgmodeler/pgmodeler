@@ -112,17 +112,20 @@ bool Constraint::isColumnExists(Column *column, unsigned col_type)
 	return found;
 }
 
-bool Constraint::isColumnsExist(vector<Column *> columns, unsigned col_type)
+bool Constraint::isColumnsExist(vector<Column *> columns, unsigned col_type, bool strict_check)
 {
 	bool is_ref = false;
+	unsigned found_cols = 0;
 
 	for(auto &col : columns)
 	{
 		is_ref = isColumnExists(col, col_type);
-		if(!is_ref) break;
+		if(!strict_check && !is_ref) break;
+		if(strict_check) found_cols++;
 	}
 
-	return is_ref;
+	return (!strict_check && is_ref) ||
+					(strict_check && found_cols == getColumnCount(col_type));
 }
 
 bool Constraint::isColumnReferenced(Column *column, bool search_only_ref_cols)

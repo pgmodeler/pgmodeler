@@ -240,8 +240,11 @@ class Constraint: public TableObject{
 		The second parameter is useful to permit or not the search of column only on referenced columns list. */
 		bool isColumnReferenced(Column *column, bool search_only_ref_cols = false);
 
-		//! \brief Indicates whether the columns are referenced in internal column list
-		bool isColumnsExist(vector<Column *> columns, unsigned col_type);
+		/*! \brief Indicates whether the columns are referenced in internal column list
+		 * The parameter strict_check will cause the method to return true if and only if all the columns
+		 * provided in the list are in the constraint and the provided columns list has the same size as
+		 * the one in the constraint */
+		bool isColumnsExist(vector<Column *> columns, unsigned col_type, bool strict_check);
 
 		//! \brief Adds an exclude element to the constraint using an column (only exclude constraint)
 		void addExcludeElement(Column *column, Operator *oper, OperatorClass *op_class, bool use_sorting, bool asc_order, bool nulls_first);
