@@ -36,7 +36,7 @@
   </property>
   <property name="windowIcon">
    <iconset resource="../../res/resources.qrc">
-    <normaloff>:/icons/icons/pgsqlModeler48x48.png</normaloff>:/icons/icons/pgsqlModeler48x48.png</iconset>
+    <normaloff>:/icons/icons/pgmodeler_logo.png</normaloff>:/icons/icons/pgmodeler_logo.png</iconset>
   </property>
   <property name="autoFillBackground">
    <bool>true</bool>
@@ -108,7 +108,7 @@
          <enum>Qt::PlainText</enum>
         </property>
         <property name="pixmap">
-         <pixmap resource="../../res/resources.qrc">:/images/images/pgmodeler_logo.png</pixmap>
+         <pixmap resource="../../res/resources.qrc">:/icons/icons/pgmodeler_logo.png</pixmap>
         </property>
         <property name="scaledContents">
          <bool>true</bool>
