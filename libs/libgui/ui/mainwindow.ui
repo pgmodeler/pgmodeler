@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>1364</width>
-    <height>768</height>
+    <height>942</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -857,8 +857,8 @@
    </property>
    <property name="iconSize">
     <size>
-     <width>48</width>
-     <height>48</height>
+     <width>56</width>
+     <height>56</height>
     </size>
    </property>
    <property name="toolButtonStyle">
@@ -919,8 +919,8 @@
    </property>
    <property name="iconSize">
     <size>
-     <width>32</width>
-     <height>32</height>
+     <width>48</width>
+     <height>48</height>
     </size>
    </property>
    <property name="toolButtonStyle">

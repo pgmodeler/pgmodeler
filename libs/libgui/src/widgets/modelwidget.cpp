@@ -219,7 +219,7 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 
 	action_edit_data=new QAction(QIcon(GuiUtilsNs::getIconPath("editdata")), tr("Edit data"), this);
 
-	action_source_code=new QAction(QIcon(GuiUtilsNs::getIconPath("sqlcode")), tr("Source"), this);
+	action_source_code=new QAction(QIcon(GuiUtilsNs::getIconPath("sourcecode")), tr("Source"), this);
 	action_source_code->setShortcut(QKeySequence(tr("Alt+S")));
 	action_source_code->setToolTip(tr("Show object source code"));
 
@@ -308,7 +308,7 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 
 	action_remove_rel_points=new QAction(QIcon(GuiUtilsNs::getIconPath("removepoints")), tr("Remove points"), this);
 
-	action_enable_sql=new QAction(QIcon(GuiUtilsNs::getIconPath("sqlcode")), tr("Enable SQL"), this);
+	action_enable_sql=new QAction(QIcon(GuiUtilsNs::getIconPath("enablesql")), tr("Enable SQL"), this);
 	action_disable_sql=new QAction(QIcon(GuiUtilsNs::getIconPath("disablesql")), tr("Disable SQL"), this);
 
 	action_duplicate=new QAction(QIcon(GuiUtilsNs::getIconPath("duplicate")), tr("Duplicate"), this);
@@ -4157,7 +4157,7 @@ void ModelWidget::configureConstraintsMenu(TableObject *tab_obj)
 				submenu->addAction(action);
 
 				action=new QAction(dynamic_cast<QObject *>(submenu));
-				action->setIcon(QPixmap(GuiUtilsNs::getIconPath("sqlcode")));
+				action->setIcon(QPixmap(GuiUtilsNs::getIconPath("sourcecode")));
 				action->setText(tr("Source code"));
 				action->setData(QVariant::fromValue<void *>(dynamic_cast<BaseObject *>(constr)));
 				connect(action, SIGNAL(triggered(bool)), this, SLOT(showSourceCode()));

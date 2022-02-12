@@ -24,7 +24,7 @@ FileSelectorWidget::FileSelectorWidget(QWidget *parent) : QWidget(parent)
 	setupUi(this);
 	allow_filename_input = read_only = false;
 
-	file_dlg.setWindowIcon(QPixmap(GuiUtilsNs::getIconPath("pgsqlModeler48x48")));
+	file_dlg.setWindowIcon(QPixmap(GuiUtilsNs::getIconPath("pgmodeler_logo")));
 
 	filename_edt->setReadOnly(true);
 	filename_edt->installEventFilter(this);

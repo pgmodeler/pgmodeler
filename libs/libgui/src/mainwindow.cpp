@@ -1712,7 +1712,7 @@ void MainWindow::loadModel()
 	try
 	{
 		file_dlg.setNameFilter(tr("Database model (*.dbm);;All files (*.*)"));
-		file_dlg.setWindowIcon(QPixmap(GuiUtilsNs::getIconPath("pgsqlModeler48x48")));
+		file_dlg.setWindowIcon(QPixmap(GuiUtilsNs::getIconPath("pgmodeler_logo")));
 		file_dlg.setWindowTitle(tr("Load model"));
 		file_dlg.setFileMode(QFileDialog::ExistingFiles);
 		file_dlg.setAcceptMode(QFileDialog::AcceptOpen);

@@ -292,6 +292,7 @@
         <file>icons/ident.png</file>
         <file>icons/saveall.png</file>
         <file>icons/pgmodeler_logo.png</file>
+        <file>icons/enablesql.png</file>
     </qresource>
     <qresource prefix="/images">
         <file>images/brazil_flag.png</file>
