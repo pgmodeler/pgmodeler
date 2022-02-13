@@ -21,7 +21,7 @@
 \class BaseGraphicObject
 \brief This is a basic implementation to control graphical objects such as tables, relationships, textboxes, views.
 The full graphical representation of these objects are made in an separated layer
-this is treated in the BaseObjectView class on libobjrenderer library
+this is treated in the BaseObjectView class on libcanvas library
 \note <strong>Creation date:</strong> 17/09/2006
 */
 
