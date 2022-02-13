@@ -134,7 +134,6 @@
         <file>icons/genericsql_grp.png</file>
         <file>icons/grid.png</file>
         <file>icons/help.png</file>
-        <file>icons/help_big.png</file>
         <file>icons/ignore.png</file>
         <file>icons/import.png</file>
         <file>icons/imprimir.png</file>
@@ -146,7 +145,6 @@
         <file>icons/language.png</file>
         <file>icons/language_grp.png</file>
         <file>icons/last_session.png</file>
-        <file>icons/last_session_big.png</file>
         <file>icons/layers.png</file>
         <file>icons/layervisibility.png</file>
         <file>icons/lesszoom.png</file>
@@ -167,7 +165,6 @@
         <file>icons/movetoschema.png</file>
         <file>icons/moveup.png</file>
         <file>icons/new.png</file>
-        <file>icons/new_big.png</file>
         <file>icons/newobject.png</file>
         <file>icons/newtab.png</file>
         <file>icons/next.png</file>
@@ -177,7 +174,6 @@
         <file>icons/opclass.png</file>
         <file>icons/opclass_grp.png</file>
         <file>icons/open.png</file>
-        <file>icons/open_big.png</file>
         <file>icons/operator.png</file>
         <file>icons/operator_grp.png</file>
         <file>icons/opfamily.png</file>
@@ -202,7 +198,6 @@
         <file>icons/question.png</file>
         <file>icons/quickactions.png</file>
         <file>icons/random.png</file>
-        <file>icons/recent_big.png</file>
         <file>icons/redo.png</file>
         <file>icons/reference.png</file>
         <file>icons/referenced.png</file>
@@ -234,7 +229,6 @@
         <file>icons/rule_grp.png</file>
         <file>icons/run.png</file>
         <file>icons/runsqldb.png</file>
-        <file>icons/samples_big.png</file>
         <file>icons/save.png</file>
         <file>icons/saveas.png</file>
         <file>icons/schema.png</file>
@@ -293,6 +287,8 @@
         <file>icons/saveall.png</file>
         <file>icons/pgmodeler_logo.png</file>
         <file>icons/enablesql.png</file>
+        <file>icons/print.png</file>
+        <file>icons/samples.png</file>
     </qresource>
     <qresource prefix="/images">
         <file>images/brazil_flag.png</file>

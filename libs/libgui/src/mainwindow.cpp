@@ -28,7 +28,7 @@ int MainWindow::GeneralActionsCount=0;
 MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(parent, flags)
 {
 	setupUi(this);
-	GeneralActionsCount = general_tb->actions().size();
+	GeneralActionsCount = tools_acts_tb->actions().size();
 
 	map<QString, attribs_map >confs;
 	map<QString, attribs_map >::iterator itr, itr_end;
@@ -54,10 +54,10 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	fix_menu.addAction(action_fix_model);
 	fix_menu.addAction(action_handle_metadata);
 	action_fix->setMenu(&fix_menu);
-	QToolButton *tool_btn = qobject_cast<QToolButton *>(general_tb->widgetForAction(action_fix));
+	QToolButton *tool_btn = qobject_cast<QToolButton *>(tools_acts_tb->widgetForAction(action_fix));
 	tool_btn->setPopupMode(QToolButton::InstantPopup);
 
-	tool_btn = qobject_cast<QToolButton *>(control_tb->widgetForAction(action_arrange_objects));
+	tool_btn = qobject_cast<QToolButton *>(model_acts_tb->widgetForAction(action_arrange_objects));
 	tool_btn->setMenu(&arrange_menu);
 	tool_btn->setPopupMode(QToolButton::InstantPopup);
 	arrange_menu.addAction(tr("Grid"), this, SLOT(arrangeObjects()));
@@ -67,7 +67,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	try
 	{
 		models_tbw->tabBar()->setVisible(false);
-		general_tb->layout()->setContentsMargins(0,0,0,0);
+		tools_acts_tb->layout()->setContentsMargins(0,0,0,0);
 
 		central_wgt=new WelcomeWidget(views_stw);
 		grid=new QGridLayout;
@@ -147,17 +147,17 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 		this->setFocusPolicy(Qt::WheelFocus);
 		model_nav_wgt=new ModelNavigationWidget(this);
 
-		control_tb->addWidget(model_nav_wgt);
-		control_tb->addSeparator();
+		model_acts_tb->addWidget(model_nav_wgt);
+		model_acts_tb->addSeparator();
 
-		control_tb->addAction(action_plugins);
-		dynamic_cast<QToolButton *>(control_tb->widgetForAction(action_plugins))->setPopupMode(QToolButton::InstantPopup);
+		model_acts_tb->addAction(action_plugins);
+		dynamic_cast<QToolButton *>(model_acts_tb->widgetForAction(action_plugins))->setPopupMode(QToolButton::InstantPopup);
 
-		control_tb->addAction(action_bug_report);
-		control_tb->addAction(action_donate);
-		control_tb->addAction(action_support);
-		control_tb->addAction(action_about);
-		control_tb->addAction(action_update_found);
+		model_acts_tb->addAction(action_bug_report);
+		model_acts_tb->addAction(action_donate);
+		model_acts_tb->addAction(action_support);
+		model_acts_tb->addAction(action_about);
+		model_acts_tb->addAction(action_update_found);
 
 		about_wgt=new AboutWidget(this);
 		donate_wgt=new DonateWidget(this);
@@ -331,8 +331,8 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	connect(obj_finder_wgt, SIGNAL(s_hideRequested()), this, SLOT(showBottomWidgetsBar()));
 
 	connect(model_valid_wgt, SIGNAL(s_validationInProgress(bool)), this->main_menu_mb, SLOT(setDisabled(bool)));
-	connect(model_valid_wgt, SIGNAL(s_validationInProgress(bool)), control_tb, SLOT(setDisabled(bool)));
-	connect(model_valid_wgt, SIGNAL(s_validationInProgress(bool)), general_tb, SLOT(setDisabled(bool)));
+	connect(model_valid_wgt, SIGNAL(s_validationInProgress(bool)), model_acts_tb, SLOT(setDisabled(bool)));
+	connect(model_valid_wgt, SIGNAL(s_validationInProgress(bool)), tools_acts_tb, SLOT(setDisabled(bool)));
 	connect(model_valid_wgt, SIGNAL(s_validationInProgress(bool)), models_tbw, SLOT(setDisabled(bool)));
 	connect(model_valid_wgt, SIGNAL(s_validationInProgress(bool)), oper_list_wgt, SLOT(setDisabled(bool)));
 	connect(model_valid_wgt, SIGNAL(s_validationInProgress(bool)), model_objs_wgt, SLOT(setDisabled(bool)));
@@ -372,13 +372,13 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	configureSamplesMenu();
 	applyConfigurations();
 
-	QList<QAction *> actions=general_tb->actions();
+	QList<QAction *> actions=tools_acts_tb->actions();
 	QToolButton *btn=nullptr;
 	QFont font;
 
 	for(auto &act : actions)
 	{
-		btn=qobject_cast<QToolButton *>(general_tb->widgetForAction(act));
+		btn=qobject_cast<QToolButton *>(tools_acts_tb->widgetForAction(act));
 
 		if(btn)
 		{
@@ -393,7 +393,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	resizeGeneralToolbarButtons();
 
 #ifdef Q_OS_MAC
-	control_tb->removeAction(action_main_menu);
+	model_acts_tb->removeAction(action_main_menu);
 	action_main_menu->setEnabled(false);
 #else
 	plugins_menu->menuAction()->setIconVisibleInMenu(false);
@@ -405,14 +405,14 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	main_menu.addSeparator();
 	main_menu.addAction(action_show_main_menu);
 	action_main_menu->setMenu(&main_menu);
-	dynamic_cast<QToolButton *>(control_tb->widgetForAction(action_main_menu))->setPopupMode(QToolButton::InstantPopup);
+	dynamic_cast<QToolButton *>(model_acts_tb->widgetForAction(action_main_menu))->setPopupMode(QToolButton::InstantPopup);
 
 	connect(action_show_main_menu, SIGNAL(triggered()), this, SLOT(showMainMenu()));
 	connect(action_hide_main_menu, SIGNAL(triggered()), this, SLOT(showMainMenu()));
 #endif
 
-	actions=control_tb->actions();
-	actions.append(general_tb->actions());
+	actions=model_acts_tb->actions();
+	actions.append(tools_acts_tb->actions());
 
 	for(QAction *act : actions)
 	{
@@ -450,7 +450,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	restoreDockWidgetsSettings();
 
 	//Positioning the update notifier widget before showing it (if there is an update)
-	setFloatingWidgetPos(update_notifier_wgt, action_update_found, control_tb, false);
+	setFloatingWidgetPos(update_notifier_wgt, action_update_found, model_acts_tb, false);
 	action_update_found->setVisible(false);
 	QTimer::singleShot(1000, this, SLOT(restoreTemporaryModels()));
 
@@ -566,17 +566,17 @@ void MainWindow::resizeGeneralToolbarButtons()
 {
 	QToolButton *btn = nullptr;
 
-	if(general_tb->minimumWidth() == 0)
-		general_tb->setMinimumWidth(general_tb->width() *
+	if(tools_acts_tb->minimumWidth() == 0)
+		tools_acts_tb->setMinimumWidth(tools_acts_tb->width() *
 																(BaseObjectView::getScreenDpiFactor() < BaseObjectView::MaxDpiFactor ? 0.60 : 0.90));
 
-	for(auto &act : general_tb->actions())
+	for(auto &act : tools_acts_tb->actions())
 	{
-		btn = qobject_cast<QToolButton *>(general_tb->widgetForAction(act));
+		btn = qobject_cast<QToolButton *>(tools_acts_tb->widgetForAction(act));
 		if(!btn) continue;
 
 		btn->setStyleSheet(QString("QToolButton { min-width: %1px; margin-top: 2px; }")
-											 .arg(models_tbw->count() == 0 ? general_tb->minimumWidth() : general_tb->minimumWidth() * 1.10));
+											 .arg(models_tbw->count() == 0 ? tools_acts_tb->minimumWidth() : tools_acts_tb->minimumWidth() * 1.10));
 	}
 }
 
@@ -881,7 +881,7 @@ void MainWindow::updateRecentModelsMenu()
 		recent_mdls_menu.addSeparator();
 		recent_mdls_menu.addAction(tr("Clear Menu"), this, SLOT(clearRecentModelsMenu()));
 		action_recent_models->setMenu(&recent_mdls_menu);
-		dynamic_cast<QToolButton *>(control_tb->widgetForAction(action_recent_models))->setPopupMode(QToolButton::InstantPopup);
+		dynamic_cast<QToolButton *>(model_acts_tb->widgetForAction(action_recent_models))->setPopupMode(QToolButton::InstantPopup);
 	}
 
 	action_recent_models->setEnabled(!recent_mdls_menu.isEmpty());
@@ -1121,30 +1121,30 @@ void MainWindow::setCurrentModel()
 		layers_cfg_wgt->setModel(current_model);
 		current_model->setFocus(Qt::OtherFocusReason);
 		current_model->cancelObjectAddition();
-		general_tb->addSeparator();
+		tools_acts_tb->addSeparator();
 
-		general_tb->addAction(current_model->action_new_object);
-		tool_btn=qobject_cast<QToolButton *>(general_tb->widgetForAction(current_model->action_new_object));
+		tools_acts_tb->addAction(current_model->action_new_object);
+		tool_btn=qobject_cast<QToolButton *>(tools_acts_tb->widgetForAction(current_model->action_new_object));
 		tool_btn->setPopupMode(QToolButton::InstantPopup);
 		btns.push_back(tool_btn);
 
-		general_tb->addAction(current_model->action_quick_actions);
-		tool_btn=qobject_cast<QToolButton *>(general_tb->widgetForAction(current_model->action_quick_actions));
+		tools_acts_tb->addAction(current_model->action_quick_actions);
+		tool_btn=qobject_cast<QToolButton *>(tools_acts_tb->widgetForAction(current_model->action_quick_actions));
 		tool_btn->setPopupMode(QToolButton::InstantPopup);
 		btns.push_back(tool_btn);
 
-		general_tb->addAction(current_model->action_edit);
-		tool_btn=qobject_cast<QToolButton *>(general_tb->widgetForAction(current_model->action_edit));
+		tools_acts_tb->addAction(current_model->action_edit);
+		tool_btn=qobject_cast<QToolButton *>(tools_acts_tb->widgetForAction(current_model->action_edit));
 		btns.push_back(tool_btn);
 
-		general_tb->addAction(current_model->action_source_code);
-		tool_btn=qobject_cast<QToolButton *>(general_tb->widgetForAction(current_model->action_source_code));
+		tools_acts_tb->addAction(current_model->action_source_code);
+		tool_btn=qobject_cast<QToolButton *>(tools_acts_tb->widgetForAction(current_model->action_source_code));
 		btns.push_back(tool_btn);
 
 		configureMoreActionsMenu();
-		general_tb->addAction(action_more_actions);
+		tools_acts_tb->addAction(action_more_actions);
 
-		tool_btn = qobject_cast<QToolButton *>(general_tb->widgetForAction(action_more_actions));
+		tool_btn = qobject_cast<QToolButton *>(tools_acts_tb->widgetForAction(action_more_actions));
 		tool_btn->setPopupMode(QToolButton::InstantPopup);
 		btns.push_back(tool_btn);
 
@@ -1280,11 +1280,11 @@ void MainWindow::applyZoom()
 void MainWindow::removeModelActions()
 {
 	QList<QAction *> act_list;
-	act_list=general_tb->actions();
+	act_list=tools_acts_tb->actions();
 
 	while(act_list.size() > GeneralActionsCount)
 	{
-		general_tb->removeAction(act_list.back());
+		tools_acts_tb->removeAction(act_list.back());
 		act_list.pop_back();
 	}
 }
@@ -1860,7 +1860,7 @@ void MainWindow::toggleUpdateNotifier(bool show)
 #ifndef NO_UPDATE_CHECK
 	if(show)
 	{
-		setFloatingWidgetPos(update_notifier_wgt,  qobject_cast<QAction *>(sender()), control_tb, false);
+		setFloatingWidgetPos(update_notifier_wgt,  qobject_cast<QAction *>(sender()), model_acts_tb, false);
 		action_about->setChecked(false);
 		action_donate->setChecked(false);
 	}
@@ -1873,7 +1873,7 @@ void MainWindow::toggleAboutWidget(bool show)
 {
 	if(show)
 	{
-		setFloatingWidgetPos(about_wgt, qobject_cast<QAction *>(sender()), control_tb, false);
+		setFloatingWidgetPos(about_wgt, qobject_cast<QAction *>(sender()), model_acts_tb, false);
 		action_update_found->setChecked(false);
 		action_donate->setChecked(false);
 	}
@@ -1885,7 +1885,7 @@ void MainWindow::toggleDonateWidget(bool show)
 {
 	if(show)
 	{
-		setFloatingWidgetPos(donate_wgt, qobject_cast<QAction *>(sender()), control_tb, false);
+		setFloatingWidgetPos(donate_wgt, qobject_cast<QAction *>(sender()), model_acts_tb, false);
 		action_about->setChecked(false);
 		action_update_found->setChecked(false);
 	}
@@ -1919,7 +1919,7 @@ void MainWindow::setBottomFloatingWidgetPos(QWidget *widget, QToolButton *btn)
 	QPoint btn_parent_pos = mapTo(this, tool_btns_bar_wgt->pos()),
 			btn_pos = mapTo(this, btn->pos());
 
-	widget->move(btn_pos.x() + general_tb->width(),
+	widget->move(btn_pos.x() + tools_acts_tb->width(),
 									 btn_parent_pos.y() - (widget->height() - btn->height() - v_splitter1->handleWidth()) + 1);
 }
 
@@ -2077,7 +2077,7 @@ void MainWindow::changeCurrentView(bool checked)
 		action_manage->blockSignals(false);
 		action_design->blockSignals(false);
 
-		actions=general_tb->actions();
+		actions=tools_acts_tb->actions();
 		for(int i=GeneralActionsCount; i < actions.count(); i++)
 		{
 			actions[i]->setEnabled(enable);

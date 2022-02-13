@@ -107,7 +107,7 @@
          </property>
          <property name="icon">
           <iconset resource="../../res/resources.qrc">
-           <normaloff>:/icons/icons/recent_big.png</normaloff>:/icons/icons/recent_big.png</iconset>
+           <normaloff>:/icons/icons/loadrecent.png</normaloff>:/icons/icons/loadrecent.png</iconset>
          </property>
          <property name="iconSize">
           <size>
@@ -151,7 +151,7 @@
          </property>
          <property name="icon">
           <iconset resource="../../res/resources.qrc">
-           <normaloff>:/icons/icons/samples_big.png</normaloff>:/icons/icons/samples_big.png</iconset>
+           <normaloff>:/icons/icons/samples.png</normaloff>:/icons/icons/samples.png</iconset>
          </property>
          <property name="iconSize">
           <size>
@@ -196,7 +196,7 @@
          </property>
          <property name="icon">
           <iconset resource="../../res/resources.qrc">
-           <normaloff>:/icons/icons/help_big.png</normaloff>:/icons/icons/help_big.png</iconset>
+           <normaloff>:/icons/icons/help.png</normaloff>:/icons/icons/help.png</iconset>
          </property>
          <property name="iconSize">
           <size>
@@ -234,7 +234,7 @@
          </property>
          <property name="icon">
           <iconset resource="../../res/resources.qrc">
-           <normaloff>:/icons/icons/new_big.png</normaloff>:/icons/icons/new_big.png</iconset>
+           <normaloff>:/icons/icons/new.png</normaloff>:/icons/icons/new.png</iconset>
          </property>
          <property name="iconSize">
           <size>
@@ -276,7 +276,7 @@
          </property>
          <property name="icon">
           <iconset resource="../../res/resources.qrc">
-           <normaloff>:/icons/icons/last_session_big.png</normaloff>:/icons/icons/last_session_big.png</iconset>
+           <normaloff>:/icons/icons/last_session.png</normaloff>:/icons/icons/last_session.png</iconset>
          </property>
          <property name="iconSize">
           <size>
@@ -314,7 +314,7 @@
          </property>
          <property name="icon">
           <iconset resource="../../res/resources.qrc">
-           <normaloff>:/icons/icons/open_big.png</normaloff>:/icons/icons/open_big.png</iconset>
+           <normaloff>:/icons/icons/open.png</normaloff>:/icons/icons/open.png</iconset>
          </property>
          <property name="iconSize">
           <size>

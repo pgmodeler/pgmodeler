@@ -830,7 +830,7 @@
    <addaction name="plugins_menu"/>
    <addaction name="about_menu"/>
   </widget>
-  <widget class="QToolBar" name="general_tb">
+  <widget class="QToolBar" name="tools_acts_tb">
    <property name="minimumSize">
     <size>
      <width>0</width>
@@ -883,7 +883,7 @@
    <addaction name="action_fix"/>
    <addaction name="action_configuration"/>
   </widget>
-  <widget class="QToolBar" name="control_tb">
+  <widget class="QToolBar" name="model_acts_tb">
    <property name="enabled">
     <bool>true</bool>
    </property>
@@ -1095,7 +1095,7 @@
    </property>
    <property name="icon">
     <iconset resource="../res/resources.qrc">
-     <normaloff>:/icons/icons/imprimir.png</normaloff>:/icons/icons/imprimir.png</iconset>
+     <normaloff>:/icons/icons/print.png</normaloff>:/icons/icons/print.png</iconset>
    </property>
    <property name="text">
     <string>&amp;Print</string>
