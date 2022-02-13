@@ -844,7 +844,7 @@
     </font>
    </property>
    <property name="windowTitle">
-    <string>General</string>
+    <string>Tools</string>
    </property>
    <property name="toolTip">
     <string/>
@@ -906,7 +906,7 @@
     </size>
    </property>
    <property name="windowTitle">
-    <string>Controls</string>
+    <string>Model actions</string>
    </property>
    <property name="layoutDirection">
     <enum>Qt::LeftToRight</enum>
