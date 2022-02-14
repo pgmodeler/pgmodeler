@@ -413,8 +413,8 @@
                  </property>
                  <property name="iconSize">
                   <size>
-                   <width>22</width>
-                   <height>22</height>
+                   <width>28</width>
+                   <height>28</height>
                   </size>
                  </property>
                  <property name="shortcut">
@@ -427,7 +427,7 @@
                   <enum>Qt::ToolButtonTextBesideIcon</enum>
                  </property>
                  <property name="autoRaise">
-                  <bool>false</bool>
+                  <bool>true</bool>
                  </property>
                 </widget>
                </item>
@@ -451,8 +451,8 @@
                  </property>
                  <property name="iconSize">
                   <size>
-                   <width>22</width>
-                   <height>22</height>
+                   <width>28</width>
+                   <height>28</height>
                   </size>
                  </property>
                  <property name="shortcut">
@@ -465,7 +465,7 @@
                   <enum>Qt::ToolButtonTextBesideIcon</enum>
                  </property>
                  <property name="autoRaise">
-                  <bool>false</bool>
+                  <bool>true</bool>
                  </property>
                 </widget>
                </item>
@@ -489,8 +489,8 @@
                  </property>
                  <property name="iconSize">
                   <size>
-                   <width>22</width>
-                   <height>22</height>
+                   <width>28</width>
+                   <height>28</height>
                   </size>
                  </property>
                  <property name="checkable">
@@ -500,7 +500,7 @@
                   <enum>Qt::ToolButtonTextBesideIcon</enum>
                  </property>
                  <property name="autoRaise">
-                  <bool>false</bool>
+                  <bool>true</bool>
                  </property>
                 </widget>
                </item>
@@ -524,8 +524,8 @@
                  </property>
                  <property name="iconSize">
                   <size>
-                   <width>22</width>
-                   <height>22</height>
+                   <width>28</width>
+                   <height>28</height>
                   </size>
                  </property>
                  <property name="checkable">
@@ -538,7 +538,7 @@
                   <enum>Qt::ToolButtonTextBesideIcon</enum>
                  </property>
                  <property name="autoRaise">
-                  <bool>false</bool>
+                  <bool>true</bool>
                  </property>
                 </widget>
                </item>
@@ -588,8 +588,8 @@
                  </property>
                  <property name="iconSize">
                   <size>
-                   <width>22</width>
-                   <height>22</height>
+                   <width>28</width>
+                   <height>28</height>
                   </size>
                  </property>
                  <property name="shortcut">
@@ -602,7 +602,7 @@
                   <enum>Qt::ToolButtonTextBesideIcon</enum>
                  </property>
                  <property name="autoRaise">
-                  <bool>false</bool>
+                  <bool>true</bool>
                  </property>
                 </widget>
                </item>
@@ -622,12 +622,12 @@
                  </property>
                  <property name="icon">
                   <iconset resource="../res/resources.qrc">
-                   <normaloff>:/icons/icons/function1.png</normaloff>:/icons/icons/function1.png</iconset>
+                   <normaloff>:/icons/icons/oprhistory.png</normaloff>:/icons/icons/oprhistory.png</iconset>
                  </property>
                  <property name="iconSize">
                   <size>
-                   <width>22</width>
-                   <height>22</height>
+                   <width>28</width>
+                   <height>28</height>
                   </size>
                  </property>
                  <property name="shortcut">
@@ -640,7 +640,7 @@
                   <enum>Qt::ToolButtonTextBesideIcon</enum>
                  </property>
                  <property name="autoRaise">
-                  <bool>false</bool>
+                  <bool>true</bool>
                  </property>
                 </widget>
                </item>
@@ -747,7 +747,7 @@
      <x>0</x>
      <y>0</y>
      <width>1364</width>
-     <height>36</height>
+     <height>26</height>
     </rect>
    </property>
    <property name="autoFillBackground">
@@ -839,7 +839,6 @@
    </property>
    <property name="font">
     <font>
-     <weight>50</weight>
      <bold>false</bold>
     </font>
    </property>
@@ -857,8 +856,8 @@
    </property>
    <property name="iconSize">
     <size>
-     <width>56</width>
-     <height>56</height>
+     <width>48</width>
+     <height>48</height>
     </size>
    </property>
    <property name="toolButtonStyle">
@@ -919,8 +918,8 @@
    </property>
    <property name="iconSize">
     <size>
-     <width>48</width>
-     <height>48</height>
+     <width>32</width>
+     <height>32</height>
     </size>
    </property>
    <property name="toolButtonStyle">
@@ -944,11 +943,11 @@
    <addaction name="action_normal_zoom"/>
    <addaction name="action_inc_zoom"/>
    <addaction name="action_overview"/>
-   <addaction name="action_arrange_objects"/>
-   <addaction name="action_show_delimiters"/>
    <addaction name="action_show_grid"/>
+   <addaction name="action_show_delimiters"/>
    <addaction name="action_alin_objs_grade"/>
    <addaction name="action_compact_view"/>
+   <addaction name="action_arrange_objects"/>
    <addaction name="separator"/>
   </widget>
   <action name="action_new_model">
@@ -1284,6 +1283,10 @@
   <action name="action_save_all">
    <property name="enabled">
     <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../res/resources.qrc">
+     <normaloff>:/icons/icons/saveall.png</normaloff>:/icons/icons/saveall.png</iconset>
    </property>
    <property name="text">
     <string>Save all</string>

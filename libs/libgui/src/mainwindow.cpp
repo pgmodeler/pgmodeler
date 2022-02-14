@@ -372,11 +372,10 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	configureSamplesMenu();
 	applyConfigurations();
 
-	QList<QAction *> actions=tools_acts_tb->actions();
 	QToolButton *btn=nullptr;
 	QFont font;
 
-	for(auto &act : actions)
+	for(auto &act : tools_acts_tb->actions())
 	{
 		btn=qobject_cast<QToolButton *>(tools_acts_tb->widgetForAction(act));
 
@@ -388,6 +387,15 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 			btn->setFont(font);
 			GuiUtilsNs::createDropShadow(btn);
 		}
+	}
+
+
+	for(auto &act : model_acts_tb->actions())
+	{
+		btn = qobject_cast<QToolButton *>(model_acts_tb->widgetForAction(act));
+
+		if(btn)
+			GuiUtilsNs::createDropShadow(btn);
 	}
 
 	resizeGeneralToolbarButtons();
@@ -411,7 +419,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	connect(action_hide_main_menu, SIGNAL(triggered()), this, SLOT(showMainMenu()));
 #endif
 
-	actions=model_acts_tb->actions();
+	QList<QAction *> actions = model_acts_tb->actions();
 	actions.append(tools_acts_tb->actions());
 
 	for(QAction *act : actions)

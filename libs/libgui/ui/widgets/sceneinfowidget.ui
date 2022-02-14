@@ -48,16 +48,10 @@
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>
-       <property name="minimumSize">
-        <size>
-         <width>18</width>
-         <height>18</height>
-        </size>
-       </property>
        <property name="maximumSize">
         <size>
-         <width>20</width>
-         <height>20</height>
+         <width>28</width>
+         <height>28</height>
         </size>
        </property>
        <property name="toolTip">
@@ -123,16 +117,10 @@
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>
-       <property name="minimumSize">
-        <size>
-         <width>18</width>
-         <height>18</height>
-        </size>
-       </property>
        <property name="maximumSize">
         <size>
-         <width>20</width>
-         <height>20</height>
+         <width>28</width>
+         <height>28</height>
         </size>
        </property>
        <property name="toolTip">
@@ -198,16 +186,10 @@
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>
-       <property name="minimumSize">
-        <size>
-         <width>18</width>
-         <height>18</height>
-        </size>
-       </property>
        <property name="maximumSize">
         <size>
-         <width>20</width>
-         <height>20</height>
+         <width>28</width>
+         <height>28</height>
         </size>
        </property>
        <property name="toolTip">
@@ -273,16 +255,10 @@
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>
-       <property name="minimumSize">
-        <size>
-         <width>18</width>
-         <height>18</height>
-        </size>
-       </property>
        <property name="maximumSize">
         <size>
-         <width>20</width>
-         <height>20</height>
+         <width>28</width>
+         <height>28</height>
         </size>
        </property>
        <property name="toolTip">
