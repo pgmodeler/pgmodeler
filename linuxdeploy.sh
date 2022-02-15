@@ -478,7 +478,7 @@ if [ $GEN_APPIMAGE = 1 ]; then
   echo "Categories=Development;" >> $APPIMG_DESKTOP
   cp "$BUILD_DIR/$INSTALL_ROOT/conf/pgmodeler_logo.png" $BUILD_DIR/$INSTALL_ROOT >> $LOG 2>&1
   
-  $LINUXDEPLOYQT_CMD "$BUILD_DIR/$INSTALL_ROOT/pgmodeler" -appimage -qmake="$QMAKE_ROOT/qmake" >> $LOG 2>&1
+  $LINUXDEPLOYQT_CMD "$BUILD_DIR/$INSTALL_ROOT/pgmodeler" -appimage -qmake="$QMAKE_ROOT/qmake" -extra-plugins=platforms/libqoffscreen.so >> $LOG 2>&1
   
   $APPIMAGETOOL_CMD "$BUILD_DIR/$INSTALL_ROOT" "$DIST_DIR/$PKGNAME.appimage" >> $LOG 2>&1
   
