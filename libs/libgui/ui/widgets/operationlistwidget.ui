@@ -9,7 +9,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>260</width>
+    <width>457</width>
     <height>335</height>
    </rect>
   </property>
@@ -59,11 +59,6 @@
    </property>
    <item>
     <widget class="QWidget" name="title_wgt" native="true">
-     <property name="font">
-      <font>
-       <pointsize>9</pointsize>
-      </font>
-     </property>
      <layout class="QHBoxLayout" name="horizontalLayout_2">
       <property name="spacing">
        <number>0</number>
@@ -82,14 +77,8 @@
       </property>
       <item>
        <widget class="QLabel" name="title_lbl">
-        <property name="font">
-         <font>
-          <pointsize>9</pointsize>
-          <italic>false</italic>
-         </font>
-        </property>
         <property name="text">
-         <string>Executed Operations</string>
+         <string>Operations history</string>
         </property>
        </widget>
       </item>
@@ -414,6 +403,8 @@
   <tabstop>hide_tb</tabstop>
  </tabstops>
  <resources>
+  <include location="../../res/resources.qrc"/>
+  <include location="../../res/resources.qrc"/>
   <include location="../../res/resources.qrc"/>
  </resources>
  <connections/>

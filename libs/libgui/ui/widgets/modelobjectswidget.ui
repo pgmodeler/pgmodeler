@@ -508,11 +508,6 @@
    </item>
    <item row="0" column="0">
     <widget class="QWidget" name="title_wgt" native="true">
-     <property name="font">
-      <font>
-       <pointsize>9</pointsize>
-      </font>
-     </property>
      <layout class="QHBoxLayout" name="horizontalLayout_3">
       <property name="spacing">
        <number>0</number>
@@ -533,8 +528,7 @@
        <widget class="QLabel" name="title_lbl">
         <property name="font">
          <font>
-          <pointsize>9</pointsize>
-          <italic>false</italic>
+          <pointsize>10</pointsize>
          </font>
         </property>
         <property name="text">
@@ -557,18 +551,6 @@
       </item>
       <item>
        <widget class="QToolButton" name="hide_tb">
-        <property name="minimumSize">
-         <size>
-          <width>20</width>
-          <height>20</height>
-         </size>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>20</width>
-          <height>20</height>
-         </size>
-        </property>
         <property name="toolTip">
          <string>Hide this widget</string>
         </property>
@@ -578,6 +560,12 @@
         <property name="icon">
          <iconset resource="../../res/resources.qrc">
           <normaloff>:/icons/icons/close1.png</normaloff>:/icons/icons/close1.png</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>28</width>
+          <height>28</height>
+         </size>
         </property>
         <property name="autoRaise">
          <bool>true</bool>
@@ -957,6 +945,8 @@
   <tabstop>hide_tb</tabstop>
  </tabstops>
  <resources>
+  <include location="../../res/resources.qrc"/>
+  <include location="../../res/resources.qrc"/>
   <include location="../../res/resources.qrc"/>
  </resources>
  <connections/>
