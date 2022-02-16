@@ -290,6 +290,8 @@
         <file>icons/print.png</file>
         <file>icons/samples.png</file>
         <file>icons/oprhistory.png</file>
+        <file>resources.qrc</file>
+        <file>icons/cursor.png</file>
     </qresource>
     <qresource prefix="/images">
         <file>images/brazil_flag.png</file>

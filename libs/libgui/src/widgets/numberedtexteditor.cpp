@@ -82,7 +82,7 @@ NumberedTextEditor::NumberedTextEditor(QWidget * parent, bool handle_ext_files) 
 
 		load_file_btn = new QToolButton(top_widget);
 		load_file_btn->setIcon(QPixmap(GuiUtilsNs::getIconPath("open")));
-		load_file_btn->setIconSize(QSize(20,20));
+		load_file_btn->setIconSize(QSize(32,32));
 		load_file_btn->setAutoRaise(true);
 		load_file_btn->setText(tr("Load"));
 		load_file_btn->setToolTip(tr("Load the object's source code from an external file"));
@@ -93,7 +93,7 @@ NumberedTextEditor::NumberedTextEditor(QWidget * parent, bool handle_ext_files) 
 
 		edit_src_btn = new QToolButton(top_widget);
 		edit_src_btn->setIcon(QPixmap(GuiUtilsNs::getIconPath("edit")));
-		edit_src_btn->setIconSize(QSize(20,20));
+		edit_src_btn->setIconSize(QSize(32,32));
 		edit_src_btn->setAutoRaise(true);
 		edit_src_btn->setText(tr("Edit"));
 		edit_src_btn->setToolTip(tr("Edit the source code in the preferred external editor"));
@@ -104,7 +104,7 @@ NumberedTextEditor::NumberedTextEditor(QWidget * parent, bool handle_ext_files) 
 
 		clear_btn = new QToolButton(top_widget);
 		clear_btn->setIcon(QPixmap(GuiUtilsNs::getIconPath("cleartext")));
-		clear_btn->setIconSize(QSize(20,20));
+		clear_btn->setIconSize(QSize(32,32));
 		clear_btn->setAutoRaise(true);
 		clear_btn->setText(tr("Clear"));
 		clear_btn->setFont(font);

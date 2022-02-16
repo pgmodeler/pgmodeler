@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>429</width>
-    <height>34</height>
+    <width>425</width>
+    <height>42</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -50,8 +50,8 @@
        </property>
        <property name="maximumSize">
         <size>
-         <width>28</width>
-         <height>28</height>
+         <width>32</width>
+         <height>32</height>
         </size>
        </property>
        <property name="toolTip">
@@ -67,7 +67,7 @@
         <string/>
        </property>
        <property name="pixmap">
-        <pixmap resource="../../res/resources.qrc">:/icons/icons/select.png</pixmap>
+        <pixmap resource="../../res/resources.qrc">:/icons/icons/cursor.png</pixmap>
        </property>
        <property name="scaledContents">
         <bool>true</bool>
@@ -119,8 +119,8 @@
        </property>
        <property name="maximumSize">
         <size>
-         <width>28</width>
-         <height>28</height>
+         <width>32</width>
+         <height>32</height>
         </size>
        </property>
        <property name="toolTip">
@@ -188,8 +188,8 @@
        </property>
        <property name="maximumSize">
         <size>
-         <width>28</width>
-         <height>28</height>
+         <width>32</width>
+         <height>32</height>
         </size>
        </property>
        <property name="toolTip">
@@ -257,8 +257,8 @@
        </property>
        <property name="maximumSize">
         <size>
-         <width>28</width>
-         <height>28</height>
+         <width>32</width>
+         <height>32</height>
         </size>
        </property>
        <property name="toolTip">
@@ -314,6 +314,7 @@
   </layout>
  </widget>
  <resources>
+  <include location="../../res/resources.qrc"/>
   <include location="../../res/resources.qrc"/>
  </resources>
  <connections/>
