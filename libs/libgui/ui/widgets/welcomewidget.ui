@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1007</width>
-    <height>830</height>
+    <width>1076</width>
+    <height>970</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -99,15 +99,8 @@
      </property>
      <item row="0" column="1" rowspan="2">
       <widget class="QToolButton" name="open_tb">
-       <property name="minimumSize">
-        <size>
-         <width>140</width>
-         <height>140</height>
-        </size>
-       </property>
        <property name="font">
         <font>
-         <weight>50</weight>
          <bold>false</bold>
         </font>
        </property>
@@ -140,15 +133,8 @@
        <property name="enabled">
         <bool>true</bool>
        </property>
-       <property name="minimumSize">
-        <size>
-         <width>140</width>
-         <height>140</height>
-        </size>
-       </property>
        <property name="font">
         <font>
-         <weight>50</weight>
          <bold>false</bold>
         </font>
        </property>
@@ -184,15 +170,8 @@
        <property name="enabled">
         <bool>true</bool>
        </property>
-       <property name="minimumSize">
-        <size>
-         <width>140</width>
-         <height>140</height>
-        </size>
-       </property>
        <property name="font">
         <font>
-         <weight>50</weight>
          <bold>false</bold>
          <stylestrategy>PreferAntialias</stylestrategy>
         </font>
@@ -226,15 +205,8 @@
        <property name="enabled">
         <bool>false</bool>
        </property>
-       <property name="minimumSize">
-        <size>
-         <width>140</width>
-         <height>140</height>
-        </size>
-       </property>
        <property name="font">
         <font>
-         <weight>50</weight>
          <bold>false</bold>
          <stylestrategy>PreferAntialias</stylestrategy>
         </font>
@@ -268,15 +240,8 @@
        <property name="enabled">
         <bool>false</bool>
        </property>
-       <property name="minimumSize">
-        <size>
-         <width>140</width>
-         <height>140</height>
-        </size>
-       </property>
        <property name="font">
         <font>
-         <weight>50</weight>
          <bold>false</bold>
         </font>
        </property>
@@ -309,15 +274,8 @@
      </item>
      <item row="0" column="0" rowspan="2">
       <widget class="QToolButton" name="new_tb">
-       <property name="minimumSize">
-        <size>
-         <width>140</width>
-         <height>140</height>
-        </size>
-       </property>
        <property name="font">
         <font>
-         <weight>50</weight>
          <bold>false</bold>
         </font>
        </property>
@@ -376,6 +334,7 @@
   </layout>
  </widget>
  <resources>
+  <include location="../../res/resources.qrc"/>
   <include location="../../res/resources.qrc"/>
  </resources>
  <connections/>

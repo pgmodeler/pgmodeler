@@ -753,7 +753,7 @@
      <x>0</x>
      <y>0</y>
      <width>1668</width>
-     <height>36</height>
+     <height>26</height>
     </rect>
    </property>
    <property name="autoFillBackground">
@@ -845,7 +845,6 @@
    </property>
    <property name="font">
     <font>
-     <weight>50</weight>
      <bold>false</bold>
     </font>
    </property>
