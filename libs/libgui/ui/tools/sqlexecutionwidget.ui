@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1057</width>
-    <height>349</height>
+    <width>1159</width>
+    <height>370</height>
    </rect>
   </property>
   <property name="baseSize">
@@ -778,8 +778,8 @@
                    </property>
                    <property name="iconSize">
                     <size>
-                     <width>28</width>
-                     <height>28</height>
+                     <width>25</width>
+                     <height>25</height>
                     </size>
                    </property>
                    <property name="autoRaise">
@@ -932,7 +932,6 @@
   </layout>
  </widget>
  <resources>
-  <include location="../../res/resources.qrc"/>
   <include location="../../res/resources.qrc"/>
   <include location="../../res/resources.qrc"/>
  </resources>

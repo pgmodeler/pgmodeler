@@ -106,7 +106,7 @@ void OperationListWidget::updateOperationList()
 
 			if(op_type==Operation::ObjectCreated)
 			{
-				op_icon=QString("criated");
+				op_icon=QString("created");
 				op_name=tr("created");
 			}
 			else if(op_type==Operation::ObjectRemoved)

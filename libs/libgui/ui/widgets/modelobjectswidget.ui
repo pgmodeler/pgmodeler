@@ -563,8 +563,8 @@
         </property>
         <property name="iconSize">
          <size>
-          <width>28</width>
-          <height>28</height>
+          <width>25</width>
+          <height>25</height>
          </size>
         </property>
         <property name="autoRaise">
@@ -945,7 +945,6 @@
   <tabstop>hide_tb</tabstop>
  </tabstops>
  <resources>
-  <include location="../../res/resources.qrc"/>
   <include location="../../res/resources.qrc"/>
   <include location="../../res/resources.qrc"/>
  </resources>

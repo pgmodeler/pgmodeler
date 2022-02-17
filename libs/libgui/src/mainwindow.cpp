@@ -381,7 +381,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 
 		if(btn)
 		{
-			GuiUtilsNs::configureWidgetFont(btn, static_cast<unsigned>(GuiUtilsNs::MediumFontFactor));
+			//GuiUtilsNs::configureWidgetFont(btn, static_cast<unsigned>(GuiUtilsNs::MediumFontFactor));
 			font = btn->font();
 			font.setBold(true);
 			btn->setFont(font);

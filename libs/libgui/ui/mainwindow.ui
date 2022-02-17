@@ -450,7 +450,7 @@
                  </property>
                  <property name="icon">
                   <iconset resource="../res/resources.qrc">
-                   <normaloff>:/icons/icons/findtext.png</normaloff>:/icons/icons/findtext.png</iconset>
+                   <normaloff>:/icons/icons/objfinder.png</normaloff>:/icons/icons/objfinder.png</iconset>
                  </property>
                  <property name="iconSize">
                   <size>
@@ -590,7 +590,7 @@
                  </property>
                  <property name="icon">
                   <iconset resource="../res/resources.qrc">
-                   <normaloff>:/icons/icons/tablespace.png</normaloff>:/icons/icons/tablespace.png</iconset>
+                   <normaloff>:/icons/icons/objects.png</normaloff>:/icons/icons/objects.png</iconset>
                  </property>
                  <property name="iconSize">
                   <size>
@@ -753,7 +753,7 @@
      <x>0</x>
      <y>0</y>
      <width>1668</width>
-     <height>26</height>
+     <height>36</height>
     </rect>
    </property>
    <property name="autoFillBackground">
@@ -845,6 +845,7 @@
    </property>
    <property name="font">
     <font>
+     <weight>50</weight>
      <bold>false</bold>
     </font>
    </property>
@@ -862,8 +863,8 @@
    </property>
    <property name="iconSize">
     <size>
-     <width>48</width>
-     <height>48</height>
+     <width>56</width>
+     <height>56</height>
     </size>
    </property>
    <property name="toolButtonStyle">
@@ -924,8 +925,8 @@
    </property>
    <property name="iconSize">
     <size>
-     <width>40</width>
-     <height>40</height>
+     <width>48</width>
+     <height>48</height>
     </size>
    </property>
    <property name="toolButtonStyle">
