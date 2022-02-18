@@ -44,17 +44,20 @@
       <string>SQL code</string>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_3">
+      <property name="spacing">
+       <number>10</number>
+      </property>
       <property name="leftMargin">
-       <number>4</number>
+       <number>10</number>
       </property>
       <property name="topMargin">
-       <number>4</number>
+       <number>10</number>
       </property>
       <property name="rightMargin">
-       <number>4</number>
+       <number>10</number>
       </property>
       <property name="bottomMargin">
-       <number>4</number>
+       <number>10</number>
       </property>
       <item>
        <layout class="QHBoxLayout" name="horizontalLayout">
@@ -96,8 +99,8 @@
           </property>
           <property name="iconSize">
            <size>
-            <width>20</width>
-            <height>20</height>
+            <width>32</width>
+            <height>32</height>
            </size>
           </property>
           <property name="popupMode">
@@ -133,8 +136,8 @@
           </property>
           <property name="iconSize">
            <size>
-            <width>20</width>
-            <height>20</height>
+            <width>32</width>
+            <height>32</height>
            </size>
           </property>
           <property name="popupMode">
@@ -170,8 +173,8 @@
           </property>
           <property name="iconSize">
            <size>
-            <width>20</width>
-            <height>20</height>
+            <width>32</width>
+            <height>32</height>
            </size>
           </property>
           <property name="popupMode">
@@ -207,8 +210,8 @@
           </property>
           <property name="iconSize">
            <size>
-            <width>20</width>
-            <height>20</height>
+            <width>32</width>
+            <height>32</height>
            </size>
           </property>
           <property name="popupMode">
@@ -238,8 +241,8 @@
           </property>
           <property name="iconSize">
            <size>
-            <width>20</width>
-            <height>20</height>
+            <width>32</width>
+            <height>32</height>
            </size>
           </property>
           <property name="toolButtonStyle">
@@ -370,16 +373,10 @@ Unchecking this will cause the SQL to be appended at the end of CREATE DATABASE 
          </property>
          <item row="0" column="0">
           <widget class="QLabel" name="label_2">
-           <property name="minimumSize">
-            <size>
-             <width>24</width>
-             <height>24</height>
-            </size>
-           </property>
            <property name="maximumSize">
             <size>
-             <width>24</width>
-             <height>24</height>
+             <width>32</width>
+             <height>32</height>
             </size>
            </property>
            <property name="text">
@@ -400,7 +397,6 @@ Unchecking this will cause the SQL to be appended at the end of CREATE DATABASE 
           <widget class="QLabel" name="message_lbl">
            <property name="font">
             <font>
-             <weight>50</weight>
              <bold>false</bold>
              <underline>false</underline>
              <strikeout>false</strikeout>
@@ -431,6 +427,7 @@ Unchecking this will cause the SQL to be appended at the end of CREATE DATABASE 
   <tabstop>clear_tb</tabstop>
  </tabstops>
  <resources>
+  <include location="../../res/resources.qrc"/>
   <include location="../../res/resources.qrc"/>
  </resources>
  <connections/>

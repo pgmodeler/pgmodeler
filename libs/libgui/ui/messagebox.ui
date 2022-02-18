@@ -34,19 +34,19 @@
   </property>
   <layout class="QGridLayout" name="gridLayout_4">
    <property name="leftMargin">
-    <number>2</number>
+    <number>5</number>
    </property>
    <property name="topMargin">
-    <number>2</number>
+    <number>5</number>
    </property>
    <property name="rightMargin">
-    <number>2</number>
+    <number>5</number>
    </property>
    <property name="bottomMargin">
-    <number>2</number>
+    <number>5</number>
    </property>
    <property name="spacing">
-    <number>4</number>
+    <number>10</number>
    </property>
    <item row="0" column="0">
     <widget class="QFrame" name="frame">
@@ -213,6 +213,9 @@
           </item>
           <item row="2" column="0" colspan="2">
            <layout class="QHBoxLayout" name="horizontalLayout_2">
+            <property name="spacing">
+             <number>10</number>
+            </property>
             <item>
              <spacer name="horizontalSpacer_3">
               <property name="orientation">
@@ -242,17 +245,20 @@
         </widget>
         <widget class="QWidget" name="pg2_4">
          <layout class="QVBoxLayout" name="verticalLayout">
+          <property name="spacing">
+           <number>10</number>
+          </property>
           <property name="leftMargin">
-           <number>4</number>
+           <number>5</number>
           </property>
           <property name="topMargin">
-           <number>4</number>
+           <number>5</number>
           </property>
           <property name="rightMargin">
-           <number>4</number>
+           <number>5</number>
           </property>
           <property name="bottomMargin">
-           <number>4</number>
+           <number>5</number>
           </property>
           <item>
            <widget class="QTabWidget" name="tabWidget">
@@ -361,9 +367,7 @@
               <item>
                <widget class="QTextBrowser" name="raw_info_txt">
                 <property name="font">
-                 <font>
-                  <family>DejaVu Sans Mono</family>
-                 </font>
+                 <font/>
                 </property>
                 <property name="lineWrapMode">
                  <enum>QTextEdit::NoWrap</enum>
@@ -386,6 +390,9 @@
    </item>
    <item row="1" column="0">
     <layout class="QGridLayout" name="gridLayout_2">
+     <property name="spacing">
+      <number>10</number>
+     </property>
      <item row="0" column="0">
       <widget class="QLabel" name="name_lbl">
        <property name="sizePolicy">
@@ -394,11 +401,20 @@
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>
+       <property name="maximumSize">
+        <size>
+         <width>242</width>
+         <height>50</height>
+        </size>
+       </property>
        <property name="text">
         <string/>
        </property>
        <property name="pixmap">
         <pixmap resource="../res/resources.qrc">:/images/images/pgmodeler_name.png</pixmap>
+       </property>
+       <property name="scaledContents">
+        <bool>true</bool>
        </property>
       </widget>
      </item>
@@ -420,24 +436,18 @@
         <item row="0" column="6">
          <widget class="QPushButton" name="no_btn">
           <property name="sizePolicy">
-           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
-          </property>
-          <property name="minimumSize">
-           <size>
-            <width>90</width>
-            <height>32</height>
-           </size>
           </property>
           <property name="text">
            <string>&amp;No</string>
           </property>
           <property name="iconSize">
            <size>
-            <width>22</width>
-            <height>22</height>
+            <width>32</width>
+            <height>32</height>
            </size>
           </property>
          </widget>
@@ -458,24 +468,18 @@
         <item row="0" column="7">
          <widget class="QPushButton" name="cancel_btn">
           <property name="sizePolicy">
-           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
-          </property>
-          <property name="minimumSize">
-           <size>
-            <width>90</width>
-            <height>32</height>
-           </size>
           </property>
           <property name="text">
            <string>Cancel</string>
           </property>
           <property name="iconSize">
            <size>
-            <width>22</width>
-            <height>22</height>
+            <width>32</width>
+            <height>32</height>
            </size>
           </property>
          </widget>
@@ -483,24 +487,18 @@
         <item row="0" column="4">
          <widget class="QPushButton" name="yes_ok_btn">
           <property name="sizePolicy">
-           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
-          </property>
-          <property name="minimumSize">
-           <size>
-            <width>90</width>
-            <height>32</height>
-           </size>
           </property>
           <property name="text">
            <string>&amp;Yes</string>
           </property>
           <property name="iconSize">
            <size>
-            <width>22</width>
-            <height>22</height>
+            <width>32</width>
+            <height>32</height>
            </size>
           </property>
           <property name="autoDefault">
@@ -514,16 +512,10 @@
         <item row="0" column="2">
          <widget class="QToolButton" name="show_errors_tb">
           <property name="sizePolicy">
-           <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+           <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
-          </property>
-          <property name="minimumSize">
-           <size>
-            <width>0</width>
-            <height>32</height>
-           </size>
           </property>
           <property name="toolTip">
            <string/>
@@ -537,8 +529,8 @@
           </property>
           <property name="iconSize">
            <size>
-            <width>22</width>
-            <height>22</height>
+            <width>32</width>
+            <height>32</height>
            </size>
           </property>
           <property name="checkable">
@@ -566,6 +558,7 @@
   <tabstop>exceptions_trw</tabstop>
  </tabstops>
  <resources>
+  <include location="../res/resources.qrc"/>
   <include location="../res/resources.qrc"/>
  </resources>
  <connections/>

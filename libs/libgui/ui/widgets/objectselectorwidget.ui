@@ -48,7 +48,7 @@
     <number>0</number>
    </property>
    <property name="spacing">
-    <number>4</number>
+    <number>10</number>
    </property>
    <item row="0" column="1">
     <widget class="QToolButton" name="rem_object_tb">
@@ -82,8 +82,8 @@
      </property>
      <property name="iconSize">
       <size>
-       <width>22</width>
-       <height>22</height>
+       <width>28</width>
+       <height>28</height>
       </size>
      </property>
     </widget>
@@ -117,8 +117,8 @@
      </property>
      <property name="iconSize">
       <size>
-       <width>22</width>
-       <height>22</height>
+       <width>28</width>
+       <height>28</height>
       </size>
      </property>
     </widget>
@@ -165,6 +165,7 @@
   </layout>
  </widget>
  <resources>
+  <include location="../../res/resources.qrc"/>
   <include location="../../res/resources.qrc"/>
  </resources>
  <connections/>

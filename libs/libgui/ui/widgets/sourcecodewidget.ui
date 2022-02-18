@@ -15,22 +15,25 @@
   </property>
   <layout class="QGridLayout" name="codigofonte_grid">
    <property name="leftMargin">
-    <number>2</number>
+    <number>10</number>
    </property>
    <property name="topMargin">
-    <number>2</number>
+    <number>10</number>
    </property>
    <property name="rightMargin">
-    <number>2</number>
+    <number>10</number>
    </property>
    <property name="bottomMargin">
-    <number>2</number>
+    <number>10</number>
    </property>
    <property name="spacing">
-    <number>6</number>
+    <number>10</number>
    </property>
    <item row="0" column="0">
     <layout class="QHBoxLayout" name="horizontalLayout">
+     <property name="spacing">
+      <number>10</number>
+     </property>
      <item>
       <widget class="QLabel" name="version_lbl">
        <property name="minimumSize">
@@ -130,20 +133,23 @@
      </item>
      <item>
       <widget class="QLabel" name="icon_lbl">
-       <property name="minimumSize">
-        <size>
-         <width>32</width>
-         <height>32</height>
-        </size>
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
        </property>
        <property name="maximumSize">
         <size>
-         <width>32</width>
-         <height>32</height>
+         <width>40</width>
+         <height>40</height>
         </size>
        </property>
        <property name="text">
         <string>iconecodigo</string>
+       </property>
+       <property name="scaledContents">
+        <bool>true</bool>
        </property>
       </widget>
      </item>
@@ -163,22 +169,25 @@
       </attribute>
       <layout class="QGridLayout" name="gridLayout_2">
        <property name="leftMargin">
-        <number>4</number>
+        <number>5</number>
        </property>
        <property name="topMargin">
-        <number>4</number>
+        <number>5</number>
        </property>
        <property name="rightMargin">
-        <number>4</number>
+        <number>5</number>
        </property>
        <property name="bottomMargin">
-        <number>4</number>
+        <number>5</number>
        </property>
        <property name="spacing">
-        <number>6</number>
+        <number>10</number>
        </property>
        <item row="1" column="0" colspan="2">
         <layout class="QHBoxLayout" name="horizontalLayout_2">
+         <property name="spacing">
+          <number>10</number>
+         </property>
          <item>
           <widget class="QLabel" name="label">
            <property name="text">
@@ -244,8 +253,8 @@
            </property>
            <property name="iconSize">
             <size>
-             <width>22</width>
-             <height>22</height>
+             <width>32</width>
+             <height>32</height>
             </size>
            </property>
            <property name="toolButtonStyle">
@@ -273,19 +282,19 @@
       </attribute>
       <layout class="QGridLayout" name="gridLayout_3">
        <property name="leftMargin">
-        <number>4</number>
+        <number>5</number>
        </property>
        <property name="topMargin">
-        <number>4</number>
+        <number>5</number>
        </property>
        <property name="rightMargin">
-        <number>4</number>
+        <number>5</number>
        </property>
        <property name="bottomMargin">
-        <number>4</number>
+        <number>5</number>
        </property>
        <property name="spacing">
-        <number>6</number>
+        <number>10</number>
        </property>
        <item row="0" column="0">
         <widget class="QWidget" name="xmlcode_wgt" native="true"/>
@@ -301,6 +310,7 @@
   <tabstop>sourcecode_twg</tabstop>
  </tabstops>
  <resources>
+  <include location="../../res/resources.qrc"/>
   <include location="../../res/resources.qrc"/>
  </resources>
  <connections/>

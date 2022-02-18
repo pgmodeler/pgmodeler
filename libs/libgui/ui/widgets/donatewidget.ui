@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>245</height>
+    <width>440</width>
+    <height>343</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -48,22 +48,24 @@
      </property>
      <layout class="QGridLayout" name="gridLayout">
       <property name="leftMargin">
-       <number>6</number>
+       <number>10</number>
       </property>
       <property name="topMargin">
-       <number>6</number>
+       <number>10</number>
       </property>
       <property name="rightMargin">
-       <number>6</number>
+       <number>10</number>
       </property>
       <property name="bottomMargin">
        <number>6</number>
+      </property>
+      <property name="spacing">
+       <number>10</number>
       </property>
       <item row="0" column="0">
        <widget class="QLabel" name="title_lbl">
         <property name="font">
          <font>
-          <weight>75</weight>
           <bold>true</bold>
          </font>
         </property>
@@ -166,12 +168,6 @@
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
-          <property name="minimumSize">
-           <size>
-            <width>0</width>
-            <height>30</height>
-           </size>
-          </property>
           <property name="text">
            <string>I want to help!</string>
           </property>
@@ -181,8 +177,8 @@
           </property>
           <property name="iconSize">
            <size>
-            <width>22</width>
-            <height>22</height>
+            <width>32</width>
+            <height>32</height>
            </size>
           </property>
           <property name="checkable">

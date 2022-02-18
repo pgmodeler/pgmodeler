@@ -29,6 +29,9 @@
    <bool>true</bool>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
+   <property name="spacing">
+    <number>10</number>
+   </property>
    <property name="leftMargin">
     <number>0</number>
    </property>
@@ -184,8 +187,8 @@
         </property>
         <property name="iconSize">
          <size>
-          <width>22</width>
-          <height>22</height>
+          <width>32</width>
+          <height>32</height>
          </size>
         </property>
         <property name="shortcut">

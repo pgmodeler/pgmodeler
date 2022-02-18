@@ -168,12 +168,6 @@
      <verstretch>0</verstretch>
     </sizepolicy>
    </property>
-   <property name="minimumSize">
-    <size>
-     <width>0</width>
-     <height>30</height>
-    </size>
-   </property>
    <property name="maximumSize">
     <size>
      <width>16777215</width>
@@ -195,8 +189,8 @@
    </property>
    <property name="iconSize">
     <size>
-     <width>22</width>
-     <height>22</height>
+     <width>32</width>
+     <height>32</height>
     </size>
    </property>
   </widget>
@@ -242,16 +236,10 @@
     </property>
     <item row="0" column="0">
      <widget class="QLabel" name="label">
-      <property name="minimumSize">
-       <size>
-        <width>24</width>
-        <height>24</height>
-       </size>
-      </property>
       <property name="maximumSize">
        <size>
-        <width>24</width>
-        <height>24</height>
+        <width>32</width>
+        <height>32</height>
        </size>
       </property>
       <property name="text">
@@ -272,7 +260,6 @@
      <widget class="QLabel" name="protected_obj_lbl">
       <property name="font">
        <font>
-        <weight>50</weight>
         <bold>false</bold>
         <underline>false</underline>
         <strikeout>false</strikeout>
@@ -349,12 +336,6 @@ This will disable the code of all child and referrer objects.</string>
      <verstretch>0</verstretch>
     </sizepolicy>
    </property>
-   <property name="minimumSize">
-    <size>
-     <width>0</width>
-     <height>30</height>
-    </size>
-   </property>
    <property name="maximumSize">
     <size>
      <width>16777215</width>
@@ -376,8 +357,8 @@ This will disable the code of all child and referrer objects.</string>
    </property>
    <property name="iconSize">
     <size>
-     <width>22</width>
-     <height>22</height>
+     <width>32</width>
+     <height>32</height>
     </size>
    </property>
   </widget>
@@ -435,7 +416,6 @@ This will disable the code of all child and referrer objects.</string>
       </property>
       <property name="font">
        <font>
-        <weight>75</weight>
         <bold>true</bold>
        </font>
       </property>
@@ -450,21 +430,15 @@ This will disable the code of all child and referrer objects.</string>
     <item>
      <widget class="QLabel" name="obj_icon_lbl">
       <property name="sizePolicy">
-       <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
         <horstretch>0</horstretch>
         <verstretch>0</verstretch>
        </sizepolicy>
       </property>
-      <property name="minimumSize">
-       <size>
-        <width>32</width>
-        <height>32</height>
-       </size>
-      </property>
       <property name="maximumSize">
        <size>
-        <width>32</width>
-        <height>32</height>
+        <width>40</width>
+        <height>40</height>
        </size>
       </property>
       <property name="frameShape">
@@ -477,7 +451,7 @@ This will disable the code of all child and referrer objects.</string>
        <string>icone</string>
       </property>
       <property name="scaledContents">
-       <bool>false</bool>
+       <bool>true</bool>
       </property>
       <property name="alignment">
        <set>Qt::AlignCenter</set>
@@ -584,6 +558,7 @@ This will disable the code of all child and referrer objects.</string>
   <tabstop>disable_sql_chk</tabstop>
  </tabstops>
  <resources>
+  <include location="../../res/resources.qrc"/>
   <include location="../../res/resources.qrc"/>
  </resources>
  <connections/>

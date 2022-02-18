@@ -91,17 +91,13 @@
      <property name="bottomMargin">
       <number>0</number>
      </property>
-     <property name="horizontalSpacing">
+     <property name="spacing">
       <number>10</number>
-     </property>
-     <property name="verticalSpacing">
-      <number>20</number>
      </property>
      <item row="0" column="1" rowspan="2">
       <widget class="QToolButton" name="open_tb">
        <property name="font">
         <font>
-         <weight>50</weight>
          <bold>false</bold>
         </font>
        </property>
@@ -136,7 +132,6 @@
        </property>
        <property name="font">
         <font>
-         <weight>50</weight>
          <bold>false</bold>
         </font>
        </property>
@@ -174,7 +169,6 @@
        </property>
        <property name="font">
         <font>
-         <weight>50</weight>
          <bold>false</bold>
          <stylestrategy>PreferAntialias</stylestrategy>
         </font>
@@ -210,7 +204,6 @@
        </property>
        <property name="font">
         <font>
-         <weight>50</weight>
          <bold>false</bold>
          <stylestrategy>PreferAntialias</stylestrategy>
         </font>
@@ -246,7 +239,6 @@
        </property>
        <property name="font">
         <font>
-         <weight>50</weight>
          <bold>false</bold>
         </font>
        </property>
@@ -281,7 +273,6 @@
       <widget class="QToolButton" name="new_tb">
        <property name="font">
         <font>
-         <weight>50</weight>
          <bold>false</bold>
         </font>
        </property>
@@ -340,7 +331,6 @@
   </layout>
  </widget>
  <resources>
-  <include location="../../res/resources.qrc"/>
   <include location="../../res/resources.qrc"/>
   <include location="../../res/resources.qrc"/>
  </resources>

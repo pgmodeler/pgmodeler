@@ -31,7 +31,7 @@
     <number>0</number>
    </property>
    <property name="spacing">
-    <number>6</number>
+    <number>10</number>
    </property>
    <item row="1" column="0">
     <widget class="QTabWidget" name="tabWidget">
@@ -384,16 +384,10 @@
       </property>
       <item row="0" column="0">
        <widget class="QLabel" name="label_3">
-        <property name="minimumSize">
-         <size>
-          <width>24</width>
-          <height>24</height>
-         </size>
-        </property>
         <property name="maximumSize">
          <size>
-          <width>24</width>
-          <height>24</height>
+          <width>32</width>
+          <height>32</height>
          </size>
         </property>
         <property name="text">
@@ -414,7 +408,6 @@
        <widget class="QLabel" name="message_lbl">
         <property name="font">
          <font>
-          <weight>50</weight>
           <bold>false</bold>
           <underline>false</underline>
           <strikeout>false</strikeout>
@@ -435,6 +428,7 @@
   </layout>
  </widget>
  <resources>
+  <include location="../../res/resources.qrc"/>
   <include location="../../res/resources.qrc"/>
  </resources>
  <connections/>
