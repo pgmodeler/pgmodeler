@@ -462,7 +462,7 @@
                    </property>
                    <property name="icon">
                     <iconset resource="../../res/resources.qrc">
-                     <normaloff>:/icons/icons/selectall.png</normaloff>:/icons/icons/selectall.png</iconset>
+                     <normaloff>:/icons/icons/selectmove.png</normaloff>:/icons/icons/selectmove.png</iconset>
                    </property>
                    <property name="iconSize">
                     <size>
@@ -1212,6 +1212,8 @@
   <tabstop>close_btn</tabstop>
  </tabstops>
  <resources>
+  <include location="../../res/resources.qrc"/>
+  <include location="../../res/resources.qrc"/>
   <include location="../../res/resources.qrc"/>
  </resources>
  <connections/>

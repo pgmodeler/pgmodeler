@@ -107,13 +107,13 @@
         <widget class="QWidget" name="pg1_4">
          <layout class="QGridLayout" name="gridLayout_6">
           <property name="leftMargin">
-           <number>0</number>
+           <number>5</number>
           </property>
           <property name="topMargin">
-           <number>0</number>
+           <number>5</number>
           </property>
           <property name="rightMargin">
-           <number>0</number>
+           <number>5</number>
           </property>
           <property name="bottomMargin">
            <number>0</number>
@@ -122,18 +122,21 @@
            <widget class="QLabel" name="icon_lbl">
             <property name="minimumSize">
              <size>
-              <width>40</width>
-              <height>40</height>
+              <width>48</width>
+              <height>48</height>
              </size>
             </property>
             <property name="maximumSize">
              <size>
-              <width>40</width>
-              <height>40</height>
+              <width>48</width>
+              <height>48</height>
              </size>
             </property>
             <property name="text">
              <string/>
+            </property>
+            <property name="scaledContents">
+             <bool>true</bool>
             </property>
             <property name="alignment">
              <set>Qt::AlignCenter</set>
@@ -558,6 +561,7 @@
   <tabstop>exceptions_trw</tabstop>
  </tabstops>
  <resources>
+  <include location="../res/resources.qrc"/>
   <include location="../res/resources.qrc"/>
   <include location="../res/resources.qrc"/>
  </resources>

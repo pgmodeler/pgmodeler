@@ -239,7 +239,7 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	action_cascade_del->setShortcut(QKeySequence(tr("Shift+Del")));
 	action_cascade_del->setMenuRole(QAction::NoRole);
 
-	action_select_all=new QAction(QIcon(GuiUtilsNs::getIconPath("selectall")), tr("Select all"), this);
+	action_select_all=new QAction(QIcon(GuiUtilsNs::getIconPath("selectmove")), tr("Select all"), this);
 	action_select_all->setToolTip(tr("Selects all the graphical objects in the model"));
 	action_select_all->setMenu(&select_all_menu);
 
@@ -291,9 +291,9 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	action_change_owner=new QAction(QIcon(GuiUtilsNs::getIconPath("changeowner")), tr("Change owner"), this);
 	action_change_owner->setMenu(&owners_menu);
 
-	action_sel_sch_children=new QAction(QIcon(GuiUtilsNs::getIconPath("selectall")), tr("Select children"), this);
-	action_sel_tagged_tabs=new QAction(QIcon(GuiUtilsNs::getIconPath("selectall")), tr("Select tagged"), this);
-	action_sel_table_rels=new QAction(QIcon(GuiUtilsNs::getIconPath("selectall")), tr("Select relationships"), this);
+	action_sel_sch_children=new QAction(QIcon(GuiUtilsNs::getIconPath("selectmove")), tr("Select children"), this);
+	action_sel_tagged_tabs=new QAction(QIcon(GuiUtilsNs::getIconPath("selectmove")), tr("Select tagged"), this);
+	action_sel_table_rels=new QAction(QIcon(GuiUtilsNs::getIconPath("selectmove")), tr("Select relationships"), this);
 
 	action_select_object=new QAction(QIcon(GuiUtilsNs::getIconPath("moved")), tr("Select"), this);
 	action_parent_rel=new QAction(QIcon(GuiUtilsNs::getIconPath("relationship")), tr("Open relationship"), this);

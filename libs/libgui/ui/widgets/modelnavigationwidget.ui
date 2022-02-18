@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>400</width>
-    <height>39</height>
+    <height>55</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -73,8 +73,8 @@
      </property>
      <property name="iconSize">
       <size>
-       <width>32</width>
-       <height>32</height>
+       <width>48</width>
+       <height>48</height>
       </size>
      </property>
      <property name="shortcut">
@@ -114,8 +114,8 @@
      </property>
      <property name="iconSize">
       <size>
-       <width>32</width>
-       <height>32</height>
+       <width>48</width>
+       <height>48</height>
       </size>
      </property>
      <property name="shortcut">
@@ -177,8 +177,8 @@
      </property>
      <property name="iconSize">
       <size>
-       <width>32</width>
-       <height>32</height>
+       <width>48</width>
+       <height>48</height>
       </size>
      </property>
      <property name="shortcut">
@@ -192,6 +192,8 @@
   </layout>
  </widget>
  <resources>
+  <include location="../../res/resources.qrc"/>
+  <include location="../../res/resources.qrc"/>
   <include location="../../res/resources.qrc"/>
  </resources>
  <connections/>
