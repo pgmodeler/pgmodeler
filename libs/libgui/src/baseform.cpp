@@ -56,7 +56,7 @@ void BaseForm::resizeForm(QWidget *widget)
 	if(dpi_factor <= 1.01)
 		dpi_factor = 1.0;
 
-	vbox->setContentsMargins(2,2,2,2);
+	vbox->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
 
 	/* If the widget's minimum size is zero then we need to do
 			a size adjustment on the widget prior to insert it into the dialog */

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>938</width>
-    <height>100</height>
+    <width>1041</width>
+    <height>226</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -45,16 +45,16 @@
      </property>
      <layout class="QGridLayout" name="load_csv_grid">
       <property name="leftMargin">
-       <number>4</number>
+       <number>5</number>
       </property>
       <property name="topMargin">
-       <number>4</number>
+       <number>5</number>
       </property>
       <property name="rightMargin">
-       <number>4</number>
+       <number>5</number>
       </property>
       <property name="bottomMargin">
-       <number>4</number>
+       <number>5</number>
       </property>
       <item row="0" column="0">
        <widget class="QLabel" name="file_lbl">
@@ -128,7 +128,7 @@
          <bool>false</bool>
         </property>
         <property name="sizePolicy">
-         <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
@@ -163,7 +163,7 @@
       <item row="1" column="1">
        <layout class="QHBoxLayout" name="horizontalLayout_3">
         <property name="spacing">
-         <number>4</number>
+         <number>10</number>
         </property>
         <item>
          <widget class="QComboBox" name="separator_cmb">
@@ -242,7 +242,7 @@
       <item row="1" column="3">
        <layout class="QHBoxLayout" name="horizontalLayout_2">
         <property name="spacing">
-         <number>0</number>
+         <number>10</number>
         </property>
         <item>
          <widget class="QCheckBox" name="txt_delim_chk">
@@ -312,6 +312,7 @@
   </layout>
  </widget>
  <resources>
+  <include location="../../res/resources.qrc"/>
   <include location="../../res/resources.qrc"/>
   <include location="../../res/resources.qrc"/>
  </resources>

@@ -594,7 +594,7 @@ bool ConnectionsConfigWidget::openConnectionsConfiguration(QComboBox *combo, boo
 		{
 			conn_cfg_wgt.loadConfiguration();
 			conn_cfg_wgt.frame->setFrameShape(QFrame::NoFrame);
-			conn_cfg_wgt.frame->layout()->setContentsMargins(2,2,2,2);
+			conn_cfg_wgt.frame->layout()->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
 
 			parent_form.setMainWidget(&conn_cfg_wgt);
 			parent_form.setButtonConfiguration(Messagebox::OkCancelButtons);

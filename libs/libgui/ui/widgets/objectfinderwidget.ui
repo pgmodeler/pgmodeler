@@ -27,16 +27,22 @@
   </property>
   <layout class="QGridLayout" name="gridLayout_3">
    <property name="leftMargin">
-    <number>4</number>
+    <number>5</number>
    </property>
    <property name="topMargin">
-    <number>4</number>
+    <number>5</number>
    </property>
    <property name="rightMargin">
-    <number>4</number>
+    <number>5</number>
    </property>
    <property name="bottomMargin">
-    <number>4</number>
+    <number>5</number>
+   </property>
+   <property name="horizontalSpacing">
+    <number>10</number>
+   </property>
+   <property name="verticalSpacing">
+    <number>5</number>
    </property>
    <item row="0" column="4">
     <widget class="QToolButton" name="filter_btn">
@@ -346,19 +352,19 @@
          </property>
          <layout class="QGridLayout" name="gridLayout_2">
           <property name="leftMargin">
-           <number>4</number>
+           <number>5</number>
           </property>
           <property name="topMargin">
-           <number>4</number>
+           <number>5</number>
           </property>
           <property name="rightMargin">
-           <number>4</number>
+           <number>5</number>
           </property>
           <property name="bottomMargin">
-           <number>4</number>
+           <number>5</number>
           </property>
-          <property name="horizontalSpacing">
-           <number>4</number>
+          <property name="spacing">
+           <number>10</number>
           </property>
           <item row="3" column="1">
            <spacer name="horizontalSpacer_4">
@@ -415,24 +421,37 @@
           <item row="0" column="0" rowspan="4">
            <layout class="QGridLayout" name="gridLayout">
             <property name="leftMargin">
-             <number>2</number>
+             <number>5</number>
             </property>
             <property name="topMargin">
-             <number>2</number>
+             <number>5</number>
             </property>
             <property name="rightMargin">
-             <number>2</number>
+             <number>5</number>
             </property>
             <property name="bottomMargin">
-             <number>4</number>
+             <number>5</number>
             </property>
-            <property name="horizontalSpacing">
-             <number>6</number>
+            <property name="spacing">
+             <number>10</number>
             </property>
-            <property name="verticalSpacing">
-             <number>8</number>
-            </property>
-            <item row="2" column="0">
+            <item row="0" column="0" colspan="4">
+             <widget class="QListWidget" name="obj_types_lst">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="editTriggers">
+               <set>QAbstractItemView::NoEditTriggers</set>
+              </property>
+              <property name="sortingEnabled">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="0" rowspan="2">
              <spacer name="horizontalSpacer_2">
               <property name="orientation">
                <enum>Qt::Horizontal</enum>
@@ -448,7 +467,7 @@
               </property>
              </spacer>
             </item>
-            <item row="2" column="1">
+            <item row="1" column="1" rowspan="2">
              <widget class="QPushButton" name="select_all_btn">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
@@ -473,7 +492,7 @@
               </property>
              </widget>
             </item>
-            <item row="2" column="2">
+            <item row="1" column="2" rowspan="2">
              <widget class="QToolButton" name="clear_all_btn">
               <property name="enabled">
                <bool>true</bool>
@@ -507,7 +526,7 @@
               </property>
              </widget>
             </item>
-            <item row="2" column="3">
+            <item row="1" column="3" rowspan="2">
              <spacer name="horizontalSpacer_3">
               <property name="orientation">
                <enum>Qt::Horizontal</enum>
@@ -522,34 +541,6 @@
                </size>
               </property>
              </spacer>
-            </item>
-            <item row="0" column="0" colspan="4">
-             <widget class="QListWidget" name="obj_types_lst">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="minimumSize">
-               <size>
-                <width>300</width>
-                <height>0</height>
-               </size>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>300</width>
-                <height>16777215</height>
-               </size>
-              </property>
-              <property name="editTriggers">
-               <set>QAbstractItemView::NoEditTriggers</set>
-              </property>
-              <property name="sortingEnabled">
-               <bool>true</bool>
-              </property>
-             </widget>
             </item>
            </layout>
           </item>
@@ -728,6 +719,7 @@
   <tabstop>hide_tb</tabstop>
  </tabstops>
  <resources>
+  <include location="../../res/resources.qrc"/>
   <include location="../../res/resources.qrc"/>
   <include location="../../res/resources.qrc"/>
  </resources>

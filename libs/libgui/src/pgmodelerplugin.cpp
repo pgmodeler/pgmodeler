@@ -34,7 +34,7 @@ PgModelerPlugin::PgModelerPlugin()
 
 	gridLayout->setHorizontalSpacing(10);
 	gridLayout->setVerticalSpacing(6);
-	gridLayout->setContentsMargins(6, 6, 6, 6);
+	gridLayout->setContentsMargins(GuiUtilsNs::LtMargin, GuiUtilsNs::LtMargin, GuiUtilsNs::LtMargin, GuiUtilsNs::LtMargin);
 
 	icon_lbl = new QLabel(widget);
 	icon_lbl->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);

@@ -41,7 +41,7 @@ PluginsConfigWidget::PluginsConfigWidget(QWidget *parent) : BaseConfigWidget(par
 
 	connect(plugins_tab, SIGNAL(s_rowEdited(int)), this, SLOT(showPluginInfo(int)));
 
-	grid->setContentsMargins(4,4,4,4);
+	grid->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
 	grid->addWidget(plugins_tab,0,0,1,1);
 	loaded_plugins_gb->setLayout(grid);
 }

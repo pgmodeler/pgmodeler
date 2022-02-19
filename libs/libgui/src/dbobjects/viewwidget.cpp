@@ -43,14 +43,14 @@ ViewWidget::ViewWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Vi
 		code_hl=new SyntaxHighlighter(code_txt);
 		code_hl->loadConfiguration(GlobalAttributes::getSQLHighlightConfPath());
 		vbox=new QVBoxLayout(code_prev_tab);
-		vbox->setContentsMargins(4,4,4,4);
+		vbox->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
 		vbox->addWidget(code_txt);
 
 		cte_expression_txt=new NumberedTextEditor(this, true);
 		cte_expression_hl=new SyntaxHighlighter(cte_expression_txt);
 		cte_expression_hl->loadConfiguration(GlobalAttributes::getSQLHighlightConfPath());
 		vbox=new QVBoxLayout(cte_tab);
-		vbox->setContentsMargins(4,4,4,4);
+		vbox->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
 		vbox->addWidget(cte_expression_txt);
 
 		tag_sel=new ObjectSelectorWidget(ObjectType::Tag, false, this);
@@ -65,7 +65,7 @@ ViewWidget::ViewWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Vi
 		references_tab->setHeaderLabel(tr("Reference alias"), 4);
 
 		vbox=new QVBoxLayout(tabWidget->widget(0));
-		vbox->setContentsMargins(4,4,4,4);
+		vbox->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
 		vbox->addWidget(references_tab);
 
 		cte_expression_cp=new CodeCompletionWidget(cte_expression_txt, true);
@@ -80,7 +80,7 @@ ViewWidget::ViewWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Vi
 
 			grid=new QGridLayout;
 			grid->addWidget(tab, 0,0,1,1);
-			grid->setContentsMargins(4,4,4,4);
+			grid->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
 			tabWidget->widget(tab_id)->setLayout(grid);
 
 			connect(tab, SIGNAL(s_rowsRemoved()), this, SLOT(removeObjects()));

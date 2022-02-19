@@ -48,7 +48,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	scene_info_wgt = new SceneInfoWidget(this);
 	QHBoxLayout *hbox = new QHBoxLayout(scene_info_parent);
 	hbox->addWidget(scene_info_wgt);
-	hbox->setContentsMargins(4,4,4,4);
+	hbox->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
 	scene_info_parent->setLayout(hbox);
 
 	fix_menu.addAction(action_fix_model);
@@ -963,7 +963,7 @@ void MainWindow::addModel(const QString &filename)
 		models_tbw->addTab(model_tab, obj_name);
 		models_tbw->setCurrentIndex(models_tbw->count()-1);
 		models_tbw->blockSignals(false);
-		models_tbw->currentWidget()->layout()->setContentsMargins(3,3,0,3);
+		models_tbw->currentWidget()->layout()->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,0,GuiUtilsNs::LtMargin);
 
 		//Creating the system objects (public schema and languages C, SQL and pgpgsql)
 		model_tab->db_model->createSystemObjects(filename.isEmpty());
@@ -1044,7 +1044,7 @@ void MainWindow::addModel(ModelWidget *model_wgt)
 		models_tbw->blockSignals(false);
 
 		setCurrentModel();
-		models_tbw->currentWidget()->layout()->setContentsMargins(3,3,0,3);
+		models_tbw->currentWidget()->layout()->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,0,GuiUtilsNs::LtMargin);
 
 		if(action_alin_objs_grade->isChecked())
 			current_model->scene->alignObjectsToGrid();

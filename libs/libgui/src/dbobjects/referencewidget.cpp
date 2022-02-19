@@ -79,7 +79,7 @@ ReferenceWidget::ReferenceWidget(QWidget *parent) : QWidget(parent)
 
 	info_frm=BaseObjectWidget::generateInformationFrame(tr("This tab can be used to inform the tables that the view references. This is just a convenience to make the visualization of this kind of object more intuitive. If no table is specified here no relationship will be displayed in the canvas. Note that no validation will be done to check if the provided tables are really referenced by the view."));
 	vbox = new QVBoxLayout;
-	vbox->setContentsMargins(4,4,4,4);
+	vbox->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
 	vbox->addLayout(hbox);
 	vbox->addWidget(ref_tables_tab);
 	vbox->addWidget(info_frm);

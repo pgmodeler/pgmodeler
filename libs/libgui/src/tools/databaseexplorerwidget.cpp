@@ -184,8 +184,8 @@ DatabaseExplorerWidget::DatabaseExplorerWidget(QWidget *parent): QWidget(parent)
 	truncate_action=new QAction(QIcon(GuiUtilsNs::getIconPath("truncate")), tr("Truncate"), &handle_menu);
 	trunc_cascade_action=new QAction(QIcon(GuiUtilsNs::getIconPath("trunccascade")), tr("Trunc. cascade"), &handle_menu);
 
-	show_data_action=new QAction(QIcon(GuiUtilsNs::getIconPath("result")), tr("Show data"), &handle_menu);
-	show_data_action->setShortcut(QKeySequence(Qt::Key_Space));
+	handle_data_action=new QAction(QIcon(GuiUtilsNs::getIconPath("editdata")), tr("Handle data"), &handle_menu);
+	handle_data_action->setShortcut(QKeySequence(Qt::Key_Space));
 	properties_action=new QAction(QIcon(GuiUtilsNs::getIconPath("edit")), tr("Reload properties"), &handle_menu);
 
 	refresh_action=new QAction(QIcon(GuiUtilsNs::getIconPath("refresh")), tr("Update"), &handle_menu);
@@ -1097,7 +1097,7 @@ void DatabaseExplorerWidget::handleObject(QTreeWidgetItem *item, int)
 		if(obj_id > 0)
 		{
 			if(BaseTable::isBaseTable(obj_type))
-				handle_menu.addAction(show_data_action);
+				handle_menu.addAction(handle_data_action);
 
 			handle_menu.addAction(properties_action);
 			handle_menu.addAction(source_action);
@@ -1138,7 +1138,7 @@ void DatabaseExplorerWidget::handleObject(QTreeWidgetItem *item, int)
 			showObjectProperties(true);
 		else if(exec_action==source_action)
 			loadObjectSource();
-		else if(exec_action==show_data_action)
+		else if(exec_action==handle_data_action)
 		{
 			openDataGrid(item->data(DatabaseImportForm::ObjectSchema, Qt::UserRole).toString(),
 									 item->text(0),

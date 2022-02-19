@@ -42,10 +42,10 @@ GenericSQLWidget::GenericSQLWidget(QWidget *parent): BaseObjectWidget(parent, Ob
 	preview_hl = new SyntaxHighlighter(preview_txt);
 	preview_hl->loadConfiguration(GlobalAttributes::getSQLHighlightConfPath());
 
-	attribs_tbw->widget(0)->layout()->setContentsMargins(4,4,4,4);
+	attribs_tbw->widget(0)->layout()->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
 	attribs_tbw->widget(0)->layout()->addWidget(definition_txt);
 
-	attribs_tbw->widget(2)->layout()->setContentsMargins(4,4,4,4);
+	attribs_tbw->widget(2)->layout()->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
 	attribs_tbw->widget(2)->layout()->addWidget(preview_txt);
 
 	// Configuring the object types accepted by object references

@@ -170,7 +170,7 @@
                 <widget class="QWidget" name="layoutWidget">
                  <layout class="QHBoxLayout" name="horizontalLayout">
                   <property name="spacing">
-                   <number>6</number>
+                   <number>10</number>
                   </property>
                   <item>
                    <spacer name="verticalSpacer_2">
@@ -676,7 +676,7 @@
                 <item>
                  <layout class="QHBoxLayout" name="horizontalLayout_5">
                   <property name="bottomMargin">
-                   <number>3</number>
+                   <number>5</number>
                   </property>
                   <item>
                    <widget class="QLabel" name="bg_saving_lbl">
@@ -1652,6 +1652,7 @@
   <tabstop>models_tbw</tabstop>
  </tabstops>
  <resources>
+  <include location="../res/resources.qrc"/>
   <include location="../res/resources.qrc"/>
   <include location="../res/resources.qrc"/>
  </resources>

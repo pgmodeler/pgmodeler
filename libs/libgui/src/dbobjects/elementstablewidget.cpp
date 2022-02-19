@@ -50,7 +50,7 @@ ElementsTableWidget::ElementsTableWidget(QWidget *parent) : QWidget(parent)
 		elements_tab->setHeaderLabel(tr("Sorting"), 5);
 		elements_tab->setHeaderLabel(tr("Nulls First"), 6);
 
-		vbox->setContentsMargins(4,4,4,4);
+		vbox->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
 		vbox->addWidget(elements_tab);
 
 		connect(elements_tab, SIGNAL(s_rowAdded(int)), this, SLOT(addElement(int)));

@@ -438,7 +438,7 @@ void BaseObjectWidget::configureFormLayout(QGridLayout *grid, ObjectType obj_typ
 	else
 		this->setLayout(baseobject_grid);
 
-	baseobject_grid->setContentsMargins(4, 4, 4, 4);
+	baseobject_grid->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
 	disable_sql_chk->setVisible(obj_type!=ObjectType::BaseObject && obj_type!=ObjectType::Permission &&
 															obj_type!=ObjectType::Textbox && obj_type!=ObjectType::Tag &&
 															obj_type!=ObjectType::Parameter);
@@ -552,7 +552,7 @@ QFrame *BaseObjectWidget::generateInformationFrame(const QString &msg)
 	info_frm->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
 
 	grid = new QGridLayout(info_frm);
-	grid->setContentsMargins(4, 4, 4, 4);
+	grid->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
 	grid->setObjectName("grid");
 
 	ico_lbl = new QLabel(info_frm);
@@ -574,7 +574,7 @@ QFrame *BaseObjectWidget::generateInformationFrame(const QString &msg)
 	msg_lbl->setText(msg);
 
 	grid->addWidget(msg_lbl, 0, 1, 1, 1);
-	grid->setContentsMargins(4,4,4,4);
+	grid->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
 
 	return info_frm;
 }
@@ -653,7 +653,7 @@ QFrame *BaseObjectWidget::generateVersionWarningFrame(map<QString, vector<QWidge
 							Generating SQL code for versions other than those specified in the fields' tooltips may create incompatible code.").arg(color.name()));
 
 	grid->addWidget(msg_lbl, 0, 1, 1, 1);
-	grid->setContentsMargins(4,4,4,4);
+	grid->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
 
 	alert_frm->adjustSize();
 	return alert_frm;

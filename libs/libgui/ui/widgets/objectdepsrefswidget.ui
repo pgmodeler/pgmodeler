@@ -50,19 +50,19 @@
       </attribute>
       <layout class="QGridLayout" name="gridLayout">
        <property name="leftMargin">
-        <number>4</number>
+        <number>5</number>
        </property>
        <property name="topMargin">
-        <number>4</number>
+        <number>5</number>
        </property>
        <property name="rightMargin">
-        <number>4</number>
+        <number>5</number>
        </property>
        <property name="bottomMargin">
-        <number>4</number>
+        <number>5</number>
        </property>
        <property name="spacing">
-        <number>6</number>
+        <number>10</number>
        </property>
        <item row="0" column="0">
         <widget class="QTableWidget" name="dependences_tbw">
@@ -203,19 +203,19 @@
       </attribute>
       <layout class="QGridLayout" name="gridLayout_2">
        <property name="leftMargin">
-        <number>4</number>
+        <number>5</number>
        </property>
        <property name="topMargin">
-        <number>4</number>
+        <number>5</number>
        </property>
        <property name="rightMargin">
-        <number>4</number>
+        <number>5</number>
        </property>
        <property name="bottomMargin">
-        <number>4</number>
+        <number>5</number>
        </property>
        <property name="spacing">
-        <number>6</number>
+        <number>10</number>
        </property>
        <item row="0" column="0">
         <widget class="QTableWidget" name="references_tbw">
@@ -371,16 +371,16 @@
      </property>
      <layout class="QGridLayout" name="gridLayout_4">
       <property name="leftMargin">
-       <number>2</number>
+       <number>5</number>
       </property>
       <property name="topMargin">
-       <number>2</number>
+       <number>5</number>
       </property>
       <property name="rightMargin">
-       <number>2</number>
+       <number>5</number>
       </property>
       <property name="bottomMargin">
-       <number>2</number>
+       <number>5</number>
       </property>
       <item row="0" column="0">
        <widget class="QLabel" name="label_3">
@@ -389,6 +389,11 @@
           <width>32</width>
           <height>32</height>
          </size>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>20</pointsize>
+         </font>
         </property>
         <property name="text">
          <string/>
@@ -408,6 +413,7 @@
        <widget class="QLabel" name="message_lbl">
         <property name="font">
          <font>
+          <weight>50</weight>
           <bold>false</bold>
           <underline>false</underline>
           <strikeout>false</strikeout>
@@ -428,6 +434,7 @@
   </layout>
  </widget>
  <resources>
+  <include location="../../res/resources.qrc"/>
   <include location="../../res/resources.qrc"/>
   <include location="../../res/resources.qrc"/>
  </resources>

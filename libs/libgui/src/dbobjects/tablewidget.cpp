@@ -86,7 +86,7 @@ TableWidget::TableWidget(QWidget *parent, ObjectType tab_type): BaseObjectWidget
 	options_tab->setHeaderLabel(tr("Value"), 1);
 
 	vbox = new QVBoxLayout;
-	vbox->setContentsMargins(4,4,4,4);
+	vbox->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
 	vbox->addWidget(options_tab);
 	attributes_tbw->widget(8)->setLayout(vbox);
 
@@ -97,7 +97,7 @@ TableWidget::TableWidget(QWidget *parent, ObjectType tab_type): BaseObjectWidget
 
 	grid=new QGridLayout;
 	grid->addWidget(parent_tables, 0,0,1,1);
-	grid->setContentsMargins(4,4,4,4);
+	grid->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
 	attributes_tbw->widget(7)->setLayout(grid);
 
 	//Configuring the table objects that stores the columns, triggers, constraints, rules and indexes
@@ -110,7 +110,7 @@ TableWidget::TableWidget(QWidget *parent, ObjectType tab_type): BaseObjectWidget
 
 		grid=new QGridLayout;
 		grid->addWidget(tab, 0,0,1,1);
-		grid->setContentsMargins(4,4,4,4);
+		grid->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
 		attributes_tbw->widget(i)->setLayout(grid);
 
 		connect(tab, SIGNAL(s_rowsRemoved()), this, SLOT(removeObjects()));

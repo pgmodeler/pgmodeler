@@ -45,7 +45,7 @@ SQLToolWidget::SQLToolWidget(QWidget * parent) : QWidget(parent)
 	QWidget *corner_wgt = new QWidget;
 
 	vbox->addWidget(sql_exec_corner_btn);
-	vbox->setContentsMargins(2,0,0,2);
+	vbox->setContentsMargins(GuiUtilsNs::LtMargin,0,0,GuiUtilsNs::LtMargin);
 	corner_wgt->setLayout(vbox);
 	sql_exec_tbw->setCornerWidget(corner_wgt, Qt::TopRightCorner);
 
@@ -57,7 +57,7 @@ SQLToolWidget::SQLToolWidget(QWidget * parent) : QWidget(parent)
 	sourcecode_hl=new SyntaxHighlighter(sourcecode_txt);
 	sourcecode_hl->loadConfiguration(GlobalAttributes::getSQLHighlightConfPath());
 
-	vbox->setContentsMargins(4,4,4,4);
+	vbox->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
 	vbox->addWidget(sourcecode_txt);
 	sourcecode_gb->setLayout(vbox);
 
@@ -298,7 +298,7 @@ SQLExecutionWidget *SQLToolWidget::addSQLExecutionTab(const QString &sql_cmd)
 		sql_exec_wgt->setConnection(conn);
 		sql_exec_tbw->addTab(sql_exec_wgt, conn.getConnectionParam(Connection::ParamDbName));
 		sql_exec_tbw->setCurrentWidget(sql_exec_wgt);
-		sql_exec_tbw->currentWidget()->layout()->setContentsMargins(4,4,4,4);
+		sql_exec_tbw->currentWidget()->layout()->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
 		sql_exec_wgt->sql_cmd_txt->appendPlainText(sql_cmd);
 		sql_exec_wgts[db_explorer_wgt].push_back(sql_exec_wgt);
 

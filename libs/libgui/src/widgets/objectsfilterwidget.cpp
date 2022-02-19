@@ -41,7 +41,7 @@ is present has the same effect as performing an exact match searching on the nam
 
 	QVBoxLayout *vbox = new QVBoxLayout;
 	vbox->addWidget(tab_objs_lst);
-	vbox->setContentsMargins(4,4,4,4);
+	vbox->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
 	frame->setLayout(vbox);
 
 	wgt_act_forced_filter = new QWidgetAction(this);

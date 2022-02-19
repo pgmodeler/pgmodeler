@@ -33,6 +33,9 @@
 #include "widgets/numberedtexteditor.h"
 
 namespace GuiUtilsNs {
+	static constexpr int LtMargin = 5,
+	LtSpacing = 10;
+
 	static constexpr unsigned SmallFontFactor = 0,
 	MediumFontFactor = 1,
 	BigFontFactor = 2,

@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>658</width>
-    <height>412</height>
+    <height>575</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -121,8 +121,8 @@
      </property>
      <property name="iconSize">
       <size>
-       <width>28</width>
-       <height>28</height>
+       <width>32</width>
+       <height>32</height>
       </size>
      </property>
      <property name="popupMode">
@@ -156,8 +156,8 @@
      </property>
      <property name="iconSize">
       <size>
-       <width>28</width>
-       <height>28</height>
+       <width>32</width>
+       <height>32</height>
       </size>
      </property>
      <property name="shortcut">
@@ -191,8 +191,8 @@
      </property>
      <property name="iconSize">
       <size>
-       <width>28</width>
-       <height>28</height>
+       <width>32</width>
+       <height>32</height>
       </size>
      </property>
      <property name="shortcut">
@@ -231,8 +231,8 @@
      </property>
      <property name="iconSize">
       <size>
-       <width>28</width>
-       <height>28</height>
+       <width>32</width>
+       <height>32</height>
       </size>
      </property>
      <property name="shortcut">
@@ -266,8 +266,8 @@
      </property>
      <property name="iconSize">
       <size>
-       <width>28</width>
-       <height>28</height>
+       <width>32</width>
+       <height>32</height>
       </size>
      </property>
      <property name="shortcut">
@@ -303,16 +303,16 @@
      </property>
      <layout class="QGridLayout" name="gridLayout_6">
       <property name="leftMargin">
-       <number>2</number>
+       <number>5</number>
       </property>
       <property name="topMargin">
-       <number>2</number>
+       <number>5</number>
       </property>
       <property name="rightMargin">
-       <number>2</number>
+       <number>5</number>
       </property>
       <property name="bottomMargin">
-       <number>2</number>
+       <number>5</number>
       </property>
       <item row="0" column="0">
        <widget class="QLabel" name="label_7">
@@ -346,6 +346,7 @@
         </property>
         <property name="font">
          <font>
+          <weight>50</weight>
           <bold>false</bold>
           <underline>false</underline>
           <strikeout>false</strikeout>
@@ -386,8 +387,8 @@
      </property>
      <property name="iconSize">
       <size>
-       <width>28</width>
-       <height>28</height>
+       <width>32</width>
+       <height>32</height>
       </size>
      </property>
      <property name="popupMode">
@@ -421,8 +422,8 @@
      </property>
      <property name="iconSize">
       <size>
-       <width>28</width>
-       <height>28</height>
+       <width>32</width>
+       <height>32</height>
       </size>
      </property>
      <property name="shortcut">
@@ -474,8 +475,8 @@
      </property>
      <property name="iconSize">
       <size>
-       <width>28</width>
-       <height>28</height>
+       <width>32</width>
+       <height>32</height>
       </size>
      </property>
      <property name="shortcut">
@@ -548,8 +549,8 @@
      </property>
      <property name="iconSize">
       <size>
-       <width>28</width>
-       <height>28</height>
+       <width>32</width>
+       <height>32</height>
       </size>
      </property>
      <property name="shortcut">
@@ -583,8 +584,8 @@
      </property>
      <property name="iconSize">
       <size>
-       <width>28</width>
-       <height>28</height>
+       <width>32</width>
+       <height>32</height>
       </size>
      </property>
      <property name="shortcut">
@@ -617,16 +618,16 @@
      </property>
      <layout class="QGridLayout" name="gridLayout_5">
       <property name="leftMargin">
-       <number>2</number>
+       <number>5</number>
       </property>
       <property name="topMargin">
-       <number>2</number>
+       <number>5</number>
       </property>
       <property name="rightMargin">
-       <number>2</number>
+       <number>5</number>
       </property>
       <property name="bottomMargin">
-       <number>2</number>
+       <number>5</number>
       </property>
       <item row="0" column="0">
        <widget class="QLabel" name="label_6">
@@ -660,6 +661,7 @@
         </property>
         <property name="font">
          <font>
+          <weight>50</weight>
           <bold>false</bold>
           <underline>false</underline>
           <strikeout>false</strikeout>
@@ -700,8 +702,8 @@
      </property>
      <property name="iconSize">
       <size>
-       <width>28</width>
-       <height>28</height>
+       <width>32</width>
+       <height>32</height>
       </size>
      </property>
      <property name="shortcut">
@@ -746,6 +748,7 @@
   <zorder>paste_tb</zorder>
  </widget>
  <resources>
+  <include location="../../res/resources.qrc"/>
   <include location="../../res/resources.qrc"/>
   <include location="../../res/resources.qrc"/>
  </resources>

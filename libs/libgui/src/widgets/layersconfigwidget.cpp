@@ -18,6 +18,7 @@
 
 #include "layersconfigwidget.h"
 #include "colorpickerwidget.h"
+#include "guiutilsns.h"
 
 LayersConfigWidget::LayersConfigWidget(QWidget *parent) : QWidget(parent)
 {
@@ -323,7 +324,7 @@ void LayersConfigWidget::__addLayer(const QString &name, Qt::CheckState chk_stat
 
 	color_picker = new ColorPickerWidget(1, layers_tab);
 	color_picker->setButtonToolTip(0, tr("Layer name color"));
-	color_picker->layout()->setContentsMargins(5,5,5,5);
+	color_picker->layout()->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
 	color_picker->setColor(0, QColor(0,0,0));
 	name_color_pickers.append(color_picker);
 	connect(color_picker, SIGNAL(s_colorChanged(unsigned, QColor)), this, SLOT(updateLayerColors()));

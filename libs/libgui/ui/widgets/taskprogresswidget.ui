@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>600</width>
-    <height>86</height>
+    <height>103</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -97,8 +97,8 @@
         </property>
         <property name="maximumSize">
          <size>
-          <width>72</width>
-          <height>72</height>
+          <width>80</width>
+          <height>80</height>
          </size>
         </property>
         <property name="text">
@@ -173,12 +173,15 @@
           </property>
           <property name="maximumSize">
            <size>
-            <width>35</width>
-            <height>32</height>
+            <width>40</width>
+            <height>40</height>
            </size>
           </property>
           <property name="text">
            <string/>
+          </property>
+          <property name="scaledContents">
+           <bool>true</bool>
           </property>
           <property name="alignment">
            <set>Qt::AlignCenter</set>
@@ -196,6 +199,7 @@
   </layout>
  </widget>
  <resources>
+  <include location="../../res/resources.qrc"/>
   <include location="../../res/resources.qrc"/>
   <include location="../../res/resources.qrc"/>
  </resources>

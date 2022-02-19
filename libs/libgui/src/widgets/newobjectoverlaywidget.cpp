@@ -81,7 +81,7 @@ NewObjectOverlayWidget::NewObjectOverlayWidget(ModelWidget *parent): QWidget(par
 		shortcut=std::get<0>(itr.second);
 		obj_type=std::get<1>(itr.second);
 
-		GuiUtilsNs::configureWidgetFont(button, GuiUtilsNs::BigFontFactor);
+		//GuiUtilsNs::configureWidgetFont(button, GuiUtilsNs::BigFontFactor);
 		button->setText(shortcut + QString(": ") + button->text());
 		button->setShortcut(QKeySequence(shortcut));
 		btn_actions[button] = parent->actions_new_objects[obj_type];
@@ -93,7 +93,7 @@ NewObjectOverlayWidget::NewObjectOverlayWidget(ModelWidget *parent): QWidget(par
 		shortcut=std::get<0>(itr.second);
 		action_idx=std::get<1>(itr.second);
 
-		GuiUtilsNs::configureWidgetFont(button, GuiUtilsNs::BigFontFactor);
+		//GuiUtilsNs::configureWidgetFont(button, GuiUtilsNs::BigFontFactor);
 		button->setText(shortcut + QString(": ") + button->text());
 		button->setShortcut(QKeySequence(shortcut));
 		btn_actions[button] = rel_actions[action_idx];
@@ -105,7 +105,7 @@ NewObjectOverlayWidget::NewObjectOverlayWidget(ModelWidget *parent): QWidget(par
 		button = itr;
 		button->setText(shortcut + QString(": ") + button->text());
 		button->setShortcut(QKeySequence(shortcut));
-		GuiUtilsNs::configureWidgetFont(button, GuiUtilsNs::BigFontFactor);
+		//GuiUtilsNs::configureWidgetFont(button, GuiUtilsNs::BigFontFactor);
 		btn_actions[button] = parent->action_edit_perms;
 	}
 

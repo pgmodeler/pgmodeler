@@ -59,7 +59,7 @@ NumberedTextEditor::NumberedTextEditor(QWidget * parent, bool handle_ext_files) 
 		top_widget->setVisible(handle_ext_files);
 		top_widget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
 
-		hbox->setContentsMargins(2,2,2,2);
+		hbox->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
 		hbox1->setContentsMargins(0,0,0,0);
 
 		QLabel *ico = new QLabel(this);

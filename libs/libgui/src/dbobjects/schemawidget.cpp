@@ -28,7 +28,7 @@ SchemaWidget::SchemaWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType
 	color_picker=new ColorPickerWidget(1, this);
 
 	hbox=new QHBoxLayout;
-	hbox->setContentsMargins(2,0,0,0);
+	hbox->setContentsMargins(GuiUtilsNs::LtMargin,0,0,0);
 	hbox->addWidget(fill_color_lbl);
 	hbox->addWidget(color_picker);
 	hbox->addWidget(show_rect_chk);

@@ -85,12 +85,12 @@ RelationshipWidget::RelationshipWidget(QWidget *parent): BaseObjectWidget(parent
 
 		grid=new QGridLayout;
 		grid->addWidget(attributes_tab, 0,0,1,1);
-		grid->setContentsMargins(4,4,4,4);
+		grid->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
 		rel_attribs_tbw->widget(AttributesTab)->setLayout(grid);
 
 		grid=new QGridLayout;
 		grid->addWidget(constraints_tab, 0,0,1,1);
-		grid->setContentsMargins(4,4,4,4);
+		grid->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
 		rel_attribs_tbw->widget(ConstraintsTab)->setLayout(grid);
 
 		grid=dynamic_cast<QGridLayout *>(rel_attribs_tbw->widget(SpecialPkTab)->layout());
@@ -100,7 +100,7 @@ RelationshipWidget::RelationshipWidget(QWidget *parent): BaseObjectWidget(parent
 		frame->setParent(rel_attribs_tbw->widget(SpecialPkTab));
 
 		grid=new QGridLayout;
-		grid->setContentsMargins(4,4,4,4);
+		grid->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
 
 		grid->addWidget(advanced_objs_tab, 0, 0, 1, 1);
 

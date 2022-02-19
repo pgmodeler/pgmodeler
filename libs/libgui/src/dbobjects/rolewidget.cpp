@@ -70,7 +70,7 @@ RoleWidget::RoleWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Ro
 
 		grid=new QGridLayout;
 		grid->addWidget(obj_tab,0,0,1,1);
-		grid->setContentsMargins(4,4,4,4);
+		grid->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
 		members_twg->widget(i)->setLayout(grid);
 	}
 

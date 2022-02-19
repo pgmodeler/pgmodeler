@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>666</width>
-    <height>443</height>
+    <width>731</width>
+    <height>456</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -48,16 +48,16 @@
        <number>10</number>
       </property>
       <property name="leftMargin">
-       <number>10</number>
+       <number>5</number>
       </property>
       <property name="topMargin">
-       <number>10</number>
+       <number>5</number>
       </property>
       <property name="rightMargin">
-       <number>10</number>
+       <number>5</number>
       </property>
       <property name="bottomMargin">
-       <number>10</number>
+       <number>5</number>
       </property>
       <item>
        <layout class="QHBoxLayout" name="horizontalLayout">
@@ -76,6 +76,12 @@
         </item>
         <item>
          <widget class="QToolButton" name="select_tb">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
           <property name="minimumSize">
            <size>
             <width>0</width>
@@ -113,6 +119,12 @@
         </item>
         <item>
          <widget class="QToolButton" name="insert_tb">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
           <property name="minimumSize">
            <size>
             <width>0</width>
@@ -150,6 +162,12 @@
         </item>
         <item>
          <widget class="QToolButton" name="update_tb">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
           <property name="minimumSize">
            <size>
             <width>0</width>
@@ -187,6 +205,12 @@
         </item>
         <item>
          <widget class="QToolButton" name="delete_tb">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
           <property name="minimumSize">
            <size>
             <width>0</width>
@@ -224,6 +248,12 @@
         </item>
         <item>
          <widget class="QToolButton" name="clear_tb">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
           <property name="font">
            <font>
             <italic>false</italic>
@@ -276,16 +306,16 @@
          </attribute>
          <layout class="QVBoxLayout" name="verticalLayout_2">
           <property name="leftMargin">
-           <number>4</number>
+           <number>5</number>
           </property>
           <property name="topMargin">
-           <number>4</number>
+           <number>5</number>
           </property>
           <property name="rightMargin">
-           <number>4</number>
+           <number>5</number>
           </property>
           <property name="bottomMargin">
-           <number>4</number>
+           <number>5</number>
           </property>
           <item>
            <widget class="QCheckBox" name="end_of_model_chk">
@@ -309,16 +339,16 @@ Unchecking this will cause the SQL to be appended at the end of CREATE DATABASE 
          </attribute>
          <layout class="QVBoxLayout" name="verticalLayout">
           <property name="leftMargin">
-           <number>4</number>
+           <number>5</number>
           </property>
           <property name="topMargin">
-           <number>4</number>
+           <number>5</number>
           </property>
           <property name="rightMargin">
-           <number>4</number>
+           <number>5</number>
           </property>
           <property name="bottomMargin">
-           <number>4</number>
+           <number>5</number>
           </property>
           <item>
            <widget class="QCheckBox" name="begin_of_model_chk">
@@ -397,6 +427,7 @@ Unchecking this will cause the SQL to be appended at the end of CREATE DATABASE 
           <widget class="QLabel" name="message_lbl">
            <property name="font">
             <font>
+             <weight>50</weight>
              <bold>false</bold>
              <underline>false</underline>
              <strikeout>false</strikeout>
@@ -427,6 +458,7 @@ Unchecking this will cause the SQL to be appended at the end of CREATE DATABASE 
   <tabstop>clear_tb</tabstop>
  </tabstops>
  <resources>
+  <include location="../../res/resources.qrc"/>
   <include location="../../res/resources.qrc"/>
   <include location="../../res/resources.qrc"/>
  </resources>

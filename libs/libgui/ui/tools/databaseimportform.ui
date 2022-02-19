@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
-    <height>620</height>
+    <width>1269</width>
+    <height>987</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -40,16 +40,16 @@
   </property>
   <layout class="QGridLayout" name="gridLayout_24">
    <property name="leftMargin">
-    <number>4</number>
+    <number>10</number>
    </property>
    <property name="topMargin">
-    <number>4</number>
+    <number>10</number>
    </property>
    <property name="rightMargin">
-    <number>4</number>
+    <number>10</number>
    </property>
    <property name="bottomMargin">
-    <number>4</number>
+    <number>10</number>
    </property>
    <item row="0" column="0" colspan="3">
     <widget class="QFrame" name="frame">
@@ -70,16 +70,16 @@
      </property>
      <layout class="QGridLayout" name="gridLayout_3">
       <property name="leftMargin">
-       <number>4</number>
+       <number>5</number>
       </property>
       <property name="topMargin">
-       <number>4</number>
+       <number>5</number>
       </property>
       <property name="rightMargin">
-       <number>4</number>
+       <number>5</number>
       </property>
       <property name="bottomMargin">
-       <number>4</number>
+       <number>5</number>
       </property>
       <item row="0" column="0" colspan="2">
        <widget class="QTabWidget" name="settings_tbw">
@@ -182,16 +182,16 @@
                  </attribute>
                  <layout class="QGridLayout" name="gridLayout_2">
                   <property name="leftMargin">
-                   <number>4</number>
+                   <number>5</number>
                   </property>
                   <property name="topMargin">
-                   <number>4</number>
+                   <number>5</number>
                   </property>
                   <property name="rightMargin">
-                   <number>4</number>
+                   <number>5</number>
                   </property>
                   <property name="bottomMargin">
-                   <number>4</number>
+                   <number>5</number>
                   </property>
                   <item row="5" column="0" colspan="3">
                    <widget class="QCheckBox" name="ignore_errors_chk">
@@ -389,16 +389,16 @@
              </property>
              <layout class="QGridLayout" name="gridLayout_5">
               <property name="leftMargin">
-               <number>4</number>
+               <number>5</number>
               </property>
               <property name="topMargin">
-               <number>4</number>
+               <number>5</number>
               </property>
               <property name="rightMargin">
-               <number>4</number>
+               <number>5</number>
               </property>
               <property name="bottomMargin">
-               <number>4</number>
+               <number>5</number>
               </property>
               <item row="3" column="0" colspan="2">
                <widget class="QWidget" name="buttons_wgt" native="true">
@@ -922,30 +922,30 @@
          </attribute>
          <layout class="QGridLayout" name="gridLayout_28">
           <property name="leftMargin">
-           <number>4</number>
+           <number>5</number>
           </property>
           <property name="topMargin">
-           <number>4</number>
+           <number>5</number>
           </property>
           <property name="rightMargin">
-           <number>4</number>
+           <number>5</number>
           </property>
           <property name="bottomMargin">
-           <number>4</number>
+           <number>5</number>
           </property>
           <item row="1" column="0" colspan="2">
            <layout class="QGridLayout" name="gridLayout_4">
             <property name="leftMargin">
-             <number>4</number>
+             <number>5</number>
             </property>
             <property name="topMargin">
-             <number>4</number>
+             <number>5</number>
             </property>
             <property name="rightMargin">
-             <number>4</number>
+             <number>5</number>
             </property>
             <property name="bottomMargin">
-             <number>4</number>
+             <number>5</number>
             </property>
             <item row="1" column="0">
              <widget class="QLabel" name="ico_lbl">
@@ -957,14 +957,14 @@
               </property>
               <property name="minimumSize">
                <size>
-                <width>22</width>
-                <height>22</height>
+                <width>32</width>
+                <height>32</height>
                </size>
               </property>
               <property name="maximumSize">
                <size>
-                <width>22</width>
-                <height>22</height>
+                <width>32</width>
+                <height>32</height>
                </size>
               </property>
               <property name="text">
@@ -996,6 +996,12 @@
               <property name="enabled">
                <bool>false</bool>
               </property>
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
               <property name="text">
                <string>&amp;Cancel</string>
               </property>
@@ -1005,8 +1011,8 @@
               </property>
               <property name="iconSize">
                <size>
-                <width>22</width>
-                <height>22</height>
+                <width>32</width>
+                <height>32</height>
                </size>
               </property>
               <property name="toolButtonStyle">
@@ -1016,6 +1022,12 @@
             </item>
             <item row="1" column="1" colspan="2">
              <widget class="QProgressBar" name="progress_pb">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
               <property name="value">
                <number>0</number>
               </property>
@@ -1083,15 +1095,21 @@
      <item>
       <widget class="QLabel" name="label">
        <property name="sizePolicy">
-        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>
        <property name="minimumSize">
         <size>
-         <width>0</width>
-         <height>0</height>
+         <width>242</width>
+         <height>50</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>242</width>
+         <height>50</height>
         </size>
        </property>
        <property name="text">
@@ -1099,6 +1117,9 @@
        </property>
        <property name="pixmap">
         <pixmap resource="../../res/resources.qrc">:/images/images/pgmodeler_name.png</pixmap>
+       </property>
+       <property name="scaledContents">
+        <bool>true</bool>
        </property>
       </widget>
      </item>
@@ -1121,16 +1142,10 @@
         <bool>false</bool>
        </property>
        <property name="sizePolicy">
-        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
-       </property>
-       <property name="minimumSize">
-        <size>
-         <width>90</width>
-         <height>32</height>
-        </size>
        </property>
        <property name="maximumSize">
         <size>
@@ -1147,8 +1162,8 @@
        </property>
        <property name="iconSize">
         <size>
-         <width>22</width>
-         <height>22</height>
+         <width>32</width>
+         <height>32</height>
         </size>
        </property>
        <property name="default">
@@ -1159,16 +1174,10 @@
      <item>
       <widget class="QPushButton" name="close_btn">
        <property name="sizePolicy">
-        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
-       </property>
-       <property name="minimumSize">
-        <size>
-         <width>90</width>
-         <height>32</height>
-        </size>
        </property>
        <property name="maximumSize">
         <size>
@@ -1185,8 +1194,8 @@
        </property>
        <property name="iconSize">
         <size>
-         <width>22</width>
-         <height>22</height>
+         <width>32</width>
+         <height>32</height>
         </size>
        </property>
        <property name="flat">

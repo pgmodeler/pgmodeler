@@ -45,8 +45,8 @@ CodeCompletionWidget::CodeCompletionWidget(QPlainTextEdit *code_field_txt, bool 
 	QVBoxLayout *vbox=new QVBoxLayout(completion_wgt);
 	vbox->addWidget(name_list);
 	vbox->addWidget(persistent_chk);
-	vbox->setContentsMargins(4,4,4,4);
-	vbox->setSpacing(6);
+	vbox->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
+	vbox->setSpacing(GuiUtilsNs::LtSpacing);
 	completion_wgt->setLayout(vbox);
 
 	GuiUtilsNs::configureWidgetFont(name_list, GuiUtilsNs::MediumFontFactor);

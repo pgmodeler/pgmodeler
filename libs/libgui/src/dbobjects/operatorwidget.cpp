@@ -34,7 +34,7 @@ OperatorWidget::OperatorWidget(QWidget *parent): BaseObjectWidget(parent, Object
 		arg_types[1]=new PgSQLTypeWidget(this, tr("Right Argument Type"));
 
 		grid=new QGridLayout;
-		grid->setContentsMargins(4,4,4,4);
+		grid->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
 		grid->addWidget(arg_types[0],0,0);
 		grid->addWidget(arg_types[1],1,0);
 

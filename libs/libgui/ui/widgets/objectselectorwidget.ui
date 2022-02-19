@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>277</width>
+    <width>824</width>
     <height>192</height>
    </rect>
   </property>
@@ -82,8 +82,8 @@
      </property>
      <property name="iconSize">
       <size>
-       <width>28</width>
-       <height>28</height>
+       <width>32</width>
+       <height>32</height>
       </size>
      </property>
     </widget>
@@ -117,8 +117,8 @@
      </property>
      <property name="iconSize">
       <size>
-       <width>28</width>
-       <height>28</height>
+       <width>32</width>
+       <height>32</height>
       </size>
      </property>
     </widget>
@@ -165,6 +165,7 @@
   </layout>
  </widget>
  <resources>
+  <include location="../../res/resources.qrc"/>
   <include location="../../res/resources.qrc"/>
   <include location="../../res/resources.qrc"/>
  </resources>

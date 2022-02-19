@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>285</width>
+    <width>397</width>
     <height>697</height>
    </rect>
   </property>
@@ -35,7 +35,7 @@
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_5">
      <property name="spacing">
-      <number>4</number>
+      <number>10</number>
      </property>
      <item>
       <widget class="QToolButton" name="toggle_display_tb">
@@ -153,7 +153,7 @@
        </property>
        <property name="icon">
         <iconset resource="../../res/resources.qrc">
-         <normaloff>:/icons/icons/result.png</normaloff>:/icons/icons/result.png</iconset>
+         <normaloff>:/icons/icons/editdata.png</normaloff>:/icons/icons/editdata.png</iconset>
        </property>
        <property name="iconSize">
         <size>
@@ -673,6 +673,7 @@
   </layout>
  </widget>
  <resources>
+  <include location="../../res/resources.qrc"/>
   <include location="../../res/resources.qrc"/>
  </resources>
  <connections/>
