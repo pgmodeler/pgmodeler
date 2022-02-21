@@ -49,6 +49,14 @@ struct SimpleColumn {
 			return name == col.name && type == col.type && alias == col.alias;
 		}
 
+		SimpleColumn & operator = (const SimpleColumn &col)
+		{
+			this->name = col.name;
+			this->type = col.type;
+			this->alias = col.alias;
+			return *this;
+		}
+
 		bool isValid() const
 		{
 			return !name.isEmpty() && !type.isEmpty();
