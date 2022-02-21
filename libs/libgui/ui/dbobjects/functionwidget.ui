@@ -84,6 +84,12 @@
      <verstretch>0</verstretch>
     </sizepolicy>
    </property>
+   <property name="iconSize">
+    <size>
+     <width>28</width>
+     <height>28</height>
+    </size>
+   </property>
   </widget>
   <widget class="QSpinBox" name="rows_ret_spb">
    <property name="geometry">
@@ -199,6 +205,12 @@
      <horstretch>0</horstretch>
      <verstretch>0</verstretch>
     </sizepolicy>
+   </property>
+   <property name="iconSize">
+    <size>
+     <width>28</width>
+     <height>28</height>
+    </size>
    </property>
   </widget>
   <widget class="QCheckBox" name="window_func_chk">
@@ -453,6 +465,12 @@
      <horstretch>0</horstretch>
      <verstretch>0</verstretch>
     </sizepolicy>
+   </property>
+   <property name="iconSize">
+    <size>
+     <width>28</width>
+     <height>28</height>
+    </size>
    </property>
   </widget>
   <widget class="QLabel" name="parallel_lbl">

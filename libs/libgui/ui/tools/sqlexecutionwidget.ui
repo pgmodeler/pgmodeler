@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1416</width>
-    <height>376</height>
+    <height>378</height>
    </rect>
   </property>
   <property name="baseSize">
@@ -700,7 +700,14 @@
                   <number>0</number>
                  </property>
                  <item>
-                  <widget class="QComboBox" name="columns_cmb"/>
+                  <widget class="QComboBox" name="columns_cmb">
+                   <property name="iconSize">
+                    <size>
+                     <width>28</width>
+                     <height>28</height>
+                    </size>
+                   </property>
+                  </widget>
                  </item>
                  <item>
                   <widget class="QLineEdit" name="filter_edt">
@@ -880,8 +887,8 @@
                 </property>
                 <property name="iconSize">
                  <size>
-                  <width>20</width>
-                  <height>20</height>
+                  <width>28</width>
+                  <height>28</height>
                  </size>
                 </property>
                 <property name="spacing">

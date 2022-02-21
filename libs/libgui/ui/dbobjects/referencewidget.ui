@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>923</width>
-    <height>321</height>
+    <width>931</width>
+    <height>345</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -217,6 +217,12 @@
            </property>
            <property name="currentText">
             <string>Table / Column</string>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>28</width>
+             <height>28</height>
+            </size>
            </property>
            <item>
             <property name="text">

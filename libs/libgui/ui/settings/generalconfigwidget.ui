@@ -889,6 +889,12 @@
             <property name="statusTip">
              <string/>
             </property>
+            <property name="iconSize">
+             <size>
+              <width>28</width>
+              <height>28</height>
+             </size>
+            </property>
            </widget>
           </item>
           <item row="1" column="0">
@@ -1038,6 +1044,12 @@
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
+              </property>
+              <property name="iconSize">
+               <size>
+                <width>28</width>
+                <height>28</height>
+               </size>
               </property>
               <item>
                <property name="text">
@@ -1501,6 +1513,12 @@
             <property name="currentIndex">
              <number>0</number>
             </property>
+            <property name="iconSize">
+             <size>
+              <width>28</width>
+              <height>28</height>
+             </size>
+            </property>
             <item>
              <property name="text">
               <string>A0 (841 x 1189 mm)</string>
@@ -1932,6 +1950,12 @@
             <property name="currentIndex">
              <number>0</number>
             </property>
+            <property name="iconSize">
+             <size>
+              <width>28</width>
+              <height>28</height>
+             </size>
+            </property>
             <item>
              <property name="text">
               <string>Milimeters</string>
@@ -1995,6 +2019,7 @@
   <tabstop>font_size_spb</tabstop>
  </tabstops>
  <resources>
+  <include location="../../res/resources.qrc"/>
   <include location="../../res/resources.qrc"/>
   <include location="../../res/resources.qrc"/>
  </resources>

@@ -290,6 +290,7 @@
                </property>
                <property name="font">
                 <font>
+                 <weight>50</weight>
                  <italic>false</italic>
                  <bold>false</bold>
                  <underline>false</underline>
@@ -747,7 +748,14 @@
            </widget>
           </item>
           <item row="3" column="2">
-           <widget class="QComboBox" name="extract_from_cmb"/>
+           <widget class="QComboBox" name="extract_from_cmb">
+            <property name="iconSize">
+             <size>
+              <width>28</width>
+              <height>28</height>
+             </size>
+            </property>
+           </widget>
           </item>
           <item row="0" column="0">
            <widget class="QLabel" name="label_3">
@@ -1014,6 +1022,7 @@
   </layout>
  </widget>
  <resources>
+  <include location="../../res/resources.qrc"/>
   <include location="../../res/resources.qrc"/>
   <include location="../../res/resources.qrc"/>
  </resources>

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>611</width>
-    <height>734</height>
+    <width>1358</width>
+    <height>1020</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -172,7 +172,14 @@
         </widget>
        </item>
        <item row="0" column="3">
-        <widget class="QComboBox" name="storage_cmb"/>
+        <widget class="QComboBox" name="storage_cmb">
+         <property name="iconSize">
+          <size>
+           <width>28</width>
+           <height>28</height>
+          </size>
+         </property>
+        </widget>
        </item>
        <item row="1" column="0" rowspan="3">
         <widget class="QLabel" name="by_value_lbl">
@@ -226,7 +233,14 @@
         </widget>
        </item>
        <item row="1" column="3">
-        <widget class="QComboBox" name="category_cmb"/>
+        <widget class="QComboBox" name="category_cmb">
+         <property name="iconSize">
+          <size>
+           <width>28</width>
+           <height>28</height>
+          </size>
+         </property>
+        </widget>
        </item>
        <item row="2" column="2">
         <widget class="QLabel" name="delimiter_lbl">
@@ -278,6 +292,12 @@
           <size>
            <width>90</width>
            <height>0</height>
+          </size>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>28</width>
+           <height>28</height>
           </size>
          </property>
          <item>

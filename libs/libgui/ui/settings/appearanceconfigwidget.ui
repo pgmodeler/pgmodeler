@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>618</width>
+    <width>620</width>
     <height>214</height>
    </rect>
   </property>
@@ -65,6 +65,12 @@
       </item>
       <item row="0" column="1" colspan="4">
        <widget class="QComboBox" name="element_cmb">
+        <property name="iconSize">
+         <size>
+          <width>28</width>
+          <height>28</height>
+         </size>
+        </property>
         <item>
          <property name="text">
           <string>Global: Font style</string>
@@ -479,6 +485,7 @@
         </property>
         <property name="font">
          <font>
+          <weight>50</weight>
           <bold>false</bold>
          </font>
         </property>
@@ -497,6 +504,7 @@
         </property>
         <property name="font">
          <font>
+          <weight>50</weight>
           <bold>false</bold>
          </font>
         </property>

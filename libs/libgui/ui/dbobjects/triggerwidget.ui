@@ -176,6 +176,12 @@
            <height>16777215</height>
           </size>
          </property>
+         <property name="iconSize">
+          <size>
+           <width>28</width>
+           <height>28</height>
+          </size>
+         </property>
         </widget>
        </item>
       </layout>
@@ -276,6 +282,12 @@
             <size>
              <width>16777215</width>
              <height>16777215</height>
+            </size>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>28</width>
+             <height>28</height>
             </size>
            </property>
           </widget>
@@ -575,6 +587,12 @@
       <size>
        <width>16777215</width>
        <height>16777215</height>
+      </size>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>28</width>
+       <height>28</height>
       </size>
      </property>
     </widget>

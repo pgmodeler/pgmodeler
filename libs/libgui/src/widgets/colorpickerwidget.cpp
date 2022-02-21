@@ -41,10 +41,10 @@ ColorPickerWidget::ColorPickerWidget(int color_count, QWidget * parent) : QWidge
 	for(int i=0; i < color_count; i++)
 	{
 		btn=new QToolButton(this);
-		btn->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
-		btn->setMinimumHeight(25);
-		btn->setMaximumHeight(random_color_tb->height() - 10);
-		btn->setMinimumWidth(55);
+		btn->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
+		btn->setMinimumHeight(random_color_tb->height());
+		btn->setMaximumHeight(random_color_tb->height());
+		btn->setMinimumWidth(random_color_tb->width() * 2);
 		btn->installEventFilter(this);
 
 		disable_color=btn->palette().color(QPalette::Button);
