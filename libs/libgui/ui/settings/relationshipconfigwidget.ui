@@ -46,16 +46,19 @@
       </attribute>
       <layout class="QGridLayout" name="gridLayout_3">
        <property name="leftMargin">
-        <number>4</number>
+        <number>5</number>
        </property>
        <property name="topMargin">
-        <number>4</number>
+        <number>5</number>
        </property>
        <property name="rightMargin">
-        <number>4</number>
+        <number>5</number>
        </property>
        <property name="bottomMargin">
-        <number>4</number>
+        <number>5</number>
+       </property>
+       <property name="spacing">
+        <number>10</number>
        </property>
        <item row="0" column="0">
         <widget class="QFrame" name="frame">
@@ -69,20 +72,26 @@
           <enum>QFrame::StyledPanel</enum>
          </property>
          <layout class="QVBoxLayout" name="verticalLayout">
+          <property name="spacing">
+           <number>10</number>
+          </property>
           <property name="leftMargin">
-           <number>4</number>
+           <number>5</number>
           </property>
           <property name="topMargin">
-           <number>4</number>
+           <number>5</number>
           </property>
           <property name="rightMargin">
-           <number>4</number>
+           <number>5</number>
           </property>
           <property name="bottomMargin">
-           <number>4</number>
+           <number>5</number>
           </property>
           <item>
            <layout class="QGridLayout" name="gridLayout_6">
+            <property name="spacing">
+             <number>10</number>
+            </property>
             <item row="1" column="0" colspan="2">
              <widget class="QLabel" name="crows_foot_lbl">
               <property name="enabled">
@@ -158,6 +167,9 @@
           </item>
           <item>
            <layout class="QGridLayout" name="gridLayout_7">
+            <property name="spacing">
+             <number>10</number>
+            </property>
             <item row="1" column="0" colspan="3">
              <widget class="QLabel" name="conn_tab_edges_lbl">
               <property name="enabled">
@@ -227,6 +239,9 @@
           </item>
           <item>
            <layout class="QGridLayout" name="gridLayout">
+            <property name="spacing">
+             <number>10</number>
+            </property>
             <item row="1" column="0" colspan="3">
              <widget class="QLabel" name="conn_fk_pk_lbl">
               <property name="enabled">
@@ -299,6 +314,9 @@
           </item>
           <item>
            <layout class="QGridLayout" name="gridLayout_4">
+            <property name="spacing">
+             <number>10</number>
+            </property>
             <item row="1" column="0" colspan="3">
              <widget class="QLabel" name="conn_cnt_pnts_lbl">
               <property name="enabled">
@@ -420,19 +438,19 @@
          </property>
          <layout class="QGridLayout" name="gridLayout_2">
           <property name="leftMargin">
-           <number>4</number>
+           <number>5</number>
           </property>
           <property name="topMargin">
-           <number>4</number>
+           <number>5</number>
           </property>
           <property name="rightMargin">
-           <number>4</number>
+           <number>5</number>
           </property>
           <property name="bottomMargin">
-           <number>4</number>
+           <number>5</number>
           </property>
           <property name="spacing">
-           <number>6</number>
+           <number>10</number>
           </property>
           <item row="0" column="2">
            <widget class="QLabel" name="deferral_lbl">
@@ -584,16 +602,19 @@
          </property>
          <layout class="QGridLayout" name="gridLayout_5">
           <property name="leftMargin">
-           <number>4</number>
+           <number>5</number>
           </property>
           <property name="topMargin">
-           <number>4</number>
+           <number>5</number>
           </property>
           <property name="rightMargin">
-           <number>4</number>
+           <number>5</number>
           </property>
           <property name="bottomMargin">
-           <number>4</number>
+           <number>5</number>
+          </property>
+          <property name="spacing">
+           <number>10</number>
           </property>
           <item row="2" column="0">
            <widget class="QLabel" name="src_fk_pattern_lbl">
@@ -909,6 +930,7 @@
   <tabstop>pk_col_pattern_txt</tabstop>
  </tabstops>
  <resources>
+  <include location="../../res/resources.qrc"/>
   <include location="../../res/resources.qrc"/>
  </resources>
  <connections/>

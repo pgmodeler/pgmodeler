@@ -19,24 +19,33 @@
   </property>
   <layout class="QGridLayout" name="gridLayout_2">
    <property name="leftMargin">
-    <number>2</number>
+    <number>10</number>
    </property>
    <property name="topMargin">
-    <number>2</number>
+    <number>10</number>
    </property>
    <property name="rightMargin">
-    <number>2</number>
+    <number>10</number>
    </property>
    <property name="bottomMargin">
-    <number>2</number>
+    <number>10</number>
+   </property>
+   <property name="spacing">
+    <number>10</number>
    </property>
    <item row="1" column="0">
     <widget class="QLabel" name="label">
      <property name="sizePolicy">
-      <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>242</width>
+       <height>50</height>
+      </size>
      </property>
      <property name="text">
       <string/>
@@ -44,15 +53,21 @@
      <property name="pixmap">
       <pixmap resource="../../res/resources.qrc">:/images/images/pgmodeler_name.png</pixmap>
      </property>
+     <property name="scaledContents">
+      <bool>true</bool>
+     </property>
     </widget>
    </item>
    <item row="1" column="1">
     <layout class="QHBoxLayout" name="horizontalLayout">
+     <property name="spacing">
+      <number>10</number>
+     </property>
      <property name="sizeConstraint">
       <enum>QLayout::SetDefaultConstraint</enum>
      </property>
      <property name="rightMargin">
-      <number>2</number>
+      <number>0</number>
      </property>
      <item>
       <spacer name="hspacer">
@@ -76,16 +91,10 @@
         <bool>false</bool>
        </property>
        <property name="sizePolicy">
-        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
-       </property>
-       <property name="minimumSize">
-        <size>
-         <width>90</width>
-         <height>35</height>
-        </size>
        </property>
        <property name="maximumSize">
         <size>
@@ -102,8 +111,8 @@
        </property>
        <property name="iconSize">
         <size>
-         <width>22</width>
-         <height>22</height>
+         <width>32</width>
+         <height>32</height>
         </size>
        </property>
        <property name="default">
@@ -114,16 +123,10 @@
      <item>
       <widget class="QPushButton" name="cancel_btn">
        <property name="sizePolicy">
-        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
-       </property>
-       <property name="minimumSize">
-        <size>
-         <width>90</width>
-         <height>35</height>
-        </size>
        </property>
        <property name="maximumSize">
         <size>
@@ -140,8 +143,8 @@
        </property>
        <property name="iconSize">
         <size>
-         <width>22</width>
-         <height>22</height>
+         <width>32</width>
+         <height>32</height>
         </size>
        </property>
        <property name="flat">
@@ -161,16 +164,19 @@
      </property>
      <layout class="QGridLayout" name="gridLayout">
       <property name="leftMargin">
-       <number>4</number>
+       <number>5</number>
       </property>
       <property name="topMargin">
-       <number>4</number>
+       <number>5</number>
       </property>
       <property name="rightMargin">
-       <number>4</number>
+       <number>5</number>
       </property>
       <property name="bottomMargin">
-       <number>4</number>
+       <number>5</number>
+      </property>
+      <property name="spacing">
+       <number>10</number>
       </property>
       <item row="0" column="0">
        <widget class="QTabWidget" name="settings_tbw">
@@ -189,16 +195,19 @@
          </attribute>
          <layout class="QGridLayout" name="settings_grid">
           <property name="leftMargin">
-           <number>4</number>
+           <number>5</number>
           </property>
           <property name="topMargin">
-           <number>4</number>
+           <number>5</number>
           </property>
           <property name="rightMargin">
-           <number>4</number>
+           <number>5</number>
           </property>
           <property name="bottomMargin">
-           <number>4</number>
+           <number>5</number>
+          </property>
+          <property name="spacing">
+           <number>10</number>
           </property>
           <item row="3" column="0">
            <widget class="QLabel" name="extract_from_lbl">
@@ -229,16 +238,19 @@
             </property>
             <layout class="QGridLayout" name="gridLayout_5">
              <property name="leftMargin">
-              <number>2</number>
+              <number>5</number>
              </property>
              <property name="topMargin">
-              <number>2</number>
+              <number>5</number>
              </property>
              <property name="rightMargin">
-              <number>2</number>
+              <number>5</number>
              </property>
              <property name="bottomMargin">
-              <number>2</number>
+              <number>5</number>
+             </property>
+             <property name="spacing">
+              <number>10</number>
              </property>
              <item row="0" column="0">
               <widget class="QLabel" name="label_4">
@@ -278,7 +290,6 @@
                </property>
                <property name="font">
                 <font>
-                 <weight>50</weight>
                  <italic>false</italic>
                  <bold>false</bold>
                  <underline>false</underline>
@@ -310,15 +321,18 @@
             </property>
             <layout class="QGridLayout" name="gridLayout_4">
              <property name="leftMargin">
-              <number>4</number>
+              <number>5</number>
              </property>
              <property name="topMargin">
-              <number>4</number>
+              <number>5</number>
              </property>
              <property name="rightMargin">
-              <number>4</number>
+              <number>5</number>
              </property>
-             <property name="horizontalSpacing">
+             <property name="bottomMargin">
+              <number>5</number>
+             </property>
+             <property name="spacing">
               <number>10</number>
              </property>
              <item row="7" column="0">
@@ -744,6 +758,9 @@
           </item>
           <item row="0" column="2">
            <layout class="QHBoxLayout" name="horizontalLayout_4">
+            <property name="spacing">
+             <number>10</number>
+            </property>
             <item>
              <widget class="QRadioButton" name="extract_restore_rb">
               <property name="sizePolicy">
@@ -767,22 +784,6 @@
              </widget>
             </item>
             <item>
-             <spacer name="horizontalSpacer_2">
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-              <property name="sizeType">
-               <enum>QSizePolicy::Fixed</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>10</width>
-                <height>20</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-            <item>
              <widget class="QRadioButton" name="extract_only_rb">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -803,22 +804,6 @@
                <bool>false</bool>
               </property>
              </widget>
-            </item>
-            <item>
-             <spacer name="horizontalSpacer_3">
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-              <property name="sizeType">
-               <enum>QSizePolicy::Fixed</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>10</width>
-                <height>20</height>
-               </size>
-              </property>
-             </spacer>
             </item>
             <item>
              <widget class="QRadioButton" name="restore_rb">
@@ -879,16 +864,19 @@
          </attribute>
          <layout class="QGridLayout" name="gridLayout_15">
           <property name="leftMargin">
-           <number>4</number>
+           <number>5</number>
           </property>
           <property name="topMargin">
-           <number>4</number>
+           <number>5</number>
           </property>
           <property name="rightMargin">
-           <number>4</number>
+           <number>5</number>
           </property>
           <property name="bottomMargin">
-           <number>4</number>
+           <number>5</number>
+          </property>
+          <property name="spacing">
+           <number>10</number>
           </property>
           <item row="1" column="0">
            <widget class="QWidget" name="progress_wgt" native="true">
@@ -1026,6 +1014,7 @@
   </layout>
  </widget>
  <resources>
+  <include location="../../res/resources.qrc"/>
   <include location="../../res/resources.qrc"/>
  </resources>
  <connections/>

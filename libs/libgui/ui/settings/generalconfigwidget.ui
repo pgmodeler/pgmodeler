@@ -67,16 +67,16 @@
          </property>
          <layout class="QGridLayout" name="gridLayout_6">
           <property name="leftMargin">
-           <number>4</number>
+           <number>5</number>
           </property>
           <property name="topMargin">
-           <number>4</number>
+           <number>5</number>
           </property>
           <property name="rightMargin">
-           <number>4</number>
+           <number>5</number>
           </property>
           <property name="bottomMargin">
-           <number>4</number>
+           <number>5</number>
           </property>
           <property name="spacing">
            <number>10</number>
@@ -696,7 +696,7 @@
           <item>
            <layout class="QGridLayout" name="gridLayout_7">
             <property name="spacing">
-             <number>6</number>
+             <number>10</number>
             </property>
             <item row="1" column="1" colspan="3">
              <widget class="QWidget" name="grid_color_wgt" native="true">
@@ -860,16 +860,19 @@
          </property>
          <layout class="QGridLayout" name="general_grid">
           <property name="leftMargin">
-           <number>4</number>
+           <number>5</number>
           </property>
           <property name="topMargin">
-           <number>4</number>
+           <number>5</number>
           </property>
           <property name="rightMargin">
-           <number>4</number>
+           <number>5</number>
           </property>
           <property name="bottomMargin">
-           <number>4</number>
+           <number>5</number>
+          </property>
+          <property name="spacing">
+           <number>10</number>
           </property>
           <item row="0" column="0">
            <widget class="QLabel" name="label_5">
@@ -924,8 +927,14 @@
           </item>
           <item row="4" column="0" colspan="2">
            <layout class="QGridLayout" name="gridLayout_8">
+            <property name="spacing">
+             <number>10</number>
+            </property>
             <item row="0" column="1">
              <layout class="QHBoxLayout" name="horizontalLayout_19">
+              <property name="spacing">
+               <number>10</number>
+              </property>
               <item>
                <widget class="QSpinBox" name="history_max_length_spb">
                 <property name="sizePolicy">
@@ -957,7 +966,7 @@
               <item>
                <widget class="QToolButton" name="clear_sql_history_tb">
                 <property name="sizePolicy">
-                 <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+                 <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
                   <horstretch>0</horstretch>
                   <verstretch>0</verstretch>
                  </sizepolicy>
@@ -989,8 +998,8 @@
                 </property>
                 <property name="iconSize">
                  <size>
-                  <width>22</width>
-                  <height>22</height>
+                  <width>32</width>
+                  <height>32</height>
                  </size>
                 </property>
                 <property name="toolButtonStyle">
@@ -1068,6 +1077,9 @@
             </item>
             <item row="0" column="2">
              <layout class="QHBoxLayout" name="horizontalLayout_7">
+              <property name="spacing">
+               <number>10</number>
+              </property>
               <item>
                <widget class="QCheckBox" name="save_restore_geometry_chk">
                 <property name="sizePolicy">
@@ -1087,7 +1099,7 @@
                  <bool>false</bool>
                 </property>
                 <property name="sizePolicy">
-                 <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+                 <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
                   <horstretch>0</horstretch>
                   <verstretch>0</verstretch>
                  </sizepolicy>
@@ -1119,8 +1131,8 @@
                 </property>
                 <property name="iconSize">
                  <size>
-                  <width>22</width>
-                  <height>22</height>
+                  <width>32</width>
+                  <height>32</height>
                  </size>
                 </property>
                 <property name="toolButtonStyle">
@@ -1193,16 +1205,19 @@
          </property>
          <layout class="QGridLayout" name="gridLayout_5">
           <property name="leftMargin">
-           <number>4</number>
+           <number>5</number>
           </property>
           <property name="topMargin">
-           <number>4</number>
+           <number>5</number>
           </property>
           <property name="rightMargin">
-           <number>4</number>
+           <number>5</number>
           </property>
           <property name="bottomMargin">
-           <number>4</number>
+           <number>5</number>
+          </property>
+          <property name="spacing">
+           <number>10</number>
           </property>
           <item row="1" column="0">
            <widget class="QLabel" name="font_lbl_2">
@@ -1258,6 +1273,9 @@
           </item>
           <item row="3" column="1" colspan="2">
            <layout class="QHBoxLayout" name="horizontalLayout_18">
+            <property name="spacing">
+             <number>10</number>
+            </property>
             <item>
              <widget class="QCheckBox" name="disp_line_numbers_chk">
               <property name="text">
@@ -1298,6 +1316,9 @@
           </item>
           <item row="1" column="1" colspan="2">
            <layout class="QHBoxLayout" name="horizontalLayout_5">
+            <property name="spacing">
+             <number>10</number>
+            </property>
             <item>
              <widget class="QDoubleSpinBox" name="font_size_spb">
               <property name="decimals">
@@ -1340,7 +1361,7 @@
               </property>
               <property name="sizeHint" stdset="0">
                <size>
-                <width>30</width>
+                <width>40</width>
                 <height>20</height>
                </size>
               </property>
@@ -1397,16 +1418,19 @@
          </property>
          <layout class="QGridLayout" name="gridLayout_3">
           <property name="leftMargin">
-           <number>4</number>
+           <number>5</number>
           </property>
           <property name="topMargin">
-           <number>4</number>
+           <number>5</number>
           </property>
           <property name="rightMargin">
-           <number>4</number>
+           <number>5</number>
           </property>
           <property name="bottomMargin">
-           <number>4</number>
+           <number>5</number>
+          </property>
+          <property name="spacing">
+           <number>10</number>
           </property>
           <item row="0" column="0">
            <widget class="QLabel" name="print_op_lbl">
@@ -1692,6 +1716,9 @@
           </item>
           <item row="4" column="1" colspan="2">
            <layout class="QHBoxLayout" name="horizontalLayout">
+            <property name="spacing">
+             <number>10</number>
+            </property>
             <item>
              <widget class="QLabel" name="width_lbl">
               <property name="sizePolicy">
@@ -1761,6 +1788,9 @@
           </item>
           <item row="5" column="1" colspan="2">
            <layout class="QGridLayout" name="gridLayout">
+            <property name="spacing">
+             <number>10</number>
+            </property>
             <item row="0" column="0">
              <widget class="QLabel" name="left_lbl">
               <property name="minimumSize">
@@ -1965,6 +1995,7 @@
   <tabstop>font_size_spb</tabstop>
  </tabstops>
  <resources>
+  <include location="../../res/resources.qrc"/>
   <include location="../../res/resources.qrc"/>
  </resources>
  <connections/>
