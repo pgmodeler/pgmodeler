@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>562</width>
-    <height>611</height>
+    <width>611</width>
+    <height>734</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -18,19 +18,19 @@
   </property>
   <layout class="QGridLayout" name="type_grid">
    <property name="leftMargin">
-    <number>2</number>
+    <number>5</number>
    </property>
    <property name="topMargin">
-    <number>2</number>
+    <number>5</number>
    </property>
    <property name="rightMargin">
-    <number>2</number>
+    <number>5</number>
    </property>
    <property name="bottomMargin">
-    <number>2</number>
+    <number>5</number>
    </property>
    <property name="spacing">
-    <number>6</number>
+    <number>10</number>
    </property>
    <item row="0" column="4">
     <widget class="QRadioButton" name="range_rb">
@@ -56,19 +56,19 @@
       </attribute>
       <layout class="QGridLayout" name="gridLayout_3">
        <property name="leftMargin">
-        <number>4</number>
+        <number>5</number>
        </property>
        <property name="topMargin">
-        <number>4</number>
+        <number>5</number>
        </property>
        <property name="rightMargin">
-        <number>4</number>
+        <number>5</number>
        </property>
        <property name="bottomMargin">
-        <number>4</number>
+        <number>5</number>
        </property>
        <property name="spacing">
-        <number>6</number>
+        <number>10</number>
        </property>
        <item row="0" column="0">
         <widget class="QLabel" name="input_lbl">
@@ -127,19 +127,19 @@
       </attribute>
       <layout class="QGridLayout" name="gridLayout_2">
        <property name="leftMargin">
-        <number>4</number>
+        <number>5</number>
        </property>
        <property name="topMargin">
-        <number>4</number>
+        <number>5</number>
        </property>
        <property name="rightMargin">
-        <number>4</number>
+        <number>5</number>
        </property>
        <property name="bottomMargin">
-        <number>4</number>
+        <number>5</number>
        </property>
        <property name="spacing">
-        <number>6</number>
+        <number>10</number>
        </property>
        <item row="0" column="0">
         <widget class="QLabel" name="internal_len_lbl">
@@ -399,19 +399,19 @@
      </property>
      <layout class="QGridLayout" name="gridLayout">
       <property name="leftMargin">
-       <number>4</number>
+       <number>5</number>
       </property>
       <property name="topMargin">
-       <number>4</number>
+       <number>5</number>
       </property>
       <property name="rightMargin">
-       <number>4</number>
+       <number>5</number>
       </property>
       <property name="bottomMargin">
-       <number>4</number>
+       <number>5</number>
       </property>
       <property name="spacing">
-       <number>6</number>
+       <number>10</number>
       </property>
       <item row="0" column="0">
        <widget class="QLabel" name="enum_name_lbl">
@@ -449,19 +449,19 @@
      </property>
      <layout class="QGridLayout" name="gridLayout_4">
       <property name="leftMargin">
-       <number>4</number>
+       <number>5</number>
       </property>
       <property name="topMargin">
-       <number>4</number>
+       <number>5</number>
       </property>
       <property name="rightMargin">
-       <number>4</number>
+       <number>5</number>
       </property>
       <property name="bottomMargin">
-       <number>4</number>
+       <number>5</number>
       </property>
       <property name="spacing">
-       <number>6</number>
+       <number>10</number>
       </property>
       <item row="0" column="0">
        <widget class="QLabel" name="attrib_name_lbl">
@@ -506,19 +506,19 @@
      </property>
      <layout class="QGridLayout" name="gridLayout_5">
       <property name="leftMargin">
-       <number>4</number>
+       <number>5</number>
       </property>
       <property name="topMargin">
-       <number>4</number>
+       <number>5</number>
       </property>
       <property name="rightMargin">
-       <number>4</number>
+       <number>5</number>
       </property>
       <property name="bottomMargin">
-       <number>4</number>
+       <number>5</number>
       </property>
       <property name="spacing">
-       <number>6</number>
+       <number>10</number>
       </property>
       <item row="2" column="0">
        <widget class="QLabel" name="diff_func_lbl">

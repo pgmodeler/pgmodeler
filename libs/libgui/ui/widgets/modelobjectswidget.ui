@@ -77,6 +77,9 @@
         <property name="orientation">
          <enum>Qt::Vertical</enum>
         </property>
+        <property name="handleWidth">
+         <number>8</number>
+        </property>
         <widget class="QStackedWidget" name="visaoobjetos_stw">
          <property name="enabled">
           <bool>true</bool>

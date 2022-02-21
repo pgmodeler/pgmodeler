@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1117</width>
-    <height>1000</height>
+    <width>1075</width>
+    <height>917</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -40,16 +40,16 @@
   </property>
   <layout class="QGridLayout" name="gridLayout_6">
    <property name="leftMargin">
-    <number>4</number>
+    <number>10</number>
    </property>
    <property name="topMargin">
-    <number>4</number>
+    <number>10</number>
    </property>
    <property name="rightMargin">
-    <number>4</number>
+    <number>10</number>
    </property>
    <property name="bottomMargin">
-    <number>4</number>
+    <number>10</number>
    </property>
    <item row="0" column="0" colspan="3">
     <widget class="QFrame" name="frame">
@@ -70,16 +70,16 @@
      </property>
      <layout class="QGridLayout" name="gridLayout_7">
       <property name="leftMargin">
-       <number>4</number>
+       <number>5</number>
       </property>
       <property name="topMargin">
-       <number>4</number>
+       <number>5</number>
       </property>
       <property name="rightMargin">
-       <number>4</number>
+       <number>5</number>
       </property>
       <property name="bottomMargin">
-       <number>4</number>
+       <number>5</number>
       </property>
       <item row="0" column="0">
        <widget class="QTabWidget" name="settings_tbw">
@@ -88,6 +88,12 @@
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>16777215</width>
+          <height>16777215</height>
+         </size>
         </property>
         <property name="currentIndex">
          <number>0</number>
@@ -98,16 +104,16 @@
          </attribute>
          <layout class="QVBoxLayout" name="verticalLayout">
           <property name="leftMargin">
-           <number>4</number>
+           <number>5</number>
           </property>
           <property name="topMargin">
-           <number>4</number>
+           <number>5</number>
           </property>
           <property name="rightMargin">
-           <number>4</number>
+           <number>5</number>
           </property>
           <property name="bottomMargin">
-           <number>4</number>
+           <number>5</number>
           </property>
           <item>
            <widget class="QGroupBox" name="groupBox">
@@ -125,16 +131,16 @@
             </property>
             <layout class="QGridLayout" name="gridLayout_9">
              <property name="leftMargin">
-              <number>4</number>
+              <number>5</number>
              </property>
              <property name="topMargin">
-              <number>4</number>
+              <number>5</number>
              </property>
              <property name="rightMargin">
-              <number>4</number>
+              <number>5</number>
              </property>
              <property name="bottomMargin">
-              <number>4</number>
+              <number>5</number>
              </property>
              <item row="0" column="2">
               <widget class="QWidget" name="export_to_dbms_wgt" native="true">
@@ -146,16 +152,16 @@
                </property>
                <layout class="QGridLayout" name="gridLayout_8">
                 <property name="leftMargin">
-                 <number>4</number>
+                 <number>5</number>
                 </property>
                 <property name="topMargin">
-                 <number>4</number>
+                 <number>5</number>
                 </property>
                 <property name="rightMargin">
                  <number>0</number>
                 </property>
                 <property name="bottomMargin">
-                 <number>4</number>
+                 <number>5</number>
                 </property>
                 <item row="0" column="0" rowspan="3">
                  <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -330,31 +336,6 @@
                 </item>
                 <item row="1" column="2">
                  <layout class="QGridLayout" name="gridLayout">
-                  <item row="0" column="1">
-                   <widget class="QWidget" name="pgsqlvers_hint" native="true">
-                    <property name="sizePolicy">
-                     <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                      <horstretch>0</horstretch>
-                      <verstretch>0</verstretch>
-                     </sizepolicy>
-                    </property>
-                    <property name="minimumSize">
-                     <size>
-                      <width>22</width>
-                      <height>22</height>
-                     </size>
-                    </property>
-                    <property name="maximumSize">
-                     <size>
-                      <width>22</width>
-                      <height>22</height>
-                     </size>
-                    </property>
-                    <property name="statusTip">
-                     <string/>
-                    </property>
-                   </widget>
-                  </item>
                   <item row="0" column="0">
                    <widget class="QComboBox" name="pgsqlvers1_cmb">
                     <property name="enabled">
@@ -386,7 +367,7 @@
                     </property>
                    </widget>
                   </item>
-                  <item row="0" column="2">
+                  <item row="0" column="1">
                    <spacer name="horizontalSpacer_2">
                     <property name="orientation">
                      <enum>Qt::Horizontal</enum>
@@ -537,16 +518,16 @@
             </property>
             <layout class="QGridLayout" name="gridLayout_10">
              <property name="leftMargin">
-              <number>4</number>
+              <number>5</number>
              </property>
              <property name="topMargin">
-              <number>4</number>
+              <number>5</number>
              </property>
              <property name="rightMargin">
-              <number>4</number>
+              <number>5</number>
              </property>
              <property name="bottomMargin">
-              <number>4</number>
+              <number>5</number>
              </property>
              <item row="0" column="0" rowspan="2">
               <widget class="QRadioButton" name="export_to_file_rb">
@@ -586,16 +567,16 @@
                </property>
                <layout class="QGridLayout" name="export_to_file_grid">
                 <property name="leftMargin">
-                 <number>4</number>
+                 <number>5</number>
                 </property>
                 <property name="topMargin">
-                 <number>4</number>
+                 <number>5</number>
                 </property>
                 <property name="rightMargin">
                  <number>0</number>
                 </property>
                 <property name="bottomMargin">
-                 <number>4</number>
+                 <number>5</number>
                 </property>
                 <item row="0" column="1">
                  <widget class="QLabel" name="mode_lbl">
@@ -821,16 +802,16 @@
             </property>
             <layout class="QGridLayout" name="gridLayout_11">
              <property name="leftMargin">
-              <number>4</number>
+              <number>5</number>
              </property>
              <property name="topMargin">
-              <number>4</number>
+              <number>5</number>
              </property>
              <property name="rightMargin">
-              <number>4</number>
+              <number>5</number>
              </property>
              <property name="bottomMargin">
-              <number>4</number>
+              <number>5</number>
              </property>
              <item row="0" column="0" rowspan="2">
               <widget class="QRadioButton" name="export_to_img_rb">
@@ -870,16 +851,16 @@
                </property>
                <layout class="QGridLayout" name="export_to_img_grid">
                 <property name="leftMargin">
-                 <number>4</number>
+                 <number>5</number>
                 </property>
                 <property name="topMargin">
-                 <number>4</number>
+                 <number>5</number>
                 </property>
                 <property name="rightMargin">
                  <number>0</number>
                 </property>
                 <property name="bottomMargin">
-                 <number>4</number>
+                 <number>5</number>
                 </property>
                 <item row="0" column="0" rowspan="3">
                  <layout class="QVBoxLayout" name="verticalLayout_3">
@@ -1148,16 +1129,16 @@
             </property>
             <layout class="QGridLayout" name="gridLayout_12">
              <property name="leftMargin">
-              <number>4</number>
+              <number>5</number>
              </property>
              <property name="topMargin">
-              <number>4</number>
+              <number>5</number>
              </property>
              <property name="rightMargin">
-              <number>4</number>
+              <number>5</number>
              </property>
              <property name="bottomMargin">
-              <number>4</number>
+              <number>5</number>
              </property>
              <item row="0" column="0" rowspan="2">
               <widget class="QRadioButton" name="export_to_dict_rb">
@@ -1197,16 +1178,16 @@
                </property>
                <layout class="QGridLayout" name="export_to_dict_grid">
                 <property name="leftMargin">
-                 <number>4</number>
+                 <number>5</number>
                 </property>
                 <property name="topMargin">
-                 <number>4</number>
+                 <number>5</number>
                 </property>
                 <property name="rightMargin">
                  <number>0</number>
                 </property>
                 <property name="bottomMargin">
-                 <number>4</number>
+                 <number>5</number>
                 </property>
                 <item row="0" column="5">
                  <widget class="QCheckBox" name="incl_index_chk">
@@ -1431,7 +1412,7 @@
             <property name="maximumSize">
              <size>
               <width>16777215</width>
-              <height>65</height>
+              <height>16777215</height>
              </size>
             </property>
             <layout class="QGridLayout" name="gridLayout_4">
@@ -1448,7 +1429,7 @@
               <number>0</number>
              </property>
              <property name="verticalSpacing">
-              <number>6</number>
+              <number>10</number>
              </property>
              <item row="1" column="0">
               <widget class="QLabel" name="ico_lbl">
@@ -1460,14 +1441,14 @@
                </property>
                <property name="minimumSize">
                 <size>
-                 <width>20</width>
-                 <height>20</height>
+                 <width>32</width>
+                 <height>32</height>
                 </size>
                </property>
                <property name="maximumSize">
                 <size>
-                 <width>20</width>
-                 <height>20</height>
+                 <width>32</width>
+                 <height>32</height>
                 </size>
                </property>
                <property name="text">
@@ -1501,7 +1482,7 @@
                </property>
                <property name="icon">
                 <iconset resource="../../res/resources.qrc">
-                 <normaloff>:/icons/icons/error.png</normaloff>:/icons/icons/error.png</iconset>
+                 <normaloff>:/icons/icons/cancel.png</normaloff>:/icons/icons/cancel.png</iconset>
                </property>
                <property name="iconSize">
                 <size>
@@ -1595,11 +1576,20 @@
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>
+       <property name="maximumSize">
+        <size>
+         <width>242</width>
+         <height>50</height>
+        </size>
+       </property>
        <property name="text">
         <string/>
        </property>
        <property name="pixmap">
         <pixmap resource="../../res/resources.qrc">:/images/images/pgmodeler_name.png</pixmap>
+       </property>
+       <property name="scaledContents">
+        <bool>true</bool>
        </property>
       </widget>
      </item>
@@ -1619,16 +1609,10 @@
      <item>
       <widget class="QPushButton" name="export_btn">
        <property name="sizePolicy">
-        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
-       </property>
-       <property name="minimumSize">
-        <size>
-         <width>90</width>
-         <height>32</height>
-        </size>
        </property>
        <property name="maximumSize">
         <size>
@@ -1645,8 +1629,8 @@
        </property>
        <property name="iconSize">
         <size>
-         <width>20</width>
-         <height>20</height>
+         <width>32</width>
+         <height>32</height>
         </size>
        </property>
        <property name="default">
@@ -1657,16 +1641,10 @@
      <item>
       <widget class="QPushButton" name="close_btn">
        <property name="sizePolicy">
-        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
-       </property>
-       <property name="minimumSize">
-        <size>
-         <width>90</width>
-         <height>32</height>
-        </size>
        </property>
        <property name="maximumSize">
         <size>
@@ -1683,8 +1661,8 @@
        </property>
        <property name="iconSize">
         <size>
-         <width>20</width>
-         <height>20</height>
+         <width>32</width>
+         <height>32</height>
         </size>
        </property>
        <property name="flat">
@@ -1711,6 +1689,8 @@
   <tabstop>close_btn</tabstop>
  </tabstops>
  <resources>
+  <include location="../../res/resources.qrc"/>
+  <include location="../../res/resources.qrc"/>
   <include location="../../res/resources.qrc"/>
  </resources>
  <connections/>

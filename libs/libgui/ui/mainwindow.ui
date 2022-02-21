@@ -116,7 +116,7 @@
              <enum>Qt::Horizontal</enum>
             </property>
             <property name="handleWidth">
-             <number>5</number>
+             <number>8</number>
             </property>
             <property name="childrenCollapsible">
              <bool>false</bool>
@@ -162,7 +162,7 @@
                  <enum>Qt::Vertical</enum>
                 </property>
                 <property name="handleWidth">
-                 <number>5</number>
+                 <number>8</number>
                 </property>
                 <property name="childrenCollapsible">
                  <bool>false</bool>
@@ -250,7 +250,7 @@
                      <enum>Qt::Horizontal</enum>
                     </property>
                     <property name="handleWidth">
-                     <number>5</number>
+                     <number>8</number>
                     </property>
                     <property name="childrenCollapsible">
                      <bool>false</bool>
@@ -313,7 +313,7 @@
                  <enum>Qt::Vertical</enum>
                 </property>
                 <property name="handleWidth">
-                 <number>5</number>
+                 <number>8</number>
                 </property>
                 <property name="childrenCollapsible">
                  <bool>false</bool>
@@ -753,7 +753,7 @@
      <x>0</x>
      <y>0</y>
      <width>1668</width>
-     <height>26</height>
+     <height>36</height>
     </rect>
    </property>
    <property name="autoFillBackground">
@@ -845,6 +845,7 @@
    </property>
    <property name="font">
     <font>
+     <weight>50</weight>
      <bold>false</bold>
     </font>
    </property>
@@ -1646,6 +1647,7 @@
   <tabstop>models_tbw</tabstop>
  </tabstops>
  <resources>
+  <include location="../res/resources.qrc"/>
   <include location="../res/resources.qrc"/>
   <include location="../res/resources.qrc"/>
  </resources>

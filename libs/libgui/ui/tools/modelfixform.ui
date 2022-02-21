@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>605</width>
-    <height>499</height>
+    <width>1163</width>
+    <height>967</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -40,16 +40,16 @@
   </property>
   <layout class="QGridLayout" name="gridLayout_3">
    <property name="leftMargin">
-    <number>2</number>
+    <number>10</number>
    </property>
    <property name="topMargin">
-    <number>2</number>
+    <number>10</number>
    </property>
    <property name="rightMargin">
-    <number>2</number>
+    <number>10</number>
    </property>
    <property name="bottomMargin">
-    <number>2</number>
+    <number>10</number>
    </property>
    <item row="0" column="0" colspan="4">
     <widget class="QFrame" name="frame">
@@ -70,16 +70,16 @@
      </property>
      <layout class="QGridLayout" name="model_fix_grid">
       <property name="leftMargin">
-       <number>4</number>
+       <number>5</number>
       </property>
       <property name="topMargin">
-       <number>4</number>
+       <number>5</number>
       </property>
       <property name="rightMargin">
-       <number>4</number>
+       <number>5</number>
       </property>
       <property name="bottomMargin">
-       <number>4</number>
+       <number>5</number>
       </property>
       <item row="2" column="0">
        <widget class="QLabel" name="label_4">
@@ -298,29 +298,29 @@ p, li { white-space: pre-wrap; }
         </property>
         <layout class="QGridLayout" name="gridLayout">
          <property name="leftMargin">
-          <number>2</number>
+          <number>5</number>
          </property>
          <property name="topMargin">
-          <number>2</number>
+          <number>5</number>
          </property>
          <property name="rightMargin">
-          <number>2</number>
+          <number>5</number>
          </property>
          <property name="bottomMargin">
-          <number>2</number>
+          <number>5</number>
          </property>
          <item row="0" column="0">
           <widget class="QLabel" name="icon_lbl">
            <property name="minimumSize">
             <size>
-             <width>24</width>
-             <height>24</height>
+             <width>32</width>
+             <height>32</height>
             </size>
            </property>
            <property name="maximumSize">
             <size>
-             <width>24</width>
-             <height>24</height>
+             <width>32</width>
+             <height>32</height>
             </size>
            </property>
            <property name="text">
@@ -382,29 +382,29 @@ p, li { white-space: pre-wrap; }
         </property>
         <layout class="QGridLayout" name="gridLayout_5">
          <property name="leftMargin">
-          <number>2</number>
+          <number>5</number>
          </property>
          <property name="topMargin">
-          <number>2</number>
+          <number>5</number>
          </property>
          <property name="rightMargin">
-          <number>2</number>
+          <number>5</number>
          </property>
          <property name="bottomMargin">
-          <number>2</number>
+          <number>5</number>
          </property>
          <item row="0" column="0">
           <widget class="QLabel" name="label_2">
            <property name="minimumSize">
             <size>
-             <width>24</width>
-             <height>24</height>
+             <width>32</width>
+             <height>32</height>
             </size>
            </property>
            <property name="maximumSize">
             <size>
-             <width>24</width>
-             <height>24</height>
+             <width>32</width>
+             <height>32</height>
             </size>
            </property>
            <property name="text">
@@ -496,11 +496,20 @@ p, li { white-space: pre-wrap; }
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>
+       <property name="maximumSize">
+        <size>
+         <width>242</width>
+         <height>50</height>
+        </size>
+       </property>
        <property name="text">
         <string/>
        </property>
        <property name="pixmap">
         <pixmap resource="../../res/resources.qrc">:/images/images/pgmodeler_name.png</pixmap>
+       </property>
+       <property name="scaledContents">
+        <bool>true</bool>
        </property>
       </widget>
      </item>
@@ -523,16 +532,10 @@ p, li { white-space: pre-wrap; }
         <bool>false</bool>
        </property>
        <property name="sizePolicy">
-        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
-       </property>
-       <property name="minimumSize">
-        <size>
-         <width>90</width>
-         <height>32</height>
-        </size>
        </property>
        <property name="maximumSize">
         <size>
@@ -541,7 +544,7 @@ p, li { white-space: pre-wrap; }
         </size>
        </property>
        <property name="text">
-        <string>&amp;Fix</string>
+        <string>&amp;Fix model</string>
        </property>
        <property name="icon">
         <iconset resource="../../res/resources.qrc">
@@ -549,8 +552,8 @@ p, li { white-space: pre-wrap; }
        </property>
        <property name="iconSize">
         <size>
-         <width>20</width>
-         <height>20</height>
+         <width>32</width>
+         <height>32</height>
         </size>
        </property>
        <property name="default">
@@ -561,16 +564,10 @@ p, li { white-space: pre-wrap; }
      <item>
       <widget class="QPushButton" name="close_btn">
        <property name="sizePolicy">
-        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
-       </property>
-       <property name="minimumSize">
-        <size>
-         <width>90</width>
-         <height>32</height>
-        </size>
        </property>
        <property name="maximumSize">
         <size>
@@ -587,8 +584,8 @@ p, li { white-space: pre-wrap; }
        </property>
        <property name="iconSize">
         <size>
-         <width>20</width>
-         <height>20</height>
+         <width>32</width>
+         <height>32</height>
         </size>
        </property>
        <property name="flat">
@@ -601,6 +598,8 @@ p, li { white-space: pre-wrap; }
   </layout>
  </widget>
  <resources>
+  <include location="../../res/resources.qrc"/>
+  <include location="../../res/resources.qrc"/>
   <include location="../../res/resources.qrc"/>
  </resources>
  <connections/>

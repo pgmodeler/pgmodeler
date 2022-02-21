@@ -36,7 +36,7 @@
     <number>0</number>
    </property>
    <property name="spacing">
-    <number>6</number>
+    <number>10</number>
    </property>
    <item row="0" column="0">
     <widget class="QLabel" name="label">

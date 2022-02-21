@@ -28,21 +28,21 @@
     <height>16777215</height>
    </size>
   </property>
-  <layout class="QGridLayout" name="relationship_grid">
+  <layout class="QGridLayout" name="relationship_grid" rowstretch="0,0">
    <property name="leftMargin">
-    <number>2</number>
+    <number>5</number>
    </property>
    <property name="topMargin">
-    <number>2</number>
+    <number>5</number>
    </property>
    <property name="rightMargin">
-    <number>2</number>
+    <number>5</number>
    </property>
    <property name="bottomMargin">
-    <number>2</number>
+    <number>5</number>
    </property>
    <property name="spacing">
-    <number>6</number>
+    <number>10</number>
    </property>
    <item row="1" column="0">
     <widget class="QTabWidget" name="rel_attribs_tbw">
@@ -67,19 +67,19 @@
       </attribute>
       <layout class="QGridLayout" name="gridLayout_3">
        <property name="leftMargin">
-        <number>4</number>
+        <number>5</number>
        </property>
        <property name="topMargin">
-        <number>4</number>
+        <number>5</number>
        </property>
        <property name="rightMargin">
-        <number>4</number>
+        <number>5</number>
        </property>
        <property name="bottomMargin">
-        <number>4</number>
+        <number>5</number>
        </property>
        <property name="spacing">
-        <number>6</number>
+        <number>10</number>
        </property>
        <item row="4" column="0">
         <widget class="QLabel" name="ref_table_lbl">
@@ -245,14 +245,14 @@
           <widget class="QLabel" name="rel_icon_lbl">
            <property name="minimumSize">
             <size>
-             <width>22</width>
-             <height>22</height>
+             <width>32</width>
+             <height>32</height>
             </size>
            </property>
            <property name="maximumSize">
             <size>
-             <width>22</width>
-             <height>22</height>
+             <width>32</width>
+             <height>32</height>
             </size>
            </property>
            <property name="scaledContents">
@@ -381,85 +381,6 @@
          </property>
         </widget>
        </item>
-       <item row="3" column="1">
-        <widget class="QLineEdit" name="relnn_tab_name_edt">
-         <property name="toolTip">
-          <string/>
-         </property>
-         <property name="statusTip">
-          <string>Name of the table generated from many to many relationship</string>
-         </property>
-         <property name="clearButtonEnabled">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item row="6" column="1">
-        <widget class="QPlainTextEdit" name="recv_table_txt">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="minimumSize">
-          <size>
-           <width>0</width>
-           <height>0</height>
-          </size>
-         </property>
-         <property name="maximumSize">
-          <size>
-           <width>16777215</width>
-           <height>16777215</height>
-          </size>
-         </property>
-         <property name="font">
-          <font>
-           <italic>true</italic>
-          </font>
-         </property>
-         <property name="verticalScrollBarPolicy">
-          <enum>Qt::ScrollBarAlwaysOff</enum>
-         </property>
-         <property name="horizontalScrollBarPolicy">
-          <enum>Qt::ScrollBarAlwaysOff</enum>
-         </property>
-        </widget>
-       </item>
-       <item row="4" column="1">
-        <widget class="QPlainTextEdit" name="ref_table_txt">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="minimumSize">
-          <size>
-           <width>0</width>
-           <height>0</height>
-          </size>
-         </property>
-         <property name="maximumSize">
-          <size>
-           <width>16777215</width>
-           <height>16777215</height>
-          </size>
-         </property>
-         <property name="font">
-          <font>
-           <italic>true</italic>
-          </font>
-         </property>
-         <property name="verticalScrollBarPolicy">
-          <enum>Qt::ScrollBarAlwaysOff</enum>
-         </property>
-         <property name="horizontalScrollBarPolicy">
-          <enum>Qt::ScrollBarAlwaysOff</enum>
-         </property>
-        </widget>
-       </item>
        <item row="10" column="0" colspan="3">
         <spacer name="verticalSpacer">
          <property name="orientation">
@@ -483,16 +404,16 @@
          </property>
          <layout class="QGridLayout" name="gridLayout_7">
           <property name="leftMargin">
-           <number>4</number>
+           <number>5</number>
           </property>
           <property name="topMargin">
-           <number>4</number>
+           <number>5</number>
           </property>
           <property name="rightMargin">
-           <number>4</number>
+           <number>5</number>
           </property>
           <property name="bottomMargin">
-           <number>4</number>
+           <number>5</number>
           </property>
           <item row="0" column="0">
            <layout class="QHBoxLayout" name="horizontalLayout_5">
@@ -572,8 +493,8 @@
               </property>
               <property name="iconSize">
                <size>
-                <width>22</width>
-                <height>22</height>
+                <width>32</width>
+                <height>32</height>
                </size>
               </property>
               <property name="toolButtonStyle">
@@ -586,6 +507,85 @@
          </layout>
         </widget>
        </item>
+       <item row="3" column="1" colspan="2">
+        <widget class="QLineEdit" name="relnn_tab_name_edt">
+         <property name="toolTip">
+          <string/>
+         </property>
+         <property name="statusTip">
+          <string>Name of the table generated from many to many relationship</string>
+         </property>
+         <property name="clearButtonEnabled">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="1" colspan="2">
+        <widget class="QPlainTextEdit" name="ref_table_txt">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>0</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>16777215</width>
+           <height>16777215</height>
+          </size>
+         </property>
+         <property name="font">
+          <font>
+           <italic>true</italic>
+          </font>
+         </property>
+         <property name="verticalScrollBarPolicy">
+          <enum>Qt::ScrollBarAlwaysOff</enum>
+         </property>
+         <property name="horizontalScrollBarPolicy">
+          <enum>Qt::ScrollBarAlwaysOff</enum>
+         </property>
+        </widget>
+       </item>
+       <item row="6" column="1" colspan="2">
+        <widget class="QPlainTextEdit" name="recv_table_txt">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>0</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>16777215</width>
+           <height>16777215</height>
+          </size>
+         </property>
+         <property name="font">
+          <font>
+           <italic>true</italic>
+          </font>
+         </property>
+         <property name="verticalScrollBarPolicy">
+          <enum>Qt::ScrollBarAlwaysOff</enum>
+         </property>
+         <property name="horizontalScrollBarPolicy">
+          <enum>Qt::ScrollBarAlwaysOff</enum>
+         </property>
+        </widget>
+       </item>
       </layout>
      </widget>
      <widget class="QWidget" name="tab_6">
@@ -594,16 +594,16 @@
       </attribute>
       <layout class="QGridLayout" name="gridLayout_2">
        <property name="leftMargin">
-        <number>4</number>
+        <number>5</number>
        </property>
        <property name="topMargin">
-        <number>4</number>
+        <number>5</number>
        </property>
        <property name="rightMargin">
-        <number>4</number>
+        <number>5</number>
        </property>
        <property name="bottomMargin">
-        <number>4</number>
+        <number>5</number>
        </property>
        <item row="2" column="0">
         <widget class="QGroupBox" name="name_patterns_grp">
@@ -626,16 +626,16 @@
          </property>
          <layout class="QVBoxLayout" name="verticalLayout">
           <property name="leftMargin">
-           <number>4</number>
+           <number>5</number>
           </property>
           <property name="topMargin">
-           <number>4</number>
+           <number>5</number>
           </property>
           <property name="rightMargin">
-           <number>4</number>
+           <number>5</number>
           </property>
           <property name="bottomMargin">
-           <number>4</number>
+           <number>5</number>
           </property>
           <item>
            <widget class="QCheckBox" name="patterns_gconf_chk">
@@ -959,19 +959,19 @@
          </property>
          <layout class="QVBoxLayout" name="verticalLayout_2">
           <property name="spacing">
-           <number>6</number>
+           <number>10</number>
           </property>
           <property name="leftMargin">
-           <number>4</number>
+           <number>5</number>
           </property>
           <property name="topMargin">
-           <number>4</number>
+           <number>5</number>
           </property>
           <property name="rightMargin">
-           <number>4</number>
+           <number>5</number>
           </property>
           <property name="bottomMargin">
-           <number>4</number>
+           <number>5</number>
           </property>
           <item>
            <widget class="QCheckBox" name="fk_gconf_chk">
@@ -1014,7 +1014,7 @@
               <number>0</number>
              </property>
              <property name="horizontalSpacing">
-              <number>6</number>
+              <number>10</number>
              </property>
              <item row="0" column="0">
               <widget class="QLabel" name="deferrable_lbl">
@@ -1161,16 +1161,16 @@
          </property>
          <layout class="QGridLayout" name="gridLayout_4">
           <property name="leftMargin">
-           <number>4</number>
+           <number>5</number>
           </property>
           <property name="topMargin">
-           <number>4</number>
+           <number>5</number>
           </property>
           <property name="rightMargin">
-           <number>4</number>
+           <number>5</number>
           </property>
           <property name="bottomMargin">
-           <number>4</number>
+           <number>5</number>
           </property>
           <item row="3" column="0">
            <widget class="QCheckBox" name="indexes_chk">
@@ -1344,19 +1344,19 @@
       </attribute>
       <layout class="QGridLayout" name="gridLayout">
        <property name="leftMargin">
-        <number>4</number>
+        <number>5</number>
        </property>
        <property name="topMargin">
-        <number>4</number>
+        <number>5</number>
        </property>
        <property name="rightMargin">
-        <number>4</number>
+        <number>5</number>
        </property>
        <property name="bottomMargin">
-        <number>4</number>
+        <number>5</number>
        </property>
        <property name="spacing">
-        <number>6</number>
+        <number>10</number>
        </property>
        <item row="0" column="0">
         <widget class="QListWidget" name="rel_columns_lst">
@@ -1401,6 +1401,8 @@
   <tabstop>rel_columns_lst</tabstop>
  </tabstops>
  <resources>
+  <include location="../../res/resources.qrc"/>
+  <include location="../../res/resources.qrc"/>
   <include location="../../res/resources.qrc"/>
  </resources>
  <connections/>

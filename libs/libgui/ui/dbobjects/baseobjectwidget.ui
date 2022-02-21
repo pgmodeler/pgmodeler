@@ -163,7 +163,7 @@
     </rect>
    </property>
    <property name="sizePolicy">
-    <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+    <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
      <horstretch>0</horstretch>
      <verstretch>0</verstretch>
     </sizepolicy>
@@ -209,12 +209,6 @@
      <verstretch>0</verstretch>
     </sizepolicy>
    </property>
-   <property name="minimumSize">
-    <size>
-     <width>0</width>
-     <height>48</height>
-    </size>
-   </property>
    <property name="frameShape">
     <enum>QFrame::StyledPanel</enum>
    </property>
@@ -223,16 +217,16 @@
    </property>
    <layout class="QGridLayout" name="gridLayout">
     <property name="leftMargin">
-     <number>2</number>
+     <number>5</number>
     </property>
     <property name="topMargin">
-     <number>2</number>
+     <number>5</number>
     </property>
     <property name="rightMargin">
-     <number>2</number>
+     <number>5</number>
     </property>
     <property name="bottomMargin">
-     <number>2</number>
+     <number>5</number>
     </property>
     <item row="0" column="0">
      <widget class="QLabel" name="label">
@@ -260,6 +254,7 @@
      <widget class="QLabel" name="protected_obj_lbl">
       <property name="font">
        <font>
+        <weight>50</weight>
         <bold>false</bold>
         <underline>false</underline>
         <strikeout>false</strikeout>
@@ -331,7 +326,7 @@ This will disable the code of all child and referrer objects.</string>
     </rect>
    </property>
    <property name="sizePolicy">
-    <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+    <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
      <horstretch>0</horstretch>
      <verstretch>0</verstretch>
     </sizepolicy>
@@ -416,6 +411,7 @@ This will disable the code of all child and referrer objects.</string>
       </property>
       <property name="font">
        <font>
+        <weight>75</weight>
         <bold>true</bold>
        </font>
       </property>
@@ -558,6 +554,7 @@ This will disable the code of all child and referrer objects.</string>
   <tabstop>disable_sql_chk</tabstop>
  </tabstops>
  <resources>
+  <include location="../../res/resources.qrc"/>
   <include location="../../res/resources.qrc"/>
   <include location="../../res/resources.qrc"/>
  </resources>

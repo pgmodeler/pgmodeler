@@ -18,7 +18,7 @@
   </property>
   <layout class="QGridLayout" name="sqltool_grid">
    <property name="leftMargin">
-    <number>4</number>
+    <number>5</number>
    </property>
    <property name="topMargin">
     <number>0</number>
@@ -71,7 +71,7 @@
          <enum>Qt::Horizontal</enum>
         </property>
         <property name="handleWidth">
-         <number>4</number>
+         <number>8</number>
         </property>
         <property name="childrenCollapsible">
          <bool>true</bool>
@@ -381,12 +381,15 @@
            <number>10</number>
           </property>
           <property name="leftMargin">
-           <number>5</number>
+           <number>0</number>
           </property>
           <item>
            <widget class="QSplitter" name="v_splitter">
             <property name="orientation">
              <enum>Qt::Vertical</enum>
+            </property>
+            <property name="handleWidth">
+             <number>8</number>
             </property>
             <property name="childrenCollapsible">
              <bool>false</bool>
@@ -467,6 +470,7 @@
   <tabstop>database_cmb</tabstop>
  </tabstops>
  <resources>
+  <include location="../../res/resources.qrc"/>
   <include location="../../res/resources.qrc"/>
   <include location="../../res/resources.qrc"/>
  </resources>

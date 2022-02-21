@@ -48,7 +48,7 @@
       <enum>Qt::Horizontal</enum>
      </property>
      <property name="handleWidth">
-      <number>4</number>
+      <number>8</number>
      </property>
      <property name="childrenCollapsible">
       <bool>false</bool>
@@ -953,6 +953,8 @@
   </layout>
  </widget>
  <resources>
+  <include location="../../../libs/libgui/res/resources.qrc"/>
+  <include location="../../../libs/libgui/res/resources.qrc"/>
   <include location="../../../libs/libgui/res/resources.qrc"/>
  </resources>
  <connections/>

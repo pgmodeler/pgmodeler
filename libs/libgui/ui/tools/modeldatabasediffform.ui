@@ -121,7 +121,7 @@
              <enum>Qt::Horizontal</enum>
             </property>
             <property name="handleWidth">
-             <number>5</number>
+             <number>8</number>
             </property>
             <property name="childrenCollapsible">
              <bool>false</bool>
@@ -474,6 +474,7 @@
                      </property>
                      <property name="font">
                       <font>
+                       <weight>75</weight>
                        <italic>false</italic>
                        <bold>true</bold>
                       </font>
@@ -1458,6 +1459,9 @@
             <property name="orientation">
              <enum>Qt::Horizontal</enum>
             </property>
+            <property name="handleWidth">
+             <number>8</number>
+            </property>
             <property name="childrenCollapsible">
              <bool>false</bool>
             </property>
@@ -2058,7 +2062,7 @@
                </property>
                <property name="icon">
                 <iconset resource="../../res/resources.qrc">
-                 <normaloff>:/icons/icons/error.png</normaloff>:/icons/icons/error.png</iconset>
+                 <normaloff>:/icons/icons/cancel.png</normaloff>:/icons/icons/cancel.png</iconset>
                </property>
                <property name="iconSize">
                 <size>
@@ -2210,6 +2214,7 @@
               <widget class="QLabel" name="message_lbl">
                <property name="font">
                 <font>
+                 <weight>50</weight>
                  <italic>false</italic>
                  <bold>false</bold>
                  <underline>false</underline>
@@ -2693,6 +2698,7 @@
   <tabstop>close_btn</tabstop>
  </tabstops>
  <resources>
+  <include location="../../res/resources.qrc"/>
   <include location="../../res/resources.qrc"/>
   <include location="../../res/resources.qrc"/>
  </resources>

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1159</width>
-    <height>370</height>
+    <width>1416</width>
+    <height>376</height>
    </rect>
   </property>
   <property name="baseSize">
@@ -21,16 +21,16 @@
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <property name="leftMargin">
-    <number>2</number>
+    <number>5</number>
    </property>
    <property name="topMargin">
-    <number>2</number>
+    <number>5</number>
    </property>
    <property name="rightMargin">
-    <number>2</number>
+    <number>5</number>
    </property>
    <property name="bottomMargin">
-    <number>2</number>
+    <number>5</number>
    </property>
    <item row="1" column="0">
     <widget class="QWidget" name="filename_wgt" native="true">
@@ -116,7 +116,7 @@
    <item row="0" column="0">
     <layout class="QHBoxLayout" name="horizontalLayout">
      <property name="spacing">
-      <number>4</number>
+      <number>10</number>
      </property>
      <item>
       <widget class="QToolButton" name="run_sql_tb">
@@ -582,6 +582,9 @@
      <property name="orientation">
       <enum>Qt::Vertical</enum>
      </property>
+     <property name="handleWidth">
+      <number>8</number>
+     </property>
      <property name="childrenCollapsible">
       <bool>false</bool>
      </property>
@@ -932,6 +935,7 @@
   </layout>
  </widget>
  <resources>
+  <include location="../../res/resources.qrc"/>
   <include location="../../res/resources.qrc"/>
   <include location="../../res/resources.qrc"/>
  </resources>

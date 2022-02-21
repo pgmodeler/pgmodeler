@@ -12,37 +12,37 @@
   </property>
   <layout class="QGridLayout" name="column_grid">
    <property name="leftMargin">
-    <number>2</number>
+    <number>5</number>
    </property>
    <property name="topMargin">
-    <number>2</number>
+    <number>5</number>
    </property>
    <property name="rightMargin">
-    <number>2</number>
+    <number>5</number>
    </property>
    <property name="bottomMargin">
-    <number>2</number>
+    <number>5</number>
    </property>
    <property name="spacing">
-    <number>6</number>
+    <number>10</number>
    </property>
-   <item row="0" column="0" colspan="2">
+   <item row="0" column="0">
     <widget class="QGroupBox" name="default_value_grp">
      <property name="title">
       <string>Default Value:</string>
      </property>
      <layout class="QGridLayout" name="gridLayout">
       <property name="leftMargin">
-       <number>4</number>
+       <number>5</number>
       </property>
       <property name="topMargin">
-       <number>4</number>
+       <number>5</number>
       </property>
       <property name="rightMargin">
-       <number>4</number>
+       <number>5</number>
       </property>
       <property name="bottomMargin">
-       <number>4</number>
+       <number>5</number>
       </property>
       <item row="0" column="0">
        <widget class="QRadioButton" name="expression_rb">
@@ -141,11 +141,11 @@
       </item>
       <item row="2" column="3">
        <widget class="QPushButton" name="edit_seq_btn">
-        <property name="minimumSize">
-         <size>
-          <width>0</width>
-          <height>30</height>
-         </size>
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
         </property>
         <property name="toolTip">
          <string>Edit the underlying sequence's attributes</string>
@@ -156,6 +156,12 @@
         <property name="icon">
          <iconset resource="../../res/resources.qrc">
           <normaloff>:/icons/icons/sequence.png</normaloff>:/icons/icons/sequence.png</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>32</width>
+          <height>32</height>
+         </size>
         </property>
        </widget>
       </item>
@@ -183,6 +189,8 @@
   <tabstop>sequence_rb</tabstop>
  </tabstops>
  <resources>
+  <include location="../../res/resources.qrc"/>
+  <include location="../../res/resources.qrc"/>
   <include location="../../res/resources.qrc"/>
  </resources>
  <connections/>

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>536</width>
-    <height>203</height>
+    <width>565</width>
+    <height>220</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -18,19 +18,19 @@
   </property>
   <layout class="QGridLayout" name="rule_grid">
    <property name="leftMargin">
-    <number>2</number>
+    <number>5</number>
    </property>
    <property name="topMargin">
-    <number>2</number>
+    <number>5</number>
    </property>
    <property name="rightMargin">
-    <number>2</number>
+    <number>5</number>
    </property>
    <property name="bottomMargin">
-    <number>2</number>
+    <number>5</number>
    </property>
    <property name="spacing">
-    <number>6</number>
+    <number>10</number>
    </property>
    <item row="0" column="0">
     <widget class="QLabel" name="event_lbl">
@@ -159,19 +159,19 @@
      </property>
      <layout class="QGridLayout" name="gridLayout">
       <property name="leftMargin">
-       <number>4</number>
+       <number>5</number>
       </property>
       <property name="topMargin">
-       <number>4</number>
+       <number>5</number>
       </property>
       <property name="rightMargin">
-       <number>4</number>
+       <number>5</number>
       </property>
       <property name="bottomMargin">
-       <number>4</number>
+       <number>5</number>
       </property>
       <property name="spacing">
-       <number>6</number>
+       <number>10</number>
       </property>
       <item row="0" column="0">
        <widget class="QLabel" name="comando_lbl">
