@@ -26,6 +26,7 @@
 #include "guiutilsns.h"
 #include "settings/generalconfigwidget.h"
 #include "qtcompat/splitbehaviorcompat.h"
+#include "utils/custommenustyle.h"
 
 const QString DatabaseExplorerWidget::DepNotDefined;
 const QString DatabaseExplorerWidget::DepNotFound=QT_TR_NOOP("(not found, OID: %1)");
@@ -256,6 +257,10 @@ DatabaseExplorerWidget::DatabaseExplorerWidget(QWidget *parent): QWidget(parent)
 
 	refresh_tb->setPopupMode(QToolButton::InstantPopup);
 	refresh_tb->setMenu(refresh_menu);
+
+	refresh_menu->setStyle(new CustomMenuStyle);
+	handle_menu.setStyle(new CustomMenuStyle);
+	snippets_menu.setStyle(new CustomMenuStyle);
 }
 
 bool DatabaseExplorerWidget::eventFilter(QObject *object, QEvent *event)

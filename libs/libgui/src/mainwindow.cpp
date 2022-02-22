@@ -21,6 +21,7 @@
 #include "tools/bugreportform.h"
 #include "tools/metadatahandlingform.h"
 #include "tools/sqlexecutionwidget.h"
+#include "utils/custommenustyle.h"
 
 bool MainWindow::confirm_validation=true;
 int MainWindow::GeneralActionsCount=0;
@@ -35,6 +36,14 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	attribs_map attribs;
 	PluginsConfigWidget *plugins_conf_wgt=nullptr;
 	QGridLayout *grid=nullptr;
+
+	file_menu->setStyle(new CustomMenuStyle);
+	edit_menu->setStyle(new CustomMenuStyle);
+	show_menu->setStyle(new CustomMenuStyle);
+	plugins_menu->setStyle(new CustomMenuStyle);
+	about_menu->setStyle(new CustomMenuStyle);
+	more_actions_menu.setStyle(new CustomMenuStyle);
+	fix_menu.setStyle(new CustomMenuStyle);
 
 	pending_op=NoPendingOp;
 	central_wgt=nullptr;

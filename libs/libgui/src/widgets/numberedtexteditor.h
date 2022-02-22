@@ -27,7 +27,6 @@ based upon the code editor example provided by Qt
 #define NUMBERED_TEXT_EDITOR_H
 
 #include <QPlainTextEdit>
-#include <QMenu>
 #include <QToolButton>
 #include <QProcess>
 #include <QLabel>

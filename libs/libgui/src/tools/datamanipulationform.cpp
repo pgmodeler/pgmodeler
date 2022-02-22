@@ -25,6 +25,7 @@
 #include "widgets/bulkdataeditwidget.h"
 #include "databaseexplorerwidget.h"
 #include "settings/generalconfigwidget.h"
+#include "utils/custommenustyle.h"
 
 const QColor DataManipulationForm::RowColors[3]={ QColor(QString("#C0FFC0")), QColor(QString("#FFFFC0")), QColor(QString("#FFC0C0"))  };
 constexpr unsigned DataManipulationForm::NoOperation;
@@ -208,6 +209,11 @@ DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f):
 		else
 			selectColumn(section, sort_order);
 	});
+
+	fks_menu.setStyle(new CustomMenuStyle);
+	copy_menu.setStyle(new CustomMenuStyle);
+	truncate_menu.setStyle(new CustomMenuStyle);
+	paste_menu.setStyle(new CustomMenuStyle);
 }
 
 void DataManipulationForm::setAttributes(Connection conn, const QString curr_schema, const QString curr_table, const QString &filter)
@@ -892,6 +898,7 @@ void DataManipulationForm::retrieveFKColumns(const QString &schema, const QStrin
 			QStringList name_list;
 
 			submenu = new QMenu(this);
+			submenu->setStyle(new CustomMenuStyle);
 			fks_menu.addAction(QPixmap(GuiUtilsNs::getIconPath("referenced")), tr("Referenced tables"))->setMenu(submenu);
 
 			if(fks.empty())
@@ -941,6 +948,7 @@ void DataManipulationForm::retrieveFKColumns(const QString &schema, const QStrin
 			}
 
 			submenu = new QMenu(this);
+			submenu->setStyle(new CustomMenuStyle);
 			fks_menu.addAction(QPixmap(GuiUtilsNs::getIconPath("referrer")), tr("Referrer tables"))->setMenu(submenu);
 
 			if(ref_fks.empty())
@@ -1623,6 +1631,8 @@ void DataManipulationForm::showPopupMenu()
 		QMenu item_menu;
 		QAction *act = nullptr;
 		ObjectType obj_type=static_cast<ObjectType>(table_cmb->currentData().toUInt());
+
+		item_menu.setStyle(new CustomMenuStyle);
 
 		act = item_menu.addAction(QIcon(GuiUtilsNs::getIconPath("copy")), tr("Copy items"));
 		act->setMenu(&copy_menu);

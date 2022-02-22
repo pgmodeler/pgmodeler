@@ -27,6 +27,8 @@
 #include "qtcompat/qplaintexteditcompat.h"
 #include "qtcompat/qfontmetricscompat.h"
 #include "utilsns.h"
+#include <QMenu>
+#include "utils/custommenustyle.h"
 
 bool NumberedTextEditor::line_nums_visible=true;
 bool NumberedTextEditor::highlight_lines=true;
@@ -214,6 +216,7 @@ void NumberedTextEditor::showContextMenu()
 	QAction *act=nullptr;
 
 	ctx_menu=createStandardContextMenu();
+	ctx_menu->setStyle(new CustomMenuStyle);
 
 	if(!isReadOnly())
 	{

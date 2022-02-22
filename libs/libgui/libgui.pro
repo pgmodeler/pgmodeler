@@ -83,6 +83,7 @@ src/tools/validationinfo.cpp \
 src/tools/modelvalidationhelper.cpp \
 src/tools/swapobjectsidswidget.cpp \
 src/tools/modelvalidationwidget.cpp \
+    src/utils/custommenustyle.cpp \
 src/utils/deletableitemdelegate.cpp \
 src/utils/htmlitemdelegate.cpp \
 src/utils/plaintextitemdelegate.cpp \
@@ -199,6 +200,7 @@ src/tools/validationinfo.h \
 src/tools/modelvalidationhelper.h \
 src/tools/swapobjectsidswidget.h \
 src/tools/modelvalidationwidget.h \
+    src/utils/custommenustyle.h \
 src/utils/deletableitemdelegate.h \
 src/utils/htmlitemdelegate.h \
 src/utils/plaintextitemdelegate.h \
