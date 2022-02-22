@@ -22,16 +22,7 @@
 
 SceneInfoWidget::SceneInfoWidget(QWidget *parent): QWidget(parent)
 {
-	QFont font;
-
 	setupUi(this);
-
-	font = obj_name_lbl->font();
-	font.setPointSizeF(font.pointSizeF() * 0.90);
-
-	obj_name_lbl->setFont(font);
-	obj_pos_info_lbl->setFont(font);
-	mouse_pos_info_lbl->setFont(font);
 }
 
 void SceneInfoWidget::updateSelectedObject(BaseObjectView *object)

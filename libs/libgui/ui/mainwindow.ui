@@ -173,19 +173,6 @@
                    <number>10</number>
                   </property>
                   <item>
-                   <spacer name="verticalSpacer_2">
-                    <property name="orientation">
-                     <enum>Qt::Vertical</enum>
-                    </property>
-                    <property name="sizeHint" stdset="0">
-                     <size>
-                      <width>0</width>
-                      <height>398</height>
-                     </size>
-                    </property>
-                   </spacer>
-                  </item>
-                  <item>
                    <widget class="QTabWidget" name="models_tbw">
                     <property name="minimumSize">
                      <size>
@@ -1647,7 +1634,6 @@
   <tabstop>models_tbw</tabstop>
  </tabstops>
  <resources>
-  <include location="../res/resources.qrc"/>
   <include location="../res/resources.qrc"/>
   <include location="../res/resources.qrc"/>
  </resources>

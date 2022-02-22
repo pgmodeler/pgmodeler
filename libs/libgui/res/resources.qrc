@@ -297,6 +297,7 @@
         <file>icons/newdatamanip.png</file>
         <file>icons/update1.png</file>
         <file>icons/about.png</file>
+        <file>icons/close2.png</file>
     </qresource>
     <qresource prefix="/images">
         <file>images/brazil_flag.png</file>

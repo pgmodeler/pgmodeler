@@ -972,7 +972,7 @@ void MainWindow::addModel(const QString &filename)
 		models_tbw->addTab(model_tab, obj_name);
 		models_tbw->setCurrentIndex(models_tbw->count()-1);
 		models_tbw->blockSignals(false);
-		models_tbw->currentWidget()->layout()->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,0,GuiUtilsNs::LtMargin);
+		models_tbw->currentWidget()->layout()->setContentsMargins(0,0,0,0);
 
 		//Creating the system objects (public schema and languages C, SQL and pgpgsql)
 		model_tab->db_model->createSystemObjects(filename.isEmpty());
@@ -1053,7 +1053,7 @@ void MainWindow::addModel(ModelWidget *model_wgt)
 		models_tbw->blockSignals(false);
 
 		setCurrentModel();
-		models_tbw->currentWidget()->layout()->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,0,GuiUtilsNs::LtMargin);
+		models_tbw->currentWidget()->layout()->setContentsMargins(0,0,0,0);
 
 		if(action_alin_objs_grade->isChecked())
 			current_model->scene->alignObjectsToGrid();

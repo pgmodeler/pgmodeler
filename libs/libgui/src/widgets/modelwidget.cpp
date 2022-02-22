@@ -170,6 +170,7 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	grid=new QGridLayout;
 	grid->addWidget(protected_model_frm, 0,0,1,1);
 	grid->addWidget(viewport, 1,0,1,1);
+	grid->setContentsMargins(20,20,20,20);
 	this->setLayout(grid);
 
 	magnifier_frm = new QFrame(this);
