@@ -1936,8 +1936,8 @@ void MainWindow::setBottomFloatingWidgetPos(QWidget *widget, QToolButton *btn)
 	QPoint btn_parent_pos = mapTo(this, tool_btns_bar_wgt->pos()),
 			btn_pos = mapTo(this, btn->pos());
 
-	widget->move(btn_pos.x() + tools_acts_tb->width(),
-									 btn_parent_pos.y() - (widget->height() - btn->height() - v_splitter1->handleWidth()) + 1);
+	widget->move(btn_pos.x() + tools_acts_tb->width() + 1,
+									 btn_parent_pos.y() - (widget->height() - btn->height() - (2 * v_splitter1->handleWidth())) + 1);
 }
 
 void MainWindow::configureSamplesMenu()

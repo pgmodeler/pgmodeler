@@ -28,8 +28,13 @@
 #include <QProxyStyle>
 
 class CustomMenuStyle : public QProxyStyle {
+	private:
+		static int icon_pixel_metric;
+
 	public:
 		CustomMenuStyle();
+
+		static void setIconPixelMetric(int icon_pm);
 
 		int pixelMetric(PixelMetric metric, const QStyleOption * option = 0, const QWidget * widget = 0) const;
 };

@@ -73,7 +73,7 @@ void Application::copyFilesRecursively(const QString &src_path, const QString &d
 			new_src_path = src_path + src_dir.separator() + filename;
 			new_dst_path = dst_path + dst_dir.separator() + filename;
 
-			if(filename.contains(GlobalAttributes::UiStyleConf) ||
+			if(/*filename.contains(GlobalAttributes::UiDefaulStyleConf) ||*/
 				 (missing_only && QFileInfo::exists(new_dst_path)))
 				continue;
 

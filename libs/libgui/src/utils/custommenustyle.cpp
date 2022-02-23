@@ -18,15 +18,22 @@
 
 #include "custommenustyle.h"
 
+int CustomMenuStyle::icon_pixel_metric = 28;
+
 CustomMenuStyle::CustomMenuStyle()
 {
 
 }
 
+void CustomMenuStyle::setIconPixelMetric(int icon_pm)
+{
+	icon_pixel_metric = icon_pm;
+}
+
 int CustomMenuStyle::pixelMetric(PixelMetric metric, const QStyleOption * option, const QWidget * widget) const
 {
-	if (metric == QStyle::PM_SmallIconSize)
-		return 22;
+	if (metric == QStyle::PM_SmallIconSize && icon_pixel_metric > 0)
+		return icon_pixel_metric;
 
 	return QProxyStyle::pixelMetric(metric, option, widget);
 }

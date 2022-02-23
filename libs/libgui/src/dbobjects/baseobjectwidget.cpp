@@ -556,9 +556,9 @@ QFrame *BaseObjectWidget::generateInformationFrame(const QString &msg)
 	grid->setObjectName("grid");
 
 	ico_lbl = new QLabel(info_frm);
-	ico_lbl->setObjectName("icone_lbl");
-	ico_lbl->setMinimumSize(QSize(24, 24));
-	ico_lbl->setMaximumSize(QSize(24, 24));
+	ico_lbl->setObjectName("icon_lbl");
+	ico_lbl->setMinimumSize(QSize(32, 32));
+	ico_lbl->setMaximumSize(QSize(32, 32));
 	ico_lbl->setScaledContents(true);
 	ico_lbl->setPixmap(QPixmap(GuiUtilsNs::getIconPath("info")));
 	ico_lbl->setAlignment(Qt::AlignLeft|Qt::AlignTop);
@@ -625,7 +625,7 @@ QFrame *BaseObjectWidget::generateVersionWarningFrame(map<QString, vector<QWidge
 
 	GuiUtilsNs::configureWidgetFont(alert_frm, GuiUtilsNs::MediumFontFactor);
 
-	alert_frm->setObjectName("alerta_frm");
+	alert_frm->setObjectName("alert_frm");
 	alert_frm->setFrameShape(QFrame::StyledPanel);
 	alert_frm->setFrameShadow(QFrame::Raised);
 	alert_frm->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
@@ -634,9 +634,9 @@ QFrame *BaseObjectWidget::generateVersionWarningFrame(map<QString, vector<QWidge
 	grid->setObjectName("grid");
 
 	ico_lbl = new QLabel(alert_frm);
-	ico_lbl->setObjectName("icone_lbl");
-	ico_lbl->setMinimumSize(QSize(24, 24));
-	ico_lbl->setMaximumSize(QSize(24, 24));
+	ico_lbl->setObjectName("icon_lbl");
+	ico_lbl->setMinimumSize(QSize(32, 32));
+	ico_lbl->setMaximumSize(QSize(32, 32));
 	ico_lbl->setScaledContents(true);
 	ico_lbl->setPixmap(QPixmap(GuiUtilsNs::getIconPath("alert")));
 	ico_lbl->setAlignment(Qt::AlignLeft|Qt::AlignTop);

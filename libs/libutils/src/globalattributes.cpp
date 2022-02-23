@@ -31,7 +31,7 @@ const QString GlobalAttributes::PgModelerVersion=QString("1.0.0-alpha")
 /****/
 
 const QString GlobalAttributes::PgModelerBuildNumber(QString("%1.%2").arg(BUILDDATE).arg(BUILDNUM));
-const QString GlobalAttributes::PgModelerAppName("pgmodeler");
+const QString GlobalAttributes::PgModelerAppName("pgmodeler-1.0");
 const QString GlobalAttributes::PgModelerURI("pgmodeler.io");
 const QString GlobalAttributes::PgModelerReverseURI("io.pgmodeler");
 const QString GlobalAttributes::PgModelerSite("https://pgmodeler.io");
@@ -61,6 +61,7 @@ const QString GlobalAttributes::RootDTD("dbmodel");
 const QString GlobalAttributes::MetadataDTD("metadata");
 const QString GlobalAttributes::ConfigurationExt(".conf");
 const QString GlobalAttributes::HighlightFileSuffix("-highlight");
+const QString GlobalAttributes::UiStyleDir("ui");
 
 const QString GlobalAttributes::CodeHighlightConf("source-code-highlight");
 const QString GlobalAttributes::ObjectsStyleConf("objects-style");
@@ -77,7 +78,7 @@ const QString GlobalAttributes::SchHighlightConf("sch-highlight");
 const QString GlobalAttributes::PatternHighlightConf("pattern-highlight");
 
 const QString GlobalAttributes::ExampleModel("example.dbm");
-const QString GlobalAttributes::UiStyleConf("ui-style");
+const QString GlobalAttributes::UiDefaulStyleConf("default");
 
 const QString GlobalAttributes::DefaultQtStyle("Fusion");
 const QString GlobalAttributes::UiStyleOption("-style");

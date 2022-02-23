@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1096</width>
-    <height>970</height>
+    <height>976</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -98,6 +98,7 @@
       <widget class="QToolButton" name="open_tb">
        <property name="font">
         <font>
+         <weight>50</weight>
          <bold>false</bold>
         </font>
        </property>
@@ -113,8 +114,8 @@
        </property>
        <property name="iconSize">
         <size>
-         <width>80</width>
-         <height>80</height>
+         <width>88</width>
+         <height>88</height>
         </size>
        </property>
        <property name="toolButtonStyle">
@@ -132,6 +133,7 @@
        </property>
        <property name="font">
         <font>
+         <weight>50</weight>
          <bold>false</bold>
         </font>
        </property>
@@ -147,8 +149,8 @@
        </property>
        <property name="iconSize">
         <size>
-         <width>80</width>
-         <height>80</height>
+         <width>88</width>
+         <height>88</height>
         </size>
        </property>
        <property name="popupMode">
@@ -169,6 +171,7 @@
        </property>
        <property name="font">
         <font>
+         <weight>50</weight>
          <bold>false</bold>
          <stylestrategy>PreferAntialias</stylestrategy>
         </font>
@@ -185,8 +188,8 @@
        </property>
        <property name="iconSize">
         <size>
-         <width>80</width>
-         <height>80</height>
+         <width>88</width>
+         <height>88</height>
         </size>
        </property>
        <property name="toolButtonStyle">
@@ -204,6 +207,7 @@
        </property>
        <property name="font">
         <font>
+         <weight>50</weight>
          <bold>false</bold>
          <stylestrategy>PreferAntialias</stylestrategy>
         </font>
@@ -220,8 +224,8 @@
        </property>
        <property name="iconSize">
         <size>
-         <width>80</width>
-         <height>80</height>
+         <width>88</width>
+         <height>88</height>
         </size>
        </property>
        <property name="toolButtonStyle">
@@ -239,6 +243,7 @@
        </property>
        <property name="font">
         <font>
+         <weight>50</weight>
          <bold>false</bold>
         </font>
        </property>
@@ -254,8 +259,8 @@
        </property>
        <property name="iconSize">
         <size>
-         <width>80</width>
-         <height>80</height>
+         <width>88</width>
+         <height>88</height>
         </size>
        </property>
        <property name="popupMode">
@@ -273,6 +278,7 @@
       <widget class="QToolButton" name="new_tb">
        <property name="font">
         <font>
+         <weight>50</weight>
          <bold>false</bold>
         </font>
        </property>
@@ -288,8 +294,8 @@
        </property>
        <property name="iconSize">
         <size>
-         <width>80</width>
-         <height>80</height>
+         <width>88</width>
+         <height>88</height>
         </size>
        </property>
        <property name="toolButtonStyle">
@@ -331,6 +337,7 @@
   </layout>
  </widget>
  <resources>
+  <include location="../../res/resources.qrc"/>
   <include location="../../res/resources.qrc"/>
   <include location="../../res/resources.qrc"/>
  </resources>

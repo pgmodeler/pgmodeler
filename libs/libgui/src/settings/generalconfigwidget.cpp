@@ -708,7 +708,7 @@ void GeneralConfigWidget::restoreDefaults()
 		BaseConfigWidget::restoreDefaults(GlobalAttributes::XMLHighlightConf, true);
 		BaseConfigWidget::restoreDefaults(GlobalAttributes::SQLHighlightConf, true);
 		BaseConfigWidget::restoreDefaults(GlobalAttributes::SchHighlightConf, true);
-		BaseConfigWidget::restoreDefaults(GlobalAttributes::UiStyleConf, true);
+		//BaseConfigWidget::restoreDefaults(GlobalAttributes::UiDefaulStyleConf, true);
 		this->loadConfiguration();
 		this->applyConfiguration();
 		setConfigurationChanged(true);
