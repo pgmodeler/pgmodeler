@@ -32,7 +32,7 @@
    </size>
   </property>
   <property name="windowTitle">
-   <string>Bug Report</string>
+   <string>Bug report</string>
   </property>
   <property name="windowIcon">
    <iconset resource="../../res/resources.qrc">
@@ -64,21 +64,21 @@
      </property>
      <property name="minimumSize">
       <size>
-       <width>100</width>
-       <height>100</height>
+       <width>128</width>
+       <height>128</height>
       </size>
      </property>
      <property name="maximumSize">
       <size>
-       <width>100</width>
-       <height>100</height>
+       <width>128</width>
+       <height>128</height>
       </size>
      </property>
      <property name="text">
       <string/>
      </property>
      <property name="pixmap">
-      <pixmap resource="../../res/resources.qrc">:/images/images/bugreport.png</pixmap>
+      <pixmap resource="../../res/resources.qrc">:/icons/icons/bugreport.png</pixmap>
      </property>
      <property name="scaledContents">
       <bool>true</bool>
@@ -99,6 +99,7 @@
      <property name="font">
       <font>
        <pointsize>13</pointsize>
+       <weight>75</weight>
        <bold>true</bold>
       </font>
      </property>
@@ -170,7 +171,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="cancel_btn">
+      <widget class="QPushButton" name="close_btn">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
          <horstretch>0</horstretch>
@@ -184,11 +185,11 @@
         </size>
        </property>
        <property name="text">
-        <string>&amp;Cancel</string>
+        <string>&amp;Close</string>
        </property>
        <property name="icon">
         <iconset resource="../../res/resources.qrc">
-         <normaloff>:/icons/icons/error.png</normaloff>:/icons/icons/error.png</iconset>
+         <normaloff>:/icons/icons/close1.png</normaloff>:/icons/icons/close1.png</iconset>
        </property>
        <property name="iconSize">
         <size>
@@ -386,15 +387,6 @@
           </item>
           <item row="0" column="1">
            <widget class="QLabel" name="hint_lbl">
-            <property name="font">
-             <font>
-              <italic>false</italic>
-              <bold>false</bold>
-              <underline>false</underline>
-              <strikeout>false</strikeout>
-              <kerning>true</kerning>
-             </font>
-            </property>
             <property name="text">
              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If you prefer it's possible to report this issue anytime on pgModeler's project repository at &lt;a href=&quot;http://github.com/pgmodeler/pgmodeler/issues&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0057ae;&quot;&gt;GitHub&lt;/span&gt;&lt;/a&gt;. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
             </property>
@@ -416,7 +408,7 @@
      </widget>
      <widget class="QWidget" name="tab_3">
       <attribute name="title">
-       <string>Database Model</string>
+       <string>Database model</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout_4">
        <property name="leftMargin">

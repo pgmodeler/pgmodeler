@@ -38,9 +38,7 @@ BugReportForm::BugReportForm(QWidget *parent, Qt::WindowFlags f) : QDialog(paren
 	output_sel->setSelectedFile(GlobalAttributes::getTemporaryDir());
 
 	output_lt->addWidget(output_sel);
-	GuiUtilsNs::configureWidgetFont(hint_lbl, GuiUtilsNs::MediumFontFactor);
-
-	connect(cancel_btn, SIGNAL(clicked()), this, SLOT(close()));
+	connect(close_btn, SIGNAL(clicked()), this, SLOT(close()));
 	connect(create_btn, SIGNAL(clicked()), this, SLOT(generateReport()));
 	connect(attach_mod_chk, SIGNAL(toggled(bool)), attach_tb, SLOT(setEnabled(bool)));
 	connect(attach_tb, SIGNAL(clicked()), this, SLOT(attachModel()));

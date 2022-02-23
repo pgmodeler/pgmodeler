@@ -301,7 +301,6 @@
     </qresource>
     <qresource prefix="/images">
         <file>images/brazil_flag.png</file>
-        <file>images/bugreport.png</file>
         <file>images/crashhandler.png</file>
         <file>images/crows_foot_notation.png</file>
         <file>images/diff2db.png</file>
@@ -310,7 +309,6 @@
         <file>images/model2png.png</file>
         <file>images/model2sgdb.png</file>
         <file>images/model2sql.png</file>
-        <file>images/pgmodeler_logo.png</file>
         <file>images/pgmodeler_name.png</file>
         <file>images/pgmodeler_splash.png</file>
         <file>images/rel_center_pnts.png</file>

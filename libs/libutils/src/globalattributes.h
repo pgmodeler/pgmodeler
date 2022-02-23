@@ -127,7 +127,9 @@ class GlobalAttributes {
 		SQLHistoryConf,		//! \brief Default name for the SQL commands history configuration file
 
 		ExampleModel, //! \brief Default name for the sample model loaded on appearence configuration form
-		UiDefaulStyleConf, //! \brief Configuration file ui style
+		UiDefaulStyleConf, //! \brief Configuration file ui style (defaults for 4k screens)
+		UiMediumStyleConf, //! \brief Extra configuration file ui style (for medium screen sizes > 1080p and < 2k)
+		UiSmallStyleConf, //! \brief Extra configuration file ui style (for medium screen sizes <= 1080p)
 
 		/*! \brief Fusion is the default widget style for pgModeler. User can change this by calling
 		the executable using -style option. This same style is applied to crash handler. */

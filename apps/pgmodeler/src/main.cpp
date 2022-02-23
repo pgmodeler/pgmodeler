@@ -97,13 +97,13 @@ int main(int argc, char **argv)
 		signal(SIGABRT, startCrashHandler);
 
 		PgModelerApp::setAttribute(Qt::AA_UseHighDpiPixmaps);
-		PgModelerApp::setAttribute(Qt::AA_EnableHighDpiScaling);
+		//PgModelerApp::setAttribute(Qt::AA_EnableHighDpiScaling);
 		PgModelerApp app(argc,argv);
 		int res=0;
 
 		//Loading the application splash screen
 		QSplashScreen splash;
-		QPixmap pix(QPixmap(QString(":images/images/pgmodeler_splash.png")));
+		QPixmap pix(QPixmap(":images/images/pgmodeler_splash.png"));
 		QSize sz = splash.screen()->size();
 
 		// Test: adjusting the size of the splash screen according to the screen resolution

@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>721</width>
-    <height>1359</height>
+    <height>1455</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -131,12 +131,6 @@
                 <verstretch>0</verstretch>
                </sizepolicy>
               </property>
-              <property name="minimumSize">
-               <size>
-                <width>95</width>
-                <height>75</height>
-               </size>
-              </property>
               <property name="font">
                <font>
                 <weight>50</weight>
@@ -156,8 +150,8 @@
               </property>
               <property name="iconSize">
                <size>
-                <width>40</width>
-                <height>40</height>
+                <width>48</width>
+                <height>48</height>
                </size>
               </property>
               <property name="autoExclusive">
@@ -179,12 +173,6 @@
                 <verstretch>0</verstretch>
                </sizepolicy>
               </property>
-              <property name="minimumSize">
-               <size>
-                <width>95</width>
-                <height>75</height>
-               </size>
-              </property>
               <property name="font">
                <font>
                 <weight>50</weight>
@@ -204,8 +192,8 @@
               </property>
               <property name="iconSize">
                <size>
-                <width>40</width>
-                <height>40</height>
+                <width>48</width>
+                <height>48</height>
                </size>
               </property>
               <property name="autoExclusive">
@@ -227,12 +215,6 @@
                 <verstretch>0</verstretch>
                </sizepolicy>
               </property>
-              <property name="minimumSize">
-               <size>
-                <width>95</width>
-                <height>75</height>
-               </size>
-              </property>
               <property name="font">
                <font>
                 <weight>50</weight>
@@ -252,8 +234,8 @@
               </property>
               <property name="iconSize">
                <size>
-                <width>40</width>
-                <height>40</height>
+                <width>48</width>
+                <height>48</height>
                </size>
               </property>
               <property name="autoExclusive">
@@ -275,12 +257,6 @@
                 <verstretch>0</verstretch>
                </sizepolicy>
               </property>
-              <property name="minimumSize">
-               <size>
-                <width>95</width>
-                <height>75</height>
-               </size>
-              </property>
               <property name="font">
                <font>
                 <weight>50</weight>
@@ -300,8 +276,8 @@
               </property>
               <property name="iconSize">
                <size>
-                <width>40</width>
-                <height>40</height>
+                <width>48</width>
+                <height>48</height>
                </size>
               </property>
               <property name="autoExclusive">
@@ -323,12 +299,6 @@
                 <verstretch>0</verstretch>
                </sizepolicy>
               </property>
-              <property name="minimumSize">
-               <size>
-                <width>95</width>
-                <height>75</height>
-               </size>
-              </property>
               <property name="font">
                <font>
                 <weight>50</weight>
@@ -348,8 +318,8 @@
               </property>
               <property name="iconSize">
                <size>
-                <width>40</width>
-                <height>40</height>
+                <width>48</width>
+                <height>48</height>
                </size>
               </property>
               <property name="autoExclusive">
@@ -371,12 +341,6 @@
                 <verstretch>0</verstretch>
                </sizepolicy>
               </property>
-              <property name="minimumSize">
-               <size>
-                <width>95</width>
-                <height>75</height>
-               </size>
-              </property>
               <property name="font">
                <font>
                 <weight>50</weight>
@@ -396,8 +360,8 @@
               </property>
               <property name="iconSize">
                <size>
-                <width>40</width>
-                <height>40</height>
+                <width>48</width>
+                <height>48</height>
                </size>
               </property>
               <property name="autoExclusive">
@@ -419,12 +383,6 @@
                 <verstretch>0</verstretch>
                </sizepolicy>
               </property>
-              <property name="minimumSize">
-               <size>
-                <width>95</width>
-                <height>75</height>
-               </size>
-              </property>
               <property name="font">
                <font>
                 <weight>50</weight>
@@ -444,8 +402,8 @@
               </property>
               <property name="iconSize">
                <size>
-                <width>40</width>
-                <height>40</height>
+                <width>48</width>
+                <height>48</height>
                </size>
               </property>
               <property name="autoExclusive">
@@ -467,12 +425,6 @@
                 <verstretch>0</verstretch>
                </sizepolicy>
               </property>
-              <property name="minimumSize">
-               <size>
-                <width>95</width>
-                <height>75</height>
-               </size>
-              </property>
               <property name="font">
                <font>
                 <weight>50</weight>
@@ -492,8 +444,8 @@
               </property>
               <property name="iconSize">
                <size>
-                <width>40</width>
-                <height>40</height>
+                <width>48</width>
+                <height>48</height>
                </size>
               </property>
               <property name="autoExclusive">
@@ -515,12 +467,6 @@
                 <verstretch>0</verstretch>
                </sizepolicy>
               </property>
-              <property name="minimumSize">
-               <size>
-                <width>95</width>
-                <height>75</height>
-               </size>
-              </property>
               <property name="font">
                <font>
                 <weight>50</weight>
@@ -540,8 +486,8 @@
               </property>
               <property name="iconSize">
                <size>
-                <width>40</width>
-                <height>40</height>
+                <width>48</width>
+                <height>48</height>
                </size>
               </property>
               <property name="autoExclusive">
@@ -563,12 +509,6 @@
                 <verstretch>0</verstretch>
                </sizepolicy>
               </property>
-              <property name="minimumSize">
-               <size>
-                <width>95</width>
-                <height>75</height>
-               </size>
-              </property>
               <property name="font">
                <font>
                 <weight>50</weight>
@@ -588,8 +528,8 @@
               </property>
               <property name="iconSize">
                <size>
-                <width>40</width>
-                <height>40</height>
+                <width>48</width>
+                <height>48</height>
                </size>
               </property>
               <property name="autoExclusive">
@@ -611,12 +551,6 @@
                 <verstretch>0</verstretch>
                </sizepolicy>
               </property>
-              <property name="minimumSize">
-               <size>
-                <width>95</width>
-                <height>75</height>
-               </size>
-              </property>
               <property name="font">
                <font>
                 <weight>50</weight>
@@ -636,8 +570,8 @@
               </property>
               <property name="iconSize">
                <size>
-                <width>40</width>
-                <height>40</height>
+                <width>48</width>
+                <height>48</height>
                </size>
               </property>
               <property name="autoExclusive">
@@ -659,12 +593,6 @@
                 <verstretch>0</verstretch>
                </sizepolicy>
               </property>
-              <property name="minimumSize">
-               <size>
-                <width>95</width>
-                <height>75</height>
-               </size>
-              </property>
               <property name="font">
                <font>
                 <weight>50</weight>
@@ -684,8 +612,8 @@
               </property>
               <property name="iconSize">
                <size>
-                <width>40</width>
-                <height>40</height>
+                <width>48</width>
+                <height>48</height>
                </size>
               </property>
               <property name="autoExclusive">
@@ -707,12 +635,6 @@
                 <verstretch>0</verstretch>
                </sizepolicy>
               </property>
-              <property name="minimumSize">
-               <size>
-                <width>95</width>
-                <height>75</height>
-               </size>
-              </property>
               <property name="font">
                <font>
                 <weight>50</weight>
@@ -732,8 +654,8 @@
               </property>
               <property name="iconSize">
                <size>
-                <width>40</width>
-                <height>40</height>
+                <width>48</width>
+                <height>48</height>
                </size>
               </property>
               <property name="autoExclusive">
@@ -755,12 +677,6 @@
                 <verstretch>0</verstretch>
                </sizepolicy>
               </property>
-              <property name="minimumSize">
-               <size>
-                <width>95</width>
-                <height>75</height>
-               </size>
-              </property>
               <property name="font">
                <font>
                 <weight>50</weight>
@@ -780,8 +696,8 @@
               </property>
               <property name="iconSize">
                <size>
-                <width>40</width>
-                <height>40</height>
+                <width>48</width>
+                <height>48</height>
                </size>
               </property>
               <property name="autoExclusive">
@@ -803,12 +719,6 @@
                 <verstretch>0</verstretch>
                </sizepolicy>
               </property>
-              <property name="minimumSize">
-               <size>
-                <width>95</width>
-                <height>75</height>
-               </size>
-              </property>
               <property name="font">
                <font>
                 <weight>50</weight>
@@ -828,8 +738,8 @@
               </property>
               <property name="iconSize">
                <size>
-                <width>40</width>
-                <height>40</height>
+                <width>48</width>
+                <height>48</height>
                </size>
               </property>
               <property name="shortcut">
@@ -902,12 +812,6 @@
                 <verstretch>0</verstretch>
                </sizepolicy>
               </property>
-              <property name="minimumSize">
-               <size>
-                <width>95</width>
-                <height>75</height>
-               </size>
-              </property>
               <property name="font">
                <font>
                 <weight>50</weight>
@@ -927,8 +831,8 @@
               </property>
               <property name="iconSize">
                <size>
-                <width>40</width>
-                <height>40</height>
+                <width>48</width>
+                <height>48</height>
                </size>
               </property>
               <property name="popupMode">
@@ -946,12 +850,6 @@
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
-              </property>
-              <property name="minimumSize">
-               <size>
-                <width>95</width>
-                <height>75</height>
-               </size>
               </property>
               <property name="font">
                <font>
@@ -972,8 +870,8 @@
               </property>
               <property name="iconSize">
                <size>
-                <width>40</width>
-                <height>40</height>
+                <width>48</width>
+                <height>48</height>
                </size>
               </property>
               <property name="popupMode">
@@ -991,12 +889,6 @@
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
-              </property>
-              <property name="minimumSize">
-               <size>
-                <width>95</width>
-                <height>75</height>
-               </size>
               </property>
               <property name="font">
                <font>
@@ -1017,8 +909,8 @@
               </property>
               <property name="iconSize">
                <size>
-                <width>40</width>
-                <height>40</height>
+                <width>48</width>
+                <height>48</height>
                </size>
               </property>
               <property name="popupMode">
@@ -1036,12 +928,6 @@
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
-              </property>
-              <property name="minimumSize">
-               <size>
-                <width>95</width>
-                <height>75</height>
-               </size>
               </property>
               <property name="font">
                <font>
@@ -1062,8 +948,8 @@
               </property>
               <property name="iconSize">
                <size>
-                <width>40</width>
-                <height>40</height>
+                <width>48</width>
+                <height>48</height>
                </size>
               </property>
               <property name="popupMode">
@@ -1081,12 +967,6 @@
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
-              </property>
-              <property name="minimumSize">
-               <size>
-                <width>95</width>
-                <height>75</height>
-               </size>
               </property>
               <property name="font">
                <font>
@@ -1107,8 +987,8 @@
               </property>
               <property name="iconSize">
                <size>
-                <width>40</width>
-                <height>40</height>
+                <width>48</width>
+                <height>48</height>
                </size>
               </property>
               <property name="popupMode">
@@ -1126,12 +1006,6 @@
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
-              </property>
-              <property name="minimumSize">
-               <size>
-                <width>95</width>
-                <height>75</height>
-               </size>
               </property>
               <property name="font">
                <font>
@@ -1152,8 +1026,8 @@
               </property>
               <property name="iconSize">
                <size>
-                <width>40</width>
-                <height>40</height>
+                <width>48</width>
+                <height>48</height>
                </size>
               </property>
               <property name="popupMode">
@@ -1171,12 +1045,6 @@
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
-              </property>
-              <property name="minimumSize">
-               <size>
-                <width>95</width>
-                <height>75</height>
-               </size>
               </property>
               <property name="font">
                <font>
@@ -1197,8 +1065,8 @@
               </property>
               <property name="iconSize">
                <size>
-                <width>40</width>
-                <height>40</height>
+                <width>48</width>
+                <height>48</height>
                </size>
               </property>
               <property name="popupMode">
@@ -1216,12 +1084,6 @@
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
-              </property>
-              <property name="minimumSize">
-               <size>
-                <width>95</width>
-                <height>75</height>
-               </size>
               </property>
               <property name="font">
                <font>
@@ -1242,8 +1104,8 @@
               </property>
               <property name="iconSize">
                <size>
-                <width>40</width>
-                <height>40</height>
+                <width>48</width>
+                <height>48</height>
                </size>
               </property>
               <property name="popupMode">
@@ -1261,12 +1123,6 @@
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
-              </property>
-              <property name="minimumSize">
-               <size>
-                <width>95</width>
-                <height>75</height>
-               </size>
               </property>
               <property name="font">
                <font>
@@ -1287,8 +1143,8 @@
               </property>
               <property name="iconSize">
                <size>
-                <width>40</width>
-                <height>40</height>
+                <width>48</width>
+                <height>48</height>
                </size>
               </property>
               <property name="popupMode">
@@ -1306,12 +1162,6 @@
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
-              </property>
-              <property name="minimumSize">
-               <size>
-                <width>95</width>
-                <height>75</height>
-               </size>
               </property>
               <property name="font">
                <font>
@@ -1332,8 +1182,8 @@
               </property>
               <property name="iconSize">
                <size>
-                <width>40</width>
-                <height>40</height>
+                <width>48</width>
+                <height>48</height>
                </size>
               </property>
               <property name="popupMode">
@@ -1351,12 +1201,6 @@
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
-              </property>
-              <property name="minimumSize">
-               <size>
-                <width>95</width>
-                <height>75</height>
-               </size>
               </property>
               <property name="font">
                <font>
@@ -1377,8 +1221,8 @@
               </property>
               <property name="iconSize">
                <size>
-                <width>40</width>
-                <height>40</height>
+                <width>48</width>
+                <height>48</height>
                </size>
               </property>
               <property name="popupMode">
@@ -1396,12 +1240,6 @@
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
-              </property>
-              <property name="minimumSize">
-               <size>
-                <width>95</width>
-                <height>75</height>
-               </size>
               </property>
               <property name="font">
                <font>
@@ -1422,8 +1260,8 @@
               </property>
               <property name="iconSize">
                <size>
-                <width>40</width>
-                <height>40</height>
+                <width>48</width>
+                <height>48</height>
                </size>
               </property>
               <property name="popupMode">
@@ -1441,12 +1279,6 @@
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
-              </property>
-              <property name="minimumSize">
-               <size>
-                <width>95</width>
-                <height>75</height>
-               </size>
               </property>
               <property name="font">
                <font>
@@ -1467,8 +1299,8 @@
               </property>
               <property name="iconSize">
                <size>
-                <width>40</width>
-                <height>40</height>
+                <width>48</width>
+                <height>48</height>
                </size>
               </property>
               <property name="popupMode">
@@ -1486,12 +1318,6 @@
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
-              </property>
-              <property name="minimumSize">
-               <size>
-                <width>95</width>
-                <height>75</height>
-               </size>
               </property>
               <property name="font">
                <font>
@@ -1512,8 +1338,8 @@
               </property>
               <property name="iconSize">
                <size>
-                <width>40</width>
-                <height>40</height>
+                <width>48</width>
+                <height>48</height>
                </size>
               </property>
               <property name="popupMode">
@@ -1580,12 +1406,6 @@
                 <verstretch>0</verstretch>
                </sizepolicy>
               </property>
-              <property name="minimumSize">
-               <size>
-                <width>95</width>
-                <height>75</height>
-               </size>
-              </property>
               <property name="font">
                <font>
                 <weight>50</weight>
@@ -1605,98 +1425,8 @@
               </property>
               <property name="iconSize">
                <size>
-                <width>40</width>
-                <height>40</height>
-               </size>
-              </property>
-              <property name="popupMode">
-               <enum>QToolButton::InstantPopup</enum>
-              </property>
-              <property name="toolButtonStyle">
-               <enum>Qt::ToolButtonTextUnderIcon</enum>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="2">
-             <widget class="QToolButton" name="column_tb">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="minimumSize">
-               <size>
-                <width>95</width>
-                <height>75</height>
-               </size>
-              </property>
-              <property name="font">
-               <font>
-                <weight>50</weight>
-                <italic>true</italic>
-                <bold>false</bold>
-               </font>
-              </property>
-              <property name="focusPolicy">
-               <enum>Qt::NoFocus</enum>
-              </property>
-              <property name="text">
-               <string>Column</string>
-              </property>
-              <property name="icon">
-               <iconset resource="../../res/resources.qrc">
-                <normaloff>:/icons/icons/column.png</normaloff>:/icons/icons/column.png</iconset>
-              </property>
-              <property name="iconSize">
-               <size>
-                <width>40</width>
-                <height>40</height>
-               </size>
-              </property>
-              <property name="popupMode">
-               <enum>QToolButton::InstantPopup</enum>
-              </property>
-              <property name="toolButtonStyle">
-               <enum>Qt::ToolButtonTextUnderIcon</enum>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="8">
-             <widget class="QToolButton" name="tab_perms_tb">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="minimumSize">
-               <size>
-                <width>95</width>
-                <height>75</height>
-               </size>
-              </property>
-              <property name="font">
-               <font>
-                <weight>50</weight>
-                <italic>true</italic>
-                <bold>false</bold>
-               </font>
-              </property>
-              <property name="focusPolicy">
-               <enum>Qt::NoFocus</enum>
-              </property>
-              <property name="text">
-               <string>Permissions</string>
-              </property>
-              <property name="icon">
-               <iconset resource="../../res/resources.qrc">
-                <normaloff>:/icons/icons/permission.png</normaloff>:/icons/icons/permission.png</iconset>
-              </property>
-              <property name="iconSize">
-               <size>
-                <width>40</width>
-                <height>40</height>
+                <width>48</width>
+                <height>48</height>
                </size>
               </property>
               <property name="popupMode">
@@ -1714,12 +1444,6 @@
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
-              </property>
-              <property name="minimumSize">
-               <size>
-                <width>95</width>
-                <height>75</height>
-               </size>
               </property>
               <property name="font">
                <font>
@@ -1740,98 +1464,8 @@
               </property>
               <property name="iconSize">
                <size>
-                <width>40</width>
-                <height>40</height>
-               </size>
-              </property>
-              <property name="popupMode">
-               <enum>QToolButton::InstantPopup</enum>
-              </property>
-              <property name="toolButtonStyle">
-               <enum>Qt::ToolButtonTextUnderIcon</enum>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="9">
-             <widget class="QToolButton" name="rule_tb">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="minimumSize">
-               <size>
-                <width>95</width>
-                <height>75</height>
-               </size>
-              </property>
-              <property name="font">
-               <font>
-                <weight>50</weight>
-                <italic>true</italic>
-                <bold>false</bold>
-               </font>
-              </property>
-              <property name="focusPolicy">
-               <enum>Qt::NoFocus</enum>
-              </property>
-              <property name="text">
-               <string>Rule</string>
-              </property>
-              <property name="icon">
-               <iconset resource="../../res/resources.qrc">
-                <normaloff>:/icons/icons/rule.png</normaloff>:/icons/icons/rule.png</iconset>
-              </property>
-              <property name="iconSize">
-               <size>
-                <width>40</width>
-                <height>40</height>
-               </size>
-              </property>
-              <property name="popupMode">
-               <enum>QToolButton::InstantPopup</enum>
-              </property>
-              <property name="toolButtonStyle">
-               <enum>Qt::ToolButtonTextUnderIcon</enum>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="2">
-             <widget class="QToolButton" name="trigger_tb">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="minimumSize">
-               <size>
-                <width>95</width>
-                <height>75</height>
-               </size>
-              </property>
-              <property name="font">
-               <font>
-                <weight>50</weight>
-                <italic>true</italic>
-                <bold>false</bold>
-               </font>
-              </property>
-              <property name="focusPolicy">
-               <enum>Qt::NoFocus</enum>
-              </property>
-              <property name="text">
-               <string>Trigger</string>
-              </property>
-              <property name="icon">
-               <iconset resource="../../res/resources.qrc">
-                <normaloff>:/icons/icons/trigger.png</normaloff>:/icons/icons/trigger.png</iconset>
-              </property>
-              <property name="iconSize">
-               <size>
-                <width>40</width>
-                <height>40</height>
+                <width>48</width>
+                <height>48</height>
                </size>
               </property>
               <property name="popupMode">
@@ -1849,12 +1483,6 @@
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
-              </property>
-              <property name="minimumSize">
-               <size>
-                <width>95</width>
-                <height>75</height>
-               </size>
               </property>
               <property name="font">
                <font>
@@ -1875,8 +1503,164 @@
               </property>
               <property name="iconSize">
                <size>
-                <width>40</width>
-                <height>40</height>
+                <width>48</width>
+                <height>48</height>
+               </size>
+              </property>
+              <property name="popupMode">
+               <enum>QToolButton::InstantPopup</enum>
+              </property>
+              <property name="toolButtonStyle">
+               <enum>Qt::ToolButtonTextUnderIcon</enum>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="9">
+             <widget class="QToolButton" name="rule_tb">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="font">
+               <font>
+                <weight>50</weight>
+                <italic>true</italic>
+                <bold>false</bold>
+               </font>
+              </property>
+              <property name="focusPolicy">
+               <enum>Qt::NoFocus</enum>
+              </property>
+              <property name="text">
+               <string>Rule</string>
+              </property>
+              <property name="icon">
+               <iconset resource="../../res/resources.qrc">
+                <normaloff>:/icons/icons/rule.png</normaloff>:/icons/icons/rule.png</iconset>
+              </property>
+              <property name="iconSize">
+               <size>
+                <width>48</width>
+                <height>48</height>
+               </size>
+              </property>
+              <property name="popupMode">
+               <enum>QToolButton::InstantPopup</enum>
+              </property>
+              <property name="toolButtonStyle">
+               <enum>Qt::ToolButtonTextUnderIcon</enum>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="2">
+             <widget class="QToolButton" name="column_tb">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="font">
+               <font>
+                <weight>50</weight>
+                <italic>true</italic>
+                <bold>false</bold>
+               </font>
+              </property>
+              <property name="focusPolicy">
+               <enum>Qt::NoFocus</enum>
+              </property>
+              <property name="text">
+               <string>Column</string>
+              </property>
+              <property name="icon">
+               <iconset resource="../../res/resources.qrc">
+                <normaloff>:/icons/icons/column.png</normaloff>:/icons/icons/column.png</iconset>
+              </property>
+              <property name="iconSize">
+               <size>
+                <width>48</width>
+                <height>48</height>
+               </size>
+              </property>
+              <property name="popupMode">
+               <enum>QToolButton::InstantPopup</enum>
+              </property>
+              <property name="toolButtonStyle">
+               <enum>Qt::ToolButtonTextUnderIcon</enum>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="2">
+             <widget class="QToolButton" name="trigger_tb">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="font">
+               <font>
+                <weight>50</weight>
+                <italic>true</italic>
+                <bold>false</bold>
+               </font>
+              </property>
+              <property name="focusPolicy">
+               <enum>Qt::NoFocus</enum>
+              </property>
+              <property name="text">
+               <string>Trigger</string>
+              </property>
+              <property name="icon">
+               <iconset resource="../../res/resources.qrc">
+                <normaloff>:/icons/icons/trigger.png</normaloff>:/icons/icons/trigger.png</iconset>
+              </property>
+              <property name="iconSize">
+               <size>
+                <width>48</width>
+                <height>48</height>
+               </size>
+              </property>
+              <property name="popupMode">
+               <enum>QToolButton::InstantPopup</enum>
+              </property>
+              <property name="toolButtonStyle">
+               <enum>Qt::ToolButtonTextUnderIcon</enum>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="8">
+             <widget class="QToolButton" name="tab_perms_tb">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="font">
+               <font>
+                <weight>50</weight>
+                <italic>true</italic>
+                <bold>false</bold>
+               </font>
+              </property>
+              <property name="focusPolicy">
+               <enum>Qt::NoFocus</enum>
+              </property>
+              <property name="text">
+               <string>Permissions</string>
+              </property>
+              <property name="icon">
+               <iconset resource="../../res/resources.qrc">
+                <normaloff>:/icons/icons/permission.png</normaloff>:/icons/icons/permission.png</iconset>
+              </property>
+              <property name="iconSize">
+               <size>
+                <width>48</width>
+                <height>48</height>
                </size>
               </property>
               <property name="popupMode">
@@ -1946,12 +1730,6 @@
                 <verstretch>0</verstretch>
                </sizepolicy>
               </property>
-              <property name="minimumSize">
-               <size>
-                <width>95</width>
-                <height>75</height>
-               </size>
-              </property>
               <property name="font">
                <font>
                 <weight>50</weight>
@@ -1971,8 +1749,8 @@
               </property>
               <property name="iconSize">
                <size>
-                <width>40</width>
-                <height>40</height>
+                <width>48</width>
+                <height>48</height>
                </size>
               </property>
               <property name="popupMode">
@@ -1990,12 +1768,6 @@
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
-              </property>
-              <property name="minimumSize">
-               <size>
-                <width>95</width>
-                <height>75</height>
-               </size>
               </property>
               <property name="font">
                <font>
@@ -2016,8 +1788,8 @@
               </property>
               <property name="iconSize">
                <size>
-                <width>40</width>
-                <height>40</height>
+                <width>48</width>
+                <height>48</height>
                </size>
               </property>
               <property name="popupMode">
@@ -2035,12 +1807,6 @@
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
-              </property>
-              <property name="minimumSize">
-               <size>
-                <width>95</width>
-                <height>75</height>
-               </size>
               </property>
               <property name="font">
                <font>
@@ -2061,8 +1827,8 @@
               </property>
               <property name="iconSize">
                <size>
-                <width>40</width>
-                <height>40</height>
+                <width>48</width>
+                <height>48</height>
                </size>
               </property>
               <property name="popupMode">
@@ -2080,12 +1846,6 @@
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
-              </property>
-              <property name="minimumSize">
-               <size>
-                <width>95</width>
-                <height>75</height>
-               </size>
               </property>
               <property name="font">
                <font>
@@ -2106,8 +1866,8 @@
               </property>
               <property name="iconSize">
                <size>
-                <width>40</width>
-                <height>40</height>
+                <width>48</width>
+                <height>48</height>
                </size>
               </property>
               <property name="popupMode">
@@ -2125,12 +1885,6 @@
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
-              </property>
-              <property name="minimumSize">
-               <size>
-                <width>95</width>
-                <height>75</height>
-               </size>
               </property>
               <property name="font">
                <font>
@@ -2151,8 +1905,8 @@
               </property>
               <property name="iconSize">
                <size>
-                <width>40</width>
-                <height>40</height>
+                <width>48</width>
+                <height>48</height>
                </size>
               </property>
               <property name="popupMode">
@@ -2170,12 +1924,6 @@
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
-              </property>
-              <property name="minimumSize">
-               <size>
-                <width>95</width>
-                <height>75</height>
-               </size>
               </property>
               <property name="font">
                <font>
@@ -2196,8 +1944,8 @@
               </property>
               <property name="iconSize">
                <size>
-                <width>40</width>
-                <height>40</height>
+                <width>48</width>
+                <height>48</height>
                </size>
               </property>
               <property name="popupMode">

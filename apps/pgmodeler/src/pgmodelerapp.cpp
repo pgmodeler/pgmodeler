@@ -129,20 +129,30 @@ PgModelerApp::PgModelerApp(int &argc, char **argv) : Application(argc,argv)
 	if(!scrs.isEmpty())
 	{
 		QSize sz = scrs[0]->size();
+		QString ui_size_conf;
 
 		// QMenu icon sizes in full hd screens is 22x22
 		if(sz.width() <= 1920)
+		{
 			CustomMenuStyle::setIconPixelMetric(22);
+			ui_size_conf = GlobalAttributes::UiSmallStyleConf;
+		}
 		// QMenu icon sizes in 2k screens is 25x25
 		else if(sz.width() < 3840)
+		{
 			CustomMenuStyle::setIconPixelMetric(25);
+			ui_size_conf = GlobalAttributes::UiMediumStyleConf;
+		}
 
-		extra_ui_conf = GlobalAttributes::getTmplConfigurationFilePath(GlobalAttributes::UiStyleDir,
-																																		"small" +
-																																		GlobalAttributes::ConfigurationExt);
+		if(!ui_size_conf.isEmpty())
+		{
+			extra_ui_conf = GlobalAttributes::getTmplConfigurationFilePath("",
+																																		 ui_size_conf +
+																																		 GlobalAttributes::ConfigurationExt);
+		}
 	}
 
-	QFile ui_style(GlobalAttributes::getTmplConfigurationFilePath(GlobalAttributes::UiStyleDir,
+	QFile ui_style(GlobalAttributes::getTmplConfigurationFilePath("",
 																																GlobalAttributes::UiDefaulStyleConf +
 																																GlobalAttributes::ConfigurationExt)),
 			extra_ui_style(extra_ui_conf);
