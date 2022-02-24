@@ -518,60 +518,59 @@ void Relationship::addObject(TableObject *tab_obj, int obj_idx)
 	try
 	{
 		//Checks if the object isn't exists on the relationshi and doesn't belongs to a table
-		if(!tab_obj->getParentTable() &&
-				getObjectIndex(tab_obj) < 0)
+		if(tab_obj->getParentTable() || getObjectIndex(tab_obj) >= 0)
 		{
-			//Gets the object list according the object type
-			obj_type=tab_obj->getObjectType();
-			if(obj_type==ObjectType::Column)
-				obj_list=&rel_attributes;
-			else if(obj_type==ObjectType::Constraint)
-				obj_list=&rel_constraints;
-			else
-				//Raises an error if the object type isn't valid (not a column or constraint)
-				throw Exception(ErrorCode::AsgObjectInvalidType, __PRETTY_FUNCTION__,__FILE__,__LINE__);
-
-			//Defines the parent table for the object only for validation
-			tab_obj->setParentTable(src_table);
-
-			//Generates the code for the object only for validation
-			if(obj_type==ObjectType::Column)
-				dynamic_cast<Column *>(tab_obj)->getCodeDefinition(SchemaParser::SqlDefinition);
-			else
-			{
-				Constraint *rest=nullptr;
-				rest=dynamic_cast<Constraint *>(tab_obj);
-
-				//Raises an error if the user try to add as foreign key to relationship
-				if(rest->getConstraintType()==ConstraintType::ForeignKey)
-					throw Exception(ErrorCode::AsgForeignKeyRelationship,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-
-				rest->getCodeDefinition(SchemaParser::SqlDefinition);
-			}
-
-			//Switch back to null the object parent
-			tab_obj->setParentTable(nullptr);
-
-			if(obj_idx < 0 || obj_idx >= static_cast<int>(obj_list->size()))
-				obj_list->push_back(tab_obj);
-			else
-			{
-				if(obj_list->size() > 0)
-					obj_list->insert((obj_list->begin() + obj_idx), tab_obj);
-				else
-					obj_list->push_back(tab_obj);
-			}
-
-			tab_obj->setAddedByLinking(true);
-			this->invalidated=true;
-		}
-		else
 			throw Exception(Exception::getErrorMessage(ErrorCode::AsgDuplicatedObject)
 							.arg(tab_obj->getName(true))
 							.arg(tab_obj->getTypeName())
 							.arg(this->getName(true))
 							.arg(this->getTypeName()),
 							ErrorCode::AsgDuplicatedObject, __PRETTY_FUNCTION__,__FILE__,__LINE__);
+		}
+
+		//Gets the object list according the object type
+		obj_type=tab_obj->getObjectType();
+		if(obj_type==ObjectType::Column)
+			obj_list=&rel_attributes;
+		else if(obj_type==ObjectType::Constraint)
+			obj_list=&rel_constraints;
+		else
+			//Raises an error if the object type isn't valid (not a column or constraint)
+			throw Exception(ErrorCode::AsgObjectInvalidType, __PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+		//Defines the parent table for the object only for validation
+		tab_obj->setParentTable(src_table);
+
+		//Generates the code for the object only for validation
+		if(obj_type==ObjectType::Column)
+			dynamic_cast<Column *>(tab_obj)->getCodeDefinition(SchemaParser::SqlDefinition);
+		else
+		{
+			Constraint *rest=nullptr;
+			rest=dynamic_cast<Constraint *>(tab_obj);
+
+			//Raises an error if the user try to add as foreign key to relationship
+			if(rest->getConstraintType()==ConstraintType::ForeignKey)
+				throw Exception(ErrorCode::AsgForeignKeyRelationship,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+			rest->getCodeDefinition(SchemaParser::SqlDefinition);
+		}
+
+		//Switch back to null the object parent
+		tab_obj->setParentTable(nullptr);
+
+		if(obj_idx < 0 || obj_idx >= static_cast<int>(obj_list->size()))
+			obj_list->push_back(tab_obj);
+		else
+		{
+			if(obj_list->size() > 0)
+				obj_list->insert((obj_list->begin() + obj_idx), tab_obj);
+			else
+				obj_list->push_back(tab_obj);
+		}
+
+		tab_obj->setAddedByLinking(true);
+		this->invalidated=true;
 	}
 	catch(Exception &e)
 	{

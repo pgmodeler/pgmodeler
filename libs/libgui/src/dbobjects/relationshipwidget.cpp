@@ -799,9 +799,9 @@ void RelationshipWidget::duplicateObject(int curr_row, int new_row)
 
 		CoreUtilsNs::copyObject(&dup_object, object, obj_type);
 		dup_object->setName(CoreUtilsNs::generateUniqueName(dup_object, obj_list, false, QString("_cp")));
-
 		op_id=op_list->registerObject(dup_object, Operation::ObjectCreated, new_row, rel);
 
+		dynamic_cast<TableObject*>(dup_object)->setParentTable(nullptr);
 		rel->addObject(dynamic_cast<TableObject *>(dup_object));
 		listObjects(obj_type);
 	}
