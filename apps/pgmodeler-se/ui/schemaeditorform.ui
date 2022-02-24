@@ -484,8 +484,8 @@
         </property>
         <property name="iconSize">
          <size>
-          <width>40</width>
-          <height>40</height>
+          <width>48</width>
+          <height>48</height>
          </size>
         </property>
         <property name="toolButtonStyle">
@@ -522,8 +522,8 @@
         </property>
         <property name="iconSize">
          <size>
-          <width>40</width>
-          <height>40</height>
+          <width>48</width>
+          <height>48</height>
          </size>
         </property>
         <property name="toolButtonStyle">
@@ -563,8 +563,8 @@
         </property>
         <property name="iconSize">
          <size>
-          <width>40</width>
-          <height>40</height>
+          <width>48</width>
+          <height>48</height>
          </size>
         </property>
         <property name="shortcut">
@@ -607,8 +607,8 @@
         </property>
         <property name="iconSize">
          <size>
-          <width>40</width>
-          <height>40</height>
+          <width>48</width>
+          <height>48</height>
          </size>
         </property>
         <property name="shortcut">
@@ -651,8 +651,8 @@
         </property>
         <property name="iconSize">
          <size>
-          <width>40</width>
-          <height>40</height>
+          <width>48</width>
+          <height>48</height>
          </size>
         </property>
         <property name="shortcut">
@@ -705,8 +705,8 @@
         </property>
         <property name="iconSize">
          <size>
-          <width>40</width>
-          <height>40</height>
+          <width>48</width>
+          <height>48</height>
          </size>
         </property>
         <property name="shortcut">
@@ -749,8 +749,8 @@
         </property>
         <property name="iconSize">
          <size>
-          <width>40</width>
-          <height>40</height>
+          <width>48</width>
+          <height>48</height>
          </size>
         </property>
         <property name="popupMode">
@@ -792,12 +792,12 @@
         </property>
         <property name="icon">
          <iconset resource="../../../libs/libgui/res/resources.qrc">
-          <normaloff>:/icons/icons/ident.png</normaloff>:/icons/icons/ident.png</iconset>
+          <normaloff>:/icons/icons/indent.png</normaloff>:/icons/icons/indent.png</iconset>
         </property>
         <property name="iconSize">
          <size>
-          <width>40</width>
-          <height>40</height>
+          <width>48</width>
+          <height>48</height>
          </size>
         </property>
         <property name="toolButtonStyle">
@@ -837,8 +837,8 @@
         </property>
         <property name="iconSize">
          <size>
-          <width>40</width>
-          <height>40</height>
+          <width>48</width>
+          <height>48</height>
          </size>
         </property>
         <property name="toolButtonStyle">
@@ -878,8 +878,8 @@
         </property>
         <property name="iconSize">
          <size>
-          <width>40</width>
-          <height>40</height>
+          <width>48</width>
+          <height>48</height>
          </size>
         </property>
         <property name="toolButtonStyle">
@@ -965,7 +965,6 @@
   </layout>
  </widget>
  <resources>
-  <include location="../../../libs/libgui/res/resources.qrc"/>
   <include location="../../../libs/libgui/res/resources.qrc"/>
   <include location="../../../libs/libgui/res/resources.qrc"/>
  </resources>

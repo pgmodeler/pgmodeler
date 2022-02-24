@@ -19,7 +19,6 @@
         <file>icons/aggregate_grp.png</file>
         <file>icons/alert.png</file>
         <file>icons/aligntogrid.png</file>
-        <file>icons/aligntogrid1.png</file>
         <file>icons/appearance.png</file>
         <file>icons/arrangetables.png</file>
         <file>icons/attribute.png</file>
@@ -30,7 +29,6 @@
         <file>icons/breakline_90dv.png</file>
         <file>icons/breakrelline.png</file>
         <file>icons/bringtofront.png</file>
-        <file>icons/browsed.png</file>
         <file>icons/browsetable.png</file>
         <file>icons/bugreport.png</file>
         <file>icons/bulkedit.png</file>
@@ -91,7 +89,6 @@
         <file>icons/domain.png</file>
         <file>icons/domain_grp.png</file>
         <file>icons/donate.png</file>
-        <file>icons/down.png</file>
         <file>icons/downarrow.png</file>
         <file>icons/duplicate.png</file>
         <file>icons/duprow.png</file>
@@ -112,21 +109,12 @@
         <file>icons/findtext.png</file>
         <file>icons/fix.png</file>
         <file>icons/fixobject.png</file>
-        <file>icons/flag_argentina.png</file>
-        <file>icons/flag_china.png</file>
-        <file>icons/flag_cuba.png</file>
-        <file>icons/flag_ecuador.png</file>
-        <file>icons/flag_france.png</file>
-        <file>icons/flag_poland.png</file>
-        <file>icons/flag_russia.png</file>
-        <file>icons/flag_singapore.png</file>
         <file>icons/foreigndatawrapper.png</file>
         <file>icons/foreigndatawrapper_grp.png</file>
         <file>icons/foreignserver.png</file>
         <file>icons/foreignserver_grp.png</file>
         <file>icons/foreigntable.png</file>
         <file>icons/foreigntable_grp.png</file>
-        <file>icons/fullscreen.png</file>
         <file>icons/function.png</file>
         <file>icons/function1.png</file>
         <file>icons/function_grp.png</file>
@@ -136,7 +124,6 @@
         <file>icons/help.png</file>
         <file>icons/ignore.png</file>
         <file>icons/import.png</file>
-        <file>icons/imprimir.png</file>
         <file>icons/index.png</file>
         <file>icons/index_grp.png</file>
         <file>icons/info.png</file>
@@ -149,7 +136,6 @@
         <file>icons/layervisibility.png</file>
         <file>icons/lesszoom.png</file>
         <file>icons/listview.png</file>
-        <file>icons/loadcsv.png</file>
         <file>icons/loadrecent.png</file>
         <file>icons/mainmenu.png</file>
         <file>icons/managedb.png</file>
@@ -160,8 +146,6 @@
         <file>icons/movedown.png</file>
         <file>icons/movefirst.png</file>
         <file>icons/movelast.png</file>
-        <file>icons/moveobjs.png</file>
-        <file>icons/movetolayer.png</file>
         <file>icons/movetoschema.png</file>
         <file>icons/moveup.png</file>
         <file>icons/new.png</file>
@@ -186,7 +170,6 @@
         <file>icons/paste.png</file>
         <file>icons/permission.png</file>
         <file>icons/permission_grp.png</file>
-        <file>icons/pgsqlModeler48x48.png</file>
         <file>icons/plugins.png</file>
         <file>icons/policy.png</file>
         <file>icons/policy_grp.png</file>
@@ -194,7 +177,6 @@
         <file>icons/procedure.png</file>
         <file>icons/procedure_grp.png</file>
         <file>icons/protect.png</file>
-        <file>icons/protectall.png</file>
         <file>icons/question.png</file>
         <file>icons/quickactions.png</file>
         <file>icons/random.png</file>
@@ -215,27 +197,22 @@
         <file>icons/relationshippart.png</file>
         <file>icons/relationshiptv.png</file>
         <file>icons/relationshiptv_grp.png</file>
-        <file>icons/relationshipusr.png</file>
         <file>icons/remove.png</file>
         <file>icons/removed.png</file>
         <file>icons/removepoints.png</file>
         <file>icons/rename.png</file>
         <file>icons/resizecols.png</file>
         <file>icons/restore.png</file>
-        <file>icons/result.png</file>
         <file>icons/role.png</file>
         <file>icons/role_grp.png</file>
         <file>icons/rule.png</file>
         <file>icons/rule_grp.png</file>
         <file>icons/run.png</file>
-        <file>icons/runsqldb.png</file>
         <file>icons/save.png</file>
         <file>icons/saveas.png</file>
         <file>icons/schema.png</file>
         <file>icons/schema_grp.png</file>
         <file>icons/schemarect.png</file>
-        <file>icons/select.png</file>
-        <file>icons/selectall.png</file>
         <file>icons/selectmove.png</file>
         <file>icons/sendtoback.png</file>
         <file>icons/sequence.png</file>
@@ -258,7 +235,6 @@
         <file>icons/tag_grp.png</file>
         <file>icons/textbox.png</file>
         <file>icons/textbox_grp.png</file>
-        <file>icons/toggleattribs.png</file>
         <file>icons/transform.png</file>
         <file>icons/transform_grp.png</file>
         <file>icons/treeview.png</file>
@@ -269,8 +245,6 @@
         <file>icons/uid.png</file>
         <file>icons/undo.png</file>
         <file>icons/unprotect.png</file>
-        <file>icons/unprotectall.png</file>
-        <file>icons/up.png</file>
         <file>icons/uparrow.png</file>
         <file>icons/update.png</file>
         <file>icons/usermapping.png</file>
@@ -283,7 +257,6 @@
         <file>icons/xmlcode.png</file>
         <file>icons/validity.png</file>
         <file>icons/validatesch.png</file>
-        <file>icons/ident.png</file>
         <file>icons/saveall.png</file>
         <file>icons/pgmodeler_logo.png</file>
         <file>icons/enablesql.png</file>
@@ -298,6 +271,7 @@
         <file>icons/update1.png</file>
         <file>icons/about.png</file>
         <file>icons/close2.png</file>
+        <file>icons/indent.png</file>
     </qresource>
     <qresource prefix="/images">
         <file>images/brazil_flag.png</file>

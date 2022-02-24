@@ -46,7 +46,7 @@
     <number>10</number>
    </property>
    <property name="horizontalSpacing">
-    <number>5</number>
+    <number>10</number>
    </property>
    <item row="2" column="0" colspan="2">
     <layout class="QGridLayout" name="buttons_lt">
@@ -1262,8 +1262,8 @@
         </property>
         <property name="iconSize">
          <size>
-          <width>40</width>
-          <height>40</height>
+          <width>48</width>
+          <height>48</height>
          </size>
         </property>
         <property name="shortcut">
@@ -1306,8 +1306,8 @@
         </property>
         <property name="iconSize">
          <size>
-          <width>40</width>
-          <height>40</height>
+          <width>48</width>
+          <height>48</height>
          </size>
         </property>
         <property name="shortcut">
@@ -1363,8 +1363,8 @@
         </property>
         <property name="iconSize">
          <size>
-          <width>40</width>
-          <height>40</height>
+          <width>48</width>
+          <height>48</height>
          </size>
         </property>
         <property name="shortcut">
@@ -1417,8 +1417,8 @@
         </property>
         <property name="iconSize">
          <size>
-          <width>40</width>
-          <height>40</height>
+          <width>48</width>
+          <height>48</height>
          </size>
         </property>
         <property name="shortcut">
@@ -1474,8 +1474,8 @@
         </property>
         <property name="iconSize">
          <size>
-          <width>40</width>
-          <height>40</height>
+          <width>48</width>
+          <height>48</height>
          </size>
         </property>
         <property name="shortcut">
@@ -1518,8 +1518,8 @@
         </property>
         <property name="iconSize">
          <size>
-          <width>40</width>
-          <height>40</height>
+          <width>48</width>
+          <height>48</height>
          </size>
         </property>
         <property name="popupMode">
@@ -1562,8 +1562,8 @@
         </property>
         <property name="iconSize">
          <size>
-          <width>40</width>
-          <height>40</height>
+          <width>48</width>
+          <height>48</height>
          </size>
         </property>
         <property name="shortcut">
@@ -1609,8 +1609,8 @@
         </property>
         <property name="iconSize">
          <size>
-          <width>40</width>
-          <height>40</height>
+          <width>48</width>
+          <height>48</height>
          </size>
         </property>
         <property name="popupMode">
@@ -1663,8 +1663,8 @@
         </property>
         <property name="iconSize">
          <size>
-          <width>40</width>
-          <height>40</height>
+          <width>48</width>
+          <height>48</height>
          </size>
         </property>
         <property name="shortcut">
@@ -1707,8 +1707,8 @@
         </property>
         <property name="iconSize">
          <size>
-          <width>40</width>
-          <height>40</height>
+          <width>48</width>
+          <height>48</height>
          </size>
         </property>
         <property name="shortcut">
@@ -1754,8 +1754,8 @@
         </property>
         <property name="iconSize">
          <size>
-          <width>40</width>
-          <height>40</height>
+          <width>48</width>
+          <height>48</height>
          </size>
         </property>
         <property name="shortcut">
@@ -1798,8 +1798,8 @@
         </property>
         <property name="iconSize">
          <size>
-          <width>40</width>
-          <height>40</height>
+          <width>48</width>
+          <height>48</height>
          </size>
         </property>
         <property name="shortcut">
@@ -1842,8 +1842,8 @@
         </property>
         <property name="iconSize">
          <size>
-          <width>40</width>
-          <height>40</height>
+          <width>48</width>
+          <height>48</height>
          </size>
         </property>
         <property name="popupMode">
@@ -1886,8 +1886,8 @@
         </property>
         <property name="iconSize">
          <size>
-          <width>40</width>
-          <height>40</height>
+          <width>48</width>
+          <height>48</height>
          </size>
         </property>
         <property name="shortcut">
@@ -1930,8 +1930,8 @@
         </property>
         <property name="iconSize">
          <size>
-          <width>40</width>
-          <height>40</height>
+          <width>48</width>
+          <height>48</height>
          </size>
         </property>
         <property name="shortcut">
@@ -1974,8 +1974,8 @@
         </property>
         <property name="iconSize">
          <size>
-          <width>40</width>
-          <height>40</height>
+          <width>48</width>
+          <height>48</height>
          </size>
         </property>
         <property name="popupMode">
