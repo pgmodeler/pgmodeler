@@ -20,7 +20,7 @@
 
 RoundedRectItem::RoundedRectItem(QGraphicsItem *parent) :  QGraphicsRectItem(parent)
 {
-	radius=5;
+	radius=12;
 	corners=AllCorners;
 }
 
@@ -58,6 +58,11 @@ void RoundedRectItem::setRect(const QRectF &rect)
 {
 	QGraphicsRectItem::setRect(rect);
 	createPolygon();
+}
+
+QPolygonF RoundedRectItem::getPolygon()
+{
+	return polygon;
 }
 
 void RoundedRectItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *)

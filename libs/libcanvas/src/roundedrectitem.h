@@ -81,6 +81,8 @@ class RoundedRectItem: public QGraphicsRectItem {
 
 		void setRect(const QRectF &rect);
 
+		QPolygonF getPolygon();
+
 		void paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *);
 };
 

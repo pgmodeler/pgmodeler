@@ -27,7 +27,6 @@
 
 #include "textbox.h"
 #include "baseobjectview.h"
-#include "roundedrectitem.h"
 #include "textpolygonitem.h"
 
 class TextboxView: public BaseObjectView {
@@ -65,7 +64,7 @@ class TextboxView: public BaseObjectView {
 
 		void setToolTip(const QString &tooltip);
 
-		QVariant itemChange(GraphicsItemChange change, const QVariant &value);
+		QVariant itemChange(GraphicsItemChange change, const QVariant &value) override;
 
 	protected slots:
 		virtual void configureObject() override;

@@ -17,7 +17,6 @@
 */
 
 #include "textboxview.h"
-#include "roundedrectitem.h"
 
 TextboxView::TextboxView(Textbox *txtbox, bool override_style) : BaseObjectView(txtbox)
 {

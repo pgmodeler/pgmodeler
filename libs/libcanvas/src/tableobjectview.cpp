@@ -722,7 +722,7 @@ void TableObjectView::configureObjectSelection()
 	else
 		rect.setWidth(rect.width() - (3.5 * HorizSpacing));
 
-	rect_item->setBorderRadius(2);
+	rect_item->setBorderRadius(4);
 	rect_item->setRect(rect);
 	rect_item->setPos(0, VertSpacing/2);
 	rect_item->setBrush(this->getFillStyle(Attributes::ObjSelection));

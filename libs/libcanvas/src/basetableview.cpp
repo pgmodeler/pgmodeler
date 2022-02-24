@@ -280,7 +280,7 @@ void BaseTableView::hoverMoveEvent(QGraphicsSceneHoverEvent *event)
 			//Configures the selection with the item's dimension
 			if(obj_selection->boundingRect().height() != item->boundingRect().height())
 			{
-				dynamic_cast<RoundedRectItem *>(obj_selection)->setBorderRadius(2);
+				dynamic_cast<RoundedRectItem *>(obj_selection)->setBorderRadius(4);
 				dynamic_cast<RoundedRectItem *>(obj_selection)->setRect(QRectF(0, 0,
 																																			 title->boundingRect().width() - (2.5 * HorizSpacing),
 																																			 item->boundingRect().height() - VertSpacing));
