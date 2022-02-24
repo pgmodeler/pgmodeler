@@ -403,7 +403,6 @@ void BaseTableView::__configureObject(double width)
 	Tag *tag = tab->getTag();
 	QBrush togg_brush, togg_btns_brush;
 	QPen togg_pen, togg_btns_pen;
-
 	double height = 0;
 
 	if(tag)
@@ -441,7 +440,7 @@ void BaseTableView::__configureObject(double width)
 	attribs_toggler->setPen(togg_pen);
 	attribs_toggler->setButtonsBrush(togg_btns_brush);
 	attribs_toggler->setButtonsPen(togg_btns_pen);
-	attribs_toggler->setRect(QRectF(0, 0, width, 12 * BaseObjectView::getFontFactor() * BaseObjectView::getScreenDpiFactor()));
+	attribs_toggler->configureButtons(QRectF(0, 0, width, 12 * BaseObjectView::getFontFactor() * BaseObjectView::getScreenDpiFactor()));
 	attribs_toggler->setCollapseMode(tab->getCollapseMode());
 
 	//Set the protected icon position to the top-right on the title

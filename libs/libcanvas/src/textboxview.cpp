@@ -99,8 +99,8 @@ void TextboxView::__configureObject()
 	text_item->setText(txtbox->getComment());
 	text_item->setTextPos(HorizSpacing * 2, VertSpacing * (text_item->getFont().italic() ? 0.90 : 0.50));
 
-	TextPolygonItem::resizePolygon(polygon, round(text_item->getTextBoundingRect().width() + (2.5 * HorizSpacing)),
-																					round(text_item->getTextBoundingRect().height() + (1.5 * VertSpacing)));
+	resizePolygon(polygon, round(text_item->getTextBoundingRect().width() + (2.5 * HorizSpacing)),
+								round(text_item->getTextBoundingRect().height() + (1.5 * VertSpacing)));
 
 	text_item->setPos(0,0);
 	text_item->setPolygon(polygon);

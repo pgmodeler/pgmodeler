@@ -91,11 +91,6 @@ class AttributesTogglerItem: public QObject, public RoundedRectItem {
 		//! \brief Constant used to reference the pagination toggler button
 		PaginationTogglerBtn=6;
 
-		/*! \brief Configures the postion and dimensions of the buttons based on the provided bounding rect
-		 * If the provided rect is smaller than the total width/height of the buttons it will be assumed
-		 * as bouding rect the latter dimensions */
-		void configureButtons(const QRectF &rect);
-
 		/*! \brief Configure the buttons visibility and opacity based upon the current values
 		 * of pagination and collapse mode */
 		void configureButtonsState();
@@ -104,16 +99,19 @@ class AttributesTogglerItem: public QObject, public RoundedRectItem {
 
 	public:
 		AttributesTogglerItem(QGraphicsItem *parent = nullptr);
+
 		virtual ~AttributesTogglerItem();
+
+		/*! \brief Configures the postion and dimensions of the buttons based on the provided bounding rect
+		 * If the provided rect is smaller than the total width/height of the buttons it will be assumed
+		 * as bouding rect the latter dimensions */
+		void configureButtons(const QRectF &rect);
 
 		//! \brief Configures the buttons brush
 		void setButtonsBrush(const QBrush &brush);
 
 		//! \brief Configures the buttons pen
 		void setButtonsPen(const QPen &pen);
-
-		//! \brief Configures the bounding rect of the whole toggler item
-		void setRect(const QRectF &rect);
 
 		//! \brief Configures the current collapse mode of the toggler
 		void setCollapseMode(CollapseMode coll_mode);

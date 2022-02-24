@@ -60,9 +60,6 @@ class TextPolygonItem : public QGraphicsPolygonItem {
 		QFont getFont();
 
 		virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = nullptr);
-
-		//! \brief Resizes to the specified dimension the passed polygon
-		static void resizePolygon(QPolygonF &pol, double width, double height);
 };
 
 #endif

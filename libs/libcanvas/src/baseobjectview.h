@@ -123,7 +123,7 @@ class BaseObjectView: public QObject, public QGraphicsItemGroup {
 		static constexpr double VertSpacing=2.0,
 		HorizSpacing=2.0,
 		DefaultFontSize=10.0,
-		ObjectBorderWidth=0.85,
+		ObjectBorderWidth=1.00,
 		MaxDpiFactor=1.4;
 
 		static constexpr int ObjectAlphaChannel=128;
@@ -204,6 +204,9 @@ class BaseObjectView: public QObject, public QGraphicsItemGroup {
 		bool isInLayer(unsigned layer_id);
 
 		int getLayersCount();
+
+		//! \brief Resizes to the specified dimension the passed polygon
+		static void resizePolygon(QPolygonF &pol, double width, double height);
 
 	protected slots:
 		//! \brief Make the basic object operations

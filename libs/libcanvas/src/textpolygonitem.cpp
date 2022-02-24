@@ -75,24 +75,3 @@ void TextPolygonItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *o
 	painter->translate(text_item->pos());
 	text_item->paint(painter, option, widget);
 }
-
-void TextPolygonItem::resizePolygon(QPolygonF &pol, double width, double height)
-{
-	QVector<QPointF>::iterator itr,itr_end;
-	double coef_a, coef_b;
-
-	itr=pol.begin();
-	itr_end=pol.end();
-
-	//Calculates the resize factor
-	coef_a=width / pol.boundingRect().width();
-	coef_b=height / pol.boundingRect().height();
-
-	//Applies the resize factor to all the polygon points
-	while(itr!=itr_end)
-	{
-		itr->setX(itr->x() * coef_a);
-		itr->setY(itr->y() * coef_b);
-		itr++;
-	}
-}

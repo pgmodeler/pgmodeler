@@ -27,6 +27,7 @@ QPolygonF AttributesTogglerItem::btn_polygons[7];
 AttributesTogglerItem::AttributesTogglerItem(QGraphicsItem *parent) : RoundedRectItem(parent)
 {
 	createButtonPolygons();
+
 	this->setRoundedCorners(RoundedRectItem::BottomLeftCorner | RoundedRectItem::BottomRightCorner);
 	sel_rect = new QGraphicsRectItem;
 
@@ -74,11 +75,6 @@ void AttributesTogglerItem::setButtonsPen(const QPen &pen)
 {
 	for(unsigned arr_id = 0; arr_id < 7; arr_id++)
 		buttons[arr_id]->setPen(pen);
-}
-
-void AttributesTogglerItem::setRect(const QRectF &rect)
-{
-	configureButtons(rect);
 }
 
 void AttributesTogglerItem::setCollapseMode(CollapseMode coll_mode)
@@ -259,24 +255,34 @@ void AttributesTogglerItem::configureButtons(const QRectF &rect)
 			h_spacing = 6 * BaseObjectView::HorizSpacing,
 			height =  4 * BaseObjectView::VertSpacing;
 	QRectF new_rect = rect;
+	QPolygonF pol;
+	double factor = BaseObjectView::getFontFactor() * BaseObjectView::getScreenDpiFactor();
 
-	btns_height = btn_polygons[PrevAttribsPageBtn].boundingRect().height();
+	// Resizing the buttons polygons to reflect any font size change
+	for(auto arr_id = 0; arr_id < 7; arr_id++)
+	{
+		pol = btn_polygons[arr_id];
+		BaseObjectView::resizePolygon(pol, pol.boundingRect().width() * factor, pol.boundingRect().height() * factor);
+		buttons[arr_id]->setPolygon(pol);
+	}
+
+	btns_height = buttons[PrevAttribsPageBtn]->boundingRect().height();
 	height += btns_height;
 
 	if(pagination_enabled)
 	{
-		arr_width = btn_polygons[PrevAttribsPageBtn].boundingRect().width() +
-								btn_polygons[NextAttribsPageBtn].boundingRect().width() +
-								btn_polygons[PrevExtAttribsPageBtn].boundingRect().width() +
-								btn_polygons[NextExtAttribsPageBtn].boundingRect().width() +
+		arr_width = buttons[PrevAttribsPageBtn]->boundingRect().width() +
+								buttons[NextAttribsPageBtn]->boundingRect().width() +
+								buttons[PrevExtAttribsPageBtn]->boundingRect().width() +
+								buttons[NextExtAttribsPageBtn]->boundingRect().width() +
 								(4 * h_spacing);
 	}
 
-	arr_width += btn_polygons[AttribsCollapseBtn].boundingRect().width() +
-							 btn_polygons[AttribsExpandBtn].boundingRect().width() + (2 * h_spacing);
+	arr_width += buttons[AttribsCollapseBtn]->boundingRect().width() +
+							 buttons[AttribsExpandBtn]->boundingRect().width() + (2 * h_spacing);
 
 	if(buttons[PaginationTogglerBtn]->isVisible())
-		arr_width += btn_polygons[AttribsExpandBtn].boundingRect().width() + h_spacing;
+		arr_width += buttons[AttribsExpandBtn]->boundingRect().width() + h_spacing;
 
 	btns_width = arr_width;
 	new_rect.setHeight(height);
@@ -344,51 +350,50 @@ void AttributesTogglerItem::createButtonPolygons()
 		return;
 
 	QPolygonF *pol = nullptr;
-	double factor = BaseObjectView::getFontFactor() * BaseObjectView::getScreenDpiFactor();
 
 	pol = &btn_polygons[PrevAttribsPageBtn];
-	pol->append(QPointF(0, 5 * factor));
-	pol->append(QPointF(8 * factor, 0));
-	pol->append(QPointF(8 * factor, 10 * factor));
+	pol->append(QPointF(0, 5 ));
+	pol->append(QPointF(8 , 0));
+	pol->append(QPointF(8 , 10 ));
 
 	pol = &btn_polygons[NextAttribsPageBtn];
 	pol->append(QPointF(0, 0));
-	pol->append(QPointF(8 * factor, 5 * factor));
-	pol->append(QPointF(0, 10 * factor));
+	pol->append(QPointF(8 , 5 ));
+	pol->append(QPointF(0, 10 ));
 
 	pol = &btn_polygons[PrevExtAttribsPageBtn];
 	pol->append(QPointF(0, 0));
-	pol->append(QPointF(2 * factor, 0));
-	pol->append(QPointF(2 * factor, 4 * factor));
-	pol->append(QPointF(8 * factor, 0));
-	pol->append(QPointF(8 * factor, 10 * factor));
-	pol->append(QPointF(2 * factor, 6 * factor));
-	pol->append(QPointF(2 * factor, 10 * factor));
-	pol->append(QPointF(0, 10 * factor));
+	pol->append(QPointF(2 , 0));
+	pol->append(QPointF(2 , 4 ));
+	pol->append(QPointF(8 , 0));
+	pol->append(QPointF(8 , 10 ));
+	pol->append(QPointF(2 , 6 ));
+	pol->append(QPointF(2 , 10 ));
+	pol->append(QPointF(0, 10 ));
 
 	pol = &btn_polygons[NextExtAttribsPageBtn];
 	pol->append(QPointF(0, 0));
-	pol->append(QPointF(6 * factor, 4 * factor));
-	pol->append(QPointF(6 * factor, 0 * factor));
-	pol->append(QPointF(8 * factor, 0));
-	pol->append(QPointF(8 * factor, 10 * factor));
-	pol->append(QPointF(6 * factor, 10 * factor));
-	pol->append(QPointF(6 * factor, 6 * factor));
-	pol->append(QPointF(0, 10 * factor));
+	pol->append(QPointF(6 , 4 ));
+	pol->append(QPointF(6 , 0 ));
+	pol->append(QPointF(8 , 0));
+	pol->append(QPointF(8 , 10 ));
+	pol->append(QPointF(6 , 10 ));
+	pol->append(QPointF(6 , 6 ));
+	pol->append(QPointF(0, 10 ));
 
 	pol = &btn_polygons[AttribsCollapseBtn];
-	pol->append(QPointF(5 * factor, 0));
-	pol->append(QPointF(0, 8 * factor));
-	pol->append(QPointF(10 * factor, 8 * factor));
+	pol->append(QPointF(5 , 0));
+	pol->append(QPointF(0, 8 ));
+	pol->append(QPointF(10 , 8 ));
 
 	pol = &btn_polygons[AttribsExpandBtn];
 	pol->append(QPointF(0, 0));
-	pol->append(QPointF(10 * factor, 0));
-	pol->append(QPointF(5 * factor, 8 * factor));
+	pol->append(QPointF(10 , 0));
+	pol->append(QPointF(5 , 8 ));
 
 	pol = &btn_polygons[PaginationTogglerBtn];
-	pol->append(QPointF(4 * factor, 0));
-	pol->append(QPointF(8 * factor, 4 * factor));
-	pol->append(QPointF(4 * factor, 8 * factor));
-	pol->append(QPointF(0, 4 * factor));
+	pol->append(QPointF(4 , 0));
+	pol->append(QPointF(8 , 4 ));
+	pol->append(QPointF(4 , 8 ));
+	pol->append(QPointF(0, 4 ));
 }

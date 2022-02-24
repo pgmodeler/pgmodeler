@@ -35,7 +35,7 @@ void StyledTextboxView::configureObject()
 	if(rect.height() < fold->boundingRect().height())
 		rect.setHeight(fold->boundingRect().height() + (2 * VertSpacing));
 
-	TextPolygonItem::resizePolygon(pol, rect.width() + fold->boundingRect().width(), rect.height());
+	resizePolygon(pol, rect.width() + fold->boundingRect().width(), rect.height());
 
 	pnt=pol.at(2);
 	pol.remove(2);
