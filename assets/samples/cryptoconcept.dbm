@@ -3,19 +3,19 @@
 CAUTION: Do not modify this file unless you know what you are doing.
  Unexpected results may occur if the code is changed deliberately.
 -->
-<dbmodel pgmodeler-ver="0.9.4" use-changelog="false" last-position="0,0" last-zoom="1" max-obj-count="25"
+<dbmodel pgmodeler-ver="1.0.0-alpha" use-changelog="false" last-position="0,0" last-zoom="0.65" max-obj-count="25"
 	 default-schema="public" default-owner="postgres"
 	 layers="Default layer"
 	 active-layers="0"
 	 layer-name-colors="#000000"
 	 layer-rect-colors="#b4b4b4"
 	 show-layer-names="false" show-layer-rects="false">
-<database name="cryptoconcept" encoding="UTF8" is-template="false" allow-conns="true">
-</database>
-
 <role name="cryptoapi"
  login="true">
 </role>
+
+<database name="cryptoconcept" encoding="UTF8" is-template="false" allow-conns="true">
+</database>
 
 <schema name="public" layers="0" fill-color="#e1e1e1" sql-disabled="true">
 </schema>
@@ -35,7 +35,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 <table name="markets" layers="0" collapse-mode="2" max-obj-count="9" z-value="0">
 	<schema name="economy"/>
 	<role name="cryptoapi"/>
-	<position x="200" y="880"/>
+	<position x="160" y="880"/>
 	<column name="id" not-null="true" default-value="encode(gen_random_bytes(6), 'hex');">
 		<type name="varchar" length="12"/>
 	</column>
@@ -69,7 +69,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 <table name="sales" layers="0" collapse-mode="2" max-obj-count="20" z-value="0">
 	<schema name="economy"/>
 	<role name="cryptoapi"/>
-	<position x="880" y="860"/>
+	<position x="880" y="960"/>
 	<column name="id" not-null="true" default-value="encode(gen_random_bytes(6), 'hex');">
 		<type name="varchar" length="12"/>
 	</column>
@@ -144,7 +144,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 <table name="users" layers="0" collapse-mode="2" max-obj-count="10" z-value="0">
 	<schema name="people"/>
 	<role name="cryptoapi"/>
-	<position x="2840" y="340"/>
+	<position x="2840" y="360"/>
 	<column name="id" not-null="true" default-value="encode(gen_random_bytes(6), 'hex');">
 		<type name="varchar" length="12"/>
 	</column>
@@ -184,7 +184,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 <table name="wallets" layers="0" collapse-mode="2" max-obj-count="8" z-value="0">
 	<schema name="economy"/>
 	<role name="cryptoapi"/>
-	<position x="1540" y="1060"/>
+	<position x="1560" y="1080"/>
 	<column name="id" not-null="true" default-value="encode(gen_random_bytes(6), 'hex');">
 		<type name="varchar" length="12"/>
 	</column>
@@ -219,7 +219,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 <table name="assets" layers="0" collapse-mode="2" max-obj-count="9" z-value="0">
 	<schema name="economy"/>
 	<role name="cryptoapi"/>
-	<position x="1780" y="1900"/>
+	<position x="1880" y="1920"/>
 	<column name="id" not-null="true" default-value="encode(gen_random_bytes(6), 'hex');">
 		<type name="varchar" length="12"/>
 	</column>
@@ -261,7 +261,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 <table name="exchanges" layers="0" collapse-mode="2" pagination="true" attribs-page="0" ext-attribs-page="0" max-obj-count="10" z-value="0">
 	<schema name="economy"/>
 	<role name="cryptoapi"/>
-	<position x="220" y="380"/>
+	<position x="240" y="400"/>
 	<column name="id" not-null="true" default-value="encode(gen_random_bytes(6), 'hex');">
 		<type name="varchar" length="12"/>
 	</column>
@@ -297,7 +297,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 <table name="prices" layers="0" collapse-mode="2" max-obj-count="7" z-value="0">
 	<schema name="economy"/>
 	<role name="cryptoapi"/>
-	<position x="820" y="380"/>
+	<position x="840" y="400"/>
 	<column name="id" not-null="true" default-value="encode(gen_random_bytes(6), 'hex');">
 		<type name="varchar" length="12"/>
 	</column>
@@ -328,7 +328,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 <table name="currencies" layers="0" collapse-mode="2" max-obj-count="8" z-value="0">
 	<schema name="economy"/>
 	<role name="cryptoapi"/>
-	<position x="1460" y="340"/>
+	<position x="1480" y="360"/>
 	<column name="id" not-null="true" default-value="encode(gen_random_bytes(6), 'hex');">
 		<type name="varchar" length="12"/>
 	</column>
@@ -364,7 +364,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 <table name="wallet_entries" layers="0" unlogged="true" collapse-mode="2" max-obj-count="12" z-value="0">
 	<schema name="economy"/>
 	<role name="cryptoapi"/>
-	<position x="940" y="1880"/>
+	<position x="1120" y="1880"/>
 	<column name="id" not-null="true" default-value="encode(gen_random_bytes(6), 'hex');">
 		<type name="varchar" length="12"/>
 	</column>
@@ -412,7 +412,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 <table name="sellers" layers="0" collapse-mode="2" max-obj-count="7" z-value="0">
 	<schema name="economy"/>
 	<role name="cryptoapi"/>
-	<position x="100" y="1940"/>
+	<position x="120" y="1960"/>
 	<column name="id" not-null="true" default-value="encode(gen_random_bytes(6), 'hex');">
 		<type name="varchar" length="12"/>
 	</column>
@@ -443,7 +443,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 <table name="media" layers="0" collapse-mode="2" max-obj-count="7" z-value="0">
 	<schema name="people"/>
 	<role name="cryptoapi"/>
-	<position x="4240" y="1640"/>
+	<position x="4360" y="1720"/>
 	<column name="id" not-null="true" default-value="encode(gen_random_bytes(6), 'hex');">
 		<type name="varchar" length="12"/>
 	</column>
@@ -536,7 +536,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 <table name="sessions" layers="0" collapse-mode="2" max-obj-count="10" z-value="0">
 	<schema name="people"/>
 	<role name="cryptoapi"/>
-	<position x="4220" y="340"/>
+	<position x="4240" y="360"/>
 	<column name="id" not-null="true" default-value="encode(gen_random_bytes(6), 'hex');">
 		<type name="varchar" length="12"/>
 	</column>
@@ -657,7 +657,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 <table name="collections" layers="0" collapse-mode="2" pagination="true" attribs-page="0" ext-attribs-page="0" max-obj-count="9" z-value="0">
 	<schema name="people"/>
 	<role name="cryptoapi"/>
-	<position x="2840" y="1640"/>
+	<position x="2840" y="1720"/>
 	<column name="id" not-null="true" default-value="encode(gen_random_bytes(6), 'hex');">
 		<type name="varchar" length="12"/>
 	</column>
@@ -712,7 +712,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 <table name="contacts" layers="0" collapse-mode="2" max-obj-count="9" z-value="0">
 	<schema name="people"/>
 	<role name="cryptoapi"/>
-	<position x="2820" y="980"/>
+	<position x="2840" y="1000"/>
 	<column name="id" not-null="true" default-value="encode(gen_random_bytes(6), 'hex');">
 		<type name="varchar" length="12"/>
 	</column>
@@ -787,7 +787,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 <table name="collection_media" layers="0" collapse-mode="2" max-obj-count="12" z-value="0">
 	<schema name="people"/>
 	<role name="cryptoapi"/>
-	<position x="3480" y="1340"/>
+	<position x="3520" y="1440"/>
 	<column name="id" not-null="true" default-value="encode(gen_random_bytes(6), 'hex');">
 		<type name="varchar" length="12"/>
 	</column>
@@ -892,7 +892,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 <table name="asset_totals" layers="0" collapse-mode="2" max-obj-count="8" z-value="0">
 	<schema name="economy"/>
 	<role name="cryptoapi"/>
-	<position x="2140" y="1100"/>
+	<position x="2200" y="1120"/>
 	<column name="id" not-null="true" default-value="encode(gen_random_bytes(6), 'hex');">
 		<type name="varchar" length="12"/>
 	</column>
@@ -948,7 +948,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 <table name="currency_totals" layers="0" collapse-mode="2" max-obj-count="8" z-value="0">
 	<schema name="economy"/>
 	<role name="cryptoapi"/>
-	<position x="2080" y="380"/>
+	<position x="2160" y="400"/>
 	<column name="id" not-null="true" default-value="encode(gen_random_bytes(6), 'hex');">
 		<type name="varchar" length="12"/>
 	</column>
@@ -992,7 +992,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 <table name="buyers" layers="0" collapse-mode="2" max-obj-count="7" z-value="0">
 	<schema name="economy"/>
 	<role name="cryptoapi"/>
-	<position x="100" y="1340"/>
+	<position x="120" y="1360"/>
 	<column name="id" not-null="true" default-value="encode(gen_random_bytes(6), 'hex');">
 		<type name="varchar" length="12"/>
 	</column>
@@ -1128,7 +1128,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 <table name="media_identities" layers="0" collapse-mode="2" max-obj-count="9" z-value="0">
 	<schema name="people"/>
 	<role name="cryptoapi"/>
-	<position x="4240" y="1000"/>
+	<position x="4280" y="1000"/>
 	<column name="id" not-null="true" default-value="encode(gen_random_bytes(6), 'hex');">
 		<type name="varchar" length="12"/>
 	</column>
@@ -1210,7 +1210,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 </index>
 
 <textbox name="cryptoconcept_desc" layers="0" z-value="0" font-size="11">
-	<position x="100" y="40"/>
+	<position x="120" y="120"/>
 	<comment><![CDATA[[ cryptoconcept database ]
 
 Database sample kindly provided by Peter Pierce at truenorth.us.]]></comment>
