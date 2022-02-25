@@ -1452,12 +1452,13 @@ void RelationshipView::configureDescriptor()
 	/* If the crow's feet is enabled the relationship descriptor is hidden
 	 * for 1:1, 1:n, n:n and fk relationship. For generalization, dependency and partitioning
 	 * relationships the descriptor is still displayed. */
-	descriptor->setVisible(!use_crows_foot ||
-												 (use_crows_foot && (
-														rel_type == BaseRelationship::RelationshipDep ||
-														rel_type == BaseRelationship::RelationshipGen ||
-														rel_type == BaseRelationship::RelationshipPart)));
-	obj_shadow->setVisible(descriptor->isVisible());
+	bool visible = !use_crows_foot ||
+								 (use_crows_foot && (
+										rel_type == BaseRelationship::RelationshipDep ||
+										rel_type == BaseRelationship::RelationshipGen ||
+										rel_type == BaseRelationship::RelationshipPart));
+	descriptor->setVisible(visible);
+	obj_shadow->setVisible(visible);
 }
 
 void RelationshipView::configureCrowsFootDescriptors()

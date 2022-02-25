@@ -372,7 +372,7 @@ void BaseTableView::configureTag()
 		double bottom;
 		QFont fnt=BaseObjectView::getFontStyle(Attributes::Tag).font();
 
-		fnt.setPointSizeF(fnt.pointSizeF() * 0.80);
+		fnt.setPointSizeF(fnt.pointSizeF() * 0.90);
 		tag_item->setFont(fnt);
 		tag_item->setText(tag->getName());
 		tag_item->setBrush(BaseObjectView::getFontStyle(Attributes::Tag).foreground());

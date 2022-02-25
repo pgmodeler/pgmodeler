@@ -21,7 +21,7 @@
 #include "qtcompat/qplaintexteditcompat.h"
 #include "textblockinfo.h"
 
-QFont SyntaxHighlighter::default_font = QFont(QString("Source Code Pro"), 10);
+QFont SyntaxHighlighter::default_font = QFont(QString("Source Code Pro"), 12);
 const QString SyntaxHighlighter::UnformattedGroup = QString("__unformatted__");
 
 SyntaxHighlighter::SyntaxHighlighter(QPlainTextEdit *parent, bool single_line_mode, bool use_custom_tab_width) : QSyntaxHighlighter(parent)
@@ -41,8 +41,8 @@ SyntaxHighlighter::SyntaxHighlighter(QPlainTextEdit *parent, bool single_line_mo
 	//Adjusting the size of the parent input according to the current font size
 	if(single_line_mode)
 	{
-		QFontMetrics fm=QFontMetrics(default_font);
-		int height=fm.height() + (fm.lineSpacing()/static_cast<double>(1.3));
+		QFontMetrics fm = QFontMetrics(default_font);
+		int height=fm.height() + fm.lineSpacing()/2;
 		parent->setMinimumHeight(height);
 		parent->setMaximumHeight(height);
 		parent->setSizePolicy(parent->sizePolicy().horizontalPolicy(), QSizePolicy::Fixed);

@@ -129,7 +129,7 @@ class BaseObjectView: public QObject, public QGraphicsItemGroup {
 		ObjectShadowYPos=8;
 
 		static constexpr int ObjectAlphaChannel=128,
-		ObjectShadowAlphaChannel=30;
+		ObjectShadowAlphaChannel=50;
 
 		BaseObjectView(BaseObject *object=nullptr);
 		virtual ~BaseObjectView();
