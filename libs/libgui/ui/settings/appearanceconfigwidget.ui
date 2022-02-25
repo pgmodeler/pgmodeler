@@ -88,6 +88,11 @@
         </item>
         <item>
          <property name="text">
+          <string>Global: Object shadow</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
           <string>Global: Position hint text</string>
          </property>
         </item>

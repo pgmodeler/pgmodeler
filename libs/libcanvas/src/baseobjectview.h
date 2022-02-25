@@ -124,9 +124,12 @@ class BaseObjectView: public QObject, public QGraphicsItemGroup {
 		HorizSpacing=2.0,
 		DefaultFontSize=10.0,
 		ObjectBorderWidth=1.00,
-		MaxDpiFactor=1.4;
+		MaxDpiFactor=1.4,
+		ObjectShadowXPos=8,
+		ObjectShadowYPos=8;
 
-		static constexpr int ObjectAlphaChannel=128;
+		static constexpr int ObjectAlphaChannel=128,
+		ObjectShadowAlphaChannel=30;
 
 		BaseObjectView(BaseObject *object=nullptr);
 		virtual ~BaseObjectView();

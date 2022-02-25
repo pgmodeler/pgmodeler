@@ -63,6 +63,7 @@ $tb [<object id="policy" fill-color="] {policy-color} [" border-color="] {policy
 $tb [<object id="locker-body" fill-color="] {locker-body-color} [" border-color="] {locker-body-bcolor} ["/>] $br
 $tb [<object id="locker-arc" fill-color="] {locker-arc-color} [" border-color="] {locker-arc-bcolor} ["/>] $br
 $tb [<object id="obj-selection" fill-color="] {obj-selection-color} [" border-color="] {obj-selection-bcolor} ["/>] $br
+$tb [<object id="obj-shadow" fill-color="] {obj-shadow-color} ["/>] $br
 $tb [<object id="pos-info" fill-color="] {pos-info-color} [" border-color="] {pos-info-bcolor} ["/>] $br
 $tb [<object id="tag" fill-color="] {tag-color} [" border-color="] {tag-bcolor} ["/>] $br
 $tb [<object id="placeholder" fill-color="] {placeholder-color} [" border-color="] {placeholder-bcolor} ["/>] $br

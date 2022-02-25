@@ -135,10 +135,10 @@ void TextboxView::configureObjectShadow()
 {
 	QGraphicsPolygonItem *pol_item=dynamic_cast<QGraphicsPolygonItem *>(obj_shadow);
 
-	pol_item->setPen(Qt::NoPen);
-	pol_item->setBrush(QColor(50,50,50,60));
+	pol_item->setPen(getBorderStyle(Attributes::ObjShadow));
+	pol_item->setBrush(getFillStyle(Attributes::ObjShadow));
 	pol_item->setPolygon(text_item->polygon());
-	pol_item->setPos(3.5,3.5);
+	pol_item->setPos(ObjectShadowXPos, ObjectShadowYPos);
 }
 
 void TextboxView::configureObjectSelection()

@@ -394,6 +394,7 @@ namespace Attributes {
 	ObjectType("object-type"),
 	ObjCount("objcount"),
 	ObjSelection("obj-selection"),
+	ObjShadow("obj-shadow"),
 	Oid("oid"),
 	OidFilterOp("oid-filter-op"),
 	Oids("oids"),

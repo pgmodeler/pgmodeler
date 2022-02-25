@@ -411,6 +411,7 @@ namespace Attributes {
 	ObjectType,
 	ObjCount,
 	ObjSelection,
+	ObjShadow,
 	Oid,
 	OidFilterOp,
 	Oids,

@@ -23,8 +23,8 @@ void StyledTextboxView::configureObject()
 	this->__configureObject();
 
 	pol.append(QPointF(0,0));
-	pol.append(QPointF(25,0));
-	pol.append(QPointF(0,25));
+	pol.append(QPointF(30,0));
+	pol.append(QPointF(0,30));
 
 	fold->setBrush(text_item->brush());
 	fold->setPen(text_item->pen());
@@ -33,8 +33,9 @@ void StyledTextboxView::configureObject()
 	rect = text_item->boundingRect();
 	rect.setLeft(rect.left() - HorizSpacing);
 
-	if(rect.height() < fold->boundingRect().height())
-		rect.setHeight(fold->boundingRect().height() + (2 * VertSpacing));
+	// Avoiding the fold element to ovelap the textbox body
+	if(rect.height() < fold->boundingRect().height() + (8 * VertSpacing))
+		rect.setHeight(fold->boundingRect().height() + (8 * VertSpacing));
 
 	rect_item.setRoundedCorners(RoundedRectItem::TopLeftCorner |
 															RoundedRectItem::TopRightCorner |
@@ -49,8 +50,7 @@ void StyledTextboxView::configureObject()
 
 	text_item->setPolygon(pol);
 	rect = text_item->boundingRect();
-	fold->setPos(rect.width() - fold->boundingRect().width(),
-							 rect.height() - fold->boundingRect().height());
+	fold->setPos(rect.bottomRight() - QPointF(fold->boundingRect().width(), fold->boundingRect().height()));
 
 	bounding_rect = text_item->boundingRect();
 

@@ -501,11 +501,10 @@ void BaseTableView::togglePlaceholder(bool value)
 void BaseTableView::configureObjectShadow()
 {
 	RoundedRectItem *rect_item=dynamic_cast<RoundedRectItem *>(obj_shadow);
-
-	rect_item->setPen(Qt::NoPen);
-	rect_item->setBrush(QColor(50,50,50,60));
+	rect_item->setPen(getBorderStyle(Attributes::ObjShadow));
+	rect_item->setBrush(getFillStyle(Attributes::ObjShadow));
 	rect_item->setRect(this->boundingRect());
-	rect_item->setPos(3.5, 4.5);
+	rect_item->setPos(ObjectShadowXPos, ObjectShadowYPos);
 }
 
 QList<TableObjectView *> BaseTableView::getSelectedChidren()

@@ -293,16 +293,18 @@ QLinearGradient BaseObjectView::getFillStyle(const QString &id)
 
 	if(color_config.count(id) > 0)
 	{
+		int alpha = 255;
 		colors=color_config[id];
 
 		if(!colors.empty())
 		{
 			if(id==Attributes::ObjSelection || id==Attributes::Placeholder)
-			{
-				colors[0].setAlpha(ObjectAlphaChannel);
-				colors[1].setAlpha(ObjectAlphaChannel);
-			}
+				alpha = ObjectAlphaChannel;
+			else if(id == Attributes::ObjShadow)
+				alpha = ObjectShadowAlphaChannel;
 
+			colors[0].setAlpha(alpha);
+			colors[1].setAlpha(alpha);
 			grad.setCoordinateMode(QGradient::ObjectBoundingMode);
 			grad.setColorAt(0, colors[0]);
 			grad.setColorAt(1, colors[1]);
@@ -314,12 +316,11 @@ QLinearGradient BaseObjectView::getFillStyle(const QString &id)
 
 QPen BaseObjectView::getBorderStyle(const QString &id)
 {
-	QPen pen;
-	vector<QColor> colors;
+	QPen pen(Qt::NoPen);
 
-	if(color_config.count(id) > 0)
+	if(id != Attributes::ObjShadow && color_config.count(id) > 0)
 	{
-		colors=color_config[id];
+		vector<QColor> colors = color_config[id];
 
 		if(!colors.empty())
 		{
@@ -328,6 +329,7 @@ QPen BaseObjectView::getBorderStyle(const QString &id)
 
 			pen.setWidthF(ObjectBorderWidth * getScreenDpiFactor());
 			pen.setColor(colors[2]);
+			pen.setStyle(Qt::SolidLine);
 		}
 	}
 

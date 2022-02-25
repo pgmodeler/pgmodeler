@@ -1442,9 +1442,9 @@ void RelationshipView::configureDescriptor()
 	pol_item=dynamic_cast<QGraphicsPolygonItem *>(obj_shadow);
 	pol_item->setPolygon(pol);
 	pol_item->setTransformOriginPoint(obj_shadow->boundingRect().center());
-	pol_item->setPos(x + 2.5, y + 3.5);
-	pol_item->setPen(Qt::NoPen);
-	pol_item->setBrush(QColor(50,50,50,60));
+	pol_item->setPos(x + ObjectShadowXPos, y + ObjectShadowYPos);
+	pol_item->setPen(getBorderStyle(Attributes::ObjShadow));
+	pol_item->setBrush(getFillStyle(Attributes::ObjShadow));
 
 	this->configureAttributes();
 	this->configurePositionInfo();
