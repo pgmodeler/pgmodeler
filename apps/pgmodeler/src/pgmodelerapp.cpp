@@ -154,24 +154,35 @@ PgModelerApp::PgModelerApp(int &argc, char **argv) : Application(argc,argv)
 
 	QFile ui_style(GlobalAttributes::getTmplConfigurationFilePath("",
 																																GlobalAttributes::UiDefaulStyleConf +
-																																GlobalAttributes::ConfigurationExt)),
-			extra_ui_style(extra_ui_conf);
+																																GlobalAttributes::ConfigurationExt));
 
-	//Loading the base style sheet
 	ui_style.open(QFile::ReadOnly);
-	extra_ui_style.open(QFile::ReadOnly);
 
-	//Raises an error if ui style is not found
-	if(!ui_style.isOpen() || (!extra_ui_conf.isEmpty() && !extra_ui_style.isOpen()))
+	if(!ui_style.isOpen())
 	{
 		Messagebox msg;
-		msg.show(Exception(Exception::getErrorMessage(ErrorCode::FileDirectoryNotAccessed).arg(!ui_style.isOpen() ? ui_style.fileName() : extra_ui_conf),
+		msg.show(Exception(Exception::getErrorMessage(ErrorCode::FileDirectoryNotAccessed).arg(ui_style.fileName()),
 											 ErrorCode::FileDirectoryNotAccessed,__PRETTY_FUNCTION__,__FILE__,__LINE__));
 	}
 	else
 	{
 		QByteArray ui_stylesheet = ui_style.readAll();
-		ui_stylesheet.append(extra_ui_style.readAll());
+
+		if(!extra_ui_conf.isEmpty())
+		{
+			QFile extra_ui_style(extra_ui_conf);
+			extra_ui_style.open(QFile::ReadOnly);
+
+			if(!extra_ui_style.isOpen())
+			{
+				Messagebox msg;
+				msg.show(Exception(Exception::getErrorMessage(ErrorCode::FileDirectoryNotAccessed).arg(extra_ui_conf),
+													 ErrorCode::FileDirectoryNotAccessed,__PRETTY_FUNCTION__,__FILE__,__LINE__));
+			}
+			else
+				ui_stylesheet.append(extra_ui_style.readAll());
+		}
+
 		this->setStyleSheet(ui_stylesheet);
 	}
 }
