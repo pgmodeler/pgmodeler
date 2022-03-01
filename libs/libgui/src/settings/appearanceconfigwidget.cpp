@@ -106,7 +106,7 @@ AppearanceConfigWidget::AppearanceConfigWidget(QWidget * parent) : BaseConfigWid
 		conf_items[i].obj_conf=(std::find(conf_obj_ids.begin(), conf_obj_ids.end(), i) != conf_obj_ids.end());
 	}
 
-	color_picker=new ColorPickerWidget(3, this);
+	elem_color_cp=new ColorPickerWidget(3, this);
 
 	model=new DatabaseModel;
 	scene=new ObjectsScene;
@@ -122,9 +122,50 @@ AppearanceConfigWidget::AppearanceConfigWidget(QWidget * parent) : BaseConfigWid
 	viewp->setViewportUpdateMode(QGraphicsView::SmartViewportUpdate);
 	viewp->centerOn(0,0);
 
+	QHBoxLayout *hbox = new QHBoxLayout(grid_color_wgt);
+	hbox->setContentsMargins(0,0,0,0);
+	grid_color_cp = new ColorPickerWidget(1, grid_color_wgt);
+	grid_color_cp->setButtonToolTip(0, tr("Define a custom color for the grid lines"));
+	hbox->addWidget(grid_color_cp);
+
+	hbox = new QHBoxLayout(canvas_color_wgt);
+	hbox->setContentsMargins(0,0,0,0);
+	canvas_color_cp = new ColorPickerWidget(1, canvas_color_wgt);
+	canvas_color_cp->setButtonToolTip(0, tr("Define a custom color for the canvas area"));
+	hbox->addWidget(canvas_color_cp);
+
+	hbox = new QHBoxLayout(delimiters_color_wgt);
+	hbox->setContentsMargins(0,0,0,0);
+	delimiters_color_cp = new ColorPickerWidget(1, delimiters_color_wgt);
+	delimiters_color_cp->setButtonToolTip(0, tr("Define a custom color for the page delimiter lines"));
+	hbox->addWidget(delimiters_color_cp);
+
 	QGridLayout *grid=dynamic_cast<QGridLayout *>(appearance_frm->layout());
-	grid->addWidget(color_picker, 3, 1, 1, 4);
+	grid->addWidget(elem_color_cp, 3, 1, 1, 4);
 	grid->addWidget(viewp, 4 , 0, 1, 5);
+
+	line_numbers_cp=new ColorPickerWidget(1, this);
+	line_numbers_cp->setButtonToolTip(0, tr("Line numbers' font color"));
+
+	line_numbers_bg_cp=new ColorPickerWidget(1, this);
+	line_numbers_bg_cp->setButtonToolTip(0, tr("Line numbers' background color"));
+
+	line_highlight_cp=new ColorPickerWidget(1, this);
+	line_highlight_cp->setButtonToolTip(0, tr("Highlighted line color"));
+
+	font_preview_txt=new NumberedTextEditor(this);
+	font_preview_txt->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+	font_preview_txt->setPlainText(tr("The little brown fox jumps over the lazy dog") + QString("\n\ttext with tab «") + QString("\n0123456789\n.()[]{};"));
+
+	QBoxLayout *layout=new QBoxLayout(QBoxLayout::LeftToRight);
+	grid=dynamic_cast<QGridLayout *>(code_font_gb->layout());
+	layout->addWidget(line_numbers_cp);
+	layout->addWidget(line_numbers_bg_cp);
+	layout->addWidget(line_highlight_cp);
+	layout->addItem(new QSpacerItem(1000,20, QSizePolicy::Expanding));
+	grid->addLayout(layout, 2, 1);
+	grid->addWidget(font_preview_txt,grid->count(),0,1,5);
+
 
 	connect(element_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(enableConfigElement()));
 	connect(font_cmb, SIGNAL(currentFontChanged(QFont)), this, SLOT(applyFontStyle()));
@@ -133,12 +174,12 @@ AppearanceConfigWidget::AppearanceConfigWidget(QWidget * parent) : BaseConfigWid
 	connect(underline_chk, SIGNAL(toggled(bool)), this, SLOT(applyFontStyle()));
 	connect(italic_chk, SIGNAL(toggled(bool)), this, SLOT(applyFontStyle()));
 
-	connect(color_picker, SIGNAL(s_colorChanged(unsigned, QColor)), this, SLOT(applyElementColor(unsigned, QColor)));
+	connect(elem_color_cp, SIGNAL(s_colorChanged(unsigned, QColor)), this, SLOT(applyElementColor(unsigned, QColor)));
 
-	connect(color_picker, &ColorPickerWidget::s_colorsChanged,
+	connect(elem_color_cp, &ColorPickerWidget::s_colorsChanged,
 			[&](){
-		for(unsigned i=0; i < color_picker->getColorCount(); i++)
-			applyElementColor(i, color_picker->getColor(i));
+		for(unsigned i=0; i < elem_color_cp->getColorCount(); i++)
+			applyElementColor(i, elem_color_cp->getColor(i));
 	});
 }
 
@@ -365,13 +406,13 @@ void AppearanceConfigWidget::enableConfigElement()
 	italic_chk->setEnabled(idx!=0 && !conf_items[idx].obj_conf);
 
 	colors_lbl->setVisible(idx!=0);
-	color_picker->setVisible(colors_lbl->isVisible());
+	elem_color_cp->setVisible(colors_lbl->isVisible());
 
 	//Buttons visible when a object configuration element is selected
-	color_picker->setButtonVisible(1, conf_items[idx].obj_conf);
+	elem_color_cp->setButtonVisible(1, conf_items[idx].obj_conf);
 	/* The border color picker is hidden only for Attributes:ObjShadow since
 	 * this element has no border drawn */
-	color_picker->setButtonVisible(2,
+	elem_color_cp->setButtonVisible(2,
 																 conf_items[idx].obj_conf &&
 																 conf_items[idx].conf_id != Attributes::ObjShadow);
 
@@ -384,7 +425,7 @@ void AppearanceConfigWidget::enableConfigElement()
 	if(!conf_items[idx].obj_conf)
 	{
 		QTextCharFormat fmt=BaseObjectView::getFontStyle(conf_items[idx].conf_id);
-		color_picker->setColor(0, fmt.foreground().color());
+		elem_color_cp->setColor(0, fmt.foreground().color());
 		underline_chk->setChecked(fmt.font().underline());
 		italic_chk->setChecked(fmt.font().italic());
 		bold_chk->setChecked(fmt.font().bold());
@@ -396,9 +437,9 @@ void AppearanceConfigWidget::enableConfigElement()
 		QColor color1, color2;
 		BaseObjectView::getFillStyle(conf_items[idx].conf_id, color1, color2);
 
-		color_picker->setColor(0, color1);
-		color_picker->setColor(1, color2);
-		color_picker->setColor(2, BaseObjectView::getBorderStyle(conf_items[idx].conf_id).color());
+		elem_color_cp->setColor(0, color1);
+		elem_color_cp->setColor(1, color2);
+		elem_color_cp->setColor(2, BaseObjectView::getBorderStyle(conf_items[idx].conf_id).color());
 		underline_chk->setChecked(false);
 		italic_chk->setChecked(false);
 		bold_chk->setChecked(false);

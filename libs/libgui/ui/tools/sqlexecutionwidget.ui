@@ -300,10 +300,10 @@
         </sizepolicy>
        </property>
        <property name="toolTip">
-        <string>Clear sql input field and results</string>
+        <string>Clear SQL input field and results</string>
        </property>
        <property name="text">
-        <string>Clear All</string>
+        <string>Clear all</string>
        </property>
        <property name="icon">
         <iconset resource="../../res/resources.qrc">

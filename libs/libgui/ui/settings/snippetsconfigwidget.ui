@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>732</width>
+    <width>756</width>
     <height>557</height>
    </rect>
   </property>
@@ -15,19 +15,19 @@
   </property>
   <layout class="QGridLayout" name="gridLayout_3">
    <property name="leftMargin">
-    <number>2</number>
+    <number>5</number>
    </property>
    <property name="topMargin">
-    <number>0</number>
+    <number>5</number>
    </property>
    <property name="rightMargin">
-    <number>0</number>
+    <number>5</number>
    </property>
    <property name="bottomMargin">
-    <number>0</number>
+    <number>5</number>
    </property>
    <property name="spacing">
-    <number>0</number>
+    <number>10</number>
    </property>
    <item row="0" column="0">
     <widget class="QFrame" name="frame">
@@ -198,7 +198,7 @@
            </size>
           </property>
           <property name="toolTip">
-           <string>Create new connection</string>
+           <string>Create a new snippet</string>
           </property>
           <property name="text">
            <string/>
@@ -234,7 +234,7 @@
           </property>
           <property name="icon">
            <iconset resource="../../res/resources.qrc">
-            <normaloff>:/icons/icons/close1.png</normaloff>:/icons/icons/close1.png</iconset>
+            <normaloff>:/icons/icons/cancel.png</normaloff>:/icons/icons/cancel.png</iconset>
           </property>
           <property name="iconSize">
            <size>
@@ -256,7 +256,7 @@
            </size>
           </property>
           <property name="toolTip">
-           <string>Edit selected connection</string>
+           <string>Edit selected snippet</string>
           </property>
           <property name="text">
            <string/>
@@ -285,7 +285,7 @@
            </size>
           </property>
           <property name="toolTip">
-           <string>Delete selected connection</string>
+           <string>Delete selected snippet</string>
           </property>
           <property name="text">
            <string/>
@@ -320,14 +320,14 @@
            </size>
           </property>
           <property name="toolTip">
-           <string>Remove All</string>
+           <string>Delete all snippets</string>
           </property>
           <property name="text">
            <string/>
           </property>
           <property name="icon">
            <iconset resource="../../res/resources.qrc">
-            <normaloff>:/icons/icons/cleartext.png</normaloff>:/icons/icons/cleartext.png</iconset>
+            <normaloff>:/icons/icons/delcascade.png</normaloff>:/icons/icons/delcascade.png</iconset>
           </property>
           <property name="iconSize">
            <size>
@@ -404,7 +404,7 @@
           </property>
           <property name="icon">
            <iconset resource="../../res/resources.qrc">
-            <normaloff>:/icons/icons/findtext.png</normaloff>:/icons/icons/findtext.png</iconset>
+            <normaloff>:/icons/icons/validatesch.png</normaloff>:/icons/icons/validatesch.png</iconset>
           </property>
           <property name="iconSize">
            <size>
@@ -436,6 +436,9 @@
             <width>16777215</width>
             <height>16777215</height>
            </size>
+          </property>
+          <property name="toolTip">
+           <string>Add the snippet as a new one</string>
           </property>
           <property name="text">
            <string>Add</string>
@@ -475,12 +478,15 @@
             <height>16777215</height>
            </size>
           </property>
+          <property name="toolTip">
+           <string>Replaces the current snippet's code by the code below</string>
+          </property>
           <property name="text">
            <string>Update</string>
           </property>
           <property name="icon">
            <iconset resource="../../res/resources.qrc">
-            <normaloff>:/icons/icons/defaults.png</normaloff>:/icons/icons/defaults.png</iconset>
+            <normaloff>:/icons/icons/refresh.png</normaloff>:/icons/icons/refresh.png</iconset>
           </property>
           <property name="iconSize">
            <size>

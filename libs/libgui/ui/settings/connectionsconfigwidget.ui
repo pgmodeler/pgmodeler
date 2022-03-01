@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>562</width>
-    <height>612</height>
+    <width>784</width>
+    <height>622</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -15,16 +15,16 @@
   </property>
   <layout class="QGridLayout" name="gridLayout_2">
    <property name="leftMargin">
-    <number>2</number>
+    <number>5</number>
    </property>
    <property name="topMargin">
-    <number>0</number>
+    <number>5</number>
    </property>
    <property name="rightMargin">
-    <number>0</number>
+    <number>5</number>
    </property>
    <property name="bottomMargin">
-    <number>0</number>
+    <number>5</number>
    </property>
    <item row="0" column="0">
     <widget class="QFrame" name="frame">
@@ -132,7 +132,7 @@
           </property>
           <property name="icon">
            <iconset resource="../../res/resources.qrc">
-            <normaloff>:/icons/icons/close1.png</normaloff>:/icons/icons/close1.png</iconset>
+            <normaloff>:/icons/icons/cancel.png</normaloff>:/icons/icons/cancel.png</iconset>
           </property>
           <property name="iconSize">
            <size>
@@ -355,7 +355,7 @@
               </property>
               <property name="icon">
                <iconset resource="../../res/resources.qrc">
-                <normaloff>:/icons/icons/defaults.png</normaloff>:/icons/icons/defaults.png</iconset>
+                <normaloff>:/icons/icons/refresh.png</normaloff>:/icons/icons/refresh.png</iconset>
               </property>
               <property name="iconSize">
                <size>

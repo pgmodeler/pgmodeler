@@ -30,6 +30,7 @@
 #include "widgets/colorpickerwidget.h"
 #include "objectsscene.h"
 #include "databasemodel.h"
+#include "widgets/numberedtexteditor.h"
 #include <algorithm>
 
 class AppearanceConfigWidget: public BaseConfigWidget, public Ui::AppearanceConfigWidget  {
@@ -47,9 +48,23 @@ class AppearanceConfigWidget: public BaseConfigWidget, public Ui::AppearanceConf
 				bool obj_conf;
 		};
 		
+		NumberedTextEditor *font_preview_txt;
+
 		RoundedRectItem *placeholder;
-		
-		ColorPickerWidget *color_picker;
+					
+		ColorPickerWidget *elem_color_cp,
+
+		*line_numbers_cp,
+
+		*line_numbers_bg_cp,
+
+		*line_highlight_cp,
+
+		*grid_color_cp,
+
+		*canvas_color_cp,
+
+		*delimiters_color_cp;
 		
 		//! \brief Color picker dialog
 		QColorDialog color_dlg;

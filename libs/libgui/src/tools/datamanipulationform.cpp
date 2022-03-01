@@ -51,12 +51,12 @@ DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f):
 		fnt.setBold(true);
 		btn->setFont(fnt);
 		GuiUtilsNs::createDropShadow(btn);
-		GuiUtilsNs::configureWidgetFont(btn, GuiUtilsNs::SmallFontFactor);
+	//	GuiUtilsNs::configureWidgetFont(btn, GuiUtilsNs::SmallFontFactor);
 	}
 
 	table_oid=0;
-	GuiUtilsNs::configureWidgetFont(hint_lbl, GuiUtilsNs::MediumFontFactor);
-	GuiUtilsNs::configureWidgetFont(warning_lbl, GuiUtilsNs::MediumFontFactor);
+	//GuiUtilsNs::configureWidgetFont(hint_lbl, GuiUtilsNs::MediumFontFactor);
+	//GuiUtilsNs::configureWidgetFont(warning_lbl, GuiUtilsNs::MediumFontFactor);
 
 	filter_hl=new SyntaxHighlighter(filter_txt);
 	filter_hl->loadConfiguration(GlobalAttributes::getSQLHighlightConfPath());
