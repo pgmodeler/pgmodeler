@@ -1,14 +1,4 @@
 <RCC>
-    <qresource prefix="/styles">
-        <file>styles/btn_checked_bg.png</file>
-        <file>styles/centralwgt_bg.png</file>
-        <file>styles/close_tab.png</file>
-        <file>styles/close_tab_hover.png</file>
-        <file>styles/h_menu_indicator.png</file>
-        <file>styles/h_separator.png</file>
-        <file>styles/pgmodeler_bg_logo.png</file>
-        <file>styles/toolbar_bg.png</file>
-    </qresource>
     <qresource prefix="/icons">
         <file>icons/add.png</file>
         <file>icons/addcol.png</file>
@@ -272,6 +262,8 @@
         <file>icons/about.png</file>
         <file>icons/close2.png</file>
         <file>icons/indent.png</file>
+        <file>icons/clearinput.png</file>
+        <file>icons/h_menu_indicator.png</file>
     </qresource>
     <qresource prefix="/images">
         <file>images/brazil_flag.png</file>
