@@ -130,7 +130,7 @@ void BaseConfigWidget::restoreDefaults(const QString &conf_id, bool silent)
 	}
 }
 
-void BaseConfigWidget::loadConfiguration(const QString &conf_id, map<QString, attribs_map> &config_params, const vector<QString> &key_attribs)
+void BaseConfigWidget::loadConfiguration(const QString &conf_id, map<QString, attribs_map> &config_params, const vector<QString> &key_attribs, bool incl_elem_name)
 {
 	QString filename;
 
@@ -140,14 +140,6 @@ void BaseConfigWidget::loadConfiguration(const QString &conf_id, map<QString, at
 
 		config_params.clear();
 		xmlparser.restartParser();
-		/* xmlparser.setDTDFile(GlobalAttributes::getTmplConfigurationDir() +
-							 GlobalAttributes::DirSeparator +
-							 GlobalAttributes::ObjectDTDDir +
-							 GlobalAttributes::DirSeparator +
-							 conf_id +
-							 GlobalAttributes::ObjectDTDExt,
-							 conf_id); */
-
 		xmlparser.setDTDFile(GlobalAttributes::getTmplConfigurationFilePath(GlobalAttributes::ObjectDTDDir,
 																																				conf_id + GlobalAttributes::ObjectDTDExt),
 												 conf_id);
@@ -160,7 +152,7 @@ void BaseConfigWidget::loadConfiguration(const QString &conf_id, map<QString, at
 			{
 				if(xmlparser.getElementType()==XML_ELEMENT_NODE)
 				{
-					this->getConfigurationParams(config_params, key_attribs);
+					this->getConfigurationParams(config_params, key_attribs, incl_elem_name);
 
 					if(xmlparser.hasElement(XmlParser::ChildElement, XML_ELEMENT_NODE))
 					{
@@ -171,7 +163,7 @@ void BaseConfigWidget::loadConfiguration(const QString &conf_id, map<QString, at
 						{
 							do
 							{
-								this->getConfigurationParams(config_params, key_attribs);
+								this->getConfigurationParams(config_params, key_attribs, incl_elem_name);
 							}
 							while(xmlparser.accessElement(XmlParser::NextElement));
 						}
@@ -189,7 +181,7 @@ void BaseConfigWidget::loadConfiguration(const QString &conf_id, map<QString, at
 	}
 }
 
-void BaseConfigWidget::getConfigurationParams(map<QString, attribs_map> &config_params, const vector<QString> &key_attribs)
+void BaseConfigWidget::getConfigurationParams(map<QString, attribs_map> &config_params, const vector<QString> &key_attribs, bool incl_elem_name)
 {
 	attribs_map aux_attribs;
 	attribs_map::iterator itr, itr_end;
@@ -200,16 +192,23 @@ void BaseConfigWidget::getConfigurationParams(map<QString, attribs_map> &config_
 	itr=aux_attribs.begin();
 	itr_end=aux_attribs.end();
 
-	while(itr!=itr_end && key.isEmpty())
+	while(itr != itr_end && key.isEmpty())
 	{
 		if(key.isEmpty() && std::find(key_attribs.begin(), key_attribs.end(), itr->first)!=key_attribs.end())
-			key=itr->second;
+		{
+			key = itr->second;
+
+			if(incl_elem_name)
+				key.prepend(xmlparser.getElementName() + "-");
+
+			break;
+		}
 
 		itr++;
 	}
 
 	if(key.isEmpty())
-		key=xmlparser.getElementName();
+		key = xmlparser.getElementName();
 
 	//Extract the contents of the child element and create a special element on map called "_contents_"
 	if(xmlparser.hasElement(XmlParser::ChildElement, XML_TEXT_NODE))

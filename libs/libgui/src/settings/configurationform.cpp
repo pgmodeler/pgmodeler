@@ -68,8 +68,6 @@ void ConfigurationForm::changeCurrentView()
 	QToolButton *btn = nullptr,
 			*btn_sender = qobject_cast<QToolButton *>(sender());
 
-	int idx = btn_sender->property(Attributes::ObjectId.toStdString().c_str()).toInt();
-
 	for(auto &obj : bnts_parent_wgt->children())
 	{
 		btn = dynamic_cast<QToolButton *>(obj);

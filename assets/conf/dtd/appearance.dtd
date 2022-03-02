@@ -2,7 +2,28 @@
   CAUTION: Do not modify this file directly on it's code unless you know what you are doing.
            Unexpected results may occur if the code is changed deliberately.
 -->
-<!ELEMENT objects-style (global, font+, object+)>
+<!ELEMENT appearance (design, code, objects)>
+
+<!ELEMENT design EMPTY>
+<!ATTLIST design grid-size CDATA #REQUIRED>
+<!ATTLIST design grid-color CDATA #IMPLIED>
+<!ATTLIST design canvas-color CDATA #IMPLIED>
+<!ATTLIST design delimiters-color CDATA #IMPLIED>
+<!ATTLIST design min-object-opacity CDATA #IMPLIED>
+<!ATTLIST design attribs-per-page CDATA #IMPLIED>
+<!ATTLIST design ext-attribs-per-page CDATA #IMPLIED>
+
+<!ELEMENT code EMPTY>
+<!ATTLIST code code-font CDATA #IMPLIED>
+<!ATTLIST code code-font-size CDATA #IMPLIED>
+<!ATTLIST code code-tab-width CDATA #IMPLIED>
+<!ATTLIST code display-line-numbers (false|true) "true">
+<!ATTLIST code highlight-lines (false|true) "true">
+<!ATTLIST code line-numbers-color CDATA #IMPLIED>
+<!ATTLIST code line-numbers-bg-color CDATA #IMPLIED>
+<!ATTLIST code line-highlight-color CDATA #IMPLIED>
+
+<!ELEMENT objects (global, font+, object+)>
 
 <!ELEMENT global EMPTY>
 <!ATTLIST global font CDATA #REQUIRED>

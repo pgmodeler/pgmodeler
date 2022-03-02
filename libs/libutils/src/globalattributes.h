@@ -113,7 +113,7 @@ class GlobalAttributes {
 		UiStyleDir,					 //! \brief Default name for the ui style directory
 
 		CodeHighlightConf,  //! \brief Default name for the language highlight dtd
-		ObjectsStyleConf,   //! \brief Default name for the object style configuration file
+		AppearanceConf,   //! \brief Default name for the appearance configuration file
 		GeneralConf,         //! \brief Default name for the general pgModeler configuration
 		ConnectionsConf,     //! \brief Default name for the DBMS connection configuration file
 		RelationshipsConf,   //! \brief Default name for the relationships configuration file

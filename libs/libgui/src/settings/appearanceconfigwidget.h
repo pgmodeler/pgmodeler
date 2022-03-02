@@ -87,6 +87,12 @@ class AppearanceConfigWidget: public BaseConfigWidget, public Ui::AppearanceConf
 		//! \brief Updates the color configuration for the placeholder item
 		void updatePlaceholderItem();
 		
+		//! \brief Applies the color/font settings loaded from file to BaseObjectView instances
+		void applyObjectsStyle();
+
+		//! \brief Applies the design and code settings loaded from file
+		void applyDesignCodeStyle();
+
 	public:
 		AppearanceConfigWidget(QWidget * parent = nullptr);
 		virtual ~AppearanceConfigWidget();

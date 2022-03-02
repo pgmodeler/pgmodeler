@@ -1,11 +1,11 @@
-# XML definition for object style configurations
+# XML definition for appearance settings.
 # CAUTION: Do not modify this file unless you know what you are doing.
 [<?xml version="1.0" encoding="UTF-8" ?>] $br
 [<!--] $br
 [ CAUTION: Do not modify this file directly on it's code unless you know what you are doing.] $br
 [ Unexpected results may occur if the code is changed deliberately.] $br
 [-->] $br
-<objects-style> $br
+<objects> $br
 $tb [<global font="] {font-name} [" size="] {font-size} ["/>] $br
 $tb [<font id="table-name" color="] {table-name-fcolor} [" italic="] {table-name-italic} [" bold="] {table-name-bold} [" underline="] {table-name-underline} ["/>] $br
 $tb [<font id="table-schema-name" color="] {table-schema-name-fcolor} [" italic="] {table-schema-name-italic} [" bold="] {table-schema-name-bold} [" underline="] {table-schema-name-underline} ["/>] $br
@@ -73,4 +73,4 @@ $tb [<object id="foreigntable-ext-body" fill-color="] {foreigntable-ext-body-col
 $tb [<object id="foreigntable-toggler-btns" fill-color="] {foreigntable-toggler-btns-color} [" border-color="] {foreigntable-toggler-btns-bcolor} ["/>] $br
 $tb [<object id="foreigntable-toggler-body" fill-color="] {foreigntable-toggler-body-color} [" border-color="] {foreigntable-toggler-body-bcolor} ["/>] $br
 
-</objects-style> $br
+</objects> $br

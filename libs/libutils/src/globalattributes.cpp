@@ -63,8 +63,8 @@ const QString GlobalAttributes::ConfigurationExt(".conf");
 const QString GlobalAttributes::HighlightFileSuffix("-highlight");
 
 const QString GlobalAttributes::CodeHighlightConf("source-code-highlight");
-const QString GlobalAttributes::ObjectsStyleConf("objects-style");
-const QString GlobalAttributes::GeneralConf("pgmodeler");
+const QString GlobalAttributes::AppearanceConf("appearance");
+const QString GlobalAttributes::GeneralConf("general");
 const QString GlobalAttributes::ConnectionsConf("connections");
 const QString GlobalAttributes::RelationshipsConf("relationships");
 const QString GlobalAttributes::SnippetsConf("snippets");

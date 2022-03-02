@@ -294,24 +294,12 @@ void AppearanceConfigWidget::loadConfiguration()
 {
 	try
 	{
-		int i, count=conf_items.size();
+		//int i, count=conf_items.size();
+		BaseConfigWidget::loadConfiguration(GlobalAttributes::AppearanceConf, config_params, { Attributes::Id }, true);
 
-		BaseObjectView::loadObjectsStyle();
-		this->loadExampleModel();
-
-		for(i=0; i < count; i++)
-		{
-			if(conf_items[i].obj_conf)
-			{
-				BaseObjectView::getFillStyle(conf_items[i].conf_id, conf_items[i].colors[0], conf_items[i].colors[1]);
-				conf_items[i].colors[2]=BaseObjectView::getBorderStyle(conf_items[i].conf_id).color();
-			}
-			else
-				conf_items[i].font_fmt=BaseObjectView::getFontStyle(conf_items[i].conf_id);
-		}
-
-		this->enableConfigElement();
-		font_cmb->setCurrentFont(BaseObjectView::getFontStyle(Attributes::Global).font());
+		applyDesignCodeStyle();
+		applyObjectsStyle();
+		loadExampleModel();
 		model->setObjectsModified();
 		updatePlaceholderItem();
 		scene->update();
@@ -320,6 +308,108 @@ void AppearanceConfigWidget::loadConfiguration()
 	{
 		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, e.getExtraInfo());
 	}
+}
+
+void AppearanceConfigWidget::applyDesignCodeStyle()
+{
+	grid_size_spb->setValue((config_params[Attributes::Design][Attributes::GridSize]).toUInt());
+	min_obj_opacity_spb->setValue(config_params[Attributes::Design][Attributes::MinObjectOpacity].toUInt());
+	attribs_per_page_spb->setValue(config_params[Attributes::Design][Attributes::AttribsPerPage].toUInt());
+	ext_attribs_per_page_spb->setValue(config_params[Attributes::Design][Attributes::ExtAttribsPerPage].toUInt());
+
+	/* If we can't identify at least one of the colors that compose the grid then we use default colors
+	 * avoiding black canvas or black grid color */
+	if(config_params[Attributes::Design].count(Attributes::GridColor) == 0 ||
+		 config_params[Attributes::Design].count(Attributes::CanvasColor) == 0 ||
+		 config_params[Attributes::Design].count(Attributes::DelimitersColor) == 0)
+	{
+		grid_color_cp->setColor(0, ObjectsScene::DefaultGridColor);
+		canvas_color_cp->setColor(0, ObjectsScene::DefaultCanvasColor);
+		delimiters_color_cp->setColor(0, ObjectsScene::DefaultDelimitersColor);
+	}
+	else
+	{
+		grid_color_cp->setColor(0, QColor(config_params[Attributes::Design][Attributes::GridColor]));
+		canvas_color_cp->setColor(0, QColor(config_params[Attributes::Design][Attributes::CanvasColor]));
+		delimiters_color_cp->setColor(0, QColor(config_params[Attributes::Design][Attributes::DelimitersColor]));
+	}
+
+	font_cmb->setCurrentFont(QFont(config_params[Attributes::Code][Attributes::CodeFont]));
+	font_size_spb->setValue(config_params[Attributes::Code][Attributes::CodeFontSize].toDouble());
+	disp_line_numbers_chk->setChecked(config_params[Attributes::Code][Attributes::DisplayLineNumbers]==Attributes::True);
+	hightlight_lines_chk->setChecked(config_params[Attributes::Code][Attributes::HighlightLines]==Attributes::True);
+	line_numbers_cp->setColor(0, config_params[Attributes::Code][Attributes::LineNumbersColor]);
+	line_numbers_bg_cp->setColor(0, config_params[Attributes::Code][Attributes::LineNumbersBgColor]);
+	line_highlight_cp->setColor(0, config_params[Attributes::Code][Attributes::LineHighlightColor]);
+
+	int tab_width=(config_params[Attributes::Code][Attributes::CodeTabWidth]).toInt();
+	tab_width_chk->setChecked(tab_width > 0);
+	tab_width_spb->setEnabled(tab_width_chk->isChecked());
+	tab_width_spb->setValue(tab_width);
+}
+
+void AppearanceConfigWidget::applyObjectsStyle()
+{
+	QTextCharFormat font_fmt;
+	QFont font;
+	attribs_map attribs;
+	QStringList list, colors;
+	QString elem;
+
+	for(auto &itr : config_params)
+	{
+		elem = itr.first;
+		attribs = itr.second;
+
+		if(elem==Attributes::Global)
+		{
+			font.setFamily(attribs[Attributes::Font]);
+			font.setPointSizeF(attribs[Attributes::Size].toDouble());
+			font.setBold(attribs[Attributes::Bold]==Attributes::True);
+			font.setItalic(attribs[Attributes::Italic]==Attributes::True);
+			font.setUnderline(attribs[Attributes::Underline]==Attributes::True);
+			font_fmt.setFont(font);
+			BaseObjectView::setFontStyle(elem, font_fmt);
+		}
+		else if(elem.startsWith(Attributes::Font + "-"))
+		{
+			elem.remove(Attributes::Font + "-");
+			font = font_fmt.font();
+			font.setBold(attribs[Attributes::Bold]==Attributes::True);
+			font.setItalic(attribs[Attributes::Italic]==Attributes::True);
+			font.setUnderline(attribs[Attributes::Underline]==Attributes::True);
+			font_fmt.setFont(font);
+			font_fmt.setForeground(QColor(attribs[Attributes::Color]));
+			BaseObjectView::setFontStyle(elem, font_fmt);
+		}
+		else if(elem.startsWith(Attributes::Object + "-"))
+		{
+			elem.remove(Attributes::Object + "-");
+			list = attribs[Attributes::FillColor].split(',');
+
+			colors.clear();
+			colors.append(!list.isEmpty() ? list.at(0) : "#000");
+			colors.append(list.size()==2 ? list.at(1) : colors.at(0));
+			BaseObjectView::setElementColor(elem, QColor(colors.at(0)), 0);
+			BaseObjectView::setElementColor(elem, QColor(colors.at(1)), 1);
+			BaseObjectView::setElementColor(elem, QColor(attribs[Attributes::BorderColor]), 2);
+		}
+	}
+
+	//for(i=0; i < count; i++)
+	for(auto &cnf_item : conf_items)
+	{
+		if(cnf_item.obj_conf)
+		{
+			BaseObjectView::getFillStyle(cnf_item.conf_id, cnf_item.colors[0], cnf_item.colors[1]);
+			cnf_item.colors[2]=BaseObjectView::getBorderStyle(cnf_item.conf_id).color();
+		}
+		else
+			cnf_item.font_fmt=BaseObjectView::getFontStyle(cnf_item.conf_id);
+	}
+
+	enableConfigElement();
+	font_cmb->setCurrentFont(BaseObjectView::getFontStyle(Attributes::Global).font());
 }
 
 void AppearanceConfigWidget::saveConfiguration()
@@ -380,8 +470,8 @@ void AppearanceConfigWidget::saveConfiguration()
 			}
 		}
 
-		config_params[GlobalAttributes::ObjectsStyleConf]=attribs;
-		BaseConfigWidget::saveConfiguration(GlobalAttributes::ObjectsStyleConf, config_params);
+		config_params[GlobalAttributes::AppearanceConf]=attribs;
+		BaseConfigWidget::saveConfiguration(GlobalAttributes::AppearanceConf, config_params);
 	}
 	catch(Exception &e)
 	{
@@ -495,7 +585,7 @@ void AppearanceConfigWidget::restoreDefaults()
 {
 	try
 	{
-		BaseConfigWidget::restoreDefaults(GlobalAttributes::ObjectsStyleConf, false);
+		BaseConfigWidget::restoreDefaults(GlobalAttributes::AppearanceConf, false);
 		this->loadConfiguration();
 		setConfigurationChanged(true);
 	}
@@ -504,4 +594,3 @@ void AppearanceConfigWidget::restoreDefaults()
 		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
-

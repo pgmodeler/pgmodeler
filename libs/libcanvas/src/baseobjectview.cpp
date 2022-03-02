@@ -163,7 +163,7 @@ void BaseObjectView::loadObjectsStyle()
 	map<QString, QTextCharFormat>::iterator itr;
 	QStringList list;
 	QString elem,
-			config_file=GlobalAttributes::getConfigurationFilePath(GlobalAttributes::ObjectsStyleConf);
+			config_file=GlobalAttributes::getConfigurationFilePath(GlobalAttributes::AppearanceConf);
 	XmlParser xmlparser;
 
 	try
@@ -171,9 +171,9 @@ void BaseObjectView::loadObjectsStyle()
 		xmlparser.restartParser();
 
 		xmlparser.setDTDFile(GlobalAttributes::getTmplConfigurationFilePath(GlobalAttributes::ObjectDTDDir,
-																																				GlobalAttributes::ObjectsStyleConf +
+																																				GlobalAttributes::AppearanceConf +
 																																				GlobalAttributes::ObjectDTDExt),
-												 GlobalAttributes::ObjectsStyleConf);
+												 GlobalAttributes::AppearanceConf);
 
 		xmlparser.loadXMLFile(config_file);
 
@@ -231,11 +231,11 @@ void BaseObjectView::loadObjectsStyle()
 
 void BaseObjectView::setFontStyle(const QString &id, QTextCharFormat font_fmt)
 {
-	QFont font;
-
-	if(id!=Attributes::Global)
+	/* If the font style is not the global one we use the settings
+	 * of the global (if available) */
+	if(id != Attributes::Global)
 	{
-		font=font_config[Attributes::Global].font();
+		QFont font = font_config[Attributes::Global].font();
 		font.setItalic(font_fmt.font().italic());
 		font.setBold(font_fmt.font().bold());
 		font.setUnderline(font_fmt.font().underline());
@@ -243,47 +243,47 @@ void BaseObjectView::setFontStyle(const QString &id, QTextCharFormat font_fmt)
 	}
 	else
 	{
-		map<QString, QTextCharFormat>::iterator itr, itr_end;
-
-		itr=font_config.begin();
-		itr_end=font_config.end();
-		font=font_fmt.font();
-
-		while(itr!=itr_end)
+		// If changing the global font settings, we apply it to all other font styles alread configured
+		QFont font = font_fmt.font();
+		for(auto &itr : font_config)
 		{
-			font.setItalic((itr->second).font().italic());
-			font.setBold((itr->second).font().bold());
-			font.setUnderline((itr->second).font().underline());
-			(itr->second).setFont(font);
-			itr++;
+			font.setItalic(itr.second.font().italic());
+			font.setBold(itr.second.font().bold());
+			font.setUnderline(itr.second.font().underline());
+			itr.second.setFont(font);
 		}
 	}
 
-	if(font_config.count(id))
-		font_config[id]=font_fmt;
+	font_config[id] = font_fmt;
 }
 
 void BaseObjectView::setElementColor(const QString &id, QColor color, unsigned color_id)
 {
-	if(color_id < 3 && color_config.count(id))
-		color_config[id][color_id]=color;
+	if(color_id >= 3)
+		return;
+
+	// If the provided element id does not exist we initialize it
+	if(color_config.count(id) == 0)
+		color_config[id] = { QColor(0,0,0), QColor(0,0,0), QColor(0,0,0) };
+
+	color_config[id][color_id] = color;
 }
 
 QColor BaseObjectView::getElementColor(const QString &id, unsigned color_id)
 {
 	if(color_config.count(id) > 0 && color_id < 3)
 		return color_config[id][color_id];
-	else
-		return QColor(0,0,0);
+
+	return QColor(0,0,0);
 }
 
 void BaseObjectView::getFillStyle(const QString &id, QColor &color1, QColor &color2)
 {
-	if(color_config.count(id) > 0)
-	{
-		color1=color_config[id][0];
-		color2=color_config[id][1];
-	}
+	if(color_config.count(id) == 0)
+		return;
+
+	color1 = color_config[id][0];
+	color2 = color_config[id][1];
 }
 
 QLinearGradient BaseObjectView::getFillStyle(const QString &id)

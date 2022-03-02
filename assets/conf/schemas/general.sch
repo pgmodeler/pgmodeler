@@ -6,7 +6,7 @@
 [ Unexpected results may occur if the code is changed deliberately.] $br
 [-->] $br
 
-<pgmodeler> $br
+<general> $br
 $tb [<configuration op-list-size="] {op-list-size} ["] $br
 $tb $tb [grid-size="] {grid-size} ["] $br
 $tb $tb [grid-color="] {grid-color} ["] $br
@@ -97,4 +97,4 @@ $tb /> $br
 	$tb </widgets-geometry> $br
 %end
 
-</pgmodeler> $br
+</general> $br
