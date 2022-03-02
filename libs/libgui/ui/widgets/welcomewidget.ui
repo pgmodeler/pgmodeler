@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1096</width>
-    <height>976</height>
+    <width>1146</width>
+    <height>1034</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -23,6 +23,9 @@
    <string>Form</string>
   </property>
   <layout class="QGridLayout" name="gridLayout_2">
+   <property name="verticalSpacing">
+    <number>50</number>
+   </property>
    <item row="1" column="0">
     <spacer name="horizontalSpacer">
      <property name="orientation">

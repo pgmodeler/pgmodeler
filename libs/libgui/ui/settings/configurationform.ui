@@ -354,9 +354,6 @@
           <height>48</height>
          </size>
         </property>
-        <property name="shortcut">
-         <string>Ctrl+S</string>
-        </property>
         <property name="checkable">
          <bool>true</bool>
         </property>
@@ -397,9 +394,6 @@
           <width>48</width>
           <height>48</height>
          </size>
-        </property>
-        <property name="shortcut">
-         <string>Ins</string>
         </property>
         <property name="checkable">
          <bool>true</bool>
@@ -442,9 +436,6 @@
           <height>48</height>
          </size>
         </property>
-        <property name="shortcut">
-         <string>Del</string>
-        </property>
         <property name="checkable">
          <bool>true</bool>
         </property>
@@ -485,9 +476,6 @@
           <width>48</width>
           <height>48</height>
          </size>
-        </property>
-        <property name="shortcut">
-         <string>F5</string>
         </property>
         <property name="checkable">
          <bool>true</bool>
@@ -531,7 +519,7 @@
          </size>
         </property>
         <property name="shortcut">
-         <string>Ctrl+N</string>
+         <string>Ctrl+S</string>
         </property>
         <property name="checkable">
          <bool>true</bool>
@@ -576,9 +564,6 @@
           <width>48</width>
           <height>48</height>
          </size>
-        </property>
-        <property name="shortcut">
-         <string>Del</string>
         </property>
         <property name="checkable">
          <bool>true</bool>
