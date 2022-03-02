@@ -14,9 +14,9 @@
 <!ATTLIST design ext-attribs-per-page CDATA #IMPLIED>
 
 <!ELEMENT code EMPTY>
-<!ATTLIST code code-font CDATA #IMPLIED>
-<!ATTLIST code code-font-size CDATA #IMPLIED>
-<!ATTLIST code code-tab-width CDATA #IMPLIED>
+<!ATTLIST code font CDATA #IMPLIED>
+<!ATTLIST code font-size CDATA #IMPLIED>
+<!ATTLIST code tab-width CDATA #IMPLIED>
 <!ATTLIST code display-line-numbers (false|true) "true">
 <!ATTLIST code highlight-lines (false|true) "true">
 <!ATTLIST code line-numbers-color CDATA #IMPLIED>

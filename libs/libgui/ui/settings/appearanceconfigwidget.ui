@@ -466,7 +466,7 @@
            </layout>
           </item>
           <item row="0" column="1" colspan="2">
-           <widget class="QFontComboBox" name="font_cmb_2">
+           <widget class="QFontComboBox" name="code_font_cmb">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -481,7 +481,10 @@
              <number>10</number>
             </property>
             <item>
-             <widget class="QDoubleSpinBox" name="font_size_spb_2">
+             <widget class="QDoubleSpinBox" name="code_font_size_spb">
+              <property name="specialValueText">
+               <string/>
+              </property>
               <property name="decimals">
                <number>1</number>
               </property>
@@ -1005,7 +1008,7 @@
              <number>0</number>
             </property>
             <item>
-             <widget class="QDoubleSpinBox" name="font_size_spb">
+             <widget class="QDoubleSpinBox" name="elem_font_size_spb">
               <property name="decimals">
                <number>1</number>
               </property>
@@ -1028,12 +1031,15 @@
               <property name="text">
                <string> pt</string>
               </property>
+              <property name="indent">
+               <number>5</number>
+              </property>
              </widget>
             </item>
            </layout>
           </item>
           <item row="1" column="1" colspan="4">
-           <widget class="QFontComboBox" name="font_cmb">
+           <widget class="QFontComboBox" name="elem_font_cmb">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -1091,8 +1097,8 @@
  </widget>
  <tabstops>
   <tabstop>element_cmb</tabstop>
-  <tabstop>font_cmb</tabstop>
-  <tabstop>font_size_spb</tabstop>
+  <tabstop>elem_font_cmb</tabstop>
+  <tabstop>elem_font_size_spb</tabstop>
   <tabstop>bold_chk</tabstop>
   <tabstop>italic_chk</tabstop>
   <tabstop>underline_chk</tabstop>

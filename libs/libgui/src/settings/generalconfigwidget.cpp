@@ -60,46 +60,6 @@ GeneralConfigWidget::GeneralConfigWidget(QWidget * parent) : BaseConfigWidget(pa
 	source_editor_sel->setToolTip(tr("External source code editor application"));
 	general_grid->addWidget(source_editor_sel, 2, 1, 1, 1);
 
-	line_numbers_cp=new ColorPickerWidget(1, this);
-	line_numbers_cp->setButtonToolTip(0, tr("Line numbers' font color"));
-
-	line_numbers_bg_cp=new ColorPickerWidget(1, this);
-	line_numbers_bg_cp->setButtonToolTip(0, tr("Line numbers' background color"));
-
-	line_highlight_cp=new ColorPickerWidget(1, this);
-	line_highlight_cp->setButtonToolTip(0, tr("Highlighted line color"));
-
-	QHBoxLayout *hbox = new QHBoxLayout(grid_color_wgt);
-	hbox->setContentsMargins(0,0,0,0);
-	grid_color_cp = new ColorPickerWidget(1, grid_color_wgt);
-	grid_color_cp->setButtonToolTip(0, tr("Define a custom color for the grid lines"));
-	hbox->addWidget(grid_color_cp);
-
-	hbox = new QHBoxLayout(canvas_color_wgt);
-	hbox->setContentsMargins(0,0,0,0);
-	canvas_color_cp = new ColorPickerWidget(1, canvas_color_wgt);
-	canvas_color_cp->setButtonToolTip(0, tr("Define a custom color for the canvas area"));
-	hbox->addWidget(canvas_color_cp);
-
-	hbox = new QHBoxLayout(delimiters_color_wgt);
-	hbox->setContentsMargins(0,0,0,0);
-	delimiters_color_cp = new ColorPickerWidget(1, delimiters_color_wgt);
-	delimiters_color_cp->setButtonToolTip(0, tr("Define a custom color for the page delimiter lines"));
-	hbox->addWidget(delimiters_color_cp);
-
-	font_preview_txt=new NumberedTextEditor(this);
-	font_preview_txt->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
-	font_preview_txt->setPlainText(tr("The little brown fox jumps over the lazy dog") + QString("\n\ttext with tab «") + QString("\n0123456789\n.()[]{};"));
-
-	QBoxLayout *layout=new QBoxLayout(QBoxLayout::LeftToRight);
-	QGridLayout *grid=dynamic_cast<QGridLayout *>(code_font_gb->layout());
-	layout->addWidget(line_numbers_cp);
-	layout->addWidget(line_numbers_bg_cp);
-	layout->addWidget(line_highlight_cp);
-	layout->addItem(new QSpacerItem(1000,20, QSizePolicy::Expanding));
-	grid->addLayout(layout, 2, 1);
-	grid->addWidget(font_preview_txt,grid->count(),0,1,5);
-
 	for(int i=0; i < count; i++)
 		paper_cmb->setItemData(i, QVariant(paper_ids[i]));
 
@@ -112,25 +72,7 @@ GeneralConfigWidget::GeneralConfigWidget(QWidget * parent) : BaseConfigWidget(pa
 	connect(unity_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(convertMarginUnity()));
 	connect(autosave_interv_chk, SIGNAL(toggled(bool)), autosave_interv_spb, SLOT(setEnabled(bool)));
 	connect(paper_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(selectPaperSize()));
-	connect(font_size_spb, SIGNAL(valueChanged(double)), this, SLOT(updateFontPreview()));
-	connect(font_cmb, SIGNAL(currentFontChanged(QFont)), this, SLOT(updateFontPreview()));
 
-	connect(line_numbers_cp, SIGNAL(s_colorChanged(unsigned, QColor)), this, SLOT(updateFontPreview()));
-	connect(line_numbers_cp, SIGNAL(s_colorsChanged()), this, SLOT(updateFontPreview()));
-
-	connect(line_numbers_bg_cp, SIGNAL(s_colorChanged(unsigned, QColor)), this, SLOT(updateFontPreview()));
-	connect(line_numbers_bg_cp, SIGNAL(s_colorsChanged()), this, SLOT(updateFontPreview()));
-
-	connect(line_highlight_cp, SIGNAL(s_colorChanged(unsigned, QColor)), this, SLOT(updateFontPreview()));
-	connect(line_highlight_cp, SIGNAL(s_colorsChanged()), this, SLOT(updateFontPreview()));
-
-	connect(disp_line_numbers_chk, SIGNAL(toggled(bool)), this, SLOT(updateFontPreview()));
-	connect(hightlight_lines_chk, SIGNAL(toggled(bool)), this, SLOT(updateFontPreview()));
-	connect(tab_width_spb, SIGNAL(valueChanged(int)), this, SLOT(updateFontPreview()));
-	connect(tab_width_chk, SIGNAL(toggled(bool)), tab_width_spb, SLOT(setEnabled(bool)));
-	connect(tab_width_chk, SIGNAL(toggled(bool)), this, SLOT(updateFontPreview()));
-
-	connect(font_preview_txt, SIGNAL(cursorPositionChanged()), this, SLOT(updateFontPreview()));
 	connect(save_restore_geometry_chk, SIGNAL(toggled(bool)), reset_sizes_tb, SLOT(setEnabled(bool)));
 	connect(reset_sizes_tb, SIGNAL(clicked(bool)), this, SLOT(resetDialogsSizes()));
 
@@ -149,8 +91,6 @@ GeneralConfigWidget::GeneralConfigWidget(QWidget * parent) : BaseConfigWidget(pa
 	config_params[Attributes::Configuration][Attributes::HideExtAttribs]="";
 	config_params[Attributes::Configuration][Attributes::HideTableTags]="";
 	config_params[Attributes::Configuration][Attributes::FileAssociated]="";
-	config_params[Attributes::Configuration][Attributes::CodeFont]="";
-	config_params[Attributes::Configuration][Attributes::CodeFontSize]="";
 	config_params[Attributes::Configuration][Attributes::CanvasCornerMove]="";
 	config_params[Attributes::Configuration][Attributes::InvertRangeSelTrigger]="";
 	config_params[Attributes::Configuration][Attributes::CheckUpdate]="";
@@ -162,20 +102,12 @@ GeneralConfigWidget::GeneralConfigWidget(QWidget * parent) : BaseConfigWidget(pa
 	config_params[Attributes::Configuration][Attributes::ConfirmValidation]="";
 	config_params[Attributes::Configuration][Attributes::ShowMainMenu]="";
 	config_params[Attributes::Configuration][Attributes::CodeCompletion]="";
-	config_params[Attributes::Configuration][Attributes::DisplayLineNumbers]="";
-	config_params[Attributes::Configuration][Attributes::LineNumbersColor]="";
-	config_params[Attributes::Configuration][Attributes::LineNumbersBgColor]="";
-	config_params[Attributes::Configuration][Attributes::LineHighlightColor]="";
-	config_params[Attributes::Configuration][Attributes::HighlightLines]="";
 	config_params[Attributes::Configuration][Attributes::UsePlaceholders]="";
-	config_params[Attributes::Configuration][Attributes::MinObjectOpacity]="";
 	config_params[Attributes::Configuration][Attributes::HistoryMaxLength]="";
 	config_params[Attributes::Configuration][Attributes::SourceEditorApp]="";
 	config_params[Attributes::Configuration][Attributes::UiLanguage]="";
 	config_params[Attributes::Configuration][Attributes::UseCurvedLines]="";
 	config_params[Attributes::Configuration][Attributes::SaveRestoreGeometry]="";
-	config_params[Attributes::Configuration][Attributes::AttribsPerPage]="";
-	config_params[Attributes::Configuration][Attributes::ExtAttribsPerPage]="";
 	config_params[Attributes::Configuration][Attributes::LowVerbosity]="";
 
 	selectPaperSize();
@@ -252,7 +184,7 @@ void GeneralConfigWidget::loadConfiguration()
 		QStringList margin, custom_size;
 		vector<QString> key_attribs;
 		unsigned interv=0;
-		int tab_width=0, x=0, y=0, w=0, h=0, idx = -1;
+		int x=0, y=0, w=0, h=0, idx = -1;
 
 		for(QWidget *wgt : child_wgts)
 			wgt->blockSignals(true);
@@ -260,20 +192,14 @@ void GeneralConfigWidget::loadConfiguration()
 		key_attribs.push_back(Attributes::Id);
 		BaseConfigWidget::loadConfiguration(GlobalAttributes::GeneralConf, config_params, key_attribs);
 
-		grid_size_spb->setValue((config_params[Attributes::Configuration][Attributes::GridSize]).toUInt());
 		oplist_size_spb->setValue((config_params[Attributes::Configuration][Attributes::OpListSize]).toUInt());
 		history_max_length_spb->setValue(config_params[Attributes::Configuration][Attributes::HistoryMaxLength].toUInt());
 
 		interv=(config_params[Attributes::Configuration][Attributes::AutoSaveInterval]).toUInt();
-		tab_width=(config_params[Attributes::Configuration][Attributes::CodeTabWidth]).toInt();
 
 		autosave_interv_chk->setChecked(interv > 0);
 		autosave_interv_spb->setValue(interv);
 		autosave_interv_spb->setEnabled(autosave_interv_chk->isChecked());
-
-		tab_width_chk->setChecked(tab_width > 0);
-		tab_width_spb->setEnabled(tab_width_chk->isChecked());
-		tab_width_spb->setValue(tab_width);
 
 		corner_move_chk->setChecked(config_params[Attributes::Configuration][Attributes::CanvasCornerMove]==Attributes::True);
 		invert_rangesel_chk->setChecked(config_params[Attributes::Configuration][Attributes::InvertRangeSelTrigger]==Attributes::True);
@@ -298,10 +224,6 @@ void GeneralConfigWidget::loadConfiguration()
 		portrait_rb->setChecked(config_params[Attributes::Configuration][Attributes::PaperOrientation]==Attributes::Portrait);
 		landscape_rb->setChecked(config_params[Attributes::Configuration][Attributes::PaperOrientation]==Attributes::Landscape);
 
-		min_obj_opacity_spb->setValue(config_params[Attributes::Configuration][Attributes::MinObjectOpacity].toUInt());
-		attribs_per_page_spb->setValue(config_params[Attributes::Configuration][Attributes::AttribsPerPage].toUInt());
-		ext_attribs_per_page_spb->setValue(config_params[Attributes::Configuration][Attributes::ExtAttribsPerPage].toUInt());
-
 		margin=config_params[Attributes::Configuration][Attributes::PaperMargin].split(',');
 		custom_size=config_params[Attributes::Configuration][Attributes::PaperCustomSize].split(',');
 
@@ -318,14 +240,6 @@ void GeneralConfigWidget::loadConfiguration()
 		hide_table_tags_chk->setChecked(config_params[Attributes::Configuration][Attributes::HideTableTags]==Attributes::True);
 		hide_sch_name_usr_types_chk->setChecked(config_params[Attributes::Configuration][Attributes::HideSchNameUserTypes]==Attributes::True);
 
-		font_cmb->setCurrentFont(QFont(config_params[Attributes::Configuration][Attributes::CodeFont]));
-		font_size_spb->setValue(config_params[Attributes::Configuration][Attributes::CodeFontSize].toDouble());
-		disp_line_numbers_chk->setChecked(config_params[Attributes::Configuration][Attributes::DisplayLineNumbers]==Attributes::True);
-		hightlight_lines_chk->setChecked(config_params[Attributes::Configuration][Attributes::HighlightLines]==Attributes::True);
-		line_numbers_cp->setColor(0, config_params[Attributes::Configuration][Attributes::LineNumbersColor]);
-		line_numbers_bg_cp->setColor(0, config_params[Attributes::Configuration][Attributes::LineNumbersBgColor]);
-		line_highlight_cp->setColor(0, config_params[Attributes::Configuration][Attributes::LineHighlightColor]);
-
 		source_editor_sel->setSelectedFile(config_params[Attributes::Configuration][Attributes::SourceEditorApp]);
 		source_editor_args_edt->setText(config_params[Attributes::Configuration][Attributes::SourceEditorArgs]);
 
@@ -333,23 +247,6 @@ void GeneralConfigWidget::loadConfiguration()
 		reset_sizes_tb->setEnabled(save_restore_geometry_chk->isChecked());
 		low_verbosity_chk->setChecked(config_params[Attributes::Configuration][Attributes::LowVerbosity]==Attributes::True);
 		escape_comments_chk->setChecked(config_params[Attributes::Configuration][Attributes::EscapeComment]==Attributes::True);
-
-		/* If we can't identify at least one of the colors that compose the grid then we use default colors
-		 * avoiding black canvas or black grid color */
-		if(config_params[Attributes::Configuration].count(Attributes::GridColor) == 0 ||
-			 config_params[Attributes::Configuration].count(Attributes::CanvasColor) == 0 ||
-			 config_params[Attributes::Configuration].count(Attributes::DelimitersColor) == 0)
-		{
-			grid_color_cp->setColor(0, ObjectsScene::DefaultGridColor);
-			canvas_color_cp->setColor(0, ObjectsScene::DefaultCanvasColor);
-			delimiters_color_cp->setColor(0, ObjectsScene::DefaultDelimitersColor);
-		}
-		else
-		{
-			grid_color_cp->setColor(0, QColor(config_params[Attributes::Configuration][Attributes::GridColor]));
-			canvas_color_cp->setColor(0, QColor(config_params[Attributes::Configuration][Attributes::CanvasColor]));
-			delimiters_color_cp->setColor(0, QColor(config_params[Attributes::Configuration][Attributes::DelimitersColor]));
-		}
 
 		int ui_idx = ui_language_cmb->findData(config_params[Attributes::Configuration][Attributes::UiLanguage]);
 		ui_language_cmb->setCurrentIndex(ui_idx >= 0 ? ui_idx : 0);
@@ -371,7 +268,6 @@ void GeneralConfigWidget::loadConfiguration()
 			}
 		}
 
-		updateFontPreview();
 		this->applyConfiguration();
 	}
 	catch(Exception &e)
@@ -494,7 +390,6 @@ void GeneralConfigWidget::saveConfiguration()
 																															Attributes::Widget +
 																															GlobalAttributes::SchemaExt);
 
-		config_params[Attributes::Configuration][Attributes::GridSize]=QString::number(grid_size_spb->value());
 		config_params[Attributes::Configuration][Attributes::OpListSize]=QString::number(oplist_size_spb->value());
 		config_params[Attributes::Configuration][Attributes::AutoSaveInterval]=QString::number(autosave_interv_chk->isChecked() ? autosave_interv_spb->value() : 0);
 		config_params[Attributes::Configuration][Attributes::PaperType]=QString::number(paper_cmb->currentIndex());
@@ -508,13 +403,9 @@ void GeneralConfigWidget::saveConfiguration()
 		config_params[Attributes::Configuration][Attributes::SimplifiedObjCreation]=(simple_obj_creation_chk->isChecked() ? Attributes::True : "");
 		config_params[Attributes::Configuration][Attributes::ConfirmValidation]=(confirm_validation_chk->isChecked() ? Attributes::True : "");
 		config_params[Attributes::Configuration][Attributes::CodeCompletion]=(code_completion_chk->isChecked() ? Attributes::True : "");
-		config_params[Attributes::Configuration][Attributes::CodeTabWidth]=QString::number(tab_width_chk->isChecked() ? tab_width_spb->value() : 0);
-		config_params[Attributes::Configuration][Attributes::MinObjectOpacity]=QString::number(min_obj_opacity_spb->value());
 		config_params[Attributes::Configuration][Attributes::UsePlaceholders]=(use_placeholders_chk->isChecked() ? Attributes::True : "");
 		config_params[Attributes::Configuration][Attributes::HistoryMaxLength]=QString::number(history_max_length_spb->value());
 		config_params[Attributes::Configuration][Attributes::UseCurvedLines]=(use_curved_lines_chk->isChecked() ? Attributes::True : "");
-		config_params[Attributes::Configuration][Attributes::AttribsPerPage]=QString::number(attribs_per_page_spb->value());
-		config_params[Attributes::Configuration][Attributes::ExtAttribsPerPage]=QString::number(ext_attribs_per_page_spb->value());
 
 		config_params[Attributes::Configuration][Attributes::ShowCanvasGrid]=(ObjectsScene::isShowGrid() ? Attributes::True : "");
 		config_params[Attributes::Configuration][Attributes::ShowPageDelimiters]=(ObjectsScene::isShowPageDelimiters() ? Attributes::True : "");
@@ -539,14 +430,6 @@ void GeneralConfigWidget::saveConfiguration()
 		config_params[Attributes::Configuration][Attributes::HideTableTags]=(hide_table_tags_chk->isChecked() ? Attributes::True : "");
 		config_params[Attributes::Configuration][Attributes::HideSchNameUserTypes]=(hide_sch_name_usr_types_chk->isChecked() ? Attributes::True : "");
 
-		config_params[Attributes::Configuration][Attributes::CodeFont]=font_cmb->currentText();
-		config_params[Attributes::Configuration][Attributes::CodeFontSize]=QString::number(font_size_spb->value());
-		config_params[Attributes::Configuration][Attributes::DisplayLineNumbers]=(disp_line_numbers_chk->isChecked() ? Attributes::True : "");
-		config_params[Attributes::Configuration][Attributes::HighlightLines]=(hightlight_lines_chk->isChecked() ? Attributes::True : "");
-		config_params[Attributes::Configuration][Attributes::LineNumbersColor]=line_numbers_cp->getColor(0).name();
-		config_params[Attributes::Configuration][Attributes::LineNumbersBgColor]=line_numbers_bg_cp->getColor(0).name();
-		config_params[Attributes::Configuration][Attributes::LineHighlightColor]=line_highlight_cp->getColor(0).name();
-
 		config_params[Attributes::Configuration][Attributes::SourceEditorApp]=source_editor_sel->getSelectedFile();
 		config_params[Attributes::Configuration][Attributes::SourceEditorArgs]=source_editor_args_edt->text();
 		config_params[Attributes::Configuration][Attributes::UiLanguage]=ui_language_cmb->currentData().toString();
@@ -555,10 +438,6 @@ void GeneralConfigWidget::saveConfiguration()
 		config_params[Attributes::Configuration][Attributes::SaveRestoreGeometry]=(save_restore_geometry_chk->isChecked() ? Attributes::True : "");
 		config_params[Attributes::Configuration][Attributes::LowVerbosity]=(low_verbosity_chk->isChecked() ? Attributes::True : "");
 		config_params[Attributes::Configuration][Attributes::EscapeComment]=(escape_comments_chk->isChecked() ? Attributes::True : "");
-
-		config_params[Attributes::Configuration][Attributes::GridColor] = grid_color_cp->getColor(0).name();
-		config_params[Attributes::Configuration][Attributes::CanvasColor] = canvas_color_cp->getColor(0).name();
-		config_params[Attributes::Configuration][Attributes::DelimitersColor] = delimiters_color_cp->getColor(0).name();
 
 		config_params[Attributes::Configuration][Attributes::File]="";
 		config_params[Attributes::Configuration][Attributes::RecentModels]="";
@@ -638,11 +517,6 @@ void GeneralConfigWidget::saveConfiguration()
 void GeneralConfigWidget::applyConfiguration()
 {
 	int unit=unity_cmb->currentIndex();
-	QFont fnt;
-	double fnt_size=config_params[Attributes::Configuration][Attributes::CodeFontSize].toDouble();
-
-	if(fnt_size < 5.0)
-		fnt_size=5.0;
 
 	if(!save_restore_geometry_chk->isChecked())
 	  widgets_geom.clear();
@@ -659,11 +533,6 @@ void GeneralConfigWidget::applyConfiguration()
 	ObjectsScene::setEnableCornerMove(corner_move_chk->isChecked());
 	ObjectsScene::setInvertRangeSelectionTrigger(invert_rangesel_chk->isChecked());
 
-	ObjectsScene::setCanvasColor(canvas_color_cp->getColor(0));
-	ObjectsScene::setGridColor(grid_color_cp->getColor(0));
-	ObjectsScene::setDelimitersColor(delimiters_color_cp->getColor(0));
-	ObjectsScene::setGridSize(grid_size_spb->value());
-
 	ObjectsScene::setGridOptions(config_params[Attributes::Configuration][Attributes::ShowCanvasGrid]==Attributes::True,
 															 config_params[Attributes::Configuration][Attributes::AlignObjsToGrid]==Attributes::True,
 															 config_params[Attributes::Configuration][Attributes::ShowPageDelimiters]==Attributes::True);
@@ -671,29 +540,19 @@ void GeneralConfigWidget::applyConfiguration()
 	OperationList::setMaximumSize(oplist_size_spb->value());
 	BaseTableView::setHideExtAttributes(hide_ext_attribs_chk->isChecked());
 	BaseTableView::setHideTags(hide_table_tags_chk->isChecked());
-	BaseTableView::setAttributesPerPage(BaseTable::AttribsSection, attribs_per_page_spb->value());
-	BaseTableView::setAttributesPerPage(BaseTable::ExtAttribsSection, ext_attribs_per_page_spb->value());
+
+	NumberedTextEditor::setSourceEditorApp(source_editor_sel->getSelectedFile());
+	NumberedTextEditor::setSourceEditorAppArgs(source_editor_args_edt->text());
+
 	RelationshipView::setHideNameLabel(hide_rel_name_chk->isChecked());
 	RelationshipView::setCurvedLines(use_curved_lines_chk->isChecked());
 	TableObjectView::setSchemaNameUserType(hide_sch_name_usr_types_chk->isChecked());
 	ModelWidget::setSaveLastCanvasPosition(save_last_pos_chk->isChecked());
 	ModelWidget::setRenderSmoothnessDisabled(disable_smooth_chk->isChecked());
 	ModelWidget::setSimplifiedObjectCreation(simple_obj_creation_chk->isChecked());
-	ModelWidget::setMinimumObjectOpacity(min_obj_opacity_spb->value());
 	MainWindow::setConfirmValidation(confirm_validation_chk->isChecked());
 	BaseObjectView::setPlaceholderEnabled(use_placeholders_chk->isChecked());
 	SQLExecutionWidget::setSQLHistoryMaxLength(history_max_length_spb->value());
-
-	fnt.setFamily(config_params[Attributes::Configuration][Attributes::CodeFont]);
-	fnt.setPointSizeF(fnt_size);
-	NumberedTextEditor::setLineNumbersVisible(disp_line_numbers_chk->isChecked());
-	NumberedTextEditor::setLineHighlightColor(line_highlight_cp->getColor(0));
-	NumberedTextEditor::setHighlightLines(hightlight_lines_chk->isChecked());
-	NumberedTextEditor::setDefaultFont(fnt);
-	NumberedTextEditor::setSourceEditorApp(source_editor_sel->getSelectedFile());
-	NumberedTextEditor::setSourceEditorAppArgs(source_editor_args_edt->text());
-	LineNumbersWidget::setColors(line_numbers_cp->getColor(0), line_numbers_bg_cp->getColor(0));
-	SyntaxHighlighter::setDefaultFont(fnt);
 
 	ModelDatabaseDiffForm::setLowVerbosity(low_verbosity_chk->isChecked());
 	DatabaseImportForm::setLowVerbosity(low_verbosity_chk->isChecked());
@@ -740,29 +599,6 @@ void GeneralConfigWidget::convertMarginUnity()
 	height_spb->setValue(height * conv_factor[unity_cmb->currentIndex()]);
 
 	prev_unity=unity_cmb->currentIndex();
-}
-
-void GeneralConfigWidget::updateFontPreview()
-{
-	QFont fnt;
-
-	fnt=font_cmb->currentFont();
-	fnt.setPointSizeF(font_size_spb->value());
-
-	NumberedTextEditor::setDefaultFont(fnt);
-	NumberedTextEditor::setLineNumbersVisible(disp_line_numbers_chk->isChecked());
-	NumberedTextEditor::setLineHighlightColor(line_highlight_cp->getColor(0));
-	NumberedTextEditor::setHighlightLines(hightlight_lines_chk->isChecked());
-	NumberedTextEditor::setTabDistance(tab_width_chk->isChecked() ? tab_width_spb->value() : 0);
-	LineNumbersWidget::setColors(line_numbers_cp->getColor(0), line_numbers_bg_cp->getColor(0));
-
-	font_preview_txt->setReadOnly(false);
-	font_preview_txt->updateLineNumbersSize();
-	font_preview_txt->updateLineNumbers();
-	font_preview_txt->highlightCurrentLine();
-	font_preview_txt->setReadOnly(true);
-
-	setConfigurationChanged(true);
 }
 
 void GeneralConfigWidget::selectPaperSize()

@@ -17,6 +17,8 @@
 */
 
 #include "appearanceconfigwidget.h"
+#include "widgets/modelwidget.h"
+#include "utils/syntaxhighlighter.h"
 
 map<QString, attribs_map> AppearanceConfigWidget::config_params;
 
@@ -166,16 +168,29 @@ AppearanceConfigWidget::AppearanceConfigWidget(QWidget * parent) : BaseConfigWid
 	grid->addLayout(layout, 2, 1);
 	grid->addWidget(font_preview_txt,grid->count(),0,1,5);
 
-
 	connect(element_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(enableConfigElement()));
-	connect(font_cmb, SIGNAL(currentFontChanged(QFont)), this, SLOT(applyFontStyle()));
-	connect(font_size_spb, SIGNAL(valueChanged(double)), this, SLOT(applyFontStyle()));
-	connect(bold_chk, SIGNAL(toggled(bool)), this, SLOT(applyFontStyle()));
-	connect(underline_chk, SIGNAL(toggled(bool)), this, SLOT(applyFontStyle()));
-	connect(italic_chk, SIGNAL(toggled(bool)), this, SLOT(applyFontStyle()));
+	connect(elem_font_cmb, SIGNAL(currentFontChanged(QFont)), this, SLOT(applyElementFontStyle()));
+	connect(elem_font_size_spb, SIGNAL(valueChanged(double)), this, SLOT(applyElementFontStyle()));
+	connect(bold_chk, SIGNAL(toggled(bool)), this, SLOT(applyElementFontStyle()));
+	connect(underline_chk, SIGNAL(toggled(bool)), this, SLOT(applyElementFontStyle()));
+	connect(italic_chk, SIGNAL(toggled(bool)), this, SLOT(applyElementFontStyle()));
+
+	connect(code_font_size_spb, SIGNAL(valueChanged(double)), this, SLOT(updateCodeFontPreview()));
+	connect(code_font_cmb, SIGNAL(currentFontChanged(QFont)), this, SLOT(updateCodeFontPreview()));
+	connect(line_numbers_cp, SIGNAL(s_colorChanged(unsigned, QColor)), this, SLOT(updateCodeFontPreview()));
+	connect(line_numbers_cp, SIGNAL(s_colorsChanged()), this, SLOT(updateCodeFontPreview()));
+	connect(line_numbers_bg_cp, SIGNAL(s_colorChanged(unsigned, QColor)), this, SLOT(updateCodeFontPreview()));
+	connect(line_numbers_bg_cp, SIGNAL(s_colorsChanged()), this, SLOT(updateCodeFontPreview()));
+	connect(line_highlight_cp, SIGNAL(s_colorChanged(unsigned, QColor)), this, SLOT(updateCodeFontPreview()));
+	connect(line_highlight_cp, SIGNAL(s_colorsChanged()), this, SLOT(updateCodeFontPreview()));
+	connect(disp_line_numbers_chk, SIGNAL(toggled(bool)), this, SLOT(updateCodeFontPreview()));
+	connect(hightlight_lines_chk, SIGNAL(toggled(bool)), this, SLOT(updateCodeFontPreview()));
+	connect(tab_width_spb, SIGNAL(valueChanged(int)), this, SLOT(updateCodeFontPreview()));
+	connect(tab_width_chk, SIGNAL(toggled(bool)), tab_width_spb, SLOT(setEnabled(bool)));
+	connect(tab_width_chk, SIGNAL(toggled(bool)), this, SLOT(updateCodeFontPreview()));
+	connect(font_preview_txt, SIGNAL(cursorPositionChanged()), this, SLOT(updateCodeFontPreview()));
 
 	connect(elem_color_cp, SIGNAL(s_colorChanged(unsigned, QColor)), this, SLOT(applyElementColor(unsigned, QColor)));
-
 	connect(elem_color_cp, &ColorPickerWidget::s_colorsChanged,
 			[&](){
 		for(unsigned i=0; i < elem_color_cp->getColorCount(); i++)
@@ -294,11 +309,9 @@ void AppearanceConfigWidget::loadConfiguration()
 {
 	try
 	{
-		//int i, count=conf_items.size();
 		BaseConfigWidget::loadConfiguration(GlobalAttributes::AppearanceConf, config_params, { Attributes::Id }, true);
 
-		applyDesignCodeStyle();
-		applyObjectsStyle();
+		applyConfiguration();
 		loadExampleModel();
 		model->setObjectsModified();
 		updatePlaceholderItem();
@@ -334,15 +347,15 @@ void AppearanceConfigWidget::applyDesignCodeStyle()
 		delimiters_color_cp->setColor(0, QColor(config_params[Attributes::Design][Attributes::DelimitersColor]));
 	}
 
-	font_cmb->setCurrentFont(QFont(config_params[Attributes::Code][Attributes::CodeFont]));
-	font_size_spb->setValue(config_params[Attributes::Code][Attributes::CodeFontSize].toDouble());
+	code_font_cmb->setCurrentFont(QFont(config_params[Attributes::Code][Attributes::Font]));
+	code_font_size_spb->setValue(config_params[Attributes::Code][Attributes::FontSize].toDouble());
 	disp_line_numbers_chk->setChecked(config_params[Attributes::Code][Attributes::DisplayLineNumbers]==Attributes::True);
 	hightlight_lines_chk->setChecked(config_params[Attributes::Code][Attributes::HighlightLines]==Attributes::True);
 	line_numbers_cp->setColor(0, config_params[Attributes::Code][Attributes::LineNumbersColor]);
 	line_numbers_bg_cp->setColor(0, config_params[Attributes::Code][Attributes::LineNumbersBgColor]);
 	line_highlight_cp->setColor(0, config_params[Attributes::Code][Attributes::LineHighlightColor]);
 
-	int tab_width=(config_params[Attributes::Code][Attributes::CodeTabWidth]).toInt();
+	int tab_width=(config_params[Attributes::Code][Attributes::TabWidth]).toInt();
 	tab_width_chk->setChecked(tab_width > 0);
 	tab_width_spb->setEnabled(tab_width_chk->isChecked());
 	tab_width_spb->setValue(tab_width);
@@ -396,7 +409,6 @@ void AppearanceConfigWidget::applyObjectsStyle()
 		}
 	}
 
-	//for(i=0; i < count; i++)
 	for(auto &cnf_item : conf_items)
 	{
 		if(cnf_item.obj_conf)
@@ -409,7 +421,7 @@ void AppearanceConfigWidget::applyObjectsStyle()
 	}
 
 	enableConfigElement();
-	font_cmb->setCurrentFont(BaseObjectView::getFontStyle(Attributes::Global).font());
+	elem_font_cmb->setCurrentFont(BaseObjectView::getFontStyle(Attributes::Global).font());
 }
 
 void AppearanceConfigWidget::saveConfiguration()
@@ -417,31 +429,45 @@ void AppearanceConfigWidget::saveConfiguration()
 	try
 	{
 		attribs_map attribs;
-		vector<AppearanceConfigItem>::iterator itr, itr_end;
 		AppearanceConfigItem item;
 		QString attrib_id;
 		QFont font;
 
-		itr=conf_items.begin();
-		itr_end=conf_items.end();
+		attribs[Attributes::GridSize]=QString::number(grid_size_spb->value());
+		attribs[Attributes::MinObjectOpacity]=QString::number(min_obj_opacity_spb->value());
+		attribs[Attributes::AttribsPerPage]=QString::number(attribs_per_page_spb->value());
+		attribs[Attributes::ExtAttribsPerPage]=QString::number(ext_attribs_per_page_spb->value());
+		attribs[Attributes::GridColor] = grid_color_cp->getColor(0).name();
+		attribs[Attributes::CanvasColor] = canvas_color_cp->getColor(0).name();
+		attribs[Attributes::DelimitersColor] = delimiters_color_cp->getColor(0).name();
+		config_params[Attributes::Design] = attribs;
+		attribs.clear();
 
-		while(itr!=itr_end)
+		attribs[Attributes::Font]=code_font_cmb->currentText();
+		attribs[Attributes::FontSize]=QString::number(code_font_size_spb->value());
+		attribs[Attributes::DisplayLineNumbers]=(disp_line_numbers_chk->isChecked() ? Attributes::True : "");
+		attribs[Attributes::HighlightLines]=(hightlight_lines_chk->isChecked() ? Attributes::True : "");
+		attribs[Attributes::LineNumbersColor]=line_numbers_cp->getColor(0).name();
+		attribs[Attributes::LineNumbersBgColor]=line_numbers_bg_cp->getColor(0).name();
+		attribs[Attributes::LineHighlightColor]=line_highlight_cp->getColor(0).name();
+		attribs[Attributes::TabWidth]=QString::number(tab_width_chk->isChecked() ? tab_width_spb->value() : 0);
+		config_params[Attributes::Code] = attribs;
+		attribs.clear();
+
+		for(auto &item : conf_items)
 		{
-			item=(*itr);
-			itr++;
-
 			//If the item is a object color config
 			if(item.obj_conf)
 			{
 				//Creates an attribute that stores the fill color
-				attrib_id=item.conf_id + QString("-color");
+				attrib_id=item.conf_id + "-color";
 				if(item.colors[0]==item.colors[1])
 					attribs[attrib_id]=item.colors[0].name();
 				else
-					attribs[attrib_id]=item.colors[0].name() + QString(",") + item.colors[1].name();
+					attribs[attrib_id]=item.colors[0].name() + "," + item.colors[1].name();
 
 				//Creates an attribute that stores the border color
-				attrib_id=item.conf_id + QString("-bcolor");
+				attrib_id=item.conf_id + "-bcolor";
 				attribs[attrib_id]=item.colors[2].name();
 			}
 			//If the item is a font config
@@ -450,27 +476,27 @@ void AppearanceConfigWidget::saveConfiguration()
 				font=item.font_fmt.font();
 
 				//Creates an attribute to store the font color
-				attrib_id=item.conf_id + QString("-fcolor");
+				attrib_id=item.conf_id + "-fcolor";
 				attribs[attrib_id]=item.font_fmt.foreground().color().name();
 
-				attrib_id=item.conf_id + QString("-") + Attributes::Italic;
+				attrib_id=item.conf_id + "-" + Attributes::Italic;
 				attribs[attrib_id]=(font.italic() ? Attributes::True : Attributes::False);
 
-				attrib_id=item.conf_id + QString("-") + Attributes::Bold;
+				attrib_id=item.conf_id + "-" + Attributes::Bold;
 				attribs[attrib_id]=(font.bold() ? Attributes::True : Attributes::False);
 
-				attrib_id=item.conf_id + QString("-") + Attributes::Underline;
+				attrib_id=item.conf_id + "-" + Attributes::Underline;
 				attribs[attrib_id]=(font.underline() ? Attributes::True : Attributes::False);
 			}
 			//Special case: treating the global font element
 			else
 			{
-				attribs[QString("font-name")]=QFontInfo(item.font_fmt.font()).family();
-				attribs[QString("font-size")]=QString("%1").arg(item.font_fmt.font().pointSizeF());
+				attribs[Attributes::Global + "-font"]=QFontInfo(item.font_fmt.font()).family();
+				attribs[Attributes::Global + "-font-size"]=QString("%1").arg(item.font_fmt.font().pointSizeF());
 			}
 		}
 
-		config_params[GlobalAttributes::AppearanceConf]=attribs;
+		config_params[GlobalAttributes::AppearanceConf] = attribs;
 		BaseConfigWidget::saveConfiguration(GlobalAttributes::AppearanceConf, config_params);
 	}
 	catch(Exception &e)
@@ -485,9 +511,9 @@ void AppearanceConfigWidget::enableConfigElement()
 	int idx=element_cmb->currentIndex();
 
 	//Widgets enabled only when the global font element is selected (idx==0)
-	font_cmb->setEnabled(idx==0);
+	elem_font_cmb->setEnabled(idx==0);
 	font_lbl->setEnabled(idx==0);
-	font_size_spb->setEnabled(idx==0);
+	elem_font_size_spb->setEnabled(idx==0);
 	unity_lbl->setEnabled(idx==0);
 
 	//Widgets enabled when a font configuration element is selected
@@ -509,8 +535,8 @@ void AppearanceConfigWidget::enableConfigElement()
 	underline_chk->blockSignals(true);
 	italic_chk->blockSignals(true);
 	bold_chk->blockSignals(true);
-	font_cmb->blockSignals(true);
-	font_size_spb->blockSignals(true);
+	elem_font_cmb->blockSignals(true);
+	elem_font_size_spb->blockSignals(true);
 
 	if(!conf_items[idx].obj_conf)
 	{
@@ -519,8 +545,8 @@ void AppearanceConfigWidget::enableConfigElement()
 		underline_chk->setChecked(fmt.font().underline());
 		italic_chk->setChecked(fmt.font().italic());
 		bold_chk->setChecked(fmt.font().bold());
-		font_cmb->setCurrentFont(fmt.font());
-		font_size_spb->setValue(fmt.font().pointSizeF());
+		elem_font_cmb->setCurrentFont(fmt.font());
+		elem_font_size_spb->setValue(fmt.font().pointSizeF());
 	}
 	else
 	{
@@ -538,8 +564,8 @@ void AppearanceConfigWidget::enableConfigElement()
 	underline_chk->blockSignals(false);
 	italic_chk->blockSignals(false);
 	bold_chk->blockSignals(false);
-	font_cmb->blockSignals(false);
-	font_size_spb->blockSignals(false);
+	elem_font_cmb->blockSignals(false);
+	elem_font_size_spb->blockSignals(false);
 }
 
 void AppearanceConfigWidget::applyElementColor(unsigned color_idx, QColor color)
@@ -562,15 +588,44 @@ void AppearanceConfigWidget::applyElementColor(unsigned color_idx, QColor color)
 	setConfigurationChanged(true);
 }
 
-void AppearanceConfigWidget::applyFontStyle()
+void AppearanceConfigWidget::applyConfiguration()
+{
+	applyDesignCodeStyle();
+	applyObjectsStyle();
+
+	ObjectsScene::setCanvasColor(canvas_color_cp->getColor(0));
+	ObjectsScene::setGridColor(grid_color_cp->getColor(0));
+	ObjectsScene::setDelimitersColor(delimiters_color_cp->getColor(0));
+	ObjectsScene::setGridSize(grid_size_spb->value());
+	BaseTableView::setAttributesPerPage(BaseTable::AttribsSection, attribs_per_page_spb->value());
+	BaseTableView::setAttributesPerPage(BaseTable::ExtAttribsSection, ext_attribs_per_page_spb->value());
+	ModelWidget::setMinimumObjectOpacity(min_obj_opacity_spb->value());
+
+	double fnt_size = config_params[Attributes::Code][Attributes::FontSize].toDouble();
+	QFont fnt;
+
+	if(fnt_size < 5.0)
+		fnt_size = 5.0;
+
+	fnt.setFamily(config_params[Attributes::Code][Attributes::Font]);
+	fnt.setPointSizeF(fnt_size);
+	NumberedTextEditor::setLineNumbersVisible(disp_line_numbers_chk->isChecked());
+	NumberedTextEditor::setLineHighlightColor(line_highlight_cp->getColor(0));
+	NumberedTextEditor::setHighlightLines(hightlight_lines_chk->isChecked());
+	NumberedTextEditor::setDefaultFont(fnt);
+	LineNumbersWidget::setColors(line_numbers_cp->getColor(0), line_numbers_bg_cp->getColor(0));
+	SyntaxHighlighter::setDefaultFont(fnt);
+}
+
+void AppearanceConfigWidget::applyElementFontStyle()
 {
 	QFont font;
 
-	font=font_cmb->currentFont();
+	font=elem_font_cmb->currentFont();
 	font.setBold(bold_chk->isChecked());
 	font.setItalic(italic_chk->isChecked());
 	font.setUnderline(underline_chk->isChecked());
-	font.setPointSizeF(font_size_spb->value());
+	font.setPointSizeF(elem_font_size_spb->value());
 
 	conf_items[element_cmb->currentIndex()].font_fmt.setFont(font);
 	BaseObjectView::setFontStyle(conf_items[element_cmb->currentIndex()].conf_id,
@@ -586,11 +641,34 @@ void AppearanceConfigWidget::restoreDefaults()
 	try
 	{
 		BaseConfigWidget::restoreDefaults(GlobalAttributes::AppearanceConf, false);
-		this->loadConfiguration();
+		loadConfiguration();
 		setConfigurationChanged(true);
 	}
 	catch(Exception &e)
 	{
 		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
+}
+
+void AppearanceConfigWidget::updateCodeFontPreview()
+{
+	QFont fnt;
+
+	fnt=code_font_cmb->currentFont();
+	fnt.setPointSizeF(code_font_size_spb->value());
+
+	NumberedTextEditor::setDefaultFont(fnt);
+	NumberedTextEditor::setLineNumbersVisible(disp_line_numbers_chk->isChecked());
+	NumberedTextEditor::setLineHighlightColor(line_highlight_cp->getColor(0));
+	NumberedTextEditor::setHighlightLines(hightlight_lines_chk->isChecked());
+	NumberedTextEditor::setTabDistance(tab_width_chk->isChecked() ? tab_width_spb->value() : 0);
+	LineNumbersWidget::setColors(line_numbers_cp->getColor(0), line_numbers_bg_cp->getColor(0));
+
+	font_preview_txt->setReadOnly(false);
+	font_preview_txt->updateLineNumbersSize();
+	font_preview_txt->updateLineNumbers();
+	font_preview_txt->highlightCurrentLine();
+	font_preview_txt->setReadOnly(true);
+
+	setConfigurationChanged(true);
 }

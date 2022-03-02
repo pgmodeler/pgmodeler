@@ -143,9 +143,6 @@ class BaseObjectView: public QObject, public QGraphicsItemGroup {
 		//! \brief Returns the object that is representend by the graphical object
 		BaseObject *getUnderlyingObject();
 
-		//! \brief Loads the font / color styels for the objects from a XML configuration file
-		static void loadObjectsStyle();
-
 		//! \brief Returns the objects bounding rect in local coordination
 		QRectF boundingRect(void) const;
 

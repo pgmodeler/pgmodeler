@@ -103,12 +103,11 @@ class AppearanceConfigWidget: public BaseConfigWidget, public Ui::AppearanceConf
 		
 	private slots:
 		void enableConfigElement();
-		void applyFontStyle();
+		void applyElementFontStyle();
 		void applyElementColor(unsigned color_idx, QColor color);
-		
-		/*! \brief Disabled method */
-		void applyConfiguration(void){}
-		
+		void applyConfiguration(void);
+		void updateCodeFontPreview();
+
 	public slots:
 		void restoreDefaults();
 };

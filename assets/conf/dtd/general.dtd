@@ -6,10 +6,6 @@
 
 <!ELEMENT configuration EMPTY>
 <!ATTLIST configuration op-list-size CDATA #REQUIRED>
-<!ATTLIST configuration grid-size CDATA #REQUIRED>
-<!ATTLIST configuration grid-color CDATA #IMPLIED>
-<!ATTLIST configuration canvas-color CDATA #IMPLIED>
-<!ATTLIST configuration delimiters-color CDATA #IMPLIED>
 <!ATTLIST configuration autosave-interval CDATA #IMPLIED>
 <!ATTLIST configuration paper-type CDATA #IMPLIED>
 <!ATTLIST configuration paper-orientation (portrait|landscape) "landscape">
@@ -30,21 +26,10 @@
 <!ATTLIST configuration simplified-obj-creation (false|true) "false">
 <!ATTLIST configuration confirm-validation (false|true) "true">
 <!ATTLIST configuration code-completion (false|true) "true">
-<!ATTLIST configuration code-font CDATA #IMPLIED>
-<!ATTLIST configuration code-font-size CDATA #IMPLIED>
-<!ATTLIST configuration display-line-numbers (false|true) "true">
-<!ATTLIST configuration highlight-lines (false|true) "true">
-<!ATTLIST configuration line-numbers-color CDATA #IMPLIED>
-<!ATTLIST configuration line-numbers-bg-color CDATA #IMPLIED>
-<!ATTLIST configuration line-highlight-color CDATA #IMPLIED>
-<!ATTLIST configuration code-tab-width CDATA #IMPLIED>
 <!ATTLIST configuration use-placeholders (false|true) "true">
 <!ATTLIST configuration show-canvas-grid (false|true) "true">
 <!ATTLIST configuration show-page-delimiters (false|true) "true">
 <!ATTLIST configuration align-objs-to-grid (false|true) "true">
-<!ATTLIST configuration min-object-opacity CDATA #IMPLIED>
-<!ATTLIST configuration attribs-per-page CDATA #IMPLIED>
-<!ATTLIST configuration ext-attribs-per-page CDATA #IMPLIED>
 <!ATTLIST configuration history-max-length CDATA #IMPLIED>
 <!ATTLIST configuration source-editor-app CDATA #IMPLIED>
 <!ATTLIST configuration source-editor-args CDATA #IMPLIED>
