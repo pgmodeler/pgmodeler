@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>584</width>
-    <height>605</height>
+    <width>827</width>
+    <height>793</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -42,7 +42,7 @@
      </property>
      <widget class="QWidget" name="tab">
       <attribute name="title">
-       <string>Connection Mode</string>
+       <string>Connection mode</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout_3">
        <property name="leftMargin">
@@ -103,16 +103,10 @@
                 <verstretch>0</verstretch>
                </sizepolicy>
               </property>
-              <property name="minimumSize">
-               <size>
-                <width>555</width>
-                <height>81</height>
-               </size>
-              </property>
               <property name="maximumSize">
                <size>
-                <width>555</width>
-                <height>81</height>
+                <width>16777215</width>
+                <height>150</height>
                </size>
               </property>
               <property name="frameShape">
@@ -129,6 +123,9 @@
               </property>
               <property name="pixmap">
                <pixmap resource="../../res/resources.qrc">:/images/images/crows_foot_notation.png</pixmap>
+              </property>
+              <property name="scaledContents">
+               <bool>true</bool>
               </property>
               <property name="textInteractionFlags">
                <set>Qt::NoTextInteraction</set>
@@ -181,16 +178,10 @@
                 <verstretch>0</verstretch>
                </sizepolicy>
               </property>
-              <property name="minimumSize">
-               <size>
-                <width>0</width>
-                <height>0</height>
-               </size>
-              </property>
               <property name="maximumSize">
                <size>
-                <width>555</width>
-                <height>16777215</height>
+                <width>16777215</width>
+                <height>150</height>
                </size>
               </property>
               <property name="frameShape">
@@ -207,6 +198,9 @@
               </property>
               <property name="pixmap">
                <pixmap resource="../../res/resources.qrc">:/images/images/rel_tab_edges.png</pixmap>
+              </property>
+              <property name="scaledContents">
+               <bool>true</bool>
               </property>
               <property name="textInteractionFlags">
                <set>Qt::NoTextInteraction</set>
@@ -253,16 +247,10 @@
                 <verstretch>0</verstretch>
                </sizepolicy>
               </property>
-              <property name="minimumSize">
-               <size>
-                <width>0</width>
-                <height>101</height>
-               </size>
-              </property>
               <property name="maximumSize">
                <size>
-                <width>555</width>
-                <height>101</height>
+                <width>16777215</width>
+                <height>150</height>
                </size>
               </property>
               <property name="frameShape">
@@ -279,6 +267,9 @@
               </property>
               <property name="pixmap">
                <pixmap resource="../../res/resources.qrc">:/images/images/rel_fk_to_pk.png</pixmap>
+              </property>
+              <property name="scaledContents">
+               <bool>true</bool>
               </property>
               <property name="textInteractionFlags">
                <set>Qt::NoTextInteraction</set>
@@ -328,16 +319,10 @@
                 <verstretch>0</verstretch>
                </sizepolicy>
               </property>
-              <property name="minimumSize">
-               <size>
-                <width>0</width>
-                <height>101</height>
-               </size>
-              </property>
               <property name="maximumSize">
                <size>
-                <width>555</width>
-                <height>101</height>
+                <width>16777215</width>
+                <height>150</height>
                </size>
               </property>
               <property name="frameShape">
@@ -354,6 +339,9 @@
               </property>
               <property name="pixmap">
                <pixmap resource="../../res/resources.qrc">:/images/images/rel_center_pnts.png</pixmap>
+              </property>
+              <property name="scaledContents">
+               <bool>true</bool>
               </property>
               <property name="textInteractionFlags">
                <set>Qt::NoTextInteraction</set>
