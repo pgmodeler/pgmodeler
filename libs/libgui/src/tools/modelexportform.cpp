@@ -31,16 +31,16 @@ ModelExportForm::ModelExportForm(QWidget *parent, Qt::WindowFlags f) : QDialog(p
 
 	sql_file_sel = new FileSelectorWidget(this);
 	sql_file_sel->setFileDialogTitle(tr("Export model to SQL file"));
-	export_to_file_grid->addWidget(sql_file_sel, 1, 2);
+	export_to_file_grid->addWidget(sql_file_sel, 1, 1);
 
 	img_file_sel = new FileSelectorWidget(this);
 	img_file_sel->setFileDialogTitle(tr("Export model to graphics file"));
 	img_file_sel->setAcceptMode(QFileDialog::AcceptSave);
-	export_to_img_grid->addWidget(img_file_sel, 1, 2, 1, 2);
+	export_to_img_grid->addWidget(img_file_sel, 1, 1, 1, 2);
 
 	dict_file_sel = new FileSelectorWidget(this);
 	dict_file_sel->setFileDialogTitle(tr("Export model to data dictionary"));
-	export_to_dict_grid->addWidget(dict_file_sel, 1, 2, 1, 5);
+	export_to_dict_grid->addWidget(dict_file_sel, 1, 1, 1, 5);
 
 	htmlitem_del=new HtmlItemDelegate(this);
 	output_trw->setItemDelegateForColumn(0, htmlitem_del);
