@@ -51,7 +51,7 @@ NumberedTextEditor::NumberedTextEditor(QWidget * parent, bool handle_ext_files) 
 		QHBoxLayout *hbox = new QHBoxLayout, *hbox1 = new QHBoxLayout;
 		QFont font = this->font();
 
-		font.setPointSizeF(font.pointSizeF() * 0.95);
+		font.setPointSizeF(font.pointSizeF() * 0.90);
 
 		top_widget = new QWidget(this);
 		top_widget->setAutoFillBackground(true);
@@ -68,7 +68,6 @@ NumberedTextEditor::NumberedTextEditor(QWidget * parent, bool handle_ext_files) 
 		msg_lbl = new QLabel(this);
 		msg_lbl->setTextInteractionFlags(Qt::TextSelectableByMouse);
 
-		ico->setMaximumSize(22,22);
 		ico->setPixmap(QPixmap(GuiUtilsNs::getIconPath("alert")));
 		ico->setScaledContents(true);
 
@@ -84,7 +83,6 @@ NumberedTextEditor::NumberedTextEditor(QWidget * parent, bool handle_ext_files) 
 
 		load_file_btn = new QToolButton(top_widget);
 		load_file_btn->setIcon(QPixmap(GuiUtilsNs::getIconPath("open")));
-		load_file_btn->setIconSize(QSize(32,32));
 		load_file_btn->setAutoRaise(true);
 		load_file_btn->setText(tr("Load"));
 		load_file_btn->setToolTip(tr("Load the object's source code from an external file"));
@@ -95,7 +93,6 @@ NumberedTextEditor::NumberedTextEditor(QWidget * parent, bool handle_ext_files) 
 
 		edit_src_btn = new QToolButton(top_widget);
 		edit_src_btn->setIcon(QPixmap(GuiUtilsNs::getIconPath("edit")));
-		edit_src_btn->setIconSize(QSize(32,32));
 		edit_src_btn->setAutoRaise(true);
 		edit_src_btn->setText(tr("Edit"));
 		edit_src_btn->setToolTip(tr("Edit the source code in the preferred external editor"));
@@ -106,7 +103,6 @@ NumberedTextEditor::NumberedTextEditor(QWidget * parent, bool handle_ext_files) 
 
 		clear_btn = new QToolButton(top_widget);
 		clear_btn->setIcon(QPixmap(GuiUtilsNs::getIconPath("cleartext")));
-		clear_btn->setIconSize(QSize(32,32));
 		clear_btn->setAutoRaise(true);
 		clear_btn->setText(tr("Clear"));
 		clear_btn->setFont(font);
@@ -122,8 +118,10 @@ NumberedTextEditor::NumberedTextEditor(QWidget * parent, bool handle_ext_files) 
 			clear_btn->setEnabled(!this->toPlainText().isEmpty() && !this->isReadOnly());
 		});
 
+		ico->setMaximumSize(edit_src_btn->iconSize());
 		hbox->addWidget(clear_btn);
 		top_widget->setLayout(hbox);
+		top_widget->adjustSize();
 
 		connect(&src_editor_proc, SIGNAL(finished(int)), this, SLOT(updateSource(int)));
 		connect(&src_editor_proc, SIGNAL(started()), this, SLOT(handleProcessStart()));

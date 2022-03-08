@@ -22,9 +22,79 @@
 
 map<QString, attribs_map> AppearanceConfigWidget::config_params;
 
+map<QPalette::ColorRole, QStringList> AppearanceConfigWidget::system_ui_colors = {
+	{ QPalette::WindowText, {} },
+	{ QPalette::Button, {} },
+	{ QPalette::Light, {} },
+	{ QPalette::Midlight, {} },
+	{ QPalette::Dark, {} },
+	{ QPalette::Mid, {} },
+	{ QPalette::Text, {} },
+	{ QPalette::BrightText, {} },
+	{ QPalette::ButtonText, {} },
+	{ QPalette::Base, {} },
+	{ QPalette::Window, {} },
+	{ QPalette::Shadow, {} },
+	{ QPalette::Highlight, {} },
+	{ QPalette::HighlightedText, {} },
+	{ QPalette::Link, {} },
+	{ QPalette::LinkVisited, {} },
+	{ QPalette::AlternateBase, {} },
+	{ QPalette::ToolTipBase, {} },
+	{ QPalette::ToolTipText, {} },
+	{ QPalette::PlaceholderText, {} }
+};
+
+map<QPalette::ColorRole, QStringList> AppearanceConfigWidget::dark_ui_colors = {
+	{ QPalette::WindowText, {"#eff0f1", "#eff0f1", "#626c76"} },
+	{ QPalette::Button, {"#31363b", "#31363b", "#31363b"} },
+	{ QPalette::Light, {"#181b1d", "#181b1d", "#181b1d"} },
+	{ QPalette::Midlight, {"#25292c", "#25292c", "#25292c"} },
+	{ QPalette::Dark, {"#626c76", "#626c76", "#626c76"} },
+	{ QPalette::Mid, {"#41484e", "#41484e", "#41484e"} },
+	{ QPalette::Text, {"#eff0f1", "#eff0f1", "#626c76"} },
+	{ QPalette::BrightText, {"#ffffff", "#ffffff", "#ffffff"} },
+	{ QPalette::ButtonText, {"#eff0f1", "#eff0f1", "#626c76"} },
+	{ QPalette::Base, {"#232629", "#232629", "#31363b"} },
+	{ QPalette::Window, {"#31363b", "#31363b", "#31363b"} },
+	{ QPalette::Shadow, {"#767676", "#767676", "#b1b1b1"} },
+	{ QPalette::Highlight, {"#3daee9", "#3daee9", "#41484e"} },
+	{ QPalette::HighlightedText, {"#eff0f1", "#eff0f1", "#25292c"} },
+	{ QPalette::Link, {"#2980b9", "#2980b9", "#2980b9"} },
+	{ QPalette::LinkVisited, {"#7f8c8d", "#7f8c8d", "#7f8c8d"} },
+	{ QPalette::AlternateBase, {"#31363b", "#31363b", "#31363b"} },
+	{ QPalette::ToolTipBase, {"#31363b", "#31363b", "#31363b"} },
+	{ QPalette::ToolTipText, {"#eff0f1", "#eff0f1", "#eff0f1"} },
+	{ QPalette::PlaceholderText, {"#2e2f30", "#2e2f30", "#2e2f30"} }
+};
+
+map<QPalette::ColorRole, QStringList> AppearanceConfigWidget::light_ui_colors = {
+	{ QPalette::WindowText, {"#232627", "#232627", "#777878"} },
+	{ QPalette::Button, {"#eff0f1", "#eff0f1", "#eff0f1"} },
+	{ QPalette::Light, {"#ffffff", "#ffffff", "#ffffff"} },
+	{ QPalette::Midlight, {"#ffffff", "#ffffff", "#ffffff"} },
+	{ QPalette::Dark, {"#777878", "#777878", "#777878"} },
+	{ QPalette::Mid, {"#9fa0a1", "#9fa0a1", "#9fa0a1"} },
+	{ QPalette::Text, {"#232627", "#232627", "#777878"} },
+	{ QPalette::BrightText, {"#ffffff", "#ffffff", "#ffffff"} },
+	{ QPalette::ButtonText, {"#232627", "#232627", "#777878"} },
+	{ QPalette::Base, {"#fcfcfc", "#fcfcfc", "#eff0f1"} },
+	{ QPalette::Window, {"#eff0f1", "#eff0f1", "#eff0f1"} },
+	{ QPalette::Shadow, {"#767676", "#767676", "#b1b1b1"} },
+	{ QPalette::Highlight, {"#3daee9", "#3daee9", "#9fa0a1"} },
+	{ QPalette::HighlightedText, {"#fcfcfc", "#fcfcfc", "#fcfcfc"} },
+	{ QPalette::Link, {"#2980b9", "#2980b9", "#2980b9"} },
+	{ QPalette::LinkVisited, {"#7f8c8d", "#7f8c8d", "#7f8c8d"} },
+	{ QPalette::AlternateBase, {"#eff0f1", "#eff0f1", "#eff0f1"} },
+	{ QPalette::ToolTipBase, {"#232627", "#232627", "#232627"} },
+	{ QPalette::ToolTipText, {"#fcfcfc", "#fcfcfc", "#fcfcfc"} },
+	{ QPalette::PlaceholderText, {"#2e2f30", "#2e2f30", "#2e2f30"} }
+};
+
 AppearanceConfigWidget::AppearanceConfigWidget(QWidget * parent) : BaseConfigWidget(parent)
 {
 	setupUi(this);
+	storeSystemUiColors();
 
 	QStringList conf_ids={
 	/* 00 */	Attributes::Global,
@@ -203,10 +273,15 @@ CREATE TABLE public.table_b (\n \
 			applyElementColor(i, elem_color_cp->getColor(i));
 	});
 
+	connect(canvas_color_cp, &ColorPickerWidget::s_colorChanged, this, &AppearanceConfigWidget::updateCanvasColors);
 	connect(canvas_color_cp, &ColorPickerWidget::s_colorsChanged, this, &AppearanceConfigWidget::updateCanvasColors);
+	connect(delimiters_color_cp, &ColorPickerWidget::s_colorChanged, this, &AppearanceConfigWidget::updateCanvasColors);
 	connect(delimiters_color_cp, &ColorPickerWidget::s_colorsChanged, this, &AppearanceConfigWidget::updateCanvasColors);
+	connect(grid_color_cp, &ColorPickerWidget::s_colorChanged, this, &AppearanceConfigWidget::updateCanvasColors);
 	connect(grid_color_cp, &ColorPickerWidget::s_colorsChanged, this, &AppearanceConfigWidget::updateCanvasColors);
 	connect(grid_size_spb, &QSpinBox::textChanged, this, &AppearanceConfigWidget::updateCanvasColors);
+
+	connect(ui_colors_cmb, &QComboBox::currentTextChanged, this, &AppearanceConfigWidget::applyUiTheme);
 }
 
 AppearanceConfigWidget::~AppearanceConfigWidget()
@@ -691,4 +766,43 @@ void AppearanceConfigWidget::updateCanvasColors()
 	ObjectsScene::setGridSize(grid_size_spb->value());
 	scene->update();
 	setConfigurationChanged(true);
+}
+
+void AppearanceConfigWidget::applyUiTheme()
+{
+	static vector<map<QPalette::ColorRole, QStringList> *> color_maps = {
+		&system_ui_colors, &dark_ui_colors, &light_ui_colors
+	};
+
+	map<QPalette::ColorRole, QStringList> *color_map = color_maps.at(ui_colors_cmb->currentIndex());
+	QPalette pal;
+
+	for(auto &itr : *color_map)
+	{
+		pal.setColor(QPalette::Active, itr.first, itr.second[0]);
+		pal.setColor(QPalette::Inactive, itr.first, itr.second[1]);
+		pal.setColor(QPalette::Disabled, itr.first, itr.second[2]);
+	}
+
+	qApp->setPalette(pal);
+
+	/* Workaround: Forcing the assignment of palette to QPushButton and QTabWidget because
+	 * some instances seem not to be accepting the parent palette change. */
+	qApp->setPalette(pal, "QPushButton");
+	qApp->setPalette(pal, "QTabWidget");
+}
+
+void AppearanceConfigWidget::storeSystemUiColors()
+{
+	if(!system_ui_colors[QPalette::Base].isEmpty())
+		return;
+
+	QPalette pal = qApp->palette();
+
+	for(auto &itr : system_ui_colors)
+	{
+		itr.second.append(pal.color(QPalette::Active, itr.first).name());
+		itr.second.append(pal.color(QPalette::Inactive, itr.first).name());
+		itr.second.append(pal.color(QPalette::Disabled, itr.first).name());
+	}
 }

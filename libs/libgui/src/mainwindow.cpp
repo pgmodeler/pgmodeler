@@ -48,54 +48,8 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	pending_op=NoPendingOp;
 	central_wgt=nullptr;
 
-	layers_cfg_wgt = new LayersConfigWidget(this);
-	layers_cfg_wgt->setVisible(false);
-
-	changelog_wgt  = new ChangelogWidget(this);
-	changelog_wgt->setVisible(false);
-
-	scene_info_wgt = new SceneInfoWidget(this);
-	QHBoxLayout *hbox = new QHBoxLayout(scene_info_parent);
-	hbox->addWidget(scene_info_wgt);
-	hbox->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
-	scene_info_parent->setLayout(hbox);
-
-	fix_menu.addAction(action_fix_model);
-	fix_menu.addAction(action_handle_metadata);
-	action_fix->setMenu(&fix_menu);
-	QToolButton *tool_btn = qobject_cast<QToolButton *>(tools_acts_tb->widgetForAction(action_fix));
-	tool_btn->setPopupMode(QToolButton::InstantPopup);
-
-	tool_btn = qobject_cast<QToolButton *>(model_acts_tb->widgetForAction(action_arrange_objects));
-	tool_btn->setMenu(&arrange_menu);
-	tool_btn->setPopupMode(QToolButton::InstantPopup);
-	arrange_menu.addAction(tr("Grid"), this, SLOT(arrangeObjects()));
-	arrange_menu.addAction(tr("Hierarchical"), this, SLOT(arrangeObjects()));
-	arrange_menu.addAction(tr("Scattered"), this, SLOT(arrangeObjects()));
-
 	try
 	{
-		models_tbw->tabBar()->setVisible(false);
-		tools_acts_tb->layout()->setContentsMargins(0,0,0,0);
-
-		central_wgt=new WelcomeWidget(views_stw);
-		grid=new QGridLayout;
-		grid->setContentsMargins(0,0,0,0);
-		grid->setSpacing(0);
-		grid->addWidget(central_wgt, 0, 0);
-		views_stw->widget(WelcomeView)->setLayout(grid);
-
-		action_welcome->setData(WelcomeView);
-		action_design->setData(DesignView);
-		action_manage->setData(ManageView);
-
-		sql_tool_wgt=new SQLToolWidget;
-		grid=new QGridLayout;
-		grid->setContentsMargins(0,0,0,0);
-		grid->setSpacing(0);
-		grid->addWidget(sql_tool_wgt, 0, 0);
-		views_stw->widget(ManageView)->setLayout(grid);
-
 		configuration_form=new ConfigurationForm(nullptr, Qt::WindowTitleHint | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint);
 		GuiUtilsNs::resizeDialog(configuration_form);
 		configuration_form->loadConfiguration();
@@ -140,16 +94,62 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 
 			itr++;
 		}
-
-		//Enables the action to restore session when there are registered session files
-		action_restore_session->setEnabled(!prev_session_files.isEmpty());
-		central_wgt->last_session_tb->setEnabled(action_restore_session->isEnabled());
 	}
 	catch(Exception &e)
 	{
 		Messagebox msg_box;
 		msg_box.show(e);
 	}
+
+	layers_cfg_wgt = new LayersConfigWidget(this);
+	layers_cfg_wgt->setVisible(false);
+
+	changelog_wgt  = new ChangelogWidget(this);
+	changelog_wgt->setVisible(false);
+
+	scene_info_wgt = new SceneInfoWidget(this);
+	QHBoxLayout *hbox = new QHBoxLayout(scene_info_parent);
+	hbox->addWidget(scene_info_wgt);
+	hbox->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
+	scene_info_parent->setLayout(hbox);
+
+	fix_menu.addAction(action_fix_model);
+	fix_menu.addAction(action_handle_metadata);
+	action_fix->setMenu(&fix_menu);
+	QToolButton *tool_btn = qobject_cast<QToolButton *>(tools_acts_tb->widgetForAction(action_fix));
+	tool_btn->setPopupMode(QToolButton::InstantPopup);
+
+	tool_btn = qobject_cast<QToolButton *>(model_acts_tb->widgetForAction(action_arrange_objects));
+	tool_btn->setMenu(&arrange_menu);
+	tool_btn->setPopupMode(QToolButton::InstantPopup);
+	arrange_menu.addAction(tr("Grid"), this, SLOT(arrangeObjects()));
+	arrange_menu.addAction(tr("Hierarchical"), this, SLOT(arrangeObjects()));
+	arrange_menu.addAction(tr("Scattered"), this, SLOT(arrangeObjects()));
+
+	models_tbw->tabBar()->setVisible(false);
+	tools_acts_tb->layout()->setContentsMargins(0,0,0,0);
+
+	central_wgt=new WelcomeWidget(views_stw);
+	grid=new QGridLayout;
+	grid->setContentsMargins(0,0,0,0);
+	grid->setSpacing(0);
+	grid->addWidget(central_wgt, 0, 0);
+	views_stw->widget(WelcomeView)->setLayout(grid);
+
+	action_welcome->setData(WelcomeView);
+	action_design->setData(DesignView);
+	action_manage->setData(ManageView);
+
+	sql_tool_wgt=new SQLToolWidget;
+	grid=new QGridLayout;
+	grid->setContentsMargins(0,0,0,0);
+	grid->setSpacing(0);
+	grid->addWidget(sql_tool_wgt, 0, 0);
+	views_stw->widget(ManageView)->setLayout(grid);
+
+	//Enables the action to restore session when there are registered session files
+	action_restore_session->setEnabled(!prev_session_files.isEmpty());
+	central_wgt->last_session_tb->setEnabled(action_restore_session->isEnabled());
 
 	try
 	{

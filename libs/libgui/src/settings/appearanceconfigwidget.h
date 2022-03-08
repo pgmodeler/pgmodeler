@@ -37,8 +37,22 @@ class AppearanceConfigWidget: public BaseConfigWidget, public Ui::AppearanceConf
 	private:
 		Q_OBJECT
 		
+		//! \brief Holds the currently loaded config params
 		static map<QString, attribs_map> config_params;
-		
+
+		/*! \brief Holds the QPalette settings that defines dark theme.
+		 * This map key is a color role which value is a string list that
+		 * contais 3 elements: active color, inactive color and disabled color. */
+		static map<QPalette::ColorRole, QStringList> dark_ui_colors,
+
+		/*! \brief Holds the QPalette settings that defines light theme.
+		 * This map key is a color role which value is a string list that
+		 * contais 3 elements: active color, inactive color and disabled color. */
+		light_ui_colors,
+
+		//! \brief Holds the default/system QPalette settings.
+		system_ui_colors;
+
 		//! \brief Auxiliary class that stores the formating data of each element
 		class AppearanceConfigItem {
 			public:
@@ -93,6 +107,9 @@ class AppearanceConfigWidget: public BaseConfigWidget, public Ui::AppearanceConf
 		//! \brief Applies the design and code settings loaded from file
 		void applyDesignCodeStyle();
 
+		//! \brief Stores in system_ui_colors the default colors of ui elements
+		void storeSystemUiColors();
+
 	public:
 		AppearanceConfigWidget(QWidget * parent = nullptr);
 		virtual ~AppearanceConfigWidget();
@@ -108,6 +125,7 @@ class AppearanceConfigWidget: public BaseConfigWidget, public Ui::AppearanceConf
 		void applyConfiguration(void);
 		void updateCodeFontPreview();
 		void updateCanvasColors();
+		void applyUiTheme();
 
 	public slots:
 		void restoreDefaults();

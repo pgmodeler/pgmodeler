@@ -66,8 +66,8 @@ bool FileSelectorWidget::eventFilter(QObject *obj, QEvent *evnt)
 
 void FileSelectorWidget::resizeEvent(QResizeEvent *)
 {
-	warn_ico_lbl->move(filename_edt->width() - warn_ico_lbl->width(),
-										 (filename_edt->height() - warn_ico_lbl->height())/2);
+	warn_ico_lbl->move(filename_edt->width() - warn_ico_lbl->width() - 5,
+										 filename_edt->height() - warn_ico_lbl->height());
 }
 
 void FileSelectorWidget::setAllowFilenameInput(bool allow_fl_input)

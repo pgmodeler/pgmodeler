@@ -74,7 +74,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QComboBox" name="comboBox">
+           <widget class="QComboBox" name="ui_colors_cmb">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -88,12 +88,12 @@
             </item>
             <item>
              <property name="text">
-              <string>Light</string>
+              <string>Dark</string>
              </property>
             </item>
             <item>
              <property name="text">
-              <string>Dark</string>
+              <string>Light</string>
              </property>
             </item>
            </widget>
@@ -109,7 +109,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QComboBox" name="comboBox_4">
+           <widget class="QComboBox" name="highlight_colors_cmb">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
               <horstretch>0</horstretch>
