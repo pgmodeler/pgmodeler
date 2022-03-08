@@ -157,7 +157,13 @@ AppearanceConfigWidget::AppearanceConfigWidget(QWidget * parent) : BaseConfigWid
 
 	font_preview_txt=new NumberedTextEditor(this);
 	font_preview_txt->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-	font_preview_txt->setPlainText(tr("The little brown fox jumps over the lazy dog") + QString("\n\ttext with tab «") + QString("\n0123456789\n.()[]{};"));
+	font_preview_txt->setPlainText(
+"-- object: public.foo | type: TABLE --\n \
+CREATE TABLE public.table_b (\n \
+\tid serial NOT NULL,\n \
+\tsku integer NOT NULL,\n \
+\tCONSTRAINT foo_pk PRIMARY KEY (id)\n \
+);\n");
 
 	QBoxLayout *layout=new QBoxLayout(QBoxLayout::LeftToRight);
 	grid=dynamic_cast<QGridLayout *>(code_font_gb->layout());
@@ -166,36 +172,41 @@ AppearanceConfigWidget::AppearanceConfigWidget(QWidget * parent) : BaseConfigWid
 	layout->addWidget(line_highlight_cp);
 	layout->addItem(new QSpacerItem(1000,20, QSizePolicy::Expanding));
 	grid->addLayout(layout, 2, 1);
-	grid->addWidget(font_preview_txt,grid->count(),0,1,5);
+	grid->addWidget(font_preview_txt,grid->count(),0, 1, 4);
 
-	connect(element_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(enableConfigElement()));
-	connect(elem_font_cmb, SIGNAL(currentFontChanged(QFont)), this, SLOT(applyElementFontStyle()));
-	connect(elem_font_size_spb, SIGNAL(valueChanged(double)), this, SLOT(applyElementFontStyle()));
-	connect(bold_chk, SIGNAL(toggled(bool)), this, SLOT(applyElementFontStyle()));
-	connect(underline_chk, SIGNAL(toggled(bool)), this, SLOT(applyElementFontStyle()));
-	connect(italic_chk, SIGNAL(toggled(bool)), this, SLOT(applyElementFontStyle()));
+	connect(element_cmb, &QComboBox::currentTextChanged, this, &AppearanceConfigWidget::enableConfigElement);
+	connect(elem_font_cmb, &QFontComboBox::currentFontChanged, this, &AppearanceConfigWidget::applyElementFontStyle);
+	connect(elem_font_size_spb, &QDoubleSpinBox::textChanged, this, &AppearanceConfigWidget::applyElementFontStyle);
+	connect(bold_chk, &QToolButton::toggled, this, &AppearanceConfigWidget::applyElementFontStyle);
+	connect(underline_chk,&QToolButton::toggled, this, &AppearanceConfigWidget::applyElementFontStyle);
+	connect(italic_chk, &QToolButton::toggled, this, &AppearanceConfigWidget::applyElementFontStyle);
 
-	connect(code_font_size_spb, SIGNAL(valueChanged(double)), this, SLOT(updateCodeFontPreview()));
-	connect(code_font_cmb, SIGNAL(currentFontChanged(QFont)), this, SLOT(updateCodeFontPreview()));
-	connect(line_numbers_cp, SIGNAL(s_colorChanged(unsigned, QColor)), this, SLOT(updateCodeFontPreview()));
-	connect(line_numbers_cp, SIGNAL(s_colorsChanged()), this, SLOT(updateCodeFontPreview()));
-	connect(line_numbers_bg_cp, SIGNAL(s_colorChanged(unsigned, QColor)), this, SLOT(updateCodeFontPreview()));
-	connect(line_numbers_bg_cp, SIGNAL(s_colorsChanged()), this, SLOT(updateCodeFontPreview()));
-	connect(line_highlight_cp, SIGNAL(s_colorChanged(unsigned, QColor)), this, SLOT(updateCodeFontPreview()));
-	connect(line_highlight_cp, SIGNAL(s_colorsChanged()), this, SLOT(updateCodeFontPreview()));
-	connect(disp_line_numbers_chk, SIGNAL(toggled(bool)), this, SLOT(updateCodeFontPreview()));
-	connect(hightlight_lines_chk, SIGNAL(toggled(bool)), this, SLOT(updateCodeFontPreview()));
-	connect(tab_width_spb, SIGNAL(valueChanged(int)), this, SLOT(updateCodeFontPreview()));
-	connect(tab_width_chk, SIGNAL(toggled(bool)), tab_width_spb, SLOT(setEnabled(bool)));
-	connect(tab_width_chk, SIGNAL(toggled(bool)), this, SLOT(updateCodeFontPreview()));
-	connect(font_preview_txt, SIGNAL(cursorPositionChanged()), this, SLOT(updateCodeFontPreview()));
+	connect(code_font_size_spb, &QDoubleSpinBox::textChanged, this, &AppearanceConfigWidget::updateCodeFontPreview);
+	connect(code_font_cmb, &QFontComboBox::currentFontChanged, this,  &AppearanceConfigWidget::updateCodeFontPreview);
+	connect(line_numbers_cp, &ColorPickerWidget::s_colorChanged, this, &AppearanceConfigWidget::updateCodeFontPreview);
+	connect(line_numbers_cp, &ColorPickerWidget::s_colorsChanged, this, &AppearanceConfigWidget::updateCodeFontPreview);
+	connect(line_numbers_bg_cp, &ColorPickerWidget::s_colorChanged, this, &AppearanceConfigWidget::updateCodeFontPreview);
+	connect(line_numbers_bg_cp, &ColorPickerWidget::s_colorsChanged, this, &AppearanceConfigWidget::updateCodeFontPreview);
+	connect(line_highlight_cp, &ColorPickerWidget::s_colorChanged, this, &AppearanceConfigWidget::updateCodeFontPreview);
+	connect(line_highlight_cp, &ColorPickerWidget::s_colorsChanged, this, &AppearanceConfigWidget::updateCodeFontPreview);
+	connect(disp_line_numbers_chk, &QCheckBox::toggled, this, &AppearanceConfigWidget::updateCodeFontPreview);
+	connect(hightlight_lines_chk, &QCheckBox::toggled, this, &AppearanceConfigWidget::updateCodeFontPreview);
+	connect(tab_width_spb, &QSpinBox::textChanged, this, &AppearanceConfigWidget::updateCodeFontPreview);
+	connect(tab_width_chk, &QCheckBox::toggled, tab_width_spb, &QSpinBox::setEnabled);
+	connect(tab_width_chk, &QCheckBox::toggled, this, &AppearanceConfigWidget::updateCodeFontPreview);
+	connect(font_preview_txt, &NumberedTextEditor::cursorPositionChanged, this, &AppearanceConfigWidget::updateCodeFontPreview);
 
-	connect(elem_color_cp, SIGNAL(s_colorChanged(unsigned, QColor)), this, SLOT(applyElementColor(unsigned, QColor)));
+	connect(elem_color_cp, &ColorPickerWidget::s_colorChanged, this, &AppearanceConfigWidget::applyElementColor);
 	connect(elem_color_cp, &ColorPickerWidget::s_colorsChanged,
 			[&](){
 		for(unsigned i=0; i < elem_color_cp->getColorCount(); i++)
 			applyElementColor(i, elem_color_cp->getColor(i));
 	});
+
+	connect(canvas_color_cp, &ColorPickerWidget::s_colorsChanged, this, &AppearanceConfigWidget::updateCanvasColors);
+	connect(delimiters_color_cp, &ColorPickerWidget::s_colorsChanged, this, &AppearanceConfigWidget::updateCanvasColors);
+	connect(grid_color_cp, &ColorPickerWidget::s_colorsChanged, this, &AppearanceConfigWidget::updateCanvasColors);
+	connect(grid_size_spb, &QSpinBox::textChanged, this, &AppearanceConfigWidget::updateCanvasColors);
 }
 
 AppearanceConfigWidget::~AppearanceConfigWidget()
@@ -507,8 +518,7 @@ void AppearanceConfigWidget::saveConfiguration()
 
 void AppearanceConfigWidget::enableConfigElement()
 {
-	//QPalette pal;
-	int idx=element_cmb->currentIndex();
+	int idx = element_cmb->currentIndex();
 
 	//Widgets enabled only when the global font element is selected (idx==0)
 	elem_font_cmb->setEnabled(idx==0);
@@ -670,5 +680,15 @@ void AppearanceConfigWidget::updateCodeFontPreview()
 	font_preview_txt->highlightCurrentLine();
 	font_preview_txt->setReadOnly(true);
 
+	setConfigurationChanged(true);
+}
+
+void AppearanceConfigWidget::updateCanvasColors()
+{
+	ObjectsScene::setCanvasColor(canvas_color_cp->getColor(0));
+	ObjectsScene::setGridColor(grid_color_cp->getColor(0));
+	ObjectsScene::setDelimitersColor(delimiters_color_cp->getColor(0));
+	ObjectsScene::setGridSize(grid_size_spb->value());
+	scene->update();
 	setConfigurationChanged(true);
 }

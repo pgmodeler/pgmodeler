@@ -107,6 +107,7 @@ class AppearanceConfigWidget: public BaseConfigWidget, public Ui::AppearanceConf
 		void applyElementColor(unsigned color_idx, QColor color);
 		void applyConfiguration(void);
 		void updateCodeFontPreview();
+		void updateCanvasColors();
 
 	public slots:
 		void restoreDefaults();
