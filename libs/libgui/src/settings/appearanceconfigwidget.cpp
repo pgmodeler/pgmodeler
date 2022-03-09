@@ -18,9 +18,11 @@
 
 #include "appearanceconfigwidget.h"
 #include "widgets/modelwidget.h"
-#include "utils/syntaxhighlighter.h"
 
 map<QString, attribs_map> AppearanceConfigWidget::config_params;
+
+QStringList AppearanceConfigWidget::ui_themes_attribs = { Attributes::System, Attributes::Dark, Attributes::Light };
+QStringList AppearanceConfigWidget::syntax_hl_themes_attribs  = { Attributes::Dark, Attributes::Light };
 
 map<QPalette::ColorRole, QStringList> AppearanceConfigWidget::system_ui_colors = {
 	{ QPalette::WindowText, {} },
@@ -235,6 +237,8 @@ CREATE TABLE public.table_b (\n \
 \tCONSTRAINT foo_pk PRIMARY KEY (id)\n \
 );\n");
 
+	font_preview_hl = new SyntaxHighlighter(font_preview_txt, false, true);
+
 	QBoxLayout *layout=new QBoxLayout(QBoxLayout::LeftToRight);
 	grid=dynamic_cast<QGridLayout *>(code_font_gb->layout());
 	layout->addWidget(line_numbers_cp);
@@ -251,20 +255,20 @@ CREATE TABLE public.table_b (\n \
 	connect(underline_chk,&QToolButton::toggled, this, &AppearanceConfigWidget::applyElementFontStyle);
 	connect(italic_chk, &QToolButton::toggled, this, &AppearanceConfigWidget::applyElementFontStyle);
 
-	connect(code_font_size_spb, &QDoubleSpinBox::textChanged, this, &AppearanceConfigWidget::updateCodeFontPreview);
-	connect(code_font_cmb, &QFontComboBox::currentFontChanged, this,  &AppearanceConfigWidget::updateCodeFontPreview);
-	connect(line_numbers_cp, &ColorPickerWidget::s_colorChanged, this, &AppearanceConfigWidget::updateCodeFontPreview);
-	connect(line_numbers_cp, &ColorPickerWidget::s_colorsChanged, this, &AppearanceConfigWidget::updateCodeFontPreview);
-	connect(line_numbers_bg_cp, &ColorPickerWidget::s_colorChanged, this, &AppearanceConfigWidget::updateCodeFontPreview);
-	connect(line_numbers_bg_cp, &ColorPickerWidget::s_colorsChanged, this, &AppearanceConfigWidget::updateCodeFontPreview);
-	connect(line_highlight_cp, &ColorPickerWidget::s_colorChanged, this, &AppearanceConfigWidget::updateCodeFontPreview);
-	connect(line_highlight_cp, &ColorPickerWidget::s_colorsChanged, this, &AppearanceConfigWidget::updateCodeFontPreview);
-	connect(disp_line_numbers_chk, &QCheckBox::toggled, this, &AppearanceConfigWidget::updateCodeFontPreview);
-	connect(hightlight_lines_chk, &QCheckBox::toggled, this, &AppearanceConfigWidget::updateCodeFontPreview);
-	connect(tab_width_spb, &QSpinBox::textChanged, this, &AppearanceConfigWidget::updateCodeFontPreview);
+	connect(code_font_size_spb, &QDoubleSpinBox::textChanged, this, &AppearanceConfigWidget::previewCodeFontStyle);
+	connect(code_font_cmb, &QFontComboBox::currentFontChanged, this,  &AppearanceConfigWidget::previewCodeFontStyle);
+	connect(line_numbers_cp, &ColorPickerWidget::s_colorChanged, this, &AppearanceConfigWidget::previewCodeFontStyle);
+	connect(line_numbers_cp, &ColorPickerWidget::s_colorsChanged, this, &AppearanceConfigWidget::previewCodeFontStyle);
+	connect(line_numbers_bg_cp, &ColorPickerWidget::s_colorChanged, this, &AppearanceConfigWidget::previewCodeFontStyle);
+	connect(line_numbers_bg_cp, &ColorPickerWidget::s_colorsChanged, this, &AppearanceConfigWidget::previewCodeFontStyle);
+	connect(line_highlight_cp, &ColorPickerWidget::s_colorChanged, this, &AppearanceConfigWidget::previewCodeFontStyle);
+	connect(line_highlight_cp, &ColorPickerWidget::s_colorsChanged, this, &AppearanceConfigWidget::previewCodeFontStyle);
+	connect(disp_line_numbers_chk, &QCheckBox::toggled, this, &AppearanceConfigWidget::previewCodeFontStyle);
+	connect(hightlight_lines_chk, &QCheckBox::toggled, this, &AppearanceConfigWidget::previewCodeFontStyle);
+	connect(tab_width_spb, &QSpinBox::textChanged, this, &AppearanceConfigWidget::previewCodeFontStyle);
 	connect(tab_width_chk, &QCheckBox::toggled, tab_width_spb, &QSpinBox::setEnabled);
-	connect(tab_width_chk, &QCheckBox::toggled, this, &AppearanceConfigWidget::updateCodeFontPreview);
-	connect(font_preview_txt, &NumberedTextEditor::cursorPositionChanged, this, &AppearanceConfigWidget::updateCodeFontPreview);
+	connect(tab_width_chk, &QCheckBox::toggled, this, &AppearanceConfigWidget::previewCodeFontStyle);
+	connect(font_preview_txt, &NumberedTextEditor::cursorPositionChanged, this, &AppearanceConfigWidget::previewCodeFontStyle);
 
 	connect(elem_color_cp, &ColorPickerWidget::s_colorChanged, this, &AppearanceConfigWidget::applyElementColor);
 	connect(elem_color_cp, &ColorPickerWidget::s_colorsChanged,
@@ -273,15 +277,16 @@ CREATE TABLE public.table_b (\n \
 			applyElementColor(i, elem_color_cp->getColor(i));
 	});
 
-	connect(canvas_color_cp, &ColorPickerWidget::s_colorChanged, this, &AppearanceConfigWidget::updateCanvasColors);
-	connect(canvas_color_cp, &ColorPickerWidget::s_colorsChanged, this, &AppearanceConfigWidget::updateCanvasColors);
-	connect(delimiters_color_cp, &ColorPickerWidget::s_colorChanged, this, &AppearanceConfigWidget::updateCanvasColors);
-	connect(delimiters_color_cp, &ColorPickerWidget::s_colorsChanged, this, &AppearanceConfigWidget::updateCanvasColors);
-	connect(grid_color_cp, &ColorPickerWidget::s_colorChanged, this, &AppearanceConfigWidget::updateCanvasColors);
-	connect(grid_color_cp, &ColorPickerWidget::s_colorsChanged, this, &AppearanceConfigWidget::updateCanvasColors);
-	connect(grid_size_spb, &QSpinBox::textChanged, this, &AppearanceConfigWidget::updateCanvasColors);
+	connect(canvas_color_cp, &ColorPickerWidget::s_colorChanged, this, &AppearanceConfigWidget::previewCanvasColors);
+	connect(canvas_color_cp, &ColorPickerWidget::s_colorsChanged, this, &AppearanceConfigWidget::previewCanvasColors);
+	connect(delimiters_color_cp, &ColorPickerWidget::s_colorChanged, this, &AppearanceConfigWidget::previewCanvasColors);
+	connect(delimiters_color_cp, &ColorPickerWidget::s_colorsChanged, this, &AppearanceConfigWidget::previewCanvasColors);
+	connect(grid_color_cp, &ColorPickerWidget::s_colorChanged, this, &AppearanceConfigWidget::previewCanvasColors);
+	connect(grid_color_cp, &ColorPickerWidget::s_colorsChanged, this, &AppearanceConfigWidget::previewCanvasColors);
+	connect(grid_size_spb, &QSpinBox::textChanged, this, &AppearanceConfigWidget::previewCanvasColors);
 
-	connect(ui_colors_cmb, &QComboBox::currentTextChanged, this, &AppearanceConfigWidget::applyUiTheme);
+	connect(ui_theme_cmb, &QComboBox::currentTextChanged, this, &AppearanceConfigWidget::applyUiTheme);
+	connect(syntax_hl_theme_cmb, &QComboBox::currentTextChanged, this, &AppearanceConfigWidget::applySyntaxHighlightTheme);
 }
 
 AppearanceConfigWidget::~AppearanceConfigWidget()
@@ -303,79 +308,80 @@ void AppearanceConfigWidget::loadExampleModel()
 {
 	try
 	{
+		if(model->getObjectCount() != 0)
+			return;
+
 		RelationshipView *rel=nullptr;
 		StyledTextboxView *txtbox=nullptr;
 		TableView *tab=nullptr;
 		GraphicalView *view=nullptr;
-		unsigned count, i;
+		unsigned count = 0, i = 0;
 		QList<BaseObjectView *> graph_objs;
 
-		if(model->getObjectCount()==0)
+		model->loadModel(GlobalAttributes::getTmplConfigurationFilePath("", GlobalAttributes::ExampleModel));
+
+		count=model->getObjectCount(ObjectType::Table);
+		for(i=0; i < count; i++)
 		{
-			model->loadModel(GlobalAttributes::getTmplConfigurationFilePath("", GlobalAttributes::ExampleModel));
-
-			count=model->getObjectCount(ObjectType::Table);
-			for(i=0; i < count; i++)
-			{
-				tab=new TableView(model->getTable(i));
-				tab->setSelected(i==1);
-				scene->addItem(tab);
-				graph_objs.append(tab);
-			}
-
-			count=model->getObjectCount(ObjectType::ForeignTable);
-			for(i=0; i < count; i++)
-			{
-				tab=new TableView(model->getForeignTable(i));
-				scene->addItem(tab);
-				graph_objs.append(tab);
-			}
-
-			count=model->getObjectCount(ObjectType::View);
-			for(i=0; i < count; i++)
-			{
-				view=new GraphicalView(model->getView(i));
-				scene->addItem(view);
-				graph_objs.append(view);
-			}
-
-			count=model->getObjectCount(ObjectType::Relationship);
-			for(i=0; i < count; i++)
-			{
-				rel=new RelationshipView(model->getRelationship(i, ObjectType::Relationship));
-				scene->addItem(rel);
-				graph_objs.append(rel);
-			}
-
-			count=model->getObjectCount(ObjectType::BaseRelationship);
-			for(i=0; i < count; i++)
-			{
-				rel=new RelationshipView(model->getRelationship(i, ObjectType::BaseRelationship));
-				scene->addItem(rel);
-				graph_objs.append(rel);
-			}
-
-			count=model->getObjectCount(ObjectType::Textbox);
-			for(i=0; i < count; i++)
-			{
-				txtbox=new StyledTextboxView(model->getTextbox(i));
-				txtbox->setSelected(i==0);
-				scene->addItem(txtbox);
-				graph_objs.append(txtbox);
-			}
-
-			for(auto &obj : graph_objs)
-			{
-				obj->setFlag(QGraphicsItem::ItemIsSelectable, false);
-				obj->setFlag(QGraphicsItem::ItemIsMovable, false);
-			}
-
-			placeholder->setRect(QRectF(400, 280, 200, 150));
-			updatePlaceholderItem();
-			scene->addItem(placeholder);
-			scene->setActiveLayers(QList<unsigned>({0}));
-			scene->setSceneRect(scene->itemsBoundingRect(false));
+			tab=new TableView(model->getTable(i));
+			tab->setSelected(i==1);
+			scene->addItem(tab);
+			graph_objs.append(tab);
 		}
+
+		count=model->getObjectCount(ObjectType::ForeignTable);
+		for(i=0; i < count; i++)
+		{
+			tab=new TableView(model->getForeignTable(i));
+			scene->addItem(tab);
+			graph_objs.append(tab);
+		}
+
+		count=model->getObjectCount(ObjectType::View);
+		for(i=0; i < count; i++)
+		{
+			view=new GraphicalView(model->getView(i));
+			scene->addItem(view);
+			graph_objs.append(view);
+		}
+
+		count=model->getObjectCount(ObjectType::Relationship);
+		for(i=0; i < count; i++)
+		{
+			rel=new RelationshipView(model->getRelationship(i, ObjectType::Relationship));
+			scene->addItem(rel);
+			graph_objs.append(rel);
+		}
+
+		count=model->getObjectCount(ObjectType::BaseRelationship);
+		for(i=0; i < count; i++)
+		{
+			rel=new RelationshipView(model->getRelationship(i, ObjectType::BaseRelationship));
+			scene->addItem(rel);
+			graph_objs.append(rel);
+		}
+
+		count=model->getObjectCount(ObjectType::Textbox);
+		for(i=0; i < count; i++)
+		{
+			txtbox=new StyledTextboxView(model->getTextbox(i));
+			txtbox->setSelected(i==0);
+			scene->addItem(txtbox);
+			graph_objs.append(txtbox);
+		}
+
+		for(auto &obj : graph_objs)
+		{
+			obj->setFlag(QGraphicsItem::ItemIsSelectable, false);
+			obj->setFlag(QGraphicsItem::ItemIsMovable, false);
+		}
+
+		placeholder->setRect(QRectF(400, 280, 200, 150));
+		updatePlaceholderItem();
+		scene->addItem(placeholder);
+		scene->setActiveLayers(QList<unsigned>({0}));
+		scene->setSceneRect(scene->itemsBoundingRect(false));
+
 	}
 	catch(Exception &e)
 	{
@@ -397,11 +403,23 @@ void AppearanceConfigWidget::loadConfiguration()
 	{
 		BaseConfigWidget::loadConfiguration(GlobalAttributes::AppearanceConf, config_params, { Attributes::Id }, true);
 
+		ui_theme_cmb->blockSignals(true);
+		syntax_hl_theme_cmb->blockSignals(true);
+
+		ui_theme_cmb->setCurrentIndex(ui_themes_attribs.indexOf(config_params[GlobalAttributes::AppearanceConf][Attributes::UiTheme]));
+
+		if(ui_theme_cmb->currentIndex() < 0)
+			ui_theme_cmb->setCurrentIndex(0);
+
+		syntax_hl_theme_cmb->setCurrentIndex(syntax_hl_themes_attribs.indexOf(config_params[GlobalAttributes::AppearanceConf][Attributes::SyntaxHlTheme]));
+
+		if(syntax_hl_theme_cmb->currentIndex() < 0)
+			syntax_hl_theme_cmb->setCurrentIndex(0);
+
+		ui_theme_cmb->blockSignals(false);
+		syntax_hl_theme_cmb->blockSignals(false);
+
 		applyConfiguration();
-		loadExampleModel();
-		model->setObjectsModified();
-		updatePlaceholderItem();
-		scene->update();
 	}
 	catch(Exception &e)
 	{
@@ -519,6 +537,12 @@ void AppearanceConfigWidget::saveConfiguration()
 		QString attrib_id;
 		QFont font;
 
+		config_params.erase(GlobalAttributes::AppearanceConf);
+		attribs[Attributes::UiTheme] = ui_themes_attribs.at(ui_theme_cmb->currentIndex());
+		attribs[Attributes::SyntaxHlTheme] = syntax_hl_themes_attribs.at(ui_theme_cmb->currentIndex());
+		config_params[Attributes::UiTheme] = attribs;
+		attribs.clear();
+
 		attribs[Attributes::GridSize]=QString::number(grid_size_spb->value());
 		attribs[Attributes::MinObjectOpacity]=QString::number(min_obj_opacity_spb->value());
 		attribs[Attributes::AttribsPerPage]=QString::number(attribs_per_page_spb->value());
@@ -582,7 +606,7 @@ void AppearanceConfigWidget::saveConfiguration()
 			}
 		}
 
-		config_params[GlobalAttributes::AppearanceConf] = attribs;
+		config_params[Attributes::Objects] = attribs;
 		BaseConfigWidget::saveConfiguration(GlobalAttributes::AppearanceConf, config_params);
 	}
 	catch(Exception &e)
@@ -675,6 +699,7 @@ void AppearanceConfigWidget::applyElementColor(unsigned color_idx, QColor color)
 
 void AppearanceConfigWidget::applyConfiguration()
 {
+	applyUiTheme();
 	applyDesignCodeStyle();
 	applyObjectsStyle();
 
@@ -700,6 +725,11 @@ void AppearanceConfigWidget::applyConfiguration()
 	NumberedTextEditor::setDefaultFont(fnt);
 	LineNumbersWidget::setColors(line_numbers_cp->getColor(0), line_numbers_bg_cp->getColor(0));
 	SyntaxHighlighter::setDefaultFont(fnt);
+
+	loadExampleModel();
+	model->setObjectsModified();
+	updatePlaceholderItem();
+	scene->update();
 }
 
 void AppearanceConfigWidget::applyElementFontStyle()
@@ -735,7 +765,7 @@ void AppearanceConfigWidget::restoreDefaults()
 	}
 }
 
-void AppearanceConfigWidget::updateCodeFontPreview()
+void AppearanceConfigWidget::previewCodeFontStyle()
 {
 	QFont fnt;
 
@@ -758,7 +788,7 @@ void AppearanceConfigWidget::updateCodeFontPreview()
 	setConfigurationChanged(true);
 }
 
-void AppearanceConfigWidget::updateCanvasColors()
+void AppearanceConfigWidget::previewCanvasColors()
 {
 	ObjectsScene::setCanvasColor(canvas_color_cp->getColor(0));
 	ObjectsScene::setGridColor(grid_color_cp->getColor(0));
@@ -770,11 +800,11 @@ void AppearanceConfigWidget::updateCanvasColors()
 
 void AppearanceConfigWidget::applyUiTheme()
 {
-	static vector<map<QPalette::ColorRole, QStringList> *> color_maps = {
+	vector<map<QPalette::ColorRole, QStringList> *> color_maps = {
 		&system_ui_colors, &dark_ui_colors, &light_ui_colors
 	};
 
-	map<QPalette::ColorRole, QStringList> *color_map = color_maps.at(ui_colors_cmb->currentIndex());
+	map<QPalette::ColorRole, QStringList> *color_map = color_maps.at(ui_theme_cmb->currentIndex());
 	QPalette pal;
 
 	for(auto &itr : *color_map)
@@ -784,12 +814,26 @@ void AppearanceConfigWidget::applyUiTheme()
 		pal.setColor(QPalette::Disabled, itr.first, itr.second[2]);
 	}
 
-	qApp->setPalette(pal);
-
 	/* Workaround: Forcing the assignment of palette to QPushButton and QTabWidget because
 	 * some instances seem not to be accepting the parent palette change. */
 	qApp->setPalette(pal, "QPushButton");
 	qApp->setPalette(pal, "QTabWidget");
+	qApp->setPalette(pal);
+
+	applySyntaxHighlightTheme();
+	setConfigurationChanged(true);
+}
+
+void AppearanceConfigWidget::applySyntaxHighlightTheme()
+{
+	QString hl_file = GlobalAttributes::getTmplConfigurationFilePath(GlobalAttributes::ThemesDir +
+																																	 GlobalAttributes::DirSeparator +
+																																	 syntax_hl_theme_cmb->currentText().toLower(),
+																																	 GlobalAttributes::SQLHighlightConf + GlobalAttributes::ConfigurationExt);
+
+	font_preview_hl->loadConfiguration(hl_file);
+	font_preview_hl->rehighlight();
+	setConfigurationChanged(true);
 }
 
 void AppearanceConfigWidget::storeSystemUiColors()

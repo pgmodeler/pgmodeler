@@ -31,6 +31,7 @@
 #include "objectsscene.h"
 #include "databasemodel.h"
 #include "widgets/numberedtexteditor.h"
+#include "utils/syntaxhighlighter.h"
 #include <algorithm>
 
 class AppearanceConfigWidget: public BaseConfigWidget, public Ui::AppearanceConfigWidget  {
@@ -39,6 +40,12 @@ class AppearanceConfigWidget: public BaseConfigWidget, public Ui::AppearanceConf
 		
 		//! \brief Holds the currently loaded config params
 		static map<QString, attribs_map> config_params;
+
+		//! \brief Holds the default attributes used to identify UI themes
+		static QStringList ui_themes_attribs,
+
+		//! \brief Holds the default attributes used to identify syntax highlight themes
+		syntax_hl_themes_attribs;
 
 		/*! \brief Holds the QPalette settings that defines dark theme.
 		 * This map key is a color role which value is a string list that
@@ -63,6 +70,8 @@ class AppearanceConfigWidget: public BaseConfigWidget, public Ui::AppearanceConf
 		};
 		
 		NumberedTextEditor *font_preview_txt;
+
+		SyntaxHighlighter *font_preview_hl;
 
 		RoundedRectItem *placeholder;
 					
@@ -123,9 +132,12 @@ class AppearanceConfigWidget: public BaseConfigWidget, public Ui::AppearanceConf
 		void applyElementFontStyle();
 		void applyElementColor(unsigned color_idx, QColor color);
 		void applyConfiguration(void);
-		void updateCodeFontPreview();
-		void updateCanvasColors();
+		void previewCodeFontStyle();
+		void previewCanvasColors();
+
+		//! \brief Applies the selected ui theme to the whole application
 		void applyUiTheme();
+		void applySyntaxHighlightTheme();
 
 	public slots:
 		void restoreDefaults();

@@ -110,7 +110,7 @@ class GlobalAttributes {
 		MetadataDTD,			//! \brief Root DTD of objects metadata xml files
 		ConfigurationExt, //! \brief Default extension for configuration files
 		HighlightFileSuffix, //! \brief Suffix of language highlight configuration files
-		UiStyleDir,					 //! \brief Default name for the ui style directory
+		ThemesDir,					 //! \brief Default name for the ui style directory
 
 		CodeHighlightConf,  //! \brief Default name for the language highlight dtd
 		AppearanceConf,   //! \brief Default name for the appearance configuration file

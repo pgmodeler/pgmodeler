@@ -49,8 +49,6 @@ bool BaseConfigWidget::isConfigurationChanged()
 
 void BaseConfigWidget::saveConfiguration(const QString &conf_id, map<QString, attribs_map> &config_params)
 {
-	//QByteArray buf;
-
 	//Configures the schema filename for the configuration
 	QString	sch_filename=GlobalAttributes::getTmplConfigurationFilePath(GlobalAttributes::SchemasDir,
 																																			conf_id + GlobalAttributes::SchemaExt),
@@ -58,31 +56,21 @@ void BaseConfigWidget::saveConfiguration(const QString &conf_id, map<QString, at
 			//Cofnigures the filename for the configuration file
 			cfg_filename = GlobalAttributes::getConfigurationFilePath(conf_id);
 
-	//QFile output(cfg_filename);
 	attribs_map attribs;
-	map<QString, attribs_map >::iterator itr, itr_end;
 
 	try
 	{
-		itr=config_params.begin();
-		itr_end=config_params.end();
-
-		while(itr!=itr_end)
-		{
-			attribs.insert((itr->second).begin(), (itr->second).end());
-			itr++;
-		}
+		for(auto &itr : config_params)
+			attribs.insert(itr.second.begin(), itr.second.end());
 
 		//Generates the configuration from the schema file
 		schparser.ignoreEmptyAttributes(true);
-		UtilsNs::saveFile(cfg_filename,
-											XmlParser::convertCharsToXMLEntities(schparser.getCodeDefinition(sch_filename, attribs)).toUtf8());
+		UtilsNs::saveFile(cfg_filename, XmlParser::convertCharsToXMLEntities(schparser.getCodeDefinition(sch_filename, attribs)).toUtf8());
 
 		config_params.erase(conf_id);
 	}
 	catch(Exception &e)
 	{
-		//if(output.isOpen()) output.close();
 		throw Exception(Exception::getErrorMessage(ErrorCode::FileNotWrittenInvalidDefinition).arg(cfg_filename),
 										ErrorCode::FileNotWrittenInvalidDefinition,__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
@@ -145,6 +133,9 @@ void BaseConfigWidget::loadConfiguration(const QString &conf_id, map<QString, at
 												 conf_id);
 
 		xmlparser.loadXMLFile(filename);
+
+		// Get the attributes of the root element
+		this->getConfigurationParams(config_params, key_attribs, incl_elem_name);
 
 		if(xmlparser.accessElement(XmlParser::ChildElement))
 		{

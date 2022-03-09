@@ -61,6 +61,7 @@ const QString GlobalAttributes::RootDTD("dbmodel");
 const QString GlobalAttributes::MetadataDTD("metadata");
 const QString GlobalAttributes::ConfigurationExt(".conf");
 const QString GlobalAttributes::HighlightFileSuffix("-highlight");
+const QString GlobalAttributes::ThemesDir("themes");
 
 const QString GlobalAttributes::CodeHighlightConf("source-code-highlight");
 const QString GlobalAttributes::AppearanceConf("appearance");

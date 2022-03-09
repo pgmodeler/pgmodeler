@@ -6,11 +6,14 @@
 [ Unexpected results may occur if the code is changed deliberately.] $br
 [-->] $br
 
-$br <appearance> $br
-
 %set {spc} $tb $tb
 
-$tb <design
+$br <appearance 
+$sp ui-theme="{ui-theme}" 
+$sp syntax-hl-theme="{syntax-hl-theme}"
+> $br
+
+$br $tb <design
 $sp grid-size="{grid-size}"
 $sp grid-color="{grid-color}"
 $sp canvas-color="{canvas-color}"

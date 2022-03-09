@@ -19,7 +19,7 @@
 #include "schemaeditorform.h"
 #include "guiutilsns.h"
 #include "globalattributes.h"
-#include "settings/generalconfigwidget.h"
+#include "settings/appearanceconfigwidget.h"
 #include "guiutilsns.h"
 #include "sourceeditorwidget.h"
 #include "aboutwidget.h"
@@ -51,8 +51,8 @@ SchemaEditorForm::SchemaEditorForm(QWidget *parent) : QWidget(parent)
 			btn->setToolTip(btn->toolTip() + QString(" (%1)").arg(btn->shortcut().toString()));
 	}
 
-	GeneralConfigWidget general_conf_wgt;
-	general_conf_wgt.loadConfiguration();
+	AppearanceConfigWidget appearance_conf_wgt;
+	appearance_conf_wgt.loadConfiguration();
 
 	alert_frm->setVisible(false);
 

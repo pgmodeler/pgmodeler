@@ -36,9 +36,9 @@ ConfigurationForm::ConfigurationForm(QWidget *parent, Qt::WindowFlags f) : QDial
 	for(auto &wgt : wgt_list)
 		confs_stw->addWidget(wgt);
 
-	connect(cancel_btn, SIGNAL(clicked()), this, SLOT(reject()));
-	connect(apply_btn, SIGNAL(clicked()), this, SLOT(applyConfiguration()));
-	connect(defaults_btn, SIGNAL(clicked()), this, SLOT(restoreDefaults()));
+	connect(cancel_btn, &QPushButton::clicked, this, &ConfigurationForm::reject);
+	connect(apply_btn,  &QPushButton::clicked, this, &ConfigurationForm::applyConfiguration);
+	connect(defaults_btn,  &QPushButton::clicked, this, &ConfigurationForm::restoreDefaults);
 
 	setMinimumSize(890, 740);
 
@@ -94,14 +94,14 @@ void ConfigurationForm::reject()
 {
 	try
 	{
-		if(sender()==cancel_btn)
+		if(sender() == cancel_btn)
 		{
 			QWidgetList wgt_list={ appearance_conf, connections_conf, snippets_conf };
 			BaseConfigWidget *conf_wgt=nullptr;
 
 			for(QWidget *wgt : wgt_list)
 			{
-				conf_wgt=qobject_cast<BaseConfigWidget *>(wgt);
+				conf_wgt = qobject_cast<BaseConfigWidget *>(wgt);
 
 				if(conf_wgt->isConfigurationChanged())
 					conf_wgt->loadConfiguration();

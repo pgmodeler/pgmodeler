@@ -3,10 +3,8 @@
            Unexpected results may occur if the code is changed deliberately.
 -->
 <!ELEMENT appearance (theme?, design, code, objects)>
-
-<!ELEMENT theme EMPTY>
-<!ATTLIST theme ui (system|dark|light) "system">
-<!ATTLIST theme highlight (dark|light) "light">
+<!ATTLIST appearance ui-theme (system|dark|light) "system">
+<!ATTLIST appearance syntax-hl-theme (system|dark|light) "system">
 
 <!ELEMENT design EMPTY>
 <!ATTLIST design grid-size CDATA #REQUIRED>

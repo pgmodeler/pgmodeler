@@ -82,10 +82,10 @@ void RelationshipConfigWidget::loadConfiguration()
 		vector<QString> key_attribs={Attributes::Type};
 		BaseConfigWidget::loadConfiguration(GlobalAttributes::RelationshipsConf, config_params, key_attribs);
 
-		fk_to_pk_rb->setChecked(config_params[Attributes::Connection][Attributes::Mode]==Attributes::ConnectFkToPk);
-		center_pnts_rb->setChecked(config_params[Attributes::Connection][Attributes::Mode]==Attributes::ConnectCenterPnts);
-		tab_edges_rb->setChecked(config_params[Attributes::Connection][Attributes::Mode]==Attributes::ConnectTableEdges);
-		crows_foot_rb->setChecked(config_params[Attributes::Connection][Attributes::Mode]==Attributes::CrowsFoot);
+		fk_to_pk_rb->setChecked(config_params[GlobalAttributes::RelationshipsConf][Attributes::LinkMode]==Attributes::ConnectFkToPk);
+		center_pnts_rb->setChecked(config_params[GlobalAttributes::RelationshipsConf][Attributes::LinkMode]==Attributes::ConnectCenterPnts);
+		tab_edges_rb->setChecked(config_params[GlobalAttributes::RelationshipsConf][Attributes::LinkMode]==Attributes::ConnectTableEdges);
+		crows_foot_rb->setChecked(config_params[GlobalAttributes::RelationshipsConf][Attributes::LinkMode]==Attributes::CrowsFoot);
 
 		deferrable_chk->setChecked(config_params[Attributes::ForeignKeys][Attributes::Deferrable]==Attributes::True);
 		deferral_cmb->setCurrentText(config_params[Attributes::ForeignKeys][Attributes::DeferType]);
@@ -122,13 +122,13 @@ void RelationshipConfigWidget::saveConfiguration()
 																																Attributes::Patterns +
 																																GlobalAttributes::SchemaExt);
 		if(crows_foot_rb->isChecked())
-			config_params[Attributes::Connection][Attributes::Mode]=Attributes::CrowsFoot;
+			config_params[GlobalAttributes::RelationshipsConf][Attributes::LinkMode]=Attributes::CrowsFoot;
 		else if(fk_to_pk_rb->isChecked())
-			config_params[Attributes::Connection][Attributes::Mode]=Attributes::ConnectFkToPk;
+			config_params[GlobalAttributes::RelationshipsConf][Attributes::LinkMode]=Attributes::ConnectFkToPk;
 		else if(tab_edges_rb->isChecked())
-			config_params[Attributes::Connection][Attributes::Mode]=Attributes::ConnectTableEdges;
+			config_params[GlobalAttributes::RelationshipsConf][Attributes::LinkMode]=Attributes::ConnectTableEdges;
 		else
-			config_params[Attributes::Connection][Attributes::Mode]=Attributes::ConnectCenterPnts;
+			config_params[GlobalAttributes::RelationshipsConf][Attributes::LinkMode]=Attributes::ConnectCenterPnts;
 
 		config_params[Attributes::ForeignKeys][Attributes::Deferrable]=(deferrable_chk->isChecked() ? Attributes::True : Attributes::False);
 		config_params[Attributes::ForeignKeys][Attributes::DeferType]=deferral_cmb->currentText();
