@@ -71,6 +71,9 @@ class TableWidget: public BaseObjectWidget, public Ui::TableWidget {
 		void setAttributes(DatabaseModel *model, OperationList *op_list, Schema *schema, Table *table, double pos_x, double pos_y);
 		void setAttributes(DatabaseModel *model, OperationList *op_list, Schema *schema, ForeignTable *ftable, double pos_x, double pos_y);
 
+		static void setTableItemColor(unsigned color_idx, const QColor color);
+		static QColor getTableItemColor(unsigned color_idx);
+
 	private slots:
 		//! \brief Adds or edit a object on the object table that calls the slot
 		void handleObject();

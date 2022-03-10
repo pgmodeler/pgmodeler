@@ -710,9 +710,17 @@ void TableWidget::showObjectData(TableObject *object, int row)
 		font.setItalic(true);
 
 		if(object->isAddedByRelationship())
-			tab->setRowFont(row, font, GuiUtilsNs::RelAddedRowFgColor, GuiUtilsNs::RelAddedRowBgColor);
+		{
+			tab->setRowFont(row, font,
+											ObjectsTableWidget::getTableItemColor(ObjectsTableWidget::RelAddedItemFgColor),
+											ObjectsTableWidget::getTableItemColor(ObjectsTableWidget::RelAddedItemBgColor));
+		}
 		else
-			tab->setRowFont(row, font, GuiUtilsNs::ProtRowFgColor, GuiUtilsNs::ProtRowBgColor);
+		{
+			tab->setRowFont(row, font,
+											ObjectsTableWidget::getTableItemColor(ObjectsTableWidget::ProtItemFgColor),
+											ObjectsTableWidget::getTableItemColor(ObjectsTableWidget::ProtItemBgColor));
+		}
 	}
 
 	tab->setCellText(object->getComment(), row, tab->getColumnCount() - 1);

@@ -19,6 +19,7 @@
 #include "objectfinderwidget.h"
 #include "guiutilsns.h"
 #include "coreutilsns.h"
+#include "objectstablewidget.h"
 
 const QStringList ObjectFinderWidget::search_attribs =
 { Attributes::Name, Attributes::Comment, Attributes::Signature,
@@ -415,19 +416,16 @@ void ObjectFinderWidget::updateObjectTable(QTableWidget *tab_wgt, vector<BaseObj
 			if(objs[i]->isProtected() || objs[i]->isSystemObject())
 			{
 				fnt.setItalic(true);
-				tab_item->setForeground(BaseObjectView::getFontStyle(Attributes::ProtColumn).foreground());
+				tab_item->setForeground(ObjectsTableWidget::getTableItemColor(ObjectsTableWidget::ProtItemAltFgColor));
 			}
 			else if(dynamic_cast<TableObject *>(objs[i]) &&
 					dynamic_cast<TableObject *>(objs[i])->isAddedByRelationship())
 			{
 				fnt.setItalic(true);
-				tab_item->setForeground(BaseObjectView::getFontStyle(Attributes::InhColumn).foreground());
+				tab_item->setForeground(ObjectsTableWidget::getTableItemColor(ObjectsTableWidget::RelAddedItemAltFgColor));
 			}
 			else
-			{
 				fnt.setItalic(false);
-				tab_item->setForeground(BaseObjectView::getFontStyle(Attributes::Column).foreground());
-			}
 
 			fnt.setStrikeOut(objs[i]->isSQLDisabled() && !objs[i]->isSystemObject());
 			tab_item->setFont(fnt);
@@ -474,13 +472,10 @@ void ObjectFinderWidget::updateObjectTable(QTableWidget *tab_wgt, vector<BaseObj
 					if(parent_obj->isProtected() || parent_obj->isSystemObject())
 					{
 						fnt.setItalic(true);
-						tab_item->setForeground(BaseObjectView::getFontStyle(Attributes::ProtColumn).foreground());
+						tab_item->setForeground(ObjectsTableWidget::getTableItemColor(ObjectsTableWidget::ProtItemAltFgColor));
 					}
 					else
-					{
 						fnt.setItalic(false);
-						tab_item->setForeground(BaseObjectView::getFontStyle(Attributes::Column).foreground());
-					}
 
 					tab_item->setFont(fnt);
 					tab_item->setIcon(QPixmap(GuiUtilsNs::getIconPath(parent_obj->getObjectType())));

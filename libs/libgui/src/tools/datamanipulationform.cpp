@@ -23,11 +23,11 @@
 #include "utils/plaintextitemdelegate.h"
 #include "baseform.h"
 #include "widgets/bulkdataeditwidget.h"
+#include "widgets/objectstablewidget.h"
 #include "databaseexplorerwidget.h"
 #include "settings/generalconfigwidget.h"
 #include "utils/custommenustyle.h"
 
-const QColor DataManipulationForm::RowColors[3]={ QColor(QString("#C0FFC0")), QColor(QString("#FFFFC0")), QColor(QString("#FFC0C0"))  };
 constexpr unsigned DataManipulationForm::NoOperation;
 constexpr unsigned DataManipulationForm::OpInsert;
 constexpr unsigned DataManipulationForm::OpUpdate;
@@ -999,6 +999,15 @@ void DataManipulationForm::markOperationOnRow(unsigned operation, int row)
 		QString tooltip=tr("This row is marked to be %1");
 		QFont fnt=results_tbw->font();
 		int marked_cols=0;
+		QColor item_fg_colors[3] = {
+			ObjectsTableWidget::getTableItemColor(ObjectsTableWidget::AddedItemFgColor),
+			ObjectsTableWidget::getTableItemColor(ObjectsTableWidget::UpdatedItemFgColor),
+			ObjectsTableWidget::getTableItemColor(ObjectsTableWidget::RemovedItemFgColor) },
+
+			item_bg_colors[3] = {
+						ObjectsTableWidget::getTableItemColor(ObjectsTableWidget::AddedItemBgColor),
+						ObjectsTableWidget::getTableItemColor(ObjectsTableWidget::UpdatedItemBgColor),
+						ObjectsTableWidget::getTableItemColor(ObjectsTableWidget::RemovedItemBgColor) };
 
 		if(operation==OpDelete)
 			tooltip=tooltip.arg(tr("deleted"));
@@ -1036,8 +1045,9 @@ void DataManipulationForm::markOperationOnRow(unsigned operation, int row)
 							header_item->data(Qt::UserRole)!=OpUpdate)
 						prev_row_colors[row]=item->background();
 
-					//Changes the item's background according to the operation
-					item->setBackground(RowColors[operation - 1]);
+					//Changes the item's background and foreground colors according to the operation
+					item->setBackground(item_bg_colors[operation - 1]);
+					item->setForeground(item_fg_colors[operation - 1]);
 				}
 
 				marked_cols++;

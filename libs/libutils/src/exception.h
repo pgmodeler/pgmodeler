@@ -371,6 +371,10 @@ class Exception {
 
 		//! \brief Gets the exception stack in a formatted text
 		QString getExceptionsText();
+
+		/*! \brief Returns in one string all the extra info from the exceptions in the error stack
+		 * Duplicated extra information is discarded */
+		QString getExceptiosExtraInfo();
 };
 
 #endif

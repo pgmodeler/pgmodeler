@@ -18,6 +18,7 @@
 
 #include "appearanceconfigwidget.h"
 #include "widgets/modelwidget.h"
+#include "widgets/objectstablewidget.h"
 
 map<QString, attribs_map> AppearanceConfigWidget::config_params;
 
@@ -88,6 +89,18 @@ map<QPalette::ColorRole, QStringList> AppearanceConfigWidget::light_ui_colors = 
 	{ QPalette::ToolTipBase, {"#232627", "#232627", "#232627"} },
 	{ QPalette::ToolTipText, {"#fcfcfc", "#fcfcfc", "#fcfcfc"} },
 	{ QPalette::PlaceholderText, {"#2e2f30", "#2e2f30", "#2e2f30"} }
+};
+
+QStringList AppearanceConfigWidget::dark_tab_item_colors = {
+	"#b54225", "#fff", "#54a800", "#fff",
+	"#54a800", "#fff", "#e2e236", "#000",
+	"#b54225", "#fff", "#fa0000", "#00f000"
+};
+
+QStringList AppearanceConfigWidget::light_tab_item_colors = {
+	"#ffb4b4", "#303030",	"#a4f9b0", "#303030",
+	"#c0ffc0", "#000", "#ffffc0", "#000",
+	"#ffc0c0", "#000", "#fa0000", "#00f000"
 };
 
 AppearanceConfigWidget::AppearanceConfigWidget(QWidget * parent) : BaseConfigWidget(parent)
@@ -548,12 +561,12 @@ void AppearanceConfigWidget::saveConfiguration()
 	{
 		attribs_map attribs;
 		AppearanceConfigItem item;
-		QString attrib_id;
+		QString attrib_id, hl_theme = syntax_hl_theme_cmb->currentData(Qt::UserRole).toString();
 		QFont font;
 
 		config_params.erase(GlobalAttributes::AppearanceConf);
-		attribs[Attributes::UiTheme] = ui_theme_cmb->currentData(Qt::UserRole).toString();
-		attribs[Attributes::SyntaxHlTheme] = syntax_hl_theme_cmb->currentData(Qt::UserRole).toString();
+		attribs[Attributes::UiTheme] =  ui_theme_cmb->currentData(Qt::UserRole).toString();
+		attribs[Attributes::SyntaxHlTheme] = hl_theme;
 		config_params[Attributes::UiTheme] = attribs;
 		attribs.clear();
 
@@ -622,6 +635,38 @@ void AppearanceConfigWidget::saveConfiguration()
 
 		config_params[Attributes::Objects] = attribs;
 		BaseConfigWidget::saveConfiguration(GlobalAttributes::AppearanceConf, config_params);
+
+		/* Copying the syntax highilighting files from the selected theme folder to the user's storage
+		 * in order to reflect the new syntax highlighting setting in the whole application */
+		QStringList theme_hl_files = {
+			GlobalAttributes::getTmplConfigurationFilePath(GlobalAttributes::ThemesDir + GlobalAttributes::DirSeparator+ hl_theme,
+																										 GlobalAttributes::SQLHighlightConf + GlobalAttributes::ConfigurationExt),
+
+			GlobalAttributes::getTmplConfigurationFilePath(GlobalAttributes::ThemesDir + GlobalAttributes::DirSeparator+ hl_theme,
+																										 GlobalAttributes::XMLHighlightConf + GlobalAttributes::ConfigurationExt),
+
+			GlobalAttributes::getTmplConfigurationFilePath(GlobalAttributes::ThemesDir + GlobalAttributes::DirSeparator + hl_theme,
+																										 GlobalAttributes::SchHighlightConf + GlobalAttributes::ConfigurationExt),
+		},
+
+		orig_hl_files = {
+			GlobalAttributes::getSQLHighlightConfPath(),
+			GlobalAttributes::getXMLHighlightConfPath(),
+			GlobalAttributes::getSchHighlightConfPath()
+		};
+
+		for(int i = 0; i < 3; i++)
+		{
+			QFile::remove(orig_hl_files[i]);
+
+			if(!QFile::copy(theme_hl_files[i], orig_hl_files[i]))
+			{
+				throw Exception(Exception::getErrorMessage(ErrorCode::FileDirectoryNotWritten).arg(orig_hl_files[i]),
+												__PRETTY_FUNCTION__,__FILE__,__LINE__, nullptr,
+												QFileInfo(theme_hl_files[i]).isReadable() ?
+												tr("The template file `%1' could not be accessed!").arg(theme_hl_files[i]) : "");
+			}
+		}
 	}
 	catch(Exception &e)
 	{
@@ -820,8 +865,18 @@ void AppearanceConfigWidget::applyUiTheme()
 		{ { Attributes::Light }, { &light_ui_colors } }
 	};
 
+	map<QString, QStringList *> item_color_lists = {
+		{ { Attributes::System }, { &light_tab_item_colors } },
+		{ { Attributes::Dark }, { &dark_tab_item_colors } },
+		{ { Attributes::Light }, { &light_tab_item_colors } }
+	};
+
 	map<QPalette::ColorRole, QStringList> *color_map = color_maps[ui_theme_cmb->currentData(Qt::UserRole).toString()];
+	QStringList *item_colors = item_color_lists[ui_theme_cmb->currentData(Qt::UserRole).toString()];
 	QPalette pal;
+
+	for(unsigned idx = 0; idx < static_cast<unsigned>(item_colors->size()); idx++)
+		ObjectsTableWidget::setTableItemColor(idx, QColor(item_colors->at(idx)));
 
 	for(auto &itr : *color_map)
 	{

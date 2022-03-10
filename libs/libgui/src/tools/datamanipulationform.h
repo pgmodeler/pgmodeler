@@ -41,9 +41,6 @@ class DataManipulationForm: public QDialog, public Ui::DataManipulationForm {
 		OpUpdate=2,
 		OpDelete=3;
 
-		//! \brief Default row colors for each operation type
-		static const QColor RowColors[3];
-
 		CsvLoadWidget *csv_load_wgt;
 
 		SyntaxHighlighter *filter_hl;

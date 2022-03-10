@@ -54,6 +54,10 @@ class AppearanceConfigWidget: public BaseConfigWidget, public Ui::AppearanceConf
 		//! \brief Holds the default/system QPalette settings.
 		system_ui_colors;
 
+		static QStringList dark_tab_item_colors,
+
+		light_tab_item_colors;
+
 		//! \brief Auxiliary class that stores the formating data of each element
 		class AppearanceConfigItem {
 			public:

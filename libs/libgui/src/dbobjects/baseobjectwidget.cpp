@@ -141,8 +141,8 @@ void BaseObjectWidget::setRequiredField(QWidget *widget)
 		QGroupBox *grp=qobject_cast<QGroupBox *>(widget);
 		ObjectSelectorWidget *sel=dynamic_cast<ObjectSelectorWidget *>(widget);
 		PgSQLTypeWidget *pgtype=dynamic_cast<PgSQLTypeWidget *>(widget);
-		QString str_aux=QString(" <span style='color: #ff0000;'>*</span> ");
-		QColor bgcolor=QColor(QString("#ffffc0"));
+		QString str_aux = " <span style='color: #ff0000;'>*</span> ";
+		QColor border_color = ObjectsTableWidget::getTableItemColor(ObjectsTableWidget::RemovedItemBgColor);
 
 		if(lbl || pgtype || grp)
 		{
@@ -158,16 +158,11 @@ void BaseObjectWidget::setRequiredField(QWidget *widget)
 		{
 			if(sel)
 			{
-				widget=sel->obj_name_txt;
-				widget->setStyleSheet(QString("ObjectSelectorWidget > QPlainTextEdit { background-color: %1; }").arg(bgcolor.name()));
+				widget = sel->obj_name_txt;
+				widget->setStyleSheet(QString("ObjectSelectorWidget > QPlainTextEdit { border: 2px solid %1; }").arg(border_color.name()));
 			}
 			else
-			{
-				QPalette pal;
-				pal.setColor(QPalette::Base, bgcolor);
-				pal.setColor(QPalette::Text, QColor(0,0,0));
-				widget->setPalette(pal);
-			}
+				widget->setStyleSheet(QString("%1 { border: 2px solid %2; padding-top: 2px; padding-bottom: 2px; border-radius: 4px; }").arg(widget->metaObject()->className()).arg(border_color.name()));
 		}
 
 		str_aux=(!widget->toolTip().isEmpty() ? QString("\n") : "");

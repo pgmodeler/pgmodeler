@@ -99,6 +99,8 @@ void ConfigurationForm::reject()
 			QWidgetList wgt_list={ appearance_conf, connections_conf, snippets_conf };
 			BaseConfigWidget *conf_wgt=nullptr;
 
+			QApplication::setOverrideCursor(Qt::WaitCursor);
+
 			for(QWidget *wgt : wgt_list)
 			{
 				conf_wgt = qobject_cast<BaseConfigWidget *>(wgt);
@@ -106,6 +108,8 @@ void ConfigurationForm::reject()
 				if(conf_wgt->isConfigurationChanged())
 					conf_wgt->loadConfiguration();
 			}
+
+			QApplication::restoreOverrideCursor();
 		}
 	}
 	catch(Exception &)
@@ -118,6 +122,8 @@ void ConfigurationForm::applyConfiguration()
 {
 	BaseConfigWidget *conf_wgt=nullptr;
 	bool curr_escape_comments = BaseObject::isEscapeComments();
+
+	QApplication::setOverrideCursor(Qt::WaitCursor);
 
 	for(int i=GeneralConfWgt; i <= SnippetsConfWgt; i++)
 	{
@@ -133,6 +139,7 @@ void ConfigurationForm::applyConfiguration()
 	if(curr_escape_comments != BaseObject::isEscapeComments())
 		emit s_invalidateModelsRequested();
 
+	QApplication::restoreOverrideCursor();
 	QDialog::accept();
 }
 

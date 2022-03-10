@@ -79,19 +79,21 @@ void Messagebox::showExceptionList()
 void Messagebox::show(Exception e, const QString &msg, unsigned icon_type, unsigned buttons, const QString &yes_lbl, const QString &no_lbl, const QString &cancel_lbl,
 					  const QString &yes_ico, const QString &no_ico, const QString &cancel_ico)
 {
-	QString str_aux, title;
+	QString fmt_msg, fmt_extra_info, title;
 
 	raw_info_txt->setPlainText(e.getExceptionsText());
+	extra_info_txt->setPlainText(e.getExceptiosExtraInfo());
+
 	GuiUtilsNs::createExceptionsTree(exceptions_trw, e, nullptr);
 	exceptions_trw->expandAll();
 	exceptions_trw->scrollToTop();
 
 	if(msg.isEmpty())
-		str_aux=GuiUtilsNs::formatMessage(e.getErrorMessage());
+		fmt_msg = GuiUtilsNs::formatMessage(e.getErrorMessage());
 	else
-		str_aux=GuiUtilsNs::formatMessage(msg);
+		fmt_msg = GuiUtilsNs::formatMessage(msg);
 
-	this->show(title, str_aux, icon_type, buttons, yes_lbl, no_lbl, cancel_lbl, yes_ico, no_ico, cancel_ico);
+	this->show(title, fmt_msg, icon_type, buttons, yes_lbl, no_lbl, cancel_lbl, yes_ico, no_ico, cancel_ico);
 }
 
 void Messagebox::show(const QString &msg, unsigned icon_type, unsigned buttons)
