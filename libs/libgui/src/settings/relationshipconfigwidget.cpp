@@ -79,8 +79,7 @@ void RelationshipConfigWidget::loadConfiguration()
 	try
 	{
 		int idx;
-		vector<QString> key_attribs={Attributes::Type};
-		BaseConfigWidget::loadConfiguration(GlobalAttributes::RelationshipsConf, config_params, key_attribs);
+		BaseConfigWidget::loadConfiguration(GlobalAttributes::RelationshipsConf, config_params, { Attributes::Type });
 
 		fk_to_pk_rb->setChecked(config_params[GlobalAttributes::RelationshipsConf][Attributes::LinkMode]==Attributes::ConnectFkToPk);
 		center_pnts_rb->setChecked(config_params[GlobalAttributes::RelationshipsConf][Attributes::LinkMode]==Attributes::ConnectCenterPnts);

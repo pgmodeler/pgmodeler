@@ -21,9 +21,6 @@
 
 map<QString, attribs_map> AppearanceConfigWidget::config_params;
 
-QStringList AppearanceConfigWidget::ui_themes_attribs = { Attributes::System, Attributes::Dark, Attributes::Light };
-QStringList AppearanceConfigWidget::syntax_hl_themes_attribs  = { Attributes::Dark, Attributes::Light };
-
 map<QPalette::ColorRole, QStringList> AppearanceConfigWidget::system_ui_colors = {
 	{ QPalette::WindowText, {} },
 	{ QPalette::Button, {} },
@@ -248,6 +245,13 @@ CREATE TABLE public.table_b (\n \
 	grid->addLayout(layout, 2, 1);
 	grid->addWidget(font_preview_txt,grid->count(),0, 1, 4);
 
+	ui_theme_cmb->addItem(tr("System default"), Attributes::System);
+	ui_theme_cmb->addItem(tr("Light"), Attributes::Light);
+	ui_theme_cmb->addItem(tr("Dark"), Attributes::Dark);
+
+	syntax_hl_theme_cmb->addItem(tr("Light"), Attributes::Light);
+	syntax_hl_theme_cmb->addItem(tr("Dark"), Attributes::Dark);
+
 	connect(element_cmb, &QComboBox::currentTextChanged, this, &AppearanceConfigWidget::enableConfigElement);
 	connect(elem_font_cmb, &QFontComboBox::currentFontChanged, this, &AppearanceConfigWidget::applyElementFontStyle);
 	connect(elem_font_size_spb, &QDoubleSpinBox::textChanged, this, &AppearanceConfigWidget::applyElementFontStyle);
@@ -285,8 +289,20 @@ CREATE TABLE public.table_b (\n \
 	connect(grid_color_cp, &ColorPickerWidget::s_colorsChanged, this, &AppearanceConfigWidget::previewCanvasColors);
 	connect(grid_size_spb, &QSpinBox::textChanged, this, &AppearanceConfigWidget::previewCanvasColors);
 
-	connect(ui_theme_cmb, &QComboBox::currentTextChanged, this, &AppearanceConfigWidget::applyUiTheme);
 	connect(syntax_hl_theme_cmb, &QComboBox::currentTextChanged, this, &AppearanceConfigWidget::applySyntaxHighlightTheme);
+
+	connect(ui_theme_cmb, &QComboBox::currentTextChanged, [&](){
+		int idx = ui_theme_cmb->currentIndex() - 1;
+		if(idx < 0 ) idx = 0;
+		syntax_hl_theme_cmb->blockSignals(true);
+		syntax_hl_theme_cmb->setCurrentIndex(idx);
+		syntax_hl_theme_cmb->blockSignals(false);
+
+		QApplication::setOverrideCursor(Qt::WaitCursor);
+		applyUiTheme();
+		applyDesignCodeTheme();
+		QApplication::restoreOverrideCursor();
+	});
 }
 
 AppearanceConfigWidget::~AppearanceConfigWidget()
@@ -406,15 +422,13 @@ void AppearanceConfigWidget::loadConfiguration()
 		ui_theme_cmb->blockSignals(true);
 		syntax_hl_theme_cmb->blockSignals(true);
 
-		ui_theme_cmb->setCurrentIndex(ui_themes_attribs.indexOf(config_params[GlobalAttributes::AppearanceConf][Attributes::UiTheme]));
+		ui_theme_cmb->setCurrentIndex(ui_theme_cmb->findData(
+																		config_params[GlobalAttributes::AppearanceConf][Attributes::UiTheme],
+																		Qt::UserRole, Qt::MatchExactly));
 
-		if(ui_theme_cmb->currentIndex() < 0)
-			ui_theme_cmb->setCurrentIndex(0);
-
-		syntax_hl_theme_cmb->setCurrentIndex(syntax_hl_themes_attribs.indexOf(config_params[GlobalAttributes::AppearanceConf][Attributes::SyntaxHlTheme]));
-
-		if(syntax_hl_theme_cmb->currentIndex() < 0)
-			syntax_hl_theme_cmb->setCurrentIndex(0);
+		syntax_hl_theme_cmb->setCurrentIndex(syntax_hl_theme_cmb->findData(
+																					config_params[GlobalAttributes::AppearanceConf][Attributes::SyntaxHlTheme],
+																					Qt::UserRole, Qt::MatchExactly));
 
 		ui_theme_cmb->blockSignals(false);
 		syntax_hl_theme_cmb->blockSignals(false);
@@ -538,8 +552,8 @@ void AppearanceConfigWidget::saveConfiguration()
 		QFont font;
 
 		config_params.erase(GlobalAttributes::AppearanceConf);
-		attribs[Attributes::UiTheme] = ui_themes_attribs.at(ui_theme_cmb->currentIndex());
-		attribs[Attributes::SyntaxHlTheme] = syntax_hl_themes_attribs.at(ui_theme_cmb->currentIndex());
+		attribs[Attributes::UiTheme] = ui_theme_cmb->currentData(Qt::UserRole).toString();
+		attribs[Attributes::SyntaxHlTheme] = syntax_hl_theme_cmb->currentData(Qt::UserRole).toString();
 		config_params[Attributes::UiTheme] = attribs;
 		attribs.clear();
 
@@ -800,11 +814,13 @@ void AppearanceConfigWidget::previewCanvasColors()
 
 void AppearanceConfigWidget::applyUiTheme()
 {
-	vector<map<QPalette::ColorRole, QStringList> *> color_maps = {
-		&system_ui_colors, &dark_ui_colors, &light_ui_colors
+	map<QString, map<QPalette::ColorRole, QStringList> *> color_maps = {
+		{ { Attributes::System }, { &system_ui_colors } },
+		{ { Attributes::Dark }, { &dark_ui_colors } },
+		{ { Attributes::Light }, { &light_ui_colors } }
 	};
 
-	map<QPalette::ColorRole, QStringList> *color_map = color_maps.at(ui_theme_cmb->currentIndex());
+	map<QPalette::ColorRole, QStringList> *color_map = color_maps[ui_theme_cmb->currentData(Qt::UserRole).toString()];
 	QPalette pal;
 
 	for(auto &itr : *color_map)
@@ -826,14 +842,45 @@ void AppearanceConfigWidget::applyUiTheme()
 
 void AppearanceConfigWidget::applySyntaxHighlightTheme()
 {
-	QString hl_file = GlobalAttributes::getTmplConfigurationFilePath(GlobalAttributes::ThemesDir +
-																																	 GlobalAttributes::DirSeparator +
-																																	 syntax_hl_theme_cmb->currentText().toLower(),
-																																	 GlobalAttributes::SQLHighlightConf + GlobalAttributes::ConfigurationExt);
+	QString filename = GlobalAttributes::getTmplConfigurationFilePath(GlobalAttributes::ThemesDir +
+																																		GlobalAttributes::DirSeparator +
+																																		syntax_hl_theme_cmb->currentData(Qt::UserRole).toString().toLower(),
+																																		GlobalAttributes::SQLHighlightConf +
+																																		GlobalAttributes::ConfigurationExt);
 
-	font_preview_hl->loadConfiguration(hl_file);
-	font_preview_hl->rehighlight();
-	setConfigurationChanged(true);
+	try
+	{
+		font_preview_hl->loadConfiguration(filename);
+		font_preview_hl->rehighlight();
+		setConfigurationChanged(true);
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorCode(), __PRETTY_FUNCTION__, __FILE__, __LINE__, &e);
+	}
+}
+
+void AppearanceConfigWidget::applyDesignCodeTheme()
+{
+	QString filename = GlobalAttributes::getTmplConfigurationFilePath(GlobalAttributes::ThemesDir +
+																																		GlobalAttributes::DirSeparator +
+																																		syntax_hl_theme_cmb->currentData(Qt::UserRole).toString().toLower(),
+																																		GlobalAttributes::AppearanceConf +
+																																		GlobalAttributes::ConfigurationExt);
+
+	try
+	{
+		BaseConfigWidget::loadConfiguration(filename, GlobalAttributes::AppearanceConf, config_params, { Attributes::Id }, true);
+
+		applyDesignCodeStyle();
+		applyObjectsStyle();
+		previewCodeFontStyle();
+		previewCanvasColors();
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorCode(), __PRETTY_FUNCTION__, __FILE__, __LINE__, &e);
+	}
 }
 
 void AppearanceConfigWidget::storeSystemUiColors()

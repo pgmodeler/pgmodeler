@@ -583,7 +583,6 @@ void BaseObjectWidget::highlightVersionSpecificFields(map<QString, vector<QWidge
 																											map< QWidget *, vector<QString> > *values)
 {
 	QString field_name;
-	QColor color=QColor(0,0,128);
 
 	for(auto itr : fields)
 	{
@@ -602,7 +601,7 @@ void BaseObjectWidget::highlightVersionSpecificFields(map<QString, vector<QWidge
 				field_name+=")";
 			}
 
-			wgt->setStyleSheet(QString("QWidget {	font-weight: bold; font-style: italic; color: %1}").arg(color.name()));
+			wgt->setStyleSheet(QString("QWidget {	font-weight: bold; font-style: italic; text-decoration: underline; }"));
 			wgt->setToolTip(QString("<p>PostgreSQL") + itr.first + QString(" %1</p>").arg(field_name));
 		}
 	}
@@ -615,7 +614,6 @@ QFrame *BaseObjectWidget::generateVersionWarningFrame(map<QString, vector<QWidge
 	QGridLayout *grid=nullptr;
 	QLabel *ico_lbl=nullptr, *msg_lbl=nullptr;
 	QFont font;
-	QColor color=QColor(0,0,128);
 
 	highlightVersionSpecificFields(fields, values);
 
@@ -649,8 +647,8 @@ QFrame *BaseObjectWidget::generateVersionWarningFrame(map<QString, vector<QWidge
 	msg_lbl->setAlignment(Qt::AlignLeft|Qt::AlignVCenter);
 	msg_lbl->setWordWrap(true);
 
-	msg_lbl->setText(tr("The <em style='color: %1'><strong>highlighted</strong></em> fields in the form or one of their values are available only on specific PostgreSQL versions. \
-							Generating SQL code for versions other than those specified in the fields' tooltips may create incompatible code.").arg(color.name()));
+	msg_lbl->setText(tr("The <em><u><strong>highlighted</strong></u></em> fields in the form or one of their values are available only on specific PostgreSQL versions. \
+							Generating SQL code for versions other than those specified in the fields' tooltips may create incompatible code."));
 
 	grid->addWidget(msg_lbl, 0, 1, 1, 1);
 	grid->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);

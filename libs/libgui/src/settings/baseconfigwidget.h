@@ -48,7 +48,10 @@ class BaseConfigWidget: public QWidget {
 			configuration values */
 		void saveConfiguration(const QString &conf_id, map<QString, attribs_map> &config_params);
 		
-		/*! \brief Loads a configuration from file.
+		/*! \brief Loads a configuration from filename.
+		 *
+		 * The parameter dtd indicates the DTD prefix/file that will be used to validate the config file being loaded
+		 *
 		 * The vector key_attribs is used to specify the xml element name  considered as a key on the configuration map
 		 *
 		 * The parametre incl_elem_name is used only when key attribs is not empty and when true, causes the current tag/element name to be
@@ -65,10 +68,14 @@ class BaseConfigWidget: public QWidget {
 		 * If incl_elem_name = false then the resulting attribs map would contain only 2 elements for font and objects,
 		 * because we have two elements identified by "obj1" and "obj2". Now, when incl_elem_name=true the resulting attribs map
 		 * would contain four elements which keys are font-obj1, font-obj2, object-obj1, object-obj2. */
-		void loadConfiguration(const QString &conf_id, map<QString, attribs_map> &config_params, const vector<QString> &key_attribs=vector<QString>(), bool incl_elem_name = false);
+		void loadConfiguration(const QString &filename, const QString &dtd, map<QString, attribs_map> &config_params, const QStringList &key_attribs = {}, bool incl_elem_name = false);
+
+		/*! \brief This is a convinience method that takes only the configuration file id instead of the filename and the DTD root element name.
+		 *  The conf_id is used to identify both the config file and its related DTD file. */
+		void loadConfiguration(const QString &conf_id, map<QString, attribs_map> &config_params, const QStringList &key_attribs={}, bool incl_elem_name = false);
 		
 		//! \brief Get a configuratoin key from the xml parser
-		void getConfigurationParams(map<QString, attribs_map> &config_params, const vector<QString> &key_attribs, bool incl_elem_name = false);
+		void getConfigurationParams(map<QString, attribs_map> &config_params, const QStringList &key_attribs = {}, bool incl_elem_name = false);
 		
 		/*! \brief Restore the configuration specified by conf_in loading them from the original file (conf/defaults)
 		 * The silent parameter indicates that the restoration should not emit a message box informing the restoration sucess */
@@ -78,7 +85,7 @@ class BaseConfigWidget: public QWidget {
 		static void addConfigurationParam(map<QString, attribs_map> &config_params, const QString &param, const attribs_map &attribs);
 		
 		void showEvent(QShowEvent *);
-		
+
 	public:
 		BaseConfigWidget(QWidget *parent = nullptr);
 		~BaseConfigWidget(void){}

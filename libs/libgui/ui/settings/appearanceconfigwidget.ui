@@ -82,23 +82,8 @@
              </sizepolicy>
             </property>
             <property name="currentIndex">
-             <number>0</number>
+             <number>-1</number>
             </property>
-            <item>
-             <property name="text">
-              <string>System default</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Dark</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Light</string>
-             </property>
-            </item>
            </widget>
           </item>
           <item>
@@ -119,16 +104,9 @@
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
-            <item>
-             <property name="text">
-              <string>Light</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Dark</string>
-             </property>
-            </item>
+            <property name="sizeAdjustPolicy">
+             <enum>QComboBox::AdjustToContentsOnFirstShow</enum>
+            </property>
            </widget>
           </item>
           <item>

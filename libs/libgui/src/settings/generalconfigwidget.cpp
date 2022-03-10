@@ -182,15 +182,13 @@ void GeneralConfigWidget::loadConfiguration()
 	try
 	{
 		QStringList margin, custom_size;
-		vector<QString> key_attribs;
 		unsigned interv=0;
 		int x=0, y=0, w=0, h=0, idx = -1;
 
 		for(QWidget *wgt : child_wgts)
 			wgt->blockSignals(true);
 
-		key_attribs.push_back(Attributes::Id);
-		BaseConfigWidget::loadConfiguration(GlobalAttributes::GeneralConf, config_params, key_attribs);
+		BaseConfigWidget::loadConfiguration(GlobalAttributes::GeneralConf, config_params, { Attributes::Id });
 
 		oplist_size_spb->setValue((config_params[Attributes::Configuration][Attributes::OpListSize]).toUInt());
 		history_max_length_spb->setValue(config_params[Attributes::Configuration][Attributes::HistoryMaxLength].toUInt());

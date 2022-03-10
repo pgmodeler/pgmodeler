@@ -97,45 +97,38 @@ void ConnectionsConfigWidget::loadConfiguration()
 {
 	try
 	{
-		vector<QString> key_attribs;
-		map<QString, attribs_map >::iterator itr, itr_end;
 		Connection *conn=nullptr;
 
 		destroyConnections();
-		key_attribs.push_back(Attributes::Alias);
-		BaseConfigWidget::loadConfiguration(GlobalAttributes::ConnectionsConf, config_params, key_attribs);
+		BaseConfigWidget::loadConfiguration(GlobalAttributes::ConnectionsConf, config_params, { Attributes::Alias });
 
-		itr=config_params.begin();
-		itr_end=config_params.end();
-
-		while(itr!=itr_end)
+		for(auto &itr : config_params)
 		{
 			conn=new Connection;
 
-			conn->setConnectionParam(Connection::ParamAlias, itr->second[Attributes::Alias]);
-			conn->setConnectionParam(Connection::ParamServerFqdn, itr->second[Connection::ParamServerFqdn]);
-			conn->setConnectionParam(Connection::ParamPort, itr->second[Connection::ParamPort]);
-			conn->setConnectionParam(Connection::ParamUser, itr->second[Connection::ParamUser]);
-			conn->setConnectionParam(Connection::ParamPassword,itr->second[Connection::ParamPassword]);
-			conn->setConnectionParam(Connection::ParamDbName, itr->second[Connection::ParamDbName]);
-			conn->setConnectionParam(Connection::ParamConnTimeout, itr->second[Attributes::ConnectionTimeout]);
-			conn->setConnectionParam(Connection::ParamSslMode, itr->second[Connection::ParamSslMode]);
-			conn->setConnectionParam(Connection::ParamSslRootCert, itr->second[Connection::ParamSslRootCert]);
-			conn->setConnectionParam(Connection::ParamSslCert, itr->second[Connection::ParamSslCert]);
-			conn->setConnectionParam(Connection::ParamSslKey, itr->second[Connection::ParamSslKey]);
-			conn->setConnectionParam(Connection::ParamSslCrl, itr->second[Connection::ParamSslCrl]);
-			conn->setConnectionParam(Connection::ParamLibGssapi, itr->second[Connection::ParamLibGssapi]);
-			conn->setConnectionParam(Connection::ParamKerberosServer, itr->second[Connection::ParamKerberosServer]);
-			conn->setConnectionParam(Connection::ParamOthers, itr->second[Connection::ParamOthers]);
+			conn->setConnectionParam(Connection::ParamAlias, itr.second[Attributes::Alias]);
+			conn->setConnectionParam(Connection::ParamServerFqdn, itr.second[Connection::ParamServerFqdn]);
+			conn->setConnectionParam(Connection::ParamPort, itr.second[Connection::ParamPort]);
+			conn->setConnectionParam(Connection::ParamUser, itr.second[Connection::ParamUser]);
+			conn->setConnectionParam(Connection::ParamPassword,itr.second[Connection::ParamPassword]);
+			conn->setConnectionParam(Connection::ParamDbName, itr.second[Connection::ParamDbName]);
+			conn->setConnectionParam(Connection::ParamConnTimeout, itr.second[Attributes::ConnectionTimeout]);
+			conn->setConnectionParam(Connection::ParamSslMode, itr.second[Connection::ParamSslMode]);
+			conn->setConnectionParam(Connection::ParamSslRootCert, itr.second[Connection::ParamSslRootCert]);
+			conn->setConnectionParam(Connection::ParamSslCert, itr.second[Connection::ParamSslCert]);
+			conn->setConnectionParam(Connection::ParamSslKey, itr.second[Connection::ParamSslKey]);
+			conn->setConnectionParam(Connection::ParamSslCrl, itr.second[Connection::ParamSslCrl]);
+			conn->setConnectionParam(Connection::ParamLibGssapi, itr.second[Connection::ParamLibGssapi]);
+			conn->setConnectionParam(Connection::ParamKerberosServer, itr.second[Connection::ParamKerberosServer]);
+			conn->setConnectionParam(Connection::ParamOthers, itr.second[Connection::ParamOthers]);
 
-			conn->setAutoBrowseDB(itr->second[Attributes::AutoBrowseDb]==Attributes::True);
-			conn->setDefaultForOperation(Connection::OpDiff, itr->second[DefaultFor.arg(Attributes::Diff)]==Attributes::True);
-			conn->setDefaultForOperation(Connection::OpExport, itr->second[DefaultFor.arg(Attributes::Export)]==Attributes::True);
-			conn->setDefaultForOperation(Connection::OpImport, itr->second[DefaultFor.arg(Attributes::Import)]==Attributes::True);
-			conn->setDefaultForOperation(Connection::OpValidation, itr->second[DefaultFor.arg(Attributes::Validation)]==Attributes::True);
+			conn->setAutoBrowseDB(itr.second[Attributes::AutoBrowseDb]==Attributes::True);
+			conn->setDefaultForOperation(Connection::OpDiff, itr.second[DefaultFor.arg(Attributes::Diff)]==Attributes::True);
+			conn->setDefaultForOperation(Connection::OpExport, itr.second[DefaultFor.arg(Attributes::Export)]==Attributes::True);
+			conn->setDefaultForOperation(Connection::OpImport, itr.second[DefaultFor.arg(Attributes::Import)]==Attributes::True);
+			conn->setDefaultForOperation(Connection::OpValidation, itr.second[DefaultFor.arg(Attributes::Validation)]==Attributes::True);
 
 			connections.push_back(conn);
-			itr++;
 		}
 
 		edit_tb->setEnabled(!connections.empty());

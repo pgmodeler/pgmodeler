@@ -118,19 +118,14 @@ void BaseConfigWidget::restoreDefaults(const QString &conf_id, bool silent)
 	}
 }
 
-void BaseConfigWidget::loadConfiguration(const QString &conf_id, map<QString, attribs_map> &config_params, const vector<QString> &key_attribs, bool incl_elem_name)
+void BaseConfigWidget::loadConfiguration(const QString &filename, const QString &dtd, map<QString, attribs_map> &config_params, const QStringList &key_attribs, bool incl_elem_name)
 {
-	QString filename;
-
 	try
 	{
-		filename = GlobalAttributes::getConfigurationFilePath(conf_id);
-
 		config_params.clear();
 		xmlparser.restartParser();
 		xmlparser.setDTDFile(GlobalAttributes::getTmplConfigurationFilePath(GlobalAttributes::ObjectDTDDir,
-																																				conf_id + GlobalAttributes::ObjectDTDExt),
-												 conf_id);
+																																				dtd + GlobalAttributes::ObjectDTDExt), dtd);
 
 		xmlparser.loadXMLFile(filename);
 
@@ -172,7 +167,20 @@ void BaseConfigWidget::loadConfiguration(const QString &conf_id, map<QString, at
 	}
 }
 
-void BaseConfigWidget::getConfigurationParams(map<QString, attribs_map> &config_params, const vector<QString> &key_attribs, bool incl_elem_name)
+void BaseConfigWidget::loadConfiguration(const QString &conf_id, map<QString, attribs_map> &config_params, const QStringList &key_attribs, bool incl_elem_name)
+{
+	try
+	{
+		QString filename = GlobalAttributes::getConfigurationFilePath(conf_id);
+		loadConfiguration(filename, conf_id, config_params, key_attribs, incl_elem_name);
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
+}
+
+void BaseConfigWidget::getConfigurationParams(map<QString, attribs_map> &config_params, const QStringList &key_attribs, bool incl_elem_name)
 {
 	attribs_map aux_attribs;
 	attribs_map::iterator itr, itr_end;

@@ -41,20 +41,14 @@ class AppearanceConfigWidget: public BaseConfigWidget, public Ui::AppearanceConf
 		//! \brief Holds the currently loaded config params
 		static map<QString, attribs_map> config_params;
 
-		//! \brief Holds the default attributes used to identify UI themes
-		static QStringList ui_themes_attribs,
-
-		//! \brief Holds the default attributes used to identify syntax highlight themes
-		syntax_hl_themes_attribs;
-
 		/*! \brief Holds the QPalette settings that defines dark theme.
 		 * This map key is a color role which value is a string list that
-		 * contais 3 elements: active color, inactive color and disabled color. */
+		 * contains 3 elements: active color, inactive color and disabled color. */
 		static map<QPalette::ColorRole, QStringList> dark_ui_colors,
 
 		/*! \brief Holds the QPalette settings that defines light theme.
 		 * This map key is a color role which value is a string list that
-		 * contais 3 elements: active color, inactive color and disabled color. */
+		 * contains 3 elements: active color, inactive color and disabled color. */
 		light_ui_colors,
 
 		//! \brief Holds the default/system QPalette settings.
@@ -138,6 +132,7 @@ class AppearanceConfigWidget: public BaseConfigWidget, public Ui::AppearanceConf
 		//! \brief Applies the selected ui theme to the whole application
 		void applyUiTheme();
 		void applySyntaxHighlightTheme();
+		void applyDesignCodeTheme();
 
 	public slots:
 		void restoreDefaults();
