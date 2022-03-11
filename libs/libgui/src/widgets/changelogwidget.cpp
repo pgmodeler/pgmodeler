@@ -18,12 +18,14 @@
 
 #include "changelogwidget.h"
 #include "settings/generalconfigwidget.h"
+#include "guiutilsns.h"
 
 ChangelogWidget::ChangelogWidget(QWidget *parent) : QWidget(parent)
 {
 	setupUi(this);
 	model = nullptr;
 	setModel(nullptr);
+	GuiUtilsNs::createDropShadow(this, 5, 5, 30);
 
 	connect(hide_tb, SIGNAL(clicked(bool)), this, SIGNAL(s_visibilityChanged(bool)));
 	connect(clear_tb, SIGNAL(clicked(bool)), this, SLOT(clearChangelog()));

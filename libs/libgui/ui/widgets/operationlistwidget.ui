@@ -113,6 +113,9 @@
           <height>25</height>
          </size>
         </property>
+        <property name="shortcut">
+         <string>Esc</string>
+        </property>
         <property name="autoRaise">
          <bool>true</bool>
         </property>

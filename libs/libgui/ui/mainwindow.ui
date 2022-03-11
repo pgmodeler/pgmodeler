@@ -395,7 +395,7 @@
                   <string>Toogle the model validation widget</string>
                  </property>
                  <property name="text">
-                  <string>&amp;Validation</string>
+                  <string>Validation</string>
                  </property>
                  <property name="icon">
                   <iconset resource="../res/resources.qrc">
@@ -573,7 +573,7 @@
                   <string>Toggle the model objects widget</string>
                  </property>
                  <property name="text">
-                  <string>O&amp;bjects</string>
+                  <string>Objects</string>
                  </property>
                  <property name="icon">
                   <iconset resource="../res/resources.qrc">
@@ -611,7 +611,7 @@
                   <string>Toggle the operation history widget</string>
                  </property>
                  <property name="text">
-                  <string>&amp;Operations</string>
+                  <string>Operations</string>
                  </property>
                  <property name="icon">
                   <iconset resource="../res/resources.qrc">

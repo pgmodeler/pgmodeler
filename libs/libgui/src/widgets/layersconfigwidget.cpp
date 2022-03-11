@@ -44,6 +44,7 @@ LayersConfigWidget::LayersConfigWidget(QWidget *parent) : QWidget(parent)
 	remove_all_tb->setToolTip(remove_all_tb->toolTip() + QString(" (%1)").arg(remove_all_tb->shortcut().toString()));
 
 	visibility_tb->setMenu(&visibility_menu);
+	GuiUtilsNs::createDropShadow(this, 5, 5, 30);
 
 	connect(toggle_layers_rects_chk, SIGNAL(toggled(bool)), this, SLOT(toggleLayersRects()));
 	connect(toggle_layers_rects_chk, SIGNAL(toggled(bool)), toggle_layers_names_chk, SLOT(setEnabled(bool)));

@@ -248,6 +248,9 @@
        <height>32</height>
       </size>
      </property>
+     <property name="shortcut">
+      <string>Return, Enter</string>
+     </property>
      <property name="toolButtonStyle">
       <enum>Qt::ToolButtonTextBesideIcon</enum>
      </property>
@@ -270,6 +273,9 @@
        <width>25</width>
        <height>25</height>
       </size>
+     </property>
+     <property name="shortcut">
+      <string>Esc</string>
      </property>
      <property name="autoRaise">
       <bool>true</bool>

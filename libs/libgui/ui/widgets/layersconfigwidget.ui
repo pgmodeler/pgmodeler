@@ -26,7 +26,7 @@
    <string>Form</string>
   </property>
   <property name="autoFillBackground">
-   <bool>true</bool>
+   <bool>false</bool>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <property name="spacing">
@@ -229,6 +229,9 @@
           <width>25</width>
           <height>25</height>
          </size>
+        </property>
+        <property name="shortcut">
+         <string>Esc</string>
         </property>
         <property name="autoRaise">
          <bool>true</bool>
