@@ -41,7 +41,7 @@ class CodeCompletionWidget: public QWidget
 		QWidget *completion_wgt;
 		
 		//! \brief Marks the completion widget as persistent (available only when there is no a database model assinged)
-		QCheckBox *persistent_chk;
+		QCheckBox *always_on_top_chk;
 		
 		//! \brief Input field that is associated with the code completion
 		QPlainTextEdit *code_field_txt;
