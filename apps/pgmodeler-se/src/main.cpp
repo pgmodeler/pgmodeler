@@ -26,8 +26,6 @@ int main(int argc, char **argv)
 {
 	try
 	{
-		PgModelerApp::setAttribute(Qt::AA_UseHighDpiPixmaps);
-		//PgModelerApp::setAttribute(Qt::AA_EnableHighDpiScaling);
 		PgModelerApp app(argc,argv);
 		QStringList args = app.arguments();
 
