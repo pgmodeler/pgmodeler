@@ -79,7 +79,6 @@ class GlobalAttributes {
 		static const QString
 		PgModelerAppName,
 		PgModelerURI,
-		PgModelerReverseURI,
 		PgModelerVersion,
 		PgModelerBuildNumber,
 		PgModelerSite,
