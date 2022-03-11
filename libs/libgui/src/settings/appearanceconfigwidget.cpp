@@ -871,8 +871,9 @@ void AppearanceConfigWidget::applyUiTheme()
 		{ { Attributes::Light }, { &light_tab_item_colors } }
 	};
 
-	map<QPalette::ColorRole, QStringList> *color_map = color_maps[ui_theme_cmb->currentData(Qt::UserRole).toString()];
-	QStringList *item_colors = item_color_lists[ui_theme_cmb->currentData(Qt::UserRole).toString()];
+	QString ui_theme = ui_theme_cmb->currentData(Qt::UserRole).toString();
+	map<QPalette::ColorRole, QStringList> *color_map = color_maps[ui_theme];
+	QStringList *item_colors = item_color_lists[ui_theme];
 	QPalette pal;
 
 	for(unsigned idx = 0; idx < static_cast<unsigned>(item_colors->size()); idx++)
@@ -890,6 +891,13 @@ void AppearanceConfigWidget::applyUiTheme()
 	qApp->setPalette(pal, "QPushButton");
 	qApp->setPalette(pal, "QTabWidget");
 	qApp->setPalette(pal);
+
+	// For dark theme, we force QMenu class to use a lighter base color
+	if(ui_theme == Attributes::Dark)
+	{
+		pal.setColor(QPalette::Base, color_map->at(QPalette::Mid).at(0));
+		qApp->setPalette(pal, "QMenu");
+	}
 
 	applySyntaxHighlightTheme();
 	setConfigurationChanged(true);
