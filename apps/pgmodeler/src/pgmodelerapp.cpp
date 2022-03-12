@@ -28,7 +28,6 @@ PgModelerApp::PgModelerApp(int &argc, char **argv) : Application(argc,argv)
 	QString plugin_name, plug_lang_dir, plug_lang_file;
 	QStringList dir_list;
 	QDir dir;
-	QList<QScreen *> scrs = this->screens();
 
 	try
 	{
@@ -126,30 +125,27 @@ PgModelerApp::PgModelerApp(int &argc, char **argv) : Application(argc,argv)
 	QString extra_ui_conf;
 
 	// Performing specific settings depending on the screen size
-	if(!scrs.isEmpty())
+	QSize sz = primaryScreen()->size();
+	QString ui_size_conf;
+
+	// QMenu icon sizes in full hd screens is 22x22
+	if(sz.width() <= 1920)
 	{
-		QSize sz = scrs[0]->size();
-		QString ui_size_conf;
+		CustomMenuStyle::setIconPixelMetric(22);
+		ui_size_conf = GlobalAttributes::UiSmallStyleConf;
+	}
+	// QMenu icon sizes in 2k screens is 25x25
+	else if(sz.width() < 3840)
+	{
+		CustomMenuStyle::setIconPixelMetric(25);
+		ui_size_conf = GlobalAttributes::UiMediumStyleConf;
+	}
 
-		// QMenu icon sizes in full hd screens is 22x22
-		if(sz.width() <= 1920)
-		{
-			CustomMenuStyle::setIconPixelMetric(22);
-			ui_size_conf = GlobalAttributes::UiSmallStyleConf;
-		}
-		// QMenu icon sizes in 2k screens is 25x25
-		else if(sz.width() < 3840)
-		{
-			CustomMenuStyle::setIconPixelMetric(25);
-			ui_size_conf = GlobalAttributes::UiMediumStyleConf;
-		}
-
-		if(!ui_size_conf.isEmpty())
-		{
-			extra_ui_conf = GlobalAttributes::getTmplConfigurationFilePath("",
-																																		 ui_size_conf +
-																																		 GlobalAttributes::ConfigurationExt);
-		}
+	if(!ui_size_conf.isEmpty())
+	{
+		extra_ui_conf = GlobalAttributes::getTmplConfigurationFilePath("",
+																																	 ui_size_conf +
+																																	 GlobalAttributes::ConfigurationExt);
 	}
 
 	QFile ui_style(GlobalAttributes::getTmplConfigurationFilePath("",

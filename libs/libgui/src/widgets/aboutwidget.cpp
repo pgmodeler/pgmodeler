@@ -19,8 +19,6 @@
 #include "aboutwidget.h"
 #include "guiutilsns.h"
 #include "baseobjectview.h"
-#include <QScreen>
-#include <QDesktopWidget>
 
 AboutWidget::AboutWidget(QWidget *parent) : QWidget(parent)
 {

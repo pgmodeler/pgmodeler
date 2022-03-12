@@ -315,15 +315,17 @@ namespace GuiUtilsNs {
 
 	void resizeDialog(QWidget *widget)
 	{
+		if(!widget)
+			return;
+
 		QSize min_size=widget->minimumSize();
-		int max_h = 0, curr_w =0, curr_h = 0,
-				screen_id = qApp->desktop()->screenNumber(qApp->activeWindow());
-		QScreen *screen=qApp->screens().at(screen_id);
+		int max_h = 0, curr_w =0, curr_h = 0;
+		QScreen *screen=qApp->primaryScreen();
 		double dpi_factor = 0;
 		double pixel_ratio = 0;
 
 		dpi_factor = screen->logicalDotsPerInch() / 96.0;
-    pixel_ratio = screen->devicePixelRatio();
+		pixel_ratio = screen->devicePixelRatio();
 
 		//If the dpi_factor is unchanged (1) we keep the dialog original dimension
 		if(dpi_factor <= 1.01)

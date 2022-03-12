@@ -19,7 +19,6 @@
 #include "attributestoggleritem.h"
 #include <QApplication>
 #include <QDesktopWidget>
-#include <QScreen>
 #include "baseobjectview.h"
 
 QPolygonF AttributesTogglerItem::btn_polygons[7];

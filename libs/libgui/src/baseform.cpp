@@ -40,11 +40,13 @@ void BaseForm::setButtonConfiguration(unsigned button_conf)
 
 void BaseForm::resizeForm(QWidget *widget)
 {
+	if(!widget)
+		return;
+
 	QVBoxLayout *vbox=new QVBoxLayout;
 	QSize min_size=widget->minimumSize();
-	int max_h = 0, max_w = 0, curr_w =0, curr_h = 0,
-			screen_id = qApp->desktop()->screenNumber(qApp->activeWindow());
-	QScreen *screen=qApp->screens().at(screen_id);
+	int max_h = 0, max_w = 0, curr_w =0, curr_h = 0;
+	QScreen *screen = qApp->primaryScreen();
 	double dpi_factor = 0;
 	double pixel_ratio = 0;
 

@@ -582,7 +582,7 @@ bool BaseObjectView::isInLayer(unsigned layer_id)
 
 double BaseObjectView::getScreenDpiFactor()
 {
-	QScreen *screen = qApp->screens().at(qApp->desktop()->screenNumber(qApp->activeWindow()));
+	QScreen *screen = qApp->primaryScreen();
 	double factor = screen->logicalDotsPerInch() / 96.0,
 			pixel_ratio = screen->devicePixelRatio(),
 			dpi_factor = factor * pixel_ratio;
