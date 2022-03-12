@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>625</width>
-    <height>252</height>
+    <width>876</width>
+    <height>449</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -30,23 +30,23 @@
   </property>
   <property name="windowIcon">
    <iconset resource="../res/resources.qrc">
-    <normaloff>:/icons/icons/pgsqlModeler48x48.png</normaloff>:/icons/icons/pgsqlModeler48x48.png</iconset>
+    <normaloff>:/icons/icons/pgmodeler_logo.png</normaloff>:/icons/icons/pgmodeler_logo.png</iconset>
   </property>
   <layout class="QGridLayout" name="gridLayout_4">
    <property name="leftMargin">
-    <number>2</number>
+    <number>10</number>
    </property>
    <property name="topMargin">
-    <number>2</number>
+    <number>10</number>
    </property>
    <property name="rightMargin">
-    <number>2</number>
+    <number>10</number>
    </property>
    <property name="bottomMargin">
-    <number>2</number>
+    <number>10</number>
    </property>
    <property name="spacing">
-    <number>4</number>
+    <number>10</number>
    </property>
    <item row="0" column="0">
     <widget class="QFrame" name="frame">
@@ -70,16 +70,16 @@
      </property>
      <layout class="QGridLayout" name="gridLayout_3">
       <property name="leftMargin">
-       <number>0</number>
+       <number>5</number>
       </property>
       <property name="topMargin">
-       <number>0</number>
+       <number>5</number>
       </property>
       <property name="rightMargin">
-       <number>0</number>
+       <number>5</number>
       </property>
       <property name="bottomMargin">
-       <number>0</number>
+       <number>5</number>
       </property>
       <item row="0" column="0" colspan="2">
        <widget class="QStackedWidget" name="objs_group_wgt">
@@ -107,13 +107,13 @@
         <widget class="QWidget" name="pg1_4">
          <layout class="QGridLayout" name="gridLayout_6">
           <property name="leftMargin">
-           <number>0</number>
+           <number>5</number>
           </property>
           <property name="topMargin">
-           <number>0</number>
+           <number>5</number>
           </property>
           <property name="rightMargin">
-           <number>0</number>
+           <number>5</number>
           </property>
           <property name="bottomMargin">
            <number>0</number>
@@ -122,18 +122,21 @@
            <widget class="QLabel" name="icon_lbl">
             <property name="minimumSize">
              <size>
-              <width>40</width>
-              <height>40</height>
+              <width>48</width>
+              <height>48</height>
              </size>
             </property>
             <property name="maximumSize">
              <size>
-              <width>40</width>
-              <height>40</height>
+              <width>48</width>
+              <height>48</height>
              </size>
             </property>
             <property name="text">
              <string/>
+            </property>
+            <property name="scaledContents">
+             <bool>true</bool>
             </property>
             <property name="alignment">
              <set>Qt::AlignCenter</set>
@@ -213,6 +216,9 @@
           </item>
           <item row="2" column="0" colspan="2">
            <layout class="QHBoxLayout" name="horizontalLayout_2">
+            <property name="spacing">
+             <number>10</number>
+            </property>
             <item>
              <spacer name="horizontalSpacer_3">
               <property name="orientation">
@@ -242,17 +248,20 @@
         </widget>
         <widget class="QWidget" name="pg2_4">
          <layout class="QVBoxLayout" name="verticalLayout">
+          <property name="spacing">
+           <number>10</number>
+          </property>
           <property name="leftMargin">
-           <number>4</number>
+           <number>5</number>
           </property>
           <property name="topMargin">
-           <number>4</number>
+           <number>5</number>
           </property>
           <property name="rightMargin">
-           <number>4</number>
+           <number>5</number>
           </property>
           <property name="bottomMargin">
-           <number>4</number>
+           <number>5</number>
           </property>
           <item>
            <widget class="QTabWidget" name="tabWidget">
@@ -264,20 +273,20 @@
             </property>
             <widget class="QWidget" name="tab">
              <attribute name="title">
-              <string>Stack</string>
+              <string>Stack info</string>
              </attribute>
              <layout class="QHBoxLayout" name="horizontalLayout_3">
               <property name="leftMargin">
-               <number>4</number>
+               <number>5</number>
               </property>
               <property name="topMargin">
-               <number>4</number>
+               <number>5</number>
               </property>
               <property name="rightMargin">
-               <number>4</number>
+               <number>5</number>
               </property>
               <property name="bottomMargin">
-               <number>4</number>
+               <number>5</number>
               </property>
               <item>
                <widget class="QTreeWidget" name="exceptions_trw">
@@ -310,8 +319,8 @@
                 </property>
                 <property name="iconSize">
                  <size>
-                  <width>20</width>
-                  <height>20</height>
+                  <width>28</width>
+                  <height>28</height>
                  </size>
                 </property>
                 <property name="indentation">
@@ -341,29 +350,59 @@
               </item>
              </layout>
             </widget>
+            <widget class="QWidget" name="tab_3">
+             <attribute name="title">
+              <string>Extra info</string>
+             </attribute>
+             <layout class="QVBoxLayout" name="verticalLayout_2">
+              <property name="leftMargin">
+               <number>5</number>
+              </property>
+              <property name="topMargin">
+               <number>5</number>
+              </property>
+              <property name="rightMargin">
+               <number>5</number>
+              </property>
+              <property name="bottomMargin">
+               <number>5</number>
+              </property>
+              <item>
+               <widget class="QTextBrowser" name="extra_info_txt">
+                <property name="font">
+                 <font/>
+                </property>
+                <property name="lineWrapMode">
+                 <enum>QTextEdit::NoWrap</enum>
+                </property>
+                <property name="acceptRichText">
+                 <bool>false</bool>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </widget>
             <widget class="QWidget" name="tab_2">
              <attribute name="title">
-              <string>Text</string>
+              <string>Plain text</string>
              </attribute>
              <layout class="QHBoxLayout" name="horizontalLayout_4">
               <property name="leftMargin">
-               <number>4</number>
+               <number>5</number>
               </property>
               <property name="topMargin">
-               <number>4</number>
+               <number>5</number>
               </property>
               <property name="rightMargin">
-               <number>4</number>
+               <number>5</number>
               </property>
               <property name="bottomMargin">
-               <number>4</number>
+               <number>5</number>
               </property>
               <item>
                <widget class="QTextBrowser" name="raw_info_txt">
                 <property name="font">
-                 <font>
-                  <family>DejaVu Sans Mono</family>
-                 </font>
+                 <font/>
                 </property>
                 <property name="lineWrapMode">
                  <enum>QTextEdit::NoWrap</enum>
@@ -386,6 +425,9 @@
    </item>
    <item row="1" column="0">
     <layout class="QGridLayout" name="gridLayout_2">
+     <property name="spacing">
+      <number>10</number>
+     </property>
      <item row="0" column="0">
       <widget class="QLabel" name="name_lbl">
        <property name="sizePolicy">
@@ -394,11 +436,20 @@
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>
+       <property name="maximumSize">
+        <size>
+         <width>242</width>
+         <height>50</height>
+        </size>
+       </property>
        <property name="text">
         <string/>
        </property>
        <property name="pixmap">
         <pixmap resource="../res/resources.qrc">:/images/images/pgmodeler_name.png</pixmap>
+       </property>
+       <property name="scaledContents">
+        <bool>true</bool>
        </property>
       </widget>
      </item>
@@ -425,19 +476,13 @@
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
-          <property name="minimumSize">
-           <size>
-            <width>90</width>
-            <height>32</height>
-           </size>
-          </property>
           <property name="text">
            <string>&amp;No</string>
           </property>
           <property name="iconSize">
            <size>
-            <width>22</width>
-            <height>22</height>
+            <width>32</width>
+            <height>32</height>
            </size>
           </property>
          </widget>
@@ -463,19 +508,13 @@
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
-          <property name="minimumSize">
-           <size>
-            <width>90</width>
-            <height>32</height>
-           </size>
-          </property>
           <property name="text">
            <string>Cancel</string>
           </property>
           <property name="iconSize">
            <size>
-            <width>22</width>
-            <height>22</height>
+            <width>32</width>
+            <height>32</height>
            </size>
           </property>
          </widget>
@@ -488,19 +527,13 @@
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
-          <property name="minimumSize">
-           <size>
-            <width>90</width>
-            <height>32</height>
-           </size>
-          </property>
           <property name="text">
            <string>&amp;Yes</string>
           </property>
           <property name="iconSize">
            <size>
-            <width>22</width>
-            <height>22</height>
+            <width>32</width>
+            <height>32</height>
            </size>
           </property>
           <property name="autoDefault">
@@ -519,12 +552,6 @@
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
-          <property name="minimumSize">
-           <size>
-            <width>0</width>
-            <height>32</height>
-           </size>
-          </property>
           <property name="toolTip">
            <string/>
           </property>
@@ -537,8 +564,8 @@
           </property>
           <property name="iconSize">
            <size>
-            <width>22</width>
-            <height>22</height>
+            <width>32</width>
+            <height>32</height>
            </size>
           </property>
           <property name="checkable">
@@ -566,6 +593,8 @@
   <tabstop>exceptions_trw</tabstop>
  </tabstops>
  <resources>
+  <include location="../res/resources.qrc"/>
+  <include location="../res/resources.qrc"/>
   <include location="../res/resources.qrc"/>
  </resources>
  <connections/>

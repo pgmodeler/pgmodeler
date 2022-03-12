@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2022 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -17,6 +17,13 @@
 */
 
 #include "objectstablewidget.h"
+
+QColor ObjectsTableWidget::item_colors[12] = { QColor("#ffb4b4"), QColor("#303030"),
+																							 QColor("#a4f9b0"), QColor("#303030"),
+																							 QColor("#c0ffc0"), QColor("#000"),
+																							 QColor("#ffffc0"), QColor("#000"),
+																							 QColor("#ffc0c0"), QColor("#000"),
+																							 QColor("#f00000"), QColor("#00f000")};
 
 ObjectsTableWidget::ObjectsTableWidget(unsigned button_conf, bool conf_exclusion, QWidget *parent): QWidget(parent)
 {
@@ -63,6 +70,22 @@ ObjectsTableWidget::ObjectsTableWidget(unsigned button_conf, bool conf_exclusion
 	move_first_tb->setToolTip(move_first_tb->toolTip() + QString(" (%1)").arg(move_first_tb->shortcut().toString()));
 	move_up_tb->setToolTip(move_up_tb->toolTip() + QString(" (%1)").arg(move_up_tb->shortcut().toString()));
 	move_down_tb->setToolTip(move_down_tb->toolTip() + QString(" (%1)").arg(move_down_tb->shortcut().toString()));
+}
+
+void ObjectsTableWidget::setTableItemColor(unsigned color_idx, const QColor color)
+{
+	if(color_idx > RelAddedItemAltFgColor)
+		return;
+
+	item_colors[color_idx] = color;
+}
+
+QColor ObjectsTableWidget::getTableItemColor(unsigned color_idx)
+{
+	if(color_idx > RelAddedItemAltFgColor)
+		return QColor();
+
+	return item_colors[color_idx];
 }
 
 void ObjectsTableWidget::setButtonConfiguration(unsigned button_conf)

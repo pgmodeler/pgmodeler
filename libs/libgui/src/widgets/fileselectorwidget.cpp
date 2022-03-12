@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2022 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -24,7 +24,7 @@ FileSelectorWidget::FileSelectorWidget(QWidget *parent) : QWidget(parent)
 	setupUi(this);
 	allow_filename_input = read_only = false;
 
-	file_dlg.setWindowIcon(QPixmap(GuiUtilsNs::getIconPath("pgsqlModeler48x48")));
+	file_dlg.setWindowIcon(QPixmap(GuiUtilsNs::getIconPath("pgmodeler_logo")));
 
 	filename_edt->setReadOnly(true);
 	filename_edt->installEventFilter(this);
@@ -66,8 +66,8 @@ bool FileSelectorWidget::eventFilter(QObject *obj, QEvent *evnt)
 
 void FileSelectorWidget::resizeEvent(QResizeEvent *)
 {
-	warn_ico_lbl->move(filename_edt->width() - warn_ico_lbl->width(),
-										 (filename_edt->height() - warn_ico_lbl->height())/2);
+	warn_ico_lbl->move(filename_edt->width() - warn_ico_lbl->width() - 5,
+										 filename_edt->height() - warn_ico_lbl->height());
 }
 
 void FileSelectorWidget::setAllowFilenameInput(bool allow_fl_input)

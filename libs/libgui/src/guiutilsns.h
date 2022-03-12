@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2022 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -33,15 +33,13 @@
 #include "widgets/numberedtexteditor.h"
 
 namespace GuiUtilsNs {
+	static constexpr int LtMargin = 5,
+	LtSpacing = 10;
+
 	static constexpr unsigned SmallFontFactor = 0,
 	MediumFontFactor = 1,
 	BigFontFactor = 2,
 	HugeFontFactor = 3;
-
-	static const QColor ProtRowBgColor(255,180,180),
-	ProtRowFgColor(80,80,80),
-	RelAddedRowBgColor(164,249,176),
-	RelAddedRowFgColor(80,80,80);
 
 	extern void configureWidgetFont(QWidget *widget, unsigned factor_id);
 	extern void __configureWidgetFont(QWidget *widget, double factor);

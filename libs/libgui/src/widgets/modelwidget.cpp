@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2022 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -64,6 +64,7 @@
 #include "dbobjects/transformwidget.h"
 #include "dbobjects/procedurewidget.h"
 #include "coreutilsns.h"
+#include "utils/custommenustyle.h"
 
 vector<BaseObject *> ModelWidget::copied_objects;
 vector<BaseObject *> ModelWidget::cutted_objects;
@@ -169,6 +170,7 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	grid=new QGridLayout;
 	grid->addWidget(protected_model_frm, 0,0,1,1);
 	grid->addWidget(viewport, 1,0,1,1);
+	grid->setContentsMargins(20,20,20,20);
 	this->setLayout(grid);
 
 	magnifier_frm = new QFrame(this);
@@ -219,7 +221,7 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 
 	action_edit_data=new QAction(QIcon(GuiUtilsNs::getIconPath("editdata")), tr("Edit data"), this);
 
-	action_source_code=new QAction(QIcon(GuiUtilsNs::getIconPath("sqlcode")), tr("Source"), this);
+	action_source_code=new QAction(QIcon(GuiUtilsNs::getIconPath("sourcecode")), tr("Source"), this);
 	action_source_code->setShortcut(QKeySequence(tr("Alt+S")));
 	action_source_code->setToolTip(tr("Show object source code"));
 
@@ -239,7 +241,7 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	action_cascade_del->setShortcut(QKeySequence(tr("Shift+Del")));
 	action_cascade_del->setMenuRole(QAction::NoRole);
 
-	action_select_all=new QAction(QIcon(GuiUtilsNs::getIconPath("selectall")), tr("Select all"), this);
+	action_select_all=new QAction(QIcon(GuiUtilsNs::getIconPath("selectmove")), tr("Select all"), this);
 	action_select_all->setToolTip(tr("Selects all the graphical objects in the model"));
 	action_select_all->setMenu(&select_all_menu);
 
@@ -274,7 +276,7 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	action_moveto_schema=new QAction(QIcon(GuiUtilsNs::getIconPath("movetoschema")), tr("Move to schema"), this);
 	action_moveto_schema->setMenu(&schemas_menu);
 
-	action_set_layer=new QAction(QIcon(GuiUtilsNs::getIconPath("movetolayer")), tr("Set layers"), this);
+	action_set_layer=new QAction(QIcon(GuiUtilsNs::getIconPath("layers")), tr("Set layers"), this);
 	action_set_layer->setMenu(&layers_menu);
 
 	layers_wgt = new LayersWidget(this);
@@ -291,9 +293,9 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	action_change_owner=new QAction(QIcon(GuiUtilsNs::getIconPath("changeowner")), tr("Change owner"), this);
 	action_change_owner->setMenu(&owners_menu);
 
-	action_sel_sch_children=new QAction(QIcon(GuiUtilsNs::getIconPath("selectall")), tr("Select children"), this);
-	action_sel_tagged_tabs=new QAction(QIcon(GuiUtilsNs::getIconPath("selectall")), tr("Select tagged"), this);
-	action_sel_table_rels=new QAction(QIcon(GuiUtilsNs::getIconPath("selectall")), tr("Select relationships"), this);
+	action_sel_sch_children=new QAction(QIcon(GuiUtilsNs::getIconPath("selectmove")), tr("Select children"), this);
+	action_sel_tagged_tabs=new QAction(QIcon(GuiUtilsNs::getIconPath("selectmove")), tr("Select tagged"), this);
+	action_sel_table_rels=new QAction(QIcon(GuiUtilsNs::getIconPath("selectmove")), tr("Select relationships"), this);
 
 	action_select_object=new QAction(QIcon(GuiUtilsNs::getIconPath("moved")), tr("Select"), this);
 	action_parent_rel=new QAction(QIcon(GuiUtilsNs::getIconPath("relationship")), tr("Open relationship"), this);
@@ -308,7 +310,7 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 
 	action_remove_rel_points=new QAction(QIcon(GuiUtilsNs::getIconPath("removepoints")), tr("Remove points"), this);
 
-	action_enable_sql=new QAction(QIcon(GuiUtilsNs::getIconPath("sqlcode")), tr("Enable SQL"), this);
+	action_enable_sql=new QAction(QIcon(GuiUtilsNs::getIconPath("enablesql")), tr("Enable SQL"), this);
 	action_disable_sql=new QAction(QIcon(GuiUtilsNs::getIconPath("disablesql")), tr("Disable SQL"), this);
 
 	action_duplicate=new QAction(QIcon(GuiUtilsNs::getIconPath("duplicate")), tr("Duplicate"), this);
@@ -433,6 +435,7 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 
 	//Creating the relationship submenu
 	rels_menu=new QMenu(this);
+	rels_menu->setStyle(new CustomMenuStyle);
 	actions_new_objects[ObjectType::Relationship]->setMenu(rels_menu);
 
 	for(int i=0; i < rel_types_cod.size(); i++)
@@ -557,6 +560,29 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	viewport->installEventFilter(this);
 	viewport->horizontalScrollBar()->installEventFilter(this);
 	viewport->verticalScrollBar()->installEventFilter(this);
+
+	popup_menu.setStyle(new CustomMenuStyle);
+	new_object_menu.setStyle(new CustomMenuStyle);
+	quick_actions_menu.setStyle(new CustomMenuStyle);
+	schemas_menu.setStyle(new CustomMenuStyle);
+	owners_menu.setStyle(new CustomMenuStyle);
+	tags_menu.setStyle(new CustomMenuStyle);
+	layers_menu.setStyle(new CustomMenuStyle);
+	break_rel_menu.setStyle(new CustomMenuStyle);
+	fade_menu.setStyle(new CustomMenuStyle);
+	fade_in_menu.setStyle(new CustomMenuStyle);
+	fade_out_menu.setStyle(new CustomMenuStyle);
+	fade_rels_menu.setStyle(new CustomMenuStyle);
+	fade_peer_tables_menu.setStyle(new CustomMenuStyle);
+	fade_both_objs_menu.setStyle(new CustomMenuStyle);
+	toggle_attrs_menu.setStyle(new CustomMenuStyle);
+	pagination_menu.setStyle(new CustomMenuStyle);
+	select_all_menu.setStyle(new CustomMenuStyle);
+	jump_to_tab_menu.setStyle(new CustomMenuStyle);
+	toggle_sch_rects_menu.setStyle(new CustomMenuStyle);
+	database_category_menu.setStyle(new CustomMenuStyle);
+	schema_category_menu.setStyle(new CustomMenuStyle);
+	stacking_menu.setStyle(new CustomMenuStyle);
 }
 
 ModelWidget::~ModelWidget()
@@ -4146,6 +4172,7 @@ void ModelWidget::configureConstraintsMenu(TableObject *tab_obj)
 
 				//For each constaint is created a menu with the edit, source code, protect/unprotect and delete actions
 				submenu=new QMenu(&popup_menu);
+				submenu->setStyle(new CustomMenuStyle);
 				submenu->setIcon(QPixmap(GuiUtilsNs::getIconPath(BaseObject::getSchemaName(ObjectType::Constraint) + str_aux)));
 				submenu->setTitle(constr->getName());
 
@@ -4157,7 +4184,7 @@ void ModelWidget::configureConstraintsMenu(TableObject *tab_obj)
 				submenu->addAction(action);
 
 				action=new QAction(dynamic_cast<QObject *>(submenu));
-				action->setIcon(QPixmap(GuiUtilsNs::getIconPath("sqlcode")));
+				action->setIcon(QPixmap(GuiUtilsNs::getIconPath("sourcecode")));
 				action->setText(tr("Source code"));
 				action->setData(QVariant::fromValue<void *>(dynamic_cast<BaseObject *>(constr)));
 				connect(action, SIGNAL(triggered(bool)), this, SLOT(showSourceCode()));
@@ -4206,6 +4233,7 @@ void ModelWidget::configureConstraintsMenu(TableObject *tab_obj)
 		if(!submenus.empty())
 		{
 			submenu=new QMenu(&popup_menu);
+			submenu->setStyle(new CustomMenuStyle);
 			submenu->setTitle(tr("Constraints"));
 			submenu->setIcon(QPixmap(GuiUtilsNs::getIconPath(BaseObject::getSchemaName(ObjectType::Constraint) + QString("_grp"))));
 

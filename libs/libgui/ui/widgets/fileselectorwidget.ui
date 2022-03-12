@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>277</width>
+    <width>339</width>
     <height>39</height>
    </rect>
   </property>
@@ -48,7 +48,7 @@
     <number>0</number>
    </property>
    <property name="spacing">
-    <number>4</number>
+    <number>10</number>
    </property>
    <item row="0" column="1">
     <widget class="QToolButton" name="rem_file_tb">
@@ -78,12 +78,12 @@
      </property>
      <property name="icon">
       <iconset resource="../../res/resources.qrc">
-       <normaloff>:/icons/icons/cleartext.png</normaloff>:/icons/icons/cleartext.png</iconset>
+       <normaloff>:/icons/icons/delete.png</normaloff>:/icons/icons/delete.png</iconset>
      </property>
      <property name="iconSize">
       <size>
-       <width>22</width>
-       <height>22</height>
+       <width>32</width>
+       <height>32</height>
       </size>
      </property>
     </widget>
@@ -120,8 +120,8 @@
      </property>
      <property name="iconSize">
       <size>
-       <width>22</width>
-       <height>22</height>
+       <width>32</width>
+       <height>32</height>
       </size>
      </property>
     </widget>
@@ -129,6 +129,8 @@
   </layout>
  </widget>
  <resources>
+  <include location="../../res/resources.qrc"/>
+  <include location="../../res/resources.qrc"/>
   <include location="../../res/resources.qrc"/>
  </resources>
  <connections/>

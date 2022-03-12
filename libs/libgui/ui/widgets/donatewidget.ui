@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>245</height>
+    <width>440</width>
+    <height>343</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -48,16 +48,19 @@
      </property>
      <layout class="QGridLayout" name="gridLayout">
       <property name="leftMargin">
-       <number>6</number>
+       <number>5</number>
       </property>
       <property name="topMargin">
-       <number>6</number>
+       <number>5</number>
       </property>
       <property name="rightMargin">
-       <number>6</number>
+       <number>5</number>
       </property>
       <property name="bottomMargin">
-       <number>6</number>
+       <number>5</number>
+      </property>
+      <property name="spacing">
+       <number>10</number>
       </property>
       <item row="0" column="0">
        <widget class="QLabel" name="title_lbl">
@@ -80,18 +83,6 @@
       </item>
       <item row="0" column="1">
        <widget class="QToolButton" name="hide_tb">
-        <property name="minimumSize">
-         <size>
-          <width>20</width>
-          <height>20</height>
-         </size>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>20</width>
-          <height>20</height>
-         </size>
-        </property>
         <property name="toolTip">
          <string>Hide this widget</string>
         </property>
@@ -101,6 +92,15 @@
         <property name="icon">
          <iconset resource="../../res/resources.qrc">
           <normaloff>:/icons/icons/close1.png</normaloff>:/icons/icons/close1.png</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>25</width>
+          <height>25</height>
+         </size>
+        </property>
+        <property name="shortcut">
+         <string>Esc</string>
         </property>
         <property name="autoRaise">
          <bool>true</bool>
@@ -167,16 +167,10 @@
         <item>
          <widget class="QToolButton" name="donate_tb">
           <property name="sizePolicy">
-           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
-          </property>
-          <property name="minimumSize">
-           <size>
-            <width>0</width>
-            <height>30</height>
-           </size>
           </property>
           <property name="text">
            <string>I want to help!</string>
@@ -187,8 +181,8 @@
           </property>
           <property name="iconSize">
            <size>
-            <width>22</width>
-            <height>22</height>
+            <width>32</width>
+            <height>32</height>
            </size>
           </property>
           <property name="checkable">
@@ -223,6 +217,8 @@
   </layout>
  </widget>
  <resources>
+  <include location="../../res/resources.qrc"/>
+  <include location="../../res/resources.qrc"/>
   <include location="../../res/resources.qrc"/>
  </resources>
  <connections/>

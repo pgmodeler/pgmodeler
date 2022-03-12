@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2022 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -35,13 +35,13 @@ IndexWidget::IndexWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::
 		elements_tab = new ElementsTableWidget(this);
 
 		grid=new QGridLayout;
-		grid->setContentsMargins(4,4,4,4);
+		grid->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
 		grid->addWidget(elements_tab,0,0);
 		attributes_tbw->widget(1)->setLayout(grid);
 
 		incl_cols_picker_wgt = new ColumnPickerWidget(this);
 		QVBoxLayout *vbox = new QVBoxLayout(attributes_tbw->widget(2));
-		vbox->setContentsMargins(4, 4, 4, 4);
+		vbox->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
 		vbox->addWidget(incl_cols_picker_wgt);
 
 		configureFormLayout(index_grid, ObjectType::Index);

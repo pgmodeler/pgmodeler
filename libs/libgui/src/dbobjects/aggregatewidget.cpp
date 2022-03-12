@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2022 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -46,7 +46,7 @@ AggregateWidget::AggregateWidget(QWidget *parent): BaseObjectWidget(parent, Obje
 		funcaoagregacao_grid->addWidget(sort_op_sel,2,1,1,1);
 
 		grid=new QGridLayout;
-		grid->setContentsMargins(2,2,2,2);
+		grid->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
 		grid->addWidget(input_type,0,0);
 		grid->addWidget(input_types_tab,1,0);
 		state_input_types_twg->widget(0)->setLayout(grid);
@@ -54,7 +54,7 @@ AggregateWidget::AggregateWidget(QWidget *parent): BaseObjectWidget(parent, Obje
 		grid=new QGridLayout;
 		spacer=new QSpacerItem(20, 1, QSizePolicy::Minimum, QSizePolicy::Expanding);
 
-		grid->setContentsMargins(2,2,2,2);
+		grid->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
 		grid->addWidget(state_type,0,0);
 		grid->addItem(spacer,1,0);
 		state_input_types_twg->widget(1)->setLayout(grid);

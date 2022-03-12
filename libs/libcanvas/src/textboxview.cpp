@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2022 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -17,7 +17,6 @@
 */
 
 #include "textboxview.h"
-#include "roundedrectitem.h"
 
 TextboxView::TextboxView(Textbox *txtbox, bool override_style) : BaseObjectView(txtbox)
 {
@@ -99,8 +98,8 @@ void TextboxView::__configureObject()
 	text_item->setText(txtbox->getComment());
 	text_item->setTextPos(HorizSpacing * 2, VertSpacing * (text_item->getFont().italic() ? 0.90 : 0.50));
 
-	TextPolygonItem::resizePolygon(polygon, round(text_item->getTextBoundingRect().width() + (2.5 * HorizSpacing)),
-																					round(text_item->getTextBoundingRect().height() + (1.5 * VertSpacing)));
+	resizePolygon(polygon, round(text_item->getTextBoundingRect().width() + (2.5 * HorizSpacing)),
+								round(text_item->getTextBoundingRect().height() + (1.5 * VertSpacing)));
 
 	text_item->setPos(0,0);
 	text_item->setPolygon(polygon);
@@ -136,10 +135,10 @@ void TextboxView::configureObjectShadow()
 {
 	QGraphicsPolygonItem *pol_item=dynamic_cast<QGraphicsPolygonItem *>(obj_shadow);
 
-	pol_item->setPen(Qt::NoPen);
-	pol_item->setBrush(QColor(50,50,50,60));
+	pol_item->setPen(getBorderStyle(Attributes::ObjShadow));
+	pol_item->setBrush(getFillStyle(Attributes::ObjShadow));
 	pol_item->setPolygon(text_item->polygon());
-	pol_item->setPos(3.5,3.5);
+	pol_item->setPos(ObjectShadowXPos, ObjectShadowYPos);
 }
 
 void TextboxView::configureObjectSelection()

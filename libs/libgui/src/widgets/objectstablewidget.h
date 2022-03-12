@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2022 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -36,6 +36,8 @@ class ObjectsTableWidget: public QWidget, public Ui::ObjectsTableWidget {
 	private:
 		Q_OBJECT
 
+		static QColor item_colors[12];
+
 		/*! \brief Indicates that a confirmation message must be shown when the user try
 		to remove an element from table. By default, the exclusions are made without confirmation */
 		bool conf_exclusion;
@@ -58,6 +60,42 @@ class ObjectsTableWidget: public QWidget, public Ui::ObjectsTableWidget {
 		ResizeColsButton=128,
 		AllButtons=255,
 		NoButtons=0;
+
+		//! \brief References the default background color  for protected items
+		static constexpr unsigned ProtItemBgColor = 0,
+
+		//! \brief References the default foreground color  for protected items
+		ProtItemFgColor = 1,
+
+		//! \brief References the default background color  for relationship added items
+		RelAddedItemBgColor = 2,
+
+		//! \brief References the default foreground color  for relationship added items
+		RelAddedItemFgColor = 3,
+
+		//! \brief References the default background color  for added items
+		AddedItemBgColor = 4,
+
+		//! \brief References the default foreground color  for added items
+		AddedItemFgColor = 5,
+
+		//! \brief References the default background color  for updated items
+		UpdatedItemBgColor = 6,
+
+		//! \brief References the default foreground color  for updated items
+		UpdatedItemFgColor = 7,
+
+		//! \brief References the default background color  for updated items
+		RemovedItemBgColor = 8,
+
+		//! \brief References the default foreground color  for removed items
+		RemovedItemFgColor = 9,
+
+		//! \brief References the alternative foreground color  for protected items
+		ProtItemAltFgColor = 10,
+
+		//! \brief References the alternative foreground color  for relationship added items
+		RelAddedItemAltFgColor = 11;
 
 		ObjectsTableWidget(unsigned button_conf=AllButtons, bool conf_exclusion=false, QWidget * parent = nullptr);
 
@@ -131,6 +169,10 @@ class ObjectsTableWidget: public QWidget, public Ui::ObjectsTableWidget {
 		void setButtonConfiguration(unsigned button_conf);
 
 		void adjustColumnToContents(int col);
+
+		static void setTableItemColor(unsigned color_idx, const QColor color);
+
+		static QColor getTableItemColor(unsigned color_idx);
 
 	private slots:
 		//! \brief Moves a row up or down according to the button that triggers the slot

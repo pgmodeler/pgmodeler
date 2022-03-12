@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2022 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -42,7 +42,7 @@ UserMappingWidget::UserMappingWidget(QWidget *parent): BaseObjectWidget(parent, 
 		options_tab->setHeaderLabel(tr("Value"), 1);
 
 		hbox = new QHBoxLayout;
-		hbox->setContentsMargins(4,4,4,4);
+		hbox->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
 		hbox->addWidget(options_tab);
 		options_gb->setLayout(hbox);
 

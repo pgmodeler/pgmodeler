@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2022 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -28,7 +28,7 @@ SchemaWidget::SchemaWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType
 	color_picker=new ColorPickerWidget(1, this);
 
 	hbox=new QHBoxLayout;
-	hbox->setContentsMargins(2,0,0,0);
+	hbox->setContentsMargins(GuiUtilsNs::LtMargin,0,0,0);
 	hbox->addWidget(fill_color_lbl);
 	hbox->addWidget(color_picker);
 	hbox->addWidget(show_rect_chk);

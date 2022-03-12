@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2022 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -56,7 +56,7 @@ void BaseForm::resizeForm(QWidget *widget)
 	if(dpi_factor <= 1.01)
 		dpi_factor = 1.0;
 
-	vbox->setContentsMargins(2,2,2,2);
+	vbox->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
 
 	/* If the widget's minimum size is zero then we need to do
 			a size adjustment on the widget prior to insert it into the dialog */

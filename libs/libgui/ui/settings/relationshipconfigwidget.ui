@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>584</width>
-    <height>605</height>
+    <width>827</width>
+    <height>793</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -21,19 +21,19 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_3">
    <property name="spacing">
-    <number>8</number>
+    <number>10</number>
    </property>
    <property name="leftMargin">
-    <number>2</number>
+    <number>5</number>
    </property>
    <property name="topMargin">
-    <number>0</number>
+    <number>5</number>
    </property>
    <property name="rightMargin">
-    <number>0</number>
+    <number>5</number>
    </property>
    <property name="bottomMargin">
-    <number>0</number>
+    <number>5</number>
    </property>
    <item>
     <widget class="QTabWidget" name="settings_twg">
@@ -42,20 +42,23 @@
      </property>
      <widget class="QWidget" name="tab">
       <attribute name="title">
-       <string>Connection Mode</string>
+       <string>Connection mode</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout_3">
        <property name="leftMargin">
-        <number>4</number>
+        <number>5</number>
        </property>
        <property name="topMargin">
-        <number>4</number>
+        <number>5</number>
        </property>
        <property name="rightMargin">
-        <number>4</number>
+        <number>5</number>
        </property>
        <property name="bottomMargin">
-        <number>4</number>
+        <number>5</number>
+       </property>
+       <property name="spacing">
+        <number>10</number>
        </property>
        <item row="0" column="0">
         <widget class="QFrame" name="frame">
@@ -69,20 +72,26 @@
           <enum>QFrame::StyledPanel</enum>
          </property>
          <layout class="QVBoxLayout" name="verticalLayout">
+          <property name="spacing">
+           <number>10</number>
+          </property>
           <property name="leftMargin">
-           <number>4</number>
+           <number>5</number>
           </property>
           <property name="topMargin">
-           <number>4</number>
+           <number>5</number>
           </property>
           <property name="rightMargin">
-           <number>4</number>
+           <number>5</number>
           </property>
           <property name="bottomMargin">
-           <number>4</number>
+           <number>5</number>
           </property>
           <item>
            <layout class="QGridLayout" name="gridLayout_6">
+            <property name="spacing">
+             <number>10</number>
+            </property>
             <item row="1" column="0" colspan="2">
              <widget class="QLabel" name="crows_foot_lbl">
               <property name="enabled">
@@ -94,16 +103,10 @@
                 <verstretch>0</verstretch>
                </sizepolicy>
               </property>
-              <property name="minimumSize">
-               <size>
-                <width>555</width>
-                <height>81</height>
-               </size>
-              </property>
               <property name="maximumSize">
                <size>
-                <width>555</width>
-                <height>81</height>
+                <width>16777215</width>
+                <height>150</height>
                </size>
               </property>
               <property name="frameShape">
@@ -120,6 +123,9 @@
               </property>
               <property name="pixmap">
                <pixmap resource="../../res/resources.qrc">:/images/images/crows_foot_notation.png</pixmap>
+              </property>
+              <property name="scaledContents">
+               <bool>true</bool>
               </property>
               <property name="textInteractionFlags">
                <set>Qt::NoTextInteraction</set>
@@ -158,6 +164,9 @@
           </item>
           <item>
            <layout class="QGridLayout" name="gridLayout_7">
+            <property name="spacing">
+             <number>10</number>
+            </property>
             <item row="1" column="0" colspan="3">
              <widget class="QLabel" name="conn_tab_edges_lbl">
               <property name="enabled">
@@ -169,16 +178,10 @@
                 <verstretch>0</verstretch>
                </sizepolicy>
               </property>
-              <property name="minimumSize">
-               <size>
-                <width>0</width>
-                <height>0</height>
-               </size>
-              </property>
               <property name="maximumSize">
                <size>
-                <width>555</width>
-                <height>16777215</height>
+                <width>16777215</width>
+                <height>150</height>
                </size>
               </property>
               <property name="frameShape">
@@ -195,6 +198,9 @@
               </property>
               <property name="pixmap">
                <pixmap resource="../../res/resources.qrc">:/images/images/rel_tab_edges.png</pixmap>
+              </property>
+              <property name="scaledContents">
+               <bool>true</bool>
               </property>
               <property name="textInteractionFlags">
                <set>Qt::NoTextInteraction</set>
@@ -227,6 +233,9 @@
           </item>
           <item>
            <layout class="QGridLayout" name="gridLayout">
+            <property name="spacing">
+             <number>10</number>
+            </property>
             <item row="1" column="0" colspan="3">
              <widget class="QLabel" name="conn_fk_pk_lbl">
               <property name="enabled">
@@ -238,16 +247,10 @@
                 <verstretch>0</verstretch>
                </sizepolicy>
               </property>
-              <property name="minimumSize">
-               <size>
-                <width>0</width>
-                <height>101</height>
-               </size>
-              </property>
               <property name="maximumSize">
                <size>
-                <width>555</width>
-                <height>101</height>
+                <width>16777215</width>
+                <height>150</height>
                </size>
               </property>
               <property name="frameShape">
@@ -264,6 +267,9 @@
               </property>
               <property name="pixmap">
                <pixmap resource="../../res/resources.qrc">:/images/images/rel_fk_to_pk.png</pixmap>
+              </property>
+              <property name="scaledContents">
+               <bool>true</bool>
               </property>
               <property name="textInteractionFlags">
                <set>Qt::NoTextInteraction</set>
@@ -299,6 +305,9 @@
           </item>
           <item>
            <layout class="QGridLayout" name="gridLayout_4">
+            <property name="spacing">
+             <number>10</number>
+            </property>
             <item row="1" column="0" colspan="3">
              <widget class="QLabel" name="conn_cnt_pnts_lbl">
               <property name="enabled">
@@ -310,16 +319,10 @@
                 <verstretch>0</verstretch>
                </sizepolicy>
               </property>
-              <property name="minimumSize">
-               <size>
-                <width>0</width>
-                <height>101</height>
-               </size>
-              </property>
               <property name="maximumSize">
                <size>
-                <width>555</width>
-                <height>101</height>
+                <width>16777215</width>
+                <height>150</height>
                </size>
               </property>
               <property name="frameShape">
@@ -336,6 +339,9 @@
               </property>
               <property name="pixmap">
                <pixmap resource="../../res/resources.qrc">:/images/images/rel_center_pnts.png</pixmap>
+              </property>
+              <property name="scaledContents">
+               <bool>true</bool>
               </property>
               <property name="textInteractionFlags">
                <set>Qt::NoTextInteraction</set>
@@ -420,19 +426,19 @@
          </property>
          <layout class="QGridLayout" name="gridLayout_2">
           <property name="leftMargin">
-           <number>4</number>
+           <number>5</number>
           </property>
           <property name="topMargin">
-           <number>4</number>
+           <number>5</number>
           </property>
           <property name="rightMargin">
-           <number>4</number>
+           <number>5</number>
           </property>
           <property name="bottomMargin">
-           <number>4</number>
+           <number>5</number>
           </property>
           <property name="spacing">
-           <number>6</number>
+           <number>10</number>
           </property>
           <item row="0" column="2">
            <widget class="QLabel" name="deferral_lbl">
@@ -538,6 +544,12 @@
             <property name="sizeAdjustPolicy">
              <enum>QComboBox::AdjustToContents</enum>
             </property>
+            <property name="iconSize">
+             <size>
+              <width>28</width>
+              <height>28</height>
+             </size>
+            </property>
            </widget>
           </item>
           <item row="1" column="0">
@@ -548,10 +560,24 @@
            </widget>
           </item>
           <item row="1" column="3">
-           <widget class="QComboBox" name="upd_action_cmb"/>
+           <widget class="QComboBox" name="upd_action_cmb">
+            <property name="iconSize">
+             <size>
+              <width>28</width>
+              <height>28</height>
+             </size>
+            </property>
+           </widget>
           </item>
           <item row="1" column="1">
-           <widget class="QComboBox" name="del_action_cmb"/>
+           <widget class="QComboBox" name="del_action_cmb">
+            <property name="iconSize">
+             <size>
+              <width>28</width>
+              <height>28</height>
+             </size>
+            </property>
+           </widget>
           </item>
           <item row="1" column="2">
            <widget class="QLabel" name="on_update_lbl">
@@ -584,16 +610,19 @@
          </property>
          <layout class="QGridLayout" name="gridLayout_5">
           <property name="leftMargin">
-           <number>4</number>
+           <number>5</number>
           </property>
           <property name="topMargin">
-           <number>4</number>
+           <number>5</number>
           </property>
           <property name="rightMargin">
-           <number>4</number>
+           <number>5</number>
           </property>
           <property name="bottomMargin">
-           <number>4</number>
+           <number>5</number>
+          </property>
+          <property name="spacing">
+           <number>10</number>
           </property>
           <item row="2" column="0">
            <widget class="QLabel" name="src_fk_pattern_lbl">
@@ -623,7 +652,14 @@
            </widget>
           </item>
           <item row="0" column="1">
-           <widget class="QComboBox" name="rel_type_cmb"/>
+           <widget class="QComboBox" name="rel_type_cmb">
+            <property name="iconSize">
+             <size>
+              <width>28</width>
+              <height>28</height>
+             </size>
+            </property>
+           </widget>
           </item>
           <item row="1" column="0">
            <widget class="QLabel" name="src_col_pattern_lbl">
@@ -909,6 +945,8 @@
   <tabstop>pk_col_pattern_txt</tabstop>
  </tabstops>
  <resources>
+  <include location="../../res/resources.qrc"/>
+  <include location="../../res/resources.qrc"/>
   <include location="../../res/resources.qrc"/>
  </resources>
  <connections/>

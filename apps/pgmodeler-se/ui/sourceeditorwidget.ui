@@ -15,19 +15,19 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <property name="spacing">
-    <number>4</number>
+    <number>10</number>
    </property>
    <property name="leftMargin">
-    <number>4</number>
+    <number>5</number>
    </property>
    <property name="topMargin">
-    <number>4</number>
+    <number>5</number>
    </property>
    <property name="rightMargin">
-    <number>4</number>
+    <number>5</number>
    </property>
    <property name="bottomMargin">
-    <number>4</number>
+    <number>5</number>
    </property>
    <item>
     <widget class="QWidget" name="source_file_parent" native="true">
@@ -62,10 +62,10 @@
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout">
      <property name="spacing">
-      <number>6</number>
+      <number>10</number>
      </property>
      <property name="bottomMargin">
-      <number>2</number>
+      <number>5</number>
      </property>
      <item>
       <widget class="QToolButton" name="validate_tb">
@@ -96,8 +96,8 @@
        </property>
        <property name="iconSize">
         <size>
-         <width>25</width>
-         <height>25</height>
+         <width>32</width>
+         <height>32</height>
         </size>
        </property>
        <property name="shortcut">
@@ -146,8 +146,8 @@
        </property>
        <property name="iconSize">
         <size>
-         <width>25</width>
-         <height>25</height>
+         <width>32</width>
+         <height>32</height>
         </size>
        </property>
        <property name="shortcut">
@@ -193,8 +193,8 @@
        </property>
        <property name="iconSize">
         <size>
-         <width>25</width>
-         <height>25</height>
+         <width>32</width>
+         <height>32</height>
         </size>
        </property>
        <property name="shortcut">
@@ -235,6 +235,7 @@
   </layout>
  </widget>
  <resources>
+  <include location="../../../libs/libgui/res/resources.qrc"/>
   <include location="../../../libs/libgui/res/resources.qrc"/>
  </resources>
  <connections/>

@@ -48,7 +48,7 @@ SourceEditorWidget::SourceEditorWidget(QWidget *parent) : QWidget(parent)
 		code_compl_wgt->insertCustomItem(itr.first, itr.second, QPixmap(GuiUtilsNs::getIconPath("codesnippet")));
 
 	vbox = new QVBoxLayout(find_parent);
-	vbox->setContentsMargins(0, 0, 0, 4);
+	vbox->setContentsMargins(0, 0, 0, GuiUtilsNs::LtMargin);
 	vbox->addWidget(find_wgt);
 
 	indent_tb->setMenu(&indent_opts_menu);

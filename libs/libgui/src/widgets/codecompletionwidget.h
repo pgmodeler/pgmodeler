@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2022 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -41,7 +41,7 @@ class CodeCompletionWidget: public QWidget
 		QWidget *completion_wgt;
 		
 		//! \brief Marks the completion widget as persistent (available only when there is no a database model assinged)
-		QCheckBox *persistent_chk;
+		QCheckBox *always_on_top_chk;
 		
 		//! \brief Input field that is associated with the code completion
 		QPlainTextEdit *code_field_txt;

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>461</width>
-    <height>236</height>
+    <width>924</width>
+    <height>276</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -33,10 +33,13 @@
     <number>0</number>
    </property>
    <property name="spacing">
-    <number>4</number>
+    <number>10</number>
    </property>
    <item row="0" column="1">
     <layout class="QHBoxLayout" name="horizontalLayout">
+     <property name="spacing">
+      <number>10</number>
+     </property>
      <item>
       <widget class="QToolButton" name="add_tb">
        <property name="enabled">
@@ -66,8 +69,8 @@
        </property>
        <property name="iconSize">
         <size>
-         <width>22</width>
-         <height>22</height>
+         <width>32</width>
+         <height>32</height>
         </size>
        </property>
        <property name="shortcut">
@@ -104,8 +107,8 @@
        </property>
        <property name="iconSize">
         <size>
-         <width>22</width>
-         <height>22</height>
+         <width>32</width>
+         <height>32</height>
         </size>
        </property>
        <property name="shortcut">
@@ -142,8 +145,8 @@
        </property>
        <property name="iconSize">
         <size>
-         <width>22</width>
-         <height>22</height>
+         <width>32</width>
+         <height>32</height>
         </size>
        </property>
        <property name="shortcut">
@@ -180,8 +183,8 @@
        </property>
        <property name="iconSize">
         <size>
-         <width>22</width>
-         <height>22</height>
+         <width>32</width>
+         <height>32</height>
         </size>
        </property>
        <property name="shortcut">
@@ -218,8 +221,8 @@
        </property>
        <property name="iconSize">
         <size>
-         <width>22</width>
-         <height>22</height>
+         <width>32</width>
+         <height>32</height>
         </size>
        </property>
        <property name="shortcut">
@@ -256,8 +259,8 @@
        </property>
        <property name="iconSize">
         <size>
-         <width>22</width>
-         <height>22</height>
+         <width>32</width>
+         <height>32</height>
         </size>
        </property>
        <property name="shortcut">
@@ -294,8 +297,8 @@
        </property>
        <property name="iconSize">
         <size>
-         <width>22</width>
-         <height>22</height>
+         <width>32</width>
+         <height>32</height>
         </size>
        </property>
        <property name="shortcut">
@@ -332,8 +335,8 @@
        </property>
        <property name="iconSize">
         <size>
-         <width>22</width>
-         <height>22</height>
+         <width>32</width>
+         <height>32</height>
         </size>
        </property>
        <property name="shortcut">
@@ -370,8 +373,8 @@
        </property>
        <property name="iconSize">
         <size>
-         <width>22</width>
-         <height>22</height>
+         <width>32</width>
+         <height>32</height>
         </size>
        </property>
        <property name="shortcut">
@@ -408,8 +411,8 @@
        </property>
        <property name="iconSize">
         <size>
-         <width>22</width>
-         <height>22</height>
+         <width>32</width>
+         <height>32</height>
         </size>
        </property>
        <property name="shortcut">
@@ -446,8 +449,8 @@
        </property>
        <property name="iconSize">
         <size>
-         <width>22</width>
-         <height>22</height>
+         <width>32</width>
+         <height>32</height>
         </size>
        </property>
       </widget>
@@ -552,6 +555,8 @@
   <tabstop>table_tbw</tabstop>
  </tabstops>
  <resources>
+  <include location="../../res/resources.qrc"/>
+  <include location="../../res/resources.qrc"/>
   <include location="../../res/resources.qrc"/>
  </resources>
  <connections/>

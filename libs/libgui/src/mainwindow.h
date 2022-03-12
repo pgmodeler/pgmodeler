@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2022 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -180,7 +180,7 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 		bool isToolButtonsChecked(QHBoxLayout *layout, const QWidgetList &ignored_wgts = QWidgetList());
 
 		/*! \brief Resizes the buttons of the general toolbar (the one positioned at the left portion of main window)
-		 * The resizing is performed through stylesheet and is related to the minimum width of the general_tb plus
+		 * The resizing is performed through stylesheet and is related to the minimum width of the tools_acts_tb plus
 		 * a size factor that is applied if there are models opened (which expands/enlarges the toolbar a little
 		 * more due to the labels of the actions added during model loading ) */
 		void resizeGeneralToolbarButtons();

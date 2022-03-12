@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2022 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -31,6 +31,7 @@ CrashHandlerForm::CrashHandlerForm(bool analysis_mode, QWidget *parent, Qt::Wind
 	QHBoxLayout *layout=new QHBoxLayout;
 
 	setWindowTitle(tr("pgModeler crash handler"));
+	setWindowIcon(QPixmap(":/images/images/crashhandler.png"));
 
 	stack_txt=new QPlainTextEdit(this);
 	stack_txt->setReadOnly(true);
@@ -38,10 +39,10 @@ CrashHandlerForm::CrashHandlerForm(bool analysis_mode, QWidget *parent, Qt::Wind
 	stack_txt->setLineWrapMode(QPlainTextEdit::NoWrap);
 
 	layout->addWidget(stack_txt);
-	layout->setContentsMargins(4,4,4,4);
+	layout->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
 	wgt->setLayout(layout);
 
-	logo_lbl->setPixmap(QPixmap(QString(":/images/images/crashhandler.png")));
+	logo_lbl->setPixmap(QPixmap(":/images/images/crashhandler.png"));
 	report_twg->addTab(wgt, tr("Stack trace"));
 
 	//Open for reading the stack trace file generated on the last crash
@@ -204,8 +205,8 @@ void CrashHandlerForm::setAnalysisMode(bool value)
 	}
 	else
 	{
-		title_lbl->setText(tr("Oops! pgModeler just crashed!"));
-		msg_lbl->setText(tr("We apologize for what happened! It is clear that a nasty bug caused that. Please fill out the form below describing your actions before pgModeler quit unexpectedly. This will help on bug extermination and improve the software."));
+		title_lbl->setText(tr("Oh no! pgModeler just crashed!"));
+		msg_lbl->setText(tr("We apologize for what happened! It's clear that a nasty bug caused that. Please, fill out the form below describing your actions that somehow caused the unexpected closing. This will help us to investigate the causes and provide the proper fix for the problem."));
 	}
 }
 

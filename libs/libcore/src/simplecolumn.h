@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2022 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -47,6 +47,14 @@ struct SimpleColumn {
 		bool operator == (const SimpleColumn &col) const
 		{
 			return name == col.name && type == col.type && alias == col.alias;
+		}
+
+		SimpleColumn & operator = (const SimpleColumn &col)
+		{
+			this->name = col.name;
+			this->type = col.type;
+			this->alias = col.alias;
+			return *this;
 		}
 
 		bool isValid() const

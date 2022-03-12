@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2022 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -96,14 +96,22 @@ int main(int argc, char **argv)
 		signal(SIGSEGV, startCrashHandler);
 		signal(SIGABRT, startCrashHandler);
 
+		PgModelerApp::setAttribute(Qt::AA_EnableHighDpiScaling, false);
 		PgModelerApp::setAttribute(Qt::AA_UseHighDpiPixmaps);
-		PgModelerApp::setAttribute(Qt::AA_EnableHighDpiScaling);
-		PgModelerApp app(argc,argv);
+		PgModelerApp app(argc,argv);		
 		int res=0;
 
 		//Loading the application splash screen
 		QSplashScreen splash;
-		QPixmap pix(QPixmap(QString(":images/images/pgmodeler_splash.png")));
+		QPixmap pix(QPixmap(":images/images/pgmodeler_splash.png"));
+		QSize sz = splash.screen()->size();
+
+		// Test: adjusting the size of the splash screen according to the screen resolution
+		if(sz.width() <= 1920)
+			pix = pix.scaledToWidth(300, Qt::SmoothTransformation);
+		else if(sz.width() < 3840)
+			pix = pix.scaledToWidth(400, Qt::SmoothTransformation);
+
 		splash.setPixmap(pix);
 		splash.setMask(pix.mask());
 		splash.show();

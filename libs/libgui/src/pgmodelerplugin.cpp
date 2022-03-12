@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2022 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -34,7 +34,7 @@ PgModelerPlugin::PgModelerPlugin()
 
 	gridLayout->setHorizontalSpacing(10);
 	gridLayout->setVerticalSpacing(6);
-	gridLayout->setContentsMargins(6, 6, 6, 6);
+	gridLayout->setContentsMargins(GuiUtilsNs::LtMargin, GuiUtilsNs::LtMargin, GuiUtilsNs::LtMargin, GuiUtilsNs::LtMargin);
 
 	icon_lbl = new QLabel(widget);
 	icon_lbl->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2022 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -91,10 +91,8 @@ namespace Attributes {
 	CheckVersions,
 	CkConstr,
 	ClientEncoding,
+	Code,
 	CodeCompletion,
-	CodeFont,
-	CodeFontSize,
-	CodeTabWidth,
 	ColIndexes,
 	ColIsIdentity,
 	CollapseMode,
@@ -156,6 +154,7 @@ namespace Attributes {
 	CustomFilter,
 	CustomIdxs,
 	Cycle,
+	Dark,
 	Database,
 	DataDirectory,
 	Date,
@@ -180,6 +179,7 @@ namespace Attributes {
 	DelEvent,
 	Delimiter,
 	DelimitersColor,
+	Design,
 	DestType,
 	Deterministic,
 	Diff,
@@ -360,12 +360,14 @@ namespace Attributes {
 	LeftType,
 	Length,
 	Library,
+	Light,
 	LikeType,
 	Line,
 	LineHighlightColor,
 	LineNumbersBgColor,
 	LineNumbersColor,
 	Link,
+	LinkMode,
 	ListenAddresses,
 	Locale,
 	LocaleMod,
@@ -411,6 +413,7 @@ namespace Attributes {
 	ObjectType,
 	ObjCount,
 	ObjSelection,
+	ObjShadow,
 	Oid,
 	OidFilterOp,
 	Oids,
@@ -617,6 +620,8 @@ namespace Attributes {
 	SubtypeDiffFunc,
 	Superuser,
 	Symbol,
+	SyntaxHlTheme,
+	System,
 	Table,
 	TableTogglerButtons,
 	TableTogglerBody,
@@ -629,6 +634,7 @@ namespace Attributes {
 	TableTitle,
 	TableType,
 	Tag,
+	TabWidth,
 	TemplateDb,
 	TemporaryPriv,
 	Top,
@@ -654,6 +660,7 @@ namespace Attributes {
 	Types,
 	TyplesUpd,
 	UiLanguage,
+	UiTheme,
 	Undefined,
 	Underline,
 	Unique,

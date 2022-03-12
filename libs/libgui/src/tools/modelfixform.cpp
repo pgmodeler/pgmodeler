@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2022 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -25,7 +25,7 @@ const QString ModelFixForm::PgModelerCli("pgmodeler-cli");
 
 ModelFixForm::ModelFixForm(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 {
-	map<QString, attribs_map> confs=GeneralConfigWidget::getConfigurationParams();
+	map<QString, attribs_map> confs = AppearanceConfigWidget::getConfigurationParams();
 
 	setupUi(this);
 
@@ -59,12 +59,12 @@ ModelFixForm::ModelFixForm(QWidget *parent, Qt::WindowFlags f) : QDialog(parent,
 	GuiUtilsNs::configureWidgetFont(not_found_lbl, GuiUtilsNs::MediumFontFactor);
 
 	//Configuring font style for output widget
-	if(!confs[Attributes::Configuration][Attributes::CodeFont].isEmpty())
+	if(!confs[Attributes::Code][Attributes::Font].isEmpty())
 	{
-		double size=confs[Attributes::Configuration][Attributes::CodeFontSize].toDouble();
+		double size=confs[Attributes::Code][Attributes::FontSize].toDouble();
 		if(size < 5.0) size=5.0;
 
-		output_txt->setFontFamily(confs[Attributes::Configuration][Attributes::CodeFont]);
+		output_txt->setFontFamily(confs[Attributes::Code][Attributes::Font]);
 		output_txt->setFontPointSize(size);
 	}
 

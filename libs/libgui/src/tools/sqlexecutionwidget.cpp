@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2022 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -25,6 +25,7 @@
 #include "datamanipulationform.h"
 #include "qtcompat/qplaintexteditcompat.h"
 #include "utilsns.h"
+#include "utils/custommenustyle.h"
 
 map<QString, QString> SQLExecutionWidget::cmd_history;
 
@@ -68,6 +69,7 @@ SQLExecutionWidget::SQLExecutionWidget(QWidget * parent) : QWidget(parent)
 	sql_file_dlg.setNameFilter(tr("SQL file (*.sql);;All files (*.*)"));
 	sql_file_dlg.setModal(true);
 
+	snippets_menu.setStyle(new CustomMenuStyle);
 	snippets_tb->setMenu(&snippets_menu);
 	code_compl_wgt=new CodeCompletionWidget(sql_cmd_txt, true);
 
@@ -91,6 +93,7 @@ SQLExecutionWidget::SQLExecutionWidget(QWidget * parent) : QWidget(parent)
 	action_save=new QAction(QIcon(GuiUtilsNs::getIconPath("save")), tr("Save"), this);
 	action_save_as=new QAction(QIcon(GuiUtilsNs::getIconPath("saveas")), tr("Save as"), this);
 
+	file_menu.setStyle(new CustomMenuStyle);
 	file_menu.addAction(action_load);
 	file_menu.addAction(action_save);
 	file_menu.addAction(action_save_as);

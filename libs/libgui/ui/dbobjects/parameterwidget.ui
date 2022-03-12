@@ -78,13 +78,13 @@
     <rect>
      <x>83</x>
      <y>129</y>
-     <width>200</width>
-     <height>30</height>
+     <width>316</width>
+     <height>39</height>
     </rect>
    </property>
    <layout class="QHBoxLayout" name="in_out_hlt">
     <property name="spacing">
-     <number>4</number>
+     <number>10</number>
     </property>
     <item>
      <widget class="QCheckBox" name="param_in_chk">

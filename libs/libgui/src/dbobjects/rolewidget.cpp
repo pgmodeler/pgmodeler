@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2022 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -70,7 +70,7 @@ RoleWidget::RoleWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Ro
 
 		grid=new QGridLayout;
 		grid->addWidget(obj_tab,0,0,1,1);
-		grid->setContentsMargins(4,4,4,4);
+		grid->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
 		members_twg->widget(i)->setLayout(grid);
 	}
 

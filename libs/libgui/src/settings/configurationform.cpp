@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2022 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -33,16 +33,29 @@ ConfigurationForm::ConfigurationForm(QWidget *parent, Qt::WindowFlags f) : QDial
 												 appearance_conf, connections_conf,
 												 snippets_conf, plugins_conf};
 
-	for(int i=GeneralConfWgt; i <= PluginsConfWgt; i++)
-		confs_stw->addWidget(wgt_list[i]);
+	for(auto &wgt : wgt_list)
+		confs_stw->addWidget(wgt);
 
-	connect(icons_lst, SIGNAL(currentRowChanged(int)), confs_stw, SLOT(setCurrentIndex(int)));
-	connect(cancel_btn, SIGNAL(clicked()), this, SLOT(reject()));
-	connect(apply_btn, SIGNAL(clicked()), this, SLOT(applyConfiguration()));
-	connect(defaults_btn, SIGNAL(clicked()), this, SLOT(restoreDefaults()));
+	connect(cancel_btn, &QPushButton::clicked, this, &ConfigurationForm::reject);
+	connect(apply_btn,  &QPushButton::clicked, this, &ConfigurationForm::applyConfiguration);
+	connect(defaults_btn,  &QPushButton::clicked, this, &ConfigurationForm::restoreDefaults);
 
-	icons_lst->setCurrentRow(GeneralConfWgt);
 	setMinimumSize(890, 740);
+
+	QFont fnt;
+	int view_idx = GeneralConfWgt;
+	QList<QToolButton *> btns = { general_tb, relationships_tb, appearance_tb,
+																connections_tb, snippets_tb, plugins_tb };
+
+	for(auto &btn : btns)
+	{
+		fnt = btn->font();
+		fnt.setBold(true);
+		btn->setFont(fnt);
+		GuiUtilsNs::createDropShadow(btn);
+		btn->setProperty(Attributes::ObjectId.toStdString().c_str(), view_idx++);
+		connect(btn, &QToolButton::toggled, this, &ConfigurationForm::changeCurrentView);
+	}
 }
 
 ConfigurationForm::~ConfigurationForm()
@@ -50,9 +63,26 @@ ConfigurationForm::~ConfigurationForm()
 	connections_conf->destroyConnections();
 }
 
+void ConfigurationForm::changeCurrentView()
+{
+	QToolButton *btn = nullptr,
+			*btn_sender = qobject_cast<QToolButton *>(sender());
+
+	for(auto &obj : bnts_parent_wgt->children())
+	{
+		btn = dynamic_cast<QToolButton *>(obj);
+		if(!btn || btn == btn_sender) continue;
+		btn->blockSignals(true);
+		btn->setChecked(false);
+		btn->blockSignals(false);
+	}
+
+	confs_stw->setCurrentIndex(btn_sender->property(Attributes::ObjectId.toStdString().c_str()).toInt());
+}
+
 void ConfigurationForm::hideEvent(QHideEvent *)
 {
-	icons_lst->setCurrentRow(GeneralConfWgt);
+	general_tb->setChecked(true);
 }
 
 void ConfigurationForm::showEvent(QShowEvent *)
@@ -64,18 +94,22 @@ void ConfigurationForm::reject()
 {
 	try
 	{
-		if(sender()==cancel_btn)
+		if(sender() == cancel_btn)
 		{
 			QWidgetList wgt_list={ appearance_conf, connections_conf, snippets_conf };
 			BaseConfigWidget *conf_wgt=nullptr;
 
+			QApplication::setOverrideCursor(Qt::WaitCursor);
+
 			for(QWidget *wgt : wgt_list)
 			{
-				conf_wgt=qobject_cast<BaseConfigWidget *>(wgt);
+				conf_wgt = qobject_cast<BaseConfigWidget *>(wgt);
 
 				if(conf_wgt->isConfigurationChanged())
 					conf_wgt->loadConfiguration();
 			}
+
+			QApplication::restoreOverrideCursor();
 		}
 	}
 	catch(Exception &)
@@ -88,6 +122,8 @@ void ConfigurationForm::applyConfiguration()
 {
 	BaseConfigWidget *conf_wgt=nullptr;
 	bool curr_escape_comments = BaseObject::isEscapeComments();
+
+	QApplication::setOverrideCursor(Qt::WaitCursor);
 
 	for(int i=GeneralConfWgt; i <= SnippetsConfWgt; i++)
 	{
@@ -103,6 +139,7 @@ void ConfigurationForm::applyConfiguration()
 	if(curr_escape_comments != BaseObject::isEscapeComments())
 		emit s_invalidateModelsRequested();
 
+	QApplication::restoreOverrideCursor();
 	QDialog::accept();
 }
 

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2022 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -141,8 +141,8 @@ void BaseObjectWidget::setRequiredField(QWidget *widget)
 		QGroupBox *grp=qobject_cast<QGroupBox *>(widget);
 		ObjectSelectorWidget *sel=dynamic_cast<ObjectSelectorWidget *>(widget);
 		PgSQLTypeWidget *pgtype=dynamic_cast<PgSQLTypeWidget *>(widget);
-		QString str_aux=QString(" <span style='color: #ff0000;'>*</span> ");
-		QColor bgcolor=QColor(QString("#ffffc0"));
+		QString str_aux = " <span style='color: #ff0000;'>*</span> ";
+		QColor border_color = ObjectsTableWidget::getTableItemColor(ObjectsTableWidget::RemovedItemBgColor);
 
 		if(lbl || pgtype || grp)
 		{
@@ -158,16 +158,11 @@ void BaseObjectWidget::setRequiredField(QWidget *widget)
 		{
 			if(sel)
 			{
-				widget=sel->obj_name_txt;
-				widget->setStyleSheet(QString("ObjectSelectorWidget > QPlainTextEdit { background-color: %1; }").arg(bgcolor.name()));
+				widget = sel->obj_name_txt;
+				widget->setStyleSheet(QString("ObjectSelectorWidget > QPlainTextEdit { border: 2px solid %1; }").arg(border_color.name()));
 			}
 			else
-			{
-				QPalette pal;
-				pal.setColor(QPalette::Base, bgcolor);
-				pal.setColor(QPalette::Text, QColor(0,0,0));
-				widget->setPalette(pal);
-			}
+				widget->setStyleSheet(QString("%1 { border: 2px solid %2; padding-top: 2px; padding-bottom: 2px; border-radius: 4px; }").arg(widget->metaObject()->className()).arg(border_color.name()));
 		}
 
 		str_aux=(!widget->toolTip().isEmpty() ? QString("\n") : "");
@@ -438,7 +433,7 @@ void BaseObjectWidget::configureFormLayout(QGridLayout *grid, ObjectType obj_typ
 	else
 		this->setLayout(baseobject_grid);
 
-	baseobject_grid->setContentsMargins(4, 4, 4, 4);
+	baseobject_grid->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
 	disable_sql_chk->setVisible(obj_type!=ObjectType::BaseObject && obj_type!=ObjectType::Permission &&
 															obj_type!=ObjectType::Textbox && obj_type!=ObjectType::Tag &&
 															obj_type!=ObjectType::Parameter);
@@ -552,13 +547,13 @@ QFrame *BaseObjectWidget::generateInformationFrame(const QString &msg)
 	info_frm->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
 
 	grid = new QGridLayout(info_frm);
-	grid->setContentsMargins(4, 4, 4, 4);
+	grid->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
 	grid->setObjectName("grid");
 
 	ico_lbl = new QLabel(info_frm);
-	ico_lbl->setObjectName("icone_lbl");
-	ico_lbl->setMinimumSize(QSize(24, 24));
-	ico_lbl->setMaximumSize(QSize(24, 24));
+	ico_lbl->setObjectName("icon_lbl");
+	ico_lbl->setMinimumSize(QSize(32, 32));
+	ico_lbl->setMaximumSize(QSize(32, 32));
 	ico_lbl->setScaledContents(true);
 	ico_lbl->setPixmap(QPixmap(GuiUtilsNs::getIconPath("info")));
 	ico_lbl->setAlignment(Qt::AlignLeft|Qt::AlignTop);
@@ -574,7 +569,7 @@ QFrame *BaseObjectWidget::generateInformationFrame(const QString &msg)
 	msg_lbl->setText(msg);
 
 	grid->addWidget(msg_lbl, 0, 1, 1, 1);
-	grid->setContentsMargins(4,4,4,4);
+	grid->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
 
 	return info_frm;
 }
@@ -583,7 +578,6 @@ void BaseObjectWidget::highlightVersionSpecificFields(map<QString, vector<QWidge
 																											map< QWidget *, vector<QString> > *values)
 {
 	QString field_name;
-	QColor color=QColor(0,0,128);
 
 	for(auto itr : fields)
 	{
@@ -602,7 +596,7 @@ void BaseObjectWidget::highlightVersionSpecificFields(map<QString, vector<QWidge
 				field_name+=")";
 			}
 
-			wgt->setStyleSheet(QString("QWidget {	font-weight: bold; font-style: italic; color: %1}").arg(color.name()));
+			wgt->setStyleSheet(QString("QWidget {	font-weight: bold; font-style: italic; text-decoration: underline; }"));
 			wgt->setToolTip(QString("<p>PostgreSQL") + itr.first + QString(" %1</p>").arg(field_name));
 		}
 	}
@@ -615,7 +609,6 @@ QFrame *BaseObjectWidget::generateVersionWarningFrame(map<QString, vector<QWidge
 	QGridLayout *grid=nullptr;
 	QLabel *ico_lbl=nullptr, *msg_lbl=nullptr;
 	QFont font;
-	QColor color=QColor(0,0,128);
 
 	highlightVersionSpecificFields(fields, values);
 
@@ -625,7 +618,7 @@ QFrame *BaseObjectWidget::generateVersionWarningFrame(map<QString, vector<QWidge
 
 	GuiUtilsNs::configureWidgetFont(alert_frm, GuiUtilsNs::MediumFontFactor);
 
-	alert_frm->setObjectName("alerta_frm");
+	alert_frm->setObjectName("alert_frm");
 	alert_frm->setFrameShape(QFrame::StyledPanel);
 	alert_frm->setFrameShadow(QFrame::Raised);
 	alert_frm->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
@@ -634,9 +627,9 @@ QFrame *BaseObjectWidget::generateVersionWarningFrame(map<QString, vector<QWidge
 	grid->setObjectName("grid");
 
 	ico_lbl = new QLabel(alert_frm);
-	ico_lbl->setObjectName("icone_lbl");
-	ico_lbl->setMinimumSize(QSize(24, 24));
-	ico_lbl->setMaximumSize(QSize(24, 24));
+	ico_lbl->setObjectName("icon_lbl");
+	ico_lbl->setMinimumSize(QSize(32, 32));
+	ico_lbl->setMaximumSize(QSize(32, 32));
 	ico_lbl->setScaledContents(true);
 	ico_lbl->setPixmap(QPixmap(GuiUtilsNs::getIconPath("alert")));
 	ico_lbl->setAlignment(Qt::AlignLeft|Qt::AlignTop);
@@ -649,11 +642,11 @@ QFrame *BaseObjectWidget::generateVersionWarningFrame(map<QString, vector<QWidge
 	msg_lbl->setAlignment(Qt::AlignLeft|Qt::AlignVCenter);
 	msg_lbl->setWordWrap(true);
 
-	msg_lbl->setText(tr("The <em style='color: %1'><strong>highlighted</strong></em> fields in the form or one of their values are available only on specific PostgreSQL versions. \
-							Generating SQL code for versions other than those specified in the fields' tooltips may create incompatible code.").arg(color.name()));
+	msg_lbl->setText(tr("The <em><u><strong>highlighted</strong></u></em> fields in the form or one of their values are available only on specific PostgreSQL versions. \
+							Generating SQL code for versions other than those specified in the fields' tooltips may create incompatible code."));
 
 	grid->addWidget(msg_lbl, 0, 1, 1, 1);
-	grid->setContentsMargins(4,4,4,4);
+	grid->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
 
 	alert_frm->adjustSize();
 	return alert_frm;

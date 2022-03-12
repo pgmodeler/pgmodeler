@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>916</width>
-    <height>629</height>
+    <width>1792</width>
+    <height>1075</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -31,16 +31,13 @@
     <number>0</number>
    </property>
    <property name="rightMargin">
-    <number>0</number>
+    <number>10</number>
    </property>
    <property name="bottomMargin">
-    <number>4</number>
+    <number>10</number>
    </property>
-   <property name="horizontalSpacing">
-    <number>4</number>
-   </property>
-   <property name="verticalSpacing">
-    <number>6</number>
+   <property name="spacing">
+    <number>10</number>
    </property>
    <item row="0" column="1">
     <widget class="QSplitter" name="h_splitter">
@@ -48,7 +45,7 @@
       <enum>Qt::Horizontal</enum>
      </property>
      <property name="handleWidth">
-      <number>4</number>
+      <number>8</number>
      </property>
      <property name="childrenCollapsible">
       <bool>false</bool>
@@ -59,7 +56,7 @@
         <number>0</number>
        </property>
        <property name="topMargin">
-        <number>4</number>
+        <number>10</number>
        </property>
        <property name="rightMargin">
         <number>0</number>
@@ -68,7 +65,7 @@
         <number>0</number>
        </property>
        <property name="spacing">
-        <number>6</number>
+        <number>10</number>
        </property>
        <item row="0" column="0">
         <widget class="QTabWidget" name="editors_tbw">
@@ -97,16 +94,16 @@
         <number>0</number>
        </property>
        <property name="topMargin">
-        <number>4</number>
+        <number>10</number>
        </property>
        <property name="rightMargin">
-        <number>4</number>
+        <number>0</number>
        </property>
        <property name="bottomMargin">
         <number>0</number>
        </property>
        <property name="spacing">
-        <number>6</number>
+        <number>10</number>
        </property>
        <item row="0" column="0">
         <widget class="QLabel" name="label_2">
@@ -153,19 +150,19 @@
          </property>
          <layout class="QGridLayout" name="gridLayout_4">
           <property name="leftMargin">
-           <number>4</number>
+           <number>5</number>
           </property>
           <property name="topMargin">
-           <number>4</number>
+           <number>5</number>
           </property>
           <property name="rightMargin">
-           <number>4</number>
+           <number>5</number>
           </property>
           <property name="bottomMargin">
-           <number>6</number>
+           <number>5</number>
           </property>
           <property name="spacing">
-           <number>6</number>
+           <number>10</number>
           </property>
           <item row="1" column="3">
            <widget class="QToolButton" name="save_conf_tb">
@@ -181,8 +178,8 @@
             </property>
             <property name="iconSize">
              <size>
-              <width>22</width>
-              <height>22</height>
+              <width>32</width>
+              <height>32</height>
              </size>
             </property>
             <property name="toolButtonStyle">
@@ -194,14 +191,14 @@
            <widget class="QLabel" name="label_6">
             <property name="minimumSize">
              <size>
-              <width>25</width>
-              <height>25</height>
+              <width>32</width>
+              <height>32</height>
              </size>
             </property>
             <property name="maximumSize">
              <size>
-              <width>24</width>
-              <height>24</height>
+              <width>32</width>
+              <height>32</height>
              </size>
             </property>
             <property name="text">
@@ -232,8 +229,8 @@
             </property>
             <property name="iconSize">
              <size>
-              <width>22</width>
-              <height>22</height>
+              <width>32</width>
+              <height>32</height>
              </size>
             </property>
             <property name="toolButtonStyle">
@@ -255,8 +252,8 @@
             </property>
             <property name="iconSize">
              <size>
-              <width>22</width>
-              <height>22</height>
+              <width>32</width>
+              <height>32</height>
              </size>
             </property>
             <property name="toolButtonStyle">
@@ -332,19 +329,19 @@
           </attribute>
           <layout class="QVBoxLayout" name="verticalLayout">
            <property name="spacing">
-            <number>6</number>
+            <number>10</number>
            </property>
            <property name="leftMargin">
-            <number>4</number>
+            <number>5</number>
            </property>
            <property name="topMargin">
-            <number>4</number>
+            <number>5</number>
            </property>
            <property name="rightMargin">
-            <number>4</number>
+            <number>5</number>
            </property>
            <property name="bottomMargin">
-            <number>4</number>
+            <number>5</number>
            </property>
            <item>
             <widget class="QWidget" name="syntax_wgt" native="true">
@@ -370,19 +367,19 @@
           </attribute>
           <layout class="QVBoxLayout" name="verticalLayout_2">
            <property name="spacing">
-            <number>6</number>
+            <number>10</number>
            </property>
            <property name="leftMargin">
-            <number>4</number>
+            <number>5</number>
            </property>
            <property name="topMargin">
-            <number>4</number>
+            <number>5</number>
            </property>
            <property name="rightMargin">
-            <number>4</number>
+            <number>5</number>
            </property>
            <property name="bottomMargin">
-            <number>4</number>
+            <number>5</number>
            </property>
            <item>
             <widget class="QWidget" name="dtd_wgt" native="true">
@@ -440,6 +437,9 @@
       </property>
       <item row="6" column="0">
        <widget class="Line" name="separator_ln_2">
+        <property name="frameShadow">
+         <enum>QFrame::Plain</enum>
+        </property>
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
         </property>
@@ -447,6 +447,9 @@
       </item>
       <item row="9" column="0">
        <widget class="Line" name="separator_ln">
+        <property name="frameShadow">
+         <enum>QFrame::Plain</enum>
+        </property>
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
         </property>
@@ -481,8 +484,8 @@
         </property>
         <property name="iconSize">
          <size>
-          <width>25</width>
-          <height>25</height>
+          <width>48</width>
+          <height>48</height>
          </size>
         </property>
         <property name="toolButtonStyle">
@@ -519,8 +522,8 @@
         </property>
         <property name="iconSize">
          <size>
-          <width>25</width>
-          <height>25</height>
+          <width>48</width>
+          <height>48</height>
          </size>
         </property>
         <property name="toolButtonStyle">
@@ -560,8 +563,8 @@
         </property>
         <property name="iconSize">
          <size>
-          <width>25</width>
-          <height>25</height>
+          <width>48</width>
+          <height>48</height>
          </size>
         </property>
         <property name="shortcut">
@@ -604,8 +607,8 @@
         </property>
         <property name="iconSize">
          <size>
-          <width>25</width>
-          <height>25</height>
+          <width>48</width>
+          <height>48</height>
          </size>
         </property>
         <property name="shortcut">
@@ -648,8 +651,8 @@
         </property>
         <property name="iconSize">
          <size>
-          <width>25</width>
-          <height>25</height>
+          <width>48</width>
+          <height>48</height>
          </size>
         </property>
         <property name="shortcut">
@@ -702,8 +705,8 @@
         </property>
         <property name="iconSize">
          <size>
-          <width>25</width>
-          <height>25</height>
+          <width>48</width>
+          <height>48</height>
          </size>
         </property>
         <property name="shortcut">
@@ -746,8 +749,8 @@
         </property>
         <property name="iconSize">
          <size>
-          <width>25</width>
-          <height>25</height>
+          <width>48</width>
+          <height>48</height>
          </size>
         </property>
         <property name="popupMode">
@@ -789,12 +792,12 @@
         </property>
         <property name="icon">
          <iconset resource="../../../libs/libgui/res/resources.qrc">
-          <normaloff>:/icons/icons/ident.png</normaloff>:/icons/icons/ident.png</iconset>
+          <normaloff>:/icons/icons/indent.png</normaloff>:/icons/icons/indent.png</iconset>
         </property>
         <property name="iconSize">
          <size>
-          <width>25</width>
-          <height>25</height>
+          <width>48</width>
+          <height>48</height>
          </size>
         </property>
         <property name="toolButtonStyle">
@@ -834,8 +837,8 @@
         </property>
         <property name="iconSize">
          <size>
-          <width>25</width>
-          <height>25</height>
+          <width>48</width>
+          <height>48</height>
          </size>
         </property>
         <property name="toolButtonStyle">
@@ -875,8 +878,8 @@
         </property>
         <property name="iconSize">
          <size>
-          <width>25</width>
-          <height>25</height>
+          <width>48</width>
+          <height>48</height>
          </size>
         </property>
         <property name="toolButtonStyle">
@@ -917,8 +920,14 @@
        </property>
        <property name="minimumSize">
         <size>
-         <width>127</width>
-         <height>0</height>
+         <width>242</width>
+         <height>50</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>242</width>
+         <height>50</height>
         </size>
        </property>
        <property name="styleSheet">
@@ -932,6 +941,9 @@
        </property>
        <property name="pixmap">
         <pixmap resource="../../../libs/libgui/res/resources.qrc">:/images/images/pgmodeler_name.png</pixmap>
+       </property>
+       <property name="scaledContents">
+        <bool>true</bool>
        </property>
       </widget>
      </item>
@@ -953,6 +965,7 @@
   </layout>
  </widget>
  <resources>
+  <include location="../../../libs/libgui/res/resources.qrc"/>
   <include location="../../../libs/libgui/res/resources.qrc"/>
  </resources>
  <connections/>

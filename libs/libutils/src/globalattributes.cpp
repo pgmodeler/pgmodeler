@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2022 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -31,9 +31,8 @@ const QString GlobalAttributes::PgModelerVersion=QString("1.0.0-alpha")
 /****/
 
 const QString GlobalAttributes::PgModelerBuildNumber(QString("%1.%2").arg(BUILDDATE).arg(BUILDNUM));
-const QString GlobalAttributes::PgModelerAppName("pgmodeler");
+const QString GlobalAttributes::PgModelerAppName("pgmodeler-1.0");
 const QString GlobalAttributes::PgModelerURI("pgmodeler.io");
-const QString GlobalAttributes::PgModelerReverseURI("io.pgmodeler");
 const QString GlobalAttributes::PgModelerSite("https://pgmodeler.io");
 const QString GlobalAttributes::PgModelerSupport("https://pgmodeler.io/support/docs");
 const QString GlobalAttributes::PgModelerSourceURL("https://github.com/pgmodeler/pgmodeler/releases");
@@ -61,10 +60,11 @@ const QString GlobalAttributes::RootDTD("dbmodel");
 const QString GlobalAttributes::MetadataDTD("metadata");
 const QString GlobalAttributes::ConfigurationExt(".conf");
 const QString GlobalAttributes::HighlightFileSuffix("-highlight");
+const QString GlobalAttributes::ThemesDir("themes");
 
 const QString GlobalAttributes::CodeHighlightConf("source-code-highlight");
-const QString GlobalAttributes::ObjectsStyleConf("objects-style");
-const QString GlobalAttributes::GeneralConf("pgmodeler");
+const QString GlobalAttributes::AppearanceConf("appearance");
+const QString GlobalAttributes::GeneralConf("general");
 const QString GlobalAttributes::ConnectionsConf("connections");
 const QString GlobalAttributes::RelationshipsConf("relationships");
 const QString GlobalAttributes::SnippetsConf("snippets");
@@ -77,7 +77,9 @@ const QString GlobalAttributes::SchHighlightConf("sch-highlight");
 const QString GlobalAttributes::PatternHighlightConf("pattern-highlight");
 
 const QString GlobalAttributes::ExampleModel("example.dbm");
-const QString GlobalAttributes::UiStyleConf("ui-style");
+const QString GlobalAttributes::UiDefaulStyleConf("ui-default");
+const QString GlobalAttributes::UiMediumStyleConf("ui-medium");
+const QString GlobalAttributes::UiSmallStyleConf("ui-small");
 
 const QString GlobalAttributes::DefaultQtStyle("Fusion");
 const QString GlobalAttributes::UiStyleOption("-style");
@@ -215,15 +217,12 @@ void GlobalAttributes::setSearchPath(const QString &search_path)
 	TmplConfigurationDir=getPathFromEnv("PGMODELER_TMPL_CONF_DIR", CONFDIR, QString("%1/conf").arg(search_path));
 	PluginsDir=getPathFromEnv("PGMODELER_PLUGINS_DIR", PLUGINSDIR, QString("%1/plugins").arg(search_path));
 
-	#if defined(Q_OS_MAC)
-		ConfigurationsDir=getPathFromEnv("PGMODELER_CONF_DIR", QStandardPaths::writableLocation(QStandardPaths::ConfigLocation) + QString("/%1").arg(PgModelerReverseURI));
-		TemporaryDir=getPathFromEnv("PGMODELER_TMP_DIR", QStandardPaths::writableLocation(QStandardPaths::ConfigLocation)  + QString("/%1/tmp").arg(PgModelerReverseURI));
-	#elif defined(Q_OS_LINUX)
-		ConfigurationsDir=getPathFromEnv("PGMODELER_CONF_DIR", QStandardPaths::writableLocation(QStandardPaths::ConfigLocation) + QString("/%1").arg(PgModelerAppName));
-		TemporaryDir=getPathFromEnv("PGMODELER_TMP_DIR", QStandardPaths::writableLocation(QStandardPaths::ConfigLocation) + QString("/%1/tmp").arg(PgModelerAppName));
-	#else
+	#if defined(Q_OS_WINDOWS)
 		ConfigurationsDir=getPathFromEnv("PGMODELER_CONF_DIR", QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation) + QString("/%1").arg(PgModelerAppName));
 		TemporaryDir=getPathFromEnv("PGMODELER_TMP_DIR", QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation) + QString("/%1/tmp").arg(PgModelerAppName));
+	#else
+		ConfigurationsDir=getPathFromEnv("PGMODELER_CONF_DIR", QStandardPaths::writableLocation(QStandardPaths::ConfigLocation) + QString("/%1").arg(PgModelerAppName));
+		TemporaryDir=getPathFromEnv("PGMODELER_TMP_DIR", QStandardPaths::writableLocation(QStandardPaths::ConfigLocation) + QString("/%1/tmp").arg(PgModelerAppName));
 	#endif
 
 	SQLHighlightConfPath=ConfigurationsDir + DirSeparator + SQLHighlightConf + ConfigurationExt;

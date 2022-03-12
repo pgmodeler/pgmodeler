@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2022 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -155,87 +155,13 @@ BaseObject *BaseObjectView::getUnderlyingObject()
 	return reinterpret_cast<BaseObject *>(this->data(0).value<void *>());
 }
 
-void BaseObjectView::loadObjectsStyle()
-{
-	QTextCharFormat font_fmt;
-	QFont font;
-	attribs_map attribs;
-	map<QString, QTextCharFormat>::iterator itr;
-	QStringList list;
-	QString elem,
-			config_file=GlobalAttributes::getConfigurationFilePath(GlobalAttributes::ObjectsStyleConf);
-	XmlParser xmlparser;
-
-	try
-	{
-		xmlparser.restartParser();
-
-		xmlparser.setDTDFile(GlobalAttributes::getTmplConfigurationFilePath(GlobalAttributes::ObjectDTDDir,
-																																				GlobalAttributes::ObjectsStyleConf +
-																																				GlobalAttributes::ObjectDTDExt),
-												 GlobalAttributes::ObjectsStyleConf);
-
-		xmlparser.loadXMLFile(config_file);
-
-		if(xmlparser.accessElement(XmlParser::ChildElement))
-		{
-			do
-			{
-				if(xmlparser.getElementType()==XML_ELEMENT_NODE)
-				{
-					xmlparser.getElementAttributes(attribs);
-					elem=xmlparser.getElementName();
-
-					if(elem==Attributes::Global)
-					{
-						font.setFamily(attribs[Attributes::Font]);
-						font.setPointSizeF(attribs[Attributes::Size].toDouble());
-						font.setBold(attribs[Attributes::Bold]==Attributes::True);
-						font.setItalic(attribs[Attributes::Italic]==Attributes::True);
-						font.setUnderline(attribs[Attributes::Underline]==Attributes::True);
-						font_fmt.setFont(font);
-						font_config[Attributes::Global]=font_fmt;
-					}
-					else if(elem==Attributes::Font)
-					{
-						font_config[attribs[Attributes::Id]]=font_fmt;
-						itr=font_config.find(attribs[Attributes::Id]);
-						font=font_fmt.font();
-						font.setBold(attribs[Attributes::Bold]==Attributes::True);
-						font.setItalic(attribs[Attributes::Italic]==Attributes::True);
-						font.setUnderline(attribs[Attributes::Underline]==Attributes::True);
-						(itr->second).setFont(font);
-						(itr->second).setForeground(QColor(attribs[Attributes::Color]));
-					}
-					else if(elem==Attributes::Object)
-					{
-						list=attribs[Attributes::FillColor].split(',');
-
-						vector<QColor> colors;
-						colors.push_back(!list.isEmpty() ? QColor(list[0]) : QColor(0,0,0));
-						colors.push_back(list.size()==2 ? QColor(list[1]) : colors[0]);
-						colors.push_back(QColor(attribs[Attributes::BorderColor]));
-
-						color_config[attribs[Attributes::Id]]=colors;
-					}
-				}
-			}
-			while(xmlparser.accessElement(XmlParser::NextElement));
-		}
-	}
-	catch(Exception &e)
-	{
-		throw Exception(e.getErrorMessage(), e.getErrorCode(), __PRETTY_FUNCTION__, __FILE__, __LINE__, &e, config_file);
-	}
-}
-
 void BaseObjectView::setFontStyle(const QString &id, QTextCharFormat font_fmt)
 {
-	QFont font;
-
-	if(id!=Attributes::Global)
+	/* If the font style is not the global one we use the settings
+	 * of the global (if available) */
+	if(id != Attributes::Global)
 	{
-		font=font_config[Attributes::Global].font();
+		QFont font = font_config[Attributes::Global].font();
 		font.setItalic(font_fmt.font().italic());
 		font.setBold(font_fmt.font().bold());
 		font.setUnderline(font_fmt.font().underline());
@@ -243,47 +169,47 @@ void BaseObjectView::setFontStyle(const QString &id, QTextCharFormat font_fmt)
 	}
 	else
 	{
-		map<QString, QTextCharFormat>::iterator itr, itr_end;
-
-		itr=font_config.begin();
-		itr_end=font_config.end();
-		font=font_fmt.font();
-
-		while(itr!=itr_end)
+		// If changing the global font settings, we apply it to all other font styles alread configured
+		QFont font = font_fmt.font();
+		for(auto &itr : font_config)
 		{
-			font.setItalic((itr->second).font().italic());
-			font.setBold((itr->second).font().bold());
-			font.setUnderline((itr->second).font().underline());
-			(itr->second).setFont(font);
-			itr++;
+			font.setItalic(itr.second.font().italic());
+			font.setBold(itr.second.font().bold());
+			font.setUnderline(itr.second.font().underline());
+			itr.second.setFont(font);
 		}
 	}
 
-	if(font_config.count(id))
-		font_config[id]=font_fmt;
+	font_config[id] = font_fmt;
 }
 
 void BaseObjectView::setElementColor(const QString &id, QColor color, unsigned color_id)
 {
-	if(color_id < 3 && color_config.count(id))
-		color_config[id][color_id]=color;
+	if(color_id >= 3)
+		return;
+
+	// If the provided element id does not exist we initialize it
+	if(color_config.count(id) == 0)
+		color_config[id] = { QColor(0,0,0), QColor(0,0,0), QColor(0,0,0) };
+
+	color_config[id][color_id] = color;
 }
 
 QColor BaseObjectView::getElementColor(const QString &id, unsigned color_id)
 {
 	if(color_config.count(id) > 0 && color_id < 3)
 		return color_config[id][color_id];
-	else
-		return QColor(0,0,0);
+
+	return QColor(0,0,0);
 }
 
 void BaseObjectView::getFillStyle(const QString &id, QColor &color1, QColor &color2)
 {
-	if(color_config.count(id) > 0)
-	{
-		color1=color_config[id][0];
-		color2=color_config[id][1];
-	}
+	if(color_config.count(id) == 0)
+		return;
+
+	color1 = color_config[id][0];
+	color2 = color_config[id][1];
 }
 
 QLinearGradient BaseObjectView::getFillStyle(const QString &id)
@@ -293,16 +219,18 @@ QLinearGradient BaseObjectView::getFillStyle(const QString &id)
 
 	if(color_config.count(id) > 0)
 	{
+		int alpha = 255;
 		colors=color_config[id];
 
 		if(!colors.empty())
 		{
 			if(id==Attributes::ObjSelection || id==Attributes::Placeholder)
-			{
-				colors[0].setAlpha(ObjectAlphaChannel);
-				colors[1].setAlpha(ObjectAlphaChannel);
-			}
+				alpha = ObjectAlphaChannel;
+			else if(id == Attributes::ObjShadow)
+				alpha = ObjectShadowAlphaChannel;
 
+			colors[0].setAlpha(alpha);
+			colors[1].setAlpha(alpha);
 			grad.setCoordinateMode(QGradient::ObjectBoundingMode);
 			grad.setColorAt(0, colors[0]);
 			grad.setColorAt(1, colors[1]);
@@ -314,12 +242,11 @@ QLinearGradient BaseObjectView::getFillStyle(const QString &id)
 
 QPen BaseObjectView::getBorderStyle(const QString &id)
 {
-	QPen pen;
-	vector<QColor> colors;
+	QPen pen(Qt::NoPen);
 
-	if(color_config.count(id) > 0)
+	if(id != Attributes::ObjShadow && color_config.count(id) > 0)
 	{
-		colors=color_config[id];
+		vector<QColor> colors = color_config[id];
 
 		if(!colors.empty())
 		{
@@ -328,6 +255,7 @@ QPen BaseObjectView::getBorderStyle(const QString &id)
 
 			pen.setWidthF(ObjectBorderWidth * getScreenDpiFactor());
 			pen.setColor(colors[2]);
+			pen.setStyle(Qt::SolidLine);
 		}
 	}
 
@@ -422,7 +350,7 @@ void BaseObjectView::configureObjectSelection()
 	{
 		rect_item->setRect(this->boundingRect());
 		rect_item->setPos(0, 0);
-		rect_item->setBorderRadius(5);
+		rect_item->setBorderRadius(12);
 		rect_item->setBrush(this->getFillStyle(Attributes::ObjSelection));
 		rect_item->setPen(this->getBorderStyle(Attributes::ObjSelection));
 	}
@@ -499,8 +427,8 @@ void BaseObjectView::configureProtectedIcon()
 		pol.append(QPointF(4,3)); pol.append(QPointF(4,5));
 
 		if(factor!=1.0)
-			TextPolygonItem::resizePolygon(pol, pol.boundingRect().width() * factor,
-																					pol.boundingRect().height() * factor);
+			resizePolygon(pol, pol.boundingRect().width() * factor,
+										pol.boundingRect().height() * factor);
 
 		pol_item=dynamic_cast<QGraphicsPolygonItem *>(protected_icon->childItems().at(0));
 		pol_item->setPolygon(pol);
@@ -514,8 +442,8 @@ void BaseObjectView::configureProtectedIcon()
 		pol.append(QPointF(0,9)); pol.append(QPointF(0,6));
 
 		if(factor!=1.0)
-			TextPolygonItem::resizePolygon(pol, pol.boundingRect().width() * factor,
-																					pol.boundingRect().height() * factor);
+			resizePolygon(pol, pol.boundingRect().width() * factor,
+										pol.boundingRect().height() * factor);
 
 		pol_item=dynamic_cast<QGraphicsPolygonItem *>(protected_icon->childItems().at(1));
 		pol_item->setPolygon(pol);
@@ -671,4 +599,25 @@ double BaseObjectView::getScreenDpiFactor()
 		return MaxDpiFactor;
 
 	return dpi_factor;
+}
+
+void BaseObjectView::resizePolygon(QPolygonF &pol, double width, double height)
+{
+	QVector<QPointF>::iterator itr,itr_end;
+	double coef_a, coef_b;
+
+	itr=pol.begin();
+	itr_end=pol.end();
+
+	//Calculates the resize factor
+	coef_a=width / pol.boundingRect().width();
+	coef_b=height / pol.boundingRect().height();
+
+	//Applies the resize factor to all the polygon points
+	while(itr!=itr_end)
+	{
+		itr->setX(itr->x() * coef_a);
+		itr->setY(itr->y() * coef_b);
+		itr++;
+	}
 }

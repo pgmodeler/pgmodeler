@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2022 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
 #include "tools/databaseimportform.h"
 #include "guiutilsns.h"
 #include "settings/generalconfigwidget.h"
+#include "objectstablewidget.h"
 
 ModelObjectsWidget::ModelObjectsWidget(bool simplified_view, QWidget *parent) : QWidget(parent)
 {
@@ -300,12 +301,12 @@ QTreeWidgetItem *ModelObjectsWidget::createItemForObject(BaseObject *object, QTr
 	if(tab_obj && tab_obj->isAddedByRelationship())
 	{
 		font.setItalic(true);
-		item->setForeground(0,BaseObjectView::getFontStyle(Attributes::InhColumn).foreground());
+		item->setForeground(0, ObjectsTableWidget::getTableItemColor(ObjectsTableWidget::RelAddedItemAltFgColor));
 	}
 	else if(object->isProtected() || object->isSystemObject())
 	{
 		font.setItalic(true);
-		item->setForeground(0,BaseObjectView::getFontStyle(Attributes::ProtColumn).foreground());
+		item->setForeground(0, ObjectsTableWidget::getTableItemColor(ObjectsTableWidget::ProtItemAltFgColor));
 	}
 
 	item->setFont(0,font);

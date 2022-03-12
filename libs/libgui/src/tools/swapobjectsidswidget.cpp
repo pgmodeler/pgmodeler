@@ -26,8 +26,8 @@ SwapObjectsIdsWidget::SwapObjectsIdsWidget(QWidget *parent, Qt::WindowFlags f) :
 		dst_object_sel=new ObjectSelectorWidget(types, true, this);
 		dst_object_sel->enableObjectCreation(false);
 
-		swap_objs_grid->setContentsMargins(4,4,4,4);
-		swap_objs_grid->setSpacing(6);
+		swap_objs_grid->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
+		swap_objs_grid->setSpacing(GuiUtilsNs::LtSpacing);
 
 		swap_objs_grid->addWidget(create_lbl, 0, 0);
 		swap_objs_grid->addWidget(src_object_sel, 0, 1);

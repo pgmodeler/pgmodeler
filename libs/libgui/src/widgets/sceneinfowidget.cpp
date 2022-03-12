@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2022 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -22,16 +22,7 @@
 
 SceneInfoWidget::SceneInfoWidget(QWidget *parent): QWidget(parent)
 {
-	QFont font;
-
 	setupUi(this);
-
-	font = obj_name_lbl->font();
-	font.setPointSizeF(font.pointSizeF() * 0.90);
-
-	obj_name_lbl->setFont(font);
-	obj_pos_info_lbl->setFont(font);
-	mouse_pos_info_lbl->setFont(font);
 }
 
 void SceneInfoWidget::updateSelectedObject(BaseObjectView *object)

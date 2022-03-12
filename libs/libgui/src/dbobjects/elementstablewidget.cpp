@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2022 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -50,7 +50,7 @@ ElementsTableWidget::ElementsTableWidget(QWidget *parent) : QWidget(parent)
 		elements_tab->setHeaderLabel(tr("Sorting"), 5);
 		elements_tab->setHeaderLabel(tr("Nulls First"), 6);
 
-		vbox->setContentsMargins(4,4,4,4);
+		vbox->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
 		vbox->addWidget(elements_tab);
 
 		connect(elements_tab, SIGNAL(s_rowAdded(int)), this, SLOT(addElement(int)));

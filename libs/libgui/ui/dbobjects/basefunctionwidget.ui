@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>879</width>
-    <height>383</height>
+    <height>559</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -24,19 +24,19 @@
   </property>
   <layout class="QGridLayout" name="base_function_grid">
    <property name="leftMargin">
-    <number>2</number>
+    <number>5</number>
    </property>
    <property name="topMargin">
-    <number>2</number>
+    <number>5</number>
    </property>
    <property name="rightMargin">
-    <number>2</number>
+    <number>5</number>
    </property>
    <property name="bottomMargin">
-    <number>2</number>
+    <number>5</number>
    </property>
    <property name="spacing">
-    <number>6</number>
+    <number>10</number>
    </property>
    <item row="1" column="0">
     <widget class="QTabWidget" name="func_config_twg">
@@ -61,19 +61,19 @@
       </attribute>
       <layout class="QVBoxLayout" name="attributes_vbox">
        <property name="spacing">
-        <number>6</number>
+        <number>10</number>
        </property>
        <property name="leftMargin">
-        <number>4</number>
+        <number>5</number>
        </property>
        <property name="topMargin">
-        <number>4</number>
+        <number>5</number>
        </property>
        <property name="rightMargin">
-        <number>4</number>
+        <number>5</number>
        </property>
        <property name="bottomMargin">
-        <number>4</number>
+        <number>5</number>
        </property>
        <item>
         <layout class="QGridLayout" name="gridLayout">
@@ -126,6 +126,12 @@
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
+           <property name="iconSize">
+            <size>
+             <width>28</width>
+             <height>28</height>
+            </size>
+           </property>
           </widget>
          </item>
          <item row="0" column="1" colspan="2">
@@ -134,6 +140,12 @@
             <size>
              <width>16777215</width>
              <height>16777215</height>
+            </size>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>28</width>
+             <height>28</height>
             </size>
            </property>
           </widget>
@@ -201,19 +213,19 @@
          </property>
          <layout class="QGridLayout" name="gridLayout_3">
           <property name="leftMargin">
-           <number>2</number>
+           <number>5</number>
           </property>
           <property name="topMargin">
-           <number>2</number>
+           <number>5</number>
           </property>
           <property name="rightMargin">
-           <number>2</number>
+           <number>5</number>
           </property>
           <property name="bottomMargin">
-           <number>2</number>
+           <number>5</number>
           </property>
           <property name="spacing">
-           <number>6</number>
+           <number>10</number>
           </property>
           <item row="0" column="0" colspan="3">
            <widget class="QLabel" name="dy_library_lbl">
@@ -331,19 +343,19 @@
          </property>
          <layout class="QGridLayout" name="gridLayout_2">
           <property name="leftMargin">
-           <number>2</number>
+           <number>5</number>
           </property>
           <property name="topMargin">
-           <number>2</number>
+           <number>5</number>
           </property>
           <property name="rightMargin">
-           <number>2</number>
+           <number>5</number>
           </property>
           <property name="bottomMargin">
-           <number>2</number>
+           <number>5</number>
           </property>
           <property name="spacing">
-           <number>6</number>
+           <number>10</number>
           </property>
           <item row="0" column="0">
            <widget class="QLabel" name="sourc_code_lbl">
@@ -403,29 +415,29 @@
        </property>
        <layout class="QGridLayout" name="gridLayout_5">
         <property name="leftMargin">
-         <number>2</number>
+         <number>5</number>
         </property>
         <property name="topMargin">
-         <number>2</number>
+         <number>5</number>
         </property>
         <property name="rightMargin">
-         <number>2</number>
+         <number>5</number>
         </property>
         <property name="bottomMargin">
-         <number>2</number>
+         <number>5</number>
         </property>
         <item row="0" column="0">
          <widget class="QLabel" name="label_6">
           <property name="minimumSize">
            <size>
-            <width>24</width>
-            <height>24</height>
+            <width>32</width>
+            <height>32</height>
            </size>
           </property>
           <property name="maximumSize">
            <size>
-            <width>24</width>
-            <height>24</height>
+            <width>32</width>
+            <height>32</height>
            </size>
           </property>
           <property name="text">
@@ -481,6 +493,8 @@
   <tabstop>library_edt</tabstop>
  </tabstops>
  <resources>
+  <include location="../../res/resources.qrc"/>
+  <include location="../../res/resources.qrc"/>
   <include location="../../res/resources.qrc"/>
  </resources>
  <connections/>

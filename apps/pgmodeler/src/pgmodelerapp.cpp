@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2022 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -19,16 +19,16 @@
 #include "globalattributes.h"
 #include "messagebox.h"
 #include "attributes.h"
+#include <QScreen>
+#include "utils/custommenustyle.h"
 
 PgModelerApp::PgModelerApp(int &argc, char **argv) : Application(argc,argv)
 {
 	QTranslator *main_translator=nullptr, *plugin_translator=nullptr;
-	QFile ui_style(GlobalAttributes::getTmplConfigurationFilePath("",
-																																GlobalAttributes::UiStyleConf +
-																																GlobalAttributes::ConfigurationExt));
 	QString plugin_name, plug_lang_dir, plug_lang_file;
 	QStringList dir_list;
 	QDir dir;
+	QList<QScreen *> scrs = this->screens();
 
 	try
 	{
@@ -123,10 +123,41 @@ PgModelerApp::PgModelerApp(int &argc, char **argv) : Application(argc,argv)
 		}
 	}
 
-	//Loading app style sheet
+	QString extra_ui_conf;
+
+	// Performing specific settings depending on the screen size
+	if(!scrs.isEmpty())
+	{
+		QSize sz = scrs[0]->size();
+		QString ui_size_conf;
+
+		// QMenu icon sizes in full hd screens is 22x22
+		if(sz.width() <= 1920)
+		{
+			CustomMenuStyle::setIconPixelMetric(22);
+			ui_size_conf = GlobalAttributes::UiSmallStyleConf;
+		}
+		// QMenu icon sizes in 2k screens is 25x25
+		else if(sz.width() < 3840)
+		{
+			CustomMenuStyle::setIconPixelMetric(25);
+			ui_size_conf = GlobalAttributes::UiMediumStyleConf;
+		}
+
+		if(!ui_size_conf.isEmpty())
+		{
+			extra_ui_conf = GlobalAttributes::getTmplConfigurationFilePath("",
+																																		 ui_size_conf +
+																																		 GlobalAttributes::ConfigurationExt);
+		}
+	}
+
+	QFile ui_style(GlobalAttributes::getTmplConfigurationFilePath("",
+																																GlobalAttributes::UiDefaulStyleConf +
+																																GlobalAttributes::ConfigurationExt));
+
 	ui_style.open(QFile::ReadOnly);
 
-	//Raises an error if ui style is not found
 	if(!ui_style.isOpen())
 	{
 		Messagebox msg;
@@ -134,7 +165,26 @@ PgModelerApp::PgModelerApp(int &argc, char **argv) : Application(argc,argv)
 											 ErrorCode::FileDirectoryNotAccessed,__PRETTY_FUNCTION__,__FILE__,__LINE__));
 	}
 	else
-		this->setStyleSheet(ui_style.readAll());
+	{
+		QByteArray ui_stylesheet = ui_style.readAll();
+
+		if(!extra_ui_conf.isEmpty())
+		{
+			QFile extra_ui_style(extra_ui_conf);
+			extra_ui_style.open(QFile::ReadOnly);
+
+			if(!extra_ui_style.isOpen())
+			{
+				Messagebox msg;
+				msg.show(Exception(Exception::getErrorMessage(ErrorCode::FileDirectoryNotAccessed).arg(extra_ui_conf),
+													 ErrorCode::FileDirectoryNotAccessed,__PRETTY_FUNCTION__,__FILE__,__LINE__));
+			}
+			else
+				ui_stylesheet.append(extra_ui_style.readAll());
+		}
+
+		this->setStyleSheet(ui_stylesheet);
+	}
 }
 
 bool PgModelerApp::notify(QObject *receiver, QEvent *event)

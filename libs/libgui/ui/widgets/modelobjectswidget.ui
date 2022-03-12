@@ -36,23 +36,23 @@
   </property>
   <property name="windowIcon">
    <iconset resource="../../res/resources.qrc">
-    <normaloff>:/icons/icons/pgsqlModeler48x48.png</normaloff>:/icons/icons/pgsqlModeler48x48.png</iconset>
+    <normaloff>:/icons/icons/pgmodeler_logo.png</normaloff>:/icons/icons/pgmodeler_logo.png</iconset>
   </property>
   <property name="floating" stdset="0">
    <bool>false</bool>
   </property>
   <layout class="QGridLayout" name="gridLayout_5">
    <property name="leftMargin">
-    <number>2</number>
+    <number>5</number>
    </property>
    <property name="topMargin">
-    <number>2</number>
+    <number>5</number>
    </property>
    <property name="rightMargin">
-    <number>2</number>
+    <number>5</number>
    </property>
    <property name="bottomMargin">
-    <number>4</number>
+    <number>10</number>
    </property>
    <item row="2" column="0">
     <widget class="QWidget" name="content_wgt" native="true">
@@ -76,6 +76,9 @@
        <widget class="QSplitter" name="splitter">
         <property name="orientation">
          <enum>Qt::Vertical</enum>
+        </property>
+        <property name="handleWidth">
+         <number>8</number>
         </property>
         <widget class="QStackedWidget" name="visaoobjetos_stw">
          <property name="enabled">
@@ -178,8 +181,8 @@
              </property>
              <property name="iconSize">
               <size>
-               <width>20</width>
-               <height>20</height>
+               <width>28</width>
+               <height>28</height>
               </size>
              </property>
              <property name="indentation">
@@ -266,8 +269,8 @@
              </property>
              <property name="iconSize">
               <size>
-               <width>20</width>
-               <height>20</height>
+               <width>28</width>
+               <height>28</height>
               </size>
              </property>
              <property name="gridStyle">
@@ -395,16 +398,16 @@
             </property>
             <layout class="QGridLayout" name="gridLayout">
              <property name="leftMargin">
-              <number>4</number>
+              <number>5</number>
              </property>
              <property name="topMargin">
-              <number>4</number>
+              <number>5</number>
              </property>
              <property name="rightMargin">
-              <number>4</number>
+              <number>5</number>
              </property>
              <property name="bottomMargin">
-              <number>4</number>
+              <number>5</number>
              </property>
              <item row="0" column="0">
               <widget class="QListWidget" name="visibleobjects_lst">
@@ -425,6 +428,12 @@
                </property>
                <property name="alternatingRowColors">
                 <bool>true</bool>
+               </property>
+               <property name="iconSize">
+                <size>
+                 <width>28</width>
+                 <height>28</height>
+                </size>
                </property>
                <property name="currentRow">
                 <number>-1</number>
@@ -502,23 +511,18 @@
    </item>
    <item row="0" column="0">
     <widget class="QWidget" name="title_wgt" native="true">
-     <property name="font">
-      <font>
-       <pointsize>9</pointsize>
-      </font>
-     </property>
      <layout class="QHBoxLayout" name="horizontalLayout_3">
       <property name="spacing">
-       <number>0</number>
+       <number>10</number>
       </property>
       <property name="leftMargin">
-       <number>2</number>
+       <number>5</number>
       </property>
       <property name="topMargin">
-       <number>2</number>
+       <number>5</number>
       </property>
       <property name="rightMargin">
-       <number>2</number>
+       <number>0</number>
       </property>
       <property name="bottomMargin">
        <number>0</number>
@@ -527,8 +531,7 @@
        <widget class="QLabel" name="title_lbl">
         <property name="font">
          <font>
-          <pointsize>9</pointsize>
-          <italic>false</italic>
+          <pointsize>10</pointsize>
          </font>
         </property>
         <property name="text">
@@ -551,18 +554,6 @@
       </item>
       <item>
        <widget class="QToolButton" name="hide_tb">
-        <property name="minimumSize">
-         <size>
-          <width>20</width>
-          <height>20</height>
-         </size>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>20</width>
-          <height>20</height>
-         </size>
-        </property>
         <property name="toolTip">
          <string>Hide this widget</string>
         </property>
@@ -572,6 +563,15 @@
         <property name="icon">
          <iconset resource="../../res/resources.qrc">
           <normaloff>:/icons/icons/close1.png</normaloff>:/icons/icons/close1.png</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>25</width>
+          <height>25</height>
+         </size>
+        </property>
+        <property name="shortcut">
+         <string>Esc</string>
         </property>
         <property name="autoRaise">
          <bool>true</bool>
@@ -682,12 +682,15 @@
        </property>
        <property name="iconSize">
         <size>
-         <width>22</width>
-         <height>22</height>
+         <width>32</width>
+         <height>32</height>
         </size>
        </property>
        <property name="shortcut">
         <string>Return</string>
+       </property>
+       <property name="autoRaise">
+        <bool>false</bool>
        </property>
       </widget>
      </item>
@@ -717,12 +720,15 @@
        </property>
        <property name="iconSize">
         <size>
-         <width>22</width>
-         <height>22</height>
+         <width>32</width>
+         <height>32</height>
         </size>
        </property>
        <property name="shortcut">
         <string>Esc</string>
+       </property>
+       <property name="autoRaise">
+        <bool>false</bool>
        </property>
       </widget>
      </item>
@@ -755,8 +761,8 @@
        </property>
        <property name="iconSize">
         <size>
-         <width>22</width>
-         <height>22</height>
+         <width>32</width>
+         <height>32</height>
         </size>
        </property>
        <property name="checkable">
@@ -764,6 +770,9 @@
        </property>
        <property name="checked">
         <bool>true</bool>
+       </property>
+       <property name="autoRaise">
+        <bool>false</bool>
        </property>
       </widget>
      </item>
@@ -793,12 +802,15 @@
        </property>
        <property name="iconSize">
         <size>
-         <width>22</width>
-         <height>22</height>
+         <width>32</width>
+         <height>32</height>
         </size>
        </property>
        <property name="checkable">
         <bool>true</bool>
+       </property>
+       <property name="autoRaise">
+        <bool>false</bool>
        </property>
       </widget>
      </item>
@@ -828,14 +840,17 @@
        </property>
        <property name="iconSize">
         <size>
-         <width>22</width>
-         <height>22</height>
+         <width>32</width>
+         <height>32</height>
         </size>
        </property>
        <property name="checkable">
         <bool>true</bool>
        </property>
        <property name="checked">
+        <bool>false</bool>
+       </property>
+       <property name="autoRaise">
         <bool>false</bool>
        </property>
       </widget>
@@ -866,11 +881,14 @@
        </property>
        <property name="iconSize">
         <size>
-         <width>22</width>
-         <height>22</height>
+         <width>32</width>
+         <height>32</height>
         </size>
        </property>
        <property name="checkable">
+        <bool>false</bool>
+       </property>
+       <property name="autoRaise">
         <bool>false</bool>
        </property>
       </widget>
@@ -901,11 +919,14 @@
        </property>
        <property name="iconSize">
         <size>
-         <width>22</width>
-         <height>22</height>
+         <width>32</width>
+         <height>32</height>
         </size>
        </property>
        <property name="checkable">
+        <bool>false</bool>
+       </property>
+       <property name="autoRaise">
         <bool>false</bool>
        </property>
       </widget>
@@ -930,6 +951,8 @@
   <tabstop>hide_tb</tabstop>
  </tabstops>
  <resources>
+  <include location="../../res/resources.qrc"/>
+  <include location="../../res/resources.qrc"/>
   <include location="../../res/resources.qrc"/>
  </resources>
  <connections/>

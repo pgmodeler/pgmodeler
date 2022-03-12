@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2022 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -194,14 +194,22 @@ void ColumnPickerWidget::addColumn(Column *column, int row)
 	//Change the table row background color if the column is protected or added by relationship
 	if(column->isAddedByRelationship() || column->isProtected())
 	{
-		QFont fonte;
-		fonte=columns_tab->font();
-		fonte.setItalic(true);
+		QFont fnt;
+		fnt=columns_tab->font();
+		fnt.setItalic(true);
 
-		if(column->isProtected())
-			columns_tab->setRowFont(row, fonte, GuiUtilsNs::ProtRowFgColor, GuiUtilsNs::ProtRowBgColor);
+		if(column->isAddedByRelationship())
+		{
+			columns_tab->setRowFont(row, fnt,
+											ObjectsTableWidget::getTableItemColor(ObjectsTableWidget::RelAddedItemFgColor),
+											ObjectsTableWidget::getTableItemColor(ObjectsTableWidget::RelAddedItemBgColor));
+		}
 		else
-			columns_tab->setRowFont(row, fonte, GuiUtilsNs::RelAddedRowFgColor, GuiUtilsNs::RelAddedRowBgColor);
+		{
+			columns_tab->setRowFont(row, fnt,
+															ObjectsTableWidget::getTableItemColor(ObjectsTableWidget::ProtItemFgColor),
+															ObjectsTableWidget::getTableItemColor(ObjectsTableWidget::ProtItemBgColor));
+		}
 	}
 }
 

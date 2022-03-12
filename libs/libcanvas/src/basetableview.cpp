@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2022 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -280,7 +280,7 @@ void BaseTableView::hoverMoveEvent(QGraphicsSceneHoverEvent *event)
 			//Configures the selection with the item's dimension
 			if(obj_selection->boundingRect().height() != item->boundingRect().height())
 			{
-				dynamic_cast<RoundedRectItem *>(obj_selection)->setBorderRadius(2);
+				dynamic_cast<RoundedRectItem *>(obj_selection)->setBorderRadius(4);
 				dynamic_cast<RoundedRectItem *>(obj_selection)->setRect(QRectF(0, 0,
 																																			 title->boundingRect().width() - (2.5 * HorizSpacing),
 																																			 item->boundingRect().height() - VertSpacing));
@@ -372,7 +372,7 @@ void BaseTableView::configureTag()
 		double bottom;
 		QFont fnt=BaseObjectView::getFontStyle(Attributes::Tag).font();
 
-		fnt.setPointSizeF(fnt.pointSizeF() * 0.80);
+		fnt.setPointSizeF(fnt.pointSizeF() * 0.90);
 		tag_item->setFont(fnt);
 		tag_item->setText(tag->getName());
 		tag_item->setBrush(BaseObjectView::getFontStyle(Attributes::Tag).foreground());
@@ -403,7 +403,6 @@ void BaseTableView::__configureObject(double width)
 	Tag *tag = tab->getTag();
 	QBrush togg_brush, togg_btns_brush;
 	QPen togg_pen, togg_btns_pen;
-
 	double height = 0;
 
 	if(tag)
@@ -441,7 +440,7 @@ void BaseTableView::__configureObject(double width)
 	attribs_toggler->setPen(togg_pen);
 	attribs_toggler->setButtonsBrush(togg_btns_brush);
 	attribs_toggler->setButtonsPen(togg_btns_pen);
-	attribs_toggler->setRect(QRectF(0, 0, width, 12 * BaseObjectView::getFontFactor() * BaseObjectView::getScreenDpiFactor()));
+	attribs_toggler->configureButtons(QRectF(0, 0, width, 12 * BaseObjectView::getFontFactor() * BaseObjectView::getScreenDpiFactor()));
 	attribs_toggler->setCollapseMode(tab->getCollapseMode());
 
 	//Set the protected icon position to the top-right on the title
@@ -502,11 +501,10 @@ void BaseTableView::togglePlaceholder(bool value)
 void BaseTableView::configureObjectShadow()
 {
 	RoundedRectItem *rect_item=dynamic_cast<RoundedRectItem *>(obj_shadow);
-
-	rect_item->setPen(Qt::NoPen);
-	rect_item->setBrush(QColor(50,50,50,60));
+	rect_item->setPen(getBorderStyle(Attributes::ObjShadow));
+	rect_item->setBrush(getFillStyle(Attributes::ObjShadow));
 	rect_item->setRect(this->boundingRect());
-	rect_item->setPos(3.5, 4.5);
+	rect_item->setPos(ObjectShadowXPos, ObjectShadowYPos);
 }
 
 QList<TableObjectView *> BaseTableView::getSelectedChidren()

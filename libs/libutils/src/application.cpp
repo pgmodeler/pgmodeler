@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2022 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -35,7 +35,7 @@ void Application::createUserConfiguration(bool missing_only)
 			 // If the overwrite flag is not set we'll copy the files only if the directory is empty
 			(!missing_only &&
 			 config_dir.entryList({QString("*%1").arg(GlobalAttributes::ConfigurationExt)},
-														QDir::Files | QDir::NoDotAndDotDot).isEmpty()))
+														QDir::Files | QDir::Dirs | QDir::NoDotAndDotDot).isEmpty()))
 		{
 			copyFilesRecursively(GlobalAttributes::getTmplConfigurationDir(), GlobalAttributes::getConfigurationsDir(), missing_only);
 		}
@@ -65,15 +65,15 @@ void Application::copyFilesRecursively(const QString &src_path, const QString &d
 			throw Exception(Exception::getErrorMessage(ErrorCode::FileDirectoryNotWritten).arg(dst_path),
 							__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-		filenames = src_dir.entryList({QString("*%1").arg(GlobalAttributes::ConfigurationExt)},
-										QDir::Files | QDir::NoDotAndDotDot);
+		filenames = src_dir.entryList({QString("*%1").arg(GlobalAttributes::ConfigurationExt)}, QDir::Files | QDir::NoDotAndDotDot);
 
 		for(auto &filename : filenames)
 		{
 			new_src_path = src_path + src_dir.separator() + filename;
 			new_dst_path = dst_path + dst_dir.separator() + filename;
 
-			if(filename.contains(GlobalAttributes::UiStyleConf) ||
+			// Ignoring ui style confs
+			if(filename.startsWith("ui-") ||
 				 (missing_only && QFileInfo::exists(new_dst_path)))
 				continue;
 

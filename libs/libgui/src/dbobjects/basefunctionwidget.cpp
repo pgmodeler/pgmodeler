@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2022 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -45,7 +45,7 @@ BaseFunctionWidget::BaseFunctionWidget(QWidget *parent, ObjectType obj_type) : B
 
 		grid = new QGridLayout;
 		grid->addWidget(parameters_tab, 0, 0, 1, 1);
-		grid->setContentsMargins(4, 4, 4, 4);
+		grid->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
 		func_config_twg->widget(1)->setLayout(grid);
 		security_cmb->addItems(SecurityType::getTypes());
 
@@ -62,7 +62,7 @@ BaseFunctionWidget::BaseFunctionWidget(QWidget *parent, ObjectType obj_type) : B
 		grid = new QGridLayout;
 		grid->addWidget(transform_type_wgt, 0, 0, 1, 1);
 		grid->addWidget(transform_types_tab, 1, 0, 1, 1);
-		grid->setContentsMargins(4, 4, 4, 4);
+		grid->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
 		func_config_twg->widget(2)->setLayout(grid);
 
 
@@ -77,7 +77,7 @@ BaseFunctionWidget::BaseFunctionWidget(QWidget *parent, ObjectType obj_type) : B
 		grid = new QGridLayout;
 		grid->addWidget(config_params_tab, 0, 0, 1, 1);
 		grid->addWidget(hint_frm, 1, 0, 1, 1);
-		grid->setContentsMargins(4, 4, 4, 4);
+		grid->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
 		func_config_twg->widget(4)->setLayout(grid);
 
 		connect(language_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(selectLanguage()));

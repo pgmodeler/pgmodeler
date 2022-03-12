@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2022 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -28,25 +28,29 @@ CodeCompletionWidget::CodeCompletionWidget(QPlainTextEdit *code_field_txt, bool 
 
 	this->enable_snippets = enable_snippets;
 	popup_timer.setInterval(300);
+	setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
 
 	completion_wgt=new QWidget(this);
 	completion_wgt->setWindowFlags(Qt::Popup);
+	completion_wgt->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
 
 	name_list=new QListWidget(completion_wgt);
 	name_list->setSpacing(2);
-	name_list->setIconSize(QSize(20,20));
+	name_list->setIconSize(QSize(32,32));
 	name_list->setSortingEnabled(false);
+	name_list->setSizeAdjustPolicy(QListWidget::AdjustToContents);
+	name_list->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
 
-	persistent_chk=new QCheckBox(completion_wgt);
-	persistent_chk->setText(tr("Make &persistent"));
-	persistent_chk->setToolTip(tr("Makes the widget closable only by ESC key or mouse click on other controls."));
-	persistent_chk->setFocusPolicy(Qt::NoFocus);
+	always_on_top_chk=new QCheckBox(completion_wgt);
+	always_on_top_chk->setText(tr("&Always on top"));
+	always_on_top_chk->setToolTip(tr("The widget will be always displayed while typing. It can be closable only by ESC key or when focus changes to another widget."));
+	always_on_top_chk->setFocusPolicy(Qt::NoFocus);
 
 	QVBoxLayout *vbox=new QVBoxLayout(completion_wgt);
 	vbox->addWidget(name_list);
-	vbox->addWidget(persistent_chk);
-	vbox->setContentsMargins(4,4,4,4);
-	vbox->setSpacing(6);
+	vbox->addWidget(always_on_top_chk);
+	vbox->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
+	vbox->setSpacing(GuiUtilsNs::LtSpacing);
 	completion_wgt->setLayout(vbox);
 
 	GuiUtilsNs::configureWidgetFont(name_list, GuiUtilsNs::MediumFontFactor);
@@ -136,11 +140,11 @@ bool CodeCompletionWidget::eventFilter(QObject *object, QEvent *event)
 					{
 						setQualifyingLevel(nullptr);
 
-						if(!persistent_chk->isChecked())
+						if(!always_on_top_chk->isChecked())
 							this->close();
 					}
 
-					if(persistent_chk->isChecked())
+					if(always_on_top_chk->isChecked())
 						this->show();
 				}
 			}
@@ -155,7 +159,7 @@ bool CodeCompletionWidget::eventFilter(QObject *object, QEvent *event)
 			//Filters the ENTER/RETURN press to close the code completion widget select the name
 			else if(k_event->key()==Qt::Key_Enter || k_event->key()==Qt::Key_Return)
 			{
-				if(!persistent_chk->isChecked())
+				if(!always_on_top_chk->isChecked())
 					this->selectItem();
 				else
 				{
@@ -187,6 +191,9 @@ bool CodeCompletionWidget::eventFilter(QObject *object, QEvent *event)
 				return true;
 			}
 		}
+
+		name_list->adjustSize();
+		adjustSize();
 	}
 
 	return QWidget::eventFilter(object, event);
@@ -308,11 +315,14 @@ void CodeCompletionWidget::populateNameList(vector<BaseObject *> &objects, QStri
 
 void CodeCompletionWidget::show()
 {
-	prev_txt_cur=code_field_txt->textCursor();
-	this->updateList();
-	completion_wgt->show();
-	this->showItemTooltip();
+	prev_txt_cur = code_field_txt->textCursor();
+	updateList();
+	completion_wgt->show();	
+	showItemTooltip();
 	popup_timer.stop();
+
+	completion_wgt->adjustSize();
+	adjustSize();
 }
 
 void CodeCompletionWidget::setQualifyingLevel(BaseObject *obj)
@@ -486,7 +496,7 @@ void CodeCompletionWidget::updateList()
 		name_list->item(0)->setSelected(true);
 
 	//Sets the list position right below of text cursor
-	completion_wgt->move(code_field_txt->mapToGlobal(code_field_txt->cursorRect().topLeft() + QPoint(0,20)));
+	completion_wgt->move(code_field_txt->mapToGlobal(code_field_txt->cursorRect().bottomRight() + QPoint(50,20)));
 	name_list->setFocus();
 }
 
@@ -517,7 +527,7 @@ void CodeCompletionWidget::selectItem()
 			/* An small workaround to correctly write the object name in the current
 			qualifying level without remove the parent's name. This happens only when
 			the completion is marked as persistent */
-			if(persistent_chk->isChecked())
+			if(always_on_top_chk->isChecked())
 			{
 				if(tc.selectedText().startsWith('.'))
 				{
@@ -554,7 +564,7 @@ void CodeCompletionWidget::selectItem()
 	name_list->clearSelection();
 	auto_triggered=false;
 
-	if(!persistent_chk->isChecked())
+	if(!always_on_top_chk->isChecked())
 		this->close();
 }
 

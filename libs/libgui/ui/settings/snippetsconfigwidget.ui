@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>688</width>
+    <width>756</width>
     <height>557</height>
    </rect>
   </property>
@@ -15,19 +15,19 @@
   </property>
   <layout class="QGridLayout" name="gridLayout_3">
    <property name="leftMargin">
-    <number>2</number>
+    <number>5</number>
    </property>
    <property name="topMargin">
-    <number>0</number>
+    <number>5</number>
    </property>
    <property name="rightMargin">
-    <number>0</number>
+    <number>5</number>
    </property>
    <property name="bottomMargin">
-    <number>0</number>
+    <number>5</number>
    </property>
    <property name="spacing">
-    <number>0</number>
+    <number>10</number>
    </property>
    <item row="0" column="0">
     <widget class="QFrame" name="frame">
@@ -45,19 +45,25 @@
      </property>
      <layout class="QGridLayout" name="gridLayout_2">
       <property name="leftMargin">
-       <number>4</number>
+       <number>5</number>
       </property>
       <property name="topMargin">
-       <number>4</number>
+       <number>5</number>
       </property>
       <property name="rightMargin">
-       <number>4</number>
+       <number>5</number>
       </property>
       <property name="bottomMargin">
-       <number>4</number>
+       <number>5</number>
+      </property>
+      <property name="spacing">
+       <number>10</number>
       </property>
       <item row="3" column="0" colspan="3">
        <layout class="QGridLayout" name="gridLayout">
+        <property name="spacing">
+         <number>10</number>
+        </property>
         <item row="0" column="3">
          <widget class="QComboBox" name="applies_to_cmb">
           <property name="sizePolicy">
@@ -77,8 +83,8 @@
           </property>
           <property name="iconSize">
            <size>
-            <width>18</width>
-            <height>18</height>
+            <width>28</width>
+            <height>28</height>
            </size>
           </property>
          </widget>
@@ -158,6 +164,9 @@
       </item>
       <item row="0" column="1" colspan="2">
        <layout class="QHBoxLayout" name="horizontalLayout_3">
+        <property name="spacing">
+         <number>10</number>
+        </property>
         <item>
          <widget class="QComboBox" name="snippets_cmb">
           <property name="sizePolicy">
@@ -168,6 +177,12 @@
           </property>
           <property name="insertPolicy">
            <enum>QComboBox::InsertAlphabetically</enum>
+          </property>
+          <property name="iconSize">
+           <size>
+            <width>28</width>
+            <height>28</height>
+           </size>
           </property>
          </widget>
         </item>
@@ -183,7 +198,7 @@
            </size>
           </property>
           <property name="toolTip">
-           <string>Create new connection</string>
+           <string>Create a new snippet</string>
           </property>
           <property name="text">
            <string/>
@@ -194,8 +209,8 @@
           </property>
           <property name="iconSize">
            <size>
-            <width>22</width>
-            <height>22</height>
+            <width>32</width>
+            <height>32</height>
            </size>
           </property>
          </widget>
@@ -219,12 +234,12 @@
           </property>
           <property name="icon">
            <iconset resource="../../res/resources.qrc">
-            <normaloff>:/icons/icons/close1.png</normaloff>:/icons/icons/close1.png</iconset>
+            <normaloff>:/icons/icons/cancel.png</normaloff>:/icons/icons/cancel.png</iconset>
           </property>
           <property name="iconSize">
            <size>
-            <width>22</width>
-            <height>22</height>
+            <width>32</width>
+            <height>32</height>
            </size>
           </property>
          </widget>
@@ -241,7 +256,7 @@
            </size>
           </property>
           <property name="toolTip">
-           <string>Edit selected connection</string>
+           <string>Edit selected snippet</string>
           </property>
           <property name="text">
            <string/>
@@ -252,8 +267,8 @@
           </property>
           <property name="iconSize">
            <size>
-            <width>22</width>
-            <height>22</height>
+            <width>32</width>
+            <height>32</height>
            </size>
           </property>
          </widget>
@@ -270,7 +285,7 @@
            </size>
           </property>
           <property name="toolTip">
-           <string>Delete selected connection</string>
+           <string>Delete selected snippet</string>
           </property>
           <property name="text">
            <string/>
@@ -281,8 +296,8 @@
           </property>
           <property name="iconSize">
            <size>
-            <width>22</width>
-            <height>22</height>
+            <width>32</width>
+            <height>32</height>
            </size>
           </property>
          </widget>
@@ -305,19 +320,19 @@
            </size>
           </property>
           <property name="toolTip">
-           <string>Remove All</string>
+           <string>Delete all snippets</string>
           </property>
           <property name="text">
            <string/>
           </property>
           <property name="icon">
            <iconset resource="../../res/resources.qrc">
-            <normaloff>:/icons/icons/cleartext.png</normaloff>:/icons/icons/cleartext.png</iconset>
+            <normaloff>:/icons/icons/delcascade.png</normaloff>:/icons/icons/delcascade.png</iconset>
           </property>
           <property name="iconSize">
            <size>
-            <width>22</width>
-            <height>22</height>
+            <width>32</width>
+            <height>32</height>
            </size>
           </property>
           <property name="shortcut">
@@ -342,6 +357,9 @@
       </item>
       <item row="4" column="2">
        <layout class="QHBoxLayout" name="horizontalLayout_2">
+        <property name="spacing">
+         <number>10</number>
+        </property>
         <item>
          <spacer name="horizontalSpacer_3">
           <property name="orientation">
@@ -361,7 +379,7 @@
            <bool>false</bool>
           </property>
           <property name="sizePolicy">
-           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
@@ -386,12 +404,12 @@
           </property>
           <property name="icon">
            <iconset resource="../../res/resources.qrc">
-            <normaloff>:/icons/icons/findtext.png</normaloff>:/icons/icons/findtext.png</iconset>
+            <normaloff>:/icons/icons/validatesch.png</normaloff>:/icons/icons/validatesch.png</iconset>
           </property>
           <property name="iconSize">
            <size>
-            <width>22</width>
-            <height>22</height>
+            <width>32</width>
+            <height>32</height>
            </size>
           </property>
          </widget>
@@ -402,7 +420,7 @@
            <bool>false</bool>
           </property>
           <property name="sizePolicy">
-           <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
@@ -418,6 +436,9 @@
             <width>16777215</width>
             <height>16777215</height>
            </size>
+          </property>
+          <property name="toolTip">
+           <string>Add the snippet as a new one</string>
           </property>
           <property name="text">
            <string>Add</string>
@@ -428,8 +449,8 @@
           </property>
           <property name="iconSize">
            <size>
-            <width>22</width>
-            <height>22</height>
+            <width>32</width>
+            <height>32</height>
            </size>
           </property>
          </widget>
@@ -440,7 +461,7 @@
            <bool>false</bool>
           </property>
           <property name="sizePolicy">
-           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
@@ -457,17 +478,20 @@
             <height>16777215</height>
            </size>
           </property>
+          <property name="toolTip">
+           <string>Replaces the current snippet's code by the code below</string>
+          </property>
           <property name="text">
            <string>Update</string>
           </property>
           <property name="icon">
            <iconset resource="../../res/resources.qrc">
-            <normaloff>:/icons/icons/defaults.png</normaloff>:/icons/icons/defaults.png</iconset>
+            <normaloff>:/icons/icons/refresh.png</normaloff>:/icons/icons/refresh.png</iconset>
           </property>
           <property name="iconSize">
            <size>
-            <width>22</width>
-            <height>22</height>
+            <width>32</width>
+            <height>32</height>
            </size>
           </property>
          </widget>
@@ -476,6 +500,9 @@
       </item>
       <item row="1" column="1" colspan="2">
        <layout class="QHBoxLayout" name="horizontalLayout_4">
+        <property name="spacing">
+         <number>10</number>
+        </property>
         <item>
          <widget class="QComboBox" name="filter_cmb">
           <property name="sizeAdjustPolicy">
@@ -483,8 +510,8 @@
           </property>
           <property name="iconSize">
            <size>
-            <width>18</width>
-            <height>18</height>
+            <width>28</width>
+            <height>28</height>
            </size>
           </property>
          </widget>
@@ -507,7 +534,7 @@
       <item row="4" column="0" colspan="2">
        <layout class="QHBoxLayout" name="horizontalLayout">
         <property name="spacing">
-         <number>6</number>
+         <number>10</number>
         </property>
         <item>
          <widget class="QCheckBox" name="parsable_chk">
@@ -632,6 +659,8 @@
   </layout>
  </widget>
  <resources>
+  <include location="../../res/resources.qrc"/>
+  <include location="../../res/resources.qrc"/>
   <include location="../../res/resources.qrc"/>
  </resources>
  <connections/>

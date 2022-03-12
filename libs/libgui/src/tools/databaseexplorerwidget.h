@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2022 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -74,7 +74,7 @@ class DatabaseExplorerWidget: public QWidget, public Ui::DatabaseExplorerWidget 
 		toggle_disp_menu;
 		
 		QAction *copy_action, *drop_action, *drop_cascade_action,
-		*show_data_action, *refresh_action, *properties_action,
+		*handle_data_action, *refresh_action, *properties_action,
 		*trunc_cascade_action, *truncate_action, *rename_action,
 		*source_action, *show_sys_objs, *show_ext_objs;
 		
