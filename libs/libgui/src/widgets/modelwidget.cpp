@@ -2596,6 +2596,7 @@ void ModelWidget::protectObject()
 	}
 	catch(Exception &e)
 	{
+		scene->blockSignals(false);
 		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
