@@ -57,8 +57,8 @@ ObjectsScene::ObjectsScene()
 
 	rel_line=new QGraphicsLineItem;
 	rel_line->setVisible(false);
+	rel_line->setEnabled(false);
 	rel_line->setZValue(-1);
-	rel_line->setPen(QColor(80,80,80));
 
 	this->addItem(selection_rect);
 	this->addItem(rel_line);
@@ -786,6 +786,8 @@ void ObjectsScene::showRelationshipLine(bool value, const QPointF &p_start)
 	if(!std::isnan(p_start.x()) && !std::isnan(p_start.y()))
 		rel_line->setLine(QLineF(p_start,p_start));
 
+	rel_line->setPen(QPen(delimiters_color,
+												BaseObjectView::ObjectBorderWidth * BaseObjectView::getScreenDpiFactor()));
 	rel_line->setVisible(value);
 
 	while(!items.isEmpty())

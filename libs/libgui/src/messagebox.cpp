@@ -83,6 +83,7 @@ void Messagebox::show(Exception e, const QString &msg, unsigned icon_type, unsig
 
 	raw_info_txt->setPlainText(e.getExceptionsText());
 	extra_info_txt->setPlainText(e.getExceptiosExtraInfo());
+	stacktrace_tbw->setTabVisible(1, !e.getExceptiosExtraInfo().isEmpty());
 
 	GuiUtilsNs::createExceptionsTree(exceptions_trw, e, nullptr);
 	exceptions_trw->expandAll();

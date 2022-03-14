@@ -264,7 +264,7 @@
            <number>5</number>
           </property>
           <item>
-           <widget class="QTabWidget" name="tabWidget">
+           <widget class="QTabWidget" name="stacktrace_tbw">
             <property name="tabPosition">
              <enum>QTabWidget::South</enum>
             </property>

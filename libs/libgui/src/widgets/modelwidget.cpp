@@ -980,7 +980,16 @@ void ModelWidget::addNewObject()
 				else
 				{
 					//For the graphical object, changes the cursor icon until the user click on the model to show the editing form
-					viewport->setCursor(QCursor(action->icon().pixmap(QSize(22,22)),0,0));
+					QPixmap act_ico = action->icon().pixmap(QSize(32, 32)),
+							cursor_ico = QPixmap(GuiUtilsNs::getIconPath("cursortmpl")).scaled(48, 48, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+					QPainter painter;
+
+					painter.begin(&cursor_ico);
+					painter.setPen(QPen(QColor(0,0,0), 2));
+					painter.drawPixmap(QRect(16, 16, 32, 32), act_ico);
+					painter.end();
+
+					viewport->setCursor(QCursor(cursor_ico, 0, 0));
 					this->new_obj_type=obj_type;
 					this->enableModelActions(false);
 
