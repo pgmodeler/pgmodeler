@@ -45,7 +45,6 @@ SchemaEditorForm::SchemaEditorForm(QWidget *parent) : QWidget(parent)
 		fnt.setBold(true);
 		btn->setFont(fnt);
 		GuiUtilsNs::createDropShadow(btn);
-		GuiUtilsNs::configureWidgetFont(btn, GuiUtilsNs::SmallFontFactor);
 
 		if(!btn->toolTip().isEmpty() && !btn->shortcut().toString().isEmpty())
 			btn->setToolTip(btn->toolTip() + QString(" (%1)").arg(btn->shortcut().toString()));
