@@ -750,8 +750,8 @@ void ObjectsScene::setGridSize(unsigned size)
 
 		if(show_grid)
 		{
-			pen.setColor(grid_color);
-			painter.setPen(pen);
+			painter.setPen(QPen(grid_color,
+													BaseObjectView::ObjectBorderWidth * BaseObjectView::getScreenDpiFactor()));
 
 			//Draws the grid
 			for(x=0; x < width; x+=size)
@@ -762,9 +762,10 @@ void ObjectsScene::setGridSize(unsigned size)
 		//Creates the page delimiter lines
 		if(show_page_delim)
 		{
-			pen.setColor(delimiters_color);
-			pen.setStyle(Qt::DashLine);
-			pen.setWidthF(1.0);
+			QPen pen(delimiters_color,
+							 BaseObjectView::ObjectBorderWidth * BaseObjectView::getScreenDpiFactor(),
+							 Qt::CustomDashLine);
+			pen.setDashPattern({3, 5});
 			painter.setPen(pen);
 			painter.drawLine(width-1, 0,width-1,img_h-1);
 			painter.drawLine(0, height-1,img_w-1,height-1);
