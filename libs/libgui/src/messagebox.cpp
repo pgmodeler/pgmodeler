@@ -24,13 +24,22 @@ Messagebox::Messagebox(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 {
 	setupUi(this);
 	this->setWindowFlags(Qt::Dialog | Qt::WindowTitleHint | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint);
-	cancelled=false;
+	cancelled=has_custom_size=false;
+	show_errors_tb->setVisible(false);
+	custom_option_chk->setVisible(false);
+
 	connect(yes_ok_btn,SIGNAL(clicked()),this,SLOT(handleYesOkClick()));
 	connect(no_btn,SIGNAL(clicked()),this,SLOT(handleNoCancelClick()));
 	connect(cancel_btn,SIGNAL(clicked()),this,SLOT(handleNoCancelClick()));
-	connect(show_errors_tb,SIGNAL(clicked()),this,SLOT(showExceptionList()));
-	show_errors_tb->setVisible(false);
-	custom_option_chk->setVisible(false);
+	connect(show_errors_tb, &QToolButton::toggled, [&](bool checked){
+			objs_group_wgt->setCurrentIndex(checked ? 1 : 0);
+
+			if(!has_custom_size)
+			{
+				resize(baseSize().width(),baseSize().height() * (checked ? 2 : 1));
+				has_custom_size = false;
+			}
+	});
 }
 
 void Messagebox::handleYesOkClick()
@@ -69,11 +78,6 @@ void Messagebox::setCustomOptionText(const QString &text)
 bool Messagebox::isCustomOptionChecked()
 {
 	return custom_option_chk->isChecked();
-}
-
-void Messagebox::showExceptionList()
-{
-	objs_group_wgt->setCurrentIndex(show_errors_tb->isChecked() ? 1 : 0);
 }
 
 void Messagebox::show(Exception e, const QString &msg, unsigned icon_type, unsigned buttons, const QString &yes_lbl, const QString &no_lbl, const QString &cancel_lbl,
@@ -180,26 +184,19 @@ void Messagebox::show(const QString &title, const QString &msg, unsigned icon_ty
 	objs_group_wgt->setCurrentIndex(0);
 	show_errors_tb->setChecked(false);
 	show_errors_tb->setVisible(exceptions_trw->topLevelItemCount() > 0);
-	showExceptionList();
 
-	QFontMetrics fm(msg_lbl->font());
-	QString aux_msg = QString(msg).replace(QRegExp(QString("(<)(br)(/)?(>)"), Qt::CaseInsensitive), QString("\n"));
-	QSize size = QSize(msg_lbl->width(), fm.height() * (aux_msg.trimmed().count('\n') + 1));
-	double factor = BaseObjectView::getScreenDpiFactor();
-	int max_h = msg_lbl->minimumHeight() * 3, btn_h = fm.height() * factor;
+	setMinimumWidth(screen()->geometry().width() * 0.20);
+	setMinimumHeight(screen()->geometry().height() * 0.10);
 
-	//Forcing the footer buttons to have the minimum height attached to the screen's dpi/font size
-	yes_ok_btn->setMinimumHeight(btn_h);
-	no_btn->setMinimumHeight(btn_h);
-	cancel_btn->setMinimumHeight(btn_h);
-	show_errors_tb->setMinimumHeight(btn_h);
-
-	//Resizing the message box if the text height is greater than the default size
-	if(size.height() > msg_lbl->minimumHeight() && size.height() < max_h)
-		setMinimumHeight((size.height() * 1.25)  + show_errors_tb->height() + yes_ok_btn->height());
-	else if(size.height() >= max_h)
-		setMinimumHeight(max_h);
-
-	resize(minimumWidth() * factor, minimumHeight());
+	adjustSize();
+	setBaseSize(size());
 	QDialog::exec();
+}
+
+void Messagebox::resizeEvent(QResizeEvent *event)
+{
+	if(isVisible())
+		has_custom_size = true;
+
+	QWidget::resizeEvent(event);
 }

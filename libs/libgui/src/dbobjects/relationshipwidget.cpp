@@ -50,7 +50,7 @@ RelationshipWidget::RelationshipWidget(QWidget *parent): BaseObjectWidget(parent
 		for(int i=0; i < pattern_fields.size(); i++)
 		{
 			patterns_hl[i]=new SyntaxHighlighter(qobject_cast<QPlainTextEdit *>(pattern_fields[i]), true);
-			patterns_hl[i]->loadConfiguration(GlobalAttributes::getConfigurationFilePath(GlobalAttributes::PatternHighlightConf));
+			patterns_hl[i]->loadConfiguration(GlobalAttributes::getPatternHighlightConfPath());
 		}
 
 		attributes_tab=new ObjectsTableWidget(ObjectsTableWidget::AllButtons ^

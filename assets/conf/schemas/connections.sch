@@ -9,28 +9,31 @@
 	[-->] $br
 
 	<connections> $br
+
 	{connections}
+
 	</connections> $br
 
 %else
 
+	%set {spc} $br $br
+
 	$tb [<connection alias="] {alias} [" host=] "{host}" [ port=] "{port}" [ dbname=] "{dbname}" $br
-	$tb $tb [user=] "{user}"
+	{spc} [user=] "{user}"
 
 	%if {password} %then [ password=] "{password}" %end
 
 	[ connection-timeout=] "{connection-timeout}"
 
-	$br $tb $tb [sslmode=] "{sslmode}"
+	$br {spc} [sslmode=] "{sslmode}"
 
-	%if {sslcert} %then $br $tb $tb [sslcert=] "{sslcert}" %end
-	%if {sslkey} %then $br $tb $tb [sslkey=] "{sslkey}" %end
-	%if {sslrootcert} %then $br $tb $tb [sslrootcert=] "{sslrootcert}" %end
-	%if {sslcrl} %then $br $tb $tb [sslcrl=] "{sslcrl}" %end
-
+	%if {sslcert} %then $br {spc} [sslcert=] "{sslcert}" %end
+	%if {sslkey} %then $br {spc} [sslkey=] "{sslkey}" %end
+	%if {sslrootcert} %then $br {spc} [sslrootcert=] "{sslrootcert}" %end
+	%if {sslcrl} %then $br {spc} [sslcrl=] "{sslcrl}" %end
 
 	%if {krbsrvname} %then
-		$br $tb $tb [krbsrvname=] "{krbsrvname}"
+		$br {spc} [krbsrvname=] "{krbsrvname}"
 
 		%if {gsslib} %then
 			[ gsslib=] "{gsslib}"
@@ -38,17 +41,17 @@
 	%end
 
 	%if {auto-browse-db} %then
-		$br $tb $tb auto-browse-db="true"
+		$br {spc} auto-browse-db="true"
 	%end
 
 	%if {options} %then
-		$br $tb $tb options="{options}"
+		$br {spc} options="{options}"
 	%end
 
-	%if {default-for-export} %then $br $tb $tb [default-for-export=] "{default-for-export}" %end
-	%if {default-for-import} %then $br $tb $tb [default-for-import=] "{default-for-import}" %end
-	%if {default-for-diff} %then $br $tb $tb [default-for-diff=] "{default-for-diff}" %end
-	%if {default-for-validation} %then $br $tb $tb [default-for-validation=] "{default-for-validation}" %end
+	%if {default-for-export} %then $br {spc} [default-for-export=] "{default-for-export}" %end
+	%if {default-for-import} %then $br {spc} [default-for-import=] "{default-for-import}" %end
+	%if {default-for-diff} %then $br {spc} [default-for-diff=] "{default-for-diff}" %end
+	%if {default-for-validation} %then $br {spc} [default-for-validation=] "{default-for-validation}" %end    
 
 	/> $br
 %end

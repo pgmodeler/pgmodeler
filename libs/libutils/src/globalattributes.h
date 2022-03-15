@@ -62,6 +62,7 @@ class GlobalAttributes {
 		SQLHighlightConfPath,
 		XMLHighlightConfPath,
 		SchHighlightConfPath,
+		PatternHighlightConfPath,
 		PgModelerCHandlerPath,
 		PgModelerCLIPath,
 		PgModelerAppPath,
@@ -187,6 +188,9 @@ class GlobalAttributes {
 
 		//! \brief Returns the path to the "sch-highlight.conf" file in user's local storage
 		static QString getSchHighlightConfPath();
+
+		//! \brief Returns the path to the "pattern-highlight.conf" file in user's local storage
+		static QString getPatternHighlightConfPath();
 
 		//! \brief Returns the path to the "pgmodeler-ch" (crash handler) executable
 		static QString getPgModelerCHandlerPath();

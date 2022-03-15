@@ -54,8 +54,10 @@ class AppearanceConfigWidget: public BaseConfigWidget, public Ui::AppearanceConf
 		//! \brief Holds the default/system QPalette settings.
 		system_ui_colors;
 
+		//! \brief Colors used for ObjectTableWidget items when in dark theme
 		static QStringList dark_tab_item_colors,
 
+		//! \brief Colors used for ObjectTableWidget items when in light theme
 		light_tab_item_colors;
 
 		//! \brief Auxiliary class that stores the formating data of each element
@@ -132,11 +134,11 @@ class AppearanceConfigWidget: public BaseConfigWidget, public Ui::AppearanceConf
 		void applyConfiguration(void);
 		void previewCodeFontStyle();
 		void previewCanvasColors();
+		void applySyntaxHighlightTheme();		
+		void applyDesignCodeTheme();
 
 		//! \brief Applies the selected ui theme to the whole application
 		void applyUiTheme();
-		void applySyntaxHighlightTheme();
-		void applyDesignCodeTheme();
 
 	public slots:
 		void restoreDefaults();

@@ -652,7 +652,8 @@ void AppearanceConfigWidget::saveConfiguration()
 		orig_hl_files = {
 			GlobalAttributes::getSQLHighlightConfPath(),
 			GlobalAttributes::getXMLHighlightConfPath(),
-			GlobalAttributes::getSchHighlightConfPath()
+			GlobalAttributes::getSchHighlightConfPath(),
+			GlobalAttributes::getPatternHighlightConfPath(),
 		};
 
 		for(int i = 0; i < 3; i++)

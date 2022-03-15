@@ -1782,7 +1782,7 @@ void MainWindow::showFixMessage(Exception &e, const QString &filename)
 							 tr("Could not load the database model file `%1'. Check the error stack to see details. You can try to fix it in order to make it loadable again.").arg(filename),
 							 Messagebox::ErrorIcon, Messagebox::YesNoButtons,
 							 tr("Fix model"), tr("Cancel"), "",
-							 GuiUtilsNs::getIconPath("fixobject"), GuiUtilsNs::getIconPath("error"));
+							 GuiUtilsNs::getIconPath("fixobject"), GuiUtilsNs::getIconPath("cancel"));
 
 	if(msg_box.result()==QDialog::Accepted)
 		fixModel(filename);

@@ -26,7 +26,27 @@ Application::Application(int &argc, char **argv) : QApplication(argc,argv)
 
 void Application::createUserConfiguration(bool missing_only)
 {
-	QDir config_dir(GlobalAttributes::getConfigurationsDir());
+	QDir config_dir(GlobalAttributes::getConfigurationsDir()),
+			old_cfg_dir(GlobalAttributes::getConfigurationsDir().replace(GlobalAttributes::PgModelerAppName, "pgmodeler"));
+
+	/* First, we check if there are pgModeler 0.9.x config files in the user's local storage.
+	 * If that's the case, we copy some files that are compatible with pgModeler 1.x+ */
+	if(!config_dir.exists() && old_cfg_dir.exists())
+	{
+		QStringList old_files = old_cfg_dir.entryList(QDir::NoDotAndDotDot | QDir::Files);
+		config_dir.mkpath(config_dir.path());
+
+		for(auto &file : old_files)
+		{
+			if(file.contains("-style") ||
+				 file.contains("-highlight") ||
+				 file.contains("pgmodeler") ||
+				 file.contains(GlobalAttributes::RelationshipsConf))
+				continue;
+
+			QFile::copy(old_cfg_dir.absoluteFilePath(file), config_dir.absoluteFilePath(file));
+		}
+	}
 
 	try
 	{

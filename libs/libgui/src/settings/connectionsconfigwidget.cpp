@@ -100,6 +100,7 @@ void ConnectionsConfigWidget::loadConfiguration()
 		Connection *conn=nullptr;
 
 		destroyConnections();
+
 		BaseConfigWidget::loadConfiguration(GlobalAttributes::ConnectionsConf, config_params, { Attributes::Alias });
 
 		for(auto &itr : config_params)
