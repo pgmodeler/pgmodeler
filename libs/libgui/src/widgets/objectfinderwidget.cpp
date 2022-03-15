@@ -78,15 +78,15 @@ bool ObjectFinderWidget::eventFilter(QObject *object, QEvent *event)
 {
 	QKeyEvent *k_event=dynamic_cast<QKeyEvent *>(event);
 
-	//Executes the search when user press enter/return on the pattern field
-	if(event->type() == QEvent::KeyPress &&
+	//Executes the search when user press and releases enter/return on the pattern field
+	if(event->type() == QEvent::KeyRelease &&
 			(k_event->key()==Qt::Key_Return || k_event->key()==Qt::Key_Enter))
 	{
 		find_btn->click();
 		return true;
 	}
-	else
-		return QWidget::eventFilter(object, event);
+
+	return QWidget::eventFilter(object, event);
 }
 
 void ObjectFinderWidget::hide()
