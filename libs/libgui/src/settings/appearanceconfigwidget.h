@@ -119,6 +119,9 @@ class AppearanceConfigWidget: public BaseConfigWidget, public Ui::AppearanceConf
 		//! \brief Stores in system_ui_colors the default colors of ui elements
 		void storeSystemUiColors();
 
+		void applyDesignCodeTheme();
+		void applyUiStyleSheet();
+
 	public:
 		AppearanceConfigWidget(QWidget * parent = nullptr);
 		virtual ~AppearanceConfigWidget();
@@ -134,8 +137,7 @@ class AppearanceConfigWidget: public BaseConfigWidget, public Ui::AppearanceConf
 		void applyConfiguration(void);
 		void previewCodeFontStyle();
 		void previewCanvasColors();
-		void applySyntaxHighlightTheme();		
-		void applyDesignCodeTheme();
+		void applySyntaxHighlightTheme();
 
 		//! \brief Applies the selected ui theme to the whole application
 		void applyUiTheme();

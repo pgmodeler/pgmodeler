@@ -25,7 +25,7 @@ TaskProgressWidget::TaskProgressWidget(QWidget *parent, Qt::WindowFlags f) : QDi
 	vector<ObjectType> obj_types=BaseObject::getObjectTypes(true);
 
 	setupUi(this);
-	this->setWindowFlags(Qt::Dialog | Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
+	setWindowFlags(Qt::Dialog | Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
 
 	for(auto &obj_tp : obj_types)
 		addIcon(enum_cast(obj_tp), QIcon(GuiUtilsNs::getIconPath(obj_tp)));
@@ -76,8 +76,8 @@ void TaskProgressWidget::updateProgress(int progress, QString text, unsigned ico
 	this->repaint();
 
 	/* MacOSX workaround: The event loop below is needed because on this system
-	   the task progress is not correctly updated. The event loop causes a little
-	   delay (1ms) and it`s sufficient to update the entire widget */
+		 the task progress is not correctly updated. The event loop causes a little
+		 delay (1ms) and it`s sufficient to update the entire widget */
 #ifdef Q_OS_MAC
 	QEventLoop eventLoop;
 	QTimer t;

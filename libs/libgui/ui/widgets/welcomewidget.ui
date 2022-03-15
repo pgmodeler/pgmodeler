@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1146</width>
-    <height>1034</height>
+    <height>1154</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -24,7 +24,7 @@
   </property>
   <layout class="QGridLayout" name="gridLayout_2">
    <property name="verticalSpacing">
-    <number>50</number>
+    <number>80</number>
    </property>
    <item row="1" column="0">
     <spacer name="horizontalSpacer">

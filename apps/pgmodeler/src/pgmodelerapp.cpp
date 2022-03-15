@@ -121,66 +121,6 @@ PgModelerApp::PgModelerApp(int &argc, char **argv) : Application(argc,argv)
 			this->installTranslator(plugin_translator);
 		}
 	}
-
-	QString extra_ui_conf;
-
-	// Performing specific settings depending on the screen size
-	QSize sz = primaryScreen()->size();
-	QString ui_size_conf;
-
-	// QMenu icon sizes in full hd screens is 22x22
-	if(sz.width() <= 1920)
-	{
-		CustomMenuStyle::setIconPixelMetric(22);
-		ui_size_conf = GlobalAttributes::UiSmallStyleConf;
-	}
-	// QMenu icon sizes in 2k screens is 25x25
-	else if(sz.width() < 3840)
-	{
-		CustomMenuStyle::setIconPixelMetric(25);
-		ui_size_conf = GlobalAttributes::UiMediumStyleConf;
-	}
-
-	if(!ui_size_conf.isEmpty())
-	{
-		extra_ui_conf = GlobalAttributes::getTmplConfigurationFilePath("",
-																																	 ui_size_conf +
-																																	 GlobalAttributes::ConfigurationExt);
-	}
-
-	QFile ui_style(GlobalAttributes::getTmplConfigurationFilePath("",
-																																GlobalAttributes::UiDefaulStyleConf +
-																																GlobalAttributes::ConfigurationExt));
-
-	ui_style.open(QFile::ReadOnly);
-
-	if(!ui_style.isOpen())
-	{
-		Messagebox msg;
-		msg.show(Exception(Exception::getErrorMessage(ErrorCode::FileDirectoryNotAccessed).arg(ui_style.fileName()),
-											 ErrorCode::FileDirectoryNotAccessed,__PRETTY_FUNCTION__,__FILE__,__LINE__));
-	}
-	else
-	{
-		QByteArray ui_stylesheet = ui_style.readAll();
-
-		if(!extra_ui_conf.isEmpty())
-		{
-			QFile extra_ui_style(extra_ui_conf);
-			extra_ui_style.open(QFile::ReadOnly);
-
-			if(!extra_ui_style.isOpen())
-			{
-				Messagebox msg;
-				msg.show(Exception(Exception::getErrorMessage(ErrorCode::FileDirectoryNotAccessed).arg(extra_ui_conf),
-													 ErrorCode::FileDirectoryNotAccessed,__PRETTY_FUNCTION__,__FILE__,__LINE__));
-			}
-			else
-				ui_stylesheet.append(extra_ui_style.readAll());
-		}
-
-		this->setStyleSheet(ui_stylesheet);
-	}
 }
 
 bool PgModelerApp::notify(QObject *receiver, QEvent *event)

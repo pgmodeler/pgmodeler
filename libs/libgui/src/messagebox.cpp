@@ -188,7 +188,14 @@ void Messagebox::show(const QString &title, const QString &msg, unsigned icon_ty
 	setMinimumWidth(screen()->geometry().width() * 0.20);
 	setMinimumHeight(screen()->geometry().height() * 0.10);
 
-	adjustSize();
+	QFontMetrics fm(msg_lbl->font());
+	int ln_cnt = QString(msg).replace(QRegExp(QString("(<)(br)(/)?(>)"), Qt::CaseInsensitive), QString("\n")).count('\n');
+
+	if(ln_cnt > 0)
+		adjustSize();
+	else
+		resize(minimumSize());
+
 	setBaseSize(size());
 	QDialog::exec();
 }
