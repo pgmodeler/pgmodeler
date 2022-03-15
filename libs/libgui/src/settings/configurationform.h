@@ -49,8 +49,8 @@ class ConfigurationForm: public QDialog, public Ui::ConfigurationForm {
 		
 	public:
 		static constexpr int	GeneralConfWgt=0,
-		RelationshipsConfWgt=1,
-		AppearanceConfWgt=2,
+		AppearanceConfWgt=1,
+		RelationshipsConfWgt=2,
 		ConnectionsConfWgt=3,
 		SnippetsConfWgt=4,
 		PluginsConfWgt=5;

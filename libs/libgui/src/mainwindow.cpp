@@ -127,7 +127,6 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	arrange_menu.addAction(tr("Scattered"), this, SLOT(arrangeObjects()));
 
 	models_tbw->tabBar()->setVisible(false);
-	tools_acts_tb->layout()->setContentsMargins(0,0,0,0);
 
 	central_wgt=new WelcomeWidget(views_stw);
 	grid=new QGridLayout;

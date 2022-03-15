@@ -29,9 +29,8 @@ ConfigurationForm::ConfigurationForm(QWidget *parent, Qt::WindowFlags f) : QDial
 	snippets_conf=new SnippetsConfigWidget(this);
 	plugins_conf=new PluginsConfigWidget(this);
 
-	QWidgetList wgt_list={ general_conf, relationships_conf,
-												 appearance_conf, connections_conf,
-												 snippets_conf, plugins_conf};
+	QWidgetList wgt_list={ general_conf, appearance_conf, relationships_conf,
+												 connections_conf, snippets_conf, plugins_conf };
 
 	for(auto &wgt : wgt_list)
 		confs_stw->addWidget(wgt);
@@ -44,7 +43,7 @@ ConfigurationForm::ConfigurationForm(QWidget *parent, Qt::WindowFlags f) : QDial
 
 	QFont fnt;
 	int view_idx = GeneralConfWgt;
-	QList<QToolButton *> btns = { general_tb, relationships_tb, appearance_tb,
+	QList<QToolButton *> btns = { general_tb, appearance_tb, relationships_tb,
 																connections_tb, snippets_tb, plugins_tb };
 
 	for(auto &btn : btns)
@@ -190,7 +189,7 @@ BaseConfigWidget *ConfigurationForm::getConfigurationWidget(unsigned idx)
 {
 	if(idx >= static_cast<unsigned>(confs_stw->count()))
 		return nullptr;
-	else
-		return qobject_cast<BaseConfigWidget *>(confs_stw->widget(static_cast<unsigned>(idx)));
+
+	return qobject_cast<BaseConfigWidget *>(confs_stw->widget(static_cast<unsigned>(idx)));
 }
 
