@@ -76,7 +76,7 @@ void SourceCodeWidget::setSourceCodeTab(int)
 			  || (obj_type!=ObjectType::BaseRelationship && obj_type!=ObjectType::Textbox)));
 
 	icone=QPixmap(GuiUtilsNs::getIconPath(code_icon));
-	icon_lbl->setPixmap(icone);
+	icon2_lbl->setPixmap(icone);
 	version_cmb->setEnabled(enabled);
 	pgsql_lbl->setEnabled(enabled);
 	version_lbl->setEnabled(enabled);

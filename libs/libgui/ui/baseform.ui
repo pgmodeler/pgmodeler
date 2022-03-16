@@ -81,7 +81,7 @@
          <number>10</number>
         </property>
         <item row="0" column="0">
-         <widget class="QLabel" name="baselogo_lbl">
+         <widget class="QLabel" name="pgmodeler_name_lbl">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
             <horstretch>0</horstretch>
@@ -236,7 +236,6 @@
   </layout>
  </widget>
  <resources>
-  <include location="../res/resources.qrc"/>
   <include location="../res/resources.qrc"/>
   <include location="../res/resources.qrc"/>
  </resources>

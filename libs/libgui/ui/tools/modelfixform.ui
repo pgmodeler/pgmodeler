@@ -251,9 +251,7 @@
          </palette>
         </property>
         <property name="font">
-         <font>
-          <family>Monospace</family>
-         </font>
+         <font/>
         </property>
         <property name="verticalScrollBarPolicy">
          <enum>Qt::ScrollBarAsNeeded</enum>
@@ -263,10 +261,10 @@
         </property>
         <property name="html">
          <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;meta charset=&quot;utf-8&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Monospace'; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:9pt;&quot;&gt;Waiting process to start...&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Noto Sans'; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Monospace'; font-size:9pt;&quot;&gt;Waiting process to start...&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
         </property>
         <property name="acceptRichText">
          <bool>false</bool>
@@ -277,7 +275,7 @@ p, li { white-space: pre-wrap; }
        </widget>
       </item>
       <item row="0" column="0" colspan="3">
-       <widget class="QFrame" name="message_frm">
+       <widget class="QFrame" name="alert_frm">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
           <horstretch>0</horstretch>
@@ -341,7 +339,6 @@ p, li { white-space: pre-wrap; }
           <widget class="QLabel" name="not_found_lbl">
            <property name="font">
             <font>
-             <weight>50</weight>
              <italic>false</italic>
              <bold>false</bold>
              <underline>false</underline>
@@ -361,7 +358,7 @@ p, li { white-space: pre-wrap; }
        </widget>
       </item>
       <item row="6" column="0" colspan="3">
-       <widget class="QFrame" name="message_frm_2">
+       <widget class="QFrame" name="alert2_frm">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
           <horstretch>0</horstretch>
@@ -394,7 +391,7 @@ p, li { white-space: pre-wrap; }
           <number>5</number>
          </property>
          <item row="0" column="0">
-          <widget class="QLabel" name="label_2">
+          <widget class="QLabel" name="icon_lbl2">
            <property name="minimumSize">
             <size>
              <width>32</width>
@@ -431,7 +428,6 @@ p, li { white-space: pre-wrap; }
            </property>
            <property name="font">
             <font>
-             <weight>50</weight>
              <italic>false</italic>
              <bold>false</bold>
              <underline>false</underline>
@@ -489,7 +485,7 @@ p, li { white-space: pre-wrap; }
    <item row="1" column="0" colspan="4">
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
-      <widget class="QLabel" name="label">
+      <widget class="QLabel" name="pgmodeler_name_lbl">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
          <horstretch>0</horstretch>
@@ -598,7 +594,6 @@ p, li { white-space: pre-wrap; }
   </layout>
  </widget>
  <resources>
-  <include location="../../res/resources.qrc"/>
   <include location="../../res/resources.qrc"/>
   <include location="../../res/resources.qrc"/>
  </resources>

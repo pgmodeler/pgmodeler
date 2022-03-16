@@ -231,7 +231,7 @@ void TableDataWidget::clearColumns()
 		clearRows(false);
 		data_tbw->setColumnCount(0);
 		clear_cols_tb->setEnabled(false);
-		warn_frm->setVisible(false);
+		alert_frm->setVisible(false);
 		add_row_tb->setEnabled(false);
 		configureColumnNamesMenu();
 	}
@@ -419,7 +419,7 @@ void TableDataWidget::populateDataGrid(const QString &data)
 		}
 	}
 
-	warn_frm->setVisible(!invalid_cols.isEmpty());
+	alert_frm->setVisible(!invalid_cols.isEmpty());
 	data_tbw->resizeColumnsToContents();
 	data_tbw->resizeRowsToContents();
 
@@ -460,7 +460,7 @@ void TableDataWidget::toggleWarningFrame()
 	for(int col = 0; col < data_tbw->columnCount() && !has_inv_cols; col++)
 		has_inv_cols = data_tbw->horizontalHeaderItem(col)->flags()==Qt::NoItemFlags;
 
-	warn_frm->setVisible(has_inv_cols);
+	alert_frm->setVisible(has_inv_cols);
 }
 
 void TableDataWidget::setItemInvalid(QTableWidgetItem *item)

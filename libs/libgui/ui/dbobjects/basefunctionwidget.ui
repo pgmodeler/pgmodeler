@@ -93,7 +93,6 @@
            </property>
            <property name="font">
             <font>
-             <weight>50</weight>
              <bold>false</bold>
             </font>
            </property>
@@ -427,7 +426,7 @@
          <number>5</number>
         </property>
         <item row="0" column="0">
-         <widget class="QLabel" name="label_6">
+         <widget class="QLabel" name="icon_lbl">
           <property name="minimumSize">
            <size>
             <width>32</width>
@@ -464,7 +463,6 @@
           </property>
           <property name="font">
            <font>
-            <weight>50</weight>
             <bold>false</bold>
             <underline>false</underline>
             <strikeout>false</strikeout>
@@ -493,7 +491,6 @@
   <tabstop>library_edt</tabstop>
  </tabstops>
  <resources>
-  <include location="../../res/resources.qrc"/>
   <include location="../../res/resources.qrc"/>
   <include location="../../res/resources.qrc"/>
  </resources>

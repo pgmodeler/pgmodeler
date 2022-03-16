@@ -82,7 +82,7 @@ ModelFixForm::ModelFixForm(QWidget *parent, Qt::WindowFlags f) : QDialog(parent,
 
 void ModelFixForm::hideEvent(QHideEvent *)
 {
-	message_frm->setVisible(false);
+	alert_frm->setVisible(false);
 	pgmodeler_cli_lbl->setVisible(false);
 	pgmodeler_cli_sel->setVisible(false);
 	input_file_sel->clearSelector();
@@ -100,7 +100,7 @@ int ModelFixForm::exec()
 	{
 		not_found_lbl->setText(tr("Could not locate <strong>%1</strong> tool on <strong>%2</strong>. The fix process can't continue! Please check pgModeler installation or try to manually specify the command below.")
 							   .arg(PgModelerCli).arg(fi.absoluteDir().absolutePath()));
-		message_frm->setVisible(true);
+		alert_frm->setVisible(true);
 		pgmodeler_cli_lbl->setVisible(true);
 		pgmodeler_cli_sel->setVisible(true);
 	}
@@ -122,12 +122,12 @@ void ModelFixForm::enableFix()
 		else
 			pgmodeler_cli_sel->clearCustomWarning();
 
-		message_frm->setVisible(invalid_cli);
+		alert_frm->setVisible(invalid_cli);
 	}
 	else
 	{
 		pgmodeler_cli_sel->clearCustomWarning();
-		message_frm->setVisible(false);
+		alert_frm->setVisible(false);
 	}
 
 	fix_btn->setEnabled(!input_file_sel->hasWarning() && !input_file_sel->getSelectedFile().isEmpty() &&

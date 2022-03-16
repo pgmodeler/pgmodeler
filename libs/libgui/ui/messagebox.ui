@@ -426,7 +426,7 @@
       <number>10</number>
      </property>
      <item row="0" column="0">
-      <widget class="QLabel" name="name_lbl">
+      <widget class="QLabel" name="pgmodeler_name_lbl">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
          <horstretch>0</horstretch>
@@ -590,7 +590,6 @@
   <tabstop>exceptions_trw</tabstop>
  </tabstops>
  <resources>
-  <include location="../res/resources.qrc"/>
   <include location="../res/resources.qrc"/>
   <include location="../res/resources.qrc"/>
  </resources>

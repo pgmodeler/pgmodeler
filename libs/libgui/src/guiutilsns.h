@@ -41,6 +41,10 @@ namespace GuiUtilsNs {
 	BigFontFactor = 2,
 	HugeFontFactor = 3;
 
+	static constexpr int FHDWidth = 1920,
+	QHDWidth = 2560,
+	UHDWidth = 3840;
+
 	extern void configureWidgetFont(QWidget *widget, unsigned factor_id);
 	extern void __configureWidgetFont(QWidget *widget, double factor);
 

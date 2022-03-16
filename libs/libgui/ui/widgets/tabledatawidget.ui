@@ -282,7 +282,7 @@
     </widget>
    </item>
    <item row="2" column="0" colspan="15">
-    <widget class="QFrame" name="warn_frm">
+    <widget class="QFrame" name="alert_frm">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
        <horstretch>0</horstretch>
@@ -315,7 +315,7 @@
        <number>5</number>
       </property>
       <item row="0" column="0">
-       <widget class="QLabel" name="label_7">
+       <widget class="QLabel" name="icon_lbl">
         <property name="maximumSize">
          <size>
           <width>32</width>
@@ -346,7 +346,6 @@
         </property>
         <property name="font">
          <font>
-          <weight>50</weight>
           <bold>false</bold>
           <underline>false</underline>
           <strikeout>false</strikeout>
@@ -630,7 +629,7 @@
        <number>5</number>
       </property>
       <item row="0" column="0">
-       <widget class="QLabel" name="label_6">
+       <widget class="QLabel" name="icon_lbl2">
         <property name="maximumSize">
          <size>
           <width>32</width>
@@ -661,7 +660,6 @@
         </property>
         <property name="font">
          <font>
-          <weight>50</weight>
           <bold>false</bold>
           <underline>false</underline>
           <strikeout>false</strikeout>
@@ -742,13 +740,12 @@
   <zorder>clear_cols_tb</zorder>
   <zorder>csv_load_tb</zorder>
   <zorder>csv_load_parent</zorder>
-  <zorder>warn_frm</zorder>
+  <zorder>alert_frm</zorder>
   <zorder>bulkedit_tb</zorder>
   <zorder>copy_tb</zorder>
   <zorder>paste_tb</zorder>
  </widget>
  <resources>
-  <include location="../../res/resources.qrc"/>
   <include location="../../res/resources.qrc"/>
   <include location="../../res/resources.qrc"/>
  </resources>

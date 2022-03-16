@@ -13,7 +13,7 @@
   <property name="minimumSize">
    <size>
     <width>800</width>
-    <height>800</height>
+    <height>600</height>
    </size>
   </property>
   <property name="baseSize">
@@ -66,18 +66,12 @@
       <number>10</number>
      </property>
      <item row="0" column="0">
-      <widget class="QLabel" name="label">
+      <widget class="QLabel" name="pgmodeler_name_lbl">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
-       </property>
-       <property name="minimumSize">
-        <size>
-         <width>242</width>
-         <height>50</height>
-        </size>
        </property>
        <property name="maximumSize">
         <size>
@@ -974,7 +968,7 @@
           <number>5</number>
          </property>
          <item row="0" column="0">
-          <widget class="QLabel" name="label_6">
+          <widget class="QLabel" name="icon_lbl">
            <property name="minimumSize">
             <size>
              <width>32</width>
@@ -1011,7 +1005,6 @@
            </property>
            <property name="font">
             <font>
-             <weight>50</weight>
              <bold>false</bold>
              <underline>false</underline>
              <strikeout>false</strikeout>
@@ -1124,7 +1117,6 @@
           <widget class="QLabel" name="warning_lbl">
            <property name="font">
             <font>
-             <weight>50</weight>
              <italic>false</italic>
              <bold>false</bold>
              <underline>false</underline>
@@ -1141,7 +1133,7 @@
           </widget>
          </item>
          <item row="0" column="0">
-          <widget class="QLabel" name="label_2">
+          <widget class="QLabel" name="icon_lbl2">
            <property name="minimumSize">
             <size>
              <width>32</width>
@@ -1998,7 +1990,6 @@
   <tabstop>close_btn</tabstop>
  </tabstops>
  <resources>
-  <include location="../../res/resources.qrc"/>
   <include location="../../res/resources.qrc"/>
   <include location="../../res/resources.qrc"/>
  </resources>

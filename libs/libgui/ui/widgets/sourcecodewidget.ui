@@ -138,7 +138,7 @@
       </spacer>
      </item>
      <item>
-      <widget class="QLabel" name="icon_lbl">
+      <widget class="QLabel" name="icon2_lbl">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
          <horstretch>0</horstretch>
@@ -322,7 +322,6 @@
   <tabstop>sourcecode_twg</tabstop>
  </tabstops>
  <resources>
-  <include location="../../res/resources.qrc"/>
   <include location="../../res/resources.qrc"/>
   <include location="../../res/resources.qrc"/>
  </resources>

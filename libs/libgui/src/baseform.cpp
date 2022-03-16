@@ -102,7 +102,7 @@ void BaseForm::resizeForm(QWidget *widget)
 	curr_w += (vbox->contentsMargins().left() +
 						 vbox->contentsMargins().right()) * 6;
 
-	curr_h += baselogo_lbl->minimumHeight() +
+	curr_h += pgmodeler_name_lbl->minimumHeight() +
 							((buttons_lt->contentsMargins().top() +
 								buttons_lt->contentsMargins().bottom()) * 6);
 

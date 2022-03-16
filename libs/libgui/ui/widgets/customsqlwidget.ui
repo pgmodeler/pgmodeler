@@ -369,7 +369,7 @@ Unchecking this will cause the SQL to be appended at the end of CREATE DATABASE 
        </widget>
       </item>
       <item>
-       <widget class="QFrame" name="message_frm">
+       <widget class="QFrame" name="alert_frm">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
           <horstretch>0</horstretch>
@@ -402,7 +402,7 @@ Unchecking this will cause the SQL to be appended at the end of CREATE DATABASE 
           <number>2</number>
          </property>
          <item row="0" column="0">
-          <widget class="QLabel" name="label_2">
+          <widget class="QLabel" name="icon_lbl">
            <property name="maximumSize">
             <size>
              <width>32</width>
@@ -427,7 +427,6 @@ Unchecking this will cause the SQL to be appended at the end of CREATE DATABASE 
           <widget class="QLabel" name="message_lbl">
            <property name="font">
             <font>
-             <weight>50</weight>
              <bold>false</bold>
              <underline>false</underline>
              <strikeout>false</strikeout>
@@ -458,7 +457,6 @@ Unchecking this will cause the SQL to be appended at the end of CREATE DATABASE 
   <tabstop>clear_tb</tabstop>
  </tabstops>
  <resources>
-  <include location="../../res/resources.qrc"/>
   <include location="../../res/resources.qrc"/>
   <include location="../../res/resources.qrc"/>
  </resources>

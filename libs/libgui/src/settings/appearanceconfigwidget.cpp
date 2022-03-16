@@ -958,13 +958,13 @@ void AppearanceConfigWidget::applyUiStyleSheet()
 	QString ui_size_conf;
 
 	// QMenu icon sizes in full hd screens is 22x22
-	if(sz.width() <= 1920)
+	if(sz.width() <= GuiUtilsNs::FHDWidth)
 	{
 		CustomMenuStyle::setIconPixelMetric(22);
 		ui_size_conf = GlobalAttributes::UiSmallStyleConf;
 	}
 	// QMenu icon sizes in 2k screens is 25x25
-	else if(sz.width() < 3840)
+	else if(sz.width() <= GuiUtilsNs::QHDWidth)
 	{
 		CustomMenuStyle::setIconPixelMetric(25);
 		ui_size_conf = GlobalAttributes::UiMediumStyleConf;

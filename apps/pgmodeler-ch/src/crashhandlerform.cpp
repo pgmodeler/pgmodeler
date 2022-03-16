@@ -92,12 +92,12 @@ CrashHandlerForm::CrashHandlerForm(bool analysis_mode, QWidget *parent, Qt::Wind
 
 	report_tab_grid->removeWidget(details_gb);
 	report_tab_grid->removeWidget(output_wgt);
-	report_tab_grid->removeWidget(message_frm);
+	report_tab_grid->removeWidget(hint_frm);
 
 	report_tab_grid->addWidget(input_wgt);
 	report_tab_grid->addWidget(details_gb);
 	report_tab_grid->addWidget(output_wgt);
-	report_tab_grid->addWidget(message_frm);
+	report_tab_grid->addWidget(hint_frm);
 
 	setAnalysisMode(analysis_mode);
 

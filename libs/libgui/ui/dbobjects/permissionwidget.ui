@@ -425,9 +425,7 @@
        <item row="0" column="0">
         <widget class="QPlainTextEdit" name="code_txt">
          <property name="font">
-          <font>
-           <family>DejaVu Sans Mono</family>
-          </font>
+          <font/>
          </property>
          <property name="readOnly">
           <bool>true</bool>
@@ -452,7 +450,6 @@
   <tabstop>cancel_tb</tabstop>
  </tabstops>
  <resources>
-  <include location="../../res/resources.qrc"/>
   <include location="../../res/resources.qrc"/>
   <include location="../../res/resources.qrc"/>
  </resources>

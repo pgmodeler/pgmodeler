@@ -264,7 +264,6 @@
           <widget class="QLabel" name="rel_type_name_lbl">
            <property name="font">
             <font>
-             <weight>75</weight>
              <bold>true</bold>
             </font>
            </property>
@@ -428,7 +427,6 @@
              <widget class="QLabel" name="part_type_lbl">
               <property name="font">
                <font>
-                <weight>75</weight>
                 <bold>true</bold>
                </font>
               </property>
@@ -1427,7 +1425,6 @@
   <tabstop>rel_columns_lst</tabstop>
  </tabstops>
  <resources>
-  <include location="../../res/resources.qrc"/>
   <include location="../../res/resources.qrc"/>
   <include location="../../res/resources.qrc"/>
  </resources>
