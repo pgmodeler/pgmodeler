@@ -114,7 +114,6 @@ int main(int argc, char **argv)
 
 		splash.setPixmap(pix);
 		splash.setMask(pix.mask());
-		splash.setWindowFlags(splash.windowFlags() | Qt::WindowStaysOnTopHint);
 		splash.show();
 
 		app.processEvents();
