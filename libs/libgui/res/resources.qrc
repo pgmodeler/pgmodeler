@@ -6,7 +6,6 @@
         <file>icons/addlayer.png</file>
         <file>icons/addrow.png</file>
         <file>icons/aggregate.png</file>
-        <file>icons/aggregate_grp.png</file>
         <file>icons/alert.png</file>
         <file>icons/aligntogrid.png</file>
         <file>icons/appearance.png</file>
@@ -24,7 +23,6 @@
         <file>icons/bulkedit.png</file>
         <file>icons/cancel.png</file>
         <file>icons/cast.png</file>
-        <file>icons/cast_grp.png</file>
         <file>icons/changelog.png</file>
         <file>icons/changeowner.png</file>
         <file>icons/clearlayers.png</file>
@@ -35,10 +33,8 @@
         <file>icons/codesnippet.png</file>
         <file>icons/collapse.png</file>
         <file>icons/collation.png</file>
-        <file>icons/collation_grp.png</file>
         <file>icons/colors.png</file>
         <file>icons/column.png</file>
-        <file>icons/column_grp.png</file>
         <file>icons/compactview.png</file>
         <file>icons/config.png</file>
         <file>icons/confirm.png</file>
@@ -47,13 +43,10 @@
         <file>icons/constraint_ck.png</file>
         <file>icons/constraint_ex.png</file>
         <file>icons/constraint_fk.png</file>
-        <file>icons/constraint_grp.png</file>
         <file>icons/constraint_pk.png</file>
         <file>icons/constraint_uq.png</file>
         <file>icons/consttrigger.png</file>
-        <file>icons/consttrigger_grp.png</file>
         <file>icons/conversion.png</file>
-        <file>icons/conversion_grp.png</file>
         <file>icons/convrel1n.png</file>
         <file>icons/convrelnn.png</file>
         <file>icons/copy.png</file>
@@ -77,7 +70,6 @@
         <file>icons/dl_binary.png</file>
         <file>icons/dl_source.png</file>
         <file>icons/domain.png</file>
-        <file>icons/domain_grp.png</file>
         <file>icons/donate.png</file>
         <file>icons/downarrow.png</file>
         <file>icons/duplicate.png</file>
@@ -86,12 +78,10 @@
         <file>icons/editdata.png</file>
         <file>icons/error.png</file>
         <file>icons/eventtrigger.png</file>
-        <file>icons/eventtrigger_grp.png</file>
         <file>icons/exit.png</file>
         <file>icons/export.png</file>
         <file>icons/exportdata.png</file>
         <file>icons/extension.png</file>
-        <file>icons/extension_grp.png</file>
         <file>icons/fade.png</file>
         <file>icons/fadein.png</file>
         <file>icons/fadeout.png</file>
@@ -100,27 +90,20 @@
         <file>icons/fix.png</file>
         <file>icons/fixobject.png</file>
         <file>icons/foreigndatawrapper.png</file>
-        <file>icons/foreigndatawrapper_grp.png</file>
         <file>icons/foreignserver.png</file>
-        <file>icons/foreignserver_grp.png</file>
         <file>icons/foreigntable.png</file>
-        <file>icons/foreigntable_grp.png</file>
         <file>icons/function.png</file>
         <file>icons/function1.png</file>
-        <file>icons/function_grp.png</file>
         <file>icons/genericsql.png</file>
-        <file>icons/genericsql_grp.png</file>
         <file>icons/grid.png</file>
         <file>icons/help.png</file>
         <file>icons/ignore.png</file>
         <file>icons/import.png</file>
         <file>icons/index.png</file>
-        <file>icons/index_grp.png</file>
         <file>icons/info.png</file>
         <file>icons/jumptotable.png</file>
         <file>icons/keyword.png</file>
         <file>icons/language.png</file>
-        <file>icons/language_grp.png</file>
         <file>icons/last_session.png</file>
         <file>icons/layers.png</file>
         <file>icons/layervisibility.png</file>
@@ -146,12 +129,9 @@
         <file>icons/objmetadata.png</file>
         <file>icons/objselect.png</file>
         <file>icons/opclass.png</file>
-        <file>icons/opclass_grp.png</file>
         <file>icons/open.png</file>
         <file>icons/operator.png</file>
-        <file>icons/operator_grp.png</file>
         <file>icons/opfamily.png</file>
-        <file>icons/opfamily_grp.png</file>
         <file>icons/outputpane.png</file>
         <file>icons/overview.png</file>
         <file>icons/pagedelim.png</file>
@@ -159,13 +139,10 @@
         <file>icons/parameter.png</file>
         <file>icons/paste.png</file>
         <file>icons/permission.png</file>
-        <file>icons/permission_grp.png</file>
         <file>icons/plugins.png</file>
         <file>icons/policy.png</file>
-        <file>icons/policy_grp.png</file>
         <file>icons/previous.png</file>
         <file>icons/procedure.png</file>
-        <file>icons/procedure_grp.png</file>
         <file>icons/protect.png</file>
         <file>icons/question.png</file>
         <file>icons/quickactions.png</file>
@@ -179,14 +156,12 @@
         <file>icons/relationship.png</file>
         <file>icons/relationship11.png</file>
         <file>icons/relationship1n.png</file>
-        <file>icons/relationship_grp.png</file>
         <file>icons/relationshipdep.png</file>
         <file>icons/relationshipfk.png</file>
         <file>icons/relationshipgen.png</file>
         <file>icons/relationshipnn.png</file>
         <file>icons/relationshippart.png</file>
         <file>icons/relationshiptv.png</file>
-        <file>icons/relationshiptv_grp.png</file>
         <file>icons/remove.png</file>
         <file>icons/removed.png</file>
         <file>icons/removepoints.png</file>
@@ -194,19 +169,15 @@
         <file>icons/resizecols.png</file>
         <file>icons/restore.png</file>
         <file>icons/role.png</file>
-        <file>icons/role_grp.png</file>
         <file>icons/rule.png</file>
-        <file>icons/rule_grp.png</file>
         <file>icons/run.png</file>
         <file>icons/save.png</file>
         <file>icons/saveas.png</file>
         <file>icons/schema.png</file>
-        <file>icons/schema_grp.png</file>
         <file>icons/schemarect.png</file>
         <file>icons/selectmove.png</file>
         <file>icons/sendtoback.png</file>
         <file>icons/sequence.png</file>
-        <file>icons/sequence_grp.png</file>
         <file>icons/server.png</file>
         <file>icons/sortasc.png</file>
         <file>icons/sourcecode.png</file>
@@ -218,18 +189,12 @@
         <file>icons/swapobjs.png</file>
         <file>icons/swapvals.png</file>
         <file>icons/table.png</file>
-        <file>icons/table_grp.png</file>
         <file>icons/tablespace.png</file>
-        <file>icons/tablespace_grp.png</file>
         <file>icons/tag.png</file>
-        <file>icons/tag_grp.png</file>
         <file>icons/textbox.png</file>
-        <file>icons/textbox_grp.png</file>
         <file>icons/transform.png</file>
-        <file>icons/transform_grp.png</file>
         <file>icons/treeview.png</file>
         <file>icons/trigger.png</file>
-        <file>icons/trigger_grp.png</file>
         <file>icons/truncate.png</file>
         <file>icons/trunccascade.png</file>
         <file>icons/uid.png</file>
@@ -238,12 +203,9 @@
         <file>icons/uparrow.png</file>
         <file>icons/update.png</file>
         <file>icons/usermapping.png</file>
-        <file>icons/usermapping_grp.png</file>
         <file>icons/usertype.png</file>
-        <file>icons/usertype_grp.png</file>
         <file>icons/validation.png</file>
         <file>icons/view.png</file>
-        <file>icons/view_grp.png</file>
         <file>icons/xmlcode.png</file>
         <file>icons/validity.png</file>
         <file>icons/validatesch.png</file>
