@@ -33,6 +33,7 @@ CodeCompletionWidget::CodeCompletionWidget(QPlainTextEdit *code_field_txt, bool 
 	completion_wgt=new QWidget(this);
 	completion_wgt->setWindowFlags(Qt::Popup);
 	completion_wgt->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
+	completion_wgt->setMinimumSize(200, 150);
 
 	name_list=new QListWidget(completion_wgt);
 	name_list->setSpacing(2);
@@ -496,7 +497,7 @@ void CodeCompletionWidget::updateList()
 		name_list->item(0)->setSelected(true);
 
 	//Sets the list position right below of text cursor
-	completion_wgt->move(code_field_txt->mapToGlobal(code_field_txt->cursorRect().bottomRight() + QPoint(50,20)));
+	completion_wgt->move(code_field_txt->mapToGlobal(code_field_txt->cursorRect().bottomRight() + QPoint(10, 10)));
 	name_list->setFocus();
 }
 

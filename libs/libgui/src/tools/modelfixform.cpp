@@ -55,7 +55,7 @@ ModelFixForm::ModelFixForm(QWidget *parent, Qt::WindowFlags f) : QDialog(parent,
 	pgmodeler_cli_sel->setVisible(false);
 	model_fix_grid->addWidget(pgmodeler_cli_sel, 1, 2);
 
-	GuiUtilsNs::configureWidgetFont(message_lbl, GuiUtilsNs::MediumFontFactor);
+
 	GuiUtilsNs::configureWidgetFont(not_found_lbl, GuiUtilsNs::MediumFontFactor);
 
 	//Configuring font style for output widget
