@@ -36,8 +36,8 @@ TriggerWidget::TriggerWidget(QWidget *parent): BaseObjectWidget(parent, ObjectTy
 
 		arguments_tab=new ObjectsTableWidget(ObjectsTableWidget::AllButtons ^ ObjectsTableWidget::DuplicateButton, true, this);
 
-		ref_table_sel=new ObjectSelectorWidget(ObjectType::Table, true, this);
-		function_sel=new ObjectSelectorWidget(ObjectType::Function, true, this);
+		ref_table_sel=new ObjectSelectorWidget(ObjectType::Table, this);
+		function_sel=new ObjectSelectorWidget(ObjectType::Function, this);
 		ref_table_sel->setEnabled(false);
 
 		trigger_grid->addWidget(function_sel, 3, 1, 1, 5);

@@ -50,7 +50,7 @@ OperatorWidget::OperatorWidget(QWidget *parent): BaseObjectWidget(parent, Object
 		for(i=Operator::FuncOperator; i <= Operator::FuncRestrict; i++)
 		{
 			functions_sel[i]=nullptr;
-			functions_sel[i]=new ObjectSelectorWidget(ObjectType::Function, true, this);
+			functions_sel[i]=new ObjectSelectorWidget(ObjectType::Function, this);
 
 			if(i!=Operator::FuncOperator)
 				grid->addWidget(functions_sel[i],i,1,1,1);
@@ -59,7 +59,7 @@ OperatorWidget::OperatorWidget(QWidget *parent): BaseObjectWidget(parent, Object
 		for(i=Operator::OperCommutator, i1=3; i <= Operator::OperNegator; i++,i1++)
 		{
 			operators_sel[i]=nullptr;
-			operators_sel[i]=new ObjectSelectorWidget(ObjectType::Operator, true, this);
+			operators_sel[i]=new ObjectSelectorWidget(ObjectType::Operator, this);
 			grid->addWidget(operators_sel[i],i1,1,1,1);
 		}
 

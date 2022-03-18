@@ -52,10 +52,10 @@ BaseObjectWidget::BaseObjectWidget(QWidget *parent, ObjectType obj_type): QWidge
 		connect(edt_perms_tb, SIGNAL(clicked(bool)),this, SLOT(editPermissions()));
 		connect(append_sql_tb, SIGNAL(clicked(bool)),this, SLOT(editCustomSQL()));
 
-		schema_sel=new ObjectSelectorWidget(ObjectType::Schema, true, this);
-		collation_sel=new ObjectSelectorWidget(ObjectType::Collation, true, this);
-		tablespace_sel=new ObjectSelectorWidget(ObjectType::Tablespace, true, this);
-		owner_sel=new ObjectSelectorWidget(ObjectType::Role, true, this);
+		schema_sel=new ObjectSelectorWidget(ObjectType::Schema, this);
+		collation_sel=new ObjectSelectorWidget(ObjectType::Collation, this);
+		tablespace_sel=new ObjectSelectorWidget(ObjectType::Tablespace, this);
+		owner_sel=new ObjectSelectorWidget(ObjectType::Role, this);
 
 		baseobject_grid = new QGridLayout;
 		baseobject_grid->setObjectName("objetobase_grid");
@@ -158,8 +158,8 @@ void BaseObjectWidget::setRequiredField(QWidget *widget)
 		{
 			if(sel)
 			{
-				widget = sel->obj_name_txt;
-				widget->setStyleSheet(QString("ObjectSelectorWidget > QPlainTextEdit { border: 2px solid %1; }").arg(border_color.name()));
+				widget = sel->obj_name_edt;
+				widget->setStyleSheet(QString("ObjectSelectorWidget > QLineEdit { border: 2px solid %2; padding-top: 2px; padding-bottom: 2px; border-radius: 4px; }").arg(border_color.name()));
 			}
 			else
 				widget->setStyleSheet(QString("%1 { border: 2px solid %2; padding-top: 2px; padding-bottom: 2px; border-radius: 4px; }").arg(widget->metaObject()->className()).arg(border_color.name()));

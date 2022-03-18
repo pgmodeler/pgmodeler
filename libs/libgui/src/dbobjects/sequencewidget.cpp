@@ -25,7 +25,7 @@ SequenceWidget::SequenceWidget(QWidget *parent): BaseObjectWidget(parent, Object
 		Ui_SequenceWidget::setupUi(this);
 
 		column_sel=nullptr;
-		column_sel=new ObjectSelectorWidget(ObjectType::Column, true, this);
+		column_sel=new ObjectSelectorWidget(ObjectType::Column, this);
 		sequence_grid->addWidget(column_sel, 4, 1, 1, 3);
 
 		configureFormLayout(sequence_grid, ObjectType::Sequence);

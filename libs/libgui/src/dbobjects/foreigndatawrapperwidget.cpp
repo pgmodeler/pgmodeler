@@ -26,8 +26,8 @@ ForeignDataWrapperWidget::ForeignDataWrapperWidget(QWidget *parent): BaseObjectW
 
 		Ui_ForeignDataWrapperWidget::setupUi(this);
 
-		func_handler_sel=new ObjectSelectorWidget(ObjectType::Function, true, this);
-		func_validator_sel=new ObjectSelectorWidget(ObjectType::Function, true, this);
+		func_handler_sel=new ObjectSelectorWidget(ObjectType::Function, this);
+		func_validator_sel=new ObjectSelectorWidget(ObjectType::Function, this);
 
 		func_handler_sel->setToolTip(tr("The handler function must have the following signature:  <strong>fdw_handler</strong> <em>function_name</em>()"));
 		func_validator_sel->setToolTip(tr("The validator function must have the following signature: <em>function_name</em>(<strong>text[]</strong>,<strong>oid</strong>). The return type of ths function is ignored."));

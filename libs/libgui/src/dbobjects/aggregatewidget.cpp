@@ -30,9 +30,9 @@ AggregateWidget::AggregateWidget(QWidget *parent): BaseObjectWidget(parent, Obje
 		initial_cond_hl=new SyntaxHighlighter(initial_cond_txt);
 		initial_cond_hl->loadConfiguration(GlobalAttributes::getSQLHighlightConfPath());
 
-		final_func_sel=new ObjectSelectorWidget(ObjectType::Function, true, this);
-		transition_func_sel=new ObjectSelectorWidget(ObjectType::Function, true, this);
-		sort_op_sel=new ObjectSelectorWidget(ObjectType::Operator, true, this);
+		final_func_sel=new ObjectSelectorWidget(ObjectType::Function, this);
+		transition_func_sel=new ObjectSelectorWidget(ObjectType::Function, this);
+		sort_op_sel=new ObjectSelectorWidget(ObjectType::Operator, this);
 
 		input_type=new PgSQLTypeWidget(this, tr("Input Data Type"));
 		state_type=new PgSQLTypeWidget(this, tr("State Data Type"));

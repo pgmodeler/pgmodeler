@@ -29,9 +29,9 @@ LanguageWidget::LanguageWidget(QWidget *parent): BaseObjectWidget(parent, Object
 		func_validator_sel=nullptr;
 		func_inline_sel=nullptr;
 
-		func_handler_sel=new ObjectSelectorWidget(ObjectType::Function, true, this);
-		func_validator_sel=new ObjectSelectorWidget(ObjectType::Function, true, this);
-		func_inline_sel=new ObjectSelectorWidget(ObjectType::Function, true, this);
+		func_handler_sel=new ObjectSelectorWidget(ObjectType::Function, this);
+		func_validator_sel=new ObjectSelectorWidget(ObjectType::Function, this);
+		func_inline_sel=new ObjectSelectorWidget(ObjectType::Function, this);
 
 		language_grid->addWidget(func_handler_sel,1,1,1,2);
 		language_grid->addWidget(func_validator_sel,2,1,1,2);

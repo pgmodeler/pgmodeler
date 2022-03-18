@@ -26,7 +26,7 @@ ConversionWidget::ConversionWidget(QWidget *parent): BaseObjectWidget(parent, Ob
 		Ui_ConversionWidget::setupUi(this);
 
 		conv_func_sel=nullptr;
-		conv_func_sel=new ObjectSelectorWidget(ObjectType::Function, true, this);
+		conv_func_sel=new ObjectSelectorWidget(ObjectType::Function, this);
 		convcod_grid->addWidget(conv_func_sel,1,1,1,3);
 
 		setRequiredField(src_encoding_lbl);

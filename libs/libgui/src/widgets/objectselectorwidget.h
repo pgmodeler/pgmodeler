@@ -27,7 +27,6 @@
 
 #include <QtWidgets>
 #include "databasemodel.h"
-#include "utils/syntaxhighlighter.h"
 #include "modelobjectswidget.h"
 #include "ui_objectselectorwidget.h"
 
@@ -37,9 +36,6 @@ class ObjectSelectorWidget: public QWidget, public Ui::ObjectSelectorWidget {
 
 		//! \brief An object view widget instance used as object picker
 		ModelObjectsWidget *obj_view_wgt;
-
-		//! \brief Selected object name highlighter
-		SyntaxHighlighter *obj_name_hl;
 
 		//! \brief Selected object reference
 		BaseObject *selected_obj;
@@ -51,13 +47,13 @@ class ObjectSelectorWidget: public QWidget, public Ui::ObjectSelectorWidget {
 		DatabaseModel *model;
 
 		//! \brief Configures the selectors attributes at construction time
-		void configureSelector(bool install_highlighter);
+		void configureSelector();
 
 		bool eventFilter(QObject *obj, QEvent *evnt);
 
 	public:
-		ObjectSelectorWidget(ObjectType sel_obj_type, bool install_highlighter, QWidget * parent = nullptr);
-		ObjectSelectorWidget(vector<ObjectType> sel_obj_types, bool install_highlighter, QWidget * parent = nullptr);
+		ObjectSelectorWidget(ObjectType sel_obj_type, QWidget * parent = nullptr);
+		ObjectSelectorWidget(vector<ObjectType> sel_obj_types, QWidget * parent = nullptr);
 		virtual ~ObjectSelectorWidget();
 
 		//! \brief Enables the creation of new objects from withing the object selector dialog

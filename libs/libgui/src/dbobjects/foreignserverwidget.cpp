@@ -27,7 +27,7 @@ ForeignServerWidget::ForeignServerWidget(QWidget *parent): BaseObjectWidget(pare
 		Ui_ForeignServerWidget::setupUi(this);
 
 		fdw_sel=nullptr;
-		fdw_sel=new ObjectSelectorWidget(ObjectType::ForeignDataWrapper, true, this);
+		fdw_sel=new ObjectSelectorWidget(ObjectType::ForeignDataWrapper, this);
 
 		hbox = new QHBoxLayout;
 		hbox->setContentsMargins(0,0,0,0);

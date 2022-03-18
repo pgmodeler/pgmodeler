@@ -54,7 +54,7 @@ GenericSQLWidget::GenericSQLWidget(QWidget *parent): BaseObjectWidget(parent, Ob
 																							ObjectType::Tag, ObjectType::Textbox });
 	types.push_back(ObjectType::Column);
 
-	object_sel = new ObjectSelectorWidget(types, true, this);
+	object_sel = new ObjectSelectorWidget(types, this);
 
 	objects_refs_tab = new ObjectsTableWidget(ObjectsTableWidget::AllButtons, true, this);
 	references_grid->addWidget(object_sel, 0, 1, 1, 1);

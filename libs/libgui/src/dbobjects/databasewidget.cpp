@@ -29,10 +29,10 @@ DatabaseWidget::DatabaseWidget(QWidget *parent): BaseObjectWidget(parent, Object
 		Ui_DatabaseWidget::setupUi(this);
 		configureFormLayout(database_grid, ObjectType::Database);
 
-		def_schema_sel=new ObjectSelectorWidget(ObjectType::Schema, true, this);
-		def_collation_sel=new ObjectSelectorWidget(ObjectType::Collation, true, this);
-		def_owner_sel=new ObjectSelectorWidget(ObjectType::Role, true, this);
-		def_tablespace_sel=new ObjectSelectorWidget(ObjectType::Tablespace, true, this);
+		def_schema_sel=new ObjectSelectorWidget(ObjectType::Schema, this);
+		def_collation_sel=new ObjectSelectorWidget(ObjectType::Collation, this);
+		def_owner_sel=new ObjectSelectorWidget(ObjectType::Role, this);
+		def_tablespace_sel=new ObjectSelectorWidget(ObjectType::Tablespace, this);
 
 		frame=generateInformationFrame(tr("The fields <strong>LC_COLLATE</strong> and <strong>LC_CTYPE</strong> have pre-configured values based upon the running system. You can freely modify those values if you intend to export the model to another host."));
 		grid=dynamic_cast<QGridLayout *>(attributes_twg->widget(0)->layout());

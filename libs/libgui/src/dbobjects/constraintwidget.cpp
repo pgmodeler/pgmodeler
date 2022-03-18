@@ -38,7 +38,7 @@ ConstraintWidget::ConstraintWidget(QWidget *parent): BaseObjectWidget(parent, Ob
 		expression_hl=new SyntaxHighlighter(expression_txt, false, true);
 		expression_hl->loadConfiguration(GlobalAttributes::getSQLHighlightConfPath());
 
-		ref_table_sel=new ObjectSelectorWidget(ObjectType::Table, true, this);
+		ref_table_sel=new ObjectSelectorWidget(ObjectType::Table, this);
 		col_picker_wgt = new ColumnPickerWidget(this);
 		ref_col_picker_wgt = new ColumnPickerWidget(this);
 

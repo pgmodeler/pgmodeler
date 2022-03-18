@@ -26,15 +26,15 @@ TransformWidget::TransformWidget(QWidget *parent): BaseObjectWidget(parent, Obje
 	type_wgt = new PgSQLTypeWidget(this);
 	transform_grid->addWidget(type_wgt, 0, 0, 1, 2);
 
-	language_sel = new ObjectSelectorWidget(ObjectType::Language, false, this);
+	language_sel = new ObjectSelectorWidget(ObjectType::Language, this);
 	transform_grid->addWidget(language_lbl, 1, 0);
 	transform_grid->addWidget(language_sel, 1, 1);
 
-	from_sql_func_sel = new ObjectSelectorWidget(ObjectType::Function, true, this);
+	from_sql_func_sel = new ObjectSelectorWidget(ObjectType::Function, this);
 	transform_grid->addWidget(from_sql_func_lbl, 2, 0);
 	transform_grid->addWidget(from_sql_func_sel, 2, 1);
 
-	to_sql_func_sel = new ObjectSelectorWidget(ObjectType::Function, true, this);
+	to_sql_func_sel = new ObjectSelectorWidget(ObjectType::Function, this);
 	transform_grid->addWidget(to_sql_func_lbl, 3, 0);
 	transform_grid->addWidget(to_sql_func_sel, 3, 1);
 

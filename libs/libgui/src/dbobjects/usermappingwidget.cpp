@@ -27,7 +27,7 @@ UserMappingWidget::UserMappingWidget(QWidget *parent): BaseObjectWidget(parent, 
 		Ui_UserMappingWidget::setupUi(this);
 
 		server_sel=nullptr;
-		server_sel=new ObjectSelectorWidget(ObjectType::ForeignServer, true, this);
+		server_sel=new ObjectSelectorWidget(ObjectType::ForeignServer, this);
 
 		hbox = new QHBoxLayout;
 		hbox->setContentsMargins(0,0,0,0);

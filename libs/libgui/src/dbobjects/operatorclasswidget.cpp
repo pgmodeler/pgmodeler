@@ -29,11 +29,11 @@ OperatorClassWidget::OperatorClassWidget(QWidget *parent): BaseObjectWidget(pare
 
 		Ui_OperatorClassWidget::setupUi(this);
 
-		family_sel=new ObjectSelectorWidget(ObjectType::OpFamily, true, this);
+		family_sel=new ObjectSelectorWidget(ObjectType::OpFamily, this);
 		data_type=new PgSQLTypeWidget(this);
-		operator_sel=new ObjectSelectorWidget(ObjectType::Operator, true, this);
-		elem_family_sel=new ObjectSelectorWidget(ObjectType::OpFamily, true, this);
-		function_sel=new ObjectSelectorWidget(ObjectType::Function, true, this);
+		operator_sel=new ObjectSelectorWidget(ObjectType::Operator, this);
+		elem_family_sel=new ObjectSelectorWidget(ObjectType::OpFamily, this);
+		function_sel=new ObjectSelectorWidget(ObjectType::Function, this);
 		storage_type=new PgSQLTypeWidget(this, tr("Storage Type"));
 		elements_tab=new ObjectsTableWidget(ObjectsTableWidget::AllButtons ^ ObjectsTableWidget::DuplicateButton, true, this);
 

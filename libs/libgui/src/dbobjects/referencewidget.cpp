@@ -30,7 +30,7 @@ ReferenceWidget::ReferenceWidget(QWidget *parent) : QWidget(parent)
 	expression_hl=new SyntaxHighlighter(expression_txt, false, true);
 	expression_hl->loadConfiguration(GlobalAttributes::getSQLHighlightConfPath());
 
-	ref_object_sel=new ObjectSelectorWidget({ ObjectType::Table, ObjectType::ForeignTable, ObjectType::Column }, true, this);
+	ref_object_sel=new ObjectSelectorWidget({ ObjectType::Table, ObjectType::ForeignTable, ObjectType::Column }, this);
 	ref_object_sel->enableObjectCreation(false);
 	ref_object_sel->setToolTip(tr("To reference all columns of a table select only a table in the object selector, this is the same as write <em><strong>[schema].[table].*</strong></em>. In order to reference a only a single column of a table select a column object in the selector."));
 	expression_cp=new CodeCompletionWidget(expression_txt, true);
@@ -70,7 +70,7 @@ ReferenceWidget::ReferenceWidget(QWidget *parent) : QWidget(parent)
 	ref_tables_tab->setHeaderLabel(tr("Schema"), 1);
 	ref_tables_tab->setHeaderIcon(QPixmap(GuiUtilsNs::getIconPath("schema")),1);
 
-	ref_table_sel=new ObjectSelectorWidget({ ObjectType::Table, ObjectType::ForeignTable }, true, this);
+	ref_table_sel=new ObjectSelectorWidget({ ObjectType::Table, ObjectType::ForeignTable }, this);
 	ref_table_sel->enableObjectCreation(false);
 
 	QHBoxLayout *hbox = new QHBoxLayout;

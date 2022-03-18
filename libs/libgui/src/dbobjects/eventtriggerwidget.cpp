@@ -26,7 +26,7 @@ EventTriggerWidget::EventTriggerWidget(QWidget *parent): BaseObjectWidget(parent
 
 	Ui_EventTriggerWidget::setupUi(this);
 
-	function_sel=new ObjectSelectorWidget(ObjectType::Function, true, this);
+	function_sel=new ObjectSelectorWidget(ObjectType::Function, this);
 	filter_tab=new ObjectsTableWidget(ObjectsTableWidget::AddButton |
 									 ObjectsTableWidget::EditButton |
 									 ObjectsTableWidget::UpdateButton |

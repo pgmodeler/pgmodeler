@@ -71,7 +71,7 @@ TableWidget::TableWidget(QWidget *parent, ObjectType tab_type): BaseObjectWidget
 	parent_tables->setHeaderIcon(QPixmap(GuiUtilsNs::getIconPath("usertype")),2);
 
 	server_sel=nullptr;
-	server_sel=new ObjectSelectorWidget(ObjectType::ForeignServer, true, this);
+	server_sel=new ObjectSelectorWidget(ObjectType::ForeignServer, this);
 
 	vbox = new QVBoxLayout;
 	vbox->setContentsMargins(0,0,0,0);
@@ -90,7 +90,7 @@ TableWidget::TableWidget(QWidget *parent, ObjectType tab_type): BaseObjectWidget
 	vbox->addWidget(options_tab);
 	attributes_tbw->widget(8)->setLayout(vbox);
 
-	tag_sel = new ObjectSelectorWidget(ObjectType::Tag, false, this);
+	tag_sel = new ObjectSelectorWidget(ObjectType::Tag, this);
 	vbox = new QVBoxLayout(tag_sel_parent);
 	vbox->addWidget(tag_sel);
 	vbox->setContentsMargins(0,0,0,0);

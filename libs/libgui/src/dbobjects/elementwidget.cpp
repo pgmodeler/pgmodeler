@@ -32,9 +32,9 @@ ElementWidget::ElementWidget(QWidget *parent) : QWidget(parent)
 		elem_expr_hl->loadConfiguration(GlobalAttributes::getSQLHighlightConfPath());
 
 		parent_obj=nullptr;
-		op_class_sel=new ObjectSelectorWidget(ObjectType::OpClass, true, this);
-		collation_sel=new ObjectSelectorWidget(ObjectType::Collation, true, this);
-		operator_sel=new ObjectSelectorWidget(ObjectType::Operator, true, this);
+		op_class_sel=new ObjectSelectorWidget(ObjectType::OpClass, this);
+		collation_sel=new ObjectSelectorWidget(ObjectType::Collation, this);
+		operator_sel=new ObjectSelectorWidget(ObjectType::Operator, this);
 
 		element_grid->addWidget(collation_sel, 3,1,1,2);
 		element_grid->addWidget(op_class_sel, 4,1,1,2);
