@@ -56,7 +56,7 @@
        </property>
        <property name="icon">
         <iconset resource="../../res/resources.qrc">
-         <normaloff>:/icons/icons/adddata.png</normaloff>:/icons/icons/adddata.png</iconset>
+         <normaloff>:/icons/icons/addfilter.png</normaloff>:/icons/icons/addfilter.png</iconset>
        </property>
        <property name="iconSize">
         <size>
@@ -365,6 +365,7 @@
         </property>
         <property name="font">
          <font>
+          <weight>50</weight>
           <bold>false</bold>
           <underline>false</underline>
           <strikeout>false</strikeout>

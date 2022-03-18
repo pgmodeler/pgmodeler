@@ -355,11 +355,11 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	action_fade_in=new QAction(QIcon(GuiUtilsNs::getIconPath("fadein")), tr("Fade in"), this);
 	action_fade_out=new QAction(QIcon(GuiUtilsNs::getIconPath("fadeout")), tr("Fade out"), this);
 
-	action_fade_rels=new QAction(QIcon(GuiUtilsNs::getIconPath("relationship_grp")), tr("Relationships"), this);
+	action_fade_rels=new QAction(QIcon(GuiUtilsNs::getIconPath("relationship")), tr("Relationships"), this);
 	action_fade_rels_in=new QAction(QIcon(GuiUtilsNs::getIconPath("fadein")), tr("Fade in"), this);
 	action_fade_rels_out=new QAction(QIcon(GuiUtilsNs::getIconPath("fadeout")), tr("Fade out"), this);
 
-	action_fade_peer_tables = new QAction(QIcon(GuiUtilsNs::getIconPath("table_grp")), tr("Peer tables"), this);
+	action_fade_peer_tables = new QAction(QIcon(GuiUtilsNs::getIconPath("table")), tr("Peer tables"), this);
 	action_fade_peer_tables_in = new QAction(QIcon(GuiUtilsNs::getIconPath("fadein")), tr("Fade in"), this);
 	action_fade_peer_tables_out = new QAction(QIcon(GuiUtilsNs::getIconPath("fadeout")), tr("Fade out"), this);
 
@@ -474,7 +474,7 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 		}
 		else
 		{
-			action=new QAction(QIcon(GuiUtilsNs::getIconPath(BaseObject::getSchemaName(obj_type) + QString("_grp"))), labels[i++], this);
+			action=new QAction(QIcon(GuiUtilsNs::getIconPath(BaseObject::getSchemaName(obj_type))), labels[i++], this);
 			select_all_menu.addAction(action);
 		}
 
@@ -3768,13 +3768,13 @@ void ModelWidget::configureFadeMenu()
 
 			for(ObjectType type : types)
 			{
-				action = new QAction(QPixmap(GuiUtilsNs::getIconPath(BaseObject::getSchemaName(type) + QString("_grp"))),
+				action = new QAction(QPixmap(GuiUtilsNs::getIconPath(BaseObject::getSchemaName(type))),
 																		 labels[id], &fade_in_menu);
 				action->setData(enum_cast(type));
 				fade_in_menu.addAction(action);
 				connect(action, SIGNAL(triggered(bool)), this, SLOT(fadeObjectsIn()));
 
-				action = new QAction(QPixmap(GuiUtilsNs::getIconPath(BaseObject::getSchemaName(type) + QString("_grp"))),
+				action = new QAction(QPixmap(GuiUtilsNs::getIconPath(BaseObject::getSchemaName(type))),
 																		 labels[id], &fade_out_menu);
 				action->setData(enum_cast(type));
 				fade_out_menu.addAction(action);
@@ -4245,7 +4245,7 @@ void ModelWidget::configureConstraintsMenu(TableObject *tab_obj)
 			submenu=new QMenu(&popup_menu);
 			submenu->setStyle(new CustomMenuStyle);
 			submenu->setTitle(tr("Constraints"));
-			submenu->setIcon(QPixmap(GuiUtilsNs::getIconPath(BaseObject::getSchemaName(ObjectType::Constraint) + QString("_grp"))));
+			submenu->setIcon(QPixmap(GuiUtilsNs::getIconPath(BaseObject::getSchemaName(ObjectType::Constraint))));
 
 			for(auto &menu : submenus)
 				submenu->addMenu(menu);

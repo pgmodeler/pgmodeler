@@ -951,7 +951,7 @@ vector<QTreeWidgetItem *> DatabaseImportForm::updateObjectsTree(DatabaseImportHe
 			{
 				//Create a group item for the current type
 				group=new QTreeWidgetItem(root);
-				group->setIcon(0, QPixmap(GuiUtilsNs::getIconPath(BaseObject::getSchemaName(grp_type) + QString("_grp"))));
+				group->setIcon(0, QPixmap(GuiUtilsNs::getIconPath(BaseObject::getSchemaName(grp_type))));
 				group->setFont(0, grp_fnt);
 
 				//Group items does contains a zero valued id to indicate that is not a valide object

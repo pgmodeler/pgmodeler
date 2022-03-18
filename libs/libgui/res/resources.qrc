@@ -265,6 +265,7 @@
         <file>icons/clearinput.png</file>
         <file>icons/h_menu_indicator.png</file>
         <file>icons/cursortmpl.png</file>
+        <file>icons/addfilter.png</file>
     </qresource>
     <qresource prefix="/images">
         <file>images/brazil_flag.png</file>
