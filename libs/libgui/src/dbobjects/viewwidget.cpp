@@ -555,8 +555,6 @@ void ViewWidget::updateCodePreview()
 			View aux_view;
 			Reference refer;
 			QString str_aux;
-			TableObject *tab_obj=nullptr;
-			map<ObjectType, ObjectsTableWidget *>::iterator itr, itr_end;
 			unsigned i, count, i1, expr_type[]={
 												Reference::SqlReferSelect,
 												Reference::SqlReferFrom,
@@ -581,49 +579,20 @@ void ViewWidget::updateCodePreview()
 				//Get the SQL application string for the current reference
 				str_aux=references_tab->getCellText(i,3);
 
-				for(i1=0; i1 < sizeof(expr_type)/sizeof(unsigned); i1++)
+				for(i1=0; i1 < 5; i1++)
 				{
 					if(str_aux[i1]=='1')
 						aux_view.addReference(refer, expr_type[i1]);
 				}
 			}
 
-			itr=objects_tab_map.begin();
-			itr_end=objects_tab_map.end();
-
-			//Inserts the triggers / rules into the auxiliary view
-			while(itr!=itr_end)
-			{
-				count=itr->second->getRowCount();
-
-				//Make a copy of each view objects (rule/trigger) to the auxiliary view
-				for(i=0; i < count; i++)
-				{
-					if(itr->first==ObjectType::Trigger)
-					{
-						tab_obj=new Trigger;
-						(*dynamic_cast<Trigger *>(tab_obj))=
-								(*reinterpret_cast<Trigger *>(itr->second->getRowData(i).value<void *>()));
-					}
-					else
-					{
-						tab_obj=new Rule;
-						(*dynamic_cast<Rule *>(tab_obj))=
-								(*reinterpret_cast<Rule *>(itr->second->getRowData(i).value<void *>()));
-					}
-					aux_view.addObject(tab_obj);
-				}
-
-				itr++;
-			}
 			code_txt->setPlainText(aux_view.getCodeDefinition(SchemaParser::SqlDefinition));
 		}
 	}
 	catch(Exception &e)
 	{
-		QString str_aux;
 		//In case of error no code is outputed, showing a error message in the code preview widget
-		str_aux=tr("/* Could not generate the SQL code. Make sure all attributes are correctly filled! ");
+		QString str_aux=tr("/* Could not generate the SQL code. Make sure all attributes are correctly filled! ");
 		str_aux+=QString("\n\n>> Returned error(s): \n\n%1*/").arg(e.getExceptionsText());
 		code_txt->setPlainText(str_aux);
 	}
