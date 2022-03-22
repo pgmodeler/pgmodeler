@@ -571,7 +571,6 @@ void ModelObjectsWidget::updateSchemaTree(QTreeWidgetItem *root)
 
 						font=item3->font(0);
 						font.setItalic(true);
-						font.setBold(true);
 						item3->setFont(0, font);
 
 						for(auto obj : obj_list)
