@@ -190,13 +190,13 @@ void Messagebox::show(const QString &title, const QString &msg, unsigned icon_ty
 
 	if(screen_rect.width() <= GuiUtilsNs::FHDWidth)
 	{
-		w_factor = 0.25;
-		h_factor = 0.15;
+		w_factor = 0.28;
+		h_factor = 0.16;
 	}
 	else if(screen_rect.width() <= GuiUtilsNs::QHDWidth)
 	{
-		w_factor = 0.225;
-		h_factor = 0.125;
+		w_factor = 0.22;
+		h_factor = 0.12;
 	}
 
 	setMinimumWidth(screen_rect.width() * w_factor);
