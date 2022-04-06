@@ -26,7 +26,6 @@ v1.0.0-alpha
 * [Change] ObjectSelectorWidget was simplified to keep UI more uniform. Now it uses a QLineEdit instead of a QPlainTextEdit.
 * [Change] Removed all files suffixed as _grp.png from resources and code.
 * [Change] The routine that applies the UI stylesheet was moved from PgModelerApp to AppearanceConfigWidget.
-* [Change] Fixed the detection of ENTER/RETURN press to find objects in ObjectFinderWidget.
 * [Change] Improved the Messagebox resizing during the first show.
 * [Change] Disabling Qt 5.15.x and below due to the starting of the transition to Qt 6.x
 * [Change] Minor layout adjustment in pgmdoeler-se/SchemaEditorForm.
@@ -85,6 +84,7 @@ v1.0.0-alpha
 * [Change] Disabling the usage of the flag QGraphicsItem::ItemClipsChildrenToShape in BaseTableView to avoid wrong clipping of column items during export to PNG.
 * [Change] The workaround in CLI that forces the loading of the offscreen plugin will now be triggered only in the absence of $DISPLAY env var.
 * [Change] Isolated the variables common to executables subproject in the file apps/apps.pri.
+* [Fix] Fixed the detection of ENTER/RETURN press to find objects in ObjectFinderWidget.
 * [Fix] Fixed a bug in ModelWidget that was causing the scene to not recover from blocked signal status if an exception was thrown in ModelWidget::protectObject.
 * [Fix] Minor fix in different places that QScreen instances are used. Instead of getting the screen where the active window is, we get the primary screen of the application.
 * [Fix] Minor fix in CodeCompletionWidget to resize correclty according to the contents.
