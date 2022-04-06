@@ -54,7 +54,6 @@ v1.0.0-alpha
 * [Change] Improved the logic used to load extra stylesheet files in PgModelerApp.
 * [Change] Changed the default source code font to 12pt.
 * [Change] Adjusted the sizes of descriptors in RelationshipView, BaseTableView, and AttributesTogglerItem to reflect the new default font size.
-* [Change] Changed default grid size to 30x30.
 * [Change] Changed default font size in canvas to 11pt.
 * [Change] pgModeler 1.0 configuration directory was renamed from "pgmodeler" to "pgmodeler-1.0" since some config files are now incompatible with 0.9.x.
 * [Change] Updated the Windows icons for the apps.
