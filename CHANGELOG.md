@@ -1,6 +1,102 @@
 Changelog
 ---------
 
+v1.0.0-alpha
+------
+<em>Release date: April 11, 2022</em><br/>
+
+* [New] pgModeler 1.0 will now copy compatible config files from 0.9.x if the older configuration dir is found on the first execution.
+* [New] Added extra constants to ObjectsTableWidget to control the coloring of items in DataManipulationForm according to the theme in use.
+* [New] Added an extra tab in Messagebox stack trace info called "Extra info" that displays only error's extra info to quickly help to identify any problem.
+* [New] AppearanceConfigWidget now switches between light/dark themes on-the-fly.
+* [New] Added custom appearance config files in conf/themes for each theme color.
+* [New] Added support for customizing objects' shadow color.
+* [New] Textboxes are now rounded at corners.
+* [New] Created the files ui-medium.conf and ui-small.conf that controls the ui style in medium (2k) and small (1080p and below) screen sizes.
+* [New] Added the class CustomMenuStyle that configures a custom size for QMenu icons.
+* [New] Added an implementation for SimpleColumn::operator = to avoid compiler warnings.
+* [New] Added an icon for update found notification in MainWindow.
+* [New] Adding cool new icons and project logo.
+* [New] CLI now restores the changelog during the fix operation.
+* [New] Added the instruction $$QMAKE_LIBS_EXECINFO to apps/pgmodeler/pgmodeler.pro
+* [Change] Minor adjustment in pgmodeler.pri to accept custom XML_??? and PGSQL_??? vars on Linux
+* [Change] Removed the code generation of rules/indexes/triggers in the "Code preview" tab at ViewWidget since these objects' codes aren't appended to the parent view's code.
+* [Change] Removed the icon of the QToolBar's extended button via CSS.
+* [Change] ColorPickerWidget color button is now resized according to the tool button icon size.
+* [Change] ObjectSelectorWidget was simplified to keep UI more uniform. Now it uses a QLineEdit instead of a QPlainTextEdit.
+* [Change] Removed all files suffixed as _grp.png from resources and code.
+* [Change] The routine that applies the UI stylesheet was moved from PgModelerApp to AppearanceConfigWidget.
+* [Change] Improved the Messagebox resizing during the first show.
+* [Change] Disabling Qt 5.15.x and below due to the starting of the transition to Qt 6.x
+* [Change] Minor layout adjustment in pgmdoeler-se/SchemaEditorForm.
+* [Change] Gridlines and delimiters lines now follow the objects' border width.
+* [Change] Adjusted the colors of database objects in the dark theme.
+* [Change] Minor adjustment in cursor icon when adding new graphical objects to the model.
+* [Change] Messagebox will hide "Extra info" tab when the exception does not carry extra error info.
+* [Change] ObjectsScene's relationship addition line now follows the page delimiter colors.
+* [Change] Updated icns files in apps/pgmodeler/res.
+* [Change] The configuration files directory in macOS is now named pgmodeler-1.0 to follow the same pattern as in other OSes.
+* [Change] Removed the use of attributes Qt::AA_UseHighDpiPixmaps and Qt::AA_EnableHighDpiScaling.
+* [Change] Floating widgets like LayersConfigWidget, AboutWidget, ChangelogWidget, and DonateWidget had CSS changed to obey QPalette changes when using themes.
+* [Change] pgModeler default UI theme is now the dark one.
+* [Change] Moved the constants ProtRowBgColor, ProtRowFgColor, RelAddedRowBgColor, RelAddedRowFgColor from GuiUtilsNs to ObjectsTableWidget.
+* [Change] Update the signal/slot connections in AppearanceConfigWidget to the new syntax connect(obj, &Class::signal, obj1, &Class1::slot) (Experimental)
+* [Change] Updated the relationship sample images in RelationshipConfigWidget.
+* [Change] Updated the icons of the operations' modes in ModelExportForm.
+* [Change] Minor component size adjust in GeneralConfigWidget.
+* [Change] Removed unused stylesheet images.
+* [Change] The configuration files renamed. Changes pgmodeler.conf -> general.conf, objects-style.conf -> appearance.conf.
+* [Change] AppearanceConfigWidget now can handle settings in the file appearance.conf.
+* [Change] Minor improvement in BaseConfigWidget::loadConfiguration.
+* [Change] DataManipulationForm now deactivates tool buttons' texts according to the dialog height compared to the screen's height.
+* [Change] Moved the appearance settings from GeneralWidget to AppearanceWidget.
+* [Change] Minor adjustments in sample models.
+* [Change] Improved the logic used to load extra stylesheet files in PgModelerApp.
+* [Change] Changed the default source code font to 12pt.
+* [Change] Adjusted the sizes of descriptors in RelationshipView, BaseTableView, and AttributesTogglerItem to reflect the new default font size.
+* [Change] Changed default font size in canvas to 11pt.
+* [Change] pgModeler 1.0 configuration directory was renamed from "pgmodeler" to "pgmodeler-1.0" since some config files are now incompatible with 0.9.x.
+* [Change] Updated the Windows icons for the apps.
+* [Change] Minor size adjustments in pgmodeler-se subproject.
+* [Change] Changed the configuration dir name to pgmodeler-1.0 to avoid conflicts with 0.9.x confs.
+* [Change] UI stylesheets are now selected depending on the screen size.
+* [Change] Changed default icon size of combo boxes.
+* [Change] Several layout margins/spacing adjustments in UI files.
+* [Change] Size adjustments in ui/settings/*.ui
+* [Change] Size adjustments in ui/tools/bugreportform.ui,databaseexplorerwidget.ui,metadatahandlingform.ui,modeldatabasediffform.ui
+* [Change] Adjusted the size of icons in tool buttons.
+* [Change] Standardization of layout spacing/margin in widgets.
+* [Change] Tool buttons resize and layout spacing adjustments.
+* [Change] Minor ui component resizes in several forms/widgets.
+* [Change] Adjusted sizes in mainwindow.ui welcomewidget.ui.
+* [Change] Adjusted ui components on sqlexecutionwidget.ui, modelobjectswidget.ui, operationlistwidget.ui.
+* [Change] Adjusted the splash screen asset.
+* [Change] Minor icons size adjustment in mainwindow.ui, sceneinfowidget.ui, welcomewidget.ui, modelnavigationwidget.ui.
+* [Change] Minor update on toolbars title in MainWindow.
+* [Change] Removed *_big* icons.
+* [Change] Renamed general_tb to tools_acts_tb and controls_tb to model_acts_tb.
+* [Change] Adjustment in the toolbars icon sizes in MainWindow.
+* [Change] Adjustment in the stylesheets for the new UI style.
+* [Change] Improved the mechanism that guesses if an FK relationship can be rendered as 1:1 or 1:N.
+* [Change] Minor adjust in CLI so the "hide-ext-attribs" property in models created before 0.9.2 can be correctly replaced by "collapse-mode" during the model fix operation.
+* [Change] PostgreSQL 14 is now the default version for code generation.
+* [Change] Disabling the usage of the flag QGraphicsItem::ItemClipsChildrenToShape in BaseTableView to avoid wrong clipping of column items during export to PNG.
+* [Change] The workaround in CLI that forces the loading of the offscreen plugin will now be triggered only in the absence of $DISPLAY env var.
+* [Change] Isolated the variables common to executables subproject in the file apps/apps.pri.
+* [Fix] Fixed the detection of ENTER/RETURN press to find objects in ObjectFinderWidget.
+* [Fix] Fixed a bug in ModelWidget that was causing the scene to not recover from blocked signal status if an exception was thrown in ModelWidget::protectObject.
+* [Fix] Minor fix in different places that QScreen instances are used. Instead of getting the screen where the active window is, we get the primary screen of the application.
+* [Fix] Minor fix in CodeCompletionWidget to resize correclty according to the contents.
+* [Fix] Fixed a critical bug that was preventing the importing of data types in CamelCase form.
+* [Fix] Minor fix in SyntaxHighlighter to set the correct height of the parent QPlainTextEdit when using single-line mode.
+* [Fix] Fixed the configuration of the shadow object in RelationshipView.
+* [Fix] Fixed a bug in RelationshipWidget that was not allowing the duplication of attributes and constraints.
+* [Fix] Fixed a bug in AttributesTogglerItem that was not resizing buttons when the user changed the font factor.
+* [Fix] Fixed an exception in ObjectFinderWidget when searching using attributes different from the name, comment, and schema.
+* [Fix] Fixed the long name of foreign-data wrappers.
+* [Fix] Fixed a bug when comparing serial and integer columns on diff that was not reusing sequences or changing types properly.
+* [Fix] Fixed the SVG exporting process avoiding truncating the resulting graphics.
+
 v0.9.4
 ------
 <em>Release date: December 17, 2021</em><br/>

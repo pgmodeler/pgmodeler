@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2022 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -40,11 +40,13 @@ void BaseForm::setButtonConfiguration(unsigned button_conf)
 
 void BaseForm::resizeForm(QWidget *widget)
 {
+	if(!widget)
+		return;
+
 	QVBoxLayout *vbox=new QVBoxLayout;
 	QSize min_size=widget->minimumSize();
-	int max_h = 0, max_w = 0, curr_w =0, curr_h = 0,
-			screen_id = qApp->desktop()->screenNumber(qApp->activeWindow());
-	QScreen *screen=qApp->screens().at(screen_id);
+	int max_h = 0, max_w = 0, curr_w =0, curr_h = 0;
+	QScreen *screen = qApp->primaryScreen();
 	double dpi_factor = 0;
 	double pixel_ratio = 0;
 
@@ -56,7 +58,7 @@ void BaseForm::resizeForm(QWidget *widget)
 	if(dpi_factor <= 1.01)
 		dpi_factor = 1.0;
 
-	vbox->setContentsMargins(2,2,2,2);
+	vbox->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
 
 	/* If the widget's minimum size is zero then we need to do
 			a size adjustment on the widget prior to insert it into the dialog */
@@ -100,7 +102,7 @@ void BaseForm::resizeForm(QWidget *widget)
 	curr_w += (vbox->contentsMargins().left() +
 						 vbox->contentsMargins().right()) * 6;
 
-	curr_h += baselogo_lbl->minimumHeight() +
+	curr_h += pgmodeler_name_lbl->minimumHeight() +
 							((buttons_lt->contentsMargins().top() +
 								buttons_lt->contentsMargins().bottom()) * 6);
 

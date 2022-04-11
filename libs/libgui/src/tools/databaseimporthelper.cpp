@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2022 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -3128,6 +3128,12 @@ QString DatabaseImportHelper::getType(const QString &oid_str, bool generate_xml,
 				type_attr = catalog.getObjectAttributes(ObjectType::Type, type_oid);
 				types[type_oid] = type_attr;
 				catalog.setQueryFilter(curr_filter);
+
+				/* Formatting/Quoting the name of the type (if necessary) in order to avoid
+				 * breaking the importing if there are user defined types in CamelCase for example.
+				 * This way the type will be always referenced like schema."Type"
+				 * instead of schema.Type (which is the same as schema.type). */
+				types[type_oid][Attributes::Name] = BaseObject::formatName(type_attr[Attributes::Name]);
 			}
 
 			object_id = type_attr[Attributes::ObjectId].toUInt();

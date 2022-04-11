@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2022 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -1299,7 +1299,7 @@ void ModelDatabaseDiffForm::enablePartialDiff()
 	{
 		pd_input_lbl->setText(QString("<strong>%1</strong>").arg(src_model_name_lbl->text()));
 		pd_input_lbl->setToolTip(src_model_name_lbl->toolTip());
-		pd_input_ico_lbl->setPixmap(QPixmap(GuiUtilsNs::getIconPath("pgsqlModeler48x48")));
+		pd_input_ico_lbl->setPixmap(QPixmap(GuiUtilsNs::getIconPath("pgmodeler_logo")));
 	}
 	else if(src_database_cmb->currentIndex() >= 0)
 	{

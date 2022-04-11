@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2022 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -42,7 +42,7 @@ TypeWidget::TypeWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Ty
 		for(i=Type::InputFunc; i <= Type::AnalyzeFunc; i++)
 		{
 			functions_sel[i]=nullptr;
-			functions_sel[i]=new ObjectSelectorWidget(ObjectType::Function, true, this);
+			functions_sel[i]=new ObjectSelectorWidget(ObjectType::Function, this);
 			grid->addWidget(functions_sel[i],i,1,1,1);
 		}
 
@@ -63,7 +63,7 @@ TypeWidget::TypeWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Ty
 
 		grid=dynamic_cast<QGridLayout *>(attributes_gb->layout());
 
-		attrib_collation_sel=new ObjectSelectorWidget(ObjectType::Collation, true, this);
+		attrib_collation_sel=new ObjectSelectorWidget(ObjectType::Collation, this);
 		grid->addWidget(attrib_collation_sel, 1,1,1,2);
 
 		attrib_type_wgt=new PgSQLTypeWidget(this);
@@ -80,13 +80,13 @@ TypeWidget::TypeWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Ty
 		frame->setParent(base_attribs_twg->widget(0));
 
 		grid=dynamic_cast<QGridLayout *>(range_attribs_gb->layout());
-		opclass_sel=new ObjectSelectorWidget(ObjectType::OpClass, true, this);
+		opclass_sel=new ObjectSelectorWidget(ObjectType::OpClass, this);
 		grid->addWidget(opclass_sel,0,1,1,1);
 
 		for(i1=1, i=Type::CanonicalFunc; i <= Type::SubtypeDiffFunc; i++,i1++)
 		{
 			functions_sel[i]=nullptr;
-			functions_sel[i]=new ObjectSelectorWidget(ObjectType::Function, true, this);
+			functions_sel[i]=new ObjectSelectorWidget(ObjectType::Function, this);
 			grid->addWidget(functions_sel[i],i1,1,1,1);
 		}
 

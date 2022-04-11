@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2022 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -26,7 +26,7 @@ EventTriggerWidget::EventTriggerWidget(QWidget *parent): BaseObjectWidget(parent
 
 	Ui_EventTriggerWidget::setupUi(this);
 
-	function_sel=new ObjectSelectorWidget(ObjectType::Function, true, this);
+	function_sel=new ObjectSelectorWidget(ObjectType::Function, this);
 	filter_tab=new ObjectsTableWidget(ObjectsTableWidget::AddButton |
 									 ObjectsTableWidget::EditButton |
 									 ObjectsTableWidget::UpdateButton |

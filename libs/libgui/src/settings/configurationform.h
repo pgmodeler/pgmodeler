@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2022 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -49,8 +49,8 @@ class ConfigurationForm: public QDialog, public Ui::ConfigurationForm {
 		
 	public:
 		static constexpr int	GeneralConfWgt=0,
-		RelationshipsConfWgt=1,
-		AppearanceConfWgt=2,
+		AppearanceConfWgt=1,
+		RelationshipsConfWgt=2,
 		ConnectionsConfWgt=3,
 		SnippetsConfWgt=4,
 		PluginsConfWgt=5;
@@ -67,6 +67,7 @@ class ConfigurationForm: public QDialog, public Ui::ConfigurationForm {
 		
 	private slots:
 		void restoreDefaults();
+		void changeCurrentView();
 
 	signals:
 		void s_invalidateModelsRequested();

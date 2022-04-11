@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2022 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -29,7 +29,7 @@ CastWidget::CastWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Ca
 
 		src_datatype=new PgSQLTypeWidget(this, tr("Source data type"));
 		trg_datatype=new PgSQLTypeWidget(this, tr("Target data type"));
-		conv_func_sel=new ObjectSelectorWidget(ObjectType::Function, true, this);
+		conv_func_sel=new ObjectSelectorWidget(ObjectType::Function, this);
 
 		cast_grid->addWidget(conv_func_sel,1,1,1,4);
 		cast_grid->addWidget(src_datatype,2,0,1,5);

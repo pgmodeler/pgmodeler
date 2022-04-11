@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2022 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@
 #include "tools/bugreportform.h"
 #include "tools/metadatahandlingform.h"
 #include "tools/sqlexecutionwidget.h"
+#include "utils/custommenustyle.h"
 
 bool MainWindow::confirm_validation=true;
 int MainWindow::GeneralActionsCount=0;
@@ -28,7 +29,7 @@ int MainWindow::GeneralActionsCount=0;
 MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(parent, flags)
 {
 	setupUi(this);
-	GeneralActionsCount = general_tb->actions().size();
+	GeneralActionsCount = tools_acts_tb->actions().size();
 
 	map<QString, attribs_map >confs;
 	map<QString, attribs_map >::iterator itr, itr_end;
@@ -36,57 +37,19 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	PluginsConfigWidget *plugins_conf_wgt=nullptr;
 	QGridLayout *grid=nullptr;
 
+	file_menu->setStyle(new CustomMenuStyle);
+	edit_menu->setStyle(new CustomMenuStyle);
+	show_menu->setStyle(new CustomMenuStyle);
+	plugins_menu->setStyle(new CustomMenuStyle);
+	about_menu->setStyle(new CustomMenuStyle);
+	more_actions_menu.setStyle(new CustomMenuStyle);
+	fix_menu.setStyle(new CustomMenuStyle);
+
 	pending_op=NoPendingOp;
 	central_wgt=nullptr;
 
-	layers_cfg_wgt = new LayersConfigWidget(this);
-	layers_cfg_wgt->setVisible(false);
-
-	changelog_wgt  = new ChangelogWidget(this);
-	changelog_wgt->setVisible(false);
-
-	scene_info_wgt = new SceneInfoWidget(this);
-	QHBoxLayout *hbox = new QHBoxLayout(scene_info_parent);
-	hbox->addWidget(scene_info_wgt);
-	hbox->setContentsMargins(4,4,4,4);
-	scene_info_parent->setLayout(hbox);
-
-	fix_menu.addAction(action_fix_model);
-	fix_menu.addAction(action_handle_metadata);
-	action_fix->setMenu(&fix_menu);
-	QToolButton *tool_btn = qobject_cast<QToolButton *>(general_tb->widgetForAction(action_fix));
-	tool_btn->setPopupMode(QToolButton::InstantPopup);
-
-	tool_btn = qobject_cast<QToolButton *>(control_tb->widgetForAction(action_arrange_objects));
-	tool_btn->setMenu(&arrange_menu);
-	tool_btn->setPopupMode(QToolButton::InstantPopup);
-	arrange_menu.addAction(tr("Grid"), this, SLOT(arrangeObjects()));
-	arrange_menu.addAction(tr("Hierarchical"), this, SLOT(arrangeObjects()));
-	arrange_menu.addAction(tr("Scattered"), this, SLOT(arrangeObjects()));
-
 	try
 	{
-		models_tbw->tabBar()->setVisible(false);
-		general_tb->layout()->setContentsMargins(0,0,0,0);
-
-		central_wgt=new WelcomeWidget(views_stw);
-		grid=new QGridLayout;
-		grid->setContentsMargins(0,0,0,0);
-		grid->setSpacing(0);
-		grid->addWidget(central_wgt, 0, 0);
-		views_stw->widget(WelcomeView)->setLayout(grid);
-
-		action_welcome->setData(WelcomeView);
-		action_design->setData(DesignView);
-		action_manage->setData(ManageView);
-
-		sql_tool_wgt=new SQLToolWidget;
-		grid=new QGridLayout;
-		grid->setContentsMargins(0,0,0,0);
-		grid->setSpacing(0);
-		grid->addWidget(sql_tool_wgt, 0, 0);
-		views_stw->widget(ManageView)->setLayout(grid);
-
 		configuration_form=new ConfigurationForm(nullptr, Qt::WindowTitleHint | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint);
 		GuiUtilsNs::resizeDialog(configuration_form);
 		configuration_form->loadConfiguration();
@@ -131,10 +94,6 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 
 			itr++;
 		}
-
-		//Enables the action to restore session when there are registered session files
-		action_restore_session->setEnabled(!prev_session_files.isEmpty());
-		central_wgt->last_session_tb->setEnabled(action_restore_session->isEnabled());
 	}
 	catch(Exception &e)
 	{
@@ -142,22 +101,71 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 		msg_box.show(e);
 	}
 
+	layers_cfg_wgt = new LayersConfigWidget(this);
+	layers_cfg_wgt->setVisible(false);
+
+	changelog_wgt  = new ChangelogWidget(this);
+	changelog_wgt->setVisible(false);
+
+	scene_info_wgt = new SceneInfoWidget(this);
+	QHBoxLayout *hbox = new QHBoxLayout(scene_info_parent);
+	hbox->addWidget(scene_info_wgt);
+	hbox->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
+	scene_info_parent->setLayout(hbox);
+
+	fix_menu.addAction(action_fix_model);
+	fix_menu.addAction(action_handle_metadata);
+	action_fix->setMenu(&fix_menu);
+	QToolButton *tool_btn = qobject_cast<QToolButton *>(tools_acts_tb->widgetForAction(action_fix));
+	tool_btn->setPopupMode(QToolButton::InstantPopup);
+
+	tool_btn = qobject_cast<QToolButton *>(model_acts_tb->widgetForAction(action_arrange_objects));
+	tool_btn->setMenu(&arrange_menu);
+	tool_btn->setPopupMode(QToolButton::InstantPopup);
+	arrange_menu.addAction(tr("Grid"), this, SLOT(arrangeObjects()));
+	arrange_menu.addAction(tr("Hierarchical"), this, SLOT(arrangeObjects()));
+	arrange_menu.addAction(tr("Scattered"), this, SLOT(arrangeObjects()));
+
+	models_tbw->tabBar()->setVisible(false);
+
+	central_wgt=new WelcomeWidget(views_stw);
+	grid=new QGridLayout;
+	grid->setContentsMargins(0,0,0,0);
+	grid->setSpacing(0);
+	grid->addWidget(central_wgt, 0, 0);
+	views_stw->widget(WelcomeView)->setLayout(grid);
+
+	action_welcome->setData(WelcomeView);
+	action_design->setData(DesignView);
+	action_manage->setData(ManageView);
+
+	sql_tool_wgt=new SQLToolWidget;
+	grid=new QGridLayout;
+	grid->setContentsMargins(0,0,0,0);
+	grid->setSpacing(0);
+	grid->addWidget(sql_tool_wgt, 0, 0);
+	views_stw->widget(ManageView)->setLayout(grid);
+
+	//Enables the action to restore session when there are registered session files
+	action_restore_session->setEnabled(!prev_session_files.isEmpty());
+	central_wgt->last_session_tb->setEnabled(action_restore_session->isEnabled());
+
 	try
 	{
 		this->setFocusPolicy(Qt::WheelFocus);
 		model_nav_wgt=new ModelNavigationWidget(this);
 
-		control_tb->addWidget(model_nav_wgt);
-		control_tb->addSeparator();
+		model_acts_tb->addWidget(model_nav_wgt);
+		model_acts_tb->addSeparator();
 
-		control_tb->addAction(action_plugins);
-		dynamic_cast<QToolButton *>(control_tb->widgetForAction(action_plugins))->setPopupMode(QToolButton::InstantPopup);
+		model_acts_tb->addAction(action_plugins);
+		dynamic_cast<QToolButton *>(model_acts_tb->widgetForAction(action_plugins))->setPopupMode(QToolButton::InstantPopup);
 
-		control_tb->addAction(action_bug_report);
-		control_tb->addAction(action_donate);
-		control_tb->addAction(action_support);
-		control_tb->addAction(action_about);
-		control_tb->addAction(action_update_found);
+		model_acts_tb->addAction(action_bug_report);
+		model_acts_tb->addAction(action_donate);
+		model_acts_tb->addAction(action_support);
+		model_acts_tb->addAction(action_about);
+		model_acts_tb->addAction(action_update_found);
 
 		about_wgt=new AboutWidget(this);
 		donate_wgt=new DonateWidget(this);
@@ -331,8 +339,8 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	connect(obj_finder_wgt, SIGNAL(s_hideRequested()), this, SLOT(showBottomWidgetsBar()));
 
 	connect(model_valid_wgt, SIGNAL(s_validationInProgress(bool)), this->main_menu_mb, SLOT(setDisabled(bool)));
-	connect(model_valid_wgt, SIGNAL(s_validationInProgress(bool)), control_tb, SLOT(setDisabled(bool)));
-	connect(model_valid_wgt, SIGNAL(s_validationInProgress(bool)), general_tb, SLOT(setDisabled(bool)));
+	connect(model_valid_wgt, SIGNAL(s_validationInProgress(bool)), model_acts_tb, SLOT(setDisabled(bool)));
+	connect(model_valid_wgt, SIGNAL(s_validationInProgress(bool)), tools_acts_tb, SLOT(setDisabled(bool)));
 	connect(model_valid_wgt, SIGNAL(s_validationInProgress(bool)), models_tbw, SLOT(setDisabled(bool)));
 	connect(model_valid_wgt, SIGNAL(s_validationInProgress(bool)), oper_list_wgt, SLOT(setDisabled(bool)));
 	connect(model_valid_wgt, SIGNAL(s_validationInProgress(bool)), model_objs_wgt, SLOT(setDisabled(bool)));
@@ -372,17 +380,16 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	configureSamplesMenu();
 	applyConfigurations();
 
-	QList<QAction *> actions=general_tb->actions();
 	QToolButton *btn=nullptr;
 	QFont font;
 
-	for(auto &act : actions)
+	for(auto &act : tools_acts_tb->actions())
 	{
-		btn=qobject_cast<QToolButton *>(general_tb->widgetForAction(act));
+		btn=qobject_cast<QToolButton *>(tools_acts_tb->widgetForAction(act));
 
 		if(btn)
 		{
-			GuiUtilsNs::configureWidgetFont(btn, static_cast<unsigned>(GuiUtilsNs::MediumFontFactor));
+			//GuiUtilsNs::configureWidgetFont(btn, static_cast<unsigned>(GuiUtilsNs::MediumFontFactor));
 			font = btn->font();
 			font.setBold(true);
 			btn->setFont(font);
@@ -390,10 +397,19 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 		}
 	}
 
+
+	for(auto &act : model_acts_tb->actions())
+	{
+		btn = qobject_cast<QToolButton *>(model_acts_tb->widgetForAction(act));
+
+		if(btn)
+			GuiUtilsNs::createDropShadow(btn);
+	}
+
 	resizeGeneralToolbarButtons();
 
 #ifdef Q_OS_MAC
-	control_tb->removeAction(action_main_menu);
+	model_acts_tb->removeAction(action_main_menu);
 	action_main_menu->setEnabled(false);
 #else
 	plugins_menu->menuAction()->setIconVisibleInMenu(false);
@@ -405,14 +421,14 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	main_menu.addSeparator();
 	main_menu.addAction(action_show_main_menu);
 	action_main_menu->setMenu(&main_menu);
-	dynamic_cast<QToolButton *>(control_tb->widgetForAction(action_main_menu))->setPopupMode(QToolButton::InstantPopup);
+	dynamic_cast<QToolButton *>(model_acts_tb->widgetForAction(action_main_menu))->setPopupMode(QToolButton::InstantPopup);
 
 	connect(action_show_main_menu, SIGNAL(triggered()), this, SLOT(showMainMenu()));
 	connect(action_hide_main_menu, SIGNAL(triggered()), this, SLOT(showMainMenu()));
 #endif
 
-	actions=control_tb->actions();
-	actions.append(general_tb->actions());
+	QList<QAction *> actions = model_acts_tb->actions();
+	actions.append(tools_acts_tb->actions());
 
 	for(QAction *act : actions)
 	{
@@ -450,7 +466,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	restoreDockWidgetsSettings();
 
 	//Positioning the update notifier widget before showing it (if there is an update)
-	setFloatingWidgetPos(update_notifier_wgt, action_update_found, control_tb, false);
+	setFloatingWidgetPos(update_notifier_wgt, action_update_found, model_acts_tb, false);
 	action_update_found->setVisible(false);
 	QTimer::singleShot(1000, this, SLOT(restoreTemporaryModels()));
 
@@ -566,17 +582,17 @@ void MainWindow::resizeGeneralToolbarButtons()
 {
 	QToolButton *btn = nullptr;
 
-	if(general_tb->minimumWidth() == 0)
-		general_tb->setMinimumWidth(general_tb->width() *
+	if(tools_acts_tb->minimumWidth() == 0)
+		tools_acts_tb->setMinimumWidth(tools_acts_tb->width() *
 																(BaseObjectView::getScreenDpiFactor() < BaseObjectView::MaxDpiFactor ? 0.60 : 0.90));
 
-	for(auto &act : general_tb->actions())
+	for(auto &act : tools_acts_tb->actions())
 	{
-		btn = qobject_cast<QToolButton *>(general_tb->widgetForAction(act));
+		btn = qobject_cast<QToolButton *>(tools_acts_tb->widgetForAction(act));
 		if(!btn) continue;
 
 		btn->setStyleSheet(QString("QToolButton { min-width: %1px; margin-top: 2px; }")
-											 .arg(models_tbw->count() == 0 ? general_tb->minimumWidth() : general_tb->minimumWidth() * 1.10));
+											 .arg(models_tbw->count() == 0 ? tools_acts_tb->minimumWidth() : tools_acts_tb->minimumWidth() * 1.10));
 	}
 }
 
@@ -881,7 +897,7 @@ void MainWindow::updateRecentModelsMenu()
 		recent_mdls_menu.addSeparator();
 		recent_mdls_menu.addAction(tr("Clear Menu"), this, SLOT(clearRecentModelsMenu()));
 		action_recent_models->setMenu(&recent_mdls_menu);
-		dynamic_cast<QToolButton *>(control_tb->widgetForAction(action_recent_models))->setPopupMode(QToolButton::InstantPopup);
+		dynamic_cast<QToolButton *>(model_acts_tb->widgetForAction(action_recent_models))->setPopupMode(QToolButton::InstantPopup);
 	}
 
 	action_recent_models->setEnabled(!recent_mdls_menu.isEmpty());
@@ -955,7 +971,7 @@ void MainWindow::addModel(const QString &filename)
 		models_tbw->addTab(model_tab, obj_name);
 		models_tbw->setCurrentIndex(models_tbw->count()-1);
 		models_tbw->blockSignals(false);
-		models_tbw->currentWidget()->layout()->setContentsMargins(3,3,0,3);
+		models_tbw->currentWidget()->layout()->setContentsMargins(0,0,0,0);
 
 		//Creating the system objects (public schema and languages C, SQL and pgpgsql)
 		model_tab->db_model->createSystemObjects(filename.isEmpty());
@@ -1036,7 +1052,7 @@ void MainWindow::addModel(ModelWidget *model_wgt)
 		models_tbw->blockSignals(false);
 
 		setCurrentModel();
-		models_tbw->currentWidget()->layout()->setContentsMargins(3,3,0,3);
+		models_tbw->currentWidget()->layout()->setContentsMargins(0,0,0,0);
 
 		if(action_alin_objs_grade->isChecked())
 			current_model->scene->alignObjectsToGrid();
@@ -1121,36 +1137,36 @@ void MainWindow::setCurrentModel()
 		layers_cfg_wgt->setModel(current_model);
 		current_model->setFocus(Qt::OtherFocusReason);
 		current_model->cancelObjectAddition();
-		general_tb->addSeparator();
+		tools_acts_tb->addSeparator();
 
-		general_tb->addAction(current_model->action_new_object);
-		tool_btn=qobject_cast<QToolButton *>(general_tb->widgetForAction(current_model->action_new_object));
+		tools_acts_tb->addAction(current_model->action_new_object);
+		tool_btn=qobject_cast<QToolButton *>(tools_acts_tb->widgetForAction(current_model->action_new_object));
 		tool_btn->setPopupMode(QToolButton::InstantPopup);
 		btns.push_back(tool_btn);
 
-		general_tb->addAction(current_model->action_quick_actions);
-		tool_btn=qobject_cast<QToolButton *>(general_tb->widgetForAction(current_model->action_quick_actions));
+		tools_acts_tb->addAction(current_model->action_quick_actions);
+		tool_btn=qobject_cast<QToolButton *>(tools_acts_tb->widgetForAction(current_model->action_quick_actions));
 		tool_btn->setPopupMode(QToolButton::InstantPopup);
 		btns.push_back(tool_btn);
 
-		general_tb->addAction(current_model->action_edit);
-		tool_btn=qobject_cast<QToolButton *>(general_tb->widgetForAction(current_model->action_edit));
+		tools_acts_tb->addAction(current_model->action_edit);
+		tool_btn=qobject_cast<QToolButton *>(tools_acts_tb->widgetForAction(current_model->action_edit));
 		btns.push_back(tool_btn);
 
-		general_tb->addAction(current_model->action_source_code);
-		tool_btn=qobject_cast<QToolButton *>(general_tb->widgetForAction(current_model->action_source_code));
+		tools_acts_tb->addAction(current_model->action_source_code);
+		tool_btn=qobject_cast<QToolButton *>(tools_acts_tb->widgetForAction(current_model->action_source_code));
 		btns.push_back(tool_btn);
 
 		configureMoreActionsMenu();
-		general_tb->addAction(action_more_actions);
+		tools_acts_tb->addAction(action_more_actions);
 
-		tool_btn = qobject_cast<QToolButton *>(general_tb->widgetForAction(action_more_actions));
+		tool_btn = qobject_cast<QToolButton *>(tools_acts_tb->widgetForAction(action_more_actions));
 		tool_btn->setPopupMode(QToolButton::InstantPopup);
 		btns.push_back(tool_btn);
 
 		for(QToolButton *btn : btns)
 		{
-			GuiUtilsNs::configureWidgetFont(btn, static_cast<unsigned>(GuiUtilsNs::MediumFontFactor));
+			//GuiUtilsNs::configureWidgetFont(btn, static_cast<unsigned>(GuiUtilsNs::MediumFontFactor));
 			font = btn->font();
 			font.setBold(true);
 			btn->setFont(font);
@@ -1280,11 +1296,11 @@ void MainWindow::applyZoom()
 void MainWindow::removeModelActions()
 {
 	QList<QAction *> act_list;
-	act_list=general_tb->actions();
+	act_list=tools_acts_tb->actions();
 
 	while(act_list.size() > GeneralActionsCount)
 	{
-		general_tb->removeAction(act_list.back());
+		tools_acts_tb->removeAction(act_list.back());
 		act_list.pop_back();
 	}
 }
@@ -1712,7 +1728,7 @@ void MainWindow::loadModel()
 	try
 	{
 		file_dlg.setNameFilter(tr("Database model (*.dbm);;All files (*.*)"));
-		file_dlg.setWindowIcon(QPixmap(GuiUtilsNs::getIconPath("pgsqlModeler48x48")));
+		file_dlg.setWindowIcon(QPixmap(GuiUtilsNs::getIconPath("pgmodeler_logo")));
 		file_dlg.setWindowTitle(tr("Load model"));
 		file_dlg.setFileMode(QFileDialog::ExistingFiles);
 		file_dlg.setAcceptMode(QFileDialog::AcceptOpen);
@@ -1765,7 +1781,7 @@ void MainWindow::showFixMessage(Exception &e, const QString &filename)
 							 tr("Could not load the database model file `%1'. Check the error stack to see details. You can try to fix it in order to make it loadable again.").arg(filename),
 							 Messagebox::ErrorIcon, Messagebox::YesNoButtons,
 							 tr("Fix model"), tr("Cancel"), "",
-							 GuiUtilsNs::getIconPath("fixobject"), GuiUtilsNs::getIconPath("error"));
+							 GuiUtilsNs::getIconPath("fixobject"), GuiUtilsNs::getIconPath("cancel"));
 
 	if(msg_box.result()==QDialog::Accepted)
 		fixModel(filename);
@@ -1860,7 +1876,7 @@ void MainWindow::toggleUpdateNotifier(bool show)
 #ifndef NO_UPDATE_CHECK
 	if(show)
 	{
-		setFloatingWidgetPos(update_notifier_wgt,  qobject_cast<QAction *>(sender()), control_tb, false);
+		setFloatingWidgetPos(update_notifier_wgt,  qobject_cast<QAction *>(sender()), model_acts_tb, false);
 		action_about->setChecked(false);
 		action_donate->setChecked(false);
 	}
@@ -1873,7 +1889,7 @@ void MainWindow::toggleAboutWidget(bool show)
 {
 	if(show)
 	{
-		setFloatingWidgetPos(about_wgt, qobject_cast<QAction *>(sender()), control_tb, false);
+		setFloatingWidgetPos(about_wgt, qobject_cast<QAction *>(sender()), model_acts_tb, false);
 		action_update_found->setChecked(false);
 		action_donate->setChecked(false);
 	}
@@ -1885,7 +1901,7 @@ void MainWindow::toggleDonateWidget(bool show)
 {
 	if(show)
 	{
-		setFloatingWidgetPos(donate_wgt, qobject_cast<QAction *>(sender()), control_tb, false);
+		setFloatingWidgetPos(donate_wgt, qobject_cast<QAction *>(sender()), model_acts_tb, false);
 		action_about->setChecked(false);
 		action_update_found->setChecked(false);
 	}
@@ -1919,8 +1935,8 @@ void MainWindow::setBottomFloatingWidgetPos(QWidget *widget, QToolButton *btn)
 	QPoint btn_parent_pos = mapTo(this, tool_btns_bar_wgt->pos()),
 			btn_pos = mapTo(this, btn->pos());
 
-	widget->move(btn_pos.x() + general_tb->width(),
-									 btn_parent_pos.y() - (widget->height() - btn->height() - v_splitter1->handleWidth()) + 1);
+	widget->move(btn_pos.x() + tools_acts_tb->width() + 1,
+									 btn_parent_pos.y() - (widget->height() - btn->height() - (2 * v_splitter1->handleWidth())) + 1);
 }
 
 void MainWindow::configureSamplesMenu()
@@ -2077,7 +2093,7 @@ void MainWindow::changeCurrentView(bool checked)
 		action_manage->blockSignals(false);
 		action_design->blockSignals(false);
 
-		actions=general_tb->actions();
+		actions=tools_acts_tb->actions();
 		for(int i=GeneralActionsCount; i < actions.count(); i++)
 		{
 			actions[i]->setEnabled(enable);

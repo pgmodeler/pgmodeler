@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2022 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -570,7 +570,7 @@ void RelationshipView::configurePositionInfo()
 	{
 		BaseObjectView::configurePositionInfo(descriptor->pos());
 		pos_info_item->setPos(descriptor->pos().x(),
-													descriptor->pos().y() - pos_info_item->boundingRect().height());
+													descriptor->pos().y() - pos_info_item->boundingRect().height() * 1.5);
 	}
 }
 
@@ -607,8 +607,8 @@ void RelationshipView::configureLine()
 		// Adjusting the relationship lines thickness according to the screen dpi
 		if(BaseObjectView::getScreenDpiFactor() > 1)
 		{
-			pen_high_width = ObjectBorderWidth * BaseObjectView::getScreenDpiFactor() * 1.60;
-			pen_mid_width = ObjectBorderWidth * BaseObjectView::getScreenDpiFactor() * 1.15;
+			pen_high_width = ObjectBorderWidth * BaseObjectView::getScreenDpiFactor() * 1.75;
+			pen_mid_width = ObjectBorderWidth * BaseObjectView::getScreenDpiFactor() * 1.25;
 		}
 
 		configuring_line=true;
@@ -653,7 +653,7 @@ void RelationshipView::configureLine()
 			if(p_central[1].x() < pos.x())
 				p_central[1].setX(pos.x());
 
-			offset = use_crows_foot ? 23 : 11;
+			offset = use_crows_foot ? 30 : 20;
 
 			points.push_back(QPointF(p_central[0].x() + (offset * fnt_factor) + pos_factor,  p_central[0].y()));
 			points.push_back(QPointF(p_central[0].x() + (offset * fnt_factor) + pos_factor,  p_central[1].y() - (offset * fnt_factor) - pos_factor));
@@ -1354,11 +1354,9 @@ void RelationshipView::configureDescriptor()
 		pol.append(QPointF(11,22)); pol.append(QPointF(0,11));
 	}
 
-	//Resizes the polygon according the font factor
-	if(factor!=1.0)
-		TextPolygonItem::resizePolygon(pol,
-																	 pol.boundingRect().width() * factor ,
-																	 pol.boundingRect().height() * factor);
+	resizePolygon(pol,
+								(pol.boundingRect().width() + (HorizSpacing * 2)) * factor ,
+								(pol.boundingRect().height() + (VertSpacing * 2)) * factor);
 
 	if(base_rel->isSelfRelationship())
 		pnt=points.at(points.size()/2);
@@ -1444,9 +1442,9 @@ void RelationshipView::configureDescriptor()
 	pol_item=dynamic_cast<QGraphicsPolygonItem *>(obj_shadow);
 	pol_item->setPolygon(pol);
 	pol_item->setTransformOriginPoint(obj_shadow->boundingRect().center());
-	pol_item->setPos(x + 2.5, y + 3.5);
-	pol_item->setPen(Qt::NoPen);
-	pol_item->setBrush(QColor(50,50,50,60));
+	pol_item->setPos(x + ObjectShadowXPos, y + ObjectShadowYPos);
+	pol_item->setPen(getBorderStyle(Attributes::ObjShadow));
+	pol_item->setBrush(getFillStyle(Attributes::ObjShadow));
 
 	this->configureAttributes();
 	this->configurePositionInfo();
@@ -1454,12 +1452,13 @@ void RelationshipView::configureDescriptor()
 	/* If the crow's feet is enabled the relationship descriptor is hidden
 	 * for 1:1, 1:n, n:n and fk relationship. For generalization, dependency and partitioning
 	 * relationships the descriptor is still displayed. */
-	descriptor->setVisible(!use_crows_foot ||
-												 (use_crows_foot && (
-														rel_type == BaseRelationship::RelationshipDep ||
-														rel_type == BaseRelationship::RelationshipGen ||
-														rel_type == BaseRelationship::RelationshipPart)));
-	obj_shadow->setVisible(descriptor->isVisible());
+	bool visible = !use_crows_foot ||
+								 (use_crows_foot && (
+										rel_type == BaseRelationship::RelationshipDep ||
+										rel_type == BaseRelationship::RelationshipGen ||
+										rel_type == BaseRelationship::RelationshipPart));
+	descriptor->setVisible(visible);
+	obj_shadow->setVisible(visible);
 }
 
 void RelationshipView::configureCrowsFootDescriptors()
@@ -1599,13 +1598,13 @@ void RelationshipView::configureCrowsFootDescriptors()
 				if(tab_id == BaseRelationship::SrcTable)
 				{
 					px = 0;
-					line = QLineF(QPointF(14, 0), QPointF(0, - 10 * factor));
-					line1 = QLineF(QPointF(14, 0), QPointF(0, 10 * factor));
+					line = QLineF(QPointF(18, 0), QPointF(0, - 10 * factor));
+					line1 = QLineF(QPointF(18, 0), QPointF(0, 10 * factor));
 				}
 				else
 				{
-					line = QLineF(QPointF(0, 0), QPointF(14, - 10 * factor));
-					line1 = QLineF(QPointF(0, 0), QPointF(14, 10 * factor));
+					line = QLineF(QPointF(0, 0), QPointF(18, - 10 * factor));
+					line1 = QLineF(QPointF(0, 0), QPointF(18, 10 * factor));
 					px = -line.dx();
 				}
 
@@ -1638,7 +1637,7 @@ void RelationshipView::configureCrowsFootDescriptors()
 				line_item->setVisible(true);
 
 				line_item->setLine(QLineF(QPointF(0, -8 * factor), QPointF(0, 8 * factor)));
-				line_item->setPos(15 * signal * (tab_id == BaseRelationship::DstTable ? -1 : 1), 0);
+				line_item->setPos(18 * signal * (tab_id == BaseRelationship::DstTable ? -1 : 1), 0);
 				line_item->setPen(pens[tab_id]);
 			}
 			else if(!mandatory[tab_id] /*&&
@@ -1649,14 +1648,14 @@ void RelationshipView::configureCrowsFootDescriptors()
 				circle_item = round_cf_descriptors[tab_id];
 				cf_descriptors[tab_id]->addToGroup(circle_item);
 				circle_item->setVisible(true);
-				circle_item->setRect(QRectF(0, 0, GraphicPointRadius * 2.20 * factor, GraphicPointRadius * 2.20 * factor));
+				circle_item->setRect(QRectF(0, 0, GraphicPointRadius * 2.75 * factor, GraphicPointRadius * 2.75 * factor));
 
 				py = -(circle_item->boundingRect().height()/2.20);
 
 				if(tab_id == BaseRelationship::SrcTable)
 				{
 					if(base_rel->isSelfRelationship() || rel_type != BaseRelationship::RelationshipNn)
-						px = 15;
+						px = 19;
 					else
 						px = 11;
 				}
@@ -1667,10 +1666,10 @@ void RelationshipView::configureCrowsFootDescriptors()
 						if(signal < 0)
 							px = 15;
 						else
-							px = -13 - circle_item->boundingRect().width();
+							px = -15 - circle_item->boundingRect().width();
 					}
 					else
-						px = -15 - circle_item->boundingRect().width();
+						px = -17 - circle_item->boundingRect().width();
 				}
 
 				pen = pens[tab_id];
@@ -1748,16 +1747,16 @@ void RelationshipView::configureAttributes()
 
 		fmt=font_config[Attributes::Attribute];
 		font=fmt.font();
-		font.setPointSizeF(font.pointSizeF() * 0.80);
+		font.setPointSizeF(font.pointSizeF() * 0.90);
 
 		//Configures the rectangle used as base for creation of attribute descriptor
 		rect.setTopLeft(QPointF(0,0));
-		rect.setSize(QSizeF(8 * factor, 8 * factor));
+		rect.setSize(QSizeF(12 * factor, 12 * factor));
 
 		//Calculates the first attribute position based upon the attribute count and descriptor size
 		count=rel->getAttributeCount();
-		px=descriptor->pos().x() + descriptor->boundingRect().width() + ((3 * HorizSpacing) * factor);
-		py=descriptor->pos().y() - (count * rect.height()/(4.0 * factor));
+		px=descriptor->pos().x() + descriptor->boundingRect().width() + (4 * HorizSpacing * factor);
+		py=descriptor->pos().y() - (count * rect.height()/(4 * factor));
 
 		for(i=0; i < count; i++)
 		{
@@ -1812,21 +1811,22 @@ void RelationshipView::configureAttributes()
 			attrib->setPos(px, py);
 
 			text->setText(compact_view && !col->getAlias().isEmpty() ? col->getAlias() : col->getName());
-			text->setPos(QPointF(desc->pos().x() + desc->boundingRect().width() + (HorizSpacing * factor), 0));
+			text->setPos(QPointF(desc->pos().x() + desc->boundingRect().width() + (HorizSpacing * factor),
+													 (desc->boundingRect().height() - text->boundingRect().height())/2));
 			desc->setPos(0, VertSpacing * factor);
 
 			pol.clear();
-			pol.append(text->boundingRect().topLeft());
-			pol.append(text->boundingRect().topRight()  + QPointF(desc->boundingRect().width() + (HorizSpacing * factor), 0));
-			pol.append(text->boundingRect().bottomRight() + QPointF(desc->boundingRect().width() + (HorizSpacing * factor), 0));
-			pol.append(text->boundingRect().bottomLeft());
+			pol.append(QPointF(-HorizSpacing, - VertSpacing));
+			pol.append(QPointF(desc->boundingRect().width() + text->boundingRect().width(), -VertSpacing));
+			pol.append(QPointF(desc->boundingRect().width() + text->boundingRect().width(), (text->boundingRect().height()/2) + VertSpacing));
+			pol.append(QPointF(-HorizSpacing, (text->boundingRect().height()/2) + VertSpacing));
 			sel_attrib->setPolygon(pol);
 
 			p_aux=this->mapToItem(attrib, descriptor->pos().x() + (descriptor->boundingRect().width()/2.0),
-									descriptor->pos().y() + (descriptor->boundingRect().height()/2.0));
+														descriptor->pos().y() + (descriptor->boundingRect().height()/2.0));
 			lin->setLine(QLineF(p_aux, desc->boundingRect().center()));
 
-			py+=desc->boundingRect().height() + (2 * VertSpacing);
+			py+=desc->boundingRect().height() + (10 * VertSpacing);
 		}
 
 		i=attributes.size()-1;

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2022 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -70,6 +70,9 @@ class TableWidget: public BaseObjectWidget, public Ui::TableWidget {
 
 		void setAttributes(DatabaseModel *model, OperationList *op_list, Schema *schema, Table *table, double pos_x, double pos_y);
 		void setAttributes(DatabaseModel *model, OperationList *op_list, Schema *schema, ForeignTable *ftable, double pos_x, double pos_y);
+
+		static void setTableItemColor(unsigned color_idx, const QColor color);
+		static QColor getTableItemColor(unsigned color_idx);
 
 	private slots:
 		//! \brief Adds or edit a object on the object table that calls the slot

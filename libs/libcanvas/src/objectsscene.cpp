@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2022 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -57,8 +57,8 @@ ObjectsScene::ObjectsScene()
 
 	rel_line=new QGraphicsLineItem;
 	rel_line->setVisible(false);
+	rel_line->setEnabled(false);
 	rel_line->setZValue(-1);
-	rel_line->setPen(QColor(80,80,80));
 
 	this->addItem(selection_rect);
 	this->addItem(rel_line);
@@ -750,8 +750,8 @@ void ObjectsScene::setGridSize(unsigned size)
 
 		if(show_grid)
 		{
-			pen.setColor(grid_color);
-			painter.setPen(pen);
+			painter.setPen(QPen(grid_color,
+													BaseObjectView::ObjectBorderWidth * BaseObjectView::getScreenDpiFactor()));
 
 			//Draws the grid
 			for(x=0; x < width; x+=size)
@@ -762,9 +762,10 @@ void ObjectsScene::setGridSize(unsigned size)
 		//Creates the page delimiter lines
 		if(show_page_delim)
 		{
-			pen.setColor(delimiters_color);
-			pen.setStyle(Qt::DashLine);
-			pen.setWidthF(1.0);
+			QPen pen(delimiters_color,
+							 BaseObjectView::ObjectBorderWidth * BaseObjectView::getScreenDpiFactor(),
+							 Qt::CustomDashLine);
+			pen.setDashPattern({3, 5});
 			painter.setPen(pen);
 			painter.drawLine(width-1, 0,width-1,img_h-1);
 			painter.drawLine(0, height-1,img_w-1,height-1);
@@ -786,6 +787,8 @@ void ObjectsScene::showRelationshipLine(bool value, const QPointF &p_start)
 	if(!std::isnan(p_start.x()) && !std::isnan(p_start.y()))
 		rel_line->setLine(QLineF(p_start,p_start));
 
+	rel_line->setPen(QPen(delimiters_color,
+												BaseObjectView::ObjectBorderWidth * BaseObjectView::getScreenDpiFactor()));
 	rel_line->setVisible(value);
 
 	while(!items.isEmpty())

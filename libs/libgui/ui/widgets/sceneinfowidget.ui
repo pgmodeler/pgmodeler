@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>429</width>
-    <height>34</height>
+    <width>425</width>
+    <height>42</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -21,7 +21,7 @@
   </property>
   <layout class="QHBoxLayout" name="horizontalLayout_2">
    <property name="spacing">
-    <number>15</number>
+    <number>10</number>
    </property>
    <property name="leftMargin">
     <number>0</number>
@@ -48,16 +48,10 @@
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>
-       <property name="minimumSize">
-        <size>
-         <width>18</width>
-         <height>18</height>
-        </size>
-       </property>
        <property name="maximumSize">
         <size>
-         <width>20</width>
-         <height>20</height>
+         <width>32</width>
+         <height>32</height>
         </size>
        </property>
        <property name="toolTip">
@@ -73,7 +67,7 @@
         <string/>
        </property>
        <property name="pixmap">
-        <pixmap resource="../../res/resources.qrc">:/icons/icons/select.png</pixmap>
+        <pixmap resource="../../res/resources.qrc">:/icons/icons/cursor.png</pixmap>
        </property>
        <property name="scaledContents">
         <bool>true</bool>
@@ -123,16 +117,10 @@
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>
-       <property name="minimumSize">
-        <size>
-         <width>18</width>
-         <height>18</height>
-        </size>
-       </property>
        <property name="maximumSize">
         <size>
-         <width>20</width>
-         <height>20</height>
+         <width>32</width>
+         <height>32</height>
         </size>
        </property>
        <property name="toolTip">
@@ -198,16 +186,10 @@
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>
-       <property name="minimumSize">
-        <size>
-         <width>18</width>
-         <height>18</height>
-        </size>
-       </property>
        <property name="maximumSize">
         <size>
-         <width>20</width>
-         <height>20</height>
+         <width>32</width>
+         <height>32</height>
         </size>
        </property>
        <property name="toolTip">
@@ -273,16 +255,10 @@
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>
-       <property name="minimumSize">
-        <size>
-         <width>18</width>
-         <height>18</height>
-        </size>
-       </property>
        <property name="maximumSize">
         <size>
-         <width>20</width>
-         <height>20</height>
+         <width>32</width>
+         <height>32</height>
         </size>
        </property>
        <property name="toolTip">
@@ -338,6 +314,7 @@
   </layout>
  </widget>
  <resources>
+  <include location="../../res/resources.qrc"/>
   <include location="../../res/resources.qrc"/>
  </resources>
  <connections/>

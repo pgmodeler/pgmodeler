@@ -88,14 +88,20 @@
      <height>24</height>
     </rect>
    </property>
+   <property name="iconSize">
+    <size>
+     <width>28</width>
+     <height>28</height>
+    </size>
+   </property>
   </widget>
   <widget class="QGroupBox" name="elements_grp">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>50</y>
-     <width>481</width>
-     <height>141</height>
+     <width>531</width>
+     <height>221</height>
     </rect>
    </property>
    <property name="title">
@@ -103,19 +109,19 @@
    </property>
    <layout class="QGridLayout" name="elementos_grid">
     <property name="leftMargin">
-     <number>4</number>
+     <number>5</number>
     </property>
     <property name="topMargin">
-     <number>4</number>
+     <number>5</number>
     </property>
     <property name="rightMargin">
-     <number>4</number>
+     <number>5</number>
     </property>
     <property name="bottomMargin">
-     <number>4</number>
+     <number>5</number>
     </property>
     <property name="spacing">
-     <number>6</number>
+     <number>10</number>
     </property>
     <item row="0" column="0">
      <widget class="QLabel" name="elem_type_lbl">
@@ -131,6 +137,12 @@
         <horstretch>0</horstretch>
         <verstretch>0</verstretch>
        </sizepolicy>
+      </property>
+      <property name="iconSize">
+       <size>
+        <width>28</width>
+        <height>28</height>
+       </size>
       </property>
       <item>
        <property name="text">

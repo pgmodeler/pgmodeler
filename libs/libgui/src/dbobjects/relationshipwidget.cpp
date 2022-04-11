@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2022 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -50,7 +50,7 @@ RelationshipWidget::RelationshipWidget(QWidget *parent): BaseObjectWidget(parent
 		for(int i=0; i < pattern_fields.size(); i++)
 		{
 			patterns_hl[i]=new SyntaxHighlighter(qobject_cast<QPlainTextEdit *>(pattern_fields[i]), true);
-			patterns_hl[i]->loadConfiguration(GlobalAttributes::getConfigurationFilePath(GlobalAttributes::PatternHighlightConf));
+			patterns_hl[i]->loadConfiguration(GlobalAttributes::getPatternHighlightConfPath());
 		}
 
 		attributes_tab=new ObjectsTableWidget(ObjectsTableWidget::AllButtons ^
@@ -85,12 +85,12 @@ RelationshipWidget::RelationshipWidget(QWidget *parent): BaseObjectWidget(parent
 
 		grid=new QGridLayout;
 		grid->addWidget(attributes_tab, 0,0,1,1);
-		grid->setContentsMargins(4,4,4,4);
+		grid->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
 		rel_attribs_tbw->widget(AttributesTab)->setLayout(grid);
 
 		grid=new QGridLayout;
 		grid->addWidget(constraints_tab, 0,0,1,1);
-		grid->setContentsMargins(4,4,4,4);
+		grid->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
 		rel_attribs_tbw->widget(ConstraintsTab)->setLayout(grid);
 
 		grid=dynamic_cast<QGridLayout *>(rel_attribs_tbw->widget(SpecialPkTab)->layout());
@@ -100,7 +100,7 @@ RelationshipWidget::RelationshipWidget(QWidget *parent): BaseObjectWidget(parent
 		frame->setParent(rel_attribs_tbw->widget(SpecialPkTab));
 
 		grid=new QGridLayout;
-		grid->setContentsMargins(4,4,4,4);
+		grid->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
 
 		grid->addWidget(advanced_objs_tab, 0, 0, 1, 1);
 
@@ -799,9 +799,9 @@ void RelationshipWidget::duplicateObject(int curr_row, int new_row)
 
 		CoreUtilsNs::copyObject(&dup_object, object, obj_type);
 		dup_object->setName(CoreUtilsNs::generateUniqueName(dup_object, obj_list, false, QString("_cp")));
-
 		op_id=op_list->registerObject(dup_object, Operation::ObjectCreated, new_row, rel);
 
+		dynamic_cast<TableObject*>(dup_object)->setParentTable(nullptr);
 		rel->addObject(dynamic_cast<TableObject *>(dup_object));
 		listObjects(obj_type);
 	}

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2022 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -26,8 +26,8 @@ ForeignDataWrapperWidget::ForeignDataWrapperWidget(QWidget *parent): BaseObjectW
 
 		Ui_ForeignDataWrapperWidget::setupUi(this);
 
-		func_handler_sel=new ObjectSelectorWidget(ObjectType::Function, true, this);
-		func_validator_sel=new ObjectSelectorWidget(ObjectType::Function, true, this);
+		func_handler_sel=new ObjectSelectorWidget(ObjectType::Function, this);
+		func_validator_sel=new ObjectSelectorWidget(ObjectType::Function, this);
 
 		func_handler_sel->setToolTip(tr("The handler function must have the following signature:  <strong>fdw_handler</strong> <em>function_name</em>()"));
 		func_validator_sel->setToolTip(tr("The validator function must have the following signature: <em>function_name</em>(<strong>text[]</strong>,<strong>oid</strong>). The return type of ths function is ignored."));
@@ -50,7 +50,7 @@ ForeignDataWrapperWidget::ForeignDataWrapperWidget(QWidget *parent): BaseObjectW
 		options_tab->setHeaderLabel(tr("Value"), 1);
 
 		hbox = new QHBoxLayout;
-		hbox->setContentsMargins(4,4,4,4);
+		hbox->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
 		hbox->addWidget(options_tab);
 		options_gb->setLayout(hbox);
 

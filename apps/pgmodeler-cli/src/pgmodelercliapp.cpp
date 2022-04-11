@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2022 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
 #include "qtcompat/qtextstreamcompat.h"
 #include "qtcompat/splitbehaviorcompat.h"
 #include "utilsns.h"
+#include "settings/appearanceconfigwidget.h"
 
 QTextStream PgModelerCliApp::out(stdout);
 
@@ -247,12 +248,9 @@ PgModelerCliApp::PgModelerCliApp(int argc, char **argv) : Application(argc, argv
 				connect(model, SIGNAL(s_objectAdded(BaseObject *)), this, SLOT(handleObjectAddition(BaseObject *)));
 				connect(model, SIGNAL(s_objectRemoved(BaseObject *)), this, SLOT(handleObjectRemoval(BaseObject *)));
 
-				//Load the general configuration including grid and delimiter options
-				GeneralConfigWidget conf_wgt;
-				conf_wgt.loadConfiguration();
-
-				//Load the objects styles
-				BaseObjectView::loadObjectsStyle();
+				//Load the appearance settings including grid and delimiter options
+				AppearanceConfigWidget appearance_wgt;
+				appearance_wgt.loadConfiguration();
 
 				scene=new ObjectsScene;
 				scene->setParent(this);

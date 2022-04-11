@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>550</width>
-    <height>77</height>
+    <width>600</width>
+    <height>103</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -21,8 +21,8 @@
   </property>
   <property name="minimumSize">
    <size>
-    <width>550</width>
-    <height>77</height>
+    <width>600</width>
+    <height>0</height>
    </size>
   </property>
   <property name="maximumSize">
@@ -36,7 +36,7 @@
   </property>
   <property name="windowIcon">
    <iconset resource="../../res/resources.qrc">
-    <normaloff>:/icons/icons/pgsqlModeler48x48.png</normaloff>:/icons/icons/pgsqlModeler48x48.png</iconset>
+    <normaloff>:/icons/icons/pgmodeler_logo.png</normaloff>:/icons/icons/pgmodeler_logo.png</iconset>
   </property>
   <property name="autoFillBackground">
    <bool>true</bool>
@@ -67,19 +67,19 @@
      </property>
      <layout class="QHBoxLayout" name="horizontalLayout">
       <property name="spacing">
-       <number>4</number>
+       <number>10</number>
       </property>
       <property name="leftMargin">
-       <number>4</number>
+       <number>10</number>
       </property>
       <property name="topMargin">
-       <number>4</number>
+       <number>10</number>
       </property>
       <property name="rightMargin">
-       <number>4</number>
+       <number>10</number>
       </property>
       <property name="bottomMargin">
-       <number>4</number>
+       <number>10</number>
       </property>
       <item>
        <widget class="QLabel" name="label">
@@ -91,14 +91,14 @@
         </property>
         <property name="minimumSize">
          <size>
-          <width>64</width>
-          <height>64</height>
+          <width>72</width>
+          <height>72</height>
          </size>
         </property>
         <property name="maximumSize">
          <size>
-          <width>64</width>
-          <height>64</height>
+          <width>80</width>
+          <height>80</height>
          </size>
         </property>
         <property name="text">
@@ -108,7 +108,7 @@
          <enum>Qt::PlainText</enum>
         </property>
         <property name="pixmap">
-         <pixmap resource="../../res/resources.qrc">:/images/images/pgmodeler_logo.png</pixmap>
+         <pixmap resource="../../res/resources.qrc">:/icons/icons/pgmodeler_logo.png</pixmap>
         </property>
         <property name="scaledContents">
          <bool>true</bool>
@@ -120,6 +120,9 @@
       </item>
       <item>
        <layout class="QGridLayout" name="gridLayout">
+        <property name="spacing">
+         <number>10</number>
+        </property>
         <item row="0" column="1" colspan="3">
          <widget class="QLabel" name="text_lbl">
           <property name="sizePolicy">
@@ -164,18 +167,21 @@
           </property>
           <property name="minimumSize">
            <size>
-            <width>35</width>
-            <height>32</height>
+            <width>40</width>
+            <height>40</height>
            </size>
           </property>
           <property name="maximumSize">
            <size>
-            <width>35</width>
-            <height>32</height>
+            <width>40</width>
+            <height>40</height>
            </size>
           </property>
           <property name="text">
            <string/>
+          </property>
+          <property name="scaledContents">
+           <bool>true</bool>
           </property>
           <property name="alignment">
            <set>Qt::AlignCenter</set>
@@ -193,6 +199,8 @@
   </layout>
  </widget>
  <resources>
+  <include location="../../res/resources.qrc"/>
+  <include location="../../res/resources.qrc"/>
   <include location="../../res/resources.qrc"/>
  </resources>
  <connections/>

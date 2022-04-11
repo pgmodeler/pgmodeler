@@ -25,7 +25,7 @@
        <key>CFBundleDisplayName</key>
        <string>pgModeler</string>
        <key>CFBundleIdentifier</key>
-       <string>br.com.pgmodeler.pgModeler</string>
+       <string>io.pgmodeler.pgModeler</string>
        <key>CFBundleInfoDictionaryVersion</key>
        <string>1.0</string>
        <key>CFBundlePackageType</key>

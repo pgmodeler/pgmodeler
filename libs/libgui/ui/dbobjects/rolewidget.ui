@@ -18,19 +18,19 @@
   </property>
   <layout class="QGridLayout" name="role_grid">
    <property name="leftMargin">
-    <number>2</number>
+    <number>5</number>
    </property>
    <property name="topMargin">
-    <number>2</number>
+    <number>5</number>
    </property>
    <property name="rightMargin">
-    <number>2</number>
+    <number>5</number>
    </property>
    <property name="bottomMargin">
-    <number>2</number>
+    <number>5</number>
    </property>
    <property name="spacing">
-    <number>6</number>
+    <number>10</number>
    </property>
    <item row="1" column="1">
     <widget class="QDateTimeEdit" name="validity_dte">
@@ -93,7 +93,6 @@
     <widget class="QLabel" name="conn_limit_lbl">
      <property name="font">
       <font>
-       <weight>50</weight>
        <italic>false</italic>
        <bold>false</bold>
       </font>
@@ -110,19 +109,19 @@
      </property>
      <layout class="QGridLayout" name="gridLayout">
       <property name="leftMargin">
-       <number>4</number>
+       <number>5</number>
       </property>
       <property name="topMargin">
-       <number>4</number>
+       <number>5</number>
       </property>
       <property name="rightMargin">
-       <number>4</number>
+       <number>5</number>
       </property>
       <property name="bottomMargin">
-       <number>4</number>
+       <number>5</number>
       </property>
       <property name="spacing">
-       <number>6</number>
+       <number>10</number>
       </property>
       <item row="0" column="0">
        <widget class="QCheckBox" name="superusr_chk">

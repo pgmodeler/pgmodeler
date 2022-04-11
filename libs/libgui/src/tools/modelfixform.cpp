@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2022 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -25,7 +25,7 @@ const QString ModelFixForm::PgModelerCli("pgmodeler-cli");
 
 ModelFixForm::ModelFixForm(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 {
-	map<QString, attribs_map> confs=GeneralConfigWidget::getConfigurationParams();
+	map<QString, attribs_map> confs = AppearanceConfigWidget::getConfigurationParams();
 
 	setupUi(this);
 
@@ -55,16 +55,16 @@ ModelFixForm::ModelFixForm(QWidget *parent, Qt::WindowFlags f) : QDialog(parent,
 	pgmodeler_cli_sel->setVisible(false);
 	model_fix_grid->addWidget(pgmodeler_cli_sel, 1, 2);
 
-	GuiUtilsNs::configureWidgetFont(message_lbl, GuiUtilsNs::MediumFontFactor);
+
 	GuiUtilsNs::configureWidgetFont(not_found_lbl, GuiUtilsNs::MediumFontFactor);
 
 	//Configuring font style for output widget
-	if(!confs[Attributes::Configuration][Attributes::CodeFont].isEmpty())
+	if(!confs[Attributes::Code][Attributes::Font].isEmpty())
 	{
-		double size=confs[Attributes::Configuration][Attributes::CodeFontSize].toDouble();
+		double size=confs[Attributes::Code][Attributes::FontSize].toDouble();
 		if(size < 5.0) size=5.0;
 
-		output_txt->setFontFamily(confs[Attributes::Configuration][Attributes::CodeFont]);
+		output_txt->setFontFamily(confs[Attributes::Code][Attributes::Font]);
 		output_txt->setFontPointSize(size);
 	}
 
@@ -82,7 +82,7 @@ ModelFixForm::ModelFixForm(QWidget *parent, Qt::WindowFlags f) : QDialog(parent,
 
 void ModelFixForm::hideEvent(QHideEvent *)
 {
-	message_frm->setVisible(false);
+	alert_frm->setVisible(false);
 	pgmodeler_cli_lbl->setVisible(false);
 	pgmodeler_cli_sel->setVisible(false);
 	input_file_sel->clearSelector();
@@ -100,7 +100,7 @@ int ModelFixForm::exec()
 	{
 		not_found_lbl->setText(tr("Could not locate <strong>%1</strong> tool on <strong>%2</strong>. The fix process can't continue! Please check pgModeler installation or try to manually specify the command below.")
 							   .arg(PgModelerCli).arg(fi.absoluteDir().absolutePath()));
-		message_frm->setVisible(true);
+		alert_frm->setVisible(true);
 		pgmodeler_cli_lbl->setVisible(true);
 		pgmodeler_cli_sel->setVisible(true);
 	}
@@ -122,12 +122,12 @@ void ModelFixForm::enableFix()
 		else
 			pgmodeler_cli_sel->clearCustomWarning();
 
-		message_frm->setVisible(invalid_cli);
+		alert_frm->setVisible(invalid_cli);
 	}
 	else
 	{
 		pgmodeler_cli_sel->clearCustomWarning();
-		message_frm->setVisible(false);
+		alert_frm->setVisible(false);
 	}
 
 	fix_btn->setEnabled(!input_file_sel->hasWarning() && !input_file_sel->getSelectedFile().isEmpty() &&

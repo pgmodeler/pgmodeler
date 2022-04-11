@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2022 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -24,13 +24,22 @@ Messagebox::Messagebox(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 {
 	setupUi(this);
 	this->setWindowFlags(Qt::Dialog | Qt::WindowTitleHint | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint);
-	cancelled=false;
+	cancelled=has_custom_size=false;
+	show_errors_tb->setVisible(false);
+	custom_option_chk->setVisible(false);
+
 	connect(yes_ok_btn,SIGNAL(clicked()),this,SLOT(handleYesOkClick()));
 	connect(no_btn,SIGNAL(clicked()),this,SLOT(handleNoCancelClick()));
 	connect(cancel_btn,SIGNAL(clicked()),this,SLOT(handleNoCancelClick()));
-	connect(show_errors_tb,SIGNAL(clicked()),this,SLOT(showExceptionList()));
-	show_errors_tb->setVisible(false);
-	custom_option_chk->setVisible(false);
+	connect(show_errors_tb, &QToolButton::toggled, [&](bool checked){
+			objs_group_wgt->setCurrentIndex(checked ? 1 : 0);
+
+			if(!has_custom_size)
+			{
+				resize(baseSize().width(),baseSize().height() * (checked ? 2 : 1));
+				has_custom_size = false;
+			}
+	});
 }
 
 void Messagebox::handleYesOkClick()
@@ -71,27 +80,25 @@ bool Messagebox::isCustomOptionChecked()
 	return custom_option_chk->isChecked();
 }
 
-void Messagebox::showExceptionList()
-{
-	objs_group_wgt->setCurrentIndex(show_errors_tb->isChecked() ? 1 : 0);
-}
-
 void Messagebox::show(Exception e, const QString &msg, unsigned icon_type, unsigned buttons, const QString &yes_lbl, const QString &no_lbl, const QString &cancel_lbl,
 					  const QString &yes_ico, const QString &no_ico, const QString &cancel_ico)
 {
-	QString str_aux, title;
+	QString fmt_msg, fmt_extra_info, title;
 
 	raw_info_txt->setPlainText(e.getExceptionsText());
+	extra_info_txt->setPlainText(e.getExceptiosExtraInfo());
+	stacktrace_tbw->setTabVisible(1, !e.getExceptiosExtraInfo().isEmpty());
+
 	GuiUtilsNs::createExceptionsTree(exceptions_trw, e, nullptr);
 	exceptions_trw->expandAll();
 	exceptions_trw->scrollToTop();
 
 	if(msg.isEmpty())
-		str_aux=GuiUtilsNs::formatMessage(e.getErrorMessage());
+		fmt_msg = GuiUtilsNs::formatMessage(e.getErrorMessage());
 	else
-		str_aux=GuiUtilsNs::formatMessage(msg);
+		fmt_msg = GuiUtilsNs::formatMessage(msg);
 
-	this->show(title, str_aux, icon_type, buttons, yes_lbl, no_lbl, cancel_lbl, yes_ico, no_ico, cancel_ico);
+	this->show(title, fmt_msg, icon_type, buttons, yes_lbl, no_lbl, cancel_lbl, yes_ico, no_ico, cancel_ico);
 }
 
 void Messagebox::show(const QString &msg, unsigned icon_type, unsigned buttons)
@@ -177,26 +184,39 @@ void Messagebox::show(const QString &title, const QString &msg, unsigned icon_ty
 	objs_group_wgt->setCurrentIndex(0);
 	show_errors_tb->setChecked(false);
 	show_errors_tb->setVisible(exceptions_trw->topLevelItemCount() > 0);
-	showExceptionList();
 
-	QFontMetrics fm(msg_lbl->font());
-	QString aux_msg = QString(msg).replace(QRegExp(QString("(<)(br)(/)?(>)"), Qt::CaseInsensitive), QString("\n"));
-	QSize size = QSize(msg_lbl->width(), fm.height() * (aux_msg.trimmed().count('\n') + 1));
-	double factor = BaseObjectView::getScreenDpiFactor();
-	int max_h = msg_lbl->minimumHeight() * 3, btn_h = fm.height() * factor;
+	double w_factor = 0.20, h_factor = 0.10;
+	QRect screen_rect = screen()->geometry();
 
-	//Forcing the footer buttons to have the minimum height attached to the screen's dpi/font size
-	yes_ok_btn->setMinimumHeight(btn_h);
-	no_btn->setMinimumHeight(btn_h);
-	cancel_btn->setMinimumHeight(btn_h);
-	show_errors_tb->setMinimumHeight(btn_h);
+	if(screen_rect.width() <= GuiUtilsNs::FHDWidth)
+	{
+		w_factor = 0.28;
+		h_factor = 0.16;
+	}
+	else if(screen_rect.width() <= GuiUtilsNs::QHDWidth)
+	{
+		w_factor = 0.22;
+		h_factor = 0.12;
+	}
 
-	//Resizing the message box if the text height is greater than the default size
-	if(size.height() > msg_lbl->minimumHeight() && size.height() < max_h)
-		setMinimumHeight((size.height() * 1.25)  + show_errors_tb->height() + yes_ok_btn->height());
-	else if(size.height() >= max_h)
-		setMinimumHeight(max_h);
+	setMinimumWidth(screen_rect.width() * w_factor);
+	setMinimumHeight(screen_rect.height() * h_factor);
 
-	resize(minimumWidth() * factor, minimumHeight());
+	int ln_cnt = QString(msg).replace(QRegExp(QString("(<)(br)(/)?(>)"), Qt::CaseInsensitive), QString("\n")).count('\n');
+
+	if(ln_cnt > 0)
+		adjustSize();
+	else
+		resize(minimumSize());
+
+	setBaseSize(size());
 	QDialog::exec();
+}
+
+void Messagebox::resizeEvent(QResizeEvent *event)
+{
+	if(isVisible())
+		has_custom_size = true;
+
+	QWidget::resizeEvent(event);
 }

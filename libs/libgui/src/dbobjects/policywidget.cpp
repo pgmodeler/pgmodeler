@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2022 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -52,7 +52,7 @@ PolicyWidget::PolicyWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType
 																					 .arg(BaseObject::getTypeName(ObjectType::Policy).toLower()));
 		vbox->addWidget(frame);
 		frame->setParent(this);
-		vbox->setContentsMargins(4,4,4,4);
+		vbox->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
 		attribs_tbw->widget(0)->setLayout(vbox);
 
 		command_cmb->addItems(PolicyCmdType::getTypes());

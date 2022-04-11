@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2022 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -19,13 +19,12 @@
 #include "globalattributes.h"
 #include "messagebox.h"
 #include "attributes.h"
+#include <QScreen>
+#include "utils/custommenustyle.h"
 
 PgModelerApp::PgModelerApp(int &argc, char **argv) : Application(argc,argv)
 {
 	QTranslator *main_translator=nullptr, *plugin_translator=nullptr;
-	QFile ui_style(GlobalAttributes::getTmplConfigurationFilePath("",
-																																GlobalAttributes::UiStyleConf +
-																																GlobalAttributes::ConfigurationExt));
 	QString plugin_name, plug_lang_dir, plug_lang_file;
 	QStringList dir_list;
 	QDir dir;
@@ -122,19 +121,6 @@ PgModelerApp::PgModelerApp(int &argc, char **argv) : Application(argc,argv)
 			this->installTranslator(plugin_translator);
 		}
 	}
-
-	//Loading app style sheet
-	ui_style.open(QFile::ReadOnly);
-
-	//Raises an error if ui style is not found
-	if(!ui_style.isOpen())
-	{
-		Messagebox msg;
-		msg.show(Exception(Exception::getErrorMessage(ErrorCode::FileDirectoryNotAccessed).arg(ui_style.fileName()),
-											 ErrorCode::FileDirectoryNotAccessed,__PRETTY_FUNCTION__,__FILE__,__LINE__));
-	}
-	else
-		this->setStyleSheet(ui_style.readAll());
 }
 
 bool PgModelerApp::notify(QObject *receiver, QEvent *event)

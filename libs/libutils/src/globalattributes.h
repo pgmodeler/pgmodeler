@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2022 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -62,6 +62,7 @@ class GlobalAttributes {
 		SQLHighlightConfPath,
 		XMLHighlightConfPath,
 		SchHighlightConfPath,
+		PatternHighlightConfPath,
 		PgModelerCHandlerPath,
 		PgModelerCLIPath,
 		PgModelerAppPath,
@@ -79,7 +80,6 @@ class GlobalAttributes {
 		static const QString
 		PgModelerAppName,
 		PgModelerURI,
-		PgModelerReverseURI,
 		PgModelerVersion,
 		PgModelerBuildNumber,
 		PgModelerSite,
@@ -110,9 +110,10 @@ class GlobalAttributes {
 		MetadataDTD,			//! \brief Root DTD of objects metadata xml files
 		ConfigurationExt, //! \brief Default extension for configuration files
 		HighlightFileSuffix, //! \brief Suffix of language highlight configuration files
+		ThemesDir,					 //! \brief Default name for the ui style directory
 
 		CodeHighlightConf,  //! \brief Default name for the language highlight dtd
-		ObjectsStyleConf,   //! \brief Default name for the object style configuration file
+		AppearanceConf,   //! \brief Default name for the appearance configuration file
 		GeneralConf,         //! \brief Default name for the general pgModeler configuration
 		ConnectionsConf,     //! \brief Default name for the DBMS connection configuration file
 		RelationshipsConf,   //! \brief Default name for the relationships configuration file
@@ -126,7 +127,9 @@ class GlobalAttributes {
 		SQLHistoryConf,		//! \brief Default name for the SQL commands history configuration file
 
 		ExampleModel, //! \brief Default name for the sample model loaded on appearence configuration form
-		UiStyleConf, //! \brief Configuration file ui style
+		UiDefaulStyleConf, //! \brief Configuration file ui style (defaults for 4k screens)
+		UiMediumStyleConf, //! \brief Extra configuration file ui style (for medium screen sizes > 1080p and < 2k)
+		UiSmallStyleConf, //! \brief Extra configuration file ui style (for medium screen sizes <= 1080p)
 
 		/*! \brief Fusion is the default widget style for pgModeler. User can change this by calling
 		the executable using -style option. This same style is applied to crash handler. */
@@ -185,6 +188,9 @@ class GlobalAttributes {
 
 		//! \brief Returns the path to the "sch-highlight.conf" file in user's local storage
 		static QString getSchHighlightConfPath();
+
+		//! \brief Returns the path to the "pattern-highlight.conf" file in user's local storage
+		static QString getPatternHighlightConfPath();
 
 		//! \brief Returns the path to the "pgmodeler-ch" (crash handler) executable
 		static QString getPgModelerCHandlerPath();

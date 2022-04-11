@@ -27,19 +27,19 @@
   </property>
   <layout class="QGridLayout" name="permission_grid">
    <property name="leftMargin">
-    <number>2</number>
+    <number>5</number>
    </property>
    <property name="topMargin">
-    <number>2</number>
+    <number>5</number>
    </property>
    <property name="rightMargin">
-    <number>2</number>
+    <number>5</number>
    </property>
    <property name="bottomMargin">
-    <number>2</number>
+    <number>5</number>
    </property>
    <property name="spacing">
-    <number>6</number>
+    <number>10</number>
    </property>
    <item row="0" column="0">
     <widget class="QTabWidget" name="tabWidget">
@@ -52,21 +52,24 @@
       </attribute>
       <layout class="QGridLayout" name="gridLayout_2">
        <property name="leftMargin">
-        <number>4</number>
+        <number>5</number>
        </property>
        <property name="topMargin">
-        <number>4</number>
+        <number>5</number>
        </property>
        <property name="rightMargin">
-        <number>4</number>
+        <number>5</number>
        </property>
        <property name="bottomMargin">
-        <number>4</number>
+        <number>5</number>
        </property>
        <item row="0" column="0">
         <widget class="QSplitter" name="splitter_2">
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="handleWidth">
+          <number>8</number>
          </property>
          <widget class="QWidget" name="layoutWidget">
           <layout class="QVBoxLayout" name="verticalLayout">
@@ -129,6 +132,9 @@
              <property name="orientation">
               <enum>Qt::Vertical</enum>
              </property>
+             <property name="handleWidth">
+              <number>8</number>
+             </property>
              <widget class="QGroupBox" name="roles_gb">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
@@ -176,19 +182,19 @@
               </property>
               <layout class="QGridLayout" name="gridLayout">
                <property name="leftMargin">
-                <number>4</number>
+                <number>5</number>
                </property>
                <property name="topMargin">
-                <number>4</number>
+                <number>5</number>
                </property>
                <property name="rightMargin">
-                <number>4</number>
+                <number>5</number>
                </property>
                <property name="bottomMargin">
-                <number>4</number>
+                <number>5</number>
                </property>
                <property name="spacing">
-                <number>6</number>
+                <number>10</number>
                </property>
                <item row="0" column="0">
                 <widget class="QRadioButton" name="grant_rb">
@@ -291,8 +297,8 @@
                </property>
                <property name="iconSize">
                 <size>
-                 <width>22</width>
-                 <height>22</height>
+                 <width>32</width>
+                 <height>32</height>
                 </size>
                </property>
               </widget>
@@ -320,8 +326,8 @@
                </property>
                <property name="iconSize">
                 <size>
-                 <width>22</width>
-                 <height>22</height>
+                 <width>32</width>
+                 <height>32</height>
                 </size>
                </property>
               </widget>
@@ -349,8 +355,8 @@
                </property>
                <property name="iconSize">
                 <size>
-                 <width>22</width>
-                 <height>22</height>
+                 <width>32</width>
+                 <height>32</height>
                 </size>
                </property>
               </widget>
@@ -405,23 +411,21 @@
       </attribute>
       <layout class="QGridLayout" name="gridLayout_3">
        <property name="leftMargin">
-        <number>4</number>
+        <number>5</number>
        </property>
        <property name="topMargin">
-        <number>4</number>
+        <number>5</number>
        </property>
        <property name="rightMargin">
-        <number>4</number>
+        <number>5</number>
        </property>
        <property name="bottomMargin">
-        <number>4</number>
+        <number>5</number>
        </property>
        <item row="0" column="0">
         <widget class="QPlainTextEdit" name="code_txt">
          <property name="font">
-          <font>
-           <family>DejaVu Sans Mono</family>
-          </font>
+          <font/>
          </property>
          <property name="readOnly">
           <bool>true</bool>
@@ -446,6 +450,7 @@
   <tabstop>cancel_tb</tabstop>
  </tabstops>
  <resources>
+  <include location="../../res/resources.qrc"/>
   <include location="../../res/resources.qrc"/>
  </resources>
  <connections/>

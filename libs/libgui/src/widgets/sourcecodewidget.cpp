@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2022 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -76,7 +76,7 @@ void SourceCodeWidget::setSourceCodeTab(int)
 			  || (obj_type!=ObjectType::BaseRelationship && obj_type!=ObjectType::Textbox)));
 
 	icone=QPixmap(GuiUtilsNs::getIconPath(code_icon));
-	icon_lbl->setPixmap(icone);
+	icon2_lbl->setPixmap(icone);
 	version_cmb->setEnabled(enabled);
 	pgsql_lbl->setEnabled(enabled);
 	version_lbl->setEnabled(enabled);

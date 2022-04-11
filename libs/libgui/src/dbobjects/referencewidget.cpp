@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2022 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -30,7 +30,7 @@ ReferenceWidget::ReferenceWidget(QWidget *parent) : QWidget(parent)
 	expression_hl=new SyntaxHighlighter(expression_txt, false, true);
 	expression_hl->loadConfiguration(GlobalAttributes::getSQLHighlightConfPath());
 
-	ref_object_sel=new ObjectSelectorWidget({ ObjectType::Table, ObjectType::ForeignTable, ObjectType::Column }, true, this);
+	ref_object_sel=new ObjectSelectorWidget({ ObjectType::Table, ObjectType::ForeignTable, ObjectType::Column }, this);
 	ref_object_sel->enableObjectCreation(false);
 	ref_object_sel->setToolTip(tr("To reference all columns of a table select only a table in the object selector, this is the same as write <em><strong>[schema].[table].*</strong></em>. In order to reference a only a single column of a table select a column object in the selector."));
 	expression_cp=new CodeCompletionWidget(expression_txt, true);
@@ -70,7 +70,7 @@ ReferenceWidget::ReferenceWidget(QWidget *parent) : QWidget(parent)
 	ref_tables_tab->setHeaderLabel(tr("Schema"), 1);
 	ref_tables_tab->setHeaderIcon(QPixmap(GuiUtilsNs::getIconPath("schema")),1);
 
-	ref_table_sel=new ObjectSelectorWidget({ ObjectType::Table, ObjectType::ForeignTable }, true, this);
+	ref_table_sel=new ObjectSelectorWidget({ ObjectType::Table, ObjectType::ForeignTable }, this);
 	ref_table_sel->enableObjectCreation(false);
 
 	QHBoxLayout *hbox = new QHBoxLayout;
@@ -79,7 +79,7 @@ ReferenceWidget::ReferenceWidget(QWidget *parent) : QWidget(parent)
 
 	info_frm=BaseObjectWidget::generateInformationFrame(tr("This tab can be used to inform the tables that the view references. This is just a convenience to make the visualization of this kind of object more intuitive. If no table is specified here no relationship will be displayed in the canvas. Note that no validation will be done to check if the provided tables are really referenced by the view."));
 	vbox = new QVBoxLayout;
-	vbox->setContentsMargins(4,4,4,4);
+	vbox->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
 	vbox->addLayout(hbox);
 	vbox->addWidget(ref_tables_tab);
 	vbox->addWidget(info_frm);

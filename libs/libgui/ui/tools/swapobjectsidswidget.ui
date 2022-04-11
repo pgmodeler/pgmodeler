@@ -55,7 +55,6 @@
    </property>
    <property name="font">
     <font>
-     <weight>50</weight>
      <bold>false</bold>
     </font>
    </property>
@@ -68,8 +67,8 @@
     <rect>
      <x>410</x>
      <y>12</y>
-     <width>32</width>
-     <height>32</height>
+     <width>40</width>
+     <height>40</height>
     </rect>
    </property>
    <property name="sizePolicy">
@@ -80,18 +79,21 @@
    </property>
    <property name="minimumSize">
     <size>
-     <width>32</width>
-     <height>32</height>
+     <width>40</width>
+     <height>40</height>
     </size>
    </property>
    <property name="maximumSize">
     <size>
-     <width>32</width>
-     <height>32</height>
+     <width>40</width>
+     <height>40</height>
     </size>
    </property>
    <property name="text">
     <string/>
+   </property>
+   <property name="scaledContents">
+    <bool>true</bool>
    </property>
   </widget>
   <widget class="QLabel" name="before_lbl">
@@ -136,7 +138,6 @@
    </property>
    <property name="font">
     <font>
-     <weight>50</weight>
      <bold>false</bold>
     </font>
    </property>
@@ -149,8 +150,8 @@
     <rect>
      <x>410</x>
      <y>50</y>
-     <width>32</width>
-     <height>32</height>
+     <width>40</width>
+     <height>40</height>
     </rect>
    </property>
    <property name="sizePolicy">
@@ -161,18 +162,21 @@
    </property>
    <property name="minimumSize">
     <size>
-     <width>32</width>
-     <height>32</height>
+     <width>40</width>
+     <height>40</height>
     </size>
    </property>
    <property name="maximumSize">
     <size>
-     <width>32</width>
-     <height>32</height>
+     <width>40</width>
+     <height>40</height>
     </size>
    </property>
    <property name="text">
     <string/>
+   </property>
+   <property name="scaledContents">
+    <bool>true</bool>
    </property>
   </widget>
   <widget class="QFrame" name="alert_frm">
@@ -210,29 +214,29 @@
    </property>
    <layout class="QGridLayout" name="gridLayout">
     <property name="leftMargin">
-     <number>2</number>
+     <number>5</number>
     </property>
     <property name="topMargin">
-     <number>2</number>
+     <number>5</number>
     </property>
     <property name="rightMargin">
-     <number>2</number>
+     <number>5</number>
     </property>
     <property name="bottomMargin">
-     <number>2</number>
+     <number>5</number>
     </property>
     <item row="0" column="0">
-     <widget class="QLabel" name="label">
+     <widget class="QLabel" name="icon_lbl">
       <property name="minimumSize">
        <size>
-        <width>24</width>
-        <height>24</height>
+        <width>32</width>
+        <height>32</height>
        </size>
       </property>
       <property name="maximumSize">
        <size>
-        <width>24</width>
-        <height>24</height>
+        <width>32</width>
+        <height>32</height>
        </size>
       </property>
       <property name="text">
@@ -259,7 +263,6 @@
       </property>
       <property name="font">
        <font>
-        <weight>50</weight>
         <bold>false</bold>
         <underline>false</underline>
         <strikeout>false</strikeout>
@@ -321,8 +324,8 @@
    </property>
    <property name="iconSize">
     <size>
-     <width>22</width>
-     <height>44</height>
+     <width>32</width>
+     <height>32</height>
     </size>
    </property>
    <property name="toolButtonStyle">
@@ -544,7 +547,7 @@
     </rect>
    </property>
    <property name="sizePolicy">
-    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+    <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
      <horstretch>0</horstretch>
      <verstretch>0</verstretch>
     </sizepolicy>
@@ -567,8 +570,8 @@
    </property>
    <property name="iconSize">
     <size>
-     <width>20</width>
-     <height>20</height>
+     <width>32</width>
+     <height>32</height>
     </size>
    </property>
    <property name="checkable">
@@ -580,6 +583,7 @@
   </widget>
  </widget>
  <resources>
+  <include location="../../res/resources.qrc"/>
   <include location="../../res/resources.qrc"/>
  </resources>
  <connections/>

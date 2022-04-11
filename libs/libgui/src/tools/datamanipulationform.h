@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2022 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -40,9 +40,6 @@ class DataManipulationForm: public QDialog, public Ui::DataManipulationForm {
 		OpInsert=1,
 		OpUpdate=2,
 		OpDelete=3;
-
-		//! \brief Default row colors for each operation type
-		static const QColor RowColors[3];
 
 		CsvLoadWidget *csv_load_wgt;
 

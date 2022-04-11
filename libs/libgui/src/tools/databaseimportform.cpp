@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2022 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -35,7 +35,7 @@ DatabaseImportForm::DatabaseImportForm(QWidget *parent, Qt::WindowFlags f) : QDi
 
 	objs_filter_wgt = new ObjectsFilterWidget(options_tbw->widget(1));
 	QVBoxLayout *vbox = new QVBoxLayout(options_tbw->widget(1));
-	vbox->setContentsMargins(4,4,4,4);
+	vbox->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
 	vbox->addWidget(objs_filter_wgt);
 
 	htmlitem_del=new HtmlItemDelegate(this);
@@ -951,7 +951,7 @@ vector<QTreeWidgetItem *> DatabaseImportForm::updateObjectsTree(DatabaseImportHe
 			{
 				//Create a group item for the current type
 				group=new QTreeWidgetItem(root);
-				group->setIcon(0, QPixmap(GuiUtilsNs::getIconPath(BaseObject::getSchemaName(grp_type) + QString("_grp"))));
+				group->setIcon(0, QPixmap(GuiUtilsNs::getIconPath(BaseObject::getSchemaName(grp_type))));
 				group->setFont(0, grp_fnt);
 
 				//Group items does contains a zero valued id to indicate that is not a valide object

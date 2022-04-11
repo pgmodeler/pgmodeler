@@ -1,0 +1,72 @@
+<!--
+  CAUTION: Do not modify this file directly on it's code unless you know what you are doing.
+           Unexpected results may occur if the code is changed deliberately.
+-->
+<!ELEMENT general (configuration, widget-conf?, session?, recent-models?, dock-widgets?, widgets-geometry?)>
+
+<!ELEMENT configuration EMPTY>
+<!ATTLIST configuration op-list-size CDATA #REQUIRED>
+<!ATTLIST configuration autosave-interval CDATA #IMPLIED>
+<!ATTLIST configuration paper-type CDATA #IMPLIED>
+<!ATTLIST configuration paper-orientation (portrait|landscape) "landscape">
+<!ATTLIST configuration paper-margin CDATA #IMPLIED>
+<!ATTLIST configuration paper-custom-size CDATA #IMPLIED>
+<!ATTLIST configuration print-grid (false|true) "true">
+<!ATTLIST configuration print-pg-num (false|true) "true">
+<!ATTLIST configuration hide-rel-name (false|true) "false">
+<!ATTLIST configuration hide-ext-attribs (false|true) "false">
+<!ATTLIST configuration hide-table-tags (false|true) "false">
+<!ATTLIST configuration canvas-corner-move (false|true) "true">
+<!ATTLIST configuration invert-rangesel-trigger (false|true) "false">
+<!ATTLIST configuration check-update (false|true) "false">
+<!ATTLIST configuration check-versions (all|stablebeta|stableonly) "all">
+<!ATTLIST configuration save-last-position (false|true) "false">
+<!ATTLIST configuration show-main-menu (false|true) "false">
+<!ATTLIST configuration disable-smoothness (false|true) "false">
+<!ATTLIST configuration simplified-obj-creation (false|true) "false">
+<!ATTLIST configuration confirm-validation (false|true) "true">
+<!ATTLIST configuration code-completion (false|true) "true">
+<!ATTLIST configuration use-placeholders (false|true) "true">
+<!ATTLIST configuration show-canvas-grid (false|true) "true">
+<!ATTLIST configuration show-page-delimiters (false|true) "true">
+<!ATTLIST configuration align-objs-to-grid (false|true) "true">
+<!ATTLIST configuration history-max-length CDATA #IMPLIED>
+<!ATTLIST configuration source-editor-app CDATA #IMPLIED>
+<!ATTLIST configuration source-editor-args CDATA #IMPLIED>
+<!ATTLIST configuration ui-language CDATA #IMPLIED>
+<!ATTLIST configuration use-curved-lines (false|true) "false">
+<!ATTLIST configuration compact-view (false|true) "false">
+<!ATTLIST configuration save-restore-geometry (false|true) "false">
+<!ATTLIST configuration low-verbosity (false|true) "false">
+<!ATTLIST configuration escape-comment (false|true) "false">
+<!ATTLIST configuration hide-schema-names-of-types (false|true) "false">
+
+<!ELEMENT session (file+)>
+<!ELEMENT recent-models (file+)>
+<!ELEMENT dock-widgets (widget+)>
+<!ELEMENT widgets-geometry (widget+)>
+
+<!ELEMENT file EMPTY>
+<!ATTLIST file id CDATA #REQUIRED>
+<!ATTLIST file path CDATA #REQUIRED>
+
+<!ELEMENT widget EMPTY>
+<!ATTLIST widget id CDATA #IMPLIED>
+<!ATTLIST widget sql-validation (false|true) "false">
+<!ATTLIST widget version CDATA #IMPLIED>
+<!ATTLIST widget use-unique-names (false|true) "false">
+<!ATTLIST widget regexp (false|true) "false">
+<!ATTLIST widget exact-match (false|true) "false">
+<!ATTLIST widget case-sensitive (false|true) "false">
+<!ATTLIST widget select-objects (false|true) "false">
+<!ATTLIST widget fadein-objects (false|true) "false">
+<!ATTLIST widget show-attributes-grid (false|true) "true">
+<!ATTLIST widget show-source-pane (false|true) "true">
+<!ATTLIST widget x CDATA #IMPLIED>
+<!ATTLIST widget y CDATA #IMPLIED>
+<!ATTLIST widget width CDATA #IMPLIED>
+<!ATTLIST widget height CDATA #IMPLIED>
+<!ATTLIST widget maximized (false|true) "false">
+
+
+

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2022 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -71,7 +71,7 @@ TableWidget::TableWidget(QWidget *parent, ObjectType tab_type): BaseObjectWidget
 	parent_tables->setHeaderIcon(QPixmap(GuiUtilsNs::getIconPath("usertype")),2);
 
 	server_sel=nullptr;
-	server_sel=new ObjectSelectorWidget(ObjectType::ForeignServer, true, this);
+	server_sel=new ObjectSelectorWidget(ObjectType::ForeignServer, this);
 
 	vbox = new QVBoxLayout;
 	vbox->setContentsMargins(0,0,0,0);
@@ -86,18 +86,18 @@ TableWidget::TableWidget(QWidget *parent, ObjectType tab_type): BaseObjectWidget
 	options_tab->setHeaderLabel(tr("Value"), 1);
 
 	vbox = new QVBoxLayout;
-	vbox->setContentsMargins(4,4,4,4);
+	vbox->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
 	vbox->addWidget(options_tab);
 	attributes_tbw->widget(8)->setLayout(vbox);
 
-	tag_sel = new ObjectSelectorWidget(ObjectType::Tag, false, this);
+	tag_sel = new ObjectSelectorWidget(ObjectType::Tag, this);
 	vbox = new QVBoxLayout(tag_sel_parent);
 	vbox->addWidget(tag_sel);
 	vbox->setContentsMargins(0,0,0,0);
 
 	grid=new QGridLayout;
 	grid->addWidget(parent_tables, 0,0,1,1);
-	grid->setContentsMargins(4,4,4,4);
+	grid->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
 	attributes_tbw->widget(7)->setLayout(grid);
 
 	//Configuring the table objects that stores the columns, triggers, constraints, rules and indexes
@@ -110,7 +110,7 @@ TableWidget::TableWidget(QWidget *parent, ObjectType tab_type): BaseObjectWidget
 
 		grid=new QGridLayout;
 		grid->addWidget(tab, 0,0,1,1);
-		grid->setContentsMargins(4,4,4,4);
+		grid->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
 		attributes_tbw->widget(i)->setLayout(grid);
 
 		connect(tab, SIGNAL(s_rowsRemoved()), this, SLOT(removeObjects()));
@@ -710,9 +710,17 @@ void TableWidget::showObjectData(TableObject *object, int row)
 		font.setItalic(true);
 
 		if(object->isAddedByRelationship())
-			tab->setRowFont(row, font, GuiUtilsNs::RelAddedRowFgColor, GuiUtilsNs::RelAddedRowBgColor);
+		{
+			tab->setRowFont(row, font,
+											ObjectsTableWidget::getTableItemColor(ObjectsTableWidget::RelAddedItemFgColor),
+											ObjectsTableWidget::getTableItemColor(ObjectsTableWidget::RelAddedItemBgColor));
+		}
 		else
-			tab->setRowFont(row, font, GuiUtilsNs::ProtRowFgColor, GuiUtilsNs::ProtRowBgColor);
+		{
+			tab->setRowFont(row, font,
+											ObjectsTableWidget::getTableItemColor(ObjectsTableWidget::ProtItemFgColor),
+											ObjectsTableWidget::getTableItemColor(ObjectsTableWidget::ProtItemBgColor));
+		}
 	}
 
 	tab->setCellText(object->getComment(), row, tab->getColumnCount() - 1);

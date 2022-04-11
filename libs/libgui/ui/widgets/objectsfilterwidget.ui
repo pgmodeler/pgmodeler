@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>492</width>
+    <width>532</width>
     <height>550</height>
    </rect>
   </property>
@@ -20,6 +20,9 @@
    <string>Form</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
+   <property name="spacing">
+    <number>10</number>
+   </property>
    <property name="leftMargin">
     <number>0</number>
    </property>
@@ -34,10 +37,13 @@
    </property>
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_2">
+     <property name="spacing">
+      <number>10</number>
+     </property>
      <item>
       <widget class="QToolButton" name="add_tb">
        <property name="sizePolicy">
-        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
@@ -50,12 +56,12 @@
        </property>
        <property name="icon">
         <iconset resource="../../res/resources.qrc">
-         <normaloff>:/icons/icons/adddata.png</normaloff>:/icons/icons/adddata.png</iconset>
+         <normaloff>:/icons/icons/addfilter.png</normaloff>:/icons/icons/addfilter.png</iconset>
        </property>
        <property name="iconSize">
         <size>
-         <width>22</width>
-         <height>22</height>
+         <width>32</width>
+         <height>32</height>
         </size>
        </property>
        <property name="shortcut">
@@ -72,7 +78,7 @@
         <bool>false</bool>
        </property>
        <property name="sizePolicy">
-        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
@@ -85,12 +91,12 @@
        </property>
        <property name="icon">
         <iconset resource="../../res/resources.qrc">
-         <normaloff>:/icons/icons/cleartext.png</normaloff>:/icons/icons/cleartext.png</iconset>
+         <normaloff>:/icons/icons/delcascade.png</normaloff>:/icons/icons/delcascade.png</iconset>
        </property>
        <property name="iconSize">
         <size>
-         <width>22</width>
-         <height>22</height>
+         <width>32</width>
+         <height>32</height>
         </size>
        </property>
        <property name="shortcut">
@@ -107,7 +113,7 @@
         <bool>true</bool>
        </property>
        <property name="sizePolicy">
-        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
@@ -121,8 +127,8 @@
        </property>
        <property name="iconSize">
         <size>
-         <width>22</width>
-         <height>22</height>
+         <width>32</width>
+         <height>32</height>
         </size>
        </property>
        <property name="popupMode">
@@ -138,6 +144,12 @@
        <property name="enabled">
         <bool>false</bool>
        </property>
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
        <property name="toolTip">
         <string>Apply configured filter(s)</string>
        </property>
@@ -150,8 +162,8 @@
        </property>
        <property name="iconSize">
         <size>
-         <width>22</width>
-         <height>22</height>
+         <width>32</width>
+         <height>32</height>
         </size>
        </property>
        <property name="shortcut">
@@ -322,17 +334,11 @@
        <number>2</number>
       </property>
       <item row="0" column="0">
-       <widget class="QLabel" name="label_6">
-        <property name="minimumSize">
-         <size>
-          <width>24</width>
-          <height>24</height>
-         </size>
-        </property>
+       <widget class="QLabel" name="icon_lbl">
         <property name="maximumSize">
          <size>
-          <width>24</width>
-          <height>24</height>
+          <width>32</width>
+          <height>32</height>
          </size>
         </property>
         <property name="text">
@@ -380,6 +386,7 @@
   </layout>
  </widget>
  <resources>
+  <include location="../../res/resources.qrc"/>
   <include location="../../res/resources.qrc"/>
  </resources>
  <connections/>

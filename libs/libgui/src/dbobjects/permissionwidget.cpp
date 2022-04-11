@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2022 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -50,7 +50,7 @@ PermissionWidget::PermissionWidget(QWidget *parent): BaseObjectWidget(parent, Ob
 
 	grid=new QGridLayout;
 	grid->addWidget(roles_tab,0,0,1,1);
-	grid->setContentsMargins(2,2,2,2);
+	grid->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
 	roles_gb->setLayout(grid);
 
 	permissions_tab=new ObjectsTableWidget(ObjectsTableWidget::RemoveButton |
@@ -66,7 +66,7 @@ PermissionWidget::PermissionWidget(QWidget *parent): BaseObjectWidget(parent, Ob
 
 	grid=new QGridLayout;
 	grid->addWidget(permissions_tab,0,0,1,1);
-	grid->setContentsMargins(2,2,2,2);
+	grid->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
 	permissions_gb->setLayout(grid);
 
 	for(i=Permission::PrivSelect; i<=Permission::PrivUsage; i++)

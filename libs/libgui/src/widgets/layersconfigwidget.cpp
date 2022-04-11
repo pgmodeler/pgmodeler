@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2022 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -18,6 +18,7 @@
 
 #include "layersconfigwidget.h"
 #include "colorpickerwidget.h"
+#include "guiutilsns.h"
 
 LayersConfigWidget::LayersConfigWidget(QWidget *parent) : QWidget(parent)
 {
@@ -43,6 +44,7 @@ LayersConfigWidget::LayersConfigWidget(QWidget *parent) : QWidget(parent)
 	remove_all_tb->setToolTip(remove_all_tb->toolTip() + QString(" (%1)").arg(remove_all_tb->shortcut().toString()));
 
 	visibility_tb->setMenu(&visibility_menu);
+	GuiUtilsNs::createDropShadow(this, 5, 5, 30);
 
 	connect(toggle_layers_rects_chk, SIGNAL(toggled(bool)), this, SLOT(toggleLayersRects()));
 	connect(toggle_layers_rects_chk, SIGNAL(toggled(bool)), toggle_layers_names_chk, SLOT(setEnabled(bool)));
@@ -323,7 +325,7 @@ void LayersConfigWidget::__addLayer(const QString &name, Qt::CheckState chk_stat
 
 	color_picker = new ColorPickerWidget(1, layers_tab);
 	color_picker->setButtonToolTip(0, tr("Layer name color"));
-	color_picker->layout()->setContentsMargins(5,5,5,5);
+	color_picker->layout()->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
 	color_picker->setColor(0, QColor(0,0,0));
 	name_color_pickers.append(color_picker);
 	connect(color_picker, SIGNAL(s_colorChanged(unsigned, QColor)), this, SLOT(updateLayerColors()));

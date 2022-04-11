@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2022 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -348,19 +348,19 @@ Exception::Exception(const QString &msg, ErrorCode error_code, const QString &me
 
 	while(itr!=exceptions.end())
 	{
-		addException((*itr));
+		addException(*itr);
 		itr++;
 	}
 }
 
 void Exception::configureException(const QString &msg, ErrorCode error_code, const QString &method, const QString &file, int line, const QString &extra_info)
 {
-	this->error_code=error_code;
-	this->error_msg=msg;
-	this->method=method;
-	this->file=file;
-	this->line=line;
-	this->extra_info=QString(extra_info);
+	this->error_code = error_code;
+	this->error_msg = msg;
+	this->method = method;
+	this->file = file;
+	this->line = line;
+	this->extra_info = extra_info;
 }
 
 QString Exception::getErrorMessage()
@@ -375,16 +375,16 @@ QString Exception::getErrorMessage(ErrorCode error_code)
 		 so the translation method is called  directly from the application specifying the
 		 context (Exception) in the ts file and the text to be translated */
 		return QApplication::translate("Exception", messages[enum_cast(error_code)][ErrorMessage].toStdString().c_str(), "", -1);
-	else
-		return "";
+
+	return "";
 }
 
 QString Exception::getErrorCode(ErrorCode error_code)
 {
 	if(enum_cast(error_code) < ErrorCount)
 		return messages[enum_cast(error_code)][ErrorCodeId];
-	else
-		return "";
+
+	return "";
 }
 
 QString Exception::getMethod()
@@ -419,15 +419,18 @@ void Exception::addException(Exception &exception)
 	itr=exception.exceptions.begin();
 	itr_end=exception.exceptions.end();
 
-	while(itr!=itr_end)
+	for(auto &itr : exception.exceptions)
 	{
-		this->exceptions.push_back(Exception(itr->error_msg,itr->error_code,
-											 itr->method,itr->file,itr->line,nullptr,itr->extra_info));
-		itr++;
+		this->exceptions.push_back(Exception(itr.error_msg,itr.error_code,
+																				 itr.method, itr.file, itr.line, nullptr,
+																				 itr.extra_info));
 	}
+
 	exception.exceptions.clear();
+
 	this->exceptions.push_back(Exception(exception.error_msg,exception.error_code,
-										 exception.method,exception.file,exception.line,nullptr,exception.extra_info));
+																			 exception.method,exception.file,exception.line,
+																			 nullptr,exception.extra_info));
 }
 
 void Exception::getExceptionsList(vector<Exception> &list)
@@ -481,3 +484,16 @@ QString Exception::getExceptionsText()
 	return exceptions_txt;
 }
 
+QString Exception::getExceptiosExtraInfo()
+{
+	QStringList list;
+
+	for(auto &ex : exceptions)
+		list.prepend(ex.extra_info);
+
+	list.prepend(extra_info);
+	list.removeAll("");
+	list.removeDuplicates();
+
+	return list.join('\n');
+}

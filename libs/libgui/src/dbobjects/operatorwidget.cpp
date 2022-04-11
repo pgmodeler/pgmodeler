@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2022 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -34,7 +34,7 @@ OperatorWidget::OperatorWidget(QWidget *parent): BaseObjectWidget(parent, Object
 		arg_types[1]=new PgSQLTypeWidget(this, tr("Right Argument Type"));
 
 		grid=new QGridLayout;
-		grid->setContentsMargins(4,4,4,4);
+		grid->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
 		grid->addWidget(arg_types[0],0,0);
 		grid->addWidget(arg_types[1],1,0);
 
@@ -50,7 +50,7 @@ OperatorWidget::OperatorWidget(QWidget *parent): BaseObjectWidget(parent, Object
 		for(i=Operator::FuncOperator; i <= Operator::FuncRestrict; i++)
 		{
 			functions_sel[i]=nullptr;
-			functions_sel[i]=new ObjectSelectorWidget(ObjectType::Function, true, this);
+			functions_sel[i]=new ObjectSelectorWidget(ObjectType::Function, this);
 
 			if(i!=Operator::FuncOperator)
 				grid->addWidget(functions_sel[i],i,1,1,1);
@@ -59,7 +59,7 @@ OperatorWidget::OperatorWidget(QWidget *parent): BaseObjectWidget(parent, Object
 		for(i=Operator::OperCommutator, i1=3; i <= Operator::OperNegator; i++,i1++)
 		{
 			operators_sel[i]=nullptr;
-			operators_sel[i]=new ObjectSelectorWidget(ObjectType::Operator, true, this);
+			operators_sel[i]=new ObjectSelectorWidget(ObjectType::Operator, this);
 			grid->addWidget(operators_sel[i],i1,1,1,1);
 		}
 

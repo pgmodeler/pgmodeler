@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2022 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -23,10 +23,11 @@
 #include "utils/plaintextitemdelegate.h"
 #include "baseform.h"
 #include "widgets/bulkdataeditwidget.h"
+#include "widgets/objectstablewidget.h"
 #include "databaseexplorerwidget.h"
 #include "settings/generalconfigwidget.h"
+#include "utils/custommenustyle.h"
 
-const QColor DataManipulationForm::RowColors[3]={ QColor(QString("#C0FFC0")), QColor(QString("#FFFFC0")), QColor(QString("#FFC0C0"))  };
 constexpr unsigned DataManipulationForm::NoOperation;
 constexpr unsigned DataManipulationForm::OpInsert;
 constexpr unsigned DataManipulationForm::OpUpdate;
@@ -50,13 +51,9 @@ DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f):
 		fnt.setBold(true);
 		btn->setFont(fnt);
 		GuiUtilsNs::createDropShadow(btn);
-		GuiUtilsNs::configureWidgetFont(btn, GuiUtilsNs::SmallFontFactor);
 	}
 
 	table_oid=0;
-	GuiUtilsNs::configureWidgetFont(hint_lbl, GuiUtilsNs::MediumFontFactor);
-	GuiUtilsNs::configureWidgetFont(warning_lbl, GuiUtilsNs::MediumFontFactor);
-
 	filter_hl=new SyntaxHighlighter(filter_txt);
 	filter_hl->loadConfiguration(GlobalAttributes::getSQLHighlightConfPath());
 
@@ -208,6 +205,11 @@ DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f):
 		else
 			selectColumn(section, sort_order);
 	});
+
+	fks_menu.setStyle(new CustomMenuStyle);
+	copy_menu.setStyle(new CustomMenuStyle);
+	truncate_menu.setStyle(new CustomMenuStyle);
+	paste_menu.setStyle(new CustomMenuStyle);
 }
 
 void DataManipulationForm::setAttributes(Connection conn, const QString curr_schema, const QString curr_table, const QString &filter)
@@ -892,6 +894,7 @@ void DataManipulationForm::retrieveFKColumns(const QString &schema, const QStrin
 			QStringList name_list;
 
 			submenu = new QMenu(this);
+			submenu->setStyle(new CustomMenuStyle);
 			fks_menu.addAction(QPixmap(GuiUtilsNs::getIconPath("referenced")), tr("Referenced tables"))->setMenu(submenu);
 
 			if(fks.empty())
@@ -941,6 +944,7 @@ void DataManipulationForm::retrieveFKColumns(const QString &schema, const QStrin
 			}
 
 			submenu = new QMenu(this);
+			submenu->setStyle(new CustomMenuStyle);
 			fks_menu.addAction(QPixmap(GuiUtilsNs::getIconPath("referrer")), tr("Referrer tables"))->setMenu(submenu);
 
 			if(ref_fks.empty())
@@ -995,6 +999,15 @@ void DataManipulationForm::markOperationOnRow(unsigned operation, int row)
 		QString tooltip=tr("This row is marked to be %1");
 		QFont fnt=results_tbw->font();
 		int marked_cols=0;
+		QColor item_fg_colors[3] = {
+			ObjectsTableWidget::getTableItemColor(ObjectsTableWidget::AddedItemFgColor),
+			ObjectsTableWidget::getTableItemColor(ObjectsTableWidget::UpdatedItemFgColor),
+			ObjectsTableWidget::getTableItemColor(ObjectsTableWidget::RemovedItemFgColor) },
+
+			item_bg_colors[3] = {
+						ObjectsTableWidget::getTableItemColor(ObjectsTableWidget::AddedItemBgColor),
+						ObjectsTableWidget::getTableItemColor(ObjectsTableWidget::UpdatedItemBgColor),
+						ObjectsTableWidget::getTableItemColor(ObjectsTableWidget::RemovedItemBgColor) };
 
 		if(operation==OpDelete)
 			tooltip=tooltip.arg(tr("deleted"));
@@ -1032,8 +1045,9 @@ void DataManipulationForm::markOperationOnRow(unsigned operation, int row)
 							header_item->data(Qt::UserRole)!=OpUpdate)
 						prev_row_colors[row]=item->background();
 
-					//Changes the item's background according to the operation
-					item->setBackground(RowColors[operation - 1]);
+					//Changes the item's background and foreground colors according to the operation
+					item->setBackground(item_bg_colors[operation - 1]);
+					item->setForeground(item_fg_colors[operation - 1]);
 				}
 
 				marked_cols++;
@@ -1526,8 +1540,10 @@ void DataManipulationForm::resizeEvent(QResizeEvent *event)
 {
 	Qt::ToolButtonStyle style = Qt::ToolButtonIconOnly;
 	QToolButton *btn = nullptr;
+	QSize screen_sz = this->screen()->size();
 
-	if(event->size().height() > this->baseSize().height())
+	// If the new dialog height is greater than 60% of the screen height we hide the toolbuttons texts
+	if(event->size().height() > screen_sz.height() * 0.70)
 		style = Qt::ToolButtonTextUnderIcon;
 
 	if(refresh_tb->toolButtonStyle() != style)
@@ -1623,6 +1639,8 @@ void DataManipulationForm::showPopupMenu()
 		QMenu item_menu;
 		QAction *act = nullptr;
 		ObjectType obj_type=static_cast<ObjectType>(table_cmb->currentData().toUInt());
+
+		item_menu.setStyle(new CustomMenuStyle);
 
 		act = item_menu.addAction(QIcon(GuiUtilsNs::getIconPath("copy")), tr("Copy items"));
 		act->setMenu(&copy_menu);

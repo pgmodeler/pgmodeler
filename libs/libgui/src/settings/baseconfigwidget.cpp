@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2022 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -49,8 +49,6 @@ bool BaseConfigWidget::isConfigurationChanged()
 
 void BaseConfigWidget::saveConfiguration(const QString &conf_id, map<QString, attribs_map> &config_params)
 {
-	//QByteArray buf;
-
 	//Configures the schema filename for the configuration
 	QString	sch_filename=GlobalAttributes::getTmplConfigurationFilePath(GlobalAttributes::SchemasDir,
 																																			conf_id + GlobalAttributes::SchemaExt),
@@ -58,31 +56,21 @@ void BaseConfigWidget::saveConfiguration(const QString &conf_id, map<QString, at
 			//Cofnigures the filename for the configuration file
 			cfg_filename = GlobalAttributes::getConfigurationFilePath(conf_id);
 
-	//QFile output(cfg_filename);
 	attribs_map attribs;
-	map<QString, attribs_map >::iterator itr, itr_end;
 
 	try
 	{
-		itr=config_params.begin();
-		itr_end=config_params.end();
-
-		while(itr!=itr_end)
-		{
-			attribs.insert((itr->second).begin(), (itr->second).end());
-			itr++;
-		}
+		for(auto &itr : config_params)
+			attribs.insert(itr.second.begin(), itr.second.end());
 
 		//Generates the configuration from the schema file
 		schparser.ignoreEmptyAttributes(true);
-		UtilsNs::saveFile(cfg_filename,
-											XmlParser::convertCharsToXMLEntities(schparser.getCodeDefinition(sch_filename, attribs)).toUtf8());
+		UtilsNs::saveFile(cfg_filename, XmlParser::convertCharsToXMLEntities(schparser.getCodeDefinition(sch_filename, attribs)).toUtf8());
 
 		config_params.erase(conf_id);
 	}
 	catch(Exception &e)
 	{
-		//if(output.isOpen()) output.close();
 		throw Exception(Exception::getErrorMessage(ErrorCode::FileNotWrittenInvalidDefinition).arg(cfg_filename),
 										ErrorCode::FileNotWrittenInvalidDefinition,__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
@@ -130,29 +118,19 @@ void BaseConfigWidget::restoreDefaults(const QString &conf_id, bool silent)
 	}
 }
 
-void BaseConfigWidget::loadConfiguration(const QString &conf_id, map<QString, attribs_map> &config_params, const vector<QString> &key_attribs)
+void BaseConfigWidget::loadConfiguration(const QString &filename, const QString &dtd, map<QString, attribs_map> &config_params, const QStringList &key_attribs, bool incl_elem_name)
 {
-	QString filename;
-
 	try
 	{
-		filename = GlobalAttributes::getConfigurationFilePath(conf_id);
-
 		config_params.clear();
 		xmlparser.restartParser();
-		/* xmlparser.setDTDFile(GlobalAttributes::getTmplConfigurationDir() +
-							 GlobalAttributes::DirSeparator +
-							 GlobalAttributes::ObjectDTDDir +
-							 GlobalAttributes::DirSeparator +
-							 conf_id +
-							 GlobalAttributes::ObjectDTDExt,
-							 conf_id); */
-
 		xmlparser.setDTDFile(GlobalAttributes::getTmplConfigurationFilePath(GlobalAttributes::ObjectDTDDir,
-																																				conf_id + GlobalAttributes::ObjectDTDExt),
-												 conf_id);
+																																				dtd + GlobalAttributes::ObjectDTDExt), dtd);
 
 		xmlparser.loadXMLFile(filename);
+
+		// Get the attributes of the root element
+		this->getConfigurationParams(config_params, key_attribs, incl_elem_name);
 
 		if(xmlparser.accessElement(XmlParser::ChildElement))
 		{
@@ -160,7 +138,7 @@ void BaseConfigWidget::loadConfiguration(const QString &conf_id, map<QString, at
 			{
 				if(xmlparser.getElementType()==XML_ELEMENT_NODE)
 				{
-					this->getConfigurationParams(config_params, key_attribs);
+					this->getConfigurationParams(config_params, key_attribs, incl_elem_name);
 
 					if(xmlparser.hasElement(XmlParser::ChildElement, XML_ELEMENT_NODE))
 					{
@@ -171,7 +149,7 @@ void BaseConfigWidget::loadConfiguration(const QString &conf_id, map<QString, at
 						{
 							do
 							{
-								this->getConfigurationParams(config_params, key_attribs);
+								this->getConfigurationParams(config_params, key_attribs, incl_elem_name);
 							}
 							while(xmlparser.accessElement(XmlParser::NextElement));
 						}
@@ -189,7 +167,20 @@ void BaseConfigWidget::loadConfiguration(const QString &conf_id, map<QString, at
 	}
 }
 
-void BaseConfigWidget::getConfigurationParams(map<QString, attribs_map> &config_params, const vector<QString> &key_attribs)
+void BaseConfigWidget::loadConfiguration(const QString &conf_id, map<QString, attribs_map> &config_params, const QStringList &key_attribs, bool incl_elem_name)
+{
+	try
+	{
+		QString filename = GlobalAttributes::getConfigurationFilePath(conf_id);
+		loadConfiguration(filename, conf_id, config_params, key_attribs, incl_elem_name);
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
+}
+
+void BaseConfigWidget::getConfigurationParams(map<QString, attribs_map> &config_params, const QStringList &key_attribs, bool incl_elem_name)
 {
 	attribs_map aux_attribs;
 	attribs_map::iterator itr, itr_end;
@@ -200,16 +191,23 @@ void BaseConfigWidget::getConfigurationParams(map<QString, attribs_map> &config_
 	itr=aux_attribs.begin();
 	itr_end=aux_attribs.end();
 
-	while(itr!=itr_end && key.isEmpty())
+	while(itr != itr_end && key.isEmpty())
 	{
 		if(key.isEmpty() && std::find(key_attribs.begin(), key_attribs.end(), itr->first)!=key_attribs.end())
-			key=itr->second;
+		{
+			key = itr->second;
+
+			if(incl_elem_name)
+				key.prepend(xmlparser.getElementName() + "-");
+
+			break;
+		}
 
 		itr++;
 	}
 
 	if(key.isEmpty())
-		key=xmlparser.getElementName();
+		key = xmlparser.getElementName();
 
 	//Extract the contents of the child element and create a special element on map called "_contents_"
 	if(xmlparser.hasElement(XmlParser::ChildElement, XML_TEXT_NODE))

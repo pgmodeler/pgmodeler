@@ -41,7 +41,11 @@ CAUTION: Do not modify this file unless you know what you are doing.
 <usertype name="mpaa_rating" configuration="enumeration">
 	<schema name="public"/>
 	<role name="postgres"/>
-	<enumeration values="G,PG,PG-13,R,NC-17"/>
+	<enumeration label="G"/>
+	<enumeration label="PG"/>
+	<enumeration label="PG-13"/>
+	<enumeration label="R"/>
+	<enumeration label="NC-17"/>
 </usertype>
 
 <domain name="year" not-null="false">

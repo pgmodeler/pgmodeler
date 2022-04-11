@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2022 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -25,7 +25,7 @@ SequenceWidget::SequenceWidget(QWidget *parent): BaseObjectWidget(parent, Object
 		Ui_SequenceWidget::setupUi(this);
 
 		column_sel=nullptr;
-		column_sel=new ObjectSelectorWidget(ObjectType::Column, true, this);
+		column_sel=new ObjectSelectorWidget(ObjectType::Column, this);
 		sequence_grid->addWidget(column_sel, 4, 1, 1, 3);
 
 		configureFormLayout(sequence_grid, ObjectType::Sequence);

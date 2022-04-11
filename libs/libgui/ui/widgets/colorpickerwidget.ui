@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>196</width>
-    <height>42</height>
+    <height>45</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -58,8 +58,8 @@
    </property>
    <property name="iconSize">
     <size>
-     <width>22</width>
-     <height>22</height>
+     <width>28</width>
+     <height>28</height>
     </size>
    </property>
    <property name="shortcut">
@@ -68,6 +68,7 @@
   </widget>
  </widget>
  <resources>
+  <include location="../../res/resources.qrc"/>
   <include location="../../res/resources.qrc"/>
  </resources>
  <connections/>

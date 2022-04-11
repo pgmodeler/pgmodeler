@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2022 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -123,10 +123,13 @@ class BaseObjectView: public QObject, public QGraphicsItemGroup {
 		static constexpr double VertSpacing=2.0,
 		HorizSpacing=2.0,
 		DefaultFontSize=10.0,
-		ObjectBorderWidth=0.85,
-		MaxDpiFactor=1.4;
+		ObjectBorderWidth=1.00,
+		MaxDpiFactor=1.4,
+		ObjectShadowXPos=8,
+		ObjectShadowYPos=8;
 
-		static constexpr int ObjectAlphaChannel=128;
+		static constexpr int ObjectAlphaChannel=128,
+		ObjectShadowAlphaChannel=50;
 
 		BaseObjectView(BaseObject *object=nullptr);
 		virtual ~BaseObjectView();
@@ -139,9 +142,6 @@ class BaseObjectView: public QObject, public QGraphicsItemGroup {
 
 		//! \brief Returns the object that is representend by the graphical object
 		BaseObject *getUnderlyingObject();
-
-		//! \brief Loads the font / color styels for the objects from a XML configuration file
-		static void loadObjectsStyle();
 
 		//! \brief Returns the objects bounding rect in local coordination
 		QRectF boundingRect(void) const;
@@ -204,6 +204,9 @@ class BaseObjectView: public QObject, public QGraphicsItemGroup {
 		bool isInLayer(unsigned layer_id);
 
 		int getLayersCount();
+
+		//! \brief Resizes to the specified dimension the passed polygon
+		static void resizePolygon(QPolygonF &pol, double width, double height);
 
 	protected slots:
 		//! \brief Make the basic object operations

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2022 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -38,9 +38,7 @@ BugReportForm::BugReportForm(QWidget *parent, Qt::WindowFlags f) : QDialog(paren
 	output_sel->setSelectedFile(GlobalAttributes::getTemporaryDir());
 
 	output_lt->addWidget(output_sel);
-	GuiUtilsNs::configureWidgetFont(hint_lbl, GuiUtilsNs::MediumFontFactor);
-
-	connect(cancel_btn, SIGNAL(clicked()), this, SLOT(close()));
+	connect(close_btn, SIGNAL(clicked()), this, SLOT(close()));
 	connect(create_btn, SIGNAL(clicked()), this, SLOT(generateReport()));
 	connect(attach_mod_chk, SIGNAL(toggled(bool)), attach_tb, SLOT(setEnabled(bool)));
 	connect(attach_tb, SIGNAL(clicked()), this, SLOT(attachModel()));

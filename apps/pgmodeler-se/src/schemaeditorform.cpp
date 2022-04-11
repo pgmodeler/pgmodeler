@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2022 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
 #include "schemaeditorform.h"
 #include "guiutilsns.h"
 #include "globalattributes.h"
-#include "settings/generalconfigwidget.h"
+#include "settings/appearanceconfigwidget.h"
 #include "guiutilsns.h"
 #include "sourceeditorwidget.h"
 #include "aboutwidget.h"
@@ -45,14 +45,13 @@ SchemaEditorForm::SchemaEditorForm(QWidget *parent) : QWidget(parent)
 		fnt.setBold(true);
 		btn->setFont(fnt);
 		GuiUtilsNs::createDropShadow(btn);
-		GuiUtilsNs::configureWidgetFont(btn, GuiUtilsNs::SmallFontFactor);
 
 		if(!btn->toolTip().isEmpty() && !btn->shortcut().toString().isEmpty())
 			btn->setToolTip(btn->toolTip() + QString(" (%1)").arg(btn->shortcut().toString()));
 	}
 
-	GeneralConfigWidget general_conf_wgt;
-	general_conf_wgt.loadConfiguration();
+	AppearanceConfigWidget appearance_conf_wgt;
+	appearance_conf_wgt.loadConfiguration();
 
 	alert_frm->setVisible(false);
 

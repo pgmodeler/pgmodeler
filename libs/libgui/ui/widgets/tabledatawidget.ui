@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>658</width>
-    <height>412</height>
+    <height>575</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -25,6 +25,9 @@
    </property>
    <property name="bottomMargin">
     <number>0</number>
+   </property>
+   <property name="spacing">
+    <number>10</number>
    </property>
    <item row="3" column="0" colspan="15">
     <widget class="QTableWidget" name="data_tbw">
@@ -118,8 +121,8 @@
      </property>
      <property name="iconSize">
       <size>
-       <width>22</width>
-       <height>22</height>
+       <width>32</width>
+       <height>32</height>
       </size>
      </property>
      <property name="popupMode">
@@ -153,8 +156,8 @@
      </property>
      <property name="iconSize">
       <size>
-       <width>22</width>
-       <height>22</height>
+       <width>32</width>
+       <height>32</height>
       </size>
      </property>
      <property name="shortcut">
@@ -188,8 +191,8 @@
      </property>
      <property name="iconSize">
       <size>
-       <width>22</width>
-       <height>22</height>
+       <width>32</width>
+       <height>32</height>
       </size>
      </property>
      <property name="shortcut">
@@ -228,8 +231,8 @@
      </property>
      <property name="iconSize">
       <size>
-       <width>22</width>
-       <height>22</height>
+       <width>32</width>
+       <height>32</height>
       </size>
      </property>
      <property name="shortcut">
@@ -259,12 +262,12 @@
      </property>
      <property name="icon">
       <iconset resource="../../res/resources.qrc">
-       <normaloff>:/icons/icons/loadcsv.png</normaloff>:/icons/icons/loadcsv.png</iconset>
+       <normaloff>:/icons/icons/open.png</normaloff>:/icons/icons/open.png</iconset>
      </property>
      <property name="iconSize">
       <size>
-       <width>22</width>
-       <height>22</height>
+       <width>32</width>
+       <height>32</height>
       </size>
      </property>
      <property name="shortcut">
@@ -279,7 +282,7 @@
     </widget>
    </item>
    <item row="2" column="0" colspan="15">
-    <widget class="QFrame" name="warn_frm">
+    <widget class="QFrame" name="alert_frm">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
        <horstretch>0</horstretch>
@@ -300,29 +303,23 @@
      </property>
      <layout class="QGridLayout" name="gridLayout_6">
       <property name="leftMargin">
-       <number>2</number>
+       <number>5</number>
       </property>
       <property name="topMargin">
-       <number>2</number>
+       <number>5</number>
       </property>
       <property name="rightMargin">
-       <number>2</number>
+       <number>5</number>
       </property>
       <property name="bottomMargin">
-       <number>2</number>
+       <number>5</number>
       </property>
       <item row="0" column="0">
-       <widget class="QLabel" name="label_7">
-        <property name="minimumSize">
-         <size>
-          <width>24</width>
-          <height>24</height>
-         </size>
-        </property>
+       <widget class="QLabel" name="icon_lbl">
         <property name="maximumSize">
          <size>
-          <width>24</width>
-          <height>24</height>
+          <width>32</width>
+          <height>32</height>
          </size>
         </property>
         <property name="text">
@@ -349,7 +346,6 @@
         </property>
         <property name="font">
          <font>
-          <weight>50</weight>
           <bold>false</bold>
           <underline>false</underline>
           <strikeout>false</strikeout>
@@ -390,8 +386,8 @@
      </property>
      <property name="iconSize">
       <size>
-       <width>22</width>
-       <height>22</height>
+       <width>32</width>
+       <height>32</height>
       </size>
      </property>
      <property name="popupMode">
@@ -425,8 +421,8 @@
      </property>
      <property name="iconSize">
       <size>
-       <width>22</width>
-       <height>22</height>
+       <width>32</width>
+       <height>32</height>
       </size>
      </property>
      <property name="shortcut">
@@ -478,8 +474,8 @@
      </property>
      <property name="iconSize">
       <size>
-       <width>22</width>
-       <height>22</height>
+       <width>32</width>
+       <height>32</height>
       </size>
      </property>
      <property name="shortcut">
@@ -552,8 +548,8 @@
      </property>
      <property name="iconSize">
       <size>
-       <width>22</width>
-       <height>22</height>
+       <width>32</width>
+       <height>32</height>
       </size>
      </property>
      <property name="shortcut">
@@ -587,8 +583,8 @@
      </property>
      <property name="iconSize">
       <size>
-       <width>22</width>
-       <height>22</height>
+       <width>32</width>
+       <height>32</height>
       </size>
      </property>
      <property name="shortcut">
@@ -621,29 +617,23 @@
      </property>
      <layout class="QGridLayout" name="gridLayout_5">
       <property name="leftMargin">
-       <number>2</number>
+       <number>5</number>
       </property>
       <property name="topMargin">
-       <number>2</number>
+       <number>5</number>
       </property>
       <property name="rightMargin">
-       <number>2</number>
+       <number>5</number>
       </property>
       <property name="bottomMargin">
-       <number>2</number>
+       <number>5</number>
       </property>
       <item row="0" column="0">
-       <widget class="QLabel" name="label_6">
-        <property name="minimumSize">
-         <size>
-          <width>24</width>
-          <height>24</height>
-         </size>
-        </property>
+       <widget class="QLabel" name="icon_lbl2">
         <property name="maximumSize">
          <size>
-          <width>24</width>
-          <height>24</height>
+          <width>32</width>
+          <height>32</height>
          </size>
         </property>
         <property name="text">
@@ -670,7 +660,6 @@
         </property>
         <property name="font">
          <font>
-          <weight>50</weight>
           <bold>false</bold>
           <underline>false</underline>
           <strikeout>false</strikeout>
@@ -711,8 +700,8 @@
      </property>
      <property name="iconSize">
       <size>
-       <width>22</width>
-       <height>22</height>
+       <width>32</width>
+       <height>32</height>
       </size>
      </property>
      <property name="shortcut">
@@ -751,12 +740,13 @@
   <zorder>clear_cols_tb</zorder>
   <zorder>csv_load_tb</zorder>
   <zorder>csv_load_parent</zorder>
-  <zorder>warn_frm</zorder>
+  <zorder>alert_frm</zorder>
   <zorder>bulkedit_tb</zorder>
   <zorder>copy_tb</zorder>
   <zorder>paste_tb</zorder>
  </widget>
  <resources>
+  <include location="../../res/resources.qrc"/>
   <include location="../../res/resources.qrc"/>
  </resources>
  <connections/>

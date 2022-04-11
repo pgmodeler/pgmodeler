@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2022 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -76,10 +76,8 @@ namespace Attributes {
 	CheckVersions("check-versions"),
 	CkConstr("ck-constr"),
 	ClientEncoding("client-encoding"),
-	CodeCompletion("code-completion"),
-	CodeFont("code-font"),
-	CodeFontSize("code-font-size"),
-	CodeTabWidth("code-tab-width"),
+	Code("code"),
+	CodeCompletion("code-completion"),	
 	ColIndexes("col-indexes"),
 	ColIsIdentity("col-is-identity"),
 	CollapseMode("collapse-mode"),
@@ -140,6 +138,7 @@ namespace Attributes {
 	CustomFilter("custom-filter"),
 	CustomIdxs("customidxs"),
 	Cycle("cycle"),
+	Dark("dark"),
 	Database("database"),
 	DataDirectory("data-directory"),
 	Date("date"),
@@ -164,6 +163,7 @@ namespace Attributes {
 	DelEvent("del-event"),
 	Delimiter("delimiter"),
 	DelimitersColor("delimiters-color"),
+	Design("design"),
 	DestType("destiny-type"),
 	Deterministic("deterministic"),
 	Diff("diff"),
@@ -343,12 +343,14 @@ namespace Attributes {
 	LeftType("left-type"),
 	Length("length"),
 	Library("library"),
+	Light("light"),
 	LikeType("like-type"),
 	Line("line"),
 	LineHighlightColor("line-highlight-color"),
 	LineNumbersBgColor("line-numbers-bg-color"),
 	LineNumbersColor("line-numbers-color"),
 	Link("link"),
+	LinkMode("link-mode"),
 	ListenAddresses("listen-addresses"),
 	Locale("locale"),
 	LocaleMod("locale-mod"),
@@ -394,6 +396,7 @@ namespace Attributes {
 	ObjectType("object-type"),
 	ObjCount("objcount"),
 	ObjSelection("obj-selection"),
+	ObjShadow("obj-shadow"),
 	Oid("oid"),
 	OidFilterOp("oid-filter-op"),
 	Oids("oids"),
@@ -600,6 +603,8 @@ namespace Attributes {
 	SubtypeDiffFunc("subtypediff"),
 	Superuser("superuser"),
 	Symbol("symbol"),
+	System("system"),
+	SyntaxHlTheme("syntax-hl-theme"),
 	Table("table"),
 	TableTogglerButtons("table-toggler-btns"),
 	TableTogglerBody("table-toggler-body"),
@@ -612,6 +617,7 @@ namespace Attributes {
 	TableTitle("table-title"),
 	TableType("table-type"),
 	Tag("tag"),
+	TabWidth("tab-width"),
 	TemplateDb("template"),
 	TemporaryPriv("temporary"),
 	Top("top"),
@@ -637,6 +643,7 @@ namespace Attributes {
 	Types("types"),
 	TyplesUpd("tuples-upd"),
 	UiLanguage("ui-language"),
+	UiTheme("ui-theme"),
 	Undefined("undefined"),
 	Underline("underline"),
 	Unique("unique"),

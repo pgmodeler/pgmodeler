@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2022 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -41,10 +41,10 @@ ColorPickerWidget::ColorPickerWidget(int color_count, QWidget * parent) : QWidge
 	for(int i=0; i < color_count; i++)
 	{
 		btn=new QToolButton(this);
-		btn->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
-		btn->setMinimumHeight(25);
-		btn->setMaximumHeight(random_color_tb->height() - 10);
-		btn->setMinimumWidth(55);
+		btn->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+		btn->setMinimumHeight(random_color_tb->iconSize().height());
+		btn->setMaximumHeight(random_color_tb->iconSize().height() * 1.5);
+		btn->setMinimumWidth(random_color_tb->iconSize().width() * 2);
 		btn->installEventFilter(this);
 
 		disable_color=btn->palette().color(QPalette::Button);

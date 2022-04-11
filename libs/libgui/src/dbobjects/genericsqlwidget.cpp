@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2022 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -42,10 +42,10 @@ GenericSQLWidget::GenericSQLWidget(QWidget *parent): BaseObjectWidget(parent, Ob
 	preview_hl = new SyntaxHighlighter(preview_txt);
 	preview_hl->loadConfiguration(GlobalAttributes::getSQLHighlightConfPath());
 
-	attribs_tbw->widget(0)->layout()->setContentsMargins(4,4,4,4);
+	attribs_tbw->widget(0)->layout()->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
 	attribs_tbw->widget(0)->layout()->addWidget(definition_txt);
 
-	attribs_tbw->widget(2)->layout()->setContentsMargins(4,4,4,4);
+	attribs_tbw->widget(2)->layout()->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
 	attribs_tbw->widget(2)->layout()->addWidget(preview_txt);
 
 	// Configuring the object types accepted by object references
@@ -54,7 +54,7 @@ GenericSQLWidget::GenericSQLWidget(QWidget *parent): BaseObjectWidget(parent, Ob
 																							ObjectType::Tag, ObjectType::Textbox });
 	types.push_back(ObjectType::Column);
 
-	object_sel = new ObjectSelectorWidget(types, true, this);
+	object_sel = new ObjectSelectorWidget(types, this);
 
 	objects_refs_tab = new ObjectsTableWidget(ObjectsTableWidget::AllButtons, true, this);
 	references_grid->addWidget(object_sel, 0, 1, 1, 1);

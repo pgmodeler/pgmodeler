@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2022 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -26,7 +26,7 @@ ConversionWidget::ConversionWidget(QWidget *parent): BaseObjectWidget(parent, Ob
 		Ui_ConversionWidget::setupUi(this);
 
 		conv_func_sel=nullptr;
-		conv_func_sel=new ObjectSelectorWidget(ObjectType::Function, true, this);
+		conv_func_sel=new ObjectSelectorWidget(ObjectType::Function, this);
 		convcod_grid->addWidget(conv_func_sel,1,1,1,3);
 
 		setRequiredField(src_encoding_lbl);

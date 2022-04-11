@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2022 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -36,8 +36,8 @@ TriggerWidget::TriggerWidget(QWidget *parent): BaseObjectWidget(parent, ObjectTy
 
 		arguments_tab=new ObjectsTableWidget(ObjectsTableWidget::AllButtons ^ ObjectsTableWidget::DuplicateButton, true, this);
 
-		ref_table_sel=new ObjectSelectorWidget(ObjectType::Table, true, this);
-		function_sel=new ObjectSelectorWidget(ObjectType::Function, true, this);
+		ref_table_sel=new ObjectSelectorWidget(ObjectType::Table, this);
+		function_sel=new ObjectSelectorWidget(ObjectType::Function, this);
 		ref_table_sel->setEnabled(false);
 
 		trigger_grid->addWidget(function_sel, 3, 1, 1, 5);

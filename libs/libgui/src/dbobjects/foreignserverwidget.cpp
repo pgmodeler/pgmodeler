@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2022 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -27,7 +27,7 @@ ForeignServerWidget::ForeignServerWidget(QWidget *parent): BaseObjectWidget(pare
 		Ui_ForeignServerWidget::setupUi(this);
 
 		fdw_sel=nullptr;
-		fdw_sel=new ObjectSelectorWidget(ObjectType::ForeignDataWrapper, true, this);
+		fdw_sel=new ObjectSelectorWidget(ObjectType::ForeignDataWrapper, this);
 
 		hbox = new QHBoxLayout;
 		hbox->setContentsMargins(0,0,0,0);
@@ -42,7 +42,7 @@ ForeignServerWidget::ForeignServerWidget(QWidget *parent): BaseObjectWidget(pare
 		options_tab->setHeaderLabel(tr("Value"), 1);
 
 		hbox = new QHBoxLayout;
-		hbox->setContentsMargins(4,4,4,4);
+		hbox->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
 		hbox->addWidget(options_tab);
 		options_gb->setLayout(hbox);
 

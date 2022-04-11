@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2022 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -80,6 +80,8 @@ class RoundedRectItem: public QGraphicsRectItem {
 		bool isCornerRounded(unsigned corner);
 
 		void setRect(const QRectF &rect);
+
+		QPolygonF getPolygon();
 
 		void paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *);
 };

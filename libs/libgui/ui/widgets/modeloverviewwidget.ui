@@ -42,7 +42,7 @@
   </property>
   <property name="windowIcon">
    <iconset resource="../../res/resources.qrc">
-    <normaloff>:/icons/icons/pgsqlModeler48x48.png</normaloff>:/icons/icons/pgsqlModeler48x48.png</iconset>
+    <normaloff>:/icons/icons/pgmodeler_logo.png</normaloff>:/icons/icons/pgmodeler_logo.png</iconset>
   </property>
   <property name="windowOpacity">
    <double>1.000000000000000</double>

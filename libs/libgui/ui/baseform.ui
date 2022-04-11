@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>329</width>
-    <height>65</height>
+    <width>600</width>
+    <height>399</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -24,20 +24,23 @@
   </property>
   <property name="windowIcon">
    <iconset resource="../res/resources.qrc">
-    <normaloff>:/icons/icons/pgsqlModeler48x48.png</normaloff>:/icons/icons/pgsqlModeler48x48.png</iconset>
+    <normaloff>:/icons/icons/pgmodeler_logo.png</normaloff>:/icons/icons/pgmodeler_logo.png</iconset>
   </property>
   <layout class="QGridLayout" name="gridLayout_2">
    <property name="leftMargin">
-    <number>2</number>
+    <number>10</number>
    </property>
    <property name="topMargin">
-    <number>2</number>
+    <number>10</number>
    </property>
    <property name="rightMargin">
-    <number>2</number>
+    <number>10</number>
    </property>
    <property name="bottomMargin">
-    <number>2</number>
+    <number>10</number>
+   </property>
+   <property name="horizontalSpacing">
+    <number>10</number>
    </property>
    <item row="1" column="0">
     <widget class="QWidget" name="buttons_wgt" native="true">
@@ -63,22 +66,22 @@
       <item row="0" column="0">
        <layout class="QGridLayout" name="buttons_lt">
         <property name="leftMargin">
-         <number>2</number>
+         <number>0</number>
         </property>
         <property name="topMargin">
-         <number>2</number>
+         <number>0</number>
         </property>
         <property name="rightMargin">
-         <number>2</number>
+         <number>0</number>
         </property>
         <property name="bottomMargin">
-         <number>2</number>
+         <number>0</number>
         </property>
         <property name="spacing">
-         <number>6</number>
+         <number>10</number>
         </property>
         <item row="0" column="0">
-         <widget class="QLabel" name="baselogo_lbl">
+         <widget class="QLabel" name="pgmodeler_name_lbl">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
             <horstretch>0</horstretch>
@@ -88,13 +91,13 @@
           <property name="minimumSize">
            <size>
             <width>0</width>
-            <height>30</height>
+            <height>0</height>
            </size>
           </property>
           <property name="maximumSize">
            <size>
-            <width>16777215</width>
-            <height>30</height>
+            <width>242</width>
+            <height>50</height>
            </size>
           </property>
           <property name="styleSheet">
@@ -109,21 +112,18 @@
           <property name="pixmap">
            <pixmap resource="../res/resources.qrc">:/images/images/pgmodeler_name.png</pixmap>
           </property>
+          <property name="scaledContents">
+           <bool>true</bool>
+          </property>
          </widget>
         </item>
-        <item row="0" column="1">
+        <item row="0" column="2">
          <widget class="QPushButton" name="apply_ok_btn">
           <property name="sizePolicy">
-           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
-          </property>
-          <property name="minimumSize">
-           <size>
-            <width>90</width>
-            <height>35</height>
-           </size>
           </property>
           <property name="maximumSize">
            <size>
@@ -146,8 +146,8 @@
           </property>
           <property name="iconSize">
            <size>
-            <width>22</width>
-            <height>22</height>
+            <width>32</width>
+            <height>32</height>
            </size>
           </property>
           <property name="autoRepeat">
@@ -158,19 +158,13 @@
           </property>
          </widget>
         </item>
-        <item row="0" column="2">
+        <item row="0" column="3">
          <widget class="QPushButton" name="cancel_btn">
           <property name="sizePolicy">
-           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
-          </property>
-          <property name="minimumSize">
-           <size>
-            <width>90</width>
-            <height>35</height>
-           </size>
           </property>
           <property name="maximumSize">
            <size>
@@ -189,12 +183,12 @@
           </property>
           <property name="icon">
            <iconset resource="../res/resources.qrc">
-            <normaloff>:/icons/icons/close1.png</normaloff>:/icons/icons/close1.png</iconset>
+            <normaloff>:/icons/icons/cancel.png</normaloff>:/icons/icons/cancel.png</iconset>
           </property>
           <property name="iconSize">
            <size>
-            <width>22</width>
-            <height>22</height>
+            <width>32</width>
+            <height>32</height>
            </size>
           </property>
           <property name="autoRepeat">
@@ -204,6 +198,19 @@
            <bool>false</bool>
           </property>
          </widget>
+        </item>
+        <item row="0" column="1">
+         <spacer name="horizontalSpacer">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
         </item>
        </layout>
       </item>
@@ -229,6 +236,7 @@
   </layout>
  </widget>
  <resources>
+  <include location="../res/resources.qrc"/>
   <include location="../res/resources.qrc"/>
  </resources>
  <connections/>
