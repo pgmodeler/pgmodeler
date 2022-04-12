@@ -243,6 +243,7 @@ void SwapObjectsIdsWidget::swapObjectsIds()
 
 	try
 	{
+		QApplication::setOverrideCursor(Qt::WaitCursor);
 		BaseObject::swapObjectsIds(src_obj, dst_obj, false);
 
 		//Special id swap for relationship
@@ -274,10 +275,12 @@ void SwapObjectsIdsWidget::swapObjectsIds()
 		src_id_lbl->setText(IdLabel.arg(src_object_sel->getSelectedObject()->getObjectId()));
 		dst_id_lbl->setText(IdLabel.arg(dst_object_sel->getSelectedObject()->getObjectId()));
 
+		QApplication::restoreOverrideCursor();
 		emit s_objectsIdsSwapped();
 	}
 	catch(Exception &e)
 	{
+		QApplication::restoreOverrideCursor();
 		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }

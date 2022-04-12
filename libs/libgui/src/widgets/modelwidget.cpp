@@ -5019,28 +5019,32 @@ void ModelWidget::swapObjectsIds()
 {
 	BaseForm parent_form(this);
 	SwapObjectsIdsWidget *swap_ids_wgt=new SwapObjectsIdsWidget;
+	bool swapped = false;
 
 	swap_ids_wgt->setModel(this->getDatabaseModel());
 
 	if(!selected_objects.empty())
 		swap_ids_wgt->setSelectedObjects(selected_objects[0], selected_objects.size() == 2 ? selected_objects[1] : nullptr);
 
-	connect(swap_ids_wgt, &SwapObjectsIdsWidget::s_objectsIdsSwapped, [&](){
-			op_list->removeOperations();
-			setModified(true);
-			emit s_objectManipulated();
-	});
-
 	parent_form.setMainWidget(swap_ids_wgt, SLOT(swapObjectsIds()));
 	parent_form.setButtonConfiguration(Messagebox::OkCancelButtons);
 	parent_form.apply_ok_btn->setEnabled(false);
 	parent_form.apply_ok_btn->setIcon(QPixmap(GuiUtilsNs::getIconPath("swapobjs")));
 	parent_form.apply_ok_btn->setText(tr("Swap ids"));
+
+	connect(swap_ids_wgt, &SwapObjectsIdsWidget::s_objectsIdsSwapped, [&](){ swapped = true; });
 	connect(swap_ids_wgt, SIGNAL(s_objectsIdsSwapReady(bool)), parent_form.apply_ok_btn, SLOT(setEnabled(bool)));
 
 	GeneralConfigWidget::restoreWidgetGeometry(&parent_form, swap_ids_wgt->metaObject()->className());
 	parent_form.exec();
 	GeneralConfigWidget::saveWidgetGeometry(&parent_form, swap_ids_wgt->metaObject()->className());
+
+	if(swapped)
+	{
+		op_list->removeOperations();
+		setModified(true);
+		emit s_objectManipulated();
+	}
 }
 
 void ModelWidget::jumpToTable()
