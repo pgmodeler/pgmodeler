@@ -5310,13 +5310,16 @@ QRectF ModelWidget::rearrangeTablesHierarchically(BaseTableView *root, vector<Ba
 
 void ModelWidget::rearrangeTablesInSchema(Schema *schema, QPointF start)
 {
-	vector<BaseObject *> tables, views;
+	vector<BaseObject *> tables, views, ftables;
 
 	if(!schema) return;
 
 	tables = db_model->getObjects(ObjectType::Table, schema);
+	ftables = db_model->getObjects(ObjectType::ForeignTable, schema);
 	views = db_model->getObjects(ObjectType::View, schema);
+
 	tables.insert(tables.end(), views.begin(), views.end());
+	tables.insert(tables.end(), ftables.begin(), ftables.end());
 
 	if(!tables.empty())
 	{
@@ -5356,19 +5359,19 @@ void ModelWidget::rearrangeTablesInSchema(Schema *schema, QPointF start)
 			{
 				base_tab = dynamic_cast<BaseTable *>(tab);
 				curr_tab = dynamic_cast<BaseTableView *>(base_tab->getOverlyingObject());
-				max_w += curr_tab->boundingRect().width();
-				max_h += curr_tab->boundingRect().height();
+				max_w += curr_tab->boundingRect().width() * 0.60;
+				max_h += curr_tab->boundingRect().height() * 0.60;
 			}
 
 			if(tables.size() >= 4)
 			{
-				max_w *= 0.50;
-				max_h *= 0.50;
+				max_w *= 0.40;
+				max_h *= 0.40;
 			}
 			else
 			{
-				max_w *= 1.15;
-				max_h *= 1.15;
+				max_w *= 1.05;
+				max_h *= 1.05;
 			}
 
 			uniform_int_distribution<unsigned> dist_x(start.x(), start.x() + max_w),
@@ -5420,7 +5423,7 @@ void ModelWidget::rearrangeTablesInSchema(Schema *schema, QPointF start)
 
 					tries++;
 				}
-				while(has_collision && tries < (tables.size() * 100));
+				while(has_collision && tries < (tables.size() * 50));
 			}
 		}
 
@@ -5444,7 +5447,8 @@ void ModelWidget::rearrangeTablesInSchemas()
 	unsigned tries = 0,
 			max_tries = (db_model->getObjectCount(ObjectType::Table) +
 									 db_model->getObjectCount(ObjectType::View) +
-									 db_model->getObjectCount(ObjectType::Schema)) * 100;
+									 db_model->getObjectCount(ObjectType::ForeignTable) +
+									 db_model->getObjectCount(ObjectType::Schema)) * 50;
 
 
 	rand_num_engine.seed(rand_seed());
@@ -5523,7 +5527,8 @@ void ModelWidget::rearrangeTablesInSchemas()
 		base_rel->resetLabelsDistance();
 	}
 
-	db_model->setObjectsModified({ ObjectType::Table, ObjectType::View, ObjectType::Schema, ObjectType::Relationship, ObjectType::BaseRelationship });
+	db_model->setObjectsModified({ ObjectType::Table, ObjectType::View, ObjectType::ForeignTable,
+																 ObjectType::Schema, ObjectType::Relationship, ObjectType::BaseRelationship });
 	adjustSceneSize();
 	viewport->updateScene({ scene->sceneRect() });
 }
