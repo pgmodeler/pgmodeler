@@ -586,7 +586,7 @@ void RelationshipView::configureLine()
 	if(!configuring_line)
 	{
 		BaseRelationship *base_rel=this->getUnderlyingObject();
-		Relationship *rel=dynamic_cast<Relationship *>(base_rel);
+
 		vector<QPointF> points, fk_points, pk_points;
 		QGraphicsLineItem *lin=nullptr;
 		QPointF pos, p_central[2], pk_pnt, fk_pnt;
@@ -600,16 +600,6 @@ void RelationshipView::configureLine()
 		bool conn_same_sides = false,
 				conn_horiz_sides[2] = { false, false }, conn_vert_sides[2] = { false, false };
 		unsigned rel_type = base_rel->getRelationshipType();
-		double pen_mid_width = ObjectBorderWidth * 1.45,
-				pen_high_width = ObjectBorderWidth * 2;
-
-
-		// Adjusting the relationship lines thickness according to the screen dpi
-		if(BaseObjectView::getScreenDpiFactor() > 1)
-		{
-			pen_high_width = ObjectBorderWidth * BaseObjectView::getScreenDpiFactor() * 1.75;
-			pen_mid_width = ObjectBorderWidth * BaseObjectView::getScreenDpiFactor() * 1.25;
-		}
 
 		configuring_line=true;
 		pen.setCapStyle(Qt::RoundCap);
@@ -1058,12 +1048,7 @@ void RelationshipView::configureLine()
 					else
 						lin=ref_lin->at(i);
 
-					//If the relationship is identifier or bidirectional, the line has its thickness modified
-					if(rel && rel->isIdentifier())
-						pen.setWidthF(pen_high_width);
-					else
-						pen.setWidthF(pen_mid_width);
-
+					pen.setWidthF(getDefaultPenWidth());
 					lin->setLine(QLineF(ref_pnt->at(i), ref_points[vet_idx]));
 					lin->setPen(pen);
 				}
@@ -1095,12 +1080,7 @@ void RelationshipView::configureLine()
 			else
 				lin=lines[i];
 
-			//If the relationship is identifier or bidirectional, the line has its thickness modified
-			if(rel && rel->isIdentifier())
-				pen.setWidthF(pen_high_width);
-			else
-				pen.setWidthF(pen_mid_width);
-
+			pen.setWidthF(getDefaultPenWidth());
 			lin->setLine(QLineF(points[i], points[i+1]));
 			lin->setPen(pen);
 		}
@@ -1284,14 +1264,10 @@ void RelationshipView::configureDescriptor()
 		pen=BaseObjectView::getBorderStyle(Attributes::Relationship);
 
 	if(rel_type==BaseRelationship::RelationshipDep ||
-	   rel_type == BaseRelationship::RelationshipPart)
+		 rel_type == BaseRelationship::RelationshipPart)
 		pen.setStyle(Qt::DashLine);
 
-	if(BaseObjectView::getScreenDpiFactor() <= 1)
-		pen.setWidthF(ObjectBorderWidth * BaseObjectView::getScreenDpiFactor() * 1.45);
-	else
-		pen.setWidthF(ObjectBorderWidth * BaseObjectView::getScreenDpiFactor() * 1.15);
-
+	pen.setWidthF(getDefaultPenWidth());
 	descriptor->setPen(pen);
 
 	if(line_color!=Qt::transparent)
@@ -2002,6 +1978,27 @@ void RelationshipView::configureLabelPosition(unsigned label_id, double x, doubl
 		labels[label_id]->setColorStyle(BaseObjectView::getFillStyle(Attributes::Label),
 										BaseObjectView::getBorderStyle(Attributes::Label));
 		dynamic_cast<Textbox *>(labels[label_id]->getUnderlyingObject())->setModified(true);
+	}
+}
+
+double RelationshipView::getDefaultPenWidth()
+{
+	Relationship *rel = dynamic_cast<Relationship *>(getUnderlyingObject());
+
+	// Adjusting the relationship lines thickness according to the screen dpi
+	if(BaseObjectView::getScreenDpiFactor() > 1)
+	{
+		if(rel && rel->isIdentifier())
+			return  ObjectBorderWidth * BaseObjectView::getScreenDpiFactor() * 1.75;
+
+		return  ObjectBorderWidth * BaseObjectView::getScreenDpiFactor() * 1.25;
+	}
+	else
+	{
+		if(rel && rel->isIdentifier())
+			return ObjectBorderWidth * 2;
+
+		return ObjectBorderWidth * 1.45;
 	}
 }
 
