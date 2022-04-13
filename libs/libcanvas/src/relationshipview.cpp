@@ -601,7 +601,7 @@ void RelationshipView::configureLine()
 				conn_horiz_sides[2] = { false, false }, conn_vert_sides[2] = { false, false };
 		unsigned rel_type = base_rel->getRelationshipType();
 		double pen_mid_width = ObjectBorderWidth * 1.45,
-				pen_high_width = ObjectBorderWidth * 1.90;
+				pen_high_width = ObjectBorderWidth * 2;
 
 
 		// Adjusting the relationship lines thickness according to the screen dpi
