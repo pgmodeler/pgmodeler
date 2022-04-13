@@ -3228,6 +3228,8 @@ void ModelWidget::removeObjects(bool cascade)
 		//If the user confirmed the removal or its a cut operation
 		if(msg_box.result()==QDialog::Accepted || ModelWidget::cut_operation)
 		{
+			QApplication::setOverrideCursor(Qt::WaitCursor);
+
 			try
 			{
 				//If in cascade mode, retrieve all references to the object (direct and indirect)
@@ -3496,6 +3498,7 @@ void ModelWidget::removeObjects(bool cascade)
 			/* In case of any object removal we clear the copied objects list in order to avoid
 			 * segfaults when trying to paste an object that was removed previously */
 			copied_objects.clear();
+			QApplication::restoreOverrideCursor();
 		}
 	}
 }
