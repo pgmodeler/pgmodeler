@@ -169,21 +169,21 @@ Relationship::Relationship(unsigned rel_type, PhysicalTable *src_tab,
 			if(tab_name_relnn.size() > BaseObject::ObjectNameMaxLength)
 				tab_name_relnn.resize(BaseObject::ObjectNameMaxLength);
 
-			setNamePattern(PkPattern, GenTabToken + SuffixSeparator + QString("pk"));
-			setNamePattern(SrcFkPattern, SrcTabToken + SuffixSeparator + QString("fk"));
-			setNamePattern(DstFkPattern, DstTabToken + SuffixSeparator + QString("fk"));
-			setNamePattern(UqPattern, GenTabToken + SuffixSeparator + QString("uq"));
+			setNamePattern(PkPattern, GenTabToken + SuffixSeparator + "pk");
+			setNamePattern(SrcFkPattern, SrcTabToken + SuffixSeparator + "fk");
+			setNamePattern(DstFkPattern, DstTabToken + SuffixSeparator + "fk");
+			setNamePattern(UqPattern, GenTabToken + SuffixSeparator + "uq");
 			setNamePattern(SrcColPattern, SrcColToken + SuffixSeparator + SrcTabToken);
 			setNamePattern(DstColPattern, SrcColToken + SuffixSeparator + DstTabToken);
-			setNamePattern(PkColPattern, QString("id"));
+			setNamePattern(PkColPattern, "id");
 		}
 		else if(rel_type==RelationshipDep || rel_type==RelationshipGen)
-			setNamePattern(PkPattern, DstTabToken + SuffixSeparator + QString("pk"));
+			setNamePattern(PkPattern, DstTabToken + SuffixSeparator + "pk");
 		else
 		{
-			setNamePattern(PkPattern, DstTabToken + SuffixSeparator + QString("pk"));
-			setNamePattern(SrcFkPattern, SrcTabToken + SuffixSeparator + QString("fk"));
-			setNamePattern(UqPattern, DstTabToken + SuffixSeparator + QString("uq"));
+			setNamePattern(PkPattern, DstTabToken + SuffixSeparator + "pk");
+			setNamePattern(SrcFkPattern, SrcTabToken + SuffixSeparator + "fk");
+			setNamePattern(UqPattern, DstTabToken + SuffixSeparator + "uq");
 			setNamePattern(SrcColPattern, SrcColToken + SuffixSeparator + SrcTabToken);
 		}
 
@@ -946,9 +946,9 @@ void Relationship::addColumnsRelGenPart()
 			relationship foreign key */
 			dst_type=dst_col->getType();
 
-			if(dst_type==QString("serial")) dst_type=QString("integer");
-			else if(dst_type==QString("bigserial")) dst_type=QString("bigint");
-			else if(dst_type==QString("smallserial")) dst_type=QString("smallint");
+			if(dst_type == "serial") dst_type = "integer";
+			else if(dst_type == "bigserial") dst_type = "bigint";
+			else if(dst_type == "smallserial") dst_type = "smallint";
 
 			/* This flag indicates that the column name is registered
 			in the other table column (duplication). This situation need
@@ -962,9 +962,9 @@ void Relationship::addColumnsRelGenPart()
 				src_col=src_tab->getColumn(i1);
 				src_type=src_col->getType();
 
-				if(src_type==QString("serial")) src_type=QString("integer");
-				else if(src_type==QString("bigserial")) src_type=QString("bigint");
-				else if(dst_type==QString("smallserial")) dst_type=QString("smallint");
+				if(src_type == "serial") src_type = "integer";
+				else if(src_type == "bigserial") src_type = "bigint";
+				else if(dst_type == "smallserial") dst_type = "smallint";
 
 				//Check the duplication on the column names
 				duplic=(src_col->getName()==dst_col->getName());
@@ -1065,12 +1065,12 @@ void Relationship::addColumnsRelGenPart()
 					column->setParentRelationship(this);
 
 					//Converts the type
-					if(column->getType()==QString("serial"))
-						column->setType(PgSqlType(QString("integer")));
-					else if(column->getType()==QString("bigserial"))
-						column->setType(PgSqlType(QString("bigint")));
-					else if(column->getType()==QString("smallserial"))
-						column->setType(PgSqlType(QString("smallint")));
+					if(column->getType() == "serial")
+						column->setType(PgSqlType("integer"));
+					else if(column->getType() == "bigserial")
+						column->setType(PgSqlType("bigint"));
+					else if(column->getType() == "smallserial")
+						column->setType(PgSqlType("smallint"));
 
 					//Adds the new column to the temporary column list
 					columns.push_back(column);
@@ -1236,8 +1236,7 @@ void Relationship::connectRelationship()
 				getReceiverTable()->setPartionedTable(getReferenceTable());
 				getReceiverTable()->setPartitionBoundingExpr(part_bounding_expr);
 			}
-			else if(rel_type==Relationship11 ||
-					rel_type==Relationship1n)
+			else if(rel_type==Relationship11 || rel_type==Relationship1n)
 			{
 				if(rel_type==Relationship11)
 					addColumnsRel11();
@@ -1248,7 +1247,7 @@ void Relationship::connectRelationship()
 			{
 				if(!table_relnn)
 					//Allocates the table that represents the Many-to-Many relationship
-					table_relnn=new Table;
+					table_relnn = new Table;
 
 				/* By default the schema and tablespace for the new table is the same as
 			 the relationship source table */
@@ -1642,12 +1641,12 @@ void Relationship::copyColumns(PhysicalTable *ref_tab, PhysicalTable *recv_tab, 
 			column->setParentRelationship(this);
 
 			//Converting the serial like types
-			if(column->getType()==QString("serial"))
-				column->setType(PgSqlType(QString("integer")));
-			else if(column->getType()==QString("bigserial"))
-				column->setType(PgSqlType(QString("bigint")));
-			else if(column->getType()==QString("smallserial"))
-				column->setType(PgSqlType(QString("smallint")));
+			if(column->getType() == "serial")
+				column->setType(PgSqlType("integer"));
+			else if(column->getType() == "bigserial")
+				column->setType(PgSqlType("bigint"));
+			else if(column->getType() == "smallserial")
+				column->setType(PgSqlType("smallint"));
 
 			column->setName(name);
 			name=CoreUtilsNs::generateUniqueName(column, (*recv_tab->getObjectList(ObjectType::Column)));
@@ -1878,7 +1877,7 @@ void Relationship::addColumnsRelNn()
 			pk_col=new Column;
 			pk_col->setName(generateObjectName(PkColPattern));
 			pk_col->setAlias(generateObjectName(PkColPattern, nullptr, true));
-			pk_col->setType(PgSqlType(QString("serial")));
+			pk_col->setType(PgSqlType("serial"));
 			pk_col->setAddedByLinking(true);
 			table_relnn->addColumn(pk_col);
 		}
@@ -2446,9 +2445,9 @@ bool Relationship::isInvalidated()
 					valid=(rel_pk_col==pk_col &&
 							(gen_col->getName()==col_name ||gen_col->getName().contains(pk_col->getName())) &&
 							(rel_pk_col->getType()==gen_col->getType() ||
-							(rel_pk_col->getType()==QString("serial") && gen_col->getType()==QString("integer")) ||
-							(rel_pk_col->getType()==QString("bigserial") && gen_col->getType()==QString("bigint")) ||
-							(rel_pk_col->getType()==QString("smallserial") && gen_col->getType()==QString("smallint"))));
+							(rel_pk_col->getType()=="serial" && gen_col->getType() == "integer") ||
+							(rel_pk_col->getType()=="bigserial" && gen_col->getType()=="bigint") ||
+							(rel_pk_col->getType()=="smallserial" && gen_col->getType()=="smallint")));
 				}
 			}
 		}
