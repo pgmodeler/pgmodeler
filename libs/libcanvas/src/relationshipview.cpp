@@ -1989,16 +1989,16 @@ double RelationshipView::getDefaultPenWidth()
 	if(BaseObjectView::getScreenDpiFactor() > 1)
 	{
 		if(rel && rel->isIdentifier())
-			return  ObjectBorderWidth * BaseObjectView::getScreenDpiFactor() * 1.75;
+			return  ObjectBorderWidth * BaseObjectView::getScreenDpiFactor() * 2;
 
 		return  ObjectBorderWidth * BaseObjectView::getScreenDpiFactor() * 1.25;
 	}
 	else
 	{
 		if(rel && rel->isIdentifier())
-			return ObjectBorderWidth * 2;
+			return ObjectBorderWidth * 2.25;
 
-		return ObjectBorderWidth * 1.45;
+		return ObjectBorderWidth * 1.50;
 	}
 }
 
