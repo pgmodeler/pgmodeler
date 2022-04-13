@@ -589,14 +589,14 @@ void RelationshipView::configureLine()
 		Relationship *rel=dynamic_cast<Relationship *>(base_rel);
 		vector<QPointF> points, fk_points, pk_points;
 		QGraphicsLineItem *lin=nullptr;
-		QPointF pos, p_int, p_central[2], pk_pnt, fk_pnt;
+		QPointF pos, p_central[2], pk_pnt, fk_pnt;
 		QRectF rect;
 		QPen pen;
 		QGraphicsPolygonItem *pol=nullptr;
 		QPolygonF pol_aux;
 		QString tool_tip;
 		QGraphicsItem *item=nullptr;
-		int i, i1, count, idx_lin_desc=0;
+		int i, i1, count;
 		bool conn_same_sides = false,
 				conn_horiz_sides[2] = { false, false }, conn_vert_sides[2] = { false, false };
 		unsigned rel_type = base_rel->getRelationshipType();
@@ -1032,27 +1032,6 @@ void RelationshipView::configureLine()
 		   rel_type == BaseRelationship::RelationshipPart)
 			pen.setStyle(Qt::DashLine);
 
-		/* For identifier relationships an additional point is created on the center of the
-		 line that supports the descriptor in order to modify the line thickness on the
-		 weak entity side */
-		if(rel && rel->isIdentifier())
-		{
-			//Calculates the index of the initial point, on the line that supports the descriptor
-			idx_lin_desc=(points.size()/2);
-			p_central[0]=points[idx_lin_desc];
-
-			//Gets the second line point
-			if(idx_lin_desc + 1 > static_cast<int>(points.size()))
-				p_central[1]=points[idx_lin_desc+1];
-			else
-				p_central[1]=points[idx_lin_desc-1];
-
-			//Calculates the middle point and inserts it on the point vector
-			p_int.setX((p_central[0].x() + p_central[1].x())/2.0);
-			p_int.setY((p_central[0].y() + p_central[1].y())/2.0);
-			points.insert(points.begin() + idx_lin_desc, p_int);
-		}
-
 		if(line_conn_mode==ConnectFkToPk)
 		{
 			vector<QPointF> ref_points={ fk_pnt, pk_pnt };
@@ -1080,7 +1059,7 @@ void RelationshipView::configureLine()
 						lin=ref_lin->at(i);
 
 					//If the relationship is identifier or bidirectional, the line has its thickness modified
-					if(rel && (rel->isIdentifier() && vet_idx==0))
+					if(rel && rel->isIdentifier())
 						pen.setWidthF(pen_high_width);
 					else
 						pen.setWidthF(pen_mid_width);
@@ -1117,7 +1096,7 @@ void RelationshipView::configureLine()
 				lin=lines[i];
 
 			//If the relationship is identifier or bidirectional, the line has its thickness modified
-			if(rel && (rel->isIdentifier() && i >= idx_lin_desc))
+			if(rel && rel->isIdentifier())
 				pen.setWidthF(pen_high_width);
 			else
 				pen.setWidthF(pen_mid_width);
@@ -1287,7 +1266,6 @@ void RelationshipView::configureDescriptor()
 	QLineF lin;
 	QPolygonF pol;
 	BaseRelationship *base_rel=this->getUnderlyingObject();
-	Relationship *rel=dynamic_cast<Relationship *>(base_rel);
 	unsigned rel_type=base_rel->getRelationshipType();
 	double x, y, x1, y1, angle = 0,
 			factor=BaseObjectView::getFontFactor() * BaseObjectView::getScreenDpiFactor();
@@ -1368,47 +1346,30 @@ void RelationshipView::configureDescriptor()
 			BezierCurveItem *curve =  curves.at(idx);
 			QPainterPath path = curve->path();
 
-			if(rel && rel->isIdentifier())
+			/* Workaround to avoid the inheritance / dependency relationship to get the descriptor rotated to the wrong side
+			 * We create and auxiliary line with points from the position at 65% of the curve to the 45% and use the
+			 * angle of that line instead of the angle at 50% of the curve */
+			if((rel_type == BaseRelationship::RelationshipDep ||
+				rel_type == BaseRelationship::RelationshipGen ||
+				rel_type == BaseRelationship::RelationshipPart) &&
+				 curve->isControlPointsInverted() && !curve->isSimpleCurve() && !curve->isStraightLine())
 			{
-				BezierCurveItem *curve_aux =  curves.at(idx - 1);
-				QLineF lin_aux = QLineF(path.pointAtPercent(0.10), curve_aux->path().pointAtPercent(0.90));
+				QLineF lin_aux = QLineF(path.pointAtPercent(0.65), path.pointAtPercent(0.45));
 				angle = -lin_aux.angle();
-				pnt = path.pointAtPercent(0);
+				pnt = path.pointAtPercent(0.5);
 			}
 			else
 			{
-				/* Workaround to avoid the inheritance / dependency relationship to get the descriptor rotated to the wrong side
-				 * We create and auxiliary line with points from the position at 65% of the curve to the 45% and use the
-				 * angle of that line instead of the angle at 50% of the curve */
-				if((rel_type == BaseRelationship::RelationshipDep ||
-					rel_type == BaseRelationship::RelationshipGen ||
-					rel_type == BaseRelationship::RelationshipPart) &&
-					 curve->isControlPointsInverted() && !curve->isSimpleCurve() && !curve->isStraightLine())
-				{
-					QLineF lin_aux = QLineF(path.pointAtPercent(0.65), path.pointAtPercent(0.45));
-					angle = -lin_aux.angle();
-					pnt = path.pointAtPercent(0.5);
-				}
-				else
-				{
-					double percent = path.percentAtLength(path.length()/2);
-					angle = -path.angleAtPercent(percent);
-					pnt = path.pointAtPercent(percent);
-				}
+				double percent = path.percentAtLength(path.length()/2);
+				angle = -path.angleAtPercent(percent);
+				pnt = path.pointAtPercent(percent);
 			}
 		}
 		else
 		{
 			lin=lines.at(lines.size()/2)->line();
-
-			if(rel && rel->isIdentifier())
-				pnt=lin.p1();
-			else
-			{
-				pnt.setX((lin.p1().x() + lin.p2().x()) / 2.0);
-				pnt.setY((lin.p1().y() + lin.p2().y()) / 2.0);
-			}
-
+			pnt.setX((lin.p1().x() + lin.p2().x()) / 2.0);
+			pnt.setY((lin.p1().y() + lin.p2().y()) / 2.0);
 			angle = -lin.angle();
 		}
 
