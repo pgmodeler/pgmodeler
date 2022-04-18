@@ -2171,7 +2171,7 @@ void DatabaseImportHelper::createConstraint(attribs_map &attribs)
 				cols=Catalog::parseArrayValues(attribs[Attributes::Columns]);
 				opers=Catalog::parseArrayValues(attribs[Attributes::Operators]);
 				opclasses=Catalog::parseArrayValues(attribs[Attributes::OpClasses]);
-				options = Catalog::parseArrayValues(attribs[Attributes::OpClasses]);
+				options = Catalog::parseArrayValues(attribs[Attributes::Options]);
 
 				/* Due to the way exclude constraints are constructed (similar to indexes),
 				 * we get the constraint's definition in for of expressions. Internally we use pg_get_constraintdef.
