@@ -2084,7 +2084,6 @@ void DatabaseImportHelper::createIndex(attribs_map &attribs)
 
 				desc_order = (options[i].toUInt() & 1) == 1;
 				nulls_first = (options[i].toUInt() & 2) == 2;
-
 				elem.setSortingEnabled(desc_order || nulls_first);
 				elem.setSortingAttribute(IndexElement::AscOrder, !desc_order);
 				elem.setSortingAttribute(IndexElement::NullsFirst, nulls_first);
@@ -2159,11 +2158,12 @@ void DatabaseImportHelper::createConstraint(attribs_map &attribs)
 
 			if(attribs[Attributes::Type]==Attributes::ExConstr)
 			{
-				QStringList cols, opclasses, opers, exprs;
+				QStringList cols, opclasses, opers, exprs, options;
 				ExcludeElement elem;
 				QString opc_name, op_name;
 				OperatorClass *opclass=nullptr;
 				Operator *oper=nullptr;
+				bool desc_order = false, nulls_first = false;
 
 				attribs[Attributes::SrcColumns]="";
 				attribs[Attributes::Expression]=attribs[Attributes::Condition];
@@ -2171,6 +2171,7 @@ void DatabaseImportHelper::createConstraint(attribs_map &attribs)
 				cols=Catalog::parseArrayValues(attribs[Attributes::Columns]);
 				opers=Catalog::parseArrayValues(attribs[Attributes::Operators]);
 				opclasses=Catalog::parseArrayValues(attribs[Attributes::OpClasses]);
+				options = Catalog::parseArrayValues(attribs[Attributes::OpClasses]);
 
 				/* Due to the way exclude constraints are constructed (similar to indexes),
 				 * we get the constraint's definition in for of expressions. Internally we use pg_get_constraintdef.
@@ -2210,6 +2211,15 @@ void DatabaseImportHelper::createConstraint(attribs_map &attribs)
 
 						if(oper)
 							elem.setOperator(oper);
+					}
+
+					if(i < options.size())
+					{
+						desc_order = (options[i].toUInt() & 1) == 1;
+						nulls_first = (options[i].toUInt() & 2) == 2;
+						elem.setSortingEnabled(desc_order || nulls_first);
+						elem.setSortingAttribute(ExcludeElement::AscOrder, !desc_order);
+						elem.setSortingAttribute(ExcludeElement::NullsFirst, nulls_first);
 					}
 
 					attribs[Attributes::Elements]+=elem.getCodeDefinition(SchemaParser::XmlDefinition);
