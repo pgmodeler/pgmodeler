@@ -1508,6 +1508,8 @@ void MainWindow::saveModel(ModelWidget *model)
 					file_dlg.setAcceptMode(QFileDialog::AcceptSave);
 					file_dlg.setModal(true);
 
+					GuiUtilsNs::restoreFileDialogState(&file_dlg);
+
 					if(file_dlg.exec()==QFileDialog::Accepted && !file_dlg.selectedFiles().isEmpty())
 					{
 						model->saveModel(file_dlg.selectedFiles().at(0));
@@ -1515,6 +1517,8 @@ void MainWindow::saveModel(ModelWidget *model)
 						updateRecentModelsMenu();
 						model_nav_wgt->updateModelText(models_tbw->indexOf(model), model->getDatabaseModel()->getName(), file_dlg.selectedFiles().at(0));
 					}
+
+					GuiUtilsNs::saveFileDialogState(&file_dlg);
 				}
 				else
 				{
@@ -1733,8 +1737,12 @@ void MainWindow::loadModel()
 		file_dlg.setFileMode(QFileDialog::ExistingFiles);
 		file_dlg.setAcceptMode(QFileDialog::AcceptOpen);
 
+		GuiUtilsNs::restoreFileDialogState(&file_dlg);
+
 		if(file_dlg.exec()==QFileDialog::Accepted)
 			loadModels(file_dlg.selectedFiles());
+
+		GuiUtilsNs::saveFileDialogState(&file_dlg);
 	}
 	catch(Exception &e)
 	{

@@ -6,6 +6,7 @@
 #include "widgets/numberedtexteditor.h"
 #include "baseform.h"
 #include "widgets/bulkdataeditwidget.h"
+#include "utilsns.h"
 
 namespace GuiUtilsNs {
 
@@ -269,7 +270,7 @@ namespace GuiUtilsNs {
 		itr_end = list.rend();
 
 		while(itr != itr_end)
-		{			
+		{
 			text=QString("[%1] - %2").arg(idx).arg(itr->getMethod());
 			item=createOutputTreeItem(exceptions_trw, text, QPixmap(getIconPath("function1")), root, false, true);
 
@@ -401,5 +402,44 @@ namespace GuiUtilsNs {
 		shadow->setBlurRadius(radius);
 		shadow->setColor(QColor(0,0,0, 100));
 		wgt->setGraphicsEffect(shadow);
+	}
+
+	void handleFileDialogSatate(QFileDialog *file_dlg, bool save_state)
+	{
+		if(!file_dlg)
+			return;
+
+		try
+		{
+			QString filename = GlobalAttributes::getConfigurationsDir() +
+												 GlobalAttributes::DirSeparator +
+												 GlobalAttributes::FileDialogConf +
+												 GlobalAttributes::ConfigurationExt;
+
+			QSettings settings(filename, QSettings::NativeFormat);
+
+			if(save_state)
+			{
+				settings.setValue("geometry", file_dlg->saveGeometry());
+				settings.setValue("state", file_dlg->saveState());
+				settings.sync();
+			}
+			else
+			{
+				file_dlg->restoreGeometry(settings.value("geometry").toByteArray());
+				file_dlg->restoreState(settings.value("state").toByteArray());
+			}
+		}
+		catch(Exception &){}
+	}
+
+	void saveFileDialogState(QFileDialog *file_dlg)
+	{
+		handleFileDialogSatate(file_dlg, true);
+	}
+
+	void restoreFileDialogState(QFileDialog *file_dlg)
+	{
+		handleFileDialogSatate(file_dlg, false);
 	}
 }

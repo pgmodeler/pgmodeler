@@ -131,6 +131,8 @@ class GlobalAttributes {
 		UiMediumStyleConf, //! \brief Extra configuration file ui style (for medium screen sizes > 1080p and < 2k)
 		UiSmallStyleConf, //! \brief Extra configuration file ui style (for medium screen sizes <= 1080p)
 
+		FileDialogConf,		//! \brief Default name for the file used to save/restore QFileDialog last geometry
+
 		/*! \brief Fusion is the default widget style for pgModeler. User can change this by calling
 		the executable using -style option. This same style is applied to crash handler. */
 		DefaultQtStyle,

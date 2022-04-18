@@ -433,8 +433,12 @@ QStringList SchemaEditorForm::showFileDialog(bool save_mode)
 		});
 	}
 
+	GuiUtilsNs::restoreFileDialogState(&file_dlg);
+
 	if(file_dlg.exec() == QFileDialog::Accepted)
 		files = file_dlg.selectedFiles();
+
+	GuiUtilsNs::saveFileDialogState(&file_dlg);
 
 	return files;
 }

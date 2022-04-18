@@ -644,7 +644,10 @@ void SQLExecutionWidget::saveCommands()
 	{
 		sql_file_dlg.setWindowTitle(tr("Save SQL commands"));
 		sql_file_dlg.setAcceptMode(QFileDialog::AcceptSave);
+
+		GuiUtilsNs::restoreFileDialogState(&sql_file_dlg);
 		sql_file_dlg.exec();
+		GuiUtilsNs::saveFileDialogState(&sql_file_dlg);
 
 		if(sql_file_dlg.result()==QDialog::Accepted)
 			filename = sql_file_dlg.selectedFiles().at(0);
@@ -664,7 +667,10 @@ void SQLExecutionWidget::loadCommands()
 {
 	sql_file_dlg.setWindowTitle(tr("Load SQL commands"));
 	sql_file_dlg.setAcceptMode(QFileDialog::AcceptOpen);
+
+	GuiUtilsNs::restoreFileDialogState(&sql_file_dlg);
 	sql_file_dlg.exec();
+	GuiUtilsNs::saveFileDialogState(&sql_file_dlg);
 
 	if(sql_file_dlg.result()==QDialog::Accepted)
 	{
@@ -689,7 +695,10 @@ void SQLExecutionWidget::exportResults(QTableView *results_tbw)
 	csv_file_dlg.setNameFilter(tr("Comma-separated values file (*.csv);;All files (*.*)"));
 	csv_file_dlg.setModal(true);
 	csv_file_dlg.setAcceptMode(QFileDialog::AcceptSave);
+
+	GuiUtilsNs::restoreFileDialogState(&csv_file_dlg);
 	csv_file_dlg.exec();
+	GuiUtilsNs::saveFileDialogState(&csv_file_dlg);
 
 	if(csv_file_dlg.result()==QDialog::Accepted)
 	{

@@ -81,6 +81,8 @@ const QString GlobalAttributes::UiDefaulStyleConf("ui-default");
 const QString GlobalAttributes::UiMediumStyleConf("ui-medium");
 const QString GlobalAttributes::UiSmallStyleConf("ui-small");
 
+const QString GlobalAttributes::FileDialogConf("filedlg");
+
 const QString GlobalAttributes::DefaultQtStyle("Fusion");
 const QString GlobalAttributes::UiStyleOption("-style");
 

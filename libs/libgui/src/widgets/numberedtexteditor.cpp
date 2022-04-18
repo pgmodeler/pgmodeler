@@ -337,7 +337,10 @@ void NumberedTextEditor::loadFile()
 	sql_file_dlg.setModal(true);
 	sql_file_dlg.setWindowTitle(tr("Load file"));
 	sql_file_dlg.setAcceptMode(QFileDialog::AcceptOpen);
+
+	GuiUtilsNs::restoreFileDialogState(&sql_file_dlg);
 	sql_file_dlg.exec();
+	GuiUtilsNs::saveFileDialogState(&sql_file_dlg);
 
 	if(sql_file_dlg.result()==QDialog::Accepted)
 	{
