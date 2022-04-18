@@ -1780,12 +1780,17 @@ void PgModelerCliApp::importDatabase(DatabaseModel *model, Connection conn)
 			force_tab_objs = parsed_opts[ForceChildren].split(',', QtCompat::SkipEmptyParts);
 
 		catalog.setConnection(conn);
-		catalog.setQueryFilter(Catalog::ListAllObjects | Catalog::ExclBuiltinArrayTypes |
+
+		/* catalog.setQueryFilter(Catalog::ListAllObjects | Catalog::ExclBuiltinArrayTypes |
 													 (!imp_ext_objs ? Catalog::ExclExtensionObjs : 0) |
-													 (!imp_sys_objs ? Catalog::ExclSystemObjs : 0));
+													 (!imp_sys_objs ? Catalog::ExclSystemObjs : 0)); */
+
+		catalog.setQueryFilter(Catalog::ListAllObjects | Catalog::ExclBuiltinArrayTypes |
+													 Catalog::ExclExtensionObjs | Catalog::ExclSystemObjs);
 
 		catalog.setObjectFilters(obj_filters, parsed_opts.count(OnlyMatching) > 0,
 														 parsed_opts.count(MatchByName) == 0, force_tab_objs);
+
 		catalog.getObjectsOIDs(obj_oids, col_oids, {{Attributes::FilterTableTypes, Attributes::True}});
 
 		db_oid = catalog.getObjectOID(conn.getConnectionParam(Connection::ParamDbName), ObjectType::Database);
