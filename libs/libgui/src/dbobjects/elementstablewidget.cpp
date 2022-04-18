@@ -48,7 +48,7 @@ ElementsTableWidget::ElementsTableWidget(QWidget *parent) : QWidget(parent)
 		elements_tab->setHeaderLabel(tr("Collation"), 4);
 		elements_tab->setHeaderIcon(QPixmap(GuiUtilsNs::getIconPath("collation")),4);
 		elements_tab->setHeaderLabel(tr("Sorting"), 5);
-		elements_tab->setHeaderLabel(tr("Nulls First"), 6);
+		elements_tab->setHeaderLabel(tr("Nulls"), 6);
 
 		vbox->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
 		vbox->addWidget(elements_tab);
@@ -109,14 +109,14 @@ void ElementsTableWidget::showElementData(Element *elem, int elem_idx)
 			elements_tab->setCellText(tr("Descending"), elem_idx, 5);
 
 		if(elem->getSortingAttribute(IndexElement::NullsFirst))
-			elements_tab->setCellText(tr("Yes"), elem_idx, 6);
+			elements_tab->setCellText(tr("First"), elem_idx, 6);
 		else
-			elements_tab->setCellText(tr("No"), elem_idx, 6);
+			elements_tab->setCellText(tr("Last"), elem_idx, 6);
 	}
 	else
 	{
-		elements_tab->clearCellText(elem_idx, 4);
-		elements_tab->clearCellText(elem_idx, 5);
+		elements_tab->setCellText(tr("Default"), elem_idx, 5);
+		elements_tab->setCellText(tr("Default"), elem_idx, 6);
 	}
 
 	elements_tab->setRowData(copyElementData(elem), elem_idx);
