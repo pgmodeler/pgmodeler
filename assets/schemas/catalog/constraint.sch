@@ -63,7 +63,8 @@
 		am.amname AS index_type, cl.reloptions AS factor, ]
 
 		[ id.indkey::oid] $ob $cb [ AS columns,
-		id. indclass::oid] $ob $cb [ AS opclasses,
+		  id.indclass::oid] $ob $cb [ AS opclasses,
+		  id.indoption::int2] $ob $cb [ AS options, 
 		pg_get_expr(id.indpred, id.indrelid) AS condition,
 		pg_get_constraintdef(cs.oid) AS expressions, ]
 

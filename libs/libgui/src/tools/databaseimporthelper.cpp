@@ -2019,13 +2019,14 @@ void DatabaseImportHelper::createIndex(attribs_map &attribs)
 {
 	try
 	{
-		QStringList cols, opclasses, collations, exprs, incl_cols;
+		QStringList cols, opclasses, collations, exprs, incl_cols, options;
 		IndexElement elem;
 		BaseTable *parent_tab=nullptr;
 		Collation *coll=nullptr;
 		OperatorClass *opclass=nullptr;
 		QString tab_name, coll_name, opc_name;
 		int i = 0, elem_cnt = 0;
+		bool desc_order = false, nulls_first = false;
 
 		attribs[Attributes::Factor]=QString("90");
 		tab_name=getDependencyObject(attribs[Attributes::Table], ObjectType::Table, true, auto_resolve_deps, false);
@@ -2043,11 +2044,12 @@ void DatabaseImportHelper::createIndex(attribs_map &attribs)
 												ErrorCode::RefObjectInexistsModel ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		}
 
-		cols=Catalog::parseArrayValues(attribs[Attributes::Columns]);
-		collations=Catalog::parseArrayValues(attribs[Attributes::Collations]);
-		opclasses=Catalog::parseArrayValues(attribs[Attributes::OpClasses]);
+		cols = Catalog::parseArrayValues(attribs[Attributes::Columns]);
+		collations = Catalog::parseArrayValues(attribs[Attributes::Collations]);
+		opclasses = Catalog::parseArrayValues(attribs[Attributes::OpClasses]);
 		exprs = Catalog::parseIndexExpressions(attribs[Attributes::Expressions]);
 		elem_cnt = attribs[Attributes::ElementsCount].toInt();
+		options = Catalog::parseArrayValues(attribs[Attributes::Options]);
 
 		for(i=0; i < elem_cnt; i++)
 		{
@@ -2064,6 +2066,27 @@ void DatabaseImportHelper::createIndex(attribs_map &attribs)
 			{
 				elem.setExpression(exprs.front());
 				exprs.pop_front();
+			}
+
+			if(i < options.size())
+			{
+				/* The definition of the index option bits is in src/include/catalog/pg_index.h
+				 * So, to determine if DESC ordering is set as well as NULLS FIRST we have
+				 * to perform a bitwise operation. */
+
+				/*
+				 * Index AMs that support ordered scans must support these two indoption
+				 * bits.  Otherwise, the content of the per-column indoption fields is
+				 * open for future definition.
+				 */
+				// #define INDOPTION_DESC          0x0001  /* values are in reverse order */
+				// #define INDOPTION_NULLS_FIRST   0x0002  /* NULLs are first instead of last */
+
+				desc_order = (options[i].toUInt() & 1) == 1;
+				nulls_first = (options[i].toUInt() & 2) == 2;
+				elem.setSortingEnabled(desc_order || nulls_first);
+				elem.setSortingAttribute(IndexElement::AscOrder, !desc_order);
+				elem.setSortingAttribute(IndexElement::NullsFirst, nulls_first);
 			}
 
 			if(i < collations.size() && collations[i]!=QString("0"))
@@ -2135,11 +2158,12 @@ void DatabaseImportHelper::createConstraint(attribs_map &attribs)
 
 			if(attribs[Attributes::Type]==Attributes::ExConstr)
 			{
-				QStringList cols, opclasses, opers, exprs;
+				QStringList cols, opclasses, opers, exprs, options;
 				ExcludeElement elem;
 				QString opc_name, op_name;
 				OperatorClass *opclass=nullptr;
 				Operator *oper=nullptr;
+				bool desc_order = false, nulls_first = false;
 
 				attribs[Attributes::SrcColumns]="";
 				attribs[Attributes::Expression]=attribs[Attributes::Condition];
@@ -2147,6 +2171,7 @@ void DatabaseImportHelper::createConstraint(attribs_map &attribs)
 				cols=Catalog::parseArrayValues(attribs[Attributes::Columns]);
 				opers=Catalog::parseArrayValues(attribs[Attributes::Operators]);
 				opclasses=Catalog::parseArrayValues(attribs[Attributes::OpClasses]);
+				options = Catalog::parseArrayValues(attribs[Attributes::Options]);
 
 				/* Due to the way exclude constraints are constructed (similar to indexes),
 				 * we get the constraint's definition in for of expressions. Internally we use pg_get_constraintdef.
@@ -2186,6 +2211,15 @@ void DatabaseImportHelper::createConstraint(attribs_map &attribs)
 
 						if(oper)
 							elem.setOperator(oper);
+					}
+
+					if(i < options.size())
+					{
+						desc_order = (options[i].toUInt() & 1) == 1;
+						nulls_first = (options[i].toUInt() & 2) == 2;
+						elem.setSortingEnabled(desc_order || nulls_first);
+						elem.setSortingAttribute(ExcludeElement::AscOrder, !desc_order);
+						elem.setSortingAttribute(ExcludeElement::NullsFirst, nulls_first);
 					}
 
 					attribs[Attributes::Elements]+=elem.getCodeDefinition(SchemaParser::XmlDefinition);

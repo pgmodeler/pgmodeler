@@ -61,8 +61,8 @@
 %else
 	%if {attribs} %then
 		[SELECT id.indexrelid AS oid, cl.relname AS name,
-		am.amname AS index_type, id.indrelid AS table,
-		id.indisunique AS unique_bool, ]
+		am.amname AS index_type, id.indrelid AS table, 
+		id.indoption::int2] $ob $cb [ AS options, id.indisunique AS unique_bool, ]
 
 		%if ({pgsql-ver} == "9.0") %then
 			[ NULL AS collations, ]

@@ -268,7 +268,6 @@ namespace GuiUtilsNs {
 		itr = list.rbegin();
 		itr_end = list.rend();
 
-		//for(Exception &ex : list)
 		while(itr != itr_end)
 		{			
 			text=QString("[%1] - %2").arg(idx).arg(itr->getMethod());
@@ -281,17 +280,14 @@ namespace GuiUtilsNs {
 			createOutputTreeItem(exceptions_trw, text, QPixmap(getIconPath("alert")), item, false, true);
 
 			child_item=createOutputTreeItem(exceptions_trw, itr->getErrorMessage(), QPixmap(getIconPath("error")), item, false, true);
-			exceptions_trw->itemWidget(child_item, 0)->setStyleSheet(QString("color: #ff0000;"));
+			exceptions_trw->itemWidget(child_item, 0)->setStyleSheet("color: #ff0000;");
 
 			if(!itr->getExtraInfo().isEmpty())
-			{
 				child_item=createOutputTreeItem(exceptions_trw, itr->getExtraInfo(), QPixmap(getIconPath("info")), item, false, true);
-				exceptions_trw->itemWidget(child_item, 0)->setStyleSheet(QString("color: #000080;"));
-			}
 
 			idx++; itr++;
 
-			/* If we have a stack bigger than 30 items we just ignore the rest in order to avoid
+			/* If we have a stack bigger than 50 items we just ignore the rest in order to avoid
 			 * the production or reduntant/useless information on the exception message box */
 			if(static_cast<unsigned>(idx) >= Exception::MaximumStackSize)
 			{

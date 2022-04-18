@@ -1549,7 +1549,7 @@ void DatabaseModel::disconnectRelationships()
 
 void DatabaseModel::validateRelationships()
 {
-	vector<BaseObject *>::iterator itr, itr_end, itr_ant;
+	vector<BaseObject *>::iterator itr, itr_end, prev_itr;
 	Relationship *rel=nullptr;
 	BaseRelationship *base_rel=nullptr;
 	vector<BaseObject *> vet_rel, vet_rel_inv, rels, fail_rels;
@@ -1570,7 +1570,7 @@ void DatabaseModel::validateRelationships()
 	This type of primary key may cause unexpected relationship invalidation during the validation process
 	because all relationship are disconnected and when reconnecting them the primary key sometimes is not yet
 	created causing other relationships to be broken. This counter is used to try revalidate any relationship
-	that emits ERR_LINK_TABLES_NO_PK exception during its connection */
+	that emits ErrorCode::InvLinkTablesNoPrimaryKey  exception during its connection */
 	while(itr!=itr_end)
 	{
 		rel=dynamic_cast<Relationship *>(*itr);
@@ -1646,13 +1646,15 @@ void DatabaseModel::validateRelationships()
 					rel=dynamic_cast<Relationship *>(*itr);
 
 					//Stores the current iterator in a auxiliary one to remove from list in case of error
-					itr_ant=itr;
+					prev_itr = itr;
 					itr++;
 
 					try
 					{
 						//Try to connect the relationship
+						rel->blockSignals(true);
 						rel->connectRelationship();
+						rel->blockSignals(false);
 
 						//Storing the schemas on a auxiliary vector to update them later
 						tab1=rel->getTable(BaseRelationship::SrcTable);
@@ -1665,59 +1667,61 @@ void DatabaseModel::validateRelationships()
 						idx++;
 
 						/* Removes the relationship from the current position and inserts it
-							 into the next position after the next relationship to try the reconnection */
-						rels.erase(itr_ant);
+							 to insert it in the next position after the next relationship to
+							 try the reconnection */
+						rels.erase(prev_itr);
 						idx=0;
 
 						/* If the list was emptied and there is relationship that fails to validate,
 							 the method will try to validate them one last time */
-						if(rels.size()==0 && !fail_rels.empty() && !valid_fail_rels)
+						if(rels.empty() && !fail_rels.empty() && !valid_fail_rels)
 						{
 							rels.insert(rels.end(), fail_rels.begin(), fail_rels.end());
 							//Check this flag indicates that the fail_rels list must be copied only one time
 							valid_fail_rels=true;
 						}
 
-						itr=rels.begin();
-						itr_end=rels.end();
+						itr = rels.begin();
+						itr_end = rels.end();
 					}
 					/* Case some error is raised during the connection the relationship is
 						 permanently invalidated and need to be removed from the model */
 					catch(Exception &e)
 					{
+						rel->blockSignals(false);
+
 						/* If the relationship connection failed after 'rels_gen_pk' times at the
 						different errors or exists on the fail_rels vector (already tried to be validated)
 						it will be deleted from model */
 						if((e.getErrorCode() != ErrorCode::InvLinkTablesNoPrimaryKey && conn_tries[rel] > rels_gen_pk) ||
-								(std::find(fail_rels.begin(), fail_rels.end(), rel)!=fail_rels.end()))
+							 (std::find(fail_rels.begin(), fail_rels.end(), rel)!=fail_rels.end()))
 						{
 							//Removes the relationship
 							__removeObject(rel);
 
-							//Removes the iterator that stores the relationship from the list
-							rels.erase(itr_ant);
+							//Removes the iterator that stores the relationship to avoid trying to validate it again
+							rels.erase(prev_itr);
 
 							//Stores the error raised in a list
 							errors.push_back(e);
 						}
-						/* If the relationship connection fails with the ERR_LINK_TABLES_NO_PK error and
-								the connection tries exceed the size of the relationship the relationship is isolated
-								on a "failed to validate" list. This list will be appended to the main rel list when
+						/* If the relationship connection fails with the ErrorCode::InvLinkTablesNoPrimaryKey error and
+								the connection tries exceed the size of the relationships list, the relationship is isolated
+								on a "failed to validate" list. This list will be appended to the main relationship list when
 								there is only one relationship to be validated */
 						else if(e.getErrorCode()==ErrorCode::InvLinkTablesNoPrimaryKey &&
-								(conn_tries[rel] > rels.size() ||
-								 rel->getRelationshipType()==BaseRelationship::RelationshipNn))
+										(conn_tries[rel] > rels.size() || rel->getRelationshipType() == BaseRelationship::RelationshipNn))
 						{
 							fail_rels.push_back(rel);
-							rels.erase(itr_ant);
+							rels.erase(prev_itr);
 							conn_tries[rel]=0;
 
 							/* If the list was emptied and there is relationship that fails to validate,
 								 the method will try to validate them one last time */
-							if(rels.size()==0 && !valid_fail_rels)
+							if(rels.empty() && !valid_fail_rels)
 							{
 								rels.insert(rels.end(), fail_rels.begin(), fail_rels.end());
-								valid_fail_rels=true;
+								valid_fail_rels = true;
 							}
 						}
 						else
@@ -1727,23 +1731,23 @@ void DatabaseModel::validateRelationships()
 
 							/* Removes the relationship from the current position and inserts it
 								 into the next position after the next relationship to try the reconnection */
-							rels.erase(itr_ant);
+							rels.erase(prev_itr);
 
 							//If the next index doesn't extrapolates the list size insert it on the next position
-							if(idx+1 < rels.size())
-								rels.insert(rels.begin() + idx + 1,rel);
+							if(idx + 1 < rels.size())
+								rels.insert(rels.begin() + idx + 1, rel);
 							else
 								rels.push_back(rel);
 						}
 
 						/* Points the searching to the iterator immediately after the removed iterator
-						evicting to walk on the list from the first item */
-						itr_end=rels.end();
-						itr=rels.begin() + idx;
+						avoiding walk on the list from the first item */
+						itr_end = rels.end();
+						itr = rels.begin() + idx;
 					}
 				}
 
-				itr=rels.begin();
+				itr = rels.begin();
 			}
 
 			//Recreating the special objects

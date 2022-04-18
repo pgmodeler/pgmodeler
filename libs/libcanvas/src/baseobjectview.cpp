@@ -589,7 +589,7 @@ double BaseObjectView::getScreenDpiFactor()
 
 	/* Avoiding returning a factor less than 1 because
 	 * this can cause improper objects resizes */
-	if(factor < 1)
+	if(factor <= 1.005)
 		return 1;
 
 	/* Special case for 4K or superior screens: we need to cap the dpi factor

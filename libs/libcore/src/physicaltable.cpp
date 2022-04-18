@@ -245,15 +245,14 @@ void PhysicalTable::setColumnsAttribute(unsigned def_type, bool incl_rel_added_c
 			bool has_constr_enabled = false;
 			Constraint *constr = nullptr;
 
-			/* Checking if we have some primary key or check constraint enabled
+			/* Checking if we have some primary key, check or exclude constraints enabled
 			 * so we can determine if the last comma in the column definition must be removed */
 			for(auto &obj : constraints)
 			{
 				constr = dynamic_cast<Constraint *>(obj);
 
 				if(!constr->isSQLDisabled() &&
-					 (constr->getConstraintType() == ConstraintType::PrimaryKey ||
-						constr->getConstraintType() == ConstraintType::Check))
+					 constr->getConstraintType() != ConstraintType::ForeignKey)
 				{
 					has_constr_enabled = true;
 					break;
