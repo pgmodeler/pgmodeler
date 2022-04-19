@@ -1547,34 +1547,80 @@ void DatabaseModel::disconnectRelationships()
 	}
 }
 
+bool DatabaseModel::hasInvalidRelatioships()
+{
+	Relationship *rel = nullptr;
+
+	for(auto &itr : relationships)
+	{
+		rel = dynamic_cast<Relationship *>(itr);
+
+		if(!rel) continue;
+
+		//Validates only table-table relationships
+		if(rel && rel->isInvalidated())
+			return true;
+	}
+
+	return false;
+}
+
+vector<Exception> DatabaseModel::createSpecialObjects()
+{
+	//The special objects are created only when the model is not being loaded
+	if(loading_model)
+		return {};
+
+	vector<unsigned> created_objs_ids;
+	vector<Exception> errors;
+
+	for(auto &itr : xml_special_objs)
+	{
+		try
+		{
+			//Try to create the special object
+			createSpecialObject(itr.second, itr.first);
+			created_objs_ids.push_back(itr.first);
+		}
+		catch(Exception &e)
+		{
+			//Maybe store the exception in a list instead of redirect?
+			errors.push_back(e);
+			//throw Exception(e.getErrorMessage(), e.getErrorCode(), __PRETTY_FUNCTION__,__FILE__,__LINE__);
+		}
+	}
+
+	while(!created_objs_ids.empty())
+	{
+		xml_special_objs.erase(created_objs_ids.back());
+		created_objs_ids.pop_back();
+	}
+
+	return errors;
+}
+
 void DatabaseModel::validateRelationships()
 {
-	vector<BaseObject *>::iterator itr, itr_end, prev_itr;
-	Relationship *rel=nullptr;
-	BaseRelationship *base_rel=nullptr;
-	vector<BaseObject *> vet_rel, vet_rel_inv, rels, fail_rels;
-	bool found_inval_rel, valid_fail_rels=false;
-	vector<Exception> errors;
-	map<unsigned, QString>::iterator itr1, itr1_end;
-	map<unsigned, Exception> error_map;
-	map<unsigned, Exception>::iterator itr2, itr2_end;
+	Relationship *rel = nullptr;
+	BaseRelationship *base_rel = nullptr;
+	vector<Exception> errors, rel_errors;
 	map<BaseObject *, unsigned> conn_tries;
-	unsigned idx, rels_gen_pk=0;
-	vector<Schema *> schemas;
-	BaseTable *tab1=nullptr, *tab2=nullptr;
+	unsigned rels_gen_pk = 0;
+	vector<Relationship *> __rels, __failed_rels;
+	vector<Schema *> __schemas;
 
-	itr=relationships.begin();
-	itr_end=relationships.end();
+	if(!hasInvalidRelatioships())
+		return;
 
 	/* Calculates the quantity of referece tables which has primary keys added by relationship.
 	This type of primary key may cause unexpected relationship invalidation during the validation process
 	because all relationship are disconnected and when reconnecting them the primary key sometimes is not yet
 	created causing other relationships to be broken. This counter is used to try revalidate any relationship
 	that emits ErrorCode::InvLinkTablesNoPrimaryKey  exception during its connection */
-	while(itr!=itr_end)
+	for(auto &itr : relationships)
 	{
-		rel=dynamic_cast<Relationship *>(*itr);
-		itr++;
+		rel = dynamic_cast<Relationship *>(itr);
+		__rels.push_back(rel);
 
 		if(rel &&
 				(rel->getRelationshipType()==Relationship::Relationship11 ||
@@ -1584,258 +1630,68 @@ void DatabaseModel::validateRelationships()
 			rels_gen_pk++;
 	}
 
-	itr=relationships.begin();
-	itr_end=relationships.end();
+	//Stores the special objects definition if there is some invalidated relationships
+	if(!loading_model && xml_special_objs.empty())
+		storeSpecialObjectsXML();
 
-	do
+	// Disconnecting all relationships in order to force the correct propagation of columns/constraints
+	disconnectRelationships();
+
+	// Trying to connect all relatinships in the order they were created
+	for(auto &rel : __rels)
 	{
-		found_inval_rel=false;
-
-		while(itr!=itr_end)
+		try
 		{
-			base_rel=dynamic_cast<BaseRelationship *>(*itr);
-			itr++;
+			rel->blockSignals(true);
+			rel->connectRelationship();
+			rel->blockSignals(false);
 
-			//Validates only table-table relationships
-			if(base_rel->getObjectType()==ObjectType::Relationship)
-			{
-				//Makes a cast to the correct object class
-				rel=dynamic_cast<Relationship *>(base_rel);
-
-				//If the relationships is invalid
-				if(rel->isInvalidated())
-				{
-					//Inserts it to the invalid relationship vector
-					vet_rel_inv.push_back(base_rel);
-
-					//Marks the flag indicating the at least one relationship was found invalidated
-					found_inval_rel=true;
-				}
-				else
-					//Otherwise inserts the relationship on the valid relationships
-					vet_rel.push_back(base_rel);
-			}
+			__schemas.push_back(dynamic_cast<Schema *>(rel->getTable(Relationship::SrcTable)->getSchema()));
+			__schemas.push_back(dynamic_cast<Schema *>(rel->getTable(Relationship::DstTable)->getSchema()));
 		}
-
-		//If there is some invalidated relationship or special objects to be recreated
-		if(found_inval_rel || !xml_special_objs.empty())
+		catch(Exception &e)
 		{
-			//Stores the special objects definition if there is some invalidated relationships
-			if(!loading_model && xml_special_objs.empty())
-				storeSpecialObjectsXML();
-
-			if(found_inval_rel)
-			{
-				//Disconnects all the relationship
-				disconnectRelationships();
-
-				/* Merges the two lists (valid and invalid relationships),
-					 taking care to insert the invalid ones at the end of the list */
-				rels=vet_rel;
-				rels.insert(rels.end(), vet_rel_inv.begin(), vet_rel_inv.end());
-				vet_rel.clear();
-				vet_rel_inv.clear();
-
-				//Walking through the created list connecting the relationships
-				itr=rels.begin();
-				itr_end=rels.end();
-				idx=0;
-
-				while(itr!=itr_end)
-				{
-					rel=dynamic_cast<Relationship *>(*itr);
-
-					//Stores the current iterator in a auxiliary one to remove from list in case of error
-					prev_itr = itr;
-					itr++;
-
-					try
-					{
-						//Try to connect the relationship
-						rel->blockSignals(true);
-						rel->connectRelationship();
-						rel->blockSignals(false);
-
-						//Storing the schemas on a auxiliary vector to update them later
-						tab1=rel->getTable(BaseRelationship::SrcTable);
-						tab2=rel->getTable(BaseRelationship::DstTable);
-						schemas.push_back(dynamic_cast<Schema *>(tab1->getSchema()));
-
-						if(tab2 != tab1)
-							schemas.push_back(dynamic_cast<Schema *>(tab2->getSchema()));
-
-						idx++;
-
-						/* Removes the relationship from the current position and inserts it
-							 to insert it in the next position after the next relationship to
-							 try the reconnection */
-						rels.erase(prev_itr);
-						idx=0;
-
-						/* If the list was emptied and there is relationship that fails to validate,
-							 the method will try to validate them one last time */
-						if(rels.empty() && !fail_rels.empty() && !valid_fail_rels)
-						{
-							rels.insert(rels.end(), fail_rels.begin(), fail_rels.end());
-							//Check this flag indicates that the fail_rels list must be copied only one time
-							valid_fail_rels=true;
-						}
-
-						itr = rels.begin();
-						itr_end = rels.end();
-					}
-					/* Case some error is raised during the connection the relationship is
-						 permanently invalidated and need to be removed from the model */
-					catch(Exception &e)
-					{
-						rel->blockSignals(false);
-
-						/* If the relationship connection failed after 'rels_gen_pk' times at the
-						different errors or exists on the fail_rels vector (already tried to be validated)
-						it will be deleted from model */
-						if((e.getErrorCode() != ErrorCode::InvLinkTablesNoPrimaryKey && conn_tries[rel] > rels_gen_pk) ||
-							 (std::find(fail_rels.begin(), fail_rels.end(), rel)!=fail_rels.end()))
-						{
-							//Removes the relationship
-							__removeObject(rel);
-
-							//Removes the iterator that stores the relationship to avoid trying to validate it again
-							rels.erase(prev_itr);
-
-							//Stores the error raised in a list
-							errors.push_back(e);
-						}
-						/* If the relationship connection fails with the ErrorCode::InvLinkTablesNoPrimaryKey error and
-								the connection tries exceed the size of the relationships list, the relationship is isolated
-								on a "failed to validate" list. This list will be appended to the main relationship list when
-								there is only one relationship to be validated */
-						else if(e.getErrorCode()==ErrorCode::InvLinkTablesNoPrimaryKey &&
-										(conn_tries[rel] > rels.size() || rel->getRelationshipType() == BaseRelationship::RelationshipNn))
-						{
-							fail_rels.push_back(rel);
-							rels.erase(prev_itr);
-							conn_tries[rel]=0;
-
-							/* If the list was emptied and there is relationship that fails to validate,
-								 the method will try to validate them one last time */
-							if(rels.empty() && !valid_fail_rels)
-							{
-								rels.insert(rels.end(), fail_rels.begin(), fail_rels.end());
-								valid_fail_rels = true;
-							}
-						}
-						else
-						{
-							//Increments the connection tries
-							conn_tries[rel]++;
-
-							/* Removes the relationship from the current position and inserts it
-								 into the next position after the next relationship to try the reconnection */
-							rels.erase(prev_itr);
-
-							//If the next index doesn't extrapolates the list size insert it on the next position
-							if(idx + 1 < rels.size())
-								rels.insert(rels.begin() + idx + 1, rel);
-							else
-								rels.push_back(rel);
-						}
-
-						/* Points the searching to the iterator immediately after the removed iterator
-						avoiding walk on the list from the first item */
-						itr_end = rels.end();
-						itr = rels.begin() + idx;
-					}
-				}
-
-				itr = rels.begin();
-			}
-
-			//Recreating the special objects
-			itr1=xml_special_objs.begin();
-			itr1_end=xml_special_objs.end();
-
-			//The special objects are created only when the model is not being loaded
-			if(!loading_model && itr1!=itr1_end)
-			{
-				do
-				{
-					try
-					{
-						//Try to create the special object
-						createSpecialObject(itr1->second, itr1->first);
-
-						/* If the special object is successfully created, remove the errors
-							 related to a previous attempt to create it */
-						if(error_map.count(itr1->first))
-							error_map.erase(error_map.find(itr1->first));
-
-						//Removes the definition of the special object when it is created successfully
-						xml_special_objs.erase(itr1);
-
-						//Restart the special object creation
-						itr1=xml_special_objs.begin();
-						itr1_end=xml_special_objs.end();
-					}
-					catch(Exception &e)
-					{
-						//If some error related to the special object is raised, stores it for latter creation attempts
-						error_map[itr1->first]=e;
-						itr1++; idx++;
-					}
-				}
-				while(itr1!=itr1_end);
-			}
+			//Capture errors here?
+			__failed_rels.push_back(rel);
 		}
 	}
-	//The validation continues until there is some invalid relationship
-	while(found_inval_rel);
 
-	if(!loading_model && !schemas.empty())
+	bool rels_updated = false;
+	auto itr = __rels.begin(),
+			itr_end = __rels.end();
+	//for(auto &rel : __rels)
+
+	while(itr != itr_end)
 	{
-		std::sort(schemas.begin(), schemas.end());
-		vector<Schema *>::iterator end = std::unique(schemas.begin(), schemas.end());
-		schemas.erase(end, schemas.end());
+		rel = *itr;
+		itr++;
+
+		rel->blockSignals(true);
+
+		if(rel->updateGeneratedObjects())
+			rels_updated = true;
+
+		rel->blockSignals(false);
+
+		if(itr == itr_end && rels_updated)
+		{
+			rels_updated = false;
+			itr = __rels.begin();
+		}
+	}
+
+	//Recreating the special objects that depends on the columns created by relationshps
+	errors = createSpecialObjects();
+
+	if(!loading_model && !__schemas.empty())
+	{
+		std::sort(__schemas.begin(), __schemas.end());
+		vector<Schema *>::iterator end = std::unique(__schemas.begin(), __schemas.end());
+		__schemas.erase(end, __schemas.end());
 
 		//Updates the schemas to ajdust its sizes due to the tables resizings
-		for(auto &sch : schemas)
+		for(auto &sch : __schemas)
 			sch->setModified(true);
-	}
-
-	//Stores the errors related to creation of special objects on the general error vector
-	itr2=error_map.begin();
-	itr2_end=error_map.end();
-	while(itr2!=itr2_end)
-	{
-		errors.push_back(itr2->second);
-		itr2++;
-	}
-
-	//If errors were caught on the above executions they will be redirected to the user
-	if(!errors.empty())
-	{
-		if(!loading_model)
-			xml_special_objs.clear();
-
-		/* Revalidates the fk relationships at this points because some fks must be removed due
-		 to special object invalidation */
-		itr=base_relationships.begin();
-		itr_end=base_relationships.end();
-
-		while(itr!=itr_end)
-		{
-			base_rel=dynamic_cast<BaseRelationship *>(*itr);
-
-			if(base_rel->getRelationshipType()==BaseRelationship::RelationshipFk)
-				this->updateTableFKRelationships(dynamic_cast<Table *>(base_rel->getTable(BaseRelationship::SrcTable)));
-
-			itr++;
-		}
-
-		//Set all the model objects as modified to force the redraw of the entire model
-		this->setObjectsModified();
-
-		//Redirects all the errors captured on the revalidation
-		throw Exception(ErrorCode::RemInvalidatedObjects,__PRETTY_FUNCTION__,__FILE__,__LINE__,errors);
 	}
 
 	if(!loading_model)
@@ -1847,6 +1703,29 @@ void DatabaseModel::validateRelationships()
 			dynamic_cast<PhysicalTable *>(tab)->restoreRelObjectsIndexes();
 
 		xml_special_objs.clear();
+	}
+
+	//If errors were caught on the above executions they will be redirected to the user
+	if(!errors.empty())
+	{
+		if(!loading_model)
+			xml_special_objs.clear();
+
+		/* Revalidates the fk relationships at this points because some fks must be removed due
+		 * to special object invalidation */
+		for(auto &itr : base_relationships)
+		{
+			base_rel = dynamic_cast<BaseRelationship *>(itr);
+
+			if(base_rel->getRelationshipType() == BaseRelationship::RelationshipFk)
+				this->updateTableFKRelationships(dynamic_cast<Table *>(base_rel->getTable(BaseRelationship::SrcTable)));
+		}
+
+		//Set all the model objects as modified to force the redraw of the entire model
+		setObjectsModified();
+
+		//Redirects all the errors captured on the revalidation
+		throw Exception(ErrorCode::RemInvalidatedObjects,__PRETTY_FUNCTION__,__FILE__,__LINE__, errors);
 	}
 }
 

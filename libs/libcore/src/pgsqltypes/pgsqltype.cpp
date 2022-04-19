@@ -952,14 +952,14 @@ PgSqlType PgSqlType::getAliasType()
 {
 	if(!isUserType())
 	{
-		if(type_names[this->type_idx]==QString("serial"))
-			return (PgSqlType(QString("integer")));
+		if(type_names[this->type_idx]=="serial")
+			return (PgSqlType("integer"));
 
-		if(type_names[this->type_idx]==QString("smallserial"))
-			return (PgSqlType(QString("smallint")));
+		if(type_names[this->type_idx]=="smallserial")
+			return (PgSqlType("smallint"));
 
-		if(type_names[this->type_idx]==QString("bigserial"))
-			return (PgSqlType(QString("bigint")));
+		if(type_names[this->type_idx]=="bigserial")
+			return (PgSqlType("bigint"));
 
 		return (PgSqlType(type_names[this->type_idx]));
 	}

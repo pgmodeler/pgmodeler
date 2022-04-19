@@ -946,9 +946,12 @@ void Relationship::addColumnsRelGenPart()
 			relationship foreign key */
 			dst_type=dst_col->getType();
 
-			if(dst_type == "serial") dst_type = "integer";
+			/* if(dst_type == "serial") dst_type = "integer";
 			else if(dst_type == "bigserial") dst_type = "bigint";
-			else if(dst_type == "smallserial") dst_type = "smallint";
+			else if(dst_type == "smallserial") dst_type = "smallint"; */
+
+			if(dst_type.isSerialType())
+				dst_type = dst_type.getAliasType();
 
 			/* This flag indicates that the column name is registered
 			in the other table column (duplication). This situation need
@@ -962,9 +965,12 @@ void Relationship::addColumnsRelGenPart()
 				src_col=src_tab->getColumn(i1);
 				src_type=src_col->getType();
 
-				if(src_type == "serial") src_type = "integer";
+				/*if(src_type == "serial") src_type = "integer";
 				else if(src_type == "bigserial") src_type = "bigint";
-				else if(dst_type == "smallserial") dst_type = "smallint";
+				else if(dst_type == "smallserial") dst_type = "smallint";*/
+
+				if(src_type.isSerialType())
+					src_type = src_type.getAliasType();
 
 				//Check the duplication on the column names
 				duplic=(src_col->getName()==dst_col->getName());
@@ -1280,6 +1286,46 @@ void Relationship::connectRelationship()
 	}
 }
 
+bool Relationship::updateGeneratedObjects()
+{
+	if(!connected || !isInvalidated())
+		return false;
+
+	Table *recv_tab = dynamic_cast<Table *>(getReceiverTable()),
+			*ref_tab = dynamic_cast<Table *>(getReferenceTable());
+
+	// Relationship 1-n, 1-1, n-n
+	copyColumns(ref_tab, recv_tab, gen_columns.front()->isNotNull(), false, true);
+
+	// Copy Dependency, Generalization, Partition cols
+	// addColumnsRelGenPart();
+
+	Column *col = nullptr, *pk_col = nullptr;
+
+	for(unsigned idx = 0; idx < gen_columns.size(); idx++)
+	{
+		col = gen_columns[idx];
+		pk_col = pk_columns[idx];
+
+		if(fk_rel1n && !fk_rel1n->isColumnExists(col, Constraint::SourceCols))
+		{
+			fk_rel1n->addColumn(col, Constraint::SourceCols);
+			fk_rel1n->addColumn(pk_col, Constraint::ReferencedCols);
+		}
+
+		if(uq_rel11 && !uq_rel11->isColumnExists(col, Constraint::SourceCols))
+			uq_rel11->addColumn(col, Constraint::SourceCols);
+
+		if(pk_relident && !pk_relident->isColumnExists(col, Constraint::SourceCols))
+			pk_relident->addColumn(col,  Constraint::SourceCols);
+	}
+
+	// Update special primary key
+	// createSpecialPrimaryKey()
+
+	return true;
+}
+
 void Relationship::configureIndentifierRel(PhysicalTable *recv_tab)
 {
 	Constraint *pk=nullptr;
@@ -1570,7 +1616,7 @@ void Relationship::addAttributes(PhysicalTable *recv_tab)
 	}
 }
 
-void Relationship::copyColumns(PhysicalTable *ref_tab, PhysicalTable *recv_tab, bool not_null, bool is_dst_table)
+void Relationship::copyColumns(PhysicalTable *ref_tab, PhysicalTable *recv_tab, bool not_null, bool is_dst_table, bool missing_only)
 {
 	Constraint *dst_pk=nullptr, *src_pk=nullptr, *pk=nullptr;
 	unsigned i, count;
@@ -1598,12 +1644,16 @@ void Relationship::copyColumns(PhysicalTable *ref_tab, PhysicalTable *recv_tab, 
 		 to the referenced column list of the relationship */
 		for(i=0; i < count; i++)
 		{
+			//Add the current primary key source column on the list
+			column_aux = pk->getColumn(i, Constraint::SourceCols);
+
+			if(missing_only && std::find(pk_columns.begin(), pk_columns.end(), column_aux) != pk_columns.end())
+				continue;
+
+			pk_columns.push_back(column_aux);
+
 			column=new Column;
 			gen_columns.push_back(column);
-
-			//Add the current primary key source column on the list
-			column_aux=pk->getColumn(i, Constraint::SourceCols);
-			pk_columns.push_back(column_aux);
 
 			(*column)=(*column_aux);
 			column->setNotNull(not_null);
@@ -1641,12 +1691,15 @@ void Relationship::copyColumns(PhysicalTable *ref_tab, PhysicalTable *recv_tab, 
 			column->setParentRelationship(this);
 
 			//Converting the serial like types
-			if(column->getType() == "serial")
+			/* if(column->getType() == "serial")
 				column->setType(PgSqlType("integer"));
 			else if(column->getType() == "bigserial")
 				column->setType(PgSqlType("bigint"));
 			else if(column->getType() == "smallserial")
-				column->setType(PgSqlType("smallint"));
+				column->setType(PgSqlType("smallint")); */
+
+			if(column->getType().isSerialType())
+				column->setType(column->getType().getAliasType());
 
 			column->setName(name);
 			name=CoreUtilsNs::generateUniqueName(column, (*recv_tab->getObjectList(ObjectType::Column)));

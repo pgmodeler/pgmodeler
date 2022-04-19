@@ -287,6 +287,10 @@ class DatabaseModel:  public QObject, public BaseObject {
 		 * to the filename. Returns true when the file could be saved. */
 		bool saveSplitCustomSQL(bool save_appended, const QString &path, const QString &file_prefix);
 
+		bool hasInvalidRelatioships();
+
+		vector<Exception> createSpecialObjects();
+
 	protected:
 		//! \brief Set the layer names (only to be written in the XML definition)
 		void setLayers(const QStringList &layers);
