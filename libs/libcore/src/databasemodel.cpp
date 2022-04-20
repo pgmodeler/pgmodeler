@@ -3134,7 +3134,7 @@ void DatabaseModel::loadModel(const QString &filename)
 		ObjectType obj_type;
 		attribs_map attribs;
 		BaseObject *object=nullptr;
-		bool protected_model=false, found_inh_rel = false;
+		bool protected_model=false; //, found_inh_rel = false;
 		QStringList pos_str;
 		map<ObjectType, QString> def_objs;
 
@@ -3300,9 +3300,9 @@ void DatabaseModel::loadModel(const QString &filename)
 
 									/* If there is at least one inheritance relationship we need to flag this situation
 									 in order to do an addtional rel. validation in the end of loading */
-									if(!found_inh_rel && object->getObjectType()==ObjectType::Relationship &&
+									/* if(!found_inh_rel && object->getObjectType()==ObjectType::Relationship &&
 											dynamic_cast<Relationship *>(object)->getRelationshipType()==BaseRelationship::RelationshipGen)
-										found_inh_rel=true;
+										found_inh_rel=true; */
 
 									emit s_objectLoaded((xmlparser.getCurrentBufferLine()/static_cast<double>(xmlparser.getBufferLineCount()))*100,
 														tr("Loading: `%1' (%2)")
@@ -3362,11 +3362,11 @@ void DatabaseModel::loadModel(const QString &filename)
 			emit s_objectLoaded(100, tr("Validating relationships..."), enum_cast(ObjectType::Relationship));
 
 			//Doing another relationship validation when there are inheritances to avoid incomplete tables
-			if(found_inh_rel)
+			/* if(found_inh_rel)
 			{
 				emit s_objectLoaded(100, tr("Validating relationships..."), enum_cast(ObjectType::Relationship));
 				validateRelationships();
-			}
+			} */
 
 			updateTablesFKRelationships();
 			emit s_objectLoaded(100, tr("Rendering database model..."), enum_cast(ObjectType::BaseObject));
