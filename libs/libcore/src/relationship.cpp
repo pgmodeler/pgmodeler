@@ -1349,24 +1349,23 @@ bool Relationship::updateGeneratedObjects()
 	{
 		copyColumns(ref_tab, recv_tab, gen_columns.front()->isNotNull(), false, true);
 
-		Column *col = nullptr, *pk_col = nullptr;
-
-		for(unsigned idx = 0; idx < gen_columns.size(); idx++)
+		if(fk_rel1n)
 		{
-			col = gen_columns[idx];
-			pk_col = pk_columns[idx];
+			fk_rel1n->removeColumns();
+			fk_rel1n->addColumns(gen_columns, Constraint::SourceCols);
+			fk_rel1n->addColumns(pk_columns, Constraint::ReferencedCols);
+		}
 
-			if(fk_rel1n && !fk_rel1n->isColumnExists(col, Constraint::SourceCols))
-			{
-				fk_rel1n->addColumn(col, Constraint::SourceCols);
-				fk_rel1n->addColumn(pk_col, Constraint::ReferencedCols);
-			}
+		if(uq_rel11)
+		{
+			uq_rel11->removeColumns();
+			uq_rel11->addColumns(gen_columns, Constraint::SourceCols);
+		}
 
-			if(uq_rel11 && !uq_rel11->isColumnExists(col, Constraint::SourceCols))
-				uq_rel11->addColumn(col, Constraint::SourceCols);
-
-			if(pk_relident && !pk_relident->isColumnExists(col, Constraint::SourceCols))
-				pk_relident->addColumn(col,  Constraint::SourceCols);
+		if(pk_relident)
+		{
+			pk_relident->removeColumns();
+			pk_relident->addColumns(gen_columns, Constraint::SourceCols);
 		}
 	}
 	else
