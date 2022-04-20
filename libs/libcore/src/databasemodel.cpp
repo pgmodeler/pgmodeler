@@ -1636,7 +1636,7 @@ void DatabaseModel::validateRelationships()
 	vector<Exception> errors;
 	map<Relationship *, Exception> rel_errors;
 	vector<Relationship *> failed_rels;
-	vector<Schema *> schemas;
+	vector<BaseTable *> tabs;
 
 	if(!hasInvalidRelatioships())
 		return;
@@ -1658,8 +1658,10 @@ void DatabaseModel::validateRelationships()
 			rel->connectRelationship();
 			rel->blockSignals(false);
 
-			schemas.push_back(dynamic_cast<Schema *>(rel->getTable(Relationship::SrcTable)->getSchema()));
-			schemas.push_back(dynamic_cast<Schema *>(rel->getTable(Relationship::DstTable)->getSchema()));
+			/* Storing the tables here in an auxiliary list so we can
+			 * update their geometry and their parent schemas rectangles */
+			tabs.push_back(rel->getTable(Relationship::SrcTable));
+			tabs.push_back(rel->getTable(Relationship::DstTable));
 		}
 		catch(Exception &)
 		{
@@ -1676,7 +1678,9 @@ void DatabaseModel::validateRelationships()
 		{
 			try
 			{
+				rel->blockSignals(true);
 				rel->connectRelationship();
+				rel->blockSignals(false);
 			}
 			catch(Exception &e)
 			{
@@ -1708,12 +1712,25 @@ void DatabaseModel::validateRelationships()
 
 	if(!loading_model && !schemas.empty())
 	{
-		std::sort(schemas.begin(), schemas.end());
-		vector<Schema *>::iterator end = std::unique(schemas.begin(), schemas.end());
-		schemas.erase(end, schemas.end());
+		vector<Schema *> schs;
+
+		std::sort(tabs.begin(), tabs.end());
+		auto tab_end = std::unique(tabs.begin(), tabs.end());
+		tabs.erase(tab_end, tabs.end());
+
+		// Updating the tables to reflect their sizes due to the creationg of new columns/constraints
+		for(auto &tab : tabs)
+		{
+			tab->setModified(true);
+			schs.push_back(dynamic_cast<Schema *>(tab->getSchema()));
+		}
+
+		std::sort(schs.begin(), schs.end());
+		auto sch_end = std::unique(schs.begin(), schs.end());
+		schs.erase(sch_end, schs.end());
 
 		//Updates the schemas to ajdust its sizes due to the tables resizings
-		for(auto &sch : schemas)
+		for(auto &sch : schs)
 			sch->setModified(true);
 	}
 
