@@ -905,7 +905,7 @@ void Relationship::addConstraints(PhysicalTable *recv_tab)
 	}
 }
 
-void Relationship::addColumnsRelGenPart()
+void Relationship::addColumnsRelGenPart(bool missing_only)
 {
 	PhysicalTable *src_tab=nullptr, *dst_tab=nullptr,
 			*parent_tab=nullptr, *aux_tab=nullptr;
@@ -1066,6 +1066,24 @@ void Relationship::addColumnsRelGenPart()
 				//In case there is no column duplicity
 				if(!duplic)
 				{
+					if(missing_only)
+					{
+						bool found = false;
+
+						for(auto &col : gen_columns)
+						{
+							if(col->getName() == dst_col->getName())
+							{
+								found = true;
+								break;
+							}
+						}
+
+						if(found)
+							continue;
+					}
+
+
 					//Creates a new column making the initial configurations
 					column=new Column;
 
@@ -1086,11 +1104,12 @@ void Relationship::addColumnsRelGenPart()
 					//Adds the new column to the temporary column list
 					columns.push_back(column);
 				}
-				else
+				// We count the rejected columns only when not creating the missing ones
+				else if(!missing_only)
 					/* If there is duplicity, the column is discarded and not included in the list,
-				instead, increases the attribute which counts the amount
-				duplicate columns of which were rejected by already exist
-				in the target (receiver) table */
+					 * instead, increases the attribute which counts the amount
+					 * duplicate columns of which were rejected by already exist
+					 * in the target (receiver) table */
 					rejected_col_count++;
 			}
 		}
@@ -1101,19 +1120,28 @@ void Relationship::addColumnsRelGenPart()
 		//In case that no duplicity error is detected
 		if(err_code==ErrorCode::Custom)
 		{
-			vector<Column *>::iterator itr, itr_end;
-
-			/* The columns of the temporary list will be inserted
-			in the list of referencing columns, and additionally the
-			relationship columns will also be inserted directly in the
-			source table, which inherits or copy table columns from target table */
-			gen_columns=columns;
-			itr=gen_columns.begin();
-			itr_end=gen_columns.end();
-			while(itr!=itr_end)
+			/* If we're creating the missing columns the columns
+			 * in the above iteration are added to both the source table
+			 * and the generated columns vector in order to reflect the
+			 * correct state of the relationship */
+			if(missing_only)
 			{
-				src_tab->addColumn((*itr));
-				itr++;
+				for(auto &col : columns)
+				{
+					src_tab->addColumn(col);
+					gen_columns.push_back(col);
+				}
+			}
+			else
+			{
+				/* The columns of the temporary list will be inserted
+				in the list of referencing columns, and additionally the
+				relationship columns will also be inserted directly in the
+				source table, which inherits or copy table columns from target table */
+				gen_columns = columns;
+
+				for(auto &col : gen_columns)
+					src_tab->addColumn(col);
 			}
 		}
 		else
@@ -1154,11 +1182,11 @@ void Relationship::addColumnsRelGenPart()
 
 		/* Creates the special primary key if exists and if the receiver table is not a foreign table .
 		 * This kind of table still don't support pks and fks */
-		if(getReceiverTable()->getObjectType() != ObjectType::ForeignTable)
-			this->createSpecialPrimaryKey();
+		//if(getReceiverTable()->getObjectType() != ObjectType::ForeignTable)
+		//	this->createSpecialPrimaryKey();
 
 		//Adds the constraint on the receiver table
-		this->addConstraints(getReceiverTable());
+		//this->addConstraints(getReceiverTable());
 	}
 	catch(Exception &e)
 	{
@@ -1170,7 +1198,7 @@ void Relationship::addColumnsRelGenPart()
 	}
 }
 
-void Relationship::addConstraintsRelGenPart()
+void Relationship::addCheckConstrsRelGenPart()
 {
 	PhysicalTable *parent_tab=getReferenceTable(),
 								*child_tab=getReceiverTable();
@@ -1211,6 +1239,17 @@ void Relationship::addConstraintsRelGenPart()
 	}
 }
 
+void Relationship::addConstraintsRelGenPart()
+{
+	/* Creates the special primary key if exists and if the receiver table is not a foreign table .
+	 * This kind of table still don't support pks and fks */
+	if(getReceiverTable()->getObjectType() != ObjectType::ForeignTable)
+		createSpecialPrimaryKey();
+
+	//Adds the constraint on the receiver table
+	addConstraints(getReceiverTable());
+}
+
 void Relationship::connectRelationship()
 {
 	try
@@ -1220,10 +1259,12 @@ void Relationship::connectRelationship()
 			if(rel_type==RelationshipGen)
 			{
 				//Copying the CHECK constraints before adding custom constraints like special pk
-				addConstraintsRelGenPart();
+				addCheckConstrsRelGenPart();
 
 				//Creates the columns on the receiver table following the rules for generalization rules
 				addColumnsRelGenPart();
+
+				addConstraintsRelGenPart();
 
 				//The reference table is added as parent table on the receiver
 				getReceiverTable()->addAncestorTable(getReferenceTable());
@@ -1233,6 +1274,8 @@ void Relationship::connectRelationship()
 				//Creates the columns on the receiver table following the rules for copy rules
 				addColumnsRelGenPart();
 
+				addConstraintsRelGenPart();
+
 				//The reference table is added as copy table on the receiver
 				getReceiverTable()->setCopyTable(getReferenceTable());
 				getReceiverTable()->setCopyTableOptions(this->copy_options);
@@ -1240,10 +1283,13 @@ void Relationship::connectRelationship()
 			else if(rel_type == RelationshipPart)
 			{
 				//Copying the CHECK constraints before adding custom constraints like special pk
-				addConstraintsRelGenPart();
+				addCheckConstrsRelGenPart();
 
 				//Creates the columns on the receiver table following the rules for copy rules
 				addColumnsRelGenPart();
+
+				addConstraintsRelGenPart();
+
 				getReceiverTable()->setPartionedTable(getReferenceTable());
 				getReceiverTable()->setPartitionBoundingExpr(part_bounding_expr);
 			}
@@ -1293,35 +1339,39 @@ void Relationship::connectRelationship()
 
 bool Relationship::updateGeneratedObjects()
 {
-	if(!connected || !isInvalidated() ||
-		 // Currently the update of generated objects are not support for Generalization, Copy and Partition relationshps
-		 (rel_type != Relationship11 && rel_type != Relationship1n && rel_type != RelationshipNn))
+	if(!connected || !isInvalidated())
 		return false;
 
 	Table *recv_tab = dynamic_cast<Table *>(getReceiverTable()),
 			*ref_tab = dynamic_cast<Table *>(getReferenceTable());
 
-	copyColumns(ref_tab, recv_tab, gen_columns.front()->isNotNull(), false, true);
-
-	Column *col = nullptr, *pk_col = nullptr;
-
-	for(unsigned idx = 0; idx < gen_columns.size(); idx++)
+	if(rel_type == Relationship11 || rel_type == Relationship1n || rel_type == RelationshipNn)
 	{
-		col = gen_columns[idx];
-		pk_col = pk_columns[idx];
+		copyColumns(ref_tab, recv_tab, gen_columns.front()->isNotNull(), false, true);
 
-		if(fk_rel1n && !fk_rel1n->isColumnExists(col, Constraint::SourceCols))
+		Column *col = nullptr, *pk_col = nullptr;
+
+		for(unsigned idx = 0; idx < gen_columns.size(); idx++)
 		{
-			fk_rel1n->addColumn(col, Constraint::SourceCols);
-			fk_rel1n->addColumn(pk_col, Constraint::ReferencedCols);
+			col = gen_columns[idx];
+			pk_col = pk_columns[idx];
+
+			if(fk_rel1n && !fk_rel1n->isColumnExists(col, Constraint::SourceCols))
+			{
+				fk_rel1n->addColumn(col, Constraint::SourceCols);
+				fk_rel1n->addColumn(pk_col, Constraint::ReferencedCols);
+			}
+
+			if(uq_rel11 && !uq_rel11->isColumnExists(col, Constraint::SourceCols))
+				uq_rel11->addColumn(col, Constraint::SourceCols);
+
+			if(pk_relident && !pk_relident->isColumnExists(col, Constraint::SourceCols))
+				pk_relident->addColumn(col,  Constraint::SourceCols);
 		}
-
-		if(uq_rel11 && !uq_rel11->isColumnExists(col, Constraint::SourceCols))
-			uq_rel11->addColumn(col, Constraint::SourceCols);
-
-		if(pk_relident && !pk_relident->isColumnExists(col, Constraint::SourceCols))
-			pk_relident->addColumn(col,  Constraint::SourceCols);
 	}
+	else
+		// Creating missing columns of Generalization, Copy or Partition relationship
+		addColumnsRelGenPart(true);
 
 	// Update special primary key
 	if(pk_special)
