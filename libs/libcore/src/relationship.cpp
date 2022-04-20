@@ -315,11 +315,30 @@ vector<unsigned> Relationship::getSpecialPrimaryKeyCols()
 	return this->column_ids_pk_rel;
 }
 
+void Relationship::addGeneratedColsToSpecialPk()
+{
+	if(!pk_special)
+		return;
+
+	auto gen_cols = gen_columns;
+
+	for(auto &attrib : rel_attributes)
+		gen_cols.push_back(dynamic_cast<Column *>(attrib));
+
+	//Adds the columns to the primary key
+	for(auto &col_idx : column_ids_pk_rel)
+	{
+		if(col_idx < gen_cols.size() &&
+			 !pk_special->isColumnExists(gen_cols[col_idx], Constraint::SourceCols))
+			pk_special->addColumn(gen_cols[col_idx], Constraint::SourceCols);
+	}
+}
+
 void Relationship::createSpecialPrimaryKey()
 {
 	if(!column_ids_pk_rel.empty())
 	{
-		unsigned i, count;
+		unsigned i = 0;
 		vector<Column *> gen_cols;
 		PhysicalTable *table = getReceiverTable();
 
@@ -350,18 +369,8 @@ void Relationship::createSpecialPrimaryKey()
 		for(i=0; pk_original && i < pk_original->getColumnCount(Constraint::SourceCols); i++)
 			pk_special->addColumn(pk_original->getColumn(i, Constraint::SourceCols), Constraint::SourceCols);
 
-		gen_cols=gen_columns;
-		for(auto &attrib : rel_attributes)
-			gen_cols.push_back(dynamic_cast<Column *>(attrib));
-
-		//Adds the columns to the primary key
-		count=column_ids_pk_rel.size();
-		for(i=0; i < count; i++)
-		{
-			if(column_ids_pk_rel[i] < gen_cols.size() &&
-					!pk_special->isColumnExists(gen_cols[column_ids_pk_rel[i]], Constraint::SourceCols))
-				pk_special->addColumn(gen_cols[column_ids_pk_rel[i]], Constraint::SourceCols);
-		}
+		//Adding generated columns and relationship attributes to the special primary key
+		addGeneratedColsToSpecialPk();
 
 		try
 		{
@@ -1071,12 +1080,8 @@ void Relationship::addColumnsRelGenPart()
 					column->setParentRelationship(this);
 
 					//Converts the type
-					if(column->getType() == "serial")
-						column->setType(PgSqlType("integer"));
-					else if(column->getType() == "bigserial")
-						column->setType(PgSqlType("bigint"));
-					else if(column->getType() == "smallserial")
-						column->setType(PgSqlType("smallint"));
+					if(column->getType().isSerialType())
+						column->setType(column->getType().getAliasType());
 
 					//Adds the new column to the temporary column list
 					columns.push_back(column);
@@ -1288,17 +1293,15 @@ void Relationship::connectRelationship()
 
 bool Relationship::updateGeneratedObjects()
 {
-	if(!connected || !isInvalidated())
+	if(!connected || !isInvalidated() ||
+		 // Currently the update of generated objects are not support for Generalization, Copy and Partition relationshps
+		 (rel_type != Relationship11 && rel_type != Relationship1n && rel_type != RelationshipNn))
 		return false;
 
 	Table *recv_tab = dynamic_cast<Table *>(getReceiverTable()),
 			*ref_tab = dynamic_cast<Table *>(getReferenceTable());
 
-	// Relationship 1-n, 1-1, n-n
 	copyColumns(ref_tab, recv_tab, gen_columns.front()->isNotNull(), false, true);
-
-	// Copy Dependency, Generalization, Partition cols
-	// addColumnsRelGenPart();
 
 	Column *col = nullptr, *pk_col = nullptr;
 
@@ -1321,7 +1324,8 @@ bool Relationship::updateGeneratedObjects()
 	}
 
 	// Update special primary key
-	// createSpecialPrimaryKey()
+	if(pk_special)
+		addGeneratedColsToSpecialPk();
 
 	return true;
 }

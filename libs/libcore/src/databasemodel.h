@@ -287,9 +287,15 @@ class DatabaseModel:  public QObject, public BaseObject {
 		 * to the filename. Returns true when the file could be saved. */
 		bool saveSplitCustomSQL(bool save_appended, const QString &path, const QString &file_prefix);
 
+		//! \brief Returns true if there is at least one relationship in an invalid state
 		bool hasInvalidRelatioships();
 
+		/*! \brief Tries to create all the special objects returning a vector of errors
+		 *  if one or more special object can't be created */
 		vector<Exception> createSpecialObjects();
+
+		//! \brief Updates all the relationships in such a way to create the missing columns/constraints
+		void updateRelsGeneratedObjects();
 
 	protected:
 		//! \brief Set the layer names (only to be written in the XML definition)

@@ -278,6 +278,9 @@ class Relationship: public BaseRelationship {
 
 		void setOriginalPrimaryKey(Constraint *pk);
 
+		//! \brief Adds the generated columns and relationshp attributes to the special primary key (if in use)
+		void addGeneratedColsToSpecialPk();
+
 	protected:
 		//! \brief Destroy all the relationship attributes and constraints
 		void destroyObjects();

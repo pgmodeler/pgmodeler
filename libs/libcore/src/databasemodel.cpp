@@ -1557,7 +1557,6 @@ bool DatabaseModel::hasInvalidRelatioships()
 
 		if(!rel) continue;
 
-		//Validates only table-table relationships
 		if(rel && rel->isInvalidated())
 			return true;
 	}
@@ -1584,9 +1583,7 @@ vector<Exception> DatabaseModel::createSpecialObjects()
 		}
 		catch(Exception &e)
 		{
-			//Maybe store the exception in a list instead of redirect?
 			errors.push_back(e);
-			//throw Exception(e.getErrorMessage(), e.getErrorCode(), __PRETTY_FUNCTION__,__FILE__,__LINE__);
 		}
 	}
 
@@ -1599,36 +1596,50 @@ vector<Exception> DatabaseModel::createSpecialObjects()
 	return errors;
 }
 
+void DatabaseModel::updateRelsGeneratedObjects()
+{
+	try
+	{
+		Relationship *rel = nullptr;
+		bool rels_updated = false;
+		auto itr = relationships.begin(), itr_end = relationships.end();
+
+		while(itr != itr_end)
+		{
+			rel = dynamic_cast<Relationship *>(*itr);
+			itr++;
+
+			rel->blockSignals(true);
+
+			if(rel->updateGeneratedObjects())
+				rels_updated = true;
+
+			rel->blockSignals(false);
+
+			if(itr == itr_end && rels_updated)
+			{
+				rels_updated = false;
+				itr = relationships.begin();
+			}
+		}
+	}
+	catch (Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__);
+	}
+}
+
 void DatabaseModel::validateRelationships()
 {
 	Relationship *rel = nullptr;
 	BaseRelationship *base_rel = nullptr;
-	vector<Exception> errors, rel_errors;
-	map<BaseObject *, unsigned> conn_tries;
-	unsigned rels_gen_pk = 0;
-	vector<Relationship *> __rels, __failed_rels;
-	vector<Schema *> __schemas;
+	vector<Exception> errors;
+	map<Relationship *, Exception> rel_errors;
+	vector<Relationship *> failed_rels;
+	vector<Schema *> schemas;
 
 	if(!hasInvalidRelatioships())
 		return;
-
-	/* Calculates the quantity of referece tables which has primary keys added by relationship.
-	This type of primary key may cause unexpected relationship invalidation during the validation process
-	because all relationship are disconnected and when reconnecting them the primary key sometimes is not yet
-	created causing other relationships to be broken. This counter is used to try revalidate any relationship
-	that emits ErrorCode::InvLinkTablesNoPrimaryKey  exception during its connection */
-	for(auto &itr : relationships)
-	{
-		rel = dynamic_cast<Relationship *>(itr);
-		__rels.push_back(rel);
-
-		if(rel &&
-				(rel->getRelationshipType()==Relationship::Relationship11 ||
-				 rel->getRelationshipType()==Relationship::Relationship1n) &&
-				rel->getReferenceTable()->getPrimaryKey() &&
-				rel->getReferenceTable()->getPrimaryKey()->isAddedByRelationship())
-			rels_gen_pk++;
-	}
 
 	//Stores the special objects definition if there is some invalidated relationships
 	if(!loading_model && xml_special_objs.empty())
@@ -1638,59 +1649,71 @@ void DatabaseModel::validateRelationships()
 	disconnectRelationships();
 
 	// Trying to connect all relatinships in the order they were created
-	for(auto &rel : __rels)
+	for(auto &rl : relationships)
 	{
 		try
 		{
+			rel = dynamic_cast<Relationship *>(rl);
 			rel->blockSignals(true);
 			rel->connectRelationship();
 			rel->blockSignals(false);
 
-			__schemas.push_back(dynamic_cast<Schema *>(rel->getTable(Relationship::SrcTable)->getSchema()));
-			__schemas.push_back(dynamic_cast<Schema *>(rel->getTable(Relationship::DstTable)->getSchema()));
+			schemas.push_back(dynamic_cast<Schema *>(rel->getTable(Relationship::SrcTable)->getSchema()));
+			schemas.push_back(dynamic_cast<Schema *>(rel->getTable(Relationship::DstTable)->getSchema()));
 		}
-		catch(Exception &e)
+		catch(Exception &)
 		{
-			//Capture errors here?
-			__failed_rels.push_back(rel);
+			failed_rels.push_back(rel);
 		}
 	}
 
-	bool rels_updated = false;
-	auto itr = __rels.begin(),
-			itr_end = __rels.end();
-	//for(auto &rel : __rels)
+	// Trying to recreate relationships that failed to connect previously
+	unsigned idx = 0, max_tries = failed_rels.size();
 
-	while(itr != itr_end)
+	while(idx < max_tries)
 	{
-		rel = *itr;
-		itr++;
-
-		rel->blockSignals(true);
-
-		if(rel->updateGeneratedObjects())
-			rels_updated = true;
-
-		rel->blockSignals(false);
-
-		if(itr == itr_end && rels_updated)
+		for(auto &rel : failed_rels)
 		{
-			rels_updated = false;
-			itr = __rels.begin();
+			try
+			{
+				rel->connectRelationship();
+			}
+			catch(Exception &e)
+			{
+				rel_errors[rel] = e;
+			}
+		}
+
+		idx++;
+	}
+
+	/* Checking if some failed relationships have generated errors in the connection retry.
+	 * If that's the case, we just remove the relationships from the model since
+	 * they are permanentely invalidated and can't be reconnected */
+	for(auto &re : rel_errors)
+	{
+		if(!re.first->isRelationshipConnected())
+		{
+			errors.push_back(re.second);
+			__removeObject(re.first, -1, false);
 		}
 	}
+
+	/* Updating the relationship generated objects.
+	 * The columns and contraints not created in first connection are properly created */
+	updateRelsGeneratedObjects();
 
 	//Recreating the special objects that depends on the columns created by relationshps
 	errors = createSpecialObjects();
 
-	if(!loading_model && !__schemas.empty())
+	if(!loading_model && !schemas.empty())
 	{
-		std::sort(__schemas.begin(), __schemas.end());
-		vector<Schema *>::iterator end = std::unique(__schemas.begin(), __schemas.end());
-		__schemas.erase(end, __schemas.end());
+		std::sort(schemas.begin(), schemas.end());
+		vector<Schema *>::iterator end = std::unique(schemas.begin(), schemas.end());
+		schemas.erase(end, schemas.end());
 
 		//Updates the schemas to ajdust its sizes due to the tables resizings
-		for(auto &sch : __schemas)
+		for(auto &sch : schemas)
 			sch->setModified(true);
 	}
 
