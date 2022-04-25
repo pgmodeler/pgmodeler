@@ -225,13 +225,16 @@ class Relationship: public BaseRelationship {
 		void addColumnsRelNn();
 
 		/*! \brief Copy columns from one table to another. This operation is done in
-		 relationships of type copy / generalization. It is necessary
-		 to check duplicate names and incompatible types of columns */
-		void addColumnsRelGenPart();
+		 *  relationships of type copy / generalization. It is necessary
+		 *  to check duplicate names and incompatible types of columns. */
+		void addColumnsRelGenPart(bool missing_only = false);
 
 		/*! \brief Copy constraints from the parent table to the child. Currently, only
 		check constraints are copied only if the NO INHERIT attribute is not set and
 		there are no conflicting constraints (name or expression) on the child table */
+		void addCheckConstrsRelGenPart();
+
+		//! \brief Creates the special primary key (if in use) and other relationship constraints in the receiver table.
 		void addConstraintsRelGenPart();
 
 		/*! \brief Creates the foreign key that represents the relationship and adds it
@@ -257,7 +260,7 @@ class Relationship: public BaseRelationship {
 		/*! \brief Copy the columns from the reference table to the receiver table. The parameter not_null indicates
 		 that the columns must not accept null values. The parameter is_dst_table is used to force the usage of destination table
 		and destination name pattern when creating a self many-to-many relationship */
-		void copyColumns(PhysicalTable *ref_tab, PhysicalTable *recv_tab, bool not_null, bool is_dst_table = false);
+		void copyColumns(PhysicalTable *ref_tab, PhysicalTable *recv_tab, bool not_null, bool is_dst_table = false, bool missing_only = false);
 
 		/*! \brief This method is always executed before disconnection of the relationship.
 		 Its function is to remove from the specified table all the attributes which
@@ -277,6 +280,9 @@ class Relationship: public BaseRelationship {
 		QString generateObjectName(unsigned pat_id, Column *id_col=nullptr, bool use_alias=false);
 
 		void setOriginalPrimaryKey(Constraint *pk);
+
+		//! \brief Adds the generated columns and relationshp attributes to the special primary key (if in use)
+		void addGeneratedColsToSpecialPk();
 
 	protected:
 		//! \brief Destroy all the relationship attributes and constraints
@@ -325,6 +331,10 @@ class Relationship: public BaseRelationship {
 
 		//! \brief  Connects the relationship making the configuration according to its type
 		void connectRelationship();
+
+		/*! \brief  Updates the columns of the relationship. This methods operates only when the
+		 *  relationship is connected but is still in an invalidated state */
+		bool updateGeneratedObjects();
 
 		/*! \brief Disconnects the relationship from the tables removing all the attributes / constraints
 			deallocating all the created object. */
