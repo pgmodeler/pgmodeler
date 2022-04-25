@@ -1349,6 +1349,7 @@ bool Relationship::updateGeneratedObjects()
 	{
 		copyColumns(ref_tab, recv_tab, gen_columns.front()->isNotNull(), false, true);
 
+		// Refreshing the generated foreign key columns
 		if(fk_rel1n)
 		{
 			fk_rel1n->removeColumns();
@@ -1356,16 +1357,36 @@ bool Relationship::updateGeneratedObjects()
 			fk_rel1n->addColumns(pk_columns, Constraint::ReferencedCols);
 		}
 
+		// Refreshing the generated unique key columns
 		if(uq_rel11)
 		{
 			uq_rel11->removeColumns();
 			uq_rel11->addColumns(gen_columns, Constraint::SourceCols);
 		}
 
-		if(pk_relident)
+		if(isIdentifier())
 		{
-			pk_relident->removeColumns();
-			pk_relident->addColumns(gen_columns, Constraint::SourceCols);
+			/* For identifier relationships we need to make two different updates:
+			 * 1) When the primary key in receiver table was created by the relationship itself (pk_relident)
+			 * 2) When the primary ky in receiver table already existed before the relationship connection
+			 *
+			 * In both cases we add the missing generated columns to the primary key in order to propagate
+			 * columns to other tables correctly */
+			if(pk_relident)
+			{
+				pk_relident->removeColumns();
+				pk_relident->addColumns(gen_columns, Constraint::SourceCols);
+			}
+			else
+			{
+				Constraint *pk = recv_tab->getPrimaryKey();
+
+				for(auto &col : gen_columns)
+				{
+					if(!pk->isColumnExists(col, Constraint::SourceCols))
+						pk->addColumn(col, Constraint::SourceCols);
+				}
+			}
 		}
 	}
 	else

@@ -358,7 +358,7 @@ void ModelValidationWidget::updateValidation(ValidationInfo val_info)
 
 		if(val_info.getValidationType()==ValidationInfo::BrokenRelConfig)
 		{
-			GuiUtilsNs::createOutputTreeItem(output_trw, tr("<strong>HINT:</strong> try to swap the relationship by another ones that somehow are linked to it through generated columns or constraints to solve this issue. Note that other objects may be lost in the swap process."),
+			GuiUtilsNs::createOutputTreeItem(output_trw, tr("<strong>HINT:</strong> try to change the relationship's creation order in the objects swap dialog and run the validation again. Note that other objects may be lost in the swapping process."),
 												QPixmap(GuiUtilsNs::getIconPath("alert")), item);
 		}
 		else if(val_info.getValidationType()==ValidationInfo::MissingExtension)
