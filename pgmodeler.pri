@@ -2,11 +2,14 @@
 
 # General Qt settings
 QT += core widgets printsupport network svg
-CONFIG += ordered qt stl rtti exceptions warn_on c++14
+CONFIG += ordered qt stl rtti exceptions warn_on c++17
 TEMPLATE = subdirs
 MOC_DIR = moc
 OBJECTS_DIR = obj
 UI_DIR = src
+
+# Disables all the APIs deprecated before Qt 6.0.0
+DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000
 
 # Store the absolute paths to library subprojects to be referenced in other .pro files
 # *_ROOT -> the path to the root folder of the subproject
