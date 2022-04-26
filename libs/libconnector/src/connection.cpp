@@ -96,17 +96,19 @@ void Connection::setSQLExecutionTimout(unsigned timeout)
 void Connection::setConnectionParam(const QString &param, const QString &value)
 {
 	//Regexp used to validate the host address
-	QRegularExpression ip_regexp("[0-9]+\\.[0-9]+\\.[0-9]+\\.[0-9]+");
+	QRegularExpression ip_regexp(QRegularExpression::anchoredPattern("[0-9]+\\.[0-9]+\\.[0-9]+\\.[0-9]+"));
 
 	//Raise an error in case the param name is empty
 	if(param.isEmpty())
 		throw Exception(ErrorCode::AsgInvalidConnParameter, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 
+	#warning "Debug me!"
 	/* Set the value to the specified param on the map.
-
 	One special case is treated here, if user use the parameter SERVER_FQDN and the value
 	is a IP address, the method will assign the value to the SERVER_IP parameter */
-	if(param==ParamServerFqdn && ip_regexp.exactMatch(value))
+
+	//if(param==ParamServerFqdn && ip_regexp.exactMatch(value))
+	if(param==ParamServerFqdn && ip_regexp.match(value).hasMatch())
 	{
 		connection_params[Connection::ParamServerIp]=value;
 		connection_params[Connection::ParamServerFqdn]="";
