@@ -985,9 +985,11 @@ unsigned Catalog::getObjectCount(bool incl_sys_objs)
 
 QStringList Catalog::parseArrayValues(const QString &array_val)
 {
+	#warning "Debug me!"
 	QStringList list;
+	QRegularExpression regexp(QRegularExpression::anchoredPattern(ArrayPattern));
 
-	if(QRegularExpression(ArrayPattern).exactMatch(array_val))
+	if(regexp.match(array_val).hasMatch())
 	{
 		//Detecting the position of { and }
 		int start=array_val.indexOf('{')+1,
@@ -1100,11 +1102,15 @@ QStringList Catalog::parseDefaultValues(const QString &def_values, const QString
 
 QStringList Catalog::parseRuleCommands(const QString &cmds)
 {
+	#warning "Debug me!"
 	int start=-1, end=-1;
-	QRegularExpression cmd_regexp(QString("(DO)( )*(INSTEAD)*( )+"));
+	QRegularExpression cmd_regexp("(DO)( )*(INSTEAD)*( )+");
+	QRegularExpressionMatch match;
 
-	start=cmd_regexp.indexIn(cmds) + cmd_regexp.matchedLength();
-	end=cmds.lastIndexOf(';');
+	match = cmd_regexp.match(cmds);
+	start = match.capturedStart() + match.capturedLength();
+	end = cmds.lastIndexOf(';');
+
 	return (cmds.mid(start,(end - start) + 1).split(';', QtCompat::SkipEmptyParts));
 }
 
