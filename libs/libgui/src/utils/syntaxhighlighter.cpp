@@ -375,42 +375,49 @@ QString SyntaxHighlighter::identifyWordGroup(const QString &word, const QChar &l
 bool SyntaxHighlighter::isWordMatchGroup(const QString &word, const QString &group, bool use_final_expr, const QChar &lookahead_chr, int &match_idx, int &match_len)
 {
 	vector<QRegularExpression> *vet_expr=nullptr;
-	bool match=false, part_match=partial_match[group];
+	bool has_match = false, part_match = partial_match[group];
+	QRegularExpressionMatch match;
 
 	if(use_final_expr && final_exprs.count(group))
-		vet_expr=&final_exprs[group];
+		vet_expr = &final_exprs[group];
 	else
-		vet_expr=&initial_exprs[group];
+		vet_expr = &initial_exprs[group];
 
 	for(auto &expr : *vet_expr)
 	{
 		if(part_match)
 		{
-			match_idx=word.indexOf(expr);
+			/* match_idx=word.indexOf(expr);
 			match_len=expr.matchedLength();
-			match=(match_idx >= 0);
+			has_match=(match_idx >= 0);*/
+			#warning "Debug me!"
+			match = expr.match(word, QRegularExpression::PartialPreferFirstMatch);
+			match_idx = match.capturedStart();
+			match_len = match.capturedLength();
+			has_match = match.hasMatch();
 		}
 		else
 		{
-			if(expr.patternSyntax()==QRegularExpression::FixedString)
-				match=((expr.pattern().compare(word, expr.caseSensitivity())==0));
+			#warning "Debug me!"
+			/* if(expr.patternSyntax()==QRegularExpression::FixedString)
+				has_match=((expr.pattern().compare(word, expr.caseSensitivity())==0));
 			else
-				match=expr.exactMatch(word);
+				has_match=expr.exactMatch(word);*/
 
-			if(match)
+			if(expr.match(word).hasMatch())
 			{
-				match_idx=0;
-				match_len=word.length();
+				match_idx = 0;
+				match_len = word.length();
 			}
 		}
 
-		if(match && lookahead_char.count(group) > 0 && lookahead_chr!=lookahead_char.at(group))
-			match=false;
+		if(has_match && lookahead_char.count(group) > 0 && lookahead_chr!=lookahead_char.at(group))
+			has_match=false;
 
-		if(match) break;
+		if(has_match) break;
 	}
 
-	return match;
+	return has_match;
 }
 
 bool SyntaxHighlighter::isConfigurationLoaded()
@@ -588,10 +595,13 @@ void SyntaxHighlighter::loadConfiguration(const QString &filename)
 								xmlparser.savePosition();
 								xmlparser.accessElement(XmlParser::ChildElement);
 
-								if(chr_sensitive)
+								#warning "Debug me!"
+								/* if(chr_sensitive)
 									regexp.setCaseSensitivity(Qt::CaseSensitive);
 								else
-									regexp.setCaseSensitivity(Qt::CaseInsensitive);
+									regexp.setCaseSensitivity(Qt::CaseInsensitive); */
+								if(!chr_sensitive)
+									regexp.setPatternOptions(QRegularExpression::CaseInsensitiveOption);
 
 								this->partial_match[group]=partial_match;
 
@@ -601,18 +611,27 @@ void SyntaxHighlighter::loadConfiguration(const QString &filename)
 									{
 										xmlparser.getElementAttributes(attribs);
 										expr_type=attribs[Attributes::Type];
-										regexp.setPattern(attribs[Attributes::Value]);
+
+										#warning "Debug me!"
+										/*regexp.setPattern(attribs[Attributes::Value]);
 
 										if(attribs[Attributes::RegularExp]==Attributes::True)
 											regexp.setPatternSyntax(QRegularExpression::RegExp2);
 										else if(attribs[Attributes::Wildcard]==Attributes::True)
 											regexp.setPatternSyntax(QRegularExpression::Wildcard);
 										else
-											regexp.setPatternSyntax(QRegularExpression::FixedString);
+											regexp.setPatternSyntax(QRegularExpression::FixedString); */
+
+										if(attribs[Attributes::RegularExp] == Attributes::True)
+											regexp.setPattern(attribs[Attributes::Value]);
+										else if(attribs[Attributes::Wildcard] == Attributes::True)
+											regexp.setPattern(QRegularExpression::wildcardToRegularExpression(attribs[Attributes::Value]));
+										else
+											regexp.setPattern(QRegularExpression::anchoredPattern(attribs[Attributes::Value]));
 
 										if(expr_type.isEmpty() ||
-												expr_type==Attributes::SimpleExp ||
-												expr_type==Attributes::InitialExp)
+											 expr_type==Attributes::SimpleExp ||
+											 expr_type==Attributes::InitialExp)
 											initial_exprs[group].push_back(regexp);
 										else
 											final_exprs[group].push_back(regexp);
