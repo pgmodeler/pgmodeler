@@ -32,7 +32,7 @@
 #include <algorithm>
 #include <QTextStream>
 #include <QCryptographicHash>
-#include <QRegExp>
+#include <QRegularExpression>
 
 class Permission: public BaseObject {
 		/*! \brief Permissions on PostgreSQL are only applied to the following

@@ -763,7 +763,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
 			count=models_tbw->count();
 
 			//Remove the references to old session
-			conf_wgt->removeConfigurationParam(QRegExp(QString("(%1)([0-9])+").arg(Attributes::File)));
+			conf_wgt->removeConfigurationParam(QRegularExpression(QString("(%1)([0-9])+").arg(Attributes::File)));
 
 			//Saving the session
 			for(i=0; i < count; i++)
@@ -800,7 +800,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
 				recent_mdls_menu.clear();
 			}
 			else
-				conf_wgt->removeConfigurationParam(QRegExp(QString("(%1)(.)+").arg(Attributes::Recent)));
+				conf_wgt->removeConfigurationParam(QRegularExpression(QString("(%1)(.)+").arg(Attributes::Recent)));
 
 			//Saving dock widgets settings
 			storeDockWidgetsSettings();

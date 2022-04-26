@@ -23,7 +23,7 @@
 
 map<QString, attribs_map> SnippetsConfigWidget::config_params;
 
-const QRegExp SnippetsConfigWidget::IdFormatRegExp=QRegExp(QString("^([a-z])([a-z]*|(\\d)*|(_)*)+"), Qt::CaseInsensitive);
+const QRegularExpression SnippetsConfigWidget::IdFormatRegExp=QRegularExpression(QString("^([a-z])([a-z]*|(\\d)*|(_)*)+"), Qt::CaseInsensitive);
 
 SnippetsConfigWidget::SnippetsConfigWidget(QWidget * parent) : BaseConfigWidget(parent)
 {

@@ -627,9 +627,9 @@ void DataManipulationForm::loadDataFromCsv(bool load_from_clipboard, bool force_
 
 		if(force_csv_parsing)
 		{
-			if(text.contains(QRegExp(csv_pattern.arg("\""))))
+			if(text.contains(QRegularExpression(csv_pattern.arg("\""))))
 				delimiter="\"";
-			else if(text.contains(QRegExp(csv_pattern.arg("'"))))
+			else if(text.contains(QRegularExpression(csv_pattern.arg("'"))))
 				delimiter="'";
 
 			// If one of the patterns matched the buffer we configure the right delimiter for csv buffer

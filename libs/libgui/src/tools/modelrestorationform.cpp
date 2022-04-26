@@ -48,7 +48,7 @@ int ModelRestorationForm::exec()
 	QFileInfo info;
 	QTableWidgetItem *item=nullptr;
 	QString buffer, filename;
-	QRegExp regexp=QRegExp("(\\<database)( )+(name)(=)(\")");
+	QRegularExpression regexp=QRegularExpression("(\\<database)( )+(name)(=)(\")");
 	int start=-1, end=-1, col=0;
 
 	while(!file_list.isEmpty())

@@ -1363,7 +1363,7 @@ void ModelDatabaseDiffForm::generateFiltersFromChangelog()
 
 	// Ignoring filters related to table children objects since they may generate wrong results in the diff
 	for(auto &type : tab_obj_types)
-		filters.replaceInStrings(QRegExp(QString("(%1)(\\:)(.)+").arg(BaseObject::getSchemaName(type))), "");
+		filters.replaceInStrings(QRegularExpression(QString("(%1)(\\:)(.)+").arg(BaseObject::getSchemaName(type))), "");
 
 	filters.removeAll("");
 

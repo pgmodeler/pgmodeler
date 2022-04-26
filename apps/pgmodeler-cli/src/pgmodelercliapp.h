@@ -121,7 +121,7 @@ class PgModelerCliApp: public Application {
 		//! \brief Stores the changelog of the model that is being fixed to reproduce it in the output model
 		QString changelog;
 
-		static const QRegExp PasswordRegExp;
+		static const QRegularExpression PasswordRegExp;
 		static const QString PasswordPlaceholder;
 
 		//! \brief Option names constants

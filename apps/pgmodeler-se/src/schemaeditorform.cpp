@@ -427,7 +427,7 @@ QStringList SchemaEditorForm::showFileDialog(bool save_mode)
 	{
 		file_dlg.setDefaultSuffix(".sch");
 		connect(&file_dlg, &QFileDialog::filterSelected, [&](QString filter){
-			filter.remove(QRegExp("(.)+(\\*)"));
+			filter.remove(QRegularExpression("(.)+(\\*)"));
 			filter.remove(")");
 			file_dlg.setDefaultSuffix(filter);
 		});

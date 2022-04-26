@@ -278,7 +278,7 @@ QTreeWidgetItem *ModelObjectsWidget::createItemForObject(BaseObject *object, QTr
 	else if(obj_type==ObjectType::OpClass || obj_type == ObjectType::OpFamily)
 	{
 		obj_name=object->getSignature(false);
-		obj_name.replace(QRegExp("( )+(USING)( )+"), QString(" ["));
+		obj_name.replace(QRegularExpression("( )+(USING)( )+"), QString(" ["));
 		obj_name+=QChar(']');
 		item->setText(0,obj_name);
 	}

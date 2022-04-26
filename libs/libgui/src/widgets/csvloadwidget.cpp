@@ -75,7 +75,7 @@ QList<QStringList> CsvLoadWidget::loadCsvFromBuffer(const QString &csv_buffer, c
 				win_line_break = QString("%1%2").arg(QChar(QChar::CarriageReturn)).arg(QChar(QChar::LineFeed)),
 				mac_line_break = QString("%1").arg(QChar(QChar::CarriageReturn));
 		QStringList values, rows;
-		QRegExp empty_val;
+		QRegularExpression empty_val;
 
 		if(aux_buffer.contains(win_line_break))
 			aux_buffer.replace(win_line_break, QString(QChar::LineFeed));
@@ -110,7 +110,7 @@ QList<QStringList> CsvLoadWidget::loadCsvFromBuffer(const QString &csv_buffer, c
 
 		//Configuring an regexp to remove empty quoted values, e.g, "",
 		if(!text_delim.isEmpty())
-			empty_val = QRegExp(QString("(\\%1\\%1)(\\%2)").arg(text_delim).arg(separator));
+			empty_val = QRegularExpression(QString("(\\%1\\%1)(\\%2)").arg(text_delim).arg(separator));
 
 		for(QString row : rows)
 		{

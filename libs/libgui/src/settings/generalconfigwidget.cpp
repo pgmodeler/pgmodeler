@@ -279,7 +279,7 @@ void GeneralConfigWidget::addConfigurationParam(const QString &param, const attr
 	BaseConfigWidget::addConfigurationParam(config_params, param, attribs);
 }
 
-void GeneralConfigWidget::removeConfigurationParam(const QRegExp &param_reg)
+void GeneralConfigWidget::removeConfigurationParam(const QRegularExpression &param_reg)
 {
 	map<QString, attribs_map>::iterator itr, itr_end;
 
@@ -451,13 +451,13 @@ void GeneralConfigWidget::saveConfiguration()
 		while(itr!=itr_end)
 		{
 			//Checking if the current attribute is a file to be stored in a <session> tag
-			if((itr->first).contains(QRegExp(QString("(") + Attributes::File + QString(")([0-9]+)"))))
+			if((itr->first).contains(QRegularExpression(QString("(") + Attributes::File + QString(")([0-9]+)"))))
 			{
 				config_params[Attributes::Configuration][Attributes::File]+=
 						XmlParser::convertCharsToXMLEntities(schparser.getCodeDefinition(file_sch, itr->second));
 			}
 			//Checking if the current attribute is a file to be stored in a <recent-models> tag
-			else if(recent_mdl_idx < MaxRecentModels && (itr->first).contains(QRegExp(QString("(") + Attributes::Recent + QString(")([0-9]+)"))))
+			else if(recent_mdl_idx < MaxRecentModels && (itr->first).contains(QRegularExpression(QString("(") + Attributes::Recent + QString(")([0-9]+)"))))
 			{
 				config_params[Attributes::Configuration][Attributes::RecentModels]+=
 						XmlParser::convertCharsToXMLEntities(schparser.getCodeDefinition(file_sch, itr->second));

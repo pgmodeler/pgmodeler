@@ -18,7 +18,7 @@
 
 #include "genericsqlwidget.h"
 
-const QRegExp GenericSQLWidget::AttrDelimRegexp = QRegExp(QString("(\\%1)+|(\\%2)+")
+const QRegularExpression GenericSQLWidget::AttrDelimRegexp = QRegularExpression(QString("(\\%1)+|(\\%2)+")
 																													.arg(SchemaParser::CharStartAttribute)
 																													.arg(SchemaParser::CharEndAttribute));
 

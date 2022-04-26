@@ -374,7 +374,7 @@ QString SyntaxHighlighter::identifyWordGroup(const QString &word, const QChar &l
 
 bool SyntaxHighlighter::isWordMatchGroup(const QString &word, const QString &group, bool use_final_expr, const QChar &lookahead_chr, int &match_idx, int &match_len)
 {
-	vector<QRegExp> *vet_expr=nullptr;
+	vector<QRegularExpression> *vet_expr=nullptr;
 	bool match=false, part_match=partial_match[group];
 
 	if(use_final_expr && final_exprs.count(group))
@@ -392,7 +392,7 @@ bool SyntaxHighlighter::isWordMatchGroup(const QString &word, const QString &gro
 		}
 		else
 		{
-			if(expr.patternSyntax()==QRegExp::FixedString)
+			if(expr.patternSyntax()==QRegularExpression::FixedString)
 				match=((expr.pattern().compare(word, expr.caseSensitivity())==0));
 			else
 				match=expr.exactMatch(word);
@@ -443,7 +443,7 @@ void SyntaxHighlighter::loadConfiguration(const QString &filename)
 				bold=false, italic=false, strikeout = false,
 				underline=false, partial_match=false;
 		QTextCharFormat format;
-		QRegExp regexp;
+		QRegularExpression regexp;
 		QColor bg_color, fg_color;
 		vector<QString>::iterator itr, itr_end;
 
@@ -604,11 +604,11 @@ void SyntaxHighlighter::loadConfiguration(const QString &filename)
 										regexp.setPattern(attribs[Attributes::Value]);
 
 										if(attribs[Attributes::RegularExp]==Attributes::True)
-											regexp.setPatternSyntax(QRegExp::RegExp2);
+											regexp.setPatternSyntax(QRegularExpression::RegExp2);
 										else if(attribs[Attributes::Wildcard]==Attributes::True)
-											regexp.setPatternSyntax(QRegExp::Wildcard);
+											regexp.setPatternSyntax(QRegularExpression::Wildcard);
 										else
-											regexp.setPatternSyntax(QRegExp::FixedString);
+											regexp.setPatternSyntax(QRegularExpression::FixedString);
 
 										if(expr_type.isEmpty() ||
 												expr_type==Attributes::SimpleExp ||
@@ -661,14 +661,14 @@ void SyntaxHighlighter::loadConfiguration(const QString &filename)
 	}
 }
 
-vector<QRegExp> SyntaxHighlighter::getExpressions(const QString &group_name, bool final_expr)
+vector<QRegularExpression> SyntaxHighlighter::getExpressions(const QString &group_name, bool final_expr)
 {
-	map<QString, vector<QRegExp> > *expr_map=(!final_expr ? &initial_exprs : &final_exprs);
+	map<QString, vector<QRegularExpression> > *expr_map=(!final_expr ? &initial_exprs : &final_exprs);
 
 	if(expr_map->count(group_name) > 0)
 		return expr_map->at(group_name);
 	else
-		return vector<QRegExp>();
+		return vector<QRegularExpression>();
 }
 
 QChar SyntaxHighlighter::getCompletionTrigger()

@@ -1976,7 +1976,7 @@ int ModelWidget::openEditingForm(QWidget *widget, unsigned button_conf)
 		editing_form.setMainWidget(base_obj_wgt);
 
 		if(rel)
-			class_name.prepend(rel->getRelationshipTypeName().replace(QRegExp("( )+|(\\-)+"), ""));
+			class_name.prepend(rel->getRelationshipTypeName().replace(QRegularExpression("( )+|(\\-)+"), ""));
 	}
 	else
 		editing_form.setMainWidget(widget);
@@ -4757,7 +4757,7 @@ void ModelWidget::convertIntegerToSerial()
 		Column *col=reinterpret_cast<Column *>(action->data().value<void *>());
 		Table *tab=dynamic_cast<Table *>(col->getParentTable());
 		PgSqlType col_type=col->getType();
-		QRegExp regexp(QString("^nextval\\(.+\\:\\:regclass\\)"));
+		QRegularExpression regexp(QString("^nextval\\(.+\\:\\:regclass\\)"));
 		QString serial_tp;
 
 		if(!col_type.isIntegerType() || (!col->getDefaultValue().contains(regexp) && !col->getSequence()))

@@ -96,7 +96,7 @@ void Connection::setSQLExecutionTimout(unsigned timeout)
 void Connection::setConnectionParam(const QString &param, const QString &value)
 {
 	//Regexp used to validate the host address
-	QRegExp ip_regexp("[0-9]+\\.[0-9]+\\.[0-9]+\\.[0-9]+");
+	QRegularExpression ip_regexp("[0-9]+\\.[0-9]+\\.[0-9]+\\.[0-9]+");
 
 	//Raise an error in case the param name is empty
 	if(param.isEmpty())
@@ -376,7 +376,7 @@ QString  Connection::getPgSQLVersion(bool major_only)
 	raw_ver=QString("%1").arg(PQserverVersion(connection));
 
 	//If the version is 10+
-	if(raw_ver.contains(QRegExp("^((1)[0-9])(.)+")))
+	if(raw_ver.contains(QRegularExpression("^((1)[0-9])(.)+")))
 	{
 		//New PostgreSQL 10+ versioning: 100001 means 10.1 (Major.Minor)
 		fmt_ver=QString("%1.%2")

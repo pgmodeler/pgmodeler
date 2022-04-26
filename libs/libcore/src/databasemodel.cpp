@@ -8163,7 +8163,7 @@ void DatabaseModel::saveSplitSQLDefinition(const QString &path)
 	BaseObject *obj = nullptr;
 	Relationship *rel = nullptr;
 	QStringList sch_names;
-	QRegExp name_fmt_regexp("(?!\\-)(\\W)");
+	QRegularExpression name_fmt_regexp("(?!\\-)(\\W)");
 	unsigned 	gen_defs_idx = 0, general_obj_cnt = 0;
 	attribs_map attribs;
 
@@ -10637,7 +10637,7 @@ vector<BaseObject *> DatabaseModel::findObjects(const QString &pattern, vector<O
 	vector<BaseObject *> tables;
 	bool inc_tabs=false, inc_views=false;
 	ObjectType obj_type;
-	QRegExp regexp;
+	QRegularExpression regexp;
 	BaseObject *object = nullptr;
 	attribs_map srch_attribs;
 
@@ -10646,11 +10646,11 @@ vector<BaseObject *> DatabaseModel::findObjects(const QString &pattern, vector<O
 	regexp.setCaseSensitivity(case_sensitive ?  Qt::CaseSensitive :  Qt::CaseInsensitive);
 
 	if(is_regexp)
-		regexp.setPatternSyntax(QRegExp::RegExp2);
+		regexp.setPatternSyntax(QRegularExpression::RegExp2);
 	else if(exact_match)
-		regexp.setPatternSyntax(QRegExp::FixedString);
+		regexp.setPatternSyntax(QRegularExpression::FixedString);
 	else
-		regexp.setPatternSyntax(QRegExp::Wildcard);
+		regexp.setPatternSyntax(QRegularExpression::Wildcard);
 
 	//If there is some table object types on the type list, gather tables and views
 	while(itr_tp!=types.end() && (!inc_views || !inc_tabs))

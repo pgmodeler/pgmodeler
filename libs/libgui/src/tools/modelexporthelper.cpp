@@ -47,7 +47,7 @@ void ModelExportHelper::handleSQLError(Exception &e, const QString &sql_cmd, boo
 
 void ModelExportHelper::setIgnoredErrors(const QStringList &err_codes)
 {
-	QRegExp valid_code = QRegExp("([a-z]|[A-Z]|[0-9])+");
+	QRegularExpression valid_code = QRegularExpression("([a-z]|[A-Z]|[0-9])+");
 	QStringList error_codes=err_codes;
 
 	ignored_errors.clear();
@@ -351,7 +351,7 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
 	ObjectType types[]={ObjectType::Role, ObjectType::Tablespace};
 	BaseObject *object=nullptr;
 	QString tmpl_comm_regexp = QString("(COMMENT)( )+(ON)( )+(%1)(.)+(\n)(") + Attributes::DdlEndToken + QString(")");
-	QRegExp comm_regexp;
+	QRegularExpression comm_regexp;
 
 	try
 	{
@@ -467,7 +467,7 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
 
 						if(types[type_id] == ObjectType::Tablespace)
 						{
-							comm_regexp = QRegExp(tmpl_comm_regexp.arg(object->getSQLName()));
+							comm_regexp = QRegularExpression(tmpl_comm_regexp.arg(object->getSQLName()));
 							pos = comm_regexp.indexIn(sql_cmd);
 
 							/* If we find a comment on statement we should strip it from the tablespace definition in
@@ -499,7 +499,7 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
 		{
 			if(!db_model->isSQLDisabled() && !export_canceled)
 			{
-				comm_regexp = QRegExp(tmpl_comm_regexp.arg(db_model->getSQLName()));
+				comm_regexp = QRegularExpression(tmpl_comm_regexp.arg(db_model->getSQLName()));
 
 				sql_cmd=db_model->__getCodeDefinition(SchemaParser::SqlDefinition);
 				pos = comm_regexp.indexIn(sql_cmd);
@@ -831,7 +831,7 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
 	int pos=0, pos1=0, comm_cnt=0;
 
 	//Regexp used to extract the object being created
-	QRegExp obj_reg(QString("(CREATE|DROP|ALTER)(.)+(\n)")),
+	QRegularExpression obj_reg(QString("(CREATE|DROP|ALTER)(.)+(\n)")),
 			tab_obj_reg(QString("^(%1)(.)+(ADD|DROP)( )(COLUMN|CONSTRAINT)( )*").arg(alter_tab)),
 			drop_reg(QString("^((\\-\\-)+( )*)+(DROP)(.)+")),
 			drop_tab_obj_reg(QString("^((\\-\\-)+( )*)+(%1)(.)+(DROP)(.)+").arg(alter_tab)),
@@ -889,7 +889,7 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
 			else
 			{
 				ddl_tk_found=(lin.indexOf(Attributes::DdlEndToken) >= 0);
-				lin.remove(QRegExp(QString("^(--)+(.)+$")));
+				lin.remove(QRegularExpression(QString("^(--)+(.)+$")));
 
 				//If the line isn't empty after cleanup it will be included on sql command
 				if(!lin.isEmpty())
@@ -908,7 +908,7 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
 					aux_cmd.remove('"');
 					aux_cmd.remove(QString("IF EXISTS "));
 					obj_type=(aux_cmd.contains(QString("COLUMN")) ? ObjectType::Column : ObjectType::Constraint);
-					reg_aux=QRegExp(QString("(COLUMN|CONSTRAINT)( )+"));
+					reg_aux=QRegularExpression(QString("(COLUMN|CONSTRAINT)( )+"));
 
 					//Extracting the table name
 					pos=aux_cmd.indexOf(alter_tab) + alter_tab.size();
@@ -977,7 +977,7 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
 							{
 								lin.remove(QString(" FOR"));
 								lin.replace(QString(" LANGUAGE "), "_");
-								lin.replace(QRegExp("(TRANSFORM)(.)+(\\.)"), "TRANSFORM ");
+								lin.replace(QRegularExpression("(TRANSFORM)(.)+(\\.)"), "TRANSFORM ");
 							}
 						}
 						else if(lin.startsWith(QString("DROP")))

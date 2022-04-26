@@ -218,7 +218,7 @@ void CodeCompletionWidget::configureCompletion(DatabaseModel *db_model, SyntaxHi
 		if(syntax_hl && keywords.isEmpty())
 		{
 			//Get the keywords from the highlighter
-			vector<QRegExp> exprs=syntax_hl->getExpressions(keywords_grp);
+			vector<QRegularExpression> exprs=syntax_hl->getExpressions(keywords_grp);
 
 			while(!exprs.empty())
 			{
@@ -280,7 +280,7 @@ void CodeCompletionWidget::populateNameList(vector<BaseObject *> &objects, QStri
 	QListWidgetItem *item=nullptr;
 	QString obj_name;
 	ObjectType obj_type;
-	QRegExp regexp(filter.remove('"') + QString("*"), Qt::CaseInsensitive, QRegExp::Wildcard);
+	QRegularExpression regexp(filter.remove('"') + QString("*"), Qt::CaseInsensitive, QRegularExpression::Wildcard);
 
 	name_list->clear();
 
@@ -452,7 +452,7 @@ void CodeCompletionWidget::updateList()
 	completion wasn't triggered using the special char */
 	if(qualifying_level < 0 && !auto_triggered)
 	{
-		QRegExp regexp(pattern, Qt::CaseInsensitive);
+		QRegularExpression regexp(pattern, Qt::CaseInsensitive);
 
 		list=keywords.filter(regexp);
 		for(int i=0; i < list.size(); i++)

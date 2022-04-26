@@ -318,7 +318,7 @@ attribs_map DatabaseExplorerWidget::formatObjectAttribs(attribs_map &attribs)
 	ObjectType obj_type=ObjectType::BaseObject;
 	attribs_map fmt_attribs;
 	QString attr_name, attr_value;
-	QRegExp oid_regexp=QRegExp(QString("^[0-9]+"));
+	QRegularExpression oid_regexp=QRegularExpression(QString("^[0-9]+"));
 	map<QString, ObjectType> dep_types={{Attributes::Owner, ObjectType::Role},
 										{Attributes::Schema, ObjectType::Schema},
 										{Attributes::Tablespace, ObjectType::Tablespace},
@@ -1227,7 +1227,7 @@ attribs_map DatabaseExplorerWidget::extractAttributesFromItem(QTreeWidgetItem *i
 		obj_name.remove(idx, obj_name.size());
 	}
 	else if(obj_type==ObjectType::OpFamily || obj_type==ObjectType::OpClass)
-		obj_name.remove(QRegExp("( )+(\\[)(.)+(\\])"));
+		obj_name.remove(QRegularExpression("( )+(\\[)(.)+(\\])"));
 
 	//Formatting the names
 	attribs[Attributes::Name]=BaseObject::formatName(obj_name, obj_type==ObjectType::Operator);
@@ -1445,9 +1445,9 @@ void DatabaseExplorerWidget::restoreTreeState()
 		grp_id = item->data(DatabaseImportForm::ObjectGroupId, Qt::UserRole).toInt();
 
 		if(grp_id < 0)
-			idx = items_state.indexOf(QRegExp(QString("(%1)(\\:)(.)+").arg(grp_id)));
+			idx = items_state.indexOf(QRegularExpression(QString("(%1)(\\:)(.)+").arg(grp_id)));
 		else
-			idx = items_state.indexOf(QRegExp(QString("(%1)(\\:)(.)+").arg(oid)));
+			idx = items_state.indexOf(QRegularExpression(QString("(%1)(\\:)(.)+").arg(oid)));
 
 		if(idx >= 0)
 		{

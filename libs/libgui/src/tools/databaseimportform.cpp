@@ -978,7 +978,7 @@ vector<QTreeWidgetItem *> DatabaseImportForm::updateObjectsTree(DatabaseImportHe
 				//Creates individual items for each object of the current type
 				oid=attribs[Attributes::Oid].toUInt();
 
-				attribs[Attributes::Name].remove(QRegExp(QString("( )(without)( time zone)")));
+				attribs[Attributes::Name].remove(QRegularExpression(QString("( )(without)( time zone)")));
 				label=name=attribs[Attributes::Name];
 
 				//Removing the trailing type string from op. families or op. classes names

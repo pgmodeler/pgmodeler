@@ -452,9 +452,9 @@ int XmlParser::getBufferLineCount()
 QString XmlParser::convertCharsToXMLEntities(QString buf)
 {
 	QTextStream ts(&buf);
-	QRegExp attr_regexp=QRegExp("([a-z]|\\-|[0-9])+( )*(=\\\")"),
-			attr_end_regexp=QRegExp("(\\\")((\\t)+|(\\n)|((\\/\\>)|(\\>)))"),
-			next_attr_regexp=QRegExp(QString("(( )|(\\t))+%1").arg(attr_regexp.pattern()));
+	QRegularExpression attr_regexp=QRegularExpression("([a-z]|\\-|[0-9])+( )*(=\\\")"),
+			attr_end_regexp=QRegularExpression("(\\\")((\\t)+|(\\n)|((\\/\\>)|(\\>)))"),
+			next_attr_regexp=QRegularExpression(QString("(( )|(\\t))+%1").arg(attr_regexp.pattern()));
 	int attr_start=0, attr_end=0, count=0, cdata_start = -1,
 			cdata_end = -1, start = -1, end = -1, pos = 0;
 	QString value, fmt_buf, lin;
@@ -515,7 +515,7 @@ QString XmlParser::convertCharsToXMLEntities(QString buf)
 
 				/* If the extracted value has one of the expected special chars
 				 * in order to perform the replacemnt to xml entities */
-				if(value.contains(QRegExp("(&|\\<|\\>|\")")))
+				if(value.contains(QRegularExpression("(&|\\<|\\>|\")")))
 				{
 					if(!value.contains(CharQuot) && !value.contains(CharLt) &&
 						 !value.contains(CharGt) && !value.contains(CharAmp) &&

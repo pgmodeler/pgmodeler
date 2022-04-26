@@ -202,7 +202,7 @@ void Messagebox::show(const QString &title, const QString &msg, unsigned icon_ty
 	setMinimumWidth(screen_rect.width() * w_factor);
 	setMinimumHeight(screen_rect.height() * h_factor);
 
-	int ln_cnt = QString(msg).replace(QRegExp(QString("(<)(br)(/)?(>)"), Qt::CaseInsensitive), QString("\n")).count('\n');
+	int ln_cnt = QString(msg).replace(QRegularExpression(QString("(<)(br)(/)?(>)"), Qt::CaseInsensitive), QString("\n")).count('\n');
 
 	if(ln_cnt > 0)
 		adjustSize();

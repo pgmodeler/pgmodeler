@@ -1427,7 +1427,7 @@ void DatabaseImportHelper::createOperator(attribs_map &attribs)
 	try
 	{
 		int pos;
-		QRegExp regexp;
+		QRegularExpression regexp;
 		QString op_signature,
 
 				func_types[]={ Attributes::OperatorFunc,
@@ -1766,7 +1766,7 @@ void DatabaseImportHelper::createTable(attribs_map &attribs)
 			inherited_cols.push_back(table->getColumn(col_idx));
 
 		// Storing the partition bound expression temporarily in the table in order to configure the partition hierarchy later
-		table->setPartitionBoundingExpr(attribs[Attributes::PartitionBoundExpr].remove(QRegExp("^(FOR)( )+(VALUES)( )*", Qt::CaseInsensitive)));
+		table->setPartitionBoundingExpr(attribs[Attributes::PartitionBoundExpr].remove(QRegularExpression("^(FOR)( )+(VALUES)( )*", Qt::CaseInsensitive)));
 
 		// Retrieving the partitioned table related to the partition table being created
 		if(!attribs[Attributes::PartitionedTable].isEmpty())
@@ -1959,7 +1959,7 @@ void DatabaseImportHelper::createRule(attribs_map &attribs)
 {
 	QString cmds=attribs[Attributes::Commands];
 	int start=-1;
-	QRegExp cond_regexp(QString("(WHERE)(.)+(DO)"));
+	QRegularExpression cond_regexp(QString("(WHERE)(.)+(DO)"));
 	ObjectType table_type=ObjectType::Table;
 
 	try
@@ -1968,7 +1968,7 @@ void DatabaseImportHelper::createRule(attribs_map &attribs)
 		if(start >=0)
 		{
 			attribs[Attributes::Condition]=cmds.mid(start, cond_regexp.matchedLength());
-			attribs[Attributes::Condition].remove(QRegExp(QString("(DO)|(WHERE)")));
+			attribs[Attributes::Condition].remove(QRegularExpression(QString("(DO)|(WHERE)")));
 		}
 
 		attribs[Attributes::Commands]=Catalog::parseRuleCommands(attribs[Attributes::Commands]).join(';');
@@ -2181,7 +2181,7 @@ void DatabaseImportHelper::createConstraint(attribs_map &attribs)
 				 * the cols list above */
 				exprs=attribs[Attributes::Expressions]
 							.replace(QString("EXCLUDE USING %1 (").arg(attribs[Attributes::IndexType]), "")
-							.split(QRegExp("(WITH )(\\+|\\-|\\*|\\/|\\<|\\>|\\=|\\~|\\!|\\@|\\#|\\%|\\^|\\&|\\||\\'|\\?)+((,)?|(\\))?)"),
+							.split(QRegularExpression("(WITH )(\\+|\\-|\\*|\\/|\\<|\\>|\\=|\\~|\\!|\\@|\\#|\\%|\\^|\\&|\\||\\'|\\?)+((,)?|(\\))?)"),
 										 QtCompat::SkipEmptyParts);
 
 				for(int i=0; i < cols.size(); i++)
@@ -2392,7 +2392,7 @@ void DatabaseImportHelper::createForeignTable(attribs_map &attribs)
 			inherited_cols.push_back(ftable->getColumn(col_idx));
 
 		// Storing the partition bound expression temporarily in the table in order to configure the partition hierarchy later
-		ftable->setPartitionBoundingExpr(attribs[Attributes::PartitionBoundExpr].remove(QRegExp("^(FOR)( )+(VALUES)( )*", Qt::CaseInsensitive)));
+		ftable->setPartitionBoundingExpr(attribs[Attributes::PartitionBoundExpr].remove(QRegularExpression("^(FOR)( )+(VALUES)( )*", Qt::CaseInsensitive)));
 
 		// Retrieving the partitioned table related to the partition table being created
 		if(!attribs[Attributes::PartitionedTable].isEmpty())
@@ -3244,7 +3244,7 @@ QString DatabaseImportHelper::getType(const QString &oid_str, bool generate_xml,
 				 (is_derivated_from_obj ||
 					(sch_name != QString("pg_catalog") && sch_name != QString("information_schema")) ||
 					type_oid > catalog.getLastSysObjectOID()) &&
-				 !obj_name.contains(QRegExp(QString("^(\\\")?(%1)(\\\")?(\\.)").arg(sch_name))))
+				 !obj_name.contains(QRegularExpression(QString("^(\\\")?(%1)(\\\")?(\\.)").arg(sch_name))))
 			{
 				obj_name.prepend(sch_name + QString("."));
 			}

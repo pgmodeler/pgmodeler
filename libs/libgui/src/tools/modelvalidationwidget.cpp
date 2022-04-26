@@ -686,7 +686,7 @@ void ModelValidationWidget::generateOutputItemText(QTreeWidgetItem *item, QStrin
 	if(label && text.isEmpty())
 		text = label->text();
 
-	text.replace(QRegExp("(\\<)(\\/)?(br|strong|em)(\\/)?(\\>)"), "");
+	text.replace(QRegularExpression("(\\<)(\\/)?(br|strong|em)(\\/)?(\\>)"), "");
 	text.prepend(level == 0 ? "* " : "\n");
 
 	text.replace("\n", filler);

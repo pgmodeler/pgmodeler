@@ -142,7 +142,7 @@ PgSqlType PgSqlType::parseString(const QString &str)
 		interv=intervals.back();
 		intervals.pop_back();
 
-		start=type_str.indexOf(QRegExp(QString("( )") + interv.toLower()));
+		start=type_str.indexOf(QRegularExpression(QString("( )") + interv.toLower()));
 		if(start>=0)
 		{
 			type_str.remove(start, interv.size()+1);
@@ -153,24 +153,24 @@ PgSqlType PgSqlType::parseString(const QString &str)
 	}
 
 	//Check if the type contains "with time zone" descriptor
-	with_tz=QRegExp(QString("(.)*(with time zone)(.)*")).exactMatch(type_str);
+	with_tz=QRegularExpression(QString("(.)*(with time zone)(.)*")).exactMatch(type_str);
 
 	//Removes the timezone descriptor
-	type_str.remove(QRegExp(QString("(with)(out)*( time zone)")));
+	type_str.remove(QRegularExpression(QString("(with)(out)*( time zone)")));
 
 	//Count the dimension of the type and removes the array descriptor
 	dim=type_str.count(QString("[]"));
 	type_str.remove(QString("[]"));
 
 	//Check if the type is a variable length type, e.g varchar(200)
-	if(QRegExp(QString("(.)+\\(( )*[0-9]+( )*\\)")).indexIn(type_str) >=0)
+	if(QRegularExpression(QString("(.)+\\(( )*[0-9]+( )*\\)")).indexIn(type_str) >=0)
 	{
 		start=type_str.indexOf('(');
 		end=type_str.indexOf(')', start);
 		len=type_str.mid(start+1, end-start-1).toInt();
 	}
 	//Check if the type is a numeric type, e.g, numeric(10,2)
-	else if(QRegExp(QString("(.)+\\(( )*[0-9]+( )*(,)( )*[0-9]+( )*\\)")).indexIn(type_str) >=0)
+	else if(QRegularExpression(QString("(.)+\\(( )*[0-9]+( )*(,)( )*[0-9]+( )*\\)")).indexIn(type_str) >=0)
 	{
 		start=type_str.indexOf('(');
 		end=type_str.indexOf(')', start);
@@ -179,7 +179,7 @@ PgSqlType PgSqlType::parseString(const QString &str)
 		prec=value[1].toUInt();
 	}
 	//Check if the type is a spatial type (PostGiS), e.g, geography(POINTZ, 4296)
-	else if(QRegExp(QString("(.)+\\(( )*[a-z]+(( )*(,)( )*[0-9]+( )*)?\\)"), Qt::CaseInsensitive).indexIn(type_str) >=0)
+	else if(QRegularExpression(QString("(.)+\\(( )*[a-z]+(( )*(,)( )*[0-9]+( )*)?\\)"), Qt::CaseInsensitive).indexIn(type_str) >=0)
 	{
 		start=type_str.indexOf('(');
 		end=type_str.indexOf(')', start);
@@ -614,7 +614,7 @@ unsigned PgSqlType::getBaseTypeIndex(const QString &type_name)
 	QString aux_name=type_name;
 
 	aux_name.remove(QString("[]"));
-	aux_name.remove(QRegExp(QString("( )(with)(out)?(.)*")));
+	aux_name.remove(QRegularExpression(QString("( )(with)(out)?(.)*")));
 	aux_name=aux_name.trimmed();
 	return getType(aux_name, type_names);
 }

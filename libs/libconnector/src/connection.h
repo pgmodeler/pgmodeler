@@ -28,7 +28,7 @@
 
 #include "resultset.h"
 #include "attribsmap.h"
-#include <QRegExp>
+#include <QRegularExpression>
 #include <QDateTime>
 
 class Connection {

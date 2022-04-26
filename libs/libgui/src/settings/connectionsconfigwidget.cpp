@@ -515,7 +515,7 @@ void ConnectionsConfigWidget::getConnections(map<QString, Connection *> &conns, 
 		alias=conn->getConnectionId();
 
 		if(!inc_hosts)
-			alias.remove(QRegExp(QString(" \\((.)*\\)")));
+			alias.remove(QRegularExpression(QString(" \\((.)*\\)")));
 
 		conns[alias]=conn;
 	}
