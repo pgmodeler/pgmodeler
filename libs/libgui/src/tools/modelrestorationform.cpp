@@ -48,7 +48,8 @@ int ModelRestorationForm::exec()
 	QFileInfo info;
 	QTableWidgetItem *item=nullptr;
 	QString buffer, filename;
-	QRegularExpression regexp=QRegularExpression("(\\<database)( )+(name)(=)(\")");
+	QRegularExpression regexp("(\\<database)( )+(name)(=)(\")");
+	QRegularExpressionMatch match;
 	int start=-1, end=-1, col=0;
 
 	while(!file_list.isEmpty())
@@ -58,12 +59,16 @@ int ModelRestorationForm::exec()
 
 		buffer.append(UtilsNs::loadFile(filename));
 
-		start=regexp.indexIn(buffer) + regexp.matchedLength();
-		end=buffer.indexOf("\"", start);
+		#warning "Debug me!"
+		/* start=regexp.indexIn(buffer) + regexp.matchedLength();
+		end=buffer.indexOf("\"", start); */
+		match = regexp.match(buffer);
+		start = match.capturedStart() + match.capturedLength();
+		end = buffer.indexOf("\"", start);
 
 		tmp_info.append(buffer.mid(start, end - start));
 		tmp_info.append(info.fileName());
-		tmp_info.append(info.lastModified().toString(QString("yyyy-MM-dd hh:mm:ss")));
+		tmp_info.append(info.lastModified().toString("yyyy-MM-dd hh:mm:ss"));
 
 		if(info.size() < 1024)
 			tmp_info.append(QString("%1 bytes").arg(info.size()));
