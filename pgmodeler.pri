@@ -9,7 +9,7 @@ OBJECTS_DIR = obj
 UI_DIR = src
 
 # Disables all the APIs deprecated before Qt 6.0.0
-DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000
+# DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000
 
 # Store the absolute paths to library subprojects to be referenced in other .pro files
 # *_ROOT -> the path to the root folder of the subproject
