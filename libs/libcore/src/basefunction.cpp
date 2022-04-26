@@ -20,7 +20,9 @@
 #include "defaultlanguages.h"
 #include "utilsns.h"
 
-const QRegularExpression BaseFunction::ConfigParamPattern("([a-z]+)([a-z]|(_))*", Qt::CaseInsensitive);
+#warning "Debug me!"
+const QRegularExpression BaseFunction::ConfigParamPattern(QRegularExpression::anchoredPattern("([a-z]+)([a-z]|(_))*"),
+																													QRegularExpression::CaseInsensitiveOption);
 
 BaseFunction::BaseFunction()
 {
@@ -226,7 +228,9 @@ void BaseFunction::addTransformTypes(const QStringList &types)
 
 void BaseFunction::setConfigurationParam(const QString &cfg_param, const QString &value)
 {
-	if(!ConfigParamPattern.exactMatch(cfg_param))
+	#warning "Debug me!"
+	//if(!ConfigParamPattern.exactMatch(cfg_param))
+	if(!ConfigParamPattern.match(cfg_param).hasMatch())
 	{
 		throw Exception(Exception::getErrorMessage(ErrorCode::InvConfigParameterName).arg(cfg_param).arg(signature),
 										ErrorCode::InvConfigParameterName, __PRETTY_FUNCTION__,__FILE__,__LINE__);
