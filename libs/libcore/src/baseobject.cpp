@@ -172,7 +172,9 @@ QString BaseObject::formatName(const QString &name, bool is_operator)
 	unsigned char chr, chr1, chr2;
 
 	//Checking if the name is already formated enclosed by quotes
-	is_formated=QRegularExpression(QString("(\")(.)+(\")")).exactMatch(name);
+	//is_formated=QRegularExpression(QString("(\")(.)+(\")")).exactMatch(name);
+	#warning "Debug me!"
+	is_formated = QRegularExpression(QRegularExpression::anchoredPattern("(\")(.)+(\")")).match(name).hasMatch();
 
 	/* If the name is not formatted or it symbolizes the name of an operator
 		(which has characters invalid according to the rule and is the only exception
@@ -1131,7 +1133,8 @@ bool BaseObject::isCodeDiffersFrom(const QString &xml_def1, const QString &xml_d
 			tag_regex=QString("<%1[^>]*((/>)|(>((?:(?!</%1>).)*)</%1>))");
 	QStringList xml_defs{ xml_def1, xml_def2 };
 	int start=0, end=-1, tag_end=-1;
-	QRegularExpression regexp;
+	QRegularExpression regexp, tag_end_regexp("(\\\\)?(>)");
+	QRegularExpressionMatch match;
 
 	for(int i=0; i < 2; i++)
 	{
@@ -1142,10 +1145,17 @@ bool BaseObject::isCodeDiffersFrom(const QString &xml_def1, const QString &xml_d
 		{
 			do
 			{
-				regexp=QRegularExpression(attr_regex.arg(attr));
-				tag_end=xml.indexOf(QRegularExpression(QString("(\\\\)?(>)")));
-				start=regexp.indexIn(xml);
-				end=xml.indexOf('"', start + regexp.matchedLength());
+				#warning "Debug me!"
+				//regexp = QRegularExpression(attr_regex.arg(attr));
+				regexp.setPattern(attr_regex.arg(attr));
+				tag_end = xml.indexOf(tag_end_regexp);
+
+				#warning "Debug me!"
+				//start=regexp.indexIn(xml);
+				//end=xml.indexOf('"', start + regexp.matchedLength());
+				match = regexp.match(xml);
+				start = match.capturedStart();
+				end = match.capturedEnd();
 
 				if(end > tag_end)
 					end=-1;
@@ -1156,8 +1166,9 @@ bool BaseObject::isCodeDiffersFrom(const QString &xml_def1, const QString &xml_d
 			while(start >= 0 && end >= 0);
 		}
 
+		#warning "Debug me!"
 		//Removing ignored tags
-		for(QString tag : ignored_tags)
+		for(auto &tag : ignored_tags)
 			xml.remove(QRegularExpression(tag_regex.arg(tag)));
 
 		xml_defs[i]=xml.simplified();
