@@ -209,8 +209,9 @@ void SyntaxHighlighter::highlightBlock(const QString &txt)
 					if(i < len && word_delimiters.contains(text[i]) &&
 						 prev_info && !prev_info->getGroup().isEmpty() && prev_info->isMultiExpr())
 					{
-						for(auto exp : final_exprs[prev_info->getGroup()])
+						for(auto &exp : final_exprs[prev_info->getGroup()])
 						{
+							#warning "Debug me! Should not compare text directly against the pattern of QRegularExpression."
 							if(exp.pattern().contains(text[i]))
 							{
 								word += text[i];
@@ -408,6 +409,7 @@ bool SyntaxHighlighter::isWordMatchGroup(const QString &word, const QString &gro
 			{
 				match_idx = 0;
 				match_len = word.length();
+				has_match = true;
 			}
 		}
 
@@ -627,7 +629,15 @@ void SyntaxHighlighter::loadConfiguration(const QString &filename)
 										else if(attribs[Attributes::Wildcard] == Attributes::True)
 											regexp.setPattern(QRegularExpression::wildcardToRegularExpression(attribs[Attributes::Value]));
 										else
-											regexp.setPattern(QRegularExpression::anchoredPattern(attribs[Attributes::Value]));
+											regexp.setPattern(QRegularExpression::anchoredPattern(QRegularExpression::escape(attribs[Attributes::Value])));
+
+										// We thrown an error aborting the loading if the regepx has an invalid pattern
+										if(!regexp.isValid())
+										{
+											throw Exception(Exception::getErrorMessage(ErrorCode::InvGroupRegExpPattern).arg(group, filename, regexp.errorString()),
+																			ErrorCode::InvGroupRegExpPattern,
+																			__PRETTY_FUNCTION__, __FILE__, __LINE__, nullptr, tr("Pattern: %1").arg(regexp.pattern()));
+										}
 
 										if(expr_type.isEmpty() ||
 											 expr_type==Attributes::SimpleExp ||
