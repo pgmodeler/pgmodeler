@@ -384,8 +384,11 @@ attribs_map DatabaseExplorerWidget::formatObjectAttribs(attribs_map &attribs)
 		if(attr_name==Attributes::ObjectType)
 			attr_value=BaseObject::getTypeName(static_cast<ObjectType>(attr_value.toUInt()));
 
+		#warning "Debug me!"
 		//If the current attribute is related to a dependency object, retreive its real name
-		else if(dep_types.count(attr_name)!=0 && oid_regexp.exactMatch(attr_value))
+		//else if(dep_types.count(attr_name)!=0 && oid_regexp.exactMatch(attr_value))
+		//	attr_value=getObjectName(dep_types[attr_name], attr_value);
+		else if(dep_types.count(attr_name)!=0 && oid_regexp.match(attr_value).hasMatch())
 			attr_value=getObjectName(dep_types[attr_name], attr_value);
 
 		attribs[attr_name]=attr_value;
