@@ -1428,6 +1428,7 @@ void DatabaseImportHelper::createOperator(attribs_map &attribs)
 	{
 		int pos;
 		QRegularExpression regexp;
+		QRegularExpressionMatch match;
 		QString op_signature,
 
 				func_types[]={ Attributes::OperatorFunc,
@@ -1453,13 +1454,19 @@ void DatabaseImportHelper::createOperator(attribs_map &attribs)
 
 			if(!attribs[op_types[i]].isEmpty())
 			{
+				#warning "Debug me!"
+
 				/* Extracting the operator's signature to check if it was previouly created:
 					Defining a operator as ++(A,B) and it's commutator as *++(B,A) PostgreSQL will automatically
 					create on the second operator a commutator reference to ++(A,B). But to pgModeler only the first
 					reference is valid, so the extracted signature is used to check if the commutator was previously
 					created in order to avoid reference errors */
-				pos=regexp.indexIn(attribs[op_types[i]]) + regexp.matchedLength();
-				op_signature=attribs[op_types[i]].mid(pos, (attribs[op_types[i]].indexOf('"',pos) - pos));
+				//pos=regexp.indexIn(attribs[op_types[i]]) + regexp.matchedLength();
+				//op_signature=attribs[op_types[i]].mid(pos, (attribs[op_types[i]].indexOf('"',pos) - pos));
+
+				match = regexp.match(attribs[op_types[i]]);
+				pos = match.capturedStart() + match.capturedLength();
+				op_signature = attribs[op_types[i]].mid(pos, (attribs[op_types[i]].indexOf('"',pos) - pos));
 
 				//If the operator is not defined clear up the reference to it
 				if(dbmodel->getObjectIndex(op_signature, ObjectType::Operator) < 0)
