@@ -17,6 +17,7 @@
 */
 
 #include "findreplacewidget.h"
+#include <QRegularExpression>
 
 FindReplaceWidget::FindReplaceWidget(QPlainTextEdit *txt_edit, QWidget *parent): QWidget(parent)
 {
@@ -94,11 +95,24 @@ void FindReplaceWidget::replaceFindText()
 
 bool FindReplaceWidget::findText(const QString &text, bool regexp, QTextDocument::FindFlags flags)
 {
-	if(regexp)
+	#warning "Debug me!"
+	/*if(regexp)
 		return text_edt->find(QRegularExpression(text, ((flags & QTextDocument::FindCaseSensitively)==QTextDocument::FindCaseSensitively ?
 																					 Qt::CaseSensitive : Qt::CaseInsensitive)), flags);
 	else
-		return text_edt->find(text, flags);
+		return text_edt->find(text, flags); */
+
+	if(regexp)
+	{
+		QRegularExpression regexp(text);
+
+		if(!flags.testFlag(QTextDocument::FindCaseSensitively))
+			regexp.setPatternOptions(QRegularExpression::CaseInsensitiveOption);
+
+		return text_edt->find(regexp, flags);
+	}
+
+	return text_edt->find(text, flags);
 }
 
 bool FindReplaceWidget::findText(bool backward, bool cyclic)
