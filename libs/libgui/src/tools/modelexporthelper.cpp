@@ -55,7 +55,9 @@ void ModelExportHelper::setIgnoredErrors(const QStringList &err_codes)
 
 	for(QString code : error_codes)
 	{
-		if(valid_code.exactMatch(code))
+		#warning "Debug me!"
+		//if(valid_code.exactMatch(code))
+		if(valid_code.match(code).hasMatch())
 			ignored_errors.push_back(code);
 	}
 }
@@ -352,6 +354,7 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
 	BaseObject *object=nullptr;
 	QString tmpl_comm_regexp = QString("(COMMENT)( )+(ON)( )+(%1)(.)+(\n)(") + Attributes::DdlEndToken + QString(")");
 	QRegularExpression comm_regexp;
+	QRegularExpressionMatch match;
 
 	try
 	{
@@ -467,15 +470,29 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
 
 						if(types[type_id] == ObjectType::Tablespace)
 						{
+							#warning "Debug me!"
+							/* comm_regexp = QRegularExpression(tmpl_comm_regexp.arg(object->getSQLName()));
+							pos = comm_regexp.indexIn(sql_cmd); */
+
+							/* If we find a comment on statement we should strip it from the tablespace definition in
+							 * order to execute it after creating the db */
+							/* if(pos >= 0)
+							{
+								sql_cmd_comment = sql_cmd.mid(pos, comm_regexp.matchedLength());
+								sql_cmd.remove(pos, comm_regexp.matchedLength());
+								pos = -1;
+							} */
+
 							comm_regexp = QRegularExpression(tmpl_comm_regexp.arg(object->getSQLName()));
-							pos = comm_regexp.indexIn(sql_cmd);
+							match = comm_regexp.match(sql_cmd);
+							pos = match.capturedStart();
 
 							/* If we find a comment on statement we should strip it from the tablespace definition in
 							 * order to execute it after creating the db */
 							if(pos >= 0)
 							{
-								sql_cmd_comment = sql_cmd.mid(pos, comm_regexp.matchedLength());
-								sql_cmd.remove(pos, comm_regexp.matchedLength());
+								sql_cmd_comment = sql_cmd.mid(pos, match.capturedLength());
+								sql_cmd.remove(pos, match.capturedLength());
 								pos = -1;
 							}
 						}
@@ -499,17 +516,30 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
 		{
 			if(!db_model->isSQLDisabled() && !export_canceled)
 			{
-				comm_regexp = QRegularExpression(tmpl_comm_regexp.arg(db_model->getSQLName()));
-
+				#warning "Debug me!"
+				/* comm_regexp = QRegularExpression(tmpl_comm_regexp.arg(db_model->getSQLName()));
 				sql_cmd=db_model->__getCodeDefinition(SchemaParser::SqlDefinition);
-				pos = comm_regexp.indexIn(sql_cmd);
+				pos = comm_regexp.indexIn(sql_cmd); */
+
+				/* If we find a comment on statment we should strip it from the DB definition in
+				 * order to execute it after creating the db */
+				/* if(pos >= 0)
+				{
+					sql_cmd_comment = sql_cmd.mid(pos, comm_regexp.matchedLength());
+					sql_cmd.remove(pos, comm_regexp.matchedLength());
+				} */
+
+				comm_regexp = QRegularExpression(tmpl_comm_regexp.arg(db_model->getSQLName()));
+				match = comm_regexp.match(sql_cmd);
+				sql_cmd=db_model->__getCodeDefinition(SchemaParser::SqlDefinition);
+				pos = match.capturedStart();
 
 				/* If we find a comment on statment we should strip it from the DB definition in
 				 * order to execute it after creating the db */
 				if(pos >= 0)
 				{
-					sql_cmd_comment = sql_cmd.mid(pos, comm_regexp.matchedLength());
-					sql_cmd.remove(pos, comm_regexp.matchedLength());
+					sql_cmd_comment = sql_cmd.mid(pos, match.capturedLength());
+					sql_cmd.remove(pos, match.capturedLength());
 				}
 
 				//Creating the database on the DBMS
@@ -873,7 +903,10 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
 			/* If the simulation mode is off and the drop objects option is checked,
 		 check if the current line matches one of the accepted drop commands
 		 (DROP [OBJECT] or ALTER TABLE...DROP) */
-			if(drop_objs && (drop_reg.exactMatch(lin) || drop_tab_obj_reg.exactMatch(lin)))
+
+			#warning "Debug me!"
+			//if(drop_objs && (drop_reg.exactMatch(lin) || drop_tab_obj_reg.exactMatch(lin)))
+			if(drop_objs && (drop_reg.match(lin).hasMatch() || drop_tab_obj_reg.match(lin).hasMatch()))
 			{
 				comm_cnt=lin.count(QString("--"));
 				lin=lin.remove(QString("--")).trimmed();
