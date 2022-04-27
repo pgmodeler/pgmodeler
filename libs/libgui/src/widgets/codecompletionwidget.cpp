@@ -280,7 +280,11 @@ void CodeCompletionWidget::populateNameList(vector<BaseObject *> &objects, QStri
 	QListWidgetItem *item=nullptr;
 	QString obj_name;
 	ObjectType obj_type;
-	QRegularExpression regexp(filter.remove('"') + QString("*"), Qt::CaseInsensitive, QRegularExpression::Wildcard);
+	//QRegularExpression regexp(filter.remove('"') + QString("*"), Qt::CaseInsensitive, QRegularExpression::Wildcard);
+
+	#warning "Debug me!"
+	QRegularExpression regexp(QRegularExpression::wildcardToRegularExpression(filter.remove('"') + QString("*")),
+														QRegularExpression::CaseInsensitiveOption);
 
 	name_list->clear();
 
@@ -300,8 +304,10 @@ void CodeCompletionWidget::populateNameList(vector<BaseObject *> &objects, QStri
 		else
 			obj_name+=objects[i]->getName(false, false);
 
+		#warning "Debug me!"
 		//The object will be inserted if its name matches the filter or there is no filter set
-		if(filter.isEmpty() || regexp.exactMatch(obj_name))
+		//if(filter.isEmpty() || regexp.exactMatch(obj_name))
+		if(filter.isEmpty() || regexp.match(obj_name).hasMatch())
 		{
 			item=new QListWidgetItem(QPixmap(GuiUtilsNs::getIconPath(objects[i]->getSchemaName())), obj_name);
 			item->setToolTip(QString("%1 (%2)").arg(objects[i]->getName(true)).arg(objects[i]->getTypeName()));
@@ -452,7 +458,9 @@ void CodeCompletionWidget::updateList()
 	completion wasn't triggered using the special char */
 	if(qualifying_level < 0 && !auto_triggered)
 	{
-		QRegularExpression regexp(pattern, Qt::CaseInsensitive);
+		#warning "Debug me!"
+		//QRegularExpression regexp(pattern, Qt::CaseInsensitive);
+		QRegularExpression regexp(pattern, QRegularExpression::CaseInsensitiveOption);
 
 		list=keywords.filter(regexp);
 		for(int i=0; i < list.size(); i++)
