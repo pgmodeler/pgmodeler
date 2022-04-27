@@ -861,11 +861,12 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
 	int pos=0, pos1=0, comm_cnt=0;
 
 	//Regexp used to extract the object being created
-	QRegularExpression obj_reg(QString("(CREATE|DROP|ALTER)(.)+(\n)")),
+	QRegularExpression obj_reg("(CREATE|DROP|ALTER)(.)+(\n)"),
 			tab_obj_reg(QString("^(%1)(.)+(ADD|DROP)( )(COLUMN|CONSTRAINT)( )*").arg(alter_tab)),
-			drop_reg(QString("^((\\-\\-)+( )*)+(DROP)(.)+")),
+			drop_reg("^((\\-\\-)+( )*)+(DROP)(.)+"),
 			drop_tab_obj_reg(QString("^((\\-\\-)+( )*)+(%1)(.)+(DROP)(.)+").arg(alter_tab)),
 			reg_aux;
+	QRegularExpressionMatch match;
 
 	vector<ObjectType> obj_types={ ObjectType::Role, ObjectType::Function, ObjectType::Trigger, ObjectType::Index,
 																 ObjectType::Policy, ObjectType::Rule,	ObjectType::Table, ObjectType::View, ObjectType::Domain,
@@ -908,62 +909,70 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
 			//if(drop_objs && (drop_reg.exactMatch(lin) || drop_tab_obj_reg.exactMatch(lin)))
 			if(drop_objs && (drop_reg.match(lin).hasMatch() || drop_tab_obj_reg.match(lin).hasMatch()))
 			{
-				comm_cnt=lin.count(QString("--"));
-				lin=lin.remove(QString("--")).trimmed();
+				comm_cnt=lin.count("--");
+				lin=lin.remove("--").trimmed();
 
 				/* If the count of comment indicators (--) is 1 indicates that the DDL of the
 		   object related to the DROP is enabled, so the DROP is executed otherwise ignored */
 				if(comm_cnt==1)
 				{
-					sql_cmd=lin + QString("\n");
+					sql_cmd=lin + "\n";
 					ddl_tk_found=true;
 				}
 			}
 			else
 			{
 				ddl_tk_found=(lin.indexOf(Attributes::DdlEndToken) >= 0);
-				lin.remove(QRegularExpression(QString("^(--)+(.)+$")));
+				lin.remove(QRegularExpression("^(--)+(.)+$"));
 
 				//If the line isn't empty after cleanup it will be included on sql command
 				if(!lin.isEmpty())
-					sql_cmd += lin + QString("\n");
+					sql_cmd += lin + "\n";
 			}
 
 			//If the ddl end token is found
 			if(ddl_tk_found || (!sql_cmd.isEmpty() && ts.atEnd()))
 			{
+				#warning "Debug me!"
 				//Checking if the command is a column or constraint creation via ALTER TABLE
-				aux_cmd=sql_cmd;
+				/*aux_cmd=sql_cmd;
 				pos=tab_obj_reg.indexIn(aux_cmd);
 
-				if(pos >= 0)
+				if(pos >= 0) */
+				aux_cmd = sql_cmd;
+				if(tab_obj_reg.match(aux_cmd).hasMatch())
 				{
 					aux_cmd.remove('"');
-					aux_cmd.remove(QString("IF EXISTS "));
-					obj_type=(aux_cmd.contains(QString("COLUMN")) ? ObjectType::Column : ObjectType::Constraint);
-					reg_aux=QRegularExpression(QString("(COLUMN|CONSTRAINT)( )+"));
+					aux_cmd.remove("IF EXISTS ");
+					obj_type=(aux_cmd.contains("COLUMN") ? ObjectType::Column : ObjectType::Constraint);
+					reg_aux.setPattern("(COLUMN|CONSTRAINT)( )+");
 
 					//Extracting the table name
-					pos=aux_cmd.indexOf(alter_tab) + alter_tab.size();
-					pos1=aux_cmd.indexOf(QString("ADD"));
+					pos = aux_cmd.indexOf(alter_tab) + alter_tab.size();
+					pos1 = aux_cmd.indexOf("ADD");
 
 					if(pos1 < 0)
 					{
-						pos1=aux_cmd.indexOf(QString("DROP"));
+						pos1=aux_cmd.indexOf("DROP");
 						is_drop=true;
 					}
 
 					tab_name=aux_cmd.mid(pos, pos1 - pos).simplified();
 
+					#warning "Debug me!"
 					//Extracting the child object name (column | constraint) the one between
-					pos=reg_aux.indexIn(aux_cmd, pos1);
-					pos+=reg_aux.matchedLength();
+					/* pos=reg_aux.indexIn(aux_cmd, pos1);
+					pos+=reg_aux.matchedLength(); */
+
+					match = reg_aux.match(aux_cmd, pos1);
+					pos = match.capturedStart();
+					pos += match.capturedLength();
 
 					pos1=aux_cmd.indexOf(" ", pos);
 					obj_name=aux_cmd.mid(pos, pos1 - pos).simplified();
 
 					//Creating a fully qualified name for the object (schema.table.name)
-					obj_name=tab_name + QString(".") + obj_name;
+					obj_name=tab_name + "." + obj_name;
 
 					if(is_drop)
 						msg=tr("Dropping object `%1' (%2)").arg(obj_name).arg(BaseObject::getTypeName(obj_type));
@@ -973,8 +982,10 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
 					emit s_progressUpdated(aux_prog, msg, obj_type, sql_cmd);
 					is_drop=false;
 				}
+				#warning "Debug me!"
 				//Check if the regex matches the sql command
-				else if(obj_reg.exactMatch(sql_cmd))
+				//else if(obj_reg.exactMatch(sql_cmd))
+				else if(obj_reg.match(sql_cmd).hasMatch())
 				{
 					//Get the fisrt line of the sql command, that contains the CREATE/DROP/ALTER ... statement
 					lin=sql_cmd.mid(0, sql_cmd.indexOf('\n'));
@@ -986,52 +997,55 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
 						obj_type=obj_tp;
 
 						//Removing/replacing noisy keywords in order to extract more easily the object's name
-						if(lin.startsWith(QString("CREATE")) || lin.startsWith(QString("ALTER")))
+						if(lin.startsWith("CREATE") || lin.startsWith("ALTER"))
 						{
 							if(obj_tp==ObjectType::Index)
 							{
-								lin.remove(QString("UNIQUE"));
-								lin.remove(QString("CONCURRENTLY"));
+								lin.remove("UNIQUE");
+								lin.remove("CONCURRENTLY");
 							}
 							else if(obj_tp==ObjectType::View)
 							{
-								lin.remove(QString("MATERIALIZED"));
-								lin.remove(QString("RECURSIVE"));
+								lin.remove("MATERIALIZED");
+								lin.remove("RECURSIVE");
 							}
 							else if(obj_tp==ObjectType::Table)
 							{
-								lin.remove(QString("UNLOGGED"));
+								lin.remove("UNLOGGED");
 							}
 							else if(obj_tp==ObjectType::Function || obj_tp==ObjectType::Procedure)
 							{
-								lin.remove(QString("OR REPLACE"));
+								lin.remove("OR REPLACE");
 							}
 							else if(obj_tp==ObjectType::Transform)
 							{
-								lin.remove(QString(" FOR"));
-								lin.replace(QString(" LANGUAGE "), "_");
+								lin.remove(" FOR");
+								lin.replace(" LANGUAGE ", "_");
 								lin.replace(QRegularExpression("(TRANSFORM)(.)+(\\.)"), "TRANSFORM ");
 							}
 						}
 						else if(lin.startsWith(QString("DROP")))
 						{
-							lin.remove(QString("IF EXISTS"));
-							lin.remove(QString("MATERIALIZED"));
+							lin.remove("IF EXISTS");
+							lin.remove("MATERIALIZED");
 						}
 
 						lin=lin.simplified();
 
+						#warning "Debug me!"
 						//Check if the keyword for the current object exists on string
 						reg_aux.setPattern(QString("(CREATE|DROP|ALTER)( )(%1)").arg(BaseObject::getSQLName(obj_tp)));
-						pos=reg_aux.indexIn(lin);
-
-						if(pos >= 0)
+						//pos=reg_aux.indexIn(lin);
+						//if(pos >= 0)
+						match = reg_aux.match(lin);
+						if(match.hasMatch())
 						{
-							is_create=lin.startsWith(QString("CREATE"));
-							is_drop=(!is_create && lin.startsWith(QString("DROP")));
+							is_create=lin.startsWith("CREATE");
+							is_drop=(!is_create && lin.startsWith("DROP"));
 
 							//Extracts from the line the string starting with the object's name
-							lin=lin.mid(reg_aux.matchedLength(), sql_cmd.indexOf('\n')).simplified();
+							//lin=lin.mid(reg_aux.matchedLength(), sql_cmd.indexOf('\n')).simplified();
+							lin = lin.mid(match.capturedLength(), sql_cmd.indexOf('\n')).simplified();
 							lin.remove('"');
 
 							if(obj_tp != ObjectType::BaseObject)
@@ -1049,11 +1063,11 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
 								}
 								else if(obj_tp == ObjectType::UserMapping)
 								{
-									obj_name.prepend(lin.remove(QString("FOR")).trimmed() + QChar('@'));
+									obj_name.prepend(lin.remove("FOR").trimmed() + "@");
 								}
 								else
 								{
-									obj_name=QString("cast") + lin.replace(QString(" AS "),QString(","));
+									obj_name="cast" + lin.replace(" AS ",",");
 								}
 
 								//Stores the object type name
@@ -1073,11 +1087,11 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
 								QString aux_cmd_type;
 
 								if(is_create)
-									aux_cmd_type = QString("CREATE");
+									aux_cmd_type = "CREATE";
 								else if(is_drop)
-									aux_cmd_type = QString("DROP");
+									aux_cmd_type = "DROP";
 								else
-									aux_cmd_type = QString("ALTER");
+									aux_cmd_type = "ALTER";
 
 								msg=tr("Running auxiliary `%1' command...").arg(aux_cmd_type);
 							}
