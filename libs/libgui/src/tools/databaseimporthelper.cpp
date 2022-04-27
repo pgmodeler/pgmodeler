@@ -1772,8 +1772,10 @@ void DatabaseImportHelper::createTable(attribs_map &attribs)
 		for(unsigned col_idx : inh_cols)
 			inherited_cols.push_back(table->getColumn(col_idx));
 
+		#warning "Debug me!"
 		// Storing the partition bound expression temporarily in the table in order to configure the partition hierarchy later
-		table->setPartitionBoundingExpr(attribs[Attributes::PartitionBoundExpr].remove(QRegularExpression("^(FOR)( )+(VALUES)( )*", Qt::CaseInsensitive)));
+		//table->setPartitionBoundingExpr(attribs[Attributes::PartitionBoundExpr].remove(QRegularExpression("^(FOR)( )+(VALUES)( )*", Qt::CaseInsensitive)));
+		table->setPartitionBoundingExpr(attribs[Attributes::PartitionBoundExpr].remove(QRegularExpression("^(FOR)( )+(VALUES)( )*", QRegularExpression::CaseInsensitiveOption)));
 
 		// Retrieving the partitioned table related to the partition table being created
 		if(!attribs[Attributes::PartitionedTable].isEmpty())
@@ -1966,16 +1968,22 @@ void DatabaseImportHelper::createRule(attribs_map &attribs)
 {
 	QString cmds=attribs[Attributes::Commands];
 	int start=-1;
-	QRegularExpression cond_regexp(QString("(WHERE)(.)+(DO)"));
+	QRegularExpression cond_regexp("(WHERE)(.)+(DO)");
+	QRegularExpressionMatch match;
 	ObjectType table_type=ObjectType::Table;
 
 	try
 	{
-		start=cond_regexp.indexIn(cmds);
+		#warning "Debug me!"
+		//start=cond_regexp.indexIn(cmds);
+		match = cond_regexp.match(cmds);
+		start = match.capturedStart();
+
 		if(start >=0)
 		{
-			attribs[Attributes::Condition]=cmds.mid(start, cond_regexp.matchedLength());
-			attribs[Attributes::Condition].remove(QRegularExpression(QString("(DO)|(WHERE)")));
+			//attribs[Attributes::Condition]=cmds.mid(start, cond_regexp.matchedLength());
+			attribs[Attributes::Condition]=cmds.mid(start, match.capturedLength());
+			attribs[Attributes::Condition].remove(QRegularExpression("(DO)|(WHERE)"));
 		}
 
 		attribs[Attributes::Commands]=Catalog::parseRuleCommands(attribs[Attributes::Commands]).join(';');
@@ -2398,8 +2406,10 @@ void DatabaseImportHelper::createForeignTable(attribs_map &attribs)
 		for(unsigned col_idx : inh_cols)
 			inherited_cols.push_back(ftable->getColumn(col_idx));
 
+		#warning "Debug me!"
 		// Storing the partition bound expression temporarily in the table in order to configure the partition hierarchy later
-		ftable->setPartitionBoundingExpr(attribs[Attributes::PartitionBoundExpr].remove(QRegularExpression("^(FOR)( )+(VALUES)( )*", Qt::CaseInsensitive)));
+		//ftable->setPartitionBoundingExpr(attribs[Attributes::PartitionBoundExpr].remove(QRegularExpression("^(FOR)( )+(VALUES)( )*", Qt::CaseInsensitive)));
+		ftable->setPartitionBoundingExpr(attribs[Attributes::PartitionBoundExpr].remove(QRegularExpression("^(FOR)( )+(VALUES)( )*", QRegularExpression::CaseInsensitiveOption)));
 
 		// Retrieving the partitioned table related to the partition table being created
 		if(!attribs[Attributes::PartitionedTable].isEmpty())
