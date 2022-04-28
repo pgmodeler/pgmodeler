@@ -311,9 +311,7 @@ QString Permission::parsePermissionString(QString perm_str, vector<unsigned> &pr
 	privs.clear();
 	gop_privs.clear();
 
-	#warning "Debug me!"
 	//Checking if the permission string is valid
-	//if(!perm_str.isEmpty() && regexp.exactMatch(perm_str))
 	if(!perm_str.isEmpty() && regexp.match(perm_str).hasMatch())
 	{
 		QStringList list=perm_str.remove(perm_str.indexOf('/'), perm_str.size()).split('=');
