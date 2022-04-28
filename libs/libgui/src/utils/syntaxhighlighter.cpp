@@ -211,7 +211,6 @@ void SyntaxHighlighter::highlightBlock(const QString &txt)
 					{
 						for(auto &exp : final_exprs[prev_info->getGroup()])
 						{
-							#warning "Debug me! Should not compare text directly against the pattern of QRegularExpression."
 							if(exp.pattern().contains(text[i]))
 							{
 								word += text[i];
@@ -375,8 +374,8 @@ QString SyntaxHighlighter::identifyWordGroup(const QString &word, const QChar &l
 
 bool SyntaxHighlighter::isWordMatchGroup(const QString &word, const QString &group, bool use_final_expr, const QChar &lookahead_chr, int &match_idx, int &match_len)
 {
-	vector<QRegularExpression> *vet_expr=nullptr;
-	bool has_match = false, part_match = partial_match[group];
+	vector<QRegularExpression> *vet_expr = nullptr;
+	bool has_match = false;
 	QRegularExpressionMatch match;
 
 	if(use_final_expr && final_exprs.count(group))
@@ -386,37 +385,18 @@ bool SyntaxHighlighter::isWordMatchGroup(const QString &word, const QString &gro
 
 	for(auto &expr : *vet_expr)
 	{
-		if(part_match)
+		if(expr.match(word).hasMatch())
 		{
-			/* match_idx=word.indexOf(expr);
-			match_len=expr.matchedLength();
-			has_match=(match_idx >= 0);*/
-			#warning "Debug me!"
-			match = expr.match(word, QRegularExpression::PartialPreferFirstMatch);
-			match_idx = match.capturedStart();
-			match_len = match.capturedLength();
-			has_match = match.hasMatch();
-		}
-		else
-		{
-			#warning "Debug me!"
-			/* if(expr.patternSyntax()==QRegularExpression::FixedString)
-				has_match=((expr.pattern().compare(word, expr.caseSensitivity())==0));
-			else
-				has_match=expr.exactMatch(word);*/
-
-			if(expr.match(word).hasMatch())
-			{
-				match_idx = 0;
-				match_len = word.length();
-				has_match = true;
-			}
+			match_idx = 0;
+			match_len = word.length();
+			has_match = true;
 		}
 
 		if(has_match && lookahead_char.count(group) > 0 && lookahead_chr!=lookahead_char.at(group))
-			has_match=false;
+			has_match =false;
 
-		if(has_match) break;
+		if(has_match)
+			break;
 	}
 
 	return has_match;
@@ -432,7 +412,6 @@ void SyntaxHighlighter::clearConfiguration()
 	initial_exprs.clear();
 	final_exprs.clear();
 	formats.clear();
-	partial_match.clear();
 	groups_order.clear();
 	word_separators.clear();
 	word_delimiters.clear();
@@ -450,7 +429,7 @@ void SyntaxHighlighter::loadConfiguration(const QString &filename)
 		QString elem, expr_type, group;
 		bool groups_decl=false, chr_sensitive=false,
 				bold=false, italic=false, strikeout = false,
-				underline=false, partial_match=false;
+				underline=false, part_match=false;
 		QTextCharFormat format;
 		QRegularExpression regexp;
 		QColor bg_color, fg_color;
@@ -566,7 +545,6 @@ void SyntaxHighlighter::loadConfiguration(const QString &filename)
 								bold=(attribs[Attributes::Bold]==Attributes::True);
 								underline=(attribs[Attributes::Underline]==Attributes::True);
 								strikeout=(attribs[Attributes::Stikeout]==Attributes::True);
-								partial_match=(attribs[Attributes::PartialMatch]==Attributes::True);								
 								fg_color.setNamedColor(attribs[Attributes::ForegroundColor]);
 
 								//If the attribute isn't defined the bg color will be transparent
@@ -593,19 +571,11 @@ void SyntaxHighlighter::loadConfiguration(const QString &filename)
 								format.setBackground(bg_color);
 								formats[group]=format;
 
-
 								xmlparser.savePosition();
 								xmlparser.accessElement(XmlParser::ChildElement);
 
-								#warning "Debug me!"
-								/* if(chr_sensitive)
-									regexp.setCaseSensitivity(Qt::CaseSensitive);
-								else
-									regexp.setCaseSensitivity(Qt::CaseInsensitive); */
 								if(!chr_sensitive)
 									regexp.setPatternOptions(QRegularExpression::CaseInsensitiveOption);
-
-								this->partial_match[group]=partial_match;
 
 								do
 								{
@@ -613,16 +583,6 @@ void SyntaxHighlighter::loadConfiguration(const QString &filename)
 									{
 										xmlparser.getElementAttributes(attribs);
 										expr_type=attribs[Attributes::Type];
-
-										#warning "Debug me!"
-										/*regexp.setPattern(attribs[Attributes::Value]);
-
-										if(attribs[Attributes::RegularExp]==Attributes::True)
-											regexp.setPatternSyntax(QRegularExpression::RegExp2);
-										else if(attribs[Attributes::Wildcard]==Attributes::True)
-											regexp.setPatternSyntax(QRegularExpression::Wildcard);
-										else
-											regexp.setPatternSyntax(QRegularExpression::FixedString); */
 
 										if(attribs[Attributes::RegularExp] == Attributes::True)
 											regexp.setPattern(attribs[Attributes::Value]);
