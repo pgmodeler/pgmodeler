@@ -177,7 +177,7 @@ row-amount=\"1000\"> \
 <transform-types names=\"varchar,text,numeric\"/> \
 <configuration name=\"log_statement_stats\" value=\"DEFAULT\"/> \
 <configuration name=\"search_path\" value=\"public,foo,bar\"/> \
-<definition><![CDATA[return 0;]]></definition> \
+<definition> <![CDATA[return 0;]]> </definition> \
 </function>").simplified();
 
 		QString generated_code = func.getCodeDefinition(SchemaParser::XmlDefinition).simplified();
@@ -262,7 +262,7 @@ security-type=\"SECURITY INVOKER\"> \
 <transform-types names=\"varchar,text,numeric\"/> \
 <configuration name=\"log_statement_stats\" value=\"DEFAULT\"/> \
 <configuration name=\"search_path\" value=\"public,foo,bar\"/> \
-<definition><![CDATA[return 0;]]></definition> \
+<definition> <![CDATA[return 0;]]> </definition> \
 </procedure>").simplified();
 
 		QString generated_code = proc.getCodeDefinition(SchemaParser::XmlDefinition).simplified();
@@ -294,7 +294,7 @@ row-amount=\"1000\"> \
 <transform-types names=\"varchar,text,numeric\"/> \
 <configuration name=\"log_statement_stats\" value=\"DEFAULT\"/> \
 <configuration name=\"search_path\" value=\"public,foo,bar\"/> \
-<definition><![CDATA[return 0;]]></definition> \
+<definition> <![CDATA[return 0;]]> </definition> \
 </function>").simplified();
 
 		dbmodel.createSystemObjects(true);
@@ -332,7 +332,7 @@ security-type=\"SECURITY INVOKER\"> \
 <transform-types names=\"varchar,text,numeric\"/> \
 <configuration name=\"log_statement_stats\" value=\"DEFAULT\"/> \
 <configuration name=\"search_path\" value=\"public,foo,bar\"/> \
-<definition><![CDATA[return 0;]]></definition> \
+<definition> <![CDATA[return 0;]]> </definition> \
 </procedure>").simplified();
 
 		dbmodel.createSystemObjects(true);
