@@ -6,4 +6,4 @@
 #The tag <![CDATA[]]> is converted to <! $ob CDATA $ob {attribute} $cb > in order
 #to not cause syntax errors on the schema parser
 
-$tb <comment><! $ob CDATA $ob {comment} $cb $cb ></comment> $br
+$tb <comment> $sp <! $ob CDATA $ob {comment} $cb $cb > $sp </comment> $br

@@ -19,7 +19,7 @@ $tb <reference
 %if {expression} %then
 	> $br
 
-	$tb $tb <expression> <! $ob CDATA $ob {expression} $cb $cb > </expression> $br
+	$tb $tb <expression> $sp <! $ob CDATA $ob {expression} $cb $cb > $sp </expression> $br
 
 	%if {columns} %then {columns} %end
 	%if {ref-tables} %then {ref-tables} %end

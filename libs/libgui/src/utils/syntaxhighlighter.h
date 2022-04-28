@@ -68,9 +68,6 @@ class SyntaxHighlighter: public QSyntaxHighlighter {
 		//! \brief Stores the text formatting to each group
 		map<QString, QTextCharFormat> formats;
 
-		//! \brief Stores the groups related to partial matching
-		map<QString, bool> partial_match;
-
 		//! \brief Stores the char used to break the highlight for a group. This char is not highlighted itself.
 		map<QString, QChar> lookahead_char;
 
