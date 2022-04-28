@@ -1674,18 +1674,19 @@ void MainWindow::printModel()
 	{
 		QPrintDialog print_dlg;
 		QPrinter *printer=nullptr;
-		QPrinter::PageSize paper_size, curr_paper_size;
-		QPrinter::Orientation orientation, curr_orientation;
+		QPageSize page_size, curr_page_size;
+		QPageLayout::Orientation orientation, curr_orientation;
 		QRectF margins;
 		QSizeF custom_size;
 		qreal ml,mt,mr,mb, ml1, mt1, mr1, mb1;
+		QMarginsF orig_marg, curr_marg;
 		GeneralConfigWidget *conf_wgt=dynamic_cast<GeneralConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::GeneralConfWgt));
 
 		print_dlg.setOption(QAbstractPrintDialog::PrintCurrentPage, false);
 		print_dlg.setWindowTitle(tr("Database model printing"));
 
 		//Get the page configuration of the scene
-		ObjectsScene::getPaperConfiguration(paper_size, orientation, margins, custom_size);
+		ObjectsScene::getPaperConfiguration(page_size, orientation, margins, custom_size);
 
 		//Get a reference to the printer
 		printer=print_dlg.printer();
@@ -1693,7 +1694,8 @@ void MainWindow::printModel()
 		//Sets the printer options based upon the configurations from the scene
 		ObjectsScene::configurePrinter(printer);
 
-		printer->getPageMargins(&mt,&ml,&mb,&mr,QPrinter::Millimeter);
+		//printer->getPageMargins(&mt,&ml,&mb,&mr,QPrinter::Millimeter);
+		orig_marg = printer->pageLayout().margins(QPageLayout::Millimeter);
 
 		print_dlg.exec();
 
@@ -1703,12 +1705,14 @@ void MainWindow::printModel()
 			Messagebox msg_box;
 
 			//Checking If the user modified the default settings overriding the scene configurations
-			printer->getPageMargins(&mt1,&ml1,&mb1,&mr1,QPrinter::Millimeter);
-			curr_orientation=print_dlg.printer()->orientation();
-			curr_paper_size=print_dlg.printer()->paperSize();
+			//printer->getPageMargins(&mt1,&ml1,&mb1,&mr1,QPrinter::Millimeter);
+			curr_marg = printer->pageLayout().margins(QPageLayout::Millimeter);
+			curr_orientation = print_dlg.printer()->pageLayout().orientation();
+			curr_page_size = print_dlg.printer()->pageLayout().pageSize();
 
-			if(ml!=ml1 || mr!=mr1 || mt!=mt1 || mb!=mb1 ||
-					orientation!=curr_orientation || curr_paper_size!=paper_size)
+			//if(ml!=ml1 || mr!=mr1 || mt!=mt1 || mb!=mb1 ||
+			if(orig_marg != curr_marg ||
+				 orientation != curr_orientation || curr_page_size != page_size)
 			{
 				msg_box.show(tr("Changes were detected in the definitions of paper/margin of the model which may cause the incorrect print of the objects. Do you want to continue printing using the new settings? To use the default settings click 'No' or 'Cancel' to abort printing."),
 							 Messagebox::AlertIcon, Messagebox::AllButtons);

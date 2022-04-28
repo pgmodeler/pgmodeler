@@ -23,8 +23,8 @@ bool ObjectsScene::show_grid=true;
 bool ObjectsScene::show_page_delim=true;
 unsigned ObjectsScene::grid_size=20;
 
-QPrinter::PageSize ObjectsScene::paper_size=QPrinter::A4;
-QPrinter::Orientation ObjectsScene::page_orientation=QPrinter::Landscape;
+QPageSize ObjectsScene::page_size(QPageSize::A4);
+QPageLayout::Orientation ObjectsScene::page_orientation = QPageLayout::Landscape;
 
 QRectF ObjectsScene::page_margins=QRectF(2,2,2,2);
 QSizeF ObjectsScene::custom_paper_size=QSizeF(0,0);
@@ -726,13 +726,14 @@ void ObjectsScene::setGridSize(unsigned size)
 		QImage grid_img;
 		double width, height, x, y;
 		int img_w, img_h;
-		QSizeF aux_size;
+		QSizeF aux_size, aux_size1;
 		QPrinter printer;
 		QPainter painter;
 		QPen pen;
 
 		configurePrinter(&printer);
 		aux_size=printer.paperSize(QPrinter::Point);
+		aux_size1=printer.pageLayout().pageSize().size(QPageSize::Point);
 		aux_size-=page_margins.size();
 
 		//Calculates where the extreme width and height where delimiter lines will be drawn
@@ -855,17 +856,17 @@ bool ObjectsScene::isShowPageDelimiters()
 	return show_page_delim;
 }
 
-void ObjectsScene::setPaperConfiguration(QPrinter::PaperSize paper_sz, QPrinter::Orientation orient, QRectF margins, QSizeF custom_size)
+void ObjectsScene::setPaperConfiguration(QPageSize paper_sz, QPageLayout::Orientation orient, QRectF margins, QSizeF custom_size)
 {
-	ObjectsScene::paper_size=paper_sz;
+	ObjectsScene::page_size=paper_sz;
 	ObjectsScene::page_orientation=orient;
 	ObjectsScene::page_margins=margins;
 	ObjectsScene::custom_paper_size=custom_size;
 }
 
-void ObjectsScene::getPaperConfiguration(QPrinter::PaperSize &paper_sz, QPrinter::Orientation &orient, QRectF &margins, QSizeF &custom_size)
+void ObjectsScene::getPaperConfiguration(QPageSize &paper_sz, QPageLayout::Orientation &orient, QRectF &margins, QSizeF &custom_size)
 {
-	paper_sz=ObjectsScene::paper_size;
+	paper_sz=ObjectsScene::page_size;
 	orient=ObjectsScene::page_orientation;
 	margins=ObjectsScene::page_margins;
 	custom_size=ObjectsScene::custom_paper_size;
@@ -876,44 +877,52 @@ void ObjectsScene::configurePrinter(QPrinter *printer)
 	if(!printer)
 		throw Exception(ErrorCode::OprNotAllocatedObject ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	if(paper_size!=QPrinter::Custom)
-		printer->setPaperSize(paper_size);
+	QPageLayout pl;
+
+	if(page_size.id() != QPageSize::Custom)
+	{
+		pl.setPageSize(page_size);
+		pl.setOrientation(page_orientation);
+	}
 	else
 	{
-		QPageLayout pl;
 		QPageSize ps;
-		ps=QPageSize(QSizeF(custom_paper_size.width(), custom_paper_size.height()), QPageSize::Point, "", QPageSize::ExactMatch);
+		ps = QPageSize(QSizeF(custom_paper_size.width(), custom_paper_size.height()), QPageSize::Point, "", QPageSize::ExactMatch);
 		pl.setPageSize(ps);
-		pl.setOrientation(page_orientation==QPrinter::Landscape ? QPageLayout::Landscape : QPageLayout::Portrait);
-		printer->setPageSize(pl.pageSize());
+		pl.setOrientation(page_orientation == QPageLayout::Landscape ? QPageLayout::Landscape : QPageLayout::Portrait);
 	}
 
-	if(paper_size==QPrinter::Custom)
+	printer->setPageSize(pl.pageSize());
+
+/*	if(page_size.id() == QPageSize::Custom)
 	{
 		if(custom_paper_size.width() > custom_paper_size.height())
-			ObjectsScene::page_orientation=QPrinter::Landscape;
+			ObjectsScene::page_orientation = QPageLayout::Landscape;
 		else
-			ObjectsScene::page_orientation=QPrinter::Portrait;
+			ObjectsScene::page_orientation = QPageLayout::Portrait;
 	}
 	else
-		printer->setOrientation(page_orientation);
+		printer->setOrientation(page_orientation); */
 
-	printer->setPageMargins(page_margins.left(), page_margins.top(), page_margins.width(), page_margins.height(), QPrinter::Millimeter);
+	//printer->setPageMargins(page_margins.left(), page_margins.top(), page_margins.width(), page_margins.height(), QPrinter::Millimeter);
+	printer->setPageMargins(QMarginsF(page_margins.left(), page_margins.top(),
+																		page_margins.width(), page_margins.height()),
+													QPageLayout::Millimeter);
 }
 
-void ObjectsScene::configurePrinter(QPrinter *printer, const QSizeF &custom_size, QPrinter::Orientation orient)
+void ObjectsScene::configurePrinter(QPrinter *printer, const QSizeF &custom_size, QPageLayout::Orientation orient)
 {
-	QPrinter::PaperSize orig_page_sz=paper_size;
-	QPrinter::Orientation orig_orient=page_orientation;
+	QPageSize orig_page_sz = page_size;
+	QPageLayout::Orientation orig_orient=page_orientation;
 	QSizeF orig_custom_sz=custom_paper_size;
 
-	paper_size=QPrinter::Custom;
+	page_size = QPageSize(QPageSize::Custom);
 	page_orientation=orient;
 	custom_paper_size=custom_size;
 
 	configurePrinter(printer);
 
-	paper_size=orig_page_sz;
+	page_size=orig_page_sz;
 	page_orientation=orig_orient;
 	custom_paper_size=orig_custom_sz;
 }

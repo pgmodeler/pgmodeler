@@ -34,14 +34,12 @@ map<QString, GeneralConfigWidget::WidgetState> GeneralConfigWidget::widgets_geom
 
 GeneralConfigWidget::GeneralConfigWidget(QWidget * parent) : BaseConfigWidget(parent)
 {
-	QPrinter::PaperSize paper_ids[]={QPrinter::A0, QPrinter::A1, QPrinter::A2, QPrinter::A3, QPrinter::A4, QPrinter::A5,
-									 QPrinter::A6, QPrinter::A7, QPrinter::A8, QPrinter::A9, QPrinter::B0, QPrinter::B1,
-									 QPrinter::B10, QPrinter::B2, QPrinter::B3, QPrinter::B4, QPrinter::B5, QPrinter::B6,
-									 QPrinter::B7, QPrinter::B8, QPrinter::B9, QPrinter::C5E, QPrinter::Comm10E, QPrinter::DLE,
-									 QPrinter::Executive, QPrinter::Folio, QPrinter::Ledger, QPrinter::Legal, QPrinter::Letter,
-									 QPrinter::Tabloid, QPrinter::Custom };
-	int count=sizeof(paper_ids)/sizeof(QPrinter::PaperSize);
-
+	vector<QPageSize::PageSizeId> page_ids={ QPageSize::A0, QPageSize::A1, QPageSize::A2, QPageSize::A3, QPageSize::A4, QPageSize::A5,
+																			 QPageSize::A6, QPageSize::A7, QPageSize::A8, QPageSize::A9, QPageSize::B0, QPageSize::B1,
+																			 QPageSize::B10, QPageSize::B2, QPageSize::B3, QPageSize::B4, QPageSize::B5, QPageSize::B6,
+																			 QPageSize::B7, QPageSize::B8, QPageSize::B9, QPageSize::C5E, QPageSize::Comm10E, QPageSize::DLE,
+																			 QPageSize::Executive, QPageSize::Folio, QPageSize::Ledger, QPageSize::Legal, QPageSize::Letter,
+																			 QPageSize::Tabloid, QPageSize::Custom };
 	Ui_GeneralConfigWidget::setupUi(this);
 
 	confs_dir_sel = new FileSelectorWidget(this);
@@ -60,8 +58,9 @@ GeneralConfigWidget::GeneralConfigWidget(QWidget * parent) : BaseConfigWidget(pa
 	source_editor_sel->setToolTip(tr("External source code editor application"));
 	general_grid->addWidget(source_editor_sel, 2, 1, 1, 1);
 
-	for(int i=0; i < count; i++)
-		paper_cmb->setItemData(i, QVariant(paper_ids[i]));
+	int i = 0;
+	for(auto &pg_id : page_ids)
+		paper_cmb->setItemData(i++, QVariant(pg_id));
 
 	check_versions_cmb->setItemData(0, Attributes::AllVersions);
 	check_versions_cmb->setItemData(1, Attributes::StableBeta);

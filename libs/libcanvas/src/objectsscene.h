@@ -101,13 +101,13 @@ class ObjectsScene: public QGraphicsScene {
 		static unsigned grid_size;
 
 		//! \brief Paper size, used to segmentate the view (via page delimiters) and printing the model
-		static QPrinter::PaperSize paper_size;
+		static QPageSize page_size;
 
 		//! \brief Used to store the custom paper size. This attribute is used only when paper_size=QPrinter::Custom
 		static QSizeF custom_paper_size;
 
 		//! \brief Page orientation (landscape / portrait)
-		static QPrinter::Orientation page_orientation;
+		static QPageLayout::Orientation page_orientation;
 
 		//! \brief Page margins (applied to paper total size)
 		static QRectF page_margins;
@@ -263,11 +263,11 @@ class ObjectsScene: public QGraphicsScene {
 		static bool isShowGrid();
 		static bool isShowPageDelimiters();
 
-		static void setPaperConfiguration(QPrinter::PaperSize paper_sz, QPrinter::Orientation orient, QRectF margins, QSizeF custom_size=QSizeF(0,0));
-		static void getPaperConfiguration(QPrinter::PaperSize &paper_sz, QPrinter::Orientation &orient, QRectF &margins, QSizeF &custom_size);
+		static void setPaperConfiguration(QPageSize page_sz, QPageLayout::Orientation orient, QRectF margins, QSizeF custom_size=QSizeF(0,0));
+		static void getPaperConfiguration(QPageSize &page_sz, QPageLayout::Orientation &orient, QRectF &margins, QSizeF &custom_size);
 
 		static void configurePrinter(QPrinter *printer);
-		static void configurePrinter(QPrinter *printer, const QSizeF &custom_size, QPrinter::Orientation orient);
+		static void configurePrinter(QPrinter *printer, const QSizeF &custom_size, QPageLayout::Orientation orient);
 
 		void addItem(QGraphicsItem *item);
 		void removeItem(QGraphicsItem *item);
