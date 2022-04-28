@@ -472,7 +472,6 @@ QString XmlParser::convertCharsToXMLEntities(QString buf)
 			continue;
 		}
 
-		#warning "Debug me!"
 		// Checking if the current line has at least one attribute in form (attr="value")
 		attr_match = attr_regexp.match(lin);
 		attr_start = attr_match.capturedStart();
@@ -489,9 +488,7 @@ QString XmlParser::convertCharsToXMLEntities(QString buf)
 
 			do
 			{
-				#warning "Debug me!"
 				// First we try to find the next attribute so we can delimite the current attribute's value
-				//attr_end = next_attr_regexp.indexIn(lin, attr_start + attr_regexp.matchedLength());
 				next_attr_match = next_attr_regexp.match(lin, attr_start + attr_match.capturedLength());
 				attr_end = next_attr_match.capturedStart();
 
@@ -500,9 +497,7 @@ QString XmlParser::convertCharsToXMLEntities(QString buf)
 					attr_end--;
 				else
 				{
-					#warning "Debug me!"
 					// If there's no next attribute we try to match the end of the attribute's value at the end of the line/tag
-					//attr_end = attr_end_regexp.indexIn(lin, attr_start + attr_regexp.matchedLength());
 					attr_end_match = attr_end_regexp.match(lin, attr_start + attr_match.capturedLength());
 					attr_end = attr_end_match.capturedStart();
 				}
@@ -516,8 +511,6 @@ QString XmlParser::convertCharsToXMLEntities(QString buf)
 						(end >= 0 && attr_start > end && attr_end > end)))
 				{
 					// Calculates the initial position where the value to be  retrived is (in that case rigth after attrib=")
-					//pos = attr_start + attr_regexp.matchedLength();
-					#warning "Debug me!"
 					pos = attr_start + attr_match.capturedLength();
 					count = attr_end - pos;
 					value = lin.mid(pos, count);
@@ -544,9 +537,6 @@ QString XmlParser::convertCharsToXMLEntities(QString buf)
 
 				// Moving the position to the next attribute in the line (if existent)
 				pos += value.length() + 1;
-
-				#warning "Debug me!"
-				//attr_start = attr_regexp.indexIn(lin, pos);
 				attr_match = attr_regexp.match(lin, pos);
 				attr_start = attr_match.capturedStart();
 
