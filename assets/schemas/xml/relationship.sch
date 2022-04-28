@@ -113,7 +113,7 @@ $br $tb [ dst-table=] "{dst-table}"
 	%end
 
 	%if {partition-bound-expr} %then
-		$tb <expression> <! $ob CDATA $ob {partition-bound-expr} $cb $cb > </expression> $br
+		$tb <expression> $sp <! $ob CDATA $ob {partition-bound-expr} $cb $cb > $sp </expression> $br
 	%end
 
 	</relationship> $br $br

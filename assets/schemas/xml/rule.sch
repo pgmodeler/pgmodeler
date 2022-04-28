@@ -27,11 +27,11 @@
 %if {prepended-sql} %then {prepended-sql} %end
 
 %if {condition} %then
-	$tb $tb <condition> <! $ob CDATA $ob {condition} $cb $cb > </condition> $br
+	$tb $tb <condition> $sp <! $ob CDATA $ob {condition} $cb $cb > $sp </condition> $br
 %end
 
 %if {commands} %then
-	$tb $tb <commands> <! $ob CDATA $ob {commands} $cb $cb > </commands> $br
+	$tb $tb <commands> $sp <! $ob CDATA $ob {commands} $cb $cb > $sp </commands> $br
 %end
 
 </rule> $br $br
