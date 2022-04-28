@@ -610,7 +610,7 @@ void DatabaseImportForm::filterObjects(QTreeWidget *tree_wgt, const QString &pat
 	QTreeWidgetItemIterator itr(tree_wgt);
 
 	if(search_column == DatabaseImportForm::ObjectId)
-		items = tree_wgt->findItems(QString("^(0)*(%1)(.)*").arg(pattern), Qt::MatchRegExp | Qt::MatchRecursive, search_column);
+		items = tree_wgt->findItems(QString("^(0)*(%1)(.)*").arg(pattern), Qt::MatchRegularExpression | Qt::MatchRecursive, search_column);
 	else
 		items = tree_wgt->findItems(pattern, Qt::MatchStartsWith | Qt::MatchRecursive, search_column);
 
