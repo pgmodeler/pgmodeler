@@ -253,7 +253,8 @@ void ObjectFinderWidget::findObjects()
 
 		//Search the objects on model
 		found_objs=model_wgt->getDatabaseModel()->findObjects(pattern_edt->text(), types,
-																													case_sensitive_chk->isChecked(), regexp_chk->isChecked(),
+																													case_sensitive_chk->isChecked(),
+																													regexp_chk->isChecked(),
 																													exact_match_chk->isChecked(),
 																													search_attr);
 

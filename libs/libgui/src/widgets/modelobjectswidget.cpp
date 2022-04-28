@@ -492,7 +492,7 @@ void ModelObjectsWidget::updateObjectsList()
 				visible_types.push_back(tp.first);
 		}
 
-		objects = db_model->findObjects("", visible_types, false, false, false);
+		objects = db_model->findObjects("*", visible_types, false, false, false);
 	}
 
 	ObjectFinderWidget::updateObjectTable(objectslist_tbw, objects);

@@ -10641,25 +10641,16 @@ vector<BaseObject *> DatabaseModel::findObjects(const QString &pattern, vector<O
 	BaseObject *object = nullptr;
 	attribs_map srch_attribs;
 
-	#warning "Debug me!"
-	//Configuring the regex style
-	//regexp.setPattern(pattern);
-	//regexp.setCaseSensitivity(case_sensitive ?  Qt::CaseSensitive :  Qt::CaseInsensitive);
 	if(!case_sensitive)
 		regexp.setPatternOptions(QRegularExpression::CaseInsensitiveOption);
 
-	#warning "Debug me!"
-	/* if(is_regexp)
-		regexp.setPatternSyntax(QRegularExpression::RegExp2);
-	else if(exact_match)
-		regexp.setPatternSyntax(QRegularExpression::FixedString);
-	else
-		regexp.setPatternSyntax(QRegularExpression::Wildcard); */
-
 	if(is_regexp)
-		regexp.setPattern(pattern);
-	else if(exact_match)
-		regexp.setPattern(QRegularExpression::anchoredPattern(pattern));
+	{
+		if(!exact_match)
+			regexp.setPattern(pattern);
+		else
+			regexp.setPattern(QRegularExpression::anchoredPattern(pattern));
+	}
 	else
 		regexp.setPattern(QRegularExpression::wildcardToRegularExpression(pattern));
 
@@ -10723,13 +10714,7 @@ vector<BaseObject *> DatabaseModel::findObjects(const QString &pattern, vector<O
 		object->configureSearchAttributes();
 		srch_attribs = object->getSearchAttributes();
 
-		#warning "Debug me!"
-		/* if((exact_match && pattern == srch_attribs[search_attr]) ||
-			 (exact_match && regexp.exactMatch(srch_attribs[search_attr])) ||
-			 (!exact_match && regexp.indexIn(srch_attribs[search_attr]) >= 0)) */
-
-		if((exact_match && pattern == srch_attribs[search_attr]) ||
-			 regexp.match(srch_attribs[search_attr]).hasMatch())
+		if(regexp.match(srch_attribs[search_attr]).hasMatch())
 			list.push_back(object);
 
 		objs.pop_back();
