@@ -28,7 +28,7 @@ const QStringList ModelsDiffHelper::ObjectsIgnoredAttribs = {
 	Attributes::MaxObjCount, Attributes::Protected, Attributes::SqlDisabled,
 	Attributes::RectVisible, Attributes::FillColor, Attributes::FadedOut,
 	Attributes::CollapseMode,	Attributes::AttribsPage, Attributes::ExtAttribsPage,
-	Attributes::Pagination,	Attributes::Alias };
+	Attributes::Pagination,	Attributes::Alias,	Attributes::Layers };
 
 const QStringList ModelsDiffHelper::ObjectsIgnoredTags = {
 	Attributes::Role, Attributes::Tablespace, Attributes::Collation,

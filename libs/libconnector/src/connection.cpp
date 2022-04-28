@@ -102,12 +102,10 @@ void Connection::setConnectionParam(const QString &param, const QString &value)
 	if(param.isEmpty())
 		throw Exception(ErrorCode::AsgInvalidConnParameter, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 
-	#warning "Debug me!"
 	/* Set the value to the specified param on the map.
 	One special case is treated here, if user use the parameter SERVER_FQDN and the value
 	is a IP address, the method will assign the value to the SERVER_IP parameter */
 
-	//if(param==ParamServerFqdn && ip_regexp.exactMatch(value))
 	if(param==ParamServerFqdn && ip_regexp.match(value).hasMatch())
 	{
 		connection_params[Connection::ParamServerIp]=value;

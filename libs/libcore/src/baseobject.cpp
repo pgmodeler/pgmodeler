@@ -170,11 +170,10 @@ QString BaseObject::formatName(const QString &name, bool is_operator)
 	QString frmt_name;
 	QByteArray raw_name;
 	unsigned char chr, chr1, chr2;
+	QRegularExpression fmt_name_regexp(QRegularExpression::anchoredPattern("(\")(.)+(\")"));
 
 	//Checking if the name is already formated enclosed by quotes
-	//is_formated=QRegularExpression(QString("(\")(.)+(\")")).exactMatch(name);
-	#warning "Debug me!"
-	is_formated = QRegularExpression(QRegularExpression::anchoredPattern("(\")(.)+(\")")).match(name).hasMatch();
+	is_formated = fmt_name_regexp.match(name).hasMatch();
 
 	/* If the name is not formatted or it symbolizes the name of an operator
 		(which has characters invalid according to the rule and is the only exception
@@ -1145,17 +1144,12 @@ bool BaseObject::isCodeDiffersFrom(const QString &xml_def1, const QString &xml_d
 		{
 			do
 			{
-				#warning "Debug me!"
-				//regexp = QRegularExpression(attr_regex.arg(attr));
 				regexp.setPattern(attr_regex.arg(attr));
 				tag_end = xml.indexOf(tag_end_regexp);
 
-				#warning "Debug me!"
-				//start=regexp.indexIn(xml);
-				//end=xml.indexOf('"', start + regexp.matchedLength());
 				match = regexp.match(xml);
 				start = match.capturedStart();
-				end = match.capturedEnd();
+				end=xml.indexOf('"', start + match.capturedLength());
 
 				if(end > tag_end)
 					end=-1;
@@ -1166,7 +1160,6 @@ bool BaseObject::isCodeDiffersFrom(const QString &xml_def1, const QString &xml_d
 			while(start >= 0 && end >= 0);
 		}
 
-		#warning "Debug me!"
 		//Removing ignored tags
 		for(auto &tag : ignored_tags)
 			xml.remove(QRegularExpression(tag_regex.arg(tag)));
