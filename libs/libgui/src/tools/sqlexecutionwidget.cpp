@@ -482,7 +482,7 @@ void SQLExecutionWidget::filterResults()
 	if(exact_chk->isChecked())
 		flags = Qt::MatchExactly;
 	else if(regexp_chk->isChecked())
-		flags = Qt::MatchRegExp;
+		flags = Qt::MatchRegularExpression;
 	else
 		flags = Qt::MatchContains;
 
