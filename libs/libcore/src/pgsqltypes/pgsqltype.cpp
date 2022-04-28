@@ -152,9 +152,7 @@ PgSqlType PgSqlType::parseString(const QString &str)
 			interv.clear();
 	}
 
-	#warning "Debug me!"
 	//Check if the type contains "with time zone" descriptor
-	//with_tz=QRegularExpression(QString("(.)*(with time zone)(.)*")).exactMatch(type_str);
 	with_tz = QRegularExpression(QRegularExpression::anchoredPattern("(.)*(with time zone)(.)*")).match(type_str).hasMatch();
 
 	//Removes the timezone descriptor
@@ -164,18 +162,14 @@ PgSqlType PgSqlType::parseString(const QString &str)
 	dim=type_str.count("[]");
 	type_str.remove("[]");
 
-	#warning "Debug me!"
 	//Check if the type is a variable length type, e.g varchar(200)
-	//if(QRegularExpression(QString("(.)+\\(( )*[0-9]+( )*\\)")).indexIn(type_str) >=0)
 	if(QRegularExpression("(.)+\\(( )*[0-9]+( )*\\)").match(type_str).hasMatch())
 	{
 		start=type_str.indexOf('(');
 		end=type_str.indexOf(')', start);
 		len=type_str.mid(start+1, end-start-1).toInt();
 	}
-	#warning "Debug me!"
 	//Check if the type is a numeric type, e.g, numeric(10,2)
-	//else if(QRegularExpression(QString("(.)+\\(( )*[0-9]+( )*(,)( )*[0-9]+( )*\\)")).indexIn(type_str) >=0)
 	else if(QRegularExpression("(.)+\\(( )*[0-9]+( )*(,)( )*[0-9]+( )*\\)").match(type_str).hasMatch())
 	{
 		start=type_str.indexOf('(');
@@ -184,9 +178,7 @@ PgSqlType PgSqlType::parseString(const QString &str)
 		len=value[0].toInt();
 		prec=value[1].toUInt();
 	}
-	#warning "Debug me!"
 	//Check if the type is a spatial type (PostGiS), e.g, geography(POINTZ, 4296)
-	//else if(QRegularExpression(QString("(.)+\\(( )*[a-z]+(( )*(,)( )*[0-9]+( )*)?\\)"), Qt::CaseInsensitive).indexIn(type_str) >=0)
 	else if(QRegularExpression("(.)+\\(( )*[a-z]+(( )*(,)( )*[0-9]+( )*)?\\)",
 														 QRegularExpression::CaseInsensitiveOption).match(type_str).hasMatch())
 	{
@@ -227,7 +219,7 @@ PgSqlType PgSqlType::parseString(const QString &str)
 			{
 				/* One last try it to check if the type has an entry on user defined types
 			 as pg_catalog.[type name] */
-				type=PgSqlType(QString("pg_catalog.") + type_str);
+				type=PgSqlType("pg_catalog." + type_str);
 			}
 		}
 

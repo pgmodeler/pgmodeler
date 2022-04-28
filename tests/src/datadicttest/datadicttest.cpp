@@ -76,6 +76,21 @@ void DataDictTest::generateASimpleDataDict()
 		col->setDefaultValue("now()");
 		table->addColumn(col);
 
+		col = new Column;
+		col->setName("col_5");
+		col->setType(PgSqlType::parseString("varchar(200)"));
+		table->addColumn(col);
+
+		col = new Column;
+		col->setName("col_6");
+		col->setType(PgSqlType::parseString("numeric(10,6)"));
+		table->addColumn(col);
+
+		col = new Column;
+		col->setName("col_7");
+		col->setType(PgSqlType::parseString("geography(POINTZ, 4296)"));
+		table->addColumn(col);
+
 		constr = new Constraint;
 		constr->setName("table_test_pk");
 		constr->setConstraintType(ConstraintType::PrimaryKey);
