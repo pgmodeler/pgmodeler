@@ -429,7 +429,7 @@ void SyntaxHighlighter::loadConfiguration(const QString &filename)
 		QString elem, expr_type, group;
 		bool groups_decl=false, chr_sensitive=false,
 				bold=false, italic=false, strikeout = false,
-				underline=false, part_match=false;
+				underline=false;
 		QTextCharFormat format;
 		QRegularExpression regexp;
 		QColor bg_color, fg_color;
