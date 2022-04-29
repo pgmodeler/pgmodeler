@@ -732,6 +732,7 @@ void ObjectsScene::setGridSize(unsigned size)
 		QPainter painter;
 		QPen pen;
 
+		#warning "Debug me!"
 		configurePrinter(&printer);
 		aux_size=printer.pageLayout().pageSize().size(QPageSize::Point);
 
@@ -923,6 +924,7 @@ void ObjectsScene::configurePrinter(QPrinter *printer)
 
 void ObjectsScene::configurePrinter(QPrinter *printer, const QSizeF &custom_size, QPageLayout::Orientation orient)
 {
+	#warning "Debug me!"
 	QPageSize orig_page_sz = page_size;
 	QPageLayout::Orientation orig_orient=page_orientation;
 	QSizeF orig_custom_sz=custom_paper_size;

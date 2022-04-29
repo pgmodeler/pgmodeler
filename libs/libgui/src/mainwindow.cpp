@@ -1681,10 +1681,12 @@ void MainWindow::printModel()
 		QMarginsF orig_marg, curr_marg;
 		GeneralConfigWidget *conf_wgt=dynamic_cast<GeneralConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::GeneralConfWgt));
 
+		#warning "Debug me!"
 		print_dlg.setOption(QAbstractPrintDialog::PrintCurrentPage, false);
 		print_dlg.setWindowTitle(tr("Database model printing"));
 
 		//Get the page configuration of the scene
+		#warning "Debug me! Replace by ObjectScene::getPageLayout()"
 		ObjectsScene::getPageConfiguration(page_size, orientation, margins, custom_size);
 
 		//Get a reference to the printer

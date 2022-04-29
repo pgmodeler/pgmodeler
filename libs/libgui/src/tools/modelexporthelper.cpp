@@ -141,6 +141,7 @@ void ModelExportHelper::exportToPNG(ObjectsScene *scene, const QString &filename
 
 		if(page_by_page)
 		{
+			#warning "Debug me!"
 			QPrinter prt;
 			QPageLayout page_lt;
 			QFileInfo fi(filename);

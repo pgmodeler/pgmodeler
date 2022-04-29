@@ -523,6 +523,7 @@ void GeneralConfigWidget::applyConfiguration()
 	BaseObject::setEscapeComments(escape_comments_chk->isChecked());
 
 	unity_cmb->setCurrentIndex(UnitPoint);
+	#warning "Debug me! Replace by ObjectScene::setPageLayout()"
 	ObjectsScene::setPageConfiguration(QPageSize(static_cast<QPageSize::PageSizeId>(paper_cmb->itemData(paper_cmb->currentIndex()).toInt())),
 										(portrait_rb->isChecked() ? QPageLayout::Portrait : QPageLayout::Landscape),
 										/*QRectF(left_marg->value(), top_marg->value(), right_marg->value(), bottom_marg->value()), */
