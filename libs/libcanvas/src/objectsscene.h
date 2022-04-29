@@ -106,11 +106,14 @@ class ObjectsScene: public QGraphicsScene {
 		//! \brief Used to store the custom paper size. This attribute is used only when paper_size=QPrinter::Custom
 		static QSizeF custom_paper_size;
 
+		//! \brief Used to store the canvas/printer page layout (size, orientation, margins)
+		static QPageLayout page_layout;
+
 		//! \brief Page orientation (landscape / portrait)
 		static QPageLayout::Orientation page_orientation;
 
 		//! \brief Page margins (applied to paper total size)
-		static QRectF page_margins;
+		static QMarginsF page_margins;
 
 		//! \brief Indicates that there are objects being moved and the signal s_objectsMoved must be emitted
 		bool moving_objs,
@@ -263,8 +266,11 @@ class ObjectsScene: public QGraphicsScene {
 		static bool isShowGrid();
 		static bool isShowPageDelimiters();
 
-		static void setPaperConfiguration(QPageSize page_sz, QPageLayout::Orientation orient, QRectF margins, QSizeF custom_size=QSizeF(0,0));
-		static void getPaperConfiguration(QPageSize &page_sz, QPageLayout::Orientation &orient, QRectF &margins, QSizeF &custom_size);
+		static void setPageConfiguration(QPageSize page_sz, QPageLayout::Orientation orient, QMarginsF margins, QSizeF custom_size=QSizeF(0,0));
+		static void getPageConfiguration(QPageSize &page_sz, QPageLayout::Orientation &orient, QMarginsF &margins, QSizeF &custom_size);
+
+		static void setPageLayout(const QPageLayout &page_lt);
+		static QPageLayout getPageLayout();
 
 		static void configurePrinter(QPrinter *printer);
 		static void configurePrinter(QPrinter *printer, const QSizeF &custom_size, QPageLayout::Orientation orient);
@@ -291,7 +297,8 @@ class ObjectsScene: public QGraphicsScene {
 		QRectF itemsBoundingRect(bool seek_only_db_objs=false, bool selected_only = false, bool incl_layer_rects = false);
 
 		//! \brief Returns a vector containing all the page rects.
-		vector<QRectF> getPagesForPrinting(const QSizeF &paper_size, const QSizeF &margin, unsigned &h_page_cnt, unsigned &v_page_cnt);
+		//vector<QRectF> getPagesForPrinting(const QSizeF &paper_size, const QSizeF &margin, unsigned &h_page_cnt, unsigned &v_page_cnt);
+		vector<QRectF> getPagesForPrinting(const QPageLayout &page_lt, unsigned &h_page_cnt, unsigned &v_page_cnt);
 
 		bool isRangeSelectionEnabled();
 		bool isRangeSelectionTriggerInverted();

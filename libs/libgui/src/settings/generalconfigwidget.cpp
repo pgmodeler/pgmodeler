@@ -523,9 +523,10 @@ void GeneralConfigWidget::applyConfiguration()
 	BaseObject::setEscapeComments(escape_comments_chk->isChecked());
 
 	unity_cmb->setCurrentIndex(UnitPoint);
-	ObjectsScene::setPaperConfiguration(static_cast<QPrinter::PaperSize>(paper_cmb->itemData(paper_cmb->currentIndex()).toInt()),
-										(portrait_rb->isChecked() ? QPrinter::Portrait : QPrinter::Landscape),
-										QRectF(left_marg->value(), top_marg->value(), right_marg->value(), bottom_marg->value()),
+	ObjectsScene::setPageConfiguration(QPageSize(static_cast<QPageSize::PageSizeId>(paper_cmb->itemData(paper_cmb->currentIndex()).toInt())),
+										(portrait_rb->isChecked() ? QPageLayout::Portrait : QPageLayout::Landscape),
+										/*QRectF(left_marg->value(), top_marg->value(), right_marg->value(), bottom_marg->value()), */
+										QMarginsF(left_marg->value(), top_marg->value(), right_marg->value(), bottom_marg->value()),
 										QSizeF(width_spb->value(), height_spb->value()));
 	unity_cmb->setCurrentIndex(unit);
 

@@ -24,15 +24,16 @@ bool ObjectsScene::show_page_delim=true;
 unsigned ObjectsScene::grid_size=20;
 
 QPageSize ObjectsScene::page_size(QPageSize::A4);
-QPageLayout::Orientation ObjectsScene::page_orientation = QPageLayout::Landscape;
+QPageLayout::Orientation ObjectsScene::page_orientation(QPageLayout::Landscape);
+QPageLayout ObjectsScene::page_layout(QPageSize(QPageSize::A4), QPageLayout::Landscape, QMarginsF(2,2,2,2));
 
-QRectF ObjectsScene::page_margins=QRectF(2,2,2,2);
-QSizeF ObjectsScene::custom_paper_size=QSizeF(0,0);
+QMarginsF ObjectsScene::page_margins(2,2,2,2);
+QSizeF ObjectsScene::custom_paper_size(0,0);
 QBrush ObjectsScene::grid;
 
-const QColor ObjectsScene::DefaultGridColor = QColor(225, 225, 225);
-const QColor ObjectsScene::DefaultCanvasColor = QColor(255, 255, 255);
-const QColor ObjectsScene::DefaultDelimitersColor = QColor(75,115,195);
+const QColor ObjectsScene::DefaultGridColor(225, 225, 225);
+const QColor ObjectsScene::DefaultCanvasColor(255, 255, 255);
+const QColor ObjectsScene::DefaultDelimitersColor(75,115,195);
 
 QColor ObjectsScene::grid_color = ObjectsScene::DefaultGridColor;
 QColor ObjectsScene::canvas_color = ObjectsScene::DefaultCanvasColor;
@@ -726,15 +727,13 @@ void ObjectsScene::setGridSize(unsigned size)
 		QImage grid_img;
 		double width, height, x, y;
 		int img_w, img_h;
-		QSizeF aux_size, aux_size1;
+		QSizeF aux_size;
 		QPrinter printer;
 		QPainter painter;
 		QPen pen;
 
 		configurePrinter(&printer);
-		aux_size=printer.paperSize(QPrinter::Point);
-		aux_size1=printer.pageLayout().pageSize().size(QPageSize::Point);
-		aux_size-=page_margins.size();
+		aux_size=printer.pageLayout().pageSize().size(QPageSize::Point);
 
 		//Calculates where the extreme width and height where delimiter lines will be drawn
 		width=aux_size.width()/static_cast<double>(size) * size;
@@ -856,20 +855,30 @@ bool ObjectsScene::isShowPageDelimiters()
 	return show_page_delim;
 }
 
-void ObjectsScene::setPaperConfiguration(QPageSize paper_sz, QPageLayout::Orientation orient, QRectF margins, QSizeF custom_size)
+void ObjectsScene::setPageConfiguration(QPageSize page_sz, QPageLayout::Orientation orient, QMarginsF margins, QSizeF custom_size)
 {
-	ObjectsScene::page_size=paper_sz;
+	ObjectsScene::page_size=page_sz;
 	ObjectsScene::page_orientation=orient;
 	ObjectsScene::page_margins=margins;
 	ObjectsScene::custom_paper_size=custom_size;
 }
 
-void ObjectsScene::getPaperConfiguration(QPageSize &paper_sz, QPageLayout::Orientation &orient, QRectF &margins, QSizeF &custom_size)
+void ObjectsScene::getPageConfiguration(QPageSize &pager_sz, QPageLayout::Orientation &orient, QMarginsF &margins, QSizeF &custom_size)
 {
-	paper_sz=ObjectsScene::page_size;
+	pager_sz=ObjectsScene::page_size;
 	orient=ObjectsScene::page_orientation;
 	margins=ObjectsScene::page_margins;
 	custom_size=ObjectsScene::custom_paper_size;
+}
+
+void ObjectsScene::setPageLayout(const QPageLayout &page_lt)
+{
+	page_layout = page_lt;
+}
+
+QPageLayout ObjectsScene::getPageLayout()
+{
+	return QPageLayout(page_size, page_orientation, page_margins);
 }
 
 void ObjectsScene::configurePrinter(QPrinter *printer)
@@ -882,17 +891,19 @@ void ObjectsScene::configurePrinter(QPrinter *printer)
 	if(page_size.id() != QPageSize::Custom)
 	{
 		pl.setPageSize(page_size);
-		pl.setOrientation(page_orientation);
+		//pl.setOrientation(page_orientation);
 	}
 	else
 	{
 		QPageSize ps;
 		ps = QPageSize(QSizeF(custom_paper_size.width(), custom_paper_size.height()), QPageSize::Point, "", QPageSize::ExactMatch);
 		pl.setPageSize(ps);
-		pl.setOrientation(page_orientation == QPageLayout::Landscape ? QPageLayout::Landscape : QPageLayout::Portrait);
+		//pl.setOrientation(page_orientation == QPageLayout::Landscape ? QPageLayout::Landscape : QPageLayout::Portrait);
 	}
 
-	printer->setPageSize(pl.pageSize());
+	pl.setMargins(page_margins);
+	pl.setOrientation(page_orientation);
+	printer->setPageLayout(pl);
 
 /*	if(page_size.id() == QPageSize::Custom)
 	{
@@ -905,9 +916,9 @@ void ObjectsScene::configurePrinter(QPrinter *printer)
 		printer->setOrientation(page_orientation); */
 
 	//printer->setPageMargins(page_margins.left(), page_margins.top(), page_margins.width(), page_margins.height(), QPrinter::Millimeter);
-	printer->setPageMargins(QMarginsF(page_margins.left(), page_margins.top(),
+	/*printer->setPageMargins(QMarginsF(page_margins.left(), page_margins.top(),
 																		page_margins.width(), page_margins.height()),
-													QPageLayout::Millimeter);
+													QPageLayout::Millimeter); */
 }
 
 void ObjectsScene::configurePrinter(QPrinter *printer, const QSizeF &custom_size, QPageLayout::Orientation orient)
@@ -1716,7 +1727,7 @@ void ObjectsScene::clearSelection()
 	QGraphicsScene::clearSelection();
 }
 
-vector<QRectF> ObjectsScene::getPagesForPrinting(const QSizeF &paper_size, const QSizeF &margin, unsigned &h_page_cnt, unsigned &v_page_cnt)
+/* vector<QRectF> ObjectsScene::getPagesForPrinting(const QSizeF &paper_size, const QSizeF &margin, unsigned &h_page_cnt, unsigned &v_page_cnt)
 {
 	vector<QRectF> pages;
 	QRectF page_rect, max_rect;
@@ -1768,7 +1779,65 @@ vector<QRectF> ObjectsScene::getPagesForPrinting(const QSizeF &paper_size, const
 			pages.push_back(QRectF(QPointF(h_page * page_width, v_page * page_height), QSizeF(page_width, page_height)));
 
 	return pages;
+} */
+
+vector<QRectF> ObjectsScene::getPagesForPrinting(const QPageLayout &page_lt, unsigned &h_page_cnt, unsigned &v_page_cnt)
+{
+	vector<QRectF> pages;
+	QRectF page_rect, max_rect;
+	double width, height, page_width, page_height;
+	unsigned h_page=0, v_page=0, start_h=99999, start_v=99999;
+	QList<QGraphicsItem *> list;
+	QSizeF paper_size = page_lt.pageSize().size(QPageSize::Point);
+
+	//page_width=ceil(paper_size.width() - margin.width()-1);
+	//page_height=ceil(paper_size.height() - margin.height()-1);
+	page_width=paper_size.width();
+	page_height=paper_size.height();
+
+	//Calculates the horizontal and vertical page count based upon the passed paper size
+	h_page_cnt=round(this->sceneRect().width()/page_width) + 1;
+	v_page_cnt=round(this->sceneRect().height()/page_height) + 1;
+
+	//Calculates the maximum count of horizontal and vertical pages
+	for(v_page=0; v_page < v_page_cnt; v_page++)
+	{
+		for(h_page=0; h_page < h_page_cnt; h_page++)
+		{
+			//Calculates the current page rectangle
+			page_rect=QRectF(QPointF(h_page * page_width, v_page * page_height), QSizeF(page_width, page_height));
+
+			//Case there is selected items recalculates the maximum page size
+			list=this->items(page_rect, Qt::IntersectsItemShape);
+			if(!list.isEmpty())
+			{
+				if(start_h > h_page) start_h=h_page;
+				if(start_v > v_page) start_v=v_page;
+
+				width=page_rect.left() + page_rect.width();
+				height=page_rect.top() + page_rect.height();
+
+				if(width > max_rect.width())
+					max_rect.setWidth(width);
+
+				if(height > max_rect.height())
+					max_rect.setHeight(height);
+			}
+		}
+	}
+
+	//Re calculates the maximum page count based upon the maximum page size
+	h_page_cnt=round(max_rect.width()/page_width);
+	v_page_cnt=round(max_rect.height()/page_height);
+
+	//Inserts the page rectangles on the list
+	for(v_page=static_cast<unsigned>(start_v); v_page < v_page_cnt; v_page++)
+		for(h_page=static_cast<unsigned>(start_h); h_page < h_page_cnt; h_page++)
+			pages.push_back(QRectF(QPointF(h_page * page_width, v_page * page_height), QSizeF(page_width, page_height)));
+
+	return pages;
 }
+
 
 bool ObjectsScene::isRangeSelectionEnabled()
 {

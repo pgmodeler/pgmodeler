@@ -1676,9 +1676,8 @@ void MainWindow::printModel()
 		QPrinter *printer=nullptr;
 		QPageSize page_size, curr_page_size;
 		QPageLayout::Orientation orientation, curr_orientation;
-		QRectF margins;
+		QMarginsF margins;
 		QSizeF custom_size;
-		qreal ml,mt,mr,mb, ml1, mt1, mr1, mb1;
 		QMarginsF orig_marg, curr_marg;
 		GeneralConfigWidget *conf_wgt=dynamic_cast<GeneralConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::GeneralConfWgt));
 
@@ -1686,15 +1685,13 @@ void MainWindow::printModel()
 		print_dlg.setWindowTitle(tr("Database model printing"));
 
 		//Get the page configuration of the scene
-		ObjectsScene::getPaperConfiguration(page_size, orientation, margins, custom_size);
+		ObjectsScene::getPageConfiguration(page_size, orientation, margins, custom_size);
 
 		//Get a reference to the printer
 		printer=print_dlg.printer();
 
 		//Sets the printer options based upon the configurations from the scene
 		ObjectsScene::configurePrinter(printer);
-
-		//printer->getPageMargins(&mt,&ml,&mb,&mr,QPrinter::Millimeter);
 		orig_marg = printer->pageLayout().margins(QPageLayout::Millimeter);
 
 		print_dlg.exec();
@@ -1705,12 +1702,10 @@ void MainWindow::printModel()
 			Messagebox msg_box;
 
 			//Checking If the user modified the default settings overriding the scene configurations
-			//printer->getPageMargins(&mt1,&ml1,&mb1,&mr1,QPrinter::Millimeter);
 			curr_marg = printer->pageLayout().margins(QPageLayout::Millimeter);
 			curr_orientation = print_dlg.printer()->pageLayout().orientation();
 			curr_page_size = print_dlg.printer()->pageLayout().pageSize();
 
-			//if(ml!=ml1 || mr!=mr1 || mt!=mt1 || mb!=mb1 ||
 			if(orig_marg != curr_marg ||
 				 orientation != curr_orientation || curr_page_size != page_size)
 			{

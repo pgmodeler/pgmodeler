@@ -1742,16 +1742,17 @@ void ModelWidget::printModel(QPrinter *printer, bool print_grid, bool print_page
 		scene->update();
 		scene->clearSelection();
 
+		#warning "Fix me! Use printing based on QPageLayout instead of QPrinter::paperSize()"
 		//Get the page size based on the printer settings
-		ObjectsScene::getPaperConfiguration(paper_size_id, orient, margins, custom_p_size);
-		paper_size=printer->paperSize(QPrinter::Point);
+		//ObjectsScene::getPaperConfiguration(paper_size_id, orient, margins, custom_p_size);
+		//paper_size=printer->paperSize(QPrinter::Point);
 
-		if(paper_size_id!=QPrinter::Custom)
-			paper_size-=margins.size();
+		//if(paper_size_id!=QPrinter::Custom)
+		//	paper_size-=margins.size();
 
 		//Get the pages rect for printing
-		pages=scene->getPagesForPrinting(paper_size, margins.size(), h_page_cnt, v_page_cnt);
-		page_size=printer->pageRect().size();
+		//pages=scene->getPagesForPrinting(paper_size, margins.size(), h_page_cnt, v_page_cnt);
+		//page_size=printer->pageRect().size();
 
 		//Creates a painter to draw the model directly on the printer
 		QPainter painter(printer);

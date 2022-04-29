@@ -141,26 +141,16 @@ void ModelExportHelper::exportToPNG(ObjectsScene *scene, const QString &filename
 
 		if(page_by_page)
 		{
-			QPrinter::Orientation orient;
-			QRectF margins;
-			QSizeF custom_sz, page_sz;
-			QPrinter::PaperSize paper_sz;
 			QPrinter prt;
+			QPageLayout page_lt;
 			QFileInfo fi(filename);
 
-			ObjectsScene::getPaperConfiguration(paper_sz, orient, margins, custom_sz);
-
-			if(paper_sz==QPrinter::Custom)
-				page_sz=custom_sz;
-			else
-			{
-				prt.setPaperSize(paper_sz);
-				prt.setOrientation(orient);
-				page_sz=prt.paperSize(QPrinter::Point);
-			}
+			//ObjectsScene::getPageConfiguration(page_sz, orient, margins, custom_sz);
+			page_lt = ObjectsScene::getPageLayout();
+			prt.setPageLayout(page_lt);
 
 			//Calculates the page count to be exported
-			pages=scene->getPagesForPrinting(page_sz, margins.size(), h_cnt, v_cnt);
+			pages=scene->getPagesForPrinting(page_lt, h_cnt, v_cnt);
 
 			//Configures the template filename for pages pixmaps
 			tmpl_filename=fi.absolutePath() + GlobalAttributes::DirSeparator + fi.baseName() + QString("_p%1.") + fi.completeSuffix();
