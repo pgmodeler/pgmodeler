@@ -1675,27 +1675,20 @@ void MainWindow::printModel()
 		QPrintDialog print_dlg;
 		QPrinter *printer=nullptr;
 		QPageSize page_size, curr_page_size;
-		QPageLayout::Orientation orientation, curr_orientation;
-		QMarginsF margins;
-		QSizeF custom_size;
-		QMarginsF orig_marg, curr_marg;
+		QPageLayout curr_page_lt, orig_page_lt;
 		GeneralConfigWidget *conf_wgt=dynamic_cast<GeneralConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::GeneralConfWgt));
 
-		#warning "Debug me!"
 		print_dlg.setOption(QAbstractPrintDialog::PrintCurrentPage, false);
 		print_dlg.setWindowTitle(tr("Database model printing"));
 
-		//Get the page configuration of the scene
-		#warning "Debug me! Replace by ObjectScene::getPageLayout()"
-		ObjectsScene::getPageConfiguration(page_size, orientation, margins, custom_size);
+		//Get the current page configuration of the scene
+		orig_page_lt = ObjectsScene::getPageLayout();
 
 		//Get a reference to the printer
-		printer=print_dlg.printer();
+		printer = print_dlg.printer();
 
 		//Sets the printer options based upon the configurations from the scene
-		ObjectsScene::configurePrinter(printer);
-		orig_marg = printer->pageLayout().margins(QPageLayout::Millimeter);
-
+		printer->setPageLayout(orig_page_lt);
 		print_dlg.exec();
 
 		//If the user confirms the printing
@@ -1703,22 +1696,22 @@ void MainWindow::printModel()
 		{
 			Messagebox msg_box;
 
-			//Checking If the user modified the default settings overriding the scene configurations
-			curr_marg = printer->pageLayout().margins(QPageLayout::Millimeter);
-			curr_orientation = print_dlg.printer()->pageLayout().orientation();
-			curr_page_size = print_dlg.printer()->pageLayout().pageSize();
+			// Checking If the user modified the default settings on the printer overriding the scene configurations
+			curr_page_lt = printer->pageLayout();
 
-			if(orig_marg != curr_marg ||
-				 orientation != curr_orientation || curr_page_size != page_size)
+			if(orig_page_lt != curr_page_lt)
 			{
-				msg_box.show(tr("Changes were detected in the definitions of paper/margin of the model which may cause the incorrect print of the objects. Do you want to continue printing using the new settings? To use the default settings click 'No' or 'Cancel' to abort printing."),
+				msg_box.show(tr("Changes were detected in the definitions of paper/margin which may cause the incorrect print of the objects. Do you want to continue printing using the new settings? To use the default settings click 'No' or 'Cancel' to abort printing."),
 							 Messagebox::AlertIcon, Messagebox::AllButtons);
 			}
 
 			if(!msg_box.isCancelled())
 			{
 				if(msg_box.result()==QDialog::Rejected)
-					ObjectsScene::configurePrinter(printer);
+				{
+					// Retore the page configuration to the scene's default
+					printer->setPageLayout(orig_page_lt);
+				}
 
 				current_model->printModel(printer, conf_wgt->print_grid_chk->isChecked(), conf_wgt->print_pg_num_chk->isChecked());
 			}

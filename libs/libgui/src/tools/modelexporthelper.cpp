@@ -141,17 +141,10 @@ void ModelExportHelper::exportToPNG(ObjectsScene *scene, const QString &filename
 
 		if(page_by_page)
 		{
-			#warning "Debug me!"
-			QPrinter prt;
-			QPageLayout page_lt;
 			QFileInfo fi(filename);
 
-			//ObjectsScene::getPageConfiguration(page_sz, orient, margins, custom_sz);
-			page_lt = ObjectsScene::getPageLayout();
-			prt.setPageLayout(page_lt);
-
 			//Calculates the page count to be exported
-			pages=scene->getPagesForPrinting(page_lt, h_cnt, v_cnt);
+			pages=scene->getPagesForPrinting(h_cnt, v_cnt);
 
 			//Configures the template filename for pages pixmaps
 			tmpl_filename=fi.absolutePath() + GlobalAttributes::DirSeparator + fi.baseName() + QString("_p%1.") + fi.completeSuffix();
@@ -186,7 +179,7 @@ void ModelExportHelper::exportToPNG(ObjectsScene *scene, const QString &filename
 		while(itr!=itr_end && !export_canceled)
 		{
 			//Convert the objects bounding rect to viewport coordinates to correctly draw them onto pixmap
-			pol=view->mapFromScene(*itr);
+			pol = view->mapFromScene(*itr);
 			itr++;
 
 			//Configure the viewport area to be copied

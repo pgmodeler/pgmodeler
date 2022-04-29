@@ -515,25 +515,32 @@ void GeneralConfigWidget::saveConfiguration()
 
 void GeneralConfigWidget::applyConfiguration()
 {
-	int unit=unity_cmb->currentIndex();
+	int unit = unity_cmb->currentIndex();
 
 	if(!save_restore_geometry_chk->isChecked())
 	  widgets_geom.clear();
 
 	BaseObject::setEscapeComments(escape_comments_chk->isChecked());
 
+	QPageLayout page_lt;
+	QPageSize::PageSizeId size_id = static_cast<QPageSize::PageSizeId>(paper_cmb->itemData(paper_cmb->currentIndex()).toInt());
+	QPageSize page_sz(size_id);
+
+	// Forcing the Point unity to configure the margins on the page layout
 	unity_cmb->setCurrentIndex(UnitPoint);
-	#warning "Debug me! Replace by ObjectScene::setPageLayout()"
-	ObjectsScene::setPageConfiguration(QPageSize(static_cast<QPageSize::PageSizeId>(paper_cmb->itemData(paper_cmb->currentIndex()).toInt())),
-										(portrait_rb->isChecked() ? QPageLayout::Portrait : QPageLayout::Landscape),
-										/*QRectF(left_marg->value(), top_marg->value(), right_marg->value(), bottom_marg->value()), */
-										QMarginsF(left_marg->value(), top_marg->value(), right_marg->value(), bottom_marg->value()),
-										QSizeF(width_spb->value(), height_spb->value()));
+
+	if(size_id == QPageSize::Custom)
+		page_sz = QPageSize(QSizeF(width_spb->value(), height_spb->value()), QPageSize::Point);
+
+	page_lt.setPageSize(page_sz);
+	page_lt.setOrientation(portrait_rb->isChecked() ? QPageLayout::Portrait : QPageLayout::Landscape);
+	page_lt.setMargins(QMarginsF(left_marg->value(), top_marg->value(), right_marg->value(), bottom_marg->value()));
+	ObjectsScene::setPageLayout(page_lt);
+
 	unity_cmb->setCurrentIndex(unit);
 
 	ObjectsScene::setEnableCornerMove(corner_move_chk->isChecked());
 	ObjectsScene::setInvertRangeSelectionTrigger(invert_rangesel_chk->isChecked());
-
 	ObjectsScene::setGridOptions(config_params[Attributes::Configuration][Attributes::ShowCanvasGrid]==Attributes::True,
 															 config_params[Attributes::Configuration][Attributes::AlignObjsToGrid]==Attributes::True,
 															 config_params[Attributes::Configuration][Attributes::ShowPageDelimiters]==Attributes::True);

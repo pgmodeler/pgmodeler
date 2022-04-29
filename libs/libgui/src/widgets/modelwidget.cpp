@@ -1716,148 +1716,80 @@ void ModelWidget::adjustSceneSize()
 
 void ModelWidget::printModel(QPrinter *printer, bool print_grid, bool print_page_nums)
 {
-	if(printer)
+	if(!printer)
+		return;
+
+	bool show_grid = false, align_objs = false, show_delims = false;
+	unsigned page_cnt = 0, page = 0, h_page_cnt = 0, v_page_cnt = 0, h_pg_id = 0, v_pg_id = 0;
+	vector<QRectF> pages;
+	QMarginsF margins;
+	QFont font;
+	QString page_info;
+	QColor color;
+	QRectF brect;
+
+	//Make a backup of the current grid options
+	show_grid = ObjectsScene::isShowGrid();
+	align_objs = ObjectsScene::isAlignObjectsToGrid();
+	show_delims = ObjectsScene::isShowPageDelimiters();
+
+	//Reconfigure the grid options based upon the passed settings
+	ObjectsScene::setGridOptions(print_grid, align_objs, false);
+
+	scene->update();
+	scene->clearSelection();
+
+	//Get the pages rect for printing
+	pages = scene->getPagesForPrinting(printer->pageLayout(), h_page_cnt, v_page_cnt);
+
+	//Creates a painter to draw the model directly on the printer
+	QPainter painter(printer);
+	painter.setRenderHint(QPainter::Antialiasing);
+	font.setPointSizeF(BaseObjectView::DefaultFontSize * 0.75);
+	font.setBold(true);
+	painter.setFont(font);
+
+	margins = printer->pageLayout().marginsPoints();
+	page_cnt = pages.size();
+
+	for(page=0, h_pg_id=1, v_pg_id=1; page < page_cnt; page++)
 	{
-		bool show_grid, align_objs, show_delims;
-		unsigned page_cnt, page, h_page_cnt, v_page_cnt, h_pg_id, v_pg_id;
-		vector<QRectF> pages;
-		QRectF margins;
-		QPrinter::PaperSize paper_size_id;
-		QPrinter::Orientation orient;
-		QSizeF paper_size, custom_p_size;
-		QSize page_size;
-		QPen pen;
-		QFont font;
-		QPointF top_left, top_right, bottom_left, bottom_right,
-				h_top_mid, h_bottom_mid, v_left_mid, v_right_mid, dx, dy, dx1, dy1;
+		//Render the current page on the printer
+		scene->render(&painter, QRect(), pages[page]);
 
-		//Make a backup of the current grid options
-		show_grid = ObjectsScene::isShowGrid();
-		align_objs = ObjectsScene::isAlignObjectsToGrid();
-		show_delims = ObjectsScene::isShowPageDelimiters();
-
-		//Reconfigure the grid options based upon the passed settings
-		ObjectsScene::setGridOptions(print_grid, align_objs, false);
-
-		scene->update();
-		scene->clearSelection();
-
-		#warning "Fix me! Use printing based on QPageLayout instead of QPrinter::paperSize()"
-		//Get the page size based on the printer settings
-		//ObjectsScene::getPaperConfiguration(paper_size_id, orient, margins, custom_p_size);
-		//paper_size=printer->paperSize(QPrinter::Point);
-
-		//if(paper_size_id!=QPrinter::Custom)
-		//	paper_size-=margins.size();
-
-		//Get the pages rect for printing
-		//pages=scene->getPagesForPrinting(paper_size, margins.size(), h_page_cnt, v_page_cnt);
-		//page_size=printer->pageRect().size();
-
-		//Creates a painter to draw the model directly on the printer
-		QPainter painter(printer);
-		painter.setRenderHint(QPainter::Antialiasing);
-		font.setPointSizeF(7.5);
-		pen.setColor(QColor(120,120,120));
-		pen.setWidthF(1.0);
-
-		//Calculates the auxiliary points to draw the page delimiter lines
-		top_left.setX(0); top_left.setY(0);
-		top_right.setX(page_size.width()); top_right.setY(0);
-
-		bottom_left.setX(0); bottom_left.setY(page_size.height());
-		bottom_right.setX(top_right.x()); bottom_right.setY(bottom_left.y());
-
-		h_top_mid.setX(page_size.width()/2); h_top_mid.setY(0);
-		h_bottom_mid.setX(h_top_mid.x()); h_bottom_mid.setY(bottom_right.y());
-
-		v_left_mid.setX(top_left.x()); v_left_mid.setY(page_size.height()/2);
-		v_right_mid.setX(top_right.x()); v_right_mid.setY(v_left_mid.y());
-
-		dx.setX(margins.left());
-		dx1.setX(margins.width());
-		dy.setY(margins.top());
-		dy1.setY(margins.height());
-
-		page_cnt=pages.size();
-		for(page=0, h_pg_id=0, v_pg_id=0; page < page_cnt; page++)
+		//Print the current page number if this option is marked
+		if(print_page_nums)
 		{
-			//Render the current page on the printer
-			scene->render(&painter, QRect(), pages[page]);
+			page_info = tr("Page #%1 / C:%2 x R:%3").arg(QString::number(page + 1)).arg(h_pg_id).arg(v_pg_id);
+			color = ObjectsScene::getGridColor().darker();
+			color.setAlpha(128);
+			painter.setBrush(color);
+			painter.setPen(ObjectsScene::getGridColor().lighter());
+			brect = painter.fontMetrics().boundingRect(page_info);
+			brect.adjust(-5, 0, 5, 0);
 
-			//Print the current page number is this option is marked
-			if(print_page_nums)
-			{
-				painter.setPen(QColor(120,120,120));
-				painter.drawText(-margins.left(), -margins.top(), QString("%1").arg(page+1));
-			}
-
-			//Print the guide lines at corners of the page
-			painter.setPen(pen);
-			if(h_pg_id==0 && v_pg_id==0)
-			{
-				painter.drawLine(top_left, top_left + dx);
-				painter.drawLine(top_left, top_left + dy);
-			}
-
-			if(h_pg_id==h_page_cnt-1 && v_pg_id==0)
-			{
-				painter.drawLine(top_right, top_right - dx1);
-				painter.drawLine(top_right, top_right + dy);
-			}
-
-			if(h_pg_id==0 && v_pg_id==v_page_cnt-1)
-			{
-				painter.drawLine(bottom_left, bottom_left + dx);
-				painter.drawLine(bottom_left, bottom_left - dy1);
-			}
-
-			if(h_pg_id==h_page_cnt-1 && v_pg_id==v_page_cnt-1)
-			{
-				painter.drawLine(bottom_right, bottom_right - dx1);
-				painter.drawLine(bottom_right, bottom_right - dy1);
-			}
-
-			if(h_pg_id >=1 && h_pg_id < h_page_cnt-1 && v_pg_id==0)
-			{
-				painter.drawLine(h_top_mid, h_top_mid - dx1);
-				painter.drawLine(h_top_mid, h_top_mid + dx);
-			}
-
-			if(h_pg_id >=1 && h_pg_id < h_page_cnt-1 && v_pg_id==v_page_cnt-1)
-			{
-				painter.drawLine(h_bottom_mid, h_bottom_mid - dx1);
-				painter.drawLine(h_bottom_mid, h_bottom_mid + dx);
-			}
-
-			if(v_pg_id >=1 && v_pg_id < v_page_cnt-1 && h_pg_id==0)
-			{
-				painter.drawLine(v_left_mid, v_left_mid - dy1);
-				painter.drawLine(v_left_mid, v_left_mid + dy);
-			}
-
-			if(v_pg_id >=1 && v_pg_id < v_page_cnt-1 && h_pg_id==h_page_cnt-1)
-			{
-				painter.drawLine(v_right_mid, v_right_mid - dy1);
-				painter.drawLine(v_right_mid, v_right_mid + dy);
-			}
+			painter.save();
+			painter.translate(-margins.left() / 2, -margins.top() / 2);
+			painter.drawRect(brect);
+			painter.drawText(0, 0, page_info);
+			painter.restore();
 
 			h_pg_id++;
 
-			if(h_pg_id==h_page_cnt)
+			if(h_pg_id >= h_page_cnt)
 			{
-				h_pg_id=0;
+				h_pg_id = 1;
 				v_pg_id++;
 			}
-
-			if(page < page_cnt-1)
-				printer->newPage();
 		}
 
-		//Restore the grid option backup
-		ObjectsScene::setGridOptions(show_grid, align_objs, show_delims);
-		scene->update();
+		if(page < page_cnt-1)
+			printer->newPage();
 	}
+
+	//Restore the grid option backup
+	ObjectsScene::setGridOptions(show_grid, align_objs, show_delims);
+	scene->update();
 }
 
 void ModelWidget::updateRenderHints()

@@ -23,11 +23,7 @@ bool ObjectsScene::show_grid=true;
 bool ObjectsScene::show_page_delim=true;
 unsigned ObjectsScene::grid_size=20;
 
-QPageSize ObjectsScene::page_size(QPageSize::A4);
-QPageLayout::Orientation ObjectsScene::page_orientation(QPageLayout::Landscape);
-QPageLayout ObjectsScene::page_layout(QPageSize(QPageSize::A4), QPageLayout::Landscape, QMarginsF(2,2,2,2));
-
-QMarginsF ObjectsScene::page_margins(2,2,2,2);
+QPageLayout ObjectsScene::page_layout(QPageSize(QPageSize::A4), QPageLayout::Landscape, QMarginsF(10,10,10,10));
 QSizeF ObjectsScene::custom_paper_size(0,0);
 QBrush ObjectsScene::grid;
 
@@ -725,16 +721,14 @@ void ObjectsScene::setGridSize(unsigned size)
 	if(size >= 20 || grid.style()==Qt::NoBrush)
 	{
 		QImage grid_img;
-		double width, height, x, y;
-		int img_w, img_h;
+		double width = 0, height = 0, x = 0, y = 0;
+		int img_w = 0, img_h = 0;
 		QSizeF aux_size;
-		QPrinter printer;
 		QPainter painter;
 		QPen pen;
 
-		#warning "Debug me!"
-		configurePrinter(&printer);
-		aux_size=printer.pageLayout().pageSize().size(QPageSize::Point);
+		// Retrieve the page rect considering the orientation, margin and page size
+		aux_size = page_layout.paintRect(QPageLayout::Point).size();
 
 		//Calculates where the extreme width and height where delimiter lines will be drawn
 		width=aux_size.width()/static_cast<double>(size) * size;
@@ -826,9 +820,9 @@ void ObjectsScene::showRelationshipLine(bool value, const QPointF &p_start)
 
 void ObjectsScene::setGridOptions(bool show_grd, bool align_objs_grd, bool show_pag_dlm)
 {
-	bool redef_grid=(ObjectsScene::show_grid!=show_grd ||
-										ObjectsScene::show_page_delim!=show_pag_dlm ||
-										grid.style()==Qt::NoBrush);
+	bool redef_grid=(ObjectsScene::show_grid != show_grd ||
+									 ObjectsScene::show_page_delim != show_pag_dlm ||
+									 grid.style() == Qt::NoBrush);
 
 	ObjectsScene::show_grid=show_grd;
 	ObjectsScene::show_page_delim=show_pag_dlm;
@@ -856,88 +850,17 @@ bool ObjectsScene::isShowPageDelimiters()
 	return show_page_delim;
 }
 
-void ObjectsScene::setPageConfiguration(QPageSize page_sz, QPageLayout::Orientation orient, QMarginsF margins, QSizeF custom_size)
-{
-	ObjectsScene::page_size=page_sz;
-	ObjectsScene::page_orientation=orient;
-	ObjectsScene::page_margins=margins;
-	ObjectsScene::custom_paper_size=custom_size;
-}
-
-void ObjectsScene::getPageConfiguration(QPageSize &pager_sz, QPageLayout::Orientation &orient, QMarginsF &margins, QSizeF &custom_size)
-{
-	pager_sz=ObjectsScene::page_size;
-	orient=ObjectsScene::page_orientation;
-	margins=ObjectsScene::page_margins;
-	custom_size=ObjectsScene::custom_paper_size;
-}
-
 void ObjectsScene::setPageLayout(const QPageLayout &page_lt)
 {
+	if(page_layout != page_lt)
+		grid = Qt::NoBrush;
+
 	page_layout = page_lt;
 }
 
 QPageLayout ObjectsScene::getPageLayout()
 {
-	return QPageLayout(page_size, page_orientation, page_margins);
-}
-
-void ObjectsScene::configurePrinter(QPrinter *printer)
-{
-	if(!printer)
-		throw Exception(ErrorCode::OprNotAllocatedObject ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-
-	QPageLayout pl;
-
-	if(page_size.id() != QPageSize::Custom)
-	{
-		pl.setPageSize(page_size);
-		//pl.setOrientation(page_orientation);
-	}
-	else
-	{
-		QPageSize ps;
-		ps = QPageSize(QSizeF(custom_paper_size.width(), custom_paper_size.height()), QPageSize::Point, "", QPageSize::ExactMatch);
-		pl.setPageSize(ps);
-		//pl.setOrientation(page_orientation == QPageLayout::Landscape ? QPageLayout::Landscape : QPageLayout::Portrait);
-	}
-
-	pl.setMargins(page_margins);
-	pl.setOrientation(page_orientation);
-	printer->setPageLayout(pl);
-
-/*	if(page_size.id() == QPageSize::Custom)
-	{
-		if(custom_paper_size.width() > custom_paper_size.height())
-			ObjectsScene::page_orientation = QPageLayout::Landscape;
-		else
-			ObjectsScene::page_orientation = QPageLayout::Portrait;
-	}
-	else
-		printer->setOrientation(page_orientation); */
-
-	//printer->setPageMargins(page_margins.left(), page_margins.top(), page_margins.width(), page_margins.height(), QPrinter::Millimeter);
-	/*printer->setPageMargins(QMarginsF(page_margins.left(), page_margins.top(),
-																		page_margins.width(), page_margins.height()),
-													QPageLayout::Millimeter); */
-}
-
-void ObjectsScene::configurePrinter(QPrinter *printer, const QSizeF &custom_size, QPageLayout::Orientation orient)
-{
-	#warning "Debug me!"
-	QPageSize orig_page_sz = page_size;
-	QPageLayout::Orientation orig_orient=page_orientation;
-	QSizeF orig_custom_sz=custom_paper_size;
-
-	page_size = QPageSize(QPageSize::Custom);
-	page_orientation=orient;
-	custom_paper_size=custom_size;
-
-	configurePrinter(printer);
-
-	page_size=orig_page_sz;
-	page_orientation=orig_orient;
-	custom_paper_size=orig_custom_sz;
+	return page_layout;
 }
 
 void ObjectsScene::handlePopupMenuRequested(TableObject *child_obj)
@@ -1787,15 +1710,12 @@ vector<QRectF> ObjectsScene::getPagesForPrinting(const QPageLayout &page_lt, uns
 {
 	vector<QRectF> pages;
 	QRectF page_rect, max_rect;
-	double width, height, page_width, page_height;
+	double width = 0, height = 0, page_width = 0, page_height = 0;
 	unsigned h_page=0, v_page=0, start_h=99999, start_v=99999;
 	QList<QGraphicsItem *> list;
-	QSizeF paper_size = page_lt.pageSize().size(QPageSize::Point);
 
-	//page_width=ceil(paper_size.width() - margin.width()-1);
-	//page_height=ceil(paper_size.height() - margin.height()-1);
-	page_width=paper_size.width();
-	page_height=paper_size.height();
+	page_width = page_lt.paintRect(QPageLayout::Point).width();
+	page_height = page_lt.paintRect(QPageLayout::Point).height();
 
 	//Calculates the horizontal and vertical page count based upon the passed paper size
 	h_page_cnt=round(this->sceneRect().width()/page_width) + 1;
@@ -1840,6 +1760,10 @@ vector<QRectF> ObjectsScene::getPagesForPrinting(const QPageLayout &page_lt, uns
 	return pages;
 }
 
+vector<QRectF> ObjectsScene::getPagesForPrinting(unsigned &h_page_cnt, unsigned &v_page_cnt)
+{
+	return getPagesForPrinting(page_layout, h_page_cnt, v_page_cnt);
+}
 
 bool ObjectsScene::isRangeSelectionEnabled()
 {
