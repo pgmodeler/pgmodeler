@@ -985,7 +985,6 @@ unsigned Catalog::getObjectCount(bool incl_sys_objs)
 
 QStringList Catalog::parseArrayValues(const QString &array_val)
 {
-	#warning "Debug me!"
 	QStringList list;
 	QRegularExpression regexp(QRegularExpression::anchoredPattern(ArrayPattern));
 
