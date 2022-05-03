@@ -318,7 +318,7 @@ attribs_map DatabaseExplorerWidget::formatObjectAttribs(attribs_map &attribs)
 	ObjectType obj_type=ObjectType::BaseObject;
 	attribs_map fmt_attribs;
 	QString attr_name, attr_value;
-	QRegularExpression oid_regexp=QRegularExpression(QString("^[0-9]+"));
+	QRegularExpression oid_regexp=QRegularExpression(QRegularExpression::anchoredPattern("\\d+"));
 	map<QString, ObjectType> dep_types={{Attributes::Owner, ObjectType::Role},
 										{Attributes::Schema, ObjectType::Schema},
 										{Attributes::Tablespace, ObjectType::Tablespace},
@@ -383,11 +383,7 @@ attribs_map DatabaseExplorerWidget::formatObjectAttribs(attribs_map &attribs)
 
 		if(attr_name==Attributes::ObjectType)
 			attr_value=BaseObject::getTypeName(static_cast<ObjectType>(attr_value.toUInt()));
-
-		#warning "Debug me!"
 		//If the current attribute is related to a dependency object, retreive its real name
-		//else if(dep_types.count(attr_name)!=0 && oid_regexp.exactMatch(attr_value))
-		//	attr_value=getObjectName(dep_types[attr_name], attr_value);
 		else if(dep_types.count(attr_name)!=0 && oid_regexp.match(attr_value).hasMatch())
 			attr_value=getObjectName(dep_types[attr_name], attr_value);
 
