@@ -287,8 +287,6 @@ void GeneralConfigWidget::removeConfigurationParam(const QRegularExpression &par
 
 	while(itr!=itr_end)
 	{
-		#warning "Debug me!"
-		//if(param_reg.exactMatch(itr->first))
 		if(param_reg.match(itr->first).hasMatch())
 		{
 			config_params.erase(itr);
