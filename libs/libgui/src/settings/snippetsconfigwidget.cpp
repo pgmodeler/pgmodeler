@@ -218,7 +218,6 @@ bool SnippetsConfigWidget::isSnippetValid(attribs_map &attribs, const QString &o
 
 	if(!orig_id.isEmpty() && snip_id!=orig_id && config_params.count(snip_id)!=0)
 		err_msg=tr("Duplicated snippet id <strong>%1</strong> detected. Please, specify a different one!").arg(snip_id);
-	#warning "Debug me!"
 	else if(!IdFormatRegExp.match(snip_id).hasMatch())
 		err_msg=tr("Invalid ID pattern detected <strong>%1</strong>. This one must start with at leat one letter and be composed by letters, numbers and/or underscore!").arg(snip_id);
 	else if(attribs[Attributes::Label].isEmpty())
