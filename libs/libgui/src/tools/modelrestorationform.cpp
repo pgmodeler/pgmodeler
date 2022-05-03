@@ -59,9 +59,6 @@ int ModelRestorationForm::exec()
 
 		buffer.append(UtilsNs::loadFile(filename));
 
-		#warning "Debug me!"
-		/* start=regexp.indexIn(buffer) + regexp.matchedLength();
-		end=buffer.indexOf("\"", start); */
 		match = regexp.match(buffer);
 		start = match.capturedStart() + match.capturedLength();
 		end = buffer.indexOf("\"", start);
