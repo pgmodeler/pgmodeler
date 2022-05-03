@@ -1101,16 +1101,15 @@ QStringList Catalog::parseDefaultValues(const QString &def_values, const QString
 
 QStringList Catalog::parseRuleCommands(const QString &cmds)
 {
-	#warning "Debug me!"
 	int start=-1, end=-1;
-	QRegularExpression cmd_regexp("(DO)( )*(INSTEAD)*( )+");
+	QRegularExpression cmd_regexp("(DO)( )*(INSTEAD)*( )+\\(");
 	QRegularExpressionMatch match;
 
 	match = cmd_regexp.match(cmds);
 	start = match.capturedStart() + match.capturedLength();
-	end = cmds.lastIndexOf(';');
+	end = cmds.lastIndexOf(");");
 
-	return (cmds.mid(start,(end - start) + 1).split(';', QtCompat::SkipEmptyParts));
+	return (cmds.mid(start,(end - start)).split(';', QtCompat::SkipEmptyParts));
 }
 
 QStringList Catalog::parseIndexExpressions(const QString &expr)
