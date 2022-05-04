@@ -1102,14 +1102,24 @@ QStringList Catalog::parseDefaultValues(const QString &def_values, const QString
 QStringList Catalog::parseRuleCommands(const QString &cmds)
 {
 	int start=-1, end=-1;
-	QRegularExpression cmd_regexp("(DO)( )*(INSTEAD)*( )+\\(");
+	QRegularExpression cmd_regexp("(DO)( )*(INSTEAD)*( )+");
 	QRegularExpressionMatch match;
+	QString fmt_cmd;
 
 	match = cmd_regexp.match(cmds);
 	start = match.capturedStart() + match.capturedLength();
-	end = cmds.lastIndexOf(");");
+	end = cmds.lastIndexOf(";");
 
-	return (cmds.mid(start,(end - start)).split(';', QtCompat::SkipEmptyParts));
+	fmt_cmd = cmds.mid(start,(end - start)).simplified();
+
+	if(fmt_cmd.startsWith('(') && fmt_cmd.endsWith(')'))
+	{
+		fmt_cmd.remove(0, 1);
+		fmt_cmd.remove(fmt_cmd.length() - 1, 1);
+		fmt_cmd = fmt_cmd.trimmed();
+	}
+
+	return fmt_cmd.split(';', QtCompat::SkipEmptyParts);
 }
 
 QStringList Catalog::parseIndexExpressions(const QString &expr)

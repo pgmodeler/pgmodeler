@@ -973,8 +973,15 @@ void DatabaseImportHelper::createTablespace(attribs_map &attribs)
 
 void DatabaseImportHelper::createSchema(attribs_map &attribs)
 {
-	Schema *schema=nullptr;
+	Schema *schema = nullptr;
 	std::uniform_int_distribution<unsigned> dist(0,255);
+
+	/* Avoiding the creation of the schemas pg_catalog and public when these objects
+	 * already exist in the destination model. This prevents the import to be aborted
+	 * due to duplicity error related to these schemas. */
+	if((attribs[Attributes::Name] == "public" || attribs[Attributes::Name] == "pg_catalog") &&
+		 dbmodel->getSchema(attribs[Attributes::Name]))
+		return;
 
 	try
 	{
@@ -1454,16 +1461,11 @@ void DatabaseImportHelper::createOperator(attribs_map &attribs)
 
 			if(!attribs[op_types[i]].isEmpty())
 			{
-				#warning "Debug me!"
-
 				/* Extracting the operator's signature to check if it was previouly created:
 					Defining a operator as ++(A,B) and it's commutator as *++(B,A) PostgreSQL will automatically
 					create on the second operator a commutator reference to ++(A,B). But to pgModeler only the first
 					reference is valid, so the extracted signature is used to check if the commutator was previously
 					created in order to avoid reference errors */
-				//pos=regexp.indexIn(attribs[op_types[i]]) + regexp.matchedLength();
-				//op_signature=attribs[op_types[i]].mid(pos, (attribs[op_types[i]].indexOf('"',pos) - pos));
-
 				match = regexp.match(attribs[op_types[i]]);
 				pos = match.capturedStart() + match.capturedLength();
 				op_signature = attribs[op_types[i]].mid(pos, (attribs[op_types[i]].indexOf('"',pos) - pos));
@@ -1772,9 +1774,7 @@ void DatabaseImportHelper::createTable(attribs_map &attribs)
 		for(unsigned col_idx : inh_cols)
 			inherited_cols.push_back(table->getColumn(col_idx));
 
-		#warning "Debug me!"
 		// Storing the partition bound expression temporarily in the table in order to configure the partition hierarchy later
-		//table->setPartitionBoundingExpr(attribs[Attributes::PartitionBoundExpr].remove(QRegularExpression("^(FOR)( )+(VALUES)( )*", Qt::CaseInsensitive)));
 		table->setPartitionBoundingExpr(attribs[Attributes::PartitionBoundExpr].remove(QRegularExpression("^(FOR)( )+(VALUES)( )*", QRegularExpression::CaseInsensitiveOption)));
 
 		// Retrieving the partitioned table related to the partition table being created
@@ -1974,14 +1974,11 @@ void DatabaseImportHelper::createRule(attribs_map &attribs)
 
 	try
 	{
-		#warning "Debug me!"
-		//start=cond_regexp.indexIn(cmds);
 		match = cond_regexp.match(cmds);
 		start = match.capturedStart();
 
 		if(start >=0)
 		{
-			//attribs[Attributes::Condition]=cmds.mid(start, cond_regexp.matchedLength());
 			attribs[Attributes::Condition]=cmds.mid(start, match.capturedLength());
 			attribs[Attributes::Condition].remove(QRegularExpression("(DO)|(WHERE)"));
 		}
@@ -2406,9 +2403,7 @@ void DatabaseImportHelper::createForeignTable(attribs_map &attribs)
 		for(unsigned col_idx : inh_cols)
 			inherited_cols.push_back(ftable->getColumn(col_idx));
 
-		#warning "Debug me!"
 		// Storing the partition bound expression temporarily in the table in order to configure the partition hierarchy later
-		//ftable->setPartitionBoundingExpr(attribs[Attributes::PartitionBoundExpr].remove(QRegularExpression("^(FOR)( )+(VALUES)( )*", Qt::CaseInsensitive)));
 		ftable->setPartitionBoundingExpr(attribs[Attributes::PartitionBoundExpr].remove(QRegularExpression("^(FOR)( )+(VALUES)( )*", QRegularExpression::CaseInsensitiveOption)));
 
 		// Retrieving the partitioned table related to the partition table being created
