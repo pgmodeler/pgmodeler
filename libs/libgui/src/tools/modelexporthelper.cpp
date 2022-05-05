@@ -47,19 +47,17 @@ void ModelExportHelper::handleSQLError(Exception &e, const QString &sql_cmd, boo
 
 void ModelExportHelper::setIgnoredErrors(const QStringList &err_codes)
 {
-	QRegularExpression valid_code = QRegularExpression("([a-z]|[A-Z]|[0-9])+");
-	QStringList error_codes=err_codes;
+	QRegularExpression valid_code = QRegularExpression(QRegularExpression::anchoredPattern("([a-z]|[A-Z]|[0-9])+"));
 
 	ignored_errors.clear();
-	error_codes.removeDuplicates();
 
-	for(QString code : error_codes)
+	for(auto &code : err_codes)
 	{
-		#warning "Debug me!"
-		//if(valid_code.exactMatch(code))
 		if(valid_code.match(code).hasMatch())
 			ignored_errors.push_back(code);
 	}
+
+	ignored_errors.removeDuplicates();
 }
 
 void ModelExportHelper::exportToSQL(DatabaseModel *db_model, const QString &filename, const QString &pgsql_ver, bool split)
@@ -514,8 +512,8 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
 				} */
 
 				comm_regexp = QRegularExpression(tmpl_comm_regexp.arg(db_model->getSQLName()));
+				sql_cmd = db_model->__getCodeDefinition(SchemaParser::SqlDefinition);
 				match = comm_regexp.match(sql_cmd);
-				sql_cmd=db_model->__getCodeDefinition(SchemaParser::SqlDefinition);
 				pos = match.capturedStart();
 
 				/* If we find a comment on statment we should strip it from the DB definition in
