@@ -1291,19 +1291,37 @@ void DatabaseExplorerWidget::dropObject(QTreeWidgetItem *item, bool cascade)
 		if(item && item->data(DatabaseImportForm::ObjectId, Qt::UserRole).toUInt() > 0)
 		{
 			ObjectType obj_type=static_cast<ObjectType>(item->data(DatabaseImportForm::ObjectTypeId, Qt::UserRole).toUInt());
-			QString msg;
-			QString obj_name=item->data(DatabaseImportForm::ObjectName, Qt::UserRole).toString();
 
 			//Roles, tablespaces and user mappings can't be removed in cascade mode
 			if(cascade && (obj_type==ObjectType::Role || obj_type==ObjectType::Tablespace || obj_type == ObjectType::UserMapping))
 				return;
 
+			QString msg,
+					parent_sch = item->data(DatabaseImportForm::ObjectSchema, Qt::UserRole).toString(),
+					parent_tab =  item->data(DatabaseImportForm::ObjectTable, Qt::UserRole).toString(),
+					obj_name = item->data(DatabaseImportForm::ObjectName, Qt::UserRole).toString(),
+					parent_name;
+
+			if(!parent_sch.isEmpty())
+			{
+				parent_name = parent_tab.isEmpty() ?
+							BaseObject::getSchemaName(ObjectType::Schema).toLower() :
+							tr("relation");
+				parent_name += " <strong>" + parent_sch;
+				parent_name += !parent_tab.isEmpty() ?  "." + parent_tab : "";
+				parent_name += "</strong>, ";
+			}
+
+			parent_name +=
+					BaseObject::getSchemaName(ObjectType::Database).toLower() +
+					QString(" <strong>%1</strong>").arg(connection.getConnectionId(true, true));
+
 			if(!cascade)
-				msg=tr("Do you really want to drop the object <strong>%1</strong> <em>(%2)</em>?")
-					.arg(obj_name).arg(BaseObject::getTypeName(obj_type));
+				msg=tr("Do you really want to drop the object <strong>%1</strong> <em>(%2)</em> in the %3?")
+					.arg(obj_name,BaseObject::getTypeName(obj_type), parent_name);
 			else
-				msg=tr("Do you really want to <strong>cascade</strong> drop the object <strong>%1</strong> <em>(%2)</em>? This action will drop all the other objects that depends on it.")
-					.arg(obj_name).arg(BaseObject::getTypeName(obj_type));
+				msg=tr("Do you really want to <strong>cascade</strong> drop the object <strong>%1</strong> <em>(%2)</em> in the %3? This action will drop all the other objects that depends on it.")
+					.arg(obj_name, BaseObject::getTypeName(obj_type), parent_name);
 
 			msg_box.show(msg, Messagebox::ConfirmIcon, Messagebox::YesNoButtons);
 
