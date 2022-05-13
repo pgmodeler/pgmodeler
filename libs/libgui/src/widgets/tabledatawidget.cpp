@@ -267,7 +267,7 @@ void TableDataWidget::changeColumnName(int col_idx)
 				PhysicalTable *table=dynamic_cast<PhysicalTable *>(this->object);
 				Column *column = table->getColumn(col_name);
 				item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
-				item->setForeground(data_tbw->horizontalHeader()->palette().color(QPalette::Foreground));
+				item->setForeground(data_tbw->horizontalHeader()->palette().color(QPalette::WindowText));
 				item->setToolTip(QString("%1 [%2]").arg(col_name).arg(~column->getType()));
 			}
 
