@@ -80,20 +80,16 @@ PgModelerApp::PgModelerApp(int &argc, char **argv) : Application(argc,argv)
 
 	if(input.open(QFile::ReadOnly))
 	{
-		#warning "Debug me!"
 		QString buf = QString(input.readAll());
 		QRegularExpression regexp = QRegularExpression(QString("(%1)(.*)(=)(\\\")(.)+(\\\")(\\\n)").arg(Attributes::UiLanguage));
 		QRegularExpressionMatch match;
-		//int idx =	regexp.indexIn(QString(buf));
 		int idx =	-1;
 
 		match =	regexp.match(buf);
 		idx = match.capturedStart();
 
 		//Extract the value of the ui-language attribute in the conf file
-		//lang_id = buf.mid(idx, regexp.matchedLength());
 		lang_id = buf.mid(idx, match.capturedLength());
-
 		lang_id.remove(Attributes::UiLanguage);
 		lang_id.remove(QChar('"')).remove(QChar('=')).remove(QChar('\n'));
 	}
