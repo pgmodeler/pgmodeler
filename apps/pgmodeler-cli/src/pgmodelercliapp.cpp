@@ -916,7 +916,8 @@ void PgModelerCliApp::extractObjectXML()
 {
 	QString buf, lin, def_xml, end_tag, pgmodeler_ver;
 	QTextStream ts;
-	QRegularExpression regexp(QString("^(\\<\\?xml)(.)*(\\<%1)( )*").arg(Attributes::DbModel)),
+	QRegularExpression regexp(QString("^(<\\?)(xml)(.)+(<%1)").arg(Attributes::DbModel),
+														QRegularExpression::DotMatchesEverythingOption),
 
 			//[schema].[func_name](...OUT [type]...)
 			func_signature=QRegularExpression("(\")(.)+(\\.)(.)+(\\()(.)*(OUT )(.)+(\\))(\")"),
@@ -925,17 +926,14 @@ void PgModelerCliApp::extractObjectXML()
 			out_param=QRegularExpression("(,)?(OUT )([a-z]|[0-9]|(\\.)|(\\_)|(\\-)|( )|(\\[)|(\\])|(&quot;))+((\\()([0-9])+(\\)))?");
 	int start=-1, end=-1;
 	bool open_tag=false, close_tag=false, is_rel=false, short_tag=false, end_extract_rel=false, is_change_log=false;
-	QRegularExpressionMatch match;
+	QRegularExpressionMatch match, header_match;
 
 	printMessage(tr("Extracting objects' XML..."));
 
 	buf.append(UtilsNs::loadFile(parsed_opts[Input]));
 
-	#warning "Debug me!"
 	// Extracting pgModeler version from input model
 	QRegularExpression ver_expr(AttributeExpr.arg(Attributes::PgModelerVersion));
-	/* start = ver_expr.indexIn(buf);
-	model_version = buf.mid(start, ver_expr.matchedLength()); */
 
 	match = ver_expr.match(buf);
 	start = match.capturedStart();
@@ -951,9 +949,8 @@ void PgModelerCliApp::extractObjectXML()
 	}
 
 	//Check if the file contains a valid header (for .dbm file)
-	// start=regexp.indexIn(buf);
-	match = regexp.match(buf);
-	start = match.capturedStart();
+	header_match = regexp.match(buf);
+	start = header_match.capturedStart();
 
 	if(start < 0)
 		throw Exception(tr("Invalid input file! It seems that is not a pgModeler generated model or the file is corrupted!"), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -962,12 +959,11 @@ void PgModelerCliApp::extractObjectXML()
 		//Extracting layers informations from the tag <dbmodel>
 		QRegularExpression dbm_regexp = QRegularExpression(TagExpr.arg(Attributes::DbModel)),
 				db_end_regexp =  QRegularExpression(EndTagExpr.arg(Attributes::Database));
-		int attr_start =-1, attr_end = -1, dbm_start = -1; /* dbm_regexp.indexIn(buf) */;
-		QString aux_buf /*= buf.mid(dbm_start, buf.indexOf(db_end_regexp) - dbm_start)*/,
+		int attr_start =-1, attr_end = -1, dbm_start = -1;
+		QString aux_buf,
 				layers, active_layers, attr_expr = "(%1)( )*(=)(\")";
 		QList<unsigned> act_layers_ids;
 
-		#warning "Debug me!"
 		match = dbm_regexp.match(buf);
 		dbm_start = match.capturedStart();
 		aux_buf = buf.mid(dbm_start, buf.indexOf(db_end_regexp) - dbm_start);
@@ -982,23 +978,21 @@ void PgModelerCliApp::extractObjectXML()
 
 		//Active layers
 		attr_start = attr_end;
-		attr_end = aux_buf.indexOf('>', attr_start);
+		attr_end = aux_buf.indexOf(Attributes::LayerNameColors, attr_start);
 		active_layers = aux_buf.mid(attr_start, attr_end - attr_start);
 		active_layers.remove(QRegularExpression(attr_expr.arg(Attributes::ActiveLayers)));
 		active_layers.remove('"');
+		active_layers.replace(',', ';');
 
-		for(auto id : active_layers.trimmed().split(';', QtCompat::SkipEmptyParts))
+		for(auto &id : active_layers.trimmed().split(';', QtCompat::SkipEmptyParts))
 			act_layers_ids.push_back(id.toUInt());
 
 		model->setActiveLayers(act_layers_ids);
-
-		#warning "Debug me!"
-		//Remove the header entry from buffer
-		//buf.remove(start, regexp.matchedLength()+1);
-		buf.remove(start, match.capturedLength() + 1);
+		buf.remove(start, header_match.capturedLength() + 1);
 
 		//Checking if the header ends on a role declaration
-		QRegularExpression role_regexp = QRegularExpression(QString("(<%1)(.)*(<\\/%2>)").arg(Attributes::Role).arg(Attributes::Role));
+		QRegularExpression role_regexp = QRegularExpression(QString("(<%1)(.)*(<\\/%1>)").arg(Attributes::Role),
+																												QRegularExpression::DotMatchesEverythingOption);
 		end = buf.indexOf(role_regexp);
 
 		// If we found role declarations we clear the header until there
@@ -1428,9 +1422,7 @@ void PgModelerCliApp::fixObjectAttributes(QString &obj_xml)
 	{
 		obj_xml.remove(QRegularExpression(AttributeExpr.arg(QString("sysid"))));
 
-		#warning "Debug me!"
-		QRegularExpression ref_roles_expr = QRegularExpression(QString("(\\<%1)(.)+(%2)( )*(=)(\")(%3)(\")(.)+(\\/\\>)").arg(Attributes::Roles, Attributes::RoleType, Attributes::Refer));
-		//int pos = ref_roles_expr.indexIn(obj_xml);
+		QRegularExpression ref_roles_expr = QRegularExpression(QString("(<%1)(.)+(%2)( )*(=)(\")(%3)(\")(.)+(>)").arg(Attributes::Roles, Attributes::RoleType, Attributes::Refer));
 		QRegularExpressionMatch match;
 		int pos = -1;
 
@@ -1439,8 +1431,6 @@ void PgModelerCliApp::fixObjectAttributes(QString &obj_xml)
 
 		if(pos >= 0)
 		{
-			#warning "Debug me!"
-			//QString buf = obj_xml.mid(pos, ref_roles_expr.matchedLength()),
 			QString buf = obj_xml.mid(pos, match.capturedLength()),
 					name_attr = "name=\"", role_name;
 			int start_idx = 0, end_idx = 0;
@@ -1451,7 +1441,6 @@ void PgModelerCliApp::fixObjectAttributes(QString &obj_xml)
 			role_name = obj_xml.mid(start_idx, end_idx - start_idx).remove(name_attr);
 
 			// Removing the element <roles ... role-type="refer"/>
-			//obj_xml.remove(pos, ref_roles_expr.matchedLength());
 			obj_xml.remove(pos, match.capturedLength());
 
 			// Retrieve the name of the ref-roles
@@ -1483,12 +1472,6 @@ void PgModelerCliApp::fixObjectAttributes(QString &obj_xml)
 					enum_tag_expr("(" + TagExpr.arg(Attributes::EnumType) + ")(.)+(/>)");
 			int start = -1, end = -1;
 			QRegularExpressionMatch match;
-
-			#warning "Debug me!"
-			// Extracting the values of the <enumeration> tag
-			/* start = enum_start_expr.indexIn(obj_xml) + enum_start_expr.matchedLength();
-			end = enum_end_expr.indexIn(obj_xml, start);
-			values = obj_xml.mid(start, end - start); */
 
 			match = enum_start_expr.match(obj_xml);
 			start = match.capturedStart() + match.capturedLength();
@@ -1548,12 +1531,6 @@ void PgModelerCliApp::fixObjectAttributes(QString &obj_xml)
 		QString constr_name;
 		QRegularExpressionMatch match;
 
-		#warning "Debug me!"
-		/*regexp.indexIn(obj_xml);
-		constr_name = regexp.capturedTexts().at(0);
-		constr_name.remove(QString("%1=\"").arg(Attributes::Constraint));
-		constr_name.remove(constr_name.length() - 1, 1); */
-
 		match = regexp.match(obj_xml);
 		constr_name = match.capturedTexts().at(0);
 		constr_name.remove(QString("%1=\"").arg(Attributes::Constraint));
@@ -1579,22 +1556,19 @@ void PgModelerCliApp::fixObjectAttributes(QString &obj_xml)
 	//Remove the usage of IN keyword in functions' signatures since it is the default if absent
 	QRegularExpression regexp = QRegularExpression(AttributeExpr.arg(Attributes::Signature));
 	QRegularExpressionMatch match;
-	int sig_idx = -1 /*regexp.indexIn(obj_xml) */,	len = 0;
+	int sig_idx = -1,	len = 0;
 	QString signature, in_keyw = "IN ";
 
-	#warning "Debug me!"
 	match = regexp.match(obj_xml);
 	sig_idx = match.capturedStart();
 
 	while(sig_idx >= 0)
 	{
-		//signature = obj_xml.mid(sig_idx, regexp.matchedLength());
 		signature = obj_xml.mid(sig_idx,  match.capturedLength());
 		len = signature.length();
 
 		if(!signature.contains(in_keyw))
 		{
-			//sig_idx = regexp.indexIn(obj_xml, sig_idx + len);
 			match = regexp.match(obj_xml, sig_idx + len);
 			sig_idx = match.capturedStart();
 			continue;
@@ -1604,7 +1578,6 @@ void PgModelerCliApp::fixObjectAttributes(QString &obj_xml)
 		obj_xml.remove(sig_idx, len);
 		obj_xml.insert(sig_idx, signature);
 
-		//sig_idx = regexp.indexIn(obj_xml, sig_idx + len);
 		match = regexp.match(obj_xml, sig_idx + len);
 		sig_idx = match.capturedStart();
 	}
@@ -1648,15 +1621,12 @@ void PgModelerCliApp::fixOpClassesFamiliesReferences(QString &obj_xml)
 
 	do
 	{
-		#warning "Debug me!"
-		//pos=sign_regexp.indexIn(obj_xml, pos);
 		match = sign_regexp.match(obj_xml, pos);
 		pos = match.capturedStart();
 
 		if(pos >= 0)
 		{
 			//Extracting the signature attribute
-			//obj_name=obj_xml.mid(pos, sign_regexp.matchedLength());
 			obj_name=obj_xml.mid(pos, match.capturedLength());
 
 			//Removing useless portions signature=" in order to retrive only the object's name
@@ -1668,21 +1638,17 @@ void PgModelerCliApp::fixOpClassesFamiliesReferences(QString &obj_xml)
 
 			for(auto &idx_type : index_types)
 			{
-				//Building a name by appe
 				aux_obj_name=signature.arg(obj_name).arg(idx_type);
 
 				if(model->getObjectIndex(aux_obj_name, ref_obj_type) >= 0)
 				{
 					//Replacing the old signature with the corrected form
 					aux_obj_name.replace(QString("\""), XmlParser::CharQuot);
-
-					//obj_xml.replace(pos, sign_regexp.matchedLength(), QString("signature=\"%1\"").arg(aux_obj_name));
 					obj_xml.replace(pos, match.capturedLength(), QString("signature=\"%1\"").arg(aux_obj_name));
 					break;
 				}
 			}
 
-			//pos+=sign_regexp.matchedLength();
 			pos += match.capturedLength();
 		}
 	}
@@ -2241,9 +2207,6 @@ void PgModelerCliApp::handleLinuxMimeDatabase(bool uninstall, bool system_wide, 
 			{
 				//Remove any reference to application/dbm mime from file
 				str_aux=ts.readLine();
-
-				#warning "Debug me!"
-				//str_aux.replace(QRegularExpression(QString("application/dbm*"),Qt::CaseSensitive,QRegularExpression::Wildcard),"");
 				str_aux.replace(QRegularExpression(QRegularExpression::wildcardToRegularExpression("application/dbm*")),"");
 
 				if(!str_aux.isEmpty())
