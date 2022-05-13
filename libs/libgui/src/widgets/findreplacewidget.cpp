@@ -95,13 +95,6 @@ void FindReplaceWidget::replaceFindText()
 
 bool FindReplaceWidget::findText(const QString &text, bool regexp, QTextDocument::FindFlags flags)
 {
-	#warning "Debug me!"
-	/*if(regexp)
-		return text_edt->find(QRegularExpression(text, ((flags & QTextDocument::FindCaseSensitively)==QTextDocument::FindCaseSensitively ?
-																					 Qt::CaseSensitive : Qt::CaseInsensitive)), flags);
-	else
-		return text_edt->find(text, flags); */
-
 	if(regexp)
 	{
 		QRegularExpression regexp(text);
