@@ -280,38 +280,34 @@ void CodeCompletionWidget::populateNameList(vector<BaseObject *> &objects, QStri
 	QListWidgetItem *item=nullptr;
 	QString obj_name;
 	ObjectType obj_type;
-	//QRegularExpression regexp(filter.remove('"') + QString("*"), Qt::CaseInsensitive, QRegularExpression::Wildcard);
-
-	#warning "Debug me!"
 	QRegularExpression regexp(QRegularExpression::wildcardToRegularExpression(filter.remove('"') + QString("*")),
 														QRegularExpression::CaseInsensitiveOption);
 
 	name_list->clear();
 
-	for(unsigned i=0; i < objects.size(); i++)
+	//for(unsigned i=0; i < objects.size(); i++)
+	for(auto &obj : objects)
 	{
-		obj_type=objects[i]->getObjectType();
+		obj_type = obj->getObjectType();
 		obj_name.clear();
 
 		//Formatting the object name according to the object type
-		if(obj_type==ObjectType::Function)
+		if(obj_type == ObjectType::Function)
 		{
-			dynamic_cast<Function *>(objects[i])->createSignature(false);
-			obj_name=dynamic_cast<Function *>(objects[i])->getSignature();
+			dynamic_cast<Function *>(obj)->createSignature(false);
+			obj_name = dynamic_cast<Function *>(obj)->getSignature();
 		}
-		else if(obj_type==ObjectType::Operator)
-			obj_name=dynamic_cast<Operator *>(objects[i])->getSignature(false);
+		else if(obj_type == ObjectType::Operator)
+			obj_name = dynamic_cast<Operator *>(obj)->getSignature(false);
 		else
-			obj_name+=objects[i]->getName(false, false);
+			obj_name += obj->getName(false, false);
 
-		#warning "Debug me!"
 		//The object will be inserted if its name matches the filter or there is no filter set
-		//if(filter.isEmpty() || regexp.exactMatch(obj_name))
 		if(filter.isEmpty() || regexp.match(obj_name).hasMatch())
 		{
-			item=new QListWidgetItem(QPixmap(GuiUtilsNs::getIconPath(objects[i]->getSchemaName())), obj_name);
-			item->setToolTip(QString("%1 (%2)").arg(objects[i]->getName(true)).arg(objects[i]->getTypeName()));
-			item->setData(Qt::UserRole, QVariant::fromValue<void *>(objects[i]));
+			item= new QListWidgetItem(QPixmap(GuiUtilsNs::getIconPath(obj->getSchemaName())), obj_name);
+			item->setToolTip(QString("%1 (%2)").arg(obj->getName(true)).arg(obj->getTypeName()));
+			item->setData(Qt::UserRole, QVariant::fromValue<void *>(obj));
 			item->setToolTip(BaseObject::getTypeName(obj_type));
 			name_list->addItem(item);
 		}
@@ -358,7 +354,6 @@ void CodeCompletionWidget::updateList()
 {
 	QListWidgetItem *item=nullptr;
 	QString pattern;
-	QStringList list;
 	vector<BaseObject *> objects;
 	vector<ObjectType> types=BaseObject::getObjectTypes(false, 	{ ObjectType::Textbox, ObjectType::Relationship, ObjectType::BaseRelationship });
 	QTextCursor tc;
@@ -458,14 +453,11 @@ void CodeCompletionWidget::updateList()
 	completion wasn't triggered using the special char */
 	if(qualifying_level < 0 && !auto_triggered)
 	{
-		#warning "Debug me!"
-		//QRegularExpression regexp(pattern, Qt::CaseInsensitive);
 		QRegularExpression regexp(pattern, QRegularExpression::CaseInsensitiveOption);
 
-		list=keywords.filter(regexp);
-		for(int i=0; i < list.size(); i++)
+		for(auto &kw : keywords.filter(regexp))
 		{
-			item=new QListWidgetItem(QPixmap(GuiUtilsNs::getIconPath("keyword")), list[i]);
+			item=new QListWidgetItem(QPixmap(GuiUtilsNs::getIconPath("keyword")), kw);
 			item->setToolTip(tr("SQL Keyword"));
 			name_list->addItem(item);
 		}
