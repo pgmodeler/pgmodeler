@@ -88,7 +88,7 @@ QString Exception::messages[Exception::ErrorCount][2]={
 	{"RefTypeInvalidIndex", QT_TR_NOOP("Reference to data type with an index outside the capacity of data types list!")},
 	{"AsgNullTypeObject", QT_TR_NOOP("Assignment of a null type to object `%1' (%2)!")},
 	{"AsgInvalidTypeObject", QT_TR_NOOP("Assignment of invalid type to the object!")},
-	{"AsgEmptyDirectoryName", QT_TR_NOOP("Assignment of an empty directory to object `%1' (%2)!")},
+	{"AsgEmptyDirectoryName", QT_TR_NOOP("Assignment of an empty directory to tablespace `%1'!")},
 	{"ObtTypesInvalidQuantity", QT_TR_NOOP("Obtaining types with invalid quantity!")},
 	{"InsDuplicatedItems", QT_TR_NOOP("Insertion of item which already exists in the attributes list of the type!")},
 	{"InsInvalidTypeAttribute", QT_TR_NOOP("Insertion of invalid item in the attributes list of the type!")},

@@ -452,19 +452,6 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
 
 						if(types[type_id] == ObjectType::Tablespace)
 						{
-							#warning "Debug me!"
-							/* comm_regexp = QRegularExpression(tmpl_comm_regexp.arg(object->getSQLName()));
-							pos = comm_regexp.indexIn(sql_cmd); */
-
-							/* If we find a comment on statement we should strip it from the tablespace definition in
-							 * order to execute it after creating the db */
-							/* if(pos >= 0)
-							{
-								sql_cmd_comment = sql_cmd.mid(pos, comm_regexp.matchedLength());
-								sql_cmd.remove(pos, comm_regexp.matchedLength());
-								pos = -1;
-							} */
-
 							comm_regexp = QRegularExpression(tmpl_comm_regexp.arg(object->getSQLName()));
 							match = comm_regexp.match(sql_cmd);
 							pos = match.capturedStart();
@@ -498,19 +485,6 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
 		{
 			if(!db_model->isSQLDisabled() && !export_canceled)
 			{
-				#warning "Debug me!"
-				/* comm_regexp = QRegularExpression(tmpl_comm_regexp.arg(db_model->getSQLName()));
-				sql_cmd=db_model->__getCodeDefinition(SchemaParser::SqlDefinition);
-				pos = comm_regexp.indexIn(sql_cmd); */
-
-				/* If we find a comment on statment we should strip it from the DB definition in
-				 * order to execute it after creating the db */
-				/* if(pos >= 0)
-				{
-					sql_cmd_comment = sql_cmd.mid(pos, comm_regexp.matchedLength());
-					sql_cmd.remove(pos, comm_regexp.matchedLength());
-				} */
-
 				comm_regexp = QRegularExpression(tmpl_comm_regexp.arg(db_model->getSQLName()));
 				sql_cmd = db_model->__getCodeDefinition(SchemaParser::SqlDefinition);
 				match = comm_regexp.match(sql_cmd);
@@ -886,9 +860,6 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
 			/* If the simulation mode is off and the drop objects option is checked,
 		 check if the current line matches one of the accepted drop commands
 		 (DROP [OBJECT] or ALTER TABLE...DROP) */
-
-			#warning "Debug me!"
-			//if(drop_objs && (drop_reg.exactMatch(lin) || drop_tab_obj_reg.exactMatch(lin)))
 			if(drop_objs && (drop_reg.match(lin).hasMatch() || drop_tab_obj_reg.match(lin).hasMatch()))
 			{
 				comm_cnt=lin.count("--");
@@ -915,13 +886,9 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
 			//If the ddl end token is found
 			if(ddl_tk_found || (!sql_cmd.isEmpty() && ts.atEnd()))
 			{
-				#warning "Debug me!"
 				//Checking if the command is a column or constraint creation via ALTER TABLE
-				/*aux_cmd=sql_cmd;
-				pos=tab_obj_reg.indexIn(aux_cmd);
-
-				if(pos >= 0) */
 				aux_cmd = sql_cmd;
+
 				if(tab_obj_reg.match(aux_cmd).hasMatch())
 				{
 					aux_cmd.remove('"');
@@ -941,11 +908,7 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
 
 					tab_name=aux_cmd.mid(pos, pos1 - pos).simplified();
 
-					#warning "Debug me!"
 					//Extracting the child object name (column | constraint) the one between
-					/* pos=reg_aux.indexIn(aux_cmd, pos1);
-					pos+=reg_aux.matchedLength(); */
-
 					match = reg_aux.match(aux_cmd, pos1);
 					pos = match.capturedStart();
 					pos += match.capturedLength();
@@ -964,9 +927,7 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
 					emit s_progressUpdated(aux_prog, msg, obj_type, sql_cmd);
 					is_drop=false;
 				}
-				#warning "Debug me!"
 				//Check if the regex matches the sql command
-				//else if(obj_reg.exactMatch(sql_cmd))
 				else if(obj_reg.match(sql_cmd).hasMatch())
 				{
 					//Get the fisrt line of the sql command, that contains the CREATE/DROP/ALTER ... statement
@@ -1006,7 +967,7 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
 								lin.replace(QRegularExpression("(TRANSFORM)(.)+(\\.)"), "TRANSFORM ");
 							}
 						}
-						else if(lin.startsWith(QString("DROP")))
+						else if(lin.startsWith("DROP"))
 						{
 							lin.remove("IF EXISTS");
 							lin.remove("MATERIALIZED");
@@ -1014,12 +975,10 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
 
 						lin=lin.simplified();
 
-						#warning "Debug me!"
 						//Check if the keyword for the current object exists on string
 						reg_aux.setPattern(QString("(CREATE|DROP|ALTER)( )(%1)").arg(BaseObject::getSQLName(obj_tp)));
-						//pos=reg_aux.indexIn(lin);
-						//if(pos >= 0)
 						match = reg_aux.match(lin);
+
 						if(match.hasMatch())
 						{
 							is_create=lin.startsWith("CREATE");
