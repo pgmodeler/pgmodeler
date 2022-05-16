@@ -114,7 +114,9 @@ TableDataWidget::TableDataWidget(QWidget *parent): BaseObjectWidget(parent, Obje
 
 							act = item_menu.addAction(btn->icon(), btn->text(), btn, SLOT(click()), btn->shortcut());
 							act->setEnabled(btn->isEnabled());
-							act->setMenu(btn->menu());
+
+							#warning "Fix me!"
+							//act->setMenu(btn->menu());
 						}
 
 						item_menu.exec(QCursor::pos());

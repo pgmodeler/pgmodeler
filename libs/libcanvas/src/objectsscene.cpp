@@ -1363,7 +1363,8 @@ void ObjectsScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 
 void ObjectsScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
-	QGraphicsScene::mouseReleaseEvent(event);
+	#warning "Fix me! (crash)"
+	//QGraphicsScene::mouseReleaseEvent(event);
 
 	if(event->button()==Qt::LeftButton && corner_move)
 		enableSceneMove(false);
@@ -1381,7 +1382,9 @@ void ObjectsScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 		sel_area.addRect(selection_rect->polygon().boundingRect());
 
 		this->blockItemsSignals(true);
-		this->setSelectionArea(sel_area, Qt::IntersectsItemShape);
+		#warning "Debug me!"
+		//this->setSelectionArea(sel_area, Qt::IntersectsItemShape);
+		this->setSelectionArea(sel_area);
 		this->blockItemsSignals(false);
 
 		selection_rect->setVisible(false);

@@ -895,7 +895,9 @@ void DataManipulationForm::retrieveFKColumns(const QString &schema, const QStrin
 
 			submenu = new QMenu(this);
 			submenu->setStyle(new CustomMenuStyle);
-			fks_menu.addAction(QPixmap(GuiUtilsNs::getIconPath("referenced")), tr("Referenced tables"))->setMenu(submenu);
+
+			#warning "Fix me!"
+			//fks_menu.addAction(QPixmap(GuiUtilsNs::getIconPath("referenced")), tr("Referenced tables"))->setMenu(submenu);
 
 			if(fks.empty())
 				submenu->addAction(tr("(none)"))->setEnabled(false);
@@ -945,7 +947,9 @@ void DataManipulationForm::retrieveFKColumns(const QString &schema, const QStrin
 
 			submenu = new QMenu(this);
 			submenu->setStyle(new CustomMenuStyle);
-			fks_menu.addAction(QPixmap(GuiUtilsNs::getIconPath("referrer")), tr("Referrer tables"))->setMenu(submenu);
+
+			#warning "Fix me!"
+			//fks_menu.addAction(QPixmap(GuiUtilsNs::getIconPath("referrer")), tr("Referrer tables"))->setMenu(submenu);
 
 			if(ref_fks.empty())
 				submenu->addAction(tr("(none)"))->setEnabled(false);
@@ -1643,10 +1647,12 @@ void DataManipulationForm::showPopupMenu()
 		item_menu.setStyle(new CustomMenuStyle);
 
 		act = item_menu.addAction(QIcon(GuiUtilsNs::getIconPath("copy")), tr("Copy items"));
-		act->setMenu(&copy_menu);
+		#warning "Fix me!"
+		//act->setMenu(&copy_menu);
 
 		act = item_menu.addAction(QIcon(GuiUtilsNs::getIconPath("paste")), tr("Paste items"));
-		act->setMenu(&paste_menu);
+		#warning "Fix me!"
+		//act->setMenu(&paste_menu);
 		act->setEnabled(paste_tb->isEnabled());
 
 		act = item_menu.addAction(QIcon(GuiUtilsNs::getIconPath("cleartext")), tr("Clear items"), this, SLOT(clearItemsText()));
@@ -1656,7 +1662,8 @@ void DataManipulationForm::showPopupMenu()
 		{
 			item_menu.addSeparator();
 			act = item_menu.addAction(browse_tabs_tb->icon(), tr("Browse tables"));
-			act->setMenu(&fks_menu);
+			#warning "Fix me!"
+			//act->setMenu(&fks_menu);
 			act->setEnabled(browse_tabs_tb->isEnabled());
 
 			item_menu.addSeparator();

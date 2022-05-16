@@ -59,9 +59,12 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 		plugins_conf_wgt->initPlugins(this);
 		plugins_menu->setEnabled(!plugins_menu->isEmpty());
 		action_plugins->setEnabled(!plugins_menu->isEmpty());
-		action_plugins->setMenu(plugins_menu);
 
-		action_more_actions->setMenu(&more_actions_menu);
+		#warning "Fix me!"
+		//action_plugins->setMenu(plugins_menu);
+
+		#warning "Fix me!"
+		//action_more_actions->setMenu(&more_actions_menu);
 
 		confs=GeneralConfigWidget::getConfigurationParams();
 		itr=confs.begin();
@@ -115,7 +118,10 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 
 	fix_menu.addAction(action_fix_model);
 	fix_menu.addAction(action_handle_metadata);
-	action_fix->setMenu(&fix_menu);
+
+	#warning "Fix me!"
+	//action_fix->setMenu(&fix_menu);
+
 	QToolButton *tool_btn = qobject_cast<QToolButton *>(tools_acts_tb->widgetForAction(action_fix));
 	tool_btn->setPopupMode(QToolButton::InstantPopup);
 
@@ -420,7 +426,10 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	main_menu.addMenu(about_menu);
 	main_menu.addSeparator();
 	main_menu.addAction(action_show_main_menu);
-	action_main_menu->setMenu(&main_menu);
+
+	#warning "Fix me!"
+	//action_main_menu->setMenu(&main_menu);
+
 	dynamic_cast<QToolButton *>(model_acts_tb->widgetForAction(action_main_menu))->setPopupMode(QToolButton::InstantPopup);
 
 	connect(action_show_main_menu, SIGNAL(triggered()), this, SLOT(showMainMenu()));
@@ -896,7 +905,10 @@ void MainWindow::updateRecentModelsMenu()
 	{
 		recent_mdls_menu.addSeparator();
 		recent_mdls_menu.addAction(tr("Clear Menu"), this, SLOT(clearRecentModelsMenu()));
-		action_recent_models->setMenu(&recent_mdls_menu);
+
+		#warning "Fix me!"
+		//action_recent_models->setMenu(&recent_mdls_menu);
+
 		dynamic_cast<QToolButton *>(model_acts_tb->widgetForAction(action_recent_models))->setPopupMode(QToolButton::InstantPopup);
 	}
 
@@ -2100,11 +2112,12 @@ void MainWindow::changeCurrentView(bool checked)
 		{
 			actions[i]->setEnabled(enable);
 
-			if(actions[i]->menu())
+			#warning "Fix me!"
+			/*if(actions[i]->menu())
 			{
 				for(auto action : actions[i]->menu()->actions())
 					action->setEnabled(enable);
-			}
+			}*/
 		}
 
 		if(!enable)

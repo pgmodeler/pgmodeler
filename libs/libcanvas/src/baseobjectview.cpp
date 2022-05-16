@@ -44,7 +44,7 @@ BaseObjectView::~BaseObjectView()
 	setSourceObject(nullptr);
 }
 
-void BaseObjectView::mousePressEvent(QGraphicsSceneMouseEvent *event)
+/*void BaseObjectView::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
 	if(event->button()==Qt::RightButton && !this->isSelected())
 	{
@@ -55,12 +55,16 @@ void BaseObjectView::mousePressEvent(QGraphicsSceneMouseEvent *event)
 		m_event->setScreenPos(event->screenPos());
 		m_event->setButton(Qt::LeftButton);
 
+		#warning "Fix me! (crash)"
 		QGraphicsItemGroup::mousePressEvent(m_event);
 		event->ignore();
 	}
 	else if(event->button()==Qt::LeftButton)
+	{
+		#warning "Fix me! (crash)"
 		QGraphicsItemGroup::mousePressEvent(event);
-}
+	}
+}*/
 
 void BaseObjectView::setSourceObject(BaseObject *object)
 {

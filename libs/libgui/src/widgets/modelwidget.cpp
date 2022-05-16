@@ -131,7 +131,7 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	font.setBold(false);
 	font.setItalic(false);
 	font.setUnderline(false);
-	font.setWeight(50);
+	font.setWeight(QFont::Normal);
 	font.setStrikeOut(false);
 	font.setKerning(true);
 	label->setFont(font);
@@ -243,7 +243,8 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 
 	action_select_all=new QAction(QIcon(GuiUtilsNs::getIconPath("selectmove")), tr("Select all"), this);
 	action_select_all->setToolTip(tr("Selects all the graphical objects in the model"));
-	action_select_all->setMenu(&select_all_menu);
+	#warning "Fix me!"
+	//action_select_all->setMenu(&select_all_menu);
 
 	action_convert_relnn=new QAction(QIcon(GuiUtilsNs::getIconPath("convrelnn")), tr("Convert"), this);
 	action_convert_rel1n=new QAction(QIcon(GuiUtilsNs::getIconPath("convrel1n")), tr("Convert"), this);
@@ -267,17 +268,20 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 
 	action_quick_actions=new QAction(QIcon(GuiUtilsNs::getIconPath("quickactions")), tr("Quick"), this);
 	action_quick_actions->setToolTip(tr("Quick action for the selected object"));
-	action_quick_actions->setMenu(&quick_actions_menu);
+	#warning "Fix me!"
+	//action_quick_actions->setMenu(&quick_actions_menu);
 
 	action_rename=new QAction(QIcon(GuiUtilsNs::getIconPath("rename")), tr("Rename"), this);
 	action_rename->setShortcut(QKeySequence(tr("F2")));
 	action_rename->setToolTip(tr("Quick rename the object"));
 
 	action_moveto_schema=new QAction(QIcon(GuiUtilsNs::getIconPath("movetoschema")), tr("Move to schema"), this);
-	action_moveto_schema->setMenu(&schemas_menu);
+	#warning "Fix me!"
+	//action_moveto_schema->setMenu(&schemas_menu);
 
 	action_set_layer=new QAction(QIcon(GuiUtilsNs::getIconPath("layers")), tr("Set layers"), this);
-	action_set_layer->setMenu(&layers_menu);
+	#warning "Fix me!"
+	//action_set_layer->setMenu(&layers_menu);
 
 	layers_wgt = new LayersWidget(this);
 	wgt_action_layers = new QWidgetAction(this);
@@ -285,13 +289,15 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	layers_menu.addAction(wgt_action_layers);
 
 	action_set_tag=new QAction(QIcon(GuiUtilsNs::getIconPath("tag")), tr("Set tag"), this);
-	action_set_tag->setMenu(&tags_menu);
+	#warning "Fix me!"
+	//action_set_tag->setMenu(&tags_menu);
 
 	action_edit_perms=new QAction(QIcon(GuiUtilsNs::getIconPath("permission")), tr("Edit permissions"), this);
 	action_edit_perms->setShortcut(QKeySequence(tr("Ctrl+E")));
 
 	action_change_owner=new QAction(QIcon(GuiUtilsNs::getIconPath("changeowner")), tr("Change owner"), this);
-	action_change_owner->setMenu(&owners_menu);
+	#warning "Fix me!"
+	//action_change_owner->setMenu(&owners_menu);
 
 	action_sel_sch_children=new QAction(QIcon(GuiUtilsNs::getIconPath("selectmove")), tr("Select children"), this);
 	action_sel_tagged_tabs=new QAction(QIcon(GuiUtilsNs::getIconPath("selectmove")), tr("Select tagged"), this);
@@ -318,7 +324,8 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	action_duplicate->setMenuRole(QAction::NoRole);
 
 	action_pagination=new QAction(QIcon(GuiUtilsNs::getIconPath("pagination")), tr("Pagination"), this);
-	action_pagination->setMenu(&pagination_menu);
+	#warning "Fix me!"
+	//action_pagination->setMenu(&pagination_menu);
 
 	action = pagination_menu.addAction(tr("Enable"));
 	action->setData(true);
@@ -337,19 +344,24 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	action_collpase_all_attribs->setData(enum_cast(CollapseMode::AllAttribsCollapsed));
 
 	action_jump_to_table=new QAction(QIcon(GuiUtilsNs::getIconPath("jumptotable")), tr("Jump to table"), this);
-	action_jump_to_table->setMenu(&jump_to_tab_menu);
+	#warning "Fix me!"
+	//action_jump_to_table->setMenu(&jump_to_tab_menu);
 
 	toggle_attrs_menu.addAction(action_no_collapse_attribs);
 	toggle_attrs_menu.addAction(action_collapse_ext_attribs);
 	toggle_attrs_menu.addAction(action_collpase_all_attribs);
-	action_collapse_mode->setMenu(&toggle_attrs_menu);
+
+	#warning "Fix me!"
+	//action_collapse_mode->setMenu(&toggle_attrs_menu);
 
 	action_schemas_rects=new QAction(QIcon(GuiUtilsNs::getIconPath("schemarect")), tr("Schemas rectangles"), this);
 	action_show_schemas_rects=new QAction(tr("Show"), this);
 	action_hide_schemas_rects=new QAction(tr("Hide"), this);
 	toggle_sch_rects_menu.addAction(action_show_schemas_rects);
 	toggle_sch_rects_menu.addAction(action_hide_schemas_rects);
-	action_schemas_rects->setMenu(&toggle_sch_rects_menu);
+
+	#warning "Fix me!"
+	//action_schemas_rects->setMenu(&toggle_sch_rects_menu);
 
 	action_fade=new QAction(QIcon(GuiUtilsNs::getIconPath("fade")), tr("Fade in/out"), this);
 	action_fade_in=new QAction(QIcon(GuiUtilsNs::getIconPath("fadein")), tr("Fade in"), this);
@@ -369,19 +381,26 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 
 	fade_rels_menu.addAction(action_fade_rels_in);
 	fade_rels_menu.addAction(action_fade_rels_out);
-	action_fade_rels->setMenu(&fade_rels_menu);
+
+	#warning "Fix me!"
+	//action_fade_rels->setMenu(&fade_rels_menu);
 
 	fade_peer_tables_menu.addAction(action_fade_peer_tables_in);
 	fade_peer_tables_menu.addAction(action_fade_peer_tables_out);
-	action_fade_peer_tables->setMenu(&fade_peer_tables_menu);
+
+	#warning "Fix me!"
+	//action_fade_peer_tables->setMenu(&fade_peer_tables_menu);
 
 	fade_both_objs_menu.addAction(action_fade_both_objs_in);
 	fade_both_objs_menu.addAction(action_fade_both_objs_out);
-	action_fade_both_objs->setMenu(&fade_both_objs_menu);
 
-	action_fade->setMenu(&fade_menu);
-	action_fade_in->setMenu(&fade_in_menu);
-	action_fade_out->setMenu(&fade_out_menu);
+	#warning "Fix me!"
+	//action_fade_both_objs->setMenu(&fade_both_objs_menu);
+
+	#warning "Fix me!"
+	//action_fade->setMenu(&fade_menu);
+	//action_fade_in->setMenu(&fade_in_menu);
+	//action_fade_out->setMenu(&fade_out_menu);
 
 	action_edit_creation_order=new QAction(QIcon(GuiUtilsNs::getIconPath("swapobjs")), tr("Swap ids"), this);
 	action_edit_creation_order->setToolTip(tr("Edit the objects creation order by swapping their ids"));
@@ -407,7 +426,8 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	action->setData(QVariant::fromValue<unsigned>(BreakHoriz2NinetyDegrees));
 	break_rel_menu.addAction(action);
 
-	action_break_rel_line->setMenu(&break_rel_menu);
+	#warning "Fix me!"
+	//action_break_rel_line->setMenu(&break_rel_menu);
 
 	//Alocatting the object creation actions
 	for(auto &type : types_vect)
@@ -419,7 +439,8 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 
 	// Configuring the submenu of database level objects
 	action_database_category = new QAction(QIcon(GuiUtilsNs::getIconPath(ObjectType::Database)), tr("Database object"), this);
-	action_database_category->setMenu(&database_category_menu);
+	#warning "Fix me!"
+	//action_database_category->setMenu(&database_category_menu);
 	types_vect = BaseObject::getChildObjectTypes(ObjectType::Database);
 
 	for(auto &type : types_vect)
@@ -427,7 +448,10 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 
 	// Configuring the submenu of schema level objects
 	action_schema_category = new QAction(QIcon(GuiUtilsNs::getIconPath(ObjectType::Schema)), tr("Schema object"), this);
-	action_schema_category->setMenu(&schema_category_menu);
+
+	#warning "Fix me!"
+	//action_schema_category->setMenu(&schema_category_menu);
+
 	types_vect = BaseObject::getChildObjectTypes(ObjectType::Schema);
 
 	for(auto &type : types_vect)
@@ -436,7 +460,9 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	//Creating the relationship submenu
 	rels_menu=new QMenu(this);
 	rels_menu->setStyle(new CustomMenuStyle);
-	actions_new_objects[ObjectType::Relationship]->setMenu(rels_menu);
+
+	#warning "Fix me!"
+	//actions_new_objects[ObjectType::Relationship]->setMenu(rels_menu);
 
 	for(int i=0; i < rel_types_cod.size(); i++)
 	{
@@ -487,7 +513,9 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	action_bring_to_front=new QAction(QIcon(GuiUtilsNs::getIconPath("bringtofront")), tr("Bring to front"), this);
 	stacking_menu.addAction(action_send_to_back);
 	stacking_menu.addAction(action_bring_to_front);
-	action_stacking->setMenu(&stacking_menu);
+
+	#warning "Fix me!"
+	//action_stacking->setMenu(&stacking_menu);
 
 	connect(action_send_to_back, SIGNAL(triggered(bool)), this, SLOT(sendToBack()));
 	connect(action_bring_to_front, SIGNAL(triggered(bool)), this, SLOT(bringToFront()));
@@ -3692,8 +3720,10 @@ void ModelWidget::configureFadeMenu()
 	{
 		fade_menu.addAction(action_fade_in);
 		fade_menu.addAction(action_fade_out);
-		action_fade_in->setMenu(&fade_in_menu);
-		action_fade_out->setMenu(&fade_out_menu);
+
+		#warning "Fix me!"
+		//action_fade_in->setMenu(&fade_in_menu);
+		//action_fade_out->setMenu(&fade_out_menu);
 
 		if(is_db_selected)
 		{
@@ -3733,8 +3763,9 @@ void ModelWidget::configureFadeMenu()
 		}
 		else
 		{
-			action_fade_in->setMenu(nullptr);
-			action_fade_out->setMenu(nullptr);
+				#warning "Fix me!"
+			//action_fade_in->setMenu(nullptr);
+			//action_fade_out->setMenu(nullptr);
 		}
 	}
 	else if(selected_objects.size() == 1)
@@ -3745,8 +3776,10 @@ void ModelWidget::configureFadeMenu()
 		{
 			fade_menu.addAction(action_fade_in);
 			fade_menu.addAction(action_fade_out);
-			action_fade_in->setMenu(nullptr);
-			action_fade_out->setMenu(nullptr);
+
+			#warning "Fix me!"
+			//action_fade_in->setMenu(nullptr);
+			//action_fade_out->setMenu(nullptr);
 		}
 		else
 		{
@@ -3757,12 +3790,16 @@ void ModelWidget::configureFadeMenu()
 				if(obj_view->opacity() == 1)
 				{
 					fade_menu.addAction(action_fade_out);
-					action_fade_out->setMenu(nullptr);
+
+					#warning "Fix me!"
+					//action_fade_out->setMenu(nullptr);
 				}
 				else
 				{
 					fade_menu.addAction(action_fade_in);
-					action_fade_in->setMenu(nullptr);
+
+					#warning "Fix me!"
+					//action_fade_in->setMenu(nullptr);
 				}
 			}
 
@@ -4217,7 +4254,8 @@ void ModelWidget::configureBasicActions(BaseObject *obj)
 			if(obj_type==ObjectType::Table)
 				new_object_menu.addAction(actions_new_objects[ObjectType::Relationship]);
 
-			action_new_object->setMenu(&new_object_menu);
+			#warning "Fix me!"
+			//action_new_object->setMenu(&new_object_menu);
 			popup_menu.insertAction(action_quick_actions, action_new_object);
 
 			popup_menu.addAction(action_sel_table_rels);
@@ -4230,7 +4268,9 @@ void ModelWidget::configureBasicActions(BaseObject *obj)
 				new_object_menu.addAction(actions_new_objects[ObjectType::Column]);
 				new_object_menu.addAction(actions_new_objects[ObjectType::Constraint]);
 
-				action_new_object->setMenu(&new_object_menu);
+				#warning "Fix me!"
+				//action_new_object->setMenu(&new_object_menu);
+
 				popup_menu.insertAction(action_quick_actions, action_new_object);
 			}
 
@@ -4277,7 +4317,8 @@ void ModelWidget::configureBasicActions(BaseObject *obj)
 			for(auto type : BaseObject::getChildObjectTypes(ObjectType::Schema))
 				new_object_menu.addAction(actions_new_objects[type]);
 
-			action_new_object->setMenu(&new_object_menu);
+			#warning "Fix me!"
+			//action_new_object->setMenu(&new_object_menu);
 			popup_menu.insertAction(action_quick_actions, action_new_object);
 
 			popup_menu.addAction(action_sel_sch_children);
@@ -4340,9 +4381,11 @@ void ModelWidget::configureDatabaseActions()
 	new_object_menu.addAction(actions_new_objects[ObjectType::GenericSql]);
 	new_object_menu.addAction(actions_new_objects[ObjectType::Tag]);
 	new_object_menu.addAction(actions_new_objects[ObjectType::Textbox]);
-	action_new_object->setMenu(&new_object_menu);
-	popup_menu.addAction(action_new_object);
 
+	#warning "Fix me!"
+	//action_new_object->setMenu(&new_object_menu);
+
+	popup_menu.addAction(action_new_object);
 	configureQuickMenu(db_model);
 
 	action_edit->setData(QVariant::fromValue<void *>(dynamic_cast<BaseObject *>(db_model)));

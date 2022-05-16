@@ -25,8 +25,10 @@ int main(int argc, char **argv)
 {
 	try
 	{
-		Application::setAttribute(Qt::AA_EnableHighDpiScaling, false);
-		Application::setAttribute(Qt::AA_UseHighDpiPixmaps);
+		#warning "Debug me!"
+		//Application::setAttribute(Qt::AA_EnableHighDpiScaling, false);
+		//Application::setAttribute(Qt::AA_UseHighDpiPixmaps);
+
 		Application app(argc,argv);
 
 		QStringList args = app.arguments();

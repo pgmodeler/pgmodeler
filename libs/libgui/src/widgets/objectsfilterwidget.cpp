@@ -72,7 +72,9 @@ is present has the same effect as performing an exact match searching on the nam
 	options_menu.addAction(action_match_signature);
 	options_menu.addAction(action_only_matching);
 	action_forced_filter = options_menu.addAction(tr("Forced filtering"));
-	action_forced_filter->setMenu(&tab_objs_menu);
+
+	#warning "Fix me!"
+	//action_forced_filter->setMenu(&tab_objs_menu);
 
 	options_tb->setMenu(&options_menu);
 

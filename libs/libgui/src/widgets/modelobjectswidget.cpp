@@ -197,7 +197,10 @@ void ModelObjectsWidget::selectObject()
 			}
 			//Case is a relationship, insert the relationship menu of the model wiget into the action
 			else
-				act.setMenu(model_wgt->rels_menu);
+			{
+				#warning "Fix me!"
+				//act.setMenu(model_wgt->rels_menu);
+			}
 
 			if(simplified_view && enable_obj_creation)
 				connect(model_wgt->getDatabaseModel(), SIGNAL(s_objectAdded(BaseObject*)), this, SLOT(selectCreatedObject(BaseObject *)), Qt::QueuedConnection);
@@ -954,8 +957,9 @@ void ModelObjectsWidget::mouseMoveEvent(QMouseEvent *)
 	if(simplified_view && QApplication::mouseButtons()==Qt::LeftButton)
 	{
 		QPoint pos_dif;
-		QDesktopWidget desktop;
-		QRect ret=qApp->screens().at(desktop.screenNumber(this))->geometry();
+		#warning "Debug me!"
+		//QRect ret=qApp->screens().at(desktop.screenNumber(this))->geometry();
+		QRect ret = this->screen()->geometry();
 		int px, py;
 
 		pos_dif=pos1-pos;

@@ -96,8 +96,9 @@ int main(int argc, char **argv)
 		signal(SIGSEGV, startCrashHandler);
 		signal(SIGABRT, startCrashHandler);
 
-		PgModelerApp::setAttribute(Qt::AA_EnableHighDpiScaling, false);
-		PgModelerApp::setAttribute(Qt::AA_UseHighDpiPixmaps);
+		#warning "Debug me!"
+		//PgModelerApp::setAttribute(Qt::AA_EnableHighDpiScaling, false);
+		//PgModelerApp::setAttribute(Qt::AA_UseHighDpiPixmaps);
 		PgModelerApp app(argc,argv);		
 		int res=0;
 

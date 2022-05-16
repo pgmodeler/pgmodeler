@@ -150,12 +150,12 @@ class ObjectsScene: public QGraphicsScene {
 		//! \brief Brush used to draw the grid over the scene
 		static QBrush grid;
 
-		void mousePressEvent(QGraphicsSceneMouseEvent *event);
-		void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
-		void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
-		void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event);
-		void keyPressEvent(QKeyEvent *event);
-		void keyReleaseEvent(QKeyEvent *event);
+		virtual void mousePressEvent(QGraphicsSceneMouseEvent *event);
+		virtual void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
+		virtual void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
+		virtual void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event);
+		virtual void keyPressEvent(QKeyEvent *event);
+		virtual void keyReleaseEvent(QKeyEvent *event);
 
 		//! \brief Draws a line from the point 'p_start' to the cursor position and simulates the relationship creation
 		void showRelationshipLine(bool value, const QPointF &p_start=QPointF(DNaN,DNaN));

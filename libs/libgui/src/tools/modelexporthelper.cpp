@@ -750,7 +750,9 @@ void ModelExportHelper::generateTempObjectNames(DatabaseModel *db_model)
 
 	for(auto &obj : orig_obj_names)
 	{
-		stream << reinterpret_cast<unsigned *>(obj.first) << QString("_") << dt.toTime_t();
+		#warning "Debug me!"
+		//stream << reinterpret_cast<unsigned *>(obj.first) << QString("_") << dt.toTime_t();
+		stream << reinterpret_cast<unsigned *>(obj.first) << QString("_") << dt.toMSecsSinceEpoch();
 
 		//Generates an unique name for the object through md5 hash
 		hash.addData(QByteArray(tmp_name.toStdString().c_str()));
