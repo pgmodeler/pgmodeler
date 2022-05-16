@@ -103,7 +103,7 @@ class BaseObjectView: public QObject, public QGraphicsItemGroup {
 
 		void configurePlaceholder();
 
-		//virtual void mousePressEvent(QGraphicsSceneMouseEvent *event);
+		void mousePressEvent(QGraphicsSceneMouseEvent *event);
 
 		void setSelectionOrder(bool selected);
 
