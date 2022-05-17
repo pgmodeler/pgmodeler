@@ -37,7 +37,7 @@ CodeCompletionWidget::CodeCompletionWidget(QPlainTextEdit *code_field_txt, bool 
 
 	name_list=new QListWidget(completion_wgt);
 	name_list->setSpacing(2);
-	name_list->setIconSize(QSize(32,32));
+	name_list->setIconSize(QSize(22, 22));
 	name_list->setSortingEnabled(false);
 	name_list->setSizeAdjustPolicy(QListWidget::AdjustToContents);
 	name_list->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);

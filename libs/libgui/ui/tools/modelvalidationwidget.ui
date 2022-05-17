@@ -32,6 +32,9 @@
    <string>Form</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
+   <property name="spacing">
+    <number>5</number>
+   </property>
    <property name="leftMargin">
     <number>5</number>
    </property>
@@ -723,8 +726,8 @@
      </property>
      <property name="iconSize">
       <size>
-       <width>25</width>
-       <height>25</height>
+       <width>22</width>
+       <height>22</height>
       </size>
      </property>
      <property name="indentation">

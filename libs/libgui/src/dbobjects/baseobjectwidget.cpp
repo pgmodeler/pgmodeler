@@ -552,8 +552,8 @@ QFrame *BaseObjectWidget::generateInformationFrame(const QString &msg)
 
 	ico_lbl = new QLabel(info_frm);
 	ico_lbl->setObjectName("icon_lbl");
-	ico_lbl->setMinimumSize(QSize(32, 32));
-	ico_lbl->setMaximumSize(QSize(32, 32));
+	ico_lbl->setMinimumSize(QSize(25, 25));
+	ico_lbl->setMaximumSize(QSize(25, 25));
 	ico_lbl->setScaledContents(true);
 	ico_lbl->setPixmap(QPixmap(GuiUtilsNs::getIconPath("info")));
 	ico_lbl->setAlignment(Qt::AlignLeft|Qt::AlignTop);
@@ -628,8 +628,8 @@ QFrame *BaseObjectWidget::generateVersionWarningFrame(map<QString, vector<QWidge
 
 	ico_lbl = new QLabel(alert_frm);
 	ico_lbl->setObjectName("icon_lbl");
-	ico_lbl->setMinimumSize(QSize(32, 32));
-	ico_lbl->setMaximumSize(QSize(32, 32));
+	ico_lbl->setMinimumSize(QSize(25, 25));
+	ico_lbl->setMaximumSize(QSize(25, 25));
 	ico_lbl->setScaledContents(true);
 	ico_lbl->setPixmap(QPixmap(GuiUtilsNs::getIconPath("alert")));
 	ico_lbl->setAlignment(Qt::AlignLeft|Qt::AlignTop);

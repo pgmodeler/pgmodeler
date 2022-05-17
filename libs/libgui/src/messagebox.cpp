@@ -185,7 +185,7 @@ void Messagebox::show(const QString &title, const QString &msg, unsigned icon_ty
 	show_errors_tb->setChecked(false);
 	show_errors_tb->setVisible(exceptions_trw->topLevelItemCount() > 0);
 
-	double w_factor = 0.28, h_factor = 0.16;
+	double w_factor = 0.25, h_factor = 0.125;
 	QSize sz = screen()->size();
 	setMinimumWidth(sz.width() * w_factor);
 	setMinimumHeight(sz.height() * h_factor);

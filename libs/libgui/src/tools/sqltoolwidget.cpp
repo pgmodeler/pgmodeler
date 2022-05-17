@@ -38,7 +38,7 @@ SQLToolWidget::SQLToolWidget(QWidget * parent) : QWidget(parent)
 
 	sql_exec_corner_btn = new QToolButton;
 	sql_exec_corner_btn->setIcon(QPixmap(GuiUtilsNs::getIconPath("newtab")));
-	sql_exec_corner_btn->setIconSize(QSize(32, 32));
+	sql_exec_corner_btn->setIconSize(disconnect_tb->iconSize());
 	sql_exec_corner_btn->setToolTip(tr("Add a new execution tab for the current database (%1)").arg(QKeySequence("Ctrl+T").toString()));
 
 	QVBoxLayout *vbox = new QVBoxLayout;

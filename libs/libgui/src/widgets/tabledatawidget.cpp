@@ -388,11 +388,13 @@ void TableDataWidget::populateDataGrid(const QString &data)
 		data_tbw->setHorizontalHeaderItem(col++, item);
 	}
 
-	buffer.removeAt(0);
+	if(!buffer.isEmpty())
+		buffer.removeAt(0);
+
 	row=0;
 
 	//Populating the grid with the data
-	for(QString buf_row : buffer)
+	for(auto &buf_row : buffer)
 	{
 		addRow();
 		values = buf_row.split(UtilsNs::DataSeparator);
