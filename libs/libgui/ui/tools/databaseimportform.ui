@@ -153,8 +153,8 @@
                    </property>
                    <property name="iconSize">
                     <size>
-                     <width>28</width>
-                     <height>28</height>
+                     <width>25</width>
+                     <height>25</height>
                     </size>
                    </property>
                   </widget>
@@ -472,8 +472,8 @@
                    </property>
                    <property name="iconSize">
                     <size>
-                     <width>28</width>
-                     <height>28</height>
+                     <width>25</width>
+                     <height>25</height>
                     </size>
                    </property>
                    <property name="checkable">
@@ -510,8 +510,8 @@
                    </property>
                    <property name="iconSize">
                     <size>
-                     <width>28</width>
-                     <height>28</height>
+                     <width>25</width>
+                     <height>25</height>
                     </size>
                    </property>
                    <property name="checkable">
@@ -548,8 +548,8 @@
                    </property>
                    <property name="iconSize">
                     <size>
-                     <width>28</width>
-                     <height>28</height>
+                     <width>25</width>
+                     <height>25</height>
                     </size>
                    </property>
                    <property name="checkable">
@@ -586,8 +586,8 @@
                    </property>
                    <property name="iconSize">
                     <size>
-                     <width>28</width>
-                     <height>28</height>
+                     <width>25</width>
+                     <height>25</height>
                     </size>
                    </property>
                    <property name="checkable">
@@ -910,8 +910,8 @@
                 </property>
                 <property name="iconSize">
                  <size>
-                  <width>28</width>
-                  <height>28</height>
+                  <width>25</width>
+                  <height>25</height>
                  </size>
                 </property>
                </widget>

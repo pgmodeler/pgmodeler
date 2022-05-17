@@ -14,6 +14,9 @@
    <string>Form</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_2">
+   <property name="spacing">
+    <number>5</number>
+   </property>
    <property name="leftMargin">
     <number>5</number>
    </property>
@@ -36,6 +39,9 @@
        <string>Theme &amp;&amp; Code</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout">
+       <property name="spacing">
+        <number>5</number>
+       </property>
        <property name="leftMargin">
         <number>5</number>
        </property>
@@ -54,6 +60,9 @@
           <string>Theme</string>
          </property>
          <layout class="QHBoxLayout" name="horizontalLayout">
+          <property name="spacing">
+           <number>5</number>
+          </property>
           <property name="leftMargin">
            <number>5</number>
           </property>
@@ -150,7 +159,7 @@
            <number>5</number>
           </property>
           <property name="spacing">
-           <number>10</number>
+           <number>5</number>
           </property>
           <item row="1" column="0">
            <widget class="QLabel" name="font_lbl_2">
@@ -207,7 +216,7 @@
           <item row="3" column="1" colspan="2">
            <layout class="QHBoxLayout" name="horizontalLayout_18">
             <property name="spacing">
-             <number>10</number>
+             <number>5</number>
             </property>
             <item>
              <widget class="QCheckBox" name="disp_line_numbers_chk">
@@ -250,7 +259,7 @@
           <item row="1" column="1" colspan="2">
            <layout class="QHBoxLayout" name="horizontalLayout_5">
             <property name="spacing">
-             <number>10</number>
+             <number>5</number>
             </property>
             <item>
              <widget class="QDoubleSpinBox" name="code_font_size_spb">
@@ -354,6 +363,9 @@
        <string>Canvas &amp;&amp; Objects</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_3">
+       <property name="spacing">
+        <number>5</number>
+       </property>
        <property name="leftMargin">
         <number>5</number>
        </property>
@@ -378,6 +390,9 @@
           <string>Design</string>
          </property>
          <layout class="QHBoxLayout" name="horizontalLayout_13">
+          <property name="spacing">
+           <number>5</number>
+          </property>
           <property name="leftMargin">
            <number>5</number>
           </property>
@@ -392,8 +407,14 @@
           </property>
           <item>
            <layout class="QHBoxLayout" name="horizontalLayout_2">
+            <property name="spacing">
+             <number>5</number>
+            </property>
             <item>
              <layout class="QGridLayout" name="gridLayout_6">
+              <property name="spacing">
+               <number>5</number>
+              </property>
               <item row="0" column="0">
                <widget class="QLabel" name="grid_size_lbl_5">
                 <property name="sizePolicy">
@@ -500,6 +521,9 @@
             </item>
             <item>
              <layout class="QGridLayout" name="gridLayout_9">
+              <property name="spacing">
+               <number>5</number>
+              </property>
               <item row="0" column="0">
                <widget class="QLabel" name="grid_size_lbl_9">
                 <property name="sizePolicy">
@@ -696,7 +720,7 @@
            <number>5</number>
           </property>
           <property name="spacing">
-           <number>10</number>
+           <number>5</number>
           </property>
           <item row="0" column="1" colspan="4">
            <widget class="QComboBox" name="element_cmb">

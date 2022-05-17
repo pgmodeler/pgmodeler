@@ -26,6 +26,9 @@
    <property name="bottomMargin">
     <number>5</number>
    </property>
+   <property name="spacing">
+    <number>5</number>
+   </property>
    <item row="0" column="0">
     <widget class="QTabWidget" name="attribs_tbw">
      <property name="currentIndex">
@@ -53,8 +56,14 @@
        <property name="bottomMargin">
         <number>5</number>
        </property>
+       <property name="spacing">
+        <number>5</number>
+       </property>
        <item row="0" column="0">
         <layout class="QHBoxLayout" name="horizontalLayout_2">
+         <property name="spacing">
+          <number>5</number>
+         </property>
          <item>
           <widget class="QLabel" name="object_lbl">
            <property name="text">
@@ -110,6 +119,9 @@
        </item>
        <item row="1" column="1">
         <layout class="QHBoxLayout" name="horizontalLayout">
+         <property name="spacing">
+          <number>5</number>
+         </property>
          <item>
           <widget class="QLineEdit" name="ref_name_edt">
            <property name="toolTip">

@@ -30,7 +30,7 @@
     <number>5</number>
    </property>
    <property name="spacing">
-    <number>10</number>
+    <number>5</number>
    </property>
    <item row="0" column="0">
     <widget class="QTabWidget" name="attributes_tbw">
@@ -201,7 +201,7 @@
        <item row="1" column="1" colspan="4">
         <layout class="QHBoxLayout" name="horizontalLayout_2">
          <property name="spacing">
-          <number>10</number>
+          <number>5</number>
          </property>
          <item>
           <widget class="QCheckBox" name="concurrent_chk">

@@ -40,18 +40,18 @@
     <number>0</number>
    </property>
    <property name="rightMargin">
-    <number>10</number>
+    <number>5</number>
    </property>
    <property name="bottomMargin">
-    <number>10</number>
+    <number>5</number>
    </property>
    <property name="spacing">
-    <number>10</number>
+    <number>5</number>
    </property>
    <item row="2" column="0" colspan="4">
     <layout class="QHBoxLayout" name="horizontalLayout">
      <property name="spacing">
-      <number>10</number>
+      <number>5</number>
      </property>
      <property name="sizeConstraint">
       <enum>QLayout::SetDefaultConstraint</enum>
@@ -219,6 +219,9 @@
       <enum>QFrame::Raised</enum>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout">
+      <property name="spacing">
+       <number>5</number>
+      </property>
       <property name="leftMargin">
        <number>5</number>
       </property>
@@ -297,7 +300,7 @@
        <number>5</number>
       </property>
       <property name="topMargin">
-       <number>10</number>
+       <number>5</number>
       </property>
       <property name="rightMargin">
        <number>5</number>
@@ -305,10 +308,7 @@
       <property name="bottomMargin">
        <number>0</number>
       </property>
-      <property name="horizontalSpacing">
-       <number>10</number>
-      </property>
-      <property name="verticalSpacing">
+      <property name="spacing">
        <number>5</number>
       </property>
       <item row="0" column="0">

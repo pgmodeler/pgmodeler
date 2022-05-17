@@ -27,7 +27,7 @@
     <number>5</number>
    </property>
    <property name="spacing">
-    <number>10</number>
+    <number>5</number>
    </property>
    <item row="0" column="0">
     <widget class="QFrame" name="frame">
@@ -57,12 +57,12 @@
        <number>5</number>
       </property>
       <property name="spacing">
-       <number>10</number>
+       <number>5</number>
       </property>
       <item row="3" column="0" colspan="3">
        <layout class="QGridLayout" name="gridLayout">
         <property name="spacing">
-         <number>10</number>
+         <number>5</number>
         </property>
         <item row="0" column="3">
          <widget class="QComboBox" name="applies_to_cmb">
@@ -83,8 +83,8 @@
           </property>
           <property name="iconSize">
            <size>
-            <width>28</width>
-            <height>28</height>
+            <width>22</width>
+            <height>22</height>
            </size>
           </property>
          </widget>
@@ -165,7 +165,7 @@
       <item row="0" column="1" colspan="2">
        <layout class="QHBoxLayout" name="horizontalLayout_3">
         <property name="spacing">
-         <number>10</number>
+         <number>5</number>
         </property>
         <item>
          <widget class="QComboBox" name="snippets_cmb">
@@ -180,8 +180,8 @@
           </property>
           <property name="iconSize">
            <size>
-            <width>28</width>
-            <height>28</height>
+            <width>22</width>
+            <height>22</height>
            </size>
           </property>
          </widget>
@@ -358,7 +358,7 @@
       <item row="4" column="2">
        <layout class="QHBoxLayout" name="horizontalLayout_2">
         <property name="spacing">
-         <number>10</number>
+         <number>5</number>
         </property>
         <item>
          <spacer name="horizontalSpacer_3">
@@ -501,7 +501,7 @@
       <item row="1" column="1" colspan="2">
        <layout class="QHBoxLayout" name="horizontalLayout_4">
         <property name="spacing">
-         <number>10</number>
+         <number>5</number>
         </property>
         <item>
          <widget class="QComboBox" name="filter_cmb">
@@ -510,8 +510,8 @@
           </property>
           <property name="iconSize">
            <size>
-            <width>28</width>
-            <height>28</height>
+            <width>22</width>
+            <height>22</height>
            </size>
           </property>
          </widget>
@@ -534,7 +534,7 @@
       <item row="4" column="0" colspan="2">
        <layout class="QHBoxLayout" name="horizontalLayout">
         <property name="spacing">
-         <number>10</number>
+         <number>5</number>
         </property>
         <item>
          <widget class="QCheckBox" name="parsable_chk">

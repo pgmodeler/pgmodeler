@@ -42,7 +42,7 @@
     <number>5</number>
    </property>
    <property name="spacing">
-    <number>10</number>
+    <number>5</number>
    </property>
    <item row="1" column="0">
     <widget class="QTabWidget" name="rel_attribs_tbw">
@@ -79,7 +79,7 @@
         <number>5</number>
        </property>
        <property name="spacing">
-        <number>10</number>
+        <number>5</number>
        </property>
        <item row="4" column="0">
         <widget class="QLabel" name="ref_table_lbl">
@@ -211,6 +211,9 @@
        </item>
        <item row="2" column="1" colspan="2">
         <layout class="QHBoxLayout" name="horizontalLayout_2">
+         <property name="spacing">
+          <number>5</number>
+         </property>
          <item>
           <widget class="QCheckBox" name="table1_mand_chk">
            <property name="sizePolicy">
@@ -241,6 +244,9 @@
        </item>
        <item row="1" column="1" colspan="2">
         <layout class="QHBoxLayout" name="horizontalLayout">
+         <property name="spacing">
+          <number>5</number>
+         </property>
          <item>
           <widget class="QLabel" name="rel_icon_lbl">
            <property name="minimumSize">
@@ -294,6 +300,9 @@
             </size>
            </property>
            <layout class="QHBoxLayout" name="horizontalLayout_3">
+            <property name="spacing">
+             <number>5</number>
+            </property>
             <property name="leftMargin">
              <number>0</number>
             </property>
@@ -337,6 +346,9 @@
             </size>
            </property>
            <layout class="QHBoxLayout" name="horizontalLayout_4">
+            <property name="spacing">
+             <number>5</number>
+            </property>
             <property name="leftMargin">
              <number>0</number>
             </property>
@@ -414,8 +426,14 @@
           <property name="bottomMargin">
            <number>5</number>
           </property>
+          <property name="spacing">
+           <number>5</number>
+          </property>
           <item row="0" column="0">
            <layout class="QHBoxLayout" name="horizontalLayout_5">
+            <property name="spacing">
+             <number>5</number>
+            </property>
             <item>
              <widget class="QLabel" name="label">
               <property name="text">
@@ -603,6 +621,9 @@
        <property name="bottomMargin">
         <number>5</number>
        </property>
+       <property name="spacing">
+        <number>5</number>
+       </property>
        <item row="2" column="0">
         <widget class="QGroupBox" name="name_patterns_grp">
          <property name="sizePolicy">
@@ -623,6 +644,9 @@
           <bool>false</bool>
          </property>
          <layout class="QVBoxLayout" name="verticalLayout">
+          <property name="spacing">
+           <number>5</number>
+          </property>
           <property name="leftMargin">
            <number>5</number>
           </property>
@@ -665,6 +689,9 @@
              </property>
              <property name="bottomMargin">
               <number>0</number>
+             </property>
+             <property name="spacing">
+              <number>5</number>
              </property>
              <item row="0" column="0">
               <widget class="QLabel" name="src_col_pattern_lbl">
@@ -957,7 +984,7 @@
          </property>
          <layout class="QVBoxLayout" name="verticalLayout_2">
           <property name="spacing">
-           <number>10</number>
+           <number>5</number>
           </property>
           <property name="leftMargin">
            <number>5</number>
@@ -1011,8 +1038,8 @@
              <property name="bottomMargin">
               <number>0</number>
              </property>
-             <property name="horizontalSpacing">
-              <number>10</number>
+             <property name="spacing">
+              <number>5</number>
              </property>
              <item row="0" column="0">
               <widget class="QLabel" name="deferrable_lbl">
@@ -1188,6 +1215,9 @@
            <number>5</number>
           </property>
           <property name="bottomMargin">
+           <number>5</number>
+          </property>
+          <property name="spacing">
            <number>5</number>
           </property>
           <item row="3" column="0">
@@ -1374,7 +1404,7 @@
         <number>5</number>
        </property>
        <property name="spacing">
-        <number>10</number>
+        <number>5</number>
        </property>
        <item row="0" column="0">
         <widget class="QListWidget" name="rel_columns_lst">
