@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>696</width>
-    <height>122</height>
+    <height>110</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -81,16 +81,19 @@
      </property>
      <layout class="QGridLayout" name="gridLayout_3">
       <property name="leftMargin">
-       <number>10</number>
+       <number>5</number>
       </property>
       <property name="topMargin">
-       <number>10</number>
+       <number>5</number>
       </property>
       <property name="rightMargin">
-       <number>10</number>
+       <number>5</number>
       </property>
       <property name="bottomMargin">
-       <number>10</number>
+       <number>5</number>
+      </property>
+      <property name="spacing">
+       <number>5</number>
       </property>
       <item row="0" column="0">
        <spacer name="horizontalSpacer">
@@ -112,14 +115,14 @@
        <widget class="QLabel" name="obj_icon_lbl">
         <property name="minimumSize">
          <size>
-          <width>40</width>
-          <height>40</height>
+          <width>32</width>
+          <height>32</height>
          </size>
         </property>
         <property name="maximumSize">
          <size>
-          <width>40</width>
-          <height>40</height>
+          <width>32</width>
+          <height>32</height>
          </size>
         </property>
         <property name="frameShape">
@@ -198,6 +201,9 @@
       </item>
       <item row="1" column="1" rowspan="2" colspan="3">
        <layout class="QGridLayout" name="gridLayout">
+        <property name="spacing">
+         <number>5</number>
+        </property>
         <item row="0" column="0" colspan="3">
          <widget class="QLineEdit" name="new_name_edt">
           <property name="minimumSize">

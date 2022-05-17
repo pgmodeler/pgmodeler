@@ -24,15 +24,19 @@ WelcomeWidget::WelcomeWidget(QWidget *parent): QWidget(parent)
 	setupUi(this);
 
 	QList<QToolButton *> btns= { new_tb, open_tb, recent_tb, last_session_tb, sample_tb, support_tb };
+	QFont fnt;
 
 	for(auto &btn : btns)
 	{
 		GuiUtilsNs::createDropShadow(btn, 3, 3, 10);
+		fnt = btn->font();
+		fnt.setWeight(QFont::Normal);
+		btn->setFont(fnt);
 
 #ifdef Q_OS_LINUX
-		GuiUtilsNs::__configureWidgetFont(btn, 1.30);
+		GuiUtilsNs::__configureWidgetFont(btn, 1.20);
 #else
-		GuiUtilsNs::__configureWidgetFont(btn, 1.50);
+		GuiUtilsNs::__configureWidgetFont(btn, 1.40);
 #endif
 	}
 }

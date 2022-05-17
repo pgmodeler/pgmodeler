@@ -397,7 +397,8 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 		{
 			//GuiUtilsNs::configureWidgetFont(btn, static_cast<unsigned>(GuiUtilsNs::MediumFontFactor));
 			font = btn->font();
-			font.setBold(true);
+			//font.setBold(true);
+			font.setWeight(QFont::Medium);
 			btn->setFont(font);
 			GuiUtilsNs::createDropShadow(btn);
 		}
@@ -1180,7 +1181,8 @@ void MainWindow::setCurrentModel()
 		{
 			//GuiUtilsNs::configureWidgetFont(btn, static_cast<unsigned>(GuiUtilsNs::MediumFontFactor));
 			font = btn->font();
-			font.setBold(true);
+			//font.setBold(true);
+			font.setWeight(QFont::Medium);
 			btn->setFont(font);
 			GuiUtilsNs::createDropShadow(btn);
 		}

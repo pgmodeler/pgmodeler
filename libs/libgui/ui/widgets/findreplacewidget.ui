@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>942</width>
-    <height>91</height>
+    <height>69</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -32,6 +32,9 @@
    <property name="bottomMargin">
     <number>0</number>
    </property>
+   <property name="spacing">
+    <number>5</number>
+   </property>
    <item row="0" column="0">
     <widget class="QLabel" name="find_lbl">
      <property name="minimumSize">
@@ -54,6 +57,9 @@
    </item>
    <item row="0" column="2">
     <layout class="QHBoxLayout" name="horizontalLayout">
+     <property name="spacing">
+      <number>5</number>
+     </property>
      <item>
       <widget class="QToolButton" name="previous_tb">
        <property name="enabled">
@@ -240,6 +246,9 @@
       </size>
      </property>
      <layout class="QHBoxLayout" name="horizontalLayout_3">
+      <property name="spacing">
+       <number>5</number>
+      </property>
       <property name="leftMargin">
        <number>0</number>
       </property>
@@ -254,6 +263,9 @@
       </property>
       <item>
        <layout class="QHBoxLayout" name="horizontalLayout_2">
+        <property name="spacing">
+         <number>5</number>
+        </property>
         <item>
          <widget class="QToolButton" name="replace_tb">
           <property name="enabled">

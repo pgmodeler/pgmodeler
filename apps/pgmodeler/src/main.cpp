@@ -106,6 +106,8 @@ int main(int argc, char **argv)
 		QSplashScreen splash;
 		QPixmap pix(":images/images/pgmodeler_splash.png");
 
+		pix.setDevicePixelRatio(qApp->primaryScreen()->devicePixelRatio());
+
 		#warning "Disabled!"
 		//QSize sz = splash.screen()->size() * splash.screen()->devicePixelRatio();
 		// Test: adjusting the size of the splash screen according to the screen resolution
@@ -114,11 +116,10 @@ int main(int argc, char **argv)
 		else if(sz.width() <= GuiUtilsNs::QHDWidth)
 			pix = pix.scaledToWidth(420, Qt::SmoothTransformation);*/
 
-		pix = pix.scaledToWidth(400, Qt::SmoothTransformation);
+		//pix = pix.scaledToWidth(400, Qt::SmoothTransformation);
 		splash.setPixmap(pix);
-		splash.setMask(pix.mask());
+		//plash.setMask(pix.mask());
 		splash.show();
-
 		app.processEvents();
 
 		//Creates the main form

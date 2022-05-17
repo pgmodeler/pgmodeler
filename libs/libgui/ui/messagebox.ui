@@ -34,19 +34,19 @@
   </property>
   <layout class="QGridLayout" name="gridLayout_4">
    <property name="leftMargin">
-    <number>10</number>
+    <number>5</number>
    </property>
    <property name="topMargin">
-    <number>10</number>
+    <number>5</number>
    </property>
    <property name="rightMargin">
-    <number>10</number>
+    <number>5</number>
    </property>
    <property name="bottomMargin">
-    <number>10</number>
+    <number>5</number>
    </property>
    <property name="spacing">
-    <number>10</number>
+    <number>5</number>
    </property>
    <item row="0" column="0">
     <widget class="QFrame" name="frame">
@@ -79,6 +79,9 @@
        <number>5</number>
       </property>
       <property name="bottomMargin">
+       <number>5</number>
+      </property>
+      <property name="spacing">
        <number>5</number>
       </property>
       <item row="0" column="0" colspan="2">
@@ -117,6 +120,9 @@
           </property>
           <property name="bottomMargin">
            <number>0</number>
+          </property>
+          <property name="spacing">
+           <number>5</number>
           </property>
           <item row="0" column="0">
            <widget class="QLabel" name="icon_lbl">
@@ -214,7 +220,7 @@
           <item row="2" column="0" colspan="2">
            <layout class="QHBoxLayout" name="horizontalLayout_2">
             <property name="spacing">
-             <number>10</number>
+             <number>5</number>
             </property>
             <item>
              <spacer name="horizontalSpacer_3">
@@ -246,7 +252,7 @@
         <widget class="QWidget" name="pg2_4">
          <layout class="QVBoxLayout" name="verticalLayout">
           <property name="spacing">
-           <number>10</number>
+           <number>5</number>
           </property>
           <property name="leftMargin">
            <number>5</number>
@@ -273,6 +279,9 @@
               <string>Stack info</string>
              </attribute>
              <layout class="QHBoxLayout" name="horizontalLayout_3">
+              <property name="spacing">
+               <number>5</number>
+              </property>
               <property name="leftMargin">
                <number>5</number>
               </property>
@@ -352,6 +361,9 @@
               <string>Extra info</string>
              </attribute>
              <layout class="QVBoxLayout" name="verticalLayout_2">
+              <property name="spacing">
+               <number>5</number>
+              </property>
               <property name="leftMargin">
                <number>5</number>
               </property>
@@ -384,6 +396,9 @@
               <string>Plain text</string>
              </attribute>
              <layout class="QHBoxLayout" name="horizontalLayout_4">
+              <property name="spacing">
+               <number>5</number>
+              </property>
               <property name="leftMargin">
                <number>5</number>
               </property>
@@ -423,7 +438,7 @@
    <item row="1" column="0">
     <layout class="QGridLayout" name="gridLayout_2">
      <property name="spacing">
-      <number>10</number>
+      <number>5</number>
      </property>
      <item row="0" column="0">
       <widget class="QLabel" name="pgmodeler_name_lbl">
@@ -464,6 +479,9 @@
         </property>
         <property name="bottomMargin">
          <number>0</number>
+        </property>
+        <property name="spacing">
+         <number>5</number>
         </property>
         <item row="0" column="6">
          <widget class="QPushButton" name="no_btn">

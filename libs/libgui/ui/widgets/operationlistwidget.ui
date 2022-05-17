@@ -55,13 +55,13 @@
     <number>5</number>
    </property>
    <property name="bottomMargin">
-    <number>10</number>
+    <number>5</number>
    </property>
    <item>
     <widget class="QWidget" name="title_wgt" native="true">
      <layout class="QHBoxLayout" name="horizontalLayout_2">
       <property name="spacing">
-       <number>10</number>
+       <number>5</number>
       </property>
       <property name="leftMargin">
        <number>5</number>
@@ -140,12 +140,12 @@
        <number>0</number>
       </property>
       <property name="spacing">
-       <number>6</number>
+       <number>5</number>
       </property>
       <item row="1" column="0">
        <layout class="QGridLayout" name="gridLayout">
         <property name="spacing">
-         <number>10</number>
+         <number>5</number>
         </property>
         <item row="0" column="0" rowspan="2">
          <widget class="QLabel" name="operations_lbl">
@@ -192,7 +192,7 @@
       <item row="1" column="2">
        <layout class="QHBoxLayout" name="horizontalLayout">
         <property name="spacing">
-         <number>10</number>
+         <number>5</number>
         </property>
         <item>
          <widget class="QToolButton" name="rem_operations_tb">

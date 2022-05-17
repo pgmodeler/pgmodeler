@@ -73,6 +73,9 @@
     <property name="bottomMargin">
      <number>0</number>
     </property>
+    <property name="spacing">
+     <number>5</number>
+    </property>
     <item row="0" column="0">
      <widget class="QStackedWidget" name="views_stw">
       <property name="sizePolicy">
@@ -99,8 +102,8 @@
         <property name="bottomMargin">
          <number>0</number>
         </property>
-        <property name="horizontalSpacing">
-         <number>6</number>
+        <property name="spacing">
+         <number>5</number>
         </property>
         <item row="0" column="0">
          <layout class="QVBoxLayout" name="verticalLayout">
@@ -170,7 +173,7 @@
                 <widget class="QWidget" name="layoutWidget">
                  <layout class="QHBoxLayout" name="horizontalLayout">
                   <property name="spacing">
-                   <number>10</number>
+                   <number>5</number>
                   </property>
                   <item>
                    <widget class="QTabWidget" name="models_tbw">
@@ -372,7 +375,7 @@
              <item row="0" column="0" colspan="2">
               <layout class="QHBoxLayout" name="horiz_wgts_btns_layout">
                <property name="spacing">
-                <number>10</number>
+                <number>5</number>
                </property>
                <property name="leftMargin">
                 <number>5</number>
@@ -550,7 +553,7 @@
              <item row="0" column="13">
               <layout class="QHBoxLayout" name="vert_wgts_btns_layout">
                <property name="spacing">
-                <number>10</number>
+                <number>5</number>
                </property>
                <property name="topMargin">
                 <number>5</number>
@@ -648,6 +651,9 @@
                 </sizepolicy>
                </property>
                <layout class="QHBoxLayout" name="horizontalLayout_2">
+                <property name="spacing">
+                 <number>5</number>
+                </property>
                 <property name="leftMargin">
                  <number>0</number>
                 </property>
@@ -662,6 +668,9 @@
                 </property>
                 <item>
                  <layout class="QHBoxLayout" name="horizontalLayout_5">
+                  <property name="spacing">
+                   <number>5</number>
+                  </property>
                   <property name="bottomMargin">
                    <number>5</number>
                   </property>

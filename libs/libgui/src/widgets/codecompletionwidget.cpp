@@ -222,7 +222,10 @@ void CodeCompletionWidget::configureCompletion(DatabaseModel *db_model, SyntaxHi
 
 			while(!exprs.empty())
 			{
-				keywords.push_front(exprs.back().pattern());
+				/* Since keywords are exact match patterns in the form \A(?:keyword)\z"
+				 * we need to remove from the pattern the initial and final regexp operators in
+				 * order to use only the word itself */
+				keywords.push_front(exprs.back().pattern().remove("\\A(?:").remove(")\\z"));
 				exprs.pop_back();
 			}
 

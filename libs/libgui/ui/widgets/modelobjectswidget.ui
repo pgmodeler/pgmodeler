@@ -52,7 +52,10 @@
     <number>5</number>
    </property>
    <property name="bottomMargin">
-    <number>10</number>
+    <number>5</number>
+   </property>
+   <property name="spacing">
+    <number>5</number>
    </property>
    <item row="2" column="0">
     <widget class="QWidget" name="content_wgt" native="true">
@@ -68,6 +71,9 @@
       </property>
       <property name="bottomMargin">
        <number>0</number>
+      </property>
+      <property name="horizontalSpacing">
+       <number>5</number>
       </property>
       <property name="verticalSpacing">
        <number>0</number>
@@ -250,6 +256,9 @@
            <property name="horizontalSpacing">
             <number>0</number>
            </property>
+           <property name="verticalSpacing">
+            <number>5</number>
+           </property>
            <item row="0" column="0">
             <widget class="QTableWidget" name="objectslist_tbw">
              <property name="enabled">
@@ -409,6 +418,9 @@
              <property name="bottomMargin">
               <number>5</number>
              </property>
+             <property name="spacing">
+              <number>5</number>
+             </property>
              <item row="0" column="0">
               <widget class="QListWidget" name="visibleobjects_lst">
                <property name="minimumSize">
@@ -445,6 +457,9 @@
              </item>
              <item row="1" column="0">
               <layout class="QHBoxLayout" name="horizontalLayout_2">
+               <property name="spacing">
+                <number>5</number>
+               </property>
                <item>
                 <spacer name="horizontalSpacer_3">
                  <property name="orientation">
@@ -513,7 +528,7 @@
     <widget class="QWidget" name="title_wgt" native="true">
      <layout class="QHBoxLayout" name="horizontalLayout_3">
       <property name="spacing">
-       <number>10</number>
+       <number>5</number>
       </property>
       <property name="leftMargin">
        <number>5</number>
@@ -529,11 +544,6 @@
       </property>
       <item>
        <widget class="QLabel" name="title_lbl">
-        <property name="font">
-         <font>
-          <pointsize>10</pointsize>
-         </font>
-        </property>
         <property name="text">
          <string>Model objects</string>
         </property>
@@ -590,6 +600,9 @@
       </size>
      </property>
      <layout class="QHBoxLayout" name="horizontalLayout_4">
+      <property name="spacing">
+       <number>5</number>
+      </property>
       <property name="leftMargin">
        <number>0</number>
       </property>
@@ -640,6 +653,9 @@
    </item>
    <item row="4" column="0">
     <layout class="QHBoxLayout" name="horizontalLayout">
+     <property name="spacing">
+      <number>5</number>
+     </property>
      <item>
       <spacer name="horizontalSpacer">
        <property name="orientation">

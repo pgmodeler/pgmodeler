@@ -21,7 +21,7 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_3">
    <property name="spacing">
-    <number>10</number>
+    <number>5</number>
    </property>
    <property name="leftMargin">
     <number>5</number>
@@ -38,7 +38,7 @@
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_5">
      <property name="spacing">
-      <number>10</number>
+      <number>5</number>
      </property>
      <item>
       <widget class="QToolButton" name="toggle_display_tb">
@@ -302,6 +302,9 @@
      </property>
      <widget class="QWidget" name="layoutWidget">
       <layout class="QVBoxLayout" name="verticalLayout">
+       <property name="spacing">
+        <number>5</number>
+       </property>
        <item>
         <widget class="QTreeWidget" name="objects_trw">
          <property name="enabled">
@@ -336,8 +339,8 @@
          </property>
          <property name="iconSize">
           <size>
-           <width>25</width>
-           <height>25</height>
+           <width>22</width>
+           <height>22</height>
           </size>
          </property>
          <property name="textElideMode">
@@ -414,6 +417,9 @@
           </property>
           <item row="1" column="0">
            <layout class="QHBoxLayout" name="horizontalLayout_8">
+            <property name="spacing">
+             <number>5</number>
+            </property>
             <item>
              <spacer name="horizontalSpacer_4">
               <property name="orientation">
@@ -509,7 +515,7 @@
           <item row="0" column="0">
            <layout class="QHBoxLayout" name="horizontalLayout_7">
             <property name="spacing">
-             <number>10</number>
+             <number>5</number>
             </property>
             <item>
              <widget class="QLabel" name="filter_lbl">
@@ -569,7 +575,7 @@
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_2">
        <property name="spacing">
-        <number>10</number>
+        <number>5</number>
        </property>
        <property name="leftMargin">
         <number>0</number>
@@ -620,8 +626,8 @@
          </property>
          <property name="iconSize">
           <size>
-           <width>25</width>
-           <height>25</height>
+           <width>22</width>
+           <height>22</height>
           </size>
          </property>
          <property name="showGrid">

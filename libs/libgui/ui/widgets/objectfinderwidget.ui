@@ -38,10 +38,7 @@
    <property name="bottomMargin">
     <number>5</number>
    </property>
-   <property name="horizontalSpacing">
-    <number>10</number>
-   </property>
-   <property name="verticalSpacing">
+   <property name="spacing">
     <number>5</number>
    </property>
    <item row="0" column="4">
@@ -339,6 +336,9 @@
      </property>
      <widget class="QWidget" name="layoutWidget">
       <layout class="QHBoxLayout" name="horizontalLayout">
+       <property name="spacing">
+        <number>5</number>
+       </property>
        <item>
         <widget class="QFrame" name="filter_frm">
          <property name="sizePolicy">
@@ -373,7 +373,7 @@
            <number>5</number>
           </property>
           <property name="spacing">
-           <number>10</number>
+           <number>5</number>
           </property>
           <item row="3" column="1">
            <spacer name="horizontalSpacer_4">
@@ -445,7 +445,7 @@
              <number>5</number>
             </property>
             <property name="spacing">
-             <number>10</number>
+             <number>5</number>
             </property>
             <item row="0" column="0" colspan="4">
              <widget class="QListWidget" name="obj_types_lst">

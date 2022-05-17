@@ -66,7 +66,7 @@
      </property>
      <layout class="QVBoxLayout" name="verticalLayout">
       <property name="spacing">
-       <number>15</number>
+       <number>10</number>
       </property>
       <property name="leftMargin">
        <number>5</number>
@@ -98,6 +98,9 @@
          <property name="bottomMargin">
           <number>5</number>
          </property>
+         <property name="spacing">
+          <number>5</number>
+         </property>
          <item row="0" column="0">
           <widget class="QWidget" name="db_objs_btns_wgt" native="true">
            <property name="sizePolicy">
@@ -120,7 +123,7 @@
              <number>5</number>
             </property>
             <property name="spacing">
-             <number>10</number>
+             <number>5</number>
             </property>
             <item row="0" column="4">
              <widget class="QToolButton" name="fdw_tb">
@@ -764,6 +767,9 @@
          <property name="bottomMargin">
           <number>5</number>
          </property>
+         <property name="spacing">
+          <number>5</number>
+         </property>
          <item row="0" column="0">
           <widget class="QWidget" name="sch_objs_btns_wgt" native="true">
            <property name="sizePolicy">
@@ -786,7 +792,7 @@
              <number>5</number>
             </property>
             <property name="spacing">
-             <number>10</number>
+             <number>5</number>
             </property>
             <item row="1" column="2">
              <widget class="QToolButton" name="operator_tb">
@@ -1344,6 +1350,9 @@
          <property name="bottomMargin">
           <number>5</number>
          </property>
+         <property name="spacing">
+          <number>5</number>
+         </property>
          <item row="0" column="0">
           <widget class="QWidget" name="tab_objs_btns_wgt" native="true">
            <property name="sizePolicy">
@@ -1366,7 +1375,7 @@
              <number>5</number>
             </property>
             <property name="spacing">
-             <number>10</number>
+             <number>5</number>
             </property>
             <item row="0" column="4">
              <widget class="QToolButton" name="constraint_tb">
@@ -1659,7 +1668,7 @@
           <number>5</number>
          </property>
          <property name="spacing">
-          <number>10</number>
+          <number>5</number>
          </property>
          <item row="0" column="0">
           <widget class="QWidget" name="rel_btns_wgt" native="true">
@@ -1674,16 +1683,16 @@
              <number>4</number>
             </property>
             <property name="topMargin">
-             <number>4</number>
+             <number>5</number>
             </property>
             <property name="rightMargin">
-             <number>4</number>
+             <number>5</number>
             </property>
             <property name="bottomMargin">
-             <number>4</number>
+             <number>5</number>
             </property>
             <property name="spacing">
-             <number>10</number>
+             <number>5</number>
             </property>
             <item row="0" column="2">
              <widget class="QToolButton" name="relnn_tb">

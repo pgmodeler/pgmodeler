@@ -60,7 +60,7 @@
        <number>5</number>
       </property>
       <property name="spacing">
-       <number>10</number>
+       <number>5</number>
       </property>
       <item row="0" column="0">
        <widget class="QLabel" name="title_lbl">
@@ -150,6 +150,9 @@
       </item>
       <item row="2" column="0" colspan="2">
        <layout class="QHBoxLayout" name="horizontalLayout">
+        <property name="spacing">
+         <number>5</number>
+        </property>
         <item>
          <spacer name="horizontalSpacer_2">
           <property name="orientation">

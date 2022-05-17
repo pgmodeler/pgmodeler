@@ -231,8 +231,8 @@
             </property>
             <property name="iconSize">
              <size>
-              <width>28</width>
-              <height>28</height>
+              <width>22</width>
+              <height>22</height>
              </size>
             </property>
            </widget>
@@ -269,8 +269,8 @@
             </property>
             <property name="iconSize">
              <size>
-              <width>28</width>
-              <height>28</height>
+              <width>22</width>
+              <height>22</height>
              </size>
             </property>
            </widget>
@@ -302,14 +302,14 @@
            <widget class="QLabel" name="db_icon_lbl">
             <property name="minimumSize">
              <size>
-              <width>32</width>
-              <height>32</height>
+              <width>25</width>
+              <height>25</height>
              </size>
             </property>
             <property name="maximumSize">
              <size>
-              <width>32</width>
-              <height>32</height>
+              <width>25</width>
+              <height>25</height>
              </size>
             </property>
             <property name="text">
@@ -417,12 +417,6 @@
          </attribute>
          <attribute name="verticalHeaderCascadingSectionResizes">
           <bool>false</bool>
-         </attribute>
-         <attribute name="verticalHeaderMinimumSectionSize">
-          <number>30</number>
-         </attribute>
-         <attribute name="verticalHeaderDefaultSectionSize">
-          <number>30</number>
          </attribute>
          <attribute name="verticalHeaderShowSortIndicator" stdset="0">
           <bool>false</bool>
@@ -971,14 +965,14 @@
           <widget class="QLabel" name="icon_lbl">
            <property name="minimumSize">
             <size>
-             <width>32</width>
-             <height>32</height>
+             <width>25</width>
+             <height>25</height>
             </size>
            </property>
            <property name="maximumSize">
             <size>
-             <width>32</width>
-             <height>32</height>
+             <width>25</width>
+             <height>25</height>
             </size>
            </property>
            <property name="text">
@@ -1136,14 +1130,14 @@
           <widget class="QLabel" name="icon_lbl2">
            <property name="minimumSize">
             <size>
-             <width>32</width>
-             <height>32</height>
+             <width>25</width>
+             <height>25</height>
             </size>
            </property>
            <property name="maximumSize">
             <size>
-             <width>32</width>
-             <height>32</height>
+             <width>25</width>
+             <height>25</height>
             </size>
            </property>
            <property name="text">
@@ -1198,22 +1192,22 @@
      </property>
      <layout class="QGridLayout" name="gridLayout_9">
       <property name="leftMargin">
-       <number>5</number>
+       <number>2</number>
       </property>
       <property name="topMargin">
-       <number>10</number>
+       <number>5</number>
       </property>
       <property name="rightMargin">
-       <number>5</number>
+       <number>2</number>
       </property>
       <property name="bottomMargin">
-       <number>0</number>
+       <number>5</number>
       </property>
       <property name="horizontalSpacing">
-       <number>10</number>
+       <number>5</number>
       </property>
       <property name="verticalSpacing">
-       <number>5</number>
+       <number>2</number>
       </property>
       <item row="18" column="0">
        <widget class="QToolButton" name="paste_tb">
@@ -1244,8 +1238,8 @@
         </property>
         <property name="iconSize">
          <size>
-          <width>32</width>
-          <height>32</height>
+          <width>25</width>
+          <height>25</height>
          </size>
         </property>
         <property name="popupMode">
@@ -1288,8 +1282,8 @@
         </property>
         <property name="iconSize">
          <size>
-          <width>32</width>
-          <height>32</height>
+          <width>25</width>
+          <height>25</height>
          </size>
         </property>
         <property name="shortcut">
@@ -1348,8 +1342,8 @@
         </property>
         <property name="iconSize">
          <size>
-          <width>32</width>
-          <height>32</height>
+          <width>25</width>
+          <height>25</height>
          </size>
         </property>
         <property name="shortcut">
@@ -1392,8 +1386,8 @@
         </property>
         <property name="iconSize">
          <size>
-          <width>32</width>
-          <height>32</height>
+          <width>25</width>
+          <height>25</height>
          </size>
         </property>
         <property name="shortcut">
@@ -1439,8 +1433,8 @@
         </property>
         <property name="iconSize">
          <size>
-          <width>32</width>
-          <height>32</height>
+          <width>25</width>
+          <height>25</height>
          </size>
         </property>
         <property name="shortcut">
@@ -1483,8 +1477,8 @@
         </property>
         <property name="iconSize">
          <size>
-          <width>32</width>
-          <height>32</height>
+          <width>25</width>
+          <height>25</height>
          </size>
         </property>
         <property name="shortcut">
@@ -1527,8 +1521,8 @@
         </property>
         <property name="iconSize">
          <size>
-          <width>32</width>
-          <height>32</height>
+          <width>25</width>
+          <height>25</height>
          </size>
         </property>
         <property name="shortcut">
@@ -1581,8 +1575,8 @@
         </property>
         <property name="iconSize">
          <size>
-          <width>32</width>
-          <height>32</height>
+          <width>25</width>
+          <height>25</height>
          </size>
         </property>
         <property name="shortcut">
@@ -1628,8 +1622,8 @@
         </property>
         <property name="iconSize">
          <size>
-          <width>32</width>
-          <height>32</height>
+          <width>25</width>
+          <height>25</height>
          </size>
         </property>
         <property name="shortcut">
@@ -1672,8 +1666,8 @@
         </property>
         <property name="iconSize">
          <size>
-          <width>32</width>
-          <height>32</height>
+          <width>25</width>
+          <height>25</height>
          </size>
         </property>
         <property name="shortcut">
@@ -1716,8 +1710,8 @@
         </property>
         <property name="iconSize">
          <size>
-          <width>32</width>
-          <height>32</height>
+          <width>25</width>
+          <height>25</height>
          </size>
         </property>
         <property name="shortcut">
@@ -1760,8 +1754,8 @@
         </property>
         <property name="iconSize">
          <size>
-          <width>32</width>
-          <height>32</height>
+          <width>25</width>
+          <height>25</height>
          </size>
         </property>
         <property name="popupMode">
@@ -1804,8 +1798,8 @@
         </property>
         <property name="iconSize">
          <size>
-          <width>32</width>
-          <height>32</height>
+          <width>25</width>
+          <height>25</height>
          </size>
         </property>
         <property name="popupMode">
@@ -1848,8 +1842,8 @@
         </property>
         <property name="iconSize">
          <size>
-          <width>32</width>
-          <height>32</height>
+          <width>25</width>
+          <height>25</height>
          </size>
         </property>
         <property name="popupMode">
@@ -1892,8 +1886,8 @@
         </property>
         <property name="iconSize">
          <size>
-          <width>32</width>
-          <height>32</height>
+          <width>25</width>
+          <height>25</height>
          </size>
         </property>
         <property name="shortcut">
@@ -1956,8 +1950,8 @@
         </property>
         <property name="iconSize">
          <size>
-          <width>32</width>
-          <height>32</height>
+          <width>25</width>
+          <height>25</height>
          </size>
         </property>
         <property name="shortcut">

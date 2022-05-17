@@ -33,12 +33,12 @@
     <number>0</number>
    </property>
    <property name="spacing">
-    <number>10</number>
+    <number>5</number>
    </property>
    <item row="0" column="1">
     <layout class="QHBoxLayout" name="horizontalLayout">
      <property name="spacing">
-      <number>10</number>
+      <number>5</number>
      </property>
      <item>
       <widget class="QToolButton" name="add_tb">

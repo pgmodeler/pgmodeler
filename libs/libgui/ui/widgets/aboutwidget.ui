@@ -84,8 +84,14 @@
       <property name="bottomMargin">
        <number>5</number>
       </property>
+      <property name="spacing">
+       <number>5</number>
+      </property>
       <item row="0" column="1" rowspan="2">
        <layout class="QGridLayout" name="gridLayout_2">
+        <property name="spacing">
+         <number>5</number>
+        </property>
         <item row="1" column="2" rowspan="2">
          <spacer name="horizontalSpacer_2">
           <property name="orientation">
@@ -314,17 +320,20 @@
          <string>License</string>
         </property>
         <layout class="QVBoxLayout" name="verticalLayout">
+         <property name="spacing">
+          <number>5</number>
+         </property>
          <property name="leftMargin">
-          <number>4</number>
+          <number>5</number>
          </property>
          <property name="topMargin">
-          <number>4</number>
+          <number>5</number>
          </property>
          <property name="rightMargin">
-          <number>4</number>
+          <number>5</number>
          </property>
          <property name="bottomMargin">
-          <number>4</number>
+          <number>5</number>
          </property>
          <item>
           <widget class="QTextEdit" name="changelog_txt">
@@ -379,6 +388,9 @@ p, li { white-space: pre-wrap; }
       </item>
       <item row="4" column="0" colspan="3">
        <layout class="QGridLayout" name="gridLayout">
+        <property name="spacing">
+         <number>5</number>
+        </property>
         <item row="0" column="1" rowspan="2">
          <widget class="QLabel" name="brazil_flag_lbl">
           <property name="toolTip">

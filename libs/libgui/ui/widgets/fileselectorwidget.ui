@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>339</width>
-    <height>39</height>
+    <height>32</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -48,7 +48,7 @@
     <number>0</number>
    </property>
    <property name="spacing">
-    <number>10</number>
+    <number>5</number>
    </property>
    <item row="0" column="1">
     <widget class="QToolButton" name="rem_file_tb">
