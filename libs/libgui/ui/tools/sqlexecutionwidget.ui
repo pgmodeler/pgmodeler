@@ -67,8 +67,8 @@
         </property>
         <property name="iconSize">
          <size>
-          <width>32</width>
-          <height>32</height>
+          <width>25</width>
+          <height>25</height>
          </size>
         </property>
         <property name="autoRaise">
@@ -141,8 +141,8 @@
        </property>
        <property name="iconSize">
         <size>
-         <width>32</width>
-         <height>32</height>
+         <width>25</width>
+         <height>25</height>
         </size>
        </property>
        <property name="shortcut">
@@ -179,8 +179,8 @@
        </property>
        <property name="iconSize">
         <size>
-         <width>32</width>
-         <height>32</height>
+         <width>25</width>
+         <height>25</height>
         </size>
        </property>
        <property name="shortcut">
@@ -217,8 +217,8 @@
        </property>
        <property name="iconSize">
         <size>
-         <width>32</width>
-         <height>32</height>
+         <width>25</width>
+         <height>25</height>
         </size>
        </property>
        <property name="shortcut">
@@ -264,8 +264,8 @@
        </property>
        <property name="iconSize">
         <size>
-         <width>32</width>
-         <height>32</height>
+         <width>25</width>
+         <height>25</height>
         </size>
        </property>
        <property name="shortcut">
@@ -311,8 +311,8 @@
        </property>
        <property name="iconSize">
         <size>
-         <width>32</width>
-         <height>32</height>
+         <width>25</width>
+         <height>25</height>
         </size>
        </property>
        <property name="toolButtonStyle">
@@ -346,8 +346,8 @@
        </property>
        <property name="iconSize">
         <size>
-         <width>32</width>
-         <height>32</height>
+         <width>25</width>
+         <height>25</height>
         </size>
        </property>
        <property name="shortcut">
@@ -393,8 +393,8 @@
        </property>
        <property name="iconSize">
         <size>
-         <width>32</width>
-         <height>32</height>
+         <width>25</width>
+         <height>25</height>
         </size>
        </property>
        <property name="shortcut">
@@ -437,8 +437,8 @@
        </property>
        <property name="iconSize">
         <size>
-         <width>32</width>
-         <height>32</height>
+         <width>25</width>
+         <height>25</height>
         </size>
        </property>
        <property name="shortcut">
@@ -481,8 +481,8 @@
        </property>
        <property name="iconSize">
         <size>
-         <width>32</width>
-         <height>32</height>
+         <width>25</width>
+         <height>25</height>
         </size>
        </property>
        <property name="shortcut">
@@ -788,8 +788,8 @@
                    </property>
                    <property name="iconSize">
                     <size>
-                     <width>25</width>
-                     <height>25</height>
+                     <width>20</width>
+                     <height>20</height>
                     </size>
                    </property>
                    <property name="autoRaise">

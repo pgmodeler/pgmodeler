@@ -68,8 +68,8 @@
        </property>
        <property name="iconSize">
         <size>
-         <width>32</width>
-         <height>32</height>
+         <width>25</width>
+         <height>25</height>
         </size>
        </property>
        <property name="popupMode">
@@ -111,8 +111,8 @@
        </property>
        <property name="iconSize">
         <size>
-         <width>32</width>
-         <height>32</height>
+         <width>25</width>
+         <height>25</height>
         </size>
        </property>
        <property name="shortcut">
@@ -160,8 +160,8 @@
        </property>
        <property name="iconSize">
         <size>
-         <width>32</width>
-         <height>32</height>
+         <width>25</width>
+         <height>25</height>
         </size>
        </property>
        <property name="shortcut">
@@ -198,8 +198,8 @@
        </property>
        <property name="iconSize">
         <size>
-         <width>32</width>
-         <height>32</height>
+         <width>25</width>
+         <height>25</height>
         </size>
        </property>
        <property name="shortcut">
@@ -233,8 +233,8 @@
        </property>
        <property name="iconSize">
         <size>
-         <width>32</width>
-         <height>32</height>
+         <width>25</width>
+         <height>25</height>
         </size>
        </property>
        <property name="autoRaise">
@@ -265,8 +265,8 @@
        </property>
        <property name="iconSize">
         <size>
-         <width>32</width>
-         <height>32</height>
+         <width>25</width>
+         <height>25</height>
         </size>
        </property>
        <property name="shortcut">
@@ -336,8 +336,8 @@
          </property>
          <property name="iconSize">
           <size>
-           <width>28</width>
-           <height>28</height>
+           <width>25</width>
+           <height>25</height>
           </size>
          </property>
          <property name="textElideMode">
@@ -450,8 +450,8 @@
               </property>
               <property name="iconSize">
                <size>
-                <width>32</width>
-                <height>32</height>
+                <width>25</width>
+                <height>25</height>
                </size>
               </property>
               <property name="checkable">
@@ -482,8 +482,8 @@
               </property>
               <property name="iconSize">
                <size>
-                <width>32</width>
-                <height>32</height>
+                <width>25</width>
+                <height>25</height>
                </size>
               </property>
               <property name="checkable">
@@ -620,8 +620,8 @@
          </property>
          <property name="iconSize">
           <size>
-           <width>28</width>
-           <height>28</height>
+           <width>25</width>
+           <height>25</height>
           </size>
          </property>
          <property name="showGrid">

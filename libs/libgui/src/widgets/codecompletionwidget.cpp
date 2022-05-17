@@ -99,7 +99,7 @@ bool CodeCompletionWidget::eventFilter(QObject *object, QEvent *event)
 		if(object==code_field_txt)
 		{
 			//Filters the trigger char and shows up the code completion only if there is a valid database model in use
-			if(QChar(k_event->key())==completion_trigger && db_model)
+			if(k_event->key() == completion_trigger.unicode() && db_model)
 			{
 				/* If the completion widget is not visible start the timer to give the user
 				a small delay in order to type another character. If no char is typed the completion is triggered */

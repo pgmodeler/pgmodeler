@@ -176,6 +176,12 @@
                 <property name="currentIndex">
                  <number>0</number>
                 </property>
+                <property name="iconSize">
+                 <size>
+                  <width>25</width>
+                  <height>25</height>
+                 </size>
+                </property>
                 <widget class="QWidget" name="options_pg">
                  <attribute name="title">
                   <string>Options</string>
@@ -466,8 +472,8 @@
                    </property>
                    <property name="iconSize">
                     <size>
-                     <width>32</width>
-                     <height>32</height>
+                     <width>28</width>
+                     <height>28</height>
                     </size>
                    </property>
                    <property name="checkable">
@@ -504,8 +510,8 @@
                    </property>
                    <property name="iconSize">
                     <size>
-                     <width>32</width>
-                     <height>32</height>
+                     <width>28</width>
+                     <height>28</height>
                     </size>
                    </property>
                    <property name="checkable">
@@ -542,8 +548,8 @@
                    </property>
                    <property name="iconSize">
                     <size>
-                     <width>32</width>
-                     <height>32</height>
+                     <width>28</width>
+                     <height>28</height>
                     </size>
                    </property>
                    <property name="checkable">
@@ -580,8 +586,8 @@
                    </property>
                    <property name="iconSize">
                     <size>
-                     <width>32</width>
-                     <height>32</height>
+                     <width>28</width>
+                     <height>28</height>
                     </size>
                    </property>
                    <property name="checkable">
@@ -716,8 +722,8 @@
                        </property>
                        <property name="iconSize">
                         <size>
-                         <width>28</width>
-                         <height>28</height>
+                         <width>25</width>
+                         <height>25</height>
                         </size>
                        </property>
                        <property name="textElideMode">
@@ -803,8 +809,8 @@
                     </property>
                     <property name="iconSize">
                      <size>
-                      <width>28</width>
-                      <height>28</height>
+                      <width>25</width>
+                      <height>25</height>
                      </size>
                     </property>
                     <property name="gridStyle">
@@ -1011,8 +1017,8 @@
               </property>
               <property name="iconSize">
                <size>
-                <width>32</width>
-                <height>32</height>
+                <width>25</width>
+                <height>25</height>
                </size>
               </property>
               <property name="toolButtonStyle">
@@ -1060,8 +1066,8 @@
             </property>
             <property name="iconSize">
              <size>
-              <width>20</width>
-              <height>20</height>
+              <width>25</width>
+              <height>25</height>
              </size>
             </property>
             <property name="indentation">
@@ -1102,8 +1108,8 @@
        </property>
        <property name="maximumSize">
         <size>
-         <width>242</width>
-         <height>50</height>
+         <width>169</width>
+         <height>35</height>
         </size>
        </property>
        <property name="text">
@@ -1156,8 +1162,8 @@
        </property>
        <property name="iconSize">
         <size>
-         <width>32</width>
-         <height>32</height>
+         <width>28</width>
+         <height>28</height>
         </size>
        </property>
        <property name="default">
@@ -1188,8 +1194,8 @@
        </property>
        <property name="iconSize">
         <size>
-         <width>32</width>
-         <height>32</height>
+         <width>28</width>
+         <height>28</height>
         </size>
        </property>
        <property name="flat">

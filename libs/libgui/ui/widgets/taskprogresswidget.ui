@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>600</width>
-    <height>103</height>
+    <height>102</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -91,14 +91,14 @@
         </property>
         <property name="minimumSize">
          <size>
-          <width>72</width>
-          <height>72</height>
+          <width>64</width>
+          <height>64</height>
          </size>
         </property>
         <property name="maximumSize">
          <size>
-          <width>80</width>
-          <height>80</height>
+          <width>64</width>
+          <height>64</height>
          </size>
         </property>
         <property name="text">
@@ -199,7 +199,6 @@
   </layout>
  </widget>
  <resources>
-  <include location="../../res/resources.qrc"/>
   <include location="../../res/resources.qrc"/>
   <include location="../../res/resources.qrc"/>
  </resources>

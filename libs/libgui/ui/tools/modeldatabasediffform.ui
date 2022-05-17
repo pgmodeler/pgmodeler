@@ -191,8 +191,8 @@
                      </property>
                      <property name="iconSize">
                       <size>
-                       <width>28</width>
-                       <height>28</height>
+                       <width>25</width>
+                       <height>25</height>
                       </size>
                      </property>
                     </widget>
@@ -230,8 +230,8 @@
                      </property>
                      <property name="iconSize">
                       <size>
-                       <width>32</width>
-                       <height>32</height>
+                       <width>25</width>
+                       <height>25</height>
                       </size>
                      </property>
                      <property name="shortcut">
@@ -262,8 +262,8 @@
                      </property>
                      <property name="iconSize">
                       <size>
-                       <width>32</width>
-                       <height>32</height>
+                       <width>25</width>
+                       <height>25</height>
                       </size>
                      </property>
                      <property name="shortcut">
@@ -294,8 +294,8 @@
                      </property>
                      <property name="iconSize">
                       <size>
-                       <width>32</width>
-                       <height>32</height>
+                       <width>25</width>
+                       <height>25</height>
                       </size>
                      </property>
                      <property name="shortcut">
@@ -326,8 +326,8 @@
                      </property>
                      <property name="iconSize">
                       <size>
-                       <width>32</width>
-                       <height>32</height>
+                       <width>25</width>
+                       <height>25</height>
                       </size>
                      </property>
                      <property name="shortcut">
@@ -358,8 +358,8 @@
                      </property>
                      <property name="iconSize">
                       <size>
-                       <width>32</width>
-                       <height>32</height>
+                       <width>25</width>
+                       <height>25</height>
                       </size>
                      </property>
                      <property name="shortcut">
@@ -390,8 +390,8 @@
                      </property>
                      <property name="iconSize">
                       <size>
-                       <width>32</width>
-                       <height>32</height>
+                       <width>25</width>
+                       <height>25</height>
                       </size>
                      </property>
                      <property name="shortcut">
@@ -1573,8 +1573,8 @@
                        </property>
                        <property name="iconSize">
                         <size>
-                         <width>32</width>
-                         <height>32</height>
+                         <width>25</width>
+                         <height>25</height>
                         </size>
                        </property>
                        <property name="toolButtonStyle">
@@ -1666,8 +1666,8 @@
                        </property>
                        <property name="iconSize">
                         <size>
-                         <width>32</width>
-                         <height>32</height>
+                         <width>25</width>
+                         <height>25</height>
                         </size>
                        </property>
                        <property name="toolButtonStyle">
@@ -1711,8 +1711,8 @@
                        </property>
                        <property name="iconSize">
                         <size>
-                         <width>32</width>
-                         <height>32</height>
+                         <width>25</width>
+                         <height>25</height>
                         </size>
                        </property>
                        <property name="toolButtonStyle">
@@ -1822,8 +1822,8 @@
                 </property>
                 <property name="iconSize">
                  <size>
-                  <width>28</width>
-                  <height>28</height>
+                  <width>25</width>
+                  <height>25</height>
                  </size>
                 </property>
                 <property name="gridStyle">
@@ -1945,8 +1945,8 @@
             </property>
             <property name="iconSize">
              <size>
-              <width>28</width>
-              <height>28</height>
+              <width>25</width>
+              <height>25</height>
              </size>
             </property>
             <property name="indentation">
@@ -2033,14 +2033,14 @@
                </property>
                <property name="minimumSize">
                 <size>
-                 <width>32</width>
-                 <height>32</height>
+                 <width>28</width>
+                 <height>28</height>
                 </size>
                </property>
                <property name="maximumSize">
                 <size>
-                 <width>32</width>
-                 <height>32</height>
+                 <width>28</width>
+                 <height>28</height>
                 </size>
                </property>
                <property name="text">
@@ -2071,8 +2071,8 @@
                </property>
                <property name="iconSize">
                 <size>
-                 <width>32</width>
-                 <height>32</height>
+                 <width>25</width>
+                 <height>25</height>
                 </size>
                </property>
                <property name="toolButtonStyle">
@@ -2104,14 +2104,14 @@
                </property>
                <property name="minimumSize">
                 <size>
-                 <width>32</width>
-                 <height>32</height>
+                 <width>28</width>
+                 <height>28</height>
                 </size>
                </property>
                <property name="maximumSize">
                 <size>
-                 <width>32</width>
-                 <height>32</height>
+                 <width>28</width>
+                 <height>28</height>
                 </size>
                </property>
                <property name="text">
@@ -2287,8 +2287,8 @@
                </property>
                <property name="iconSize">
                 <size>
-                 <width>32</width>
-                 <height>32</height>
+                 <width>25</width>
+                 <height>25</height>
                 </size>
                </property>
                <property name="checkable">
@@ -2322,8 +2322,8 @@
                </property>
                <property name="iconSize">
                 <size>
-                 <width>32</width>
-                 <height>32</height>
+                 <width>25</width>
+                 <height>25</height>
                 </size>
                </property>
                <property name="checkable">
@@ -2357,8 +2357,8 @@
                </property>
                <property name="iconSize">
                 <size>
-                 <width>32</width>
-                 <height>32</height>
+                 <width>25</width>
+                 <height>25</height>
                 </size>
                </property>
                <property name="checkable">
@@ -2392,8 +2392,8 @@
                </property>
                <property name="iconSize">
                 <size>
-                 <width>32</width>
-                 <height>32</height>
+                 <width>25</width>
+                 <height>25</height>
                 </size>
                </property>
                <property name="checkable">
@@ -2490,8 +2490,8 @@
             </property>
             <property name="iconSize">
              <size>
-              <width>22</width>
-              <height>22</height>
+              <width>28</width>
+              <height>28</height>
              </size>
             </property>
             <property name="default">
@@ -2554,8 +2554,8 @@
             </property>
             <property name="iconSize">
              <size>
-              <width>22</width>
-              <height>22</height>
+              <width>28</width>
+              <height>28</height>
              </size>
             </property>
             <property name="autoDefault">
@@ -2588,8 +2588,8 @@
        </property>
        <property name="maximumSize">
         <size>
-         <width>242</width>
-         <height>50</height>
+         <width>169</width>
+         <height>35</height>
         </size>
        </property>
        <property name="text">
@@ -2639,8 +2639,8 @@
        </property>
        <property name="iconSize">
         <size>
-         <width>32</width>
-         <height>32</height>
+         <width>28</width>
+         <height>28</height>
         </size>
        </property>
        <property name="shortcut">
@@ -2677,8 +2677,8 @@
        </property>
        <property name="iconSize">
         <size>
-         <width>32</width>
-         <height>32</height>
+         <width>28</width>
+         <height>28</height>
         </size>
        </property>
        <property name="shortcut">

@@ -24,7 +24,7 @@
   </property>
   <layout class="QGridLayout" name="gridLayout_2">
    <property name="verticalSpacing">
-    <number>80</number>
+    <number>50</number>
    </property>
    <item row="1" column="0">
     <spacer name="horizontalSpacer">
@@ -51,6 +51,12 @@
       <size>
        <width>0</width>
        <height>0</height>
+      </size>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>350</width>
+       <height>353</height>
       </size>
      </property>
      <property name="text">
@@ -116,8 +122,8 @@
        </property>
        <property name="iconSize">
         <size>
-         <width>88</width>
-         <height>88</height>
+         <width>56</width>
+         <height>56</height>
         </size>
        </property>
        <property name="toolButtonStyle">
@@ -150,8 +156,8 @@
        </property>
        <property name="iconSize">
         <size>
-         <width>88</width>
-         <height>88</height>
+         <width>56</width>
+         <height>56</height>
         </size>
        </property>
        <property name="popupMode">
@@ -188,8 +194,8 @@
        </property>
        <property name="iconSize">
         <size>
-         <width>88</width>
-         <height>88</height>
+         <width>56</width>
+         <height>56</height>
         </size>
        </property>
        <property name="toolButtonStyle">
@@ -223,8 +229,8 @@
        </property>
        <property name="iconSize">
         <size>
-         <width>88</width>
-         <height>88</height>
+         <width>56</width>
+         <height>56</height>
         </size>
        </property>
        <property name="toolButtonStyle">
@@ -257,8 +263,8 @@
        </property>
        <property name="iconSize">
         <size>
-         <width>88</width>
-         <height>88</height>
+         <width>56</width>
+         <height>56</height>
         </size>
        </property>
        <property name="popupMode">
@@ -291,8 +297,8 @@
        </property>
        <property name="iconSize">
         <size>
-         <width>88</width>
-         <height>88</height>
+         <width>56</width>
+         <height>56</height>
         </size>
        </property>
        <property name="toolButtonStyle">

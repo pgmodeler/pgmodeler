@@ -18,7 +18,6 @@
   </property>
   <property name="font">
    <font>
-    <weight>75</weight>
     <italic>true</italic>
     <bold>true</bold>
    </font>
@@ -133,7 +132,6 @@
               </property>
               <property name="font">
                <font>
-                <weight>50</weight>
                 <italic>true</italic>
                 <bold>false</bold>
                </font>
@@ -150,8 +148,8 @@
               </property>
               <property name="iconSize">
                <size>
-                <width>48</width>
-                <height>48</height>
+                <width>32</width>
+                <height>32</height>
                </size>
               </property>
               <property name="autoExclusive">
@@ -175,7 +173,6 @@
               </property>
               <property name="font">
                <font>
-                <weight>50</weight>
                 <italic>true</italic>
                 <bold>false</bold>
                </font>
@@ -192,8 +189,8 @@
               </property>
               <property name="iconSize">
                <size>
-                <width>48</width>
-                <height>48</height>
+                <width>32</width>
+                <height>32</height>
                </size>
               </property>
               <property name="autoExclusive">
@@ -217,7 +214,6 @@
               </property>
               <property name="font">
                <font>
-                <weight>50</weight>
                 <italic>true</italic>
                 <bold>false</bold>
                </font>
@@ -234,8 +230,8 @@
               </property>
               <property name="iconSize">
                <size>
-                <width>48</width>
-                <height>48</height>
+                <width>32</width>
+                <height>32</height>
                </size>
               </property>
               <property name="autoExclusive">
@@ -259,7 +255,6 @@
               </property>
               <property name="font">
                <font>
-                <weight>50</weight>
                 <italic>true</italic>
                 <bold>false</bold>
                </font>
@@ -276,8 +271,8 @@
               </property>
               <property name="iconSize">
                <size>
-                <width>48</width>
-                <height>48</height>
+                <width>32</width>
+                <height>32</height>
                </size>
               </property>
               <property name="autoExclusive">
@@ -301,7 +296,6 @@
               </property>
               <property name="font">
                <font>
-                <weight>50</weight>
                 <italic>true</italic>
                 <bold>false</bold>
                </font>
@@ -318,8 +312,8 @@
               </property>
               <property name="iconSize">
                <size>
-                <width>48</width>
-                <height>48</height>
+                <width>32</width>
+                <height>32</height>
                </size>
               </property>
               <property name="autoExclusive">
@@ -343,7 +337,6 @@
               </property>
               <property name="font">
                <font>
-                <weight>50</weight>
                 <italic>true</italic>
                 <bold>false</bold>
                </font>
@@ -360,8 +353,8 @@
               </property>
               <property name="iconSize">
                <size>
-                <width>48</width>
-                <height>48</height>
+                <width>32</width>
+                <height>32</height>
                </size>
               </property>
               <property name="autoExclusive">
@@ -385,7 +378,6 @@
               </property>
               <property name="font">
                <font>
-                <weight>50</weight>
                 <italic>true</italic>
                 <bold>false</bold>
                </font>
@@ -402,8 +394,8 @@
               </property>
               <property name="iconSize">
                <size>
-                <width>48</width>
-                <height>48</height>
+                <width>32</width>
+                <height>32</height>
                </size>
               </property>
               <property name="autoExclusive">
@@ -427,7 +419,6 @@
               </property>
               <property name="font">
                <font>
-                <weight>50</weight>
                 <italic>true</italic>
                 <bold>false</bold>
                </font>
@@ -444,8 +435,8 @@
               </property>
               <property name="iconSize">
                <size>
-                <width>48</width>
-                <height>48</height>
+                <width>32</width>
+                <height>32</height>
                </size>
               </property>
               <property name="autoExclusive">
@@ -469,7 +460,6 @@
               </property>
               <property name="font">
                <font>
-                <weight>50</weight>
                 <italic>true</italic>
                 <bold>false</bold>
                </font>
@@ -486,8 +476,8 @@
               </property>
               <property name="iconSize">
                <size>
-                <width>48</width>
-                <height>48</height>
+                <width>32</width>
+                <height>32</height>
                </size>
               </property>
               <property name="autoExclusive">
@@ -511,7 +501,6 @@
               </property>
               <property name="font">
                <font>
-                <weight>50</weight>
                 <italic>true</italic>
                 <bold>false</bold>
                </font>
@@ -528,8 +517,8 @@
               </property>
               <property name="iconSize">
                <size>
-                <width>48</width>
-                <height>48</height>
+                <width>32</width>
+                <height>32</height>
                </size>
               </property>
               <property name="autoExclusive">
@@ -553,7 +542,6 @@
               </property>
               <property name="font">
                <font>
-                <weight>50</weight>
                 <italic>true</italic>
                 <bold>false</bold>
                </font>
@@ -570,8 +558,8 @@
               </property>
               <property name="iconSize">
                <size>
-                <width>48</width>
-                <height>48</height>
+                <width>32</width>
+                <height>32</height>
                </size>
               </property>
               <property name="autoExclusive">
@@ -595,7 +583,6 @@
               </property>
               <property name="font">
                <font>
-                <weight>50</weight>
                 <italic>true</italic>
                 <bold>false</bold>
                </font>
@@ -612,8 +599,8 @@
               </property>
               <property name="iconSize">
                <size>
-                <width>48</width>
-                <height>48</height>
+                <width>32</width>
+                <height>32</height>
                </size>
               </property>
               <property name="autoExclusive">
@@ -637,7 +624,6 @@
               </property>
               <property name="font">
                <font>
-                <weight>50</weight>
                 <italic>true</italic>
                 <bold>false</bold>
                </font>
@@ -654,8 +640,8 @@
               </property>
               <property name="iconSize">
                <size>
-                <width>48</width>
-                <height>48</height>
+                <width>32</width>
+                <height>32</height>
                </size>
               </property>
               <property name="autoExclusive">
@@ -679,7 +665,6 @@
               </property>
               <property name="font">
                <font>
-                <weight>50</weight>
                 <italic>true</italic>
                 <bold>false</bold>
                </font>
@@ -696,8 +681,8 @@
               </property>
               <property name="iconSize">
                <size>
-                <width>48</width>
-                <height>48</height>
+                <width>32</width>
+                <height>32</height>
                </size>
               </property>
               <property name="autoExclusive">
@@ -721,7 +706,6 @@
               </property>
               <property name="font">
                <font>
-                <weight>50</weight>
                 <italic>true</italic>
                 <bold>false</bold>
                </font>
@@ -738,8 +722,8 @@
               </property>
               <property name="iconSize">
                <size>
-                <width>48</width>
-                <height>48</height>
+                <width>32</width>
+                <height>32</height>
                </size>
               </property>
               <property name="shortcut">
@@ -814,7 +798,6 @@
               </property>
               <property name="font">
                <font>
-                <weight>50</weight>
                 <italic>true</italic>
                 <bold>false</bold>
                </font>
@@ -831,8 +814,8 @@
               </property>
               <property name="iconSize">
                <size>
-                <width>48</width>
-                <height>48</height>
+                <width>32</width>
+                <height>32</height>
                </size>
               </property>
               <property name="popupMode">
@@ -853,7 +836,6 @@
               </property>
               <property name="font">
                <font>
-                <weight>50</weight>
                 <italic>true</italic>
                 <bold>false</bold>
                </font>
@@ -870,8 +852,8 @@
               </property>
               <property name="iconSize">
                <size>
-                <width>48</width>
-                <height>48</height>
+                <width>32</width>
+                <height>32</height>
                </size>
               </property>
               <property name="popupMode">
@@ -892,7 +874,6 @@
               </property>
               <property name="font">
                <font>
-                <weight>50</weight>
                 <italic>true</italic>
                 <bold>false</bold>
                </font>
@@ -909,8 +890,8 @@
               </property>
               <property name="iconSize">
                <size>
-                <width>48</width>
-                <height>48</height>
+                <width>32</width>
+                <height>32</height>
                </size>
               </property>
               <property name="popupMode">
@@ -931,7 +912,6 @@
               </property>
               <property name="font">
                <font>
-                <weight>50</weight>
                 <italic>true</italic>
                 <bold>false</bold>
                </font>
@@ -948,8 +928,8 @@
               </property>
               <property name="iconSize">
                <size>
-                <width>48</width>
-                <height>48</height>
+                <width>32</width>
+                <height>32</height>
                </size>
               </property>
               <property name="popupMode">
@@ -970,7 +950,6 @@
               </property>
               <property name="font">
                <font>
-                <weight>50</weight>
                 <italic>true</italic>
                 <bold>false</bold>
                </font>
@@ -987,8 +966,8 @@
               </property>
               <property name="iconSize">
                <size>
-                <width>48</width>
-                <height>48</height>
+                <width>32</width>
+                <height>32</height>
                </size>
               </property>
               <property name="popupMode">
@@ -1009,7 +988,6 @@
               </property>
               <property name="font">
                <font>
-                <weight>50</weight>
                 <italic>true</italic>
                 <bold>false</bold>
                </font>
@@ -1026,8 +1004,8 @@
               </property>
               <property name="iconSize">
                <size>
-                <width>48</width>
-                <height>48</height>
+                <width>32</width>
+                <height>32</height>
                </size>
               </property>
               <property name="popupMode">
@@ -1048,7 +1026,6 @@
               </property>
               <property name="font">
                <font>
-                <weight>50</weight>
                 <italic>true</italic>
                 <bold>false</bold>
                </font>
@@ -1065,8 +1042,8 @@
               </property>
               <property name="iconSize">
                <size>
-                <width>48</width>
-                <height>48</height>
+                <width>32</width>
+                <height>32</height>
                </size>
               </property>
               <property name="popupMode">
@@ -1087,7 +1064,6 @@
               </property>
               <property name="font">
                <font>
-                <weight>50</weight>
                 <italic>true</italic>
                 <bold>false</bold>
                </font>
@@ -1104,8 +1080,8 @@
               </property>
               <property name="iconSize">
                <size>
-                <width>48</width>
-                <height>48</height>
+                <width>32</width>
+                <height>32</height>
                </size>
               </property>
               <property name="popupMode">
@@ -1126,7 +1102,6 @@
               </property>
               <property name="font">
                <font>
-                <weight>50</weight>
                 <italic>true</italic>
                 <bold>false</bold>
                </font>
@@ -1143,8 +1118,8 @@
               </property>
               <property name="iconSize">
                <size>
-                <width>48</width>
-                <height>48</height>
+                <width>32</width>
+                <height>32</height>
                </size>
               </property>
               <property name="popupMode">
@@ -1165,7 +1140,6 @@
               </property>
               <property name="font">
                <font>
-                <weight>50</weight>
                 <italic>true</italic>
                 <bold>false</bold>
                </font>
@@ -1182,8 +1156,8 @@
               </property>
               <property name="iconSize">
                <size>
-                <width>48</width>
-                <height>48</height>
+                <width>32</width>
+                <height>32</height>
                </size>
               </property>
               <property name="popupMode">
@@ -1204,7 +1178,6 @@
               </property>
               <property name="font">
                <font>
-                <weight>50</weight>
                 <italic>true</italic>
                 <bold>false</bold>
                </font>
@@ -1221,8 +1194,8 @@
               </property>
               <property name="iconSize">
                <size>
-                <width>48</width>
-                <height>48</height>
+                <width>32</width>
+                <height>32</height>
                </size>
               </property>
               <property name="popupMode">
@@ -1243,7 +1216,6 @@
               </property>
               <property name="font">
                <font>
-                <weight>50</weight>
                 <italic>true</italic>
                 <bold>false</bold>
                </font>
@@ -1260,8 +1232,8 @@
               </property>
               <property name="iconSize">
                <size>
-                <width>48</width>
-                <height>48</height>
+                <width>32</width>
+                <height>32</height>
                </size>
               </property>
               <property name="popupMode">
@@ -1282,7 +1254,6 @@
               </property>
               <property name="font">
                <font>
-                <weight>50</weight>
                 <italic>true</italic>
                 <bold>false</bold>
                </font>
@@ -1299,8 +1270,8 @@
               </property>
               <property name="iconSize">
                <size>
-                <width>48</width>
-                <height>48</height>
+                <width>32</width>
+                <height>32</height>
                </size>
               </property>
               <property name="popupMode">
@@ -1321,7 +1292,6 @@
               </property>
               <property name="font">
                <font>
-                <weight>50</weight>
                 <italic>true</italic>
                 <bold>false</bold>
                </font>
@@ -1338,8 +1308,8 @@
               </property>
               <property name="iconSize">
                <size>
-                <width>48</width>
-                <height>48</height>
+                <width>32</width>
+                <height>32</height>
                </size>
               </property>
               <property name="popupMode">
@@ -1408,7 +1378,6 @@
               </property>
               <property name="font">
                <font>
-                <weight>50</weight>
                 <italic>true</italic>
                 <bold>false</bold>
                </font>
@@ -1425,8 +1394,8 @@
               </property>
               <property name="iconSize">
                <size>
-                <width>48</width>
-                <height>48</height>
+                <width>32</width>
+                <height>32</height>
                </size>
               </property>
               <property name="popupMode">
@@ -1447,7 +1416,6 @@
               </property>
               <property name="font">
                <font>
-                <weight>50</weight>
                 <italic>true</italic>
                 <bold>false</bold>
                </font>
@@ -1464,8 +1432,8 @@
               </property>
               <property name="iconSize">
                <size>
-                <width>48</width>
-                <height>48</height>
+                <width>32</width>
+                <height>32</height>
                </size>
               </property>
               <property name="popupMode">
@@ -1486,7 +1454,6 @@
               </property>
               <property name="font">
                <font>
-                <weight>50</weight>
                 <italic>true</italic>
                 <bold>false</bold>
                </font>
@@ -1503,8 +1470,8 @@
               </property>
               <property name="iconSize">
                <size>
-                <width>48</width>
-                <height>48</height>
+                <width>32</width>
+                <height>32</height>
                </size>
               </property>
               <property name="popupMode">
@@ -1525,7 +1492,6 @@
               </property>
               <property name="font">
                <font>
-                <weight>50</weight>
                 <italic>true</italic>
                 <bold>false</bold>
                </font>
@@ -1542,8 +1508,8 @@
               </property>
               <property name="iconSize">
                <size>
-                <width>48</width>
-                <height>48</height>
+                <width>32</width>
+                <height>32</height>
                </size>
               </property>
               <property name="popupMode">
@@ -1564,7 +1530,6 @@
               </property>
               <property name="font">
                <font>
-                <weight>50</weight>
                 <italic>true</italic>
                 <bold>false</bold>
                </font>
@@ -1581,8 +1546,8 @@
               </property>
               <property name="iconSize">
                <size>
-                <width>48</width>
-                <height>48</height>
+                <width>32</width>
+                <height>32</height>
                </size>
               </property>
               <property name="popupMode">
@@ -1603,7 +1568,6 @@
               </property>
               <property name="font">
                <font>
-                <weight>50</weight>
                 <italic>true</italic>
                 <bold>false</bold>
                </font>
@@ -1620,8 +1584,8 @@
               </property>
               <property name="iconSize">
                <size>
-                <width>48</width>
-                <height>48</height>
+                <width>32</width>
+                <height>32</height>
                </size>
               </property>
               <property name="popupMode">
@@ -1642,7 +1606,6 @@
               </property>
               <property name="font">
                <font>
-                <weight>50</weight>
                 <italic>true</italic>
                 <bold>false</bold>
                </font>
@@ -1659,8 +1622,8 @@
               </property>
               <property name="iconSize">
                <size>
-                <width>48</width>
-                <height>48</height>
+                <width>32</width>
+                <height>32</height>
                </size>
               </property>
               <property name="popupMode">
@@ -1732,7 +1695,6 @@
               </property>
               <property name="font">
                <font>
-                <weight>50</weight>
                 <italic>true</italic>
                 <bold>false</bold>
                </font>
@@ -1749,8 +1711,8 @@
               </property>
               <property name="iconSize">
                <size>
-                <width>48</width>
-                <height>48</height>
+                <width>32</width>
+                <height>32</height>
                </size>
               </property>
               <property name="popupMode">
@@ -1771,7 +1733,6 @@
               </property>
               <property name="font">
                <font>
-                <weight>50</weight>
                 <italic>true</italic>
                 <bold>false</bold>
                </font>
@@ -1788,8 +1749,8 @@
               </property>
               <property name="iconSize">
                <size>
-                <width>48</width>
-                <height>48</height>
+                <width>32</width>
+                <height>32</height>
                </size>
               </property>
               <property name="popupMode">
@@ -1810,7 +1771,6 @@
               </property>
               <property name="font">
                <font>
-                <weight>50</weight>
                 <italic>true</italic>
                 <bold>false</bold>
                </font>
@@ -1827,8 +1787,8 @@
               </property>
               <property name="iconSize">
                <size>
-                <width>48</width>
-                <height>48</height>
+                <width>32</width>
+                <height>32</height>
                </size>
               </property>
               <property name="popupMode">
@@ -1849,7 +1809,6 @@
               </property>
               <property name="font">
                <font>
-                <weight>50</weight>
                 <italic>true</italic>
                 <bold>false</bold>
                </font>
@@ -1866,8 +1825,8 @@
               </property>
               <property name="iconSize">
                <size>
-                <width>48</width>
-                <height>48</height>
+                <width>32</width>
+                <height>32</height>
                </size>
               </property>
               <property name="popupMode">
@@ -1888,7 +1847,6 @@
               </property>
               <property name="font">
                <font>
-                <weight>50</weight>
                 <italic>true</italic>
                 <bold>false</bold>
                </font>
@@ -1905,8 +1863,8 @@
               </property>
               <property name="iconSize">
                <size>
-                <width>48</width>
-                <height>48</height>
+                <width>32</width>
+                <height>32</height>
                </size>
               </property>
               <property name="popupMode">
@@ -1927,7 +1885,6 @@
               </property>
               <property name="font">
                <font>
-                <weight>50</weight>
                 <italic>true</italic>
                 <bold>false</bold>
                </font>
@@ -1944,8 +1901,8 @@
               </property>
               <property name="iconSize">
                <size>
-                <width>48</width>
-                <height>48</height>
+                <width>32</width>
+                <height>32</height>
                </size>
               </property>
               <property name="popupMode">
@@ -1981,7 +1938,6 @@
   </layout>
  </widget>
  <resources>
-  <include location="../../res/resources.qrc"/>
   <include location="../../res/resources.qrc"/>
   <include location="../../res/resources.qrc"/>
  </resources>

@@ -104,15 +104,17 @@ int main(int argc, char **argv)
 
 		//Loading the application splash screen
 		QSplashScreen splash;
-		QPixmap pix(QPixmap(":images/images/pgmodeler_splash.png"));
-		QSize sz = splash.screen()->size();
+		QPixmap pix(":images/images/pgmodeler_splash.png");
 
+		#warning "Disabled!"
+		//QSize sz = splash.screen()->size() * splash.screen()->devicePixelRatio();
 		// Test: adjusting the size of the splash screen according to the screen resolution
-		if(sz.width() <= GuiUtilsNs::FHDWidth)
+		/*if(sz.width() <= GuiUtilsNs::FHDWidth)
 			pix = pix.scaledToWidth(350, Qt::SmoothTransformation);
 		else if(sz.width() <= GuiUtilsNs::QHDWidth)
-			pix = pix.scaledToWidth(420, Qt::SmoothTransformation);
+			pix = pix.scaledToWidth(420, Qt::SmoothTransformation);*/
 
+		pix = pix.scaledToWidth(400, Qt::SmoothTransformation);
 		splash.setPixmap(pix);
 		splash.setMask(pix.mask());
 		splash.show();

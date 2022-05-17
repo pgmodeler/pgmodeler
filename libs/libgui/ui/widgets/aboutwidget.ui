@@ -109,7 +109,6 @@
           </property>
           <property name="font">
            <font>
-            <weight>75</weight>
             <bold>true</bold>
            </font>
           </property>
@@ -146,7 +145,6 @@
           </property>
           <property name="font">
            <font>
-            <weight>75</weight>
             <italic>true</italic>
             <bold>true</bold>
            </font>
@@ -222,7 +220,6 @@
           </property>
           <property name="font">
            <font>
-            <weight>50</weight>
             <italic>true</italic>
             <bold>false</bold>
            </font>
@@ -299,8 +296,8 @@
         </property>
         <property name="iconSize">
          <size>
-          <width>25</width>
-          <height>25</height>
+          <width>20</width>
+          <height>20</height>
          </size>
         </property>
         <property name="shortcut">
@@ -348,10 +345,10 @@
            </property>
            <property name="html">
             <string notr="true">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;meta charset=&quot;utf-8&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Noto Sans'; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Courier'; font-size:11pt;&quot;&gt;pgModeler - PostgreSQL Database Modeler&lt;br /&gt;Copyright 2006-2021 - Raphael Araújo e Silva&lt;br /&gt;&lt;br /&gt;This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation version 3.&lt;br /&gt;&lt;br /&gt;This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.&lt;br /&gt;&lt;br /&gt;The complete text of GPLv3 is at LICENSE file on pgModeler's source code root directory. Also, you can get the complete GNU General Public License at &amp;lt;&lt;/span&gt;&lt;a href=&quot;http://www.gnu.org/licenses&quot;&gt;&lt;span style=&quot; font-family:'Courier'; font-size:11pt; text-decoration: underline; color:#0000ff;&quot;&gt;http://www.gnu.org/licenses&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot; font-family:'Courier'; font-size:11pt;&quot;&gt;&amp;gt;&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Noto Sans'; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Courier';&quot;&gt;pgModeler - PostgreSQL Database Modeler&lt;br /&gt;Copyright 2006-2021 - Raphael Araújo e Silva&lt;br /&gt;&lt;br /&gt;This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation version 3.&lt;br /&gt;&lt;br /&gt;This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.&lt;br /&gt;&lt;br /&gt;The complete text of GPLv3 is at LICENSE file on pgModeler's source code root directory. Also, you can get the complete GNU General Public License at &amp;lt;&lt;/span&gt;&lt;a href=&quot;http://www.gnu.org/licenses&quot;&gt;&lt;span style=&quot; font-family:'Courier'; text-decoration: underline; color:#0000ff;&quot;&gt;http://www.gnu.org/licenses&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot; font-family:'Courier';&quot;&gt;&amp;gt;&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
            </property>
            <property name="acceptRichText">
             <bool>false</bool>
@@ -435,8 +432,8 @@ p, li { white-space: pre-wrap; }
         </property>
         <property name="minimumSize">
          <size>
-          <width>100</width>
-          <height>100</height>
+          <width>128</width>
+          <height>128</height>
          </size>
         </property>
         <property name="maximumSize">
@@ -449,7 +446,7 @@ p, li { white-space: pre-wrap; }
          <string/>
         </property>
         <property name="pixmap">
-         <pixmap resource="../../res/resources.qrc">:/icons/icons/pgmodeler_logo.png</pixmap>
+         <pixmap resource="../../res/resources.qrc">:/images/images/pgmodeler_splash.png</pixmap>
         </property>
         <property name="scaledContents">
          <bool>true</bool>
@@ -462,7 +459,6 @@ p, li { white-space: pre-wrap; }
   </layout>
  </widget>
  <resources>
-  <include location="../../res/resources.qrc"/>
   <include location="../../res/resources.qrc"/>
   <include location="../../res/resources.qrc"/>
  </resources>

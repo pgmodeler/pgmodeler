@@ -60,8 +60,8 @@
        </property>
        <property name="iconSize">
         <size>
-         <width>32</width>
-         <height>32</height>
+         <width>25</width>
+         <height>25</height>
         </size>
        </property>
        <property name="shortcut">
@@ -95,8 +95,8 @@
        </property>
        <property name="iconSize">
         <size>
-         <width>32</width>
-         <height>32</height>
+         <width>25</width>
+         <height>25</height>
         </size>
        </property>
        <property name="shortcut">
@@ -127,8 +127,8 @@
        </property>
        <property name="iconSize">
         <size>
-         <width>32</width>
-         <height>32</height>
+         <width>25</width>
+         <height>25</height>
         </size>
        </property>
        <property name="popupMode">
@@ -162,8 +162,8 @@
        </property>
        <property name="iconSize">
         <size>
-         <width>32</width>
-         <height>32</height>
+         <width>25</width>
+         <height>25</height>
         </size>
        </property>
        <property name="shortcut">
@@ -214,6 +214,12 @@
      </property>
      <property name="selectionBehavior">
       <enum>QAbstractItemView::SelectItems</enum>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>25</width>
+       <height>25</height>
+      </size>
      </property>
      <property name="gridStyle">
       <enum>Qt::SolidLine</enum>
@@ -365,7 +371,6 @@
         </property>
         <property name="font">
          <font>
-          <weight>50</weight>
           <bold>false</bold>
           <underline>false</underline>
           <strikeout>false</strikeout>

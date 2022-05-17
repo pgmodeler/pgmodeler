@@ -81,6 +81,12 @@
          <property name="selectionBehavior">
           <enum>QAbstractItemView::SelectRows</enum>
          </property>
+         <property name="iconSize">
+          <size>
+           <width>25</width>
+           <height>25</height>
+          </size>
+         </property>
          <property name="gridStyle">
           <enum>Qt::SolidLine</enum>
          </property>
@@ -233,6 +239,12 @@
          </property>
          <property name="selectionBehavior">
           <enum>QAbstractItemView::SelectRows</enum>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>25</width>
+           <height>25</height>
+          </size>
          </property>
          <property name="gridStyle">
           <enum>Qt::SolidLine</enum>
