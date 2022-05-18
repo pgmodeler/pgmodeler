@@ -16,12 +16,31 @@
 # Also, you can get the complete GNU General Public License at <http://www.gnu.org/licenses/>
 */
 #include "application.h"
-#include "globalattributes.h"
 #include "exception.h"
+#include <QTranslator>
 
 Application::Application(int &argc, char **argv) : QApplication(argc,argv)
 {
 	GlobalAttributes::setSearchPath(this->applicationDirPath());
+}
+
+bool Application::loadTranslation(const QString &lang_id, const QString &directory)
+{
+	if(lang_id.isEmpty())
+		return false;
+
+	QTranslator *translator = new QTranslator(this);
+
+	/* Tries to load the ui translation according to the system's locale,
+	 * and in case of success install it in the application */
+	if(!translator->load(lang_id, directory) ||
+		 !installTranslator(translator))
+	{
+		delete(translator);
+		return false;
+	}
+
+	return true;
 }
 
 void Application::createUserConfiguration(bool missing_only)

@@ -30,13 +30,8 @@ int main(int argc, char **argv)
 		//Application::setAttribute(Qt::AA_UseHighDpiPixmaps);
 
 		Application app(argc,argv);
-
 		QStringList args = app.arguments();
-		QTranslator translator;
-
-		//Loads the ui translation for crashhandler
-		translator.load(QLocale::system().name(), GlobalAttributes::getLanguagesDir());
-		app.installTranslator(&translator);
+		app.loadTranslation(QLocale::system().name());
 
 		CrashHandlerForm crashhandler(args.size() > 1 && args[1]==CrashHandlerForm::AnalysisMode);
 		GuiUtilsNs::resizeDialog(&crashhandler);

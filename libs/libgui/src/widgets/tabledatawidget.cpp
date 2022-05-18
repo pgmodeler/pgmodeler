@@ -516,7 +516,7 @@ QString TableDataWidget::generateDataBuffer()
 	return buffer.join(Table::DataLineBreak);
 }
 
-void TableDataWidget::enterEvent(QEvent *)
+void TableDataWidget::enterEvent(QEnterEvent *)
 {
 	paste_tb->setEnabled(!qApp->clipboard()->text().isEmpty());
 }

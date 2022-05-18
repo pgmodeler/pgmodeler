@@ -28,6 +28,7 @@
 
 #include <QApplication>
 #include <QDir>
+#include "globalattributes.h"
 
 class Application: public QApplication {
 	private:
@@ -41,6 +42,11 @@ class Application: public QApplication {
 
 	public:
 		Application(int & argc, char ** argv);
+
+		/*! \brief Loads the translation file by its id (e.g. pt_BR, en_US, etc) in the provided directory.
+		 * By default, the files are searched in the pgModeler's default lang files location.
+		 * In case of success installs a translator object in the application */
+		bool loadTranslation(const QString &lang_id, const QString &directory = GlobalAttributes::LanguagesDir);
 };
 
 #endif

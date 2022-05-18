@@ -32,8 +32,10 @@ int main(int argc, char **argv)
 
 		PgModelerApp app(argc,argv);
 		QStringList args = app.arguments();
-
 		SchemaEditorForm syntaxchk;
+
+		app.loadTranslation(QLocale::system().name());
+
 		args.pop_front();
 		syntaxchk.loadFiles(args);
 		syntaxchk.showMaximized();
