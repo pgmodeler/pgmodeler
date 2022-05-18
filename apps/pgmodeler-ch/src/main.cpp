@@ -25,10 +25,6 @@ int main(int argc, char **argv)
 {
 	try
 	{
-		#warning "Debug me!"
-		//Application::setAttribute(Qt::AA_EnableHighDpiScaling, false);
-		//Application::setAttribute(Qt::AA_UseHighDpiPixmaps);
-
 		Application app(argc,argv);
 		QStringList args = app.arguments();
 		app.loadTranslation(QLocale::system().name());
