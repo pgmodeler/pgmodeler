@@ -126,13 +126,13 @@ GeneralConfigWidget::GeneralConfigWidget(QWidget * parent) : BaseConfigWidget(pa
 	for(QSpinBox *spin : spin_boxes)
 	{
 		child_wgts.push_back(spin);
-		connect(spin, SIGNAL(valueChanged(QString)), this, SLOT(setConfigurationChanged()));
+		connect(spin, SIGNAL(valueChanged(int)), this, SLOT(setConfigurationChanged()));
 	}
 
 	for(QDoubleSpinBox *dspin : dspin_boxes)
 	{
 		child_wgts.push_back(dspin);
-		connect(dspin, SIGNAL(valueChanged(QString)), this, SLOT(setConfigurationChanged()));
+		connect(dspin, SIGNAL(valueChanged(double)), this, SLOT(setConfigurationChanged()));
 	}
 
 	for(QComboBox *cmb : combos)

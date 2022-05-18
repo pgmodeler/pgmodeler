@@ -120,7 +120,7 @@ int main(int argc, char **argv)
 			pix = pix.scaledToWidth(400, Qt::SmoothTransformation);
 
 		splash.setPixmap(pix);
-		//plash.setMask(pix.mask());
+		splash.setMask(pix.mask());
 		splash.show();
 		app.processEvents();
 
