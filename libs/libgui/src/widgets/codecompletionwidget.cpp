@@ -34,6 +34,12 @@ CodeCompletionWidget::CodeCompletionWidget(QPlainTextEdit *code_field_txt, bool 
 	completion_wgt->setWindowFlags(Qt::Popup);
 	completion_wgt->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
 	completion_wgt->setMinimumSize(200, 150);
+	completion_wgt->setMaximumHeight(300);
+
+	always_on_top_chk=new QCheckBox(completion_wgt);
+	always_on_top_chk->setText(tr("&Always on top"));
+	always_on_top_chk->setToolTip(tr("The widget will be always displayed while typing. It can be closable only by ESC key or when focus changes to another widget."));
+	always_on_top_chk->setFocusPolicy(Qt::NoFocus);
 
 	name_list=new QListWidget(completion_wgt);
 	name_list->setSpacing(2);
@@ -41,11 +47,7 @@ CodeCompletionWidget::CodeCompletionWidget(QPlainTextEdit *code_field_txt, bool 
 	name_list->setSortingEnabled(false);
 	name_list->setSizeAdjustPolicy(QListWidget::AdjustToContents);
 	name_list->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
-
-	always_on_top_chk=new QCheckBox(completion_wgt);
-	always_on_top_chk->setText(tr("&Always on top"));
-	always_on_top_chk->setToolTip(tr("The widget will be always displayed while typing. It can be closable only by ESC key or when focus changes to another widget."));
-	always_on_top_chk->setFocusPolicy(Qt::NoFocus);
+	name_list->setMaximumHeight(completion_wgt->maximumHeight() - always_on_top_chk->height() - GuiUtilsNs::LtSpacing);
 
 	QVBoxLayout *vbox=new QVBoxLayout(completion_wgt);
 	vbox->addWidget(name_list);
@@ -326,7 +328,6 @@ void CodeCompletionWidget::show()
 	completion_wgt->show();	
 	showItemTooltip();
 	popup_timer.stop();
-
 	completion_wgt->adjustSize();
 	adjustSize();
 }
@@ -500,7 +501,7 @@ void CodeCompletionWidget::updateList()
 		name_list->item(0)->setSelected(true);
 
 	//Sets the list position right below of text cursor
-	completion_wgt->move(code_field_txt->mapToGlobal(code_field_txt->cursorRect().bottomRight() + QPoint(10, 10)));
+	completion_wgt->move(code_field_txt->viewport()->mapToGlobal(code_field_txt->cursorRect().bottomLeft()));
 	name_list->setFocus();
 }
 
