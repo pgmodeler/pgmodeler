@@ -72,7 +72,7 @@
           <enum>Qt::Horizontal</enum>
          </property>
          <property name="handleWidth">
-          <number>8</number>
+          <number>5</number>
          </property>
          <widget class="QWidget" name="layoutWidget">
           <layout class="QVBoxLayout" name="verticalLayout">
@@ -142,7 +142,7 @@
               <enum>Qt::Vertical</enum>
              </property>
              <property name="handleWidth">
-              <number>8</number>
+              <number>5</number>
              </property>
              <widget class="QGroupBox" name="roles_gb">
               <property name="sizePolicy">

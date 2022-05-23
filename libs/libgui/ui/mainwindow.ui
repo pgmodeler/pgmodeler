@@ -119,7 +119,7 @@
              <enum>Qt::Horizontal</enum>
             </property>
             <property name="handleWidth">
-             <number>8</number>
+             <number>5</number>
             </property>
             <property name="childrenCollapsible">
              <bool>false</bool>
@@ -165,7 +165,7 @@
                  <enum>Qt::Vertical</enum>
                 </property>
                 <property name="handleWidth">
-                 <number>8</number>
+                 <number>5</number>
                 </property>
                 <property name="childrenCollapsible">
                  <bool>false</bool>
@@ -240,7 +240,7 @@
                      <enum>Qt::Horizontal</enum>
                     </property>
                     <property name="handleWidth">
-                     <number>8</number>
+                     <number>5</number>
                     </property>
                     <property name="childrenCollapsible">
                      <bool>false</bool>
@@ -303,7 +303,7 @@
                  <enum>Qt::Vertical</enum>
                 </property>
                 <property name="handleWidth">
-                 <number>8</number>
+                 <number>5</number>
                 </property>
                 <property name="childrenCollapsible">
                  <bool>false</bool>
@@ -749,7 +749,7 @@
      <x>0</x>
      <y>0</y>
      <width>1668</width>
-     <height>26</height>
+     <height>27</height>
     </rect>
    </property>
    <property name="autoFillBackground">

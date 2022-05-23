@@ -31,12 +31,15 @@
     <number>0</number>
    </property>
    <property name="rightMargin">
-    <number>10</number>
+    <number>5</number>
    </property>
    <property name="bottomMargin">
     <number>10</number>
    </property>
-   <property name="spacing">
+   <property name="horizontalSpacing">
+    <number>5</number>
+   </property>
+   <property name="verticalSpacing">
     <number>10</number>
    </property>
    <item row="0" column="1">
@@ -45,7 +48,7 @@
       <enum>Qt::Horizontal</enum>
      </property>
      <property name="handleWidth">
-      <number>8</number>
+      <number>5</number>
      </property>
      <property name="childrenCollapsible">
       <bool>false</bool>

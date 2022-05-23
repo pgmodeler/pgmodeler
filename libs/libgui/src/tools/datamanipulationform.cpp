@@ -897,8 +897,10 @@ void DataManipulationForm::retrieveFKColumns(const QString &schema, const QStrin
 			submenu = new QMenu(this);
 			submenu->setStyle(new CustomMenuStyle);
 
-			#warning "Fix me!"
-			//fks_menu.addAction(QPixmap(GuiUtilsNs::getIconPath("referenced")), tr("Referenced tables"))->setMenu(submenu);
+			QAction *act = submenu->menuAction();
+			act->setIcon(QPixmap(GuiUtilsNs::getIconPath("referenced")));
+			act->setText(tr("Referenced tables"));
+			fks_menu.addAction(act);
 
 			if(fks.empty())
 				submenu->addAction(tr("(none)"))->setEnabled(false);
@@ -949,8 +951,10 @@ void DataManipulationForm::retrieveFKColumns(const QString &schema, const QStrin
 			submenu = new QMenu(this);
 			submenu->setStyle(new CustomMenuStyle);
 
-			#warning "Fix me!"
-			//fks_menu.addAction(QPixmap(GuiUtilsNs::getIconPath("referrer")), tr("Referrer tables"))->setMenu(submenu);
+			act = submenu->menuAction();
+			act->setIcon(QPixmap(GuiUtilsNs::getIconPath("referrer")));
+			act->setText(tr("Referrer tables"));
+			fks_menu.addAction(act);
 
 			if(ref_fks.empty())
 				submenu->addAction(tr("(none)"))->setEnabled(false);
@@ -1647,14 +1651,16 @@ void DataManipulationForm::showPopupMenu()
 
 		item_menu.setStyle(new CustomMenuStyle);
 
-		act = item_menu.addAction(QIcon(GuiUtilsNs::getIconPath("copy")), tr("Copy items"));
-		#warning "Fix me!"
-		//act->setMenu(&copy_menu);
+		act = copy_menu.menuAction();
+		act->setIcon(QIcon(GuiUtilsNs::getIconPath("copy")));
+		act->setText(tr("Copy items"));
+		item_menu.addAction(act);
 
-		act = item_menu.addAction(QIcon(GuiUtilsNs::getIconPath("paste")), tr("Paste items"));
-		#warning "Fix me!"
-		//act->setMenu(&paste_menu);
+		act = paste_menu.menuAction();
+		act->setIcon(QIcon(GuiUtilsNs::getIconPath("paste")));
+		act->setText(tr("Paste items"));
 		act->setEnabled(paste_tb->isEnabled());
+		item_menu.addAction(act);
 
 		act = item_menu.addAction(QIcon(GuiUtilsNs::getIconPath("cleartext")), tr("Clear items"), this, SLOT(clearItemsText()));
 		act->setEnabled(!results_tbw->selectedRanges().isEmpty());
@@ -1662,10 +1668,11 @@ void DataManipulationForm::showPopupMenu()
 		if(obj_type == ObjectType::Table)
 		{
 			item_menu.addSeparator();
-			act = item_menu.addAction(browse_tabs_tb->icon(), tr("Browse tables"));
-			#warning "Fix me!"
-			//act->setMenu(&fks_menu);
+			act = fks_menu.menuAction();
+			act->setIcon(browse_tabs_tb->icon());
+			act->setText(tr("Browse tables"));
 			act->setEnabled(browse_tabs_tb->isEnabled());
+			item_menu.addAction(act);
 
 			item_menu.addSeparator();
 			act = item_menu.addAction(duplicate_tb->icon(), tr("Duplicate row(s)"), this, SLOT(duplicateRows()), duplicate_tb->shortcut());
