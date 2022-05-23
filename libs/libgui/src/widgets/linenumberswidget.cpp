@@ -83,8 +83,8 @@ void LineNumbersWidget::paintEvent(QPaintEvent *event)
 	for(unsigned lin=first_line; lin < last_line; lin++)
 	{
 		font.setBold(cursor.hasSelection() && lin-1 >= fs_line && lin-1 <= ls_line);
-		height =  QFontMetrics(font).height();
 		painter.setFont(font);
+		height = painter.fontMetrics().height() + 1;
 
 		if(font.bold())
 		{
