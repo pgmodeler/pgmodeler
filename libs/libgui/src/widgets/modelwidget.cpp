@@ -366,26 +366,33 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	action_fade->setIcon(QIcon(GuiUtilsNs::getIconPath("fade")));
 	action_fade->setText(tr("Fade in/out"));
 
-	action_fade_in=new QAction(QIcon(GuiUtilsNs::getIconPath("fadein")), tr("Fade in"), this);
-	action_fade_out=new QAction(QIcon(GuiUtilsNs::getIconPath("fadeout")), tr("Fade out"), this);
+	action_fade_in = new QAction(QIcon(GuiUtilsNs::getIconPath("fadein")), tr("Fade in"), this);
+	action_fade_out = new QAction(QIcon(GuiUtilsNs::getIconPath("fadeout")), tr("Fade out"), this);
+
+	action_fade_objs_in = fade_in_menu.menuAction();
+	action_fade_objs_in->setIcon(QIcon(GuiUtilsNs::getIconPath("fadein")));
+	action_fade_objs_in->setText(tr("Fade in"));
+
+	action_fade_objs_out = fade_out_menu.menuAction();
+	action_fade_objs_out->setIcon(QIcon(GuiUtilsNs::getIconPath("fadeout")));
+	action_fade_objs_out->setText(tr("Fade out"));
 
 	action_fade_rels = fade_rels_menu.menuAction();
 	action_fade_rels->setIcon(QIcon(GuiUtilsNs::getIconPath("relationship")));
 	action_fade_rels->setText(tr("Relationships"));
-
 	action_fade_rels_in=new QAction(QIcon(GuiUtilsNs::getIconPath("fadein")), tr("Fade in"), this);
 	action_fade_rels_out=new QAction(QIcon(GuiUtilsNs::getIconPath("fadeout")), tr("Fade out"), this);
 
 	action_fade_peer_tables = fade_peer_tables_menu.menuAction();
 	action_fade_peer_tables->setIcon(QIcon(GuiUtilsNs::getIconPath("table")));
 	action_fade_peer_tables->setText(tr("Peer tables"));
-
 	action_fade_peer_tables_in = new QAction(QIcon(GuiUtilsNs::getIconPath("fadein")), tr("Fade in"), this);
 	action_fade_peer_tables_out = new QAction(QIcon(GuiUtilsNs::getIconPath("fadeout")), tr("Fade out"), this);
 
-	action_fade_both_objs = new QAction(tr("Both"), this);
-	action_fade_both_objs_in = new QAction(QIcon(GuiUtilsNs::getIconPath("fadein")), tr("Fade in"), this);
-	action_fade_both_objs_out = new QAction(QIcon(GuiUtilsNs::getIconPath("fadeout")), tr("Fade out"), this);
+	action_fade_tabs_rels = fade_both_objs_menu.menuAction();
+	action_fade_tabs_rels->setText(tr("Tables && Relationships"));
+	action_fade_tabs_rels_in = new QAction(QIcon(GuiUtilsNs::getIconPath("fadein")), tr("Fade in"), this);
+	action_fade_tabs_rels_out = new QAction(QIcon(GuiUtilsNs::getIconPath("fadeout")), tr("Fade out"), this);
 
 	fade_rels_menu.addAction(action_fade_rels_in);
 	fade_rels_menu.addAction(action_fade_rels_out);
@@ -393,16 +400,8 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	fade_peer_tables_menu.addAction(action_fade_peer_tables_in);
 	fade_peer_tables_menu.addAction(action_fade_peer_tables_out);
 
-	fade_both_objs_menu.addAction(action_fade_both_objs_in);
-	fade_both_objs_menu.addAction(action_fade_both_objs_out);
-
-	#warning "Fix me!"
-	//action_fade_both_objs->setMenu(&fade_both_objs_menu);
-
-	#warning "Fix me!"
-	//action_fade->setMenu(&fade_menu);
-	//action_fade_in->setMenu(&fade_in_menu);
-	//action_fade_out->setMenu(&fade_out_menu);
+	fade_both_objs_menu.addAction(action_fade_tabs_rels_in);
+	fade_both_objs_menu.addAction(action_fade_tabs_rels_out);
 
 	action_edit_creation_order=new QAction(QIcon(GuiUtilsNs::getIconPath("swapobjs")), tr("Swap ids"), this);
 	action_edit_creation_order->setToolTip(tr("Edit the objects creation order by swapping their ids"));
@@ -553,12 +552,14 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	connect(action_cascade_del, &QAction::triggered, [&](){ removeObjects(true); });
 	connect(action_fade_in, SIGNAL(triggered(bool)), this, SLOT(fadeObjectsIn()));
 	connect(action_fade_out, SIGNAL(triggered(bool)), this, SLOT(fadeObjectsOut()));
+	connect(action_fade_objs_in, SIGNAL(triggered(bool)), this, SLOT(fadeObjectsIn()));
+	connect(action_fade_objs_out, SIGNAL(triggered(bool)), this, SLOT(fadeObjectsOut()));
 	connect(action_fade_rels_in, SIGNAL(triggered(bool)), this, SLOT(fadeObjectsIn()));
 	connect(action_fade_rels_out, SIGNAL(triggered(bool)), this, SLOT(fadeObjectsOut()));
 	connect(action_fade_peer_tables_in, SIGNAL(triggered(bool)), this, SLOT(fadeObjectsIn()));
 	connect(action_fade_peer_tables_out, SIGNAL(triggered(bool)), this, SLOT(fadeObjectsOut()));
-	connect(action_fade_both_objs_in, SIGNAL(triggered(bool)), this, SLOT(fadeObjectsIn()));
-	connect(action_fade_both_objs_out, SIGNAL(triggered(bool)), this, SLOT(fadeObjectsOut()));
+	connect(action_fade_tabs_rels_in, SIGNAL(triggered(bool)), this, SLOT(fadeObjectsIn()));
+	connect(action_fade_tabs_rels_out, SIGNAL(triggered(bool)), this, SLOT(fadeObjectsOut()));
 	connect(action_collapse_ext_attribs, SIGNAL(triggered(bool)), this, SLOT(setCollapseMode()));
 	connect(action_collpase_all_attribs, SIGNAL(triggered(bool)), this, SLOT(setCollapseMode()));
 	connect(action_no_collapse_attribs, SIGNAL(triggered(bool)), this, SLOT(setCollapseMode()));
@@ -3720,15 +3721,11 @@ void ModelWidget::configureFadeMenu()
 
 	if(is_db_selected || (selected_objects.size() > 1 && !scene->hasOnlyTableChildrenSelection()))
 	{
-		fade_menu.addAction(action_fade_in);
-		fade_menu.addAction(action_fade_out);
-
-		#warning "Fix me!"
-		//action_fade_in->setMenu(&fade_in_menu);
-		//action_fade_out->setMenu(&fade_out_menu);
-
 		if(is_db_selected)
 		{
+			fade_menu.addAction(action_fade_objs_in);
+			fade_menu.addAction(action_fade_objs_out);
+
 			QAction *action = nullptr;
 			vector<ObjectType> types = { ObjectType::Schema, ObjectType::Table, ObjectType::ForeignTable, ObjectType::View, ObjectType::Relationship, ObjectType::Textbox };
 			QStringList labels = { tr("Schemas"), tr("Tables"), tr("Foreign tables"), tr("Views"), tr("Relationships"), tr("Textboxes") };
@@ -3765,9 +3762,8 @@ void ModelWidget::configureFadeMenu()
 		}
 		else
 		{
-				#warning "Fix me!"
-			//action_fade_in->setMenu(nullptr);
-			//action_fade_out->setMenu(nullptr);
+			fade_menu.addAction(action_fade_in);
+			fade_menu.addAction(action_fade_out);
 		}
 	}
 	else if(selected_objects.size() == 1)
@@ -3778,10 +3774,6 @@ void ModelWidget::configureFadeMenu()
 		{
 			fade_menu.addAction(action_fade_in);
 			fade_menu.addAction(action_fade_out);
-
-			#warning "Fix me!"
-			//action_fade_in->setMenu(nullptr);
-			//action_fade_out->setMenu(nullptr);
 		}
 		else
 		{
@@ -3790,19 +3782,9 @@ void ModelWidget::configureFadeMenu()
 			if(obj_view)
 			{
 				if(obj_view->opacity() == 1)
-				{
 					fade_menu.addAction(action_fade_out);
-
-					#warning "Fix me!"
-					//action_fade_out->setMenu(nullptr);
-				}
 				else
-				{
 					fade_menu.addAction(action_fade_in);
-
-					#warning "Fix me!"
-					//action_fade_in->setMenu(nullptr);
-				}
 			}
 
 			if(BaseTable::isBaseTable(obj_type))
@@ -3810,7 +3792,7 @@ void ModelWidget::configureFadeMenu()
 				fade_menu.addSeparator();
 				fade_menu.addAction(action_fade_rels);
 				fade_menu.addAction(action_fade_peer_tables);
-				fade_menu.addAction(action_fade_both_objs);
+				fade_menu.addAction(action_fade_tabs_rels);
 			}
 		}
 	}
@@ -3894,7 +3876,7 @@ void ModelWidget::fadeObjects(QAction *action, bool fade_in)
 		{
 			bool fade_rels = action == action_fade_rels_in || action == action_fade_rels_out,
 					fade_peer_tabs = action == action_fade_peer_tables_in || action == action_fade_peer_tables_out,
-					fade_both_objs = action == action_fade_both_objs_in || action == action_fade_both_objs_out;
+					fade_both_objs = action == action_fade_tabs_rels_in || action == action_fade_tabs_rels_out;
 
 			if(fade_rels || fade_peer_tabs || fade_both_objs)
 			{
