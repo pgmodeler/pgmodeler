@@ -40,12 +40,12 @@ class LineNumbersWidget : public QWidget {
 		unsigned first_line,
 
 		//! \brief The amount of lines to be drawn
-		line_count;
+		line_count,
 
 		//! \brief The y axis increment to start drawn the line number
-		int dy;
+		dy,
 
-		int	start_sel_line, start_sel_pos;
+		start_sel_line, start_sel_pos;
 
 		//! \brief Font color for drawn line numbers
 		static QColor font_color,
