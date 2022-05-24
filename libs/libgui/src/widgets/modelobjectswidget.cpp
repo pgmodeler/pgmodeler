@@ -185,29 +185,28 @@ void ModelObjectsWidget::selectObject()
 				obj_type != ObjectType::Column && obj_type != ObjectType::Constraint && obj_type != ObjectType::Rule &&
 				obj_type != ObjectType::Index && obj_type != ObjectType::Trigger && obj_type != ObjectType::Permission)
 		{
-			QAction act(QPixmap(GuiUtilsNs::getIconPath(obj_type)),
-									tr("New") + QString(" ") + BaseObject::getTypeName(obj_type), nullptr);
+			QAction act, *p_act = nullptr;
 			QMenu popup;
 
 			//If not a relationship, connect the action to the addNewObject method of the model wiget
 			if(obj_type != ObjectType::Relationship)
 			{
 				act.setData(QVariant(enum_cast(obj_type)));
-				connect(&act, SIGNAL(triggered()), model_wgt, SLOT(addNewObject()));
+				p_act = &act;
+				connect(p_act, SIGNAL(triggered()), model_wgt, SLOT(addNewObject()));
 			}
 			//Case is a relationship, insert the relationship menu of the model wiget into the action
 			else
-			{
-				#warning "Fix me!"
-				//act.setMenu(model_wgt->rels_menu);
-			}
+				p_act = model_wgt->rels_menu->menuAction();
 
 			if(simplified_view && enable_obj_creation)
 				connect(model_wgt->getDatabaseModel(), SIGNAL(s_objectAdded(BaseObject*)), this, SLOT(selectCreatedObject(BaseObject *)), Qt::QueuedConnection);
 
-			popup.addAction(&act);
+			p_act->setIcon(QPixmap(GuiUtilsNs::getIconPath(obj_type)));
+			p_act->setText(tr("New") + QString(" ") + BaseObject::getTypeName(obj_type));
+			popup.addAction(p_act);
 			popup.exec(QCursor::pos());
-			disconnect(&act, nullptr, model_wgt, nullptr);
+			disconnect(p_act, nullptr, model_wgt, nullptr);
 			disconnect(model_wgt->getDatabaseModel(), nullptr, this, nullptr);
 		}
 	}
