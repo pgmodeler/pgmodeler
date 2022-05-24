@@ -99,7 +99,7 @@ TableDataWidget::TableDataWidget(QWidget *parent): BaseObjectWidget(parent, Obje
 					{
 						QMenu item_menu;
 						QAction *act = nullptr;
-						QList<QToolButton *> btns = { add_row_tb, add_col_tb, dup_rows_tb, nullptr,
+						QList<QToolButton *> btns = { add_row_tb, add_col_tb, dup_rows_tb, bulkedit_tb, nullptr,
 																					del_rows_tb, del_cols_tb, nullptr,
 																					clear_rows_tb, clear_cols_tb, nullptr,
 																					copy_tb, paste_tb };
@@ -112,11 +112,18 @@ TableDataWidget::TableDataWidget(QWidget *parent): BaseObjectWidget(parent, Obje
 								continue;
 							}
 
-							act = item_menu.addAction(btn->icon(), btn->text(), btn, SLOT(click()), btn->shortcut());
-							act->setEnabled(btn->isEnabled());
+							if(btn->menu())
+							{
+								act = btn->menu()->menuAction();
+								act->setIcon(btn->icon());
+								act->setText(btn->text());
+								act->setShortcut(btn->shortcut());
+								item_menu.addAction(act);
+							}
+							else
+								act = item_menu.addAction(btn->icon(), btn->text(), btn, SLOT(click()), btn->shortcut());
 
-							#warning "Fix me!"
-							//act->setMenu(btn->menu());
+							act->setEnabled(btn->isEnabled());
 						}
 
 						item_menu.exec(QCursor::pos());
