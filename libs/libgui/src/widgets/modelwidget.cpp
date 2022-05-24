@@ -241,10 +241,10 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	action_cascade_del->setShortcut(QKeySequence(tr("Shift+Del")));
 	action_cascade_del->setMenuRole(QAction::NoRole);
 
-	action_select_all=new QAction(QIcon(GuiUtilsNs::getIconPath("selectmove")), tr("Select all"), this);
+	action_select_all = select_all_menu.menuAction();
+	action_select_all->setIcon(QIcon(GuiUtilsNs::getIconPath("selectmove")));
+	action_select_all->setText(tr("Select all"));
 	action_select_all->setToolTip(tr("Selects all the graphical objects in the model"));
-	#warning "Fix me!"
-	//action_select_all->setMenu(&select_all_menu);
 
 	action_convert_relnn=new QAction(QIcon(GuiUtilsNs::getIconPath("convrelnn")), tr("Convert"), this);
 	action_convert_rel1n=new QAction(QIcon(GuiUtilsNs::getIconPath("convrel1n")), tr("Convert"), this);
@@ -266,38 +266,38 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	action_new_object=new QAction(QIcon(GuiUtilsNs::getIconPath("newobject")), tr("New"), this);
 	action_new_object->setToolTip(tr("Add a new object in the model"));
 
-	action_quick_actions=new QAction(QIcon(GuiUtilsNs::getIconPath("quickactions")), tr("Quick"), this);
+	action_quick_actions = quick_actions_menu.menuAction();
+	action_quick_actions->setIcon(QIcon(GuiUtilsNs::getIconPath("quickactions")));
+	action_quick_actions->setText(tr("Quick"));
 	action_quick_actions->setToolTip(tr("Quick action for the selected object"));
-	#warning "Fix me!"
-	//action_quick_actions->setMenu(&quick_actions_menu);
 
 	action_rename=new QAction(QIcon(GuiUtilsNs::getIconPath("rename")), tr("Rename"), this);
 	action_rename->setShortcut(QKeySequence(tr("F2")));
 	action_rename->setToolTip(tr("Quick rename the object"));
 
-	action_moveto_schema=new QAction(QIcon(GuiUtilsNs::getIconPath("movetoschema")), tr("Move to schema"), this);
-	#warning "Fix me!"
-	//action_moveto_schema->setMenu(&schemas_menu);
+	action_moveto_schema = schemas_menu.menuAction();
+	action_moveto_schema->setIcon(QIcon(GuiUtilsNs::getIconPath("movetoschema")));
+	action_moveto_schema->setText(tr("Move to schema"));
 
-	action_set_layer=new QAction(QIcon(GuiUtilsNs::getIconPath("layers")), tr("Set layers"), this);
-	#warning "Fix me!"
-	//action_set_layer->setMenu(&layers_menu);
+	action_set_layer = layers_menu.menuAction();
+	action_set_layer->setIcon(QIcon(GuiUtilsNs::getIconPath("layers")));
+	action_set_layer->setText(tr("Set layers"));
 
 	layers_wgt = new LayersWidget(this);
 	wgt_action_layers = new QWidgetAction(this);
 	wgt_action_layers->setDefaultWidget(layers_wgt);
 	layers_menu.addAction(wgt_action_layers);
 
-	action_set_tag=new QAction(QIcon(GuiUtilsNs::getIconPath("tag")), tr("Set tag"), this);
-	#warning "Fix me!"
-	//action_set_tag->setMenu(&tags_menu);
+	action_set_tag = tags_menu.menuAction();
+	action_set_tag->setIcon(QIcon(GuiUtilsNs::getIconPath("tag")));
+	action_set_tag->setText(tr("Set tag"));
 
 	action_edit_perms=new QAction(QIcon(GuiUtilsNs::getIconPath("permission")), tr("Edit permissions"), this);
 	action_edit_perms->setShortcut(QKeySequence(tr("Ctrl+E")));
 
-	action_change_owner=new QAction(QIcon(GuiUtilsNs::getIconPath("changeowner")), tr("Change owner"), this);
-	#warning "Fix me!"
-	//action_change_owner->setMenu(&owners_menu);
+	action_change_owner = owners_menu.menuAction();
+	action_change_owner->setIcon(QIcon(GuiUtilsNs::getIconPath("changeowner")));
+	action_change_owner->setText(tr("Change owner"));
 
 	action_sel_sch_children=new QAction(QIcon(GuiUtilsNs::getIconPath("selectmove")), tr("Select children"), this);
 	action_sel_tagged_tabs=new QAction(QIcon(GuiUtilsNs::getIconPath("selectmove")), tr("Select tagged"), this);
@@ -323,9 +323,9 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	action_duplicate->setShortcut(QKeySequence(tr("Ctrl+D")));
 	action_duplicate->setMenuRole(QAction::NoRole);
 
-	action_pagination=new QAction(QIcon(GuiUtilsNs::getIconPath("pagination")), tr("Pagination"), this);
-	#warning "Fix me!"
-	//action_pagination->setMenu(&pagination_menu);
+	action_pagination = pagination_menu.menuAction();
+	action_pagination->setIcon(QIcon(GuiUtilsNs::getIconPath("pagination")));
+	action_pagination->setText(tr("Pagination"));
 
 	action = pagination_menu.addAction(tr("Enable"));
 	action->setData(true);
@@ -335,7 +335,14 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	action->setData(false);
 	connect(action, SIGNAL(triggered(bool)), this, SLOT(togglePagination()));
 
-	action_collapse_mode=new QAction(QIcon(GuiUtilsNs::getIconPath("collapse")), tr("Collapse"), this);
+	action_jump_to_table = jump_to_tab_menu.menuAction();
+	action_jump_to_table->setIcon(QIcon(GuiUtilsNs::getIconPath("jumptotable")));
+	action_jump_to_table->setText(tr("Jump to table"));
+
+	action_collapse_mode = toggle_attrs_menu.menuAction();
+	action_collapse_mode->setIcon(QIcon(GuiUtilsNs::getIconPath("collapse")));
+	action_collapse_mode->setText(tr("Collapse"));
+
 	action_no_collapse_attribs=new QAction(tr("Not collapsed"), this);
 	action_no_collapse_attribs->setData(enum_cast(CollapseMode::NotCollapsed));
 	action_collapse_ext_attribs=new QAction(tr("Extended attributes"), this);
@@ -343,35 +350,36 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	action_collpase_all_attribs=new QAction(tr("All attributes"), this);
 	action_collpase_all_attribs->setData(enum_cast(CollapseMode::AllAttribsCollapsed));
 
-	action_jump_to_table=new QAction(QIcon(GuiUtilsNs::getIconPath("jumptotable")), tr("Jump to table"), this);
-	#warning "Fix me!"
-	//action_jump_to_table->setMenu(&jump_to_tab_menu);
-
 	toggle_attrs_menu.addAction(action_no_collapse_attribs);
 	toggle_attrs_menu.addAction(action_collapse_ext_attribs);
 	toggle_attrs_menu.addAction(action_collpase_all_attribs);
 
-	#warning "Fix me!"
-	//action_collapse_mode->setMenu(&toggle_attrs_menu);
-
-	action_schemas_rects=new QAction(QIcon(GuiUtilsNs::getIconPath("schemarect")), tr("Schemas rectangles"), this);
+	action_schemas_rects = toggle_sch_rects_menu.menuAction();
+	action_schemas_rects->setIcon(QIcon(GuiUtilsNs::getIconPath("schemarect")));
+	action_schemas_rects->setText(tr("Schemas rectangles"));
 	action_show_schemas_rects=new QAction(tr("Show"), this);
 	action_hide_schemas_rects=new QAction(tr("Hide"), this);
 	toggle_sch_rects_menu.addAction(action_show_schemas_rects);
 	toggle_sch_rects_menu.addAction(action_hide_schemas_rects);
 
-	#warning "Fix me!"
-	//action_schemas_rects->setMenu(&toggle_sch_rects_menu);
+	action_fade = fade_menu.menuAction();
+	action_fade->setIcon(QIcon(GuiUtilsNs::getIconPath("fade")));
+	action_fade->setText(tr("Fade in/out"));
 
-	action_fade=new QAction(QIcon(GuiUtilsNs::getIconPath("fade")), tr("Fade in/out"), this);
 	action_fade_in=new QAction(QIcon(GuiUtilsNs::getIconPath("fadein")), tr("Fade in"), this);
 	action_fade_out=new QAction(QIcon(GuiUtilsNs::getIconPath("fadeout")), tr("Fade out"), this);
 
-	action_fade_rels=new QAction(QIcon(GuiUtilsNs::getIconPath("relationship")), tr("Relationships"), this);
+	action_fade_rels = fade_rels_menu.menuAction();
+	action_fade_rels->setIcon(QIcon(GuiUtilsNs::getIconPath("relationship")));
+	action_fade_rels->setText(tr("Relationships"));
+
 	action_fade_rels_in=new QAction(QIcon(GuiUtilsNs::getIconPath("fadein")), tr("Fade in"), this);
 	action_fade_rels_out=new QAction(QIcon(GuiUtilsNs::getIconPath("fadeout")), tr("Fade out"), this);
 
-	action_fade_peer_tables = new QAction(QIcon(GuiUtilsNs::getIconPath("table")), tr("Peer tables"), this);
+	action_fade_peer_tables = fade_peer_tables_menu.menuAction();
+	action_fade_peer_tables->setIcon(QIcon(GuiUtilsNs::getIconPath("table")));
+	action_fade_peer_tables->setText(tr("Peer tables"));
+
 	action_fade_peer_tables_in = new QAction(QIcon(GuiUtilsNs::getIconPath("fadein")), tr("Fade in"), this);
 	action_fade_peer_tables_out = new QAction(QIcon(GuiUtilsNs::getIconPath("fadeout")), tr("Fade out"), this);
 
@@ -382,14 +390,8 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	fade_rels_menu.addAction(action_fade_rels_in);
 	fade_rels_menu.addAction(action_fade_rels_out);
 
-	#warning "Fix me!"
-	//action_fade_rels->setMenu(&fade_rels_menu);
-
 	fade_peer_tables_menu.addAction(action_fade_peer_tables_in);
 	fade_peer_tables_menu.addAction(action_fade_peer_tables_out);
-
-	#warning "Fix me!"
-	//action_fade_peer_tables->setMenu(&fade_peer_tables_menu);
 
 	fade_both_objs_menu.addAction(action_fade_both_objs_in);
 	fade_both_objs_menu.addAction(action_fade_both_objs_out);
