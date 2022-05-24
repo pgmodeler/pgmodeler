@@ -37,7 +37,7 @@ class LineNumbersWidget : public QWidget {
 		bool has_selection;
 
 		//! \brief The first line number that must be drawn
-		unsigned first_line,
+		int first_line,
 
 		//! \brief The amount of lines to be drawn
 		line_count,
@@ -64,7 +64,7 @@ class LineNumbersWidget : public QWidget {
 
 		/*! \brief Draw the lines starting from 'first_line' and stoping at fisrt_line + line_count -1.
 		The dy param. defines an initial Y translation before drawn lines */
-		void drawLineNumbers(unsigned first_line, unsigned line_count, int dy);
+		void drawLineNumbers(int first_line, int line_count, int dy);
 
 		//! \brief Configures the lines for both font and widget's background
 		static void setColors(const QColor &font_color, const QColor &bg_color);

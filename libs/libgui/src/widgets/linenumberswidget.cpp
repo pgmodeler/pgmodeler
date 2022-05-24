@@ -39,7 +39,7 @@ LineNumbersWidget::LineNumbersWidget(QPlainTextEdit * parent) : QWidget(parent)
 	connect(parent_edt, SIGNAL(cursorPositionChanged()), this, SLOT(update()));
 }
 
-void LineNumbersWidget::drawLineNumbers(unsigned first_line, unsigned line_count, int dy)
+void LineNumbersWidget::drawLineNumbers(int first_line, int line_count, int dy)
 {
 	bool update=(first_line!=this->first_line || line_count != this->line_count);
 
