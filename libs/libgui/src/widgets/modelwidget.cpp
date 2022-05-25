@@ -94,7 +94,7 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 							 BaseRelationship::RelationshipGen, BaseRelationship::RelationshipPart};
 
 	vector<ObjectType> types_vect = BaseObject::getObjectTypes(true, { ObjectType::Database, ObjectType::Permission,
-																																		 ObjectType::BaseRelationship});
+																																		 ObjectType::BaseRelationship, ObjectType::Relationship});
 
 	current_zoom=1;
 	modified = panning_mode = false;
@@ -263,7 +263,9 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 
 	action_deps_refs=new QAction(QIcon(GuiUtilsNs::getIconPath("depsrefs")), tr("Deps && Referrers"), this);
 
-	action_new_object=new QAction(QIcon(GuiUtilsNs::getIconPath("newobject")), tr("New"), this);
+	action_new_object = new_object_menu.menuAction();
+	action_new_object->setIcon(QIcon(GuiUtilsNs::getIconPath("newobject")));
+	action_new_object->setText(tr("New"));
 	action_new_object->setToolTip(tr("Add a new object in the model"));
 
 	action_quick_actions = quick_actions_menu.menuAction();
@@ -311,8 +313,6 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 
 	action_create_seq_col=new QAction(QIcon(GuiUtilsNs::getIconPath("sequence")), tr("Convert to sequence"), this);
 	action_conv_int_serial=new QAction(QIcon(GuiUtilsNs::getIconPath("sequence")), tr("Convert to serial"), this);
-
-	action_break_rel_line=new QAction(QIcon(GuiUtilsNs::getIconPath("breakrelline")), tr("Break line"), this);
 
 	action_remove_rel_points=new QAction(QIcon(GuiUtilsNs::getIconPath("removepoints")), tr("Remove points"), this);
 
@@ -407,6 +407,10 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	action_edit_creation_order->setToolTip(tr("Edit the objects creation order by swapping their ids"));
 	connect(action_edit_creation_order, SIGNAL(triggered(bool)), this, SLOT(swapObjectsIds()));
 
+	action_break_rel_line = break_rel_menu.menuAction();
+	action_break_rel_line->setIcon(QIcon(GuiUtilsNs::getIconPath("breakrelline")));
+	action_break_rel_line->setText(tr("Break line"));
+
 	action=new QAction(QIcon(GuiUtilsNs::getIconPath("breakline_90dv")), tr("90° (vertical)"), this);
 	connect(action, SIGNAL(triggered(bool)), this, SLOT(breakRelationshipLine()));
 	action->setData(QVariant::fromValue<unsigned>(BreakVertNinetyDegrees));
@@ -427,9 +431,6 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	action->setData(QVariant::fromValue<unsigned>(BreakHoriz2NinetyDegrees));
 	break_rel_menu.addAction(action);
 
-	#warning "Fix me!"
-	//action_break_rel_line->setMenu(&break_rel_menu);
-
 	//Alocatting the object creation actions
 	for(auto &type : types_vect)
 	{
@@ -439,20 +440,18 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	}
 
 	// Configuring the submenu of database level objects
-	action_database_category = new QAction(QIcon(GuiUtilsNs::getIconPath(ObjectType::Database)), tr("Database object"), this);
-	#warning "Fix me!"
-	//action_database_category->setMenu(&database_category_menu);
+	action_database_category = database_category_menu.menuAction();
+	action_database_category->setIcon(QIcon(GuiUtilsNs::getIconPath(ObjectType::Database)));
+	action_database_category->setText(tr("Database object"));
 	types_vect = BaseObject::getChildObjectTypes(ObjectType::Database);
 
 	for(auto &type : types_vect)
 		database_category_menu.addAction(actions_new_objects[type]);
 
 	// Configuring the submenu of schema level objects
-	action_schema_category = new QAction(QIcon(GuiUtilsNs::getIconPath(ObjectType::Schema)), tr("Schema object"), this);
-
-	#warning "Fix me!"
-	//action_schema_category->setMenu(&schema_category_menu);
-
+	action_schema_category = schema_category_menu.menuAction();
+	action_schema_category->setIcon(QIcon(GuiUtilsNs::getIconPath(ObjectType::Schema)));
+	action_schema_category->setText(tr("Schema object"));
 	types_vect = BaseObject::getChildObjectTypes(ObjectType::Schema);
 
 	for(auto &type : types_vect)
@@ -462,8 +461,10 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	rels_menu=new QMenu(this);
 	rels_menu->setStyle(new CustomMenuStyle);
 
-	#warning "Fix me!"
-	//actions_new_objects[ObjectType::Relationship]->setMenu(rels_menu);
+	actions_new_objects[ObjectType::Relationship] = rels_menu->menuAction();
+	actions_new_objects[ObjectType::Relationship]->setIcon(QIcon(GuiUtilsNs::getIconPath(ObjectType::Relationship)));
+	actions_new_objects[ObjectType::Relationship]->setText(BaseObject::getTypeName(ObjectType::Relationship));
+	actions_new_objects[ObjectType::Relationship]->setData(QVariant(enum_cast(ObjectType::Relationship)));
 
 	for(int i=0; i < rel_types_cod.size(); i++)
 	{
@@ -509,14 +510,13 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 		connect(action, SIGNAL(triggered(bool)), this, SLOT(selectAllObjects()));
 	}
 
-	action_stacking=new QAction(QIcon(GuiUtilsNs::getIconPath("stacking")), tr("Stacking"), this);
+	action_stacking = stacking_menu.menuAction();
+	action_stacking->setIcon(QIcon(GuiUtilsNs::getIconPath("stacking")));
+	action_stacking->setText(tr("Stacking"));
 	action_send_to_back=new QAction(QIcon(GuiUtilsNs::getIconPath("sendtoback")), tr("Send to back"), this);
 	action_bring_to_front=new QAction(QIcon(GuiUtilsNs::getIconPath("bringtofront")), tr("Bring to front"), this);
 	stacking_menu.addAction(action_send_to_back);
 	stacking_menu.addAction(action_bring_to_front);
-
-	#warning "Fix me!"
-	//action_stacking->setMenu(&stacking_menu);
 
 	connect(action_send_to_back, SIGNAL(triggered(bool)), this, SLOT(sendToBack()));
 	connect(action_bring_to_front, SIGNAL(triggered(bool)), this, SLOT(bringToFront()));
@@ -4238,10 +4238,7 @@ void ModelWidget::configureBasicActions(BaseObject *obj)
 			if(obj_type==ObjectType::Table)
 				new_object_menu.addAction(actions_new_objects[ObjectType::Relationship]);
 
-			#warning "Fix me!"
-			//action_new_object->setMenu(&new_object_menu);
 			popup_menu.insertAction(action_quick_actions, action_new_object);
-
 			popup_menu.addAction(action_sel_table_rels);
 			action_sel_table_rels->setData(QVariant::fromValue<void *>(obj));
 		}
@@ -4251,10 +4248,6 @@ void ModelWidget::configureBasicActions(BaseObject *obj)
 			{
 				new_object_menu.addAction(actions_new_objects[ObjectType::Column]);
 				new_object_menu.addAction(actions_new_objects[ObjectType::Constraint]);
-
-				#warning "Fix me!"
-				//action_new_object->setMenu(&new_object_menu);
-
 				popup_menu.insertAction(action_quick_actions, action_new_object);
 			}
 
@@ -4301,10 +4294,7 @@ void ModelWidget::configureBasicActions(BaseObject *obj)
 			for(auto type : BaseObject::getChildObjectTypes(ObjectType::Schema))
 				new_object_menu.addAction(actions_new_objects[type]);
 
-			#warning "Fix me!"
-			//action_new_object->setMenu(&new_object_menu);
 			popup_menu.insertAction(action_quick_actions, action_new_object);
-
 			popup_menu.addAction(action_sel_sch_children);
 			action_sel_sch_children->setData(QVariant::fromValue<void *>(obj));
 		}
@@ -4365,9 +4355,6 @@ void ModelWidget::configureDatabaseActions()
 	new_object_menu.addAction(actions_new_objects[ObjectType::GenericSql]);
 	new_object_menu.addAction(actions_new_objects[ObjectType::Tag]);
 	new_object_menu.addAction(actions_new_objects[ObjectType::Textbox]);
-
-	#warning "Fix me!"
-	//action_new_object->setMenu(&new_object_menu);
 
 	popup_menu.addAction(action_new_object);
 	configureQuickMenu(db_model);
