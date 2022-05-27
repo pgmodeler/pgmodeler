@@ -749,7 +749,7 @@
      <x>0</x>
      <y>0</y>
      <width>1668</width>
-     <height>26</height>
+     <height>27</height>
     </rect>
    </property>
    <property name="autoFillBackground">
@@ -853,6 +853,9 @@
    </property>
    <property name="toolTip">
     <string/>
+   </property>
+   <property name="styleSheet">
+    <string notr="true"/>
    </property>
    <property name="movable">
     <bool>false</bool>

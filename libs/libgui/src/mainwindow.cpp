@@ -24,12 +24,11 @@
 #include "utils/custommenustyle.h"
 
 bool MainWindow::confirm_validation=true;
-int MainWindow::GeneralActionsCount=0;
+int MainWindow::ToolsActionsCount=0;
 
 MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(parent, flags)
 {
 	setupUi(this);
-	GeneralActionsCount = tools_acts_tb->actions().size();
 
 	map<QString, attribs_map >confs;
 	map<QString, attribs_map >::iterator itr, itr_end;
@@ -449,8 +448,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	}
 
 	resizeGeneralToolbarButtons();
-
-
+	ToolsActionsCount = tools_acts_tb->actions().size();
 	QList<QAction *> actions = model_acts_tb->actions();
 	actions.append(tools_acts_tb->actions());
 
@@ -1321,7 +1319,7 @@ void MainWindow::removeModelActions()
 	QList<QAction *> act_list;
 	act_list=tools_acts_tb->actions();
 
-	while(act_list.size() > GeneralActionsCount)
+	while(act_list.size() > ToolsActionsCount)
 	{
 		tools_acts_tb->removeAction(act_list.back());
 		act_list.pop_back();
@@ -2119,7 +2117,7 @@ void MainWindow::changeCurrentView(bool checked)
 		action_design->blockSignals(false);
 
 		actions=tools_acts_tb->actions();
-		for(int i=GeneralActionsCount; i < actions.count(); i++)
+		for(int i=ToolsActionsCount; i < actions.count(); i++)
 			actions[i]->setEnabled(enable);
 
 		if(!enable)

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>550</width>
-    <height>357</height>
+    <width>580</width>
+    <height>373</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -36,7 +36,7 @@
      </property>
      <widget class="QWidget" name="tab">
       <attribute name="title">
-       <string>Theme &amp;&amp; Code</string>
+       <string>Interface &amp;&amp; Code</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout">
        <property name="spacing">
@@ -57,12 +57,9 @@
        <item>
         <widget class="QGroupBox" name="groupBox">
          <property name="title">
-          <string>Theme</string>
+          <string>User interface</string>
          </property>
-         <layout class="QHBoxLayout" name="horizontalLayout">
-          <property name="spacing">
-           <number>5</number>
-          </property>
+         <layout class="QGridLayout" name="gridLayout_2">
           <property name="leftMargin">
            <number>5</number>
           </property>
@@ -75,14 +72,7 @@
           <property name="bottomMargin">
            <number>5</number>
           </property>
-          <item>
-           <widget class="QLabel" name="label">
-            <property name="text">
-             <string>User interface:</string>
-            </property>
-           </widget>
-          </item>
-          <item>
+          <item row="0" column="1">
            <widget class="QComboBox" name="ui_theme_cmb">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -95,17 +85,7 @@
             </property>
            </widget>
           </item>
-          <item>
-           <widget class="QLabel" name="label_3">
-            <property name="text">
-             <string>Syntax highlight:</string>
-            </property>
-            <property name="indent">
-             <number>10</number>
-            </property>
-           </widget>
-          </item>
-          <item>
+          <item row="0" column="3">
            <widget class="QComboBox" name="syntax_hl_theme_cmb">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -118,7 +98,24 @@
             </property>
            </widget>
           </item>
-          <item>
+          <item row="0" column="2">
+           <widget class="QLabel" name="label_3">
+            <property name="text">
+             <string>Syntax highlight:</string>
+            </property>
+            <property name="indent">
+             <number>10</number>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="0">
+           <widget class="QLabel" name="label">
+            <property name="text">
+             <string>Theme:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="4" rowspan="3">
            <spacer name="horizontalSpacer_3">
             <property name="orientation">
              <enum>Qt::Horizontal</enum>
@@ -130,6 +127,45 @@
              </size>
             </property>
            </spacer>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="icons_size_lbl">
+            <property name="text">
+             <string>Icons size:</string>
+            </property>
+            <property name="indent">
+             <number>-1</number>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QComboBox" name="icons_size_cmb"/>
+          </item>
+          <item row="1" column="2">
+           <widget class="QCheckBox" name="custom_scale_chk">
+            <property name="text">
+             <string>Custom scale:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="3">
+           <widget class="QDoubleSpinBox" name="custom_scale_spb">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
+            <property name="decimals">
+             <number>1</number>
+            </property>
+            <property name="minimum">
+             <double>1.000000000000000</double>
+            </property>
+            <property name="maximum">
+             <double>2.000000000000000</double>
+            </property>
+            <property name="singleStep">
+             <double>0.100000000000000</double>
+            </property>
+           </widget>
           </item>
          </layout>
         </widget>

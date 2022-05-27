@@ -127,9 +127,9 @@ class GlobalAttributes {
 		SQLHistoryConf,		//! \brief Default name for the SQL commands history configuration file
 
 		ExampleModel, //! \brief Default name for the sample model loaded on appearence configuration form
-		UiDefaulStyleConf, //! \brief Configuration file ui style (defaults for 4k screens)
-		UiMediumStyleConf, //! \brief Extra configuration file ui style (for medium screen sizes > 1080p and < 2k)
-		UiSmallStyleConf, //! \brief Extra configuration file ui style (for medium screen sizes <= 1080p)
+		UiStyleConf, //! \brief Configuration file ui style
+		IconsMediumConf, //! \brief Extra configuration file that defines medium icons size
+		IconsSmallConf, //! \brief Extra configuration file that defines small icons size
 
 		FileDialogConf,		//! \brief Default name for the file used to save/restore QFileDialog last geometry
 

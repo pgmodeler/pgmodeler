@@ -77,9 +77,9 @@ const QString GlobalAttributes::SchHighlightConf("sch-highlight");
 const QString GlobalAttributes::PatternHighlightConf("pattern-highlight");
 
 const QString GlobalAttributes::ExampleModel("example.dbm");
-const QString GlobalAttributes::UiDefaulStyleConf("ui-default");
-const QString GlobalAttributes::UiMediumStyleConf("ui-medium");
-const QString GlobalAttributes::UiSmallStyleConf("ui-small");
+const QString GlobalAttributes::UiStyleConf("ui-style");
+const QString GlobalAttributes::IconsMediumConf("icons-medium");
+const QString GlobalAttributes::IconsSmallConf("icons-small");
 
 const QString GlobalAttributes::FileDialogConf("filedlg");
 
