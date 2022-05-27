@@ -47,9 +47,6 @@ PgModelerPlugin::PgModelerPlugin()
 	font.setPointSize(12);
 	font.setBold(true);
 	font.setItalic(true);
-
-	#warning "Debug me!"
-	//font.setWeight(QFont::Bold);
 	title_lbl->setFont(font);
 	gridLayout->addWidget(title_lbl, 0, 1, 1, 1);
 

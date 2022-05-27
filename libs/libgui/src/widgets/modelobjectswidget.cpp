@@ -956,8 +956,6 @@ void ModelObjectsWidget::mouseMoveEvent(QMouseEvent *)
 	if(simplified_view && QApplication::mouseButtons()==Qt::LeftButton)
 	{
 		QPoint pos_dif;
-		#warning "Debug me!"
-		//QRect ret=qApp->screens().at(desktop.screenNumber(this))->geometry();
 		QRect ret = this->screen()->geometry();
 		int px, py;
 

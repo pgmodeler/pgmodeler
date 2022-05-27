@@ -2120,16 +2120,7 @@ void MainWindow::changeCurrentView(bool checked)
 
 		actions=tools_acts_tb->actions();
 		for(int i=GeneralActionsCount; i < actions.count(); i++)
-		{
 			actions[i]->setEnabled(enable);
-
-			#warning "Fix me!"
-			/*if(actions[i]->menu())
-			{
-				for(auto action : actions[i]->menu()->actions())
-					action->setEnabled(enable);
-			}*/
-		}
 
 		if(!enable)
 			overview_wgt->close();

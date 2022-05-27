@@ -197,10 +197,6 @@ void ModelOverviewWidget::resizeOverview()
 {
 	if(this->model)
 	{
-		//QDesktopWidget desktop;
-		//QRect screen_rect=qApp->primaryScreen()->geometry();
-
-		#warning "Debug me!"
 		QRect screen_rect = this->screen()->geometry();
 
 		//Make an initial calculation of the overview window size

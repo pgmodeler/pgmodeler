@@ -107,8 +107,6 @@ QVariant ResultSetModel::data(const QModelIndex &index, int role) const
 			return QVariant(Qt::AlignLeft | Qt::AlignVCenter);
 	}
 
-	#warning "Debug me!"
-	//return QVariant(QVariant::Invalid);
 	return QVariant();
 }
 
@@ -117,8 +115,6 @@ QVariant ResultSetModel::headerData(int section, Qt::Orientation orientation, in
 	if(orientation == Qt::Horizontal)
 	{
 		if(section >= col_count)
-			#warning "Debug me!"
-			//return QVariant(QVariant::Invalid);
 			return QVariant();
 
 		if(role == Qt::DisplayRole)
