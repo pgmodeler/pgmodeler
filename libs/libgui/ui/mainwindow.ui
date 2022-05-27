@@ -749,7 +749,7 @@
      <x>0</x>
      <y>0</y>
      <width>1668</width>
-     <height>27</height>
+     <height>26</height>
     </rect>
    </property>
    <property name="autoFillBackground">
@@ -764,8 +764,6 @@
     </property>
     <addaction name="action_new_model"/>
     <addaction name="action_load_model"/>
-    <addaction name="action_recent_models"/>
-    <addaction name="action_fix"/>
     <addaction name="action_close_model"/>
     <addaction name="action_save_model"/>
     <addaction name="action_save_as"/>
@@ -887,7 +885,6 @@
    <addaction name="action_import"/>
    <addaction name="action_export"/>
    <addaction name="action_diff"/>
-   <addaction name="action_fix"/>
    <addaction name="action_configuration"/>
   </widget>
   <widget class="QToolBar" name="model_acts_tb">
@@ -939,10 +936,8 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
-   <addaction name="action_main_menu"/>
    <addaction name="action_new_model"/>
    <addaction name="action_load_model"/>
-   <addaction name="action_recent_models"/>
    <addaction name="action_save_model"/>
    <addaction name="action_save_as"/>
    <addaction name="action_print"/>
@@ -1348,33 +1343,6 @@
     <string>New object</string>
    </property>
   </action>
-  <action name="action_plugins">
-   <property name="icon">
-    <iconset resource="../res/resources.qrc">
-     <normaloff>:/icons/icons/plugins.png</normaloff>:/icons/icons/plugins.png</iconset>
-   </property>
-   <property name="text">
-    <string>Plugins</string>
-   </property>
-   <property name="toolTip">
-    <string>Access the list of loaded plugins</string>
-   </property>
-  </action>
-  <action name="action_recent_models">
-   <property name="icon">
-    <iconset resource="../res/resources.qrc">
-     <normaloff>:/icons/icons/loadrecent.png</normaloff>:/icons/icons/loadrecent.png</iconset>
-   </property>
-   <property name="text">
-    <string>&amp;Recent Models</string>
-   </property>
-   <property name="toolTip">
-    <string>Load recently opened model</string>
-   </property>
-   <property name="iconVisibleInMenu">
-    <bool>true</bool>
-   </property>
-  </action>
   <action name="action_import">
    <property name="icon">
     <iconset resource="../res/resources.qrc">
@@ -1433,18 +1401,6 @@
    </property>
    <property name="text">
     <string>&amp;Check for update</string>
-   </property>
-  </action>
-  <action name="action_main_menu">
-   <property name="icon">
-    <iconset resource="../res/resources.qrc">
-     <normaloff>:/icons/icons/mainmenu.png</normaloff>:/icons/icons/mainmenu.png</iconset>
-   </property>
-   <property name="text">
-    <string>action_main_menu</string>
-   </property>
-   <property name="toolTip">
-    <string>Main menu</string>
    </property>
   </action>
   <action name="action_show_main_menu">
@@ -1620,27 +1576,6 @@
    </property>
    <property name="toolTip">
     <string>Toggle the compact view on the model(s)</string>
-   </property>
-  </action>
-  <action name="action_more_actions">
-   <property name="icon">
-    <iconset resource="../res/resources.qrc">
-     <normaloff>:/icons/icons/moreactions.png</normaloff>:/icons/icons/moreactions.png</iconset>
-   </property>
-   <property name="text">
-    <string>More</string>
-   </property>
-   <property name="toolTip">
-    <string>Addition action over the model</string>
-   </property>
-  </action>
-  <action name="action_fix">
-   <property name="icon">
-    <iconset resource="../res/resources.qrc">
-     <normaloff>:/icons/icons/fix.png</normaloff>:/icons/icons/fix.png</iconset>
-   </property>
-   <property name="text">
-    <string>Fix</string>
    </property>
   </action>
  </widget>

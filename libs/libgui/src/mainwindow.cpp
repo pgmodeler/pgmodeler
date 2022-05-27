@@ -36,6 +36,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	attribs_map attribs;
 	PluginsConfigWidget *plugins_conf_wgt=nullptr;
 	QGridLayout *grid=nullptr;
+	QAction *action_plugins = nullptr;
 
 	file_menu->setStyle(new CustomMenuStyle);
 	edit_menu->setStyle(new CustomMenuStyle);
@@ -58,13 +59,17 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 		plugins_conf_wgt->installPluginsActions(plugins_menu, this, SLOT(executePlugin()));
 		plugins_conf_wgt->initPlugins(this);
 		plugins_menu->setEnabled(!plugins_menu->isEmpty());
+
+		action_plugins = plugins_menu->menuAction();
+		action_plugins->setIcon(QIcon(GuiUtilsNs::getIconPath("plugins")));
+		action_plugins->setText(tr("Plug-ins"));
+		action_plugins->setToolTip(tr("Access the list of loaded plugins"));
 		action_plugins->setEnabled(!plugins_menu->isEmpty());
 
-		#warning "Fix me!"
-		//action_plugins->setMenu(plugins_menu);
-
-		#warning "Fix me!"
-		//action_more_actions->setMenu(&more_actions_menu);
+		QAction *act = more_actions_menu.menuAction();
+		act->setText(tr("More"));
+		act->setIcon(QIcon(GuiUtilsNs::getIconPath("moreactions")));
+		act->setToolTip(tr("Addition action over the model"));
 
 		confs=GeneralConfigWidget::getConfigurationParams();
 		itr=confs.begin();
@@ -119,10 +124,11 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	fix_menu.addAction(action_fix_model);
 	fix_menu.addAction(action_handle_metadata);
 
-	#warning "Fix me!"
-	//action_fix->setMenu(&fix_menu);
-
-	QToolButton *tool_btn = qobject_cast<QToolButton *>(tools_acts_tb->widgetForAction(action_fix));
+	QAction *act_fix = fix_menu.menuAction();
+	act_fix->setIcon(QIcon(GuiUtilsNs::getIconPath("fix")));
+	act_fix->setText(tr("Fix"));
+	tools_acts_tb->insertAction(action_configuration, fix_menu.menuAction());
+	QToolButton *tool_btn = qobject_cast<QToolButton *>(tools_acts_tb->widgetForAction(fix_menu.menuAction()));
 	tool_btn->setPopupMode(QToolButton::InstantPopup);
 
 	tool_btn = qobject_cast<QToolButton *>(model_acts_tb->widgetForAction(action_arrange_objects));
@@ -386,6 +392,36 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	configureSamplesMenu();
 	applyConfigurations();
 
+#ifdef Q_OS_MAC
+//	model_acts_tb->removeAction(action_main_menu);
+//	action_main_menu->setEnabled(false);
+#else
+	plugins_menu->menuAction()->setIconVisibleInMenu(false);
+	main_menu.addMenu(file_menu);
+	main_menu.addMenu(edit_menu);
+	main_menu.addMenu(show_menu);
+	main_menu.addMenu(plugins_menu);
+	main_menu.addMenu(about_menu);
+	main_menu.addSeparator();
+	main_menu.addAction(action_show_main_menu);
+
+	main_menu.setIcon(QIcon(GuiUtilsNs::getIconPath("mainmenu")));
+	main_menu.menuAction()->setText(tr("Main menu"));
+	main_menu.menuAction()->setToolTip(tr("Main menu"));
+	model_acts_tb->insertAction(action_new_model, main_menu.menuAction());
+	dynamic_cast<QToolButton *>(model_acts_tb->widgetForAction(main_menu.menuAction()))->setPopupMode(QToolButton::InstantPopup);
+
+	connect(action_show_main_menu, SIGNAL(triggered()), this, SLOT(showMainMenu()));
+	connect(action_hide_main_menu, SIGNAL(triggered()), this, SLOT(showMainMenu()));
+#endif
+
+	QAction *act = recent_mdls_menu.menuAction();
+	act->setIcon(QIcon(GuiUtilsNs::getIconPath("loadrecent")));
+	act->setText(tr("Recent models"));
+	act->setToolTip(tr("Load recently opened model"));
+	model_acts_tb->insertAction(action_save_model, act);
+	dynamic_cast<QToolButton *>(model_acts_tb->widgetForAction(act))->setPopupMode(QToolButton::InstantPopup);
+
 	QToolButton *btn=nullptr;
 	QFont font;
 
@@ -404,7 +440,6 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 		}
 	}
 
-
 	for(auto &act : model_acts_tb->actions())
 	{
 		btn = qobject_cast<QToolButton *>(model_acts_tb->widgetForAction(act));
@@ -415,27 +450,6 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 
 	resizeGeneralToolbarButtons();
 
-#ifdef Q_OS_MAC
-	model_acts_tb->removeAction(action_main_menu);
-	action_main_menu->setEnabled(false);
-#else
-	plugins_menu->menuAction()->setIconVisibleInMenu(false);
-	main_menu.addMenu(file_menu);
-	main_menu.addMenu(edit_menu);
-	main_menu.addMenu(show_menu);
-	main_menu.addMenu(plugins_menu);
-	main_menu.addMenu(about_menu);
-	main_menu.addSeparator();
-	main_menu.addAction(action_show_main_menu);
-
-	#warning "Fix me!"
-	//action_main_menu->setMenu(&main_menu);
-
-	dynamic_cast<QToolButton *>(model_acts_tb->widgetForAction(action_main_menu))->setPopupMode(QToolButton::InstantPopup);
-
-	connect(action_show_main_menu, SIGNAL(triggered()), this, SLOT(showMainMenu()));
-	connect(action_hide_main_menu, SIGNAL(triggered()), this, SLOT(showMainMenu()));
-#endif
 
 	QList<QAction *> actions = model_acts_tb->actions();
 	actions.append(tools_acts_tb->actions());
@@ -470,7 +484,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	if(show_main_menu)
 		file_menu->addAction(action_hide_main_menu);
 
-	action_main_menu->setVisible(!show_main_menu);
+	main_menu.menuAction()->setVisible(!show_main_menu);
 #endif
 
 	restoreDockWidgetsSettings();
@@ -906,15 +920,10 @@ void MainWindow::updateRecentModelsMenu()
 	{
 		recent_mdls_menu.addSeparator();
 		recent_mdls_menu.addAction(tr("Clear Menu"), this, SLOT(clearRecentModelsMenu()));
-
-		#warning "Fix me!"
-		//action_recent_models->setMenu(&recent_mdls_menu);
-
-		dynamic_cast<QToolButton *>(model_acts_tb->widgetForAction(action_recent_models))->setPopupMode(QToolButton::InstantPopup);
 	}
 
-	action_recent_models->setEnabled(!recent_mdls_menu.isEmpty());
-	central_wgt->recent_tb->setEnabled(action_recent_models->isEnabled());
+	recent_mdls_menu.menuAction()->setEnabled(!recent_mdls_menu.isEmpty());
+	central_wgt->recent_tb->setEnabled(recent_mdls_menu.menuAction()->isEnabled());
 	central_wgt->recent_tb->setMenu(recent_mdls_menu.isEmpty() ? nullptr : &recent_mdls_menu);
 }
 
@@ -1091,7 +1100,7 @@ ModelWidget *MainWindow::getModel(int idx)
 
 void MainWindow::showMainMenu()
 {
-	action_main_menu->setVisible(sender()!=action_show_main_menu);
+	main_menu.menuAction()->setVisible(sender()!=action_show_main_menu);
 	main_menu_mb->setVisible(sender()==action_show_main_menu);
 
 	if(sender()!=action_show_main_menu)
@@ -1171,9 +1180,9 @@ void MainWindow::setCurrentModel()
 		btns.push_back(tool_btn);
 
 		configureMoreActionsMenu();
-		tools_acts_tb->addAction(action_more_actions);
+		tools_acts_tb->addAction(more_actions_menu.menuAction());
 
-		tool_btn = qobject_cast<QToolButton *>(tools_acts_tb->widgetForAction(action_more_actions));
+		tool_btn = qobject_cast<QToolButton *>(tools_acts_tb->widgetForAction(more_actions_menu.menuAction()));
 		tool_btn->setPopupMode(QToolButton::InstantPopup);
 		btns.push_back(tool_btn);
 
