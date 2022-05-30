@@ -75,6 +75,9 @@ class GlobalAttributes {
 		//! \brief Sets the path in which the application should search for its internal folders (schemas, lang, conf, etc)
 		static void setSearchPath(const QString &search_path);
 
+		//! \brief Sets the config files paths variables that doesn't depend on a search path.
+		static void setConfigFilesPaths();
+
 	public:
 		static const QString
 		PgModelerAppName,
@@ -205,6 +208,15 @@ class GlobalAttributes {
 
 		//! \brief Returns the path to the "pgmodeler-se" executable
 		static QString getPgModelerSchemaEditorPath();
+
+		/*! \brief Returns the param_name value in the specified configuration file.
+		 *  Returns empty string when the config parameter or the file does not exist. */
+		static QString getConfigParamFromFile(const QString &param_name, const QString &conf_file);
+
+		/*! \brief Sets up the QT_SCALE_FACTOR enviroment variable by getting the custom ui factor
+		 *  from the file appearance.conf. This method should be called before the instantiation of
+		 *  any QCoreApplication-based class otherwise the environment variable will be ignored */
+		static void setCustomUiScaleFactor();
 
 		friend class Application;
 		friend class PgModelerUnitTest;

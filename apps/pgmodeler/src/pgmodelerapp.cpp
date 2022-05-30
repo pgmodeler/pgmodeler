@@ -71,27 +71,10 @@ PgModelerApp::PgModelerApp(int &argc, char **argv) : Application(argc,argv)
 	}
 
 	//Trying to identify if the user defined a custom UI language in the pgmodeler.conf file
-	QString conf_file =	GlobalAttributes::getConfigurationFilePath(GlobalAttributes::GeneralConf);
-	QFile input;
-	QString lang_id = QLocale::system().name();
+	QString lang_id = GlobalAttributes::getConfigParamFromFile(Attributes::UiLanguage, GlobalAttributes::GeneralConf);
 
-	input.setFileName(conf_file);
-
-	if(input.open(QFile::ReadOnly))
-	{
-		QString buf = QString(input.readAll());
-		QRegularExpression regexp = QRegularExpression(QString("(%1)(.*)(=)(\\\")(.)+(\\\")(\\\n)").arg(Attributes::UiLanguage));
-		QRegularExpressionMatch match;
-		int idx =	-1;
-
-		match =	regexp.match(buf);
-		idx = match.capturedStart();
-
-		//Extract the value of the ui-language attribute in the conf file
-		lang_id = buf.mid(idx, match.capturedLength());
-		lang_id.remove(Attributes::UiLanguage);
-		lang_id.remove(QChar('"')).remove(QChar('=')).remove(QChar('\n'));
-	}
+	if(lang_id.isEmpty())
+		lang_id = QLocale::system().name();
 
 	loadTranslation(lang_id);
 

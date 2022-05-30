@@ -96,7 +96,7 @@ int main(int argc, char **argv)
 		signal(SIGSEGV, startCrashHandler);
 		signal(SIGABRT, startCrashHandler);
 
-		AppearanceConfigWidget::applyCustomUiScale();
+		GlobalAttributes::setCustomUiScaleFactor();
 		PgModelerApp app(argc,argv);
 		int res=0;
 

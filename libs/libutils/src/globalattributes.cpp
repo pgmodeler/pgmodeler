@@ -219,14 +219,37 @@ QString GlobalAttributes::getPgModelerSchemaEditorPath()
 	return PgModelerSchemaEditorPath;
 }
 
-void GlobalAttributes::setSearchPath(const QString &search_path)
+QString GlobalAttributes::getConfigParamFromFile(const QString &param_name, const QString &conf_file)
 {
-	SchemasRootDir=GlobalAttributes::getPathFromEnv("PGMODELER_SCHEMAS_DIR", SCHEMASDIR, QString("%1/schemas").arg(search_path));
-	LanguagesDir=GlobalAttributes::getPathFromEnv("PGMODELER_LANG_DIR", LANGDIR, QString("%1/lang").arg(search_path));
-	SamplesDir=getPathFromEnv("PGMODELER_SAMPLES_DIR", SAMPLESDIR, QString("%1/samples").arg(search_path));
-	TmplConfigurationDir=getPathFromEnv("PGMODELER_TMPL_CONF_DIR", CONFDIR, QString("%1/conf").arg(search_path));
-	PluginsDir=getPathFromEnv("PGMODELER_PLUGINS_DIR", PLUGINSDIR, QString("%1/plugins").arg(search_path));
+	setConfigFilesPaths();
 
+	QString filename = getConfigurationFilePath(conf_file);
+	QFile input;
+	QString attr_val;
+
+	input.setFileName(filename);
+
+	if(input.open(QFile::ReadOnly) && !param_name.isEmpty())
+	{
+		QString buf = QString(input.readAll());
+		QRegularExpression regexp = QRegularExpression(QString("(%1)(.*)(=)(\\\")(.)+(\\\")(\\\n)*").arg(param_name));
+		QRegularExpressionMatch match;
+		int idx =	-1;
+
+		match =	regexp.match(buf);
+		idx = match.capturedStart();
+
+		//Extract the value of the attribute in the conf file
+		attr_val = buf.mid(idx, match.capturedLength());
+		attr_val.remove(param_name);
+		attr_val.remove(QChar('"')).remove(QChar('=')).remove(QChar('\n'));
+	}
+
+	return attr_val;
+}
+
+void GlobalAttributes::setConfigFilesPaths()
+{
 	#if defined(Q_OS_WINDOWS)
 		ConfigurationsDir=getPathFromEnv("PGMODELER_CONF_DIR", QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation) + QString("/%1").arg(PgModelerAppName));
 		TemporaryDir=getPathFromEnv("PGMODELER_TMP_DIR", QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation) + QString("/%1/tmp").arg(PgModelerAppName));
@@ -239,6 +262,17 @@ void GlobalAttributes::setSearchPath(const QString &search_path)
 	XMLHighlightConfPath=ConfigurationsDir + DirSeparator + XMLHighlightConf + ConfigurationExt;
 	SchHighlightConfPath=ConfigurationsDir + DirSeparator + SchHighlightConf + ConfigurationExt;
 	PatternHighlightConfPath=ConfigurationsDir + DirSeparator + PatternHighlightConf + ConfigurationExt;
+}
+
+void GlobalAttributes::setSearchPath(const QString &search_path)
+{
+	setConfigFilesPaths();
+
+	SchemasRootDir=GlobalAttributes::getPathFromEnv("PGMODELER_SCHEMAS_DIR", SCHEMASDIR, QString("%1/schemas").arg(search_path));
+	LanguagesDir=GlobalAttributes::getPathFromEnv("PGMODELER_LANG_DIR", LANGDIR, QString("%1/lang").arg(search_path));
+	SamplesDir=getPathFromEnv("PGMODELER_SAMPLES_DIR", SAMPLESDIR, QString("%1/samples").arg(search_path));
+	TmplConfigurationDir=getPathFromEnv("PGMODELER_TMPL_CONF_DIR", CONFDIR, QString("%1/conf").arg(search_path));
+	PluginsDir=getPathFromEnv("PGMODELER_PLUGINS_DIR", PLUGINSDIR, QString("%1/plugins").arg(search_path));
 
 	#if defined(Q_OS_UNIX)
 		#if defined(Q_OS_MAC)
@@ -258,4 +292,12 @@ void GlobalAttributes::setSearchPath(const QString &search_path)
 		PgModelerAppPath=getPathFromEnv("PGMODELER_PATH", QString("%1\\pgmodeler.exe").arg(BINDIR), QString("%1\\pgmodeler.exe").arg(search_path));
 		PgModelerSchemaEditorPath=getPathFromEnv("PGMODELER_SE_PATH", QString("%1/pgmodeler-se.exe").arg(BINDIR), QString("%1/pgmodeler-sc.exe").arg(search_path));
 	#endif
+}
+
+void GlobalAttributes::setCustomUiScaleFactor()
+{
+	QString scale = GlobalAttributes::getConfigParamFromFile("custom-scale", GlobalAttributes::AppearanceConf);
+
+	if(scale.toDouble() > 0)
+		qputenv("QT_SCALE_FACTOR", scale.toUtf8());
 }

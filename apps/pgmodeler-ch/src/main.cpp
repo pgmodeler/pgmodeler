@@ -25,6 +25,7 @@ int main(int argc, char **argv)
 {
 	try
 	{
+		GlobalAttributes::setCustomUiScaleFactor();
 		Application app(argc,argv);
 		QStringList args = app.arguments();
 		app.loadTranslation(QLocale::system().name());

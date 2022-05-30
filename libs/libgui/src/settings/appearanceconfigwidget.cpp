@@ -337,32 +337,6 @@ map<QString, attribs_map> AppearanceConfigWidget::getConfigurationParams()
 	return config_params;
 }
 
-void AppearanceConfigWidget::applyCustomUiScale()
-{
-	QFile input;
-	input.setFileName(GlobalAttributes::getConfigurationFilePath(GlobalAttributes::AppearanceConf));
-	input.open(QFile::ReadOnly);
-
-	if(input.isOpen())
-	{
-		QString buf = QString(input.readAll()), scale;
-		QRegularExpression regexp = QRegularExpression(QString("(%1)(.*)(=)(\\\")(.)+(\\\")").arg(Attributes::CustomScale));
-		QRegularExpressionMatch match;
-		int idx =	-1;
-
-		match =	regexp.match(buf);
-		idx = match.capturedStart();
-
-		//Extract the value of the custom-scale attribute in the conf file
-		scale = buf.mid(idx, match.capturedLength());
-		scale.remove(Attributes::CustomScale);
-		scale.remove(QChar('"')).remove(QChar('=')).remove(QChar('\n'));
-
-		if(scale.toDouble() > 0)
-			qputenv("QT_SCALE_FACTOR", scale.toUtf8());
-	}
-}
-
 void AppearanceConfigWidget::loadExampleModel()
 {
 	try
@@ -466,17 +440,14 @@ void AppearanceConfigWidget::loadConfiguration()
 		syntax_hl_theme_cmb->blockSignals(true);
 		icons_size_cmb->blockSignals(true);
 
-		ui_theme_cmb->setCurrentIndex(ui_theme_cmb->findData(
-																		config_params[GlobalAttributes::AppearanceConf][Attributes::UiTheme],
-																		Qt::UserRole, Qt::MatchExactly));
+		int idx = ui_theme_cmb->findData(config_params[GlobalAttributes::AppearanceConf][Attributes::UiTheme], Qt::UserRole, Qt::MatchExactly);
+		ui_theme_cmb->setCurrentIndex(idx < 0 ? 0 : idx);
 
-		syntax_hl_theme_cmb->setCurrentIndex(syntax_hl_theme_cmb->findData(
-																					config_params[GlobalAttributes::AppearanceConf][Attributes::SyntaxHlTheme],
-																					Qt::UserRole, Qt::MatchExactly));
+		idx = syntax_hl_theme_cmb->findData(config_params[GlobalAttributes::AppearanceConf][Attributes::SyntaxHlTheme], Qt::UserRole, Qt::MatchExactly);
+		syntax_hl_theme_cmb->setCurrentIndex(idx < 0 ? 0 : idx);
 
-		icons_size_cmb->setCurrentIndex(icons_size_cmb->findData(
-																		config_params[GlobalAttributes::AppearanceConf][Attributes::IconsSize],
-																		Qt::UserRole, Qt::MatchExactly));
+		idx = icons_size_cmb->findData(config_params[GlobalAttributes::AppearanceConf][Attributes::IconsSize], Qt::UserRole, Qt::MatchExactly);
+		icons_size_cmb->setCurrentIndex(idx < 0 ? 0 : idx);
 
 		ui_theme_cmb->blockSignals(false);
 		syntax_hl_theme_cmb->blockSignals(false);
@@ -609,7 +580,7 @@ void AppearanceConfigWidget::saveConfiguration()
 		attribs[Attributes::IconsSize] = icons_size_cmb->currentData(Qt::UserRole).toString();
 
 		attribs[Attributes::CustomScale] = custom_scale_chk->isChecked() ?
-					QString::number(custom_scale_spb->value(), 'g', 1) : "";
+					QString::number(custom_scale_spb->value(), 'g', 2) : "";
 
 		config_params[Attributes::UiTheme] = attribs;
 		attribs.clear();

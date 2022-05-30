@@ -26,6 +26,7 @@ int main(int argc, char **argv)
 {
 	try
 	{
+		GlobalAttributes::setCustomUiScaleFactor();
 		PgModelerApp app(argc,argv);
 		QStringList args = app.arguments();
 		SchemaEditorForm syntaxchk;

@@ -131,10 +131,6 @@ class AppearanceConfigWidget: public BaseConfigWidget, public Ui::AppearanceConf
 
 		static map<QString, attribs_map> getConfigurationParams();
 
-		/*! \brief Retrieve from the config file the custom ui scale factor
-		 *  Returns a negative value if no factor is undefined in the file */
-		static void applyCustomUiScale();
-
 	private slots:
 		void enableConfigElement();
 		void applyElementFontStyle();
