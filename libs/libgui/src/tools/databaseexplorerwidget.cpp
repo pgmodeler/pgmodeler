@@ -25,7 +25,6 @@
 #include "utilsns.h"
 #include "guiutilsns.h"
 #include "settings/generalconfigwidget.h"
-#include "qtcompat/splitbehaviorcompat.h"
 #include "utils/custommenustyle.h"
 
 const QString DatabaseExplorerWidget::DepNotDefined;
@@ -318,7 +317,7 @@ attribs_map DatabaseExplorerWidget::formatObjectAttribs(attribs_map &attribs)
 	ObjectType obj_type=ObjectType::BaseObject;
 	attribs_map fmt_attribs;
 	QString attr_name, attr_value;
-	QRegExp oid_regexp=QRegExp(QString("^[0-9]+"));
+	QRegularExpression oid_regexp=QRegularExpression(QRegularExpression::anchoredPattern("\\d+"));
 	map<QString, ObjectType> dep_types={{Attributes::Owner, ObjectType::Role},
 										{Attributes::Schema, ObjectType::Schema},
 										{Attributes::Tablespace, ObjectType::Tablespace},
@@ -383,9 +382,8 @@ attribs_map DatabaseExplorerWidget::formatObjectAttribs(attribs_map &attribs)
 
 		if(attr_name==Attributes::ObjectType)
 			attr_value=BaseObject::getTypeName(static_cast<ObjectType>(attr_value.toUInt()));
-
 		//If the current attribute is related to a dependency object, retreive its real name
-		else if(dep_types.count(attr_name)!=0 && oid_regexp.exactMatch(attr_value))
+		else if(dep_types.count(attr_name)!=0 && oid_regexp.match(attr_value).hasMatch())
 			attr_value=getObjectName(dep_types[attr_name], attr_value);
 
 		attribs[attr_name]=attr_value;
@@ -748,7 +746,7 @@ void DatabaseExplorerWidget::formatTriggerAttribs(attribs_map &attribs)
 									Attributes::TruncEvent });
 
 	attribs[Attributes::TriggerFunc]=getObjectName(ObjectType::Function, attribs[Attributes::TriggerFunc]);
-	attribs[Attributes::Arguments]=attribs[Attributes::Arguments].split(Catalog::EscapedNullChar, QtCompat::SkipEmptyParts).join(UtilsNs::DataSeparator);
+	attribs[Attributes::Arguments]=attribs[Attributes::Arguments].split(Catalog::EscapedNullChar, Qt::SkipEmptyParts).join(UtilsNs::DataSeparator);
 	attribs[Attributes::Columns]=Catalog::parseArrayValues(attribs[Attributes::Columns]).join(UtilsNs::DataSeparator);
 }
 
@@ -1227,7 +1225,7 @@ attribs_map DatabaseExplorerWidget::extractAttributesFromItem(QTreeWidgetItem *i
 		obj_name.remove(idx, obj_name.size());
 	}
 	else if(obj_type==ObjectType::OpFamily || obj_type==ObjectType::OpClass)
-		obj_name.remove(QRegExp("( )+(\\[)(.)+(\\])"));
+		obj_name.remove(QRegularExpression("( )+(\\[)(.)+(\\])"));
 
 	//Formatting the names
 	attribs[Attributes::Name]=BaseObject::formatName(obj_name, obj_type==ObjectType::Operator);
@@ -1292,19 +1290,37 @@ void DatabaseExplorerWidget::dropObject(QTreeWidgetItem *item, bool cascade)
 		if(item && item->data(DatabaseImportForm::ObjectId, Qt::UserRole).toUInt() > 0)
 		{
 			ObjectType obj_type=static_cast<ObjectType>(item->data(DatabaseImportForm::ObjectTypeId, Qt::UserRole).toUInt());
-			QString msg;
-			QString obj_name=item->data(DatabaseImportForm::ObjectName, Qt::UserRole).toString();
 
 			//Roles, tablespaces and user mappings can't be removed in cascade mode
 			if(cascade && (obj_type==ObjectType::Role || obj_type==ObjectType::Tablespace || obj_type == ObjectType::UserMapping))
 				return;
 
+			QString msg,
+					parent_sch = item->data(DatabaseImportForm::ObjectSchema, Qt::UserRole).toString(),
+					parent_tab =  item->data(DatabaseImportForm::ObjectTable, Qt::UserRole).toString(),
+					obj_name = item->data(DatabaseImportForm::ObjectName, Qt::UserRole).toString(),
+					parent_name;
+
+			if(!parent_sch.isEmpty())
+			{
+				parent_name = parent_tab.isEmpty() ?
+							BaseObject::getSchemaName(ObjectType::Schema).toLower() :
+							tr("relation");
+				parent_name += " <strong>" + parent_sch;
+				parent_name += !parent_tab.isEmpty() ?  "." + parent_tab : "";
+				parent_name += "</strong>, ";
+			}
+
+			parent_name +=
+					BaseObject::getSchemaName(ObjectType::Database).toLower() +
+					QString(" <strong>%1</strong>").arg(connection.getConnectionId(true, true));
+
 			if(!cascade)
-				msg=tr("Do you really want to drop the object <strong>%1</strong> <em>(%2)</em>?")
-					.arg(obj_name).arg(BaseObject::getTypeName(obj_type));
+				msg=tr("Do you really want to drop the object <strong>%1</strong> <em>(%2)</em> in the %3?")
+					.arg(obj_name,BaseObject::getTypeName(obj_type), parent_name);
 			else
-				msg=tr("Do you really want to <strong>cascade</strong> drop the object <strong>%1</strong> <em>(%2)</em>? This action will drop all the other objects that depends on it.")
-					.arg(obj_name).arg(BaseObject::getTypeName(obj_type));
+				msg=tr("Do you really want to <strong>cascade</strong> drop the object <strong>%1</strong> <em>(%2)</em> in the %3? This action will drop all the other objects that depends on it.")
+					.arg(obj_name, BaseObject::getTypeName(obj_type), parent_name);
 
 			msg_box.show(msg, Messagebox::ConfirmIcon, Messagebox::YesNoButtons);
 
@@ -1445,9 +1461,9 @@ void DatabaseExplorerWidget::restoreTreeState()
 		grp_id = item->data(DatabaseImportForm::ObjectGroupId, Qt::UserRole).toInt();
 
 		if(grp_id < 0)
-			idx = items_state.indexOf(QRegExp(QString("(%1)(\\:)(.)+").arg(grp_id)));
+			idx = items_state.indexOf(QRegularExpression(QString("(%1)(\\:)(.)+").arg(grp_id)));
 		else
-			idx = items_state.indexOf(QRegExp(QString("(%1)(\\:)(.)+").arg(oid)));
+			idx = items_state.indexOf(QRegularExpression(QString("(%1)(\\:)(.)+").arg(oid)));
 
 		if(idx >= 0)
 		{

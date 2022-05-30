@@ -69,7 +69,7 @@ class GeneralConfigWidget: public BaseConfigWidget, public Ui::GeneralConfigWidg
 		void saveConfiguration();
 		void loadConfiguration();
 		static void addConfigurationParam(const QString &param, const attribs_map &attribs);
-		static void removeConfigurationParam(const QRegExp &param_reg);
+		static void removeConfigurationParam(const QRegularExpression &param_reg);
 		static map<QString, attribs_map> getConfigurationParams();
 
 		/*! \brief Returns a single value of a configuration param in the specified section id.

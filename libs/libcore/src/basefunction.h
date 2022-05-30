@@ -72,7 +72,7 @@ class BaseFunction: public BaseObject {
 		virtual void configureSearchAttributes();
 
 	public:
-		static const QRegExp ConfigParamPattern;
+		static const QRegularExpression ConfigParamPattern;
 
 		BaseFunction();
 

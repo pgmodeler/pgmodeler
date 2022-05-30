@@ -56,7 +56,7 @@ class TableDataWidget: public BaseObjectWidget, public Ui::TableDataWidget {
 
 		void showEvent(QShowEvent *);
 
-		void enterEvent(QEvent *);
+		void enterEvent(QEnterEvent *);
 
 	public:
 		static const QString PlaceholderColumn;

@@ -27,6 +27,7 @@ class BaseObjectTest: public QObject {
   private slots:
     void quoteNameIfKeyword();
     void nameIsInvalidIfStartsWithNumber();
+		void dontFormatNameIfAlreadyQuoted();
 };
 
 void BaseObjectTest::quoteNameIfKeyword()
@@ -42,6 +43,11 @@ void BaseObjectTest::nameIsInvalidIfStartsWithNumber()
   QCOMPARE(BaseObject::isValidName("nameA"), true);
 }
 
+void BaseObjectTest::dontFormatNameIfAlreadyQuoted()
+{
+	QString name = "\"SomeObjName\"";
+	QCOMPARE(BaseObject::formatName(name), name);
+}
 
 QTEST_MAIN(BaseObjectTest)
 #include "baseobjecttest.moc"

@@ -18,7 +18,6 @@
 #include "catalog.h"
 #include "coreutilsns.h"
 #include "utilsns.h"
-#include "qtcompat/splitbehaviorcompat.h"
 
 const QString Catalog::QueryList("list");
 const QString Catalog::QueryAttribs("attribs");
@@ -179,9 +178,9 @@ void Catalog::setObjectFilters(QStringList filters, bool only_matching, bool mat
 	map<ObjectType, QStringList> parsed_filters;
 	attribs_map fmt_filter;
 
-	bool has_tab_filter = filters.indexOf(QRegExp(tab_filter.arg(BaseObject::getSchemaName(ObjectType::Table)))) >= 0,
-			 has_view_filter = filters.indexOf(QRegExp(tab_filter.arg(BaseObject::getSchemaName(ObjectType::View)))) >= 0,
-			 has_ftab_filter = filters.indexOf(QRegExp(tab_filter.arg(BaseObject::getSchemaName(ObjectType::ForeignTable)))) >= 0;
+	bool has_tab_filter = filters.indexOf(QRegularExpression(tab_filter.arg(BaseObject::getSchemaName(ObjectType::Table)))) >= 0,
+			 has_view_filter = filters.indexOf(QRegularExpression(tab_filter.arg(BaseObject::getSchemaName(ObjectType::View)))) >= 0,
+			 has_ftab_filter = filters.indexOf(QRegularExpression(tab_filter.arg(BaseObject::getSchemaName(ObjectType::ForeignTable)))) >= 0;
 
 	/* If we have at least one table (view or foreign table) filter
 	 * and the forced object types list we configure filters to force the
@@ -224,7 +223,7 @@ void Catalog::setObjectFilters(QStringList filters, bool only_matching, bool mat
 			if(tab_obj_types.contains(BaseObject::getSchemaName(type)))
 				continue;
 
-			if(filters.indexOf(QRegExp(QString("(%1)(.)+").arg(BaseObject::getSchemaName(type)))) < 0)
+			if(filters.indexOf(QRegularExpression(QString("(%1)(.)+").arg(BaseObject::getSchemaName(type)))) < 0)
 				parsed_filters[type].append(QString("(%1)").arg(InvFilterPattern));
 		}
 	}
@@ -259,7 +258,7 @@ void Catalog::setObjectFilters(QStringList filters, bool only_matching, bool mat
 			// If the pattern has wildcard chars we replace them by (.)*
 			if(pattern.contains(UtilsNs::WildcardChar))
 			{
-				QStringList list = pattern.split(UtilsNs::WildcardChar, QtCompat::KeepEmptyParts);
+				QStringList list = pattern.split(UtilsNs::WildcardChar, Qt::KeepEmptyParts);
 				QString any_str = "(.)*";
 				pattern.clear();
 
@@ -506,11 +505,11 @@ map<ObjectType, QString> Catalog::getObjectFilters()
 vector<ObjectType> Catalog::getFilteredObjectTypes()
 {
 	vector<ObjectType> types;
-	QRegExp regexp = QRegExp(QString("(.)*(%1)(.)*").arg(InvFilterPattern));
+	QRegularExpression regexp = QRegularExpression(QString("(.)*(%1)(.)*").arg(InvFilterPattern));
 
 	for(auto &flt : obj_filters)
 	{
-		if(flt.second.indexOf(QRegExp(regexp)) < 0)
+		if(flt.second.indexOf(QRegularExpression(regexp)) < 0)
 			types.push_back(flt.first);
 	}
 
@@ -986,8 +985,9 @@ unsigned Catalog::getObjectCount(bool incl_sys_objs)
 QStringList Catalog::parseArrayValues(const QString &array_val)
 {
 	QStringList list;
+	QRegularExpression regexp(QRegularExpression::anchoredPattern(ArrayPattern));
 
-	if(QRegExp(ArrayPattern).exactMatch(array_val))
+	if(regexp.match(array_val).hasMatch())
 	{
 		//Detecting the position of { and }
 		int start=array_val.indexOf('{')+1,
@@ -997,7 +997,7 @@ QStringList Catalog::parseArrayValues(const QString &array_val)
 		if(value.contains('"'))
 			list = parseDefaultValues(value, QString("\""), QString(","));
 		else
-			list = value.split(',', QtCompat::SkipEmptyParts);
+			list = value.split(',', Qt::SkipEmptyParts);
 	}
 
 	return list;
@@ -1101,11 +1101,24 @@ QStringList Catalog::parseDefaultValues(const QString &def_values, const QString
 QStringList Catalog::parseRuleCommands(const QString &cmds)
 {
 	int start=-1, end=-1;
-	QRegExp cmd_regexp(QString("(DO)( )*(INSTEAD)*( )+"));
+	QRegularExpression cmd_regexp("(DO)( )*(INSTEAD)*( )+");
+	QRegularExpressionMatch match;
+	QString fmt_cmd;
 
-	start=cmd_regexp.indexIn(cmds) + cmd_regexp.matchedLength();
-	end=cmds.lastIndexOf(';');
-	return (cmds.mid(start,(end - start) + 1).split(';', QtCompat::SkipEmptyParts));
+	match = cmd_regexp.match(cmds);
+	start = match.capturedStart() + match.capturedLength();
+	end = cmds.lastIndexOf(";");
+
+	fmt_cmd = cmds.mid(start,(end - start)).simplified();
+
+	if(fmt_cmd.startsWith('(') && fmt_cmd.endsWith(')'))
+	{
+		fmt_cmd.remove(0, 1);
+		fmt_cmd.remove(fmt_cmd.length() - 1, 1);
+		fmt_cmd = fmt_cmd.trimmed();
+	}
+
+	return fmt_cmd.split(';', Qt::SkipEmptyParts);
 }
 
 QStringList Catalog::parseIndexExpressions(const QString &expr)

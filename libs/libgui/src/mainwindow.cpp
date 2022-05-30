@@ -24,18 +24,18 @@
 #include "utils/custommenustyle.h"
 
 bool MainWindow::confirm_validation=true;
-int MainWindow::GeneralActionsCount=0;
+int MainWindow::ToolsActionsCount=0;
 
 MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(parent, flags)
 {
 	setupUi(this);
-	GeneralActionsCount = tools_acts_tb->actions().size();
 
 	map<QString, attribs_map >confs;
 	map<QString, attribs_map >::iterator itr, itr_end;
 	attribs_map attribs;
 	PluginsConfigWidget *plugins_conf_wgt=nullptr;
 	QGridLayout *grid=nullptr;
+	QAction *action_plugins = nullptr;
 
 	file_menu->setStyle(new CustomMenuStyle);
 	edit_menu->setStyle(new CustomMenuStyle);
@@ -58,10 +58,17 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 		plugins_conf_wgt->installPluginsActions(plugins_menu, this, SLOT(executePlugin()));
 		plugins_conf_wgt->initPlugins(this);
 		plugins_menu->setEnabled(!plugins_menu->isEmpty());
-		action_plugins->setEnabled(!plugins_menu->isEmpty());
-		action_plugins->setMenu(plugins_menu);
 
-		action_more_actions->setMenu(&more_actions_menu);
+		action_plugins = plugins_menu->menuAction();
+		action_plugins->setIcon(QIcon(GuiUtilsNs::getIconPath("plugins")));
+		action_plugins->setText(tr("Plug-ins"));
+		action_plugins->setToolTip(tr("Access the list of loaded plugins"));
+		action_plugins->setEnabled(!plugins_menu->isEmpty());
+
+		QAction *act = more_actions_menu.menuAction();
+		act->setText(tr("More"));
+		act->setIcon(QIcon(GuiUtilsNs::getIconPath("moreactions")));
+		act->setToolTip(tr("Addition action over the model"));
 
 		confs=GeneralConfigWidget::getConfigurationParams();
 		itr=confs.begin();
@@ -115,8 +122,12 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 
 	fix_menu.addAction(action_fix_model);
 	fix_menu.addAction(action_handle_metadata);
-	action_fix->setMenu(&fix_menu);
-	QToolButton *tool_btn = qobject_cast<QToolButton *>(tools_acts_tb->widgetForAction(action_fix));
+
+	QAction *act_fix = fix_menu.menuAction();
+	act_fix->setIcon(QIcon(GuiUtilsNs::getIconPath("fix")));
+	act_fix->setText(tr("Fix"));
+	tools_acts_tb->insertAction(action_configuration, fix_menu.menuAction());
+	QToolButton *tool_btn = qobject_cast<QToolButton *>(tools_acts_tb->widgetForAction(fix_menu.menuAction()));
 	tool_btn->setPopupMode(QToolButton::InstantPopup);
 
 	tool_btn = qobject_cast<QToolButton *>(model_acts_tb->widgetForAction(action_arrange_objects));
@@ -380,6 +391,36 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	configureSamplesMenu();
 	applyConfigurations();
 
+#ifdef Q_OS_MAC
+//	model_acts_tb->removeAction(action_main_menu);
+//	action_main_menu->setEnabled(false);
+#else
+	plugins_menu->menuAction()->setIconVisibleInMenu(false);
+	main_menu.addMenu(file_menu);
+	main_menu.addMenu(edit_menu);
+	main_menu.addMenu(show_menu);
+	main_menu.addMenu(plugins_menu);
+	main_menu.addMenu(about_menu);
+	main_menu.addSeparator();
+	main_menu.addAction(action_show_main_menu);
+
+	main_menu.setIcon(QIcon(GuiUtilsNs::getIconPath("mainmenu")));
+	main_menu.menuAction()->setText(tr("Main menu"));
+	main_menu.menuAction()->setToolTip(tr("Main menu"));
+	model_acts_tb->insertAction(action_new_model, main_menu.menuAction());
+	dynamic_cast<QToolButton *>(model_acts_tb->widgetForAction(main_menu.menuAction()))->setPopupMode(QToolButton::InstantPopup);
+
+	connect(action_show_main_menu, SIGNAL(triggered()), this, SLOT(showMainMenu()));
+	connect(action_hide_main_menu, SIGNAL(triggered()), this, SLOT(showMainMenu()));
+#endif
+
+	QAction *act = recent_mdls_menu.menuAction();
+	act->setIcon(QIcon(GuiUtilsNs::getIconPath("loadrecent")));
+	act->setText(tr("Recent models"));
+	act->setToolTip(tr("Load recently opened model"));
+	model_acts_tb->insertAction(action_save_model, act);
+	dynamic_cast<QToolButton *>(model_acts_tb->widgetForAction(act))->setPopupMode(QToolButton::InstantPopup);
+
 	QToolButton *btn=nullptr;
 	QFont font;
 
@@ -391,12 +432,12 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 		{
 			//GuiUtilsNs::configureWidgetFont(btn, static_cast<unsigned>(GuiUtilsNs::MediumFontFactor));
 			font = btn->font();
-			font.setBold(true);
+			//font.setBold(true);
+			font.setWeight(QFont::Medium);
 			btn->setFont(font);
 			GuiUtilsNs::createDropShadow(btn);
 		}
 	}
-
 
 	for(auto &act : model_acts_tb->actions())
 	{
@@ -407,26 +448,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	}
 
 	resizeGeneralToolbarButtons();
-
-#ifdef Q_OS_MAC
-	model_acts_tb->removeAction(action_main_menu);
-	action_main_menu->setEnabled(false);
-#else
-	plugins_menu->menuAction()->setIconVisibleInMenu(false);
-	main_menu.addMenu(file_menu);
-	main_menu.addMenu(edit_menu);
-	main_menu.addMenu(show_menu);
-	main_menu.addMenu(plugins_menu);
-	main_menu.addMenu(about_menu);
-	main_menu.addSeparator();
-	main_menu.addAction(action_show_main_menu);
-	action_main_menu->setMenu(&main_menu);
-	dynamic_cast<QToolButton *>(model_acts_tb->widgetForAction(action_main_menu))->setPopupMode(QToolButton::InstantPopup);
-
-	connect(action_show_main_menu, SIGNAL(triggered()), this, SLOT(showMainMenu()));
-	connect(action_hide_main_menu, SIGNAL(triggered()), this, SLOT(showMainMenu()));
-#endif
-
+	ToolsActionsCount = tools_acts_tb->actions().size();
 	QList<QAction *> actions = model_acts_tb->actions();
 	actions.append(tools_acts_tb->actions());
 
@@ -460,7 +482,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	if(show_main_menu)
 		file_menu->addAction(action_hide_main_menu);
 
-	action_main_menu->setVisible(!show_main_menu);
+	main_menu.menuAction()->setVisible(!show_main_menu);
 #endif
 
 	restoreDockWidgetsSettings();
@@ -763,7 +785,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
 			count=models_tbw->count();
 
 			//Remove the references to old session
-			conf_wgt->removeConfigurationParam(QRegExp(QString("(%1)([0-9])+").arg(Attributes::File)));
+			conf_wgt->removeConfigurationParam(QRegularExpression(QString("(%1)([0-9])+").arg(Attributes::File)));
 
 			//Saving the session
 			for(i=0; i < count; i++)
@@ -800,7 +822,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
 				recent_mdls_menu.clear();
 			}
 			else
-				conf_wgt->removeConfigurationParam(QRegExp(QString("(%1)(.)+").arg(Attributes::Recent)));
+				conf_wgt->removeConfigurationParam(QRegularExpression(QString("(%1)(.)+").arg(Attributes::Recent)));
 
 			//Saving dock widgets settings
 			storeDockWidgetsSettings();
@@ -896,12 +918,10 @@ void MainWindow::updateRecentModelsMenu()
 	{
 		recent_mdls_menu.addSeparator();
 		recent_mdls_menu.addAction(tr("Clear Menu"), this, SLOT(clearRecentModelsMenu()));
-		action_recent_models->setMenu(&recent_mdls_menu);
-		dynamic_cast<QToolButton *>(model_acts_tb->widgetForAction(action_recent_models))->setPopupMode(QToolButton::InstantPopup);
 	}
 
-	action_recent_models->setEnabled(!recent_mdls_menu.isEmpty());
-	central_wgt->recent_tb->setEnabled(action_recent_models->isEnabled());
+	recent_mdls_menu.menuAction()->setEnabled(!recent_mdls_menu.isEmpty());
+	central_wgt->recent_tb->setEnabled(recent_mdls_menu.menuAction()->isEnabled());
 	central_wgt->recent_tb->setMenu(recent_mdls_menu.isEmpty() ? nullptr : &recent_mdls_menu);
 }
 
@@ -1078,7 +1098,7 @@ ModelWidget *MainWindow::getModel(int idx)
 
 void MainWindow::showMainMenu()
 {
-	action_main_menu->setVisible(sender()!=action_show_main_menu);
+	main_menu.menuAction()->setVisible(sender()!=action_show_main_menu);
 	main_menu_mb->setVisible(sender()==action_show_main_menu);
 
 	if(sender()!=action_show_main_menu)
@@ -1158,9 +1178,9 @@ void MainWindow::setCurrentModel()
 		btns.push_back(tool_btn);
 
 		configureMoreActionsMenu();
-		tools_acts_tb->addAction(action_more_actions);
+		tools_acts_tb->addAction(more_actions_menu.menuAction());
 
-		tool_btn = qobject_cast<QToolButton *>(tools_acts_tb->widgetForAction(action_more_actions));
+		tool_btn = qobject_cast<QToolButton *>(tools_acts_tb->widgetForAction(more_actions_menu.menuAction()));
 		tool_btn->setPopupMode(QToolButton::InstantPopup);
 		btns.push_back(tool_btn);
 
@@ -1168,7 +1188,8 @@ void MainWindow::setCurrentModel()
 		{
 			//GuiUtilsNs::configureWidgetFont(btn, static_cast<unsigned>(GuiUtilsNs::MediumFontFactor));
 			font = btn->font();
-			font.setBold(true);
+			//font.setBold(true);
+			font.setWeight(QFont::Medium);
 			btn->setFont(font);
 			GuiUtilsNs::createDropShadow(btn);
 		}
@@ -1298,7 +1319,7 @@ void MainWindow::removeModelActions()
 	QList<QAction *> act_list;
 	act_list=tools_acts_tb->actions();
 
-	while(act_list.size() > GeneralActionsCount)
+	while(act_list.size() > ToolsActionsCount)
 	{
 		tools_acts_tb->removeAction(act_list.back());
 		act_list.pop_back();
@@ -1674,27 +1695,21 @@ void MainWindow::printModel()
 	{
 		QPrintDialog print_dlg;
 		QPrinter *printer=nullptr;
-		QPrinter::PageSize paper_size, curr_paper_size;
-		QPrinter::Orientation orientation, curr_orientation;
-		QRectF margins;
-		QSizeF custom_size;
-		qreal ml,mt,mr,mb, ml1, mt1, mr1, mb1;
+		QPageSize page_size, curr_page_size;
+		QPageLayout curr_page_lt, orig_page_lt;
 		GeneralConfigWidget *conf_wgt=dynamic_cast<GeneralConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::GeneralConfWgt));
 
 		print_dlg.setOption(QAbstractPrintDialog::PrintCurrentPage, false);
 		print_dlg.setWindowTitle(tr("Database model printing"));
 
-		//Get the page configuration of the scene
-		ObjectsScene::getPaperConfiguration(paper_size, orientation, margins, custom_size);
+		//Get the current page configuration of the scene
+		orig_page_lt = ObjectsScene::getPageLayout();
 
 		//Get a reference to the printer
-		printer=print_dlg.printer();
+		printer = print_dlg.printer();
 
 		//Sets the printer options based upon the configurations from the scene
-		ObjectsScene::configurePrinter(printer);
-
-		printer->getPageMargins(&mt,&ml,&mb,&mr,QPrinter::Millimeter);
-
+		printer->setPageLayout(orig_page_lt);
 		print_dlg.exec();
 
 		//If the user confirms the printing
@@ -1702,22 +1717,22 @@ void MainWindow::printModel()
 		{
 			Messagebox msg_box;
 
-			//Checking If the user modified the default settings overriding the scene configurations
-			printer->getPageMargins(&mt1,&ml1,&mb1,&mr1,QPrinter::Millimeter);
-			curr_orientation=print_dlg.printer()->orientation();
-			curr_paper_size=print_dlg.printer()->paperSize();
+			// Checking If the user modified the default settings on the printer overriding the scene configurations
+			curr_page_lt = printer->pageLayout();
 
-			if(ml!=ml1 || mr!=mr1 || mt!=mt1 || mb!=mb1 ||
-					orientation!=curr_orientation || curr_paper_size!=paper_size)
+			if(orig_page_lt != curr_page_lt)
 			{
-				msg_box.show(tr("Changes were detected in the definitions of paper/margin of the model which may cause the incorrect print of the objects. Do you want to continue printing using the new settings? To use the default settings click 'No' or 'Cancel' to abort printing."),
+				msg_box.show(tr("Changes were detected in the definitions of paper/margin which may cause the incorrect print of the objects. Do you want to continue printing using the new settings? To use the default settings click 'No' or 'Cancel' to abort printing."),
 							 Messagebox::AlertIcon, Messagebox::AllButtons);
 			}
 
 			if(!msg_box.isCancelled())
 			{
 				if(msg_box.result()==QDialog::Rejected)
-					ObjectsScene::configurePrinter(printer);
+				{
+					// Retore the page configuration to the scene's default
+					printer->setPageLayout(orig_page_lt);
+				}
 
 				current_model->printModel(printer, conf_wgt->print_grid_chk->isChecked(), conf_wgt->print_pg_num_chk->isChecked());
 			}
@@ -2102,16 +2117,8 @@ void MainWindow::changeCurrentView(bool checked)
 		action_design->blockSignals(false);
 
 		actions=tools_acts_tb->actions();
-		for(int i=GeneralActionsCount; i < actions.count(); i++)
-		{
+		for(int i=ToolsActionsCount; i < actions.count(); i++)
 			actions[i]->setEnabled(enable);
-
-			if(actions[i]->menu())
-			{
-				for(auto action : actions[i]->menu()->actions())
-					action->setEnabled(enable);
-			}
-		}
 
 		if(!enable)
 			overview_wgt->close();

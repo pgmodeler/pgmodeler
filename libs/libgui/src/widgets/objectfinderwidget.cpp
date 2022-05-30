@@ -53,7 +53,7 @@ ObjectFinderWidget::ObjectFinderWidget(QWidget *parent) : QWidget(parent)
 	fade_btn->setMenu(&fade_menu);
 
 	connect(filter_btn, SIGNAL(toggled(bool)), filter_frm, SLOT(setVisible(bool)));
-	connect(filter_btn, &QToolButton::toggled, [&](){
+	connect(filter_btn, &QToolButton::toggled, this, [&](){
 		splitter->setSizes({0, 1000});
 		splitter->handle(1)->setEnabled(filter_btn->isChecked());
 	});
@@ -66,6 +66,13 @@ ObjectFinderWidget::ObjectFinderWidget(QWidget *parent) : QWidget(parent)
 	connect(clear_res_btn, SIGNAL(clicked()), this, SLOT(clearResult()));
 	connect(select_all_btn, SIGNAL(clicked()), this, SLOT(setAllObjectsChecked()));
 	connect(clear_all_btn, SIGNAL(clicked()), this, SLOT(setAllObjectsChecked()));
+
+	connect(regexp_chk, &QCheckBox::toggled, this, [&](bool checked){
+		exact_match_chk->setEnabled(checked);
+
+		if(!checked)
+			exact_match_chk->setChecked(false);
+	});
 
 	for(auto &attr : search_attribs_i18n)
 		search_attrs_cmb->addItem(attr);
@@ -253,7 +260,8 @@ void ObjectFinderWidget::findObjects()
 
 		//Search the objects on model
 		found_objs=model_wgt->getDatabaseModel()->findObjects(pattern_edt->text(), types,
-																													case_sensitive_chk->isChecked(), regexp_chk->isChecked(),
+																													case_sensitive_chk->isChecked(),
+																													regexp_chk->isChecked(),
 																													exact_match_chk->isChecked(),
 																													search_attr);
 

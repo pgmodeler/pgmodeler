@@ -185,24 +185,14 @@ void Messagebox::show(const QString &title, const QString &msg, unsigned icon_ty
 	show_errors_tb->setChecked(false);
 	show_errors_tb->setVisible(exceptions_trw->topLevelItemCount() > 0);
 
-	double w_factor = 0.20, h_factor = 0.10;
-	QRect screen_rect = screen()->geometry();
+	double w_factor = 0.25, h_factor = 0.125;
+	QSize sz = screen()->size();
+	setMinimumWidth(sz.width() * w_factor);
+	setMinimumHeight(sz.height() * h_factor);
 
-	if(screen_rect.width() <= GuiUtilsNs::FHDWidth)
-	{
-		w_factor = 0.28;
-		h_factor = 0.16;
-	}
-	else if(screen_rect.width() <= GuiUtilsNs::QHDWidth)
-	{
-		w_factor = 0.22;
-		h_factor = 0.12;
-	}
-
-	setMinimumWidth(screen_rect.width() * w_factor);
-	setMinimumHeight(screen_rect.height() * h_factor);
-
-	int ln_cnt = QString(msg).replace(QRegExp(QString("(<)(br)(/)?(>)"), Qt::CaseInsensitive), QString("\n")).count('\n');
+	int ln_cnt = QString(msg).replace(QRegularExpression("(<)(br)(/)?(>)",
+																			QRegularExpression::CaseInsensitiveOption),
+																		QString("\n")).count('\n');
 
 	if(ln_cnt > 0)
 		adjustSize();

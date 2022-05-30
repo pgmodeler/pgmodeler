@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>658</width>
+    <width>768</width>
     <height>575</height>
    </rect>
   </property>
@@ -27,7 +27,7 @@
     <number>0</number>
    </property>
    <property name="spacing">
-    <number>10</number>
+    <number>5</number>
    </property>
    <item row="3" column="0" colspan="15">
     <widget class="QTableWidget" name="data_tbw">
@@ -121,8 +121,8 @@
      </property>
      <property name="iconSize">
       <size>
-       <width>32</width>
-       <height>32</height>
+       <width>25</width>
+       <height>25</height>
       </size>
      </property>
      <property name="popupMode">
@@ -156,8 +156,8 @@
      </property>
      <property name="iconSize">
       <size>
-       <width>32</width>
-       <height>32</height>
+       <width>25</width>
+       <height>25</height>
       </size>
      </property>
      <property name="shortcut">
@@ -191,8 +191,8 @@
      </property>
      <property name="iconSize">
       <size>
-       <width>32</width>
-       <height>32</height>
+       <width>25</width>
+       <height>25</height>
       </size>
      </property>
      <property name="shortcut">
@@ -231,8 +231,8 @@
      </property>
      <property name="iconSize">
       <size>
-       <width>32</width>
-       <height>32</height>
+       <width>25</width>
+       <height>25</height>
       </size>
      </property>
      <property name="shortcut">
@@ -266,8 +266,8 @@
      </property>
      <property name="iconSize">
       <size>
-       <width>32</width>
-       <height>32</height>
+       <width>25</width>
+       <height>25</height>
       </size>
      </property>
      <property name="shortcut">
@@ -314,12 +314,15 @@
       <property name="bottomMargin">
        <number>5</number>
       </property>
+      <property name="spacing">
+       <number>5</number>
+      </property>
       <item row="0" column="0">
        <widget class="QLabel" name="icon_lbl">
         <property name="maximumSize">
          <size>
-          <width>32</width>
-          <height>32</height>
+          <width>25</width>
+          <height>25</height>
          </size>
         </property>
         <property name="text">
@@ -386,8 +389,8 @@
      </property>
      <property name="iconSize">
       <size>
-       <width>32</width>
-       <height>32</height>
+       <width>25</width>
+       <height>25</height>
       </size>
      </property>
      <property name="popupMode">
@@ -421,8 +424,8 @@
      </property>
      <property name="iconSize">
       <size>
-       <width>32</width>
-       <height>32</height>
+       <width>25</width>
+       <height>25</height>
       </size>
      </property>
      <property name="shortcut">
@@ -474,8 +477,8 @@
      </property>
      <property name="iconSize">
       <size>
-       <width>32</width>
-       <height>32</height>
+       <width>25</width>
+       <height>25</height>
       </size>
      </property>
      <property name="shortcut">
@@ -548,8 +551,8 @@
      </property>
      <property name="iconSize">
       <size>
-       <width>32</width>
-       <height>32</height>
+       <width>25</width>
+       <height>25</height>
       </size>
      </property>
      <property name="shortcut">
@@ -583,8 +586,8 @@
      </property>
      <property name="iconSize">
       <size>
-       <width>32</width>
-       <height>32</height>
+       <width>25</width>
+       <height>25</height>
       </size>
      </property>
      <property name="shortcut">
@@ -628,12 +631,15 @@
       <property name="bottomMargin">
        <number>5</number>
       </property>
+      <property name="spacing">
+       <number>5</number>
+      </property>
       <item row="0" column="0">
        <widget class="QLabel" name="icon_lbl2">
         <property name="maximumSize">
          <size>
-          <width>32</width>
-          <height>32</height>
+          <width>25</width>
+          <height>25</height>
          </size>
         </property>
         <property name="text">
@@ -700,8 +706,8 @@
      </property>
      <property name="iconSize">
       <size>
-       <width>32</width>
-       <height>32</height>
+       <width>25</width>
+       <height>25</height>
       </size>
      </property>
      <property name="shortcut">

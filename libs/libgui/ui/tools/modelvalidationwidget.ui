@@ -32,6 +32,9 @@
    <string>Form</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
+   <property name="spacing">
+    <number>5</number>
+   </property>
    <property name="leftMargin">
     <number>5</number>
    </property>
@@ -65,8 +68,8 @@
          </property>
          <property name="iconSize">
           <size>
-           <width>32</width>
-           <height>32</height>
+           <width>25</width>
+           <height>25</height>
           </size>
          </property>
          <property name="toolButtonStyle">
@@ -100,8 +103,8 @@
          </property>
          <property name="iconSize">
           <size>
-           <width>32</width>
-           <height>32</height>
+           <width>25</width>
+           <height>25</height>
           </size>
          </property>
          <property name="shortcut">
@@ -141,8 +144,8 @@
          </property>
          <property name="iconSize">
           <size>
-           <width>32</width>
-           <height>32</height>
+           <width>25</width>
+           <height>25</height>
           </size>
          </property>
          <property name="shortcut">
@@ -176,8 +179,8 @@
          </property>
          <property name="iconSize">
           <size>
-           <width>32</width>
-           <height>32</height>
+           <width>25</width>
+           <height>25</height>
           </size>
          </property>
          <property name="toolButtonStyle">
@@ -211,8 +214,8 @@
          </property>
          <property name="iconSize">
           <size>
-           <width>32</width>
-           <height>32</height>
+           <width>25</width>
+           <height>25</height>
           </size>
          </property>
          <property name="checkable">
@@ -249,8 +252,8 @@
          </property>
          <property name="iconSize">
           <size>
-           <width>32</width>
-           <height>32</height>
+           <width>25</width>
+           <height>25</height>
           </size>
          </property>
          <property name="checkable">
@@ -296,8 +299,8 @@
        </property>
        <property name="iconSize">
         <size>
-         <width>25</width>
-         <height>25</height>
+         <width>20</width>
+         <height>20</height>
         </size>
        </property>
        <property name="shortcut">
@@ -521,10 +524,16 @@
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
+          <property name="minimumSize">
+           <size>
+            <width>25</width>
+            <height>25</height>
+           </size>
+          </property>
           <property name="maximumSize">
            <size>
-            <width>32</width>
-            <height>32</height>
+            <width>25</width>
+            <height>25</height>
            </size>
           </property>
           <property name="toolTip">
@@ -602,14 +611,14 @@
           </property>
           <property name="minimumSize">
            <size>
-            <width>22</width>
-            <height>22</height>
+            <width>25</width>
+            <height>25</height>
            </size>
           </property>
           <property name="maximumSize">
            <size>
-            <width>32</width>
-            <height>32</height>
+            <width>25</width>
+            <height>25</height>
            </size>
           </property>
           <property name="toolTip">
@@ -717,8 +726,8 @@
      </property>
      <property name="iconSize">
       <size>
-       <width>28</width>
-       <height>28</height>
+       <width>22</width>
+       <height>22</height>
       </size>
      </property>
      <property name="indentation">
@@ -749,7 +758,6 @@
   <tabstop>hide_tb</tabstop>
  </tabstops>
  <resources>
-  <include location="../../res/resources.qrc"/>
   <include location="../../res/resources.qrc"/>
   <include location="../../res/resources.qrc"/>
  </resources>

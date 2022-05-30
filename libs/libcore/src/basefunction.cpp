@@ -20,7 +20,8 @@
 #include "defaultlanguages.h"
 #include "utilsns.h"
 
-const QRegExp BaseFunction::ConfigParamPattern("([a-z]+)([a-z]|(_))*", Qt::CaseInsensitive);
+const QRegularExpression BaseFunction::ConfigParamPattern(QRegularExpression::anchoredPattern("([a-z]+)([a-z]|(_))*"),
+																													QRegularExpression::CaseInsensitiveOption);
 
 BaseFunction::BaseFunction()
 {
@@ -226,7 +227,7 @@ void BaseFunction::addTransformTypes(const QStringList &types)
 
 void BaseFunction::setConfigurationParam(const QString &cfg_param, const QString &value)
 {
-	if(!ConfigParamPattern.exactMatch(cfg_param))
+	if(!ConfigParamPattern.match(cfg_param).hasMatch())
 	{
 		throw Exception(Exception::getErrorMessage(ErrorCode::InvConfigParameterName).arg(cfg_param).arg(signature),
 										ErrorCode::InvConfigParameterName, __PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -381,7 +382,7 @@ void BaseFunction::createSignature(bool format, bool prepend_schema)
 			 * So in order to avoid signature conflicts (mainly whe diff functions) we remove it.
 			 * The keyword OUT is also removed for IN OUT parameters, since removing the IN parameter the OUT keyword will remain which
 			 * forms an invalid signature. */
-			aux_str = param.getCodeDefinition(SchemaParser::SqlDefinition, true).replace(QRegExp("^(IN)?( )*(OUT)?( )"),"").trimmed();
+			aux_str = param.getCodeDefinition(SchemaParser::SqlDefinition, true).replace(QRegularExpression("^(IN)?( )*(OUT)?( )"),"").trimmed();
 			aux_str.remove(',');
 			fmt_params.append(aux_str);
 			param.setCodeInvalidated(true);

@@ -73,6 +73,9 @@
     <property name="bottomMargin">
      <number>0</number>
     </property>
+    <property name="spacing">
+     <number>5</number>
+    </property>
     <item row="0" column="0">
      <widget class="QStackedWidget" name="views_stw">
       <property name="sizePolicy">
@@ -99,8 +102,8 @@
         <property name="bottomMargin">
          <number>0</number>
         </property>
-        <property name="horizontalSpacing">
-         <number>6</number>
+        <property name="spacing">
+         <number>5</number>
         </property>
         <item row="0" column="0">
          <layout class="QVBoxLayout" name="verticalLayout">
@@ -116,7 +119,7 @@
              <enum>Qt::Horizontal</enum>
             </property>
             <property name="handleWidth">
-             <number>8</number>
+             <number>5</number>
             </property>
             <property name="childrenCollapsible">
              <bool>false</bool>
@@ -162,7 +165,7 @@
                  <enum>Qt::Vertical</enum>
                 </property>
                 <property name="handleWidth">
-                 <number>8</number>
+                 <number>5</number>
                 </property>
                 <property name="childrenCollapsible">
                  <bool>false</bool>
@@ -170,7 +173,7 @@
                 <widget class="QWidget" name="layoutWidget">
                  <layout class="QHBoxLayout" name="horizontalLayout">
                   <property name="spacing">
-                   <number>10</number>
+                   <number>5</number>
                   </property>
                   <item>
                    <widget class="QTabWidget" name="models_tbw">
@@ -237,7 +240,7 @@
                      <enum>Qt::Horizontal</enum>
                     </property>
                     <property name="handleWidth">
-                     <number>8</number>
+                     <number>5</number>
                     </property>
                     <property name="childrenCollapsible">
                      <bool>false</bool>
@@ -300,7 +303,7 @@
                  <enum>Qt::Vertical</enum>
                 </property>
                 <property name="handleWidth">
-                 <number>8</number>
+                 <number>5</number>
                 </property>
                 <property name="childrenCollapsible">
                  <bool>false</bool>
@@ -372,7 +375,7 @@
              <item row="0" column="0" colspan="2">
               <layout class="QHBoxLayout" name="horiz_wgts_btns_layout">
                <property name="spacing">
-                <number>10</number>
+                <number>5</number>
                </property>
                <property name="leftMargin">
                 <number>5</number>
@@ -403,8 +406,8 @@
                  </property>
                  <property name="iconSize">
                   <size>
-                   <width>40</width>
-                   <height>40</height>
+                   <width>25</width>
+                   <height>25</height>
                   </size>
                  </property>
                  <property name="shortcut">
@@ -441,8 +444,8 @@
                  </property>
                  <property name="iconSize">
                   <size>
-                   <width>40</width>
-                   <height>40</height>
+                   <width>25</width>
+                   <height>25</height>
                   </size>
                  </property>
                  <property name="shortcut">
@@ -479,8 +482,8 @@
                  </property>
                  <property name="iconSize">
                   <size>
-                   <width>40</width>
-                   <height>40</height>
+                   <width>25</width>
+                   <height>25</height>
                   </size>
                  </property>
                  <property name="checkable">
@@ -514,8 +517,8 @@
                  </property>
                  <property name="iconSize">
                   <size>
-                   <width>40</width>
-                   <height>40</height>
+                   <width>25</width>
+                   <height>25</height>
                   </size>
                  </property>
                  <property name="checkable">
@@ -550,7 +553,7 @@
              <item row="0" column="13">
               <layout class="QHBoxLayout" name="vert_wgts_btns_layout">
                <property name="spacing">
-                <number>10</number>
+                <number>5</number>
                </property>
                <property name="topMargin">
                 <number>5</number>
@@ -581,8 +584,8 @@
                  </property>
                  <property name="iconSize">
                   <size>
-                   <width>40</width>
-                   <height>40</height>
+                   <width>25</width>
+                   <height>25</height>
                   </size>
                  </property>
                  <property name="shortcut">
@@ -619,8 +622,8 @@
                  </property>
                  <property name="iconSize">
                   <size>
-                   <width>40</width>
-                   <height>40</height>
+                   <width>25</width>
+                   <height>25</height>
                   </size>
                  </property>
                  <property name="shortcut">
@@ -648,6 +651,9 @@
                 </sizepolicy>
                </property>
                <layout class="QHBoxLayout" name="horizontalLayout_2">
+                <property name="spacing">
+                 <number>5</number>
+                </property>
                 <property name="leftMargin">
                  <number>0</number>
                 </property>
@@ -662,6 +668,9 @@
                 </property>
                 <item>
                  <layout class="QHBoxLayout" name="horizontalLayout_5">
+                  <property name="spacing">
+                   <number>5</number>
+                  </property>
                   <property name="bottomMargin">
                    <number>5</number>
                   </property>
@@ -740,7 +749,7 @@
      <x>0</x>
      <y>0</y>
      <width>1668</width>
-     <height>36</height>
+     <height>27</height>
     </rect>
    </property>
    <property name="autoFillBackground">
@@ -755,8 +764,6 @@
     </property>
     <addaction name="action_new_model"/>
     <addaction name="action_load_model"/>
-    <addaction name="action_recent_models"/>
-    <addaction name="action_fix"/>
     <addaction name="action_close_model"/>
     <addaction name="action_save_model"/>
     <addaction name="action_save_as"/>
@@ -825,7 +832,7 @@
   </widget>
   <widget class="QToolBar" name="tools_acts_tb">
    <property name="sizePolicy">
-    <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+    <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
      <horstretch>0</horstretch>
      <verstretch>0</verstretch>
     </sizepolicy>
@@ -838,7 +845,6 @@
    </property>
    <property name="font">
     <font>
-     <weight>50</weight>
      <bold>false</bold>
     </font>
    </property>
@@ -848,6 +854,9 @@
    <property name="toolTip">
     <string/>
    </property>
+   <property name="styleSheet">
+    <string notr="true"/>
+   </property>
    <property name="movable">
     <bool>false</bool>
    </property>
@@ -856,8 +865,8 @@
    </property>
    <property name="iconSize">
     <size>
-     <width>56</width>
-     <height>56</height>
+     <width>40</width>
+     <height>40</height>
     </size>
    </property>
    <property name="toolButtonStyle">
@@ -879,7 +888,6 @@
    <addaction name="action_import"/>
    <addaction name="action_export"/>
    <addaction name="action_diff"/>
-   <addaction name="action_fix"/>
    <addaction name="action_configuration"/>
   </widget>
   <widget class="QToolBar" name="model_acts_tb">
@@ -918,8 +926,8 @@
    </property>
    <property name="iconSize">
     <size>
-     <width>48</width>
-     <height>48</height>
+     <width>32</width>
+     <height>32</height>
     </size>
    </property>
    <property name="toolButtonStyle">
@@ -931,10 +939,8 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
-   <addaction name="action_main_menu"/>
    <addaction name="action_new_model"/>
    <addaction name="action_load_model"/>
-   <addaction name="action_recent_models"/>
    <addaction name="action_save_model"/>
    <addaction name="action_save_as"/>
    <addaction name="action_print"/>
@@ -1340,33 +1346,6 @@
     <string>New object</string>
    </property>
   </action>
-  <action name="action_plugins">
-   <property name="icon">
-    <iconset resource="../res/resources.qrc">
-     <normaloff>:/icons/icons/plugins.png</normaloff>:/icons/icons/plugins.png</iconset>
-   </property>
-   <property name="text">
-    <string>Plugins</string>
-   </property>
-   <property name="toolTip">
-    <string>Access the list of loaded plugins</string>
-   </property>
-  </action>
-  <action name="action_recent_models">
-   <property name="icon">
-    <iconset resource="../res/resources.qrc">
-     <normaloff>:/icons/icons/loadrecent.png</normaloff>:/icons/icons/loadrecent.png</iconset>
-   </property>
-   <property name="text">
-    <string>&amp;Recent Models</string>
-   </property>
-   <property name="toolTip">
-    <string>Load recently opened model</string>
-   </property>
-   <property name="iconVisibleInMenu">
-    <bool>true</bool>
-   </property>
-  </action>
   <action name="action_import">
    <property name="icon">
     <iconset resource="../res/resources.qrc">
@@ -1425,18 +1404,6 @@
    </property>
    <property name="text">
     <string>&amp;Check for update</string>
-   </property>
-  </action>
-  <action name="action_main_menu">
-   <property name="icon">
-    <iconset resource="../res/resources.qrc">
-     <normaloff>:/icons/icons/mainmenu.png</normaloff>:/icons/icons/mainmenu.png</iconset>
-   </property>
-   <property name="text">
-    <string>action_main_menu</string>
-   </property>
-   <property name="toolTip">
-    <string>Main menu</string>
    </property>
   </action>
   <action name="action_show_main_menu">
@@ -1614,33 +1581,11 @@
     <string>Toggle the compact view on the model(s)</string>
    </property>
   </action>
-  <action name="action_more_actions">
-   <property name="icon">
-    <iconset resource="../res/resources.qrc">
-     <normaloff>:/icons/icons/moreactions.png</normaloff>:/icons/icons/moreactions.png</iconset>
-   </property>
-   <property name="text">
-    <string>More</string>
-   </property>
-   <property name="toolTip">
-    <string>Addition action over the model</string>
-   </property>
-  </action>
-  <action name="action_fix">
-   <property name="icon">
-    <iconset resource="../res/resources.qrc">
-     <normaloff>:/icons/icons/fix.png</normaloff>:/icons/icons/fix.png</iconset>
-   </property>
-   <property name="text">
-    <string>Fix</string>
-   </property>
-  </action>
  </widget>
  <tabstops>
   <tabstop>models_tbw</tabstop>
  </tabstops>
  <resources>
-  <include location="../res/resources.qrc"/>
   <include location="../res/resources.qrc"/>
   <include location="../res/resources.qrc"/>
  </resources>

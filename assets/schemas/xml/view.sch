@@ -46,7 +46,7 @@
 %end
 
 %if {cte-exp} %then
-	$tb [<expression type="cte-exp">] <! $ob CDATA $ob {cte-exp} $cb $cb ></expression> $br
+	$tb [<expression type="cte-exp">] $sp <! $ob CDATA $ob {cte-exp} $cb $cb > $sp </expression> $br
 %end
 
 </view> $br $br

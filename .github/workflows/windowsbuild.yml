@@ -14,7 +14,7 @@ jobs:
 
     strategy:
       matrix:
-        qt: ['5.15.0'] 
+        qt: ['6.2.x'] 
     
     defaults:
       run:
@@ -27,7 +27,7 @@ jobs:
       with:
         msystem: MINGW64
         update: true
-        install: base-devel mingw-w64-x86_64-make mingw-w64-x86_64-gcc mingw-w64-x86_64-postgresql mingw-w64-x86_64-qt5
+        install: base-devel mingw-w64-x86_64-make mingw-w64-x86_64-gcc mingw-w64-x86_64-postgresql mingw-w64-x86_64-qt6
                      
     # Workaround: Instead of using $GITHUB_WORKSPACE in PREFIX we actually use the path converted to unix-like
     # since we're running the building inside msys2

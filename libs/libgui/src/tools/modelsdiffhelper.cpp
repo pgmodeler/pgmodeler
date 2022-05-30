@@ -28,7 +28,7 @@ const QStringList ModelsDiffHelper::ObjectsIgnoredAttribs = {
 	Attributes::MaxObjCount, Attributes::Protected, Attributes::SqlDisabled,
 	Attributes::RectVisible, Attributes::FillColor, Attributes::FadedOut,
 	Attributes::CollapseMode,	Attributes::AttribsPage, Attributes::ExtAttribsPage,
-	Attributes::Pagination,	Attributes::Alias };
+	Attributes::Pagination,	Attributes::Alias,	Attributes::Layers };
 
 const QStringList ModelsDiffHelper::ObjectsIgnoredTags = {
 	Attributes::Role, Attributes::Tablespace, Attributes::Collation,
@@ -992,7 +992,7 @@ void ModelsDiffHelper::processDiffInfos()
 						alter_def=diff.getOldObject()->getAlterDefinition(object);
 
 					if(obj_type == ObjectType::Database && diff_opts[OptPreserveDbName])
-						alter_def.remove(QRegExp(QString("(ALTER)( )+(DATABASE)( )+(%1)( )+(RENAME)( )+(TO)(.)*(\\n)").arg(diff.getOldObject()->getSignature())));
+						alter_def.remove(QRegularExpression(QString("(ALTER)( )+(DATABASE)( )+(%1)( )+(RENAME)( )+(TO)(.)*(\\n)").arg(diff.getOldObject()->getSignature())));
 
 					if(!alter_def.isEmpty())
 					{

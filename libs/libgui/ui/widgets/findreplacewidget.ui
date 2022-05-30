@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>942</width>
-    <height>91</height>
+    <height>69</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -32,6 +32,9 @@
    <property name="bottomMargin">
     <number>0</number>
    </property>
+   <property name="spacing">
+    <number>5</number>
+   </property>
    <item row="0" column="0">
     <widget class="QLabel" name="find_lbl">
      <property name="minimumSize">
@@ -54,6 +57,9 @@
    </item>
    <item row="0" column="2">
     <layout class="QHBoxLayout" name="horizontalLayout">
+     <property name="spacing">
+      <number>5</number>
+     </property>
      <item>
       <widget class="QToolButton" name="previous_tb">
        <property name="enabled">
@@ -82,8 +88,8 @@
        </property>
        <property name="iconSize">
         <size>
-         <width>32</width>
-         <height>32</height>
+         <width>25</width>
+         <height>25</height>
         </size>
        </property>
        <property name="shortcut">
@@ -122,8 +128,8 @@
        </property>
        <property name="iconSize">
         <size>
-         <width>32</width>
-         <height>32</height>
+         <width>25</width>
+         <height>25</height>
         </size>
        </property>
        <property name="shortcut">
@@ -200,8 +206,8 @@
        </property>
        <property name="iconSize">
         <size>
-         <width>25</width>
-         <height>25</height>
+         <width>20</width>
+         <height>20</height>
         </size>
        </property>
        <property name="autoRaise">
@@ -240,6 +246,9 @@
       </size>
      </property>
      <layout class="QHBoxLayout" name="horizontalLayout_3">
+      <property name="spacing">
+       <number>5</number>
+      </property>
       <property name="leftMargin">
        <number>0</number>
       </property>
@@ -254,6 +263,9 @@
       </property>
       <item>
        <layout class="QHBoxLayout" name="horizontalLayout_2">
+        <property name="spacing">
+         <number>5</number>
+        </property>
         <item>
          <widget class="QToolButton" name="replace_tb">
           <property name="enabled">
@@ -350,7 +362,6 @@
   <tabstop>replace_find_tb</tabstop>
  </tabstops>
  <resources>
-  <include location="../../res/resources.qrc"/>
   <include location="../../res/resources.qrc"/>
   <include location="../../res/resources.qrc"/>
  </resources>

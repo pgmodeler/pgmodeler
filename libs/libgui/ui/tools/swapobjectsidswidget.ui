@@ -229,14 +229,14 @@
      <widget class="QLabel" name="icon_lbl">
       <property name="minimumSize">
        <size>
-        <width>32</width>
-        <height>32</height>
+        <width>25</width>
+        <height>25</height>
        </size>
       </property>
       <property name="maximumSize">
        <size>
-        <width>32</width>
-        <height>32</height>
+        <width>25</width>
+        <height>25</height>
        </size>
       </property>
       <property name="text">
@@ -324,8 +324,8 @@
    </property>
    <property name="iconSize">
     <size>
-     <width>32</width>
-     <height>32</height>
+     <width>25</width>
+     <height>25</height>
     </size>
    </property>
    <property name="toolButtonStyle">
@@ -430,6 +430,12 @@
    </property>
    <property name="selectionBehavior">
     <enum>QAbstractItemView::SelectRows</enum>
+   </property>
+   <property name="iconSize">
+    <size>
+     <width>22</width>
+     <height>22</height>
+    </size>
    </property>
    <property name="gridStyle">
     <enum>Qt::SolidLine</enum>
@@ -570,8 +576,8 @@
    </property>
    <property name="iconSize">
     <size>
-     <width>32</width>
-     <height>32</height>
+     <width>25</width>
+     <height>25</height>
     </size>
    </property>
    <property name="checkable">

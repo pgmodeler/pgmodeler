@@ -57,7 +57,7 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 	private:
 		Q_OBJECT
 
-		static int GeneralActionsCount;
+		static int ToolsActionsCount;
 
 		static constexpr int WelcomeView=0,
 		DesignView=1,

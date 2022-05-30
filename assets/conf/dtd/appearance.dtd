@@ -2,9 +2,11 @@
   CAUTION: Do not modify this file directly on it's code unless you know what you are doing.
            Unexpected results may occur if the code is changed deliberately.
 -->
-<!ELEMENT appearance (theme?, design, code, objects)>
+<!ELEMENT appearance (design, code, objects)>
 <!ATTLIST appearance ui-theme (system|dark|light) "system">
 <!ATTLIST appearance syntax-hl-theme (dark|light) "light">
+<!ATTLIST appearance icons-size (big|medium|small) "big">
+<!ATTLIST appearance custom-scale CDATA #IMPLIED>
 
 <!ELEMENT design EMPTY>
 <!ATTLIST design grid-size CDATA #REQUIRED>

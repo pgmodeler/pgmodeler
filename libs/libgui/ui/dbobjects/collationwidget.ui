@@ -30,7 +30,7 @@
     <number>5</number>
    </property>
    <property name="spacing">
-    <number>10</number>
+    <number>5</number>
    </property>
    <item row="2" column="0" colspan="2">
     <widget class="QGroupBox" name="groupBox">
@@ -51,7 +51,7 @@
        <number>5</number>
       </property>
       <property name="spacing">
-       <number>10</number>
+       <number>5</number>
       </property>
       <item row="0" column="0">
        <widget class="QLabel" name="lccollate_lbl">
@@ -69,7 +69,6 @@
         </property>
         <property name="font">
          <font>
-          <weight>50</weight>
           <italic>false</italic>
           <bold>false</bold>
          </font>
@@ -120,7 +119,6 @@
         </property>
         <property name="font">
          <font>
-          <weight>50</weight>
           <italic>false</italic>
           <bold>false</bold>
          </font>
@@ -159,7 +157,7 @@
        <number>5</number>
       </property>
       <property name="spacing">
-       <number>10</number>
+       <number>5</number>
       </property>
       <item row="0" column="0">
        <widget class="QLabel" name="locale_lbl">
@@ -262,7 +260,6 @@
         </property>
         <property name="font">
          <font>
-          <weight>50</weight>
           <italic>false</italic>
           <bold>false</bold>
          </font>
@@ -295,7 +292,6 @@
         </property>
         <property name="font">
          <font>
-          <weight>50</weight>
           <italic>false</italic>
           <bold>false</bold>
          </font>
@@ -344,7 +340,7 @@
        <number>5</number>
       </property>
       <property name="spacing">
-       <number>10</number>
+       <number>5</number>
       </property>
       <item row="0" column="0">
        <widget class="QLabel" name="lcctype_lbl">
@@ -362,7 +358,6 @@
         </property>
         <property name="font">
          <font>
-          <weight>50</weight>
           <italic>false</italic>
           <bold>false</bold>
          </font>
@@ -416,7 +411,6 @@
         </property>
         <property name="font">
          <font>
-          <weight>50</weight>
           <italic>false</italic>
           <bold>false</bold>
          </font>

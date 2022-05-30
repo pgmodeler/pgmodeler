@@ -33,7 +33,7 @@
     <number>5</number>
    </property>
    <property name="spacing">
-    <number>10</number>
+    <number>5</number>
    </property>
    <item row="4" column="0">
     <widget class="QLabel" name="op_class_lbl">
@@ -118,6 +118,9 @@
    </item>
    <item row="6" column="1" colspan="2">
     <layout class="QHBoxLayout" name="horizontalLayout">
+     <property name="spacing">
+      <number>5</number>
+     </property>
      <item>
       <widget class="QRadioButton" name="ascending_rb">
        <property name="sizePolicy">
@@ -259,6 +262,9 @@
       </size>
      </property>
      <layout class="QHBoxLayout" name="horizontalLayout_2">
+      <property name="spacing">
+       <number>5</number>
+      </property>
       <property name="leftMargin">
        <number>0</number>
       </property>

@@ -24,7 +24,7 @@
     <number>5</number>
    </property>
    <property name="spacing">
-    <number>10</number>
+    <number>5</number>
    </property>
    <item row="0" column="0">
     <widget class="QGroupBox" name="default_value_grp">
@@ -44,6 +44,9 @@
       <property name="bottomMargin">
        <number>5</number>
       </property>
+      <property name="spacing">
+       <number>5</number>
+      </property>
       <item row="0" column="0">
        <widget class="QRadioButton" name="expression_rb">
         <property name="text">
@@ -56,6 +59,9 @@
       </item>
       <item row="0" column="1" colspan="4">
        <layout class="QHBoxLayout" name="horizontalLayout">
+        <property name="spacing">
+         <number>5</number>
+        </property>
         <item>
          <widget class="QPlainTextEdit" name="def_value_txt">
           <property name="sizePolicy">
@@ -165,8 +171,8 @@
         </property>
         <property name="iconSize">
          <size>
-          <width>32</width>
-          <height>32</height>
+          <width>25</width>
+          <height>25</height>
          </size>
         </property>
        </widget>
@@ -195,7 +201,6 @@
   <tabstop>sequence_rb</tabstop>
  </tabstops>
  <resources>
-  <include location="../../res/resources.qrc"/>
   <include location="../../res/resources.qrc"/>
   <include location="../../res/resources.qrc"/>
  </resources>

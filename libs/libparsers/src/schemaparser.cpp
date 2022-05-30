@@ -19,6 +19,7 @@
 #include "schemaparser.h"
 #include "attributes.h"
 #include "utilsns.h"
+#include "xmlparser.h"
 
 const char SchemaParser::CharComment='#';
 const char SchemaParser::CharLineEnd='\n';
@@ -65,7 +66,9 @@ const QString SchemaParser::TokenLtOper=QString("<");
 const QString SchemaParser::TokenGtEqOper=QString(">=");
 const QString SchemaParser::TokenLtEqOper=QString("<=");
 
-const QRegExp SchemaParser::AttribRegExp=QRegExp("^([a-z])([a-z]*|(\\d)*|(\\-)*|(_)*)+", Qt::CaseInsensitive);
+// QRegularExpression::anchoredPattern is used to force the exact match
+const QRegularExpression SchemaParser::AttribRegExp(QRegularExpression::anchoredPattern("^([a-z])([a-z]*|(\\d)*|(\\-)*|(_)*)+"),
+																										QRegularExpression::CaseInsensitiveOption);
 
 SchemaParser::SchemaParser()
 {
@@ -265,7 +268,7 @@ QString SchemaParser::getAttribute()
 					QString(QT_TR_NOOP("Expected a valid attribute token enclosed by `%1%2'.")).arg(CharStartAttribute).arg(CharEndAttribute),
 					ErrorCode::InvalidSyntax,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	}
-	else if(!AttribRegExp.exactMatch(atrib))
+	else if(!AttribRegExp.match(atrib).hasMatch())
 	{
 		throw Exception(Exception::getErrorMessage(ErrorCode::InvalidAttribute)
 						.arg(atrib).arg(filename).arg(getCurrentLine()).arg(getCurrentColumn()),
@@ -662,7 +665,7 @@ void SchemaParser::defineAttribute()
 		attrib=(use_val_as_name ? attributes[new_attrib] : new_attrib);
 
 		//Checking if the attribute has a valid name
-		if(!AttribRegExp.exactMatch(attrib))
+		if(!AttribRegExp.match(attrib).hasMatch())
 		{
 			throw Exception(Exception::getErrorMessage(ErrorCode::InvalidAttribute)
 							.arg(attrib).arg(filename).arg(getCurrentLine()).arg(getCurrentColumn()),
@@ -707,7 +710,7 @@ void SchemaParser::unsetAttribute()
 										.arg(attrib).arg(filename).arg(getCurrentLine()).arg(getCurrentColumn()),
 										ErrorCode::UnkownAttribute,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 					}
-					else if(!AttribRegExp.exactMatch(attrib))
+					else if(!AttribRegExp.match(attrib).hasMatch())
 					{
 						throw Exception(Exception::getErrorMessage(ErrorCode::InvalidAttribute)
 										.arg(attrib).arg(filename).arg(getCurrentLine()).arg(getCurrentColumn()),

@@ -18,8 +18,6 @@
 
 #include "databaseimporthelper.h"
 #include "defaultlanguages.h"
-#include "qtcompat/qtextstreamcompat.h"
-#include "qtcompat/splitbehaviorcompat.h"
 #include "utilsns.h"
 #include "coreutilsns.h"
 
@@ -727,7 +725,7 @@ void DatabaseImportHelper::createObject(attribs_map &attribs)
 			if(debug_mode)
 			{
 				QTextStream ts(stdout);
-				ts << dumpObjectAttributes(attribs) << QtCompat::endl;
+				ts << dumpObjectAttributes(attribs) << Qt::endl;
 			}
 
 			switch(obj_type)
@@ -767,7 +765,7 @@ void DatabaseImportHelper::createObject(attribs_map &attribs)
 				default:
 					if(debug_mode)
 					{
-						qDebug() << QString("create() method for %s isn't implemented!").arg(BaseObject::getSchemaName(obj_type)) << QtCompat::endl;
+						qDebug() << QString("create() method for %s isn't implemented!").arg(BaseObject::getSchemaName(obj_type)) << Qt::endl;
 					}
 				break;
 			}
@@ -902,8 +900,8 @@ void DatabaseImportHelper::loadObjectXML(ObjectType obj_type, attribs_map &attri
 		if(debug_mode)
 		{
 			QTextStream ts(stdout);
-			ts << QString("<!-- XML code: %1 (OID: %2) -->").arg(attribs[Attributes::Name]).arg(attribs[Attributes::Oid]) << QtCompat::endl;
-			ts << xml_buf << QtCompat::endl;
+			ts << QString("<!-- XML code: %1 (OID: %2) -->").arg(attribs[Attributes::Name]).arg(attribs[Attributes::Oid]) << Qt::endl;
+			ts << xml_buf << Qt::endl;
 		}
 
 		xmlparser->loadXMLBuffer(xml_buf);
@@ -973,8 +971,15 @@ void DatabaseImportHelper::createTablespace(attribs_map &attribs)
 
 void DatabaseImportHelper::createSchema(attribs_map &attribs)
 {
-	Schema *schema=nullptr;
+	Schema *schema = nullptr;
 	std::uniform_int_distribution<unsigned> dist(0,255);
+
+	/* Avoiding the creation of the schemas pg_catalog and public when these objects
+	 * already exist in the destination model. This prevents the import to be aborted
+	 * due to duplicity error related to these schemas. */
+	if((attribs[Attributes::Name] == "public" || attribs[Attributes::Name] == "pg_catalog") &&
+		 dbmodel->getSchema(attribs[Attributes::Name]))
+		return;
 
 	try
 	{
@@ -1036,7 +1041,7 @@ void DatabaseImportHelper::createDomain(attribs_map &attribs)
 
 	try
 	{
-		constraints = attribs[Attributes::Constraints].split(UtilsNs::DataSeparator, QtCompat::SkipEmptyParts);
+		constraints = attribs[Attributes::Constraints].split(UtilsNs::DataSeparator, Qt::SkipEmptyParts);
 		attribs[Attributes::Constraints].clear();
 
 		for(auto &constr : constraints)
@@ -1104,7 +1109,7 @@ void DatabaseImportHelper::configureBaseFunctionAttribs(attribs_map &attribs)
 		transform_types = getTypes(attribs[Attributes::TransformTypes], false);
 		attribs[Attributes::TransformTypes] = transform_types.join(',');
 
-		config_params = attribs[Attributes::ConfigParams].split(UtilsNs::DataSeparator, QtCompat::SkipEmptyParts);
+		config_params = attribs[Attributes::ConfigParams].split(UtilsNs::DataSeparator, Qt::SkipEmptyParts);
 		attribs[Attributes::ConfigParams] = "";
 
 		for(auto &cfg : config_params)
@@ -1427,7 +1432,8 @@ void DatabaseImportHelper::createOperator(attribs_map &attribs)
 	try
 	{
 		int pos;
-		QRegExp regexp;
+		QRegularExpression regexp;
+		QRegularExpressionMatch match;
 		QString op_signature,
 
 				func_types[]={ Attributes::OperatorFunc,
@@ -1458,8 +1464,9 @@ void DatabaseImportHelper::createOperator(attribs_map &attribs)
 					create on the second operator a commutator reference to ++(A,B). But to pgModeler only the first
 					reference is valid, so the extracted signature is used to check if the commutator was previously
 					created in order to avoid reference errors */
-				pos=regexp.indexIn(attribs[op_types[i]]) + regexp.matchedLength();
-				op_signature=attribs[op_types[i]].mid(pos, (attribs[op_types[i]].indexOf('"',pos) - pos));
+				match = regexp.match(attribs[op_types[i]]);
+				pos = match.capturedStart() + match.capturedLength();
+				op_signature = attribs[op_types[i]].mid(pos, (attribs[op_types[i]].indexOf('"',pos) - pos));
 
 				//If the operator is not defined clear up the reference to it
 				if(dbmodel->getObjectIndex(op_signature, ObjectType::Operator) < 0)
@@ -1666,7 +1673,7 @@ void DatabaseImportHelper::createType(attribs_map &attribs)
 
 		if(!attribs[Attributes::EnumType].isEmpty())
 		{
-			for(auto &label : attribs[Attributes::Labels].split(UtilsNs::DataSeparator, QtCompat::SkipEmptyParts))
+			for(auto &label : attribs[Attributes::Labels].split(UtilsNs::DataSeparator, Qt::SkipEmptyParts))
 			{
 				aux_attribs[Attributes::Label] = label;
 				attribs[Attributes::Labels] += schparser.getCodeDefinition(Attributes::EnumType, aux_attribs, SchemaParser::XmlDefinition);
@@ -1766,7 +1773,7 @@ void DatabaseImportHelper::createTable(attribs_map &attribs)
 			inherited_cols.push_back(table->getColumn(col_idx));
 
 		// Storing the partition bound expression temporarily in the table in order to configure the partition hierarchy later
-		table->setPartitionBoundingExpr(attribs[Attributes::PartitionBoundExpr].remove(QRegExp("^(FOR)( )+(VALUES)( )*", Qt::CaseInsensitive)));
+		table->setPartitionBoundingExpr(attribs[Attributes::PartitionBoundExpr].remove(QRegularExpression("^(FOR)( )+(VALUES)( )*", QRegularExpression::CaseInsensitiveOption)));
 
 		// Retrieving the partitioned table related to the partition table being created
 		if(!attribs[Attributes::PartitionedTable].isEmpty())
@@ -1959,16 +1966,19 @@ void DatabaseImportHelper::createRule(attribs_map &attribs)
 {
 	QString cmds=attribs[Attributes::Commands];
 	int start=-1;
-	QRegExp cond_regexp(QString("(WHERE)(.)+(DO)"));
+	QRegularExpression cond_regexp("(WHERE)(.)+(DO)");
+	QRegularExpressionMatch match;
 	ObjectType table_type=ObjectType::Table;
 
 	try
 	{
-		start=cond_regexp.indexIn(cmds);
+		match = cond_regexp.match(cmds);
+		start = match.capturedStart();
+
 		if(start >=0)
 		{
-			attribs[Attributes::Condition]=cmds.mid(start, cond_regexp.matchedLength());
-			attribs[Attributes::Condition].remove(QRegExp(QString("(DO)|(WHERE)")));
+			attribs[Attributes::Condition]=cmds.mid(start, match.capturedLength());
+			attribs[Attributes::Condition].remove(QRegularExpression("(DO)|(WHERE)"));
 		}
 
 		attribs[Attributes::Commands]=Catalog::parseRuleCommands(attribs[Attributes::Commands]).join(';');
@@ -2000,7 +2010,7 @@ void DatabaseImportHelper::createTrigger(attribs_map &attribs)
 		attribs[Attributes::Table]=getDependencyObject(attribs[Attributes::Table], table_type, true, auto_resolve_deps, false);
 		attribs[Attributes::TriggerFunc]=getDependencyObject(attribs[Attributes::TriggerFunc], ObjectType::Function, true, true);
 
-		args = attribs[Attributes::Arguments].split(Catalog::EscapedNullChar, QtCompat::SkipEmptyParts);
+		args = attribs[Attributes::Arguments].split(Catalog::EscapedNullChar, Qt::SkipEmptyParts);
 		attribs[Attributes::Arguments] = args.join(UtilsNs::DataSeparator);
 
 		loadObjectXML(ObjectType::Trigger, attribs);
@@ -2181,8 +2191,8 @@ void DatabaseImportHelper::createConstraint(attribs_map &attribs)
 				 * the cols list above */
 				exprs=attribs[Attributes::Expressions]
 							.replace(QString("EXCLUDE USING %1 (").arg(attribs[Attributes::IndexType]), "")
-							.split(QRegExp("(WITH )(\\+|\\-|\\*|\\/|\\<|\\>|\\=|\\~|\\!|\\@|\\#|\\%|\\^|\\&|\\||\\'|\\?)+((,)?|(\\))?)"),
-										 QtCompat::SkipEmptyParts);
+							.split(QRegularExpression("(WITH )(\\+|\\-|\\*|\\/|\\<|\\>|\\=|\\~|\\!|\\@|\\#|\\%|\\^|\\&|\\||\\'|\\?)+((,)?|(\\))?)"),
+										 Qt::SkipEmptyParts);
 
 				for(int i=0; i < cols.size(); i++)
 				{
@@ -2392,7 +2402,7 @@ void DatabaseImportHelper::createForeignTable(attribs_map &attribs)
 			inherited_cols.push_back(ftable->getColumn(col_idx));
 
 		// Storing the partition bound expression temporarily in the table in order to configure the partition hierarchy later
-		ftable->setPartitionBoundingExpr(attribs[Attributes::PartitionBoundExpr].remove(QRegExp("^(FOR)( )+(VALUES)( )*", Qt::CaseInsensitive)));
+		ftable->setPartitionBoundingExpr(attribs[Attributes::PartitionBoundExpr].remove(QRegularExpression("^(FOR)( )+(VALUES)( )*", QRegularExpression::CaseInsensitiveOption)));
 
 		// Retrieving the partitioned table related to the partition table being created
 		if(!attribs[Attributes::PartitionedTable].isEmpty())
@@ -2876,7 +2886,7 @@ void DatabaseImportHelper::assignSequencesToColumns()
 				catch(Exception &)
 				{
 					// Failing to create the sequence will not abort the entire process, instead, it'll dump a debug message
-					qDebug() << QString("assignSequencesToColumns(): Failed to create the sequence: %1").arg(seq_name) << QtCompat::endl;
+					qDebug() << QString("assignSequencesToColumns(): Failed to create the sequence: %1").arg(seq_name) << Qt::endl;
 				}
 
 				if(seq)
@@ -3244,7 +3254,7 @@ QString DatabaseImportHelper::getType(const QString &oid_str, bool generate_xml,
 				 (is_derivated_from_obj ||
 					(sch_name != QString("pg_catalog") && sch_name != QString("information_schema")) ||
 					type_oid > catalog.getLastSysObjectOID()) &&
-				 !obj_name.contains(QRegExp(QString("^(\\\")?(%1)(\\\")?(\\.)").arg(sch_name))))
+				 !obj_name.contains(QRegularExpression(QString("^(\\\")?(%1)(\\\")?(\\.)").arg(sch_name))))
 			{
 				obj_name.prepend(sch_name + QString("."));
 			}

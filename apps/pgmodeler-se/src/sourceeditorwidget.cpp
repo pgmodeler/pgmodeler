@@ -1,7 +1,6 @@
 #include "sourceeditorwidget.h"
 #include "messagebox.h"
 #include "guiutilsns.h"
-#include "qtcompat/splitbehaviorcompat.h"
 #include "utilsns.h"
 
 QPalette SourceEditorWidget::def_editor_pal;
@@ -181,7 +180,7 @@ void SourceEditorWidget::applyIndentation()
 			tk_then = SchemaParser::CharStartConditional + SchemaParser::TokenThen,
 			tk_else = SchemaParser::CharStartConditional + SchemaParser::TokenElse,
 			tk_end = SchemaParser::CharStartConditional + SchemaParser::TokenEnd;
-	QRegExp inline_if_regexp(QString("(%1)(.)+(%2)").arg(tk_if).arg(tk_end));
+	QRegularExpression inline_if_regexp(QString("(%1)(.)+(%2)").arg(tk_if).arg(tk_end));
 
 	for(int ln_idx = 0; ln_idx < line_count; ln_idx++)
 	{
@@ -189,13 +188,13 @@ void SourceEditorWidget::applyIndentation()
 		comment_pos = line.indexOf(SchemaParser::CharComment);
 		inline_ifend = line.contains(inline_if_regexp);
 
-		if(line.contains(QRegExp(cond_pattern.arg(tk_if))) && !inline_ifend)
+		if(line.contains(QRegularExpression(cond_pattern.arg(tk_if))) && !inline_ifend)
 		{
 			if_level++;
 			found_if = found_cond = true;
 		}
-		else if(line.contains(QRegExp(cond_pattern.arg(tk_else))) ||
-						line.contains(QRegExp(cond_pattern.arg(tk_end))))
+		else if(line.contains(QRegularExpression(cond_pattern.arg(tk_else))) ||
+						line.contains(QRegularExpression(cond_pattern.arg(tk_end))))
 			found_cond = true;
 
 		// If the current line is an inline if: %if ... %then ... %end, we break it
@@ -210,7 +209,7 @@ void SourceEditorWidget::applyIndentation()
 			 * and insert the new lines in the buffer and restart the indentation process */
 			if(line.contains(QChar::LineFeed))
 			{
-				QStringList buf_aux = line.split(QChar::LineFeed, QtCompat::SkipEmptyParts);
+				QStringList buf_aux = line.split(QChar::LineFeed, Qt::SkipEmptyParts);
 				buffer.removeAt(ln_idx);
 
 				for(auto itr = buf_aux.rbegin(); itr != buf_aux.rend(); itr++)
@@ -238,7 +237,7 @@ void SourceEditorWidget::applyIndentation()
 		found_cond = found_if = false;
 	}
 
-	QRegExp cond_tk_regexp(QString("^(( )|(\\t))*(%1)[a-z]+").arg(SchemaParser::CharStartConditional));
+	QRegularExpression cond_tk_regexp(QString("^(( )|(\\t))*(%1)[a-z]+").arg(SchemaParser::CharStartConditional));
 	QString prev_line, next_line, next_next_line,
 			tk_set = SchemaParser::CharStartConditional + SchemaParser::TokenSet,
 			tk_unset = SchemaParser::CharStartConditional + SchemaParser::TokenUnset;
@@ -262,15 +261,15 @@ void SourceEditorWidget::applyIndentation()
 		 * 3) Between an two %if tokens
 		 * 4) Between an %else and %if | %set | %unset */
 		if(next_line.isEmpty() && !next_next_line.isEmpty() &&
-			 ((line.contains(QRegExp(cond_pattern.arg(tk_end))) &&
-					(next_next_line.contains(QRegExp(cond_pattern.arg(tk_else))) ||
-					 next_next_line.contains(QRegExp(cond_pattern.arg(tk_end))))) ||
+			 ((line.contains(QRegularExpression(cond_pattern.arg(tk_end))) &&
+					(next_next_line.contains(QRegularExpression(cond_pattern.arg(tk_else))) ||
+					 next_next_line.contains(QRegularExpression(cond_pattern.arg(tk_end))))) ||
 
-				 ((line.contains(QRegExp(cond_pattern.arg(tk_if))) ||
-					 line.contains(QRegExp(cond_pattern.arg(tk_else)))) &&
-					(next_next_line.contains(QRegExp(cond_pattern.arg(tk_if))) ||
-					 next_next_line.contains(QRegExp(cond_pattern.arg(tk_set))) ||
-					 next_next_line.contains(QRegExp(cond_pattern.arg(tk_unset)))))))
+				 ((line.contains(QRegularExpression(cond_pattern.arg(tk_if))) ||
+					 line.contains(QRegularExpression(cond_pattern.arg(tk_else)))) &&
+					(next_next_line.contains(QRegularExpression(cond_pattern.arg(tk_if))) ||
+					 next_next_line.contains(QRegularExpression(cond_pattern.arg(tk_set))) ||
+					 next_next_line.contains(QRegularExpression(cond_pattern.arg(tk_unset)))))))
 		{
 			buffer.removeAt(ln_idx + 1);
 			ln_idx--;
@@ -278,7 +277,7 @@ void SourceEditorWidget::applyIndentation()
 		}
 
 		// Separating an end token from any conditional token in the next line
-		if(line.contains(QRegExp(cond_pattern.arg(tk_end))) &&
+		if(line.contains(QRegularExpression(cond_pattern.arg(tk_end))) &&
 			 !next_line.isEmpty() &&
 			 !next_line.contains(cond_tk_regexp))
 			buffer[ln_idx].append(QChar::LineFeed);
@@ -290,13 +289,13 @@ void SourceEditorWidget::applyIndentation()
 			buffer[ln_idx].append(QChar::LineFeed);
 
 		// If the current line has an %if and the previous is not a conditional instruction %
-		else if(line.contains(QRegExp(cond_pattern.arg(tk_if))) &&
+		else if(line.contains(QRegularExpression(cond_pattern.arg(tk_if))) &&
 						!prev_line.isEmpty() &&
 						!prev_line.contains(cond_tk_regexp))
 			buffer[ln_idx].prepend(QChar::LineFeed);
 
 		// Separating an if token from previous end, set and unset
-		else if(line.contains(QRegExp(cond_pattern.arg(tk_if))) &&
+		else if(line.contains(QRegularExpression(cond_pattern.arg(tk_if))) &&
 						(prev_line.contains(tk_end) ||
 						 prev_line.contains(tk_set) ||
 						 prev_line.contains(tk_unset)))

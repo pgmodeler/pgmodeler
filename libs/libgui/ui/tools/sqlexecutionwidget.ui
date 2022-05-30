@@ -41,6 +41,9 @@
       </size>
      </property>
      <layout class="QHBoxLayout" name="horizontalLayout_3">
+      <property name="spacing">
+       <number>5</number>
+      </property>
       <property name="leftMargin">
        <number>0</number>
       </property>
@@ -67,8 +70,8 @@
         </property>
         <property name="iconSize">
          <size>
-          <width>32</width>
-          <height>32</height>
+          <width>25</width>
+          <height>25</height>
          </size>
         </property>
         <property name="autoRaise">
@@ -116,7 +119,7 @@
    <item row="0" column="0">
     <layout class="QHBoxLayout" name="horizontalLayout">
      <property name="spacing">
-      <number>10</number>
+      <number>5</number>
      </property>
      <item>
       <widget class="QToolButton" name="run_sql_tb">
@@ -141,8 +144,8 @@
        </property>
        <property name="iconSize">
         <size>
-         <width>32</width>
-         <height>32</height>
+         <width>25</width>
+         <height>25</height>
         </size>
        </property>
        <property name="shortcut">
@@ -179,8 +182,8 @@
        </property>
        <property name="iconSize">
         <size>
-         <width>32</width>
-         <height>32</height>
+         <width>25</width>
+         <height>25</height>
         </size>
        </property>
        <property name="shortcut">
@@ -217,8 +220,8 @@
        </property>
        <property name="iconSize">
         <size>
-         <width>32</width>
-         <height>32</height>
+         <width>25</width>
+         <height>25</height>
         </size>
        </property>
        <property name="shortcut">
@@ -264,8 +267,8 @@
        </property>
        <property name="iconSize">
         <size>
-         <width>32</width>
-         <height>32</height>
+         <width>25</width>
+         <height>25</height>
         </size>
        </property>
        <property name="shortcut">
@@ -311,8 +314,8 @@
        </property>
        <property name="iconSize">
         <size>
-         <width>32</width>
-         <height>32</height>
+         <width>25</width>
+         <height>25</height>
         </size>
        </property>
        <property name="toolButtonStyle">
@@ -346,8 +349,8 @@
        </property>
        <property name="iconSize">
         <size>
-         <width>32</width>
-         <height>32</height>
+         <width>25</width>
+         <height>25</height>
         </size>
        </property>
        <property name="shortcut">
@@ -393,8 +396,8 @@
        </property>
        <property name="iconSize">
         <size>
-         <width>32</width>
-         <height>32</height>
+         <width>25</width>
+         <height>25</height>
         </size>
        </property>
        <property name="shortcut">
@@ -437,8 +440,8 @@
        </property>
        <property name="iconSize">
         <size>
-         <width>32</width>
-         <height>32</height>
+         <width>25</width>
+         <height>25</height>
         </size>
        </property>
        <property name="shortcut">
@@ -481,8 +484,8 @@
        </property>
        <property name="iconSize">
         <size>
-         <width>32</width>
-         <height>32</height>
+         <width>25</width>
+         <height>25</height>
         </size>
        </property>
        <property name="shortcut">
@@ -530,14 +533,14 @@
         <widget class="QLabel" name="db_icon_lbl">
          <property name="minimumSize">
           <size>
-           <width>32</width>
-           <height>32</height>
+           <width>25</width>
+           <height>25</height>
           </size>
          </property>
          <property name="maximumSize">
           <size>
-           <width>32</width>
-           <height>32</height>
+           <width>25</width>
+           <height>25</height>
           </size>
          </property>
          <property name="text">
@@ -583,13 +586,16 @@
       <enum>Qt::Vertical</enum>
      </property>
      <property name="handleWidth">
-      <number>8</number>
+      <number>5</number>
      </property>
      <property name="childrenCollapsible">
       <bool>false</bool>
      </property>
      <widget class="QWidget" name="layoutWidget">
       <layout class="QVBoxLayout" name="verticalLayout_2">
+       <property name="spacing">
+        <number>5</number>
+       </property>
        <item>
         <widget class="QWidget" name="sql_cmd_wgt" native="true">
          <property name="enabled">
@@ -667,16 +673,19 @@
              </attribute>
              <layout class="QGridLayout" name="gridLayout_5">
               <property name="leftMargin">
-               <number>4</number>
+               <number>5</number>
               </property>
               <property name="topMargin">
-               <number>4</number>
+               <number>5</number>
               </property>
               <property name="rightMargin">
-               <number>4</number>
+               <number>5</number>
               </property>
               <property name="bottomMargin">
-               <number>4</number>
+               <number>5</number>
+              </property>
+              <property name="spacing">
+               <number>5</number>
               </property>
               <item row="0" column="0">
                <widget class="QWidget" name="filter_wgt" native="true">
@@ -687,6 +696,9 @@
                  </size>
                 </property>
                 <layout class="QHBoxLayout" name="horizontalLayout_5">
+                 <property name="spacing">
+                  <number>5</number>
+                 </property>
                  <property name="leftMargin">
                   <number>0</number>
                  </property>
@@ -788,8 +800,8 @@
                    </property>
                    <property name="iconSize">
                     <size>
-                     <width>25</width>
-                     <height>25</height>
+                     <width>20</width>
+                     <height>20</height>
                     </size>
                    </property>
                    <property name="autoRaise">
@@ -815,8 +827,8 @@
                  <property name="bottomMargin">
                   <number>0</number>
                  </property>
-                 <property name="horizontalSpacing">
-                  <number>6</number>
+                 <property name="spacing">
+                  <number>5</number>
                  </property>
                  <item row="2" column="0" colspan="5">
                   <widget class="QTableView" name="results_tbw">
@@ -838,11 +850,8 @@
                    <attribute name="verticalHeaderCascadingSectionResizes">
                     <bool>false</bool>
                    </attribute>
-                   <attribute name="verticalHeaderMinimumSectionSize">
-                    <number>30</number>
-                   </attribute>
-                   <attribute name="verticalHeaderDefaultSectionSize">
-                    <number>30</number>
+                   <attribute name="verticalHeaderStretchLastSection">
+                    <bool>false</bool>
                    </attribute>
                   </widget>
                  </item>
@@ -857,16 +866,19 @@
              </attribute>
              <layout class="QGridLayout" name="gridLayout_4">
               <property name="leftMargin">
-               <number>4</number>
+               <number>5</number>
               </property>
               <property name="topMargin">
-               <number>4</number>
+               <number>5</number>
               </property>
               <property name="rightMargin">
-               <number>4</number>
+               <number>5</number>
               </property>
               <property name="bottomMargin">
-               <number>4</number>
+               <number>5</number>
+              </property>
+              <property name="spacing">
+               <number>5</number>
               </property>
               <item row="0" column="0">
                <widget class="QListWidget" name="msgoutput_lst">
@@ -887,8 +899,8 @@
                 </property>
                 <property name="iconSize">
                  <size>
-                  <width>28</width>
-                  <height>28</height>
+                  <width>22</width>
+                  <height>22</height>
                  </size>
                 </property>
                 <property name="spacing">
@@ -904,16 +916,19 @@
              </attribute>
              <layout class="QGridLayout" name="gridLayout_6">
               <property name="leftMargin">
-               <number>4</number>
+               <number>5</number>
               </property>
               <property name="topMargin">
-               <number>4</number>
+               <number>5</number>
               </property>
               <property name="rightMargin">
-               <number>4</number>
+               <number>5</number>
               </property>
               <property name="bottomMargin">
-               <number>4</number>
+               <number>5</number>
+              </property>
+              <property name="spacing">
+               <number>5</number>
               </property>
               <item row="1" column="0">
                <widget class="QWidget" name="find_history_parent" native="true"/>

@@ -88,7 +88,7 @@ QString Exception::messages[Exception::ErrorCount][2]={
 	{"RefTypeInvalidIndex", QT_TR_NOOP("Reference to data type with an index outside the capacity of data types list!")},
 	{"AsgNullTypeObject", QT_TR_NOOP("Assignment of a null type to object `%1' (%2)!")},
 	{"AsgInvalidTypeObject", QT_TR_NOOP("Assignment of invalid type to the object!")},
-	{"AsgEmptyDirectoryName", QT_TR_NOOP("Assignment of an empty directory to object `%1' (%2)!")},
+	{"AsgEmptyDirectoryName", QT_TR_NOOP("Assignment of an empty directory to tablespace `%1'!")},
 	{"ObtTypesInvalidQuantity", QT_TR_NOOP("Obtaining types with invalid quantity!")},
 	{"InsDuplicatedItems", QT_TR_NOOP("Insertion of item which already exists in the attributes list of the type!")},
 	{"InsInvalidTypeAttribute", QT_TR_NOOP("Insertion of invalid item in the attributes list of the type!")},
@@ -275,7 +275,8 @@ QString Exception::messages[Exception::ErrorCount][2]={
 	{"InvProcedureParamOutMode", QT_TR_NOOP("Parameters using `out' mode are not supported by procedures! Use `inout' instead.") },
 	{"ExportFailureDbSQLDisabled", QT_TR_NOOP("The SQL code of the database `%1' is disabled! The export process can't proceed. Please, enable the SQL code of the mentioned object and try again.")},
 	{"InvConfigParameterName", QT_TR_NOOP("Invalid configuration parameter `%1' assigned to the function `%2'!")},
-	{"EmptyConfigParameterValue", QT_TR_NOOP("Empty value assigned to the configuration parameter `%1' in the function `%2'!")}
+	{"EmptyConfigParameterValue", QT_TR_NOOP("Empty value assigned to the configuration parameter `%1' in the function `%2'!")},
+	{"InvGroupRegExpPattern", QT_TR_NOOP("Invalid regexp pattern detected in syntax highlighting group `%1' at file `%2'! Error detected: `%3'")}
 };
 
 Exception::Exception()

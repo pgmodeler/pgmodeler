@@ -31,9 +31,9 @@
 #include <vector>
 #include <QDir>
 #include <QTextStream>
-#include "xmlparser.h"
 #include "attribsmap.h"
 #include "pgsqlversions.h"
+#include <QRegularExpression>
 
 class SchemaParser {
 	private:
@@ -46,7 +46,7 @@ class SchemaParser {
 		bool ignore_empty_atribs;
 
 		//! \brief RegExp used to validate attribute names
-		static const QRegExp AttribRegExp;
+		static const QRegularExpression AttribRegExp;
 
 		//! \brief Get an attribute name from the buffer on the current position
 		QString getAttribute();

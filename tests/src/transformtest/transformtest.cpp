@@ -21,7 +21,6 @@
 #include "globalattributes.h"
 #include "pgmodelerunittest.h"
 #include "defaultlanguages.h"
-#include "qtcompat/qtextstreamcompat.h"
 
 class TransformTest: public QObject, public PgModelerUnitTest {
 	private:
@@ -236,9 +235,9 @@ COMMENT ON TRANSFORM FOR varchar LANGUAGE plpgsql IS E'This is a comment!';\n\
 
 		sql_code = transf.getCodeDefinition(SchemaParser::SqlDefinition);
 		//QTextStream out(stdout);
-		//out <<  sql_code << QtCompat::endl;
-		//out <<  expect_code <<  QtCompat::endl;
-		//out << "---" <<  QtCompat::endl;
+		//out <<  sql_code << Qt::endl;
+		//out <<  expect_code <<  Qt::endl;
+		//out << "---" <<  Qt::endl;
 		QCOMPARE(sql_code.simplified(), expect_code.simplified());
 	}
 	catch(Exception &e)
@@ -291,9 +290,9 @@ void TransformTest::generatesXMLCorrectly()
 
 		xml_code = transf.getCodeDefinition(SchemaParser::XmlDefinition);
 		/*QTextStream out(stdout);
-		out <<  xml_code << QtCompat::endl;
-		out <<  expect_code <<  QtCompat::endl;
-		out << "---" <<  QtCompat::endl;*/
+		out <<  xml_code << Qt::endl;
+		out <<  expect_code <<  Qt::endl;
+		out << "---" <<  Qt::endl;*/
 		QCOMPARE(xml_code.simplified(), expect_code.simplified());
 	}
 	catch(Exception &e)
@@ -444,11 +443,11 @@ void TransformTest::modelCreatesTransformFromXML()
 		QVERIFY(nullptr != transf);
 
 		/*QTextStream out(stdout);
-		out << "Expected:" << QtCompat::endl;
-		out << xml_code << QtCompat::endl;
-		out << "---" << QtCompat::endl;
-		out << "Result:" << QtCompat::endl;
-		out << transf->getCodeDefinition(SchemaParser::XmlDefinition) << QtCompat::endl;*/
+		out << "Expected:" << Qt::endl;
+		out << xml_code << Qt::endl;
+		out << "---" << Qt::endl;
+		out << "Result:" << Qt::endl;
+		out << transf->getCodeDefinition(SchemaParser::XmlDefinition) << Qt::endl;*/
 
 		QVERIFY(transf->getCodeDefinition(SchemaParser::XmlDefinition).simplified() == xml_code.simplified());
 	}

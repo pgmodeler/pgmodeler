@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>784</width>
-    <height>687</height>
+    <height>506</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -24,6 +24,9 @@
     <number>5</number>
    </property>
    <property name="bottomMargin">
+    <number>5</number>
+   </property>
+   <property name="spacing">
     <number>5</number>
    </property>
    <item row="0" column="0">
@@ -54,7 +57,7 @@
        <number>5</number>
       </property>
       <property name="spacing">
-       <number>10</number>
+       <number>5</number>
       </property>
       <item row="0" column="0">
        <widget class="QLabel" name="connections_lbl">
@@ -72,7 +75,7 @@
       <item row="0" column="1">
        <layout class="QHBoxLayout" name="horizontalLayout_6">
         <property name="spacing">
-         <number>10</number>
+         <number>5</number>
         </property>
         <item>
          <widget class="QComboBox" name="connections_cmb">
@@ -90,8 +93,8 @@
           </property>
           <property name="iconSize">
            <size>
-            <width>28</width>
-            <height>28</height>
+            <width>25</width>
+            <height>25</height>
            </size>
           </property>
          </widget>
@@ -113,8 +116,8 @@
           </property>
           <property name="iconSize">
            <size>
-            <width>32</width>
-            <height>32</height>
+            <width>25</width>
+            <height>25</height>
            </size>
           </property>
          </widget>
@@ -136,8 +139,8 @@
           </property>
           <property name="iconSize">
            <size>
-            <width>32</width>
-            <height>32</height>
+            <width>25</width>
+            <height>25</height>
            </size>
           </property>
          </widget>
@@ -159,8 +162,8 @@
           </property>
           <property name="iconSize">
            <size>
-            <width>32</width>
-            <height>32</height>
+            <width>25</width>
+            <height>25</height>
            </size>
           </property>
          </widget>
@@ -182,8 +185,8 @@
           </property>
           <property name="iconSize">
            <size>
-            <width>32</width>
-            <height>32</height>
+            <width>25</width>
+            <height>25</height>
            </size>
           </property>
          </widget>
@@ -205,8 +208,8 @@
           </property>
           <property name="iconSize">
            <size>
-            <width>32</width>
-            <height>32</height>
+            <width>25</width>
+            <height>25</height>
            </size>
           </property>
          </widget>
@@ -236,7 +239,7 @@
            <number>5</number>
           </property>
           <property name="spacing">
-           <number>10</number>
+           <number>5</number>
           </property>
           <item row="5" column="0">
            <widget class="QLabel" name="timeout_lbl">
@@ -254,7 +257,7 @@
           <item row="9" column="0" colspan="2">
            <layout class="QHBoxLayout" name="horizontalLayout_2">
             <property name="spacing">
-             <number>10</number>
+             <number>5</number>
             </property>
             <item>
              <spacer name="horizontalSpacer">
@@ -295,8 +298,8 @@
               </property>
               <property name="iconSize">
                <size>
-                <width>32</width>
-                <height>32</height>
+                <width>25</width>
+                <height>25</height>
                </size>
               </property>
              </widget>
@@ -327,8 +330,8 @@
               </property>
               <property name="iconSize">
                <size>
-                <width>32</width>
-                <height>32</height>
+                <width>25</width>
+                <height>25</height>
                </size>
               </property>
              </widget>
@@ -359,8 +362,8 @@
               </property>
               <property name="iconSize">
                <size>
-                <width>32</width>
-                <height>32</height>
+                <width>25</width>
+                <height>25</height>
                </size>
               </property>
              </widget>
@@ -382,6 +385,9 @@
           </item>
           <item row="2" column="1">
            <layout class="QHBoxLayout" name="horizontalLayout">
+            <property name="spacing">
+             <number>5</number>
+            </property>
             <item>
              <widget class="QLineEdit" name="host_edt">
               <property name="minimumSize">
@@ -528,6 +534,9 @@
           </item>
           <item row="6" column="1">
            <layout class="QHBoxLayout" name="horizontalLayout_9">
+            <property name="spacing">
+             <number>5</number>
+            </property>
             <item>
              <widget class="QLineEdit" name="other_params_edt">
               <property name="toolTip">
@@ -545,6 +554,9 @@
           </item>
           <item row="5" column="1">
            <layout class="QHBoxLayout" name="horizontalLayout_7">
+            <property name="spacing">
+             <number>5</number>
+            </property>
             <item>
              <widget class="QSpinBox" name="timeout_sbp">
               <property name="value">
@@ -586,7 +598,7 @@
           <item row="7" column="1">
            <layout class="QHBoxLayout" name="horizontalLayout_5">
             <property name="spacing">
-             <number>10</number>
+             <number>5</number>
             </property>
             <item>
              <widget class="QCheckBox" name="diff_chk">
@@ -636,6 +648,9 @@
           </item>
           <item row="1" column="1">
            <layout class="QHBoxLayout" name="horizontalLayout_4">
+            <property name="spacing">
+             <number>5</number>
+            </property>
             <item>
              <widget class="QLineEdit" name="conn_db_edt">
               <property name="sizePolicy">
@@ -719,7 +734,7 @@
            <number>5</number>
           </property>
           <property name="spacing">
-           <number>10</number>
+           <number>5</number>
           </property>
           <item row="1" column="1">
            <widget class="QLineEdit" name="client_cert_edt">
@@ -739,6 +754,9 @@
           </item>
           <item row="0" column="1">
            <layout class="QHBoxLayout" name="horizontalLayout_3">
+            <property name="spacing">
+             <number>5</number>
+            </property>
             <item>
              <widget class="QComboBox" name="ssl_mode_cmb">
               <property name="minimumSize">
@@ -814,7 +832,7 @@
           <item row="5" column="1">
            <layout class="QHBoxLayout" name="horizontalLayout_8">
             <property name="spacing">
-             <number>10</number>
+             <number>5</number>
             </property>
             <item>
              <widget class="QLineEdit" name="krb_server_edt">

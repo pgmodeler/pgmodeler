@@ -55,13 +55,13 @@
     <number>5</number>
    </property>
    <property name="bottomMargin">
-    <number>10</number>
+    <number>5</number>
    </property>
    <item>
     <widget class="QWidget" name="title_wgt" native="true">
      <layout class="QHBoxLayout" name="horizontalLayout_2">
       <property name="spacing">
-       <number>10</number>
+       <number>5</number>
       </property>
       <property name="leftMargin">
        <number>5</number>
@@ -109,8 +109,8 @@
         </property>
         <property name="iconSize">
          <size>
-          <width>25</width>
-          <height>25</height>
+          <width>20</width>
+          <height>20</height>
          </size>
         </property>
         <property name="shortcut">
@@ -140,12 +140,12 @@
        <number>0</number>
       </property>
       <property name="spacing">
-       <number>6</number>
+       <number>5</number>
       </property>
       <item row="1" column="0">
        <layout class="QGridLayout" name="gridLayout">
         <property name="spacing">
-         <number>10</number>
+         <number>5</number>
         </property>
         <item row="0" column="0" rowspan="2">
          <widget class="QLabel" name="operations_lbl">
@@ -192,7 +192,7 @@
       <item row="1" column="2">
        <layout class="QHBoxLayout" name="horizontalLayout">
         <property name="spacing">
-         <number>10</number>
+         <number>5</number>
         </property>
         <item>
          <widget class="QToolButton" name="rem_operations_tb">
@@ -217,8 +217,8 @@
           </property>
           <property name="iconSize">
            <size>
-            <width>32</width>
-            <height>32</height>
+            <width>25</width>
+            <height>25</height>
            </size>
           </property>
           <property name="autoRaise">
@@ -249,8 +249,8 @@
           </property>
           <property name="iconSize">
            <size>
-            <width>32</width>
-            <height>32</height>
+            <width>25</width>
+            <height>25</height>
            </size>
           </property>
           <property name="autoRaise">
@@ -281,8 +281,8 @@
           </property>
           <property name="iconSize">
            <size>
-            <width>32</width>
-            <height>32</height>
+            <width>25</width>
+            <height>25</height>
            </size>
           </property>
           <property name="autoRaise">
@@ -354,8 +354,8 @@
         </property>
         <property name="iconSize">
          <size>
-          <width>28</width>
-          <height>28</height>
+          <width>22</width>
+          <height>22</height>
          </size>
         </property>
         <property name="indentation">
@@ -412,7 +412,6 @@
   <tabstop>hide_tb</tabstop>
  </tabstops>
  <resources>
-  <include location="../../res/resources.qrc"/>
   <include location="../../res/resources.qrc"/>
   <include location="../../res/resources.qrc"/>
  </resources>

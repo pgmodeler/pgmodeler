@@ -21,7 +21,6 @@
 #include <iostream>
 #include "attributes.h"
 #include "globalattributes.h"
-#include "qtcompat/qtextstreamcompat.h"
 
 const QString Connection::SslDisable=QString("disable");
 const QString Connection::SslAllow=QString("allow");
@@ -96,17 +95,17 @@ void Connection::setSQLExecutionTimout(unsigned timeout)
 void Connection::setConnectionParam(const QString &param, const QString &value)
 {
 	//Regexp used to validate the host address
-	QRegExp ip_regexp("[0-9]+\\.[0-9]+\\.[0-9]+\\.[0-9]+");
+	QRegularExpression ip_regexp(QRegularExpression::anchoredPattern("[0-9]+\\.[0-9]+\\.[0-9]+\\.[0-9]+"));
 
 	//Raise an error in case the param name is empty
 	if(param.isEmpty())
 		throw Exception(ErrorCode::AsgInvalidConnParameter, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 
 	/* Set the value to the specified param on the map.
-
 	One special case is treated here, if user use the parameter SERVER_FQDN and the value
 	is a IP address, the method will assign the value to the SERVER_IP parameter */
-	if(param==ParamServerFqdn && ip_regexp.exactMatch(value))
+
+	if(param==ParamServerFqdn && ip_regexp.match(value).hasMatch())
 	{
 		connection_params[Connection::ParamServerIp]=value;
 		connection_params[Connection::ParamServerFqdn]="";
@@ -236,8 +235,8 @@ void Connection::connect()
 		else
 		{
 			QTextStream err(stderr);
-			err << QT_TR_NOOP("ERROR: trying to open an already stablished connection.") << QtCompat::endl
-				<< QString("Conn. info: [ ") << connection_str << QString("]") << QtCompat::endl;
+			err << QT_TR_NOOP("ERROR: trying to open an already stablished connection.") << Qt::endl
+				<< QString("Conn. info: [ ") << connection_str << QString("]") << Qt::endl;
 			this->close();
 		}
 	}
@@ -376,7 +375,7 @@ QString  Connection::getPgSQLVersion(bool major_only)
 	raw_ver=QString("%1").arg(PQserverVersion(connection));
 
 	//If the version is 10+
-	if(raw_ver.contains(QRegExp("^((1)[0-9])(.)+")))
+	if(raw_ver.contains(QRegularExpression("^((1)[0-9])(.)+")))
 	{
 		//New PostgreSQL 10+ versioning: 100001 means 10.1 (Major.Minor)
 		fmt_ver=QString("%1.%2")
@@ -424,7 +423,7 @@ void Connection::executeDMLCommand(const QString &sql, ResultSet &result)
 	if(print_sql)
 	{
 		QTextStream out(stdout);
-		out << QString("\n---\n") << sql << QtCompat::endl;
+		out << QString("\n---\n") << sql << Qt::endl;
 	}
 
 	//Raise an error in case the command sql execution is not sucessful
@@ -463,7 +462,7 @@ void Connection::executeDDLCommand(const QString &sql)
 	if(print_sql)
 	{
 		QTextStream out(stdout);
-		out << QString("\n---\n") << sql << QtCompat::endl;
+		out << QString("\n---\n") << sql << Qt::endl;
 	}
 
 	//Raise an error in case the command sql execution is not sucessful

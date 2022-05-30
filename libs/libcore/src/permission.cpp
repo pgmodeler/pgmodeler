@@ -306,13 +306,13 @@ QString Permission::getPermissionString()
 QString Permission::parsePermissionString(QString perm_str, vector<unsigned> &privs, vector<unsigned> &gop_privs)
 {
 	QString role;
-	QRegExp regexp(QString("(.)*(\\=)([%1*])+((\\/)(.)+)?").arg(priv_codes));
+	QRegularExpression regexp(QRegularExpression::anchoredPattern(QString("(.)*(\\=)([%1*])+((\\/)(.)+)?").arg(priv_codes)));
 
 	privs.clear();
 	gop_privs.clear();
 
 	//Checking if the permission string is valid
-	if(!perm_str.isEmpty() && regexp.exactMatch(perm_str))
+	if(!perm_str.isEmpty() && regexp.match(perm_str).hasMatch())
 	{
 		QStringList list=perm_str.remove(perm_str.indexOf('/'), perm_str.size()).split('=');
 		QChar chr;

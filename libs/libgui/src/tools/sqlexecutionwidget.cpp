@@ -23,7 +23,6 @@
 #include "guiutilsns.h"
 #include "utils/plaintextitemdelegate.h"
 #include "datamanipulationform.h"
-#include "qtcompat/qplaintexteditcompat.h"
 #include "utilsns.h"
 #include "utils/custommenustyle.h"
 
@@ -40,8 +39,7 @@ SQLExecutionWidget::SQLExecutionWidget(QWidget * parent) : QWidget(parent)
 	cmd_history_txt=GuiUtilsNs::createNumberedTextEditor(cmd_history_parent);
 	cmd_history_txt->setCustomContextMenuEnabled(false);
 
-	QtCompat::setTabStopDistance(cmd_history_txt, sql_cmd_txt->getTabDistance());
-
+	cmd_history_txt->setTabStopDistance(sql_cmd_txt->getTabDistance());
 	cmd_history_txt->setContextMenuPolicy(Qt::CustomContextMenu);
 	cmd_history_txt->setReadOnly(true);
 	cmd_history_txt->installEventFilter(this);
@@ -482,7 +480,7 @@ void SQLExecutionWidget::filterResults()
 	if(exact_chk->isChecked())
 		flags = Qt::MatchExactly;
 	else if(regexp_chk->isChecked())
-		flags = Qt::MatchRegExp;
+		flags = Qt::MatchRegularExpression;
 	else
 		flags = Qt::MatchContains;
 
@@ -848,10 +846,11 @@ void SQLExecutionWidget::copySelection(QTableView *results_tbw, bool use_popup, 
 
 		if(use_popup)
 		{
-			act = copy_menu.addAction(tr("Copy selection"));
+			act = copy_mode_menu.menuAction();
+			act->setText(tr("Copy selection"));
 			act_txt = copy_mode_menu.addAction(tr("Plain format"));
 			act_csv = copy_mode_menu.addAction(tr("CVS format"));
-			act->setMenu(&copy_mode_menu);
+			copy_menu.addAction(act);
 			act = copy_menu.exec(QCursor::pos());
 		}
 

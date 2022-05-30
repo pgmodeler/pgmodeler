@@ -30,7 +30,7 @@
 #include "schemaparser.h"
 #include "xmlparser.h"
 #include <map>
-#include <QRegExp>
+#include <QRegularExpression>
 #include <QStringList>
 #include <QTextStream>
 #include <type_traits>

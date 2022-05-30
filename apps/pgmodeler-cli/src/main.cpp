@@ -18,18 +18,17 @@
 
 #include <QTranslator>
 #include "pgmodelercliapp.h"
-#include "qtcompat/qtextstreamcompat.h"
 
 int main(int argc, char **argv)
 {
 	QTextStream out(stdout);
 
 #ifdef DEMO_VERSION
-	out << QtCompat::endl;
-	out << QString("pgModeler ") << GlobalAttributes::PgModelerVersion << QT_TR_NOOP(" command line interface.") << QtCompat::endl;
-	out << QT_TR_NOOP("PostgreSQL Database Modeler Project - pgmodeler.io") << QtCompat::endl;
-	out << QT_TR_NOOP("Copyright 2006-2022 Raphael Araújo e Silva <raphael@pgmodeler.io>") << QtCompat::endl;
-	out << QT_TR_NOOP("\n** CLI disabled in demonstration version! **") << QtCompat::endl << QtCompat::endl;
+	out << Qt::endl;
+	out << QString("pgModeler ") << GlobalAttributes::PgModelerVersion << QT_TR_NOOP(" command line interface.") << Qt::endl;
+	out << QT_TR_NOOP("PostgreSQL Database Modeler Project - pgmodeler.io") << Qt::endl;
+	out << QT_TR_NOOP("Copyright 2006-2022 Raphael Araújo e Silva <raphael@pgmodeler.io>") << Qt::endl;
+	out << QT_TR_NOOP("\n** CLI disabled in demonstration version! **") << Qt::endl << Qt::endl;
 #else
 	try
 	{
@@ -45,22 +44,16 @@ int main(int argc, char **argv)
 		#endif
 
 		PgModelerCliApp pgmodeler_cli(argc, argv);
-		QTranslator translator(&pgmodeler_cli);
-
-		//Tries to load the ui translation according to the system's locale
-		translator.load(QLocale::system().name(), GlobalAttributes::getLanguagesDir());
-
-		//Installs the translator on the application
-		pgmodeler_cli.installTranslator(&translator);
+		pgmodeler_cli.loadTranslation(QLocale::system().name());
 
 		//Executes the cli
 		return pgmodeler_cli.exec();
 	}
 	catch(Exception &e)
 	{
-		out << QtCompat::endl;
+		out << Qt::endl;
 		out << e.getExceptionsText();
-		out << QString("** pgmodeler-cli aborted due to critical error(s). **") << QtCompat::endl << QtCompat::endl;
+		out << QString("** pgmodeler-cli aborted due to critical error(s). **") << Qt::endl << Qt::endl;
 		return (e.getErrorCode()==ErrorCode::Custom ? -1 : enum_cast(e.getErrorCode()));
 	}
 #endif

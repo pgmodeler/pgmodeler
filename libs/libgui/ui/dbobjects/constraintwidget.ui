@@ -30,7 +30,7 @@
     <number>5</number>
    </property>
    <property name="spacing">
-    <number>10</number>
+    <number>5</number>
    </property>
    <item row="1" column="2">
     <widget class="QLabel" name="match_lbl">
@@ -404,6 +404,9 @@
         <number>5</number>
        </property>
        <property name="bottomMargin">
+        <number>5</number>
+       </property>
+       <property name="spacing">
         <number>5</number>
        </property>
        <item row="0" column="0">
