@@ -29,6 +29,9 @@
    <property name="bottomMargin">
     <number>5</number>
    </property>
+   <property name="spacing">
+    <number>5</number>
+   </property>
    <item row="1" column="0">
     <widget class="QLabel" name="event_lbl">
      <property name="sizePolicy">
@@ -90,7 +93,7 @@
         <number>5</number>
        </property>
        <property name="spacing">
-        <number>10</number>
+        <number>5</number>
        </property>
        <item row="0" column="0">
         <widget class="QLabel" name="argument_lbl">
@@ -135,7 +138,7 @@
         <number>5</number>
        </property>
        <property name="spacing">
-        <number>10</number>
+        <number>5</number>
        </property>
        <item row="0" column="0">
         <widget class="QLabel" name="column_lbl">
@@ -203,6 +206,9 @@
        <property name="bottomMargin">
         <number>5</number>
        </property>
+       <property name="spacing">
+        <number>5</number>
+       </property>
        <item row="0" column="0">
         <widget class="QLabel" name="options_lbl">
          <property name="enabled">
@@ -233,6 +239,9 @@
        </item>
        <item row="0" column="1">
         <layout class="QHBoxLayout" name="horizontalLayout">
+         <property name="spacing">
+          <number>5</number>
+         </property>
          <item>
           <widget class="QCheckBox" name="deferrable_chk">
            <property name="enabled">
@@ -397,6 +406,9 @@
       </size>
      </property>
      <layout class="QHBoxLayout" name="horizontalLayout_2">
+      <property name="spacing">
+       <number>5</number>
+      </property>
       <property name="leftMargin">
        <number>0</number>
       </property>
@@ -677,8 +689,8 @@
       <property name="bottomMargin">
        <number>5</number>
       </property>
-      <property name="horizontalSpacing">
-       <number>10</number>
+      <property name="spacing">
+       <number>5</number>
       </property>
       <item row="0" column="1">
        <widget class="QLineEdit" name="old_table_edt">

@@ -31,12 +31,15 @@
     <number>0</number>
    </property>
    <property name="rightMargin">
-    <number>10</number>
+    <number>5</number>
    </property>
    <property name="bottomMargin">
     <number>10</number>
    </property>
-   <property name="spacing">
+   <property name="horizontalSpacing">
+    <number>5</number>
+   </property>
+   <property name="verticalSpacing">
     <number>10</number>
    </property>
    <item row="0" column="1">
@@ -45,7 +48,7 @@
       <enum>Qt::Horizontal</enum>
      </property>
      <property name="handleWidth">
-      <number>8</number>
+      <number>5</number>
      </property>
      <property name="childrenCollapsible">
       <bool>false</bool>
@@ -178,8 +181,8 @@
             </property>
             <property name="iconSize">
              <size>
-              <width>32</width>
-              <height>32</height>
+              <width>25</width>
+              <height>25</height>
              </size>
             </property>
             <property name="toolButtonStyle">
@@ -191,14 +194,14 @@
            <widget class="QLabel" name="label_6">
             <property name="minimumSize">
              <size>
-              <width>32</width>
-              <height>32</height>
+              <width>25</width>
+              <height>25</height>
              </size>
             </property>
             <property name="maximumSize">
              <size>
-              <width>32</width>
-              <height>32</height>
+              <width>25</width>
+              <height>25</height>
              </size>
             </property>
             <property name="text">
@@ -229,8 +232,8 @@
             </property>
             <property name="iconSize">
              <size>
-              <width>32</width>
-              <height>32</height>
+              <width>25</width>
+              <height>25</height>
              </size>
             </property>
             <property name="toolButtonStyle">
@@ -252,8 +255,8 @@
             </property>
             <property name="iconSize">
              <size>
-              <width>32</width>
-              <height>32</height>
+              <width>25</width>
+              <height>25</height>
              </size>
             </property>
             <property name="toolButtonStyle">
@@ -271,7 +274,6 @@
             </property>
             <property name="font">
              <font>
-              <weight>50</weight>
               <bold>false</bold>
               <underline>false</underline>
               <strikeout>false</strikeout>
@@ -433,7 +435,7 @@
        <number>5</number>
       </property>
       <property name="spacing">
-       <number>10</number>
+       <number>5</number>
       </property>
       <item row="6" column="0">
        <widget class="Line" name="separator_ln_2">
@@ -484,8 +486,8 @@
         </property>
         <property name="iconSize">
          <size>
-          <width>48</width>
-          <height>48</height>
+          <width>32</width>
+          <height>32</height>
          </size>
         </property>
         <property name="toolButtonStyle">
@@ -522,8 +524,8 @@
         </property>
         <property name="iconSize">
          <size>
-          <width>48</width>
-          <height>48</height>
+          <width>32</width>
+          <height>32</height>
          </size>
         </property>
         <property name="toolButtonStyle">
@@ -563,8 +565,8 @@
         </property>
         <property name="iconSize">
          <size>
-          <width>48</width>
-          <height>48</height>
+          <width>32</width>
+          <height>32</height>
          </size>
         </property>
         <property name="shortcut">
@@ -607,8 +609,8 @@
         </property>
         <property name="iconSize">
          <size>
-          <width>48</width>
-          <height>48</height>
+          <width>32</width>
+          <height>32</height>
          </size>
         </property>
         <property name="shortcut">
@@ -651,8 +653,8 @@
         </property>
         <property name="iconSize">
          <size>
-          <width>48</width>
-          <height>48</height>
+          <width>32</width>
+          <height>32</height>
          </size>
         </property>
         <property name="shortcut">
@@ -705,8 +707,8 @@
         </property>
         <property name="iconSize">
          <size>
-          <width>48</width>
-          <height>48</height>
+          <width>32</width>
+          <height>32</height>
          </size>
         </property>
         <property name="shortcut">
@@ -749,8 +751,8 @@
         </property>
         <property name="iconSize">
          <size>
-          <width>48</width>
-          <height>48</height>
+          <width>32</width>
+          <height>32</height>
          </size>
         </property>
         <property name="popupMode">
@@ -796,8 +798,8 @@
         </property>
         <property name="iconSize">
          <size>
-          <width>48</width>
-          <height>48</height>
+          <width>32</width>
+          <height>32</height>
          </size>
         </property>
         <property name="toolButtonStyle">
@@ -837,8 +839,8 @@
         </property>
         <property name="iconSize">
          <size>
-          <width>48</width>
-          <height>48</height>
+          <width>32</width>
+          <height>32</height>
          </size>
         </property>
         <property name="toolButtonStyle">
@@ -878,8 +880,8 @@
         </property>
         <property name="iconSize">
          <size>
-          <width>48</width>
-          <height>48</height>
+          <width>32</width>
+          <height>32</height>
          </size>
         </property>
         <property name="toolButtonStyle">
@@ -920,14 +922,14 @@
        </property>
        <property name="minimumSize">
         <size>
-         <width>242</width>
-         <height>50</height>
+         <width>169</width>
+         <height>35</height>
         </size>
        </property>
        <property name="maximumSize">
         <size>
-         <width>242</width>
-         <height>50</height>
+         <width>169</width>
+         <height>35</height>
         </size>
        </property>
        <property name="styleSheet">
@@ -965,7 +967,6 @@
   </layout>
  </widget>
  <resources>
-  <include location="../../../libs/libgui/res/resources.qrc"/>
   <include location="../../../libs/libgui/res/resources.qrc"/>
   <include location="../../../libs/libgui/res/resources.qrc"/>
  </resources>

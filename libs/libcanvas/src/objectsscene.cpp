@@ -1340,8 +1340,7 @@ void ObjectsScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 			//If the alignment to grid is active, adjust the event scene position
 			if(align_objs_grid && !selection_rect->isVisible() && sel_items_count <= 1)
 				event->setScenePos(this->alignPointToGrid(event->scenePos()));
-			else
-			if(selection_rect->isVisible())
+			else	if(selection_rect->isVisible())
 			{
 				QPolygonF pol;
 				pol.append(sel_ini_pnt);
@@ -1381,7 +1380,7 @@ void ObjectsScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 		sel_area.addRect(selection_rect->polygon().boundingRect());
 
 		this->blockItemsSignals(true);
-		this->setSelectionArea(sel_area, Qt::IntersectsItemShape);
+		this->setSelectionArea(sel_area);
 		this->blockItemsSignals(false);
 
 		selection_rect->setVisible(false);

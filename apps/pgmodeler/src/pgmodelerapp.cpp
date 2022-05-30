@@ -24,7 +24,6 @@
 
 PgModelerApp::PgModelerApp(int &argc, char **argv) : Application(argc,argv)
 {
-	QTranslator *main_translator=nullptr, *plugin_translator=nullptr;
 	QString plugin_name, plug_lang_dir, plug_lang_file;
 	QStringList dir_list;
 	QDir dir;
@@ -72,32 +71,12 @@ PgModelerApp::PgModelerApp(int &argc, char **argv) : Application(argc,argv)
 	}
 
 	//Trying to identify if the user defined a custom UI language in the pgmodeler.conf file
-	QString conf_file =	GlobalAttributes::getConfigurationFilePath(GlobalAttributes::GeneralConf);
-	QFile input;
-	QString lang_id = QLocale::system().name();
+	QString lang_id = GlobalAttributes::getConfigParamFromFile(Attributes::UiLanguage, GlobalAttributes::GeneralConf);
 
-	input.setFileName(conf_file);
+	if(lang_id.isEmpty())
+		lang_id = QLocale::system().name();
 
-	if(input.open(QFile::ReadOnly))
-	{
-		QString buf = QString(input.readAll());
-		QRegularExpression regexp = QRegularExpression(QString("(%1)(.*)(=)(\\\")(.)+(\\\")(\\\n)").arg(Attributes::UiLanguage));
-		QRegularExpressionMatch match;
-		int idx =	-1;
-
-		match =	regexp.match(buf);
-		idx = match.capturedStart();
-
-		//Extract the value of the ui-language attribute in the conf file
-		lang_id = buf.mid(idx, match.capturedLength());
-		lang_id.remove(Attributes::UiLanguage);
-		lang_id.remove(QChar('"')).remove(QChar('=')).remove(QChar('\n'));
-	}
-
-	//Tries to load the main ui translation according to the system's locale
-	main_translator=new QTranslator(this);
-	main_translator->load(lang_id, GlobalAttributes::getLanguagesDir());
-	this->installTranslator(main_translator);
+	loadTranslation(lang_id);
 
 	//Trying to load plugins translations
 	dir_list=QDir(GlobalAttributes::getPluginsDir() +
@@ -116,14 +95,7 @@ PgModelerApp::PgModelerApp(int &argc, char **argv) : Application(argc,argv)
 					  GlobalAttributes::DirSeparator;
 
 		plug_lang_file=plugin_name + QString(".") + lang_id;
-
-		//Check if the .qm file exists for the current plugin. If so create and install a translator
-		if(QFileInfo(plug_lang_dir + plug_lang_file + QString(".qm")).exists())
-		{
-			plugin_translator=new QTranslator(this);
-			plugin_translator->load(plug_lang_file, plug_lang_dir);
-			this->installTranslator(plugin_translator);
-		}
+		loadTranslation(plug_lang_file, plug_lang_dir);
 	}
 }
 

@@ -26,12 +26,13 @@ int main(int argc, char **argv)
 {
 	try
 	{
-		PgModelerApp::setAttribute(Qt::AA_EnableHighDpiScaling, false);
-		PgModelerApp::setAttribute(Qt::AA_UseHighDpiPixmaps);
+		GlobalAttributes::setCustomUiScaleFactor();
 		PgModelerApp app(argc,argv);
 		QStringList args = app.arguments();
-
 		SchemaEditorForm syntaxchk;
+
+		app.loadTranslation(QLocale::system().name());
+
 		args.pop_front();
 		syntaxchk.loadFiles(args);
 		syntaxchk.showMaximized();

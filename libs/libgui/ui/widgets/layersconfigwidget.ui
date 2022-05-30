@@ -72,7 +72,7 @@
        <number>5</number>
       </property>
       <property name="spacing">
-       <number>10</number>
+       <number>5</number>
       </property>
       <item row="0" column="0">
        <widget class="QToolButton" name="add_tb">
@@ -103,8 +103,8 @@
         </property>
         <property name="iconSize">
          <size>
-          <width>32</width>
-          <height>32</height>
+          <width>25</width>
+          <height>25</height>
          </size>
         </property>
         <property name="shortcut">
@@ -147,8 +147,8 @@
         </property>
         <property name="iconSize">
          <size>
-          <width>32</width>
-          <height>32</height>
+          <width>25</width>
+          <height>25</height>
          </size>
         </property>
         <property name="checkable">
@@ -197,8 +197,8 @@
         </property>
         <property name="iconSize">
          <size>
-          <width>32</width>
-          <height>32</height>
+          <width>25</width>
+          <height>25</height>
          </size>
         </property>
         <property name="shortcut">
@@ -226,8 +226,8 @@
         </property>
         <property name="iconSize">
          <size>
-          <width>25</width>
-          <height>25</height>
+          <width>20</width>
+          <height>20</height>
          </size>
         </property>
         <property name="shortcut">
@@ -347,8 +347,8 @@
         </property>
         <property name="iconSize">
          <size>
-          <width>32</width>
-          <height>32</height>
+          <width>25</width>
+          <height>25</height>
          </size>
         </property>
         <property name="shortcut">
@@ -364,6 +364,9 @@
       </item>
       <item row="1" column="0" colspan="6">
        <layout class="QHBoxLayout" name="horizontalLayout">
+        <property name="spacing">
+         <number>5</number>
+        </property>
         <item>
          <widget class="QCheckBox" name="toggle_layers_rects_chk">
           <property name="sizePolicy">
@@ -401,7 +404,6 @@
   </layout>
  </widget>
  <resources>
-  <include location="../../res/resources.qrc"/>
   <include location="../../res/resources.qrc"/>
   <include location="../../res/resources.qrc"/>
  </resources>

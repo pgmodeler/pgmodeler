@@ -29,6 +29,9 @@
    <property name="bottomMargin">
     <number>0</number>
    </property>
+   <property name="spacing">
+    <number>5</number>
+   </property>
    <item row="0" column="0">
     <widget class="QTabWidget" name="attributes_twg">
      <property name="currentIndex">
@@ -49,6 +52,9 @@
         <number>5</number>
        </property>
        <property name="bottomMargin">
+        <number>5</number>
+       </property>
+       <property name="spacing">
         <number>5</number>
        </property>
        <item row="0" column="0">
@@ -309,6 +315,9 @@
        </item>
        <item row="4" column="1" colspan="3">
         <layout class="QHBoxLayout" name="horizontalLayout">
+         <property name="spacing">
+          <number>5</number>
+         </property>
          <item>
           <widget class="QCheckBox" name="allow_conn_chk">
            <property name="text">
@@ -374,6 +383,9 @@
         <number>5</number>
        </property>
        <property name="bottomMargin">
+        <number>5</number>
+       </property>
+       <property name="spacing">
         <number>5</number>
        </property>
        <item row="3" column="0">

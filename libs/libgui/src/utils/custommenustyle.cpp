@@ -18,7 +18,7 @@
 
 #include "custommenustyle.h"
 
-int CustomMenuStyle::icon_pixel_metric = 28;
+int CustomMenuStyle::icon_pixel_metric = 25;
 
 CustomMenuStyle::CustomMenuStyle()
 {

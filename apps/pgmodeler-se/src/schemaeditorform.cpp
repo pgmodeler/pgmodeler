@@ -42,7 +42,8 @@ SchemaEditorForm::SchemaEditorForm(QWidget *parent) : QWidget(parent)
 		if(!btn) continue;
 
 		fnt = btn->font();
-		fnt.setBold(true);
+		//fnt.setBold(true);
+		fnt.setWeight(QFont::Medium);
 		btn->setFont(fnt);
 		GuiUtilsNs::createDropShadow(btn);
 

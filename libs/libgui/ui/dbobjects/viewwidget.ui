@@ -23,6 +23,9 @@
    <property name="bottomMargin">
     <number>5</number>
    </property>
+   <property name="spacing">
+    <number>5</number>
+   </property>
    <item row="2" column="0" colspan="3">
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
@@ -78,6 +81,9 @@
       <property name="bottomMargin">
        <number>5</number>
       </property>
+      <property name="spacing">
+       <number>5</number>
+      </property>
       <item row="0" column="0">
        <widget class="QLabel" name="tag_lbl">
         <property name="sizePolicy">
@@ -106,6 +112,9 @@
       </item>
       <item row="1" column="1">
        <layout class="QHBoxLayout" name="horizontalLayout">
+        <property name="spacing">
+         <number>5</number>
+        </property>
         <item>
          <widget class="QRadioButton" name="ordinary_rb">
           <property name="text">

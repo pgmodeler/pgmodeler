@@ -34,18 +34,20 @@ CodeCompletionWidget::CodeCompletionWidget(QPlainTextEdit *code_field_txt, bool 
 	completion_wgt->setWindowFlags(Qt::Popup);
 	completion_wgt->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
 	completion_wgt->setMinimumSize(200, 150);
-
-	name_list=new QListWidget(completion_wgt);
-	name_list->setSpacing(2);
-	name_list->setIconSize(QSize(32,32));
-	name_list->setSortingEnabled(false);
-	name_list->setSizeAdjustPolicy(QListWidget::AdjustToContents);
-	name_list->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
+	completion_wgt->setMaximumHeight(300);
 
 	always_on_top_chk=new QCheckBox(completion_wgt);
 	always_on_top_chk->setText(tr("&Always on top"));
 	always_on_top_chk->setToolTip(tr("The widget will be always displayed while typing. It can be closable only by ESC key or when focus changes to another widget."));
 	always_on_top_chk->setFocusPolicy(Qt::NoFocus);
+
+	name_list=new QListWidget(completion_wgt);
+	name_list->setSpacing(2);
+	name_list->setIconSize(QSize(22, 22));
+	name_list->setSortingEnabled(false);
+	name_list->setSizeAdjustPolicy(QListWidget::AdjustToContents);
+	name_list->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
+	name_list->setMaximumHeight(completion_wgt->maximumHeight() - always_on_top_chk->height() - GuiUtilsNs::LtSpacing);
 
 	QVBoxLayout *vbox=new QVBoxLayout(completion_wgt);
 	vbox->addWidget(name_list);
@@ -99,7 +101,7 @@ bool CodeCompletionWidget::eventFilter(QObject *object, QEvent *event)
 		if(object==code_field_txt)
 		{
 			//Filters the trigger char and shows up the code completion only if there is a valid database model in use
-			if(QChar(k_event->key())==completion_trigger && db_model)
+			if(k_event->key() == completion_trigger.unicode() && db_model)
 			{
 				/* If the completion widget is not visible start the timer to give the user
 				a small delay in order to type another character. If no char is typed the completion is triggered */
@@ -222,7 +224,10 @@ void CodeCompletionWidget::configureCompletion(DatabaseModel *db_model, SyntaxHi
 
 			while(!exprs.empty())
 			{
-				keywords.push_front(exprs.back().pattern());
+				/* Since keywords are exact match patterns in the form \A(?:keyword)\z"
+				 * we need to remove from the pattern the initial and final regexp operators in
+				 * order to use only the word itself */
+				keywords.push_front(exprs.back().pattern().remove("\\A(?:").remove(")\\z"));
 				exprs.pop_back();
 			}
 
@@ -323,7 +328,6 @@ void CodeCompletionWidget::show()
 	completion_wgt->show();	
 	showItemTooltip();
 	popup_timer.stop();
-
 	completion_wgt->adjustSize();
 	adjustSize();
 }
@@ -497,7 +501,7 @@ void CodeCompletionWidget::updateList()
 		name_list->item(0)->setSelected(true);
 
 	//Sets the list position right below of text cursor
-	completion_wgt->move(code_field_txt->mapToGlobal(code_field_txt->cursorRect().bottomRight() + QPoint(10, 10)));
+	completion_wgt->move(code_field_txt->viewport()->mapToGlobal(code_field_txt->cursorRect().bottomLeft()));
 	name_list->setFocus();
 }
 

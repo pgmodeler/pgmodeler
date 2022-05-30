@@ -21,7 +21,7 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_3">
    <property name="spacing">
-    <number>10</number>
+    <number>5</number>
    </property>
    <property name="leftMargin">
     <number>5</number>
@@ -58,7 +58,7 @@
         <number>5</number>
        </property>
        <property name="spacing">
-        <number>10</number>
+        <number>5</number>
        </property>
        <item row="0" column="0">
         <widget class="QFrame" name="frame">
@@ -73,7 +73,7 @@
          </property>
          <layout class="QVBoxLayout" name="verticalLayout">
           <property name="spacing">
-           <number>10</number>
+           <number>5</number>
           </property>
           <property name="leftMargin">
            <number>5</number>
@@ -90,7 +90,7 @@
           <item>
            <layout class="QGridLayout" name="gridLayout_6">
             <property name="spacing">
-             <number>10</number>
+             <number>5</number>
             </property>
             <item row="1" column="0" colspan="2">
              <widget class="QLabel" name="crows_foot_lbl">
@@ -105,8 +105,8 @@
               </property>
               <property name="maximumSize">
                <size>
-                <width>16777215</width>
-                <height>150</height>
+                <width>550</width>
+                <height>110</height>
                </size>
               </property>
               <property name="frameShape">
@@ -165,7 +165,7 @@
           <item>
            <layout class="QGridLayout" name="gridLayout_7">
             <property name="spacing">
-             <number>10</number>
+             <number>5</number>
             </property>
             <item row="1" column="0" colspan="3">
              <widget class="QLabel" name="conn_tab_edges_lbl">
@@ -180,8 +180,8 @@
               </property>
               <property name="maximumSize">
                <size>
-                <width>16777215</width>
-                <height>150</height>
+                <width>550</width>
+                <height>110</height>
                </size>
               </property>
               <property name="frameShape">
@@ -234,7 +234,7 @@
           <item>
            <layout class="QGridLayout" name="gridLayout">
             <property name="spacing">
-             <number>10</number>
+             <number>5</number>
             </property>
             <item row="1" column="0" colspan="3">
              <widget class="QLabel" name="conn_fk_pk_lbl">
@@ -249,8 +249,8 @@
               </property>
               <property name="maximumSize">
                <size>
-                <width>16777215</width>
-                <height>150</height>
+                <width>550</width>
+                <height>110</height>
                </size>
               </property>
               <property name="frameShape">
@@ -306,7 +306,7 @@
           <item>
            <layout class="QGridLayout" name="gridLayout_4">
             <property name="spacing">
-             <number>10</number>
+             <number>5</number>
             </property>
             <item row="1" column="0" colspan="3">
              <widget class="QLabel" name="conn_cnt_pnts_lbl">
@@ -321,8 +321,8 @@
               </property>
               <property name="maximumSize">
                <size>
-                <width>16777215</width>
-                <height>150</height>
+                <width>550</width>
+                <height>110</height>
                </size>
               </property>
               <property name="frameShape">
@@ -395,17 +395,20 @@
        <string>FK Settings &amp;&amp; Patterns</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_4">
+       <property name="spacing">
+        <number>5</number>
+       </property>
        <property name="leftMargin">
-        <number>4</number>
+        <number>5</number>
        </property>
        <property name="topMargin">
-        <number>4</number>
+        <number>5</number>
        </property>
        <property name="rightMargin">
-        <number>4</number>
+        <number>5</number>
        </property>
        <property name="bottomMargin">
-        <number>4</number>
+        <number>5</number>
        </property>
        <item>
         <widget class="QGroupBox" name="foreign_key_gb">
@@ -438,7 +441,7 @@
            <number>5</number>
           </property>
           <property name="spacing">
-           <number>10</number>
+           <number>5</number>
           </property>
           <item row="0" column="2">
            <widget class="QLabel" name="deferral_lbl">
@@ -622,7 +625,7 @@
            <number>5</number>
           </property>
           <property name="spacing">
-           <number>10</number>
+           <number>5</number>
           </property>
           <item row="2" column="0">
            <widget class="QLabel" name="src_fk_pattern_lbl">

@@ -59,7 +59,9 @@ void BaseObjectView::mousePressEvent(QGraphicsSceneMouseEvent *event)
 		event->ignore();
 	}
 	else if(event->button()==Qt::LeftButton)
+	{
 		QGraphicsItemGroup::mousePressEvent(event);
+	}
 }
 
 void BaseObjectView::setSourceObject(BaseObject *object)

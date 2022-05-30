@@ -71,7 +71,7 @@
          <enum>Qt::Horizontal</enum>
         </property>
         <property name="handleWidth">
-         <number>8</number>
+         <number>5</number>
         </property>
         <property name="childrenCollapsible">
          <bool>true</bool>
@@ -88,7 +88,7 @@
          </property>
          <layout class="QVBoxLayout" name="verticalLayout">
           <property name="spacing">
-           <number>10</number>
+           <number>5</number>
           </property>
           <property name="leftMargin">
            <number>5</number>
@@ -105,7 +105,7 @@
           <item>
            <layout class="QHBoxLayout" name="horizontalLayout">
             <property name="spacing">
-             <number>10</number>
+             <number>5</number>
             </property>
             <property name="topMargin">
              <number>0</number>
@@ -132,8 +132,8 @@
               </property>
               <property name="iconSize">
                <size>
-                <width>28</width>
-                <height>28</height>
+                <width>22</width>
+                <height>22</height>
                </size>
               </property>
              </widget>
@@ -161,8 +161,8 @@
               </property>
               <property name="iconSize">
                <size>
-                <width>32</width>
-                <height>32</height>
+                <width>25</width>
+                <height>25</height>
                </size>
               </property>
              </widget>
@@ -172,7 +172,7 @@
           <item>
            <layout class="QHBoxLayout" name="horizontalLayout_6">
             <property name="spacing">
-             <number>10</number>
+             <number>5</number>
             </property>
             <item>
              <widget class="QComboBox" name="database_cmb">
@@ -196,8 +196,8 @@
               </property>
               <property name="iconSize">
                <size>
-                <width>28</width>
-                <height>28</height>
+                <width>22</width>
+                <height>22</height>
                </size>
               </property>
              </widget>
@@ -225,8 +225,8 @@
               </property>
               <property name="iconSize">
                <size>
-                <width>32</width>
-                <height>32</height>
+                <width>25</width>
+                <height>25</height>
                </size>
               </property>
              </widget>
@@ -258,7 +258,7 @@
           <item>
            <layout class="QHBoxLayout" name="horizontalLayout_4">
             <property name="spacing">
-             <number>10</number>
+             <number>5</number>
             </property>
             <property name="leftMargin">
              <number>0</number>
@@ -302,8 +302,8 @@
               </property>
               <property name="iconSize">
                <size>
-                <width>32</width>
-                <height>32</height>
+                <width>25</width>
+                <height>25</height>
                </size>
               </property>
               <property name="shortcut">
@@ -343,8 +343,8 @@
               </property>
               <property name="iconSize">
                <size>
-                <width>32</width>
-                <height>32</height>
+                <width>25</width>
+                <height>25</height>
                </size>
               </property>
               <property name="checkable">
@@ -378,7 +378,7 @@
         <widget class="QWidget" name="layoutWidget">
          <layout class="QVBoxLayout" name="verticalLayout_2">
           <property name="spacing">
-           <number>10</number>
+           <number>5</number>
           </property>
           <property name="leftMargin">
            <number>0</number>
@@ -389,7 +389,7 @@
              <enum>Qt::Vertical</enum>
             </property>
             <property name="handleWidth">
-             <number>8</number>
+             <number>5</number>
             </property>
             <property name="childrenCollapsible">
              <bool>false</bool>
@@ -418,7 +418,7 @@
                <number>5</number>
               </property>
               <property name="spacing">
-               <number>10</number>
+               <number>5</number>
               </property>
               <item row="0" column="0">
                <widget class="QTabWidget" name="sql_exec_tbw">
@@ -470,7 +470,6 @@
   <tabstop>database_cmb</tabstop>
  </tabstops>
  <resources>
-  <include location="../../res/resources.qrc"/>
   <include location="../../res/resources.qrc"/>
   <include location="../../res/resources.qrc"/>
  </resources>

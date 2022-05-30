@@ -57,19 +57,19 @@
      </property>
      <layout class="QGridLayout" name="gridLayout">
       <property name="leftMargin">
-       <number>10</number>
+       <number>5</number>
       </property>
       <property name="topMargin">
-       <number>10</number>
+       <number>5</number>
       </property>
       <property name="rightMargin">
-       <number>10</number>
+       <number>5</number>
       </property>
       <property name="bottomMargin">
-       <number>10</number>
+       <number>5</number>
       </property>
       <property name="spacing">
-       <number>10</number>
+       <number>5</number>
       </property>
       <item row="0" column="1">
        <widget class="QLabel" name="title_lbl">
@@ -98,7 +98,7 @@
         <property name="maximumSize">
          <size>
           <width>128</width>
-          <height>480</height>
+          <height>128</height>
          </size>
         </property>
         <property name="text">
@@ -108,7 +108,7 @@
          <pixmap resource="../../res/resources.qrc">:/icons/icons/update1.png</pixmap>
         </property>
         <property name="scaledContents">
-         <bool>false</bool>
+         <bool>true</bool>
         </property>
         <property name="alignment">
          <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
@@ -129,8 +129,8 @@
         </property>
         <property name="iconSize">
          <size>
-          <width>25</width>
-          <height>25</height>
+          <width>20</width>
+          <height>20</height>
          </size>
         </property>
         <property name="autoRaise">
@@ -140,6 +140,9 @@
       </item>
       <item row="2" column="1" colspan="2">
        <layout class="QHBoxLayout" name="horizontalLayout_3">
+        <property name="spacing">
+         <number>5</number>
+        </property>
         <item>
          <widget class="QLabel" name="date_lbl">
           <property name="sizePolicy">
@@ -188,6 +191,9 @@
       </item>
       <item row="1" column="1" colspan="2">
        <layout class="QHBoxLayout" name="horizontalLayout_2">
+        <property name="spacing">
+         <number>5</number>
+        </property>
         <item>
          <widget class="QLabel" name="version_lbl">
           <property name="sizePolicy">
@@ -240,7 +246,7 @@
         </property>
         <layout class="QVBoxLayout" name="verticalLayout_2">
          <property name="spacing">
-          <number>10</number>
+          <number>5</number>
          </property>
          <property name="leftMargin">
           <number>5</number>
@@ -293,6 +299,9 @@
       </item>
       <item row="4" column="0" colspan="3">
        <layout class="QHBoxLayout" name="horizontalLayout">
+        <property name="spacing">
+         <number>5</number>
+        </property>
         <item>
          <spacer name="horizontalSpacer_2">
           <property name="orientation">
@@ -326,8 +335,8 @@
           </property>
           <property name="iconSize">
            <size>
-            <width>32</width>
-            <height>32</height>
+            <width>25</width>
+            <height>25</height>
            </size>
           </property>
           <property name="checkable">
@@ -361,8 +370,8 @@
           </property>
           <property name="iconSize">
            <size>
-            <width>32</width>
-            <height>32</height>
+            <width>25</width>
+            <height>25</height>
            </size>
           </property>
           <property name="checkable">

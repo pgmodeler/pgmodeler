@@ -45,7 +45,7 @@
     <number>0</number>
    </property>
    <property name="spacing">
-    <number>10</number>
+    <number>5</number>
    </property>
    <item row="0" column="0">
     <widget class="QGroupBox" name="groupBox">
@@ -80,6 +80,9 @@
       <property name="bottomMargin">
        <number>5</number>
       </property>
+      <property name="spacing">
+       <number>5</number>
+      </property>
       <item row="2" column="0">
        <widget class="QLabel" name="spatial_lbl">
         <property name="enabled">
@@ -105,7 +108,6 @@
         </property>
         <property name="font">
          <font>
-          <weight>50</weight>
           <italic>false</italic>
           <bold>false</bold>
          </font>
@@ -255,7 +257,6 @@
         </property>
         <property name="font">
          <font>
-          <weight>50</weight>
           <italic>false</italic>
           <bold>false</bold>
          </font>
@@ -334,7 +335,6 @@
         </property>
         <property name="font">
          <font>
-          <weight>50</weight>
           <italic>false</italic>
           <bold>false</bold>
          </font>
@@ -412,7 +412,6 @@
         </property>
         <property name="font">
          <font>
-          <weight>50</weight>
           <italic>false</italic>
           <bold>false</bold>
          </font>
@@ -487,7 +486,6 @@
         </property>
         <property name="font">
          <font>
-          <weight>50</weight>
           <italic>false</italic>
           <bold>false</bold>
          </font>
@@ -519,7 +517,6 @@
         </property>
         <property name="font">
          <font>
-          <weight>50</weight>
           <bold>false</bold>
           <stylestrategy>PreferDefault</stylestrategy>
          </font>
@@ -574,6 +571,9 @@
       </item>
       <item row="2" column="9" colspan="6">
        <layout class="QHBoxLayout" name="horizontalLayout">
+        <property name="spacing">
+         <number>5</number>
+        </property>
         <item>
          <widget class="QLabel" name="srid_lbl">
           <property name="text">
@@ -616,7 +616,6 @@
           </property>
           <property name="font">
            <font>
-            <weight>50</weight>
             <italic>false</italic>
             <bold>false</bold>
            </font>

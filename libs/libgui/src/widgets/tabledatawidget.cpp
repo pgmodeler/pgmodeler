@@ -99,7 +99,7 @@ TableDataWidget::TableDataWidget(QWidget *parent): BaseObjectWidget(parent, Obje
 					{
 						QMenu item_menu;
 						QAction *act = nullptr;
-						QList<QToolButton *> btns = { add_row_tb, add_col_tb, dup_rows_tb, nullptr,
+						QList<QToolButton *> btns = { add_row_tb, add_col_tb, dup_rows_tb, bulkedit_tb, nullptr,
 																					del_rows_tb, del_cols_tb, nullptr,
 																					clear_rows_tb, clear_cols_tb, nullptr,
 																					copy_tb, paste_tb };
@@ -112,9 +112,18 @@ TableDataWidget::TableDataWidget(QWidget *parent): BaseObjectWidget(parent, Obje
 								continue;
 							}
 
-							act = item_menu.addAction(btn->icon(), btn->text(), btn, SLOT(click()), btn->shortcut());
+							if(btn->menu())
+							{
+								act = btn->menu()->menuAction();
+								act->setIcon(btn->icon());
+								act->setText(btn->text());
+								act->setShortcut(btn->shortcut());
+								item_menu.addAction(act);
+							}
+							else
+								act = item_menu.addAction(btn->icon(), btn->text(), btn, SLOT(click()), btn->shortcut());
+
 							act->setEnabled(btn->isEnabled());
-							act->setMenu(btn->menu());
 						}
 
 						item_menu.exec(QCursor::pos());
@@ -386,11 +395,13 @@ void TableDataWidget::populateDataGrid(const QString &data)
 		data_tbw->setHorizontalHeaderItem(col++, item);
 	}
 
-	buffer.removeAt(0);
+	if(!buffer.isEmpty())
+		buffer.removeAt(0);
+
 	row=0;
 
 	//Populating the grid with the data
-	for(QString buf_row : buffer)
+	for(auto &buf_row : buffer)
 	{
 		addRow();
 		values = buf_row.split(UtilsNs::DataSeparator);
@@ -512,7 +523,7 @@ QString TableDataWidget::generateDataBuffer()
 	return buffer.join(Table::DataLineBreak);
 }
 
-void TableDataWidget::enterEvent(QEvent *)
+void TableDataWidget::enterEvent(QEnterEvent *)
 {
 	paste_tb->setEnabled(!qApp->clipboard()->text().isEmpty());
 }

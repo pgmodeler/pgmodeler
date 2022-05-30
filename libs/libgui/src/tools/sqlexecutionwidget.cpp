@@ -848,10 +848,11 @@ void SQLExecutionWidget::copySelection(QTableView *results_tbw, bool use_popup, 
 
 		if(use_popup)
 		{
-			act = copy_menu.addAction(tr("Copy selection"));
+			act = copy_mode_menu.menuAction();
+			act->setText(tr("Copy selection"));
 			act_txt = copy_mode_menu.addAction(tr("Plain format"));
 			act_csv = copy_mode_menu.addAction(tr("CVS format"));
-			act->setMenu(&copy_mode_menu);
+			copy_menu.addAction(act);
 			act = copy_menu.exec(QCursor::pos());
 		}
 
