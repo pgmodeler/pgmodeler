@@ -18,7 +18,6 @@
 #include "catalog.h"
 #include "coreutilsns.h"
 #include "utilsns.h"
-#include "qtcompat/splitbehaviorcompat.h"
 
 const QString Catalog::QueryList("list");
 const QString Catalog::QueryAttribs("attribs");
@@ -259,7 +258,7 @@ void Catalog::setObjectFilters(QStringList filters, bool only_matching, bool mat
 			// If the pattern has wildcard chars we replace them by (.)*
 			if(pattern.contains(UtilsNs::WildcardChar))
 			{
-				QStringList list = pattern.split(UtilsNs::WildcardChar, QtCompat::KeepEmptyParts);
+				QStringList list = pattern.split(UtilsNs::WildcardChar, Qt::KeepEmptyParts);
 				QString any_str = "(.)*";
 				pattern.clear();
 
@@ -998,7 +997,7 @@ QStringList Catalog::parseArrayValues(const QString &array_val)
 		if(value.contains('"'))
 			list = parseDefaultValues(value, QString("\""), QString(","));
 		else
-			list = value.split(',', QtCompat::SkipEmptyParts);
+			list = value.split(',', Qt::SkipEmptyParts);
 	}
 
 	return list;
@@ -1119,7 +1118,7 @@ QStringList Catalog::parseRuleCommands(const QString &cmds)
 		fmt_cmd = fmt_cmd.trimmed();
 	}
 
-	return fmt_cmd.split(';', QtCompat::SkipEmptyParts);
+	return fmt_cmd.split(';', Qt::SkipEmptyParts);
 }
 
 QStringList Catalog::parseIndexExpressions(const QString &expr)

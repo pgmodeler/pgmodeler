@@ -17,7 +17,6 @@
 */
 
 #include "relationshipview.h"
-#include "qtcompat/qlinefcompat.h"
 
 bool RelationshipView::hide_name_label=false;
 bool RelationshipView::use_curved_lines=true;
@@ -401,7 +400,7 @@ void RelationshipView::mousePressEvent(QGraphicsSceneMouseEvent *event)
 						lin.setP2(QPointF(event->pos().x() + 50, event->pos().y() + 50));
 
 						//Case the auxiliary line intercepts one relationship line
-						inter_type = QtCompat::intersects(lines[i]->line(), lin, &p);
+						inter_type = lines[i]->line().intersects(lin, &p);
 
 						if((!use_curved_lines && inter_type == QLineF::BoundedIntersection) ||
 							 (use_curved_lines && curves[i]->contains(event->pos())))
@@ -913,7 +912,7 @@ void RelationshipView::configureLine()
 				{
 					edge.setP1(pol.at(idx));
 					edge.setP2(pol.at(idx + 1));
-					inter_type = QtCompat::intersects(line, edge, &pi);
+					inter_type = line.intersects(edge, &pi);
 
 					if(inter_type == QLineF::BoundedIntersection)
 					{
@@ -1631,7 +1630,7 @@ void RelationshipView::configureCrowsFootDescriptors()
 			{
 				edge.setP1(pol.at(idx));
 				edge.setP2(pol.at(idx + 1));
-				inter_type = QtCompat::intersects(rel_lines[tab_id], edge, &pi);
+				inter_type = rel_lines[tab_id].intersects(edge, &pi);
 
 				if(inter_type == QLineF::BoundedIntersection)
 				{
@@ -1884,7 +1883,7 @@ void RelationshipView::configureLabels()
 			{
 				for(i1=0; i1 < 4; i1++)
 				{
-					inter_type = QtCompat::intersects(lins[idx], borders[idx][i1], &p_int);
+					inter_type = lins[idx].intersects(borders[idx][i1], &p_int);
 
 					if(inter_type == QLineF::BoundedIntersection)
 					{

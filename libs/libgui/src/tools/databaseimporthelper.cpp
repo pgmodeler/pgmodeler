@@ -18,8 +18,6 @@
 
 #include "databaseimporthelper.h"
 #include "defaultlanguages.h"
-#include "qtcompat/qtextstreamcompat.h"
-#include "qtcompat/splitbehaviorcompat.h"
 #include "utilsns.h"
 #include "coreutilsns.h"
 
@@ -727,7 +725,7 @@ void DatabaseImportHelper::createObject(attribs_map &attribs)
 			if(debug_mode)
 			{
 				QTextStream ts(stdout);
-				ts << dumpObjectAttributes(attribs) << QtCompat::endl;
+				ts << dumpObjectAttributes(attribs) << Qt::endl;
 			}
 
 			switch(obj_type)
@@ -767,7 +765,7 @@ void DatabaseImportHelper::createObject(attribs_map &attribs)
 				default:
 					if(debug_mode)
 					{
-						qDebug() << QString("create() method for %s isn't implemented!").arg(BaseObject::getSchemaName(obj_type)) << QtCompat::endl;
+						qDebug() << QString("create() method for %s isn't implemented!").arg(BaseObject::getSchemaName(obj_type)) << Qt::endl;
 					}
 				break;
 			}
@@ -902,8 +900,8 @@ void DatabaseImportHelper::loadObjectXML(ObjectType obj_type, attribs_map &attri
 		if(debug_mode)
 		{
 			QTextStream ts(stdout);
-			ts << QString("<!-- XML code: %1 (OID: %2) -->").arg(attribs[Attributes::Name]).arg(attribs[Attributes::Oid]) << QtCompat::endl;
-			ts << xml_buf << QtCompat::endl;
+			ts << QString("<!-- XML code: %1 (OID: %2) -->").arg(attribs[Attributes::Name]).arg(attribs[Attributes::Oid]) << Qt::endl;
+			ts << xml_buf << Qt::endl;
 		}
 
 		xmlparser->loadXMLBuffer(xml_buf);
@@ -1043,7 +1041,7 @@ void DatabaseImportHelper::createDomain(attribs_map &attribs)
 
 	try
 	{
-		constraints = attribs[Attributes::Constraints].split(UtilsNs::DataSeparator, QtCompat::SkipEmptyParts);
+		constraints = attribs[Attributes::Constraints].split(UtilsNs::DataSeparator, Qt::SkipEmptyParts);
 		attribs[Attributes::Constraints].clear();
 
 		for(auto &constr : constraints)
@@ -1111,7 +1109,7 @@ void DatabaseImportHelper::configureBaseFunctionAttribs(attribs_map &attribs)
 		transform_types = getTypes(attribs[Attributes::TransformTypes], false);
 		attribs[Attributes::TransformTypes] = transform_types.join(',');
 
-		config_params = attribs[Attributes::ConfigParams].split(UtilsNs::DataSeparator, QtCompat::SkipEmptyParts);
+		config_params = attribs[Attributes::ConfigParams].split(UtilsNs::DataSeparator, Qt::SkipEmptyParts);
 		attribs[Attributes::ConfigParams] = "";
 
 		for(auto &cfg : config_params)
@@ -1675,7 +1673,7 @@ void DatabaseImportHelper::createType(attribs_map &attribs)
 
 		if(!attribs[Attributes::EnumType].isEmpty())
 		{
-			for(auto &label : attribs[Attributes::Labels].split(UtilsNs::DataSeparator, QtCompat::SkipEmptyParts))
+			for(auto &label : attribs[Attributes::Labels].split(UtilsNs::DataSeparator, Qt::SkipEmptyParts))
 			{
 				aux_attribs[Attributes::Label] = label;
 				attribs[Attributes::Labels] += schparser.getCodeDefinition(Attributes::EnumType, aux_attribs, SchemaParser::XmlDefinition);
@@ -2012,7 +2010,7 @@ void DatabaseImportHelper::createTrigger(attribs_map &attribs)
 		attribs[Attributes::Table]=getDependencyObject(attribs[Attributes::Table], table_type, true, auto_resolve_deps, false);
 		attribs[Attributes::TriggerFunc]=getDependencyObject(attribs[Attributes::TriggerFunc], ObjectType::Function, true, true);
 
-		args = attribs[Attributes::Arguments].split(Catalog::EscapedNullChar, QtCompat::SkipEmptyParts);
+		args = attribs[Attributes::Arguments].split(Catalog::EscapedNullChar, Qt::SkipEmptyParts);
 		attribs[Attributes::Arguments] = args.join(UtilsNs::DataSeparator);
 
 		loadObjectXML(ObjectType::Trigger, attribs);
@@ -2194,7 +2192,7 @@ void DatabaseImportHelper::createConstraint(attribs_map &attribs)
 				exprs=attribs[Attributes::Expressions]
 							.replace(QString("EXCLUDE USING %1 (").arg(attribs[Attributes::IndexType]), "")
 							.split(QRegularExpression("(WITH )(\\+|\\-|\\*|\\/|\\<|\\>|\\=|\\~|\\!|\\@|\\#|\\%|\\^|\\&|\\||\\'|\\?)+((,)?|(\\))?)"),
-										 QtCompat::SkipEmptyParts);
+										 Qt::SkipEmptyParts);
 
 				for(int i=0; i < cols.size(); i++)
 				{
@@ -2888,7 +2886,7 @@ void DatabaseImportHelper::assignSequencesToColumns()
 				catch(Exception &)
 				{
 					// Failing to create the sequence will not abort the entire process, instead, it'll dump a debug message
-					qDebug() << QString("assignSequencesToColumns(): Failed to create the sequence: %1").arg(seq_name) << QtCompat::endl;
+					qDebug() << QString("assignSequencesToColumns(): Failed to create the sequence: %1").arg(seq_name) << Qt::endl;
 				}
 
 				if(seq)

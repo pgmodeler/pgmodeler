@@ -25,7 +25,6 @@
 #include "utilsns.h"
 #include "guiutilsns.h"
 #include "settings/generalconfigwidget.h"
-#include "qtcompat/splitbehaviorcompat.h"
 #include "utils/custommenustyle.h"
 
 const QString DatabaseExplorerWidget::DepNotDefined;
@@ -747,7 +746,7 @@ void DatabaseExplorerWidget::formatTriggerAttribs(attribs_map &attribs)
 									Attributes::TruncEvent });
 
 	attribs[Attributes::TriggerFunc]=getObjectName(ObjectType::Function, attribs[Attributes::TriggerFunc]);
-	attribs[Attributes::Arguments]=attribs[Attributes::Arguments].split(Catalog::EscapedNullChar, QtCompat::SkipEmptyParts).join(UtilsNs::DataSeparator);
+	attribs[Attributes::Arguments]=attribs[Attributes::Arguments].split(Catalog::EscapedNullChar, Qt::SkipEmptyParts).join(UtilsNs::DataSeparator);
 	attribs[Attributes::Columns]=Catalog::parseArrayValues(attribs[Attributes::Columns]).join(UtilsNs::DataSeparator);
 }
 

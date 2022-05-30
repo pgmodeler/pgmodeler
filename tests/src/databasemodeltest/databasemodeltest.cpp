@@ -18,7 +18,6 @@
 
 #include <QtTest/QtTest>
 #include "databasemodel.h"
-#include "qtcompat/qtextstreamcompat.h"
 #include "pgmodelerunittest.h"
 
 class DatabaseModelTest: public QObject, public PgModelerUnitTest {
@@ -51,7 +50,7 @@ void DatabaseModelTest::saveObjectsMetadata()
 	}
 	catch (Exception &e)
 	{
-		out << e.getExceptionsText() << QtCompat::endl;
+		out << e.getExceptionsText() << Qt::endl;
 	}
 
 	QCOMPARE(QFileInfo(output).exists(), true);
@@ -75,7 +74,7 @@ void DatabaseModelTest::loadObjectsMetadata()
 	}
 	catch (Exception &e)
 	{
-		out << e.getExceptionsText() << QtCompat::endl;
+		out << e.getExceptionsText() << Qt::endl;
 		QCOMPARE(false, true);
 	}
 }
@@ -98,7 +97,7 @@ void DatabaseModelTest::saveSplitSQLDefinition()
 	}
 	catch (Exception &e)
 	{
-		out << e.getExceptionsText() << QtCompat::endl;
+		out << e.getExceptionsText() << Qt::endl;
 		QCOMPARE(false, true);
 	}
 }

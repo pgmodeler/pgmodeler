@@ -18,7 +18,6 @@
 
 #include "syntaxhighlighter.h"
 #include "widgets/numberedtexteditor.h"
-#include "qtcompat/qplaintexteditcompat.h"
 #include "textblockinfo.h"
 
 QFont SyntaxHighlighter::default_font = QFont(QString("Source Code Pro"), 12);
@@ -36,7 +35,7 @@ SyntaxHighlighter::SyntaxHighlighter(QPlainTextEdit *parent, bool single_line_mo
 	parent->installEventFilter(this);
 
 	if(use_custom_tab_width)
-		QtCompat::setTabStopDistance(parent, NumberedTextEditor::getTabDistance());
+		parent->setTabStopDistance(NumberedTextEditor::getTabDistance());
 
 	//Adjusting the size of the parent input according to the current font size
 	if(single_line_mode)

@@ -17,8 +17,6 @@
 */
 
 #include "pgmodelercliapp.h"
-#include "qtcompat/qtextstreamcompat.h"
-#include "qtcompat/splitbehaviorcompat.h"
 #include "utilsns.h"
 #include "settings/appearanceconfigwidget.h"
 
@@ -319,7 +317,7 @@ PgModelerCliApp::~PgModelerCliApp()
 
 void PgModelerCliApp::printText(const QString &txt)
 {
-	out << txt << QtCompat::endl;
+	out << txt << Qt::endl;
 }
 
 void PgModelerCliApp::printMessage(const QString &txt)
@@ -974,7 +972,7 @@ void PgModelerCliApp::extractObjectXML()
 		layers = aux_buf.mid(attr_start, attr_end - attr_start);
 		layers.remove(QRegularExpression(attr_expr.arg(Attributes::Layers)));
 		layers.remove('"');
-		model->setLayers(layers.trimmed().split(',', QtCompat::SkipEmptyParts));
+		model->setLayers(layers.trimmed().split(',', Qt::SkipEmptyParts));
 
 		//Active layers
 		attr_start = attr_end;
@@ -984,7 +982,7 @@ void PgModelerCliApp::extractObjectXML()
 		active_layers.remove('"');
 		active_layers.replace(',', ';');
 
-		for(auto &id : active_layers.trimmed().split(';', QtCompat::SkipEmptyParts))
+		for(auto &id : active_layers.trimmed().split(';', Qt::SkipEmptyParts))
 			act_layers_ids.push_back(id.toUInt());
 
 		model->setActiveLayers(act_layers_ids);
@@ -1449,7 +1447,7 @@ void PgModelerCliApp::fixObjectAttributes(QString &obj_xml)
 
 			/* Storing the association between the current role and the ref-roles
 			 * in a map for further processing */
-			for(auto &rl_name : buf.split(',', QtCompat::SkipEmptyParts))
+			for(auto &rl_name : buf.split(',', Qt::SkipEmptyParts))
 				member_roles[rl_name].append(role_name);
 		}
 	}
@@ -1483,7 +1481,7 @@ void PgModelerCliApp::fixObjectAttributes(QString &obj_xml)
 			if(!values.isEmpty())
 			{
 				// Converting each value extract into a separated <enumeration> tag
-				for(auto &label : values.split(sep, QtCompat::SkipEmptyParts))
+				for(auto &label : values.split(sep, Qt::SkipEmptyParts))
 					labels.append(QString("\t<%1 label=\"%2\"/>\n").arg(Attributes::EnumType, label));
 
 				obj_xml.replace(enum_tag_expr, labels);
@@ -1802,7 +1800,7 @@ void PgModelerCliApp::importDatabase(DatabaseModel *model, Connection conn)
 			}
 		}
 		else
-			force_tab_objs = parsed_opts[ForceChildren].split(',', QtCompat::SkipEmptyParts);
+			force_tab_objs = parsed_opts[ForceChildren].split(',', Qt::SkipEmptyParts);
 
 		catalog.setConnection(conn);
 
@@ -1974,8 +1972,8 @@ void PgModelerCliApp::diffModelDatabase()
 					}
 				}
 
-				out << QtCompat::endl;
-				out << tr("** WARNING: You are about to apply the generated diff code to the server. Data can be lost in the process!") << QtCompat::endl;
+				out << Qt::endl;
+				out << tr("** WARNING: You are about to apply the generated diff code to the server. Data can be lost in the process!") << Qt::endl;
 
 				do
 				{

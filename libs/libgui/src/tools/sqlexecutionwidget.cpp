@@ -23,7 +23,6 @@
 #include "guiutilsns.h"
 #include "utils/plaintextitemdelegate.h"
 #include "datamanipulationform.h"
-#include "qtcompat/qplaintexteditcompat.h"
 #include "utilsns.h"
 #include "utils/custommenustyle.h"
 
@@ -40,8 +39,7 @@ SQLExecutionWidget::SQLExecutionWidget(QWidget * parent) : QWidget(parent)
 	cmd_history_txt=GuiUtilsNs::createNumberedTextEditor(cmd_history_parent);
 	cmd_history_txt->setCustomContextMenuEnabled(false);
 
-	QtCompat::setTabStopDistance(cmd_history_txt, sql_cmd_txt->getTabDistance());
-
+	cmd_history_txt->setTabStopDistance(sql_cmd_txt->getTabDistance());
 	cmd_history_txt->setContextMenuPolicy(Qt::CustomContextMenu);
 	cmd_history_txt->setReadOnly(true);
 	cmd_history_txt->installEventFilter(this);

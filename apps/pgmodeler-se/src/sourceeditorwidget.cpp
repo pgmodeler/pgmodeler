@@ -1,7 +1,6 @@
 #include "sourceeditorwidget.h"
 #include "messagebox.h"
 #include "guiutilsns.h"
-#include "qtcompat/splitbehaviorcompat.h"
 #include "utilsns.h"
 
 QPalette SourceEditorWidget::def_editor_pal;
@@ -210,7 +209,7 @@ void SourceEditorWidget::applyIndentation()
 			 * and insert the new lines in the buffer and restart the indentation process */
 			if(line.contains(QChar::LineFeed))
 			{
-				QStringList buf_aux = line.split(QChar::LineFeed, QtCompat::SkipEmptyParts);
+				QStringList buf_aux = line.split(QChar::LineFeed, Qt::SkipEmptyParts);
 				buffer.removeAt(ln_idx);
 
 				for(auto itr = buf_aux.rbegin(); itr != buf_aux.rend(); itr++)

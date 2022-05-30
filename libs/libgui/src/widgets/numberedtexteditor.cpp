@@ -24,8 +24,6 @@
 #include <QFileDialog>
 #include <QTemporaryFile>
 #include "guiutilsns.h"
-#include "qtcompat/qplaintexteditcompat.h"
-#include "qtcompat/qfontmetricscompat.h"
 #include "utilsns.h"
 #include <QMenu>
 #include "utils/custommenustyle.h"
@@ -195,7 +193,7 @@ double NumberedTextEditor::getTabDistance()
 	if(static_cast<int>(tab_width) == 0)
 		return 80;
 
-	return tab_width * QtCompat::horizontalAdvance(default_font, ' ');
+	return tab_width * QFontMetrics(default_font).horizontalAdvance(' ');
 }
 
 void NumberedTextEditor::setSourceEditorApp(const QString &app)
@@ -505,10 +503,10 @@ void NumberedTextEditor::updateLineNumbers()
 	}
 
 	line_number_wgt->drawLineNumbers(first_line, line_count, dy);
-	tab_stop_dist = QtCompat::tabStopDistance(this);
+	tab_stop_dist = this->tabStopDistance();
 
 	if(round(tab_stop_dist) != round(NumberedTextEditor::getTabDistance()))
-		QtCompat::setTabStopDistance(this, NumberedTextEditor::getTabDistance());
+		setTabStopDistance(NumberedTextEditor::getTabDistance());
 }
 
 void NumberedTextEditor::updateLineNumbersSize()
@@ -542,7 +540,7 @@ int NumberedTextEditor::getLineNumbersWidth()
 		++digits;
 	}
 
-	chr_width = QtCompat::horizontalAdvance(this->font(), QChar('9'));
+	chr_width = this->fontMetrics().horizontalAdvance(QChar('9'));
 	return (15 + chr_width * digits);
 }
 

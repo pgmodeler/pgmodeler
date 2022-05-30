@@ -21,7 +21,6 @@
 #include "databaseimportform.h"
 #include "guiutilsns.h"
 #include <QTemporaryFile>
-#include "qtcompat/qlabelcompat.h"
 #include "utilsns.h"
 
 bool ModelDatabaseDiffForm::low_verbosity = false;
@@ -547,9 +546,9 @@ void ModelDatabaseDiffForm::importDatabase(unsigned thread_id)
 											.arg(conn.getConnectionId(true, true)));
 
 		if(thread_id == SrcImportThread)
-			src_import_item=GuiUtilsNs::createOutputTreeItem(output_trw, step_lbl->text(), QtCompat::pixmap(step_ico_lbl), nullptr);
+			src_import_item=GuiUtilsNs::createOutputTreeItem(output_trw, step_lbl->text(), step_ico_lbl->pixmap(Qt::ReturnByValue), nullptr);
 		else
-			import_item=GuiUtilsNs::createOutputTreeItem(output_trw, step_lbl->text(), QtCompat::pixmap(step_ico_lbl), nullptr);
+			import_item=GuiUtilsNs::createOutputTreeItem(output_trw, step_lbl->text(), step_ico_lbl->pixmap(Qt::ReturnByValue), nullptr);
 
 		pgsql_ver=conn.getPgSQLVersion(true);
 		catalog.setConnection(conn);
@@ -630,7 +629,7 @@ void ModelDatabaseDiffForm::diffModels()
 	output_trw->collapseItem(import_item);
 	diff_progress=step_pb->value();
 
-	diff_item=GuiUtilsNs::createOutputTreeItem(output_trw, step_lbl->text(), QtCompat::pixmap(step_ico_lbl), nullptr);
+	diff_item=GuiUtilsNs::createOutputTreeItem(output_trw, step_lbl->text(), step_ico_lbl->pixmap(Qt::ReturnByValue), nullptr);
 
 	diff_helper->setDiffOption(ModelsDiffHelper::OptKeepClusterObjs, keep_cluster_objs_chk->isChecked());
 	diff_helper->setDiffOption(ModelsDiffHelper::OptCascadeMode, cascade_mode_chk->isChecked());
@@ -687,7 +686,7 @@ void ModelDatabaseDiffForm::exportDiff(bool confirm)
 
 		output_trw->collapseItem(diff_item);
 		diff_progress=step_pb->value();
-		export_item=GuiUtilsNs::createOutputTreeItem(output_trw, step_lbl->text(), QtCompat::pixmap(step_ico_lbl), nullptr);
+		export_item=GuiUtilsNs::createOutputTreeItem(output_trw, step_lbl->text(), step_ico_lbl->pixmap(Qt::ReturnByValue), nullptr);
 
 		export_helper->setExportToDBMSParams(sqlcode_txt->toPlainText(), export_conn,
 																				 database_cmb->currentText(), ignore_duplic_chk->isChecked());
@@ -771,7 +770,7 @@ void ModelDatabaseDiffForm::saveDiffToFile()
 	{
 		step_lbl->setText(tr("Saving diff to file <strong>%1</strong>").arg(file_sel->getSelectedFile()));
 		step_ico_lbl->setPixmap(QPixmap(GuiUtilsNs::getIconPath("save")));
-		import_item=GuiUtilsNs::createOutputTreeItem(output_trw, step_lbl->text(), QtCompat::pixmap(step_ico_lbl), nullptr);
+		import_item=GuiUtilsNs::createOutputTreeItem(output_trw, step_lbl->text(), step_ico_lbl->pixmap(Qt::ReturnByValue), nullptr);
 		step_pb->setValue(90);
 		progress_pb->setValue(100);
 
@@ -791,7 +790,7 @@ void ModelDatabaseDiffForm::finishDiff()
 	step_ico_lbl->setPixmap(QPixmap(GuiUtilsNs::getIconPath("info")));
 	progress_ico_lbl->setPixmap(QPixmap(GuiUtilsNs::getIconPath("info")));
 
-	import_item=GuiUtilsNs::createOutputTreeItem(output_trw, step_lbl->text(), QtCompat::pixmap(step_ico_lbl), nullptr);
+	import_item=GuiUtilsNs::createOutputTreeItem(output_trw, step_lbl->text(), step_ico_lbl->pixmap(Qt::ReturnByValue), nullptr);
 	step_pb->setValue(100);
 	progress_pb->setValue(100);
 }
@@ -806,7 +805,7 @@ void ModelDatabaseDiffForm::cancelOperation(bool cancel_by_user)
 		step_ico_lbl->setPixmap(QPixmap(GuiUtilsNs::getIconPath("alert")));
 		progress_ico_lbl->setPixmap(QPixmap(GuiUtilsNs::getIconPath("alert")));
 
-		GuiUtilsNs::createOutputTreeItem(output_trw, step_lbl->text(), QtCompat::pixmap(step_ico_lbl), nullptr);
+		GuiUtilsNs::createOutputTreeItem(output_trw, step_lbl->text(), step_ico_lbl->pixmap(Qt::ReturnByValue), nullptr);
 	}
 
 	if(src_import_helper && src_import_thread->isRunning())
@@ -846,7 +845,7 @@ void ModelDatabaseDiffForm::captureThreadError(Exception e)
 	progress_lbl->setText(tr("Process aborted due to errors!"));
 	progress_ico_lbl->setPixmap(QPixmap(GuiUtilsNs::getIconPath("error")));
 
-	item=GuiUtilsNs::createOutputTreeItem(output_trw, GuiUtilsNs::formatMessage(e.getErrorMessage()), QtCompat::pixmap(progress_ico_lbl), nullptr, false, true);
+	item=GuiUtilsNs::createOutputTreeItem(output_trw, GuiUtilsNs::formatMessage(e.getErrorMessage()), progress_ico_lbl->pixmap(Qt::ReturnByValue), nullptr, false, true);
 	GuiUtilsNs::createExceptionsTree(output_trw, e, item);
 
 	throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);

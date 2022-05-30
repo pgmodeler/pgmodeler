@@ -21,8 +21,6 @@
 #include "defaultlanguages.h"
 #include "operation.h"
 #include <QtDebug>
-#include "qtcompat/splitbehaviorcompat.h"
-#include "qtcompat/qtextstreamcompat.h"
 #include <random>
 #include "utilsns.h"
 
@@ -736,8 +734,8 @@ void DatabaseModel::destroyObjects()
 		/* DEBUG: An exception at this point shouldn't never occur but if
 		 * it is raised, we spit out the error to the stdout in order to try to
 		 * find out the problem! */
-		qDebug() << "** FAIL TO DESTROY ALL OBJECTS **" << QtCompat::endl;
-		qDebug() << e.getExceptionsText().toStdString().c_str() << QtCompat::endl;
+		qDebug() << "** FAIL TO DESTROY ALL OBJECTS **" << Qt::endl;
+		qDebug() << e.getExceptionsText().toStdString().c_str() << Qt::endl;
 	}
 
 	objects = getCreationOrder(SchemaParser::XmlDefinition, true);
@@ -3201,11 +3199,11 @@ void DatabaseModel::loadModel(const QString &filename)
 			 * We need to replace semi-colon by comma in the attribute Layers in order to split the
 			 * string correctly, otherwise, the model will have only one layer no matter the amount of
 			 * layers created preivously (in an older version) */
-			layers = attribs[Attributes::Layers].replace(';',',').split(',', QtCompat::SkipEmptyParts);
+			layers = attribs[Attributes::Layers].replace(';',',').split(',', Qt::SkipEmptyParts);
 			attribs[Attributes::ActiveLayers].replace(';',',');
 
-			layer_name_colors = attribs[Attributes::LayerNameColors].split(',', QtCompat::SkipEmptyParts);
-			layer_rect_colors = attribs[Attributes::LayerRectColors].split(',', QtCompat::SkipEmptyParts);
+			layer_name_colors = attribs[Attributes::LayerNameColors].split(',', Qt::SkipEmptyParts);
+			layer_rect_colors = attribs[Attributes::LayerRectColors].split(',', Qt::SkipEmptyParts);
 
 			is_layer_names_visible = attribs[Attributes::ShowLayerNames] == Attributes::True;
 			is_layer_rects_visible = attribs[Attributes::ShowLayerRects] == Attributes::True;
@@ -3241,7 +3239,7 @@ void DatabaseModel::loadModel(const QString &filename)
 			 * If the "active-layers" is absent we make the default layer always visible */
 			active_layers.clear();
 
-			for(auto &layer_id : attribs[Attributes::ActiveLayers].split(',', QtCompat::SkipEmptyParts))
+			for(auto &layer_id : attribs[Attributes::ActiveLayers].split(',', Qt::SkipEmptyParts))
 			{
 				if(layer_id.toInt() >= layers.size())
 					continue;
@@ -4020,7 +4018,7 @@ void DatabaseModel::setBasicFunctionAttributes(BaseFunction *func)
 					{
 						xmlparser.savePosition();
 						xmlparser.getElementAttributes(attribs_aux);
-						func->addTransformTypes(attribs_aux[Attributes::Names].split(',', QtCompat::SkipEmptyParts));
+						func->addTransformTypes(attribs_aux[Attributes::Names].split(',', Qt::SkipEmptyParts));
 						xmlparser.restorePosition();
 					}
 					else if(xmlparser.getElementName() == Attributes::Configuration)
@@ -5570,7 +5568,7 @@ Index *DatabaseModel::createIndex()
 					else if(elem == Attributes::Columns)
 					{
 						xmlparser.getElementAttributes(attribs);
-						QStringList col_names =  attribs[Attributes::Names].split(',', QtCompat::SkipEmptyParts);
+						QStringList col_names =  attribs[Attributes::Names].split(',', Qt::SkipEmptyParts);
 
 						if(table->getObjectType() == ObjectType::Table)
 						{
@@ -5742,7 +5740,7 @@ Trigger *DatabaseModel::createTrigger()
 		trigger->setTransitionTableName(Trigger::OldTableName, attribs[Attributes::OldTableName]);
 		trigger->setTransitionTableName(Trigger::NewTableName, attribs[Attributes::NewTableName]);
 
-		trigger->addArguments(attribs[Attributes::Arguments].split(UtilsNs::DataSeparator, QtCompat::SkipEmptyParts));
+		trigger->addArguments(attribs[Attributes::Arguments].split(UtilsNs::DataSeparator, Qt::SkipEmptyParts));
 		trigger->setDeferrable(attribs[Attributes::Deferrable]==Attributes::True);
 
 		if(trigger->isDeferrable())
@@ -11299,12 +11297,12 @@ void DatabaseModel::loadObjectsMetadata(const QString &filename, unsigned option
 							{
 								active_layers.clear();
 
-								for(auto &layer_id : attribs[Attributes::ActiveLayers].split(',', QtCompat::SkipEmptyParts))
+								for(auto &layer_id : attribs[Attributes::ActiveLayers].split(',', Qt::SkipEmptyParts))
 									active_layers.append(layer_id.toInt());
 
-								layers = attribs[Attributes::Layers].split(',', QtCompat::SkipEmptyParts);
-								layer_name_colors = attribs[Attributes::LayerNameColors].split(',', QtCompat::SkipEmptyParts);
-								layer_rect_colors = attribs[Attributes::LayerRectColors].split(',', QtCompat::SkipEmptyParts);
+								layers = attribs[Attributes::Layers].split(',', Qt::SkipEmptyParts);
+								layer_name_colors = attribs[Attributes::LayerNameColors].split(',', Qt::SkipEmptyParts);
+								layer_rect_colors = attribs[Attributes::LayerRectColors].split(',', Qt::SkipEmptyParts);
 								is_layer_names_visible = attribs[Attributes::ShowLayerNames] == Attributes::True;
 								is_layer_rects_visible = attribs[Attributes::ShowLayerRects] == Attributes::True;
 							}
@@ -11379,7 +11377,7 @@ void DatabaseModel::loadObjectsMetadata(const QString &filename, unsigned option
 								object->setAlias(attribs[Attributes::Alias]);
 
 							if(load_objs_layers_cfg && BaseGraphicObject::isGraphicObject(obj_type) && !attribs[Attributes::Layers].isEmpty())
-								dynamic_cast<BaseGraphicObject *>(object)->setLayers(attribs[Attributes::Layers].split(',', QtCompat::SkipEmptyParts));
+								dynamic_cast<BaseGraphicObject *>(object)->setLayers(attribs[Attributes::Layers].split(',', Qt::SkipEmptyParts));
 
 							if(xmlparser.accessElement(XmlParser::ChildElement))
 							{
