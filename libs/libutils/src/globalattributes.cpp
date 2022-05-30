@@ -18,6 +18,7 @@
 
 #include "globalattributes.h"
 #include <QDir>
+#include <QRegularExpression>
 
 /** Base version number **/
 const QString GlobalAttributes::PgModelerVersion = QString("1.0.0-alpha1")
@@ -80,6 +81,7 @@ const QString GlobalAttributes::ExampleModel("example.dbm");
 const QString GlobalAttributes::UiStyleConf("ui-style");
 const QString GlobalAttributes::IconsMediumConf("icons-medium");
 const QString GlobalAttributes::IconsSmallConf("icons-small");
+const QString GlobalAttributes::IconsBigConf("icons-big");
 
 const QString GlobalAttributes::FileDialogConf("filedlg");
 

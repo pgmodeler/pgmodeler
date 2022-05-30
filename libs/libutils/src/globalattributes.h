@@ -27,7 +27,6 @@
 #ifndef GLOBAL_ATTRIBUTES_H
 #define GLOBAL_ATTRIBUTES_H
 
-//#include <cstdlib>
 #include <QString>
 #include <QStandardPaths>
 
@@ -130,6 +129,7 @@ class GlobalAttributes {
 		UiStyleConf, //! \brief Configuration file ui style
 		IconsMediumConf, //! \brief Extra configuration file that defines medium icons size
 		IconsSmallConf, //! \brief Extra configuration file that defines small icons size
+		IconsBigConf, //! \brief Extra configuration file that defines big icons size
 
 		FileDialogConf,		//! \brief Default name for the file used to save/restore QFileDialog last geometry
 

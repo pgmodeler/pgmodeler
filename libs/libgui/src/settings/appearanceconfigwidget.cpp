@@ -312,7 +312,14 @@ CREATE TABLE public.table_b (\n \
 	connect(ui_theme_cmb, &QComboBox::currentTextChanged, this, &AppearanceConfigWidget::previewUiSettings);
 	connect(icons_size_cmb, &QComboBox::currentTextChanged, this, &AppearanceConfigWidget::previewUiSettings);
 
-	connect(custom_scale_chk, &QCheckBox::toggled, custom_scale_spb, &QDoubleSpinBox::setEnabled);
+	connect(custom_scale_chk, &QCheckBox::toggled, [&](bool toggled){
+		custom_scale_spb->setEnabled(toggled);
+		setConfigurationChanged(true);
+	});
+
+	connect(custom_scale_spb, &QDoubleSpinBox::valueChanged, [&](){
+		setConfigurationChanged(true);
+	});
 }
 
 AppearanceConfigWidget::~AppearanceConfigWidget()
@@ -328,6 +335,32 @@ AppearanceConfigWidget::~AppearanceConfigWidget()
 map<QString, attribs_map> AppearanceConfigWidget::getConfigurationParams()
 {
 	return config_params;
+}
+
+void AppearanceConfigWidget::applyCustomUiScale()
+{
+	QFile input;
+	input.setFileName(GlobalAttributes::getConfigurationFilePath(GlobalAttributes::AppearanceConf));
+	input.open(QFile::ReadOnly);
+
+	if(input.isOpen())
+	{
+		QString buf = QString(input.readAll()), scale;
+		QRegularExpression regexp = QRegularExpression(QString("(%1)(.*)(=)(\\\")(.)+(\\\")").arg(Attributes::CustomScale));
+		QRegularExpressionMatch match;
+		int idx =	-1;
+
+		match =	regexp.match(buf);
+		idx = match.capturedStart();
+
+		//Extract the value of the custom-scale attribute in the conf file
+		scale = buf.mid(idx, match.capturedLength());
+		scale.remove(Attributes::CustomScale);
+		scale.remove(QChar('"')).remove(QChar('=')).remove(QChar('\n'));
+
+		if(scale.toDouble() > 0)
+			qputenv("QT_SCALE_FACTOR", scale.toUtf8());
+	}
 }
 
 void AppearanceConfigWidget::loadExampleModel()

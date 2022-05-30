@@ -96,7 +96,8 @@ int main(int argc, char **argv)
 		signal(SIGSEGV, startCrashHandler);
 		signal(SIGABRT, startCrashHandler);
 
-		PgModelerApp app(argc,argv);		
+		AppearanceConfigWidget::applyCustomUiScale();
+		PgModelerApp app(argc,argv);
 		int res=0;
 
 		//Loading the application splash screen
