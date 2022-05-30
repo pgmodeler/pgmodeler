@@ -112,7 +112,7 @@ void Application::copyFilesRecursively(const QString &src_path, const QString &d
 			new_dst_path = dst_path + dst_dir.separator() + filename;
 
 			// Ignoring ui style confs
-			if(filename.startsWith("ui-") ||
+			if(filename.startsWith("ui-") || filename.startsWith("icons-") ||
 				 (missing_only && QFileInfo::exists(new_dst_path)))
 				continue;
 

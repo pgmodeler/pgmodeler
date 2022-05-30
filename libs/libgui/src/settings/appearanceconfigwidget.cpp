@@ -575,8 +575,8 @@ void AppearanceConfigWidget::saveConfiguration()
 		attribs[Attributes::SyntaxHlTheme] = hl_theme;
 		attribs[Attributes::IconsSize] = icons_size_cmb->currentData(Qt::UserRole).toString();
 
-		if(custom_scale_chk->isChecked())
-			attribs[Attributes::CustomScale] = QString::number(custom_scale_spb->value(), 'g', 1);
+		attribs[Attributes::CustomScale] = custom_scale_chk->isChecked() ?
+					QString::number(custom_scale_spb->value(), 'g', 1) : "";
 
 		config_params[Attributes::UiTheme] = attribs;
 		attribs.clear();
@@ -975,14 +975,9 @@ void AppearanceConfigWidget::applyDesignCodeTheme()
 
 void AppearanceConfigWidget::applyUiStyleSheet()
 {
-	QString ico_style_conf;
-
-	if(icons_size_cmb->currentIndex() > 0)
-	{
-		ico_style_conf = GlobalAttributes::getTmplConfigurationFilePath("",
-																																		"icons-" + icons_size_cmb->currentData().toString().toLower() +
-																																		GlobalAttributes::ConfigurationExt);
-	}
+	QString ico_style_conf = GlobalAttributes::getTmplConfigurationFilePath("",
+																																					"icons-" + icons_size_cmb->currentData().toString().toLower() +
+																																					GlobalAttributes::ConfigurationExt);
 
 	QFile ui_style(GlobalAttributes::getTmplConfigurationFilePath("",
 																																GlobalAttributes::UiStyleConf +
