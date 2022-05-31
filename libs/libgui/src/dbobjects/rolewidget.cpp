@@ -24,7 +24,7 @@ RoleWidget::RoleWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Ro
 	ObjectsTableWidget *obj_tab=nullptr;
 	QGridLayout *grid=nullptr;
 	QFrame *frame=nullptr;
-	map<QString, vector<QWidget *> > fields_map;
+	std::map<QString, std::vector<QWidget *> > fields_map;
 	unsigned i;
 
 	Ui_RoleWidget::setupUi(this);

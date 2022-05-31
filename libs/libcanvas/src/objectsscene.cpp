@@ -80,7 +80,7 @@ ObjectsScene::~ObjectsScene()
 {
 	QGraphicsItemGroup *item=nullptr;
 	QList<QGraphicsItem *> items;
-	vector<ObjectType> obj_types={ ObjectType::Relationship, ObjectType::Textbox, ObjectType::View,
+	std::vector<ObjectType> obj_types={ ObjectType::Relationship, ObjectType::Textbox, ObjectType::View,
 																 ObjectType::Table, ObjectType::ForeignTable, ObjectType::Schema };
 
 	this->removeItem(selection_rect);
@@ -1399,9 +1399,9 @@ void ObjectsScene::finishObjectsMove(const QPointF &pnt_end)
 	double x1,y1,x2,y2, dx, dy;
 	QRectF rect;
 	SchemaView *sch_view=nullptr;
-	vector<QPointF> points;
-	vector<QPointF>::iterator itr;
-	vector<BaseObject *> rels, base_rels;
+	std::vector<QPointF> points;
+	std::vector<QPointF>::iterator itr;
+	std::vector<BaseObject *> rels, base_rels;
 	QSet<Schema *> schemas;
 	BaseRelationship *base_rel=nullptr;
 	RelationshipView *rel=nullptr;
@@ -1577,8 +1577,8 @@ void ObjectsScene::alignObjectsToGrid()
 	RelationshipView *rel=nullptr;
 	BaseTableView *tab=nullptr;
 	TextboxView *lab=nullptr;
-	vector<QPointF> points;
-	vector<Schema *> schemas;
+	std::vector<QPointF> points;
+	std::vector<Schema *> schemas;
 	unsigned i, count, i1, count1;
 
 	count=items.size();
@@ -1651,9 +1651,9 @@ void ObjectsScene::clearSelection()
 	QGraphicsScene::clearSelection();
 }
 
-/* vector<QRectF> ObjectsScene::getPagesForPrinting(const QSizeF &paper_size, const QSizeF &margin, unsigned &h_page_cnt, unsigned &v_page_cnt)
+/* std::vector<QRectF> ObjectsScene::getPagesForPrinting(const QSizeF &paper_size, const QSizeF &margin, unsigned &h_page_cnt, unsigned &v_page_cnt)
 {
-	vector<QRectF> pages;
+	std::vector<QRectF> pages;
 	QRectF page_rect, max_rect;
 	double width, height, page_width, page_height;
 	unsigned h_page=0, v_page=0, start_h=99999, start_v=99999;
@@ -1705,9 +1705,9 @@ void ObjectsScene::clearSelection()
 	return pages;
 } */
 
-vector<QRectF> ObjectsScene::getPagesForPrinting(const QPageLayout &page_lt, unsigned &h_page_cnt, unsigned &v_page_cnt)
+std::vector<QRectF> ObjectsScene::getPagesForPrinting(const QPageLayout &page_lt, unsigned &h_page_cnt, unsigned &v_page_cnt)
 {
-	vector<QRectF> pages;
+	std::vector<QRectF> pages;
 	QRectF page_rect, max_rect;
 	double width = 0, height = 0, page_width = 0, page_height = 0;
 	unsigned h_page=0, v_page=0, start_h=99999, start_v=99999;
@@ -1759,7 +1759,7 @@ vector<QRectF> ObjectsScene::getPagesForPrinting(const QPageLayout &page_lt, uns
 	return pages;
 }
 
-vector<QRectF> ObjectsScene::getPagesForPrinting(unsigned &h_page_cnt, unsigned &v_page_cnt)
+std::vector<QRectF> ObjectsScene::getPagesForPrinting(unsigned &h_page_cnt, unsigned &v_page_cnt)
 {
 	return getPagesForPrinting(page_layout, h_page_cnt, v_page_cnt);
 }

@@ -126,7 +126,7 @@ class BaseObjectWidget: public QWidget, public Ui::BaseObjectWidget {
 		//! \brief Disable the object's refereces SQL code
 		void disableReferencesSQL(BaseObject *object);
 		
-		void configureTabOrder(vector<QWidget *> widgets={});
+		void configureTabOrder(std::vector<QWidget *> widgets={});
 
 		BaseObject *getHandledObject();
 			
@@ -147,12 +147,12 @@ class BaseObjectWidget: public QWidget, public Ui::BaseObjectWidget {
 			PostgreSQL versions. On the first map (fields) the key is the PostgreSQL versions and
 			the values are the reference to the widget. The second map is used to specify the values
 			of widgets specific for each version. */
-		static QFrame *generateVersionWarningFrame(map<QString, vector<QWidget *> > &fields, map<QWidget *, vector<QString> > *values=nullptr);
+		static QFrame *generateVersionWarningFrame(std::map<QString, std::vector<QWidget *> > &fields, std::map<QWidget *, std::vector<QString> > *values=nullptr);
 		
 		//! \brief Generates a informative frame containing the specified message
 		static QFrame *generateInformationFrame(const QString &msg);
 
-		static void highlightVersionSpecificFields(map<QString, vector<QWidget *> > &fields, map<QWidget *, vector<QString> > *values=nullptr);
+		static void highlightVersionSpecificFields(std::map<QString, std::vector<QWidget *> > &fields, std::map<QWidget *, std::vector<QString> > *values=nullptr);
 		
 		//! \brief Highlights the specified widget as a required field
 		static void setRequiredField(QWidget *widget);

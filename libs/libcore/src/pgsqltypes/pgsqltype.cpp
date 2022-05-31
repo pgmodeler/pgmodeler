@@ -20,7 +20,7 @@
 #include "schemaparser.h"
 #include "attributes.h"
 
-vector<UserTypeConfig> PgSqlType::user_types;
+std::vector<UserTypeConfig> PgSqlType::user_types;
 
 template<>
 QStringList PgSqlType::TemplateType<PgSqlType>::type_names =
@@ -544,7 +544,7 @@ void PgSqlType::removeUserType(const QString &type_name, void *ptype)
 	if(PgSqlType::user_types.size() > 0 &&
 			!type_name.isEmpty() && ptype)
 	{
-		vector<UserTypeConfig>::iterator itr, itr_end;
+		std::vector<UserTypeConfig>::iterator itr, itr_end;
 
 		itr=PgSqlType::user_types.begin();
 		itr_end=PgSqlType::user_types.end();
@@ -569,7 +569,7 @@ void PgSqlType::renameUserType(const QString &type_name, void *ptype,const QStri
 	if(PgSqlType::user_types.size() > 0 &&
 			!type_name.isEmpty() && ptype && type_name!=new_name)
 	{
-		vector<UserTypeConfig>::iterator itr, itr_end;
+		std::vector<UserTypeConfig>::iterator itr, itr_end;
 
 		itr=PgSqlType::user_types.begin();
 		itr_end=PgSqlType::user_types.end();
@@ -590,7 +590,7 @@ void PgSqlType::removeUserTypes(void *pmodel)
 {
 	if(pmodel)
 	{
-		vector<UserTypeConfig>::iterator itr;
+		std::vector<UserTypeConfig>::iterator itr;
 		unsigned idx=0;
 
 		itr=user_types.begin();
@@ -624,7 +624,7 @@ unsigned PgSqlType::getUserTypeIndex(const QString &type_name, void *ptype, void
 {
 	if(user_types.size() > 0 && (!type_name.isEmpty() || ptype))
 	{
-		vector<UserTypeConfig>::iterator itr, itr_end;
+		std::vector<UserTypeConfig>::iterator itr, itr_end;
 		int idx=0;
 
 		itr=user_types.begin();
@@ -680,7 +680,7 @@ void PgSqlType::getUserTypes(QStringList &type_list, void *pmodel, unsigned inc_
 	}
 }
 
-void PgSqlType::getUserTypes(vector<void *> &ptypes, void *pmodel, unsigned inc_usr_types)
+void PgSqlType::getUserTypes(std::vector<void *> &ptypes, void *pmodel, unsigned inc_usr_types)
 {
 	unsigned idx, total;
 
@@ -901,7 +901,7 @@ bool PgSqlType::canCastTo(PgSqlType type)
 bool PgSqlType::isEquivalentTo(PgSqlType type)
 {
 	unsigned this_idx=0, type_idx=0;
-	static vector<QStringList> types={{QString("int2"),QString("smallint")},
+	static std::vector<QStringList> types={{QString("int2"),QString("smallint")},
 																		{QString("int4"),QString("integer")},
 																		{QString("int8"),QString("bigint")},
 																		{QString("decimal"),QString("numeric")},

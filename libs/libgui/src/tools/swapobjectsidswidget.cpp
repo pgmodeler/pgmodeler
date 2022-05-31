@@ -8,7 +8,7 @@ SwapObjectsIdsWidget::SwapObjectsIdsWidget(QWidget *parent, Qt::WindowFlags f) :
 	try
 	{
 		QGridLayout *swap_objs_grid=new QGridLayout(this);
-		vector<ObjectType> types=BaseObject::getObjectTypes(true, {ObjectType::Permission,
+		std::vector<ObjectType> types=BaseObject::getObjectTypes(true, {ObjectType::Permission,
 																															 ObjectType::Textbox,
 																															 ObjectType::Column,
 																															 ObjectType::Constraint });
@@ -115,8 +115,8 @@ void SwapObjectsIdsWidget::fillCreationOrderGrid()
 	if(!model)
 		return;
 
-	map<unsigned, BaseObject *> creation_order = model->getCreationOrder(SchemaParser::SqlDefinition);
-	vector<BaseObject *> objects;
+	std::map<unsigned, BaseObject *> creation_order = model->getCreationOrder(SchemaParser::SqlDefinition);
+	std::vector<BaseObject *> objects;
 
 	//Using an stl function to extract all the values (objects) from the map and put them into a list
 	std::for_each(creation_order.begin(), creation_order.end(), [&](const std::pair<unsigned, BaseObject *> &itr) {
@@ -249,8 +249,8 @@ void SwapObjectsIdsWidget::swapObjectsIds()
 		//Special id swap for relationship
 		if(src_obj->getObjectType()==ObjectType::Relationship)
 		{
-			vector<BaseObject *>::iterator itr, itr1;
-			vector<BaseObject *> *list=model->getObjectList(ObjectType::Relationship);
+			std::vector<BaseObject *>::iterator itr, itr1;
+			std::vector<BaseObject *> *list=model->getObjectList(ObjectType::Relationship);
 
 			//Find the relationships in the list and swap the memory position too
 			itr=std::find(list->begin(), list->end(), src_obj);

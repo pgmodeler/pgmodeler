@@ -113,7 +113,7 @@ void ModelExportHelper::exportToPNG(ObjectsScene *scene, const QString &filename
 		QGraphicsView *view=nullptr;
 		QRect retv;
 		QPolygon pol;
-		vector<QRectF> pages;
+		std::vector<QRectF> pages;
 		unsigned v_cnt=0, h_cnt=0, page_idx=1;
 		QString tmpl_filename, file;
 
@@ -172,7 +172,7 @@ void ModelExportHelper::exportToPNG(ObjectsScene *scene, const QString &filename
 		view->scale(zoom, zoom);
 
 		QPainter painter;
-		vector<QRectF>::iterator itr=pages.begin(), itr_end=pages.end();
+		std::vector<QRectF>::iterator itr=pages.begin(), itr_end=pages.end();
 
 		while(itr!=itr_end && !export_canceled)
 		{
@@ -627,7 +627,7 @@ void ModelExportHelper::exportToDataDict(DatabaseModel *db_model, const QString 
 
 void ModelExportHelper::saveGenAtlerCmdsStatus(DatabaseModel *db_model)
 {
-	vector<BaseObject *> objects;
+	std::vector<BaseObject *> objects;
 	PhysicalTable *tab=nullptr;
 	Relationship *rel=nullptr;
 
@@ -728,7 +728,7 @@ void ModelExportHelper::generateTempObjectNames(DatabaseModel *db_model)
 	QTextStream stream(&tmp_name);
 	QDateTime dt=QDateTime::currentDateTime();
 	QCryptographicHash hash(QCryptographicHash::Md5);
-	map<ObjectType, QString> obj_suffixes={ { ObjectType::Database, QString("db_") },
+	std::map<ObjectType, QString> obj_suffixes={ { ObjectType::Database, QString("db_") },
 											{ ObjectType::Role, QString("rl_")},
 											{ ObjectType::Tablespace, QString("tb_")} };
 
@@ -808,7 +808,7 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
 	QString sql_buf=buffer, sql_cmd, aux_cmd, lin, msg,
 			obj_name, obj_tp_name, tab_name, orig_conn_db_name,
 			alter_tab=QString("ALTER TABLE");
-	vector<QString> db_sql_cmds;
+	std::vector<QString> db_sql_cmds;
 	QTextStream ts;
 	ObjectType obj_type=ObjectType::BaseObject;
 	bool ddl_tk_found=false, is_create=false, is_drop=false;
@@ -824,7 +824,7 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
 			reg_aux;
 	QRegularExpressionMatch match;
 
-	vector<ObjectType> obj_types={ ObjectType::Role, ObjectType::Function, ObjectType::Trigger, ObjectType::Index,
+	std::vector<ObjectType> obj_types={ ObjectType::Role, ObjectType::Function, ObjectType::Trigger, ObjectType::Index,
 																 ObjectType::Policy, ObjectType::Rule,	ObjectType::Table, ObjectType::View, ObjectType::Domain,
 																 ObjectType::Schema,	ObjectType::Aggregate, ObjectType::OpFamily,
 																 ObjectType::OpClass, ObjectType::Operator,  ObjectType::Sequence,

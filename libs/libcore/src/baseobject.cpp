@@ -989,15 +989,15 @@ void BaseObject::updateObjectId(BaseObject *obj)
 		obj->object_id=++global_id;
 }
 
-vector<ObjectType> BaseObject::getObjectTypes(bool inc_table_objs, vector<ObjectType> exclude_types)
+std::vector<ObjectType> BaseObject::getObjectTypes(bool inc_table_objs, std::vector<ObjectType> exclude_types)
 {
-	vector<ObjectType> vet_types={ ObjectType::BaseRelationship, ObjectType::Aggregate, ObjectType::Cast, ObjectType::Collation,
+	std::vector<ObjectType> vet_types={ ObjectType::BaseRelationship, ObjectType::Aggregate, ObjectType::Cast, ObjectType::Collation,
 									 ObjectType::Conversion, ObjectType::Database, ObjectType::Domain, ObjectType::Extension, ObjectType::EventTrigger,
 									 ObjectType::ForeignDataWrapper, ObjectType::ForeignServer, ObjectType::Function, ObjectType::Procedure, ObjectType::GenericSql,
 									 ObjectType::Language, ObjectType::OpClass, ObjectType::Operator, ObjectType::OpFamily, ObjectType::Permission,
 									 ObjectType::Relationship, ObjectType::Role, ObjectType::Schema, ObjectType::Sequence, ObjectType::Table, ObjectType::Tablespace,
 									 ObjectType::Tag, ObjectType::Textbox, ObjectType::Type, ObjectType::UserMapping, ObjectType::View, ObjectType::ForeignTable, ObjectType::Transform };
-	vector<ObjectType>::iterator itr;
+	std::vector<ObjectType>::iterator itr;
 
 	if(inc_table_objs)
 	{
@@ -1019,36 +1019,36 @@ vector<ObjectType> BaseObject::getObjectTypes(bool inc_table_objs, vector<Object
 	return vet_types;
 }
 
-vector<ObjectType> BaseObject::getChildObjectTypes(ObjectType obj_type)
+std::vector<ObjectType> BaseObject::getChildObjectTypes(ObjectType obj_type)
 {
 	if(obj_type==ObjectType::Database)
-		return vector<ObjectType>()={ ObjectType::Cast, ObjectType::Role, ObjectType::Language,
+		return std::vector<ObjectType>()={ ObjectType::Cast, ObjectType::Role, ObjectType::Language,
 																	ObjectType::Tablespace, ObjectType::Schema, ObjectType::Extension,
 																	ObjectType::EventTrigger, ObjectType::ForeignDataWrapper, ObjectType::ForeignServer,
 																	ObjectType::UserMapping, ObjectType::Transform };
 
 	if(obj_type==ObjectType::Schema)
-		return vector<ObjectType>()={	ObjectType::Aggregate, ObjectType::Conversion, ObjectType::Collation,
+		return std::vector<ObjectType>()={	ObjectType::Aggregate, ObjectType::Conversion, ObjectType::Collation,
 																	ObjectType::Domain, ObjectType::ForeignTable, ObjectType::Function, ObjectType::OpClass,
 																	ObjectType::Operator, ObjectType::OpFamily, ObjectType::Procedure, ObjectType::Sequence,
 																	ObjectType::Type, ObjectType::Table, ObjectType::View };
 
 	if(obj_type==ObjectType::Table)
-		return vector<ObjectType>()={	ObjectType::Column, ObjectType::Constraint, ObjectType::Rule,
+		return std::vector<ObjectType>()={	ObjectType::Column, ObjectType::Constraint, ObjectType::Rule,
 																	ObjectType::Trigger, ObjectType::Index, ObjectType::Policy };
 
 	if(obj_type==ObjectType::ForeignTable)
-		return vector<ObjectType>()={	ObjectType::Column, ObjectType::Constraint, ObjectType::Trigger };
+		return std::vector<ObjectType>()={	ObjectType::Column, ObjectType::Constraint, ObjectType::Trigger };
 
 	if(obj_type==ObjectType::View)
-		return vector<ObjectType>()={ObjectType::Rule, ObjectType::Trigger, ObjectType::Index};
+		return std::vector<ObjectType>()={ObjectType::Rule, ObjectType::Trigger, ObjectType::Index};
 
-	return vector<ObjectType>()={};
+	return std::vector<ObjectType>()={};
 }
 
 bool BaseObject::isChildObjectType(ObjectType parent_type, ObjectType child_type)
 {
-	vector<ObjectType> types = getChildObjectTypes(parent_type);
+	std::vector<ObjectType> types = getChildObjectTypes(parent_type);
 	return std::find(types.begin(), types.end(), child_type) != types.end();
 }
 

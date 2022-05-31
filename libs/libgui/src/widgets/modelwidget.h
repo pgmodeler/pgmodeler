@@ -77,10 +77,10 @@ class ModelWidget: public QWidget {
 		static ModelWidget *src_model;
 
 		//! \brief Copied object on the source model
-		static vector<BaseObject *> copied_objects;
+		static std::vector<BaseObject *> copied_objects;
 
 		//! \brief Stores the cutted object on source model (only when executing cut command)
-		static vector<BaseObject *> cutted_objects;
+		static std::vector<BaseObject *> cutted_objects;
 
 		//! \brief Frame that indicates if the model is protected
 		QFrame *protected_model_frm;
@@ -143,7 +143,7 @@ class ModelWidget: public QWidget {
 		stacking_menu;
 
 		//! \brief Stores the selected object on the scene
-		vector<BaseObject *> selected_objects;
+		std::vector<BaseObject *> selected_objects;
 
 		//! \brief Type of the object to be inserted on the model
 		ObjectType new_obj_type;
@@ -210,7 +210,7 @@ class ModelWidget: public QWidget {
 		/*! \brief Arrange tables starting from a specified root in a hierarchical way
 		where for a certain table its child (or related) tables are places aside from left to right and top to bottom.
 		This method returns the bounding rect of the items after the rearrangement */
-		QRectF rearrangeTablesHierarchically(BaseTableView *root, vector<BaseObject *> &evaluated_tabs);
+		QRectF rearrangeTablesHierarchically(BaseTableView *root, std::vector<BaseObject *> &evaluated_tabs);
 
 		/*! \brief Arrange tables inside the provided schema randomly (scattered). An start point should
 		 * be provided. The method will avoid to put two or more tables in the same position causing
@@ -302,7 +302,7 @@ class ModelWidget: public QWidget {
 		QWidgetAction *wgt_action_layers;
 
 		//! \brief Actions used to create new objects on the model
-		map<ObjectType, QAction *> actions_new_objects;
+		std::map<ObjectType, QAction *> actions_new_objects;
 
 		//! \brief Stores the relationship types menu
 		QMenu *rels_menu;
@@ -327,7 +327,7 @@ class ModelWidget: public QWidget {
 		 a object spacing */
 		void rearrangeTablesInGrid(Schema *schema, unsigned tabs_per_row, QPointF origin, double obj_spacing);
 
-		void fadeObjects(const vector<BaseObject *> &objects, bool fade_in);
+		void fadeObjects(const std::vector<BaseObject *> &objects, bool fade_in);
 
 		void setAllCollapseMode(CollapseMode mode);
 
@@ -439,7 +439,7 @@ class ModelWidget: public QWidget {
 		void configurePopupMenu(BaseObject *object);
 
 		//! \brief Configures the popup menu according the the selected objects list
-		void configurePopupMenu(const vector<BaseObject *> &objects=vector<BaseObject *>());
+		void configurePopupMenu(const std::vector<BaseObject *> &objects=std::vector<BaseObject *>());
 
 		//! \brief Shows the configured popup menu
 		void showObjectMenu();

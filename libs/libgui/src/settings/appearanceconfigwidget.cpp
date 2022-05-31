@@ -21,9 +21,9 @@
 #include "widgets/objectstablewidget.h"
 #include "utils/custommenustyle.h"
 
-map<QString, attribs_map> AppearanceConfigWidget::config_params;
+std::map<QString, attribs_map> AppearanceConfigWidget::config_params;
 
-map<QPalette::ColorRole, QStringList> AppearanceConfigWidget::system_ui_colors = {
+std::map<QPalette::ColorRole, QStringList> AppearanceConfigWidget::system_ui_colors = {
 	{ QPalette::WindowText, {} },
 	{ QPalette::Button, {} },
 	{ QPalette::Light, {} },
@@ -46,7 +46,7 @@ map<QPalette::ColorRole, QStringList> AppearanceConfigWidget::system_ui_colors =
 	{ QPalette::PlaceholderText, {} }
 };
 
-map<QPalette::ColorRole, QStringList> AppearanceConfigWidget::dark_ui_colors = {
+std::map<QPalette::ColorRole, QStringList> AppearanceConfigWidget::dark_ui_colors = {
 	{ QPalette::WindowText, {"#eff0f1", "#eff0f1", "#626c76"} },
 	{ QPalette::Button, {"#31363b", "#31363b", "#31363b"} },
 	{ QPalette::Light, {"#181b1d", "#181b1d", "#181b1d"} },
@@ -69,7 +69,7 @@ map<QPalette::ColorRole, QStringList> AppearanceConfigWidget::dark_ui_colors = {
 	{ QPalette::PlaceholderText, {"#2e2f30", "#2e2f30", "#2e2f30"} }
 };
 
-map<QPalette::ColorRole, QStringList> AppearanceConfigWidget::light_ui_colors = {
+std::map<QPalette::ColorRole, QStringList> AppearanceConfigWidget::light_ui_colors = {
 	{ QPalette::WindowText, {"#232627", "#232627", "#777878"} },
 	{ QPalette::Button, {"#eff0f1", "#eff0f1", "#eff0f1"} },
 	{ QPalette::Light, {"#ffffff", "#ffffff", "#ffffff"} },
@@ -182,7 +182,7 @@ AppearanceConfigWidget::AppearanceConfigWidget(QWidget * parent) : BaseConfigWid
 														17, 19, 21, 23, 25, 28, 29, 30,
 														34, 35, 36, 37, 39, 43, 45, 47, 49,
 														50, 52, 54, 56, 57, 60, 61, 62, 63, 64 };
-	vector<int> conf_obj_ids(obj_conf_ids_vect, obj_conf_ids_vect + sizeof(obj_conf_ids_vect) / sizeof(int));
+	std::vector<int> conf_obj_ids(obj_conf_ids_vect, obj_conf_ids_vect + sizeof(obj_conf_ids_vect) / sizeof(int));
 
 	conf_items.resize(count);
 	for(i=0; i < count; i++)
@@ -332,7 +332,7 @@ AppearanceConfigWidget::~AppearanceConfigWidget()
 	delete model;
 }
 
-map<QString, attribs_map> AppearanceConfigWidget::getConfigurationParams()
+std::map<QString, attribs_map> AppearanceConfigWidget::getConfigurationParams()
 {
 	return config_params;
 }
@@ -875,20 +875,20 @@ void AppearanceConfigWidget::previewCanvasColors()
 
 void AppearanceConfigWidget::applyUiTheme()
 {
-	map<QString, map<QPalette::ColorRole, QStringList> *> color_maps = {
+	std::map<QString, std::map<QPalette::ColorRole, QStringList> *> color_maps = {
 		{ { Attributes::System }, { &system_ui_colors } },
 		{ { Attributes::Dark }, { &dark_ui_colors } },
 		{ { Attributes::Light }, { &light_ui_colors } }
 	};
 
-	map<QString, QStringList *> item_color_lists = {
+	std::map<QString, QStringList *> item_color_lists = {
 		{ { Attributes::System }, { &light_tab_item_colors } },
 		{ { Attributes::Dark }, { &dark_tab_item_colors } },
 		{ { Attributes::Light }, { &light_tab_item_colors } }
 	};
 
 	QString ui_theme = ui_theme_cmb->currentData(Qt::UserRole).toString();
-	map<QPalette::ColorRole, QStringList> *color_map = color_maps[ui_theme];
+	std::map<QPalette::ColorRole, QStringList> *color_map = color_maps[ui_theme];
 	QStringList *item_colors = item_color_lists[ui_theme];
 	QPalette pal;
 

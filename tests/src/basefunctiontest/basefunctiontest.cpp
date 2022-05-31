@@ -47,7 +47,7 @@ class BaseFunctionTest: public QObject, public PgModelerUnitTest {
 void BaseFunctionTest::doesntAddDuplicatedTransformType()
 {
 	Function func;
-	vector<PgSqlType> types, types_aux;
+	std::vector<PgSqlType> types, types_aux;
 
 	func.addTransformType(PgSqlType("integer"));
 	func.addTransformType(PgSqlType("text"));

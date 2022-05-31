@@ -23,8 +23,8 @@ ConstraintWidget::ConstraintWidget(QWidget *parent): BaseObjectWidget(parent, Ob
 	try
 	{
 		QStringList list;
-		map<QString, vector<QWidget *> > fields_map;
-		map<QWidget *, vector<QString> > values_map;
+		std::map<QString, std::vector<QWidget *> > fields_map;
+		std::map<QWidget *, std::vector<QString> > values_map;
 		QGridLayout *grid=nullptr;
 
 		Ui_ConstraintWidget::setupUi(this);
@@ -152,7 +152,7 @@ void ConstraintWidget::selectConstraintType()
 void ConstraintWidget::setAttributes(DatabaseModel *model, OperationList *op_list,  BaseObject *parent_obj, Constraint *constr)
 {
 	ObjectType obj_type;
-	vector<ExcludeElement> excl_elems;
+	std::vector<ExcludeElement> excl_elems;
 
 	if(!parent_obj)
 		throw Exception(ErrorCode::AsgNotAllocattedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -205,7 +205,7 @@ void ConstraintWidget::applyConfiguration()
 	try
 	{
 		Constraint *constr = nullptr;
-		vector<ExcludeElement> excl_elems;
+		std::vector<ExcludeElement> excl_elems;
 
 		startConfiguration<Constraint>();
 

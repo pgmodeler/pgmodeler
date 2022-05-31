@@ -24,7 +24,7 @@ const QRegularExpression GenericSQLWidget::AttrDelimRegexp = QRegularExpression(
 
 GenericSQLWidget::GenericSQLWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::GenericSql)
 {
-	vector<ObjectType> types;
+	std::vector<ObjectType> types;
 
 	Ui_GenericSQLWidget::setupUi(this);
 	configureFormLayout(genericsql_grid, ObjectType::GenericSql);

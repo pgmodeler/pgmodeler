@@ -36,7 +36,7 @@ class ObjectRenameWidget: public QDialog, public Ui::ObjectRenameWidget {
 		Q_OBJECT
 
 		//! \brief Objects to be renamed
-		vector<BaseObject *> objects;
+		std::vector<BaseObject *> objects;
 
 		//! \brief Operation list used to register the modification over object
 		OperationList *op_list;
@@ -48,7 +48,7 @@ class ObjectRenameWidget: public QDialog, public Ui::ObjectRenameWidget {
 
 	public:
 		ObjectRenameWidget(QWidget *parent);
-		void setAttributes(vector<BaseObject *> objs, DatabaseModel *model, OperationList *op_list);
+		void setAttributes(std::vector<BaseObject *> objs, DatabaseModel *model, OperationList *op_list);
 
 	public slots:
 		int exec();

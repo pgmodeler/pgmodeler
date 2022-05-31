@@ -36,10 +36,10 @@ class PluginsConfigWidget: public BaseConfigWidget, public Ui::PluginsConfigWidg
 		Q_OBJECT
 
 		//! \brief Loaded plugins
-		vector<PgModelerPlugin *> plugins;
+		std::vector<PgModelerPlugin *> plugins;
 
 		//! \brief Stores the actions assigned for each plugin
-		vector<QAction *> plugins_actions;
+		std::vector<QAction *> plugins_actions;
 
 		//! \brief Table used to show the loaded plugins
 		ObjectsTableWidget *plugins_tab;

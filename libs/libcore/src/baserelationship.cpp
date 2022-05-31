@@ -482,7 +482,7 @@ QString BaseRelationship::getCodeDefinition(unsigned def_type)
 	}
 }
 
-void BaseRelationship::setPoints(const vector<QPointF> &points)
+void BaseRelationship::setPoints(const std::vector<QPointF> &points)
 {
 	this->setCodeInvalidated(true);
 	this->points=points;
@@ -521,7 +521,7 @@ void BaseRelationship::resetLabelsDistance()
 		this->setLabelDistance(i, QPointF(DNaN,DNaN));
 }
 
-vector<QPointF> BaseRelationship::getPoints()
+std::vector<QPointF> BaseRelationship::getPoints()
 {
 	return points;
 }

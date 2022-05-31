@@ -40,7 +40,7 @@ class SQLExecutionWidget: public QWidget, public Ui::SQLExecutionWidget {
 	private:
 		Q_OBJECT
 
-		static map<QString, QString> cmd_history;
+		static std::map<QString, QString> cmd_history;
 
 		static int cmd_history_max_len;
 

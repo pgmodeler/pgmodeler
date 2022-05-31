@@ -41,7 +41,7 @@ class ObjectSelectorWidget: public QWidget, public Ui::ObjectSelectorWidget {
 		BaseObject *selected_obj;
 
 		//! \brief Object types that the selector is able to pick
-		vector<ObjectType> sel_obj_types;
+		std::vector<ObjectType> sel_obj_types;
 
 		//! \brief Stores the database model which the selector must search the object
 		DatabaseModel *model;
@@ -53,7 +53,7 @@ class ObjectSelectorWidget: public QWidget, public Ui::ObjectSelectorWidget {
 
 	public:
 		ObjectSelectorWidget(ObjectType sel_obj_type, QWidget * parent = nullptr);
-		ObjectSelectorWidget(vector<ObjectType> sel_obj_types, QWidget * parent = nullptr);
+		ObjectSelectorWidget(std::vector<ObjectType> sel_obj_types, QWidget * parent = nullptr);
 		virtual ~ObjectSelectorWidget();
 
 		//! \brief Enables the creation of new objects from withing the object selector dialog

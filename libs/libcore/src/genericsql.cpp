@@ -37,7 +37,7 @@ QString GenericSQL::getDefinition()
 	return definition;
 }
 
-vector<GenericSQL::ObjectRefConfig> GenericSQL::getObjectsReferences()
+std::vector<GenericSQL::ObjectRefConfig> GenericSQL::getObjectsReferences()
 {
 	return objects_refs;
 }
@@ -45,7 +45,7 @@ vector<GenericSQL::ObjectRefConfig> GenericSQL::getObjectsReferences()
 int GenericSQL::getObjectRefNameIndex(const QString &ref_name)
 {
 	int idx = -1;
-	vector<ObjectRefConfig>::iterator itr = objects_refs.begin(),
+	std::vector<ObjectRefConfig>::iterator itr = objects_refs.begin(),
 			itr_end = objects_refs.end();
 
 	if(ref_name.isEmpty())
@@ -69,7 +69,7 @@ bool GenericSQL::isObjectReferenced(BaseObject *object)
 {
 	bool found = false;
 	BaseObject *ref_obj = nullptr;
-	vector<ObjectRefConfig>::iterator itr = objects_refs.begin(),
+	std::vector<ObjectRefConfig>::iterator itr = objects_refs.begin(),
 			itr_end = objects_refs.end();
 
 	if(!object)
@@ -92,7 +92,7 @@ bool GenericSQL::isObjectReferenced(BaseObject *object)
 bool GenericSQL::isReferRelationshipAddedObject()
 {
 	bool found = false;
-	vector<ObjectRefConfig>::iterator itr = objects_refs.begin(),
+	std::vector<ObjectRefConfig>::iterator itr = objects_refs.begin(),
 			itr_end = objects_refs.end();
 	TableObject *tab_obj = nullptr;
 
@@ -106,9 +106,9 @@ bool GenericSQL::isReferRelationshipAddedObject()
 	return found;
 }
 
-vector<BaseObject *> GenericSQL::getReferencedObjects()
+std::vector<BaseObject *> GenericSQL::getReferencedObjects()
 {
-	vector<BaseObject *> ref_objs;
+	std::vector<BaseObject *> ref_objs;
 
 	for(auto &ref : objects_refs)
 		ref_objs.push_back(ref.object);
@@ -154,7 +154,7 @@ void GenericSQL::updateObjectReference(const QString &ref_name, BaseObject *obje
 	try
 	{
 		ObjectRefConfig ref = ObjectRefConfig(new_ref_name, object, use_signature, format_name);
-		vector<ObjectRefConfig>::iterator itr = objects_refs.begin() + idx;
+		std::vector<ObjectRefConfig>::iterator itr = objects_refs.begin() + idx;
 		int idx_aux = getObjectRefNameIndex(new_ref_name);
 
 		if(idx_aux >= 0 && idx_aux != idx)

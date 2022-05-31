@@ -41,7 +41,7 @@ class ValidationInfo {
 
 		/*! \brief References to the validated object. This vector isn't filled when
 		the info is about SQL validation */
-		vector<BaseObject *> references;
+		std::vector<BaseObject *> references;
 
 		QStringList errors;
 
@@ -55,7 +55,7 @@ class ValidationInfo {
 		ValidationAborted=6;
 
 		ValidationInfo();
-		ValidationInfo(unsigned val_type, BaseObject *object, vector<BaseObject *> references);
+		ValidationInfo(unsigned val_type, BaseObject *object, std::vector<BaseObject *> references);
 		ValidationInfo(const QString &msg);
 		ValidationInfo(Exception e);
 
@@ -66,7 +66,7 @@ class ValidationInfo {
 		BaseObject *getObject();
 
 		//! \brief Returns the objects that somehow references the validation info object
-		vector<BaseObject *> getReferences();
+		std::vector<BaseObject *> getReferences();
 
 		//! \brief Returns the SQL errors generated during the SQL validation
 		QStringList getErrors();

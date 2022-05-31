@@ -256,7 +256,7 @@ void ModelValidationWidget::updateValidation(ValidationInfo val_info)
 
 	QTreeWidgetItem *item=new QTreeWidgetItem, *item1=nullptr, *item2=nullptr;
 	QLabel *label=new QLabel, *label1=nullptr, *label2=nullptr;
-	vector<BaseObject *> refs;
+	std::vector<BaseObject *> refs;
 	BaseTable *table=nullptr;
 	TableObject *tab_obj=nullptr;
 	QString ref_name;
@@ -599,7 +599,7 @@ void ModelValidationWidget::updateGraphicalObjects()
 {
 	if(!graph_objects.empty())
 	{
-		vector<BaseGraphicObject *>::iterator end;
+		std::vector<BaseGraphicObject *>::iterator end;
 
 		std::sort(graph_objects.begin(), graph_objects.end());
 		end=std::unique(graph_objects.begin(), graph_objects.end());

@@ -24,7 +24,7 @@ ValidationInfo::ValidationInfo()
 	val_type=ValidationAborted;
 }
 
-ValidationInfo::ValidationInfo(unsigned val_type, BaseObject *object, vector<BaseObject *> references)
+ValidationInfo::ValidationInfo(unsigned val_type, BaseObject *object, std::vector<BaseObject *> references)
 {
 	if(val_type >= SqlValidationError)
 		throw Exception(ErrorCode::AsgInvalidTypeObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -39,7 +39,7 @@ ValidationInfo::ValidationInfo(unsigned val_type, BaseObject *object, vector<Bas
 
 ValidationInfo::ValidationInfo(Exception e)
 {
-	vector<Exception> err_list;
+	std::vector<Exception> err_list;
 
 	val_type=SqlValidationError;
 	e.getExceptionsList(err_list);
@@ -69,7 +69,7 @@ BaseObject *ValidationInfo::getObject()
 	return object;
 }
 
-vector<BaseObject *> ValidationInfo::getReferences()
+std::vector<BaseObject *> ValidationInfo::getReferences()
 {
 	return references;
 }

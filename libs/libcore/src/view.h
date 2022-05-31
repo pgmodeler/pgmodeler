@@ -31,20 +31,20 @@
 class View: public BaseTable {
 	private:
 		//! \brief Stores the references to expressions and objects
-		vector<Reference> references;
+		std::vector<Reference> references;
 
 		/*! \brief Vectors that stores indexes to the view references in each
 		 SQL part: SELECT-FROM, FROM-WHERE, after WHERE, expressions at the very end of definition (e.g. group by) */
-		vector<unsigned>	exp_select,
+		std::vector<unsigned>	exp_select,
 		exp_from,
 		exp_where,
 		exp_end;
 
-		vector<TableObject *> triggers;
-		vector<TableObject *> rules;
-		vector<TableObject *> indexes;
+		std::vector<TableObject *> triggers;
+		std::vector<TableObject *> rules;
+		std::vector<TableObject *> indexes;
 
-		vector<SimpleColumn> columns;
+		std::vector<SimpleColumn> columns;
 
 		/*! \brief Commom table expression. This is prepend on the views definition.
 		CTE's are available since PostgreSQL 8.4:
@@ -71,7 +71,7 @@ class View: public BaseTable {
 		int getReferenceIndex(Reference &refer);
 
 		//! \brief Returns the reference to internal expression list according to the SQL expression type
-		vector<unsigned> *getExpressionList(unsigned sql_type);
+		std::vector<unsigned> *getExpressionList(unsigned sql_type);
 
 		void setSQLObjectAttribute();
 
@@ -143,7 +143,7 @@ class View: public BaseTable {
 		int getObjectIndex(const QString &name, ObjectType obj_type);
 
 		//! \brief Returns the children objects of the view excluding the provided children types (does not include references)
-		vector<BaseObject *> getObjects(const vector<ObjectType> &excl_types = {});
+		std::vector<BaseObject *> getObjects(const std::vector<ObjectType> &excl_types = {});
 
 		//! \brief Returns the view's child object using its index and type
 		TableObject *getObject(unsigned obj_idx, ObjectType obj_type);
@@ -176,7 +176,7 @@ class View: public BaseTable {
 		void removeObjects();
 
 		//! \brief Returns the object list according to specified type
-		vector<TableObject *> *getObjectList(ObjectType obj_type);
+		std::vector<TableObject *> *getObjectList(ObjectType obj_type);
 
 		//! \brief Sets the commom table expression for the view
 		void setCommomTableExpression(const QString &expr);
@@ -228,7 +228,7 @@ class View: public BaseTable {
 	This method is slower than isReferRelationshipAddedColumn() so it's not
 	recommended to use it only check if the object is referencing columns
 	added by relationship */
-		vector<Column *> getRelationshipAddedColumns();
+		std::vector<Column *> getRelationshipAddedColumns();
 
 		//! \brief Returns if the view is referencing the specified table
 		bool isReferencingTable(PhysicalTable *tab);
@@ -250,7 +250,7 @@ class View: public BaseTable {
 		void generateColumns();
 
 		//! \brief Returns the deduced columns of the view
-		vector<SimpleColumn> getColumns();
+		std::vector<SimpleColumn> getColumns();
 
 		virtual QString getDataDictionary(bool split, attribs_map extra_attribs = {});
 

@@ -27,7 +27,7 @@ LayersWidget::LayersWidget(QWidget *parent) : QWidget(parent)
 	connect(layers_lst, SIGNAL(itemChanged(QListWidgetItem*)), this, SLOT(updateObjectsLayers()));
 }
 
-void LayersWidget::setAttributes(const QStringList &layers, const vector<BaseObject *> &sel_objs)
+void LayersWidget::setAttributes(const QStringList &layers, const std::vector<BaseObject *> &sel_objs)
 {
 	QListWidgetItem *item = nullptr;
 	BaseGraphicObject *graph_obj = nullptr;

@@ -41,19 +41,19 @@ class OperationList: public QObject {
 		XmlParser *xmlparser;
 
 		//! \brief List of objects that were removed / modified on the model
-		vector<BaseObject *> object_pool;
+		std::vector<BaseObject *> object_pool;
 
 		/*! \brief List of objects that at the time of deletion from pool were still referenced
 		 somehow on the model. The object is stored in this secondary list and
 		 deleted when the whole list of operations is destroyed */
-		vector<BaseObject *> not_removed_objs;
+		std::vector<BaseObject *> not_removed_objs;
 
 		/*! \brief Stores the objects that were unallocated on the removeOperations() method. This maps
 		is used in order to avoid double delete on pointers. */
-		map<BaseObject *, bool> unallocated_objs;
+		std::map<BaseObject *, bool> unallocated_objs;
 
 		//! \brief Stores the operations executed by the user
-		vector<Operation *> operations;
+		std::vector<Operation *> operations;
 
 		//! \brief Database model that is linked with this operation list
 		DatabaseModel *model;

@@ -48,7 +48,7 @@ class ViewWidget: public BaseObjectWidget, public Ui::ViewWidget {
 		//! \brief Stores all the view references
 		ObjectsTableWidget *references_tab;
 
-		map<ObjectType, ObjectsTableWidget *> objects_tab_map;
+		std::map<ObjectType, ObjectsTableWidget *> objects_tab_map;
 
 		SyntaxHighlighter *code_hl,	*cte_expression_hl;
 

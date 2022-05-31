@@ -67,13 +67,13 @@ class ModelsDiffHelper: public QObject {
 		*imported_model;
 
 		//! \brief Stores all generated diff information during the process
-		vector<ObjectsDiffInfo> diff_infos;
+		std::vector<ObjectsDiffInfo> diff_infos;
 
 		//! \brief Stores all temporary objects created during the diff process
-		vector<BaseObject *> tmp_objects;
+		std::vector<BaseObject *> tmp_objects;
 
 		//! \brief Stores all objects filtered by the partial diff filters
-		map<unsigned, BaseObject *> filtered_objs;
+		std::map<unsigned, BaseObject *> filtered_objs;
 
 		/*! note The parameter diff_type in any methods below is one of the values in
 		ObjectsDiffInfo::CreateObject|AlterObject|DropObject */
@@ -103,7 +103,7 @@ class ModelsDiffHelper: public QObject {
 
 		/*! \brief Generates the proper DROP and CREATE for the specified object and its references. This method
 		is used when the force_recreation is true and the object in the parameter is marked with an ALTER_OBJECT */
-		void recreateObject(BaseObject *object, vector<BaseObject *> &drop_objs, vector<BaseObject *> &create_objs);
+		void recreateObject(BaseObject *object, std::vector<BaseObject *> &drop_objs, std::vector<BaseObject *> &create_objs);
 
 		/*! \brief Returns if a diff information exists for the object. The exact_match parameter is used to force the
 		comparison of all values on the paramenter against the diff infos. When false the exact_match parameter
@@ -168,14 +168,14 @@ class ModelsDiffHelper: public QObject {
 		 * This is only useful when performing a partial diff between a model and a database.
 		 * This method makes extra treatment in the provided objects list in order to specify to the
 		 * diff process their correct creation order */
-		void setFilteredObjects(const vector<BaseObject *> &objects);
+		void setFilteredObjects(const std::vector<BaseObject *> &objects);
 
 		/*! \brief This utility method scans the provided list of filtered objects and produces filters
 		 * for peer tables related to inheritance/partitioning or the generated tables of many-to-many
 		 * relationships. The parameter use_signature indicates that the filter pattern should be constructed
 		 * based on the object's signatures instead their names. This is used by the diff form and cli to
 		 * perform partial diffs between a database model and a database. */
-		static QStringList getRelationshipFilters(const vector<BaseObject *> &objects, bool use_signature);
+		static QStringList getRelationshipFilters(const std::vector<BaseObject *> &objects, bool use_signature);
 
 		//! \brief Toggles a diff option throught the OPT_xxx constants
 		void setDiffOption(unsigned opt_id, bool value);

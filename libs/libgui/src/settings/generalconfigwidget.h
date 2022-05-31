@@ -51,9 +51,9 @@ class GeneralConfigWidget: public BaseConfigWidget, public Ui::GeneralConfigWidg
 		FileSelectorWidget *confs_dir_sel,
 		*source_editor_sel;
 
-		static map<QString, WidgetState> widgets_geom;
+		static std::map<QString, WidgetState> widgets_geom;
 
-		static map<QString, attribs_map> config_params;
+		static std::map<QString, attribs_map> config_params;
 
 		static constexpr unsigned UnitMilimeters=0,
 		UnitPoint=1,
@@ -70,7 +70,7 @@ class GeneralConfigWidget: public BaseConfigWidget, public Ui::GeneralConfigWidg
 		void loadConfiguration();
 		static void addConfigurationParam(const QString &param, const attribs_map &attribs);
 		static void removeConfigurationParam(const QRegularExpression &param_reg);
-		static map<QString, attribs_map> getConfigurationParams();
+		static std::map<QString, attribs_map> getConfigurationParams();
 
 		/*! \brief Returns a single value of a configuration param in the specified section id.
 		Section id can be <configuration>, <dock-widget>, <file[n]> or <recent[n]> */

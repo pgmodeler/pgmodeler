@@ -150,9 +150,9 @@ void Index::addIndexElement(Column *column, Collation *coll, OperatorClass *op_c
 	}
 }
 
-void Index::addIndexElements(vector<IndexElement> &elems)
+void Index::addIndexElements(std::vector<IndexElement> &elems)
 {
-	vector<IndexElement> elems_bkp=idx_elements;
+	std::vector<IndexElement> elems_bkp=idx_elements;
 
 	try
 	{
@@ -191,7 +191,7 @@ IndexElement Index::getIndexElement(unsigned elem_idx)
 	return idx_elements[elem_idx];
 }
 
-vector<IndexElement> Index::getIndexElements()
+std::vector<IndexElement> Index::getIndexElements()
 {
 	return idx_elements;
 }
@@ -271,9 +271,9 @@ bool Index::isReferRelationshipAddedColumn()
 	return false;
 }
 
-vector<Column *> Index::getRelationshipAddedColumns()
+std::vector<Column *> Index::getRelationshipAddedColumns()
 {
-	vector<Column *> cols;
+	std::vector<Column *> cols;
 	Column *col = nullptr;
 
 	for(auto &elem : idx_elements)
@@ -295,7 +295,7 @@ vector<Column *> Index::getRelationshipAddedColumns()
 
 bool Index::isReferCollation(Collation *coll)
 {
-	vector<IndexElement>::iterator itr, itr_end;
+	std::vector<IndexElement>::iterator itr, itr_end;
 	bool found=false;
 
 	if(!coll) return false;
@@ -367,7 +367,7 @@ void Index::addSimpleColumn(const SimpleColumn &col)
 	}
 }
 
-void Index::setColumns(const vector<Column *> &cols)
+void Index::setColumns(const std::vector<Column *> &cols)
 {
 	try
 	{
@@ -380,7 +380,7 @@ void Index::setColumns(const vector<Column *> &cols)
 	}
 }
 
-void Index::setSimpleColumns(const vector<SimpleColumn> &cols)
+void Index::setSimpleColumns(const std::vector<SimpleColumn> &cols)
 {
 	try
 	{
@@ -393,12 +393,12 @@ void Index::setSimpleColumns(const vector<SimpleColumn> &cols)
 	}
 }
 
-vector<Column *> Index::getColumns()
+std::vector<Column *> Index::getColumns()
 {
 	return included_cols;
 }
 
-vector<SimpleColumn> Index::getSimpleColumns()
+std::vector<SimpleColumn> Index::getSimpleColumns()
 {
 	return incl_simple_cols;
 }

@@ -298,7 +298,7 @@ void Relationship::setIdentifier(bool value)
 	this->invalidated=true;
 }
 
-void Relationship::setSpecialPrimaryKeyCols(vector<unsigned> &cols)
+void Relationship::setSpecialPrimaryKeyCols(std::vector<unsigned> &cols)
 {
 	/* Raises an error if the user try to set columns for special primary key when the
 		relationship type is identifier or self relationship */
@@ -310,7 +310,7 @@ void Relationship::setSpecialPrimaryKeyCols(vector<unsigned> &cols)
 	this->column_ids_pk_rel=cols;
 }
 
-vector<unsigned> Relationship::getSpecialPrimaryKeyCols()
+std::vector<unsigned> Relationship::getSpecialPrimaryKeyCols()
 {
 	return this->column_ids_pk_rel;
 }
@@ -339,7 +339,7 @@ void Relationship::createSpecialPrimaryKey()
 	if(!column_ids_pk_rel.empty())
 	{
 		unsigned i = 0;
-		vector<Column *> gen_cols;
+		std::vector<Column *> gen_cols;
 		PhysicalTable *table = getReceiverTable();
 
 		// First we need to remove the original primary key in order to use the special pk
@@ -450,8 +450,8 @@ ActionType Relationship::getActionType(unsigned act_id)
 
 int Relationship::getObjectIndex(TableObject *object)
 {
-	vector<TableObject *>::iterator itr, itr_end;
-	vector<TableObject *> *list=nullptr;
+	std::vector<TableObject *>::iterator itr, itr_end;
+	std::vector<TableObject *> *list=nullptr;
 	TableObject *obj_aux=nullptr;
 	ObjectType obj_type;
 	bool found=false;
@@ -488,7 +488,7 @@ int Relationship::getObjectIndex(TableObject *object)
 
 bool Relationship::isColumnExists(Column *column)
 {
-	vector<Column *>::iterator itr, itr_end;
+	std::vector<Column *>::iterator itr, itr_end;
 	Column *col_aux=nullptr;
 	bool found=false;
 
@@ -512,7 +512,7 @@ bool Relationship::isColumnExists(Column *column)
 void Relationship::addObject(TableObject *tab_obj, int obj_idx)
 {
 	ObjectType obj_type;
-	vector<TableObject *> *obj_list=nullptr;
+	std::vector<TableObject *> *obj_list=nullptr;
 
 	/* Raises an error if the user try to add  manually a special primary key on
 		the relationship and the relationship type is not generalization or copy */
@@ -610,7 +610,7 @@ void Relationship::destroyObjects()
 
 void Relationship::removeObject(unsigned obj_id, ObjectType obj_type)
 {
-	vector<TableObject *> *obj_list=nullptr;
+	std::vector<TableObject *> *obj_list=nullptr;
 	TableObject *tab_obj=nullptr;
 	PhysicalTable *recv_table=nullptr;
 
@@ -632,8 +632,8 @@ void Relationship::removeObject(unsigned obj_id, ObjectType obj_type)
 	{
 		Column *col=nullptr;
 		Constraint *constr=nullptr;
-		vector<TableObject *>::iterator itr, itr_end;
-		vector<unsigned>::iterator sp_pk_itr;
+		std::vector<TableObject *>::iterator itr, itr_end;
+		std::vector<unsigned>::iterator sp_pk_itr;
 		bool refer=false;
 		int col_idx=0;
 
@@ -702,7 +702,7 @@ void Relationship::removeConstraint(unsigned constr_idx)
 	removeObject(constr_idx, ObjectType::Constraint);
 }
 
-vector<Column *> Relationship::getGeneratedColumns()
+std::vector<Column *> Relationship::getGeneratedColumns()
 {
 	return gen_columns;
 }
@@ -712,9 +712,9 @@ Table *Relationship::getGeneratedTable()
 	return table_relnn;
 }
 
-vector<Constraint *> Relationship::getGeneratedConstraints()
+std::vector<Constraint *> Relationship::getGeneratedConstraints()
 {
-	vector<Constraint *> vect;
+	std::vector<Constraint *> vect;
 
 	if(fk_rel1n)
 		vect.push_back(fk_rel1n);
@@ -736,7 +736,7 @@ void Relationship::configureSearchAttributes()
 
 TableObject *Relationship::getObject(unsigned obj_idx, ObjectType obj_type)
 {
-	vector<TableObject *> *list=nullptr;
+	std::vector<TableObject *> *list=nullptr;
 
 	if(obj_type==ObjectType::Column)
 		list=&rel_attributes;
@@ -753,8 +753,8 @@ TableObject *Relationship::getObject(unsigned obj_idx, ObjectType obj_type)
 
 TableObject *Relationship::getObject(const QString &name, ObjectType obj_type)
 {
-	vector<TableObject *>::iterator itr, itr_end;
-	vector<TableObject *> *list=nullptr;
+	std::vector<TableObject *>::iterator itr, itr_end;
+	std::vector<TableObject *> *list=nullptr;
 	TableObject *obj_aux=nullptr;
 	bool found=false;
 
@@ -795,7 +795,7 @@ Column *Relationship::getAttribute(const QString &name)
 	return dynamic_cast<Column *>(getObject(name,ObjectType::Column));
 }
 
-vector<TableObject *> Relationship::getAttributes()
+std::vector<TableObject *> Relationship::getAttributes()
 {
 	return rel_attributes;
 }
@@ -814,7 +814,7 @@ Constraint *Relationship::getConstraint(const QString &name)
 	return dynamic_cast<Constraint *>(getObject(name,ObjectType::Constraint));
 }
 
-vector<TableObject *> Relationship::getConstraints()
+std::vector<TableObject *> Relationship::getConstraints()
 {
 	return rel_constraints;
 }
@@ -893,7 +893,7 @@ void Relationship::addConstraints(PhysicalTable *recv_tab)
 	}
 	catch(Exception &e)
 	{
-		vector<TableObject *>::iterator itr=rel_constraints.begin();
+		std::vector<TableObject *>::iterator itr=rel_constraints.begin();
 
 		while(itr!=rel_constraints.end())
 		{
@@ -914,7 +914,7 @@ void Relationship::addColumnsRelGenPart(bool missing_only)
 	unsigned src_count, dst_count,
 			i, i1, i2, id_tab,
 			idx, tab_count;
-	vector<Column *> columns;
+	std::vector<Column *> columns;
 	ObjectType types[2]={ ObjectType::Table, ObjectType::BaseTable };
 	ErrorCode err_code=ErrorCode::Custom;
 	bool duplic=false, cond=false,
@@ -1202,7 +1202,7 @@ void Relationship::addCheckConstrsRelGenPart()
 {
 	PhysicalTable *parent_tab=getReferenceTable(),
 								*child_tab=getReceiverTable();
-	vector<TableObject *> *constrs=parent_tab->getObjectList(ObjectType::Constraint);
+	std::vector<TableObject *> *constrs=parent_tab->getObjectList(ObjectType::Constraint);
 	Constraint *ck_constr=nullptr, *constr=nullptr, *aux_constr=nullptr;
 
 	try
@@ -1581,7 +1581,7 @@ void Relationship::addForeignKey(PhysicalTable *ref_tab, PhysicalTable *recv_tab
 							source table because they is always inserted after this position. */
 		if(rel_type==RelationshipNn)
 		{
-			vector<Constraint *> fks;
+			std::vector<Constraint *> fks;
 
 			/* Get the created foreign keys created on the self relationship in order to
 				 create them properly */
@@ -1678,7 +1678,7 @@ void Relationship::addAttributes(PhysicalTable *recv_tab)
 	}
 	catch(Exception &e)
 	{
-		vector<TableObject *>::iterator itr=rel_attributes.begin();
+		std::vector<TableObject *>::iterator itr=rel_attributes.begin();
 
 		while(itr!=rel_attributes.end())
 		{
@@ -2247,12 +2247,12 @@ void Relationship::disconnectRelationship(bool rem_tab_objs)
 				  but is related to relationship disconnection, mixing fk rels and 1:n rels, and validation. */
 				(!connected && (fk_rel1n || pk_relident || uq_rel11 || table_relnn || pk_special)))
 		{
-			vector<Column *>::iterator itr, itr_end;
+			std::vector<Column *>::iterator itr, itr_end;
 			Column *column=nullptr;
 			PhysicalTable *table=nullptr;
 			unsigned list_idx=0;
-			vector<TableObject *> *attr_list=nullptr;
-			vector<TableObject *>::iterator itr_atrib, itr_atrib_end;
+			std::vector<TableObject *> *attr_list=nullptr;
+			std::vector<TableObject *>::iterator itr_atrib, itr_atrib_end;
 			TableObject *tab_obj=nullptr;
 
 			if(rel_type==RelationshipGen || rel_type==RelationshipDep || rel_type== RelationshipPart)
@@ -2467,7 +2467,7 @@ CopyOptions Relationship::getCopyOptions()
 
 bool Relationship::hasIndentifierAttribute()
 {
-	vector<TableObject *>::iterator itr, itr_end;
+	std::vector<TableObject *>::iterator itr, itr_end;
 	Constraint *constr=nullptr;
 	bool found=false;
 

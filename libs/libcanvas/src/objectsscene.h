@@ -56,7 +56,7 @@ class ObjectsScene: public QGraphicsScene {
 		//! \brief Stores the items used to represent layers around objects
 		QList<LayerItem *> layers_paths;
 
-		vector<BaseObjectView *> removed_objs;
+		std::vector<BaseObjectView *> removed_objs;
 
 		//! \brief Holds the tables/views which have selected children objects
 		QList<BaseTableView *> tabs_sel_children;
@@ -285,10 +285,10 @@ class ObjectsScene: public QGraphicsScene {
 		QRectF itemsBoundingRect(bool seek_only_db_objs=false, bool selected_only = false, bool incl_layer_rects = false);
 
 		//! \brief Returns a vector containing all the page rects considering the provided page layout settings
-		vector<QRectF> getPagesForPrinting(const QPageLayout &page_lt, unsigned &h_page_cnt, unsigned &v_page_cnt);
+		std::vector<QRectF> getPagesForPrinting(const QPageLayout &page_lt, unsigned &h_page_cnt, unsigned &v_page_cnt);
 
 		//! \brief Returns a vector containing all the page rects considering the current scene's page layout settings
-		vector<QRectF> getPagesForPrinting(unsigned &h_page_cnt, unsigned &v_page_cnt);
+		std::vector<QRectF> getPagesForPrinting(unsigned &h_page_cnt, unsigned &v_page_cnt);
 
 		bool isRangeSelectionEnabled();
 		bool isRangeSelectionTriggerInverted();

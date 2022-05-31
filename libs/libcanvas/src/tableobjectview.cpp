@@ -623,7 +623,7 @@ QString TableObjectView::getConstraintString(Column *column)
 		PhysicalTable *table=dynamic_cast<PhysicalTable *>(column->getParentTable());
 		QString str_constr;
 		Constraint *constr=nullptr;
-		vector<TableObject *>::iterator itr,itr_end;
+		std::vector<TableObject *>::iterator itr,itr_end;
 		ConstraintType constr_type;
 
 		itr=table->getObjectList(ObjectType::Constraint)->begin();

@@ -134,7 +134,7 @@ void SourceCodeWidget::generateSourceCode(int)
 					sqlcode_txt->setPlainText(object->getCodeDefinition(SchemaParser::SqlDefinition));
 				else
 				{
-					vector<BaseObject *> objs=model->getCreationOrder(object, code_options_cmb->currentIndex()==ChildrenSql);
+					std::vector<BaseObject *> objs=model->getCreationOrder(object, code_options_cmb->currentIndex()==ChildrenSql);
 
 					for(BaseObject *obj : objs)
 						aux_def+=obj->getCodeDefinition(SchemaParser::SqlDefinition);

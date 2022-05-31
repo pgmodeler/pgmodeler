@@ -482,11 +482,11 @@ void ModelObjectsWidget::updateObjectsView()
 
 void ModelObjectsWidget::updateObjectsList()
 {
-	vector<BaseObject *> objects;
+	std::vector<BaseObject *> objects;
 
 	if(db_model)
 	{
-		vector<ObjectType> visible_types;
+		std::vector<ObjectType> visible_types;
 
 		for(auto &tp : visible_objs_map)
 		{
@@ -506,10 +506,10 @@ void ModelObjectsWidget::updateSchemaTree(QTreeWidgetItem *root)
 	if(db_model && visible_objs_map[ObjectType::Schema])
 	{
 		BaseObject *schema=nullptr;
-		vector<BaseObject *> obj_list;
+		std::vector<BaseObject *> obj_list;
 		QFont font;
 		QTreeWidgetItem *item=nullptr, *item1=nullptr, *item2=nullptr, *item3=nullptr;
-		vector<ObjectType> types = BaseObject::getChildObjectTypes(ObjectType::Schema);
+		std::vector<ObjectType> types = BaseObject::getChildObjectTypes(ObjectType::Schema);
 		int count = 0, count2 = 0, i = 0;
 		QPixmap group_icon=QPixmap(GuiUtilsNs::getIconPath(QString(BaseObject::getSchemaName(ObjectType::Schema))));
 
@@ -592,11 +592,11 @@ void ModelObjectsWidget::updateTableTree(QTreeWidgetItem *root, BaseObject *sche
 {
 	if(db_model && PhysicalTable::isPhysicalTable(table_type) && visible_objs_map[table_type])
 	{
-		vector<BaseObject *> obj_list;
+		std::vector<BaseObject *> obj_list;
 		PhysicalTable *table=nullptr;
 		QTreeWidgetItem *item=nullptr, *item1=nullptr, *item2=nullptr;
 		QFont font;
-		vector<ObjectType> types = BaseObject::getChildObjectTypes(table_type);
+		std::vector<ObjectType> types = BaseObject::getChildObjectTypes(table_type);
 		QPixmap group_icon=QPixmap(GuiUtilsNs::getIconPath(BaseObject::getSchemaName(table_type)));
 
 		try
@@ -651,11 +651,11 @@ void ModelObjectsWidget::updateViewTree(QTreeWidgetItem *root, BaseObject *schem
 	if(db_model && visible_objs_map[ObjectType::View])
 	{
 		BaseObject *object=nullptr;
-		vector<BaseObject *> obj_list;
+		std::vector<BaseObject *> obj_list;
 		View *view=nullptr;
 		QTreeWidgetItem *item=nullptr, *item1=nullptr, *item2=nullptr;
 		QFont font;
-		vector<ObjectType> types = BaseObject::getChildObjectTypes(ObjectType::View);
+		std::vector<ObjectType> types = BaseObject::getChildObjectTypes(ObjectType::View);
 		int count = 0, count1 = 0, i = 0, i2 = 0;
 		QPixmap group_icon=QPixmap(GuiUtilsNs::getIconPath(QString(BaseObject::getSchemaName(ObjectType::View))));
 
@@ -718,7 +718,7 @@ void ModelObjectsWidget::updatePermissionTree(QTreeWidgetItem *root, BaseObject 
 		if(db_model && visible_objs_map[ObjectType::Permission] &&
 				Permission::acceptsPermission(object->getObjectType()))
 		{
-			vector<Permission *> perms;
+			std::vector<Permission *> perms;
 			QTreeWidgetItem *item=new QTreeWidgetItem(root);
 			QFont font=item->font(0);
 
@@ -751,8 +751,8 @@ void ModelObjectsWidget::updateDatabaseTree()
 		BaseObject *object=nullptr;
 		QTreeWidgetItem *root=nullptr,*item1=nullptr, *item2=nullptr;
 		QFont font;
-		vector<BaseObject *> ref_list, tree_state, obj_list;
-		vector<ObjectType> types = BaseObject::getChildObjectTypes(ObjectType::Database);
+		std::vector<BaseObject *> ref_list, tree_state, obj_list;
+		std::vector<ObjectType> types = BaseObject::getChildObjectTypes(ObjectType::Database);
 		unsigned count = 0, i = 0, i1 = 0;
 
 		types.push_back(ObjectType::Tag);
@@ -791,7 +791,7 @@ void ModelObjectsWidget::updateDatabaseTree()
 						//Special case for relationship, merging the base relationship list to the relationship list
 						if(type==ObjectType::Relationship)
 						{
-							vector<BaseObject *> obj_list_aux;
+							std::vector<BaseObject *> obj_list_aux;
 							obj_list_aux=(*db_model->getObjectList(ObjectType::BaseRelationship));
 							obj_list.insert(obj_list.end(), obj_list_aux.begin(), obj_list_aux.end());
 						}
@@ -929,7 +929,7 @@ void ModelObjectsWidget::closeEvent(QCloseEvent *)
 {
 	if(simplified_view)
 	{
-		map<ObjectType, bool>::iterator itr, itr_end;
+		std::map<ObjectType, bool>::iterator itr, itr_end;
 
 		itr=visible_objs_map.begin();
 		itr_end=visible_objs_map.end();
@@ -1001,7 +1001,7 @@ void ModelObjectsWidget::clearSelectedObject()
 	model_wgt->emitSceneInteracted();
 }
 
-void ModelObjectsWidget::saveTreeState(vector<BaseObject *> &tree_items)
+void ModelObjectsWidget::saveTreeState(std::vector<BaseObject *> &tree_items)
 {
 	QTreeWidgetItemIterator itr(objectstree_tw);
 	BaseObject *obj=nullptr;
@@ -1019,7 +1019,7 @@ void ModelObjectsWidget::saveTreeState(vector<BaseObject *> &tree_items)
 	}
 }
 
-void ModelObjectsWidget::restoreTreeState(vector<BaseObject *> &tree_items)
+void ModelObjectsWidget::restoreTreeState(std::vector<BaseObject *> &tree_items)
 {
 	QTreeWidgetItem *item=nullptr, *parent_item=nullptr;
 

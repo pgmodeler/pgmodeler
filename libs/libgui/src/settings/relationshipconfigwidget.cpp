@@ -18,7 +18,7 @@
 
 #include "relationshipconfigwidget.h"
 
-map<QString, attribs_map> RelationshipConfigWidget::config_params;
+std::map<QString, attribs_map> RelationshipConfigWidget::config_params;
 
 RelationshipConfigWidget::RelationshipConfigWidget(QWidget * parent) : BaseConfigWidget(parent)
 {
@@ -69,7 +69,7 @@ RelationshipConfigWidget::RelationshipConfigWidget(QWidget * parent) : BaseConfi
 	connect(deferral_cmb, &QComboBox::currentTextChanged, [&](){ setConfigurationChanged(true); });
 }
 
-map<QString, attribs_map> RelationshipConfigWidget::getConfigurationParams()
+std::map<QString, attribs_map> RelationshipConfigWidget::getConfigurationParams()
 {
 	return config_params;
 }
@@ -228,7 +228,7 @@ void RelationshipConfigWidget::updatePattern()
 {
 	QPlainTextEdit *input=qobject_cast<QPlainTextEdit *>(sender());
 	QString rel_type=rel_type_cmb->currentData().toString();
-	map<QPlainTextEdit *, QString> inputs_map={ { pk_pattern_txt, Attributes::PkPattern },
+	std::map<QPlainTextEdit *, QString> inputs_map={ { pk_pattern_txt, Attributes::PkPattern },
 												{ uq_pattern_txt, Attributes::UqPattern },
 												{ src_col_pattern_txt, Attributes::SrcColPattern },
 												{ dst_col_pattern_txt, Attributes::DstColPattern },

@@ -21,7 +21,7 @@
 \class BaseConfigWidget
 \brief Implements base operations to load/save XML based configuration files. This class reunites basic methods to perform
 	   the load and save operation. Each subclass must satisfy the contract (implement abstract methods) and have their own
-	   static configuration parameter set as following: map<QStrig, attribs_map>
+	   static configuration parameter set as following: std::map<QStrig, attribs_map>
 */
 
 #ifndef BASE_CONF_WIDGET_H
@@ -46,7 +46,7 @@ class BaseConfigWidget: public QWidget {
 		/*! \brief Saves the configuration params on file. The conf_id param indicates the type of
 			configuration to be saved. (see GlobalAttributes::*_CONF) and config_params the map containing the
 			configuration values */
-		void saveConfiguration(const QString &conf_id, map<QString, attribs_map> &config_params);
+		void saveConfiguration(const QString &conf_id, std::map<QString, attribs_map> &config_params);
 		
 		/*! \brief Loads a configuration from filename.
 		 *
@@ -68,21 +68,21 @@ class BaseConfigWidget: public QWidget {
 		 * If incl_elem_name = false then the resulting attribs map would contain only 2 elements for font and objects,
 		 * because we have two elements identified by "obj1" and "obj2". Now, when incl_elem_name=true the resulting attribs map
 		 * would contain four elements which keys are font-obj1, font-obj2, object-obj1, object-obj2. */
-		void loadConfiguration(const QString &filename, const QString &dtd, map<QString, attribs_map> &config_params, const QStringList &key_attribs = {}, bool incl_elem_name = false);
+		void loadConfiguration(const QString &filename, const QString &dtd, std::map<QString, attribs_map> &config_params, const QStringList &key_attribs = {}, bool incl_elem_name = false);
 
 		/*! \brief This is a convinience method that takes only the configuration file id instead of the filename and the DTD root element name.
 		 *  The conf_id is used to identify both the config file and its related DTD file. */
-		void loadConfiguration(const QString &conf_id, map<QString, attribs_map> &config_params, const QStringList &key_attribs={}, bool incl_elem_name = false);
+		void loadConfiguration(const QString &conf_id, std::map<QString, attribs_map> &config_params, const QStringList &key_attribs={}, bool incl_elem_name = false);
 		
 		//! \brief Get a configuratoin key from the xml parser
-		void getConfigurationParams(map<QString, attribs_map> &config_params, const QStringList &key_attribs = {}, bool incl_elem_name = false);
+		void getConfigurationParams(std::map<QString, attribs_map> &config_params, const QStringList &key_attribs = {}, bool incl_elem_name = false);
 		
 		/*! \brief Restore the configuration specified by conf_in loading them from the original file (conf/defaults)
 		 * The silent parameter indicates that the restoration should not emit a message box informing the restoration sucess */
 		void restoreDefaults(const QString &conf_id, bool silent);
 		
 		//! \brief Adds a parameter to the specified configuration parameters set
-		static void addConfigurationParam(map<QString, attribs_map> &config_params, const QString &param, const attribs_map &attribs);
+		static void addConfigurationParam(std::map<QString, attribs_map> &config_params, const QString &param, const attribs_map &attribs);
 		
 		void showEvent(QShowEvent *);
 

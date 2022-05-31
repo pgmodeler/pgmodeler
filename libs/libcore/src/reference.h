@@ -57,11 +57,11 @@ class Reference {
 		 * These columns are used when drawing a view and that has only on definition expression.
 		 * By having columns, instead of drawing the expression as a column of the view, the ones in
 		 * this vector are displayed */
-		vector<SimpleColumn> columns;
+		std::vector<SimpleColumn> columns;
 
 		/*! \brief Stores the tables that the reference object is using within the expression which defines the view
 		 * when is_def_expr is set. These tables are used to hint the user which tables the view is using. */
-		vector<PhysicalTable *> ref_tables;
+		std::vector<PhysicalTable *> ref_tables;
 
 	public:
 		//! \brief Constants used to define the reference type
@@ -90,7 +90,7 @@ class Reference {
 		void addReferencedTable(PhysicalTable *ref_table);
 		int getReferencedTableIndex(PhysicalTable *ref_table);
 		void clearReferencedTables();
-		vector<PhysicalTable *> getReferencedTables();
+		std::vector<PhysicalTable *> getReferencedTables();
 
 		//! \brief Gets the referenced table
 		PhysicalTable *getTable();
@@ -131,7 +131,7 @@ class Reference {
 		void removeColumns();
 
 		//! \brief Returns the columns which the reference generates
-		vector<SimpleColumn> getColumns();
+		std::vector<SimpleColumn> getColumns();
 
 		/*! \brief Compare the attributes of two references returning true
 		 when they have the same values */

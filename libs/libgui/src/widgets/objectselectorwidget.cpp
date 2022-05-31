@@ -24,7 +24,7 @@ ObjectSelectorWidget::ObjectSelectorWidget(ObjectType sel_obj_type, QWidget *par
 	configureSelector();
 }
 
-ObjectSelectorWidget::ObjectSelectorWidget(vector<ObjectType> sel_obj_types, QWidget * parent) : QWidget(parent)
+ObjectSelectorWidget::ObjectSelectorWidget(std::vector<ObjectType> sel_obj_types, QWidget * parent) : QWidget(parent)
 {
 	this->sel_obj_types=sel_obj_types;
 	configureSelector();

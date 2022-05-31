@@ -21,8 +21,8 @@
 OperatorFamilyWidget::OperatorFamilyWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::OpFamily)
 {
 	QStringList types;
-	map<QString, vector<QWidget *> > fields_map;
-	map<QWidget *, vector<QString> > values_map;
+	std::map<QString, std::vector<QWidget *> > fields_map;
+	std::map<QWidget *, std::vector<QString> > values_map;
 	QFrame *frame=nullptr;
 
 	Ui_OperatorFamilyWidget::setupUi(this);

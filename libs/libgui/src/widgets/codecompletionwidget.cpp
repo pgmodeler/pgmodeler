@@ -204,7 +204,7 @@ bool CodeCompletionWidget::eventFilter(QObject *object, QEvent *event)
 
 void CodeCompletionWidget::configureCompletion(DatabaseModel *db_model, SyntaxHighlighter *syntax_hl, const QString &keywords_grp)
 {
-	map<QString, attribs_map> confs=GeneralConfigWidget::getConfigurationParams();
+	std::map<QString, attribs_map> confs=GeneralConfigWidget::getConfigurationParams();
 
 	name_list->clear();
 	word.clear();
@@ -220,7 +220,7 @@ void CodeCompletionWidget::configureCompletion(DatabaseModel *db_model, SyntaxHi
 		if(syntax_hl && keywords.isEmpty())
 		{
 			//Get the keywords from the highlighter
-			vector<QRegularExpression> exprs=syntax_hl->getExpressions(keywords_grp);
+			std::vector<QRegularExpression> exprs=syntax_hl->getExpressions(keywords_grp);
 
 			while(!exprs.empty())
 			{
@@ -280,7 +280,7 @@ void CodeCompletionWidget::clearCustomItems()
 	custom_items.clear();
 }
 
-void CodeCompletionWidget::populateNameList(vector<BaseObject *> &objects, QString filter)
+void CodeCompletionWidget::populateNameList(std::vector<BaseObject *> &objects, QString filter)
 {
 	QListWidgetItem *item=nullptr;
 	QString obj_name;
@@ -358,8 +358,8 @@ void CodeCompletionWidget::updateList()
 {
 	QListWidgetItem *item=nullptr;
 	QString pattern;
-	vector<BaseObject *> objects;
-	vector<ObjectType> types=BaseObject::getObjectTypes(false, 	{ ObjectType::Textbox, ObjectType::Relationship, ObjectType::BaseRelationship });
+	std::vector<BaseObject *> objects;
+	std::vector<ObjectType> types=BaseObject::getObjectTypes(false, 	{ ObjectType::Textbox, ObjectType::Relationship, ObjectType::BaseRelationship });
 	QTextCursor tc;
 
 	name_list->clear();

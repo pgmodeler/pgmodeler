@@ -65,12 +65,12 @@ class ModelValidationHelper: public QObject {
 
 		/*! \brief Stores the validation infos generated during validation steps.
 		This vector is read when applying fixes */
-		vector<ValidationInfo> val_infos;
+		std::vector<ValidationInfo> val_infos;
 
 		//! \brief Stores the analyzed relationship marked as invalidated
-		vector<BaseObject *> inv_rels;
+		std::vector<BaseObject *> inv_rels;
 
-		void generateValidationInfo(unsigned val_type, BaseObject *object, vector<BaseObject *> refs);
+		void generateValidationInfo(unsigned val_type, BaseObject *object, std::vector<BaseObject *> refs);
 
 	public:
 		ModelValidationHelper();

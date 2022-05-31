@@ -46,7 +46,7 @@ class Role: public BaseObject {
 		password;
 
 		//! \brief Member roles of 'this' role
-		vector<Role *>	member_roles,
+		std::vector<Role *>	member_roles,
 
 		//! \brief Member roles of 'this' role with admin privileges
 		admin_roles;
@@ -54,7 +54,7 @@ class Role: public BaseObject {
 		//! \brief Formats the role attribute to be used by the SchemaParser
 		void setRoleAttribute(unsigned role_type);
 
-		vector<Role *> *getRoleList(unsigned role_type);
+		std::vector<Role *> *getRoleList(unsigned role_type);
 
 		QString getAlterMembershipCommands(Role *imp_role, Role *ref_role, bool revoke);
 

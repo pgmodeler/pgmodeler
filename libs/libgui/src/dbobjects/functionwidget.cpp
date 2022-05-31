@@ -25,8 +25,8 @@ FunctionWidget::FunctionWidget(QWidget *parent): BaseFunctionWidget(parent, Obje
 	QGridLayout *function_grid = nullptr;
 	QVBoxLayout *vbox = nullptr;
 	QHBoxLayout *options_hbox = nullptr, *ret_methods_hbox = nullptr;
-	map<QString, vector<QWidget *> > fields_map;
-	map<QWidget *, vector<QString> > value_map;
+	std::map<QString, std::vector<QWidget *> > fields_map;
+	std::map<QWidget *, std::vector<QString> > value_map;
 	QFrame *frame=nullptr;
 
 	Ui_FunctionWidget::setupUi(this);
@@ -211,8 +211,8 @@ void FunctionWidget::alternateReturnTypes()
 
 void FunctionWidget::validateConfiguredFunction()
 {
-	vector<BaseObject *>::iterator itr, itr_end;
-	vector<BaseObject *> obj_list;
+	std::vector<BaseObject *>::iterator itr, itr_end;
+	std::vector<BaseObject *> obj_list;
 	Conversion *conv = nullptr;
 	Cast *cast = nullptr;
 	Aggregate *aggr = nullptr;

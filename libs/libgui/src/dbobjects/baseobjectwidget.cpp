@@ -177,7 +177,7 @@ void BaseObjectWidget::setAttributes(DatabaseModel *model, BaseObject *object, B
 
 void BaseObjectWidget::disableReferencesSQL(BaseObject *object)
 {
-	vector<BaseObject *> refs;
+	std::vector<BaseObject *> refs;
 	TableObject *tab_obj=nullptr;
 
 	model->getObjectReferences(object, refs);
@@ -203,11 +203,11 @@ void BaseObjectWidget::disableReferencesSQL(BaseObject *object)
 	}
 }
 
-void BaseObjectWidget::configureTabOrder(vector<QWidget *> widgets)
+void BaseObjectWidget::configureTabOrder(std::vector<QWidget *> widgets)
 {
 	ObjectSelectorWidget *obj_sel=nullptr;
 	PgSQLTypeWidget *type_wgt=nullptr;
-	vector<QWidget *> children, tab_order;
+	std::vector<QWidget *> children, tab_order;
 	int idx=0, cnt=0;
 
 	widgets.insert(widgets.begin(),
@@ -491,7 +491,7 @@ void BaseObjectWidget::configureFormLayout(QGridLayout *grid, ObjectType obj_typ
 	if(BaseObject::acceptsCollation(obj_type))
 	{
 		QFrame *frame=nullptr;
-		map<QString, vector<QWidget *> > fields_map;
+		std::map<QString, std::vector<QWidget *> > fields_map;
 		fields_map[generateVersionsInterval(AfterVersion, PgSqlVersions::PgSqlVersion91)].push_back(collation_lbl);
 		frame=generateVersionWarningFrame(fields_map);
 		baseobject_grid->addWidget(frame, baseobject_grid->count()+1, 0, 1, 0);
@@ -574,8 +574,8 @@ QFrame *BaseObjectWidget::generateInformationFrame(const QString &msg)
 	return info_frm;
 }
 
-void BaseObjectWidget::highlightVersionSpecificFields(map<QString, vector<QWidget *> > &fields,
-																											map< QWidget *, vector<QString> > *values)
+void BaseObjectWidget::highlightVersionSpecificFields(std::map<QString, std::vector<QWidget *> > &fields,
+																											std::map< QWidget *, std::vector<QString> > *values)
 {
 	QString field_name;
 
@@ -602,8 +602,8 @@ void BaseObjectWidget::highlightVersionSpecificFields(map<QString, vector<QWidge
 	}
 }
 
-QFrame *BaseObjectWidget::generateVersionWarningFrame(map<QString, vector<QWidget *> > &fields,
-																											map< QWidget *, vector<QString> > *values)
+QFrame *BaseObjectWidget::generateVersionWarningFrame(std::map<QString, std::vector<QWidget *> > &fields,
+																											std::map< QWidget *, std::vector<QString> > *values)
 {
 	QFrame *alert_frm=nullptr;
 	QGridLayout *grid=nullptr;
@@ -799,7 +799,7 @@ void BaseObjectWidget::finishConfiguration()
 			ObjectType obj_type=this->object->getObjectType();
 			BaseGraphicObject *graph_obj=dynamic_cast<BaseGraphicObject *>(this->object);
 			TableObject *tab_obj=dynamic_cast<TableObject *>(this->object);
-			vector<BaseObject *> ref_objs;
+			std::vector<BaseObject *> ref_objs;
 
 			if(graph_obj && !std::isnan(object_px) && !std::isnan(object_py))
 				graph_obj->setPosition(QPointF(object_px, object_py));

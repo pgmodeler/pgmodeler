@@ -30,8 +30,8 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 {
 	setupUi(this);
 
-	map<QString, attribs_map >confs;
-	map<QString, attribs_map >::iterator itr, itr_end;
+	std::map<QString, attribs_map >confs;
+	std::map<QString, attribs_map >::iterator itr, itr_end;
 	attribs_map attribs;
 	PluginsConfigWidget *plugins_conf_wgt=nullptr;
 	QGridLayout *grid=nullptr;
@@ -720,7 +720,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
 	else
 	{
 		GeneralConfigWidget *conf_wgt=nullptr;
-		map<QString, attribs_map > confs;
+		std::map<QString, attribs_map > confs;
 
 		GeneralConfigWidget::saveWidgetGeometry(this);
 
@@ -1268,7 +1268,7 @@ void MainWindow::setCurrentModel()
 void MainWindow::setGridOptions()
 {
 	GeneralConfigWidget *conf_wgt = dynamic_cast<GeneralConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::GeneralConfWgt));
-	map<QString, attribs_map> attribs = conf_wgt->getConfigurationParams();
+	std::map<QString, attribs_map> attribs = conf_wgt->getConfigurationParams();
 
 	//Configures the global settings for the scene grid
 	ObjectsScene::setGridOptions(action_show_grid->isChecked(),
@@ -2018,7 +2018,7 @@ void MainWindow::storeDockWidgetsSettings()
 void MainWindow::restoreDockWidgetsSettings()
 {
 	GeneralConfigWidget *conf_wgt=dynamic_cast<GeneralConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::GeneralConfWgt));
-	map<QString, attribs_map> confs=conf_wgt->getConfigurationParams();
+	std::map<QString, attribs_map> confs=conf_wgt->getConfigurationParams();
 
 	if(confs.count(Attributes::Validator))
 	{

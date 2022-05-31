@@ -111,7 +111,7 @@ bool OperationList::isOperationChainStarted()
 bool OperationList::isObjectRegistered(BaseObject *object, unsigned op_type)
 {
 	bool registered=false;
-	vector<Operation *>::iterator itr=operations.begin();
+	std::vector<Operation *>::iterator itr=operations.begin();
 
 	while(itr!=operations.end() && !registered)
 	{
@@ -193,7 +193,7 @@ void OperationList::removeOperations()
 	TableObject *tab_obj=nullptr;
 	BaseTable *tab=nullptr;
 	Operation *oper=nullptr;
-	vector<BaseObject *> invalid_objs;
+	std::vector<BaseObject *> invalid_objs;
 
 	//Destroy the operations
 	while(!operations.empty())
@@ -231,7 +231,7 @@ void OperationList::removeOperations()
 			{
 				if(object->getObjectType()==ObjectType::Table)
 				{
-					vector<BaseObject *> list=dynamic_cast<Table *>(object)->getObjects();
+					std::vector<BaseObject *> list=dynamic_cast<Table *>(object)->getObjects();
 
 					while(!list.empty())
 					{
@@ -268,7 +268,7 @@ void OperationList::removeOperations()
 
 void OperationList::validateOperations()
 {
-	vector<Operation *>::iterator itr, itr_end;
+	std::vector<Operation *>::iterator itr, itr_end;
 	Operation *oper=nullptr;
 
 	itr=operations.begin();
@@ -295,7 +295,7 @@ void OperationList::validateOperations()
 bool OperationList::isObjectOnPool(BaseObject *object)
 {
 	bool found=false;
-	vector<BaseObject *>::iterator itr, itr_end;
+	std::vector<BaseObject *>::iterator itr, itr_end;
 
 	if(!object)
 		throw Exception(ErrorCode::OprNotAllocatedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -314,7 +314,7 @@ bool OperationList::isObjectOnPool(BaseObject *object)
 void OperationList::removeFromPool(unsigned obj_idx)
 {
 	BaseObject *object=nullptr;
-	vector<BaseObject *>::iterator itr;
+	std::vector<BaseObject *>::iterator itr;
 
 	//Avoiding the removal of an object in invalid index (out of bound)
 	if(obj_idx >= object_pool.size())
@@ -401,7 +401,7 @@ int OperationList::registerObject(BaseObject *object, unsigned op_type, int obje
 		//Stores the object's permission befor its removal
 		if(op_type==Operation::ObjectRemoved)
 		{
-			vector<Permission *> perms;
+			std::vector<Permission *> perms;
 			model->getPermissions(object, perms);
 			operation->setPermissions(perms);
 		}
@@ -929,7 +929,7 @@ void OperationList::executeOperation(Operation *oper, bool redo)
 			}
 			else if(obj_type==ObjectType::Tag)
 			{
-				vector<BaseObject *> refs;
+				std::vector<BaseObject *> refs;
 				model->getObjectReferences(object, refs);
 
 				while(!refs.empty())
@@ -946,7 +946,7 @@ void OperationList::executeOperation(Operation *oper, bool redo)
 				 object->getObjectType()==ObjectType::Table || object->getObjectType()==ObjectType::ForeignTable ||
 				 object->getObjectType()==ObjectType::View || object->getObjectType()==ObjectType::Extension))
 		{
-			vector<BaseObject *> ref_objs;
+			std::vector<BaseObject *> ref_objs;
 			model->getObjectReferences(object, ref_objs);
 
 			for(auto &obj : ref_objs)
@@ -964,7 +964,7 @@ void OperationList::removeLastOperation()
 	{
 		Operation *oper=nullptr;
 		bool end=false;
-		vector<Operation *>::reverse_iterator itr;
+		std::vector<Operation *>::reverse_iterator itr;
 		int oper_idx=operations.size()-1;
 
 		//Gets the last operation on the list using reverse iterator
@@ -1013,7 +1013,7 @@ void OperationList::removeLastOperation()
 
 void OperationList::updateObjectIndex(BaseObject *object, unsigned new_idx)
 {
-	vector<Operation *>::iterator itr, itr_end;
+	std::vector<Operation *>::iterator itr, itr_end;
 	Operation *oper=nullptr;
 
 	if(!object)

@@ -41,7 +41,7 @@ class Aggregate: public BaseObject {
 		 To declare an aggregate function which works with several
 		 types in the old syntax, the only element of the list must
 		 be of type 'any' */
-		vector<PgSqlType> data_types;
+		std::vector<PgSqlType> data_types;
 
 		/*! \brief Function that defines the aggregate behavior
 		 0 -> Final function

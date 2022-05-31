@@ -39,12 +39,12 @@ class AppearanceConfigWidget: public BaseConfigWidget, public Ui::AppearanceConf
 		Q_OBJECT
 		
 		//! \brief Holds the currently loaded config params
-		static map<QString, attribs_map> config_params;
+		static std::map<QString, attribs_map> config_params;
 
 		/*! \brief Holds the QPalette settings that defines dark theme.
 		 * This map key is a color role which value is a string list that
 		 * contains 3 elements: active color, inactive color and disabled color. */
-		static map<QPalette::ColorRole, QStringList> dark_ui_colors,
+		static std::map<QPalette::ColorRole, QStringList> dark_ui_colors,
 
 		/*! \brief Holds the QPalette settings that defines light theme.
 		 * This map key is a color role which value is a string list that
@@ -102,7 +102,7 @@ class AppearanceConfigWidget: public BaseConfigWidget, public Ui::AppearanceConf
 		DatabaseModel *model;
 		
 		//! \brief Stores the element configuration items
-		vector<AppearanceConfigItem> conf_items;
+		std::vector<AppearanceConfigItem> conf_items;
 		
 		//! \brief Loads the example model from file (conf/exampledb.dbm)
 		void loadExampleModel();
@@ -129,7 +129,7 @@ class AppearanceConfigWidget: public BaseConfigWidget, public Ui::AppearanceConf
 		void saveConfiguration();
 		void loadConfiguration();
 
-		static map<QString, attribs_map> getConfigurationParams();
+		static std::map<QString, attribs_map> getConfigurationParams();
 
 	private slots:
 		void enableConfigElement();

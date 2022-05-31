@@ -67,7 +67,7 @@ void DatabaseImportHelper::setCurrentDatabase(const QString &dbname)
 	}
 }
 
-void DatabaseImportHelper::setSelectedOIDs(DatabaseModel *db_model, const map<ObjectType, vector<unsigned> > &obj_oids, const map<unsigned, vector<unsigned> > &col_oids)
+void DatabaseImportHelper::setSelectedOIDs(DatabaseModel *db_model, const std::map<ObjectType, std::vector<unsigned> > &obj_oids, const std::map<unsigned, std::vector<unsigned> > &col_oids)
 {
 	if(!db_model)
 		throw Exception(ErrorCode::AsgNotAllocattedObject ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -140,7 +140,7 @@ attribs_map DatabaseImportHelper::getObjects(ObjectType obj_type, const QString 
 	}
 }
 
-vector<attribs_map> DatabaseImportHelper::getObjects(vector<ObjectType> obj_types, const QString &schema, const QString &table, attribs_map extra_attribs)
+std::vector<attribs_map> DatabaseImportHelper::getObjects(std::vector<ObjectType> obj_types, const QString &schema, const QString &table, attribs_map extra_attribs)
 {
 	try
 	{
@@ -156,7 +156,7 @@ vector<attribs_map> DatabaseImportHelper::getObjects(vector<ObjectType> obj_type
 void DatabaseImportHelper::swapSequencesTablesIds()
 {
 	BaseObject *table=nullptr, *sequence=nullptr;
-	map<QString, QString>::iterator itr;
+	std::map<QString, QString>::iterator itr;
 
 	//Swapping the id's between sequences and tables to avoid reference breaking on SQL code
 	itr=seq_tab_swap.begin();
@@ -173,10 +173,10 @@ void DatabaseImportHelper::swapSequencesTablesIds()
 void DatabaseImportHelper::retrieveSystemObjects()
 {
 	int progress=0;
-	vector<attribs_map>::iterator itr;
-	map<unsigned, attribs_map> *obj_map=nullptr;
-	vector<attribs_map> objects;
-	vector<ObjectType> sys_objs={ ObjectType::Schema, ObjectType::Role, ObjectType::Tablespace,
+	std::vector<attribs_map>::iterator itr;
+	std::map<unsigned, attribs_map> *obj_map=nullptr;
+	std::vector<attribs_map> objects;
+	std::vector<ObjectType> sys_objs={ ObjectType::Schema, ObjectType::Role, ObjectType::Tablespace,
 																ObjectType::Language, ObjectType::Type };
 	unsigned i = 0, oid = 0, cnt = sys_objs.size();
 
@@ -222,11 +222,11 @@ void DatabaseImportHelper::retrieveSystemObjects()
 void DatabaseImportHelper::retrieveUserObjects()
 {
 	int progress=0;
-	map<ObjectType, vector<unsigned>>::iterator oid_itr=object_oids.begin();
-	vector<attribs_map>::iterator itr;
-	vector<attribs_map> objects;
+	std::map<ObjectType, std::vector<unsigned>>::iterator oid_itr=object_oids.begin();
+	std::vector<attribs_map>::iterator itr;
+	std::vector<attribs_map> objects;
 	unsigned i=0, oid=0;
-	map<unsigned, vector<unsigned>>::iterator col_itr;
+	std::map<unsigned, std::vector<unsigned>>::iterator col_itr;
 	QStringList names;
 
 	i=0;
@@ -273,11 +273,11 @@ void DatabaseImportHelper::retrieveUserObjects()
 	}
 }
 
-void DatabaseImportHelper::retrieveTableColumns(const QString &sch_name, const QString &tab_name, vector<unsigned> col_ids)
+void DatabaseImportHelper::retrieveTableColumns(const QString &sch_name, const QString &tab_name, std::vector<unsigned> col_ids)
 {
 	try
 	{
-		vector<attribs_map> cols;
+		std::vector<attribs_map> cols;
 		unsigned tab_oid=0, col_oid;
 
 		cols=catalog.getObjectsAttributes(ObjectType::Column, sch_name, tab_name, col_ids);
@@ -301,10 +301,10 @@ void DatabaseImportHelper::createObjects()
 	attribs_map attribs;
 	ObjectType obj_type;
 	unsigned i=0, oid=0, prev_size=0;
-	vector<unsigned> not_created_objs, oids;
-	vector<unsigned>::iterator itr, itr_end;
-	vector<Exception> aux_errors;
-	map<unsigned, attribs_map>::iterator itr_objs, itr_objs_end;
+	std::vector<unsigned> not_created_objs, oids;
+	std::vector<unsigned>::iterator itr, itr_end;
+	std::vector<Exception> aux_errors;
+	std::map<unsigned, attribs_map>::iterator itr_objs, itr_objs_end;
 
 	created_objs.reserve(creation_order.size());
 	itr_objs = user_objs.begin();
@@ -424,7 +424,7 @@ void DatabaseImportHelper::createConstraints()
 	int progress=0;
 	attribs_map attribs;
 	unsigned i=0;
-	vector<attribs_map>::iterator itr, itr_end;
+	std::vector<attribs_map>::iterator itr, itr_end;
 
 	itr = constraints.begin();
 	itr_end = constraints.end();
@@ -470,8 +470,8 @@ void DatabaseImportHelper::createPermissions()
 	try
 	{
 		unsigned i=0, progress=0;
-		vector<unsigned>::iterator itr, itr_obj=obj_perms.begin();
-		map<unsigned, vector<unsigned>>::iterator itr_cols=col_perms.begin();
+		std::vector<unsigned>::iterator itr, itr_obj=obj_perms.begin();
+		std::map<unsigned, std::vector<unsigned>>::iterator itr_cols=col_perms.begin();
 		QString msg=tr("Creating permissions for object `%1' (%2)...");
 		ObjectType obj_type;
 
@@ -527,7 +527,7 @@ void DatabaseImportHelper::createPermissions()
 void DatabaseImportHelper::updateFKRelationships()
 {
 	int progress=0;
-	vector<BaseObject *>::iterator itr_tab, itr_tab_end;
+	std::vector<BaseObject *>::iterator itr_tab, itr_tab_end;
 	unsigned i=0, count=0;
 	Table *tab=nullptr;
 
@@ -623,8 +623,8 @@ void DatabaseImportHelper::importDatabase()
 			//Generating random colors for relationships
 			if(rand_rel_colors)
 			{
-				vector<BaseObject *> *rels=nullptr;
-				vector<BaseObject *>::iterator itr, itr_end;
+				std::vector<BaseObject *> *rels=nullptr;
+				std::vector<BaseObject *>::iterator itr, itr_end;
 				std::uniform_int_distribution<unsigned> dist(0,255);
 				ObjectType rel_type[]={ ObjectType::Relationship, ObjectType::BaseRelationship };
 				BaseRelationship *rel=nullptr;
@@ -671,7 +671,7 @@ void DatabaseImportHelper::setObjectFilters(QStringList filter, bool only_matchi
 	catalog.setObjectFilters(filter, only_matching, match_signature, force_tab_obj_types);
 }
 
-map<ObjectType, QString> DatabaseImportHelper::getObjectFilters()
+std::map<ObjectType, QString> DatabaseImportHelper::getObjectFilters()
 {
 	return catalog.getObjectFilters();
 }
@@ -827,7 +827,7 @@ QString DatabaseImportHelper::getDependencyObject(const QString &oid, ObjectType
 					 (obj_oid > catalog.getLastSysObjectOID() && !catalog.isExtensionObject(obj_oid))))
 			{
 				catalog.setQueryFilter(Catalog::ListAllObjects);
-				vector<attribs_map> attribs_vect=catalog.getObjectsAttributes(obj_type,"","", { obj_oid });
+				std::vector<attribs_map> attribs_vect=catalog.getObjectsAttributes(obj_type,"","", { obj_oid });
 
 				if(!attribs_vect.empty())
 				{
@@ -1096,7 +1096,7 @@ void DatabaseImportHelper::configureBaseFunctionAttribs(attribs_map &attribs)
 			param_def_vals, param_xmls, used_names, transform_types,
 			config_params, list;
 	QString param_tmpl_name = QString("_param%1"), pname;
-	vector<Parameter> parameters;
+	std::vector<Parameter> parameters;
 	attribs_map cfg_attrs;
 
 	try
@@ -1185,7 +1185,7 @@ void DatabaseImportHelper::configureBaseFunctionAttribs(attribs_map &attribs)
 
 		if(!parameters.empty())
 		{
-			vector<Parameter>::reverse_iterator ritr, ritr_end;
+			std::vector<Parameter>::reverse_iterator ritr, ritr_end;
 
 			ritr = parameters.rbegin();
 			ritr_end = parameters.rend();
@@ -1350,7 +1350,7 @@ void DatabaseImportHelper::createOperatorClass(attribs_map &attribs)
 	try
 	{
 		attribs_map elem_attr;
-		vector<attribs_map> elems;
+		std::vector<attribs_map> elems;
 		QStringList array_vals, list;
 
 		attribs[Attributes::Family]=getObjectName(attribs[Attributes::Family], true);
@@ -1757,7 +1757,7 @@ void DatabaseImportHelper::createTable(attribs_map &attribs)
 
 	try
 	{
-		vector<unsigned> inh_cols;
+		std::vector<unsigned> inh_cols;
 		attribs_map pos_attrib={
 			{ Attributes::XPos, QString("0") },
 			{ Attributes::YPos, QString("0") }};
@@ -1804,7 +1804,7 @@ void DatabaseImportHelper::createTable(attribs_map &attribs)
 			QString coll_name, opc_name;
 			Collation *coll = nullptr;
 			OperatorClass *opclass = nullptr;
-			vector<PartitionKey> part_keys;
+			std::vector<PartitionKey> part_keys;
 
 			part_type = PartitioningType(attribs[Attributes::Partitioning]);
 			table->setPartitioningType(part_type);
@@ -2384,7 +2384,7 @@ void DatabaseImportHelper::createForeignTable(attribs_map &attribs)
 
 	try
 	{
-		vector<unsigned> inh_cols;
+		std::vector<unsigned> inh_cols;
 		attribs_map pos_attrib={
 			{ Attributes::XPos, QString("0") },
 			{ Attributes::YPos, QString("0") }};
@@ -2466,7 +2466,7 @@ void DatabaseImportHelper::createPermission(attribs_map &attribs)
 	if(Permission::acceptsPermission(obj_type))
 	{
 		QStringList perm_list;
-		vector<unsigned> privs, gop_privs;
+		std::vector<unsigned> privs, gop_privs;
 		QString role_name;
 		Role *role=nullptr;
 		BaseObject *object=nullptr;
@@ -2631,7 +2631,7 @@ void DatabaseImportHelper::destroyDetachedColumns()
 	if(inherited_cols.empty() || import_canceled)
 		return;
 
-	vector<BaseObject *> refs;
+	std::vector<BaseObject *> refs;
 	PhysicalTable *parent_tab=nullptr;
 
 	// Saving the special objects' xmls is needed here in case of importing objects to an already populated model
@@ -2672,13 +2672,13 @@ void DatabaseImportHelper::destroyDetachedColumns()
 	dbmodel->validateRelationships();
 }
 
-void DatabaseImportHelper::createColumns(attribs_map &attribs, vector<unsigned> &inh_cols)
+void DatabaseImportHelper::createColumns(attribs_map &attribs, std::vector<unsigned> &inh_cols)
 {
 	unsigned tab_oid=attribs[Attributes::Oid].toUInt(), type_oid=0, col_idx=0;
 	bool is_type_registered=false;
 	Column col;
 	QString type_def, unknown_obj_xml, type_name, def_val;
-	map<unsigned, attribs_map>::iterator itr, itr1, itr_end;
+	std::map<unsigned, attribs_map>::iterator itr, itr1, itr_end;
 	static QStringList sp_types = SpatialType::getTypes();
 
 	if(tab_oid == 0)
@@ -2829,7 +2829,7 @@ void DatabaseImportHelper::assignSequencesToColumns()
 {
 	PhysicalTable *table=nullptr;
 	Column *col=nullptr;
-	vector<BaseObject *> tables;
+	std::vector<BaseObject *> tables;
 	int progress = 0, i = 0;
 
 	tables = *dbmodel->getObjectList(ObjectType::Table);
@@ -2907,7 +2907,7 @@ void DatabaseImportHelper::assignSequencesToColumns()
 
 void DatabaseImportHelper::__createTableInheritances()
 {
-	vector<unsigned> table_oids;
+	std::vector<unsigned> table_oids;
 	Relationship *rel=nullptr;
 	PhysicalTable *parent_tab=nullptr, *child_tab=nullptr;
 	QStringList inh_list;

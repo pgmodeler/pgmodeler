@@ -123,7 +123,7 @@ attribs_map PgModelerCliApp::short_opts = {
 	{ SystemWide, "-sw" },	{ CreateConfigs, "-cc" }, { Force, "-ff" }, { MissingOnly, "-mo" }
 };
 
-map<QString, bool> PgModelerCliApp::long_opts = {
+std::map<QString, bool> PgModelerCliApp::long_opts = {
 	{ Input, true }, { Output, true }, { InputDb, true },
 	{ ExportToFile, false },	{ ExportToPng, false },	{ ExportToSvg, false },
 	{ ExportToDbms, false },	{ ImportDb, false },	{ Diff, false },
@@ -147,7 +147,7 @@ map<QString, bool> PgModelerCliApp::long_opts = {
 	{ CreateConfigs, false }, { Force, false }, { MissingOnly, false }
 };
 
-map<QString, QStringList> PgModelerCliApp::accepted_opts = {
+std::map<QString, QStringList> PgModelerCliApp::accepted_opts = {
 	{{ Attributes::Connection }, { ConnAlias, Host, Port, User, Passwd, InitialDb }},
 	{{ ExportToFile }, { Input, Output, PgSqlVer, Split }},
 	{{ ExportToPng },  { Input, Output, ShowGrid, ShowDelimiters, PageByPage, ZoomFactor }},
@@ -565,7 +565,7 @@ void PgModelerCliApp::showMenu()
 
 void PgModelerCliApp::listConnections()
 {
-	map<QString, Connection *>::iterator itr=connections.begin();
+	std::map<QString, Connection *>::iterator itr=connections.begin();
 
 	if(connections.empty())
 		printText(tr("There are no connections configured."));
@@ -1119,7 +1119,7 @@ void PgModelerCliApp::recreateObjects()
 	QString xml_def, aux_def, start_tag = "<%1", end_tag = "</%1>", aux_tag, type_tag = "<type name=\"%1\"";
 	BaseObject *object=nullptr;
 	ObjectType obj_type=ObjectType::BaseObject;
-	vector<ObjectType> types={ ObjectType::Index, ObjectType::Trigger, ObjectType::Rule };
+	std::vector<ObjectType> types={ ObjectType::Index, ObjectType::Trigger, ObjectType::Rule };
 	attribs_map attribs, fmt_ext_names;
 	bool use_fail_obj=false;
 	unsigned tries=0, max_tries=parsed_opts[FixTries].toUInt();
@@ -1781,8 +1781,8 @@ void PgModelerCliApp::importDatabase(DatabaseModel *model, Connection conn)
 {
 	try
 	{
-		map<ObjectType, vector<unsigned>> obj_oids;
-		map<unsigned, vector<unsigned>> col_oids;
+		std::map<ObjectType, std::vector<unsigned>> obj_oids;
+		std::map<unsigned, std::vector<unsigned>> col_oids;
 		Catalog catalog;
 		QString db_oid;
 		QStringList force_tab_objs;
@@ -1843,7 +1843,7 @@ void PgModelerCliApp::diffModelDatabase()
 {
 	DatabaseModel *model_aux = new DatabaseModel();
 	QString dbname;
-	vector<BaseObject *> filtered_objs;
+	std::vector<BaseObject *> filtered_objs;
 
 	printMessage(tr("Starting diff process..."));
 
@@ -2066,7 +2066,7 @@ QStringList PgModelerCliApp::extractForeignKeys(QString &obj_xml)
 bool PgModelerCliApp::containsRelAttributes(const QString &str)
 {
 	bool found=false;
-	static vector<QString> attribs={ Attributes::Relationship,
+	static std::vector<QString> attribs={ Attributes::Relationship,
 									 Attributes::Type, Attributes::SrcRequired, Attributes::DstRequired,
 									 Attributes::SrcTable, Attributes::DstTable,	Attributes::Points,
 									 Attributes::Columns,	Attributes::Column, Attributes::Constraint,
@@ -2278,7 +2278,7 @@ void PgModelerCliApp::handleWindowsMimeDatabase(bool uninstall, bool system_wide
 	sch_ext.sync();
 
 	//Other registry keys values
-	map<QString, QStringList> confs = {
+	std::map<QString, QStringList> confs = {
 				{ QString("\\%1\\Classes\\dbm_auto_file").arg(base_reg_key), { QString("FriendlyTypeName") , QString("pgModeler Database Model") } },
 				{ QString("\\%1\\Classes\\dbm_auto_file\\DefaultIcon").arg(base_reg_key), { QString("Default") , QString("%1,1").arg(exe_path) } },
 				{ QString("\\%1\\Classes\\dbm_auto_file\\shell\\open\\command").arg(base_reg_key), { QString("Default") , QString("\"%1\" \"%2\"").arg(exe_path).arg("%1") } },
@@ -2289,7 +2289,7 @@ void PgModelerCliApp::handleWindowsMimeDatabase(bool uninstall, bool system_wide
 				{ QString("\\%1\\Microsoft\\Windows\\CurrentVersion\\Explorer\\FileExts\\.sch").arg(base_reg_key), { QString("OpenWithList/a"), QString("pgmodeler-sc.exe"), QString("OpenWithList/MRUList"), QString("a")} }
 	};
 
-	map<QString, QStringList>::iterator itr;
+	std::map<QString, QStringList>::iterator itr;
 	itr=confs.begin();
 
 	//Iterates over the configuration map writing the other keys on registry

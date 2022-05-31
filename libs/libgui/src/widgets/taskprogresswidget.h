@@ -37,7 +37,7 @@ class TaskProgressWidget: public QDialog, public Ui::TaskProgressWidget
 		Q_OBJECT
 
 		//! \brief Stores the icons that are shown as the icons tokens are send via	updateProgress() slot
-		map<unsigned, QIcon> icons;
+		std::map<unsigned, QIcon> icons;
 
 	public:
 		TaskProgressWidget(QWidget *parent = nullptr, Qt::WindowFlags f = Qt::Widget);

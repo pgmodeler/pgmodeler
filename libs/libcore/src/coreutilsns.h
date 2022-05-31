@@ -51,7 +51,7 @@ namespace CoreUtilsNs {
 	 * when false the name of the input object (obj) will always be compared to itself if it is present in the provided list. When that
 	 * parameter is true the comparison is not made. */
 	template <class Class>
-	QString generateUniqueName(BaseObject *obj, vector<Class *> &obj_vector,
+	QString generateUniqueName(BaseObject *obj, std::vector<Class *> &obj_vector,
 														 bool fmt_name = false, const QString &suffix = "",
 														 bool use_suf_on_conflict = false, bool discard_input_obj = false)
 	{

@@ -20,8 +20,8 @@
 
 EventTriggerWidget::EventTriggerWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::EventTrigger)
 {
-	map<QString, vector<QWidget *> > fields_map;
-	map<QWidget *, vector<QString> > values_map;
+	std::map<QString, std::vector<QWidget *> > fields_map;
+	std::map<QWidget *, std::vector<QString> > values_map;
 	QFrame *frame=nullptr;
 
 	Ui_EventTriggerWidget::setupUi(this);

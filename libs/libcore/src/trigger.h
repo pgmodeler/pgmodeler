@@ -43,7 +43,7 @@ class Trigger: public TableObject{
 		/*! \brief Column list used as the trigger firing condition. This attribute was
 		 introduced in PostgreSQL 9.1 and it is used only when the UPDATE event
 		 is assigned to trigger. */
-		vector<Column *> upd_columns;
+		std::vector<Column *> upd_columns;
 
 		//! \brief Function that is excuted when the trigger is activated
 		Function *function;
@@ -55,7 +55,7 @@ class Trigger: public TableObject{
 		FiringType firing_type;
 
 		//! \brief Map that marks which events activates the trigger
-		map<EventType, bool> events;
+		std::map<EventType, bool> events;
 
 		//! \brief Flag that indicates whether the function must be executed by row
 		bool is_exec_per_row;
@@ -188,7 +188,7 @@ class Trigger: public TableObject{
 	This method is slower than isReferRelationshipAddedColumn() so it's not
 	recommended to use it only check if the object is referencing columns
 	added by relationship */
-		vector<Column *> getRelationshipAddedColumns();
+		std::vector<Column *> getRelationshipAddedColumns();
 
 		//! \brief Returns the SQL / XML definition for the trigger
 		virtual QString getCodeDefinition(unsigned def_type) final;

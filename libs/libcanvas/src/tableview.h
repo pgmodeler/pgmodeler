@@ -34,7 +34,7 @@ class TableView: public BaseTableView {
 	private:
 		Q_OBJECT
 
-		map<TableObject *, vector<QPointF>> conn_points;
+		std::map<TableObject *, std::vector<QPointF>> conn_points;
 
 	public:
 		TableView(PhysicalTable *table);

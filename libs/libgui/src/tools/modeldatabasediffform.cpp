@@ -24,7 +24,7 @@
 #include "utilsns.h"
 
 bool ModelDatabaseDiffForm::low_verbosity = false;
-map<QString, attribs_map> ModelDatabaseDiffForm::config_params;
+std::map<QString, attribs_map> ModelDatabaseDiffForm::config_params;
 
 ModelDatabaseDiffForm::ModelDatabaseDiffForm(QWidget *parent, Qt::WindowFlags flags) : BaseConfigWidget (parent)
 {
@@ -529,8 +529,8 @@ void ModelDatabaseDiffForm::importDatabase(unsigned thread_id)
 		QComboBox *conn_cmb = (thread_id == SrcImportThread ? src_connections_cmb : connections_cmb),
 				*db_cmb = (thread_id == SrcImportThread ? src_database_cmb : database_cmb);
 		Connection conn=(*reinterpret_cast<Connection *>(conn_cmb->itemData(conn_cmb->currentIndex()).value<void *>())), conn1;
-		map<ObjectType, vector<unsigned>> obj_oids;
-		map<unsigned, vector<unsigned>> col_oids;
+		std::map<ObjectType, std::vector<unsigned>> obj_oids;
+		std::map<unsigned, std::vector<unsigned>> col_oids;
 		Catalog catalog;
 		DatabaseModel *db_model = nullptr;
 		QStringList pd_filters = pd_filter_wgt->getObjectFilters();
@@ -715,7 +715,7 @@ void ModelDatabaseDiffForm::exportDiff(bool confirm)
 void ModelDatabaseDiffForm::filterDiffInfos()
 {
 	QToolButton *btn=dynamic_cast<QToolButton *>(sender());
-	map<QToolButton *, unsigned> diff_types={ {create_tb, ObjectsDiffInfo::CreateObject},
+	std::map<QToolButton *, unsigned> diff_types={ {create_tb, ObjectsDiffInfo::CreateObject},
 											  {drop_tb, ObjectsDiffInfo::DropObject},
 											  {alter_tb, ObjectsDiffInfo::AlterObject},
 											  {ignore_tb, ObjectsDiffInfo::IgnoreObject}};
@@ -1006,7 +1006,7 @@ void ModelDatabaseDiffForm::updateProgress(int progress, QString msg, ObjectType
 
 void ModelDatabaseDiffForm::updateDiffInfo(ObjectsDiffInfo diff_info)
 {
-	map<unsigned, QToolButton *> buttons={ {ObjectsDiffInfo::CreateObject, create_tb},
+	std::map<unsigned, QToolButton *> buttons={ {ObjectsDiffInfo::CreateObject, create_tb},
 																				 {ObjectsDiffInfo::DropObject,   drop_tb},
 																				 {ObjectsDiffInfo::AlterObject,  alter_tb},
 																				 {ObjectsDiffInfo::IgnoreObject, ignore_tb} };
@@ -1329,7 +1329,7 @@ void ModelDatabaseDiffForm::applyPartialDiffFilters()
 		QString search_attr = (gen_filters_from_log_chk->isChecked() ||
 													 pd_filter_wgt->isMatchSignature()) ?
 														Attributes::Signature : Attributes::Name;
-		vector<BaseObject *> filterd_objs = loaded_model->findObjects(pd_filter_wgt->getObjectFilters(), search_attr);
+		std::vector<BaseObject *> filterd_objs = loaded_model->findObjects(pd_filter_wgt->getObjectFilters(), search_attr);
 		ObjectFinderWidget::updateObjectTable(filtered_objs_tbw, filterd_objs, search_attr);
 		getFilteredObjects(filtered_objs);
 	}
@@ -1356,7 +1356,7 @@ void ModelDatabaseDiffForm::generateFiltersFromChangelog()
 	if(!source_model)
 		return;
 
-	vector<ObjectType> tab_obj_types = BaseObject::getChildObjectTypes(ObjectType::Table);
+	std::vector<ObjectType> tab_obj_types = BaseObject::getChildObjectTypes(ObjectType::Table);
 	QStringList filters = source_model->getFiltersFromChangelog(start_date_chk->isChecked() ? start_date_dt->dateTime() : QDateTime(),
 																											end_date_chk->isChecked() ? end_date_dt->dateTime() : QDateTime());
 
@@ -1370,7 +1370,7 @@ void ModelDatabaseDiffForm::generateFiltersFromChangelog()
 	pd_filter_wgt->addFilters(filters);
 }
 
-void ModelDatabaseDiffForm::getFilteredObjects(vector<BaseObject *> &objects)
+void ModelDatabaseDiffForm::getFilteredObjects(std::vector<BaseObject *> &objects)
 {
 	int row_cnt = filtered_objs_tbw->rowCount();
 	QTableWidgetItem *item = nullptr;
@@ -1390,7 +1390,7 @@ void ModelDatabaseDiffForm::getFilteredObjects(vector<BaseObject *> &objects)
 	}
 }
 
-void ModelDatabaseDiffForm::getFilteredObjects(map<ObjectType, vector<unsigned>> &obj_oids)
+void ModelDatabaseDiffForm::getFilteredObjects(std::map<ObjectType, std::vector<unsigned>> &obj_oids)
 {
 	ObjectType obj_type;
 	int row_cnt = filtered_objs_tbw->rowCount();

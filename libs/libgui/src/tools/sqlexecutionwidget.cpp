@@ -26,7 +26,7 @@
 #include "utilsns.h"
 #include "utils/custommenustyle.h"
 
-map<QString, QString> SQLExecutionWidget::cmd_history;
+std::map<QString, QString> SQLExecutionWidget::cmd_history;
 
 int SQLExecutionWidget::cmd_history_max_len = 1000;
 const QString SQLExecutionWidget::ColumnNullValue("␀");
@@ -269,10 +269,10 @@ void SQLExecutionWidget::fillResultsTable(Catalog &catalog, ResultSet &res, QTab
 	{
 		int col=0, row=0, col_cnt=res.getColumnCount();
 		QTableWidgetItem *item=nullptr;
-		vector<unsigned> type_ids;
-		vector<unsigned>::iterator end;
-		vector<attribs_map> types;
-		map<unsigned, QString> type_names;
+		std::vector<unsigned> type_ids;
+		std::vector<unsigned>::iterator end;
+		std::vector<attribs_map> types;
+		std::map<unsigned, QString> type_names;
 		unsigned orig_filter=catalog.getQueryFilter();
 
 		results_tbw->setRowCount(0);
