@@ -58,8 +58,8 @@ class TemplateType: public BaseType {
 		QString operator ~();
 };
 
-template<class Class>
-QStringList TemplateType<Class>::type_names = {};
+/* template<class Class>
+QStringList TemplateType<Class>::type_names = {}; */
 
 template<class Class>
 TemplateType<Class>::TemplateType() { }

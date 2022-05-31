@@ -17,8 +17,10 @@
 */
 
 #include "custommenustyle.h"
+#include <QScreen>
+#include <QWidget>
 
-int CustomMenuStyle::icon_pixel_metric = 25;
+int CustomMenuStyle::icon_pixel_metric = 22;
 
 CustomMenuStyle::CustomMenuStyle()
 {
