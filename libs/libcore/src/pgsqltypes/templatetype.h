@@ -29,6 +29,7 @@ to see the CRTP working.
 
 Interesting readings:
 https://stackoverflow.com/questions/12796580/static-variable-for-each-derived-class
+https://stackoverflow.com/questions/1390913/are-static-variables-in-a-base-class-shared-by-all-derived-classes
 https://en.wikipedia.org/wiki/Curiously_recurring_template_pattern
 https://www.fluentcpp.com/2017/05/12/curiously-recurring-template-pattern/
 
@@ -42,12 +43,6 @@ https://www.fluentcpp.com/2017/05/12/curiously-recurring-template-pattern/
 template<class Class>
 class TemplateType: public BaseType {
 	protected:
-		/* C++17 allows inline initialization of static attributes.
-		 * This seems to solve the problem with warning related to
-		 * undefined template variable (-Wundefined-var-template)
-		 * Reference: https://stackoverflow.com/questions/38043442/how-do-inline-variables-work */
-		//static inline QStringList type_names;
-
 		static QStringList type_names;
 
 	public:
@@ -62,6 +57,9 @@ class TemplateType: public BaseType {
 		unsigned operator = (const QString &type_name);
 		QString operator ~();
 };
+
+template<class Class>
+QStringList TemplateType<Class>::type_names = {};
 
 template<class Class>
 TemplateType<Class>::TemplateType() { }
