@@ -42,8 +42,11 @@ https://www.fluentcpp.com/2017/05/12/curiously-recurring-template-pattern/
 template<class Class>
 class TemplateType: public BaseType {
 	protected:
-		//NOTE: This static attribute MUST BE INITIALIZED in the derived class
-		static QStringList type_names;
+		/* C++17 allows inline initialization of static attributes.
+		 * This seems to solve the problem with warning related to
+		 * undefined template variable (-Wundefined-var-template)
+		 * Reference: https://stackoverflow.com/questions/38043442/how-do-inline-variables-work */
+		static inline QStringList type_names;
 
 	public:
 		TemplateType();
