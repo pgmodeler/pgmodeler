@@ -46,7 +46,9 @@ class TemplateType: public BaseType {
 		 * This seems to solve the problem with warning related to
 		 * undefined template variable (-Wundefined-var-template)
 		 * Reference: https://stackoverflow.com/questions/38043442/how-do-inline-variables-work */
-		static inline QStringList type_names;
+		//static inline QStringList type_names;
+
+		static QStringList type_names;
 
 	public:
 		TemplateType();
