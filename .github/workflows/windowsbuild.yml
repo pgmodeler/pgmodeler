@@ -34,7 +34,7 @@ jobs:
     - name: Running qmake
       run: |
         cd $GITHUB_WORKSPACE;
-        qmake-qt6 pgmodeler.pro -r PREFIX=D:/a/pgmodeler/pgmodeler/build \
+        qmake-qt6 pgmodeler.pro -spec win32-clang-g++ -r PREFIX=D:/a/pgmodeler/pgmodeler/build \
           XML_INC=$(cygpath -m /mingw64/include/libxml2) \
           XML_LIB=$(cygpath -m /mingw64/bin/libxml2-2.dll) \
           PGSQL_INC=$(cygpath -m /mingw64/include) \
