@@ -34,8 +34,6 @@
 #include <deque>
 #include <type_traits>
 
-using namespace std;
-
 //! \brief This function causes the provided enum to be converted to its underlying datatype
 template<typename Enum>
 constexpr std::underlying_type_t<Enum> enum_cast (Enum obj_type) noexcept

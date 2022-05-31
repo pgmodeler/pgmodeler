@@ -5297,8 +5297,8 @@ void ModelWidget::rearrangeTablesInSchema(Schema *schema, QPointF start)
 			bool has_collision = false;
 			QRectF curr_brect, comp_brect, irect;
 			QPointF pos;
-			random_device rand_seed;
-			default_random_engine rand_num_engine;
+			std::random_device rand_seed;
+			std::default_random_engine rand_num_engine;
 			unsigned tries = 0;
 
 			rand_num_engine.seed(rand_seed());
@@ -5324,7 +5324,7 @@ void ModelWidget::rearrangeTablesInSchema(Schema *schema, QPointF start)
 				max_h *= 1.05;
 			}
 
-			uniform_int_distribution<unsigned> dist_x(start.x(), start.x() + max_w),
+			std::uniform_int_distribution<unsigned> dist_x(start.x(), start.x() + max_w),
 					dist_y(start.y(), start.y() + max_h);
 
 			//Doing the first random positioning on all tables
@@ -5388,12 +5388,12 @@ void ModelWidget::rearrangeTablesInSchemas()
 	Schema *schema = nullptr;
 	SchemaView *sch_view = nullptr, *sch_view_aux = nullptr;
 	QRectF curr_brect, comp_brect, irect;
-	random_device rand_seed;
-	default_random_engine rand_num_engine;
+	std::random_device rand_seed;
+	std::default_random_engine rand_num_engine;
 	double max_w = 1000, max_h = 1000;
 	std::vector<BaseObject *> schemas = *db_model->getObjectList(ObjectType::Schema), rels;
 	bool has_collision = false;
-	uniform_int_distribution<unsigned> dist_x(0, max_w), dist_y(0, max_h);
+	std::uniform_int_distribution<unsigned> dist_x(0, max_w), dist_y(0, max_h);
 	unsigned tries = 0,
 			max_tries = (db_model->getObjectCount(ObjectType::Table) +
 									 db_model->getObjectCount(ObjectType::View) +
@@ -5419,10 +5419,10 @@ void ModelWidget::rearrangeTablesInSchemas()
 		max_h += sch_view->boundingRect().height();
 	}
 
-	uniform_int_distribution<unsigned>::param_type new_dx(0, max_w * 0.40);
+	std::uniform_int_distribution<unsigned>::param_type new_dx(0, max_w * 0.40);
 	dist_x.param(new_dx);
 
-	uniform_int_distribution<unsigned>::param_type new_dy(0, max_h * 0.40);
+	std::uniform_int_distribution<unsigned>::param_type new_dy(0, max_h * 0.40);
 	dist_y.param(new_dy);
 
 	/* Collision detection: If a schema collides with other schemas it'll then repositioned

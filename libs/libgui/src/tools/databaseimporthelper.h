@@ -36,7 +36,7 @@ class DatabaseImportHelper: public QObject {
 		Q_OBJECT
 		
 		//! \brief Random number generator engine used to generate random colors for imported schemas
-		default_random_engine rand_num_engine;
+		std::default_random_engine rand_num_engine;
 		
 		static const QString UnkownObjectOidXml;
 		

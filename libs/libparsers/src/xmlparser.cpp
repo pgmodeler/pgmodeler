@@ -483,8 +483,8 @@ QString XmlParser::convertCharsToXMLEntities(QString buf)
 			 * replacing contents within that tag */
 			cdata_start = lin.indexOf(CdataStart);
 			cdata_end = lin.indexOf(CdataEnd);
-			start = min<int>(cdata_start, cdata_end);
-			end = max<int>(cdata_start, cdata_end);
+			start = std::min<int>(cdata_start, cdata_end);
+			end = std::max<int>(cdata_start, cdata_end);
 
 			do
 			{

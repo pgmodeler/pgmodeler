@@ -625,7 +625,7 @@ void RelationshipView::configureLine()
 			if(rel_cnt > 1)
 			{
 				int idx = tables[0]->getConnectedRelationshipIndex(base_rel, true);
-				double min_val = min<double>(rect.width(), rect.height());
+				double min_val = std::min<double>(rect.width(), rect.height());
 
 				if(idx < 0) idx =0;
 				pos_factor = min_val * 0.08 * idx;
@@ -920,7 +920,7 @@ void RelationshipView::configureLine()
 						 * this will cause all relationships to be aligned together */
 						if(conn_rels_cnt[tab_idx] > 1)
 						{							
-							double max_dim = max<double>(brect.height(), brect.width());
+							double max_dim = std::max<double>(brect.height(), brect.width());
 							int signal = 0;
 
 							if(edge.dx() == 0)

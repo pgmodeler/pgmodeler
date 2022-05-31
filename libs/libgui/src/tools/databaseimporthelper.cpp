@@ -25,7 +25,7 @@ const QString DatabaseImportHelper::UnkownObjectOidXml("\t<!--[ unknown object O
 
 DatabaseImportHelper::DatabaseImportHelper(QObject *parent) : QObject(parent)
 {
-	random_device rand_seed;
+	std::random_device rand_seed;
 	rand_num_engine.seed(rand_seed());
 
 	import_canceled=ignore_errors=import_sys_objs=import_ext_objs=rand_rel_colors=update_fk_rels=false;

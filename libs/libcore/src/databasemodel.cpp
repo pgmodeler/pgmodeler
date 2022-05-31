@@ -3218,9 +3218,9 @@ void DatabaseModel::loadModel(const QString &filename)
 
 			if(layer_rect_colors.isEmpty())
 			{
-				random_device rand_seed;
-				default_random_engine rand_num_engine;
-				uniform_int_distribution<unsigned> dist(0,255);
+				std::random_device rand_seed;
+				std::default_random_engine rand_num_engine;
+				std::uniform_int_distribution<unsigned> dist(0,255);
 
 				layer_name_colors.clear();
 				rand_num_engine.seed(rand_seed());

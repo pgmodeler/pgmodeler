@@ -61,7 +61,7 @@ class XmlParser {
 		 a subsequent operation. To configure this element it is necessary
 		 call the method savePosition() and to return the navigation to the saved
 		 position is necessary call restorePosition() */
-		stack<xmlNode *> elems_stack;
+		std::stack<xmlNode *> elems_stack;
 
 		//! \brief Stores the document DTD declaration
 		QString	dtd_decl,

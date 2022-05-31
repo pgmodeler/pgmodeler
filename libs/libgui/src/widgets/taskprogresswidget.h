@@ -29,8 +29,6 @@
 #include "ui_taskprogresswidget.h"
 #include <map>
 
-using namespace std;
-
 class TaskProgressWidget: public QDialog, public Ui::TaskProgressWidget
 {
 	private:
