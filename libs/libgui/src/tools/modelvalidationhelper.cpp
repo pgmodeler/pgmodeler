@@ -43,7 +43,7 @@ ModelValidationHelper::~ModelValidationHelper()
 	delete export_thread;
 }
 
-void ModelValidationHelper::generateValidationInfo(unsigned val_type, BaseObject *object, vector<BaseObject *> refs)
+void ModelValidationHelper::generateValidationInfo(unsigned val_type, BaseObject *object, std::vector<BaseObject *> refs)
 {
 	if(!refs.empty() ||
 		 val_type==ValidationInfo::MissingExtension ||
@@ -67,7 +67,7 @@ void  ModelValidationHelper::resolveConflict(ValidationInfo &info)
 {
 	try
 	{
-		vector<BaseObject *> refs=info.getReferences();
+		std::vector<BaseObject *> refs=info.getReferences();
 		BaseObject *obj=nullptr;
 
 		//Resolving broken references by swaping the object ids
@@ -108,7 +108,7 @@ void  ModelValidationHelper::resolveConflict(ValidationInfo &info)
 
 					if(aux_obj && BaseTable::isBaseTable(aux_obj->getObjectType()))
 					{
-						vector<BaseRelationship *> base_rels=db_model->getRelationships(dynamic_cast<BaseTable *>(aux_obj));
+						std::vector<BaseRelationship *> base_rels=db_model->getRelationships(dynamic_cast<BaseTable *>(aux_obj));
 						for(auto &rel : base_rels)
 						{
 							if(rel->getObjectId() < aux_obj->getObjectId())
@@ -266,7 +266,7 @@ void ModelValidationHelper::validateModel()
 
 	try
 	{
-		vector<ObjectType> types = { ObjectType::Role, ObjectType::Tablespace, ObjectType::Schema, ObjectType::Language, ObjectType::Function,
+		std::vector<ObjectType> types = { ObjectType::Role, ObjectType::Tablespace, ObjectType::Schema, ObjectType::Language, ObjectType::Function,
 																 ObjectType::Type, ObjectType::Domain, ObjectType::Sequence, ObjectType::Operator, ObjectType::OpFamily,
 																 ObjectType::OpClass, ObjectType::Collation, ObjectType::Table, ObjectType::Extension, ObjectType::View,
 																 ObjectType::Relationship, ObjectType::ForeignDataWrapper, ObjectType::ForeignServer, ObjectType::GenericSql,
@@ -277,16 +277,16 @@ void ModelValidationHelper::validateModel()
 		ObjectType	obj_type;
 		unsigned i = 0, i1 = 0, cnt = 0, aux_cnt = 0,	count = 0, count1 = 0;
 		BaseObject *object=nullptr, *refer_obj=nullptr;
-		vector<BaseObject *> refs, refs_aux, *obj_list=nullptr, aux_tables;
-		vector<BaseObject *>::iterator itr;
+		std::vector<BaseObject *> refs, refs_aux, *obj_list=nullptr, aux_tables;
+		std::vector<BaseObject *>::iterator itr;
 		TableObject *tab_obj=nullptr;
 		PhysicalTable *table=nullptr, *ref_tab=nullptr, *recv_tab=nullptr;
 		BaseTable *base_tab = nullptr;
 		Constraint *constr=nullptr;
 		Column *col=nullptr;
 		Relationship *rel=nullptr;
-		map<QString, vector<BaseObject *> > dup_objects;
-		map<QString, vector<BaseObject *> >::iterator mitr;
+		std::map<QString, std::vector<BaseObject *> > dup_objects;
+		std::map<QString, std::vector<BaseObject *> >::iterator mitr;
 		QString name, signal_msg=QString("`%1' (%2)");
 		bool postgis_exists = db_model->getObjectIndex(QString("postgis"), ObjectType::Extension) >= 0;
 
@@ -376,10 +376,10 @@ void ModelValidationHelper::validateModel()
 						 *  that relationship is being created after the creation of the special object */
 						if(BaseTable::isBaseTable(obj_type) || obj_type == ObjectType::GenericSql)
 						{
-							vector<ObjectType> tab_aux_types={ ObjectType::Constraint, ObjectType::Trigger, ObjectType::Index };
-							vector<TableObject *> *tab_objs;
-							vector<Column *> ref_cols;
-							vector<BaseObject *> rels;
+							std::vector<ObjectType> tab_aux_types={ ObjectType::Constraint, ObjectType::Trigger, ObjectType::Index };
+							std::vector<TableObject *> *tab_objs;
+							std::vector<Column *> ref_cols;
+							std::vector<BaseObject *> rels;
 							BaseObject *rel=nullptr;
 							View *view=nullptr;
 							GenericSQL *gen_sql=nullptr;
@@ -556,7 +556,7 @@ void ModelValidationHelper::validateModel()
 		// Step 3: Checking if columns of any table is using GiS data types and the postgis extension is not created.
 		if(!postgis_exists)
 		{
-			vector<BaseObject *> tabs;
+			std::vector<BaseObject *> tabs;
 
 			tabs.assign(db_model->getObjectList(ObjectType::Table)->begin(),
 									db_model->getObjectList(ObjectType::Table)->end());

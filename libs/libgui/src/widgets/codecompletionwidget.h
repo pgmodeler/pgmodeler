@@ -85,9 +85,9 @@ class CodeCompletionWidget: public QWidget
 		enable_snippets;
 		
 		//! \brief Store the objects selected for each qualifying level
-		vector<BaseObject *> sel_objects;
+		std::vector<BaseObject *> sel_objects;
 		
-		map<QString, QPixmap> custom_items;
+		std::map<QString, QPixmap> custom_items;
 		
 		attribs_map custom_items_tips;
 		
@@ -99,7 +99,7 @@ class CodeCompletionWidget: public QWidget
 		
 		/*! \brief Insert the objects of the vector into the name listing. The filter parameter is used to
 		insert only the object which names matches the filter */
-		void populateNameList(vector<BaseObject *> &objects, QString filter="");
+		void populateNameList(std::vector<BaseObject *> &objects, QString filter="");
 		
 		//! \brief Configures the current qualifying level according to the passed object
 		void setQualifyingLevel(BaseObject *obj);

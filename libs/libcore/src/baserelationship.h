@@ -41,7 +41,7 @@ class BaseRelationship: public BaseGraphicObject  {
 		QColor custom_color;
 
 		//! \brief Represents the points added by the user on the relationship line
-		vector<QPointF> points;
+		std::vector<QPointF> points;
 
 		//! \brief Indicates whether the relationship is linked to the tables
 		bool connected;
@@ -146,10 +146,10 @@ class BaseRelationship: public BaseGraphicObject  {
 		bool isSelfRelationship();
 
 		//! \brief Stores the points that defines the custom relationship line
-		void setPoints(const vector<QPointF> &points);
+		void setPoints(const std::vector<QPointF> &points);
 
 		//! \brief Returns the relationship point list
-		vector<QPointF> getPoints();
+		std::vector<QPointF> getPoints();
 
 		//! \brief Sets the distance of the specified label in relation to its origin
 		void setLabelDistance(unsigned label_id, QPointF label_dist);

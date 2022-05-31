@@ -309,7 +309,7 @@ void TransformTest::modelReturnsTransformDepsRefsToFuncs()
 	QString xml_code, expect_code;
 	Schema schema;
 	DatabaseModel dbmodel;
-	vector<BaseObject *> refs, deps;
+	std::vector<BaseObject *> refs, deps;
 	unsigned to_sql_refs, from_sql_refs, transf_deps;
 	Type custom_type;
 

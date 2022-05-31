@@ -34,7 +34,7 @@
 class Rule: public TableObject{
 	private:
 		//! \brief Commands executed by the rule when activated
-		vector<QString> commands;
+		std::vector<QString> commands;
 
 		//! \brief Conditional expression for the rule activation
 		QString conditional_expr;

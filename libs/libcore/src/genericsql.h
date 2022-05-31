@@ -42,14 +42,14 @@ class GenericSQL: public BaseObject{
 		};
 
 		//! \brief Returns a copy of the objects references list
-		vector<ObjectRefConfig> getObjectsReferences();
+		std::vector<ObjectRefConfig> getObjectsReferences();
 
 	private:
 		//! \brief The SQL definition of the generic object
 		QString definition;
 
 		//! \brief The list of references to other object in the model
-		vector<ObjectRefConfig> objects_refs;
+		std::vector<ObjectRefConfig> objects_refs;
 
 		/*! \brief Returns the index of a object reference searching by its name.
 		 * A negative return value indicates the reference doens't exist */
@@ -84,7 +84,7 @@ class GenericSQL: public BaseObject{
 		/*! \brief Returns a list of objectes being referenced by the generic object.
 		 * For performance reasons this method doesn't eliminate duplicated values in
 		 * the retunring list*/
-		vector<BaseObject *> getReferencedObjects();
+		std::vector<BaseObject *> getReferencedObjects();
 
 		virtual QString getCodeDefinition(unsigned def_type);
 

@@ -373,7 +373,7 @@ QString SyntaxHighlighter::identifyWordGroup(const QString &word, const QChar &l
 
 bool SyntaxHighlighter::isWordMatchGroup(const QString &word, const QString &group, bool use_final_expr, const QChar &lookahead_chr, int &match_idx, int &match_len)
 {
-	vector<QRegularExpression> *vet_expr = nullptr;
+	std::vector<QRegularExpression> *vet_expr = nullptr;
 	bool has_match = false;
 	QRegularExpressionMatch match;
 
@@ -432,7 +432,7 @@ void SyntaxHighlighter::loadConfiguration(const QString &filename)
 		QTextCharFormat format;
 		QRegularExpression regexp;
 		QColor bg_color, fg_color;
-		vector<QString>::iterator itr, itr_end;
+		std::vector<QString>::iterator itr, itr_end;
 
 		try
 		{
@@ -649,14 +649,14 @@ void SyntaxHighlighter::loadConfiguration(const QString &filename)
 	}
 }
 
-vector<QRegularExpression> SyntaxHighlighter::getExpressions(const QString &group_name, bool final_expr)
+std::vector<QRegularExpression> SyntaxHighlighter::getExpressions(const QString &group_name, bool final_expr)
 {
-	map<QString, vector<QRegularExpression> > *expr_map=(!final_expr ? &initial_exprs : &final_exprs);
+	std::map<QString, std::vector<QRegularExpression> > *expr_map=(!final_expr ? &initial_exprs : &final_exprs);
 
 	if(expr_map->count(group_name) > 0)
 		return expr_map->at(group_name);
 	else
-		return vector<QRegularExpression>();
+		return std::vector<QRegularExpression>();
 }
 
 QChar SyntaxHighlighter::getCompletionTrigger()

@@ -62,7 +62,7 @@ void PluginsConfigWidget::showPluginInfo(int idx)
 
 void PluginsConfigWidget::loadConfiguration()
 {
-	vector<Exception> errors;
+	std::vector<Exception> errors;
 	QString lib, plugin_name,
 			dir_plugins=GlobalAttributes::getPluginsDir() +
 						GlobalAttributes::DirSeparator;
@@ -155,7 +155,7 @@ void PluginsConfigWidget::installPluginsActions(QMenu *menu, QObject *recv, cons
 {
 	if(menu && slot)
 	{
-		vector<QAction *>::iterator itr=plugins_actions.begin();
+		std::vector<QAction *>::iterator itr=plugins_actions.begin();
 
 		while(itr!=plugins_actions.end())
 		{

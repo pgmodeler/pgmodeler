@@ -65,13 +65,13 @@ class Constraint: public TableObject{
 		ActionType del_action, upd_action;
 
 		//! \brief Stores the columns that is referenced by the constraint (except for check constraints)
-		vector<Column *> columns;
+		std::vector<Column *> columns;
 
 		//! \brief Stores the referenced columns from the referenced table primary key
-		vector<Column *> ref_columns;
+		std::vector<Column *> ref_columns;
 
 		//! \brief Stores the exclude elements of the exclude constraint
-		vector<ExcludeElement> excl_elements;
+		std::vector<ExcludeElement> excl_elements;
 
 		//! \brief Stores the check expression or the exclude predicate (only for check and exclude constraints)
 		QString expression;
@@ -111,10 +111,10 @@ class Constraint: public TableObject{
 
 		/*! \brief Adds columns to the internal column list referenced by the
 		 constants SOURCE_COLS or REFERENCED_COLS. Previously columns added are removed. */
-		void addColumns(const vector<Column *> &cols, unsigned col_type);
+		void addColumns(const std::vector<Column *> &cols, unsigned col_type);
 
 		//! \brief Adds several elements to the constraint using a defined vector
-		void addExcludeElements(vector<ExcludeElement> &elems);
+		void addExcludeElements(std::vector<ExcludeElement> &elems);
 
 		//! \brief Defines the constraint type
 		void setConstraintType(ConstraintType constr_type);
@@ -158,7 +158,7 @@ class Constraint: public TableObject{
 		ActionType getActionType(unsigned act_id);
 
 		//! \brief Returns the list of columns of the specified type SOURCE_COLS or REFERENCED_COLS
-		vector<Column *> getColumns(unsigned col_type);
+		std::vector<Column *> getColumns(unsigned col_type);
 
 		/*! \brief Returns one column (using its index) from the internal constraint column lists.
 		 Use the constants SOURCE_COLS or REFERENCED_COLS to access the lists */
@@ -176,7 +176,7 @@ class Constraint: public TableObject{
 		unsigned getExcludeElementCount();
 
 		//! \brief Returns a list of exclude elements
-		vector<ExcludeElement> getExcludeElements();
+		std::vector<ExcludeElement> getExcludeElements();
 
 		/*! \brief Removes one column from internal list using its name.
 		 Use the constants SOURCE_COLS or REFERENCED_COLS to access the lists */
@@ -214,7 +214,7 @@ class Constraint: public TableObject{
 	This method is slower than isReferRelationshipAddedColumn() so it's not
 	recommended to use it only check if the object is referencing columns
 	added by relationship */
-		vector<Column *> getRelationshipAddedColumns();
+		std::vector<Column *> getRelationshipAddedColumns();
 
 		//! \brief Returns the matching type adopted by the constraint
 		MatchType getMatchType();
@@ -244,7 +244,7 @@ class Constraint: public TableObject{
 		 * The parameter strict_check will cause the method to return true if and only if all the columns
 		 * provided in the list are in the constraint and the provided columns list has the same size as
 		 * the one in the constraint */
-		bool isColumnsExist(vector<Column *> columns, unsigned col_type, bool strict_check);
+		bool isColumnsExist(std::vector<Column *> columns, unsigned col_type, bool strict_check);
 
 		//! \brief Adds an exclude element to the constraint using an column (only exclude constraint)
 		void addExcludeElement(Column *column, Operator *oper, OperatorClass *op_class, bool use_sorting, bool asc_order, bool nulls_first);

@@ -64,7 +64,7 @@ void ColumnPickerWidget::setParentObject(BaseObject *p_obj)
 	updateColumnsCombo();
 }
 
-void ColumnPickerWidget::setColumns(const vector<Column *> &cols)
+void ColumnPickerWidget::setColumns(const std::vector<Column *> &cols)
 {
 	int row = 0;
 
@@ -87,7 +87,7 @@ void ColumnPickerWidget::setColumns(const vector<Column *> &cols)
 	columns_tab->blockSignals(false);
 }
 
-void ColumnPickerWidget::setColumns(const vector<SimpleColumn> &cols)
+void ColumnPickerWidget::setColumns(const std::vector<SimpleColumn> &cols)
 {
 	int row = 0;
 
@@ -113,8 +113,8 @@ void ColumnPickerWidget::updateColumnsCombo()
 	try
 	{
 		Column *column=nullptr;
-		vector<TableObject *> columns;
-		vector<SimpleColumn> simple_cols;
+		std::vector<TableObject *> columns;
+		std::vector<SimpleColumn> simple_cols;
 		Table *table = dynamic_cast<Table *>(parent_obj);
 		View *view = dynamic_cast<View *>(parent_obj);
 		Relationship *relationship = dynamic_cast<Relationship *>(parent_obj);
@@ -223,9 +223,9 @@ void ColumnPickerWidget::addColumn(const SimpleColumn &column, int row)
 	columns_tab->setRowData(QVariant::fromValue<SimpleColumn>(column), row);
 }
 
-vector<Column *> ColumnPickerWidget::getColumns()
+std::vector<Column *> ColumnPickerWidget::getColumns()
 {
-	vector<Column *> cols;
+	std::vector<Column *> cols;
 
 	for(unsigned row = 0; row < columns_tab->getRowCount(); row++)
 		cols.push_back(reinterpret_cast<Column *>(columns_tab->getRowData(row).value<void *>()));
@@ -233,12 +233,12 @@ vector<Column *> ColumnPickerWidget::getColumns()
 	return cols;
 }
 
-vector<SimpleColumn> ColumnPickerWidget::getSimpleColumns()
+std::vector<SimpleColumn> ColumnPickerWidget::getSimpleColumns()
 {
 	if(parent_obj && parent_obj->getObjectType() != ObjectType::View)
 		return {};
 
-	vector<SimpleColumn> cols;
+	std::vector<SimpleColumn> cols;
 
 	for(unsigned row = 0; row < columns_tab->getRowCount(); row++)
 		cols.push_back(columns_tab->getRowData(row).value<SimpleColumn>());

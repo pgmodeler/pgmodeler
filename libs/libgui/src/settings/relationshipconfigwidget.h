@@ -34,9 +34,9 @@ class RelationshipConfigWidget:  public BaseConfigWidget, public Ui::Relationshi
 	private:
 		Q_OBJECT
 
-		static map<QString, attribs_map> config_params;
+		static std::map<QString, attribs_map> config_params;
 
-		map<QString, attribs_map> patterns;
+		std::map<QString, attribs_map> patterns;
 
 		void hideEvent(QHideEvent *);
 
@@ -45,7 +45,7 @@ class RelationshipConfigWidget:  public BaseConfigWidget, public Ui::Relationshi
 
 		void saveConfiguration();
 		void loadConfiguration();
-		static map<QString, attribs_map> getConfigurationParams();
+		static std::map<QString, attribs_map> getConfigurationParams();
 
 	public slots:
 		void applyConfiguration();

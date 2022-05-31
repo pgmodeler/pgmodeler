@@ -57,7 +57,7 @@ class Catalog {
 		 * The keys of this map are the names of the extensions that hold objects in the database,
 		 * The values of this map are the list of objects oids. This is used to speed up the checking
 		 * if an certain object is owned by a certain extension (see isExtensionObject()) */
-		map<QString, QStringList> ext_objects;
+		std::map<QString, QStringList> ext_objects;
 
 		/*! \brief Stores in comma seperated way the oids of all objects created by extensions. This
 		 * 	attribute is use to create the catalog query that filters objects that are created or not
@@ -65,15 +65,15 @@ class Catalog {
 		QString ext_objs_oids;
 
 		//! \brief Stores the name filters for each type of object. (See setObjectFilters())
-		map<ObjectType, QString> obj_filters;
+		std::map<ObjectType, QString> obj_filters;
 
 		/*! \brief Stores the extra filters for table children objects.
 		 * This one is used only when forced objects filtering is enabled (See setObjectFilters()) */
-		map<ObjectType, QString> extra_filter_conds;
+		std::map<ObjectType, QString> extra_filter_conds;
 
 		/*! \brief This map stores the oid field name for each object type. The oid field name can be
 		composed by the pg_[OBJECT_TYPE] table alias. Refer to catalog query schema files for details */
-		static map<ObjectType, QString> oid_fields,
+		static std::map<ObjectType, QString> oid_fields,
 
 		/*! \brief This map stores the name field for each object type. Refer to catalog query schema files for details */
 		name_fields,
@@ -145,7 +145,7 @@ class Catalog {
 		QString getCommentQuery(const QString &oid_field, bool is_shared_obj=false);
 
 		//! \brief Creates a comma separated string containing all the oids to be filtered
-		QString createOidFilter(const vector<unsigned> &oids);
+		QString createOidFilter(const std::vector<unsigned> &oids);
 
 	public:
 		Catalog();
@@ -217,14 +217,14 @@ class Catalog {
 		unsigned getQueryFilter();
 
 		//! \brief Returns the configured objects a name filters
-		map<ObjectType, QString> getObjectFilters();
+		std::map<ObjectType, QString> getObjectFilters();
 
 		/*! \brief Returns a vector with all filtered object types.
 		 * Invalid pattern filters containing the InvFilterPattern are discarded from the returning vector */
-		vector<ObjectType> getFilteredObjectTypes();
+		std::vector<ObjectType> getFilteredObjectTypes();
 
 		//! \brief Fills the specified maps with all object's oids querying the catalog with the specified filter
-		void getObjectsOIDs(map<ObjectType, vector<unsigned> > &obj_oids, map<unsigned, vector<unsigned> > &col_oids, attribs_map extra_attribs=attribs_map());
+		void getObjectsOIDs(std::map<ObjectType, std::vector<unsigned> > &obj_oids, std::map<unsigned, std::vector<unsigned> > &col_oids, attribs_map extra_attribs=attribs_map());
 
 		/*! \brief Returns a attributes map containing the oids (key) and names (values) of the objects from
 		the specified type.	A schema name can be specified in order to filter only objects of the specifed schema */
@@ -232,21 +232,21 @@ class Catalog {
 
 		/*! \brief Returns a vector of attributes map containing the oids (key) and names as well types of the objects from
 		the specified list of types.	A schema name can be specified in order to filter only objects of the specifed schema */
-		vector<attribs_map> getObjectsNames(vector<ObjectType> obj_types, const QString &sch_name="", const QString &tab_name="", attribs_map extra_attribs=attribs_map(), bool sort_results=false);
+		std::vector<attribs_map> getObjectsNames(std::vector<ObjectType> obj_types, const QString &sch_name="", const QString &tab_name="", attribs_map extra_attribs=attribs_map(), bool sort_results=false);
 
 		//! \brief Returns a set of multiple attributes (several tuples) for the specified object type
-		vector<attribs_map> getMultipleAttributes(ObjectType obj_type, attribs_map extra_attribs=attribs_map());
+		std::vector<attribs_map> getMultipleAttributes(ObjectType obj_type, attribs_map extra_attribs=attribs_map());
 
 		/*! \brief Returns a set of multiple attributes (several tuples) for the specified catalog schema file.
 		 * This version of the method differs from the one in which the user need to provide the object type.
 		 * This one, the user is responsible to provide all attributes that will be parsed together with the
 		 * catalog file. */
-		vector<attribs_map> getMultipleAttributes(const QString &catalog_sch, attribs_map attribs=attribs_map());
+		std::vector<attribs_map> getMultipleAttributes(const QString &catalog_sch, attribs_map attribs=attribs_map());
 
 		/*! \brief Retrieve all available objects attributes for the specified type. Internally this method calls the get method for the
 		specified type. User can filter items by oids (except for table child objects), by schema (in the object type is suitable to accept schema)
 		and by table name (only when retriving child objects for a specific table) */
-		vector<attribs_map> getObjectsAttributes(ObjectType obj_type, const QString &schema="", const QString &table="", const vector<unsigned> &filter_oids={}, attribs_map extra_attribs=attribs_map());
+		std::vector<attribs_map> getObjectsAttributes(ObjectType obj_type, const QString &schema="", const QString &table="", const std::vector<unsigned> &filter_oids={}, attribs_map extra_attribs=attribs_map());
 
 		//! \brief Returns the attributes for the object specified by its type and OID
 		attribs_map getObjectAttributes(ObjectType obj_type, unsigned oid, const QString sch_name="", const QString tab_name="", attribs_map extra_attribs=attribs_map());
@@ -286,7 +286,7 @@ class Catalog {
 		static bool isCachedQueriesEnabled();
 
 		//! \brief Returns the object types that are able to be filtered
-		static vector<ObjectType> getFilterableObjectTypes();
+		static std::vector<ObjectType> getFilterableObjectTypes();
 
 		//! \brief Returns the object schema names that are able to be filtered
 		static QStringList getFilterableObjectNames();

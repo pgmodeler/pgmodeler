@@ -83,7 +83,7 @@ void Constraint::setExpression(const QString &expr)
 
 bool Constraint::isColumnExists(Column *column, unsigned col_type)
 {
-	vector<Column *>::iterator itr, itr_end;
+	std::vector<Column *>::iterator itr, itr_end;
 	bool found=false;
 
 	//Raises an error if the column is not allocated
@@ -112,7 +112,7 @@ bool Constraint::isColumnExists(Column *column, unsigned col_type)
 	return found;
 }
 
-bool Constraint::isColumnsExist(vector<Column *> columns, unsigned col_type, bool strict_check)
+bool Constraint::isColumnsExist(std::vector<Column *> columns, unsigned col_type, bool strict_check)
 {
 	bool is_ref = false;
 	unsigned found_cols = 0;
@@ -131,7 +131,7 @@ bool Constraint::isColumnsExist(vector<Column *> columns, unsigned col_type, boo
 bool Constraint::isColumnReferenced(Column *column, bool search_only_ref_cols)
 {
 	bool found=false;
-	vector<ExcludeElement>::iterator itr, itr_end;
+	std::vector<ExcludeElement>::iterator itr, itr_end;
 
 	if(constr_type == ConstraintType::PrimaryKey ||
 			constr_type == ConstraintType::Unique ||
@@ -185,7 +185,7 @@ void Constraint::addColumn(Column *column, unsigned col_type)
 	}
 }
 
-void Constraint::addColumns(const vector<Column *> &cols, unsigned col_type)
+void Constraint::addColumns(const std::vector<Column *> &cols, unsigned col_type)
 {
 	try
 	{
@@ -222,7 +222,7 @@ void Constraint::setTablespace(BaseObject *tabspc)
 
 void Constraint::setColumnsAttribute(unsigned col_type, unsigned def_type, bool inc_addedbyrel)
 {
-	vector<Column *> *col_vector=nullptr;
+	std::vector<Column *> *col_vector=nullptr;
 	Column *col=nullptr;
 	QString str_cols, attrib;
 	unsigned i, count;
@@ -313,7 +313,7 @@ ActionType Constraint::getActionType(unsigned act_id)
 		return upd_action;
 }
 
-vector<Column *> Constraint::getColumns(unsigned col_type)
+std::vector<Column *> Constraint::getColumns(unsigned col_type)
 {
   return (col_type==SourceCols ? columns : ref_columns);
 }
@@ -325,7 +325,7 @@ QString Constraint::getExpression()
 
 Column *Constraint::getColumn(unsigned col_idx, unsigned col_type)
 {
-	vector<Column *> *col_list=nullptr;
+	std::vector<Column *> *col_list=nullptr;
 
 	col_list=(col_type==SourceCols ? &columns : &ref_columns);
 
@@ -339,8 +339,8 @@ Column *Constraint::getColumn(unsigned col_idx, unsigned col_type)
 Column *Constraint::getColumn(const QString &name, unsigned col_type)
 {
 	bool found=false;
-	vector<Column *> *col_list=nullptr;
-	vector<Column *>::iterator itr_col, itr_end_col;
+	std::vector<Column *> *col_list=nullptr;
+	std::vector<Column *>::iterator itr_col, itr_end_col;
 
 	col_list=(col_type==SourceCols? &columns : &ref_columns);
 
@@ -381,8 +381,8 @@ void Constraint::removeColumns()
 
 void Constraint::removeColumn(const QString &name, unsigned col_type)
 {
-	vector<Column *>::iterator itr, itr_end;
-	vector<Column *> *cols=nullptr;
+	std::vector<Column *>::iterator itr, itr_end;
+	std::vector<Column *> *cols=nullptr;
 	Column *col=nullptr;
 
 	//Gets the column list using the specified internal list type
@@ -430,8 +430,8 @@ bool Constraint::isNoInherit()
 
 bool Constraint::isReferRelationshipAddedColumn()
 {
-	vector<Column *>::iterator itr, itr_end;
-	vector<ExcludeElement>::iterator itr1, itr1_end;
+	std::vector<Column *>::iterator itr, itr_end;
+	std::vector<ExcludeElement>::iterator itr1, itr1_end;
 	Column *col=nullptr;
 	bool found=false;
 
@@ -469,11 +469,11 @@ bool Constraint::isReferRelationshipAddedColumn()
 	return found;
 }
 
-vector<Column *> Constraint::getRelationshipAddedColumns()
+std::vector<Column *> Constraint::getRelationshipAddedColumns()
 {
 	Column *column=nullptr;
-	vector<Column *> cols;
-	vector<vector<Column *> *> lists = { &columns, &ref_columns };
+	std::vector<Column *> cols;
+	std::vector<std::vector<Column *> *> lists = { &columns, &ref_columns };
 
 	for(auto &p_lst : lists)
 	{
@@ -514,14 +514,14 @@ int Constraint::getExcludeElementIndex(ExcludeElement elem)
 	return (found ? idx : -1);
 }
 
-vector<ExcludeElement> Constraint::getExcludeElements()
+std::vector<ExcludeElement> Constraint::getExcludeElements()
 {
 	return excl_elements;
 }
 
-void Constraint::addExcludeElements(vector<ExcludeElement> &elems)
+void Constraint::addExcludeElements(std::vector<ExcludeElement> &elems)
 {
-	vector<ExcludeElement> elems_bkp=excl_elements;
+	std::vector<ExcludeElement> elems_bkp=excl_elements;
 
 	try
 	{

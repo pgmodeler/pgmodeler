@@ -41,7 +41,7 @@ class Type: public BaseObject {
 		unsigned config;
 
 		//! \brief Attributes for composite type
-		vector<TypeAttribute> type_attribs;
+		std::vector<TypeAttribute> type_attribs;
 
 		//! \brief Enumerations of enumeration type
 		QStringList enumerations;

@@ -36,7 +36,7 @@ class Tag: public BaseObject {
 		static unsigned tag_id;
 
 		//! \brief Stores the object colors configuration
-		map<QString, vector<QColor>> color_config;
+		std::map<QString, std::vector<QColor>> color_config;
 
 		/*! \brief Validates the element id and the color id. This method will
 	raise an error if some of parameters are invalid */

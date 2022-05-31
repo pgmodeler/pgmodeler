@@ -34,7 +34,7 @@ class Policy : public TableObject {
 		/*! \brief Roles that has permissions over the object. This vector can be
 			empty indicating that all roles on the cluster has permission over
 			the object. */
-		vector<Role *> roles;
+		std::vector<Role *> roles;
 
 		//! \brief Defines the USING expression applied to queries referencing the table which policy is applied
 		QString using_expr,
@@ -85,7 +85,7 @@ class Policy : public TableObject {
 		void removeRoles();
 
 		//! \brief Returns all the roles that is used by the policy
-		vector<Role *> getRoles();
+		std::vector<Role *> getRoles();
 
 		//! \brief Returns the SQL / XML definition for the policy
 		virtual QString getCodeDefinition(unsigned def_type) final;

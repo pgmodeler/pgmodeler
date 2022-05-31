@@ -77,7 +77,7 @@ void Operation::setParentObject(BaseObject *object)
 	operation_id=generateOperationId();
 }
 
-void Operation::setPermissions(const vector<Permission *> &perms)
+void Operation::setPermissions(const std::vector<Permission *> &perms)
 {
 	permissions=perms;
 }
@@ -117,7 +117,7 @@ BaseObject *Operation::getParentObject()
 	return parent_obj;
 }
 
-vector<Permission *> Operation::getPermissions()
+std::vector<Permission *> Operation::getPermissions()
 {
 	return permissions;
 }

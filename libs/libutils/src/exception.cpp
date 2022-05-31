@@ -307,9 +307,9 @@ Exception::Exception(const QString &msg, ErrorCode error_code, const QString &me
 	if(exception) addException(*exception);
 }
 
-Exception::Exception(ErrorCode error_code, const QString &method, const QString &file, int line, vector<Exception> &exceptions, const QString &extra_info)
+Exception::Exception(ErrorCode error_code, const QString &method, const QString &file, int line, std::vector<Exception> &exceptions, const QString &extra_info)
 {
-	vector<Exception>::iterator itr, itr_end;
+	std::vector<Exception>::iterator itr, itr_end;
 
 	/* Because the Exception class is not derived from QObject the function tr() is inefficient to translate messages
 		so the translation method is called  directly from the application specifying the
@@ -326,9 +326,9 @@ Exception::Exception(ErrorCode error_code, const QString &method, const QString 
 	}
 }
 
-Exception::Exception(const QString &msg, const QString &method, const QString &file, int line, vector<Exception> &exceptions, const QString &extra_info)
+Exception::Exception(const QString &msg, const QString &method, const QString &file, int line, std::vector<Exception> &exceptions, const QString &extra_info)
 {
-	vector<Exception>::iterator itr, itr_end;
+	std::vector<Exception>::iterator itr, itr_end;
 
 	configureException(msg,ErrorCode::Custom, method, file, line, extra_info);
 
@@ -341,9 +341,9 @@ Exception::Exception(const QString &msg, const QString &method, const QString &f
 	}
 }
 
-Exception::Exception(const QString &msg, ErrorCode error_code, const QString &method, const QString &file, int line, vector<Exception> &exceptions, const QString &extra_info)
+Exception::Exception(const QString &msg, ErrorCode error_code, const QString &method, const QString &file, int line, std::vector<Exception> &exceptions, const QString &extra_info)
 {
-	vector<Exception>::iterator itr=exceptions.begin();
+	std::vector<Exception>::iterator itr=exceptions.begin();
 
 	configureException(msg,error_code, method, file, line, extra_info);
 
@@ -415,7 +415,7 @@ QString Exception::getExtraInfo()
 
 void Exception::addException(Exception &exception)
 {
-	vector<Exception>::iterator itr, itr_end;
+	std::vector<Exception>::iterator itr, itr_end;
 
 	itr=exception.exceptions.begin();
 	itr_end=exception.exceptions.end();
@@ -434,7 +434,7 @@ void Exception::addException(Exception &exception)
 																			 nullptr,exception.extra_info));
 }
 
-void Exception::getExceptionsList(vector<Exception> &list)
+void Exception::getExceptionsList(std::vector<Exception> &list)
 {
 	list.assign(this->exceptions.begin(), this->exceptions.end());
 	list.push_back(Exception(this->error_msg,this->error_code,
@@ -443,8 +443,8 @@ void Exception::getExceptionsList(vector<Exception> &list)
 
 QString Exception::getExceptionsText()
 {
-	vector<Exception> exceptions;
-	vector<Exception>::reverse_iterator itr, itr_end;
+	std::vector<Exception> exceptions;
+	std::vector<Exception>::reverse_iterator itr, itr_end;
 	unsigned idx=0, hidden_errors_cnt = 0;
 	QString exceptions_txt;
 	bool stack_truncated = false;

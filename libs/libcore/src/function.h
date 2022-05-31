@@ -56,7 +56,7 @@ class Function: public BaseFunction {
 		/*! \brief Stores the table columns returned by the clause RETURNS TABLE. This clause instead
 		 of return a specific element returns a whole table. This structure is available
 		 only on PostgreSQL 8.4 and later */
-		vector<Parameter> ret_table_columns;
+		std::vector<Parameter> ret_table_columns;
 
 		//! \brief Execution cost for the function
 		unsigned execution_cost;

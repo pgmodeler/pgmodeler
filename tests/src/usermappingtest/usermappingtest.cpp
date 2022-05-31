@@ -133,7 +133,7 @@ void UserMappingTest::modelReturnsDepsAndRefsForUserMapping()
 		model.addForeignServer(&server);
 		model.addUserMapping(&usr_mapping);
 
-		vector<BaseObject *> refs, deps;
+		std::vector<BaseObject *> refs, deps;
 		model.getObjectDependecies(&usr_mapping, deps);
 
 		model.getObjectReferences(&server, refs);

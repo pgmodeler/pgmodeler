@@ -23,7 +23,7 @@
 
 ObjectsFilterWidget::ObjectsFilterWidget(QWidget *parent) : QWidget(parent)
 {
-	vector<ObjectType> types = BaseObject::getChildObjectTypes(ObjectType::Table);
+	std::vector<ObjectType> types = BaseObject::getChildObjectTypes(ObjectType::Table);
 
 	setupUi(this);
 
@@ -91,7 +91,7 @@ is present has the same effect as performing an exact match searching on the nam
 	filters_tbw->horizontalHeader()->resizeSection(2, 100);
 }
 
-void ObjectsFilterWidget::setModelFilteringMode(bool value, const vector<ObjectType> &extra_types)
+void ObjectsFilterWidget::setModelFilteringMode(bool value, const std::vector<ObjectType> &extra_types)
 {
 	for(auto &item : tab_objs_lst->findItems("*", Qt::MatchWildcard))
 		item->setCheckState(Qt::Checked);

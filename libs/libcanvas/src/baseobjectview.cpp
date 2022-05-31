@@ -21,8 +21,8 @@
 #include "roundedrectitem.h"
 #include "objectsscene.h"
 
-map<QString, QTextCharFormat> BaseObjectView::font_config;
-map<QString, vector<QColor>> BaseObjectView::color_config;
+std::map<QString, QTextCharFormat> BaseObjectView::font_config;
+std::map<QString, std::vector<QColor>> BaseObjectView::color_config;
 unsigned BaseObjectView::global_sel_order=1;
 bool BaseObjectView::use_placeholder=true;
 bool BaseObjectView::compact_view=false;
@@ -216,7 +216,7 @@ void BaseObjectView::getFillStyle(const QString &id, QColor &color1, QColor &col
 
 QLinearGradient BaseObjectView::getFillStyle(const QString &id)
 {
-	vector<QColor> colors;
+	std::vector<QColor> colors;
 	QLinearGradient grad(QPointF(0,0),QPointF(0,1));
 
 	if(color_config.count(id) > 0)
@@ -248,7 +248,7 @@ QPen BaseObjectView::getBorderStyle(const QString &id)
 
 	if(id != Attributes::ObjShadow && color_config.count(id) > 0)
 	{
-		vector<QColor> colors = color_config[id];
+		std::vector<QColor> colors = color_config[id];
 
 		if(!colors.empty())
 		{

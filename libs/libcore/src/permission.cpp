@@ -185,7 +185,7 @@ bool Permission::isSimilarTo(Permission *perm)
 		return false;
 
 	QStringList rol_names, fmt_rol_names;
-	vector<vector<Role *>*> vect_roles={ &this->roles, &perm->roles };
+	std::vector<std::vector<Role *>*> vect_roles={ &this->roles, &perm->roles };
 	BaseObject *object=this->getObject(), *aux_object=perm->getObject();
 
 	//Generating a list with role names of both permissions
@@ -232,7 +232,7 @@ Role *Permission::getRole(unsigned role_idx)
 	return roles[role_idx];
 }
 
-vector<Role *> Permission::getRoles()
+std::vector<Role *> Permission::getRoles()
 {
 	return roles;
 }
@@ -303,7 +303,7 @@ QString Permission::getPermissionString()
 	return str_priv;
 }
 
-QString Permission::parsePermissionString(QString perm_str, vector<unsigned> &privs, vector<unsigned> &gop_privs)
+QString Permission::parsePermissionString(QString perm_str, std::vector<unsigned> &privs, std::vector<unsigned> &gop_privs)
 {
 	QString role;
 	QRegularExpression regexp(QRegularExpression::anchoredPattern(QString("(.)*(\\=)([%1*])+((\\/)(.)+)?").arg(priv_codes)));

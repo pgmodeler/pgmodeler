@@ -20,8 +20,8 @@
 #include "guiutilsns.h"
 #include "baseform.h"
 
-vector<Connection *> ConnectionsConfigWidget::connections;
-map<QString, attribs_map> ConnectionsConfigWidget::config_params;
+std::vector<Connection *> ConnectionsConfigWidget::connections;
+std::map<QString, attribs_map> ConnectionsConfigWidget::config_params;
 const QString ConnectionsConfigWidget::DefaultFor("default-for-%1");
 
 ConnectionsConfigWidget::ConnectionsConfigWidget(QWidget * parent) : BaseConfigWidget(parent)
@@ -88,7 +88,7 @@ void ConnectionsConfigWidget::destroyConnections()
 	}
 }
 
-map<QString, attribs_map> ConnectionsConfigWidget::getConfigurationParams()
+std::map<QString, attribs_map> ConnectionsConfigWidget::getConfigurationParams()
 {
 	return config_params;
 }
@@ -505,7 +505,7 @@ void ConnectionsConfigWidget::saveConfiguration()
 	}
 }
 
-void ConnectionsConfigWidget::getConnections(map<QString, Connection *> &conns, bool inc_hosts)
+void ConnectionsConfigWidget::getConnections(std::map<QString, Connection *> &conns, bool inc_hosts)
 {
 	QString alias;
 
@@ -534,7 +534,7 @@ Connection *ConnectionsConfigWidget::getConnection(const QString &conn_id)
 
 void ConnectionsConfigWidget::fillConnectionsComboBox(QComboBox *combo, bool incl_placeholder, unsigned check_def_for)
 {
-	map<QString, Connection *> connections;
+	std::map<QString, Connection *> connections;
 	Connection *def_conn=nullptr;
 
 	if(!combo)

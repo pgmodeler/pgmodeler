@@ -80,7 +80,7 @@ RelationshipView::RelationshipView(BaseRelationship *rel) : BaseObjectView(rel)
 RelationshipView::~RelationshipView()
 {
 	QGraphicsItem *item=nullptr;
-	vector<vector<QGraphicsLineItem *> *> rel_lines = { &lines, &fk_lines, &pk_lines, &src_cf_lines, &dst_cf_lines };
+	std::vector<std::vector<QGraphicsLineItem *> *> rel_lines = { &lines, &fk_lines, &pk_lines, &src_cf_lines, &dst_cf_lines };
 
 	while(!curves.empty())
 	{
@@ -227,7 +227,7 @@ QVariant RelationshipView::itemChange(GraphicsItemChange change, const QVariant 
 		unsigned i, count;
 		QPen pen;
 		QColor color, line_color=this->getUnderlyingObject()->getCustomColor();
-		vector<QGraphicsLineItem *> rel_lines;
+		std::vector<QGraphicsLineItem *> rel_lines;
 
 		this->setSelectionOrder(value.toBool());
 		pos_info_item->setVisible(value.toBool());
@@ -284,7 +284,7 @@ QVariant RelationshipView::itemChange(GraphicsItemChange change, const QVariant 
 		//If the crow's foot descriptors are allocated we change their border color
 		if(cf_descriptors[0] != nullptr)
 		{
-			vector<QGraphicsLineItem *> lines;
+			std::vector<QGraphicsLineItem *> lines;
 			QVector<QGradientStop> grad_stops = descriptor->brush().gradient()->stops();
 			QColor sel_color = BaseObjectView::getBorderStyle(Attributes::ObjSelection).color();
 			QLinearGradient grad(QPointF(0,0),QPointF(0,1));
@@ -361,7 +361,7 @@ void RelationshipView::mousePressEvent(QGraphicsSceneMouseEvent *event)
 			QRectF rect;
 			unsigned i, count;
 			bool pnt_rem=false;
-			vector<QPointF> points=base_rel->getPoints();
+			std::vector<QPointF> points=base_rel->getPoints();
 			QLineF::IntersectType inter_type;
 
 			if(!base_rel->isSelfRelationship())
@@ -475,7 +475,7 @@ void RelationshipView::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 			if(!brect.contains(event->pos()) && !brect1.contains(event->pos()))
 			{
 				BaseRelationship *rel_base=this->getUnderlyingObject();
-				vector<QPointF> points=rel_base->getPoints();
+				std::vector<QPointF> points=rel_base->getPoints();
 
 				points[sel_object_idx]=event->pos();
 				rel_base->setPoints(points);
@@ -586,7 +586,7 @@ void RelationshipView::configureLine()
 	{
 		BaseRelationship *base_rel=this->getUnderlyingObject();
 
-		vector<QPointF> points, fk_points, pk_points;
+		std::vector<QPointF> points, fk_points, pk_points;
 		QGraphicsLineItem *lin=nullptr;
 		QPointF pos, p_central[2], pk_pnt, fk_pnt;
 		QRectF rect;
@@ -625,7 +625,7 @@ void RelationshipView::configureLine()
 			if(rel_cnt > 1)
 			{
 				int idx = tables[0]->getConnectedRelationshipIndex(base_rel, true);
-				double min_val = min<double>(rect.width(), rect.height());
+				double min_val = std::min<double>(rect.width(), rect.height());
 
 				if(idx < 0) idx =0;
 				pos_factor = min_val * 0.08 * idx;
@@ -667,7 +667,7 @@ void RelationshipView::configureLine()
 
 			if(line_conn_mode==ConnectCenterPoints || line_conn_mode==ConnectTableEdges || !rel_1n)
 			{
-				vector<vector<QGraphicsLineItem *> *> ref_lines={ &fk_lines, &pk_lines };
+				std::vector<std::vector<QGraphicsLineItem *> *> ref_lines={ &fk_lines, &pk_lines };
 
 				for(i=0; i < 2; i++)
 					p_central[i]=tables[i]->getCenter();
@@ -689,7 +689,7 @@ void RelationshipView::configureLine()
 				QPointF pnt;
 				QRectF rec_tab_rect, ref_tab_rect;
 				double fk_py=0, pk_py=0, fk_px=0, pk_px=0;
-				vector<Constraint *> fks;
+				std::vector<Constraint *> fks;
 				Table *ref_tab=nullptr, *rec_tab=nullptr;
 				TableView *ref_tab_view=nullptr, *rec_tab_view=nullptr;
 				unsigned cnt=0, i=0, pk_pnt_type=0, fk_pnt_type=0;
@@ -920,7 +920,7 @@ void RelationshipView::configureLine()
 						 * this will cause all relationships to be aligned together */
 						if(conn_rels_cnt[tab_idx] > 1)
 						{							
-							double max_dim = max<double>(brect.height(), brect.width());
+							double max_dim = std::max<double>(brect.height(), brect.width());
 							int signal = 0;
 
 							if(edge.dx() == 0)
@@ -1023,11 +1023,11 @@ void RelationshipView::configureLine()
 
 		if(line_conn_mode==ConnectFkToPk)
 		{
-			vector<QPointF> ref_points={ fk_pnt, pk_pnt };
-			vector<vector<QPointF> *> ref_pnt_vects={ &fk_points, &pk_points };
-			vector<vector<QGraphicsLineItem *> *> ref_lines={ &fk_lines, &pk_lines };
-			vector<QPointF> *ref_pnt=nullptr;
-			vector<QGraphicsLineItem *> *ref_lin=nullptr;
+			std::vector<QPointF> ref_points={ fk_pnt, pk_pnt };
+			std::vector<std::vector<QPointF> *> ref_pnt_vects={ &fk_points, &pk_points };
+			std::vector<std::vector<QGraphicsLineItem *> *> ref_lines={ &fk_lines, &pk_lines };
+			std::vector<QPointF> *ref_pnt=nullptr;
+			std::vector<QGraphicsLineItem *> *ref_lin=nullptr;
 
 			for(unsigned vet_idx=0; vet_idx < 2; vet_idx++)
 			{
@@ -1250,7 +1250,7 @@ void RelationshipView::configureDescriptor()
 			factor=BaseObjectView::getFontFactor() * BaseObjectView::getScreenDpiFactor();
 	QPen pen;
 	QPointF pnt;
-	vector<QPointF> points=base_rel->getPoints();
+	std::vector<QPointF> points=base_rel->getPoints();
 	QColor line_color=base_rel->getCustomColor();
 	QGraphicsPolygonItem *pol_item=nullptr;
 
@@ -1495,7 +1495,7 @@ void RelationshipView::configureCrowsFootDescriptors()
 		QLineF line, line1, edge, rel_lines[2] = {(signal < 0 ? lines.back()->line() : lines.front()->line()),
 															 (signal < 0 ? lines.front()->line() : lines.back()->line())};
 		QPolygonF pol;
-		vector<vector<QGraphicsLineItem *> *> cf_lines = { &src_cf_lines, &dst_cf_lines };
+		std::vector<std::vector<QGraphicsLineItem *> *> cf_lines = { &src_cf_lines, &dst_cf_lines };
 		unsigned lin_idx = 0;
 		double px = 0, py = 0, min_x = 0, max_x = 0, min_y = 0, max_y = 0;
 
@@ -2005,7 +2005,7 @@ QRectF RelationshipView::__boundingRect()
 {
 	unsigned i;
 	QRectF rect, brect;
-	vector<QPointF> points=dynamic_cast<BaseRelationship *>(this->getUnderlyingObject())->getPoints();
+	std::vector<QPointF> points=dynamic_cast<BaseRelationship *>(this->getUnderlyingObject())->getPoints();
 
 	brect = QRectF(QPointF(descriptor->pos().x(), descriptor->pos().y()), descriptor->boundingRect().size());
 

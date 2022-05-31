@@ -35,7 +35,7 @@ const QString Catalog::GetExtensionObjsSql("SELECT d.objid AS oid, e.extname AS 
 																					 ORDER BY extname;");
 attribs_map Catalog::catalog_queries;
 
-map<ObjectType, QString> Catalog::oid_fields=
+std::map<ObjectType, QString> Catalog::oid_fields=
 { {ObjectType::Database, "oid"}, {ObjectType::Role, "oid"}, {ObjectType::Schema,"oid"},
 	{ObjectType::Language, "oid"}, {ObjectType::Tablespace, "oid"}, {ObjectType::Extension, "ex.oid"},
 	{ObjectType::Function, "pr.oid"}, {ObjectType::Aggregate, "pr.oid"}, {ObjectType::Operator, "op.oid"},
@@ -49,7 +49,7 @@ map<ObjectType, QString> Catalog::oid_fields=
 	{ObjectType::Transform, "tr.oid"}, {ObjectType::Procedure, "pr.oid"}
 };
 
-map<ObjectType, QString> Catalog::ext_oid_fields={
+std::map<ObjectType, QString> Catalog::ext_oid_fields={
 	{ObjectType::Constraint, "cs.conrelid"},
 	{ObjectType::Index, "id.indexrelid"},
 	{ObjectType::Trigger, "tg.tgrelid"},
@@ -57,7 +57,7 @@ map<ObjectType, QString> Catalog::ext_oid_fields={
 	{ObjectType::Policy, "pl.polrelid"}
 };
 
-map<ObjectType, QString> Catalog::parent_aliases={
+std::map<ObjectType, QString> Catalog::parent_aliases={
 	{ObjectType::Constraint, "tb"},
 	{ObjectType::Index, "tb"},
 	{ObjectType::Trigger, "tb"},
@@ -65,7 +65,7 @@ map<ObjectType, QString> Catalog::parent_aliases={
 	{ObjectType::Policy, "tb"}
 };
 
-map<ObjectType, QString> Catalog::name_fields=
+std::map<ObjectType, QString> Catalog::name_fields=
 { {ObjectType::Database, "datname"}, {ObjectType::Role, "rolname"}, {ObjectType::Schema,"nspname"},
 	{ObjectType::Language, "lanname"}, {ObjectType::Tablespace, "spcname"}, {ObjectType::Extension, "extname"},
 	{ObjectType::Function, "proname"}, {ObjectType::Aggregate, "proname"}, {ObjectType::Operator, "oprname"},
@@ -174,8 +174,8 @@ void Catalog::setObjectFilters(QStringList filters, bool only_matching, bool mat
 	ObjectType obj_type;
 	QString pattern, mode, aux_filter, parent_alias_ref, tab_filter = "^(%1)(.)+", _tmpl_filter;
 	QStringList values,	modes = { UtilsNs::FilterWildcard, UtilsNs::FilterRegExp };
-	map<ObjectType, QStringList> tab_patterns;
-	map<ObjectType, QStringList> parsed_filters;
+	std::map<ObjectType, QStringList> tab_patterns;
+	std::map<ObjectType, QStringList> parsed_filters;
 	attribs_map fmt_filter;
 
 	bool has_tab_filter = filters.indexOf(QRegularExpression(tab_filter.arg(BaseObject::getSchemaName(ObjectType::Table)))) >= 0,
@@ -289,7 +289,7 @@ void Catalog::setObjectFilters(QStringList filters, bool only_matching, bool mat
 
 	if(!tab_obj_types.isEmpty())
 	{
-		map<ObjectType, QString> fmt_tab_patterns;
+		std::map<ObjectType, QString> fmt_tab_patterns;
 		QStringList fmt_conds;
 
 		for(auto &itr : tab_patterns)
@@ -497,14 +497,14 @@ unsigned Catalog::getQueryFilter()
 	return filter;
 }
 
-map<ObjectType, QString> Catalog::getObjectFilters()
+std::map<ObjectType, QString> Catalog::getObjectFilters()
 {
 	return obj_filters;
 }
 
-vector<ObjectType> Catalog::getFilteredObjectTypes()
+std::vector<ObjectType> Catalog::getFilteredObjectTypes()
 {
-	vector<ObjectType> types;
+	std::vector<ObjectType> types;
 	QRegularExpression regexp = QRegularExpression(QString("(.)*(%1)(.)*").arg(InvFilterPattern));
 
 	for(auto &flt : obj_filters)
@@ -519,15 +519,15 @@ vector<ObjectType> Catalog::getFilteredObjectTypes()
 	return types;
 }
 
-void Catalog::getObjectsOIDs(map<ObjectType, vector<unsigned> > &obj_oids, map<unsigned, vector<unsigned> > &col_oids, attribs_map extra_attribs)
+void Catalog::getObjectsOIDs(std::map<ObjectType, std::vector<unsigned> > &obj_oids, std::map<unsigned, std::vector<unsigned> > &col_oids, attribs_map extra_attribs)
 {
 	try
 	{
-		vector<ObjectType> types=BaseObject::getObjectTypes(true, { ObjectType::Database, ObjectType::Relationship, ObjectType::BaseRelationship,
+		std::vector<ObjectType> types=BaseObject::getObjectTypes(true, { ObjectType::Database, ObjectType::Relationship, ObjectType::BaseRelationship,
 																																ObjectType::Textbox, ObjectType::Tag, ObjectType::Column, ObjectType::Permission,
 																																ObjectType::GenericSql });
 		attribs_map attribs, col_attribs, sch_names;
-		vector<attribs_map> tab_attribs;
+		std::vector<attribs_map> tab_attribs;
 		unsigned tab_oid=0;
 
 		for(ObjectType type : types)
@@ -598,12 +598,12 @@ attribs_map Catalog::getObjectsNames(ObjectType obj_type, const QString &sch_nam
 	}
 }
 
-vector<attribs_map> Catalog::getObjectsNames(vector<ObjectType> obj_types, const QString &sch_name, const QString &tab_name, attribs_map extra_attribs, bool sort_results)
+std::vector<attribs_map> Catalog::getObjectsNames(std::vector<ObjectType> obj_types, const QString &sch_name, const QString &tab_name, attribs_map extra_attribs, bool sort_results)
 {
 	try
 	{
 		ResultSet res;
-		vector<attribs_map> objects;
+		std::vector<attribs_map> objects;
 		QString sql, select_kw=QString("SELECT");
 		QStringList queries;
 		attribs_map attribs;
@@ -690,13 +690,13 @@ attribs_map Catalog::getAttributes(const QString &obj_name, ObjectType obj_type,
 	}
 }
 
-vector<attribs_map> Catalog::getMultipleAttributes(ObjectType obj_type, attribs_map extra_attribs)
+std::vector<attribs_map> Catalog::getMultipleAttributes(ObjectType obj_type, attribs_map extra_attribs)
 {
 	try
 	{
 		ResultSet res;
 		attribs_map tuple;
-		vector<attribs_map> obj_attribs;
+		std::vector<attribs_map> obj_attribs;
 
 		executeCatalogQuery(QueryAttribs, obj_type, res, false, extra_attribs);
 		if(res.accessTuple(ResultSet::FirstTuple))
@@ -723,13 +723,13 @@ vector<attribs_map> Catalog::getMultipleAttributes(ObjectType obj_type, attribs_
 	}
 }
 
-vector<attribs_map> Catalog::getMultipleAttributes(const QString &catalog_sch, attribs_map attribs)
+std::vector<attribs_map> Catalog::getMultipleAttributes(const QString &catalog_sch, attribs_map attribs)
 {
 	try
 	{
 		ResultSet res;
 		attribs_map tuple;
-		vector<attribs_map> obj_attribs;
+		std::vector<attribs_map> obj_attribs;
 
 		loadCatalogQuery(catalog_sch);
 		schparser.ignoreUnkownAttributes(true);
@@ -822,7 +822,7 @@ attribs_map Catalog::changeAttributeNames(const attribs_map &attribs)
 	return new_attribs;
 }
 
-QString Catalog::createOidFilter(const vector<unsigned> &oids)
+QString Catalog::createOidFilter(const std::vector<unsigned> &oids)
 {
 	QString filter;
 
@@ -835,7 +835,7 @@ QString Catalog::createOidFilter(const vector<unsigned> &oids)
 	return filter;
 }
 
-vector<attribs_map> Catalog::getObjectsAttributes(ObjectType obj_type, const QString &schema, const QString &table, const vector<unsigned> &filter_oids, attribs_map extra_attribs)
+std::vector<attribs_map> Catalog::getObjectsAttributes(ObjectType obj_type, const QString &schema, const QString &table, const std::vector<unsigned> &filter_oids, attribs_map extra_attribs)
 {
 	try
 	{
@@ -866,7 +866,7 @@ attribs_map Catalog::getObjectAttributes(ObjectType obj_type, unsigned oid, cons
 {
 	try
 	{
-		vector<attribs_map> attribs_vect=getObjectsAttributes(obj_type, sch_name, tab_name, { oid }, extra_attribs);
+		std::vector<attribs_map> attribs_vect=getObjectsAttributes(obj_type, sch_name, tab_name, { oid }, extra_attribs);
 		return (attribs_vect.empty() ? attribs_map() : attribs_vect[0]);
 	}
 	catch(Exception &e)
@@ -1166,9 +1166,9 @@ QStringList Catalog::parseIndexExpressions(const QString &expr)
 	return expressions;
 }
 
-vector<ObjectType> Catalog::getFilterableObjectTypes()
+std::vector<ObjectType> Catalog::getFilterableObjectTypes()
 {
-	static vector<ObjectType> types = BaseObject::getObjectTypes(true, { ObjectType::Relationship,
+	static std::vector<ObjectType> types = BaseObject::getObjectTypes(true, { ObjectType::Relationship,
 																																			 ObjectType::BaseRelationship,
 																																			 ObjectType::Textbox,
 																																			 ObjectType::GenericSql,

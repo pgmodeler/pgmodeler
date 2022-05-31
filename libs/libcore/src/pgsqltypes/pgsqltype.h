@@ -46,7 +46,7 @@ class PgSqlType: public TemplateType<PgSqlType>{
 		PseudoEnd = 118;
 
 		//! \brief Configuration for user defined types
-		static vector<UserTypeConfig> user_types;
+		static std::vector<UserTypeConfig> user_types;
 
 		//! \brief Dimension of the type if it's configured as array
 		unsigned dimension,
@@ -151,7 +151,7 @@ class PgSqlType: public TemplateType<PgSqlType>{
 		static bool isRegistered(const QString &type, void *pmodel=nullptr);
 
 		static void getUserTypes(QStringList &type_list, void *pmodel, unsigned inc_usr_types);
-		static void getUserTypes(vector<void *> &ptypes, void *pmodel, unsigned inc_usr_types);
+		static void getUserTypes(std::vector<void *> &ptypes, void *pmodel, unsigned inc_usr_types);
 		static QStringList getTypes(bool oids = true, bool pseudos = true);
 
 		void setDimension(unsigned dim);

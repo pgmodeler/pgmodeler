@@ -259,7 +259,7 @@ void ProcedureTest::modelReturnsProcedureDepsRefs()
 	Language *lang = nullptr;
 	Role *owner = nullptr;
 	Type type;
-	vector<BaseObject *> deps, refs;
+	std::vector<BaseObject *> deps, refs;
 
 	try
 	{

@@ -303,7 +303,7 @@ void DataManipulationForm::listTables()
 
 	if(schema_cmb->currentIndex() > 0)
 	{
-		vector<ObjectType> types = { ObjectType::Table, ObjectType::ForeignTable };
+		std::vector<ObjectType> types = { ObjectType::Table, ObjectType::ForeignTable };
 
 		if(!hide_views_chk->isChecked())
 			types.push_back(ObjectType::View);
@@ -330,7 +330,7 @@ void DataManipulationForm::listColumns()
 
 		if(table_cmb->currentIndex() > 0)
 		{
-			vector<attribs_map> cols;
+			std::vector<attribs_map> cols;
 
 			catalog.setConnection(conn);
 			cols=catalog.getObjectsAttributes(ObjectType::Column, schema_cmb->currentText(), table_cmb->currentText());
@@ -382,7 +382,7 @@ void DataManipulationForm::retrieveData()
 		ResultSet res;
 		unsigned limit=limit_spb->value();
 		ObjectType obj_type = static_cast<ObjectType>(table_cmb->currentData(Qt::UserRole).toUInt());
-		vector<int> curr_hidden_cols;
+		std::vector<int> curr_hidden_cols;
 		int col_cnt = results_tbw->horizontalHeader()->count();
 
 		prev_tab_name = curr_table_name;
@@ -740,7 +740,7 @@ void DataManipulationForm::changeOrderMode(QListWidgetItem *item)
 	}
 }
 
-void DataManipulationForm::listObjects(QComboBox *combo, vector<ObjectType> obj_types, const QString &schema)
+void DataManipulationForm::listObjects(QComboBox *combo, std::vector<ObjectType> obj_types, const QString &schema)
 {
 	Catalog catalog;
 	Connection conn=Connection(tmpl_conn_params);
@@ -804,7 +804,7 @@ void DataManipulationForm::retrievePKColumns(const QString &schema, const QStrin
 
 	try
 	{
-		vector<attribs_map> pks, columns;
+		std::vector<attribs_map> pks, columns;
 		ObjectType obj_type=static_cast<ObjectType>(table_cmb->currentData().toUInt());
 
 		table_oid = 0;
@@ -835,7 +835,7 @@ void DataManipulationForm::retrievePKColumns(const QString &schema, const QStrin
 		if(!pks.empty())
 		{
 			QStringList col_str_ids=Catalog::parseArrayValues(pks[0][Attributes::Columns]);
-			vector<unsigned> col_ids;
+			std::vector<unsigned> col_ids;
 
 			for(QString id : col_str_ids)
 				col_ids.push_back(id.toUInt());
@@ -869,7 +869,7 @@ void DataManipulationForm::retrieveFKColumns(const QString &schema, const QStrin
 	try
 	{
 		QAction *action = nullptr;
-		vector<attribs_map> fks, ref_fks;
+		std::vector<attribs_map> fks, ref_fks;
 		ObjectType obj_type=static_cast<ObjectType>(table_cmb->currentData().toUInt());
 		QString fk_name;
 
@@ -888,7 +888,7 @@ void DataManipulationForm::retrieveFKColumns(const QString &schema, const QStrin
 
 		if(!fks.empty() || !ref_fks.empty())
 		{
-			vector<unsigned> col_ids;
+			std::vector<unsigned> col_ids;
 			QMenu *submenu = nullptr;
 
 			attribs_map aux_table, aux_schema;
@@ -1114,7 +1114,7 @@ void DataManipulationForm::markDeleteOnRows()
 {
 	QList<QTableWidgetSelectionRange> sel_ranges=results_tbw->selectedRanges();
 	QTableWidgetItem *item=nullptr;
-	vector<int> ins_rows;
+	std::vector<int> ins_rows;
 
 	for(auto &sel_rng : sel_ranges)
 	{
@@ -1196,13 +1196,13 @@ void DataManipulationForm::duplicateRows()
 	}
 }
 
-void DataManipulationForm::removeNewRows(vector<int> ins_rows)
+void DataManipulationForm::removeNewRows(std::vector<int> ins_rows)
 {
 	if(!ins_rows.empty())
 	{
 		unsigned idx=0, cnt=ins_rows.size();
 		int row_idx=0;
-		vector<int>::reverse_iterator itr, itr_end;
+		std::vector<int>::reverse_iterator itr, itr_end;
 
 		//Mark the rows as no-op to remove their indexes from changed rows set
 		for(idx=0; idx < cnt; idx++)
@@ -1299,7 +1299,7 @@ void DataManipulationForm::browseReferencedTable()
 void DataManipulationForm::undoOperations()
 {
 	QTableWidgetItem *item=nullptr;
-	vector<int> rows, ins_rows;
+	std::vector<int> rows, ins_rows;
 	QList<QTableWidgetSelectionRange> sel_range=results_tbw->selectedRanges();
 
 	if(!sel_range.isEmpty())
@@ -1407,7 +1407,7 @@ void DataManipulationForm::saveChanges()
 	}
 	catch(Exception &e)
 	{
-		map<unsigned, QString> op_names={{ OpDelete, tr("delete") },
+		std::map<unsigned, QString> op_names={{ OpDelete, tr("delete") },
 										 { OpUpdate, tr("update") },
 										 { OpInsert, tr("insert") }};
 

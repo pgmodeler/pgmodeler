@@ -60,7 +60,7 @@ class ModelValidationWidget: public QWidget, public Ui::ModelValidationWidget {
 
 		/*! \brief Stores the graphical objects that have their ids changed so that in the end of
 		the validation they can be updated to reflect the new id in the tooltips and forms */
-		vector<BaseGraphicObject *> graph_objects;
+		std::vector<BaseGraphicObject *> graph_objects;
 
 		void emitValidationInProgress();
 

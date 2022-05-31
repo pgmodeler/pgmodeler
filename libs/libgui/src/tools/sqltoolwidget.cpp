@@ -312,7 +312,7 @@ SQLExecutionWidget *SQLToolWidget::addSQLExecutionTab(const QString &sql_cmd)
 
 void SQLToolWidget::addSQLExecutionTab(const QString &conn_id, const QString &database, const QString &sql_file)
 {
-	map<QString, Connection *> conns;
+	std::map<QString, Connection *> conns;
 	SQLExecutionWidget *sql_exec_wgt = nullptr;
 	DatabaseExplorerWidget *db_explorer_wgt = nullptr;
 	QByteArray buf;

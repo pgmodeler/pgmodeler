@@ -90,7 +90,7 @@ class BaseTable: public BaseGraphicObject {
 		virtual int getObjectIndex(BaseObject *obj)=0;
 
 		//! \brief Returns all children objects of the table but excluding the ones of the provided type
-		virtual vector<BaseObject *> getObjects(const vector<ObjectType> &excl_types = {})=0;
+		virtual std::vector<BaseObject *> getObjects(const std::vector<ObjectType> &excl_types = {})=0;
 
 		virtual QString getCodeDefinition(unsigned tipo_def)=0;
 

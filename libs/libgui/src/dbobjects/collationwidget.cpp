@@ -35,7 +35,7 @@ CollationWidget::CollationWidget(QWidget *parent): BaseObjectWidget(parent, Obje
 
 		configureFormLayout(collation_grid, ObjectType::Collation);
 
-		map<QString, vector<QWidget *> > fields_map;
+		std::map<QString, std::vector<QWidget *> > fields_map;
 		fields_map[generateVersionsInterval(AfterVersion, PgSqlVersions::PgSqlVersion100)].push_back(provider_lbl);
 		fields_map[generateVersionsInterval(AfterVersion, PgSqlVersions::PgSqlVersion120)].push_back(deterministic_chk);
 		highlightVersionSpecificFields(fields_map);

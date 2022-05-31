@@ -23,10 +23,10 @@ ResultSetModel::ResultSetModel(ResultSet &res, Catalog &catalog, QObject *parent
 	try
 	{
 		Catalog aux_cat = catalog;
-		vector<unsigned> type_ids;
-		vector<unsigned>::iterator end;
-		vector<attribs_map> types;
-		map<int, QString> type_names;
+		std::vector<unsigned> type_ids;
+		std::vector<unsigned>::iterator end;
+		std::vector<attribs_map> types;
+		std::map<int, QString> type_names;
 		int col = 0;
 
 		col_count = res.getColumnCount();

@@ -133,7 +133,7 @@ namespace GuiUtilsNs {
 			if(PhysicalTable::isPhysicalTable(object->getObjectType()))
 			{
 				Constraint *constr = nullptr;
-				vector<TableObject *> *objects=dynamic_cast<PhysicalTable *>(object)->getObjectList(ObjectType::Constraint);
+				std::vector<TableObject *> *objects=dynamic_cast<PhysicalTable *>(object)->getObjectList(ObjectType::Constraint);
 
 				for(auto &obj : (*objects))
 				{
@@ -154,7 +154,7 @@ namespace GuiUtilsNs {
 	{
 		if(object && object->getDatabase())
 		{
-			vector<BaseObject *> refs;
+			std::vector<BaseObject *> refs;
 			TableObject *tab_obj=nullptr;
 			DatabaseModel *model=dynamic_cast<DatabaseModel *>(object->getDatabase());
 
@@ -256,8 +256,8 @@ namespace GuiUtilsNs {
 
 	void createExceptionsTree(QTreeWidget *exceptions_trw, Exception &e, QTreeWidgetItem *root)
 	{
-		vector<Exception> list;
-		vector<Exception>::reverse_iterator itr, itr_end;
+		std::vector<Exception> list;
+		std::vector<Exception>::reverse_iterator itr, itr_end;
 		QString text;
 		int idx=0;
 		QTreeWidgetItem *item=nullptr, *child_item=nullptr;

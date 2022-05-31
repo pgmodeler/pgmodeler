@@ -66,7 +66,7 @@ void TagWidget::applyConfiguration()
 	try
 	{
 		Tag *tag=nullptr;
-		vector<BaseObject *> tagged_tabs;
+		std::vector<BaseObject *> tagged_tabs;
 
 		startConfiguration<Tag>();
 		tag=dynamic_cast<Tag *>(this->object);

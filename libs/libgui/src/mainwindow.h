@@ -128,7 +128,7 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 		ModelWidget *current_model;
 
 		//! \brief Stores the model objects tree state for each opened model
-		map<ModelWidget *, vector<BaseObject *> > model_tree_states;
+		std::map<ModelWidget *, std::vector<BaseObject *> > model_tree_states;
 
 		//! \brief Stores the defaul window title
 		QString window_title;

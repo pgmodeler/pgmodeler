@@ -66,8 +66,8 @@
 #include "coreutilsns.h"
 #include "utils/custommenustyle.h"
 
-vector<BaseObject *> ModelWidget::copied_objects;
-vector<BaseObject *> ModelWidget::cutted_objects;
+std::vector<BaseObject *> ModelWidget::copied_objects;
+std::vector<BaseObject *> ModelWidget::cutted_objects;
 bool ModelWidget::cut_operation=false;
 bool ModelWidget::save_restore_pos=true;
 bool ModelWidget::disable_render_smooth=false;
@@ -93,7 +93,7 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 							 BaseRelationship::RelationshipNn, BaseRelationship::RelationshipDep,
 							 BaseRelationship::RelationshipGen, BaseRelationship::RelationshipPart};
 
-	vector<ObjectType> types_vect = BaseObject::getObjectTypes(true, { ObjectType::Database, ObjectType::Permission,
+	std::vector<ObjectType> types_vect = BaseObject::getObjectTypes(true, { ObjectType::Database, ObjectType::Permission,
 																																		 ObjectType::BaseRelationship, ObjectType::Relationship});
 
 	current_zoom=1;
@@ -485,7 +485,7 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	new_obj_overlay_wgt->setVisible(false);
 	GuiUtilsNs::createDropShadow(new_obj_overlay_wgt, 5, 5, 20);
 
-	vector<ObjectType> graph_types = { ObjectType::BaseObject, ObjectType::Schema, ObjectType::Table, ObjectType::ForeignTable,
+	std::vector<ObjectType> graph_types = { ObjectType::BaseObject, ObjectType::Schema, ObjectType::Table, ObjectType::ForeignTable,
 																		 ObjectType::View, ObjectType::Relationship, ObjectType::Textbox };
 	QStringList labels = { tr("All objects"), tr("Schemas"), tr("Tables"), tr("Foreign Tables"),
 												 tr("Views"), tr("Relationships"), tr("Textboxes") };
@@ -1063,8 +1063,8 @@ void ModelWidget::handleObjectDoubleClick(BaseGraphicObject *object)
 
 void ModelWidget::handleObjectsMovement(bool end_moviment)
 {
-	vector<BaseObject *>::iterator itr, itr_end;
-	vector<BaseObject *> reg_tables;
+	std::vector<BaseObject *>::iterator itr, itr_end;
+	std::vector<BaseObject *> reg_tables;
 	QList<BaseObjectView *> tables;
 	BaseGraphicObject *obj=nullptr;
 	Schema *schema=nullptr;
@@ -1106,7 +1106,7 @@ void ModelWidget::handleObjectsMovement(bool end_moviment)
 	}
 	else
 	{
-		vector<Schema *> schemas;
+		std::vector<Schema *> schemas;
 
 		while(itr!=itr_end)
 		{
@@ -1170,8 +1170,8 @@ void ModelWidget::configureObjectSelection()
 {
 	QList<QGraphicsItem *> items=scene->selectedItems();
 	BaseObjectView *item=nullptr;
-	map<unsigned, QGraphicsItem *> objs_map;
-	map<unsigned, QGraphicsItem *>::iterator itr;
+	std::map<unsigned, QGraphicsItem *> objs_map;
+	std::map<unsigned, QGraphicsItem *>::iterator itr;
 
 	selected_objects.clear();
 
@@ -1272,7 +1272,7 @@ void ModelWidget::selectAllObjects()
 	else
 	{
 		BaseObjectView *obj_view = nullptr;
-		vector<BaseObject *> objs = *db_model->getObjectList(obj_type);
+		std::vector<BaseObject *> objs = *db_model->getObjectList(obj_type);
 
 		if(obj_type == ObjectType::Relationship)
 			objs.insert(objs.end(), db_model->getObjectList(ObjectType::BaseRelationship)->begin(),  db_model->getObjectList(ObjectType::BaseRelationship)->end());
@@ -1322,8 +1322,8 @@ void ModelWidget::convertRelationshipNN()
 					QString tab_name, xml_buf;
 					QPointF pnt;
 					unsigned i=1, idx, count, idx1, count1, x;
-					vector<Constraint *> fks;
-					vector<QString> pk_cols;
+					std::vector<Constraint *> fks;
+					std::vector<QString> pk_cols;
 					int attr_idx=-1;
 
 					op_count=op_list->getCurrentSize();
@@ -1543,7 +1543,7 @@ void ModelWidget::convertRelationship1N()
 		QStringList constrs_xmls;
 		Column *column = nullptr;
 		Constraint *constr = nullptr, *pk = recv_tab->getPrimaryKey();
-		vector<Column *> columns;
+		std::vector<Column *> columns;
 		QString pk_name, orig_name, rel_name = rel->getName();
 		bool register_pk = false;
 		QColor rel_color = rel->getCustomColor();
@@ -1752,7 +1752,7 @@ void ModelWidget::printModel(QPrinter *printer, bool print_grid, bool print_page
 
 	bool show_grid = false, align_objs = false, show_delims = false;
 	unsigned page_cnt = 0, page = 0, h_page_cnt = 0, v_page_cnt = 0, h_pg_id = 0, v_pg_id = 0;
-	vector<QRectF> pages;
+	std::vector<QRectF> pages;
 	QMarginsF margins;
 	QFont font;
 	QString page_info;
@@ -2240,7 +2240,7 @@ void ModelWidget::moveToSchema()
 	QAction *act=dynamic_cast<QAction *>(sender());
 	Schema *schema=dynamic_cast<Schema *>(reinterpret_cast<BaseObject *>(act->data().value<void *>()));
 	BaseGraphicObject *obj_graph=nullptr;
-	vector<BaseObject *> ref_objs;
+	std::vector<BaseObject *> ref_objs;
 	int op_id=-1, op_curr_idx=op_list->getCurrentIndex();
 
 	try
@@ -2315,7 +2315,7 @@ void ModelWidget::changeOwner()
 {
 	QAction *act=dynamic_cast<QAction *>(sender());
 	BaseObject *owner=reinterpret_cast<BaseObject *>(act->data().value<void *>());
-	vector<BaseObject *> sel_objs;
+	std::vector<BaseObject *> sel_objs;
 	int op_id=-1, op_curr_idx=op_list->getCurrentIndex();
 
 	try
@@ -2463,7 +2463,7 @@ void ModelWidget::selectTaggedTables()
 {
 	QObject *obj_sender=dynamic_cast<QAction *>(sender());
 	Tag *tag=nullptr;
-	vector<BaseObject *> objects;
+	std::vector<BaseObject *> objects;
 	BaseObjectView *obj_view = nullptr;
 
 	tag=dynamic_cast<Tag *>(
@@ -2533,7 +2533,7 @@ void ModelWidget::protectObject()
 
 					if(msgbox.result()==QDialog::Accepted || msgbox.isCustomOptionChecked())
 					{
-						vector<BaseObject *> objects(db_model->getObjects(object));
+						std::vector<BaseObject *> objects(db_model->getObjects(object));
 
 						for(BaseObject *obj : objects)
 							obj->setProtected(protect);
@@ -2578,10 +2578,10 @@ void ModelWidget::cutObjects()
 
 void ModelWidget::copyObjects(bool duplicate_mode)
 {
-	map<unsigned, BaseObject *> objs_map;
-	map<unsigned, BaseObject *>::iterator obj_itr;
-	vector<BaseObject *>::iterator itr, itr_end;
-	vector<BaseObject *> deps;
+	std::map<unsigned, BaseObject *> objs_map;
+	std::map<unsigned, BaseObject *>::iterator obj_itr;
+	std::vector<BaseObject *>::iterator itr, itr_end;
+	std::vector<BaseObject *> deps;
 	BaseObject *object=nullptr;
 	TableObject *tab_obj=nullptr;
 	BaseTable *table=nullptr;
@@ -2690,10 +2690,10 @@ void ModelWidget::copyObjects(bool duplicate_mode)
 
 void ModelWidget::pasteObjects(bool duplicate_mode)
 {
-	map<BaseObject *, QString> xml_objs;
+	std::map<BaseObject *, QString> xml_objs;
 	BaseTable *orig_parent_tab=nullptr;
-	vector<BaseObject *>::iterator itr, itr_end;
-	map<BaseObject *, QString> orig_obj_names;
+	std::vector<BaseObject *>::iterator itr, itr_end;
+	std::map<BaseObject *, QString> orig_obj_names;
 	BaseObject *object=nullptr, *aux_object=nullptr;
 	TableObject *tab_obj=nullptr;
 	Table *sel_table=nullptr, *aux_table = nullptr;
@@ -2704,7 +2704,7 @@ void ModelWidget::pasteObjects(bool duplicate_mode)
 	Operator *oper=nullptr;
 	QString aux_name, copy_obj_name;
 	ObjectType obj_type;
-	vector<Exception> errors;
+	std::vector<Exception> errors;
 	unsigned pos=0;
 	TaskProgressWidget task_prog_wgt(this);
 
@@ -3140,13 +3140,13 @@ void ModelWidget::removeObjects(bool cascade)
 	TableObject *tab_obj=nullptr;
 	ObjectType obj_type=ObjectType::BaseObject, parent_type=ObjectType::BaseObject;
 	BaseObject *object=nullptr, *aux_obj=nullptr;
-	vector<BaseObject *> sel_objs, aux_sel_objs;
+	std::vector<BaseObject *> sel_objs, aux_sel_objs;
 
-	map<unsigned, tuple<BaseObject *, QString, ObjectType, QString, ObjectType>> objs_map;
-	map<unsigned, tuple<BaseObject *, QString, ObjectType, QString, ObjectType>>::reverse_iterator ritr, ritr_end;
+	std::map<unsigned, std::tuple<BaseObject *, QString, ObjectType, QString, ObjectType>> objs_map;
+	std::map<unsigned, std::tuple<BaseObject *, QString, ObjectType, QString, ObjectType>>::reverse_iterator ritr, ritr_end;
 	QAction *obj_sender=dynamic_cast<QAction *>(sender());
 	QString obj_name, parent_name;
-	vector<Exception> errors;
+	std::vector<Exception> errors;
 
 	if(obj_sender)
 		object=reinterpret_cast<BaseObject *>(obj_sender->data().value<void *>());
@@ -3199,7 +3199,7 @@ void ModelWidget::removeObjects(bool cascade)
 				//If in cascade mode, retrieve all references to the object (direct and indirect)
 				if(cascade)
 				{
-					vector<BaseObject *> refs;
+					std::vector<BaseObject *> refs;
 
 					for(BaseObject *sel_obj : sel_objs)
 					{
@@ -3513,7 +3513,7 @@ void ModelWidget::showObjectMenu()
 
 void ModelWidget::configurePopupMenu(BaseObject *object)
 {
-	vector<BaseObject *> vet_obj;
+	std::vector<BaseObject *> vet_obj;
 
 	if(object)
 		vet_obj.push_back(object);
@@ -3544,7 +3544,7 @@ void ModelWidget::enableModelActions(bool value)
 void ModelWidget::configureQuickMenu(BaseObject *object)
 {
 	QAction *act=nullptr;
-	vector<BaseObject *> sel_objs;
+	std::vector<BaseObject *> sel_objs;
 	ObjectType obj_type=ObjectType::BaseObject;
 	bool tab_or_view=false, is_graph_obj = false, accepts_owner=false, accepts_schema=false;
 
@@ -3579,8 +3579,8 @@ void ModelWidget::configureQuickMenu(BaseObject *object)
 	{
 		if(accepts_owner || accepts_schema)
 		{
-			vector<BaseObject *> obj_list;
-			map<QString, QAction *> act_map;
+			std::vector<BaseObject *> obj_list;
+			std::map<QString, QAction *> act_map;
 			QStringList name_list;
 			QMenu *menus[]={ &schemas_menu, &owners_menu, &tags_menu };
 			ObjectType types[]={ ObjectType::Schema, ObjectType::Role, ObjectType::Tag };
@@ -3727,7 +3727,7 @@ void ModelWidget::configureFadeMenu()
 			fade_menu.addAction(action_fade_objs_out);
 
 			QAction *action = nullptr;
-			vector<ObjectType> types = { ObjectType::Schema, ObjectType::Table, ObjectType::ForeignTable, ObjectType::View, ObjectType::Relationship, ObjectType::Textbox };
+			std::vector<ObjectType> types = { ObjectType::Schema, ObjectType::Table, ObjectType::ForeignTable, ObjectType::View, ObjectType::Relationship, ObjectType::Textbox };
 			QStringList labels = { tr("Schemas"), tr("Tables"), tr("Foreign tables"), tr("Views"), tr("Relationships"), tr("Textboxes") };
 			unsigned id = 0;
 
@@ -3798,7 +3798,7 @@ void ModelWidget::configureFadeMenu()
 	}
 }
 
-void ModelWidget::fadeObjects(const vector<BaseObject *> &objects, bool fade_in)
+void ModelWidget::fadeObjects(const std::vector<BaseObject *> &objects, bool fade_in)
 {
 	BaseObjectView *obj_view = nullptr;
 	Schema *schema = nullptr;
@@ -3834,7 +3834,7 @@ void ModelWidget::fadeObjects(QAction *action, bool fade_in)
 	if(!action)
 		return;
 
-	vector<BaseObject *> list;
+	std::vector<BaseObject *> list;
 
 	//If the database object is selected or there is no object select
 	if(selected_objects.empty() || (selected_objects.size() == 1 && selected_objects[0]->getObjectType() == ObjectType::Database))
@@ -3844,7 +3844,7 @@ void ModelWidget::fadeObjects(QAction *action, bool fade_in)
 		//If the action contains a data of type ObjectType::ObjBaseObject means that the user wants to fade all objects
 		if(obj_type == ObjectType::BaseObject)
 		{
-			vector<ObjectType> types = { ObjectType::Schema, ObjectType::Table, ObjectType::View,
+			std::vector<ObjectType> types = { ObjectType::Schema, ObjectType::Table, ObjectType::View,
 																	 ObjectType::Relationship, ObjectType::BaseRelationship, ObjectType::Textbox};
 
 			for(ObjectType type : types)
@@ -3881,7 +3881,7 @@ void ModelWidget::fadeObjects(QAction *action, bool fade_in)
 			if(fade_rels || fade_peer_tabs || fade_both_objs)
 			{
 				//Applying fade to the relationships linked to the selected table/view
-				vector<BaseRelationship *> rel_list = db_model->getRelationships(dynamic_cast<BaseTable *>(selected_objects[0]));
+				std::vector<BaseRelationship *> rel_list = db_model->getRelationships(dynamic_cast<BaseTable *>(selected_objects[0]));
 
 				for(auto rel : rel_list)
 				{
@@ -3895,7 +3895,7 @@ void ModelWidget::fadeObjects(QAction *action, bool fade_in)
 					}
 				}
 
-				vector<BaseObject *>::iterator end;
+				std::vector<BaseObject *>::iterator end;
 				std::sort(list.begin(), list.end());
 				end=std::unique(list.begin(), list.end());
 				list.erase(end, list.end());
@@ -3923,7 +3923,7 @@ void ModelWidget::fadeObjectsOut()
 void ModelWidget::setAllCollapseMode(CollapseMode mode)
 {
 	BaseTable *base_tab = nullptr;
-	vector<BaseObject *> objects;
+	std::vector<BaseObject *> objects;
 
 	this->scene->clearSelection();
 	objects.assign(db_model->getObjectList(ObjectType::Table)->begin(), db_model->getObjectList(ObjectType::Table)->end());
@@ -4007,7 +4007,7 @@ void ModelWidget::setCollapseMode()
 {
 	CollapseMode mode = static_cast<CollapseMode>(dynamic_cast<QAction *>(sender())->data().toUInt());
 	BaseTable *base_tab = nullptr;
-	vector<BaseObject *> objects;
+	std::vector<BaseObject *> objects;
 
 	if(selected_objects.empty() || (selected_objects.size() == 1 && selected_objects[0] == db_model))
 	{
@@ -4037,7 +4037,7 @@ void ModelWidget::togglePagination()
 {
 	bool enable = dynamic_cast<QAction *>(sender())->data().toBool();
 	BaseTable *base_tab = nullptr;
-	vector<BaseObject *> objects;
+	std::vector<BaseObject *> objects;
 
 	if(selected_objects.empty() || (selected_objects.size() == 1 && selected_objects[0] == db_model))
 	{
@@ -4084,7 +4084,7 @@ void ModelWidget::toggleSchemasRectangles()
 
 void ModelWidget::updateObjectsOpacity()
 {
-	vector<ObjectType> types = { ObjectType::Schema, ObjectType::Table, ObjectType::View,
+	std::vector<ObjectType> types = { ObjectType::Schema, ObjectType::Table, ObjectType::View,
 															 ObjectType::Relationship, ObjectType::BaseRelationship, ObjectType::Textbox};
 	BaseObjectView *obj_view = nullptr;
 	BaseGraphicObject *base_obj = nullptr;
@@ -4376,10 +4376,10 @@ void ModelWidget::configureDatabaseActions()
 		popup_menu.addAction(action_select_all);
 }
 
-void ModelWidget::configurePopupMenu(const vector<BaseObject *> &objects)
+void ModelWidget::configurePopupMenu(const std::vector<BaseObject *> &objects)
 {
 	unsigned count, i;
-	vector<QMenu *> submenus;
+	std::vector<QMenu *> submenus;
 	TableObject *tab_obj=nullptr;
 	QString str_aux;
 	bool protected_obj=false, model_protected=db_model->isProtected();
@@ -4806,7 +4806,7 @@ void ModelWidget::removeRelationshipPoints()
 		//Remove points from all selected relationships
 		if(!rel && !selected_objects.empty())
 		{
-			vector<BaseObject *> rels;
+			std::vector<BaseObject *> rels;
 
 			rels = *db_model->getObjectList(ObjectType::BaseRelationship);
 			rels.insert(rels.end(), db_model->getObjectList(ObjectType::Relationship)->begin(),  db_model->getObjectList(ObjectType::Relationship)->end());
@@ -4844,7 +4844,7 @@ void ModelWidget::removeRelationshipPoints()
 
 void ModelWidget::rearrangeSchemasInGrid(unsigned tabs_per_row, unsigned sch_per_row, QPointF origin, double obj_spacing)
 {
-	vector<BaseObject *> *objects=nullptr;
+	std::vector<BaseObject *> *objects=nullptr;
 	Schema *schema=nullptr;
 	SchemaView *sch_view=nullptr;
 	unsigned sch_id=0, min_cnt = 0;
@@ -4920,8 +4920,8 @@ void ModelWidget::rearrangeTablesInGrid(Schema *schema, unsigned tabs_per_row,  
 {
 	if(schema)
 	{
-		vector<BaseObject *> tables, views, ftables;
-		vector<BaseObject *>::iterator itr;
+		std::vector<BaseObject *> tables, views, ftables;
+		std::vector<BaseObject *>::iterator itr;
 		BaseTableView *tab_view=nullptr;
 		BaseTable *base_tab=nullptr;
 		unsigned tab_id=0;
@@ -5038,7 +5038,7 @@ void ModelWidget::updateModelLayersInfo()
 
 void ModelWidget::rearrangeTablesHierarchically()
 {
-	vector<BaseObject *> objects;
+	std::vector<BaseObject *> objects;
 	BaseGraphicObject *graph_obj = nullptr;
 	BaseTableView *tab_view = nullptr, *root = nullptr;
 	int num_rels = 0;
@@ -5068,7 +5068,7 @@ void ModelWidget::rearrangeTablesHierarchically()
 		BaseObjectView *obj_view = nullptr;
 		BaseRelationship *rel = nullptr;
 		QRectF items_rect;
-		vector<BaseObject *> evaluated_tabs, not_evaluated, not_linked_tabs;
+		std::vector<BaseObject *> evaluated_tabs, not_evaluated, not_linked_tabs;
 		double px = 0, py = 0, max_h = 0, max_w = 0;
 
 		//Positioning the root object at the top-left portion of canvas
@@ -5183,14 +5183,14 @@ void ModelWidget::rearrangeTablesHierarchically()
 	viewport->updateScene({ scene->sceneRect() });
 }
 
-QRectF ModelWidget::rearrangeTablesHierarchically(BaseTableView *root, vector<BaseObject *> &evaluated_tabs)
+QRectF ModelWidget::rearrangeTablesHierarchically(BaseTableView *root, std::vector<BaseObject *> &evaluated_tabs)
 {
 	BaseTable *base_tab = dynamic_cast<BaseTable *>(root->getUnderlyingObject()),
 			*src_tab = nullptr, *dst_tab = nullptr, *curr_tab = nullptr;
-	vector<BaseRelationship *> rels ;
+	std::vector<BaseRelationship *> rels ;
 	double px = 0, py = 0, px1 = 0, py1 = 0;
 	BaseTableView *tab_view = nullptr;
-	vector<BaseTable *> tabs = { base_tab }, next_tabs;
+	std::vector<BaseTable *> tabs = { base_tab }, next_tabs;
 	bool is_protected = false;
 
 	while(!tabs.empty())
@@ -5260,7 +5260,7 @@ QRectF ModelWidget::rearrangeTablesHierarchically(BaseTableView *root, vector<Ba
 
 void ModelWidget::rearrangeTablesInSchema(Schema *schema, QPointF start)
 {
-	vector<BaseObject *> tables, views, ftables;
+	std::vector<BaseObject *> tables, views, ftables;
 
 	if(!schema) return;
 
@@ -5297,8 +5297,8 @@ void ModelWidget::rearrangeTablesInSchema(Schema *schema, QPointF start)
 			bool has_collision = false;
 			QRectF curr_brect, comp_brect, irect;
 			QPointF pos;
-			random_device rand_seed;
-			default_random_engine rand_num_engine;
+			std::random_device rand_seed;
+			std::default_random_engine rand_num_engine;
 			unsigned tries = 0;
 
 			rand_num_engine.seed(rand_seed());
@@ -5324,7 +5324,7 @@ void ModelWidget::rearrangeTablesInSchema(Schema *schema, QPointF start)
 				max_h *= 1.05;
 			}
 
-			uniform_int_distribution<unsigned> dist_x(start.x(), start.x() + max_w),
+			std::uniform_int_distribution<unsigned> dist_x(start.x(), start.x() + max_w),
 					dist_y(start.y(), start.y() + max_h);
 
 			//Doing the first random positioning on all tables
@@ -5388,12 +5388,12 @@ void ModelWidget::rearrangeTablesInSchemas()
 	Schema *schema = nullptr;
 	SchemaView *sch_view = nullptr, *sch_view_aux = nullptr;
 	QRectF curr_brect, comp_brect, irect;
-	random_device rand_seed;
-	default_random_engine rand_num_engine;
+	std::random_device rand_seed;
+	std::default_random_engine rand_num_engine;
 	double max_w = 1000, max_h = 1000;
-	vector<BaseObject *> schemas = *db_model->getObjectList(ObjectType::Schema), rels;
+	std::vector<BaseObject *> schemas = *db_model->getObjectList(ObjectType::Schema), rels;
 	bool has_collision = false;
-	uniform_int_distribution<unsigned> dist_x(0, max_w), dist_y(0, max_h);
+	std::uniform_int_distribution<unsigned> dist_x(0, max_w), dist_y(0, max_h);
 	unsigned tries = 0,
 			max_tries = (db_model->getObjectCount(ObjectType::Table) +
 									 db_model->getObjectCount(ObjectType::View) +
@@ -5419,10 +5419,10 @@ void ModelWidget::rearrangeTablesInSchemas()
 		max_h += sch_view->boundingRect().height();
 	}
 
-	uniform_int_distribution<unsigned>::param_type new_dx(0, max_w * 0.40);
+	std::uniform_int_distribution<unsigned>::param_type new_dx(0, max_w * 0.40);
 	dist_x.param(new_dx);
 
-	uniform_int_distribution<unsigned>::param_type new_dy(0, max_h * 0.40);
+	std::uniform_int_distribution<unsigned>::param_type new_dy(0, max_h * 0.40);
 	dist_y.param(new_dy);
 
 	/* Collision detection: If a schema collides with other schemas it'll then repositioned

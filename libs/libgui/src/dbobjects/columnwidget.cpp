@@ -53,7 +53,7 @@ ColumnWidget::ColumnWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType
 		configureFormLayout(column_grid, ObjectType::Column);
 		configureTabOrder({ data_type });
 
-		map<QString, vector<QWidget *> > fields_map;
+		std::map<QString, std::vector<QWidget *> > fields_map;
 		fields_map[generateVersionsInterval(AfterVersion, PgSqlVersions::PgSqlVersion100)].push_back(identity_rb);
 		fields_map[generateVersionsInterval(AfterVersion, PgSqlVersions::PgSqlVersion120)].push_back(generated_chk);
 		highlightVersionSpecificFields(fields_map);
@@ -170,7 +170,7 @@ void ColumnWidget::applyConfiguration()
 		Column *column=nullptr;
 		Constraint *pk = nullptr, *constr = nullptr;
 		PhysicalTable *parent_tab = dynamic_cast<PhysicalTable *>(table);
-		vector<Constraint *> fks;
+		std::vector<Constraint *> fks;
 		BaseRelationship *rel = nullptr;
 		startConfiguration<Column>();
 

@@ -44,7 +44,7 @@ class TableWidget: public BaseObjectWidget, public Ui::TableWidget {
 		QFrame *warn_frame;
 
 		//! \brief Stores the objects tables used to handle columns, constraints, indexes, rules and triggers
-		map<ObjectType, ObjectsTableWidget *> objects_tab_map;
+		std::map<ObjectType, ObjectsTableWidget *> objects_tab_map;
 
 		//! \brief Lists (on the correct object table) the table objects according to the specified type
 		void listObjects(ObjectType obj_type);

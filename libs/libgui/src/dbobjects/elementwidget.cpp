@@ -22,7 +22,7 @@ ElementWidget::ElementWidget(QWidget *parent) : QWidget(parent)
 {
 	try
 	{
-		map<QString, vector<QWidget *> > fields_map;
+		std::map<QString, std::vector<QWidget *> > fields_map;
 
 		warning_frame=nullptr;
 		element = nullptr;

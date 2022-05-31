@@ -29,12 +29,12 @@
 #include "tools/databaseimportform.h"
 #include "tools/modelexportform.h"
 
-map<QString, attribs_map> GeneralConfigWidget::config_params;
-map<QString, GeneralConfigWidget::WidgetState> GeneralConfigWidget::widgets_geom;
+std::map<QString, attribs_map> GeneralConfigWidget::config_params;
+std::map<QString, GeneralConfigWidget::WidgetState> GeneralConfigWidget::widgets_geom;
 
 GeneralConfigWidget::GeneralConfigWidget(QWidget * parent) : BaseConfigWidget(parent)
 {
-	vector<QPageSize::PageSizeId> page_ids={ QPageSize::A0, QPageSize::A1, QPageSize::A2, QPageSize::A3, QPageSize::A4, QPageSize::A5,
+	std::vector<QPageSize::PageSizeId> page_ids={ QPageSize::A0, QPageSize::A1, QPageSize::A2, QPageSize::A3, QPageSize::A4, QPageSize::A5,
 																			 QPageSize::A6, QPageSize::A7, QPageSize::A8, QPageSize::A9, QPageSize::B0, QPageSize::B1,
 																			 QPageSize::B10, QPageSize::B2, QPageSize::B3, QPageSize::B4, QPageSize::B5, QPageSize::B6,
 																			 QPageSize::B7, QPageSize::B8, QPageSize::B9, QPageSize::C5E, QPageSize::Comm10E, QPageSize::DLE,
@@ -280,7 +280,7 @@ void GeneralConfigWidget::addConfigurationParam(const QString &param, const attr
 
 void GeneralConfigWidget::removeConfigurationParam(const QRegularExpression &param_reg)
 {
-	map<QString, attribs_map>::iterator itr, itr_end;
+	std::map<QString, attribs_map>::iterator itr, itr_end;
 
 	itr=config_params.begin();
 	itr_end=config_params.end();
@@ -298,7 +298,7 @@ void GeneralConfigWidget::removeConfigurationParam(const QRegularExpression &par
 	}
 }
 
-map<QString, attribs_map> GeneralConfigWidget::getConfigurationParams()
+std::map<QString, attribs_map> GeneralConfigWidget::getConfigurationParams()
 {
 	return config_params;
 }
@@ -375,7 +375,7 @@ void GeneralConfigWidget::saveConfiguration()
 	try
 	{
 		attribs_map attribs;
-		map<QString, attribs_map >::iterator itr, itr_end;
+		std::map<QString, attribs_map >::iterator itr, itr_end;
 		QString file_sch, widget_sch;
 		int recent_mdl_idx = 0;
 

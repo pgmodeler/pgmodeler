@@ -21,7 +21,7 @@
 #include "messagebox.h"
 #include "guiutilsns.h"
 
-map<QString, attribs_map> SnippetsConfigWidget::config_params;
+std::map<QString, attribs_map> SnippetsConfigWidget::config_params;
 
 const QRegularExpression SnippetsConfigWidget::IdFormatRegExp(QRegularExpression::anchoredPattern("^([a-z])([a-z]*|(\\d)*|(_)*)+"), QRegularExpression::CaseInsensitiveOption);
 
@@ -29,8 +29,8 @@ SnippetsConfigWidget::SnippetsConfigWidget(QWidget * parent) : BaseConfigWidget(
 {
 	QPixmap ico;
 	QString gen_purpose=tr("General purpose");
-	map<QString, ObjectType> types_map;
-	vector<ObjectType> types=BaseObject::getObjectTypes(true, {ObjectType::Relationship, ObjectType::Tag, ObjectType::Textbox,
+	std::map<QString, ObjectType> types_map;
+	std::vector<ObjectType> types=BaseObject::getObjectTypes(true, {ObjectType::Relationship, ObjectType::Tag, ObjectType::Textbox,
 																														 ObjectType::Permission, ObjectType::BaseRelationship });
 
 	setupUi(this);
@@ -84,7 +84,7 @@ SnippetsConfigWidget::SnippetsConfigWidget(QWidget * parent) : BaseConfigWidget(
 	connect(parsable_chk, SIGNAL(toggled(bool)), placeholders_chk, SLOT(setEnabled(bool)));
 }
 
-map<QString, attribs_map> SnippetsConfigWidget::getConfigurationParams()
+std::map<QString, attribs_map> SnippetsConfigWidget::getConfigurationParams()
 {
 	return config_params;
 }
@@ -112,9 +112,9 @@ QStringList SnippetsConfigWidget::getSnippetsIdsByObject(ObjectType obj_type)
 	return ids;
 }
 
-vector<attribs_map> SnippetsConfigWidget::getSnippetsByObject(ObjectType obj_type)
+std::vector<attribs_map> SnippetsConfigWidget::getSnippetsByObject(ObjectType obj_type)
 {
-	vector<attribs_map> snippets;
+	std::vector<attribs_map> snippets;
 	QString type_name=(obj_type==ObjectType::BaseObject ?
 						   Attributes::General : BaseObject::getSchemaName(obj_type));
 
@@ -140,9 +140,9 @@ QStringList SnippetsConfigWidget::getAllSnippetsAttribute(const QString &attrib)
 	return attribs;
 }
 
-vector<attribs_map> SnippetsConfigWidget::getAllSnippets()
+std::vector<attribs_map> SnippetsConfigWidget::getAllSnippets()
 {
-	vector<attribs_map> snippets;
+	std::vector<attribs_map> snippets;
 
 	for(auto &snip : config_params)
 		snippets.push_back(snip.second);
@@ -202,7 +202,7 @@ QString SnippetsConfigWidget::getParsedSnippet(const QString &snip_id, attribs_m
 		return "";
 }
 
-void SnippetsConfigWidget::fillSnippetsCombo(map<QString, attribs_map> &config)
+void SnippetsConfigWidget::fillSnippetsCombo(std::map<QString, attribs_map> &config)
 {
 	snippets_cmb->clear();
 
@@ -404,7 +404,7 @@ void SnippetsConfigWidget::filterSnippets(int idx)
 	else
 	{
 		ObjectType obj_type=static_cast<ObjectType>(filter_cmb->currentData().toUInt());
-		map<QString, attribs_map> flt_snippets;
+		std::map<QString, attribs_map> flt_snippets;
 		QString object_id=BaseObject::getSchemaName(obj_type);
 
 		if(object_id.isEmpty())
@@ -444,7 +444,7 @@ void SnippetsConfigWidget::saveConfiguration()
 
 		attribs_map attribs;
 		ObjectType obj_type;
-		vector<attribs_map> snippets;
+		std::vector<attribs_map> snippets;
 
 		//Saving the snippets sorting them by object type in the output file
 		for(int i=0; i < applies_to_cmb->count(); i++)
@@ -482,12 +482,12 @@ void SnippetsConfigWidget::restoreDefaults()
 	}
 }
 
-void SnippetsConfigWidget::configureSnippetsMenu(QMenu *snip_menu, vector<ObjectType> types)
+void SnippetsConfigWidget::configureSnippetsMenu(QMenu *snip_menu, std::vector<ObjectType> types)
 {
-	vector<attribs_map> snippets, vet_aux;
+	std::vector<attribs_map> snippets, vet_aux;
 	QAction *act=nullptr;
 	QMenu *menu=nullptr;
-	map<QString, QMenu *> submenus;
+	std::map<QString, QMenu *> submenus;
 	QString object, snip_id, type_name;
 	QPixmap ico;
 

@@ -63,7 +63,7 @@ class Operation {
 		int object_idx;
 
 		//! \brief Stores the object's permission before it's removal
-		vector<Permission *> permissions;
+		std::vector<Permission *> permissions;
 
 		//! \brief Generate an unique id for the operation based upon the memory addresses of objects held by it
 		QString generateOperationId();
@@ -94,7 +94,7 @@ class Operation {
 		void setOriginalObject(BaseObject *object);
 		void setPoolObject(BaseObject *object);
 		void setParentObject(BaseObject *object);
-		void setPermissions(const vector<Permission *> &perms);
+		void setPermissions(const std::vector<Permission *> &perms);
 		void setXMLDefinition(const QString &xml_def);
 
 		int getObjectIndex();
@@ -103,7 +103,7 @@ class Operation {
 		BaseObject *getOriginalObject();
 		BaseObject *getPoolObject();
 		BaseObject *getParentObject();
-		vector<Permission *> getPermissions();
+		std::vector<Permission *> getPermissions();
 		QString getXMLDefinition();
 		bool isOperationValid();
 };

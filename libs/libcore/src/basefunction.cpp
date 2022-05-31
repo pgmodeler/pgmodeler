@@ -54,7 +54,7 @@ void BaseFunction::setSchema(BaseObject *schema)
 
 void BaseFunction::addParameter(Parameter param)
 {
-	vector<Parameter>::iterator itr,itr_end;
+	std::vector<Parameter>::iterator itr,itr_end;
 	bool found=false;
 
 	itr=parameters.begin();
@@ -280,7 +280,7 @@ SecurityType BaseFunction::getSecurityType()
 	return security_type;
 }
 
-vector<PgSqlType> BaseFunction::getTransformTypes()
+std::vector<PgSqlType> BaseFunction::getTransformTypes()
 {
 	return transform_types;
 }
@@ -328,7 +328,7 @@ bool BaseFunction::isTransformTypeExists(PgSqlType type)
 
 void BaseFunction::removeParameter(const QString &name, PgSqlType type)
 {
-	vector<Parameter>::iterator itr,itr_end;
+	std::vector<Parameter>::iterator itr,itr_end;
 
 	itr=parameters.begin();
 	itr_end=parameters.end();
@@ -354,7 +354,7 @@ void BaseFunction::removeParameter(unsigned param_idx)
 	if(param_idx>=parameters.size())
 		throw Exception(ErrorCode::RefParameterInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	vector<Parameter>::iterator itr;
+	std::vector<Parameter>::iterator itr;
 	itr=parameters.begin()+param_idx;
 	parameters.erase(itr);
 

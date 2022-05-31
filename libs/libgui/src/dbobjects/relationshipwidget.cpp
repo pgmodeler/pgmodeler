@@ -464,7 +464,7 @@ void RelationshipWidget::useFKGlobalSettings(bool value)
 
 	if(value)
 	{
-		map<QString, attribs_map> confs=RelationshipConfigWidget::getConfigurationParams();
+		std::map<QString, attribs_map> confs=RelationshipConfigWidget::getConfigurationParams();
 		deferrable_chk->setChecked(confs[Attributes::ForeignKeys][Attributes::Deferrable]==Attributes::True);
 		deferral_cmb->setCurrentText(confs[Attributes::ForeignKeys][Attributes::DeferType]);
 		upd_action_cmb->setCurrentText(confs[Attributes::ForeignKeys][Attributes::UpdAction]);
@@ -500,7 +500,7 @@ void RelationshipWidget::usePatternGlobalSettings(bool value)
 	{
 		if(value)
 		{
-			map<QString, attribs_map> confs=RelationshipConfigWidget::getConfigurationParams();
+			std::map<QString, attribs_map> confs=RelationshipConfigWidget::getConfigurationParams();
 			QString rel_type=rel->getRelTypeAttribute();
 
 			//Using the global settings
@@ -584,8 +584,8 @@ void RelationshipWidget::listAdvancedObjects()
 	BaseRelationship *base_rel=nullptr;
 	Relationship *rel=nullptr;
 	Table *tab=nullptr;
-	vector<Column *> cols;
-	vector<Constraint *> constrs;
+	std::vector<Column *> cols;
+	std::vector<Constraint *> constrs;
 	unsigned count=0, i,i1;
 
 	try
@@ -771,7 +771,7 @@ void RelationshipWidget::duplicateObject(int curr_row, int new_row)
 	ObjectType obj_type=ObjectType::BaseObject;
 	BaseObject *object = nullptr, *dup_object = nullptr;
 	Relationship *rel = dynamic_cast<Relationship *>(this->object);
-	vector<TableObject *> obj_list;
+	std::vector<TableObject *> obj_list;
 	ObjectsTableWidget *tab = nullptr;
 	int op_id = -1;
 
@@ -999,8 +999,8 @@ void RelationshipWidget::listSpecialPkColumns()
 
 	if(aux_rel)
 	{
-		vector<Column *> cols;
-		vector<unsigned> col_ids;
+		std::vector<Column *> cols;
+		std::vector<unsigned> col_ids;
 		int count, idx;
 		QListWidgetItem *item=nullptr;
 
@@ -1040,7 +1040,7 @@ void RelationshipWidget::applyConfiguration()
 		Relationship *rel=nullptr;
 		BaseRelationship *base_rel=dynamic_cast<BaseRelationship *>(this->object);
 		unsigned rel_type, count, i, copy_mode=0, copy_ops=0;
-		vector<unsigned> col_ids;
+		std::vector<unsigned> col_ids;
 
 		/* Due to the complexity of the Relationship class and the strong link between all
 		 the relationships on the model is necessary to store the XML of the special objects
@@ -1065,12 +1065,12 @@ void RelationshipWidget::applyConfiguration()
 
 		if(this->object->getObjectType()==ObjectType::Relationship)
 		{
-			vector<QPlainTextEdit *> pattern_fields={ src_col_pattern_txt, dst_col_pattern_txt,
+			std::vector<QPlainTextEdit *> pattern_fields={ src_col_pattern_txt, dst_col_pattern_txt,
 																								pk_pattern_txt, uq_pattern_txt,
 																								src_fk_pattern_txt, dst_fk_pattern_txt,
 																								pk_col_pattern_txt };
 
-			vector<unsigned> pattern_ids= { Relationship::SrcColPattern, Relationship::DstColPattern,
+			std::vector<unsigned> pattern_ids= { Relationship::SrcColPattern, Relationship::DstColPattern,
 																			Relationship::PkPattern, Relationship::UqPattern,
 																			Relationship::SrcFkPattern, Relationship::DstFkPattern,
 																			Relationship::PkColPattern };

@@ -38,11 +38,11 @@ class NewObjectOverlayWidget: public QWidget, public Ui::NewObjectOverlayWidget 
 		Q_OBJECT
 
 		//! \brief Store the actions in the ModelWidget corresponding to each button the in overlay
-		map<QToolButton *, QAction *> btn_actions;
+		std::map<QToolButton *, QAction *> btn_actions;
 
 	public:
 		explicit NewObjectOverlayWidget(ModelWidget * parent);
-		void setSelectedObjects(vector<BaseObject *> &sel_objs);
+		void setSelectedObjects(std::vector<BaseObject *> &sel_objs);
 		void configureOverlayButtons();
 
 	private slots:

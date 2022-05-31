@@ -21,7 +21,7 @@
 
 ColorPickerWidget::ColorPickerWidget(int color_count, QWidget * parent) : QWidget(parent)
 {
-	random_device rand_seed;
+	std::random_device rand_seed;
 	rand_num_engine.seed(rand_seed());
 
 	QToolButton *btn=nullptr;
@@ -159,7 +159,7 @@ void ColorPickerWidget::selectColor()
 void ColorPickerWidget::generateRandomColors()
 {
 	QColor color;
-	uniform_int_distribution<unsigned> dist(0,255);
+	std::uniform_int_distribution<unsigned> dist(0,255);
 	int i=0;
 
 	for(i=0; i < buttons.size(); i++)

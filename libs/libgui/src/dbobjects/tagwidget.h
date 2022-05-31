@@ -34,7 +34,7 @@ class TagWidget: public BaseObjectWidget, public Ui::TagWidget {
 		Q_OBJECT
 
 		//! \brief Stores all color picker using the attribute the represents as map key.
-		map<QString, ColorPickerWidget *> color_pickers;
+		std::map<QString, ColorPickerWidget *> color_pickers;
 
 	public:
 		TagWidget(QWidget * parent = nullptr);

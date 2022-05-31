@@ -46,8 +46,8 @@ void GraphicalView::configureObject()
 	QPen pen;
 	TableObjectView *graph_ref=nullptr;
 	QList<QGraphicsItem *> subitems;
-	vector<TableObject *> tab_objs, ext_tab_objs;
-	vector<SimpleColumn> view_cols;
+	std::vector<TableObject *> tab_objs, ext_tab_objs;
+	std::vector<SimpleColumn> view_cols;
 	QGraphicsItemGroup *groups[]={ columns, ext_attribs };
 	RoundedRectItem *bodies[]={ body, ext_attribs_body };
 	QString attribs[]={ Attributes::ViewBody, Attributes::ViewExtBody },
@@ -95,7 +95,7 @@ void GraphicalView::configureObject()
 	}
 	else
 	{
-		vector<SimpleColumn> aux_view_cols;
+		std::vector<SimpleColumn> aux_view_cols;
 
 		if(has_col_pag)
 			aux_view_cols.assign(view_cols.begin() + start_col, view_cols.begin() + end_col);

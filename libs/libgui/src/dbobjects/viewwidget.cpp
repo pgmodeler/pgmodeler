@@ -33,7 +33,7 @@ ViewWidget::ViewWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Vi
 		QGridLayout *grid=nullptr;
 		QVBoxLayout *vbox=nullptr;
 
-		map<QString, vector<QWidget *> > fields_map;
+		std::map<QString, std::vector<QWidget *> > fields_map;
 		QFrame *frame=nullptr;
 
 		Ui_ViewWidget::setupUi(this);
@@ -325,7 +325,7 @@ ObjectType ViewWidget::getObjectType(QObject *sender)
 
 	if(sender)
 	{
-		map<ObjectType, ObjectsTableWidget *>::iterator itr, itr_end;
+		std::map<ObjectType, ObjectsTableWidget *>::iterator itr, itr_end;
 
 		itr=objects_tab_map.begin();
 		itr_end=objects_tab_map.end();

@@ -78,7 +78,7 @@ void ObjectDepsRefsWidget::clearTables()
 
 void ObjectDepsRefsWidget::updateObjectTables()
 {
-	vector<BaseObject *> objs;
+	std::vector<BaseObject *> objs;
 	model->getObjectDependecies(object, objs, !exc_ind_deps_chk->isChecked());
 
 	/* As the list of dependencies include the this->object itself is necessary

@@ -318,7 +318,7 @@ attribs_map DatabaseExplorerWidget::formatObjectAttribs(attribs_map &attribs)
 	attribs_map fmt_attribs;
 	QString attr_name, attr_value;
 	QRegularExpression oid_regexp=QRegularExpression(QRegularExpression::anchoredPattern("\\d+"));
-	map<QString, ObjectType> dep_types={{Attributes::Owner, ObjectType::Role},
+	std::map<QString, ObjectType> dep_types={{Attributes::Owner, ObjectType::Role},
 										{Attributes::Schema, ObjectType::Schema},
 										{Attributes::Tablespace, ObjectType::Tablespace},
 										{Attributes::Collation, ObjectType::Collation},
@@ -614,7 +614,7 @@ void DatabaseExplorerWidget::formatSequenceAttribs(attribs_map &attribs)
 	if(owner_col.size()==2)
 	{
 		QStringList names=getObjectName(ObjectType::Table, owner_col[0]).split('.');
-		vector<attribs_map> col_attribs=catalog.getObjectsAttributes(ObjectType::Column, names[0], names[1], { owner_col[1].toUInt() });
+		std::vector<attribs_map> col_attribs=catalog.getObjectsAttributes(ObjectType::Column, names[0], names[1], { owner_col[1].toUInt() });
 
 		if(!col_attribs.empty())
 			attribs[Attributes::OwnerColumn]=QString("%1.%2.%3").arg(names[0], names[1], col_attribs[0].at(Attributes::Name));
@@ -766,7 +766,7 @@ void DatabaseExplorerWidget::formatColumnAttribs(attribs_map &attribs)
 
 void DatabaseExplorerWidget::formatConstraintAttribs(attribs_map &attribs)
 {
-	map<QString, ConstraintType> types={{Attributes::PkConstr, ConstraintType(ConstraintType::PrimaryKey)},
+	std::map<QString, ConstraintType> types={{Attributes::PkConstr, ConstraintType(ConstraintType::PrimaryKey)},
 										{Attributes::FkConstr, ConstraintType(ConstraintType::ForeignKey)},
 										{Attributes::UqConstr, ConstraintType(ConstraintType::Unique)},
 										{Attributes::CkConstr, ConstraintType(ConstraintType::Check)},
@@ -918,7 +918,7 @@ QString DatabaseExplorerWidget::formatObjectName(attribs_map &attribs)
 			{
 				QStringList arg_types, names;
 				QString type_name;
-				vector<QString> attrib_ids={ Attributes::LeftType, Attributes::RightType };
+				std::vector<QString> attrib_ids={ Attributes::LeftType, Attributes::RightType };
 
 				for(QString attr : attrib_ids)
 				{
@@ -949,9 +949,9 @@ QStringList DatabaseExplorerWidget::getObjectsNames(ObjectType obj_type, const Q
 			return QStringList{ DepNotDefined };
 		else
 		{
-			vector<attribs_map> attribs_vect;
-			vector<unsigned> oids_vect;
-			map<QString, attribs_map> attrs_map;
+			std::vector<attribs_map> attribs_vect;
+			std::vector<unsigned> oids_vect;
+			std::map<QString, attribs_map> attrs_map;
 			QStringList names;
 
 			//Converting the oids to unsigned in order to filter them on Catalog
@@ -1506,7 +1506,7 @@ void DatabaseExplorerWidget::updateItem(QTreeWidgetItem *item, bool restore_tree
 		ObjectType obj_type=static_cast<ObjectType>(item->data(DatabaseImportForm::ObjectTypeId, Qt::UserRole).toUInt());
 		unsigned obj_id=item->data(DatabaseImportForm::ObjectId, Qt::UserRole).toUInt();
 		QString sch_name, tab_name;
-		vector<QTreeWidgetItem *> gen_items;
+		std::vector<QTreeWidgetItem *> gen_items;
 
 		QApplication::setOverrideCursor(Qt::WaitCursor);
 
@@ -1622,7 +1622,7 @@ void DatabaseExplorerWidget::loadObjectProperties(bool force_reload)
 
 					if(obj_type == ObjectType::Table)
 					{
-						vector<attribs_map> ref_fks;
+						std::vector<attribs_map> ref_fks;
 						attribs_map ref_table, ref_schema;
 						QStringList tab_list;
 
@@ -1643,7 +1643,7 @@ void DatabaseExplorerWidget::loadObjectProperties(bool force_reload)
 				{
 					QString tab_name=item->data(DatabaseImportForm::ObjectTable, Qt::UserRole).toString(),
 							sch_name=item->data(DatabaseImportForm::ObjectSchema, Qt::UserRole).toString();
-					vector<attribs_map> vect_attribs=catalog.getObjectsAttributes(obj_type, sch_name, tab_name, { oid });
+					std::vector<attribs_map> vect_attribs=catalog.getObjectsAttributes(obj_type, sch_name, tab_name, { oid });
 
 					if(!vect_attribs.empty())
 						orig_attribs=vect_attribs[0];
@@ -2075,7 +2075,7 @@ QString DatabaseExplorerWidget::getObjectSource(BaseObject *object, DatabaseMode
 	if(!object || !dbmodel)
 		return "";
 
-	vector<Permission *> perms;
+	std::vector<Permission *> perms;
 	QString source;
 
 	dbmodel->getPermissions(object, perms);

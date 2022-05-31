@@ -81,7 +81,7 @@ void Reference::addReferencedTable(PhysicalTable *ref_table)
 int Reference::getReferencedTableIndex(PhysicalTable *ref_table)
 {
 	int idx = -1;
-	vector<PhysicalTable *>::iterator itr = std::find(ref_tables.begin(), ref_tables.end(), ref_table);
+	std::vector<PhysicalTable *>::iterator itr = std::find(ref_tables.begin(), ref_tables.end(), ref_table);
 
 	if(itr != ref_tables.end())
 		idx = itr - ref_tables.begin();
@@ -94,7 +94,7 @@ void Reference::clearReferencedTables()
 	ref_tables.clear();
 }
 
-vector<PhysicalTable *> Reference::getReferencedTables()
+std::vector<PhysicalTable *> Reference::getReferencedTables()
 {
 	return ref_tables;
 }
@@ -149,7 +149,7 @@ void Reference::removeColumns()
 	columns.clear();
 }
 
-vector<SimpleColumn> Reference::getColumns()
+std::vector<SimpleColumn> Reference::getColumns()
 {
 	return columns;
 }

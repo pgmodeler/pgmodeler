@@ -46,7 +46,7 @@ PhysicalTable::PhysicalTable() : BaseTable()
 
 void PhysicalTable::destroyObjects()
 {
-	vector<BaseObject *> list=getObjects();
+	std::vector<BaseObject *> list=getObjects();
 
 	while(!list.empty())
 	{
@@ -124,8 +124,8 @@ PhysicalTable *PhysicalTable::getPartitionedTable()
 
 void PhysicalTable::setProtected(bool value)
 {
-	vector<ObjectType> obj_types = getChildObjectTypes(obj_type);
-	vector<TableObject *> *list=nullptr;
+	std::vector<ObjectType> obj_types = getChildObjectTypes(obj_type);
+	std::vector<TableObject *> *list=nullptr;
 
 	//Protected the table child objects
 	for(auto &type : obj_types)
@@ -185,7 +185,7 @@ void PhysicalTable::setAncestorTableAttribute()
 void PhysicalTable::setRelObjectsIndexesAttribute()
 {
 	attribs_map aux_attribs;
-	vector<map<QString, unsigned> *> obj_indexes={ &col_indexes, &constr_indexes };
+	std::vector<std::map<QString, unsigned> *> obj_indexes={ &col_indexes, &constr_indexes };
 	QString attribs[]={ Attributes::ColIndexes,  Attributes::ConstrIndexes };
 	ObjectType obj_types[]={ ObjectType::Column, ObjectType::Constraint };
 	unsigned idx=0, size=obj_indexes.size();
@@ -285,7 +285,7 @@ void PhysicalTable::setConstraintsAttribute(unsigned def_type)
 	unsigned i, count;
 	bool inc_added_by_rel;
 	Constraint *constr=nullptr;
-	vector<QString> lines;
+	std::vector<QString> lines;
 
 	count=constraints.size();
 	for(i=0; i < count; i++)
@@ -353,7 +353,7 @@ void PhysicalTable::setConstraintsAttribute(unsigned def_type)
 	attributes[Attributes::Constraints]=str_constr;
 }
 
-vector<TableObject *> *PhysicalTable::getObjectList(ObjectType obj_type)
+std::vector<TableObject *> *PhysicalTable::getObjectList(ObjectType obj_type)
 {
 	if(obj_type==ObjectType::Column)
 		return &columns;
@@ -380,7 +380,7 @@ void PhysicalTable::addObject(BaseObject *obj, int obj_idx)
 
 #ifdef DEMO_VERSION
 #warning "DEMO VERSION: table children objects creation limit."
-		vector<TableObject *> *obj_list=(obj_type!=ObjectType::Table ? getObjectList(obj_type) : nullptr);
+		std::vector<TableObject *> *obj_list=(obj_type!=ObjectType::Table ? getObjectList(obj_type) : nullptr);
 
 		if((obj_list && obj_list->size() >= GlobalAttributes::MaxObjectCount) ||
 				(obj_type==ObjectType::Table && ancestor_tables.size() >= GlobalAttributes::MaxObjectCount))
@@ -411,7 +411,7 @@ void PhysicalTable::addObject(BaseObject *obj, int obj_idx)
 			if(!isPhysicalTable(obj_type))
 			{
 				TableObject *tab_obj;
-				vector<TableObject *> *obj_list;
+				std::vector<TableObject *> *obj_list;
 				Column *col;
 
 				tab_obj=dynamic_cast<TableObject *>(obj);
@@ -547,7 +547,7 @@ QString PhysicalTable::getPartitionBoundingExpr()
 	return part_bounding_expr;
 }
 
-vector<PhysicalTable *> PhysicalTable::getPartionTables()
+std::vector<PhysicalTable *> PhysicalTable::getPartionTables()
 {
 	return partition_tables;
 }
@@ -600,7 +600,7 @@ int PhysicalTable::getPartitionTableIndex(PhysicalTable *tab, bool compare_names
 	if(!tab)
 		return -1;
 
-	vector<PhysicalTable *>::iterator itr = partition_tables.begin();
+	std::vector<PhysicalTable *>::iterator itr = partition_tables.begin();
 
 	while(itr != partition_tables.end())
 	{
@@ -616,9 +616,9 @@ int PhysicalTable::getPartitionTableIndex(PhysicalTable *tab, bool compare_names
 	return (itr - partition_tables.begin());
 }
 
-void PhysicalTable::addPartitionKeys(vector<PartitionKey> &part_keys)
+void PhysicalTable::addPartitionKeys(std::vector<PartitionKey> &part_keys)
 {
-	vector<PartitionKey> part_keys_bkp = partition_keys;
+	std::vector<PartitionKey> part_keys_bkp = partition_keys;
 
 	if(partitioning_type == BaseType::Null)
 		return;
@@ -697,14 +697,14 @@ void PhysicalTable::removeObject(unsigned obj_idx, ObjectType obj_type)
 
 	else if(PhysicalTable::isPhysicalTable(obj_type) && obj_idx < ancestor_tables.size())
 	{
-		vector<PhysicalTable *>::iterator itr;
+		std::vector<PhysicalTable *>::iterator itr;
 		itr=ancestor_tables.begin() + obj_idx;
 		ancestor_tables.erase(itr);
 	}
 	else if(!PhysicalTable::isPhysicalTable(obj_type))
 	{
-		vector<TableObject *> *obj_list=getObjectList(obj_type);
-		vector<TableObject *>::iterator itr;
+		std::vector<TableObject *> *obj_list=getObjectList(obj_type);
+		std::vector<TableObject *>::iterator itr;
 
 		if(!obj_list)
 			return;
@@ -727,7 +727,7 @@ void PhysicalTable::removeObject(unsigned obj_idx, ObjectType obj_type)
 		}
 		else
 		{
-			vector<TableObject *> refs;
+			std::vector<TableObject *> refs;
 			Column *column=nullptr;
 
 			itr=obj_list->begin() + obj_idx;
@@ -871,8 +871,8 @@ int PhysicalTable::getObjectIndex(const QString &name, ObjectType obj_type)
 int PhysicalTable::getObjectIndex(BaseObject *obj)
 {
 	TableObject *tab_obj=dynamic_cast<TableObject *>(obj);
-	vector<TableObject *> *obj_list = nullptr;
-	vector<TableObject *>::iterator itr, itr_end;
+	std::vector<TableObject *> *obj_list = nullptr;
+	std::vector<TableObject *>::iterator itr, itr_end;
 	bool found=false;
 
 	if(!obj) return -1;
@@ -906,14 +906,14 @@ BaseObject *PhysicalTable::getObject(const QString &name, ObjectType obj_type, i
 {
 	BaseObject *object=nullptr;
 	bool found=false, format=false;
-	vector<TableObject *> *obj_list=getObjectList(obj_type);
+	std::vector<TableObject *> *obj_list=getObjectList(obj_type);
 
 	//Checks if the name contains ", if so, the search will consider formatted names
 	format=name.contains('"');
 
 	if(TableObject::isTableObject(obj_type) && obj_list)
 	{
-		vector<TableObject *>::iterator itr, itr_end;
+		std::vector<TableObject *>::iterator itr, itr_end;
 		QString aux_name=name;
 
 		itr=obj_list->begin();
@@ -935,7 +935,7 @@ BaseObject *PhysicalTable::getObject(const QString &name, ObjectType obj_type, i
 	}
 	else if(isPhysicalTable(obj_type))
 	{
-		vector<PhysicalTable *>::iterator itr_tab, itr_end_tab;
+		std::vector<PhysicalTable *>::iterator itr_tab, itr_end_tab;
 		QString tab_name, aux_name=name;
 
 		aux_name.remove('"');
@@ -968,7 +968,7 @@ BaseObject *PhysicalTable::getObject(const QString &name, ObjectType obj_type, i
 
 BaseObject *PhysicalTable::getObject(unsigned obj_idx, ObjectType obj_type)
 {
-	vector<TableObject *> *obj_list=nullptr;
+	std::vector<TableObject *> *obj_list=nullptr;
 
 	if(isPhysicalTable(obj_type))
 	{
@@ -1029,7 +1029,7 @@ Column *PhysicalTable::getColumn(const QString &name, bool ref_old_name)
 	else
 	{
 		Column *column=nullptr;
-		vector<TableObject *>::iterator itr, itr_end;
+		std::vector<TableObject *>::iterator itr, itr_end;
 		bool found=false, format=false;
 
 		format=name.contains('"');
@@ -1105,14 +1105,14 @@ unsigned PhysicalTable::getObjectCount(ObjectType obj_type, bool inc_added_by_re
 		return ancestor_tables.size();
 	else
 	{
-		vector<TableObject *> *list=nullptr;
+		std::vector<TableObject *> *list=nullptr;
 		list = getObjectList(obj_type);
 
 		if(!list) return 0;
 
 		if(!inc_added_by_rel)
 		{
-			vector<TableObject *>::iterator itr, itr_end;
+			std::vector<TableObject *>::iterator itr, itr_end;
 			unsigned count=0;
 
 			itr=list->begin();
@@ -1130,11 +1130,11 @@ unsigned PhysicalTable::getObjectCount(ObjectType obj_type, bool inc_added_by_re
 	}
 }
 
-void PhysicalTable::setRelObjectsIndexes(const vector<QString> &obj_names, const vector<unsigned> &idxs, ObjectType obj_type)
+void PhysicalTable::setRelObjectsIndexes(const std::vector<QString> &obj_names, const std::vector<unsigned> &idxs, ObjectType obj_type)
 {
 	if(!obj_names.empty() && obj_names.size()==idxs.size())
 	{
-		map<QString, unsigned > *obj_idxs_map=nullptr;
+		std::map<QString, unsigned > *obj_idxs_map=nullptr;
 		unsigned idx=0, size=obj_names.size();
 
 		if(obj_type==ObjectType::Column)
@@ -1151,8 +1151,8 @@ void PhysicalTable::setRelObjectsIndexes(const vector<QString> &obj_names, const
 
 void PhysicalTable::saveRelObjectsIndexes(ObjectType obj_type)
 {
-	map<QString, unsigned > *obj_idxs_map=nullptr;
-	vector<TableObject *> *list=nullptr;
+	std::map<QString, unsigned > *obj_idxs_map=nullptr;
+	std::vector<TableObject *> *list=nullptr;
 
 	if(obj_type==ObjectType::Column)
 	{
@@ -1208,7 +1208,7 @@ void PhysicalTable::restoreRelObjectsIndexes()
 
 void PhysicalTable::restoreRelObjectsIndexes(ObjectType obj_type)
 {
-	map<QString, unsigned> *obj_idxs=nullptr;
+	std::map<QString, unsigned> *obj_idxs=nullptr;
 
 	if(obj_type==ObjectType::Column)
 		obj_idxs=&col_indexes;
@@ -1217,8 +1217,8 @@ void PhysicalTable::restoreRelObjectsIndexes(ObjectType obj_type)
 
 	if(!obj_idxs->empty())
 	{
-		vector<TableObject *> *list = getObjectList(obj_type);
-		vector<TableObject *> new_list;
+		std::vector<TableObject *> *list = getObjectList(obj_type);
+		std::vector<TableObject *> new_list;
 		QString name;
 		TableObject *tab_obj = nullptr;
 		unsigned i = 0, pos = 0, size = 0, obj_idx, names_used = 0, aux_size = 0;
@@ -1293,7 +1293,7 @@ void PhysicalTable::restoreRelObjectsIndexes(ObjectType obj_type)
 bool PhysicalTable::isConstraintRefColumn(Column *column, ConstraintType constr_type)
 {
 	bool found=false;
-	vector<TableObject *>::iterator itr, itr_end;
+	std::vector<TableObject *>::iterator itr, itr_end;
 	Constraint *constr=nullptr;
 
 	if(column)
@@ -1434,7 +1434,7 @@ void PhysicalTable::operator = (PhysicalTable &table)
 
 bool PhysicalTable::isReferRelationshipAddedObject()
 {
-	vector<TableObject *>::iterator itr, itr_end;
+	std::vector<TableObject *>::iterator itr, itr_end;
 	ObjectType types[]={ ObjectType::Column, ObjectType::Constraint };
 	bool found=false;
 
@@ -1470,8 +1470,8 @@ bool PhysicalTable::isPhysicalTable(ObjectType obj_type)
 
 void PhysicalTable::swapObjectsIndexes(ObjectType obj_type, unsigned idx1, unsigned idx2)
 {
-	vector<TableObject *> *obj_list=nullptr;
-	vector<TableObject *>::iterator itr1, itr2;
+	std::vector<TableObject *> *obj_list=nullptr;
+	std::vector<TableObject *>::iterator itr1, itr2;
 	TableObject *aux_obj=nullptr, *aux_obj1=nullptr;
 
 	try
@@ -1523,13 +1523,13 @@ void PhysicalTable::swapObjectsIndexes(ObjectType obj_type, unsigned idx1, unsig
 	}
 }
 
-void PhysicalTable::getColumnReferences(Column *column, vector<TableObject *> &refs, bool exclusion_mode)
+void PhysicalTable::getColumnReferences(Column *column, std::vector<TableObject *> &refs, bool exclusion_mode)
 {
 	if(column && !column->isAddedByRelationship())
 	{
 		unsigned count, i;
 		Column *col=nullptr, *col1=nullptr;
-		vector<TableObject *>::iterator itr, itr_end;
+		std::vector<TableObject *>::iterator itr, itr_end;
 		bool found=false;
 		Constraint *constr=nullptr;
 		Trigger *trig=nullptr;
@@ -1573,10 +1573,10 @@ void PhysicalTable::getColumnReferences(Column *column, vector<TableObject *> &r
 	}
 }
 
-vector<BaseObject *> PhysicalTable::getObjects(const vector<ObjectType> &excl_types)
+std::vector<BaseObject *> PhysicalTable::getObjects(const std::vector<ObjectType> &excl_types)
 {
-	vector<BaseObject *> list;
-	vector<ObjectType> types=getChildObjectTypes(obj_type);
+	std::vector<BaseObject *> list;
+	std::vector<ObjectType> types=getChildObjectTypes(obj_type);
 
 	for(auto type : types)
 	{
@@ -1589,14 +1589,14 @@ vector<BaseObject *> PhysicalTable::getObjects(const vector<ObjectType> &excl_ty
 	return list;
 }
 
-vector<PartitionKey> PhysicalTable::getPartitionKeys()
+std::vector<PartitionKey> PhysicalTable::getPartitionKeys()
 {
 	return partition_keys;
 }
 
 void PhysicalTable::setCodeInvalidated(bool value)
 {
-	vector<ObjectType> types = getChildObjectTypes(obj_type);
+	std::vector<ObjectType> types = getChildObjectTypes(obj_type);
 
 	for(auto type : types)
 	{

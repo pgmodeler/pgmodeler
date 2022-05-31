@@ -310,7 +310,7 @@ bool Trigger::isConstraint()
 
 bool Trigger::isReferRelationshipAddedColumn()
 {
-	vector<Column *>::iterator itr, itr_end;
+	std::vector<Column *>::iterator itr, itr_end;
 	Column *col=nullptr;
 	bool found=false;
 
@@ -327,9 +327,9 @@ bool Trigger::isReferRelationshipAddedColumn()
 	return found;
 }
 
-vector<Column *> Trigger::getRelationshipAddedColumns()
+std::vector<Column *> Trigger::getRelationshipAddedColumns()
 {
-	vector<Column *> cols;
+	std::vector<Column *> cols;
 
 	for(auto &col : upd_columns)
 	{

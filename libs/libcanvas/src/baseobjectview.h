@@ -81,10 +81,10 @@ class BaseObjectView: public QObject, public QGraphicsItemGroup {
 		TextPolygonItem *sql_disabled_item;
 
 		//! \brief Stores the object font configuration
-		static map<QString, QTextCharFormat> font_config;
+		static std::map<QString, QTextCharFormat> font_config;
 
 		//! \brief Stores the object colors configuration
-		static map<QString, vector<QColor>> color_config;
+		static std::map<QString, std::vector<QColor>> color_config;
 
 		//! \brief Configures the objects shadow polygon
 		void configureObjectShadow(void) {}

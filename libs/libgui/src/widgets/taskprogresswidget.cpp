@@ -22,7 +22,7 @@
 
 TaskProgressWidget::TaskProgressWidget(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 {
-	vector<ObjectType> obj_types=BaseObject::getObjectTypes(true);
+	std::vector<ObjectType> obj_types=BaseObject::getObjectTypes(true);
 
 	setupUi(this);
 	setWindowFlags(Qt::Dialog | Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);

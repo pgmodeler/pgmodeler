@@ -36,7 +36,7 @@ class DatabaseImportHelper: public QObject {
 		Q_OBJECT
 		
 		//! \brief Random number generator engine used to generate random colors for imported schemas
-		default_random_engine rand_num_engine;
+		std::default_random_engine rand_num_engine;
 		
 		static const QString UnkownObjectOidXml;
 		
@@ -45,7 +45,7 @@ class DatabaseImportHelper: public QObject {
 		QFile import_log;
 		
 		//! \brief Stores the errors generated during the import
-		vector<Exception> errors;
+		std::vector<Exception> errors;
 		
 		//! \brief Instance of catalog class to query system catalogs
 		Catalog catalog;
@@ -81,53 +81,53 @@ class DatabaseImportHelper: public QObject {
 		update_fk_rels;
 		
 		//! \brief Stores the selected objects oids to be imported
-		map<ObjectType, vector<unsigned>> object_oids;
+		std::map<ObjectType, std::vector<unsigned>> object_oids;
 		
 		/*! \brief Stores the selected column ids to be imported. The key of this map
 		it the oid of parent table */
-		map<unsigned, vector<unsigned>> column_oids;
+		std::map<unsigned, std::vector<unsigned>> column_oids;
 		
 		//! \brief Stores the selected objects oids to be imported
-		vector<unsigned> creation_order;
+		std::vector<unsigned> creation_order;
 			
 		//! \brief Stores the user defined objects attributes
-		map<unsigned, attribs_map> user_objs;
+		std::map<unsigned, attribs_map> user_objs;
 		
 		//! \brief Stores the system catalog objects attributes
-		map<unsigned, attribs_map> system_objs;
+		std::map<unsigned, attribs_map> system_objs;
 		
 		//! \brief Stores all defined types attributes
-		map<unsigned, attribs_map> types;
+		std::map<unsigned, attribs_map> types;
 
 		//! \brief Stores all constraints attributes
-		vector<attribs_map> constraints;
+		std::vector<attribs_map> constraints;
 
 		//! \brief Stores the OIDs of the objects successfully created
-		vector<unsigned> created_objs;
+		std::vector<unsigned> created_objs;
 
 		//! \brief Stores all selected columns attributes
-		map<unsigned, map<unsigned, attribs_map>> columns;
+		std::map<unsigned, std::map<unsigned, attribs_map>> columns;
 		
 		//! \brief Stores the oids of all objects that has permissions to be created
-		vector<unsigned> obj_perms;
+		std::vector<unsigned> obj_perms;
 		
 		//! \brief Stores the oids of all columns that has permissions to be created
-		map<unsigned, vector<unsigned>> col_perms;
+		std::map<unsigned, std::vector<unsigned>> col_perms;
 		
 		/*! \brief This special map is used to swap the id of a table and the sequence that
 				is referenced by it in order to avoid reference breaking */
-		map<QString, QString> seq_tab_swap;
+		std::map<QString, QString> seq_tab_swap;
 
 		/*! \brief Stores all columns that are inherited on the database. Since these columns are created
 		dettached from parent columns on the resulting model before the inheritances creation they
 		will be removed from their related tables if there is no object referencing them */
-		vector<Column *> inherited_cols;
+		std::vector<Column *> inherited_cols;
 		
 		//! \brief Reference for the database model instance of the model widget
 		DatabaseModel *dbmodel;
 
 		//! \brief Stored the table created (value) from the oid (key) so the partitioning hierarchy (if existent) can be reconstructed
-		map<unsigned, PhysicalTable *> imported_tables;
+		std::map<unsigned, PhysicalTable *> imported_tables;
 
 		XmlParser *xmlparser;
 		
@@ -174,7 +174,7 @@ class DatabaseImportHelper: public QObject {
 
 		/*! \brief Create the columns of the table represented by the passed attributes.
 		 * The inh_cols is used to hold the id of inherited columns to be managed later */
-		void createColumns(attribs_map &attribs, vector<unsigned> &inh_cols);
+		void createColumns(attribs_map &attribs, std::vector<unsigned> &inh_cols);
 
 		//! \brief Tries to assign imported sequences that are related to nextval() calls used in columns default values
 		void assignSequencesToColumns();
@@ -239,7 +239,7 @@ class DatabaseImportHelper: public QObject {
 		void setCurrentDatabase(const QString &dbname);
 		
 		//! \brief Defines the selected object to be imported. This method always expect filled maps. Hint: use the method Catalog::getObjectOIDs()
-		void setSelectedOIDs(DatabaseModel *db_model, const map<ObjectType, vector<unsigned>> &obj_oids, const map<unsigned, vector<unsigned>> &col_oids);
+		void setSelectedOIDs(DatabaseModel *db_model, const std::map<ObjectType, std::vector<unsigned>> &obj_oids, const std::map<unsigned, std::vector<unsigned>> &col_oids);
 		
 		//! \brief Configures the import parameters
 		void setImportOptions(bool import_sys_objs, bool import_ext_objs, bool auto_resolve_deps, bool ignore_errors, bool debug_mode, bool rand_rel_colors, bool update_fk_rels);
@@ -271,11 +271,11 @@ class DatabaseImportHelper: public QObject {
 				\note: The database used as reference is the same as the currently connection. So,
 				if the user want a different database it must call Connection::switchToDatabase() method
 				before assign the connection to this class. */
-		vector<attribs_map> getObjects(vector<ObjectType> obj_type, const QString &schema="", const QString &table="", attribs_map extra_attribs=attribs_map());
+		std::vector<attribs_map> getObjects(std::vector<ObjectType> obj_type, const QString &schema="", const QString &table="", attribs_map extra_attribs=attribs_map());
 
 		void retrieveSystemObjects();
 		void retrieveUserObjects();
-		void retrieveTableColumns(const QString &sch_name, const QString &tab_name, vector<unsigned> col_ids={});
+		void retrieveTableColumns(const QString &sch_name, const QString &tab_name, std::vector<unsigned> col_ids={});
 		void createObjects();
 		void createConstraints();
 		void createPermissions();
@@ -283,7 +283,7 @@ class DatabaseImportHelper: public QObject {
 		void updateFKRelationships();
 		
 		//! \brief Returns the currently configured object filters in the internal catalog instance
-		map<ObjectType, QString> getObjectFilters();
+		std::map<ObjectType, QString> getObjectFilters();
 
 	signals:
 		//! \brief This singal is emitted whenever the export progress changes

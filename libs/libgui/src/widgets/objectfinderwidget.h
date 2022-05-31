@@ -41,7 +41,7 @@ class ObjectFinderWidget : public QWidget, public Ui::ObjectFinderWidget {
 		 * populate the combo box used to select which attribute will be used to search objects */
 		search_attribs_i18n;
 
-		vector<BaseObject *> found_objs,
+		std::vector<BaseObject *> found_objs,
 
 		selected_objs;
 
@@ -68,7 +68,7 @@ class ObjectFinderWidget : public QWidget, public Ui::ObjectFinderWidget {
 
 		/*! \brief Lists the objects of a vector in a QTableWidget. The first column on each row of table contains thereference to the object
 		 * The parameter search_attr is used to display the attribute value in which the search was performed. */
-		static void updateObjectTable(QTableWidget *tab_wgt, vector<BaseObject *> &objects, const QString &search_attr = Attributes::Name, bool checkable_items = false);
+		static void updateObjectTable(QTableWidget *tab_wgt, std::vector<BaseObject *> &objects, const QString &search_attr = Attributes::Name, bool checkable_items = false);
 		
 		//! \brief Sets the database model to work on
 		void setModel(ModelWidget *model_wgt);

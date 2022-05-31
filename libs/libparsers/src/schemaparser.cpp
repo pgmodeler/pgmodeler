@@ -950,11 +950,11 @@ QString SchemaParser::getCodeDefinition(const attribs_map &attribs)
 	QString atrib, cond, prev_cond, word, meta;
 	bool error, if_expr;
 	char chr;
-	vector<bool> vet_expif, vet_tk_if, vet_tk_then, vet_tk_else;
-	map<int, vector<QString> > if_map, else_map;
-	vector<QString>::iterator itr, itr_end;
-	vector<int> vet_prev_level;
-	vector<QString> *vet_aux;
+	std::vector<bool> vet_expif, vet_tk_if, vet_tk_then, vet_tk_else;
+	std::map<int, std::vector<QString> > if_map, else_map;
+	std::vector<QString>::iterator itr, itr_end;
+	std::vector<int> vet_prev_level;
+	std::vector<QString> *vet_aux;
 
 	//In case the file was successfuly loaded
 	if(buffer.size() > 0)

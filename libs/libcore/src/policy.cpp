@@ -103,7 +103,7 @@ void Policy::removeRoles()
 	setCodeInvalidated(true);
 }
 
-vector<Role *> Policy::getRoles()
+std::vector<Role *> Policy::getRoles()
 {
 	return roles;
 }
