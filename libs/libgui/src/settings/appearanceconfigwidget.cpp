@@ -847,6 +847,7 @@ void AppearanceConfigWidget::previewCodeFontStyle()
 	fnt=code_font_cmb->currentFont();
 	fnt.setPointSizeF(code_font_size_spb->value());
 
+	SyntaxHighlighter::setDefaultFont(fnt);
 	NumberedTextEditor::setDefaultFont(fnt);
 	NumberedTextEditor::setLineNumbersVisible(disp_line_numbers_chk->isChecked());
 	NumberedTextEditor::setLineHighlightColor(line_highlight_cp->getColor(0));
@@ -858,7 +859,8 @@ void AppearanceConfigWidget::previewCodeFontStyle()
 	font_preview_txt->updateLineNumbersSize();
 	font_preview_txt->updateLineNumbers();
 	font_preview_txt->highlightCurrentLine();
-	font_preview_txt->setReadOnly(true);
+	font_preview_txt->setReadOnly(true);	
+	font_preview_hl->rehighlight();
 
 	setConfigurationChanged(true);
 }
