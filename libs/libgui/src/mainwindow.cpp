@@ -105,8 +105,10 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 		QTimer::singleShot(5000, this, SLOT(showDemoVersionWarning()));
 	#endif
 
-	AppearanceConfigWidget *appearance_wgt = dynamic_cast<AppearanceConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::AppearanceConfWgt));
-	appearance_wgt->applyUiTheme();
+	#ifndef Q_OS_LINUX
+		AppearanceConfigWidget *appearance_wgt = dynamic_cast<AppearanceConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::AppearanceConfWgt));
+		appearance_wgt->applyUiTheme();
+	#endif
 }
 
 MainWindow::~MainWindow()

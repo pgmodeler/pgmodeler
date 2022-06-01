@@ -774,9 +774,7 @@ void AppearanceConfigWidget::applyElementColor(unsigned color_idx, QColor color)
 
 void AppearanceConfigWidget::applyConfiguration()
 {
-	#warning "Debug me: applyUiTheme() is need to be called in the end of MainWindow's ctor"
-	//applyUiTheme();
-
+	applyUiTheme();
 	applyDesignCodeStyle();
 	applyObjectsStyle();
 
