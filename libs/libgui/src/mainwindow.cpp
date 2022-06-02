@@ -21,7 +21,6 @@
 #include "tools/bugreportform.h"
 #include "tools/metadatahandlingform.h"
 #include "tools/sqlexecutionwidget.h"
-#include "utils/custommenustyle.h"
 
 bool MainWindow::confirm_validation=true;
 int MainWindow::ToolsActionsCount=0;
@@ -123,14 +122,6 @@ MainWindow::~MainWindow()
 
 void MainWindow::configureMenusActionsWidgets()
 {
-	file_menu->setStyle(new CustomMenuStyle);
-	edit_menu->setStyle(new CustomMenuStyle);
-	show_menu->setStyle(new CustomMenuStyle);
-	plugins_menu->setStyle(new CustomMenuStyle);
-	about_menu->setStyle(new CustomMenuStyle);
-	more_actions_menu.setStyle(new CustomMenuStyle);
-	fix_menu.setStyle(new CustomMenuStyle);
-
 	QAction *act_more = more_actions_menu.menuAction();
 	act_more->setText(tr("More"));
 	act_more->setIcon(QIcon(GuiUtilsNs::getIconPath("moreactions")));

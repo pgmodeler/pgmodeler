@@ -26,7 +26,6 @@
 #include "widgets/objectstablewidget.h"
 #include "databaseexplorerwidget.h"
 #include "settings/generalconfigwidget.h"
-#include "utils/custommenustyle.h"
 
 constexpr unsigned DataManipulationForm::NoOperation;
 constexpr unsigned DataManipulationForm::OpInsert;
@@ -206,11 +205,6 @@ DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f):
 		else
 			selectColumn(section, sort_order);
 	});
-
-	fks_menu.setStyle(new CustomMenuStyle);
-	copy_menu.setStyle(new CustomMenuStyle);
-	truncate_menu.setStyle(new CustomMenuStyle);
-	paste_menu.setStyle(new CustomMenuStyle);
 }
 
 void DataManipulationForm::setAttributes(Connection conn, const QString curr_schema, const QString curr_table, const QString &filter)
@@ -895,7 +889,6 @@ void DataManipulationForm::retrieveFKColumns(const QString &schema, const QStrin
 			QStringList name_list;
 
 			submenu = new QMenu(this);
-			submenu->setStyle(new CustomMenuStyle);
 
 			QAction *act = submenu->menuAction();
 			act->setIcon(QPixmap(GuiUtilsNs::getIconPath("referenced")));
@@ -949,7 +942,6 @@ void DataManipulationForm::retrieveFKColumns(const QString &schema, const QStrin
 			}
 
 			submenu = new QMenu(this);
-			submenu->setStyle(new CustomMenuStyle);
 
 			act = submenu->menuAction();
 			act->setIcon(QPixmap(GuiUtilsNs::getIconPath("referrer")));
@@ -1648,8 +1640,6 @@ void DataManipulationForm::showPopupMenu()
 		QMenu item_menu;
 		QAction *act = nullptr;
 		ObjectType obj_type=static_cast<ObjectType>(table_cmb->currentData().toUInt());
-
-		item_menu.setStyle(new CustomMenuStyle);
 
 		act = copy_menu.menuAction();
 		act->setIcon(QIcon(GuiUtilsNs::getIconPath("copy")));

@@ -64,7 +64,6 @@
 #include "dbobjects/transformwidget.h"
 #include "dbobjects/procedurewidget.h"
 #include "coreutilsns.h"
-#include "utils/custommenustyle.h"
 
 std::vector<BaseObject *> ModelWidget::copied_objects;
 std::vector<BaseObject *> ModelWidget::cutted_objects;
@@ -459,8 +458,6 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 
 	//Creating the relationship submenu
 	rels_menu=new QMenu(this);
-	rels_menu->setStyle(new CustomMenuStyle);
-
 	actions_new_objects[ObjectType::Relationship] = rels_menu->menuAction();
 	actions_new_objects[ObjectType::Relationship]->setIcon(QIcon(GuiUtilsNs::getIconPath(ObjectType::Relationship)));
 	actions_new_objects[ObjectType::Relationship]->setText(BaseObject::getTypeName(ObjectType::Relationship));
@@ -591,29 +588,6 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	viewport->installEventFilter(this);
 	viewport->horizontalScrollBar()->installEventFilter(this);
 	viewport->verticalScrollBar()->installEventFilter(this);
-
-	popup_menu.setStyle(new CustomMenuStyle);
-	new_object_menu.setStyle(new CustomMenuStyle);
-	quick_actions_menu.setStyle(new CustomMenuStyle);
-	schemas_menu.setStyle(new CustomMenuStyle);
-	owners_menu.setStyle(new CustomMenuStyle);
-	tags_menu.setStyle(new CustomMenuStyle);
-	layers_menu.setStyle(new CustomMenuStyle);
-	break_rel_menu.setStyle(new CustomMenuStyle);
-	fade_menu.setStyle(new CustomMenuStyle);
-	fade_in_menu.setStyle(new CustomMenuStyle);
-	fade_out_menu.setStyle(new CustomMenuStyle);
-	fade_rels_menu.setStyle(new CustomMenuStyle);
-	fade_peer_tables_menu.setStyle(new CustomMenuStyle);
-	fade_both_objs_menu.setStyle(new CustomMenuStyle);
-	toggle_attrs_menu.setStyle(new CustomMenuStyle);
-	pagination_menu.setStyle(new CustomMenuStyle);
-	select_all_menu.setStyle(new CustomMenuStyle);
-	jump_to_tab_menu.setStyle(new CustomMenuStyle);
-	toggle_sch_rects_menu.setStyle(new CustomMenuStyle);
-	database_category_menu.setStyle(new CustomMenuStyle);
-	schema_category_menu.setStyle(new CustomMenuStyle);
-	stacking_menu.setStyle(new CustomMenuStyle);
 }
 
 ModelWidget::~ModelWidget()
@@ -4139,7 +4113,6 @@ void ModelWidget::configureConstraintsMenu(TableObject *tab_obj)
 
 				//For each constaint is created a menu with the edit, source code, protect/unprotect and delete actions
 				submenu=new QMenu(&popup_menu);
-				submenu->setStyle(new CustomMenuStyle);
 				submenu->setIcon(QPixmap(GuiUtilsNs::getIconPath(BaseObject::getSchemaName(ObjectType::Constraint) + str_aux)));
 				submenu->setTitle(constr->getName());
 
@@ -4200,7 +4173,6 @@ void ModelWidget::configureConstraintsMenu(TableObject *tab_obj)
 		if(!submenus.empty())
 		{
 			submenu=new QMenu(&popup_menu);
-			submenu->setStyle(new CustomMenuStyle);
 			submenu->setTitle(tr("Constraints"));
 			submenu->setIcon(QPixmap(GuiUtilsNs::getIconPath(BaseObject::getSchemaName(ObjectType::Constraint))));
 

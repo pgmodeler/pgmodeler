@@ -19,7 +19,6 @@
 #include "appearanceconfigwidget.h"
 #include "widgets/modelwidget.h"
 #include "widgets/objectstablewidget.h"
-#include "utils/custommenustyle.h"
 
 std::map<QString, attribs_map> AppearanceConfigWidget::config_params;
 

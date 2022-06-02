@@ -20,7 +20,6 @@
 #include "messagebox.h"
 #include "attributes.h"
 #include <QScreen>
-#include "utils/custommenustyle.h"
 
 PgModelerApp::PgModelerApp(int &argc, char **argv) : Application(argc,argv)
 {
