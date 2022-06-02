@@ -40,16 +40,19 @@
   </property>
   <layout class="QGridLayout" name="gridLayout_6">
    <property name="leftMargin">
-    <number>10</number>
+    <number>5</number>
    </property>
    <property name="topMargin">
-    <number>10</number>
+    <number>5</number>
    </property>
    <property name="rightMargin">
-    <number>10</number>
+    <number>5</number>
    </property>
    <property name="bottomMargin">
-    <number>10</number>
+    <number>5</number>
+   </property>
+   <property name="spacing">
+    <number>5</number>
    </property>
    <item row="0" column="0" colspan="3">
     <widget class="QFrame" name="frame">
@@ -81,6 +84,9 @@
       <property name="bottomMargin">
        <number>5</number>
       </property>
+      <property name="spacing">
+       <number>5</number>
+      </property>
       <item row="0" column="0">
        <widget class="QTabWidget" name="settings_tbw">
         <property name="sizePolicy">
@@ -103,6 +109,9 @@
           <string>Settings</string>
          </attribute>
          <layout class="QVBoxLayout" name="verticalLayout">
+          <property name="spacing">
+           <number>5</number>
+          </property>
           <property name="leftMargin">
            <number>5</number>
           </property>
@@ -142,6 +151,9 @@
              <property name="bottomMargin">
               <number>5</number>
              </property>
+             <property name="spacing">
+              <number>5</number>
+             </property>
              <item row="0" column="2">
               <widget class="QWidget" name="export_to_dbms_wgt" native="true">
                <property name="sizePolicy">
@@ -163,8 +175,14 @@
                 <property name="bottomMargin">
                  <number>5</number>
                 </property>
+                <property name="spacing">
+                 <number>5</number>
+                </property>
                 <item row="0" column="2">
                  <layout class="QHBoxLayout" name="horizontalLayout_2">
+                  <property name="spacing">
+                   <number>5</number>
+                  </property>
                   <item>
                    <widget class="QCheckBox" name="ignore_dup_chk">
                     <property name="enabled">
@@ -191,6 +209,9 @@
                 </item>
                 <item row="1" column="2" rowspan="2">
                  <layout class="QGridLayout" name="gridLayout_5">
+                  <property name="spacing">
+                   <number>5</number>
+                  </property>
                   <item row="1" column="0" colspan="3">
                    <widget class="QLineEdit" name="error_codes_edt">
                     <property name="enabled">
@@ -249,6 +270,9 @@
                 </item>
                 <item row="2" column="1">
                  <layout class="QHBoxLayout" name="horizontalLayout_12">
+                  <property name="spacing">
+                   <number>5</number>
+                  </property>
                   <item>
                    <widget class="QCheckBox" name="drop_chk">
                     <property name="enabled">
@@ -339,6 +363,9 @@
                 </item>
                 <item row="1" column="1">
                  <layout class="QGridLayout" name="gridLayout">
+                  <property name="spacing">
+                   <number>5</number>
+                  </property>
                   <item row="0" column="0">
                    <widget class="QComboBox" name="pgsqlvers1_cmb">
                     <property name="enabled">
@@ -472,6 +499,9 @@
              <property name="bottomMargin">
               <number>5</number>
              </property>
+             <property name="spacing">
+              <number>5</number>
+             </property>
              <item row="0" column="0" rowspan="2">
               <widget class="QRadioButton" name="export_to_file_rb">
                <property name="sizePolicy">
@@ -531,6 +561,9 @@
                 <property name="bottomMargin">
                  <number>5</number>
                 </property>
+                <property name="spacing">
+                 <number>5</number>
+                </property>
                 <item row="1" column="0">
                  <widget class="QLabel" name="output_lbl">
                   <property name="enabled">
@@ -555,6 +588,9 @@
                 </item>
                 <item row="2" column="1">
                  <layout class="QHBoxLayout" name="horizontalLayout_5">
+                  <property name="spacing">
+                   <number>5</number>
+                  </property>
                   <item>
                    <widget class="QComboBox" name="pgsqlvers_cmb">
                     <property name="enabled">
@@ -603,6 +639,9 @@
                 </item>
                 <item row="0" column="1">
                  <layout class="QHBoxLayout" name="horizontalLayout">
+                  <property name="spacing">
+                   <number>5</number>
+                  </property>
                   <item>
                    <widget class="QRadioButton" name="sql_standalone_rb">
                     <property name="sizePolicy">
@@ -738,6 +777,9 @@
              <property name="bottomMargin">
               <number>5</number>
              </property>
+             <property name="spacing">
+              <number>5</number>
+             </property>
              <item row="0" column="0" rowspan="2">
               <widget class="QRadioButton" name="export_to_img_rb">
                <property name="sizePolicy">
@@ -795,6 +837,9 @@
                  <number>0</number>
                 </property>
                 <property name="bottomMargin">
+                 <number>5</number>
+                </property>
+                <property name="spacing">
                  <number>5</number>
                 </property>
                 <item row="2" column="0">
@@ -893,6 +938,9 @@
                 </item>
                 <item row="2" column="1" colspan="2">
                  <layout class="QHBoxLayout" name="horizontalLayout_8">
+                  <property name="spacing">
+                   <number>5</number>
+                  </property>
                   <item>
                    <widget class="QComboBox" name="zoom_cmb">
                     <property name="enabled">
@@ -1011,6 +1059,9 @@
              <property name="bottomMargin">
               <number>5</number>
              </property>
+             <property name="spacing">
+              <number>5</number>
+             </property>
              <item row="0" column="0" rowspan="2">
               <widget class="QRadioButton" name="export_to_dict_rb">
                <property name="sizePolicy">
@@ -1068,6 +1119,9 @@
                  <number>0</number>
                 </property>
                 <property name="bottomMargin">
+                 <number>5</number>
+                </property>
+                <property name="spacing">
                  <number>5</number>
                 </property>
                 <item row="0" column="0">
@@ -1233,16 +1287,19 @@
          </attribute>
          <layout class="QGridLayout" name="gridLayout_15">
           <property name="leftMargin">
-           <number>4</number>
+           <number>5</number>
           </property>
           <property name="topMargin">
-           <number>4</number>
+           <number>5</number>
           </property>
           <property name="rightMargin">
-           <number>4</number>
+           <number>5</number>
           </property>
           <property name="bottomMargin">
-           <number>4</number>
+           <number>5</number>
+          </property>
+          <property name="spacing">
+           <number>5</number>
           </property>
           <item row="1" column="0">
            <widget class="QWidget" name="progress_wgt" native="true">
@@ -1271,8 +1328,8 @@
              <property name="bottomMargin">
               <number>0</number>
              </property>
-             <property name="verticalSpacing">
-              <number>10</number>
+             <property name="spacing">
+              <number>5</number>
              </property>
              <item row="1" column="0">
               <widget class="QLabel" name="ico_lbl">
@@ -1411,6 +1468,9 @@
    </item>
    <item row="1" column="0" colspan="3">
     <layout class="QHBoxLayout" name="horizontalLayout_10">
+     <property name="spacing">
+      <number>5</number>
+     </property>
      <item>
       <widget class="QLabel" name="pgmodeler_name_lbl">
        <property name="sizePolicy">

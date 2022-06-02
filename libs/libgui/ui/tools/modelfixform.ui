@@ -40,16 +40,19 @@
   </property>
   <layout class="QGridLayout" name="gridLayout_3">
    <property name="leftMargin">
-    <number>10</number>
+    <number>5</number>
    </property>
    <property name="topMargin">
-    <number>10</number>
+    <number>5</number>
    </property>
    <property name="rightMargin">
-    <number>10</number>
+    <number>5</number>
    </property>
    <property name="bottomMargin">
-    <number>10</number>
+    <number>5</number>
+   </property>
+   <property name="spacing">
+    <number>5</number>
    </property>
    <item row="0" column="0" colspan="4">
     <widget class="QFrame" name="frame">
@@ -79,6 +82,9 @@
        <number>5</number>
       </property>
       <property name="bottomMargin">
+       <number>5</number>
+      </property>
+      <property name="spacing">
        <number>5</number>
       </property>
       <item row="2" column="0">
@@ -125,6 +131,9 @@
           <number>5</number>
          </property>
          <property name="bottomMargin">
+          <number>5</number>
+         </property>
+         <property name="spacing">
           <number>5</number>
          </property>
          <item row="0" column="0">
@@ -199,6 +208,9 @@
           <number>5</number>
          </property>
          <property name="bottomMargin">
+          <number>5</number>
+         </property>
+         <property name="spacing">
           <number>5</number>
          </property>
          <item row="0" column="0">
@@ -433,6 +445,9 @@ p, li { white-space: pre-wrap; }
       </item>
       <item row="4" column="2">
        <layout class="QHBoxLayout" name="horizontalLayout_2">
+        <property name="spacing">
+         <number>5</number>
+        </property>
         <item>
          <widget class="QSpinBox" name="fix_tries_sb">
           <property name="minimum">
@@ -466,6 +481,9 @@ p, li { white-space: pre-wrap; }
    </item>
    <item row="1" column="0" colspan="4">
     <layout class="QHBoxLayout" name="horizontalLayout">
+     <property name="spacing">
+      <number>5</number>
+     </property>
      <item>
       <widget class="QLabel" name="pgmodeler_name_lbl">
        <property name="sizePolicy">

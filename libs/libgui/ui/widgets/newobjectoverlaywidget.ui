@@ -66,7 +66,7 @@
      </property>
      <layout class="QVBoxLayout" name="verticalLayout">
       <property name="spacing">
-       <number>10</number>
+       <number>5</number>
       </property>
       <property name="leftMargin">
        <number>5</number>
@@ -1680,7 +1680,7 @@
            </property>
            <layout class="QGridLayout" name="gridLayout_5">
             <property name="leftMargin">
-             <number>4</number>
+             <number>5</number>
             </property>
             <property name="topMargin">
              <number>5</number>

@@ -49,8 +49,14 @@
    </property>
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_4">
+     <property name="spacing">
+      <number>5</number>
+     </property>
      <item>
       <layout class="QHBoxLayout" name="horizontalLayout_3">
+       <property name="spacing">
+        <number>5</number>
+       </property>
        <item>
         <widget class="QToolButton" name="validate_btn">
          <property name="sizePolicy">
@@ -346,6 +352,9 @@
       <property name="bottomMargin">
        <number>5</number>
       </property>
+      <property name="spacing">
+       <number>5</number>
+      </property>
       <item row="0" column="5">
        <widget class="QCheckBox" name="use_tmp_names_chk">
         <property name="sizePolicy">
@@ -508,13 +517,16 @@
       <property name="bottomMargin">
        <number>0</number>
       </property>
+      <property name="spacing">
+       <number>5</number>
+      </property>
       <item row="1" column="0">
        <layout class="QHBoxLayout" name="horizontalLayout_2">
         <property name="spacing">
          <number>5</number>
         </property>
         <property name="rightMargin">
-         <number>10</number>
+         <number>5</number>
         </property>
         <item>
          <widget class="QLabel" name="warn_lbl">
@@ -599,7 +611,7 @@
          <number>5</number>
         </property>
         <property name="rightMargin">
-         <number>10</number>
+         <number>5</number>
         </property>
         <item>
          <widget class="QLabel" name="error_lbl">
@@ -661,6 +673,9 @@
       </item>
       <item row="0" column="0" colspan="3">
        <layout class="QHBoxLayout" name="horizontalLayout_5">
+        <property name="spacing">
+         <number>5</number>
+        </property>
         <item>
          <widget class="QLabel" name="ico_lbl">
           <property name="sizePolicy">

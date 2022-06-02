@@ -34,13 +34,10 @@
     <number>5</number>
    </property>
    <property name="bottomMargin">
-    <number>10</number>
-   </property>
-   <property name="horizontalSpacing">
     <number>5</number>
    </property>
-   <property name="verticalSpacing">
-    <number>10</number>
+   <property name="spacing">
+    <number>5</number>
    </property>
    <item row="0" column="1">
     <widget class="QSplitter" name="h_splitter">
@@ -68,7 +65,7 @@
         <number>0</number>
        </property>
        <property name="spacing">
-        <number>10</number>
+        <number>5</number>
        </property>
        <item row="0" column="0">
         <widget class="QTabWidget" name="editors_tbw">
@@ -97,7 +94,7 @@
         <number>0</number>
        </property>
        <property name="topMargin">
-        <number>10</number>
+        <number>5</number>
        </property>
        <property name="rightMargin">
         <number>0</number>
@@ -106,7 +103,7 @@
         <number>0</number>
        </property>
        <property name="spacing">
-        <number>10</number>
+        <number>5</number>
        </property>
        <item row="0" column="0">
         <widget class="QLabel" name="label_2">
@@ -165,7 +162,7 @@
            <number>5</number>
           </property>
           <property name="spacing">
-           <number>10</number>
+           <number>5</number>
           </property>
           <item row="1" column="3">
            <widget class="QToolButton" name="save_conf_tb">
@@ -323,7 +320,7 @@
        <item row="2" column="0" colspan="5">
         <widget class="QTabWidget" name="tabWidget">
          <property name="currentIndex">
-          <number>0</number>
+          <number>1</number>
          </property>
          <widget class="QWidget" name="tab">
           <attribute name="title">
@@ -331,7 +328,7 @@
           </attribute>
           <layout class="QVBoxLayout" name="verticalLayout">
            <property name="spacing">
-            <number>10</number>
+            <number>5</number>
            </property>
            <property name="leftMargin">
             <number>5</number>
@@ -369,7 +366,7 @@
           </attribute>
           <layout class="QVBoxLayout" name="verticalLayout_2">
            <property name="spacing">
-            <number>10</number>
+            <number>5</number>
            </property>
            <property name="leftMargin">
             <number>5</number>
@@ -426,7 +423,7 @@
        <number>5</number>
       </property>
       <property name="topMargin">
-       <number>10</number>
+       <number>5</number>
       </property>
       <property name="rightMargin">
        <number>5</number>
@@ -898,19 +895,19 @@
    <item row="1" column="0" colspan="2">
     <layout class="QGridLayout" name="buttons_lt">
      <property name="leftMargin">
-      <number>4</number>
+      <number>5</number>
      </property>
      <property name="topMargin">
-      <number>2</number>
+      <number>5</number>
      </property>
      <property name="rightMargin">
-      <number>4</number>
+      <number>5</number>
      </property>
      <property name="bottomMargin">
-      <number>2</number>
+      <number>5</number>
      </property>
      <property name="spacing">
-      <number>6</number>
+      <number>5</number>
      </property>
      <item row="0" column="0">
       <widget class="QLabel" name="label">

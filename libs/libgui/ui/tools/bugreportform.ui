@@ -40,19 +40,19 @@
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <property name="leftMargin">
-    <number>10</number>
+    <number>5</number>
    </property>
    <property name="topMargin">
-    <number>10</number>
+    <number>5</number>
    </property>
    <property name="rightMargin">
-    <number>10</number>
+    <number>5</number>
    </property>
    <property name="bottomMargin">
-    <number>10</number>
+    <number>5</number>
    </property>
    <property name="spacing">
-    <number>10</number>
+    <number>5</number>
    </property>
    <item row="0" column="0" rowspan="2">
     <widget class="QLabel" name="logo_lbl">
@@ -113,7 +113,7 @@
    <item row="3" column="0" colspan="2">
     <layout class="QHBoxLayout" name="horizontalLayout">
      <property name="spacing">
-      <number>10</number>
+      <number>5</number>
      </property>
      <property name="leftMargin">
       <number>0</number>
@@ -281,17 +281,20 @@
        <string>Report</string>
       </attribute>
       <layout class="QVBoxLayout" name="report_tab_grid">
+       <property name="spacing">
+        <number>5</number>
+       </property>
        <property name="leftMargin">
-        <number>4</number>
+        <number>5</number>
        </property>
        <property name="topMargin">
-        <number>4</number>
+        <number>5</number>
        </property>
        <property name="rightMargin">
-        <number>4</number>
+        <number>5</number>
        </property>
        <property name="bottomMargin">
-        <number>4</number>
+        <number>5</number>
        </property>
        <item>
         <widget class="QGroupBox" name="details_gb">
@@ -311,6 +314,9 @@
           <property name="bottomMargin">
            <number>5</number>
           </property>
+          <property name="spacing">
+           <number>5</number>
+          </property>
           <item row="0" column="0">
            <widget class="QPlainTextEdit" name="details_txt"/>
           </item>
@@ -320,6 +326,9 @@
        <item>
         <widget class="QWidget" name="output_wgt" native="true">
          <layout class="QHBoxLayout" name="output_lt">
+          <property name="spacing">
+           <number>5</number>
+          </property>
           <property name="leftMargin">
            <number>0</number>
           </property>
@@ -379,6 +388,9 @@
            <number>5</number>
           </property>
           <property name="bottomMargin">
+           <number>5</number>
+          </property>
+          <property name="spacing">
            <number>5</number>
           </property>
           <item row="0" column="0">
@@ -447,6 +459,9 @@
        <property name="bottomMargin">
         <number>5</number>
        </property>
+       <property name="spacing">
+        <number>5</number>
+       </property>
        <item row="0" column="0" colspan="2">
         <widget class="QWidget" name="attach_wgt" native="true">
          <property name="minimumSize">
@@ -456,6 +471,9 @@
           </size>
          </property>
          <layout class="QHBoxLayout" name="horizontalLayout_2">
+          <property name="spacing">
+           <number>5</number>
+          </property>
           <property name="leftMargin">
            <number>0</number>
           </property>

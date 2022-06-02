@@ -19,19 +19,19 @@
   </property>
   <layout class="QGridLayout" name="gridLayout_2">
    <property name="leftMargin">
-    <number>10</number>
+    <number>5</number>
    </property>
    <property name="topMargin">
-    <number>10</number>
+    <number>5</number>
    </property>
    <property name="rightMargin">
-    <number>10</number>
+    <number>5</number>
    </property>
    <property name="bottomMargin">
-    <number>10</number>
+    <number>5</number>
    </property>
    <property name="spacing">
-    <number>10</number>
+    <number>5</number>
    </property>
    <item row="1" column="0">
     <widget class="QLabel" name="pgmodeler_name_lbl">
@@ -61,7 +61,7 @@
    <item row="1" column="1">
     <layout class="QHBoxLayout" name="horizontalLayout">
      <property name="spacing">
-      <number>10</number>
+      <number>5</number>
      </property>
      <property name="sizeConstraint">
       <enum>QLayout::SetDefaultConstraint</enum>
@@ -176,7 +176,7 @@
        <number>5</number>
       </property>
       <property name="spacing">
-       <number>10</number>
+       <number>5</number>
       </property>
       <item row="0" column="0">
        <widget class="QTabWidget" name="settings_tbw">
@@ -207,7 +207,7 @@
            <number>5</number>
           </property>
           <property name="spacing">
-           <number>10</number>
+           <number>5</number>
           </property>
           <item row="3" column="0">
            <widget class="QLabel" name="extract_from_lbl">
@@ -250,7 +250,7 @@
               <number>5</number>
              </property>
              <property name="spacing">
-              <number>10</number>
+              <number>5</number>
              </property>
              <item row="0" column="0">
               <widget class="QLabel" name="icon_lbl">
@@ -333,7 +333,7 @@
               <number>5</number>
              </property>
              <property name="spacing">
-              <number>10</number>
+              <number>5</number>
              </property>
              <item row="7" column="0">
               <widget class="QCheckBox" name="objs_aliases_chk">
@@ -395,7 +395,7 @@
                  <number>0</number>
                 </property>
                 <property name="topMargin">
-                 <number>10</number>
+                 <number>5</number>
                 </property>
                 <property name="rightMargin">
                  <number>0</number>
@@ -766,7 +766,7 @@
           <item row="0" column="2">
            <layout class="QHBoxLayout" name="horizontalLayout_4">
             <property name="spacing">
-             <number>10</number>
+             <number>5</number>
             </property>
             <item>
              <widget class="QRadioButton" name="extract_restore_rb">
@@ -883,7 +883,7 @@
            <number>5</number>
           </property>
           <property name="spacing">
-           <number>10</number>
+           <number>5</number>
           </property>
           <item row="1" column="0">
            <widget class="QWidget" name="progress_wgt" native="true">
@@ -912,8 +912,8 @@
              <property name="bottomMargin">
               <number>0</number>
              </property>
-             <property name="verticalSpacing">
-              <number>6</number>
+             <property name="spacing">
+              <number>5</number>
              </property>
              <item row="1" column="0">
               <widget class="QLabel" name="ico_lbl">

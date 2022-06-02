@@ -50,10 +50,16 @@
       <property name="bottomMargin">
        <number>5</number>
       </property>
+      <property name="spacing">
+       <number>5</number>
+      </property>
       <item row="2" column="0" colspan="2">
        <layout class="QGridLayout" name="gridLayout">
         <property name="topMargin">
-         <number>10</number>
+         <number>5</number>
+        </property>
+        <property name="spacing">
+         <number>5</number>
         </property>
         <item row="0" column="1">
          <widget class="QCheckBox" name="unlogged_chk">
@@ -240,6 +246,9 @@
        <property name="bottomMargin">
         <number>5</number>
        </property>
+       <property name="spacing">
+        <number>5</number>
+       </property>
        <item row="0" column="0">
         <widget class="QLabel" name="partitioning_type_lbl">
          <property name="sizePolicy">
@@ -255,6 +264,9 @@
        </item>
        <item row="0" column="1">
         <layout class="QHBoxLayout" name="horizontalLayout">
+         <property name="spacing">
+          <number>5</number>
+         </property>
          <item>
           <widget class="QComboBox" name="partitioning_type_cmb">
            <property name="minimumSize">
