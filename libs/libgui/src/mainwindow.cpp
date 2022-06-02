@@ -29,14 +29,100 @@ int MainWindow::ToolsActionsCount=0;
 MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(parent, flags)
 {
 	setupUi(this);
+	pending_op=NoPendingOp;
+	central_wgt=nullptr;
+	window_title=this->windowTitle() + QString(" ") + GlobalAttributes::PgModelerVersion;
 
-	std::map<QString, attribs_map >confs;
-	std::map<QString, attribs_map >::iterator itr, itr_end;
-	attribs_map attribs;
-	PluginsConfigWidget *plugins_conf_wgt=nullptr;
-	QGridLayout *grid=nullptr;
-	QAction *action_plugins = nullptr;
+	#ifdef DEMO_VERSION
+		window_title+=tr(" (Demo)");
+	#endif
 
+	setWindowTitle(window_title);
+	createMainWidgets();
+	loadConfigurations();
+	configureMenusActionsWidgets();
+	connectSignalsToSlots();
+	showRightWidgetsBar();
+	showBottomWidgetsBar();
+	updateConnections();
+	updateRecentModelsMenu();
+	configureSamplesMenu();
+	applyConfigurations();
+
+	try
+	{
+		SQLExecutionWidget::loadSQLHistory();
+	}
+	catch(Exception &){}
+
+	GeneralConfigWidget *conf_wgt=dynamic_cast<GeneralConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::GeneralConfWgt));
+	std::map<QString, attribs_map >confs = conf_wgt->getConfigurationParams();
+
+	//Restoring the canvas grid options
+	action_show_grid->setChecked(confs[Attributes::Configuration][Attributes::ShowCanvasGrid]==Attributes::True);
+	action_alin_objs_grade->setChecked(confs[Attributes::Configuration][Attributes::AlignObjsToGrid]==Attributes::True);
+	action_show_delimiters->setChecked(confs[Attributes::Configuration][Attributes::ShowPageDelimiters]==Attributes::True);
+	action_compact_view->setChecked(confs[Attributes::Configuration][Attributes::CompactView]==Attributes::True);
+
+	ObjectsScene::setGridOptions(action_show_grid->isChecked(),
+															 action_alin_objs_grade->isChecked(),
+															 action_show_delimiters->isChecked());
+
+	#ifndef Q_OS_MAC
+		//Hiding/showing the main menu bar depending on the retrieved conf
+		bool show_main_menu = confs[Attributes::Configuration][Attributes::ShowMainMenu]==Attributes::True;
+		main_menu_mb->setVisible(show_main_menu);
+
+		if(show_main_menu)
+			file_menu->addAction(action_hide_main_menu);
+
+		main_menu.menuAction()->setVisible(!show_main_menu);
+	#endif
+
+	restoreDockWidgetsSettings();
+
+	//Positioning the update notifier widget before showing it (if there is an update)
+	setFloatingWidgetPos(update_notifier_wgt, action_update_found, model_acts_tb, false);
+	action_update_found->setVisible(false);
+	QTimer::singleShot(1000, this, SLOT(restoreTemporaryModels()));
+
+	//If there's no previuos geometry registered for the mainwindow display it maximized
+	if(!GeneralConfigWidget::restoreWidgetGeometry(this))
+		this->setWindowState(Qt::WindowMaximized);
+
+	#ifdef NO_UPDATE_CHECK
+		#warning "NO UPDATE CHECK: Update checking is disabled."
+	#else
+		//Enabling update check at startup
+		if(confs[Attributes::Configuration][Attributes::CheckUpdate]==Attributes::True) {
+			update_notifier_wgt->setCheckVersions(confs[Attributes::Configuration][Attributes::CheckVersions]);
+			QTimer::singleShot(10000, update_notifier_wgt, SLOT(checkForUpdate()));
+		}
+	#endif
+
+	#ifdef DEMO_VERSION
+		#warning "DEMO VERSION: demonstration version startup alert."
+		QTimer::singleShot(5000, this, SLOT(showDemoVersionWarning()));
+	#endif
+
+	#ifndef Q_OS_LINUX
+		AppearanceConfigWidget *appearance_wgt = dynamic_cast<AppearanceConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::AppearanceConfWgt));
+		appearance_wgt->applyUiTheme();
+	#endif
+}
+
+MainWindow::~MainWindow()
+{
+	//This fix the crash on exit at Mac OSX system (but not sure why) (???)
+	file_menu->clear();
+
+	delete restoration_form;
+	delete overview_wgt;
+	delete configuration_form;
+}
+
+void MainWindow::configureMenusActionsWidgets()
+{
 	file_menu->setStyle(new CustomMenuStyle);
 	edit_menu->setStyle(new CustomMenuStyle);
 	show_menu->setStyle(new CustomMenuStyle);
@@ -45,80 +131,10 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	more_actions_menu.setStyle(new CustomMenuStyle);
 	fix_menu.setStyle(new CustomMenuStyle);
 
-	pending_op=NoPendingOp;
-	central_wgt=nullptr;
-
-	try
-	{
-		configuration_form=new ConfigurationForm(nullptr, Qt::WindowTitleHint | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint);
-		GuiUtilsNs::resizeDialog(configuration_form);
-		configuration_form->loadConfiguration();
-
-		plugins_conf_wgt=dynamic_cast<PluginsConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::PluginsConfWgt));
-		plugins_conf_wgt->installPluginsActions(plugins_menu, this, SLOT(executePlugin()));
-		plugins_conf_wgt->initPlugins(this);
-		plugins_menu->setEnabled(!plugins_menu->isEmpty());
-
-		action_plugins = plugins_menu->menuAction();
-		action_plugins->setIcon(QIcon(GuiUtilsNs::getIconPath("plugins")));
-		action_plugins->setText(tr("Plug-ins"));
-		action_plugins->setToolTip(tr("Access the list of loaded plugins"));
-		action_plugins->setEnabled(!plugins_menu->isEmpty());
-
-		QAction *act = more_actions_menu.menuAction();
-		act->setText(tr("More"));
-		act->setIcon(QIcon(GuiUtilsNs::getIconPath("moreactions")));
-		act->setToolTip(tr("Addition action over the model"));
-
-		confs=GeneralConfigWidget::getConfigurationParams();
-		itr=confs.begin();
-		itr_end=confs.end();
-
-		//Configuring the widget visibility according to the configurations
-		while(itr!=itr_end)
-		{
-			attribs=itr->second;
-			if(attribs.count(Attributes::Path)!=0)
-			{
-				try
-				{
-					//Storing the file of a previous session
-					if(itr->first.contains(Attributes::File) &&
-							!attribs[Attributes::Path].isEmpty())
-						prev_session_files.push_back(attribs[Attributes::Path]);
-
-					//Creating the recent models menu
-					else if(itr->first.contains(Attributes::Recent) &&
-							!attribs[Attributes::Path].isEmpty())
-						recent_models.push_back(attribs[Attributes::Path]);
-				}
-				catch(Exception &e)
-				{
-					Messagebox msg_box;
-					msg_box.show(e);
-				}
-			}
-
-			itr++;
-		}
-	}
-	catch(Exception &e)
-	{
-		Messagebox msg_box;
-		msg_box.show(e);
-	}
-
-	layers_cfg_wgt = new LayersConfigWidget(this);
-	layers_cfg_wgt->setVisible(false);
-
-	changelog_wgt  = new ChangelogWidget(this);
-	changelog_wgt->setVisible(false);
-
-	scene_info_wgt = new SceneInfoWidget(this);
-	QHBoxLayout *hbox = new QHBoxLayout(scene_info_parent);
-	hbox->addWidget(scene_info_wgt);
-	hbox->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
-	scene_info_parent->setLayout(hbox);
+	QAction *act_more = more_actions_menu.menuAction();
+	act_more->setText(tr("More"));
+	act_more->setIcon(QIcon(GuiUtilsNs::getIconPath("moreactions")));
+	act_more->setToolTip(tr("Additional actions over the model"));
 
 	fix_menu.addAction(action_fix_model);
 	fix_menu.addAction(action_handle_metadata);
@@ -138,56 +154,170 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	arrange_menu.addAction(tr("Scattered"), this, SLOT(arrangeObjects()));
 
 	models_tbw->tabBar()->setVisible(false);
-
-	central_wgt=new WelcomeWidget(views_stw);
-	grid=new QGridLayout;
-	grid->setContentsMargins(0,0,0,0);
-	grid->setSpacing(0);
-	grid->addWidget(central_wgt, 0, 0);
-	views_stw->widget(WelcomeView)->setLayout(grid);
-
 	action_welcome->setData(WelcomeView);
 	action_design->setData(DesignView);
 	action_manage->setData(ManageView);
-
-	sql_tool_wgt=new SQLToolWidget;
-	grid=new QGridLayout;
-	grid->setContentsMargins(0,0,0,0);
-	grid->setSpacing(0);
-	grid->addWidget(sql_tool_wgt, 0, 0);
-	views_stw->widget(ManageView)->setLayout(grid);
 
 	//Enables the action to restore session when there are registered session files
 	action_restore_session->setEnabled(!prev_session_files.isEmpty());
 	central_wgt->last_session_tb->setEnabled(action_restore_session->isEnabled());
 
+	this->setFocusPolicy(Qt::WheelFocus);
+	model_acts_tb->addWidget(model_nav_wgt);
+	model_acts_tb->addSeparator();
+
+	model_acts_tb->addAction(plugins_menu->menuAction());
+	dynamic_cast<QToolButton *>(model_acts_tb->widgetForAction(plugins_menu->menuAction()))->setPopupMode(QToolButton::InstantPopup);
+
+	model_acts_tb->addAction(action_bug_report);
+	model_acts_tb->addAction(action_donate);
+	model_acts_tb->addAction(action_support);
+	model_acts_tb->addAction(action_about);
+	model_acts_tb->addAction(action_update_found);
+
+	current_model=nullptr;
+	models_tbw->setVisible(false);
+	model_objs_parent->setVisible(false);
+	oper_list_parent->setVisible(false);
+	obj_finder_parent->setVisible(false);
+	model_valid_parent->setVisible(false);
+	bg_saving_wgt->setVisible(false);
+	about_wgt->setVisible(false);
+	donate_wgt->setVisible(false);
+	models_tbw_parent->lower();
+	central_wgt->lower();
+	v_splitter1->lower();
+
+	QVBoxLayout *vlayout=new QVBoxLayout;
+	vlayout->setContentsMargins(0,0,0,0);
+	vlayout->addWidget(model_objs_wgt);
+	model_objs_parent->setLayout(vlayout);
+
+	vlayout=new QVBoxLayout;
+	vlayout->setContentsMargins(0,0,0,0);
+	vlayout->addWidget(oper_list_wgt);
+	oper_list_parent->setLayout(vlayout);
+
+	QHBoxLayout * hlayout=new QHBoxLayout;
+	hlayout->setContentsMargins(0,0,0,0);
+	hlayout->addWidget(model_valid_wgt);
+	model_valid_parent->setLayout(hlayout);
+
+	hlayout=new QHBoxLayout;
+	hlayout->setContentsMargins(0,0,0,0);
+	hlayout->addWidget(obj_finder_wgt);
+	obj_finder_parent->setLayout(hlayout);
+
+	models_tbw_parent->resize(QSize(models_tbw_parent->maximumWidth(), models_tbw_parent->height()));
+
+	//Forcing the splitter that handles the bottom widgets to resize its children to their minimum size
+	v_splitter1->setSizes({500, 250, 500});
+
+#ifdef Q_OS_MAC
+//	model_acts_tb->removeAction(action_main_menu);
+//	action_main_menu->setEnabled(false);
+#else
+	plugins_menu->menuAction()->setIconVisibleInMenu(false);
+	main_menu.addMenu(file_menu);
+	main_menu.addMenu(edit_menu);
+	main_menu.addMenu(show_menu);
+	main_menu.addMenu(plugins_menu);
+	main_menu.addMenu(about_menu);
+	main_menu.addSeparator();
+	main_menu.addAction(action_show_main_menu);
+
+	main_menu.setIcon(QIcon(GuiUtilsNs::getIconPath("mainmenu")));
+	main_menu.menuAction()->setText(tr("Main menu"));
+	main_menu.menuAction()->setToolTip(tr("Main menu"));
+	model_acts_tb->insertAction(action_new_model, main_menu.menuAction());
+	dynamic_cast<QToolButton *>(model_acts_tb->widgetForAction(main_menu.menuAction()))->setPopupMode(QToolButton::InstantPopup);
+#endif
+
+	QAction *act = recent_mdls_menu.menuAction();
+	act->setIcon(QIcon(GuiUtilsNs::getIconPath("loadrecent")));
+	act->setText(tr("Recent models"));
+	act->setToolTip(tr("Load recently opened model"));
+	model_acts_tb->insertAction(action_save_model, act);
+	dynamic_cast<QToolButton *>(model_acts_tb->widgetForAction(act))->setPopupMode(QToolButton::InstantPopup);
+
+	QToolButton *btn=nullptr;
+	QFont font;
+
+	for(auto &act : tools_acts_tb->actions())
+	{
+		btn=qobject_cast<QToolButton *>(tools_acts_tb->widgetForAction(act));
+
+		if(btn)
+		{
+			font = btn->font();
+			font.setWeight(QFont::Medium);
+			btn->setFont(font);
+			GuiUtilsNs::createDropShadow(btn);
+		}
+	}
+
+	for(auto &act : model_acts_tb->actions())
+	{
+		btn = qobject_cast<QToolButton *>(model_acts_tb->widgetForAction(act));
+
+		if(btn)
+			GuiUtilsNs::createDropShadow(btn);
+	}
+
+	ToolsActionsCount = tools_acts_tb->actions().size();
+	QList<QAction *> actions = model_acts_tb->actions();
+	actions.append(tools_acts_tb->actions());
+
+	for(auto &act : actions)
+	{
+		if(!act->shortcut().toString().isEmpty())
+			act->setToolTip(act->toolTip() + QString(" (%1)").arg(act->shortcut().toString()));
+	}
+
+	resizeGeneralToolbarButtons();
+}
+
+void MainWindow::createMainWidgets()
+{
 	try
 	{
-		this->setFocusPolicy(Qt::WheelFocus);
+		layers_cfg_wgt = new LayersConfigWidget(this);
+		layers_cfg_wgt->setVisible(false);
+
+		changelog_wgt  = new ChangelogWidget(this);
+		changelog_wgt->setVisible(false);
+
+		scene_info_wgt = new SceneInfoWidget(this);
+		QHBoxLayout *hbox = new QHBoxLayout(scene_info_parent);
+		hbox->addWidget(scene_info_wgt);
+		hbox->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
+		scene_info_parent->setLayout(hbox);
+
+		central_wgt=new WelcomeWidget(views_stw);
+		QGridLayout *grid=new QGridLayout;
+		grid->setContentsMargins(0,0,0,0);
+		grid->setSpacing(0);
+		grid->addWidget(central_wgt, 0, 0);
+		views_stw->widget(WelcomeView)->setLayout(grid);
+
+		sql_tool_wgt=new SQLToolWidget;
+		grid=new QGridLayout;
+		grid->setContentsMargins(0,0,0,0);
+		grid->setSpacing(0);
+		grid->addWidget(sql_tool_wgt, 0, 0);
+		views_stw->widget(ManageView)->setLayout(grid);
+
 		model_nav_wgt=new ModelNavigationWidget(this);
-
-		model_acts_tb->addWidget(model_nav_wgt);
-		model_acts_tb->addSeparator();
-
-		model_acts_tb->addAction(action_plugins);
-		dynamic_cast<QToolButton *>(model_acts_tb->widgetForAction(action_plugins))->setPopupMode(QToolButton::InstantPopup);
-
-		model_acts_tb->addAction(action_bug_report);
-		model_acts_tb->addAction(action_donate);
-		model_acts_tb->addAction(action_support);
-		model_acts_tb->addAction(action_about);
-		model_acts_tb->addAction(action_update_found);
-
 		about_wgt=new AboutWidget(this);
 		donate_wgt=new DonateWidget(this);
 		restoration_form=new ModelRestorationForm(nullptr, Qt::Dialog | Qt::WindowTitleHint | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint);
 
-#ifdef NO_UPDATE_CHECK
+	#ifdef NO_UPDATE_CHECK
 		update_notifier_wgt=nullptr;
-#else
+	#else
 		update_notifier_wgt=new UpdateNotifierWidget(this);
 		update_notifier_wgt->setVisible(false);
-#endif
+	#endif
 
 		oper_list_wgt=new OperationListWidget;
 		model_objs_wgt=new ModelObjectsWidget;
@@ -199,7 +329,61 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	{
 		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
+}
 
+void MainWindow::loadConfigurations()
+{
+	try
+	{
+		configuration_form=new ConfigurationForm(nullptr, Qt::WindowTitleHint | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint);
+		GuiUtilsNs::resizeDialog(configuration_form);
+		configuration_form->loadConfiguration();
+
+		PluginsConfigWidget *plugins_conf_wgt = dynamic_cast<PluginsConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::PluginsConfWgt));
+		plugins_conf_wgt->installPluginsActions(plugins_menu, this, SLOT(executePlugin()));
+		plugins_conf_wgt->initPlugins(this);
+		plugins_menu->setEnabled(!plugins_menu->isEmpty());
+
+		QAction *action_plugins = plugins_menu->menuAction();
+		action_plugins->setIcon(QIcon(GuiUtilsNs::getIconPath("plugins")));
+		action_plugins->setText(tr("Plug-ins"));
+		action_plugins->setToolTip(tr("Access the list of loaded plugins"));
+		action_plugins->setEnabled(!plugins_menu->isEmpty());
+
+		//Configuring the widget visibility according to the configurations
+		for(auto &itr : GeneralConfigWidget::getConfigurationParams())
+		{
+			if(itr.second.count(Attributes::Path)!=0)
+			{
+				try
+				{
+					//Storing the file of a previous session
+					if(itr.first.contains(Attributes::File) &&
+							!itr.second[Attributes::Path].isEmpty())
+						prev_session_files.push_back(itr.second[Attributes::Path]);
+
+					//Creating the recent models menu
+					else if(itr.first.contains(Attributes::Recent) &&
+							!itr.second[Attributes::Path].isEmpty())
+						recent_models.push_back(itr.second[Attributes::Path]);
+				}
+				catch(Exception &e)
+				{
+					Messagebox msg_box;
+					msg_box.show(e);
+				}
+			}
+		}
+	}
+	catch(Exception &e)
+	{
+		Messagebox msg_box;
+		msg_box.show(e);
+	}
+}
+
+void MainWindow::connectSignalsToSlots()
+{
 	connect(central_wgt->new_tb, SIGNAL(clicked()), this, SLOT(addModel()));
 	connect(central_wgt->open_tb, SIGNAL(clicked()), this, SLOT(loadModel()));
 	connect(central_wgt->last_session_tb, SIGNAL(clicked()), this, SLOT(restoreLastSession()));
@@ -246,9 +430,9 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	connect(action_print, SIGNAL(triggered(bool)), this, SLOT(printModel()));
 
 	connect(action_configuration, &QAction::triggered, [&](){
-	  GeneralConfigWidget::restoreWidgetGeometry(configuration_form);
-	  configuration_form->exec();
-	  GeneralConfigWidget::saveWidgetGeometry(configuration_form);
+		GeneralConfigWidget::restoreWidgetGeometry(configuration_form);
+		configuration_form->exec();
+		GeneralConfigWidget::saveWidgetGeometry(configuration_form);
 	});
 
 	connect(oper_list_wgt, SIGNAL(s_operationExecuted()), overview_wgt, SLOT(updateOverview()));
@@ -281,49 +465,6 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	connect(sql_tool_wgt, &SQLToolWidget::s_connectionsUpdateRequest, [&](){ updateConnections(true); });
 
 	connect(action_compact_view, SIGNAL(toggled(bool)), this, SLOT(toggleCompactView()));
-
-	window_title=this->windowTitle() + QString(" ") + GlobalAttributes::PgModelerVersion;
-
-#ifdef DEMO_VERSION
-	window_title+=tr(" (Demo)");
-#endif
-
-	this->setWindowTitle(window_title);
-
-	current_model=nullptr;
-	models_tbw->setVisible(false);
-
-	model_objs_parent->setVisible(false);
-	oper_list_parent->setVisible(false);
-	obj_finder_parent->setVisible(false);
-	model_valid_parent->setVisible(false);
-	bg_saving_wgt->setVisible(false);
-	about_wgt->setVisible(false);
-	donate_wgt->setVisible(false);
-
-	models_tbw_parent->lower();
-	central_wgt->lower();
-	v_splitter1->lower();
-
-	QVBoxLayout *vlayout=new QVBoxLayout;
-	vlayout->setContentsMargins(0,0,0,0);
-	vlayout->addWidget(model_objs_wgt);
-	model_objs_parent->setLayout(vlayout);
-
-	vlayout=new QVBoxLayout;
-	vlayout->setContentsMargins(0,0,0,0);
-	vlayout->addWidget(oper_list_wgt);
-	oper_list_parent->setLayout(vlayout);
-
-	QHBoxLayout * hlayout=new QHBoxLayout;
-	hlayout->setContentsMargins(0,0,0,0);
-	hlayout->addWidget(model_valid_wgt);
-	model_valid_parent->setLayout(hlayout);
-
-	hlayout=new QHBoxLayout;
-	hlayout->setContentsMargins(0,0,0,0);
-	hlayout->addWidget(obj_finder_wgt);
-	obj_finder_parent->setLayout(hlayout);
 
 	connect(objects_btn, SIGNAL(toggled(bool)), model_objs_parent, SLOT(setVisible(bool)));
 	connect(objects_btn, SIGNAL(toggled(bool)), model_objs_wgt, SLOT(setVisible(bool)));
@@ -374,152 +515,10 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 
 	connect(&tmpmodel_save_timer, SIGNAL(timeout()), this, SLOT(saveTemporaryModels()));
 
-	models_tbw_parent->resize(QSize(models_tbw_parent->maximumWidth(), models_tbw_parent->height()));
-
-	//Forcing the splitter that handles the bottom widgets to resize its children to their minimum size
-	v_splitter1->setSizes({500, 250, 500});
-
-	showRightWidgetsBar();
-	showBottomWidgetsBar();
-
-	GeneralConfigWidget *conf_wgt=dynamic_cast<GeneralConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::GeneralConfWgt));
-	confs=conf_wgt->getConfigurationParams();
-
-	//If a previous session was restored save the temp models
-	updateConnections();
-	updateRecentModelsMenu();
-	configureSamplesMenu();
-	applyConfigurations();
-
-#ifdef Q_OS_MAC
-//	model_acts_tb->removeAction(action_main_menu);
-//	action_main_menu->setEnabled(false);
-#else
-	plugins_menu->menuAction()->setIconVisibleInMenu(false);
-	main_menu.addMenu(file_menu);
-	main_menu.addMenu(edit_menu);
-	main_menu.addMenu(show_menu);
-	main_menu.addMenu(plugins_menu);
-	main_menu.addMenu(about_menu);
-	main_menu.addSeparator();
-	main_menu.addAction(action_show_main_menu);
-
-	main_menu.setIcon(QIcon(GuiUtilsNs::getIconPath("mainmenu")));
-	main_menu.menuAction()->setText(tr("Main menu"));
-	main_menu.menuAction()->setToolTip(tr("Main menu"));
-	model_acts_tb->insertAction(action_new_model, main_menu.menuAction());
-	dynamic_cast<QToolButton *>(model_acts_tb->widgetForAction(main_menu.menuAction()))->setPopupMode(QToolButton::InstantPopup);
-
+#ifndef Q_OS_MAC
 	connect(action_show_main_menu, SIGNAL(triggered()), this, SLOT(showMainMenu()));
 	connect(action_hide_main_menu, SIGNAL(triggered()), this, SLOT(showMainMenu()));
 #endif
-
-	QAction *act = recent_mdls_menu.menuAction();
-	act->setIcon(QIcon(GuiUtilsNs::getIconPath("loadrecent")));
-	act->setText(tr("Recent models"));
-	act->setToolTip(tr("Load recently opened model"));
-	model_acts_tb->insertAction(action_save_model, act);
-	dynamic_cast<QToolButton *>(model_acts_tb->widgetForAction(act))->setPopupMode(QToolButton::InstantPopup);
-
-	QToolButton *btn=nullptr;
-	QFont font;
-
-	for(auto &act : tools_acts_tb->actions())
-	{
-		btn=qobject_cast<QToolButton *>(tools_acts_tb->widgetForAction(act));
-
-		if(btn)
-		{
-			//GuiUtilsNs::configureWidgetFont(btn, static_cast<unsigned>(GuiUtilsNs::MediumFontFactor));
-			font = btn->font();
-			//font.setBold(true);
-			font.setWeight(QFont::Medium);
-			btn->setFont(font);
-			GuiUtilsNs::createDropShadow(btn);
-		}
-	}
-
-	for(auto &act : model_acts_tb->actions())
-	{
-		btn = qobject_cast<QToolButton *>(model_acts_tb->widgetForAction(act));
-
-		if(btn)
-			GuiUtilsNs::createDropShadow(btn);
-	}
-
-	resizeGeneralToolbarButtons();
-	ToolsActionsCount = tools_acts_tb->actions().size();
-	QList<QAction *> actions = model_acts_tb->actions();
-	actions.append(tools_acts_tb->actions());
-
-	for(QAction *act : actions)
-	{
-		if(!act->shortcut().toString().isEmpty())
-			act->setToolTip(act->toolTip() + QString(" (%1)").arg(act->shortcut().toString()));
-	}
-
-	try
-	{
-		SQLExecutionWidget::loadSQLHistory();
-	}
-	catch(Exception &){}
-
-#ifndef Q_OS_MAC
-	//Restoring the canvas grid options
-	action_show_grid->setChecked(confs[Attributes::Configuration][Attributes::ShowCanvasGrid]==Attributes::True);
-	action_alin_objs_grade->setChecked(confs[Attributes::Configuration][Attributes::AlignObjsToGrid]==Attributes::True);
-	action_show_delimiters->setChecked(confs[Attributes::Configuration][Attributes::ShowPageDelimiters]==Attributes::True);
-	action_compact_view->setChecked(confs[Attributes::Configuration][Attributes::CompactView]==Attributes::True);
-
-	ObjectsScene::setGridOptions(action_show_grid->isChecked(),
-															 action_alin_objs_grade->isChecked(),
-															 action_show_delimiters->isChecked());
-
-	//Hiding/showing the main menu bar depending on the retrieved conf
-	bool show_main_menu = confs[Attributes::Configuration][Attributes::ShowMainMenu]==Attributes::True;
-	main_menu_mb->setVisible(show_main_menu);
-
-	if(show_main_menu)
-		file_menu->addAction(action_hide_main_menu);
-
-	main_menu.menuAction()->setVisible(!show_main_menu);
-#endif
-
-	restoreDockWidgetsSettings();
-
-	//Positioning the update notifier widget before showing it (if there is an update)
-	setFloatingWidgetPos(update_notifier_wgt, action_update_found, model_acts_tb, false);
-	action_update_found->setVisible(false);
-	QTimer::singleShot(1000, this, SLOT(restoreTemporaryModels()));
-
-	//If there's no previuos geometry registered for the mainwindow display it maximized
-	if(!GeneralConfigWidget::restoreWidgetGeometry(this))
-	  this->setWindowState(Qt::WindowMaximized);
-
-#ifdef NO_UPDATE_CHECK
-#warning "NO UPDATE CHECK: Update checking is disabled."
-#else
-	//Enabling update check at startup
-	if(confs[Attributes::Configuration][Attributes::CheckUpdate]==Attributes::True) {
-		update_notifier_wgt->setCheckVersions(confs[Attributes::Configuration][Attributes::CheckVersions]);
-		QTimer::singleShot(10000, update_notifier_wgt, SLOT(checkForUpdate()));
-	}
-#endif
-
-#ifdef DEMO_VERSION
-#warning "DEMO VERSION: demonstration version startup alert."
-	QTimer::singleShot(5000, this, SLOT(showDemoVersionWarning()));
-#endif
-}
-
-MainWindow::~MainWindow()
-{
-	//This fix the crash on exit at Mac OSX system (but not sure why) (???)
-	file_menu->clear();
-
-	delete restoration_form;
-	delete overview_wgt;
-	delete configuration_form;
 }
 
 void MainWindow::restoreTemporaryModels()

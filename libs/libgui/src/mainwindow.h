@@ -185,6 +185,14 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 		 * more due to the labels of the actions added during model loading ) */
 		void resizeGeneralToolbarButtons();
 
+		void connectSignalsToSlots();
+
+		void loadConfigurations();
+
+		void createMainWidgets();
+
+		void configureMenusActionsWidgets();
+
 	public:
 		MainWindow(QWidget *parent = nullptr, Qt::WindowFlags flags = Qt::Widget);
 		virtual ~MainWindow();

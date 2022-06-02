@@ -129,6 +129,9 @@ class AppearanceConfigWidget: public BaseConfigWidget, public Ui::AppearanceConf
 		void saveConfiguration();
 		void loadConfiguration();
 
+		//! \brief Applies the selected ui theme to the whole application
+		void applyUiTheme();
+
 		static std::map<QString, attribs_map> getConfigurationParams();
 
 	private slots:
@@ -139,9 +142,6 @@ class AppearanceConfigWidget: public BaseConfigWidget, public Ui::AppearanceConf
 		void previewCodeFontStyle();
 		void previewCanvasColors();
 		void applySyntaxHighlightTheme();
-
-		//! \brief Applies the selected ui theme to the whole application
-		void applyUiTheme();
 
 		//! \brief Applies temporarily all the settings related to the UI
 		void previewUiSettings();
