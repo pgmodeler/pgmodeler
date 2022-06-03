@@ -47,18 +47,10 @@ void BaseForm::resizeForm(QWidget *widget)
 	QSize min_size=widget->minimumSize();
 	int max_h = 0, max_w = 0, curr_w =0, curr_h = 0;
 	QScreen *screen = qApp->primaryScreen();
-	//double dpi_factor = 0;
-	// pixel_ratio = 0;
 
 	max_w = screen->size().width() * 0.70;
 	max_h = screen->size().height() * 0.70;
-	/*dpi_factor = screen->logicalDotsPerInch() / 96.0;
-  pixel_ratio = screen->devicePixelRatio();
-
-	if(dpi_factor <= 1.01)
-		dpi_factor = 1.0; */
-
-	vbox->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
+	vbox->setContentsMargins(0, 0, 0, 0);
 
 	/* If the widget's minimum size is zero then we need to do
 			a size adjustment on the widget prior to insert it into the dialog */
@@ -105,9 +97,6 @@ void BaseForm::resizeForm(QWidget *widget)
 	curr_h += pgmodeler_name_lbl->minimumHeight() +
 							((buttons_lt->contentsMargins().top() +
 								buttons_lt->contentsMargins().bottom()) * 6);
-
-	/*curr_w *= dpi_factor * pixel_ratio;
-	curr_h *= dpi_factor * pixel_ratio;*/
 
 	if(curr_w > screen->size().width())
 		curr_w = screen->size().width() * 0.80;
