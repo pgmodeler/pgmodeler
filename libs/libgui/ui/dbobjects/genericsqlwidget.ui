@@ -34,12 +34,26 @@
      <property name="currentIndex">
       <number>0</number>
      </property>
+     <property name="iconSize">
+      <size>
+       <width>22</width>
+       <height>22</height>
+      </size>
+     </property>
      <widget class="QWidget" name="tab">
+      <attribute name="icon">
+       <iconset resource="../../res/resources.qrc">
+        <normaloff>:/icons/icons/sqlcode.png</normaloff>:/icons/icons/sqlcode.png</iconset>
+      </attribute>
       <attribute name="title">
        <string>SQL code</string>
       </attribute>
      </widget>
      <widget class="QWidget" name="tab_2">
+      <attribute name="icon">
+       <iconset resource="../../res/resources.qrc">
+        <normaloff>:/icons/icons/reference.png</normaloff>:/icons/icons/reference.png</iconset>
+      </attribute>
       <attribute name="title">
        <string>References</string>
       </attribute>
@@ -163,6 +177,10 @@
       </layout>
      </widget>
      <widget class="QWidget" name="tab_3">
+      <attribute name="icon">
+       <iconset resource="../../res/resources.qrc">
+        <normaloff>:/icons/icons/objselect.png</normaloff>:/icons/icons/objselect.png</iconset>
+      </attribute>
       <attribute name="title">
        <string>Preview</string>
       </attribute>
@@ -171,6 +189,9 @@
    </item>
   </layout>
  </widget>
- <resources/>
+ <resources>
+  <include location="../../res/resources.qrc"/>
+  <include location="../../res/resources.qrc"/>
+ </resources>
  <connections/>
 </ui>

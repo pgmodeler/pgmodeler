@@ -75,7 +75,17 @@
      <property name="currentIndex">
       <number>0</number>
      </property>
+     <property name="iconSize">
+      <size>
+       <width>22</width>
+       <height>22</height>
+      </size>
+     </property>
      <widget class="QWidget" name="tab">
+      <attribute name="icon">
+       <iconset resource="../../res/resources.qrc">
+        <normaloff>:/icons/icons/usertype.png</normaloff>:/icons/icons/usertype.png</iconset>
+      </attribute>
       <attribute name="title">
        <string>Arguments</string>
       </attribute>
@@ -121,6 +131,10 @@
       <property name="enabled">
        <bool>false</bool>
       </property>
+      <attribute name="icon">
+       <iconset resource="../../res/resources.qrc">
+        <normaloff>:/icons/icons/column.png</normaloff>:/icons/icons/column.png</iconset>
+      </attribute>
       <attribute name="title">
        <string>Columns</string>
       </attribute>
@@ -190,6 +204,10 @@
       </layout>
      </widget>
      <widget class="QWidget" name="tab_3">
+      <attribute name="icon">
+       <iconset resource="../../res/resources.qrc">
+        <normaloff>:/icons/icons/constraint.png</normaloff>:/icons/icons/constraint.png</iconset>
+      </attribute>
       <attribute name="title">
        <string>Constraint</string>
       </attribute>
@@ -744,6 +762,9 @@
   <tabstop>argument_edt</tabstop>
   <tabstop>column_cmb</tabstop>
  </tabstops>
- <resources/>
+ <resources>
+  <include location="../../res/resources.qrc"/>
+  <include location="../../res/resources.qrc"/>
+ </resources>
  <connections/>
 </ui>

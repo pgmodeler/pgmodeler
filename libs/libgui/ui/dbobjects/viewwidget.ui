@@ -31,32 +31,62 @@
      <property name="currentIndex">
       <number>0</number>
      </property>
+     <property name="iconSize">
+      <size>
+       <width>22</width>
+       <height>22</height>
+      </size>
+     </property>
      <widget class="QWidget" name="view_refs_tab">
+      <attribute name="icon">
+       <iconset resource="../../res/resources.qrc">
+        <normaloff>:/icons/icons/reference.png</normaloff>:/icons/icons/reference.png</iconset>
+      </attribute>
       <attribute name="title">
        <string>References</string>
       </attribute>
      </widget>
      <widget class="QWidget" name="triggers_tab">
+      <attribute name="icon">
+       <iconset resource="../../res/resources.qrc">
+        <normaloff>:/icons/icons/trigger.png</normaloff>:/icons/icons/trigger.png</iconset>
+      </attribute>
       <attribute name="title">
        <string>Triggers</string>
       </attribute>
      </widget>
      <widget class="QWidget" name="rules_tab">
+      <attribute name="icon">
+       <iconset resource="../../res/resources.qrc">
+        <normaloff>:/icons/icons/rule.png</normaloff>:/icons/icons/rule.png</iconset>
+      </attribute>
       <attribute name="title">
        <string>Rules</string>
       </attribute>
      </widget>
      <widget class="QWidget" name="indexes_tab">
+      <attribute name="icon">
+       <iconset resource="../../res/resources.qrc">
+        <normaloff>:/icons/icons/index.png</normaloff>:/icons/icons/index.png</iconset>
+      </attribute>
       <attribute name="title">
        <string>Indexes</string>
       </attribute>
      </widget>
      <widget class="QWidget" name="cte_tab">
+      <attribute name="icon">
+       <iconset resource="../../res/resources.qrc">
+        <normaloff>:/icons/icons/sourcecode.png</normaloff>:/icons/icons/sourcecode.png</iconset>
+      </attribute>
       <attribute name="title">
        <string>Table Expression</string>
       </attribute>
      </widget>
      <widget class="QWidget" name="code_prev_tab">
+      <attribute name="icon">
+       <iconset resource="../../res/resources.qrc">
+        <normaloff>:/icons/icons/objselect.png</normaloff>:/icons/icons/objselect.png</iconset>
+      </attribute>
       <attribute name="title">
        <string>Code Preview</string>
       </attribute>
@@ -168,6 +198,9 @@
    </item>
   </layout>
  </widget>
- <resources/>
+ <resources>
+  <include location="../../res/resources.qrc"/>
+  <include location="../../res/resources.qrc"/>
+ </resources>
  <connections/>
 </ui>

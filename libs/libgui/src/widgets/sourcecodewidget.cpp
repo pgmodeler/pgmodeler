@@ -62,21 +62,13 @@ void SourceCodeWidget::setSourceCodeTab(int)
 {
 	QString code_icon;
 	bool enabled=false;
-	QPixmap icone;
 	ObjectType obj_type=object->getObjectType();
-
-	if(sourcecode_twg->currentIndex()==0)
-		code_icon=QString("sqlcode");
-	else
-		code_icon=QString("xmlcode");
 
 	enabled=(sourcecode_twg->currentIndex()==0 &&
 			 ((obj_type==ObjectType::BaseRelationship &&
 			   dynamic_cast<BaseRelationship *>(object)->getRelationshipType()==BaseRelationship::RelationshipFk)
 			  || (obj_type!=ObjectType::BaseRelationship && obj_type!=ObjectType::Textbox)));
 
-	icone=QPixmap(GuiUtilsNs::getIconPath(code_icon));
-	icon2_lbl->setPixmap(icone);
 	version_cmb->setEnabled(enabled);
 	pgsql_lbl->setEnabled(enabled);
 	version_lbl->setEnabled(enabled);

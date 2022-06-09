@@ -31,7 +31,17 @@
      <property name="currentIndex">
       <number>0</number>
      </property>
+     <property name="iconSize">
+      <size>
+       <width>22</width>
+       <height>22</height>
+      </size>
+     </property>
      <widget class="QWidget" name="arguments_tab">
+      <attribute name="icon">
+       <iconset resource="../../res/resources.qrc">
+        <normaloff>:/icons/icons/usertype.png</normaloff>:/icons/icons/usertype.png</iconset>
+      </attribute>
       <attribute name="title">
        <string>Arguments</string>
       </attribute>
@@ -150,6 +160,9 @@
    </item>
   </layout>
  </widget>
- <resources/>
+ <resources>
+  <include location="../../res/resources.qrc"/>
+  <include location="../../res/resources.qrc"/>
+ </resources>
  <connections/>
 </ui>

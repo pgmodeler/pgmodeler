@@ -370,7 +370,13 @@
       </sizepolicy>
      </property>
      <property name="currentIndex">
-      <number>1</number>
+      <number>0</number>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>22</width>
+       <height>22</height>
+      </size>
      </property>
      <widget class="QWidget" name="tab">
       <property name="sizePolicy">
@@ -379,6 +385,10 @@
         <verstretch>0</verstretch>
        </sizepolicy>
       </property>
+      <attribute name="icon">
+       <iconset resource="../../res/resources.qrc">
+        <normaloff>:/icons/icons/column.png</normaloff>:/icons/icons/column.png</iconset>
+      </attribute>
       <attribute name="title">
        <string>Columns</string>
       </attribute>
@@ -390,6 +400,10 @@
         <verstretch>0</verstretch>
        </sizepolicy>
       </property>
+      <attribute name="icon">
+       <iconset resource="../../res/resources.qrc">
+        <normaloff>:/icons/icons/constraint_fk.png</normaloff>:/icons/icons/constraint_fk.png</iconset>
+      </attribute>
       <attribute name="title">
        <string>Referenced Columns</string>
       </attribute>
@@ -516,6 +530,9 @@
   <tabstop>on_update_cmb</tabstop>
   <tabstop>columns_tbw</tabstop>
  </tabstops>
- <resources/>
+ <resources>
+  <include location="../../res/resources.qrc"/>
+  <include location="../../res/resources.qrc"/>
+ </resources>
  <connections/>
 </ui>

@@ -55,7 +55,17 @@
      <property name="currentIndex">
       <number>0</number>
      </property>
+     <property name="iconSize">
+      <size>
+       <width>22</width>
+       <height>22</height>
+      </size>
+     </property>
      <widget class="QWidget" name="attributes_tab">
+      <attribute name="icon">
+       <iconset resource="../../res/resources.qrc">
+        <normaloff>:/icons/icons/attribute.png</normaloff>:/icons/icons/attribute.png</iconset>
+      </attribute>
       <attribute name="title">
        <string>Attributes</string>
       </attribute>
@@ -170,16 +180,28 @@
       </layout>
      </widget>
      <widget class="QWidget" name="parameters_tab">
+      <attribute name="icon">
+       <iconset resource="../../res/resources.qrc">
+        <normaloff>:/icons/icons/parameter.png</normaloff>:/icons/icons/parameter.png</iconset>
+      </attribute>
       <attribute name="title">
        <string>Parameters</string>
       </attribute>
      </widget>
      <widget class="QWidget" name="tab">
+      <attribute name="icon">
+       <iconset resource="../../res/resources.qrc">
+        <normaloff>:/icons/icons/usertype.png</normaloff>:/icons/icons/usertype.png</iconset>
+      </attribute>
       <attribute name="title">
        <string>Transform types</string>
       </attribute>
      </widget>
      <widget class="QWidget" name="definition_tab">
+      <attribute name="icon">
+       <iconset resource="../../res/resources.qrc">
+        <normaloff>:/icons/icons/sourcecode.png</normaloff>:/icons/icons/sourcecode.png</iconset>
+      </attribute>
       <attribute name="title">
        <string>Definition</string>
       </attribute>
@@ -385,6 +407,10 @@
       </layout>
      </widget>
      <widget class="QWidget" name="tab_2">
+      <attribute name="icon">
+       <iconset resource="../../res/resources.qrc">
+        <normaloff>:/icons/icons/config.png</normaloff>:/icons/icons/config.png</iconset>
+      </attribute>
       <attribute name="title">
        <string>Configuration</string>
       </attribute>

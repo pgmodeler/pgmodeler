@@ -41,7 +41,7 @@
    <item row="0" column="0">
     <widget class="QLabel" name="label">
      <property name="text">
-      <string>Defualt values:</string>
+      <string>Default values:</string>
      </property>
     </widget>
    </item>
