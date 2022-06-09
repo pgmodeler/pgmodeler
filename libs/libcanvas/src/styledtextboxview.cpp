@@ -23,8 +23,8 @@ void StyledTextboxView::configureObject()
 	this->__configureObject();
 
 	pol.append(QPointF(0,0));
-	pol.append(QPointF(30,0));
-	pol.append(QPointF(0,30));
+	pol.append(QPointF(20,0));
+	pol.append(QPointF(0,20));
 
 	fold->setBrush(text_item->brush());
 	fold->setPen(text_item->pen());
