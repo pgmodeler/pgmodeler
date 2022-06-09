@@ -85,7 +85,7 @@
      <widget class="QWidget" name="code_prev_tab">
       <attribute name="icon">
        <iconset resource="../../res/resources.qrc">
-        <normaloff>:/icons/icons/objselect.png</normaloff>:/icons/icons/objselect.png</iconset>
+        <normaloff>:/icons/icons/sqlpreview.png</normaloff>:/icons/icons/sqlpreview.png</iconset>
       </attribute>
       <attribute name="title">
        <string>Code Preview</string>

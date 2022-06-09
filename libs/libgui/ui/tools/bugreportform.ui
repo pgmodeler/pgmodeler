@@ -276,7 +276,17 @@
      <property name="currentIndex">
       <number>0</number>
      </property>
+     <property name="iconSize">
+      <size>
+       <width>22</width>
+       <height>22</height>
+      </size>
+     </property>
      <widget class="QWidget" name="tab">
+      <attribute name="icon">
+       <iconset resource="../../res/resources.qrc">
+        <normaloff>:/icons/icons/sourcecode.png</normaloff>:/icons/icons/sourcecode.png</iconset>
+      </attribute>
       <attribute name="title">
        <string>Report</string>
       </attribute>
@@ -443,6 +453,10 @@
       </layout>
      </widget>
      <widget class="QWidget" name="tab_3">
+      <attribute name="icon">
+       <iconset resource="../../res/resources.qrc">
+        <normaloff>:/icons/icons/dbmodel.png</normaloff>:/icons/icons/dbmodel.png</iconset>
+      </attribute>
       <attribute name="title">
        <string>Database model</string>
       </attribute>
@@ -506,7 +520,7 @@
             </property>
             <property name="icon">
              <iconset resource="../../res/resources.qrc">
-              <normaloff>:/icons/icons/adddata.png</normaloff>:/icons/icons/adddata.png</iconset>
+              <normaloff>:/icons/icons/open.png</normaloff>:/icons/icons/open.png</iconset>
             </property>
             <property name="iconSize">
              <size>

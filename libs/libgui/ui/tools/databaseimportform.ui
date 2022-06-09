@@ -101,7 +101,17 @@
         <property name="currentIndex">
          <number>0</number>
         </property>
+        <property name="iconSize">
+         <size>
+          <width>22</width>
+          <height>22</height>
+         </size>
+        </property>
         <widget class="QWidget" name="tab_7">
+         <attribute name="icon">
+          <iconset resource="../../res/resources.qrc">
+           <normaloff>:/icons/icons/config.png</normaloff>:/icons/icons/config.png</iconset>
+         </attribute>
          <attribute name="title">
           <string>Settings</string>
          </attribute>
@@ -962,6 +972,10 @@
          </layout>
         </widget>
         <widget class="QWidget" name="tab_8">
+         <attribute name="icon">
+          <iconset resource="../../res/resources.qrc">
+           <normaloff>:/icons/icons/outputpane.png</normaloff>:/icons/icons/outputpane.png</iconset>
+         </attribute>
          <attribute name="title">
           <string>Output</string>
          </attribute>

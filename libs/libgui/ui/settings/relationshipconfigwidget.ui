@@ -40,7 +40,17 @@
      <property name="currentIndex">
       <number>0</number>
      </property>
+     <property name="iconSize">
+      <size>
+       <width>22</width>
+       <height>22</height>
+      </size>
+     </property>
      <widget class="QWidget" name="tab">
+      <attribute name="icon">
+       <iconset resource="../../res/resources.qrc">
+        <normaloff>:/icons/icons/connmode.png</normaloff>:/icons/icons/connmode.png</iconset>
+      </attribute>
       <attribute name="title">
        <string>Connection mode</string>
       </attribute>
@@ -391,6 +401,10 @@
       </layout>
      </widget>
      <widget class="QWidget" name="tab_2">
+      <attribute name="icon">
+       <iconset resource="../../res/resources.qrc">
+        <normaloff>:/icons/icons/constraint_fk.png</normaloff>:/icons/icons/constraint_fk.png</iconset>
+      </attribute>
       <attribute name="title">
        <string>FK Settings &amp;&amp; Patterns</string>
       </attribute>

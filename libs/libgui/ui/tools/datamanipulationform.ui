@@ -438,7 +438,17 @@
          <property name="currentIndex">
           <number>0</number>
          </property>
+         <property name="iconSize">
+          <size>
+           <width>22</width>
+           <height>22</height>
+          </size>
+         </property>
          <widget class="QWidget" name="tab">
+          <attribute name="icon">
+           <iconset resource="../../res/resources.qrc">
+            <normaloff>:/icons/icons/filter.png</normaloff>:/icons/icons/filter.png</iconset>
+          </attribute>
           <attribute name="title">
            <string>Filter</string>
           </attribute>
@@ -868,6 +878,10 @@
           </layout>
          </widget>
          <widget class="QWidget" name="tab_2">
+          <attribute name="icon">
+           <iconset resource="../../res/resources.qrc">
+            <normaloff>:/icons/icons/column.png</normaloff>:/icons/icons/column.png</iconset>
+          </attribute>
           <attribute name="title">
            <string>Columns</string>
           </attribute>

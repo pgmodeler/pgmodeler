@@ -47,6 +47,10 @@
       </attribute>
      </widget>
      <widget class="QWidget" name="funcs_opers_tab">
+      <attribute name="icon">
+       <iconset resource="../../res/resources.qrc">
+        <normaloff>:/icons/icons/moreactions.png</normaloff>:/icons/icons/moreactions.png</iconset>
+      </attribute>
       <attribute name="title">
        <string>Advanced</string>
       </attribute>

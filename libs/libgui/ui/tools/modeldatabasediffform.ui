@@ -98,7 +98,17 @@
         <property name="currentIndex">
          <number>0</number>
         </property>
+        <property name="iconSize">
+         <size>
+          <width>22</width>
+          <height>22</height>
+         </size>
+        </property>
         <widget class="QWidget" name="tab">
+         <attribute name="icon">
+          <iconset resource="../../res/resources.qrc">
+           <normaloff>:/icons/icons/config.png</normaloff>:/icons/icons/config.png</iconset>
+         </attribute>
          <attribute name="title">
           <string>Settings</string>
          </attribute>
@@ -1452,6 +1462,10 @@
          </layout>
         </widget>
         <widget class="QWidget" name="tab_6">
+         <attribute name="icon">
+          <iconset resource="../../res/resources.qrc">
+           <normaloff>:/icons/icons/filter.png</normaloff>:/icons/icons/filter.png</iconset>
+         </attribute>
          <attribute name="title">
           <string>Partial diff</string>
          </attribute>
@@ -1916,6 +1930,10 @@
          </layout>
         </widget>
         <widget class="QWidget" name="tab_2">
+         <attribute name="icon">
+          <iconset resource="../../res/resources.qrc">
+           <normaloff>:/icons/icons/outputpane.png</normaloff>:/icons/icons/outputpane.png</iconset>
+         </attribute>
          <attribute name="title">
           <string>Output</string>
          </attribute>
@@ -2441,6 +2459,10 @@
          </layout>
         </widget>
         <widget class="QWidget" name="tab_3">
+         <attribute name="icon">
+          <iconset resource="../../res/resources.qrc">
+           <normaloff>:/icons/icons/sqlpreview.png</normaloff>:/icons/icons/sqlpreview.png</iconset>
+         </attribute>
          <attribute name="title">
           <string>Diff preview</string>
          </attribute>

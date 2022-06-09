@@ -45,6 +45,10 @@
       </size>
      </property>
      <widget class="QWidget" name="dependnces_tab">
+      <attribute name="icon">
+       <iconset resource="../../res/resources.qrc">
+        <normaloff>:/icons/icons/referrer.png</normaloff>:/icons/icons/referrer.png</iconset>
+      </attribute>
       <attribute name="title">
        <string>Dependencies</string>
       </attribute>
@@ -204,6 +208,10 @@
       </layout>
      </widget>
      <widget class="QWidget" name="references_tab">
+      <attribute name="icon">
+       <iconset resource="../../res/resources.qrc">
+        <normaloff>:/icons/icons/referenced.png</normaloff>:/icons/icons/referenced.png</iconset>
+      </attribute>
       <attribute name="title">
        <string>References</string>
       </attribute>

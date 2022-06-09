@@ -1463,6 +1463,10 @@
       </layout>
      </widget>
      <widget class="QWidget" name="tab_5">
+      <attribute name="icon">
+       <iconset resource="../../res/resources.qrc">
+        <normaloff>:/icons/icons/moreactions.png</normaloff>:/icons/icons/moreactions.png</iconset>
+      </attribute>
       <attribute name="title">
        <string>Advanced</string>
       </attribute>

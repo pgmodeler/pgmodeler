@@ -34,7 +34,17 @@
      <property name="currentIndex">
       <number>0</number>
      </property>
+     <property name="iconSize">
+      <size>
+       <width>22</width>
+       <height>22</height>
+      </size>
+     </property>
      <widget class="QWidget" name="tab">
+      <attribute name="icon">
+       <iconset resource="../../res/resources.qrc">
+        <normaloff>:/icons/icons/uicode.png</normaloff>:/icons/icons/uicode.png</iconset>
+      </attribute>
       <attribute name="title">
        <string>Interface &amp;&amp; Code</string>
       </attribute>
@@ -398,6 +408,10 @@
       </layout>
      </widget>
      <widget class="QWidget" name="tab_2">
+      <attribute name="icon">
+       <iconset resource="../../res/resources.qrc">
+        <normaloff>:/icons/icons/dbmodel.png</normaloff>:/icons/icons/dbmodel.png</iconset>
+      </attribute>
       <attribute name="title">
        <string>Canvas &amp;&amp; Objects</string>
       </attribute>
@@ -1247,6 +1261,9 @@
   <tabstop>italic_chk</tabstop>
   <tabstop>underline_chk</tabstop>
  </tabstops>
- <resources/>
+ <resources>
+  <include location="../../res/resources.qrc"/>
+  <include location="../../res/resources.qrc"/>
+ </resources>
  <connections/>
 </ui>
