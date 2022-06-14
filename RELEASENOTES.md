@@ -1,13 +1,15 @@
-v1.0.0-alpha
+v1.0.0-alpha1
 ------
 
-<em>Release date: April 11, 2022</em><br/>
-<em>Changes since: <strong>v0.9.4</strong></em><br/>
+<em>Release date: June 20, 2022</em><br/>
+<em>Changes since: <strong>v1.0.0-alpha</strong></em><br/>
 
-<strong>Attention:</strong> pgModeler 0.9.x settings are not compatible with pgModeler 1.0.0-alpha. This way, in the first start of the newer version, automatic migration of some settings will occur if the tool detects the configuration files related to 0.9.4 or below in the system! <br/>
+<strong>Attention:</strong> pgModeler 0.9.x settings are not compatible with pgModeler 1.0.0-alpha1. This way, in the first start of the newer version, some settings will be automatically migrated if the tool detects the configuration files related to 0.9.4 or below in the system! <br/>
 
-<strong>Summary:</strong> after long 4 months of working we finally have the first alpha release of pgModeler 1.0! The main goal of this version was to boot up a series of deep improvements in the UI to add visual comfort while using the software. So that was done, this one brings redesigned UI elements and colors, a completely new icon set, and officially introduces the new project logo. <br/>
+<strong>Summary:</strong> since the main focus of this release was to improve even more the UI, we had to work on the refactoring of the codebase to use Qt 6 which has lots of enhancements compared to the previous major version. So, after 2 months of work, pgModeler is now completely ported to Qt 6 and thus not compatible with Qt 5 anymore. <br/>
 
-As promised, pgModeler 1.0 brings a responsive UI, which means, it will adapt the widget sizes and icons according to the screen's resolution. Also, we now have the support for color themes which can be toggled on-the-fly in the appearance settings. For now, it's possible to switch between dark and light themes or, if you prefer, use the system default theme but future updates will allow custom themes. <br/>
+So, attending to some requests, pgModeler received the ability to change the icon sizes to fit different screens in a better way. Still in the responsiveness subject and using the Qt 6 improved high DPI screens support, pgModeler allows the use of custom UI scale factors which adjust the entire user-interface rendering depending on the screen that the tool is running. <br/>
 
-Finally, there are a lot of bug fixes and improvements (92 in total) in almost all parts of the tool which improves stability and reliability. For more details about them, please, read the CHANGELOG.md file. <br/>
+Another enhancement that is worth mentioning here is that the columns/constraints propagation mechanism was completely rewritten which resulted in a noticeable performance gain and now solves an old problem of columns/constraints created by identifier relationships not being added or even disappearing in certain circumstances. <br/>
+
+Finally, as always, there were a lot of other fixes and changes (56 in total) in almost all parts of the tool which improves stability and reliability. For more details about them, please, read the CHANGELOG.md file. <br/>
