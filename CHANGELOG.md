@@ -5,12 +5,14 @@ v1.0.0-alpha1
 ------
 <em>Release date: June 20, 2022</em><br/>
 
+* [New] Added PostgreSQL 15 as the default version for code generation.
 * [New] Added a workaround in MainWindow constructor to force the application of UI themes on Windows and Mac.
 * [New] Added the methods GlobalAttributes::getConfigParamFromFile and GlobalAttributes::setCustomUiScaleFactor.
 * [New] Add support for custom UI scaling and UI icons size selection in AppearanceConfigWidget.
 * [New] Created the method Relationship::updateGeneratedObjects.
 * [New] pgModeler now saves and restores the QFileDialog instances geometry/state in the file filedlg.conf.
 * [New] Created the method QApplication::loadTranslation to reuse translation loading routines.
+* [Change] Minor adjustment in assets/schemas/catalog/database.sch in order to retrieve the last system oid from pg_depend.
 * [Change] Removed the class CustomMenuStyle since its use is not needed anymore.
 * [Change] Refactored MainWindow constructor by creating small methods for specific initialization tasks.
 * [Change] Changed the references to STL classes/algorithms by using the namespace std::.
