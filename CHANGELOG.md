@@ -3,7 +3,7 @@ Changelog
 
 v1.0.0-alpha1
 ------
-<em>Release date: June 20, 2022</em><br/>
+<em>Release date: June 21, 2022</em><br/>
 
 * [New] Added PostgreSQL 15 as the default version for code generation.
 * [New] Added a workaround in MainWindow constructor to force the application of UI themes on Windows and Mac.
