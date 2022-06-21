@@ -57,7 +57,7 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 	private:
 		Q_OBJECT
 
-		static int GeneralActionsCount;
+		static int ToolsActionsCount;
 
 		static constexpr int WelcomeView=0,
 		DesignView=1,
@@ -128,7 +128,7 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 		ModelWidget *current_model;
 
 		//! \brief Stores the model objects tree state for each opened model
-		map<ModelWidget *, vector<BaseObject *> > model_tree_states;
+		std::map<ModelWidget *, std::vector<BaseObject *> > model_tree_states;
 
 		//! \brief Stores the defaul window title
 		QString window_title;
@@ -184,6 +184,14 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 		 * a size factor that is applied if there are models opened (which expands/enlarges the toolbar a little
 		 * more due to the labels of the actions added during model loading ) */
 		void resizeGeneralToolbarButtons();
+
+		void connectSignalsToSlots();
+
+		void loadConfigurations();
+
+		void createMainWidgets();
+
+		void configureMenusActionsWidgets();
 
 	public:
 		MainWindow(QWidget *parent = nullptr, Qt::WindowFlags flags = Qt::Widget);

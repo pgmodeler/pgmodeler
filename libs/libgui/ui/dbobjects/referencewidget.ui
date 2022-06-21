@@ -33,7 +33,7 @@
     <number>5</number>
    </property>
    <property name="spacing">
-    <number>10</number>
+    <number>5</number>
    </property>
    <item row="0" column="0">
     <widget class="QTabWidget" name="properties_tbw">
@@ -43,7 +43,17 @@
      <property name="currentIndex">
       <number>0</number>
      </property>
+     <property name="iconSize">
+      <size>
+       <width>22</width>
+       <height>22</height>
+      </size>
+     </property>
      <widget class="QWidget" name="tab">
+      <attribute name="icon">
+       <iconset resource="../../res/resources.qrc">
+        <normaloff>:/icons/icons/attribute.png</normaloff>:/icons/icons/attribute.png</iconset>
+      </attribute>
       <attribute name="title">
        <string>Properties</string>
       </attribute>
@@ -61,7 +71,7 @@
         <number>5</number>
        </property>
        <property name="spacing">
-        <number>10</number>
+        <number>5</number>
        </property>
        <item row="0" column="0">
         <widget class="QLabel" name="ref_type_lbl">
@@ -84,6 +94,9 @@
        </item>
        <item row="1" column="1" colspan="4">
         <layout class="QGridLayout" name="gridLayout">
+         <property name="spacing">
+          <number>5</number>
+         </property>
          <item row="0" column="2" rowspan="2">
           <widget class="QCheckBox" name="after_where_chk">
            <property name="sizePolicy">
@@ -210,6 +223,9 @@
        </item>
        <item row="0" column="1" colspan="4">
         <layout class="QHBoxLayout" name="horizontalLayout_4">
+         <property name="spacing">
+          <number>5</number>
+         </property>
          <item>
           <widget class="QComboBox" name="ref_type_cmb">
            <property name="statusTip">
@@ -424,12 +440,16 @@
       <property name="enabled">
        <bool>true</bool>
       </property>
+      <attribute name="icon">
+       <iconset resource="../../res/resources.qrc">
+        <normaloff>:/icons/icons/column.png</normaloff>:/icons/icons/column.png</iconset>
+      </attribute>
       <attribute name="title">
        <string>Columns</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout">
        <property name="spacing">
-        <number>10</number>
+        <number>5</number>
        </property>
        <property name="leftMargin">
         <number>5</number>
@@ -445,6 +465,9 @@
        </property>
        <item>
         <layout class="QGridLayout" name="gridLayout_3">
+         <property name="spacing">
+          <number>5</number>
+         </property>
          <item row="0" column="1" colspan="3">
           <widget class="QLineEdit" name="name_edt">
            <property name="sizePolicy">
@@ -556,6 +579,10 @@
       </layout>
      </widget>
      <widget class="QWidget" name="tab_3">
+      <attribute name="icon">
+       <iconset resource="../../res/resources.qrc">
+        <normaloff>:/icons/icons/referenced.png</normaloff>:/icons/icons/referenced.png</iconset>
+      </attribute>
       <attribute name="title">
        <string>Referenced tables</string>
       </attribute>
@@ -591,6 +618,9 @@
   <tabstop>expr_alias_edt</tabstop>
   <tabstop>name_edt</tabstop>
  </tabstops>
- <resources/>
+ <resources>
+  <include location="../../res/resources.qrc"/>
+  <include location="../../res/resources.qrc"/>
+ </resources>
  <connections/>
 </ui>

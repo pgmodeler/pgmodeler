@@ -18,13 +18,13 @@
 
 #include "genericsqlwidget.h"
 
-const QRegExp GenericSQLWidget::AttrDelimRegexp = QRegExp(QString("(\\%1)+|(\\%2)+")
+const QRegularExpression GenericSQLWidget::AttrDelimRegexp = QRegularExpression(QString("(\\%1)+|(\\%2)+")
 																													.arg(SchemaParser::CharStartAttribute)
 																													.arg(SchemaParser::CharEndAttribute));
 
 GenericSQLWidget::GenericSQLWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::GenericSql)
 {
-	vector<ObjectType> types;
+	std::vector<ObjectType> types;
 
 	Ui_GenericSQLWidget::setupUi(this);
 	configureFormLayout(genericsql_grid, ObjectType::GenericSql);

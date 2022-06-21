@@ -232,7 +232,7 @@ void ForeignDataWrapperTest::modelReturnsDepsAndRefsForFDW()
 		model.addFunction(&func_validator);
 		model.addForeignDataWrapper(&fdw);
 
-		vector<BaseObject *> deps;
+		std::vector<BaseObject *> deps;
 		model.getObjectDependecies(&fdw, deps);
 
 		QVERIFY(deps.size() >= 3);

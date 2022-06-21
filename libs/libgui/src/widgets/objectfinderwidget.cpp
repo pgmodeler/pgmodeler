@@ -53,7 +53,7 @@ ObjectFinderWidget::ObjectFinderWidget(QWidget *parent) : QWidget(parent)
 	fade_btn->setMenu(&fade_menu);
 
 	connect(filter_btn, SIGNAL(toggled(bool)), filter_frm, SLOT(setVisible(bool)));
-	connect(filter_btn, &QToolButton::toggled, [&](){
+	connect(filter_btn, &QToolButton::toggled, this, [&](){
 		splitter->setSizes({0, 1000});
 		splitter->handle(1)->setEnabled(filter_btn->isChecked());
 	});
@@ -66,6 +66,13 @@ ObjectFinderWidget::ObjectFinderWidget(QWidget *parent) : QWidget(parent)
 	connect(clear_res_btn, SIGNAL(clicked()), this, SLOT(clearResult()));
 	connect(select_all_btn, SIGNAL(clicked()), this, SLOT(setAllObjectsChecked()));
 	connect(clear_all_btn, SIGNAL(clicked()), this, SLOT(setAllObjectsChecked()));
+
+	connect(regexp_chk, &QCheckBox::toggled, this, [&](bool checked){
+		exact_match_chk->setEnabled(checked);
+
+		if(!checked)
+			exact_match_chk->setChecked(false);
+	});
 
 	for(auto &attr : search_attribs_i18n)
 		search_attrs_cmb->addItem(attr);
@@ -122,7 +129,7 @@ void ObjectFinderWidget::fadeObjects()
 	if(!model_wgt)
 		return;
 
-	vector<BaseObject *> objects, other_objs;
+	std::vector<BaseObject *> objects, other_objs;
 	bool fade_listed = false;
 
 	for(auto obj_type : {ObjectType::Table, ObjectType::ForeignTable, ObjectType::View, ObjectType::Textbox,
@@ -154,7 +161,7 @@ void ObjectFinderWidget::selectObjects()
 	if(!model_wgt)
 		return;
 
-	vector<BaseObject *> objects, other_objs;
+	std::vector<BaseObject *> objects, other_objs;
 	BaseObjectView *obj_view = nullptr;
 	BaseGraphicObject *graph_obj = nullptr;
 	bool sel_listed = false;
@@ -238,7 +245,7 @@ void ObjectFinderWidget::findObjects()
 {
 	if(model_wgt)
 	{
-		vector<ObjectType> types;
+		std::vector<ObjectType> types;
 		QString search_attr = search_attribs.at(search_attrs_cmb->currentIndex());
 		QTableWidgetItem *item = result_tbw->horizontalHeaderItem(result_tbw->columnCount() - 1);
 
@@ -253,7 +260,8 @@ void ObjectFinderWidget::findObjects()
 
 		//Search the objects on model
 		found_objs=model_wgt->getDatabaseModel()->findObjects(pattern_edt->text(), types,
-																													case_sensitive_chk->isChecked(), regexp_chk->isChecked(),
+																													case_sensitive_chk->isChecked(),
+																													regexp_chk->isChecked(),
 																													exact_match_chk->isChecked(),
 																													search_attr);
 
@@ -355,7 +363,7 @@ void ObjectFinderWidget::editObject()
 			model_wgt->showObjectForm(ObjectType::Permission, dynamic_cast<Permission *>(selected_obj)->getObject());
 		else
 		{
-			vector<BaseObject *> vect;
+			std::vector<BaseObject *> vect;
 			vect.push_back(selected_obj);
 			model_wgt->scene->clearSelection();
 			model_wgt->configurePopupMenu(vect);
@@ -374,7 +382,7 @@ void ObjectFinderWidget::setAllObjectsChecked()
 		obj_types_lst->item(i)->setCheckState((checked ? Qt::Checked : Qt::Unchecked));
 }
 
-void ObjectFinderWidget::updateObjectTable(QTableWidget *tab_wgt, vector<BaseObject *> &objs, const QString &search_attr, bool checkable_items)
+void ObjectFinderWidget::updateObjectTable(QTableWidget *tab_wgt, std::vector<BaseObject *> &objs, const QString &search_attr, bool checkable_items)
 {
 	if(tab_wgt && tab_wgt->columnCount()!=0)
 	{
@@ -526,7 +534,7 @@ void ObjectFinderWidget::updateObjectTable(QTableWidget *tab_wgt, vector<BaseObj
 
 void ObjectFinderWidget::updateObjectTypeList(QListWidget *list_wgt)
 {
-	vector<ObjectType> types=BaseObject::getObjectTypes();
+	std::vector<ObjectType> types=BaseObject::getObjectTypes();
 	QListWidgetItem *item=nullptr;
 	QPixmap icon;
 	QString str_aux;

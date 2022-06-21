@@ -28,7 +28,7 @@ const QStringList ModelsDiffHelper::ObjectsIgnoredAttribs = {
 	Attributes::MaxObjCount, Attributes::Protected, Attributes::SqlDisabled,
 	Attributes::RectVisible, Attributes::FillColor, Attributes::FadedOut,
 	Attributes::CollapseMode,	Attributes::AttribsPage, Attributes::ExtAttribsPage,
-	Attributes::Pagination,	Attributes::Alias };
+	Attributes::Pagination,	Attributes::Alias,	Attributes::Layers };
 
 const QStringList ModelsDiffHelper::ObjectsIgnoredTags = {
 	Attributes::Role, Attributes::Tablespace, Attributes::Collation,
@@ -97,9 +97,9 @@ void ModelsDiffHelper::setModels(DatabaseModel *src_model, DatabaseModel *imp_mo
 	filtered_objs.clear();
 }
 
-void ModelsDiffHelper::setFilteredObjects(const vector<BaseObject *> &objects)
+void ModelsDiffHelper::setFilteredObjects(const std::vector<BaseObject *> &objects)
 {
-	vector<Constraint *> constrs;
+	std::vector<Constraint *> constrs;
 	ObjectType obj_type;
 
 	filtered_objs.clear();
@@ -142,7 +142,7 @@ void ModelsDiffHelper::setFilteredObjects(const vector<BaseObject *> &objects)
 		{
 			Constraint *constr = nullptr;
 			BaseTable *tab = dynamic_cast<BaseTable *>(obj);
-			vector<BaseObject *> child_objs = tab->getObjects({ ObjectType::Column });
+			std::vector<BaseObject *> child_objs = tab->getObjects({ ObjectType::Column });
 
 			filtered_objs[obj->getObjectId()] = obj;
 
@@ -170,7 +170,7 @@ void ModelsDiffHelper::setFilteredObjects(const vector<BaseObject *> &objects)
 		filtered_objs[BaseObject::getGlobalId() + constr->getObjectId()] = constr;
 }
 
-QStringList ModelsDiffHelper::getRelationshipFilters(const vector<BaseObject *> &objects, bool use_signature)
+QStringList ModelsDiffHelper::getRelationshipFilters(const std::vector<BaseObject *> &objects, bool use_signature)
 {
 	Relationship *rel = nullptr;
 	QStringList filters;
@@ -294,7 +294,7 @@ void ModelsDiffHelper::diffColsInheritance(PhysicalTable *parent_tab, PhysicalTa
 void ModelsDiffHelper::diffTables(PhysicalTable *src_table, PhysicalTable *imp_table, unsigned diff_type)
 {
 	ObjectType types[2]={ ObjectType::Column, ObjectType::Constraint };
-	vector<TableObject *> *tab_objs=nullptr;
+	std::vector<TableObject *> *tab_objs=nullptr;
 	Constraint *constr=nullptr;
 	PhysicalTable *ref_tab=nullptr, *comp_tab=nullptr;
 	BaseObject *aux_obj=nullptr;
@@ -372,7 +372,7 @@ void ModelsDiffHelper::diffModels(unsigned diff_type)
 
 	try
 	{
-		map<unsigned, BaseObject *> obj_order;
+		std::map<unsigned, BaseObject *> obj_order;
 		BaseObject *object=nullptr, *aux_object=nullptr;
 		ObjectType obj_type;
 		QString obj_name;
@@ -613,7 +613,7 @@ void ModelsDiffHelper::diffTableObject(TableObject *tab_obj, unsigned diff_type)
 
 BaseObject *ModelsDiffHelper::getRelNNTable(const QString &obj_name, DatabaseModel *model)
 {
-	vector<BaseObject *> *rels=model->getObjectList(ObjectType::Relationship);
+	std::vector<BaseObject *> *rels=model->getObjectList(ObjectType::Relationship);
 	Relationship *rel=nullptr;
 	BaseObject *tab=nullptr;
 
@@ -715,7 +715,7 @@ void ModelsDiffHelper::generateDiffInfo(unsigned diff_type, BaseObject *object, 
 					else if(diff_opts[OptReuseSequences])
 					{
 						//Removing DROP infos related to the sequence that will be reused
-						vector<ObjectsDiffInfo>::iterator itr=diff_infos.begin(),
+						std::vector<ObjectsDiffInfo>::iterator itr=diff_infos.begin(),
 								itr_end=diff_infos.end();
 
 						while(itr!=itr_end)
@@ -750,7 +750,7 @@ void ModelsDiffHelper::generateDiffInfo(unsigned diff_type, BaseObject *object, 
 				if((!diff_opts[OptForceRecreation] || diff_opts[OptRecreateUnmodifiable]) &&
 						diff_type==ObjectsDiffInfo::DropObject)
 				{
-					vector<BaseObject *> ref_objs;
+					std::vector<BaseObject *> ref_objs;
 					ObjectType obj_type=object->getObjectType();
 
 					imported_model->getObjectReferences(object, ref_objs);
@@ -801,17 +801,17 @@ void ModelsDiffHelper::processDiffInfos()
 {
 	BaseObject *object=nullptr;
 	Relationship *rel=nullptr;
-	map<unsigned, QString> drop_objs, create_objs, alter_objs, truncate_tabs, create_fks, create_constrs;
-	vector<BaseObject *> drop_vect, create_vect, drop_cols;
+	std::map<unsigned, QString> drop_objs, create_objs, alter_objs, truncate_tabs, create_fks, create_constrs;
+	std::vector<BaseObject *> drop_vect, create_vect, drop_cols;
 	unsigned diff_type, schema_id=0, idx=0;
 	ObjectType obj_type;
-	map<unsigned, QString>::reverse_iterator ritr, ritr_end;
+	std::map<unsigned, QString>::reverse_iterator ritr, ritr_end;
 	attribs_map attribs;
 	QString alter_def, no_inherit_def, inherit_def, set_perms,
 			unset_perms, col_drop_def, curr_pgsql_ver = BaseObject::getPgSQLVersion();
 	SchemaParser schparser;
 	Type *type=nullptr;
-	vector<Type *> types;
+	std::vector<Type *> types;
 	Constraint *constr=nullptr;
 	Column *col=nullptr, *aux_col=nullptr;
 	PhysicalTable *parent_tab=nullptr;
@@ -992,7 +992,7 @@ void ModelsDiffHelper::processDiffInfos()
 						alter_def=diff.getOldObject()->getAlterDefinition(object);
 
 					if(obj_type == ObjectType::Database && diff_opts[OptPreserveDbName])
-						alter_def.remove(QRegExp(QString("(ALTER)( )+(DATABASE)( )+(%1)( )+(RENAME)( )+(TO)(.)*(\\n)").arg(diff.getOldObject()->getSignature())));
+						alter_def.remove(QRegularExpression(QString("(ALTER)( )+(DATABASE)( )+(%1)( )+(RENAME)( )+(TO)(.)*(\\n)").arg(diff.getOldObject()->getSignature())));
 
 					if(!alter_def.isEmpty())
 					{
@@ -1158,14 +1158,14 @@ void ModelsDiffHelper::destroyTempObjects()
 	diff_infos.clear();
 }
 
-void ModelsDiffHelper::recreateObject(BaseObject *object, vector<BaseObject *> &drop_objs, vector<BaseObject *> &create_objs)
+void ModelsDiffHelper::recreateObject(BaseObject *object, std::vector<BaseObject *> &drop_objs, std::vector<BaseObject *> &create_objs)
 {
 	if(object &&
 			object->getObjectType()!=ObjectType::BaseRelationship &&
 			object->getObjectType()!=ObjectType::Relationship &&
 			object->getObjectType()!=ObjectType::Database)
 	{
-		vector<BaseObject *> ref_objs;
+		std::vector<BaseObject *> ref_objs;
 		BaseObject *aux_obj=nullptr;
 
 		/* If the specified object is not a table's child object,
@@ -1198,7 +1198,7 @@ void ModelsDiffHelper::recreateObject(BaseObject *object, vector<BaseObject *> &
 			if(constr->getConstraintType()==ConstraintType::PrimaryKey)
 			{
 				unsigned i=0, col_cnt=constr->getColumnCount(Constraint::SourceCols);
-				vector<BaseObject *> ref_aux;
+				std::vector<BaseObject *> ref_aux;
 				Constraint *aux_constr=nullptr;
 
 				for(i=0; i < col_cnt; i++)

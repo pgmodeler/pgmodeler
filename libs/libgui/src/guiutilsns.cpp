@@ -6,6 +6,7 @@
 #include "widgets/numberedtexteditor.h"
 #include "baseform.h"
 #include "widgets/bulkdataeditwidget.h"
+#include "utilsns.h"
 
 namespace GuiUtilsNs {
 
@@ -132,7 +133,7 @@ namespace GuiUtilsNs {
 			if(PhysicalTable::isPhysicalTable(object->getObjectType()))
 			{
 				Constraint *constr = nullptr;
-				vector<TableObject *> *objects=dynamic_cast<PhysicalTable *>(object)->getObjectList(ObjectType::Constraint);
+				std::vector<TableObject *> *objects=dynamic_cast<PhysicalTable *>(object)->getObjectList(ObjectType::Constraint);
 
 				for(auto &obj : (*objects))
 				{
@@ -153,7 +154,7 @@ namespace GuiUtilsNs {
 	{
 		if(object && object->getDatabase())
 		{
-			vector<BaseObject *> refs;
+			std::vector<BaseObject *> refs;
 			TableObject *tab_obj=nullptr;
 			DatabaseModel *model=dynamic_cast<DatabaseModel *>(object->getDatabase());
 
@@ -255,8 +256,8 @@ namespace GuiUtilsNs {
 
 	void createExceptionsTree(QTreeWidget *exceptions_trw, Exception &e, QTreeWidgetItem *root)
 	{
-		vector<Exception> list;
-		vector<Exception>::reverse_iterator itr, itr_end;
+		std::vector<Exception> list;
+		std::vector<Exception>::reverse_iterator itr, itr_end;
 		QString text;
 		int idx=0;
 		QTreeWidgetItem *item=nullptr, *child_item=nullptr;
@@ -268,9 +269,8 @@ namespace GuiUtilsNs {
 		itr = list.rbegin();
 		itr_end = list.rend();
 
-		//for(Exception &ex : list)
 		while(itr != itr_end)
-		{			
+		{
 			text=QString("[%1] - %2").arg(idx).arg(itr->getMethod());
 			item=createOutputTreeItem(exceptions_trw, text, QPixmap(getIconPath("function1")), root, false, true);
 
@@ -281,17 +281,14 @@ namespace GuiUtilsNs {
 			createOutputTreeItem(exceptions_trw, text, QPixmap(getIconPath("alert")), item, false, true);
 
 			child_item=createOutputTreeItem(exceptions_trw, itr->getErrorMessage(), QPixmap(getIconPath("error")), item, false, true);
-			exceptions_trw->itemWidget(child_item, 0)->setStyleSheet(QString("color: #ff0000;"));
+			exceptions_trw->itemWidget(child_item, 0)->setStyleSheet("color: #ff0000;");
 
 			if(!itr->getExtraInfo().isEmpty())
-			{
 				child_item=createOutputTreeItem(exceptions_trw, itr->getExtraInfo(), QPixmap(getIconPath("info")), item, false, true);
-				exceptions_trw->itemWidget(child_item, 0)->setStyleSheet(QString("color: #000080;"));
-			}
 
 			idx++; itr++;
 
-			/* If we have a stack bigger than 30 items we just ignore the rest in order to avoid
+			/* If we have a stack bigger than 50 items we just ignore the rest in order to avoid
 			 * the production or reduntant/useless information on the exception message box */
 			if(static_cast<unsigned>(idx) >= Exception::MaximumStackSize)
 			{
@@ -321,15 +318,15 @@ namespace GuiUtilsNs {
 		QSize min_size=widget->minimumSize();
 		int max_h = 0, curr_w =0, curr_h = 0;
 		QScreen *screen=qApp->primaryScreen();
-		double dpi_factor = 0;
+		/* double dpi_factor = 0;
 		double pixel_ratio = 0;
 
 		dpi_factor = screen->logicalDotsPerInch() / 96.0;
-		pixel_ratio = screen->devicePixelRatio();
+		pixel_ratio = screen->devicePixelRatio(); */
 
 		//If the dpi_factor is unchanged (1) we keep the dialog original dimension
-		if(dpi_factor <= 1.01)
-			return;
+		/* if(dpi_factor <= 1.01)
+			return; */
 
 		max_h = screen->size().height() * 0.70;
 
@@ -352,8 +349,8 @@ namespace GuiUtilsNs {
 		else if(min_size.height() >= max_h)
 			curr_h = max_h;
 
-		curr_w *= dpi_factor * pixel_ratio;
-		curr_h *= dpi_factor * pixel_ratio;
+		/* curr_w *= dpi_factor * pixel_ratio;
+		curr_h *= dpi_factor * pixel_ratio; */
 
 		if(curr_w > screen->size().width())
 			curr_w = screen->size().width() * 0.80;
@@ -405,5 +402,44 @@ namespace GuiUtilsNs {
 		shadow->setBlurRadius(radius);
 		shadow->setColor(QColor(0,0,0, 100));
 		wgt->setGraphicsEffect(shadow);
+	}
+
+	void handleFileDialogSatate(QFileDialog *file_dlg, bool save_state)
+	{
+		if(!file_dlg)
+			return;
+
+		try
+		{
+			QString filename = GlobalAttributes::getConfigurationsDir() +
+												 GlobalAttributes::DirSeparator +
+												 GlobalAttributes::FileDialogConf +
+												 GlobalAttributes::ConfigurationExt;
+
+			QSettings settings(filename, QSettings::NativeFormat);
+
+			if(save_state)
+			{
+				settings.setValue("geometry", file_dlg->saveGeometry());
+				settings.setValue("state", file_dlg->saveState());
+				settings.sync();
+			}
+			else
+			{
+				file_dlg->restoreGeometry(settings.value("geometry").toByteArray());
+				file_dlg->restoreState(settings.value("state").toByteArray());
+			}
+		}
+		catch(Exception &){}
+	}
+
+	void saveFileDialogState(QFileDialog *file_dlg)
+	{
+		handleFileDialogSatate(file_dlg, true);
+	}
+
+	void restoreFileDialogState(QFileDialog *file_dlg)
+	{
+		handleFileDialogSatate(file_dlg, false);
 	}
 }

@@ -178,8 +178,12 @@ void CrashHandlerForm::saveModel()
 		file_dlg.setAcceptMode(QFileDialog::AcceptSave);
 		file_dlg.setModal(true);
 
+		GuiUtilsNs::restoreFileDialogState(&file_dlg);
+
 		if(file_dlg.exec()==QFileDialog::Accepted)
 			UtilsNs::saveFile(file_dlg.selectedFiles().at(0), model_txt->toPlainText().toUtf8());
+
+		GuiUtilsNs::saveFileDialogState(&file_dlg);
 	}
 	catch(Exception &e)
 	{

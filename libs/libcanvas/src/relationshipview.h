@@ -75,10 +75,10 @@ class RelationshipView: public BaseObjectView {
 		QPointF conn_points[2];
 
 		//! \brief Graphical representation for the user added points
-		vector<QGraphicsPolygonItem *> graph_points;
+		std::vector<QGraphicsPolygonItem *> graph_points;
 
 		//! \brief Lines that represent the relationship
-		vector<QGraphicsLineItem *> lines,
+		std::vector<QGraphicsLineItem *> lines,
 
 		//! \brief Lines that are connected to the reference table (only on CONNECT_FK_TO_PK mode)
 		pk_lines,
@@ -87,7 +87,7 @@ class RelationshipView: public BaseObjectView {
 		fk_lines;
 
 		//! \brief Stores the graphical representation for relationship attributes
-		vector<QGraphicsItemGroup *> attributes;
+		std::vector<QGraphicsItemGroup *> attributes;
 
 		//! \brief Relationship descriptor (lozenge -> (1,n)-(1,n) relationship, triangle -> inheritance)
 		QGraphicsPolygonItem *descriptor;
@@ -101,12 +101,12 @@ class RelationshipView: public BaseObjectView {
 		QGraphicsEllipseItem *line_circles[2];
 
 		//! \brief Stores the curved lines representing the relationship
-		vector<BezierCurveItem *> curves;
+		std::vector<BezierCurveItem *> curves;
 
 		//! \brief Stores the crow's foot notation descriptors
 		QGraphicsItemGroup * cf_descriptors[2];
 
-		vector<QGraphicsLineItem *> src_cf_lines,	dst_cf_lines;
+		std::vector<QGraphicsLineItem *> src_cf_lines,	dst_cf_lines;
 
 		QGraphicsEllipseItem *round_cf_descriptors[2];
 
@@ -130,6 +130,10 @@ class RelationshipView: public BaseObjectView {
 
 		//! \brief Configures the specified label's position based as well some styles for it
 		void configureLabelPosition(unsigned label_id, double x, double y);
+
+		/*! \brief Returns the default pen width size taking into account the screen dpi and the
+		 * whether the relationship is identifier or not */
+		double getDefaultPenWidth();
 
 	protected:
 		QVariant itemChange(GraphicsItemChange change, const QVariant &value);

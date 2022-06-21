@@ -26,7 +26,7 @@ BaseConfigWidget::BaseConfigWidget(QWidget *parent) : QWidget(parent)
 	config_changed=false;
 }
 
-void BaseConfigWidget::addConfigurationParam(map<QString, attribs_map> &config_params, const QString &param, const attribs_map &attribs)
+void BaseConfigWidget::addConfigurationParam(std::map<QString, attribs_map> &config_params, const QString &param, const attribs_map &attribs)
 {
 	if(!param.isEmpty() && !attribs.empty())
 		config_params[param]=attribs;
@@ -47,7 +47,7 @@ bool BaseConfigWidget::isConfigurationChanged()
 	return config_changed;
 }
 
-void BaseConfigWidget::saveConfiguration(const QString &conf_id, map<QString, attribs_map> &config_params)
+void BaseConfigWidget::saveConfiguration(const QString &conf_id, std::map<QString, attribs_map> &config_params)
 {
 	//Configures the schema filename for the configuration
 	QString	sch_filename=GlobalAttributes::getTmplConfigurationFilePath(GlobalAttributes::SchemasDir,
@@ -118,7 +118,7 @@ void BaseConfigWidget::restoreDefaults(const QString &conf_id, bool silent)
 	}
 }
 
-void BaseConfigWidget::loadConfiguration(const QString &filename, const QString &dtd, map<QString, attribs_map> &config_params, const QStringList &key_attribs, bool incl_elem_name)
+void BaseConfigWidget::loadConfiguration(const QString &filename, const QString &dtd, std::map<QString, attribs_map> &config_params, const QStringList &key_attribs, bool incl_elem_name)
 {
 	try
 	{
@@ -167,7 +167,7 @@ void BaseConfigWidget::loadConfiguration(const QString &filename, const QString 
 	}
 }
 
-void BaseConfigWidget::loadConfiguration(const QString &conf_id, map<QString, attribs_map> &config_params, const QStringList &key_attribs, bool incl_elem_name)
+void BaseConfigWidget::loadConfiguration(const QString &conf_id, std::map<QString, attribs_map> &config_params, const QStringList &key_attribs, bool incl_elem_name)
 {
 	try
 	{
@@ -180,7 +180,7 @@ void BaseConfigWidget::loadConfiguration(const QString &conf_id, map<QString, at
 	}
 }
 
-void BaseConfigWidget::getConfigurationParams(map<QString, attribs_map> &config_params, const QStringList &key_attribs, bool incl_elem_name)
+void BaseConfigWidget::getConfigurationParams(std::map<QString, attribs_map> &config_params, const QStringList &key_attribs, bool incl_elem_name)
 {
 	attribs_map aux_attribs;
 	attribs_map::iterator itr, itr_end;

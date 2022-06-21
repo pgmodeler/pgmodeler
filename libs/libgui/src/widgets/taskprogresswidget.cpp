@@ -22,7 +22,7 @@
 
 TaskProgressWidget::TaskProgressWidget(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 {
-	vector<ObjectType> obj_types=BaseObject::getObjectTypes(true);
+	std::vector<ObjectType> obj_types=BaseObject::getObjectTypes(true);
 
 	setupUi(this);
 	setWindowFlags(Qt::Dialog | Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
@@ -69,7 +69,7 @@ void TaskProgressWidget::updateProgress(int progress, QString text, unsigned ico
 		text_lbl->setText(GuiUtilsNs::formatMessage(text));
 
 	if(icons.count(icon_id))
-		icon_lbl->setPixmap(icons[icon_id].pixmap(QSize(32,32)));
+		icon_lbl->setPixmap(icons[icon_id].pixmap(icon_lbl->minimumSize()));
 	else
 		icon_lbl->clear();
 

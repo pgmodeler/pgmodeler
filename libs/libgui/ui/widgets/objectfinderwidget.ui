@@ -38,10 +38,7 @@
    <property name="bottomMargin">
     <number>5</number>
    </property>
-   <property name="horizontalSpacing">
-    <number>10</number>
-   </property>
-   <property name="verticalSpacing">
+   <property name="spacing">
     <number>5</number>
    </property>
    <item row="0" column="4">
@@ -73,8 +70,8 @@
      </property>
      <property name="iconSize">
       <size>
-       <width>32</width>
-       <height>32</height>
+       <width>25</width>
+       <height>25</height>
       </size>
      </property>
      <property name="checkable">
@@ -152,8 +149,8 @@
      </property>
      <property name="iconSize">
       <size>
-       <width>32</width>
-       <height>32</height>
+       <width>25</width>
+       <height>25</height>
       </size>
      </property>
      <property name="checkable">
@@ -212,8 +209,8 @@
      </property>
      <property name="iconSize">
       <size>
-       <width>32</width>
-       <height>32</height>
+       <width>25</width>
+       <height>25</height>
       </size>
      </property>
      <property name="toolButtonStyle">
@@ -244,8 +241,8 @@
      </property>
      <property name="iconSize">
       <size>
-       <width>32</width>
-       <height>32</height>
+       <width>25</width>
+       <height>25</height>
       </size>
      </property>
      <property name="shortcut">
@@ -270,8 +267,8 @@
      </property>
      <property name="iconSize">
       <size>
-       <width>25</width>
-       <height>25</height>
+       <width>20</width>
+       <height>20</height>
       </size>
      </property>
      <property name="shortcut">
@@ -311,8 +308,8 @@
      </property>
      <property name="iconSize">
       <size>
-       <width>32</width>
-       <height>32</height>
+       <width>25</width>
+       <height>25</height>
       </size>
      </property>
      <property name="checkable">
@@ -332,13 +329,16 @@
       <enum>Qt::Vertical</enum>
      </property>
      <property name="handleWidth">
-      <number>8</number>
+      <number>5</number>
      </property>
      <property name="childrenCollapsible">
       <bool>false</bool>
      </property>
      <widget class="QWidget" name="layoutWidget">
       <layout class="QHBoxLayout" name="horizontalLayout">
+       <property name="spacing">
+        <number>5</number>
+       </property>
        <item>
         <widget class="QFrame" name="filter_frm">
          <property name="sizePolicy">
@@ -373,7 +373,7 @@
            <number>5</number>
           </property>
           <property name="spacing">
-           <number>10</number>
+           <number>5</number>
           </property>
           <item row="3" column="1">
            <spacer name="horizontalSpacer_4">
@@ -416,6 +416,9 @@
           </item>
           <item row="1" column="1">
            <widget class="QCheckBox" name="exact_match_chk">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
             <property name="sizePolicy">
              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -442,7 +445,7 @@
              <number>5</number>
             </property>
             <property name="spacing">
-             <number>10</number>
+             <number>5</number>
             </property>
             <item row="0" column="0" colspan="4">
              <widget class="QListWidget" name="obj_types_lst">
@@ -457,8 +460,8 @@
               </property>
               <property name="iconSize">
                <size>
-                <width>28</width>
-                <height>28</height>
+                <width>22</width>
+                <height>22</height>
                </size>
               </property>
               <property name="sortingEnabled">
@@ -579,6 +582,12 @@
       </property>
       <property name="selectionBehavior">
        <enum>QAbstractItemView::SelectRows</enum>
+      </property>
+      <property name="iconSize">
+       <size>
+        <width>22</width>
+        <height>22</height>
+       </size>
       </property>
       <property name="gridStyle">
        <enum>Qt::SolidLine</enum>
@@ -740,7 +749,6 @@
   <tabstop>hide_tb</tabstop>
  </tabstops>
  <resources>
-  <include location="../../res/resources.qrc"/>
   <include location="../../res/resources.qrc"/>
   <include location="../../res/resources.qrc"/>
  </resources>

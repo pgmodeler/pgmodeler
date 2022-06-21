@@ -18,8 +18,6 @@
 
 #include "databaseimporthelper.h"
 #include "defaultlanguages.h"
-#include "qtcompat/qtextstreamcompat.h"
-#include "qtcompat/splitbehaviorcompat.h"
 #include "utilsns.h"
 #include "coreutilsns.h"
 
@@ -27,7 +25,7 @@ const QString DatabaseImportHelper::UnkownObjectOidXml("\t<!--[ unknown object O
 
 DatabaseImportHelper::DatabaseImportHelper(QObject *parent) : QObject(parent)
 {
-	random_device rand_seed;
+	std::random_device rand_seed;
 	rand_num_engine.seed(rand_seed());
 
 	import_canceled=ignore_errors=import_sys_objs=import_ext_objs=rand_rel_colors=update_fk_rels=false;
@@ -69,7 +67,7 @@ void DatabaseImportHelper::setCurrentDatabase(const QString &dbname)
 	}
 }
 
-void DatabaseImportHelper::setSelectedOIDs(DatabaseModel *db_model, const map<ObjectType, vector<unsigned> > &obj_oids, const map<unsigned, vector<unsigned> > &col_oids)
+void DatabaseImportHelper::setSelectedOIDs(DatabaseModel *db_model, const std::map<ObjectType, std::vector<unsigned> > &obj_oids, const std::map<unsigned, std::vector<unsigned> > &col_oids)
 {
 	if(!db_model)
 		throw Exception(ErrorCode::AsgNotAllocattedObject ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -142,7 +140,7 @@ attribs_map DatabaseImportHelper::getObjects(ObjectType obj_type, const QString 
 	}
 }
 
-vector<attribs_map> DatabaseImportHelper::getObjects(vector<ObjectType> obj_types, const QString &schema, const QString &table, attribs_map extra_attribs)
+std::vector<attribs_map> DatabaseImportHelper::getObjects(std::vector<ObjectType> obj_types, const QString &schema, const QString &table, attribs_map extra_attribs)
 {
 	try
 	{
@@ -158,7 +156,7 @@ vector<attribs_map> DatabaseImportHelper::getObjects(vector<ObjectType> obj_type
 void DatabaseImportHelper::swapSequencesTablesIds()
 {
 	BaseObject *table=nullptr, *sequence=nullptr;
-	map<QString, QString>::iterator itr;
+	std::map<QString, QString>::iterator itr;
 
 	//Swapping the id's between sequences and tables to avoid reference breaking on SQL code
 	itr=seq_tab_swap.begin();
@@ -175,10 +173,10 @@ void DatabaseImportHelper::swapSequencesTablesIds()
 void DatabaseImportHelper::retrieveSystemObjects()
 {
 	int progress=0;
-	vector<attribs_map>::iterator itr;
-	map<unsigned, attribs_map> *obj_map=nullptr;
-	vector<attribs_map> objects;
-	vector<ObjectType> sys_objs={ ObjectType::Schema, ObjectType::Role, ObjectType::Tablespace,
+	std::vector<attribs_map>::iterator itr;
+	std::map<unsigned, attribs_map> *obj_map=nullptr;
+	std::vector<attribs_map> objects;
+	std::vector<ObjectType> sys_objs={ ObjectType::Schema, ObjectType::Role, ObjectType::Tablespace,
 																ObjectType::Language, ObjectType::Type };
 	unsigned i = 0, oid = 0, cnt = sys_objs.size();
 
@@ -224,11 +222,11 @@ void DatabaseImportHelper::retrieveSystemObjects()
 void DatabaseImportHelper::retrieveUserObjects()
 {
 	int progress=0;
-	map<ObjectType, vector<unsigned>>::iterator oid_itr=object_oids.begin();
-	vector<attribs_map>::iterator itr;
-	vector<attribs_map> objects;
+	std::map<ObjectType, std::vector<unsigned>>::iterator oid_itr=object_oids.begin();
+	std::vector<attribs_map>::iterator itr;
+	std::vector<attribs_map> objects;
 	unsigned i=0, oid=0;
-	map<unsigned, vector<unsigned>>::iterator col_itr;
+	std::map<unsigned, std::vector<unsigned>>::iterator col_itr;
 	QStringList names;
 
 	i=0;
@@ -275,11 +273,11 @@ void DatabaseImportHelper::retrieveUserObjects()
 	}
 }
 
-void DatabaseImportHelper::retrieveTableColumns(const QString &sch_name, const QString &tab_name, vector<unsigned> col_ids)
+void DatabaseImportHelper::retrieveTableColumns(const QString &sch_name, const QString &tab_name, std::vector<unsigned> col_ids)
 {
 	try
 	{
-		vector<attribs_map> cols;
+		std::vector<attribs_map> cols;
 		unsigned tab_oid=0, col_oid;
 
 		cols=catalog.getObjectsAttributes(ObjectType::Column, sch_name, tab_name, col_ids);
@@ -303,10 +301,10 @@ void DatabaseImportHelper::createObjects()
 	attribs_map attribs;
 	ObjectType obj_type;
 	unsigned i=0, oid=0, prev_size=0;
-	vector<unsigned> not_created_objs, oids;
-	vector<unsigned>::iterator itr, itr_end;
-	vector<Exception> aux_errors;
-	map<unsigned, attribs_map>::iterator itr_objs, itr_objs_end;
+	std::vector<unsigned> not_created_objs, oids;
+	std::vector<unsigned>::iterator itr, itr_end;
+	std::vector<Exception> aux_errors;
+	std::map<unsigned, attribs_map>::iterator itr_objs, itr_objs_end;
 
 	created_objs.reserve(creation_order.size());
 	itr_objs = user_objs.begin();
@@ -426,7 +424,7 @@ void DatabaseImportHelper::createConstraints()
 	int progress=0;
 	attribs_map attribs;
 	unsigned i=0;
-	vector<attribs_map>::iterator itr, itr_end;
+	std::vector<attribs_map>::iterator itr, itr_end;
 
 	itr = constraints.begin();
 	itr_end = constraints.end();
@@ -472,8 +470,8 @@ void DatabaseImportHelper::createPermissions()
 	try
 	{
 		unsigned i=0, progress=0;
-		vector<unsigned>::iterator itr, itr_obj=obj_perms.begin();
-		map<unsigned, vector<unsigned>>::iterator itr_cols=col_perms.begin();
+		std::vector<unsigned>::iterator itr, itr_obj=obj_perms.begin();
+		std::map<unsigned, std::vector<unsigned>>::iterator itr_cols=col_perms.begin();
 		QString msg=tr("Creating permissions for object `%1' (%2)...");
 		ObjectType obj_type;
 
@@ -529,7 +527,7 @@ void DatabaseImportHelper::createPermissions()
 void DatabaseImportHelper::updateFKRelationships()
 {
 	int progress=0;
-	vector<BaseObject *>::iterator itr_tab, itr_tab_end;
+	std::vector<BaseObject *>::iterator itr_tab, itr_tab_end;
 	unsigned i=0, count=0;
 	Table *tab=nullptr;
 
@@ -625,8 +623,8 @@ void DatabaseImportHelper::importDatabase()
 			//Generating random colors for relationships
 			if(rand_rel_colors)
 			{
-				vector<BaseObject *> *rels=nullptr;
-				vector<BaseObject *>::iterator itr, itr_end;
+				std::vector<BaseObject *> *rels=nullptr;
+				std::vector<BaseObject *>::iterator itr, itr_end;
 				std::uniform_int_distribution<unsigned> dist(0,255);
 				ObjectType rel_type[]={ ObjectType::Relationship, ObjectType::BaseRelationship };
 				BaseRelationship *rel=nullptr;
@@ -673,7 +671,7 @@ void DatabaseImportHelper::setObjectFilters(QStringList filter, bool only_matchi
 	catalog.setObjectFilters(filter, only_matching, match_signature, force_tab_obj_types);
 }
 
-map<ObjectType, QString> DatabaseImportHelper::getObjectFilters()
+std::map<ObjectType, QString> DatabaseImportHelper::getObjectFilters()
 {
 	return catalog.getObjectFilters();
 }
@@ -727,7 +725,7 @@ void DatabaseImportHelper::createObject(attribs_map &attribs)
 			if(debug_mode)
 			{
 				QTextStream ts(stdout);
-				ts << dumpObjectAttributes(attribs) << QtCompat::endl;
+				ts << dumpObjectAttributes(attribs) << Qt::endl;
 			}
 
 			switch(obj_type)
@@ -767,7 +765,7 @@ void DatabaseImportHelper::createObject(attribs_map &attribs)
 				default:
 					if(debug_mode)
 					{
-						qDebug() << QString("create() method for %s isn't implemented!").arg(BaseObject::getSchemaName(obj_type)) << QtCompat::endl;
+						qDebug() << QString("create() method for %s isn't implemented!").arg(BaseObject::getSchemaName(obj_type)) << Qt::endl;
 					}
 				break;
 			}
@@ -829,7 +827,7 @@ QString DatabaseImportHelper::getDependencyObject(const QString &oid, ObjectType
 					 (obj_oid > catalog.getLastSysObjectOID() && !catalog.isExtensionObject(obj_oid))))
 			{
 				catalog.setQueryFilter(Catalog::ListAllObjects);
-				vector<attribs_map> attribs_vect=catalog.getObjectsAttributes(obj_type,"","", { obj_oid });
+				std::vector<attribs_map> attribs_vect=catalog.getObjectsAttributes(obj_type,"","", { obj_oid });
 
 				if(!attribs_vect.empty())
 				{
@@ -902,8 +900,8 @@ void DatabaseImportHelper::loadObjectXML(ObjectType obj_type, attribs_map &attri
 		if(debug_mode)
 		{
 			QTextStream ts(stdout);
-			ts << QString("<!-- XML code: %1 (OID: %2) -->").arg(attribs[Attributes::Name]).arg(attribs[Attributes::Oid]) << QtCompat::endl;
-			ts << xml_buf << QtCompat::endl;
+			ts << QString("<!-- XML code: %1 (OID: %2) -->").arg(attribs[Attributes::Name]).arg(attribs[Attributes::Oid]) << Qt::endl;
+			ts << xml_buf << Qt::endl;
 		}
 
 		xmlparser->loadXMLBuffer(xml_buf);
@@ -973,8 +971,15 @@ void DatabaseImportHelper::createTablespace(attribs_map &attribs)
 
 void DatabaseImportHelper::createSchema(attribs_map &attribs)
 {
-	Schema *schema=nullptr;
+	Schema *schema = nullptr;
 	std::uniform_int_distribution<unsigned> dist(0,255);
+
+	/* Avoiding the creation of the schemas pg_catalog and public when these objects
+	 * already exist in the destination model. This prevents the import to be aborted
+	 * due to duplicity error related to these schemas. */
+	if((attribs[Attributes::Name] == "public" || attribs[Attributes::Name] == "pg_catalog") &&
+		 dbmodel->getSchema(attribs[Attributes::Name]))
+		return;
 
 	try
 	{
@@ -1036,7 +1041,7 @@ void DatabaseImportHelper::createDomain(attribs_map &attribs)
 
 	try
 	{
-		constraints = attribs[Attributes::Constraints].split(UtilsNs::DataSeparator, QtCompat::SkipEmptyParts);
+		constraints = attribs[Attributes::Constraints].split(UtilsNs::DataSeparator, Qt::SkipEmptyParts);
 		attribs[Attributes::Constraints].clear();
 
 		for(auto &constr : constraints)
@@ -1091,7 +1096,7 @@ void DatabaseImportHelper::configureBaseFunctionAttribs(attribs_map &attribs)
 			param_def_vals, param_xmls, used_names, transform_types,
 			config_params, list;
 	QString param_tmpl_name = QString("_param%1"), pname;
-	vector<Parameter> parameters;
+	std::vector<Parameter> parameters;
 	attribs_map cfg_attrs;
 
 	try
@@ -1104,7 +1109,7 @@ void DatabaseImportHelper::configureBaseFunctionAttribs(attribs_map &attribs)
 		transform_types = getTypes(attribs[Attributes::TransformTypes], false);
 		attribs[Attributes::TransformTypes] = transform_types.join(',');
 
-		config_params = attribs[Attributes::ConfigParams].split(UtilsNs::DataSeparator, QtCompat::SkipEmptyParts);
+		config_params = attribs[Attributes::ConfigParams].split(UtilsNs::DataSeparator, Qt::SkipEmptyParts);
 		attribs[Attributes::ConfigParams] = "";
 
 		for(auto &cfg : config_params)
@@ -1180,7 +1185,7 @@ void DatabaseImportHelper::configureBaseFunctionAttribs(attribs_map &attribs)
 
 		if(!parameters.empty())
 		{
-			vector<Parameter>::reverse_iterator ritr, ritr_end;
+			std::vector<Parameter>::reverse_iterator ritr, ritr_end;
 
 			ritr = parameters.rbegin();
 			ritr_end = parameters.rend();
@@ -1345,7 +1350,7 @@ void DatabaseImportHelper::createOperatorClass(attribs_map &attribs)
 	try
 	{
 		attribs_map elem_attr;
-		vector<attribs_map> elems;
+		std::vector<attribs_map> elems;
 		QStringList array_vals, list;
 
 		attribs[Attributes::Family]=getObjectName(attribs[Attributes::Family], true);
@@ -1427,7 +1432,8 @@ void DatabaseImportHelper::createOperator(attribs_map &attribs)
 	try
 	{
 		int pos;
-		QRegExp regexp;
+		QRegularExpression regexp;
+		QRegularExpressionMatch match;
 		QString op_signature,
 
 				func_types[]={ Attributes::OperatorFunc,
@@ -1458,8 +1464,9 @@ void DatabaseImportHelper::createOperator(attribs_map &attribs)
 					create on the second operator a commutator reference to ++(A,B). But to pgModeler only the first
 					reference is valid, so the extracted signature is used to check if the commutator was previously
 					created in order to avoid reference errors */
-				pos=regexp.indexIn(attribs[op_types[i]]) + regexp.matchedLength();
-				op_signature=attribs[op_types[i]].mid(pos, (attribs[op_types[i]].indexOf('"',pos) - pos));
+				match = regexp.match(attribs[op_types[i]]);
+				pos = match.capturedStart() + match.capturedLength();
+				op_signature = attribs[op_types[i]].mid(pos, (attribs[op_types[i]].indexOf('"',pos) - pos));
 
 				//If the operator is not defined clear up the reference to it
 				if(dbmodel->getObjectIndex(op_signature, ObjectType::Operator) < 0)
@@ -1666,7 +1673,7 @@ void DatabaseImportHelper::createType(attribs_map &attribs)
 
 		if(!attribs[Attributes::EnumType].isEmpty())
 		{
-			for(auto &label : attribs[Attributes::Labels].split(UtilsNs::DataSeparator, QtCompat::SkipEmptyParts))
+			for(auto &label : attribs[Attributes::Labels].split(UtilsNs::DataSeparator, Qt::SkipEmptyParts))
 			{
 				aux_attribs[Attributes::Label] = label;
 				attribs[Attributes::Labels] += schparser.getCodeDefinition(Attributes::EnumType, aux_attribs, SchemaParser::XmlDefinition);
@@ -1750,7 +1757,7 @@ void DatabaseImportHelper::createTable(attribs_map &attribs)
 
 	try
 	{
-		vector<unsigned> inh_cols;
+		std::vector<unsigned> inh_cols;
 		attribs_map pos_attrib={
 			{ Attributes::XPos, QString("0") },
 			{ Attributes::YPos, QString("0") }};
@@ -1766,7 +1773,7 @@ void DatabaseImportHelper::createTable(attribs_map &attribs)
 			inherited_cols.push_back(table->getColumn(col_idx));
 
 		// Storing the partition bound expression temporarily in the table in order to configure the partition hierarchy later
-		table->setPartitionBoundingExpr(attribs[Attributes::PartitionBoundExpr].remove(QRegExp("^(FOR)( )+(VALUES)( )*", Qt::CaseInsensitive)));
+		table->setPartitionBoundingExpr(attribs[Attributes::PartitionBoundExpr].remove(QRegularExpression("^(FOR)( )+(VALUES)( )*", QRegularExpression::CaseInsensitiveOption)));
 
 		// Retrieving the partitioned table related to the partition table being created
 		if(!attribs[Attributes::PartitionedTable].isEmpty())
@@ -1797,7 +1804,7 @@ void DatabaseImportHelper::createTable(attribs_map &attribs)
 			QString coll_name, opc_name;
 			Collation *coll = nullptr;
 			OperatorClass *opclass = nullptr;
-			vector<PartitionKey> part_keys;
+			std::vector<PartitionKey> part_keys;
 
 			part_type = PartitioningType(attribs[Attributes::Partitioning]);
 			table->setPartitioningType(part_type);
@@ -1959,16 +1966,19 @@ void DatabaseImportHelper::createRule(attribs_map &attribs)
 {
 	QString cmds=attribs[Attributes::Commands];
 	int start=-1;
-	QRegExp cond_regexp(QString("(WHERE)(.)+(DO)"));
+	QRegularExpression cond_regexp("(WHERE)(.)+(DO)");
+	QRegularExpressionMatch match;
 	ObjectType table_type=ObjectType::Table;
 
 	try
 	{
-		start=cond_regexp.indexIn(cmds);
+		match = cond_regexp.match(cmds);
+		start = match.capturedStart();
+
 		if(start >=0)
 		{
-			attribs[Attributes::Condition]=cmds.mid(start, cond_regexp.matchedLength());
-			attribs[Attributes::Condition].remove(QRegExp(QString("(DO)|(WHERE)")));
+			attribs[Attributes::Condition]=cmds.mid(start, match.capturedLength());
+			attribs[Attributes::Condition].remove(QRegularExpression("(DO)|(WHERE)"));
 		}
 
 		attribs[Attributes::Commands]=Catalog::parseRuleCommands(attribs[Attributes::Commands]).join(';');
@@ -2000,7 +2010,7 @@ void DatabaseImportHelper::createTrigger(attribs_map &attribs)
 		attribs[Attributes::Table]=getDependencyObject(attribs[Attributes::Table], table_type, true, auto_resolve_deps, false);
 		attribs[Attributes::TriggerFunc]=getDependencyObject(attribs[Attributes::TriggerFunc], ObjectType::Function, true, true);
 
-		args = attribs[Attributes::Arguments].split(Catalog::EscapedNullChar, QtCompat::SkipEmptyParts);
+		args = attribs[Attributes::Arguments].split(Catalog::EscapedNullChar, Qt::SkipEmptyParts);
 		attribs[Attributes::Arguments] = args.join(UtilsNs::DataSeparator);
 
 		loadObjectXML(ObjectType::Trigger, attribs);
@@ -2019,13 +2029,14 @@ void DatabaseImportHelper::createIndex(attribs_map &attribs)
 {
 	try
 	{
-		QStringList cols, opclasses, collations, exprs, incl_cols;
+		QStringList cols, opclasses, collations, exprs, incl_cols, options;
 		IndexElement elem;
 		BaseTable *parent_tab=nullptr;
 		Collation *coll=nullptr;
 		OperatorClass *opclass=nullptr;
 		QString tab_name, coll_name, opc_name;
 		int i = 0, elem_cnt = 0;
+		bool desc_order = false, nulls_first = false;
 
 		attribs[Attributes::Factor]=QString("90");
 		tab_name=getDependencyObject(attribs[Attributes::Table], ObjectType::Table, true, auto_resolve_deps, false);
@@ -2043,11 +2054,12 @@ void DatabaseImportHelper::createIndex(attribs_map &attribs)
 												ErrorCode::RefObjectInexistsModel ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		}
 
-		cols=Catalog::parseArrayValues(attribs[Attributes::Columns]);
-		collations=Catalog::parseArrayValues(attribs[Attributes::Collations]);
-		opclasses=Catalog::parseArrayValues(attribs[Attributes::OpClasses]);
+		cols = Catalog::parseArrayValues(attribs[Attributes::Columns]);
+		collations = Catalog::parseArrayValues(attribs[Attributes::Collations]);
+		opclasses = Catalog::parseArrayValues(attribs[Attributes::OpClasses]);
 		exprs = Catalog::parseIndexExpressions(attribs[Attributes::Expressions]);
 		elem_cnt = attribs[Attributes::ElementsCount].toInt();
+		options = Catalog::parseArrayValues(attribs[Attributes::Options]);
 
 		for(i=0; i < elem_cnt; i++)
 		{
@@ -2064,6 +2076,27 @@ void DatabaseImportHelper::createIndex(attribs_map &attribs)
 			{
 				elem.setExpression(exprs.front());
 				exprs.pop_front();
+			}
+
+			if(i < options.size())
+			{
+				/* The definition of the index option bits is in src/include/catalog/pg_index.h
+				 * So, to determine if DESC ordering is set as well as NULLS FIRST we have
+				 * to perform a bitwise operation. */
+
+				/*
+				 * Index AMs that support ordered scans must support these two indoption
+				 * bits.  Otherwise, the content of the per-column indoption fields is
+				 * open for future definition.
+				 */
+				// #define INDOPTION_DESC          0x0001  /* values are in reverse order */
+				// #define INDOPTION_NULLS_FIRST   0x0002  /* NULLs are first instead of last */
+
+				desc_order = (options[i].toUInt() & 1) == 1;
+				nulls_first = (options[i].toUInt() & 2) == 2;
+				elem.setSortingEnabled(desc_order || nulls_first);
+				elem.setSortingAttribute(IndexElement::AscOrder, !desc_order);
+				elem.setSortingAttribute(IndexElement::NullsFirst, nulls_first);
 			}
 
 			if(i < collations.size() && collations[i]!=QString("0"))
@@ -2135,11 +2168,12 @@ void DatabaseImportHelper::createConstraint(attribs_map &attribs)
 
 			if(attribs[Attributes::Type]==Attributes::ExConstr)
 			{
-				QStringList cols, opclasses, opers, exprs;
+				QStringList cols, opclasses, opers, exprs, options;
 				ExcludeElement elem;
 				QString opc_name, op_name;
 				OperatorClass *opclass=nullptr;
 				Operator *oper=nullptr;
+				bool desc_order = false, nulls_first = false;
 
 				attribs[Attributes::SrcColumns]="";
 				attribs[Attributes::Expression]=attribs[Attributes::Condition];
@@ -2147,6 +2181,7 @@ void DatabaseImportHelper::createConstraint(attribs_map &attribs)
 				cols=Catalog::parseArrayValues(attribs[Attributes::Columns]);
 				opers=Catalog::parseArrayValues(attribs[Attributes::Operators]);
 				opclasses=Catalog::parseArrayValues(attribs[Attributes::OpClasses]);
+				options = Catalog::parseArrayValues(attribs[Attributes::Options]);
 
 				/* Due to the way exclude constraints are constructed (similar to indexes),
 				 * we get the constraint's definition in for of expressions. Internally we use pg_get_constraintdef.
@@ -2156,8 +2191,8 @@ void DatabaseImportHelper::createConstraint(attribs_map &attribs)
 				 * the cols list above */
 				exprs=attribs[Attributes::Expressions]
 							.replace(QString("EXCLUDE USING %1 (").arg(attribs[Attributes::IndexType]), "")
-							.split(QRegExp("(WITH )(\\+|\\-|\\*|\\/|\\<|\\>|\\=|\\~|\\!|\\@|\\#|\\%|\\^|\\&|\\||\\'|\\?)+((,)?|(\\))?)"),
-										 QtCompat::SkipEmptyParts);
+							.split(QRegularExpression("(WITH )(\\+|\\-|\\*|\\/|\\<|\\>|\\=|\\~|\\!|\\@|\\#|\\%|\\^|\\&|\\||\\'|\\?)+((,)?|(\\))?)"),
+										 Qt::SkipEmptyParts);
 
 				for(int i=0; i < cols.size(); i++)
 				{
@@ -2186,6 +2221,15 @@ void DatabaseImportHelper::createConstraint(attribs_map &attribs)
 
 						if(oper)
 							elem.setOperator(oper);
+					}
+
+					if(i < options.size())
+					{
+						desc_order = (options[i].toUInt() & 1) == 1;
+						nulls_first = (options[i].toUInt() & 2) == 2;
+						elem.setSortingEnabled(desc_order || nulls_first);
+						elem.setSortingAttribute(ExcludeElement::AscOrder, !desc_order);
+						elem.setSortingAttribute(ExcludeElement::NullsFirst, nulls_first);
 					}
 
 					attribs[Attributes::Elements]+=elem.getCodeDefinition(SchemaParser::XmlDefinition);
@@ -2340,7 +2384,7 @@ void DatabaseImportHelper::createForeignTable(attribs_map &attribs)
 
 	try
 	{
-		vector<unsigned> inh_cols;
+		std::vector<unsigned> inh_cols;
 		attribs_map pos_attrib={
 			{ Attributes::XPos, QString("0") },
 			{ Attributes::YPos, QString("0") }};
@@ -2358,7 +2402,7 @@ void DatabaseImportHelper::createForeignTable(attribs_map &attribs)
 			inherited_cols.push_back(ftable->getColumn(col_idx));
 
 		// Storing the partition bound expression temporarily in the table in order to configure the partition hierarchy later
-		ftable->setPartitionBoundingExpr(attribs[Attributes::PartitionBoundExpr].remove(QRegExp("^(FOR)( )+(VALUES)( )*", Qt::CaseInsensitive)));
+		ftable->setPartitionBoundingExpr(attribs[Attributes::PartitionBoundExpr].remove(QRegularExpression("^(FOR)( )+(VALUES)( )*", QRegularExpression::CaseInsensitiveOption)));
 
 		// Retrieving the partitioned table related to the partition table being created
 		if(!attribs[Attributes::PartitionedTable].isEmpty())
@@ -2422,7 +2466,7 @@ void DatabaseImportHelper::createPermission(attribs_map &attribs)
 	if(Permission::acceptsPermission(obj_type))
 	{
 		QStringList perm_list;
-		vector<unsigned> privs, gop_privs;
+		std::vector<unsigned> privs, gop_privs;
 		QString role_name;
 		Role *role=nullptr;
 		BaseObject *object=nullptr;
@@ -2587,7 +2631,7 @@ void DatabaseImportHelper::destroyDetachedColumns()
 	if(inherited_cols.empty() || import_canceled)
 		return;
 
-	vector<BaseObject *> refs;
+	std::vector<BaseObject *> refs;
 	PhysicalTable *parent_tab=nullptr;
 
 	// Saving the special objects' xmls is needed here in case of importing objects to an already populated model
@@ -2628,13 +2672,13 @@ void DatabaseImportHelper::destroyDetachedColumns()
 	dbmodel->validateRelationships();
 }
 
-void DatabaseImportHelper::createColumns(attribs_map &attribs, vector<unsigned> &inh_cols)
+void DatabaseImportHelper::createColumns(attribs_map &attribs, std::vector<unsigned> &inh_cols)
 {
 	unsigned tab_oid=attribs[Attributes::Oid].toUInt(), type_oid=0, col_idx=0;
 	bool is_type_registered=false;
 	Column col;
 	QString type_def, unknown_obj_xml, type_name, def_val;
-	map<unsigned, attribs_map>::iterator itr, itr1, itr_end;
+	std::map<unsigned, attribs_map>::iterator itr, itr1, itr_end;
 	static QStringList sp_types = SpatialType::getTypes();
 
 	if(tab_oid == 0)
@@ -2785,7 +2829,7 @@ void DatabaseImportHelper::assignSequencesToColumns()
 {
 	PhysicalTable *table=nullptr;
 	Column *col=nullptr;
-	vector<BaseObject *> tables;
+	std::vector<BaseObject *> tables;
 	int progress = 0, i = 0;
 
 	tables = *dbmodel->getObjectList(ObjectType::Table);
@@ -2842,7 +2886,7 @@ void DatabaseImportHelper::assignSequencesToColumns()
 				catch(Exception &)
 				{
 					// Failing to create the sequence will not abort the entire process, instead, it'll dump a debug message
-					qDebug() << QString("assignSequencesToColumns(): Failed to create the sequence: %1").arg(seq_name) << QtCompat::endl;
+					qDebug() << QString("assignSequencesToColumns(): Failed to create the sequence: %1").arg(seq_name) << Qt::endl;
 				}
 
 				if(seq)
@@ -2863,7 +2907,7 @@ void DatabaseImportHelper::assignSequencesToColumns()
 
 void DatabaseImportHelper::__createTableInheritances()
 {
-	vector<unsigned> table_oids;
+	std::vector<unsigned> table_oids;
 	Relationship *rel=nullptr;
 	PhysicalTable *parent_tab=nullptr, *child_tab=nullptr;
 	QStringList inh_list;
@@ -3210,7 +3254,7 @@ QString DatabaseImportHelper::getType(const QString &oid_str, bool generate_xml,
 				 (is_derivated_from_obj ||
 					(sch_name != QString("pg_catalog") && sch_name != QString("information_schema")) ||
 					type_oid > catalog.getLastSysObjectOID()) &&
-				 !obj_name.contains(QRegExp(QString("^(\\\")?(%1)(\\\")?(\\.)").arg(sch_name))))
+				 !obj_name.contains(QRegularExpression(QString("^(\\\")?(%1)(\\\")?(\\.)").arg(sch_name))))
 			{
 				obj_name.prepend(sch_name + QString("."));
 			}

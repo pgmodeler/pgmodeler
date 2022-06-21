@@ -34,8 +34,6 @@
 #include <deque>
 #include <type_traits>
 
-using namespace std;
-
 //! \brief This function causes the provided enum to be converted to its underlying datatype
 template<typename Enum>
 constexpr std::underlying_type_t<Enum> enum_cast (Enum obj_type) noexcept
@@ -301,16 +299,17 @@ enum class ErrorCode: unsigned {
 	InvProcedureParamOutMode,
 	ExportFailureDbSQLDisabled,
 	InvConfigParameterName,
-	EmptyConfigParameterValue
+	EmptyConfigParameterValue,
+	InvGroupRegExpPattern
 };
 
 class Exception {
 	private:
-		static constexpr unsigned ErrorCount=257;
+		static constexpr unsigned ErrorCount=258;
 
 		/*! \brief Stores other exceptions before raise the 'this' exception.
 		 This structure can be used to simulate a stack trace to improve the debug */
-		vector<Exception> exceptions;
+		std::vector<Exception> exceptions;
 
 		//! \brief Stores the error messages and codes (names of errors) in string format
 		static QString messages[ErrorCount][2];
@@ -350,11 +349,11 @@ class Exception {
 
 		Exception();
 		Exception(const QString &msg, const QString &method, const QString &file, int line, Exception *exception=nullptr, const QString &extra_info="");
-		Exception(const QString &msg, const QString &method, const QString &file, int line, vector<Exception> &exceptions, const QString &extra_info="");
+		Exception(const QString &msg, const QString &method, const QString &file, int line, std::vector<Exception> &exceptions, const QString &extra_info="");
 		Exception(const QString &msg, ErrorCode error_code, const QString &method, const QString &file, int line, Exception *exception=nullptr, const QString &extra_info="");
-		Exception(const QString &msg, ErrorCode error_code, const QString &method, const QString &file, int line, vector<Exception> &exceptions, const QString &extra_info="");
+		Exception(const QString &msg, ErrorCode error_code, const QString &method, const QString &file, int line, std::vector<Exception> &exceptions, const QString &extra_info="");
 		Exception(ErrorCode error_code, const QString &method, const QString &file, int line, Exception *exception=nullptr, const QString &extra_info="");
-		Exception(ErrorCode error_code, const QString &method, const QString &file, int line, vector<Exception> &exceptions, const QString &extra_info="");
+		Exception(ErrorCode error_code, const QString &method, const QString &file, int line, std::vector<Exception> &exceptions, const QString &extra_info="");
 
 		~Exception(void){}
 		QString getErrorMessage();
@@ -367,7 +366,7 @@ class Exception {
 		QString getExtraInfo();
 
 		//! \brief Gets the full exception stack
-		void getExceptionsList(vector<Exception> &list);
+		void getExceptionsList(std::vector<Exception> &list);
 
 		//! \brief Gets the exception stack in a formatted text
 		QString getExceptionsText();

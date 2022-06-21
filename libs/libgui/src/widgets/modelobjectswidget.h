@@ -50,7 +50,7 @@ class ModelObjectsWidget: public QWidget, public Ui::ModelObjectsWidget {
 		enable_obj_creation;
 
 		//! \brief Stores the objects currently selected on the tree/list
-		vector<BaseObject *> selected_objs;
+		std::vector<BaseObject *> selected_objs;
 
 		/*! \brief Stores the  initial splitter size to be used in conjunction with the
 		object type visualization buttons */
@@ -63,7 +63,7 @@ class ModelObjectsWidget: public QWidget, public Ui::ModelObjectsWidget {
 		DatabaseModel *db_model;
 
 		//! \brief Stores which object types are visible on the view
-		map<ObjectType, bool> visible_objs_map;
+		std::map<ObjectType, bool> visible_objs_map;
 
 		//! \brief Updates only a schema tree starting from the 'root' item
 		void updateSchemaTree(QTreeWidgetItem *root);
@@ -108,10 +108,10 @@ class ModelObjectsWidget: public QWidget, public Ui::ModelObjectsWidget {
 
 	protected:
 		//! \brief Saves the currently expanded items on the specified vector
-		void saveTreeState(vector<BaseObject *> &tree_items);
+		void saveTreeState(std::vector<BaseObject *> &tree_items);
 
 		//! \brief Restores the tree at a previous state when the specified items were expanded
-		void restoreTreeState(vector<BaseObject *> &tree_items);
+		void restoreTreeState(std::vector<BaseObject *> &tree_items);
 
 		//! \brief Defines if the widget must save/restore the tree state automaticaly
 		void saveTreeState(bool value);

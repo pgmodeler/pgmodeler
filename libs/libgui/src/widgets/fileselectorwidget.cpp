@@ -169,7 +169,10 @@ void FileSelectorWidget::openFileDialog()
 {
 	filename_edt->clearFocus();
 	file_dlg.selectFile(filename_edt->text());
+
+	GuiUtilsNs::restoreFileDialogState(&file_dlg);
 	file_dlg.exec();
+	GuiUtilsNs::saveFileDialogState(&file_dlg);
 
 	if(file_dlg.result() == QDialog::Accepted && !file_dlg.selectedFiles().isEmpty())
 	{

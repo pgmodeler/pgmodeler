@@ -23,37 +23,70 @@
    <property name="bottomMargin">
     <number>5</number>
    </property>
+   <property name="spacing">
+    <number>5</number>
+   </property>
    <item row="2" column="0" colspan="3">
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
       <number>0</number>
      </property>
+     <property name="iconSize">
+      <size>
+       <width>22</width>
+       <height>22</height>
+      </size>
+     </property>
      <widget class="QWidget" name="view_refs_tab">
+      <attribute name="icon">
+       <iconset resource="../../res/resources.qrc">
+        <normaloff>:/icons/icons/reference.png</normaloff>:/icons/icons/reference.png</iconset>
+      </attribute>
       <attribute name="title">
        <string>References</string>
       </attribute>
      </widget>
      <widget class="QWidget" name="triggers_tab">
+      <attribute name="icon">
+       <iconset resource="../../res/resources.qrc">
+        <normaloff>:/icons/icons/trigger.png</normaloff>:/icons/icons/trigger.png</iconset>
+      </attribute>
       <attribute name="title">
        <string>Triggers</string>
       </attribute>
      </widget>
      <widget class="QWidget" name="rules_tab">
+      <attribute name="icon">
+       <iconset resource="../../res/resources.qrc">
+        <normaloff>:/icons/icons/rule.png</normaloff>:/icons/icons/rule.png</iconset>
+      </attribute>
       <attribute name="title">
        <string>Rules</string>
       </attribute>
      </widget>
      <widget class="QWidget" name="indexes_tab">
+      <attribute name="icon">
+       <iconset resource="../../res/resources.qrc">
+        <normaloff>:/icons/icons/index.png</normaloff>:/icons/icons/index.png</iconset>
+      </attribute>
       <attribute name="title">
        <string>Indexes</string>
       </attribute>
      </widget>
      <widget class="QWidget" name="cte_tab">
+      <attribute name="icon">
+       <iconset resource="../../res/resources.qrc">
+        <normaloff>:/icons/icons/sourcecode.png</normaloff>:/icons/icons/sourcecode.png</iconset>
+      </attribute>
       <attribute name="title">
        <string>Table Expression</string>
       </attribute>
      </widget>
      <widget class="QWidget" name="code_prev_tab">
+      <attribute name="icon">
+       <iconset resource="../../res/resources.qrc">
+        <normaloff>:/icons/icons/sqlpreview.png</normaloff>:/icons/icons/sqlpreview.png</iconset>
+      </attribute>
       <attribute name="title">
        <string>Code Preview</string>
       </attribute>
@@ -76,6 +109,9 @@
        <number>5</number>
       </property>
       <property name="bottomMargin">
+       <number>5</number>
+      </property>
+      <property name="spacing">
        <number>5</number>
       </property>
       <item row="0" column="0">
@@ -106,6 +142,9 @@
       </item>
       <item row="1" column="1">
        <layout class="QHBoxLayout" name="horizontalLayout">
+        <property name="spacing">
+         <number>5</number>
+        </property>
         <item>
          <widget class="QRadioButton" name="ordinary_rb">
           <property name="text">
@@ -159,6 +198,9 @@
    </item>
   </layout>
  </widget>
- <resources/>
+ <resources>
+  <include location="../../res/resources.qrc"/>
+  <include location="../../res/resources.qrc"/>
+ </resources>
  <connections/>
 </ui>

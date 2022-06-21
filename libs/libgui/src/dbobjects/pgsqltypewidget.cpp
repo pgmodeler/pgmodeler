@@ -189,7 +189,7 @@ void PgSQLTypeWidget::setAttributes(PgSqlType type, DatabaseModel *model, bool a
 
 		//Get the passed type index
 		type_name=~type;
-		type_name.remove(QRegExp(QString("( )(with)(out)?(.)*")));
+		type_name.remove(QRegularExpression(QString("( )(with)(out)?(.)*")));
 		idx=type_cmb->findText(type_name);
 
 		//Select the type on the combo

@@ -49,7 +49,7 @@ void Function::addReturnedTableColumn(const QString &name, PgSqlType type)
 	if(name.isEmpty())
 		throw Exception(ErrorCode::AsgEmptyNameTableReturnType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	vector<Parameter>::iterator itr,itr_end;
+	std::vector<Parameter>::iterator itr,itr_end;
 	bool found=false;
 
 	type.reset();
@@ -228,7 +228,7 @@ void Function::removeReturnedTableColumn(unsigned column_idx)
 	if(column_idx>=ret_table_columns.size())
 		throw Exception(ErrorCode::RefObjectInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	vector<Parameter>::iterator itr;
+	std::vector<Parameter>::iterator itr;
 	itr=ret_table_columns.begin()+column_idx;
 	ret_table_columns.erase(itr);
 	setCodeInvalidated(true);

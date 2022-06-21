@@ -37,7 +37,7 @@ void HtmlItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
 	painter->save();
 	QStyledItemDelegate::paint(painter, option, index);
 
-	if(text.contains(QRegExp("(<)(\\/)?(.+)((>)|(\\/>))(\n)?")))
+	if(text.contains(QRegularExpression("(<)(\\/)?(.+)((>)|(\\/>))(\n)?")))
 	{
 		static QTextDocument doc;
 		static QRect rect;

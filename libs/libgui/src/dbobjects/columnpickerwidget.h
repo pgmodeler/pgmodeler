@@ -56,16 +56,16 @@ class ColumnPickerWidget: public QWidget, public Ui::ColumnPickerWidget {
 		/*! \brief Fills the columns grid with the elements in the vector.
 		 * Columns that aren't child of the parent object specified by setParentObject()
 		 * will be ignored */
-		void setColumns(const vector<Column *> &cols);
+		void setColumns(const std::vector<Column *> &cols);
 
 		//! \brief Fills the columns grid with the elements view's columns
-		void setColumns(const vector<SimpleColumn> &cols);
+		void setColumns(const std::vector<SimpleColumn> &cols);
 
 		//! \brief Returns a list of the columns that are in the grid.
-		vector<Column *> getColumns();
+		std::vector<Column *> getColumns();
 
 		//! \brief Returns a list of the view columns that are in the grid.
-		vector<SimpleColumn> getSimpleColumns();
+		std::vector<SimpleColumn> getSimpleColumns();
 
 	private slots:
 		void updateColumnsCombo();

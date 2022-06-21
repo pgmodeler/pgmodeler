@@ -20,7 +20,7 @@
 #include "schemaparser.h"
 #include "attributes.h"
 
-vector<UserTypeConfig> PgSqlType::user_types;
+std::vector<UserTypeConfig> PgSqlType::user_types;
 
 template<>
 QStringList PgSqlType::TemplateType<PgSqlType>::type_names =
@@ -142,7 +142,7 @@ PgSqlType PgSqlType::parseString(const QString &str)
 		interv=intervals.back();
 		intervals.pop_back();
 
-		start=type_str.indexOf(QRegExp(QString("( )") + interv.toLower()));
+		start=type_str.indexOf(QRegularExpression(QString("( )") + interv.toLower()));
 		if(start>=0)
 		{
 			type_str.remove(start, interv.size()+1);
@@ -153,24 +153,24 @@ PgSqlType PgSqlType::parseString(const QString &str)
 	}
 
 	//Check if the type contains "with time zone" descriptor
-	with_tz=QRegExp(QString("(.)*(with time zone)(.)*")).exactMatch(type_str);
+	with_tz = QRegularExpression(QRegularExpression::anchoredPattern("(.)*(with time zone)(.)*")).match(type_str).hasMatch();
 
 	//Removes the timezone descriptor
-	type_str.remove(QRegExp(QString("(with)(out)*( time zone)")));
+	type_str.remove(QRegularExpression("(with)(out)*( time zone)"));
 
 	//Count the dimension of the type and removes the array descriptor
-	dim=type_str.count(QString("[]"));
-	type_str.remove(QString("[]"));
+	dim=type_str.count("[]");
+	type_str.remove("[]");
 
 	//Check if the type is a variable length type, e.g varchar(200)
-	if(QRegExp(QString("(.)+\\(( )*[0-9]+( )*\\)")).indexIn(type_str) >=0)
+	if(QRegularExpression("(.)+\\(( )*[0-9]+( )*\\)").match(type_str).hasMatch())
 	{
 		start=type_str.indexOf('(');
 		end=type_str.indexOf(')', start);
 		len=type_str.mid(start+1, end-start-1).toInt();
 	}
 	//Check if the type is a numeric type, e.g, numeric(10,2)
-	else if(QRegExp(QString("(.)+\\(( )*[0-9]+( )*(,)( )*[0-9]+( )*\\)")).indexIn(type_str) >=0)
+	else if(QRegularExpression("(.)+\\(( )*[0-9]+( )*(,)( )*[0-9]+( )*\\)").match(type_str).hasMatch())
 	{
 		start=type_str.indexOf('(');
 		end=type_str.indexOf(')', start);
@@ -179,7 +179,8 @@ PgSqlType PgSqlType::parseString(const QString &str)
 		prec=value[1].toUInt();
 	}
 	//Check if the type is a spatial type (PostGiS), e.g, geography(POINTZ, 4296)
-	else if(QRegExp(QString("(.)+\\(( )*[a-z]+(( )*(,)( )*[0-9]+( )*)?\\)"), Qt::CaseInsensitive).indexIn(type_str) >=0)
+	else if(QRegularExpression("(.)+\\(( )*[a-z]+(( )*(,)( )*[0-9]+( )*)?\\)",
+														 QRegularExpression::CaseInsensitiveOption).match(type_str).hasMatch())
 	{
 		start=type_str.indexOf('(');
 		end=type_str.indexOf(')', start);
@@ -218,7 +219,7 @@ PgSqlType PgSqlType::parseString(const QString &str)
 			{
 				/* One last try it to check if the type has an entry on user defined types
 			 as pg_catalog.[type name] */
-				type=PgSqlType(QString("pg_catalog.") + type_str);
+				type=PgSqlType("pg_catalog." + type_str);
 			}
 		}
 
@@ -543,7 +544,7 @@ void PgSqlType::removeUserType(const QString &type_name, void *ptype)
 	if(PgSqlType::user_types.size() > 0 &&
 			!type_name.isEmpty() && ptype)
 	{
-		vector<UserTypeConfig>::iterator itr, itr_end;
+		std::vector<UserTypeConfig>::iterator itr, itr_end;
 
 		itr=PgSqlType::user_types.begin();
 		itr_end=PgSqlType::user_types.end();
@@ -568,7 +569,7 @@ void PgSqlType::renameUserType(const QString &type_name, void *ptype,const QStri
 	if(PgSqlType::user_types.size() > 0 &&
 			!type_name.isEmpty() && ptype && type_name!=new_name)
 	{
-		vector<UserTypeConfig>::iterator itr, itr_end;
+		std::vector<UserTypeConfig>::iterator itr, itr_end;
 
 		itr=PgSqlType::user_types.begin();
 		itr_end=PgSqlType::user_types.end();
@@ -589,7 +590,7 @@ void PgSqlType::removeUserTypes(void *pmodel)
 {
 	if(pmodel)
 	{
-		vector<UserTypeConfig>::iterator itr;
+		std::vector<UserTypeConfig>::iterator itr;
 		unsigned idx=0;
 
 		itr=user_types.begin();
@@ -614,7 +615,7 @@ unsigned PgSqlType::getBaseTypeIndex(const QString &type_name)
 	QString aux_name=type_name;
 
 	aux_name.remove(QString("[]"));
-	aux_name.remove(QRegExp(QString("( )(with)(out)?(.)*")));
+	aux_name.remove(QRegularExpression(QString("( )(with)(out)?(.)*")));
 	aux_name=aux_name.trimmed();
 	return getType(aux_name, type_names);
 }
@@ -623,7 +624,7 @@ unsigned PgSqlType::getUserTypeIndex(const QString &type_name, void *ptype, void
 {
 	if(user_types.size() > 0 && (!type_name.isEmpty() || ptype))
 	{
-		vector<UserTypeConfig>::iterator itr, itr_end;
+		std::vector<UserTypeConfig>::iterator itr, itr_end;
 		int idx=0;
 
 		itr=user_types.begin();
@@ -679,7 +680,7 @@ void PgSqlType::getUserTypes(QStringList &type_list, void *pmodel, unsigned inc_
 	}
 }
 
-void PgSqlType::getUserTypes(vector<void *> &ptypes, void *pmodel, unsigned inc_usr_types)
+void PgSqlType::getUserTypes(std::vector<void *> &ptypes, void *pmodel, unsigned inc_usr_types)
 {
 	unsigned idx, total;
 
@@ -900,7 +901,7 @@ bool PgSqlType::canCastTo(PgSqlType type)
 bool PgSqlType::isEquivalentTo(PgSqlType type)
 {
 	unsigned this_idx=0, type_idx=0;
-	static vector<QStringList> types={{QString("int2"),QString("smallint")},
+	static std::vector<QStringList> types={{QString("int2"),QString("smallint")},
 																		{QString("int4"),QString("integer")},
 																		{QString("int8"),QString("bigint")},
 																		{QString("decimal"),QString("numeric")},
@@ -952,14 +953,14 @@ PgSqlType PgSqlType::getAliasType()
 {
 	if(!isUserType())
 	{
-		if(type_names[this->type_idx]==QString("serial"))
-			return (PgSqlType(QString("integer")));
+		if(type_names[this->type_idx]=="serial")
+			return (PgSqlType("integer"));
 
-		if(type_names[this->type_idx]==QString("smallserial"))
-			return (PgSqlType(QString("smallint")));
+		if(type_names[this->type_idx]=="smallserial")
+			return (PgSqlType("smallint"));
 
-		if(type_names[this->type_idx]==QString("bigserial"))
-			return (PgSqlType(QString("bigint")));
+		if(type_names[this->type_idx]=="bigserial")
+			return (PgSqlType("bigint"));
 
 		return (PgSqlType(type_names[this->type_idx]));
 	}

@@ -228,6 +228,10 @@
         <file>icons/h_menu_indicator.png</file>
         <file>icons/cursortmpl.png</file>
         <file>icons/addfilter.png</file>
+        <file>icons/uicode.png</file>
+        <file>icons/locker.png</file>
+        <file>icons/connmode.png</file>
+        <file>icons/sqlpreview.png</file>
     </qresource>
     <qresource prefix="/images">
         <file>images/brazil_flag.png</file>

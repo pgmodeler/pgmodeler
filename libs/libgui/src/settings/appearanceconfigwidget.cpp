@@ -19,11 +19,10 @@
 #include "appearanceconfigwidget.h"
 #include "widgets/modelwidget.h"
 #include "widgets/objectstablewidget.h"
-#include "utils/custommenustyle.h"
 
-map<QString, attribs_map> AppearanceConfigWidget::config_params;
+std::map<QString, attribs_map> AppearanceConfigWidget::config_params;
 
-map<QPalette::ColorRole, QStringList> AppearanceConfigWidget::system_ui_colors = {
+std::map<QPalette::ColorRole, QStringList> AppearanceConfigWidget::system_ui_colors = {
 	{ QPalette::WindowText, {} },
 	{ QPalette::Button, {} },
 	{ QPalette::Light, {} },
@@ -46,7 +45,7 @@ map<QPalette::ColorRole, QStringList> AppearanceConfigWidget::system_ui_colors =
 	{ QPalette::PlaceholderText, {} }
 };
 
-map<QPalette::ColorRole, QStringList> AppearanceConfigWidget::dark_ui_colors = {
+std::map<QPalette::ColorRole, QStringList> AppearanceConfigWidget::dark_ui_colors = {
 	{ QPalette::WindowText, {"#eff0f1", "#eff0f1", "#626c76"} },
 	{ QPalette::Button, {"#31363b", "#31363b", "#31363b"} },
 	{ QPalette::Light, {"#181b1d", "#181b1d", "#181b1d"} },
@@ -69,7 +68,7 @@ map<QPalette::ColorRole, QStringList> AppearanceConfigWidget::dark_ui_colors = {
 	{ QPalette::PlaceholderText, {"#2e2f30", "#2e2f30", "#2e2f30"} }
 };
 
-map<QPalette::ColorRole, QStringList> AppearanceConfigWidget::light_ui_colors = {
+std::map<QPalette::ColorRole, QStringList> AppearanceConfigWidget::light_ui_colors = {
 	{ QPalette::WindowText, {"#232627", "#232627", "#777878"} },
 	{ QPalette::Button, {"#eff0f1", "#eff0f1", "#eff0f1"} },
 	{ QPalette::Light, {"#ffffff", "#ffffff", "#ffffff"} },
@@ -182,7 +181,7 @@ AppearanceConfigWidget::AppearanceConfigWidget(QWidget * parent) : BaseConfigWid
 														17, 19, 21, 23, 25, 28, 29, 30,
 														34, 35, 36, 37, 39, 43, 45, 47, 49,
 														50, 52, 54, 56, 57, 60, 61, 62, 63, 64 };
-	vector<int> conf_obj_ids(obj_conf_ids_vect, obj_conf_ids_vect + sizeof(obj_conf_ids_vect) / sizeof(int));
+	std::vector<int> conf_obj_ids(obj_conf_ids_vect, obj_conf_ids_vect + sizeof(obj_conf_ids_vect) / sizeof(int));
 
 	conf_items.resize(count);
 	for(i=0; i < count; i++)
@@ -266,6 +265,10 @@ CREATE TABLE public.table_b (\n \
 	syntax_hl_theme_cmb->addItem(tr("Light"), Attributes::Light);
 	syntax_hl_theme_cmb->addItem(tr("Dark"), Attributes::Dark);
 
+	icons_size_cmb->addItem(tr("Big"), Attributes::Big);
+	icons_size_cmb->addItem(tr("Medium"), Attributes::Medium);
+	icons_size_cmb->addItem(tr("Small"), Attributes::Small);
+
 	connect(element_cmb, &QComboBox::currentTextChanged, this, &AppearanceConfigWidget::enableConfigElement);
 	connect(elem_font_cmb, &QFontComboBox::currentFontChanged, this, &AppearanceConfigWidget::applyElementFontStyle);
 	connect(elem_font_size_spb, &QDoubleSpinBox::textChanged, this, &AppearanceConfigWidget::applyElementFontStyle);
@@ -305,17 +308,16 @@ CREATE TABLE public.table_b (\n \
 
 	connect(syntax_hl_theme_cmb, &QComboBox::currentTextChanged, this, &AppearanceConfigWidget::applySyntaxHighlightTheme);
 
-	connect(ui_theme_cmb, &QComboBox::currentTextChanged, [&](){
-		int idx = ui_theme_cmb->currentIndex() - 1;
-		if(idx < 0 ) idx = 0;
-		syntax_hl_theme_cmb->blockSignals(true);
-		syntax_hl_theme_cmb->setCurrentIndex(idx);
-		syntax_hl_theme_cmb->blockSignals(false);
+	connect(ui_theme_cmb, &QComboBox::currentTextChanged, this, &AppearanceConfigWidget::previewUiSettings);
+	connect(icons_size_cmb, &QComboBox::currentTextChanged, this, &AppearanceConfigWidget::previewUiSettings);
 
-		QApplication::setOverrideCursor(Qt::WaitCursor);
-		applyUiTheme();
-		applyDesignCodeTheme();
-		QApplication::restoreOverrideCursor();
+	connect(custom_scale_chk, &QCheckBox::toggled, [&](bool toggled){
+		custom_scale_spb->setEnabled(toggled);
+		setConfigurationChanged(true);
+	});
+
+	connect(custom_scale_spb, &QDoubleSpinBox::valueChanged, [&](){
+		setConfigurationChanged(true);
 	});
 }
 
@@ -329,7 +331,7 @@ AppearanceConfigWidget::~AppearanceConfigWidget()
 	delete model;
 }
 
-map<QString, attribs_map> AppearanceConfigWidget::getConfigurationParams()
+std::map<QString, attribs_map> AppearanceConfigWidget::getConfigurationParams()
 {
 	return config_params;
 }
@@ -435,17 +437,23 @@ void AppearanceConfigWidget::loadConfiguration()
 
 		ui_theme_cmb->blockSignals(true);
 		syntax_hl_theme_cmb->blockSignals(true);
+		icons_size_cmb->blockSignals(true);
 
-		ui_theme_cmb->setCurrentIndex(ui_theme_cmb->findData(
-																		config_params[GlobalAttributes::AppearanceConf][Attributes::UiTheme],
-																		Qt::UserRole, Qt::MatchExactly));
+		int idx = ui_theme_cmb->findData(config_params[GlobalAttributes::AppearanceConf][Attributes::UiTheme], Qt::UserRole, Qt::MatchExactly);
+		ui_theme_cmb->setCurrentIndex(idx < 0 ? 0 : idx);
 
-		syntax_hl_theme_cmb->setCurrentIndex(syntax_hl_theme_cmb->findData(
-																					config_params[GlobalAttributes::AppearanceConf][Attributes::SyntaxHlTheme],
-																					Qt::UserRole, Qt::MatchExactly));
+		idx = syntax_hl_theme_cmb->findData(config_params[GlobalAttributes::AppearanceConf][Attributes::SyntaxHlTheme], Qt::UserRole, Qt::MatchExactly);
+		syntax_hl_theme_cmb->setCurrentIndex(idx < 0 ? 0 : idx);
+
+		idx = icons_size_cmb->findData(config_params[GlobalAttributes::AppearanceConf][Attributes::IconsSize], Qt::UserRole, Qt::MatchExactly);
+		icons_size_cmb->setCurrentIndex(idx < 0 ? 0 : idx);
 
 		ui_theme_cmb->blockSignals(false);
 		syntax_hl_theme_cmb->blockSignals(false);
+		icons_size_cmb->blockSignals(false);
+
+		custom_scale_chk->setChecked(config_params[GlobalAttributes::AppearanceConf].count(Attributes::CustomScale));
+		custom_scale_spb->setValue(config_params[GlobalAttributes::AppearanceConf][Attributes::CustomScale].toDouble());
 
 		applyConfiguration();
 	}
@@ -568,6 +576,11 @@ void AppearanceConfigWidget::saveConfiguration()
 		config_params.erase(GlobalAttributes::AppearanceConf);
 		attribs[Attributes::UiTheme] =  ui_theme_cmb->currentData(Qt::UserRole).toString();
 		attribs[Attributes::SyntaxHlTheme] = hl_theme;
+		attribs[Attributes::IconsSize] = icons_size_cmb->currentData(Qt::UserRole).toString();
+
+		attribs[Attributes::CustomScale] = custom_scale_chk->isChecked() ?
+					QString::number(custom_scale_spb->value(), 'g', 2) : "";
+
 		config_params[Attributes::UiTheme] = attribs;
 		attribs.clear();
 
@@ -833,6 +846,7 @@ void AppearanceConfigWidget::previewCodeFontStyle()
 	fnt=code_font_cmb->currentFont();
 	fnt.setPointSizeF(code_font_size_spb->value());
 
+	SyntaxHighlighter::setDefaultFont(fnt);
 	NumberedTextEditor::setDefaultFont(fnt);
 	NumberedTextEditor::setLineNumbersVisible(disp_line_numbers_chk->isChecked());
 	NumberedTextEditor::setLineHighlightColor(line_highlight_cp->getColor(0));
@@ -844,7 +858,8 @@ void AppearanceConfigWidget::previewCodeFontStyle()
 	font_preview_txt->updateLineNumbersSize();
 	font_preview_txt->updateLineNumbers();
 	font_preview_txt->highlightCurrentLine();
-	font_preview_txt->setReadOnly(true);
+	font_preview_txt->setReadOnly(true);	
+	font_preview_hl->rehighlight();
 
 	setConfigurationChanged(true);
 }
@@ -861,20 +876,20 @@ void AppearanceConfigWidget::previewCanvasColors()
 
 void AppearanceConfigWidget::applyUiTheme()
 {
-	map<QString, map<QPalette::ColorRole, QStringList> *> color_maps = {
+	std::map<QString, std::map<QPalette::ColorRole, QStringList> *> color_maps = {
 		{ { Attributes::System }, { &system_ui_colors } },
 		{ { Attributes::Dark }, { &dark_ui_colors } },
 		{ { Attributes::Light }, { &light_ui_colors } }
 	};
 
-	map<QString, QStringList *> item_color_lists = {
+	std::map<QString, QStringList *> item_color_lists = {
 		{ { Attributes::System }, { &light_tab_item_colors } },
 		{ { Attributes::Dark }, { &dark_tab_item_colors } },
 		{ { Attributes::Light }, { &light_tab_item_colors } }
 	};
 
 	QString ui_theme = ui_theme_cmb->currentData(Qt::UserRole).toString();
-	map<QPalette::ColorRole, QStringList> *color_map = color_maps[ui_theme];
+	std::map<QPalette::ColorRole, QStringList> *color_map = color_maps[ui_theme];
 	QStringList *item_colors = item_color_lists[ui_theme];
 	QPalette pal;
 
@@ -904,6 +919,20 @@ void AppearanceConfigWidget::applyUiTheme()
 	applySyntaxHighlightTheme();
 	applyUiStyleSheet();
 	setConfigurationChanged(true);
+}
+
+void AppearanceConfigWidget::previewUiSettings()
+{
+	int idx = ui_theme_cmb->currentIndex() - 1;
+	if(idx < 0 ) idx = 0;
+	syntax_hl_theme_cmb->blockSignals(true);
+	syntax_hl_theme_cmb->setCurrentIndex(idx);
+	syntax_hl_theme_cmb->blockSignals(false);
+
+	QApplication::setOverrideCursor(Qt::WaitCursor);
+	applyUiTheme();
+	applyDesignCodeTheme();
+	QApplication::restoreOverrideCursor();
 }
 
 void AppearanceConfigWidget::applySyntaxHighlightTheme()
@@ -951,34 +980,12 @@ void AppearanceConfigWidget::applyDesignCodeTheme()
 
 void AppearanceConfigWidget::applyUiStyleSheet()
 {
-	QString extra_ui_conf;
-
-	// Performing specific settings depending on the screen size
-	QSize sz = qApp->primaryScreen()->size();
-	QString ui_size_conf;
-
-	// QMenu icon sizes in full hd screens is 22x22
-	if(sz.width() <= GuiUtilsNs::FHDWidth)
-	{
-		CustomMenuStyle::setIconPixelMetric(22);
-		ui_size_conf = GlobalAttributes::UiSmallStyleConf;
-	}
-	// QMenu icon sizes in 2k screens is 25x25
-	else if(sz.width() <= GuiUtilsNs::QHDWidth)
-	{
-		CustomMenuStyle::setIconPixelMetric(25);
-		ui_size_conf = GlobalAttributes::UiMediumStyleConf;
-	}
-
-	if(!ui_size_conf.isEmpty())
-	{
-		extra_ui_conf = GlobalAttributes::getTmplConfigurationFilePath("",
-																																	 ui_size_conf +
-																																	 GlobalAttributes::ConfigurationExt);
-	}
+	QString ico_style_conf = GlobalAttributes::getTmplConfigurationFilePath("",
+																																					"icons-" + icons_size_cmb->currentData().toString().toLower() +
+																																					GlobalAttributes::ConfigurationExt);
 
 	QFile ui_style(GlobalAttributes::getTmplConfigurationFilePath("",
-																																GlobalAttributes::UiDefaulStyleConf +
+																																GlobalAttributes::UiStyleConf +
 																																GlobalAttributes::ConfigurationExt));
 
 	ui_style.open(QFile::ReadOnly);
@@ -993,19 +1000,19 @@ void AppearanceConfigWidget::applyUiStyleSheet()
 	{
 		QByteArray ui_stylesheet = ui_style.readAll();
 
-		if(!extra_ui_conf.isEmpty())
+		if(!ico_style_conf.isEmpty())
 		{
-			QFile extra_ui_style(extra_ui_conf);
-			extra_ui_style.open(QFile::ReadOnly);
+			QFile ico_style(ico_style_conf);
+			ico_style.open(QFile::ReadOnly);
 
-			if(!extra_ui_style.isOpen())
+			if(!ico_style.isOpen())
 			{
 				Messagebox msg;
-				msg.show(Exception(Exception::getErrorMessage(ErrorCode::FileDirectoryNotAccessed).arg(extra_ui_conf),
+				msg.show(Exception(Exception::getErrorMessage(ErrorCode::FileDirectoryNotAccessed).arg(ico_style_conf),
 													 ErrorCode::FileDirectoryNotAccessed,__PRETTY_FUNCTION__,__FILE__,__LINE__));
 			}
 			else
-				ui_stylesheet.append(extra_ui_style.readAll());
+				ui_stylesheet.append(ico_style.readAll());
 		}
 
 		qApp->setStyleSheet(ui_stylesheet);

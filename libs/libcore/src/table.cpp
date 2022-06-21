@@ -120,7 +120,7 @@ void Table::removeObject(BaseObject *obj)
 	}
 }
 
-vector<TableObject *> *Table::getObjectList(ObjectType obj_type)
+std::vector<TableObject *> *Table::getObjectList(ObjectType obj_type)
 {
 	if(obj_type==ObjectType::Rule)
 		return &rules;
@@ -290,7 +290,7 @@ unsigned Table::getPolicyCount()
 	return policies.size();
 }
 
-void Table::getForeignKeys(vector<Constraint *> &fks, bool inc_added_by_rel, Table *ref_table)
+void Table::getForeignKeys(std::vector<Constraint *> &fks, bool inc_added_by_rel, Table *ref_table)
 {
 	unsigned count,i;
 	Constraint *constr=nullptr;
@@ -387,14 +387,14 @@ void Table::operator = (Table &tab)
 	this->rls_enabled=tab.rls_enabled;
 }
 
-void Table::getColumnReferences(Column *column, vector<TableObject *> &refs, bool exclusion_mode)
+void Table::getColumnReferences(Column *column, std::vector<TableObject *> &refs, bool exclusion_mode)
 {
 	if(column && !column->isAddedByRelationship())
 	{
 		unsigned count, i;
 		IndexElement elem;
 		Column *col=nullptr;
-		vector<TableObject *>::iterator itr, itr_end;
+		std::vector<TableObject *>::iterator itr, itr_end;
 		bool found=false;
 		Index *ind=nullptr;
 

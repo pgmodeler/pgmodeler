@@ -29,7 +29,8 @@ SUBDIRS += apps/pgmodeler \
 	   apps/pgmodeler-se
 
 # Deployment settings
-samples.files = assets/samples/*
+defined(DEMO_VERSION, var): samples.files = assets/samples/demo.dbm
+!defined(DEMO_VERSION, var): samples.files = assets/samples/*
 samples.path = $$SAMPLESDIR
 
 schemas.files = assets/schemas/*

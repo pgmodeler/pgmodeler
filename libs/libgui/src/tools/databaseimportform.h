@@ -68,7 +68,7 @@ class DatabaseImportForm: public QDialog, public Ui::DatabaseImportForm {
 		
 		/*! \brief Returns the items oids in "obj_oids" map. The second parameter
 		"col_oids" stores the columns oids for each selected table */
-		void getObjectToImport(map<ObjectType, vector<unsigned>> &obj_oids, map<unsigned, vector<unsigned>> &col_oids);
+		void getObjectToImport(std::map<ObjectType, std::vector<unsigned>> &obj_oids, std::map<unsigned, std::vector<unsigned>> &col_oids);
 		
 		void finishImport(const QString &msg);
 		void showEvent(QShowEvent *);
@@ -140,7 +140,7 @@ class DatabaseImportForm: public QDialog, public Ui::DatabaseImportForm {
 		The "schema" and "table" parameter are used to filter objects by schema and/or table.
 		This method automatically returns a list of QTreeWidgetItem when the vector "types" contains ObjectType::ObjSchema or ObjectType::Table or ObjectType::View,
 		The sort_by param indicates the column index in which the tree should be sorted by. When the sort_by is negative not sorting will be performed.*/
-		static vector<QTreeWidgetItem *> updateObjectsTree(DatabaseImportHelper &import_helper, QTreeWidget *tree_wgt, vector<ObjectType> types,
+		static std::vector<QTreeWidgetItem *> updateObjectsTree(DatabaseImportHelper &import_helper, QTreeWidget *tree_wgt, std::vector<ObjectType> types,
 																											 bool checkable_items=false, bool disable_empty_grps=true, QTreeWidgetItem *root=nullptr,
 																											 const QString &schema="", const QString &table="");
 

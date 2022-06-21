@@ -197,8 +197,7 @@ void ModelOverviewWidget::resizeOverview()
 {
 	if(this->model)
 	{
-		QDesktopWidget desktop;
-		QRect screen_rect=qApp->primaryScreen()->geometry();
+		QRect screen_rect = this->screen()->geometry();
 
 		//Make an initial calculation of the overview window size
 		scene_rect=this->model->scene->sceneRect();
@@ -295,7 +294,7 @@ void ModelOverviewWidget::mouseMoveEvent(QMouseEvent *event)
 	if(event->buttons()==Qt::LeftButton)
 	{
 		QRect rect=window_frm->geometry(), rect1;
-		int width = 0, height = 0, x=event->x(), y=event->y() + scrollarea->verticalScrollBar()->value();
+		int width = 0, height = 0, x=event->pos().x(), y=event->pos().y() + scrollarea->verticalScrollBar()->value();
 
 		width=rect.width()/2;
 		height=rect.height()/2;

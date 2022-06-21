@@ -152,8 +152,8 @@ void DatabaseImportForm::listFilteredObjects(DatabaseImportHelper &import_hlp, Q
 	if(!flt_objects_tbw)
 		return;
 
-	vector<ObjectType> types = import_hlp.getCatalog().getFilteredObjectTypes();
-	vector<attribs_map> obj_attrs;
+	std::vector<ObjectType> types = import_hlp.getCatalog().getFilteredObjectTypes();
+	std::vector<attribs_map> obj_attrs;
 	QTableWidgetItem *item = nullptr;
 	int row = 0;
 	ObjectType obj_type;
@@ -290,8 +290,8 @@ void DatabaseImportForm::importDatabase()
 	{
 		Messagebox msg_box;
 
-		map<ObjectType, vector<unsigned>> obj_oids;
-		map<unsigned, vector<unsigned>> col_oids;
+		std::map<ObjectType, std::vector<unsigned>> obj_oids;
+		std::map<unsigned, std::vector<unsigned>> col_oids;
 
 		if(import_to_model_chk->isChecked())
 		{
@@ -390,7 +390,7 @@ bool DatabaseImportForm::hasObjectsToImport()
 	return selected;
 }
 
-void DatabaseImportForm::getObjectToImport(map<ObjectType, vector<unsigned>> &obj_oids, map<unsigned, vector<unsigned>> &col_oids)
+void DatabaseImportForm::getObjectToImport(std::map<ObjectType, std::vector<unsigned>> &obj_oids, std::map<unsigned, std::vector<unsigned>> &col_oids)
 {
 	ObjectType obj_type;
 	unsigned tab_oid=0;
@@ -610,7 +610,7 @@ void DatabaseImportForm::filterObjects(QTreeWidget *tree_wgt, const QString &pat
 	QTreeWidgetItemIterator itr(tree_wgt);
 
 	if(search_column == DatabaseImportForm::ObjectId)
-		items = tree_wgt->findItems(QString("^(0)*(%1)(.)*").arg(pattern), Qt::MatchRegExp | Qt::MatchRecursive, search_column);
+		items = tree_wgt->findItems(QString("^(0)*(%1)(.)*").arg(pattern), Qt::MatchRegularExpression | Qt::MatchRecursive, search_column);
 	else
 		items = tree_wgt->findItems(pattern, Qt::MatchStartsWith | Qt::MatchRecursive, search_column);
 
@@ -766,7 +766,7 @@ void DatabaseImportForm::listDatabases(DatabaseImportHelper &import_helper, QCom
 			attribs_map db_attribs;
 			attribs_map::iterator itr;
 			QStringList list;
-			map<QString, unsigned> oids;
+			std::map<QString, unsigned> oids;
 
 			db_attribs=import_helper.getObjects(ObjectType::Database);
 			dbcombo->blockSignals(true);
@@ -816,7 +816,7 @@ void DatabaseImportForm::listObjects(DatabaseImportHelper &import_helper, QTreeW
 		if(tree_wgt)
 		{
 			QTreeWidgetItem *db_item=nullptr, *item=nullptr;
-			vector<QTreeWidgetItem *> sch_items, tab_items;
+			std::vector<QTreeWidgetItem *> sch_items, tab_items;
 			double inc=0, inc1=0, aux_prog=0;
 
 			if(!create_dummy_item)
@@ -832,7 +832,7 @@ void DatabaseImportForm::listObjects(DatabaseImportHelper &import_helper, QTreeW
 			if(create_db_item)
 			{
 				Catalog catalog=import_helper.getCatalog();
-				vector<attribs_map> attribs;
+				std::vector<attribs_map> attribs;
 
 				//Creating database item
 				db_item=new QTreeWidgetItem;
@@ -921,10 +921,10 @@ void DatabaseImportForm::listObjects(DatabaseImportHelper &import_helper, QTreeW
 	}
 }
 
-vector<QTreeWidgetItem *> DatabaseImportForm::updateObjectsTree(DatabaseImportHelper &import_helper, QTreeWidget *tree_wgt, vector<ObjectType> types, bool checkable_items,
+std::vector<QTreeWidgetItem *> DatabaseImportForm::updateObjectsTree(DatabaseImportHelper &import_helper, QTreeWidget *tree_wgt, std::vector<ObjectType> types, bool checkable_items,
 																																bool disable_empty_grps, QTreeWidgetItem *root, const QString &schema, const QString &table)
 {
-	vector<QTreeWidgetItem *> items_vect;
+	std::vector<QTreeWidgetItem *> items_vect;
 
 	if(tree_wgt)
 	{
@@ -933,8 +933,8 @@ vector<QTreeWidgetItem *> DatabaseImportForm::updateObjectsTree(DatabaseImportHe
 		attribs_map extra_attribs={{Attributes::FilterTableTypes, Attributes::True}};
 		QString tooltip=QString("OID: %1"), name, label;
 		bool child_checked=false;
-		vector<attribs_map> objects_vect;
-		map<ObjectType, QTreeWidgetItem *> gen_groups;
+		std::vector<attribs_map> objects_vect;
+		std::map<ObjectType, QTreeWidgetItem *> gen_groups;
 		ObjectType obj_type;
 		QList<QTreeWidgetItem*> groups_list;
 		unsigned oid=0;
@@ -978,7 +978,7 @@ vector<QTreeWidgetItem *> DatabaseImportForm::updateObjectsTree(DatabaseImportHe
 				//Creates individual items for each object of the current type
 				oid=attribs[Attributes::Oid].toUInt();
 
-				attribs[Attributes::Name].remove(QRegExp(QString("( )(without)( time zone)")));
+				attribs[Attributes::Name].remove(QRegularExpression(QString("( )(without)( time zone)")));
 				label=name=attribs[Attributes::Name];
 
 				//Removing the trailing type string from op. families or op. classes names

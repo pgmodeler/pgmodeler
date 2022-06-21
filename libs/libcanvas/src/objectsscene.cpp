@@ -23,16 +23,13 @@ bool ObjectsScene::show_grid=true;
 bool ObjectsScene::show_page_delim=true;
 unsigned ObjectsScene::grid_size=20;
 
-QPrinter::PageSize ObjectsScene::paper_size=QPrinter::A4;
-QPrinter::Orientation ObjectsScene::page_orientation=QPrinter::Landscape;
-
-QRectF ObjectsScene::page_margins=QRectF(2,2,2,2);
-QSizeF ObjectsScene::custom_paper_size=QSizeF(0,0);
+QPageLayout ObjectsScene::page_layout(QPageSize(QPageSize::A4), QPageLayout::Landscape, QMarginsF(10,10,10,10));
+QSizeF ObjectsScene::custom_paper_size(0,0);
 QBrush ObjectsScene::grid;
 
-const QColor ObjectsScene::DefaultGridColor = QColor(225, 225, 225);
-const QColor ObjectsScene::DefaultCanvasColor = QColor(255, 255, 255);
-const QColor ObjectsScene::DefaultDelimitersColor = QColor(75,115,195);
+const QColor ObjectsScene::DefaultGridColor(225, 225, 225);
+const QColor ObjectsScene::DefaultCanvasColor(255, 255, 255);
+const QColor ObjectsScene::DefaultDelimitersColor(75,115,195);
 
 QColor ObjectsScene::grid_color = ObjectsScene::DefaultGridColor;
 QColor ObjectsScene::canvas_color = ObjectsScene::DefaultCanvasColor;
@@ -83,7 +80,7 @@ ObjectsScene::~ObjectsScene()
 {
 	QGraphicsItemGroup *item=nullptr;
 	QList<QGraphicsItem *> items;
-	vector<ObjectType> obj_types={ ObjectType::Relationship, ObjectType::Textbox, ObjectType::View,
+	std::vector<ObjectType> obj_types={ ObjectType::Relationship, ObjectType::Textbox, ObjectType::View,
 																 ObjectType::Table, ObjectType::ForeignTable, ObjectType::Schema };
 
 	this->removeItem(selection_rect);
@@ -211,7 +208,7 @@ QString ObjectsScene::renameLayer(unsigned idx, const QString &name)
 				new_name = formatLayerName(name);
 
 		layers[idx] = new_name;
-		active_layers.replaceInStrings(QRegExp(QString("^(%1)$").arg(old_name)), new_name);
+		active_layers.replaceInStrings(QRegularExpression(QString("^(%1)$").arg(old_name)), new_name);
 
 		updateLayerRects();
 		emit s_layersChanged();
@@ -724,16 +721,14 @@ void ObjectsScene::setGridSize(unsigned size)
 	if(size >= 20 || grid.style()==Qt::NoBrush)
 	{
 		QImage grid_img;
-		double width, height, x, y;
-		int img_w, img_h;
+		double width = 0, height = 0, x = 0, y = 0;
+		int img_w = 0, img_h = 0;
 		QSizeF aux_size;
-		QPrinter printer;
 		QPainter painter;
 		QPen pen;
 
-		configurePrinter(&printer);
-		aux_size=printer.paperSize(QPrinter::Point);
-		aux_size-=page_margins.size();
+		// Retrieve the page rect considering the orientation, margin and page size
+		aux_size = page_layout.paintRect(QPageLayout::Point).size();
 
 		//Calculates where the extreme width and height where delimiter lines will be drawn
 		width=aux_size.width()/static_cast<double>(size) * size;
@@ -825,9 +820,9 @@ void ObjectsScene::showRelationshipLine(bool value, const QPointF &p_start)
 
 void ObjectsScene::setGridOptions(bool show_grd, bool align_objs_grd, bool show_pag_dlm)
 {
-	bool redef_grid=(ObjectsScene::show_grid!=show_grd ||
-										ObjectsScene::show_page_delim!=show_pag_dlm ||
-										grid.style()==Qt::NoBrush);
+	bool redef_grid=(ObjectsScene::show_grid != show_grd ||
+									 ObjectsScene::show_page_delim != show_pag_dlm ||
+									 grid.style() == Qt::NoBrush);
 
 	ObjectsScene::show_grid=show_grd;
 	ObjectsScene::show_page_delim=show_pag_dlm;
@@ -855,67 +850,17 @@ bool ObjectsScene::isShowPageDelimiters()
 	return show_page_delim;
 }
 
-void ObjectsScene::setPaperConfiguration(QPrinter::PaperSize paper_sz, QPrinter::Orientation orient, QRectF margins, QSizeF custom_size)
+void ObjectsScene::setPageLayout(const QPageLayout &page_lt)
 {
-	ObjectsScene::paper_size=paper_sz;
-	ObjectsScene::page_orientation=orient;
-	ObjectsScene::page_margins=margins;
-	ObjectsScene::custom_paper_size=custom_size;
+	if(page_layout != page_lt)
+		grid = Qt::NoBrush;
+
+	page_layout = page_lt;
 }
 
-void ObjectsScene::getPaperConfiguration(QPrinter::PaperSize &paper_sz, QPrinter::Orientation &orient, QRectF &margins, QSizeF &custom_size)
+QPageLayout ObjectsScene::getPageLayout()
 {
-	paper_sz=ObjectsScene::paper_size;
-	orient=ObjectsScene::page_orientation;
-	margins=ObjectsScene::page_margins;
-	custom_size=ObjectsScene::custom_paper_size;
-}
-
-void ObjectsScene::configurePrinter(QPrinter *printer)
-{
-	if(!printer)
-		throw Exception(ErrorCode::OprNotAllocatedObject ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-
-	if(paper_size!=QPrinter::Custom)
-		printer->setPaperSize(paper_size);
-	else
-	{
-		QPageLayout pl;
-		QPageSize ps;
-		ps=QPageSize(QSizeF(custom_paper_size.width(), custom_paper_size.height()), QPageSize::Point, "", QPageSize::ExactMatch);
-		pl.setPageSize(ps);
-		pl.setOrientation(page_orientation==QPrinter::Landscape ? QPageLayout::Landscape : QPageLayout::Portrait);
-		printer->setPageSize(pl.pageSize());
-	}
-
-	if(paper_size==QPrinter::Custom)
-	{
-		if(custom_paper_size.width() > custom_paper_size.height())
-			ObjectsScene::page_orientation=QPrinter::Landscape;
-		else
-			ObjectsScene::page_orientation=QPrinter::Portrait;
-	}
-	else
-		printer->setOrientation(page_orientation);
-
-	printer->setPageMargins(page_margins.left(), page_margins.top(), page_margins.width(), page_margins.height(), QPrinter::Millimeter);
-}
-
-void ObjectsScene::configurePrinter(QPrinter *printer, const QSizeF &custom_size, QPrinter::Orientation orient)
-{
-	QPrinter::PaperSize orig_page_sz=paper_size;
-	QPrinter::Orientation orig_orient=page_orientation;
-	QSizeF orig_custom_sz=custom_paper_size;
-
-	paper_size=QPrinter::Custom;
-	page_orientation=orient;
-	custom_paper_size=custom_size;
-
-	configurePrinter(printer);
-
-	paper_size=orig_page_sz;
-	page_orientation=orig_orient;
-	custom_paper_size=orig_custom_sz;
+	return page_layout;
 }
 
 void ObjectsScene::handlePopupMenuRequested(TableObject *child_obj)
@@ -1395,8 +1340,7 @@ void ObjectsScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 			//If the alignment to grid is active, adjust the event scene position
 			if(align_objs_grid && !selection_rect->isVisible() && sel_items_count <= 1)
 				event->setScenePos(this->alignPointToGrid(event->scenePos()));
-			else
-			if(selection_rect->isVisible())
+			else	if(selection_rect->isVisible())
 			{
 				QPolygonF pol;
 				pol.append(sel_ini_pnt);
@@ -1436,7 +1380,7 @@ void ObjectsScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 		sel_area.addRect(selection_rect->polygon().boundingRect());
 
 		this->blockItemsSignals(true);
-		this->setSelectionArea(sel_area, Qt::IntersectsItemShape);
+		this->setSelectionArea(sel_area);
 		this->blockItemsSignals(false);
 
 		selection_rect->setVisible(false);
@@ -1455,9 +1399,9 @@ void ObjectsScene::finishObjectsMove(const QPointF &pnt_end)
 	double x1,y1,x2,y2, dx, dy;
 	QRectF rect;
 	SchemaView *sch_view=nullptr;
-	vector<QPointF> points;
-	vector<QPointF>::iterator itr;
-	vector<BaseObject *> rels, base_rels;
+	std::vector<QPointF> points;
+	std::vector<QPointF>::iterator itr;
+	std::vector<BaseObject *> rels, base_rels;
 	QSet<Schema *> schemas;
 	BaseRelationship *base_rel=nullptr;
 	RelationshipView *rel=nullptr;
@@ -1633,8 +1577,8 @@ void ObjectsScene::alignObjectsToGrid()
 	RelationshipView *rel=nullptr;
 	BaseTableView *tab=nullptr;
 	TextboxView *lab=nullptr;
-	vector<QPointF> points;
-	vector<Schema *> schemas;
+	std::vector<QPointF> points;
+	std::vector<Schema *> schemas;
 	unsigned i, count, i1, count1;
 
 	count=items.size();
@@ -1707,9 +1651,9 @@ void ObjectsScene::clearSelection()
 	QGraphicsScene::clearSelection();
 }
 
-vector<QRectF> ObjectsScene::getPagesForPrinting(const QSizeF &paper_size, const QSizeF &margin, unsigned &h_page_cnt, unsigned &v_page_cnt)
+/* std::vector<QRectF> ObjectsScene::getPagesForPrinting(const QSizeF &paper_size, const QSizeF &margin, unsigned &h_page_cnt, unsigned &v_page_cnt)
 {
-	vector<QRectF> pages;
+	std::vector<QRectF> pages;
 	QRectF page_rect, max_rect;
 	double width, height, page_width, page_height;
 	unsigned h_page=0, v_page=0, start_h=99999, start_v=99999;
@@ -1759,6 +1703,65 @@ vector<QRectF> ObjectsScene::getPagesForPrinting(const QSizeF &paper_size, const
 			pages.push_back(QRectF(QPointF(h_page * page_width, v_page * page_height), QSizeF(page_width, page_height)));
 
 	return pages;
+} */
+
+std::vector<QRectF> ObjectsScene::getPagesForPrinting(const QPageLayout &page_lt, unsigned &h_page_cnt, unsigned &v_page_cnt)
+{
+	std::vector<QRectF> pages;
+	QRectF page_rect, max_rect;
+	double width = 0, height = 0, page_width = 0, page_height = 0;
+	unsigned h_page=0, v_page=0, start_h=99999, start_v=99999;
+	QList<QGraphicsItem *> list;
+
+	page_width = page_lt.paintRect(QPageLayout::Point).width();
+	page_height = page_lt.paintRect(QPageLayout::Point).height();
+
+	//Calculates the horizontal and vertical page count based upon the passed paper size
+	h_page_cnt=round(this->sceneRect().width()/page_width) + 1;
+	v_page_cnt=round(this->sceneRect().height()/page_height) + 1;
+
+	//Calculates the maximum count of horizontal and vertical pages
+	for(v_page=0; v_page < v_page_cnt; v_page++)
+	{
+		for(h_page=0; h_page < h_page_cnt; h_page++)
+		{
+			//Calculates the current page rectangle
+			page_rect=QRectF(QPointF(h_page * page_width, v_page * page_height), QSizeF(page_width, page_height));
+
+			//Case there is selected items recalculates the maximum page size
+			list=this->items(page_rect, Qt::IntersectsItemShape);
+			if(!list.isEmpty())
+			{
+				if(start_h > h_page) start_h=h_page;
+				if(start_v > v_page) start_v=v_page;
+
+				width=page_rect.left() + page_rect.width();
+				height=page_rect.top() + page_rect.height();
+
+				if(width > max_rect.width())
+					max_rect.setWidth(width);
+
+				if(height > max_rect.height())
+					max_rect.setHeight(height);
+			}
+		}
+	}
+
+	//Re calculates the maximum page count based upon the maximum page size
+	h_page_cnt=round(max_rect.width()/page_width);
+	v_page_cnt=round(max_rect.height()/page_height);
+
+	//Inserts the page rectangles on the list
+	for(v_page=static_cast<unsigned>(start_v); v_page < v_page_cnt; v_page++)
+		for(h_page=static_cast<unsigned>(start_h); h_page < h_page_cnt; h_page++)
+			pages.push_back(QRectF(QPointF(h_page * page_width, v_page * page_height), QSizeF(page_width, page_height)));
+
+	return pages;
+}
+
+std::vector<QRectF> ObjectsScene::getPagesForPrinting(unsigned &h_page_cnt, unsigned &v_page_cnt)
+{
+	return getPagesForPrinting(page_layout, h_page_cnt, v_page_cnt);
 }
 
 bool ObjectsScene::isRangeSelectionEnabled()

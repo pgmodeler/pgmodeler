@@ -109,7 +109,7 @@ void ServerTest::modelReturnsDepsAndRefsForServer()
 		server.setForeignDataWrapper(&fdw);
 		model.addForeignServer(&server);
 
-		vector<BaseObject *> refs, deps;
+		std::vector<BaseObject *> refs, deps;
 		model.getObjectDependecies(&server, deps);
 
 		model.getObjectReferences(&fdw, refs);

@@ -20,8 +20,8 @@
 #include "guiutilsns.h"
 #include "baseform.h"
 
-vector<Connection *> ConnectionsConfigWidget::connections;
-map<QString, attribs_map> ConnectionsConfigWidget::config_params;
+std::vector<Connection *> ConnectionsConfigWidget::connections;
+std::map<QString, attribs_map> ConnectionsConfigWidget::config_params;
 const QString ConnectionsConfigWidget::DefaultFor("default-for-%1");
 
 ConnectionsConfigWidget::ConnectionsConfigWidget(QWidget * parent) : BaseConfigWidget(parent)
@@ -88,7 +88,7 @@ void ConnectionsConfigWidget::destroyConnections()
 	}
 }
 
-map<QString, attribs_map> ConnectionsConfigWidget::getConfigurationParams()
+std::map<QString, attribs_map> ConnectionsConfigWidget::getConfigurationParams()
 {
 	return config_params;
 }
@@ -505,7 +505,7 @@ void ConnectionsConfigWidget::saveConfiguration()
 	}
 }
 
-void ConnectionsConfigWidget::getConnections(map<QString, Connection *> &conns, bool inc_hosts)
+void ConnectionsConfigWidget::getConnections(std::map<QString, Connection *> &conns, bool inc_hosts)
 {
 	QString alias;
 
@@ -515,7 +515,7 @@ void ConnectionsConfigWidget::getConnections(map<QString, Connection *> &conns, 
 		alias=conn->getConnectionId();
 
 		if(!inc_hosts)
-			alias.remove(QRegExp(QString(" \\((.)*\\)")));
+			alias.remove(QRegularExpression(QString(" \\((.)*\\)")));
 
 		conns[alias]=conn;
 	}
@@ -534,7 +534,7 @@ Connection *ConnectionsConfigWidget::getConnection(const QString &conn_id)
 
 void ConnectionsConfigWidget::fillConnectionsComboBox(QComboBox *combo, bool incl_placeholder, unsigned check_def_for)
 {
-	map<QString, Connection *> connections;
+	std::map<QString, Connection *> connections;
 	Connection *def_conn=nullptr;
 
 	if(!combo)
@@ -588,7 +588,8 @@ bool ConnectionsConfigWidget::openConnectionsConfiguration(QComboBox *combo, boo
 		{
 			conn_cfg_wgt.loadConfiguration();
 			conn_cfg_wgt.frame->setFrameShape(QFrame::NoFrame);
-			conn_cfg_wgt.frame->layout()->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
+			conn_cfg_wgt.layout()->setContentsMargins(0,0,0,0);
+			conn_cfg_wgt.frame->layout()->setContentsMargins(0,0,0,0);
 
 			parent_form.setMainWidget(&conn_cfg_wgt);
 			parent_form.setButtonConfiguration(Messagebox::OkCancelButtons);
@@ -599,6 +600,8 @@ bool ConnectionsConfigWidget::openConnectionsConfiguration(QComboBox *combo, boo
 				conn_cfg_wgt.saveConfiguration();
 				conn_saved=true;
 			}
+			else
+				conn_cfg_wgt.loadConfiguration();
 
 			conn_cfg_wgt.fillConnectionsComboBox(combo, incl_placeholder);
 		}

@@ -170,9 +170,10 @@ QString BaseObject::formatName(const QString &name, bool is_operator)
 	QString frmt_name;
 	QByteArray raw_name;
 	unsigned char chr, chr1, chr2;
+	QRegularExpression fmt_name_regexp(QRegularExpression::anchoredPattern("(\")(.)+(\")"));
 
 	//Checking if the name is already formated enclosed by quotes
-	is_formated=QRegExp(QString("(\")(.)+(\")")).exactMatch(name);
+	is_formated = fmt_name_regexp.match(name).hasMatch();
 
 	/* If the name is not formatted or it symbolizes the name of an operator
 		(which has characters invalid according to the rule and is the only exception
@@ -187,7 +188,7 @@ QString BaseObject::formatName(const QString &name, bool is_operator)
 
 		/* Checks if the name has some upper case letter. If its the
 		 case the name will be enclosed in quotes */
-		needs_fmt = (!is_operator && name.contains(QRegExp("^[0-9]+")));
+		needs_fmt = (!is_operator && name.contains(QRegularExpression("^[0-9]+")));
 
 		for(int idx = 0; idx < special_chars.size() && !needs_fmt; idx++)
 			needs_fmt = (!is_operator && special_chars.at(idx) != '_' && name.indexOf(special_chars.at(idx)) >= 0);
@@ -249,7 +250,7 @@ bool BaseObject::isValidName(const QString &name)
 {
 	QString aux_name=name;
 
-	if(aux_name.contains(QRegExp("^(\")(.)+(\")$")))
+	if(aux_name.contains(QRegularExpression("^(\")(.)+(\")$")))
 	{
 		aux_name.remove(0,1);
 		aux_name.remove(aux_name.size()-1,1);
@@ -361,7 +362,7 @@ void BaseObject::setProtected(bool value)
 void BaseObject::setName(const QString &name)
 {
 	QString aux_name=name;
-	bool is_quoted=aux_name.contains(QRegExp("^(\")(.)+(\")$"));
+	bool is_quoted=aux_name.contains(QRegularExpression("^(\")(.)+(\")$"));
 
 	//Raises an error if the passed name is invalid
 	if(!isValidName(aux_name))
@@ -988,15 +989,15 @@ void BaseObject::updateObjectId(BaseObject *obj)
 		obj->object_id=++global_id;
 }
 
-vector<ObjectType> BaseObject::getObjectTypes(bool inc_table_objs, vector<ObjectType> exclude_types)
+std::vector<ObjectType> BaseObject::getObjectTypes(bool inc_table_objs, std::vector<ObjectType> exclude_types)
 {
-	vector<ObjectType> vet_types={ ObjectType::BaseRelationship, ObjectType::Aggregate, ObjectType::Cast, ObjectType::Collation,
+	std::vector<ObjectType> vet_types={ ObjectType::BaseRelationship, ObjectType::Aggregate, ObjectType::Cast, ObjectType::Collation,
 									 ObjectType::Conversion, ObjectType::Database, ObjectType::Domain, ObjectType::Extension, ObjectType::EventTrigger,
 									 ObjectType::ForeignDataWrapper, ObjectType::ForeignServer, ObjectType::Function, ObjectType::Procedure, ObjectType::GenericSql,
 									 ObjectType::Language, ObjectType::OpClass, ObjectType::Operator, ObjectType::OpFamily, ObjectType::Permission,
 									 ObjectType::Relationship, ObjectType::Role, ObjectType::Schema, ObjectType::Sequence, ObjectType::Table, ObjectType::Tablespace,
 									 ObjectType::Tag, ObjectType::Textbox, ObjectType::Type, ObjectType::UserMapping, ObjectType::View, ObjectType::ForeignTable, ObjectType::Transform };
-	vector<ObjectType>::iterator itr;
+	std::vector<ObjectType>::iterator itr;
 
 	if(inc_table_objs)
 	{
@@ -1018,36 +1019,36 @@ vector<ObjectType> BaseObject::getObjectTypes(bool inc_table_objs, vector<Object
 	return vet_types;
 }
 
-vector<ObjectType> BaseObject::getChildObjectTypes(ObjectType obj_type)
+std::vector<ObjectType> BaseObject::getChildObjectTypes(ObjectType obj_type)
 {
 	if(obj_type==ObjectType::Database)
-		return vector<ObjectType>()={ ObjectType::Cast, ObjectType::Role, ObjectType::Language,
+		return std::vector<ObjectType>()={ ObjectType::Cast, ObjectType::Role, ObjectType::Language,
 																	ObjectType::Tablespace, ObjectType::Schema, ObjectType::Extension,
 																	ObjectType::EventTrigger, ObjectType::ForeignDataWrapper, ObjectType::ForeignServer,
 																	ObjectType::UserMapping, ObjectType::Transform };
 
 	if(obj_type==ObjectType::Schema)
-		return vector<ObjectType>()={	ObjectType::Aggregate, ObjectType::Conversion, ObjectType::Collation,
+		return std::vector<ObjectType>()={	ObjectType::Aggregate, ObjectType::Conversion, ObjectType::Collation,
 																	ObjectType::Domain, ObjectType::ForeignTable, ObjectType::Function, ObjectType::OpClass,
 																	ObjectType::Operator, ObjectType::OpFamily, ObjectType::Procedure, ObjectType::Sequence,
 																	ObjectType::Type, ObjectType::Table, ObjectType::View };
 
 	if(obj_type==ObjectType::Table)
-		return vector<ObjectType>()={	ObjectType::Column, ObjectType::Constraint, ObjectType::Rule,
+		return std::vector<ObjectType>()={	ObjectType::Column, ObjectType::Constraint, ObjectType::Rule,
 																	ObjectType::Trigger, ObjectType::Index, ObjectType::Policy };
 
 	if(obj_type==ObjectType::ForeignTable)
-		return vector<ObjectType>()={	ObjectType::Column, ObjectType::Constraint, ObjectType::Trigger };
+		return std::vector<ObjectType>()={	ObjectType::Column, ObjectType::Constraint, ObjectType::Trigger };
 
 	if(obj_type==ObjectType::View)
-		return vector<ObjectType>()={ObjectType::Rule, ObjectType::Trigger, ObjectType::Index};
+		return std::vector<ObjectType>()={ObjectType::Rule, ObjectType::Trigger, ObjectType::Index};
 
-	return vector<ObjectType>()={};
+	return std::vector<ObjectType>()={};
 }
 
 bool BaseObject::isChildObjectType(ObjectType parent_type, ObjectType child_type)
 {
-	vector<ObjectType> types = getChildObjectTypes(parent_type);
+	std::vector<ObjectType> types = getChildObjectTypes(parent_type);
 	return std::find(types.begin(), types.end(), child_type) != types.end();
 }
 
@@ -1131,7 +1132,8 @@ bool BaseObject::isCodeDiffersFrom(const QString &xml_def1, const QString &xml_d
 			tag_regex=QString("<%1[^>]*((/>)|(>((?:(?!</%1>).)*)</%1>))");
 	QStringList xml_defs{ xml_def1, xml_def2 };
 	int start=0, end=-1, tag_end=-1;
-	QRegExp regexp;
+	QRegularExpression regexp, tag_end_regexp("(\\\\)?(>)");
+	QRegularExpressionMatch match;
 
 	for(int i=0; i < 2; i++)
 	{
@@ -1142,10 +1144,12 @@ bool BaseObject::isCodeDiffersFrom(const QString &xml_def1, const QString &xml_d
 		{
 			do
 			{
-				regexp=QRegExp(attr_regex.arg(attr));
-				tag_end=xml.indexOf(QRegExp(QString("(\\\\)?(>)")));
-				start=regexp.indexIn(xml);
-				end=xml.indexOf('"', start + regexp.matchedLength());
+				regexp.setPattern(attr_regex.arg(attr));
+				tag_end = xml.indexOf(tag_end_regexp);
+
+				match = regexp.match(xml);
+				start = match.capturedStart();
+				end=xml.indexOf('"', start + match.capturedLength());
 
 				if(end > tag_end)
 					end=-1;
@@ -1157,8 +1161,8 @@ bool BaseObject::isCodeDiffersFrom(const QString &xml_def1, const QString &xml_d
 		}
 
 		//Removing ignored tags
-		for(QString tag : ignored_tags)
-			xml.remove(QRegExp(tag_regex.arg(tag)));
+		for(auto &tag : ignored_tags)
+			xml.remove(QRegularExpression(tag_regex.arg(tag)));
 
 		xml_defs[i]=xml.simplified();
 	}

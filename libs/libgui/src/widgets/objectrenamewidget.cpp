@@ -37,7 +37,7 @@ ObjectRenameWidget::ObjectRenameWidget(QWidget * parent) : QDialog(parent)
 	});
 }
 
-void ObjectRenameWidget::setAttributes(vector<BaseObject *> objs, DatabaseModel *model, OperationList *op_list)
+void ObjectRenameWidget::setAttributes(std::vector<BaseObject *> objs, DatabaseModel *model, OperationList *op_list)
 {
 	TableObject *tab_obj = nullptr;
 
@@ -115,14 +115,14 @@ void ObjectRenameWidget::applyRenaming()
 					return;
 			}
 
-			map<unsigned, BaseObject *> sel_objs_map;
-			map<unsigned, BaseObject *>::reverse_iterator itr;
+			std::map<unsigned, BaseObject *> sel_objs_map;
+			std::map<unsigned, BaseObject *>::reverse_iterator itr;
 			BaseGraphicObject *graph_obj = nullptr;
 			TableObject *tab_obj = nullptr;
 			QString fmt_name, new_name;
-			vector<BaseObject *> ref_objs, obj_list;
-			vector<TableObject *> tab_objs;
-			map<ObjectType, vector<BaseObject *>> obj_map;
+			std::vector<BaseObject *> ref_objs, obj_list;
+			std::vector<TableObject *> tab_objs;
+			std::map<ObjectType, std::vector<BaseObject *>> obj_map;
 			BaseObject *object = nullptr;
 			bool revalidate_rels = false;
 

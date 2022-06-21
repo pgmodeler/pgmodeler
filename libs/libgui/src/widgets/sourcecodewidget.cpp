@@ -62,21 +62,13 @@ void SourceCodeWidget::setSourceCodeTab(int)
 {
 	QString code_icon;
 	bool enabled=false;
-	QPixmap icone;
 	ObjectType obj_type=object->getObjectType();
-
-	if(sourcecode_twg->currentIndex()==0)
-		code_icon=QString("sqlcode");
-	else
-		code_icon=QString("xmlcode");
 
 	enabled=(sourcecode_twg->currentIndex()==0 &&
 			 ((obj_type==ObjectType::BaseRelationship &&
 			   dynamic_cast<BaseRelationship *>(object)->getRelationshipType()==BaseRelationship::RelationshipFk)
 			  || (obj_type!=ObjectType::BaseRelationship && obj_type!=ObjectType::Textbox)));
 
-	icone=QPixmap(GuiUtilsNs::getIconPath(code_icon));
-	icon2_lbl->setPixmap(icone);
 	version_cmb->setEnabled(enabled);
 	pgsql_lbl->setEnabled(enabled);
 	version_lbl->setEnabled(enabled);
@@ -94,8 +86,12 @@ void SourceCodeWidget::saveSQLCode()
 	file_dlg.setNameFilter(tr("SQL code (*.sql);;All files (*.*)"));
 	file_dlg.selectFile(QString("%1-%2.sql").arg(object->getSchemaName()).arg(object->getName()));
 
+	GuiUtilsNs::restoreFileDialogState(&file_dlg);
+
 	if(file_dlg.exec() == QFileDialog::Accepted && !file_dlg.selectedFiles().isEmpty())
 		UtilsNs::saveFile(file_dlg.selectedFiles().at(0), sqlcode_txt->toPlainText().toUtf8());
+
+	GuiUtilsNs::saveFileDialogState(&file_dlg);
 }
 
 void SourceCodeWidget::generateSourceCode(int)
@@ -130,7 +126,7 @@ void SourceCodeWidget::generateSourceCode(int)
 					sqlcode_txt->setPlainText(object->getCodeDefinition(SchemaParser::SqlDefinition));
 				else
 				{
-					vector<BaseObject *> objs=model->getCreationOrder(object, code_options_cmb->currentIndex()==ChildrenSql);
+					std::vector<BaseObject *> objs=model->getCreationOrder(object, code_options_cmb->currentIndex()==ChildrenSql);
 
 					for(BaseObject *obj : objs)
 						aux_def+=obj->getCodeDefinition(SchemaParser::SqlDefinition);

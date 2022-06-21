@@ -46,11 +46,11 @@ void TableView::configureObject()
 	TableObject *tab_obj=nullptr;
 	QGraphicsItemGroup *groups[]={ columns, ext_attribs };
 	RoundedRectItem *bodies[]={ body, ext_attribs_body };
-	vector<TableObject *> tab_objs, columns, ext_tab_objs;
+	std::vector<TableObject *> tab_objs, columns, ext_tab_objs;
 	QStringList atribs, tag_attribs = { Attributes::TableBody, Attributes::TableExtBody };
 	Tag *tag=table->getTag();
 	CollapseMode collapse_mode = table->getCollapseMode();
-	vector<ObjectType> ext_types = BaseObject::getChildObjectTypes(table->getObjectType());
+	std::vector<ObjectType> ext_types = BaseObject::getChildObjectTypes(table->getObjectType());
 	bool has_col_pag = false, has_ext_pag = false;
 
 	if(table->getObjectType() == ObjectType::Table)

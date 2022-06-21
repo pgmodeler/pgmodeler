@@ -29,34 +29,35 @@
 #include <QListWidget>
 #include <QTableWidget>
 #include <QPixmap>
+#include <QFileDialog>
 #include "baseobject.h"
 #include "widgets/numberedtexteditor.h"
 
 namespace GuiUtilsNs {
 	static constexpr int LtMargin = 5,
-	LtSpacing = 10;
+	LtSpacing = 5;
 
 	static constexpr unsigned SmallFontFactor = 0,
 	MediumFontFactor = 1,
 	BigFontFactor = 2,
 	HugeFontFactor = 3;
 
-	static constexpr int FHDWidth = 1920,
+	/*static constexpr int FHDWidth = 1920,
 	QHDWidth = 2560,
-	UHDWidth = 3840;
+	UHDWidth = 3840;*/
 
 	extern void configureWidgetFont(QWidget *widget, unsigned factor_id);
 	extern void __configureWidgetFont(QWidget *widget, double factor);
 
 	/*! \brief Creates a NumberedTextEditor instance automatically assigning it to 'parent'.
-	  This method will create a layout if 'parent' doesn't has one. If parent has a layout
-	  the method will do nothing. If parent is null creates an orphan object which means the
-	  user must take care of the destruction of the object */
+		This method will create a layout if 'parent' doesn't has one. If parent has a layout
+		the method will do nothing. If parent is null creates an orphan object which means the
+		user must take care of the destruction of the object */
 	extern NumberedTextEditor *createNumberedTextEditor(QWidget *parent, bool handle_ext_files = false);
 
 	/*! \brief Creates an item in the specified QTreeWidget instance.
-	  The new item is automatically inserted on the QTreeWidget object.
-	  Setting word_wrap will create a QLabel instance into item's and assign the text to it. */
+		The new item is automatically inserted on the QTreeWidget object.
+		Setting word_wrap will create a QLabel instance into item's and assign the text to it. */
 	extern QTreeWidgetItem *createOutputTreeItem(QTreeWidget *output_trw, const QString &text, const QPixmap &ico=QPixmap(),
 												 QTreeWidgetItem *parent=nullptr, bool expand_item=true, bool word_wrap=false);
 
@@ -64,7 +65,7 @@ namespace GuiUtilsNs {
 	extern void createOutputListItem(QListWidget *output_lst, const QString &text, const QPixmap &ico=QPixmap(), bool is_formated=true);
 
 	/*! \brief Toggles the SQL code for the object. This function also toggles the SQL of the references
-	  related to the input object */
+		related to the input object */
 	extern void disableObjectSQL(BaseObject *object, bool disable);
 
 	//! \brief Recursively toggles the specified object's references SQL
@@ -91,6 +92,17 @@ namespace GuiUtilsNs {
 
 	//! \brief Creates drop shadown on a widget
 	extern void createDropShadow(QWidget *wgt, int x_offset = 2, int y_offset = 2, int radius = 5);
+
+	/*! \brief Handles the currently provided file dialog state to file.
+	 * If save_state is true, then the dialog's state is saved to file
+	 * otherwise is restored */
+	extern void handleFileDialogSatate(QFileDialog *file_dlg, bool save_state);
+
+	//! \brief Saves the currently provided file dialog state to file
+	extern  void saveFileDialogState(QFileDialog *file_dlg);
+
+	//! \brief Restores the saved filed dialog from file/memory and applies to the provided file dialog
+	extern void restoreFileDialogState(QFileDialog *file_dlg);
 }
 
 #endif

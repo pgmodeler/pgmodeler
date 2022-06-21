@@ -34,13 +34,13 @@
 class Table: public PhysicalTable {
 	private:
 		//! \brief Stores the indexes
-		vector<TableObject *> indexes;
+		std::vector<TableObject *> indexes;
 
 		//! \brief Stores the rules
-		vector<TableObject *> rules;
+		std::vector<TableObject *> rules;
 
 		//! \brief Stores the policies
-		vector<TableObject *> policies;
+		std::vector<TableObject *> policies;
 
 		//! \brief Indicates if the table is unlogged, which means, is not controled by the WAL (write ahead logs)
 		bool unlogged,
@@ -141,7 +141,7 @@ class Table: public PhysicalTable {
 		/*! \brief Stores on the specified vector 'fks' the foreign key present on table. The
 		 boolean paramenter is used to include those foreign keys includes by relationship. The third parameter
 		is used to filter the search, including only the foreign keys that references the specified table */
-		void getForeignKeys(vector<Constraint *> &fks, bool inc_added_by_rel=false, Table *ref_table=nullptr);
+		void getForeignKeys(std::vector<Constraint *> &fks, bool inc_added_by_rel=false, Table *ref_table=nullptr);
 
 		//! \brief Returns if the table is configured as unlogged
 		bool isUnlogged();
@@ -156,7 +156,7 @@ class Table: public PhysicalTable {
 		void operator = (Table &tabela);
 
 		//! \brief Returns the specified object type list
-		virtual vector<TableObject *> *getObjectList(ObjectType obj_type);
+		virtual std::vector<TableObject *> *getObjectList(ObjectType obj_type);
 
 		/*! \brief Returns if some of the foreign keys references the specified table. This method only considers the foreign keys
 		 created by the user. Relationship created foreign keys are discarded from the search. */
@@ -166,7 +166,7 @@ class Table: public PhysicalTable {
 		 The 'exclusion_mode' is used to speed up the execution of the method when it is used to validate the
 		 deletion of the object, getting only the first reference to the object candidate for deletion.
 		 To get ALL references to the object must be specified as 'false' the parameter 'exclusion_mode'. */
-		void getColumnReferences(Column *column, vector<TableObject *> &refs, bool exclusion_mode=false);
+		void getColumnReferences(Column *column, std::vector<TableObject *> &refs, bool exclusion_mode=false);
 
 		//! \brief Returns the alter definition comparing the this table against the one provided via parameter
 		virtual QString getAlterDefinition(BaseObject *object) final;

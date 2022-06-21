@@ -105,7 +105,7 @@ class ElementsTableWidget: public QWidget {
 
 		//! \brief Fills the grid with the elements on the vector vector
 		template<class Class>
-		void setElements(vector<Class> elems)
+		void setElements(std::vector<Class> elems)
 		{
 			elements_tab->blockSignals(true);
 			for(auto &elem : elems)
@@ -119,7 +119,7 @@ class ElementsTableWidget: public QWidget {
 
 		//! \brief Fills the provided vector with the elements on the grid
 		template<class Class>
-		void getElements(vector<Class> &elems)
+		void getElements(std::vector<Class> &elems)
 		{
 			if(elements_tab->getRowCount() > 0)
 			{

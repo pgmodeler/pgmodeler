@@ -57,7 +57,7 @@ $br $tb [ table=] "{table}"
 %if {prepended-sql} %then {prepended-sql} %end
 
 %if {condition} %then
-	$tb <condition> <! $ob CDATA $ob {condition} $cb $cb > </condition> $br
+	$tb <condition> $sp <! $ob CDATA $ob {condition} $cb $cb > $sp </condition> $br
 %end
 
 $tb {trigger-func}

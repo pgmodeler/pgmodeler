@@ -6,4 +6,4 @@
 #The tag <![CDATA[]]> is converted to <! $ob CDATA $ob {attribute} $cb > in order
 #to not cause syntax errors on the schema parser
 
-$tb <appended-sql><! $ob CDATA $ob {appended-sql} $cb $cb ></appended-sql> $br
+$tb <appended-sql> $sp <! $ob CDATA $ob {appended-sql} $cb $cb > $sp </appended-sql> $br

@@ -23,8 +23,8 @@ IndexWidget::IndexWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::
 	try
 	{
 		QGridLayout *grid=nullptr;
-		map<QString, vector<QWidget *> > fields_map;
-		map<QWidget *, vector<QString> > values_map;
+		std::map<QString, std::vector<QWidget *> > fields_map;
+		std::map<QWidget *, std::vector<QString> > values_map;
 		QFrame *frame=nullptr;
 
 		Ui_IndexWidget::setupUi(this);
@@ -79,7 +79,7 @@ void IndexWidget::selectIndexingType()
 
 void IndexWidget::setAttributes(DatabaseModel *model, OperationList *op_list, BaseTable *parent_obj, Index *index)
 {
-	vector<IndexElement> idx_elems;
+	std::vector<IndexElement> idx_elems;
 
 	if(!parent_obj)
 		throw Exception(ErrorCode::AsgNotAllocattedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -123,7 +123,7 @@ void IndexWidget::applyConfiguration()
 	try
 	{
 		Index *index=nullptr;
-		vector<IndexElement> idx_elems;
+		std::vector<IndexElement> idx_elems;
 
 		startConfiguration<Index>();
 

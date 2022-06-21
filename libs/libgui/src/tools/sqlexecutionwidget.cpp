@@ -23,11 +23,9 @@
 #include "guiutilsns.h"
 #include "utils/plaintextitemdelegate.h"
 #include "datamanipulationform.h"
-#include "qtcompat/qplaintexteditcompat.h"
 #include "utilsns.h"
-#include "utils/custommenustyle.h"
 
-map<QString, QString> SQLExecutionWidget::cmd_history;
+std::map<QString, QString> SQLExecutionWidget::cmd_history;
 
 int SQLExecutionWidget::cmd_history_max_len = 1000;
 const QString SQLExecutionWidget::ColumnNullValue("␀");
@@ -40,8 +38,7 @@ SQLExecutionWidget::SQLExecutionWidget(QWidget * parent) : QWidget(parent)
 	cmd_history_txt=GuiUtilsNs::createNumberedTextEditor(cmd_history_parent);
 	cmd_history_txt->setCustomContextMenuEnabled(false);
 
-	QtCompat::setTabStopDistance(cmd_history_txt, sql_cmd_txt->getTabDistance());
-
+	cmd_history_txt->setTabStopDistance(sql_cmd_txt->getTabDistance());
 	cmd_history_txt->setContextMenuPolicy(Qt::CustomContextMenu);
 	cmd_history_txt->setReadOnly(true);
 	cmd_history_txt->installEventFilter(this);
@@ -69,7 +66,6 @@ SQLExecutionWidget::SQLExecutionWidget(QWidget * parent) : QWidget(parent)
 	sql_file_dlg.setNameFilter(tr("SQL file (*.sql);;All files (*.*)"));
 	sql_file_dlg.setModal(true);
 
-	snippets_menu.setStyle(new CustomMenuStyle);
 	snippets_tb->setMenu(&snippets_menu);
 	code_compl_wgt=new CodeCompletionWidget(sql_cmd_txt, true);
 
@@ -93,7 +89,6 @@ SQLExecutionWidget::SQLExecutionWidget(QWidget * parent) : QWidget(parent)
 	action_save=new QAction(QIcon(GuiUtilsNs::getIconPath("save")), tr("Save"), this);
 	action_save_as=new QAction(QIcon(GuiUtilsNs::getIconPath("saveas")), tr("Save as"), this);
 
-	file_menu.setStyle(new CustomMenuStyle);
 	file_menu.addAction(action_load);
 	file_menu.addAction(action_save);
 	file_menu.addAction(action_save_as);
@@ -271,10 +266,10 @@ void SQLExecutionWidget::fillResultsTable(Catalog &catalog, ResultSet &res, QTab
 	{
 		int col=0, row=0, col_cnt=res.getColumnCount();
 		QTableWidgetItem *item=nullptr;
-		vector<unsigned> type_ids;
-		vector<unsigned>::iterator end;
-		vector<attribs_map> types;
-		map<unsigned, QString> type_names;
+		std::vector<unsigned> type_ids;
+		std::vector<unsigned>::iterator end;
+		std::vector<attribs_map> types;
+		std::map<unsigned, QString> type_names;
 		unsigned orig_filter=catalog.getQueryFilter();
 
 		results_tbw->setRowCount(0);
@@ -482,7 +477,7 @@ void SQLExecutionWidget::filterResults()
 	if(exact_chk->isChecked())
 		flags = Qt::MatchExactly;
 	else if(regexp_chk->isChecked())
-		flags = Qt::MatchRegExp;
+		flags = Qt::MatchRegularExpression;
 	else
 		flags = Qt::MatchContains;
 
@@ -644,7 +639,10 @@ void SQLExecutionWidget::saveCommands()
 	{
 		sql_file_dlg.setWindowTitle(tr("Save SQL commands"));
 		sql_file_dlg.setAcceptMode(QFileDialog::AcceptSave);
+
+		GuiUtilsNs::restoreFileDialogState(&sql_file_dlg);
 		sql_file_dlg.exec();
+		GuiUtilsNs::saveFileDialogState(&sql_file_dlg);
 
 		if(sql_file_dlg.result()==QDialog::Accepted)
 			filename = sql_file_dlg.selectedFiles().at(0);
@@ -664,7 +662,10 @@ void SQLExecutionWidget::loadCommands()
 {
 	sql_file_dlg.setWindowTitle(tr("Load SQL commands"));
 	sql_file_dlg.setAcceptMode(QFileDialog::AcceptOpen);
+
+	GuiUtilsNs::restoreFileDialogState(&sql_file_dlg);
 	sql_file_dlg.exec();
+	GuiUtilsNs::saveFileDialogState(&sql_file_dlg);
 
 	if(sql_file_dlg.result()==QDialog::Accepted)
 	{
@@ -689,7 +690,10 @@ void SQLExecutionWidget::exportResults(QTableView *results_tbw)
 	csv_file_dlg.setNameFilter(tr("Comma-separated values file (*.csv);;All files (*.*)"));
 	csv_file_dlg.setModal(true);
 	csv_file_dlg.setAcceptMode(QFileDialog::AcceptSave);
+
+	GuiUtilsNs::restoreFileDialogState(&csv_file_dlg);
 	csv_file_dlg.exec();
+	GuiUtilsNs::saveFileDialogState(&csv_file_dlg);
 
 	if(csv_file_dlg.result()==QDialog::Accepted)
 	{
@@ -839,10 +843,11 @@ void SQLExecutionWidget::copySelection(QTableView *results_tbw, bool use_popup, 
 
 		if(use_popup)
 		{
-			act = copy_menu.addAction(tr("Copy selection"));
+			act = copy_mode_menu.menuAction();
+			act->setText(tr("Copy selection"));
 			act_txt = copy_mode_menu.addAction(tr("Plain format"));
 			act_csv = copy_mode_menu.addAction(tr("CVS format"));
-			act->setMenu(&copy_mode_menu);
+			copy_menu.addAction(act);
 			act = copy_menu.exec(QCursor::pos());
 		}
 

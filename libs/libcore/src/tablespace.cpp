@@ -47,7 +47,11 @@ void Tablespace::setDirectory(const QString &dir)
 
 	//Raises an error if the directory is an empty path
 	if(dir_aux.isEmpty())
-		throw Exception(ErrorCode::AsgEmptyDirectoryName,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+	{
+		throw Exception(Exception::getErrorMessage(ErrorCode::AsgEmptyDirectoryName).arg(obj_name),
+										ErrorCode::AsgEmptyDirectoryName,
+										__PRETTY_FUNCTION__,__FILE__,__LINE__);
+	}
 
 	setCodeInvalidated(this->directory != dir_aux);
 	this->directory=dir_aux;

@@ -38,7 +38,7 @@ View::View() : BaseTable()
 View::~View()
 {
 	ObjectType types[]={ ObjectType::Trigger, ObjectType::Rule, ObjectType::Index };
-	vector<TableObject *> *list=nullptr;
+	std::vector<TableObject *> *list=nullptr;
 
 	for(unsigned i=0; i < 3; i++)
 	{
@@ -69,8 +69,8 @@ void View::setProtected(bool value)
 {
 	ObjectType obj_types[]={ ObjectType::Rule, ObjectType::Trigger };
 	unsigned i;
-	vector<TableObject *>::iterator itr, itr_end;
-	vector<TableObject *> *list=nullptr;
+	std::vector<TableObject *>::iterator itr, itr_end;
+	std::vector<TableObject *> *list=nullptr;
 
 	//Protected the table child objects
 	for(i=0; i < sizeof(obj_types)/sizeof(ObjectType); i++)
@@ -144,7 +144,7 @@ void View::setCommomTableExpression(const QString &expr)
 
 bool View::hasDefinitionExpression()
 {
-	vector<Reference>::iterator itr;
+	std::vector<Reference>::iterator itr;
 	bool found=false;
 
 	itr=references.begin();
@@ -164,7 +164,7 @@ QString View::getCommomTableExpression()
 
 int View::getReferenceIndex(Reference &refer)
 {
-	vector<Reference>::iterator itr, itr_end;
+	std::vector<Reference>::iterator itr, itr_end;
 	bool found=false;
 	int idx=-1;
 
@@ -182,7 +182,7 @@ int View::getReferenceIndex(Reference &refer)
 	return idx;
 }
 
-vector<unsigned> *View::getExpressionList(unsigned sql_type)
+std::vector<unsigned> *View::getExpressionList(unsigned sql_type)
 {
 	if(sql_type==Reference::SqlReferSelect)
 		return &exp_select;
@@ -208,7 +208,7 @@ void View::generateColumns()
 
 	if(hasDefinitionExpression())
 	{
-		vector<SimpleColumn> ref_cols = references[0].getColumns();
+		std::vector<SimpleColumn> ref_cols = references[0].getColumns();
 
 		if(ref_cols.empty())
 			columns.push_back(SimpleColumn(QString("%1...").arg(references[0].getExpression().simplified().mid(0, 20)),
@@ -267,7 +267,7 @@ void View::generateColumns()
 	}
 }
 
-vector<SimpleColumn> View::getColumns()
+std::vector<SimpleColumn> View::getColumns()
 {
 	return columns;
 }
@@ -275,7 +275,7 @@ vector<SimpleColumn> View::getColumns()
 void View::addReference(Reference &refer, unsigned sql_type, int expr_id)
 {
 	int idx;
-	vector<unsigned> *expr_list=nullptr;
+	std::vector<unsigned> *expr_list=nullptr;
 	Column *col=nullptr;
 
 	//Specific tests for expressions used as view definition
@@ -342,7 +342,7 @@ unsigned View::getReferenceCount()
 
 unsigned View::getReferenceCount(unsigned sql_type, int ref_type)
 {
-	vector<unsigned> *vect_idref=getExpressionList(sql_type);
+	std::vector<unsigned> *vect_idref=getExpressionList(sql_type);
 
 	if(!vect_idref)
 	{
@@ -357,7 +357,7 @@ unsigned View::getReferenceCount(unsigned sql_type, int ref_type)
 			return vect_idref->size();
 		else
 		{
-			vector<unsigned>::iterator itr, itr_end;
+			std::vector<unsigned>::iterator itr, itr_end;
 			unsigned count=0;
 
 
@@ -385,7 +385,7 @@ Reference View::getReference(unsigned ref_id)
 
 Reference View::getReference(unsigned ref_id, unsigned sql_type)
 {
-	vector<unsigned> *vect_idref=getExpressionList(sql_type);
+	std::vector<unsigned> *vect_idref=getExpressionList(sql_type);
 
 	//Raises an error if the reference id is out of bound
 	if(ref_id >= references.size())
@@ -399,8 +399,8 @@ Reference View::getReference(unsigned ref_id, unsigned sql_type)
 
 void View::removeReference(unsigned ref_id)
 {
-	vector<unsigned> *vect_idref[4]={&exp_select, &exp_from, &exp_where, &exp_end};
-	vector<unsigned>::iterator itr, itr_end;
+	std::vector<unsigned> *vect_idref[4]={&exp_select, &exp_from, &exp_where, &exp_end};
+	std::vector<unsigned>::iterator itr, itr_end;
 	unsigned i;
 
 	//Raises an error if the reference id is out of bound
@@ -441,7 +441,7 @@ void View::removeReferences()
 
 void View::removeReference(unsigned expr_id, unsigned sql_type)
 {
-	vector<unsigned> *vect_idref=getExpressionList(sql_type);
+	std::vector<unsigned> *vect_idref=getExpressionList(sql_type);
 
 	if(expr_id >= vect_idref->size())
 		throw Exception(ErrorCode::RefObjectInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -452,8 +452,8 @@ void View::removeReference(unsigned expr_id, unsigned sql_type)
 
 int View::getReferenceIndex(Reference &ref, unsigned sql_type)
 {
-	vector<unsigned> *vet_idref=getExpressionList(sql_type);
-	vector<unsigned>::iterator itr, itr_end;
+	std::vector<unsigned> *vet_idref=getExpressionList(sql_type);
+	std::vector<unsigned>::iterator itr, itr_end;
 	int idx_ref;
 	bool found=false;
 
@@ -494,8 +494,8 @@ void View::setDefinitionAttribute()
 		}
 		else
 		{
-			vector<unsigned> *refs_vect[4]={&exp_select, &exp_from, &exp_where, &exp_end};
-			vector<unsigned>::iterator itr, itr_end;
+			std::vector<unsigned> *refs_vect[4]={&exp_select, &exp_from, &exp_where, &exp_end};
+			std::vector<unsigned>::iterator itr, itr_end;
 			QString keywords[4]={"SELECT\n", "\nFROM\n", "\nWHERE\n", "\n"};
 			unsigned i, cnt, idx, sql_type[4]={ Reference::SqlReferSelect,
 																					Reference::SqlReferFrom,
@@ -544,7 +544,7 @@ void View::setReferencesAttribute()
 											Attributes::FromExp,
 											Attributes::SimpleExp,
 											Attributes::EndExp};
-	vector<unsigned> *vect_exp[]={&exp_select, &exp_from, &exp_where, &exp_end};
+	std::vector<unsigned> *vect_exp[]={&exp_select, &exp_from, &exp_where, &exp_end};
 	int cnt, i, i1;
 
 	cnt=references.size();
@@ -582,9 +582,9 @@ bool View::isReferRelationshipAddedColumn()
 	return found;
 }
 
-vector<Column *> View::getRelationshipAddedColumns()
+std::vector<Column *> View::getRelationshipAddedColumns()
 {
-	vector<Column *> cols;
+	std::vector<Column *> cols;
 	Column *col=nullptr;
 
 	for(auto &ref : references)
@@ -693,7 +693,7 @@ QString View::getUniqueColumnName(const QString &name)
 {
 	unsigned idx = 1;
 	QString fmt_name = name;
-	vector<SimpleColumn>::iterator itr, itr_end;
+	std::vector<SimpleColumn>::iterator itr, itr_end;
 
 	itr = columns.begin();
 	itr_end = columns.end();
@@ -727,7 +727,7 @@ void View::setObjectListsCapacity(unsigned capacity)
 unsigned View::getMaxObjectCount()
 {
   unsigned count = 0, max = references.size();
-  vector<ObjectType> types = { ObjectType::Index, ObjectType::Rule, ObjectType::Trigger };
+  std::vector<ObjectType> types = { ObjectType::Index, ObjectType::Rule, ObjectType::Trigger };
 
   for(auto type : types)
   {
@@ -753,8 +753,8 @@ int View::getObjectIndex(BaseObject *obj)
 		return -1;
 	else
 	{
-		vector<TableObject *>::iterator itr, itr_end;
-		vector<TableObject *> *obj_list=getObjectList(obj->getObjectType());
+		std::vector<TableObject *>::iterator itr, itr_end;
+		std::vector<TableObject *> *obj_list=getObjectList(obj->getObjectType());
 		bool found=false;
 
 		if(!obj_list)
@@ -782,8 +782,8 @@ int View::getObjectIndex(const QString &name, ObjectType obj_type)
 		return -1;
 	else
 	{
-		vector<TableObject *>::iterator itr, itr_end;
-		vector<TableObject *> *obj_list=getObjectList(obj_type);
+		std::vector<TableObject *>::iterator itr, itr_end;
+		std::vector<TableObject *> *obj_list=getObjectList(obj_type);
 		bool found=false, format=name.contains('"');
 
 		if(!obj_list)
@@ -813,7 +813,7 @@ void View::addObject(BaseObject *obj, int obj_idx)
 	{
 		try
 		{
-			vector<TableObject *> *obj_list = getObjectList(obj->getObjectType());
+			std::vector<TableObject *> *obj_list = getObjectList(obj->getObjectType());
 			TableObject *tab_obj=dynamic_cast<TableObject *>(obj);
 
 			//Raises an error if already exists a object with the same name and type
@@ -894,8 +894,8 @@ void View::addIndex(Index *index, int obj_idx)
 
 void View::removeObject(unsigned obj_idx, ObjectType obj_type)
 {
-	vector<TableObject *> *obj_list = getObjectList(obj_type);
-	vector<TableObject *>::iterator itr;
+	std::vector<TableObject *> *obj_list = getObjectList(obj_type);
+	std::vector<TableObject *>::iterator itr;
 
 	//Raises an error if the object index is out of bound
 	if(obj_idx >= obj_list->size())
@@ -969,7 +969,7 @@ void View::removeIndex(unsigned idx)
 
 TableObject *View::getObject(unsigned obj_idx, ObjectType obj_type)
 {
-	vector<TableObject *> *obj_list=getObjectList(obj_type);
+	std::vector<TableObject *> *obj_list=getObjectList(obj_type);
 
 	//Raises an error if the object index is out of bound
 	if(obj_idx >= obj_list->size())
@@ -1034,7 +1034,7 @@ Index *View::getIndex(unsigned obj_idx)
 
 unsigned View::getObjectCount(ObjectType obj_type, bool)
 {
-	vector<TableObject *> *obj_list = getObjectList(obj_type);
+	std::vector<TableObject *> *obj_list = getObjectList(obj_type);
 	return (!obj_list ? 0 : obj_list->size());
 }
 
@@ -1053,7 +1053,7 @@ unsigned View::getIndexCount()
 	return indexes.size();
 }
 
-vector<TableObject *> *View::getObjectList(ObjectType obj_type)
+std::vector<TableObject *> *View::getObjectList(ObjectType obj_type)
 {
 	if(obj_type==ObjectType::Trigger)
 		return &triggers;
@@ -1108,10 +1108,10 @@ void View::operator = (View &view)
 	PgSqlType::renameUserType(prev_name, this, this->getName(true));
 }
 
-vector<BaseObject *> View::getObjects(const vector<ObjectType> &excl_types)
+std::vector<BaseObject *> View::getObjects(const std::vector<ObjectType> &excl_types)
 {
-	vector<BaseObject *> list;
-	vector<ObjectType> types={ ObjectType::Trigger, ObjectType::Index, ObjectType::Rule };
+	std::vector<BaseObject *> list;
+	std::vector<ObjectType> types={ ObjectType::Trigger, ObjectType::Index, ObjectType::Rule };
 
 	for(auto type : types)
 	{

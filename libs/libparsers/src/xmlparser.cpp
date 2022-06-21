@@ -452,12 +452,13 @@ int XmlParser::getBufferLineCount()
 QString XmlParser::convertCharsToXMLEntities(QString buf)
 {
 	QTextStream ts(&buf);
-	QRegExp attr_regexp=QRegExp("([a-z]|\\-|[0-9])+( )*(=\\\")"),
-			attr_end_regexp=QRegExp("(\\\")((\\t)+|(\\n)|((\\/\\>)|(\\>)))"),
-			next_attr_regexp=QRegExp(QString("(( )|(\\t))+%1").arg(attr_regexp.pattern()));
+	QRegularExpression attr_regexp("([a-z]|\\-|[0-9])+( )*(=\\\")"),
+			attr_end_regexp("(\\\")((\\t)+|(\\n)|((\\/\\>)|(\\>)))"),
+			next_attr_regexp(QString("(( )|(\\t))+%1").arg(attr_regexp.pattern()));
 	int attr_start=0, attr_end=0, count=0, cdata_start = -1,
 			cdata_end = -1, start = -1, end = -1, pos = 0;
 	QString value, fmt_buf, lin;
+	QRegularExpressionMatch attr_match, next_attr_match, attr_end_match;
 
 	while(!ts.atEnd())
 	{
@@ -472,8 +473,8 @@ QString XmlParser::convertCharsToXMLEntities(QString buf)
 		}
 
 		// Checking if the current line has at least one attribute in form (attr="value")
-		attr_start = -1;
-		attr_start = attr_regexp.indexIn(lin);
+		attr_match = attr_regexp.match(lin);
+		attr_start = attr_match.capturedStart();
 
 		if(attr_start >= 0)
 		{
@@ -482,20 +483,24 @@ QString XmlParser::convertCharsToXMLEntities(QString buf)
 			 * replacing contents within that tag */
 			cdata_start = lin.indexOf(CdataStart);
 			cdata_end = lin.indexOf(CdataEnd);
-			start = min<int>(cdata_start, cdata_end);
-			end = max<int>(cdata_start, cdata_end);
+			start = std::min<int>(cdata_start, cdata_end);
+			end = std::max<int>(cdata_start, cdata_end);
 
 			do
 			{
 				// First we try to find the next attribute so we can delimite the current attribute's value
-				attr_end = next_attr_regexp.indexIn(lin, attr_start + attr_regexp.matchedLength());
+				next_attr_match = next_attr_regexp.match(lin, attr_start + attr_match.capturedLength());
+				attr_end = next_attr_match.capturedStart();
 
 				// Found the next attribute we decrement in 1 char the current attribute's value in order to eliminate the unneeded "
 				if(attr_end >= 0)
 					attr_end--;
 				else
+				{
 					// If there's no next attribute we try to match the end of the attribute's value at the end of the line/tag
-					attr_end = attr_end_regexp.indexIn(lin, attr_start + attr_regexp.matchedLength());
+					attr_end_match = attr_end_regexp.match(lin, attr_start + attr_match.capturedLength());
+					attr_end = attr_end_match.capturedStart();
+				}
 
 				if(attr_start >= 0 && attr_end >= 0 &&
 					 //CDATA absent in the current line
@@ -506,7 +511,7 @@ QString XmlParser::convertCharsToXMLEntities(QString buf)
 						(end >= 0 && attr_start > end && attr_end > end)))
 				{
 					// Calculates the initial position where the value to be  retrived is (in that case rigth after attrib=")
-					pos = attr_start + attr_regexp.matchedLength();
+					pos = attr_start + attr_match.capturedLength();
 					count = attr_end - pos;
 					value = lin.mid(pos, count);
 				}
@@ -515,7 +520,7 @@ QString XmlParser::convertCharsToXMLEntities(QString buf)
 
 				/* If the extracted value has one of the expected special chars
 				 * in order to perform the replacemnt to xml entities */
-				if(value.contains(QRegExp("(&|\\<|\\>|\")")))
+				if(value.contains(QRegularExpression("(&|\\<|\\>|\")")))
 				{
 					if(!value.contains(CharQuot) && !value.contains(CharLt) &&
 						 !value.contains(CharGt) && !value.contains(CharAmp) &&
@@ -532,7 +537,9 @@ QString XmlParser::convertCharsToXMLEntities(QString buf)
 
 				// Moving the position to the next attribute in the line (if existent)
 				pos += value.length() + 1;
-				attr_start = attr_regexp.indexIn(lin, pos);
+				attr_match = attr_regexp.match(lin, pos);
+				attr_start = attr_match.capturedStart();
+
 				value.clear();
 			}
 			while(attr_start >=0 && attr_start < lin.size());

@@ -121,7 +121,7 @@ OperatorClassElement OperatorClass::getElement(unsigned elem_idx)
 bool OperatorClass::isElementExists(OperatorClassElement elem)
 {
 	bool exists=false;
-	vector<OperatorClassElement>::iterator itr, itr_end;
+	std::vector<OperatorClassElement>::iterator itr, itr_end;
 	OperatorClassElement elem_aux;
 
 	itr=elements.begin();

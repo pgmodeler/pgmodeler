@@ -19,6 +19,7 @@
 #include "schemaparser.h"
 #include "attributes.h"
 #include "utilsns.h"
+#include "xmlparser.h"
 
 const char SchemaParser::CharComment='#';
 const char SchemaParser::CharLineEnd='\n';
@@ -65,7 +66,9 @@ const QString SchemaParser::TokenLtOper=QString("<");
 const QString SchemaParser::TokenGtEqOper=QString(">=");
 const QString SchemaParser::TokenLtEqOper=QString("<=");
 
-const QRegExp SchemaParser::AttribRegExp=QRegExp("^([a-z])([a-z]*|(\\d)*|(\\-)*|(_)*)+", Qt::CaseInsensitive);
+// QRegularExpression::anchoredPattern is used to force the exact match
+const QRegularExpression SchemaParser::AttribRegExp(QRegularExpression::anchoredPattern("^([a-z])([a-z]*|(\\d)*|(\\-)*|(_)*)+"),
+																										QRegularExpression::CaseInsensitiveOption);
 
 SchemaParser::SchemaParser()
 {
@@ -265,7 +268,7 @@ QString SchemaParser::getAttribute()
 					QString(QT_TR_NOOP("Expected a valid attribute token enclosed by `%1%2'.")).arg(CharStartAttribute).arg(CharEndAttribute),
 					ErrorCode::InvalidSyntax,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	}
-	else if(!AttribRegExp.exactMatch(atrib))
+	else if(!AttribRegExp.match(atrib).hasMatch())
 	{
 		throw Exception(Exception::getErrorMessage(ErrorCode::InvalidAttribute)
 						.arg(atrib).arg(filename).arg(getCurrentLine()).arg(getCurrentColumn()),
@@ -662,7 +665,7 @@ void SchemaParser::defineAttribute()
 		attrib=(use_val_as_name ? attributes[new_attrib] : new_attrib);
 
 		//Checking if the attribute has a valid name
-		if(!AttribRegExp.exactMatch(attrib))
+		if(!AttribRegExp.match(attrib).hasMatch())
 		{
 			throw Exception(Exception::getErrorMessage(ErrorCode::InvalidAttribute)
 							.arg(attrib).arg(filename).arg(getCurrentLine()).arg(getCurrentColumn()),
@@ -707,7 +710,7 @@ void SchemaParser::unsetAttribute()
 										.arg(attrib).arg(filename).arg(getCurrentLine()).arg(getCurrentColumn()),
 										ErrorCode::UnkownAttribute,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 					}
-					else if(!AttribRegExp.exactMatch(attrib))
+					else if(!AttribRegExp.match(attrib).hasMatch())
 					{
 						throw Exception(Exception::getErrorMessage(ErrorCode::InvalidAttribute)
 										.arg(attrib).arg(filename).arg(getCurrentLine()).arg(getCurrentColumn()),
@@ -947,11 +950,11 @@ QString SchemaParser::getCodeDefinition(const attribs_map &attribs)
 	QString atrib, cond, prev_cond, word, meta;
 	bool error, if_expr;
 	char chr;
-	vector<bool> vet_expif, vet_tk_if, vet_tk_then, vet_tk_else;
-	map<int, vector<QString> > if_map, else_map;
-	vector<QString>::iterator itr, itr_end;
-	vector<int> vet_prev_level;
-	vector<QString> *vet_aux;
+	std::vector<bool> vet_expif, vet_tk_if, vet_tk_then, vet_tk_else;
+	std::map<int, std::vector<QString> > if_map, else_map;
+	std::vector<QString>::iterator itr, itr_end;
+	std::vector<int> vet_prev_level;
+	std::vector<QString> *vet_aux;
 
 	//In case the file was successfuly loaded
 	if(buffer.size() > 0)

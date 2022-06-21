@@ -37,11 +37,11 @@ class ConnectionsConfigWidget: public BaseConfigWidget, public Ui::ConnectionsCo
 		static const QString DefaultFor;
 		
 		//! \brief Stores the connections created by the user
-		static vector<Connection *> connections;
+		static std::vector<Connection *> connections;
 		
 		/*! \brief Stores the connections attributes. This map is used to write the connections.conf file
 		as well to create the connections stored by the 'connections' vector */
-		static map<QString, attribs_map> config_params;
+		static std::map<QString, attribs_map> config_params;
 		
 		//! \brief Configures the passed connection setting it's attributes using the values from the form
 		void configureConnection(Connection *conn);
@@ -57,10 +57,10 @@ class ConnectionsConfigWidget: public BaseConfigWidget, public Ui::ConnectionsCo
 		void saveConfiguration();
 		void loadConfiguration();
 		
-		static map<QString, attribs_map> getConfigurationParams();
+		static std::map<QString, attribs_map> getConfigurationParams();
 		
 		//! \brief Fills the passed map with all the loaded connections.
-		static void getConnections(map<QString, Connection *> &conns, bool inc_hosts=true);
+		static void getConnections(std::map<QString, Connection *> &conns, bool inc_hosts=true);
 
 		//! \brief Return a connection with the provided ID. If no connection is found the method returns nullptr
 		static Connection *getConnection(const QString &conn_id);

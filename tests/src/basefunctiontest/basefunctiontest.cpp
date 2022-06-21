@@ -21,7 +21,6 @@
 #include "globalattributes.h"
 #include "pgmodelerunittest.h"
 #include "defaultlanguages.h"
-#include "qtcompat/qtextstreamcompat.h"
 
 class BaseFunctionTest: public QObject, public PgModelerUnitTest {
 	private:
@@ -48,7 +47,7 @@ class BaseFunctionTest: public QObject, public PgModelerUnitTest {
 void BaseFunctionTest::doesntAddDuplicatedTransformType()
 {
 	Function func;
-	vector<PgSqlType> types, types_aux;
+	std::vector<PgSqlType> types, types_aux;
 
 	func.addTransformType(PgSqlType("integer"));
 	func.addTransformType(PgSqlType("text"));
@@ -177,7 +176,7 @@ row-amount=\"1000\"> \
 <transform-types names=\"varchar,text,numeric\"/> \
 <configuration name=\"log_statement_stats\" value=\"DEFAULT\"/> \
 <configuration name=\"search_path\" value=\"public,foo,bar\"/> \
-<definition><![CDATA[return 0;]]></definition> \
+<definition> <![CDATA[return 0;]]> </definition> \
 </function>").simplified();
 
 		QString generated_code = func.getCodeDefinition(SchemaParser::XmlDefinition).simplified();
@@ -262,7 +261,7 @@ security-type=\"SECURITY INVOKER\"> \
 <transform-types names=\"varchar,text,numeric\"/> \
 <configuration name=\"log_statement_stats\" value=\"DEFAULT\"/> \
 <configuration name=\"search_path\" value=\"public,foo,bar\"/> \
-<definition><![CDATA[return 0;]]></definition> \
+<definition> <![CDATA[return 0;]]> </definition> \
 </procedure>").simplified();
 
 		QString generated_code = proc.getCodeDefinition(SchemaParser::XmlDefinition).simplified();
@@ -294,7 +293,7 @@ row-amount=\"1000\"> \
 <transform-types names=\"varchar,text,numeric\"/> \
 <configuration name=\"log_statement_stats\" value=\"DEFAULT\"/> \
 <configuration name=\"search_path\" value=\"public,foo,bar\"/> \
-<definition><![CDATA[return 0;]]></definition> \
+<definition> <![CDATA[return 0;]]> </definition> \
 </function>").simplified();
 
 		dbmodel.createSystemObjects(true);
@@ -332,7 +331,7 @@ security-type=\"SECURITY INVOKER\"> \
 <transform-types names=\"varchar,text,numeric\"/> \
 <configuration name=\"log_statement_stats\" value=\"DEFAULT\"/> \
 <configuration name=\"search_path\" value=\"public,foo,bar\"/> \
-<definition><![CDATA[return 0;]]></definition> \
+<definition> <![CDATA[return 0;]]> </definition> \
 </procedure>").simplified();
 
 		dbmodel.createSystemObjects(true);

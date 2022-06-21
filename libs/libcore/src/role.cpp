@@ -127,7 +127,7 @@ void Role::setRoleAttribute(unsigned role_type)
 {
 	QString attrib;
 	QStringList rol_names;
-	vector<Role *> *roles_vect = getRoleList(role_type);
+	std::vector<Role *> *roles_vect = getRoleList(role_type);
 
 	if(role_type == MemberRole)
 		attrib = Attributes::MemberRoles;
@@ -140,7 +140,7 @@ void Role::setRoleAttribute(unsigned role_type)
 	attributes[attrib]= rol_names.join(',');
 }
 
-vector<Role *> *Role::getRoleList(unsigned role_type)
+std::vector<Role *> *Role::getRoleList(unsigned role_type)
 {
 	if(role_type == MemberRole)
 	 return &member_roles;
@@ -153,8 +153,8 @@ vector<Role *> *Role::getRoleList(unsigned role_type)
 
 void Role::removeRole(unsigned role_type, unsigned role_idx)
 {
-	vector<Role *> *list = getRoleList(role_type);
-	vector<Role *>::iterator itr;
+	std::vector<Role *> *list = getRoleList(role_type);
+	std::vector<Role *>::iterator itr;
 
 	if(role_idx >= list->size())
 		throw Exception(ErrorCode::RefObjectInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -166,15 +166,15 @@ void Role::removeRole(unsigned role_type, unsigned role_idx)
 
 void Role::removeRoles(unsigned role_type)
 {
-	vector<Role *> *list = getRoleList(role_type);
+	std::vector<Role *> *list = getRoleList(role_type);
 	list->clear();
 	setCodeInvalidated(true);
 }
 
 bool Role::isRoleExists(unsigned role_type, Role *role)
 {
-	vector<Role *> *list = getRoleList(role_type);
-	vector<Role *>::iterator itr, itr_end;
+	std::vector<Role *> *list = getRoleList(role_type);
+	std::vector<Role *>::iterator itr, itr_end;
 	bool found=false;
 
 	itr = list->begin();
@@ -190,7 +190,7 @@ bool Role::isRoleExists(unsigned role_type, Role *role)
 
 bool Role::isRoleExists(unsigned role_type, const QString &rl_name)
 {
-	vector<Role *> *list = getRoleList(role_type);
+	std::vector<Role *> *list = getRoleList(role_type);
 
 	for(auto &rl : *list)
 	{
@@ -211,7 +211,7 @@ bool Role::getOption(unsigned op_type)
 
 Role *Role::getRole(unsigned role_type, unsigned role_idx)
 {
-	vector<Role *> *list = getRoleList(role_type);
+	std::vector<Role *> *list = getRoleList(role_type);
 
 	//Raises an error if the role index is invalid (out of bound)
 	if(role_idx > list->size())

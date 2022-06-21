@@ -76,7 +76,7 @@ void Type::setSchema(BaseObject *schema)
 
 int Type::getAttributeIndex(const QString &attrib_name)
 {
-	vector<TypeAttribute>::iterator itr, itr_end;
+	std::vector<TypeAttribute>::iterator itr, itr_end;
 	int idx=-1;
 
 	itr=type_attribs.begin();

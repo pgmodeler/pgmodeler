@@ -48,7 +48,7 @@ class OperatorClass: public BaseObject {
 		bool is_default;
 
 		//! \brief Operator class attributes list
-		vector<OperatorClassElement> elements;
+		std::vector<OperatorClassElement> elements;
 
 		/*! \brief Formats the elements string used by the SchemaParser on the
 		 SQL/XML code definition for operator classes */

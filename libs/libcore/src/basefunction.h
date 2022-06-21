@@ -49,13 +49,13 @@ class BaseFunction: public BaseObject {
 		BaseObject *language;
 
 		//! \brief Function parameters
-		vector<Parameter> parameters;
+		std::vector<Parameter> parameters;
 
 		//! \brief Function security type. It can be SECURITY [INVOKER | DEFINER]
 		SecurityType security_type;
 
 		//! \brief Transforms types that are applied to this function
-		vector<PgSqlType> transform_types;
+		std::vector<PgSqlType> transform_types;
 
 		//! \brief The user-defined configuration parameters of the function
 		attribs_map config_params;
@@ -72,7 +72,7 @@ class BaseFunction: public BaseObject {
 		virtual void configureSearchAttributes();
 
 	public:
-		static const QRegExp ConfigParamPattern;
+		static const QRegularExpression ConfigParamPattern;
 
 		BaseFunction();
 
@@ -142,7 +142,7 @@ class BaseFunction: public BaseObject {
 		SecurityType getSecurityType();
 
 		//! \brief Returns the transform types of the function
-		vector<PgSqlType> getTransformTypes();
+		std::vector<PgSqlType> getTransformTypes();
 
 		//! \brief Removes a parameter using its name and type
 		void removeParameter(const QString &name, PgSqlType type);

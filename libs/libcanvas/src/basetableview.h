@@ -44,7 +44,7 @@ class BaseTableView: public BaseObjectView {
 		QTimer sel_enabler_timer;
 
 		/*! \brief Stores the references to the relationships connected to this table. */
-		vector<BaseRelationship *> connected_rels;
+		std::vector<BaseRelationship *> connected_rels;
 
 	protected:		
 		//! \brief Stores the selected child objects in order to retrieve them in ObjectScene/ModelWidget

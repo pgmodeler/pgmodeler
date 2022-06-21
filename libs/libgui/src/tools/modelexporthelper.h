@@ -91,17 +91,17 @@ class ModelExportHelper: public QObject {
 		//! \brief List of ignored error codes
 		QStringList ignored_errors;
 
-		vector<Exception> errors;
+		std::vector<Exception> errors;
 
 		/*! \brief Indicates which role / tablespaces were created on server (only dbms export).
 		This attribute is used to drop the created roles / tablespaces from server */
-		map<ObjectType, int> created_objs;
+		std::map<ObjectType, int> created_objs;
 
 		//! \brief Stores the current state of ALTER command generation for table columns/constraints
-		map<PhysicalTable *, bool> alter_cmds_status;
+		std::map<PhysicalTable *, bool> alter_cmds_status;
 
 		//! \brief Stores the original object names before the call of generateRandomObjectNames()
-		map<BaseObject *, QString> orig_obj_names;
+		std::map<BaseObject *, QString> orig_obj_names;
 
 		ObjectsScene *scene;
 

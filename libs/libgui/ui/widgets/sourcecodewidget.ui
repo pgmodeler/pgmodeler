@@ -27,12 +27,12 @@
     <number>0</number>
    </property>
    <property name="spacing">
-    <number>10</number>
+    <number>5</number>
    </property>
    <item row="0" column="0">
     <layout class="QHBoxLayout" name="horizontalLayout">
      <property name="spacing">
-      <number>10</number>
+      <number>5</number>
      </property>
      <item>
       <widget class="QLabel" name="version_lbl">
@@ -137,28 +137,6 @@
        </property>
       </spacer>
      </item>
-     <item>
-      <widget class="QLabel" name="icon2_lbl">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="maximumSize">
-        <size>
-         <width>40</width>
-         <height>40</height>
-        </size>
-       </property>
-       <property name="text">
-        <string>iconecodigo</string>
-       </property>
-       <property name="scaledContents">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
     </layout>
    </item>
    <item row="1" column="0">
@@ -169,7 +147,17 @@
      <property name="currentIndex">
       <number>0</number>
      </property>
+     <property name="iconSize">
+      <size>
+       <width>22</width>
+       <height>22</height>
+      </size>
+     </property>
      <widget class="QWidget" name="codigosql_tab">
+      <attribute name="icon">
+       <iconset resource="../../res/resources.qrc">
+        <normaloff>:/icons/icons/sqlcode.png</normaloff>:/icons/icons/sqlcode.png</iconset>
+      </attribute>
       <attribute name="title">
        <string>SQL</string>
       </attribute>
@@ -187,12 +175,12 @@
         <number>5</number>
        </property>
        <property name="spacing">
-        <number>10</number>
+        <number>5</number>
        </property>
        <item row="1" column="0" colspan="2">
         <layout class="QHBoxLayout" name="horizontalLayout_2">
          <property name="spacing">
-          <number>10</number>
+          <number>5</number>
          </property>
          <item>
           <widget class="QLabel" name="label">
@@ -265,8 +253,8 @@
            </property>
            <property name="iconSize">
             <size>
-             <width>32</width>
-             <height>32</height>
+             <width>25</width>
+             <height>25</height>
             </size>
            </property>
            <property name="toolButtonStyle">
@@ -289,6 +277,10 @@
       </layout>
      </widget>
      <widget class="QWidget" name="codigoxml_tab">
+      <attribute name="icon">
+       <iconset resource="../../res/resources.qrc">
+        <normaloff>:/icons/icons/xmlcode.png</normaloff>:/icons/icons/xmlcode.png</iconset>
+      </attribute>
       <attribute name="title">
        <string>XML</string>
       </attribute>
@@ -306,7 +298,7 @@
         <number>5</number>
        </property>
        <property name="spacing">
-        <number>10</number>
+        <number>5</number>
        </property>
        <item row="0" column="0">
         <widget class="QWidget" name="xmlcode_wgt" native="true"/>

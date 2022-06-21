@@ -33,13 +33,13 @@
 class Index: public TableObject{
 	private:
 		//! \brief Stores the elements that defines the index
-		vector<IndexElement> idx_elements;
+		std::vector<IndexElement> idx_elements;
 
 		//! \brief Stores the non-key (included) table columns associated with the INCLUDE clause in the index's DDL
-		vector<Column *> included_cols;
+		std::vector<Column *> included_cols;
 
 		//! \brief Stores the non-key (included) view columns associated with the INCLUDE clause in the index's DDL
-		vector<SimpleColumn> incl_simple_cols;
+		std::vector<SimpleColumn> incl_simple_cols;
 
 		//! \brief Predicate expression for the index
 		QString predicate;
@@ -78,7 +78,7 @@ class Index: public TableObject{
 		void addIndexElement(IndexElement elem);
 
 		//! \brief Adds several elements to the index using a defined vector
-		void addIndexElements(vector<IndexElement> &elems);
+		void addIndexElements(std::vector<IndexElement> &elems);
 
 		//! \brief Returns the specified element index
 		int getElementIndex(IndexElement elem);
@@ -87,7 +87,7 @@ class Index: public TableObject{
 		IndexElement getIndexElement(unsigned elem_idx);
 
 		//! \brief Returns a list of the index elements
-		vector<IndexElement> getIndexElements();
+		std::vector<IndexElement> getIndexElements();
 
 		//! \brief Remove an element using its index
 		void removeIndexElement(unsigned idx_elem);
@@ -141,7 +141,7 @@ class Index: public TableObject{
 	This method is slower than isReferRelationshipAddedColumn() so it's not
 	recommended to use it only check if the object is referencing columns
 	added by relationship */
-		vector<Column *> getRelationshipAddedColumns();
+		std::vector<Column *> getRelationshipAddedColumns();
 
 		//! \brief Returns if some index element is referencing the specified collation
 		bool isReferCollation(Collation *coll);
@@ -150,10 +150,10 @@ class Index: public TableObject{
 		bool isReferColumn(Column *column);
 
 		//! \brief Defines the non-key table columns (INCLUDE clause) of the index.
-		void setColumns(const vector<Column *> &cols);
+		void setColumns(const std::vector<Column *> &cols);
 
 		//! \brief Defines the non-key view columns (INCLUDE clause) of the index.
-		void setSimpleColumns(const vector<SimpleColumn> &cols);
+		void setSimpleColumns(const std::vector<SimpleColumn> &cols);
 
 		//! \brief Adds a single non-key column (INCLUDE clause) to the index.
 		void addColumn(Column *col);
@@ -162,10 +162,10 @@ class Index: public TableObject{
 		void addSimpleColumn(const SimpleColumn &col);
 
 		//! \brief Returns the non-key table columns (INCLUDE clause) of the index
-		vector<Column *> getColumns();
+		std::vector<Column *> getColumns();
 
 		//! \brief Returns the non-key view columns (INCLUDE clause) of the index
-		vector<SimpleColumn> getSimpleColumns();
+		std::vector<SimpleColumn> getSimpleColumns();
 };
 
 #endif

@@ -30,7 +30,7 @@
     <number>5</number>
    </property>
    <property name="spacing">
-    <number>10</number>
+    <number>5</number>
    </property>
    <item row="0" column="4">
     <widget class="QRadioButton" name="range_rb">
@@ -50,7 +50,17 @@
      <property name="currentIndex">
       <number>0</number>
      </property>
+     <property name="iconSize">
+      <size>
+       <width>22</width>
+       <height>22</height>
+      </size>
+     </property>
      <widget class="QWidget" name="tab_2">
+      <attribute name="icon">
+       <iconset resource="../../res/resources.qrc">
+        <normaloff>:/icons/icons/function.png</normaloff>:/icons/icons/function.png</iconset>
+      </attribute>
       <attribute name="title">
        <string>Functions</string>
       </attribute>
@@ -68,7 +78,7 @@
         <number>5</number>
        </property>
        <property name="spacing">
-        <number>10</number>
+        <number>5</number>
        </property>
        <item row="0" column="0">
         <widget class="QLabel" name="input_lbl">
@@ -122,6 +132,10 @@
       </layout>
      </widget>
      <widget class="QWidget" name="tab">
+      <attribute name="icon">
+       <iconset resource="../../res/resources.qrc">
+        <normaloff>:/icons/icons/attribute.png</normaloff>:/icons/icons/attribute.png</iconset>
+      </attribute>
       <attribute name="title">
        <string>Attributes</string>
       </attribute>
@@ -139,7 +153,7 @@
         <number>5</number>
        </property>
        <property name="spacing">
-        <number>10</number>
+        <number>5</number>
        </property>
        <item row="0" column="0">
         <widget class="QLabel" name="internal_len_lbl">
@@ -190,6 +204,9 @@
        </item>
        <item row="1" column="1" rowspan="3">
         <layout class="QVBoxLayout" name="verticalLayout">
+         <property name="spacing">
+          <number>5</number>
+         </property>
          <item>
           <widget class="QCheckBox" name="by_value_chk">
            <property name="sizePolicy">
@@ -431,7 +448,7 @@
        <number>5</number>
       </property>
       <property name="spacing">
-       <number>10</number>
+       <number>5</number>
       </property>
       <item row="0" column="0">
        <widget class="QLabel" name="enum_name_lbl">
@@ -481,7 +498,7 @@
        <number>5</number>
       </property>
       <property name="spacing">
-       <number>10</number>
+       <number>5</number>
       </property>
       <item row="0" column="0">
        <widget class="QLabel" name="attrib_name_lbl">
@@ -538,7 +555,7 @@
        <number>5</number>
       </property>
       <property name="spacing">
-       <number>10</number>
+       <number>5</number>
       </property>
       <item row="2" column="0">
        <widget class="QLabel" name="diff_func_lbl">
@@ -584,6 +601,9 @@
   <tabstop>default_value_edt</tabstop>
   <tabstop>alignment_cmb</tabstop>
  </tabstops>
- <resources/>
+ <resources>
+  <include location="../../res/resources.qrc"/>
+  <include location="../../res/resources.qrc"/>
+ </resources>
  <connections/>
 </ui>

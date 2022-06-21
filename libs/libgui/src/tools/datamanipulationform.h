@@ -68,19 +68,19 @@ class DataManipulationForm: public QDialog, public Ui::DataManipulationForm {
 		unsigned table_oid;
 		
 		//! \brief Stores the ids of changed rows. These ids are handled on saveChanges() method
-		vector<int> changed_rows;
+		std::vector<int> changed_rows;
 		
 		//! \brief Stores the previous color of the rows before being marked with some operation
-		map<int, QBrush> prev_row_colors;
+		std::map<int, QBrush> prev_row_colors;
 
 		//! \brief Stores the fk informations about referenced tables
-		map<QString, attribs_map> fk_infos,
+		std::map<QString, attribs_map> fk_infos,
 
 		//! \brief Stores the fk informations about referencing tables
 		ref_fk_infos;
 		
 		//! \brief Fills a combobox with the names of objects retrieved from catalog
-		void listObjects(QComboBox *combo, vector<ObjectType> obj_types, const QString &schema="");
+		void listObjects(QComboBox *combo, std::vector<ObjectType> obj_types, const QString &schema="");
 		
 		//! \brief Retrieve the primary key column ids for the specified table
 		void retrievePKColumns(const QString &schema, const QString &table);
@@ -97,7 +97,7 @@ class DataManipulationForm: public QDialog, public Ui::DataManipulationForm {
 		QString getDMLCommand(int row);
 		
 		//! \brief Remove the rows marked as OP_INSERT which ids are specified on the parameter vector
-		void removeNewRows(vector<int> ins_rows);
+		void removeNewRows(std::vector<int> ins_rows);
 		
 		//! \brief Reset the state of changed rows, clearing all attributes used to control the modifications on them
 		void clearChangedRows();

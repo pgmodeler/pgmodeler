@@ -30,7 +30,7 @@
     <number>5</number>
    </property>
    <property name="spacing">
-    <number>10</number>
+    <number>5</number>
    </property>
    <item row="1" column="2">
     <widget class="QLabel" name="match_lbl">
@@ -372,6 +372,12 @@
      <property name="currentIndex">
       <number>0</number>
      </property>
+     <property name="iconSize">
+      <size>
+       <width>22</width>
+       <height>22</height>
+      </size>
+     </property>
      <widget class="QWidget" name="tab">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
@@ -379,6 +385,10 @@
         <verstretch>0</verstretch>
        </sizepolicy>
       </property>
+      <attribute name="icon">
+       <iconset resource="../../res/resources.qrc">
+        <normaloff>:/icons/icons/column.png</normaloff>:/icons/icons/column.png</iconset>
+      </attribute>
       <attribute name="title">
        <string>Columns</string>
       </attribute>
@@ -390,6 +400,10 @@
         <verstretch>0</verstretch>
        </sizepolicy>
       </property>
+      <attribute name="icon">
+       <iconset resource="../../res/resources.qrc">
+        <normaloff>:/icons/icons/constraint_fk.png</normaloff>:/icons/icons/constraint_fk.png</iconset>
+      </attribute>
       <attribute name="title">
        <string>Referenced Columns</string>
       </attribute>
@@ -404,6 +418,9 @@
         <number>5</number>
        </property>
        <property name="bottomMargin">
+        <number>5</number>
+       </property>
+       <property name="spacing">
         <number>5</number>
        </property>
        <item row="0" column="0">
@@ -513,6 +530,9 @@
   <tabstop>on_update_cmb</tabstop>
   <tabstop>columns_tbw</tabstop>
  </tabstops>
- <resources/>
+ <resources>
+  <include location="../../res/resources.qrc"/>
+  <include location="../../res/resources.qrc"/>
+ </resources>
  <connections/>
 </ui>

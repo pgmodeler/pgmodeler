@@ -52,7 +52,10 @@
     <number>5</number>
    </property>
    <property name="bottomMargin">
-    <number>10</number>
+    <number>5</number>
+   </property>
+   <property name="spacing">
+    <number>5</number>
    </property>
    <item row="2" column="0">
     <widget class="QWidget" name="content_wgt" native="true">
@@ -69,6 +72,9 @@
       <property name="bottomMargin">
        <number>0</number>
       </property>
+      <property name="horizontalSpacing">
+       <number>5</number>
+      </property>
       <property name="verticalSpacing">
        <number>0</number>
       </property>
@@ -78,7 +84,7 @@
          <enum>Qt::Vertical</enum>
         </property>
         <property name="handleWidth">
-         <number>8</number>
+         <number>5</number>
         </property>
         <widget class="QStackedWidget" name="visaoobjetos_stw">
          <property name="enabled">
@@ -181,8 +187,8 @@
              </property>
              <property name="iconSize">
               <size>
-               <width>28</width>
-               <height>28</height>
+               <width>22</width>
+               <height>22</height>
               </size>
              </property>
              <property name="indentation">
@@ -250,6 +256,9 @@
            <property name="horizontalSpacing">
             <number>0</number>
            </property>
+           <property name="verticalSpacing">
+            <number>5</number>
+           </property>
            <item row="0" column="0">
             <widget class="QTableWidget" name="objectslist_tbw">
              <property name="enabled">
@@ -269,8 +278,8 @@
              </property>
              <property name="iconSize">
               <size>
-               <width>28</width>
-               <height>28</height>
+               <width>22</width>
+               <height>22</height>
               </size>
              </property>
              <property name="gridStyle">
@@ -409,6 +418,9 @@
              <property name="bottomMargin">
               <number>5</number>
              </property>
+             <property name="spacing">
+              <number>5</number>
+             </property>
              <item row="0" column="0">
               <widget class="QListWidget" name="visibleobjects_lst">
                <property name="minimumSize">
@@ -431,8 +443,8 @@
                </property>
                <property name="iconSize">
                 <size>
-                 <width>28</width>
-                 <height>28</height>
+                 <width>22</width>
+                 <height>22</height>
                 </size>
                </property>
                <property name="currentRow">
@@ -445,6 +457,9 @@
              </item>
              <item row="1" column="0">
               <layout class="QHBoxLayout" name="horizontalLayout_2">
+               <property name="spacing">
+                <number>5</number>
+               </property>
                <item>
                 <spacer name="horizontalSpacer_3">
                  <property name="orientation">
@@ -513,7 +528,7 @@
     <widget class="QWidget" name="title_wgt" native="true">
      <layout class="QHBoxLayout" name="horizontalLayout_3">
       <property name="spacing">
-       <number>10</number>
+       <number>5</number>
       </property>
       <property name="leftMargin">
        <number>5</number>
@@ -529,11 +544,6 @@
       </property>
       <item>
        <widget class="QLabel" name="title_lbl">
-        <property name="font">
-         <font>
-          <pointsize>10</pointsize>
-         </font>
-        </property>
         <property name="text">
          <string>Model objects</string>
         </property>
@@ -566,8 +576,8 @@
         </property>
         <property name="iconSize">
          <size>
-          <width>25</width>
-          <height>25</height>
+          <width>20</width>
+          <height>20</height>
          </size>
         </property>
         <property name="shortcut">
@@ -590,6 +600,9 @@
       </size>
      </property>
      <layout class="QHBoxLayout" name="horizontalLayout_4">
+      <property name="spacing">
+       <number>5</number>
+      </property>
       <property name="leftMargin">
        <number>0</number>
       </property>
@@ -640,6 +653,9 @@
    </item>
    <item row="4" column="0">
     <layout class="QHBoxLayout" name="horizontalLayout">
+     <property name="spacing">
+      <number>5</number>
+     </property>
      <item>
       <spacer name="horizontalSpacer">
        <property name="orientation">
@@ -682,8 +698,8 @@
        </property>
        <property name="iconSize">
         <size>
-         <width>32</width>
-         <height>32</height>
+         <width>25</width>
+         <height>25</height>
         </size>
        </property>
        <property name="shortcut">
@@ -720,8 +736,8 @@
        </property>
        <property name="iconSize">
         <size>
-         <width>32</width>
-         <height>32</height>
+         <width>25</width>
+         <height>25</height>
         </size>
        </property>
        <property name="shortcut">
@@ -761,8 +777,8 @@
        </property>
        <property name="iconSize">
         <size>
-         <width>32</width>
-         <height>32</height>
+         <width>25</width>
+         <height>25</height>
         </size>
        </property>
        <property name="checkable">
@@ -802,8 +818,8 @@
        </property>
        <property name="iconSize">
         <size>
-         <width>32</width>
-         <height>32</height>
+         <width>25</width>
+         <height>25</height>
         </size>
        </property>
        <property name="checkable">
@@ -840,8 +856,8 @@
        </property>
        <property name="iconSize">
         <size>
-         <width>32</width>
-         <height>32</height>
+         <width>25</width>
+         <height>25</height>
         </size>
        </property>
        <property name="checkable">
@@ -881,8 +897,8 @@
        </property>
        <property name="iconSize">
         <size>
-         <width>32</width>
-         <height>32</height>
+         <width>25</width>
+         <height>25</height>
         </size>
        </property>
        <property name="checkable">
@@ -919,8 +935,8 @@
        </property>
        <property name="iconSize">
         <size>
-         <width>32</width>
-         <height>32</height>
+         <width>25</width>
+         <height>25</height>
         </size>
        </property>
        <property name="checkable">
@@ -951,7 +967,6 @@
   <tabstop>hide_tb</tabstop>
  </tabstops>
  <resources>
-  <include location="../../res/resources.qrc"/>
   <include location="../../res/resources.qrc"/>
   <include location="../../res/resources.qrc"/>
  </resources>

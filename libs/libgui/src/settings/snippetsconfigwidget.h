@@ -36,17 +36,17 @@ class SnippetsConfigWidget: public BaseConfigWidget, public Ui::SnippetsConfigWi
 		Q_OBJECT
 
 		//! \brief Stores all snippets created by the user or loaded from file
-		static map<QString, attribs_map> config_params;
+		static std::map<QString, attribs_map> config_params;
 
 		//! \brief The regular expression the defines a valid id for a snippet
-		static const QRegExp IdFormatRegExp;
+		static const QRegularExpression IdFormatRegExp;
 
 		NumberedTextEditor *snippet_txt;
 
 		SyntaxHighlighter *snippet_hl;
 
 		//! \brief Fills the snippet combobox with previously loaded snippet map
-		void fillSnippetsCombo(map<QString, attribs_map> &config);
+		void fillSnippetsCombo(std::map<QString, attribs_map> &config);
 
 		//! \brief Validates the specified snippet atributes against the current loaded ones
 		bool isSnippetValid(attribs_map &attribs, const QString &orig_id="");
@@ -67,7 +67,7 @@ class SnippetsConfigWidget: public BaseConfigWidget, public Ui::SnippetsConfigWi
 
 		void saveConfiguration();
 		void loadConfiguration();
-		static map<QString, attribs_map> getConfigurationParams();
+		static std::map<QString, attribs_map> getConfigurationParams();
 
 		//! \brief Returns the snippet attributes related to the identified snippet snip_id
 		static attribs_map getSnippetById(const QString &snip_id);
@@ -78,20 +78,20 @@ class SnippetsConfigWidget: public BaseConfigWidget, public Ui::SnippetsConfigWi
 		/*! \brief Returns a vector of snippets' attributes filtering by the object type in which they apply.
 		There's a special group for general purpose snippets that can be retrieved using ObjectType::ObjBaseObject type.
 		If there is no snippets related to the type an empty vector is returned. */
-		static vector<attribs_map> getSnippetsByObject(ObjectType obj_type);
+		static std::vector<attribs_map> getSnippetsByObject(ObjectType obj_type);
 
 		//! \brief Returns the a list of all available snippets specified attribute
 		static QStringList getAllSnippetsAttribute(const QString &attrib);
 
 		//! \brief Returns the a vector of all available snippets.
-		static vector<attribs_map> getAllSnippets();
+		static std::vector<attribs_map> getAllSnippets();
 
 		/*! \brief Returns the parsed snipped identified by 'snip_id'. The 'attribs' contains the set of
 		attributes to be replaced on the original snippet code */
 		static QString getParsedSnippet(const QString &snip_id, attribs_map attribs=attribs_map());
 
 		//! \brief Configures a QMenu instances with the available snippets categorizing them in submenus
-		static void configureSnippetsMenu(QMenu *snip_menu, vector<ObjectType> types=vector<ObjectType>());
+		static void configureSnippetsMenu(QMenu *snip_menu, std::vector<ObjectType> types=std::vector<ObjectType>());
 
 		//! \brief Returns is the identified snippet exists
 		static bool isSnippetExists(const QString &snip_id);

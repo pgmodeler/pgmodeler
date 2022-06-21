@@ -29,12 +29,25 @@
    <property name="bottomMargin">
     <number>0</number>
    </property>
+   <property name="spacing">
+    <number>5</number>
+   </property>
    <item row="0" column="0">
     <widget class="QTabWidget" name="attributes_twg">
      <property name="currentIndex">
       <number>0</number>
      </property>
+     <property name="iconSize">
+      <size>
+       <width>22</width>
+       <height>22</height>
+      </size>
+     </property>
      <widget class="QWidget" name="tab">
+      <attribute name="icon">
+       <iconset resource="../../res/resources.qrc">
+        <normaloff>:/icons/icons/attribute.png</normaloff>:/icons/icons/attribute.png</iconset>
+      </attribute>
       <attribute name="title">
        <string>Attributes</string>
       </attribute>
@@ -49,6 +62,9 @@
         <number>5</number>
        </property>
        <property name="bottomMargin">
+        <number>5</number>
+       </property>
+       <property name="spacing">
         <number>5</number>
        </property>
        <item row="0" column="0">
@@ -309,6 +325,9 @@
        </item>
        <item row="4" column="1" colspan="3">
         <layout class="QHBoxLayout" name="horizontalLayout">
+         <property name="spacing">
+          <number>5</number>
+         </property>
          <item>
           <widget class="QCheckBox" name="allow_conn_chk">
            <property name="text">
@@ -360,6 +379,10 @@
       </layout>
      </widget>
      <widget class="QWidget" name="tab_2">
+      <attribute name="icon">
+       <iconset resource="../../res/resources.qrc">
+        <normaloff>:/icons/icons/objects.png</normaloff>:/icons/icons/objects.png</iconset>
+      </attribute>
       <attribute name="title">
        <string>Default Objects</string>
       </attribute>
@@ -374,6 +397,9 @@
         <number>5</number>
        </property>
        <property name="bottomMargin">
+        <number>5</number>
+       </property>
+       <property name="spacing">
         <number>5</number>
        </property>
        <item row="3" column="0">
@@ -426,6 +452,9 @@
    </item>
   </layout>
  </widget>
- <resources/>
+ <resources>
+  <include location="../../res/resources.qrc"/>
+  <include location="../../res/resources.qrc"/>
+ </resources>
  <connections/>
 </ui>

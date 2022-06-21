@@ -41,7 +41,7 @@ class EventTrigger: public BaseObject {
 		/*! \brief This map contains the values used as condition on WHEN clause.
 				Currently the only supported variable is TAG, and the object will raise
 				error is other variable name is used on setFilter() call */
-		map<QString, QStringList> filter;
+		std::map<QString, QStringList> filter;
 
 	public:
 		EventTrigger();

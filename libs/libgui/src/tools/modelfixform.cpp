@@ -25,7 +25,7 @@ const QString ModelFixForm::PgModelerCli("pgmodeler-cli");
 
 ModelFixForm::ModelFixForm(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 {
-	map<QString, attribs_map> confs = AppearanceConfigWidget::getConfigurationParams();
+	std::map<QString, attribs_map> confs = AppearanceConfigWidget::getConfigurationParams();
 
 	setupUi(this);
 

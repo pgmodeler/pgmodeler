@@ -30,7 +30,7 @@
     <number>5</number>
    </property>
    <property name="spacing">
-    <number>10</number>
+    <number>5</number>
    </property>
    <item row="1" column="0" colspan="2">
     <widget class="QGroupBox" name="attributes_gb">
@@ -50,10 +50,16 @@
       <property name="bottomMargin">
        <number>5</number>
       </property>
+      <property name="spacing">
+       <number>5</number>
+      </property>
       <item row="2" column="0" colspan="2">
        <layout class="QGridLayout" name="gridLayout">
         <property name="topMargin">
-         <number>10</number>
+         <number>5</number>
+        </property>
+        <property name="spacing">
+         <number>5</number>
         </property>
         <item row="0" column="1">
          <widget class="QCheckBox" name="unlogged_chk">
@@ -193,32 +199,62 @@
      <property name="currentIndex">
       <number>0</number>
      </property>
+     <property name="iconSize">
+      <size>
+       <width>22</width>
+       <height>22</height>
+      </size>
+     </property>
      <widget class="QWidget" name="tab">
+      <attribute name="icon">
+       <iconset resource="../../res/resources.qrc">
+        <normaloff>:/icons/icons/column.png</normaloff>:/icons/icons/column.png</iconset>
+      </attribute>
       <attribute name="title">
        <string>&amp;Columns</string>
       </attribute>
      </widget>
      <widget class="QWidget" name="tab_4">
+      <attribute name="icon">
+       <iconset resource="../../res/resources.qrc">
+        <normaloff>:/icons/icons/constraint.png</normaloff>:/icons/icons/constraint.png</iconset>
+      </attribute>
       <attribute name="title">
        <string>Co&amp;nstraints</string>
       </attribute>
      </widget>
      <widget class="QWidget" name="tab_5">
+      <attribute name="icon">
+       <iconset resource="../../res/resources.qrc">
+        <normaloff>:/icons/icons/trigger.png</normaloff>:/icons/icons/trigger.png</iconset>
+      </attribute>
       <attribute name="title">
        <string>Tri&amp;ggers</string>
       </attribute>
      </widget>
      <widget class="QWidget" name="tab_6">
+      <attribute name="icon">
+       <iconset resource="../../res/resources.qrc">
+        <normaloff>:/icons/icons/rule.png</normaloff>:/icons/icons/rule.png</iconset>
+      </attribute>
       <attribute name="title">
        <string>&amp;Rules</string>
       </attribute>
      </widget>
      <widget class="QWidget" name="tab_3">
+      <attribute name="icon">
+       <iconset resource="../../res/resources.qrc">
+        <normaloff>:/icons/icons/index.png</normaloff>:/icons/icons/index.png</iconset>
+      </attribute>
       <attribute name="title">
        <string>&amp;Indexes</string>
       </attribute>
      </widget>
      <widget class="QWidget" name="tab_7">
+      <attribute name="icon">
+       <iconset resource="../../res/resources.qrc">
+        <normaloff>:/icons/icons/policy.png</normaloff>:/icons/icons/policy.png</iconset>
+      </attribute>
       <attribute name="title">
        <string>&amp;Policies</string>
       </attribute>
@@ -240,6 +276,9 @@
        <property name="bottomMargin">
         <number>5</number>
        </property>
+       <property name="spacing">
+        <number>5</number>
+       </property>
        <item row="0" column="0">
         <widget class="QLabel" name="partitioning_type_lbl">
          <property name="sizePolicy">
@@ -255,6 +294,9 @@
        </item>
        <item row="0" column="1">
         <layout class="QHBoxLayout" name="horizontalLayout">
+         <property name="spacing">
+          <number>5</number>
+         </property>
          <item>
           <widget class="QComboBox" name="partitioning_type_cmb">
            <property name="minimumSize">
@@ -289,11 +331,19 @@
       </layout>
      </widget>
      <widget class="QWidget" name="tab_2">
+      <attribute name="icon">
+       <iconset resource="../../res/resources.qrc">
+        <normaloff>:/icons/icons/table.png</normaloff>:/icons/icons/table.png</iconset>
+      </attribute>
       <attribute name="title">
        <string>&amp;Tables</string>
       </attribute>
      </widget>
      <widget class="QWidget" name="tab_9">
+      <attribute name="icon">
+       <iconset resource="../../res/resources.qrc">
+        <normaloff>:/icons/icons/config.png</normaloff>:/icons/icons/config.png</iconset>
+      </attribute>
       <attribute name="title">
        <string>Options</string>
       </attribute>
@@ -302,6 +352,9 @@
    </item>
   </layout>
  </widget>
- <resources/>
+ <resources>
+  <include location="../../res/resources.qrc"/>
+  <include location="../../res/resources.qrc"/>
+ </resources>
  <connections/>
 </ui>

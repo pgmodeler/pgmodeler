@@ -88,7 +88,7 @@ QString Exception::messages[Exception::ErrorCount][2]={
 	{"RefTypeInvalidIndex", QT_TR_NOOP("Reference to data type with an index outside the capacity of data types list!")},
 	{"AsgNullTypeObject", QT_TR_NOOP("Assignment of a null type to object `%1' (%2)!")},
 	{"AsgInvalidTypeObject", QT_TR_NOOP("Assignment of invalid type to the object!")},
-	{"AsgEmptyDirectoryName", QT_TR_NOOP("Assignment of an empty directory to object `%1' (%2)!")},
+	{"AsgEmptyDirectoryName", QT_TR_NOOP("Assignment of an empty directory to tablespace `%1'!")},
 	{"ObtTypesInvalidQuantity", QT_TR_NOOP("Obtaining types with invalid quantity!")},
 	{"InsDuplicatedItems", QT_TR_NOOP("Insertion of item which already exists in the attributes list of the type!")},
 	{"InsInvalidTypeAttribute", QT_TR_NOOP("Insertion of invalid item in the attributes list of the type!")},
@@ -275,7 +275,8 @@ QString Exception::messages[Exception::ErrorCount][2]={
 	{"InvProcedureParamOutMode", QT_TR_NOOP("Parameters using `out' mode are not supported by procedures! Use `inout' instead.") },
 	{"ExportFailureDbSQLDisabled", QT_TR_NOOP("The SQL code of the database `%1' is disabled! The export process can't proceed. Please, enable the SQL code of the mentioned object and try again.")},
 	{"InvConfigParameterName", QT_TR_NOOP("Invalid configuration parameter `%1' assigned to the function `%2'!")},
-	{"EmptyConfigParameterValue", QT_TR_NOOP("Empty value assigned to the configuration parameter `%1' in the function `%2'!")}
+	{"EmptyConfigParameterValue", QT_TR_NOOP("Empty value assigned to the configuration parameter `%1' in the function `%2'!")},
+	{"InvGroupRegExpPattern", QT_TR_NOOP("Invalid regexp pattern detected in syntax highlighting group `%1' at file `%2'! Error detected: `%3'")}
 };
 
 Exception::Exception()
@@ -306,9 +307,9 @@ Exception::Exception(const QString &msg, ErrorCode error_code, const QString &me
 	if(exception) addException(*exception);
 }
 
-Exception::Exception(ErrorCode error_code, const QString &method, const QString &file, int line, vector<Exception> &exceptions, const QString &extra_info)
+Exception::Exception(ErrorCode error_code, const QString &method, const QString &file, int line, std::vector<Exception> &exceptions, const QString &extra_info)
 {
-	vector<Exception>::iterator itr, itr_end;
+	std::vector<Exception>::iterator itr, itr_end;
 
 	/* Because the Exception class is not derived from QObject the function tr() is inefficient to translate messages
 		so the translation method is called  directly from the application specifying the
@@ -325,9 +326,9 @@ Exception::Exception(ErrorCode error_code, const QString &method, const QString 
 	}
 }
 
-Exception::Exception(const QString &msg, const QString &method, const QString &file, int line, vector<Exception> &exceptions, const QString &extra_info)
+Exception::Exception(const QString &msg, const QString &method, const QString &file, int line, std::vector<Exception> &exceptions, const QString &extra_info)
 {
-	vector<Exception>::iterator itr, itr_end;
+	std::vector<Exception>::iterator itr, itr_end;
 
 	configureException(msg,ErrorCode::Custom, method, file, line, extra_info);
 
@@ -340,9 +341,9 @@ Exception::Exception(const QString &msg, const QString &method, const QString &f
 	}
 }
 
-Exception::Exception(const QString &msg, ErrorCode error_code, const QString &method, const QString &file, int line, vector<Exception> &exceptions, const QString &extra_info)
+Exception::Exception(const QString &msg, ErrorCode error_code, const QString &method, const QString &file, int line, std::vector<Exception> &exceptions, const QString &extra_info)
 {
-	vector<Exception>::iterator itr=exceptions.begin();
+	std::vector<Exception>::iterator itr=exceptions.begin();
 
 	configureException(msg,error_code, method, file, line, extra_info);
 
@@ -414,7 +415,7 @@ QString Exception::getExtraInfo()
 
 void Exception::addException(Exception &exception)
 {
-	vector<Exception>::iterator itr, itr_end;
+	std::vector<Exception>::iterator itr, itr_end;
 
 	itr=exception.exceptions.begin();
 	itr_end=exception.exceptions.end();
@@ -433,7 +434,7 @@ void Exception::addException(Exception &exception)
 																			 nullptr,exception.extra_info));
 }
 
-void Exception::getExceptionsList(vector<Exception> &list)
+void Exception::getExceptionsList(std::vector<Exception> &list)
 {
 	list.assign(this->exceptions.begin(), this->exceptions.end());
 	list.push_back(Exception(this->error_msg,this->error_code,
@@ -442,8 +443,8 @@ void Exception::getExceptionsList(vector<Exception> &list)
 
 QString Exception::getExceptionsText()
 {
-	vector<Exception> exceptions;
-	vector<Exception>::reverse_iterator itr, itr_end;
+	std::vector<Exception> exceptions;
+	std::vector<Exception>::reverse_iterator itr, itr_end;
 	unsigned idx=0, hidden_errors_cnt = 0;
 	QString exceptions_txt;
 	bool stack_truncated = false;

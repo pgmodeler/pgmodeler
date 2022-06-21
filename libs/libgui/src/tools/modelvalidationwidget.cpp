@@ -256,7 +256,7 @@ void ModelValidationWidget::updateValidation(ValidationInfo val_info)
 
 	QTreeWidgetItem *item=new QTreeWidgetItem, *item1=nullptr, *item2=nullptr;
 	QLabel *label=new QLabel, *label1=nullptr, *label2=nullptr;
-	vector<BaseObject *> refs;
+	std::vector<BaseObject *> refs;
 	BaseTable *table=nullptr;
 	TableObject *tab_obj=nullptr;
 	QString ref_name;
@@ -358,7 +358,7 @@ void ModelValidationWidget::updateValidation(ValidationInfo val_info)
 
 		if(val_info.getValidationType()==ValidationInfo::BrokenRelConfig)
 		{
-			GuiUtilsNs::createOutputTreeItem(output_trw, tr("<strong>HINT:</strong> try to swap the relationship by another ones that somehow are linked to it through generated columns or constraints to solve this issue. Note that other objects may be lost in the swap process."),
+			GuiUtilsNs::createOutputTreeItem(output_trw, tr("<strong>HINT:</strong> try to change the relationship's creation order in the objects swap dialog and run the validation again. Note that other objects may be lost in the swapping process."),
 												QPixmap(GuiUtilsNs::getIconPath("alert")), item);
 		}
 		else if(val_info.getValidationType()==ValidationInfo::MissingExtension)
@@ -599,7 +599,7 @@ void ModelValidationWidget::updateGraphicalObjects()
 {
 	if(!graph_objects.empty())
 	{
-		vector<BaseGraphicObject *>::iterator end;
+		std::vector<BaseGraphicObject *>::iterator end;
 
 		std::sort(graph_objects.begin(), graph_objects.end());
 		end=std::unique(graph_objects.begin(), graph_objects.end());
@@ -686,7 +686,7 @@ void ModelValidationWidget::generateOutputItemText(QTreeWidgetItem *item, QStrin
 	if(label && text.isEmpty())
 		text = label->text();
 
-	text.replace(QRegExp("(\\<)(\\/)?(br|strong|em)(\\/)?(\\>)"), "");
+	text.replace(QRegularExpression("(\\<)(\\/)?(br|strong|em)(\\/)?(\\>)"), "");
 	text.prepend(level == 0 ? "* " : "\n");
 
 	text.replace("\n", filler);

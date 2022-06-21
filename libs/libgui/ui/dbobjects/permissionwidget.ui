@@ -39,14 +39,24 @@
     <number>5</number>
    </property>
    <property name="spacing">
-    <number>10</number>
+    <number>5</number>
    </property>
    <item row="0" column="0">
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
       <number>0</number>
      </property>
+     <property name="iconSize">
+      <size>
+       <width>22</width>
+       <height>22</height>
+      </size>
+     </property>
      <widget class="QWidget" name="tab">
+      <attribute name="icon">
+       <iconset resource="../../res/resources.qrc">
+        <normaloff>:/icons/icons/permission.png</normaloff>:/icons/icons/permission.png</iconset>
+      </attribute>
       <attribute name="title">
        <string>Permissions</string>
       </attribute>
@@ -63,18 +73,27 @@
        <property name="bottomMargin">
         <number>5</number>
        </property>
+       <property name="spacing">
+        <number>5</number>
+       </property>
        <item row="0" column="0">
         <widget class="QSplitter" name="splitter_2">
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
          </property>
          <property name="handleWidth">
-          <number>8</number>
+          <number>5</number>
          </property>
          <widget class="QWidget" name="layoutWidget">
           <layout class="QVBoxLayout" name="verticalLayout">
+           <property name="spacing">
+            <number>5</number>
+           </property>
            <item>
             <layout class="QHBoxLayout" name="horizontalLayout">
+             <property name="spacing">
+              <number>5</number>
+             </property>
              <item>
               <widget class="QLabel" name="id_lbl">
                <property name="sizePolicy">
@@ -133,7 +152,7 @@
               <enum>Qt::Vertical</enum>
              </property>
              <property name="handleWidth">
-              <number>8</number>
+              <number>5</number>
              </property>
              <widget class="QGroupBox" name="roles_gb">
               <property name="sizePolicy">
@@ -194,7 +213,7 @@
                 <number>5</number>
                </property>
                <property name="spacing">
-                <number>10</number>
+                <number>5</number>
                </property>
                <item row="0" column="0">
                 <widget class="QRadioButton" name="grant_rb">
@@ -234,6 +253,12 @@
                  <property name="selectionBehavior">
                   <enum>QAbstractItemView::SelectRows</enum>
                  </property>
+                 <property name="iconSize">
+                  <size>
+                   <width>22</width>
+                   <height>22</height>
+                  </size>
+                 </property>
                  <attribute name="horizontalHeaderVisible">
                   <bool>false</bool>
                  </attribute>
@@ -261,6 +286,9 @@
            </item>
            <item>
             <layout class="QHBoxLayout" name="horizontalLayout_2">
+             <property name="spacing">
+              <number>5</number>
+             </property>
              <item>
               <spacer name="horizontalSpacer_2">
                <property name="orientation">
@@ -297,8 +325,8 @@
                </property>
                <property name="iconSize">
                 <size>
-                 <width>32</width>
-                 <height>32</height>
+                 <width>25</width>
+                 <height>25</height>
                 </size>
                </property>
               </widget>
@@ -326,8 +354,8 @@
                </property>
                <property name="iconSize">
                 <size>
-                 <width>32</width>
-                 <height>32</height>
+                 <width>25</width>
+                 <height>25</height>
                 </size>
                </property>
               </widget>
@@ -355,8 +383,8 @@
                </property>
                <property name="iconSize">
                 <size>
-                 <width>32</width>
-                 <height>32</height>
+                 <width>25</width>
+                 <height>25</height>
                 </size>
                </property>
               </widget>
@@ -406,8 +434,12 @@
       </layout>
      </widget>
      <widget class="QWidget" name="tab_2">
+      <attribute name="icon">
+       <iconset resource="../../res/resources.qrc">
+        <normaloff>:/icons/icons/sqlpreview.png</normaloff>:/icons/icons/sqlpreview.png</iconset>
+      </attribute>
       <attribute name="title">
-       <string>Code Preview</string>
+       <string>Code preview</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout_3">
        <property name="leftMargin">
@@ -420,6 +452,9 @@
         <number>5</number>
        </property>
        <property name="bottomMargin">
+        <number>5</number>
+       </property>
+       <property name="spacing">
         <number>5</number>
        </property>
        <item row="0" column="0">

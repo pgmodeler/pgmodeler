@@ -84,7 +84,7 @@
    </property>
    <layout class="QHBoxLayout" name="in_out_hlt">
     <property name="spacing">
-     <number>10</number>
+     <number>5</number>
     </property>
     <item>
      <widget class="QCheckBox" name="param_in_chk">

@@ -195,7 +195,7 @@ void PermissionWidget::listPermissions()
 {
 	if(model)
 	{
-		vector<Permission *> permissions;
+		std::vector<Permission *> permissions;
 		Permission *perm=nullptr;
 		unsigned i, count, i1, count1;
 		QString str_aux;
@@ -398,7 +398,7 @@ void PermissionWidget::removePermission(int)
 
 void PermissionWidget::removePermissions()
 {
-	vector<Permission *> perms;
+	std::vector<Permission *> perms;
 
 	model->getPermissions(object, perms);
 	model->removePermissions(object);
@@ -517,7 +517,7 @@ void PermissionWidget::updateCodePreview()
 	try
 	{
 		QString code;
-		vector<Permission *> perms;
+		std::vector<Permission *> perms;
 		unsigned i=0, cnt=0;
 
 		model->getPermissions(this->object, perms);

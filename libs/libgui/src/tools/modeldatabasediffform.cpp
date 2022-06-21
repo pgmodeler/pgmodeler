@@ -21,11 +21,10 @@
 #include "databaseimportform.h"
 #include "guiutilsns.h"
 #include <QTemporaryFile>
-#include "qtcompat/qlabelcompat.h"
 #include "utilsns.h"
 
 bool ModelDatabaseDiffForm::low_verbosity = false;
-map<QString, attribs_map> ModelDatabaseDiffForm::config_params;
+std::map<QString, attribs_map> ModelDatabaseDiffForm::config_params;
 
 ModelDatabaseDiffForm::ModelDatabaseDiffForm(QWidget *parent, Qt::WindowFlags flags) : BaseConfigWidget (parent)
 {
@@ -530,8 +529,8 @@ void ModelDatabaseDiffForm::importDatabase(unsigned thread_id)
 		QComboBox *conn_cmb = (thread_id == SrcImportThread ? src_connections_cmb : connections_cmb),
 				*db_cmb = (thread_id == SrcImportThread ? src_database_cmb : database_cmb);
 		Connection conn=(*reinterpret_cast<Connection *>(conn_cmb->itemData(conn_cmb->currentIndex()).value<void *>())), conn1;
-		map<ObjectType, vector<unsigned>> obj_oids;
-		map<unsigned, vector<unsigned>> col_oids;
+		std::map<ObjectType, std::vector<unsigned>> obj_oids;
+		std::map<unsigned, std::vector<unsigned>> col_oids;
 		Catalog catalog;
 		DatabaseModel *db_model = nullptr;
 		QStringList pd_filters = pd_filter_wgt->getObjectFilters();
@@ -547,9 +546,9 @@ void ModelDatabaseDiffForm::importDatabase(unsigned thread_id)
 											.arg(conn.getConnectionId(true, true)));
 
 		if(thread_id == SrcImportThread)
-			src_import_item=GuiUtilsNs::createOutputTreeItem(output_trw, step_lbl->text(), QtCompat::pixmap(step_ico_lbl), nullptr);
+			src_import_item=GuiUtilsNs::createOutputTreeItem(output_trw, step_lbl->text(), step_ico_lbl->pixmap(Qt::ReturnByValue), nullptr);
 		else
-			import_item=GuiUtilsNs::createOutputTreeItem(output_trw, step_lbl->text(), QtCompat::pixmap(step_ico_lbl), nullptr);
+			import_item=GuiUtilsNs::createOutputTreeItem(output_trw, step_lbl->text(), step_ico_lbl->pixmap(Qt::ReturnByValue), nullptr);
 
 		pgsql_ver=conn.getPgSQLVersion(true);
 		catalog.setConnection(conn);
@@ -577,10 +576,13 @@ void ModelDatabaseDiffForm::importDatabase(unsigned thread_id)
 		 * But it will include/exclude extension and system objects retrieval
 		 * according to the related check boxes state, this will produce a more
 		 * complete imported model, diminishing false-positive results. */
-		catalog.setQueryFilter(Catalog::ListAllObjects | Catalog::ExclBuiltinArrayTypes |
-							   (!import_ext_objs_chk->isChecked() ? Catalog::ExclExtensionObjs : 0) |
-							   (!import_sys_objs_chk->isChecked() ? Catalog::ExclSystemObjs : 0));
 
+		/* catalog.setQueryFilter(Catalog::ListAllObjects | Catalog::ExclBuiltinArrayTypes |
+							   (!import_ext_objs_chk->isChecked() ? Catalog::ExclExtensionObjs : 0) |
+								 (!import_sys_objs_chk->isChecked() ? Catalog::ExclSystemObjs : 0)); */
+
+		catalog.setQueryFilter(Catalog::ListAllObjects | Catalog::ExclBuiltinArrayTypes |
+													 Catalog::ExclExtensionObjs | Catalog::ExclSystemObjs);
 		catalog.getObjectsOIDs(obj_oids, col_oids, {{Attributes::FilterTableTypes, Attributes::True}});
 		obj_oids[ObjectType::Database].push_back(db_cmb->currentData().value<unsigned>());
 
@@ -627,7 +629,7 @@ void ModelDatabaseDiffForm::diffModels()
 	output_trw->collapseItem(import_item);
 	diff_progress=step_pb->value();
 
-	diff_item=GuiUtilsNs::createOutputTreeItem(output_trw, step_lbl->text(), QtCompat::pixmap(step_ico_lbl), nullptr);
+	diff_item=GuiUtilsNs::createOutputTreeItem(output_trw, step_lbl->text(), step_ico_lbl->pixmap(Qt::ReturnByValue), nullptr);
 
 	diff_helper->setDiffOption(ModelsDiffHelper::OptKeepClusterObjs, keep_cluster_objs_chk->isChecked());
 	diff_helper->setDiffOption(ModelsDiffHelper::OptCascadeMode, cascade_mode_chk->isChecked());
@@ -684,7 +686,7 @@ void ModelDatabaseDiffForm::exportDiff(bool confirm)
 
 		output_trw->collapseItem(diff_item);
 		diff_progress=step_pb->value();
-		export_item=GuiUtilsNs::createOutputTreeItem(output_trw, step_lbl->text(), QtCompat::pixmap(step_ico_lbl), nullptr);
+		export_item=GuiUtilsNs::createOutputTreeItem(output_trw, step_lbl->text(), step_ico_lbl->pixmap(Qt::ReturnByValue), nullptr);
 
 		export_helper->setExportToDBMSParams(sqlcode_txt->toPlainText(), export_conn,
 																				 database_cmb->currentText(), ignore_duplic_chk->isChecked());
@@ -713,7 +715,7 @@ void ModelDatabaseDiffForm::exportDiff(bool confirm)
 void ModelDatabaseDiffForm::filterDiffInfos()
 {
 	QToolButton *btn=dynamic_cast<QToolButton *>(sender());
-	map<QToolButton *, unsigned> diff_types={ {create_tb, ObjectsDiffInfo::CreateObject},
+	std::map<QToolButton *, unsigned> diff_types={ {create_tb, ObjectsDiffInfo::CreateObject},
 											  {drop_tb, ObjectsDiffInfo::DropObject},
 											  {alter_tb, ObjectsDiffInfo::AlterObject},
 											  {ignore_tb, ObjectsDiffInfo::IgnoreObject}};
@@ -768,7 +770,7 @@ void ModelDatabaseDiffForm::saveDiffToFile()
 	{
 		step_lbl->setText(tr("Saving diff to file <strong>%1</strong>").arg(file_sel->getSelectedFile()));
 		step_ico_lbl->setPixmap(QPixmap(GuiUtilsNs::getIconPath("save")));
-		import_item=GuiUtilsNs::createOutputTreeItem(output_trw, step_lbl->text(), QtCompat::pixmap(step_ico_lbl), nullptr);
+		import_item=GuiUtilsNs::createOutputTreeItem(output_trw, step_lbl->text(), step_ico_lbl->pixmap(Qt::ReturnByValue), nullptr);
 		step_pb->setValue(90);
 		progress_pb->setValue(100);
 
@@ -788,7 +790,7 @@ void ModelDatabaseDiffForm::finishDiff()
 	step_ico_lbl->setPixmap(QPixmap(GuiUtilsNs::getIconPath("info")));
 	progress_ico_lbl->setPixmap(QPixmap(GuiUtilsNs::getIconPath("info")));
 
-	import_item=GuiUtilsNs::createOutputTreeItem(output_trw, step_lbl->text(), QtCompat::pixmap(step_ico_lbl), nullptr);
+	import_item=GuiUtilsNs::createOutputTreeItem(output_trw, step_lbl->text(), step_ico_lbl->pixmap(Qt::ReturnByValue), nullptr);
 	step_pb->setValue(100);
 	progress_pb->setValue(100);
 }
@@ -803,7 +805,7 @@ void ModelDatabaseDiffForm::cancelOperation(bool cancel_by_user)
 		step_ico_lbl->setPixmap(QPixmap(GuiUtilsNs::getIconPath("alert")));
 		progress_ico_lbl->setPixmap(QPixmap(GuiUtilsNs::getIconPath("alert")));
 
-		GuiUtilsNs::createOutputTreeItem(output_trw, step_lbl->text(), QtCompat::pixmap(step_ico_lbl), nullptr);
+		GuiUtilsNs::createOutputTreeItem(output_trw, step_lbl->text(), step_ico_lbl->pixmap(Qt::ReturnByValue), nullptr);
 	}
 
 	if(src_import_helper && src_import_thread->isRunning())
@@ -843,7 +845,7 @@ void ModelDatabaseDiffForm::captureThreadError(Exception e)
 	progress_lbl->setText(tr("Process aborted due to errors!"));
 	progress_ico_lbl->setPixmap(QPixmap(GuiUtilsNs::getIconPath("error")));
 
-	item=GuiUtilsNs::createOutputTreeItem(output_trw, GuiUtilsNs::formatMessage(e.getErrorMessage()), QtCompat::pixmap(progress_ico_lbl), nullptr, false, true);
+	item=GuiUtilsNs::createOutputTreeItem(output_trw, GuiUtilsNs::formatMessage(e.getErrorMessage()), progress_ico_lbl->pixmap(Qt::ReturnByValue), nullptr, false, true);
 	GuiUtilsNs::createExceptionsTree(output_trw, e, item);
 
 	throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
@@ -1004,7 +1006,7 @@ void ModelDatabaseDiffForm::updateProgress(int progress, QString msg, ObjectType
 
 void ModelDatabaseDiffForm::updateDiffInfo(ObjectsDiffInfo diff_info)
 {
-	map<unsigned, QToolButton *> buttons={ {ObjectsDiffInfo::CreateObject, create_tb},
+	std::map<unsigned, QToolButton *> buttons={ {ObjectsDiffInfo::CreateObject, create_tb},
 																				 {ObjectsDiffInfo::DropObject,   drop_tb},
 																				 {ObjectsDiffInfo::AlterObject,  alter_tb},
 																				 {ObjectsDiffInfo::IgnoreObject, ignore_tb} };
@@ -1327,7 +1329,7 @@ void ModelDatabaseDiffForm::applyPartialDiffFilters()
 		QString search_attr = (gen_filters_from_log_chk->isChecked() ||
 													 pd_filter_wgt->isMatchSignature()) ?
 														Attributes::Signature : Attributes::Name;
-		vector<BaseObject *> filterd_objs = loaded_model->findObjects(pd_filter_wgt->getObjectFilters(), search_attr);
+		std::vector<BaseObject *> filterd_objs = loaded_model->findObjects(pd_filter_wgt->getObjectFilters(), search_attr);
 		ObjectFinderWidget::updateObjectTable(filtered_objs_tbw, filterd_objs, search_attr);
 		getFilteredObjects(filtered_objs);
 	}
@@ -1354,13 +1356,13 @@ void ModelDatabaseDiffForm::generateFiltersFromChangelog()
 	if(!source_model)
 		return;
 
-	vector<ObjectType> tab_obj_types = BaseObject::getChildObjectTypes(ObjectType::Table);
+	std::vector<ObjectType> tab_obj_types = BaseObject::getChildObjectTypes(ObjectType::Table);
 	QStringList filters = source_model->getFiltersFromChangelog(start_date_chk->isChecked() ? start_date_dt->dateTime() : QDateTime(),
 																											end_date_chk->isChecked() ? end_date_dt->dateTime() : QDateTime());
 
 	// Ignoring filters related to table children objects since they may generate wrong results in the diff
 	for(auto &type : tab_obj_types)
-		filters.replaceInStrings(QRegExp(QString("(%1)(\\:)(.)+").arg(BaseObject::getSchemaName(type))), "");
+		filters.replaceInStrings(QRegularExpression(QString("(%1)(\\:)(.)+").arg(BaseObject::getSchemaName(type))), "");
 
 	filters.removeAll("");
 
@@ -1368,7 +1370,7 @@ void ModelDatabaseDiffForm::generateFiltersFromChangelog()
 	pd_filter_wgt->addFilters(filters);
 }
 
-void ModelDatabaseDiffForm::getFilteredObjects(vector<BaseObject *> &objects)
+void ModelDatabaseDiffForm::getFilteredObjects(std::vector<BaseObject *> &objects)
 {
 	int row_cnt = filtered_objs_tbw->rowCount();
 	QTableWidgetItem *item = nullptr;
@@ -1388,7 +1390,7 @@ void ModelDatabaseDiffForm::getFilteredObjects(vector<BaseObject *> &objects)
 	}
 }
 
-void ModelDatabaseDiffForm::getFilteredObjects(map<ObjectType, vector<unsigned>> &obj_oids)
+void ModelDatabaseDiffForm::getFilteredObjects(std::map<ObjectType, std::vector<unsigned>> &obj_oids)
 {
 	ObjectType obj_type;
 	int row_cnt = filtered_objs_tbw->rowCount();

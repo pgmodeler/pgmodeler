@@ -133,8 +133,12 @@ void BugReportForm::attachModel()
 		file_dlg.setFileMode(QFileDialog::ExistingFile);
 		file_dlg.setModal(true);
 
+		GuiUtilsNs::restoreFileDialogState(&file_dlg);
+
 		if(file_dlg.exec()==QFileDialog::Accepted)
 			attachModel(file_dlg.selectedFiles().at(0));
+
+		GuiUtilsNs::saveFileDialogState(&file_dlg);
 	}
 	catch(Exception &e)
 	{

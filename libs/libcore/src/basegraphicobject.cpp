@@ -163,7 +163,7 @@ void BaseGraphicObject::setLayers(QStringList list)
 	setCodeInvalidated(true);
 
 	//Sanitizing the string list by removing non-numbers
-	list.replaceInStrings(QRegExp("^(.)*(\\D)+(.)*$"), "0");
+	list.replaceInStrings(QRegularExpression("^(.)*(\\D)+(.)*$"), "0");
 	list.removeDuplicates();
 	layers.clear();
 

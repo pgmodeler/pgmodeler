@@ -25,8 +25,6 @@
 #include "utilsns.h"
 #include "guiutilsns.h"
 #include "settings/generalconfigwidget.h"
-#include "qtcompat/splitbehaviorcompat.h"
-#include "utils/custommenustyle.h"
 
 const QString DatabaseExplorerWidget::DepNotDefined;
 const QString DatabaseExplorerWidget::DepNotFound=QT_TR_NOOP("(not found, OID: %1)");
@@ -257,10 +255,6 @@ DatabaseExplorerWidget::DatabaseExplorerWidget(QWidget *parent): QWidget(parent)
 
 	refresh_tb->setPopupMode(QToolButton::InstantPopup);
 	refresh_tb->setMenu(refresh_menu);
-
-	refresh_menu->setStyle(new CustomMenuStyle);
-	handle_menu.setStyle(new CustomMenuStyle);
-	snippets_menu.setStyle(new CustomMenuStyle);
 }
 
 bool DatabaseExplorerWidget::eventFilter(QObject *object, QEvent *event)
@@ -318,8 +312,8 @@ attribs_map DatabaseExplorerWidget::formatObjectAttribs(attribs_map &attribs)
 	ObjectType obj_type=ObjectType::BaseObject;
 	attribs_map fmt_attribs;
 	QString attr_name, attr_value;
-	QRegExp oid_regexp=QRegExp(QString("^[0-9]+"));
-	map<QString, ObjectType> dep_types={{Attributes::Owner, ObjectType::Role},
+	QRegularExpression oid_regexp=QRegularExpression(QRegularExpression::anchoredPattern("\\d+"));
+	std::map<QString, ObjectType> dep_types={{Attributes::Owner, ObjectType::Role},
 										{Attributes::Schema, ObjectType::Schema},
 										{Attributes::Tablespace, ObjectType::Tablespace},
 										{Attributes::Collation, ObjectType::Collation},
@@ -383,9 +377,8 @@ attribs_map DatabaseExplorerWidget::formatObjectAttribs(attribs_map &attribs)
 
 		if(attr_name==Attributes::ObjectType)
 			attr_value=BaseObject::getTypeName(static_cast<ObjectType>(attr_value.toUInt()));
-
 		//If the current attribute is related to a dependency object, retreive its real name
-		else if(dep_types.count(attr_name)!=0 && oid_regexp.exactMatch(attr_value))
+		else if(dep_types.count(attr_name)!=0 && oid_regexp.match(attr_value).hasMatch())
 			attr_value=getObjectName(dep_types[attr_name], attr_value);
 
 		attribs[attr_name]=attr_value;
@@ -616,7 +609,7 @@ void DatabaseExplorerWidget::formatSequenceAttribs(attribs_map &attribs)
 	if(owner_col.size()==2)
 	{
 		QStringList names=getObjectName(ObjectType::Table, owner_col[0]).split('.');
-		vector<attribs_map> col_attribs=catalog.getObjectsAttributes(ObjectType::Column, names[0], names[1], { owner_col[1].toUInt() });
+		std::vector<attribs_map> col_attribs=catalog.getObjectsAttributes(ObjectType::Column, names[0], names[1], { owner_col[1].toUInt() });
 
 		if(!col_attribs.empty())
 			attribs[Attributes::OwnerColumn]=QString("%1.%2.%3").arg(names[0], names[1], col_attribs[0].at(Attributes::Name));
@@ -748,7 +741,7 @@ void DatabaseExplorerWidget::formatTriggerAttribs(attribs_map &attribs)
 									Attributes::TruncEvent });
 
 	attribs[Attributes::TriggerFunc]=getObjectName(ObjectType::Function, attribs[Attributes::TriggerFunc]);
-	attribs[Attributes::Arguments]=attribs[Attributes::Arguments].split(Catalog::EscapedNullChar, QtCompat::SkipEmptyParts).join(UtilsNs::DataSeparator);
+	attribs[Attributes::Arguments]=attribs[Attributes::Arguments].split(Catalog::EscapedNullChar, Qt::SkipEmptyParts).join(UtilsNs::DataSeparator);
 	attribs[Attributes::Columns]=Catalog::parseArrayValues(attribs[Attributes::Columns]).join(UtilsNs::DataSeparator);
 }
 
@@ -768,7 +761,7 @@ void DatabaseExplorerWidget::formatColumnAttribs(attribs_map &attribs)
 
 void DatabaseExplorerWidget::formatConstraintAttribs(attribs_map &attribs)
 {
-	map<QString, ConstraintType> types={{Attributes::PkConstr, ConstraintType(ConstraintType::PrimaryKey)},
+	std::map<QString, ConstraintType> types={{Attributes::PkConstr, ConstraintType(ConstraintType::PrimaryKey)},
 										{Attributes::FkConstr, ConstraintType(ConstraintType::ForeignKey)},
 										{Attributes::UqConstr, ConstraintType(ConstraintType::Unique)},
 										{Attributes::CkConstr, ConstraintType(ConstraintType::Check)},
@@ -920,7 +913,7 @@ QString DatabaseExplorerWidget::formatObjectName(attribs_map &attribs)
 			{
 				QStringList arg_types, names;
 				QString type_name;
-				vector<QString> attrib_ids={ Attributes::LeftType, Attributes::RightType };
+				std::vector<QString> attrib_ids={ Attributes::LeftType, Attributes::RightType };
 
 				for(QString attr : attrib_ids)
 				{
@@ -951,9 +944,9 @@ QStringList DatabaseExplorerWidget::getObjectsNames(ObjectType obj_type, const Q
 			return QStringList{ DepNotDefined };
 		else
 		{
-			vector<attribs_map> attribs_vect;
-			vector<unsigned> oids_vect;
-			map<QString, attribs_map> attrs_map;
+			std::vector<attribs_map> attribs_vect;
+			std::vector<unsigned> oids_vect;
+			std::map<QString, attribs_map> attrs_map;
 			QStringList names;
 
 			//Converting the oids to unsigned in order to filter them on Catalog
@@ -1227,7 +1220,7 @@ attribs_map DatabaseExplorerWidget::extractAttributesFromItem(QTreeWidgetItem *i
 		obj_name.remove(idx, obj_name.size());
 	}
 	else if(obj_type==ObjectType::OpFamily || obj_type==ObjectType::OpClass)
-		obj_name.remove(QRegExp("( )+(\\[)(.)+(\\])"));
+		obj_name.remove(QRegularExpression("( )+(\\[)(.)+(\\])"));
 
 	//Formatting the names
 	attribs[Attributes::Name]=BaseObject::formatName(obj_name, obj_type==ObjectType::Operator);
@@ -1292,19 +1285,37 @@ void DatabaseExplorerWidget::dropObject(QTreeWidgetItem *item, bool cascade)
 		if(item && item->data(DatabaseImportForm::ObjectId, Qt::UserRole).toUInt() > 0)
 		{
 			ObjectType obj_type=static_cast<ObjectType>(item->data(DatabaseImportForm::ObjectTypeId, Qt::UserRole).toUInt());
-			QString msg;
-			QString obj_name=item->data(DatabaseImportForm::ObjectName, Qt::UserRole).toString();
 
 			//Roles, tablespaces and user mappings can't be removed in cascade mode
 			if(cascade && (obj_type==ObjectType::Role || obj_type==ObjectType::Tablespace || obj_type == ObjectType::UserMapping))
 				return;
 
+			QString msg,
+					parent_sch = item->data(DatabaseImportForm::ObjectSchema, Qt::UserRole).toString(),
+					parent_tab =  item->data(DatabaseImportForm::ObjectTable, Qt::UserRole).toString(),
+					obj_name = item->data(DatabaseImportForm::ObjectName, Qt::UserRole).toString(),
+					parent_name;
+
+			if(!parent_sch.isEmpty())
+			{
+				parent_name = parent_tab.isEmpty() ?
+							BaseObject::getSchemaName(ObjectType::Schema).toLower() :
+							tr("relation");
+				parent_name += " <strong>" + parent_sch;
+				parent_name += !parent_tab.isEmpty() ?  "." + parent_tab : "";
+				parent_name += "</strong>, ";
+			}
+
+			parent_name +=
+					BaseObject::getSchemaName(ObjectType::Database).toLower() +
+					QString(" <strong>%1</strong>").arg(connection.getConnectionId(true, true));
+
 			if(!cascade)
-				msg=tr("Do you really want to drop the object <strong>%1</strong> <em>(%2)</em>?")
-					.arg(obj_name).arg(BaseObject::getTypeName(obj_type));
+				msg=tr("Do you really want to drop the object <strong>%1</strong> <em>(%2)</em> in the %3?")
+					.arg(obj_name,BaseObject::getTypeName(obj_type), parent_name);
 			else
-				msg=tr("Do you really want to <strong>cascade</strong> drop the object <strong>%1</strong> <em>(%2)</em>? This action will drop all the other objects that depends on it.")
-					.arg(obj_name).arg(BaseObject::getTypeName(obj_type));
+				msg=tr("Do you really want to <strong>cascade</strong> drop the object <strong>%1</strong> <em>(%2)</em> in the %3? This action will drop all the other objects that depends on it.")
+					.arg(obj_name, BaseObject::getTypeName(obj_type), parent_name);
 
 			msg_box.show(msg, Messagebox::ConfirmIcon, Messagebox::YesNoButtons);
 
@@ -1445,9 +1456,9 @@ void DatabaseExplorerWidget::restoreTreeState()
 		grp_id = item->data(DatabaseImportForm::ObjectGroupId, Qt::UserRole).toInt();
 
 		if(grp_id < 0)
-			idx = items_state.indexOf(QRegExp(QString("(%1)(\\:)(.)+").arg(grp_id)));
+			idx = items_state.indexOf(QRegularExpression(QString("(%1)(\\:)(.)+").arg(grp_id)));
 		else
-			idx = items_state.indexOf(QRegExp(QString("(%1)(\\:)(.)+").arg(oid)));
+			idx = items_state.indexOf(QRegularExpression(QString("(%1)(\\:)(.)+").arg(oid)));
 
 		if(idx >= 0)
 		{
@@ -1490,7 +1501,7 @@ void DatabaseExplorerWidget::updateItem(QTreeWidgetItem *item, bool restore_tree
 		ObjectType obj_type=static_cast<ObjectType>(item->data(DatabaseImportForm::ObjectTypeId, Qt::UserRole).toUInt());
 		unsigned obj_id=item->data(DatabaseImportForm::ObjectId, Qt::UserRole).toUInt();
 		QString sch_name, tab_name;
-		vector<QTreeWidgetItem *> gen_items;
+		std::vector<QTreeWidgetItem *> gen_items;
 
 		QApplication::setOverrideCursor(Qt::WaitCursor);
 
@@ -1606,7 +1617,7 @@ void DatabaseExplorerWidget::loadObjectProperties(bool force_reload)
 
 					if(obj_type == ObjectType::Table)
 					{
-						vector<attribs_map> ref_fks;
+						std::vector<attribs_map> ref_fks;
 						attribs_map ref_table, ref_schema;
 						QStringList tab_list;
 
@@ -1627,7 +1638,7 @@ void DatabaseExplorerWidget::loadObjectProperties(bool force_reload)
 				{
 					QString tab_name=item->data(DatabaseImportForm::ObjectTable, Qt::UserRole).toString(),
 							sch_name=item->data(DatabaseImportForm::ObjectSchema, Qt::UserRole).toString();
-					vector<attribs_map> vect_attribs=catalog.getObjectsAttributes(obj_type, sch_name, tab_name, { oid });
+					std::vector<attribs_map> vect_attribs=catalog.getObjectsAttributes(obj_type, sch_name, tab_name, { oid });
 
 					if(!vect_attribs.empty())
 						orig_attribs=vect_attribs[0];
@@ -1810,6 +1821,7 @@ void DatabaseExplorerWidget::showObjectProperties(bool force_reload)
 	}
 	catch(Exception &e)
 	{
+		QApplication::restoreOverrideCursor();
 		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 	}
 }
@@ -2058,7 +2070,7 @@ QString DatabaseExplorerWidget::getObjectSource(BaseObject *object, DatabaseMode
 	if(!object || !dbmodel)
 		return "";
 
-	vector<Permission *> perms;
+	std::vector<Permission *> perms;
 	QString source;
 
 	dbmodel->getPermissions(object, perms);

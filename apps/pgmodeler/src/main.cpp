@@ -96,26 +96,21 @@ int main(int argc, char **argv)
 		signal(SIGSEGV, startCrashHandler);
 		signal(SIGABRT, startCrashHandler);
 
-		PgModelerApp::setAttribute(Qt::AA_EnableHighDpiScaling, false);
-		PgModelerApp::setAttribute(Qt::AA_UseHighDpiPixmaps);
-		PgModelerApp app(argc,argv);		
+		GlobalAttributes::setCustomUiScaleFactor();
+		PgModelerApp app(argc,argv);
 		int res=0;
 
 		//Loading the application splash screen
 		QSplashScreen splash;
-		QPixmap pix(QPixmap(":images/images/pgmodeler_splash.png"));
-		QSize sz = splash.screen()->size();
+		QPixmap pix(":images/images/pgmodeler_splash.png");
 
-		// Test: adjusting the size of the splash screen according to the screen resolution
-		if(sz.width() <= GuiUtilsNs::FHDWidth)
-			pix = pix.scaledToWidth(350, Qt::SmoothTransformation);
-		else if(sz.width() <= GuiUtilsNs::QHDWidth)
-			pix = pix.scaledToWidth(420, Qt::SmoothTransformation);
+		if(qApp->primaryScreen()->devicePixelRatio() > 1)
+			pix.setDevicePixelRatio(qApp->primaryScreen()->devicePixelRatio());
+		else
+			pix = pix.scaledToWidth(500, Qt::SmoothTransformation);
 
 		splash.setPixmap(pix);
-		splash.setMask(pix.mask());
 		splash.show();
-
 		app.processEvents();
 
 		//Creates the main form

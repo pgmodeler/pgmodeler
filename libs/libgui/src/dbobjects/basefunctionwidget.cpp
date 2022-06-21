@@ -206,7 +206,7 @@ void BaseFunctionWidget::showParameterData(ObjectsTableWidget *params_tab, Param
 
 void BaseFunctionWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Schema *schema, BaseFunction *func)
 {
-	vector<BaseObject *> languages;
+	std::vector<BaseObject *> languages;
 	Language *lang = nullptr;
 	QStringList list;
 	unsigned count = 0, i = 0;

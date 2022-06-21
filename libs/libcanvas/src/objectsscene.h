@@ -56,7 +56,7 @@ class ObjectsScene: public QGraphicsScene {
 		//! \brief Stores the items used to represent layers around objects
 		QList<LayerItem *> layers_paths;
 
-		vector<BaseObjectView *> removed_objs;
+		std::vector<BaseObjectView *> removed_objs;
 
 		//! \brief Holds the tables/views which have selected children objects
 		QList<BaseTableView *> tabs_sel_children;
@@ -100,17 +100,11 @@ class ObjectsScene: public QGraphicsScene {
 		//! \brief Scene grid size
 		static unsigned grid_size;
 
-		//! \brief Paper size, used to segmentate the view (via page delimiters) and printing the model
-		static QPrinter::PaperSize paper_size;
-
 		//! \brief Used to store the custom paper size. This attribute is used only when paper_size=QPrinter::Custom
 		static QSizeF custom_paper_size;
 
-		//! \brief Page orientation (landscape / portrait)
-		static QPrinter::Orientation page_orientation;
-
-		//! \brief Page margins (applied to paper total size)
-		static QRectF page_margins;
+		//! \brief Used to store the canvas/printer page layout (size, orientation, margins)
+		static QPageLayout page_layout;
 
 		//! \brief Indicates that there are objects being moved and the signal s_objectsMoved must be emitted
 		bool moving_objs,
@@ -263,11 +257,11 @@ class ObjectsScene: public QGraphicsScene {
 		static bool isShowGrid();
 		static bool isShowPageDelimiters();
 
-		static void setPaperConfiguration(QPrinter::PaperSize paper_sz, QPrinter::Orientation orient, QRectF margins, QSizeF custom_size=QSizeF(0,0));
-		static void getPaperConfiguration(QPrinter::PaperSize &paper_sz, QPrinter::Orientation &orient, QRectF &margins, QSizeF &custom_size);
+		/* ! \brief Configures the canvas page layout. This method invalidates the grid to force it to be recreated
+		 * taking into account the new page settings */
+		static void setPageLayout(const QPageLayout &page_lt);
 
-		static void configurePrinter(QPrinter *printer);
-		static void configurePrinter(QPrinter *printer, const QSizeF &custom_size, QPrinter::Orientation orient);
+		static QPageLayout getPageLayout();
 
 		void addItem(QGraphicsItem *item);
 		void removeItem(QGraphicsItem *item);
@@ -290,8 +284,11 @@ class ObjectsScene: public QGraphicsScene {
 		Note: using this method with seek_only_db_objs=true can be time expensive depending on the size of the model so use it wisely. */
 		QRectF itemsBoundingRect(bool seek_only_db_objs=false, bool selected_only = false, bool incl_layer_rects = false);
 
-		//! \brief Returns a vector containing all the page rects.
-		vector<QRectF> getPagesForPrinting(const QSizeF &paper_size, const QSizeF &margin, unsigned &h_page_cnt, unsigned &v_page_cnt);
+		//! \brief Returns a vector containing all the page rects considering the provided page layout settings
+		std::vector<QRectF> getPagesForPrinting(const QPageLayout &page_lt, unsigned &h_page_cnt, unsigned &v_page_cnt);
+
+		//! \brief Returns a vector containing all the page rects considering the current scene's page layout settings
+		std::vector<QRectF> getPagesForPrinting(unsigned &h_page_cnt, unsigned &v_page_cnt);
 
 		bool isRangeSelectionEnabled();
 		bool isRangeSelectionTriggerInverted();

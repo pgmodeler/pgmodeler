@@ -1,6 +1,69 @@
 Changelog
 ---------
 
+v1.0.0-alpha1
+------
+<em>Release date: June 21, 2022</em><br/>
+
+* [New] Added PostgreSQL 15 as the default version for code generation.
+* [New] Added a workaround in MainWindow constructor to force the application of UI themes on Windows and Mac.
+* [New] Added the methods GlobalAttributes::getConfigParamFromFile and GlobalAttributes::setCustomUiScaleFactor.
+* [New] Add support for custom UI scaling and UI icons size selection in AppearanceConfigWidget.
+* [New] Created the method Relationship::updateGeneratedObjects.
+* [New] pgModeler now saves and restores the QFileDialog instances geometry/state in the file filedlg.conf.
+* [New] Created the method QApplication::loadTranslation to reuse translation loading routines.
+* [Change] Minor adjustment in assets/schemas/catalog/database.sch in order to retrieve the last system oid from pg_depend.
+* [Change] Removed the class CustomMenuStyle since its use is not needed anymore.
+* [Change] Refactored MainWindow constructor by creating small methods for specific initialization tasks.
+* [Change] Changed the references to STL classes/algorithms by using the namespace std::.
+* [Change] Removed global "using namespace std" to avoid breaking the building on mingw64.
+* [Change] Replaced QtCompat classes with Qt 6 specific code.
+* [Change] Adjusted the layout spacing in all *.ui files.
+* [Change] Updated several icon sizes due to Qt 6 improved auto-scale factor.
+* [Change] Replaced deprecated attribute QPalette::Foreground in TableDataWidget.
+* [Change] Minor improvement in DatabaseExplorerWidget::dropObject to show the complete location of the object being dropped (schema, table, DB).
+* [Change] In DatabaseImportHelper::createSchema if the schema to be created is public or pg_catalog, pgModeler will just ignore them because these schemas already exist in the model being imported.
+* [Change] When printing a model with page numbers enabled pgModeler now will add the column and row info of the current page being printed.
+* [Change] Moved from deprecated QPrinter API to newer one in Qt 6.
+* [Change] Adjusted the behavior of ObjectFinderWidget, now "Exact match" option is only enabled when using regular expressions.
+* [Change] Adjusted the generation of CDATA elements in XML schema files.
+* [Change] Adjusted the syntax highlighting conf files.
+* [Change] Adjusted the XML highlighting conf files.
+* [Change] Removed the support to partial-match attribute in syntax highlight conf files.
+* [Change] Removed partial matching from SyntaxHighlighter.
+* [Change] SyntaxHighlighter will raise an error if an invalid regex pattern is detected during file loading.
+* [Change] Replaced all QRegExp usages by QRegularExpression due to the deprecation of the former class in Qt 6.
+* [Change] Forcing C++17 building and the deprecation of any API before Qt 6.
+* [Change] Minor improvement in Relationship::addColumnsRelGenPart to allow the creation of missing columns only as part of the routines in Relationship::updateGeneratedObjects.
+* [Change] Minor change in DatabaseModel::validateRelationships to update tables and schemas geometry only at the end of the method.
+* [Change] Disabling the extra relationship validation in DatabaseModel::loadModel.
+* [Change] Improved the procedure that tries to recreate invalid relationships in DatabaseModel::validateRelationships.
+* [Change] Refactored the way relationships are validated in DatabaseModel improving the overall operation speed.
+* [Change] Changing the catalog query filter in PgModelerCliApp::importDatabase and ModelDatabaseDiffForm::importDatabase to avoid retrieving and creating system objects unnecessarily.
+* [Change] Minor adjustments in pen width factor in RelationshipView::getDefaultPenWidth.
+* [Change] Minor change in identifier relationship rendering.
+* [Change] Removed the unneeded use of QString("") instantiation in several parts.
+* [Change] The delete operation on ModelWidget now displays a wait cursor while running.
+* [Fix] Fixed a bug in ConnectionsConfigWidget::openConnectionsConfiguration that was preventing reloading the original conf file when the user clicked cancel.
+* [Fix] Fixed a bug in AppearanceConfigWidget that was applying the font style correctly to the source code preview.
+* [Fix] Fix splitters handler sizes.
+* [Fix] Fixed the QMenu configuration in several parts to use the new API of Qt 6.
+* [Fix] Minor fix in LineNumbersWidget to render numbers in the correct height.
+* [Fix] Fixed the resizing and positioning of the code completion widget in the first show.
+* [Fix] Fixed a signal/slot connection in GeneralConfigWidget.
+* [Fix] Fix a crash in ObjectsScene::mousePressEvent when building with Qt 6.
+* [Fix] Fixed a typo in the error message in Tablespace::setDirectory.
+* [Fix] Minor fix in Catalog::parseRuleCommands.
+* [Fix] Minor fix in ModelObjectsWidget::updateObjectsList. Instead of using an empty pattern, we needed to force the wildcard * so the search returns all objects.
+* [Fix] Fixed a bug in the column propagation mechanism that was failing to (re)create columns properly when the model was using lots of identifier relationships.
+* [Fix] Minor fix in ElementsTableWidget to display "Default" in Sorting and Nulls columns instead of a blank text when no sorting method is defined for an element.
+* [Fix] Fixed a bug in PhysicalTable::setColumnsAttribute that was ignoring exclude constraints when determining the use of the last comma in the table's SQL code.
+* [Fix] Import process now correctly configures sorting options for excluding constraints and indexes.
+* [Fix] Minor fix in RelationshipView to use the method getDefaultPenWidth when configuring lines and descriptors.
+* [Fix] Fixed the scattered objects arrangement mode to make tables less sparse over the canvas.
+* [Fix] Fixed a crash when trying to swap relationships in SwapObjectsIdsWidget.
+* [Fix] Fixed blurry icons on TaskProgressWidget.
+
 v1.0.0-alpha
 ------
 <em>Release date: April 11, 2022</em><br/>

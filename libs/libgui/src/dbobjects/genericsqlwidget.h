@@ -50,7 +50,7 @@ class GenericSQLWidget: public BaseObjectWidget, public Ui::GenericSQLWidget {
 		GenericSQL dummy_gsql;
 
 		//! \brief A regular expression used to remove attribute/reference delimiters {} from the names of configured references
-		static const QRegExp AttrDelimRegexp;
+		static const QRegularExpression AttrDelimRegexp;
 
 		void showObjectReferenceData(int row, BaseObject *object, const QString &ref_name, bool use_signature, bool format_name);
 

@@ -18,7 +18,6 @@
 #include "catalog.h"
 #include "coreutilsns.h"
 #include "utilsns.h"
-#include "qtcompat/splitbehaviorcompat.h"
 
 const QString Catalog::QueryList("list");
 const QString Catalog::QueryAttribs("attribs");
@@ -36,7 +35,7 @@ const QString Catalog::GetExtensionObjsSql("SELECT d.objid AS oid, e.extname AS 
 																					 ORDER BY extname;");
 attribs_map Catalog::catalog_queries;
 
-map<ObjectType, QString> Catalog::oid_fields=
+std::map<ObjectType, QString> Catalog::oid_fields=
 { {ObjectType::Database, "oid"}, {ObjectType::Role, "oid"}, {ObjectType::Schema,"oid"},
 	{ObjectType::Language, "oid"}, {ObjectType::Tablespace, "oid"}, {ObjectType::Extension, "ex.oid"},
 	{ObjectType::Function, "pr.oid"}, {ObjectType::Aggregate, "pr.oid"}, {ObjectType::Operator, "op.oid"},
@@ -50,7 +49,7 @@ map<ObjectType, QString> Catalog::oid_fields=
 	{ObjectType::Transform, "tr.oid"}, {ObjectType::Procedure, "pr.oid"}
 };
 
-map<ObjectType, QString> Catalog::ext_oid_fields={
+std::map<ObjectType, QString> Catalog::ext_oid_fields={
 	{ObjectType::Constraint, "cs.conrelid"},
 	{ObjectType::Index, "id.indexrelid"},
 	{ObjectType::Trigger, "tg.tgrelid"},
@@ -58,7 +57,7 @@ map<ObjectType, QString> Catalog::ext_oid_fields={
 	{ObjectType::Policy, "pl.polrelid"}
 };
 
-map<ObjectType, QString> Catalog::parent_aliases={
+std::map<ObjectType, QString> Catalog::parent_aliases={
 	{ObjectType::Constraint, "tb"},
 	{ObjectType::Index, "tb"},
 	{ObjectType::Trigger, "tb"},
@@ -66,7 +65,7 @@ map<ObjectType, QString> Catalog::parent_aliases={
 	{ObjectType::Policy, "tb"}
 };
 
-map<ObjectType, QString> Catalog::name_fields=
+std::map<ObjectType, QString> Catalog::name_fields=
 { {ObjectType::Database, "datname"}, {ObjectType::Role, "rolname"}, {ObjectType::Schema,"nspname"},
 	{ObjectType::Language, "lanname"}, {ObjectType::Tablespace, "spcname"}, {ObjectType::Extension, "extname"},
 	{ObjectType::Function, "proname"}, {ObjectType::Aggregate, "proname"}, {ObjectType::Operator, "oprname"},
@@ -175,13 +174,13 @@ void Catalog::setObjectFilters(QStringList filters, bool only_matching, bool mat
 	ObjectType obj_type;
 	QString pattern, mode, aux_filter, parent_alias_ref, tab_filter = "^(%1)(.)+", _tmpl_filter;
 	QStringList values,	modes = { UtilsNs::FilterWildcard, UtilsNs::FilterRegExp };
-	map<ObjectType, QStringList> tab_patterns;
-	map<ObjectType, QStringList> parsed_filters;
+	std::map<ObjectType, QStringList> tab_patterns;
+	std::map<ObjectType, QStringList> parsed_filters;
 	attribs_map fmt_filter;
 
-	bool has_tab_filter = filters.indexOf(QRegExp(tab_filter.arg(BaseObject::getSchemaName(ObjectType::Table)))) >= 0,
-			 has_view_filter = filters.indexOf(QRegExp(tab_filter.arg(BaseObject::getSchemaName(ObjectType::View)))) >= 0,
-			 has_ftab_filter = filters.indexOf(QRegExp(tab_filter.arg(BaseObject::getSchemaName(ObjectType::ForeignTable)))) >= 0;
+	bool has_tab_filter = filters.indexOf(QRegularExpression(tab_filter.arg(BaseObject::getSchemaName(ObjectType::Table)))) >= 0,
+			 has_view_filter = filters.indexOf(QRegularExpression(tab_filter.arg(BaseObject::getSchemaName(ObjectType::View)))) >= 0,
+			 has_ftab_filter = filters.indexOf(QRegularExpression(tab_filter.arg(BaseObject::getSchemaName(ObjectType::ForeignTable)))) >= 0;
 
 	/* If we have at least one table (view or foreign table) filter
 	 * and the forced object types list we configure filters to force the
@@ -224,7 +223,7 @@ void Catalog::setObjectFilters(QStringList filters, bool only_matching, bool mat
 			if(tab_obj_types.contains(BaseObject::getSchemaName(type)))
 				continue;
 
-			if(filters.indexOf(QRegExp(QString("(%1)(.)+").arg(BaseObject::getSchemaName(type)))) < 0)
+			if(filters.indexOf(QRegularExpression(QString("(%1)(.)+").arg(BaseObject::getSchemaName(type)))) < 0)
 				parsed_filters[type].append(QString("(%1)").arg(InvFilterPattern));
 		}
 	}
@@ -259,7 +258,7 @@ void Catalog::setObjectFilters(QStringList filters, bool only_matching, bool mat
 			// If the pattern has wildcard chars we replace them by (.)*
 			if(pattern.contains(UtilsNs::WildcardChar))
 			{
-				QStringList list = pattern.split(UtilsNs::WildcardChar, QtCompat::KeepEmptyParts);
+				QStringList list = pattern.split(UtilsNs::WildcardChar, Qt::KeepEmptyParts);
 				QString any_str = "(.)*";
 				pattern.clear();
 
@@ -290,7 +289,7 @@ void Catalog::setObjectFilters(QStringList filters, bool only_matching, bool mat
 
 	if(!tab_obj_types.isEmpty())
 	{
-		map<ObjectType, QString> fmt_tab_patterns;
+		std::map<ObjectType, QString> fmt_tab_patterns;
 		QStringList fmt_conds;
 
 		for(auto &itr : tab_patterns)
@@ -498,19 +497,19 @@ unsigned Catalog::getQueryFilter()
 	return filter;
 }
 
-map<ObjectType, QString> Catalog::getObjectFilters()
+std::map<ObjectType, QString> Catalog::getObjectFilters()
 {
 	return obj_filters;
 }
 
-vector<ObjectType> Catalog::getFilteredObjectTypes()
+std::vector<ObjectType> Catalog::getFilteredObjectTypes()
 {
-	vector<ObjectType> types;
-	QRegExp regexp = QRegExp(QString("(.)*(%1)(.)*").arg(InvFilterPattern));
+	std::vector<ObjectType> types;
+	QRegularExpression regexp = QRegularExpression(QString("(.)*(%1)(.)*").arg(InvFilterPattern));
 
 	for(auto &flt : obj_filters)
 	{
-		if(flt.second.indexOf(QRegExp(regexp)) < 0)
+		if(flt.second.indexOf(QRegularExpression(regexp)) < 0)
 			types.push_back(flt.first);
 	}
 
@@ -520,15 +519,15 @@ vector<ObjectType> Catalog::getFilteredObjectTypes()
 	return types;
 }
 
-void Catalog::getObjectsOIDs(map<ObjectType, vector<unsigned> > &obj_oids, map<unsigned, vector<unsigned> > &col_oids, attribs_map extra_attribs)
+void Catalog::getObjectsOIDs(std::map<ObjectType, std::vector<unsigned> > &obj_oids, std::map<unsigned, std::vector<unsigned> > &col_oids, attribs_map extra_attribs)
 {
 	try
 	{
-		vector<ObjectType> types=BaseObject::getObjectTypes(true, { ObjectType::Database, ObjectType::Relationship, ObjectType::BaseRelationship,
+		std::vector<ObjectType> types=BaseObject::getObjectTypes(true, { ObjectType::Database, ObjectType::Relationship, ObjectType::BaseRelationship,
 																																ObjectType::Textbox, ObjectType::Tag, ObjectType::Column, ObjectType::Permission,
 																																ObjectType::GenericSql });
 		attribs_map attribs, col_attribs, sch_names;
-		vector<attribs_map> tab_attribs;
+		std::vector<attribs_map> tab_attribs;
 		unsigned tab_oid=0;
 
 		for(ObjectType type : types)
@@ -599,12 +598,12 @@ attribs_map Catalog::getObjectsNames(ObjectType obj_type, const QString &sch_nam
 	}
 }
 
-vector<attribs_map> Catalog::getObjectsNames(vector<ObjectType> obj_types, const QString &sch_name, const QString &tab_name, attribs_map extra_attribs, bool sort_results)
+std::vector<attribs_map> Catalog::getObjectsNames(std::vector<ObjectType> obj_types, const QString &sch_name, const QString &tab_name, attribs_map extra_attribs, bool sort_results)
 {
 	try
 	{
 		ResultSet res;
-		vector<attribs_map> objects;
+		std::vector<attribs_map> objects;
 		QString sql, select_kw=QString("SELECT");
 		QStringList queries;
 		attribs_map attribs;
@@ -691,13 +690,13 @@ attribs_map Catalog::getAttributes(const QString &obj_name, ObjectType obj_type,
 	}
 }
 
-vector<attribs_map> Catalog::getMultipleAttributes(ObjectType obj_type, attribs_map extra_attribs)
+std::vector<attribs_map> Catalog::getMultipleAttributes(ObjectType obj_type, attribs_map extra_attribs)
 {
 	try
 	{
 		ResultSet res;
 		attribs_map tuple;
-		vector<attribs_map> obj_attribs;
+		std::vector<attribs_map> obj_attribs;
 
 		executeCatalogQuery(QueryAttribs, obj_type, res, false, extra_attribs);
 		if(res.accessTuple(ResultSet::FirstTuple))
@@ -724,13 +723,13 @@ vector<attribs_map> Catalog::getMultipleAttributes(ObjectType obj_type, attribs_
 	}
 }
 
-vector<attribs_map> Catalog::getMultipleAttributes(const QString &catalog_sch, attribs_map attribs)
+std::vector<attribs_map> Catalog::getMultipleAttributes(const QString &catalog_sch, attribs_map attribs)
 {
 	try
 	{
 		ResultSet res;
 		attribs_map tuple;
-		vector<attribs_map> obj_attribs;
+		std::vector<attribs_map> obj_attribs;
 
 		loadCatalogQuery(catalog_sch);
 		schparser.ignoreUnkownAttributes(true);
@@ -823,7 +822,7 @@ attribs_map Catalog::changeAttributeNames(const attribs_map &attribs)
 	return new_attribs;
 }
 
-QString Catalog::createOidFilter(const vector<unsigned> &oids)
+QString Catalog::createOidFilter(const std::vector<unsigned> &oids)
 {
 	QString filter;
 
@@ -836,7 +835,7 @@ QString Catalog::createOidFilter(const vector<unsigned> &oids)
 	return filter;
 }
 
-vector<attribs_map> Catalog::getObjectsAttributes(ObjectType obj_type, const QString &schema, const QString &table, const vector<unsigned> &filter_oids, attribs_map extra_attribs)
+std::vector<attribs_map> Catalog::getObjectsAttributes(ObjectType obj_type, const QString &schema, const QString &table, const std::vector<unsigned> &filter_oids, attribs_map extra_attribs)
 {
 	try
 	{
@@ -867,7 +866,7 @@ attribs_map Catalog::getObjectAttributes(ObjectType obj_type, unsigned oid, cons
 {
 	try
 	{
-		vector<attribs_map> attribs_vect=getObjectsAttributes(obj_type, sch_name, tab_name, { oid }, extra_attribs);
+		std::vector<attribs_map> attribs_vect=getObjectsAttributes(obj_type, sch_name, tab_name, { oid }, extra_attribs);
 		return (attribs_vect.empty() ? attribs_map() : attribs_vect[0]);
 	}
 	catch(Exception &e)
@@ -986,8 +985,9 @@ unsigned Catalog::getObjectCount(bool incl_sys_objs)
 QStringList Catalog::parseArrayValues(const QString &array_val)
 {
 	QStringList list;
+	QRegularExpression regexp(QRegularExpression::anchoredPattern(ArrayPattern));
 
-	if(QRegExp(ArrayPattern).exactMatch(array_val))
+	if(regexp.match(array_val).hasMatch())
 	{
 		//Detecting the position of { and }
 		int start=array_val.indexOf('{')+1,
@@ -997,7 +997,7 @@ QStringList Catalog::parseArrayValues(const QString &array_val)
 		if(value.contains('"'))
 			list = parseDefaultValues(value, QString("\""), QString(","));
 		else
-			list = value.split(',', QtCompat::SkipEmptyParts);
+			list = value.split(',', Qt::SkipEmptyParts);
 	}
 
 	return list;
@@ -1101,11 +1101,24 @@ QStringList Catalog::parseDefaultValues(const QString &def_values, const QString
 QStringList Catalog::parseRuleCommands(const QString &cmds)
 {
 	int start=-1, end=-1;
-	QRegExp cmd_regexp(QString("(DO)( )*(INSTEAD)*( )+"));
+	QRegularExpression cmd_regexp("(DO)( )*(INSTEAD)*( )+");
+	QRegularExpressionMatch match;
+	QString fmt_cmd;
 
-	start=cmd_regexp.indexIn(cmds) + cmd_regexp.matchedLength();
-	end=cmds.lastIndexOf(';');
-	return (cmds.mid(start,(end - start) + 1).split(';', QtCompat::SkipEmptyParts));
+	match = cmd_regexp.match(cmds);
+	start = match.capturedStart() + match.capturedLength();
+	end = cmds.lastIndexOf(";");
+
+	fmt_cmd = cmds.mid(start,(end - start)).simplified();
+
+	if(fmt_cmd.startsWith('(') && fmt_cmd.endsWith(')'))
+	{
+		fmt_cmd.remove(0, 1);
+		fmt_cmd.remove(fmt_cmd.length() - 1, 1);
+		fmt_cmd = fmt_cmd.trimmed();
+	}
+
+	return fmt_cmd.split(';', Qt::SkipEmptyParts);
 }
 
 QStringList Catalog::parseIndexExpressions(const QString &expr)
@@ -1153,9 +1166,9 @@ QStringList Catalog::parseIndexExpressions(const QString &expr)
 	return expressions;
 }
 
-vector<ObjectType> Catalog::getFilterableObjectTypes()
+std::vector<ObjectType> Catalog::getFilterableObjectTypes()
 {
-	static vector<ObjectType> types = BaseObject::getObjectTypes(true, { ObjectType::Relationship,
+	static std::vector<ObjectType> types = BaseObject::getObjectTypes(true, { ObjectType::Relationship,
 																																			 ObjectType::BaseRelationship,
 																																			 ObjectType::Textbox,
 																																			 ObjectType::GenericSql,

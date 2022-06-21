@@ -29,19 +29,17 @@
 #include "tools/databaseimportform.h"
 #include "tools/modelexportform.h"
 
-map<QString, attribs_map> GeneralConfigWidget::config_params;
-map<QString, GeneralConfigWidget::WidgetState> GeneralConfigWidget::widgets_geom;
+std::map<QString, attribs_map> GeneralConfigWidget::config_params;
+std::map<QString, GeneralConfigWidget::WidgetState> GeneralConfigWidget::widgets_geom;
 
 GeneralConfigWidget::GeneralConfigWidget(QWidget * parent) : BaseConfigWidget(parent)
 {
-	QPrinter::PaperSize paper_ids[]={QPrinter::A0, QPrinter::A1, QPrinter::A2, QPrinter::A3, QPrinter::A4, QPrinter::A5,
-									 QPrinter::A6, QPrinter::A7, QPrinter::A8, QPrinter::A9, QPrinter::B0, QPrinter::B1,
-									 QPrinter::B10, QPrinter::B2, QPrinter::B3, QPrinter::B4, QPrinter::B5, QPrinter::B6,
-									 QPrinter::B7, QPrinter::B8, QPrinter::B9, QPrinter::C5E, QPrinter::Comm10E, QPrinter::DLE,
-									 QPrinter::Executive, QPrinter::Folio, QPrinter::Ledger, QPrinter::Legal, QPrinter::Letter,
-									 QPrinter::Tabloid, QPrinter::Custom };
-	int count=sizeof(paper_ids)/sizeof(QPrinter::PaperSize);
-
+	std::vector<QPageSize::PageSizeId> page_ids={ QPageSize::A0, QPageSize::A1, QPageSize::A2, QPageSize::A3, QPageSize::A4, QPageSize::A5,
+																			 QPageSize::A6, QPageSize::A7, QPageSize::A8, QPageSize::A9, QPageSize::B0, QPageSize::B1,
+																			 QPageSize::B10, QPageSize::B2, QPageSize::B3, QPageSize::B4, QPageSize::B5, QPageSize::B6,
+																			 QPageSize::B7, QPageSize::B8, QPageSize::B9, QPageSize::C5E, QPageSize::Comm10E, QPageSize::DLE,
+																			 QPageSize::Executive, QPageSize::Folio, QPageSize::Ledger, QPageSize::Legal, QPageSize::Letter,
+																			 QPageSize::Tabloid, QPageSize::Custom };
 	Ui_GeneralConfigWidget::setupUi(this);
 
 	confs_dir_sel = new FileSelectorWidget(this);
@@ -60,8 +58,9 @@ GeneralConfigWidget::GeneralConfigWidget(QWidget * parent) : BaseConfigWidget(pa
 	source_editor_sel->setToolTip(tr("External source code editor application"));
 	general_grid->addWidget(source_editor_sel, 2, 1, 1, 1);
 
-	for(int i=0; i < count; i++)
-		paper_cmb->setItemData(i, QVariant(paper_ids[i]));
+	int i = 0;
+	for(auto &pg_id : page_ids)
+		paper_cmb->setItemData(i++, QVariant(pg_id));
 
 	check_versions_cmb->setItemData(0, Attributes::AllVersions);
 	check_versions_cmb->setItemData(1, Attributes::StableBeta);
@@ -127,13 +126,13 @@ GeneralConfigWidget::GeneralConfigWidget(QWidget * parent) : BaseConfigWidget(pa
 	for(QSpinBox *spin : spin_boxes)
 	{
 		child_wgts.push_back(spin);
-		connect(spin, SIGNAL(valueChanged(QString)), this, SLOT(setConfigurationChanged()));
+		connect(spin, SIGNAL(valueChanged(int)), this, SLOT(setConfigurationChanged()));
 	}
 
 	for(QDoubleSpinBox *dspin : dspin_boxes)
 	{
 		child_wgts.push_back(dspin);
-		connect(dspin, SIGNAL(valueChanged(QString)), this, SLOT(setConfigurationChanged()));
+		connect(dspin, SIGNAL(valueChanged(double)), this, SLOT(setConfigurationChanged()));
 	}
 
 	for(QComboBox *cmb : combos)
@@ -279,16 +278,16 @@ void GeneralConfigWidget::addConfigurationParam(const QString &param, const attr
 	BaseConfigWidget::addConfigurationParam(config_params, param, attribs);
 }
 
-void GeneralConfigWidget::removeConfigurationParam(const QRegExp &param_reg)
+void GeneralConfigWidget::removeConfigurationParam(const QRegularExpression &param_reg)
 {
-	map<QString, attribs_map>::iterator itr, itr_end;
+	std::map<QString, attribs_map>::iterator itr, itr_end;
 
 	itr=config_params.begin();
 	itr_end=config_params.end();
 
 	while(itr!=itr_end)
 	{
-		if(param_reg.exactMatch(itr->first))
+		if(param_reg.match(itr->first).hasMatch())
 		{
 			config_params.erase(itr);
 			itr=config_params.begin();
@@ -299,7 +298,7 @@ void GeneralConfigWidget::removeConfigurationParam(const QRegExp &param_reg)
 	}
 }
 
-map<QString, attribs_map> GeneralConfigWidget::getConfigurationParams()
+std::map<QString, attribs_map> GeneralConfigWidget::getConfigurationParams()
 {
 	return config_params;
 }
@@ -376,7 +375,7 @@ void GeneralConfigWidget::saveConfiguration()
 	try
 	{
 		attribs_map attribs;
-		map<QString, attribs_map >::iterator itr, itr_end;
+		std::map<QString, attribs_map >::iterator itr, itr_end;
 		QString file_sch, widget_sch;
 		int recent_mdl_idx = 0;
 
@@ -451,13 +450,13 @@ void GeneralConfigWidget::saveConfiguration()
 		while(itr!=itr_end)
 		{
 			//Checking if the current attribute is a file to be stored in a <session> tag
-			if((itr->first).contains(QRegExp(QString("(") + Attributes::File + QString(")([0-9]+)"))))
+			if((itr->first).contains(QRegularExpression(QString("(") + Attributes::File + QString(")([0-9]+)"))))
 			{
 				config_params[Attributes::Configuration][Attributes::File]+=
 						XmlParser::convertCharsToXMLEntities(schparser.getCodeDefinition(file_sch, itr->second));
 			}
 			//Checking if the current attribute is a file to be stored in a <recent-models> tag
-			else if(recent_mdl_idx < MaxRecentModels && (itr->first).contains(QRegExp(QString("(") + Attributes::Recent + QString(")([0-9]+)"))))
+			else if(recent_mdl_idx < MaxRecentModels && (itr->first).contains(QRegularExpression(QString("(") + Attributes::Recent + QString(")([0-9]+)"))))
 			{
 				config_params[Attributes::Configuration][Attributes::RecentModels]+=
 						XmlParser::convertCharsToXMLEntities(schparser.getCodeDefinition(file_sch, itr->second));
@@ -514,23 +513,32 @@ void GeneralConfigWidget::saveConfiguration()
 
 void GeneralConfigWidget::applyConfiguration()
 {
-	int unit=unity_cmb->currentIndex();
+	int unit = unity_cmb->currentIndex();
 
 	if(!save_restore_geometry_chk->isChecked())
 	  widgets_geom.clear();
 
 	BaseObject::setEscapeComments(escape_comments_chk->isChecked());
 
+	QPageLayout page_lt;
+	QPageSize::PageSizeId size_id = static_cast<QPageSize::PageSizeId>(paper_cmb->itemData(paper_cmb->currentIndex()).toInt());
+	QPageSize page_sz(size_id);
+
+	// Forcing the Point unity to configure the margins on the page layout
 	unity_cmb->setCurrentIndex(UnitPoint);
-	ObjectsScene::setPaperConfiguration(static_cast<QPrinter::PaperSize>(paper_cmb->itemData(paper_cmb->currentIndex()).toInt()),
-										(portrait_rb->isChecked() ? QPrinter::Portrait : QPrinter::Landscape),
-										QRectF(left_marg->value(), top_marg->value(), right_marg->value(), bottom_marg->value()),
-										QSizeF(width_spb->value(), height_spb->value()));
+
+	if(size_id == QPageSize::Custom)
+		page_sz = QPageSize(QSizeF(width_spb->value(), height_spb->value()), QPageSize::Point);
+
+	page_lt.setPageSize(page_sz);
+	page_lt.setOrientation(portrait_rb->isChecked() ? QPageLayout::Portrait : QPageLayout::Landscape);
+	page_lt.setMargins(QMarginsF(left_marg->value(), top_marg->value(), right_marg->value(), bottom_marg->value()));
+	ObjectsScene::setPageLayout(page_lt);
+
 	unity_cmb->setCurrentIndex(unit);
 
 	ObjectsScene::setEnableCornerMove(corner_move_chk->isChecked());
 	ObjectsScene::setInvertRangeSelectionTrigger(invert_rangesel_chk->isChecked());
-
 	ObjectsScene::setGridOptions(config_params[Attributes::Configuration][Attributes::ShowCanvasGrid]==Attributes::True,
 															 config_params[Attributes::Configuration][Attributes::AlignObjsToGrid]==Attributes::True,
 															 config_params[Attributes::Configuration][Attributes::ShowPageDelimiters]==Attributes::True);

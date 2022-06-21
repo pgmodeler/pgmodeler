@@ -23,10 +23,10 @@ ResultSetModel::ResultSetModel(ResultSet &res, Catalog &catalog, QObject *parent
 	try
 	{
 		Catalog aux_cat = catalog;
-		vector<unsigned> type_ids;
-		vector<unsigned>::iterator end;
-		vector<attribs_map> types;
-		map<int, QString> type_names;
+		std::vector<unsigned> type_ids;
+		std::vector<unsigned>::iterator end;
+		std::vector<attribs_map> types;
+		std::map<int, QString> type_names;
 		int col = 0;
 
 		col_count = res.getColumnCount();
@@ -107,7 +107,7 @@ QVariant ResultSetModel::data(const QModelIndex &index, int role) const
 			return QVariant(Qt::AlignLeft | Qt::AlignVCenter);
 	}
 
-	return QVariant(QVariant::Invalid);
+	return QVariant();
 }
 
 QVariant ResultSetModel::headerData(int section, Qt::Orientation orientation, int role) const
@@ -115,7 +115,7 @@ QVariant ResultSetModel::headerData(int section, Qt::Orientation orientation, in
 	if(orientation == Qt::Horizontal)
 	{
 		if(section >= col_count)
-			return QVariant(QVariant::Invalid);
+			return QVariant();
 
 		if(role == Qt::DisplayRole)
 			return header_data.at(section);

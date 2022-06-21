@@ -318,8 +318,8 @@ void BaseTableView::removeConnectedRelationship(BaseRelationship *base_rel)
 
 int BaseTableView::getConnectedRelationshipIndex(BaseRelationship *base_rel, bool only_self_rels)
 {
-	vector<BaseRelationship *>::iterator itr;
-	vector<BaseRelationship *> self_rels, *vet_rels = nullptr;
+	std::vector<BaseRelationship *>::iterator itr;
+	std::vector<BaseRelationship *> self_rels, *vet_rels = nullptr;
 
 	if(!only_self_rels)
 		vet_rels = &connected_rels;
@@ -474,7 +474,7 @@ double BaseTableView::calculateWidth()
 {
 	/* Calculating the maximum width between the title, columns, extended attributes and the attribs toggler.
 	 * This width is used to set the uniform width of table */
-	vector<double> widths = { columns->isVisible() ? columns->boundingRect().width() : 0,
+	std::vector<double> widths = { columns->isVisible() ? columns->boundingRect().width() : 0,
 														ext_attribs->isVisible() ? ext_attribs->boundingRect().width() : 0,
 														attribs_toggler->isVisible() ? attribs_toggler->getButtonsWidth() : 0,
 														title->boundingRect().width() };

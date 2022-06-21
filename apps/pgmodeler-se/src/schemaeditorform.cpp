@@ -42,7 +42,8 @@ SchemaEditorForm::SchemaEditorForm(QWidget *parent) : QWidget(parent)
 		if(!btn) continue;
 
 		fnt = btn->font();
-		fnt.setBold(true);
+		//fnt.setBold(true);
+		fnt.setWeight(QFont::Medium);
 		btn->setFont(fnt);
 		GuiUtilsNs::createDropShadow(btn);
 
@@ -427,14 +428,18 @@ QStringList SchemaEditorForm::showFileDialog(bool save_mode)
 	{
 		file_dlg.setDefaultSuffix(".sch");
 		connect(&file_dlg, &QFileDialog::filterSelected, [&](QString filter){
-			filter.remove(QRegExp("(.)+(\\*)"));
+			filter.remove(QRegularExpression("(.)+(\\*)"));
 			filter.remove(")");
 			file_dlg.setDefaultSuffix(filter);
 		});
 	}
 
+	GuiUtilsNs::restoreFileDialogState(&file_dlg);
+
 	if(file_dlg.exec() == QFileDialog::Accepted)
 		files = file_dlg.selectedFiles();
+
+	GuiUtilsNs::saveFileDialogState(&file_dlg);
 
 	return files;
 }

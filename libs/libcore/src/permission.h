@@ -32,7 +32,7 @@
 #include <algorithm>
 #include <QTextStream>
 #include <QCryptographicHash>
-#include <QRegExp>
+#include <QRegularExpression>
 
 class Permission: public BaseObject {
 		/*! \brief Permissions on PostgreSQL are only applied to the following
@@ -60,7 +60,7 @@ class Permission: public BaseObject {
 		/*! \brief Roles that has permissions over the object. This vector can be
 			empty indicating that all roles on the cluster has permission over
 			the object. */
-		vector<Role *> roles;
+		std::vector<Role *> roles;
 
 		//! \brief Privileges set applied to the object (Accessed via constants PRIV_???)
 		bool privileges[13],
@@ -125,7 +125,7 @@ class Permission: public BaseObject {
 		Role *getRole(unsigned role_idx);
 
 		//! \brief Returns all the roles that is used by the permission
-		vector<Role *> getRoles();
+		std::vector<Role *> getRoles();
 
 		//! \brief Gets the object that is subject to the privileges
 		BaseObject *getObject();
@@ -143,7 +143,7 @@ class Permission: public BaseObject {
 
 		/*! \brief Parses the permission string (e.g. postgres=arwdDxt/postgres) and returns the role name
 		which owns the permission. The parameter vectors stores the ordinary privileges as well the GRANT OPTION privileges */
-		static QString parsePermissionString(QString perm_str, vector<unsigned> &privs, vector<unsigned> &gop_privs);
+		static QString parsePermissionString(QString perm_str, std::vector<unsigned> &privs, std::vector<unsigned> &gop_privs);
 
 		//! \brief Indicates whether the role is present on the permission
 		bool isRoleExists(Role *role);

@@ -35,7 +35,7 @@ TableWidget::TableWidget(QWidget *parent, ObjectType tab_type): BaseObjectWidget
 	ObjectsTableWidget *tab=nullptr;
 	ObjectType types[]={ ObjectType::Column, ObjectType::Constraint, ObjectType::Trigger,
 											 ObjectType::Rule, ObjectType::Index, ObjectType::Policy };
-	map<QString, vector<QWidget *> > fields_map;	
+	std::map<QString, std::vector<QWidget *> > fields_map;	
 	QPushButton *edt_data_tb=nullptr;
 	QStringList part_types;
 
@@ -247,7 +247,7 @@ ObjectType TableWidget::getObjectType(QObject *sender)
 
 	if(sender)
 	{
-		map<ObjectType, ObjectsTableWidget *>::iterator itr, itr_end;
+		std::map<ObjectType, ObjectsTableWidget *>::iterator itr, itr_end;
 
 		itr=objects_tab_map.begin();
 		itr_end=objects_tab_map.end();
@@ -320,8 +320,8 @@ void TableWidget::__setAttributes(DatabaseModel *model, OperationList *op_list, 
 	{
 		unsigned i, count;
 		PhysicalTable *aux_tab=nullptr;
-		vector<ObjectType> types=BaseObject::getChildObjectTypes(ObjectType::Table);
-		vector<PartitionKey> part_keys;
+		std::vector<ObjectType> types=BaseObject::getChildObjectTypes(ObjectType::Table);
+		std::vector<PartitionKey> part_keys;
 
 		BaseObjectWidget::setAttributes(model, op_list, table, schema, pos_x, pos_y);
 
@@ -428,7 +428,7 @@ void TableWidget::listObjects(ObjectType obj_type)
 	ObjectsTableWidget *tab=nullptr;
 	unsigned idx = 0, count = 0;
 	PhysicalTable *table=nullptr;
-	vector<int> checked_cols;
+	std::vector<int> checked_cols;
 
 	try
 	{
@@ -924,9 +924,9 @@ void TableWidget::applyConfiguration()
 		PhysicalTable *table=nullptr;
 		Table *aux_tab = nullptr;
 		Constraint *pk = nullptr;
-		vector<BaseRelationship *> rels;
-		vector<Column *> pk_cols;
-		vector<PartitionKey> part_keys;
+		std::vector<BaseRelationship *> rels;
+		std::vector<Column *> pk_cols;
+		std::vector<PartitionKey> part_keys;
 		ObjectsTableWidget *col_tab = objects_tab_map[ObjectType::Column];
 		PartitioningType part_type;
 
@@ -1003,7 +1003,7 @@ void TableWidget::applyConfiguration()
 			}
 			else if(!pk->isAddedByRelationship())
 			{
-			  vector<Column *> orig_pk_cols = pk->getColumns(Constraint::SourceCols);
+			  std::vector<Column *> orig_pk_cols = pk->getColumns(Constraint::SourceCols);
 
 				//If the table owns a pk we only update the columns
 				op_list->registerObject(pk, Operation::ObjectModified, -1, table);

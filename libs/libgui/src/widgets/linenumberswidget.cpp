@@ -36,9 +36,10 @@ LineNumbersWidget::LineNumbersWidget(QPlainTextEdit * parent) : QWidget(parent)
 	start_sel_line = -1;
 
 	connect(parent_edt, SIGNAL(selectionChanged()), this, SLOT(update()));
+	connect(parent_edt, SIGNAL(cursorPositionChanged()), this, SLOT(update()));
 }
 
-void LineNumbersWidget::drawLineNumbers(unsigned first_line, unsigned line_count, int dy)
+void LineNumbersWidget::drawLineNumbers(int first_line, int line_count, int dy)
 {
 	bool update=(first_line!=this->first_line || line_count != this->line_count);
 
@@ -60,10 +61,9 @@ void LineNumbersWidget::setColors(const QColor &font_color, const QColor &bg_col
 void LineNumbersWidget::paintEvent(QPaintEvent *event)
 {
 	QPainter painter(this);
-	int y = dy, height = 0;
-	unsigned last_line=first_line + line_count;
+	int y = dy, height = 0, fs_line = 0,	ls_line = 0,
+			last_line=first_line + line_count;
 	QFont font = painter.font();
-	unsigned fs_line = 0,	ls_line = 0;
 	QTextCursor cursor = parent_edt->textCursor();
 
 	if(cursor.hasSelection())
@@ -80,11 +80,16 @@ void LineNumbersWidget::paintEvent(QPaintEvent *event)
 	painter.setPen(font_color);
 
 	//Draw line numbers
-	for(unsigned lin=first_line; lin < last_line; lin++)
+	for(int lin = first_line; lin < last_line; lin++)
 	{
-		font.setBold(cursor.hasSelection() && lin-1 >= fs_line && lin-1 <= ls_line);
-		height =  QFontMetrics(font).height();
+		if((lin-1 == cursor.blockNumber()) ||
+			 (cursor.hasSelection() && lin-1 >= fs_line && lin-1 <= ls_line))
+			font.setBold(true);
+		else
+			font.setBold(false);
+
 		painter.setFont(font);
+		height = painter.fontMetrics().height() + 1;
 
 		if(font.bold())
 		{

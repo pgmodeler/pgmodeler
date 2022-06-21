@@ -14,8 +14,7 @@ jobs:
 
     strategy:
       matrix:
-        qt: ['5.15.2']
-        #qt: ['5.15.0', '5.14.2', '5.13.2', '5.12.9', '5.11.3', '5.10.1', '5.9.9']
+        qt: ['6.2.4']
 
     steps:
     - uses: actions/checkout@v2

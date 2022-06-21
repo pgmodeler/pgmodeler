@@ -29,6 +29,9 @@
    <property name="bottomMargin">
     <number>5</number>
    </property>
+   <property name="spacing">
+    <number>5</number>
+   </property>
    <item row="1" column="0">
     <widget class="QLabel" name="event_lbl">
      <property name="sizePolicy">
@@ -72,7 +75,17 @@
      <property name="currentIndex">
       <number>0</number>
      </property>
+     <property name="iconSize">
+      <size>
+       <width>22</width>
+       <height>22</height>
+      </size>
+     </property>
      <widget class="QWidget" name="tab">
+      <attribute name="icon">
+       <iconset resource="../../res/resources.qrc">
+        <normaloff>:/icons/icons/usertype.png</normaloff>:/icons/icons/usertype.png</iconset>
+      </attribute>
       <attribute name="title">
        <string>Arguments</string>
       </attribute>
@@ -90,7 +103,7 @@
         <number>5</number>
        </property>
        <property name="spacing">
-        <number>10</number>
+        <number>5</number>
        </property>
        <item row="0" column="0">
         <widget class="QLabel" name="argument_lbl">
@@ -118,6 +131,10 @@
       <property name="enabled">
        <bool>false</bool>
       </property>
+      <attribute name="icon">
+       <iconset resource="../../res/resources.qrc">
+        <normaloff>:/icons/icons/column.png</normaloff>:/icons/icons/column.png</iconset>
+      </attribute>
       <attribute name="title">
        <string>Columns</string>
       </attribute>
@@ -135,7 +152,7 @@
         <number>5</number>
        </property>
        <property name="spacing">
-        <number>10</number>
+        <number>5</number>
        </property>
        <item row="0" column="0">
         <widget class="QLabel" name="column_lbl">
@@ -187,6 +204,10 @@
       </layout>
      </widget>
      <widget class="QWidget" name="tab_3">
+      <attribute name="icon">
+       <iconset resource="../../res/resources.qrc">
+        <normaloff>:/icons/icons/constraint.png</normaloff>:/icons/icons/constraint.png</iconset>
+      </attribute>
       <attribute name="title">
        <string>Constraint</string>
       </attribute>
@@ -201,6 +222,9 @@
         <number>5</number>
        </property>
        <property name="bottomMargin">
+        <number>5</number>
+       </property>
+       <property name="spacing">
         <number>5</number>
        </property>
        <item row="0" column="0">
@@ -233,6 +257,9 @@
        </item>
        <item row="0" column="1">
         <layout class="QHBoxLayout" name="horizontalLayout">
+         <property name="spacing">
+          <number>5</number>
+         </property>
          <item>
           <widget class="QCheckBox" name="deferrable_chk">
            <property name="enabled">
@@ -397,6 +424,9 @@
       </size>
      </property>
      <layout class="QHBoxLayout" name="horizontalLayout_2">
+      <property name="spacing">
+       <number>5</number>
+      </property>
       <property name="leftMargin">
        <number>0</number>
       </property>
@@ -677,8 +707,8 @@
       <property name="bottomMargin">
        <number>5</number>
       </property>
-      <property name="horizontalSpacing">
-       <number>10</number>
+      <property name="spacing">
+       <number>5</number>
       </property>
       <item row="0" column="1">
        <widget class="QLineEdit" name="old_table_edt">
@@ -732,6 +762,9 @@
   <tabstop>argument_edt</tabstop>
   <tabstop>column_cmb</tabstop>
  </tabstops>
- <resources/>
+ <resources>
+  <include location="../../res/resources.qrc"/>
+  <include location="../../res/resources.qrc"/>
+ </resources>
  <connections/>
 </ui>
