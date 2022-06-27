@@ -342,7 +342,14 @@ void ConnectionsConfigWidget::configureConnection(Connection *conn)
 	if(conn)
 	{
 		conn->setAutoBrowseDB(auto_browse_chk->isChecked());
-		conn->setConnectionParam(Connection::ParamAlias, alias_edt->text());
+
+		// Avoiding add duplicated aliases in the combo
+		int idx = 0;
+		QString alias = alias_edt->text();
+		while(connections_cmb->findText(alias, Qt::MatchStartsWith) > 0)
+			alias = alias_edt->text() + QString::number(++idx);
+
+		conn->setConnectionParam(Connection::ParamAlias, alias);
 		conn->setConnectionParam(Connection::ParamServerIp, "");
 		conn->setConnectionParam(Connection::ParamServerFqdn, host_edt->text());
 		conn->setConnectionParam(Connection::ParamPort, QString("%1").arg(port_sbp->value()));
@@ -454,7 +461,7 @@ void ConnectionsConfigWidget::saveConfiguration()
 		{
 			Messagebox msg_box;
 
-			msg_box.show(tr("There is a connection being created or edited! Do you want to save it?"),
+			msg_box.show(tr("There is a connection being created or edited! Do you want to save it before applying settings?"),
 									 Messagebox::AlertIcon, Messagebox::YesNoButtons);
 
 			if(msg_box.result()==QDialog::Accepted)
