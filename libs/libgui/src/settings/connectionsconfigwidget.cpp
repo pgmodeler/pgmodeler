@@ -461,8 +461,8 @@ void ConnectionsConfigWidget::saveConfiguration()
 		{
 			Messagebox msg_box;
 
-			msg_box.show(tr("There is a connection being created or edited! Do you want to save it before applying settings?"),
-									 Messagebox::AlertIcon, Messagebox::YesNoButtons);
+			msg_box.show(tr("There is a connection being configured! Do you want to save it before applying settings?"),
+									 Messagebox::ConfirmIcon, Messagebox::YesNoButtons);
 
 			if(msg_box.result()==QDialog::Accepted)
 				handleConnection();
@@ -579,49 +579,44 @@ void ConnectionsConfigWidget::fillConnectionsComboBox(QComboBox *combo, bool inc
 
 bool ConnectionsConfigWidget::openConnectionsConfiguration(QComboBox *combo, bool incl_placeholder)
 {
-	if(combo)
+	if(!combo)
+		return false;
+
+	BaseForm parent_form;
+	ConnectionsConfigWidget conn_cfg_wgt;
+
+	parent_form.setWindowTitle(tr("Edit database connections"));
+	parent_form.setWindowFlags(Qt::Dialog | Qt::WindowMinimizeButtonHint | Qt::WindowCloseButtonHint);
+
+	try
 	{
-		BaseForm parent_form;
-		ConnectionsConfigWidget conn_cfg_wgt;
-		bool conn_saved = false;
+		conn_cfg_wgt.loadConfiguration();
+		conn_cfg_wgt.frame->setFrameShape(QFrame::NoFrame);
+		conn_cfg_wgt.layout()->setContentsMargins(0,0,0,0);
+		conn_cfg_wgt.frame->layout()->setContentsMargins(0,0,0,0);
 
-		parent_form.setWindowTitle(tr("Edit database connections"));
-		parent_form.setWindowFlags(Qt::Dialog | Qt::WindowMinimizeButtonHint | Qt::WindowCloseButtonHint);
-
-		connect(parent_form.cancel_btn, SIGNAL(clicked(bool)), &parent_form, SLOT(reject()));
-		connect(parent_form.apply_ok_btn, SIGNAL(clicked(bool)),  &parent_form, SLOT(accept()));
-
-		try
-		{
+		connect(parent_form.cancel_btn, &QPushButton::clicked, [&](){
 			conn_cfg_wgt.loadConfiguration();
-			conn_cfg_wgt.frame->setFrameShape(QFrame::NoFrame);
-			conn_cfg_wgt.layout()->setContentsMargins(0,0,0,0);
-			conn_cfg_wgt.frame->layout()->setContentsMargins(0,0,0,0);
+		});
 
-			parent_form.setMainWidget(&conn_cfg_wgt);
-			parent_form.setButtonConfiguration(Messagebox::OkCancelButtons);
-			parent_form.exec();
+		connect(parent_form.apply_ok_btn, &QPushButton::clicked, [&](){
+			conn_cfg_wgt.saveConfiguration();
+			parent_form.accept();
+		});
 
-			if(parent_form.result()==QDialog::Accepted)
-			{
-				conn_cfg_wgt.saveConfiguration();
-				conn_saved=true;
-			}
-			else
-				conn_cfg_wgt.loadConfiguration();
+		parent_form.setMainWidget(&conn_cfg_wgt);
+		parent_form.setButtonConfiguration(Messagebox::OkCancelButtons);
+		parent_form.exec();
 
-			conn_cfg_wgt.fillConnectionsComboBox(combo, incl_placeholder);
-		}
-		catch(Exception &e)
-		{
-			combo->setCurrentIndex(0);
-			throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
-		}
-
-		return conn_saved;
+		conn_cfg_wgt.fillConnectionsComboBox(combo, incl_placeholder);
+	}
+	catch(Exception &e)
+	{
+		combo->setCurrentIndex(0);
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 	}
 
-	return false;
+	return parent_form.result() == QDialog::Accepted;
 }
 
 Connection *ConnectionsConfigWidget::getDefaultConnection(unsigned operation)
