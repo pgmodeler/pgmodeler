@@ -914,24 +914,15 @@ void PgModelerCliApp::extractObjectXML()
 {
 	QString buf, lin, def_xml, end_tag, pgmodeler_ver;
 	QTextStream ts;
-	QRegularExpression regexp(QString("^(<\\?)(xml)(.)+(<%1)").arg(Attributes::DbModel),
-														QRegularExpression::DotMatchesEverythingOption),
-
-			//[schema].[func_name](...OUT [type]...)
-			func_signature=QRegularExpression("(\")(.)+(\\.)(.)+(\\()(.)*(OUT )(.)+(\\))(\")"),
-
-			//[,]OUT [schema].[type]
-			out_param=QRegularExpression("(,)?(OUT )([a-z]|[0-9]|(\\.)|(\\_)|(\\-)|( )|(\\[)|(\\])|(&quot;))+((\\()([0-9])+(\\)))?");
 	int start=-1, end=-1;
 	bool open_tag=false, close_tag=false, is_rel=false, short_tag=false, end_extract_rel=false, is_change_log=false;
-	QRegularExpressionMatch match, header_match;
 
 	printMessage(tr("Extracting objects' XML..."));
-
 	buf.append(UtilsNs::loadFile(parsed_opts[Input]));
 
 	// Extracting pgModeler version from input model
 	QRegularExpression ver_expr(AttributeExpr.arg(Attributes::PgModelerVersion));
+	QRegularExpressionMatch match;
 
 	match = ver_expr.match(buf);
 	start = match.capturedStart();
@@ -946,169 +937,189 @@ void PgModelerCliApp::extractObjectXML()
 		model_version.clear();
 	}
 
+	QRegularExpressionMatch header_match;
+	QRegularExpression header_regexp(QString("^<\\?xml.+<%1").arg(Attributes::DbModel),
+														QRegularExpression::DotMatchesEverythingOption);
+
 	//Check if the file contains a valid header (for .dbm file)
-	header_match = regexp.match(buf);
+	/* ATTENTION: PCRE2 (base implementation of QRegularExpression) limits the amount of groups (defined by  (expr) ) to
+	 * be captured. So, in large buffer expression such (.)+ must be used with caution. In some cases the matching won't
+	 * work even if it works on smaller text buffers. The workaround is to avoid capture groups using (.). In the case below
+	 * we just need to know the position of a certain regexp in the buffer, so we use a simplified expression
+	 * Reference: https://stackoverflow.com/questions/52980957/qregularexpression-lazy-matching-not-working-for-very-large-strings */
+	header_match = header_regexp.match(buf);
 	start = header_match.capturedStart();
 
 	if(start < 0)
 		throw Exception(tr("Invalid input file! It seems that is not a pgModeler generated model or the file is corrupted!"), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+	//Extracting layers informations from the tag <dbmodel>
+	QRegularExpression dbm_regexp = QRegularExpression(TagExpr.arg(Attributes::DbModel)),
+
+			db_end_regexp =  QRegularExpression(EndTagExpr.arg(Attributes::Database)),
+
+			//[schema].[func_name](...OUT [type]...)
+			func_signature=QRegularExpression("(\")(.)+(\\.)(.)+(\\()(.)*(OUT )(.)+(\\))(\")"),
+
+			//[,]OUT [schema].[type]
+			out_param=QRegularExpression("(,)?(OUT )([a-z]|[0-9]|(\\.)|(\\_)|(\\-)|( )|(\\[)|(\\])|(&quot;))+((\\()([0-9])+(\\)))?");
+
+	int attr_start =-1, attr_end = -1, dbm_start = -1;
+	QString aux_buf,
+			layers, active_layers, attr_expr = "(%1)( )*(=)(\")";
+	QList<unsigned> act_layers_ids;
+
+	match = dbm_regexp.match(buf);
+	dbm_start = match.capturedStart();
+	aux_buf = buf.mid(dbm_start, buf.indexOf(db_end_regexp) - dbm_start);
+
+	//Layers names
+	attr_start = aux_buf.indexOf(Attributes::Layers);
+	attr_end = aux_buf.indexOf(Attributes::ActiveLayers);
+	layers = aux_buf.mid(attr_start, attr_end - attr_start);
+	layers.remove(QRegularExpression(attr_expr.arg(Attributes::Layers)));
+	layers.remove('"');
+	model->setLayers(layers.trimmed().split(',', Qt::SkipEmptyParts));
+
+	//Active layers
+	attr_start = attr_end;
+	attr_end = aux_buf.indexOf(Attributes::LayerNameColors, attr_start);
+	active_layers = aux_buf.mid(attr_start, attr_end - attr_start);
+	active_layers.remove(QRegularExpression(attr_expr.arg(Attributes::ActiveLayers)));
+	active_layers.remove('"');
+	active_layers.replace(',', ';');
+
+	for(auto &id : active_layers.trimmed().split(';', Qt::SkipEmptyParts))
+		act_layers_ids.push_back(id.toUInt());
+
+	model->setActiveLayers(act_layers_ids);
+	buf.remove(0, dbm_start);
+
+	//Checking if the header ends on a role declaration
+	/* ATTENTION: PCRE2 (base implementation of QRegularExpression) limits the amount of groups (defined by  (expr) ) to
+	 * be captured. So, in large buffer expression such (.)+ must be used with caution. In some cases the matching won't
+	 * work even if it works on smaller text buffers. The workaround is to avoid capture groups using (.). In the case below
+	 * we just need to know the position of a certain regexp in the buffer, so we use a simplified expression
+	 * Reference: https://stackoverflow.com/questions/52980957/qregularexpression-lazy-matching-not-working-for-very-large-strings */
+	QRegularExpression role_regexp = QRegularExpression(QString("<%1.*<\\/%1>").arg(Attributes::Role),
+																											QRegularExpression::DotMatchesEverythingOption);
+	end = buf.indexOf(role_regexp);
+
+	// If we found role declarations we clear the header until there
+	if(end >= 0)
+		buf.remove(0, end);
 	else
+		// Instead, we clear the header until the starting of database declaration
+		buf.remove(0, buf.indexOf(QString("<%1").arg(Attributes::Database)));
+
+	buf.remove(QString("<\\%1>").arg(Attributes::DbModel));
+	ts.setString(&buf);
+
+	//Extracts the objects xml line by line
+	while(!ts.atEnd())
 	{
-		//Extracting layers informations from the tag <dbmodel>
-		QRegularExpression dbm_regexp = QRegularExpression(TagExpr.arg(Attributes::DbModel)),
-				db_end_regexp =  QRegularExpression(EndTagExpr.arg(Attributes::Database));
-		int attr_start =-1, attr_end = -1, dbm_start = -1;
-		QString aux_buf,
-				layers, active_layers, attr_expr = "(%1)( )*(=)(\")";
-		QList<unsigned> act_layers_ids;
+		lin=ts.readLine();
 
-		match = dbm_regexp.match(buf);
-		dbm_start = match.capturedStart();
-		aux_buf = buf.mid(dbm_start, buf.indexOf(db_end_regexp) - dbm_start);
+		/* Collecting changelog entries if present and storing in a separated buffer
+		 * so it can be restored in the fixed model during objects' reconstruction */
+		if(!is_change_log && lin.contains(TagExpr.arg(Attributes::Changelog)))
+			is_change_log = true;
 
-		//Layers names
-		attr_start = aux_buf.indexOf(Attributes::Layers);
-		attr_end = aux_buf.indexOf(Attributes::ActiveLayers);
-		layers = aux_buf.mid(attr_start, attr_end - attr_start);
-		layers.remove(QRegularExpression(attr_expr.arg(Attributes::Layers)));
-		layers.remove('"');
-		model->setLayers(layers.trimmed().split(',', Qt::SkipEmptyParts));
-
-		//Active layers
-		attr_start = attr_end;
-		attr_end = aux_buf.indexOf(Attributes::LayerNameColors, attr_start);
-		active_layers = aux_buf.mid(attr_start, attr_end - attr_start);
-		active_layers.remove(QRegularExpression(attr_expr.arg(Attributes::ActiveLayers)));
-		active_layers.remove('"');
-		active_layers.replace(',', ';');
-
-		for(auto &id : active_layers.trimmed().split(';', Qt::SkipEmptyParts))
-			act_layers_ids.push_back(id.toUInt());
-
-		model->setActiveLayers(act_layers_ids);
-		buf.remove(start, header_match.capturedLength() + 1);
-
-		//Checking if the header ends on a role declaration
-		QRegularExpression role_regexp = QRegularExpression(QString("(<%1)(.)*(<\\/%1>)").arg(Attributes::Role),
-																												QRegularExpression::DotMatchesEverythingOption);
-		end = buf.indexOf(role_regexp);
-
-		// If we found role declarations we clear the header until there
-		if(end >= 0)
-			buf.remove(0, end);
-		else
-			// Instead, we clear the header until the starting of database declaration
-			buf.remove(0, buf.indexOf(QString("<%1").arg(Attributes::Database)));
-
-		buf.remove(QString("<\\%1>").arg(Attributes::DbModel));
-		ts.setString(&buf);
-
-		//Extracts the objects xml line by line
-		while(!ts.atEnd())
+		if(is_change_log)
 		{
-			lin=ts.readLine();
+			changelog.append(lin);
 
-			/* Collecting changelog entries if present and storing in a separated buffer
-			 * so it can be restored in the fixed model during objects' reconstruction */
-			if(!is_change_log && lin.contains(TagExpr.arg(Attributes::Changelog)))
-				is_change_log = true;
-
-			if(is_change_log)
-			{
-				changelog.append(lin);
-
-				if(lin.contains(EndTagExpr.arg(Attributes::Changelog)))
-					is_change_log = false;
-				else
-					continue;
-			}
-
-			/*  Special case for empty tags like <language />, they will be converted to
-		  <language></language> in order to be correctly extracted further. Currently only language has this
-		  behaviour, so additional object may be added in the future. */
-			if(lin.contains(QString("<%1").arg(BaseObject::getSchemaName(ObjectType::Language))))
-			{
-				lin=lin.simplified();
-
-				if(lin.contains(QString("/>")))
-					lin.replace(QString("/>"), QString("></%1>").arg(BaseObject::getSchemaName(ObjectType::Language)));
-			}
-			/* Special case for function signatures. In previous releases, the function's signature was wrongly
-		 including OUT parameters and according to docs they are not part of the signature, so it is needed
-		 to remove them if the current line contains a valid signature with parameters. */
-			else if(lin.contains(func_signature))
-				lin.remove(out_param);
-
-			if(is_rel && (((short_tag && lin.contains(QString("/>"))) ||
-										 (lin.contains(QString("[a-z]+")) && !containsRelAttributes(lin)))))
-				open_tag=close_tag=true;
+			if(lin.contains(EndTagExpr.arg(Attributes::Changelog)))
+				is_change_log = false;
 			else
+				continue;
+		}
+
+		/*  Special case for empty tags like <language />, they will be converted to
+		<language></language> in order to be correctly extracted further. Currently only language has this
+		behaviour, so additional object may be added in the future. */
+		if(lin.contains(QString("<%1").arg(BaseObject::getSchemaName(ObjectType::Language))))
+		{
+			lin=lin.simplified();
+
+			if(lin.contains(QString("/>")))
+				lin.replace(QString("/>"), QString("></%1>").arg(BaseObject::getSchemaName(ObjectType::Language)));
+		}
+		/* Special case for function signatures. In previous releases, the function's signature was wrongly
+	 including OUT parameters and according to docs they are not part of the signature, so it is needed
+	 to remove them if the current line contains a valid signature with parameters. */
+		else if(lin.contains(func_signature))
+			lin.remove(out_param);
+
+		if(is_rel && (((short_tag && lin.contains(QString("/>"))) ||
+									 (lin.contains(QString("[a-z]+")) && !containsRelAttributes(lin)))))
+			open_tag=close_tag=true;
+		else
+		{
+			//If the line contains an objects open tag
+			if(lin.contains(QRegularExpression("^(((\n)|(\t))*(<))")) && !open_tag)
 			{
-				//If the line contains an objects open tag
-				if(lin.contains(QRegularExpression("^(((\n)|(\t))*(<))")) && !open_tag)
+				//Check the flag indicating an open tag
+				open_tag=true;
+
+				start=lin.indexOf('<');
+				end=lin.indexOf(' ');
+				if(end < 0)	end=lin.indexOf('>');
+
+				//Configures the end tag with the same word extracted from open tag
+				end_tag=lin.mid(start, end-start+1).trimmed();
+				end_tag.replace(QString("<"),QString("</"));
+
+				if(!end_tag.endsWith('>'))
+					end_tag+=QString(">");
+
+				/* Checking if the line start a relationship. Relationships are treated
+		a little different because they can be empty <relationship attribs /> or
+		contain open and close tags <relationship attribs></relationship> */
+				is_rel=lin.contains(Attributes::Relationship);
+
+				if(is_rel)
 				{
-					//Check the flag indicating an open tag
-					open_tag=true;
+					end_extract_rel=short_tag=false;
 
-					start=lin.indexOf('<');
-					end=lin.indexOf(' ');
-					if(end < 0)	end=lin.indexOf('>');
-
-					//Configures the end tag with the same word extracted from open tag
-					end_tag=lin.mid(start, end-start+1).trimmed();
-					end_tag.replace(QString("<"),QString("</"));
-
-					if(!end_tag.endsWith('>'))
-						end_tag+=QString(">");
-
-					/* Checking if the line start a relationship. Relationships are treated
-		  a little different because they can be empty <relationship attribs /> or
-		  contain open and close tags <relationship attribs></relationship> */
-					is_rel=lin.contains(Attributes::Relationship);
-
-					if(is_rel)
+					while(!end_extract_rel && !ts.atEnd())
 					{
-						end_extract_rel=short_tag=false;
+						def_xml+=lin + QString("\n");
+						lin=lin.trimmed();
 
-						while(!end_extract_rel && !ts.atEnd())
-						{
-							def_xml+=lin + QString("\n");
-							lin=lin.trimmed();
+						//Checking if the current line is the end of a short-tag relationship
+						if(!short_tag && !lin.startsWith('<') && lin.endsWith(QString("/>")))
+							short_tag=true;
 
-							//Checking if the current line is the end of a short-tag relationship
-							if(!short_tag && !lin.startsWith('<') && lin.endsWith(QString("/>")))
-								short_tag=true;
+						end_extract_rel=((!short_tag && lin.contains(end_tag)) || short_tag);
 
-							end_extract_rel=((!short_tag && lin.contains(end_tag)) || short_tag);
-
-							if(!end_extract_rel)
-								lin=ts.readLine();
-						}
-
-						close_tag=true;
+						if(!end_extract_rel)
+							lin=ts.readLine();
 					}
-					else
-						close_tag=lin.contains(end_tag);
-				}
-				else if(open_tag && lin.contains(end_tag))
+
 					close_tag=true;
+				}
+				else
+					close_tag=lin.contains(end_tag);
 			}
+			else if(open_tag && lin.contains(end_tag))
+				close_tag=true;
+		}
 
-			if(!is_rel && !lin.isEmpty())
-				def_xml+=lin + QString("\n");
-			else if(lin.isEmpty())
-				def_xml+=QString("\n");
+		if(!is_rel && !lin.isEmpty())
+			def_xml+=lin + QString("\n");
+		else if(lin.isEmpty())
+			def_xml+=QString("\n");
 
-			//If the iteration reached the end of the object's definition
-			if(open_tag && close_tag)
-			{
-				//Pushes the extracted definition to the list (only if not empty)
-				if(def_xml!=QString("\n"))
-					objs_xml.push_back(def_xml);
+		//If the iteration reached the end of the object's definition
+		if(open_tag && close_tag)
+		{
+			//Pushes the extracted definition to the list (only if not empty)
+			if(def_xml!=QString("\n"))
+				objs_xml.push_back(def_xml);
 
-				def_xml.clear();
-				open_tag=close_tag=is_rel=false;
-			}
+			def_xml.clear();
+			open_tag=close_tag=is_rel=false;
 		}
 	}
 }
