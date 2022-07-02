@@ -70,6 +70,10 @@ class DatabaseModel:  public QObject, public BaseObject {
 	private:
 		Q_OBJECT
 
+		static constexpr unsigned OriginalSql=0,
+		DependenciesSql=1,
+		ChildrenSql=2;
+
 		/*! \brief Stores all changes performed in the database model
 		 * The only purpose of this structure is to be used by the partial diff to filter certain objects by operation/date and,
 		 * differently from OperationList class, it's data persisted in the database model file. */
@@ -477,7 +481,7 @@ class DatabaseModel:  public QObject, public BaseObject {
 		/*! \brief Saves the model's SQL code definition by creating separated files for each object
 		 * The provided path must be a directory. If it does not exists then the method will create
 		 * it prior to the generation of the files. */
-		void saveSplitSQLDefinition(const QString &path);
+		void saveSplitSQLDefinition(const QString &path, unsigned code_option = OriginalSql);
 
 		/*! \brief Returns the complete SQL/XML defintion for the entire model (including all the other objects).
 		 The parameter 'export_file' is used to format the generated code in a way that can be saved

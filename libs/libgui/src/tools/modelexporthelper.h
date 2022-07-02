@@ -157,7 +157,7 @@ class ModelExportHelper: public QObject {
 		void setIgnoredErrors(const QStringList &err_codes);
 
 		//! \brief Exports the model to a named SQL file. The PostgreSQL version syntax must be specified.
-		void exportToSQL(DatabaseModel *db_model, const QString &filename, const QString &pgsql_ver, bool split);
+		void exportToSQL(DatabaseModel *db_model, const QString &filename, const QString &pgsql_ver, bool split, unsigned code_option=0);
 
 		/*! \brief Exports the model to a named PNG image. The boolean parameters controls the grid exhibition
 		as well the page delimiters on the output image. The zoom parameter controls the zoom applied to the viewport

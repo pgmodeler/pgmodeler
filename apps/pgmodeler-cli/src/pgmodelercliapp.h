@@ -160,6 +160,7 @@ class PgModelerCliApp: public Application {
 		SystemWide,
 		NoIndex,
 		Split,
+		CodeOption,
 
 		IgnoreImportErrors,
 		ImportSystemObjs,

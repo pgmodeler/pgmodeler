@@ -8220,7 +8220,7 @@ bool DatabaseModel::saveSplitCustomSQL(bool save_appended, const QString &path, 
 	return false;
 }
 
-void DatabaseModel::saveSplitSQLDefinition(const QString &path)
+void DatabaseModel::saveSplitSQLDefinition(const QString &path, unsigned code_option)
 {
 	QFileInfo fi(path);
 	QDir dir;
@@ -8270,6 +8270,8 @@ void DatabaseModel::saveSplitSQLDefinition(const QString &path)
 			if(obj->isSystemObject())
 				continue;
 
+			QString aux_def;
+
 			// Saving the shell types before we start generating the files of other objects
 			if(!shell_types.isEmpty() &&
 				 obj->getObjectType() != ObjectType::Role && obj->getObjectType() != ObjectType::Tablespace &&
@@ -8289,11 +8291,50 @@ void DatabaseModel::saveSplitSQLDefinition(const QString &path)
 				shell_types.clear();
 			}
 
-			if(obj == this)
-				buffer.append(this->__getCodeDefinition(SchemaParser::SqlDefinition).toUtf8());
+			if(obj->getObjectType() == ObjectType::Database)
+			{
+				if(obj == this)
+					buffer.append(this->__getCodeDefinition(SchemaParser::SqlDefinition).toUtf8());
+				else
+					buffer.append(obj->getCodeDefinition(SchemaParser::SqlDefinition).toUtf8());
+			}
 			else
-				buffer.append(obj->getCodeDefinition(SchemaParser::SqlDefinition).toUtf8());
+			{
+				if (code_option == OriginalSql)
+				{
+					if(obj == this)
+						buffer.append(this->__getCodeDefinition(SchemaParser::SqlDefinition).toUtf8());
+					else
+						buffer.append(obj->getCodeDefinition(SchemaParser::SqlDefinition).toUtf8());
+				}
+				else
+				{
+					vector<BaseObject *> objs=getCreationOrder(obj, code_option==ChildrenSql);
 
+					for(BaseObject *obj : objs)
+					{
+						if(obj == this)
+							aux_def+=this->__getCodeDefinition(SchemaParser::SqlDefinition).toUtf8();
+						else
+							aux_def+=obj->getCodeDefinition(SchemaParser::SqlDefinition).toUtf8();
+					}
+
+					if(!aux_def.isEmpty())
+					{
+						aux_def=tr("-- NOTE: the code below contains the SQL for the selected object\n\
+-- as well for its dependencies and children (if applicable).\n\
+-- \n\
+-- This feature is only a convinience in order to permit you to test\n\
+-- the whole object's SQL definition at once.\n\
+-- \n\
+-- When exporting or generating the SQL for the whole database model\n\
+-- all objects will be placed at their original positions.\n\n\n") + aux_def;
+
+						buffer.append(aux_def);
+					}
+				}
+			}
+						
 			if(buffer.isEmpty())
 				continue;
 

@@ -38,6 +38,7 @@ const QString PgModelerCliApp::ExportToDict("--export-to-dict");
 const QString PgModelerCliApp::ImportDb("--import-db");
 const QString PgModelerCliApp::NoIndex("--no-index");
 const QString PgModelerCliApp::Split("--split");
+const QString PgModelerCliApp::CodeOption("--code-option");
 const QString PgModelerCliApp::Diff("--diff");
 const QString PgModelerCliApp::DropDatabase("--drop-database");
 const QString PgModelerCliApp::DropObjects("--drop-objects");
@@ -120,7 +121,7 @@ attribs_map PgModelerCliApp::short_opts = {
 	{ DropClusterObjs, "-dc" },	{ RevokePermissions, "-rv" },	{ DropMissingObjs, "-dm" },
 	{ ForceDropColsConstrs, "-fd" },	{ RenameDb, "-rn" },
 	{ NoSequenceReuse, "-ns" },	{ NoCascadeDrop, "-nd" },	{ ForceRecreateObjs, "-nf" },
-	{ OnlyUnmodifiable, "-nu" },	{ NoIndex, "-ni" },	{ Split, "-sp" },
+	{ OnlyUnmodifiable, "-nu" },	{ NoIndex, "-ni" },	{ Split, "-sp" },	{ CodeOption, "-co" },
 	{ SystemWide, "-sw" },	{ CreateConfigs, "-cc" }, { Force, "-ff" }, { MissingOnly, "-mo" }
 };
 
@@ -144,12 +145,13 @@ map<QString, bool> PgModelerCliApp::long_opts = {
 	{ DropMissingObjs, false },	{ ForceDropColsConstrs, false },	{ RenameDb, false },
 	{ NoSequenceReuse, false },	{ NoCascadeDrop, false },
 	{ ForceRecreateObjs, false },	{ OnlyUnmodifiable, false },	{ ExportToDict, false },
-	{ NoIndex, false },	{ Split, false },	{ SystemWide, false },
+	{ NoIndex, false },	{ Split, false },	{ CodeOption, true }, 	{ SystemWide, false },
 	{ CreateConfigs, false }, { Force, false }, { MissingOnly, false }
 };
 
 map<QString, QStringList> PgModelerCliApp::accepted_opts = {
 	{{ Attributes::Connection }, { ConnAlias, Host, Port, User, Passwd, InitialDb }},
+	{{ ExportToFile }, { Input, Output, PgSqlVer, Split, CodeOption }},
 	{{ ExportToFile }, { Input, Output, PgSqlVer, Split }},
 	{{ ExportToPng },  { Input, Output, ShowGrid, ShowDelimiters, PageByPage, ZoomFactor }},
 	{{ ExportToSvg },  { Input, Output, ShowGrid, ShowDelimiters }},
@@ -427,6 +429,7 @@ void PgModelerCliApp::showMenu()
 
 	printText(tr("SQL file export options: "));
 	printText(tr("  %1, %2\t\t\t    The SQL file is generated per object. The files will be named in such a way to reflect the correct creation order of the objects.").arg(short_opts[Split]).arg(Split));
+	printText(tr("  %1, %2 [LEVEL]\t     The Code Option (Original, Dependencies, or Children) to use for each file.").arg(short_opts[CodeOption]).arg(CodeOption));
 	printText();
 
 	printText(tr("PNG and SVG export options: "));
@@ -1676,7 +1679,33 @@ void PgModelerCliApp::exportModel()
 	else if(parsed_opts.count(ExportToFile))
 	{
 		printMessage(tr("Export to SQL script file: %1").arg(parsed_opts[Output]));
-		export_hlp->exportToSQL(model, parsed_opts[Output], parsed_opts[PgSqlVer], parsed_opts.count(Split) > 0);
+		
+		unsigned coOut = 0;
+
+		if (parsed_opts.count(CodeOption) > 0)
+		{
+			QString coIn = parsed_opts[CodeOption];
+			QString Original = "original", Dependencies = "dependencies", Children = "children";
+
+			if (QString::compare(coIn, Original, Qt::CaseInsensitive) == 0)
+			{
+				coOut = 0;
+			}
+			else if (QString::compare(coIn, Dependencies, Qt::CaseInsensitive) == 0)
+			{
+				coOut = 1;
+			}
+			else if (QString::compare(coIn, Children, Qt::CaseInsensitive) == 0)
+			{
+				coOut = 2;
+			}
+			else
+			{
+				throw Exception(tr("Invalid Code Option was specified!"), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			}
+		}
+
+		export_hlp->exportToSQL(model, parsed_opts[Output], parsed_opts[PgSqlVer], parsed_opts.count(Split) > 0, coOut);
 	}
 	//Export data dictionary
 	else if(parsed_opts.count(ExportToDict))
