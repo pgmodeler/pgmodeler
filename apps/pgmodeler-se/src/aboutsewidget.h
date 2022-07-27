@@ -17,24 +17,24 @@
 */
 
 /**
-\ingroup pgmodeler-sc
-\class AboutForm
+\ingroup pgmodeler-se
+\class AboutSEWidget
 \brief Form that contains information about software authoring and licensing.
 */
 
-#ifndef ABOUT_WIDGET_H
-#define ABOUT_WIDGET_H
+#ifndef ABOUT_SE_WIDGET_H
+#define ABOUT_SE_WIDGET_H
 
 #include <QWidget>
-#include "ui_aboutwidget.h"
+#include "ui_aboutsewidget.h"
 #include "globalattributes.h"
 
-class AboutWidget: public QWidget, public Ui::AboutWidget {
+class AboutSEWidget: public QWidget, public Ui::AboutSEWidget {
 	private:
 		Q_OBJECT
 		
 	public:
-		AboutWidget(QWidget *parent = nullptr);
+		AboutSEWidget(QWidget *parent = nullptr);
 };
 
 #endif

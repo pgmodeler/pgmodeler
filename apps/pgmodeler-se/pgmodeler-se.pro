@@ -7,16 +7,18 @@ windows:RC_FILE=res/windows_ico.qrc
 windows:RCC_DIR=src/
 
 SOURCES += src/main.cpp \
-	    src/aboutwidget.cpp \
+    src/aboutsewidget.cpp \
 	    src/schemaeditorform.cpp \
 	    src/sourceeditorwidget.cpp \
 	    ../pgmodeler/src/pgmodelerapp.cpp \
 
-FORMS += ui/aboutwidget.ui \
+FORMS += \
+	 ui/aboutsewidget.ui \
 	 ui/schemaeditorform.ui \
 	 ui/sourceeditorwidget.ui
 
-HEADERS += src/aboutwidget.h \
+HEADERS += \
+	   src/aboutsewidget.h \
 	   src/schemaeditorform.h \
 	   src/sourceeditorwidget.h
 
