@@ -85,6 +85,7 @@ FunctionWidget::FunctionWidget(QWidget *parent): BaseFunctionWidget(parent, Obje
 
 	attributes_vbox->addLayout(function_grid);
 
+	#warning "Deprecated PG version usage"
 	fields_map[generateVersionsInterval(AfterVersion, PgSqlVersions::PgSqlVersion92)].push_back(leakproof_chk);
 	fields_map[generateVersionsInterval(AfterVersion, PgSqlVersions::PgSqlVersion96)].push_back(parallel_lbl);
 	frame = generateVersionWarningFrame(fields_map, &value_map);

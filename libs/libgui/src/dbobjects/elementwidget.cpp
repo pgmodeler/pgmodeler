@@ -40,6 +40,7 @@ ElementWidget::ElementWidget(QWidget *parent) : QWidget(parent)
 		element_grid->addWidget(op_class_sel, 4,1,1,2);
 		element_grid->addWidget(operator_sel, 5,1,1,2);
 
+		#warning "Deprecated PG version usage"
 		fields_map[BaseObjectWidget::generateVersionsInterval(BaseObjectWidget::AfterVersion, PgSqlVersions::PgSqlVersion91)].push_back(collation_lbl);
 		warning_frame=BaseObjectWidget::generateVersionWarningFrame(fields_map);
 		element_grid->addWidget(warning_frame, element_grid->count()+1, 0, 1, 3);

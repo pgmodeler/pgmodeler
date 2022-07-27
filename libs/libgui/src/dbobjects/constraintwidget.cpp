@@ -64,6 +64,7 @@ ConstraintWidget::ConstraintWidget(QWidget *parent): BaseObjectWidget(parent, Ob
 		constraint_grid->addWidget(info_frm, constraint_grid->count()+1, 0, 1, 0);
 		info_frm->setParent(this);
 
+		#warning "Deprecated PG version usage"
 		fields_map[generateVersionsInterval(AfterVersion, PgSqlVersions::PgSqlVersion92)].push_back(no_inherit_lbl);
 		fields_map[generateVersionsInterval(AfterVersion, PgSqlVersions::PgSqlVersion95)].push_back(indexing_chk);
 		values_map[indexing_chk].push_back(~IndexingType(IndexingType::Brin));
