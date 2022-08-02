@@ -47,6 +47,16 @@ SourceCodeWidget::SourceCodeWidget(QWidget *parent): BaseObjectWidget(parent)
 		connect(sourcecode_twg, SIGNAL(currentChanged(int)), this, SLOT(setSourceCodeTab(int)));
 		connect(save_sql_tb, SIGNAL(clicked()), this, SLOT(saveSQLCode()));
 
+		find_sql_wgt = new FindReplaceWidget(sqlcode_txt, find_wgt_parent);
+		find_wgt_parent->setVisible(false);
+
+		QVBoxLayout *vbox = new QVBoxLayout(find_wgt_parent);
+		vbox->addWidget(find_sql_wgt);
+		vbox->setContentsMargins(0,0,0,0);
+
+		connect(find_tb, &QToolButton::toggled, find_wgt_parent, &QWidget::setVisible);
+		connect(find_sql_wgt, &FindReplaceWidget::s_hideRequested, find_tb, &QToolButton::toggle);
+
 		hl_sqlcode=new SyntaxHighlighter(sqlcode_txt);
 		hl_xmlcode=new SyntaxHighlighter(xmlcode_txt);
 
@@ -71,7 +81,6 @@ void SourceCodeWidget::setSourceCodeTab(int)
 
 	version_cmb->setEnabled(enabled);
 	pgsql_lbl->setEnabled(enabled);
-	version_lbl->setEnabled(enabled);
 }
 
 void SourceCodeWidget::saveSQLCode()

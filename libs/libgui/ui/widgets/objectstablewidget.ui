@@ -217,7 +217,7 @@
        </property>
        <property name="icon">
         <iconset resource="../../res/resources.qrc">
-         <normaloff>:/icons/icons/editdata.png</normaloff>:/icons/icons/editdata.png</iconset>
+         <normaloff>:/icons/icons/edit.png</normaloff>:/icons/icons/edit.png</iconset>
        </property>
        <property name="iconSize">
         <size>
