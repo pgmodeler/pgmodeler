@@ -488,7 +488,7 @@ void BaseObjectWidget::configureFormLayout(QGridLayout *grid, ObjectType obj_typ
 		}
 	}
 
-	if(BaseObject::acceptsCollation(obj_type))
+	/* if(BaseObject::acceptsCollation(obj_type))
 	{
 		QFrame *frame=nullptr;
 		std::map<QString, std::vector<QWidget *> > fields_map;
@@ -499,7 +499,7 @@ void BaseObjectWidget::configureFormLayout(QGridLayout *grid, ObjectType obj_typ
 		frame=generateVersionWarningFrame(fields_map);
 		baseobject_grid->addWidget(frame, baseobject_grid->count()+1, 0, 1, 0);
 		frame->setParent(this);
-	}
+	} */
 
 	//Install the event filter into all children object in order to capture key press
 	chld_list=this->children();
