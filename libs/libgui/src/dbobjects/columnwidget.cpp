@@ -54,7 +54,6 @@ ColumnWidget::ColumnWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType
 		configureTabOrder({ data_type });
 
 		std::map<QString, std::vector<QWidget *> > fields_map;
-		fields_map[generateVersionsInterval(AfterVersion, PgSqlVersions::PgSqlVersion100)].push_back(identity_rb);
 		fields_map[generateVersionsInterval(AfterVersion, PgSqlVersions::PgSqlVersion120)].push_back(generated_chk);
 		highlightVersionSpecificFields(fields_map);
 
