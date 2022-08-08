@@ -30,7 +30,8 @@ OperatorFamilyWidget::OperatorFamilyWidget(QWidget *parent): BaseObjectWidget(pa
 
 	indexing_cmb->addItems(IndexingType::getTypes());
 
-	setRequiredField(indexing_lbl);
+	#warning "Deprecated PG version usage"
+	setRequiredField(indexing_lbl);	
 	fields_map[BaseObjectWidget::generateVersionsInterval(BaseObjectWidget::AfterVersion, PgSqlVersions::PgSqlVersion95)].push_back(indexing_lbl);
 	values_map[indexing_lbl].push_back(~IndexingType(IndexingType::Brin));
 

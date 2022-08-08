@@ -42,6 +42,7 @@ EventTriggerWidget::EventTriggerWidget(QWidget *parent): BaseObjectWidget(parent
 	configureFormLayout(eventtrigger_grid, ObjectType::EventTrigger);
 	setRequiredField(function_lbl);
 
+	#warning "Deprecated PG version usage"
 	fields_map[BaseObjectWidget::generateVersionsInterval(BaseObjectWidget::AfterVersion, PgSqlVersions::PgSqlVersion95)].push_back(event_lbl);
 	values_map[event_lbl].push_back(~EventTriggerType(EventTriggerType::TableRewrite));
 

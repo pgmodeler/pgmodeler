@@ -1541,11 +1541,23 @@ void PgModelerCliApp::fixObjectAttributes(QString &obj_xml)
 		QRegularExpressionMatch match;
 
 		match = regexp.match(obj_xml);
-		constr_name = match.capturedTexts().at(0);
-		constr_name.remove(QString("%1=\"").arg(Attributes::Constraint));
-		constr_name.remove(constr_name.length() - 1, 1);
 
-		obj_xml.remove(QRegularExpression(AttributeExpr.arg(Attributes::Constraint)));
+		/* In pgModeler 0.8.2, there wasn't the constraint attribute in domains
+		 * so we just create a name for it based on the domain's name */
+		if(!match.hasMatch())
+		{
+			QString	name_attr="name=\"";
+			start_idx = obj_xml.indexOf(name_attr);
+			end_idx = obj_xml.indexOf("\"", start_idx + name_attr.size());
+			constr_name = obj_xml.mid(start_idx, end_idx - start_idx).remove(name_attr) + "_ck";
+		}
+		else
+		{
+			constr_name = match.capturedTexts().at(0);
+			constr_name.remove(QString("%1=\"").arg(Attributes::Constraint));
+			constr_name.remove(constr_name.length() - 1, 1);
+			obj_xml.remove(QRegularExpression(AttributeExpr.arg(Attributes::Constraint)));
+		}
 
 		start_idx = obj_xml.indexOf(TagExpr.arg(Attributes::Expression));
 		obj_xml.insert(start_idx, QString("\n\t<constraint name=\"%1\" type=\"check\">\n\t\t").arg(constr_name));

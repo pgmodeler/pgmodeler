@@ -53,9 +53,12 @@ TableWidget::TableWidget(QWidget *parent, ObjectType tab_type): BaseObjectWidget
 	misc_btns_lt->insertWidget(1, edt_data_tb);
 
 	fields_map[generateVersionsInterval(UntilVersion, PgSqlVersions::PgSqlVersion110)].push_back(with_oids_chk);
+
+	#warning "Deprecated PG version usage"
 	fields_map[generateVersionsInterval(AfterVersion, PgSqlVersions::PgSqlVersion91)].push_back(unlogged_chk);
 	fields_map[generateVersionsInterval(AfterVersion, PgSqlVersions::PgSqlVersion95)].push_back(enable_rls_chk);
 	fields_map[generateVersionsInterval(AfterVersion, PgSqlVersions::PgSqlVersion95)].push_back(force_rls_chk);
+
 	fields_map[generateVersionsInterval(AfterVersion, PgSqlVersions::PgSqlVersion100)].push_back(partitioning_type_lbl);
 	warn_frame=generateVersionWarningFrame(fields_map);
 	table_grid->addWidget(warn_frame, table_grid->count()+1, 0, 1, 2);

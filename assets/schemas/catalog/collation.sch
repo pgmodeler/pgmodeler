@@ -2,7 +2,7 @@
 # CAUTION: Do not modify this file unless you know what you are doing.
 # Code generation can be broken if incorrect changes are made.
 
-%if {list} %and ({pgsql-ver} != "9.0") %then
+%if {list} %then
 	%if {use-signature} %then
 		%set {signature} [ ns.nspname || '.' || ]
 	%end
@@ -45,22 +45,18 @@
 		( {signature} [ cl.collname ~* ] E'{name-filter}' )
 	%end
 %else
-	%if {attribs} %and ({pgsql-ver} != "9.0") %then
+	%if {attribs} %then
 		[ SELECT cl.oid, cl.collname AS name, cl.collnamespace AS schema,
 		cl.collowner AS owner, pg_encoding_to_char(cl.collencoding) AS encoding,
 		cl.collcollate AS lc_collate, cl.collctype AS lc_ctype,
 		split_part(collctype, '@', 2) AS lc_ctype_mod,
-		split_part(collcollate, '@', 2) AS lc_collate_mod, ]
+		split_part(collcollate, '@', 2) AS lc_collate_mod, 
 
-		%if ({pgsql-ver} >=f "10.0") %then
-			[ CASE
+		CASE
 			WHEN collprovider = 'i' THEN 'icu'
 			WHEN collprovider = 'c' THEN 'libc'
 			ELSE ''
-			END AS provider, ]
-		%else
-			[ NULL AS provider, ]
-		%end
+		END AS provider, ]
 
 		%if ({pgsql-ver} >=f "12.0") %then
 			[ collisdeterministic AS deterministic_bool, ]

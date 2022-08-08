@@ -22,7 +22,7 @@
 #include "settings/appearanceconfigwidget.h"
 #include "guiutilsns.h"
 #include "sourceeditorwidget.h"
-#include "aboutwidget.h"
+#include "aboutsewidget.h"
 #include "baseform.h"
 #include "utilsns.h"
 
@@ -127,7 +127,7 @@ subcontrol-position: right center; }");
 	});
 
 	connect(about_tb, &QToolButton::clicked, [&](){
-		AboutWidget *info_wgt = new AboutWidget;
+		AboutSEWidget *info_wgt = new AboutSEWidget;
 		BaseForm base_frm;
 		base_frm.setMainWidget(info_wgt);
 		base_frm.exec();

@@ -28,6 +28,7 @@
 #include "ui_findreplacewidget.h"
 #include <QPlainTextEdit>
 #include "exception.h"
+#include <QTimer>
 
 class FindReplaceWidget: public QWidget, public Ui::FindReplaceWidget {
 	private:
@@ -43,7 +44,13 @@ class FindReplaceWidget: public QWidget, public Ui::FindReplaceWidget {
 		bool findText(const QString &text, bool regexp, QTextDocument::FindFlags flags);
 		
 		void showEvent(QShowEvent *);
-		
+
+		QLabel *search_info_lbl;
+
+		QTimer search_info_timer;
+
+		void showSearchInfo(const QString &msg);
+
 	public:
 		FindReplaceWidget(QPlainTextEdit *txt_edit, QWidget * parent = nullptr);
 		

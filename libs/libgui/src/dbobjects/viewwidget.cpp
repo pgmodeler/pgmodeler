@@ -121,9 +121,11 @@ ViewWidget::ViewWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Vi
 		tablespace_lbl->setEnabled(false);
 		configureFormLayout(view_grid, ObjectType::View);
 
+		#warning "Deprecated PG version usage"
 		fields_map[generateVersionsInterval(AfterVersion, PgSqlVersions::PgSqlVersion93)].push_back(recursive_rb);
 		fields_map[generateVersionsInterval(AfterVersion, PgSqlVersions::PgSqlVersion93)].push_back(materialized_rb);
 		fields_map[generateVersionsInterval(AfterVersion, PgSqlVersions::PgSqlVersion93)].push_back(with_no_data_chk);
+
 		frame=generateVersionWarningFrame(fields_map);
 		view_grid->addWidget(frame, view_grid->count()+1, 0, 1,3);
 		frame->setParent(this);

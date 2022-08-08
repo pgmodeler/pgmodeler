@@ -35,41 +35,6 @@
       <number>5</number>
      </property>
      <item>
-      <widget class="QLabel" name="version_lbl">
-       <property name="minimumSize">
-        <size>
-         <width>50</width>
-         <height>0</height>
-        </size>
-       </property>
-       <property name="maximumSize">
-        <size>
-         <width>50</width>
-         <height>16777215</height>
-        </size>
-       </property>
-       <property name="text">
-        <string>Version:</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <spacer name="horizontalSpacer_2">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeType">
-        <enum>QSizePolicy::Fixed</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>15</width>
-         <height>20</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-     <item>
       <widget class="QLabel" name="pgsql_lbl">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
@@ -91,11 +56,11 @@
        </property>
        <property name="font">
         <font>
-         <italic>true</italic>
+         <italic>false</italic>
         </font>
        </property>
        <property name="text">
-        <string>PostgreSQL</string>
+        <string>PostgreSQL:</string>
        </property>
       </widget>
      </item>
@@ -153,7 +118,7 @@
        <height>22</height>
       </size>
      </property>
-     <widget class="QWidget" name="codigosql_tab">
+     <widget class="QWidget" name="sqlcode_tab">
       <attribute name="icon">
        <iconset resource="../../res/resources.qrc">
         <normaloff>:/icons/icons/sqlcode.png</normaloff>:/icons/icons/sqlcode.png</iconset>
@@ -177,7 +142,7 @@
        <property name="spacing">
         <number>5</number>
        </property>
-       <item row="1" column="0" colspan="2">
+       <item row="2" column="0" colspan="2">
         <layout class="QHBoxLayout" name="horizontalLayout_2">
          <property name="spacing">
           <number>5</number>
@@ -234,6 +199,41 @@
           </spacer>
          </item>
          <item>
+          <widget class="QToolButton" name="find_tb">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="toolTip">
+            <string>Perform text search on the SQL code.</string>
+           </property>
+           <property name="text">
+            <string>Find</string>
+           </property>
+           <property name="icon">
+            <iconset resource="../../res/resources.qrc">
+             <normaloff>:/icons/icons/findtext.png</normaloff>:/icons/icons/findtext.png</iconset>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>25</width>
+             <height>25</height>
+            </size>
+           </property>
+           <property name="shortcut">
+            <string>Ctrl+F</string>
+           </property>
+           <property name="checkable">
+            <bool>true</bool>
+           </property>
+           <property name="toolButtonStyle">
+            <enum>Qt::ToolButtonTextBesideIcon</enum>
+           </property>
+          </widget>
+         </item>
+         <item>
           <widget class="QToolButton" name="save_sql_tb">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
@@ -274,9 +274,12 @@
          </property>
         </widget>
        </item>
+       <item row="1" column="0" colspan="2">
+        <widget class="QWidget" name="find_wgt_parent" native="true"/>
+       </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="codigoxml_tab">
+     <widget class="QWidget" name="xmlcode_tab">
       <attribute name="icon">
        <iconset resource="../../res/resources.qrc">
         <normaloff>:/icons/icons/xmlcode.png</normaloff>:/icons/icons/xmlcode.png</iconset>
