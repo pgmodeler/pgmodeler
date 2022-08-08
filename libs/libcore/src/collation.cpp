@@ -199,16 +199,3 @@ QString Collation::getCodeDefinition(unsigned def_type, bool reduced_form)
 
 	return BaseObject::getCodeDefinition(def_type, reduced_form);
 }
-
-QString Collation::getAlterDefinition(BaseObject *object)
-{
-	try
-	{
-		attributes[Attributes::AlterCmds]=BaseObject::getAlterDefinition(object);
-		return BaseObject::getAlterDefinition(this->getSchemaName(), attributes, false, false);
-	}
-	catch(Exception &e)
-	{
-		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
-	}
-}

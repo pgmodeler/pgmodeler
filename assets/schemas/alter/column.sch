@@ -10,7 +10,7 @@
 		{alter-table}
 		[ TYPE ] {type}
 
-		%if {collation} %and ({pgsql-ver} != "9.0") %then
+		%if {collation} %then
 			[ COLLATE ] {collation}
 		%end
 

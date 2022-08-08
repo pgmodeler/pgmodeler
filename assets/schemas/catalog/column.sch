@@ -22,17 +22,12 @@
 	%if {attribs} %then
 		[SELECT cl.attnum AS oid, cl.attname AS name, cl.attnotnull AS not_null_bool,
 		cl.attacl AS permission, pg_get_expr(df.adbin, df.adrelid) AS default_value,
-		ds.description AS comment, tb.oid AS table, ]
-
-		%if ({pgsql-ver} >=f "10.0") %then
-			[ CASE
+		ds.description AS comment, tb.oid AS table, 
+		CASE
 			WHEN cl.attidentity = 'a' THEN 'ALWAYS'
 			WHEN cl.attidentity = 'd' THEN 'BY DEFAULT'
 			ELSE NULL
-			END AS identity_type, ]
-		%else
-			[ NULL AS identity_type, ]
-		%end
+		END AS identity_type, ]
 
 		%if ({pgsql-ver} >=f "12.0") %then
 			[ CASE
@@ -53,21 +48,17 @@
 		# This is necessary because pgModeler identifies user-defined types by the complete
 		# type signature [schema].[typename]
 		[(SELECT
-		CASE
-		WHEN ns.nspname='public' THEN ns.nspname || '.'
-		ELSE ''
-		END
-		FROM pg_namespace AS ns
-		LEFT JOIN pg_type AS tp ON tp.typnamespace=ns.oid
-		WHERE tp.oid=cl.atttypid) || format_type(atttypid,atttypmod) AS type, atttypid AS type_oid, ]
+			CASE
+				WHEN ns.nspname='public' THEN ns.nspname || '.'
+				ELSE ''
+			END
+			FROM pg_namespace AS ns
+			LEFT JOIN pg_type AS tp ON tp.typnamespace=ns.oid
+			WHERE tp.oid=cl.atttypid) || format_type(atttypid,atttypmod) AS type, 
 
-		%if ({pgsql-ver} == "9.0") %then
-			[ NULL AS collation ]
-		%else
-			[ cl.attcollation AS collation ]
-		%end
+		atttypid AS type_oid, cl.attcollation AS collation 
 
-		[ FROM pg_attribute AS cl
+		FROM pg_attribute AS cl
 		LEFT JOIN pg_attrdef AS df ON df.adrelid=cl.attrelid AND df.adnum=cl.attnum
 		LEFT JOIN pg_description AS ds ON ds.objoid=cl.attrelid AND ds.objsubid=cl.attnum
 		LEFT JOIN pg_class AS tb ON tb.oid = cl.attrelid
