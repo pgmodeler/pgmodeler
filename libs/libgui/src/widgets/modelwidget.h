@@ -310,7 +310,6 @@ class ModelWidget: public QWidget {
 		void resizeEvent(QResizeEvent *);
 		void mousePressEvent(QMouseEvent *event);
 		void keyPressEvent(QKeyEvent *event);
-		void keyReleaseEvent(QKeyEvent *event);
 		void hideEvent(QHideEvent *);
 
 		//! \brief Captures and handles the QWeelEvent raised on the viewport scrollbars
