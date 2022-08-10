@@ -5,20 +5,17 @@
 %set {alter-table} [ALTER ] {sql-object} $sp
 
 %if {partitioned-table} %then
-	%if ({pgsql-ver} >=f "10.0") %then
+	{alter-table} {partitioned-table}
 
-		{alter-table} {partitioned-table}
+	%if ({partitioning}=="unset") %then [ DETACH] %else [ ATTACH] %end
 
-		%if ({partitioning}=="unset") %then [ DETACH] %else [ ATTACH] %end
+	[ PARTITION ] {table}
 
-		[ PARTITION ] {table}
-
-		%if ({partitioning}!="unset") %then
-			%if {partition-bound-expr} %then
-				[ FOR VALUES ] {partition-bound-expr}
-			%else
-				[ DEFAULT]
-			%end
+	%if ({partitioning}!="unset") %then
+		%if {partition-bound-expr} %then
+			[ FOR VALUES ] {partition-bound-expr}
+		%else
+			[ DEFAULT]
 		%end
 	%end
 %else
