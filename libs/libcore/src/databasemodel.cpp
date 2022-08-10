@@ -3734,13 +3734,12 @@ Role *DatabaseModel::createRole()
 
 	QString op_attribs[]={ Attributes::Superuser, Attributes::CreateDb,
 							 Attributes::CreateRole, Attributes::Inherit,
-							 Attributes::Login, Attributes::Encrypted,
-							 Attributes::Replication, Attributes::BypassRls };
+							 Attributes::Login, Attributes::Replication,
+							 Attributes::BypassRls };
 
 	unsigned op_vect[]={ Role::OpSuperuser, Role::OpCreateDb,
 						 Role::OpCreateRole, Role::OpInherit,
-						 Role::OpLogin, Role::OpEncrypted,
-						 Role::OpReplication, Role::OpBypassRls };
+						 Role::OpLogin, Role::OpReplication, Role::OpBypassRls };
 
 	try
 	{
