@@ -274,7 +274,6 @@ void Connection::connect()
 										ErrorCode::UnsupportedPGVersion,
 										__PRETTY_FUNCTION__, __FILE__, __LINE__);
 	}
-
 }
 
 void Connection::close()
