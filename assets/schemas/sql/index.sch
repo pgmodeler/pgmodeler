@@ -48,7 +48,7 @@ $br ( {elements} $br )
 		[FASTUPDATE = ON]
 	%end
 
-	%if {buffering} %and ({pgsql-ver} >=f "9.2") %then
+	%if {buffering} %then
 		%if {factor} %then [, ] %end
 		[BUFFERING = ON]
 	%end
