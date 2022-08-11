@@ -66,64 +66,57 @@
 		  id.indclass::oid] $ob $cb [ AS opclasses,
 		  id.indoption::int2] $ob $cb [ AS options, 
 		pg_get_expr(id.indpred, id.indrelid) AS condition,
-		pg_get_constraintdef(cs.oid) AS expressions, ]
+		pg_get_constraintdef(cs.oid) AS expressions, 
 
-		%if ({pgsql-ver} <=f "9.1") %then
-			[ FALSE AS no_inherit_bool, ]
-		%else
-			[ cs.connoinherit AS no_inherit_bool, ]
-		%end
+		cs.connoinherit AS no_inherit_bool, 
 
-
-		[ CASE cs.coninhcount
-		WHEN 0 THEN FALSE
-		ELSE TRUE
+		CASE cs.coninhcount
+			WHEN 0 THEN FALSE
+			ELSE TRUE
 		END AS inherited_bool,
 
 		CASE cs.contype
-		WHEN 'p' THEN 'pk-constr'
-		WHEN 'u' THEN 'uq-constr'
-		WHEN 'c' THEN 'ck-constr'
-		WHEN 'f' THEN 'fk-constr'
-		ELSE 'ex-constr'
+			WHEN 'p' THEN 'pk-constr'
+			WHEN 'u' THEN 'uq-constr'
+			WHEN 'c' THEN 'ck-constr'
+			WHEN 'f' THEN 'fk-constr'
+			ELSE 'ex-constr'
 		END AS type,
 
 		CASE cs.condeferred
-		WHEN TRUE THEN 'INITIALLY DEFERRED'
-		ELSE 'INITIALLY IMMEDIATE'
+			WHEN TRUE THEN 'INITIALLY DEFERRED'
+			ELSE 'INITIALLY IMMEDIATE'
 		END AS defer_type,
 
 		CASE cs.confupdtype
-		WHEN 'a' THEN 'NO ACTION'
-		WHEN 'r' THEN 'RESTRICT'
-		WHEN 'c' THEN 'CASCADE'
-		WHEN 'n' THEN 'SET NULL'
-		WHEN 'd' THEN 'SET DEFAULT'
-		ELSE NULL
+			WHEN 'a' THEN 'NO ACTION'
+			WHEN 'r' THEN 'RESTRICT'
+			WHEN 'c' THEN 'CASCADE'
+			WHEN 'n' THEN 'SET NULL'
+			WHEN 'd' THEN 'SET DEFAULT'
+			ELSE NULL
 		END AS upd_action,
 
 		CASE cs.confdeltype
-		WHEN 'a' THEN 'NO ACTION'
-		WHEN 'r' THEN 'RESTRICT'
-		WHEN 'c' THEN 'CASCADE'
-		WHEN 'n' THEN 'SET NULL'
-		WHEN 'd' THEN 'SET DEFAULT'
-		ELSE NULL
+			WHEN 'a' THEN 'NO ACTION'
+			WHEN 'r' THEN 'RESTRICT'
+			WHEN 'c' THEN 'CASCADE'
+			WHEN 'n' THEN 'SET NULL'
+			WHEN 'd' THEN 'SET DEFAULT'
+			ELSE NULL
 		END AS del_action,
 
 		CASE cs.confmatchtype
-		WHEN 'f' THEN 'MATCH FULL'
-		WHEN 'p' THEN 'MATCH PARTIAL' ]
+			WHEN 'f' THEN 'MATCH FULL'
+			WHEN 'p' THEN 'MATCH PARTIAL' 
+			WHEN 's' THEN 'MATCH SIMPLE' 
+		ELSE NULL
+		END AS comparison_type, 
 
-		[ WHEN ] %if ({pgsql-ver} >=f "9.3") %then 's' %else 'u' %end [ THEN 'MATCH SIMPLE' ]
-
-		[ ELSE NULL
-		END AS comparison_type, ]
-
-		[ CASE
-		WHEN tb.relkind = 'r' THEN 'table'
-		WHEN tb.relkind = 'p' THEN 'table'
-		WHEN tb.relkind = 'f' THEN 'foreigntable'
+		CASE
+			WHEN tb.relkind = 'r' THEN 'table'
+			WHEN tb.relkind = 'p' THEN 'table'
+			WHEN tb.relkind = 'f' THEN 'foreigntable'
 		END AS table_type, ]
 
 		({comment}) [ AS comment ]
