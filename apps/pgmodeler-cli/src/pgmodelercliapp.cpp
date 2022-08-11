@@ -1425,11 +1425,12 @@ void PgModelerCliApp::fixObjectAttributes(QString &obj_xml)
 	if(obj_xml.contains(TagExpr.arg(BaseObject::getSchemaName(ObjectType::Sequence))))
 		obj_xml.replace(QRegularExpression(QString("(%1)( )*(=)(\")").arg(Attributes::Owner)), QString("%1 = \"").arg(Attributes::OwnerColumn));
 
-	/* Remove sysid attribute from <role> tags and storing the referenced roles (ref-roles)
+	/* Remove sysid attribute and encrypted from <role> tags and storing the referenced roles (ref-roles)
 	 * for later re-assignment. */
 	if(obj_xml.contains(TagExpr.arg(BaseObject::getSchemaName(ObjectType::Role))))
 	{
-		obj_xml.remove(QRegularExpression(AttributeExpr.arg(QString("sysid"))));
+		obj_xml.remove(QRegularExpression(AttributeExpr.arg("sysid")));
+		obj_xml.remove(QRegularExpression(AttributeExpr.arg("encrypted")));
 
 		QRegularExpression ref_roles_expr = QRegularExpression(QString("(<%1)(.)+(%2)( )*(=)(\")(%3)(\")(.)+(>)").arg(Attributes::Roles, Attributes::RoleType, Attributes::Refer));
 		QRegularExpressionMatch match;

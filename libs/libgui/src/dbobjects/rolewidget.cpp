@@ -111,7 +111,6 @@ void RoleWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Rol
 		superusr_chk->setChecked(role->getOption(Role::OpSuperuser));
 		create_db_chk->setChecked(role->getOption(Role::OpCreateDb));
 		create_role_chk->setChecked(role->getOption(Role::OpCreateRole));
-		encrypt_pass_chk->setChecked(role->getOption(Role::OpEncrypted));
 		inh_perm_chk->setChecked(role->getOption(Role::OpInherit));
 		can_login_chk->setChecked(role->getOption(Role::OpLogin));
 		can_replicate_chk->setChecked(role->getOption(Role::OpReplication));
@@ -234,14 +233,13 @@ void RoleWidget::applyConfiguration()
 		role->setPassword(passwd_edt->text());
 
 		if(validity_chk->isChecked())
-			role->setValidity(validity_dte->dateTime().toString(QString("yyyy-MM-dd hh:mm")));
+			role->setValidity(validity_dte->dateTime().toString("yyyy-MM-dd hh:mm"));
 		else
 			role->setValidity("");
 
 		role->setOption(Role::OpSuperuser, superusr_chk->isChecked());
 		role->setOption(Role::OpCreateDb, create_db_chk->isChecked());
 		role->setOption(Role::OpCreateRole, create_role_chk->isChecked());
-		role->setOption(Role::OpEncrypted, encrypt_pass_chk->isChecked());
 		role->setOption(Role::OpInherit, inh_perm_chk->isChecked());
 		role->setOption(Role::OpLogin, can_login_chk->isChecked());
 		role->setOption(Role::OpReplication, can_replicate_chk->isChecked());

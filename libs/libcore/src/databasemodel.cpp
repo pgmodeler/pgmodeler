@@ -3756,7 +3756,7 @@ Role *DatabaseModel::createRole()
 			role->setConnectionLimit(attribs[Attributes::ConnLimit].toInt());
 
 		//Setting up the role options according to the configured on the XML
-		for(i=0; i < 8; i++)
+		for(i=0; i < 7; i++)
 		{
 			marked=attribs[op_attribs[i]]==Attributes::True;
 			role->setOption(op_vect[i], marked);
