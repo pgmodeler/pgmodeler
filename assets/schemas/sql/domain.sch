@@ -16,7 +16,7 @@
 
 [CREATE DOMAIN ] {name} [ AS ] {type}
 
-%if ({pgsql-ver} != "9.0") %and {collation} %then
+%if {collation} %then
 	$br $tb [COLLATE ] {collation}
 %end
 
