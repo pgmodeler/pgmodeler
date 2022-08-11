@@ -52,8 +52,8 @@
 		op.opcfamily AS family, op.opcintype AS type, op.opcdefault AS default_bool,
 		op.opckeytype AS storage, am.amname AS index_type, ]
 
-		[(SELECT array_agg(amopstrategy::text || ':' || amopopr::text || ':' || ] %if ({pgsql-ver} == "9.0") %then 0 %else amopsortfamily::text %end [)]
-		[ FROM pg_amop AS ap WHERE ap.amopfamily=op.opcfamily AND ap.amopmethod=am.oid) AS operator, ]
+		[(SELECT array_agg(amopstrategy::text || ':' || amopopr::text || ':' || amopsortfamily::text)
+		  FROM pg_amop AS ap WHERE ap.amopfamily=op.opcfamily AND ap.amopmethod=am.oid) AS operator, ]
 
 		[(SELECT array_agg(amprocnum::text || ':' || amproc::oid::text)
 		FROM pg_amproc AS _ap1 WHERE _ap1.amprocfamily=op.opcfamily) AS function, ]
