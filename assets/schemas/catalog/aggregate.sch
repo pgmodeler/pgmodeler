@@ -2,7 +2,7 @@
 # CAUTION: Do not modify this file unless you know what you are doing.
 # Code generation can be broken if incorrect changes are made.
 
-%if ({pgsql-ver} <=f "10.0") %then
+%if ({pgsql-ver} == "10.0") %then
 	%set {is-agg} [pr.proisagg IS TRUE]
 %else
 	%set {is-agg} [pr.prokind = 'a']
