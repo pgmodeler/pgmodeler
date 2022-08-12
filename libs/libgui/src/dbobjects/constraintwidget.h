@@ -38,7 +38,7 @@ class ConstraintWidget: public BaseObjectWidget, public Ui::ConstraintWidget {
 		
 		ColumnPickerWidget *col_picker_wgt, *ref_col_picker_wgt;
 
-		QFrame *info_frm, *warn_frm;
+		QFrame *info_frm;
 		
 		SyntaxHighlighter *expression_hl;
 		

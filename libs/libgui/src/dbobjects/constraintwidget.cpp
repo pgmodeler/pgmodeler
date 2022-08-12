@@ -64,15 +64,6 @@ ConstraintWidget::ConstraintWidget(QWidget *parent): BaseObjectWidget(parent, Ob
 		constraint_grid->addWidget(info_frm, constraint_grid->count()+1, 0, 1, 0);
 		info_frm->setParent(this);
 
-		#warning "Deprecated PG version usage"
-		fields_map[generateVersionsInterval(AfterVersion, PgSqlVersions::PgSqlVersion92)].push_back(no_inherit_lbl);
-		fields_map[generateVersionsInterval(AfterVersion, PgSqlVersions::PgSqlVersion95)].push_back(indexing_chk);
-		values_map[indexing_chk].push_back(~IndexingType(IndexingType::Brin));
-
-		warn_frm=generateVersionWarningFrame(fields_map, &values_map);
-		constraint_grid->addWidget(warn_frm, constraint_grid->count()+1, 0, 1, 0);
-		warn_frm->setParent(this);
-
 		connect(constr_type_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(selectConstraintType()));
 		connect(deferrable_chk, SIGNAL(toggled(bool)), deferral_cmb, SLOT(setEnabled(bool)));
 		connect(deferrable_chk, SIGNAL(toggled(bool)), deferral_lbl, SLOT(setEnabled(bool)));
@@ -109,7 +100,6 @@ void ConstraintWidget::selectConstraintType()
 	expression_txt->setVisible(constr_type==ConstraintType::Check || constr_type==ConstraintType::Exclude);
 	no_inherit_chk->setVisible(constr_type==ConstraintType::Check);
 	no_inherit_lbl->setVisible(constr_type==ConstraintType::Check);
-	warn_frm->setVisible(constr_type==ConstraintType::Check);
 
 	fill_factor_chk->setVisible(constr_type==ConstraintType::Unique ||
 								constr_type==ConstraintType::PrimaryKey ||
