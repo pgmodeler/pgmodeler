@@ -11,7 +11,7 @@ $br $tb
 	%end
 %end
 
-%if ({pgsql-ver} != "9.0") %and {collation} %then
+%if {collation} %then
 	[ COLLATE ] {collation}
 %end
 

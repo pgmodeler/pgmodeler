@@ -16,12 +16,10 @@
 
 [CREATE POLICY ] {name} [ ON ] {table}
 
-%if ({pgsql-ver} >=f "10.0") %then
-	%if {permissive} %then
-		$br $tb [AS PERMISSIVE]
-	%else
-		$br $tb [AS RESTRICTIVE]
-	%end
+%if {permissive} %then
+	$br $tb [AS PERMISSIVE]
+%else
+	$br $tb [AS RESTRICTIVE]
 %end
 
 $br $tb [FOR ] {command}
