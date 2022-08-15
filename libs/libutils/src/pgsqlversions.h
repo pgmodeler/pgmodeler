@@ -30,13 +30,6 @@
 
 namespace PgSqlVersions {
 	extern const QString
-	PgSqlVersion90,
-	PgSqlVersion91,
-	PgSqlVersion92,
-	PgSqlVersion93,
-	PgSqlVersion94,
-	PgSqlVersion95,
-	PgSqlVersion96,
 	PgSqlVersion100,
 	PgSqlVersion110,
 	PgSqlVersion120,

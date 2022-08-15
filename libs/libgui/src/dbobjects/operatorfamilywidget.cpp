@@ -20,26 +20,13 @@
 
 OperatorFamilyWidget::OperatorFamilyWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::OpFamily)
 {
-	QStringList types;
-	std::map<QString, std::vector<QWidget *> > fields_map;
-	std::map<QWidget *, std::vector<QString> > values_map;
-	QFrame *frame=nullptr;
-
 	Ui_OperatorFamilyWidget::setupUi(this);
 	configureFormLayout(opfamily_grid, ObjectType::OpFamily);
 
 	indexing_cmb->addItems(IndexingType::getTypes());
 
-	#warning "Deprecated PG version usage"
 	setRequiredField(indexing_lbl);	
-	fields_map[BaseObjectWidget::generateVersionsInterval(BaseObjectWidget::AfterVersion, PgSqlVersions::PgSqlVersion95)].push_back(indexing_lbl);
-	values_map[indexing_lbl].push_back(~IndexingType(IndexingType::Brin));
-
 	opfamily_grid->addItem(new QSpacerItem(10,10,QSizePolicy::Minimum,QSizePolicy::Expanding), opfamily_grid->count()+1, 0, 1, 0);
-
-	frame=BaseObjectWidget::generateVersionWarningFrame(fields_map, &values_map);
-	frame->setParent(this);
-	opfamily_grid->addWidget(frame, opfamily_grid->count()+1, 0, 1, 5);
 
 	configureTabOrder();
 	setMinimumSize(500, 290);

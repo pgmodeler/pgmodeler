@@ -78,16 +78,14 @@ QString CopyOptions::getSQLDefinition()
 
 			switch(op_id)
 			{
-				case All: op_name=QString(" ALL"); break;
-				case Defaults: op_name=QString(" DEFAULTS"); break;
-				case Constraints: op_name=QString(" CONSTRAINTS"); break;
-				case Indexes: op_name=QString(" INDEXES"); break;
-				case Storage: op_name=QString(" STORAGE"); break;
-				case Comments: op_name=QString(" COMMENTS"); break;
-
-				#warning "Deprecated PG version usage"
-				case Identity: op_name=(BaseObject::getPgSQLVersion().toFloat() > PgSqlVersions::PgSqlVersion96.toFloat() ? QString(" IDENTITY") : ""); break;
-				case Statistics: op_name=(BaseObject::getPgSQLVersion().toFloat() > PgSqlVersions::PgSqlVersion96.toFloat() ? QString(" STATISTICS") : ""); break;
+				case All: op_name=" ALL"; break;
+				case Defaults: op_name=" DEFAULTS"; break;
+				case Constraints: op_name=" CONSTRAINTS"; break;
+				case Indexes: op_name=" INDEXES"; break;
+				case Storage: op_name=" STORAGE"; break;
+				case Comments: op_name=" COMMENTS"; break;
+				case Identity: op_name=" IDENTITY"; break;
+				case Statistics: op_name=" STATISTICS"; break;
 			}
 
 			if(!op_name.isEmpty())
