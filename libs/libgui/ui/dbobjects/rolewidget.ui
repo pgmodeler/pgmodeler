@@ -204,7 +204,7 @@
      </property>
     </widget>
    </item>
-   <item row="0" column="1">
+   <item row="0" column="1" colspan="3">
     <widget class="QLineEdit" name="passwd_edt">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
@@ -217,24 +217,10 @@
      </property>
     </widget>
    </item>
-   <item row="0" column="2" colspan="2">
-    <widget class="QCheckBox" name="encrypt_pass_chk">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="text">
-      <string>Encrypted</string>
-     </property>
-    </widget>
-   </item>
   </layout>
  </widget>
  <tabstops>
   <tabstop>passwd_edt</tabstop>
-  <tabstop>encrypt_pass_chk</tabstop>
   <tabstop>validity_chk</tabstop>
   <tabstop>validity_dte</tabstop>
   <tabstop>conn_limit_sb</tabstop>

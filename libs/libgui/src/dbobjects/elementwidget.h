@@ -35,8 +35,6 @@ class ElementWidget: public QWidget, public Ui::ElementWidget {
 	private:
 		Q_OBJECT
 
-		QFrame *warning_frame;
-
 		Element *element;
 
 		//! \brief Parent object (table or relationship) from which the columns will be referenced on the elements

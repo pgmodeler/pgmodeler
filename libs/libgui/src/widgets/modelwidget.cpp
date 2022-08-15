@@ -778,17 +778,9 @@ void ModelWidget::keyPressEvent(QKeyEvent *event)
 	{
 		toggleNewObjectOverlay();
 	}
-	else if(event->modifiers() == Qt::ControlModifier && event->key() == Qt::Key_Alt && current_zoom < 1)
+	else if(event->key() == Qt::Key_F9 && current_zoom < 1)
 	{
-		showMagnifierArea(true);
-	}
-}
-
-void ModelWidget::keyReleaseEvent(QKeyEvent *event)
-{
-	if(event->key() == Qt::Key_Control || event->key() == Qt::Key_Alt)
-	{
-		showMagnifierArea(false);
+		showMagnifierArea(!magnifier_frm->isVisible());
 	}
 }
 

@@ -61,15 +61,6 @@ OperatorClassWidget::OperatorClassWidget(QWidget *parent): BaseObjectWidget(pare
 		this->setLayout(grid);
 		configureFormLayout(grid, ObjectType::OpClass);
 
-		#warning "Deprecated PG version usage"
-		fields_map[BaseObjectWidget::generateVersionsInterval(BaseObjectWidget::AfterVersion, PgSqlVersions::PgSqlVersion95)].push_back(indexing_lbl);
-		values_map[indexing_lbl].push_back(~IndexingType(IndexingType::Brin));
-
-		frame=BaseObjectWidget::generateVersionWarningFrame(fields_map, &values_map);
-		frame->setParent(this);
-		grid=dynamic_cast<QGridLayout *>(this->layout());
-		grid->addWidget(frame, grid->count(), 0, 1, 5);
-
 		grid=dynamic_cast<QGridLayout *>(elements_grp->layout());
 		grid->addWidget(function_sel, 1,1,1,4);
 		grid->addWidget(operator_sel, 2,1,1,4);

@@ -2,7 +2,7 @@
 # CAUTION: Do not modify this file unless you know what you are doing.
 # Code generation can be broken if incorrect changes are made.
 
-%if ({pgsql-ver} <=f "10.0") %then
+%if ({pgsql-ver} == "10.0") %then
 	%set {is-not-agg-proc} [pr.proisagg IS FALSE]
 	%set {window-func} [pr.proiswindow AS window_func_bool]
 %else
@@ -80,29 +80,20 @@
 		END AS function_type,
 
 		CASE
-		WHEN pr.proisstrict THEN 'STRICT'
-		ELSE 'CALLED ON NULL INPUT'
-		END AS behavior_type, ]
+			WHEN pr.proisstrict THEN 'STRICT'
+			ELSE 'CALLED ON NULL INPUT'
+		END AS behavior_type, 
 
-		%if ({pgsql-ver} <=f "9.1") %then
-			[ NULL AS leakproof_bool, ]
-		%else
-			[ pr.proleakproof AS leakproof_bool, ]
-		%end
-
-		%if ({pgsql-ver} <=f "9.5") %then
-			[ NULL AS parallel_type,
-			NULL AS transform_types, ]
-		%else
-			[ CASE
+		pr.proleakproof AS leakproof_bool, 
+	
+		CASE
 			WHEN pr.proparallel='u' THEN 'PARALLEL UNSAFE'
 			WHEN pr.proparallel='r' THEN 'PARALLEL RESTRICTED'
 			ELSE 'PARALLEL SAFE'
-			END AS parallel_type,
+		END AS parallel_type,
 
-			pr.protrftypes AS transform_types, ]
-		%end
-
+		pr.protrftypes AS transform_types, ]
+	
 		({comment}) [ AS comment ]
 
 		[ FROM pg_proc AS pr ]

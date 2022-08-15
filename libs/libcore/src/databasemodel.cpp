@@ -3734,13 +3734,12 @@ Role *DatabaseModel::createRole()
 
 	QString op_attribs[]={ Attributes::Superuser, Attributes::CreateDb,
 							 Attributes::CreateRole, Attributes::Inherit,
-							 Attributes::Login, Attributes::Encrypted,
-							 Attributes::Replication, Attributes::BypassRls };
+							 Attributes::Login, Attributes::Replication,
+							 Attributes::BypassRls };
 
 	unsigned op_vect[]={ Role::OpSuperuser, Role::OpCreateDb,
 						 Role::OpCreateRole, Role::OpInherit,
-						 Role::OpLogin, Role::OpEncrypted,
-						 Role::OpReplication, Role::OpBypassRls };
+						 Role::OpLogin, Role::OpReplication, Role::OpBypassRls };
 
 	try
 	{
@@ -3757,7 +3756,7 @@ Role *DatabaseModel::createRole()
 			role->setConnectionLimit(attribs[Attributes::ConnLimit].toInt());
 
 		//Setting up the role options according to the configured on the XML
-		for(i=0; i < 8; i++)
+		for(i=0; i < 7; i++)
 		{
 			marked=attribs[op_attribs[i]]==Attributes::True;
 			role->setOption(op_vect[i], marked);

@@ -29,7 +29,7 @@ $br
 
 $tb [LANGUAGE ] {language} $br
 
-%if ({pgsql-ver} >=f "9.5") %and {transform-types} %then
+%if {transform-types} %then
 	$tb TRANSFORM {transform-types} $br
 %end
 
@@ -41,10 +41,7 @@ $tb {function-type} $sp %if {leakproof} %then LEAKPROOF %end $br
 
 $tb {behavior-type} $br
 $tb {security-type} $br
-
-%if ({pgsql-ver} >=f "9.6") %then
-	$tb {parallel-type} $br
-%end
+$tb {parallel-type} $br
 
 $tb [COST ] {execution-cost} $br
 
