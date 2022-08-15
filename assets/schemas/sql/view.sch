@@ -46,7 +46,7 @@ $br
 $br {definition}
 
 %if {materialized} %and {with-no-data} %then
-	$br [WITH NO DATA]
+	$br [WITH NO DATA;]
 %end
 
 

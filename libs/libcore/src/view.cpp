@@ -531,7 +531,7 @@ void View::setDefinitionAttribute()
 	}
 
 	decl=decl.trimmed();
-	if(!decl.isEmpty() && !decl.endsWith(QChar(';')))
+	if(!decl.isEmpty() && !decl.endsWith(QChar(';')) && !with_no_data)
 		decl.append(QChar(';'));
 
 	attributes[Attributes::Definition]=decl;
@@ -1175,4 +1175,17 @@ QString View::getDataDictionary(bool split, attribs_map extra_attribs)
 
 	schparser.ignoreEmptyAttributes(true);
 	return schparser.getCodeDefinition(view_dict_file, attribs);
+}
+
+QString View::getAlterDefinition(BaseObject *object)
+{
+	try
+	{
+		attributes[Attributes::Materialized] = (materialized ? Attributes::True : "");
+		return BaseObject::getAlterDefinition(object);
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+	}
 }
