@@ -178,8 +178,8 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	magnifier_frm->setMouseTracking(true);
 	magnifier_frm->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 	magnifier_frm->setGeometry(0,0,
-														500 * BaseObjectView::getFontFactor() * BaseObjectView::getScreenDpiFactor(),
-														500 * BaseObjectView::getFontFactor() * BaseObjectView::getScreenDpiFactor());
+														600 * BaseObjectView::getFontFactor() * BaseObjectView::getScreenDpiFactor(),
+														600 * BaseObjectView::getFontFactor() * BaseObjectView::getScreenDpiFactor());
 	magnifier_frm->setCursor(Qt::CrossCursor);
 
 	QColor c1, c2;

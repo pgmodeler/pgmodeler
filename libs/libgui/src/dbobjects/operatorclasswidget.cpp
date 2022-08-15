@@ -23,10 +23,6 @@ OperatorClassWidget::OperatorClassWidget(QWidget *parent): BaseObjectWidget(pare
 	try
 	{
 		QGridLayout *grid=nullptr;
-		std::map<QString, std::vector<QWidget *> > fields_map;
-		std::map<QWidget *, std::vector<QString> > values_map;
-		QFrame *frame=nullptr;
-
 		Ui_OperatorClassWidget::setupUi(this);
 
 		family_sel=new ObjectSelectorWidget(ObjectType::OpFamily, this);
