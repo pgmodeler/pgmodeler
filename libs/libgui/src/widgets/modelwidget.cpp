@@ -177,9 +177,13 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	magnifier_frm->installEventFilter(this);
 	magnifier_frm->setMouseTracking(true);
 	magnifier_frm->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+
+	int sz = (std::min<int>(qApp->primaryScreen()->size().width(),
+												 qApp->primaryScreen()->size().height()))/2;
+
 	magnifier_frm->setGeometry(0,0,
-														600 * BaseObjectView::getFontFactor() * BaseObjectView::getScreenDpiFactor(),
-														600 * BaseObjectView::getFontFactor() * BaseObjectView::getScreenDpiFactor());
+														 sz * BaseObjectView::getFontFactor() * BaseObjectView::getScreenDpiFactor(),
+														 sz * BaseObjectView::getFontFactor() * BaseObjectView::getScreenDpiFactor());
 	magnifier_frm->setCursor(Qt::CrossCursor);
 
 	QColor c1, c2;
@@ -658,7 +662,7 @@ bool ModelWidget::eventFilter(QObject *object, QEvent *event)
 			object == viewport->verticalScrollBar())
 		 && event->type() == QEvent::Wheel && w_event->modifiers()==Qt::ControlModifier)
 	{
-		double zoom_inc = round(fabs(w_event->angleDelta().y())/120) * ZoomIncrement;
+		double zoom_inc = round(fabs(w_event->angleDelta().y()/120.0)) * ZoomIncrement;
 
 		if(w_event->angleDelta().y() < 0)
 			this->applyZoom(this->current_zoom - zoom_inc);
@@ -677,8 +681,6 @@ bool ModelWidget::eventFilter(QObject *object, QEvent *event)
 	{
 		if(event->type() == QEvent::MouseMove)
 			updateMagnifierArea();
-		else if(k_event->modifiers() == Qt::ControlModifier  && k_event->key() == Qt::AltModifier)
-			showMagnifierArea(false);
 
 		return true;
 	}
@@ -690,6 +692,7 @@ bool ModelWidget::eventFilter(QObject *object, QEvent *event)
 		showMagnifierArea(false);
 		gm_event->setButton(m_event->button());
 		gm_event->setButtons(m_event->buttons());
+		gm_event->setModifiers(m_event->modifiers());
 		gm_event->setScenePos(viewport->mapToScene(viewport->mapFromGlobal(QCursor::pos())));
 		qApp->postEvent(scene, gm_event);
 
