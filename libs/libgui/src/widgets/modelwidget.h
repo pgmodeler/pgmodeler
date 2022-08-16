@@ -166,7 +166,8 @@ class ModelWidget: public QWidget {
 		//! \brief This label shows a small portion of the canvas in normal zoom at the current cursor position
 		*magnifier_area_lbl;
 
-		QFrame	*magnifier_frm;
+		//! \brief This rect stores the current size of the magnifier area in viewport that is drawn in the magnifier area label
+		QRect magnifier_rect;
 
 		//! \brief This timer controls the interval the zoom label is visible
 		QTimer zoom_info_timer;
