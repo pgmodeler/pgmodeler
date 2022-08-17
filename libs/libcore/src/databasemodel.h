@@ -81,6 +81,16 @@ class DatabaseModel:  public QObject, public BaseObject {
 
 		static unsigned dbmodel_id;
 
+		/*! \brief Constants used to determine the code generation mode:
+		 *  OriginalSql: generates the SQL for the object only (original behavior)
+		 *  DependenciesSql: generates the original SQL code + dependencies SQL
+		 *  ChildrenSql: generates the original SQL code + children SQL */
+		static constexpr unsigned OriginalSql = 0,
+
+		DependenciesSql = 1,
+
+		ChildrenSql = 2;
+
 		//! \brief Constants used to access the tuple columns in the internal changelog
 		static constexpr unsigned LogDate = 0,
 		LogSinature = 1,
@@ -487,7 +497,7 @@ class DatabaseModel:  public QObject, public BaseObject {
 		/*! \brief Saves the model's SQL code definition by creating separated files for each object
 		 * The provided path must be a directory. If it does not exists then the method will create
 		 * it prior to the generation of the files. */
-		void saveSplitSQLDefinition(const QString &path);
+		void saveSplitSQLDefinition(const QString &path, unsigned code_gen_mode = OriginalSql);
 
 		/*! \brief Returns the complete SQL/XML defintion for the entire model (including all the other objects).
 		 The parameter 'export_file' is used to format the generated code in a way that can be saved

@@ -8140,7 +8140,7 @@ bool DatabaseModel::saveSplitCustomSQL(bool save_appended, const QString &path, 
 	return false;
 }
 
-void DatabaseModel::saveSplitSQLDefinition(const QString &path)
+void DatabaseModel::saveSplitSQLDefinition(const QString &path, unsigned code_gen_mode)
 {
 	QFileInfo fi(path);
 	QDir dir;
@@ -8148,6 +8148,10 @@ void DatabaseModel::saveSplitSQLDefinition(const QString &path)
 	if(fi.exists() && !fi.isDir())
 		throw Exception(Exception::getErrorMessage(ErrorCode::InvOutputDirectory).arg(path),
 										ErrorCode::InvOutputDirectory,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+	if(code_gen_mode > ChildrenSql)
+		throw Exception(Exception::getErrorMessage(ErrorCode::InvCodeGenerationMode).arg(code_gen_mode),
+										ErrorCode::InvCodeGenerationMode,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	if(!fi.exists())
 		dir.mkdir(path);
@@ -8209,10 +8213,55 @@ void DatabaseModel::saveSplitSQLDefinition(const QString &path)
 				shell_types.clear();
 			}
 
-			if(obj == this)
+			/*if(obj == this)
 				buffer.append(this->__getCodeDefinition(SchemaParser::SqlDefinition).toUtf8());
 			else
-				buffer.append(obj->getCodeDefinition(SchemaParser::SqlDefinition).toUtf8());
+				buffer.append(obj->getCodeDefinition(SchemaParser::SqlDefinition).toUtf8());*/
+
+			if(obj->getObjectType() == ObjectType::Database)
+			{
+				if(obj == this)
+					buffer.append(this->__getCodeDefinition(SchemaParser::SqlDefinition).toUtf8());
+				else
+					buffer.append(obj->getCodeDefinition(SchemaParser::SqlDefinition).toUtf8());
+			}
+			else
+			{
+				if (code_gen_mode == OriginalSql)
+				{
+					if(obj == this)
+						buffer.append(this->__getCodeDefinition(SchemaParser::SqlDefinition).toUtf8());
+					else
+						buffer.append(obj->getCodeDefinition(SchemaParser::SqlDefinition).toUtf8());
+				}
+				else
+				{
+					std::vector<BaseObject *> objs = getCreationOrder(obj, code_gen_mode == ChildrenSql);
+					QString aux_def;
+
+					for(auto &obj : objs)
+					{
+						if(obj == this)
+							aux_def += this->__getCodeDefinition(SchemaParser::SqlDefinition).toUtf8();
+						else
+							aux_def += obj->getCodeDefinition(SchemaParser::SqlDefinition).toUtf8();
+					}
+
+					if(!aux_def.isEmpty())
+					{
+						aux_def = tr("-- NOTE: the code below contains the SQL for the selected object\n\
+-- as well for its dependencies and children (if applicable).\n\
+-- \n\
+-- This feature is only a convinience in order to permit you to test\n\
+-- the whole object's SQL definition at once.\n\
+-- \n\
+-- When exporting or generating the SQL for the whole database model\n\
+-- all objects will be placed at their original positions.\n\n\n") + aux_def;
+
+						buffer.append(aux_def.toUtf8());
+					}
+				}
+			}
 
 			if(buffer.isEmpty())
 				continue;
