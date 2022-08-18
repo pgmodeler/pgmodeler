@@ -7483,6 +7483,47 @@ QString DatabaseModel::__getCodeDefinition(unsigned def_type)
 	}
 }
 
+QString DatabaseModel::getSQLDefinition(BaseObject *object, unsigned code_gen_mode)
+{
+	if(!object)
+		throw Exception(ErrorCode::OprNotAllocatedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+	if(code_gen_mode == OriginalSql)
+	{
+		if(object->getObjectType() == ObjectType::Database)
+			return dynamic_cast<DatabaseModel *>(object)->__getCodeDefinition(SchemaParser::SqlDefinition);
+
+		return object->getCodeDefinition(SchemaParser::SqlDefinition);
+	}
+	else
+	{
+		std::vector<BaseObject *> objs = getCreationOrder(object, code_gen_mode == ChildrenSql);
+		QString aux_def;
+
+		for(auto &obj : objs)
+		{
+			if(obj->getObjectType() == ObjectType::Database)
+				aux_def += dynamic_cast<DatabaseModel *>(obj)->__getCodeDefinition(SchemaParser::SqlDefinition);
+			else
+				aux_def += obj->getCodeDefinition(SchemaParser::SqlDefinition);
+		}
+
+		if(!aux_def.isEmpty())
+		{
+			aux_def.prepend(tr("-- NOTE: the code below contains the SQL for the object itself\n\
+-- as well as for its dependencies or children (if applicable).\n\
+-- \n\
+-- This feature is only a convenience in order to allow you to test\n\
+-- the whole object's SQL definition at once.\n\
+-- \n\
+-- When exporting or generating the SQL for the whole database model\n\
+-- all objects will be placed at their original positions.\n\n\n"));
+		}
+
+		return aux_def;
+	}
+}
+
 QString DatabaseModel::configureShellTypes(bool reset_config)
 {
 	QString shell_types_def;
@@ -8140,7 +8181,7 @@ bool DatabaseModel::saveSplitCustomSQL(bool save_appended, const QString &path, 
 	return false;
 }
 
-void DatabaseModel::saveSplitSQLDefinition(const QString &path)
+void DatabaseModel::saveSplitSQLDefinition(const QString &path, unsigned code_gen_mode)
 {
 	QFileInfo fi(path);
 	QDir dir;
@@ -8148,6 +8189,10 @@ void DatabaseModel::saveSplitSQLDefinition(const QString &path)
 	if(fi.exists() && !fi.isDir())
 		throw Exception(Exception::getErrorMessage(ErrorCode::InvOutputDirectory).arg(path),
 										ErrorCode::InvOutputDirectory,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+	if(code_gen_mode > ChildrenSql)
+		throw Exception(Exception::getErrorMessage(ErrorCode::InvCodeGenerationMode).arg(code_gen_mode),
+										ErrorCode::InvCodeGenerationMode,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	if(!fi.exists())
 		dir.mkdir(path);
@@ -8209,10 +8254,7 @@ void DatabaseModel::saveSplitSQLDefinition(const QString &path)
 				shell_types.clear();
 			}
 
-			if(obj == this)
-				buffer.append(this->__getCodeDefinition(SchemaParser::SqlDefinition).toUtf8());
-			else
-				buffer.append(obj->getCodeDefinition(SchemaParser::SqlDefinition).toUtf8());
+			buffer.append(getSQLDefinition(obj, code_gen_mode).toUtf8());
 
 			if(buffer.isEmpty())
 				continue;

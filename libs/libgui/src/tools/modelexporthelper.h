@@ -45,6 +45,9 @@ class ModelExportHelper: public QObject {
 		//! \brief PostgreSQL version used by the exporter (only in thread mode)
 		QString pgsql_ver;
 
+		//! \brief The SQL code generation mode. (only in thread mode)
+		unsigned code_gen_mode;
+
 		//! \brief Indicates to the exporter to ignore object duplicity (only in thread mode)
 		bool ignore_dup,
 
@@ -157,7 +160,7 @@ class ModelExportHelper: public QObject {
 		void setIgnoredErrors(const QStringList &err_codes);
 
 		//! \brief Exports the model to a named SQL file. The PostgreSQL version syntax must be specified.
-		void exportToSQL(DatabaseModel *db_model, const QString &filename, const QString &pgsql_ver, bool split);
+		void exportToSQL(DatabaseModel *db_model, const QString &filename, const QString &pgsql_ver, bool split, unsigned code_gen_mode);
 
 		/*! \brief Exports the model to a named PNG image. The boolean parameters controls the grid exhibition
 		as well the page delimiters on the output image. The zoom parameter controls the zoom applied to the viewport
@@ -194,7 +197,7 @@ class ModelExportHelper: public QObject {
 
 		/*! \brief Configures the SQL export params before start the export thread (when in thread mode).
 		This form receive the model, output filename and pgsql version to be used */
-		void setExportToSQLParams(DatabaseModel *db_model, const QString &filename, const QString &pgsql_ver, bool split);
+		void setExportToSQLParams(DatabaseModel *db_model, const QString &filename, const QString &pgsql_ver, bool split, unsigned code_gen_mode);
 
 		/*! \brief Configures the PNG export params before start the export thread (when in thread mode).
 		This form receive the objects scene, a viewport, the output filename, zoom factor, grid options and page by page export options */

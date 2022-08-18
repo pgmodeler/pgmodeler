@@ -163,7 +163,7 @@
             </sizepolicy>
            </property>
            <property name="toolTip">
-            <string>&lt;strong&gt;Original:&lt;/strong&gt; displays only the original object's SQL code.&lt;br/&gt;&lt;br/&gt;&lt;strong&gt;Dependencies:&lt;/strong&gt; displays the original code including all dependencies needed to properly create the selected object.&lt;br/&gt;&lt;br/&gt;&lt;strong&gt;Children:&lt;/strong&gt; displays the original code including all object's children SQL code. This option is used only by schemas, tables and views.</string>
+            <string>&lt;strong&gt;Original:&lt;/strong&gt; generates only the original SQL code of the selected object.&lt;br/&gt;&lt;br/&gt;&lt;strong&gt;Dependencies:&lt;/strong&gt; generates the original code including all dependencies needed to properly create the selected  object. &lt;br/&gt;&lt;br/&gt;&lt;strong&gt;Children:&lt;/strong&gt; generates the original code including all children's SQL code. This option is used only for schemas, tables, and views.</string>
            </property>
            <property name="statusTip">
             <string/>
