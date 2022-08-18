@@ -172,26 +172,12 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	grid->setContentsMargins(20,20,20,20);
 	this->setLayout(grid);
 
-	magnifier_frm = new QFrame(this);
-	magnifier_frm->setVisible(false);
-	magnifier_frm->installEventFilter(this);
-	magnifier_frm->setMouseTracking(true);
-	magnifier_frm->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-
 	int sz = (std::min<int>(qApp->primaryScreen()->size().width(),
 												 qApp->primaryScreen()->size().height()))/2;
 
-	magnifier_frm->setGeometry(0,0,
-														 sz * BaseObjectView::getFontFactor() * BaseObjectView::getScreenDpiFactor(),
-														 sz * BaseObjectView::getFontFactor() * BaseObjectView::getScreenDpiFactor());
-	magnifier_frm->setCursor(Qt::CrossCursor);
-
-	QColor c1, c2;
-	BaseObjectView::getFillStyle(Attributes::ObjSelection, c1, c2);
-	c1.setAlpha(50);
-	magnifier_frm->setStyleSheet(QString("background-color: %1; border: 1px solid %2;")
-															 .arg(c1.name(QColor::HexArgb))
-															 .arg(BaseObjectView::getBorderStyle(Attributes::ObjSelection).color().name(QColor::HexArgb)));
+	magnifier_rect = QRect(0, 0,
+												 sz * BaseObjectView::getFontFactor() * BaseObjectView::getScreenDpiFactor(),
+												 sz * BaseObjectView::getFontFactor() * BaseObjectView::getScreenDpiFactor());
 
 	magnifier_area_lbl = new QLabel(this);
 	magnifier_area_lbl->raise();
@@ -200,7 +186,8 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	magnifier_area_lbl->setStyleSheet(QString("background-color: #C8f0f0f0;\
 										border: 1px solid #C8808080;"));
 	magnifier_area_lbl->setVisible(false);
-	magnifier_area_lbl->setGeometry(magnifier_frm->geometry());
+	magnifier_area_lbl->setGeometry(magnifier_rect);
+
 	magnifier_area_lbl->setCursor(Qt::BlankCursor);
 	magnifier_area_lbl->installEventFilter(this);
 	magnifier_area_lbl->setMouseTracking(true);
@@ -653,15 +640,16 @@ void ModelWidget::resizeEvent(QResizeEvent *)
 
 bool ModelWidget::eventFilter(QObject *object, QEvent *event)
 {
-	QWheelEvent *w_event=dynamic_cast<QWheelEvent *>(event);
-	QKeyEvent *k_event=dynamic_cast<QKeyEvent *>(event);
-	QGraphicsSceneMouseEvent *m_event = dynamic_cast<QGraphicsSceneMouseEvent *>(event);
-
 	//Filters the Wheel event if it is raised by the viewport scrollbars
 	if((object == viewport->horizontalScrollBar() ||
 			object == viewport->verticalScrollBar())
-		 && event->type() == QEvent::Wheel && w_event->modifiers()==Qt::ControlModifier)
+		 && event->type() == QEvent::Wheel)
 	{
+		QWheelEvent *w_event=dynamic_cast<QWheelEvent *>(event);
+
+		if(w_event->modifiers() != Qt::ControlModifier)
+			return false;
+
 		double zoom_inc = round(fabs(w_event->angleDelta().y()/120.0)) * ZoomIncrement;
 
 		if(w_event->angleDelta().y() < 0)
@@ -671,35 +659,18 @@ bool ModelWidget::eventFilter(QObject *object, QEvent *event)
 
 		return true;
 	}
-	else if(event->type() == QEvent::KeyPress && k_event->modifiers()==Qt::AltModifier)
+	else if(object == magnifier_area_lbl && event->type() == QEvent::MouseMove)
 	{
-		this->keyPressEvent(k_event);
+		updateMagnifierArea();
 		return true;
 	}
-	else if((object == magnifier_area_lbl || object == magnifier_frm) &&
-					(event->type() == QEvent::MouseMove || event->type() == QEvent::KeyRelease))
+	else if(object == scene)
 	{
-		if(event->type() == QEvent::MouseMove)
-			updateMagnifierArea();
+		QGraphicsSceneMouseEvent *m_event = dynamic_cast<QGraphicsSceneMouseEvent *>(event);
 
-		return true;
-	}
-	else if(object == magnifier_frm && event->type() == QEvent::MouseButtonPress)
-	{
-		QGraphicsSceneMouseEvent *gm_event = new QGraphicsSceneMouseEvent(QEvent::GraphicsSceneMousePress);
-		QMouseEvent *m_event = dynamic_cast<QMouseEvent *>(event);
+		if(!m_event)
+			return false;
 
-		showMagnifierArea(false);
-		gm_event->setButton(m_event->button());
-		gm_event->setButtons(m_event->buttons());
-		gm_event->setModifiers(m_event->modifiers());
-		gm_event->setScenePos(viewport->mapToScene(viewport->mapFromGlobal(QCursor::pos())));
-		qApp->postEvent(scene, gm_event);
-
-		return true;
-	}
-	else if(object == scene && m_event)
-	{
 		if(event->type() == QEvent::GraphicsSceneMouseMove)
 		{
 			emit s_sceneInteracted(m_event->scenePos());
@@ -736,10 +707,9 @@ bool ModelWidget::eventFilter(QObject *object, QEvent *event)
 
 			return true;
 		}
-		else if(m_event->button() == Qt::NoButton && event->type() == QEvent::GraphicsSceneMouseMove)
+		else if(m_event->button() == Qt::NoButton && event->type() == QEvent::GraphicsSceneMouseMove && magnifier_area_lbl->isVisible())
 		{
-			if(magnifier_frm->isVisible())
-				updateMagnifierArea();
+			updateMagnifierArea();
 		}
 		//Activating the panning mode
 		else if(m_event->button() == Qt::MiddleButton && event->type() == QEvent::GraphicsSceneMousePress)
@@ -783,7 +753,7 @@ void ModelWidget::keyPressEvent(QKeyEvent *event)
 	}
 	else if(event->key() == Qt::Key_F9 && current_zoom < 1)
 	{
-		showMagnifierArea(!magnifier_frm->isVisible());
+		showMagnifierArea(!magnifier_area_lbl->isVisible());
 	}
 }
 
@@ -805,7 +775,8 @@ void ModelWidget::mousePressEvent(QMouseEvent *event)
 
 void ModelWidget::hideEvent(QHideEvent *)
 {
-	magnifier_area_lbl->hide();
+	//magnifier_area_lbl->hide();
+	showMagnifierArea(false);
 }
 
 bool ModelWidget::saveLastCanvasPosition()
@@ -867,6 +838,9 @@ void ModelWidget::applyZoom(double zoom)
 	zoom_info_lbl->setText(tr("Zoom: %1%").arg(QString::number(this->current_zoom * 100, 'g' , 3)));
 	zoom_info_lbl->setVisible(true);
 	zoom_info_timer.start();
+
+	if(current_zoom >= 1 && magnifier_area_lbl->isVisible())
+		showMagnifierArea(false);
 
 	emit s_zoomModified(zoom);
 }
@@ -3467,7 +3441,7 @@ void ModelWidget::showObjectMenu()
 			tab=dynamic_cast<BaseTableView *>(tab_obj->getParentTable()->getOverlyingObject());
 	}
 
-	magnifier_area_lbl->hide();
+	showMagnifierArea(false);
 	popup_menu.exec(QCursor::pos());
 
 	//If the table object has a parent table
@@ -5458,15 +5432,15 @@ void ModelWidget::updateMagnifierArea()
 	QPixmap pix = QPixmap(size);
 	double cx = magnifier_area_lbl->width() / 2, cy =  magnifier_area_lbl->height() / 2;
 
-	magnifier_frm->setGeometry(0, 0,
-														 magnifier_area_lbl->width() * current_zoom,
-														 magnifier_area_lbl->height() * current_zoom);
-	magnifier_frm->move(pos - QPoint(magnifier_frm->width()/2, magnifier_frm->height()/2));
+	magnifier_rect.setRect(0, 0,
+												 magnifier_area_lbl->width() * current_zoom,
+												 magnifier_area_lbl->height() * current_zoom);
+	magnifier_rect.translate(pos - QPoint(magnifier_rect.width()/2, magnifier_rect.height()/2));
 
-	if(magnifier_frm->geometry().left() <= magnifier_area_lbl->geometry().right())
+	if(magnifier_rect.left() <= magnifier_area_lbl->geometry().right())
 		magnifier_area_lbl->move(viewport->width() - magnifier_area_lbl->width(), magnifier_area_lbl->geometry().top());
 
-	if(magnifier_frm->geometry().right() >= magnifier_area_lbl->geometry().left())
+	if(magnifier_rect.right() >= magnifier_area_lbl->geometry().left())
 		magnifier_area_lbl->move(5, magnifier_area_lbl->geometry().top());
 
 	QPainter p(&pix);
@@ -5494,5 +5468,4 @@ void ModelWidget::showMagnifierArea(bool show)
 		viewport->setCursor(Qt::ArrowCursor);
 
 	magnifier_area_lbl->setVisible(show);
-	magnifier_frm->setVisible(show);
 }

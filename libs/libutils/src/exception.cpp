@@ -277,7 +277,8 @@ QString Exception::messages[Exception::ErrorCount][2]={
 	{"InvConfigParameterName", QT_TR_NOOP("Invalid configuration parameter `%1' assigned to the function `%2'!")},
 	{"EmptyConfigParameterValue", QT_TR_NOOP("Empty value assigned to the configuration parameter `%1' in the function `%2'!")},
 	{"InvGroupRegExpPattern", QT_TR_NOOP("Invalid regexp pattern detected in syntax highlighting group `%1' at file `%2'! Error detected: `%3'")},
-	{"UnsupportedPGVersion", QT_TR_NOOP("Unsupported PostgreSQL version `%1' detected! pgModeler supports only PostgreSQL 10 and above.")}
+	{"UnsupportedPGVersion", QT_TR_NOOP("Unsupported PostgreSQL version `%1' detected! pgModeler supports only PostgreSQL 10 and above.")},
+	{"InvCodeGenerationMode", QT_TR_NOOP("Invalid code generation mode `%1' specified!")},
 };
 
 Exception::Exception()
