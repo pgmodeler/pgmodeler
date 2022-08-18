@@ -277,7 +277,6 @@ class DatabaseModel:  public QObject, public BaseObject {
 		void getRelationshipDependencies(BaseObject *object, std::vector<BaseObject *> &deps, bool inc_indirect_deps);
 		void getSequenceDependencies(BaseObject *object, std::vector<BaseObject *> &deps, bool inc_indirect_deps);
 		void getColumnDependencies(BaseObject *object, std::vector<BaseObject *> &deps, bool inc_indirect_deps);
-		void getConstraintDependencies(BaseObject *object, std::vector<BaseObject *> &deps, bool inc_indirect_deps);
 		void getTriggerDependencies(BaseObject *object, std::vector<BaseObject *> &deps, bool inc_indirect_deps);
 		void getIndexDependencies(BaseObject *object, std::vector<BaseObject *> &deps, bool inc_indirect_deps);
 		void getPolicyDependencies(BaseObject *object, std::vector<BaseObject *> &deps, bool inc_indirect_deps);
@@ -510,6 +509,14 @@ class DatabaseModel:  public QObject, public BaseObject {
 
 		//! \brief Returns the code definition only for the database (excluding the definition of the other objects)
 		QString __getCodeDefinition(unsigned def_type);
+
+		/*! \brief Returns the code definition for the specified object.
+		 *  This method receives the code generation mode option which can be:
+		 *  OriginalSql: generates only the original SQL code of the object.
+		 *  DependenciesSql: generates the original code plus all dependencies needed to properly create the object.
+		 *  ChildrenSql: generates the original code plus all object's children SQL code. This option is used only by schemas, tables and views.
+		 */
+		QString getSQLDefinition(BaseObject *object, unsigned code_gen_mode = OriginalSql);
 
 		/*! \brief Returns the creation order of objects in each definition type (SQL or XML).
 

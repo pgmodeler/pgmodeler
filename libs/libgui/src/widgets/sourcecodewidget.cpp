@@ -131,29 +131,7 @@ void SourceCodeWidget::generateSourceCode(int)
 			}
 			else
 			{
-				if(code_options_cmb->currentIndex()==OriginalSql)
-					sqlcode_txt->setPlainText(object->getCodeDefinition(SchemaParser::SqlDefinition));
-				else
-				{
-					std::vector<BaseObject *> objs=model->getCreationOrder(object, code_options_cmb->currentIndex()==ChildrenSql);
-
-					for(BaseObject *obj : objs)
-						aux_def+=obj->getCodeDefinition(SchemaParser::SqlDefinition);
-				}
-
-				if(!aux_def.isEmpty())
-				{
-					aux_def=tr("-- NOTE: the code below contains the SQL for the selected object\n\
--- as well for its dependencies and children (if applicable).\n\
--- \n\
--- This feature is only a convinience in order to permit you to test\n\
--- the whole object's SQL definition at once.\n\
--- \n\
--- When exporting or generating the SQL for the whole database model\n\
--- all objects will be placed at their original positions.\n\n\n") + aux_def;
-
-					sqlcode_txt->setPlainText(sqlcode_txt->toPlainText() + aux_def);
-				}
+				sqlcode_txt->setPlainText(model->getSQLDefinition(object, static_cast<unsigned>(code_options_cmb->currentIndex())));
 			}
 
 #ifdef DEMO_VERSION
