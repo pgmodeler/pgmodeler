@@ -277,6 +277,7 @@ class DatabaseModel:  public QObject, public BaseObject {
 		void getRelationshipDependencies(BaseObject *object, std::vector<BaseObject *> &deps, bool inc_indirect_deps);
 		void getSequenceDependencies(BaseObject *object, std::vector<BaseObject *> &deps, bool inc_indirect_deps);
 		void getColumnDependencies(BaseObject *object, std::vector<BaseObject *> &deps, bool inc_indirect_deps);
+		void getConstraintDependencies(BaseObject *object, std::vector<BaseObject *> &deps, bool inc_indirect_deps);
 		void getTriggerDependencies(BaseObject *object, std::vector<BaseObject *> &deps, bool inc_indirect_deps);
 		void getIndexDependencies(BaseObject *object, std::vector<BaseObject *> &deps, bool inc_indirect_deps);
 		void getPolicyDependencies(BaseObject *object, std::vector<BaseObject *> &deps, bool inc_indirect_deps);

@@ -60,7 +60,7 @@ void ModelExportHelper::setIgnoredErrors(const QStringList &err_codes)
 	ignored_errors.removeDuplicates();
 }
 
-void ModelExportHelper::exportToSQL(DatabaseModel *db_model, const QString &filename, const QString &pgsql_ver, bool split)
+void ModelExportHelper::exportToSQL(DatabaseModel *db_model, const QString &filename, const QString &pgsql_ver, bool split, unsigned code_gen_mode)
 {
 	if(!db_model)
 		throw Exception(ErrorCode::AsgNotAllocattedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -83,7 +83,7 @@ void ModelExportHelper::exportToSQL(DatabaseModel *db_model, const QString &file
 		}
 		else
 		{
-			db_model->saveSplitSQLDefinition(filename);
+			db_model->saveSplitSQLDefinition(filename, code_gen_mode);
 			emit s_progressUpdated(100, tr("SQL files successfully written in `%1'.").arg(filename), ObjectType::BaseObject);
 		}
 

@@ -8218,7 +8218,7 @@ void DatabaseModel::saveSplitSQLDefinition(const QString &path, unsigned code_ge
 			else
 				buffer.append(obj->getCodeDefinition(SchemaParser::SqlDefinition).toUtf8());*/
 
-			if(obj->getObjectType() == ObjectType::Database)
+			if(code_gen_mode == OriginalSql)
 			{
 				if(obj == this)
 					buffer.append(this->__getCodeDefinition(SchemaParser::SqlDefinition).toUtf8());
@@ -8227,29 +8227,20 @@ void DatabaseModel::saveSplitSQLDefinition(const QString &path, unsigned code_ge
 			}
 			else
 			{
-				if (code_gen_mode == OriginalSql)
+				std::vector<BaseObject *> objs = getCreationOrder(obj, code_gen_mode == ChildrenSql);
+				QString aux_def;
+
+				for(auto &obj : objs)
 				{
 					if(obj == this)
-						buffer.append(this->__getCodeDefinition(SchemaParser::SqlDefinition).toUtf8());
+						aux_def += this->__getCodeDefinition(SchemaParser::SqlDefinition).toUtf8();
 					else
-						buffer.append(obj->getCodeDefinition(SchemaParser::SqlDefinition).toUtf8());
+						aux_def += obj->getCodeDefinition(SchemaParser::SqlDefinition).toUtf8();
 				}
-				else
+
+				if(!aux_def.isEmpty())
 				{
-					std::vector<BaseObject *> objs = getCreationOrder(obj, code_gen_mode == ChildrenSql);
-					QString aux_def;
-
-					for(auto &obj : objs)
-					{
-						if(obj == this)
-							aux_def += this->__getCodeDefinition(SchemaParser::SqlDefinition).toUtf8();
-						else
-							aux_def += obj->getCodeDefinition(SchemaParser::SqlDefinition).toUtf8();
-					}
-
-					if(!aux_def.isEmpty())
-					{
-						aux_def = tr("-- NOTE: the code below contains the SQL for the selected object\n\
+					aux_def = tr("-- NOTE: the code below contains the SQL for the selected object\n\
 -- as well for its dependencies and children (if applicable).\n\
 -- \n\
 -- This feature is only a convinience in order to permit you to test\n\
@@ -8258,8 +8249,7 @@ void DatabaseModel::saveSplitSQLDefinition(const QString &path, unsigned code_ge
 -- When exporting or generating the SQL for the whole database model\n\
 -- all objects will be placed at their original positions.\n\n\n") + aux_def;
 
-						buffer.append(aux_def.toUtf8());
-					}
+					buffer.append(aux_def.toUtf8());
 				}
 			}
 
@@ -8587,6 +8577,21 @@ void DatabaseModel::getColumnDependencies(BaseObject *object, std::vector<BaseOb
 		getObjectDependecies(sequence, deps, inc_indirect_deps);
 }
 
+void DatabaseModel::getConstraintDependencies(BaseObject *object, std::vector<BaseObject *> &deps, bool inc_indirect_deps)
+{
+	Constraint *constr=dynamic_cast<Constraint *>(object);
+
+	getObjectDependecies(constr->getParentTable(), deps, inc_indirect_deps);
+	getObjectDependecies(constr->getReferencedTable(), deps, inc_indirect_deps);
+
+	for(auto &excl_elem : constr->getExcludeElements())
+	{
+		getObjectDependecies(excl_elem.getOperator(), deps, inc_indirect_deps);
+		getObjectDependecies(excl_elem.getOperatorClass(), deps, inc_indirect_deps);
+		getObjectDependecies(excl_elem.getCollation(), deps, inc_indirect_deps);
+	}
+}
+
 void DatabaseModel::getTriggerDependencies(BaseObject *object, std::vector<BaseObject *> &deps, bool inc_indirect_deps)
 {
 	Trigger *trig=dynamic_cast<Trigger *>(object);
@@ -8871,6 +8876,9 @@ void DatabaseModel::getObjectDependecies(BaseObject *object, std::vector<BaseObj
 
 			if(obj_type==ObjectType::Column)
 				getColumnDependencies(object, deps, inc_indirect_deps);
+
+			if(obj_type==ObjectType::Constraint)
+				getConstraintDependencies(object, deps, inc_indirect_deps);
 
 			if(obj_type==ObjectType::Trigger)
 				getTriggerDependencies(object, deps, inc_indirect_deps);
