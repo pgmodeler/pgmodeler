@@ -11871,13 +11871,13 @@ void DatabaseModel::getDataDictionary(attribs_map &datadict, bool browsable, boo
 	BaseObject *object = nullptr;
 	std::vector<BaseObject *> objects;
 	std::map<QString, BaseObject *> objs_map;
-	QString styles, id, index, items, buffer;
+	QString styles, id, dict_index, items, buffer;
 	attribs_map attribs, aux_attribs;
-	QStringList index_list;
+	QStringList dict_index_list;
 	QString dict_sch_file = GlobalAttributes::getSchemaFilePath(GlobalAttributes::DataDictSchemaDir, GlobalAttributes::DataDictSchemaDir),
 			style_sch_file = GlobalAttributes::getSchemaFilePath(GlobalAttributes::DataDictSchemaDir, Attributes::Styles),
 			item_sch_file = GlobalAttributes::getSchemaFilePath(GlobalAttributes::DataDictSchemaDir, Attributes::Item),
-			index_sch_file = GlobalAttributes::getSchemaFilePath(GlobalAttributes::DataDictSchemaDir, Attributes::Index);
+			dict_idx_sch_file = GlobalAttributes::getSchemaFilePath(GlobalAttributes::DataDictSchemaDir, Attributes::DataDictIndex);
 
 	objects.assign(tables.begin(), tables.end());
 	objects.insert(objects.end(), foreign_tables.begin(), foreign_tables.end());
@@ -11900,16 +11900,16 @@ void DatabaseModel::getDataDictionary(attribs_map &datadict, bool browsable, boo
 
 		id = obj->getSignature().remove(QChar('"'));
 		objs_map[id] = obj;
-		index_list.push_back(id);
+		dict_index_list.push_back(id);
 	}
 
-	index_list.sort();
+	dict_index_list.sort();
 	datadict.clear();
 
 	// Generates the the stylesheet
 	styles = schparser.getCodeDefinition(style_sch_file, attribs);
 	attribs[Attributes::Styles] = "";
-	attribs[Attributes::Index] = "";
+	attribs[Attributes::DataDictIndex] = "";
 	attribs[Attributes::Split] = split ? Attributes::True : "";
 	attribs[Attributes::Year] = QString::number(QDate::currentDate().year());
 
@@ -11926,9 +11926,9 @@ void DatabaseModel::getDataDictionary(attribs_map &datadict, bool browsable, boo
 		object = itr.second;
 
 		// Generate the individual data dictionaries
-		aux_attribs[Attributes::Index] = browsable ? Attributes::True : "";
-		aux_attribs[Attributes::Previous] = idx - 1 >= 0 ? index_list.at(idx - 1) : "";
-		aux_attribs[Attributes::Next] = (++idx <= index_list.size() - 1) ? index_list.at(idx) : "";
+		aux_attribs[Attributes::DataDictIndex] = browsable ? Attributes::True : "";
+		aux_attribs[Attributes::Previous] = idx - 1 >= 0 ? dict_index_list.at(idx - 1) : "";
+		aux_attribs[Attributes::Next] = (++idx <= dict_index_list.size() - 1) ? dict_index_list.at(idx) : "";
 		attribs[Attributes::Objects] += dynamic_cast<BaseTable *>(object)->getDataDictionary(split, aux_attribs);
 
 		// If the generation is configured to be splitted we generate a complete HTML file for the current table
@@ -11952,7 +11952,7 @@ void DatabaseModel::getDataDictionary(attribs_map &datadict, bool browsable, boo
 		idx_attribs[Attributes::Year] = QString::number(QDate::currentDate().year());
 
 		// Generating the index items
-		for(auto &item : index_list)
+		for(auto &item : dict_index_list)
 		{
 			aux_attribs[Attributes::Split] = attribs[Attributes::Split];
 			aux_attribs[Attributes::Item] = item;
@@ -11963,15 +11963,15 @@ void DatabaseModel::getDataDictionary(attribs_map &datadict, bool browsable, boo
 		idx_attribs[Attributes::Split] = attribs[Attributes::Split];
 
 		schparser.ignoreEmptyAttributes(true);
-		index = schparser.getCodeDefinition(index_sch_file, idx_attribs);
+		dict_index = schparser.getCodeDefinition(dict_idx_sch_file, idx_attribs);
 	}
 
 	// If the data dictionary is browsable and splitted the index goes into a separated file
 	if(split && browsable)
-		datadict[Attributes::Index + QString(".html")] = index;
+		datadict[Attributes::Index + QString(".html")] = dict_index;
 	else if(!split)
 	{
-		attribs[Attributes::Index] = index;
+		attribs[Attributes::DataDictIndex] = dict_index;
 		schparser.ignoreEmptyAttributes(true);
 		datadict[Attributes::Database] = schparser.getCodeDefinition(dict_sch_file, attribs);
 	}

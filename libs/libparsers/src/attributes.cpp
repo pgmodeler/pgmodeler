@@ -143,6 +143,7 @@ namespace Attributes {
 	Dark("dark"),
 	Database("database"),
 	DataDirectory("data-directory"),
+	DataDictIndex("datadictidx"),
 	Date("date"),
 	DbModel("dbmodel"),
 	DdlEndToken("-- ddl-end --"),

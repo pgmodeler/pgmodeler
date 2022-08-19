@@ -116,7 +116,7 @@ $br [ ] </tbody>
 $br </table> $br
 
 
-%if {index} %then
+%if {datadictidx} %then
 	$br <div>
 
 	%if {split} %and {previous} %then

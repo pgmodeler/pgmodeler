@@ -18,8 +18,8 @@
 </head> $br
 <body> $br
 
-%if %not {split} %and {index} %then
-	{index}
+%if %not {split} %and {datadictidx} %then
+	{datadictidx}
 %end
 
 {objects}

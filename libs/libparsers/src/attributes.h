@@ -159,6 +159,7 @@ namespace Attributes {
 	Dark,
 	Database,
 	DataDirectory,
+	DataDictIndex,
 	Date,
 	DbModel,
 	DdlEndToken,
