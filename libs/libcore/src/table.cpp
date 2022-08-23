@@ -368,6 +368,11 @@ QString Table::__getCodeDefinition(unsigned def_type, bool incl_rel_added_objs)
 	return BaseObject::__getCodeDefinition(def_type);
 }
 
+QString Table::getDataDictionary(bool split, attribs_map extra_attribs)
+{
+
+}
+
 QString Table::getCodeDefinition(unsigned def_type)
 {
 	QString code_def=getCachedCode(def_type, false);

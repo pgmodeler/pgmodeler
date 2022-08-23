@@ -8,109 +8,135 @@
 	%set {colspan} 5
 %end
 
+%set {spc} $br [ ]
+
 
 <table $sp id="{schema}.{name}" $sp class="{type-class}">
-$br [ ] <caption [ class="tab-name"]>
-$br [ ] <em>{schema}</em>.<strong>{name}</strong>
-$br [ ] <span $sp class="type-label">{type}</span>
-$br [ ] </caption>
-$br [ ] <thead>
+{spc} <caption [ class="tab-name"]>
+{spc} <em>{schema}</em>.<strong>{name}</strong>
+{spc} <span $sp class="type-label">{type}</span>
+{spc} </caption>
+{spc} <thead>
 
 %if {comment} %then
-	$br [ ] <tr>
-	$br [ ] <td $sp colspan="{colspan}" $sp class="tab-description">
+	{spc} <tr>
+	{spc} <td $sp colspan="{colspan}" $sp class="tab-description">
 	{comment}
-	$br [ ] </td>
-	$br [ ] </tr>
+	{spc} </td>
+	{spc} </tr>
 %end
 
 %if {columns} %then
-	$br [ ] <tr>
-	$br [ ] <th>Name</th>
-	$br [ ] <th>[Data type]</th>
+	{spc} <tr>
+	{spc} <th> Name </th>
+	{spc} <th>[Data type]</th>
 
 	%if ({type-class} == "table") %then
-		$br [ ] <th>PK</th>
-		$br [ ] <th>FK</th>
-		$br [ ] <th>UQ</th>
+		{spc} <th>PK</th>
+		{spc} <th>FK</th>
+		{spc} <th>UQ</th>
 	%end
 
-	$br [ ] <th>[Not null]</th>
-	$br [ ] <th>[Default value]</th>
-	$br [ ] <th>Description</th>
-	$br [ ] </tr>
+	{spc} <th>[Not null]</th>
+	{spc} <th>[Default value]</th>
+	{spc} <th> Description </th>
+	{spc} </tr>
 %else
-	$br [ ] <tr>
-	$br [ ] <th $sp colspan="{colspan}">
-	$br [ ] <em>[No columns]</em>
-	$br [ ] </th>
-	$br [ ] </tr>
+	{spc} <tr>
+	{spc} <th $sp colspan="{colspan}">
+	{spc} <em>[No columns]</em>
+	{spc} </th>
+	{spc} </tr>
 %end
 
-$br [ ] </thead>
-$br [ ] <tbody>
+{spc} </thead>
+{spc} <tbody> 
 
 %if {columns} %then
 	{columns}
 %end
 
 %if {constraints} %then
-	$br [ ] <tr>
-	$br [ ] <td $sp colspan="{colspan}" $sp class="nested-tab-parent">
-	$br [ ] <table $sp class="nested-tab">
-	$br [ ] <tr>
-	$br [ ] <td [ class="title" colspan="6"]>Constraints</td>
-	$br [ ] </tr>
-	$br [ ] <tr>
-	$br [ ] <td [ class="title"]>Name</td>
-	$br [ ] <td [ class="title"]>Type</td>
-	$br [ ] <td [ class="title"]>Column(s)</td>
-	$br [ ] <td [ class="title"]>References</td>
-	$br [ ] <td [ class="title"]>Expression</td>
-	$br [ ] <td [ class="title"]>Description</td>
-	$br [ ] </tr>
+	{spc} <tr>
+	{spc} <td $sp colspan="{colspan}" $sp class="nested-tab-parent">
+	{spc} <table $sp class="nested-tab">
+	{spc} <tr>
+	{spc} <td [ class="title" colspan="6"]> Constraints </td>
+	{spc} </tr>
+	{spc} <tr>
+	{spc} <td [ class="title"]> Name </td>
+	{spc} <td [ class="title"]> Type </td>
+	{spc} <td [ class="title"]> Column(s) </td>
+	{spc} <td [ class="title"]> References </td>
+	{spc} <td [ class="title"]> Expression </td>
+	{spc} <td [ class="title"]> Description </td>
+	{spc} </tr>
 
 	{constraints}
 
-	$br [ ] </table>
-	$br [ ] </td>
-	$br [ ] </tr>
+	{spc} </table>
+	{spc} </td>
+	{spc} </tr>
 %end
 
-$br [ ] </tbody>
 
+%if {indexes} %then
+	{spc} <tr>
+	{spc} <td $sp colspan="{colspan}" $sp class="nested-tab-parent">
+	{spc} <table $sp class="nested-tab">
+	{spc} <tr>
+	{spc} <td [ class="title" colspan="5"]> Indexes </td>
+	{spc} </tr>
+	{spc} <tr>
+	{spc} <td [ class="title"]> Name </td>
+	{spc} <td [ class="title"]> Type </td>
+	{spc} <td [ class="title"]> Column(s) </td>
+	{spc} <td [ class="title"]> Expression(s) </td>
+	{spc} <td [ class="title"]> Predicate </td>
+	{spc} <td [ class="title"]> Description </td>
+	{spc} </tr>
+
+	{constraints}
+
+	{spc} </table>
+	{spc} </td>
+	{spc} </tr>
+%end
+
+
+{spc} </tbody>
 
 %if {inherit} %or {partitioned-table} %or {partition-tables} %then
-	$br [ ] <tfoot>
-	$br [ ] <tr>
-	$br [ ] <td $sp colspan="{colspan}" $sp class="nested-tab-parent">
-	$br [ ] <table $sp class="nested-tab">
+	{spc} <tfoot>
+	{spc} <tr>
+	{spc} <td $sp colspan="{colspan}" $sp class="nested-tab-parent">
+	{spc} <table $sp class="nested-tab">
 
 	%if {inherit} %then
-		$br [ ] <tr>
-		$br [ ] <td $sp class="label">Inherits:</td>
-		$br [ ] <td> {inherit} </td>
-		$br [ ] </tr>
+		{spc} <tr>
+		{spc} <td $sp class="label"> Inherits: </td>
+		{spc} <td> {inherit} </td>
+		{spc} </tr>
 	%end
 
 	%if {partitioned-table} %then
-		$br [ ] <tr>
-		$br [ ] <td $sp class="label">[Partition of:]</td>
-		$br [ ] <td>{partitioned-table}</td>
-		$br [ ] </tr>
+		{spc} <tr>
+		{spc} <td $sp class="label">[Partition of:]</td>
+		{spc} <td> {partitioned-table} </td>
+		{spc} </tr>
 	%end
 
 	%if {partition-tables} %then
-		$br [ ] <tr>
-		$br [ ] <td $sp class="label">[Partitions:]</td>
-		$br [ ] <td>{partition-tables}</td>
-		$br [ ] </tr>
+		{spc} <tr>
+		{spc} <td $sp class="label">[Partitions:]</td>
+		{spc} <td> {partition-tables} </td>
+		{spc} </tr>
 	%end
 
-	$br [ ] </table>
-	$br [ ] </td>
-	$br [ ] </tr>
-	$br [ ] </tfoot> $br
+	{spc} </table>
+	{spc} </td>
+	{spc} </tr>
+	{spc} </tfoot> $br
 %end
 
 $br </table> $br
@@ -120,7 +146,7 @@ $br </table> $br
 	$br <div>
 
 	%if {split} %and {previous} %then
-		$br [ ] <a $sp href="{previous}.html" $sp class="nav-link"> &larr; $sp {previous}</a>
+		{spc} <a $sp href="{previous}.html" $sp class="nav-link"> &larr; $sp {previous}</a>
 	%end
 
 	%if {split} %then
@@ -132,7 +158,7 @@ $br </table> $br
 	[&uarr; Index</a>]
 
 	%if {split} %and {next} %then
-		$br [ ] <a $sp href="{next}.html" $sp class="nav-link"> {next} $sp &rarr;</a>
+		{spc} <a $sp href="{next}.html" $sp class="nav-link"> {next} $sp &rarr; </a>
 	%end
 
 	$br </div> $br
