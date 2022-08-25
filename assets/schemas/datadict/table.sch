@@ -85,7 +85,7 @@
 	{spc} <td $sp colspan="{colspan}" $sp class="nested-tab-parent">
 	{spc} <table $sp class="nested-tab">
 	{spc} <tr>
-	{spc} <td [ class="title" colspan="5"]> Indexes </td>
+	{spc} <td [ class="title" colspan="6"]> Indexes </td>
 	{spc} </tr>
 	{spc} <tr>
 	{spc} <td [ class="title"]> Name </td>
@@ -96,7 +96,7 @@
 	{spc} <td [ class="title"]> Description </td>
 	{spc} </tr>
 
-	{constraints}
+	{indexes}
 
 	{spc} </table>
 	{spc} </td>

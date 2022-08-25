@@ -370,7 +370,43 @@ QString Table::__getCodeDefinition(unsigned def_type, bool incl_rel_added_objs)
 
 QString Table::getDataDictionary(bool split, attribs_map extra_attribs)
 {
+	Index *index = nullptr;
+	attribs_map attribs;
+	QStringList exprs, col_names;
 
+	extra_attribs[Attributes::Indexes] = "";
+
+	for(auto &obj : indexes)
+	{
+		index = dynamic_cast<Index *>(obj);
+
+		attribs[Attributes::Name] = index->getName();
+		attribs[Attributes::Type] = ~index->getIndexingType();
+		attribs[Attributes::Comment] = index->getComment();
+		attribs[Attributes::Predicate] = index->getPredicate();
+
+		for(auto &elem : index->getIndexElements())
+		{
+			if(elem.getColumn())
+				col_names.append(elem.getColumn()->getName());
+			else
+				exprs.append(elem.getExpression());
+		}
+
+		attribs[Attributes::Columns] = col_names.join(", ");
+		attribs[Attributes::Expressions] = exprs.join(", ");
+		col_names.clear();
+		exprs.clear();
+
+		schparser.ignoreEmptyAttributes(true);
+		extra_attribs[Attributes::Indexes] += schparser.getCodeDefinition(GlobalAttributes::getSchemaFilePath(
+																																				GlobalAttributes::DataDictSchemaDir,
+																																				Attributes::Index),
+																																			attribs);
+		attribs.clear();
+	}
+
+	return PhysicalTable::getDataDictionary(split, extra_attribs);
 }
 
 QString Table::getCodeDefinition(unsigned def_type)
