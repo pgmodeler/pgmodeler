@@ -63,6 +63,7 @@ namespace Attributes {
 	AttribsPage,
 	AttribsPerPage,
 	Attribute,
+	Attributes,
 	AutoBrowseDb,
 	AutoSaveInterval,
 	BackgroundColor,

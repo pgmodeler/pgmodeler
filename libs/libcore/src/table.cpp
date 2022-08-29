@@ -374,8 +374,6 @@ QString Table::getDataDictionary(bool split, attribs_map extra_attribs)
 	attribs_map attribs;
 	QStringList exprs, col_names;
 
-	extra_attribs[Attributes::Indexes] = "";
-
 	for(auto &obj : indexes)
 	{
 		index = dynamic_cast<Index *>(obj);

@@ -65,7 +65,6 @@ class Index: public TableObject{
 		Concurrent=1,
 		FastUpdate=2,
 		Buffering=3;
-
 		Index();
 
 		//! \brief Adds an element to the index using an column

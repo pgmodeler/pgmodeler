@@ -48,6 +48,7 @@ namespace Attributes {
 	AttribsPage("attribs-page"),
 	AttribsPerPage("attribs-per-page"),
 	Attribute("attribute"),
+	Attributes("attributes"),
 	AutoBrowseDb("auto-browse-db"),
 	AutoSaveInterval("autosave-interval"),
 	BackgroundColor("background-color"),

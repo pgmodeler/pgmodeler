@@ -1139,42 +1139,48 @@ QString View::getDataDictionary(bool split, attribs_map extra_attribs)
 	attribs[Attributes::Name] = obj_name;
 	attribs[Attributes::Schema] = schema ? schema->getName() : "";
 	attribs[Attributes::Comment] = comment;
-	attribs[Attributes::Columns] = "";
 
 	aux_attrs[Attributes::Split] = attribs[Attributes::Split];
 
-	for(auto &ref : references)
+	try
 	{
-		if(ref.getTable())
+		for(auto &ref : references)
 		{
-			aux_attrs[Attributes::Name] = ref.getTable()->getSignature().remove(QChar('"'));
-			tab_names.push_back(schparser.getCodeDefinition(link_dict_file, aux_attrs));
+			if(ref.getTable())
+			{
+				aux_attrs[Attributes::Name] = ref.getTable()->getSignature().remove(QChar('"'));
+				tab_names.push_back(schparser.getCodeDefinition(link_dict_file, aux_attrs));
+			}
+
+			for(auto &tab : ref.getReferencedTables())
+			{
+				aux_attrs[Attributes::Name] = tab->getSignature().remove(QChar('"'));
+				tab_names.push_back(schparser.getCodeDefinition(link_dict_file, aux_attrs));
+			}
 		}
 
-		for(auto &tab : ref.getReferencedTables())
-		{
-			aux_attrs[Attributes::Name] = tab->getSignature().remove(QChar('"'));
-			tab_names.push_back(schparser.getCodeDefinition(link_dict_file, aux_attrs));
-		}
-	}
-
-	tab_names.removeDuplicates();
-	attribs[Attributes::References] = tab_names.join(", ");
-	aux_attrs.clear();
-
-	for(auto &col : columns)
-	{
-		aux_attrs[Attributes::Parent] = getSchemaName();
-		aux_attrs[Attributes::Name] = col.name;
-		aux_attrs[Attributes::Type] = col.type;
-
-		schparser.ignoreUnkownAttributes(true);
-		attribs[Attributes::Columns] += schparser.getCodeDefinition(col_dict_file, aux_attrs);
+		tab_names.removeDuplicates();
+		attribs[Attributes::References] = tab_names.join(", ");
 		aux_attrs.clear();
-	}
 
-	schparser.ignoreEmptyAttributes(true);
-	return schparser.getCodeDefinition(view_dict_file, attribs);
+		for(auto &col : columns)
+		{
+			aux_attrs[Attributes::Parent] = getSchemaName();
+			aux_attrs[Attributes::Name] = col.name;
+			aux_attrs[Attributes::Type] = col.type;
+
+			schparser.ignoreUnkownAttributes(true);
+			attribs[Attributes::Columns] += schparser.getCodeDefinition(col_dict_file, aux_attrs);
+			aux_attrs.clear();
+		}
+
+		schparser.ignoreEmptyAttributes(true);
+		return schparser.getCodeDefinition(view_dict_file, attribs);
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorCode(), __PRETTY_FUNCTION__, __FILE__, __LINE__, &e);
+	}
 }
 
 QString View::getAlterDefinition(BaseObject *object)

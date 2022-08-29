@@ -344,11 +344,10 @@ void Trigger::setBasicAttributes(unsigned def_type)
 {
 	QString str_aux,
 			attribs[4]={Attributes::InsEvent, Attributes::DelEvent,
-						Attributes::TruncEvent, Attributes::UpdEvent },
+									Attributes::TruncEvent, Attributes::UpdEvent },
 			sql_event[4]={"INSERT OR ", "DELETE OR ", "TRUNCATE OR ", "UPDATE   "};
 	unsigned count, i, i1, event_types[4]={EventType::OnInsert, EventType::OnDelete,
 										   EventType::OnTruncate, EventType::OnUpdate};
-
 
 	setArgumentAttribute(def_type);
 
