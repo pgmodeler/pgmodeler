@@ -199,6 +199,8 @@ class Trigger: public TableObject{
 		void validateTrigger();
 
 		virtual QString getSignature(bool format=true) final;
+
+		QString getDataDictionary(const attribs_map &extra_attribs);
 };
 
 #endif

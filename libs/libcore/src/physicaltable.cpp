@@ -1742,21 +1742,14 @@ unsigned PhysicalTable::getMaxObjectCount()
 	return max;
 }
 
-QString PhysicalTable::getDataDictionary(bool split, attribs_map extra_attribs)
+QString PhysicalTable::getDataDictionary(bool split, const attribs_map &extra_attribs)
 {
 	Column *column = nullptr;
-	Constraint *constr = nullptr;
-	Trigger *trig = nullptr;
 	attribs_map attribs, aux_attrs;
-	QStringList tab_names, col_names, aux_list, attr_names = { Attributes::Columns, Attributes::Constraints,
-																														 Attributes::Triggers, Attributes::Indexes };
-	std::vector<EventType> events = {EventType::OnInsert, EventType::OnDelete,
-																	 EventType::OnTruncate, EventType::OnUpdate };
-	QString check_mark = QString("&#10003;"),
-			tab_dict_file = GlobalAttributes::getSchemaFilePath(GlobalAttributes::DataDictSchemaDir, BaseObject::getSchemaName(ObjectType::Table)),
-			col_dict_file = GlobalAttributes::getSchemaFilePath(GlobalAttributes::DataDictSchemaDir, BaseObject::getSchemaName(ObjectType::Column)),
-			constr_dict_file = GlobalAttributes::getSchemaFilePath(GlobalAttributes::DataDictSchemaDir, BaseObject::getSchemaName(ObjectType::Constraint)),
-			trig_dict_file = GlobalAttributes::getSchemaFilePath(GlobalAttributes::DataDictSchemaDir, BaseObject::getSchemaName(ObjectType::Trigger)),
+	QStringList tab_names, aux_list, attr_names = { Attributes::Columns, Attributes::Constraints,
+																									Attributes::Triggers, Attributes::Indexes };
+
+	QString tab_dict_file = GlobalAttributes::getSchemaFilePath(GlobalAttributes::DataDictSchemaDir, BaseObject::getSchemaName(ObjectType::Table)),
 			link_dict_file = GlobalAttributes::getSchemaFilePath(GlobalAttributes::DataDictSchemaDir, Attributes::Link),
 			objs_dict_file = GlobalAttributes::getSchemaFilePath(GlobalAttributes::DataDictSchemaDir, Attributes::Objects);
 
@@ -1807,85 +1800,26 @@ QString PhysicalTable::getDataDictionary(bool split, attribs_map extra_attribs)
 		for(auto &obj : columns)
 		{
 			column = dynamic_cast<Column *>(obj);
-
-			aux_attrs[Attributes::Parent] = getSchemaName();
-			aux_attrs[Attributes::Name] = column->getName();
-			aux_attrs[Attributes::Type] = *column->getType();
-			aux_attrs[Attributes::DefaultValue] = column->getSequence() ? Column::NextValFuncTmpl.arg(column->getSequence()->getSignature()) : column->getDefaultValue();
-			aux_attrs[Attributes::Comment] = column->getComment();
-			aux_attrs[Attributes::NotNull] = column->isNotNull() ? check_mark : "";
-			aux_attrs[Attributes::PkConstr] = isConstraintRefColumn(column, ConstraintType::PrimaryKey) ? check_mark : "";
-			aux_attrs[Attributes::UqConstr] = isConstraintRefColumn(column, ConstraintType::Unique) ? check_mark : "";
-			aux_attrs[Attributes::FkConstr] = isConstraintRefColumn(column, ConstraintType::ForeignKey) ? check_mark : "";
-
-			schparser.ignoreEmptyAttributes(true);
-			attribs[Attributes::Columns] += schparser.getCodeDefinition(col_dict_file, aux_attrs);
-			aux_attrs.clear();
+			aux_attrs[Attributes::PkConstr] = isConstraintRefColumn(column, ConstraintType::PrimaryKey) ? Column::DataDictCheckMark : "";
+			aux_attrs[Attributes::UqConstr] = isConstraintRefColumn(column, ConstraintType::Unique) ? Column::DataDictCheckMark : "";
+			aux_attrs[Attributes::FkConstr] = isConstraintRefColumn(column, ConstraintType::ForeignKey) ? Column::DataDictCheckMark : "";
+			attribs[Attributes::Columns] += column->getDataDictionary(aux_attrs);
 		}
 
 		for(auto &obj : constraints)
 		{
-			constr = dynamic_cast<Constraint *>(obj);
-
-			aux_attrs[Attributes::Split] = attribs[Attributes::Split];
-			aux_attrs[Attributes::Name] = constr->getName();
-			aux_attrs[Attributes::Type] = ~constr->getConstraintType();
-			aux_attrs[Attributes::Comment] = constr->getComment();
-			aux_attrs[Attributes::RefTable] = constr->getReferencedTable() ? constr->getReferencedTable()->getSignature().remove(QChar('"')) : "";
-			aux_attrs[Attributes::Expression] = constr->getExpression();
-
-			// Retrieving the columns that composes the constraint
-			for(auto &col : constr->getColumns(Constraint::SourceCols))
-				 col_names.push_back(col->getName());
-
-			aux_attrs[Attributes::Columns] = col_names.join(", ");
-			col_names.clear();
-
-			schparser.ignoreEmptyAttributes(true);
-			attribs[Attributes::Constraints] += schparser.getCodeDefinition(constr_dict_file, aux_attrs);
-			aux_attrs.clear();
+			attribs[Attributes::Constraints] +=
+					dynamic_cast<Constraint *>(obj)->getDataDictionary({{ Attributes::Split, attribs[Attributes::Split] }});
 		}
 
 		for(auto &obj : triggers)
 		{
-			trig = dynamic_cast<Trigger *>(obj);
-
-			aux_attrs[Attributes::Split] = attribs[Attributes::Split];
-			aux_attrs[Attributes::Name] = trig->getName();
-			aux_attrs[Attributes::Comment] = trig->getComment();
-			aux_attrs[Attributes::RefTable] = trig->getReferencedTable() ? trig->getReferencedTable()->getSignature().remove(QChar('"')) : "";
-			aux_attrs[Attributes::Function] = trig->getFunction()->getSignature();
-			aux_attrs[Attributes::FiringType] = ~trig->getFiringType();
-			aux_attrs[Attributes::Condition] = trig->getCondition();
-			aux_attrs[Attributes::PerRow] = trig->isExecutePerRow() ? check_mark : "";
-
-			if(trig->isConstraint())
-				aux_list.append(Attributes::Constraint.toUpper());
-
-			aux_list.clear();
-			if(trig->isDeferrable())
-				aux_list.append(Attributes::Deferrable.toUpper() + QString(" (%1)").arg(~trig->getDeferralType()));
-			else
-				aux_list.append("NOT " + Attributes::Deferrable.toUpper());
-
-			aux_attrs[Attributes::Attributes] = aux_list.join(", ");
-
-			aux_list.clear();
-			for(auto &event : events)
-			{
-				if(!trig->isExecuteOnEvent(event))
-					continue;
-
-				aux_list.append(~event);
-			}
-
-			aux_attrs[Attributes::Events] = aux_list.join(", ");
-			schparser.ignoreEmptyAttributes(true);
-			attribs[Attributes::Triggers] += schparser.getCodeDefinition(trig_dict_file, aux_attrs);
-			aux_attrs.clear();
+			attribs[Attributes::Triggers] +=
+					dynamic_cast<Trigger *>(obj)->getDataDictionary({{ Attributes::Split, attribs[Attributes::Split] }});
 		}
 
-		attribs[Attributes::Objects] += schparser.getCodeDefinition(objs_dict_file, attribs);
+		attribs[Attributes::Objects] += schparser.getCodeDefinition(GlobalAttributes::getSchemaFilePath(GlobalAttributes::DataDictSchemaDir,
+																																																		Attributes::Objects), attribs);
 		schparser.ignoreEmptyAttributes(true);
 		return schparser.getCodeDefinition(tab_dict_file, attribs);
 	}

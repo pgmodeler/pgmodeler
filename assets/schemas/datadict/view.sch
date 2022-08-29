@@ -35,8 +35,8 @@
 {spc} </thead>
 {spc} <tbody>
 
-%if {columns} %then
-	{columns}
+%if {objects} %then
+	{objects}
 %end
 
 {spc} </tbody>

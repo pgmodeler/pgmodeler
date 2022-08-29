@@ -165,6 +165,8 @@ class Index: public TableObject{
 
 		//! \brief Returns the non-key view columns (INCLUDE clause) of the index
 		std::vector<SimpleColumn> getSimpleColumns();
+
+		QString getDataDictionary(const attribs_map &extra_attribs = {});
 };
 
 #endif

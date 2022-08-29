@@ -368,43 +368,21 @@ QString Table::__getCodeDefinition(unsigned def_type, bool incl_rel_added_objs)
 	return BaseObject::__getCodeDefinition(def_type);
 }
 
-QString Table::getDataDictionary(bool split, attribs_map extra_attribs)
+QString Table::getDataDictionary(bool split, const attribs_map &extra_attribs)
 {
-	Index *index = nullptr;
-	attribs_map attribs;
-	QStringList exprs, col_names;
-
-	for(auto &obj : indexes)
+	try
 	{
-		index = dynamic_cast<Index *>(obj);
+		attribs_map attribs = extra_attribs;
 
-		attribs[Attributes::Name] = index->getName();
-		attribs[Attributes::Type] = ~index->getIndexingType();
-		attribs[Attributes::Comment] = index->getComment();
-		attribs[Attributes::Predicate] = index->getPredicate();
+		for(auto &obj : indexes)
+			attribs[Attributes::Indexes] +=  dynamic_cast<Index *>(obj)->getDataDictionary();
 
-		for(auto &elem : index->getIndexElements())
-		{
-			if(elem.getColumn())
-				col_names.append(elem.getColumn()->getName());
-			else
-				exprs.append(elem.getExpression());
-		}
-
-		attribs[Attributes::Columns] = col_names.join(", ");
-		attribs[Attributes::Expressions] = exprs.join(", ");
-		col_names.clear();
-		exprs.clear();
-
-		schparser.ignoreEmptyAttributes(true);
-		extra_attribs[Attributes::Indexes] += schparser.getCodeDefinition(GlobalAttributes::getSchemaFilePath(
-																																				GlobalAttributes::DataDictSchemaDir,
-																																				Attributes::Index),
-																																			attribs);
-		attribs.clear();
+		return PhysicalTable::getDataDictionary(split, attribs);
 	}
-
-	return PhysicalTable::getDataDictionary(split, extra_attribs);
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorCode(), __PRETTY_FUNCTION__, __FILE__, __LINE__, &e);
+	}
 }
 
 QString Table::getCodeDefinition(unsigned def_type)

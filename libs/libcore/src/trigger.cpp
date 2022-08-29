@@ -480,3 +480,53 @@ QString Trigger::getSignature(bool format)
 
 	return (QString("%1 ON %2").arg(this->getName(format)).arg(getParentTable()->getSignature(true)));
 }
+
+QString Trigger::getDataDictionary(const attribs_map &extra_attribs)
+{
+	try
+	{
+		attribs_map attribs;
+		QStringList aux_list;
+		std::vector<EventType> events = { EventType::OnInsert, EventType::OnDelete,
+																			EventType::OnTruncate, EventType::OnUpdate };
+
+		attribs.insert(extra_attribs.begin(), extra_attribs.end());
+		attribs[Attributes::Name] = obj_name;
+		attribs[Attributes::Comment] = comment;
+		attribs[Attributes::RefTable] = referenced_table ? referenced_table->getSignature().remove('"') : "";
+		attribs[Attributes::Function] = function ? function->getSignature() : "";
+		attribs[Attributes::FiringType] = ~firing_type;
+		attribs[Attributes::Condition] = condition;
+		attribs[Attributes::PerRow] = is_exec_per_row ? Column::DataDictCheckMark : "";
+
+		if(is_constraint)
+			aux_list.append(Attributes::Constraint.toUpper());
+
+		aux_list.clear();
+		if(is_deferrable)
+			aux_list.append(Attributes::Deferrable.toUpper() + QString(" (%1)").arg(~deferral_type));
+		else
+			aux_list.append("NOT " + Attributes::Deferrable.toUpper());
+
+		attribs[Attributes::Attributes] = aux_list.join(", ");
+
+		aux_list.clear();
+		for(auto &event : events)
+		{
+			if(!isExecuteOnEvent(event))
+				continue;
+
+			aux_list.append(~event);
+		}
+
+		attribs[Attributes::Events] = aux_list.join(", ");
+
+		schparser.ignoreEmptyAttributes(true);
+		return schparser.getCodeDefinition(GlobalAttributes::getSchemaFilePath(GlobalAttributes::DataDictSchemaDir,
+																																					 BaseObject::getSchemaName(ObjectType::Trigger)), attribs);
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorCode(), __PRETTY_FUNCTION__, __FILE__, __LINE__, &e);
+	}
+}

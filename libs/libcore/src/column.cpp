@@ -19,6 +19,7 @@
 #include "column.h"
 
 const QString Column::NextValFuncTmpl("nextval('%1'::regclass)");
+const QString Column::DataDictCheckMark("&#10003;");
 
 Column::Column()
 {
@@ -439,4 +440,28 @@ void Column::operator = (Column &col)
 	this->setAddedByGeneralization(false);
 	this->setAddedByLinking(false);
 	this->setCodeInvalidated(true);
+}
+
+QString Column::getDataDictionary(const attribs_map &extra_attribs)
+{
+	try
+	{
+		attribs_map attribs;
+
+		attribs.insert(extra_attribs.begin(), extra_attribs.end());
+		attribs[Attributes::Parent] = getParentTable()->getSchemaName();
+		attribs[Attributes::Name] = obj_name;
+		attribs[Attributes::Type] = *type;
+		attribs[Attributes::DefaultValue] = sequence ? NextValFuncTmpl.arg(sequence->getSignature()) : default_value;
+		attribs[Attributes::Comment] = comment;
+		attribs[Attributes::NotNull] = not_null ? DataDictCheckMark : "";
+
+		schparser.ignoreEmptyAttributes(true);
+		return schparser.getCodeDefinition(GlobalAttributes::getSchemaFilePath(GlobalAttributes::DataDictSchemaDir,
+																																					 getSchemaName()), attribs);
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorCode(), __PRETTY_FUNCTION__, __FILE__, __LINE__, &e);
+	}
 }
