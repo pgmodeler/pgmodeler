@@ -1752,7 +1752,8 @@ QString PhysicalTable::getDataDictionary(bool split, attribs_map extra_attribs)
 			tab_dict_file = GlobalAttributes::getSchemaFilePath(GlobalAttributes::DataDictSchemaDir, Attributes::Table),
 			col_dict_file = GlobalAttributes::getSchemaFilePath(GlobalAttributes::DataDictSchemaDir, Attributes::Column),
 			constr_dict_file = GlobalAttributes::getSchemaFilePath(GlobalAttributes::DataDictSchemaDir, Attributes::Constraint),
-			link_dict_file = GlobalAttributes::getSchemaFilePath(GlobalAttributes::DataDictSchemaDir, Attributes::Link);
+			link_dict_file = GlobalAttributes::getSchemaFilePath(GlobalAttributes::DataDictSchemaDir, Attributes::Link),
+			objs_dict_file = GlobalAttributes::getSchemaFilePath(GlobalAttributes::DataDictSchemaDir, Attributes::Objects);
 
 	attribs.insert(extra_attribs.begin(), extra_attribs.end());
 	attribs[Attributes::Type] = getTypeName();
@@ -1832,6 +1833,7 @@ QString PhysicalTable::getDataDictionary(bool split, attribs_map extra_attribs)
 		aux_attrs.clear();
 	}
 
+	attribs[Attributes::Objects] += schparser.getCodeDefinition(objs_dict_file, attribs);
 	schparser.ignoreEmptyAttributes(true);
 	return schparser.getCodeDefinition(tab_dict_file, attribs);
 }

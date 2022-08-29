@@ -52,56 +52,61 @@
 {spc} </thead>
 {spc} <tbody> 
 
-%if {columns} %then
-	{columns}
+
+%if {objects} %then
+	{objects}
 %end
 
-%if {constraints} %then
-	{spc} <tr>
-	{spc} <td $sp colspan="{colspan}" $sp class="nested-tab-parent">
-	{spc} <table $sp class="nested-tab">
-	{spc} <tr>
-	{spc} <td [ class="title" colspan="6"]> Constraints </td>
-	{spc} </tr>
-	{spc} <tr>
-	{spc} <td [ class="title"]> Name </td>
-	{spc} <td [ class="title"]> Type </td>
-	{spc} <td [ class="title"]> Column(s) </td>
-	{spc} <td [ class="title"]> References </td>
-	{spc} <td [ class="title"]> Expression </td>
-	{spc} <td [ class="title"]> Description </td>
-	{spc} </tr>
+#%if {columns} %then
+#	{columns}
+#%end
 
-	{constraints}
+#%if {constraints} %then
+#	{spc} <tr>
+#	{spc} <td $sp colspan="{colspan}" $sp class="nested-tab-parent">
+#	{spc} <table $sp class="nested-tab">
+#	{spc} <tr>
+#	{spc} <td [ class="title" colspan="6"]> Constraints </td>
+#	{spc} </tr>
+#	{spc} <tr>
+#	{spc} <td [ class="title"]> Name </td>
+#	{spc} <td [ class="title"]> Type </td>
+#	{spc} <td [ class="title"]> Column(s) </td>
+#	{spc} <td [ class="title"]> References </td>
+#	{spc} <td [ class="title"]> Expression </td>
+#	{spc} <td [ class="title"]> Description </td>
+#	{spc} </tr>
 
-	{spc} </table>
-	{spc} </td>
-	{spc} </tr>
-%end
+#	{constraints}
+
+#	{spc} </table>
+#	{spc} </td>
+#	{spc} </tr>
+#%end
 
 
-%if {indexes} %then
-	{spc} <tr>
-	{spc} <td $sp colspan="{colspan}" $sp class="nested-tab-parent">
-	{spc} <table $sp class="nested-tab">
-	{spc} <tr>
-	{spc} <td [ class="title" colspan="6"]> Indexes </td>
-	{spc} </tr>
-	{spc} <tr>
-	{spc} <td [ class="title"]> Name </td>
-	{spc} <td [ class="title"]> Type </td>
-	{spc} <td [ class="title"]> Column(s) </td>
-	{spc} <td [ class="title"]> Expression(s) </td>
-	{spc} <td [ class="title"]> Predicate </td>
-	{spc} <td [ class="title"]> Description </td>
-	{spc} </tr>
+#%if {indexes} %then
+#	{spc} <tr>
+#	{spc} <td $sp colspan="{colspan}" $sp class="nested-tab-parent">
+#	{spc} <table $sp class="nested-tab">
+#	{spc} <tr>
+#	{spc} <td [ class="title" colspan="6"]> Indexes </td>
+#	{spc} </tr>
+#	{spc} <tr>
+#	{spc} <td [ class="title"]> Name </td>
+#	{spc} <td [ class="title"]> Type </td>
+#	{spc} <td [ class="title"]> Column(s) </td>
+#	{spc} <td [ class="title"]> Expression(s) </td>
+#	{spc} <td [ class="title"]> Predicate </td>
+#	{spc} <td [ class="title"]> Description </td>
+#	{spc} </tr>
 
-	{indexes}
+#	{indexes}
 
-	{spc} </table>
-	{spc} </td>
-	{spc} </tr>
-%end
+#	{spc} </table>
+#	{spc} </td>
+#	{spc} </tr>
+#%end
 
 
 {spc} </tbody>
