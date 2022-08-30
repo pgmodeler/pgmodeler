@@ -124,6 +124,8 @@ class Sequence: public BaseObject {
 		virtual QString getCodeDefinition(unsigned def_type) final;
 
 		virtual QString getAlterDefinition(BaseObject *object) final;
+
+		QString getDataDictionary(const attribs_map &extra_attribs = {});
 };
 
 #endif

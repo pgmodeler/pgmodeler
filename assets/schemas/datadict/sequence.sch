@@ -6,11 +6,10 @@
 
 {spc} <tr>
 {spc} <td> {name} </td>
-{spc} <td [ class="value constr-type"]> {type} </td>
+{spc} <td [ class="value bool-value"]> {cycle} </td>
+{spc} <td [ class="value"] > {min-value} </td>
+{spc} <td [ class="value"] > {max-value} </td>
 {spc} <td> {columns} </td>
-{spc} <td [ class="value"] > <p $sp class="max-td-wth"> {expressions} </p> </td>
-{spc} <td [ class="value"] > <p $sp class="max-td-wth"> {predicate} </p> </td>
 {spc} <td> <p $sp class="max-td-wth"> <em> {comment} </em> </p></td>
-</td>
 
 {spc} </tr>

@@ -513,3 +513,39 @@ void Index::validateElements()
 		}
 	}
 }
+
+QString Index::getDataDictionary(const attribs_map &extra_attribs)
+{
+	try
+	{
+		attribs_map attribs;
+		QStringList exprs, col_names;
+
+		attribs.insert(extra_attribs.begin(), extra_attribs.end());
+		attribs[Attributes::Name] = obj_name;
+		attribs[Attributes::Type] = ~indexing_type;
+		attribs[Attributes::Comment] = comment;
+		attribs[Attributes::Predicate] = predicate;
+
+		for(auto &elem : idx_elements)
+		{
+			if(elem.getColumn())
+				col_names.append(elem.getColumn()->getName());
+			else if(elem.getSimpleColumn().isValid())
+				col_names.append(elem.getSimpleColumn().name);
+			else
+				exprs.append(elem.getExpression());
+		}
+
+		attribs[Attributes::Columns] = col_names.join(", ");
+		attribs[Attributes::Expressions] = exprs.join(", ");
+
+		schparser.ignoreEmptyAttributes(true);
+		return schparser.getCodeDefinition(GlobalAttributes::getSchemaFilePath(GlobalAttributes::DataDictSchemaDir,
+																																					 getSchemaName()), attribs);
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorCode(), __PRETTY_FUNCTION__, __FILE__, __LINE__, &e);
+	}
+}

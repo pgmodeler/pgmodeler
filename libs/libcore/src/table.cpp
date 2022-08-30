@@ -368,6 +368,23 @@ QString Table::__getCodeDefinition(unsigned def_type, bool incl_rel_added_objs)
 	return BaseObject::__getCodeDefinition(def_type);
 }
 
+QString Table::getDataDictionary(bool split, const attribs_map &extra_attribs)
+{
+	try
+	{
+		attribs_map attribs = extra_attribs;
+
+		for(auto &obj : indexes)
+			attribs[Attributes::Indexes] +=  dynamic_cast<Index *>(obj)->getDataDictionary();
+
+		return PhysicalTable::getDataDictionary(split, attribs);
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorCode(), __PRETTY_FUNCTION__, __FILE__, __LINE__, &e);
+	}
+}
+
 QString Table::getCodeDefinition(unsigned def_type)
 {
 	QString code_def=getCachedCode(def_type, false);

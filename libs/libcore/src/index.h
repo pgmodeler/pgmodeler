@@ -65,7 +65,6 @@ class Index: public TableObject{
 		Concurrent=1,
 		FastUpdate=2,
 		Buffering=3;
-
 		Index();
 
 		//! \brief Adds an element to the index using an column
@@ -166,6 +165,8 @@ class Index: public TableObject{
 
 		//! \brief Returns the non-key view columns (INCLUDE clause) of the index
 		std::vector<SimpleColumn> getSimpleColumns();
+
+		QString getDataDictionary(const attribs_map &extra_attribs = {});
 };
 
 #endif

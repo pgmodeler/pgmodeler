@@ -1124,13 +1124,11 @@ std::vector<BaseObject *> View::getObjects(const std::vector<ObjectType> &excl_t
 	return list;
 }
 
-QString View::getDataDictionary(bool split, attribs_map extra_attribs)
+QString View::getDataDictionary(bool split, const attribs_map &extra_attribs)
 {
 	attribs_map attribs, aux_attrs;
 	QStringList tab_names, col_names;
-	QString view_dict_file = GlobalAttributes::getSchemaFilePath(GlobalAttributes::DataDictSchemaDir, getSchemaName()),
-			col_dict_file = GlobalAttributes::getSchemaFilePath(GlobalAttributes::DataDictSchemaDir, Attributes::Column),
-			link_dict_file = GlobalAttributes::getSchemaFilePath(GlobalAttributes::DataDictSchemaDir, Attributes::Link);
+	QString link_dict_file = GlobalAttributes::getSchemaFilePath(GlobalAttributes::DataDictSchemaDir, Attributes::Link);
 
 	attribs.insert(extra_attribs.begin(), extra_attribs.end());
 	attribs[Attributes::Type] = getTypeName();
@@ -1139,42 +1137,63 @@ QString View::getDataDictionary(bool split, attribs_map extra_attribs)
 	attribs[Attributes::Name] = obj_name;
 	attribs[Attributes::Schema] = schema ? schema->getName() : "";
 	attribs[Attributes::Comment] = comment;
-	attribs[Attributes::Columns] = "";
+	attribs[Attributes::Objects] = "";
 
 	aux_attrs[Attributes::Split] = attribs[Attributes::Split];
 
-	for(auto &ref : references)
+	try
 	{
-		if(ref.getTable())
+		for(auto &ref : references)
 		{
-			aux_attrs[Attributes::Name] = ref.getTable()->getSignature().remove(QChar('"'));
-			tab_names.push_back(schparser.getCodeDefinition(link_dict_file, aux_attrs));
+			if(ref.getTable())
+			{
+				aux_attrs[Attributes::Name] = ref.getTable()->getSignature().remove(QChar('"'));
+				tab_names.push_back(schparser.getCodeDefinition(link_dict_file, aux_attrs));
+			}
+
+			for(auto &tab : ref.getReferencedTables())
+			{
+				aux_attrs[Attributes::Name] = tab->getSignature().remove(QChar('"'));
+				tab_names.push_back(schparser.getCodeDefinition(link_dict_file, aux_attrs));
+			}
 		}
 
-		for(auto &tab : ref.getReferencedTables())
+		tab_names.removeDuplicates();
+		attribs[Attributes::References] = tab_names.join(", ");
+		aux_attrs.clear();
+
+		for(auto &col : columns)
 		{
-			aux_attrs[Attributes::Name] = tab->getSignature().remove(QChar('"'));
-			tab_names.push_back(schparser.getCodeDefinition(link_dict_file, aux_attrs));
+			aux_attrs[Attributes::Parent] = getSchemaName();
+			aux_attrs[Attributes::Name] = col.name;
+			aux_attrs[Attributes::Type] = col.type;
+
+			schparser.ignoreUnkownAttributes(true);
+			attribs[Attributes::Columns] += schparser.getCodeDefinition(GlobalAttributes::getSchemaFilePath(GlobalAttributes::DataDictSchemaDir,
+																																																			BaseObject::getSchemaName(ObjectType::Column)), aux_attrs);
+			aux_attrs.clear();
 		}
-	}
 
-	tab_names.removeDuplicates();
-	attribs[Attributes::References] = tab_names.join(", ");
-	aux_attrs.clear();
+		for(auto &obj : triggers)
+		{
+			attribs[Attributes::Triggers] +=
+					dynamic_cast<Trigger *>(obj)->getDataDictionary({{ Attributes::Split, attribs[Attributes::Split] }});
+		}
 
-	for(auto &col : columns)
-	{
-		aux_attrs[Attributes::Parent] = getSchemaName();
-		aux_attrs[Attributes::Name] = col.name;
-		aux_attrs[Attributes::Type] = col.type;
+		for(auto &obj : indexes)
+			attribs[Attributes::Indexes] +=  dynamic_cast<Index *>(obj)->getDataDictionary();
 
 		schparser.ignoreUnkownAttributes(true);
-		attribs[Attributes::Columns] += schparser.getCodeDefinition(col_dict_file, aux_attrs);
-		aux_attrs.clear();
+		attribs[Attributes::Objects] += schparser.getCodeDefinition(GlobalAttributes::getSchemaFilePath(GlobalAttributes::DataDictSchemaDir,
+																																																		Attributes::Objects), attribs);
+		schparser.ignoreEmptyAttributes(true);
+		return schparser.getCodeDefinition(GlobalAttributes::getSchemaFilePath(GlobalAttributes::DataDictSchemaDir,
+																																					 getSchemaName()), attribs);
 	}
-
-	schparser.ignoreEmptyAttributes(true);
-	return schparser.getCodeDefinition(view_dict_file, attribs);
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorCode(), __PRETTY_FUNCTION__, __FILE__, __LINE__, &e);
+	}
 }
 
 QString View::getAlterDefinition(BaseObject *object)

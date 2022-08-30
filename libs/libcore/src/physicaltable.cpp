@@ -18,6 +18,7 @@
 
 #include "physicaltable.h"
 #include "utilsns.h"
+#include "coreutilsns.h"
 
 const QString PhysicalTable::DataLineBreak = QString("%1%2").arg("⸣").arg('\n');
 
@@ -1576,7 +1577,7 @@ void PhysicalTable::getColumnReferences(Column *column, std::vector<TableObject 
 std::vector<BaseObject *> PhysicalTable::getObjects(const std::vector<ObjectType> &excl_types)
 {
 	std::vector<BaseObject *> list;
-	std::vector<ObjectType> types=getChildObjectTypes(obj_type);
+	std::vector<ObjectType> types = getChildObjectTypes(obj_type);
 
 	for(auto type : types)
 	{
@@ -1742,17 +1743,16 @@ unsigned PhysicalTable::getMaxObjectCount()
 	return max;
 }
 
-QString PhysicalTable::getDataDictionary(bool split, attribs_map extra_attribs)
+QString PhysicalTable::getDataDictionary(bool split, const attribs_map &extra_attribs)
 {
 	Column *column = nullptr;
-	Constraint *constr = nullptr;
 	attribs_map attribs, aux_attrs;
-	QStringList tab_names, col_names;
-	QString check_mark = QString("&#10003;"),
-			tab_dict_file = GlobalAttributes::getSchemaFilePath(GlobalAttributes::DataDictSchemaDir, Attributes::Table),
-			col_dict_file = GlobalAttributes::getSchemaFilePath(GlobalAttributes::DataDictSchemaDir, Attributes::Column),
-			constr_dict_file = GlobalAttributes::getSchemaFilePath(GlobalAttributes::DataDictSchemaDir, Attributes::Constraint),
-			link_dict_file = GlobalAttributes::getSchemaFilePath(GlobalAttributes::DataDictSchemaDir, Attributes::Link);
+	QStringList tab_names, aux_list, attr_names = { Attributes::Columns, Attributes::Constraints,
+																									Attributes::Triggers, Attributes::Indexes };
+
+	QString tab_dict_file = GlobalAttributes::getSchemaFilePath(GlobalAttributes::DataDictSchemaDir, BaseObject::getSchemaName(ObjectType::Table)),
+			link_dict_file = GlobalAttributes::getSchemaFilePath(GlobalAttributes::DataDictSchemaDir, Attributes::Link),
+			objs_dict_file = GlobalAttributes::getSchemaFilePath(GlobalAttributes::DataDictSchemaDir, Attributes::Objects);
 
 	attribs.insert(extra_attribs.begin(), extra_attribs.end());
 	attribs[Attributes::Type] = getTypeName();
@@ -1761,77 +1761,71 @@ QString PhysicalTable::getDataDictionary(bool split, attribs_map extra_attribs)
 	attribs[Attributes::Name] = obj_name;
 	attribs[Attributes::Schema] = schema ? schema->getName() : "";
 	attribs[Attributes::Comment] = comment;
-	attribs[Attributes::Columns] = "";
-	attribs[Attributes::Constraints] = "";
+
+	/* Initialize the attributes for columns, trigger, indexes and contraints
+	 * if there one or more missing in the attributes map */
+	for(auto &attr : attr_names)
+	{
+	 if(!attribs.count(attr))
+		 attribs[attr] = "";
+	}
 
 	aux_attrs[Attributes::Split] = attribs[Attributes::Split];
 
-	// Gathering the acestor table names
-	for(auto &tab : ancestor_tables)
+	try
 	{
-		aux_attrs[Attributes::Name] = tab->getSignature().remove(QChar('"'));
-		tab_names.push_back(schparser.getCodeDefinition(link_dict_file, aux_attrs));
-	}
-	attribs[Attributes::Inherit] = tab_names.join(", ");
-	tab_names.clear();
+		// Gathering the acestor table names
+		for(auto &tab : ancestor_tables)
+		{
+			aux_attrs[Attributes::Name] = tab->getSignature().remove(QChar('"'));
+			tab_names.push_back(schparser.getCodeDefinition(link_dict_file, aux_attrs));
+		}
+		attribs[Attributes::Inherit] = tab_names.join(", ");
+		tab_names.clear();
 
-	attribs[Attributes::PartitionedTable] = "";
-	if(partitioned_table)
-	{
-		aux_attrs[Attributes::Name] = partitioned_table->getSignature().remove(QChar('"'));
-		attribs[Attributes::PartitionedTable] = schparser.getCodeDefinition(link_dict_file, aux_attrs);
-	}
+		attribs[Attributes::PartitionedTable] = "";
+		if(partitioned_table)
+		{
+			aux_attrs[Attributes::Name] = partitioned_table->getSignature().remove(QChar('"'));
+			attribs[Attributes::PartitionedTable] = schparser.getCodeDefinition(link_dict_file, aux_attrs);
+		}
 
-	// Gathering the patition table names
-	for(auto &tab : partition_tables)
-	{
-		aux_attrs[Attributes::Name] = tab->getSignature().remove(QChar('"'));
-		tab_names.push_back(schparser.getCodeDefinition(link_dict_file, aux_attrs));
-	}
-	attribs[Attributes::PartitionTables] = tab_names.join(", ");
+		// Gathering the patition table names
+		for(auto &tab : partition_tables)
+		{
+			aux_attrs[Attributes::Name] = tab->getSignature().remove(QChar('"'));
+			tab_names.push_back(schparser.getCodeDefinition(link_dict_file, aux_attrs));
+		}
+		attribs[Attributes::PartitionTables] = tab_names.join(", ");
 
-	for(auto &obj : columns)
-	{
-		column = dynamic_cast<Column *>(obj);
+		for(auto &obj : columns)
+		{
+			column = dynamic_cast<Column *>(obj);
+			aux_attrs[Attributes::PkConstr] = isConstraintRefColumn(column, ConstraintType::PrimaryKey) ? CoreUtilsNs::DataDictCheckMark : "";
+			aux_attrs[Attributes::UqConstr] = isConstraintRefColumn(column, ConstraintType::Unique) ? CoreUtilsNs::DataDictCheckMark : "";
+			aux_attrs[Attributes::FkConstr] = isConstraintRefColumn(column, ConstraintType::ForeignKey) ? CoreUtilsNs::DataDictCheckMark : "";
+			attribs[Attributes::Columns] += column->getDataDictionary(aux_attrs);
+		}
 
-		aux_attrs[Attributes::Parent] = getSchemaName();
-		aux_attrs[Attributes::Name] = column->getName();
-		aux_attrs[Attributes::Type] = *column->getType();
-		aux_attrs[Attributes::DefaultValue] = column->getSequence() ? Column::NextValFuncTmpl.arg(column->getSequence()->getSignature()) : column->getDefaultValue();
-		aux_attrs[Attributes::Comment] = column->getComment();
-		aux_attrs[Attributes::NotNull] = column->isNotNull() ? check_mark : "";
-		aux_attrs[Attributes::PkConstr] = isConstraintRefColumn(column, ConstraintType::PrimaryKey) ? check_mark : "";
-		aux_attrs[Attributes::UqConstr] = isConstraintRefColumn(column, ConstraintType::Unique) ? check_mark : "";
-		aux_attrs[Attributes::FkConstr] = isConstraintRefColumn(column, ConstraintType::ForeignKey) ? check_mark : "";
+		for(auto &obj : constraints)
+		{
+			attribs[Attributes::Constraints] +=
+					dynamic_cast<Constraint *>(obj)->getDataDictionary({{ Attributes::Split, attribs[Attributes::Split] }});
+		}
 
+		for(auto &obj : triggers)
+		{
+			attribs[Attributes::Triggers] +=
+					dynamic_cast<Trigger *>(obj)->getDataDictionary({{ Attributes::Split, attribs[Attributes::Split] }});
+		}
+
+		attribs[Attributes::Objects] += schparser.getCodeDefinition(GlobalAttributes::getSchemaFilePath(GlobalAttributes::DataDictSchemaDir,
+																																																		Attributes::Objects), attribs);
 		schparser.ignoreEmptyAttributes(true);
-		attribs[Attributes::Columns] += schparser.getCodeDefinition(col_dict_file, aux_attrs);
-		aux_attrs.clear();
+		return schparser.getCodeDefinition(tab_dict_file, attribs);
 	}
-
-	for(auto &obj : constraints)
+	catch(Exception &e)
 	{
-		constr = dynamic_cast<Constraint *>(obj);
-
-		aux_attrs[Attributes::Split] = attribs[Attributes::Split];
-		aux_attrs[Attributes::Name] = constr->getName();
-		aux_attrs[Attributes::Type] = ~constr->getConstraintType();
-		aux_attrs[Attributes::Comment] = constr->getComment();
-		aux_attrs[Attributes::RefTable] = constr->getReferencedTable() ? constr->getReferencedTable()->getSignature().remove(QChar('"')) : "";
-		aux_attrs[Attributes::Expression] = constr->getExpression();
-
-		// Retrieving the columns that composes the constraint
-		for(auto &col : constr->getColumns(Constraint::SourceCols))
-			 col_names.push_back(col->getName());
-
-		aux_attrs[Attributes::Columns] = col_names.join(", ");
-		col_names.clear();
-
-		schparser.ignoreEmptyAttributes(true);
-		attribs[Attributes::Constraints] += schparser.getCodeDefinition(constr_dict_file, aux_attrs);
-		aux_attrs.clear();
+		throw Exception(e.getErrorMessage(), e.getErrorCode(), __PRETTY_FUNCTION__, __FILE__, __LINE__, &e);
 	}
-
-	schparser.ignoreEmptyAttributes(true);
-	return schparser.getCodeDefinition(tab_dict_file, attribs);
 }

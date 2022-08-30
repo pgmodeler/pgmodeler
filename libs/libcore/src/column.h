@@ -163,6 +163,8 @@ class Column: public TableObject{
 
 		//! \brief Copies on column to other
 		void operator = (Column &col);
+
+		QString getDataDictionary(const attribs_map &extra_attribs = {});
 };
 
 #endif

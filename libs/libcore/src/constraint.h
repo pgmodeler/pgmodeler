@@ -272,6 +272,8 @@ class Constraint: public TableObject{
 
 		virtual QString getSignature(bool format) final;
 
+		QString getDataDictionary(const attribs_map &extra_attribs);
+
 		/*! \brief Compares two constratins XML definition and returns if they differs. This methods varies a little from
 		BaseObject::isCodeDiffersFrom() because here we need to generate xml code including relationship added columns */
 		virtual bool isCodeDiffersFrom(BaseObject *object, const QStringList &ignored_attribs={}, const QStringList &ignored_tags={});

@@ -30,6 +30,10 @@
 #include <QCryptographicHash>
 
 namespace CoreUtilsNs {
+	/*! \brief Holds the check mark character for use in data dictionary
+	 *  to indicate constraints applied to the column */
+	const QString DataDictCheckMark("&#10003;");
+
 	/*! \brief Template function that makes a copy from 'copy_obj' to 'psrc_obj' doing the cast to the
 		 correct object type. If the source object (psrc_obj) is not allocated the function allocates the attributes
 		 before copying. Both objects must be the same type if both are allocated.
