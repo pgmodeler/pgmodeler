@@ -11921,6 +11921,8 @@ void DatabaseModel::getDataDictionary(attribs_map &datadict, bool browsable, boo
 	attribs[Attributes::DataDictIndex] = "";
 	attribs[Attributes::Split] = split ? Attributes::True : "";
 	attribs[Attributes::Year] = QString::number(QDate::currentDate().year());
+	attribs[Attributes::Date] = QDateTime::currentDateTime().toString(Qt::ISODate);
+	attribs[Attributes::Version] = GlobalAttributes::PgModelerVersion;
 
 	// If the generation is a standalone HTML the css is embedded
 	if(!split)
