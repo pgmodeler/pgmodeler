@@ -31,7 +31,7 @@ FileSelectorWidget::FileSelectorWidget(QWidget *parent) : QWidget(parent)
 
 	warn_ico_lbl = new QLabel(this);
 	warn_ico_lbl->setVisible(false);
-	warn_ico_lbl->setMinimumSize(filename_edt->height(), filename_edt->height());
+	warn_ico_lbl->setMinimumSize(filename_edt->height() * 0.75, filename_edt->height() * 0.75);
 	warn_ico_lbl->setMaximumSize(warn_ico_lbl->minimumSize());
 	warn_ico_lbl->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 	warn_ico_lbl->setScaledContents(true);
@@ -67,7 +67,7 @@ bool FileSelectorWidget::eventFilter(QObject *obj, QEvent *evnt)
 void FileSelectorWidget::resizeEvent(QResizeEvent *)
 {
 	warn_ico_lbl->move(filename_edt->width() - warn_ico_lbl->width() - 5,
-										 filename_edt->height() - warn_ico_lbl->height());
+										 (filename_edt->height() - warn_ico_lbl->height()) / 2);
 }
 
 void FileSelectorWidget::setAllowFilenameInput(bool allow_fl_input)
