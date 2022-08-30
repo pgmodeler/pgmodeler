@@ -11868,7 +11868,7 @@ TableClass *DatabaseModel::createPhysicalTable()
 void DatabaseModel::getDataDictionary(attribs_map &datadict, bool browsable, bool split)
 {
 	int idx = 0;
-	BaseObject *object = nullptr;
+	BaseTable *base_tab = nullptr;
 	std::vector<BaseObject *> objects;
 	std::map<QString, BaseObject *> objs_map;
 	QString styles, id, dict_index, items, buffer;
@@ -11923,13 +11923,39 @@ void DatabaseModel::getDataDictionary(attribs_map &datadict, bool browsable, boo
 	// Generating individual data dictionaries
 	for(auto &itr : objs_map)
 	{
-		object = itr.second;
+		base_tab = dynamic_cast<BaseTable *>( itr.second);
 
 		// Generate the individual data dictionaries
 		aux_attribs[Attributes::DataDictIndex] = browsable ? Attributes::True : "";
 		aux_attribs[Attributes::Previous] = idx - 1 >= 0 ? dict_index_list.at(idx - 1) : "";
-		aux_attribs[Attributes::Next] = (++idx <= dict_index_list.size() - 1) ? dict_index_list.at(idx) : "";
-		attribs[Attributes::Objects] += dynamic_cast<BaseTable *>(object)->getDataDictionary(split, aux_attribs);
+		aux_attribs[Attributes::Next] = (++idx <= dict_index_list.size() - 1) ? dict_index_list.at(idx) : "";	
+
+		if(base_tab->getObjectType() != ObjectType::View)
+		{
+			Column *col = nullptr;
+			std::vector<TableObject *> *cols = dynamic_cast<PhysicalTable *>(base_tab)->getObjectList(ObjectType::Column);
+			std::map<Sequence *, QStringList> col_seqs;
+
+			aux_attribs[Attributes::Sequences] = "";
+
+			for(auto itr =  cols->begin(); itr != cols->end(); itr++)
+			{
+				col = dynamic_cast<Column *>(*itr);
+
+				if(col->getSequence())
+					col_seqs[dynamic_cast<Sequence *>(col->getSequence())].append(col->getName());
+			}
+
+			for(auto &itr : col_seqs)
+			{
+				aux_attribs[Attributes::Sequences] +=
+						itr.first->getDataDictionary({{ Attributes::Columns, itr.second.join(", ") }});
+			}
+
+			col_seqs.clear();
+		}
+
+		attribs[Attributes::Objects] += base_tab->getDataDictionary(split, aux_attribs);
 
 		// If the generation is configured to be splitted we generate a complete HTML file for the current table
 		if(split && !attribs[Attributes::Objects].isEmpty())

@@ -18,6 +18,7 @@
 
 #include "trigger.h"
 #include "utilsns.h"
+#include "coreutilsns.h"
 
 Trigger::Trigger()
 {
@@ -497,7 +498,7 @@ QString Trigger::getDataDictionary(const attribs_map &extra_attribs)
 		attribs[Attributes::Function] = function ? function->getSignature() : "";
 		attribs[Attributes::FiringType] = ~firing_type;
 		attribs[Attributes::Condition] = condition;
-		attribs[Attributes::PerRow] = is_exec_per_row ? Column::DataDictCheckMark : "";
+		attribs[Attributes::PerRow] = is_exec_per_row ? CoreUtilsNs::DataDictCheckMark : "";
 
 		if(is_constraint)
 			aux_list.append(Attributes::Constraint.toUpper());

@@ -85,3 +85,26 @@
 	{spc} </td>
 	{spc} </tr>
 %end
+
+%if {sequences} %then
+	{spc} <tr>
+	{spc} <td $sp colspan="{colspan}" $sp class="nested-tab-parent">
+	{spc} <table $sp class="nested-tab">
+	{spc} <tr>
+	{spc} <td [ class="title" colspan="6"]> Sequences </td>
+	{spc} </tr>
+	{spc} <tr>
+	{spc} <td [ class="title"]> Name </td>
+	{spc} <td [ class="title"]> Cyclic </td>
+	{spc} <td [ class="title"]> [Min. value] </td>
+	{spc} <td [ class="title"]> [Max. value] </td>
+	{spc} <td [ class="title"]> Column(s) </td>
+	{spc} <td [ class="title"]> Description </td>
+	{spc} </tr>
+
+	{sequences}
+
+	{spc} </table>
+	{spc} </td>
+	{spc} </tr>
+%end

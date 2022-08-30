@@ -17,9 +17,9 @@
 */
 
 #include "column.h"
+#include "coreutilsns.h"
 
 const QString Column::NextValFuncTmpl("nextval('%1'::regclass)");
-const QString Column::DataDictCheckMark("&#10003;");
 
 Column::Column()
 {
@@ -454,7 +454,7 @@ QString Column::getDataDictionary(const attribs_map &extra_attribs)
 		attribs[Attributes::Type] = *type;
 		attribs[Attributes::DefaultValue] = sequence ? NextValFuncTmpl.arg(sequence->getSignature()) : default_value;
 		attribs[Attributes::Comment] = comment;
-		attribs[Attributes::NotNull] = not_null ? DataDictCheckMark : "";
+		attribs[Attributes::NotNull] = not_null ? CoreUtilsNs::DataDictCheckMark : "";
 
 		schparser.ignoreEmptyAttributes(true);
 		return schparser.getCodeDefinition(GlobalAttributes::getSchemaFilePath(GlobalAttributes::DataDictSchemaDir,

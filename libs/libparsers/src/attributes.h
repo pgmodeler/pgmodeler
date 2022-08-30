@@ -564,6 +564,7 @@ namespace Attributes {
 	SelectPriv,
 	SendFunc,
 	Sequence,
+	Sequences,
 	Server,
 	ServerEncoding,
 	ServerPid,

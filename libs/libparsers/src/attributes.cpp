@@ -547,6 +547,7 @@ namespace Attributes {
 	SelectPriv("select"),
 	SendFunc("send"),
 	Sequence("sequence"),
+	Sequences("sequences"),
 	Server("server"),
 	ServerEncoding("server-encoding"),
 	ServerPid("server-pid"),

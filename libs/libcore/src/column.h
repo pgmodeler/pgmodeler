@@ -86,11 +86,7 @@ class Column: public TableObject{
 
 	public:
 		//! \brief Holds the pattern for nextval() function call
-		static const QString NextValFuncTmpl,
-
-		/*! \brief Holds the check mark character for use in data dictionary
-		 *  to indicate constraints applied to the column */
-		DataDictCheckMark;
+		static const QString NextValFuncTmpl;
 
 		Column();
 

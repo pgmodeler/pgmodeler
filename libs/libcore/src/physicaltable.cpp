@@ -18,6 +18,7 @@
 
 #include "physicaltable.h"
 #include "utilsns.h"
+#include "coreutilsns.h"
 
 const QString PhysicalTable::DataLineBreak = QString("%1%2").arg("⸣").arg('\n');
 
@@ -1576,7 +1577,7 @@ void PhysicalTable::getColumnReferences(Column *column, std::vector<TableObject 
 std::vector<BaseObject *> PhysicalTable::getObjects(const std::vector<ObjectType> &excl_types)
 {
 	std::vector<BaseObject *> list;
-	std::vector<ObjectType> types=getChildObjectTypes(obj_type);
+	std::vector<ObjectType> types = getChildObjectTypes(obj_type);
 
 	for(auto type : types)
 	{
@@ -1800,9 +1801,9 @@ QString PhysicalTable::getDataDictionary(bool split, const attribs_map &extra_at
 		for(auto &obj : columns)
 		{
 			column = dynamic_cast<Column *>(obj);
-			aux_attrs[Attributes::PkConstr] = isConstraintRefColumn(column, ConstraintType::PrimaryKey) ? Column::DataDictCheckMark : "";
-			aux_attrs[Attributes::UqConstr] = isConstraintRefColumn(column, ConstraintType::Unique) ? Column::DataDictCheckMark : "";
-			aux_attrs[Attributes::FkConstr] = isConstraintRefColumn(column, ConstraintType::ForeignKey) ? Column::DataDictCheckMark : "";
+			aux_attrs[Attributes::PkConstr] = isConstraintRefColumn(column, ConstraintType::PrimaryKey) ? CoreUtilsNs::DataDictCheckMark : "";
+			aux_attrs[Attributes::UqConstr] = isConstraintRefColumn(column, ConstraintType::Unique) ? CoreUtilsNs::DataDictCheckMark : "";
+			aux_attrs[Attributes::FkConstr] = isConstraintRefColumn(column, ConstraintType::ForeignKey) ? CoreUtilsNs::DataDictCheckMark : "";
 			attribs[Attributes::Columns] += column->getDataDictionary(aux_attrs);
 		}
 
