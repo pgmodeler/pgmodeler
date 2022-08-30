@@ -11608,11 +11608,24 @@ void DatabaseModel::addChangelogEntry(BaseObject *object, unsigned op_type, Base
 	if(op_type == Operation::NoOperation || op_type == Operation::ObjectMoved)
 		return;
 
-	if(!object || (object && TableObject::isTableObject(object->getObjectType()) && !parent_obj))
-		throw Exception(ErrorCode::InvChangelogEntryValues, __PRETTY_FUNCTION__, __FILE__, __LINE__);
-
 	QString action, obj_signature;
 	QDateTime date_time = QDateTime::currentDateTime();
+
+	if(op_type == Operation::ObjectCreated)
+		action = Attributes::Created;
+	else if(op_type == Operation::ObjectRemoved)
+		action = Attributes::Deleted;
+	else
+		action = Attributes::Updated;
+
+	if(!object || (object && TableObject::isTableObject(object->getObjectType()) && !parent_obj))
+	{
+		QString obj_name = object ? object->getSignature() : "",
+				obj_type =  object ? object->getTypeName() : "";
+
+		throw Exception(Exception::getErrorMessage(ErrorCode::InvChangelogEntryValues).arg(obj_name, obj_type, action, date_time.toString(Qt::ISODate)),
+										ErrorCode::InvChangelogEntryValues, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+	}
 
 	if(TableObject::isTableObject(object->getObjectType()))
 	{
@@ -11621,13 +11634,6 @@ void DatabaseModel::addChangelogEntry(BaseObject *object, unsigned op_type, Base
 	}
 	else
 		obj_signature = object->getSignature();
-
-	if(op_type == Operation::ObjectCreated)
-		action = Attributes::Created;
-	else if(op_type == Operation::ObjectRemoved)
-		action = Attributes::Deleted;
-	else
-		action = Attributes::Updated;
 
 	changelog.push_back(std::make_tuple(date_time, obj_signature, object->getObjectType(), action));
 }
@@ -11640,7 +11646,10 @@ void DatabaseModel::addChangelogEntry(const QString &signature, const QString &t
 
 	if(!BaseObject::isValidName(signature) || obj_type == ObjectType::BaseObject ||
 		 !date_time.isValid() || !actions.contains(action))
-		throw Exception(ErrorCode::InvChangelogEntryValues, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+	{
+		throw Exception(Exception::getErrorMessage(ErrorCode::InvChangelogEntryValues).arg(signature, type, action, date),
+										ErrorCode::InvChangelogEntryValues, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+	}
 
 	changelog.push_back(std::make_tuple(date_time, signature, obj_type, action));
 }
