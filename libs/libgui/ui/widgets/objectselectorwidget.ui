@@ -128,6 +128,11 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>obj_name_edt</tabstop>
+  <tabstop>rem_object_tb</tabstop>
+  <tabstop>sel_object_tb</tabstop>
+ </tabstops>
  <resources>
   <include location="../../res/resources.qrc"/>
   <include location="../../res/resources.qrc"/>

@@ -393,6 +393,13 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>add_tb</tabstop>
+  <tabstop>clear_all_tb</tabstop>
+  <tabstop>options_tb</tabstop>
+  <tabstop>apply_tb</tabstop>
+  <tabstop>filters_tbw</tabstop>
+ </tabstops>
  <resources>
   <include location="../../res/resources.qrc"/>
   <include location="../../res/resources.qrc"/>

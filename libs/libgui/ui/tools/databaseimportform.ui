@@ -198,6 +198,9 @@
                   <verstretch>0</verstretch>
                  </sizepolicy>
                 </property>
+                <property name="focusPolicy">
+                 <enum>Qt::NoFocus</enum>
+                </property>
                 <property name="tabPosition">
                  <enum>QTabWidget::South</enum>
                 </property>
@@ -1270,17 +1273,28 @@
   </layout>
  </widget>
  <tabstops>
+  <tabstop>settings_tbw</tabstop>
+  <tabstop>connections_cmb</tabstop>
+  <tabstop>import_to_model_chk</tabstop>
+  <tabstop>rand_rel_color_chk</tabstop>
   <tabstop>resolve_deps_chk</tabstop>
   <tabstop>import_sys_objs_chk</tabstop>
   <tabstop>import_ext_objs_chk</tabstop>
   <tabstop>ignore_errors_chk</tabstop>
   <tabstop>debug_mode_chk</tabstop>
   <tabstop>database_cmb</tabstop>
+  <tabstop>db_objects_tw</tabstop>
   <tabstop>filter_edt</tabstop>
   <tabstop>by_oid_chk</tabstop>
+  <tabstop>select_all_tb</tabstop>
+  <tabstop>clear_all_tb</tabstop>
+  <tabstop>expand_all_tb</tabstop>
+  <tabstop>collapse_all_tb</tabstop>
+  <tabstop>output_trw</tabstop>
   <tabstop>cancel_btn</tabstop>
   <tabstop>import_btn</tabstop>
   <tabstop>close_btn</tabstop>
+  <tabstop>filtered_objs_tbw</tabstop>
  </tabstops>
  <resources>
   <include location="../../res/resources.qrc"/>

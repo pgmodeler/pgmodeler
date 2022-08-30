@@ -547,11 +547,14 @@
   <tabstop>add_tb</tabstop>
   <tabstop>remove_tb</tabstop>
   <tabstop>remove_all_tb</tabstop>
+  <tabstop>duplicate_tb</tabstop>
   <tabstop>edit_tb</tabstop>
+  <tabstop>update_tb</tabstop>
   <tabstop>move_up_tb</tabstop>
   <tabstop>move_down_tb</tabstop>
   <tabstop>move_first_tb</tabstop>
   <tabstop>move_last_tb</tabstop>
+  <tabstop>resize_cols_tb</tabstop>
   <tabstop>table_tbw</tabstop>
  </tabstops>
  <resources>
