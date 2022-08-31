@@ -948,6 +948,10 @@
  </widget>
  <tabstops>
   <tabstop>settings_twg</tabstop>
+  <tabstop>crows_foot_rb</tabstop>
+  <tabstop>tab_edges_rb</tabstop>
+  <tabstop>fk_to_pk_rb</tabstop>
+  <tabstop>center_pnts_rb</tabstop>
   <tabstop>deferrable_chk</tabstop>
   <tabstop>deferral_cmb</tabstop>
   <tabstop>del_action_cmb</tabstop>

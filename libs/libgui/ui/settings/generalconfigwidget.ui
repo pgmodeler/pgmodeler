@@ -1430,7 +1430,33 @@
   </layout>
  </widget>
  <tabstops>
+  <tabstop>settings_twg</tabstop>
+  <tabstop>ui_language_cmb</tabstop>
+  <tabstop>source_editor_args_edt</tabstop>
+  <tabstop>history_max_length_spb</tabstop>
+  <tabstop>clear_sql_history_tb</tabstop>
   <tabstop>oplist_size_spb</tabstop>
+  <tabstop>check_update_chk</tabstop>
+  <tabstop>check_versions_cmb</tabstop>
+  <tabstop>save_restore_geometry_chk</tabstop>
+  <tabstop>reset_sizes_tb</tabstop>
+  <tabstop>autosave_interv_chk</tabstop>
+  <tabstop>autosave_interv_spb</tabstop>
+  <tabstop>low_verbosity_chk</tabstop>
+  <tabstop>confirm_validation_chk</tabstop>
+  <tabstop>simple_obj_creation_chk</tabstop>
+  <tabstop>use_placeholders_chk</tabstop>
+  <tabstop>corner_move_chk</tabstop>
+  <tabstop>invert_rangesel_chk</tabstop>
+  <tabstop>save_last_pos_chk</tabstop>
+  <tabstop>hide_ext_attribs_chk</tabstop>
+  <tabstop>hide_table_tags_chk</tabstop>
+  <tabstop>hide_rel_name_chk</tabstop>
+  <tabstop>hide_sch_name_usr_types_chk</tabstop>
+  <tabstop>use_curved_lines_chk</tabstop>
+  <tabstop>code_completion_chk</tabstop>
+  <tabstop>disable_smooth_chk</tabstop>
+  <tabstop>escape_comments_chk</tabstop>
   <tabstop>print_grid_chk</tabstop>
   <tabstop>print_pg_num_chk</tabstop>
   <tabstop>paper_cmb</tabstop>

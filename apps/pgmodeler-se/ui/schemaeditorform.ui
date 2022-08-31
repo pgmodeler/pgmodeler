@@ -963,6 +963,24 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>new_tb</tabstop>
+  <tabstop>load_tb</tabstop>
+  <tabstop>save_tb</tabstop>
+  <tabstop>save_as_tb</tabstop>
+  <tabstop>save_all_tb</tabstop>
+  <tabstop>close_all_tb</tabstop>
+  <tabstop>syntax_tb</tabstop>
+  <tabstop>indent_all_tb</tabstop>
+  <tabstop>about_tb</tabstop>
+  <tabstop>exit_tb</tabstop>
+  <tabstop>editors_tbw</tabstop>
+  <tabstop>tabWidget</tabstop>
+  <tabstop>use_tmpl_file_chk</tabstop>
+  <tabstop>save_conf_tb</tabstop>
+  <tabstop>apply_conf_tb</tabstop>
+  <tabstop>reload_conf_tb</tabstop>
+ </tabstops>
  <resources>
   <include location="../../../libs/libgui/res/resources.qrc"/>
   <include location="../../../libs/libgui/res/resources.qrc"/>

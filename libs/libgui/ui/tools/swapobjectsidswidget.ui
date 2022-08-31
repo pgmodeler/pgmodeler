@@ -588,6 +588,14 @@
    </property>
   </widget>
  </widget>
+ <tabstops>
+  <tabstop>swap_values_tb</tabstop>
+  <tabstop>filter_btn</tabstop>
+  <tabstop>filter_edt</tabstop>
+  <tabstop>hide_sys_objs_chk</tabstop>
+  <tabstop>hide_rels_chk</tabstop>
+  <tabstop>objects_tbw</tabstop>
+ </tabstops>
  <resources>
   <include location="../../res/resources.qrc"/>
   <include location="../../res/resources.qrc"/>

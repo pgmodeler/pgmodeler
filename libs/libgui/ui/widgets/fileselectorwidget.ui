@@ -68,7 +68,7 @@
       </size>
      </property>
      <property name="focusPolicy">
-      <enum>Qt::WheelFocus</enum>
+      <enum>Qt::TabFocus</enum>
      </property>
      <property name="toolTip">
       <string>Clear field</string>
@@ -106,7 +106,7 @@
       </size>
      </property>
      <property name="focusPolicy">
-      <enum>Qt::WheelFocus</enum>
+      <enum>Qt::TabFocus</enum>
      </property>
      <property name="toolTip">
       <string>Select file</string>

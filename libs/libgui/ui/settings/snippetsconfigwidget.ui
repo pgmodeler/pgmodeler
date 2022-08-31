@@ -658,6 +658,23 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>snippets_cmb</tabstop>
+  <tabstop>new_tb</tabstop>
+  <tabstop>cancel_tb</tabstop>
+  <tabstop>edit_tb</tabstop>
+  <tabstop>remove_tb</tabstop>
+  <tabstop>remove_all_tb</tabstop>
+  <tabstop>filter_cmb</tabstop>
+  <tabstop>id_edt</tabstop>
+  <tabstop>applies_to_cmb</tabstop>
+  <tabstop>label_edt</tabstop>
+  <tabstop>parsable_chk</tabstop>
+  <tabstop>placeholders_chk</tabstop>
+  <tabstop>parse_tb</tabstop>
+  <tabstop>add_tb</tabstop>
+  <tabstop>update_tb</tabstop>
+ </tabstops>
  <resources>
   <include location="../../res/resources.qrc"/>
   <include location="../../res/resources.qrc"/>

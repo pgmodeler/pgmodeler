@@ -581,6 +581,17 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>general_tb</tabstop>
+  <tabstop>appearance_tb</tabstop>
+  <tabstop>relationships_tb</tabstop>
+  <tabstop>connections_tb</tabstop>
+  <tabstop>snippets_tb</tabstop>
+  <tabstop>plugins_tb</tabstop>
+  <tabstop>defaults_btn</tabstop>
+  <tabstop>apply_btn</tabstop>
+  <tabstop>cancel_btn</tabstop>
+ </tabstops>
  <resources>
   <include location="../../res/resources.qrc"/>
   <include location="../../res/resources.qrc"/>
