@@ -79,6 +79,11 @@ TriggerWidget::TriggerWidget(QWidget *parent): BaseObjectWidget(parent, ObjectTy
 		setRequiredField(function_sel);
 
 		setMinimumSize(580, 500);
+		configureTabOrder({ ordinary_rb, constraint_rb, insert_chk, delete_chk, update_chk,
+												truncate_chk, firing_mode_cmb, exec_per_row_chk, function_sel,
+												old_table_edt, new_table_edt, argument_edt, arguments_tab,
+												column_cmb, columns_tab, deferrable_chk, deferral_type_cmb,
+												ref_table_sel, cond_expr_txt });
 	}
 	catch(Exception &e)
 	{
