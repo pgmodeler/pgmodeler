@@ -323,6 +323,14 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>separator_cmb</tabstop>
+  <tabstop>separator_edt</tabstop>
+  <tabstop>txt_delim_chk</tabstop>
+  <tabstop>txt_delim_edt</tabstop>
+  <tabstop>col_names_chk</tabstop>
+  <tabstop>load_btn</tabstop>
+ </tabstops>
  <resources>
   <include location="../../res/resources.qrc"/>
   <include location="../../res/resources.qrc"/>

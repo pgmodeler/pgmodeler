@@ -885,7 +885,7 @@
                </font>
               </property>
               <property name="focusPolicy">
-               <enum>Qt::StrongFocus</enum>
+               <enum>Qt::NoFocus</enum>
               </property>
               <property name="text">
                <string>Type</string>
@@ -1946,6 +1946,50 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>cast_tb</tabstop>
+  <tabstop>eventtrigger_tb</tabstop>
+  <tabstop>extension_tb</tabstop>
+  <tabstop>fdw_tb</tabstop>
+  <tabstop>language_tb</tabstop>
+  <tabstop>genericsql_tb</tabstop>
+  <tabstop>role_tb</tabstop>
+  <tabstop>schema_tb</tabstop>
+  <tabstop>server_tb</tabstop>
+  <tabstop>tablespace_tb</tabstop>
+  <tabstop>tag_tb</tabstop>
+  <tabstop>textbox_tb</tabstop>
+  <tabstop>user_mapping_tb</tabstop>
+  <tabstop>transform_tb</tabstop>
+  <tabstop>db_sch_perms_tb</tabstop>
+  <tabstop>aggregate_tb</tabstop>
+  <tabstop>collation_tb</tabstop>
+  <tabstop>conversion_tb</tabstop>
+  <tabstop>domain_tb</tabstop>
+  <tabstop>function_tb</tabstop>
+  <tabstop>foreigntable_tb</tabstop>
+  <tabstop>operator_tb</tabstop>
+  <tabstop>opclass_tb</tabstop>
+  <tabstop>opfamily_tb</tabstop>
+  <tabstop>procedure_tb</tabstop>
+  <tabstop>view_tb</tabstop>
+  <tabstop>sequence_tb</tabstop>
+  <tabstop>table_tb</tabstop>
+  <tabstop>type_tb</tabstop>
+  <tabstop>column_tb</tabstop>
+  <tabstop>constraint_tb</tabstop>
+  <tabstop>index_tb</tabstop>
+  <tabstop>rule_tb</tabstop>
+  <tabstop>trigger_tb</tabstop>
+  <tabstop>policy_tb</tabstop>
+  <tabstop>tab_perms_tb</tabstop>
+  <tabstop>rel11_tb</tabstop>
+  <tabstop>rel1n_tb</tabstop>
+  <tabstop>relnn_tb</tabstop>
+  <tabstop>relgen_tb</tabstop>
+  <tabstop>reldep_tb</tabstop>
+  <tabstop>relpart_tb</tabstop>
+ </tabstops>
  <resources>
   <include location="../../res/resources.qrc"/>
   <include location="../../res/resources.qrc"/>

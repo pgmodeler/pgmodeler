@@ -70,8 +70,8 @@ CollationWidget::CollationWidget(QWidget *parent): BaseObjectWidget(parent, Obje
 		connect(lcctype_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(resetFields()));
 		connect(lccollate_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(resetFields()));
 
-		configureTabOrder({ locale_cmb, encoding_cmb, lccollate_cmb,
-												lcctype_cmb, provider_cmb, deterministic_chk });
+		/*configureTabOrder({ locale_cmb, encoding_cmb, lccollate_cmb,
+												lcctype_cmb, provider_cmb, deterministic_chk });*/
 
 		locale_mod_lbl->setToolTip(tr("<p>The modifier is any value specified after the character <strong>@</strong>. For example: <em>en_US.utf8<strong>@modifier</strong></em></p>"));
 		lcctype_mod_lbl->setToolTip(locale_mod_lbl->toolTip());

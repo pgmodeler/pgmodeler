@@ -956,6 +956,8 @@
   <tabstop>visibleobjects_lst</tabstop>
   <tabstop>select_all_tb</tabstop>
   <tabstop>clear_all_tb</tabstop>
+  <tabstop>filter_edt</tabstop>
+  <tabstop>by_id_chk</tabstop>
   <tabstop>select_tb</tabstop>
   <tabstop>cancel_tb</tabstop>
   <tabstop>tree_view_tb</tabstop>
@@ -963,8 +965,8 @@
   <tabstop>options_tb</tabstop>
   <tabstop>expand_all_tb</tabstop>
   <tabstop>collapse_all_tb</tabstop>
-  <tabstop>objectslist_tbw</tabstop>
   <tabstop>hide_tb</tabstop>
+  <tabstop>objectslist_tbw</tabstop>
  </tabstops>
  <resources>
   <include location="../../res/resources.qrc"/>

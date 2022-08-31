@@ -1254,6 +1254,22 @@
   </layout>
  </widget>
  <tabstops>
+  <tabstop>appearance_tbw</tabstop>
+  <tabstop>ui_theme_cmb</tabstop>
+  <tabstop>syntax_hl_theme_cmb</tabstop>
+  <tabstop>icons_size_cmb</tabstop>
+  <tabstop>custom_scale_chk</tabstop>
+  <tabstop>custom_scale_spb</tabstop>
+  <tabstop>code_font_cmb</tabstop>
+  <tabstop>code_font_size_spb</tabstop>
+  <tabstop>tab_width_chk</tabstop>
+  <tabstop>tab_width_spb</tabstop>
+  <tabstop>disp_line_numbers_chk</tabstop>
+  <tabstop>hightlight_lines_chk</tabstop>
+  <tabstop>grid_size_spb</tabstop>
+  <tabstop>min_obj_opacity_spb</tabstop>
+  <tabstop>attribs_per_page_spb</tabstop>
+  <tabstop>ext_attribs_per_page_spb</tabstop>
   <tabstop>element_cmb</tabstop>
   <tabstop>elem_font_cmb</tabstop>
   <tabstop>elem_font_size_spb</tabstop>

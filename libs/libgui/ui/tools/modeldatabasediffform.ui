@@ -2734,6 +2734,58 @@
   </layout>
  </widget>
  <tabstops>
+  <tabstop>settings_tbw</tabstop>
+  <tabstop>presets_cmb</tabstop>
+  <tabstop>preset_name_edt</tabstop>
+  <tabstop>new_preset_tb</tabstop>
+  <tabstop>edit_preset_tb</tabstop>
+  <tabstop>save_preset_tb</tabstop>
+  <tabstop>cancel_preset_edit_tb</tabstop>
+  <tabstop>remove_preset_tb</tabstop>
+  <tabstop>default_presets_tb</tabstop>
+  <tabstop>src_model_rb</tabstop>
+  <tabstop>src_database_rb</tabstop>
+  <tabstop>src_connections_cmb</tabstop>
+  <tabstop>src_database_cmb</tabstop>
+  <tabstop>connections_cmb</tabstop>
+  <tabstop>database_cmb</tabstop>
+  <tabstop>pgsql_ver_chk</tabstop>
+  <tabstop>pgsql_ver_cmb</tabstop>
+  <tabstop>store_in_file_rb</tabstop>
+  <tabstop>apply_on_server_rb</tabstop>
+  <tabstop>tabWidget</tabstop>
+  <tabstop>keep_cluster_objs_chk</tabstop>
+  <tabstop>keep_obj_perms_chk</tabstop>
+  <tabstop>dont_drop_missing_objs_chk</tabstop>
+  <tabstop>drop_missing_cols_constr_chk</tabstop>
+  <tabstop>preserve_db_name_chk</tabstop>
+  <tabstop>cascade_mode_chk</tabstop>
+  <tabstop>reuse_sequences_chk</tabstop>
+  <tabstop>force_recreation_chk</tabstop>
+  <tabstop>recreate_unmod_chk</tabstop>
+  <tabstop>import_sys_objs_chk</tabstop>
+  <tabstop>import_ext_objs_chk</tabstop>
+  <tabstop>ignore_errors_chk</tabstop>
+  <tabstop>debug_mode_chk</tabstop>
+  <tabstop>ignore_duplic_chk</tabstop>
+  <tabstop>ignore_error_codes_chk</tabstop>
+  <tabstop>error_codes_edt</tabstop>
+  <tabstop>gen_filters_from_log_chk</tabstop>
+  <tabstop>start_date_chk</tabstop>
+  <tabstop>start_date_dt</tabstop>
+  <tabstop>first_change_dt_tb</tabstop>
+  <tabstop>end_date_chk</tabstop>
+  <tabstop>end_date_dt</tabstop>
+  <tabstop>last_change_dt_tb</tabstop>
+  <tabstop>generate_filters_tb</tabstop>
+  <tabstop>filtered_objs_tbw</tabstop>
+  <tabstop>create_tb</tabstop>
+  <tabstop>drop_tb</tabstop>
+  <tabstop>alter_tb</tabstop>
+  <tabstop>ignore_tb</tabstop>
+  <tabstop>output_trw</tabstop>
+  <tabstop>apply_on_server_btn</tabstop>
+  <tabstop>open_in_sql_tool_btn</tabstop>
   <tabstop>cancel_btn</tabstop>
   <tabstop>generate_btn</tabstop>
   <tabstop>close_btn</tabstop>

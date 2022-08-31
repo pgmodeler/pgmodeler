@@ -467,7 +467,14 @@
   </layout>
  </widget>
  <tabstops>
+  <tabstop>connections_cmb</tabstop>
+  <tabstop>disconnect_tb</tabstop>
   <tabstop>database_cmb</tabstop>
+  <tabstop>refresh_tb</tabstop>
+  <tabstop>databases_tbw</tabstop>
+  <tabstop>attributes_tb</tabstop>
+  <tabstop>source_pane_tb</tabstop>
+  <tabstop>sql_exec_tbw</tabstop>
  </tabstops>
  <resources>
   <include location="../../res/resources.qrc"/>

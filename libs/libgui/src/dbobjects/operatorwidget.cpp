@@ -38,7 +38,6 @@ OperatorWidget::OperatorWidget(QWidget *parent): BaseObjectWidget(parent, Object
 		grid->addWidget(arg_types[0],0,0);
 		grid->addWidget(arg_types[1],1,0);
 
-
 		grid->addItem(new QSpacerItem(10,1,QSizePolicy::Fixed,QSizePolicy::Expanding), 2, 0);
 
 		frame=generateInformationFrame(tr("To create a unary operator it is necessary to specify as <strong><em>'any'</em></strong> one of its arguments. Additionally, the function that defines the operator must have only one parameter and this, in turn, must have the same data type of the the argument of unary operator."));
@@ -68,7 +67,7 @@ OperatorWidget::OperatorWidget(QWidget *parent): BaseObjectWidget(parent, Object
 
 		setRequiredField(operator_func_lbl);
 		setRequiredField(functions_sel[0]);
-		configureTabOrder({ functions_sel[0], arg_types[0], arg_types[1] });
+		configureTabOrder({ functions_sel[0], merges_chk, hashes_chk, arg_types[0], arg_types[1] });
 
 		setMinimumSize(600, 620);
 	}

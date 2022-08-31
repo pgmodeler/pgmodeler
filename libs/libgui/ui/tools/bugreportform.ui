@@ -560,6 +560,15 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>report_twg</tabstop>
+  <tabstop>details_txt</tabstop>
+  <tabstop>attach_mod_chk</tabstop>
+  <tabstop>attach_tb</tabstop>
+  <tabstop>model_txt</tabstop>
+  <tabstop>create_btn</tabstop>
+  <tabstop>close_btn</tabstop>
+ </tabstops>
  <resources>
   <include location="../../res/resources.qrc"/>
   <include location="../../res/resources.qrc"/>

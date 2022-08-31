@@ -693,6 +693,21 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>toggle_display_tb</tabstop>
+  <tabstop>sort_by_name_tb</tabstop>
+  <tabstop>data_grid_tb</tabstop>
+  <tabstop>runsql_tb</tabstop>
+  <tabstop>refresh_tb</tabstop>
+  <tabstop>drop_db_tb</tabstop>
+  <tabstop>objects_trw</tabstop>
+  <tabstop>filter_edt</tabstop>
+  <tabstop>by_oid_chk</tabstop>
+  <tabstop>expand_all_tb</tabstop>
+  <tabstop>collapse_all_tb</tabstop>
+  <tabstop>properties_tbw</tabstop>
+  <tabstop>raw_attrib_names_chk</tabstop>
+ </tabstops>
  <resources>
   <include location="../../res/resources.qrc"/>
   <include location="../../res/resources.qrc"/>

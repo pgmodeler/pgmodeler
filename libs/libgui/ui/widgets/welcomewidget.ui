@@ -19,6 +19,9 @@
   <property name="mouseTracking">
    <bool>false</bool>
   </property>
+  <property name="focusPolicy">
+   <enum>Qt::NoFocus</enum>
+  </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
@@ -132,6 +135,9 @@
        <property name="mouseTracking">
         <bool>false</bool>
        </property>
+       <property name="focusPolicy">
+        <enum>Qt::NoFocus</enum>
+       </property>
        <property name="text">
         <string>Support</string>
        </property>
@@ -162,6 +168,9 @@
        </property>
        <property name="mouseTracking">
         <bool>false</bool>
+       </property>
+       <property name="focusPolicy">
+        <enum>Qt::NoFocus</enum>
        </property>
        <property name="text">
         <string>New model</string>
@@ -196,6 +205,9 @@
        </property>
        <property name="mouseTracking">
         <bool>false</bool>
+       </property>
+       <property name="focusPolicy">
+        <enum>Qt::NoFocus</enum>
        </property>
        <property name="text">
         <string>Recent models</string>
@@ -233,6 +245,9 @@
        </property>
        <property name="mouseTracking">
         <bool>false</bool>
+       </property>
+       <property name="focusPolicy">
+        <enum>Qt::NoFocus</enum>
        </property>
        <property name="text">
         <string>Sample models</string>
@@ -272,6 +287,9 @@
        <property name="mouseTracking">
         <bool>false</bool>
        </property>
+       <property name="focusPolicy">
+        <enum>Qt::NoFocus</enum>
+       </property>
        <property name="text">
         <string>Last session</string>
        </property>
@@ -302,6 +320,9 @@
        </property>
        <property name="mouseTracking">
         <bool>false</bool>
+       </property>
+       <property name="focusPolicy">
+        <enum>Qt::NoFocus</enum>
        </property>
        <property name="text">
         <string>Open model</string>
@@ -380,6 +401,14 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>new_tb</tabstop>
+  <tabstop>open_tb</tabstop>
+  <tabstop>sample_tb</tabstop>
+  <tabstop>recent_tb</tabstop>
+  <tabstop>last_session_tb</tabstop>
+  <tabstop>support_tb</tabstop>
+ </tabstops>
  <resources>
   <include location="../../res/resources.qrc"/>
   <include location="../../res/resources.qrc"/>

@@ -403,6 +403,16 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>add_tb</tabstop>
+  <tabstop>remove_tb</tabstop>
+  <tabstop>remove_all_tb</tabstop>
+  <tabstop>visibility_tb</tabstop>
+  <tabstop>toggle_layers_rects_chk</tabstop>
+  <tabstop>toggle_layers_names_chk</tabstop>
+  <tabstop>layers_tab</tabstop>
+  <tabstop>hide_tb</tabstop>
+ </tabstops>
  <resources>
   <include location="../../res/resources.qrc"/>
   <include location="../../res/resources.qrc"/>
