@@ -435,6 +435,17 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>locale_cmb</tabstop>
+  <tabstop>encoding_cmb</tabstop>
+  <tabstop>locale_mod_edt</tabstop>
+  <tabstop>provider_cmb</tabstop>
+  <tabstop>deterministic_chk</tabstop>
+  <tabstop>lccollate_cmb</tabstop>
+  <tabstop>lccollate_mod_edt</tabstop>
+  <tabstop>lcctype_cmb</tabstop>
+  <tabstop>lcctype_mod_edt</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

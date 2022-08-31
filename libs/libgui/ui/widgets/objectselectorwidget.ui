@@ -124,7 +124,11 @@
     </widget>
    </item>
    <item row="0" column="0">
-    <widget class="QLineEdit" name="obj_name_edt"/>
+    <widget class="QLineEdit" name="obj_name_edt">
+     <property name="focusPolicy">
+      <enum>Qt::NoFocus</enum>
+     </property>
+    </widget>
    </item>
   </layout>
  </widget>

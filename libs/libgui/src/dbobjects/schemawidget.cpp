@@ -21,21 +21,11 @@
 SchemaWidget::SchemaWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Schema)
 {
 	Ui_SchemaWidget::setupUi(this);
-	QHBoxLayout *hbox=nullptr;
+	QHBoxLayout *hbox = dynamic_cast<QHBoxLayout *>(attributes_gb->layout());
 
-	configureFormLayout(nullptr, ObjectType::Schema);
-
+	configureFormLayout(schema_grid, ObjectType::Schema);
 	color_picker=new ColorPickerWidget(1, this);
-
-	hbox=new QHBoxLayout;
-	hbox->setContentsMargins(GuiUtilsNs::LtMargin,0,0,0);
-	hbox->addWidget(fill_color_lbl);
-	hbox->addWidget(color_picker);
-	hbox->addWidget(show_rect_chk);
-
-	baseobject_grid->addLayout(hbox, baseobject_grid->count(), 0, 1, baseobject_grid->columnCount());
-	baseobject_grid->addItem(new QSpacerItem(1,1,QSizePolicy::Minimum,QSizePolicy::Expanding), baseobject_grid->count(), 0);
-
+	hbox->insertWidget(1, color_picker);
 	configureTabOrder({ color_picker, show_rect_chk });
 
 	setMinimumSize(480, 140);

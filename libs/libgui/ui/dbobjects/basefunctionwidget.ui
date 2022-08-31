@@ -516,6 +516,7 @@
  <tabstops>
   <tabstop>func_config_twg</tabstop>
   <tabstop>language_cmb</tabstop>
+  <tabstop>security_cmb</tabstop>
   <tabstop>symbol_edt</tabstop>
   <tabstop>library_edt</tabstop>
  </tabstops>

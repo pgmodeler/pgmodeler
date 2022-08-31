@@ -55,9 +55,16 @@ ColorPickerWidget::ColorPickerWidget(int color_count, QWidget * parent) : QWidge
 		connect(btn, SIGNAL(clicked()), this, SLOT(selectColor()));
 	}
 
+	QList<QToolButton *> btns = buttons;
+	btns.append(random_color_tb);
+
+	for(int i = 0; i < btns.size() - 1; i++)
+		setTabOrder(btns[i], btns[i + 1]);
+
 	hbox->addWidget(random_color_tb);
 	hbox->addSpacerItem(spacer);
 	this->adjustSize();
+	setMaximumWidth(width());
 
 	connect(random_color_tb, SIGNAL(clicked()), this, SLOT(generateRandomColors()));
 }
