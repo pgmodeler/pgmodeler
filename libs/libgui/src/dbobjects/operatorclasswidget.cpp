@@ -74,7 +74,8 @@ OperatorClassWidget::OperatorClassWidget(QWidget *parent): BaseObjectWidget(pare
 
 		setRequiredField(elements_grp);
 		configureTabOrder({ indexing_cmb, def_class_chk , family_sel, data_type, elem_type_cmb,
-												operator_sel, elem_family_sel, function_sel, stg_num_sb, storage_type });
+												operator_sel, elem_family_sel, function_sel, stg_num_sb, storage_type,
+												elements_tab });
 
 		setMinimumSize(640, 730);
 	}

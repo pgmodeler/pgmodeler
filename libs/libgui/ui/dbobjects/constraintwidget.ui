@@ -523,7 +523,10 @@
   <tabstop>match_cmb</tabstop>
   <tabstop>no_inherit_chk</tabstop>
   <tabstop>expression_txt</tabstop>
+  <tabstop>fill_factor_chk</tabstop>
   <tabstop>fill_factor_sb</tabstop>
+  <tabstop>indexing_chk</tabstop>
+  <tabstop>indexing_cmb</tabstop>
   <tabstop>deferrable_chk</tabstop>
   <tabstop>deferral_cmb</tabstop>
   <tabstop>on_delete_cmb</tabstop>

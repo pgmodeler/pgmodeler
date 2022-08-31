@@ -352,6 +352,15 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>with_oids_chk</tabstop>
+  <tabstop>unlogged_chk</tabstop>
+  <tabstop>gen_alter_cmds_chk</tabstop>
+  <tabstop>enable_rls_chk</tabstop>
+  <tabstop>force_rls_chk</tabstop>
+  <tabstop>attributes_tbw</tabstop>
+  <tabstop>partitioning_type_cmb</tabstop>
+ </tabstops>
  <resources>
   <include location="../../res/resources.qrc"/>
   <include location="../../res/resources.qrc"/>
