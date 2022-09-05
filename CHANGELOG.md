@@ -26,6 +26,7 @@ v1.0.0-beta
 * [Change] Changed the shortcut key of the magnifier tool from Ctrl + Alt to F9.
 * [Change] Changed the "edit item" icon on ObjectsTableWidget.
 * [Change] Changed the default size of splash screen on screens with device pixel ratio = 1.
+* [Fix] Fix a crash in macOS when right-clicking a blank portion of the canvas when there are objects selected.
 * [Fix] Minor fix the warning icon size and position in FileSelectorWidget.
 * [Fix] Fixed a bug in BaseObject::isValidName that was not considered valid a  name in the format schema."object".
 * [Fix] Fixed the diff generation for materialized views.
