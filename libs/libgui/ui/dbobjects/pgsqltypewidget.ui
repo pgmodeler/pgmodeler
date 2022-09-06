@@ -65,7 +65,7 @@
       <enum>Qt::NoFocus</enum>
      </property>
      <property name="title">
-      <string>Data Type</string>
+      <string>Data T&amp;ype</string>
      </property>
      <layout class="QGridLayout" name="gridLayout">
       <property name="leftMargin">

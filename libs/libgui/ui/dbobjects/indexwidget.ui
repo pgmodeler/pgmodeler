@@ -49,7 +49,7 @@
         <normaloff>:/icons/icons/attribute.png</normaloff>:/icons/icons/attribute.png</iconset>
       </attribute>
       <attribute name="title">
-       <string>Attributes</string>
+       <string>&amp;Attributes</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout_2">
        <property name="leftMargin">
@@ -373,7 +373,7 @@
         <normaloff>:/icons/icons/usertype.png</normaloff>:/icons/icons/usertype.png</iconset>
       </attribute>
       <attribute name="title">
-       <string>Elements</string>
+       <string>&amp;Elements</string>
       </attribute>
      </widget>
      <widget class="QWidget" name="tab">
@@ -382,7 +382,7 @@
         <normaloff>:/icons/icons/column.png</normaloff>:/icons/icons/column.png</iconset>
       </attribute>
       <attribute name="title">
-       <string>Include columns</string>
+       <string>&amp;Include columns</string>
       </attribute>
      </widget>
     </widget>

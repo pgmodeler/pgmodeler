@@ -73,7 +73,7 @@
         <normaloff>:/icons/icons/attribute.png</normaloff>:/icons/icons/attribute.png</iconset>
       </attribute>
       <attribute name="title">
-       <string>General</string>
+       <string>&amp;General</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout_3">
        <property name="leftMargin">
@@ -632,7 +632,7 @@
         <normaloff>:/icons/icons/config.png</normaloff>:/icons/icons/config.png</iconset>
       </attribute>
       <attribute name="title">
-       <string>Settings</string>
+       <string>&amp;Settings</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout_2">
        <property name="leftMargin">
@@ -1510,7 +1510,7 @@
         <normaloff>:/icons/icons/column.png</normaloff>:/icons/icons/column.png</iconset>
       </attribute>
       <attribute name="title">
-       <string>Attributes</string>
+       <string>&amp;Attributes</string>
       </attribute>
      </widget>
      <widget class="QWidget" name="tab_2">
@@ -1519,7 +1519,7 @@
         <normaloff>:/icons/icons/constraint.png</normaloff>:/icons/icons/constraint.png</iconset>
       </attribute>
       <attribute name="title">
-       <string>Constraints</string>
+       <string>Co&amp;nstraints</string>
       </attribute>
      </widget>
      <widget class="QWidget" name="tab_4">
@@ -1528,7 +1528,7 @@
         <normaloff>:/icons/icons/constraint_pk.png</normaloff>:/icons/icons/constraint_pk.png</iconset>
       </attribute>
       <attribute name="title">
-       <string>Primary key</string>
+       <string>&amp;Primary key</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout">
        <property name="leftMargin">
@@ -1582,7 +1582,7 @@
         <normaloff>:/icons/icons/moreactions.png</normaloff>:/icons/icons/moreactions.png</iconset>
       </attribute>
       <attribute name="title">
-       <string>Advanced</string>
+       <string>A&amp;dvanced</string>
       </attribute>
      </widget>
     </widget>

@@ -43,7 +43,7 @@
         <normaloff>:/icons/icons/attribute.png</normaloff>:/icons/icons/attribute.png</iconset>
       </attribute>
       <attribute name="title">
-       <string>Attributes</string>
+       <string>&amp;Attributes</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout_2">
        <property name="leftMargin">
@@ -97,7 +97,7 @@
         <normaloff>:/icons/icons/constraint_ck.png</normaloff>:/icons/icons/constraint_ck.png</iconset>
       </attribute>
       <attribute name="title">
-       <string>Check constraints</string>
+       <string>Ch&amp;eck constraints</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout">
        <property name="leftMargin">

@@ -44,7 +44,7 @@
       </size>
      </property>
      <property name="title">
-      <string>Load CSV</string>
+      <string>&amp;Load CSV</string>
      </property>
      <layout class="QGridLayout" name="load_csv_grid">
       <property name="leftMargin">

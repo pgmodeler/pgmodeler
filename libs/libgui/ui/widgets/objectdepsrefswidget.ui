@@ -50,7 +50,7 @@
         <normaloff>:/icons/icons/referrer.png</normaloff>:/icons/icons/referrer.png</iconset>
       </attribute>
       <attribute name="title">
-       <string>Dependencies</string>
+       <string>&amp;Dependencies</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout">
        <property name="leftMargin">
@@ -213,7 +213,7 @@
         <normaloff>:/icons/icons/referenced.png</normaloff>:/icons/icons/referenced.png</iconset>
       </attribute>
       <attribute name="title">
-       <string>References</string>
+       <string>&amp;References</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout_2">
        <property name="leftMargin">

@@ -27,7 +27,7 @@ AggregateWidget::AggregateWidget(QWidget *parent): BaseObjectWidget(parent, Obje
 		QSpacerItem *spacer=nullptr;
 		QFrame *frame=nullptr;
 
-		initial_cond_hl=new SyntaxHighlighter(initial_cond_txt);
+		initial_cond_hl=new SyntaxHighlighter(initial_cond_txt, true);
 		initial_cond_hl->loadConfiguration(GlobalAttributes::getSQLHighlightConfPath());
 
 		final_func_sel=new ObjectSelectorWidget(ObjectType::Function, this);

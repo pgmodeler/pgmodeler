@@ -110,7 +110,7 @@
            <normaloff>:/icons/icons/config.png</normaloff>:/icons/icons/config.png</iconset>
          </attribute>
          <attribute name="title">
-          <string>Settings</string>
+          <string>&amp;Settings</string>
          </attribute>
          <layout class="QGridLayout" name="gridLayout_2">
           <property name="leftMargin">
@@ -159,7 +159,7 @@
                  </size>
                 </property>
                 <property name="title">
-                 <string>Presets</string>
+                 <string>Pr&amp;esets</string>
                 </property>
                 <property name="flat">
                  <bool>false</bool>
@@ -432,7 +432,7 @@
                  </size>
                 </property>
                 <property name="title">
-                 <string>Input</string>
+                 <string>&amp;Input</string>
                 </property>
                 <property name="flat">
                  <bool>false</bool>
@@ -635,7 +635,7 @@
                  </size>
                 </property>
                 <property name="title">
-                 <string>Compare to</string>
+                 <string>Co&amp;mpare to</string>
                 </property>
                 <layout class="QGridLayout" name="gridLayout_11">
                  <property name="leftMargin">
@@ -735,7 +735,7 @@
                  </sizepolicy>
                 </property>
                 <property name="title">
-                 <string>Options</string>
+                 <string>Op&amp;tions</string>
                 </property>
                 <layout class="QVBoxLayout" name="verticalLayout">
                  <property name="spacing">
@@ -980,7 +980,7 @@
              </property>
              <widget class="QWidget" name="tab_4">
               <attribute name="title">
-               <string>Diff</string>
+               <string>Di&amp;ff</string>
               </attribute>
               <layout class="QVBoxLayout" name="verticalLayout_2">
                <property name="spacing">
@@ -1238,7 +1238,7 @@
              </widget>
              <widget class="QWidget" name="tab_5">
               <attribute name="title">
-               <string>Import &amp;&amp; Export</string>
+               <string>Impo&amp;rt &amp;&amp; Export</string>
               </attribute>
               <layout class="QVBoxLayout" name="verticalLayout_5">
                <property name="spacing">
@@ -1467,7 +1467,7 @@
            <normaloff>:/icons/icons/filter.png</normaloff>:/icons/icons/filter.png</iconset>
          </attribute>
          <attribute name="title">
-          <string>Partial diff</string>
+          <string>&amp;Partial diff</string>
          </attribute>
          <layout class="QGridLayout" name="gridLayout">
           <property name="leftMargin">
@@ -1935,7 +1935,7 @@
            <normaloff>:/icons/icons/outputpane.png</normaloff>:/icons/icons/outputpane.png</iconset>
          </attribute>
          <attribute name="title">
-          <string>Output</string>
+          <string>&amp;Output</string>
          </attribute>
          <layout class="QGridLayout" name="gridLayout_9">
           <property name="leftMargin">
@@ -2464,7 +2464,7 @@
            <normaloff>:/icons/icons/sqlpreview.png</normaloff>:/icons/icons/sqlpreview.png</iconset>
          </attribute>
          <attribute name="title">
-          <string>Diff preview</string>
+          <string>&amp;Diff preview</string>
          </attribute>
          <layout class="QGridLayout" name="gridLayout_5">
           <property name="leftMargin">

@@ -79,7 +79,7 @@
       </sizepolicy>
      </property>
      <property name="title">
-      <string>Filter</string>
+      <string>&amp;Filter</string>
      </property>
      <layout class="QVBoxLayout" name="filter_layout">
       <property name="spacing">

@@ -201,7 +201,7 @@
            <normaloff>:/icons/icons/config.png</normaloff>:/icons/icons/config.png</iconset>
          </attribute>
          <attribute name="title">
-          <string>Settings</string>
+          <string>&amp;Settings</string>
          </attribute>
          <layout class="QGridLayout" name="settings_grid">
           <property name="leftMargin">
@@ -881,7 +881,7 @@
            <normaloff>:/icons/icons/outputpane.png</normaloff>:/icons/icons/outputpane.png</iconset>
          </attribute>
          <attribute name="title">
-          <string>Output</string>
+          <string>&amp;Output</string>
          </attribute>
          <layout class="QGridLayout" name="gridLayout_15">
           <property name="leftMargin">

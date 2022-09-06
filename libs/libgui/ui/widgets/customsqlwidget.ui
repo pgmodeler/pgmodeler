@@ -44,7 +44,7 @@
    <item row="0" column="0">
     <widget class="QGroupBox" name="sqlcode_grp">
      <property name="title">
-      <string>SQL code</string>
+      <string>S&amp;QL code</string>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_3">
       <property name="spacing">

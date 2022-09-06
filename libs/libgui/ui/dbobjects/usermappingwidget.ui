@@ -54,7 +54,7 @@
    <item row="1" column="0" colspan="3">
     <widget class="QGroupBox" name="options_gb">
      <property name="title">
-      <string>Options</string>
+      <string>&amp;Options</string>
      </property>
     </widget>
    </item>

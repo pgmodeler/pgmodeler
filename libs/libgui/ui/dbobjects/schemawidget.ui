@@ -29,7 +29,7 @@
    <item row="0" column="0">
     <widget class="QGroupBox" name="attributes_gb">
      <property name="title">
-      <string>Attributes</string>
+      <string>&amp;Attributes</string>
      </property>
      <layout class="QHBoxLayout" name="horizontalLayout">
       <property name="spacing">

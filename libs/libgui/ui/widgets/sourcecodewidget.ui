@@ -124,7 +124,7 @@
         <normaloff>:/icons/icons/sqlcode.png</normaloff>:/icons/icons/sqlcode.png</iconset>
       </attribute>
       <attribute name="title">
-       <string>SQL</string>
+       <string>S&amp;QL</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout_2">
        <property name="leftMargin">
@@ -257,6 +257,9 @@
              <height>25</height>
             </size>
            </property>
+           <property name="shortcut">
+            <string>Ctrl+S</string>
+           </property>
            <property name="toolButtonStyle">
             <enum>Qt::ToolButtonTextBesideIcon</enum>
            </property>
@@ -285,7 +288,7 @@
         <normaloff>:/icons/icons/xmlcode.png</normaloff>:/icons/icons/xmlcode.png</iconset>
       </attribute>
       <attribute name="title">
-       <string>XML</string>
+       <string>&amp;XML</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout_3">
        <property name="leftMargin">
