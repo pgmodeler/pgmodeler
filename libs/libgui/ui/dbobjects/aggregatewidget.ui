@@ -82,12 +82,12 @@
         <normaloff>:/icons/icons/parameter.png</normaloff>:/icons/icons/parameter.png</iconset>
       </attribute>
       <attribute name="title">
-       <string>Funtion Inputs</string>
+       <string>Funtion &amp;Inputs</string>
       </attribute>
      </widget>
      <widget class="QWidget" name="tab_2">
       <attribute name="title">
-       <string>Function State</string>
+       <string>Function &amp;State</string>
       </attribute>
      </widget>
     </widget>
@@ -106,12 +106,6 @@
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
-     </property>
-     <property name="maximumSize">
-      <size>
-       <width>16777215</width>
-       <height>25</height>
-      </size>
      </property>
      <property name="verticalScrollBarPolicy">
       <enum>Qt::ScrollBarAlwaysOff</enum>

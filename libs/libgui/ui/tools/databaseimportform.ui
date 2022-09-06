@@ -148,9 +148,12 @@
                <number>5</number>
               </property>
               <item>
-               <widget class="QGroupBox" name="groupBox">
+               <widget class="QGroupBox" name="connection_gb">
+                <property name="focusPolicy">
+                 <enum>Qt::TabFocus</enum>
+                </property>
                 <property name="title">
-                 <string>Connection</string>
+                 <string>Co&amp;nnection</string>
                 </property>
                 <layout class="QHBoxLayout" name="horizontalLayout">
                  <property name="spacing">
@@ -424,8 +427,11 @@
                <verstretch>0</verstretch>
               </sizepolicy>
              </property>
+             <property name="focusPolicy">
+              <enum>Qt::TabFocus</enum>
+             </property>
              <property name="title">
-              <string>Database</string>
+              <string>&amp;Database</string>
              </property>
              <layout class="QGridLayout" name="gridLayout_5">
               <property name="leftMargin">

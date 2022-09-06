@@ -105,7 +105,7 @@
    <item row="2" column="0" colspan="4">
     <widget class="QGroupBox" name="attributes_gb">
      <property name="title">
-      <string>Attributes</string>
+      <string>&amp;Attributes</string>
      </property>
      <layout class="QGridLayout" name="gridLayout">
       <property name="leftMargin">
@@ -182,17 +182,17 @@
      </property>
      <widget class="QWidget" name="member_of_tab">
       <attribute name="title">
-       <string>Members</string>
+       <string>&amp;Members</string>
       </attribute>
      </widget>
      <widget class="QWidget" name="adm_members_tab">
       <attribute name="title">
-       <string>Admin option</string>
+       <string>&amp;Admin option</string>
       </attribute>
      </widget>
      <widget class="QWidget" name="members_tab">
       <attribute name="title">
-       <string>Member of</string>
+       <string>M&amp;ember of</string>
       </attribute>
      </widget>
     </widget>

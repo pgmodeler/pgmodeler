@@ -43,7 +43,7 @@
         <normaloff>:/icons/icons/reference.png</normaloff>:/icons/icons/reference.png</iconset>
       </attribute>
       <attribute name="title">
-       <string>References</string>
+       <string>&amp;References</string>
       </attribute>
      </widget>
      <widget class="QWidget" name="triggers_tab">
@@ -52,7 +52,7 @@
         <normaloff>:/icons/icons/trigger.png</normaloff>:/icons/icons/trigger.png</iconset>
       </attribute>
       <attribute name="title">
-       <string>Triggers</string>
+       <string>&amp;Triggers</string>
       </attribute>
      </widget>
      <widget class="QWidget" name="rules_tab">
@@ -61,7 +61,7 @@
         <normaloff>:/icons/icons/rule.png</normaloff>:/icons/icons/rule.png</iconset>
       </attribute>
       <attribute name="title">
-       <string>Rules</string>
+       <string>&amp;Rules</string>
       </attribute>
      </widget>
      <widget class="QWidget" name="indexes_tab">
@@ -70,7 +70,7 @@
         <normaloff>:/icons/icons/index.png</normaloff>:/icons/icons/index.png</iconset>
       </attribute>
       <attribute name="title">
-       <string>Indexes</string>
+       <string>&amp;Indexes</string>
       </attribute>
      </widget>
      <widget class="QWidget" name="cte_tab">
@@ -79,7 +79,7 @@
         <normaloff>:/icons/icons/sourcecode.png</normaloff>:/icons/icons/sourcecode.png</iconset>
       </attribute>
       <attribute name="title">
-       <string>Table Expression</string>
+       <string>Table E&amp;xpression</string>
       </attribute>
      </widget>
      <widget class="QWidget" name="code_prev_tab">
@@ -88,7 +88,7 @@
         <normaloff>:/icons/icons/sqlpreview.png</normaloff>:/icons/icons/sqlpreview.png</iconset>
       </attribute>
       <attribute name="title">
-       <string>Code Preview</string>
+       <string>Code Pre&amp;view</string>
       </attribute>
      </widget>
     </widget>
@@ -96,7 +96,7 @@
    <item row="1" column="0" colspan="3">
     <widget class="QGroupBox" name="options_gb">
      <property name="title">
-      <string>Options</string>
+      <string>&amp;Options</string>
      </property>
      <layout class="QGridLayout" name="gridLayout_2">
       <property name="leftMargin">

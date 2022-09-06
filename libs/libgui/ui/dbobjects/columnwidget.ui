@@ -29,7 +29,7 @@
    <item row="0" column="0">
     <widget class="QGroupBox" name="default_value_grp">
      <property name="title">
-      <string>Default Value:</string>
+      <string>&amp;Default Value:</string>
      </property>
      <layout class="QGridLayout" name="gridLayout">
       <property name="leftMargin">

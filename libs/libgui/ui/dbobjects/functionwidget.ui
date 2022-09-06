@@ -379,7 +379,7 @@
     </sizepolicy>
    </property>
    <property name="title">
-    <string>Return table</string>
+    <string>&amp;Return table</string>
    </property>
   </widget>
   <widget class="QRadioButton" name="simple_rb">

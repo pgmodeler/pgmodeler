@@ -54,6 +54,9 @@ RelationshipConfigWidget::RelationshipConfigWidget(QWidget * parent) : BaseConfi
 	for(int i=0; i < rel_types.size(); i++)
 		rel_type_cmb->addItem(BaseRelationship::getRelationshipTypeName(rel_types_id[i]), rel_types[i]);
 
+	settings_twg->widget(0)->setFocusProxy(crows_foot_rb);
+	foreign_key_gb->setFocusProxy(deferrable_chk);
+
 	connect(crows_foot_rb, SIGNAL(toggled(bool)), this, SLOT(enableConnModePreview()));
 	connect(fk_to_pk_rb, SIGNAL(toggled(bool)), this, SLOT(enableConnModePreview()));
 	connect(center_pnts_rb, SIGNAL(toggled(bool)), this, SLOT(enableConnModePreview()));

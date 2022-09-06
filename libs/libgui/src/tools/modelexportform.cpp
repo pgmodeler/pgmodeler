@@ -48,6 +48,11 @@ ModelExportForm::ModelExportForm(QWidget *parent, Qt::WindowFlags f) : QDialog(p
 	export_thread=new QThread(this);
 	export_hlp.moveToThread(export_thread);
 
+	export_to_dbms_gb->setFocusProxy(export_to_dbms_rb);
+	export_to_file_gb->setFocusProxy(export_to_file_rb);
+	export_to_dict_gb->setFocusProxy(export_to_dict_rb);
+	export_to_img_gb->setFocusProxy(export_to_img_rb);
+
 	connect(sql_file_sel, SIGNAL(s_fileSelected(QString)), this, SLOT(enableExport()));
 	connect(sql_file_sel, SIGNAL(s_selectorCleared()), this, SLOT(enableExport()));
 	connect(img_file_sel, SIGNAL(s_fileSelected(QString)), this, SLOT(enableExport()));

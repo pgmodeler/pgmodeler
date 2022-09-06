@@ -52,7 +52,7 @@
         <normaloff>:/icons/icons/connmode.png</normaloff>:/icons/icons/connmode.png</iconset>
       </attribute>
       <attribute name="title">
-       <string>Connection mode</string>
+       <string>Connection &amp;mode</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout_3">
        <property name="leftMargin">
@@ -406,7 +406,7 @@
         <normaloff>:/icons/icons/constraint_fk.png</normaloff>:/icons/icons/constraint_fk.png</iconset>
       </attribute>
       <attribute name="title">
-       <string>FK Settings &amp;&amp; Patterns</string>
+       <string>&amp;FK Settings &amp;&amp; Patterns</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_4">
        <property name="spacing">
@@ -431,6 +431,9 @@
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
+         </property>
+         <property name="focusPolicy">
+          <enum>Qt::TabFocus</enum>
          </property>
          <property name="title">
           <string>Foreign key settings</string>
@@ -618,6 +621,9 @@
           <font>
            <italic>false</italic>
           </font>
+         </property>
+         <property name="focusPolicy">
+          <enum>Qt::TabFocus</enum>
          </property>
          <property name="title">
           <string>Name patterns</string>

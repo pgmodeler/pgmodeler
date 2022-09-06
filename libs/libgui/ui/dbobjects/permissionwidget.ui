@@ -58,7 +58,7 @@
         <normaloff>:/icons/icons/permission.png</normaloff>:/icons/icons/permission.png</iconset>
       </attribute>
       <attribute name="title">
-       <string>Permissions</string>
+       <string>&amp;Permissions</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout_2">
        <property name="leftMargin">
@@ -174,7 +174,7 @@
                </size>
               </property>
               <property name="title">
-               <string>Roles</string>
+               <string>&amp;Roles</string>
               </property>
              </widget>
              <widget class="QGroupBox" name="privileges_gb">
@@ -197,7 +197,7 @@
                </size>
               </property>
               <property name="title">
-               <string>Privileges</string>
+               <string>P&amp;rivileges</string>
               </property>
               <layout class="QGridLayout" name="gridLayout">
                <property name="leftMargin">
@@ -221,7 +221,7 @@
                   <bool>true</bool>
                  </property>
                  <property name="text">
-                  <string>&amp;Grant</string>
+                  <string>Grant</string>
                  </property>
                  <property name="checked">
                   <bool>true</bool>
@@ -231,7 +231,7 @@
                <item row="0" column="1">
                 <widget class="QRadioButton" name="revoke_rb">
                  <property name="text">
-                  <string>Re&amp;voke</string>
+                  <string>Revoke</string>
                  </property>
                 </widget>
                </item>
@@ -426,7 +426,7 @@
            </size>
           </property>
           <property name="title">
-           <string>Permissions</string>
+           <string>P&amp;ermissions</string>
           </property>
          </widget>
         </widget>
@@ -439,7 +439,7 @@
         <normaloff>:/icons/icons/sqlpreview.png</normaloff>:/icons/icons/sqlpreview.png</iconset>
       </attribute>
       <attribute name="title">
-       <string>Code preview</string>
+       <string>Code pre&amp;view</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout_3">
        <property name="leftMargin">

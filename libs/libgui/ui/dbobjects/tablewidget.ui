@@ -35,7 +35,7 @@
    <item row="1" column="0" colspan="2">
     <widget class="QGroupBox" name="attributes_gb">
      <property name="title">
-      <string>Attributes</string>
+      <string>&amp;Attributes</string>
      </property>
      <layout class="QGridLayout" name="gridLayout_2">
       <property name="leftMargin">
@@ -260,6 +260,10 @@
       </attribute>
      </widget>
      <widget class="QWidget" name="tab_8">
+      <attribute name="icon">
+       <iconset resource="../../res/resources.qrc">
+        <normaloff>:/icons/icons/partitionkey.png</normaloff>:/icons/icons/partitionkey.png</iconset>
+      </attribute>
       <attribute name="title">
        <string>Partition &amp;keys</string>
       </attribute>
@@ -345,7 +349,7 @@
         <normaloff>:/icons/icons/config.png</normaloff>:/icons/icons/config.png</iconset>
       </attribute>
       <attribute name="title">
-       <string>Options</string>
+       <string>Optio&amp;ns</string>
       </attribute>
      </widget>
     </widget>

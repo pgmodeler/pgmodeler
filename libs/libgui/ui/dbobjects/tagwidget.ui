@@ -29,7 +29,7 @@
    <item row="0" column="0">
     <widget class="QGroupBox" name="groupBox">
      <property name="title">
-      <string>Colors</string>
+      <string>C&amp;olors</string>
      </property>
      <layout class="QGridLayout" name="colors_grid">
       <property name="leftMargin">

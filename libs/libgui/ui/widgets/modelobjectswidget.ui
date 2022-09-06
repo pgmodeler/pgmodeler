@@ -397,7 +397,7 @@
              </size>
             </property>
             <property name="title">
-             <string>Visible object types</string>
+             <string>Visible object &amp;types</string>
             </property>
             <property name="flat">
              <bool>false</bool>
