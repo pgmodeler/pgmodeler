@@ -37,6 +37,9 @@
    </property>
    <item row="0" column="0">
     <widget class="QTabWidget" name="settings_twg">
+     <property name="focusPolicy">
+      <enum>Qt::TabFocus</enum>
+     </property>
      <property name="currentIndex">
       <number>0</number>
      </property>
@@ -52,7 +55,7 @@
         <normaloff>:/icons/icons/design.png</normaloff>:/icons/icons/design.png</iconset>
       </attribute>
       <attribute name="title">
-       <string>General &amp;&amp; Design</string>
+       <string>&amp;General &amp;&amp; Design</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout_11">
        <property name="leftMargin">
@@ -834,7 +837,7 @@
         <normaloff>:/icons/icons/print.png</normaloff>:/icons/icons/print.png</iconset>
       </attribute>
       <attribute name="title">
-       <string>Printing</string>
+       <string>&amp;Printing</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout_9">
        <property name="leftMargin">

@@ -664,7 +664,7 @@
           </font>
          </property>
          <property name="focusPolicy">
-          <enum>Qt::WheelFocus</enum>
+          <enum>Qt::StrongFocus</enum>
          </property>
          <property name="title">
           <string>&amp;Name Patterns</string>
@@ -1048,7 +1048,7 @@
           </sizepolicy>
          </property>
          <property name="focusPolicy">
-          <enum>Qt::WheelFocus</enum>
+          <enum>Qt::StrongFocus</enum>
          </property>
          <property name="title">
           <string>&amp;Foreign key Settings</string>
@@ -1294,7 +1294,7 @@
           </sizepolicy>
          </property>
          <property name="focusPolicy">
-          <enum>Qt::TabFocus</enum>
+          <enum>Qt::StrongFocus</enum>
          </property>
          <property name="title">
           <string>&amp;Copy Options</string>

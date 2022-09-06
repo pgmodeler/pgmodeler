@@ -46,7 +46,7 @@
         <normaloff>:/icons/icons/uicode.png</normaloff>:/icons/icons/uicode.png</iconset>
       </attribute>
       <attribute name="title">
-       <string>Interface &amp;&amp; Code</string>
+       <string>&amp;Interface &amp;&amp; Code</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout">
        <property name="spacing">
@@ -413,7 +413,7 @@
         <normaloff>:/icons/icons/dbmodel.png</normaloff>:/icons/icons/dbmodel.png</iconset>
       </attribute>
       <attribute name="title">
-       <string>Canvas &amp;&amp; Objects</string>
+       <string>Ca&amp;nvas &amp;&amp; Objects</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_3">
        <property name="spacing">
