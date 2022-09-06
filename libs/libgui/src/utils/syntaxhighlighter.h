@@ -78,7 +78,8 @@ class SyntaxHighlighter: public QSyntaxHighlighter {
 		bool conf_loaded,
 
 		/*! \brief This causes the highlighter to ignores any RETURN/ENTER press on QTextEdit causing
-							the text to be in a single line. */
+		 *  the text to be in a single line. Also, in single line mode, pressing tab on a focused
+		 *  input causes the focus to jump to the next widget in the hierarchy */
 		single_line_mode,
 
 		/*! \brief Indicates that nearby (contiguous) word separators must be captured

@@ -577,6 +577,12 @@
          <property name="horizontalScrollBarPolicy">
           <enum>Qt::ScrollBarAlwaysOff</enum>
          </property>
+         <property name="tabChangesFocus">
+          <bool>true</bool>
+         </property>
+         <property name="readOnly">
+          <bool>true</bool>
+         </property>
         </widget>
        </item>
        <item row="6" column="1" colspan="2">
@@ -609,6 +615,12 @@
          </property>
          <property name="horizontalScrollBarPolicy">
           <enum>Qt::ScrollBarAlwaysOff</enum>
+         </property>
+         <property name="tabChangesFocus">
+          <bool>true</bool>
+         </property>
+         <property name="readOnly">
+          <bool>true</bool>
          </property>
         </widget>
        </item>
@@ -651,8 +663,11 @@
            <italic>false</italic>
           </font>
          </property>
+         <property name="focusPolicy">
+          <enum>Qt::WheelFocus</enum>
+         </property>
          <property name="title">
-          <string>Name Patterns</string>
+          <string>&amp;Name Patterns</string>
          </property>
          <property name="checkable">
           <bool>false</bool>
@@ -675,6 +690,9 @@
           </property>
           <item>
            <widget class="QCheckBox" name="patterns_gconf_chk">
+            <property name="focusPolicy">
+             <enum>Qt::WheelFocus</enum>
+            </property>
             <property name="toolTip">
              <string>Use the values defined on settings dialogs for the fields below</string>
             </property>
@@ -797,11 +815,17 @@
                  <height>16777215</height>
                 </size>
                </property>
+               <property name="focusPolicy">
+                <enum>Qt::WheelFocus</enum>
+               </property>
                <property name="verticalScrollBarPolicy">
                 <enum>Qt::ScrollBarAlwaysOff</enum>
                </property>
                <property name="horizontalScrollBarPolicy">
                 <enum>Qt::ScrollBarAlwaysOff</enum>
+               </property>
+               <property name="tabChangesFocus">
+                <bool>true</bool>
                </property>
               </widget>
              </item>
@@ -825,11 +849,17 @@
                  <height>16777215</height>
                 </size>
                </property>
+               <property name="focusPolicy">
+                <enum>Qt::WheelFocus</enum>
+               </property>
                <property name="verticalScrollBarPolicy">
                 <enum>Qt::ScrollBarAlwaysOff</enum>
                </property>
                <property name="horizontalScrollBarPolicy">
                 <enum>Qt::ScrollBarAlwaysOff</enum>
+               </property>
+               <property name="tabChangesFocus">
+                <bool>true</bool>
                </property>
               </widget>
              </item>
@@ -853,11 +883,17 @@
                  <height>16777215</height>
                 </size>
                </property>
+               <property name="focusPolicy">
+                <enum>Qt::WheelFocus</enum>
+               </property>
                <property name="verticalScrollBarPolicy">
                 <enum>Qt::ScrollBarAlwaysOff</enum>
                </property>
                <property name="horizontalScrollBarPolicy">
                 <enum>Qt::ScrollBarAlwaysOff</enum>
+               </property>
+               <property name="tabChangesFocus">
+                <bool>true</bool>
                </property>
               </widget>
              </item>
@@ -881,11 +917,17 @@
                  <height>16777215</height>
                 </size>
                </property>
+               <property name="focusPolicy">
+                <enum>Qt::WheelFocus</enum>
+               </property>
                <property name="verticalScrollBarPolicy">
                 <enum>Qt::ScrollBarAlwaysOff</enum>
                </property>
                <property name="horizontalScrollBarPolicy">
                 <enum>Qt::ScrollBarAlwaysOff</enum>
+               </property>
+               <property name="tabChangesFocus">
+                <bool>true</bool>
                </property>
               </widget>
              </item>
@@ -909,11 +951,17 @@
                  <height>16777215</height>
                 </size>
                </property>
+               <property name="focusPolicy">
+                <enum>Qt::WheelFocus</enum>
+               </property>
                <property name="verticalScrollBarPolicy">
                 <enum>Qt::ScrollBarAlwaysOff</enum>
                </property>
                <property name="horizontalScrollBarPolicy">
                 <enum>Qt::ScrollBarAlwaysOff</enum>
+               </property>
+               <property name="tabChangesFocus">
+                <bool>true</bool>
                </property>
               </widget>
              </item>
@@ -937,11 +985,17 @@
                  <height>16777215</height>
                 </size>
                </property>
+               <property name="focusPolicy">
+                <enum>Qt::WheelFocus</enum>
+               </property>
                <property name="verticalScrollBarPolicy">
                 <enum>Qt::ScrollBarAlwaysOff</enum>
                </property>
                <property name="horizontalScrollBarPolicy">
                 <enum>Qt::ScrollBarAlwaysOff</enum>
+               </property>
+               <property name="tabChangesFocus">
+                <bool>true</bool>
                </property>
               </widget>
              </item>
@@ -965,11 +1019,17 @@
                  <height>16777215</height>
                 </size>
                </property>
+               <property name="focusPolicy">
+                <enum>Qt::WheelFocus</enum>
+               </property>
                <property name="verticalScrollBarPolicy">
                 <enum>Qt::ScrollBarAlwaysOff</enum>
                </property>
                <property name="horizontalScrollBarPolicy">
                 <enum>Qt::ScrollBarAlwaysOff</enum>
+               </property>
+               <property name="tabChangesFocus">
+                <bool>true</bool>
                </property>
               </widget>
              </item>
@@ -987,8 +1047,11 @@
            <verstretch>0</verstretch>
           </sizepolicy>
          </property>
+         <property name="focusPolicy">
+          <enum>Qt::WheelFocus</enum>
+         </property>
          <property name="title">
-          <string>Foreign key Settings</string>
+          <string>&amp;Foreign key Settings</string>
          </property>
          <property name="checkable">
           <bool>false</bool>
@@ -1016,6 +1079,9 @@
            <widget class="QCheckBox" name="fk_gconf_chk">
             <property name="enabled">
              <bool>true</bool>
+            </property>
+            <property name="focusPolicy">
+             <enum>Qt::WheelFocus</enum>
             </property>
             <property name="toolTip">
              <string>Use the values defined on settings dialogs for the fields below</string>
@@ -1100,6 +1166,9 @@
                  <height>16777215</height>
                 </size>
                </property>
+               <property name="focusPolicy">
+                <enum>Qt::WheelFocus</enum>
+               </property>
                <property name="text">
                 <string/>
                </property>
@@ -1156,6 +1225,9 @@
                  <height>16777215</height>
                 </size>
                </property>
+               <property name="focusPolicy">
+                <enum>Qt::WheelFocus</enum>
+               </property>
                <property name="sizeAdjustPolicy">
                 <enum>QComboBox::AdjustToContents</enum>
                </property>
@@ -1176,6 +1248,9 @@
              </item>
              <item row="1" column="1">
               <widget class="QComboBox" name="del_action_cmb">
+               <property name="focusPolicy">
+                <enum>Qt::WheelFocus</enum>
+               </property>
                <property name="iconSize">
                 <size>
                  <width>28</width>
@@ -1193,6 +1268,9 @@
              </item>
              <item row="1" column="3">
               <widget class="QComboBox" name="upd_action_cmb">
+               <property name="focusPolicy">
+                <enum>Qt::WheelFocus</enum>
+               </property>
                <property name="iconSize">
                 <size>
                  <width>28</width>
@@ -1215,8 +1293,11 @@
            <verstretch>0</verstretch>
           </sizepolicy>
          </property>
+         <property name="focusPolicy">
+          <enum>Qt::TabFocus</enum>
+         </property>
          <property name="title">
-          <string>Copy Options</string>
+          <string>&amp;Copy Options</string>
          </property>
          <layout class="QGridLayout" name="gridLayout_4">
           <property name="leftMargin">
@@ -1239,6 +1320,9 @@
             <property name="enabled">
              <bool>false</bool>
             </property>
+            <property name="focusPolicy">
+             <enum>Qt::WheelFocus</enum>
+            </property>
             <property name="text">
              <string>INDEXES</string>
             </property>
@@ -1249,6 +1333,9 @@
             <property name="enabled">
              <bool>false</bool>
             </property>
+            <property name="focusPolicy">
+             <enum>Qt::WheelFocus</enum>
+            </property>
             <property name="text">
              <string>COMMENTS</string>
             </property>
@@ -1256,6 +1343,9 @@
           </item>
           <item row="0" column="1">
            <widget class="QRadioButton" name="including_rb">
+            <property name="focusPolicy">
+             <enum>Qt::WheelFocus</enum>
+            </property>
             <property name="text">
              <string>INCLUDING</string>
             </property>
@@ -1265,6 +1355,9 @@
            <widget class="QCheckBox" name="defaults_chk">
             <property name="enabled">
              <bool>false</bool>
+            </property>
+            <property name="focusPolicy">
+             <enum>Qt::WheelFocus</enum>
             </property>
             <property name="text">
              <string>DEFAULTS</string>
@@ -1279,6 +1372,9 @@
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
+            <property name="focusPolicy">
+             <enum>Qt::WheelFocus</enum>
+            </property>
             <property name="text">
              <string>E&amp;XCLUDING</string>
             </property>
@@ -1288,6 +1384,9 @@
            <widget class="QCheckBox" name="constraints_chk">
             <property name="enabled">
              <bool>false</bool>
+            </property>
+            <property name="focusPolicy">
+             <enum>Qt::WheelFocus</enum>
             </property>
             <property name="text">
              <string>CONSTRAINTS</string>
@@ -1302,6 +1401,9 @@
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
+            <property name="focusPolicy">
+             <enum>Qt::WheelFocus</enum>
+            </property>
             <property name="text">
              <string>Use defaults</string>
             </property>
@@ -1315,6 +1417,9 @@
             <property name="enabled">
              <bool>false</bool>
             </property>
+            <property name="focusPolicy">
+             <enum>Qt::WheelFocus</enum>
+            </property>
             <property name="text">
              <string>ALL</string>
             </property>
@@ -1324,6 +1429,9 @@
            <widget class="QCheckBox" name="storage_chk">
             <property name="enabled">
              <bool>false</bool>
+            </property>
+            <property name="focusPolicy">
+             <enum>Qt::WheelFocus</enum>
             </property>
             <property name="text">
              <string>STORAGE</string>
@@ -1357,6 +1465,9 @@
             <property name="enabled">
              <bool>false</bool>
             </property>
+            <property name="focusPolicy">
+             <enum>Qt::WheelFocus</enum>
+            </property>
             <property name="text">
              <string>STATISTICS</string>
             </property>
@@ -1366,6 +1477,9 @@
            <widget class="QCheckBox" name="identity_chk">
             <property name="enabled">
              <bool>false</bool>
+            </property>
+            <property name="focusPolicy">
+             <enum>Qt::WheelFocus</enum>
             </property>
             <property name="text">
              <string>IDENTITY</string>
@@ -1487,6 +1601,7 @@
   <tabstop>recv_table_txt</tabstop>
   <tabstop>default_part_chk</tabstop>
   <tabstop>gen_bound_expr_tb</tabstop>
+  <tabstop>copy_options_grp</tabstop>
   <tabstop>defaults_rb</tabstop>
   <tabstop>including_rb</tabstop>
   <tabstop>excluding_rb</tabstop>
@@ -1498,11 +1613,13 @@
   <tabstop>comments_chk</tabstop>
   <tabstop>identity_chk</tabstop>
   <tabstop>statistics_chk</tabstop>
+  <tabstop>foreign_key_gb</tabstop>
   <tabstop>fk_gconf_chk</tabstop>
   <tabstop>deferrable_chk</tabstop>
   <tabstop>deferral_cmb</tabstop>
   <tabstop>del_action_cmb</tabstop>
   <tabstop>upd_action_cmb</tabstop>
+  <tabstop>name_patterns_grp</tabstop>
   <tabstop>patterns_gconf_chk</tabstop>
   <tabstop>src_col_pattern_txt</tabstop>
   <tabstop>dst_col_pattern_txt</tabstop>

@@ -46,6 +46,7 @@ SyntaxHighlighter::SyntaxHighlighter(QPlainTextEdit *parent, bool single_line_mo
 		parent->setMaximumHeight(height);
 		parent->setSizePolicy(parent->sizePolicy().horizontalPolicy(), QSizePolicy::Fixed);
 		parent->adjustSize();
+		parent->setTabChangesFocus(true);
 	}
 }
 
