@@ -62,9 +62,6 @@
      <height>25</height>
     </size>
    </property>
-   <property name="shortcut">
-    <string>Alt+R</string>
-   </property>
   </widget>
  </widget>
  <resources>

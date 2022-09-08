@@ -67,7 +67,7 @@
        <item>
         <widget class="QGroupBox" name="groupBox">
          <property name="title">
-          <string>User interface</string>
+          <string>&amp;User interface</string>
          </property>
          <layout class="QGridLayout" name="gridLayout_2">
           <property name="leftMargin">
@@ -192,7 +192,7 @@
           </sizepolicy>
          </property>
          <property name="title">
-          <string>Code style</string>
+          <string>Co&amp;de style</string>
          </property>
          <layout class="QGridLayout" name="gridLayout_5">
           <property name="leftMargin">
@@ -440,7 +440,7 @@
           </size>
          </property>
          <property name="title">
-          <string>Design</string>
+          <string>&amp;Design</string>
          </property>
          <layout class="QHBoxLayout" name="horizontalLayout_13">
           <property name="spacing">
@@ -757,7 +757,7 @@
        <item>
         <widget class="QGroupBox" name="appearance_frm">
          <property name="title">
-          <string>Objects</string>
+          <string>O&amp;bjects</string>
          </property>
          <layout class="QGridLayout" name="gridLayout">
           <property name="leftMargin">

@@ -268,7 +268,7 @@
          </size>
         </property>
         <property name="text">
-         <string>Connections</string>
+         <string>C&amp;onnections</string>
         </property>
         <property name="icon">
          <iconset resource="../../res/resources.qrc">
@@ -309,7 +309,7 @@
          </size>
         </property>
         <property name="text">
-         <string>Plug-ins</string>
+         <string>P&amp;lug-ins</string>
         </property>
         <property name="icon">
          <iconset resource="../../res/resources.qrc">
@@ -350,7 +350,7 @@
          </size>
         </property>
         <property name="text">
-         <string>Relationships</string>
+         <string>&amp;Relationships</string>
         </property>
         <property name="icon">
          <iconset resource="../../res/resources.qrc">
@@ -391,7 +391,7 @@
          </size>
         </property>
         <property name="text">
-         <string>General</string>
+         <string>&amp;General</string>
         </property>
         <property name="icon">
          <iconset resource="../../res/resources.qrc">
@@ -402,9 +402,6 @@
           <width>32</width>
           <height>32</height>
          </size>
-        </property>
-        <property name="shortcut">
-         <string>Ctrl+S</string>
         </property>
         <property name="checkable">
          <bool>true</bool>
@@ -451,7 +448,7 @@
          </size>
         </property>
         <property name="text">
-         <string>Snippets</string>
+         <string>&amp;Snippets</string>
         </property>
         <property name="icon">
          <iconset resource="../../res/resources.qrc">
@@ -492,7 +489,7 @@
          </size>
         </property>
         <property name="text">
-         <string>Appearance</string>
+         <string>A&amp;ppearance</string>
         </property>
         <property name="icon">
          <iconset resource="../../res/resources.qrc">
