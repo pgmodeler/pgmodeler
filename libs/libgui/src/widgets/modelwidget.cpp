@@ -775,7 +775,6 @@ void ModelWidget::mousePressEvent(QMouseEvent *event)
 
 void ModelWidget::hideEvent(QHideEvent *)
 {
-	//magnifier_area_lbl->hide();
 	showMagnifierArea(false);
 }
 
@@ -5428,13 +5427,16 @@ void ModelWidget::updateMagnifierArea()
 {
 	QPoint pos = viewport->mapFromGlobal(QCursor::pos());
 	QPointF scene_pos = viewport->mapToScene(pos);
-	QSize size = magnifier_area_lbl->size();
+	QSize size = magnifier_area_lbl->size() * qApp->devicePixelRatio();
 	QPixmap pix = QPixmap(size);
 	double cx = magnifier_area_lbl->width() / 2, cy =  magnifier_area_lbl->height() / 2;
+
+	pix.setDevicePixelRatio(qApp->devicePixelRatio());
 
 	magnifier_rect.setRect(0, 0,
 												 magnifier_area_lbl->width() * current_zoom,
 												 magnifier_area_lbl->height() * current_zoom);
+
 	magnifier_rect.translate(pos - QPoint(magnifier_rect.width()/2, magnifier_rect.height()/2));
 
 	if(magnifier_rect.left() <= magnifier_area_lbl->geometry().right())
