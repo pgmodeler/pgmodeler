@@ -11965,6 +11965,8 @@ void DatabaseModel::getDataDictionary(attribs_map &datadict, bool browsable, boo
 
 			col_seqs.clear();
 		}
+		else
+			aux_attribs[Attributes::Sequences] = "";
 
 		attribs[Attributes::Objects] += base_tab->getDataDictionary(split, aux_attribs);
 
