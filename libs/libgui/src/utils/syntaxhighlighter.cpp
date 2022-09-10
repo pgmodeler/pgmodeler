@@ -46,6 +46,7 @@ SyntaxHighlighter::SyntaxHighlighter(QPlainTextEdit *parent, bool single_line_mo
 		parent->setMaximumHeight(height);
 		parent->setSizePolicy(parent->sizePolicy().horizontalPolicy(), QSizePolicy::Fixed);
 		parent->adjustSize();
+		parent->setTabChangesFocus(true);
 	}
 }
 
@@ -644,7 +645,7 @@ void SyntaxHighlighter::loadConfiguration(const QString &filename)
 		}
 		catch(Exception &e)
 		{
-			throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+			throw Exception(e.getErrorMessage(), e.getErrorCode(), __PRETTY_FUNCTION__, __FILE__, __LINE__, &e, filename);
 		}
 	}
 }

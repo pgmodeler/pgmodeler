@@ -35,7 +35,7 @@
    <item row="1" column="0" colspan="2">
     <widget class="QGroupBox" name="attributes_gb">
      <property name="title">
-      <string>Attributes</string>
+      <string>&amp;Attributes</string>
      </property>
      <layout class="QGridLayout" name="gridLayout_2">
       <property name="leftMargin">
@@ -260,6 +260,10 @@
       </attribute>
      </widget>
      <widget class="QWidget" name="tab_8">
+      <attribute name="icon">
+       <iconset resource="../../res/resources.qrc">
+        <normaloff>:/icons/icons/partitionkey.png</normaloff>:/icons/icons/partitionkey.png</iconset>
+      </attribute>
       <attribute name="title">
        <string>Partition &amp;keys</string>
       </attribute>
@@ -345,13 +349,22 @@
         <normaloff>:/icons/icons/config.png</normaloff>:/icons/icons/config.png</iconset>
       </attribute>
       <attribute name="title">
-       <string>Options</string>
+       <string>Optio&amp;ns</string>
       </attribute>
      </widget>
     </widget>
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>with_oids_chk</tabstop>
+  <tabstop>unlogged_chk</tabstop>
+  <tabstop>gen_alter_cmds_chk</tabstop>
+  <tabstop>enable_rls_chk</tabstop>
+  <tabstop>force_rls_chk</tabstop>
+  <tabstop>attributes_tbw</tabstop>
+  <tabstop>partitioning_type_cmb</tabstop>
+ </tabstops>
  <resources>
   <include location="../../res/resources.qrc"/>
   <include location="../../res/resources.qrc"/>

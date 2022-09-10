@@ -22,7 +22,6 @@ EventTriggerWidget::EventTriggerWidget(QWidget *parent): BaseObjectWidget(parent
 {
 	std::map<QString, std::vector<QWidget *> > fields_map;
 	std::map<QWidget *, std::vector<QString> > values_map;
-	QFrame *frame=nullptr;
 
 	Ui_EventTriggerWidget::setupUi(this);
 
@@ -41,13 +40,6 @@ EventTriggerWidget::EventTriggerWidget(QWidget *parent): BaseObjectWidget(parent
 
 	configureFormLayout(eventtrigger_grid, ObjectType::EventTrigger);
 	setRequiredField(function_lbl);
-
-	fields_map[BaseObjectWidget::generateVersionsInterval(BaseObjectWidget::AfterVersion, PgSqlVersions::PgSqlVersion95)].push_back(event_lbl);
-	values_map[event_lbl].push_back(~EventTriggerType(EventTriggerType::TableRewrite));
-
-	frame=BaseObjectWidget::generateVersionWarningFrame(fields_map, &values_map);
-	frame->setParent(this);
-	eventtrigger_grid->addWidget(frame, eventtrigger_grid->count(), 0, 1, 2);
 
 	configureTabOrder({ event_cmb, function_sel, tag_edt, filter_tab });
 

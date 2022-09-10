@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>942</width>
-    <height>69</height>
+    <height>70</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -353,13 +353,17 @@
   </layout>
  </widget>
  <tabstops>
+  <tabstop>find_edt</tabstop>
   <tabstop>previous_tb</tabstop>
   <tabstop>next_tb</tabstop>
   <tabstop>case_sensitive_chk</tabstop>
   <tabstop>regexp_chk</tabstop>
+  <tabstop>all_words_chk</tabstop>
+  <tabstop>replace_edt</tabstop>
   <tabstop>replace_tb</tabstop>
   <tabstop>replace_all_tb</tabstop>
   <tabstop>replace_find_tb</tabstop>
+  <tabstop>hide_tb</tabstop>
  </tabstops>
  <resources>
   <include location="../../res/resources.qrc"/>

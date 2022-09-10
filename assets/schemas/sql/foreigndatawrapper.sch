@@ -14,16 +14,12 @@
 	{ddl-end} $br
 %end
 
-[CREATE ] {sql-object} $sp {name}
+[CREATE ] {sql-object} $sp {name} $br
 
-%if ({pgsql-ver} >=f "9.1") %then
-	$br
-
-	%if %not {handler} %then
-		[NO HANDLER]
-	%else
-		[HANDLER ] {handler}
-	%end
+%if %not {handler} %then
+	[NO HANDLER]
+%else
+	[HANDLER ] {handler}
 %end
 
 $br

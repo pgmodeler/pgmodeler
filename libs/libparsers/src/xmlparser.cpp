@@ -89,7 +89,7 @@ void XmlParser::loadXMLFile(const QString &filename)
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(), e.getErrorCode(), __PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(), e.getErrorCode(), __PRETTY_FUNCTION__,__FILE__,__LINE__, &e, filename);
 	}
 }
 
@@ -196,7 +196,7 @@ void XmlParser::readBuffer()
 			//Raise an exception with the error massege from the parser xml
 			throw Exception(Exception::getErrorMessage(ErrorCode::LibXMLError)
 							.arg(xml_error->line).arg(xml_error->int2).arg(msg).arg(file),
-							ErrorCode::LibXMLError,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+							ErrorCode::LibXMLError,__PRETTY_FUNCTION__,__FILE__,__LINE__,nullptr, xml_doc_filename);
 		}
 
 		//Gets the referênce to the root element on the document

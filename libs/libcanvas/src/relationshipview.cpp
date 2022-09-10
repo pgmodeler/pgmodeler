@@ -1663,118 +1663,119 @@ void RelationshipView::configureAttributes()
 {
 	Relationship *rel=dynamic_cast<Relationship *>(this->getUnderlyingObject());
 
-	if(rel)
+	if(!rel)
+		return;
+
+	int i = 0, count;
+	Column *col=nullptr;
+	QGraphicsItemGroup *attrib=nullptr;
+	QGraphicsLineItem *lin=nullptr;
+	QGraphicsEllipseItem *desc=nullptr;
+	QGraphicsPolygonItem *sel_attrib=nullptr;
+	QGraphicsSimpleTextItem *text=nullptr;
+	QGraphicsItemGroup *item=nullptr;
+	QPointF p_aux;
+	QTextCharFormat fmt;
+	QFont font;
+	QRectF rect;
+	QPolygonF pol;
+	double py, px,
+			factor=font_config[Attributes::Global].font().pointSizeF()/DefaultFontSize;
+
+	fmt=font_config[Attributes::Attribute];
+	font=fmt.font();
+	font.setPointSizeF(font.pointSizeF() * 0.90);
+
+	//Configures the rectangle used as base for creation of attribute descriptor
+	rect.setTopLeft(QPointF(0,0));
+	rect.setSize(QSizeF(12 * factor, 12 * factor));
+
+	//Calculates the first attribute position based upon the attribute count and descriptor size
+	count=rel->getAttributeCount();
+	px=descriptor->pos().x() + descriptor->boundingRect().width() + (4 * HorizSpacing * factor);
+	py=descriptor->pos().y() - (count * rect.height()/(4 * factor));
+
+	for(i=0; i < count; i++)
 	{
-		int i, count;
-		Column *col=nullptr;
-		QGraphicsItemGroup *attrib=nullptr;
-		QGraphicsLineItem *lin=nullptr;
-		QGraphicsEllipseItem *desc=nullptr;
-		QGraphicsPolygonItem *sel_attrib=nullptr;
-		QGraphicsSimpleTextItem *text=nullptr;
-		QGraphicsItemGroup *item=nullptr;
-		QPointF p_aux;
-		QTextCharFormat fmt;
-		QFont font;
-		QRectF rect;
-		QPolygonF pol;
-		double py, px,
-				factor=font_config[Attributes::Global].font().pointSizeF()/DefaultFontSize;
+		col=rel->getAttribute(i);
 
-		fmt=font_config[Attributes::Attribute];
-		font=fmt.font();
-		font.setPointSizeF(font.pointSizeF() * 0.90);
-
-		//Configures the rectangle used as base for creation of attribute descriptor
-		rect.setTopLeft(QPointF(0,0));
-		rect.setSize(QSizeF(12 * factor, 12 * factor));
-
-		//Calculates the first attribute position based upon the attribute count and descriptor size
-		count=rel->getAttributeCount();
-		px=descriptor->pos().x() + descriptor->boundingRect().width() + (4 * HorizSpacing * factor);
-		py=descriptor->pos().y() - (count * rect.height()/(4 * factor));
-
-		for(i=0; i < count; i++)
+		if(i >= static_cast<int>(attributes.size()))
 		{
-			col=rel->getAttribute(i);
+			attrib=new QGraphicsItemGroup;
+			attrib->setZValue(-1);
 
-			if(i >= static_cast<int>(attributes.size()))
-			{
-				attrib=new QGraphicsItemGroup;
-				attrib->setZValue(-1);
+			//Creates the line that connects the attribute to the relationship descriptor
+			lin=new QGraphicsLineItem;
+			lin->setZValue(-1);
+			attrib->addToGroup(lin);
 
-				//Creates the line that connects the attribute to the relationship descriptor
-				lin=new QGraphicsLineItem;
-				lin->setZValue(-1);
-				attrib->addToGroup(lin);
+			//Creates the attribute descriptor
+			desc=new QGraphicsEllipseItem;
+			desc->setZValue(0);
+			attrib->addToGroup(desc);
 
-				//Creates the attribute descriptor
-				desc=new QGraphicsEllipseItem;
-				desc->setZValue(0);
-				attrib->addToGroup(desc);
+			//Creates the attribute text
+			text=new QGraphicsSimpleTextItem;
+			text->setZValue(0);
+			attrib->addToGroup(text);
 
-				//Creates the attribute text
-				text=new QGraphicsSimpleTextItem;
-				text->setZValue(0);
-				attrib->addToGroup(text);
+			sel_attrib=new QGraphicsPolygonItem;
+			sel_attrib->setZValue(1);
+			sel_attrib->setVisible(false);
+			attrib->addToGroup(sel_attrib);
 
-				sel_attrib=new QGraphicsPolygonItem;
-				sel_attrib->setZValue(1);
-				sel_attrib->setVisible(false);
-				attrib->addToGroup(sel_attrib);
-
-				this->addToGroup(attrib);
-				attributes.push_back(attrib);
-			}
-			else
-			{
-				attrib=attributes[i];
-				lin=dynamic_cast<QGraphicsLineItem *>(attrib->childItems().at(0));
-				desc=dynamic_cast<QGraphicsEllipseItem *>(attrib->childItems().at(1));
-				text=dynamic_cast<QGraphicsSimpleTextItem *>(attrib->childItems().at(2));
-				sel_attrib=dynamic_cast<QGraphicsPolygonItem *>(attrib->childItems().at(3));
-			}
-
-			desc->setRect(rect);
-			desc->setPen(BaseObjectView::getBorderStyle(Attributes::Attribute));
-			desc->setBrush(BaseObjectView::getFillStyle(Attributes::Attribute));
-			lin->setPen(descriptor->pen());
-			text->setBrush(fmt.foreground());
-			text->setFont(font);
-			sel_attrib->setPen(BaseObjectView::getBorderStyle(Attributes::ObjSelection));
-			sel_attrib->setBrush(BaseObjectView::getFillStyle(Attributes::ObjSelection));
-
-			attrib->setPos(px, py);
-
-			text->setText(compact_view && !col->getAlias().isEmpty() ? col->getAlias() : col->getName());
-			text->setPos(QPointF(desc->pos().x() + desc->boundingRect().width() + (HorizSpacing * factor),
-													 (desc->boundingRect().height() - text->boundingRect().height())/2));
-			desc->setPos(0, VertSpacing * factor);
-
-			pol.clear();
-			pol.append(QPointF(-HorizSpacing, - VertSpacing));
-			pol.append(QPointF(desc->boundingRect().width() + text->boundingRect().width(), -VertSpacing));
-			pol.append(QPointF(desc->boundingRect().width() + text->boundingRect().width(), (text->boundingRect().height()/2) + VertSpacing));
-			pol.append(QPointF(-HorizSpacing, (text->boundingRect().height()/2) + VertSpacing));
-			sel_attrib->setPolygon(pol);
-
-			p_aux=this->mapToItem(attrib, descriptor->pos().x() + (descriptor->boundingRect().width()/2.0),
-														descriptor->pos().y() + (descriptor->boundingRect().height()/2.0));
-			lin->setLine(QLineF(p_aux, desc->boundingRect().center()));
-
-			py+=desc->boundingRect().height() + (10 * VertSpacing);
+			this->addToGroup(attrib);
+			attributes.push_back(attrib);
+		}
+		else
+		{
+			attrib=attributes[i];
+			lin=dynamic_cast<QGraphicsLineItem *>(attrib->childItems().at(0));
+			desc=dynamic_cast<QGraphicsEllipseItem *>(attrib->childItems().at(1));
+			text=dynamic_cast<QGraphicsSimpleTextItem *>(attrib->childItems().at(2));
+			sel_attrib=dynamic_cast<QGraphicsPolygonItem *>(attrib->childItems().at(3));
 		}
 
-		i=attributes.size()-1;
-		while(i > count-1)
-		{
-			item=attributes.back();
-			attributes.pop_back();
-			this->removeFromGroup(item);
-			delete item;
-			i--;
-		}
+		desc->setRect(rect);
+		desc->setPen(BaseObjectView::getBorderStyle(Attributes::Attribute));
+		desc->setBrush(BaseObjectView::getFillStyle(Attributes::Attribute));
+		lin->setPen(descriptor->pen());
+		text->setBrush(fmt.foreground());
+		text->setFont(font);
+		sel_attrib->setPen(BaseObjectView::getBorderStyle(Attributes::ObjSelection));
+		sel_attrib->setBrush(BaseObjectView::getFillStyle(Attributes::ObjSelection));
+
+		attrib->setPos(px, py);
+
+		text->setText(compact_view && !col->getAlias().isEmpty() ? col->getAlias() : col->getName());
+		text->setPos(QPointF(desc->pos().x() + desc->boundingRect().width() + (HorizSpacing * factor),
+												 (desc->boundingRect().height() - text->boundingRect().height())/2.5));
+		desc->setPos(0, VertSpacing * factor);
+
+		pol.clear();
+		pol.append(QPointF(-HorizSpacing, 0));
+		pol.append(QPointF(desc->boundingRect().width() + text->boundingRect().width() + 2 * HorizSpacing, 0));
+		pol.append(QPointF(desc->boundingRect().width() + text->boundingRect().width() + 2 * HorizSpacing, text->boundingRect().height()));
+		pol.append(QPointF(-HorizSpacing, text->boundingRect().height()));
+		sel_attrib->setPolygon(pol);
+
+		p_aux=this->mapToItem(attrib, descriptor->pos().x() + (descriptor->boundingRect().width()/2.0),
+													descriptor->pos().y() + (descriptor->boundingRect().height()/2.0));
+		lin->setLine(QLineF(p_aux, desc->boundingRect().center()));
+
+		py+=desc->boundingRect().height() + (5 * VertSpacing);
 	}
+
+	i=attributes.size()-1;
+	while(i > count-1)
+	{
+		item=attributes.back();
+		attributes.pop_back();
+		this->removeFromGroup(item);
+		delete item;
+		i--;
+	}
+
 }
 
 void RelationshipView::configureLabels()

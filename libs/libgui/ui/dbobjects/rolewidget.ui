@@ -105,7 +105,7 @@
    <item row="2" column="0" colspan="4">
     <widget class="QGroupBox" name="attributes_gb">
      <property name="title">
-      <string>Attributes</string>
+      <string>&amp;Attributes</string>
      </property>
      <layout class="QGridLayout" name="gridLayout">
       <property name="leftMargin">
@@ -182,17 +182,17 @@
      </property>
      <widget class="QWidget" name="member_of_tab">
       <attribute name="title">
-       <string>Members</string>
+       <string>&amp;Members</string>
       </attribute>
      </widget>
      <widget class="QWidget" name="adm_members_tab">
       <attribute name="title">
-       <string>Admin option</string>
+       <string>&amp;Admin option</string>
       </attribute>
      </widget>
      <widget class="QWidget" name="members_tab">
       <attribute name="title">
-       <string>Member of</string>
+       <string>M&amp;ember of</string>
       </attribute>
      </widget>
     </widget>
@@ -204,7 +204,7 @@
      </property>
     </widget>
    </item>
-   <item row="0" column="1">
+   <item row="0" column="1" colspan="3">
     <widget class="QLineEdit" name="passwd_edt">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
@@ -217,29 +217,20 @@
      </property>
     </widget>
    </item>
-   <item row="0" column="2" colspan="2">
-    <widget class="QCheckBox" name="encrypt_pass_chk">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="text">
-      <string>Encrypted</string>
-     </property>
-    </widget>
-   </item>
   </layout>
  </widget>
  <tabstops>
   <tabstop>passwd_edt</tabstop>
-  <tabstop>encrypt_pass_chk</tabstop>
   <tabstop>validity_chk</tabstop>
   <tabstop>validity_dte</tabstop>
   <tabstop>conn_limit_sb</tabstop>
   <tabstop>superusr_chk</tabstop>
+  <tabstop>inh_perm_chk</tabstop>
   <tabstop>create_db_chk</tabstop>
+  <tabstop>create_role_chk</tabstop>
+  <tabstop>can_login_chk</tabstop>
+  <tabstop>can_replicate_chk</tabstop>
+  <tabstop>bypass_rls_chk</tabstop>
   <tabstop>members_twg</tabstop>
  </tabstops>
  <resources/>

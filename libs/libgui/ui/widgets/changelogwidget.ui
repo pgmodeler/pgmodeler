@@ -226,6 +226,11 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>persisted_chk</tabstop>
+  <tabstop>clear_tb</tabstop>
+  <tabstop>hide_tb</tabstop>
+ </tabstops>
  <resources>
   <include location="../../res/resources.qrc"/>
   <include location="../../res/resources.qrc"/>

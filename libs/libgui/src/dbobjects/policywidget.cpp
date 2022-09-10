@@ -58,7 +58,7 @@ PolicyWidget::PolicyWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType
 		command_cmb->addItems(PolicyCmdType::getTypes());
 
 		configureFormLayout(policy_grid, ObjectType::Policy);
-		configureTabOrder({ basics_grp, attribs_tbw });
+		configureTabOrder({ command_cmb, permissive_chk, attribs_tbw });
 
 		connect(roles_tab, SIGNAL(s_rowAdded(int)), model_objs_wgt, SLOT(show()));
 		connect(model_objs_wgt, SIGNAL(s_visibilityChanged(BaseObject*, bool)), this, SLOT(selectRole(BaseObject*, bool)));

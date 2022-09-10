@@ -105,7 +105,7 @@
     </rect>
    </property>
    <property name="title">
-    <string>Elements</string>
+    <string>&amp;Elements</string>
    </property>
    <layout class="QGridLayout" name="elementos_grid">
     <property name="leftMargin">

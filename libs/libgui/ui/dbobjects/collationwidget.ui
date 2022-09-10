@@ -35,7 +35,7 @@
    <item row="2" column="0" colspan="2">
     <widget class="QGroupBox" name="groupBox">
      <property name="title">
-      <string>LC_COLLATE</string>
+      <string>&amp;LC_COLLATE</string>
      </property>
      <layout class="QGridLayout" name="gridLayout">
       <property name="leftMargin">
@@ -141,7 +141,7 @@
    <item row="0" column="0" colspan="4">
     <widget class="QGroupBox" name="groupBox_3">
      <property name="title">
-      <string>Basics</string>
+      <string>&amp;Basics</string>
      </property>
      <layout class="QGridLayout" name="gridLayout_3">
       <property name="leftMargin">
@@ -324,7 +324,7 @@
    <item row="2" column="2" colspan="2">
     <widget class="QGroupBox" name="groupBox_2">
      <property name="title">
-      <string>LC_CTYPE</string>
+      <string>LC_C&amp;TYPE</string>
      </property>
      <layout class="QGridLayout" name="gridLayout_2">
       <property name="leftMargin">
@@ -435,6 +435,17 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>locale_cmb</tabstop>
+  <tabstop>encoding_cmb</tabstop>
+  <tabstop>locale_mod_edt</tabstop>
+  <tabstop>provider_cmb</tabstop>
+  <tabstop>deterministic_chk</tabstop>
+  <tabstop>lccollate_cmb</tabstop>
+  <tabstop>lccollate_mod_edt</tabstop>
+  <tabstop>lcctype_cmb</tabstop>
+  <tabstop>lcctype_mod_edt</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

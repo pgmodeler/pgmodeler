@@ -436,7 +436,12 @@ void RelationshipWidget::setAttributes(DatabaseModel *model, OperationList *op_l
 		fk_gconf_chk->setChecked(this->new_object);
 		useFKGlobalSettings(this->new_object);
 		fk_gconf_chk->blockSignals(false);
+		rel_attribs_tbw->widget(SettingsTab)->setFocusProxy(fk_gconf_chk);
 	}
+	else if(relgen_dep)
+		rel_attribs_tbw->widget(SettingsTab)->setFocusProxy(defaults_rb);
+	else
+		rel_attribs_tbw->widget(SettingsTab)->setFocusProxy(patterns_gconf_chk);
 
 	if(use_name_patterns)
 	{

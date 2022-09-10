@@ -38,12 +38,6 @@ RoleWidget::RoleWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Ro
 	role_grid->addWidget(frame, role_grid->count()+1, 0, 1, 4);
 	frame->setParent(this);
 
-	fields_map[generateVersionsInterval(AfterVersion, PgSqlVersions::PgSqlVersion91)].push_back(can_replicate_chk);
-	fields_map[generateVersionsInterval(AfterVersion, PgSqlVersions::PgSqlVersion95)].push_back(bypass_rls_chk);
-	frame=generateVersionWarningFrame(fields_map);
-	role_grid->addWidget(frame, role_grid->count()+1, 0, 1, 0);
-	frame->setParent(this);
-
 	connect(validity_chk, SIGNAL(toggled(bool)), validity_dte, SLOT(setEnabled(bool)));
 	connect(members_twg, SIGNAL(currentChanged(int)), this, SLOT(configureRoleSelection()));
 
@@ -117,7 +111,6 @@ void RoleWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Rol
 		superusr_chk->setChecked(role->getOption(Role::OpSuperuser));
 		create_db_chk->setChecked(role->getOption(Role::OpCreateDb));
 		create_role_chk->setChecked(role->getOption(Role::OpCreateRole));
-		encrypt_pass_chk->setChecked(role->getOption(Role::OpEncrypted));
 		inh_perm_chk->setChecked(role->getOption(Role::OpInherit));
 		can_login_chk->setChecked(role->getOption(Role::OpLogin));
 		can_replicate_chk->setChecked(role->getOption(Role::OpReplication));
@@ -240,14 +233,13 @@ void RoleWidget::applyConfiguration()
 		role->setPassword(passwd_edt->text());
 
 		if(validity_chk->isChecked())
-			role->setValidity(validity_dte->dateTime().toString(QString("yyyy-MM-dd hh:mm")));
+			role->setValidity(validity_dte->dateTime().toString("yyyy-MM-dd hh:mm"));
 		else
 			role->setValidity("");
 
 		role->setOption(Role::OpSuperuser, superusr_chk->isChecked());
 		role->setOption(Role::OpCreateDb, create_db_chk->isChecked());
 		role->setOption(Role::OpCreateRole, create_role_chk->isChecked());
-		role->setOption(Role::OpEncrypted, encrypt_pass_chk->isChecked());
 		role->setOption(Role::OpInherit, inh_perm_chk->isChecked());
 		role->setOption(Role::OpLogin, can_login_chk->isChecked());
 		role->setOption(Role::OpReplication, can_replicate_chk->isChecked());

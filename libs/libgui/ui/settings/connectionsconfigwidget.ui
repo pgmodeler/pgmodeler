@@ -233,7 +233,7 @@
            <normaloff>:/icons/icons/attribute.png</normaloff>:/icons/icons/attribute.png</iconset>
          </attribute>
          <attribute name="title">
-          <string>General</string>
+          <string>G&amp;eneral</string>
          </attribute>
          <layout class="QGridLayout" name="gridLayout">
           <property name="leftMargin">
@@ -732,7 +732,7 @@
            <normaloff>:/icons/icons/locker.png</normaloff>:/icons/icons/locker.png</iconset>
          </attribute>
          <attribute name="title">
-          <string>Security</string>
+          <string>Securi&amp;ty</string>
          </attribute>
          <layout class="QGridLayout" name="gridLayout_4">
           <property name="leftMargin">

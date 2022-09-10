@@ -793,6 +793,36 @@ QString Constraint::getSignature(bool format)
 	return QString("%1 ON %2 ").arg(this->getName(format)).arg(getParentTable()->getSignature(true));
 }
 
+QString Constraint::getDataDictionary(const attribs_map &extra_attribs)
+{
+	try
+	{
+		attribs_map attribs;
+		QStringList col_names;
+
+		attribs.insert(extra_attribs.begin(), extra_attribs.end());
+		attribs[Attributes::Name] = obj_name;
+		attribs[Attributes::Type] = ~constr_type;
+		attribs[Attributes::Comment] = comment;
+		attribs[Attributes::RefTable] = ref_table ? ref_table->getSignature().remove('"') : "";
+		attribs[Attributes::Expression] = expression;
+
+		// Retrieving the columns that composes the constraint
+		for(auto &col : columns)
+			 col_names.push_back(col->getName());
+
+		attribs[Attributes::Columns] = col_names.join(", ");
+
+		schparser.ignoreEmptyAttributes(true);
+		return schparser.getCodeDefinition(GlobalAttributes::getSchemaFilePath(GlobalAttributes::DataDictSchemaDir,
+																																					 getSchemaName()), attribs);
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorCode(), __PRETTY_FUNCTION__, __FILE__, __LINE__, &e);
+	}
+}
+
 bool Constraint::isCodeDiffersFrom(BaseObject *object, const QStringList &ignored_attribs, const QStringList &ignored_tags)
 {
 	if(!object)

@@ -232,6 +232,7 @@
         <file>icons/locker.png</file>
         <file>icons/connmode.png</file>
         <file>icons/sqlpreview.png</file>
+        <file>icons/partitionkey.png</file>
     </qresource>
     <qresource prefix="/images">
         <file>images/brazil_flag.png</file>
@@ -247,5 +248,8 @@
         <file>images/exporttodatadict.png</file>
         <file>images/exporttodbms.png</file>
         <file>images/exporttoimg.png</file>
+    </qresource>
+    <qresource prefix="/">
+        <file>icons/partitionkey.png</file>
     </qresource>
 </RCC>

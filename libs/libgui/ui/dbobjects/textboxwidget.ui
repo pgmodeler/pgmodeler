@@ -29,7 +29,7 @@
    <item row="1" column="0">
     <widget class="QGroupBox" name="groupBox">
      <property name="title">
-      <string>Text</string>
+      <string>&amp;Text</string>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_2">
       <property name="spacing">
@@ -215,9 +215,12 @@
   </layout>
  </widget>
  <tabstops>
+  <tabstop>font_size_sb</tabstop>
+  <tabstop>color_select_tb</tabstop>
   <tabstop>bold_chk</tabstop>
   <tabstop>italic_chk</tabstop>
   <tabstop>underline_chk</tabstop>
+  <tabstop>text_txt</tabstop>
  </tabstops>
  <resources/>
  <connections/>

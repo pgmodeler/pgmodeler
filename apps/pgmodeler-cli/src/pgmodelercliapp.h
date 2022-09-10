@@ -163,6 +163,9 @@ class PgModelerCliApp: public Application {
 		SystemWide,
 		NoIndex,
 		Split,
+		OriginalSql,
+		DependenciesSql,
+		ChildrenSql,
 
 		IgnoreImportErrors,
 		ImportSystemObjs,

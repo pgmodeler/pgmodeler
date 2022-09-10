@@ -27,7 +27,6 @@ FunctionWidget::FunctionWidget(QWidget *parent): BaseFunctionWidget(parent, Obje
 	QHBoxLayout *options_hbox = nullptr, *ret_methods_hbox = nullptr;
 	std::map<QString, std::vector<QWidget *> > fields_map;
 	std::map<QWidget *, std::vector<QString> > value_map;
-	QFrame *frame=nullptr;
 
 	Ui_FunctionWidget::setupUi(this);
 
@@ -84,12 +83,6 @@ FunctionWidget::FunctionWidget(QWidget *parent): BaseFunctionWidget(parent, Obje
 	ret_table_gb->setVisible(false);
 
 	attributes_vbox->addLayout(function_grid);
-
-	fields_map[generateVersionsInterval(AfterVersion, PgSqlVersions::PgSqlVersion92)].push_back(leakproof_chk);
-	fields_map[generateVersionsInterval(AfterVersion, PgSqlVersions::PgSqlVersion96)].push_back(parallel_lbl);
-	frame = generateVersionWarningFrame(fields_map, &value_map);
-	base_function_grid->addWidget(frame, base_function_grid->count() + 1, 0);
-	frame->setParent(this);
 
 	configureFormLayout(base_function_grid, ObjectType::Function);
 

@@ -8,12 +8,10 @@
 %if {operator} %then
 	$tb OPERATOR $tb {stg-number} $tb {signature}
 
-	%if ({pgsql-ver} != "9.0") %then
-		%if {opfamily} %then
-			[ FOR ORDER BY ] {opfamily}
-		%else
-			[ FOR SEARCH ]
-		%end
+	%if {opfamily} %then
+		[ FOR ORDER BY ] {opfamily}
+	%else
+		[ FOR SEARCH ]
 	%end
 %end
 

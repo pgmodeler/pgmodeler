@@ -44,6 +44,7 @@ DatabaseImportForm::DatabaseImportForm(QWidget *parent, Qt::WindowFlags f) : QDi
 	settings_tbw->setTabEnabled(1, false);
 	objs_parent_wgt->setEnabled(false);
 	buttons_wgt->setEnabled(false);
+	connection_gb->setFocusProxy(connections_cmb);
 
 	connect(close_btn, SIGNAL(clicked(bool)), this, SLOT(close()));
 	connect(connections_cmb, SIGNAL(activated(int)), this, SLOT(listDatabases()));

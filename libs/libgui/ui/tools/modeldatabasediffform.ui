@@ -110,7 +110,7 @@
            <normaloff>:/icons/icons/config.png</normaloff>:/icons/icons/config.png</iconset>
          </attribute>
          <attribute name="title">
-          <string>Settings</string>
+          <string>&amp;Settings</string>
          </attribute>
          <layout class="QGridLayout" name="gridLayout_2">
           <property name="leftMargin">
@@ -159,7 +159,7 @@
                  </size>
                 </property>
                 <property name="title">
-                 <string>Presets</string>
+                 <string>Pr&amp;esets</string>
                 </property>
                 <property name="flat">
                  <bool>false</bool>
@@ -432,7 +432,7 @@
                  </size>
                 </property>
                 <property name="title">
-                 <string>Input</string>
+                 <string>&amp;Input</string>
                 </property>
                 <property name="flat">
                  <bool>false</bool>
@@ -635,7 +635,7 @@
                  </size>
                 </property>
                 <property name="title">
-                 <string>Compare to</string>
+                 <string>Co&amp;mpare to</string>
                 </property>
                 <layout class="QGridLayout" name="gridLayout_11">
                  <property name="leftMargin">
@@ -735,7 +735,7 @@
                  </sizepolicy>
                 </property>
                 <property name="title">
-                 <string>Options</string>
+                 <string>Op&amp;tions</string>
                 </property>
                 <layout class="QVBoxLayout" name="verticalLayout">
                  <property name="spacing">
@@ -980,7 +980,7 @@
              </property>
              <widget class="QWidget" name="tab_4">
               <attribute name="title">
-               <string>Diff</string>
+               <string>Di&amp;ff</string>
               </attribute>
               <layout class="QVBoxLayout" name="verticalLayout_2">
                <property name="spacing">
@@ -1238,7 +1238,7 @@
              </widget>
              <widget class="QWidget" name="tab_5">
               <attribute name="title">
-               <string>Import &amp;&amp; Export</string>
+               <string>Impo&amp;rt &amp;&amp; Export</string>
               </attribute>
               <layout class="QVBoxLayout" name="verticalLayout_5">
                <property name="spacing">
@@ -1467,7 +1467,7 @@
            <normaloff>:/icons/icons/filter.png</normaloff>:/icons/icons/filter.png</iconset>
          </attribute>
          <attribute name="title">
-          <string>Partial diff</string>
+          <string>&amp;Partial diff</string>
          </attribute>
          <layout class="QGridLayout" name="gridLayout">
           <property name="leftMargin">
@@ -1935,7 +1935,7 @@
            <normaloff>:/icons/icons/outputpane.png</normaloff>:/icons/icons/outputpane.png</iconset>
          </attribute>
          <attribute name="title">
-          <string>Output</string>
+          <string>&amp;Output</string>
          </attribute>
          <layout class="QGridLayout" name="gridLayout_9">
           <property name="leftMargin">
@@ -2464,7 +2464,7 @@
            <normaloff>:/icons/icons/sqlpreview.png</normaloff>:/icons/icons/sqlpreview.png</iconset>
          </attribute>
          <attribute name="title">
-          <string>Diff preview</string>
+          <string>&amp;Diff preview</string>
          </attribute>
          <layout class="QGridLayout" name="gridLayout_5">
           <property name="leftMargin">
@@ -2734,6 +2734,58 @@
   </layout>
  </widget>
  <tabstops>
+  <tabstop>settings_tbw</tabstop>
+  <tabstop>presets_cmb</tabstop>
+  <tabstop>preset_name_edt</tabstop>
+  <tabstop>new_preset_tb</tabstop>
+  <tabstop>edit_preset_tb</tabstop>
+  <tabstop>save_preset_tb</tabstop>
+  <tabstop>cancel_preset_edit_tb</tabstop>
+  <tabstop>remove_preset_tb</tabstop>
+  <tabstop>default_presets_tb</tabstop>
+  <tabstop>src_model_rb</tabstop>
+  <tabstop>src_database_rb</tabstop>
+  <tabstop>src_connections_cmb</tabstop>
+  <tabstop>src_database_cmb</tabstop>
+  <tabstop>connections_cmb</tabstop>
+  <tabstop>database_cmb</tabstop>
+  <tabstop>pgsql_ver_chk</tabstop>
+  <tabstop>pgsql_ver_cmb</tabstop>
+  <tabstop>store_in_file_rb</tabstop>
+  <tabstop>apply_on_server_rb</tabstop>
+  <tabstop>tabWidget</tabstop>
+  <tabstop>keep_cluster_objs_chk</tabstop>
+  <tabstop>keep_obj_perms_chk</tabstop>
+  <tabstop>dont_drop_missing_objs_chk</tabstop>
+  <tabstop>drop_missing_cols_constr_chk</tabstop>
+  <tabstop>preserve_db_name_chk</tabstop>
+  <tabstop>cascade_mode_chk</tabstop>
+  <tabstop>reuse_sequences_chk</tabstop>
+  <tabstop>force_recreation_chk</tabstop>
+  <tabstop>recreate_unmod_chk</tabstop>
+  <tabstop>import_sys_objs_chk</tabstop>
+  <tabstop>import_ext_objs_chk</tabstop>
+  <tabstop>ignore_errors_chk</tabstop>
+  <tabstop>debug_mode_chk</tabstop>
+  <tabstop>ignore_duplic_chk</tabstop>
+  <tabstop>ignore_error_codes_chk</tabstop>
+  <tabstop>error_codes_edt</tabstop>
+  <tabstop>gen_filters_from_log_chk</tabstop>
+  <tabstop>start_date_chk</tabstop>
+  <tabstop>start_date_dt</tabstop>
+  <tabstop>first_change_dt_tb</tabstop>
+  <tabstop>end_date_chk</tabstop>
+  <tabstop>end_date_dt</tabstop>
+  <tabstop>last_change_dt_tb</tabstop>
+  <tabstop>generate_filters_tb</tabstop>
+  <tabstop>filtered_objs_tbw</tabstop>
+  <tabstop>create_tb</tabstop>
+  <tabstop>drop_tb</tabstop>
+  <tabstop>alter_tb</tabstop>
+  <tabstop>ignore_tb</tabstop>
+  <tabstop>output_trw</tabstop>
+  <tabstop>apply_on_server_btn</tabstop>
+  <tabstop>open_in_sql_tool_btn</tabstop>
   <tabstop>cancel_btn</tabstop>
   <tabstop>generate_btn</tabstop>
   <tabstop>close_btn</tabstop>

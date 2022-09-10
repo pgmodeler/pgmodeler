@@ -43,7 +43,7 @@
         <normaloff>:/icons/icons/usertype.png</normaloff>:/icons/icons/usertype.png</iconset>
       </attribute>
       <attribute name="title">
-       <string>Arguments</string>
+       <string>&amp;Arguments</string>
       </attribute>
      </widget>
      <widget class="QWidget" name="funcs_opers_tab">
@@ -52,7 +52,7 @@
         <normaloff>:/icons/icons/moreactions.png</normaloff>:/icons/icons/moreactions.png</iconset>
       </attribute>
       <attribute name="title">
-       <string>Advanced</string>
+       <string>A&amp;dvanced</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout">
        <property name="leftMargin">

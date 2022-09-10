@@ -23,10 +23,6 @@ OperatorClassWidget::OperatorClassWidget(QWidget *parent): BaseObjectWidget(pare
 	try
 	{
 		QGridLayout *grid=nullptr;
-		std::map<QString, std::vector<QWidget *> > fields_map;
-		std::map<QWidget *, std::vector<QString> > values_map;
-		QFrame *frame=nullptr;
-
 		Ui_OperatorClassWidget::setupUi(this);
 
 		family_sel=new ObjectSelectorWidget(ObjectType::OpFamily, this);
@@ -61,14 +57,6 @@ OperatorClassWidget::OperatorClassWidget(QWidget *parent): BaseObjectWidget(pare
 		this->setLayout(grid);
 		configureFormLayout(grid, ObjectType::OpClass);
 
-		fields_map[BaseObjectWidget::generateVersionsInterval(BaseObjectWidget::AfterVersion, PgSqlVersions::PgSqlVersion95)].push_back(indexing_lbl);
-		values_map[indexing_lbl].push_back(~IndexingType(IndexingType::Brin));
-
-		frame=BaseObjectWidget::generateVersionWarningFrame(fields_map, &values_map);
-		frame->setParent(this);
-		grid=dynamic_cast<QGridLayout *>(this->layout());
-		grid->addWidget(frame, grid->count(), 0, 1, 5);
-
 		grid=dynamic_cast<QGridLayout *>(elements_grp->layout());
 		grid->addWidget(function_sel, 1,1,1,4);
 		grid->addWidget(operator_sel, 2,1,1,4);
@@ -86,7 +74,8 @@ OperatorClassWidget::OperatorClassWidget(QWidget *parent): BaseObjectWidget(pare
 
 		setRequiredField(elements_grp);
 		configureTabOrder({ indexing_cmb, def_class_chk , family_sel, data_type, elem_type_cmb,
-												operator_sel, elem_family_sel, function_sel, stg_num_sb, storage_type });
+												operator_sel, elem_family_sel, function_sel, stg_num_sb, storage_type,
+												elements_tab });
 
 		setMinimumSize(640, 730);
 	}

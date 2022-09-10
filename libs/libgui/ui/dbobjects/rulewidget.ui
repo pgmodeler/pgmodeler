@@ -170,7 +170,7 @@
    <item row="2" column="0" colspan="2">
     <widget class="QGroupBox" name="commands_gb">
      <property name="title">
-      <string>Commands</string>
+      <string>C&amp;ommands</string>
      </property>
      <layout class="QGridLayout" name="gridLayout">
       <property name="leftMargin">

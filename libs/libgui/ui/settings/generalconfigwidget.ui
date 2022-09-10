@@ -37,6 +37,9 @@
    </property>
    <item row="0" column="0">
     <widget class="QTabWidget" name="settings_twg">
+     <property name="focusPolicy">
+      <enum>Qt::TabFocus</enum>
+     </property>
      <property name="currentIndex">
       <number>0</number>
      </property>
@@ -52,7 +55,7 @@
         <normaloff>:/icons/icons/design.png</normaloff>:/icons/icons/design.png</iconset>
       </attribute>
       <attribute name="title">
-       <string>General &amp;&amp; Design</string>
+       <string>Ge&amp;neral &amp;&amp; Design</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout_11">
        <property name="leftMargin">
@@ -73,7 +76,7 @@
        <item row="0" column="0">
         <widget class="QGroupBox" name="general_gb">
          <property name="title">
-          <string>General</string>
+          <string>G&amp;eneral</string>
          </property>
          <layout class="QGridLayout" name="general_grid">
           <property name="leftMargin">
@@ -523,7 +526,7 @@
        <item row="1" column="0">
         <widget class="QGroupBox" name="behavior_gb">
          <property name="title">
-          <string>Design behavior</string>
+          <string>Design be&amp;havior</string>
          </property>
          <layout class="QGridLayout" name="gridLayout_6">
           <property name="leftMargin">
@@ -834,7 +837,7 @@
         <normaloff>:/icons/icons/print.png</normaloff>:/icons/icons/print.png</iconset>
       </attribute>
       <attribute name="title">
-       <string>Printing</string>
+       <string>Pr&amp;inting</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout_9">
        <property name="leftMargin">
@@ -1430,7 +1433,33 @@
   </layout>
  </widget>
  <tabstops>
+  <tabstop>settings_twg</tabstop>
+  <tabstop>ui_language_cmb</tabstop>
+  <tabstop>source_editor_args_edt</tabstop>
+  <tabstop>history_max_length_spb</tabstop>
+  <tabstop>clear_sql_history_tb</tabstop>
   <tabstop>oplist_size_spb</tabstop>
+  <tabstop>check_update_chk</tabstop>
+  <tabstop>check_versions_cmb</tabstop>
+  <tabstop>save_restore_geometry_chk</tabstop>
+  <tabstop>reset_sizes_tb</tabstop>
+  <tabstop>autosave_interv_chk</tabstop>
+  <tabstop>autosave_interv_spb</tabstop>
+  <tabstop>low_verbosity_chk</tabstop>
+  <tabstop>confirm_validation_chk</tabstop>
+  <tabstop>simple_obj_creation_chk</tabstop>
+  <tabstop>use_placeholders_chk</tabstop>
+  <tabstop>corner_move_chk</tabstop>
+  <tabstop>invert_rangesel_chk</tabstop>
+  <tabstop>save_last_pos_chk</tabstop>
+  <tabstop>hide_ext_attribs_chk</tabstop>
+  <tabstop>hide_table_tags_chk</tabstop>
+  <tabstop>hide_rel_name_chk</tabstop>
+  <tabstop>hide_sch_name_usr_types_chk</tabstop>
+  <tabstop>use_curved_lines_chk</tabstop>
+  <tabstop>code_completion_chk</tabstop>
+  <tabstop>disable_smooth_chk</tabstop>
+  <tabstop>escape_comments_chk</tabstop>
   <tabstop>print_grid_chk</tabstop>
   <tabstop>print_pg_num_chk</tabstop>
   <tabstop>paper_cmb</tabstop>

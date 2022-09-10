@@ -47,6 +47,16 @@ SourceCodeWidget::SourceCodeWidget(QWidget *parent): BaseObjectWidget(parent)
 		connect(sourcecode_twg, SIGNAL(currentChanged(int)), this, SLOT(setSourceCodeTab(int)));
 		connect(save_sql_tb, SIGNAL(clicked()), this, SLOT(saveSQLCode()));
 
+		find_sql_wgt = new FindReplaceWidget(sqlcode_txt, find_wgt_parent);
+		find_wgt_parent->setVisible(false);
+
+		QVBoxLayout *vbox = new QVBoxLayout(find_wgt_parent);
+		vbox->addWidget(find_sql_wgt);
+		vbox->setContentsMargins(0,0,0,0);
+
+		connect(find_tb, &QToolButton::toggled, find_wgt_parent, &QWidget::setVisible);
+		connect(find_sql_wgt, &FindReplaceWidget::s_hideRequested, find_tb, &QToolButton::toggle);
+
 		hl_sqlcode=new SyntaxHighlighter(sqlcode_txt);
 		hl_xmlcode=new SyntaxHighlighter(xmlcode_txt);
 
@@ -71,7 +81,6 @@ void SourceCodeWidget::setSourceCodeTab(int)
 
 	version_cmb->setEnabled(enabled);
 	pgsql_lbl->setEnabled(enabled);
-	version_lbl->setEnabled(enabled);
 }
 
 void SourceCodeWidget::saveSQLCode()
@@ -122,29 +131,7 @@ void SourceCodeWidget::generateSourceCode(int)
 			}
 			else
 			{
-				if(code_options_cmb->currentIndex()==OriginalSql)
-					sqlcode_txt->setPlainText(object->getCodeDefinition(SchemaParser::SqlDefinition));
-				else
-				{
-					std::vector<BaseObject *> objs=model->getCreationOrder(object, code_options_cmb->currentIndex()==ChildrenSql);
-
-					for(BaseObject *obj : objs)
-						aux_def+=obj->getCodeDefinition(SchemaParser::SqlDefinition);
-				}
-
-				if(!aux_def.isEmpty())
-				{
-					aux_def=tr("-- NOTE: the code below contains the SQL for the selected object\n\
--- as well for its dependencies and children (if applicable).\n\
--- \n\
--- This feature is only a convinience in order to permit you to test\n\
--- the whole object's SQL definition at once.\n\
--- \n\
--- When exporting or generating the SQL for the whole database model\n\
--- all objects will be placed at their original positions.\n\n\n") + aux_def;
-
-					sqlcode_txt->setPlainText(sqlcode_txt->toPlainText() + aux_def);
-				}
+				sqlcode_txt->setPlainText(model->getSQLDefinition(object, static_cast<unsigned>(code_options_cmb->currentIndex())));
 			}
 
 #ifdef DEMO_VERSION

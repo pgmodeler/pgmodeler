@@ -107,7 +107,7 @@ int main(int argc, char **argv)
 		if(qApp->primaryScreen()->devicePixelRatio() > 1)
 			pix.setDevicePixelRatio(qApp->primaryScreen()->devicePixelRatio());
 		else
-			pix = pix.scaledToWidth(500, Qt::SmoothTransformation);
+			pix = pix.scaledToWidth(320, Qt::SmoothTransformation);
 
 		splash.setPixmap(pix);
 		splash.show();

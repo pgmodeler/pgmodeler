@@ -28,6 +28,7 @@
 #include "ui_sourcecodewidget.h"
 #include "dbobjects/baseobjectwidget.h"
 #include "numberedtexteditor.h"
+#include "widgets/findreplacewidget.h"
 
 class SourceCodeWidget: public BaseObjectWidget, public Ui::SourceCodeWidget {
 	private:
@@ -42,6 +43,8 @@ class SourceCodeWidget: public BaseObjectWidget, public Ui::SourceCodeWidget {
 
 		SyntaxHighlighter *hl_sqlcode,
 		*hl_xmlcode;
+
+		FindReplaceWidget *find_sql_wgt;
 
 	public:
 		SourceCodeWidget(QWidget * parent = nullptr);

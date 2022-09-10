@@ -33,9 +33,6 @@ ViewWidget::ViewWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Vi
 		QGridLayout *grid=nullptr;
 		QVBoxLayout *vbox=nullptr;
 
-		std::map<QString, std::vector<QWidget *> > fields_map;
-		QFrame *frame=nullptr;
-
 		Ui_ViewWidget::setupUi(this);
 
 		code_txt=new NumberedTextEditor(this);
@@ -120,13 +117,6 @@ ViewWidget::ViewWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Vi
 		tablespace_sel->setEnabled(false);
 		tablespace_lbl->setEnabled(false);
 		configureFormLayout(view_grid, ObjectType::View);
-
-		fields_map[generateVersionsInterval(AfterVersion, PgSqlVersions::PgSqlVersion93)].push_back(recursive_rb);
-		fields_map[generateVersionsInterval(AfterVersion, PgSqlVersions::PgSqlVersion93)].push_back(materialized_rb);
-		fields_map[generateVersionsInterval(AfterVersion, PgSqlVersions::PgSqlVersion93)].push_back(with_no_data_chk);
-		frame=generateVersionWarningFrame(fields_map);
-		view_grid->addWidget(frame, view_grid->count()+1, 0, 1,3);
-		frame->setParent(this);
 
 		connect(references_tab, SIGNAL(s_rowAdded(int)), this, SLOT(addReference(int)));
 		connect(references_tab, SIGNAL(s_rowEdited(int)), this, SLOT(editReference(int)));

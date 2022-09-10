@@ -113,9 +113,6 @@
            <height>25</height>
           </size>
          </property>
-         <property name="shortcut">
-          <string>Ctrl+S</string>
-         </property>
          <property name="toolButtonStyle">
           <enum>Qt::ToolButtonTextBesideIcon</enum>
          </property>
@@ -766,9 +763,14 @@
  <tabstops>
   <tabstop>validate_btn</tabstop>
   <tabstop>fix_btn</tabstop>
+  <tabstop>cancel_btn</tabstop>
+  <tabstop>swap_ids_btn</tabstop>
+  <tabstop>options_btn</tabstop>
+  <tabstop>output_btn</tabstop>
   <tabstop>sql_validation_chk</tabstop>
   <tabstop>connections_cmb</tabstop>
   <tabstop>version_cmb</tabstop>
+  <tabstop>use_tmp_names_chk</tabstop>
   <tabstop>output_trw</tabstop>
   <tabstop>hide_tb</tabstop>
  </tabstops>

@@ -62,7 +62,7 @@
         <normaloff>:/icons/icons/function.png</normaloff>:/icons/icons/function.png</iconset>
       </attribute>
       <attribute name="title">
-       <string>Functions</string>
+       <string>&amp;Functions</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout_3">
        <property name="leftMargin">
@@ -137,7 +137,7 @@
         <normaloff>:/icons/icons/attribute.png</normaloff>:/icons/icons/attribute.png</iconset>
       </attribute>
       <attribute name="title">
-       <string>Attributes</string>
+       <string>A&amp;ttributes</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout_2">
        <property name="leftMargin">
@@ -432,7 +432,7 @@
       </size>
      </property>
      <property name="title">
-      <string>Enumerations</string>
+      <string>&amp;Enumerations</string>
      </property>
      <layout class="QGridLayout" name="gridLayout">
       <property name="leftMargin">
@@ -482,7 +482,7 @@
       </size>
      </property>
      <property name="title">
-      <string>Attributes</string>
+      <string>&amp;Attributes</string>
      </property>
      <layout class="QGridLayout" name="gridLayout_4">
       <property name="leftMargin">
@@ -539,7 +539,7 @@
       </sizepolicy>
      </property>
      <property name="title">
-      <string>Attributes</string>
+      <string>&amp;Attributes</string>
      </property>
      <layout class="QGridLayout" name="gridLayout_5">
       <property name="leftMargin">

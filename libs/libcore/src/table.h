@@ -180,6 +180,8 @@ class Table: public PhysicalTable {
 		 * invalidate the tables code (see setCodeInvalidated()) after retrieving the resulting code */
 		QString __getCodeDefinition(unsigned def_type, bool incl_rel_added_objs);
 
+		virtual QString getDataDictionary(bool split, const attribs_map & extra_attribs = {});
+
 		friend class Relationship;
 		friend class OperationList;
 };

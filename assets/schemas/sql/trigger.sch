@@ -33,7 +33,7 @@ $tb [ON ] {table} $br
 	%end
 %end
 
-%if {old-table-name} %or {new-table-name} %and ({pgsql-ver} >=f "10.0") %then
+%if {old-table-name} %or {new-table-name} %then
 	$tb REFERENCING
 	%if {old-table-name} %then [ OLD TABLE AS ] {old-table-name} %end
 	%if {new-table-name} %then [ NEW TABLE AS ] {new-table-name} %end

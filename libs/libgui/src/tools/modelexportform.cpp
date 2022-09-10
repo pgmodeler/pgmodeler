@@ -48,6 +48,11 @@ ModelExportForm::ModelExportForm(QWidget *parent, Qt::WindowFlags f) : QDialog(p
 	export_thread=new QThread(this);
 	export_hlp.moveToThread(export_thread);
 
+	export_to_dbms_gb->setFocusProxy(export_to_dbms_rb);
+	export_to_file_gb->setFocusProxy(export_to_file_rb);
+	export_to_dict_gb->setFocusProxy(export_to_dict_rb);
+	export_to_img_gb->setFocusProxy(export_to_img_rb);
+
 	connect(sql_file_sel, SIGNAL(s_fileSelected(QString)), this, SLOT(enableExport()));
 	connect(sql_file_sel, SIGNAL(s_selectorCleared()), this, SLOT(enableExport()));
 	connect(img_file_sel, SIGNAL(s_fileSelected(QString)), this, SLOT(enableExport()));
@@ -104,7 +109,8 @@ ModelExportForm::ModelExportForm(QWidget *parent, Qt::WindowFlags f) : QDialog(p
 	connect(dict_standalone_rb, SIGNAL(toggled(bool)), this, SLOT(selectDataDictMode()));
 	connect(dict_split_rb, SIGNAL(toggled(bool)), this, SLOT(selectDataDictMode()));
 	connect(sql_standalone_rb, SIGNAL(toggled(bool)), this, SLOT(selectSQLExportMode()));
-	connect(sql_split_rb, SIGNAL(toggled(bool)), this, SLOT(selectSQLExportMode()));
+	connect(sql_split_rb, SIGNAL(toggled(bool)), this, SLOT(selectSQLExportMode()));	
+	connect(sql_split_rb, &QRadioButton::toggled, code_options_cmb, &QComboBox::setEnabled);
 
 	pgsqlvers_cmb->addItems(PgSqlVersions::AllVersions);
 	pgsqlvers1_cmb->addItems(PgSqlVersions::AllVersions);
@@ -221,7 +227,8 @@ void ModelExportForm::exportModel()
 			{
 				progress_lbl->setText(tr("Saving file '%1'").arg(sql_file_sel->getSelectedFile()));
 				export_hlp.setExportToSQLParams(model->db_model, sql_file_sel->getSelectedFile(),
-																				pgsqlvers_cmb->currentText(), sql_split_rb->isChecked());
+																				pgsqlvers_cmb->currentText(), sql_split_rb->isChecked(),
+																				static_cast<unsigned>(code_options_cmb->currentIndex()));
 				export_thread->start();
 			}
 			else if(export_to_dict_rb->isChecked())

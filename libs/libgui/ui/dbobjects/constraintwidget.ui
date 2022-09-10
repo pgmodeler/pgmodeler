@@ -357,7 +357,7 @@
       </sizepolicy>
      </property>
      <property name="title">
-      <string>Exclude Elements</string>
+      <string>&amp;Exclude Elements</string>
      </property>
     </widget>
    </item>
@@ -390,7 +390,7 @@
         <normaloff>:/icons/icons/column.png</normaloff>:/icons/icons/column.png</iconset>
       </attribute>
       <attribute name="title">
-       <string>Columns</string>
+       <string>C&amp;olumns</string>
       </attribute>
      </widget>
      <widget class="QWidget" name="tab_2">
@@ -405,7 +405,7 @@
         <normaloff>:/icons/icons/constraint_fk.png</normaloff>:/icons/icons/constraint_fk.png</iconset>
       </attribute>
       <attribute name="title">
-       <string>Referenced Columns</string>
+       <string>&amp;Referenced Columns</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout_2">
        <property name="leftMargin">
@@ -523,7 +523,10 @@
   <tabstop>match_cmb</tabstop>
   <tabstop>no_inherit_chk</tabstop>
   <tabstop>expression_txt</tabstop>
+  <tabstop>fill_factor_chk</tabstop>
   <tabstop>fill_factor_sb</tabstop>
+  <tabstop>indexing_chk</tabstop>
+  <tabstop>indexing_cmb</tabstop>
   <tabstop>deferrable_chk</tabstop>
   <tabstop>deferral_cmb</tabstop>
   <tabstop>on_delete_cmb</tabstop>

@@ -19,6 +19,7 @@ void ModelExportHelper::resetExportParams()
 	zoom=100;
 	show_grid=show_delim=page_by_page=split=browsable=false;
 	viewp=nullptr;
+	code_gen_mode=DatabaseModel::OriginalSql;
 }
 
 void ModelExportHelper::abortExport(Exception &e)
@@ -60,7 +61,7 @@ void ModelExportHelper::setIgnoredErrors(const QStringList &err_codes)
 	ignored_errors.removeDuplicates();
 }
 
-void ModelExportHelper::exportToSQL(DatabaseModel *db_model, const QString &filename, const QString &pgsql_ver, bool split)
+void ModelExportHelper::exportToSQL(DatabaseModel *db_model, const QString &filename, const QString &pgsql_ver, bool split, unsigned code_gen_mode)
 {
 	if(!db_model)
 		throw Exception(ErrorCode::AsgNotAllocattedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -83,7 +84,7 @@ void ModelExportHelper::exportToSQL(DatabaseModel *db_model, const QString &file
 		}
 		else
 		{
-			db_model->saveSplitSQLDefinition(filename);
+			db_model->saveSplitSQLDefinition(filename, code_gen_mode);
 			emit s_progressUpdated(100, tr("SQL files successfully written in `%1'.").arg(filename), ObjectType::BaseObject);
 		}
 
@@ -1127,12 +1128,13 @@ void ModelExportHelper::setExportToDBMSParams(const QString &sql_buffer, Connect
 	this->errors.clear();
 }
 
-void ModelExportHelper::setExportToSQLParams(DatabaseModel *db_model, const QString &filename, const QString &pgsql_ver, bool split)
+void ModelExportHelper::setExportToSQLParams(DatabaseModel *db_model, const QString &filename, const QString &pgsql_ver, bool split, unsigned code_gen_mode)
 {
 	this->db_model=db_model;
 	this->filename=filename;
 	this->pgsql_ver=pgsql_ver;
 	this->split=split;
+	this->code_gen_mode=code_gen_mode;
 }
 
 void ModelExportHelper::setExportToPNGParams(ObjectsScene *scene, QGraphicsView *viewp, const QString &filename, double zoom, bool show_grid, bool show_delim, bool page_by_page)
@@ -1218,7 +1220,7 @@ void ModelExportHelper::exportToSQL()
 {
 	try
 	{
-		exportToSQL(db_model, filename, pgsql_ver, split);
+		exportToSQL(db_model, filename, pgsql_ver, split, code_gen_mode);
 		resetExportParams();
 	}
 	catch(Exception &e)

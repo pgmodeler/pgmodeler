@@ -21,22 +21,10 @@
 %if {createrole} %then $br $tb CREATEROLE %end
 %if {inherit} %then $br $tb INHERIT %end
 %if {login} %then $br $tb LOGIN %end
+%if {replication} %then $br $tb REPLICATION %end
+%if {bypassrls} %then $br $tb BYPASSRLS %end
 
-%if {replication} %and ({pgsql-ver} != "9.0") %then $br $tb REPLICATION %end
-%if {bypassrls} %and ({pgsql-ver} >=f "9.5") %then $br $tb BYPASSRLS %end
-
-%if {password} %then
-	$br $tb
-
-	%if {encrypted} %then
-		ENCRYPTED
-	%else
-		UNENCRYPTED
-	%end
-
-	[ PASSWORD ] '{password}'
-%end
-
+%if {password} %then	$br $tb	[ PASSWORD ] '{password}' %end
 %if {connlimit} %then $br $tb [CONNECTION LIMIT ] {connlimit} %end
 %if {validity} %then $br $tb [VALID UNTIL ] '{validity}' %end
 

@@ -201,7 +201,7 @@
            <normaloff>:/icons/icons/config.png</normaloff>:/icons/icons/config.png</iconset>
          </attribute>
          <attribute name="title">
-          <string>Settings</string>
+          <string>&amp;Settings</string>
          </attribute>
          <layout class="QGridLayout" name="settings_grid">
           <property name="leftMargin">
@@ -881,7 +881,7 @@
            <normaloff>:/icons/icons/outputpane.png</normaloff>:/icons/icons/outputpane.png</iconset>
          </attribute>
          <attribute name="title">
-          <string>Output</string>
+          <string>&amp;Output</string>
          </attribute>
          <layout class="QGridLayout" name="gridLayout_15">
           <property name="leftMargin">
@@ -1034,6 +1034,34 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>settings_tbw</tabstop>
+  <tabstop>extract_restore_rb</tabstop>
+  <tabstop>extract_only_rb</tabstop>
+  <tabstop>restore_rb</tabstop>
+  <tabstop>extract_from_cmb</tabstop>
+  <tabstop>apply_to_edt</tabstop>
+  <tabstop>db_metadata_chk</tabstop>
+  <tabstop>objs_positioning_chk</tabstop>
+  <tabstop>objs_z_stack_value_chk</tabstop>
+  <tabstop>custom_colors_chk</tabstop>
+  <tabstop>objs_sql_disabled_chk</tabstop>
+  <tabstop>objs_fadedout_chk</tabstop>
+  <tabstop>objs_aliases_chk</tabstop>
+  <tabstop>objs_protection_chk</tabstop>
+  <tabstop>objs_layers_config_chk</tabstop>
+  <tabstop>objs_collapse_mode_chk</tabstop>
+  <tabstop>custom_sql_chk</tabstop>
+  <tabstop>textbox_objs_chk</tabstop>
+  <tabstop>tag_objs_chk</tabstop>
+  <tabstop>generic_sql_objs_chk</tabstop>
+  <tabstop>merge_dup_objs_chk</tabstop>
+  <tabstop>select_all_btn</tabstop>
+  <tabstop>clear_all_btn</tabstop>
+  <tabstop>output_trw</tabstop>
+  <tabstop>apply_btn</tabstop>
+  <tabstop>cancel_btn</tabstop>
+ </tabstops>
  <resources>
   <include location="../../res/resources.qrc"/>
   <include location="../../res/resources.qrc"/>

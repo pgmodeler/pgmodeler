@@ -550,6 +550,8 @@ This will disable the code of all child and referrer objects.</string>
  </widget>
  <tabstops>
   <tabstop>name_edt</tabstop>
+  <tabstop>alias_edt</tabstop>
+  <tabstop>comment_edt</tabstop>
   <tabstop>append_sql_tb</tabstop>
   <tabstop>edt_perms_tb</tabstop>
   <tabstop>disable_sql_chk</tabstop>

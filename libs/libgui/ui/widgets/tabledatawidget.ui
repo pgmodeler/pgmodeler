@@ -751,6 +751,20 @@
   <zorder>copy_tb</zorder>
   <zorder>paste_tb</zorder>
  </widget>
+ <tabstops>
+  <tabstop>add_row_tb</tabstop>
+  <tabstop>del_rows_tb</tabstop>
+  <tabstop>dup_rows_tb</tabstop>
+  <tabstop>add_col_tb</tabstop>
+  <tabstop>del_cols_tb</tabstop>
+  <tabstop>bulkedit_tb</tabstop>
+  <tabstop>clear_rows_tb</tabstop>
+  <tabstop>clear_cols_tb</tabstop>
+  <tabstop>copy_tb</tabstop>
+  <tabstop>paste_tb</tabstop>
+  <tabstop>csv_load_tb</tabstop>
+  <tabstop>data_tbw</tabstop>
+ </tabstops>
  <resources>
   <include location="../../res/resources.qrc"/>
   <include location="../../res/resources.qrc"/>

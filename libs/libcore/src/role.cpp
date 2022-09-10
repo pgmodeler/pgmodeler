@@ -37,7 +37,6 @@ Role::Role()
 	attributes[Attributes::Login]="";
 	attributes[Attributes::ConnLimit]="";
 	attributes[Attributes::Password]="";
-	attributes[Attributes::Encrypted]="";
 	attributes[Attributes::Validity]="";
 	attributes[Attributes::MemberRoles]="";
 	attributes[Attributes::AdminRoles]="";
@@ -253,8 +252,8 @@ QString Role::getCodeDefinition(unsigned def_type, bool reduced_form)
 	unsigned i;
 	QString op_attribs[]={ Attributes::Superuser, Attributes::CreateDb,
 						   Attributes::CreateRole, Attributes::Inherit,
-						   Attributes::Login, Attributes::Encrypted,
-							 Attributes::Replication, Attributes::BypassRls };
+							 Attributes::Login, Attributes::Replication,
+							 Attributes::BypassRls };
 
 	setRoleAttribute(MemberRole);
 	setRoleAttribute(AdminRole);
@@ -327,8 +326,8 @@ QString Role::getAlterDefinition(BaseObject *object)
 		attribs_map attribs;
 		QString op_attribs[]={ Attributes::Superuser, Attributes::CreateDb,
 							   Attributes::CreateRole, Attributes::Inherit,
-							   Attributes::Login, Attributes::Encrypted,
-								 Attributes::Replication, Attributes::BypassRls };
+								 Attributes::Login, Attributes::Replication,
+								 Attributes::BypassRls };
 
 		attributes[Attributes::AlterCmds]=BaseObject::getAlterDefinition(object);
 
@@ -343,7 +342,7 @@ QString Role::getAlterDefinition(BaseObject *object)
 
 		for(unsigned i=0; i <= OpBypassRls; i++)
 		{
-			if((attribs.count(Attributes::Password) && i==OpEncrypted) ||	this->options[i]!=role->options[i])
+			if(this->options[i]!=role->options[i])
 				attribs[op_attribs[i]]=(role->options[i] ? Attributes::True : Attributes::Unset);
 		}
 

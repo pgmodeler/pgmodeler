@@ -68,7 +68,7 @@
       </size>
      </property>
      <property name="focusPolicy">
-      <enum>Qt::WheelFocus</enum>
+      <enum>Qt::TabFocus</enum>
      </property>
      <property name="toolTip">
       <string>Clear field</string>
@@ -106,7 +106,7 @@
       </size>
      </property>
      <property name="focusPolicy">
-      <enum>Qt::WheelFocus</enum>
+      <enum>Qt::TabFocus</enum>
      </property>
      <property name="toolTip">
       <string>Select file</string>
@@ -128,6 +128,11 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>filename_edt</tabstop>
+  <tabstop>rem_file_tb</tabstop>
+  <tabstop>sel_file_tb</tabstop>
+ </tabstops>
  <resources>
   <include location="../../res/resources.qrc"/>
   <include location="../../res/resources.qrc"/>

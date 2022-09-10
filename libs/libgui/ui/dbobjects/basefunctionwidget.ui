@@ -67,7 +67,7 @@
         <normaloff>:/icons/icons/attribute.png</normaloff>:/icons/icons/attribute.png</iconset>
       </attribute>
       <attribute name="title">
-       <string>Attributes</string>
+       <string>&amp;Attributes</string>
       </attribute>
       <layout class="QVBoxLayout" name="attributes_vbox">
        <property name="spacing">
@@ -185,7 +185,7 @@
         <normaloff>:/icons/icons/parameter.png</normaloff>:/icons/icons/parameter.png</iconset>
       </attribute>
       <attribute name="title">
-       <string>Parameters</string>
+       <string>&amp;Parameters</string>
       </attribute>
      </widget>
      <widget class="QWidget" name="tab">
@@ -194,7 +194,7 @@
         <normaloff>:/icons/icons/usertype.png</normaloff>:/icons/icons/usertype.png</iconset>
       </attribute>
       <attribute name="title">
-       <string>Transform types</string>
+       <string>&amp;Transform types</string>
       </attribute>
      </widget>
      <widget class="QWidget" name="definition_tab">
@@ -203,7 +203,7 @@
         <normaloff>:/icons/icons/sourcecode.png</normaloff>:/icons/icons/sourcecode.png</iconset>
       </attribute>
       <attribute name="title">
-       <string>Definition</string>
+       <string>&amp;Definition</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout_4">
        <property name="leftMargin">
@@ -237,16 +237,16 @@
          </property>
          <layout class="QGridLayout" name="gridLayout_3">
           <property name="leftMargin">
-           <number>5</number>
+           <number>0</number>
           </property>
           <property name="topMargin">
-           <number>5</number>
+           <number>0</number>
           </property>
           <property name="rightMargin">
-           <number>5</number>
+           <number>0</number>
           </property>
           <property name="bottomMargin">
-           <number>5</number>
+           <number>0</number>
           </property>
           <property name="spacing">
            <number>5</number>
@@ -367,16 +367,16 @@
          </property>
          <layout class="QGridLayout" name="gridLayout_2">
           <property name="leftMargin">
-           <number>5</number>
+           <number>0</number>
           </property>
           <property name="topMargin">
-           <number>5</number>
+           <number>0</number>
           </property>
           <property name="rightMargin">
-           <number>5</number>
+           <number>0</number>
           </property>
           <property name="bottomMargin">
-           <number>5</number>
+           <number>0</number>
           </property>
           <property name="spacing">
            <number>5</number>
@@ -412,7 +412,7 @@
         <normaloff>:/icons/icons/config.png</normaloff>:/icons/icons/config.png</iconset>
       </attribute>
       <attribute name="title">
-       <string>Configuration</string>
+       <string>&amp;Configuration</string>
       </attribute>
       <widget class="QFrame" name="hint_frm">
        <property name="geometry">
@@ -516,6 +516,7 @@
  <tabstops>
   <tabstop>func_config_twg</tabstop>
   <tabstop>language_cmb</tabstop>
+  <tabstop>security_cmb</tabstop>
   <tabstop>symbol_edt</tabstop>
   <tabstop>library_edt</tabstop>
  </tabstops>

@@ -250,7 +250,8 @@ bool BaseObject::isValidName(const QString &name)
 {
 	QString aux_name=name;
 
-	if(aux_name.contains(QRegularExpression("^(\")(.)+(\")$")))
+	// Remove the quotes from the start/end of the name to calculate the exact length
+	if(aux_name.contains(QRegularExpression::anchoredPattern("(\")(.)+(\")")))
 	{
 		aux_name.remove(0,1);
 		aux_name.remove(aux_name.size()-1,1);
@@ -268,6 +269,7 @@ bool BaseObject::isValidName(const QString &name)
 		bool valid=true;
 		unsigned char chr='\0', chr1='\0', chr2='\0';
 		QByteArray raw_name;
+		bool is_sch_qualified = name.contains('.');
 
 		raw_name.append(name.toUtf8());
 		len=raw_name.size();
@@ -286,7 +288,16 @@ bool BaseObject::isValidName(const QString &name)
 
 		while(valid && i < len)
 		{
-			chr=raw_name[i];
+			chr = raw_name[i];
+
+			/* If the name is schema qulified [schema].[name] we just ignore the
+			 * double quotes if they appear because double quote between dot which
+			 * qualifies hierarchy is completely accepatable */
+			if(is_sch_qualified && chr == '"')
+			{
+				i++;
+				continue;
+			}
 
 			/* Validation of simple ASCI characters.
 				Checks if the name has the characters in the set [ a-z A-Z 0-9 _ . @ $ - : space () <>] */

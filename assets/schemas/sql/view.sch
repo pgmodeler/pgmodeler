@@ -16,13 +16,11 @@
 
 [CREATE ]
 
-%if ({pgsql-ver} >=f "9.3") %then
-	%if {recursive} %then
-		[RECURSIVE ]
-	%else
-		%if {materialized} %then
-			[MATERIALIZED ]
-		%end
+%if {recursive} %then
+	[RECURSIVE ]
+%else
+	%if {materialized} %then
+		[MATERIALIZED ]
 	%end
 %end
 
@@ -34,10 +32,8 @@ VIEW $sp {name}
 
 $br
 
-%if ({pgsql-ver} >=f "9.3") %then
-	%if {materialized} %and {tablespace} %then
-		TABLESPACE $sp {tablespace} $br
-	%end
+%if {materialized} %and {tablespace} %then
+	TABLESPACE $sp {tablespace} $br
 %end
 
 [AS ] $br
@@ -49,11 +45,10 @@ $br
 
 $br {definition}
 
-%if ({pgsql-ver} >=f "9.3") %then
-	%if {materialized} %and {with-no-data} %then
-		$br [WITH NO DATA]
-	%end
+%if {materialized} %and {with-no-data} %then
+	$br [WITH NO DATA;]
 %end
+
 
 {ddl-end}
 

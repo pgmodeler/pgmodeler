@@ -27,13 +27,8 @@
 		datacl AS permission, dattablespace AS tablespace, datdba AS owner,
 		NULL AS template, ]
 
-		({comment}) [ AS comment ]
-
-		%if ({pgsql-ver} >=f "9.5") %then
-			[ , datallowconn AS allow_conns_bool, datistemplate AS is_template_bool ]
-		%end
-
-		[ FROM pg_database WHERE datistemplate = FALSE ]
+		({comment}) [ AS comment, datallowconn AS allow_conns_bool, datistemplate AS is_template_bool 
+		FROM pg_database WHERE datistemplate = FALSE ]
 
 		%if {last-sys-oid} %then
 			[ AND oid ] {oid-filter-op} $sp {last-sys-oid}

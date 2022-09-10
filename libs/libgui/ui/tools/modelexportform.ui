@@ -135,15 +135,18 @@
            <number>5</number>
           </property>
           <item>
-           <widget class="QGroupBox" name="groupBox">
+           <widget class="QGroupBox" name="export_to_dbms_gb">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
+            <property name="focusPolicy">
+             <enum>Qt::StrongFocus</enum>
+            </property>
             <property name="title">
-             <string>Database server</string>
+             <string>&amp;Database server</string>
             </property>
             <property name="checkable">
              <bool>false</bool>
@@ -492,9 +495,12 @@
            </widget>
           </item>
           <item>
-           <widget class="QGroupBox" name="groupBox_2">
+           <widget class="QGroupBox" name="export_to_file_gb">
+            <property name="focusPolicy">
+             <enum>Qt::StrongFocus</enum>
+            </property>
             <property name="title">
-             <string>SQL file</string>
+             <string>&amp;SQL file</string>
             </property>
             <layout class="QGridLayout" name="gridLayout_10">
              <property name="leftMargin">
@@ -694,6 +700,40 @@
                    </widget>
                   </item>
                   <item>
+                   <widget class="QComboBox" name="code_options_cmb">
+                    <property name="enabled">
+                     <bool>false</bool>
+                    </property>
+                    <property name="sizePolicy">
+                     <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                      <horstretch>0</horstretch>
+                      <verstretch>0</verstretch>
+                     </sizepolicy>
+                    </property>
+                    <property name="toolTip">
+                     <string>&lt;strong&gt;Original:&lt;/strong&gt; generates only the original SQL code of the selected object.&lt;br/&gt;&lt;br/&gt;&lt;strong&gt;Dependencies:&lt;/strong&gt; generates the original code including all dependencies needed to properly create the selected  object. &lt;br/&gt;&lt;br/&gt;&lt;strong&gt;Children:&lt;/strong&gt; generates the original code including all children's SQL code. This option is used only for schemas, tables, and views.</string>
+                    </property>
+                    <property name="statusTip">
+                     <string/>
+                    </property>
+                    <item>
+                     <property name="text">
+                      <string>Original</string>
+                     </property>
+                    </item>
+                    <item>
+                     <property name="text">
+                      <string>Original + depedencies' SQL</string>
+                     </property>
+                    </item>
+                    <item>
+                     <property name="text">
+                      <string>Original + children's SQL</string>
+                     </property>
+                    </item>
+                   </widget>
+                  </item>
+                  <item>
                    <spacer name="horizontalSpacer_8">
                     <property name="orientation">
                      <enum>Qt::Horizontal</enum>
@@ -764,15 +804,18 @@
            </widget>
           </item>
           <item>
-           <widget class="QGroupBox" name="groupBox_3">
+           <widget class="QGroupBox" name="export_to_img_gb">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
+            <property name="focusPolicy">
+             <enum>Qt::StrongFocus</enum>
+            </property>
             <property name="title">
-             <string>Graphics file</string>
+             <string>&amp;Graphics file</string>
             </property>
             <layout class="QGridLayout" name="gridLayout_11">
              <property name="leftMargin">
@@ -1046,15 +1089,18 @@
            </widget>
           </item>
           <item>
-           <widget class="QGroupBox" name="groupBox_4">
+           <widget class="QGroupBox" name="export_to_dict_gb">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
+            <property name="focusPolicy">
+             <enum>Qt::StrongFocus</enum>
+            </property>
             <property name="title">
-             <string>Data dictionary</string>
+             <string>Da&amp;ta dictionary</string>
             </property>
             <layout class="QGridLayout" name="gridLayout_12">
              <property name="leftMargin">
@@ -1592,15 +1638,34 @@
   </layout>
  </widget>
  <tabstops>
+  <tabstop>settings_tbw</tabstop>
+  <tabstop>export_to_dbms_rb</tabstop>
   <tabstop>connections_cmb</tabstop>
+  <tabstop>ignore_dup_chk</tabstop>
   <tabstop>pgsqlvers_chk</tabstop>
   <tabstop>pgsqlvers1_cmb</tabstop>
-  <tabstop>ignore_dup_chk</tabstop>
+  <tabstop>ignore_error_codes_chk</tabstop>
   <tabstop>drop_chk</tabstop>
+  <tabstop>drop_db_rb</tabstop>
+  <tabstop>drop_objs_rb</tabstop>
+  <tabstop>error_codes_edt</tabstop>
+  <tabstop>export_to_file_rb</tabstop>
+  <tabstop>sql_standalone_rb</tabstop>
+  <tabstop>sql_split_rb</tabstop>
+  <tabstop>code_options_cmb</tabstop>
   <tabstop>pgsqlvers_cmb</tabstop>
+  <tabstop>export_to_img_rb</tabstop>
+  <tabstop>png_rb</tabstop>
+  <tabstop>svg_rb</tabstop>
+  <tabstop>zoom_cmb</tabstop>
   <tabstop>show_grid_chk</tabstop>
   <tabstop>show_delim_chk</tabstop>
   <tabstop>page_by_page_chk</tabstop>
+  <tabstop>export_to_dict_rb</tabstop>
+  <tabstop>dict_standalone_rb</tabstop>
+  <tabstop>dict_split_rb</tabstop>
+  <tabstop>incl_index_chk</tabstop>
+  <tabstop>output_trw</tabstop>
   <tabstop>cancel_btn</tabstop>
   <tabstop>export_btn</tabstop>
   <tabstop>close_btn</tabstop>

@@ -252,7 +252,8 @@ class View: public BaseTable {
 		//! \brief Returns the deduced columns of the view
 		std::vector<SimpleColumn> getColumns();
 
-		virtual QString getDataDictionary(bool split, attribs_map extra_attribs = {});
+		virtual QString getDataDictionary(bool split, const attribs_map &extra_attribs = {});
+		virtual QString getAlterDefinition(BaseObject *object) final;
 
 		//! \brief Copy the attributes between two views
 		void operator = (View &visao);

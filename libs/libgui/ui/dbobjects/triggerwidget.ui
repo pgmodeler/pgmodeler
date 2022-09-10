@@ -87,7 +87,7 @@
         <normaloff>:/icons/icons/usertype.png</normaloff>:/icons/icons/usertype.png</iconset>
       </attribute>
       <attribute name="title">
-       <string>Arguments</string>
+       <string>&amp;Arguments</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout">
        <property name="leftMargin">
@@ -136,7 +136,7 @@
         <normaloff>:/icons/icons/column.png</normaloff>:/icons/icons/column.png</iconset>
       </attribute>
       <attribute name="title">
-       <string>Columns</string>
+       <string>Co&amp;lumns</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout_2">
        <property name="leftMargin">
@@ -209,7 +209,7 @@
         <normaloff>:/icons/icons/constraint.png</normaloff>:/icons/icons/constraint.png</iconset>
       </attribute>
       <attribute name="title">
-       <string>Constraint</string>
+       <string>Co&amp;nstraint</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout_3">
        <property name="leftMargin">
@@ -756,11 +756,22 @@
   </layout>
  </widget>
  <tabstops>
-  <tabstop>deferrable_chk</tabstop>
-  <tabstop>deferral_type_cmb</tabstop>
+  <tabstop>ordinary_rb</tabstop>
+  <tabstop>constraint_rb</tabstop>
+  <tabstop>insert_chk</tabstop>
+  <tabstop>delete_chk</tabstop>
+  <tabstop>update_chk</tabstop>
+  <tabstop>truncate_chk</tabstop>
+  <tabstop>firing_mode_cmb</tabstop>
+  <tabstop>exec_per_row_chk</tabstop>
+  <tabstop>old_table_edt</tabstop>
+  <tabstop>new_table_edt</tabstop>
   <tabstop>arg_cols_tbw</tabstop>
   <tabstop>argument_edt</tabstop>
   <tabstop>column_cmb</tabstop>
+  <tabstop>deferrable_chk</tabstop>
+  <tabstop>deferral_type_cmb</tabstop>
+  <tabstop>cond_expr_txt</tabstop>
  </tabstops>
  <resources>
   <include location="../../res/resources.qrc"/>

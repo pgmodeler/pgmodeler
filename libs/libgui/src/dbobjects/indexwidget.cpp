@@ -25,7 +25,6 @@ IndexWidget::IndexWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::
 		QGridLayout *grid=nullptr;
 		std::map<QString, std::vector<QWidget *> > fields_map;
 		std::map<QWidget *, std::vector<QString> > values_map;
-		QFrame *frame=nullptr;
 
 		Ui_IndexWidget::setupUi(this);
 
@@ -35,7 +34,7 @@ IndexWidget::IndexWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::
 		elements_tab = new ElementsTableWidget(this);
 
 		grid=new QGridLayout;
-		grid->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
+		grid->setContentsMargins(0,0,0,0);
 		grid->addWidget(elements_tab,0,0);
 		attributes_tbw->widget(1)->setLayout(grid);
 
@@ -46,15 +45,6 @@ IndexWidget::IndexWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::
 
 		configureFormLayout(index_grid, ObjectType::Index);
 		indexing_cmb->addItems(IndexingType::getTypes());
-
-		fields_map[BaseObjectWidget::generateVersionsInterval(BaseObjectWidget::AfterVersion, PgSqlVersions::PgSqlVersion92)].push_back(buffering_chk);
-		fields_map[BaseObjectWidget::generateVersionsInterval(BaseObjectWidget::AfterVersion, PgSqlVersions::PgSqlVersion95)].push_back(indexing_lbl);
-		values_map[indexing_lbl].push_back(~IndexingType(IndexingType::Brin));
-
-		frame=BaseObjectWidget::generateVersionWarningFrame(fields_map, &values_map);
-		frame->setParent(this);
-		grid=dynamic_cast<QGridLayout *>(attributes_tbw->widget(0)->layout());
-		grid->addWidget(frame, grid->count(), 0, 1, 5);
 
 		connect(indexing_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(selectIndexingType()));
 		connect(fill_factor_chk, SIGNAL(toggled(bool)), fill_factor_sb, SLOT(setEnabled(bool)));

@@ -3734,13 +3734,12 @@ Role *DatabaseModel::createRole()
 
 	QString op_attribs[]={ Attributes::Superuser, Attributes::CreateDb,
 							 Attributes::CreateRole, Attributes::Inherit,
-							 Attributes::Login, Attributes::Encrypted,
-							 Attributes::Replication, Attributes::BypassRls };
+							 Attributes::Login, Attributes::Replication,
+							 Attributes::BypassRls };
 
 	unsigned op_vect[]={ Role::OpSuperuser, Role::OpCreateDb,
 						 Role::OpCreateRole, Role::OpInherit,
-						 Role::OpLogin, Role::OpEncrypted,
-						 Role::OpReplication, Role::OpBypassRls };
+						 Role::OpLogin, Role::OpReplication, Role::OpBypassRls };
 
 	try
 	{
@@ -3757,7 +3756,7 @@ Role *DatabaseModel::createRole()
 			role->setConnectionLimit(attribs[Attributes::ConnLimit].toInt());
 
 		//Setting up the role options according to the configured on the XML
-		for(i=0; i < 8; i++)
+		for(i=0; i < 7; i++)
 		{
 			marked=attribs[op_attribs[i]]==Attributes::True;
 			role->setOption(op_vect[i], marked);
@@ -7484,6 +7483,47 @@ QString DatabaseModel::__getCodeDefinition(unsigned def_type)
 	}
 }
 
+QString DatabaseModel::getSQLDefinition(BaseObject *object, unsigned code_gen_mode)
+{
+	if(!object)
+		throw Exception(ErrorCode::OprNotAllocatedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+	if(code_gen_mode == OriginalSql)
+	{
+		if(object->getObjectType() == ObjectType::Database)
+			return dynamic_cast<DatabaseModel *>(object)->__getCodeDefinition(SchemaParser::SqlDefinition);
+
+		return object->getCodeDefinition(SchemaParser::SqlDefinition);
+	}
+	else
+	{
+		std::vector<BaseObject *> objs = getCreationOrder(object, code_gen_mode == ChildrenSql);
+		QString aux_def;
+
+		for(auto &obj : objs)
+		{
+			if(obj->getObjectType() == ObjectType::Database)
+				aux_def += dynamic_cast<DatabaseModel *>(obj)->__getCodeDefinition(SchemaParser::SqlDefinition);
+			else
+				aux_def += obj->getCodeDefinition(SchemaParser::SqlDefinition);
+		}
+
+		if(!aux_def.isEmpty())
+		{
+			aux_def.prepend(tr("-- NOTE: the code below contains the SQL for the object itself\n\
+-- as well as for its dependencies or children (if applicable).\n\
+-- \n\
+-- This feature is only a convenience in order to allow you to test\n\
+-- the whole object's SQL definition at once.\n\
+-- \n\
+-- When exporting or generating the SQL for the whole database model\n\
+-- all objects will be placed at their original positions.\n\n\n"));
+		}
+
+		return aux_def;
+	}
+}
+
 QString DatabaseModel::configureShellTypes(bool reset_config)
 {
 	QString shell_types_def;
@@ -8141,7 +8181,7 @@ bool DatabaseModel::saveSplitCustomSQL(bool save_appended, const QString &path, 
 	return false;
 }
 
-void DatabaseModel::saveSplitSQLDefinition(const QString &path)
+void DatabaseModel::saveSplitSQLDefinition(const QString &path, unsigned code_gen_mode)
 {
 	QFileInfo fi(path);
 	QDir dir;
@@ -8149,6 +8189,10 @@ void DatabaseModel::saveSplitSQLDefinition(const QString &path)
 	if(fi.exists() && !fi.isDir())
 		throw Exception(Exception::getErrorMessage(ErrorCode::InvOutputDirectory).arg(path),
 										ErrorCode::InvOutputDirectory,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+	if(code_gen_mode > ChildrenSql)
+		throw Exception(Exception::getErrorMessage(ErrorCode::InvCodeGenerationMode).arg(code_gen_mode),
+										ErrorCode::InvCodeGenerationMode,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	if(!fi.exists())
 		dir.mkdir(path);
@@ -8210,10 +8254,7 @@ void DatabaseModel::saveSplitSQLDefinition(const QString &path)
 				shell_types.clear();
 			}
 
-			if(obj == this)
-				buffer.append(this->__getCodeDefinition(SchemaParser::SqlDefinition).toUtf8());
-			else
-				buffer.append(obj->getCodeDefinition(SchemaParser::SqlDefinition).toUtf8());
+			buffer.append(getSQLDefinition(obj, code_gen_mode).toUtf8());
 
 			if(buffer.isEmpty())
 				continue;
@@ -11567,11 +11608,24 @@ void DatabaseModel::addChangelogEntry(BaseObject *object, unsigned op_type, Base
 	if(op_type == Operation::NoOperation || op_type == Operation::ObjectMoved)
 		return;
 
-	if(!object || (object && TableObject::isTableObject(object->getObjectType()) && !parent_obj))
-		throw Exception(ErrorCode::InvChangelogEntryValues, __PRETTY_FUNCTION__, __FILE__, __LINE__);
-
 	QString action, obj_signature;
 	QDateTime date_time = QDateTime::currentDateTime();
+
+	if(op_type == Operation::ObjectCreated)
+		action = Attributes::Created;
+	else if(op_type == Operation::ObjectRemoved)
+		action = Attributes::Deleted;
+	else
+		action = Attributes::Updated;
+
+	if(!object || (object && TableObject::isTableObject(object->getObjectType()) && !parent_obj))
+	{
+		QString obj_name = object ? object->getSignature() : "",
+				obj_type =  object ? object->getTypeName() : "";
+
+		throw Exception(Exception::getErrorMessage(ErrorCode::InvChangelogEntryValues).arg(obj_name, obj_type, action, date_time.toString(Qt::ISODate)),
+										ErrorCode::InvChangelogEntryValues, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+	}
 
 	if(TableObject::isTableObject(object->getObjectType()))
 	{
@@ -11580,13 +11634,6 @@ void DatabaseModel::addChangelogEntry(BaseObject *object, unsigned op_type, Base
 	}
 	else
 		obj_signature = object->getSignature();
-
-	if(op_type == Operation::ObjectCreated)
-		action = Attributes::Created;
-	else if(op_type == Operation::ObjectRemoved)
-		action = Attributes::Deleted;
-	else
-		action = Attributes::Updated;
 
 	changelog.push_back(std::make_tuple(date_time, obj_signature, object->getObjectType(), action));
 }
@@ -11599,7 +11646,10 @@ void DatabaseModel::addChangelogEntry(const QString &signature, const QString &t
 
 	if(!BaseObject::isValidName(signature) || obj_type == ObjectType::BaseObject ||
 		 !date_time.isValid() || !actions.contains(action))
-		throw Exception(ErrorCode::InvChangelogEntryValues, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+	{
+		throw Exception(Exception::getErrorMessage(ErrorCode::InvChangelogEntryValues).arg(signature, type, action, date),
+										ErrorCode::InvChangelogEntryValues, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+	}
 
 	changelog.push_back(std::make_tuple(date_time, signature, obj_type, action));
 }
@@ -11827,16 +11877,16 @@ TableClass *DatabaseModel::createPhysicalTable()
 void DatabaseModel::getDataDictionary(attribs_map &datadict, bool browsable, bool split)
 {
 	int idx = 0;
-	BaseObject *object = nullptr;
+	BaseTable *base_tab = nullptr;
 	std::vector<BaseObject *> objects;
 	std::map<QString, BaseObject *> objs_map;
-	QString styles, id, index, items, buffer;
+	QString styles, id, dict_index, items, buffer;
 	attribs_map attribs, aux_attribs;
-	QStringList index_list;
+	QStringList dict_index_list;
 	QString dict_sch_file = GlobalAttributes::getSchemaFilePath(GlobalAttributes::DataDictSchemaDir, GlobalAttributes::DataDictSchemaDir),
 			style_sch_file = GlobalAttributes::getSchemaFilePath(GlobalAttributes::DataDictSchemaDir, Attributes::Styles),
 			item_sch_file = GlobalAttributes::getSchemaFilePath(GlobalAttributes::DataDictSchemaDir, Attributes::Item),
-			index_sch_file = GlobalAttributes::getSchemaFilePath(GlobalAttributes::DataDictSchemaDir, Attributes::Index);
+			dict_idx_sch_file = GlobalAttributes::getSchemaFilePath(GlobalAttributes::DataDictSchemaDir, Attributes::DataDictIndex);
 
 	objects.assign(tables.begin(), tables.end());
 	objects.insert(objects.end(), foreign_tables.begin(), foreign_tables.end());
@@ -11859,18 +11909,20 @@ void DatabaseModel::getDataDictionary(attribs_map &datadict, bool browsable, boo
 
 		id = obj->getSignature().remove(QChar('"'));
 		objs_map[id] = obj;
-		index_list.push_back(id);
+		dict_index_list.push_back(id);
 	}
 
-	index_list.sort();
+	dict_index_list.sort();
 	datadict.clear();
 
 	// Generates the the stylesheet
 	styles = schparser.getCodeDefinition(style_sch_file, attribs);
 	attribs[Attributes::Styles] = "";
-	attribs[Attributes::Index] = "";
+	attribs[Attributes::DataDictIndex] = "";
 	attribs[Attributes::Split] = split ? Attributes::True : "";
 	attribs[Attributes::Year] = QString::number(QDate::currentDate().year());
+	attribs[Attributes::Date] = QDateTime::currentDateTime().toString(Qt::ISODate);
+	attribs[Attributes::Version] = GlobalAttributes::PgModelerVersion;
 
 	// If the generation is a standalone HTML the css is embedded
 	if(!split)
@@ -11882,13 +11934,41 @@ void DatabaseModel::getDataDictionary(attribs_map &datadict, bool browsable, boo
 	// Generating individual data dictionaries
 	for(auto &itr : objs_map)
 	{
-		object = itr.second;
+		base_tab = dynamic_cast<BaseTable *>( itr.second);
 
 		// Generate the individual data dictionaries
-		aux_attribs[Attributes::Index] = browsable ? Attributes::True : "";
-		aux_attribs[Attributes::Previous] = idx - 1 >= 0 ? index_list.at(idx - 1) : "";
-		aux_attribs[Attributes::Next] = (++idx <= index_list.size() - 1) ? index_list.at(idx) : "";
-		attribs[Attributes::Objects] += dynamic_cast<BaseTable *>(object)->getDataDictionary(split, aux_attribs);
+		aux_attribs[Attributes::DataDictIndex] = browsable ? Attributes::True : "";
+		aux_attribs[Attributes::Previous] = idx - 1 >= 0 ? dict_index_list.at(idx - 1) : "";
+		aux_attribs[Attributes::Next] = (++idx <= dict_index_list.size() - 1) ? dict_index_list.at(idx) : "";	
+
+		if(base_tab->getObjectType() != ObjectType::View)
+		{
+			Column *col = nullptr;
+			std::vector<TableObject *> *cols = dynamic_cast<PhysicalTable *>(base_tab)->getObjectList(ObjectType::Column);
+			std::map<Sequence *, QStringList> col_seqs;
+
+			aux_attribs[Attributes::Sequences] = "";
+
+			for(auto itr =  cols->begin(); itr != cols->end(); itr++)
+			{
+				col = dynamic_cast<Column *>(*itr);
+
+				if(col->getSequence())
+					col_seqs[dynamic_cast<Sequence *>(col->getSequence())].append(col->getName());
+			}
+
+			for(auto &itr : col_seqs)
+			{
+				aux_attribs[Attributes::Sequences] +=
+						itr.first->getDataDictionary({{ Attributes::Columns, itr.second.join(", ") }});
+			}
+
+			col_seqs.clear();
+		}
+		else
+			aux_attribs[Attributes::Sequences] = "";
+
+		attribs[Attributes::Objects] += base_tab->getDataDictionary(split, aux_attribs);
 
 		// If the generation is configured to be splitted we generate a complete HTML file for the current table
 		if(split && !attribs[Attributes::Objects].isEmpty())
@@ -11911,7 +11991,7 @@ void DatabaseModel::getDataDictionary(attribs_map &datadict, bool browsable, boo
 		idx_attribs[Attributes::Year] = QString::number(QDate::currentDate().year());
 
 		// Generating the index items
-		for(auto &item : index_list)
+		for(auto &item : dict_index_list)
 		{
 			aux_attribs[Attributes::Split] = attribs[Attributes::Split];
 			aux_attribs[Attributes::Item] = item;
@@ -11922,15 +12002,15 @@ void DatabaseModel::getDataDictionary(attribs_map &datadict, bool browsable, boo
 		idx_attribs[Attributes::Split] = attribs[Attributes::Split];
 
 		schparser.ignoreEmptyAttributes(true);
-		index = schparser.getCodeDefinition(index_sch_file, idx_attribs);
+		dict_index = schparser.getCodeDefinition(dict_idx_sch_file, idx_attribs);
 	}
 
 	// If the data dictionary is browsable and splitted the index goes into a separated file
 	if(split && browsable)
-		datadict[Attributes::Index + QString(".html")] = index;
+		datadict[Attributes::Index + QString(".html")] = dict_index;
 	else if(!split)
 	{
-		attribs[Attributes::Index] = index;
+		attribs[Attributes::DataDictIndex] = dict_index;
 		schparser.ignoreEmptyAttributes(true);
 		datadict[Attributes::Database] = schparser.getCodeDefinition(dict_sch_file, attribs);
 	}

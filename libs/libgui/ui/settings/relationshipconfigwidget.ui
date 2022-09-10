@@ -52,7 +52,7 @@
         <normaloff>:/icons/icons/connmode.png</normaloff>:/icons/icons/connmode.png</iconset>
       </attribute>
       <attribute name="title">
-       <string>Connection mode</string>
+       <string>Connection &amp;mode</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout_3">
        <property name="leftMargin">
@@ -406,7 +406,7 @@
         <normaloff>:/icons/icons/constraint_fk.png</normaloff>:/icons/icons/constraint_fk.png</iconset>
       </attribute>
       <attribute name="title">
-       <string>FK Settings &amp;&amp; Patterns</string>
+       <string>&amp;FK Settings &amp;&amp; Patterns</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_4">
        <property name="spacing">
@@ -432,8 +432,11 @@
            <verstretch>0</verstretch>
           </sizepolicy>
          </property>
+         <property name="focusPolicy">
+          <enum>Qt::TabFocus</enum>
+         </property>
          <property name="title">
-          <string>Foreign key settings</string>
+          <string>Foreign &amp;key settings</string>
          </property>
          <property name="checkable">
           <bool>false</bool>
@@ -619,8 +622,11 @@
            <italic>false</italic>
           </font>
          </property>
+         <property name="focusPolicy">
+          <enum>Qt::TabFocus</enum>
+         </property>
          <property name="title">
-          <string>Name patterns</string>
+          <string>&amp;Name patterns</string>
          </property>
          <property name="checkable">
           <bool>false</bool>
@@ -948,6 +954,10 @@
  </widget>
  <tabstops>
   <tabstop>settings_twg</tabstop>
+  <tabstop>crows_foot_rb</tabstop>
+  <tabstop>tab_edges_rb</tabstop>
+  <tabstop>fk_to_pk_rb</tabstop>
+  <tabstop>center_pnts_rb</tabstop>
   <tabstop>deferrable_chk</tabstop>
   <tabstop>deferral_cmb</tabstop>
   <tabstop>del_action_cmb</tabstop>

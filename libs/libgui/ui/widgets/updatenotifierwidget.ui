@@ -402,6 +402,12 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>changelog_txt</tabstop>
+  <tabstop>get_binary_tb</tabstop>
+  <tabstop>get_source_tb</tabstop>
+  <tabstop>hide_tb</tabstop>
+ </tabstops>
  <resources>
   <include location="../../res/resources.qrc"/>
   <include location="../../res/resources.qrc"/>

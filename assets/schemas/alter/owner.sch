@@ -2,5 +2,13 @@
 # CAUTION: Do not modify this file unless you know what you are doing.
 # Code generation can be broken if incorrect changes are made.
 
-[ALTER ] {sql-object} $sp {signature} [ OWNER TO ] {owner};
+[ALTER ] 
+
+# Special condition for materialized views
+%if {materialized} %then
+	[MATERIALIZED ]
+%end
+
+{sql-object} $sp {signature} [ OWNER TO ] {owner};
+
 $br [-- ddl-end --] $br

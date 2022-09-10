@@ -39,13 +39,8 @@
 		[ AND ]
 	%end
 
-	[ (id.indisprimary IS FALSE ]
-
-	%if ({pgsql-ver} != "9.0") %then
-		[ AND id.indisexclusion IS FALSE ]
-	%end
-
-	[) AND ((SELECT count(oid) FROM pg_constraint WHERE conindid=id.indexrelid)=0) ]
+	[ (id.indisprimary IS FALSE AND id.indisexclusion IS FALSE) AND
+	 ((SELECT count(oid) FROM pg_constraint WHERE conindid=id.indexrelid)=0) ]
 
 	%if {not-ext-object} %then
 		[ AND ]( {not-ext-object} )
@@ -62,15 +57,9 @@
 	%if {attribs} %then
 		[SELECT id.indexrelid AS oid, cl.relname AS name,
 		am.amname AS index_type, id.indrelid AS table, 
-		id.indoption::int2] $ob $cb [ AS options, id.indisunique AS unique_bool, ]
-
-		%if ({pgsql-ver} == "9.0") %then
-			[ NULL AS collations, ]
-		%else
-			[ indcollation::oid] $ob $cb [ AS collations, ]
-		%end
-
-		[ id.indkey::oid] $ob $cb [ AS columns,
+		id.indoption::int2] $ob $cb [ AS options, id.indisunique AS unique_bool, 
+	    indcollation::oid] $ob $cb [ AS collations, 
+		id.indkey::oid] $ob $cb [ AS columns,
 		id.indclass::oid] $ob $cb [ AS opclasses,
 		pg_get_expr(indexprs, indrelid) AS expressions,
 		pg_get_expr(indpred, indrelid, true) predicate, ]
@@ -125,13 +114,8 @@
 			[ AND ]
 		%end
 
-		[ (id.indisprimary IS FALSE ]
-
-		%if ({pgsql-ver} != "9.0") %then
-			[ AND id.indisexclusion IS FALSE ]
-		%end
-
-		[) AND ((SELECT count(oid) FROM pg_constraint WHERE conindid=id.indexrelid)=0) ]
+		[ (id.indisprimary IS FALSE AND id.indisexclusion IS FALSE ) 
+		  AND ((SELECT count(oid) FROM pg_constraint WHERE conindid=id.indexrelid)=0) ]
 
 		%if {not-ext-object} %then
 			[ AND ]( {not-ext-object} )

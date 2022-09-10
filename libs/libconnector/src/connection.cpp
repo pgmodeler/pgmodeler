@@ -21,6 +21,7 @@
 #include <iostream>
 #include "attributes.h"
 #include "globalattributes.h"
+#include "pgsqlversions.h"
 
 const QString Connection::SslDisable=QString("disable");
 const QString Connection::SslAllow=QString("allow");
@@ -263,6 +264,16 @@ void Connection::connect()
 	else
 		//Enable the notice/warnings in the connection by pushing them into the list of generated notices
 		PQsetNoticeProcessor(connection, noticeProcessor, nullptr);
+
+	// Aborts the connection is PostgreSQL 9x is detected
+	QString pgver = getPgSQLVersion(true);
+	if(pgver.toFloat() < PgSqlVersions::PgSqlVersion100.toFloat())
+	{
+		close();
+		throw Exception(Exception::getErrorMessage(ErrorCode::UnsupportedPGVersion).arg(pgver),
+										ErrorCode::UnsupportedPGVersion,
+										__PRETTY_FUNCTION__, __FILE__, __LINE__);
+	}
 }
 
 void Connection::close()

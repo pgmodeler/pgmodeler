@@ -22,9 +22,6 @@ ElementWidget::ElementWidget(QWidget *parent) : QWidget(parent)
 {
 	try
 	{
-		std::map<QString, std::vector<QWidget *> > fields_map;
-
-		warning_frame=nullptr;
 		element = nullptr;
 
 		setupUi(this);
@@ -39,11 +36,6 @@ ElementWidget::ElementWidget(QWidget *parent) : QWidget(parent)
 		element_grid->addWidget(collation_sel, 3,1,1,2);
 		element_grid->addWidget(op_class_sel, 4,1,1,2);
 		element_grid->addWidget(operator_sel, 5,1,1,2);
-
-		fields_map[BaseObjectWidget::generateVersionsInterval(BaseObjectWidget::AfterVersion, PgSqlVersions::PgSqlVersion91)].push_back(collation_lbl);
-		warning_frame=BaseObjectWidget::generateVersionWarningFrame(fields_map);
-		element_grid->addWidget(warning_frame, element_grid->count()+1, 0, 1, 3);
-		warning_frame->setParent(this);
 
 		connect(column_rb, SIGNAL(toggled(bool)), this, SLOT(selectElementObject()));
 		connect(expression_rb, SIGNAL(toggled(bool)), this, SLOT(selectElementObject()));
@@ -166,7 +158,6 @@ void ElementWidget::setIndexElement(IndexElement *elem)
 	setWindowTitle(tr("Index element properties"));
 	collation_sel->setVisible(true);
 	collation_lbl->setVisible(true);
-	warning_frame->setVisible(true);
 }
 
 void ElementWidget::setExcludeElement(ExcludeElement *elem)
@@ -175,7 +166,6 @@ void ElementWidget::setExcludeElement(ExcludeElement *elem)
 	setWindowTitle(tr("Exclude element properties"));
 	operator_sel->setVisible(true);
 	operator_lbl->setVisible(true);
-	warning_frame->setVisible(false);
 }
 
 void ElementWidget::setPartitionKey(PartitionKey *elem)
@@ -188,7 +178,6 @@ void ElementWidget::setPartitionKey(PartitionKey *elem)
 	ascending_rb->setVisible(false);
 	descending_rb->setVisible(false);
 	nulls_first_chk->setVisible(false);
-	warning_frame->setVisible(true);
 }
 
 Element *ElementWidget::getElement()

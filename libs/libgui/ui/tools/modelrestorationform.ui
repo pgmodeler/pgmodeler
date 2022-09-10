@@ -392,6 +392,12 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>tmp_files_tbw</tabstop>
+  <tabstop>keep_models_chk</tabstop>
+  <tabstop>restore_btn</tabstop>
+  <tabstop>cancel_btn</tabstop>
+ </tabstops>
  <resources>
   <include location="../../res/resources.qrc"/>
   <include location="../../res/resources.qrc"/>

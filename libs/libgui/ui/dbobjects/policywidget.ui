@@ -38,7 +38,7 @@
    <item row="0" column="0">
     <widget class="QGroupBox" name="basics_grp">
      <property name="title">
-      <string>Basics</string>
+      <string>&amp;Basics</string>
      </property>
      <layout class="QGridLayout" name="gridLayout">
       <property name="leftMargin">
@@ -132,7 +132,7 @@
         <normaloff>:/icons/icons/role.png</normaloff>:/icons/icons/role.png</iconset>
       </attribute>
       <attribute name="title">
-       <string>Roles</string>
+       <string>&amp;Roles</string>
       </attribute>
      </widget>
      <widget class="QWidget" name="tab">
@@ -141,7 +141,7 @@
         <normaloff>:/icons/icons/validatesch.png</normaloff>:/icons/icons/validatesch.png</iconset>
       </attribute>
       <attribute name="title">
-       <string>Expressions</string>
+       <string>E&amp;xpressions</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout">
        <property name="spacing">
