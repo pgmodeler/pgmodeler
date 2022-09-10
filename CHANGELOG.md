@@ -3,7 +3,7 @@ Changelog
 
 v1.0.0-beta
 ------
-<em>Release date: September 9, 2022</em><br/>
+<em>Release date: September 10, 2022</em><br/>
 
 * [New] Added data dictionary entry for indexes, triggers, and sequences.
 * [New] Columns, indexes, triggers, and constraints now have their own method to generate their data dictionaries.
