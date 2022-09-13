@@ -21,7 +21,7 @@
 #include <QRegularExpression>
 
 /** Base version number **/
-const QString GlobalAttributes::PgModelerVersion = QString("1.0.0-beta")
+const QString GlobalAttributes::PgModelerVersion = QString("1.0.0-beta1")
 
 /* Appending the snapshot build number to the version number
  * when the external variable SNAPSHOT_BUILD is defined */
