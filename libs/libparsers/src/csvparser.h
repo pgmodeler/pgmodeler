@@ -25,9 +25,25 @@
 #ifndef CSV_PARSER_H
 #define CSV_PARSER_H
 
+#include <QString>
+#include <QList>
+
 class CsvParser {
+	private:
+		QList<QStringList> values;
+
+		QStringList columns;
+
 	public:
 		CsvParser();
+
+		void parseFile(const QString &filename, const QChar &separator = ';', const QChar &text_delim = '"', bool cols_in_first_row = false);
+
+		void parseBuffer(const QString &csv_buf, const QChar &separator = ';', const QChar &text_delim = '"', bool cols_in_first_row = false);
+
+		const QStringList &getColumnNames();
+
+		const QString &getValue(int col_idx);
 };
 
 #endif

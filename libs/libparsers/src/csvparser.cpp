@@ -17,8 +17,42 @@
 */
 
 #include "csvparser.h"
+#include "utilsns.h"
+#include "exception.h"
 
 CsvParser::CsvParser()
+{
+
+}
+
+void CsvParser::parseFile(const QString &filename, const QChar &separator, const QChar &text_delim, bool cols_in_first_row)
+{
+	try
+	{
+		parseBuffer(UtilsNs::loadFile(filename), separator, text_delim, cols_in_first_row);
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorCode(), __PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
+}
+
+void CsvParser::parseBuffer(const QString &csv_buf, const QChar &separator, const QChar &text_delim, bool cols_in_first_row)
+{
+	columns.clear();
+	values.clear();
+
+	if(csv_buf.isEmpty())
+		return;
+
+}
+
+const QStringList &CsvParser::getColumnNames()
+{
+	return columns;
+}
+
+const QString &CsvParser::getValue(int col_idx)
 {
 
 }
