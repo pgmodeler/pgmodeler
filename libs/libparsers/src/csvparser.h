@@ -27,6 +27,7 @@
 
 #include <QString>
 #include <QList>
+#include "exception.h"
 
 class CsvParser {
 	private:
@@ -34,16 +35,30 @@ class CsvParser {
 
 		QStringList columns;
 
+		QChar separator, text_delim, line_break;
+
+		bool cols_in_first_row;
+
+		QString buffer;
+
+		int curr_pos;
+
+		QString extractValue();
+
 	public:
 		CsvParser();
 
-		void parseFile(const QString &filename, const QChar &separator = ';', const QChar &text_delim = '"', bool cols_in_first_row = false);
+		void setOptions(const QChar &separator, const QChar &text_delim, const QChar &ln_break, bool cols_fst_row);
 
-		void parseBuffer(const QString &csv_buf, const QChar &separator = ';', const QChar &text_delim = '"', bool cols_in_first_row = false);
+		void parseFile(const QString &filename);
+
+		void parseBuffer(const QString &csv_buf);
 
 		const QStringList &getColumnNames();
 
 		const QString &getValue(int col_idx);
+
+		const QString &getValue(const QString &col_name);
 };
 
 #endif
