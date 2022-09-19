@@ -18,39 +18,42 @@
 
 /**
 \ingroup libparsers
-\class CsvParser
-\brief This class implements basic operations to parse CSV documents
+\class CsvDocument
+\brief This class implements basic operations to store a parsed CSV document in memory.
 */
 
-#ifndef CSV_PARSER_H
-#define CSV_PARSER_H
+#ifndef CSV_DOCUMENT_H
+#define CSV_DOCUMENT_H
 
-#include <QString>
-#include <QList>
-#include "csvdocument.h"
+#include "exception.h"
+#include <QStringList>
 
-class CsvParser {
+class CsvDocument {
 	private:
-		QChar separator, text_delim, line_break;
+		QStringList columns;
 
-		bool cols_in_first_row;
+		QList<QStringList> values;
 
-		QString buffer;
+		void addValues(const QStringList &values);
 
-		int curr_pos, curr_row;
-
-		QString extractValue();
-
-		QStringList extractValues();
+		void setValue(int row, int col, const QString &value);
 
 	public:
-		CsvParser();
+		CsvDocument();
 
-		void setOptions(const QChar &separator, const QChar &text_delim, const QChar &ln_break, bool cols_fst_row);
+		int getRowCount();
 
-		CsvDocument parseFile(const QString &filename);
+		int getColumnCount();
 
-		CsvDocument parseBuffer(const QString &csv_buf);
+		bool isEmpty();
+
+		QStringList getColumnNames();
+
+		QString getValue(int row, const QString &col_name);
+
+		QString getValue(int col, int row);
+
+		friend class CsvParser;
 };
 
 #endif

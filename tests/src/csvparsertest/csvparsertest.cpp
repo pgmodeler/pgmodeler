@@ -24,20 +24,106 @@ class CsvParserTest: public QObject {
 		Q_OBJECT
 
 	private slots:
-		void testBufferWithSimpleAndQuotedValues();
+		void testOneRowBufferWithQuotesInValues();
+		void testOneRowBufferWithoutLineBreak();
+		void testTwoBufferWithSimpleAndQuotedValues();
+		void testOneRowBufferWithSimpleAndQuotedValues();
 };
 
-void CsvParserTest::testBufferWithSimpleAndQuotedValues()
+void CsvParserTest::testOneRowBufferWithSimpleAndQuotedValues()
 {
-	CsvParser csvparser;
-	QString buffer;
-
-	buffer = "value 1;value 2;\"value 3\"\n";
-
 	try
 	{
-		csvparser.parseBuffer(buffer);
-		//QCOMPARE(schparser.getCodeDefinition(attribs) == "10.0", true);
+		CsvParser csvparser;
+		CsvDocument csvdoc;
+		QString buffer;
+
+		buffer = "value 1;value 2;\"value 3\"\n";
+		csvdoc = csvparser.parseBuffer(buffer);
+
+		QCOMPARE(csvdoc.getColumnCount(), 3);
+		QCOMPARE(csvdoc.getRowCount(), 1);
+
+		QCOMPARE(csvdoc.getValue(0, 0), "value 1");
+		QCOMPARE(csvdoc.getValue(0, 1), "value 2");
+		QCOMPARE(csvdoc.getValue(0, 2), "value 3");
+	}
+	catch(Exception &e)
+	{
+		QFAIL(e.getExceptionsText().toStdString().c_str());
+	}
+}
+
+void CsvParserTest::testTwoBufferWithSimpleAndQuotedValues()
+{
+	try
+	{
+		CsvParser csvparser;
+		CsvDocument csvdoc;
+		QString buffer;
+
+		buffer = "value 1;value 2;\"value 3\"\n";
+		buffer += "\"value 4\";\"value 5\";\"value 6\"\n";
+		csvdoc = csvparser.parseBuffer(buffer);
+
+		QCOMPARE(csvdoc.getColumnCount(), 3);
+		QCOMPARE(csvdoc.getRowCount(), 2);
+
+		QCOMPARE(csvdoc.getValue(0, 0), "value 1");
+		QCOMPARE(csvdoc.getValue(0, 1), "value 2");
+		QCOMPARE(csvdoc.getValue(0, 2), "value 3");
+
+		QCOMPARE(csvdoc.getValue(1, 0), "value 4");
+		QCOMPARE(csvdoc.getValue(1, 1), "value 5");
+		QCOMPARE(csvdoc.getValue(1, 2), "value 6");
+	}
+	catch(Exception &e)
+	{
+		QFAIL(e.getExceptionsText().toStdString().c_str());
+	}
+}
+
+void CsvParserTest::testOneRowBufferWithoutLineBreak()
+{
+	try
+	{
+		CsvParser csvparser;
+		CsvDocument csvdoc;
+		QString buffer;
+
+		buffer = "value 1;value 2;\"value 3\"";
+		csvdoc = csvparser.parseBuffer(buffer);
+
+		QCOMPARE(csvdoc.getColumnCount(), 3);
+		QCOMPARE(csvdoc.getRowCount(), 1);
+
+		QCOMPARE(csvdoc.getValue(0, 0), "value 1");
+		QCOMPARE(csvdoc.getValue(0, 1), "value 2");
+		QCOMPARE(csvdoc.getValue(0, 2), "value 3");
+	}
+	catch(Exception &e)
+	{
+		QFAIL(e.getExceptionsText().toStdString().c_str());
+	}
+}
+
+void CsvParserTest::testOneRowBufferWithQuotesInValues()
+{
+	try
+	{
+		CsvParser csvparser;
+		CsvDocument csvdoc;
+		QString buffer;
+
+		buffer = "\"value \"\"1\"\";\"value\"\"2\";\"value 3\"\n";
+		csvdoc = csvparser.parseBuffer(buffer);
+
+		QCOMPARE(csvdoc.getColumnCount(), 3);
+		QCOMPARE(csvdoc.getRowCount(), 1);
+
+		QCOMPARE(csvdoc.getValue(0, 0), "value \"1\"");
+		QCOMPARE(csvdoc.getValue(0, 1), "value\"2");
+		QCOMPARE(csvdoc.getValue(0, 2), "value 3");
 	}
 	catch(Exception &e)
 	{

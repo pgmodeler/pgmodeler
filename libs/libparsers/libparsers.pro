@@ -5,12 +5,14 @@ TARGET = parsers
 windows: DESTDIR = $$PWD
 
 HEADERS += src/schemaparser.h \
+    src/csvdocument.h \
     src/csvparser.h \
 	   src/xmlparser.h \
 	   src/attribsmap.h \
 	    src/attributes.h
 
 SOURCES += src/schemaparser.cpp \
+    src/csvdocument.cpp \
     src/csvparser.cpp \
 	   src/xmlparser.cpp \
     src/attributes.cpp
