@@ -71,8 +71,9 @@ QString CsvParser::extractValue()
 {
 	bool delim_open = false,
 			delim_closed = false;
-	QString value, dbl_delim;
+	QString value;
 	QChar chr;
+	int delim_cnt = 0;
 
 	while(curr_pos < buffer.length())
 	{
@@ -85,27 +86,43 @@ QString CsvParser::extractValue()
 		}
 		else if(chr == text_delim && delim_open)
 		{
-			dbl_delim.append(text_delim);
+			delim_cnt++;
 			curr_pos++;
 		}
 		else
 		{
-			if(delim_open && !dbl_delim.isEmpty())
+			if(delim_open && delim_cnt > 0)
 			{
-				if(dbl_delim.length() == 1)
+				if(delim_cnt % 2 == 0)
 				{
-					dbl_delim.clear();
+					value = value.leftJustified(value.size() + (delim_cnt / 2), text_delim);
+					delim_cnt = 0;
+				}
+				else
+				{
+					value = value.leftJustified(value.size() + (delim_cnt / 2), text_delim);
+					delim_cnt = 0;
+					delim_closed = true;
+				}
+			}
+
+			/*if(delim_open && delim_cnt > 0)
+			{
+				if(delim_cnt == 1)
+				{
+					delim_cnt = 0;
 					delim_closed = true;
 				}
 				else
 				{
 					value.append(text_delim);
-					dbl_delim.clear();
+					delim_cnt = 0;
 				}
 			}
-			else if((!delim_open ||
-							 (delim_open && delim_closed)) &&
-							(chr == separator || chr == line_break))
+			else */
+			if((!delim_open ||
+				 (delim_open && delim_closed)) &&
+				(chr == separator || chr == line_break))
 			{
 				curr_pos++;
 
