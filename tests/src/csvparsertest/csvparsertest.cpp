@@ -115,7 +115,7 @@ void CsvParserTest::testOneRowBufferWithQuotesInValues()
 		CsvDocument csvdoc;
 		QString buffer;
 
-		buffer = "\"value \"\"1\"\";\"value\"\"2\";\"value 3\"\n";
+		buffer = "\"value \"\"1\"\"\";\"value\"\"2\";\"value 3\"\n";
 		csvdoc = csvparser.parseBuffer(buffer);
 
 		QCOMPARE(csvdoc.getColumnCount(), 3);
