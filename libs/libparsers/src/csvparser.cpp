@@ -18,18 +18,18 @@
 
 #include "csvparser.h"
 #include "utilsns.h"
-#include <QTextStream>
 
 CsvParser::CsvParser()
 {
-	setOptions(';', '"', QChar::LineFeed, false);
+	setOptions(CsvDocument::SeparatorChar, CsvDocument::TextDelimiterChar,
+						 CsvDocument::LineBreakChar, false);
 	curr_pos = curr_row = 0;
 }
 
 void CsvParser::setOptions(const QChar &sep, const QChar &txt_delim, const QChar &ln_break, bool cols_fst_row)
 {
-	//if(sep == txt_delim)
-	// throw error?
+	if(sep == txt_delim || sep == ln_break || ln_break == txt_delim)
+		throw Exception(ErrorCode::InvCsvParserOptions, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 
 	separator = sep;
 	text_delim = txt_delim;
@@ -54,17 +54,25 @@ CsvDocument CsvParser::parseBuffer(const QString &csv_buf)
 	if(csv_buf.isEmpty())
 		return CsvDocument();
 
-	buffer = csv_buf;
-	curr_pos = 0;
+	try
+	{
+		buffer = csv_buf;
+		curr_pos = curr_row = 0;
 
-	CsvDocument csv_doc;
-	QStringList values;
-	QTextStream out(stdout);
+		CsvDocument csv_doc;
 
-	while(curr_pos < buffer.length())
-		csv_doc.addValues(extractValues());
+		if(curr_row == 0 && cols_in_first_row)
+			csv_doc.setColumns(extractValues());
 
-	return csv_doc;
+		while(curr_pos < buffer.length())
+			csv_doc.addValues(extractValues());
+
+		return csv_doc;
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorCode(), __PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
 }
 
 QString CsvParser::extractValue()
@@ -93,33 +101,13 @@ QString CsvParser::extractValue()
 		{
 			if(delim_open && delim_cnt > 0)
 			{
-				if(delim_cnt % 2 == 0)
-				{
-					value = value.leftJustified(value.size() + (delim_cnt / 2), text_delim);
-					delim_cnt = 0;
-				}
-				else
-				{
-					value = value.leftJustified(value.size() + (delim_cnt / 2), text_delim);
-					delim_cnt = 0;
+				if(delim_cnt % 2 != 0)
 					delim_closed = true;
-				}
+
+				value = value.leftJustified(value.size() + (delim_cnt / 2), text_delim);
+				delim_cnt = 0;
 			}
 
-			/*if(delim_open && delim_cnt > 0)
-			{
-				if(delim_cnt == 1)
-				{
-					delim_cnt = 0;
-					delim_closed = true;
-				}
-				else
-				{
-					value.append(text_delim);
-					delim_cnt = 0;
-				}
-			}
-			else */
 			if((!delim_open ||
 				 (delim_open && delim_closed)) &&
 				(chr == separator || chr == line_break))

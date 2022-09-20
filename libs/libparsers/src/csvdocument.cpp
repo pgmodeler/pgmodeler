@@ -1,5 +1,9 @@
 #include "csvdocument.h"
 
+const QChar CsvDocument::TextDelimiterChar = '"';
+const QChar CsvDocument::SeparatorChar = ';';
+const QChar CsvDocument::LineBreakChar = QChar::LineFeed;
+
 CsvDocument::CsvDocument()
 {
 
@@ -31,32 +35,33 @@ QStringList CsvDocument::getColumnNames()
 	return columns;
 }
 
-void CsvDocument::addValues(const QStringList &values)
+void CsvDocument::setColumns(const QStringList &cols)
 {
-	/* Validate the document here.
-	 * Check if the number of columns of the provided values is the same
-	 * of the number of columns (first row or columns list) */
-
-	this->values.append(values);
+	columns = cols;
 }
 
-void CsvDocument::setValue(int row, int col, const QString &value)
+void CsvDocument::addValues(const QStringList &vals)
 {
+	if(vals.isEmpty())
+		return;
 
-}
+	if(getColumnCount() > 0 && vals.size() != getColumnCount())
+	{
+		throw Exception(Exception::getErrorMessage(ErrorCode::MalformedCsvDocument)
+										.arg(getColumnCount()).arg(values.size() + 1).arg(vals.size()),
+										ErrorCode::MalformedCsvDocument, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+	}
 
-QString CsvDocument::getValue(int row, const QString &col_name)
-{
-
+	this->values.append(vals);
 }
 
 QString CsvDocument::getValue(int row, int col)
 {
-	//if(row >= values.size())
-		//trhow error!
-
-	//if(col >= getColumnCount())
-		//trhow error!
+	if(row >= values.size() || col >= getColumnCount())
+	{
+		throw Exception(Exception::getErrorMessage(ErrorCode::RefInvCsvDocumentValue).arg(row).arg(col),
+										ErrorCode::RefInvCsvDocumentValue, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+	}
 
 	return values.at(row).at(col);
 }

@@ -34,11 +34,15 @@ class CsvDocument {
 
 		QList<QStringList> values;
 
+		void setColumns(const QStringList &cols);
+
 		void addValues(const QStringList &values);
 
-		void setValue(int row, int col, const QString &value);
-
 	public:
+		static const QChar TextDelimiterChar,
+		SeparatorChar,
+		LineBreakChar;
+
 		CsvDocument();
 
 		int getRowCount();
@@ -48,8 +52,6 @@ class CsvDocument {
 		bool isEmpty();
 
 		QStringList getColumnNames();
-
-		QString getValue(int row, const QString &col_name);
 
 		QString getValue(int col, int row);
 
