@@ -19,7 +19,7 @@
 /**
 \ingroup libparsers
 \class CsvParser
-\brief This class implements basic operations to parse CSV documents
+\brief This class implements basic operations to parse CSV documents based upon RFC 4180 (https://www.rfc-editor.org/rfc/rfc4180)
 */
 
 #ifndef CSV_PARSER_H
@@ -31,25 +31,42 @@
 
 class CsvParser {
 	private:
-		QChar separator, text_delim, line_break;
+		//! \brief Indicates the character used as values separator
+		QChar separator,
 
+		//! \brief Indicates the character used as text delimiter
+		text_delim,
+
+		//! \brief Indicates the character used as line break
+		line_break;
+
+		//! \brief Indicates if the parsed document contains the column names in the first row
 		bool cols_in_first_row;
 
+		//! \brief The CSV document which is stored in memory and parsed
 		QString buffer;
 
-		int curr_pos, curr_row;
+		//! \brief Indicates the current linear position in which the parser is in.
+		int curr_pos,
 
+		//! \brief Indicates the current row in which the parser is in.
+		curr_row;
+
+		//! \brief Extract and returns a single value from a row in the buffer
 		QString extractValue();
 
-		QStringList extractValues();
+		//! \brief Extract and returns a list of values that defines a single row in the buffer
+		QStringList extractRow();
 
 	public:
 		CsvParser();
 
 		void setOptions(const QChar &separator, const QChar &text_delim, const QChar &ln_break, bool cols_fst_row);
 
+		//! \brief Parses a CSV document by loading the contents from a file
 		CsvDocument parseFile(const QString &filename);
 
+		//! \brief Parses a CSV document defined in a string buffer
 		CsvDocument parseBuffer(const QString &csv_buf);
 };
 

@@ -21,16 +21,14 @@
 
 CsvParser::CsvParser()
 {
-	setOptions(CsvDocument::SeparatorChar, CsvDocument::TextDelimiterChar,
+	setOptions(CsvDocument::SeparatorChar,
+						 CsvDocument::TextDelimiterChar,
 						 CsvDocument::LineBreakChar, false);
 	curr_pos = curr_row = 0;
 }
 
 void CsvParser::setOptions(const QChar &sep, const QChar &txt_delim, const QChar &ln_break, bool cols_fst_row)
 {
-	if(sep == txt_delim || sep == ln_break || ln_break == txt_delim)
-		throw Exception(ErrorCode::InvCsvParserOptions, __PRETTY_FUNCTION__, __FILE__, __LINE__);
-
 	separator = sep;
 	text_delim = txt_delim;
 	line_break = ln_break;
@@ -59,13 +57,15 @@ CsvDocument CsvParser::parseBuffer(const QString &csv_buf)
 		buffer = csv_buf;
 		curr_pos = curr_row = 0;
 
-		CsvDocument csv_doc;
+		CsvDocument csv_doc(separator, text_delim, line_break);
 
+		// Extracting the column names if the option to do so is set
 		if(curr_row == 0 && cols_in_first_row)
-			csv_doc.setColumns(extractValues());
+			csv_doc.setColumns(extractRow());
 
+		// Extracting all the document rows while there's chars to be read
 		while(curr_pos < buffer.length())
-			csv_doc.addValues(extractValues());
+			csv_doc.addRow(extractRow());
 
 		return csv_doc;
 	}
@@ -87,13 +87,20 @@ QString CsvParser::extractValue()
 	{
 		chr = buffer.at(curr_pos);
 
+		/* If we find a starting text delimiter and we still didn't
+		 * open a text delimiter */
 		if(chr == text_delim && !delim_open)
 		{
+			/* Indicates that we are inside a quoted value: "value"
+			 * From this point,.the parser will interpret separators and line breaks
+			 * as part of the value being extracted until the closing delimiter is found */
 			delim_open = true;
 			curr_pos++;
 		}
+		// If we find the a text delimiter char and we are extracting a quoted value
 		else if(chr == text_delim && delim_open)
 		{
+			// We increment the amount of contigous delimiters found until now
 			delim_cnt++;
 			curr_pos++;
 		}
@@ -101,19 +108,30 @@ QString CsvParser::extractValue()
 		{
 			if(delim_open && delim_cnt > 0)
 			{
+				/* If the amount of contigous delimiters are not even we consider that
+				 * the last text delimiter character was closing the quoted value,
+				 * so we flag the closing of the quoted value */
 				if(delim_cnt % 2 != 0)
 					delim_closed = true;
 
+				/* If the number of contigous delimiters is even we need to insert delimiters
+				 * in the value being extract by half number of contigous delimiters, since
+				 * according to CSV RFC, to represent a text delimiter inside a quoted values
+				 * we must write two double quotes (e.g. "foo""bar" is translated to foo"bar) */
 				value = value.leftJustified(value.size() + (delim_cnt / 2), text_delim);
 				delim_cnt = 0;
 			}
 
-			if((!delim_open ||
-				 (delim_open && delim_closed)) &&
-				(chr == separator || chr == line_break))
+			/* If we find a separator or line break character and
+			 * we are not inside a quoted value or we finished extracting
+			 * a quoted value we need to return the whole extracted value */
+			if((chr == separator || chr == line_break) &&
+				 (!delim_open || (delim_open && delim_closed)))
 			{
 				curr_pos++;
 
+				/* If the character is line break we need to indicate to the parser
+				 * the the next line will be parsed */
 				if(chr == line_break)
 					curr_row++;
 
@@ -130,7 +148,7 @@ QString CsvParser::extractValue()
 	return value;
 }
 
-QStringList CsvParser::extractValues()
+QStringList CsvParser::extractRow()
 {
 	QStringList values;
 	int last_row = curr_row;

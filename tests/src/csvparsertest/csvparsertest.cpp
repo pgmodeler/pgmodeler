@@ -18,6 +18,7 @@
 
 #include <QtTest/QtTest>
 #include "csvparser.h"
+#include "utilsns.h"
 
 class CsvParserTest: public QObject {
 	private:
@@ -27,13 +28,14 @@ class CsvParserTest: public QObject {
 		void testRaiseExceptionWhenRefInvValue();
 		void testRaiseExceptionOnMalformedDocument();
 		void testExtractColumnsInFirstRow();
-		void testRaiseExceptionOnInvalidParserOptions();
+		//void testRaiseExceptionOnInvalidParserOptions();
 		void testTwoRowsWithQuotesSeparatorLineBreakInValues();
 		void testOneRowWithSimpleAndQuotedValues();
 		void testTwoRowsWithSimpleAndQuotedValues();
 		void testOneRowWithoutLineBreak();
 		void testOneRowWithQuotesInValues();
 		void testTwoRowsWithQuotesInValues();
+		void testSaveParsedDocumentToFile();
 };
 
 void CsvParserTest::testRaiseExceptionWhenRefInvValue()
@@ -113,7 +115,7 @@ void CsvParserTest::testExtractColumnsInFirstRow()
 	}
 }
 
-void CsvParserTest::testRaiseExceptionOnInvalidParserOptions()
+/* void CsvParserTest::testRaiseExceptionOnInvalidParserOptions()
 {
 	try
 	{
@@ -126,7 +128,7 @@ void CsvParserTest::testRaiseExceptionOnInvalidParserOptions()
 	{
 		QVERIFY(e.getErrorCode() == ErrorCode::InvCsvParserOptions);
 	}
-}
+} */
 
 void CsvParserTest::testOneRowWithSimpleAndQuotedValues()
 {
@@ -275,6 +277,28 @@ void CsvParserTest::testTwoRowsWithQuotesSeparatorLineBreakInValues()
 		QCOMPARE(csvdoc.getValue(0, 0), "\"quoted\"");
 		QCOMPARE(csvdoc.getValue(0, 1), "\"quoted + ;\"");
 		QCOMPARE(csvdoc.getValue(0, 2), "value \n with break");
+	}
+	catch(Exception &e)
+	{
+		QFAIL(e.getExceptionsText().toStdString().c_str());
+	}
+}
+
+void CsvParserTest::testSaveParsedDocumentToFile()
+{
+	try
+	{
+		CsvParser csvparser;
+		CsvDocument csvdoc;
+		QString buffer;
+
+		buffer = "\"column1\";\"colu\"\"mn2\";\"column__3\"\n";
+		buffer += "\"\"\"quoted\"\"\";\"\"\"quoted + ;\"\"\";\"value \n with break\"\n";
+		csvparser.setOptions(';', '"', '\n', true);
+		csvdoc = csvparser.parseBuffer(buffer);
+		csvdoc.saveToFile("test.csv");
+
+		QCOMPARE(UtilsNs::loadFile("test.csv"), buffer);
 	}
 	catch(Exception &e)
 	{

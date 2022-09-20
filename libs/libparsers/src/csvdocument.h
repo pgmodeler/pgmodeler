@@ -30,17 +30,41 @@
 
 class CsvDocument {
 	private:
+		//! \brief Indicates the character used as values separator
+		QChar separator,
+
+		//! \brief Indicates the character used as text delimiter
+		text_delim,
+
+		//! \brief Indicates the character used as line break
+		line_break;
+
+		//! \brief Stores the columns names
 		QStringList columns;
 
-		QList<QStringList> values;
+		//! \brief Stores the rows of the parsed CSV document
+		QList<QStringList> rows;
 
+		//! \brief Defines the column names
 		void setColumns(const QStringList &cols);
 
-		void addValues(const QStringList &values);
+		/*! \brief Add a single row to the document. This method will check
+		 * if the number of colums of the provided row matches the document's
+		 * number of column, raising an error if they don't match. */
+		void addRow(const QStringList &row);
+
+		void setOptions(const QChar &sep, const QChar &txt_delim, const QChar &ln_break);
+
+		CsvDocument(const QChar &sep, const QChar &txt_delim, const QChar &ln_break);
 
 	public:
+		//! \brief Default character used as text delimiter
 		static const QChar TextDelimiterChar,
+
+		//! \brief Default character used as value separator
 		SeparatorChar,
+
+		//! \brief Default character used as line break
 		LineBreakChar;
 
 		CsvDocument();
@@ -49,11 +73,14 @@ class CsvDocument {
 
 		int getColumnCount();
 
-		bool isEmpty();
-
 		QStringList getColumnNames();
 
 		QString getValue(int col, int row);
+
+		/*! \brief Saves the parsed document into a file.
+		 * This method use thes original document's separator, delimiter and line break
+		 * characters when creating the buffer that is saved to the file */
+		void saveToFile(const QString &filename);
 
 		friend class CsvParser;
 };
