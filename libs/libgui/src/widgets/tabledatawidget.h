@@ -40,7 +40,7 @@ class TableDataWidget: public BaseObjectWidget, public Ui::TableDataWidget {
 		QMenu col_names_menu;
 
 		//! brief Loads the grid with the initial data of the curret table object
-		void populateDataGrid(const QString &data = "");
+		void populateDataGrid(const CsvDocument &csv_doc = CsvDocument());
 
 		//! brief Configures the col_name_menu with the not used columns names
 		void configureColumnNamesMenu();

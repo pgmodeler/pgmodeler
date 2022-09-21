@@ -1,26 +1,26 @@
 #include "csvdocument.h"
 #include "utilsns.h"
 
-const QChar CsvDocument::TextDelimiterChar = '"';
-const QChar CsvDocument::SeparatorChar = ';';
-const QChar CsvDocument::LineBreakChar = QChar::LineFeed;
+const QChar CsvDocument::TextDelimiter = '"';
+const QChar CsvDocument::Separator = ';';
+const QChar CsvDocument::LineBreak = QChar::LineFeed;
 
 CsvDocument::CsvDocument()
 {
-	setOptions(SeparatorChar, TextDelimiterChar, LineBreakChar);
+	setSpecialChars(Separator, TextDelimiter, LineBreak);
 }
 
 CsvDocument::CsvDocument(const QChar &sep, const QChar &txt_delim, const QChar &ln_break)
 {
-	setOptions(sep, txt_delim, ln_break);
+	setSpecialChars(sep, txt_delim, ln_break);
 }
 
-int CsvDocument::getRowCount()
+int CsvDocument::getRowCount() const
 {
 	return rows.size();
 }
 
-int CsvDocument::getColumnCount()
+int CsvDocument::getColumnCount() const
 {
 	if(!columns.isEmpty())
 		return columns.size();
@@ -31,7 +31,7 @@ int CsvDocument::getColumnCount()
 	return 0;
 }
 
-QStringList CsvDocument::getColumnNames()
+QStringList CsvDocument::getColumnNames() const
 {
 	return columns;
 }
@@ -56,7 +56,7 @@ void CsvDocument::addRow(const QStringList &row)
 	rows.append(row);
 }
 
-void CsvDocument::setOptions(const QChar &sep, const QChar &txt_delim, const QChar &ln_break)
+void CsvDocument::setSpecialChars(const QChar &sep, const QChar &txt_delim, const QChar &ln_break)
 {
 	if(sep == txt_delim || sep == ln_break || ln_break == txt_delim)
 		throw Exception(ErrorCode::InvCsvParserOptions, __PRETTY_FUNCTION__, __FILE__, __LINE__);
@@ -66,7 +66,7 @@ void CsvDocument::setOptions(const QChar &sep, const QChar &txt_delim, const QCh
 	line_break = ln_break;
 }
 
-QString CsvDocument::getValue(int row, int col)
+QString CsvDocument::getValue(int row, int col) const
 {
 	if(row >= rows.size() || col >= getColumnCount())
 	{
@@ -77,7 +77,12 @@ QString CsvDocument::getValue(int row, int col)
 	return rows.at(row).at(col);
 }
 
-void CsvDocument::saveToFile(const QString &filename)
+bool CsvDocument::isEmpty() const
+{
+	return rows.isEmpty();
+}
+
+void CsvDocument::saveToFile(const QString &filename) const
 {
 	try
 	{

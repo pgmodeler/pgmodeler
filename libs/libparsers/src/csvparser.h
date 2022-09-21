@@ -61,7 +61,9 @@ class CsvParser {
 	public:
 		CsvParser();
 
-		void setOptions(const QChar &separator, const QChar &text_delim, const QChar &ln_break, bool cols_fst_row);
+		void setSpecialChars(const QChar &separator, const QChar &text_delim, const QChar &ln_break);
+
+		void setColumnInFirstRow(bool value);
 
 		//! \brief Parses a CSV document by loading the contents from a file
 		CsvDocument parseFile(const QString &filename);

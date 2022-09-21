@@ -1619,6 +1619,7 @@ QString PhysicalTable::getInitialData()
 	return initial_data;
 }
 
+#warning "Fix me: use CSV compliant buffer to generate INSERT commands!"
 QString PhysicalTable::getInitialDataCommands()
 {
 	QStringList buffer=initial_data.split(DataLineBreak);

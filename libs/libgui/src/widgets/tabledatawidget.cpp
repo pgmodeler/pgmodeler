@@ -74,12 +74,15 @@ TableDataWidget::TableDataWidget(QWidget *parent): BaseObjectWidget(parent, Obje
 	connect(csv_load_tb, SIGNAL(toggled(bool)), csv_load_parent, SLOT(setVisible(bool)));
 
 	connect(csv_load_wgt, &CsvLoadWidget::s_csvFileLoaded, [&](){
-		populateDataGrid(csv_load_wgt->getCsvBuffer(UtilsNs::DataSeparator, Table::DataLineBreak));
+		populateDataGrid(csv_load_wgt->getCsvDocument());
 	});
 
 	connect(paste_tb, &QToolButton::clicked, [&](){
-		csv_load_wgt->loadCsvBuffer(qApp->clipboard()->text(), QString(";"), QString("\""), true);
-		populateDataGrid(csv_load_wgt->getCsvBuffer(UtilsNs::DataSeparator, Table::DataLineBreak));
+		csv_load_wgt->loadCsvFromBuffer(qApp->clipboard()->text(),
+																	CsvDocument::Separator,
+																	CsvDocument::TextDelimiter,
+																	true);
+		populateDataGrid(csv_load_wgt->getCsvDocument());
 		qApp->clipboard()->clear();
 		paste_tb->setEnabled(false);
 	});
@@ -336,107 +339,106 @@ void TableDataWidget::setAttributes(DatabaseModel *model, PhysicalTable *table)
 		populateDataGrid();
 }
 
-void TableDataWidget::populateDataGrid(const QString &data)
+void TableDataWidget::populateDataGrid(const CsvDocument &csv_doc)
 {
-	PhysicalTable *table=dynamic_cast<PhysicalTable *>(this->object);
-	QTableWidgetItem *item=nullptr;
-	QString ini_data;
-	int col=0, row=0;
-	QStringList columns, aux_cols, buffer, values;
-	QVector<int> invalid_cols;
-	Column *column=nullptr;
-
-	clearRows(false);
-
-	if(!data.isEmpty())
-		ini_data=data;
-	else
-		ini_data=table->getInitialData();
-
-	/* If the initial data buffer is preset the columns
-	there have priority over the current table's columns */
-	if(!ini_data.isEmpty())
-	{		
-		buffer=ini_data.split(Table::DataLineBreak);
-
-		//The first line of the buffer always has the column names
-		if(!buffer.isEmpty() && !buffer[0].isEmpty())
-			columns.append(buffer[0].split(UtilsNs::DataSeparator));
-	}
-	else
+	try
 	{
-		for(auto object : *table->getObjectList(ObjectType::Column))
-			columns.push_back(object->getName());
-	}
+		PhysicalTable *table = dynamic_cast<PhysicalTable *>(this->object);
+		QTableWidgetItem *item = nullptr;
+		QStringList columns, aux_cols;
+		QVector<int> invalid_cols;
+		Column *column = nullptr;
+		CsvDocument ini_data_csv;
 
-	data_tbw->setColumnCount(columns.size());
+		QApplication::setOverrideCursor(Qt::WaitCursor);
+		clearRows(false);
 
-	//Creating the header of the grid
-	for(QString col_name : columns)
-	{
-		column = table->getColumn(col_name);
-		item=new QTableWidgetItem(col_name);
-
-		/* Marking the invalid columns. The ones which aren't present in the table
-		or were already created in a previous iteration */
-		if(!column || aux_cols.contains(col_name))
-		{
-			invalid_cols.push_back(col);
-
-			if(!column)
-				item->setToolTip(tr("Unknown column"));
-			else
-				item->setToolTip(tr("Duplicated column"));
-		}
+		if(!csv_doc.isEmpty())
+			ini_data_csv = csv_doc;
 		else
-			item->setToolTip(QString("%1 [%2]").arg(col_name).arg(~column->getType()));
-
-		aux_cols.append(col_name);
-		data_tbw->setHorizontalHeaderItem(col++, item);
-	}
-
-	if(!buffer.isEmpty())
-		buffer.removeAt(0);
-
-	row=0;
-
-	//Populating the grid with the data
-	for(auto &buf_row : buffer)
-	{
-		addRow();
-		values = buf_row.split(UtilsNs::DataSeparator);
-		col = 0;
-
-		for(QString val : values)
 		{
-			if(col < columns.size())
-				data_tbw->item(row, col++)->setText(val);
+			CsvParser csv_parser;
+			csv_parser.setColumnInFirstRow(true);
+			ini_data_csv = csv_parser.parseBuffer(table->getInitialData());
 		}
 
-		row++;
-	}
-
-	//Disabling invalid columns avoiding the user interaction
-	if(!invalid_cols.isEmpty())
-	{
-		for(int dis_col : invalid_cols)
+		/* If the initial data buffer is preset the columns
+		there have priority over the current table's columns */
+		if(!ini_data_csv.isEmpty())
+			columns = ini_data_csv.getColumnNames();
+		else
 		{
-			for(row = 0; row < data_tbw->rowCount(); row++)
-				setItemInvalid(data_tbw->item(row, dis_col));
-
-			item=data_tbw->horizontalHeaderItem(dis_col);
-			item->setFlags(Qt::NoItemFlags);
-			item->setForeground(QColor(Qt::red));
+			for(auto object : *table->getObjectList(ObjectType::Column))
+				columns.push_back(object->getName());
 		}
+
+		data_tbw->setColumnCount(columns.size());
+
+		//Creating the header of the grid
+		int col = 0;
+		for(auto &col_name : columns)
+		{
+			column = table->getColumn(col_name);
+			item = new QTableWidgetItem(col_name);
+
+			/* Marking the invalid columns. The ones which aren't present in the table
+			or were already created in a previous iteration */
+			if(!column || aux_cols.contains(col_name))
+			{
+				invalid_cols.push_back(col);
+
+				if(!column)
+					item->setToolTip(tr("Unknown column"));
+				else
+					item->setToolTip(tr("Duplicated column"));
+			}
+			else
+				item->setToolTip(QString("%1 [%2]").arg(col_name).arg(~column->getType()));
+
+			aux_cols.append(col_name);
+			data_tbw->setHorizontalHeaderItem(col++, item);
+		}
+
+		//Populating the grid with the data
+		for(int row = 0; row < ini_data_csv.getRowCount(); row++)
+		{
+			addRow();
+
+			for(col = 0; col < ini_data_csv.getColumnCount(); col++)
+			{
+				//if(col < columns.size())
+					data_tbw->item(row, col)->setText(ini_data_csv.getValue(row, col));
+			}
+		}
+
+		//Disabling invalid columns avoiding the user interaction
+		if(!invalid_cols.isEmpty())
+		{
+			for(int dis_col : invalid_cols)
+			{
+				for(int row = 0; row < data_tbw->rowCount(); row++)
+					setItemInvalid(data_tbw->item(row, dis_col));
+
+				item=data_tbw->horizontalHeaderItem(dis_col);
+				item->setFlags(Qt::NoItemFlags);
+				item->setForeground(QColor(Qt::red));
+			}
+		}
+
+		alert_frm->setVisible(!invalid_cols.isEmpty());
+		data_tbw->resizeColumnsToContents();
+		data_tbw->resizeRowsToContents();
+
+		add_row_tb->setEnabled(!columns.isEmpty());
+		clear_cols_tb->setEnabled(!columns.isEmpty());
+		configureColumnNamesMenu();
+		QApplication::restoreOverrideCursor();
 	}
-
-	alert_frm->setVisible(!invalid_cols.isEmpty());
-	data_tbw->resizeColumnsToContents();
-	data_tbw->resizeRowsToContents();
-
-	add_row_tb->setEnabled(!columns.isEmpty());
-	clear_cols_tb->setEnabled(!columns.isEmpty());
-	configureColumnNamesMenu();
+	catch(Exception &e)
+	{
+		QApplication::restoreOverrideCursor();
+		throw Exception(e.getErrorMessage(), e.getErrorCode(), __PRETTY_FUNCTION__, __FILE__, __LINE__, &e);
+	}
 }
 
 void TableDataWidget::configureColumnNamesMenu()
@@ -487,40 +489,40 @@ void TableDataWidget::setItemInvalid(QTableWidgetItem *item)
 QString TableDataWidget::generateDataBuffer()
 {
 	QStringList val_list, col_names, buffer;
-	QString value;
+	QString value, dbl_quotes = QString("%1%1").arg(CsvDocument::TextDelimiter);
 	int col = 0, col_count = data_tbw->horizontalHeader()->count();
 
 	for(int col=0; col < col_count; col++)
-		col_names.push_back(data_tbw->horizontalHeaderItem(col)->text());
+	{
+		value = data_tbw->horizontalHeaderItem(col)->text();
+		value.replace(CsvDocument::TextDelimiter, dbl_quotes);
+		value.append(CsvDocument::TextDelimiter);
+		value.prepend(CsvDocument::TextDelimiter);
+		col_names.push_back(value);
+	}
 
 	//The first line of the buffer consists in the column names
-	buffer.push_back(col_names.join(UtilsNs::DataSeparator));
+	buffer.push_back(col_names.join(CsvDocument::Separator));
 
 	for(int row = 0; row < data_tbw->rowCount(); row++)
 	{
 		for(col = 0; col < col_count; col++)
 		{
 			value = data_tbw->item(row, col)->text();
-
-			//Checking if the value is a malformed unescaped value, e.g., {value, value}, {value\}
-			if((value.startsWith(UtilsNs::UnescValueStart) && value.endsWith(QString("\\") + UtilsNs::UnescValueEnd)) ||
-					(value.startsWith(UtilsNs::UnescValueStart) && !value.endsWith(UtilsNs::UnescValueEnd)) ||
-					(!value.startsWith(UtilsNs::UnescValueStart) && !value.endsWith(QString("\\") + UtilsNs::UnescValueEnd) && value.endsWith(UtilsNs::UnescValueEnd)))
-				throw Exception(Exception::getErrorMessage(ErrorCode::MalformedUnescapedValue)
-												.arg(row + 1).arg(col_names[col]),
-												ErrorCode::MalformedUnescapedValue,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-
+			value.replace(CsvDocument::TextDelimiter, dbl_quotes);
+			value.append(CsvDocument::TextDelimiter);
+			value.prepend(CsvDocument::TextDelimiter);
 			val_list.push_back(value);
 		}
 
-		buffer.push_back(val_list.join(UtilsNs::DataSeparator));
+		buffer.push_back(val_list.join(CsvDocument::Separator));
 		val_list.clear();
 	}
 
 	if(buffer.size() <= 1)
 		return "";
 
-	return buffer.join(Table::DataLineBreak);
+	return buffer.join(CsvDocument::LineBreak);
 }
 
 void TableDataWidget::enterEvent(QEnterEvent *)

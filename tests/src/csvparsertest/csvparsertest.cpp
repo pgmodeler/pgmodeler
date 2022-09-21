@@ -72,7 +72,8 @@ void CsvParserTest::testRaiseExceptionOnMalformedDocument()
 		buffer = "col_1;col_2;\"col_3\"\n";
 		buffer += "value 1;value 2;value 3;\"value 4\"\n";
 
-		csvparser.setOptions(';', '"','\n',true);
+		csvparser.setSpecialChars(';', '"','\n');
+		csvparser.setColumnInFirstRow(true);
 		csvdoc = csvparser.parseBuffer(buffer);
 		QFAIL("Expected exception not thrown!");
 	}
@@ -93,7 +94,8 @@ void CsvParserTest::testExtractColumnsInFirstRow()
 		buffer = "col_1;col_2;\"col_3\"\n";
 		buffer += "value 1;value 2;\"value 3\"\n";
 
-		csvparser.setOptions(';', '"','\n',true);
+		csvparser.setSpecialChars(';', '"','\n');
+		csvparser.setColumnInFirstRow(true);
 		csvdoc = csvparser.parseBuffer(buffer);
 
 		QCOMPARE(csvdoc.getColumnCount(), 3);
@@ -294,7 +296,8 @@ void CsvParserTest::testSaveParsedDocumentToFile()
 
 		buffer = "\"column1\";\"colu\"\"mn2\";\"column__3\"\n";
 		buffer += "\"\"\"quoted\"\"\";\"\"\"quoted + ;\"\"\";\"value \n with break\"\n";
-		csvparser.setOptions(';', '"', '\n', true);
+		csvparser.setSpecialChars(';', '"', '\n');
+		csvparser.setColumnInFirstRow(true);
 		csvdoc = csvparser.parseBuffer(buffer);
 		csvdoc.saveToFile("test.csv");
 

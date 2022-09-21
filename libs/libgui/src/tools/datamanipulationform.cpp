@@ -609,35 +609,40 @@ void DataManipulationForm::swapColumns()
 void DataManipulationForm::loadDataFromCsv(bool load_from_clipboard, bool force_csv_parsing)
 {
 	QList<QStringList> rows;
-	QStringList cols;
+	QStringList csv_cols;
 	int row_id = 0, col_id = 0;
+	CsvDocument csv_doc;
+
+	QApplication::setOverrideCursor(Qt::WaitCursor);
+	results_tbw->setUpdatesEnabled(false);
 
 	if(load_from_clipboard)
 	{
 		if(qApp->clipboard()->text().isEmpty())
 			return;
 
-		QString csv_pattern="(%1)(.)*(%1)(;)";
-		QString separator="\t", delimiter="", text=qApp->clipboard()->text();
+		QString csv_pattern = "(%1)(.)*(%1)(%2)";
+		QChar separator = QChar::Tabulation, delimiter;
+		QString text = qApp->clipboard()->text();
 
 		if(force_csv_parsing)
 		{
-			if(text.contains(QRegularExpression(csv_pattern.arg("\""))))
-				delimiter="\"";
-			else if(text.contains(QRegularExpression(csv_pattern.arg("'"))))
-				delimiter="'";
+			if(text.contains(QRegularExpression(csv_pattern.arg("\"").arg(CsvDocument::Separator))))
+				delimiter = '\"';
+			else if(text.contains(QRegularExpression(csv_pattern.arg("'").arg(CsvDocument::Separator))))
+				delimiter='\'';
 
 			// If one of the patterns matched the buffer we configure the right delimiter for csv buffer
-			if(!delimiter.isEmpty())
-				separator=";";
+			if(!delimiter.isNull())
+				separator = CsvDocument::Separator;
 		}
 
-		rows = CsvLoadWidget::loadCsvFromBuffer(text, separator, delimiter, false, cols);
+		csv_doc = CsvLoadWidget::loadCsvFromBuffer(text, separator, delimiter, false);
 	}
 	else
 	{
-		rows = csv_load_wgt->getCsvRows();
-		cols = csv_load_wgt->getCsvColumns();
+		csv_doc = csv_load_wgt->getCsvDocument();
+		csv_cols = csv_doc.getColumnNames();
 	}
 
 	/* If there is only one empty row in the grid, this one will
@@ -659,36 +664,39 @@ void DataManipulationForm::loadDataFromCsv(bool load_from_clipboard, bool force_
 			removeNewRows({0});
 	}
 
-	for(QStringList &values : rows)
+	for(int csv_row = 0; csv_row < csv_doc.getRowCount(); csv_row++)
 	{
 		addRow();
-		row_id=results_tbw->rowCount() - 1;
+		row_id = results_tbw->rowCount() - 1;
 
-		for(int i = 0; i < values.count(); i++)
+		for(int csv_col = 0; csv_col < csv_doc.getColumnCount(); csv_col++)
 		{
-			if(i > values.count())
+			if(csv_col > csv_doc.getColumnCount())
 				break;
 
 			if((!load_from_clipboard && csv_load_wgt->isColumnsInFirstRow()) ||
-				 (load_from_clipboard && !cols.isEmpty()))
+				 (load_from_clipboard && !csv_cols.isEmpty()))
 			{
 				//First we need to get the index of the column by its name
-				col_id=col_names.indexOf(cols[i]);
+				col_id = col_names.indexOf(csv_cols[csv_col]);
 
 				//If a matching column is not found we add the value at the current position
 				if(col_id < 0)
-					col_id = i;
+					col_id = csv_col;
 
 				if(col_id >= 0 && col_id < results_tbw->columnCount())
-					results_tbw->item(row_id, col_id)->setText(values.at(i));
+					results_tbw->item(row_id, col_id)->setText(csv_doc.getValue(csv_row, csv_col));
 			}
-			else if(i < results_tbw->columnCount())
+			else if(csv_col < results_tbw->columnCount())
 			{
 				//Insert the value to the cell in order of appearance
-				results_tbw->item(row_id, i)->setText(values.at(i));
+				results_tbw->item(row_id, csv_col)->setText(csv_doc.getValue(csv_row, csv_col));
 			}
 		}
 	}
+
+	results_tbw->setUpdatesEnabled(true);
+	QApplication::restoreOverrideCursor();
 }
 
 void DataManipulationForm::removeSortColumnFromList()

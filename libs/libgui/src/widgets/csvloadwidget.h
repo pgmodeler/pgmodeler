@@ -27,6 +27,7 @@
 
 #include "ui_csvloadwidget.h"
 #include "fileselectorwidget.h"
+#include "csvparser.h"
 
 class CsvLoadWidget : public QWidget, Ui::CsvLoadWidget {
 	private:
@@ -40,32 +41,21 @@ class CsvLoadWidget : public QWidget, Ui::CsvLoadWidget {
 
 		FileSelectorWidget *file_sel;
 
+		CsvDocument csv_document;
+
 	public:
 		CsvLoadWidget(QWidget * parent = nullptr, bool cols_in_first_row = true);
 
-		//! \brief Returns the extracted columns
-		QStringList getCsvColumns();
-
-		//! \brief Returns the extracted rows
-		QList<QStringList> getCsvRows();
-
-		//! \brief Returns a formatted CSV buffer by specifying a custom separator and line break
-		QString getCsvBuffer(QString separator, QString line_break);
+		CsvDocument getCsvDocument();
 
 		bool isColumnsInFirstRow();
 
-		/*! \brief Loads a csv document from a buffer and stores the result in the internal csv_columns and csv_rows attributes for later usage.
-		 * The separator and text delimiter chars can be specified overriding the ones configured in the widget */
-		void loadCsvBuffer(const QString csv_buffer, const QString &separator, const QString &text_delim, bool cols_in_first_row);
+		QChar getSeparator();
 
-		//! \brief Loads a csv document from a buffer and stores the result in the internal csv_columns and csv_rows attributes for later usage.
-		void loadCsvBuffer(const QString csv_buffer);
-
-		QString getSeparator();
-
-		/*! \brief Loads a csv document from a buffer. The user can specify the value separator, text delimiter and an object which will store the column names.
-		 *  In that case, the column names are only extracted from the first row if the cols_in_first_row is true */
-		static QList<QStringList> loadCsvFromBuffer(const QString &csv_buffer, const QString &separator, const QString &text_delim, bool cols_in_first_row, QStringList &csv_cols);
+		/*! \brief Loads a csv document from a buffer. The user can specify the value separator, text delimiter and an object
+		 *  which will store the column names.In that case, the column names are only extracted from the first
+		 *  row if the cols_in_first_row is true */
+		static CsvDocument loadCsvFromBuffer(const QString &csv_buffer, const QChar &separator, const QChar &text_delim, bool cols_in_first_row);
 
 	private slots:
 		void loadCsvFile();

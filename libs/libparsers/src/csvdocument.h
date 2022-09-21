@@ -53,34 +53,36 @@ class CsvDocument {
 		 * number of column, raising an error if they don't match. */
 		void addRow(const QStringList &row);
 
-		void setOptions(const QChar &sep, const QChar &txt_delim, const QChar &ln_break);
+		void setSpecialChars(const QChar &sep, const QChar &txt_delim, const QChar &ln_break);
 
 		CsvDocument(const QChar &sep, const QChar &txt_delim, const QChar &ln_break);
 
 	public:
 		//! \brief Default character used as text delimiter
-		static const QChar TextDelimiterChar,
+		static const QChar TextDelimiter,
 
 		//! \brief Default character used as value separator
-		SeparatorChar,
+		Separator,
 
 		//! \brief Default character used as line break
-		LineBreakChar;
+		LineBreak;
 
 		CsvDocument();
 
-		int getRowCount();
+		int getRowCount() const;
 
-		int getColumnCount();
+		int getColumnCount() const;
 
-		QStringList getColumnNames();
+		QStringList getColumnNames() const;
 
-		QString getValue(int col, int row);
+		QString getValue(int row, int col) const;
+
+		bool isEmpty() const;
 
 		/*! \brief Saves the parsed document into a file.
 		 * This method use thes original document's separator, delimiter and line break
 		 * characters when creating the buffer that is saved to the file */
-		void saveToFile(const QString &filename);
+		void saveToFile(const QString &filename) const;
 
 		friend class CsvParser;
 };

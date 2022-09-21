@@ -21,18 +21,23 @@
 
 CsvParser::CsvParser()
 {
-	setOptions(CsvDocument::SeparatorChar,
-						 CsvDocument::TextDelimiterChar,
-						 CsvDocument::LineBreakChar, false);
+	setSpecialChars(CsvDocument::Separator,
+						 CsvDocument::TextDelimiter,
+						 CsvDocument::LineBreak);
+	cols_in_first_row = false;
 	curr_pos = curr_row = 0;
 }
 
-void CsvParser::setOptions(const QChar &sep, const QChar &txt_delim, const QChar &ln_break, bool cols_fst_row)
+void CsvParser::setSpecialChars(const QChar &sep, const QChar &txt_delim, const QChar &ln_break)
 {
 	separator = sep;
 	text_delim = txt_delim;
 	line_break = ln_break;
-	cols_in_first_row = cols_fst_row;
+}
+
+void CsvParser::setColumnInFirstRow(bool value)
+{
+	cols_in_first_row = value;
 }
 
 CsvDocument CsvParser::parseFile(const QString &filename)
