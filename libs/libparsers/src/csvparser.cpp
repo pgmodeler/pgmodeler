@@ -150,6 +150,14 @@ QString CsvParser::extractValue()
 		}
 	}
 
+	/* If we finished to walk in the buffer and there is a open delimiter
+	 * means that the document is malformed, so we raise an exception */
+	if(delim_open && !delim_closed && delim_cnt != 1)
+	{
+		throw Exception(Exception::getErrorMessage(ErrorCode::MalformedCsvMissingDelim).arg(text_delim).arg(curr_row +1),
+										ErrorCode::MalformedCsvMissingDelim, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+	}
+
 	return value;
 }
 

@@ -48,9 +48,9 @@ void CsvDocument::addRow(const QStringList &row)
 
 	if(getColumnCount() > 0 && row.size() != getColumnCount())
 	{
-		throw Exception(Exception::getErrorMessage(ErrorCode::MalformedCsvDocument)
+		throw Exception(Exception::getErrorMessage(ErrorCode::MalformedCsvInvalidCols)
 										.arg(getColumnCount()).arg(rows.size() + 1).arg(row.size()),
-										ErrorCode::MalformedCsvDocument, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+										ErrorCode::MalformedCsvInvalidCols, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 	}
 
 	rows.append(row);

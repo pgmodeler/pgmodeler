@@ -280,7 +280,8 @@ QString Exception::messages[Exception::ErrorCount][2]={
 	{"UnsupportedPGVersion", QT_TR_NOOP("Unsupported PostgreSQL version `%1' detected! pgModeler supports only PostgreSQL 10 and above.")},
 	{"InvCodeGenerationMode", QT_TR_NOOP("Invalid code generation mode `%1' specified!")},
 	{"InvCsvParserOptions", QT_TR_NOOP("The characters for text delimiter, value separator, and line break in CSV document must be different from each other!")},
-	{"MalformedCsvDocument", QT_TR_NOOP("Malformed CSV document detected! The number of columns is `%1' but the row `%2' has `%3' columns!")},
+	{"MalformedCsvInvalidCols", QT_TR_NOOP("Malformed CSV document detected! The number of columns is `%1' but the row `%2' has `%3' columns!")},
+	{"MalformedCsvMissingDelim", QT_TR_NOOP("Malformed CSV document detected! Missing close text delimiter `%1' row `%2'!")},
 	{"RefInvCsvDocumentValue", QT_TR_NOOP("Trying to get a value from the CSV document in an invalid position: row `%1', column `%2'!")},
 };
 

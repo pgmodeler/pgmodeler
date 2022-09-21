@@ -25,17 +25,17 @@ class CsvParserTest: public QObject {
 		Q_OBJECT
 
 	private slots:
-		void testRaiseExceptionWhenRefInvValue();
+		void testOneRowWithoutLineBreak();
 		void testRaiseExceptionOnMalformedDocument();
+		void testRaiseExceptionWhenRefInvValue();
 		void testExtractColumnsInFirstRow();
-		//void testRaiseExceptionOnInvalidParserOptions();
 		void testTwoRowsWithQuotesSeparatorLineBreakInValues();
 		void testOneRowWithSimpleAndQuotedValues();
 		void testTwoRowsWithSimpleAndQuotedValues();
-		void testOneRowWithoutLineBreak();
 		void testOneRowWithQuotesInValues();
 		void testTwoRowsWithQuotesInValues();
 		void testSaveParsedDocumentToFile();
+		void testRaiseExceptionOnMissingCloseDelim();
 };
 
 void CsvParserTest::testRaiseExceptionWhenRefInvValue()
@@ -70,7 +70,7 @@ void CsvParserTest::testRaiseExceptionOnMalformedDocument()
 		QString buffer;
 
 		buffer = "col_1;col_2;\"col_3\"\n";
-		buffer += "value 1;value 2;value 3;\"value 4\"\n";
+		buffer += "value 1;value 2;value 3;value 4; value 5\n";
 
 		csvparser.setSpecialChars(';', '"','\n');
 		csvparser.setColumnInFirstRow(true);
@@ -79,7 +79,29 @@ void CsvParserTest::testRaiseExceptionOnMalformedDocument()
 	}
 	catch(Exception &e)
 	{
-		QVERIFY(e.getErrorCode() == ErrorCode::MalformedCsvDocument);
+		QVERIFY(e.getErrorCode() == ErrorCode::MalformedCsvInvalidCols);
+	}
+}
+
+void CsvParserTest::testRaiseExceptionOnMissingCloseDelim()
+{
+	try
+	{
+		CsvParser csvparser;
+		CsvDocument csvdoc;
+		QString buffer;
+
+		buffer = "col_1;col_2;\"col_3\n";
+		buffer += "value 1;value 2;value 3\n";
+
+		csvparser.setSpecialChars(';', '"','\n');
+		csvparser.setColumnInFirstRow(true);
+		csvdoc = csvparser.parseBuffer(buffer);
+		QFAIL("Expected exception not thrown!");
+	}
+	catch(Exception &e)
+	{
+		QVERIFY(e.getErrorCode() == ErrorCode::MalformedCsvMissingDelim);
 	}
 }
 
@@ -116,21 +138,6 @@ void CsvParserTest::testExtractColumnsInFirstRow()
 		QFAIL(e.getExceptionsText().toStdString().c_str());
 	}
 }
-
-/* void CsvParserTest::testRaiseExceptionOnInvalidParserOptions()
-{
-	try
-	{
-		CsvParser csvparser;
-		csvparser.setOptions(';', '"', '\n', false);
-		csvparser.setOptions(';', ';', '\n', false);
-		QFAIL("Expected exception not thrown!");
-	}
-	catch(Exception &e)
-	{
-		QVERIFY(e.getErrorCode() == ErrorCode::InvCsvParserOptions);
-	}
-} */
 
 void CsvParserTest::testOneRowWithSimpleAndQuotedValues()
 {
