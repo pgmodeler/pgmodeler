@@ -19,6 +19,7 @@
 #include "physicaltable.h"
 #include "utilsns.h"
 #include "coreutilsns.h"
+#include "csvparser.h"
 
 const QString PhysicalTable::DataLineBreak = QString("%1%2").arg("⸣").arg('\n');
 
@@ -1619,8 +1620,60 @@ QString PhysicalTable::getInitialData()
 	return initial_data;
 }
 
-#warning "Fix me: use CSV compliant buffer to generate INSERT commands!"
 QString PhysicalTable::getInitialDataCommands()
+{
+	CsvDocument csv_doc;
+	CsvParser csv_parser;
+
+	try
+	{
+		csv_doc = csv_parser.parseBuffer(initial_data);
+	}
+	catch(Exception &e)
+	{
+		return tr("/* Failed to create initial data commands! \n\n %1 */").arg(e.getErrorMessage());
+	}
+
+	if(csv_doc.isEmpty())
+		return "";
+
+	QStringList	col_names, col_values, commands, selected_cols;
+	int curr_col=0;
+	QList<int> ignored_cols;
+
+	col_names = csv_doc.getColumnNames();
+	col_names.removeDuplicates();
+
+	//Separating valid columns (selected) from the invalids (ignored)
+	for(auto &col_name : col_names)
+	{
+		if(getObjectIndex(col_name, ObjectType::Column) >= 0)
+			selected_cols.append(col_name);
+		else
+			ignored_cols.append(curr_col);
+
+		curr_col++;
+	}
+
+	for(int row = 0; row < csv_doc.getRowCount(); row++)
+	{
+		//Filtering the invalid columns' values
+		for(int col = 0; col < csv_doc.getColumnCount(); col++)
+		{
+			if(ignored_cols.contains(col))
+				continue;
+
+			col_values.append(csv_doc.getValue(row, col));
+		}
+
+		commands.append(createInsertCommand(selected_cols, col_values));
+		col_values.clear();
+	}
+
+	return commands.join('\n');
+}
+
+/*QString PhysicalTable::getInitialDataCommands()
 {
 	QStringList buffer=initial_data.split(DataLineBreak);
 
@@ -1666,7 +1719,7 @@ QString PhysicalTable::getInitialDataCommands()
 	}
 
 	return "";
-}
+} */
 
 QString PhysicalTable::createInsertCommand(const QStringList &col_names, const QStringList &values)
 {
