@@ -302,12 +302,16 @@ enum class ErrorCode: unsigned {
 	EmptyConfigParameterValue,
 	InvGroupRegExpPattern,
 	UnsupportedPGVersion,
-	InvCodeGenerationMode
+	InvCodeGenerationMode,
+	InvCsvParserOptions,
+	MalformedCsvInvalidCols,
+	MalformedCsvMissingDelim,
+	RefInvCsvDocumentValue
 };
 
 class Exception {
 	private:
-		static constexpr unsigned ErrorCount=260;
+		static constexpr unsigned ErrorCount=264;
 
 		/*! \brief Stores other exceptions before raise the 'this' exception.
 		 This structure can be used to simulate a stack trace to improve the debug */

@@ -735,15 +735,15 @@ int SQLExecutionWidget::clearAll()
 
 QByteArray SQLExecutionWidget::generateCSVBuffer(QTableView *results_tbw)
 {
-	return generateBuffer(results_tbw, QChar(';'), true, true, true);
+	return generateBuffer(results_tbw, CsvDocument::Separator, true, true);
 }
 
 QByteArray SQLExecutionWidget::generateTextBuffer(QTableView *results_tbw)
 {
-	return generateBuffer(results_tbw, QChar('\t'), false, false, false);
+	return generateBuffer(results_tbw, QChar('\t'), false, false);
 }
 
-QByteArray SQLExecutionWidget::generateBuffer(QTableView *results_tbw, QChar separator, bool incl_col_names, bool use_quotes, bool escape_chars)
+QByteArray SQLExecutionWidget::generateBuffer(QTableView *results_tbw, QChar separator, bool incl_col_names, bool csv_format)
 {
 	if(!results_tbw)
 		throw Exception(ErrorCode::OprNotAllocatedObject ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -756,7 +756,10 @@ QByteArray SQLExecutionWidget::generateBuffer(QTableView *results_tbw, QChar sep
 	QByteArray buf;
 	QStringList line;
 	QModelIndex index;
-	QString str_pattern = use_quotes ? QString("\"%1\"") : QString("%1"), value;
+	QString str_pattern = csv_format ?
+													QString("%1%2%1").arg(CsvDocument::TextDelimiter).arg("%1") :
+													QString("%1"),
+			value;
 	int start_row = -1, start_col = -1,
 			row_cnt = 0, col_cnt = 0;
 
@@ -779,21 +782,14 @@ QByteArray SQLExecutionWidget::generateBuffer(QTableView *results_tbw, QChar sep
 
 			value = model->headerData(col, Qt::Horizontal).toString();
 
-			if(escape_chars)
-			{
-				value.replace(separator, QString("\\%1").arg(separator));
-				value.replace(QChar::Tabulation, QString("\\t"));
-				value.replace(QChar::LineFeed, QString("\\n"));
-
-				if(use_quotes)
-					value.replace('"', QString("\\%1").arg('"'));
-			}
+			if(csv_format)
+				value.replace(CsvDocument::TextDelimiter, QString("%1%1").arg(CsvDocument::TextDelimiter));
 
 			line.append(str_pattern.arg(value));
 		}
 
 		buf.append(line.join(separator).toUtf8());
-		buf.append('\n');
+		buf.append(CsvDocument::LineBreak.unicode());
 		line.clear();
 	}
 
@@ -808,22 +804,15 @@ QByteArray SQLExecutionWidget::generateBuffer(QTableView *results_tbw, QChar sep
 			index = model->index(row, col);
 			value = index.data().toString();
 
-			if(escape_chars)
-			{
-				value.replace(separator, QString("\\%1").arg(separator));
-				value.replace(QChar::Tabulation, QString("\\t"));
-				value.replace(QChar::LineFeed, QString("\\n"));
-
-				if(use_quotes)
-					value.replace('"', QString("\\%1").arg('"'));
-			}
+			if(csv_format)
+				value.replace(CsvDocument::TextDelimiter, QString("%1%1").arg(CsvDocument::TextDelimiter));
 
 			line.append(str_pattern.arg(value));
 		}
 
 		buf.append(line.join(separator).toUtf8());
 		line.clear();
-		buf.append('\n');
+		buf.append(CsvDocument::LineBreak.unicode());
 	}
 
 	return buf;

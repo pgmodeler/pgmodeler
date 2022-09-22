@@ -16,4 +16,5 @@ src/fileselectortest \
 src/transformtest \
 src/xmlparsertest \
 src/proceduretest \
-src/basefunctiontest
+src/basefunctiontest \
+src/csvparsertest \
