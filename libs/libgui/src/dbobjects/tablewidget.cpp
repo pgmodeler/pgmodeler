@@ -42,7 +42,7 @@ TableWidget::TableWidget(QWidget *parent, ObjectType tab_type): BaseObjectWidget
 	Ui_TableWidget::setupUi(this);
 
 	edt_data_tb=new QPushButton(this);
-	QPixmap icon=QPixmap(GuiUtilsNs::getIconPath("editdata"));
+	QPixmap icon=QPixmap(GuiUtilsNs::getIconPath("editrows"));
 	edt_data_tb->setMinimumSize(edt_perms_tb->minimumSize());
 	edt_data_tb->setText(tr("Edit data"));
 	edt_data_tb->setToolTip(tr("Define initial data for the table"));
