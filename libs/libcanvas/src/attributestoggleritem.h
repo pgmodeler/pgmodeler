@@ -70,26 +70,28 @@ class AttributesTogglerItem: public QObject, public RoundedRectItem {
 		//! \brief The minimum opacity factor used to fade buttons
 		static constexpr double ButtonMinOpacity = 0.40;
 
-		//! \brief Constant used to reference the attributes expand button
-		static constexpr unsigned AttribsExpandBtn=0,
+		enum ButtonId: unsigned {
+			//! \brief Constant used to reference the attributes expand button
+			AttribsExpandBtn=0,
 
-		//! \brief Constant used to reference the attributes collapse button
-		AttribsCollapseBtn=1,
+			//! \brief Constant used to reference the attributes collapse button
+			AttribsCollapseBtn=1,
 
-		//! \brief Constant used to reference the next page button
-		NextAttribsPageBtn=2,
+			//! \brief Constant used to reference the next page button
+			NextAttribsPageBtn=2,
 
-		//! \brief Constant used to reference the previous page button
-		PrevAttribsPageBtn=3,
+			//! \brief Constant used to reference the previous page button
+			PrevAttribsPageBtn=3,
 
-		//! \brief Constant used to reference the next page button
-		NextExtAttribsPageBtn=4,
+			//! \brief Constant used to reference the next page button
+			NextExtAttribsPageBtn=4,
 
-		//! \brief Constant used to reference the previous page button
-		PrevExtAttribsPageBtn=5,
+			//! \brief Constant used to reference the previous page button
+			PrevExtAttribsPageBtn=5,
 
-		//! \brief Constant used to reference the pagination toggler button
-		PaginationTogglerBtn=6;
+			//! \brief Constant used to reference the pagination toggler button
+			PaginationTogglerBtn=6
+		};
 
 		/*! \brief Configure the buttons visibility and opacity based upon the current values
 		 * of pagination and collapse mode */
