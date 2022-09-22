@@ -59,7 +59,19 @@ CsvDocument CsvParser::parseBuffer(const QString &csv_buf)
 
 	try
 	{
+		QString win_line_break = QString("%1%2").arg(QChar(QChar::CarriageReturn)).arg(QChar(QChar::LineFeed)),
+						mac_line_break = QString("%1").arg(QChar(QChar::CarriageReturn));
+
 		buffer = csv_buf;
+
+		// Converting Windows line breaks (\r\n) into a single line feed char
+		if(buffer.contains(win_line_break))
+			buffer.replace(win_line_break, QString(QChar::LineFeed));
+
+		// Converting MacOs line breaks (\r) to a into single line feed char
+		if(buffer.contains(mac_line_break))
+			buffer.replace(mac_line_break, QString(QChar::LineFeed));
+
 		curr_pos = curr_row = 0;
 
 		CsvDocument csv_doc(separator, text_delim, line_break);

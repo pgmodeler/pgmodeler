@@ -1627,6 +1627,7 @@ QString PhysicalTable::getInitialDataCommands()
 
 	try
 	{
+		csv_parser.setColumnInFirstRow(true);
 		csv_doc = csv_parser.parseBuffer(initial_data);
 	}
 	catch(Exception &e)
@@ -1637,7 +1638,7 @@ QString PhysicalTable::getInitialDataCommands()
 	if(csv_doc.isEmpty())
 		return "";
 
-	QStringList	col_names, col_values, commands, selected_cols;
+	QStringList col_names, col_values, commands, selected_cols;
 	int curr_col=0;
 	QList<int> ignored_cols;
 
@@ -1673,69 +1674,21 @@ QString PhysicalTable::getInitialDataCommands()
 	return commands.join('\n');
 }
 
-/*QString PhysicalTable::getInitialDataCommands()
-{
-	QStringList buffer=initial_data.split(DataLineBreak);
-
-	if(!buffer.isEmpty() && !buffer.at(0).isEmpty())
-	{
-		QStringList	col_names, col_values, commands, selected_cols;
-		int curr_col=0;
-		QList<int> ignored_cols;
-
-		col_names=(buffer.at(0)).split(UtilsNs::DataSeparator);
-		col_names.removeDuplicates();
-		buffer.removeFirst();
-
-		//Separating valid columns (selected) from the invalids (ignored)
-		for(QString col_name : col_names)
-		{
-			if(getObjectIndex(col_name, ObjectType::Column) >= 0)
-				selected_cols.append(col_name);
-			else
-				ignored_cols.append(curr_col);
-
-			curr_col++;
-		}
-
-		for(QString buf_row : buffer)
-		{
-			curr_col=0;
-
-			//Filtering the invalid columns' values
-			for(QString value : buf_row.split(UtilsNs::DataSeparator))
-			{
-				if(ignored_cols.contains(curr_col))
-					continue;
-
-				col_values.append(value);
-			}
-
-			commands.append(createInsertCommand(selected_cols, col_values));
-			col_values.clear();
-		}
-
-		return commands.join('\n');
-	}
-
-	return "";
-} */
-
 QString PhysicalTable::createInsertCommand(const QStringList &col_names, const QStringList &values)
 {
 	QString fmt_cmd, insert_cmd = QString("INSERT INTO %1 (%2) VALUES (%3);\n%4");
 	QStringList val_list, col_list;
 	int curr_col=0;
 
-	for(QString col_name : col_names)
+	for(auto &col_name : col_names)
 		col_list.push_back(BaseObject::formatName(col_name));
 
-	for(QString value : values)
+	for(auto value : values)
 	{
 		//Empty values as considered as DEFAULT
 		if(value.isEmpty())
 		{
-			value=QString("DEFAULT");
+			value = "DEFAULT";
 		}
 		//Unescaped values will not be enclosed in quotes
 		else if(value.startsWith(UtilsNs::UnescValueStart) && value.endsWith(UtilsNs::UnescValueEnd))
