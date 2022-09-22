@@ -92,6 +92,28 @@ DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f):
 		paste_tb->setEnabled(false);
 	});
 
+	edit_tb->setMenu(&edit_menu);
+
+	action_add = edit_menu.addAction(QIcon(GuiUtilsNs::getIconPath("addrow")), tr("Add row(s)"), this, SLOT(addRow()), QKeySequence("Ins"));
+	action_add->setToolTip(tr("Add empty rows"));
+
+	action_delete = edit_menu.addAction(QIcon(GuiUtilsNs::getIconPath("delrow")), tr("Delete row(s)"), this, SLOT(markDeleteOnRows()), QKeySequence("Del"));
+	action_delete->setToolTip(tr("Mark the selected rows to be deleted"));
+
+	action_bulk_edit = edit_menu.addAction(QIcon(GuiUtilsNs::getIconPath("bulkedit")), tr("Edit cells"));
+	action_bulk_edit->setShortcut(QKeySequence("Ctrl+E"));
+	action_bulk_edit->setToolTip(tr("Change the values of all selected cells at once"));
+
+	connect(action_bulk_edit, &QAction::triggered, [&](){
+		GuiUtilsNs::bulkDataEdit(results_tbw);
+	});
+
+	action_duplicate = edit_menu.addAction(QIcon(GuiUtilsNs::getIconPath("duprow")), tr("Duplicate row(s)"), this, SLOT(duplicateRows()), QKeySequence("Ctrl+D"));
+	action_duplicate->setToolTip(tr("Duplicate the selected rows"));
+
+	action_clear = edit_menu.addAction(QIcon(GuiUtilsNs::getIconPath("cleartext")), tr("Clear cell(s)"), this, SLOT(clearItemsText()), QKeySequence("Ctrl+R"));
+	action_clear->setToolTip(tr("Clears the items selected on the grid"));
+
 	paste_tb->setMenu(&paste_menu);
 	truncate_tb->setMenu(&truncate_menu);
 	truncate_menu.addAction(QIcon(GuiUtilsNs::getIconPath("truncate")), tr("Truncate"), this, SLOT(truncateTable()), QKeySequence("Ctrl+Del"))->setData(QVariant::fromValue<bool>(false));
@@ -103,14 +125,9 @@ DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f):
 	paste_tb->setToolTip(paste_tb->toolTip() + QString(" (%1)").arg(paste_tb->shortcut().toString()));
 	export_tb->setToolTip(export_tb->toolTip() + QString(" (%1)").arg(export_tb->shortcut().toString()));
 	undo_tb->setToolTip(undo_tb->toolTip() + QString(" (%1)").arg(undo_tb->shortcut().toString()));
-	add_tb->setToolTip(add_tb->toolTip() + QString(" (%1)").arg(add_tb->shortcut().toString()));
-	delete_tb->setToolTip(delete_tb->toolTip() + QString(" (%1)").arg(delete_tb->shortcut().toString()));
-	bulkedit_tb->setToolTip(bulkedit_tb->toolTip() + QString(" (%1)").arg(bulkedit_tb->shortcut().toString()));
-	duplicate_tb->setToolTip(duplicate_tb->toolTip() + QString(" (%1)").arg(duplicate_tb->shortcut().toString()));
 	csv_load_tb->setToolTip(csv_load_tb->toolTip() + QString(" (%1)").arg(csv_load_tb->shortcut().toString()));
 	filter_tb->setToolTip(filter_tb->toolTip() + QString(" (%1)").arg(filter_tb->shortcut().toString()));
 	new_window_tb->setToolTip(new_window_tb->toolTip() + QString(" (%1)").arg(new_window_tb->shortcut().toString()));
-	clear_tb->setToolTip(clear_tb->toolTip() + QString(" (%1)").arg(clear_tb->shortcut().toString()));
 	result_info_wgt->setVisible(false);
 
 	//Forcing the splitter that handles the bottom widgets to resize its children to their minimum size
@@ -145,7 +162,6 @@ DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f):
 	  setColumnsCheckState(Qt::Unchecked);
 	});
 
-	connect(clear_tb, SIGNAL(clicked(bool)), this, SLOT(clearItemsText()));
 	connect(columns_lst, SIGNAL(itemClicked(QListWidgetItem*)), this, SLOT(toggleColumnDisplay(QListWidgetItem*)));
 	connect(csv_load_tb, SIGNAL(toggled(bool)), csv_load_parent, SLOT(setVisible(bool)));
 	connect(close_btn, SIGNAL(clicked()), this, SLOT(reject()));
@@ -162,9 +178,6 @@ DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f):
 	connect(rem_ord_col_tb, SIGNAL(clicked()), this, SLOT(removeSortColumnFromList()));
 	connect(clear_ord_cols_tb, SIGNAL(clicked()), this, SLOT(clearSortColumnList()));
 	connect(results_tbw, SIGNAL(itemChanged(QTableWidgetItem*)), this, SLOT(markUpdateOnRow(QTableWidgetItem *)));
-	connect(delete_tb, SIGNAL(clicked()), this, SLOT(markDeleteOnRows()));
-	connect(add_tb, SIGNAL(clicked()), this, SLOT(addRow()));
-	connect(duplicate_tb, SIGNAL(clicked()), this, SLOT(duplicateRows()));
 	connect(undo_tb, SIGNAL(clicked()), this, SLOT(undoOperations()));
 	connect(save_tb, SIGNAL(clicked()), this, SLOT(saveChanges()));
 	connect(ord_columns_lst, SIGNAL(currentRowChanged(int)), this, SLOT(enableColumnControlButtons()));
@@ -173,10 +186,6 @@ DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f):
 	connect(filter_tb, SIGNAL(toggled(bool)), filter_tbw, SLOT(setVisible(bool)));
 	connect(truncate_tb, SIGNAL(clicked(bool)), this, SLOT(truncateTable()));
 	connect(new_window_tb, SIGNAL(clicked(bool)), this, SLOT(openNewWindow()));
-
-	connect(bulkedit_tb, &QToolButton::clicked, [&](){
-		GuiUtilsNs::bulkDataEdit(results_tbw);
-	});
 
 	connect(filter_tb, &QToolButton::toggled,
 			[&](bool checked){
@@ -424,6 +433,7 @@ void DataManipulationForm::retrieveData()
 		retrieveFKColumns(schema_cmb->currentText(), table_cmb->currentText());
 		SQLExecutionWidget::fillResultsTable(catalog, res, results_tbw, true);
 
+		edit_tb->setEnabled(true);
 		export_tb->setEnabled(results_tbw->rowCount() > 0);
 		result_info_wgt->setVisible(results_tbw->rowCount() > 0);
 		result_info_lbl->setText(QString("<em>[%1]</em> ").arg(QTime::currentTime().toString(QString("hh:mm:ss.zzz"))) +
@@ -431,6 +441,7 @@ void DataManipulationForm::retrieveData()
 								 tr("<em>(Limit: <strong>%1</strong>)</em>").arg(limit_spb->value()==0 ? tr("none") : QString::number(limit_spb->value())));
 
 		//Reset the changed rows state
+		enableRowControlButtons();
 		clearChangedRows();
 
 		//If the table is empty automatically creates a new row
@@ -512,8 +523,7 @@ void DataManipulationForm::disableControlButtons()
 	results_tbw->setColumnCount(0);
 	warning_frm->setVisible(false);
 	hint_frm->setVisible(false);
-	add_tb->setEnabled(false);
-	duplicate_tb->setEnabled(false);
+	edit_tb->setEnabled(false);
 	export_tb->setEnabled(false);
 	paste_tb->setEnabled(false);
 	truncate_tb->setEnabled(false);
@@ -536,15 +546,16 @@ void DataManipulationForm::enableRowControlButtons()
 		rows_selected &= (sel_rng.rowCount() == results_tbw->rowCount());
 	}
 
-	delete_tb->setEnabled(cols_selected);
-	duplicate_tb->setEnabled(cols_selected);
+	action_delete->setEnabled(cols_selected);
+	action_duplicate->setEnabled(cols_selected);
+	action_bulk_edit->setEnabled(sel_ranges.count() != 0);
+	action_clear->setEnabled(sel_ranges.count() != 0);
+
 	copy_tb->setEnabled(sel_ranges.count() != 0);
-	clear_tb->setEnabled(sel_ranges.count() != 0);
 	paste_tb->setEnabled(!qApp->clipboard()->text().isEmpty() &&
 											 PhysicalTable::isPhysicalTable(obj_type)  &&
 											 !col_names.isEmpty());
 	browse_tabs_tb->setEnabled((!fk_infos.empty() || !ref_fk_infos.empty()) && sel_ranges.count() == 1 && sel_ranges.at(0).rowCount() == 1);
-	bulkedit_tb->setEnabled(sel_ranges.count() != 0);
 }
 
 void DataManipulationForm::resetAdvancedControls()
@@ -831,7 +842,7 @@ void DataManipulationForm::retrievePKColumns(const QString &schema, const QStrin
 		}
 
 		hint_frm->setVisible(PhysicalTable::isPhysicalTable(obj_type));
-		add_tb->setEnabled(PhysicalTable::isPhysicalTable(obj_type) && !col_names.empty());
+		action_add->setEnabled(PhysicalTable::isPhysicalTable(obj_type) && !col_names.empty());
 		pk_col_names.clear();
 
 		if(!pks.empty())
@@ -1673,14 +1684,9 @@ void DataManipulationForm::showPopupMenu()
 			item_menu.addAction(act);
 
 			item_menu.addSeparator();
-			act = item_menu.addAction(duplicate_tb->icon(), tr("Duplicate row(s)"), this, SLOT(duplicateRows()), duplicate_tb->shortcut());
-			act->setEnabled(duplicate_tb->isEnabled());
-
-			act = item_menu.addAction(delete_tb->icon(), tr("Delete row(s)"), this, SLOT(markDeleteOnRows()), delete_tb->shortcut());
-			act->setEnabled(delete_tb->isEnabled());
-
-			act = item_menu.addAction(bulkedit_tb->icon(), tr("Edit cell(s)"), bulkedit_tb, SLOT(click()), bulkedit_tb->shortcut());
-			act->setEnabled(bulkedit_tb->isEnabled());
+			item_menu.addAction(action_duplicate);
+			item_menu.addAction(action_delete);
+			item_menu.addAction(action_bulk_edit);
 		}
 
 		item_menu.exec(QCursor::pos());

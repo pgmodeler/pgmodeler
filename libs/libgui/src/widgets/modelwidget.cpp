@@ -209,7 +209,7 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	zoom_info_lbl->setVisible(false);
 	zoom_info_timer.setInterval(3000);
 
-	action_edit_data=new QAction(QIcon(GuiUtilsNs::getIconPath("editdata")), tr("Edit data"), this);
+	action_edit_data=new QAction(QIcon(GuiUtilsNs::getIconPath("editrows")), tr("Edit data"), this);
 
 	action_source_code=new QAction(QIcon(GuiUtilsNs::getIconPath("sourcecode")), tr("Source"), this);
 	action_source_code->setShortcut(QKeySequence(tr("Alt+S")));

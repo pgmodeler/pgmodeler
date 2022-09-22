@@ -47,7 +47,10 @@ class DataManipulationForm: public QDialog, public Ui::DataManipulationForm {
 		
 		CodeCompletionWidget *code_compl_wgt;
 
-		QMenu fks_menu, copy_menu, truncate_menu, paste_menu;
+		QAction *action_add, *action_delete, *action_bulk_edit,
+		*action_duplicate, *action_clear;
+
+		QMenu fks_menu, copy_menu, truncate_menu, paste_menu, edit_menu;
 
 		//! \brief Store the template connection params to be used by catalogs and command execution connections
 		attribs_map tmpl_conn_params;

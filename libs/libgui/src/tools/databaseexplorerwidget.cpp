@@ -183,9 +183,9 @@ DatabaseExplorerWidget::DatabaseExplorerWidget(QWidget *parent): QWidget(parent)
 	truncate_action=new QAction(QIcon(GuiUtilsNs::getIconPath("truncate")), tr("Truncate"), &handle_menu);
 	trunc_cascade_action=new QAction(QIcon(GuiUtilsNs::getIconPath("trunccascade")), tr("Trunc. cascade"), &handle_menu);
 
-	handle_data_action=new QAction(QIcon(GuiUtilsNs::getIconPath("editdata")), tr("Handle data"), &handle_menu);
+	handle_data_action=new QAction(QIcon(GuiUtilsNs::getIconPath("editrows")), tr("Handle data"), &handle_menu);
 	handle_data_action->setShortcut(QKeySequence(Qt::Key_Space));
-	properties_action=new QAction(QIcon(GuiUtilsNs::getIconPath("edit")), tr("Reload properties"), &handle_menu);
+	properties_action=new QAction(QIcon(GuiUtilsNs::getIconPath("reloadattribs")), tr("Reload properties"), &handle_menu);
 
 	refresh_action=new QAction(QIcon(GuiUtilsNs::getIconPath("refresh")), tr("Update"), &handle_menu);
 	refresh_action->setShortcut(QKeySequence(Qt::Key_F6));

@@ -430,6 +430,8 @@ void SQLToolWidget::showSourceCode(const QString &source)
 #else
 	sourcecode_txt->setPlainText(source);
 #endif
+
+	source_pane_tb->setChecked(true);
 }
 
 bool SQLToolWidget::hasDatabasesBrowsed()
