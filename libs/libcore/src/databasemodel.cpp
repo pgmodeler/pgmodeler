@@ -561,8 +561,6 @@ BaseObject *DatabaseModel::getObject(const QString &name, ObjectType obj_type, i
 		throw Exception(ErrorCode::ObtObjectInvalidType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	else
 	{
-		QString signature;
-
 		itr=obj_list->begin();
 		itr_end=obj_list->end();
 		obj_idx=-1;
@@ -570,17 +568,21 @@ BaseObject *DatabaseModel::getObject(const QString &name, ObjectType obj_type, i
 
 		while(itr!=itr_end && !found)
 		{
-			signature=(*itr)->getSignature().remove("\"");
-			found=(signature==aux_name1);
-			if(!found) itr++;
+			if((*itr)->getSignature().remove("\"") == aux_name1 ||
+				 (*itr)->getName(false) == aux_name1)
+			{
+				found = true;
+				break;
+			}
+
+			itr++;
 		}
 
 		if(found)
 		{
-			object=(*itr);
-			obj_idx=(itr - obj_list->begin());
+			object = (*itr);
+			obj_idx = (itr - obj_list->begin());
 		}
-		else obj_idx=-1;
 	}
 
 	return object;

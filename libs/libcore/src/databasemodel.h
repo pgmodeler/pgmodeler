@@ -707,7 +707,9 @@ class DatabaseModel:  public QObject, public BaseObject {
 		//! \brief Returns all the permissions related to the passed object
 		void getPermissions(BaseObject *object, std::vector<Permission *> &perms);
 
-		//! \brief Returns the object searching by its name and type
+		/*! \brief Returns the object searching by its signature and type.
+		 *  If the signature does not match the provided name then the method
+		 *  tries to match the name parameter against the object's name */
 		BaseObject *getObject(const QString &name, ObjectType obj_type);
 
 		void configureDatabase(attribs_map &attribs);
