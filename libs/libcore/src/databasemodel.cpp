@@ -3325,7 +3325,7 @@ void DatabaseModel::loadModel(const QString &filename)
 														tr("Loading: `%1' (%2)")
 														.arg(object->getName())
 														.arg(object->getTypeName()),
-														enum_cast(obj_type));
+														enum_t(obj_type));
 								}
 
 								xmlparser.restorePosition();
@@ -3369,14 +3369,14 @@ void DatabaseModel::loadModel(const QString &filename)
 			//If there are relationship make a relationship validation to recreate any special object left behind
 			if(!relationships.empty())
 			{
-				emit s_objectLoaded(100, tr("Validating relationships..."), enum_cast(ObjectType::Relationship));
+				emit s_objectLoaded(100, tr("Validating relationships..."), enum_t(ObjectType::Relationship));
 				storeSpecialObjectsXML();
 				disconnectRelationships();
 				validateRelationships();
 			}
 
 			this->setInvalidated(false);
-			emit s_objectLoaded(100, tr("Validating relationships..."), enum_cast(ObjectType::Relationship));
+			emit s_objectLoaded(100, tr("Validating relationships..."), enum_t(ObjectType::Relationship));
 
 			//Doing another relationship validation when there are inheritances to avoid incomplete tables
 			/* if(found_inh_rel)
@@ -3386,7 +3386,7 @@ void DatabaseModel::loadModel(const QString &filename)
 			} */
 
 			updateTablesFKRelationships();
-			emit s_objectLoaded(100, tr("Rendering database model..."), enum_cast(ObjectType::BaseObject));
+			emit s_objectLoaded(100, tr("Rendering database model..."), enum_t(ObjectType::BaseObject));
 			this->setObjectsModified();
 		}
 		catch(Exception &e)
@@ -4721,7 +4721,7 @@ Operator *DatabaseModel::createOperator()
 				{
 					elem=xmlparser.getElementName();
 
-					if(elem==objs_schemas[enum_cast(ObjectType::Operator)])
+					if(elem==objs_schemas[enum_t(ObjectType::Operator)])
 					{
 						xmlparser.getElementAttributes(attribs);
 						oper_aux=getObject(attribs[Attributes::Signature], ObjectType::Operator);
@@ -4813,7 +4813,7 @@ OperatorClass *DatabaseModel::createOperatorClass()
 				{
 					elem=xmlparser.getElementName();
 
-					if(elem==objs_schemas[enum_cast(ObjectType::OpFamily)])
+					if(elem==objs_schemas[enum_t(ObjectType::OpFamily)])
 					{
 						xmlparser.getElementAttributes(attribs);
 						object=getObject(attribs[Attributes::Signature], ObjectType::OpFamily);
@@ -7665,7 +7665,7 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 									msg.arg(def_type_str)
 									.arg(object->getName())
 									.arg(object->getTypeName()),
-									enum_cast(object->getObjectType()));
+									enum_t(object->getObjectType()));
 			}
 		}
 
@@ -8175,7 +8175,7 @@ bool DatabaseModel::saveSplitCustomSQL(bool save_appended, const QString &path, 
 
 	if(!buffer.isEmpty())
 	{
-		emit s_objectLoaded(!save_appended ? 0 : 100, msg, enum_cast(ObjectType::Database));
+		emit s_objectLoaded(!save_appended ? 0 : 100, msg, enum_t(ObjectType::Database));
 		UtilsNs::saveFile(path + GlobalAttributes::DirSeparator + filename, buffer);
 		return true;
 	}
@@ -8248,7 +8248,7 @@ void DatabaseModel::saveSplitSQLDefinition(const QString &path, unsigned code_ge
 
 				emit s_objectLoaded((gen_defs_idx/static_cast<double>(general_obj_cnt)) * 100,
 									tr("Saving SQL of shell types to file `%1'.").arg(filename),
-									enum_cast(ObjectType::Type));
+									enum_t(ObjectType::Type));
 
 				buffer.append(shell_types.toUtf8());
 				UtilsNs::saveFile(path + GlobalAttributes::DirSeparator + filename, buffer);
@@ -8309,7 +8309,7 @@ void DatabaseModel::saveSplitSQLDefinition(const QString &path, unsigned code_ge
 								.arg(obj->getName())
 								.arg(obj->getTypeName())
 								.arg(filename),
-								enum_cast(obj->getObjectType()));
+								enum_t(obj->getObjectType()));
 
 			UtilsNs::saveFile(path + GlobalAttributes::DirSeparator + filename, buffer);
 			buffer.clear();
@@ -8327,7 +8327,7 @@ void DatabaseModel::saveSplitSQLDefinition(const QString &path, unsigned code_ge
 									 .arg(Attributes::SessionOpts);
 
 				emit s_objectLoaded((gen_defs_idx/static_cast<double>(general_obj_cnt)) * 100, tr("Saving session options file `%1'.").arg(filename),
-														enum_cast(ObjectType::Database));
+														enum_t(ObjectType::Database));
 
 				buffer.append(schparser.getCodeDefinition(Attributes::SessionOpts, attribs, SchemaParser::SqlDefinition).toUtf8());
 				UtilsNs::saveFile( path + GlobalAttributes::DirSeparator + filename, buffer);
@@ -10973,7 +10973,7 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned option
 			{
 				emit s_objectLoaded(((idx++)/static_cast<double>(objects.size()))*100,
 														tr("Saving object `%1' (%2)")
-														.arg(object->getName()).arg(object->getTypeName()), enum_cast(obj_type));
+														.arg(object->getName()).arg(object->getTypeName()), enum_t(obj_type));
 
 				objs_def+=object->getCodeDefinition(SchemaParser::XmlDefinition);
 				continue;
@@ -10995,7 +10995,7 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned option
 			attribs[Attributes::AppendedSql]=object->getAppendedSQL();
 			attribs[Attributes::PrependedSql]=object->getPrependedSQL();			
 			attribs[Attributes::FadedOut]=(save_fadeout && graph_obj && graph_obj->isFadedOut() ? Attributes::True : "");
-			attribs[Attributes::CollapseMode]=(save_collapsemode && base_tab ? QString::number(enum_cast(base_tab->getCollapseMode())) : "");
+			attribs[Attributes::CollapseMode]=(save_collapsemode && base_tab ? QString::number(enum_t(base_tab->getCollapseMode())) : "");
 
 			//Saving layers information
 			if(graph_obj && save_objs_layers_cfg)
@@ -11170,7 +11170,7 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned option
 			{
 				emit s_objectLoaded(((idx++)/static_cast<double>(objects.size()))*100,
 														tr("Saving metadata of the object `%1' (%2)")
-														.arg(object->getSignature()).arg(object->getTypeName()), enum_cast(obj_type));
+														.arg(object->getSignature()).arg(object->getTypeName()), enum_t(obj_type));
 
 				schparser.ignoreUnkownAttributes(true);
 				objs_def+=XmlParser::convertCharsToXMLEntities(
@@ -11192,10 +11192,10 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned option
 
 			output.write(buf.data(),buf.size());
 
-			emit s_objectLoaded(100, tr("Metadata file successfully saved!"), enum_cast(ObjectType::BaseObject));
+			emit s_objectLoaded(100, tr("Metadata file successfully saved!"), enum_t(ObjectType::BaseObject));
 		}
 		else
-			emit s_objectLoaded(100, tr("Process successfully ended but no metadata was saved!"), enum_cast(ObjectType::BaseObject));
+			emit s_objectLoaded(100, tr("Process successfully ended but no metadata was saved!"), enum_t(ObjectType::BaseObject));
 
 		output.close();
 	}
@@ -11287,7 +11287,7 @@ void DatabaseModel::loadObjectsMetadata(const QString &filename, unsigned option
 						{
 							emit s_objectLoaded(progress, tr("Creating object `%1' (%2)")
 																	.arg(attribs[Attributes::Name])
-																	.arg(BaseObject::getTypeName(obj_type)), enum_cast(obj_type));
+																	.arg(BaseObject::getTypeName(obj_type)), enum_t(obj_type));
 
 							addObject(new_object);
 						}
@@ -11297,7 +11297,7 @@ void DatabaseModel::loadObjectsMetadata(const QString &filename, unsigned option
 																	tr("Object `%1' (%2) already exists. %3.")
 																	.arg(attribs[Attributes::Name])
 																	.arg(BaseObject::getTypeName(obj_type))
-																	.arg(merge_dup_objs ? tr("Merging") : tr("Ignoring")), enum_cast(ObjectType::BaseObject));
+																	.arg(merge_dup_objs ? tr("Merging") : tr("Ignoring")), enum_t(ObjectType::BaseObject));
 
 							if(merge_dup_objs)
 								CoreUtilsNs::copyObject(&aux_obj, new_object, obj_type);
@@ -11383,7 +11383,7 @@ void DatabaseModel::loadObjectsMetadata(const QString &filename, unsigned option
 						if(object)
 						{
 							emit s_objectLoaded(progress, tr("Loading metadata for object `%1' (%2)")
-																	.arg(object->getName()).arg(object->getTypeName()), enum_cast(obj_type));
+																	.arg(object->getName()).arg(object->getTypeName()), enum_t(obj_type));
 
 							if(!object->isSystemObject() &&
 								 ((!attribs[Attributes::Protected].isEmpty() && load_objs_prot) ||
@@ -11520,7 +11520,7 @@ void DatabaseModel::loadObjectsMetadata(const QString &filename, unsigned option
 						else if(!object)
 						{
 							emit s_objectLoaded(progress, tr("Object `%1' (%2) not found. Ignoring metadata.")
-																	.arg(obj_name).arg(BaseObject::getTypeName(obj_type)), enum_cast(ObjectType::BaseObject));
+																	.arg(obj_name).arg(BaseObject::getTypeName(obj_type)), enum_t(ObjectType::BaseObject));
 						}
 
 						xmlparser.restorePosition();
@@ -11531,7 +11531,7 @@ void DatabaseModel::loadObjectsMetadata(const QString &filename, unsigned option
 			while(xmlparser.accessElement(XmlParser::NextElement));
 		}
 
-		emit s_objectLoaded(100, tr("Metadata file successfully loaded!"), enum_cast(ObjectType::BaseObject));
+		emit s_objectLoaded(100, tr("Metadata file successfully loaded!"), enum_t(ObjectType::BaseObject));
 		setObjectsModified();
 	}
 	catch(Exception &e)
@@ -11765,11 +11765,11 @@ TableClass *DatabaseModel::createPhysicalTable()
 					xmlparser.savePosition();
 					object=nullptr;
 
-					if(elem==BaseObject::objs_schemas[enum_cast(ObjectType::Column)])
+					if(elem==BaseObject::objs_schemas[enum_t(ObjectType::Column)])
 						object=createColumn();
-					else if(elem==BaseObject::objs_schemas[enum_cast(ObjectType::Constraint)])
+					else if(elem==BaseObject::objs_schemas[enum_t(ObjectType::Constraint)])
 						object=createConstraint(table);
-					else if(elem==BaseObject::objs_schemas[enum_cast(ObjectType::Tag)])
+					else if(elem==BaseObject::objs_schemas[enum_t(ObjectType::Tag)])
 					{
 						xmlparser.getElementAttributes(aux_attribs);
 						tag=getObject(aux_attribs[Attributes::Name], ObjectType::Tag);

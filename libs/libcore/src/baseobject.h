@@ -113,7 +113,7 @@ class BaseObject {
 		unsigned object_id;
 
 		//! \brief Objects type count declared on enum ObjectType
-		static constexpr unsigned ObjectTypeCount=enum_cast(ObjectType::BaseTable) + 1;
+		static constexpr unsigned ObjectTypeCount=enum_t(ObjectType::BaseTable) + 1;
 
 		/*! \brief Indicates whether the object is protected or not.
 		 A protected object indicates that it can not suffer changes in position

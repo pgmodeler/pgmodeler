@@ -786,7 +786,7 @@ void DataManipulationForm::listObjects(QComboBox *combo, std::vector<ObjectType>
 			for(; idx < count; idx++)
 			{
 				combo->setItemIcon(idx, QPixmap(GuiUtilsNs::getIconPath(obj_type)));
-				combo->setItemData(idx, enum_cast(obj_type));
+				combo->setItemData(idx, enum_t(obj_type));
 			}
 
 			idx=count;

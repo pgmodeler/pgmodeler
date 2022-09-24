@@ -31,15 +31,7 @@
 #include <exception>
 #include <signal.h>
 #include <vector>
-#include <deque>
-#include <type_traits>
-
-//! \brief This function causes the provided enum to be converted to its underlying datatype
-template<typename Enum>
-constexpr std::underlying_type_t<Enum> enum_cast (Enum obj_type) noexcept
-{
-	return static_cast<typename std::underlying_type_t<Enum>>(obj_type);
-}
+#include "enumtype.h"
 
 //! \brief This enum defines the global error codes used throughout the application
 enum class ErrorCode: unsigned {

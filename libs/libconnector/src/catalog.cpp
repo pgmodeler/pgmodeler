@@ -623,7 +623,7 @@ std::vector<attribs_map> Catalog::getObjectsNames(std::vector<ObjectType> obj_ty
 			{
 				//Injecting the object type integer code in order to sort the final result
 				sql.replace(sql.indexOf(select_kw), select_kw.size(),
-										QString("%1 %2 AS object_type, ").arg(select_kw).arg(enum_cast(obj_type)));
+										QString("%1 %2 AS object_type, ").arg(select_kw).arg(enum_t(obj_type)));
 
 				sql+=QChar('\n');
 				queries.push_back(sql);
@@ -680,7 +680,7 @@ attribs_map Catalog::getAttributes(const QString &obj_name, ObjectType obj_type,
 
 		/* Insert the object type as an attribute of the query result to facilitate the
 		import process on the classes that uses the Catalog */
-		obj_attribs[Attributes::ObjectType]=QString("%1").arg(enum_cast(obj_type));
+		obj_attribs[Attributes::ObjectType]=QString("%1").arg(enum_t(obj_type));
 
 		return obj_attribs;
 	}
@@ -707,7 +707,7 @@ std::vector<attribs_map> Catalog::getMultipleAttributes(ObjectType obj_type, att
 
 				/* Insert the object type as an attribute of the query result to facilitate the
 				import process on the classes that uses the Catalog */
-				tuple[Attributes::ObjectType]=QString("%1").arg(enum_cast(obj_type));
+				tuple[Attributes::ObjectType]=QString("%1").arg(enum_t(obj_type));
 
 				obj_attribs.push_back(tuple);
 				tuple.clear();

@@ -16,31 +16,21 @@
 # Also, you can get the complete GNU General Public License at <http://www.gnu.org/licenses/>
 */
 
-#include "crashhandlerform.h"
-#include "application.h"
-#include <QTranslator>
-#include "guiutilsns.h"
+/**
+\ingroup libutils
+\brief Definition of a constexpr function that returns the underlying type of a enum class
+*/
 
-int main(int argc, char **argv)
+#ifndef ENUM_TYPE_H
+#define ENUM_TYPE_H
+
+#include <type_traits>
+
+//! \brief This function causes the provided enum to be converted to its underlying datatype
+template<typename Enum>
+constexpr std::underlying_type_t<Enum> enum_t (Enum enum_val) noexcept
 {
-	try
-	{
-		GlobalAttributes::setCustomUiScaleFactor();
-		Application app(argc,argv);
-		QStringList args = app.arguments();
-		app.loadTranslation(QLocale::system().name());
-
-		CrashHandlerForm crashhandler(args.size() > 1 && args[1]==CrashHandlerForm::AnalysisMode);
-		GuiUtilsNs::resizeDialog(&crashhandler);
-		crashhandler.show();
-		app.exec();
-
-		return 0;
-	}
-	catch(Exception &e)
-	{
-		QTextStream out(stdout);
-		out << e.getExceptionsText();
-		return enum_t(e.getErrorCode());
-	}
+	return static_cast<typename std::underlying_type_t<Enum>>(enum_val);
 }
+
+#endif

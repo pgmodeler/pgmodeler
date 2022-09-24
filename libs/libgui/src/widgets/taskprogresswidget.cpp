@@ -28,7 +28,7 @@ TaskProgressWidget::TaskProgressWidget(QWidget *parent, Qt::WindowFlags f) : QDi
 	setWindowFlags(Qt::Dialog | Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
 
 	for(auto &obj_tp : obj_types)
-		addIcon(enum_cast(obj_tp), QIcon(GuiUtilsNs::getIconPath(obj_tp)));
+		addIcon(enum_t(obj_tp), QIcon(GuiUtilsNs::getIconPath(obj_tp)));
 }
 
 void TaskProgressWidget::addIcon(unsigned id, const QIcon &ico)

@@ -301,7 +301,7 @@ Exception::Exception(ErrorCode error_code, const QString &method, const QString 
 	/* Because the Exception class is not derived from QObject the function tr() is inefficient to translate messages
 		so the translation method is called  directly from the application specifying the
 		context (Exception) in the ts file and the text to be translated */
-	configureException(QApplication::translate("Exception",messages[enum_cast(error_code)][ErrorMessage].toStdString().c_str(),"", -1),
+	configureException(QApplication::translate("Exception",messages[enum_t(error_code)][ErrorMessage].toStdString().c_str(),"", -1),
 						 error_code, method, file, line, extra_info);
 
 	if(exception) addException(*exception);
@@ -320,7 +320,7 @@ Exception::Exception(ErrorCode error_code, const QString &method, const QString 
 	/* Because the Exception class is not derived from QObject the function tr() is inefficient to translate messages
 		so the translation method is called  directly from the application specifying the
 		context (Exception) in the ts file and the text to be translated */
-	configureException(QApplication::translate("Exception",messages[enum_cast(error_code)][ErrorMessage].toStdString().c_str(),"",-1),
+	configureException(QApplication::translate("Exception",messages[enum_t(error_code)][ErrorMessage].toStdString().c_str(),"",-1),
 						 error_code, method, file, line, extra_info);
 
 	itr=exceptions.begin();
@@ -377,21 +377,21 @@ QString Exception::getErrorMessage()
 
 QString Exception::getErrorMessage(ErrorCode error_code)
 {
-	if(enum_cast(error_code) < ErrorCount)
+	//if(enum_t(error_code) < ErrorCount)
 		/* Because the Exception class is not derived from QObject the function tr() is inefficient to translate messages
 		 so the translation method is called  directly from the application specifying the
 		 context (Exception) in the ts file and the text to be translated */
-		return QApplication::translate("Exception", messages[enum_cast(error_code)][ErrorMessage].toStdString().c_str(), "", -1);
+		return QApplication::translate("Exception", messages[enum_t(error_code)][ErrorMessage].toStdString().c_str(), "", -1);
 
-	return "";
+	//return "";
 }
 
 QString Exception::getErrorCode(ErrorCode error_code)
 {
-	if(enum_cast(error_code) < ErrorCount)
-		return messages[enum_cast(error_code)][ErrorCodeId];
+	//if(enum_t(error_code) < ErrorCount)
+		return messages[enum_t(error_code)][ErrorCodeId];
 
-	return "";
+	//return "";
 }
 
 QString Exception::getMethod()
