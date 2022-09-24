@@ -1653,8 +1653,8 @@ void ModelWidget::updateSceneLayers()
 
 	scene->addLayers(db_model->getLayers(), false);
 	scene->setActiveLayers(db_model->getActiveLayers());
-	scene->setLayerColors(ObjectsScene::LayerNameColor, db_model->getLayerNameColors());
-	scene->setLayerColors(ObjectsScene::LayerRectColor, db_model->getLayerRectColors());
+	scene->setLayerColors(LayerAttribute::LayerName, db_model->getLayerNameColors());
+	scene->setLayerColors(LayerAttribute::LayerRect, db_model->getLayerRectColors());
 	scene->setLayerNamesVisible(db_model->isLayerNamesVisible());
 	scene->setLayerRectsVisible(db_model->isLayerRectsVisible());
 	db_model->setObjectsModified({ ObjectType::Schema });
@@ -4969,8 +4969,8 @@ void ModelWidget::updateModelLayersInfo()
 
 	db_model->setLayers(layers);
 	db_model->setActiveLayers(scene->getActiveLayersIds());
-	db_model->setLayerNameColors(scene->getLayerColorNames(ObjectsScene::LayerNameColor));
-	db_model->setLayerRectColors(scene->getLayerColorNames(ObjectsScene::LayerRectColor));
+	db_model->setLayerNameColors(scene->getLayerColorNames(LayerAttribute::LayerName));
+	db_model->setLayerRectColors(scene->getLayerColorNames(LayerAttribute::LayerRect));
 	db_model->setLayerNamesVisible(scene->isLayerNamesVisible());
 	db_model->setLayerRectsVisible(scene->isLayerRectsVisible());
 	setModified(true);
