@@ -334,11 +334,11 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	action_collapse_mode->setText(tr("Collapse"));
 
 	action_no_collapse_attribs=new QAction(tr("Not collapsed"), this);
-	action_no_collapse_attribs->setData(enum_t(CollapseMode::NotCollapsed));
+	action_no_collapse_attribs->setData(BaseTable::NotCollapsed);
 	action_collapse_ext_attribs=new QAction(tr("Extended attributes"), this);
-	action_collapse_ext_attribs->setData(enum_t(CollapseMode::ExtAttribsCollapsed));
+	action_collapse_ext_attribs->setData(BaseTable::ExtAttribsCollapsed);
 	action_collpase_all_attribs=new QAction(tr("All attributes"), this);
-	action_collpase_all_attribs->setData(enum_t(CollapseMode::AllAttribsCollapsed));
+	action_collpase_all_attribs->setData(BaseTable::AllAttribsCollapsed);
 
 	toggle_attrs_menu.addAction(action_no_collapse_attribs);
 	toggle_attrs_menu.addAction(action_collapse_ext_attribs);
@@ -1653,8 +1653,8 @@ void ModelWidget::updateSceneLayers()
 
 	scene->addLayers(db_model->getLayers(), false);
 	scene->setActiveLayers(db_model->getActiveLayers());
-	scene->setLayerColors(LayerAttribute::LayerName, db_model->getLayerNameColors());
-	scene->setLayerColors(LayerAttribute::LayerRect, db_model->getLayerRectColors());
+	scene->setLayerColors(ObjectsScene::LayerNameColor, db_model->getLayerNameColors());
+	scene->setLayerColors(ObjectsScene::LayerRectColor, db_model->getLayerRectColors());
 	scene->setLayerNamesVisible(db_model->isLayerNamesVisible());
 	scene->setLayerRectsVisible(db_model->isLayerRectsVisible());
 	db_model->setObjectsModified({ ObjectType::Schema });
@@ -3862,7 +3862,7 @@ void ModelWidget::fadeObjectsOut()
 	fadeObjects(qobject_cast<QAction *>(sender()), false);
 }
 
-void ModelWidget::setAllCollapseMode(CollapseMode mode)
+void ModelWidget::setAllCollapseMode(BaseTable::CollapseMode mode)
 {
 	BaseTable *base_tab = nullptr;
 	std::vector<BaseObject *> objects;
@@ -3947,7 +3947,7 @@ void ModelWidget::moveObjectsInZStack(int direction)
 
 void ModelWidget::setCollapseMode()
 {
-	CollapseMode mode = static_cast<CollapseMode>(dynamic_cast<QAction *>(sender())->data().toUInt());
+	BaseTable::CollapseMode mode = static_cast<BaseTable::CollapseMode>(dynamic_cast<QAction *>(sender())->data().toUInt());
 	BaseTable *base_tab = nullptr;
 	std::vector<BaseObject *> objects;
 
@@ -4969,8 +4969,8 @@ void ModelWidget::updateModelLayersInfo()
 
 	db_model->setLayers(layers);
 	db_model->setActiveLayers(scene->getActiveLayersIds());
-	db_model->setLayerNameColors(scene->getLayerColorNames(LayerAttribute::LayerName));
-	db_model->setLayerRectColors(scene->getLayerColorNames(LayerAttribute::LayerRect));
+	db_model->setLayerNameColors(scene->getLayerColorNames(ObjectsScene::LayerNameColor));
+	db_model->setLayerRectColors(scene->getLayerColorNames(ObjectsScene::LayerRectColor));
 	db_model->setLayerNamesVisible(scene->isLayerNamesVisible());
 	db_model->setLayerRectsVisible(scene->isLayerRectsVisible());
 	setModified(true);

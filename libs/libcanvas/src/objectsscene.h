@@ -34,11 +34,6 @@
 #include "styledtextboxview.h"
 #include "layeritem.h"
 
-enum class LayerAttribute: unsigned {
-	LayerName,
-	LayerRect
-};
-
 class ObjectsScene: public QGraphicsScene {
 	private:
 		Q_OBJECT
@@ -183,6 +178,11 @@ class ObjectsScene: public QGraphicsScene {
 		void removeLayers(bool reset_obj_layers);
 
 	public:
+		enum LayerAttrColor: unsigned {
+			LayerNameColor,
+			LayerRectColor
+		};
+
 		static constexpr unsigned DefaultLayer = 0;
 
 		//! \brief Stores the default grid line color
@@ -239,7 +239,7 @@ class ObjectsScene: public QGraphicsScene {
 		void updateActiveLayers();
 
 		//! \brief Retuns a list of the layers colors names. The color ids must be LayerNameColor or LayerRectColor
-		QStringList getLayerColorNames(LayerAttribute color_id);
+		QStringList getLayerColorNames(LayerAttrColor color_id);
 
 		/*! \brief This method sets up the text and background color of the layer referenced by the id.
 		 * This method adjust the alpha channel for the background color to a make it semi transparent */
@@ -247,7 +247,7 @@ class ObjectsScene: public QGraphicsScene {
 
 		/*! \brief This method sets up the layers name/rect colors. The layer_attr_id is either LayerNameColor or LayerRectColor.
 		 * This method adjust the alpha channel for the background color to a make it semi transparent */
-		void setLayerColors(LayerAttribute layer_attr_id, const QStringList &colors);
+		void setLayerColors(LayerAttrColor layer_attr_id, const QStringList &colors);
 
 		static void setEnableCornerMove(bool enable);
 		static void setInvertRangeSelectionTrigger(bool invert);

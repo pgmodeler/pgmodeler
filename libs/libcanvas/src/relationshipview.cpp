@@ -21,7 +21,7 @@
 bool RelationshipView::hide_name_label=false;
 bool RelationshipView::use_curved_lines=true;
 bool RelationshipView::use_crows_foot=false;
-unsigned RelationshipView::line_conn_mode=RelationshipView::ConnectFkToPk;
+RelationshipView::LineConnectionMode RelationshipView::line_conn_mode=RelationshipView::ConnectFkToPk;
 
 RelationshipView::RelationshipView(BaseRelationship *rel) : BaseObjectView(rel)
 {
@@ -177,7 +177,7 @@ bool RelationshipView::isCrowsFoot()
 	return use_crows_foot;
 }
 
-void RelationshipView::setLineConnectionMode(unsigned mode)
+void RelationshipView::setLineConnectionMode(LineConnectionMode mode)
 {
 	if(use_crows_foot)
 		line_conn_mode=ConnectTableEdges;
@@ -712,8 +712,8 @@ void RelationshipView::configureLine()
 
 				/* We determine the fk to pk connections only if both tables are not fully collapsed.
 				 * Otherwise, the tables' center points are used as connection point of the relationship */
-				if(rec_tab->getCollapseMode() != CollapseMode::AllAttribsCollapsed &&
-					 ref_tab->getCollapseMode() != CollapseMode::AllAttribsCollapsed)
+				if(rec_tab->getCollapseMode() != BaseTable::AllAttribsCollapsed &&
+					 ref_tab->getCollapseMode() != BaseTable::AllAttribsCollapsed)
 				{
 					rec_tab->getForeignKeys(fks, true, ref_tab);
 

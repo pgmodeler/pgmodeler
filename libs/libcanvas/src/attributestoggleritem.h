@@ -40,7 +40,7 @@ class AttributesTogglerItem: public QObject, public RoundedRectItem {
 		QGraphicsRectItem *sel_rect;
 
 		//! \brief Stores the current collasping mode related to the table associated to this toggler
-		CollapseMode collapse_mode;
+		BaseTable::CollapseMode collapse_mode;
 
 		//! \brief Stores the polygonal items denoting the control buttons of the toggler
 		QGraphicsPolygonItem *buttons[7];
@@ -70,7 +70,7 @@ class AttributesTogglerItem: public QObject, public RoundedRectItem {
 		//! \brief The minimum opacity factor used to fade buttons
 		static constexpr double ButtonMinOpacity = 0.40;
 
-		enum class TogglerButton: unsigned {
+		enum TogglerButton: unsigned {
 			//! \brief Constant used to reference the attributes expand button
 			AttribsExpandBtn,
 
@@ -116,7 +116,7 @@ class AttributesTogglerItem: public QObject, public RoundedRectItem {
 		void setButtonsPen(const QPen &pen);
 
 		//! \brief Configures the current collapse mode of the toggler
-		void setCollapseMode(CollapseMode coll_mode);
+		void setCollapseMode(BaseTable::CollapseMode coll_mode);
 
 		/*! \brief Set a button selected (highlighted by the selection rectangle) if the provided
 		 * point is within a button's bouding rect. The parameter 'clicked' indicates if the button
@@ -148,7 +148,7 @@ class AttributesTogglerItem: public QObject, public RoundedRectItem {
 
 	signals:
 		//! \brief Signal emitted when the current collapse mode changes (the user clicks the collpase/expand buttons)
-		void s_collapseModeChanged(CollapseMode);
+		void s_collapseModeChanged(BaseTable::CollapseMode);
 
 		//! \brief Signal emitted when the current page changes (the user clicks the page navigation buttons)
 		void s_currentPageChanged(unsigned, unsigned);

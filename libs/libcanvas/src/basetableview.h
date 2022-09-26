@@ -181,7 +181,7 @@ class BaseTableView: public BaseObjectView {
 	private slots:
 		/*! \brief This slot reconfigures the table when the attributes toggler emits the signal s_collapseModeChanged
 		 * hiding or exposing the sections related to the current collapse mode */
-		void configureCollapsedSections(CollapseMode coll_mode);
+		void configureCollapsedSections(BaseTable::CollapseMode coll_mode);
 
 		//! \brief This slot reconfigures the table when the attributes toggler emits the signal s_paginationToggled
 		void togglePagination(bool enabled);

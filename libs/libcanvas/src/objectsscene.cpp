@@ -549,7 +549,7 @@ void ObjectsScene::updateActiveLayers()
 	setActiveLayers(active_layers);
 }
 
-QStringList ObjectsScene::getLayerColorNames(LayerAttribute color_id)
+QStringList ObjectsScene::getLayerColorNames(LayerAttrColor color_id)
 {
 	//if(color_id > LayerRectColor)
 	//	return {};
@@ -557,7 +557,7 @@ QStringList ObjectsScene::getLayerColorNames(LayerAttribute color_id)
 	QStringList colors;
 
 	for(auto &path : layers_paths)
-		colors.append(color_id == LayerAttribute::LayerName ? path->getTextColor().name() : path->brush().color().name());
+		colors.append(color_id == LayerNameColor ? path->getTextColor().name() : path->brush().color().name());
 
 	return colors;
 }
@@ -576,7 +576,7 @@ void ObjectsScene::setLayerColors(int layer_id, QColor txt_color, QColor bg_colo
 	layers_paths[layer_id]->update();
 }
 
-void ObjectsScene::setLayerColors(LayerAttribute layer_attr_id, const QStringList &colors)
+void ObjectsScene::setLayerColors(LayerAttrColor layer_attr_id, const QStringList &colors)
 {
 	//if(layer_attr_id > LayerRectColor)
 	//	return;
@@ -591,7 +591,7 @@ void ObjectsScene::setLayerColors(LayerAttribute layer_attr_id, const QStringLis
 
 		color = QColor(cl_name);
 
-		if(layer_attr_id == LayerAttribute::LayerName)
+		if(layer_attr_id == LayerNameColor)
 			layers_paths[idx]->setTextColor(color);
 		else
 		{

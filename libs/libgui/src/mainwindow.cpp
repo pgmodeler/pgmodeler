@@ -2204,9 +2204,9 @@ void MainWindow::toggleCompactView()
 		model_wgt = dynamic_cast<ModelWidget *>(models_tbw->widget(idx));
 
 		if(action_compact_view->isChecked())
-			model_wgt->setAllCollapseMode(CollapseMode::ExtAttribsCollapsed);
+			model_wgt->setAllCollapseMode(BaseTable::ExtAttribsCollapsed);
 		else
-			model_wgt->setAllCollapseMode(CollapseMode::NotCollapsed);
+			model_wgt->setAllCollapseMode(BaseTable::NotCollapsed);
 
 		model_wgt->getDatabaseModel()->setObjectsModified({ ObjectType::Table, ObjectType::ForeignTable,
 																												ObjectType::View, ObjectType::Relationship,

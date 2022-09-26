@@ -329,7 +329,7 @@ class ModelWidget: public QWidget {
 
 		void fadeObjects(const std::vector<BaseObject *> &objects, bool fade_in);
 
-		void setAllCollapseMode(CollapseMode mode);
+		void setAllCollapseMode(BaseTable::CollapseMode mode);
 
 	public:
 		static constexpr double MinimumZoom=0.050000,

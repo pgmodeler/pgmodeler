@@ -29,14 +29,15 @@
 #include "basegraphicobject.h"
 #include "tag.h"
 
-//! \brief This enum is used to control the collapsing of the tables
-enum CollapseMode: unsigned {
-	AllAttribsCollapsed, //Columns (attributes) and extended attributes are collapsed
-	ExtAttribsCollapsed, //Extended attributes are collapsed
-	NotCollapsed //Table is fully expanded (columns and extended attributes)
-};
-
 class BaseTable: public BaseGraphicObject {
+	public:
+		//! \brief This enum is used to control the collapsing of the tables
+		enum CollapseMode: unsigned {
+			AllAttribsCollapsed, //Columns (attributes) and extended attributes are collapsed
+			ExtAttribsCollapsed, //Extended attributes are collapsed
+			NotCollapsed //Table is fully expanded (columns and extended attributes)
+		};
+
 	protected:
 		Tag *tag;
 

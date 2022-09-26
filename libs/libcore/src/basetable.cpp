@@ -76,7 +76,7 @@ void BaseTable::operator = (BaseTable &tab)
 	this->tag=tab.tag;
 }
 
-CollapseMode BaseTable::getCollapseMode()
+BaseTable::CollapseMode BaseTable::getCollapseMode()
 {
 	return collapse_mode;
 }

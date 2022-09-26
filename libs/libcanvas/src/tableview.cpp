@@ -49,7 +49,7 @@ void TableView::configureObject()
 	std::vector<TableObject *> tab_objs, columns, ext_tab_objs;
 	QStringList atribs, tag_attribs = { Attributes::TableBody, Attributes::TableExtBody };
 	Tag *tag=table->getTag();
-	CollapseMode collapse_mode = table->getCollapseMode();
+	BaseTable::CollapseMode collapse_mode = table->getCollapseMode();
 	std::vector<ObjectType> ext_types = BaseObject::getChildObjectTypes(table->getObjectType());
 	bool has_col_pag = false, has_ext_pag = false;
 
@@ -82,7 +82,7 @@ void TableView::configureObject()
 	has_col_pag = configurePaginationParams(BaseTable::AttribsSection, columns.size(), start_col, end_col);
 
 	has_ext_pag = configurePaginationParams(BaseTable::ExtAttribsSection,
-																						collapse_mode != CollapseMode::ExtAttribsCollapsed ? ext_tab_objs.size() : 0,
+																						collapse_mode != BaseTable::ExtAttribsCollapsed ? ext_tab_objs.size() : 0,
 																						start_ext, end_ext);
 
 	attribs_toggler->setHasExtAttributes(!hide_ext_attribs && !ext_tab_objs.empty());
@@ -97,7 +97,7 @@ void TableView::configureObject()
 
 		if(obj_idx==0)
 		{
-			if(collapse_mode != CollapseMode::AllAttribsCollapsed)
+			if(collapse_mode != BaseTable::AllAttribsCollapsed)
 			{
 				if(table->isPaginationEnabled() && has_col_pag)
 					tab_objs.assign(columns.begin() + start_col, columns.begin() + end_col);
@@ -107,7 +107,7 @@ void TableView::configureObject()
 		}
 		else
 		{
-			if(!hide_ext_attribs && collapse_mode == CollapseMode::NotCollapsed)
+			if(!hide_ext_attribs && collapse_mode == BaseTable::NotCollapsed)
 			{
 				if(table->isPaginationEnabled() && has_ext_pag)
 					tab_objs.assign(ext_tab_objs.begin() + start_ext, ext_tab_objs.begin() + end_ext);
