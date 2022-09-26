@@ -234,8 +234,8 @@ void TableView::configureObject()
 				tab_obj=dynamic_cast<TableObject *>(col_item->getUnderlyingObject());
 				cy=title->boundingRect().height() + col_item->pos().y() + (col_item->boundingRect().height()/2);
 				conn_points[tab_obj].resize(2);
-				conn_points[tab_obj][enum_t(BaseTableView::LeftConnPoint)]=QPointF(col_item->pos().x() - 1.5, cy);
-				conn_points[tab_obj][enum_t(BaseTableView::RightConnPoint)]=QPointF(col_item->pos().x() + width - 1.5  , cy);
+				conn_points[tab_obj][BaseTableView::LeftConnPoint]=QPointF(col_item->pos().x() - 1.5, cy);
+				conn_points[tab_obj][BaseTableView::RightConnPoint]=QPointF(col_item->pos().x() + width - 1.5  , cy);
 			}
 		}
 	}

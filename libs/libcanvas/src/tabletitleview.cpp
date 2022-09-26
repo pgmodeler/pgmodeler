@@ -27,9 +27,7 @@ TableTitleView::TableTitleView() : BaseObjectView(nullptr)
 	obj_name->setZValue(1);
 
 	box=new RoundedRectItem;
-	box->setRoundedCorners(static_cast<RoundedRectItem::RectCorners>(
-													 enum_t(RoundedRectItem::TopLeftCorner) |
-													 enum_t(RoundedRectItem::TopRightCorner)));
+	box->setRoundedCorners(RoundedRectItem::TopLeftCorner | RoundedRectItem::TopRightCorner);
 	box->setZValue(0);
 }
 

@@ -645,7 +645,7 @@ QString View::getCodeDefinition(unsigned def_type)
 	attributes[Attributes::Columns]="";
 	attributes[Attributes::Tag]="";
 	attributes[Attributes::Pagination]=(pagination_enabled ? Attributes::True : "");
-	attributes[Attributes::CollapseMode]=QString::number(enum_t(collapse_mode));
+	attributes[Attributes::CollapseMode]=QString::number(collapse_mode);
 	attributes[Attributes::AttribsPage]=(pagination_enabled ? QString::number(curr_page[AttribsSection]) : "");
 	attributes[Attributes::ExtAttribsPage]=(pagination_enabled ? QString::number(curr_page[ExtAttribsSection]) : "");
 

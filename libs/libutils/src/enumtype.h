@@ -33,4 +33,24 @@ constexpr std::underlying_type_t<Enum> enum_t (Enum enum_val) noexcept
 	return static_cast<typename std::underlying_type_t<Enum>>(enum_val);
 }
 
+//! \brief This function peforms OR bitwise operation on enums
+template<typename Enum>
+constexpr Enum operator | (Enum left_enum, Enum right_enum) noexcept
+{
+	return static_cast<Enum>(enum_t(left_enum) | enum_t(right_enum));
+}
+
+//! \brief This function peforms XOR bitwise operation on enums
+template<typename Enum>
+constexpr Enum operator ^ (Enum left_enum, Enum right_enum) noexcept
+{
+	return static_cast<Enum>(enum_t(left_enum) ^ enum_t(right_enum));
+}
+
+//! \brief This function peforms AND bitwise operation on enums
+template<typename Enum>
+constexpr Enum operator & (Enum left_enum, Enum right_enum) noexcept
+{
+	return static_cast<Enum>(enum_t(left_enum) & enum_t(right_enum));
+}
 #endif

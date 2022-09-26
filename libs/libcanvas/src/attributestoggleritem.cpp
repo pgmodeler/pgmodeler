@@ -26,9 +26,7 @@ AttributesTogglerItem::AttributesTogglerItem(QGraphicsItem *parent) : RoundedRec
 {
 	createButtonPolygons();
 
-	this->setRoundedCorners(static_cast<RoundedRectItem::RectCorners>(
-														enum_t(RoundedRectItem::BottomLeftCorner) |
-														enum_t(RoundedRectItem::BottomRightCorner)));
+	this->setRoundedCorners(RoundedRectItem::BottomLeftCorner | RoundedRectItem::BottomRightCorner);
 	sel_rect = new QGraphicsRectItem;
 
 	for(unsigned arr_id = 0; arr_id < 7; arr_id++)
