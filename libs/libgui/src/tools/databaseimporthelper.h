@@ -54,7 +54,7 @@ class DatabaseImportHelper: public QObject {
 		Connection connection;
 		
 		//! \brief Stores the current configured catalog filter
-		unsigned import_filter;
+		Catalog::QueryFilter import_filter;
 		
 		//! \brief Indicates that import was canceled by user (only on thread mode)
 		bool import_canceled,

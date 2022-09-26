@@ -3167,7 +3167,7 @@ QString DatabaseImportHelper::getType(const QString &oid_str, bool generate_xml,
 				/* If the type was not found is more likely that is a user-defined type which was not listed
 				 * while retrieving system types (see retrieveSystemObjects()).User defined types are created on demand,
 				 * this way pgModeler will import its attributes so it can be created correctly below. */
-				unsigned curr_filter = catalog.getQueryFilter();
+				Catalog::QueryFilter curr_filter = catalog.getQueryFilter();
 				catalog.setQueryFilter(Catalog::ListAllObjects);
 				type_attr = catalog.getObjectAttributes(ObjectType::Type, type_oid);
 				types[type_oid] = type_attr;

@@ -33,6 +33,25 @@ This class is the basis for the reverse engineering feature.
 #include <QApplication>
 
 class Catalog {
+	public:
+		enum QueryFilter: unsigned {
+			//! \brief Excludes the system objects from listing
+			ExclSystemObjs=1,
+
+			//! \brief Excludes the extension generated objects from listing
+			ExclExtensionObjs=2,
+
+			//! \brief Excludes the builtin array types.
+			ExclBuiltinArrayTypes=4,
+
+			/*! \brief Shows only system objects. Using this filter will disable the other two filters.
+			Using this filter implies the listing of extension objects */
+			ListOnlySystemObjs=8,
+
+			//! \brief Shows all objects including system objects and extension object.
+			ListAllObjects=16
+		};
+
 	private:
 		SchemaParser schparser;
 
@@ -95,9 +114,9 @@ class Catalog {
 		Connection connection;
 
 		//! \brief Stores the last system object identifier. This is used to filter system objects
-		unsigned last_sys_oid,
+		unsigned last_sys_oid;
 
-		filter;
+		QueryFilter filter;
 
 		//! \brief Indicates if the catalog must filter system objects
 		bool exclude_sys_objs,
@@ -155,23 +174,7 @@ class Catalog {
 		static const QString PgModelerTempDbObj;
 
 		//! \brief Stores the null char escaped in format \000
-		static const QString EscapedNullChar;
-
-		//! \brief Excludes the system objects from listing
-		static constexpr unsigned ExclSystemObjs=1,
-
-		//! \brief Excludes the extension generated objects from listing
-		ExclExtensionObjs=2,
-
-		//! \brief Excludes the builtin array types.
-		ExclBuiltinArrayTypes=4,
-
-		/*! \brief Shows only system objects. Using this filter will disable the other two filters.
-		Using this filter implies the listing of extension objects */
-		ListOnlySystemObjs=8,
-
-		//! \brief Shows all objects including system objects and extension object.
-		ListAllObjects=16;
+		static const QString EscapedNullChar;		
 
 		//! \brief Changes the current connection used by the catalog
 		void setConnection(Connection &conn);
@@ -182,7 +185,7 @@ class Catalog {
 		void closeConnection();
 
 		//! \brief Configures the catalog query filter
-		void setQueryFilter(unsigned filter);
+		void setQueryFilter(QueryFilter filter);
 
 		/*! \brief Configures the objects name filtering.
 		 * The parameter only_matching creates extra filters for the other kind of objects not provided by the user in order to avoid listing them.
@@ -214,7 +217,7 @@ class Catalog {
 		unsigned getObjectCount(ObjectType obj_type, const QString &sch_name="", const QString &tab_name="", attribs_map extra_attribs=attribs_map());
 
 		//! \brief Returns the current filter configuration for the catalog queries
-		unsigned getQueryFilter();
+		QueryFilter getQueryFilter();
 
 		//! \brief Returns the configured objects a name filters
 		std::map<ObjectType, QString> getObjectFilters();

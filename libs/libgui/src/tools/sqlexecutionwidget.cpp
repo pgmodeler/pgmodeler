@@ -270,7 +270,7 @@ void SQLExecutionWidget::fillResultsTable(Catalog &catalog, ResultSet &res, QTab
 		std::vector<unsigned>::iterator end;
 		std::vector<attribs_map> types;
 		std::map<unsigned, QString> type_names;
-		unsigned orig_filter=catalog.getQueryFilter();
+		Catalog::QueryFilter orig_filter=catalog.getQueryFilter();
 
 		results_tbw->setRowCount(0);
 		results_tbw->setColumnCount(col_cnt);

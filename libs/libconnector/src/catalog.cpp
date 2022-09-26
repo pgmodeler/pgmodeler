@@ -140,7 +140,7 @@ void Catalog::closeConnection()
 	connection.close();
 }
 
-void Catalog::setQueryFilter(unsigned filter)
+void Catalog::setQueryFilter(QueryFilter filter)
 {
 	bool list_all=(ListAllObjects & filter) == ListAllObjects;
 
@@ -492,7 +492,7 @@ unsigned Catalog::getObjectCount(ObjectType obj_type, const QString &sch_name, c
 	}
 }
 
-unsigned Catalog::getQueryFilter()
+Catalog::QueryFilter Catalog::getQueryFilter()
 {
 	return filter;
 }
