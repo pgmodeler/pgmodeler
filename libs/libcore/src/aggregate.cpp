@@ -32,21 +32,21 @@ Aggregate::Aggregate()
 	attributes[Attributes::SortOp]="";
 }
 
-void Aggregate::setFunction(unsigned func_idx, Function *func)
+void Aggregate::setFunction(FunctionId func_id, Function *func)
 {
 	//Case the function index is invalid raises an error
-	if(func_idx!=FinalFunc && func_idx!=TransitionFunc)
+	if(func_id > TransitionFunc)
 		throw Exception(ErrorCode::RefFunctionInvalidType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	//Checks if the function is valid, if not the case raises an error
-	if(!isValidFunction(func_idx, func))
+	if(!isValidFunction(func_id, func))
 		throw Exception(Exception::getErrorMessage(ErrorCode::AsgFunctionInvalidConfiguration)
 						.arg(this->getName())
 						.arg(BaseObject::getTypeName(ObjectType::Aggregate)),
 						ErrorCode::AsgFunctionInvalidConfiguration,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	setCodeInvalidated(functions[func_idx]!=func);
-	functions[func_idx]=func;
+	setCodeInvalidated(functions[func_id]!=func);
+	functions[func_id]=func;
 }
 
 bool Aggregate::isValidFunction(unsigned func_idx, Function *func)
@@ -185,13 +185,13 @@ unsigned Aggregate::getDataTypeCount()
 	return data_types.size();
 }
 
-Function *Aggregate::getFunction(unsigned func_idx)
+Function *Aggregate::getFunction(FunctionId func_id)
 {
 	//Raises an exception if the function index is invalid
-	if(func_idx!=FinalFunc && func_idx!=TransitionFunc)
+	if(func_id > TransitionFunc)
 		throw Exception(ErrorCode::RefFunctionInvalidType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	return functions[func_idx];
+	return functions[func_id];
 }
 
 PgSqlType Aggregate::getStateType()

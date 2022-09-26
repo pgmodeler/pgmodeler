@@ -68,13 +68,15 @@ class Aggregate: public BaseObject {
 
 	public:
 		//! \brief Constants used to reference the functions used by the aggregate
-		static constexpr unsigned FinalFunc=0,
-		TransitionFunc=1;
+		enum FunctionId: unsigned {
+			FinalFunc,
+			TransitionFunc
+		};
 
 		Aggregate();
 
 		//! \brief Defines one of the functions used by the aggregate
-		void setFunction(unsigned func_idx, Function *func);
+		void setFunction(FunctionId func_id, Function *func);
 
 		//! \brief Defines the state data type of the aggregate
 		void setStateType(PgSqlType state_type);
@@ -94,7 +96,7 @@ class Aggregate: public BaseObject {
 		//! \brief Removes all accepted data types from aggregate
 		void removeDataTypes();
 
-		Function *getFunction(unsigned func_idx);
+		Function *getFunction(FunctionId func_id);
 		PgSqlType getStateType();
 		QString getInitialCondition();
 		Operator *getSortOperator();

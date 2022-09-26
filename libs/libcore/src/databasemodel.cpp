@@ -8458,10 +8458,9 @@ void DatabaseModel::getAggregateDependencies(BaseObject *object, std::vector<Bas
 {
 	Aggregate *aggreg=dynamic_cast<Aggregate *>(object);
 	BaseObject *usr_type=nullptr;
-	unsigned count, i;
 
-	for(i=Aggregate::FinalFunc; i <= Aggregate::TransitionFunc; i++)
-		getObjectDependecies(aggreg->getFunction(i), deps, inc_indirect_deps);
+	for(unsigned i = Aggregate::FinalFunc; i <= Aggregate::TransitionFunc; i++)
+		getObjectDependecies(aggreg->getFunction(static_cast<Aggregate::FunctionId>(i)), deps, inc_indirect_deps);
 
 	usr_type=getObjectPgSQLType(aggreg->getStateType());
 
@@ -8471,8 +8470,8 @@ void DatabaseModel::getAggregateDependencies(BaseObject *object, std::vector<Bas
 	if(aggreg->getSortOperator())
 		getObjectDependecies(aggreg->getSortOperator(), deps, inc_indirect_deps);
 
-	count=aggreg->getDataTypeCount();
-	for(i=0; i < count; i++)
+	unsigned count=aggreg->getDataTypeCount();
+	for(unsigned i=0; i < count; i++)
 	{
 		usr_type=getObjectPgSQLType(aggreg->getDataType(i));
 
