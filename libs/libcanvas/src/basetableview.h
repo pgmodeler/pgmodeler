@@ -34,11 +34,6 @@
 #include "textpolygonitem.h"
 #include "attributestoggleritem.h"
 
-enum class ConnPoint: unsigned {
-	LeftConnPoint,
-	RightConnPoint
-};
-
 class BaseTableView: public BaseObjectView {
 	private:
 		Q_OBJECT
@@ -130,6 +125,11 @@ class BaseTableView: public BaseObjectView {
 		bool configurePaginationParams(unsigned page_id, unsigned total_attrs, unsigned &start_attr, unsigned &end_attr);
 
 	public:
+		enum ConnectionPoint: unsigned {
+			LeftConnPoint,
+			RightConnPoint
+		};
+
 		BaseTableView(BaseTable *base_tab);
 		virtual ~BaseTableView();
 

@@ -297,7 +297,8 @@ void GraphicalView::configureObject()
 			col_item=dynamic_cast<TableObjectView *>(subitems.front());
 			subitems.pop_front();
 			col_item->setChildObjectXPos(TableObjectView::ConstrAliasLabel,
-																	 width - col_item->getChildObject(3)->boundingRect().width() - (2 * HorizSpacing));
+																	 width - col_item->getChildObject(TableObjectView::ConstrAliasLabel)
+																	 ->boundingRect().width() - (2 * HorizSpacing));
 		}
 	}
 

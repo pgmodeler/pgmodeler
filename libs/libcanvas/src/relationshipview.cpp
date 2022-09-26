@@ -693,8 +693,8 @@ void RelationshipView::configureLine()
 				Table *ref_tab=nullptr, *rec_tab=nullptr;
 				TableView *ref_tab_view=nullptr, *rec_tab_view=nullptr;
 				unsigned cnt=0, i=0;
-				ConnPoint pk_pnt_type = ConnPoint::LeftConnPoint,
-						fk_pnt_type = ConnPoint::LeftConnPoint;
+				BaseTableView::ConnectionPoint pk_pnt_type = BaseTableView::LeftConnPoint,
+						fk_pnt_type = BaseTableView::LeftConnPoint;
 
 				if(!rel)
 				{
@@ -730,22 +730,22 @@ void RelationshipView::configureLine()
 						conn_same_sides = true;
 
 						if(rec_tab_rect.center().x() >= ref_tab_rect.center().x())
-							pk_pnt_type=fk_pnt_type=ConnPoint::LeftConnPoint;
+							pk_pnt_type=fk_pnt_type=BaseTableView::LeftConnPoint;
 						else if(rec_tab_rect.center().x() < ref_tab_rect.center().x())
-							pk_pnt_type=fk_pnt_type=ConnPoint::RightConnPoint;
+							pk_pnt_type=fk_pnt_type=BaseTableView::RightConnPoint;
 					}
 					else
 					{
 						//Connecting the relationship on the opposite sides depending on the tables' position
 						if(ref_tab_rect.right() <= rec_tab_rect.left())
 						{
-							pk_pnt_type=ConnPoint::RightConnPoint;
-							fk_pnt_type=ConnPoint::LeftConnPoint;
+							pk_pnt_type=BaseTableView::RightConnPoint;
+							fk_pnt_type=BaseTableView::LeftConnPoint;
 						}
 						else
 						{
-							pk_pnt_type=ConnPoint::LeftConnPoint;
-							fk_pnt_type=ConnPoint::RightConnPoint;
+							pk_pnt_type=BaseTableView::LeftConnPoint;
+							fk_pnt_type=BaseTableView::RightConnPoint;
 						}
 					}
 
@@ -770,8 +770,8 @@ void RelationshipView::configureLine()
 
 				if(!fks.empty())
 				{
-					double pk_dx=(pk_pnt_type==ConnPoint::LeftConnPoint ? -ConnLineLength : ConnLineLength),
-							fk_dx=(fk_pnt_type==ConnPoint::LeftConnPoint ? -ConnLineLength : ConnLineLength);
+					double pk_dx=(pk_pnt_type==BaseTableView::LeftConnPoint ? -ConnLineLength : ConnLineLength),
+							fk_dx=(fk_pnt_type==BaseTableView::LeftConnPoint ? -ConnLineLength : ConnLineLength);
 
 					pk_pnt=this->mapFromItem(ref_tab_view, QPointF(pk_px + pk_dx, pk_py/pk_points.size()));
 					fk_pnt=this->mapFromItem(rec_tab_view, QPointF(fk_px + fk_dx, fk_py/fk_points.size()));

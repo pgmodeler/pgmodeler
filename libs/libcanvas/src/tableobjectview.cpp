@@ -562,15 +562,15 @@ void TableObjectView::configureObject(const SimpleColumn &col)
 	calculateBoundingRect();
 }
 
-void TableObjectView::setChildObjectXPos(unsigned obj_idx, double px)
+void TableObjectView::setChildObjectXPos(ChildObjectId obj_id, double px)
 {
-	if(obj_idx >= 4)
+	if(obj_id > ConstrAliasLabel)
 		throw Exception(ErrorCode::RefObjectInvalidIndex, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 
-	if(obj_idx==0)
+	if(obj_id == ObjDescriptor)
 		descriptor->setPos(px, descriptor->pos().y());
 	else
-		lables[obj_idx-1]->setPos(px, lables[obj_idx-1]->pos().y());
+		lables[obj_id-1]->setPos(px, lables[obj_id-1]->pos().y());
 
 	calculateBoundingRect();
 }
@@ -605,15 +605,15 @@ void TableObjectView::calculateBoundingRect()
 		lables[i]->setPos(lables[i]->pos().x(), py);
 }
 
-QGraphicsItem *TableObjectView::getChildObject(unsigned obj_idx)
+QGraphicsItem *TableObjectView::getChildObject(ChildObjectId obj_id)
 {
-	if(obj_idx > ConstrAliasLabel)
+	if(obj_id > ConstrAliasLabel)
 		throw Exception(ErrorCode::RefObjectInvalidIndex, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 
-	if(obj_idx == ObjDescriptor)
+	if(obj_id == ObjDescriptor)
 		return descriptor;
 	else
-		return lables[obj_idx - 1];
+		return lables[obj_id - 1];
 }
 
 QString TableObjectView::getConstraintString(Column *column)

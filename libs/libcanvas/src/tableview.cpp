@@ -234,8 +234,8 @@ void TableView::configureObject()
 				tab_obj=dynamic_cast<TableObject *>(col_item->getUnderlyingObject());
 				cy=title->boundingRect().height() + col_item->pos().y() + (col_item->boundingRect().height()/2);
 				conn_points[tab_obj].resize(2);
-				conn_points[tab_obj][enum_t(ConnPoint::LeftConnPoint)]=QPointF(col_item->pos().x() - 1.5, cy);
-				conn_points[tab_obj][enum_t(ConnPoint::RightConnPoint)]=QPointF(col_item->pos().x() + width - 1.5  , cy);
+				conn_points[tab_obj][enum_t(BaseTableView::LeftConnPoint)]=QPointF(col_item->pos().x() - 1.5, cy);
+				conn_points[tab_obj][enum_t(BaseTableView::RightConnPoint)]=QPointF(col_item->pos().x() + width - 1.5  , cy);
 			}
 		}
 	}
@@ -265,15 +265,17 @@ void TableView::configureObject()
 		requestRelationshipsUpdate();
 }
 
-QPointF TableView::getConnectionPoints(TableObject *tab_obj, ConnPoint conn_pnt)
+QPointF TableView::getConnectionPoints(TableObject *tab_obj, ConnectionPoint conn_pnt)
 {
 	if(!tab_obj)
 		throw Exception(ErrorCode::OprNotAllocatedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-	//else if(pnt_type > RightConnPoint)
-	//	throw Exception(ErrorCode::RefElementInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-	else if(conn_points.count(tab_obj)==0)
+
+	if(conn_pnt > RightConnPoint)
+		throw Exception(ErrorCode::RefElementInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+	if(conn_points.count(tab_obj)==0)
 		//Returns the center point in case of the connection point of the table object wasn't calculated already
 		return this->getCenter();
 
-	return conn_points[tab_obj][enum_t(conn_pnt)];
+	return conn_points[tab_obj][conn_pnt];
 }
