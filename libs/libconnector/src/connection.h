@@ -125,14 +125,16 @@ class Connection {
 		ServerPid;
 
 		//! \brief Constants used to reference the default usage in model operations (see setDefaultForOperation())
-		static constexpr unsigned OpValidation=0,
-		OpExport=1,
-		OpImport=2,
-		OpDiff=3,
-		OpNone=4;
+		enum ConnOperation: unsigned {
+			OpValidation = 0,
+			OpExport = 1,
+			OpImport = 2,
+			OpDiff = 3,
+			OpNone = 4
+		};
 
 		Connection();
-        Connection(const Connection &);
+		Connection(const Connection &);
 		Connection(const attribs_map &params);
 		~Connection();
 
@@ -233,10 +235,10 @@ class Connection {
 		void executeDDLCommand(const QString &sql);
 
 		//! \brief Toggles the default status for the connect in the specified operation (OP_??? constants).
-		void setDefaultForOperation(unsigned op_id, bool value);
+		void setDefaultForOperation(ConnOperation op_id, bool value);
 
 		//! \brief Returns if the connection is the default for the specifed operation
-		bool isDefaultForOperation(unsigned op_id);
+		bool isDefaultForOperation(ConnOperation op_id);
 
 		//! \brief Makes an copy between two connections
 		void operator = (const Connection &conn);

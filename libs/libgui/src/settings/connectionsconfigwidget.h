@@ -66,13 +66,13 @@ class ConnectionsConfigWidget: public BaseConfigWidget, public Ui::ConnectionsCo
 		static Connection *getConnection(const QString &conn_id);
 		
 		//! \brief Fills the passed combobox with all the loaded connections
-		static void fillConnectionsComboBox(QComboBox *combo, bool incl_placeholder, unsigned check_def_for=Connection::OpNone);
+		static void fillConnectionsComboBox(QComboBox *combo, bool incl_placeholder, Connection::ConnOperation check_def_for=Connection::OpNone);
 		
 		//! \brief Opens a local instance of connection config dialog to permit user configures connections on-the-fly
 		static bool openConnectionsConfiguration(QComboBox *combo, bool incl_placeholder);
 
 		//! \brief Returns the first connection found which is defined as the default for the specified operation
-		static Connection *getDefaultConnection(unsigned operation);
+		static Connection *getDefaultConnection(Connection::ConnOperation operation);
 		
 	protected:
 		void destroyConnections();
