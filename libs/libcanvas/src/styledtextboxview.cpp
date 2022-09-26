@@ -37,9 +37,10 @@ void StyledTextboxView::configureObject()
 	if(rect.height() < fold->boundingRect().height() + (8 * VertSpacing))
 		rect.setHeight(fold->boundingRect().height() + (8 * VertSpacing));
 
-	rect_item.setRoundedCorners(RoundedRectItem::TopLeftCorner |
-															RoundedRectItem::TopRightCorner |
-															RoundedRectItem::BottomLeftCorner);
+	rect_item.setRoundedCorners(static_cast<RoundedRectItem::RectCorners>(
+																enum_t(RoundedRectItem::TopLeftCorner) |
+																enum_t(RoundedRectItem::TopRightCorner) |
+																enum_t(RoundedRectItem::BottomLeftCorner)));
 	rect_item.setRect(rect);
 	pol = rect_item.getPolygon();
 	resizePolygon(pol, rect.width() + fold->boundingRect().width(), rect.height());

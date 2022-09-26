@@ -29,7 +29,9 @@ BaseTableView::BaseTableView(BaseTable *base_tab) : BaseObjectView(base_tab)
 
 	pending_geom_update = false;
 	body=new RoundedRectItem;
-	body->setRoundedCorners(RoundedRectItem::BottomLeftCorner | RoundedRectItem::BottomRightCorner);
+	body->setRoundedCorners(static_cast<RoundedRectItem::RectCorners>(
+														enum_t(RoundedRectItem::BottomLeftCorner) |
+														enum_t(RoundedRectItem::BottomRightCorner)));
 
 	title=new TableTitleView;
 	title->setZValue(2);

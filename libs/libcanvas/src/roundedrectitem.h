@@ -29,6 +29,27 @@
 #include <QPainter>
 
 class RoundedRectItem: public QGraphicsRectItem {
+	public:
+		enum RectCorners: unsigned {
+			//! \brief Implies a normal rectangle (no rounded corner)
+			NoCorners=0,
+
+			//! \brief The top-left corner will be rounded
+			TopLeftCorner=2,
+
+			//! \brief The top-right corner will be rounded
+			TopRightCorner=4,
+
+			//! \brief The Bottom-left corner will be rounded
+			BottomLeftCorner=8,
+
+			//! \brief The Bottom-right corner will be rounded
+			BottomRightCorner=16,
+
+			//! \brief All corners will be rounded
+			AllCorners=32
+		};
+
 	private:
 		//! \brief Rect border radius
 		double radius;
@@ -37,7 +58,7 @@ class RoundedRectItem: public QGraphicsRectItem {
 		QPolygonF polygon;
 
 		//! \brief Stores which corners of the rectangle must be rounded
-		unsigned corners;
+		RectCorners corners;
 
 		//! \brief Creates the polygon that represents the rounded rectangle
 		void createPolygon();
@@ -50,34 +71,16 @@ class RoundedRectItem: public QGraphicsRectItem {
 		QVector<QPointF> calculatePoints(QPointF start_pnt, double start_angle, double end_angle);
 
 	public:
-		//! \brief Implies a normal rectangle (no rounded corner)
-		static constexpr unsigned NoCorners=0,
-
-		//! \brief The top-left corner will be rounded
-		TopLeftCorner=2,
-
-		//! \brief The top-right corner will be rounded
-		TopRightCorner=4,
-
-		//! \brief The Bottom-left corner will be rounded
-		BottomLeftCorner=8,
-
-		//! \brief The Bottom-right corner will be rounded
-		BottomRightCorner=16,
-
-		//! \brief All corners will be rounded
-		AllCorners=32;
-
 		explicit RoundedRectItem(QGraphicsItem *parent = 0);
 
 		void setBorderRadius(double radius);
 		double getBorderRadius();
 
-		void setRoundedCorners(unsigned corners);
-		unsigned getRoundedCorners();
+		void setRoundedCorners(RectCorners corners);
+		RectCorners getRoundedCorners();
 
 		//! \brief Test if a corners is configured to be rounded
-		bool isCornerRounded(unsigned corner);
+		bool isCornerRounded(RectCorners corner);
 
 		void setRect(const QRectF &rect);
 
