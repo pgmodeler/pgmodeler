@@ -90,7 +90,8 @@ void AttributesTogglerItem::setButtonSelected(const QPointF &pnt, bool clicked)
 {
 	QRectF rect;
 	double h_spacing = 4 * BaseObjectView::HorizSpacing;
-	unsigned coll_mode = static_cast<unsigned>(collapse_mode), section_id = 0;
+	unsigned coll_mode = static_cast<unsigned>(collapse_mode);
+	BaseTable::TableSection section_id;
 
 	this->setToolTip("");
 	clearButtonsSelection();
@@ -228,7 +229,7 @@ void AttributesTogglerItem::setPaginationEnabled(bool value, bool hide_pag_toggl
 	configureButtonsState();
 }
 
-void AttributesTogglerItem::setPaginationValues(unsigned section_id, unsigned curr_page, unsigned max_page)
+void AttributesTogglerItem::setPaginationValues(BaseTable::TableSection section_id, unsigned curr_page, unsigned max_page)
 {
 	if(!pagination_enabled || section_id > BaseTable::ExtAttribsSection)
 		return;

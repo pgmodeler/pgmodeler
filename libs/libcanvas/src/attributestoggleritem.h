@@ -132,7 +132,7 @@ class AttributesTogglerItem: public QObject, public RoundedRectItem {
 
 		/*! \brief Defines the current values of the pagination (current page and maximum allowed pages)
 		 * Thes values are used to control the buttons fading when the page navigation reaches one of the limits (min/max) */
-		void setPaginationValues(unsigned page_id, unsigned curr_page, unsigned max_page);
+		void setPaginationValues(BaseTable::TableSection page_id, unsigned curr_page, unsigned max_page);
 
 		//! \brief Clears the selection status of the buttons
 		void clearButtonsSelection();
@@ -151,7 +151,7 @@ class AttributesTogglerItem: public QObject, public RoundedRectItem {
 		void s_collapseModeChanged(BaseTable::CollapseMode);
 
 		//! \brief Signal emitted when the current page changes (the user clicks the page navigation buttons)
-		void s_currentPageChanged(unsigned, unsigned);
+		void s_currentPageChanged(BaseTable::TableSection, unsigned);
 
 		//! \brief Signal emitted when the user clicks the pagination toggler buttons
 		void s_paginationToggled(bool);

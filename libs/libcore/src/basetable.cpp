@@ -95,7 +95,7 @@ bool BaseTable::isPaginationEnabled()
 	return pagination_enabled;
 }
 
-void BaseTable::setCurrentPage(unsigned section_id, unsigned value)
+void BaseTable::setCurrentPage(TableSection section_id, unsigned value)
 {
 	if(section_id > ExtAttribsSection)
 		throw Exception(ErrorCode::RefElementInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -104,7 +104,7 @@ void BaseTable::setCurrentPage(unsigned section_id, unsigned value)
 	curr_page[section_id] = value;
 }
 
-unsigned BaseTable::getCurrentPage(unsigned section_id)
+unsigned BaseTable::getCurrentPage(TableSection section_id)
 {
 	if(section_id > ExtAttribsSection)
 		throw Exception(ErrorCode::RefElementInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);

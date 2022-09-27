@@ -319,6 +319,18 @@ CREATE TABLE public.table_b (\n \
 	connect(custom_scale_spb, &QDoubleSpinBox::valueChanged, [&](){
 		setConfigurationChanged(true);
 	});
+
+	connect(min_obj_opacity_spb, &QSpinBox::valueChanged, [&](){
+		setConfigurationChanged(true);
+	});
+
+	connect(ext_attribs_per_page_spb, &QSpinBox::valueChanged, [&](){
+		setConfigurationChanged(true);
+	});
+
+	connect(attribs_per_page_spb, &QSpinBox::valueChanged, [&](){
+		setConfigurationChanged(true);
+	});
 }
 
 AppearanceConfigWidget::~AppearanceConfigWidget()

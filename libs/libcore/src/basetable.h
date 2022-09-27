@@ -51,8 +51,10 @@ class BaseTable: public BaseGraphicObject {
 		unsigned curr_page[2];
 
 	public:
-		static constexpr unsigned AttribsSection = 0,
-		ExtAttribsSection = 1;
+		enum TableSection: unsigned {
+			AttribsSection,
+			ExtAttribsSection
+		};
 
 		BaseTable();
 
@@ -127,9 +129,9 @@ class BaseTable: public BaseGraphicObject {
 		/*! \brief Defines the current page visible on the table. Calling this method direclty
 		 * will not update the geometry of the graphical representation of this object. For that,
 		 * the setModified(true) should be called */
-		void setCurrentPage(unsigned section_id, unsigned value);
+		void setCurrentPage(TableSection section_id, unsigned value);
 		void resetCurrentPages();
-		unsigned getCurrentPage(unsigned section_id);
+		unsigned getCurrentPage(TableSection section_id);
 
 		/*! \brief Returns the data dictionary definition of the table (in HTML format).
 		 * The split parameter is used to inform the generation process that the dicts are being

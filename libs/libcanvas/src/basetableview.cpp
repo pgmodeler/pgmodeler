@@ -210,7 +210,7 @@ void BaseTableView::mousePressEvent(QGraphicsSceneMouseEvent *event)
 	}
 }
 
-void BaseTableView::setAttributesPerPage(unsigned section_id, unsigned value)
+void BaseTableView::setAttributesPerPage(BaseTable::TableSection section_id, unsigned value)
 {
 	if(section_id > BaseTable::ExtAttribsSection)
 		throw Exception(ErrorCode::RefElementInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -219,7 +219,7 @@ void BaseTableView::setAttributesPerPage(unsigned section_id, unsigned value)
 		attribs_per_page[section_id] = value;
 }
 
-unsigned BaseTableView::getAttributesPerPage(unsigned section_id)
+unsigned BaseTableView::getAttributesPerPage(BaseTable::TableSection section_id)
 {
 	if(section_id > BaseTable::ExtAttribsSection)
 		throw Exception(ErrorCode::RefElementInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -543,7 +543,7 @@ void BaseTableView::finishGeometryUpdate()
 	dynamic_cast<Schema *>(this->getUnderlyingObject()->getSchema())->setModified(true);
 }
 
-bool BaseTableView::configurePaginationParams(unsigned section_id, unsigned total_attrs, unsigned &start_attr, unsigned &end_attr)
+bool BaseTableView::configurePaginationParams(BaseTable::TableSection section_id, unsigned total_attrs, unsigned &start_attr, unsigned &end_attr)
 {
 	if(section_id > BaseTable::ExtAttribsSection)
 		return false;
@@ -609,7 +609,7 @@ void BaseTableView::togglePagination(bool enabled)
 	emit s_paginationToggled();
 }
 
-void BaseTableView::configureCurrentPage(unsigned section_id, unsigned page)
+void BaseTableView::configureCurrentPage(BaseTable::TableSection section_id, unsigned page)
 {
 	startGeometryUpdate();
 	dynamic_cast<BaseTable *>(this->getUnderlyingObject())->setCurrentPage(section_id, page);
