@@ -28,13 +28,12 @@ RelationshipView::RelationshipView(BaseRelationship *rel) : BaseObjectView(rel)
 	if(!rel)
 		throw Exception(ErrorCode::AsgNotAllocattedObject, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 
-	for(unsigned i=BaseRelationship::SrcCardLabel;
-			i <= BaseRelationship::RelNameLabel; i++)
+	for(unsigned i=BaseRelationship::SrcCardLabel; i <= BaseRelationship::RelNameLabel; i++)
 	{
-		if(rel->getLabel(i))
+		if(rel->getLabel(static_cast<BaseRelationship::RelationshipLabel>(i)))
 		{
-			labels[i]=new TextboxView(rel->getLabel(i), true);
-			labels[i]->setZValue(i==BaseRelationship::RelNameLabel ? 1 : 2);
+			labels[i] = new TextboxView(rel->getLabel(static_cast<BaseRelationship::RelationshipLabel>(i)), true);
+			labels[i]->setZValue(i == BaseRelationship::RelNameLabel ? 1 : 2);
 			this->addToGroup(labels[i]);
 		}
 		else
@@ -493,17 +492,17 @@ void RelationshipView::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
 	BaseRelationship *base_rel=this->getUnderlyingObject();
 
-	if(event->button()==Qt::LeftButton)
+	if(event->button() == Qt::LeftButton)
 	{
 		if(dynamic_cast<TextboxView *>(sel_object))
 		{
 			//Calculates the displacement of the label from the initial pos to the current
-			base_rel->setLabelDistance(sel_object_idx,
-										 QPointF(sel_object->pos() - labels_ini_pos[sel_object_idx]));
+			base_rel->setLabelDistance(static_cast<BaseRelationship::RelationshipLabel>(sel_object_idx),
+																 QPointF(sel_object->pos() - labels_ini_pos[sel_object_idx]));
 		}
 
-		sel_object_idx=-1;
-		sel_object=nullptr;
+		sel_object_idx = -1;
+		sel_object = nullptr;
 	}
 
 	BaseObjectView::mouseReleaseEvent(event);
@@ -1785,7 +1784,7 @@ void RelationshipView::configureLabels()
 	double x=0,y=0;
 	QPointF pnt;
 	BaseRelationship *base_rel=this->getUnderlyingObject();
-	unsigned rel_type=base_rel->getRelationshipType();
+	BaseRelationship::RelationshipType rel_type = base_rel->getRelationshipType();
 	QPointF label_dist;
 
 	label_dist=base_rel->getLabelDistance(BaseRelationship::RelNameLabel);
@@ -1836,8 +1835,8 @@ void RelationshipView::configureLabels()
 		double dl, da, v_space=VertSpacing * 2.5, h_space=HorizSpacing * 2.5;
 		QLineF lins[2], borders[2][4];
 		QRectF tab_rect, rect;
-		unsigned label_ids[2]={ BaseRelationship::SrcCardLabel,
-														BaseRelationship::DstCardLabel };
+		BaseRelationship::RelationshipLabel label_ids[2]={ BaseRelationship::SrcCardLabel,
+																											 BaseRelationship::DstCardLabel };
 
 		if(!base_rel->isSelfRelationship() &&
 				line_conn_mode==ConnectFkToPk && rel_type!=BaseRelationship::RelationshipNn)
@@ -1951,7 +1950,7 @@ void RelationshipView::configureLabels()
 	}
 }
 
-void RelationshipView::configureLabelPosition(unsigned label_id, double x, double y)
+void RelationshipView::configureLabelPosition(BaseRelationship::RelationshipLabel label_id, double x, double y)
 {
 	if(label_id > BaseRelationship::RelNameLabel)
 		throw Exception(ErrorCode::RefObjectInvalidIndex ,__PRETTY_FUNCTION__,__FILE__,__LINE__);

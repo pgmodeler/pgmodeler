@@ -6901,26 +6901,25 @@ BaseRelationship *DatabaseModel::createRelationship()
 {
 	std::vector<unsigned> cols_special_pk;
 	attribs_map attribs, constr_attribs;
-	std::map<QString, unsigned> labels_id;
 	BaseRelationship *base_rel=nullptr;
 	Relationship *rel=nullptr;
 	BaseTable *tables[2]={nullptr, nullptr};
 	bool src_mand, dst_mand, identifier, protect, deferrable, sql_disabled, single_pk_col, faded_out;
 	DeferralType defer_type;
 	ActionType del_action, upd_action;
-	unsigned rel_type=0, i = 0;
+	BaseRelationship::RelationshipType rel_type;
+	unsigned i = 0;
 	QStringList layers;
 	ObjectType table_types[2]={ ObjectType::View, ObjectType::Table }, obj_rel_type;
 	QString str_aux, elem, tab_attribs[2]={ Attributes::SrcTable, Attributes::DstTable };
 	QColor custom_color=Qt::transparent;
 	Table *table = nullptr;
+	std::map<QString, BaseRelationship::RelationshipLabel> 	labels_id= {{ Attributes::NameLabel, BaseRelationship::RelNameLabel },
+																																			{ Attributes::SrcLabel, BaseRelationship::SrcCardLabel },
+																																			{ Attributes::DstLabel, BaseRelationship::DstCardLabel }};
 
 	try
 	{
-		labels_id[Attributes::NameLabel]=BaseRelationship::RelNameLabel;
-		labels_id[Attributes::SrcLabel]=BaseRelationship::SrcCardLabel;
-		labels_id[Attributes::DstLabel]=BaseRelationship::DstCardLabel;
-
 		xmlparser.getElementAttributes(attribs);
 
 		src_mand=attribs[Attributes::SrcRequired]==Attributes::True;
@@ -7058,7 +7057,7 @@ BaseRelationship *DatabaseModel::createRelationship()
 				rel_type=BaseRelationship::RelationshipGen;
 			else if(attribs[Attributes::Type]==Attributes::RelationshipDep)
 				rel_type=BaseRelationship::RelationshipDep;
-			else if(attribs[Attributes::Type]==Attributes::RelationshipPart)
+			else /* if(attribs[Attributes::Type]==Attributes::RelationshipPart) */
 				rel_type=BaseRelationship::RelationshipPart;
 
 			rel=new Relationship(rel_type,
@@ -10425,9 +10424,9 @@ void DatabaseModel::setObjectsModified(std::vector<ObjectType> types)
 				if(obj_types[i]==ObjectType::Relationship || obj_types[i]==ObjectType::BaseRelationship)
 				{
 					rel=dynamic_cast<BaseRelationship *>(*itr);
-					for(i1=0; i1 < 3; i1++)
+					for(i1 = BaseRelationship::SrcCardLabel; i1 <= BaseRelationship::RelNameLabel; i1++)
 					{
-						label=rel->getLabel(i1);
+						label = rel->getLabel(static_cast<BaseRelationship::RelationshipLabel>(i1));
 						if(label) label->setModified(true);
 					}
 				}
@@ -11115,7 +11114,7 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned option
 					//Saving the labels' custom positions
 					for(unsigned id=BaseRelationship::SrcCardLabel; id <= BaseRelationship::RelNameLabel; id++)
 					{
-						pnt=rel->getLabelDistance(id);
+						pnt=rel->getLabelDistance(static_cast<BaseRelationship::RelationshipLabel>(id));
 						if(!std::isnan(pnt.x()) && !std::isnan(pnt.y()))
 						{
 							aux_attribs[Attributes::XPos]=QString::number(pnt.x());
@@ -11493,7 +11492,7 @@ void DatabaseModel::loadObjectsMetadata(const QString &filename, unsigned option
 
 										for(unsigned id=BaseRelationship::SrcCardLabel; id <= BaseRelationship::RelNameLabel; id++)
 										{
-											rel->setLabelDistance(id, labels_pos[id]);
+											rel->setLabelDistance(static_cast<BaseRelationship::RelationshipLabel>(id), labels_pos[id]);
 											labels_pos[id]=QPointF(DNaN, DNaN);
 										}
 									}

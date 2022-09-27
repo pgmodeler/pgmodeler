@@ -35,7 +35,7 @@ BaseRelationship::BaseRelationship(BaseRelationship *rel)
 	reference_fk = nullptr;
 }
 
-BaseRelationship::BaseRelationship(unsigned rel_type, BaseTable *src_tab, BaseTable *dst_tab, bool src_mandatory, bool dst_mandatory)
+BaseRelationship::BaseRelationship(RelationshipType rel_type, BaseTable *src_tab, BaseTable *dst_tab, bool src_mandatory, bool dst_mandatory)
 
 {
 	try
@@ -311,16 +311,15 @@ void BaseRelationship::connectRelationship()
 	}
 }
 
-Textbox *BaseRelationship::getLabel(unsigned label_id)
+Textbox *BaseRelationship::getLabel(RelationshipLabel label_id)
 {
-	if(label_id<=RelNameLabel)
-		return lables[label_id];
+	if(label_id > RelNameLabel)
+		throw Exception(ErrorCode::RefLabelInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	//Raises an error when the label id is invalid
-	throw Exception(ErrorCode::RefLabelInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+	return lables[label_id];
 }
 
-unsigned BaseRelationship::getRelationshipType()
+BaseRelationship::RelationshipType BaseRelationship::getRelationshipType()
 {
 	return rel_type;
 }
@@ -484,25 +483,25 @@ QString BaseRelationship::getCodeDefinition(unsigned def_type)
 
 void BaseRelationship::setPoints(const std::vector<QPointF> &points)
 {
-	this->setCodeInvalidated(true);
+	setCodeInvalidated(true);
 	this->points=points;
 }
 
-void BaseRelationship::setLabelDistance(unsigned label_id, QPointF label_dist)
+void BaseRelationship::setLabelDistance(RelationshipLabel label_id, QPointF label_dist)
 {
 	if(label_id > RelNameLabel)
 		throw Exception(ErrorCode::RefObjectInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	this->lables_dist[label_id]=label_dist;
-	this->setCodeInvalidated(true);
+	lables_dist[label_id]=label_dist;
+	setCodeInvalidated(true);
 }
 
-QPointF BaseRelationship::getLabelDistance(unsigned label_id)
+QPointF BaseRelationship::getLabelDistance(RelationshipLabel label_id)
 {
 	if(label_id > RelNameLabel)
 		throw Exception(ErrorCode::RefObjectInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	return this->lables_dist[label_id];
+	return lables_dist[label_id];
 }
 
 void BaseRelationship::setCustomColor(const QColor &color)
@@ -517,8 +516,8 @@ QColor BaseRelationship::getCustomColor()
 
 void BaseRelationship::resetLabelsDistance()
 {
-	for(unsigned i=0; i < 3; i++)
-		this->setLabelDistance(i, QPointF(DNaN,DNaN));
+	for(unsigned i = SrcCardLabel; i < RelNameLabel; i++)
+		this->setLabelDistance(static_cast<RelationshipLabel>(i), QPointF(DNaN,DNaN));
 }
 
 std::vector<QPointF> BaseRelationship::getPoints()
@@ -575,7 +574,7 @@ QString BaseRelationship::getRelTypeAttribute()
 	}
 }
 
-QString BaseRelationship::getRelationshipTypeName(unsigned rel_type, bool is_view)
+QString BaseRelationship::getRelationshipTypeName(RelationshipType rel_type, bool is_view)
 {
   switch(rel_type)
   {

@@ -320,7 +320,7 @@ class Relationship: public BaseRelationship {
 
 		Relationship(Relationship *rel);
 
-		Relationship(unsigned rel_type,
+		Relationship(BaseRelationship::RelationshipType rel_type,
 					 PhysicalTable *src_tab, PhysicalTable *dst_tab,
 					 bool src_mdtry=false, bool dst_mdtry=false,
 					 bool identifier=false, bool deferrable=false,

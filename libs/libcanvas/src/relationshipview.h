@@ -136,7 +136,7 @@ class RelationshipView: public BaseObjectView {
 		void configurePositionInfo();
 
 		//! \brief Configures the specified label's position based as well some styles for it
-		void configureLabelPosition(unsigned label_id, double x, double y);
+		void configureLabelPosition(BaseRelationship::RelationshipLabel label_id, double x, double y);
 
 		/*! \brief Returns the default pen width size taking into account the screen dpi and the
 		 * whether the relationship is identifier or not */

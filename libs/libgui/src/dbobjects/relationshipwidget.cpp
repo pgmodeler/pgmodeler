@@ -196,7 +196,7 @@ RelationshipWidget::RelationshipWidget(QWidget *parent): BaseObjectWidget(parent
 	}
 }
 
-void RelationshipWidget::setAttributes(DatabaseModel *model, OperationList *op_list, PhysicalTable *src_tab, PhysicalTable *dst_tab, unsigned rel_type)
+void RelationshipWidget::setAttributes(DatabaseModel *model, OperationList *op_list, PhysicalTable *src_tab, PhysicalTable *dst_tab, BaseRelationship::RelationshipType rel_type)
 {
 	Relationship *rel=nullptr;
 
@@ -454,15 +454,16 @@ void RelationshipWidget::setAttributes(DatabaseModel *model, OperationList *op_l
 
 QSize RelationshipWidget::getIdealSize()
 {
-	unsigned rel_type = 0;
+	BaseRelationship::RelationshipType rel_type = BaseRelationship::Relationship11;
 
 	if(this->object)
-	  rel_type = dynamic_cast<BaseRelationship *>(this->object)->getRelationshipType();
+		rel_type = dynamic_cast<BaseRelationship *>(this->object)->getRelationshipType();
 
 	if(rel_type == BaseRelationship::RelationshipFk ||
-	   (BaseRelationship::RelationshipDep && this->object && this->object->getObjectType()==ObjectType::BaseRelationship))
+		 (rel_type == BaseRelationship::RelationshipDep &&
+			this->object && this->object->getObjectType()==ObjectType::BaseRelationship))
 		return QSize(640, 320);
-	else if(BaseRelationship::RelationshipGen)
+	else if(rel_type == BaseRelationship::RelationshipGen)
 		return QSize(640, 520);
 	else
 		return QSize(640, 680);

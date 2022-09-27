@@ -23,11 +23,12 @@ std::map<QString, attribs_map> RelationshipConfigWidget::config_params;
 RelationshipConfigWidget::RelationshipConfigWidget(QWidget * parent) : BaseConfigWidget(parent)
 {
 	QStringList list, rel_types={ Attributes::Relationship11, Attributes::Relationship1n,
-								  Attributes::RelationshipNn, Attributes::RelationshipGen,
-								  Attributes::RelationshipDep, Attributes::RelationshipPart };
-	unsigned rel_types_id[]={ BaseRelationship::Relationship11, BaseRelationship::Relationship1n,
-							  BaseRelationship::RelationshipNn, BaseRelationship::RelationshipGen,
-							  BaseRelationship::RelationshipDep, BaseRelationship::RelationshipPart};
+																Attributes::RelationshipNn, Attributes::RelationshipGen,
+																Attributes::RelationshipDep, Attributes::RelationshipPart };
+	BaseRelationship::RelationshipType rel_types_id[]={
+								BaseRelationship::Relationship11, BaseRelationship::Relationship1n,
+								BaseRelationship::RelationshipNn, BaseRelationship::RelationshipGen,
+								BaseRelationship::RelationshipDep, BaseRelationship::RelationshipPart };
 
 	Ui_RelationshipConfigWidget::setupUi(this);
 

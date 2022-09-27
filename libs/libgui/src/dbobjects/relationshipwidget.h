@@ -80,10 +80,12 @@ class RelationshipWidget: public BaseObjectWidget, public Ui::RelationshipWidget
 		int openEditingForm(TableObject *object, BaseObject *parent = nullptr);
 
 	protected:
-		void setAttributes(DatabaseModel *model, OperationList *op_list, PhysicalTable *src_tab, PhysicalTable *dst_tab, unsigned rel_type);
+		void setAttributes(DatabaseModel *model, OperationList *op_list, PhysicalTable *src_tab,
+											 PhysicalTable *dst_tab, BaseRelationship::RelationshipType rel_type);
 
 	public:
 		RelationshipWidget(QWidget * parent = nullptr);
+
 		void setAttributes(DatabaseModel *model, OperationList *op_list, BaseRelationship *base_rel);
 
 		QSize getIdealSize();
