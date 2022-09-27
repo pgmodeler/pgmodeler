@@ -37,38 +37,34 @@ void Cast::setName(const QString &)
 	this->obj_name=QString("cast(%1,%2)").arg(~types[SrcType]).arg(~types[DstType]);
 }
 
-void Cast::setDataType(unsigned type_idx, PgSqlType type)
+void Cast::setDataType(DataTypeId type_idx, PgSqlType type)
 {
 	type.reset();
 
-	//Check if the type index is valid
-	if(type_idx<=DstType)
-	{
-		//Raises an error if the passed data type is null
-		if((*type).isEmpty())
-			throw Exception(Exception::getErrorMessage(ErrorCode::AsgNullTypeObject)
-							.arg(this->getName())
-							.arg(BaseObject::getTypeName(ObjectType::Cast)),
-							ErrorCode::AsgNullTypeObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-
-		setCodeInvalidated(this->types[type_idx] != type);
-		this->types[type_idx]=type;
-	}
-	else
-		//Raises an error if the type index is invalid
+	if(type_idx > DstType)
 		throw Exception(ErrorCode::RefTypeInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+	//Raises an error if the passed data type is null
+	if((*type).isEmpty())
+		throw Exception(Exception::getErrorMessage(ErrorCode::AsgNullTypeObject)
+						.arg(this->getName())
+						.arg(BaseObject::getTypeName(ObjectType::Cast)),
+						ErrorCode::AsgNullTypeObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+	setCodeInvalidated(this->types[type_idx] != type);
+	this->types[type_idx]=type;
 
 	setName("");
 }
 
-void Cast::setCastType(unsigned cast_type)
+void Cast::setCastType(CastType cast_type)
 {
 	//Raises an error if the user tries to assign an invalid cast type
 	if(cast_type > Implicit)
 		throw Exception(ErrorCode::AsgInvalidTypeObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	setCodeInvalidated(this->cast_type != cast_type);
-	this->cast_type=cast_type;
+	this->cast_type = cast_type;
 }
 
 void Cast::setInOut(bool value)
@@ -137,7 +133,7 @@ void Cast::setCastFunction(Function *cast_func)
 	this->cast_function=cast_func;
 }
 
-PgSqlType Cast::getDataType(unsigned type_idx)
+PgSqlType Cast::getDataType(DataTypeId type_idx)
 {
 	if(type_idx > DstType)
 		throw Exception(ErrorCode::RefTypeInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -155,7 +151,7 @@ Function *Cast::getCastFunction()
 	return cast_function;
 }
 
-unsigned Cast::getCastType()
+Cast::CastType Cast::getCastType()
 {
 	return cast_type;
 }

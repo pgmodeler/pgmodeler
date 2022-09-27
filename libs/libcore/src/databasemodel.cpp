@@ -8392,9 +8392,9 @@ void DatabaseModel::getCastDependencies(BaseObject *object, std::vector<BaseObje
 	Cast *cast=dynamic_cast<Cast *>(object);
 	BaseObject *usr_type=nullptr;
 
-	for(unsigned i=Cast::SrcType; i <= Cast::DstType; i++)
+	for(unsigned i = Cast::SrcType; i <= Cast::DstType; i++)
 	{
-		usr_type=getObjectPgSQLType(cast->getDataType(i));
+		usr_type=getObjectPgSQLType(cast->getDataType(static_cast<Cast::DataTypeId>(i)));
 
 		if(usr_type)
 			getObjectDependecies(usr_type, deps, inc_indirect_deps);
