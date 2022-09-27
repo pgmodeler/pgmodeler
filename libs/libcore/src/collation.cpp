@@ -42,7 +42,7 @@ void Collation::setLocale(const QString &locale)
 	this->locale=locale;
 }
 
-void Collation::setLocalization(unsigned lc_id, QString lc_name)
+void Collation::setLocalization(LocaleId lc_id, QString lc_name)
 {
 	if(locale.isEmpty())
 	{
@@ -72,7 +72,7 @@ void Collation::setLocalization(unsigned lc_id, QString lc_name)
 	}
 }
 
-void Collation::setModifier(unsigned lc_id, QString mod)
+void Collation::setModifier(LocaleId lc_id, QString mod)
 {
 	if(lc_id > Locale)
 		throw Exception(ErrorCode::RefElementInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -81,7 +81,7 @@ void Collation::setModifier(unsigned lc_id, QString mod)
 	modifier[lc_id] = mod;
 }
 
-QString Collation::getModifier(unsigned lc_id)
+QString Collation::getModifier(LocaleId lc_id)
 {
 	if(lc_id > Locale)
 		throw Exception(ErrorCode::RefElementInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -117,7 +117,7 @@ QString Collation::getLocale()
 	return locale;
 }
 
-QString Collation::getLocalization(unsigned lc_id)
+QString Collation::getLocalization(LocaleId lc_id)
 {
 	if(lc_id > LcCollate)
 		throw Exception(ErrorCode::RefElementInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -181,9 +181,9 @@ QString Collation::getCodeDefinition(unsigned def_type, bool reduced_form)
 		if(localization[LcCtype].isEmpty() && localization[LcCollate].isEmpty())
 			throw Exception(ErrorCode::EmptyLCCollationAttributes,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-		for(unsigned int i=LcCtype; i <= LcCollate; i++)
+		for(unsigned i=LcCtype; i <= LcCollate; i++)
 		{
-			attributes[lc_attribs[i]]=getLocalization(i);
+			attributes[lc_attribs[i]]=getLocalization(static_cast<LocaleId>(i));
 
 			if(def_type==SchemaParser::SqlDefinition && encoding!=BaseType::Null && !attributes[lc_attribs[i]].isEmpty())
 				attributes[lc_attribs[i]] += fmt_encoding;

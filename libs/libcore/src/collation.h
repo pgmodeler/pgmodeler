@@ -30,6 +30,13 @@
 #include "pgsqltypes/providertype.h"
 
 class Collation : public BaseObject {
+	public:
+		enum LocaleId: unsigned {
+			LcCtype,
+			LcCollate,
+			Locale
+		};
+
 	private:
 		/*! \brief Base encoding for the collation.
 		When setting the locale or lc_??? attributes the encoding name
@@ -58,10 +65,6 @@ class Collation : public BaseObject {
 		bool is_deterministic;
 
 	public:
-		static constexpr unsigned LcCtype = 0,
-		LcCollate = 1,
-		Locale = 2;
-
 		Collation();
 
 		/*! \brief Sets the collation locale and the base encoding. This method specifies at once the LC_CTYPE
@@ -70,12 +73,12 @@ class Collation : public BaseObject {
 		void setLocale(const QString &locale);
 
 		//! \brief Configures the LC_CTYPE and LC_COLLATE attributes and the default encoding for them.
-		void setLocalization(unsigned lc_id, QString lc_name);
+		void setLocalization(LocaleId lc_id, QString lc_name);
 
 		/*! \brief Configures the modifier(@modeset) of the locale, LC_CTYPE and LC_COLLATE attributes.
 		 * The locale, LC_CTYPE and LC_COLLATE must be accessed by the related constants Locale, LcCtype and LcCollate */
-		void setModifier(unsigned lc_id, QString mods);
-		QString getModifier(unsigned lc_id);
+		void setModifier(LocaleId lc_id, QString mods);
+		QString getModifier(LocaleId lc_id);
 
 		/*! \brief Sets the collation from which this collation will copy attributes. The use of this method nullifies
 		all the other collation's attributes */
@@ -85,7 +88,7 @@ class Collation : public BaseObject {
 		void setEncoding(EncodingType encoding);
 
 		QString getLocale();
-		QString getLocalization(unsigned lc_id);
+		QString getLocalization(LocaleId lc_id);
 		EncodingType getEncoding();
 
 		void setProvider(ProviderType type);
