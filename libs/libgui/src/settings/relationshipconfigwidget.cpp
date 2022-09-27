@@ -25,7 +25,7 @@ RelationshipConfigWidget::RelationshipConfigWidget(QWidget * parent) : BaseConfi
 	QStringList list, rel_types={ Attributes::Relationship11, Attributes::Relationship1n,
 																Attributes::RelationshipNn, Attributes::RelationshipGen,
 																Attributes::RelationshipDep, Attributes::RelationshipPart };
-	BaseRelationship::RelationshipType rel_types_id[]={
+	BaseRelationship::RelType rel_types_id[]={
 								BaseRelationship::Relationship11, BaseRelationship::Relationship1n,
 								BaseRelationship::RelationshipNn, BaseRelationship::RelationshipGen,
 								BaseRelationship::RelationshipDep, BaseRelationship::RelationshipPart };

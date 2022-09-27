@@ -35,7 +35,7 @@ BaseRelationship::BaseRelationship(BaseRelationship *rel)
 	reference_fk = nullptr;
 }
 
-BaseRelationship::BaseRelationship(RelationshipType rel_type, BaseTable *src_tab, BaseTable *dst_tab, bool src_mandatory, bool dst_mandatory)
+BaseRelationship::BaseRelationship(RelType rel_type, BaseTable *src_tab, BaseTable *dst_tab, bool src_mandatory, bool dst_mandatory)
 
 {
 	try
@@ -181,10 +181,10 @@ void BaseRelationship::setName(const QString &name)
 	}
 }
 
-void BaseRelationship::setMandatoryTable(unsigned table_id, bool value)
+void BaseRelationship::setMandatoryTable(TableId table_id, bool value)
 {
 	QString cmin, aux;
-	unsigned label_id;
+	LabelId label_id;
 
 	/* Raises an error if the user tries to create an relationship
 		One to One where both tables are mandatory partitipation
@@ -255,22 +255,23 @@ void BaseRelationship::setMandatoryTable(unsigned table_id, bool value)
 	}
 }
 
-BaseTable *BaseRelationship::getTable(unsigned table_id)
+BaseTable *BaseRelationship::getTable(TableId table_id)
 {
 	if(table_id==SrcTable)
 		return src_table;
-	else if(table_id==DstTable)
+
+	if(table_id==DstTable)
 		return dst_table;
-	else
-		return nullptr;
+
+	return nullptr;
 }
 
-bool BaseRelationship::isTableMandatory(unsigned table_id)
+bool BaseRelationship::isTableMandatory(TableId table_id)
 {
 	if(table_id==SrcTable)
 		return src_mandatory;
-	else
-		return dst_mandatory;
+
+	return dst_mandatory;
 }
 
 void BaseRelationship::setConnected(bool value)
@@ -311,7 +312,7 @@ void BaseRelationship::connectRelationship()
 	}
 }
 
-Textbox *BaseRelationship::getLabel(RelationshipLabel label_id)
+Textbox *BaseRelationship::getLabel(LabelId label_id)
 {
 	if(label_id > RelNameLabel)
 		throw Exception(ErrorCode::RefLabelInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -319,7 +320,7 @@ Textbox *BaseRelationship::getLabel(RelationshipLabel label_id)
 	return lables[label_id];
 }
 
-BaseRelationship::RelationshipType BaseRelationship::getRelationshipType()
+BaseRelationship::RelType BaseRelationship::getRelationshipType()
 {
 	return rel_type;
 }
@@ -487,7 +488,7 @@ void BaseRelationship::setPoints(const std::vector<QPointF> &points)
 	this->points=points;
 }
 
-void BaseRelationship::setLabelDistance(RelationshipLabel label_id, QPointF label_dist)
+void BaseRelationship::setLabelDistance(LabelId label_id, QPointF label_dist)
 {
 	if(label_id > RelNameLabel)
 		throw Exception(ErrorCode::RefObjectInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -496,7 +497,7 @@ void BaseRelationship::setLabelDistance(RelationshipLabel label_id, QPointF labe
 	setCodeInvalidated(true);
 }
 
-QPointF BaseRelationship::getLabelDistance(RelationshipLabel label_id)
+QPointF BaseRelationship::getLabelDistance(LabelId label_id)
 {
 	if(label_id > RelNameLabel)
 		throw Exception(ErrorCode::RefObjectInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -517,7 +518,7 @@ QColor BaseRelationship::getCustomColor()
 void BaseRelationship::resetLabelsDistance()
 {
 	for(unsigned i = SrcCardLabel; i < RelNameLabel; i++)
-		this->setLabelDistance(static_cast<RelationshipLabel>(i), QPointF(DNaN,DNaN));
+		this->setLabelDistance(static_cast<LabelId>(i), QPointF(DNaN,DNaN));
 }
 
 std::vector<QPointF> BaseRelationship::getPoints()
@@ -574,7 +575,7 @@ QString BaseRelationship::getRelTypeAttribute()
 	}
 }
 
-QString BaseRelationship::getRelationshipTypeName(RelationshipType rel_type, bool is_view)
+QString BaseRelationship::getRelationshipTypeName(RelType rel_type, bool is_view)
 {
   switch(rel_type)
   {

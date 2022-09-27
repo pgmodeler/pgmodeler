@@ -1606,10 +1606,9 @@ void ObjectsScene::alignObjectsToGrid()
 				}
 
 				//Align the labels
-				for(i1=BaseRelationship::SrcCardLabel;
-					i1<=BaseRelationship::RelNameLabel; i1++)
+				for(i1=BaseRelationship::SrcCardLabel; i1 <= BaseRelationship::RelNameLabel; i1++)
 				{
-					lab=rel->getLabel(i1);
+					lab=rel->getLabel(static_cast<BaseRelationship::LabelId>(i1));
 					if(lab)
 						lab->setPos(this->alignPointToGrid(lab->pos()));
 				}

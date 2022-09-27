@@ -136,7 +136,7 @@ class RelationshipView: public BaseObjectView {
 		void configurePositionInfo();
 
 		//! \brief Configures the specified label's position based as well some styles for it
-		void configureLabelPosition(BaseRelationship::RelationshipLabel label_id, double x, double y);
+		void configureLabelPosition(BaseRelationship::LabelId label_id, double x, double y);
 
 		/*! \brief Returns the default pen width size taking into account the screen dpi and the
 		 * whether the relationship is identifier or not */
@@ -197,7 +197,7 @@ class RelationshipView: public BaseObjectView {
 		/*! \brief Returns the connection point for the specified table. The connection point is
 		 where the relationship is connected on envolved tables. The point returned deffers depending on the
 		 line connection mode used.	*/
-		QPointF getConnectionPoint(unsigned table_idx);
+		QPointF getConnectionPoint(BaseRelationship::TableId table_idx);
 
 		void configureObjectShadow(void) = delete;
 		void configureObjectSelection(void) = delete;
@@ -207,7 +207,7 @@ class RelationshipView: public BaseObjectView {
 		void configureLine();
 
 		//! \brief Returns the label through its index
-		TextboxView *getLabel(unsigned lab_idx);
+		TextboxView *getLabel(BaseRelationship::LabelId lab_idx);
 
 	private slots:
 		//! \brief Makes the comple relationship configuration

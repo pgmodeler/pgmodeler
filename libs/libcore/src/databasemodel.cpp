@@ -1773,13 +1773,11 @@ void DatabaseModel::checkRelationshipRedundancy(Relationship *rel)
 {
 	try
 	{
-		unsigned rel_type;
-
 		//Raises an error if the user try to check the redundancy starting from a unnallocated relationship
 		if(!rel)
 			throw Exception(ErrorCode::OprNotAllocatedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-		rel_type=rel->getRelationshipType();
+		BaseRelationship::RelType rel_type = rel->getRelationshipType();
 
 		/* Only identifier relationships or relationship that has identifier
 		 attributes (primary keys) are checked */
@@ -6907,14 +6905,14 @@ BaseRelationship *DatabaseModel::createRelationship()
 	bool src_mand, dst_mand, identifier, protect, deferrable, sql_disabled, single_pk_col, faded_out;
 	DeferralType defer_type;
 	ActionType del_action, upd_action;
-	BaseRelationship::RelationshipType rel_type;
+	BaseRelationship::RelType rel_type;
 	unsigned i = 0;
 	QStringList layers;
 	ObjectType table_types[2]={ ObjectType::View, ObjectType::Table }, obj_rel_type;
 	QString str_aux, elem, tab_attribs[2]={ Attributes::SrcTable, Attributes::DstTable };
 	QColor custom_color=Qt::transparent;
 	Table *table = nullptr;
-	std::map<QString, BaseRelationship::RelationshipLabel> 	labels_id= {{ Attributes::NameLabel, BaseRelationship::RelNameLabel },
+	std::map<QString, BaseRelationship::LabelId> 	labels_id= {{ Attributes::NameLabel, BaseRelationship::RelNameLabel },
 																																			{ Attributes::SrcLabel, BaseRelationship::SrcCardLabel },
 																																			{ Attributes::DstLabel, BaseRelationship::DstCardLabel }};
 
@@ -10426,7 +10424,7 @@ void DatabaseModel::setObjectsModified(std::vector<ObjectType> types)
 					rel=dynamic_cast<BaseRelationship *>(*itr);
 					for(i1 = BaseRelationship::SrcCardLabel; i1 <= BaseRelationship::RelNameLabel; i1++)
 					{
-						label = rel->getLabel(static_cast<BaseRelationship::RelationshipLabel>(i1));
+						label = rel->getLabel(static_cast<BaseRelationship::LabelId>(i1));
 						if(label) label->setModified(true);
 					}
 				}
@@ -11114,7 +11112,7 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned option
 					//Saving the labels' custom positions
 					for(unsigned id=BaseRelationship::SrcCardLabel; id <= BaseRelationship::RelNameLabel; id++)
 					{
-						pnt=rel->getLabelDistance(static_cast<BaseRelationship::RelationshipLabel>(id));
+						pnt=rel->getLabelDistance(static_cast<BaseRelationship::LabelId>(id));
 						if(!std::isnan(pnt.x()) && !std::isnan(pnt.y()))
 						{
 							aux_attribs[Attributes::XPos]=QString::number(pnt.x());
@@ -11492,7 +11490,7 @@ void DatabaseModel::loadObjectsMetadata(const QString &filename, unsigned option
 
 										for(unsigned id=BaseRelationship::SrcCardLabel; id <= BaseRelationship::RelNameLabel; id++)
 										{
-											rel->setLabelDistance(static_cast<BaseRelationship::RelationshipLabel>(id), labels_pos[id]);
+											rel->setLabelDistance(static_cast<BaseRelationship::LabelId>(id), labels_pos[id]);
 											labels_pos[id]=QPointF(DNaN, DNaN);
 										}
 									}

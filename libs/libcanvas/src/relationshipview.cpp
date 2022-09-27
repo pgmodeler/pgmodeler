@@ -30,9 +30,9 @@ RelationshipView::RelationshipView(BaseRelationship *rel) : BaseObjectView(rel)
 
 	for(unsigned i=BaseRelationship::SrcCardLabel; i <= BaseRelationship::RelNameLabel; i++)
 	{
-		if(rel->getLabel(static_cast<BaseRelationship::RelationshipLabel>(i)))
+		if(rel->getLabel(static_cast<BaseRelationship::LabelId>(i)))
 		{
-			labels[i] = new TextboxView(rel->getLabel(static_cast<BaseRelationship::RelationshipLabel>(i)), true);
+			labels[i] = new TextboxView(rel->getLabel(static_cast<BaseRelationship::LabelId>(i)), true);
 			labels[i]->setZValue(i == BaseRelationship::RelNameLabel ? 1 : 2);
 			this->addToGroup(labels[i]);
 		}
@@ -194,7 +194,7 @@ unsigned RelationshipView::getLineConnectinMode()
 	return line_conn_mode;
 }
 
-QPointF RelationshipView::getConnectionPoint(unsigned table_idx)
+QPointF RelationshipView::getConnectionPoint(BaseRelationship::TableId table_idx)
 {
 	if(table_idx > 2)
 		throw Exception(ErrorCode::RefElementInvalidIndex ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -207,12 +207,12 @@ BaseRelationship *RelationshipView::getUnderlyingObject()
 	return dynamic_cast<BaseRelationship *>(this->BaseObjectView::getUnderlyingObject());
 }
 
-TextboxView *RelationshipView::getLabel(unsigned lab_idx)
+TextboxView *RelationshipView::getLabel(BaseRelationship::LabelId lab_idx)
 {
 	if(lab_idx > BaseRelationship::RelNameLabel)
 		return nullptr;
-	else
-		return labels[lab_idx];
+
+	return labels[lab_idx];
 }
 
 QVariant RelationshipView::itemChange(GraphicsItemChange change, const QVariant &value)
@@ -497,7 +497,7 @@ void RelationshipView::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 		if(dynamic_cast<TextboxView *>(sel_object))
 		{
 			//Calculates the displacement of the label from the initial pos to the current
-			base_rel->setLabelDistance(static_cast<BaseRelationship::RelationshipLabel>(sel_object_idx),
+			base_rel->setLabelDistance(static_cast<BaseRelationship::LabelId>(sel_object_idx),
 																 QPointF(sel_object->pos() - labels_ini_pos[sel_object_idx]));
 		}
 
@@ -597,7 +597,7 @@ void RelationshipView::configureLine()
 		int i, i1, count;
 		bool conn_same_sides = false,
 				conn_horiz_sides[2] = { false, false }, conn_vert_sides[2] = { false, false };
-		unsigned rel_type = base_rel->getRelationshipType();
+		BaseRelationship::RelType rel_type = base_rel->getRelationshipType();
 
 		configuring_line=true;
 		pen.setCapStyle(Qt::RoundCap);
@@ -1426,7 +1426,7 @@ void RelationshipView::configureCrowsFootDescriptors()
 	{
 		QGraphicsLineItem *line_item = nullptr;
 		QGraphicsEllipseItem *circle_item = nullptr;
-		unsigned rel_type = base_rel->getRelationshipType();
+		BaseRelationship::RelType rel_type = base_rel->getRelationshipType();
 		double factor=BaseObjectView::getFontFactor() * BaseObjectView::getScreenDpiFactor();
 		int signal = 1;
 		BaseTableView *tables[2] = { nullptr, nullptr };
@@ -1784,7 +1784,7 @@ void RelationshipView::configureLabels()
 	double x=0,y=0;
 	QPointF pnt;
 	BaseRelationship *base_rel=this->getUnderlyingObject();
-	BaseRelationship::RelationshipType rel_type = base_rel->getRelationshipType();
+	BaseRelationship::RelType rel_type = base_rel->getRelationshipType();
 	QPointF label_dist;
 
 	label_dist=base_rel->getLabelDistance(BaseRelationship::RelNameLabel);
@@ -1835,7 +1835,7 @@ void RelationshipView::configureLabels()
 		double dl, da, v_space=VertSpacing * 2.5, h_space=HorizSpacing * 2.5;
 		QLineF lins[2], borders[2][4];
 		QRectF tab_rect, rect;
-		BaseRelationship::RelationshipLabel label_ids[2]={ BaseRelationship::SrcCardLabel,
+		BaseRelationship::LabelId label_ids[2]={ BaseRelationship::SrcCardLabel,
 																											 BaseRelationship::DstCardLabel };
 
 		if(!base_rel->isSelfRelationship() &&
@@ -1950,7 +1950,7 @@ void RelationshipView::configureLabels()
 	}
 }
 
-void RelationshipView::configureLabelPosition(BaseRelationship::RelationshipLabel label_id, double x, double y)
+void RelationshipView::configureLabelPosition(BaseRelationship::LabelId label_id, double x, double y)
 {
 	if(label_id > BaseRelationship::RelNameLabel)
 		throw Exception(ErrorCode::RefObjectInvalidIndex ,__PRETTY_FUNCTION__,__FILE__,__LINE__);

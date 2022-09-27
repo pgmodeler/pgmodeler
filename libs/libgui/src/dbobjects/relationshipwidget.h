@@ -81,7 +81,7 @@ class RelationshipWidget: public BaseObjectWidget, public Ui::RelationshipWidget
 
 	protected:
 		void setAttributes(DatabaseModel *model, OperationList *op_list, PhysicalTable *src_tab,
-											 PhysicalTable *dst_tab, BaseRelationship::RelationshipType rel_type);
+											 PhysicalTable *dst_tab, BaseRelationship::RelType rel_type);
 
 	public:
 		RelationshipWidget(QWidget * parent = nullptr);

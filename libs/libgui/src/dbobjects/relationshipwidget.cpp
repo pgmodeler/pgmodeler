@@ -196,7 +196,7 @@ RelationshipWidget::RelationshipWidget(QWidget *parent): BaseObjectWidget(parent
 	}
 }
 
-void RelationshipWidget::setAttributes(DatabaseModel *model, OperationList *op_list, PhysicalTable *src_tab, PhysicalTable *dst_tab, BaseRelationship::RelationshipType rel_type)
+void RelationshipWidget::setAttributes(DatabaseModel *model, OperationList *op_list, PhysicalTable *src_tab, PhysicalTable *dst_tab, BaseRelationship::RelType rel_type)
 {
 	Relationship *rel=nullptr;
 
@@ -221,13 +221,12 @@ void RelationshipWidget::setAttributes(DatabaseModel *model, OperationList *op_l
 
 void RelationshipWidget::setAttributes(DatabaseModel *model, OperationList *op_list, BaseRelationship *base_rel)
 {
-	unsigned rel_type, i;
-	Relationship *aux_rel=nullptr;
-	bool rel1n=false, relnn=false, relgen_dep=false, has_foreign_tab=false;
-
 	if(!base_rel)
 		throw Exception(ErrorCode::AsgNotAllocattedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
+	BaseRelationship::RelType rel_type;
+	Relationship *aux_rel=nullptr;
+	bool rel1n=false, relnn=false, relgen_dep=false, has_foreign_tab=false;
 	BaseObjectWidget::setAttributes(model, op_list, base_rel);
 
 	if(!this->new_object)
@@ -399,13 +398,13 @@ void RelationshipWidget::setAttributes(DatabaseModel *model, OperationList *op_l
 
 	part_bound_expr_gb->setVisible(rel_type==BaseRelationship::RelationshipPart);
 
-	for(i=SettingsTab; i <= AdvancedTab; i++)
+	for(unsigned i=SettingsTab; i <= AdvancedTab; i++)
 		//rel_attribs_tbw->removeTab(1);
 		rel_attribs_tbw->setTabVisible(i, false);
 
 	if(!relgen_dep)
 	{
-		for(i=SettingsTab; i <= SpecialPkTab; i++)
+		for(unsigned i=SettingsTab; i <= SpecialPkTab; i++)
 			//rel_attribs_tbw->addTab(tabs[i], tab_labels[i]);
 			rel_attribs_tbw->setTabVisible(i, true);
 	}
@@ -454,7 +453,7 @@ void RelationshipWidget::setAttributes(DatabaseModel *model, OperationList *op_l
 
 QSize RelationshipWidget::getIdealSize()
 {
-	BaseRelationship::RelationshipType rel_type = BaseRelationship::Relationship11;
+	BaseRelationship::RelType rel_type = BaseRelationship::Relationship11;
 
 	if(this->object)
 		rel_type = dynamic_cast<BaseRelationship *>(this->object)->getRelationshipType();
@@ -1050,7 +1049,8 @@ void RelationshipWidget::applyConfiguration()
 	{
 		Relationship *rel=nullptr;
 		BaseRelationship *base_rel=dynamic_cast<BaseRelationship *>(this->object);
-		unsigned rel_type, count, i, copy_mode=0, copy_ops=0;
+		BaseRelationship::RelType rel_type;
+		unsigned count, i, copy_mode=0, copy_ops=0;
 		std::vector<unsigned> col_ids;
 
 		/* Due to the complexity of the Relationship class and the strong link between all

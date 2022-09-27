@@ -116,7 +116,7 @@ void ModelsDiffHelper::setFilteredObjects(const std::vector<BaseObject *> &objec
 		if(obj_type == ObjectType::Relationship)
 		{
 			Relationship *rel = dynamic_cast<Relationship *>(obj);
-			unsigned rel_type = rel->getRelationshipType();
+			BaseRelationship::RelType rel_type = rel->getRelationshipType();
 
 			if(rel_type == BaseRelationship::RelationshipGen ||
 				 rel_type == BaseRelationship::RelationshipPart)

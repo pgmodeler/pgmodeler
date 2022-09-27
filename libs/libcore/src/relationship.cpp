@@ -42,7 +42,7 @@ Relationship::Relationship(Relationship *rel) : BaseRelationship(rel)
 	(*(this))=(*rel);
 }
 
-Relationship::Relationship(BaseRelationship::RelationshipType rel_type, PhysicalTable *src_tab,
+Relationship::Relationship(BaseRelationship::RelType rel_type, PhysicalTable *src_tab,
 							 PhysicalTable *dst_tab, bool src_mdtry, bool dst_mdtry,
 							 bool identifier,  bool deferrable, DeferralType deferral_type,
 							 ActionType fk_del_act, ActionType fk_upd_act, CopyOptions copy_op) :
@@ -270,7 +270,7 @@ void Relationship::setOriginalPrimaryKey(Constraint *pk)
 	pk_original = pk;
 }
 
-void Relationship::setMandatoryTable(unsigned table_id, bool value)
+void Relationship::setMandatoryTable(TableId table_id, bool value)
 {
 	BaseRelationship::setMandatoryTable(table_id, value);
 	this->invalidated=true;

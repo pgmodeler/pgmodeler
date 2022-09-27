@@ -88,7 +88,7 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	QString str_ico;
 	QStringList rel_types_cod={QString("11"), QString("1n"), QString("nn"), QString("dep"), QString("gen"), QString("part") };
 	unsigned i;
-	BaseRelationship::RelationshipType
+	BaseRelationship::RelType
 			rel_types_id[]={ BaseRelationship::Relationship11, BaseRelationship::Relationship1n,
 											 BaseRelationship::RelationshipNn, BaseRelationship::RelationshipDep,
 											 BaseRelationship::RelationshipGen, BaseRelationship::RelationshipPart };
@@ -1937,7 +1937,7 @@ void ModelWidget::showObjectForm(ObjectType obj_type, BaseObject *object, BaseOb
 {
 	try
 	{
-		unsigned rel_type = 0;
+		BaseRelationship::RelType rel_type;
 		int res = QDialog::Rejected;
 		Schema *sel_schema=dynamic_cast<Schema *>(parent_obj);
 		QPointF obj_pos=pos;
@@ -1948,7 +1948,7 @@ void ModelWidget::showObjectForm(ObjectType obj_type, BaseObject *object, BaseOb
 		 to the BaseRelationship::RELATIONSHIP_??? constant. */
 		if(obj_type > ObjectType::BaseTable)
 		{
-			rel_type=enum_t(obj_type) - enum_t(ObjectType::Relationship);
+			rel_type=static_cast<BaseRelationship::RelType>(enum_t(obj_type) - enum_t(ObjectType::Relationship));
 			obj_type=ObjectType::Relationship;
 		}
 
@@ -2050,7 +2050,7 @@ void ModelWidget::showObjectForm(ObjectType obj_type, BaseObject *object, BaseOb
 				PhysicalTable *tab1 = dynamic_cast<PhysicalTable *>(selected_objects[0]),
 											*tab2 = (selected_objects.size()==2 ?
 															 dynamic_cast<PhysicalTable *>(selected_objects[1]) : tab1);
-				relationship_wgt->setAttributes(db_model, op_list, tab1, tab2, static_cast<BaseRelationship::RelationshipType>(rel_type));
+				relationship_wgt->setAttributes(db_model, op_list, tab1, tab2, static_cast<BaseRelationship::RelType>(rel_type));
 			}
 			else
 				relationship_wgt->setAttributes(db_model, op_list, dynamic_cast<BaseRelationship *>(object));

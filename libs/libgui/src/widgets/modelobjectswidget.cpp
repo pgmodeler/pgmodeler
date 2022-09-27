@@ -250,7 +250,7 @@ QTreeWidgetItem *ModelObjectsWidget::createItemForObject(BaseObject *object, QTr
 	QTreeWidgetItem *item=nullptr;
 	QFont font;
 	QString str_aux;
-	unsigned rel_type=0;
+	BaseRelationship::RelType rel_type;
 	ConstraintType constr_type;
 	ObjectType obj_type;
 	TableObject *tab_obj=nullptr;
