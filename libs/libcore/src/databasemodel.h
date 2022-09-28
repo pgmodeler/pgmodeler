@@ -81,16 +81,6 @@ class DatabaseModel:  public QObject, public BaseObject {
 
 		static unsigned dbmodel_id;
 
-		/*! \brief Constants used to determine the code generation mode:
-		 *  OriginalSql: generates the SQL for the object only (original behavior)
-		 *  DependenciesSql: generates the original SQL code + dependencies SQL
-		 *  ChildrenSql: generates the original SQL code + children SQL */
-		static constexpr unsigned OriginalSql = 0,
-
-		DependenciesSql = 1,
-
-		ChildrenSql = 2;
-
 		//! \brief Constants used to access the tuple columns in the internal changelog
 		static constexpr unsigned LogDate = 0,
 		LogSinature = 1,
@@ -347,6 +337,16 @@ class DatabaseModel:  public QObject, public BaseObject {
 		void setBasicFunctionAttributes(BaseFunction *func);
 
 	public:
+		/*! \brief Constants used to determine the code generation mode:
+		 *  OriginalSql: generates the SQL for the object only (original behavior)
+		 *  DependenciesSql: generates the original SQL code + dependencies SQL
+		 *  ChildrenSql: generates the original SQL code + children SQL */
+		enum CodeGenMode: unsigned {
+			OriginalSql,
+			DependenciesSql,
+			ChildrenSql
+		};
+
 		static constexpr unsigned MetaDbAttributes=1,	//! \brief Handle database model attribute when save/load metadata file
 		MetaObjsPositioning=2,	//! \brief Handle objects' positioning when save/load metadata file
 		MetaObjsProtection=4,	//! \brief Handle objects' protection status when save/load metadata file
@@ -497,7 +497,7 @@ class DatabaseModel:  public QObject, public BaseObject {
 		/*! \brief Saves the model's SQL code definition by creating separated files for each object
 		 * The provided path must be a directory. If it does not exists then the method will create
 		 * it prior to the generation of the files. */
-		void saveSplitSQLDefinition(const QString &path, unsigned code_gen_mode = OriginalSql);
+		void saveSplitSQLDefinition(const QString &path, CodeGenMode code_gen_mode = OriginalSql);
 
 		/*! \brief Returns the complete SQL/XML defintion for the entire model (including all the other objects).
 		 The parameter 'export_file' is used to format the generated code in a way that can be saved
@@ -516,7 +516,7 @@ class DatabaseModel:  public QObject, public BaseObject {
 		 *  DependenciesSql: generates the original code plus all dependencies needed to properly create the object.
 		 *  ChildrenSql: generates the original code plus all object's children SQL code. This option is used only by schemas, tables and views.
 		 */
-		QString getSQLDefinition(BaseObject *object, unsigned code_gen_mode = OriginalSql);
+		QString getSQLDefinition(BaseObject *object, CodeGenMode code_gen_mode = OriginalSql);
 
 		/*! \brief Returns the creation order of objects in each definition type (SQL or XML).
 

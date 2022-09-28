@@ -7482,7 +7482,7 @@ QString DatabaseModel::__getCodeDefinition(unsigned def_type)
 	}
 }
 
-QString DatabaseModel::getSQLDefinition(BaseObject *object, unsigned code_gen_mode)
+QString DatabaseModel::getSQLDefinition(BaseObject *object, CodeGenMode code_gen_mode)
 {
 	if(!object)
 		throw Exception(ErrorCode::OprNotAllocatedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -8180,7 +8180,7 @@ bool DatabaseModel::saveSplitCustomSQL(bool save_appended, const QString &path, 
 	return false;
 }
 
-void DatabaseModel::saveSplitSQLDefinition(const QString &path, unsigned code_gen_mode)
+void DatabaseModel::saveSplitSQLDefinition(const QString &path, CodeGenMode code_gen_mode)
 {
 	QFileInfo fi(path);
 	QDir dir;

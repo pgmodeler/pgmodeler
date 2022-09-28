@@ -118,7 +118,7 @@ void SourceCodeWidget::generateSourceCode(int)
 				(obj_type==ObjectType::BaseRelationship &&
 				 dynamic_cast<BaseRelationship *>(object)->getRelationshipType()==BaseRelationship::RelationshipFk))
 		{
-			QString aux_def;
+
 			BaseObject::setPgSQLVersion(version_cmb->currentText());
 
 			if(obj_type==ObjectType::Database)
@@ -131,7 +131,7 @@ void SourceCodeWidget::generateSourceCode(int)
 			}
 			else
 			{
-				sqlcode_txt->setPlainText(model->getSQLDefinition(object, static_cast<unsigned>(code_options_cmb->currentIndex())));
+				sqlcode_txt->setPlainText(model->getSQLDefinition(object, static_cast<DatabaseModel::CodeGenMode>(code_options_cmb->currentIndex())));
 			}
 
 #ifdef DEMO_VERSION

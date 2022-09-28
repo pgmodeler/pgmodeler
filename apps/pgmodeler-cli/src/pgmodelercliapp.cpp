@@ -1766,7 +1766,7 @@ void PgModelerCliApp::exportModel()
 	//Export to SQL file
 	else if(parsed_opts.count(ExportToFile))
 	{
-		unsigned code_gen_option = DatabaseModel::OriginalSql;
+		DatabaseModel::CodeGenMode code_gen_option = DatabaseModel::OriginalSql;
 
 		if(parsed_opts.count(DependenciesSql))
 			code_gen_option = DatabaseModel::DependenciesSql;
