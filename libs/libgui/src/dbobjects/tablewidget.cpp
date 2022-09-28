@@ -616,10 +616,10 @@ void TableWidget::showObjectData(TableObject *object, int row)
 		if(constr->getConstraintType()==ConstraintType::ForeignKey)
 		{
 			//Column 2: ON DELETE action
-			tab->setCellText(~constr->getActionType(false),row,2);
+			tab->setCellText(~constr->getActionType(Constraint::DeleteAction),row,2);
 
 			//Column 3: ON UPDATE action
-			tab->setCellText(~constr->getActionType(true),row,3);
+			tab->setCellText(~constr->getActionType(Constraint::UpdateAction),row,3);
 		}
 		else
 		{

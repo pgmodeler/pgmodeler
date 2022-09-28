@@ -68,7 +68,7 @@ class PgSqlType: public TemplateType<PgSqlType>{
 
 	protected:
 		//! \brief Adds a new reference to the user defined type
-		static void addUserType(const QString &type_name, void *ptype, void *pmodel, unsigned type_conf);
+		static void addUserType(const QString &type_name, void *ptype, void *pmodel, UserTypeConfig::TypeConf type_conf);
 
 		//! \brief Removes a reference to the user defined type
 		static void removeUserType(const QString &type_name, void *ptype);

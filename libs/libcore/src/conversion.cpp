@@ -29,24 +29,21 @@ Conversion::Conversion()
 	attributes[Attributes::Function]="";
 }
 
-void Conversion::setEncoding(unsigned encoding_idx, EncodingType encoding_type)
+void Conversion::setEncoding(EncodingId encoding_id, EncodingType encoding_type)
 {
 	//Checks if the encoding index is valid
-	if(encoding_idx<=DstEncoding)
-	{
-		//If the passed enconding type is null an error is raised
-		if((~encoding_type).isEmpty())
-			throw Exception(Exception::getErrorMessage(ErrorCode::AsgNullTypeObject)
-							.arg(this->getName())
-							.arg(BaseObject::getTypeName(ObjectType::Conversion)),
-							ErrorCode::AsgNullTypeObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-
-		//Assigns the encoding to the conversion in the specified index
-		this->encodings[encoding_idx]=encoding_type;
-	}
-	else
-		//Raises an error if the encoding index is invalid
+	if(encoding_id > DstEncoding)
 		throw Exception(ErrorCode::RefTypeInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+	//If the passed enconding type is null an error is raised
+	if((~encoding_type).isEmpty())
+		throw Exception(Exception::getErrorMessage(ErrorCode::AsgNullTypeObject)
+						.arg(this->getName())
+						.arg(BaseObject::getTypeName(ObjectType::Conversion)),
+						ErrorCode::AsgNullTypeObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+	//Assigns the encoding to the conversion in the specified index
+	this->encodings[encoding_id]=encoding_type;
 }
 
 void Conversion::setConversionFunction(Function *conv_func)
@@ -92,12 +89,12 @@ void Conversion::setDefault(bool value)
 	is_default=value;
 }
 
-EncodingType Conversion::getEncoding(unsigned encoding_idx)
+EncodingType Conversion::getEncoding(EncodingId encoding_id)
 {
-	if(encoding_idx > DstEncoding)
+	if(encoding_id > DstEncoding)
 		throw Exception(ErrorCode::RefTypeInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	return this->encodings[encoding_idx];
+	return this->encodings[encoding_id];
 }
 
 Function *Conversion::getConversionFunction()

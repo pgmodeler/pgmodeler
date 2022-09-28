@@ -4292,7 +4292,7 @@ PgSqlType DatabaseModel::createPgSQLType()
 	if(!attribs[Attributes::SpatialType].isEmpty())
 		spatial_type=SpatialType(attribs[Attributes::SpatialType],
 				attribs[Attributes::Srid].toUInt(),
-				attribs[Attributes::Variation].toUInt());
+				static_cast<SpatialType::VariationId>(attribs[Attributes::Variation].toUInt()));
 
 	name=attribs[Attributes::Name];
 
@@ -5086,7 +5086,7 @@ Constraint *DatabaseModel::createConstraint(BaseObject *parent_obj)
 	ConstraintType constr_type;
 	QStringList col_list;
 	int count, i;
-	unsigned col_type;
+	Constraint::ColumnsId cols_id;
 	ObjectType obj_type;
 	ExcludeElement exc_elem;
 
@@ -5231,13 +5231,13 @@ Constraint *DatabaseModel::createConstraint(BaseObject *parent_obj)
 						count=col_list.count();
 
 						if(attribs[Attributes::RefType]==Attributes::SrcColumns)
-							col_type=Constraint::SourceCols;
+							cols_id=Constraint::SourceCols;
 						else
-							col_type=Constraint::ReferencedCols;
+							cols_id=Constraint::ReferencedCols;
 
 						for(i=0; i < count; i++)
 						{
-							if(col_type==Constraint::SourceCols)
+							if(cols_id==Constraint::SourceCols)
 							{
 								if(PhysicalTable::isPhysicalTable(obj_type))
 								{
@@ -5260,7 +5260,7 @@ Constraint *DatabaseModel::createConstraint(BaseObject *parent_obj)
 									column=table_aux->getColumn(col_list[i], true);
 							}
 
-							constr->addColumn(column, col_type);
+							constr->addColumn(column, cols_id);
 						}
 					}
 				}

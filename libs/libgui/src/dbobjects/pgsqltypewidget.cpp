@@ -150,7 +150,7 @@ void PgSQLTypeWidget::updateTypeFormat()
 	}
 }
 
-void PgSQLTypeWidget::listPgSQLTypes(QComboBox *combo, DatabaseModel *model, unsigned user_type_conf, bool oid_types, bool pseudo_types)
+void PgSQLTypeWidget::listPgSQLTypes(QComboBox *combo, DatabaseModel *model, UserTypeConfig::TypeConf user_type_conf, bool oid_types, bool pseudo_types)
 {
 	if(combo)
 	{
@@ -174,7 +174,7 @@ void PgSQLTypeWidget::listPgSQLTypes(QComboBox *combo, DatabaseModel *model, uns
 	}
 }
 
-void PgSQLTypeWidget::setAttributes(PgSqlType type, DatabaseModel *model, bool allow_qualifiers,  unsigned usr_type_conf, bool oid_types, bool pseudo_types)
+void PgSQLTypeWidget::setAttributes(PgSqlType type, DatabaseModel *model, bool allow_qualifiers,  UserTypeConfig::TypeConf usr_type_conf, bool oid_types, bool pseudo_types)
 {
 	try
 	{

@@ -32,6 +32,29 @@
 	 it can be used as a type on certain configurations so this
 	 class implements a basic structure to control these types */
 class UserTypeConfig {
+	public:
+		enum TypeConf: unsigned {
+			BaseType=1, //! \brief The type refers to a user-defined base type (class Type)
+			DomainType=2, //! \brief The type refers to a domain
+			TableType=4, //! \brief The type refers to a table
+			SequenceType=8, //! \brief The type refers to a sequence
+			ViewType=16, //! \brief The type refers to a view
+			ExtensionType=32, //! \brief The type refers to a extension used as datatype
+			ForeignTableType=64, //! \brief The type refers to a extension used as datatype
+
+			//! \brief This constant refers to all types above and must be used only on type searches
+			AllUserTypes=127
+		};
+
+		UserTypeConfig(void)
+		{
+			name="";
+			ptype=nullptr;
+			pmodel=nullptr;
+			invalidated=false;
+			type_conf=BaseType;
+		}
+
 	protected:
 		//! \brief Pointer to the instance of the user defined type
 		void *ptype;
@@ -43,33 +66,12 @@ class UserTypeConfig {
 		QString name;
 
 		//! \brief Type configuration id (refer to ???_TYPE constants)
-		unsigned type_conf;
+		TypeConf type_conf;
 
 		/*! \brief Indicates that the type is invalidated after being removed from database model.
 		This wll cause the type not to be listed or referenced. Actually the type is not removed from
 		user type list but deactivated to avoid messing around with other user types */
 		bool invalidated;
-
-	public:
-		static constexpr unsigned BaseType=1, //! \brief The type refers to a user-defined base type (class Type)
-		DomainType=2, //! \brief The type refers to a domain
-		TableType=4, //! \brief The type refers to a table
-		SequenceType=8, //! \brief The type refers to a sequence
-		ViewType=16, //! \brief The type refers to a view
-		ExtensionType=32, //! \brief The type refers to a extension used as datatype
-		ForeignTableType=64, //! \brief The type refers to a extension used as datatype
-
-		//! \brief This constant refers to all types above and must be used only on type searches
-		AllUserTypes=127;
-
-		UserTypeConfig(void)
-		{
-			name="";
-			ptype=nullptr;
-			pmodel=nullptr;
-			invalidated=false;
-			type_conf=BaseType;
-		}
 
 		friend class PgSqlType;
 };

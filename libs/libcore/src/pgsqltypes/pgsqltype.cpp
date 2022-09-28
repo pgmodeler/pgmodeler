@@ -517,16 +517,17 @@ unsigned PgSqlType::setUserType(void *ptype)
 	return type_idx;
 }
 
-void PgSqlType::addUserType(const QString &type_name, void *ptype, void *pmodel, unsigned type_conf)
+void PgSqlType::addUserType(const QString &type_name, void *ptype, void *pmodel, UserTypeConfig::TypeConf type_conf)
 {
 	if(!type_name.isEmpty() && ptype && pmodel &&
-			(type_conf==UserTypeConfig::DomainType ||
+			/*(type_conf==UserTypeConfig::DomainType ||
 			 type_conf==UserTypeConfig::SequenceType ||
 			 type_conf==UserTypeConfig::TableType ||
 			 type_conf==UserTypeConfig::ViewType ||
 			 type_conf==UserTypeConfig::ExtensionType ||
 			 type_conf==UserTypeConfig::ForeignTableType ||
-			 type_conf==UserTypeConfig::BaseType) &&
+			 type_conf==UserTypeConfig::BaseType)*/
+			type_conf != UserTypeConfig::AllUserTypes &&
 			getUserTypeIndex(type_name,ptype,pmodel)==0)
 	{
 		UserTypeConfig cfg;

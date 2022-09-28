@@ -1544,8 +1544,8 @@ void PhysicalTable::getColumnReferences(Column *column, std::vector<TableObject 
 			constr=dynamic_cast<Constraint *>(*itr);
 			itr++;
 
-			col=constr->getColumn(column->getName(),true);
-			col1=constr->getColumn(column->getName(),false);
+			col=constr->getColumn(column->getName(), Constraint::SourceCols);
+			col1=constr->getColumn(column->getName(), Constraint::ReferencedCols);
 
 			if((col && col==column) || (col1 && col1==column))
 			{

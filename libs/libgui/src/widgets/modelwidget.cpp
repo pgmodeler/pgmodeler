@@ -1359,11 +1359,11 @@ void ModelWidget::convertRelationshipNN()
 
 							for(x=Constraint::SourceCols; x <= Constraint::ReferencedCols; x++)
 							{
-								count1=aux_constr->getColumnCount(x);
+								count1=aux_constr->getColumnCount(static_cast<Constraint::ColumnsId>(x));
 								for(idx1=0; idx1 < count1; idx1++)
 								{
-									col=tab->getColumn(aux_constr->getColumn(idx, x)->getName());
-									if(col) constr->addColumn(col, x);
+									col=tab->getColumn(aux_constr->getColumn(idx, static_cast<Constraint::ColumnsId>(x))->getName());
+									if(col) constr->addColumn(col, static_cast<Constraint::ColumnsId>(x));
 								}
 							}
 							tab->addConstraint(constr);
