@@ -70,6 +70,14 @@ class DatabaseModel:  public QObject, public BaseObject {
 	private:
 		Q_OBJECT
 
+		//! \brief Constants used to access the tuple columns in the internal changelog
+		enum LogFields: unsigned {
+			LogDate,
+			LogSinature,
+			LogObjectType,
+			LogAction
+		};
+
 		/*! \brief Stores all changes performed in the database model
 		 * The only purpose of this structure is to be used by the partial diff to filter certain objects by operation/date and,
 		 * differently from OperationList class, it's data persisted in the database model file. */
@@ -80,12 +88,6 @@ class DatabaseModel:  public QObject, public BaseObject {
 		std::map<ObjectType, std::vector<BaseObject *> *> obj_lists;
 
 		static unsigned dbmodel_id;
-
-		//! \brief Constants used to access the tuple columns in the internal changelog
-		static constexpr unsigned LogDate = 0,
-		LogSinature = 1,
-		LogObjectType = 2,
-		LogAction = 3;
 
 		XmlParser xmlparser;
 
@@ -347,22 +349,24 @@ class DatabaseModel:  public QObject, public BaseObject {
 			ChildrenSql
 		};
 
-		static constexpr unsigned MetaDbAttributes=1,	//! \brief Handle database model attribute when save/load metadata file
-		MetaObjsPositioning=2,	//! \brief Handle objects' positioning when save/load metadata file
-		MetaObjsProtection=4,	//! \brief Handle objects' protection status when save/load metadata file
-		MetaObjsSqlDisabled=8,	//! \brief Handle objects' sql disabled status when save/load metadata file
-		MetaObjsCustomSql=16,	//! \brief Handle object's custom sql when save/load metadata file
-		MetaObjsCustomColors=32,	//! \brief Handle object's custom colors when save/load metadata file
-		MetaObjsFadeOut=64,	//! \brief Handle graphical object's fade out status when save/load metadata file
-		MetaObjsCollapseMode=128,	//! \brief Handle tables and views collapse mode when save/load metadata file
-		MetaTextboxObjs=256,	//! \brief Handle textboxes object when save/load metadata file
-		MetaTagObjs=512,	//! \brief Handle tags object when save/load metadata file
-		MetaGenericSqlObjs=1024,	//! \brief Handle generic sql object when save/load metadata file
-		MetaObjsAliases=2048,	//! \brief Handle the object's aliases (graphical objects and table children objects) when save/load metadata file
-		MetaObjsZStackValue=4096,	//! \brief Handle the object's Z stack value
-		MetaObjsLayersConfig=8192,	//! \brief Handle all the configuration related to layers
-		MetaMergeDuplicatedObjs=16384,	//! \brief Merges duplicated textboxes, tags and generic SQL objects
-		MetaAllInfo=32767;	//! \brief Handle all metadata information about objects when save/load metadata file
+		enum MetaAttrOptions {
+			MetaDbAttributes=1,	//! \brief Handle database model attribute when save/load metadata file
+			MetaObjsPositioning=2,	//! \brief Handle objects' positioning when save/load metadata file
+			MetaObjsProtection=4,	//! \brief Handle objects' protection status when save/load metadata file
+			MetaObjsSqlDisabled=8,	//! \brief Handle objects' sql disabled status when save/load metadata file
+			MetaObjsCustomSql=16,	//! \brief Handle object's custom sql when save/load metadata file
+			MetaObjsCustomColors=32,	//! \brief Handle object's custom colors when save/load metadata file
+			MetaObjsFadeOut=64,	//! \brief Handle graphical object's fade out status when save/load metadata file
+			MetaObjsCollapseMode=128,	//! \brief Handle tables and views collapse mode when save/load metadata file
+			MetaTextboxObjs=256,	//! \brief Handle textboxes object when save/load metadata file
+			MetaTagObjs=512,	//! \brief Handle tags object when save/load metadata file
+			MetaGenericSqlObjs=1024,	//! \brief Handle generic sql object when save/load metadata file
+			MetaObjsAliases=2048,	//! \brief Handle the object's aliases (graphical objects and table children objects) when save/load metadata file
+			MetaObjsZStackValue=4096,	//! \brief Handle the object's Z stack value
+			MetaObjsLayersConfig=8192,	//! \brief Handle all the configuration related to layers
+			MetaMergeDuplicatedObjs=16384,	//! \brief Merges duplicated textboxes, tags and generic SQL objects
+			MetaAllInfo=32767	//! \brief Handle all metadata information about objects when save/load metadata file
+		};
 
 		DatabaseModel();
 
@@ -858,10 +862,10 @@ class DatabaseModel:  public QObject, public BaseObject {
 
 		/*! \brief Save the graphical objects positions, custom colors and custom points (for relationship lines) to an special file
 				that can be loaded by another model in order to change their objects position */
-		void saveObjectsMetadata(const QString &filename, unsigned options=MetaAllInfo);
+		void saveObjectsMetadata(const QString &filename, MetaAttrOptions options=MetaAllInfo);
 
 		//! \brief Load the file containing the objects positioning to be applied to the model
-		void loadObjectsMetadata(const QString &filename, unsigned options=MetaAllInfo);		
+		void loadObjectsMetadata(const QString &filename, MetaAttrOptions options=MetaAllInfo);
 
 		/*! \brief Returns a search filter from the objects in the change log.
 		 * It's possible to specify a date interval to contrain the entries

@@ -175,7 +175,7 @@ void MetadataHandlingForm::handleObjectsMetada()
 																										GuiUtilsNs::formatMessage(tr("Extracting metadata to file `%1'").arg(metadata_file)),
 																										QPixmap(GuiUtilsNs::getIconPath("info")), nullptr);
 
-			extract_model->saveObjectsMetadata(metadata_file, options);
+			extract_model->saveObjectsMetadata(metadata_file, static_cast<DatabaseModel::MetaAttrOptions>(options));
 
 			if(extract_restore_rb->isChecked() && !backup_file_sel->getSelectedFile().isEmpty())
 			{
@@ -202,7 +202,7 @@ void MetadataHandlingForm::handleObjectsMetada()
 																										QPixmap(GuiUtilsNs::getIconPath("info")), nullptr);
 
 			model_wgt->setUpdatesEnabled(false);
-			model_wgt->getDatabaseModel()->loadObjectsMetadata(metadata_file, options);
+			model_wgt->getDatabaseModel()->loadObjectsMetadata(metadata_file, static_cast<DatabaseModel::MetaAttrOptions>(options));
 			model_wgt->adjustSceneSize();
 			model_wgt->updateSceneLayers();
 			model_wgt->restoreLastCanvasPosition();

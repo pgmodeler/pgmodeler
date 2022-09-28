@@ -10827,7 +10827,7 @@ bool DatabaseModel::isAllowConnections()
 	return allow_conns;
 }
 
-void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned options)
+void DatabaseModel::saveObjectsMetadata(const QString &filename, MetaAttrOptions options)
 {
 	QFile output(filename);
 	QByteArray buf;
@@ -11203,7 +11203,7 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned option
 	}
 }
 
-void DatabaseModel::loadObjectsMetadata(const QString &filename, unsigned options)
+void DatabaseModel::loadObjectsMetadata(const QString &filename, MetaAttrOptions options)
 {
 	QString elem_name, aux_elem, obj_name, ref_type,
 			dtd_file=GlobalAttributes::getSchemasRootDir() +
