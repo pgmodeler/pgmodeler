@@ -2826,7 +2826,7 @@ QString Relationship::getCodeDefinition(unsigned def_type)
 
 		if(copy_options.getCopyMode()!=0)
 		{
-			attributes[Attributes::CopyOptions]=QString("%1").arg(copy_options.getCopyOptionsIds());
+			attributes[Attributes::CopyOptions]=QString("%1").arg(copy_options.getCopyOptions());
 			attributes[Attributes::CopyMode]=QString("%1").arg(copy_options.getCopyMode());
 		}
 

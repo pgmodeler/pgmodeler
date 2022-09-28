@@ -1050,7 +1050,8 @@ void RelationshipWidget::applyConfiguration()
 		Relationship *rel=nullptr;
 		BaseRelationship *base_rel=dynamic_cast<BaseRelationship *>(this->object);
 		BaseRelationship::RelType rel_type;
-		unsigned count, i, copy_mode=0, copy_ops=0;
+		unsigned count, i, copy_ops = CopyOptions::NoOpts;
+		CopyOptions::CopyMode copy_mode = CopyOptions::NoMode;
 		std::vector<unsigned> col_ids;
 
 		/* Due to the complexity of the Relationship class and the strong link between all
@@ -1106,17 +1107,17 @@ void RelationshipWidget::applyConfiguration()
 				else
 					copy_mode=CopyOptions::Excluding;
 
-				copy_ops+=(all_chk->isChecked() ? CopyOptions::All : 0);
-				copy_ops+=(defaults_chk->isChecked() ? CopyOptions::Defaults : 0);
-				copy_ops+=(constraints_chk->isChecked() ? CopyOptions::Constraints : 0);
-				copy_ops+=(comments_chk->isChecked() ? CopyOptions::Comments : 0);
-				copy_ops+=(indexes_chk->isChecked() ? CopyOptions::Indexes : 0);
-				copy_ops+=(storage_chk->isChecked() ? CopyOptions::Storage : 0);
-				copy_ops+=(identity_chk->isChecked() ? CopyOptions::Identity : 0);
-				copy_ops+=(statistics_chk->isChecked() ? CopyOptions::Statistics : 0);
+				copy_ops+=(all_chk->isChecked() ? CopyOptions::All : CopyOptions::NoOpts);
+				copy_ops+=(defaults_chk->isChecked() ? CopyOptions::Defaults : CopyOptions::NoOpts);
+				copy_ops+=(constraints_chk->isChecked() ? CopyOptions::Constraints : CopyOptions::NoOpts);
+				copy_ops+=(comments_chk->isChecked() ? CopyOptions::Comments : CopyOptions::NoOpts);
+				copy_ops+=(indexes_chk->isChecked() ? CopyOptions::Indexes : CopyOptions::NoOpts);
+				copy_ops+=(storage_chk->isChecked() ? CopyOptions::Storage : CopyOptions::NoOpts);
+				copy_ops+=(identity_chk->isChecked() ? CopyOptions::Identity : CopyOptions::NoOpts);
+				copy_ops+=(statistics_chk->isChecked() ? CopyOptions::Statistics : CopyOptions::NoOpts);
 			}
 
-			rel->setCopyOptions(CopyOptions(copy_mode, copy_ops));
+			rel->setCopyOptions(CopyOptions(copy_mode, static_cast<CopyOptions::CopyOpts>(copy_ops)));
 			rel->setMandatoryTable(BaseRelationship::SrcTable, false);
 			rel->setMandatoryTable(BaseRelationship::DstTable, false);
 

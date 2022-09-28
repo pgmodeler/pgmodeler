@@ -327,7 +327,7 @@ class Relationship: public BaseRelationship {
 					 DeferralType deferral_type=DeferralType::Immediate,
 					 ActionType fk_del_act=ActionType::Null,
 					 ActionType fk_upd_act=ActionType::Null,
-					 CopyOptions copy_op = CopyOptions(0,0));
+					 CopyOptions copy_op = CopyOptions());
 
 		//! \brief  Connects the relationship making the configuration according to its type
 		void connectRelationship();

@@ -7063,8 +7063,8 @@ BaseRelationship *DatabaseModel::createRelationship()
 					dynamic_cast<PhysicalTable *>(tables[1]),
 					src_mand, dst_mand,
 					identifier, deferrable, defer_type, del_action, upd_action,
-					CopyOptions(attribs[Attributes::CopyMode].toUInt(),
-					attribs[Attributes::CopyOptions].toUInt()));
+					CopyOptions(static_cast<CopyOptions::CopyMode>(attribs[Attributes::CopyMode].toUInt()),
+											static_cast<CopyOptions::CopyOpts>(attribs[Attributes::CopyOptions].toUInt())));
 
 			rel->setSQLDisabled(sql_disabled);
 			rel->setSiglePKColumn(single_pk_col);

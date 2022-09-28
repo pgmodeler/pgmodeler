@@ -80,7 +80,7 @@ void PhysicalTable::setCopyTable(PhysicalTable *tab)
 	copy_table=tab;
 
 	if(!copy_table)
-		copy_op=CopyOptions(0,0);
+		copy_op = CopyOptions();
 }
 
 void PhysicalTable::setCopyTableOptions(CopyOptions like_op)
