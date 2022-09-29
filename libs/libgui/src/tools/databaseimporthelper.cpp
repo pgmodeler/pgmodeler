@@ -3177,14 +3177,29 @@ QString DatabaseImportHelper::getType(const QString &oid_str, bool generate_xml,
 				 * breaking the importing if there are user defined types in CamelCase for example.
 				 * This way the type will be always referenced like schema."Type"
 				 * instead of schema.Type (which is the same as schema.type). */
-				types[type_oid][Attributes::Name] = BaseObject::formatName(type_attr[Attributes::Name]);
+				if(type_attr[Attributes::Category] == "A")
+				{
+					/* Special treatment for array data types: Before quoting the name
+					 * we have to extract the [], then format the name and then restore the
+					 * brackets. This avoids the brackets to be considered as part of the name and
+					 * thus causing the name to be quoted inconditionaly. */
+					int num_brkt = type_attr[Attributes::Name].count("[]");
+					QString aux_name = BaseObject::formatName(type_attr[Attributes::Name].remove("[]"));
+
+					for(int i = 0; i < num_brkt; i++)
+						aux_name.append("[]");
+
+					types[type_oid][Attributes::Name] = aux_name;
+				}
+				else
+					types[type_oid][Attributes::Name] = BaseObject::formatName(type_attr[Attributes::Name]);
 			}
 
 			object_id = type_attr[Attributes::ObjectId].toUInt();
 
 			//Special treatment for array types. Removes the [] descriptor when generating XML code for the type
-			if(!type_attr.empty() && type_attr[Attributes::Category]==QString("A") &&
-					type_attr[Attributes::Name].contains(QString("[]")))
+			if(!type_attr.empty() && type_attr[Attributes::Category]=="A" &&
+					type_attr[Attributes::Name].contains("[]"))
 			{
 				obj_name=type_attr[Attributes::Name];
 				elem_tp_oid=type_attr[Attributes::Element].toUInt();
