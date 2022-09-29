@@ -63,6 +63,7 @@ Additionally, this class, saves, loads and generates the XML/SQL definition of a
 #include "procedure.h"
 #include <algorithm>
 #include <locale.h>
+#include "operation.h"
 
 class ModelWidget;
 
@@ -320,9 +321,9 @@ class DatabaseModel:  public QObject, public BaseObject {
 
 		/*! \brief Register an object change in the internal changelog.
 		 * If the provided object is derived from TableObject then the parent is registered instead.
-		 * The op_type is one of the operations Operation::ObjectCreate, Operation::ObjectRemoved, Operation::ObjectModified, any other operation type is ignored.
+		 * The op_type is one of the operations Operation::ObjectCreate, Operation::ObjRemoved, Operation::ObjModified, any other operation type is ignored.
 		 * This method will validate all the provided parameters and in case of invalid values will raise and exception */
-		void addChangelogEntry(BaseObject *object, unsigned op_type, BaseObject *parent_obj = nullptr);
+		void addChangelogEntry(BaseObject *object, Operation::OperType op_type, BaseObject *parent_obj = nullptr);
 
 		/*! \brief Register an object change in the internal changelog.
 		 * This version accepts string parameters to make the changelog loading from file more easy to handle.

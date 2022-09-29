@@ -217,7 +217,7 @@ void ViewWidget::duplicateObject(int curr_row, int new_row)
 		CoreUtilsNs::copyObject(&dup_object, object, obj_type);
 		dup_object->setName(CoreUtilsNs::generateUniqueName(dup_object, *view->getObjectList(obj_type), false, QString("_cp")));
 
-		op_id=op_list->registerObject(dup_object, Operation::ObjectCreated, new_row, this->object);
+		op_id=op_list->registerObject(dup_object, Operation::ObjCreated, new_row, this->object);
 
 		view->addObject(dup_object);
 		view->setModified(true);
@@ -254,7 +254,7 @@ void ViewWidget::removeObjects()
 		{
 			object=view->getObject(0, obj_type);
 			view->removeObject(object);
-			op_list->registerObject(object, Operation::ObjectRemoved, 0, this->object);
+			op_list->registerObject(object, Operation::ObjRemoved, 0, this->object);
 		}
 	}
 	catch(Exception &e)
@@ -300,7 +300,7 @@ void ViewWidget::removeObject(int row)
 		view=dynamic_cast<View *>(this->object);
 		object=view->getObject(row, obj_type);
 		view->removeObject(object);
-		op_list->registerObject(object, Operation::ObjectRemoved, row, this->object);
+		op_list->registerObject(object, Operation::ObjRemoved, row, this->object);
 	}
 	catch(Exception &e)
 	{
@@ -672,7 +672,7 @@ void ViewWidget::applyConfiguration()
 		QString str_aux;
 
 		if(!this->new_object)
-			op_list->registerObject(this->object, Operation::ObjectModified);
+			op_list->registerObject(this->object, Operation::ObjModified);
 		else
 			registerNewObject();
 

@@ -274,7 +274,7 @@ void RoleWidget::applyConfiguration()
 												ErrorCode::OprReservedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 			}
 
-			op_list->registerObject(aux_role, Operation::ObjectModified);
+			op_list->registerObject(aux_role, Operation::ObjModified);
 			aux_role->addRole(Role::MemberRole, role);
 		}
 

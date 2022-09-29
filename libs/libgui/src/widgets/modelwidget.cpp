@@ -1031,14 +1031,14 @@ void ModelWidget::handleObjectsMovement(bool end_moviment)
 
 				//Register the object if it is not a schema or a table already registered
 				if(!schema && std::find(reg_tables.begin(), reg_tables.end(), obj)==reg_tables.end())
-					op_list->registerObject(obj, Operation::ObjectMoved);
+					op_list->registerObject(obj, Operation::ObjMoved);
 				else if(schema)
 				{
 					//For schemas, when they are moved, the original position of tables are registered instead of the position of schema itself
 					tables=dynamic_cast<SchemaView *>(schema->getOverlyingObject())->getChildren();
 					for(auto &tab : tables)
 					{
-						op_list->registerObject(tab->getUnderlyingObject(), Operation::ObjectMoved);
+						op_list->registerObject(tab->getUnderlyingObject(), Operation::ObjMoved);
 
 						//Registers the table on a auxiliary list to avoid multiple registration on operation history
 						reg_tables.push_back(tab->getUnderlyingObject());
@@ -1081,7 +1081,7 @@ void ModelWidget::handleObjectsMovement(bool end_moviment)
 
 void ModelWidget::handleObjectModification(BaseGraphicObject *object)
 {
-	op_list->registerObject(object, Operation::ObjectModified);
+	op_list->registerObject(object, Operation::ObjModified);
 	setModified(true);
 	emit s_objectModified();
 
@@ -1377,7 +1377,7 @@ void ModelWidget::convertRelationshipNN()
 					op_list->startOperationChain();
 
 					//Removes the many-to-many relationship from the model
-					op_list->registerObject(rel, Operation::ObjectRemoved);
+					op_list->registerObject(rel, Operation::ObjRemoved);
 
 					//The default position for the table will be the middle point between the relationship participant tables
 					pnt.setX((src_tab->getPosition().x() + dst_tab->getPosition().x())/2.0);
@@ -1386,14 +1386,14 @@ void ModelWidget::convertRelationshipNN()
 
 					//Adds the new table to the model
 					db_model->addObject(tab);
-					op_list->registerObject(tab, Operation::ObjectCreated);
+					op_list->registerObject(tab, Operation::ObjCreated);
 
 					if(rel->isSelfRelationship())
 					{
 						//For self relationships register the created foreign keys on the operation list
 						while(!fks.empty())
 						{
-							op_list->registerObject(fks.back(), Operation::ObjectCreated, -1, fks.back()->getParentTable());
+							op_list->registerObject(fks.back(), Operation::ObjCreated, -1, fks.back()->getParentTable());
 							fks.pop_back();
 						}
 					}
@@ -1411,7 +1411,7 @@ void ModelWidget::convertRelationshipNN()
 							aux_constr->setName(CoreUtilsNs::generateUniqueName(tab, *tab->getObjectList(ObjectType::Constraint), false, QString("_pk")));
 							tab->addConstraint(aux_constr);
 
-							op_list->registerObject(aux_constr, Operation::ObjectCreated, -1, tab);
+							op_list->registerObject(aux_constr, Operation::ObjCreated, -1, tab);
 						}
 
 						/* Creates a one-to-many relationship that links the source table of the many-to-many rel. to the created table
@@ -1419,14 +1419,14 @@ void ModelWidget::convertRelationshipNN()
 						rel1=new Relationship(Relationship::Relationship1n,
 												src_tab, tab, src_mand, false, !rel->isSiglePKColumn());
 						db_model->addRelationship(rel1);
-						op_list->registerObject(rel1, Operation::ObjectCreated);
+						op_list->registerObject(rel1, Operation::ObjCreated);
 
 						/*Creates a one-to-many relationship that links the destination table of the many-to-many rel. to the created table
 				The relationship will be identifier if the single pk column attribute of the original relationship is false */
 						rel2=new Relationship(Relationship::Relationship1n,
 												dst_tab, tab, dst_mand, false, !rel->isSiglePKColumn());
 						db_model->addRelationship(rel2);
-						op_list->registerObject(rel2, Operation::ObjectCreated);
+						op_list->registerObject(rel2, Operation::ObjCreated);
 					}
 
 					op_list->finishOperationChain();
@@ -1543,7 +1543,7 @@ void ModelWidget::convertRelationship1N()
 		db_model->__removeObject(rel);
 
 		// Register the exclusion of the original relationship
-		op_list->registerObject(rel, Operation::ObjectRemoved);
+		op_list->registerObject(rel, Operation::ObjRemoved);
 
 		/* If after the relationships disconnection the table still have a PK
 		 * it means that it was not added by relationship so we can remove it from the table
@@ -1553,7 +1553,7 @@ void ModelWidget::convertRelationship1N()
 		if(pk)
 		{
 			if(register_pk)
-				op_list->registerObject(pk, Operation::ObjectRemoved, -1, recv_tab);
+				op_list->registerObject(pk, Operation::ObjRemoved, -1, recv_tab);
 
 			recv_tab->removeObject(pk);
 		}
@@ -1564,7 +1564,7 @@ void ModelWidget::convertRelationship1N()
 			col->setParentRelationship(nullptr);
 			col->setParentTable(nullptr);
 			recv_tab->addColumn(col);
-			op_list->registerObject(col, Operation::ObjectCreated, - 1, recv_tab);
+			op_list->registerObject(col, Operation::ObjCreated, - 1, recv_tab);
 		}
 
 		// Recreating the constraints from XML code
@@ -1574,7 +1574,7 @@ void ModelWidget::convertRelationship1N()
 			xmlparser->loadXMLBuffer(constr_xml);
 			constr = db_model->createConstraint(recv_tab);
 			recv_tab->addConstraint(constr);
-			op_list->registerObject(constr, Operation::ObjectCreated, - 1, recv_tab);
+			op_list->registerObject(constr, Operation::ObjCreated, - 1, recv_tab);
 		}
 
 		/* Resetting the relatinship added columns/constraint indexes in the table
@@ -1591,7 +1591,7 @@ void ModelWidget::convertRelationship1N()
 		fk_rel->setCustomColor(rel_color);
 		fk_rel->setModified(true);
 
-		op_list->registerObject(fk_rel, Operation::ObjectModified);
+		op_list->registerObject(fk_rel, Operation::ObjModified);
 		op_list->finishOperationChain();
 
 		QApplication::restoreOverrideCursor();
@@ -2197,7 +2197,7 @@ void ModelWidget::moveToSchema()
 			//Change the object's schema only if the new schema is different from the current
 			if(obj->acceptsSchema() && obj->getSchema()!=schema)
 			{
-				op_id=op_list->registerObject(obj, Operation::ObjectModified, -1);
+				op_id=op_list->registerObject(obj, Operation::ObjModified, -1);
 
 				obj->setSchema(schema);
 				obj_graph=dynamic_cast<BaseGraphicObject *>(obj);
@@ -2282,7 +2282,7 @@ void ModelWidget::changeOwner()
 
 				//Register an operation only if the object is not the database itself
 				if(obj->getObjectType()!=ObjectType::Database)
-					op_id=op_list->registerObject(obj, Operation::ObjectModified, -1);
+					op_id=op_list->registerObject(obj, Operation::ObjModified, -1);
 
 				obj->setOwner(owner);
 			}
@@ -2317,7 +2317,7 @@ void ModelWidget::setTag()
 
 			if(tab)
 			{
-				op_id=op_list->registerObject(obj, Operation::ObjectModified, -1);
+				op_id=op_list->registerObject(obj, Operation::ObjModified, -1);
 				tab->setTag(dynamic_cast<Tag *>(tag));
 			}
 		}
@@ -2920,10 +2920,10 @@ void ModelWidget::pasteObjects(bool duplicate_mode)
 					if(constr && constr->getConstraintType()==ConstraintType::ForeignKey)
 						db_model->updateTableFKRelationships(dynamic_cast<Table *>(tab_obj->getParentTable()));
 
-					op_list->registerObject(tab_obj, Operation::ObjectCreated, -1, tab_obj->getParentTable());
+					op_list->registerObject(tab_obj, Operation::ObjCreated, -1, tab_obj->getParentTable());
 				}
 				else
-					op_list->registerObject(object, Operation::ObjectCreated);
+					op_list->registerObject(object, Operation::ObjCreated);
 			}
 			catch(Exception &e)
 			{
@@ -3013,7 +3013,7 @@ void ModelWidget::duplicateObject()
 				else
 					dup_object->setName(CoreUtilsNs::generateUniqueName(dup_object, *dynamic_cast<View *>(table)->getObjectList(obj_type), false, QString("_cp")));
 
-				op_id=op_list->registerObject(dup_object, Operation::ObjectCreated, -1, table);
+				op_id=op_list->registerObject(dup_object, Operation::ObjCreated, -1, table);
 				table->addObject(dup_object);
 
 				// Flagging the table to be repainted
@@ -3292,7 +3292,7 @@ void ModelWidget::removeObjects(bool cascade)
 									db_model->validateColumnRemoval(dynamic_cast<Column *>(tab_obj));
 
 								//Register the removed object on the operation list
-								op_list->registerObject(tab_obj, Operation::ObjectRemoved, obj_idx, table);
+								op_list->registerObject(tab_obj, Operation::ObjRemoved, obj_idx, table);
 								table->removeObject(obj_idx, obj_type);
 								db_model->removePermissions(tab_obj);
 
@@ -3340,7 +3340,7 @@ void ModelWidget::removeObjects(bool cascade)
 								try
 								{
 									db_model->removeObject(object, obj_idx);
-									op_list->registerObject(object, Operation::ObjectRemoved, obj_idx);
+									op_list->registerObject(object, Operation::ObjRemoved, obj_idx);
 								}
 								catch(Exception &e)
 								{
@@ -3925,7 +3925,7 @@ void ModelWidget::moveObjectsInZStack(int direction)
 					zval = item->zValue();
 			}
 
-			op_list->registerObject(obj_view->getUnderlyingObject(), Operation::ObjectModified);
+			op_list->registerObject(obj_view->getUnderlyingObject(), Operation::ObjModified);
 
 			zval += (1 * direction);
 
@@ -4611,12 +4611,12 @@ void ModelWidget::createSequenceFromColumn()
 		seq->setSchema(tab->getSchema());
 		seq->setDefaultValues(col->getType());
 
-		op_list->registerObject(seq, Operation::ObjectCreated);
+		op_list->registerObject(seq, Operation::ObjCreated);
 		db_model->addSequence(seq);
 
 		BaseObject::swapObjectsIds(tab, seq, false);
 
-		op_list->registerObject(col, Operation::ObjectModified, -1, tab);
+		op_list->registerObject(col, Operation::ObjModified, -1, tab);
 		//Changes the column type to the alias for serial type
 		col->setType(col->getType().getAliasType());
 		col->setSequence(seq);
@@ -4652,7 +4652,7 @@ void ModelWidget::convertIntegerToSerial()
 			throw Exception(Exception::getErrorMessage(ErrorCode::InvConversionIntegerToSerial).arg(col->getName()),
 											ErrorCode::InvConversionIntegerToSerial ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-		op_list->registerObject(col, Operation::ObjectModified, -1, tab);
+		op_list->registerObject(col, Operation::ObjModified, -1, tab);
 
 		if(col_type==QString("integer") || col_type==QString("int4"))
 			serial_tp=QString("serial");
@@ -4684,7 +4684,7 @@ void ModelWidget::breakRelationshipLine()
 		QAction *action=dynamic_cast<QAction *>(sender());
 		BaseRelationship *rel=dynamic_cast<BaseRelationship *>(selected_objects[0]);
 
-		op_list->registerObject(rel, Operation::ObjectModified);
+		op_list->registerObject(rel, Operation::ObjModified);
 		breakRelationshipLine(rel, action->data().toUInt());
 		rel->setModified(true);
 		this->setModified(true);
@@ -4759,7 +4759,7 @@ void ModelWidget::removeRelationshipPoints()
 
 				if(!rel->isProtected())
 				{
-					op_list->registerObject(rel, Operation::ObjectModified);
+					op_list->registerObject(rel, Operation::ObjModified);
 					rel->setPoints({});
 					rel->setModified(true);
 				}
@@ -4768,7 +4768,7 @@ void ModelWidget::removeRelationshipPoints()
 		}
 		else
 		{
-			op_list->registerObject(rel, Operation::ObjectModified);
+			op_list->registerObject(rel, Operation::ObjModified);
 			rel->setPoints({});
 			rel->setModified(true);
 		}

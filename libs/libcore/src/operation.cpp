@@ -54,9 +54,9 @@ void Operation::setChainType(unsigned type)
 	chain_type=(type > ChainEnd ? NoChain : type);
 }
 
-void Operation::setOperationType(unsigned type)
+void Operation::setOperationType(OperType type)
 {
-	op_type=(type > ObjectMoved ? NoOperation : type);
+	op_type=(type > ObjMoved ? NoOperation : type);
 }
 
 void Operation::setOriginalObject(BaseObject *object)
@@ -97,7 +97,7 @@ unsigned Operation::getChainType()
 	return chain_type;
 }
 
-unsigned Operation::getOperationType()
+Operation::OperType Operation::getOperationType()
 {
 	return op_type;
 }

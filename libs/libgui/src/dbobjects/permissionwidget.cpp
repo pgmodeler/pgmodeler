@@ -279,7 +279,7 @@ void PermissionWidget::addPermission()
 		perm=new Permission(this->object);
 		configurePermission(perm);
 		model->addPermission(perm);
-		model->addChangelogEntry(perm, Operation::ObjectCreated);
+		model->addChangelogEntry(perm, Operation::ObjCreated);
 		listPermissions();
 		cancelOperation();
 		perms_changed=true;
@@ -391,7 +391,7 @@ void PermissionWidget::editPermission()
 void PermissionWidget::removePermission(int)
 { 
 	model->removePermission(permission);
-	model->addChangelogEntry(permission, Operation::ObjectRemoved);
+	model->addChangelogEntry(permission, Operation::ObjRemoved);
 	cancelOperation();
 	permission=nullptr;
 	permissions_tab->clearSelection();
@@ -410,7 +410,7 @@ void PermissionWidget::removePermissions()
 	updateCodePreview();
 
 	for(auto &perm : perms)
-		model->addChangelogEntry(perm, Operation::ObjectRemoved);
+		model->addChangelogEntry(perm, Operation::ObjRemoved);
 }
 
 void PermissionWidget::configurePermission(Permission *perm)

@@ -19,7 +19,6 @@
 #include "databasemodel.h"
 #include "coreutilsns.h"
 #include "defaultlanguages.h"
-#include "operation.h"
 #include <QtDebug>
 #include <random>
 #include "utilsns.h"
@@ -11601,17 +11600,17 @@ bool DatabaseModel::isLayerRectsVisible()
 	return is_layer_rects_visible;
 }
 
-void DatabaseModel::addChangelogEntry(BaseObject *object, unsigned op_type, BaseObject *parent_obj)
+void DatabaseModel::addChangelogEntry(BaseObject *object, Operation::OperType op_type, BaseObject *parent_obj)
 {
-	if(op_type == Operation::NoOperation || op_type == Operation::ObjectMoved)
+	if(op_type == Operation::NoOperation || op_type == Operation::ObjMoved)
 		return;
 
 	QString action, obj_signature;
 	QDateTime date_time = QDateTime::currentDateTime();
 
-	if(op_type == Operation::ObjectCreated)
+	if(op_type == Operation::ObjCreated)
 		action = Attributes::Created;
-	else if(op_type == Operation::ObjectRemoved)
+	else if(op_type == Operation::ObjRemoved)
 		action = Attributes::Deleted;
 	else
 		action = Attributes::Updated;

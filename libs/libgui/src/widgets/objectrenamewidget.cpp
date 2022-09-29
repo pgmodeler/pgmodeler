@@ -144,7 +144,7 @@ void ObjectRenameWidget::applyRenaming()
 				if(obj_type != ObjectType::Database)
 				{
 					//Register the object on operations list before the modification
-					op_list->registerObject(object, Operation::ObjectModified, -1, (tab_obj ? tab_obj->getParentTable() : nullptr));
+					op_list->registerObject(object, Operation::ObjModified, -1, (tab_obj ? tab_obj->getParentTable() : nullptr));
 					object->setName(new_name);
 
 					//For table child object, generate an unique name among the other objects of the same type in the table

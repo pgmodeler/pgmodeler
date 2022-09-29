@@ -809,7 +809,7 @@ void RelationshipWidget::duplicateObject(int curr_row, int new_row)
 
 		CoreUtilsNs::copyObject(&dup_object, object, obj_type);
 		dup_object->setName(CoreUtilsNs::generateUniqueName(dup_object, obj_list, false, QString("_cp")));
-		op_id=op_list->registerObject(dup_object, Operation::ObjectCreated, new_row, rel);
+		op_id=op_list->registerObject(dup_object, Operation::ObjCreated, new_row, rel);
 
 		dynamic_cast<TableObject*>(dup_object)->setParentTable(nullptr);
 		rel->addObject(dynamic_cast<TableObject *>(dup_object));
@@ -910,7 +910,7 @@ void RelationshipWidget::removeObjects()
 		for(i=0; i < count; i++)
 		{
 			object=rel->getObject(0, obj_type);
-			op_list->registerObject(object, Operation::ObjectRemoved, 0, rel);
+			op_list->registerObject(object, Operation::ObjRemoved, 0, rel);
 			rel->removeObject(object);
 		}
 
@@ -955,7 +955,7 @@ void RelationshipWidget::removeObject(int row)
 			obj_type=ObjectType::Constraint;
 
 		object=rel->getObject(row, obj_type);
-		op_id=op_list->registerObject(object, Operation::ObjectRemoved, 0, rel);
+		op_id=op_list->registerObject(object, Operation::ObjRemoved, 0, rel);
 		rel->removeObject(object);
 
 		if(obj_type==ObjectType::Column)
@@ -1064,7 +1064,7 @@ void RelationshipWidget::applyConfiguration()
 		}
 
 		if(!this->new_object && this->object->getObjectType()==ObjectType::Relationship)
-			op_list->registerObject(this->object, Operation::ObjectModified);
+			op_list->registerObject(this->object, Operation::ObjModified);
 		else
 			registerNewObject();
 
