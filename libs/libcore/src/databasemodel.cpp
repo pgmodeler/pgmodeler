@@ -8481,10 +8481,10 @@ void DatabaseModel::getLanguageDependencies(BaseObject *object, std::vector<Base
 {
 	Language *lang=dynamic_cast<Language *>(object);
 
-	for(unsigned i=Language::ValidatorFunc; i <= Language::InlineFunc; i++)
+	for(unsigned i = Language::ValidatorFunc; i <= Language::InlineFunc; i++)
 	{
-		if(lang->getFunction(i))
-			getObjectDependecies(lang->getFunction(i), deps, inc_indirect_deps);
+		if(lang->getFunction(static_cast<Language::FunctionId>(i)))
+			getObjectDependecies(lang->getFunction(static_cast<Language::FunctionId>(i)), deps, inc_indirect_deps);
 	}
 }
 

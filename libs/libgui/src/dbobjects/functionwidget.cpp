@@ -272,8 +272,8 @@ void FunctionWidget::validateConfiguredFunction()
 
 				for(idx = Language::ValidatorFunc; idx <= Language::InlineFunc; idx++)
 				{
-					if(lang->getFunction(idx)==func)
-						lang->setFunction(func, idx);
+					if(lang->getFunction(static_cast<Language::FunctionId>(idx))==func)
+						lang->setFunction(func, static_cast<Language::FunctionId>(idx));
 				}
 			}
 			else if(obj_type == ObjectType::Operator)
