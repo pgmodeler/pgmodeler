@@ -55,7 +55,7 @@ void Extension::setHandlesType(bool value)
 	this->handles_type=value;
 }
 
-void Extension::setVersion(unsigned ver, const QString &value)
+void Extension::setVersion(VersionId ver, const QString &value)
 {
 	if(ver > OldVersion)
 		throw Exception(ErrorCode::RefAttributeInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -69,7 +69,7 @@ bool Extension::handlesType()
 	return handles_type;
 }
 
-QString Extension::getVersion(unsigned ver)
+QString Extension::getVersion(VersionId ver)
 {
 	if(ver > OldVersion)
 		throw Exception(ErrorCode::RefAttributeInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);

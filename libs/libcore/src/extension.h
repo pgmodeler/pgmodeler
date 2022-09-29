@@ -40,8 +40,11 @@ class Extension: public BaseObject {
 		QString versions[2];
 
 	public:
-		static constexpr unsigned CurVersion=0,
-		OldVersion=1;
+		enum VersionId: unsigned {
+			CurVersion,
+			OldVersion
+		};
+
 		Extension();
 
 		void setName(const QString &name);
@@ -53,13 +56,13 @@ class Extension: public BaseObject {
 		void setHandlesType(bool value);
 
 		//! \brief Set the versions of the extension
-		void setVersion(unsigned ver, const QString &value);
+		void setVersion(VersionId ver, const QString &value);
 
 		//! \brief Returns if the extension handles a datatype
 		bool handlesType();
 
 		//! \brief Returns on of the versions of the extension
-		QString getVersion(unsigned ver);
+		QString getVersion(VersionId ver);
 
 		//! \brief Returns the SQL / XML code definition for the extension
 		virtual QString getCodeDefinition(unsigned def_type) final;
