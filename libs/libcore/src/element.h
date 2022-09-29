@@ -63,8 +63,10 @@ class Element {
 
 	public:
 		//! \brief Constants used to reference the sorting method of the element
-		static constexpr unsigned AscOrder=0,
-		NullsFirst=1;
+		enum SortOrder: unsigned {
+			AscOrder,
+			NullsFirst
+		};
 
 		Element();
 		virtual ~Element(void) {}
@@ -79,10 +81,10 @@ class Element {
 		void setSortingEnabled(bool value);
 
 		//! \brief Sets the state of one of the element sorting method
-		void setSortingAttribute(unsigned attrib, bool value);
+		void setSortingAttribute(SortOrder attrib, bool value);
 
 		//! \brief Gets the curret state of the element sorting attribute
-		bool getSortingAttribute(unsigned attrib);
+		bool getSortingAttribute(SortOrder attrib);
 
 		Column *getColumn();
 		QString getExpression();
