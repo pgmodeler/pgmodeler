@@ -45,6 +45,14 @@ class Operation {
 			ObjMoved
 		};
 
+		//! \brief Operation chain types
+		enum ChainType: unsigned {
+			NoChain, //! \brief The operation is not part of a chain
+			ChainStart, //! \brief The operation is the head of the chain
+			ChainMiddle, //! \brief The operation is in the middle of the chain
+			ChainEnd //! \brief The operation is the last on the chain
+		};
+
 	private:
 		/*! \brief Uniquely identifies the object. This id is used to check if the operation object's somehow
 		where delete (changing their addresses). This will avoid the operation list to try to execute
@@ -72,7 +80,7 @@ class Operation {
 		OperType op_type;
 
 		//! \brief Operation chain type. This attribute is used to redo/undo several operations at once
-		unsigned chain_type;
+		ChainType chain_type;
 
 		//! \brief Object index inside the list on its parent object
 		int object_idx;
@@ -84,16 +92,10 @@ class Operation {
 		QString generateOperationId();
 
 	public:
-		//! \brief Operation chain types
-		static constexpr unsigned NoChain=0, //! \brief The operation is not part of a chain
-		ChainStart=1, //! \brief The operation is the head of the chain
-		ChainMiddle=2, //! \brief The operation is in the middle of the chain
-		ChainEnd=3; //! \brief The operation is the last on the chain
-
 		Operation();
 
 		void setObjectIndex(int idx);
-		void setChainType(unsigned type);
+		void setChainType(ChainType type);
 		void setOperationType(OperType type);
 		void setOriginalObject(BaseObject *object);
 		void setPoolObject(BaseObject *object);
@@ -102,7 +104,7 @@ class Operation {
 		void setXMLDefinition(const QString &xml_def);
 
 		int getObjectIndex();
-		unsigned getChainType();
+		ChainType getChainType();
 		OperType getOperationType();
 		BaseObject *getOriginalObject();
 		BaseObject *getPoolObject();

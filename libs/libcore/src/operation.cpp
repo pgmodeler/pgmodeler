@@ -49,7 +49,7 @@ void Operation::setObjectIndex(int idx)
 	object_idx=idx;
 }
 
-void Operation::setChainType(unsigned type)
+void Operation::setChainType(ChainType type)
 {
 	chain_type=(type > ChainEnd ? NoChain : type);
 }
@@ -92,7 +92,7 @@ int Operation::getObjectIndex()
 	return object_idx;
 }
 
-unsigned Operation::getChainType()
+Operation::ChainType Operation::getChainType()
 {
 	return chain_type;
 }

@@ -64,7 +64,7 @@ class OperationList: public QObject {
 		/*! \brief Stores the type of chain to the next operation to be stored
 		 in the list. This attribute is used in conjunction with the chaining
 		 initialization / finalization methods. */
-		unsigned next_op_chain;
+		Operation::ChainType next_op_chain;
 
 		//! \brief Current operation index
 		int current_index;
