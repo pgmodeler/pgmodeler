@@ -91,7 +91,7 @@ void OperatorClassElement::setStorage(PgSqlType storage)
 	this->element_type=StorageElem;
 }
 
-unsigned OperatorClassElement::getElementType()
+OperatorClassElement::ElementType OperatorClassElement::getElementType()
 {
 	return element_type;
 }

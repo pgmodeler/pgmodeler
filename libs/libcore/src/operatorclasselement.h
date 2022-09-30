@@ -33,13 +33,21 @@
 #include "operatorfamily.h"
 
 class OperatorClassElement {
+	public:
+		//! \brief Constants used to reference the element types
+		enum ElementType: unsigned {
+			OperatorElem,
+			FunctionElem,
+			StorageElem
+		};
+
 	private:
 		/*! \brief Type of the operator class element.
 		 This can have 3 possible values:
 		 0 -> OPERATOR_ELEM
 		 1 -> FUNCTION_ELEM
 		 2 -> STORAGE_ELEM */
-		unsigned element_type;
+		ElementType element_type;
 
 		//! \brief Function used by the element (only for type FUNCTION_ELEM)
 		Function *function;
@@ -59,11 +67,6 @@ class OperatorClassElement {
 		unsigned strategy_number;
 
 	public:
-		//! \brief Constants used to reference the element types
-		static constexpr unsigned OperatorElem=0,
-		FunctionElem=1,
-		StorageElem=2;
-
 		OperatorClassElement();
 		virtual ~OperatorClassElement(void){}
 
@@ -80,7 +83,7 @@ class OperatorClassElement {
 		void setStorage(PgSqlType storage);
 
 		//! \brief Returns the element type
-		unsigned getElementType();
+		ElementType getElementType();
 
 		/*! \brief Returns the current assigned function.
 		 This method returns nullptr when the element is not an FUNCTION_ELEM */
