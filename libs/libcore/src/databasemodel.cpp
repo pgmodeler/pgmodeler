@@ -4687,11 +4687,11 @@ Operator *DatabaseModel::createOperator()
 {
 	attribs_map attribs;
 	std::map<QString, Operator::FunctionId> func_ids;
-	std::map<QString, unsigned> oper_types;
+	std::map<QString, Operator::OperatorId> oper_ids;
 	Operator *oper=nullptr;
 	QString elem;
 	BaseObject *func=nullptr,*oper_aux=nullptr;
-	unsigned arg_type;
+	Operator::ArgumentId arg_id;
 	PgSqlType type;
 
 	try
@@ -4707,8 +4707,8 @@ Operator *DatabaseModel::createOperator()
 		func_ids[Attributes::JoinFunc]=Operator::FuncJoin;
 		func_ids[Attributes::RestrictionFunc]=Operator::FuncRestrict;
 
-		oper_types[Attributes::CommutatorOp]=Operator::OperCommutator;
-		oper_types[Attributes::NegatorOp]=Operator::OperNegator;
+		oper_ids[Attributes::CommutatorOp]=Operator::OperCommutator;
+		oper_ids[Attributes::NegatorOp]=Operator::OperNegator;
 
 		if(xmlparser.accessElement(XmlParser::ChildElement))
 		{
@@ -4733,19 +4733,19 @@ Operator *DatabaseModel::createOperator()
 								ErrorCode::RefObjectInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 						oper->setOperator(dynamic_cast<Operator *>(oper_aux),
-											oper_types[attribs[Attributes::RefType]]);
+											oper_ids[attribs[Attributes::RefType]]);
 					}
 					else if(elem==Attributes::Type)
 					{
 						xmlparser.getElementAttributes(attribs);
 
 						if(attribs[Attributes::RefType]!=Attributes::RightType)
-							arg_type=Operator::LeftArg;
+							arg_id=Operator::LeftArg;
 						else
-							arg_type=Operator::RightArg;
+							arg_id=Operator::RightArg;
 
 						type=createPgSQLType();
-						oper->setArgumentType(type, arg_type);
+						oper->setArgumentType(type, arg_id);
 					}
 					else if(elem==Attributes::Function)
 					{
@@ -8501,7 +8501,7 @@ void DatabaseModel::getOperatorDependencies(BaseObject *object, std::vector<Base
 
 	for(i=Operator::LeftArg; i <= Operator::RightArg; i++)
 	{
-		usr_type=getObjectPgSQLType(oper->getArgumentType(i));
+		usr_type=getObjectPgSQLType(oper->getArgumentType(static_cast<Operator::ArgumentId>(i)));
 
 		if(usr_type)
 			getObjectDependecies(usr_type, deps, inc_indirect_deps);
@@ -8509,8 +8509,8 @@ void DatabaseModel::getOperatorDependencies(BaseObject *object, std::vector<Base
 
 	for(i=Operator::OperCommutator; i <= Operator::OperNegator; i++)
 	{
-		if(oper->getOperator(i))
-			getObjectDependecies(oper->getOperator(i), deps, inc_indirect_deps);
+		if(oper->getOperator(static_cast<Operator::OperatorId>(i)))
+			getObjectDependecies(oper->getOperator(static_cast<Operator::OperatorId>(i)), deps, inc_indirect_deps);
 	}
 }
 
@@ -9910,7 +9910,7 @@ void DatabaseModel::getOperatorReferences(BaseObject *object, std::vector<BaseOb
 				for(i1=Operator::OperCommutator; i1 <= Operator::OperNegator &&
 					(!exclusion_mode || (exclusion_mode && !refer)); i1++)
 				{
-					if(oper_aux->getOperator(i1)==oper)
+					if(oper_aux->getOperator(static_cast<Operator::OperatorId>(i1))==oper)
 					{
 						refer=true;
 						refs.push_back(oper_aux);

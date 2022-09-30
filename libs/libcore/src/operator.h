@@ -48,17 +48,21 @@ class Operator: public BaseObject {
 		virtual void configureSearchAttributes();
 
 	public:
-		enum FunctionId {
+		enum FunctionId: unsigned {
 			FuncOperator,
 			FuncJoin,
 			FuncRestrict
 		};
 
-		static constexpr unsigned LeftArg=0,
-		RightArg=1,
+		enum ArgumentId: unsigned {
+			LeftArg,
+			RightArg
+		};
 
-		OperCommutator=0,
-		OperNegator=1;
+		enum OperatorId: unsigned {
+			OperCommutator,
+			OperNegator
+		};
 
 		Operator();
 
@@ -69,10 +73,10 @@ class Operator: public BaseObject {
 		void setFunction(Function *func, FunctionId func_id);
 
 		//! \brief Defines the argument data type for operator (constants ARG_[LEFT | RIGHT])
-		void setArgumentType(PgSqlType arg_type, unsigned arg_id);
+		void setArgumentType(PgSqlType arg_type, ArgumentId arg_id);
 
 		//! \brief Defines the auxiliary operators (constants OPER_[COMMUTATOR | NEGATOR])
-		void setOperator(Operator *oper, unsigned op_type);
+		void setOperator(Operator *oper, OperatorId op_id);
 
 		//! \brief Defines that the operator accepts hash join
 		void setHashes(bool value);
@@ -84,10 +88,10 @@ class Operator: public BaseObject {
 		Function *getFunction(FunctionId func_id);
 
 		//! \brief Returns the type of the passed argument id
-		PgSqlType getArgumentType(unsigned arg_id);
+		PgSqlType getArgumentType(ArgumentId arg_id);
 
 		//! \brief Returns on of the auxiliary operators
-		Operator *getOperator(unsigned op_type);
+		Operator *getOperator(OperatorId op_id);
 
 		//! \brief Returns whether the operator accepts hash join
 		bool isHashes();

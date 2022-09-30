@@ -151,7 +151,7 @@ void Operator::setFunction(Function *func, FunctionId func_id)
 	functions[func_id]=func;
 }
 
-void Operator::setArgumentType(PgSqlType arg_type, unsigned arg_id)
+void Operator::setArgumentType(PgSqlType arg_type, ArgumentId arg_id)
 {
 	//Raises an error if the argument id is invalid
 	if(arg_id > RightArg)
@@ -162,10 +162,10 @@ void Operator::setArgumentType(PgSqlType arg_type, unsigned arg_id)
 	argument_types[arg_id]=arg_type;
 }
 
-void Operator::setOperator(Operator *oper, unsigned op_type)
+void Operator::setOperator(Operator *oper, OperatorId op_id)
 {
 	//Raises an error if the operator type is invalid
-	if(op_type > OperNegator)
+	if(op_id > OperNegator)
 		throw Exception(ErrorCode::RefOperatorInvalidType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	else
 	{
@@ -175,7 +175,7 @@ void Operator::setOperator(Operator *oper, unsigned op_type)
 		 is being defined and its commutator operator is +*+ then the signature
 		 of the latter should be +*+ (typeB, typeA). Raises an error when this condition
 		 is not satisfied. */
-		if(oper && op_type==OperCommutator && argument_types[LeftArg]!=oper->argument_types[RightArg])
+		if(oper && op_id==OperCommutator && argument_types[LeftArg]!=oper->argument_types[RightArg])
 		{
 			throw Exception(Exception::getErrorMessage(ErrorCode::AsgInvalidCommutatorOperator)
 							.arg(oper->getSignature(true))
@@ -187,7 +187,7 @@ void Operator::setOperator(Operator *oper, unsigned op_type)
 		 operator to be defined. That is, if the operator !!(typeA) is being
 		 set and its negator is !*! then the signature of the latter should be !*! (typeA).
 		 Raises an error when this condition is not satisfied. */
-		else if(oper && op_type==OperNegator &&
+		else if(oper && op_id==OperNegator &&
 				(argument_types[LeftArg]!=oper->argument_types[LeftArg] &&
 				 argument_types[RightArg]!=oper->argument_types[RightArg]))
 		{
@@ -197,8 +197,8 @@ void Operator::setOperator(Operator *oper, unsigned op_type)
 							ErrorCode::AsgFunctionInvalidParamCount,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		}
 
-		setCodeInvalidated(operators[op_type] != oper);
-		operators[op_type]=oper;
+		setCodeInvalidated(operators[op_id] != oper);
+		operators[op_id]=oper;
 	}
 }
 
@@ -223,7 +223,7 @@ Function *Operator::getFunction(FunctionId func_id)
 	return functions[func_id];
 }
 
-PgSqlType Operator::getArgumentType(unsigned arg_id)
+PgSqlType Operator::getArgumentType(ArgumentId arg_id)
 {
 	//Raises an error if the argument id is invalid
 	if(arg_id > RightArg)
@@ -231,13 +231,13 @@ PgSqlType Operator::getArgumentType(unsigned arg_id)
 	return argument_types[arg_id];
 }
 
-Operator *Operator::getOperator(unsigned op_type)
+Operator *Operator::getOperator(OperatorId op_id)
 {
 	//Raises an error if the operator type is invalid
-	if(op_type > OperNegator)
+	if(op_id > OperNegator)
 		throw Exception(ErrorCode::RefFunctionInvalidType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	return operators[op_type];
+	return operators[op_id];
 }
 
 bool Operator::isHashes()
