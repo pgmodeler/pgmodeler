@@ -48,11 +48,15 @@ class Operator: public BaseObject {
 		virtual void configureSearchAttributes();
 
 	public:
-		static constexpr unsigned FuncOperator=0,
-		FuncJoin=1,
-		FuncRestrict=2,
-		LeftArg=0,
+		enum FunctionId {
+			FuncOperator,
+			FuncJoin,
+			FuncRestrict
+		};
+
+		static constexpr unsigned LeftArg=0,
 		RightArg=1,
+
 		OperCommutator=0,
 		OperNegator=1;
 
@@ -62,7 +66,7 @@ class Operator: public BaseObject {
 		void setName(const QString &name);
 
 		//! \brief Defines the function used by the operator (constants FUNC_[OPERATOR | JOIN | RESTRICT])
-		void setFunction(Function *func, unsigned func_type);
+		void setFunction(Function *func, FunctionId func_id);
 
 		//! \brief Defines the argument data type for operator (constants ARG_[LEFT | RIGHT])
 		void setArgumentType(PgSqlType arg_type, unsigned arg_id);
@@ -77,7 +81,7 @@ class Operator: public BaseObject {
 		void setMerges(bool value);
 
 		//! \brief Returns the function used by the operator referencing it by its type
-		Function *getFunction(unsigned func_type);
+		Function *getFunction(FunctionId func_id);
 
 		//! \brief Returns the type of the passed argument id
 		PgSqlType getArgumentType(unsigned arg_id);

@@ -96,7 +96,7 @@ void OperatorWidget::setAttributes(DatabaseModel *model, OperationList *op_list,
 		merges_chk->setChecked(oper->isMerges());
 
 		for(i=Operator::FuncOperator; i <= Operator::FuncRestrict; i++)
-			functions_sel[i]->setSelectedObject(oper->getFunction(i));
+			functions_sel[i]->setSelectedObject(oper->getFunction(static_cast<Operator::FunctionId>(i)));
 
 		for(i=Operator::OperCommutator; i <= Operator::OperNegator; i++)
 			operators_sel[i]->setSelectedObject(oper->getOperator(i));
@@ -128,7 +128,8 @@ void OperatorWidget::applyConfiguration()
 			oper->setArgumentType(arg_types[i]->getPgSQLType(), i);
 
 		for(i=Operator::FuncOperator; i <= Operator::FuncRestrict; i++)
-			oper->setFunction(dynamic_cast<Function *>(functions_sel[i]->getSelectedObject()), i);
+			oper->setFunction(dynamic_cast<Function *>(functions_sel[i]->getSelectedObject()),
+												static_cast<Operator::FunctionId>(i));
 
 		for(i=Operator::OperCommutator; i <= Operator::OperNegator; i++)
 			oper->setOperator(dynamic_cast<Operator *>(operators_sel[i]->getSelectedObject()), i);

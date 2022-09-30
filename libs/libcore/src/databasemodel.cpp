@@ -4686,7 +4686,7 @@ Conversion *DatabaseModel::createConversion()
 Operator *DatabaseModel::createOperator()
 {
 	attribs_map attribs;
-	std::map<QString, unsigned> func_types;
+	std::map<QString, Operator::FunctionId> func_ids;
 	std::map<QString, unsigned> oper_types;
 	Operator *oper=nullptr;
 	QString elem;
@@ -4703,9 +4703,9 @@ Operator *DatabaseModel::createOperator()
 		oper->setMerges(attribs[Attributes::Merges]==Attributes::True);
 		oper->setHashes(attribs[Attributes::Hashes]==Attributes::True);
 
-		func_types[Attributes::OperatorFunc]=Operator::FuncOperator;
-		func_types[Attributes::JoinFunc]=Operator::FuncJoin;
-		func_types[Attributes::RestrictionFunc]=Operator::FuncRestrict;
+		func_ids[Attributes::OperatorFunc]=Operator::FuncOperator;
+		func_ids[Attributes::JoinFunc]=Operator::FuncJoin;
+		func_ids[Attributes::RestrictionFunc]=Operator::FuncRestrict;
 
 		oper_types[Attributes::CommutatorOp]=Operator::OperCommutator;
 		oper_types[Attributes::NegatorOp]=Operator::OperNegator;
@@ -4762,7 +4762,7 @@ Operator *DatabaseModel::createOperator()
 								ErrorCode::RefObjectInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 						oper->setFunction(dynamic_cast<Function *>(func),
-											func_types[attribs[Attributes::RefType]]);
+											func_ids[attribs[Attributes::RefType]]);
 					}
 				}
 			}
@@ -8495,8 +8495,8 @@ void DatabaseModel::getOperatorDependencies(BaseObject *object, std::vector<Base
 
 	for(i=Operator::FuncOperator; i <= Operator::FuncRestrict; i++)
 	{
-		if(oper->getFunction(i))
-			getObjectDependecies(oper->getFunction(i), deps, inc_indirect_deps);
+		if(oper->getFunction(static_cast<Operator::FunctionId>(i)))
+			getObjectDependecies(oper->getFunction(static_cast<Operator::FunctionId>(i)), deps, inc_indirect_deps);
 	}
 
 	for(i=Operator::LeftArg; i <= Operator::RightArg; i++)

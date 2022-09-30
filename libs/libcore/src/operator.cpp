@@ -89,12 +89,12 @@ void Operator::setName(const QString &name)
 	this->obj_name=name;
 }
 
-void Operator::setFunction(Function *func, unsigned func_type)
+void Operator::setFunction(Function *func, FunctionId func_id)
 {
 	//Raises an error if the function type is invalid
-	if(func_type > FuncRestrict)
+	if(func_id > FuncRestrict)
 		throw Exception(ErrorCode::RefFunctionInvalidType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-	else if(func_type==FuncOperator)
+	else if(func_id==FuncOperator)
 	{
 		//Raises an error if the function is not allocated
 		if(!func)
@@ -147,8 +147,8 @@ void Operator::setFunction(Function *func, unsigned func_type)
 		}
 	}
 
-	setCodeInvalidated(functions[func_type] != func);
-	functions[func_type]=func;
+	setCodeInvalidated(functions[func_id] != func);
+	functions[func_id]=func;
 }
 
 void Operator::setArgumentType(PgSqlType arg_type, unsigned arg_id)
@@ -214,13 +214,13 @@ void Operator::setMerges(bool value)
 	merges=value;
 }
 
-Function *Operator::getFunction(unsigned func_type)
+Function *Operator::getFunction(FunctionId func_id)
 {
 	//Raises an error if the function type is invalid
-	if(func_type > FuncRestrict)
+	if(func_id > FuncRestrict)
 		throw Exception(ErrorCode::RefOperatorInvalidType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	return functions[func_type];
+	return functions[func_id];
 }
 
 PgSqlType Operator::getArgumentType(unsigned arg_id)

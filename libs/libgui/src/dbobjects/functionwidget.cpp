@@ -281,8 +281,8 @@ void FunctionWidget::validateConfiguredFunction()
 				oper = dynamic_cast<Operator *>(object);
 				for(idx = Operator::FuncOperator; idx <= Operator::FuncRestrict; idx++)
 				{
-					if(oper->getFunction(idx) == func)
-						oper->setFunction(func, idx);
+					if(oper->getFunction(static_cast<Operator::FunctionId>(idx)) == func)
+						oper->setFunction(func, static_cast<Operator::FunctionId>(idx));
 				}
 			}
 			else if(obj_type == ObjectType::Type)
