@@ -2466,7 +2466,7 @@ void DatabaseImportHelper::createPermission(attribs_map &attribs)
 	if(Permission::acceptsPermission(obj_type))
 	{
 		QStringList perm_list;
-		std::vector<unsigned> privs, gop_privs;
+		std::vector<Permission::PrivilegeId> privs, gop_privs;
 		QString role_name;
 		Role *role=nullptr;
 		BaseObject *object=nullptr;

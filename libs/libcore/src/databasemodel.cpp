@@ -7214,8 +7214,21 @@ Permission *DatabaseModel::createPermission()
 	ObjectType obj_type;
 	QString parent_name, obj_name;
 	QStringList list;
-	unsigned priv_type=Permission::PrivSelect;
 	bool priv_value, grant_op, revoke, cascade;
+	std::map<QString, Permission::PrivilegeId> priv_ids = {
+		{ Attributes::ConnectPriv, Permission::PrivConnect },
+		{ Attributes::CreatePriv, Permission::PrivCreate },
+		{ Attributes::DeletePriv, Permission::PrivDelete },
+		{ Attributes::ExecutPriv, Permission::PrivExecute },
+		{ Attributes::InsertPriv, Permission::PrivInsert },
+		{ Attributes::ReferencesPriv, Permission::PrivReferences },
+		{ Attributes::SelectPriv, Permission::PrivSelect },
+		{ Attributes::TemporaryPriv, Permission::PrivTemporary },
+		{ Attributes::TriggerPriv, Permission::PrivTrigger },
+		{ Attributes::TruncatePriv, Permission::PrivTruncate },
+		{ Attributes::UpdatePriv, Permission::PrivUpdate },
+		{ Attributes::UsagePriv, Permission::PrivUsage }
+	};
 
 	try
 	{
@@ -7295,7 +7308,7 @@ Permission *DatabaseModel::createPermission()
 						priv_value=(itr->second==Attributes::True);
 						grant_op=(itr->second==Attributes::GrantOp);
 
-						if(itr->first==Attributes::ConnectPriv)
+						/*if(itr->first==Attributes::ConnectPriv)
 							priv_type=Permission::PrivConnect;
 						else if(itr->first==Attributes::CreatePriv)
 							priv_type=Permission::PrivCreate;
@@ -7320,7 +7333,9 @@ Permission *DatabaseModel::createPermission()
 						else if(itr->first==Attributes::UsagePriv)
 							priv_type=Permission::PrivUsage;
 
-						perm->setPrivilege(priv_type, (priv_value || grant_op), grant_op);
+						perm->setPrivilege(priv_type, (priv_value || grant_op), grant_op); */
+
+						perm->setPrivilege(priv_ids[itr->first], (priv_value || grant_op), grant_op);
 					}
 					itr++;
 				}

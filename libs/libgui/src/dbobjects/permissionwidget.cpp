@@ -380,8 +380,8 @@ void PermissionWidget::editPermission()
 			chk=dynamic_cast<QCheckBox *>(privileges_tbw->cellWidget(priv,0));
 			chk1=dynamic_cast<QCheckBox *>(privileges_tbw->cellWidget(priv,1));
 
-			chk->setChecked(permission->getPrivilege(priv));
-			chk1->setChecked(permission->getGrantOption(priv));
+			chk->setChecked(permission->getPrivilege(static_cast<Permission::PrivilegeId>(priv)));
+			chk1->setChecked(permission->getGrantOption(static_cast<Permission::PrivilegeId>(priv)));
 		}
 
 		enableEditButtons();
@@ -436,7 +436,7 @@ void PermissionWidget::configurePermission(Permission *perm)
 			{
 				chk=dynamic_cast<QCheckBox *>(privileges_tbw->cellWidget(priv,0));
 				chk1=dynamic_cast<QCheckBox *>(privileges_tbw->cellWidget(priv,1));
-				perm->setPrivilege(priv, chk->isChecked(), chk1->isChecked());
+				perm->setPrivilege(static_cast<Permission::PrivilegeId>(priv), chk->isChecked(), chk1->isChecked());
 			}
 		}
 	}
