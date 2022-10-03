@@ -179,12 +179,12 @@ QString Reference::getExpression()
 	return expression;
 }
 
-unsigned Reference::getReferenceType()
+Reference::ReferType Reference::getReferenceType()
 {
 	if(expression.isEmpty())
 		return ReferColumn;
-	else
-		return ReferExpression;
+
+	return ReferExpression;
 }
 
 void Reference::setReferenceAlias(const QString &alias)
@@ -203,7 +203,7 @@ QString Reference::getReferenceAlias()
 QString Reference::getSQLDefinition(unsigned sql_type)
 {
 	QString sql_def, tab_name;
-	unsigned refer_type;
+	ReferType refer_type;
 
 	refer_type=getReferenceType();
 

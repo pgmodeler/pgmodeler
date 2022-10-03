@@ -348,29 +348,23 @@ unsigned View::getReferenceCount(unsigned sql_type, int ref_type)
 	{
 		if(sql_type==Reference::SqlViewDefinition)
 			return references.size();
-		else
-			return 0;
+
+		return 0;
 	}
 	else
 	{
 		if(ref_type < 0)
 			return vect_idref->size();
-		else
+
+		unsigned count=0;
+
+		for(auto &ref : *vect_idref)
 		{
-			std::vector<unsigned>::iterator itr, itr_end;
-			unsigned count=0;
-
-
-			itr=vect_idref->begin();
-			itr_end=vect_idref->end();
-			while(itr!=itr_end)
-			{
-				if(references[(*itr)].getReferenceType()==static_cast<unsigned>(ref_type)) count++;
-				itr++;
-			}
-
-			return count;
+			if(references[ref].getReferenceType()== static_cast<Reference::ReferType>(ref_type))
+				count++;
 		}
+
+		return count;
 	}
 }
 

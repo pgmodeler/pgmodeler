@@ -200,7 +200,7 @@ class View: public BaseTable {
 		/*! \brief Returns the element count on the specified SQL expression type list (sql_type).
 		 It possible to filter the reference type via 'ref_type' which must be filled
 		 with the Reference::REFER_??? constants */
-		unsigned getReferenceCount(unsigned sql_type, int ref_type=-1);
+		unsigned getReferenceCount(unsigned sql_type, int ref_type = -1);
 
 		//! \brief Returs one reference using its index
 		Reference getReference(unsigned ref_id);
