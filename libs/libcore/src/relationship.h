@@ -117,6 +117,18 @@ Must be manually simulated using the available binary relationships.
 			the first. */
 
 class Relationship: public BaseRelationship {
+	public:
+		//! \brief Patterns ids
+		enum PatternId: unsigned {
+			SrcColPattern,
+			DstColPattern,
+			PkPattern,
+			UqPattern,
+			SrcFkPattern,
+			DstFkPattern,
+			PkColPattern
+		};
+
 	private:
 		/*! \brief Indicates that the relationship invalid because one or more critical attributes
 		 where modified needing to be revalidated */
@@ -277,7 +289,7 @@ class Relationship: public BaseRelationship {
 		void removeColumnFromTablePK(PhysicalTable *table, Column *column);
 
 		//! \brief Generates the object name according to the specified name pattern
-		QString generateObjectName(unsigned pat_id, Column *id_col=nullptr, bool use_alias=false);
+		QString generateObjectName(PatternId pat_id, Column *id_col=nullptr, bool use_alias=false);
 
 		void setOriginalPrimaryKey(Constraint *pk);
 
@@ -308,15 +320,6 @@ class Relationship: public BaseRelationship {
 		DstTabToken, //{dt}
 		GenTabToken, //{gt}
 		SrcColToken; //{sc}
-
-		//! \brief Patterns ids
-		static constexpr unsigned SrcColPattern=0,
-		DstColPattern=1,
-		PkPattern=2,
-		UqPattern=3,
-		SrcFkPattern=4,
-		DstFkPattern=5,
-		PkColPattern=6;
 
 		Relationship(Relationship *rel);
 
@@ -400,10 +403,10 @@ class Relationship: public BaseRelationship {
 		void setCopyOptions(CopyOptions copy_op);
 
 		//! \brief Defines the format for the specified pattern
-		void setNamePattern(unsigned pat_id, const QString &pattern);
+		void setNamePattern(PatternId pat_id, const QString &pattern);
 
 		//! \brief Gets the current format for the specified pattern
-		QString getNamePattern(unsigned pat_id);
+		QString getNamePattern(PatternId pat_id);
 
 		//! \brief Returns the current copy options
 		CopyOptions getCopyOptions();

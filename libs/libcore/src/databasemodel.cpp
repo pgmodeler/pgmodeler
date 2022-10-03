@@ -7030,11 +7030,12 @@ BaseRelationship *DatabaseModel::createRelationship()
 									Attributes::PkPattern, Attributes::UqPattern,
 									Attributes::PkColPattern };
 
-			unsigned 	pattern_id[]= { Relationship::SrcColPattern, Relationship::DstColPattern,
-										Relationship::SrcFkPattern, Relationship::DstFkPattern,
-										Relationship::PkPattern, Relationship::UqPattern,
-										Relationship::PkColPattern },
-					pat_count=sizeof(pattern_id)/sizeof(unsigned);
+			std::vector<Relationship::PatternId>	pattern_ids= {
+				Relationship::SrcColPattern, Relationship::DstColPattern,
+				Relationship::SrcFkPattern, Relationship::DstFkPattern,
+				Relationship::PkPattern, Relationship::UqPattern,
+				Relationship::PkColPattern
+			};
 
 			sql_disabled=attribs[Attributes::SqlDisabled]==Attributes::True;
 			identifier=attribs[Attributes::Identifier]==Attributes::True;
@@ -7076,8 +7077,8 @@ BaseRelationship *DatabaseModel::createRelationship()
 			base_rel=rel;
 
 			//Configuring the name patterns
-			for(i=0; i < pat_count; i++)
-				rel->setNamePattern(pattern_id[i], attribs[pat_attrib[i]]);
+			for(auto &pat_id : pattern_ids)
+				rel->setNamePattern(pat_id, attribs[pat_attrib[pat_id]]);
 		}
 
 		if(xmlparser.accessElement(XmlParser::ChildElement))

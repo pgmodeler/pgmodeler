@@ -1082,10 +1082,10 @@ void RelationshipWidget::applyConfiguration()
 																								src_fk_pattern_txt, dst_fk_pattern_txt,
 																								pk_col_pattern_txt };
 
-			std::vector<unsigned> pattern_ids= { Relationship::SrcColPattern, Relationship::DstColPattern,
-																			Relationship::PkPattern, Relationship::UqPattern,
-																			Relationship::SrcFkPattern, Relationship::DstFkPattern,
-																			Relationship::PkColPattern };
+			std::vector<Relationship::PatternId> pattern_ids= { Relationship::SrcColPattern, Relationship::DstColPattern,
+																													Relationship::PkPattern, Relationship::UqPattern,
+																													Relationship::SrcFkPattern, Relationship::DstFkPattern,
+																													Relationship::PkColPattern };
 
 			rel = dynamic_cast<Relationship *>(base_rel);
 

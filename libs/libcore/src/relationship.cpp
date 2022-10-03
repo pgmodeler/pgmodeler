@@ -26,14 +26,6 @@ const QString Relationship::DstTabToken("{dt}");
 const QString Relationship::GenTabToken("{gt}");
 const QString Relationship::SrcColToken("{sc}");
 
-constexpr unsigned Relationship::SrcColPattern;
-constexpr unsigned Relationship::DstColPattern;
-constexpr unsigned Relationship::PkPattern;
-constexpr unsigned Relationship::UqPattern;
-constexpr unsigned Relationship::SrcFkPattern;
-constexpr unsigned Relationship::DstFkPattern;
-constexpr unsigned Relationship::PkColPattern;
-
 Relationship::Relationship(Relationship *rel) : BaseRelationship(rel)
 {
 	if(!rel)
@@ -196,16 +188,15 @@ Relationship::Relationship(BaseRelationship::RelType rel_type, PhysicalTable *sr
 	}
 }
 
-void Relationship::setNamePattern(unsigned pat_id, const QString &pattern)
+void Relationship::setNamePattern(PatternId pat_id, const QString &pattern)
 {
 	if(!pattern.isEmpty())
 	{
 		QString aux_name=pattern,
 				pat_tokens[]={ SrcTabToken, DstTabToken,
 											 GenTabToken, SrcColToken };
-		unsigned i, count=sizeof(pat_tokens)/sizeof(QString);
 
-		for(i=0; i < count; i++)
+		for(unsigned i=0; i < 4; i++)
 			aux_name.replace(pat_tokens[i], QString("%1").arg(static_cast<char>('a' + i)));
 
 		if(pat_id > PkColPattern)
@@ -220,7 +211,7 @@ void Relationship::setNamePattern(unsigned pat_id, const QString &pattern)
 	}
 }
 
-QString Relationship::getNamePattern(unsigned pat_id)
+QString Relationship::getNamePattern(PatternId pat_id)
 {
 	if(pat_id > PkColPattern)
 		throw Exception(ErrorCode::RefInvalidNamePatternId,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -228,7 +219,7 @@ QString Relationship::getNamePattern(unsigned pat_id)
 	return name_patterns[pat_id];
 }
 
-QString Relationship::generateObjectName(unsigned pat_id, Column *id_col, bool use_alias)
+QString Relationship::generateObjectName(PatternId pat_id, Column *id_col, bool use_alias)
 {
 	QString name, aux_name;
 
