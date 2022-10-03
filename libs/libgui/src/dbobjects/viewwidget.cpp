@@ -462,20 +462,20 @@ unsigned ViewWidget::getReferenceFlag(int row)
 		return 0;
 
 	if(flags_str[4] == '1')
-		ref_flags = Reference::SqlViewDefinition;
+		ref_flags = Reference::SqlViewDef;
 	else
 	{
 		if(flags_str[0] == '1')
-			ref_flags |= Reference::SqlReferSelect;
+			ref_flags |= Reference::SqlSelect;
 
 		if(flags_str[1] == '1')
-			ref_flags |= Reference::SqlReferFrom;
+			ref_flags |= Reference::SqlFrom;
 
 		if(flags_str[2] == '1')
-			ref_flags |= Reference::SqlReferWhere;
+			ref_flags |= Reference::SqlWhere;
 
 		if(flags_str[3] == '1')
-			ref_flags |= Reference::SqlReferEndExpr;
+			ref_flags |= Reference::SqlEndExpr;
 	}
 
 	return ref_flags;
@@ -491,11 +491,11 @@ void ViewWidget::showReferenceData(Reference refer, unsigned ref_flags, unsigned
 	PhysicalTable *tab=nullptr;
 	Column *col=nullptr;
 	QString str_aux;
-	bool	selec_from = (ref_flags & Reference::SqlReferSelect) == Reference::SqlReferSelect,
-				from_where = (ref_flags & Reference::SqlReferFrom) == Reference::SqlReferFrom,
-				after_where = (ref_flags & Reference::SqlReferWhere) == Reference::SqlReferWhere,
-				end_expr = (ref_flags & Reference::SqlReferEndExpr) == Reference::SqlReferEndExpr,
-				view_def = (ref_flags & Reference::SqlViewDefinition) == Reference::SqlViewDefinition;
+	bool	selec_from = (ref_flags & Reference::SqlSelect) == Reference::SqlSelect,
+				from_where = (ref_flags & Reference::SqlFrom) == Reference::SqlFrom,
+				after_where = (ref_flags & Reference::SqlWhere) == Reference::SqlWhere,
+				end_expr = (ref_flags & Reference::SqlEndExpr) == Reference::SqlEndExpr,
+				view_def = (ref_flags & Reference::SqlViewDef) == Reference::SqlViewDef;
 
 	if(refer.getReferenceType()==Reference::ReferColumn)
 	{
@@ -545,12 +545,14 @@ void ViewWidget::updateCodePreview()
 			View aux_view;
 			Reference refer;
 			QString str_aux;
-			unsigned i, count, i1, expr_type[]={
-												Reference::SqlReferSelect,
-												Reference::SqlReferFrom,
-												Reference::SqlReferWhere,
-												Reference::SqlReferEndExpr,
-												Reference::SqlViewDefinition};
+			unsigned i, count, i1;
+			Reference::SqlType expr_type[]={
+				Reference::SqlSelect,
+				Reference::SqlFrom,
+				Reference::SqlWhere,
+				Reference::SqlEndExpr,
+				Reference::SqlViewDef
+			};
 
 			aux_view.BaseObject::setName(name_edt->text().toUtf8());
 			aux_view.BaseObject::setSchema(schema_sel->getSelectedObject());
@@ -631,20 +633,20 @@ void ViewWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Sch
 		ref_flags = 0;
 		refer=view->getReference(i);
 
-		if(view->getReferenceIndex(refer, Reference::SqlViewDefinition) >= 0)
-			ref_flags = Reference::SqlViewDefinition;
+		if(view->getReferenceIndex(refer, Reference::SqlViewDef) >= 0)
+			ref_flags = Reference::SqlViewDef;
 
-		if(view->getReferenceIndex(refer, Reference::SqlReferSelect) >= 0)
-			ref_flags |= Reference::SqlReferSelect;
+		if(view->getReferenceIndex(refer, Reference::SqlSelect) >= 0)
+			ref_flags |= Reference::SqlSelect;
 
-		if(view->getReferenceIndex(refer, Reference::SqlReferFrom) >= 0)
-			ref_flags |= Reference::SqlReferFrom;
+		if(view->getReferenceIndex(refer, Reference::SqlFrom) >= 0)
+			ref_flags |= Reference::SqlFrom;
 
-		if(view->getReferenceIndex(refer, Reference::SqlReferWhere) >= 0)
-			ref_flags |= Reference::SqlReferWhere;
+		if(view->getReferenceIndex(refer, Reference::SqlWhere) >= 0)
+			ref_flags |= Reference::SqlWhere;
 
-		if(view->getReferenceIndex(refer, Reference::SqlReferEndExpr) >= 0)
-			ref_flags |= Reference::SqlReferEndExpr;
+		if(view->getReferenceIndex(refer, Reference::SqlEndExpr) >= 0)
+			ref_flags |= Reference::SqlEndExpr;
 
 		showReferenceData(refer, ref_flags, i);
 	}
@@ -663,11 +665,11 @@ void ViewWidget::applyConfiguration()
 	{
 		View *view=nullptr;
 		ObjectType types[]={ ObjectType::Trigger, ObjectType::Rule, ObjectType::Index };
-		unsigned expr_type[]={ Reference::SqlReferSelect,
-													 Reference::SqlReferFrom,
-													 Reference::SqlReferWhere,
-													 Reference::SqlReferEndExpr,
-													 Reference::SqlViewDefinition};
+		Reference::SqlType expr_type[]={ Reference::SqlSelect,
+																		 Reference::SqlFrom,
+																		 Reference::SqlWhere,
+																		 Reference::SqlEndExpr,
+																		 Reference::SqlViewDef};
 		Reference refer;
 		QString str_aux;
 

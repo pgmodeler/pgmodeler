@@ -200,7 +200,7 @@ QString Reference::getReferenceAlias()
 	return ref_alias;
 }
 
-QString Reference::getSQLDefinition(unsigned sql_type)
+QString Reference::getSQLDefinition(SqlType sql_type)
 {
 	QString sql_def, tab_name;
 	ReferType refer_type;
@@ -208,7 +208,7 @@ QString Reference::getSQLDefinition(unsigned sql_type)
 	refer_type=getReferenceType();
 
 	//Case the reference is between the SELECT-FROM keywords
-	if(sql_type==SqlReferSelect)
+	if(sql_type==SqlSelect)
 	{
 		//Case the reference is linked to a column
 		if(refer_type==ReferColumn)
@@ -247,7 +247,7 @@ QString Reference::getSQLDefinition(unsigned sql_type)
 		sql_def+=QString(",\n");
 	}
 	//Case the reference is between the FROM-[JOIN | WHERE] keywords
-	else if(sql_type==SqlReferFrom)
+	else if(sql_type==SqlFrom)
 	{
 		/* Case the reference is linked to a column only the table name is used.
 		 For expression the complete code is used thus the generated code is:

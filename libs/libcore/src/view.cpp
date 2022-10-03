@@ -182,18 +182,21 @@ int View::getReferenceIndex(Reference &refer)
 	return idx;
 }
 
-std::vector<unsigned> *View::getExpressionList(unsigned sql_type)
+std::vector<unsigned> *View::getExpressionList(Reference::SqlType sql_type)
 {
-	if(sql_type==Reference::SqlReferSelect)
+	if(sql_type==Reference::SqlSelect)
 		return &exp_select;
-	else if(sql_type==Reference::SqlReferFrom)
+
+	if(sql_type==Reference::SqlFrom)
 		return &exp_from;
-	else if(sql_type==Reference::SqlReferWhere)
+
+	if(sql_type==Reference::SqlWhere)
 		return &exp_where;
-	else if(sql_type==Reference::SqlReferEndExpr)
+
+	if(sql_type==Reference::SqlEndExpr)
 		return &exp_end;
-	else
-		return nullptr;
+
+	return nullptr;
 }
 
 void View::generateColumns()
@@ -272,14 +275,14 @@ std::vector<SimpleColumn> View::getColumns()
 	return columns;
 }
 
-void View::addReference(Reference &refer, unsigned sql_type, int expr_id)
+void View::addReference(Reference &refer, Reference::SqlType sql_type, int expr_id)
 {
 	int idx;
 	std::vector<unsigned> *expr_list=nullptr;
 	Column *col=nullptr;
 
 	//Specific tests for expressions used as view definition
-	if(sql_type==Reference::SqlViewDefinition)
+	if(sql_type==Reference::SqlViewDef)
 	{
 		//Raises an error if the expression is empty
 		if(refer.getExpression().isEmpty())
@@ -302,12 +305,12 @@ void View::addReference(Reference &refer, unsigned sql_type, int expr_id)
 	if(idx < 0)
 	{
 		//Inserts the reference on the view
-		refer.setDefinitionExpression(sql_type==Reference::SqlViewDefinition);
+		refer.setDefinitionExpression(sql_type==Reference::SqlViewDef);
 		references.push_back(refer);
 		idx=references.size()-1;
 	}
 
-	if(sql_type!=Reference::SqlViewDefinition)
+	if(sql_type!=Reference::SqlViewDef)
 	{
 		//Gets the expression list
 		expr_list=getExpressionList(sql_type);
@@ -340,13 +343,13 @@ unsigned View::getReferenceCount()
 	return references.size();
 }
 
-unsigned View::getReferenceCount(unsigned sql_type, int ref_type)
+unsigned View::getReferenceCount(Reference::SqlType sql_type, int ref_type)
 {
 	std::vector<unsigned> *vect_idref=getExpressionList(sql_type);
 
 	if(!vect_idref)
 	{
-		if(sql_type==Reference::SqlViewDefinition)
+		if(sql_type==Reference::SqlViewDef)
 			return references.size();
 
 		return 0;
@@ -377,7 +380,7 @@ Reference View::getReference(unsigned ref_id)
 	return references[ref_id];
 }
 
-Reference View::getReference(unsigned ref_id, unsigned sql_type)
+Reference View::getReference(unsigned ref_id, Reference::SqlType sql_type)
 {
 	std::vector<unsigned> *vect_idref=getExpressionList(sql_type);
 
@@ -385,7 +388,7 @@ Reference View::getReference(unsigned ref_id, unsigned sql_type)
 	if(ref_id >= references.size())
 		throw Exception(ErrorCode::RefObjectInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	if(sql_type==Reference::SqlViewDefinition || vect_idref)
+	if(sql_type==Reference::SqlViewDef || vect_idref)
 		return references[ref_id];
 	else
 		return references[vect_idref->at(ref_id)];
@@ -433,7 +436,7 @@ void View::removeReferences()
 	setCodeInvalidated(true);
 }
 
-void View::removeReference(unsigned expr_id, unsigned sql_type)
+void View::removeReference(unsigned expr_id, Reference::SqlType sql_type)
 {
 	std::vector<unsigned> *vect_idref=getExpressionList(sql_type);
 
@@ -444,7 +447,7 @@ void View::removeReference(unsigned expr_id, unsigned sql_type)
 	setCodeInvalidated(true);
 }
 
-int View::getReferenceIndex(Reference &ref, unsigned sql_type)
+int View::getReferenceIndex(Reference &ref, Reference::SqlType sql_type)
 {
 	std::vector<unsigned> *vet_idref=getExpressionList(sql_type);
 	std::vector<unsigned>::iterator itr, itr_end;
@@ -453,10 +456,10 @@ int View::getReferenceIndex(Reference &ref, unsigned sql_type)
 
 	idx_ref=getReferenceIndex(ref);
 
-	if(sql_type==Reference::SqlViewDefinition &&
+	if(sql_type==Reference::SqlViewDef &&
 			idx_ref >=0 && ref.isDefinitionExpression())
 		return idx_ref;
-	else if(sql_type!=Reference::SqlViewDefinition)
+	else if(sql_type!=Reference::SqlViewDef)
 	{
 		itr=vet_idref->begin();
 		itr_end=vet_idref->end();
@@ -491,10 +494,11 @@ void View::setDefinitionAttribute()
 			std::vector<unsigned> *refs_vect[4]={&exp_select, &exp_from, &exp_where, &exp_end};
 			std::vector<unsigned>::iterator itr, itr_end;
 			QString keywords[4]={"SELECT\n", "\nFROM\n", "\nWHERE\n", "\n"};
-			unsigned i, cnt, idx, sql_type[4]={ Reference::SqlReferSelect,
-																					Reference::SqlReferFrom,
-																					Reference::SqlReferWhere,
-																					Reference::SqlReferEndExpr };
+			unsigned i, cnt, idx;
+			Reference::SqlType sql_type[4]={ Reference::SqlSelect,
+																						Reference::SqlFrom,
+																						Reference::SqlWhere,
+																						Reference::SqlEndExpr };
 
 			for(i=0; i < 4; i++)
 			{
@@ -511,8 +515,8 @@ void View::setDefinitionAttribute()
 						itr++;
 					}
 
-					if(sql_type[i]==Reference::SqlReferSelect ||
-							sql_type[i]==Reference::SqlReferFrom)
+					if(sql_type[i]==Reference::SqlSelect ||
+							sql_type[i]==Reference::SqlFrom)
 					{
 						//Removing the final comma from SELECT / FROM declarations
 						cnt=decl.size();
@@ -646,7 +650,7 @@ QString View::getCodeDefinition(unsigned def_type)
 	setSQLObjectAttribute();
 	setLayersAttribute();
 
-	// We use column names only if the view has references that aren't its whole definition (Reference::SqlViewDefinition)
+	// We use column names only if the view has references that aren't its whole definition (Reference::SqlViewDef)
 	if(recursive && !hasDefinitionExpression())
 	{
 		QStringList fmt_names;

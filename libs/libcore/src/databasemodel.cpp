@@ -1483,18 +1483,18 @@ void DatabaseModel::updateViewRelationships(View *view, bool force_rel_removal)
 
 		/* Creates the relationships from the view references
 		 * First we try to create relationship from referecences in SELECT portion of view's definition */
-		ref_count=view->getReferenceCount(Reference::SqlReferSelect);
+		ref_count=view->getReferenceCount(Reference::SqlSelect);
 		for(i=0; i < ref_count; i++)
 		{
-			table = view->getReference(i, Reference::SqlReferSelect).getTable();
+			table = view->getReference(i, Reference::SqlSelect).getTable();
 			if(table) tables.push_back(table);
 		}
 
 		/* If the view does have tables referenced from SELECT portion we check if
-		 * the table was constructed from a single reference (Reference::SqlViewDefinition). In
+		 * the table was constructed from a single reference (Reference::SqlViewDef). In
 		 * that case we use the list of referenced tables configured in that view reference object */
-		if(tables.empty() && view->getReferenceCount(Reference::SqlViewDefinition) > 0)
-			tables = view->getReference(0, Reference::SqlViewDefinition).getReferencedTables();
+		if(tables.empty() && view->getReferenceCount(Reference::SqlViewDef) > 0)
+			tables = view->getReference(0, Reference::SqlViewDef).getReferencedTables();
 
 		// Effectively creating the relationships
 		for(auto &tab : tables)
@@ -2015,11 +2015,11 @@ void DatabaseModel::storeSpecialObjectsXML()
 				/* Relationships linking the view and the referenced tables are considered as
 			 special objects in this case only to be recreated more easely latter */
 
-				count=view->getReferenceCount(Reference::SqlReferSelect);
+				count=view->getReferenceCount(Reference::SqlSelect);
 
 				for(i=0; i < count; i++)
 				{
-					ref=view->getReference(i, Reference::SqlReferSelect);
+					ref=view->getReference(i, Reference::SqlSelect);
 					table=ref.getTable();
 
 					if(table)
@@ -6524,7 +6524,7 @@ View *DatabaseModel::createView()
 	QStringList list_aux;
 	std::vector<Reference> refs;
 	BaseObject *tag=nullptr;
-	unsigned type;
+	Reference::SqlType sql_type;
 	int ref_idx, i, count;
 	bool refs_in_expr=false;
 	Reference reference;
@@ -6662,13 +6662,13 @@ View *DatabaseModel::createView()
 						else
 						{
 							if(attribs[Attributes::Type]==Attributes::SelectExp)
-								type=Reference::SqlReferSelect;
+								sql_type=Reference::SqlSelect;
 							else if(attribs[Attributes::Type]==Attributes::FromExp)
-								type=Reference::SqlReferFrom;
+								sql_type=Reference::SqlFrom;
 							else if(attribs[Attributes::Type]==Attributes::SimpleExp)
-								type=Reference::SqlReferWhere;
+								sql_type=Reference::SqlWhere;
 							else
-								type=Reference::SqlReferEndExpr;
+								sql_type=Reference::SqlEndExpr;
 
 							list_aux=xmlparser.getElementContent().split(',');
 							count=list_aux.size();
@@ -6680,7 +6680,7 @@ View *DatabaseModel::createView()
 							for(i=0; i < count; i++)
 							{
 								ref_idx=list_aux[i].toInt();
-								view->addReference(refs[ref_idx],type);
+								view->addReference(refs[ref_idx],sql_type);
 							}
 						}
 
@@ -6725,7 +6725,7 @@ View *DatabaseModel::createView()
 			itr=refs.begin();
 			while(itr!=refs.end())
 			{
-				view->addReference(*itr, Reference::SqlViewDefinition);
+				view->addReference(*itr, Reference::SqlViewDef);
 				itr++;
 			}
 		}
