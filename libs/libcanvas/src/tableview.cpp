@@ -200,7 +200,7 @@ void TableView::configureObject()
 			bodies[obj_idx]->setBrush(this->getFillStyle(atribs[obj_idx]));
 		else
 		{
-			pen.setColor(tag->getElementColor(tag_attribs[obj_idx], Tag::BorderColor));
+			pen.setColor(tag->getElementColor(tag_attribs[obj_idx], ColorId::BorderColor));
 			bodies[obj_idx]->setBrush(tag->getFillStyle(tag_attribs[obj_idx]));
 		}
 

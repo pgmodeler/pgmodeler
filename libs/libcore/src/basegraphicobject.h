@@ -32,6 +32,13 @@ this is treated in the BaseObjectView class on libobjrenderer library
 #include <QPointF>
 #include "baseobject.h"
 
+//! \brief Enum used to reference object color ids
+enum class ColorId: unsigned {
+	FillColor1,
+	FillColor2,
+	BorderColor,
+};
+
 class BaseGraphicObject: public QObject, public BaseObject {
 	private:
 		Q_OBJECT
@@ -44,7 +51,7 @@ class BaseGraphicObject: public QObject, public BaseObject {
 		 and it is needed to be updated or specially treated */
 		bool is_modified,
 
-		//! \bried Indicates if the graphical representation of this object is faded out
+		//! \brief Indicates if the graphical representation of this object is faded out
 		is_faded_out;
 
 		/*! \brief Stores a reference to the object which is currently the receiver

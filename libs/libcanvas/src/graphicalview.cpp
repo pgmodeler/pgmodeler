@@ -265,7 +265,7 @@ void GraphicalView::configureObject()
 		else
 		{
 			bodies[idx]->setBrush(tag->getFillStyle(tag_attribs[idx]));
-			pen.setColor(tag->getElementColor(tag_attribs[idx], Tag::BorderColor));
+			pen.setColor(tag->getElementColor(tag_attribs[idx], ColorId::BorderColor));
 		}
 
 		pen.setStyle(Qt::DashLine);

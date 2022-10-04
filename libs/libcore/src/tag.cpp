@@ -55,7 +55,7 @@ void Tag::setElementColor(const QString &elem_id, const QColor &color, ColorId c
 	try
 	{
 		validateElementId(elem_id, color_id);
-		color_config[elem_id][color_id]=color;
+		color_config[elem_id][enum_t(color_id)]=color;
 		setCodeInvalidated(true);
 	}
 	catch(Exception &e)
@@ -69,7 +69,7 @@ void Tag::setElementColors(const QString &elem_id, const QString &colors)
 	try
 	{
 		QStringList color_lst=colors.split(',');
-		unsigned color_id=FillColor1;
+		unsigned color_id = enum_t(ColorId::FillColor1);
 
 		for(auto &color : color_lst)
 		{
@@ -91,7 +91,7 @@ QColor Tag::getElementColor(const QString &elem_id, ColorId color_id)
 	try
 	{
 		validateElementId(elem_id, color_id);
-		return color_config[elem_id][color_id];
+		return color_config[elem_id][enum_t(color_id)];
 	}
 	catch(Exception &e)
 	{
@@ -104,10 +104,10 @@ void Tag::validateElementId(const QString &id, ColorId color_id)
 	if(color_config.count(id) == 0)
 		throw Exception(Exception::getErrorMessage(ErrorCode::OprInvalidElementId).arg(id),
 										ErrorCode::OprInvalidElementId ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-	else if((color_id > BorderColor) ||
-					(color_id > FillColor1 &&
+	else if((color_id > ColorId::BorderColor) ||
+					(color_id > ColorId::FillColor1 &&
 					 (id==Attributes::TableName || id==Attributes::TableSchemaName)))
-		throw Exception(Exception::getErrorMessage(ErrorCode::RefInvalidElementColorId).arg(id).arg(color_id),
+		throw Exception(Exception::getErrorMessage(ErrorCode::RefInvalidElementColorId).arg(id).arg(enum_t(color_id)),
 										ErrorCode::RefInvalidElementColorId ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 }
 
@@ -115,12 +115,12 @@ QLinearGradient Tag::getFillStyle(const QString &elem_id)
 {
 	try
 	{
-		validateElementId(elem_id, FillColor2);
+		validateElementId(elem_id, ColorId::FillColor2);
 		QLinearGradient grad(QPointF(0,0),QPointF(0,1));
 
 		grad.setCoordinateMode(QGradient::ObjectBoundingMode);
-		grad.setColorAt(0, color_config[elem_id][FillColor1]);
-		grad.setColorAt(1, color_config[elem_id][FillColor2]);
+		grad.setColorAt(0, color_config[elem_id][enum_t(ColorId::FillColor1)]);
+		grad.setColorAt(1, color_config[elem_id][enum_t(ColorId::FillColor2)]);
 
 		return grad;
 	}
@@ -154,10 +154,11 @@ QString Tag::getCodeDefinition(unsigned def_type, bool reduced_form)
 				attribs[Attributes::Colors]="";
 
 				if(itr.first==Attributes::TableName || itr.first==Attributes::TableSchemaName)
-					attribs[Attributes::Colors]=itr.second[FillColor1].name();
+					attribs[Attributes::Colors]=itr.second[enum_t(ColorId::FillColor1)].name();
 				else
-					attribs[Attributes::Colors]=itr.second[FillColor1].name() + QString(",") +
-													   itr.second[FillColor2].name() + QString(",") + itr.second[BorderColor].name();
+					attribs[Attributes::Colors]=itr.second[enum_t(ColorId::FillColor1)].name() + QString(",") +
+							itr.second[enum_t(ColorId::FillColor2)].name() + QString(",") +
+							itr.second[enum_t(ColorId::BorderColor)].name();
 
 				attributes[Attributes::Styles]+=schparser.getCodeDefinition(Attributes::Style, attribs, SchemaParser::XmlDefinition);
 			}

@@ -27,18 +27,11 @@ that replaces the original colors of tables/views that owns them.
 #ifndef TAG_H
 #define TAG_H
 
-#include "baseobject.h"
+#include "basegraphicobject.h"
 #include <QColor>
 #include <QLinearGradient>
 
 class Tag: public BaseObject {
-	public:
-		enum ColorId: unsigned {
-			FillColor1,
-			FillColor2,
-			BorderColor,
-		};
-
 	private:
 		static unsigned tag_id;
 
