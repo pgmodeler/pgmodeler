@@ -768,7 +768,8 @@ void AppearanceConfigWidget::applyElementColor(unsigned color_idx, QColor color)
 	if(conf_items[element_cmb->currentIndex()].obj_conf)
 	{
 		conf_items[element_cmb->currentIndex()].colors[color_idx]=color;
-		BaseObjectView::setElementColor(conf_items[element_cmb->currentIndex()].conf_id, color, color_idx);
+		BaseObjectView::setElementColor(conf_items[element_cmb->currentIndex()].conf_id,
+				color, static_cast<ColorId>(color_idx));
 		updatePlaceholderItem();
 	}
 	else if(color_idx == 0)
