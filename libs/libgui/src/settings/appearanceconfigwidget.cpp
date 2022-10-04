@@ -555,9 +555,9 @@ void AppearanceConfigWidget::applyObjectsStyle()
 			colors.clear();
 			colors.append(!list.isEmpty() ? list.at(0) : "#000");
 			colors.append(list.size()==2 ? list.at(1) : colors.at(0));
-			BaseObjectView::setElementColor(elem, QColor(colors.at(0)), 0);
-			BaseObjectView::setElementColor(elem, QColor(colors.at(1)), 1);
-			BaseObjectView::setElementColor(elem, QColor(attribs[Attributes::BorderColor]), 2);
+			BaseObjectView::setElementColor(elem, QColor(colors.at(0)), ColorId::FillColor1);
+			BaseObjectView::setElementColor(elem, QColor(colors.at(1)), ColorId::FillColor2);
+			BaseObjectView::setElementColor(elem, QColor(attribs[Attributes::BorderColor]), ColorId::BorderColor);
 		}
 	}
 

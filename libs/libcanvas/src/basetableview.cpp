@@ -408,9 +408,9 @@ void BaseTableView::__configureObject(double width)
 	if(tag)
 	{
 		togg_brush = tag->getFillStyle(Attributes::TableTogglerBody);
-		togg_pen = tag->getElementColor(Attributes::TableTogglerBody, Tag::BorderColor);
+		togg_pen = tag->getElementColor(Attributes::TableTogglerBody, ColorId::BorderColor);
 		togg_btns_brush = tag->getFillStyle(Attributes::TableTogglerButtons);
-		togg_btns_pen = tag->getElementColor(Attributes::TableTogglerButtons, Tag::BorderColor);
+		togg_btns_pen = tag->getElementColor(Attributes::TableTogglerButtons, ColorId::BorderColor);
 	}
 	else
 	{

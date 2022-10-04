@@ -56,7 +56,7 @@ void TagWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Tag 
 			if(tag)
 				color_pickers[attr]->setColor(i, tag->getElementColor(attr, static_cast<ColorId>(i)));
 			else
-				color_pickers[attr]->setColor(i, BaseObjectView::getElementColor(attr, i));
+				color_pickers[attr]->setColor(i, BaseObjectView::getElementColor(attr, static_cast<ColorId>(i)));
 		}
 	}
 }

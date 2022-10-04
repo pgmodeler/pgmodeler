@@ -185,22 +185,22 @@ void BaseObjectView::setFontStyle(const QString &id, QTextCharFormat font_fmt)
 	font_config[id] = font_fmt;
 }
 
-void BaseObjectView::setElementColor(const QString &id, QColor color, unsigned color_id)
+void BaseObjectView::setElementColor(const QString &id, QColor color, ColorId color_id)
 {
-	if(color_id >= 3)
+	if(color_id > ColorId::BorderColor)
 		return;
 
 	// If the provided element id does not exist we initialize it
 	if(color_config.count(id) == 0)
 		color_config[id] = { QColor(0,0,0), QColor(0,0,0), QColor(0,0,0) };
 
-	color_config[id][color_id] = color;
+	color_config[id][enum_t(color_id)] = color;
 }
 
-QColor BaseObjectView::getElementColor(const QString &id, unsigned color_id)
+QColor BaseObjectView::getElementColor(const QString &id, ColorId color_id)
 {
-	if(color_config.count(id) > 0 && color_id < 3)
-		return color_config[id][color_id];
+	if(color_config.count(id) > 0 && color_id <= ColorId::BorderColor)
+		return color_config[id][enum_t(color_id)];
 
 	return QColor(0,0,0);
 }
@@ -210,8 +210,8 @@ void BaseObjectView::getFillStyle(const QString &id, QColor &color1, QColor &col
 	if(color_config.count(id) == 0)
 		return;
 
-	color1 = color_config[id][0];
-	color2 = color_config[id][1];
+	color1 = color_config[id][enum_t(ColorId::FillColor1)];
+	color2 = color_config[id][enum_t(ColorId::FillColor2)];
 }
 
 QLinearGradient BaseObjectView::getFillStyle(const QString &id)
