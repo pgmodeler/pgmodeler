@@ -3729,16 +3729,17 @@ Role *DatabaseModel::createRole()
 	bool marked;
 	QStringList list;
 	QString elem_name;
-	unsigned role_type;
+	Role::RoleType role_type;
 
 	QString op_attribs[]={ Attributes::Superuser, Attributes::CreateDb,
-							 Attributes::CreateRole, Attributes::Inherit,
-							 Attributes::Login, Attributes::Replication,
-							 Attributes::BypassRls };
+												 Attributes::CreateRole, Attributes::Inherit,
+												 Attributes::Login, Attributes::Replication,
+												 Attributes::BypassRls };
 
-	unsigned op_vect[]={ Role::OpSuperuser, Role::OpCreateDb,
-						 Role::OpCreateRole, Role::OpInherit,
-						 Role::OpLogin, Role::OpReplication, Role::OpBypassRls };
+	Role::RoleOpts op_vect[]={ Role::OpSuperuser, Role::OpCreateDb,
+														 Role::OpCreateRole, Role::OpInherit,
+														 Role::OpLogin, Role::OpReplication,
+														 Role::OpBypassRls };
 
 	try
 	{
@@ -3780,10 +3781,6 @@ Role *DatabaseModel::createRole()
 						len=list.size();
 
 						//Identifying the member role type
-						/* if(attribs_aux[Attributes::RoleType]==Attributes::Refer)
-							role_type=Role::RefRole;
-						else */
-
 						if(attribs_aux[Attributes::RoleType]==Attributes::Member)
 							role_type=Role::MemberRole;
 						else
@@ -8533,13 +8530,10 @@ void DatabaseModel::getOperatorDependencies(BaseObject *object, std::vector<Base
 void DatabaseModel::getRoleDependencies(BaseObject *object, std::vector<BaseObject *> &deps, bool inc_indirect_deps)
 {
 	Role *role=dynamic_cast<Role *>(object);
-	unsigned rl_type = 0, idx = 0, count = 0;
 
-	for(rl_type = Role::MemberRole; rl_type <= Role::AdminRole; rl_type++)
+	for(auto rl_type : { Role::MemberRole, Role::AdminRole })
 	{
-		count=role->getRoleCount(rl_type);
-
-		for(idx=0; idx < count; idx++)
+		for(unsigned idx=0; idx < role->getRoleCount(rl_type); idx++)
 			getObjectDependecies(role->getRole(rl_type, idx), deps, inc_indirect_deps);
 	}
 }
@@ -9592,7 +9586,6 @@ void DatabaseModel::getRoleReferences(BaseObject *object, std::vector<BaseObject
 								ObjectType::Type, ObjectType::OpFamily, ObjectType::OpClass,
 								ObjectType::UserMapping };
 	std::vector<ObjectType>::iterator itr_tp, itr_tp_end;
-	unsigned i, count;
 	Role *role_aux=nullptr;
 	Role *role=dynamic_cast<Role *>(object);
 	Permission *perm=nullptr;
@@ -9622,10 +9615,9 @@ void DatabaseModel::getRoleReferences(BaseObject *object, std::vector<BaseObject
 
 		for(unsigned rl_type = Role::MemberRole; rl_type <= Role::AdminRole && (!exclusion_mode || (exclusion_mode && !refer)); rl_type++)
 		{
-			count = role_aux->getRoleCount(rl_type);
-			for(i=0; i < count && !refer; i++)
+			for(unsigned i = 0; i < role_aux->getRoleCount(static_cast<Role::RoleType>(rl_type)) && !refer; i++)
 			{
-				if(role_aux->getRole(rl_type, i)==role)
+				if(role_aux->getRole(static_cast<Role::RoleType>(rl_type), i)==role)
 				{
 					refer=true;
 					refs.push_back(role_aux);

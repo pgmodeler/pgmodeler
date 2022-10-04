@@ -46,7 +46,7 @@ Role::Role()
 	attributes[Attributes::EmptyPassword]="";
 }
 
-void Role::setOption(unsigned op_type, bool value)
+void Role::setOption(RoleOpts op_type, bool value)
 {
 	if(op_type > OpBypassRls)
 		//Raises an error if the option type is invalid
@@ -56,7 +56,7 @@ void Role::setOption(unsigned op_type, bool value)
 	options[op_type]=value;
 }
 
-void Role::addRole(unsigned role_type, Role *role)
+void Role::addRole(RoleType role_type, Role *role)
 {
 	//Raises an error if the role to be added is not allocated
 	if(!role)
@@ -150,7 +150,7 @@ std::vector<Role *> *Role::getRoleList(unsigned role_type)
 	throw Exception(ErrorCode::RefInvalidRoleType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 }
 
-void Role::removeRole(unsigned role_type, unsigned role_idx)
+void Role::removeRole(RoleType role_type, unsigned role_idx)
 {
 	std::vector<Role *> *list = getRoleList(role_type);
 	std::vector<Role *>::iterator itr;
@@ -163,14 +163,14 @@ void Role::removeRole(unsigned role_type, unsigned role_idx)
 	setCodeInvalidated(true);
 }
 
-void Role::removeRoles(unsigned role_type)
+void Role::removeRoles(RoleType role_type)
 {
 	std::vector<Role *> *list = getRoleList(role_type);
 	list->clear();
 	setCodeInvalidated(true);
 }
 
-bool Role::isRoleExists(unsigned role_type, Role *role)
+bool Role::isRoleExists(RoleType role_type, Role *role)
 {
 	std::vector<Role *> *list = getRoleList(role_type);
 	std::vector<Role *>::iterator itr, itr_end;
@@ -187,7 +187,7 @@ bool Role::isRoleExists(unsigned role_type, Role *role)
 	return found;
 }
 
-bool Role::isRoleExists(unsigned role_type, const QString &rl_name)
+bool Role::isRoleExists(RoleType role_type, const QString &rl_name)
 {
 	std::vector<Role *> *list = getRoleList(role_type);
 
@@ -200,7 +200,7 @@ bool Role::isRoleExists(unsigned role_type, const QString &rl_name)
 	return false;
 }
 
-bool Role::getOption(unsigned op_type)
+bool Role::getOption(RoleOpts op_type)
 {
 	if(op_type > OpBypassRls)
 		throw Exception(ErrorCode::AsgValueInvalidRoleOptionType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -208,7 +208,7 @@ bool Role::getOption(unsigned op_type)
 	return options[op_type];
 }
 
-Role *Role::getRole(unsigned role_type, unsigned role_idx)
+Role *Role::getRole(RoleType role_type, unsigned role_idx)
 {
 	std::vector<Role *> *list = getRoleList(role_type);
 
@@ -219,7 +219,7 @@ Role *Role::getRole(unsigned role_type, unsigned role_idx)
 	return list->at(role_idx);
 }
 
-unsigned Role::getRoleCount(unsigned role_type)
+unsigned Role::getRoleCount(RoleType role_type)
 {
 	return getRoleList(role_type)->size();
 }
@@ -272,7 +272,7 @@ QString Role::getCodeDefinition(unsigned def_type, bool reduced_form)
 
 QString Role::getAlterMembershipCommands(Role *imp_role, Role *ref_role, bool revoke)
 {
-	unsigned role_types[2] = { MemberRole, AdminRole };
+	Role::RoleType role_types[] = { MemberRole, AdminRole };
 	QStringList rl_names, role_attrs = { Attributes::MemberRoles, Attributes::AdminRoles };
 	attribs_map member_attrs;
 	QString cmds;

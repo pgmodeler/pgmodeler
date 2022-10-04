@@ -60,26 +60,29 @@ class Role: public BaseObject {
 
 	public:
 		//! \brief Constants used to reference the available options for the role
-		static constexpr unsigned OpSuperuser=0,
-		OpCreateDb=1,
-		OpCreateRole=2,
-		OpInherit=3,
-		OpLogin=4,
-		OpReplication=5,
-		OpBypassRls=6;
+		enum RoleOpts: unsigned {
+			OpSuperuser,
+			OpCreateDb,
+			OpCreateRole,
+			OpInherit,
+			OpLogin,
+			OpReplication,
+			OpBypassRls
+		};
 
 		//! \brief Constants used to reference the internal role lists of the class
-		static constexpr unsigned
-		MemberRole=0,
-		AdminRole=1;
+		enum RoleType: unsigned {
+			MemberRole,
+			AdminRole
+		};
 
 		Role();
 
 		//! \brief Sets one option for the role (Via OP_??? constants)
-		void setOption(unsigned op_type, bool value);
+		void setOption(RoleOpts op_type, bool value);
 
 		//! \brief Adds one role to the internal role list (Via ???_ROLE constants)
-		void addRole(unsigned role_type, Role *role);
+		void addRole(RoleType role_type, Role *role);
 
 		//! \brief Defines the connection limit for the role
 		void setConnectionLimit(int limit);
@@ -91,26 +94,26 @@ class Role: public BaseObject {
 		void setPassword(const QString &passwd);
 
 		//! \brief Gets on option for the role (Via OP_??? constants)
-		bool getOption(unsigned op_type);
+		bool getOption(RoleOpts op_type);
 
 		//! \brief Remove one role from internal role list (Via ???_ROLE constants)
-		void removeRole(unsigned role_type, unsigned role_idx);
+		void removeRole(RoleType role_type, unsigned role_idx);
 
 		//! \brief Remove all roles from one iternal list (Via ???_ROLE constants)
-		void removeRoles(unsigned role_type);
+		void removeRoles(RoleType role_type);
 
 		/*! \brief Gets one role from internal list (Via ???_ROLE constants) referencing
 		 the object by its index */
-		Role *getRole(unsigned role_type, unsigned role_idx);
+		Role *getRole(RoleType role_type, unsigned role_idx);
 
 		//! \brief Returns whether the role exists in the internal lists (Via ???_ROLE constants)
-		bool isRoleExists(unsigned role_type, Role *role);
+		bool isRoleExists(RoleType role_type, Role *role);
 
 		//! \brief Returns whether the role name exists in the internal lists (Via ???_ROLE constants)
-		bool isRoleExists(unsigned role_type, const QString &rl_name);
+		bool isRoleExists(RoleType role_type, const QString &rl_name);
 
 		//! \brief Gets the role count on the specified internal list (Via ???_ROLE constants)
-		unsigned getRoleCount(unsigned role_type);
+		unsigned getRoleCount(RoleType role_type);
 
 		//! \brief Returns the connection limit for the role
 		unsigned getConnectionLimit();
