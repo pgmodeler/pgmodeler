@@ -32,7 +32,7 @@
 class Operation {
 	public:
 		//! \brief Constants used to reference the type of operations
-		enum OperType {
+		enum OperType: unsigned {
 			NoOperation,
 			ObjModified,
 			ObjCreated,

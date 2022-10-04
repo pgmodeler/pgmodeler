@@ -350,7 +350,8 @@ class DatabaseModel:  public QObject, public BaseObject {
 			ChildrenSql
 		};
 
-		enum MetaAttrOptions {
+		enum MetaAttrOptions: unsigned {
+			MetaNoOpts=0,
 			MetaDbAttributes=1,	//! \brief Handle database model attribute when save/load metadata file
 			MetaObjsPositioning=2,	//! \brief Handle objects' positioning when save/load metadata file
 			MetaObjsProtection=4,	//! \brief Handle objects' protection status when save/load metadata file

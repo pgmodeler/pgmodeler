@@ -122,7 +122,7 @@ void MetadataHandlingForm::handleObjectsMetada()
 
 	QTemporaryFile tmp_file;
 	QString metadata_file;
-	unsigned options=0;
+	DatabaseModel::MetaAttrOptions options = DatabaseModel::MetaNoOpts;
 	DatabaseModel *extract_model=nullptr;
 
 	try
@@ -132,21 +132,21 @@ void MetadataHandlingForm::handleObjectsMetada()
 		settings_tbw->setTabEnabled(1, true);
 		settings_tbw->setCurrentIndex(1);
 
-		options+=(db_metadata_chk->isChecked() ? DatabaseModel::MetaDbAttributes : 0);
-		options+=(custom_colors_chk->isChecked() ? DatabaseModel::MetaObjsCustomColors : 0);
-		options+=(custom_sql_chk->isChecked() ? DatabaseModel::MetaObjsCustomSql : 0);
-		options+=(objs_positioning_chk->isChecked() ? DatabaseModel::MetaObjsPositioning : 0);
-		options+=(objs_protection_chk->isChecked() ? DatabaseModel::MetaObjsProtection : 0);
-		options+=(objs_sql_disabled_chk->isChecked() ? DatabaseModel::MetaObjsSqlDisabled : 0);
-		options+=(tag_objs_chk->isChecked() ? DatabaseModel::MetaTagObjs : 0);
-		options+=(textbox_objs_chk->isChecked() ? DatabaseModel::MetaTextboxObjs : 0);
-		options+=(objs_fadedout_chk->isChecked() ? DatabaseModel::MetaObjsFadeOut : 0);
-		options+=(objs_collapse_mode_chk->isChecked() ? DatabaseModel::MetaObjsCollapseMode : 0);
-		options+=(generic_sql_objs_chk->isChecked() ? DatabaseModel::MetaGenericSqlObjs : 0);
-		options+=(objs_aliases_chk->isChecked() ? DatabaseModel::MetaObjsAliases : 0);
-		options+=(objs_z_stack_value_chk->isChecked() ? DatabaseModel::MetaObjsZStackValue : 0);
-		options+=(objs_layers_config_chk->isChecked() ? DatabaseModel::MetaObjsLayersConfig : 0);
-		options+=(merge_dup_objs_chk->isChecked() ? DatabaseModel::MetaMergeDuplicatedObjs : 0);
+		options|=(db_metadata_chk->isChecked() ? DatabaseModel::MetaDbAttributes : DatabaseModel::MetaNoOpts);
+		options|=(custom_colors_chk->isChecked() ? DatabaseModel::MetaObjsCustomColors : DatabaseModel::MetaNoOpts);
+		options|=(custom_sql_chk->isChecked() ? DatabaseModel::MetaObjsCustomSql : DatabaseModel::MetaNoOpts);
+		options|=(objs_positioning_chk->isChecked() ? DatabaseModel::MetaObjsPositioning : DatabaseModel::MetaNoOpts);
+		options|=(objs_protection_chk->isChecked() ? DatabaseModel::MetaObjsProtection : DatabaseModel::MetaNoOpts);
+		options|=(objs_sql_disabled_chk->isChecked() ? DatabaseModel::MetaObjsSqlDisabled : DatabaseModel::MetaNoOpts);
+		options|=(tag_objs_chk->isChecked() ? DatabaseModel::MetaTagObjs : DatabaseModel::MetaNoOpts);
+		options|=(textbox_objs_chk->isChecked() ? DatabaseModel::MetaTextboxObjs : DatabaseModel::MetaNoOpts);
+		options|=(objs_fadedout_chk->isChecked() ? DatabaseModel::MetaObjsFadeOut : DatabaseModel::MetaNoOpts);
+		options|=(objs_collapse_mode_chk->isChecked() ? DatabaseModel::MetaObjsCollapseMode : DatabaseModel::MetaNoOpts);
+		options|=(generic_sql_objs_chk->isChecked() ? DatabaseModel::MetaGenericSqlObjs : DatabaseModel::MetaNoOpts);
+		options|=(objs_aliases_chk->isChecked() ? DatabaseModel::MetaObjsAliases : DatabaseModel::MetaNoOpts);
+		options|=(objs_z_stack_value_chk->isChecked() ? DatabaseModel::MetaObjsZStackValue : DatabaseModel::MetaNoOpts);
+		options|=(objs_layers_config_chk->isChecked() ? DatabaseModel::MetaObjsLayersConfig : DatabaseModel::MetaNoOpts);
+		options|=(merge_dup_objs_chk->isChecked() ? DatabaseModel::MetaMergeDuplicatedObjs : DatabaseModel::MetaNoOpts);
 
 		connect(model_wgt->getDatabaseModel(), SIGNAL(s_objectLoaded(int,QString,unsigned)), this, SLOT(updateProgress(int,QString,unsigned)), Qt::UniqueConnection);
 

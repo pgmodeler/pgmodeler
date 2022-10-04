@@ -27,30 +27,52 @@
 #include <type_traits>
 
 //! \brief This function causes the provided enum to be converted to its underlying datatype
-template<typename Enum>
+template<typename Enum /*, std::enable_if_t<std::is_enum_v<Enum>> = true */>
 constexpr std::underlying_type_t<Enum> enum_t (Enum enum_val) noexcept
 {
 	return static_cast<typename std::underlying_type_t<Enum>>(enum_val);
 }
 
 //! \brief This function peforms OR bitwise operation on enums
-template<typename Enum>
+template<typename Enum /*, std::enable_if_t<std::is_enum_v<Enum>> = true */>
 constexpr Enum operator | (Enum left_enum, Enum right_enum) noexcept
 {
 	return static_cast<Enum>(enum_t(left_enum) | enum_t(right_enum));
 }
 
+//! \brief This function peforms cummulative OR bitwise operation on enums
+template<typename Enum /*, std::enable_if_t<std::is_enum_v<Enum>> = true */>
+constexpr Enum &operator |= (Enum &left_enum, Enum right_enum) noexcept
+{
+	return left_enum = (left_enum | right_enum);
+}
+
 //! \brief This function peforms XOR bitwise operation on enums
-template<typename Enum>
+template<typename Enum /*, std::enable_if_t<std::is_enum_v<Enum>> = true */>
 constexpr Enum operator ^ (Enum left_enum, Enum right_enum) noexcept
 {
 	return static_cast<Enum>(enum_t(left_enum) ^ enum_t(right_enum));
 }
 
+//! \brief This function peforms cummulative XOR bitwise operation on enums
+template<typename Enum /*, std::enable_if_t<std::is_enum_v<Enum>> = true */>
+constexpr Enum &operator ^= (Enum &left_enum, Enum right_enum) noexcept
+{
+	return left_enum = (left_enum ^ right_enum);
+}
+
 //! \brief This function peforms AND bitwise operation on enums
-template<typename Enum>
+template<typename Enum /*, std::enable_if_t<std::is_enum_v<Enum>> = true */>
 constexpr Enum operator & (Enum left_enum, Enum right_enum) noexcept
 {
 	return static_cast<Enum>(enum_t(left_enum) & enum_t(right_enum));
 }
+
+//! \brief This function peforms cummulative AND bitwise operation on enums
+template<typename Enum /*, std::enable_if_t<std::is_enum_v<Enum>> = true */>
+constexpr Enum &operator &= (Enum &left_enum, Enum right_enum) noexcept
+{
+	return left_enum = (left_enum & right_enum);
+}
+
 #endif

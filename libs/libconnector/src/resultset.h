@@ -67,7 +67,7 @@ class ResultSet {
 
 	public:
 		//! \brief Constants used to navigate through the resultset
-		enum TupleId {
+		enum TupleId: unsigned {
 			FirstTuple = 0,
 			LastTuple = 1,
 			PreviousTuple = 2,

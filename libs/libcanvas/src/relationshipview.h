@@ -32,7 +32,7 @@
 
 class RelationshipView: public BaseObjectView {
 	public:
-		enum LineConnectionMode {
+		enum LineConnectionMode: unsigned {
 			ConnectCenterPoints,
 			ConnectFkToPk,
 			ConnectTableEdges

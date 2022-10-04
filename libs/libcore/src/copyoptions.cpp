@@ -64,11 +64,11 @@ CopyOptions::CopyOpts CopyOptions::getCopyOptions()
 QString CopyOptions::getSQLDefinition()
 {
 	QString def, mode, op_name;
-	CopyOpts op_id;
-	std::vector<CopyOpts> opts={ All, Defaults, Constraints, Indexes,
-															 Storage, Comments, Identity, Statistics };
+	CopyOpts op_id,
+			opts[] ={ All, Defaults, Constraints, Indexes,
+								Storage, Comments, Identity, Statistics };
 
-	mode = (copy_mode == Including ? QString(" INCLUDING") : QString(" EXCLUDING"));
+	mode = (copy_mode == Including ? " INCLUDING" : " EXCLUDING");
 
 	if(copy_mode != NoMode && copy_opts != NoOpts)
 	{

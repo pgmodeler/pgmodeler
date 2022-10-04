@@ -31,7 +31,7 @@
 class CopyOptions {
 	public:
 		enum CopyOpts: unsigned {
-			NoOpts,
+			NoOpts = 0,
 			Defaults = 1,
 			Constraints = 2,
 			Indexes = 4,

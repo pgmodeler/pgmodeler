@@ -50,7 +50,7 @@ QString Tag::getName(bool, bool)
 	return this->obj_name;
 }
 
-void Tag::setElementColor(const QString &elem_id, const QColor &color, unsigned color_id)
+void Tag::setElementColor(const QString &elem_id, const QColor &color, ColorId color_id)
 {
 	try
 	{
@@ -73,7 +73,7 @@ void Tag::setElementColors(const QString &elem_id, const QString &colors)
 
 		for(auto &color : color_lst)
 		{
-			validateElementId(elem_id, color_id);
+			validateElementId(elem_id, static_cast<ColorId>(color_id));
 			color_config[elem_id][color_id]=QColor(color);
 			color_id++;
 		}
@@ -86,7 +86,7 @@ void Tag::setElementColors(const QString &elem_id, const QString &colors)
 	}
 }
 
-QColor Tag::getElementColor(const QString &elem_id, unsigned color_id)
+QColor Tag::getElementColor(const QString &elem_id, ColorId color_id)
 {
 	try
 	{
@@ -99,13 +99,13 @@ QColor Tag::getElementColor(const QString &elem_id, unsigned color_id)
 	}
 }
 
-void Tag::validateElementId(const QString &id, unsigned color_id)
+void Tag::validateElementId(const QString &id, ColorId color_id)
 {
 	if(color_config.count(id) == 0)
 		throw Exception(Exception::getErrorMessage(ErrorCode::OprInvalidElementId).arg(id),
 										ErrorCode::OprInvalidElementId ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-	else if((color_id > ColorCount) ||
-					(color_id > 0 &&
+	else if((color_id > BorderColor) ||
+					(color_id > FillColor1 &&
 					 (id==Attributes::TableName || id==Attributes::TableSchemaName)))
 		throw Exception(Exception::getErrorMessage(ErrorCode::RefInvalidElementColorId).arg(id).arg(color_id),
 										ErrorCode::RefInvalidElementColorId ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -115,7 +115,7 @@ QLinearGradient Tag::getFillStyle(const QString &elem_id)
 {
 	try
 	{
-		validateElementId(elem_id, 1);
+		validateElementId(elem_id, FillColor2);
 		QLinearGradient grad(QPointF(0,0),QPointF(0,1));
 
 		grad.setCoordinateMode(QGradient::ObjectBoundingMode);
