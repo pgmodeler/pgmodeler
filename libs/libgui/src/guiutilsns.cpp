@@ -220,7 +220,7 @@ namespace GuiUtilsNs {
 		return fmt_msg;
 	}
 
-	void configureWidgetFont(QWidget *widget, unsigned factor_id)
+	void configureWidgetFont(QWidget *widget, FontFactorId factor_id)
 	{
 		double factor = 1;
 

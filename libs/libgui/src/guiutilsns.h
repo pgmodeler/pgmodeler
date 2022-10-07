@@ -37,16 +37,14 @@ namespace GuiUtilsNs {
 	static constexpr int LtMargin = 5,
 	LtSpacing = 5;
 
-	static constexpr unsigned SmallFontFactor = 0,
-	MediumFontFactor = 1,
-	BigFontFactor = 2,
-	HugeFontFactor = 3;
+	enum FontFactorId: unsigned {
+		SmallFontFactor,
+		MediumFontFactor,
+		BigFontFactor,
+		HugeFontFactor
+	};
 
-	/*static constexpr int FHDWidth = 1920,
-	QHDWidth = 2560,
-	UHDWidth = 3840;*/
-
-	extern void configureWidgetFont(QWidget *widget, unsigned factor_id);
+	extern void configureWidgetFont(QWidget *widget, FontFactorId factor_id);
 	extern void __configureWidgetFont(QWidget *widget, double factor);
 
 	/*! \brief Creates a NumberedTextEditor instance automatically assigning it to 'parent'.

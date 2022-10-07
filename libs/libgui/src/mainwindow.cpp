@@ -1176,9 +1176,7 @@ void MainWindow::setCurrentModel()
 
 		for(QToolButton *btn : btns)
 		{
-			//GuiUtilsNs::configureWidgetFont(btn, static_cast<unsigned>(GuiUtilsNs::MediumFontFactor));
 			font = btn->font();
-			//font.setBold(true);
 			font.setWeight(QFont::Medium);
 			btn->setFont(font);
 			GuiUtilsNs::createDropShadow(btn);
