@@ -1799,8 +1799,8 @@ void ModelWidget::saveModel(const QString &filename)
 {
 	TaskProgressWidget task_prog_wgt(this);
 	QString bkpfile;
-	QTemporaryFile tmpfile;
-	bool exists = QFile::exists(filename);
+	QFileInfo fi(filename);
+	bool has_bkp_file = false;
 
 	try
 	{
@@ -1808,24 +1808,28 @@ void ModelWidget::saveModel(const QString &filename)
 		task_prog_wgt.setWindowTitle(tr("Saving database model"));
 		task_prog_wgt.show();
 
-		/* If the original file exists we need to make a back first to avoid
-		 * in order to recover it in case of failures */
-		if(exists)
+		/* If the original file exists we need to make a backup first to avoid
+		 * data loss so we can recover it in case of saving failures */
+		if(fi.exists())
 		{
-			// Generate a temporary backup file
-			tmpfile.setAutoRemove(false);
-			tmpfile.setFileTemplate(GlobalAttributes::getTemporaryFilePath(QString("%1_XXXXXX.dbk").arg(this->db_model->getName())));
+			QTemporaryFile tmpfile;
+
+			// Generate a temporary backup filename
+			tmpfile.setFileTemplate(fi.absolutePath() +
+															GlobalAttributes::DirSeparator +
+															QString("%1_XXXXXX.dbk").arg(db_model->getName()));
 			tmpfile.open();
 			bkpfile = tmpfile.fileName();
 			tmpfile.close();
 			tmpfile.remove();
 
-			/* Copy the original database model file prior to the saving to store
-			 * its last state in a safe place (temporary storage of the tool ~/.config/pgmodeler by default */
-			QFile::copy(filename, bkpfile);
+			/* Trying to rename the original model to the backup filename so
+			 * we can write the new one in its place */
+			if(!QFile::rename(filename, bkpfile))
+				throw Exception(Exception::getErrorMessage(ErrorCode::FileDirectoryNotWritten).arg(bkpfile),
+												ErrorCode::FileDirectoryNotWritten,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-			// Remove the original filename before create a new one in the same path
-			QFile::remove(filename);
+			has_bkp_file = true;
 		}
 
 		saveLastCanvasPosition();
@@ -1837,25 +1841,33 @@ void ModelWidget::saveModel(const QString &filename)
 		setModified(false);
 
 		/* Doing a final check to the file regarding its size.
-		 * If we have a zero-byte file something went wrong during the saving process (disk failure, thread errors, etc)
+		 * If we have a empty file something went wrong during the saving process (disk failure, thread errors, etc)
 		 * so we raise an error to the user and restore the backup file to its original path */
-		if(QFileInfo(filename).size() == 0)
-			throw Exception(Exception::getErrorMessage(ErrorCode::ModelFileInvalidSize).arg(filename).arg(bkpfile),
+		if(fi.size() == 0)
+			throw Exception(Exception::getErrorMessage(ErrorCode::ModelFileInvalidSize).arg(filename),
 											ErrorCode::ModelFileInvalidSize,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-		if(exists)
+		// Removing the backup file if the model was successfully saved
+		if(has_bkp_file)
 			QFile::remove(bkpfile);
 	}
 	catch(Exception &e)
 	{
-		if(exists && QFile::exists(bkpfile))
-		{
-			QFile::remove(filename);
-			QFile::copy(bkpfile, filename);
-		}
-
 		task_prog_wgt.close();
 		disconnect(db_model, nullptr, &task_prog_wgt, nullptr);
+
+		/* If the original file was successfully rename as the backup file
+		 * we just revert the name to the original one */
+		if(has_bkp_file)
+		{
+			// Remove the failed file so we can restore the backup file
+			QFile::remove(filename);
+			QFile::copy(bkpfile, filename);
+
+			throw Exception(Exception::getErrorMessage(ErrorCode::ModelFileSaveFailure).arg(filename).arg(bkpfile),
+											ErrorCode::ModelFileSaveFailure,__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		}
+
 		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }

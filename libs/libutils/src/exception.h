@@ -298,12 +298,13 @@ enum class ErrorCode: unsigned {
 	InvCsvParserOptions,
 	MalformedCsvInvalidCols,
 	MalformedCsvMissingDelim,
-	RefInvCsvDocumentValue
+	RefInvCsvDocumentValue,
+	ModelFileSaveFailure
 };
 
 class Exception {
 	private:
-		static constexpr unsigned ErrorCount=264;
+		static constexpr unsigned ErrorCount=265;
 
 		/*! \brief Stores other exceptions before raise the 'this' exception.
 		 This structure can be used to simulate a stack trace to improve the debug */
