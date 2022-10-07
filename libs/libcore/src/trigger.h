@@ -79,7 +79,10 @@ class Trigger: public TableObject{
 		void setArgumentAttribute(unsigned tipo_def);
 
 	public:
-		static constexpr unsigned OldTableName=0, NewTableName=1;
+		enum TransitionTableId: unsigned {
+			OldTableName,
+			NewTableName
+		};
 
 		Trigger();
 
@@ -124,10 +127,10 @@ class Trigger: public TableObject{
 		void setConstraint(bool value);
 
 		//! \brief Defines the transition table name (OLD|NEW) referenced by the trigger
-		void setTransitionTableName(unsigned tab_idx, const QString &name);
+		void setTransitionTableName(TransitionTableId tab_idx, const QString &name);
 
 		//! \brief Returns the transition table name (OLD|NEW) referenced by the trigger
-		QString getTransitionTableName(unsigned tab_idx);
+		QString getTransitionTableName(TransitionTableId tab_idx);
 
 		//! \brief Returns true if the trigger executes on the passed event
 		bool isExecuteOnEvent(EventType event);

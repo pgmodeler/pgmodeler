@@ -287,7 +287,7 @@ void Trigger::setConstraint(bool value)
 	is_constraint=value;
 }
 
-void Trigger::setTransitionTableName(unsigned tab_idx, const QString &name)
+void Trigger::setTransitionTableName(TransitionTableId tab_idx, const QString &name)
 {
 	if(tab_idx > NewTableName)
 		throw Exception(ErrorCode::RefElementInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -296,7 +296,7 @@ void Trigger::setTransitionTableName(unsigned tab_idx, const QString &name)
 	transition_tabs_names[tab_idx] = name;
 }
 
-QString Trigger::getTransitionTableName(unsigned tab_idx)
+QString Trigger::getTransitionTableName(TransitionTableId tab_idx)
 {
 	if(tab_idx > NewTableName)
 		throw Exception(ErrorCode::RefElementInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
