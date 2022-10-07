@@ -42,9 +42,11 @@ class Textbox: public BaseGraphicObject{
 
 	public:
 		//! \brief Constants used to configure the text attributes
-		static constexpr unsigned ItalicText=0,
-		BoldText=1,
-		UnderlineText=2;
+		enum TextAttrib {
+			ItalicText,
+			BoldText,
+			UnderlineText
+		};
 
 		/*! \brief To define the content of the textboxes
 		 the method setComment() must be used and the getComment()
@@ -52,7 +54,7 @@ class Textbox: public BaseGraphicObject{
 		Textbox();
 
 		//! \brief Sets the attributes of the text
-		void setTextAttribute(unsigned attrib, bool value);
+		void setTextAttribute(TextAttrib attrib, bool value);
 
 		//! \brief Sets the color used to draw the text of textbox
 		void setTextColor(const QColor &color);
@@ -64,7 +66,7 @@ class Textbox: public BaseGraphicObject{
 		virtual QString getCodeDefinition(unsigned def_type) final;
 
 		//! \brief Returns the current state of the passed text attribute
-		bool getTextAttribute(unsigned attrib);
+		bool getTextAttribute(TextAttrib attrib);
 
 		QColor getTextColor();
 
