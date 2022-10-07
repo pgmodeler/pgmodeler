@@ -305,10 +305,10 @@ void FunctionWidget::validateConfiguredFunction()
 			{
 				transf = dynamic_cast<Transform *>(object);
 
-				for(idx = Transform::FromSqlFunc; idx <= Transform::ToSqlFunc; idx++)
+				for(auto func_id : { Transform::FromSqlFunc, Transform::ToSqlFunc })
 				{
-					if(func == transf->getFunction(idx))
-						transf->setFunction(func, idx);
+					if(func == transf->getFunction(func_id))
+						transf->setFunction(func, func_id);
 				}
 			}
 			else if(obj_type == 	ObjectType::ForeignDataWrapper)

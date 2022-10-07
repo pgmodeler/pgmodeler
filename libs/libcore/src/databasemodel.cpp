@@ -8800,7 +8800,7 @@ void DatabaseModel::getTransformDependencies(BaseObject *object, std::vector<Bas
 
 	getObjectDependecies(transf->getLanguage(), deps, inc_indirect_deps);
 
-	for(unsigned func_id = Transform::FromSqlFunc; func_id <= Transform::ToSqlFunc; func_id++)
+	for(auto func_id : { Transform::FromSqlFunc, Transform::ToSqlFunc })
 		getObjectDependecies(transf->getFunction(func_id), deps, inc_indirect_deps);
 
 	if(transf->getType().isUserType())

@@ -42,7 +42,7 @@ class Textbox: public BaseGraphicObject{
 
 	public:
 		//! \brief Constants used to configure the text attributes
-		enum TextAttrib {
+		enum TextAttrib: unsigned {
 			ItalicText,
 			BoldText,
 			UnderlineText

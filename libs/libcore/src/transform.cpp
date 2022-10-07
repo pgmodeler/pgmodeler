@@ -82,7 +82,7 @@ void Transform::setLanguage(Language *lang)
 	setName("");
 }
 
-void Transform::setFunction(Function *func, unsigned func_id)
+void Transform::setFunction(Function *func, FunctionId func_id)
 {
 	try
 	{
@@ -96,7 +96,7 @@ void Transform::setFunction(Function *func, unsigned func_id)
 	}
 }
 
-void Transform::validateFunction(Function *func, unsigned func_id)
+void Transform::validateFunction(Function *func, FunctionId func_id)
 {
 	if(func_id > ToSqlFunc)
 		throw Exception(ErrorCode::RefFunctionInvalidType, __PRETTY_FUNCTION__, __FILE__, __LINE__);
@@ -144,7 +144,7 @@ Language *Transform::getLanguage()
 	return language;
 }
 
-Function *Transform::getFunction(unsigned func_id)
+Function *Transform::getFunction(FunctionId func_id)
 {
 	if(func_id > ToSqlFunc)
 		throw Exception(ErrorCode::RefFunctionInvalidType, __PRETTY_FUNCTION__, __FILE__, __LINE__);
@@ -167,7 +167,7 @@ QString Transform::getCodeDefinition(unsigned def_type)
 		if(language)
 			attributes[Attributes::Language] = language->getName(true);
 
-		for(unsigned func_id = FromSqlFunc; func_id <= ToSqlFunc; func_id++)
+		for(auto func_id : { FromSqlFunc, ToSqlFunc })
 		{
 			if(functions[func_id])
 				attributes[funcs_attr[func_id]] = functions[func_id]->getSignature();
@@ -180,7 +180,7 @@ QString Transform::getCodeDefinition(unsigned def_type)
 		if(language)
 			attributes[Attributes::Language] = language->getCodeDefinition(def_type, true);
 
-		for(unsigned func_id = FromSqlFunc; func_id <= ToSqlFunc; func_id++)
+		for(auto func_id : { FromSqlFunc, ToSqlFunc })
 		{
 			if(functions[func_id])
 			{
