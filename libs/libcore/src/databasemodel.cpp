@@ -4320,7 +4320,7 @@ PgSqlType DatabaseModel::createPgSQLType()
 Type *DatabaseModel::createType()
 {
 	attribs_map attribs;
-	std::map<QString, unsigned> func_types;
+	std::map<QString, Type::FunctionId> func_types;
 	Type *type=nullptr;
 	QStringList enums;
 	QString elem, str_aux;
@@ -8749,7 +8749,7 @@ void DatabaseModel::getTypeDependencies(BaseObject *object, std::vector<BaseObje
 			getObjectDependecies(aux_type, deps, inc_indirect_deps);
 
 		for(i=Type::InputFunc; i <= Type::AnalyzeFunc; i++)
-			getObjectDependecies(usr_type->getFunction(i), deps, inc_indirect_deps);
+			getObjectDependecies(usr_type->getFunction(static_cast<Type::FunctionId>(i)), deps, inc_indirect_deps);
 	}
 	else if(usr_type->getConfiguration()==Type::CompositeType)
 	{
@@ -9225,7 +9225,7 @@ void DatabaseModel::getFunctionReferences(BaseObject *object, std::vector<BaseOb
 
 				for(i1=Type::InputFunc; i1 <= Type::AnalyzeFunc && (!exclusion_mode || (exclusion_mode && !refer)); i1++)
 				{
-					if(type->getFunction(i1)==func)
+					if(type->getFunction(static_cast<Type::FunctionId>(i1))==func)
 					{
 						refer=true;
 						refs.push_back(type);

@@ -292,8 +292,8 @@ void FunctionWidget::validateConfiguredFunction()
 				{
 					for(idx = Type::InputFunc; idx <= Type::AnalyzeFunc; idx++)
 					{
-						if(type->getFunction(idx)==func)
-							type->setFunction(idx, func);
+						if(type->getFunction(static_cast<Type::FunctionId>(idx))==func)
+							type->setFunction(static_cast<Type::FunctionId>(idx), func);
 					}
 				}
 			}

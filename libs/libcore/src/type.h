@@ -44,6 +44,18 @@ class Type: public BaseObject {
 			RangeType
 		};
 
+		enum FunctionId: unsigned {
+			InputFunc,
+			OutputFunc,
+			RecvFunc,
+			SendFunc,
+			TpmodInFunc,
+			TpmodOutFunc,
+			AnalyzeFunc,
+			CanonicalFunc,
+			SubtypeDiffFunc
+		};
+
 	private:
 		//! \brief Type configuration (BASE | ENUMERATION | COMPOSITE | RANGE)
 		TypeConfig config;
@@ -113,16 +125,6 @@ class Type: public BaseObject {
 		void convertFunctionParameters(bool inverse_conv=false);
 
 	public:
-		static constexpr unsigned InputFunc=0,
-		OutputFunc=1,
-		RecvFunc=2,
-		SendFunc=3,
-		TpmodInFunc=4,
-		TpmodOutFunc=5,
-		AnalyzeFunc=6,
-		CanonicalFunc=7,
-		SubtypeDiffFunc=8;
-
 		Type();
 
 		//! \brief Sets the type name
@@ -155,7 +157,7 @@ class Type: public BaseObject {
 		void removeEnumerations();
 
 		//! \brief Sets on function to the type (only for base type)
-		void setFunction(unsigned func_id, Function *func);
+		void setFunction(FunctionId func_id, Function *func);
 
 		//! \brief Sets the type internal length (only for base type)
 		void setInternalLength(unsigned length);
@@ -206,7 +208,7 @@ class Type: public BaseObject {
 		CategoryType getCategory();
 		bool isPreferred();
 		PgSqlType getLikeType();
-		Function *getFunction(unsigned func_id);
+		Function *getFunction(FunctionId func_id);
 		unsigned getInternalLength();
 		bool isByValue();
 		bool isCollatable();

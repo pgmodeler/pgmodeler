@@ -189,13 +189,12 @@ void Type::setConfiguration(TypeConfig conf)
 	setCodeInvalidated(true);
 }
 
-void Type::setFunction(unsigned func_id, Function *func)
+void Type::setFunction(FunctionId func_id, Function *func)
 {
 	unsigned param_count=0;
-	unsigned funcs_len=sizeof(functions)/sizeof(Function *);
 
 	//Raises an error if the function id is invalid
-	if(func_id >= funcs_len)
+	if(func_id > SubtypeDiffFunc)
 		throw Exception(ErrorCode::RefFunctionInvalidType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	if(func)
@@ -510,9 +509,9 @@ unsigned Type::getEnumerationCount()
 	return enumerations.size();
 }
 
-Function *Type::getFunction(unsigned func_id)
+Function *Type::getFunction(FunctionId func_id)
 {
-	if(func_id >= sizeof(functions)/sizeof(Function *))
+	if(func_id > SubtypeDiffFunc)
 		throw Exception(ErrorCode::RefFunctionInvalidType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	return functions[func_id];

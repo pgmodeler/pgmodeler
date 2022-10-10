@@ -276,7 +276,7 @@ void TypeWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Sch
 			alignment_cmb->setCurrentIndex(alignment_cmb->findText(~type->getAlignment()));
 
 			for(i=Type::InputFunc; i <= Type::AnalyzeFunc; i++)
-				functions_sel[i]->setSelectedObject(type->getFunction(i));
+				functions_sel[i]->setSelectedObject(type->getFunction(static_cast<Type::FunctionId>(i)));
 		}
 	}
 	else
@@ -346,7 +346,8 @@ void TypeWidget::applyConfiguration()
 			type->setStorage(StorageType(storage_cmb->currentText()));
 
 			for(i=Type::InputFunc; i <= Type::AnalyzeFunc; i++)
-				type->setFunction(i, dynamic_cast<Function *>(functions_sel[i]->getSelectedObject()));
+				type->setFunction(static_cast<Type::FunctionId>(i),
+													dynamic_cast<Function *>(functions_sel[i]->getSelectedObject()));
 		}
 
 		finishConfiguration();
