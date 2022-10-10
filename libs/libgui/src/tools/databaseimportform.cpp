@@ -270,17 +270,6 @@ void DatabaseImportForm::setItemsCheckState()
 		}
 		db_objects_tw->blockSignals(false);
 	}
-	/*else
-	{
-		int row_cnt = filtered_objs_tbw->rowCount();
-
-		filtered_objs_tbw->blockSignals(true);
-
-		for(int row = 0; row < row_cnt; row++)
-			filtered_objs_tbw->item(row, 0)->setCheckState(chk_state);
-
-		filtered_objs_tbw->blockSignals(false);
-	}*/
 
 	import_btn->setEnabled(chk_state == Qt::Checked);
 }
