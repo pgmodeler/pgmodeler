@@ -36,9 +36,17 @@
 #include "pgsqltypes/categorytype.h"
 
 class Type: public BaseObject {
+	public:
+		enum TypeConfig: unsigned {
+			BaseType,
+			EnumerationType,
+			CompositeType,
+			RangeType
+		};
+
 	private:
 		//! \brief Type configuration (BASE | ENUMERATION | COMPOSITE | RANGE)
-		unsigned config;
+		TypeConfig config;
 
 		//! \brief Attributes for composite type
 		std::vector<TypeAttribute> type_attribs;
@@ -105,11 +113,6 @@ class Type: public BaseObject {
 		void convertFunctionParameters(bool inverse_conv=false);
 
 	public:
-		static constexpr unsigned BaseType=10,
-		EnumerationType=11,
-		CompositeType=12,
-		RangeType=13;
-
 		static constexpr unsigned InputFunc=0,
 		OutputFunc=1,
 		RecvFunc=2,
@@ -131,7 +134,7 @@ class Type: public BaseObject {
 		/*! \brief Defines the type configuration (BASE | ENUMARATION | COMPOSITE | RANGE).
 		Calling this method causes all attribute to be reset, so it may be executed before
 		any other attribute of the type be defined. */
-		void setConfiguration(unsigned conf);
+		void setConfiguration(TypeConfig conf);
 
 		//! \brief Adds an attribute to the type (only for composite type)
 		void addAttribute(TypeAttribute attrib);
@@ -199,7 +202,7 @@ class Type: public BaseObject {
 		unsigned getAttributeCount();
 		QString getEnumeration(unsigned idx_enum);
 		unsigned getEnumerationCount();
-		unsigned getConfiguration();
+		TypeConfig getConfiguration();
 		CategoryType getCategory();
 		bool isPreferred();
 		PgSqlType getLikeType();

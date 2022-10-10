@@ -161,10 +161,10 @@ void Type::removeEnumerations()
 	setCodeInvalidated(true);
 }
 
-void Type::setConfiguration(unsigned conf)
+void Type::setConfiguration(TypeConfig conf)
 {
 	//Raises an error if the configuration type is invalid
-	if(conf < BaseType || conf > RangeType)
+	if(conf > RangeType)
 		throw Exception(ErrorCode::AsgInvalidTypeConfiguration,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	type_attribs.clear();
@@ -553,7 +553,7 @@ char Type::getDelimiter()
 	return delimiter;
 }
 
-unsigned Type::getConfiguration()
+Type::TypeConfig Type::getConfiguration()
 {
 	return config;
 }
