@@ -2061,10 +2061,14 @@ void MainWindow::executePendingOperation(bool valid_error)
 	if(!valid_error && pending_op!=NoPendingOp)
 	{
 		static const QString op_names[]={ "", QT_TR_NOOP("save"), QT_TR_NOOP("save"),
-																			QT_TR_NOOP("export"), QT_TR_NOOP("diff") };
+																			QT_TR_NOOP("export"), QT_TR_NOOP("diff") },
+
+		op_icons[]={ "", GuiUtilsNs::getIconPath("save"), GuiUtilsNs::getIconPath("saveas"),
+								 GuiUtilsNs::getIconPath("export"), GuiUtilsNs::getIconPath("diff") };
 
 		GuiUtilsNs::createOutputTreeItem(model_valid_wgt->output_trw,
-											tr("Executing pending <strong>%1</strong> operation...").arg(op_names[pending_op]));
+																		 tr("Executing pending <strong>%1</strong> operation...").arg(op_names[pending_op]),
+																		 op_icons[pending_op]);
 
 		if(pending_op==PendingSaveOp || pending_op==PendingSaveAsOp)
 			saveModel();

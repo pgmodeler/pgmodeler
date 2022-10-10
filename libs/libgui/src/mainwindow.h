@@ -67,13 +67,15 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 		static bool confirm_validation;
 
 		//! \brief Constants used to mark a pending operation to be executed after validate model
-		static constexpr unsigned NoPendingOp=0,
-		PendingSaveOp=1,
-		PendingSaveAsOp=2,
-		PendingExportOp=3,
-		PendingDiffOp=4;
+		enum PendingOpId: unsigned {
+			NoPendingOp,
+			PendingSaveOp,
+			PendingSaveAsOp,
+			PendingExportOp,
+			PendingDiffOp
+		};
 
-		unsigned pending_op;
+		PendingOpId pending_op;
 
 		//! \brief Timer used for auto saving the model and temporary model.
 		QTimer model_save_timer,	tmpmodel_save_timer;
