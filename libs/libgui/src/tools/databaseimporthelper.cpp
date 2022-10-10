@@ -3013,8 +3013,7 @@ QString DatabaseImportHelper::getObjectName(const QString &oid, bool signature_f
 
 	if(!signature_form && cached_names.count(obj_oid))
 		return cached_names[obj_oid];
-
-	if(cached_signatures.count(obj_oid))
+	else if(signature_form && cached_signatures.count(obj_oid))
 		return cached_signatures[obj_oid];
 
 	QString sch_name,
