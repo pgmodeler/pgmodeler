@@ -850,16 +850,16 @@ QString DatabaseImportHelper::getDependencyObject(const QString &oid, ObjectType
 					itr++;
 				}
 
-				/* If the attributes of the dependency exists but it was not created on the model yet,
-					 pgModeler will create it and it's dependencies recursively */
-				if(recursive_dep_res && !TableObject::isTableObject(obj_type) &&
-						obj_type!=ObjectType::Database && dbmodel->getObjectIndex(obj_attr[Attributes::Name], obj_type) < 0)
-					createObject(obj_attr);
-
 				if(use_signature)
 					obj_name=obj_attr[Attributes::Signature]=getObjectName(oid, true);
 				else
 					obj_name=obj_attr[Attributes::Name]=getObjectName(oid);
+
+				/* If the attributes of the dependency exists but it was not created on the model yet,
+					 pgModeler will create it and it's dependencies recursively */
+				if(recursive_dep_res && !TableObject::isTableObject(obj_type) &&
+						obj_type!=ObjectType::Database && dbmodel->getObjectIndex(obj_name, obj_type) < 0)
+					createObject(obj_attr);
 
 				if(generate_xml)
 				{
