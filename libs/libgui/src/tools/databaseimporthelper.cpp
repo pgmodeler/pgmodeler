@@ -567,7 +567,6 @@ void DatabaseImportHelper::importDatabase()
 		if(!dbmodel)
 			throw Exception(ErrorCode::OprNotAllocatedObject ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-		QDateTime dt_start = QDateTime::currentDateTime(), dt_end;
 		dbmodel->setLoadingModel(true);
 		dbmodel->setObjectListsCapacity(creation_order.size());
 
@@ -647,12 +646,6 @@ void DatabaseImportHelper::importDatabase()
 					}
 				}
 			}
-
-			dt_end = QDateTime::currentDateTime();
-
-			long msecs = dt_end.toMSecsSinceEpoch() - dt_start.toMSecsSinceEpoch();
-			QTextStream out(stdout);
-			out << "Imported in " << msecs << " ms\n";
 
 			emit s_importFinished();
 		}
@@ -1357,7 +1350,7 @@ void DatabaseImportHelper::createOperatorClass(attribs_map &attribs)
 		QStringList array_vals, list;
 
 		attribs[Attributes::Family]=getObjectName(attribs[Attributes::Family], true);
-		attribs[Attributes::Type]=getType(attribs[Attributes::Type], true, attribs);
+		attribs[Attributes::Type]=getType(attribs[Attributes::Type], true /*, attribs */);
 
 		//Generating attributes for STORAGE elements
 		if(attribs[Attributes::Storage]!=QString("0"))
@@ -3313,6 +3306,7 @@ QString DatabaseImportHelper::getType(const QString &oid_str, bool generate_xml,
 			schparser.ignoreUnkownAttributes(true);
 			xml_def = schparser.getCodeDefinition(Attributes::PgSqlBaseType, extra_attribs, SchemaParser::XmlDefinition);
 			schparser.ignoreUnkownAttributes(false);
+
 			return xml_def;
 		}
 
