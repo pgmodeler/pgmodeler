@@ -25,7 +25,7 @@ QColor ObjectsTableWidget::item_colors[12] = { QColor("#ffb4b4"), QColor("#30303
 																							 QColor("#ffc0c0"), QColor("#000"),
 																							 QColor("#f00000"), QColor("#00f000")};
 
-ObjectsTableWidget::ObjectsTableWidget(unsigned button_conf, bool conf_exclusion, QWidget *parent): QWidget(parent)
+ObjectsTableWidget::ObjectsTableWidget(ButtonConf button_conf, bool conf_exclusion, QWidget *parent): QWidget(parent)
 {
 	setupUi(this);
 	connect(move_down_tb, SIGNAL(clicked(bool)), this, SLOT(moveRows()));
@@ -72,7 +72,7 @@ ObjectsTableWidget::ObjectsTableWidget(unsigned button_conf, bool conf_exclusion
 	move_down_tb->setToolTip(move_down_tb->toolTip() + QString(" (%1)").arg(move_down_tb->shortcut().toString()));
 }
 
-void ObjectsTableWidget::setTableItemColor(unsigned color_idx, const QColor color)
+void ObjectsTableWidget::setTableItemColor(TableItemColor color_idx, const QColor color)
 {
 	if(color_idx > RelAddedItemAltFgColor)
 		return;
@@ -80,7 +80,7 @@ void ObjectsTableWidget::setTableItemColor(unsigned color_idx, const QColor colo
 	item_colors[color_idx] = color;
 }
 
-QColor ObjectsTableWidget::getTableItemColor(unsigned color_idx)
+QColor ObjectsTableWidget::getTableItemColor(TableItemColor color_idx)
 {
 	if(color_idx > RelAddedItemAltFgColor)
 		return QColor();
@@ -88,7 +88,7 @@ QColor ObjectsTableWidget::getTableItemColor(unsigned color_idx)
 	return item_colors[color_idx];
 }
 
-void ObjectsTableWidget::setButtonConfiguration(unsigned button_conf)
+void ObjectsTableWidget::setButtonConfiguration(ButtonConf button_conf)
 {
 	bool move_btn = false;
 
@@ -606,7 +606,7 @@ void ObjectsTableWidget::clearSelection()
 	setButtonsEnabled();
 }
 
-void ObjectsTableWidget::setButtonsEnabled(unsigned button_conf, bool value)
+void ObjectsTableWidget::setButtonsEnabled(ButtonConf button_conf, bool value)
 {
 	int lin=-1;
 	QTableWidgetItem *item=table_tbw->currentItem();

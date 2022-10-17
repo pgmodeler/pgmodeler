@@ -907,7 +907,10 @@ void AppearanceConfigWidget::applyUiTheme()
 	QPalette pal;
 
 	for(unsigned idx = 0; idx < static_cast<unsigned>(item_colors->size()); idx++)
-		ObjectsTableWidget::setTableItemColor(idx, QColor(item_colors->at(idx)));
+	{
+		ObjectsTableWidget::setTableItemColor(static_cast<ObjectsTableWidget::TableItemColor>(idx),
+																					QColor(item_colors->at(idx)));
+	}
 
 	for(auto &itr : *color_map)
 	{
