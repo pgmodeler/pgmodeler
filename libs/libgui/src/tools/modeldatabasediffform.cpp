@@ -715,7 +715,8 @@ void ModelDatabaseDiffForm::exportDiff(bool confirm)
 void ModelDatabaseDiffForm::filterDiffInfos()
 {
 	QToolButton *btn=dynamic_cast<QToolButton *>(sender());
-	std::map<QToolButton *, unsigned> diff_types={ {create_tb, ObjectsDiffInfo::CreateObject},
+	std::map<QToolButton *, ObjectsDiffInfo::DiffType> diff_types={
+												{create_tb, ObjectsDiffInfo::CreateObject},
 											  {drop_tb, ObjectsDiffInfo::DropObject},
 											  {alter_tb, ObjectsDiffInfo::AlterObject},
 											  {ignore_tb, ObjectsDiffInfo::IgnoreObject}};
@@ -1011,7 +1012,7 @@ void ModelDatabaseDiffForm::updateDiffInfo(ObjectsDiffInfo diff_info)
 																				 {ObjectsDiffInfo::AlterObject,  alter_tb},
 																				 {ObjectsDiffInfo::IgnoreObject, ignore_tb} };
 
-	unsigned diff_type=diff_info.getDiffType();
+	ObjectsDiffInfo::DiffType diff_type=diff_info.getDiffType();
 	QToolButton *btn=buttons[diff_type];
 	QTreeWidgetItem *item=nullptr;
 

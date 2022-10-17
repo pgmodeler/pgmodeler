@@ -218,7 +218,7 @@ QStringList ModelsDiffHelper::getRelationshipFilters(const std::vector<BaseObjec
 	return filters;
 }
 
-unsigned ModelsDiffHelper::getDiffTypeCount(unsigned diff_type)
+unsigned ModelsDiffHelper::getDiffTypeCount(ObjectsDiffInfo::DiffType diff_type)
 {
 	if(diff_type >= ObjectsDiffInfo::NoDifference)
 		throw Exception(ErrorCode::RefElementInvalidIndex ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -291,7 +291,7 @@ void ModelsDiffHelper::diffColsInheritance(PhysicalTable *parent_tab, PhysicalTa
 	}
 }
 
-void ModelsDiffHelper::diffTables(PhysicalTable *src_table, PhysicalTable *imp_table, unsigned diff_type)
+void ModelsDiffHelper::diffTables(PhysicalTable *src_table, PhysicalTable *imp_table, ObjectsDiffInfo::DiffType diff_type)
 {
 	ObjectType types[2]={ ObjectType::Column, ObjectType::Constraint };
 	std::vector<TableObject *> *tab_objs=nullptr;
@@ -365,7 +365,7 @@ void ModelsDiffHelper::diffTables(PhysicalTable *src_table, PhysicalTable *imp_t
 	}
 }
 
-void ModelsDiffHelper::diffModels(unsigned diff_type)
+void ModelsDiffHelper::diffModels(ObjectsDiffInfo::DiffType diff_type)
 {
 	if(diff_canceled)
 		return;
@@ -559,7 +559,7 @@ void ModelsDiffHelper::diffModels(unsigned diff_type)
 	}
 }
 
-void ModelsDiffHelper::diffTableObject(TableObject *tab_obj, unsigned diff_type)
+void ModelsDiffHelper::diffTableObject(TableObject *tab_obj, ObjectsDiffInfo::DiffType diff_type)
 {
 	BaseTable *base_tab=nullptr, *aux_base_tab=nullptr;
 	ObjectType obj_type=tab_obj->getObjectType();
@@ -631,7 +631,7 @@ BaseObject *ModelsDiffHelper::getRelNNTable(const QString &obj_name, DatabaseMod
 	return tab;
 }
 
-void ModelsDiffHelper::generateDiffInfo(unsigned diff_type, BaseObject *object, BaseObject *old_object)
+void ModelsDiffHelper::generateDiffInfo(ObjectsDiffInfo::DiffType diff_type, BaseObject *object, BaseObject *old_object)
 {
 	try
 	{
@@ -777,7 +777,7 @@ void ModelsDiffHelper::generateDiffInfo(unsigned diff_type, BaseObject *object, 
 	}
 }
 
-bool ModelsDiffHelper::isDiffInfoExists(unsigned diff_type, BaseObject *object, BaseObject *old_object, bool exact_match)
+bool ModelsDiffHelper::isDiffInfoExists(ObjectsDiffInfo::DiffType  diff_type, BaseObject *object, BaseObject *old_object, bool exact_match)
 {
 	bool found_diff=false;
 	ObjectsDiffInfo aux_diff(diff_type, object, old_object);
@@ -803,7 +803,8 @@ void ModelsDiffHelper::processDiffInfos()
 	Relationship *rel=nullptr;
 	std::map<unsigned, QString> drop_objs, create_objs, alter_objs, truncate_tabs, create_fks, create_constrs;
 	std::vector<BaseObject *> drop_vect, create_vect, drop_cols;
-	unsigned diff_type, schema_id=0, idx=0;
+	unsigned schema_id=0, idx=0;
+	ObjectsDiffInfo::DiffType diff_type;
 	ObjectType obj_type;
 	std::map<unsigned, QString>::reverse_iterator ritr, ritr_end;
 	attribs_map attribs;

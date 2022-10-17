@@ -79,14 +79,14 @@ class ModelsDiffHelper: public QObject {
 		ObjectsDiffInfo::CreateObject|AlterObject|DropObject */
 
 		//! \brief Compares two tables storing the diff between them in the diff_infos vector.
-		void diffTables(PhysicalTable *src_table, PhysicalTable *imp_table, unsigned diff_type);
+		void diffTables(PhysicalTable *src_table, PhysicalTable *imp_table, ObjectsDiffInfo::DiffType diff_type);
 
 		//! \brief Compares the two models storing the diff between them in the diff_infos vector.
-		void diffModels(unsigned diff_type);
+		void diffModels(ObjectsDiffInfo::DiffType diff_type);
 
 		/*! \brief Compares the specified table object against the ones on the source model or imported
 		model depending on the diff_type parameter. */
-		void diffTableObject(TableObject *tab_obj, unsigned diff_type);
+		void diffTableObject(TableObject *tab_obj, ObjectsDiffInfo::DiffType diff_type);
 
 		/*! \brief Compares the two tables' columns and if needed generates the CREATE statments for the missing ones in child_tab.
 		 * This is used when a new inheritance relationship is detected between two tables that previously were not parent and child.
@@ -95,7 +95,7 @@ class ModelsDiffHelper: public QObject {
 		void diffColsInheritance(PhysicalTable *parent_tab, PhysicalTable *child_tab);
 
 		//! \brief Creates a diff info instance storing in o diff_infos vector
-		void generateDiffInfo(unsigned diff_type, BaseObject *object, BaseObject *old_object=nullptr);
+		void generateDiffInfo(ObjectsDiffInfo::DiffType diff_type, BaseObject *object, BaseObject *old_object=nullptr);
 
 		/*! \brief Processes the generated diff infos resulting in a SQL buffer with the needed commands
 		to synchronize both model and database */
@@ -108,7 +108,7 @@ class ModelsDiffHelper: public QObject {
 		/*! \brief Returns if a diff information exists for the object. The exact_match parameter is used to force the
 		comparison of all values on the paramenter against the diff infos. When false the exact_match parameter
 		considers one of parameters object or old_object to be used (if not null) */
-		bool isDiffInfoExists(unsigned diff_type, BaseObject *object, BaseObject *old_object, bool exact_match = true);
+		bool isDiffInfoExists(ObjectsDiffInfo::DiffType diff_type, BaseObject *object, BaseObject *old_object, bool exact_match = true);
 
 		/*! \brief Generate the proper code definition for the table's child objects. If drop_cmd is true a DROP command
 		will be generated otherwise a CREATE is generated. */
@@ -184,7 +184,7 @@ class ModelsDiffHelper: public QObject {
 		void setPgSQLVersion(const QString pgsql_ver);
 
 		//! \brief Returns the count of diff infos of the specified diff_type
-		unsigned getDiffTypeCount(unsigned diff_type);
+		unsigned getDiffTypeCount(ObjectsDiffInfo::DiffType diff_type);
 
 		//! \brief Reset all the diff info counters in order to restart the diff process
 		void resetDiffCounter();
