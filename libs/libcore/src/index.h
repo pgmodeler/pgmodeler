@@ -61,10 +61,13 @@ class Index: public TableObject{
 		void validateElements();
 
 	public:
-		static constexpr  unsigned Unique=0,
-		Concurrent=1,
-		FastUpdate=2,
-		Buffering=3;
+		enum IndexAttrib: unsigned {
+			Unique,
+			Concurrent,
+			FastUpdate,
+			Buffering
+		};
+
 		Index();
 
 		//! \brief Adds an element to the index using an column
@@ -102,7 +105,7 @@ class Index: public TableObject{
 
 		/*! \brief Configures the attributes for the indexs. These attributes can be
 		 referencede using the UNIQUE, CONCURRENT and FAST_UPDATE constants */
-		void setIndexAttribute(unsigned attrib_id, bool value);
+		void setIndexAttribute(IndexAttrib attrib_id, bool value);
 
 		//! \brief Defines the index fill factor
 		void setFillFactor(unsigned factor);
@@ -117,7 +120,7 @@ class Index: public TableObject{
 		IndexingType getIndexingType();
 
 		//! \brief Returns the current state of one index attribute (UNIQUE, CONCURRENT, FAST UPDATE)
-		bool getIndexAttribute(unsigned attrib_id);
+		bool getIndexAttribute(IndexAttrib attrib_id);
 
 		//! \brief Returns the index fill factor
 		unsigned getFillFactor();

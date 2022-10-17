@@ -201,7 +201,7 @@ unsigned Index::getIndexElementCount()
 	return idx_elements.size();
 }
 
-void Index::setIndexAttribute(unsigned attrib_id, bool value)
+void Index::setIndexAttribute(IndexAttrib attrib_id, bool value)
 {
 	if(attrib_id > Buffering)
 		throw Exception(ErrorCode::RefAttributeInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -234,7 +234,7 @@ unsigned Index::getFillFactor()
 	return fill_factor;
 }
 
-bool Index::getIndexAttribute(unsigned attrib_id)
+bool Index::getIndexAttribute(IndexAttrib attrib_id)
 {
 	if(attrib_id > Buffering)
 		throw Exception(ErrorCode::RefAttributeInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
