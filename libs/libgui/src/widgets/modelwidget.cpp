@@ -66,18 +66,13 @@
 #include "coreutilsns.h"
 
 std::vector<BaseObject *> ModelWidget::copied_objects;
-std::vector<BaseObject *> ModelWidget::cutted_objects;
+std::vector<BaseObject *> ModelWidget::cut_objects;
 bool ModelWidget::cut_operation=false;
 bool ModelWidget::save_restore_pos=true;
 bool ModelWidget::disable_render_smooth=false;
 bool ModelWidget::simple_obj_creation=true;
 ModelWidget *ModelWidget::src_model=nullptr;
 double ModelWidget::min_object_opacity=0.10;
-
-constexpr unsigned ModelWidget::BreakVertNinetyDegrees;
-constexpr unsigned ModelWidget::BreakHorizNinetyDegrees;
-constexpr unsigned ModelWidget::BreakVert2NinetyDegrees;
-constexpr unsigned ModelWidget::BreakHoriz2NinetyDegrees;
 
 ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 {
@@ -404,22 +399,22 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 
 	action=new QAction(QIcon(GuiUtilsNs::getIconPath("breakline_90dv")), tr("90° (vertical)"), this);
 	connect(action, SIGNAL(triggered(bool)), this, SLOT(breakRelationshipLine()));
-	action->setData(QVariant::fromValue<unsigned>(BreakVertNinetyDegrees));
+	action->setData(BreakVertNinetyDegrees);
 	break_rel_menu.addAction(action);
 
 	action=new QAction(QIcon(GuiUtilsNs::getIconPath("breakline_90dh")), tr("90° (horizontal)"), this);
 	connect(action, SIGNAL(triggered(bool)), this, SLOT(breakRelationshipLine()));
-	action->setData(QVariant::fromValue<unsigned>(BreakHorizNinetyDegrees));
+	action->setData(BreakHorizNinetyDegrees);
 	break_rel_menu.addAction(action);
 
 	action=new QAction(QIcon(GuiUtilsNs::getIconPath("breakline_290dv")), tr("90° + 90° (vertical)"), this);
 	connect(action, SIGNAL(triggered(bool)), this, SLOT(breakRelationshipLine()));
-	action->setData(QVariant::fromValue<unsigned>(BreakVert2NinetyDegrees));
+	action->setData(BreakVert2NinetyDegrees);
 	break_rel_menu.addAction(action);
 
 	action=new QAction(QIcon(GuiUtilsNs::getIconPath("breakline_290dh")), tr("90° + 90° (horizontal)"), this);
 	connect(action, SIGNAL(triggered(bool)), this, SLOT(breakRelationshipLine()));
-	action->setData(QVariant::fromValue<unsigned>(BreakHoriz2NinetyDegrees));
+	action->setData(BreakHoriz2NinetyDegrees);
 	break_rel_menu.addAction(action);
 
 	//Alocatting the object creation actions
@@ -588,11 +583,11 @@ ModelWidget::~ModelWidget()
 	 being destroyed, then the cut/copy operation are cancelled by emptying
 	 the lists, avoiding crashes when trying to paste them */
 	if((!copied_objects.empty() && copied_objects[0]->getDatabase()==db_model) ||
-			(!cutted_objects.empty() && cutted_objects[0]->getDatabase()==db_model))
+			(!cut_objects.empty() && cut_objects[0]->getDatabase()==db_model))
 	{
 		cut_operation=false;
 		copied_objects.clear();
-		cutted_objects.clear();
+		cut_objects.clear();
 	}
 
 	popup_menu.clear();
@@ -2564,7 +2559,7 @@ void ModelWidget::copyObjects(bool duplicate_mode)
 	/* When in cut operation is necessary to store the selected objects in a separeted list
 	in order to correclty cut (remove) the object on the source model */
 	if(ModelWidget::cut_operation)
-		cutted_objects=selected_objects;
+		cut_objects=selected_objects;
 
 	itr=selected_objects.begin();
 	itr_end=selected_objects.end();
@@ -2969,14 +2964,14 @@ void ModelWidget::pasteObjects(bool duplicate_mode)
 	else
 	{
 		//Remove the objects from the source model
-		ModelWidget::src_model->selected_objects=ModelWidget::cutted_objects;
+		ModelWidget::src_model->selected_objects=ModelWidget::cut_objects;
 		ModelWidget::src_model->removeObjects(false);
 
 		//Uncheck the cut operation flag
 		ModelWidget::cut_operation=false;
 
 		copied_objects.clear();
-		cutted_objects.clear();
+		cut_objects.clear();
 
 		if(this!=ModelWidget::src_model)
 			ModelWidget::src_model->configurePopupMenu();
@@ -4697,7 +4692,7 @@ void ModelWidget::breakRelationshipLine()
 		BaseRelationship *rel=dynamic_cast<BaseRelationship *>(selected_objects[0]);
 
 		op_list->registerObject(rel, Operation::ObjModified);
-		breakRelationshipLine(rel, action->data().toUInt());
+		breakRelationshipLine(rel, static_cast<RelBreakMode>(action->data().toInt()));
 		rel->setModified(true);
 		this->setModified(true);
 
@@ -4709,7 +4704,7 @@ void ModelWidget::breakRelationshipLine()
 	}
 }
 
-void ModelWidget::breakRelationshipLine(BaseRelationship *rel, unsigned break_type)
+void ModelWidget::breakRelationshipLine(BaseRelationship *rel, RelBreakMode break_type)
 {
 	if(!rel) return;
 
