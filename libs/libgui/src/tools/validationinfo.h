@@ -26,15 +26,24 @@ are emitted during the validation process on ModelValidationHelper class.
 #ifndef VALIDATION_INFO_H
 #define VALIDATION_INFO_H
 
-/* Including QByteArray due to 'QByteArray has no toStdString()'
-   error on Qt 5.4 (Windows only) */
 #include "baseobject.h"
 #include <vector>
 
 class ValidationInfo {
+	public:
+		enum ValType: unsigned {
+			NoUniqueName,
+			BrokenReference,
+			SpObjBrokenReference,
+			BrokenRelConfig,
+			MissingExtension,
+			SqlValidationError,
+			ValidationAborted
+		};
+
 	private:
 		//! \brief Validation type (see constants below)
-		unsigned val_type;
+		ValType val_type;
 
 		//! \brief Object which the validation info belongs to
 		BaseObject *object;
@@ -46,21 +55,13 @@ class ValidationInfo {
 		QStringList errors;
 
 	public:
-		static constexpr unsigned NoUniqueName=0,
-		BrokenReference=1,
-		SpObjBrokenReference=2,
-		BrokenRelConfig=3,
-		MissingExtension=4,
-		SqlValidationError=5,
-		ValidationAborted=6;
-
 		ValidationInfo();
-		ValidationInfo(unsigned val_type, BaseObject *object, std::vector<BaseObject *> references);
+		ValidationInfo(ValType val_type, BaseObject *object, std::vector<BaseObject *> references);
 		ValidationInfo(const QString &msg);
 		ValidationInfo(Exception e);
 
 		//! \brief Returns the validation type
-		unsigned getValidationType();
+		ValType getValidationType();
 
 		//! \brief Returns the object which the validation info belongs to
 		BaseObject *getObject();

@@ -43,7 +43,7 @@ ModelValidationHelper::~ModelValidationHelper()
 	delete export_thread;
 }
 
-void ModelValidationHelper::generateValidationInfo(unsigned val_type, BaseObject *object, std::vector<BaseObject *> refs)
+void ModelValidationHelper::generateValidationInfo(ValidationInfo::ValType val_type, BaseObject *object, std::vector<BaseObject *> refs)
 {
 	if(!refs.empty() ||
 		 val_type==ValidationInfo::MissingExtension ||
@@ -193,7 +193,7 @@ void  ModelValidationHelper::resolveConflict(ValidationInfo &info)
 			}
 		}
 		//Resolving the absence of postgis extension
-		else if(info.getValidationType()==ValidationInfo::MissingExtension && !db_model->getExtension(QString("postgis")))
+		else if(info.getValidationType()==ValidationInfo::MissingExtension && !db_model->getExtension("postgis"))
 		{
 			Extension *extension = new Extension();			
 			extension->setName("postgis");

@@ -306,15 +306,15 @@ class Exception {
 	private:
 		static constexpr unsigned ErrorCount=265;
 
+		//! \brief Constants used to access the error details
+		static constexpr unsigned ErrorCodeId=0, ErrorMessage=1;
+
 		/*! \brief Stores other exceptions before raise the 'this' exception.
 		 This structure can be used to simulate a stack trace to improve the debug */
 		std::vector<Exception> exceptions;
 
 		//! \brief Stores the error messages and codes (names of errors) in string format
 		static QString messages[ErrorCount][2];
-
-		//! \brief Constants used to access the error details
-		static constexpr unsigned ErrorCodeId=0, ErrorMessage=1;
 
 		//! \brief Error type related to the exception
 		ErrorCode error_code;
