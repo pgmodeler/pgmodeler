@@ -61,7 +61,7 @@ ModelsDiffHelper::~ModelsDiffHelper()
 	destroyTempObjects();
 }
 
-void ModelsDiffHelper::setDiffOption(unsigned opt_id, bool value)
+void ModelsDiffHelper::setDiffOption(DiffOptions opt_id, bool value)
 {
 	if(opt_id > OptDropMissingColsConstr)
 		throw Exception(ErrorCode::RefElementInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);

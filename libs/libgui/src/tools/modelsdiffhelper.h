@@ -120,43 +120,43 @@ class ModelsDiffHelper: public QObject {
 		BaseObject *getRelNNTable(const QString &obj_name, DatabaseModel *model);
 
 	public:
-		static constexpr unsigned OptKeepClusterObjs=0,
+		enum DiffOptions: unsigned {
+			OptKeepClusterObjs,
 
-		//! \brief Indicates if any DROP/TRUNCATE generated must be in cascade mode
-		OptCascadeMode=1,
+			//! \brief Indicates if any DROP/TRUNCATE generated must be in cascade mode
+			OptCascadeMode,
 
-		//! \brief Forces the recreation of any object maked as ALTER in the output
-		OptForceRecreation=2,
+			//! \brief Forces the recreation of any object maked as ALTER in the output
+			OptForceRecreation,
 
-		//! \brief Recreates only objects that can't be modified using ALTER commands
-		OptRecreateUnmodifiable=3,
+			//! \brief Recreates only objects that can't be modified using ALTER commands
+			OptRecreateUnmodifiable,
 
-		//! \brief Generate a TRUNCATE command for every table which columns was modified in their data types
-		//OptTruncateTables=4,
+			//! \brief Indicates if permissions must be preserved on database
+			OptKeepObjectPerms,
 
-		//! \brief Indicates if permissions must be preserved on database
-		OptKeepObjectPerms=4,
+			/*! \brief Indicates that existing sequences must be reused in serial columns. Since serial columns are converted
+			into integer and a new sequence created and assigned as nextval(sequence) default value for those columns,
+			if reuse is enabled, new sequences will not be created instead the ones which name matches the column's default
+			value will be reused */
+			OptReuseSequences,
 
-		/*! \brief Indicates that existing sequences must be reused in serial columns. Since serial columns are converted
-		into integer and a new sequence created and assigned as nextval(sequence) default value for those columns,
-		if reuse is enabled, new sequences will not be created instead the ones which name matches the column's default
-		value will be reused */
-		OptReuseSequences=5,
+			//! \brief Indicates to not generate and execute commands to rename the destination database
+			OptPreserveDbName,
 
-		//! \brief Indicates to not generate and execute commands to rename the destination database
-		OptPreserveDbName=6,
+			/*! \brief Indicates to not generate and execute commands to drop missing objects. For instance, if user
+			try to diff a partial model against the original database DROP commands will be generated, this option
+			will avoid this situation and preserve the missing (not imported) objects. */
+			OptDontDropMissingObjs,
 
-		/*! \brief Indicates to not generate and execute commands to drop missing objects. For instance, if user
-		try to diff a partial model against the original database DROP commands will be generated, this option
-		will avoid this situation and preserve the missing (not imported) objects. */
-		OptDontDropMissingObjs=7,
-
-		/*! \brief Indicates to generate and execute commands to drop missing columns and constraints. For instance, if user
-		try to diff a partial model against the original database and the OPT_DONT_DROP_MISSING_OBJS is set, DROP commands will not be generated,
-		except for columns and constraints. This option is only considered in the process when OPT_DONT_DROP_MISSING_OBJS is enabled. */
-		OptDropMissingColsConstr=8;
+			/*! \brief Indicates to generate and execute commands to drop missing columns and constraints. For instance, if user
+			try to diff a partial model against the original database and the OPT_DONT_DROP_MISSING_OBJS is set, DROP commands will not be generated,
+			except for columns and constraints. This option is only considered in the process when OPT_DONT_DROP_MISSING_OBJS is enabled. */
+			OptDropMissingColsConstr
+		};
 
 		ModelsDiffHelper();
+
 		virtual ~ModelsDiffHelper();
 
 		/*! \brief Configures the models to be compared. It is assumed that src_model is the reference model
@@ -178,7 +178,7 @@ class ModelsDiffHelper: public QObject {
 		static QStringList getRelationshipFilters(const std::vector<BaseObject *> &objects, bool use_signature);
 
 		//! \brief Toggles a diff option throught the OPT_xxx constants
-		void setDiffOption(unsigned opt_id, bool value);
+		void setDiffOption(DiffOptions opt_id, bool value);
 
 		//! \brief Configures the PostgreSQL version used in the diff generation
 		void setPgSQLVersion(const QString pgsql_ver);
