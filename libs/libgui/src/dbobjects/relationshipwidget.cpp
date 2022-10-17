@@ -399,19 +399,15 @@ void RelationshipWidget::setAttributes(DatabaseModel *model, OperationList *op_l
 	part_bound_expr_gb->setVisible(rel_type==BaseRelationship::RelationshipPart);
 
 	for(unsigned i=SettingsTab; i <= AdvancedTab; i++)
-		//rel_attribs_tbw->removeTab(1);
 		rel_attribs_tbw->setTabVisible(i, false);
 
 	if(!relgen_dep)
 	{
 		for(unsigned i=SettingsTab; i <= SpecialPkTab; i++)
-			//rel_attribs_tbw->addTab(tabs[i], tab_labels[i]);
 			rel_attribs_tbw->setTabVisible(i, true);
 	}
 	else if(relgen_dep && base_rel->getObjectType()==ObjectType::Relationship && !has_foreign_tab)
 	{
-		//rel_attribs_tbw->addTab(tabs[SettingsTab], tab_labels[SettingsTab]);
-		//rel_attribs_tbw->addTab(tabs[SpecialPkTab], tab_labels[SpecialPkTab]);
 		rel_attribs_tbw->setTabVisible(SettingsTab, true);
 		rel_attribs_tbw->setTabVisible(SpecialPkTab, true);
 	}
@@ -419,7 +415,6 @@ void RelationshipWidget::setAttributes(DatabaseModel *model, OperationList *op_l
 	if(base_rel->getObjectType()==ObjectType::Relationship ||
 		 (base_rel->getObjectType()==ObjectType::BaseRelationship &&
 			base_rel->getRelationshipType()==BaseRelationship::RelationshipFk))
-		//rel_attribs_tbw->addTab(tabs[AdvancedTab], tab_labels[AdvancedTab]);
 		rel_attribs_tbw->setTabVisible(AdvancedTab, true);
 
 	copy_options_grp->setVisible(base_rel->getObjectType()==ObjectType::Relationship &&
