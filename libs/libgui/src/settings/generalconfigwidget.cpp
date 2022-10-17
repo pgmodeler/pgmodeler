@@ -586,16 +586,16 @@ void GeneralConfigWidget::restoreDefaults()
 
 void GeneralConfigWidget::convertMarginUnity()
 {
-	static int prev_unity=UnitMilimeters;
+	static int prev_unit=UnitMilimeters;
 	double conv_factor[]={1.0, 2.83, 0.04, 0.1},
 			left, right, top, bottom, width, height;
 
-	left=left_marg->value() / conv_factor[prev_unity];
-	right=right_marg->value() / conv_factor[prev_unity];
-	bottom=bottom_marg->value() / conv_factor[prev_unity];
-	top=top_marg->value() / conv_factor[prev_unity];
-	width=width_spb->value() / conv_factor[prev_unity];
-	height=height_spb->value() / conv_factor[prev_unity];
+	left=left_marg->value() / conv_factor[prev_unit];
+	right=right_marg->value() / conv_factor[prev_unit];
+	bottom=bottom_marg->value() / conv_factor[prev_unit];
+	top=top_marg->value() / conv_factor[prev_unit];
+	width=width_spb->value() / conv_factor[prev_unit];
+	height=height_spb->value() / conv_factor[prev_unit];
 
 	left_marg->setValue(left * conv_factor[unity_cmb->currentIndex()]);
 	right_marg->setValue(right * conv_factor[unity_cmb->currentIndex()]);
@@ -604,7 +604,7 @@ void GeneralConfigWidget::convertMarginUnity()
 	width_spb->setValue(width * conv_factor[unity_cmb->currentIndex()]);
 	height_spb->setValue(height * conv_factor[unity_cmb->currentIndex()]);
 
-	prev_unity=unity_cmb->currentIndex();
+	prev_unit=unity_cmb->currentIndex();
 }
 
 void GeneralConfigWidget::selectPaperSize()
