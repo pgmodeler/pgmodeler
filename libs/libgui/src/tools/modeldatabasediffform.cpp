@@ -266,7 +266,7 @@ void ModelDatabaseDiffForm::showEvent(QShowEvent *)
 	}
 }
 
-void ModelDatabaseDiffForm::createThread(unsigned thread_id)
+void ModelDatabaseDiffForm::createThread(ThreadId thread_id)
 {
 	if(thread_id==SrcImportThread)
 	{
@@ -324,7 +324,7 @@ void ModelDatabaseDiffForm::createThread(unsigned thread_id)
 	}
 }
 
-void ModelDatabaseDiffForm::destroyThread(unsigned thread_id)
+void ModelDatabaseDiffForm::destroyThread(ThreadId thread_id)
 {
 	if(thread_id==SrcImportThread && src_import_thread)
 	{
@@ -515,7 +515,7 @@ void ModelDatabaseDiffForm::generateDiff()
 	settings_tbw->setCurrentIndex(2);
 }
 
-void ModelDatabaseDiffForm::importDatabase(unsigned thread_id)
+void ModelDatabaseDiffForm::importDatabase(ThreadId thread_id)
 {
 	try
 	{
