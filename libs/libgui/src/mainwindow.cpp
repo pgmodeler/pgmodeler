@@ -2258,18 +2258,19 @@ void MainWindow::configureMoreActionsMenu()
 	more_actions_menu.addActions(actions);
 }
 
-void MainWindow::switchView(int view)
+void MainWindow::switchView(MWViewsId view)
 {
 	switch(view)
 	{
-	case(ManageView):
-		action_manage->toggle();
+		case(ManageView):
+			action_manage->toggle();
 		break;
-	case(DesignView):
-		action_design->toggle();
+		case(DesignView):
+			action_design->toggle();
 		break;
-	case(WelcomeView):
-		action_welcome->toggle();
+		case(WelcomeView):
+			action_welcome->toggle();
+		break;
 	}
 }
 

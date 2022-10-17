@@ -59,10 +59,7 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 
 		static int ToolsActionsCount;
 
-		static constexpr int WelcomeView=0,
-		DesignView=1,
-		ManageView=2,
-		InfinityInterval = INT_MAX;
+		static constexpr int InfinityInterval = INT_MAX;
 
 		static bool confirm_validation;
 
@@ -196,7 +193,14 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 		void configureMenusActionsWidgets();
 
 	public:
+		enum MWViewsId {
+			WelcomeView,
+			DesignView,
+			ManageView
+		};
+
 		MainWindow(QWidget *parent = nullptr, Qt::WindowFlags flags = Qt::Widget);
+
 		virtual ~MainWindow();
 
 		//! \brief Loads a set of models from string list
@@ -224,7 +228,7 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 		ModelWidget *getModel(int idx);
 
 		//! \brief Switches the currently opened view (Design, Manage, Welcome)
-		void switchView(int view);
+		void switchView(MWViewsId view);
 
 		/*! \brief This is a convenience method to make able the addition of execution tabs in SQL tool without
 		 *  expose the SQL Tool widget itself (useful for plugin developers) */
