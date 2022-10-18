@@ -266,7 +266,7 @@ void ModelDatabaseDiffForm::showEvent(QShowEvent *)
 	}
 }
 
-void ModelDatabaseDiffForm::createThread(unsigned thread_id)
+void ModelDatabaseDiffForm::createThread(ThreadId thread_id)
 {
 	if(thread_id==SrcImportThread)
 	{
@@ -324,7 +324,7 @@ void ModelDatabaseDiffForm::createThread(unsigned thread_id)
 	}
 }
 
-void ModelDatabaseDiffForm::destroyThread(unsigned thread_id)
+void ModelDatabaseDiffForm::destroyThread(ThreadId thread_id)
 {
 	if(thread_id==SrcImportThread && src_import_thread)
 	{
@@ -515,7 +515,7 @@ void ModelDatabaseDiffForm::generateDiff()
 	settings_tbw->setCurrentIndex(2);
 }
 
-void ModelDatabaseDiffForm::importDatabase(unsigned thread_id)
+void ModelDatabaseDiffForm::importDatabase(ThreadId thread_id)
 {
 	try
 	{
@@ -715,7 +715,8 @@ void ModelDatabaseDiffForm::exportDiff(bool confirm)
 void ModelDatabaseDiffForm::filterDiffInfos()
 {
 	QToolButton *btn=dynamic_cast<QToolButton *>(sender());
-	std::map<QToolButton *, unsigned> diff_types={ {create_tb, ObjectsDiffInfo::CreateObject},
+	std::map<QToolButton *, ObjectsDiffInfo::DiffType> diff_types={
+												{create_tb, ObjectsDiffInfo::CreateObject},
 											  {drop_tb, ObjectsDiffInfo::DropObject},
 											  {alter_tb, ObjectsDiffInfo::AlterObject},
 											  {ignore_tb, ObjectsDiffInfo::IgnoreObject}};
@@ -1011,7 +1012,7 @@ void ModelDatabaseDiffForm::updateDiffInfo(ObjectsDiffInfo diff_info)
 																				 {ObjectsDiffInfo::AlterObject,  alter_tb},
 																				 {ObjectsDiffInfo::IgnoreObject, ignore_tb} };
 
-	unsigned diff_type=diff_info.getDiffType();
+	ObjectsDiffInfo::DiffType diff_type=diff_info.getDiffType();
 	QToolButton *btn=buttons[diff_type];
 	QTreeWidgetItem *item=nullptr;
 
@@ -1064,7 +1065,7 @@ void ModelDatabaseDiffForm::saveConfiguration()
 		{
 			schparser.ignoreUnkownAttributes(true);
 			schparser.ignoreEmptyAttributes(true);
-			presets += schparser.getCodeDefinition(preset_sch, conf.second);
+			presets += schparser.getSourceCode(preset_sch, conf.second);
 			schparser.ignoreUnkownAttributes(false);
 			schparser.ignoreEmptyAttributes(false);
 		}

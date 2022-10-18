@@ -136,7 +136,7 @@ class Table: public PhysicalTable {
 		void removePolicy(unsigned idx);
 
 		//! \brief Returns the SQL / XML definition for table
-		virtual QString getCodeDefinition(unsigned def_type) final;
+		virtual QString getSourceCode(SchemaParser::CodeType def_type) final;
 
 		/*! \brief Stores on the specified vector 'fks' the foreign key present on table. The
 		 boolean paramenter is used to include those foreign keys includes by relationship. The third parameter
@@ -169,7 +169,7 @@ class Table: public PhysicalTable {
 		void getColumnReferences(Column *column, std::vector<TableObject *> &refs, bool exclusion_mode=false);
 
 		//! \brief Returns the alter definition comparing the this table against the one provided via parameter
-		virtual QString getAlterDefinition(BaseObject *object) final;
+		virtual QString getAlterCode(BaseObject *object) final;
 
 		//! \brief Returns the truncate definition for this table
 		QString getTruncateDefinition(bool cascade);
@@ -178,7 +178,7 @@ class Table: public PhysicalTable {
 		 * Note if the method is called with incl_rel_added_objs = true it can produce an SQL/XML code
 		 * that does not reflect the real semantics of the table. So take care to use this method and always
 		 * invalidate the tables code (see setCodeInvalidated()) after retrieving the resulting code */
-		QString __getCodeDefinition(unsigned def_type, bool incl_rel_added_objs);
+		QString __getSourceCode(SchemaParser::CodeType def_type, bool incl_rel_added_objs);
 
 		virtual QString getDataDictionary(bool split, const attribs_map & extra_attribs = {});
 

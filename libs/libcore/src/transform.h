@@ -30,6 +30,12 @@
 #include "language.h"
 
 class Transform : public BaseObject {
+	public:
+		enum FunctionId: unsigned {
+			FromSqlFunc,
+			ToSqlFunc
+		};
+
 	private:
 		PgSqlType type;
 
@@ -37,13 +43,9 @@ class Transform : public BaseObject {
 
 		Function *functions[2];
 
-		void validateFunction(Function *func, unsigned func_id);
+		void validateFunction(Function *func, FunctionId func_id);
 
 	public:
-		static constexpr unsigned
-		FromSqlFunc = 0,
-		ToSqlFunc = 1;
-
 		Transform();
 
 		//! \brief This method has a hardcoded way to generated the transform's name. It'll reject any value passed by its parameter
@@ -51,16 +53,16 @@ class Transform : public BaseObject {
 
 		void setType(PgSqlType tp);
 		void setLanguage(Language *lang);
-		void setFunction(Function *func, unsigned func_id);
+		void setFunction(Function *func, FunctionId func_id);
 
 		PgSqlType getType();
 		Language *getLanguage();		
-		Function *getFunction(unsigned func_id);
+		Function *getFunction(FunctionId func_id);
 
 		void operator = (Transform &transf);
-		virtual QString getCodeDefinition(unsigned def_type) final;
+		virtual QString getSourceCode(SchemaParser::CodeType def_type) final;
 		virtual QString getSignature(bool = false) final;
-		virtual QString getDropDefinition(bool cascade) final;
+		virtual QString getDropCode(bool cascade) final;
 };
 
 #endif

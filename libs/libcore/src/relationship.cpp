@@ -26,14 +26,6 @@ const QString Relationship::DstTabToken("{dt}");
 const QString Relationship::GenTabToken("{gt}");
 const QString Relationship::SrcColToken("{sc}");
 
-constexpr unsigned Relationship::SrcColPattern;
-constexpr unsigned Relationship::DstColPattern;
-constexpr unsigned Relationship::PkPattern;
-constexpr unsigned Relationship::UqPattern;
-constexpr unsigned Relationship::SrcFkPattern;
-constexpr unsigned Relationship::DstFkPattern;
-constexpr unsigned Relationship::PkColPattern;
-
 Relationship::Relationship(Relationship *rel) : BaseRelationship(rel)
 {
 	if(!rel)
@@ -42,7 +34,7 @@ Relationship::Relationship(Relationship *rel) : BaseRelationship(rel)
 	(*(this))=(*rel);
 }
 
-Relationship::Relationship(unsigned rel_type, PhysicalTable *src_tab,
+Relationship::Relationship(BaseRelationship::RelType rel_type, PhysicalTable *src_tab,
 							 PhysicalTable *dst_tab, bool src_mdtry, bool dst_mdtry,
 							 bool identifier,  bool deferrable, DeferralType deferral_type,
 							 ActionType fk_del_act, ActionType fk_upd_act, CopyOptions copy_op) :
@@ -196,16 +188,15 @@ Relationship::Relationship(unsigned rel_type, PhysicalTable *src_tab,
 	}
 }
 
-void Relationship::setNamePattern(unsigned pat_id, const QString &pattern)
+void Relationship::setNamePattern(PatternId pat_id, const QString &pattern)
 {
 	if(!pattern.isEmpty())
 	{
 		QString aux_name=pattern,
 				pat_tokens[]={ SrcTabToken, DstTabToken,
 											 GenTabToken, SrcColToken };
-		unsigned i, count=sizeof(pat_tokens)/sizeof(QString);
 
-		for(i=0; i < count; i++)
+		for(unsigned i=0; i < 4; i++)
 			aux_name.replace(pat_tokens[i], QString("%1").arg(static_cast<char>('a' + i)));
 
 		if(pat_id > PkColPattern)
@@ -220,7 +211,7 @@ void Relationship::setNamePattern(unsigned pat_id, const QString &pattern)
 	}
 }
 
-QString Relationship::getNamePattern(unsigned pat_id)
+QString Relationship::getNamePattern(PatternId pat_id)
 {
 	if(pat_id > PkColPattern)
 		throw Exception(ErrorCode::RefInvalidNamePatternId,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -228,7 +219,7 @@ QString Relationship::getNamePattern(unsigned pat_id)
 	return name_patterns[pat_id];
 }
 
-QString Relationship::generateObjectName(unsigned pat_id, Column *id_col, bool use_alias)
+QString Relationship::generateObjectName(PatternId pat_id, Column *id_col, bool use_alias)
 {
 	QString name, aux_name;
 
@@ -270,7 +261,7 @@ void Relationship::setOriginalPrimaryKey(Constraint *pk)
 	pk_original = pk;
 }
 
-void Relationship::setMandatoryTable(unsigned table_id, bool value)
+void Relationship::setMandatoryTable(TableId table_id, bool value)
 {
 	BaseRelationship::setMandatoryTable(table_id, value);
 	this->invalidated=true;
@@ -552,7 +543,7 @@ void Relationship::addObject(TableObject *tab_obj, int obj_idx)
 
 		//Generates the code for the object only for validation
 		if(obj_type==ObjectType::Column)
-			dynamic_cast<Column *>(tab_obj)->getCodeDefinition(SchemaParser::SqlDefinition);
+			dynamic_cast<Column *>(tab_obj)->getSourceCode(SchemaParser::SqlCode);
 		else
 		{
 			Constraint *rest=nullptr;
@@ -562,7 +553,7 @@ void Relationship::addObject(TableObject *tab_obj, int obj_idx)
 			if(rest->getConstraintType()==ConstraintType::ForeignKey)
 				throw Exception(ErrorCode::AsgForeignKeyRelationship,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-			rest->getCodeDefinition(SchemaParser::SqlDefinition);
+			rest->getSourceCode(SchemaParser::SqlCode);
 		}
 
 		//Switch back to null the object parent
@@ -2715,28 +2706,28 @@ bool Relationship::isInvalidated()
 		return true;
 }
 
-QString Relationship::getCodeDefinition(unsigned def_type)
+QString Relationship::getSourceCode(SchemaParser::CodeType def_type)
 {
 	QString code_def=getCachedCode(def_type);
 	if(!code_def.isEmpty()) return code_def;
 
-	if(def_type==SchemaParser::SqlDefinition)
+	if(def_type==SchemaParser::SqlCode)
 	{
 		if(fk_rel1n && (rel_type==Relationship11 || rel_type==Relationship1n))
 		{
 			unsigned count, i;
 
 			attributes[Attributes::Relationship1n]=Attributes::True;
-			attributes[Attributes::Constraints]=fk_rel1n->getCodeDefinition(def_type);
+			attributes[Attributes::Constraints]=fk_rel1n->getSourceCode(def_type);
 
 			if(uq_rel11)
-				attributes[Attributes::Constraints]+=uq_rel11->getCodeDefinition(def_type);
+				attributes[Attributes::Constraints]+=uq_rel11->getSourceCode(def_type);
 
 			count=rel_constraints.size();
 			for(i=0; i < count; i++)
 			{
 				if(dynamic_cast<Constraint *>(rel_constraints[i])->getConstraintType()!=ConstraintType::PrimaryKey)
-					attributes[Attributes::Constraints]+=dynamic_cast<Constraint *>(rel_constraints[i])->getCodeDefinition(def_type, false);
+					attributes[Attributes::Constraints]+=dynamic_cast<Constraint *>(rel_constraints[i])->getSourceCode(def_type, false);
 
 			}
 
@@ -2747,14 +2738,14 @@ QString Relationship::getCodeDefinition(unsigned def_type)
 			unsigned count, i;
 
 			attributes[Attributes::RelationshipNn]=Attributes::True;
-			attributes[Attributes::Table]=table_relnn->getCodeDefinition(def_type);
+			attributes[Attributes::Table]=table_relnn->getSourceCode(def_type);
 
 			count=table_relnn->getConstraintCount();
 			for(i=0; i < count; i++)
 			{
 				if(table_relnn->getConstraint(i)->getConstraintType()!=ConstraintType::PrimaryKey &&
 						table_relnn->getConstraint(i)->getConstraintType()!=ConstraintType::Check)
-					attributes[Attributes::Constraints]+=table_relnn->getConstraint(i)->getCodeDefinition(def_type, true);
+					attributes[Attributes::Constraints]+=table_relnn->getConstraint(i)->getSourceCode(def_type, true);
 			}
 		}
 		else if(rel_type==RelationshipGen)
@@ -2763,7 +2754,7 @@ QString Relationship::getCodeDefinition(unsigned def_type)
 			attributes[Attributes::Table]=getReceiverTable()->getName(true);
 		}
 
-		return this->BaseObject::__getCodeDefinition(SchemaParser::SqlDefinition);
+		return this->BaseObject::__getSourceCode(SchemaParser::SqlCode);
 	}
 	else
 	{
@@ -2799,7 +2790,7 @@ QString Relationship::getCodeDefinition(unsigned def_type)
 		for(i=0; i < count; i++)
 		{
 			attributes[Attributes::Columns]+=dynamic_cast<Column *>(rel_attributes[i])->
-													getCodeDefinition(SchemaParser::XmlDefinition);
+													getSourceCode(SchemaParser::XmlCode);
 		}
 
 		attributes[Attributes::Constraints]="";
@@ -2808,13 +2799,13 @@ QString Relationship::getCodeDefinition(unsigned def_type)
 		{
 			if(!rel_constraints[i]->isProtected())
 				attributes[Attributes::Constraints]+=dynamic_cast<Constraint *>(rel_constraints[i])->
-															getCodeDefinition(SchemaParser::XmlDefinition, true);
+															getSourceCode(SchemaParser::XmlCode, true);
 		}
 
 		if(pk_original)
 		{
 			pk_original->setParentTable(getReceiverTable());
-			attributes[Attributes::OriginalPk]=pk_original->getCodeDefinition(SchemaParser::XmlDefinition);
+			attributes[Attributes::OriginalPk]=pk_original->getSourceCode(SchemaParser::XmlCode);
 			pk_original->setParentTable(nullptr);
 		}
 
@@ -2826,7 +2817,7 @@ QString Relationship::getCodeDefinition(unsigned def_type)
 
 		if(copy_options.getCopyMode()!=0)
 		{
-			attributes[Attributes::CopyOptions]=QString("%1").arg(copy_options.getCopyOptionsIds());
+			attributes[Attributes::CopyOptions]=QString("%1").arg(copy_options.getCopyOptions());
 			attributes[Attributes::CopyMode]=QString("%1").arg(copy_options.getCopyMode());
 		}
 
@@ -2841,7 +2832,7 @@ QString Relationship::getCodeDefinition(unsigned def_type)
 		if(!reduced_form)
 			cached_reduced_code.clear();
 
-		return this->BaseObject::getCodeDefinition(SchemaParser::XmlDefinition, reduced_form);
+		return this->BaseObject::getSourceCode(SchemaParser::XmlCode, reduced_form);
 	}
 
 }
@@ -2894,7 +2885,7 @@ QString Relationship::getAlterRelationshipDefinition(bool undo_inh_part)
 		attributes[Attributes::PartitionBoundExpr]=getReceiverTable()->getPartitionBoundingExpr();
 	}
 
-	return BaseObject::getAlterDefinition(this->getSchemaName(), attributes);
+	return BaseObject::getAlterCode(this->getSchemaName(), attributes);
 }
 
 

@@ -65,7 +65,7 @@ bool Schema::isRectVisible()
 	return rect_visible;
 }
 
-QString Schema::getCodeDefinition(unsigned def_type)
+QString Schema::getSourceCode(SchemaParser::CodeType def_type)
 {
 	QString code_def=getCachedCode(def_type, false);
 	if(!code_def.isEmpty()) return code_def;
@@ -76,5 +76,5 @@ QString Schema::getCodeDefinition(unsigned def_type)
 	setFadedOutAttribute();
 	setLayersAttribute();
 
-	return BaseObject::__getCodeDefinition(def_type);
+	return BaseObject::__getSourceCode(def_type);
 }

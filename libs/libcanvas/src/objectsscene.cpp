@@ -549,10 +549,10 @@ void ObjectsScene::updateActiveLayers()
 	setActiveLayers(active_layers);
 }
 
-QStringList ObjectsScene::getLayerColorNames(unsigned color_id)
+QStringList ObjectsScene::getLayerColorNames(LayerAttrColor color_id)
 {
-	if(color_id > LayerRectColor)
-		return {};
+	//if(color_id > LayerRectColor)
+	//	return {};
 
 	QStringList colors;
 
@@ -576,10 +576,10 @@ void ObjectsScene::setLayerColors(int layer_id, QColor txt_color, QColor bg_colo
 	layers_paths[layer_id]->update();
 }
 
-void ObjectsScene::setLayerColors(unsigned layer_attr_id, const QStringList &colors)
+void ObjectsScene::setLayerColors(LayerAttrColor layer_attr_id, const QStringList &colors)
 {
-	if(layer_attr_id > LayerRectColor)
-		return;
+	//if(layer_attr_id > LayerRectColor)
+	//	return;
 
 	int idx = 0;
 	QColor color;
@@ -1606,10 +1606,9 @@ void ObjectsScene::alignObjectsToGrid()
 				}
 
 				//Align the labels
-				for(i1=BaseRelationship::SrcCardLabel;
-					i1<=BaseRelationship::RelNameLabel; i1++)
+				for(i1=BaseRelationship::SrcCardLabel; i1 <= BaseRelationship::RelNameLabel; i1++)
 				{
-					lab=rel->getLabel(i1);
+					lab=rel->getLabel(static_cast<BaseRelationship::LabelId>(i1));
 					if(lab)
 						lab->setPos(this->alignPointToGrid(lab->pos()));
 				}

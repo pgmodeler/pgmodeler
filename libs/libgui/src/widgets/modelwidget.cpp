@@ -66,18 +66,13 @@
 #include "coreutilsns.h"
 
 std::vector<BaseObject *> ModelWidget::copied_objects;
-std::vector<BaseObject *> ModelWidget::cutted_objects;
+std::vector<BaseObject *> ModelWidget::cut_objects;
 bool ModelWidget::cut_operation=false;
 bool ModelWidget::save_restore_pos=true;
 bool ModelWidget::disable_render_smooth=false;
 bool ModelWidget::simple_obj_creation=true;
 ModelWidget *ModelWidget::src_model=nullptr;
 double ModelWidget::min_object_opacity=0.10;
-
-constexpr unsigned ModelWidget::BreakVertNinetyDegrees;
-constexpr unsigned ModelWidget::BreakHorizNinetyDegrees;
-constexpr unsigned ModelWidget::BreakVert2NinetyDegrees;
-constexpr unsigned ModelWidget::BreakHoriz2NinetyDegrees;
 
 ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 {
@@ -87,13 +82,14 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	QAction *action=nullptr;
 	QString str_ico;
 	QStringList rel_types_cod={QString("11"), QString("1n"), QString("nn"), QString("dep"), QString("gen"), QString("part") };
-	unsigned i,
+	unsigned i;
+	BaseRelationship::RelType
 			rel_types_id[]={ BaseRelationship::Relationship11, BaseRelationship::Relationship1n,
-							 BaseRelationship::RelationshipNn, BaseRelationship::RelationshipDep,
-							 BaseRelationship::RelationshipGen, BaseRelationship::RelationshipPart};
+											 BaseRelationship::RelationshipNn, BaseRelationship::RelationshipDep,
+											 BaseRelationship::RelationshipGen, BaseRelationship::RelationshipPart };
 
 	std::vector<ObjectType> types_vect = BaseObject::getObjectTypes(true, { ObjectType::Database, ObjectType::Permission,
-																																		 ObjectType::BaseRelationship, ObjectType::Relationship});
+																																					ObjectType::BaseRelationship, ObjectType::Relationship });
 
 	current_zoom=1;
 	modified = panning_mode = false;
@@ -334,11 +330,11 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	action_collapse_mode->setText(tr("Collapse"));
 
 	action_no_collapse_attribs=new QAction(tr("Not collapsed"), this);
-	action_no_collapse_attribs->setData(enum_cast(CollapseMode::NotCollapsed));
+	action_no_collapse_attribs->setData(BaseTable::NotCollapsed);
 	action_collapse_ext_attribs=new QAction(tr("Extended attributes"), this);
-	action_collapse_ext_attribs->setData(enum_cast(CollapseMode::ExtAttribsCollapsed));
+	action_collapse_ext_attribs->setData(BaseTable::ExtAttribsCollapsed);
 	action_collpase_all_attribs=new QAction(tr("All attributes"), this);
-	action_collpase_all_attribs->setData(enum_cast(CollapseMode::AllAttribsCollapsed));
+	action_collpase_all_attribs->setData(BaseTable::AllAttribsCollapsed);
 
 	toggle_attrs_menu.addAction(action_no_collapse_attribs);
 	toggle_attrs_menu.addAction(action_collapse_ext_attribs);
@@ -403,29 +399,29 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 
 	action=new QAction(QIcon(GuiUtilsNs::getIconPath("breakline_90dv")), tr("90° (vertical)"), this);
 	connect(action, SIGNAL(triggered(bool)), this, SLOT(breakRelationshipLine()));
-	action->setData(QVariant::fromValue<unsigned>(BreakVertNinetyDegrees));
+	action->setData(BreakVertNinetyDegrees);
 	break_rel_menu.addAction(action);
 
 	action=new QAction(QIcon(GuiUtilsNs::getIconPath("breakline_90dh")), tr("90° (horizontal)"), this);
 	connect(action, SIGNAL(triggered(bool)), this, SLOT(breakRelationshipLine()));
-	action->setData(QVariant::fromValue<unsigned>(BreakHorizNinetyDegrees));
+	action->setData(BreakHorizNinetyDegrees);
 	break_rel_menu.addAction(action);
 
 	action=new QAction(QIcon(GuiUtilsNs::getIconPath("breakline_290dv")), tr("90° + 90° (vertical)"), this);
 	connect(action, SIGNAL(triggered(bool)), this, SLOT(breakRelationshipLine()));
-	action->setData(QVariant::fromValue<unsigned>(BreakVert2NinetyDegrees));
+	action->setData(BreakVert2NinetyDegrees);
 	break_rel_menu.addAction(action);
 
 	action=new QAction(QIcon(GuiUtilsNs::getIconPath("breakline_290dh")), tr("90° + 90° (horizontal)"), this);
 	connect(action, SIGNAL(triggered(bool)), this, SLOT(breakRelationshipLine()));
-	action->setData(QVariant::fromValue<unsigned>(BreakHoriz2NinetyDegrees));
+	action->setData(BreakHoriz2NinetyDegrees);
 	break_rel_menu.addAction(action);
 
 	//Alocatting the object creation actions
 	for(auto &type : types_vect)
 	{
 		actions_new_objects[type]=new QAction(QIcon(GuiUtilsNs::getIconPath(type)), BaseObject::getTypeName(type), this);
-		actions_new_objects[type]->setData(QVariant(enum_cast(type)));
+		actions_new_objects[type]->setData(QVariant(enum_t(type)));
 		connect(actions_new_objects[type], SIGNAL(triggered(bool)), this, SLOT(addNewObject()));
 	}
 
@@ -452,7 +448,7 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	actions_new_objects[ObjectType::Relationship] = rels_menu->menuAction();
 	actions_new_objects[ObjectType::Relationship]->setIcon(QIcon(GuiUtilsNs::getIconPath(ObjectType::Relationship)));
 	actions_new_objects[ObjectType::Relationship]->setText(BaseObject::getTypeName(ObjectType::Relationship));
-	actions_new_objects[ObjectType::Relationship]->setData(QVariant(enum_cast(ObjectType::Relationship)));
+	actions_new_objects[ObjectType::Relationship]->setData(QVariant(enum_t(ObjectType::Relationship)));
 
 	for(int i=0; i < rel_types_cod.size(); i++)
 	{
@@ -462,7 +458,7 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 						   BaseRelationship::getRelationshipTypeName(rel_types_id[i], false), this);
 
 		//Storing a unique identifier for the relationship type
-		action->setData(QVariant(enum_cast(ObjectType::Relationship) + rel_types_id[i]));
+		action->setData(QVariant(enum_t(ObjectType::Relationship) + rel_types_id[i]));
 
 		connect(action, SIGNAL(triggered(bool)), this, SLOT(addNewObject()));
 		rels_menu->addAction(action);
@@ -494,7 +490,7 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 			select_all_menu.addAction(action);
 		}
 
-		action->setData(QVariant(enum_cast(obj_type)));
+		action->setData(QVariant(enum_t(obj_type)));
 		connect(action, SIGNAL(triggered(bool)), this, SLOT(selectAllObjects()));
 	}
 
@@ -587,11 +583,11 @@ ModelWidget::~ModelWidget()
 	 being destroyed, then the cut/copy operation are cancelled by emptying
 	 the lists, avoiding crashes when trying to paste them */
 	if((!copied_objects.empty() && copied_objects[0]->getDatabase()==db_model) ||
-			(!cutted_objects.empty() && cutted_objects[0]->getDatabase()==db_model))
+			(!cut_objects.empty() && cut_objects[0]->getDatabase()==db_model))
 	{
 		cut_operation=false;
 		copied_objects.clear();
-		cutted_objects.clear();
+		cut_objects.clear();
 	}
 
 	popup_menu.clear();
@@ -1030,14 +1026,14 @@ void ModelWidget::handleObjectsMovement(bool end_moviment)
 
 				//Register the object if it is not a schema or a table already registered
 				if(!schema && std::find(reg_tables.begin(), reg_tables.end(), obj)==reg_tables.end())
-					op_list->registerObject(obj, Operation::ObjectMoved);
+					op_list->registerObject(obj, Operation::ObjMoved);
 				else if(schema)
 				{
 					//For schemas, when they are moved, the original position of tables are registered instead of the position of schema itself
 					tables=dynamic_cast<SchemaView *>(schema->getOverlyingObject())->getChildren();
 					for(auto &tab : tables)
 					{
-						op_list->registerObject(tab->getUnderlyingObject(), Operation::ObjectMoved);
+						op_list->registerObject(tab->getUnderlyingObject(), Operation::ObjMoved);
 
 						//Registers the table on a auxiliary list to avoid multiple registration on operation history
 						reg_tables.push_back(tab->getUnderlyingObject());
@@ -1080,7 +1076,7 @@ void ModelWidget::handleObjectsMovement(bool end_moviment)
 
 void ModelWidget::handleObjectModification(BaseGraphicObject *object)
 {
-	op_list->registerObject(object, Operation::ObjectModified);
+	op_list->registerObject(object, Operation::ObjModified);
 	setModified(true);
 	emit s_objectModified();
 
@@ -1289,7 +1285,7 @@ void ModelWidget::convertRelationshipNN()
 						}
 					}
 
-					xml_buf=tab_nn->getCodeDefinition(SchemaParser::XmlDefinition);
+					xml_buf=tab_nn->getSourceCode(SchemaParser::XmlCode);
 
 					//Creates the table from the xml code
 					xmlparser->restartParser();
@@ -1324,7 +1320,7 @@ void ModelWidget::convertRelationshipNN()
 						count=tab_nn->getConstraintCount();
 						for(idx=0; idx < count; idx++)
 						{
-							xml_buf=tab_nn->getConstraint(idx)->getCodeDefinition(SchemaParser::XmlDefinition,true);
+							xml_buf=tab_nn->getConstraint(idx)->getSourceCode(SchemaParser::XmlCode,true);
 
 							xmlparser->restartParser();
 							xmlparser->loadXMLBuffer(xml_buf);
@@ -1358,11 +1354,11 @@ void ModelWidget::convertRelationshipNN()
 
 							for(x=Constraint::SourceCols; x <= Constraint::ReferencedCols; x++)
 							{
-								count1=aux_constr->getColumnCount(x);
+								count1=aux_constr->getColumnCount(static_cast<Constraint::ColumnsId>(x));
 								for(idx1=0; idx1 < count1; idx1++)
 								{
-									col=tab->getColumn(aux_constr->getColumn(idx, x)->getName());
-									if(col) constr->addColumn(col, x);
+									col=tab->getColumn(aux_constr->getColumn(idx, static_cast<Constraint::ColumnsId>(x))->getName());
+									if(col) constr->addColumn(col, static_cast<Constraint::ColumnsId>(x));
 								}
 							}
 							tab->addConstraint(constr);
@@ -1376,7 +1372,7 @@ void ModelWidget::convertRelationshipNN()
 					op_list->startOperationChain();
 
 					//Removes the many-to-many relationship from the model
-					op_list->registerObject(rel, Operation::ObjectRemoved);
+					op_list->registerObject(rel, Operation::ObjRemoved);
 
 					//The default position for the table will be the middle point between the relationship participant tables
 					pnt.setX((src_tab->getPosition().x() + dst_tab->getPosition().x())/2.0);
@@ -1385,14 +1381,14 @@ void ModelWidget::convertRelationshipNN()
 
 					//Adds the new table to the model
 					db_model->addObject(tab);
-					op_list->registerObject(tab, Operation::ObjectCreated);
+					op_list->registerObject(tab, Operation::ObjCreated);
 
 					if(rel->isSelfRelationship())
 					{
 						//For self relationships register the created foreign keys on the operation list
 						while(!fks.empty())
 						{
-							op_list->registerObject(fks.back(), Operation::ObjectCreated, -1, fks.back()->getParentTable());
+							op_list->registerObject(fks.back(), Operation::ObjCreated, -1, fks.back()->getParentTable());
 							fks.pop_back();
 						}
 					}
@@ -1410,7 +1406,7 @@ void ModelWidget::convertRelationshipNN()
 							aux_constr->setName(CoreUtilsNs::generateUniqueName(tab, *tab->getObjectList(ObjectType::Constraint), false, QString("_pk")));
 							tab->addConstraint(aux_constr);
 
-							op_list->registerObject(aux_constr, Operation::ObjectCreated, -1, tab);
+							op_list->registerObject(aux_constr, Operation::ObjCreated, -1, tab);
 						}
 
 						/* Creates a one-to-many relationship that links the source table of the many-to-many rel. to the created table
@@ -1418,14 +1414,14 @@ void ModelWidget::convertRelationshipNN()
 						rel1=new Relationship(Relationship::Relationship1n,
 												src_tab, tab, src_mand, false, !rel->isSiglePKColumn());
 						db_model->addRelationship(rel1);
-						op_list->registerObject(rel1, Operation::ObjectCreated);
+						op_list->registerObject(rel1, Operation::ObjCreated);
 
 						/*Creates a one-to-many relationship that links the destination table of the many-to-many rel. to the created table
 				The relationship will be identifier if the single pk column attribute of the original relationship is false */
 						rel2=new Relationship(Relationship::Relationship1n,
 												dst_tab, tab, dst_mand, false, !rel->isSiglePKColumn());
 						db_model->addRelationship(rel2);
-						op_list->registerObject(rel2, Operation::ObjectCreated);
+						op_list->registerObject(rel2, Operation::ObjCreated);
 					}
 
 					op_list->finishOperationChain();
@@ -1499,7 +1495,7 @@ void ModelWidget::convertRelationship1N()
 			pk_name = pk->getName();
 
 			// Storing the pk XML definition so it can be recreated correctly even after the disconnection of all relationships
-			constrs_xmls.append(recv_tab->getPrimaryKey()->getCodeDefinition(SchemaParser::XmlDefinition, true));
+			constrs_xmls.append(recv_tab->getPrimaryKey()->getSourceCode(SchemaParser::XmlCode, true));
 		}
 
 		// Stores the XML definition of all generated constraints
@@ -1508,14 +1504,14 @@ void ModelWidget::convertRelationship1N()
 			if(constr->getConstraintType() == ConstraintType::PrimaryKey)
 				continue;
 
-			constrs_xmls.append(constr->getCodeDefinition(SchemaParser::XmlDefinition, true));
+			constrs_xmls.append(constr->getSourceCode(SchemaParser::XmlCode, true));
 		}
 
 		// Stores the XML definition of all relationship's constraints (added by the user)
 		for(auto &obj : rel->getConstraints())
 		{
 			constr = dynamic_cast<Constraint *>(obj);
-			constrs_xmls.append(constr->getCodeDefinition(SchemaParser::XmlDefinition, true));
+			constrs_xmls.append(constr->getSourceCode(SchemaParser::XmlCode, true));
 		}
 
 		// Copying all generated columns
@@ -1542,7 +1538,7 @@ void ModelWidget::convertRelationship1N()
 		db_model->__removeObject(rel);
 
 		// Register the exclusion of the original relationship
-		op_list->registerObject(rel, Operation::ObjectRemoved);
+		op_list->registerObject(rel, Operation::ObjRemoved);
 
 		/* If after the relationships disconnection the table still have a PK
 		 * it means that it was not added by relationship so we can remove it from the table
@@ -1552,7 +1548,7 @@ void ModelWidget::convertRelationship1N()
 		if(pk)
 		{
 			if(register_pk)
-				op_list->registerObject(pk, Operation::ObjectRemoved, -1, recv_tab);
+				op_list->registerObject(pk, Operation::ObjRemoved, -1, recv_tab);
 
 			recv_tab->removeObject(pk);
 		}
@@ -1563,7 +1559,7 @@ void ModelWidget::convertRelationship1N()
 			col->setParentRelationship(nullptr);
 			col->setParentTable(nullptr);
 			recv_tab->addColumn(col);
-			op_list->registerObject(col, Operation::ObjectCreated, - 1, recv_tab);
+			op_list->registerObject(col, Operation::ObjCreated, - 1, recv_tab);
 		}
 
 		// Recreating the constraints from XML code
@@ -1573,7 +1569,7 @@ void ModelWidget::convertRelationship1N()
 			xmlparser->loadXMLBuffer(constr_xml);
 			constr = db_model->createConstraint(recv_tab);
 			recv_tab->addConstraint(constr);
-			op_list->registerObject(constr, Operation::ObjectCreated, - 1, recv_tab);
+			op_list->registerObject(constr, Operation::ObjCreated, - 1, recv_tab);
 		}
 
 		/* Resetting the relatinship added columns/constraint indexes in the table
@@ -1590,7 +1586,7 @@ void ModelWidget::convertRelationship1N()
 		fk_rel->setCustomColor(rel_color);
 		fk_rel->setModified(true);
 
-		op_list->registerObject(fk_rel, Operation::ObjectModified);
+		op_list->registerObject(fk_rel, Operation::ObjModified);
 		op_list->finishOperationChain();
 
 		QApplication::restoreOverrideCursor();
@@ -1625,7 +1621,7 @@ void ModelWidget::loadModel(const QString &filename)
 	try
 	{
 		connect(db_model, SIGNAL(s_objectLoaded(int,QString,unsigned)), &task_prog_wgt, SLOT(updateProgress(int,QString,unsigned)));
-		task_prog_wgt.addIcon(enum_cast(ObjectType::BaseObject), QPixmap(GuiUtilsNs::getIconPath("design")));
+		task_prog_wgt.addIcon(enum_t(ObjectType::BaseObject), QPixmap(GuiUtilsNs::getIconPath("design")));
 		task_prog_wgt.setWindowTitle(tr("Loading database model"));
 		task_prog_wgt.show();
 
@@ -1798,8 +1794,8 @@ void ModelWidget::saveModel(const QString &filename)
 {
 	TaskProgressWidget task_prog_wgt(this);
 	QString bkpfile;
-	QTemporaryFile tmpfile;
-	bool exists = QFile::exists(filename);
+	QFileInfo fi(filename);
+	bool has_bkp_file = false;
 
 	try
 	{
@@ -1807,28 +1803,32 @@ void ModelWidget::saveModel(const QString &filename)
 		task_prog_wgt.setWindowTitle(tr("Saving database model"));
 		task_prog_wgt.show();
 
-		/* If the original file exists we need to make a back first to avoid
-		 * in order to recover it in case of failures */
-		if(exists)
+		/* If the original file exists we need to make a backup first to avoid
+		 * data loss so we can recover it in case of saving failures */
+		if(fi.exists())
 		{
-			// Generate a temporary backup file
-			tmpfile.setAutoRemove(false);
-			tmpfile.setFileTemplate(GlobalAttributes::getTemporaryFilePath(QString("%1_XXXXXX.dbk").arg(this->db_model->getName())));
+			QTemporaryFile tmpfile;
+
+			// Generate a temporary backup filename
+			tmpfile.setFileTemplate(fi.absolutePath() +
+															GlobalAttributes::DirSeparator +
+															QString("%1_XXXXXX.dbk").arg(db_model->getName()));
 			tmpfile.open();
 			bkpfile = tmpfile.fileName();
 			tmpfile.close();
 			tmpfile.remove();
 
-			/* Copy the original database model file prior to the saving to store
-			 * its last state in a safe place (temporary storage of the tool ~/.config/pgmodeler by default */
-			QFile::copy(filename, bkpfile);
+			/* Trying to rename the original model to the backup filename so
+			 * we can write the new one in its place */
+			if(!QFile::rename(filename, bkpfile))
+				throw Exception(Exception::getErrorMessage(ErrorCode::FileDirectoryNotWritten).arg(bkpfile),
+												ErrorCode::FileDirectoryNotWritten,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-			// Remove the original filename before create a new one in the same path
-			QFile::remove(filename);
+			has_bkp_file = true;
 		}
 
 		saveLastCanvasPosition();
-		db_model->saveModel(filename, SchemaParser::XmlDefinition);
+		db_model->saveModel(filename, SchemaParser::XmlCode);
 		this->filename=filename;
 
 		task_prog_wgt.close();
@@ -1836,25 +1836,33 @@ void ModelWidget::saveModel(const QString &filename)
 		setModified(false);
 
 		/* Doing a final check to the file regarding its size.
-		 * If we have a zero-byte file something went wrong during the saving process (disk failure, thread errors, etc)
+		 * If we have a empty file something went wrong during the saving process (disk failure, thread errors, etc)
 		 * so we raise an error to the user and restore the backup file to its original path */
-		if(QFileInfo(filename).size() == 0)
-			throw Exception(Exception::getErrorMessage(ErrorCode::ModelFileInvalidSize).arg(filename).arg(bkpfile),
+		if(fi.size() == 0)
+			throw Exception(Exception::getErrorMessage(ErrorCode::ModelFileInvalidSize).arg(filename),
 											ErrorCode::ModelFileInvalidSize,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-		if(exists)
+		// Removing the backup file if the model was successfully saved
+		if(has_bkp_file)
 			QFile::remove(bkpfile);
 	}
 	catch(Exception &e)
 	{
-		if(exists && QFile::exists(bkpfile))
-		{
-			QFile::remove(filename);
-			QFile::copy(bkpfile, filename);
-		}
-
 		task_prog_wgt.close();
 		disconnect(db_model, nullptr, &task_prog_wgt, nullptr);
+
+		/* If the original file was successfully rename as the backup file
+		 * we just revert the name to the original one */
+		if(has_bkp_file)
+		{
+			// Remove the failed file so we can restore the backup file
+			QFile::remove(filename);
+			QFile::copy(bkpfile, filename);
+
+			throw Exception(Exception::getErrorMessage(ErrorCode::ModelFileSaveFailure).arg(filename).arg(bkpfile),
+											ErrorCode::ModelFileSaveFailure,__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		}
+
 		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
@@ -1936,7 +1944,7 @@ void ModelWidget::showObjectForm(ObjectType obj_type, BaseObject *object, BaseOb
 {
 	try
 	{
-		unsigned rel_type=0;
+		BaseRelationship::RelType rel_type;
 		int res = QDialog::Rejected;
 		Schema *sel_schema=dynamic_cast<Schema *>(parent_obj);
 		QPointF obj_pos=pos;
@@ -1947,7 +1955,7 @@ void ModelWidget::showObjectForm(ObjectType obj_type, BaseObject *object, BaseOb
 		 to the BaseRelationship::RELATIONSHIP_??? constant. */
 		if(obj_type > ObjectType::BaseTable)
 		{
-			rel_type=enum_cast(obj_type) - enum_cast(ObjectType::Relationship);
+			rel_type=static_cast<BaseRelationship::RelType>(enum_t(obj_type) - enum_t(ObjectType::Relationship));
 			obj_type=ObjectType::Relationship;
 		}
 
@@ -2049,7 +2057,7 @@ void ModelWidget::showObjectForm(ObjectType obj_type, BaseObject *object, BaseOb
 				PhysicalTable *tab1 = dynamic_cast<PhysicalTable *>(selected_objects[0]),
 											*tab2 = (selected_objects.size()==2 ?
 															 dynamic_cast<PhysicalTable *>(selected_objects[1]) : tab1);
-				relationship_wgt->setAttributes(db_model, op_list, tab1, tab2, rel_type);
+				relationship_wgt->setAttributes(db_model, op_list, tab1, tab2, static_cast<BaseRelationship::RelType>(rel_type));
 			}
 			else
 				relationship_wgt->setAttributes(db_model, op_list, dynamic_cast<BaseRelationship *>(object));
@@ -2196,7 +2204,7 @@ void ModelWidget::moveToSchema()
 			//Change the object's schema only if the new schema is different from the current
 			if(obj->acceptsSchema() && obj->getSchema()!=schema)
 			{
-				op_id=op_list->registerObject(obj, Operation::ObjectModified, -1);
+				op_id=op_list->registerObject(obj, Operation::ObjModified, -1);
 
 				obj->setSchema(schema);
 				obj_graph=dynamic_cast<BaseGraphicObject *>(obj);
@@ -2281,7 +2289,7 @@ void ModelWidget::changeOwner()
 
 				//Register an operation only if the object is not the database itself
 				if(obj->getObjectType()!=ObjectType::Database)
-					op_id=op_list->registerObject(obj, Operation::ObjectModified, -1);
+					op_id=op_list->registerObject(obj, Operation::ObjModified, -1);
 
 				obj->setOwner(owner);
 			}
@@ -2316,7 +2324,7 @@ void ModelWidget::setTag()
 
 			if(tab)
 			{
-				op_id=op_list->registerObject(obj, Operation::ObjectModified, -1);
+				op_id=op_list->registerObject(obj, Operation::ObjModified, -1);
 				tab->setTag(dynamic_cast<Tag *>(tag));
 			}
 		}
@@ -2551,7 +2559,7 @@ void ModelWidget::copyObjects(bool duplicate_mode)
 	/* When in cut operation is necessary to store the selected objects in a separeted list
 	in order to correclty cut (remove) the object on the source model */
 	if(ModelWidget::cut_operation)
-		cutted_objects=selected_objects;
+		cut_objects=selected_objects;
 
 	itr=selected_objects.begin();
 	itr_end=selected_objects.end();
@@ -2675,7 +2683,7 @@ void ModelWidget::pasteObjects(bool duplicate_mode)
 		task_prog_wgt.updateProgress((pos/static_cast<double>(copied_objects.size()))*100,
 									 tr("Validating object: `%1' (%2)").arg(object->getName())
 									 .arg(object->getTypeName()),
-									 enum_cast(object->getObjectType()));
+									 enum_t(object->getObjectType()));
 
 		if(!tab_obj || ((sel_table || sel_view) && tab_obj))
 		{
@@ -2709,8 +2717,8 @@ void ModelWidget::pasteObjects(bool duplicate_mode)
 					(aux_object &&
 					 (dynamic_cast<BaseGraphicObject *>(object) ||
 						(aux_object->getDatabase()==object->getDatabase()) ||
-						(aux_object->getCodeDefinition(SchemaParser::SchemaParser::XmlDefinition) !=
-						 object->getCodeDefinition(SchemaParser::SchemaParser::XmlDefinition)))))
+						(aux_object->getSourceCode(SchemaParser::SchemaParser::XmlCode) !=
+						 object->getSourceCode(SchemaParser::SchemaParser::XmlCode)))))
 			{
 				//Resolving name conflicts
 				if(obj_type!=ObjectType::Cast)
@@ -2777,7 +2785,7 @@ void ModelWidget::pasteObjects(bool duplicate_mode)
 		task_prog_wgt.updateProgress((pos/static_cast<double>(copied_objects.size()))*100,
 									 tr("Generating XML for: `%1' (%2)").arg(object->getName())
 									 .arg(object->getTypeName()),
-									 enum_cast(object->getObjectType()));
+									 enum_t(object->getObjectType()));
 
 		if(!tab_obj)
 		{
@@ -2786,11 +2794,11 @@ void ModelWidget::pasteObjects(bool duplicate_mode)
 			//Stores the XML definition on a xml buffer map
 			if(duplicate_mode && aux_table)
 			{
-				xml_objs[object] = aux_table->__getCodeDefinition(SchemaParser::XmlDefinition, true);
+				xml_objs[object] = aux_table->__getSourceCode(SchemaParser::XmlCode, true);
 			  object->setCodeInvalidated(true);
 			}
 			else
-				xml_objs[object]=object->getCodeDefinition(SchemaParser::XmlDefinition);
+				xml_objs[object]=object->getSourceCode(SchemaParser::XmlCode);
 		}
 
 		//Store the original parent table of the object
@@ -2820,11 +2828,11 @@ void ModelWidget::pasteObjects(bool duplicate_mode)
 				//Generates the XML code with the new parent table
 				if(constr)
 				{
-					xml_objs[object]=constr->getCodeDefinition(SchemaParser::XmlDefinition, duplicate_mode);
+					xml_objs[object]=constr->getSourceCode(SchemaParser::XmlCode, duplicate_mode);
 				  tab_obj->setCodeInvalidated(true);
 				}
 				else
-					xml_objs[object]=object->getCodeDefinition(SchemaParser::XmlDefinition);
+					xml_objs[object]=object->getSourceCode(SchemaParser::XmlCode);
 
 				//Restore the original parent table
 				tab_obj->setParentTable(orig_parent_tab);
@@ -2837,11 +2845,11 @@ void ModelWidget::pasteObjects(bool duplicate_mode)
 
 			if(constr)
 			{
-				xml_objs[object]=constr->getCodeDefinition(SchemaParser::XmlDefinition, duplicate_mode);
+				xml_objs[object]=constr->getSourceCode(SchemaParser::XmlCode, duplicate_mode);
 			  tab_obj->setCodeInvalidated(true);
 			}
 			else
-				xml_objs[object]=tab_obj->getCodeDefinition(SchemaParser::XmlDefinition);
+				xml_objs[object]=tab_obj->getSourceCode(SchemaParser::XmlCode);
 		}
 	}
 
@@ -2882,7 +2890,7 @@ void ModelWidget::pasteObjects(bool duplicate_mode)
 				task_prog_wgt.updateProgress((pos/static_cast<double>(copied_objects.size()))*100,
 											 tr("Pasting object: `%1' (%2)").arg(object->getName())
 											 .arg(object->getTypeName()),
-											 enum_cast(object->getObjectType()));
+											 enum_t(object->getObjectType()));
 
 				//Creates the object from the XML
 				object=db_model->createObject(BaseObject::getObjectType(xmlparser->getElementName()));
@@ -2919,10 +2927,10 @@ void ModelWidget::pasteObjects(bool duplicate_mode)
 					if(constr && constr->getConstraintType()==ConstraintType::ForeignKey)
 						db_model->updateTableFKRelationships(dynamic_cast<Table *>(tab_obj->getParentTable()));
 
-					op_list->registerObject(tab_obj, Operation::ObjectCreated, -1, tab_obj->getParentTable());
+					op_list->registerObject(tab_obj, Operation::ObjCreated, -1, tab_obj->getParentTable());
 				}
 				else
-					op_list->registerObject(object, Operation::ObjectCreated);
+					op_list->registerObject(object, Operation::ObjCreated);
 			}
 			catch(Exception &e)
 			{
@@ -2956,14 +2964,14 @@ void ModelWidget::pasteObjects(bool duplicate_mode)
 	else
 	{
 		//Remove the objects from the source model
-		ModelWidget::src_model->selected_objects=ModelWidget::cutted_objects;
+		ModelWidget::src_model->selected_objects=ModelWidget::cut_objects;
 		ModelWidget::src_model->removeObjects(false);
 
 		//Uncheck the cut operation flag
 		ModelWidget::cut_operation=false;
 
 		copied_objects.clear();
-		cutted_objects.clear();
+		cut_objects.clear();
 
 		if(this!=ModelWidget::src_model)
 			ModelWidget::src_model->configurePopupMenu();
@@ -3012,7 +3020,7 @@ void ModelWidget::duplicateObject()
 				else
 					dup_object->setName(CoreUtilsNs::generateUniqueName(dup_object, *dynamic_cast<View *>(table)->getObjectList(obj_type), false, QString("_cp")));
 
-				op_id=op_list->registerObject(dup_object, Operation::ObjectCreated, -1, table);
+				op_id=op_list->registerObject(dup_object, Operation::ObjCreated, -1, table);
 				table->addObject(dup_object);
 
 				// Flagging the table to be repainted
@@ -3291,7 +3299,7 @@ void ModelWidget::removeObjects(bool cascade)
 									db_model->validateColumnRemoval(dynamic_cast<Column *>(tab_obj));
 
 								//Register the removed object on the operation list
-								op_list->registerObject(tab_obj, Operation::ObjectRemoved, obj_idx, table);
+								op_list->registerObject(tab_obj, Operation::ObjRemoved, obj_idx, table);
 								table->removeObject(obj_idx, obj_type);
 								db_model->removePermissions(tab_obj);
 
@@ -3339,7 +3347,7 @@ void ModelWidget::removeObjects(bool cascade)
 								try
 								{
 									db_model->removeObject(object, obj_idx);
-									op_list->registerObject(object, Operation::ObjectRemoved, obj_idx);
+									op_list->registerObject(object, Operation::ObjRemoved, obj_idx);
 								}
 								catch(Exception &e)
 								{
@@ -3677,13 +3685,13 @@ void ModelWidget::configureFadeMenu()
 			{
 				action = new QAction(QPixmap(GuiUtilsNs::getIconPath(BaseObject::getSchemaName(type))),
 																		 labels[id], &fade_in_menu);
-				action->setData(enum_cast(type));
+				action->setData(enum_t(type));
 				fade_in_menu.addAction(action);
 				connect(action, SIGNAL(triggered(bool)), this, SLOT(fadeObjectsIn()));
 
 				action = new QAction(QPixmap(GuiUtilsNs::getIconPath(BaseObject::getSchemaName(type))),
 																		 labels[id], &fade_out_menu);
-				action->setData(enum_cast(type));
+				action->setData(enum_t(type));
 				fade_out_menu.addAction(action);
 
 				id++;
@@ -3691,13 +3699,13 @@ void ModelWidget::configureFadeMenu()
 			}
 
 			action = new QAction(tr("All objects"), &fade_in_menu);
-			action->setData(enum_cast(ObjectType::BaseObject));
+			action->setData(enum_t(ObjectType::BaseObject));
 			connect(action, SIGNAL(triggered(bool)), this, SLOT(fadeObjectsIn()));
 			fade_in_menu.addSeparator();
 			fade_in_menu.addAction(action);
 
 			action = new QAction(tr("All objects"), &fade_out_menu);
-			action->setData(enum_cast(ObjectType::BaseObject));
+			action->setData(enum_t(ObjectType::BaseObject));
 			connect(action, SIGNAL(triggered(bool)), this, SLOT(fadeObjectsOut()));
 			fade_out_menu.addSeparator();
 			fade_out_menu.addAction(action);
@@ -3862,7 +3870,7 @@ void ModelWidget::fadeObjectsOut()
 	fadeObjects(qobject_cast<QAction *>(sender()), false);
 }
 
-void ModelWidget::setAllCollapseMode(CollapseMode mode)
+void ModelWidget::setAllCollapseMode(BaseTable::CollapseMode mode)
 {
 	BaseTable *base_tab = nullptr;
 	std::vector<BaseObject *> objects;
@@ -3924,7 +3932,7 @@ void ModelWidget::moveObjectsInZStack(int direction)
 					zval = item->zValue();
 			}
 
-			op_list->registerObject(obj_view->getUnderlyingObject(), Operation::ObjectModified);
+			op_list->registerObject(obj_view->getUnderlyingObject(), Operation::ObjModified);
 
 			zval += (1 * direction);
 
@@ -3947,7 +3955,7 @@ void ModelWidget::moveObjectsInZStack(int direction)
 
 void ModelWidget::setCollapseMode()
 {
-	CollapseMode mode = static_cast<CollapseMode>(dynamic_cast<QAction *>(sender())->data().toUInt());
+	BaseTable::CollapseMode mode = static_cast<BaseTable::CollapseMode>(dynamic_cast<QAction *>(sender())->data().toUInt());
 	BaseTable *base_tab = nullptr;
 	std::vector<BaseObject *> objects;
 
@@ -4610,12 +4618,12 @@ void ModelWidget::createSequenceFromColumn()
 		seq->setSchema(tab->getSchema());
 		seq->setDefaultValues(col->getType());
 
-		op_list->registerObject(seq, Operation::ObjectCreated);
+		op_list->registerObject(seq, Operation::ObjCreated);
 		db_model->addSequence(seq);
 
 		BaseObject::swapObjectsIds(tab, seq, false);
 
-		op_list->registerObject(col, Operation::ObjectModified, -1, tab);
+		op_list->registerObject(col, Operation::ObjModified, -1, tab);
 		//Changes the column type to the alias for serial type
 		col->setType(col->getType().getAliasType());
 		col->setSequence(seq);
@@ -4651,7 +4659,7 @@ void ModelWidget::convertIntegerToSerial()
 			throw Exception(Exception::getErrorMessage(ErrorCode::InvConversionIntegerToSerial).arg(col->getName()),
 											ErrorCode::InvConversionIntegerToSerial ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-		op_list->registerObject(col, Operation::ObjectModified, -1, tab);
+		op_list->registerObject(col, Operation::ObjModified, -1, tab);
 
 		if(col_type==QString("integer") || col_type==QString("int4"))
 			serial_tp=QString("serial");
@@ -4683,8 +4691,8 @@ void ModelWidget::breakRelationshipLine()
 		QAction *action=dynamic_cast<QAction *>(sender());
 		BaseRelationship *rel=dynamic_cast<BaseRelationship *>(selected_objects[0]);
 
-		op_list->registerObject(rel, Operation::ObjectModified);
-		breakRelationshipLine(rel, action->data().toUInt());
+		op_list->registerObject(rel, Operation::ObjModified);
+		breakRelationshipLine(rel, static_cast<RelBreakMode>(action->data().toInt()));
 		rel->setModified(true);
 		this->setModified(true);
 
@@ -4696,7 +4704,7 @@ void ModelWidget::breakRelationshipLine()
 	}
 }
 
-void ModelWidget::breakRelationshipLine(BaseRelationship *rel, unsigned break_type)
+void ModelWidget::breakRelationshipLine(BaseRelationship *rel, RelBreakMode break_type)
 {
 	if(!rel) return;
 
@@ -4758,7 +4766,7 @@ void ModelWidget::removeRelationshipPoints()
 
 				if(!rel->isProtected())
 				{
-					op_list->registerObject(rel, Operation::ObjectModified);
+					op_list->registerObject(rel, Operation::ObjModified);
 					rel->setPoints({});
 					rel->setModified(true);
 				}
@@ -4767,7 +4775,7 @@ void ModelWidget::removeRelationshipPoints()
 		}
 		else
 		{
-			op_list->registerObject(rel, Operation::ObjectModified);
+			op_list->registerObject(rel, Operation::ObjModified);
 			rel->setPoints({});
 			rel->setModified(true);
 		}

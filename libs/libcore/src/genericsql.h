@@ -86,7 +86,7 @@ class GenericSQL: public BaseObject{
 		 * the retunring list*/
 		std::vector<BaseObject *> getReferencedObjects();
 
-		virtual QString getCodeDefinition(unsigned def_type);
+		virtual QString getSourceCode(SchemaParser::CodeType def_type);
 
 		friend class GenericSQLWidget;
 };

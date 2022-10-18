@@ -47,7 +47,7 @@ class TableObjectView: public BaseObjectView {
 		 The constraint type parameter is only used when the source object is a
 		 column  and is used to format the descriptor indication that the column
 		 has a constraint */
-		void configureDescriptor(ConstraintType constr_type=BaseType::Null);
+		void configureDescriptor(ConstraintType constr_type = ConstraintType::Null);
 
 		QVariant itemChange(GraphicsItemChange, const QVariant &value)
 		{
@@ -72,10 +72,12 @@ class TableObjectView: public BaseObjectView {
 		TextCheck,
 		TextExclude;
 
-		static constexpr unsigned ObjDescriptor = 0,
-		NameLabel = 1,
-		TypeLabel = 2,
-		ConstrAliasLabel = 3;
+		enum ChildObjectId: unsigned {
+			ObjDescriptor,
+			NameLabel,
+			TypeLabel,
+			ConstrAliasLabel
+		};
 
 		TableObjectView(TableObject *object=nullptr);
 		virtual ~TableObjectView();
@@ -90,10 +92,10 @@ class TableObjectView: public BaseObjectView {
 		void configureObject();
 
 		//! \brief Sets the horizontal position of the specified child object (index)
-		void setChildObjectXPos(unsigned obj_idx, double px);
+		void setChildObjectXPos(ChildObjectId obj_id, double px);
 
 		//! \brief Returns the child object at the specified index
-		QGraphicsItem *getChildObject(unsigned obj_idx);
+		QGraphicsItem *getChildObject(ChildObjectId obj_id);
 
 		/*! \brief Returns a formatted string containing the keywords indicating the constraints
 		 that is applyed to the passed column */

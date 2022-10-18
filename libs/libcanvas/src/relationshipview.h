@@ -31,6 +31,13 @@
 #include "beziercurveitem.h"
 
 class RelationshipView: public BaseObjectView {
+	public:
+		enum LineConnectionMode: unsigned {
+			ConnectCenterPoints,
+			ConnectFkToPk,
+			ConnectTableEdges
+		};
+
 	private:
 		Q_OBJECT
 
@@ -52,7 +59,7 @@ class RelationshipView: public BaseObjectView {
 		/*! \brief Specify the type of connection used by the lines. The first (classical)
 		is to connect the line to tables through their central points. The second (better semantics)
 		makes the line start from the fk columns on receiver table and connecting to the pk columns on reference table */
-		static unsigned line_conn_mode;
+		static LineConnectionMode line_conn_mode;
 
 		/*! \brief Indicate that the line is being configured/updated. This flag is used to evict
 		 that the configureLine() method is exceedingly called during the table moving. */
@@ -129,7 +136,7 @@ class RelationshipView: public BaseObjectView {
 		void configurePositionInfo();
 
 		//! \brief Configures the specified label's position based as well some styles for it
-		void configureLabelPosition(unsigned label_id, double x, double y);
+		void configureLabelPosition(BaseRelationship::LabelId label_id, double x, double y);
 
 		/*! \brief Returns the default pen width size taking into account the screen dpi and the
 		 * whether the relationship is identifier or not */
@@ -150,22 +157,7 @@ class RelationshipView: public BaseObjectView {
 		//! \brief Disconnects the signal handled by the relationship which senders are the tables
 		void disconnectTables();
 
-	public slots:
-		//! \brief Configures the relationship line
-		void configureLine();
-
-		//! \brief Returns the label through its index
-		TextboxView *getLabel(unsigned lab_idx);
-
-	private slots:
-		//! \brief Makes the comple relationship configuration
-		void configureObject();
-
 	public:
-		static constexpr unsigned ConnectCenterPoints=0,
-		ConnectFkToPk=1,
-		ConnectTableEdges=2;
-
 		RelationshipView(BaseRelationship *rel);
 		virtual ~RelationshipView();
 
@@ -197,7 +189,7 @@ class RelationshipView: public BaseObjectView {
 		The first one is the CONNECT_CENTER_PNTS (the classical one) which connects the
 		two tables through the center points. The CONNECT_FK_TO_PK is the one with a better
 		semantics	and connects the fk columns of receiver table to pk columns on reference table */
-		static void setLineConnectionMode(unsigned mode);
+		static void setLineConnectionMode(LineConnectionMode mode);
 
 		//! \brief Returns the line connection mode used for the relationships
 		static unsigned getLineConnectinMode();
@@ -205,15 +197,26 @@ class RelationshipView: public BaseObjectView {
 		/*! \brief Returns the connection point for the specified table. The connection point is
 		 where the relationship is connected on envolved tables. The point returned deffers depending on the
 		 line connection mode used.	*/
-		QPointF getConnectionPoint(unsigned table_idx);
+		QPointF getConnectionPoint(BaseRelationship::TableId table_idx);
 
 		void configureObjectShadow(void) = delete;
 		void configureObjectSelection(void) = delete;
 
+	public slots:
+		//! \brief Configures the relationship line
+		void configureLine();
+
+		//! \brief Returns the label through its index
+		TextboxView *getLabel(BaseRelationship::LabelId lab_idx);
+
+	private slots:
+		//! \brief Makes the comple relationship configuration
+		void configureObject();
+
 	signals:
 		void s_relationshipModified(BaseGraphicObject *rel);
 
-		friend class ObjectsScene;
+	friend class ObjectsScene;
 };
 
 #endif

@@ -76,9 +76,9 @@ class TableObject: public BaseObject {
 		/*! \brief This method is purely virtual to force the derived classes
 	overload this method. This also makes class TableObject
 	not instantiable */
-		virtual QString getCodeDefinition(unsigned def_type)=0;
+		virtual QString getSourceCode(SchemaParser::CodeType def_type)=0;
 
-		virtual QString getDropDefinition(bool cascade);
+		virtual QString getDropCode(bool cascade);
 
 		virtual QString getSignature(bool format = true);
 

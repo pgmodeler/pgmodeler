@@ -47,7 +47,7 @@ class Tablespace: public BaseObject{
 		QString getDirectory();
 
 		//! \brief Returns the SQL / XML code for the tablespace
-		virtual QString getCodeDefinition(unsigned def_type) final;
+		virtual QString getSourceCode(SchemaParser::CodeType def_type) final;
 };
 
 #endif

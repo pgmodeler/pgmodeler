@@ -49,7 +49,7 @@ void TableView::configureObject()
 	std::vector<TableObject *> tab_objs, columns, ext_tab_objs;
 	QStringList atribs, tag_attribs = { Attributes::TableBody, Attributes::TableExtBody };
 	Tag *tag=table->getTag();
-	CollapseMode collapse_mode = table->getCollapseMode();
+	BaseTable::CollapseMode collapse_mode = table->getCollapseMode();
 	std::vector<ObjectType> ext_types = BaseObject::getChildObjectTypes(table->getObjectType());
 	bool has_col_pag = false, has_ext_pag = false;
 
@@ -82,7 +82,7 @@ void TableView::configureObject()
 	has_col_pag = configurePaginationParams(BaseTable::AttribsSection, columns.size(), start_col, end_col);
 
 	has_ext_pag = configurePaginationParams(BaseTable::ExtAttribsSection,
-																						collapse_mode != CollapseMode::ExtAttribsCollapsed ? ext_tab_objs.size() : 0,
+																						collapse_mode != BaseTable::ExtAttribsCollapsed ? ext_tab_objs.size() : 0,
 																						start_ext, end_ext);
 
 	attribs_toggler->setHasExtAttributes(!hide_ext_attribs && !ext_tab_objs.empty());
@@ -97,7 +97,7 @@ void TableView::configureObject()
 
 		if(obj_idx==0)
 		{
-			if(collapse_mode != CollapseMode::AllAttribsCollapsed)
+			if(collapse_mode != BaseTable::AllAttribsCollapsed)
 			{
 				if(table->isPaginationEnabled() && has_col_pag)
 					tab_objs.assign(columns.begin() + start_col, columns.begin() + end_col);
@@ -107,7 +107,7 @@ void TableView::configureObject()
 		}
 		else
 		{
-			if(!hide_ext_attribs && collapse_mode == CollapseMode::NotCollapsed)
+			if(!hide_ext_attribs && collapse_mode == BaseTable::NotCollapsed)
 			{
 				if(table->isPaginationEnabled() && has_ext_pag)
 					tab_objs.assign(ext_tab_objs.begin() + start_ext, ext_tab_objs.begin() + end_ext);
@@ -200,7 +200,7 @@ void TableView::configureObject()
 			bodies[obj_idx]->setBrush(this->getFillStyle(atribs[obj_idx]));
 		else
 		{
-			pen.setColor(tag->getElementColor(tag_attribs[obj_idx], Tag::BorderColor));
+			pen.setColor(tag->getElementColor(tag_attribs[obj_idx], ColorId::BorderColor));
 			bodies[obj_idx]->setBrush(tag->getFillStyle(tag_attribs[obj_idx]));
 		}
 
@@ -234,8 +234,8 @@ void TableView::configureObject()
 				tab_obj=dynamic_cast<TableObject *>(col_item->getUnderlyingObject());
 				cy=title->boundingRect().height() + col_item->pos().y() + (col_item->boundingRect().height()/2);
 				conn_points[tab_obj].resize(2);
-				conn_points[tab_obj][LeftConnPoint]=QPointF(col_item->pos().x() - 1.5, cy);
-				conn_points[tab_obj][RightConnPoint]=QPointF(col_item->pos().x() + width - 1.5  , cy);
+				conn_points[tab_obj][BaseTableView::LeftConnPoint]=QPointF(col_item->pos().x() - 1.5, cy);
+				conn_points[tab_obj][BaseTableView::RightConnPoint]=QPointF(col_item->pos().x() + width - 1.5  , cy);
 			}
 		}
 	}
@@ -265,15 +265,17 @@ void TableView::configureObject()
 		requestRelationshipsUpdate();
 }
 
-QPointF TableView::getConnectionPoints(TableObject *tab_obj, unsigned pnt_type)
+QPointF TableView::getConnectionPoints(TableObject *tab_obj, ConnectionPoint conn_pnt)
 {
 	if(!tab_obj)
 		throw Exception(ErrorCode::OprNotAllocatedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-	else if(pnt_type > RightConnPoint)
+
+	if(conn_pnt > RightConnPoint)
 		throw Exception(ErrorCode::RefElementInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-	else if(conn_points.count(tab_obj)==0)
+
+	if(conn_points.count(tab_obj)==0)
 		//Returns the center point in case of the connection point of the table object wasn't calculated already
 		return this->getCenter();
 
-	return conn_points[tab_obj][pnt_type];
+	return conn_points[tab_obj][conn_pnt];
 }

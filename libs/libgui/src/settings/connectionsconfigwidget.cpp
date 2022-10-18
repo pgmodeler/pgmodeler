@@ -494,7 +494,7 @@ void ConnectionsConfigWidget::saveConfiguration()
 
 				schparser.ignoreUnkownAttributes(true);
 				config_params[GlobalAttributes::ConnectionsConf][Attributes::Connections]+=
-						schparser.getCodeDefinition(GlobalAttributes::getTmplConfigurationFilePath(GlobalAttributes::SchemasDir,
+						schparser.getSourceCode(GlobalAttributes::getTmplConfigurationFilePath(GlobalAttributes::SchemasDir,
 																																											 GlobalAttributes::ConnectionsConf +
 																																											 GlobalAttributes::SchemaExt), attribs);
 
@@ -539,7 +539,7 @@ Connection *ConnectionsConfigWidget::getConnection(const QString &conn_id)
 	return nullptr;
 }
 
-void ConnectionsConfigWidget::fillConnectionsComboBox(QComboBox *combo, bool incl_placeholder, unsigned check_def_for)
+void ConnectionsConfigWidget::fillConnectionsComboBox(QComboBox *combo, bool incl_placeholder, Connection::ConnOperation check_def_for)
 {
 	std::map<QString, Connection *> connections;
 	Connection *def_conn=nullptr;
@@ -619,7 +619,7 @@ bool ConnectionsConfigWidget::openConnectionsConfiguration(QComboBox *combo, boo
 	return parent_form.result() == QDialog::Accepted;
 }
 
-Connection *ConnectionsConfigWidget::getDefaultConnection(unsigned operation)
+Connection *ConnectionsConfigWidget::getDefaultConnection(Connection::ConnOperation operation)
 {
 	Connection *conn=nullptr;
 

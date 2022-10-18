@@ -21,7 +21,7 @@
 template<>
 QStringList PartitioningType::TemplateType<PartitioningType>::type_names =
 {
-	"", // Reserved for BaseType::null
+	"", // Reserved for Class::Null
 
 	"RANGE",
 	"LIST",

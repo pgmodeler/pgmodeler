@@ -21,20 +21,19 @@
 bool RelationshipView::hide_name_label=false;
 bool RelationshipView::use_curved_lines=true;
 bool RelationshipView::use_crows_foot=false;
-unsigned RelationshipView::line_conn_mode=RelationshipView::ConnectFkToPk;
+RelationshipView::LineConnectionMode RelationshipView::line_conn_mode=RelationshipView::ConnectFkToPk;
 
 RelationshipView::RelationshipView(BaseRelationship *rel) : BaseObjectView(rel)
 {
 	if(!rel)
 		throw Exception(ErrorCode::AsgNotAllocattedObject, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 
-	for(unsigned i=BaseRelationship::SrcCardLabel;
-			i <= BaseRelationship::RelNameLabel; i++)
+	for(unsigned i=BaseRelationship::SrcCardLabel; i <= BaseRelationship::RelNameLabel; i++)
 	{
-		if(rel->getLabel(i))
+		if(rel->getLabel(static_cast<BaseRelationship::LabelId>(i)))
 		{
-			labels[i]=new TextboxView(rel->getLabel(i), true);
-			labels[i]->setZValue(i==BaseRelationship::RelNameLabel ? 1 : 2);
+			labels[i] = new TextboxView(rel->getLabel(static_cast<BaseRelationship::LabelId>(i)), true);
+			labels[i]->setZValue(i == BaseRelationship::RelNameLabel ? 1 : 2);
 			this->addToGroup(labels[i]);
 		}
 		else
@@ -177,7 +176,7 @@ bool RelationshipView::isCrowsFoot()
 	return use_crows_foot;
 }
 
-void RelationshipView::setLineConnectionMode(unsigned mode)
+void RelationshipView::setLineConnectionMode(LineConnectionMode mode)
 {
 	if(use_crows_foot)
 		line_conn_mode=ConnectTableEdges;
@@ -195,7 +194,7 @@ unsigned RelationshipView::getLineConnectinMode()
 	return line_conn_mode;
 }
 
-QPointF RelationshipView::getConnectionPoint(unsigned table_idx)
+QPointF RelationshipView::getConnectionPoint(BaseRelationship::TableId table_idx)
 {
 	if(table_idx > 2)
 		throw Exception(ErrorCode::RefElementInvalidIndex ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -208,12 +207,12 @@ BaseRelationship *RelationshipView::getUnderlyingObject()
 	return dynamic_cast<BaseRelationship *>(this->BaseObjectView::getUnderlyingObject());
 }
 
-TextboxView *RelationshipView::getLabel(unsigned lab_idx)
+TextboxView *RelationshipView::getLabel(BaseRelationship::LabelId lab_idx)
 {
 	if(lab_idx > BaseRelationship::RelNameLabel)
 		return nullptr;
-	else
-		return labels[lab_idx];
+
+	return labels[lab_idx];
 }
 
 QVariant RelationshipView::itemChange(GraphicsItemChange change, const QVariant &value)
@@ -493,17 +492,17 @@ void RelationshipView::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
 	BaseRelationship *base_rel=this->getUnderlyingObject();
 
-	if(event->button()==Qt::LeftButton)
+	if(event->button() == Qt::LeftButton)
 	{
 		if(dynamic_cast<TextboxView *>(sel_object))
 		{
 			//Calculates the displacement of the label from the initial pos to the current
-			base_rel->setLabelDistance(sel_object_idx,
-										 QPointF(sel_object->pos() - labels_ini_pos[sel_object_idx]));
+			base_rel->setLabelDistance(static_cast<BaseRelationship::LabelId>(sel_object_idx),
+																 QPointF(sel_object->pos() - labels_ini_pos[sel_object_idx]));
 		}
 
-		sel_object_idx=-1;
-		sel_object=nullptr;
+		sel_object_idx = -1;
+		sel_object = nullptr;
 	}
 
 	BaseObjectView::mouseReleaseEvent(event);
@@ -598,7 +597,7 @@ void RelationshipView::configureLine()
 		int i, i1, count;
 		bool conn_same_sides = false,
 				conn_horiz_sides[2] = { false, false }, conn_vert_sides[2] = { false, false };
-		unsigned rel_type = base_rel->getRelationshipType();
+		BaseRelationship::RelType rel_type = base_rel->getRelationshipType();
 
 		configuring_line=true;
 		pen.setCapStyle(Qt::RoundCap);
@@ -692,7 +691,9 @@ void RelationshipView::configureLine()
 				std::vector<Constraint *> fks;
 				Table *ref_tab=nullptr, *rec_tab=nullptr;
 				TableView *ref_tab_view=nullptr, *rec_tab_view=nullptr;
-				unsigned cnt=0, i=0, pk_pnt_type=0, fk_pnt_type=0;
+				unsigned cnt=0, i=0;
+				BaseTableView::ConnectionPoint pk_pnt_type = BaseTableView::LeftConnPoint,
+						fk_pnt_type = BaseTableView::LeftConnPoint;
 
 				if(!rel)
 				{
@@ -710,8 +711,8 @@ void RelationshipView::configureLine()
 
 				/* We determine the fk to pk connections only if both tables are not fully collapsed.
 				 * Otherwise, the tables' center points are used as connection point of the relationship */
-				if(rec_tab->getCollapseMode() != CollapseMode::AllAttribsCollapsed &&
-					 ref_tab->getCollapseMode() != CollapseMode::AllAttribsCollapsed)
+				if(rec_tab->getCollapseMode() != BaseTable::AllAttribsCollapsed &&
+					 ref_tab->getCollapseMode() != BaseTable::AllAttribsCollapsed)
 				{
 					rec_tab->getForeignKeys(fks, true, ref_tab);
 
@@ -1425,7 +1426,7 @@ void RelationshipView::configureCrowsFootDescriptors()
 	{
 		QGraphicsLineItem *line_item = nullptr;
 		QGraphicsEllipseItem *circle_item = nullptr;
-		unsigned rel_type = base_rel->getRelationshipType();
+		BaseRelationship::RelType rel_type = base_rel->getRelationshipType();
 		double factor=BaseObjectView::getFontFactor() * BaseObjectView::getScreenDpiFactor();
 		int signal = 1;
 		BaseTableView *tables[2] = { nullptr, nullptr };
@@ -1783,7 +1784,7 @@ void RelationshipView::configureLabels()
 	double x=0,y=0;
 	QPointF pnt;
 	BaseRelationship *base_rel=this->getUnderlyingObject();
-	unsigned rel_type=base_rel->getRelationshipType();
+	BaseRelationship::RelType rel_type = base_rel->getRelationshipType();
 	QPointF label_dist;
 
 	label_dist=base_rel->getLabelDistance(BaseRelationship::RelNameLabel);
@@ -1834,8 +1835,8 @@ void RelationshipView::configureLabels()
 		double dl, da, v_space=VertSpacing * 2.5, h_space=HorizSpacing * 2.5;
 		QLineF lins[2], borders[2][4];
 		QRectF tab_rect, rect;
-		unsigned label_ids[2]={ BaseRelationship::SrcCardLabel,
-														BaseRelationship::DstCardLabel };
+		BaseRelationship::LabelId label_ids[2]={ BaseRelationship::SrcCardLabel,
+																											 BaseRelationship::DstCardLabel };
 
 		if(!base_rel->isSelfRelationship() &&
 				line_conn_mode==ConnectFkToPk && rel_type!=BaseRelationship::RelationshipNn)
@@ -1949,7 +1950,7 @@ void RelationshipView::configureLabels()
 	}
 }
 
-void RelationshipView::configureLabelPosition(unsigned label_id, double x, double y)
+void RelationshipView::configureLabelPosition(BaseRelationship::LabelId label_id, double x, double y)
 {
 	if(label_id > BaseRelationship::RelNameLabel)
 		throw Exception(ErrorCode::RefObjectInvalidIndex ,__PRETTY_FUNCTION__,__FILE__,__LINE__);

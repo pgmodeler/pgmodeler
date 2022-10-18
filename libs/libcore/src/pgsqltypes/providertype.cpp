@@ -21,7 +21,7 @@
 template<>
 QStringList ProviderType::TemplateType<ProviderType>::type_names =
 {
-	"", // Reserved for BaseType::null
+	"", // Reserved for Class::Null
 
 	"libc",
 	"icu"

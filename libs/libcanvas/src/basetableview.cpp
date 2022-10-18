@@ -74,9 +74,9 @@ BaseTableView::BaseTableView(BaseTable *base_tab) : BaseObjectView(base_tab)
 
 	sel_enabler_timer.setInterval(500);
 
-	connect(attribs_toggler, SIGNAL(s_collapseModeChanged(CollapseMode)), this, SLOT(configureCollapsedSections(CollapseMode)));
-	connect(attribs_toggler, SIGNAL(s_paginationToggled(bool)), this, SLOT(togglePagination(bool)));
-	connect(attribs_toggler, SIGNAL(s_currentPageChanged(unsigned,unsigned)), this, SLOT(configureCurrentPage(unsigned,unsigned)));
+	connect(attribs_toggler, &AttributesTogglerItem::s_collapseModeChanged, this, &BaseTableView::configureCollapsedSections);
+	connect(attribs_toggler, &AttributesTogglerItem::s_paginationToggled, this, &BaseTableView::togglePagination);
+	connect(attribs_toggler, &AttributesTogglerItem::s_currentPageChanged, this, &BaseTableView::configureCurrentPage);
 
 	connect(&sel_enabler_timer, &QTimer::timeout, [&](){
 		this->setFlag(QGraphicsItem::ItemIsSelectable, true);
@@ -210,7 +210,7 @@ void BaseTableView::mousePressEvent(QGraphicsSceneMouseEvent *event)
 	}
 }
 
-void BaseTableView::setAttributesPerPage(unsigned section_id, unsigned value)
+void BaseTableView::setAttributesPerPage(BaseTable::TableSection section_id, unsigned value)
 {
 	if(section_id > BaseTable::ExtAttribsSection)
 		throw Exception(ErrorCode::RefElementInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -219,7 +219,7 @@ void BaseTableView::setAttributesPerPage(unsigned section_id, unsigned value)
 		attribs_per_page[section_id] = value;
 }
 
-unsigned BaseTableView::getAttributesPerPage(unsigned section_id)
+unsigned BaseTableView::getAttributesPerPage(BaseTable::TableSection section_id)
 {
 	if(section_id > BaseTable::ExtAttribsSection)
 		throw Exception(ErrorCode::RefElementInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -250,7 +250,7 @@ void BaseTableView::hoverMoveEvent(QGraphicsSceneHoverEvent *event)
 		items.append(columns->childItems());
 
 		if(!hide_ext_attribs &&
-			 dynamic_cast<BaseTable *>(this->getUnderlyingObject())->getCollapseMode() == CollapseMode::NotCollapsed)
+			 dynamic_cast<BaseTable *>(this->getUnderlyingObject())->getCollapseMode() == BaseTable::NotCollapsed)
 		{
 			items.append(ext_attribs->childItems());
 			ext_height=ext_attribs->boundingRect().height();
@@ -408,9 +408,9 @@ void BaseTableView::__configureObject(double width)
 	if(tag)
 	{
 		togg_brush = tag->getFillStyle(Attributes::TableTogglerBody);
-		togg_pen = tag->getElementColor(Attributes::TableTogglerBody, Tag::BorderColor);
+		togg_pen = tag->getElementColor(Attributes::TableTogglerBody, ColorId::BorderColor);
 		togg_btns_brush = tag->getFillStyle(Attributes::TableTogglerButtons);
-		togg_btns_pen = tag->getElementColor(Attributes::TableTogglerButtons, Tag::BorderColor);
+		togg_btns_pen = tag->getElementColor(Attributes::TableTogglerButtons, ColorId::BorderColor);
 	}
 	else
 	{
@@ -543,7 +543,7 @@ void BaseTableView::finishGeometryUpdate()
 	dynamic_cast<Schema *>(this->getUnderlyingObject()->getSchema())->setModified(true);
 }
 
-bool BaseTableView::configurePaginationParams(unsigned section_id, unsigned total_attrs, unsigned &start_attr, unsigned &end_attr)
+bool BaseTableView::configurePaginationParams(BaseTable::TableSection section_id, unsigned total_attrs, unsigned &start_attr, unsigned &end_attr)
 {
 	if(section_id > BaseTable::ExtAttribsSection)
 		return false;
@@ -590,7 +590,7 @@ bool BaseTableView::configurePaginationParams(unsigned section_id, unsigned tota
 	}
 }
 
-void BaseTableView::configureCollapsedSections(CollapseMode coll_mode)
+void BaseTableView::configureCollapsedSections(BaseTable::CollapseMode coll_mode)
 {
 	startGeometryUpdate();
 	dynamic_cast<BaseTable *>(this->getUnderlyingObject())->setCollapseMode(coll_mode);
@@ -609,7 +609,7 @@ void BaseTableView::togglePagination(bool enabled)
 	emit s_paginationToggled();
 }
 
-void BaseTableView::configureCurrentPage(unsigned section_id, unsigned page)
+void BaseTableView::configureCurrentPage(BaseTable::TableSection section_id, unsigned page)
 {
 	startGeometryUpdate();
 	dynamic_cast<BaseTable *>(this->getUnderlyingObject())->setCurrentPage(section_id, page);

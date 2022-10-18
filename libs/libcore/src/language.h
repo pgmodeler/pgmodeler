@@ -45,9 +45,11 @@ class Language: public BaseObject{
 			> VALIDATOR: Function that validates the code written in the language's syntax
 			> HANDLER: Function that executes the functions written in the language's syntax
 			> INLINE: Function that executes inline instructions (DO's) (only on PostgreSQL 9.x) */
-		static constexpr unsigned ValidatorFunc=0,
-		HandlerFunc=1,
-		InlineFunc=2;
+		enum FunctionId: unsigned {
+			ValidatorFunc,
+			HandlerFunc,
+			InlineFunc
+		};
 
 		Language();
 
@@ -58,17 +60,17 @@ class Language: public BaseObject{
 		void setTrusted(bool value);
 
 		//! \brief Sets one of the language auxiliary functions
-		void setFunction(Function *func, unsigned func_type);
+		void setFunction(Function *func, FunctionId func_id);
 
 		//! \brief Returs the trusted state of the language
 		bool isTrusted();
 
 		//! \brief Returns one of the auxiliary functions
-		Function *getFunction(unsigned func_type);
+		Function *getFunction(FunctionId func_id);
 
 		//! \brief Returns the SQL / XML code definition for the language
-		virtual QString getCodeDefinition(unsigned def_type, bool reduced_form) final;
-		virtual QString getCodeDefinition(unsigned def_type) final;
+		virtual QString getSourceCode(SchemaParser::CodeType def_type, bool reduced_form) final;
+		virtual QString getSourceCode(SchemaParser::CodeType def_type) final;
 };
 
 #endif

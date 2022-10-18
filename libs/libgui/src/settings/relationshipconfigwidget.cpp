@@ -23,11 +23,12 @@ std::map<QString, attribs_map> RelationshipConfigWidget::config_params;
 RelationshipConfigWidget::RelationshipConfigWidget(QWidget * parent) : BaseConfigWidget(parent)
 {
 	QStringList list, rel_types={ Attributes::Relationship11, Attributes::Relationship1n,
-								  Attributes::RelationshipNn, Attributes::RelationshipGen,
-								  Attributes::RelationshipDep, Attributes::RelationshipPart };
-	unsigned rel_types_id[]={ BaseRelationship::Relationship11, BaseRelationship::Relationship1n,
-							  BaseRelationship::RelationshipNn, BaseRelationship::RelationshipGen,
-							  BaseRelationship::RelationshipDep, BaseRelationship::RelationshipPart};
+																Attributes::RelationshipNn, Attributes::RelationshipGen,
+																Attributes::RelationshipDep, Attributes::RelationshipPart };
+	BaseRelationship::RelType rel_types_id[]={
+								BaseRelationship::Relationship11, BaseRelationship::Relationship1n,
+								BaseRelationship::RelationshipNn, BaseRelationship::RelationshipGen,
+								BaseRelationship::RelationshipDep, BaseRelationship::RelationshipPart };
 
 	Ui_RelationshipConfigWidget::setupUi(this);
 
@@ -144,7 +145,7 @@ void RelationshipConfigWidget::saveConfiguration()
 			schparser.ignoreUnkownAttributes(true);
 			schparser.ignoreEmptyAttributes(true);
 			config_params[itr.first]=itr.second;
-			config_params[Attributes::NamePatterns][Attributes::Patterns]+=schparser.getCodeDefinition(patterns_sch, itr.second);
+			config_params[Attributes::NamePatterns][Attributes::Patterns]+=schparser.getSourceCode(patterns_sch, itr.second);
 		}
 
 		BaseConfigWidget::saveConfiguration(GlobalAttributes::RelationshipsConf, config_params);

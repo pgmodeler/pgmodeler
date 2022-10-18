@@ -21,7 +21,7 @@
 template<>
 QStringList BehaviorType::TemplateType<BehaviorType>::type_names =
 {
-	"", // Reserved for BaseType::null
+	"", // Reserved for Class::Null
 
 	"CALLED ON NULL INPUT",
 	"RETURNS NULL ON NULL INPUT",

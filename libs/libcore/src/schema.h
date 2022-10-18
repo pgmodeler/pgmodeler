@@ -46,7 +46,7 @@ class Schema: public BaseGraphicObject {
 		void setRectVisible(bool value);
 		bool isRectVisible();
 
-		virtual QString getCodeDefinition(unsigned def_type) final;
+		virtual QString getSourceCode(SchemaParser::CodeType def_type) final;
 };
 
 #endif

@@ -491,19 +491,21 @@ void Connection::executeDDLCommand(const QString &sql)
 	PQclear(sql_res);
 }
 
-void Connection::setDefaultForOperation(unsigned op_id, bool value)
+void Connection::setDefaultForOperation(ConnOperation op_id, bool value)
 {
 	if(op_id > OpNone)
 		throw Exception(ErrorCode::RefElementInvalidIndex,  __PRETTY_FUNCTION__, __FILE__, __LINE__);
-	else if(op_id!=OpNone)
+
+	if(op_id != OpNone)
 		default_for_oper[op_id]=value;
 }
 
-bool Connection::isDefaultForOperation(unsigned op_id)
+bool Connection::isDefaultForOperation(ConnOperation op_id)
 {
 	if(op_id > OpNone)
 		throw Exception(ErrorCode::RefElementInvalidIndex,  __PRETTY_FUNCTION__, __FILE__, __LINE__);
-	else if(op_id==OpNone)
+
+	if(op_id==OpNone)
 		return false;
 
 	return default_for_oper[op_id];

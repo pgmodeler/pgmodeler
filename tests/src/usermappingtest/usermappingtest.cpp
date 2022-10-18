@@ -96,10 +96,10 @@ QString xml_code =QString(
 		usr_mapping.setOption("opt1", "value1");
 		usr_mapping.setOption("opt2", "value2");
 
-		QString res_sql_code = usr_mapping.getCodeDefinition(SchemaParser::SqlDefinition).simplified();
+		QString res_sql_code = usr_mapping.getSourceCode(SchemaParser::SqlCode).simplified();
 		QCOMPARE(sql_code, res_sql_code);
 
-		QString res_xml_code = usr_mapping.getCodeDefinition(SchemaParser::XmlDefinition).simplified();
+		QString res_xml_code = usr_mapping.getSourceCode(SchemaParser::XmlCode).simplified();
 		QCOMPARE(xml_code, res_xml_code);
 	}
 	catch (Exception &e)
@@ -184,7 +184,7 @@ void UserMappingTest::modelCreatesUserMappingfromXMLandResultingXMLisEqual()
 
 		QVERIFY(usr_map != nullptr);
 
-		res_xml_code = usr_map->getCodeDefinition(SchemaParser::XmlDefinition).simplified();
+		res_xml_code = usr_map->getSourceCode(SchemaParser::XmlCode).simplified();
 		xml_code = xml_code.simplified();
 
 		model.removeUserMapping(usr_map);

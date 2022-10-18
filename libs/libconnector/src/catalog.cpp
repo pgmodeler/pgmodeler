@@ -140,7 +140,7 @@ void Catalog::closeConnection()
 	connection.close();
 }
 
-void Catalog::setQueryFilter(unsigned filter)
+void Catalog::setQueryFilter(QueryFilter filter)
 {
 	bool list_all=(ListAllObjects & filter) == ListAllObjects;
 
@@ -434,7 +434,7 @@ QString Catalog::getCatalogQuery(const QString &qry_type, ObjectType obj_type, b
 	schparser.ignoreEmptyAttributes(true);
 
 	attribs[Attributes::PgSqlVersion]=schparser.getPgSQLVersion();
-	sql=schparser.getCodeDefinition(attribs).simplified();
+	sql=schparser.getSourceCode(attribs).simplified();
 
 	//Appeding the custom filter to the whole catalog query
 	if(!custom_filter.isEmpty())
@@ -492,7 +492,7 @@ unsigned Catalog::getObjectCount(ObjectType obj_type, const QString &sch_name, c
 	}
 }
 
-unsigned Catalog::getQueryFilter()
+Catalog::QueryFilter Catalog::getQueryFilter()
 {
 	return filter;
 }
@@ -623,7 +623,7 @@ std::vector<attribs_map> Catalog::getObjectsNames(std::vector<ObjectType> obj_ty
 			{
 				//Injecting the object type integer code in order to sort the final result
 				sql.replace(sql.indexOf(select_kw), select_kw.size(),
-										QString("%1 %2 AS object_type, ").arg(select_kw).arg(enum_cast(obj_type)));
+										QString("%1 %2 AS object_type, ").arg(select_kw).arg(enum_t(obj_type)));
 
 				sql+=QChar('\n');
 				queries.push_back(sql);
@@ -680,7 +680,7 @@ attribs_map Catalog::getAttributes(const QString &obj_name, ObjectType obj_type,
 
 		/* Insert the object type as an attribute of the query result to facilitate the
 		import process on the classes that uses the Catalog */
-		obj_attribs[Attributes::ObjectType]=QString("%1").arg(enum_cast(obj_type));
+		obj_attribs[Attributes::ObjectType]=QString("%1").arg(enum_t(obj_type));
 
 		return obj_attribs;
 	}
@@ -707,7 +707,7 @@ std::vector<attribs_map> Catalog::getMultipleAttributes(ObjectType obj_type, att
 
 				/* Insert the object type as an attribute of the query result to facilitate the
 				import process on the classes that uses the Catalog */
-				tuple[Attributes::ObjectType]=QString("%1").arg(enum_cast(obj_type));
+				tuple[Attributes::ObjectType]=QString("%1").arg(enum_t(obj_type));
 
 				obj_attribs.push_back(tuple);
 				tuple.clear();
@@ -736,7 +736,7 @@ std::vector<attribs_map> Catalog::getMultipleAttributes(const QString &catalog_s
 		schparser.ignoreEmptyAttributes(true);
 
 		attribs[Attributes::PgSqlVersion]=schparser.getPgSQLVersion();
-		connection.executeDMLCommand(schparser.getCodeDefinition(attribs).simplified(), res);
+		connection.executeDMLCommand(schparser.getSourceCode(attribs).simplified(), res);
 
 		if(res.accessTuple(ResultSet::FirstTuple))
 		{
@@ -767,7 +767,7 @@ QString Catalog::getCommentQuery(const QString &oid_field, bool is_shared_obj)
 												 {Attributes::SharedObj, (is_shared_obj ? Attributes::True : "")}};
 
 		loadCatalogQuery(query_id);
-		return schparser.getCodeDefinition(attribs).simplified();
+		return schparser.getSourceCode(attribs).simplified();
 	}
 	catch(Exception &e)
 	{
@@ -787,7 +787,7 @@ QString Catalog::getNotExtObjectQuery(const QString &oid_field)
 
 
 		loadCatalogQuery(query_id);
-		return schparser.getCodeDefinition(attribs).simplified();
+		return schparser.getSourceCode(attribs).simplified();
 	}
 	catch(Exception &e)
 	{
@@ -920,7 +920,7 @@ attribs_map Catalog::getServerAttributes()
 		loadCatalogQuery(QString("server"));
 		schparser.ignoreUnkownAttributes(true);
 		schparser.ignoreEmptyAttributes(true);
-		sql = schparser.getCodeDefinition(attribs).simplified();
+		sql = schparser.getSourceCode(attribs).simplified();
 		connection.executeDMLCommand(sql, res);
 
 		if(res.accessTuple(ResultSet::FirstTuple))
@@ -964,7 +964,7 @@ unsigned Catalog::getObjectCount(bool incl_sys_objs)
 		loadCatalogQuery(Attributes::ObjCount);
 		schparser.ignoreUnkownAttributes(true);
 		schparser.ignoreEmptyAttributes(true);
-		sql = schparser.getCodeDefinition(attribs).simplified();
+		sql = schparser.getSourceCode(attribs).simplified();
 		connection.executeDMLCommand(sql, res);
 
 		if(res.accessTuple(ResultSet::FirstTuple))

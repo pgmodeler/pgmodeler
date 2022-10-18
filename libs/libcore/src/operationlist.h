@@ -64,7 +64,7 @@ class OperationList: public QObject {
 		/*! \brief Stores the type of chain to the next operation to be stored
 		 in the list. This attribute is used in conjunction with the chaining
 		 initialization / finalization methods. */
-		unsigned next_op_chain;
+		Operation::ChainType next_op_chain;
 
 		//! \brief Current operation index
 		int current_index;
@@ -79,7 +79,7 @@ class OperationList: public QObject {
 		bool isObjectOnPool(BaseObject *object);
 
 		//! \brief Adds the object on the pool according to the operation type passed
-		void addToPool(BaseObject *object, unsigned op_type);
+		void addToPool(BaseObject *object, Operation::OperType op_type);
 
 		/*! \brief Removes one object from the pool using its index and deallocating
 		 it in case the object is not referenced on the model */
@@ -121,7 +121,7 @@ class OperationList: public QObject {
 		bool isOperationChainStarted();
 
 		//! \brief Returns if an operation of the specified op_type is already registered for the object
-		bool isObjectRegistered(BaseObject *object, unsigned op_type);
+		bool isObjectRegistered(BaseObject *object, Operation::OperType op_type);
 
 		//! \brief Undo the current operation on the list
 		void undoOperation();
@@ -147,7 +147,7 @@ class OperationList: public QObject {
 	 segmentations fault.
 
 	 In case of success this method returns an integer indicating the last registered operation ID */
-		int registerObject(BaseObject *object, unsigned op_type, int object_idx=-1, BaseObject *parent_obj=nullptr);
+		int registerObject(BaseObject *object, Operation::OperType op_type, int object_idx=-1, BaseObject *parent_obj=nullptr);
 
 		//! \brief Gets the maximum size for the operation list
 		unsigned getMaximumSize();

@@ -5,6 +5,7 @@ TARGET = utils
 windows: DESTDIR = $$PWD
 
 HEADERS += src/exception.h \
+	src/enumtype.h \
            src/globalattributes.h \
            src/pgsqlversions.h \
 	   src/doublenan.h \

@@ -30,6 +30,20 @@
 #include "function.h"
 
 class Cast: public BaseObject {
+	public:
+		//! \brief Constants used to access the data types envolved in the cast
+		enum DataTypeId: unsigned {
+			SrcType,
+			DstType
+		};
+
+		//! \brief Constants used to define the cast type
+		enum CastType: unsigned {
+			Explicit,
+			Assignment,
+			Implicit
+		};
+
 	private:
 		/*! \brief Data types used on the cast:
 		0 -> Source data type
@@ -37,7 +51,7 @@ class Cast: public BaseObject {
 		PgSqlType types[2];
 
 		//! \brief Conversion type (ASSIGNMENT or IMPLICIT)
-		unsigned cast_type;
+		CastType cast_type;
 
 		//! \brief Function used to do the type cast
 		Function *cast_function;
@@ -51,15 +65,6 @@ class Cast: public BaseObject {
 		virtual void configureSearchAttributes();
 
 	public:
-		//! \brief Constants used to access the data types envolved in the cast
-		static constexpr unsigned SrcType=0,
-		DstType=1,
-
-		//! \brief Constants used to define the cast type
-		Explicit=0,
-		Assignment=1,
-		Implicit=2;
-
 		Cast();
 
 		//! \brief This method has a hardcoded way to generated the cast's name. It'll reject any value passed by its parameter
@@ -67,10 +72,10 @@ class Cast: public BaseObject {
 
 		/*! \brief Defines one of the data types envolved on the cast
 		 (using constants SRC_TYPE | DST_TYPE) */
-		void setDataType(unsigned type_idx, PgSqlType type);
+		void setDataType(DataTypeId type_idx, PgSqlType type);
 
 		//! \brief Defines the cast type (using constants ASSINGMENT | IMPLICIT)
-		void setCastType(unsigned cast_type);
+		void setCastType(CastType cast_type);
 
 		//! \brief Defines the function used to do the type cast
 		void setCastFunction(Function *cast_func);
@@ -81,10 +86,10 @@ class Cast: public BaseObject {
 		void setInOut(bool value);
 
 		//! \brief Returns one of the cast envolved data types
-		PgSqlType getDataType(unsigned type_idx);
+		PgSqlType getDataType(DataTypeId type_idx);
 
 		//! \brief Returns the cast type
-		unsigned getCastType();
+		CastType getCastType();
 
 		//! \brief Returns the cast function
 		Function *getCastFunction();
@@ -93,11 +98,11 @@ class Cast: public BaseObject {
 		bool isInOut();
 
 		//! \brief Returns the SQL/XML code definition for the cast
-		virtual QString getCodeDefinition(unsigned def_type) final;
+		virtual QString getSourceCode(SchemaParser::CodeType def_type) final;
 
 		virtual QString getSignature(bool=false) final;
 
-		QString getDropDefinition(bool cascade) final;
+		QString getDropCode(bool cascade) final;
 };
 
 #endif

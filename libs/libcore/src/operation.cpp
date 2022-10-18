@@ -49,14 +49,14 @@ void Operation::setObjectIndex(int idx)
 	object_idx=idx;
 }
 
-void Operation::setChainType(unsigned type)
+void Operation::setChainType(ChainType type)
 {
 	chain_type=(type > ChainEnd ? NoChain : type);
 }
 
-void Operation::setOperationType(unsigned type)
+void Operation::setOperationType(OperType type)
 {
-	op_type=(type > ObjectMoved ? NoOperation : type);
+	op_type=(type > ObjMoved ? NoOperation : type);
 }
 
 void Operation::setOriginalObject(BaseObject *object)
@@ -92,12 +92,12 @@ int Operation::getObjectIndex()
 	return object_idx;
 }
 
-unsigned Operation::getChainType()
+Operation::ChainType Operation::getChainType()
 {
 	return chain_type;
 }
 
-unsigned Operation::getOperationType()
+Operation::OperType Operation::getOperationType()
 {
 	return op_type;
 }

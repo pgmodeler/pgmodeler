@@ -21,7 +21,7 @@
 template<>
 QStringList SpatialType::TemplateType<SpatialType>::type_names =
 {
-	"", // Reserved for BaseType::null
+	"", // Reserved for Class::Null
 
 	"POINT",	"LINESTRING",
 	"POLYGON",	"MULTIPOINT",
@@ -33,7 +33,7 @@ QStringList SpatialType::TemplateType<SpatialType>::type_names =
 	"MULTICURVE",	"MULTISURFACE",
 };
 
-SpatialType::SpatialType(const QString &type_name, int srid, unsigned variation_id)
+SpatialType::SpatialType(const QString &type_name, int srid, VariationId variation_id)
 {
 	QString name=type_name;
 
@@ -58,7 +58,7 @@ SpatialType::SpatialType(const QString &type_name, int srid, unsigned variation_
 	setSRID(srid);
 }
 
-SpatialType::SpatialType(unsigned type_id, int srid, unsigned var_id)
+SpatialType::SpatialType(unsigned type_id, int srid, VariationId var_id)
 {
 	setType(type_id);
 	setVariation(var_id);
@@ -67,12 +67,12 @@ SpatialType::SpatialType(unsigned type_id, int srid, unsigned var_id)
 
 SpatialType::SpatialType()
 {
-	type_idx=BaseType::Null;
+	type_idx=Null;
 	variation=NoVar;
 	srid=0;
 }
 
-void SpatialType::setVariation(unsigned var)
+void SpatialType::setVariation(VariationId var)
 {
 	if(var > VarZm)
 		variation=VarZm;
@@ -80,7 +80,7 @@ void SpatialType::setVariation(unsigned var)
 		variation=var;
 }
 
-unsigned SpatialType::getVariation()
+SpatialType::VariationId SpatialType::getVariation()
 {
 	return variation;
 }

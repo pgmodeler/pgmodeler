@@ -78,37 +78,37 @@ Function *ForeignDataWrapper::getValidatorFunction()
 	return validator_func;
 }
 
-QString ForeignDataWrapper::getCodeDefinition(unsigned def_type)
+QString ForeignDataWrapper::getSourceCode(SchemaParser::CodeType def_type)
 {
-	return getCodeDefinition(def_type, false);
+	return getSourceCode(def_type, false);
 }
 
-QString ForeignDataWrapper::getCodeDefinition(unsigned def_type, bool reduced_form)
+QString ForeignDataWrapper::getSourceCode(SchemaParser::CodeType def_type, bool reduced_form)
 {
 	QString code_def=getCachedCode(def_type, reduced_form);
 	if(!code_def.isEmpty()) return code_def;
 
 	QStringList fmt_options;
-	bool is_sql_def = (def_type == SchemaParser::SqlDefinition);
+	bool is_sql_def = (def_type == SchemaParser::SqlCode);
 
 	if(handler_func)
 	{
 		handler_func->setAttribute(Attributes::RefType, Attributes::HandlerFunc);
-		attributes[Attributes::HandlerFunc] = is_sql_def ? handler_func->getName(true) : handler_func->getCodeDefinition(def_type, true);
+		attributes[Attributes::HandlerFunc] = is_sql_def ? handler_func->getName(true) : handler_func->getSourceCode(def_type, true);
 	}
 
 	if(validator_func)
 	{
 		validator_func->setAttribute(Attributes::RefType, Attributes::ValidatorFunc);
-		attributes[Attributes::ValidatorFunc] = is_sql_def ? validator_func->getName(true) : validator_func->getCodeDefinition(def_type, true);
+		attributes[Attributes::ValidatorFunc] = is_sql_def ? validator_func->getName(true) : validator_func->getSourceCode(def_type, true);
 	}
 
 	attributes[Attributes::Options] = getOptionsAttribute(def_type);
 
-	return this->BaseObject::getCodeDefinition(def_type, reduced_form);
+	return this->BaseObject::getSourceCode(def_type, reduced_form);
 }
 
-QString ForeignDataWrapper::getAlterDefinition(BaseObject *object)
+QString ForeignDataWrapper::getAlterCode(BaseObject *object)
 {
 	try
 	{
@@ -119,7 +119,7 @@ QString ForeignDataWrapper::getAlterDefinition(BaseObject *object)
 				*fdw_funcs[2] = { fdw->getValidatorFunction(), fdw->getHandlerFunction() },
 				*this_func = nullptr, *fdw_func = nullptr;
 
-		attributes[Attributes::AlterCmds] = BaseObject::getAlterDefinition(fdw);
+		attributes[Attributes::AlterCmds] = BaseObject::getAlterCode(fdw);
 		getAlteredAttributes(fdw, attribs);
 
 		// Comparing FDW functions
@@ -137,7 +137,7 @@ QString ForeignDataWrapper::getAlterDefinition(BaseObject *object)
 		}
 
 		copyAttributes(attribs);
-		return BaseObject::getAlterDefinition(this->getSchemaName(), attributes, false, true);
+		return BaseObject::getAlterCode(this->getSchemaName(), attributes, false, true);
 	}
 	catch(Exception &e)
 	{

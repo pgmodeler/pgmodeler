@@ -91,7 +91,7 @@ void OperatorClassElement::setStorage(PgSqlType storage)
 	this->element_type=StorageElem;
 }
 
-unsigned OperatorClassElement::getElementType()
+OperatorClassElement::ElementType OperatorClassElement::getElementType()
 {
 	return element_type;
 }
@@ -121,7 +121,7 @@ unsigned OperatorClassElement::getStrategyNumber()
 	return strategy_number;
 }
 
-QString OperatorClassElement::getCodeDefinition(unsigned def_type)
+QString OperatorClassElement::getSourceCode(SchemaParser::CodeType def_type)
 {
 	SchemaParser schparser;
 	attribs_map attributes;
@@ -141,10 +141,10 @@ QString OperatorClassElement::getCodeDefinition(unsigned def_type)
 		attributes[Attributes::Function]=Attributes::True;
 		attributes[Attributes::StrategyNum]=QString("%1").arg(strategy_number);
 
-		if(def_type==SchemaParser::SqlDefinition)
+		if(def_type==SchemaParser::SqlCode)
 			attributes[Attributes::Signature]=function->getSignature();
 		else
-			attributes[Attributes::Definition]=function->getCodeDefinition(def_type,true);
+			attributes[Attributes::Definition]=function->getSourceCode(def_type,true);
 	}
 	else if(element_type==OperatorElem && _operator && strategy_number > 0)
 	{
@@ -152,17 +152,17 @@ QString OperatorClassElement::getCodeDefinition(unsigned def_type)
 		attributes[Attributes::Operator]=Attributes::True;
 		attributes[Attributes::StrategyNum]=QString("%1").arg(strategy_number);
 
-		if(def_type==SchemaParser::SqlDefinition)
+		if(def_type==SchemaParser::SqlCode)
 			attributes[Attributes::Signature]=_operator->getSignature();
 		else
-			attributes[Attributes::Definition]=_operator->getCodeDefinition(def_type,true);
+			attributes[Attributes::Definition]=_operator->getSourceCode(def_type,true);
 
 		if(op_family)
 		{
-			if(def_type==SchemaParser::SqlDefinition)
+			if(def_type==SchemaParser::SqlCode)
 				attributes[Attributes::OpFamily]=op_family->getName(true);
 			else
-				attributes[Attributes::Definition]+=op_family->getCodeDefinition(def_type,true);
+				attributes[Attributes::Definition]+=op_family->getSourceCode(def_type,true);
 		}
 	}
 	else if(element_type==StorageElem && storage!=PgSqlType::Null)
@@ -170,13 +170,13 @@ QString OperatorClassElement::getCodeDefinition(unsigned def_type)
 		//STORAGE storage_type
 		attributes[Attributes::Storage]=Attributes::True;
 
-		if(def_type==SchemaParser::SqlDefinition)
+		if(def_type==SchemaParser::SqlCode)
 			attributes[Attributes::Type]=(*storage);
 		else
-			attributes[Attributes::Definition]=storage.getCodeDefinition(def_type);
+			attributes[Attributes::Definition]=storage.getSourceCode(def_type);
 	}
 
-	return schparser.getCodeDefinition(Attributes::Element,attributes, def_type);
+	return schparser.getSourceCode(Attributes::Element,attributes, def_type);
 }
 
 bool OperatorClassElement::operator == (OperatorClassElement &elem)

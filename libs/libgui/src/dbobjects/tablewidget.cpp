@@ -572,7 +572,7 @@ void TableWidget::showObjectData(TableObject *object, int row)
 		//Column 3: Column defaul value
 		if(column->getSequence())
 			str_aux=QString("nextval('%1'::regclass)").arg(column->getSequence()->getName(true).remove('"'));
-		else if(column->getIdentityType() != BaseType::Null)
+		else if(column->getIdentityType() != IdentityType::Null)
 			str_aux=QString("GENERATED %1 AS IDENTITY").arg(~column->getIdentityType());
 		else
 			str_aux=column->getDefaultValue();
@@ -616,10 +616,10 @@ void TableWidget::showObjectData(TableObject *object, int row)
 		if(constr->getConstraintType()==ConstraintType::ForeignKey)
 		{
 			//Column 2: ON DELETE action
-			tab->setCellText(~constr->getActionType(false),row,2);
+			tab->setCellText(~constr->getActionType(Constraint::DeleteAction),row,2);
 
 			//Column 3: ON UPDATE action
-			tab->setCellText(~constr->getActionType(true),row,3);
+			tab->setCellText(~constr->getActionType(Constraint::UpdateAction),row,3);
 		}
 		else
 		{
@@ -744,7 +744,7 @@ void TableWidget::removeObjects()
 			if(!object->isProtected() &&
 					!dynamic_cast<TableObject *>(object)->isAddedByRelationship())
 			{
-				op_list->registerObject(object, Operation::ObjectRemoved, 0, this->object);
+				op_list->registerObject(object, Operation::ObjRemoved, 0, this->object);
 				table->removeObject(object);
 			}
 			else
@@ -795,7 +795,7 @@ void TableWidget::removeObject(int row)
 		if(!object->isProtected() &&
 				!dynamic_cast<TableObject *>(object)->isAddedByRelationship())
 		{
-			op_id=op_list->registerObject(object, Operation::ObjectRemoved, row, this->object);
+			op_id=op_list->registerObject(object, Operation::ObjRemoved, row, this->object);
 			table->removeObject(object);
 			table->setModified(true);
 		}
@@ -845,7 +845,7 @@ void TableWidget::duplicateObject(int sel_row, int new_row)
 		CoreUtilsNs::copyObject(&dup_object, object, obj_type);
 		dup_object->setName(CoreUtilsNs::generateUniqueName(dup_object, *table->getObjectList(obj_type), false, QString("_cp")));
 
-		op_id=op_list->registerObject(dup_object, Operation::ObjectCreated, new_row, this->object);
+		op_id=op_list->registerObject(dup_object, Operation::ObjCreated, new_row, this->object);
 
 		table->addObject(dup_object);
 		table->setModified(true);
@@ -927,7 +927,7 @@ void TableWidget::applyConfiguration()
 		PartitioningType part_type;
 
 		if(!this->new_object)
-			op_list->registerObject(this->object, Operation::ObjectModified);
+			op_list->registerObject(this->object, Operation::ObjModified);
 		else
 			registerNewObject();
 
@@ -956,16 +956,16 @@ void TableWidget::applyConfiguration()
 				ftable->setOption(options_tab->getCellText(row, 0), options_tab->getCellText(row, 1));
 		}
 
-		part_type = partitioning_type_cmb->currentIndex() == 0 ? BaseType::Null : PartitioningType(partitioning_type_cmb->currentText());
+		part_type = partitioning_type_cmb->currentIndex() == 0 ? PartitioningType::Null : PartitioningType(partitioning_type_cmb->currentText());
 		table->setPartitioningType(part_type);
 
-		if(part_type != BaseType::Null)
+		if(part_type != PartitioningType::Null)
 		{
 			partition_keys_tab->getElements<PartitionKey>(part_keys);
 			table->addPartitionKeys(part_keys);
 
 			if(part_keys.empty())
-				part_type = BaseType::Null;
+				part_type = PartitioningType::Null;
 		}
 
 		BaseObjectWidget::applyConfiguration();
@@ -995,14 +995,14 @@ void TableWidget::applyConfiguration()
 					pk->addColumn(col, Constraint::SourceCols);
 
 				table->addConstraint(pk);
-				op_list->registerObject(pk, Operation::ObjectCreated, -1, table);
+				op_list->registerObject(pk, Operation::ObjCreated, -1, table);
 			}
 			else if(!pk->isAddedByRelationship())
 			{
 			  std::vector<Column *> orig_pk_cols = pk->getColumns(Constraint::SourceCols);
 
 				//If the table owns a pk we only update the columns
-				op_list->registerObject(pk, Operation::ObjectModified, -1, table);
+				op_list->registerObject(pk, Operation::ObjModified, -1, table);
 				pk->removeColumns();
 
 				/* Adding the original primary key columns if they also exists in the
@@ -1022,7 +1022,7 @@ void TableWidget::applyConfiguration()
 		else if(pk_cols.empty() && pk && !pk->isAddedByRelationship())
 		{
 			//Removing the primary key from the table when no column is checked as pk
-			op_list->registerObject(pk, Operation::ObjectRemoved, -1, table);
+			op_list->registerObject(pk, Operation::ObjRemoved, -1, table);
 			table->removeObject(pk);
 		}
 

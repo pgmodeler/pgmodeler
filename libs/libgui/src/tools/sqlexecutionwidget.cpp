@@ -270,7 +270,7 @@ void SQLExecutionWidget::fillResultsTable(Catalog &catalog, ResultSet &res, QTab
 		std::vector<unsigned>::iterator end;
 		std::vector<attribs_map> types;
 		std::map<unsigned, QString> type_names;
-		unsigned orig_filter=catalog.getQueryFilter();
+		Catalog::QueryFilter orig_filter=catalog.getQueryFilter();
 
 		results_tbw->setRowCount(0);
 		results_tbw->setColumnCount(col_cnt);
@@ -909,7 +909,7 @@ void SQLExecutionWidget::saveSQLHistory()
 			attribs[Attributes::Connection] = hist.first;
 			attribs[Attributes::Commands] = hist.second;
 			schparser.ignoreEmptyAttributes(true);
-			commands += schparser.getCodeDefinition(GlobalAttributes::getTmplConfigurationFilePath(GlobalAttributes::SchemasDir,
+			commands += schparser.getSourceCode(GlobalAttributes::getTmplConfigurationFilePath(GlobalAttributes::SchemasDir,
 																																														 Attributes::Commands +
 																																														 GlobalAttributes::SchemaExt), attribs);
 		}
@@ -922,7 +922,7 @@ void SQLExecutionWidget::saveSQLHistory()
 		attribs[Attributes::Commands] = commands;
 
 		UtilsNs::saveFile(GlobalAttributes::getConfigurationFilePath(GlobalAttributes::SQLHistoryConf),
-											schparser.getCodeDefinition(attribs).toUtf8());
+											schparser.getSourceCode(attribs).toUtf8());
 	}
 	catch(Exception &e)
 	{

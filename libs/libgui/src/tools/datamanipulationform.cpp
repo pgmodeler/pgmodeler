@@ -27,11 +27,6 @@
 #include "databaseexplorerwidget.h"
 #include "settings/generalconfigwidget.h"
 
-constexpr unsigned DataManipulationForm::NoOperation;
-constexpr unsigned DataManipulationForm::OpInsert;
-constexpr unsigned DataManipulationForm::OpUpdate;
-constexpr unsigned DataManipulationForm::OpDelete;
-
 DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f): QDialog(parent, f)
 {
 	QAction *act = nullptr;
@@ -786,7 +781,7 @@ void DataManipulationForm::listObjects(QComboBox *combo, std::vector<ObjectType>
 			for(; idx < count; idx++)
 			{
 				combo->setItemIcon(idx, QPixmap(GuiUtilsNs::getIconPath(obj_type)));
-				combo->setItemData(idx, enum_cast(obj_type));
+				combo->setItemData(idx, enum_t(obj_type));
 			}
 
 			idx=count;
@@ -1010,7 +1005,7 @@ void DataManipulationForm::retrieveFKColumns(const QString &schema, const QStrin
 	}
 }
 
-void DataManipulationForm::markOperationOnRow(unsigned operation, int row)
+void DataManipulationForm::markOperationOnRow(OperationId operation, int row)
 {
 	if(row < results_tbw->rowCount() &&
 			(operation==NoOperation || results_tbw->verticalHeaderItem(row)->data(Qt::UserRole)!=OpInsert))

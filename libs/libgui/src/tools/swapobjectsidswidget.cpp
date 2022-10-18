@@ -115,7 +115,7 @@ void SwapObjectsIdsWidget::fillCreationOrderGrid()
 	if(!model)
 		return;
 
-	std::map<unsigned, BaseObject *> creation_order = model->getCreationOrder(SchemaParser::SqlDefinition);
+	std::map<unsigned, BaseObject *> creation_order = model->getCreationOrder(SchemaParser::SqlCode);
 	std::vector<BaseObject *> objects;
 
 	//Using an stl function to extract all the values (objects) from the map and put them into a list

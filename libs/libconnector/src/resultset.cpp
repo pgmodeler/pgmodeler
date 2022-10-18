@@ -20,10 +20,10 @@
 
 ResultSet::ResultSet()
 {
-	sql_result=nullptr;
-	empty_result=false;
-	is_res_copied=false;
-	current_tuple=-1;
+	sql_result = nullptr;
+	empty_result = false;
+	is_res_copied = false;
+	current_tuple = -1;
 }
 
 ResultSet::ResultSet(PGresult *sql_result)
@@ -57,9 +57,9 @@ ResultSet::ResultSet(PGresult *sql_result)
 		case PGRES_COPY_OUT:
 		case PGRES_COPY_IN:
 		default:
-			empty_result=(res_state!=PGRES_TUPLES_OK && res_state!=PGRES_SINGLE_TUPLE && res_state!=PGRES_EMPTY_QUERY);
-			current_tuple=-1;
-			is_res_copied=false;
+			empty_result = (res_state!=PGRES_TUPLES_OK && res_state!=PGRES_SINGLE_TUPLE && res_state!=PGRES_EMPTY_QUERY);
+			current_tuple = -1;
+			is_res_copied = false;
 		break;
 	}
 }
@@ -125,7 +125,7 @@ int ResultSet::validateColumnName(const QString &column_name)
 		/* Raises an error if the user try to get the value of a column in
 		 a tuple of an empty result or generated from an INSERT, DELETE, UPDATE,
 		 that is, which command do not return lines but only do updates or removal */
-		if(getTupleCount()==0 || empty_result)
+		if(getTupleCount() == 0 || empty_result)
 			throw Exception(ErrorCode::RefInvalidTuple, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 		else if(current_tuple < 0 || current_tuple >= getTupleCount())
 			throw Exception(ErrorCode::RefInvalidTupleColumn, __PRETTY_FUNCTION__, __FILE__, __LINE__);
@@ -151,12 +151,14 @@ void ResultSet::validateColumnIndex(int column_idx)
 	//Raise an error in case the column index is invalid
 	if(column_idx < 0 || column_idx >= getColumnCount())
 		throw Exception(ErrorCode::RefTupleColumnInvalidIndex, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+
 	/* Raises an error if the user try to get the value of a column in
 		a tuple of an empty result or generated from an INSERT, DELETE, UPDATE,
 		that is, which command do not return lines but only do updates or removal */
-	else if(getTupleCount()==0 || empty_result)
+	if(getTupleCount() == 0 || empty_result)
 		throw Exception(ErrorCode::RefInvalidTuple, __PRETTY_FUNCTION__, __FILE__, __LINE__);
-	else if(current_tuple < 0 || current_tuple >= getTupleCount())
+
+	if(current_tuple < 0 || current_tuple >= getTupleCount())
 		throw Exception(ErrorCode::RefInvalidTupleColumn, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 }
 
@@ -268,7 +270,7 @@ bool ResultSet::isColumnBinaryFormat(int column_idx)
 	return (PQfformat(sql_result, column_idx)==1 || PQftype(sql_result, column_idx)==BYTEAOID);
 }
 
-bool ResultSet::accessTuple(unsigned tuple_type)
+bool ResultSet::accessTuple(TupleId tuple_id)
 {
 	int tuple_count=getTupleCount();
 
@@ -276,38 +278,36 @@ bool ResultSet::accessTuple(unsigned tuple_type)
 		is derived from a command which affects only rows or
 		The tuple type to be accessed is invalid, out of
 		set defined by the class */
-	if(empty_result || tuple_type > NextTuple)
+	if(empty_result || tuple_id > NextTuple)
 		throw Exception(ErrorCode::RefInvalidTuple, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 
-	if(tuple_count==0)
+	if(tuple_count == 0)
 		return false;
-	else
+
+	bool accessed = true;
+
+	switch(tuple_id)
 	{
-		bool accessed=true;
+		case FirstTuple:
+			current_tuple = 0;
+		break;
 
-		switch(tuple_type)
-		{
-			case FirstTuple:
-				current_tuple=0;
-			break;
+		case LastTuple:
+			current_tuple = tuple_count-1;
+		break;
 
-			case LastTuple:
-				current_tuple=tuple_count-1;
-			break;
+		case PreviousTuple:
+			accessed = (current_tuple > 0);
+			if(accessed) current_tuple--;
+		break;
 
-			case PreviousTuple:
-				accessed=(current_tuple > 0);
-				if(accessed) current_tuple--;
-			break;
-
-			case NextTuple:
-				accessed=(current_tuple < (tuple_count-1));
-				if(accessed) current_tuple++;
-			break;
-		}
-
-		return accessed;
+		case NextTuple:
+			accessed = (current_tuple < (tuple_count-1));
+			if(accessed) current_tuple++;
+		break;
 	}
+
+	return accessed;
 }
 
 bool ResultSet::isEmpty()

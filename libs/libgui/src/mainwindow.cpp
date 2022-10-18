@@ -870,7 +870,7 @@ void MainWindow::saveTemporaryModels()
 				bg_saving_pb->setValue(((i+1)/static_cast<double>(count)) * 100);
 
 				if(model->isModified())
-					model->getDatabaseModel()->saveModel(model->getTempFilename(), SchemaParser::XmlDefinition);
+					model->getDatabaseModel()->saveModel(model->getTempFilename(), SchemaParser::XmlCode);
 			}
 
 			bg_saving_pb->setValue(100);
@@ -1176,9 +1176,7 @@ void MainWindow::setCurrentModel()
 
 		for(QToolButton *btn : btns)
 		{
-			//GuiUtilsNs::configureWidgetFont(btn, static_cast<unsigned>(GuiUtilsNs::MediumFontFactor));
 			font = btn->font();
-			//font.setBold(true);
 			font.setWeight(QFont::Medium);
 			btn->setFont(font);
 			GuiUtilsNs::createDropShadow(btn);
@@ -2063,10 +2061,14 @@ void MainWindow::executePendingOperation(bool valid_error)
 	if(!valid_error && pending_op!=NoPendingOp)
 	{
 		static const QString op_names[]={ "", QT_TR_NOOP("save"), QT_TR_NOOP("save"),
-																			QT_TR_NOOP("export"), QT_TR_NOOP("diff") };
+																			QT_TR_NOOP("export"), QT_TR_NOOP("diff") },
+
+		op_icons[]={ "", GuiUtilsNs::getIconPath("save"), GuiUtilsNs::getIconPath("saveas"),
+								 GuiUtilsNs::getIconPath("export"), GuiUtilsNs::getIconPath("diff") };
 
 		GuiUtilsNs::createOutputTreeItem(model_valid_wgt->output_trw,
-											tr("Executing pending <strong>%1</strong> operation...").arg(op_names[pending_op]));
+																		 tr("Executing pending <strong>%1</strong> operation...").arg(op_names[pending_op]),
+																		 op_icons[pending_op]);
 
 		if(pending_op==PendingSaveOp || pending_op==PendingSaveAsOp)
 			saveModel();
@@ -2204,9 +2206,9 @@ void MainWindow::toggleCompactView()
 		model_wgt = dynamic_cast<ModelWidget *>(models_tbw->widget(idx));
 
 		if(action_compact_view->isChecked())
-			model_wgt->setAllCollapseMode(CollapseMode::ExtAttribsCollapsed);
+			model_wgt->setAllCollapseMode(BaseTable::ExtAttribsCollapsed);
 		else
-			model_wgt->setAllCollapseMode(CollapseMode::NotCollapsed);
+			model_wgt->setAllCollapseMode(BaseTable::NotCollapsed);
 
 		model_wgt->getDatabaseModel()->setObjectsModified({ ObjectType::Table, ObjectType::ForeignTable,
 																												ObjectType::View, ObjectType::Relationship,
@@ -2256,18 +2258,19 @@ void MainWindow::configureMoreActionsMenu()
 	more_actions_menu.addActions(actions);
 }
 
-void MainWindow::switchView(int view)
+void MainWindow::switchView(MWViewsId view)
 {
 	switch(view)
 	{
-	case(ManageView):
-		action_manage->toggle();
+		case(ManageView):
+			action_manage->toggle();
 		break;
-	case(DesignView):
-		action_design->toggle();
+		case(DesignView):
+			action_design->toggle();
 		break;
-	case(WelcomeView):
-		action_welcome->toggle();
+		case(WelcomeView):
+			action_welcome->toggle();
+		break;
 	}
 }
 

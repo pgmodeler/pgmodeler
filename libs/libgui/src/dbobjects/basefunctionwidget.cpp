@@ -254,7 +254,7 @@ void BaseFunctionWidget::setAttributes(DatabaseModel *model, OperationList *op_l
 			library_edt->setText(func->getLibrary());
 		}
 		else
-			source_code_txt->setPlainText(func->getSourceCode());
+			source_code_txt->setPlainText(func->getFunctionSource());
 
 		for(auto &type : func->getTransformTypes())
 		{
@@ -346,7 +346,7 @@ void BaseFunctionWidget::applyBasicConfiguration(BaseFunction *func)
 			func->setSymbol(symbol_edt->text());
 		}
 		else
-			func->setSourceCode(source_code_txt->toPlainText().toUtf8());
+			func->setFunctionSource(source_code_txt->toPlainText().toUtf8());
 	}
 	catch(Exception &e)
 	{

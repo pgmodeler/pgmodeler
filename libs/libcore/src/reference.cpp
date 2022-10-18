@@ -179,12 +179,12 @@ QString Reference::getExpression()
 	return expression;
 }
 
-unsigned Reference::getReferenceType()
+Reference::ReferType Reference::getReferenceType()
 {
 	if(expression.isEmpty())
 		return ReferColumn;
-	else
-		return ReferExpression;
+
+	return ReferExpression;
 }
 
 void Reference::setReferenceAlias(const QString &alias)
@@ -200,15 +200,15 @@ QString Reference::getReferenceAlias()
 	return ref_alias;
 }
 
-QString Reference::getSQLDefinition(unsigned sql_type)
+QString Reference::getSQLDefinition(SqlType sql_type)
 {
 	QString sql_def, tab_name;
-	unsigned refer_type;
+	ReferType refer_type;
 
 	refer_type=getReferenceType();
 
 	//Case the reference is between the SELECT-FROM keywords
-	if(sql_type==SqlReferSelect)
+	if(sql_type==SqlSelect)
 	{
 		//Case the reference is linked to a column
 		if(refer_type==ReferColumn)
@@ -247,7 +247,7 @@ QString Reference::getSQLDefinition(unsigned sql_type)
 		sql_def+=QString(",\n");
 	}
 	//Case the reference is between the FROM-[JOIN | WHERE] keywords
-	else if(sql_type==SqlReferFrom)
+	else if(sql_type==SqlFrom)
 	{
 		/* Case the reference is linked to a column only the table name is used.
 		 For expression the complete code is used thus the generated code is:
@@ -321,7 +321,7 @@ QString Reference::getXMLDefinition()
 		col_aux.setName(col.name);
 		col_aux.setType(PgSqlType::parseString(col.type));
 		col_aux.setAlias(col.alias);
-		attribs[Attributes::Columns]+=col_aux.getCodeDefinition(SchemaParser::XmlDefinition);
+		attribs[Attributes::Columns]+=col_aux.getSourceCode(SchemaParser::XmlCode);
 	}
 
 	if(is_def_expr)
@@ -329,11 +329,11 @@ QString Reference::getXMLDefinition()
 		for(auto &tab : ref_tables)
 		{
 			aux_attribs[Attributes::Name] = tab->getSignature();
-			attribs[Attributes::RefTables] += schparser.getCodeDefinition(Attributes::RefTableTag, aux_attribs, SchemaParser::XmlDefinition);
+			attribs[Attributes::RefTables] += schparser.getSourceCode(Attributes::RefTableTag, aux_attribs, SchemaParser::XmlCode);
 		}
 	}
 
-	return schparser.getCodeDefinition(Attributes::Reference, attribs, SchemaParser::XmlDefinition);
+	return schparser.getSourceCode(Attributes::Reference, attribs, SchemaParser::XmlCode);
 }
 
 bool Reference::operator == (Reference &refer)

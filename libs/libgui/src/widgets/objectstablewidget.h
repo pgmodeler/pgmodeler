@@ -50,54 +50,58 @@ class ObjectsTableWidget: public QWidget, public Ui::ObjectsTableWidget {
 
 	public:
 		//! \brief Constants used to configure the table buttons
-		static constexpr unsigned AddButton=1,
-		RemoveButton=2,
-		UpdateButton=4,
-		MoveButtons=8,
-		EditButton=16,
-		DuplicateButton=32,
-		RemoveAllButton=64,
-		ResizeColsButton=128,
-		AllButtons=255,
-		NoButtons=0;
+		enum ButtonConf: unsigned {
+			NoButtons = 0,
+			AddButton = 1,
+			RemoveButton = 2,
+			UpdateButton = 4,
+			MoveButtons = 8,
+			EditButton = 16,
+			DuplicateButton = 32,
+			RemoveAllButton = 64,
+			ResizeColsButton = 128,
+			AllButtons = 255
+		};
 
-		//! \brief References the default background color  for protected items
-		static constexpr unsigned ProtItemBgColor = 0,
+		enum TableItemColor: unsigned {
+			//! \brief References the default background color  for protected items
+			ProtItemBgColor,
 
-		//! \brief References the default foreground color  for protected items
-		ProtItemFgColor = 1,
+			//! \brief References the default foreground color  for protected items
+			ProtItemFgColor,
 
-		//! \brief References the default background color  for relationship added items
-		RelAddedItemBgColor = 2,
+			//! \brief References the default background color  for relationship added items
+			RelAddedItemBgColor,
 
-		//! \brief References the default foreground color  for relationship added items
-		RelAddedItemFgColor = 3,
+			//! \brief References the default foreground color  for relationship added items
+			RelAddedItemFgColor,
 
-		//! \brief References the default background color  for added items
-		AddedItemBgColor = 4,
+			//! \brief References the default background color  for added items
+			AddedItemBgColor,
 
-		//! \brief References the default foreground color  for added items
-		AddedItemFgColor = 5,
+			//! \brief References the default foreground color  for added items
+			AddedItemFgColor,
 
-		//! \brief References the default background color  for updated items
-		UpdatedItemBgColor = 6,
+			//! \brief References the default background color  for updated items
+			UpdatedItemBgColor,
 
-		//! \brief References the default foreground color  for updated items
-		UpdatedItemFgColor = 7,
+			//! \brief References the default foreground color  for updated items
+			UpdatedItemFgColor,
 
-		//! \brief References the default background color  for updated items
-		RemovedItemBgColor = 8,
+			//! \brief References the default background color  for updated items
+			RemovedItemBgColor,
 
-		//! \brief References the default foreground color  for removed items
-		RemovedItemFgColor = 9,
+			//! \brief References the default foreground color  for removed items
+			RemovedItemFgColor,
 
-		//! \brief References the alternative foreground color  for protected items
-		ProtItemAltFgColor = 10,
+			//! \brief References the alternative foreground color  for protected items
+			ProtItemAltFgColor,
 
-		//! \brief References the alternative foreground color  for relationship added items
-		RelAddedItemAltFgColor = 11;
+			//! \brief References the alternative foreground color  for relationship added items
+			RelAddedItemAltFgColor
+		};
 
-		ObjectsTableWidget(unsigned button_conf=AllButtons, bool conf_exclusion=false, QWidget * parent = nullptr);
+		ObjectsTableWidget(ButtonConf button_conf=AllButtons, bool conf_exclusion=false, QWidget * parent = nullptr);
 
 		//! \brief Sets the table's column count
 		void setColumnCount(unsigned col_count);
@@ -166,13 +170,13 @@ class ObjectsTableWidget: public QWidget, public Ui::ObjectsTableWidget {
 		void clearCellText(unsigned row_idx, unsigned col_idx);
 
 		//! \brief Sets the table button configuration. Use the constants ???_BUTTON combined via bitwise operation.
-		void setButtonConfiguration(unsigned button_conf);
+		void setButtonConfiguration(ButtonConf button_conf);
 
 		void adjustColumnToContents(int col);
 
-		static void setTableItemColor(unsigned color_idx, const QColor color);
+		static void setTableItemColor(TableItemColor color_idx, const QColor color);
 
-		static QColor getTableItemColor(unsigned color_idx);
+		static QColor getTableItemColor(TableItemColor color_idx);
 
 	private slots:
 		//! \brief Moves a row up or down according to the button that triggers the slot
@@ -216,7 +220,7 @@ class ObjectsTableWidget: public QWidget, public Ui::ObjectsTableWidget {
 		void selectRow(int lin_idx);
 
 		//! \brief Controls the enable state of each button
-		void setButtonsEnabled(unsigned button_conf, bool value);
+		void setButtonsEnabled(ButtonConf button_conf, bool value);
 
 		void setCellsEditable(bool value);
 

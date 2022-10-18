@@ -31,15 +31,7 @@
 #include <exception>
 #include <signal.h>
 #include <vector>
-#include <deque>
-#include <type_traits>
-
-//! \brief This function causes the provided enum to be converted to its underlying datatype
-template<typename Enum>
-constexpr std::underlying_type_t<Enum> enum_cast (Enum obj_type) noexcept
-{
-	return static_cast<typename std::underlying_type_t<Enum>>(obj_type);
-}
+#include "enumtype.h"
 
 //! \brief This enum defines the global error codes used throughout the application
 enum class ErrorCode: unsigned {
@@ -306,12 +298,16 @@ enum class ErrorCode: unsigned {
 	InvCsvParserOptions,
 	MalformedCsvInvalidCols,
 	MalformedCsvMissingDelim,
-	RefInvCsvDocumentValue
+	RefInvCsvDocumentValue,
+	ModelFileSaveFailure
 };
 
 class Exception {
 	private:
-		static constexpr unsigned ErrorCount=264;
+		static constexpr unsigned ErrorCount=265;
+
+		//! \brief Constants used to access the error details
+		static constexpr unsigned ErrorCodeId=0, ErrorMessage=1;
 
 		/*! \brief Stores other exceptions before raise the 'this' exception.
 		 This structure can be used to simulate a stack trace to improve the debug */
@@ -319,9 +315,6 @@ class Exception {
 
 		//! \brief Stores the error messages and codes (names of errors) in string format
 		static QString messages[ErrorCount][2];
-
-		//! \brief Constants used to access the error details
-		static constexpr unsigned ErrorCodeId=0, ErrorMessage=1;
 
 		//! \brief Error type related to the exception
 		ErrorCode error_code;

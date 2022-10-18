@@ -21,7 +21,7 @@
 template<>
 QStringList EventTriggerType::TemplateType<EventTriggerType>::type_names =
 {
-	"", // Reserved for BaseType::null
+	"", // Reserved for Class::Null
 
 	"ddl_command_start",
 	"ddl_command_end",

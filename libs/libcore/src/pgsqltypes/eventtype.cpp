@@ -21,7 +21,7 @@
 template<>
 QStringList EventType::TemplateType<EventType>::type_names =
 {
-	"", // Reserved for BaseType::null
+	"", // Reserved for Class::Null
 
 	"ON SELECT",
 	"ON INSERT",

@@ -29,23 +29,26 @@ are emitted during the diff process on ModelsDiffHelper class.
 #include "tableobject.h"
 
 class ObjectsDiffInfo {
+	public:
+		enum DiffType: unsigned {
+			CreateObject,
+			DropObject,
+			AlterObject,
+			IgnoreObject,
+			NoDifference
+		};
+
 	private:
 		//! \brief Difference type (see constants below)
-		unsigned diff_type;
+		DiffType diff_type;
 
 		BaseObject *object, *old_object;
 
 	public:
-		static constexpr unsigned CreateObject=0,
-		DropObject=1,
-		AlterObject=2,
-		IgnoreObject=3,
-		NoDifference=4;
-
 		ObjectsDiffInfo();
-		ObjectsDiffInfo(unsigned diff_type, BaseObject *ref_object, BaseObject *old_object);
+		ObjectsDiffInfo(DiffType diff_type, BaseObject *ref_object, BaseObject *old_object);
 
-		unsigned getDiffType();
+		DiffType getDiffType();
 		QString getInfoMessage();
 		QString getDiffTypeString();
 		BaseObject *getObject();

@@ -65,7 +65,7 @@ class Function: public BaseFunction {
 		unsigned row_amount;
 
 		//! \brief Formats the function return type to be used by the SchemaParser
-		void setTableReturnTypeAttribute(unsigned def_type);
+		void setTableReturnTypeAttribute(SchemaParser::CodeType def_type);
 
 	protected:
 		virtual void configureSearchAttributes();
@@ -146,11 +146,11 @@ class Function: public BaseFunction {
 		void removeReturnedTableColumns();
 
 		//! \brief Returns the SQL / XML code definition for the function
-		virtual QString getCodeDefinition(unsigned def_type, bool reduced_form) final;
+		virtual QString getSourceCode(SchemaParser::CodeType def_type, bool reduced_form) final;
 
-		virtual QString getCodeDefinition(unsigned def_type) final;
+		virtual QString getSourceCode(SchemaParser::CodeType def_type) final;
 
-		virtual QString getAlterDefinition(BaseObject *object) final;
+		virtual QString getAlterCode(BaseObject *object) final;
 };
 
 #endif

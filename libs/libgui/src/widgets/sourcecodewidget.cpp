@@ -118,7 +118,7 @@ void SourceCodeWidget::generateSourceCode(int)
 				(obj_type==ObjectType::BaseRelationship &&
 				 dynamic_cast<BaseRelationship *>(object)->getRelationshipType()==BaseRelationship::RelationshipFk))
 		{
-			QString aux_def;
+
 			BaseObject::setPgSQLVersion(version_cmb->currentText());
 
 			if(obj_type==ObjectType::Database)
@@ -127,11 +127,11 @@ void SourceCodeWidget::generateSourceCode(int)
 				task_prog_wgt->setWindowTitle(tr("Generating source code..."));
 				task_prog_wgt->show();
 				connect(this->model, SIGNAL(s_objectLoaded(int,QString,unsigned)), task_prog_wgt, SLOT(updateProgress(int,QString,unsigned)));
-				sqlcode_txt->setPlainText(object->getCodeDefinition(SchemaParser::SqlDefinition));
+				sqlcode_txt->setPlainText(object->getSourceCode(SchemaParser::SqlCode));
 			}
 			else
 			{
-				sqlcode_txt->setPlainText(model->getSQLDefinition(object, static_cast<unsigned>(code_options_cmb->currentIndex())));
+				sqlcode_txt->setPlainText(model->getSQLDefinition(object, static_cast<DatabaseModel::CodeGenMode>(code_options_cmb->currentIndex())));
 			}
 
 #ifdef DEMO_VERSION
@@ -162,7 +162,7 @@ void SourceCodeWidget::generateSourceCode(int)
 #warning "DEMO VERSION: XML code preview disabled."
 		xmlcode_txt->setPlainText(tr("<!-- XML code preview disabled in demonstration version -->"));
 #else
-		xmlcode_txt->setPlainText(object->getCodeDefinition(SchemaParser::XmlDefinition));
+		xmlcode_txt->setPlainText(object->getSourceCode(SchemaParser::XmlCode));
 #endif
 
 		setSourceCodeTab();

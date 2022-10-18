@@ -70,7 +70,7 @@ class ModelValidationHelper: public QObject {
 		//! \brief Stores the analyzed relationship marked as invalidated
 		std::vector<BaseObject *> inv_rels;
 
-		void generateValidationInfo(unsigned val_type, BaseObject *object, std::vector<BaseObject *> refs);
+		void generateValidationInfo(ValidationInfo::ValType val_type, BaseObject *object, std::vector<BaseObject *> refs);
 
 	public:
 		ModelValidationHelper();

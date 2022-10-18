@@ -83,16 +83,18 @@ class XmlParser {
 
 	public:
 		//! \brief Constants used to referência the elements on the element tree
-		static constexpr unsigned RootElement=0,
-		ChildElement=1,
-		NextElement=2,
-		PreviousElement=3;
+		enum ElementType: unsigned {
+			RootElement,
+			ChildElement,
+			NextElement,
+			PreviousElement
+		};
 
 		static const QString CharAmp, //! \brief & = &amp;
 		CharLt, //! \brief  < = &lt;
 		CharGt, //! \brief  < = &gt;
-		CharQuot, //! \brief  < = &quot;
-		CharApos, //! \brief  < = &apos;
+		CharQuot, //! \brief  " = &quot;
+		CharApos, //! \brief  ' = &apos;
 		CdataStart, //! \brief Constant that indicates <![CDATA instruction start
 		CdataEnd, //! \brief Constant that indicates <![CDATA instruction end (]]>)
 		CommentStart, //! \brief Constant that indicates xml comments start
@@ -124,10 +126,10 @@ class XmlParser {
 		/*! \brief Moves one level in the element tree according to the type of element
 		 to be accessed. Returns true if the position was moved to the
 		 desired element. */
-		bool accessElement(unsigned elem_type);
+		bool accessElement(ElementType elem_type);
 
 		//! \brief Returns if an element has a root, child, previous or next element
-		bool hasElement(unsigned elem_type, xmlElementType xml_node_type=static_cast<xmlElementType>(0));
+		bool hasElement(ElementType elem_type, xmlElementType xml_node_type=static_cast<xmlElementType>(0));
 
 		//! \brief Retorns if an element has attributes
 		bool hasAttributes();

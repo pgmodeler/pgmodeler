@@ -48,13 +48,21 @@ class Operator: public BaseObject {
 		virtual void configureSearchAttributes();
 
 	public:
-		static constexpr unsigned FuncOperator=0,
-		FuncJoin=1,
-		FuncRestrict=2,
-		LeftArg=0,
-		RightArg=1,
-		OperCommutator=0,
-		OperNegator=1;
+		enum FunctionId: unsigned {
+			FuncOperator,
+			FuncJoin,
+			FuncRestrict
+		};
+
+		enum ArgumentId: unsigned {
+			LeftArg,
+			RightArg
+		};
+
+		enum OperatorId: unsigned {
+			OperCommutator,
+			OperNegator
+		};
 
 		Operator();
 
@@ -62,13 +70,13 @@ class Operator: public BaseObject {
 		void setName(const QString &name);
 
 		//! \brief Defines the function used by the operator (constants FUNC_[OPERATOR | JOIN | RESTRICT])
-		void setFunction(Function *func, unsigned func_type);
+		void setFunction(Function *func, FunctionId func_id);
 
 		//! \brief Defines the argument data type for operator (constants ARG_[LEFT | RIGHT])
-		void setArgumentType(PgSqlType arg_type, unsigned arg_id);
+		void setArgumentType(PgSqlType arg_type, ArgumentId arg_id);
 
 		//! \brief Defines the auxiliary operators (constants OPER_[COMMUTATOR | NEGATOR])
-		void setOperator(Operator *oper, unsigned op_type);
+		void setOperator(Operator *oper, OperatorId op_id);
 
 		//! \brief Defines that the operator accepts hash join
 		void setHashes(bool value);
@@ -77,13 +85,13 @@ class Operator: public BaseObject {
 		void setMerges(bool value);
 
 		//! \brief Returns the function used by the operator referencing it by its type
-		Function *getFunction(unsigned func_type);
+		Function *getFunction(FunctionId func_id);
 
 		//! \brief Returns the type of the passed argument id
-		PgSqlType getArgumentType(unsigned arg_id);
+		PgSqlType getArgumentType(ArgumentId arg_id);
 
 		//! \brief Returns on of the auxiliary operators
-		Operator *getOperator(unsigned op_type);
+		Operator *getOperator(OperatorId op_id);
 
 		//! \brief Returns whether the operator accepts hash join
 		bool isHashes();
@@ -95,8 +103,8 @@ class Operator: public BaseObject {
 		static bool isValidName(const QString &name);
 
 		//! \brief Returns the SQL / XML definition for the operator
-		virtual QString getCodeDefinition(unsigned def_type, bool reduced_form) final;
-		virtual QString getCodeDefinition(unsigned def_type) final;
+		virtual QString getSourceCode(SchemaParser::CodeType def_type, bool reduced_form) final;
+		virtual QString getSourceCode(SchemaParser::CodeType def_type) final;
 
 		//! \brief Returns the operator signature
 		virtual QString getSignature(bool format_name=true);

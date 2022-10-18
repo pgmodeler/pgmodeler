@@ -67,10 +67,12 @@ class ResultSet {
 
 	public:
 		//! \brief Constants used to navigate through the resultset
-		static constexpr unsigned FirstTuple=0,
-		LastTuple=1,
-		PreviousTuple=2,
-		NextTuple=3;
+		enum TupleId: unsigned {
+			FirstTuple = 0,
+			LastTuple = 1,
+			PreviousTuple = 2,
+			NextTuple = 3
+		};
 
 		ResultSet();
 		~ResultSet();
@@ -115,7 +117,7 @@ class ResultSet {
 		bool isColumnValueNull(const QString &column_name);
 
 		//! \brief Access on tuple on result set via navigation constants
-		bool accessTuple(unsigned tuple_type);
+		bool accessTuple(TupleId tuple_id);
 
 		//! \brief Returns if the result set is empty due a DML command that does not returned any data
 		bool isEmpty();

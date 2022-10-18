@@ -55,10 +55,12 @@ class GeneralConfigWidget: public BaseConfigWidget, public Ui::GeneralConfigWidg
 
 		static std::map<QString, attribs_map> config_params;
 
-		static constexpr unsigned UnitMilimeters=0,
-		UnitPoint=1,
-		UnitInches=2,
-		UnitCentimeters=3;
+		enum UnitId: unsigned {
+			UnitMilimeters,
+			UnitPoint,
+			UnitInches,
+			UnitCentimeters
+		};
 
 	public:
 		//! \brief Maximum number of files listed as recent models

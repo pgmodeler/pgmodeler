@@ -58,7 +58,7 @@ class Aggregate: public BaseObject {
 		Operator *sort_operator;
 
 		//! \brief Formats the data types to be used as attribute by the SchemaParser
-		void setTypesAttribute(unsigned def_type);
+		void setTypesAttribute(SchemaParser::CodeType def_type);
 
 		//! \brief Checks if the passed function is valid according to the rule of aggregate definition
 		bool isValidFunction(unsigned func_idx, Function *func);
@@ -68,13 +68,15 @@ class Aggregate: public BaseObject {
 
 	public:
 		//! \brief Constants used to reference the functions used by the aggregate
-		static constexpr unsigned FinalFunc=0,
-		TransitionFunc=1;
+		enum FunctionId: unsigned {
+			FinalFunc,
+			TransitionFunc
+		};
 
 		Aggregate();
 
 		//! \brief Defines one of the functions used by the aggregate
-		void setFunction(unsigned func_idx, Function *func);
+		void setFunction(FunctionId func_id, Function *func);
 
 		//! \brief Defines the state data type of the aggregate
 		void setStateType(PgSqlType state_type);
@@ -94,7 +96,7 @@ class Aggregate: public BaseObject {
 		//! \brief Removes all accepted data types from aggregate
 		void removeDataTypes();
 
-		Function *getFunction(unsigned func_idx);
+		Function *getFunction(FunctionId func_id);
 		PgSqlType getStateType();
 		QString getInitialCondition();
 		Operator *getSortOperator();
@@ -102,11 +104,11 @@ class Aggregate: public BaseObject {
 		unsigned getDataTypeCount();
 
 		//! \brief Returns the SQL / XML code definition for the aggregate
-		virtual QString getCodeDefinition(unsigned def_type) final;
+		virtual QString getSourceCode(SchemaParser::CodeType def_type) final;
 
-		virtual QString getDropDefinition(bool cascade) final;
+		virtual QString getDropCode(bool cascade) final;
 
-		virtual QString getAlterDefinition(BaseObject *object) final;
+		virtual QString getAlterCode(BaseObject *object) final;
 
 		virtual QString getSignature(bool format=true) final;
 };

@@ -153,7 +153,7 @@ void ReferenceWidget::setAttributes(Reference ref, unsigned ref_flags, DatabaseM
 		expr_alias_edt->setText(ref.getAlias());
 	}
 
-	if(ref_flags == Reference::SqlViewDefinition)
+	if(ref_flags == Reference::SqlViewDef)
 	{
 		int row = 0;
 		view_def_chk->setChecked(true);
@@ -188,10 +188,10 @@ void ReferenceWidget::setAttributes(Reference ref, unsigned ref_flags, DatabaseM
 	}
 	else
 	{
-		select_from_chk->setChecked((ref_flags & Reference::SqlReferSelect) == Reference::SqlReferSelect);
-		from_where_chk->setChecked((ref_flags & Reference::SqlReferFrom) == Reference::SqlReferFrom);
-		after_where_chk->setChecked((ref_flags & Reference::SqlReferWhere) == Reference::SqlReferWhere);
-		end_expr_chk->setChecked((ref_flags & Reference::SqlReferEndExpr) == Reference::SqlReferEndExpr);
+		select_from_chk->setChecked((ref_flags & Reference::SqlSelect) == Reference::SqlSelect);
+		from_where_chk->setChecked((ref_flags & Reference::SqlFrom) == Reference::SqlFrom);
+		after_where_chk->setChecked((ref_flags & Reference::SqlWhere) == Reference::SqlWhere);
+		end_expr_chk->setChecked((ref_flags & Reference::SqlEndExpr) == Reference::SqlEndExpr);
 	}
 
 	ref_tables_tab->setButtonsEnabled(ObjectsTableWidget::AddButton, false);
@@ -236,7 +236,7 @@ void ReferenceWidget::applyConfiguration()
 
 		if(view_def_chk->isChecked())
 		{
-			ref_flags = Reference::SqlViewDefinition;
+			ref_flags = Reference::SqlViewDef;
 			reference.removeColumns();
 
 			for(unsigned row = 0; row < columns_tab->getRowCount(); row++)
@@ -249,16 +249,16 @@ void ReferenceWidget::applyConfiguration()
 		}
 
 		if(select_from_chk->isChecked())
-			ref_flags |= Reference::SqlReferSelect;
+			ref_flags |= Reference::SqlSelect;
 
 		if(from_where_chk->isChecked())
-			ref_flags |= Reference::SqlReferFrom;
+			ref_flags |= Reference::SqlFrom;
 
 		if(after_where_chk->isChecked())
-			ref_flags |= Reference::SqlReferWhere;
+			ref_flags |= Reference::SqlWhere;
 
 		if(end_expr_chk->isChecked())
-			ref_flags |= Reference::SqlReferEndExpr;
+			ref_flags |= Reference::SqlEndExpr;
 
 
 		emit s_closeRequested();

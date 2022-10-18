@@ -84,8 +84,8 @@ class PhysicalTable: public BaseTable {
 		BaseObject *getObject(const QString &name, ObjectType obj_type, int &obj_idx);
 
 		//! \brief The methods below generates the table attributes used by the SchemaParser
-		void setColumnsAttribute(unsigned def_type, bool incl_rel_added_cols);
-		void setConstraintsAttribute(unsigned def_type);
+		void setColumnsAttribute(SchemaParser::CodeType def_type, bool incl_rel_added_cols);
+		void setConstraintsAttribute(SchemaParser::CodeType def_type);
 		void setCommentAttribute(TableObject *tab_obj);
 		void setAncestorTableAttribute();
 		void setRelObjectsIndexesAttribute();		
@@ -271,7 +271,7 @@ class PhysicalTable: public BaseTable {
 		void removeTrigger(unsigned idx);
 
 		//! \brief Returns the SQL / XML definition for table
-		virtual QString getCodeDefinition(unsigned def_type) = 0;
+		virtual QString getSourceCode(SchemaParser::CodeType def_type) = 0;
 
 		//! \brief Gets the object index using its name and type
 		int getObjectIndex(const QString &name, ObjectType obj_type);
@@ -313,7 +313,7 @@ class PhysicalTable: public BaseTable {
 		//! \brief Returns if the table is a partition of another table
 		bool isPartition();
 
-		//! \brief Returns if the table is a partitioned. This is the same as getPartitioningType() != BaseType::null
+		//! \brief Returns if the table is a partitioned. This is the same as getPartitioningType() != null
 		bool isPartitioned();
 
 		//! \brief Copy the attributes between two tables
@@ -347,7 +347,7 @@ class PhysicalTable: public BaseTable {
 
 		/*! \brief Returns the alter definition by comparing the this table against the one provided via parameter
 		 * This is a pure virtual method and must be implemented by children classes */
-		virtual QString getAlterDefinition(BaseObject *object) = 0;
+		virtual QString getAlterCode(BaseObject *object) = 0;
 
 		/*! \brief Defines an initial set of data for the table in a CSV-like buffer.
 		In order to separate columns and values use the DATA_SEPARATOR char and to separate
@@ -365,7 +365,7 @@ class PhysicalTable: public BaseTable {
 		 * Note if the method is called with incl_rel_added_objs = true it can produce an SQL/XML code
 		 * that does not reflect the real semantics of the table. So take care to use this method and always
 		 * invalidate the tables code (see setCodeInvalidated()) after retrieving the resulting code */
-		void setTableAttributes(unsigned def_type, bool incl_rel_added_objs);
+		void setTableAttributes(SchemaParser::CodeType def_type, bool incl_rel_added_objs);
 
 		virtual void setObjectListsCapacity(unsigned capacity);
 

@@ -279,7 +279,7 @@ void PermissionWidget::addPermission()
 		perm=new Permission(this->object);
 		configurePermission(perm);
 		model->addPermission(perm);
-		model->addChangelogEntry(perm, Operation::ObjectCreated);
+		model->addChangelogEntry(perm, Operation::ObjCreated);
 		listPermissions();
 		cancelOperation();
 		perms_changed=true;
@@ -380,8 +380,8 @@ void PermissionWidget::editPermission()
 			chk=dynamic_cast<QCheckBox *>(privileges_tbw->cellWidget(priv,0));
 			chk1=dynamic_cast<QCheckBox *>(privileges_tbw->cellWidget(priv,1));
 
-			chk->setChecked(permission->getPrivilege(priv));
-			chk1->setChecked(permission->getGrantOption(priv));
+			chk->setChecked(permission->getPrivilege(static_cast<Permission::PrivilegeId>(priv)));
+			chk1->setChecked(permission->getGrantOption(static_cast<Permission::PrivilegeId>(priv)));
 		}
 
 		enableEditButtons();
@@ -391,7 +391,7 @@ void PermissionWidget::editPermission()
 void PermissionWidget::removePermission(int)
 { 
 	model->removePermission(permission);
-	model->addChangelogEntry(permission, Operation::ObjectRemoved);
+	model->addChangelogEntry(permission, Operation::ObjRemoved);
 	cancelOperation();
 	permission=nullptr;
 	permissions_tab->clearSelection();
@@ -410,7 +410,7 @@ void PermissionWidget::removePermissions()
 	updateCodePreview();
 
 	for(auto &perm : perms)
-		model->addChangelogEntry(perm, Operation::ObjectRemoved);
+		model->addChangelogEntry(perm, Operation::ObjRemoved);
 }
 
 void PermissionWidget::configurePermission(Permission *perm)
@@ -436,7 +436,7 @@ void PermissionWidget::configurePermission(Permission *perm)
 			{
 				chk=dynamic_cast<QCheckBox *>(privileges_tbw->cellWidget(priv,0));
 				chk1=dynamic_cast<QCheckBox *>(privileges_tbw->cellWidget(priv,1));
-				perm->setPrivilege(priv, chk->isChecked(), chk1->isChecked());
+				perm->setPrivilege(static_cast<Permission::PrivilegeId>(priv), chk->isChecked(), chk1->isChecked());
 			}
 		}
 	}
@@ -527,7 +527,7 @@ void PermissionWidget::updateCodePreview()
 		cnt=perms.size();
 
 		for(i=0; i < cnt; i++)
-			code+=perms[i]->getCodeDefinition(SchemaParser::SqlDefinition);
+			code+=perms[i]->getSourceCode(SchemaParser::SqlCode);
 
 		if(code.isEmpty())
 			code=tr("-- No permissions defined for the specified object!");

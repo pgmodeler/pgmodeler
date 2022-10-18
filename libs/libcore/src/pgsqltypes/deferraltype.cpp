@@ -21,7 +21,7 @@
 template<>
 QStringList DeferralType::TemplateType<DeferralType>::type_names =
 {
-	"", // Reserved for BaseType::null
+	"", // Reserved for Class::Null
 
 	"INITIALLY IMMEDIATE",
 	"INITIALLY DEFERRED"

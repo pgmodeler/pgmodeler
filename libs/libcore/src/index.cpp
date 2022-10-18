@@ -43,7 +43,7 @@ Index::Index()
 	attributes[Attributes::IncludedCols]="";
 }
 
-void Index::setIndexElementsAttribute(unsigned def_type)
+void Index::setIndexElementsAttribute(SchemaParser::CodeType def_type)
 {
 	QString str_elem;
 	unsigned i, count;
@@ -51,8 +51,8 @@ void Index::setIndexElementsAttribute(unsigned def_type)
 	count=idx_elements.size();
 	for(i=0; i < count; i++)
 	{
-		str_elem+=idx_elements[i].getCodeDefinition(def_type);
-		if(i < (count-1) && def_type==SchemaParser::SqlDefinition) str_elem+=',';
+		str_elem+=idx_elements[i].getSourceCode(def_type);
+		if(i < (count-1) && def_type==SchemaParser::SqlCode) str_elem+=',';
 	}
 
 	attributes[Attributes::Elements]=str_elem;
@@ -201,7 +201,7 @@ unsigned Index::getIndexElementCount()
 	return idx_elements.size();
 }
 
-void Index::setIndexAttribute(unsigned attrib_id, bool value)
+void Index::setIndexAttribute(IndexAttrib attrib_id, bool value)
 {
 	if(attrib_id > Buffering)
 		throw Exception(ErrorCode::RefAttributeInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -234,7 +234,7 @@ unsigned Index::getFillFactor()
 	return fill_factor;
 }
 
-bool Index::getIndexAttribute(unsigned attrib_id)
+bool Index::getIndexAttribute(IndexAttrib attrib_id)
 {
 	if(attrib_id > Buffering)
 		throw Exception(ErrorCode::RefAttributeInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -403,7 +403,7 @@ std::vector<SimpleColumn> Index::getSimpleColumns()
 	return incl_simple_cols;
 }
 
-QString Index::getCodeDefinition(unsigned def_type)
+QString Index::getSourceCode(SchemaParser::CodeType def_type)
 {
 	QString code_def=getCachedCode(def_type, false);
 	if(!code_def.isEmpty()) return code_def;
@@ -419,7 +419,7 @@ QString Index::getCodeDefinition(unsigned def_type)
 	{
 		attributes[Attributes::Table]=getParentTable()->getName(true);
 
-		if(def_type==SchemaParser::SqlDefinition && getParentTable()->getSchema())
+		if(def_type==SchemaParser::SqlCode && getParentTable()->getSchema())
 			attributes[Attributes::Schema]=getParentTable()->getSchema()->getName(true);
 	}
 
@@ -434,7 +434,7 @@ QString Index::getCodeDefinition(unsigned def_type)
 		attributes[Attributes::Factor]=QString("%1").arg(fill_factor);
 		attributes[Attributes::StorageParams]=Attributes::True;
 	}
-	else if(def_type==SchemaParser::XmlDefinition)
+	else if(def_type==SchemaParser::XmlCode)
 		attributes[Attributes::Factor]=QString("0");
 
 	QStringList incl_cols;
@@ -452,7 +452,7 @@ QString Index::getCodeDefinition(unsigned def_type)
 	if(!isReferRelationshipAddedColumn())
 		attributes[Attributes::DeclInTable]=Attributes::True;
 
-	return BaseObject::__getCodeDefinition(def_type);
+	return BaseObject::__getSourceCode(def_type);
 }
 
 QString Index::getSignature(bool format)
@@ -463,7 +463,7 @@ QString Index::getSignature(bool format)
 	return QString("%1.%2").arg(getParentTable()->getSchema()->getName(format)).arg(this->getName(format));
 }
 
-QString Index::getAlterDefinition(BaseObject *object)
+QString Index::getAlterCode(BaseObject *object)
 {
 	Index *index=dynamic_cast<Index *>(object);
 
@@ -473,7 +473,7 @@ QString Index::getAlterDefinition(BaseObject *object)
 	try
 	{
 		attribs_map attribs;
-		attributes[Attributes::AlterCmds]=BaseObject::getAlterDefinition(object);
+		attributes[Attributes::AlterCmds]=BaseObject::getAlterCode(object);
 
 		if(this->indexing_type==index->indexing_type)
 		{
@@ -491,7 +491,7 @@ QString Index::getAlterDefinition(BaseObject *object)
 		}
 
 		copyAttributes(attribs);
-		return BaseObject::getAlterDefinition(this->getSchemaName(), attributes, false, true);
+		return BaseObject::getAlterCode(this->getSchemaName(), attributes, false, true);
 	}
 	catch(Exception &e)
 	{
@@ -541,7 +541,7 @@ QString Index::getDataDictionary(const attribs_map &extra_attribs)
 		attribs[Attributes::Expressions] = exprs.join(", ");
 
 		schparser.ignoreEmptyAttributes(true);
-		return schparser.getCodeDefinition(GlobalAttributes::getSchemaFilePath(GlobalAttributes::DataDictSchemaDir,
+		return schparser.getSourceCode(GlobalAttributes::getSchemaFilePath(GlobalAttributes::DataDictSchemaDir,
 																																					 getSchemaName()), attribs);
 	}
 	catch(Exception &e)

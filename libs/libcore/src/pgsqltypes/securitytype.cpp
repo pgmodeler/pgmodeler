@@ -21,7 +21,7 @@
 template<>
 QStringList SecurityType::TemplateType<SecurityType>::type_names =
 {
-	"", // Reserved for BaseType::null
+	"", // Reserved for Class::Null
 
 	"SECURITY INVOKER",
 	"SECURITY DEFINER"

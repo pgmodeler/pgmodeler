@@ -86,19 +86,21 @@ class DatabaseImportForm: public QDialog, public Ui::DatabaseImportForm {
 
 	public:
 		//! \brief Constants used to access the tree widget items data
-		static constexpr unsigned ObjectId=1,
-		ObjectTypeId=2,
-		ObjectName=3,
-		ObjectSchema=4,
-		ObjectTable=5,
-		ObjectAttribs=6, //Stores the object's attributes returned by catalog query
-		ObjectOtherData=7, //General purpose usage
-		ObjectCount=8,		
-		ObjectSource=9,
+		enum ObjectAttrId {
+			ObjectId=1,
+			ObjectTypeId=2,
+			ObjectName=3,
+			ObjectSchema=4,
+			ObjectTable=5,
+			ObjectAttribs=6, //Stores the object's attributes returned by catalog query
+			ObjectOtherData=7, //General purpose usage
+			ObjectCount=8,
+			ObjectSource=9,
 
-		/* Special field that stores an internal group id in the form -(object type code + root item id [if not null]).
-		 * This is use to save and restore tree state */
-		ObjectGroupId=10;
+			/* Special field that stores an internal group id in the form -(object type code + root item id [if not null]).
+			 * This is use to save and restore tree state */
+			ObjectGroupId=10
+		};
 
 		/*! \brief This constant holds the maximum amount of objects in a database to be imported
 		 * which will not generate an alert message about the possible slowdowns in the process

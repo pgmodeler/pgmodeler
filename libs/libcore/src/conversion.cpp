@@ -29,24 +29,21 @@ Conversion::Conversion()
 	attributes[Attributes::Function]="";
 }
 
-void Conversion::setEncoding(unsigned encoding_idx, EncodingType encoding_type)
+void Conversion::setEncoding(EncodingId encoding_id, EncodingType encoding_type)
 {
 	//Checks if the encoding index is valid
-	if(encoding_idx<=DstEncoding)
-	{
-		//If the passed enconding type is null an error is raised
-		if((~encoding_type).isEmpty())
-			throw Exception(Exception::getErrorMessage(ErrorCode::AsgNullTypeObject)
-							.arg(this->getName())
-							.arg(BaseObject::getTypeName(ObjectType::Conversion)),
-							ErrorCode::AsgNullTypeObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-
-		//Assigns the encoding to the conversion in the specified index
-		this->encodings[encoding_idx]=encoding_type;
-	}
-	else
-		//Raises an error if the encoding index is invalid
+	if(encoding_id > DstEncoding)
 		throw Exception(ErrorCode::RefTypeInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+	//If the passed enconding type is null an error is raised
+	if((~encoding_type).isEmpty())
+		throw Exception(Exception::getErrorMessage(ErrorCode::AsgNullTypeObject)
+						.arg(this->getName())
+						.arg(BaseObject::getTypeName(ObjectType::Conversion)),
+						ErrorCode::AsgNullTypeObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+	//Assigns the encoding to the conversion in the specified index
+	this->encodings[encoding_id]=encoding_type;
 }
 
 void Conversion::setConversionFunction(Function *conv_func)
@@ -92,12 +89,12 @@ void Conversion::setDefault(bool value)
 	is_default=value;
 }
 
-EncodingType Conversion::getEncoding(unsigned encoding_idx)
+EncodingType Conversion::getEncoding(EncodingId encoding_id)
 {
-	if(encoding_idx > DstEncoding)
+	if(encoding_id > DstEncoding)
 		throw Exception(ErrorCode::RefTypeInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	return this->encodings[encoding_idx];
+	return this->encodings[encoding_id];
 }
 
 Function *Conversion::getConversionFunction()
@@ -110,7 +107,7 @@ bool Conversion::isDefault()
 	return is_default;
 }
 
-QString Conversion::getCodeDefinition(unsigned def_type)
+QString Conversion::getSourceCode(SchemaParser::CodeType def_type)
 {
 	QString code_def=getCachedCode(def_type, false);
 	if(!code_def.isEmpty()) return code_def;
@@ -121,12 +118,12 @@ QString Conversion::getCodeDefinition(unsigned def_type)
 
 	if(conversion_func)
 	{
-		if(def_type==SchemaParser::SqlDefinition)
+		if(def_type==SchemaParser::SqlCode)
 			attributes[Attributes::Function]=conversion_func->getName(true);
 		else
-			attributes[Attributes::Function]=conversion_func->getCodeDefinition(def_type, true);
+			attributes[Attributes::Function]=conversion_func->getSourceCode(def_type, true);
 	}
 
-	return BaseObject::__getCodeDefinition(def_type);
+	return BaseObject::__getSourceCode(def_type);
 }
 

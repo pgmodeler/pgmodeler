@@ -813,9 +813,9 @@ void BaseObjectWidget::finishConfiguration()
 			{
 				//If the object is being updated, validates its SQL definition
 				if(obj_type==ObjectType::BaseRelationship || obj_type==ObjectType::Textbox || obj_type==ObjectType::Tag)
-					this->object->getCodeDefinition(SchemaParser::XmlDefinition);
+					this->object->getSourceCode(SchemaParser::XmlCode);
 				else
-					this->object->getCodeDefinition(SchemaParser::SqlDefinition);
+					this->object->getSourceCode(SchemaParser::SqlCode);
 			}
 
 			model->getObjectReferences(object, ref_objs);
@@ -899,7 +899,7 @@ void BaseObjectWidget::cancelConfiguration()
 
 		if(!BaseTable::isBaseTable(obj_type) && obj_type != ObjectType::Relationship)
 		{
-			if(!op_list->isObjectRegistered(this->object, Operation::ObjectCreated))
+			if(!op_list->isObjectRegistered(this->object, Operation::ObjCreated))
 				delete this->object;
 
 			this->object=nullptr;
@@ -927,15 +927,15 @@ void BaseObjectWidget::registerNewObject()
 {
 	try
 	{
-		if(this->new_object && op_list && !op_list->isObjectRegistered(this->object, Operation::ObjectCreated))
+		if(this->new_object && op_list && !op_list->isObjectRegistered(this->object, Operation::ObjCreated))
 		{
 			//If the object is a new one is necessary register it on the operation list
 			if(this->table)
-				op_list->registerObject(this->object, Operation::ObjectCreated, -1, this->table);
+				op_list->registerObject(this->object, Operation::ObjCreated, -1, this->table);
 			else if(this->relationship)
-				op_list->registerObject(this->object, Operation::ObjectCreated, -1, this->relationship);
+				op_list->registerObject(this->object, Operation::ObjCreated, -1, this->relationship);
 			else
-				op_list->registerObject(this->object, Operation::ObjectCreated);
+				op_list->registerObject(this->object, Operation::ObjCreated);
 		}
 	}
 	catch(Exception &e)

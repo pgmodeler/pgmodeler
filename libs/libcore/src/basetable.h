@@ -29,14 +29,15 @@
 #include "basegraphicobject.h"
 #include "tag.h"
 
-//! \brief This enum is used to control the collapsing of the tables
-enum class CollapseMode: unsigned {
-	AllAttribsCollapsed, //Columns (attributes) and extended attributes are collapsed
-	ExtAttribsCollapsed, //Extended attributes are collapsed
-	NotCollapsed //Table is fully expanded (columns and extended attributes)
-};
-
 class BaseTable: public BaseGraphicObject {
+	public:
+		//! \brief This enum is used to control the collapsing of the tables
+		enum CollapseMode: unsigned {
+			AllAttribsCollapsed, //Columns (attributes) and extended attributes are collapsed
+			ExtAttribsCollapsed, //Extended attributes are collapsed
+			NotCollapsed //Table is fully expanded (columns and extended attributes)
+		};
+
 	protected:
 		Tag *tag;
 
@@ -50,8 +51,10 @@ class BaseTable: public BaseGraphicObject {
 		unsigned curr_page[2];
 
 	public:
-		static constexpr unsigned AttribsSection = 0,
-		ExtAttribsSection = 1;
+		enum TableSection: unsigned {
+			AttribsSection,
+			ExtAttribsSection
+		};
 
 		BaseTable();
 
@@ -92,9 +95,9 @@ class BaseTable: public BaseGraphicObject {
 		//! \brief Returns all children objects of the table but excluding the ones of the provided type
 		virtual std::vector<BaseObject *> getObjects(const std::vector<ObjectType> &excl_types = {})=0;
 
-		virtual QString getCodeDefinition(unsigned tipo_def)=0;
+		virtual QString getSourceCode(SchemaParser::CodeType tipo_def)=0;
 
-		virtual QString getAlterDefinition(BaseObject *object);
+		virtual QString getAlterCode(BaseObject *object);
 
 		/*! \brief Set the initial capacity of the objects list for a optimized memory usage.
 		 * This method should be called prior to adding the first object to the table because, depending o the capacity,
@@ -126,9 +129,9 @@ class BaseTable: public BaseGraphicObject {
 		/*! \brief Defines the current page visible on the table. Calling this method direclty
 		 * will not update the geometry of the graphical representation of this object. For that,
 		 * the setModified(true) should be called */
-		void setCurrentPage(unsigned section_id, unsigned value);
+		void setCurrentPage(TableSection section_id, unsigned value);
 		void resetCurrentPages();
-		unsigned getCurrentPage(unsigned section_id);
+		unsigned getCurrentPage(TableSection section_id);
 
 		/*! \brief Returns the data dictionary definition of the table (in HTML format).
 		 * The split parameter is used to inform the generation process that the dicts are being

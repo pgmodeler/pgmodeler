@@ -62,7 +62,7 @@ void Element::setSimpleColumn(const SimpleColumn &col)
 	expression = "";
 }
 
-void Element::setSortingAttribute(unsigned attrib, bool value)
+void Element::setSortingAttribute(SortOrder attrib, bool value)
 {
 	if(attrib > NullsFirst)
 		throw Exception(ErrorCode::RefAttributeInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -80,7 +80,7 @@ bool Element::isSortingEnabled()
 	return sorting_enabled;
 }
 
-bool Element::getSortingAttribute(unsigned attrib)
+bool Element::getSortingAttribute(SortOrder attrib)
 {
 	if(attrib > NullsFirst)
 		throw Exception(ErrorCode::RefAttributeInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -108,7 +108,7 @@ SimpleColumn Element::getSimpleColumn()
 	return simple_col;
 }
 
-void Element::configureAttributes(attribs_map &attributes, unsigned def_type)
+void Element::configureAttributes(attribs_map &attributes, SchemaParser::CodeType def_type)
 {
 	attributes[Attributes::Column]="";
 	attributes[Attributes::Expression]="";
@@ -118,10 +118,10 @@ void Element::configureAttributes(attribs_map &attributes, unsigned def_type)
 	attributes[Attributes::AscOrder]=(this->sorting_enabled && this->sorting_attibs[AscOrder] ? Attributes::True : "");
 
 	if(column)
-		attributes[Attributes::Column]=column->getName(def_type == SchemaParser::SqlDefinition);
+		attributes[Attributes::Column]=column->getName(def_type == SchemaParser::SqlCode);
 	else if(simple_col.isValid())
 	{
-		if(def_type == SchemaParser::SqlDefinition)
+		if(def_type == SchemaParser::SqlCode)
 			attributes[Attributes::Column] = BaseObject::formatName(simple_col.name);
 		else
 			attributes[Attributes::Column] = simple_col.name;
@@ -131,10 +131,10 @@ void Element::configureAttributes(attribs_map &attributes, unsigned def_type)
 
 	if(operator_class)
 	{
-		if(def_type==SchemaParser::SqlDefinition)
-			attributes[Attributes::OpClass]=operator_class->getName(def_type == SchemaParser::SqlDefinition);
+		if(def_type==SchemaParser::SqlCode)
+			attributes[Attributes::OpClass]=operator_class->getName(def_type == SchemaParser::SqlCode);
 		else
-			attributes[Attributes::OpClass]=operator_class->getCodeDefinition(def_type, true);
+			attributes[Attributes::OpClass]=operator_class->getSourceCode(def_type, true);
 	}
 }
 

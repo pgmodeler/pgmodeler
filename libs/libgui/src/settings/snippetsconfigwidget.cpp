@@ -42,14 +42,14 @@ SnippetsConfigWidget::SnippetsConfigWidget(QWidget * parent) : BaseConfigWidget(
 	for(auto &itr : types_map)
 	{
 		ico.load(GuiUtilsNs::getIconPath(itr.second));
-		applies_to_cmb->addItem(ico, itr.first, enum_cast(itr.second));
-		filter_cmb->addItem(ico, itr.first, enum_cast(itr.second));
+		applies_to_cmb->addItem(ico, itr.first, enum_t(itr.second));
+		filter_cmb->addItem(ico, itr.first, enum_t(itr.second));
 	}
 
-	applies_to_cmb->insertItem(0, gen_purpose, enum_cast(ObjectType::BaseObject));
+	applies_to_cmb->insertItem(0, gen_purpose, enum_t(ObjectType::BaseObject));
 	applies_to_cmb->setCurrentIndex(0);
 
-	filter_cmb->insertItem(0, gen_purpose, enum_cast(ObjectType::BaseObject));
+	filter_cmb->insertItem(0, gen_purpose, enum_t(ObjectType::BaseObject));
 	filter_cmb->insertItem(0, tr("All snippets"));
 	filter_cmb->setCurrentIndex(0);
 
@@ -177,7 +177,7 @@ QString SnippetsConfigWidget::parseSnippet(attribs_map snippet, attribs_map attr
 
 		schparser.ignoreEmptyAttributes(true);
 		schparser.ignoreUnkownAttributes(true);
-		return schparser.getCodeDefinition(attribs);
+		return schparser.getSourceCode(attribs);
 	}
 	catch(Exception &e)
 	{
@@ -235,7 +235,7 @@ bool SnippetsConfigWidget::isSnippetValid(attribs_map &attribs, const QString &o
 			schparser.loadBuffer(buf);
 			schparser.ignoreEmptyAttributes(true);
 			schparser.ignoreUnkownAttributes(true);
-			schparser.getCodeDefinition(attribs);
+			schparser.getSourceCode(attribs);
 		}
 		catch(Exception &e)
 		{
@@ -455,7 +455,7 @@ void SnippetsConfigWidget::saveConfiguration()
 			for(auto &snip : snippets)
 			{
 				attribs[Attributes::Snippet]+=
-						XmlParser::convertCharsToXMLEntities(schparser.getCodeDefinition(snippet_sch, snip));
+						XmlParser::convertCharsToXMLEntities(schparser.getSourceCode(snippet_sch, snip));
 			}
 		}
 

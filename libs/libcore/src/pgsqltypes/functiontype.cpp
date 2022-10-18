@@ -20,7 +20,7 @@
 
 template<>
 QStringList FunctionType::TemplateType<FunctionType>::type_names = {
-	"", // Reserved for BaseType::null
+	"", // Reserved for Class::Null
 
 	"VOLATILE",
 	"STABLE",

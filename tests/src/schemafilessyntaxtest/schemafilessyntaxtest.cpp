@@ -54,7 +54,7 @@ void SchemaFilesSyntaxTest::schemasDontGenerateSyntaxErrors()
 			{
 				schparser.ignoreEmptyAttributes(true);
 				schparser.ignoreUnkownAttributes(true);
-				schparser.getCodeDefinition(path + GlobalAttributes::DirSeparator + sch_file, attrs);
+				schparser.getSourceCode(path + GlobalAttributes::DirSeparator + sch_file, attrs);
 			}
 		}
 		catch(Exception &e)

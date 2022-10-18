@@ -89,12 +89,12 @@ void Operator::setName(const QString &name)
 	this->obj_name=name;
 }
 
-void Operator::setFunction(Function *func, unsigned func_type)
+void Operator::setFunction(Function *func, FunctionId func_id)
 {
 	//Raises an error if the function type is invalid
-	if(func_type > FuncRestrict)
+	if(func_id > FuncRestrict)
 		throw Exception(ErrorCode::RefFunctionInvalidType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-	else if(func_type==FuncOperator)
+	else if(func_id==FuncOperator)
 	{
 		//Raises an error if the function is not allocated
 		if(!func)
@@ -147,11 +147,11 @@ void Operator::setFunction(Function *func, unsigned func_type)
 		}
 	}
 
-	setCodeInvalidated(functions[func_type] != func);
-	functions[func_type]=func;
+	setCodeInvalidated(functions[func_id] != func);
+	functions[func_id]=func;
 }
 
-void Operator::setArgumentType(PgSqlType arg_type, unsigned arg_id)
+void Operator::setArgumentType(PgSqlType arg_type, ArgumentId arg_id)
 {
 	//Raises an error if the argument id is invalid
 	if(arg_id > RightArg)
@@ -162,10 +162,10 @@ void Operator::setArgumentType(PgSqlType arg_type, unsigned arg_id)
 	argument_types[arg_id]=arg_type;
 }
 
-void Operator::setOperator(Operator *oper, unsigned op_type)
+void Operator::setOperator(Operator *oper, OperatorId op_id)
 {
 	//Raises an error if the operator type is invalid
-	if(op_type > OperNegator)
+	if(op_id > OperNegator)
 		throw Exception(ErrorCode::RefOperatorInvalidType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	else
 	{
@@ -175,7 +175,7 @@ void Operator::setOperator(Operator *oper, unsigned op_type)
 		 is being defined and its commutator operator is +*+ then the signature
 		 of the latter should be +*+ (typeB, typeA). Raises an error when this condition
 		 is not satisfied. */
-		if(oper && op_type==OperCommutator && argument_types[LeftArg]!=oper->argument_types[RightArg])
+		if(oper && op_id==OperCommutator && argument_types[LeftArg]!=oper->argument_types[RightArg])
 		{
 			throw Exception(Exception::getErrorMessage(ErrorCode::AsgInvalidCommutatorOperator)
 							.arg(oper->getSignature(true))
@@ -187,7 +187,7 @@ void Operator::setOperator(Operator *oper, unsigned op_type)
 		 operator to be defined. That is, if the operator !!(typeA) is being
 		 set and its negator is !*! then the signature of the latter should be !*! (typeA).
 		 Raises an error when this condition is not satisfied. */
-		else if(oper && op_type==OperNegator &&
+		else if(oper && op_id==OperNegator &&
 				(argument_types[LeftArg]!=oper->argument_types[LeftArg] &&
 				 argument_types[RightArg]!=oper->argument_types[RightArg]))
 		{
@@ -197,8 +197,8 @@ void Operator::setOperator(Operator *oper, unsigned op_type)
 							ErrorCode::AsgFunctionInvalidParamCount,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		}
 
-		setCodeInvalidated(operators[op_type] != oper);
-		operators[op_type]=oper;
+		setCodeInvalidated(operators[op_id] != oper);
+		operators[op_id]=oper;
 	}
 }
 
@@ -214,16 +214,16 @@ void Operator::setMerges(bool value)
 	merges=value;
 }
 
-Function *Operator::getFunction(unsigned func_type)
+Function *Operator::getFunction(FunctionId func_id)
 {
 	//Raises an error if the function type is invalid
-	if(func_type > FuncRestrict)
+	if(func_id > FuncRestrict)
 		throw Exception(ErrorCode::RefOperatorInvalidType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	return functions[func_type];
+	return functions[func_id];
 }
 
-PgSqlType Operator::getArgumentType(unsigned arg_id)
+PgSqlType Operator::getArgumentType(ArgumentId arg_id)
 {
 	//Raises an error if the argument id is invalid
 	if(arg_id > RightArg)
@@ -231,13 +231,13 @@ PgSqlType Operator::getArgumentType(unsigned arg_id)
 	return argument_types[arg_id];
 }
 
-Operator *Operator::getOperator(unsigned op_type)
+Operator *Operator::getOperator(OperatorId op_id)
 {
 	//Raises an error if the operator type is invalid
-	if(op_type > OperNegator)
+	if(op_id > OperNegator)
 		throw Exception(ErrorCode::RefFunctionInvalidType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	return operators[op_type];
+	return operators[op_id];
 }
 
 bool Operator::isHashes()
@@ -270,12 +270,12 @@ QString Operator::getSignature(bool format_name)
 	return signature;
 }
 
-QString Operator::getCodeDefinition(unsigned def_type)
+QString Operator::getSourceCode(SchemaParser::CodeType def_type)
 {
-	return this->getCodeDefinition(def_type, false);
+	return this->getSourceCode(def_type, false);
 }
 
-QString Operator::getCodeDefinition(unsigned def_type, bool reduced_form)
+QString Operator::getSourceCode(SchemaParser::CodeType def_type, bool reduced_form)
 {
 	QString code_def=getCachedCode(def_type, reduced_form);
 	if(!code_def.isEmpty()) return code_def;
@@ -291,7 +291,7 @@ QString Operator::getCodeDefinition(unsigned def_type, bool reduced_form)
 
 	for(i=Operator::LeftArg; i <= Operator::RightArg; i++)
 	{
-		if(def_type==SchemaParser::SqlDefinition)
+		if(def_type==SchemaParser::SqlCode)
 		{
 			if(argument_types[i]!=QString("\"any\""))
 				attributes[type_attribs[i]]=~argument_types[i];
@@ -299,7 +299,7 @@ QString Operator::getCodeDefinition(unsigned def_type, bool reduced_form)
 		else
 		{
 			attributes[type_attribs[i]]=argument_types[i].
-																	getCodeDefinition(SchemaParser::XmlDefinition,type_attribs[i]);
+																	getSourceCode(SchemaParser::XmlCode,type_attribs[i]);
 		}
 	}
 
@@ -307,12 +307,12 @@ QString Operator::getCodeDefinition(unsigned def_type, bool reduced_form)
 	{
 		if(operators[i])
 		{
-			if(def_type==SchemaParser::SqlDefinition)
+			if(def_type==SchemaParser::SqlCode)
 				attributes[op_attribs[i]]=operators[i]->getName(true);
 			else
 			{
 				operators[i]->attributes[Attributes::RefType]=op_attribs[i];
-				attributes[op_attribs[i]]=operators[i]->getCodeDefinition(def_type, true);
+				attributes[op_attribs[i]]=operators[i]->getSourceCode(def_type, true);
 			}
 		}
 	}
@@ -321,12 +321,12 @@ QString Operator::getCodeDefinition(unsigned def_type, bool reduced_form)
 	{
 		if(functions[i])
 		{
-			if(def_type==SchemaParser::SqlDefinition)
+			if(def_type==SchemaParser::SqlCode)
 				attributes[func_attribs[i]]=functions[i]->getName(true);
 			else
 			{
 				functions[i]->setAttribute(Attributes::RefType, func_attribs[i]);
-				attributes[func_attribs[i]]=functions[i]->getCodeDefinition(def_type, true);
+				attributes[func_attribs[i]]=functions[i]->getSourceCode(def_type, true);
 			}
 		}
 	}
@@ -335,7 +335,7 @@ QString Operator::getCodeDefinition(unsigned def_type, bool reduced_form)
 	attributes[Attributes::Merges]=(merges ? Attributes::True : "");
 	attributes[Attributes::Signature]=getSignature();
 
-	return BaseObject::getCodeDefinition(def_type, reduced_form);
+	return BaseObject::getSourceCode(def_type, reduced_form);
 }
 
 void Operator::configureSearchAttributes()

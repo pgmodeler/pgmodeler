@@ -453,13 +453,13 @@ void GeneralConfigWidget::saveConfiguration()
 			if((itr->first).contains(QRegularExpression(QString("(") + Attributes::File + QString(")([0-9]+)"))))
 			{
 				config_params[Attributes::Configuration][Attributes::File]+=
-						XmlParser::convertCharsToXMLEntities(schparser.getCodeDefinition(file_sch, itr->second));
+						XmlParser::convertCharsToXMLEntities(schparser.getSourceCode(file_sch, itr->second));
 			}
 			//Checking if the current attribute is a file to be stored in a <recent-models> tag
 			else if(recent_mdl_idx < MaxRecentModels && (itr->first).contains(QRegularExpression(QString("(") + Attributes::Recent + QString(")([0-9]+)"))))
 			{
 				config_params[Attributes::Configuration][Attributes::RecentModels]+=
-						XmlParser::convertCharsToXMLEntities(schparser.getCodeDefinition(file_sch, itr->second));
+						XmlParser::convertCharsToXMLEntities(schparser.getSourceCode(file_sch, itr->second));
 
 				recent_mdl_idx++;
 			}
@@ -470,7 +470,7 @@ void GeneralConfigWidget::saveConfiguration()
 				schparser.ignoreUnkownAttributes(true);
 				schparser.ignoreEmptyAttributes(true);
 				config_params[Attributes::Configuration][Attributes::DockWidgets]+=
-						schparser.getCodeDefinition(widget_sch, itr->second);
+						schparser.getSourceCode(widget_sch, itr->second);
 				schparser.ignoreUnkownAttributes(false);
 				schparser.ignoreEmptyAttributes(false);
 			}
@@ -498,7 +498,7 @@ void GeneralConfigWidget::saveConfiguration()
 
 				schparser.ignoreUnkownAttributes(true);
 				config_params[Attributes::Configuration][Attributes::WidgetsGeometry]+=
-						schparser.getCodeDefinition(widget_sch, attribs);
+						schparser.getSourceCode(widget_sch, attribs);
 				schparser.ignoreUnkownAttributes(false);
 			}
 		}
@@ -586,16 +586,16 @@ void GeneralConfigWidget::restoreDefaults()
 
 void GeneralConfigWidget::convertMarginUnity()
 {
-	static int prev_unity=UnitMilimeters;
+	static int prev_unit=UnitMilimeters;
 	double conv_factor[]={1.0, 2.83, 0.04, 0.1},
 			left, right, top, bottom, width, height;
 
-	left=left_marg->value() / conv_factor[prev_unity];
-	right=right_marg->value() / conv_factor[prev_unity];
-	bottom=bottom_marg->value() / conv_factor[prev_unity];
-	top=top_marg->value() / conv_factor[prev_unity];
-	width=width_spb->value() / conv_factor[prev_unity];
-	height=height_spb->value() / conv_factor[prev_unity];
+	left=left_marg->value() / conv_factor[prev_unit];
+	right=right_marg->value() / conv_factor[prev_unit];
+	bottom=bottom_marg->value() / conv_factor[prev_unit];
+	top=top_marg->value() / conv_factor[prev_unit];
+	width=width_spb->value() / conv_factor[prev_unit];
+	height=height_spb->value() / conv_factor[prev_unit];
 
 	left_marg->setValue(left * conv_factor[unity_cmb->currentIndex()]);
 	right_marg->setValue(right * conv_factor[unity_cmb->currentIndex()]);
@@ -604,7 +604,7 @@ void GeneralConfigWidget::convertMarginUnity()
 	width_spb->setValue(width * conv_factor[unity_cmb->currentIndex()]);
 	height_spb->setValue(height * conv_factor[unity_cmb->currentIndex()]);
 
-	prev_unity=unity_cmb->currentIndex();
+	prev_unit=unity_cmb->currentIndex();
 }
 
 void GeneralConfigWidget::selectPaperSize()

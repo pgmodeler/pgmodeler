@@ -122,11 +122,13 @@ class BaseTableView: public BaseObjectView {
 		 * the section (BaseTable::AttribsSection | ExtAttribsSection) and the total amount of attributes in the section.
 		 * The other paramenters start_attr and end_attr are reference parameters that will hold the indexes of items
 		 * to be displayed in the current page. See configureObject() on TableView and GraphicalView */
-		bool configurePaginationParams(unsigned page_id, unsigned total_attrs, unsigned &start_attr, unsigned &end_attr);
+		bool configurePaginationParams(BaseTable::TableSection page_id, unsigned total_attrs, unsigned &start_attr, unsigned &end_attr);
 
 	public:
-		static constexpr unsigned LeftConnPoint=0,
-		RightConnPoint=1;
+		enum ConnectionPoint: unsigned {
+			LeftConnPoint,
+			RightConnPoint
+		};
 
 		BaseTableView(BaseTable *base_tab);
 		virtual ~BaseTableView();
@@ -136,10 +138,10 @@ class BaseTableView: public BaseObjectView {
 		void mousePressEvent(QGraphicsSceneMouseEvent *event);
 
 		//! brief Defines the amount of attributes per page to be displayed
-		static void setAttributesPerPage(unsigned section_id, unsigned value);
+		static void setAttributesPerPage(BaseTable::TableSection section_id, unsigned value);
 
 		//! brief Returns the current amount of attributes per page to be displayed
-		static unsigned getAttributesPerPage(unsigned section_id);
+		static unsigned getAttributesPerPage(BaseTable::TableSection section_id);
 
 		//! \brief Hides the table's extended attributes (rules, triggers, indexes). This applies to all table/view instances
 		static void setHideExtAttributes(bool value);
@@ -179,14 +181,14 @@ class BaseTableView: public BaseObjectView {
 	private slots:
 		/*! \brief This slot reconfigures the table when the attributes toggler emits the signal s_collapseModeChanged
 		 * hiding or exposing the sections related to the current collapse mode */
-		void configureCollapsedSections(CollapseMode coll_mode);
+		void configureCollapsedSections(BaseTable::CollapseMode coll_mode);
 
 		//! \brief This slot reconfigures the table when the attributes toggler emits the signal s_paginationToggled
 		void togglePagination(bool enabled);
 
 		/*! \brief This slot reconfigures the table when the attributes toggler emits the signal s_currentPageChanged
 		 * causing the the attributes of the current page to be displayed */
-		void configureCurrentPage(unsigned section_id, unsigned page);
+		void configureCurrentPage(BaseTable::TableSection section_id, unsigned page);
 
 	signals:
 		//! \brief Signal emitted when a table is moved over the scene

@@ -161,10 +161,10 @@ void Type::removeEnumerations()
 	setCodeInvalidated(true);
 }
 
-void Type::setConfiguration(unsigned conf)
+void Type::setConfiguration(TypeConfig conf)
 {
 	//Raises an error if the configuration type is invalid
-	if(conf < BaseType || conf > RangeType)
+	if(conf > RangeType)
 		throw Exception(ErrorCode::AsgInvalidTypeConfiguration,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	type_attribs.clear();
@@ -189,13 +189,12 @@ void Type::setConfiguration(unsigned conf)
 	setCodeInvalidated(true);
 }
 
-void Type::setFunction(unsigned func_id, Function *func)
+void Type::setFunction(FunctionId func_id, Function *func)
 {
 	unsigned param_count=0;
-	unsigned funcs_len=sizeof(functions)/sizeof(Function *);
 
 	//Raises an error if the function id is invalid
-	if(func_id >= funcs_len)
+	if(func_id > SubtypeDiffFunc)
 		throw Exception(ErrorCode::RefFunctionInvalidType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	if(func)
@@ -398,38 +397,38 @@ void Type::setDelimiter(char delim)
 	delimiter=delim;
 }
 
-void Type::setElementsAttribute(unsigned def_type)
+void Type::setElementsAttribute(SchemaParser::CodeType def_type)
 {
 	QString str_elem;
 	unsigned i, count;
 
 	count=type_attribs.size();
 	for(i=0; i < count; i++)
-		str_elem+=type_attribs[i].getCodeDefinition(def_type);
+		str_elem+=type_attribs[i].getSourceCode(def_type);
 
-	if(def_type==SchemaParser::SqlDefinition)
+	if(def_type==SchemaParser::SqlCode)
 		str_elem.remove(str_elem.lastIndexOf(','), str_elem.size());
 
 	attributes[Attributes::TypeAttribute]=str_elem;
 }
 
-void Type::setEnumerationsAttribute(unsigned def_type)
+void Type::setEnumerationsAttribute(SchemaParser::CodeType def_type)
 {
 	QStringList str_enum;
 	attribs_map attribs;
 
 	for(auto &enum_attr : enumerations)
 	{
-		if(def_type == SchemaParser::SqlDefinition)
+		if(def_type == SchemaParser::SqlCode)
 			str_enum.append("'" + enum_attr + "'");
 		else
 		{
 			attribs[Attributes::Label] = enum_attr;
-			str_enum.append(schparser.getCodeDefinition(Attributes::EnumType, attribs, def_type));
+			str_enum.append(schparser.getSourceCode(Attributes::EnumType, attribs, def_type));
 		}
 	}
 
-	attributes[Attributes::Labels] = str_enum.join(def_type == SchemaParser::SqlDefinition ? "," : "");
+	attributes[Attributes::Labels] = str_enum.join(def_type == SchemaParser::SqlCode ? "," : "");
 }
 
 void Type::setCategory(CategoryType categ)
@@ -510,9 +509,9 @@ unsigned Type::getEnumerationCount()
 	return enumerations.size();
 }
 
-Function *Type::getFunction(unsigned func_id)
+Function *Type::getFunction(FunctionId func_id)
 {
-	if(func_id >= sizeof(functions)/sizeof(Function *))
+	if(func_id > SubtypeDiffFunc)
 		throw Exception(ErrorCode::RefFunctionInvalidType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	return functions[func_id];
@@ -553,7 +552,7 @@ char Type::getDelimiter()
 	return delimiter;
 }
 
-unsigned Type::getConfiguration()
+Type::TypeConfig Type::getConfiguration()
 {
 	return config;
 }
@@ -588,12 +587,12 @@ OperatorClass *Type::getSubtypeOpClass()
 	return subtype_opclass;
 }
 
-QString Type::getCodeDefinition(unsigned def_type)
+QString Type::getSourceCode(SchemaParser::CodeType def_type)
 {
-	return this->getCodeDefinition(def_type, false);
+	return this->getSourceCode(def_type, false);
 }
 
-QString Type::getCodeDefinition(unsigned def_type, bool reduced_form)
+QString Type::getSourceCode(SchemaParser::CodeType def_type, bool reduced_form)
 {
 	QString code_def=getCachedCode(def_type, reduced_form);
 	if(!code_def.isEmpty()) return code_def;
@@ -612,24 +611,24 @@ QString Type::getCodeDefinition(unsigned def_type, bool reduced_form)
 	{
 		attributes[Attributes::RangeType]=Attributes::True;
 
-		if(def_type==SchemaParser::SqlDefinition)
+		if(def_type==SchemaParser::SqlCode)
 			attributes[Attributes::Subtype]=(*subtype);
 		else
-			attributes[Attributes::Subtype]=subtype.getCodeDefinition(SchemaParser::XmlDefinition);
+			attributes[Attributes::Subtype]=subtype.getSourceCode(SchemaParser::XmlCode);
 
 		if(subtype_opclass)
 		{
-			if(def_type==SchemaParser::SqlDefinition)
+			if(def_type==SchemaParser::SqlCode)
 				attributes[Attributes::OpClass]=subtype_opclass->getName(true);
 			else
-				attributes[Attributes::OpClass]=subtype_opclass->getCodeDefinition(def_type, true);
+				attributes[Attributes::OpClass]=subtype_opclass->getSourceCode(def_type, true);
 		}
 	}
 	else
 	{
 		attributes[Attributes::BaseType]=Attributes::True;
 
-		if(internal_len==0 && def_type==SchemaParser::SqlDefinition)
+		if(internal_len==0 && def_type==SchemaParser::SqlCode)
 			attributes[Attributes::InternalLength]=QString("VARIABLE");
 		else
 			attributes[Attributes::InternalLength]=QString("%1").arg(internal_len);
@@ -652,10 +651,10 @@ QString Type::getCodeDefinition(unsigned def_type, bool reduced_form)
 
 		if(like_type!=QString("\"any\""))
 		{
-			if(def_type==SchemaParser::SqlDefinition)
+			if(def_type==SchemaParser::SqlCode)
 				attributes[Attributes::LikeType]=(*like_type);
 			else
-				attributes[Attributes::LikeType]=like_type.getCodeDefinition(SchemaParser::XmlDefinition);
+				attributes[Attributes::LikeType]=like_type.getSourceCode(SchemaParser::XmlCode);
 		}
 	}
 
@@ -676,21 +675,21 @@ QString Type::getCodeDefinition(unsigned def_type, bool reduced_form)
 		{
 			if(functions[i])
 			{
-				if(def_type==SchemaParser::SqlDefinition)
+				if(def_type==SchemaParser::SqlCode)
 					attributes[func_attrib[i]]=functions[i]->getName();
 				else
 				{
 					functions[i]->setAttribute(Attributes::RefType, func_attrib[i]);
-					attributes[func_attrib[i]]=functions[i]->getCodeDefinition(def_type, true);
+					attributes[func_attrib[i]]=functions[i]->getSourceCode(def_type, true);
 				}
 			}
 		}
 	}
 
-	return BaseObject::getCodeDefinition(def_type, reduced_form);
+	return BaseObject::getSourceCode(def_type, reduced_form);
 }
 
-QString Type::getAlterDefinition(BaseObject *object)
+QString Type::getAlterCode(BaseObject *object)
 {
 	Type *type=dynamic_cast<Type *>(object);
 
@@ -703,7 +702,7 @@ QString Type::getAlterDefinition(BaseObject *object)
 		QString alter_def, prev_val;
 		int attrib_idx=-1;
 
-		alter_def=BaseObject::getAlterDefinition(object);
+		alter_def=BaseObject::getAlterCode(object);
 
 		if(this->config==type->config)
 		{
@@ -723,7 +722,7 @@ QString Type::getAlterDefinition(BaseObject *object)
 						attribs[Attributes::Value]=enum_val;
 						attribs[Attributes::ExistingValue]=prev_val;
 						copyAttributes(attribs);
-						alter_def+=BaseObject::getAlterDefinition(this->getSchemaName(), attributes, true, true);
+						alter_def+=BaseObject::getAlterCode(this->getSchemaName(), attributes, true, true);
 						attribs.clear();
 					}
 
@@ -740,7 +739,7 @@ QString Type::getAlterDefinition(BaseObject *object)
 						attribs[Attributes::Drop]=Attributes::True;
 						attribs[Attributes::Attribute]=attrib.getName(true);
 						copyAttributes(attribs);
-						alter_def+=BaseObject::getAlterDefinition(this->getSchemaName(), attributes, true, true);
+						alter_def+=BaseObject::getAlterCode(this->getSchemaName(), attributes, true, true);
 						attribs.clear();
 						attributes[Attributes::Drop]="";
 					}
@@ -754,14 +753,14 @@ QString Type::getAlterDefinition(BaseObject *object)
 					if(attrib_idx < 0)
 					{
 						attribs[Attributes::Attribute]=attrib.getName(true);
-						attribs[Attributes::Type]=attrib.getType().getCodeDefinition(SchemaParser::SqlDefinition);
+						attribs[Attributes::Type]=attrib.getType().getSourceCode(SchemaParser::SqlCode);
 						attribs[Attributes::Collation]="";
 
 						if(attrib.getCollation())
 							attribs[Attributes::Collation]=attrib.getCollation()->getName(true);
 
 						copyAttributes(attribs);
-						alter_def+=BaseObject::getAlterDefinition(this->getSchemaName(), attributes, true, true);
+						alter_def+=BaseObject::getAlterCode(this->getSchemaName(), attributes, true, true);
 					}
 					//Changing type attributes
 					else
@@ -771,11 +770,11 @@ QString Type::getAlterDefinition(BaseObject *object)
 						if(!type_attribs[attrib_idx].getType().isEquivalentTo(attrib.getType()))
 						{
 							attribs[Attributes::Attribute]=attrib.getName(true);
-							attribs[Attributes::Type]=attrib.getType().getCodeDefinition(SchemaParser::SqlDefinition);
+							attribs[Attributes::Type]=attrib.getType().getSourceCode(SchemaParser::SqlCode);
 						}
 
 						copyAttributes(attribs);
-						alter_def+=BaseObject::getAlterDefinition(this->getSchemaName(), attributes, true, true);
+						alter_def+=BaseObject::getAlterCode(this->getSchemaName(), attributes, true, true);
 						attributes[Attributes::Change]="";
 					}
 

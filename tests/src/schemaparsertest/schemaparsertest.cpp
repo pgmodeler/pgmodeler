@@ -45,7 +45,7 @@ void SchemaParserTest::testExpressionEvaluationWithCasts()
 	try
 	{
 		schparser.loadBuffer(buffer);
-		QCOMPARE(schparser.getCodeDefinition(attribs) == "10.0", true);
+		QCOMPARE(schparser.getSourceCode(attribs) == "10.0", true);
 	}
 	catch(Exception &e)
 	{
@@ -72,7 +72,7 @@ void SchemaParserTest::testSetOperationInIf()
 	try
 	{
 		schparser.loadBuffer(buffer);
-		QCOMPARE(schparser.getCodeDefinition(attribs) == "extract in else", true);
+		QCOMPARE(schparser.getSourceCode(attribs) == "extract in else", true);
 	}
 	catch(Exception &e)
 	{
@@ -102,7 +102,7 @@ void SchemaParserTest::testSetOperationUnderIfEvaluatedAsFalse()
 		//QTextStream out(stdout);
 		//out <<  buffer;
 		schparser.loadBuffer(buffer);
-		QCOMPARE(schparser.getCodeDefinition(attribs) == "", true);
+		QCOMPARE(schparser.getSourceCode(attribs) == "", true);
 	}
 	catch(Exception &e)
 	{

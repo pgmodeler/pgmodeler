@@ -54,17 +54,20 @@ class Index: public TableObject{
 		bool index_attribs[4];
 
 		//! \brief Formats the elements string used by the SchemaParser
-		void setIndexElementsAttribute(unsigned def_type);
+		void setIndexElementsAttribute(SchemaParser::CodeType def_type);
 
 		/*! \brief Executes any validation over the index's elements. Currently, this method disable sorting
 		when the indexing type is 'gin' */
 		void validateElements();
 
 	public:
-		static constexpr  unsigned Unique=0,
-		Concurrent=1,
-		FastUpdate=2,
-		Buffering=3;
+		enum IndexAttrib: unsigned {
+			Unique,
+			Concurrent,
+			FastUpdate,
+			Buffering
+		};
+
 		Index();
 
 		//! \brief Adds an element to the index using an column
@@ -102,7 +105,7 @@ class Index: public TableObject{
 
 		/*! \brief Configures the attributes for the indexs. These attributes can be
 		 referencede using the UNIQUE, CONCURRENT and FAST_UPDATE constants */
-		void setIndexAttribute(unsigned attrib_id, bool value);
+		void setIndexAttribute(IndexAttrib attrib_id, bool value);
 
 		//! \brief Defines the index fill factor
 		void setFillFactor(unsigned factor);
@@ -117,17 +120,17 @@ class Index: public TableObject{
 		IndexingType getIndexingType();
 
 		//! \brief Returns the current state of one index attribute (UNIQUE, CONCURRENT, FAST UPDATE)
-		bool getIndexAttribute(unsigned attrib_id);
+		bool getIndexAttribute(IndexAttrib attrib_id);
 
 		//! \brief Returns the index fill factor
 		unsigned getFillFactor();
 
 		//! \brief Returns the SQL / XML definition for the index
-		virtual QString getCodeDefinition(unsigned def_type) final;
+		virtual QString getSourceCode(SchemaParser::CodeType def_type) final;
 
 		virtual QString getSignature(bool format=true) final ;
 
-		virtual QString getAlterDefinition(BaseObject *object) final;
+		virtual QString getAlterCode(BaseObject *object) final;
 
 		/*! \brief Returns whether the index references columns added
 		 by relationship. This method is used as auxiliary

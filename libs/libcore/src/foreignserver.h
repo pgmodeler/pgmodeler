@@ -46,9 +46,9 @@ class ForeignServer: public BaseObject, public ForeignObject {
 		QString getVersion();
 		ForeignDataWrapper *getForeignDataWrapper();
 
-		virtual QString getCodeDefinition(unsigned def_type);
-		virtual QString getCodeDefinition(unsigned def_type, bool reduced_form);
-		virtual QString getAlterDefinition(BaseObject *object);
+		virtual QString getSourceCode(SchemaParser::CodeType def_type);
+		virtual QString getSourceCode(SchemaParser::CodeType def_type, bool reduced_form);
+		virtual QString getAlterCode(BaseObject *object);
 };
 
 #endif

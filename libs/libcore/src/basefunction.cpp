@@ -81,23 +81,23 @@ void BaseFunction::addParameter(Parameter param)
 	createSignature();
 }
 
-void BaseFunction::setParametersAttribute(unsigned def_type)
+void BaseFunction::setParametersAttribute(SchemaParser::CodeType def_type)
 {
 	QString str_param;
 	QStringList fmt_params;
 
 	for(auto &param : parameters)
-		fmt_params.append(param.getCodeDefinition(def_type));
+		fmt_params.append(param.getSourceCode(def_type));
 
 	str_param = fmt_params.join("");
 
-	if(def_type==SchemaParser::SqlDefinition)
+	if(def_type==SchemaParser::SqlCode)
 		str_param.remove(str_param.size()-2,2);
 
 	attributes[Attributes::Parameters]=str_param;
 }
 
-void BaseFunction::setBasicFunctionAttributes(unsigned def_type)
+void BaseFunction::setBasicFunctionAttributes(SchemaParser::CodeType def_type)
 {
 	try
 	{
@@ -106,10 +106,10 @@ void BaseFunction::setBasicFunctionAttributes(unsigned def_type)
 
 		if(language)
 		{
-			if(def_type==SchemaParser::SqlDefinition)
+			if(def_type==SchemaParser::SqlCode)
 				attributes[Attributes::Language]=language->getName(false);
 			else
-				attributes[Attributes::Language]=language->getCodeDefinition(def_type, true);
+				attributes[Attributes::Language]=language->getSourceCode(def_type, true);
 
 			if(language->getName().toLower() == DefaultLanguages::C)
 			{
@@ -122,11 +122,11 @@ void BaseFunction::setBasicFunctionAttributes(unsigned def_type)
 		for(auto &type : transform_types)
 		{
 			types.append(QString("%1%2")
-									 .arg(def_type == SchemaParser::SqlDefinition ? UtilsNs::DataSeparator : "")
+									 .arg(def_type == SchemaParser::SqlCode ? UtilsNs::DataSeparator : "")
 									 .arg(~type));
 		}
 
-		if(def_type==SchemaParser::SqlDefinition)
+		if(def_type==SchemaParser::SqlCode)
 			types.replaceInStrings(UtilsNs::DataSeparator, QString(" FOR TYPE "));
 
 		attributes[Attributes::TransformTypes] = types.join(',');
@@ -135,11 +135,11 @@ void BaseFunction::setBasicFunctionAttributes(unsigned def_type)
 		{
 			attribs[Attributes::Name] = cfg_param.first;
 			attribs[Attributes::Value] = cfg_param.second;
-			attributes[Attributes::ConfigParams] += schparser.getCodeDefinition(Attributes::ConfigParam, attribs, def_type);
+			attributes[Attributes::ConfigParams] += schparser.getSourceCode(Attributes::ConfigParam, attribs, def_type);
 		}
 
 		attributes[Attributes::SecurityType]=~security_type;
-		attributes[Attributes::Definition]=source_code;
+		attributes[Attributes::Definition]=func_source;
 		attributes[Attributes::Signature]=signature;
 	}
 	catch(Exception &e)
@@ -254,15 +254,15 @@ attribs_map BaseFunction::getConfigurationParams()
 	return config_params;
 }
 
-void BaseFunction::setSourceCode(const QString &src_code)
+void BaseFunction::setFunctionSource(const QString &src_code)
 {
 	if(language && language->getName().toLower() == DefaultLanguages::C)
 		throw Exception(Exception::getErrorMessage(ErrorCode::AsgSourceCodeFuncCLanguage)
 						.arg(this->getSignature()),
 						ErrorCode::AsgSourceCodeFuncCLanguage,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	setCodeInvalidated(this->source_code != src_code);
-	this->source_code=src_code;
+	setCodeInvalidated(this->func_source != src_code);
+	this->func_source=src_code;
 }
 
 BaseObject *BaseFunction::getLanguage()
@@ -285,9 +285,9 @@ std::vector<PgSqlType> BaseFunction::getTransformTypes()
 	return transform_types;
 }
 
-QString BaseFunction::getSourceCode()
+QString BaseFunction::getFunctionSource()
 {
-	return source_code;
+	return func_source;
 }
 
 Parameter BaseFunction::getParameter(unsigned param_idx)
@@ -382,7 +382,7 @@ void BaseFunction::createSignature(bool format, bool prepend_schema)
 			 * So in order to avoid signature conflicts (mainly whe diff functions) we remove it.
 			 * The keyword OUT is also removed for IN OUT parameters, since removing the IN parameter the OUT keyword will remain which
 			 * forms an invalid signature. */
-			aux_str = param.getCodeDefinition(SchemaParser::SqlDefinition, true).replace(QRegularExpression("^(IN)?( )*(OUT)?( )"),"").trimmed();
+			aux_str = param.getSourceCode(SchemaParser::SqlCode, true).replace(QRegularExpression("^(IN)?( )*(OUT)?( )"),"").trimmed();
 			aux_str.remove(',');
 			fmt_params.append(aux_str);
 			param.setCodeInvalidated(true);
@@ -394,14 +394,14 @@ void BaseFunction::createSignature(bool format, bool prepend_schema)
 	this->setCodeInvalidated(true);
 }
 
-attribs_map BaseFunction::getAlterDefinitionAttributes(BaseFunction *func)
+attribs_map BaseFunction::getAlterCodeAttributes(BaseFunction *func)
 {
 	attribs_map attribs,
 			cfg_params, aux_attrs;
 
 	try
 	{
-		attributes[Attributes::AlterCmds] = BaseObject::getAlterDefinition(func);
+		attributes[Attributes::AlterCmds] = BaseObject::getAlterCode(func);
 
 		if(this->security_type != func->security_type)
 			attribs[Attributes::SecurityType] = ~func->security_type;
@@ -416,7 +416,7 @@ attribs_map BaseFunction::getAlterDefinitionAttributes(BaseFunction *func)
 			{
 				aux_attrs[Attributes::Name] = cfg.first;
 				aux_attrs[Attributes::Value] = cfg.second;
-				attribs[Attributes::ConfigParams] += BaseObject::getAlterDefinition(Attributes::ConfigParam, aux_attrs, false, true);
+				attribs[Attributes::ConfigParams] += BaseObject::getAlterCode(Attributes::ConfigParam, aux_attrs, false, true);
 			}
 		}
 
@@ -427,7 +427,7 @@ attribs_map BaseFunction::getAlterDefinitionAttributes(BaseFunction *func)
 			{
 				aux_attrs[Attributes::Name] = cfg.first;
 				aux_attrs[Attributes::Value] = Attributes::Unset;
-				attribs[Attributes::ConfigParams] += BaseObject::getAlterDefinition(Attributes::ConfigParam, aux_attrs, false, true);
+				attribs[Attributes::ConfigParams] += BaseObject::getAlterCode(Attributes::ConfigParam, aux_attrs, false, true);
 			}
 		}
 	}

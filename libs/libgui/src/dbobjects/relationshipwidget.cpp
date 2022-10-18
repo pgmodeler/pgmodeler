@@ -196,7 +196,7 @@ RelationshipWidget::RelationshipWidget(QWidget *parent): BaseObjectWidget(parent
 	}
 }
 
-void RelationshipWidget::setAttributes(DatabaseModel *model, OperationList *op_list, PhysicalTable *src_tab, PhysicalTable *dst_tab, unsigned rel_type)
+void RelationshipWidget::setAttributes(DatabaseModel *model, OperationList *op_list, PhysicalTable *src_tab, PhysicalTable *dst_tab, BaseRelationship::RelType rel_type)
 {
 	Relationship *rel=nullptr;
 
@@ -221,13 +221,12 @@ void RelationshipWidget::setAttributes(DatabaseModel *model, OperationList *op_l
 
 void RelationshipWidget::setAttributes(DatabaseModel *model, OperationList *op_list, BaseRelationship *base_rel)
 {
-	unsigned rel_type, i;
-	Relationship *aux_rel=nullptr;
-	bool rel1n=false, relnn=false, relgen_dep=false, has_foreign_tab=false;
-
 	if(!base_rel)
 		throw Exception(ErrorCode::AsgNotAllocattedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
+	BaseRelationship::RelType rel_type;
+	Relationship *aux_rel=nullptr;
+	bool rel1n=false, relnn=false, relgen_dep=false, has_foreign_tab=false;
 	BaseObjectWidget::setAttributes(model, op_list, base_rel);
 
 	if(!this->new_object)
@@ -399,20 +398,16 @@ void RelationshipWidget::setAttributes(DatabaseModel *model, OperationList *op_l
 
 	part_bound_expr_gb->setVisible(rel_type==BaseRelationship::RelationshipPart);
 
-	for(i=SettingsTab; i <= AdvancedTab; i++)
-		//rel_attribs_tbw->removeTab(1);
+	for(unsigned i=SettingsTab; i <= AdvancedTab; i++)
 		rel_attribs_tbw->setTabVisible(i, false);
 
 	if(!relgen_dep)
 	{
-		for(i=SettingsTab; i <= SpecialPkTab; i++)
-			//rel_attribs_tbw->addTab(tabs[i], tab_labels[i]);
+		for(unsigned i=SettingsTab; i <= SpecialPkTab; i++)
 			rel_attribs_tbw->setTabVisible(i, true);
 	}
 	else if(relgen_dep && base_rel->getObjectType()==ObjectType::Relationship && !has_foreign_tab)
 	{
-		//rel_attribs_tbw->addTab(tabs[SettingsTab], tab_labels[SettingsTab]);
-		//rel_attribs_tbw->addTab(tabs[SpecialPkTab], tab_labels[SpecialPkTab]);
 		rel_attribs_tbw->setTabVisible(SettingsTab, true);
 		rel_attribs_tbw->setTabVisible(SpecialPkTab, true);
 	}
@@ -420,7 +415,6 @@ void RelationshipWidget::setAttributes(DatabaseModel *model, OperationList *op_l
 	if(base_rel->getObjectType()==ObjectType::Relationship ||
 		 (base_rel->getObjectType()==ObjectType::BaseRelationship &&
 			base_rel->getRelationshipType()==BaseRelationship::RelationshipFk))
-		//rel_attribs_tbw->addTab(tabs[AdvancedTab], tab_labels[AdvancedTab]);
 		rel_attribs_tbw->setTabVisible(AdvancedTab, true);
 
 	copy_options_grp->setVisible(base_rel->getObjectType()==ObjectType::Relationship &&
@@ -454,15 +448,16 @@ void RelationshipWidget::setAttributes(DatabaseModel *model, OperationList *op_l
 
 QSize RelationshipWidget::getIdealSize()
 {
-	unsigned rel_type = 0;
+	BaseRelationship::RelType rel_type = BaseRelationship::Relationship11;
 
 	if(this->object)
-	  rel_type = dynamic_cast<BaseRelationship *>(this->object)->getRelationshipType();
+		rel_type = dynamic_cast<BaseRelationship *>(this->object)->getRelationshipType();
 
 	if(rel_type == BaseRelationship::RelationshipFk ||
-	   (BaseRelationship::RelationshipDep && this->object && this->object->getObjectType()==ObjectType::BaseRelationship))
+		 (rel_type == BaseRelationship::RelationshipDep &&
+			this->object && this->object->getObjectType()==ObjectType::BaseRelationship))
 		return QSize(640, 320);
-	else if(BaseRelationship::RelationshipGen)
+	else if(rel_type == BaseRelationship::RelationshipGen)
 		return QSize(640, 520);
 	else
 		return QSize(640, 680);
@@ -809,7 +804,7 @@ void RelationshipWidget::duplicateObject(int curr_row, int new_row)
 
 		CoreUtilsNs::copyObject(&dup_object, object, obj_type);
 		dup_object->setName(CoreUtilsNs::generateUniqueName(dup_object, obj_list, false, QString("_cp")));
-		op_id=op_list->registerObject(dup_object, Operation::ObjectCreated, new_row, rel);
+		op_id=op_list->registerObject(dup_object, Operation::ObjCreated, new_row, rel);
 
 		dynamic_cast<TableObject*>(dup_object)->setParentTable(nullptr);
 		rel->addObject(dynamic_cast<TableObject *>(dup_object));
@@ -910,7 +905,7 @@ void RelationshipWidget::removeObjects()
 		for(i=0; i < count; i++)
 		{
 			object=rel->getObject(0, obj_type);
-			op_list->registerObject(object, Operation::ObjectRemoved, 0, rel);
+			op_list->registerObject(object, Operation::ObjRemoved, 0, rel);
 			rel->removeObject(object);
 		}
 
@@ -955,7 +950,7 @@ void RelationshipWidget::removeObject(int row)
 			obj_type=ObjectType::Constraint;
 
 		object=rel->getObject(row, obj_type);
-		op_id=op_list->registerObject(object, Operation::ObjectRemoved, 0, rel);
+		op_id=op_list->registerObject(object, Operation::ObjRemoved, 0, rel);
 		rel->removeObject(object);
 
 		if(obj_type==ObjectType::Column)
@@ -1049,7 +1044,9 @@ void RelationshipWidget::applyConfiguration()
 	{
 		Relationship *rel=nullptr;
 		BaseRelationship *base_rel=dynamic_cast<BaseRelationship *>(this->object);
-		unsigned rel_type, count, i, copy_mode=0, copy_ops=0;
+		BaseRelationship::RelType rel_type;
+		unsigned count, i, copy_ops = CopyOptions::NoOpts;
+		CopyOptions::CopyMode copy_mode = CopyOptions::NoMode;
 		std::vector<unsigned> col_ids;
 
 		/* Due to the complexity of the Relationship class and the strong link between all
@@ -1062,7 +1059,7 @@ void RelationshipWidget::applyConfiguration()
 		}
 
 		if(!this->new_object && this->object->getObjectType()==ObjectType::Relationship)
-			op_list->registerObject(this->object, Operation::ObjectModified);
+			op_list->registerObject(this->object, Operation::ObjModified);
 		else
 			registerNewObject();
 
@@ -1080,10 +1077,10 @@ void RelationshipWidget::applyConfiguration()
 																								src_fk_pattern_txt, dst_fk_pattern_txt,
 																								pk_col_pattern_txt };
 
-			std::vector<unsigned> pattern_ids= { Relationship::SrcColPattern, Relationship::DstColPattern,
-																			Relationship::PkPattern, Relationship::UqPattern,
-																			Relationship::SrcFkPattern, Relationship::DstFkPattern,
-																			Relationship::PkColPattern };
+			std::vector<Relationship::PatternId> pattern_ids= { Relationship::SrcColPattern, Relationship::DstColPattern,
+																													Relationship::PkPattern, Relationship::UqPattern,
+																													Relationship::SrcFkPattern, Relationship::DstFkPattern,
+																													Relationship::PkColPattern };
 
 			rel = dynamic_cast<Relationship *>(base_rel);
 
@@ -1105,17 +1102,17 @@ void RelationshipWidget::applyConfiguration()
 				else
 					copy_mode=CopyOptions::Excluding;
 
-				copy_ops+=(all_chk->isChecked() ? CopyOptions::All : 0);
-				copy_ops+=(defaults_chk->isChecked() ? CopyOptions::Defaults : 0);
-				copy_ops+=(constraints_chk->isChecked() ? CopyOptions::Constraints : 0);
-				copy_ops+=(comments_chk->isChecked() ? CopyOptions::Comments : 0);
-				copy_ops+=(indexes_chk->isChecked() ? CopyOptions::Indexes : 0);
-				copy_ops+=(storage_chk->isChecked() ? CopyOptions::Storage : 0);
-				copy_ops+=(identity_chk->isChecked() ? CopyOptions::Identity : 0);
-				copy_ops+=(statistics_chk->isChecked() ? CopyOptions::Statistics : 0);
+				copy_ops+=(all_chk->isChecked() ? CopyOptions::All : CopyOptions::NoOpts);
+				copy_ops+=(defaults_chk->isChecked() ? CopyOptions::Defaults : CopyOptions::NoOpts);
+				copy_ops+=(constraints_chk->isChecked() ? CopyOptions::Constraints : CopyOptions::NoOpts);
+				copy_ops+=(comments_chk->isChecked() ? CopyOptions::Comments : CopyOptions::NoOpts);
+				copy_ops+=(indexes_chk->isChecked() ? CopyOptions::Indexes : CopyOptions::NoOpts);
+				copy_ops+=(storage_chk->isChecked() ? CopyOptions::Storage : CopyOptions::NoOpts);
+				copy_ops+=(identity_chk->isChecked() ? CopyOptions::Identity : CopyOptions::NoOpts);
+				copy_ops+=(statistics_chk->isChecked() ? CopyOptions::Statistics : CopyOptions::NoOpts);
 			}
 
-			rel->setCopyOptions(CopyOptions(copy_mode, copy_ops));
+			rel->setCopyOptions(CopyOptions(copy_mode, static_cast<CopyOptions::CopyOpts>(copy_ops)));
 			rel->setMandatoryTable(BaseRelationship::SrcTable, false);
 			rel->setMandatoryTable(BaseRelationship::DstTable, false);
 

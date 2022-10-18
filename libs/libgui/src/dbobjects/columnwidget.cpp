@@ -116,7 +116,7 @@ void ColumnWidget::setAttributes(DatabaseModel *model, OperationList *op_list, B
 			sequence_sel->setEnabled(true);
 			sequence_sel->setSelectedObject(column->getSequence());
 		}
-		else if(column->getIdentityType() != BaseType::Null)
+		else if(column->getIdentityType() != IdentityType::Null)
 		{
 			identity_rb->click();
 			identity_type_cmb->setEnabled(true);

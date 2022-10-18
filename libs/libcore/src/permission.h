@@ -84,18 +84,20 @@ class Permission: public BaseObject {
 
 	public:
 		//! \brief Constants used to reference the privileges
-		static constexpr unsigned PrivSelect=0,
-		PrivInsert=1,
-		PrivUpdate=2,
-		PrivDelete=3,
-		PrivTruncate=4,
-		PrivReferences=5,
-		PrivTrigger=6,
-		PrivCreate=7,
-		PrivConnect=8,
-		PrivTemporary=9,
-		PrivExecute=10,
-		PrivUsage=11;
+		enum PrivilegeId: unsigned {
+			PrivSelect,
+			PrivInsert,
+			PrivUpdate,
+			PrivDelete,
+			PrivTruncate,
+			PrivReferences,
+			PrivTrigger,
+			PrivCreate,
+			PrivConnect,
+			PrivTemporary,
+			PrivExecute,
+			PrivUsage
+		};
 
 		/*! \brief In the constructor is required to specify which object will receive
 		 the permissions this can not be changed after the object instance of
@@ -106,7 +108,7 @@ class Permission: public BaseObject {
 		void addRole(Role *role);
 
 		//! \brief Sets the state of one permission's privilege (Accessed via constants PRIV_???)
-		void setPrivilege(unsigned priv_id, bool value, bool grant_op);
+		void setPrivilege(PrivilegeId priv_id, bool value, bool grant_op);
 
 		void setRevoke(bool value);
 
@@ -131,10 +133,10 @@ class Permission: public BaseObject {
 		BaseObject *getObject();
 
 		//! \brief Gets the actual state of the GRANT OPTION for the given privilege
-		bool getGrantOption(unsigned priv_id);
+		bool getGrantOption(PrivilegeId priv_id);
 
 		//! \brief Gets the current state for the given privilege
-		bool getPrivilege(unsigned priv_id);
+		bool getPrivilege(PrivilegeId priv_id);
 
 		/*! \brief Returns a string containing all the privileges
 		 configured as the internal format of permissions
@@ -143,7 +145,7 @@ class Permission: public BaseObject {
 
 		/*! \brief Parses the permission string (e.g. postgres=arwdDxt/postgres) and returns the role name
 		which owns the permission. The parameter vectors stores the ordinary privileges as well the GRANT OPTION privileges */
-		static QString parsePermissionString(QString perm_str, std::vector<unsigned> &privs, std::vector<unsigned> &gop_privs);
+		static QString parsePermissionString(QString perm_str, std::vector<PrivilegeId> &privs, std::vector<PrivilegeId> &gop_privs);
 
 		//! \brief Indicates whether the role is present on the permission
 		bool isRoleExists(Role *role);
@@ -157,11 +159,11 @@ class Permission: public BaseObject {
 		static bool acceptsPermission(ObjectType obj_type, int privilege=-1);
 
 		//! \brief Returns the SQL / XML definition for the permission
-		virtual QString getCodeDefinition(unsigned def_type) final;
+		virtual QString getSourceCode(SchemaParser::CodeType def_type) final;
 
 		virtual QString getSignature(bool = false) final;
 
-		virtual QString getDropDefinition(bool cascade) final;
+		virtual QString getDropCode(bool cascade) final;
 };
 
 #endif

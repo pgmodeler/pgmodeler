@@ -54,7 +54,7 @@ class PgSQLTypeWidget: public QWidget, public Ui::PgSQLTypeWidget {
 		must be shown using the last tree parameters. The DatabaseModel parameter is used to
 		gather the user-defined types of the specified model. */
 		static void listPgSQLTypes(QComboBox *combo, DatabaseModel *model,
-								   unsigned user_type_conf=UserTypeConfig::AllUserTypes,
+									 UserTypeConfig::TypeConf user_type_conf=UserTypeConfig::AllUserTypes,
 								   bool oid_types=true, bool pseudo_types=true);
 
 	private slots:
@@ -68,7 +68,7 @@ class PgSQLTypeWidget: public QWidget, public Ui::PgSQLTypeWidget {
 		 *  The pseudo_types indicates if pseudo data types are allowed */
 		void setAttributes(PgSqlType type, DatabaseModel *model,
 											 bool allow_qualifiers = true,
-											 unsigned usr_type_conf=UserTypeConfig::AllUserTypes,
+											 UserTypeConfig::TypeConf usr_type_conf=UserTypeConfig::AllUserTypes,
 											 bool oid_types=true, bool pseudo_types=true);
 
 		//! \brief Returns the PostgreSQL type configured via form

@@ -130,7 +130,7 @@ COMMENT ON PROCEDURE public.procedure(smallint,text,integer,VARIADIC \"any\") IS
 		proc.setSchema(&schema);
 		proc.setLanguage(&lang);
 		proc.setName("procedure");
-		proc.setSourceCode("select 1+1;");
+		proc.setFunctionSource("select 1+1;");
 		proc.setComment("This is a comment!");
 
 		param.setName("p1");
@@ -156,7 +156,7 @@ COMMENT ON PROCEDURE public.procedure(smallint,text,integer,VARIADIC \"any\") IS
 		param.setVariadic(true);
 		proc.addParameter(param);
 
-		result_code = proc.getCodeDefinition(SchemaParser::SqlDefinition);
+		result_code = proc.getSourceCode(SchemaParser::SqlCode);
 
 		/*QTextStream out(stdout);
 		out << result_code.simplified() << Qt::endl;
@@ -210,7 +210,7 @@ void ProcedureTest::generatesXMLCorrectly()
 		proc.setSchema(&schema);
 		proc.setLanguage(&lang);
 		proc.setName("procedure");
-		proc.setSourceCode("select 1+1;");
+		proc.setFunctionSource("select 1+1;");
 		proc.setComment("This is a comment!");
 
 		param.setName("p1");
@@ -236,7 +236,7 @@ void ProcedureTest::generatesXMLCorrectly()
 		param.setVariadic(true);
 		proc.addParameter(param);
 
-		result_code = proc.getCodeDefinition(SchemaParser::XmlDefinition);
+		result_code = proc.getSourceCode(SchemaParser::XmlCode);
 
 		/*QTextStream out(stdout);
 		out << result_code << Qt::endl;
@@ -279,7 +279,7 @@ void ProcedureTest::modelReturnsProcedureDepsRefs()
 		proc.setSchema(schema);
 		proc.setLanguage(lang);
 		proc.setName("procedure");
-		proc.setSourceCode("select 1+1;");
+		proc.setFunctionSource("select 1+1;");
 		proc.setComment("This is a comment!");
 
 		param.setName("p1");
@@ -366,11 +366,11 @@ void ProcedureTest::modelCreatesProcedureFromXML()
 		proc = model.createProcedure();
 
 		QTextStream out(stdout);
-		out << proc->getCodeDefinition(SchemaParser::XmlDefinition) << Qt::endl;
+		out << proc->getSourceCode(SchemaParser::XmlCode) << Qt::endl;
 		out << "---" << Qt::endl;
 		out << xml_code << Qt::endl;
 
-		QCOMPARE(proc->getCodeDefinition(SchemaParser::XmlDefinition).simplified(), xml_code.simplified());
+		QCOMPARE(proc->getSourceCode(SchemaParser::XmlCode).simplified(), xml_code.simplified());
 	}
 	catch(Exception &e)
 	{

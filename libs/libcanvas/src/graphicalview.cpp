@@ -57,7 +57,7 @@ void GraphicalView::configureObject()
 	QList<TableObjectView *> col_items;
 	TableObject *tab_obj=nullptr;
 	Tag *tag=view->getTag();
-	CollapseMode collapse_mode = view->getCollapseMode();
+	BaseTable::CollapseMode collapse_mode = view->getCollapseMode();
 	bool has_col_pag = false, has_ext_pag = false;
 
 	old_width = bounding_rect.width();
@@ -77,12 +77,12 @@ void GraphicalView::configureObject()
 	view_cols = view->getColumns();
 	has_col_pag = configurePaginationParams(BaseTable::AttribsSection, view_cols.size(), start_col, end_col);
 	has_ext_pag = configurePaginationParams(BaseTable::ExtAttribsSection,
-																						collapse_mode != CollapseMode::ExtAttribsCollapsed ? ext_tab_objs.size() : 0,
+																						collapse_mode != BaseTable::ExtAttribsCollapsed ? ext_tab_objs.size() : 0,
 																						start_ext, end_ext);
 
 	//Moves the references group to the origin to be moved latter
 	columns->moveBy(-columns->scenePos().x(),	-columns->scenePos().y());
-	columns->setVisible(view->getCollapseMode() != CollapseMode::AllAttribsCollapsed && start_col < static_cast<unsigned>(view_cols.size()));
+	columns->setVisible(view->getCollapseMode() != BaseTable::AllAttribsCollapsed && start_col < static_cast<unsigned>(view_cols.size()));
 	body->setVisible(columns->isVisible());
 
 	if(!columns->isVisible())
@@ -161,7 +161,7 @@ void GraphicalView::configureObject()
 		}
 	}
 
-	if(!hide_ext_attribs && view->getCollapseMode() == CollapseMode::NotCollapsed)
+	if(!hide_ext_attribs && view->getCollapseMode() == BaseTable::NotCollapsed)
 	{
 		if(view->isPaginationEnabled() && has_ext_pag)
 			tab_objs.assign(ext_tab_objs.begin() + start_ext, ext_tab_objs.begin() + end_ext);
@@ -169,7 +169,7 @@ void GraphicalView::configureObject()
 			tab_objs.assign(ext_tab_objs.begin(), ext_tab_objs.end());
 	}
 
-	ext_attribs->setVisible(!tab_objs.empty() && view->getCollapseMode() == CollapseMode::NotCollapsed);
+	ext_attribs->setVisible(!tab_objs.empty() && view->getCollapseMode() == BaseTable::NotCollapsed);
 	ext_attribs_body->setVisible(ext_attribs->isVisible());
 
 	if(tab_objs.empty())
@@ -265,7 +265,7 @@ void GraphicalView::configureObject()
 		else
 		{
 			bodies[idx]->setBrush(tag->getFillStyle(tag_attribs[idx]));
-			pen.setColor(tag->getElementColor(tag_attribs[idx], Tag::BorderColor));
+			pen.setColor(tag->getElementColor(tag_attribs[idx], ColorId::BorderColor));
 		}
 
 		pen.setStyle(Qt::DashLine);
@@ -297,7 +297,8 @@ void GraphicalView::configureObject()
 			col_item=dynamic_cast<TableObjectView *>(subitems.front());
 			subitems.pop_front();
 			col_item->setChildObjectXPos(TableObjectView::ConstrAliasLabel,
-																	 width - col_item->getChildObject(3)->boundingRect().width() - (2 * HorizSpacing));
+																	 width - col_item->getChildObject(TableObjectView::ConstrAliasLabel)
+																	 ->boundingRect().width() - (2 * HorizSpacing));
 		}
 	}
 

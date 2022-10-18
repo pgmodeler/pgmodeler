@@ -187,7 +187,7 @@ void GenericSQL::removeObjectReferences()
 	setCodeInvalidated(true);
 }
 
-QString GenericSQL::getCodeDefinition(unsigned def_type)
+QString GenericSQL::getSourceCode(SchemaParser::CodeType def_type)
 {
 	QString code_def=getCachedCode(def_type, false);
 	if(!code_def.isEmpty()) return code_def;
@@ -204,7 +204,7 @@ QString GenericSQL::getCodeDefinition(unsigned def_type)
 
 		for(auto &ref : objects_refs)
 		{
-			if(def_type == SchemaParser::XmlDefinition)
+			if(def_type == SchemaParser::XmlCode)
 			{
 				obj_attrs[Attributes::Name] = ref.object->getSignature();
 				obj_attrs[Attributes::Type] = ref.object->getSchemaName();
@@ -213,7 +213,7 @@ QString GenericSQL::getCodeDefinition(unsigned def_type)
 				obj_attrs[Attributes::UseSignature] = ref.use_signature ? Attributes::True : "";
 
 				schparser.ignoreUnkownAttributes(true);
-				attributes[Attributes::Objects] += schparser.getCodeDefinition(Attributes::Object, obj_attrs, SchemaParser::XmlDefinition);
+				attributes[Attributes::Objects] += schparser.getSourceCode(Attributes::Object, obj_attrs, SchemaParser::XmlCode);
 			}
 			else
 			{
@@ -234,11 +234,11 @@ QString GenericSQL::getCodeDefinition(unsigned def_type)
 	}
 
 	// Special case for the {name} attribute which is created automatically when there's no one defined by the user
-	if(def_type == SchemaParser::SqlDefinition &&
+	if(def_type == SchemaParser::SqlCode &&
 		 fmt_definition.contains(name_attr) && getObjectRefNameIndex(Attributes::Name) < 0)
 		fmt_definition = fmt_definition.replace(name_attr, this->getName(true));
 
 	attributes[Attributes::Definition] = fmt_definition;
 
-	return this->BaseObject::__getCodeDefinition(def_type);
+	return this->BaseObject::__getSourceCode(def_type);
 }

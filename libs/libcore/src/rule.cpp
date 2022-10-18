@@ -20,7 +20,7 @@
 
 Rule::Rule()
 {
-	execution_type=BaseType::Null;
+	execution_type=ExecutionType::Null;
 	obj_type=ObjectType::Rule;
 	attributes[Attributes::EventType]="";
 	attributes[Attributes::Table]="";
@@ -121,7 +121,7 @@ void Rule::removeCommands()
 	setCodeInvalidated(true);
 }
 
-QString Rule::getCodeDefinition(unsigned def_type)
+QString Rule::getSourceCode(SchemaParser::CodeType def_type)
 {
 	QString code_def=getCachedCode(def_type, false);
 	if(!code_def.isEmpty()) return code_def;
@@ -134,7 +134,7 @@ QString Rule::getCodeDefinition(unsigned def_type)
 	if(getParentTable())
 		attributes[Attributes::Table]=getParentTable()->getName(true);
 
-	return BaseObject::__getCodeDefinition(def_type);
+	return BaseObject::__getSourceCode(def_type);
 }
 
 QString Rule::getSignature(bool format)

@@ -61,7 +61,7 @@ void ModelExportHelper::setIgnoredErrors(const QStringList &err_codes)
 	ignored_errors.removeDuplicates();
 }
 
-void ModelExportHelper::exportToSQL(DatabaseModel *db_model, const QString &filename, const QString &pgsql_ver, bool split, unsigned code_gen_mode)
+void ModelExportHelper::exportToSQL(DatabaseModel *db_model, const QString &filename, const QString &pgsql_ver, bool split, DatabaseModel::CodeGenMode code_gen_mode)
 {
 	if(!db_model)
 		throw Exception(ErrorCode::AsgNotAllocattedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -79,7 +79,7 @@ void ModelExportHelper::exportToSQL(DatabaseModel *db_model, const QString &file
 
 		if(!split)
 		{
-			db_model->saveModel(filename, SchemaParser::SqlDefinition);
+			db_model->saveModel(filename, SchemaParser::SqlCode);
 			emit s_progressUpdated(100, tr("SQL file `%1' successfully written.").arg(filename), ObjectType::BaseObject);
 		}
 		else
@@ -444,7 +444,7 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
 				{
 					if(!object->isSQLDisabled())
 					{
-						sql_cmd=object->getCodeDefinition(SchemaParser::SqlDefinition);
+						sql_cmd=object->getSourceCode(SchemaParser::SqlCode);
 
 						//Emits a signal indicating that the object is being exported
 						emit s_progressUpdated(progress,
@@ -487,7 +487,7 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
 			if(!db_model->isSQLDisabled() && !export_canceled)
 			{
 				comm_regexp = QRegularExpression(tmpl_comm_regexp.arg(db_model->getSQLName()));
-				sql_cmd = db_model->__getCodeDefinition(SchemaParser::SqlDefinition);
+				sql_cmd = db_model->__getSourceCode(SchemaParser::SqlCode);
 				match = comm_regexp.match(sql_cmd);
 				pos = match.capturedStart();
 
@@ -533,7 +533,7 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
 			emit s_progressUpdated(progress, tr("Generating SQL for `%1' objects...").arg(db_model->getObjectCount()));
 
 			//Exporting the database model definition using the opened connection
-			buf=db_model->getCodeDefinition(SchemaParser::SqlDefinition, false);
+			buf=db_model->getSourceCode(SchemaParser::SqlCode, false);
 			progress=40;
 			exportBufferToDBMS(buf, new_db_conn, drop_objs);
 		}
@@ -1128,7 +1128,7 @@ void ModelExportHelper::setExportToDBMSParams(const QString &sql_buffer, Connect
 	this->errors.clear();
 }
 
-void ModelExportHelper::setExportToSQLParams(DatabaseModel *db_model, const QString &filename, const QString &pgsql_ver, bool split, unsigned code_gen_mode)
+void ModelExportHelper::setExportToSQLParams(DatabaseModel *db_model, const QString &filename, const QString &pgsql_ver, bool split, DatabaseModel::CodeGenMode code_gen_mode)
 {
 	this->db_model=db_model;
 	this->filename=filename;

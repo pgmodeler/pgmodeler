@@ -21,7 +21,7 @@
 template<>
 QStringList ExecutionType::TemplateType<ExecutionType>::type_names =
 {
-	"", // Reserved for BaseType::null
+	"", // Reserved for Class::Null
 
 	"ALSO",
 	"INSTEAD"

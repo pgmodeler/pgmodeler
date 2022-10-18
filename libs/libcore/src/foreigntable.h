@@ -50,19 +50,19 @@ class ForeignTable: public PhysicalTable, public ForeignObject {
 		void setPartitioningType(PartitioningType);
 
 		//! \brief Returns the SQL / XML definition for table
-		virtual QString getCodeDefinition(unsigned def_type) final;
+		virtual QString getSourceCode(SchemaParser::CodeType def_type) final;
 
 		//! \brief Copy the attributes between two tables
 		void operator = (ForeignTable &table);
 
 		//! \brief Returns the alter definition comparing the this table against the one provided via parameter
-		virtual QString getAlterDefinition(BaseObject *object) final;
+		virtual QString getAlterCode(BaseObject *object) final;
 
 		/*! \brief Generates the table's SQL code considering adding the relationship added object or not.
 		 * Note if the method is called with incl_rel_added_objs = true it can produce an SQL/XML code
 		 * that does not reflect the real semantics of the table. So take care to use this method and always
 		 * invalidate the tables code (see setCodeInvalidated()) after retrieving the resulting code */
-		QString __getCodeDefinition(unsigned def_type, bool incl_rel_added_objs);
+		QString __getSourceCode(SchemaParser::CodeType def_type, bool incl_rel_added_objs);
 
 		friend class Relationship;
 		friend class OperationList;

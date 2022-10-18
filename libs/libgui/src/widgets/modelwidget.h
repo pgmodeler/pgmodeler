@@ -38,8 +38,23 @@ class ModelWidget: public QWidget {
 	private:
 		Q_OBJECT
 
+		enum RelBreakMode {
+			//Break vertically the line in one 90° angle
+			BreakVertNinetyDegrees,
+
+			//Break horizontally the line in one 90° angle
+			BreakHorizNinetyDegrees,
+
+			//Break vertically the line in two 90° angles
+			BreakVert2NinetyDegrees,
+
+			//Break horizontally the line in two 90° angles
+			BreakHoriz2NinetyDegrees
+		};
+
 		//! \brief Constants used to control the object stacking method
 		static constexpr int BringToFront = 1,
+
 		SendToBack = -1;
 
 		XmlParser *xmlparser;
@@ -80,7 +95,7 @@ class ModelWidget: public QWidget {
 		static std::vector<BaseObject *> copied_objects;
 
 		//! \brief Stores the cutted object on source model (only when executing cut command)
-		static std::vector<BaseObject *> cutted_objects;
+		static std::vector<BaseObject *> cut_objects;
 
 		//! \brief Frame that indicates if the model is protected
 		QFrame *protected_model_frm;
@@ -206,7 +221,7 @@ class ModelWidget: public QWidget {
 		//! \brief Fades in our out the object types held by the specified action
 		void fadeObjects(QAction *action, bool fade_in);
 
-		void breakRelationshipLine(BaseRelationship *rel, unsigned break_type);
+		void breakRelationshipLine(BaseRelationship *rel, RelBreakMode break_type);
 
 		/*! \brief Arrange tables starting from a specified root in a hierarchical way
 		where for a certain table its child (or related) tables are places aside from left to right and top to bottom.
@@ -230,11 +245,6 @@ class ModelWidget: public QWidget {
 		void updateSceneLayers();
 
 	protected:
-		static constexpr unsigned BreakVertNinetyDegrees=0, //Break vertically the line in one 90° angle
-		BreakHorizNinetyDegrees=1, //Break horizontally the line in one 90° angle
-		BreakVert2NinetyDegrees=2, //Break vertically the line in two 90° angles
-		BreakHoriz2NinetyDegrees=3;//Break horizontally the line in two 90° angles
-
 		QAction *action_source_code,
 		*action_edit,
 		*action_protect,
@@ -329,7 +339,7 @@ class ModelWidget: public QWidget {
 
 		void fadeObjects(const std::vector<BaseObject *> &objects, bool fade_in);
 
-		void setAllCollapseMode(CollapseMode mode);
+		void setAllCollapseMode(BaseTable::CollapseMode mode);
 
 	public:
 		static constexpr double MinimumZoom=0.050000,

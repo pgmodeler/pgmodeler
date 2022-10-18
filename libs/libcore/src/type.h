@@ -36,9 +36,29 @@
 #include "pgsqltypes/categorytype.h"
 
 class Type: public BaseObject {
+	public:
+		enum TypeConfig: unsigned {
+			BaseType,
+			EnumerationType,
+			CompositeType,
+			RangeType
+		};
+
+		enum FunctionId: unsigned {
+			InputFunc,
+			OutputFunc,
+			RecvFunc,
+			SendFunc,
+			TpmodInFunc,
+			TpmodOutFunc,
+			AnalyzeFunc,
+			CanonicalFunc,
+			SubtypeDiffFunc
+		};
+
 	private:
 		//! \brief Type configuration (BASE | ENUMERATION | COMPOSITE | RANGE)
-		unsigned config;
+		TypeConfig config;
 
 		//! \brief Attributes for composite type
 		std::vector<TypeAttribute> type_attribs;
@@ -92,10 +112,10 @@ class Type: public BaseObject {
 		int getAttributeIndex(const QString &attrib_name);
 
 		//! \brief Formats the elements string used by the SchemaParser
-		void setElementsAttribute(unsigned def_type);
+		void setElementsAttribute(SchemaParser::CodeType def_type);
 
 		//! \brief Formats the enumeration string used by the SchemaParser
-		void setEnumerationsAttribute(unsigned def_type);
+		void setEnumerationsAttribute(SchemaParser::CodeType def_type);
 
 		/*! \brief Performs the conversion of parameters and return types of functions.
 		 If the parameter 'inverse_conv' is selected, the method
@@ -105,21 +125,6 @@ class Type: public BaseObject {
 		void convertFunctionParameters(bool inverse_conv=false);
 
 	public:
-		static constexpr unsigned BaseType=10,
-		EnumerationType=11,
-		CompositeType=12,
-		RangeType=13;
-
-		static constexpr unsigned InputFunc=0,
-		OutputFunc=1,
-		RecvFunc=2,
-		SendFunc=3,
-		TpmodInFunc=4,
-		TpmodOutFunc=5,
-		AnalyzeFunc=6,
-		CanonicalFunc=7,
-		SubtypeDiffFunc=8;
-
 		Type();
 
 		//! \brief Sets the type name
@@ -131,7 +136,7 @@ class Type: public BaseObject {
 		/*! \brief Defines the type configuration (BASE | ENUMARATION | COMPOSITE | RANGE).
 		Calling this method causes all attribute to be reset, so it may be executed before
 		any other attribute of the type be defined. */
-		void setConfiguration(unsigned conf);
+		void setConfiguration(TypeConfig conf);
 
 		//! \brief Adds an attribute to the type (only for composite type)
 		void addAttribute(TypeAttribute attrib);
@@ -152,7 +157,7 @@ class Type: public BaseObject {
 		void removeEnumerations();
 
 		//! \brief Sets on function to the type (only for base type)
-		void setFunction(unsigned func_id, Function *func);
+		void setFunction(FunctionId func_id, Function *func);
 
 		//! \brief Sets the type internal length (only for base type)
 		void setInternalLength(unsigned length);
@@ -199,11 +204,11 @@ class Type: public BaseObject {
 		unsigned getAttributeCount();
 		QString getEnumeration(unsigned idx_enum);
 		unsigned getEnumerationCount();
-		unsigned getConfiguration();
+		TypeConfig getConfiguration();
 		CategoryType getCategory();
 		bool isPreferred();
 		PgSqlType getLikeType();
-		Function *getFunction(unsigned func_id);
+		Function *getFunction(FunctionId func_id);
 		unsigned getInternalLength();
 		bool isByValue();
 		bool isCollatable();
@@ -216,12 +221,12 @@ class Type: public BaseObject {
 		/*! \brief Returns the SQL / XML definition for the type. If the boolean
 		 parameter is set the code definition is generated in a
 		 reduced form (XML only) */
-		virtual QString getCodeDefinition(unsigned def_type, bool reduced_form) final;
+		virtual QString getSourceCode(SchemaParser::CodeType def_type, bool reduced_form) final;
 
 		//! \brief Returns the SQL / XML definition for the type
-		virtual QString getCodeDefinition(unsigned def_type) final;
+		virtual QString getSourceCode(SchemaParser::CodeType def_type) final;
 
-		virtual QString getAlterDefinition(BaseObject *object) final;
+		virtual QString getAlterCode(BaseObject *object) final;
 
 		//! \brief Makes a copy between two type
 		void operator = (Type &tipo);

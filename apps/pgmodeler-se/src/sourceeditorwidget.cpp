@@ -140,7 +140,7 @@ void SourceEditorWidget::validateSyntax()
 		schparser.ignoreEmptyAttributes(true);
 		schparser.ignoreUnkownAttributes(true);
 		schparser.loadBuffer(editor_txt->toPlainText());
-		schparser.getCodeDefinition({});
+		schparser.getSourceCode({});
 
 		msgbox.show(tr("No lexical or sytactical errors found."), Messagebox::InfoIcon);
 	}

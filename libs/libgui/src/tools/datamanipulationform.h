@@ -36,10 +36,12 @@ class DataManipulationForm: public QDialog, public Ui::DataManipulationForm {
 		Q_OBJECT
 		
 		//! \brief Constants used to mark the type of operation performed on rows
-		static constexpr unsigned NoOperation=0,
-		OpInsert=1,
-		OpUpdate=2,
-		OpDelete=3;
+		enum OperationId: unsigned {
+			NoOperation,
+			OpInsert,
+			OpUpdate,
+			OpDelete
+		};
 
 		CsvLoadWidget *csv_load_wgt;
 
@@ -94,7 +96,7 @@ class DataManipulationForm: public QDialog, public Ui::DataManipulationForm {
 		
 		/*! \brief Mark the line as changed, changing its background color and applying the respective operation (see OP_??? constant)
 				when user call saveChanged() */
-		void markOperationOnRow(unsigned operation, int row);
+		void markOperationOnRow(OperationId operation, int row);
 		
 		//! \brief Generates a DML command for the row depending on the it's operation type
 		QString getDMLCommand(int row);

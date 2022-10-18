@@ -79,14 +79,14 @@ class ModelsDiffHelper: public QObject {
 		ObjectsDiffInfo::CreateObject|AlterObject|DropObject */
 
 		//! \brief Compares two tables storing the diff between them in the diff_infos vector.
-		void diffTables(PhysicalTable *src_table, PhysicalTable *imp_table, unsigned diff_type);
+		void diffTables(PhysicalTable *src_table, PhysicalTable *imp_table, ObjectsDiffInfo::DiffType diff_type);
 
 		//! \brief Compares the two models storing the diff between them in the diff_infos vector.
-		void diffModels(unsigned diff_type);
+		void diffModels(ObjectsDiffInfo::DiffType diff_type);
 
 		/*! \brief Compares the specified table object against the ones on the source model or imported
 		model depending on the diff_type parameter. */
-		void diffTableObject(TableObject *tab_obj, unsigned diff_type);
+		void diffTableObject(TableObject *tab_obj, ObjectsDiffInfo::DiffType diff_type);
 
 		/*! \brief Compares the two tables' columns and if needed generates the CREATE statments for the missing ones in child_tab.
 		 * This is used when a new inheritance relationship is detected between two tables that previously were not parent and child.
@@ -95,7 +95,7 @@ class ModelsDiffHelper: public QObject {
 		void diffColsInheritance(PhysicalTable *parent_tab, PhysicalTable *child_tab);
 
 		//! \brief Creates a diff info instance storing in o diff_infos vector
-		void generateDiffInfo(unsigned diff_type, BaseObject *object, BaseObject *old_object=nullptr);
+		void generateDiffInfo(ObjectsDiffInfo::DiffType diff_type, BaseObject *object, BaseObject *old_object=nullptr);
 
 		/*! \brief Processes the generated diff infos resulting in a SQL buffer with the needed commands
 		to synchronize both model and database */
@@ -108,11 +108,11 @@ class ModelsDiffHelper: public QObject {
 		/*! \brief Returns if a diff information exists for the object. The exact_match parameter is used to force the
 		comparison of all values on the paramenter against the diff infos. When false the exact_match parameter
 		considers one of parameters object or old_object to be used (if not null) */
-		bool isDiffInfoExists(unsigned diff_type, BaseObject *object, BaseObject *old_object, bool exact_match = true);
+		bool isDiffInfoExists(ObjectsDiffInfo::DiffType diff_type, BaseObject *object, BaseObject *old_object, bool exact_match = true);
 
 		/*! \brief Generate the proper code definition for the table's child objects. If drop_cmd is true a DROP command
 		will be generated otherwise a CREATE is generated. */
-		QString getCodeDefinition(BaseObject *object, bool drop_cmd);
+		QString getSourceCode(BaseObject *object, bool drop_cmd);
 
 		//! \brief Destroy the temporary objects and clears the diff info list
 		void destroyTempObjects();
@@ -120,43 +120,43 @@ class ModelsDiffHelper: public QObject {
 		BaseObject *getRelNNTable(const QString &obj_name, DatabaseModel *model);
 
 	public:
-		static constexpr unsigned OptKeepClusterObjs=0,
+		enum DiffOptions: unsigned {
+			OptKeepClusterObjs,
 
-		//! \brief Indicates if any DROP/TRUNCATE generated must be in cascade mode
-		OptCascadeMode=1,
+			//! \brief Indicates if any DROP/TRUNCATE generated must be in cascade mode
+			OptCascadeMode,
 
-		//! \brief Forces the recreation of any object maked as ALTER in the output
-		OptForceRecreation=2,
+			//! \brief Forces the recreation of any object maked as ALTER in the output
+			OptForceRecreation,
 
-		//! \brief Recreates only objects that can't be modified using ALTER commands
-		OptRecreateUnmodifiable=3,
+			//! \brief Recreates only objects that can't be modified using ALTER commands
+			OptRecreateUnmodifiable,
 
-		//! \brief Generate a TRUNCATE command for every table which columns was modified in their data types
-		//OptTruncateTables=4,
+			//! \brief Indicates if permissions must be preserved on database
+			OptKeepObjectPerms,
 
-		//! \brief Indicates if permissions must be preserved on database
-		OptKeepObjectPerms=4,
+			/*! \brief Indicates that existing sequences must be reused in serial columns. Since serial columns are converted
+			into integer and a new sequence created and assigned as nextval(sequence) default value for those columns,
+			if reuse is enabled, new sequences will not be created instead the ones which name matches the column's default
+			value will be reused */
+			OptReuseSequences,
 
-		/*! \brief Indicates that existing sequences must be reused in serial columns. Since serial columns are converted
-		into integer and a new sequence created and assigned as nextval(sequence) default value for those columns,
-		if reuse is enabled, new sequences will not be created instead the ones which name matches the column's default
-		value will be reused */
-		OptReuseSequences=5,
+			//! \brief Indicates to not generate and execute commands to rename the destination database
+			OptPreserveDbName,
 
-		//! \brief Indicates to not generate and execute commands to rename the destination database
-		OptPreserveDbName=6,
+			/*! \brief Indicates to not generate and execute commands to drop missing objects. For instance, if user
+			try to diff a partial model against the original database DROP commands will be generated, this option
+			will avoid this situation and preserve the missing (not imported) objects. */
+			OptDontDropMissingObjs,
 
-		/*! \brief Indicates to not generate and execute commands to drop missing objects. For instance, if user
-		try to diff a partial model against the original database DROP commands will be generated, this option
-		will avoid this situation and preserve the missing (not imported) objects. */
-		OptDontDropMissingObjs=7,
-
-		/*! \brief Indicates to generate and execute commands to drop missing columns and constraints. For instance, if user
-		try to diff a partial model against the original database and the OPT_DONT_DROP_MISSING_OBJS is set, DROP commands will not be generated,
-		except for columns and constraints. This option is only considered in the process when OPT_DONT_DROP_MISSING_OBJS is enabled. */
-		OptDropMissingColsConstr=8;
+			/*! \brief Indicates to generate and execute commands to drop missing columns and constraints. For instance, if user
+			try to diff a partial model against the original database and the OPT_DONT_DROP_MISSING_OBJS is set, DROP commands will not be generated,
+			except for columns and constraints. This option is only considered in the process when OPT_DONT_DROP_MISSING_OBJS is enabled. */
+			OptDropMissingColsConstr
+		};
 
 		ModelsDiffHelper();
+
 		virtual ~ModelsDiffHelper();
 
 		/*! \brief Configures the models to be compared. It is assumed that src_model is the reference model
@@ -178,13 +178,13 @@ class ModelsDiffHelper: public QObject {
 		static QStringList getRelationshipFilters(const std::vector<BaseObject *> &objects, bool use_signature);
 
 		//! \brief Toggles a diff option throught the OPT_xxx constants
-		void setDiffOption(unsigned opt_id, bool value);
+		void setDiffOption(DiffOptions opt_id, bool value);
 
 		//! \brief Configures the PostgreSQL version used in the diff generation
 		void setPgSQLVersion(const QString pgsql_ver);
 
 		//! \brief Returns the count of diff infos of the specified diff_type
-		unsigned getDiffTypeCount(unsigned diff_type);
+		unsigned getDiffTypeCount(ObjectsDiffInfo::DiffType diff_type);
 
 		//! \brief Reset all the diff info counters in order to restart the diff process
 		void resetDiffCounter();

@@ -32,7 +32,7 @@ class TypeAttribute: public BaseObject {
 	private:
 		PgSqlType type;
 
-		QString getCodeDefinition(unsigned, bool){ return ""; }
+		QString getSourceCode(SchemaParser::CodeType, bool){ return ""; }
 
 	public:
 		TypeAttribute();
@@ -42,7 +42,7 @@ class TypeAttribute: public BaseObject {
 		PgSqlType getType();
 
 		//! \brief Returns the SQL / XML code definition for the parameter
-		virtual QString getCodeDefinition(unsigned def_type) final;
+		virtual QString getSourceCode(SchemaParser::CodeType def_type) final;
 		void operator = (const TypeAttribute &tpattrib);
 };
 

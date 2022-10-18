@@ -32,21 +32,21 @@ Aggregate::Aggregate()
 	attributes[Attributes::SortOp]="";
 }
 
-void Aggregate::setFunction(unsigned func_idx, Function *func)
+void Aggregate::setFunction(FunctionId func_id, Function *func)
 {
 	//Case the function index is invalid raises an error
-	if(func_idx!=FinalFunc && func_idx!=TransitionFunc)
+	if(func_id > TransitionFunc)
 		throw Exception(ErrorCode::RefFunctionInvalidType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	//Checks if the function is valid, if not the case raises an error
-	if(!isValidFunction(func_idx, func))
+	if(!isValidFunction(func_id, func))
 		throw Exception(Exception::getErrorMessage(ErrorCode::AsgFunctionInvalidConfiguration)
 						.arg(this->getName())
 						.arg(BaseObject::getTypeName(ObjectType::Aggregate)),
 						ErrorCode::AsgFunctionInvalidConfiguration,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	setCodeInvalidated(functions[func_idx]!=func);
-	functions[func_idx]=func;
+	setCodeInvalidated(functions[func_id]!=func);
+	functions[func_id]=func;
 }
 
 bool Aggregate::isValidFunction(unsigned func_idx, Function *func)
@@ -133,7 +133,7 @@ void Aggregate::setSortOperator(Operator *sort_op)
 	this->sort_operator=sort_op;
 }
 
-void Aggregate::setTypesAttribute(unsigned def_type)
+void Aggregate::setTypesAttribute(SchemaParser::CodeType def_type)
 {
 	QString str_types;
 	unsigned i, count;
@@ -141,17 +141,17 @@ void Aggregate::setTypesAttribute(unsigned def_type)
 	count=data_types.size();
 	for(i=0; i < count; i++)
 	{
-		if(def_type==SchemaParser::SqlDefinition)
+		if(def_type==SchemaParser::SqlCode)
 		{
-			str_types+=data_types[i].getCodeDefinition(SchemaParser::SqlDefinition);
+			str_types+=data_types[i].getSourceCode(SchemaParser::SqlCode);
 			if(i < (count-1)) str_types+=',';
 		}
-		else str_types+=data_types[i].getCodeDefinition(def_type);
+		else str_types+=data_types[i].getSourceCode(def_type);
 	}
 
 	/* Case none data type is specified for the aggregate creates
 		an aggregate that accepts any possible data '*' e.g. function(*) */
-	if(def_type == SchemaParser::SqlDefinition && str_types.isEmpty()) str_types='*';
+	if(def_type == SchemaParser::SqlCode && str_types.isEmpty()) str_types='*';
 
 	attributes[Attributes::Types]=str_types;
 }
@@ -185,13 +185,13 @@ unsigned Aggregate::getDataTypeCount()
 	return data_types.size();
 }
 
-Function *Aggregate::getFunction(unsigned func_idx)
+Function *Aggregate::getFunction(FunctionId func_id)
 {
 	//Raises an exception if the function index is invalid
-	if(func_idx!=FinalFunc && func_idx!=TransitionFunc)
+	if(func_id > TransitionFunc)
 		throw Exception(ErrorCode::RefFunctionInvalidType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	return functions[func_idx];
+	return functions[func_id];
 }
 
 PgSqlType Aggregate::getStateType()
@@ -218,7 +218,7 @@ PgSqlType Aggregate::getDataType(unsigned type_idx)
 	return data_types[type_idx];
 }
 
-QString Aggregate::getCodeDefinition(unsigned def_type)
+QString Aggregate::getSourceCode(SchemaParser::CodeType def_type)
 {
 	QString code_def=getCachedCode(def_type, false);
 	if(!code_def.isEmpty()) return code_def;
@@ -227,58 +227,58 @@ QString Aggregate::getCodeDefinition(unsigned def_type)
 
 	if(functions[TransitionFunc])
 	{
-		if(def_type==SchemaParser::SqlDefinition)
+		if(def_type==SchemaParser::SqlCode)
 			attributes[Attributes::TransitionFunc]=functions[TransitionFunc]->getName(true);
 		else
 		{
 			functions[TransitionFunc]->setAttribute(Attributes::RefType, Attributes::TransitionFunc);
-			attributes[Attributes::TransitionFunc]=functions[TransitionFunc]->getCodeDefinition(def_type,true);
+			attributes[Attributes::TransitionFunc]=functions[TransitionFunc]->getSourceCode(def_type,true);
 		}
 	}
 
 	if(functions[FinalFunc])
 	{
-		if(def_type==SchemaParser::SqlDefinition)
+		if(def_type==SchemaParser::SqlCode)
 			attributes[Attributes::FinalFunc]=functions[FinalFunc]->getName(true);
 		else
 		{
 			functions[FinalFunc]->setAttribute(Attributes::RefType,
 												Attributes::FinalFunc);
-			attributes[Attributes::FinalFunc]=functions[FinalFunc]->getCodeDefinition(def_type,true);
+			attributes[Attributes::FinalFunc]=functions[FinalFunc]->getSourceCode(def_type,true);
 		}
 	}
 
 	if(sort_operator)
 	{
-		if(def_type==SchemaParser::SqlDefinition)
+		if(def_type==SchemaParser::SqlCode)
 			attributes[Attributes::SortOp]=sort_operator->getName(true);
 		else
-			attributes[Attributes::SortOp]=sort_operator->getCodeDefinition(def_type,true);
+			attributes[Attributes::SortOp]=sort_operator->getSourceCode(def_type,true);
 	}
 
 	if(!initial_condition.isEmpty())
 		attributes[Attributes::InitialCond]=initial_condition;
 
-	if(def_type==SchemaParser::SqlDefinition)
+	if(def_type==SchemaParser::SqlCode)
 		attributes[Attributes::StateType]=*(state_type);
 	else
-		attributes[Attributes::StateType]=state_type.getCodeDefinition(def_type,Attributes::StateType);
+		attributes[Attributes::StateType]=state_type.getSourceCode(def_type,Attributes::StateType);
 
-	return BaseObject::__getCodeDefinition(def_type);
+	return BaseObject::__getSourceCode(def_type);
 }
 
-QString Aggregate::getDropDefinition(bool cascade)
+QString Aggregate::getDropCode(bool cascade)
 {
-	setTypesAttribute(SchemaParser::SqlDefinition);
-	return BaseObject::getDropDefinition(cascade);
+	setTypesAttribute(SchemaParser::SqlCode);
+	return BaseObject::getDropCode(cascade);
 }
 
-QString Aggregate::getAlterDefinition(BaseObject *object)
+QString Aggregate::getAlterCode(BaseObject *object)
 {
 	try
 	{
-		setTypesAttribute(SchemaParser::SqlDefinition);
-		return BaseObject::getAlterDefinition(object);
+		setTypesAttribute(SchemaParser::SqlCode);
+		return BaseObject::getAlterCode(object);
 	}
 	catch(Exception &e)
 	{
@@ -295,7 +295,7 @@ QString Aggregate::getSignature(bool format)
 	else
 	{
 		for(auto &tp : data_types)
-			types.push_back(tp.getCodeDefinition(SchemaParser::SqlDefinition));
+			types.push_back(tp.getSourceCode(SchemaParser::SqlCode));
 	}
 
 	return BaseObject::getSignature(format) + QString("(%1)").arg(types.join(','));

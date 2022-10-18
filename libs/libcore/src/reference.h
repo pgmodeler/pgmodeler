@@ -65,15 +65,19 @@ class Reference {
 
 	public:
 		//! \brief Constants used to define the reference type
-		static constexpr unsigned ReferColumn=0, //! \brief The reference is based on a table column
-		ReferExpression=1; //! \brief The reference is based on an expression
+		enum ReferType: unsigned {
+			ReferColumn, //! \brief The reference is based on a table column
+			ReferExpression //! \brief The reference is based on an expression
+		};
 
 		//! \brief Constants used on the view code generation
-		static constexpr unsigned SqlReferWhere=1,
-		SqlReferSelect=2,
-		SqlReferFrom=4,
-		SqlReferEndExpr=8,
-		SqlViewDefinition=16;
+		enum SqlType: unsigned {
+			SqlWhere=1,
+			SqlSelect=2,
+			SqlFrom=4,
+			SqlEndExpr=8,
+			SqlViewDef=16
+		};
 
 		Reference();
 
@@ -108,14 +112,14 @@ class Reference {
 		QString getExpression();
 
 		//! \brief Returns the reference typ (see REFER_??? constants)
-		unsigned getReferenceType();
+		ReferType getReferenceType();
 
 		void setReferenceAlias(const QString &alias);
 
 		QString getReferenceAlias();
 
 		//! \brief Returns the SQL code definition
-		QString getSQLDefinition(unsigned sql_type);
+		QString getSQLDefinition(SqlType sql_type);
 
 		//! \brief Returns the XML code definition
 		QString getXMLDefinition();

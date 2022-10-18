@@ -319,6 +319,18 @@ CREATE TABLE public.table_b (\n \
 	connect(custom_scale_spb, &QDoubleSpinBox::valueChanged, [&](){
 		setConfigurationChanged(true);
 	});
+
+	connect(min_obj_opacity_spb, &QSpinBox::valueChanged, [&](){
+		setConfigurationChanged(true);
+	});
+
+	connect(ext_attribs_per_page_spb, &QSpinBox::valueChanged, [&](){
+		setConfigurationChanged(true);
+	});
+
+	connect(attribs_per_page_spb, &QSpinBox::valueChanged, [&](){
+		setConfigurationChanged(true);
+	});
 }
 
 AppearanceConfigWidget::~AppearanceConfigWidget()
@@ -543,9 +555,9 @@ void AppearanceConfigWidget::applyObjectsStyle()
 			colors.clear();
 			colors.append(!list.isEmpty() ? list.at(0) : "#000");
 			colors.append(list.size()==2 ? list.at(1) : colors.at(0));
-			BaseObjectView::setElementColor(elem, QColor(colors.at(0)), 0);
-			BaseObjectView::setElementColor(elem, QColor(colors.at(1)), 1);
-			BaseObjectView::setElementColor(elem, QColor(attribs[Attributes::BorderColor]), 2);
+			BaseObjectView::setElementColor(elem, QColor(colors.at(0)), ColorId::FillColor1);
+			BaseObjectView::setElementColor(elem, QColor(colors.at(1)), ColorId::FillColor2);
+			BaseObjectView::setElementColor(elem, QColor(attribs[Attributes::BorderColor]), ColorId::BorderColor);
 		}
 	}
 
@@ -756,7 +768,8 @@ void AppearanceConfigWidget::applyElementColor(unsigned color_idx, QColor color)
 	if(conf_items[element_cmb->currentIndex()].obj_conf)
 	{
 		conf_items[element_cmb->currentIndex()].colors[color_idx]=color;
-		BaseObjectView::setElementColor(conf_items[element_cmb->currentIndex()].conf_id, color, color_idx);
+		BaseObjectView::setElementColor(conf_items[element_cmb->currentIndex()].conf_id,
+				color, static_cast<ColorId>(color_idx));
 		updatePlaceholderItem();
 	}
 	else if(color_idx == 0)
@@ -894,7 +907,10 @@ void AppearanceConfigWidget::applyUiTheme()
 	QPalette pal;
 
 	for(unsigned idx = 0; idx < static_cast<unsigned>(item_colors->size()); idx++)
-		ObjectsTableWidget::setTableItemColor(idx, QColor(item_colors->at(idx)));
+	{
+		ObjectsTableWidget::setTableItemColor(static_cast<ObjectsTableWidget::TableItemColor>(idx),
+																					QColor(item_colors->at(idx)));
+	}
 
 	for(auto &itr : *color_map)
 	{

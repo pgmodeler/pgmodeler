@@ -1034,7 +1034,7 @@ void DatabaseExplorerWidget::listObjects()
 		root->setText(0, connection.getConnectionId(true));
 		root->setIcon(0, QPixmap(GuiUtilsNs::getIconPath("server")));
 		root->setData(DatabaseImportForm::ObjectId, Qt::UserRole, -1);
-		root->setData(DatabaseImportForm::ObjectTypeId, Qt::UserRole, enum_cast(ObjectType::BaseObject));
+		root->setData(DatabaseImportForm::ObjectTypeId, Qt::UserRole, enum_t(ObjectType::BaseObject));
 		root->setData(DatabaseImportForm::ObjectSource, Qt::UserRole, tr("-- Source code unavailable for this kind of object --"));
 		root->addChild(curr_root);
 		objects_trw->addTopLevelItem(root);
@@ -1140,7 +1140,7 @@ void DatabaseExplorerWidget::handleObject(QTreeWidgetItem *item, int)
 		{
 			openDataGrid(item->data(DatabaseImportForm::ObjectSchema, Qt::UserRole).toString(),
 									 item->text(0),
-									 item->data(DatabaseImportForm::ObjectTypeId, Qt::UserRole).toUInt() != enum_cast(ObjectType::View));
+									 item->data(DatabaseImportForm::ObjectTypeId, Qt::UserRole).toUInt() != enum_t(ObjectType::View));
 		}
 		else if(exec_action)
 			handleSelectedSnippet(exec_action->text());
@@ -1334,7 +1334,7 @@ void DatabaseExplorerWidget::dropObject(QTreeWidgetItem *item, bool cascade)
 				//Generate the drop command
 				schparser.ignoreEmptyAttributes(true);
 				schparser.ignoreUnkownAttributes(true);
-				drop_cmd=schparser.getCodeDefinition(Attributes::Drop, attribs, SchemaParser::SqlDefinition);
+				drop_cmd=schparser.getSourceCode(Attributes::Drop, attribs, SchemaParser::SqlCode);
 
 				if(cascade)
 					drop_cmd.replace(';', QString(" CASCADE;"));
@@ -1402,7 +1402,7 @@ bool DatabaseExplorerWidget::truncateTable(const QString &sch_name, const QStrin
 			schparser.ignoreEmptyAttributes(true);
 			schparser.ignoreUnkownAttributes(true);
 
-			truc_cmd=schparser.getCodeDefinition(GlobalAttributes::getSchemaFilePath(GlobalAttributes::AlterSchemaDir, Attributes::Truncate),
+			truc_cmd=schparser.getSourceCode(GlobalAttributes::getSchemaFilePath(GlobalAttributes::AlterSchemaDir, Attributes::Truncate),
 																					 attribs);
 
 			//Executes the truncate cmd
@@ -1862,7 +1862,7 @@ void DatabaseExplorerWidget::finishObjectRename()
 			schparser.ignoreEmptyAttributes(true);
 			schparser.ignoreUnkownAttributes(true);
 
-			rename_cmd=schparser.getCodeDefinition(GlobalAttributes::getSchemaFilePath(GlobalAttributes::AlterSchemaDir, Attributes::Rename),
+			rename_cmd=schparser.getSourceCode(GlobalAttributes::getSchemaFilePath(GlobalAttributes::AlterSchemaDir, Attributes::Rename),
 													 attribs);
 
 			//Executes the rename cmd
@@ -2079,12 +2079,12 @@ QString DatabaseExplorerWidget::getObjectSource(BaseObject *object, DatabaseMode
 	object->setCodeInvalidated(true);
 
 	if(object!=dbmodel)
-		source=object->getCodeDefinition(SchemaParser::SqlDefinition);
+		source=object->getSourceCode(SchemaParser::SqlCode);
 	else
-		source=dbmodel->__getCodeDefinition(SchemaParser::SqlDefinition);
+		source=dbmodel->__getSourceCode(SchemaParser::SqlCode);
 
 	for(auto &perm : perms)
-		source+=perm->getCodeDefinition(SchemaParser::SqlDefinition);
+		source+=perm->getSourceCode(SchemaParser::SqlCode);
 
 	return source;
 }

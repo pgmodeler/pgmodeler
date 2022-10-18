@@ -71,27 +71,27 @@ void ForeignTable::setPartitioningType(PartitioningType)
 	PhysicalTable::setPartitioningType(PartitioningType::Null);
 }
 
-QString ForeignTable::__getCodeDefinition(unsigned def_type, bool incl_rel_added_objs)
+QString ForeignTable::__getSourceCode(SchemaParser::CodeType def_type, bool incl_rel_added_objs)
 {
 	setTableAttributes(def_type, incl_rel_added_objs);
 
 	if(foreign_server)
 	{
-		attributes[Attributes::Server] = (def_type == SchemaParser::SqlDefinition ?
+		attributes[Attributes::Server] = (def_type == SchemaParser::SqlCode ?
 																			foreign_server->getSignature() :
-																			foreign_server->getCodeDefinition(SchemaParser::XmlDefinition, true));
+																			foreign_server->getSourceCode(SchemaParser::XmlCode, true));
 	}
 
 	attributes[Attributes::Options] = getOptionsAttribute(def_type);
-	return PhysicalTable::__getCodeDefinition(def_type);
+	return PhysicalTable::__getSourceCode(def_type);
 }
 
-QString ForeignTable::getCodeDefinition(unsigned def_type)
+QString ForeignTable::getSourceCode(SchemaParser::CodeType def_type)
 {
 	QString code_def = PhysicalTable::getCachedCode(def_type, false);
 	if(!code_def.isEmpty()) return code_def;
 
-	return __getCodeDefinition(def_type, false);
+	return __getSourceCode(def_type, false);
 }
 
 void ForeignTable::operator = (ForeignTable &tab)
@@ -99,15 +99,15 @@ void ForeignTable::operator = (ForeignTable &tab)
 	(*dynamic_cast<PhysicalTable *>(this))=dynamic_cast<PhysicalTable &>(tab);
 }
 
-QString ForeignTable::getAlterDefinition(BaseObject *object)
+QString ForeignTable::getAlterCode(BaseObject *object)
 {
 	try
 	{
 		attribs_map attribs;
-		attributes[Attributes::AlterCmds] = BaseObject::getAlterDefinition(object);
+		attributes[Attributes::AlterCmds] = BaseObject::getAlterCode(object);
 		getAlteredAttributes(dynamic_cast<ForeignObject *>(object), attribs);
 		copyAttributes(attribs);
-		return BaseObject::getAlterDefinition(this->getSchemaName(), attributes, false, true);
+		return BaseObject::getAlterCode(this->getSchemaName(), attributes, false, true);
 	}
 	catch(Exception &e)
 	{

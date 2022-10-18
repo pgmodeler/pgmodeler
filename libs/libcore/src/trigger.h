@@ -73,13 +73,16 @@ class Trigger: public TableObject{
 		DeferralType deferral_type;
 
 		//! \brief Formats the basic trigger attributes to be used by SchemaParser
-		void setBasicAttributes(unsigned def_type);
+		void setBasicAttributes(SchemaParser::CodeType def_type);
 
 		//! \brief Format the function arguments to be used by the SchemaParser
 		void setArgumentAttribute(unsigned tipo_def);
 
 	public:
-		static constexpr unsigned OldTableName=0, NewTableName=1;
+		enum TransitionTableId: unsigned {
+			OldTableName,
+			NewTableName
+		};
 
 		Trigger();
 
@@ -124,10 +127,10 @@ class Trigger: public TableObject{
 		void setConstraint(bool value);
 
 		//! \brief Defines the transition table name (OLD|NEW) referenced by the trigger
-		void setTransitionTableName(unsigned tab_idx, const QString &name);
+		void setTransitionTableName(TransitionTableId tab_idx, const QString &name);
 
 		//! \brief Returns the transition table name (OLD|NEW) referenced by the trigger
-		QString getTransitionTableName(unsigned tab_idx);
+		QString getTransitionTableName(TransitionTableId tab_idx);
 
 		//! \brief Returns true if the trigger executes on the passed event
 		bool isExecuteOnEvent(EventType event);
@@ -191,7 +194,7 @@ class Trigger: public TableObject{
 		std::vector<Column *> getRelationshipAddedColumns();
 
 		//! \brief Returns the SQL / XML definition for the trigger
-		virtual QString getCodeDefinition(unsigned def_type) final;
+		virtual QString getSourceCode(SchemaParser::CodeType def_type) final;
 
 		/*! \brief Validates the trigger attributes according to the docs.
 		This method is executed whenever the trigger is added to a table or view.
