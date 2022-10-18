@@ -25,7 +25,6 @@
 #ifndef PGSQL_TYPE
 #define PGSQL_TYPE
 
-#include "basetype.h"
 #include "usertypeconfig.h"
 #include "intervaltype.h"
 #include "spatialtype.h"

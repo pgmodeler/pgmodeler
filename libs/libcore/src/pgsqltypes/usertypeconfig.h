@@ -25,7 +25,7 @@
 #ifndef USER_TYPE_CONFIG
 #define USER_TYPE_CONFIG
 
-#include "basetype.h"
+#include <QString>
 
 /*! \brief This class stores the user defined type configureation.
 	 When the user creates a Type, Sequence, Domain, even a Table,
