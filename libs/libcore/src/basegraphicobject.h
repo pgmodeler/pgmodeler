@@ -125,7 +125,7 @@ class BaseGraphicObject: public QObject, public BaseObject {
 		QObject *getOverlyingObject();
 
 		//! \brief Returns the code definition of the object
-		virtual QString getCodeDefinition(unsigned)=0;
+		virtual QString getSourceCode(SchemaParser::CodeType)=0;
 
 		//! \brief Returns if the passed type one that has a graphical representation (table, view, schema, relationship or textbox)
 		static bool isGraphicObject(ObjectType type);

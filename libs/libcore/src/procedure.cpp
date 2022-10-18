@@ -31,22 +31,22 @@ void Procedure::addParameter(Parameter param)
 	BaseFunction::addParameter(param);
 }
 
-QString Procedure::getCodeDefinition(unsigned def_type, bool)
+QString Procedure::getSourceCode(SchemaParser::CodeType def_type, bool)
 {
 	QString code_def = getCachedCode(def_type, false);
 	if(!code_def.isEmpty()) return code_def;
 
 	setBasicFunctionAttributes(def_type);
 
-	return BaseObject::getCodeDefinition(def_type, false);
+	return BaseObject::getSourceCode(def_type, false);
 }
 
-QString Procedure::getCodeDefinition(unsigned def_type)
+QString Procedure::getSourceCode(SchemaParser::CodeType def_type)
 {
-	return getCodeDefinition(def_type, false);
+	return getSourceCode(def_type, false);
 }
 
-QString Procedure::getAlterDefinition(BaseObject *object)
+QString Procedure::getAlterCode(BaseObject *object)
 {
 	Procedure *proc = dynamic_cast<Procedure *>(object);
 
@@ -56,17 +56,17 @@ QString Procedure::getAlterDefinition(BaseObject *object)
 	try
 	{
 		attribs_map attribs;
-		attribs = BaseFunction::getAlterDefinitionAttributes(proc);
+		attribs = BaseFunction::getAlterCodeAttributes(proc);
 
-		if(this->source_code.simplified() != proc->source_code.simplified() ||
+		if(this->func_source.simplified() != proc->func_source.simplified() ||
 			 this->library != proc->library || this->symbol != proc->symbol)
 		{
-			attribs[Attributes::Definition] = proc->getCodeDefinition(SchemaParser::SqlDefinition);
+			attribs[Attributes::Definition] = proc->getSourceCode(SchemaParser::SqlCode);
 			attribs[Attributes::Definition].replace(QString("CREATE PROCEDURE").arg(this->getSQLName()), QString("CREATE OR REPLACE PROCEDURE"));
 		}
 
 		copyAttributes(attribs);
-		return BaseObject::getAlterDefinition(this->getSchemaName(), attributes, false, true);
+		return BaseObject::getAlterCode(this->getSchemaName(), attributes, false, true);
 	}
 	catch(Exception &e)
 	{

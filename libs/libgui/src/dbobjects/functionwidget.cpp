@@ -186,7 +186,7 @@ void FunctionWidget::setAttributes(DatabaseModel *model, OperationList *op_list,
 		}
 		else
 		{
-			source_code_txt->setPlainText(func->getSourceCode());
+			source_code_txt->setPlainText(func->getFunctionSource());
 		}
 	}
 

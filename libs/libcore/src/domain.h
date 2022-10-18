@@ -78,9 +78,9 @@ class Domain: public BaseObject{
 		PgSqlType getType();
 
 		//! \brief Returns the SQL / XML code definition for the domain
-		virtual QString getCodeDefinition(unsigned def_type) final;
+		virtual QString getSourceCode(SchemaParser::CodeType def_type) final;
 
-		virtual QString getAlterDefinition(BaseObject *object) final;
+		virtual QString getAlterCode(BaseObject *object) final;
 
 		void operator = (Domain &domain);
 };

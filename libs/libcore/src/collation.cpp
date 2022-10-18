@@ -152,12 +152,12 @@ bool Collation::isDeterministic()
 	return is_deterministic;
 }
 
-QString Collation::getCodeDefinition(unsigned def_type)
+QString Collation::getSourceCode(SchemaParser::CodeType def_type)
 {
-	return getCodeDefinition(def_type, false);
+	return getSourceCode(def_type, false);
 }
 
-QString Collation::getCodeDefinition(unsigned def_type, bool reduced_form)
+QString Collation::getSourceCode(SchemaParser::CodeType def_type, bool reduced_form)
 {
 	QString code_def=getCachedCode(def_type, reduced_form);
 	if(!code_def.isEmpty()) return code_def;
@@ -169,7 +169,7 @@ QString Collation::getCodeDefinition(unsigned def_type, bool reduced_form)
 	{
 		attributes[Attributes::Locale]=locale;
 
-		if(def_type==SchemaParser::SqlDefinition && encoding!=BaseType::Null)
+		if(def_type==SchemaParser::SqlCode && encoding!=BaseType::Null)
 			attributes[Attributes::Locale]=locale + fmt_encoding;
 	}
 	else if(collation)
@@ -185,7 +185,7 @@ QString Collation::getCodeDefinition(unsigned def_type, bool reduced_form)
 		{
 			attributes[lc_attribs[i]]=getLocalization(static_cast<LocaleId>(i));
 
-			if(def_type==SchemaParser::SqlDefinition && encoding!=BaseType::Null && !attributes[lc_attribs[i]].isEmpty())
+			if(def_type==SchemaParser::SqlCode && encoding!=BaseType::Null && !attributes[lc_attribs[i]].isEmpty())
 				attributes[lc_attribs[i]] += fmt_encoding;
 		}
 	}
@@ -197,5 +197,5 @@ QString Collation::getCodeDefinition(unsigned def_type, bool reduced_form)
 	attributes[Attributes::LcCollateMod] = modifier[LcCollate];
 	attributes[Attributes::LcCtypeMod] = modifier[LcCtype];
 
-	return BaseObject::getCodeDefinition(def_type, reduced_form);
+	return BaseObject::getSourceCode(def_type, reduced_form);
 }

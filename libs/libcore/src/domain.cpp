@@ -119,7 +119,7 @@ PgSqlType Domain::getType()
 	return type;
 }
 
-QString Domain::getCodeDefinition(unsigned def_type)
+QString Domain::getSourceCode(SchemaParser::CodeType def_type)
 {
 	QString code_def=getCachedCode(def_type, false);
 	if(!code_def.isEmpty()) return code_def;
@@ -133,15 +133,15 @@ QString Domain::getCodeDefinition(unsigned def_type)
 	{
 		aux_attribs[Attributes::Name] = itr.first;
 		aux_attribs[Attributes::Expression] = itr.second;
-		attributes[Attributes::Constraints]+=schparser.getCodeDefinition(Attributes::DomConstraint, aux_attribs, def_type);
+		attributes[Attributes::Constraints]+=schparser.getSourceCode(Attributes::DomConstraint, aux_attribs, def_type);
 	}
 
-	if(def_type==SchemaParser::SqlDefinition)
+	if(def_type==SchemaParser::SqlCode)
 		attributes[Attributes::Type]=(*type);
 	else
-		attributes[Attributes::Type]=type.getCodeDefinition(def_type);
+		attributes[Attributes::Type]=type.getSourceCode(def_type);
 
-	return BaseObject::__getCodeDefinition(def_type);
+	return BaseObject::__getSourceCode(def_type);
 }
 
 void Domain::operator = (Domain &domain)
@@ -156,7 +156,7 @@ void Domain::operator = (Domain &domain)
 	PgSqlType::renameUserType(prev_name, this, this->getName(true));
 }
 
-QString Domain::getAlterDefinition(BaseObject *object)
+QString Domain::getAlterCode(BaseObject *object)
 {
 	Domain *domain=dynamic_cast<Domain *>(object);
 
@@ -165,7 +165,7 @@ QString Domain::getAlterDefinition(BaseObject *object)
 
 	try
 	{
-		QString alter_def=BaseObject::getAlterDefinition(object);
+		QString alter_def=BaseObject::getAlterCode(object);
 		attribs_map orig_constrs, aux_constrs, aux_attribs;
 		QString orig_expr, aux_expr;
 
@@ -199,7 +199,7 @@ QString Domain::getAlterDefinition(BaseObject *object)
 			{
 				aux_attribs[Attributes::Name]=constr.first;
 				aux_attribs[Attributes::Expression]=Attributes::Unset;
-				attributes[Attributes::Constraints]+=BaseObject::getAlterDefinition(Attributes::DomConstraint, aux_attribs, false, true);
+				attributes[Attributes::Constraints]+=BaseObject::getAlterCode(Attributes::DomConstraint, aux_attribs, false, true);
 			}
 
 			//We should include a command to recreate the check constraint with the new expression
@@ -207,7 +207,7 @@ QString Domain::getAlterDefinition(BaseObject *object)
 			{
 				aux_attribs[Attributes::Name]=constr.first;
 				aux_attribs[Attributes::Expression]=aux_constrs[constr.first];
-				attributes[Attributes::Constraints]+=BaseObject::getAlterDefinition(Attributes::DomConstraint, aux_attribs, false, true);
+				attributes[Attributes::Constraints]+=BaseObject::getAlterCode(Attributes::DomConstraint, aux_attribs, false, true);
 			}
 		}
 
@@ -218,11 +218,11 @@ QString Domain::getAlterDefinition(BaseObject *object)
 			{
 				aux_attribs[Attributes::Name]=constr.first;
 				aux_attribs[Attributes::Expression]=constr.second;
-				attributes[Attributes::Constraints]+=BaseObject::getAlterDefinition(Attributes::DomConstraint, aux_attribs, false, true);
+				attributes[Attributes::Constraints]+=BaseObject::getAlterCode(Attributes::DomConstraint, aux_attribs, false, true);
 			}
 		}
 
-		alter_def+=BaseObject::getAlterDefinition(this->getSchemaName(), attributes, false, true);
+		alter_def+=BaseObject::getAlterCode(this->getSchemaName(), attributes, false, true);
 		return alter_def;
 	}
 	catch(Exception &e)

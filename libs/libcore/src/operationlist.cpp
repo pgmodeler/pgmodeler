@@ -428,9 +428,9 @@ int OperationList::registerObject(BaseObject *object, Operation::OperType op_typ
 					tab_obj->setParentTable(parent_tab);
 
 				if(tab_obj->getObjectType()==ObjectType::Constraint)
-					operation->setXMLDefinition(dynamic_cast<Constraint *>(tab_obj)->getCodeDefinition(SchemaParser::XmlDefinition, true));
+					operation->setXMLDefinition(dynamic_cast<Constraint *>(tab_obj)->getSourceCode(SchemaParser::XmlCode, true));
 				else
-					operation->setXMLDefinition(tab_obj->getCodeDefinition(SchemaParser::XmlDefinition));
+					operation->setXMLDefinition(tab_obj->getSourceCode(SchemaParser::XmlCode));
 			}
 
 			operation->setParentObject(parent_obj);
@@ -465,7 +465,7 @@ int OperationList::registerObject(BaseObject *object, Operation::OperType op_typ
 			if((obj_type==ObjectType::Sequence && dynamic_cast<Sequence *>(object)->isReferRelationshipAddedColumn()) ||
 					(obj_type==ObjectType::View && dynamic_cast<View *>(object)->isReferRelationshipAddedColumn()) ||
 					(obj_type==ObjectType::GenericSql && dynamic_cast<GenericSQL *>(object)->isReferRelationshipAddedObject()))
-				operation->setXMLDefinition(object->getCodeDefinition(SchemaParser::XmlDefinition));
+				operation->setXMLDefinition(object->getSourceCode(SchemaParser::XmlCode));
 
 			//Case a specific index wasn't specified
 			if(object_idx < 0)
@@ -477,7 +477,7 @@ int OperationList::registerObject(BaseObject *object, Operation::OperType op_typ
 		}
 
 		if(obj_type==ObjectType::Column && dynamic_cast<Column *>(object)->getType().isUserType())
-			operation->setXMLDefinition(object->getCodeDefinition(SchemaParser::XmlDefinition));
+			operation->setXMLDefinition(object->getSourceCode(SchemaParser::XmlCode));
 
 		operation->setObjectIndex(obj_idx);
 		operations.push_back(operation);
@@ -766,7 +766,7 @@ void OperationList::executeOperation(Operation *oper, bool redo)
 				orig_obj=model->getObject(obj_idx, obj_type);
 
 			if(aux_obj)
-				oper->setXMLDefinition(orig_obj->getCodeDefinition(SchemaParser::XmlDefinition));
+				oper->setXMLDefinition(orig_obj->getSourceCode(SchemaParser::XmlCode));
 
 
 			//For pk constraint, before restore the previous configuration, uncheck the not-null flag of the source columns
@@ -811,7 +811,7 @@ void OperationList::executeOperation(Operation *oper, bool redo)
 			else if(parent_rel)
 				parent_rel->addObject(dynamic_cast<TableObject *>(object), obj_idx);
 			else if(object->getObjectType()==ObjectType::Table)
-				dynamic_cast<Table *>(object)->getCodeDefinition(SchemaParser::SqlDefinition);
+				dynamic_cast<Table *>(object)->getSourceCode(SchemaParser::SqlCode);
 
 			model->addObject(object, obj_idx);
 

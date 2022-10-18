@@ -870,7 +870,7 @@ void MainWindow::saveTemporaryModels()
 				bg_saving_pb->setValue(((i+1)/static_cast<double>(count)) * 100);
 
 				if(model->isModified())
-					model->getDatabaseModel()->saveModel(model->getTempFilename(), SchemaParser::XmlDefinition);
+					model->getDatabaseModel()->saveModel(model->getTempFilename(), SchemaParser::XmlCode);
 			}
 
 			bg_saving_pb->setValue(100);

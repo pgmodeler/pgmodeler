@@ -52,7 +52,7 @@ class OperatorClass: public BaseObject {
 
 		/*! \brief Formats the elements string used by the SchemaParser on the
 		 SQL/XML code definition for operator classes */
-		void setElementsAttribute(unsigned def_type);
+		void setElementsAttribute(SchemaParser::CodeType def_type);
 
 	public:
 		OperatorClass();
@@ -85,8 +85,8 @@ class OperatorClass: public BaseObject {
 		unsigned getElementCount();
 
 		//! \brief Returns the SQL/XML code definition for operator class
-		virtual QString getCodeDefinition(unsigned def_type, bool reduced_form) final;
-		virtual QString getCodeDefinition(unsigned def_type) final;
+		virtual QString getSourceCode(SchemaParser::CodeType def_type, bool reduced_form) final;
+		virtual QString getSourceCode(SchemaParser::CodeType def_type) final;
 
 		virtual QString getSignature(bool format=true) final;
 };

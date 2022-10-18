@@ -107,7 +107,7 @@ bool Conversion::isDefault()
 	return is_default;
 }
 
-QString Conversion::getCodeDefinition(unsigned def_type)
+QString Conversion::getSourceCode(SchemaParser::CodeType def_type)
 {
 	QString code_def=getCachedCode(def_type, false);
 	if(!code_def.isEmpty()) return code_def;
@@ -118,12 +118,12 @@ QString Conversion::getCodeDefinition(unsigned def_type)
 
 	if(conversion_func)
 	{
-		if(def_type==SchemaParser::SqlDefinition)
+		if(def_type==SchemaParser::SqlCode)
 			attributes[Attributes::Function]=conversion_func->getName(true);
 		else
-			attributes[Attributes::Function]=conversion_func->getCodeDefinition(def_type, true);
+			attributes[Attributes::Function]=conversion_func->getSourceCode(def_type, true);
 	}
 
-	return BaseObject::__getCodeDefinition(def_type);
+	return BaseObject::__getSourceCode(def_type);
 }
 

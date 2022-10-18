@@ -384,7 +384,7 @@ Column *Sequence::getOwnerColumn()
 	return owner_col;
 }
 
-QString Sequence::getCodeDefinition(unsigned def_type)
+QString Sequence::getSourceCode(SchemaParser::CodeType def_type)
 {
 	QString code_def=getCachedCode(def_type, false);
 	if(!code_def.isEmpty()) return code_def;
@@ -410,10 +410,10 @@ QString Sequence::getCodeDefinition(unsigned def_type)
 	attributes[Attributes::Cache]=cache;
 	attributes[Attributes::Cycle]=(cycle ? Attributes::True : "");
 
-	return BaseObject::__getCodeDefinition(def_type);
+	return BaseObject::__getSourceCode(def_type);
 }
 
-QString Sequence::getAlterDefinition(BaseObject *object)
+QString Sequence::getAlterCode(BaseObject *object)
 {
 	Sequence *seq=dynamic_cast<Sequence *>(object);
 
@@ -425,7 +425,7 @@ QString Sequence::getAlterDefinition(BaseObject *object)
 		PhysicalTable *table=nullptr;
 		attribs_map attribs;
 
-		attributes[Attributes::AlterCmds]=BaseObject::getAlterDefinition(object);
+		attributes[Attributes::AlterCmds]=BaseObject::getAlterCode(object);
 
 		if((this->owner_col && !seq->owner_col) ||
 				(!this->owner_col && seq->owner_col) ||
@@ -466,7 +466,7 @@ QString Sequence::getAlterDefinition(BaseObject *object)
 			attribs[Attributes::Cycle]=(seq->cycle ? Attributes::True : Attributes::Unset);
 
 		copyAttributes(attribs);
-		return BaseObject::getAlterDefinition(this->getSchemaName(), attributes, false, true);
+		return BaseObject::getAlterCode(this->getSchemaName(), attributes, false, true);
 	}
 	catch(Exception &e)
 	{
@@ -505,7 +505,7 @@ QString Sequence::getDataDictionary(const attribs_map &extra_attribs)
 		attribs[Attributes::Comment] = comment;
 
 		schparser.ignoreEmptyAttributes(true);
-		return schparser.getCodeDefinition(GlobalAttributes::getSchemaFilePath(GlobalAttributes::DataDictSchemaDir,
+		return schparser.getSourceCode(GlobalAttributes::getSchemaFilePath(GlobalAttributes::DataDictSchemaDir,
 																																					 getSchemaName()), attribs);
 	}
 	catch(Exception &e)

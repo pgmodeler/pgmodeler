@@ -85,7 +85,7 @@ class Rule: public TableObject{
 		void removeCommands();
 
 		//! \brief Returns the SQL / XML definition for the rule
-		virtual QString getCodeDefinition(unsigned def_type) final;
+		virtual QString getSourceCode(SchemaParser::CodeType def_type) final;
 
 		virtual QString getSignature(bool format=true) final;
 };

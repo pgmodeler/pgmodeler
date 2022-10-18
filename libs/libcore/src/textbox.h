@@ -63,7 +63,7 @@ class Textbox: public BaseGraphicObject{
 
 		/*! \brief Since textboxes doesn't has SQL code definition this method will return a empty
 		definition whenever the user try to generate a SQL for this object. */
-		virtual QString getCodeDefinition(unsigned def_type) final;
+		virtual QString getSourceCode(SchemaParser::CodeType def_type) final;
 
 		//! \brief Returns the current state of the passed text attribute
 		bool getTextAttribute(TextAttrib attrib);

@@ -233,7 +233,7 @@ class DatabaseModel:  public QObject, public BaseObject {
 		 * calling this method, the user is obligated to call the methdo setObjectsModified() to force the graphical objects rendering. */
 		void setLoadingModel(bool value);
 
-		/*! \brief This method forces the breaking of the code generation/saving in the methods getCodeDefinition, saveModel and saveSplitModel.
+		/*! \brief This method forces the breaking of the code generation/saving in the methods getSourceCode, saveModel and saveSplitModel.
 		 *  This method is used only by the export helper in such a way to allow the user to abort any export to file in a threaded operation. */
 		void setCancelSaving(bool value);
 
@@ -498,7 +498,7 @@ class DatabaseModel:  public QObject, public BaseObject {
 		void setInvalidated(bool value);
 
 		//! \brief Saves the specified code definition for the model on the specified filename
-		void saveModel(const QString &filename, unsigned def_type);
+		void saveModel(const QString &filename, SchemaParser::CodeType def_type);
 
 		/*! \brief Saves the model's SQL code definition by creating separated files for each object
 		 * The provided path must be a directory. If it does not exists then the method will create
@@ -508,13 +508,13 @@ class DatabaseModel:  public QObject, public BaseObject {
 		/*! \brief Returns the complete SQL/XML defintion for the entire model (including all the other objects).
 		 The parameter 'export_file' is used to format the generated code in a way that can be saved
 		 in na SQL file and executed later on the DBMS server. This parameter is only used for SQL definition. */
-		virtual QString getCodeDefinition(unsigned def_type, bool export_file) final;
+		virtual QString getSourceCode(SchemaParser::CodeType def_type, bool export_file) final;
 
 		//! \brief Returns the complete SQL/XML definition for the entire model (including all the other objects).
-		virtual QString getCodeDefinition(unsigned def_type) final;
+		virtual QString getSourceCode(SchemaParser::CodeType def_type) final;
 
 		//! \brief Returns the code definition only for the database (excluding the definition of the other objects)
-		QString __getCodeDefinition(unsigned def_type);
+		QString __getSourceCode(SchemaParser::CodeType def_type);
 
 		/*! \brief Returns the code definition for the specified object.
 		 *  This method receives the code generation mode option which can be:
@@ -854,7 +854,7 @@ class DatabaseModel:  public QObject, public BaseObject {
 		XmlParser *getXMLParser();
 
 		//! \brief Returns the ALTER definition between the current model and the provided one
-		virtual QString getAlterDefinition(BaseObject *object) final;
+		virtual QString getAlterCode(BaseObject *object) final;
 
 		//! \brief Returns the data dictionary of all tables in a single HTML code
 		void getDataDictionary(attribs_map &datadict, bool browsable, bool split);

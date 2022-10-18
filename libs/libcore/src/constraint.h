@@ -99,7 +99,7 @@ class Constraint: public TableObject{
 		void setColumnsAttribute(ColumnsId cols_id, unsigned def_type, bool inc_addedbyrel=false);
 
 		//! \brief Formats the exclude elements string used by the SchemaParser
-		void setExcludeElementsAttribute(unsigned def_type);
+		void setExcludeElementsAttribute(SchemaParser::CodeType def_type);
 
 		void setDeclInTableAttribute();
 
@@ -230,13 +230,13 @@ class Constraint: public TableObject{
 		/*! \brief Returns the SQL / XML definition for the constraint.
 		 This method calls getCodeDefintion(unsigned, bool) with the
 		 second parameter as false */
-		virtual QString getCodeDefinition(unsigned def_type) final;
+		virtual QString getSourceCode(SchemaParser::CodeType def_type) final;
 
 		/*! \brief Returns the SQL / XML definition for the constraint. The boolean parameter indicates
 		 whether the columns added by relationship must appear on the code definition */
-		virtual QString getCodeDefinition(unsigned def_type, bool inc_addedbyrel) final;
+		virtual QString getSourceCode(SchemaParser::CodeType def_type, bool inc_addedbyrel) final;
 
-		virtual QString getDropDefinition(bool cascade) final;
+		virtual QString getDropCode(bool cascade) final;
 
 		//! \brief Indicates whether the column exists on the specified internal column list
 		bool isColumnExists(Column *column, ColumnsId cols_id);

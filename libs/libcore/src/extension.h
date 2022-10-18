@@ -65,11 +65,11 @@ class Extension: public BaseObject {
 		QString getVersion(VersionId ver);
 
 		//! \brief Returns the SQL / XML code definition for the extension
-		virtual QString getCodeDefinition(unsigned def_type) final;
+		virtual QString getSourceCode(SchemaParser::CodeType def_type) final;
 
-		virtual QString getAlterDefinition(BaseObject *object) final;
+		virtual QString getAlterCode(BaseObject *object) final;
 
-		virtual QString getDropDefinition(bool cascade) final;
+		virtual QString getDropCode(bool cascade) final;
 
 		virtual QString getSignature(bool format = true) final;
 

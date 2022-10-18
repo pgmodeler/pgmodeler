@@ -270,12 +270,12 @@ QString Operator::getSignature(bool format_name)
 	return signature;
 }
 
-QString Operator::getCodeDefinition(unsigned def_type)
+QString Operator::getSourceCode(SchemaParser::CodeType def_type)
 {
-	return this->getCodeDefinition(def_type, false);
+	return this->getSourceCode(def_type, false);
 }
 
-QString Operator::getCodeDefinition(unsigned def_type, bool reduced_form)
+QString Operator::getSourceCode(SchemaParser::CodeType def_type, bool reduced_form)
 {
 	QString code_def=getCachedCode(def_type, reduced_form);
 	if(!code_def.isEmpty()) return code_def;
@@ -291,7 +291,7 @@ QString Operator::getCodeDefinition(unsigned def_type, bool reduced_form)
 
 	for(i=Operator::LeftArg; i <= Operator::RightArg; i++)
 	{
-		if(def_type==SchemaParser::SqlDefinition)
+		if(def_type==SchemaParser::SqlCode)
 		{
 			if(argument_types[i]!=QString("\"any\""))
 				attributes[type_attribs[i]]=~argument_types[i];
@@ -299,7 +299,7 @@ QString Operator::getCodeDefinition(unsigned def_type, bool reduced_form)
 		else
 		{
 			attributes[type_attribs[i]]=argument_types[i].
-																	getCodeDefinition(SchemaParser::XmlDefinition,type_attribs[i]);
+																	getSourceCode(SchemaParser::XmlCode,type_attribs[i]);
 		}
 	}
 
@@ -307,12 +307,12 @@ QString Operator::getCodeDefinition(unsigned def_type, bool reduced_form)
 	{
 		if(operators[i])
 		{
-			if(def_type==SchemaParser::SqlDefinition)
+			if(def_type==SchemaParser::SqlCode)
 				attributes[op_attribs[i]]=operators[i]->getName(true);
 			else
 			{
 				operators[i]->attributes[Attributes::RefType]=op_attribs[i];
-				attributes[op_attribs[i]]=operators[i]->getCodeDefinition(def_type, true);
+				attributes[op_attribs[i]]=operators[i]->getSourceCode(def_type, true);
 			}
 		}
 	}
@@ -321,12 +321,12 @@ QString Operator::getCodeDefinition(unsigned def_type, bool reduced_form)
 	{
 		if(functions[i])
 		{
-			if(def_type==SchemaParser::SqlDefinition)
+			if(def_type==SchemaParser::SqlCode)
 				attributes[func_attribs[i]]=functions[i]->getName(true);
 			else
 			{
 				functions[i]->setAttribute(Attributes::RefType, func_attribs[i]);
-				attributes[func_attribs[i]]=functions[i]->getCodeDefinition(def_type, true);
+				attributes[func_attribs[i]]=functions[i]->getSourceCode(def_type, true);
 			}
 		}
 	}
@@ -335,7 +335,7 @@ QString Operator::getCodeDefinition(unsigned def_type, bool reduced_form)
 	attributes[Attributes::Merges]=(merges ? Attributes::True : "");
 	attributes[Attributes::Signature]=getSignature();
 
-	return BaseObject::getCodeDefinition(def_type, reduced_form);
+	return BaseObject::getSourceCode(def_type, reduced_form);
 }
 
 void Operator::configureSearchAttributes()

@@ -199,9 +199,9 @@ class BaseObject {
 		 It was used a numeric type to avoid the use excessive of RTTI. */
 		ObjectType obj_type;
 
-		/*! \brief This method calls the getCodeDefinition(unsigned, bool) method with the 'reduced_form' defined as 'false',
-		 This is the real implementation of the virtual method getCodeDefinition(unsigned). */
-		QString __getCodeDefinition(unsigned def_type);
+		/*! \brief This method calls the getSourceCode(SchemaParser::CodeType, bool) method with the 'reduced_form' defined as 'false',
+		 This is the real implementation of the virtual method getSourceCode(SchemaParser::CodeType). */
+		QString __getSourceCode(SchemaParser::CodeType def_type);
 
 		/*! \brief Set the database that owns the object
 		ATTENTION: calling this method with a nullptr parameter doesn't means that the object will
@@ -238,7 +238,7 @@ class BaseObject {
 		products of comparison */
 		void copyAttributes(attribs_map &attribs);
 
-		static QString getAlterDefinition(QString sch_name, attribs_map &attribs, bool ignore_ukn_attribs=false, bool ignore_empty_attribs=false);
+		static QString getAlterCode(QString sch_name, attribs_map &attribs, bool ignore_ukn_attribs=false, bool ignore_empty_attribs=false);
 
 		QString getAlterCommentDefinition(BaseObject *object, attribs_map attributes);
 
@@ -402,25 +402,25 @@ class BaseObject {
 
 		/*! \brief Forcing the class to be virtual. This means that derivated classes may
 		 override this method in order to be possible its instatiation. */
-		virtual QString getCodeDefinition(unsigned)=0;
+		virtual QString getSourceCode(SchemaParser::CodeType)=0;
 
 		/*! \brief Returns the object's SQL or XML code definition. The attribute 'reduced_form'
 		 indicates that the code generation will be an XML minimum representation
 		 of the object. See schema file for: functions, schemas, domains, types. */
-		virtual QString getCodeDefinition(unsigned def_type, bool reduced_form);
+		virtual QString getSourceCode(SchemaParser::CodeType def_type, bool reduced_form);
 
 		/*! \brief Returns the SQL definition in form of ALTER commands containing the differences between the this and 'object'.
 		This form do the camparison considering the difference on the objects' names (ignore_name_diff=false). This method
 		is used in cases when the objects' name differences are important and can't be discarded */
-		virtual QString getAlterDefinition(BaseObject *object);
+		virtual QString getAlterCode(BaseObject *object);
 
 		/*! \brief Returns the SQL definition in form of ALTER commands containing the differences between the this and 'object'.
 		The paramenter ignore_name_diff when true will cause the method to not generate a ALTER ... RENAME TO when the name of
 		objects differs. */
-		virtual QString getAlterDefinition(BaseObject *object, bool ignore_name_diff);
+		virtual QString getAlterCode(BaseObject *object, bool ignore_name_diff);
 
 		//!brief Returns the DROP statement for the object
-		virtual QString getDropDefinition(bool cascade);
+		virtual QString getDropCode(bool cascade);
 
 		//! \brief Returns if the specified type accepts to have a schema assigned
 		static bool acceptsSchema(ObjectType obj_type);

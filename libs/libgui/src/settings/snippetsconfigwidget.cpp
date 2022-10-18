@@ -177,7 +177,7 @@ QString SnippetsConfigWidget::parseSnippet(attribs_map snippet, attribs_map attr
 
 		schparser.ignoreEmptyAttributes(true);
 		schparser.ignoreUnkownAttributes(true);
-		return schparser.getCodeDefinition(attribs);
+		return schparser.getSourceCode(attribs);
 	}
 	catch(Exception &e)
 	{
@@ -235,7 +235,7 @@ bool SnippetsConfigWidget::isSnippetValid(attribs_map &attribs, const QString &o
 			schparser.loadBuffer(buf);
 			schparser.ignoreEmptyAttributes(true);
 			schparser.ignoreUnkownAttributes(true);
-			schparser.getCodeDefinition(attribs);
+			schparser.getSourceCode(attribs);
 		}
 		catch(Exception &e)
 		{
@@ -455,7 +455,7 @@ void SnippetsConfigWidget::saveConfiguration()
 			for(auto &snip : snippets)
 			{
 				attribs[Attributes::Snippet]+=
-						XmlParser::convertCharsToXMLEntities(schparser.getCodeDefinition(snippet_sch, snip));
+						XmlParser::convertCharsToXMLEntities(schparser.getSourceCode(snippet_sch, snip));
 			}
 		}
 

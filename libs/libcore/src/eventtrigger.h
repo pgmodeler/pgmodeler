@@ -58,7 +58,7 @@ class EventTrigger: public BaseObject {
 		Function *getFunction();
 		QStringList getFilter(const QString &variable);
 
-		virtual QString getCodeDefinition(unsigned def_type) final;
+		virtual QString getSourceCode(SchemaParser::CodeType def_type) final;
 };
 
 #endif

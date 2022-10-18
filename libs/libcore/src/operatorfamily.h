@@ -44,8 +44,8 @@ class OperatorFamily: public BaseObject {
 		IndexingType getIndexingType();
 
 		//! \brief Returns the SQL / XML code definition for the operator family
-		virtual QString getCodeDefinition(unsigned def_type, bool reduced_form) final;
-		virtual QString getCodeDefinition(unsigned def_type) final;
+		virtual QString getSourceCode(SchemaParser::CodeType def_type, bool reduced_form) final;
+		virtual QString getSourceCode(SchemaParser::CodeType def_type) final;
 
 		virtual QString getSignature(bool format=true) final;
 };

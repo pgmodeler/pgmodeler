@@ -168,7 +168,7 @@ void PhysicalTable::setCommentAttribute(TableObject *tab_obj)
 		if(tab_obj->isSQLDisabled())
 			attributes[Attributes::ColsComment]+=QString("-- ");
 
-		attributes[Attributes::ColsComment]+=schparser.getCodeDefinition(Attributes::Comment, attribs, SchemaParser::SqlDefinition);
+		attributes[Attributes::ColsComment]+=schparser.getSourceCode(Attributes::Comment, attribs, SchemaParser::SqlCode);
 		schparser.ignoreUnkownAttributes(false);
 	}
 }
@@ -204,17 +204,17 @@ void PhysicalTable::setRelObjectsIndexesAttribute()
 				aux_attribs[Attributes::Index]=QString::number(obj_idx.second);
 
 				schparser.ignoreUnkownAttributes(true);
-				aux_attribs[Attributes::Objects]+=schparser.getCodeDefinition(Attributes::Object, aux_attribs, SchemaParser::XmlDefinition);
+				aux_attribs[Attributes::Objects]+=schparser.getSourceCode(Attributes::Object, aux_attribs, SchemaParser::XmlCode);
 			}
 
 			aux_attribs[Attributes::ObjectType]=BaseObject::getSchemaName(obj_types[idx]);
-			attributes[attribs[idx]]=schparser.getCodeDefinition(Attributes::CustomIdxs, aux_attribs, SchemaParser::XmlDefinition);
+			attributes[attribs[idx]]=schparser.getSourceCode(Attributes::CustomIdxs, aux_attribs, SchemaParser::XmlCode);
 			aux_attribs.clear();
 		}
 	}
 }
 
-void PhysicalTable::setColumnsAttribute(unsigned def_type, bool incl_rel_added_cols)
+void PhysicalTable::setColumnsAttribute(SchemaParser::CodeType def_type, bool incl_rel_added_cols)
 {
 	QStringList cols, inh_cols;
 
@@ -222,21 +222,21 @@ void PhysicalTable::setColumnsAttribute(unsigned def_type, bool incl_rel_added_c
 	{
 		/* Do not generates the column code definition when it is not included by
 		 relatoinship, in case of XML definition. */
-		if((def_type==SchemaParser::SqlDefinition && !col->isAddedByCopy() && !col->isAddedByGeneralization()) ||
-			 (def_type==SchemaParser::XmlDefinition && (!col->isAddedByRelationship() || (incl_rel_added_cols && col->isAddedByRelationship()))))
+		if((def_type==SchemaParser::SqlCode && !col->isAddedByCopy() && !col->isAddedByGeneralization()) ||
+			 (def_type==SchemaParser::XmlCode && (!col->isAddedByRelationship() || (incl_rel_added_cols && col->isAddedByRelationship()))))
 		{
-			cols.append(col->getCodeDefinition(def_type));
+			cols.append(col->getSourceCode(def_type));
 
-			if(def_type==SchemaParser::SqlDefinition)
+			if(def_type==SchemaParser::SqlCode)
 				setCommentAttribute(col);
 		}
-		else if(def_type==SchemaParser::SqlDefinition && col->isAddedByGeneralization() && !gen_alter_cmds)
+		else if(def_type==SchemaParser::SqlCode && col->isAddedByGeneralization() && !gen_alter_cmds)
 		{
-			inh_cols.append("-- " + col->getCodeDefinition(def_type));
+			inh_cols.append("-- " + col->getSourceCode(def_type));
 		}
 	}
 
-	if(def_type == SchemaParser::SqlDefinition)
+	if(def_type == SchemaParser::SqlCode)
 	{
 		if(!cols.isEmpty())
 		{
@@ -281,7 +281,7 @@ void PhysicalTable::setColumnsAttribute(unsigned def_type, bool incl_rel_added_c
 		attributes[Attributes::Columns] += col;
 }
 
-void PhysicalTable::setConstraintsAttribute(unsigned def_type)
+void PhysicalTable::setConstraintsAttribute(SchemaParser::CodeType def_type)
 {
 	QString str_constr;
 	unsigned i, count;
@@ -296,29 +296,29 @@ void PhysicalTable::setConstraintsAttribute(unsigned def_type)
 
 		if(constr->getConstraintType()!=ConstraintType::ForeignKey &&
 
-				((def_type==SchemaParser::SqlDefinition &&
+				((def_type==SchemaParser::SqlCode &&
 					((!constr->isReferRelationshipAddedColumn() && constr->getConstraintType()!=ConstraintType::Check) ||
 					 (constr->getConstraintType()==ConstraintType::Check && !constr->isAddedByGeneralization()) ||
 					 constr->getConstraintType()==ConstraintType::PrimaryKey)) ||
 
-				 (def_type==SchemaParser::XmlDefinition && !constr->isAddedByRelationship() &&
+				 (def_type==SchemaParser::XmlCode && !constr->isAddedByRelationship() &&
 					((constr->getConstraintType()!=ConstraintType::PrimaryKey && !constr->isReferRelationshipAddedColumn()) ||
 					 (constr->getConstraintType()==ConstraintType::PrimaryKey)))))
 		{
-			inc_added_by_rel=(def_type==SchemaParser::SqlDefinition);
+			inc_added_by_rel=(def_type==SchemaParser::SqlCode);
 
-			if(def_type==SchemaParser::XmlDefinition)
-				str_constr+=constr->getCodeDefinition(def_type,inc_added_by_rel);
+			if(def_type==SchemaParser::XmlCode)
+				str_constr+=constr->getSourceCode(def_type,inc_added_by_rel);
 			else
 				//For sql definition the generated constraints are stored in a vector to be treated below
-				lines.push_back(constr->getCodeDefinition(def_type,inc_added_by_rel));
+				lines.push_back(constr->getSourceCode(def_type,inc_added_by_rel));
 
-			if(def_type==SchemaParser::SqlDefinition)
+			if(def_type==SchemaParser::SqlCode)
 				setCommentAttribute(constr);
 		}
 	}
 
-	if(def_type==SchemaParser::SqlDefinition && !lines.empty())
+	if(def_type==SchemaParser::SqlCode && !lines.empty())
 	{
 		/* When the coistraints are being generated in form of ALTER commands
 		simply concatenates all the lines */
@@ -427,7 +427,7 @@ void PhysicalTable::addObject(BaseObject *obj, int obj_idx)
 					throw Exception(ErrorCode::AsgObjectBelongsAnotherTable,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 				//Validates the object SQL code befor insert on table
-				obj->getCodeDefinition(SchemaParser::SqlDefinition);
+				obj->getSourceCode(SchemaParser::SqlCode);
 
 				if(col && col->getType()==this)
 				{
@@ -1370,7 +1370,7 @@ void PhysicalTable::updateAlterCmdsStatus()
 																			 dynamic_cast<Constraint *>(constraints[i])->getConstraintType()!=ConstraintType::ForeignKey);
 }
 
-void PhysicalTable::setTableAttributes(unsigned def_type, bool incl_rel_added_objs)
+void PhysicalTable::setTableAttributes(SchemaParser::CodeType def_type, bool incl_rel_added_objs)
 {
 	QStringList part_keys_code;
 
@@ -1387,24 +1387,24 @@ void PhysicalTable::setTableAttributes(unsigned def_type, bool incl_rel_added_ob
 	attributes[Attributes::ExtAttribsPage]=(pagination_enabled ? QString::number(curr_page[ExtAttribsSection]) : "");
 
 	for(auto part_key : partition_keys)
-		part_keys_code+=part_key.getCodeDefinition(def_type);
+		part_keys_code+=part_key.getSourceCode(def_type);
 
-	if(def_type == SchemaParser::SqlDefinition)
+	if(def_type == SchemaParser::SqlCode)
 		attributes[Attributes::PartitionKey]=part_keys_code.join(',');
 	else
 		attributes[Attributes::PartitionKey]=part_keys_code.join(' ');
 
-	if(def_type==SchemaParser::SqlDefinition && partitioned_table)
+	if(def_type==SchemaParser::SqlCode && partitioned_table)
 		attributes[Attributes::PartitionedTable]=partitioned_table->getName(true);
 
-	if(tag && def_type==SchemaParser::XmlDefinition)
-		attributes[Attributes::Tag]=tag->getCodeDefinition(def_type, true);
+	if(tag && def_type==SchemaParser::XmlCode)
+		attributes[Attributes::Tag]=tag->getSourceCode(def_type, true);
 
 	setColumnsAttribute(def_type, incl_rel_added_objs);
 	setConstraintsAttribute(def_type);
 	setAncestorTableAttribute();
 
-	if(def_type==SchemaParser::XmlDefinition)
+	if(def_type==SchemaParser::XmlCode)
 	{
 		setRelObjectsIndexesAttribute();
 		setPositionAttribute();
@@ -1785,7 +1785,7 @@ QString PhysicalTable::getDataDictionary(bool split, const attribs_map &extra_at
 		for(auto &tab : ancestor_tables)
 		{
 			aux_attrs[Attributes::Name] = tab->getSignature().remove(QChar('"'));
-			tab_names.push_back(schparser.getCodeDefinition(link_dict_file, aux_attrs));
+			tab_names.push_back(schparser.getSourceCode(link_dict_file, aux_attrs));
 		}
 		attribs[Attributes::Inherit] = tab_names.join(", ");
 		tab_names.clear();
@@ -1794,14 +1794,14 @@ QString PhysicalTable::getDataDictionary(bool split, const attribs_map &extra_at
 		if(partitioned_table)
 		{
 			aux_attrs[Attributes::Name] = partitioned_table->getSignature().remove(QChar('"'));
-			attribs[Attributes::PartitionedTable] = schparser.getCodeDefinition(link_dict_file, aux_attrs);
+			attribs[Attributes::PartitionedTable] = schparser.getSourceCode(link_dict_file, aux_attrs);
 		}
 
 		// Gathering the patition table names
 		for(auto &tab : partition_tables)
 		{
 			aux_attrs[Attributes::Name] = tab->getSignature().remove(QChar('"'));
-			tab_names.push_back(schparser.getCodeDefinition(link_dict_file, aux_attrs));
+			tab_names.push_back(schparser.getSourceCode(link_dict_file, aux_attrs));
 		}
 		attribs[Attributes::PartitionTables] = tab_names.join(", ");
 
@@ -1826,10 +1826,10 @@ QString PhysicalTable::getDataDictionary(bool split, const attribs_map &extra_at
 					dynamic_cast<Trigger *>(obj)->getDataDictionary({{ Attributes::Split, attribs[Attributes::Split] }});
 		}
 
-		attribs[Attributes::Objects] += schparser.getCodeDefinition(GlobalAttributes::getSchemaFilePath(GlobalAttributes::DataDictSchemaDir,
+		attribs[Attributes::Objects] += schparser.getSourceCode(GlobalAttributes::getSchemaFilePath(GlobalAttributes::DataDictSchemaDir,
 																																																		Attributes::Objects), attribs);
 		schparser.ignoreEmptyAttributes(true);
-		return schparser.getCodeDefinition(tab_dict_file, attribs);
+		return schparser.getSourceCode(tab_dict_file, attribs);
 	}
 	catch(Exception &e)
 	{

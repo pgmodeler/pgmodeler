@@ -72,13 +72,13 @@ void Trigger::setArgumentAttribute(unsigned def_type)
 
 	for(auto &arg : arguments)
 	{
-		if(def_type==SchemaParser::SqlDefinition)
+		if(def_type==SchemaParser::SqlCode)
 			str_args.append(QString("'") + arg + QString("'"));
 		else
 			str_args.append(arg);
 	}
 
-	attributes[Attributes::Arguments] = str_args.join(def_type == SchemaParser::SqlDefinition ? "," : UtilsNs::DataSeparator);
+	attributes[Attributes::Arguments] = str_args.join(def_type == SchemaParser::SqlCode ? "," : UtilsNs::DataSeparator);
 }
 
 void Trigger::setFiringType(FiringType firing_type)
@@ -341,7 +341,7 @@ std::vector<Column *> Trigger::getRelationshipAddedColumns()
 	return cols;
 }
 
-void Trigger::setBasicAttributes(unsigned def_type)
+void Trigger::setBasicAttributes(SchemaParser::CodeType def_type)
 {
 	QString str_aux,
 			attribs[4]={Attributes::InsEvent, Attributes::DelEvent,
@@ -376,21 +376,21 @@ void Trigger::setBasicAttributes(unsigned def_type)
 
 	if(!str_aux.isEmpty()) str_aux.remove(str_aux.size()-3,3);
 
-	if(def_type==SchemaParser::SqlDefinition && !attributes[Attributes::Columns].isEmpty())
+	if(def_type==SchemaParser::SqlCode && !attributes[Attributes::Columns].isEmpty())
 		str_aux+=QString(" OF ") + attributes[Attributes::Columns];
 
 	attributes[Attributes::Events]=str_aux;
 
 	if(function)
 	{
-		if(def_type==SchemaParser::SqlDefinition)
+		if(def_type==SchemaParser::SqlCode)
 			attributes[Attributes::TriggerFunc]=function->getName(true);
 		else
-			attributes[Attributes::TriggerFunc]=function->getCodeDefinition(def_type, true);
+			attributes[Attributes::TriggerFunc]=function->getSourceCode(def_type, true);
 	}
 }
 
-QString Trigger::getCodeDefinition(unsigned def_type)
+QString Trigger::getSourceCode(SchemaParser::CodeType def_type)
 {
 	QString code_def=getCachedCode(def_type, false);
 	if(!code_def.isEmpty()) return code_def;
@@ -419,7 +419,7 @@ QString Trigger::getCodeDefinition(unsigned def_type)
 	attributes[Attributes::Deferrable]=(is_deferrable ? Attributes::True : "");
 	attributes[Attributes::DeferType]=(~deferral_type);
 
-	if(def_type == SchemaParser::XmlDefinition)
+	if(def_type == SchemaParser::XmlCode)
 	{
 		attributes[Attributes::OldTableName]=transition_tabs_names[OldTableName];
 		attributes[Attributes::NewTableName]=transition_tabs_names[NewTableName];
@@ -430,7 +430,7 @@ QString Trigger::getCodeDefinition(unsigned def_type)
 		attributes[Attributes::NewTableName]=BaseObject::formatName(transition_tabs_names[NewTableName]);
 	}
 
-	return BaseObject::__getCodeDefinition(def_type);
+	return BaseObject::__getSourceCode(def_type);
 }
 
 void Trigger::validateTrigger()
@@ -523,7 +523,7 @@ QString Trigger::getDataDictionary(const attribs_map &extra_attribs)
 		attribs[Attributes::Events] = aux_list.join(", ");
 
 		schparser.ignoreEmptyAttributes(true);
-		return schparser.getCodeDefinition(GlobalAttributes::getSchemaFilePath(GlobalAttributes::DataDictSchemaDir,
+		return schparser.getSourceCode(GlobalAttributes::getSchemaFilePath(GlobalAttributes::DataDictSchemaDir,
 																																					 BaseObject::getSchemaName(ObjectType::Trigger)), attribs);
 	}
 	catch(Exception &e)

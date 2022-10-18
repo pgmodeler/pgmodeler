@@ -156,34 +156,34 @@ Cast::CastType Cast::getCastType()
 	return cast_type;
 }
 
-QString Cast::getDropDefinition(bool cascade)
+QString Cast::getDropCode(bool cascade)
 {
 	attributes[Attributes::Signature].replace(QString(","), QString(" AS "));
-	return BaseObject::getDropDefinition(cascade);
+	return BaseObject::getDropCode(cascade);
 }
 
-QString Cast::getCodeDefinition(unsigned def_type)
+QString Cast::getSourceCode(SchemaParser::CodeType def_type)
 {
 	QString code_def=getCachedCode(def_type, false);
 	if(!code_def.isEmpty()) return code_def;
 
-	if(def_type==SchemaParser::SqlDefinition)
+	if(def_type==SchemaParser::SqlCode)
 	{
 		attributes[Attributes::SourceType]=(*types[SrcType]);
 		attributes[Attributes::DestType]=(*types[DstType]);
 	}
 	else
 	{
-		attributes[Attributes::SourceType]=types[SrcType].getCodeDefinition(def_type);
-		attributes[Attributes::DestType]=types[DstType].getCodeDefinition(def_type);
+		attributes[Attributes::SourceType]=types[SrcType].getSourceCode(def_type);
+		attributes[Attributes::DestType]=types[DstType].getSourceCode(def_type);
 	}
 
 	if(!is_in_out && cast_function)
 	{
-		if(def_type==SchemaParser::SqlDefinition)
+		if(def_type==SchemaParser::SqlCode)
 			attributes[Attributes::Function]=cast_function->getSignature();
 		else
-			attributes[Attributes::Function]=cast_function->getCodeDefinition(def_type, true);
+			attributes[Attributes::Function]=cast_function->getSourceCode(def_type, true);
 	}
 	else
 		attributes[Attributes::IoCast]=(is_in_out ? Attributes::True : "");
@@ -195,10 +195,10 @@ QString Cast::getCodeDefinition(unsigned def_type)
 	else
 		attributes[Attributes::CastType]="";
 
-	if(def_type==SchemaParser::SqlDefinition)
+	if(def_type==SchemaParser::SqlCode)
 		attributes[Attributes::CastType]=attributes[Attributes::CastType].toUpper();
 
-	return BaseObject::__getCodeDefinition(def_type);
+	return BaseObject::__getSourceCode(def_type);
 }
 
 QString Cast::getSignature(bool)

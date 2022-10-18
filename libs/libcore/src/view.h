@@ -213,9 +213,9 @@ class View: public BaseTable {
 		int getReferenceIndex(Reference &ref, Reference::SqlType sql_type);
 
 		//! \brief Returns the SQL / XML definition for the view
-		virtual QString getCodeDefinition(unsigned def_type) final;
+		virtual QString getSourceCode(SchemaParser::CodeType def_type) final;
 
-		virtual QString getDropDefinition(bool cascade) final;
+		virtual QString getDropCode(bool cascade) final;
 
 		/*! \brief Returns whether the view references columns added
 		 by relationship. This method is used as auxiliary
@@ -253,7 +253,7 @@ class View: public BaseTable {
 		std::vector<SimpleColumn> getColumns();
 
 		virtual QString getDataDictionary(bool split, const attribs_map &extra_attribs = {});
-		virtual QString getAlterDefinition(BaseObject *object) final;
+		virtual QString getAlterCode(BaseObject *object) final;
 
 		//! \brief Copy the attributes between two views
 		void operator = (View &visao);

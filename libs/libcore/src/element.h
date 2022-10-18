@@ -59,7 +59,7 @@ class Element {
 	protected:
 		SchemaParser schparser;
 
-		void configureAttributes(attribs_map &attributes, unsigned def_type);
+		void configureAttributes(attribs_map &attributes, SchemaParser::CodeType def_type);
 
 	public:
 		//! \brief Constants used to reference the sorting method of the element
@@ -95,7 +95,7 @@ class Element {
 
 		bool isSortingEnabled();
 
-		virtual QString getCodeDefinition(unsigned) { return ""; }
+		virtual QString getSourceCode(SchemaParser::CodeType) { return ""; }
 		bool operator == (Element &elem);
 		bool operator ==(const Element &elem);
 };

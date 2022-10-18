@@ -104,12 +104,12 @@ bool Language::isTrusted()
 	return is_trusted;
 }
 
-QString Language::getCodeDefinition(unsigned def_type)
+QString Language::getSourceCode(SchemaParser::CodeType def_type)
 {
-	return this->getCodeDefinition(def_type, false);
+	return this->getSourceCode(def_type, false);
 }
 
-QString Language::getCodeDefinition(unsigned def_type, bool reduced_form)
+QString Language::getSourceCode(SchemaParser::CodeType def_type, bool reduced_form)
 {
 	QString code_def=getCachedCode(def_type, reduced_form);
 	if(!code_def.isEmpty()) return code_def;
@@ -121,23 +121,23 @@ QString Language::getCodeDefinition(unsigned def_type, bool reduced_form)
 
 	attributes[Attributes::Trusted]=(is_trusted ? Attributes::True : "");
 
-	if(!reduced_form && def_type==SchemaParser::XmlDefinition)
+	if(!reduced_form && def_type==SchemaParser::XmlCode)
 		reduced_form=(!functions[ValidatorFunc] && !functions[HandlerFunc] && !functions[InlineFunc] && !this->getOwner());
 
 	for(i=0; i < 3; i++)
 	{
 		if(functions[i])
 		{
-			if(def_type==SchemaParser::SqlDefinition)
+			if(def_type==SchemaParser::SqlCode)
 				attributes[attribs_func[i]]=functions[i]->getName(true);
 			else
 			{
 				functions[i]->setAttribute(Attributes::RefType, attribs_func[i]);
-				attributes[attribs_func[i]]=functions[i]->getCodeDefinition(def_type, true);
+				attributes[attribs_func[i]]=functions[i]->getSourceCode(def_type, true);
 			}
 		}
 	}
 
-	return BaseObject::getCodeDefinition(def_type, reduced_form);
+	return BaseObject::getSourceCode(def_type, reduced_form);
 }
 

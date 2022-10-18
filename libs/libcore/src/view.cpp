@@ -631,7 +631,7 @@ bool View::isReferencingColumn(Column *col)
 	return found;
 }
 
-QString View::getCodeDefinition(unsigned def_type)
+QString View::getSourceCode(SchemaParser::CodeType def_type)
 {
 	QString code_def=getCachedCode(def_type, false);
 	if(!code_def.isEmpty()) return code_def;
@@ -664,10 +664,10 @@ QString View::getCodeDefinition(unsigned def_type)
 		attributes[Attributes::Columns]=fmt_names.join(',');
 	}
 
-	if(tag && def_type==SchemaParser::XmlDefinition)
-		attributes[Attributes::Tag]=tag->getCodeDefinition(def_type, true);
+	if(tag && def_type==SchemaParser::XmlCode)
+		attributes[Attributes::Tag]=tag->getSourceCode(def_type, true);
 
-	if(def_type==SchemaParser::SqlDefinition)
+	if(def_type==SchemaParser::SqlCode)
 		setDefinitionAttribute();
 	else
 	{
@@ -678,7 +678,7 @@ QString View::getCodeDefinition(unsigned def_type)
 		attributes[Attributes::MaxObjCount]=QString::number(static_cast<unsigned>(getMaxObjectCount() * 1.20));
 	}
 
-	return BaseObject::__getCodeDefinition(def_type);
+	return BaseObject::__getSourceCode(def_type);
 }
 
 void View::setSQLObjectAttribute()
@@ -736,10 +736,10 @@ unsigned View::getMaxObjectCount()
 	return max;
 }
 
-QString View::getDropDefinition(bool cascade)
+QString View::getDropCode(bool cascade)
 {
 	setSQLObjectAttribute();
-	return BaseObject::getDropDefinition(cascade);
+	return BaseObject::getDropCode(cascade);
 }
 
 
@@ -827,7 +827,7 @@ void View::addObject(BaseObject *obj, int obj_idx)
 
 			//Validates the object definition
 			tab_obj->setParentTable(this);
-			tab_obj->getCodeDefinition(SchemaParser::SqlDefinition);
+			tab_obj->getSourceCode(SchemaParser::SqlCode);
 
 			//Make a additional validation if the object is a trigger
 			if(tab_obj->getObjectType()==ObjectType::Trigger)
@@ -1146,13 +1146,13 @@ QString View::getDataDictionary(bool split, const attribs_map &extra_attribs)
 			if(ref.getTable())
 			{
 				aux_attrs[Attributes::Name] = ref.getTable()->getSignature().remove(QChar('"'));
-				tab_names.push_back(schparser.getCodeDefinition(link_dict_file, aux_attrs));
+				tab_names.push_back(schparser.getSourceCode(link_dict_file, aux_attrs));
 			}
 
 			for(auto &tab : ref.getReferencedTables())
 			{
 				aux_attrs[Attributes::Name] = tab->getSignature().remove(QChar('"'));
-				tab_names.push_back(schparser.getCodeDefinition(link_dict_file, aux_attrs));
+				tab_names.push_back(schparser.getSourceCode(link_dict_file, aux_attrs));
 			}
 		}
 
@@ -1167,7 +1167,7 @@ QString View::getDataDictionary(bool split, const attribs_map &extra_attribs)
 			aux_attrs[Attributes::Type] = col.type;
 
 			schparser.ignoreUnkownAttributes(true);
-			attribs[Attributes::Columns] += schparser.getCodeDefinition(GlobalAttributes::getSchemaFilePath(GlobalAttributes::DataDictSchemaDir,
+			attribs[Attributes::Columns] += schparser.getSourceCode(GlobalAttributes::getSchemaFilePath(GlobalAttributes::DataDictSchemaDir,
 																																																			BaseObject::getSchemaName(ObjectType::Column)), aux_attrs);
 			aux_attrs.clear();
 		}
@@ -1182,10 +1182,10 @@ QString View::getDataDictionary(bool split, const attribs_map &extra_attribs)
 			attribs[Attributes::Indexes] +=  dynamic_cast<Index *>(obj)->getDataDictionary();
 
 		schparser.ignoreUnkownAttributes(true);
-		attribs[Attributes::Objects] += schparser.getCodeDefinition(GlobalAttributes::getSchemaFilePath(GlobalAttributes::DataDictSchemaDir,
+		attribs[Attributes::Objects] += schparser.getSourceCode(GlobalAttributes::getSchemaFilePath(GlobalAttributes::DataDictSchemaDir,
 																																																		Attributes::Objects), attribs);
 		schparser.ignoreEmptyAttributes(true);
-		return schparser.getCodeDefinition(GlobalAttributes::getSchemaFilePath(GlobalAttributes::DataDictSchemaDir,
+		return schparser.getSourceCode(GlobalAttributes::getSchemaFilePath(GlobalAttributes::DataDictSchemaDir,
 																																					 getSchemaName()), attribs);
 	}
 	catch(Exception &e)
@@ -1194,12 +1194,12 @@ QString View::getDataDictionary(bool split, const attribs_map &extra_attribs)
 	}
 }
 
-QString View::getAlterDefinition(BaseObject *object)
+QString View::getAlterCode(BaseObject *object)
 {
 	try
 	{
 		attributes[Attributes::Materialized] = (materialized ? Attributes::True : "");
-		return BaseObject::getAlterDefinition(object);
+		return BaseObject::getAlterCode(object);
 	}
 	catch(Exception &e)
 	{

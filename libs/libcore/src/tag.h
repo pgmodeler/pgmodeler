@@ -67,8 +67,8 @@ class Tag: public BaseObject {
 	an error if the current element does not have at least 2 colors configured */
 		QLinearGradient getFillStyle(const QString &elem_id);
 
-		QString getCodeDefinition(unsigned def_type);
-		QString getCodeDefinition(unsigned def_type, bool reduced_form) final;
+		QString getSourceCode(SchemaParser::CodeType def_type);
+		QString getSourceCode(SchemaParser::CodeType def_type, bool reduced_form) final;
 
 		static QStringList getColorAttributes(void);
 

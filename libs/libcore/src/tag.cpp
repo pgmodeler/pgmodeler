@@ -130,14 +130,14 @@ QLinearGradient Tag::getFillStyle(const QString &elem_id)
 	}
 }
 
-QString Tag::getCodeDefinition(unsigned def_type)
+QString Tag::getSourceCode(SchemaParser::CodeType def_type)
 {
-	return this->getCodeDefinition(def_type, false);
+	return this->getSourceCode(def_type, false);
 }
 
-QString Tag::getCodeDefinition(unsigned def_type, bool reduced_form)
+QString Tag::getSourceCode(SchemaParser::CodeType def_type, bool reduced_form)
 {
-	if(def_type==SchemaParser::SqlDefinition)
+	if(def_type==SchemaParser::SqlCode)
 		return "";
 	else
 	{
@@ -160,7 +160,7 @@ QString Tag::getCodeDefinition(unsigned def_type, bool reduced_form)
 							itr.second[enum_t(ColorId::FillColor2)].name() + QString(",") +
 							itr.second[enum_t(ColorId::BorderColor)].name();
 
-				attributes[Attributes::Styles]+=schparser.getCodeDefinition(Attributes::Style, attribs, SchemaParser::XmlDefinition);
+				attributes[Attributes::Styles]+=schparser.getSourceCode(Attributes::Style, attribs, SchemaParser::XmlCode);
 			}
 		}
 		catch(Exception &e)
@@ -168,7 +168,7 @@ QString Tag::getCodeDefinition(unsigned def_type, bool reduced_form)
 			throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 		}
 
-		return BaseObject::getCodeDefinition(def_type, reduced_form);
+		return BaseObject::getSourceCode(def_type, reduced_form);
 	}
 }
 

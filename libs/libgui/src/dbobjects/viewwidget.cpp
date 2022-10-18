@@ -578,7 +578,7 @@ void ViewWidget::updateCodePreview()
 				}
 			}
 
-			code_txt->setPlainText(aux_view.getCodeDefinition(SchemaParser::SqlDefinition));
+			code_txt->setPlainText(aux_view.getSourceCode(SchemaParser::SqlCode));
 		}
 	}
 	catch(Exception &e)

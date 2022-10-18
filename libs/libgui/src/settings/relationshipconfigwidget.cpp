@@ -145,7 +145,7 @@ void RelationshipConfigWidget::saveConfiguration()
 			schparser.ignoreUnkownAttributes(true);
 			schparser.ignoreEmptyAttributes(true);
 			config_params[itr.first]=itr.second;
-			config_params[Attributes::NamePatterns][Attributes::Patterns]+=schparser.getCodeDefinition(patterns_sch, itr.second);
+			config_params[Attributes::NamePatterns][Attributes::Patterns]+=schparser.getSourceCode(patterns_sch, itr.second);
 		}
 
 		BaseConfigWidget::saveConfiguration(GlobalAttributes::RelationshipsConf, config_params);

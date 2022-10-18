@@ -96,7 +96,7 @@ class BaseRelationship: public BaseGraphicObject  {
 
 		QString getCachedCode(unsigned def_type);
 
-		virtual QString getDropDefinition(bool) final { return ""; }
+		virtual QString getDropCode(bool) final { return ""; }
 
 		void setReferenceForeignKey(Constraint *reference_fk);
 
@@ -145,7 +145,7 @@ class BaseRelationship: public BaseGraphicObject  {
 
 		/*! \brief Since base relationships doesn't has SQL code definition this method will return a empty
 		definition whenever the user try to generate a SQL for this object. */
-		virtual QString getCodeDefinition(unsigned def_type);
+		virtual QString getSourceCode(SchemaParser::CodeType def_type);
 
 		//! \brief Returns whether the table is linked to itself via relationship (self-relationship)
 		bool isSelfRelationship();
@@ -181,7 +181,7 @@ class BaseRelationship: public BaseGraphicObject  {
 
 		virtual void setCodeInvalidated(bool value);
 
-		virtual QString getAlterDefinition(BaseObject *) { return ""; }
+		virtual QString getAlterCode(BaseObject *) { return ""; }
 
 		static QString getRelationshipTypeName(RelType rel_type, bool is_view = false);
 

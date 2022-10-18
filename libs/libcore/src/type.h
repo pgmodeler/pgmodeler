@@ -112,10 +112,10 @@ class Type: public BaseObject {
 		int getAttributeIndex(const QString &attrib_name);
 
 		//! \brief Formats the elements string used by the SchemaParser
-		void setElementsAttribute(unsigned def_type);
+		void setElementsAttribute(SchemaParser::CodeType def_type);
 
 		//! \brief Formats the enumeration string used by the SchemaParser
-		void setEnumerationsAttribute(unsigned def_type);
+		void setEnumerationsAttribute(SchemaParser::CodeType def_type);
 
 		/*! \brief Performs the conversion of parameters and return types of functions.
 		 If the parameter 'inverse_conv' is selected, the method
@@ -221,12 +221,12 @@ class Type: public BaseObject {
 		/*! \brief Returns the SQL / XML definition for the type. If the boolean
 		 parameter is set the code definition is generated in a
 		 reduced form (XML only) */
-		virtual QString getCodeDefinition(unsigned def_type, bool reduced_form) final;
+		virtual QString getSourceCode(SchemaParser::CodeType def_type, bool reduced_form) final;
 
 		//! \brief Returns the SQL / XML definition for the type
-		virtual QString getCodeDefinition(unsigned def_type) final;
+		virtual QString getSourceCode(SchemaParser::CodeType def_type) final;
 
-		virtual QString getAlterDefinition(BaseObject *object) final;
+		virtual QString getAlterCode(BaseObject *object) final;
 
 		//! \brief Makes a copy between two type
 		void operator = (Type &tipo);

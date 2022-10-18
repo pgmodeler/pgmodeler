@@ -797,7 +797,7 @@ QString DatabaseImportHelper::getComment(attribs_map &attribs)
 		QString xml_def;
 
 		if(!attribs[Attributes::Comment].isEmpty())
-			xml_def=schparser.getCodeDefinition(Attributes::Comment, attribs, SchemaParser::XmlDefinition);
+			xml_def=schparser.getSourceCode(Attributes::Comment, attribs, SchemaParser::XmlCode);
 
 		return xml_def;
 	}
@@ -862,7 +862,7 @@ QString DatabaseImportHelper::getDependencyObject(const QString &oid, ObjectType
 			{
 				obj_attr[Attributes::ReducedForm] = Attributes::True;
 				schparser.ignoreUnkownAttributes(true);
-				xml_def = schparser.getCodeDefinition(BaseObject::getSchemaName(obj_type), obj_attr, SchemaParser::XmlDefinition);
+				xml_def = schparser.getSourceCode(BaseObject::getSchemaName(obj_type), obj_attr, SchemaParser::XmlCode);
 				schparser.ignoreUnkownAttributes(false);
 			}
 			else
@@ -888,7 +888,7 @@ void DatabaseImportHelper::loadObjectXML(ObjectType obj_type, attribs_map &attri
 	try
 	{
 		schparser.ignoreUnkownAttributes(true);
-		xml_buf=schparser.getCodeDefinition(BaseObject::getSchemaName(obj_type), attribs, SchemaParser::XmlDefinition);
+		xml_buf=schparser.getSourceCode(BaseObject::getSchemaName(obj_type), attribs, SchemaParser::XmlCode);
 
 		schparser.ignoreUnkownAttributes(false);
 		xmlparser->restartParser();
@@ -1048,7 +1048,7 @@ void DatabaseImportHelper::createDomain(attribs_map &attribs)
 			expr.remove(expr.indexOf('('), 1);
 			expr.remove(expr.lastIndexOf(')'), 1);
 			aux_attribs[Attributes::Expression] = expr;
-			attribs[Attributes::Constraints]+= schparser.getCodeDefinition(Attributes::DomConstraint, aux_attribs, SchemaParser::XmlDefinition);
+			attribs[Attributes::Constraints]+= schparser.getSourceCode(Attributes::DomConstraint, aux_attribs, SchemaParser::XmlCode);
 		}
 
 		attribs[Attributes::Type]=getType(attribs[Attributes::Type], true, attribs);
@@ -1117,7 +1117,7 @@ void DatabaseImportHelper::configureBaseFunctionAttribs(attribs_map &attribs)
 
 			cfg_attrs[Attributes::Name] = list[0];
 			cfg_attrs[Attributes::Value] = list[1];
-			attribs[Attributes::ConfigParams] +=	schparser.getCodeDefinition(Attributes::ConfigParam, cfg_attrs, SchemaParser::XmlDefinition);
+			attribs[Attributes::ConfigParams] +=	schparser.getSourceCode(Attributes::ConfigParam, cfg_attrs, SchemaParser::XmlCode);
 		}
 
 
@@ -1174,7 +1174,7 @@ void DatabaseImportHelper::configureBaseFunctionAttribs(attribs_map &attribs)
 
 			//If the mode is 't' indicates that the current parameter will be used as a return table colum
 			if(!param_modes.isEmpty() && param_modes[i]==QString("t"))
-				attribs[Attributes::ReturnTable]+=param.getCodeDefinition(SchemaParser::XmlDefinition);
+				attribs[Attributes::ReturnTable]+=param.getSourceCode(SchemaParser::XmlCode);
 			else
 				parameters.push_back(param);
 		}
@@ -1198,7 +1198,7 @@ void DatabaseImportHelper::configureBaseFunctionAttribs(attribs_map &attribs)
 					param_def_vals.pop_back();
 				}
 
-				param_xmls.push_front(param.getCodeDefinition(SchemaParser::XmlDefinition));
+				param_xmls.push_front(param.getSourceCode(SchemaParser::XmlCode));
 			}
 
 			attribs[Attributes::Parameters] += param_xmls.join(QChar('\n'));
@@ -1248,7 +1248,7 @@ void DatabaseImportHelper::createFunction(attribs_map &attribs)
 			if(attribs[Attributes::RefType] == Attributes::InputFunc ||
 					attribs[Attributes::RefType] == Attributes::RecvFunc ||
 					attribs[Attributes::RefType] == Attributes::CanonicalFunc)
-				attribs[Attributes::ReturnType] = PgSqlType(QString("\"any\"")).getCodeDefinition(SchemaParser::XmlDefinition);
+				attribs[Attributes::ReturnType] = PgSqlType(QString("\"any\"")).getSourceCode(SchemaParser::XmlCode);
 			else
 				attribs[Attributes::ReturnType] = getType(attribs[Attributes::ReturnType], true);
 		}
@@ -1405,7 +1405,7 @@ void DatabaseImportHelper::createOperatorClass(attribs_map &attribs)
 		for(unsigned i=0; i < elems.size(); i++)
 		{
 			schparser.ignoreUnkownAttributes(true);
-			attribs[Attributes::Elements]+=schparser.getCodeDefinition(Attributes::Element, elems[i], SchemaParser::XmlDefinition);
+			attribs[Attributes::Elements]+=schparser.getSourceCode(Attributes::Element, elems[i], SchemaParser::XmlCode);
 			schparser.ignoreUnkownAttributes(false);
 		}
 
@@ -1572,7 +1572,7 @@ void DatabaseImportHelper::createSequence(attribs_map &attribs)
 
 			/* Get the table and the owner column instances so the sequence code can be disabled if the
 				column is an identity one */
-			extra_attrs[Attributes::Position] = schparser.getCodeDefinition(Attributes::Position, pos_attrib, SchemaParser::XmlDefinition);
+			extra_attrs[Attributes::Position] = schparser.getSourceCode(Attributes::Position, pos_attrib, SchemaParser::XmlCode);
 			tab_name = getDependencyObject(owner_col[0], ObjectType::Table, true, auto_resolve_deps, false, extra_attrs);
 			tab = dbmodel->getTable(tab_name);
 
@@ -1672,7 +1672,7 @@ void DatabaseImportHelper::createType(attribs_map &attribs)
 			for(auto &label : attribs[Attributes::Labels].split(UtilsNs::DataSeparator, Qt::SkipEmptyParts))
 			{
 				aux_attribs[Attributes::Label] = label;
-				attribs[Attributes::Labels] += schparser.getCodeDefinition(Attributes::EnumType, aux_attribs, SchemaParser::XmlDefinition);
+				attribs[Attributes::Labels] += schparser.getSourceCode(Attributes::EnumType, aux_attribs, SchemaParser::XmlCode);
 			}
 		}
 		else if(!attribs[Attributes::CompositeType].isEmpty())
@@ -1692,7 +1692,7 @@ void DatabaseImportHelper::createType(attribs_map &attribs)
 					type_attrib.setName(values[0].remove('"'));
 					type_attrib.setType(PgSqlType::parseString(values[1].remove('\\')));
 					type_attrib.setCollation(dbmodel->getObject(getObjectName(values[2].remove('"')),	ObjectType::Collation));
-					attribs[Attributes::TypeAttribute]+=type_attrib.getCodeDefinition(SchemaParser::XmlDefinition);
+					attribs[Attributes::TypeAttribute]+=type_attrib.getSourceCode(SchemaParser::XmlCode);
 				}
 			}
 		}
@@ -1759,7 +1759,7 @@ void DatabaseImportHelper::createTable(attribs_map &attribs)
 			{ Attributes::YPos, QString("0") }};
 
 		attribs[Attributes::Columns]="";
-		attribs[Attributes::Position]=schparser.getCodeDefinition(Attributes::Position, pos_attrib, SchemaParser::XmlDefinition);
+		attribs[Attributes::Position]=schparser.getSourceCode(Attributes::Position, pos_attrib, SchemaParser::XmlCode);
 
 		createColumns(attribs, inh_cols);
 		loadObjectXML(ObjectType::Table, attribs);
@@ -1878,7 +1878,7 @@ void DatabaseImportHelper::createView(attribs_map &attribs)
 		attribs_map pos_attrib={{ Attributes::XPos, QString("0") },
 														{ Attributes::YPos, QString("0") }};
 
-		attribs[Attributes::Position]=schparser.getCodeDefinition(Attributes::Position, pos_attrib, SchemaParser::XmlDefinition);
+		attribs[Attributes::Position]=schparser.getSourceCode(Attributes::Position, pos_attrib, SchemaParser::XmlCode);
 
 		ref=Reference(attribs[Attributes::Definition], "");
 		ref.setDefinitionExpression(true);	
@@ -2116,7 +2116,7 @@ void DatabaseImportHelper::createIndex(attribs_map &attribs)
 			}
 
 			if(elem.getColumn() || elem.getSimpleColumn().isValid() || !elem.getExpression().isEmpty())
-				attribs[Attributes::Elements]+=elem.getCodeDefinition(SchemaParser::XmlDefinition);
+				attribs[Attributes::Elements]+=elem.getSourceCode(SchemaParser::XmlCode);
 		}
 
 		for(i = elem_cnt; i < cols.size(); i++)
@@ -2228,7 +2228,7 @@ void DatabaseImportHelper::createConstraint(attribs_map &attribs)
 						elem.setSortingAttribute(ExcludeElement::NullsFirst, nulls_first);
 					}
 
-					attribs[Attributes::Elements]+=elem.getCodeDefinition(SchemaParser::XmlDefinition);
+					attribs[Attributes::Elements]+=elem.getSourceCode(SchemaParser::XmlCode);
 				}
 			}
 			else
@@ -2388,7 +2388,7 @@ void DatabaseImportHelper::createForeignTable(attribs_map &attribs)
 		attribs[Attributes::Server] = getDependencyObject(attribs[Attributes::Server], ObjectType::ForeignServer, true , true, true);
 		attribs[Attributes::Options] = Catalog::parseArrayValues(attribs[Attributes::Options]).join(ForeignDataWrapper::OptionsSeparator);
 		attribs[Attributes::Columns]="";
-		attribs[Attributes::Position]=schparser.getCodeDefinition(Attributes::Position, pos_attrib, SchemaParser::XmlDefinition);
+		attribs[Attributes::Position]=schparser.getSourceCode(Attributes::Position, pos_attrib, SchemaParser::XmlCode);
 
 		createColumns(attribs, inh_cols);
 		loadObjectXML(ObjectType::ForeignTable, attribs);
@@ -2815,7 +2815,7 @@ void DatabaseImportHelper::createColumns(attribs_map &attribs, std::vector<unsig
 			getDependencyObject(itr->second[Attributes::Collation], ObjectType::Collation);
 
 		col.setCollation(dbmodel->getObject(getObjectName(itr->second[Attributes::Collation]),ObjectType::Collation));
-		attribs[Attributes::Columns]+=col.getCodeDefinition(SchemaParser::XmlDefinition);
+		attribs[Attributes::Columns]+=col.getSourceCode(SchemaParser::XmlCode);
 		itr++;
 		col_idx++;
 	}
@@ -3304,7 +3304,7 @@ QString DatabaseImportHelper::getType(const QString &oid_str, bool generate_xml,
 			extra_attribs[Attributes::Dimension]=(dimension > 0 ? QString::number(dimension) : "");
 
 			schparser.ignoreUnkownAttributes(true);
-			xml_def = schparser.getCodeDefinition(Attributes::PgSqlBaseType, extra_attribs, SchemaParser::XmlDefinition);
+			xml_def = schparser.getSourceCode(Attributes::PgSqlBaseType, extra_attribs, SchemaParser::XmlCode);
 			schparser.ignoreUnkownAttributes(false);
 
 			return xml_def;

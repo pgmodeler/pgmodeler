@@ -321,7 +321,7 @@ QString Reference::getXMLDefinition()
 		col_aux.setName(col.name);
 		col_aux.setType(PgSqlType::parseString(col.type));
 		col_aux.setAlias(col.alias);
-		attribs[Attributes::Columns]+=col_aux.getCodeDefinition(SchemaParser::XmlDefinition);
+		attribs[Attributes::Columns]+=col_aux.getSourceCode(SchemaParser::XmlCode);
 	}
 
 	if(is_def_expr)
@@ -329,11 +329,11 @@ QString Reference::getXMLDefinition()
 		for(auto &tab : ref_tables)
 		{
 			aux_attribs[Attributes::Name] = tab->getSignature();
-			attribs[Attributes::RefTables] += schparser.getCodeDefinition(Attributes::RefTableTag, aux_attribs, SchemaParser::XmlDefinition);
+			attribs[Attributes::RefTables] += schparser.getSourceCode(Attributes::RefTableTag, aux_attribs, SchemaParser::XmlCode);
 		}
 	}
 
-	return schparser.getCodeDefinition(Attributes::Reference, attribs, SchemaParser::XmlDefinition);
+	return schparser.getSourceCode(Attributes::Reference, attribs, SchemaParser::XmlCode);
 }
 
 bool Reference::operator == (Reference &refer)

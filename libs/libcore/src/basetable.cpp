@@ -58,11 +58,11 @@ bool BaseTable::isBaseTable(ObjectType obj_tp)
 				 obj_tp == ObjectType::View);
 }
 
-QString BaseTable::getAlterDefinition(BaseObject *object)
+QString BaseTable::getAlterCode(BaseObject *object)
 {
 	try
 	{
-		return BaseObject::getAlterDefinition(object);
+		return BaseObject::getAlterCode(object);
 	}
 	catch(Exception &e)
 	{

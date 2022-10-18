@@ -60,9 +60,9 @@ class Transform : public BaseObject {
 		Function *getFunction(FunctionId func_id);
 
 		void operator = (Transform &transf);
-		virtual QString getCodeDefinition(unsigned def_type) final;
+		virtual QString getSourceCode(SchemaParser::CodeType def_type) final;
 		virtual QString getSignature(bool = false) final;
-		virtual QString getDropDefinition(bool cascade) final;
+		virtual QString getDropCode(bool cascade) final;
 };
 
 #endif

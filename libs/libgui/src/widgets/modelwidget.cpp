@@ -1285,7 +1285,7 @@ void ModelWidget::convertRelationshipNN()
 						}
 					}
 
-					xml_buf=tab_nn->getCodeDefinition(SchemaParser::XmlDefinition);
+					xml_buf=tab_nn->getSourceCode(SchemaParser::XmlCode);
 
 					//Creates the table from the xml code
 					xmlparser->restartParser();
@@ -1320,7 +1320,7 @@ void ModelWidget::convertRelationshipNN()
 						count=tab_nn->getConstraintCount();
 						for(idx=0; idx < count; idx++)
 						{
-							xml_buf=tab_nn->getConstraint(idx)->getCodeDefinition(SchemaParser::XmlDefinition,true);
+							xml_buf=tab_nn->getConstraint(idx)->getSourceCode(SchemaParser::XmlCode,true);
 
 							xmlparser->restartParser();
 							xmlparser->loadXMLBuffer(xml_buf);
@@ -1495,7 +1495,7 @@ void ModelWidget::convertRelationship1N()
 			pk_name = pk->getName();
 
 			// Storing the pk XML definition so it can be recreated correctly even after the disconnection of all relationships
-			constrs_xmls.append(recv_tab->getPrimaryKey()->getCodeDefinition(SchemaParser::XmlDefinition, true));
+			constrs_xmls.append(recv_tab->getPrimaryKey()->getSourceCode(SchemaParser::XmlCode, true));
 		}
 
 		// Stores the XML definition of all generated constraints
@@ -1504,14 +1504,14 @@ void ModelWidget::convertRelationship1N()
 			if(constr->getConstraintType() == ConstraintType::PrimaryKey)
 				continue;
 
-			constrs_xmls.append(constr->getCodeDefinition(SchemaParser::XmlDefinition, true));
+			constrs_xmls.append(constr->getSourceCode(SchemaParser::XmlCode, true));
 		}
 
 		// Stores the XML definition of all relationship's constraints (added by the user)
 		for(auto &obj : rel->getConstraints())
 		{
 			constr = dynamic_cast<Constraint *>(obj);
-			constrs_xmls.append(constr->getCodeDefinition(SchemaParser::XmlDefinition, true));
+			constrs_xmls.append(constr->getSourceCode(SchemaParser::XmlCode, true));
 		}
 
 		// Copying all generated columns
@@ -1828,7 +1828,7 @@ void ModelWidget::saveModel(const QString &filename)
 		}
 
 		saveLastCanvasPosition();
-		db_model->saveModel(filename, SchemaParser::XmlDefinition);
+		db_model->saveModel(filename, SchemaParser::XmlCode);
 		this->filename=filename;
 
 		task_prog_wgt.close();
@@ -2717,8 +2717,8 @@ void ModelWidget::pasteObjects(bool duplicate_mode)
 					(aux_object &&
 					 (dynamic_cast<BaseGraphicObject *>(object) ||
 						(aux_object->getDatabase()==object->getDatabase()) ||
-						(aux_object->getCodeDefinition(SchemaParser::SchemaParser::XmlDefinition) !=
-						 object->getCodeDefinition(SchemaParser::SchemaParser::XmlDefinition)))))
+						(aux_object->getSourceCode(SchemaParser::SchemaParser::XmlCode) !=
+						 object->getSourceCode(SchemaParser::SchemaParser::XmlCode)))))
 			{
 				//Resolving name conflicts
 				if(obj_type!=ObjectType::Cast)
@@ -2794,11 +2794,11 @@ void ModelWidget::pasteObjects(bool duplicate_mode)
 			//Stores the XML definition on a xml buffer map
 			if(duplicate_mode && aux_table)
 			{
-				xml_objs[object] = aux_table->__getCodeDefinition(SchemaParser::XmlDefinition, true);
+				xml_objs[object] = aux_table->__getSourceCode(SchemaParser::XmlCode, true);
 			  object->setCodeInvalidated(true);
 			}
 			else
-				xml_objs[object]=object->getCodeDefinition(SchemaParser::XmlDefinition);
+				xml_objs[object]=object->getSourceCode(SchemaParser::XmlCode);
 		}
 
 		//Store the original parent table of the object
@@ -2828,11 +2828,11 @@ void ModelWidget::pasteObjects(bool duplicate_mode)
 				//Generates the XML code with the new parent table
 				if(constr)
 				{
-					xml_objs[object]=constr->getCodeDefinition(SchemaParser::XmlDefinition, duplicate_mode);
+					xml_objs[object]=constr->getSourceCode(SchemaParser::XmlCode, duplicate_mode);
 				  tab_obj->setCodeInvalidated(true);
 				}
 				else
-					xml_objs[object]=object->getCodeDefinition(SchemaParser::XmlDefinition);
+					xml_objs[object]=object->getSourceCode(SchemaParser::XmlCode);
 
 				//Restore the original parent table
 				tab_obj->setParentTable(orig_parent_tab);
@@ -2845,11 +2845,11 @@ void ModelWidget::pasteObjects(bool duplicate_mode)
 
 			if(constr)
 			{
-				xml_objs[object]=constr->getCodeDefinition(SchemaParser::XmlDefinition, duplicate_mode);
+				xml_objs[object]=constr->getSourceCode(SchemaParser::XmlCode, duplicate_mode);
 			  tab_obj->setCodeInvalidated(true);
 			}
 			else
-				xml_objs[object]=tab_obj->getCodeDefinition(SchemaParser::XmlDefinition);
+				xml_objs[object]=tab_obj->getSourceCode(SchemaParser::XmlCode);
 		}
 	}
 

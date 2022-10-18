@@ -17,7 +17,6 @@
 */
 
 #include "pgsqltype.h"
-#include "schemaparser.h"
 #include "attributes.h"
 
 std::vector<UserTypeConfig> PgSqlType::user_types;
@@ -1021,9 +1020,9 @@ int PgSqlType::getPrecision()
 	return precision;
 }
 
-QString PgSqlType::getCodeDefinition(unsigned def_type,QString ref_type)
+QString PgSqlType::getSourceCode(SchemaParser::CodeType def_type, QString ref_type)
 {
-	if(def_type==SchemaParser::SqlDefinition)
+	if(def_type==SchemaParser::SqlCode)
 		return getSQLTypeName();
 
 	attribs_map attribs;
@@ -1061,7 +1060,7 @@ QString PgSqlType::getCodeDefinition(unsigned def_type,QString ref_type)
 	if(with_timezone)
 		attribs[Attributes::WithTimezone]=Attributes::True;
 
-	return schparser.getCodeDefinition(Attributes::PgSqlBaseType, attribs, def_type);
+	return schparser.getSourceCode(Attributes::PgSqlBaseType, attribs, def_type);
 }
 
 QString PgSqlType::operator * ()

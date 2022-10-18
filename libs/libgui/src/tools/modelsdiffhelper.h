@@ -112,7 +112,7 @@ class ModelsDiffHelper: public QObject {
 
 		/*! \brief Generate the proper code definition for the table's child objects. If drop_cmd is true a DROP command
 		will be generated otherwise a CREATE is generated. */
-		QString getCodeDefinition(BaseObject *object, bool drop_cmd);
+		QString getSourceCode(BaseObject *object, bool drop_cmd);
 
 		//! \brief Destroy the temporary objects and clears the diff info list
 		void destroyTempObjects();

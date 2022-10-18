@@ -453,13 +453,13 @@ void GeneralConfigWidget::saveConfiguration()
 			if((itr->first).contains(QRegularExpression(QString("(") + Attributes::File + QString(")([0-9]+)"))))
 			{
 				config_params[Attributes::Configuration][Attributes::File]+=
-						XmlParser::convertCharsToXMLEntities(schparser.getCodeDefinition(file_sch, itr->second));
+						XmlParser::convertCharsToXMLEntities(schparser.getSourceCode(file_sch, itr->second));
 			}
 			//Checking if the current attribute is a file to be stored in a <recent-models> tag
 			else if(recent_mdl_idx < MaxRecentModels && (itr->first).contains(QRegularExpression(QString("(") + Attributes::Recent + QString(")([0-9]+)"))))
 			{
 				config_params[Attributes::Configuration][Attributes::RecentModels]+=
-						XmlParser::convertCharsToXMLEntities(schparser.getCodeDefinition(file_sch, itr->second));
+						XmlParser::convertCharsToXMLEntities(schparser.getSourceCode(file_sch, itr->second));
 
 				recent_mdl_idx++;
 			}
@@ -470,7 +470,7 @@ void GeneralConfigWidget::saveConfiguration()
 				schparser.ignoreUnkownAttributes(true);
 				schparser.ignoreEmptyAttributes(true);
 				config_params[Attributes::Configuration][Attributes::DockWidgets]+=
-						schparser.getCodeDefinition(widget_sch, itr->second);
+						schparser.getSourceCode(widget_sch, itr->second);
 				schparser.ignoreUnkownAttributes(false);
 				schparser.ignoreEmptyAttributes(false);
 			}
@@ -498,7 +498,7 @@ void GeneralConfigWidget::saveConfiguration()
 
 				schparser.ignoreUnkownAttributes(true);
 				config_params[Attributes::Configuration][Attributes::WidgetsGeometry]+=
-						schparser.getCodeDefinition(widget_sch, attribs);
+						schparser.getSourceCode(widget_sch, attribs);
 				schparser.ignoreUnkownAttributes(false);
 			}
 		}

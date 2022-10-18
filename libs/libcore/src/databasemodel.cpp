@@ -396,9 +396,9 @@ void DatabaseModel::__addObject(BaseObject *object, int obj_idx)
 	try
 	{
 		if(obj_type==ObjectType::Textbox || obj_type==ObjectType::BaseRelationship)
-			object->getCodeDefinition(SchemaParser::XmlDefinition);
+			object->getSourceCode(SchemaParser::XmlCode);
 		else
-			object->getCodeDefinition(SchemaParser::SqlDefinition);
+			object->getSourceCode(SchemaParser::SqlCode);
 	}
 	catch(Exception &e)
 	{
@@ -739,7 +739,7 @@ void DatabaseModel::destroyObjects()
 		qDebug() << e.getExceptionsText().toStdString().c_str() << Qt::endl;
 	}
 
-	objects = getCreationOrder(SchemaParser::XmlDefinition, true);
+	objects = getCreationOrder(SchemaParser::XmlCode, true);
 	ritr = objects.rbegin();
 	ritr_end = objects.rend();
 
@@ -1924,7 +1924,7 @@ void DatabaseModel::storeSpecialObjectsXML()
 
 						//When found some special object, stores is xml definition
 						if(found)
-							xml_special_objs[constr->getObjectId()]=constr->getCodeDefinition(SchemaParser::XmlDefinition, true);
+							xml_special_objs[constr->getObjectId()]=constr->getSourceCode(SchemaParser::XmlCode, true);
 					}
 					else if(tab_obj_type[type_id]==ObjectType::Trigger)
 					{
@@ -1932,7 +1932,7 @@ void DatabaseModel::storeSpecialObjectsXML()
 						found=trigger->isReferRelationshipAddedColumn();
 
 						if(found)
-							xml_special_objs[trigger->getObjectId()]=trigger->getCodeDefinition(SchemaParser::XmlDefinition);
+							xml_special_objs[trigger->getObjectId()]=trigger->getSourceCode(SchemaParser::XmlCode);
 					}
 					else
 					{
@@ -1940,7 +1940,7 @@ void DatabaseModel::storeSpecialObjectsXML()
 						found=index->isReferRelationshipAddedColumn();
 
 						if(found)
-							xml_special_objs[index->getObjectId()]=index->getCodeDefinition(SchemaParser::XmlDefinition);
+							xml_special_objs[index->getObjectId()]=index->getSourceCode(SchemaParser::XmlCode);
 					}
 
 					if(found)
@@ -1991,7 +1991,7 @@ void DatabaseModel::storeSpecialObjectsXML()
 
 			if(sequence->isReferRelationshipAddedColumn())
 			{
-				xml_special_objs[sequence->getObjectId()]=sequence->getCodeDefinition(SchemaParser::XmlDefinition);
+				xml_special_objs[sequence->getObjectId()]=sequence->getSourceCode(SchemaParser::XmlCode);
 				removeSequence(sequence);
 				invalid_special_objs.push_back(sequence);
 				//delete sequence;
@@ -2010,7 +2010,7 @@ void DatabaseModel::storeSpecialObjectsXML()
 
 			if(view->isReferRelationshipAddedColumn())
 			{
-				xml_special_objs[view->getObjectId()]=view->getCodeDefinition(SchemaParser::XmlDefinition);
+				xml_special_objs[view->getObjectId()]=view->getSourceCode(SchemaParser::XmlCode);
 
 				/* Relationships linking the view and the referenced tables are considered as
 			 special objects in this case only to be recreated more easely latter */
@@ -2029,7 +2029,7 @@ void DatabaseModel::storeSpecialObjectsXML()
 
 						if(rel)
 						{
-							xml_special_objs[rel->getObjectId()]=rel->getCodeDefinition(SchemaParser::XmlDefinition);
+							xml_special_objs[rel->getObjectId()]=rel->getSourceCode(SchemaParser::XmlCode);
 							removeRelationship(rel);
 							invalid_special_objs.push_back(rel);
 							//delete rel;
@@ -2042,7 +2042,7 @@ void DatabaseModel::storeSpecialObjectsXML()
 				objects=view->getObjects();
 				for(auto &obj : objects)
 				{
-					xml_special_objs[obj->getObjectId()]=obj->getCodeDefinition(SchemaParser::XmlDefinition);
+					xml_special_objs[obj->getObjectId()]=obj->getSourceCode(SchemaParser::XmlCode);
 					view->removeObject(obj);
 					invalid_special_objs.push_back(obj);
 					//delete obj;
@@ -2067,7 +2067,7 @@ void DatabaseModel::storeSpecialObjectsXML()
 
 			if(tab_obj)
 			{
-				xml_special_objs[permission->getObjectId()]=permission->getCodeDefinition(SchemaParser::XmlDefinition);
+				xml_special_objs[permission->getObjectId()]=permission->getSourceCode(SchemaParser::XmlCode);
 				removePermission(permission);
 				invalid_special_objs.push_back(permission);
 				//delete permission;
@@ -2086,7 +2086,7 @@ void DatabaseModel::storeSpecialObjectsXML()
 
 			if(generic_sql->isReferRelationshipAddedObject())
 			{
-				xml_special_objs[generic_sql->getObjectId()] = generic_sql->getCodeDefinition(SchemaParser::XmlDefinition);
+				xml_special_objs[generic_sql->getObjectId()] = generic_sql->getSourceCode(SchemaParser::XmlCode);
 				removeGenericSQL(generic_sql);
 				invalid_special_objs.push_back(generic_sql);
 				//delete generic_sql;
@@ -4005,7 +4005,7 @@ void DatabaseModel::setBasicFunctionAttributes(BaseFunction *func)
 							func->setSymbol(attribs_aux[Attributes::Symbol]);
 						}
 						else if(xmlparser.accessElement(XmlParser::ChildElement))
-							func->setSourceCode(xmlparser.getElementContent());
+							func->setFunctionSource(xmlparser.getElementContent());
 
 						xmlparser.restorePosition();
 					}
@@ -5465,7 +5465,7 @@ XmlParser *DatabaseModel::getXMLParser()
 	return &xmlparser;
 }
 
-QString DatabaseModel::getAlterDefinition(BaseObject *object)
+QString DatabaseModel::getAlterCode(BaseObject *object)
 {
 	DatabaseModel *db_aux=dynamic_cast<DatabaseModel *>(object);
 
@@ -5489,8 +5489,8 @@ QString DatabaseModel::getAlterDefinition(BaseObject *object)
 		if(this->allow_conns != db_aux->allow_conns)
 			aux_attribs[Attributes::AllowConns] = (db_aux->allow_conns ? Attributes::True : Attributes::False);
 
-		alter_def+=BaseObject::getAlterDefinition(this->getSchemaName(), aux_attribs, true, false);
-		alter_def+=BaseObject::getAlterDefinition(object);
+		alter_def+=BaseObject::getAlterCode(this->getSchemaName(), aux_attribs, true, false);
+		alter_def+=BaseObject::getAlterCode(object);
 
 		return alter_def;
 	}
@@ -7423,7 +7423,7 @@ void DatabaseModel::validateRelationships(TableObject *object, Table *parent_tab
 	}
 }
 
-QString DatabaseModel::__getCodeDefinition(unsigned def_type)
+QString DatabaseModel::__getSourceCode(SchemaParser::CodeType def_type)
 {
 	QString def, bkp_appended_sql, bkp_prepended_sql;
 
@@ -7434,7 +7434,7 @@ QString DatabaseModel::__getCodeDefinition(unsigned def_type)
 	if(conn_limit >= 0)
 		attributes[Attributes::ConnLimit]=QString("%1").arg(conn_limit);
 
-	if(def_type==SchemaParser::SqlDefinition)
+	if(def_type==SchemaParser::SqlCode)
 	{
 		QString loc_attribs[]={ Attributes::LcCtype,  Attributes::LcCollate };
 
@@ -7462,13 +7462,13 @@ QString DatabaseModel::__getCodeDefinition(unsigned def_type)
 	attributes[Attributes::AllowConns]=(allow_conns ? Attributes::True : Attributes::False);
 	attributes[Attributes::TemplateDb]=template_db;
 
-	if(def_type==SchemaParser::SqlDefinition && append_at_eod)
+	if(def_type==SchemaParser::SqlCode && append_at_eod)
 	{
 		bkp_appended_sql=this->appended_sql;
 		this->appended_sql.clear();
 	}
 
-	if(def_type==SchemaParser::SqlDefinition && prepend_at_bod)
+	if(def_type==SchemaParser::SqlCode && prepend_at_bod)
 	{
 		bkp_prepended_sql=this->prepended_sql;
 		this->prepended_sql.clear();
@@ -7476,12 +7476,12 @@ QString DatabaseModel::__getCodeDefinition(unsigned def_type)
 
 	try
 	{
-		def=this->BaseObject::__getCodeDefinition(def_type);
+		def=this->BaseObject::__getSourceCode(def_type);
 
-		if(def_type==SchemaParser::SqlDefinition && append_at_eod)
+		if(def_type==SchemaParser::SqlCode && append_at_eod)
 			this->appended_sql=bkp_appended_sql;
 
-		if(def_type==SchemaParser::SqlDefinition && prepend_at_bod)
+		if(def_type==SchemaParser::SqlCode && prepend_at_bod)
 			this->prepended_sql=bkp_prepended_sql;
 
 		return def;
@@ -7502,9 +7502,9 @@ QString DatabaseModel::getSQLDefinition(BaseObject *object, CodeGenMode code_gen
 	if(code_gen_mode == OriginalSql)
 	{
 		if(object->getObjectType() == ObjectType::Database)
-			return dynamic_cast<DatabaseModel *>(object)->__getCodeDefinition(SchemaParser::SqlDefinition);
+			return dynamic_cast<DatabaseModel *>(object)->__getSourceCode(SchemaParser::SqlCode);
 
-		return object->getCodeDefinition(SchemaParser::SqlDefinition);
+		return object->getSourceCode(SchemaParser::SqlCode);
 	}
 	else
 	{
@@ -7514,9 +7514,9 @@ QString DatabaseModel::getSQLDefinition(BaseObject *object, CodeGenMode code_gen
 		for(auto &obj : objs)
 		{
 			if(obj->getObjectType() == ObjectType::Database)
-				aux_def += dynamic_cast<DatabaseModel *>(obj)->__getCodeDefinition(SchemaParser::SqlDefinition);
+				aux_def += dynamic_cast<DatabaseModel *>(obj)->__getSourceCode(SchemaParser::SqlCode);
 			else
-				aux_def += obj->getCodeDefinition(SchemaParser::SqlDefinition);
+				aux_def += obj->getSourceCode(SchemaParser::SqlCode);
 		}
 
 		if(!aux_def.isEmpty())
@@ -7550,7 +7550,7 @@ QString DatabaseModel::configureShellTypes(bool reset_config)
 
 			//Generating the shell type declaration (only for base types)
 			if(!reset_config)
-				shell_types_def += usr_type->getCodeDefinition(SchemaParser::SqlDefinition, true);
+				shell_types_def += usr_type->getSourceCode(SchemaParser::SqlCode, true);
 
 			/* Forcing the code invalidation for the type so the complete definition can be
 			 * generated in the below iteration */
@@ -7561,12 +7561,12 @@ QString DatabaseModel::configureShellTypes(bool reset_config)
 	return shell_types_def;
 }
 
-QString DatabaseModel::getCodeDefinition(unsigned def_type)
+QString DatabaseModel::getSourceCode(SchemaParser::CodeType def_type)
 {
-	return this->getCodeDefinition(def_type, true);
+	return this->getSourceCode(def_type, true);
 }
 
-QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
+QString DatabaseModel::getSourceCode(SchemaParser::CodeType def_type, bool export_file)
 {
 	attribs_map attribs_aux;
 	unsigned general_obj_cnt, gen_defs_count;
@@ -7574,7 +7574,7 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 	QString def, search_path=QString("pg_catalog,public"),
 			msg=tr("Generating %1 code: `%2' (%3)"),
 			attrib=Attributes::Objects, attrib_aux,
-			def_type_str=(def_type==SchemaParser::SqlDefinition ? QString("SQL") : QString("XML"));
+			def_type_str=(def_type==SchemaParser::SqlCode ? QString("SQL") : QString("XML"));
 	Type *usr_type=nullptr;
 	std::map<unsigned, BaseObject *> objects_map;
 	ObjectType obj_type;
@@ -7592,7 +7592,7 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 		attribs_aux[Attributes::Tablespace]="";
 		attribs_aux[Attributes::Role]="";
 
-		if(def_type==SchemaParser::SqlDefinition)
+		if(def_type==SchemaParser::SqlCode)
 		{
 			attribs_aux[Attributes::Function]=(!functions.empty() ? Attributes::True : "");
 			attribs_aux[Attributes::ShellTypes] = configureShellTypes(false);
@@ -7612,49 +7612,49 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 			object=obj_itr.second;
 			obj_type=object->getObjectType();
 
-			if(obj_type==ObjectType::Type && def_type==SchemaParser::SqlDefinition)
+			if(obj_type==ObjectType::Type && def_type==SchemaParser::SqlCode)
 			{
 				usr_type=dynamic_cast<Type *>(object);
-				attribs_aux[attrib]+=usr_type->getCodeDefinition(def_type);
+				attribs_aux[attrib]+=usr_type->getSourceCode(def_type);
 			}
 			else if(obj_type==ObjectType::Database)
 			{
-				if(def_type==SchemaParser::SqlDefinition)
-					attribs_aux[this->getSchemaName()] += this->__getCodeDefinition(def_type);
+				if(def_type==SchemaParser::SqlCode)
+					attribs_aux[this->getSchemaName()] += this->__getSourceCode(def_type);
 				else
-					attribs_aux[attrib]+=this->__getCodeDefinition(def_type);
+					attribs_aux[attrib]+=this->__getSourceCode(def_type);
 			}
 			else if(obj_type==ObjectType::Permission)
 			{
-				attribs_aux[Attributes::Permission]+=dynamic_cast<Permission *>(object)->getCodeDefinition(def_type);
+				attribs_aux[Attributes::Permission]+=dynamic_cast<Permission *>(object)->getSourceCode(def_type);
 			}
 			else if(obj_type==ObjectType::Constraint)
 			{
-				attribs_aux[attrib]+=dynamic_cast<Constraint *>(object)->getCodeDefinition(def_type, true);
+				attribs_aux[attrib]+=dynamic_cast<Constraint *>(object)->getSourceCode(def_type, true);
 			}
 			else if(obj_type==ObjectType::Role || obj_type==ObjectType::Tablespace ||  obj_type==ObjectType::Schema)
 			{
 				//The "public" schema does not have the SQL code definition generated
-				if(def_type==SchemaParser::SqlDefinition)
+				if(def_type==SchemaParser::SqlCode)
 					attrib_aux=BaseObject::getSchemaName(obj_type);
 				else
 					attrib_aux=attrib;
 
 				/* The Tablespace has the SQL code definition disabled when generating the
 				 * code of the entire model because this object cannot be created from a multiline sql command */
-				if(obj_type==ObjectType::Tablespace && !object->isSystemObject() && def_type==SchemaParser::SqlDefinition)
-					attribs_aux[attrib_aux]+=object->getCodeDefinition(def_type);
+				if(obj_type==ObjectType::Tablespace && !object->isSystemObject() && def_type==SchemaParser::SqlCode)
+					attribs_aux[attrib_aux]+=object->getSourceCode(def_type);
 				//System object doesn't has the XML generated (the only exception is for public schema)
 				else if((obj_type!=ObjectType::Schema && !object->isSystemObject()) ||
 								(obj_type==ObjectType::Schema &&
-								 ((object->getName()==QString("public") && def_type==SchemaParser::XmlDefinition) ||
+								 ((object->getName()==QString("public") && def_type==SchemaParser::XmlCode) ||
 									(object->getName()!=QString("public") && object->getName()!=QString("pg_catalog")))))
 				{
 					if(object->getObjectType()==ObjectType::Schema)
 						search_path+=QString(",") + object->getName(true);
 
 					//Generates the code definition and concatenates to the others
-					attribs_aux[attrib_aux]+=object->getCodeDefinition(def_type);
+					attribs_aux[attrib_aux]+=object->getSourceCode(def_type);
 				}
 			}
 			else
@@ -7662,13 +7662,13 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 				if(object->isSystemObject())
 					attribs_aux[attrib]+="";
 				else
-					attribs_aux[attrib]+=object->getCodeDefinition(def_type);
+					attribs_aux[attrib]+=object->getSourceCode(def_type);
 			}
 
 			gen_defs_count++;
 
-			if((def_type==SchemaParser::SqlDefinition && !object->isSQLDisabled()) ||
-					(def_type==SchemaParser::XmlDefinition && !object->isSystemObject()))
+			if((def_type==SchemaParser::SqlCode && !object->isSQLDisabled()) ||
+					(def_type==SchemaParser::XmlCode && !object->isSystemObject()))
 			{
 				emit s_objectLoaded((gen_defs_count/static_cast<double>(general_obj_cnt)) * 100,
 									msg.arg(def_type_str)
@@ -7682,7 +7682,7 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 		attribs_aux[Attributes::ModelAuthor]=author;
 		attribs_aux[Attributes::PgModelerVersion]=GlobalAttributes::PgModelerVersion;
 
-		if(def_type==SchemaParser::XmlDefinition)
+		if(def_type==SchemaParser::XmlCode)
 		{
 			QStringList act_layers;
 
@@ -7709,19 +7709,19 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 	}
 	catch(Exception &e)
 	{
-		if(def_type==SchemaParser::SqlDefinition)
+		if(def_type==SchemaParser::SqlCode)
 			configureShellTypes(true);
 
 		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 
 	attribs_aux[Attributes::ExportToFile]=(export_file ? Attributes::True : "");
-	def=schparser.getCodeDefinition(Attributes::DbModel, attribs_aux, def_type);
+	def=schparser.getSourceCode(Attributes::DbModel, attribs_aux, def_type);
 
-	if(prepend_at_bod && def_type==SchemaParser::SqlDefinition)
+	if(prepend_at_bod && def_type==SchemaParser::SqlCode)
 		def=QString("-- Prepended SQL commands --\n") +	this->prepended_sql + Attributes::DdlEndToken + def;
 
-	if(append_at_eod && def_type==SchemaParser::SqlDefinition)
+	if(append_at_eod && def_type==SchemaParser::SqlCode)
 		def+=QString("-- Appended SQL commands --\n") +	this->appended_sql + QChar('\n') + Attributes::DdlEndToken;
 
 	return def;
@@ -7748,7 +7748,7 @@ std::map<unsigned, BaseObject *> DatabaseModel::getCreationOrder(unsigned def_ty
 	//The first objects on the map will be roles, tablespaces, schemas and tags
 	for(i=0; i < aux_obj_cnt; i++)
 	{
-		if(aux_obj_types[i]!=ObjectType::Tag || def_type==SchemaParser::XmlDefinition)
+		if(aux_obj_types[i]!=ObjectType::Tag || def_type==SchemaParser::XmlCode)
 		{
 			obj_list=getObjectList(aux_obj_types[i]);
 
@@ -7763,7 +7763,7 @@ std::map<unsigned, BaseObject *> DatabaseModel::getCreationOrder(unsigned def_ty
 	for(auto &obj_type : obj_types_vect)
 	{
 		//For SQL definition, only the textbox and base relationship does not enters to the code generation list
-		if(def_type==SchemaParser::SqlDefinition &&
+		if(def_type==SchemaParser::SqlCode &&
 			 (obj_type==ObjectType::Textbox || obj_type==ObjectType::BaseRelationship))
 			obj_list=nullptr;
 		else
@@ -7782,7 +7782,7 @@ std::map<unsigned, BaseObject *> DatabaseModel::getCreationOrder(unsigned def_ty
 				}
 				else
 				{
-					if(def_type==SchemaParser::XmlDefinition || !incl_relnn_objs)
+					if(def_type==SchemaParser::XmlCode || !incl_relnn_objs)
 						objects_map[object->getObjectId()]=object;
 					else
 					{
@@ -7844,7 +7844,7 @@ std::map<unsigned, BaseObject *> DatabaseModel::getCreationOrder(unsigned def_ty
 	 2) Other tables came after the objects on the step 1.
 	 3) The sequences must have their code generated after the tables
 	 4) View are the last objects in the list avoiding table/column reference breaking */
-	if(def_type==SchemaParser::SqlDefinition)
+	if(def_type==SchemaParser::SqlCode)
 	{
 		BaseObject *objs[3]={nullptr, nullptr, nullptr};
 		std::vector<BaseObject *> vet_aux, rel_constrs;
@@ -8150,12 +8150,12 @@ std::vector<BaseObject *> DatabaseModel::getCreationOrder(BaseObject *object, bo
 	return objs;
 }
 
-void DatabaseModel::saveModel(const QString &filename, unsigned def_type)
+void DatabaseModel::saveModel(const QString &filename, SchemaParser::CodeType def_type)
 {
 	try
 	{
 		if(!cancel_saving)
-			UtilsNs::saveFile(filename, this->getCodeDefinition(def_type).toUtf8());
+			UtilsNs::saveFile(filename, this->getSourceCode(def_type).toUtf8());
 	}
 	catch(Exception &e)
 	{
@@ -8210,7 +8210,7 @@ void DatabaseModel::saveSplitSQLDefinition(const QString &path, CodeGenMode code
 
 	QFile output;
 	QByteArray buffer;
-	std::map<unsigned, BaseObject *> objects = getCreationOrder(SchemaParser::SqlDefinition);
+	std::map<unsigned, BaseObject *> objects = getCreationOrder(SchemaParser::SqlCode);
 	int pad_size = QString::number(objects.size()).size(), idx = 1;
 	QString filename, name, shell_types;
 	BaseObject *obj = nullptr;
@@ -8338,7 +8338,7 @@ void DatabaseModel::saveSplitSQLDefinition(const QString &path, CodeGenMode code
 				emit s_objectLoaded((gen_defs_idx/static_cast<double>(general_obj_cnt)) * 100, tr("Saving session options file `%1'.").arg(filename),
 														enum_t(ObjectType::Database));
 
-				buffer.append(schparser.getCodeDefinition(Attributes::SessionOpts, attribs, SchemaParser::SqlDefinition).toUtf8());
+				buffer.append(schparser.getSourceCode(Attributes::SessionOpts, attribs, SchemaParser::SqlCode).toUtf8());
 				UtilsNs::saveFile( path + GlobalAttributes::DirSeparator + filename, buffer);
 				buffer.clear();
 			}
@@ -10978,7 +10978,7 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, MetaAttrOptions
 														tr("Saving object `%1' (%2)")
 														.arg(object->getName()).arg(object->getTypeName()), enum_t(obj_type));
 
-				objs_def+=object->getCodeDefinition(SchemaParser::XmlDefinition);
+				objs_def+=object->getSourceCode(SchemaParser::XmlCode);
 				continue;
 			}
 			//Discarding the relationship added table objects (when extracting aliases)
@@ -11086,7 +11086,7 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, MetaAttrOptions
 					{
 						schparser.ignoreUnkownAttributes(true);
 						attribs[Attributes::Position]=
-								schparser.getCodeDefinition(GlobalAttributes::getSchemaFilePath(GlobalAttributes::XMLSchemaDir, Attributes::Position),
+								schparser.getSourceCode(GlobalAttributes::getSchemaFilePath(GlobalAttributes::XMLSchemaDir, Attributes::Position),
 																						attribs);
 					}
 				}
@@ -11112,7 +11112,7 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, MetaAttrOptions
 
 						schparser.ignoreUnkownAttributes(true);
 						attribs[Attributes::Position]+=
-								schparser.getCodeDefinition(GlobalAttributes::getSchemaFilePath(GlobalAttributes::XMLSchemaDir, Attributes::Position),
+								schparser.getSourceCode(GlobalAttributes::getSchemaFilePath(GlobalAttributes::XMLSchemaDir, Attributes::Position),
 																						attribs);
 					}
 
@@ -11126,10 +11126,10 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, MetaAttrOptions
 							aux_attribs[Attributes::YPos]=QString::number(pnt.y());
 							aux_attribs[Attributes::RefType]=labels_attrs[id];
 
-							aux_attribs[Attributes::Position]=schparser.getCodeDefinition(GlobalAttributes::getSchemaFilePath(GlobalAttributes::XMLSchemaDir, Attributes::Position),
+							aux_attribs[Attributes::Position]=schparser.getSourceCode(GlobalAttributes::getSchemaFilePath(GlobalAttributes::XMLSchemaDir, Attributes::Position),
 																																						aux_attribs);
 
-							attribs[Attributes::Position]+=schparser.getCodeDefinition(GlobalAttributes::getSchemaFilePath( GlobalAttributes::XMLSchemaDir, Attributes::Label),
+							attribs[Attributes::Position]+=schparser.getSourceCode(GlobalAttributes::getSchemaFilePath( GlobalAttributes::XMLSchemaDir, Attributes::Label),
 																																				 aux_attribs);
 
 						}
@@ -11141,12 +11141,12 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, MetaAttrOptions
 			if(save_custom_sql)
 			{
 				if(!object->getAppendedSQL().isEmpty())
-					attribs[Attributes::AppendedSql]=schparser.getCodeDefinition(GlobalAttributes::getSchemaFilePath(GlobalAttributes::XMLSchemaDir, QString(Attributes::AppendedSql).remove(QChar('-'))),
+					attribs[Attributes::AppendedSql]=schparser.getSourceCode(GlobalAttributes::getSchemaFilePath(GlobalAttributes::XMLSchemaDir, QString(Attributes::AppendedSql).remove(QChar('-'))),
 																																			 attribs);
 
 
 				if(!object->getPrependedSQL().isEmpty())
-					attribs[Attributes::PrependedSql]=schparser.getCodeDefinition(GlobalAttributes::getSchemaFilePath(GlobalAttributes::XMLSchemaDir,	QString(Attributes::PrependedSql).remove(QChar('-'))),
+					attribs[Attributes::PrependedSql]=schparser.getSourceCode(GlobalAttributes::getSchemaFilePath(GlobalAttributes::XMLSchemaDir,	QString(Attributes::PrependedSql).remove(QChar('-'))),
 																																				attribs);
 
 			}
@@ -11177,7 +11177,7 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, MetaAttrOptions
 
 				schparser.ignoreUnkownAttributes(true);
 				objs_def+=XmlParser::convertCharsToXMLEntities(
-										schparser.getCodeDefinition(GlobalAttributes::getSchemaFilePath(GlobalAttributes::XMLSchemaDir, Attributes::Info),
+										schparser.getSourceCode(GlobalAttributes::getSchemaFilePath(GlobalAttributes::XMLSchemaDir, Attributes::Info),
 																								attribs));
 			}
 			else
@@ -11190,7 +11190,7 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, MetaAttrOptions
 		{
 			//Generates the metadata XML buffer
 			attribs[Attributes::Info]=objs_def;
-			buf.append(schparser.getCodeDefinition(GlobalAttributes::getSchemaFilePath(GlobalAttributes::XMLSchemaDir, Attributes::Metadata),
+			buf.append(schparser.getSourceCode(GlobalAttributes::getSchemaFilePath(GlobalAttributes::XMLSchemaDir, Attributes::Metadata),
 																						 attribs).toUtf8());
 
 			output.write(buf.data(),buf.size());
@@ -11921,7 +11921,7 @@ void DatabaseModel::getDataDictionary(attribs_map &datadict, bool browsable, boo
 	datadict.clear();
 
 	// Generates the the stylesheet
-	styles = schparser.getCodeDefinition(style_sch_file, attribs);
+	styles = schparser.getSourceCode(style_sch_file, attribs);
 	attribs[Attributes::Styles] = "";
 	attribs[Attributes::DataDictIndex] = "";
 	attribs[Attributes::Split] = split ? Attributes::True : "";
@@ -11980,7 +11980,7 @@ void DatabaseModel::getDataDictionary(attribs_map &datadict, bool browsable, boo
 		{
 			id = itr.first + QString(".html");
 			schparser.ignoreEmptyAttributes(true);			
-			datadict[id] = schparser.getCodeDefinition(dict_sch_file, attribs);
+			datadict[id] = schparser.getSourceCode(dict_sch_file, attribs);
 			attribs[Attributes::Objects].clear();
 		}
 	}
@@ -12000,14 +12000,14 @@ void DatabaseModel::getDataDictionary(attribs_map &datadict, bool browsable, boo
 		{
 			aux_attribs[Attributes::Split] = attribs[Attributes::Split];
 			aux_attribs[Attributes::Item] = item;
-			idx_attribs[objs_map[item]->getSchemaName()] += schparser.getCodeDefinition(item_sch_file, aux_attribs);
+			idx_attribs[objs_map[item]->getSchemaName()] += schparser.getSourceCode(item_sch_file, aux_attribs);
 		}
 
 		idx_attribs[Attributes::Name] = this->obj_name;
 		idx_attribs[Attributes::Split] = attribs[Attributes::Split];
 
 		schparser.ignoreEmptyAttributes(true);
-		dict_index = schparser.getCodeDefinition(dict_idx_sch_file, idx_attribs);
+		dict_index = schparser.getSourceCode(dict_idx_sch_file, idx_attribs);
 	}
 
 	// If the data dictionary is browsable and splitted the index goes into a separated file
@@ -12017,7 +12017,7 @@ void DatabaseModel::getDataDictionary(attribs_map &datadict, bool browsable, boo
 	{
 		attribs[Attributes::DataDictIndex] = dict_index;
 		schparser.ignoreEmptyAttributes(true);
-		datadict[Attributes::Database] = schparser.getCodeDefinition(dict_sch_file, attribs);
+		datadict[Attributes::Database] = schparser.getSourceCode(dict_sch_file, attribs);
 	}
 }
 
@@ -12084,13 +12084,13 @@ QString DatabaseModel::getChangelogDefinition()
 			attribs[Attributes::Type] = BaseObject::getSchemaName(type);
 			attribs[Attributes::Action] = action;
 
-			xml_code += schparser.getCodeDefinition(Attributes::Entry, attribs, SchemaParser::XmlDefinition);
+			xml_code += schparser.getSourceCode(Attributes::Entry, attribs, SchemaParser::XmlCode);
 		}
 
 		attribs.clear();
 		attribs[Attributes::Entry] = xml_code;
 		schparser.ignoreEmptyAttributes(true);
-		return schparser.getCodeDefinition(Attributes::Changelog, attribs, SchemaParser::XmlDefinition);
+		return schparser.getSourceCode(Attributes::Changelog, attribs, SchemaParser::XmlCode);
 	}
 	catch(Exception &e)
 	{

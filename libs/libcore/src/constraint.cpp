@@ -227,7 +227,7 @@ void Constraint::setColumnsAttribute(ColumnsId cols_id, unsigned def_type, bool 
 	Column *col=nullptr;
 	QString str_cols, attrib;
 	unsigned i, count;
-	bool format=(def_type==SchemaParser::SqlDefinition);
+	bool format=(def_type==SchemaParser::SqlCode);
 
 	if(cols_id==ReferencedCols)
 	{
@@ -249,8 +249,8 @@ void Constraint::setColumnsAttribute(ColumnsId cols_id, unsigned def_type, bool 
 		 through relationship can not be included because they are inserted
 		 to the restriction on the time of creation of the relationship from its XML
 		 so the parameter 'inc_addedbyrel' can be used to solve this case. */
-		if((def_type==SchemaParser::SqlDefinition) ||
-				((def_type==SchemaParser::XmlDefinition) &&
+		if((def_type==SchemaParser::SqlCode) ||
+				((def_type==SchemaParser::XmlCode) &&
 				 ((inc_addedbyrel && col->isAddedByRelationship()) ||
 				  (inc_addedbyrel && !col->isAddedByRelationship()) ||
 				  (!inc_addedbyrel && !col->isAddedByRelationship()))))
@@ -653,7 +653,7 @@ unsigned Constraint::getExcludeElementCount()
 	return excl_elements.size();
 }
 
-void Constraint::setExcludeElementsAttribute(unsigned def_type)
+void Constraint::setExcludeElementsAttribute(SchemaParser::CodeType def_type)
 {
 	QString str_elem;
 	unsigned i, count;
@@ -661,8 +661,8 @@ void Constraint::setExcludeElementsAttribute(unsigned def_type)
 	count=excl_elements.size();
 	for(i=0; i < count; i++)
 	{
-		str_elem+=excl_elements[i].getCodeDefinition(def_type);
-		if(i < (count-1) && def_type==SchemaParser::SqlDefinition) str_elem+=',';
+		str_elem+=excl_elements[i].getSourceCode(def_type);
+		if(i < (count-1) && def_type==SchemaParser::SqlCode) str_elem+=',';
 	}
 
 	attributes[Attributes::Elements]=str_elem;
@@ -678,9 +678,9 @@ IndexingType Constraint::getIndexType()
 	return index_type;
 }
 
-QString Constraint::getCodeDefinition(unsigned def_type)
+QString Constraint::getSourceCode(SchemaParser::CodeType def_type)
 {
-	return getCodeDefinition(def_type, false);
+	return getSourceCode(def_type, false);
 }
 
 void Constraint::setDeclInTableAttribute()
@@ -706,7 +706,7 @@ void Constraint::configureSearchAttributes()
 	TableObject::configureSearchAttributes();
 }
 
-QString Constraint::getCodeDefinition(unsigned def_type, bool inc_addedbyrel)
+QString Constraint::getSourceCode(SchemaParser::CodeType def_type, bool inc_addedbyrel)
 {
 	QString code_def=getCachedCode(def_type, false);
 	if(!inc_addedbyrel && !code_def.isEmpty()) return code_def;
@@ -777,13 +777,13 @@ QString Constraint::getCodeDefinition(unsigned def_type, bool inc_addedbyrel)
 	else
 		attributes[Attributes::Factor]="";
 
-	return BaseObject::__getCodeDefinition(def_type);
+	return BaseObject::__getSourceCode(def_type);
 }
 
-QString Constraint::getDropDefinition(bool cascade)
+QString Constraint::getDropCode(bool cascade)
 {
 	setDeclInTableAttribute();
-	return TableObject::getDropDefinition(cascade);
+	return TableObject::getDropCode(cascade);
 }
 
 QString Constraint::getSignature(bool format)
@@ -815,7 +815,7 @@ QString Constraint::getDataDictionary(const attribs_map &extra_attribs)
 		attribs[Attributes::Columns] = col_names.join(", ");
 
 		schparser.ignoreEmptyAttributes(true);
-		return schparser.getCodeDefinition(GlobalAttributes::getSchemaFilePath(GlobalAttributes::DataDictSchemaDir,
+		return schparser.getSourceCode(GlobalAttributes::getSchemaFilePath(GlobalAttributes::DataDictSchemaDir,
 																																					 getSchemaName()), attribs);
 	}
 	catch(Exception &e)
@@ -833,8 +833,8 @@ bool Constraint::isCodeDiffersFrom(BaseObject *object, const QStringList &ignore
 
 	try
 	{
-		return BaseObject::isCodeDiffersFrom(this->getCodeDefinition(SchemaParser::XmlDefinition, true),
-											 object->getCodeDefinition(SchemaParser::XmlDefinition, true),
+		return BaseObject::isCodeDiffersFrom(this->getSourceCode(SchemaParser::XmlCode, true),
+											 object->getSourceCode(SchemaParser::XmlCode, true),
 											 ignored_attribs, ignored_tags);
 	}
 	catch(Exception &e)

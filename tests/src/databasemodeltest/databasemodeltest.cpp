@@ -69,7 +69,7 @@ void DatabaseModelTest::loadObjectsMetadata()
 		dbmodel.createSystemObjects(false);
 		dbmodel.loadModel(input_dbm);
 		dbmodel.loadObjectsMetadata(input_opf);
-		dbmodel.saveModel(output, SchemaParser::XmlDefinition);
+		dbmodel.saveModel(output, SchemaParser::XmlCode);
 		QCOMPARE(true, true);
 	}
 	catch (Exception &e)

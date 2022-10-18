@@ -1704,7 +1704,7 @@ void PgModelerCliApp::fixModel()
 	model->updateTablesFKRelationships();
 
 	printMessage(tr("Saving fixed output model..."));
-	model->saveModel(parsed_opts[Output], SchemaParser::XmlDefinition);
+	model->saveModel(parsed_opts[Output], SchemaParser::XmlCode);
 
 	printMessage(tr("Model successfully fixed!"));
 }
@@ -1820,7 +1820,7 @@ void PgModelerCliApp::importDatabase()
 
 	printMessage(tr("Saving the imported database to file..."));
 
-	model_wgt->getDatabaseModel()->saveModel(parsed_opts[Output], SchemaParser::XmlDefinition);
+	model_wgt->getDatabaseModel()->saveModel(parsed_opts[Output], SchemaParser::XmlCode);
 
 	printMessage(tr("Import successfully ended!\n"));
 
@@ -2218,7 +2218,7 @@ void PgModelerCliApp::handleLinuxMimeDatabase(bool uninstall, bool system_wide, 
 
 				schparser.loadFile(schemas[i]);
 				schparser.ignoreEmptyAttributes(true);
-				buf.append(schparser.getCodeDefinition(attribs).toUtf8());
+				buf.append(schparser.getSourceCode(attribs).toUtf8());
 				QDir(QString(".")).mkpath(QFileInfo(files[i]).absolutePath());
 
 				UtilsNs::saveFile(files[i], buf);

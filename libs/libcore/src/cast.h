@@ -98,11 +98,11 @@ class Cast: public BaseObject {
 		bool isInOut();
 
 		//! \brief Returns the SQL/XML code definition for the cast
-		virtual QString getCodeDefinition(unsigned def_type) final;
+		virtual QString getSourceCode(SchemaParser::CodeType def_type) final;
 
 		virtual QString getSignature(bool=false) final;
 
-		QString getDropDefinition(bool cascade) final;
+		QString getDropCode(bool cascade) final;
 };
 
 #endif

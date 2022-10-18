@@ -58,7 +58,7 @@ class Aggregate: public BaseObject {
 		Operator *sort_operator;
 
 		//! \brief Formats the data types to be used as attribute by the SchemaParser
-		void setTypesAttribute(unsigned def_type);
+		void setTypesAttribute(SchemaParser::CodeType def_type);
 
 		//! \brief Checks if the passed function is valid according to the rule of aggregate definition
 		bool isValidFunction(unsigned func_idx, Function *func);
@@ -104,11 +104,11 @@ class Aggregate: public BaseObject {
 		unsigned getDataTypeCount();
 
 		//! \brief Returns the SQL / XML code definition for the aggregate
-		virtual QString getCodeDefinition(unsigned def_type) final;
+		virtual QString getSourceCode(SchemaParser::CodeType def_type) final;
 
-		virtual QString getDropDefinition(bool cascade) final;
+		virtual QString getDropCode(bool cascade) final;
 
-		virtual QString getAlterDefinition(BaseObject *object) final;
+		virtual QString getAlterCode(BaseObject *object) final;
 
 		virtual QString getSignature(bool format=true) final;
 };

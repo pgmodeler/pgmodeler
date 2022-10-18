@@ -359,7 +359,7 @@ void BaseRelationship::setRelationshipAttributes()
 	{
 		attributes[Attributes::XPos]=QString("%1").arg(points[i].x());
 		attributes[Attributes::YPos]=QString("%1").arg(points[i].y());
-		str_aux+=schparser.getCodeDefinition(Attributes::Position, attributes, SchemaParser::XmlDefinition);
+		str_aux+=schparser.getSourceCode(Attributes::Position, attributes, SchemaParser::XmlCode);
 	}
 	attributes[Attributes::Points]=str_aux;
 
@@ -370,9 +370,9 @@ void BaseRelationship::setRelationshipAttributes()
 		{
 			attributes[Attributes::XPos]=QString("%1").arg(lables_dist[i].x());
 			attributes[Attributes::YPos]=QString("%1").arg(lables_dist[i].y());
-			attributes[Attributes::Position]=schparser.getCodeDefinition(Attributes::Position, attributes, SchemaParser::XmlDefinition);
+			attributes[Attributes::Position]=schparser.getSourceCode(Attributes::Position, attributes, SchemaParser::XmlCode);
 			attributes[Attributes::RefType]=label_attribs[i];
-			str_aux+=schparser.getCodeDefinition(Attributes::Label, attributes, SchemaParser::XmlDefinition);
+			str_aux+=schparser.getSourceCode(Attributes::Label, attributes, SchemaParser::XmlCode);
 		}
 	}
 
@@ -388,9 +388,9 @@ QString BaseRelationship::getCachedCode(unsigned def_type)
 {
 	if(!code_invalidated &&
 			((!cached_code[def_type].isEmpty()) ||
-			 (def_type==SchemaParser::XmlDefinition  && !cached_reduced_code.isEmpty())))
+			 (def_type==SchemaParser::XmlCode  && !cached_reduced_code.isEmpty())))
 	{
-		if(def_type==SchemaParser::XmlDefinition  && !cached_reduced_code.isEmpty())
+		if(def_type==SchemaParser::XmlCode  && !cached_reduced_code.isEmpty())
 			return cached_reduced_code;
 		else
 			return cached_code[def_type];
@@ -453,18 +453,18 @@ bool BaseRelationship::canSimulateRelationship11()
 	return false;
 }
 
-QString BaseRelationship::getCodeDefinition(unsigned def_type)
+QString BaseRelationship::getSourceCode(SchemaParser::CodeType def_type)
 {
 	QString code_def=getCachedCode(def_type);
 	if(!code_def.isEmpty()) return code_def;
 
-	if(def_type==SchemaParser::SqlDefinition)
+	if(def_type==SchemaParser::SqlCode)
 	{
 		if(rel_type!=RelationshipFk)
 			return "";
 		else
 		{
-			cached_code[def_type] = reference_fk->getCodeDefinition(SchemaParser::SqlDefinition);
+			cached_code[def_type] = reference_fk->getSourceCode(SchemaParser::SqlCode);
 			return cached_code[def_type];
 		}
 	}
@@ -478,7 +478,7 @@ QString BaseRelationship::getCodeDefinition(unsigned def_type)
 		if(!reduced_form)
 			cached_reduced_code.clear();
 
-		return BaseObject::getCodeDefinition(SchemaParser::XmlDefinition,reduced_form);
+		return BaseObject::getSourceCode(SchemaParser::XmlCode,reduced_form);
 	}
 }
 

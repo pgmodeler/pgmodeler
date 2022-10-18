@@ -434,7 +434,7 @@ QString Catalog::getCatalogQuery(const QString &qry_type, ObjectType obj_type, b
 	schparser.ignoreEmptyAttributes(true);
 
 	attribs[Attributes::PgSqlVersion]=schparser.getPgSQLVersion();
-	sql=schparser.getCodeDefinition(attribs).simplified();
+	sql=schparser.getSourceCode(attribs).simplified();
 
 	//Appeding the custom filter to the whole catalog query
 	if(!custom_filter.isEmpty())
@@ -736,7 +736,7 @@ std::vector<attribs_map> Catalog::getMultipleAttributes(const QString &catalog_s
 		schparser.ignoreEmptyAttributes(true);
 
 		attribs[Attributes::PgSqlVersion]=schparser.getPgSQLVersion();
-		connection.executeDMLCommand(schparser.getCodeDefinition(attribs).simplified(), res);
+		connection.executeDMLCommand(schparser.getSourceCode(attribs).simplified(), res);
 
 		if(res.accessTuple(ResultSet::FirstTuple))
 		{
@@ -767,7 +767,7 @@ QString Catalog::getCommentQuery(const QString &oid_field, bool is_shared_obj)
 												 {Attributes::SharedObj, (is_shared_obj ? Attributes::True : "")}};
 
 		loadCatalogQuery(query_id);
-		return schparser.getCodeDefinition(attribs).simplified();
+		return schparser.getSourceCode(attribs).simplified();
 	}
 	catch(Exception &e)
 	{
@@ -787,7 +787,7 @@ QString Catalog::getNotExtObjectQuery(const QString &oid_field)
 
 
 		loadCatalogQuery(query_id);
-		return schparser.getCodeDefinition(attribs).simplified();
+		return schparser.getSourceCode(attribs).simplified();
 	}
 	catch(Exception &e)
 	{
@@ -920,7 +920,7 @@ attribs_map Catalog::getServerAttributes()
 		loadCatalogQuery(QString("server"));
 		schparser.ignoreUnkownAttributes(true);
 		schparser.ignoreEmptyAttributes(true);
-		sql = schparser.getCodeDefinition(attribs).simplified();
+		sql = schparser.getSourceCode(attribs).simplified();
 		connection.executeDMLCommand(sql, res);
 
 		if(res.accessTuple(ResultSet::FirstTuple))
@@ -964,7 +964,7 @@ unsigned Catalog::getObjectCount(bool incl_sys_objs)
 		loadCatalogQuery(Attributes::ObjCount);
 		schparser.ignoreUnkownAttributes(true);
 		schparser.ignoreEmptyAttributes(true);
-		sql = schparser.getCodeDefinition(attribs).simplified();
+		sql = schparser.getSourceCode(attribs).simplified();
 		connection.executeDMLCommand(sql, res);
 
 		if(res.accessTuple(ResultSet::FirstTuple))

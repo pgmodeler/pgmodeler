@@ -1334,7 +1334,7 @@ void DatabaseExplorerWidget::dropObject(QTreeWidgetItem *item, bool cascade)
 				//Generate the drop command
 				schparser.ignoreEmptyAttributes(true);
 				schparser.ignoreUnkownAttributes(true);
-				drop_cmd=schparser.getCodeDefinition(Attributes::Drop, attribs, SchemaParser::SqlDefinition);
+				drop_cmd=schparser.getSourceCode(Attributes::Drop, attribs, SchemaParser::SqlCode);
 
 				if(cascade)
 					drop_cmd.replace(';', QString(" CASCADE;"));
@@ -1402,7 +1402,7 @@ bool DatabaseExplorerWidget::truncateTable(const QString &sch_name, const QStrin
 			schparser.ignoreEmptyAttributes(true);
 			schparser.ignoreUnkownAttributes(true);
 
-			truc_cmd=schparser.getCodeDefinition(GlobalAttributes::getSchemaFilePath(GlobalAttributes::AlterSchemaDir, Attributes::Truncate),
+			truc_cmd=schparser.getSourceCode(GlobalAttributes::getSchemaFilePath(GlobalAttributes::AlterSchemaDir, Attributes::Truncate),
 																					 attribs);
 
 			//Executes the truncate cmd
@@ -1862,7 +1862,7 @@ void DatabaseExplorerWidget::finishObjectRename()
 			schparser.ignoreEmptyAttributes(true);
 			schparser.ignoreUnkownAttributes(true);
 
-			rename_cmd=schparser.getCodeDefinition(GlobalAttributes::getSchemaFilePath(GlobalAttributes::AlterSchemaDir, Attributes::Rename),
+			rename_cmd=schparser.getSourceCode(GlobalAttributes::getSchemaFilePath(GlobalAttributes::AlterSchemaDir, Attributes::Rename),
 													 attribs);
 
 			//Executes the rename cmd
@@ -2079,12 +2079,12 @@ QString DatabaseExplorerWidget::getObjectSource(BaseObject *object, DatabaseMode
 	object->setCodeInvalidated(true);
 
 	if(object!=dbmodel)
-		source=object->getCodeDefinition(SchemaParser::SqlDefinition);
+		source=object->getSourceCode(SchemaParser::SqlCode);
 	else
-		source=dbmodel->__getCodeDefinition(SchemaParser::SqlDefinition);
+		source=dbmodel->__getSourceCode(SchemaParser::SqlCode);
 
 	for(auto &perm : perms)
-		source+=perm->getCodeDefinition(SchemaParser::SqlDefinition);
+		source+=perm->getSourceCode(SchemaParser::SqlCode);
 
 	return source;
 }

@@ -73,7 +73,7 @@ class Trigger: public TableObject{
 		DeferralType deferral_type;
 
 		//! \brief Formats the basic trigger attributes to be used by SchemaParser
-		void setBasicAttributes(unsigned def_type);
+		void setBasicAttributes(SchemaParser::CodeType def_type);
 
 		//! \brief Format the function arguments to be used by the SchemaParser
 		void setArgumentAttribute(unsigned tipo_def);
@@ -194,7 +194,7 @@ class Trigger: public TableObject{
 		std::vector<Column *> getRelationshipAddedColumns();
 
 		//! \brief Returns the SQL / XML definition for the trigger
-		virtual QString getCodeDefinition(unsigned def_type) final;
+		virtual QString getSourceCode(SchemaParser::CodeType def_type) final;
 
 		/*! \brief Validates the trigger attributes according to the docs.
 		This method is executed whenever the trigger is added to a table or view.

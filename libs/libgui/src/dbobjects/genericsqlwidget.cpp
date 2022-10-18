@@ -193,7 +193,7 @@ void GenericSQLWidget::updateCodePreview()
 
 			dummy_gsql.setDefinition(definition_txt->toPlainText());
 			dummy_gsql.setCodeInvalidated(true);
-			preview_txt->setPlainText(dummy_gsql.getCodeDefinition(SchemaParser::SqlDefinition));
+			preview_txt->setPlainText(dummy_gsql.getSourceCode(SchemaParser::SqlCode));
 		}
 		else
 			preview_txt->setPlainText(QString("-- %1 --").arg(tr("No object name, SQL code or references defined! Preview unavailable.")));

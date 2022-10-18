@@ -15,7 +15,7 @@ Operator *ExcludeElement::getOperator()
 	return _operator;
 }
 
-QString ExcludeElement::getCodeDefinition(unsigned def_type)
+QString ExcludeElement::getSourceCode(SchemaParser::CodeType def_type)
 {
 	attribs_map attributes;
 
@@ -25,13 +25,13 @@ QString ExcludeElement::getCodeDefinition(unsigned def_type)
 
 	if(_operator)
 	{
-		if(def_type==SchemaParser::SqlDefinition)
+		if(def_type==SchemaParser::SqlCode)
 			attributes[Attributes::Operator]=_operator->getName(true);
 		else
-			attributes[Attributes::Operator]=_operator->getCodeDefinition(def_type, true);
+			attributes[Attributes::Operator]=_operator->getSourceCode(def_type, true);
 	}
 
-	return schparser.getCodeDefinition(Attributes::ExcludeElement, attributes, def_type);
+	return schparser.getSourceCode(Attributes::ExcludeElement, attributes, def_type);
 }
 
 bool ExcludeElement::operator == (ExcludeElement &elem)

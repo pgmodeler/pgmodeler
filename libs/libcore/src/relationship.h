@@ -508,7 +508,7 @@ class Relationship: public BaseRelationship {
 		bool isSiglePKColumn();
 
 		//! \brief Returns SQL / XML definition for the relationship.
-		virtual QString getCodeDefinition(unsigned def_type) final;
+		virtual QString getSourceCode(SchemaParser::CodeType def_type) final;
 
 		//! \brief Copies the attributes from one relationship to another
 		void operator = (Relationship &rel);

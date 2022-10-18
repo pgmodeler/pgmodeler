@@ -239,12 +239,12 @@ QString Role::getPassword()
 	return password;
 }
 
-QString Role::getCodeDefinition(unsigned def_type)
+QString Role::getSourceCode(SchemaParser::CodeType def_type)
 {
-	return (getCodeDefinition(def_type, false));
+	return (getSourceCode(def_type, false));
 }
 
-QString Role::getCodeDefinition(unsigned def_type, bool reduced_form)
+QString Role::getSourceCode(SchemaParser::CodeType def_type, bool reduced_form)
 {
 	QString code_def=getCachedCode(def_type, reduced_form);
 	if(!code_def.isEmpty()) return code_def;
@@ -267,7 +267,7 @@ QString Role::getCodeDefinition(unsigned def_type, bool reduced_form)
 	if(conn_limit >= 0)
 		attributes[Attributes::ConnLimit]=QString("%1").arg(conn_limit);
 
-	return BaseObject::getCodeDefinition(def_type, reduced_form);
+	return BaseObject::getSourceCode(def_type, reduced_form);
 }
 
 QString Role::getAlterMembershipCommands(Role *imp_role, Role *ref_role, bool revoke)
@@ -297,7 +297,7 @@ QString Role::getAlterMembershipCommands(Role *imp_role, Role *ref_role, bool re
 
 			try
 			{
-				cmds += schparser.getCodeDefinition(
+				cmds += schparser.getSourceCode(
 									GlobalAttributes::getSchemaFilePath(GlobalAttributes::AlterSchemaDir, Attributes::RoleMembers),
 									member_attrs);
 			}
@@ -314,7 +314,7 @@ QString Role::getAlterMembershipCommands(Role *imp_role, Role *ref_role, bool re
 	return cmds;
 }
 
-QString Role::getAlterDefinition(BaseObject *object)
+QString Role::getAlterCode(BaseObject *object)
 {
 	Role *role=dynamic_cast<Role *>(object);
 
@@ -329,7 +329,7 @@ QString Role::getAlterDefinition(BaseObject *object)
 								 Attributes::Login, Attributes::Replication,
 								 Attributes::BypassRls };
 
-		attributes[Attributes::AlterCmds]=BaseObject::getAlterDefinition(object);
+		attributes[Attributes::AlterCmds]=BaseObject::getAlterCode(object);
 
 		if(this->password!=role->password)
 		{
@@ -351,7 +351,7 @@ QString Role::getAlterDefinition(BaseObject *object)
 
 		copyAttributes(attribs);
 
-		return BaseObject::getAlterDefinition(this->getSchemaName(), attributes, false, true);
+		return BaseObject::getAlterCode(this->getSchemaName(), attributes, false, true);
 	}
 	catch(Exception &e)
 	{

@@ -195,8 +195,10 @@ class SchemaParser {
 		TokenLtEqOper;// <= (less or equal to)
 
 		//! \brief Constants used to get a specific object definition
-		static constexpr unsigned SqlDefinition=0,
-		XmlDefinition=1;
+		enum CodeType {
+			SqlCode,
+			XmlCode
+		};
 
 		SchemaParser();
 
@@ -209,17 +211,17 @@ class SchemaParser {
 		/*! \brief Returns the complete xml/sql definition for an database object represented by the
 		 map 'attributes'. For SQL definition is necessary to indicate the version of PostgreSQL
 		 in order to the to correct schema be loaded */
-		QString getCodeDefinition(const QString &obj_name, attribs_map &attribs, unsigned def_type);
+		QString getSourceCode(const QString &obj_name, attribs_map &attribs, CodeType def_type);
 
 		/*! \brief Generic method that loads a schema file and for a given map of attributes
 		 this method returns the data of the file analyzed and filled with the values ​​of the
 		 attributes map */
-		QString getCodeDefinition(const QString &filename, attribs_map &attribs);
+		QString getSourceCode(const QString &filename, attribs_map &attribs);
 
 		/*! \brief Generic method that interprets a pre-specified buffer (see loadBuffer()) and for a given map
 		 of attributes this method returns the data of the buffer analyzed and filled with the values ​​of the
 		 attributes map */
-		QString getCodeDefinition(const attribs_map &attribs);
+		QString getSourceCode(const attribs_map &attribs);
 
 		//! \brief Loads the buffer with a string
 		void loadBuffer(const QString &buf);

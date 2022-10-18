@@ -30,6 +30,7 @@
 #include "intervaltype.h"
 #include "spatialtype.h"
 #include "templatetype.h"
+#include "schemaparser.h"
 
 class PgSqlType: public TemplateType<PgSqlType>{
 	private:
@@ -216,7 +217,7 @@ class PgSqlType: public TemplateType<PgSqlType>{
 		bool isExactTo(PgSqlType type);
 
 		PgSqlType getAliasType();
-		QString getCodeDefinition(unsigned def_type, QString ref_type="");
+		QString getSourceCode(SchemaParser::CodeType def_type, QString ref_type="");
 		virtual QString operator ~ ();
 
 		//! \brief Returns the complet SQL definition for the type (same as calling getSQLTypeName(true))

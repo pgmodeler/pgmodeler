@@ -127,7 +127,7 @@ void SourceCodeWidget::generateSourceCode(int)
 				task_prog_wgt->setWindowTitle(tr("Generating source code..."));
 				task_prog_wgt->show();
 				connect(this->model, SIGNAL(s_objectLoaded(int,QString,unsigned)), task_prog_wgt, SLOT(updateProgress(int,QString,unsigned)));
-				sqlcode_txt->setPlainText(object->getCodeDefinition(SchemaParser::SqlDefinition));
+				sqlcode_txt->setPlainText(object->getSourceCode(SchemaParser::SqlCode));
 			}
 			else
 			{
@@ -162,7 +162,7 @@ void SourceCodeWidget::generateSourceCode(int)
 #warning "DEMO VERSION: XML code preview disabled."
 		xmlcode_txt->setPlainText(tr("<!-- XML code preview disabled in demonstration version -->"));
 #else
-		xmlcode_txt->setPlainText(object->getCodeDefinition(SchemaParser::XmlDefinition));
+		xmlcode_txt->setPlainText(object->getSourceCode(SchemaParser::XmlCode));
 #endif
 
 		setSourceCodeTab();

@@ -31,9 +31,9 @@ class Procedure: public BaseFunction {
 		Procedure();
 
 		virtual void addParameter(Parameter param);
-		virtual QString getCodeDefinition(unsigned def_type, bool) final;
-		virtual QString getCodeDefinition(unsigned def_type) final;
-		virtual QString getAlterDefinition(BaseObject *object) final;
+		virtual QString getSourceCode(SchemaParser::CodeType def_type, bool) final;
+		virtual QString getSourceCode(SchemaParser::CodeType def_type) final;
+		virtual QString getAlterCode(BaseObject *object) final;
 };
 
 #endif

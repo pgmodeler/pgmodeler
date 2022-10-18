@@ -30,9 +30,9 @@ Textbox::Textbox()
 	attributes[Attributes::FontSize]="";
 }
 
-QString Textbox::getCodeDefinition(unsigned def_type)
+QString Textbox::getSourceCode(SchemaParser::CodeType def_type)
 {
-	if(def_type==SchemaParser::SqlDefinition)
+	if(def_type==SchemaParser::SqlCode)
 		return "";
 	else
 	{
@@ -58,7 +58,7 @@ QString Textbox::getCodeDefinition(unsigned def_type)
 		attributes[Attributes::FontSize]=QString("%1").arg(font_size);
 		attributes[Attributes::ZValue]=QString::number(z_value);
 
-		return this->BaseObject::__getCodeDefinition(SchemaParser::XmlDefinition);
+		return this->BaseObject::__getSourceCode(SchemaParser::XmlCode);
 	}
 }
 

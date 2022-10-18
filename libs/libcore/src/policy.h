@@ -88,11 +88,11 @@ class Policy : public TableObject {
 		std::vector<Role *> getRoles();
 
 		//! \brief Returns the SQL / XML definition for the policy
-		virtual QString getCodeDefinition(unsigned def_type) final;
+		virtual QString getSourceCode(SchemaParser::CodeType def_type) final;
 
 		virtual QString getSignature(bool format=false) final;
 
-		virtual QString getAlterDefinition(BaseObject *object) final;
+		virtual QString getAlterCode(BaseObject *object) final;
 
 		bool isRoleExists(Role *role);
 };

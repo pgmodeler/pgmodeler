@@ -41,27 +41,27 @@ PgSqlType TypeAttribute::getType()
 	return type;
 }
 
-QString TypeAttribute::getCodeDefinition(unsigned def_type)
+QString TypeAttribute::getSourceCode(SchemaParser::CodeType def_type)
 {
 	QString code_def=getCachedCode(def_type, false);
 	if(!code_def.isEmpty()) return code_def;
 
-	if(def_type==SchemaParser::SqlDefinition)
+	if(def_type==SchemaParser::SqlCode)
 		attributes[Attributes::Name]=BaseObject::formatName(obj_name);
 	else
 		attributes[Attributes::Name]=obj_name;
 
-	attributes[Attributes::Type]=type.getCodeDefinition(def_type);
+	attributes[Attributes::Type]=type.getSourceCode(def_type);
 
 	if(collation)
 	{
-		if(def_type==SchemaParser::SqlDefinition)
+		if(def_type==SchemaParser::SqlCode)
 			attributes[Attributes::Collation]=collation->getName(true);
 		else
-			attributes[Attributes::Collation]=collation->getCodeDefinition(def_type, true);
+			attributes[Attributes::Collation]=collation->getSourceCode(def_type, true);
 	}
 
-	return BaseObject::__getCodeDefinition(def_type);
+	return BaseObject::__getSourceCode(def_type);
 }
 
 void TypeAttribute::operator = (const TypeAttribute &tpattrib)

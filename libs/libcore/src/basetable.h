@@ -95,9 +95,9 @@ class BaseTable: public BaseGraphicObject {
 		//! \brief Returns all children objects of the table but excluding the ones of the provided type
 		virtual std::vector<BaseObject *> getObjects(const std::vector<ObjectType> &excl_types = {})=0;
 
-		virtual QString getCodeDefinition(unsigned tipo_def)=0;
+		virtual QString getSourceCode(SchemaParser::CodeType tipo_def)=0;
 
-		virtual QString getAlterDefinition(BaseObject *object);
+		virtual QString getAlterCode(BaseObject *object);
 
 		/*! \brief Set the initial capacity of the objects list for a optimized memory usage.
 		 * This method should be called prior to adding the first object to the table because, depending o the capacity,

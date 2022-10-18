@@ -54,7 +54,7 @@ class Index: public TableObject{
 		bool index_attribs[4];
 
 		//! \brief Formats the elements string used by the SchemaParser
-		void setIndexElementsAttribute(unsigned def_type);
+		void setIndexElementsAttribute(SchemaParser::CodeType def_type);
 
 		/*! \brief Executes any validation over the index's elements. Currently, this method disable sorting
 		when the indexing type is 'gin' */
@@ -126,11 +126,11 @@ class Index: public TableObject{
 		unsigned getFillFactor();
 
 		//! \brief Returns the SQL / XML definition for the index
-		virtual QString getCodeDefinition(unsigned def_type) final;
+		virtual QString getSourceCode(SchemaParser::CodeType def_type) final;
 
 		virtual QString getSignature(bool format=true) final ;
 
-		virtual QString getAlterDefinition(BaseObject *object) final;
+		virtual QString getAlterCode(BaseObject *object) final;
 
 		/*! \brief Returns whether the index references columns added
 		 by relationship. This method is used as auxiliary

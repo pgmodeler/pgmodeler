@@ -33,7 +33,7 @@ Collation *PartitionKey::getCollation()
 	return collation;
 }
 
-QString PartitionKey::getCodeDefinition(unsigned def_type)
+QString PartitionKey::getSourceCode(SchemaParser::CodeType def_type)
 {
 	attribs_map attribs;
 	schparser.setPgSQLVersion(BaseObject::getPgSQLVersion());
@@ -43,11 +43,11 @@ QString PartitionKey::getCodeDefinition(unsigned def_type)
 
 	if(collation)
 	{
-		if(def_type==SchemaParser::SqlDefinition)
+		if(def_type==SchemaParser::SqlCode)
 			attribs[Attributes::Collation]=collation->getName(true);
 		else
-			attribs[Attributes::Collation]=collation->getCodeDefinition(def_type, true);
+			attribs[Attributes::Collation]=collation->getSourceCode(def_type, true);
 	}
 
-	return schparser.getCodeDefinition(Attributes::PartitionKey, attribs, def_type);
+	return schparser.getSourceCode(Attributes::PartitionKey, attribs, def_type);
 }

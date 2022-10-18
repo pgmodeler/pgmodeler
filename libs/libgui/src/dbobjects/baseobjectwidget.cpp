@@ -813,9 +813,9 @@ void BaseObjectWidget::finishConfiguration()
 			{
 				//If the object is being updated, validates its SQL definition
 				if(obj_type==ObjectType::BaseRelationship || obj_type==ObjectType::Textbox || obj_type==ObjectType::Tag)
-					this->object->getCodeDefinition(SchemaParser::XmlDefinition);
+					this->object->getSourceCode(SchemaParser::XmlCode);
 				else
-					this->object->getCodeDefinition(SchemaParser::SqlDefinition);
+					this->object->getSourceCode(SchemaParser::SqlCode);
 			}
 
 			model->getObjectReferences(object, ref_objs);
