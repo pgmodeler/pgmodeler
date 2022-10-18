@@ -163,7 +163,7 @@ void ConstraintWidget::setAttributes(DatabaseModel *model, OperationList *op_lis
 	{
 		excl_elems = constr->getExcludeElements();
 
-		indexing_chk->setChecked(constr->getIndexType()!=BaseType::Null);
+		indexing_chk->setChecked(constr->getIndexType()!=IndexingType::Null);
 		indexing_cmb->setCurrentIndex(indexing_cmb->findText(~constr->getIndexType()));
 
 		constr_type_cmb->setCurrentIndex(constr_type_cmb->findText(~constr->getConstraintType()));
@@ -219,7 +219,7 @@ void ConstraintWidget::applyConfiguration()
 		if(indexing_chk->isChecked())
 			constr->setIndexType(IndexingType(indexing_cmb->currentText()));
 		else
-			constr->setIndexType(BaseType::Null);
+			constr->setIndexType(IndexingType::Null);
 
 		if(constr->getConstraintType()==ConstraintType::ForeignKey)
 			constr->setReferencedTable(dynamic_cast<BaseTable *>(ref_table_sel->getSelectedObject()));

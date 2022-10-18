@@ -67,7 +67,7 @@ void TableObjectView::configureDescriptor(ConstraintType constr_type)
 
 	/* Elliptical descriptor is used to columns (with or without not-null constraint),
 		for other object types, polygonal descriptor is usded */
-	ellipse_desc=((column && constr_type==BaseType::Null) || (!TableObject::isTableObject(obj_type)));
+	ellipse_desc=((column && constr_type==ConstraintType::Null) || (!TableObject::isTableObject(obj_type)));
 
 	if(descriptor && ((ellipse_desc && !dynamic_cast<QGraphicsEllipseItem *>(descriptor)) ||
 										(!ellipse_desc && dynamic_cast<QGraphicsEllipseItem *>(descriptor))))
@@ -89,7 +89,7 @@ void TableObjectView::configureDescriptor(ConstraintType constr_type)
 		QString attrib;
 		QPolygonF pol;
 
-		if(constr_type==BaseType::Null)
+		if(constr_type==ConstraintType::Null)
 		{
 			QGraphicsEllipseItem *desc=dynamic_cast<QGraphicsEllipseItem *>(descriptor);
 

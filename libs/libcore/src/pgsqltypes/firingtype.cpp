@@ -21,7 +21,7 @@
 template<>
 QStringList FiringType::TemplateType<FiringType>::type_names =
 {
-	"", // Reserved for BaseType::null
+	"", // Reserved for Class::Null
 
 	"BEFORE",
 	"AFTER",

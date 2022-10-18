@@ -2758,7 +2758,7 @@ void DatabaseImportHelper::createColumns(attribs_map &attribs, std::vector<unsig
 			// Try to create the missing data type
 			getType(itr->second[Attributes::TypeOid], false);
 
-		col.setIdentityType(BaseType::Null);
+		col.setIdentityType(IdentityType::Null);
 		col.setGenerated(false);
 		col.setType(PgSqlType::parseString(type_name));
 		col.setNotNull(!itr->second[Attributes::NotNull].isEmpty());

@@ -42,7 +42,7 @@ DatabaseModel::DatabaseModel()
 	allow_conns = true;
 	cancel_saving = false;
 
-	encoding=BaseType::Null;
+	encoding=EncodingType::Null;
 	BaseObject::setName(QObject::tr("new_database"));
 
 	default_objs[ObjectType::Schema]=nullptr;
@@ -4309,7 +4309,7 @@ PgSqlType DatabaseModel::createPgSQLType()
 	else
 	{
 		//Raises an error if the referenced type name doesn't exists
-		if(PgSqlType::getUserTypeIndex(name,nullptr,this) == BaseType::Null)
+		if(PgSqlType::getUserTypeIndex(name,nullptr,this) == PgSqlType::Null)
 			throw Exception(ErrorCode::RefUserTypeInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		type_idx=PgSqlType::getUserTypeIndex(name, ptype);
@@ -7438,7 +7438,7 @@ QString DatabaseModel::__getSourceCode(SchemaParser::CodeType def_type)
 	{
 		QString loc_attribs[]={ Attributes::LcCtype,  Attributes::LcCollate };
 
-		if(encoding!=BaseType::Null)
+		if(encoding!=EncodingType::Null)
 			attributes[Attributes::Encoding]=QString("'%1'").arg(~encoding);
 
 		for(unsigned i=0; i < 2; i++)

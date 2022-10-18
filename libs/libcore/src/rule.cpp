@@ -20,7 +20,7 @@
 
 Rule::Rule()
 {
-	execution_type=BaseType::Null;
+	execution_type=ExecutionType::Null;
 	obj_type=ObjectType::Rule;
 	attributes[Attributes::EventType]="";
 	attributes[Attributes::Table]="";

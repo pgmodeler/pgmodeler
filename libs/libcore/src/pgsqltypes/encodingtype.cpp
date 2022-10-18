@@ -20,7 +20,7 @@
 
 template<>
 QStringList EncodingType::TemplateType<EncodingType>::type_names = {
-	"", // Reserved for BaseType::null
+	"", // Reserved for Class::Null
 
 	"UTF8", "BIG5", "EUC_CN", "EUC_JP", "EUC_JIS_2004",
 	"EUC_KR", "EUC_TW", "GB18030", "GBK",

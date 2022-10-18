@@ -21,7 +21,7 @@
 template<>
 QStringList IntervalType::TemplateType<IntervalType>::type_names =
 {
-	"", // Reserved for BaseType::null
+	"", // Reserved for Class::Null
 
 	"YEAR", "MONTH", "DAY", "HOUR",
 	"MINUTE", "SECOND","YEAR TO MONTH",

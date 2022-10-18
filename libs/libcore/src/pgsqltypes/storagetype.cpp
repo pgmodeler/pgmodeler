@@ -21,7 +21,7 @@
 template<>
 QStringList StorageType::TemplateType<StorageType>::type_names =
 {
-	"", // Reserved for BaseType::null
+	"", // Reserved for Class::Null
 
 	"plain",
 	"external",

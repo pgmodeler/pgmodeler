@@ -47,7 +47,7 @@ void Extension::setHandlesType(bool value)
 	/* Raises an error if the extension is already registered as a data type and the
 	try to change the attribute value. This cannot be done to avoid cascade reference breaking
 	on table columns/functions or any other objects that references PgSQLType */
-	if(!value && PgSqlType::getUserTypeIndex(getName(true, true), this) != BaseType::Null)
+	if(!value && PgSqlType::getUserTypeIndex(getName(true, true), this) != PgSqlType::Null)
 		throw Exception(Exception::getErrorMessage(ErrorCode::ExtensionHandlingTypeImmutable)
 						.arg(getName(true)),
 						ErrorCode::ExtensionHandlingTypeImmutable,__PRETTY_FUNCTION__,__FILE__,__LINE__);

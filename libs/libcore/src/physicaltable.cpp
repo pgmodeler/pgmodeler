@@ -43,7 +43,7 @@ PhysicalTable::PhysicalTable() : BaseTable()
 	attributes[Attributes::CopyTable]="";
 
 	copy_table=partitioned_table=nullptr;
-	partitioning_type=BaseType::Null;
+	partitioning_type=PartitioningType::Null;
 }
 
 void PhysicalTable::destroyObjects()
@@ -622,7 +622,7 @@ void PhysicalTable::addPartitionKeys(std::vector<PartitionKey> &part_keys)
 {
 	std::vector<PartitionKey> part_keys_bkp = partition_keys;
 
-	if(partitioning_type == BaseType::Null)
+	if(partitioning_type == PartitioningType::Null)
 		return;
 
 	if(partitioning_type == PartitioningType::List && part_keys.size() > 1)
@@ -1462,7 +1462,7 @@ bool PhysicalTable::isPartition()
 
 bool PhysicalTable::isPartitioned()
 {
-	return (partitioning_type != BaseType::Null);
+	return (partitioning_type != PartitioningType::Null);
 }
 
 bool PhysicalTable::isPhysicalTable(ObjectType obj_type)

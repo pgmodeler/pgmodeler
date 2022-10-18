@@ -41,7 +41,7 @@ Column::Column()
 	attributes[Attributes::Cycle]="";
 
 	parent_rel=sequence=nullptr;
-	identity_type=BaseType::Null;
+	identity_type = IdentityType::Null;
 }
 
 void Column::setName(const QString &name)
@@ -71,7 +71,7 @@ void Column::setType(PgSqlType type)
 	//An error is raised if the column receive a pseudo-type as data type.
 	if(type.isPseudoType())
 		throw Exception(ErrorCode::AsgPseudoTypeColumn,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-	else if(this->identity_type != BaseType::Null && !type.isIntegerType())
+	else if(this->identity_type != IdentityType::Null && !type.isIntegerType())
 	{
 		throw Exception(Exception::getErrorMessage(ErrorCode::InvalidIdentityColumn).arg(getSignature()),
 										ErrorCode::InvalidIdentityColumn, __PRETTY_FUNCTION__, __FILE__, __LINE__);
@@ -83,7 +83,7 @@ void Column::setType(PgSqlType type)
 
 void Column::setIdentityType(IdentityType id_type)
 {
-	if(id_type != BaseType::Null && !type.isIntegerType())
+	if(id_type != IdentityType::Null && !type.isIntegerType())
 	{
 		throw Exception(Exception::getErrorMessage(ErrorCode::InvalidIdentityColumn).arg(getSignature()),
 										ErrorCode::InvalidIdentityColumn, __PRETTY_FUNCTION__, __FILE__, __LINE__);
@@ -96,7 +96,7 @@ void Column::setIdentityType(IdentityType id_type)
 	generated = false;
 
 	//Identity column implies NOT NULL constraint
-	if(id_type != BaseType::Null)
+	if(id_type != IdentityType::Null)
 		setNotNull(true);
 }
 
@@ -105,7 +105,7 @@ void Column::setDefaultValue(const QString &value)
 	setCodeInvalidated(default_value != value);
 	default_value = value.trimmed();
 	sequence = nullptr;
-	identity_type = BaseType::Null;
+	identity_type = IdentityType::Null;
 }
 
 void Column::setNotNull(bool value)
@@ -118,7 +118,7 @@ void Column::setGenerated(bool value)
 {
 	setCodeInvalidated(generated != value);
 	generated = value;
-	identity_type = BaseType::Null;
+	identity_type = IdentityType::Null;
 	sequence = nullptr;
 }
 
@@ -144,7 +144,7 @@ bool Column::isGenerated()
 
 bool Column::isIdentity()
 {
-	return (identity_type != BaseType::Null);
+	return (identity_type != IdentityType::Null);
 }
 
 QString Column::getTypeReference()
@@ -198,7 +198,7 @@ void Column::setSequence(BaseObject *seq)
 							ErrorCode::IncompColumnTypeForSequence,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		default_value="";
-		identity_type=BaseType::Null;
+		identity_type=IdentityType::Null;
 		generated = false;
 	}
 
@@ -263,7 +263,7 @@ QString Column::getSourceCode(SchemaParser::CodeType def_type)
 	attributes[Attributes::DefaultValue]="";
 	attributes[Attributes::IdentityType]="";
 
-	if(identity_type != BaseType::Null)
+	if(identity_type != IdentityType::Null)
 	{
 		attributes[Attributes::IdentityType] = ~identity_type;	
 		attributes[Attributes::Increment]=seq_increment;
@@ -333,11 +333,11 @@ QString Column::getAlterCode(BaseObject *object)
 
 		attribs[Attributes::NewIdentityType] = "";
 
-		if(this->identity_type == BaseType::Null && col->identity_type != BaseType::Null)
+		if(this->identity_type == IdentityType::Null && col->identity_type != IdentityType::Null)
 			attribs[Attributes::IdentityType] = ~col->identity_type;
-		else if(this->identity_type != BaseType::Null && col->identity_type == BaseType::Null)
+		else if(this->identity_type != IdentityType::Null && col->identity_type == IdentityType::Null)
 			attribs[Attributes::IdentityType] = Attributes::Unset;
-		else if(this->identity_type != BaseType::Null && col->identity_type != BaseType::Null &&
+		else if(this->identity_type != IdentityType::Null && col->identity_type != IdentityType::Null &&
 						this->identity_type != col->identity_type)
 			attribs[Attributes::NewIdentityType] = ~col->identity_type;
 

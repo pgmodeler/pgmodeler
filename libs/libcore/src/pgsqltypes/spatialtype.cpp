@@ -21,7 +21,7 @@
 template<>
 QStringList SpatialType::TemplateType<SpatialType>::type_names =
 {
-	"", // Reserved for BaseType::null
+	"", // Reserved for Class::Null
 
 	"POINT",	"LINESTRING",
 	"POLYGON",	"MULTIPOINT",
@@ -67,7 +67,7 @@ SpatialType::SpatialType(unsigned type_id, int srid, VariationId var_id)
 
 SpatialType::SpatialType()
 {
-	type_idx=BaseType::Null;
+	type_idx=Null;
 	variation=NoVar;
 	srid=0;
 }

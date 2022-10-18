@@ -21,7 +21,7 @@
 template<>
 QStringList MatchType::TemplateType<MatchType>::type_names =
 {
-	"", // Reserved for BaseType::null
+	"", // Reserved for Class::Null
 
 	"MATCH SIMPLE",
 	"MATCH FULL",

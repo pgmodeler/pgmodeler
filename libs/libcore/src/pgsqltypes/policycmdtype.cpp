@@ -21,7 +21,7 @@
 template<>
 QStringList PolicyCmdType::TemplateType<PolicyCmdType>::type_names =
 {
-	"", // Reserved for BaseType::null
+	"", // Reserved for Class::Null
 
 	"ALL",
 	"SELECT",

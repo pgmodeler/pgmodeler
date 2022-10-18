@@ -21,7 +21,7 @@
 template<>
 QStringList IndexingType::TemplateType<IndexingType>::type_names =
 {
-	"", // Reserved for BaseType::null
+	"", // Reserved for Class::Null
 
 	"btree",
 	"gist",

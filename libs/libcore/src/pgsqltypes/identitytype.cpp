@@ -21,7 +21,7 @@
 template<>
 QStringList IdentityType::TemplateType<IdentityType>::type_names =
 {
-	"", // Reserved for BaseType::null
+	"", // Reserved for Class::Null
 
 	"ALWAYS",
 	"BY DEFAULT"

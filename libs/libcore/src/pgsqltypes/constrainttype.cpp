@@ -21,7 +21,7 @@
 template<>
 QStringList ConstraintType::TemplateType<ConstraintType>::type_names =
 {
-	"", // Reserved for BaseType::null
+	"", // Reserved for Class::Null
 
 	"PRIMARY KEY",
 	"FOREIGN KEY",

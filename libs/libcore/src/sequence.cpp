@@ -401,7 +401,7 @@ QString Sequence::getSourceCode(SchemaParser::CodeType def_type)
 	attributes[Attributes::Column]=(owner_col ? owner_col->getName(true) : "");
 
 	attributes[Attributes::ColIsIdentity]=
-			(owner_col && owner_col->getIdentityType() != BaseType::Null ? Attributes::True : "");
+			(owner_col && owner_col->getIdentityType() != IdentityType::Null ? Attributes::True : "");
 
 	attributes[Attributes::Increment]=increment;
 	attributes[Attributes::MinValue]=min_value;

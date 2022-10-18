@@ -21,7 +21,7 @@
 template<>
 QStringList ParallelType::TemplateType<ParallelType>::type_names =
 {
-	"", // Reserved for BaseType::null
+	"", // Reserved for Class::Null
 
 	"PARALLEL UNSAFE",
 	"PARALLEL RESTRICTED",

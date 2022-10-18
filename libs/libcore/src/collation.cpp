@@ -21,7 +21,7 @@
 Collation::Collation()
 {
 	obj_type = ObjectType::Collation;
-	encoding = BaseType::Null;
+	encoding = EncodingType::Null;
 	is_deterministic = false;
 
 	attributes[Attributes::LcCtype] = "";
@@ -104,7 +104,7 @@ void Collation::setCollation(BaseObject *collation)
 
 	BaseObject::setCollation(collation);
 
-	encoding = BaseType::Null;
+	encoding = EncodingType::Null;
 	locale.clear();
 	localization[0] = localization[1]= "";
 	provider = ProviderType::Null;
@@ -169,7 +169,7 @@ QString Collation::getSourceCode(SchemaParser::CodeType def_type, bool reduced_f
 	{
 		attributes[Attributes::Locale]=locale;
 
-		if(def_type==SchemaParser::SqlCode && encoding!=BaseType::Null)
+		if(def_type==SchemaParser::SqlCode && encoding != EncodingType::Null)
 			attributes[Attributes::Locale]=locale + fmt_encoding;
 	}
 	else if(collation)
@@ -185,7 +185,7 @@ QString Collation::getSourceCode(SchemaParser::CodeType def_type, bool reduced_f
 		{
 			attributes[lc_attribs[i]]=getLocalization(static_cast<LocaleId>(i));
 
-			if(def_type==SchemaParser::SqlCode && encoding!=BaseType::Null && !attributes[lc_attribs[i]].isEmpty())
+			if(def_type==SchemaParser::SqlCode && encoding != EncodingType::Null && !attributes[lc_attribs[i]].isEmpty())
 				attributes[lc_attribs[i]] += fmt_encoding;
 		}
 	}

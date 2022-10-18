@@ -24,7 +24,7 @@ std::vector<UserTypeConfig> PgSqlType::user_types;
 template<>
 QStringList PgSqlType::TemplateType<PgSqlType>::type_names =
 {
-	"", // Reserved for BaseType::null
+	"", // Reserved for Class::Null
 
 	//Types used by the class PgSQLType
 	//offsets 1 to 63
@@ -381,7 +381,7 @@ QString PgSqlType::getSQLTypeName()
 		{
 			aux = type_names[type_idx];
 
-			if(interval_type!=BaseType::Null)
+			if(interval_type!=IntervalType::Null)
 				aux+=QString(" %1 ").arg(~interval_type);
 
 			if(precision >= 0)
@@ -403,10 +403,10 @@ QString PgSqlType::getSQLTypeName()
 
 bool PgSqlType::isRegistered(const QString &type, void *pmodel)
 {
-	if(getBaseTypeIndex(type)!=BaseType::Null)
+	if(getBaseTypeIndex(type)!=PgSqlType::Null)
 		return true;
 	else
-		return (getUserTypeIndex(type, nullptr, pmodel)!=BaseType::Null);
+		return (getUserTypeIndex(type, nullptr, pmodel)!=PgSqlType::Null);
 }
 
 bool PgSqlType::operator == (unsigned type_id)
@@ -644,9 +644,9 @@ unsigned PgSqlType::getUserTypeIndex(const QString &type_name, void *ptype, void
 		if(itr!=itr_end)
 			return (PseudoEnd + 1 + idx);
 		else
-			return BaseType::Null;
+			return PgSqlType::Null;
 	}
-	else return BaseType::Null;
+	else return PgSqlType::Null;
 }
 
 QString PgSqlType::getUserTypeName(unsigned type_id)
@@ -856,7 +856,7 @@ bool PgSqlType::acceptsPrecision()
 
 void PgSqlType::reset(bool all_attrs)
 {
-	setIntervalType(BaseType::Null);
+	setIntervalType(IntervalType::Null);
 	setSpatialType(SpatialType());
 	setPrecision(-1);
 	setLength(0);
@@ -1047,7 +1047,7 @@ QString PgSqlType::getSourceCode(SchemaParser::CodeType def_type, QString ref_ty
 	if(precision >= 0)
 		attribs[Attributes::Precision]=QString("%1").arg(this->precision);
 
-	if(interval_type != BaseType::Null)
+	if(interval_type != IntervalType::Null)
 		attribs[Attributes::IntervalType]=(~interval_type);
 
 	if(isGeoType())

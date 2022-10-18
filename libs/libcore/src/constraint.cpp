@@ -25,7 +25,7 @@ Constraint::Constraint()
 	deferrable=false;
 	no_inherit=false;
 	fill_factor=0;
-	index_type=BaseType::Null;
+	index_type=IndexingType::Null;
 
 	attributes[Attributes::PkConstr]="";
 	attributes[Attributes::FkConstr]="";

@@ -572,7 +572,7 @@ void TableWidget::showObjectData(TableObject *object, int row)
 		//Column 3: Column defaul value
 		if(column->getSequence())
 			str_aux=QString("nextval('%1'::regclass)").arg(column->getSequence()->getName(true).remove('"'));
-		else if(column->getIdentityType() != BaseType::Null)
+		else if(column->getIdentityType() != IdentityType::Null)
 			str_aux=QString("GENERATED %1 AS IDENTITY").arg(~column->getIdentityType());
 		else
 			str_aux=column->getDefaultValue();
@@ -956,16 +956,16 @@ void TableWidget::applyConfiguration()
 				ftable->setOption(options_tab->getCellText(row, 0), options_tab->getCellText(row, 1));
 		}
 
-		part_type = partitioning_type_cmb->currentIndex() == 0 ? BaseType::Null : PartitioningType(partitioning_type_cmb->currentText());
+		part_type = partitioning_type_cmb->currentIndex() == 0 ? PartitioningType::Null : PartitioningType(partitioning_type_cmb->currentText());
 		table->setPartitioningType(part_type);
 
-		if(part_type != BaseType::Null)
+		if(part_type != PartitioningType::Null)
 		{
 			partition_keys_tab->getElements<PartitionKey>(part_keys);
 			table->addPartitionKeys(part_keys);
 
 			if(part_keys.empty())
-				part_type = BaseType::Null;
+				part_type = PartitioningType::Null;
 		}
 
 		BaseObjectWidget::applyConfiguration();

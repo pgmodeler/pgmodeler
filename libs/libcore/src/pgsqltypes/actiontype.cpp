@@ -21,7 +21,7 @@
 template<>
 QStringList ActionType::TemplateType<ActionType>::type_names =
 {
-	"", // Reserved for BaseType::null
+	"", // Reserved for Class::Null
 
 	"NO ACTION",
 	"RESTRICT",

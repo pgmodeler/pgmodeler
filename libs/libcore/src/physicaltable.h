@@ -313,7 +313,7 @@ class PhysicalTable: public BaseTable {
 		//! \brief Returns if the table is a partition of another table
 		bool isPartition();
 
-		//! \brief Returns if the table is a partitioned. This is the same as getPartitioningType() != BaseType::null
+		//! \brief Returns if the table is a partitioned. This is the same as getPartitioningType() != null
 		bool isPartitioned();
 
 		//! \brief Copy the attributes between two tables
