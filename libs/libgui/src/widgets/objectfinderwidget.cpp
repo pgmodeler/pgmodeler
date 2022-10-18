@@ -174,7 +174,7 @@ void ObjectFinderWidget::selectObjects()
 	}
 
 	model_wgt->scene->blockSignals(true);
-	fadeObjects();
+	//fadeObjects();
 	model_wgt->scene->blockSignals(false);
 
 	sel_listed = qobject_cast<QAction *>(sender()) == select_menu.actions().at(0);
@@ -291,7 +291,7 @@ void ObjectFinderWidget::findObjects()
 		clear_res_btn->setEnabled(!found_objs.empty());
 		select_btn->setEnabled(!found_objs.empty());
 		fade_btn->setEnabled(!found_objs.empty());
-		fadeObjects();
+		//fadeObjects();
 	}
 }
 
