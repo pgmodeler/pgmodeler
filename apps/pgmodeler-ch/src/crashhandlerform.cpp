@@ -101,11 +101,11 @@ CrashHandlerForm::CrashHandlerForm(bool analysis_mode, QWidget *parent, Qt::Wind
 
 	setAnalysisMode(analysis_mode);
 
-	connect(input_sel, SIGNAL(s_fileSelected(QString)), this, SLOT(loadReport(QString)));
-	connect(input_sel, SIGNAL(s_selectorCleared()), model_txt, SLOT(clear()));
-	connect(input_sel, SIGNAL(s_selectorCleared()), details_txt, SLOT(clear()));
-	connect(input_sel, SIGNAL(s_selectorCleared()), stack_txt, SLOT(clear()));
-	connect(save_tb, SIGNAL(clicked()), this, SLOT(saveModel()));
+	connect(input_sel, &FileSelectorWidget::s_fileSelected, this, &CrashHandlerForm::loadReport);
+	connect(input_sel, &FileSelectorWidget::s_selectorCleared, model_txt, &QPlainTextEdit::clear);
+	connect(input_sel, &FileSelectorWidget::s_selectorCleared, details_txt, &QPlainTextEdit::clear);
+	connect(input_sel, &FileSelectorWidget::s_selectorCleared, stack_txt, &QPlainTextEdit::clear);
+	connect(save_tb, &QToolButton::clicked, this, &CrashHandlerForm::saveModel);
 
 	connect(model_txt, &QPlainTextEdit::textChanged, [&](){
 			save_tb->setEnabled(!model_txt->toPlainText().isEmpty());
