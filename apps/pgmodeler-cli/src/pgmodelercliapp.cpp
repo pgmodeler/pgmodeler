@@ -247,8 +247,8 @@ PgModelerCliApp::PgModelerCliApp(int argc, char **argv) : Application(argc, argv
 			//If the export is to png or svg loads additional configurations
 			if(parsed_opts.count(ExportToPng) || parsed_opts.count(ExportToSvg) || parsed_opts.count(ImportDb))
 			{
-				connect(model, SIGNAL(s_objectAdded(BaseObject *)), this, SLOT(handleObjectAddition(BaseObject *)));
-				connect(model, SIGNAL(s_objectRemoved(BaseObject *)), this, SLOT(handleObjectRemoval(BaseObject *)));
+				connect(model, &DatabaseModel::s_objectAdded, this, &PgModelerCliApp::handleObjectAddition);
+				connect(model, &DatabaseModel::s_objectRemoved, this, &PgModelerCliApp::handleObjectRemoval);
 
 				//Load the appearance settings including grid and delimiter options
 				AppearanceConfigWidget appearance_wgt;
@@ -280,10 +280,10 @@ PgModelerCliApp::PgModelerCliApp(int argc, char **argv) : Application(argc, argv
 
 			if(!silent_mode && export_hlp && import_hlp && diff_hlp)
 			{
-				connect(export_hlp, SIGNAL(s_progressUpdated(int,QString)), this, SLOT(updateProgress(int,QString)));
-				connect(export_hlp, SIGNAL(s_errorIgnored(QString,QString,QString)), this, SLOT(printIgnoredError(QString,QString,QString)));
-				connect(import_hlp, SIGNAL(s_progressUpdated(int,QString,ObjectType)), this, SLOT(updateProgress(int,QString)));
-				connect(diff_hlp, SIGNAL(s_progressUpdated(int,QString,ObjectType)), this, SLOT(updateProgress(int,QString)));
+				connect(export_hlp, &ModelExportHelper::s_progressUpdated, this, &PgModelerCliApp::updateProgress);
+				connect(export_hlp, &ModelExportHelper::s_errorIgnored, this,  &PgModelerCliApp::printIgnoredError);
+				connect(import_hlp, &DatabaseImportHelper::s_progressUpdated, this, &PgModelerCliApp::updateProgress);
+				connect(diff_hlp, &ModelsDiffHelper::s_progressUpdated, this, &PgModelerCliApp::updateProgress);
 			}
 		}
 	}
@@ -1852,11 +1852,9 @@ void PgModelerCliApp::importDatabase(DatabaseModel *model, Connection conn)
 		else
 			force_tab_objs = parsed_opts[ForceChildren].split(',', Qt::SkipEmptyParts);
 
-		catalog.setConnection(conn);
+		Connection::setPrintSQL(parsed_opts.count(DebugMode) > 0);
 
-		/* catalog.setQueryFilter(Catalog::ListAllObjects | Catalog::ExclBuiltinArrayTypes |
-													 (!imp_ext_objs ? Catalog::ExclExtensionObjs : 0) |
-													 (!imp_sys_objs ? Catalog::ExclSystemObjs : 0)); */
+		catalog.setConnection(conn);
 
 		catalog.setQueryFilter(Catalog::ListAllObjects | Catalog::ExclBuiltinArrayTypes |
 													 Catalog::ExclExtensionObjs | Catalog::ExclSystemObjs);

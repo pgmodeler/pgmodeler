@@ -439,15 +439,39 @@ QString Catalog::getCatalogQuery(const QString &qry_type, ObjectType obj_type, b
 	//Appeding the custom filter to the whole catalog query
 	if(!custom_filter.isEmpty())
 	{
-		int order_by_idx = sql.indexOf(QString("ORDER BY"), 0, Qt::CaseInsensitive);
+		int order_by_idx = sql.lastIndexOf("ORDER BY", -1, Qt::CaseInsensitive),
+				where_idx = sql.lastIndexOf("WHERE", -1, Qt::CaseInsensitive),
+				pos = -1;
 
-		if(order_by_idx < 0)
-			order_by_idx = sql.length();
+		// If there's no where in the catalog query
+		if(where_idx < 0)
+		{
+			// Adding the custom filter with a WHERE statement
+			custom_filter.prepend("WHERE ");
 
-		if(!sql.contains(QString("WHERE"), Qt::CaseInsensitive))
-			sql.insert(order_by_idx, QString(" WHERE ") + custom_filter);
-		else
-			sql.insert(order_by_idx, QString(" AND (%1) ").arg(custom_filter));
+			/* If we have and order by then the where statement will
+			 * be placed before the order by */
+			if(order_by_idx > 0)
+				pos = order_by_idx;
+			// Otherwise, it will be placed at query end
+			else
+				pos = sql.length();
+		}
+		// If we have an order by and a where
+		else if(where_idx > 0 && order_by_idx > 0)
+		{
+			custom_filter = QString(" AND (%1) ").arg(custom_filter);
+
+			// If the order by at left of the where (inside a subquery for example)
+			if(order_by_idx < where_idx)
+				// The custom filter will be placed at the end of the query
+				pos = sql.length();
+			else
+				//Otherwise, before the order by
+				pos = order_by_idx;
+		}
+
+		sql.insert(pos, custom_filter);
 	}
 
 	//Append a LIMIT clause when the single_result is set
