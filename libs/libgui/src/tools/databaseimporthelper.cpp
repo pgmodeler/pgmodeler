@@ -2879,10 +2879,11 @@ void DatabaseImportHelper::assignSequencesToColumns()
 						seq = dbmodel->getSequence(seq_name);
 					}
 				}
-				catch(Exception &)
+				catch(Exception &e)
 				{
 					// Failing to create the sequence will not abort the entire process, instead, it'll dump a debug message
 					qDebug() << QString("assignSequencesToColumns(): Failed to create the sequence: %1").arg(seq_name) << Qt::endl;
+					qDebug() << e.getExceptionsText() << Qt::endl;
 				}
 
 				if(seq)

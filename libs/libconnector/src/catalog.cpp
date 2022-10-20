@@ -458,12 +458,12 @@ QString Catalog::getCatalogQuery(const QString &qry_type, ObjectType obj_type, b
 				pos = sql.length();
 		}
 		// If we have an order by and a where
-		else if(where_idx > 0 && order_by_idx > 0)
+		else if(where_idx > 0)
 		{
 			custom_filter = QString(" AND (%1) ").arg(custom_filter);
 
 			// If the order by at left of the where (inside a subquery for example)
-			if(order_by_idx < where_idx)
+			if(order_by_idx < 0 || order_by_idx < where_idx)
 				// The custom filter will be placed at the end of the query
 				pos = sql.length();
 			else
