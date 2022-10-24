@@ -35,6 +35,7 @@
 #include "settings/baseconfigwidget.h"
 #include "widgets/fileselectorwidget.h"
 #include "widgets/objectsfilterwidget.h"
+#include "widgets/findreplacewidget.h"
 #include <QThread>
 
 class ModelDatabaseDiffForm: public BaseConfigWidget, public Ui::ModelDatabaseDiffForm {
@@ -64,6 +65,8 @@ class ModelDatabaseDiffForm: public BaseConfigWidget, public Ui::ModelDatabaseDi
 		FileSelectorWidget *file_sel;
 
 		ObjectsFilterWidget *pd_filter_wgt;
+
+		FindReplaceWidget *find_sql_wgt;
 
 		//! \brief Custom delegate used to paint html texts in output tree
 		HtmlItemDelegate *htmlitem_del;
