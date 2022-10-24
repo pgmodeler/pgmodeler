@@ -104,19 +104,27 @@ subcontrol-position: right center; }");
 
 	syntax_cfg_menu.installEventFilter(this);
 
-	connect(apply_conf_tb, SIGNAL(clicked(bool)), this, SLOT(applySyntaxConfig()));
-	connect(save_conf_tb, SIGNAL(clicked(bool)), this, SLOT(saveSyntaxConfig()));
-	connect(reload_conf_tb, SIGNAL(clicked(bool)), this, SLOT(loadSyntaxConfig()));
-	connect(new_tb, SIGNAL(clicked(bool)), this, SLOT(addEditorTab()));
-	connect(load_tb, SIGNAL(clicked(bool)), this, SLOT(loadFile()));
-	connect(exit_tb, SIGNAL(clicked(bool)), this, SLOT(close()));
-	connect(save_tb, SIGNAL(clicked(bool)), this, SLOT(saveFile()));
-	connect(editors_tbw, SIGNAL(tabCloseRequested(int)), this, SLOT(closeEditorTab(int)));
-	connect(editors_tbw, SIGNAL(currentChanged(int)), this, SLOT(loadSyntaxFromCurrentTab()));
-	connect(use_tmpl_file_chk, SIGNAL(toggled(bool)), this, SLOT(loadSyntaxConfig()));
-	connect(indent_all_tb, SIGNAL(clicked(bool)), this, SLOT(indentAll()));
-	connect(save_all_tb, SIGNAL(clicked(bool)), this, SLOT(saveAll()));
-	connect(close_all_tb, SIGNAL(clicked(bool)), this, SLOT(closeAll()));
+	connect(apply_conf_tb, &QToolButton::clicked, this, &SchemaEditorForm::applySyntaxConfig);
+	connect(save_conf_tb, &QToolButton::clicked, this, &SchemaEditorForm::saveSyntaxConfig);
+	connect(reload_conf_tb, &QToolButton::clicked, this, &SchemaEditorForm::loadSyntaxConfig);
+
+	connect(new_tb, &QToolButton::clicked, [&](){
+		addEditorTab();
+	});
+
+	connect(load_tb, &QToolButton::clicked, this, &SchemaEditorForm::loadFile);
+	connect(exit_tb, &QToolButton::clicked, this, &SchemaEditorForm::close);
+	connect(save_tb, &QToolButton::clicked, this, &SchemaEditorForm::saveFile);
+	connect(indent_all_tb, &QToolButton::clicked, this, &SchemaEditorForm::indentAll);
+	connect(save_all_tb, &QToolButton::clicked, this, &SchemaEditorForm::saveAll);
+	connect(close_all_tb, &QToolButton::clicked, this, &SchemaEditorForm::closeAll);
+
+	connect(editors_tbw, &QTabWidget::tabCloseRequested, [&](int idx){
+		closeEditorTab(idx);
+	});
+
+	connect(editors_tbw, &QTabWidget::currentChanged, this, &SchemaEditorForm::loadSyntaxFromCurrentTab);
+	connect(use_tmpl_file_chk, &QCheckBox::toggled, this, &SchemaEditorForm::loadSyntaxConfig);
 
 	connect(syntax_txt, &NumberedTextEditor::textChanged, [&](){
 		alert_frm->setVisible(true);
@@ -489,7 +497,7 @@ void SchemaEditorForm::addEditorTab(const QString &filename)
 		if(!filename.isEmpty())
 			editor_wgt->loadFile(filename);
 
-		connect(editor_wgt, SIGNAL(s_editorModified(bool)), this, SLOT(setTabModified(bool)));		
+		connect(editor_wgt, &SourceEditorWidget::s_editorModified, this, &SchemaEditorForm::setTabModified);
 	}
 	catch(Exception &e)
 	{
