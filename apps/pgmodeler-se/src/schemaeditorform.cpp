@@ -20,6 +20,7 @@
 #include "guiutilsns.h"
 #include "globalattributes.h"
 #include "settings/appearanceconfigwidget.h"
+#include "settings/generalconfigwidget.h"
 #include "guiutilsns.h"
 #include "sourceeditorwidget.h"
 #include "aboutsewidget.h"
@@ -42,7 +43,6 @@ SchemaEditorForm::SchemaEditorForm(QWidget *parent) : QWidget(parent)
 		if(!btn) continue;
 
 		fnt = btn->font();
-		//fnt.setBold(true);
 		fnt.setWeight(QFont::Medium);
 		btn->setFont(fnt);
 		GuiUtilsNs::createDropShadow(btn);
@@ -53,6 +53,9 @@ SchemaEditorForm::SchemaEditorForm(QWidget *parent) : QWidget(parent)
 
 	AppearanceConfigWidget appearance_conf_wgt;
 	appearance_conf_wgt.loadConfiguration();
+
+	GeneralConfigWidget general_conf_wgt;
+	general_conf_wgt.loadConfiguration();
 
 	alert_frm->setVisible(false);
 
