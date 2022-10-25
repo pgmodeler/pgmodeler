@@ -20,7 +20,7 @@
 
 GraphicalView::GraphicalView(View *view) : BaseTableView(view)
 {
-	connect(view, SIGNAL(s_objectModified()), this, SLOT(configureObject()));
+	connect(view, &View::s_objectModified, this, &GraphicalView::configureObject);
 
 	columns=new QGraphicsItemGroup;
 	columns->setZValue(1);
