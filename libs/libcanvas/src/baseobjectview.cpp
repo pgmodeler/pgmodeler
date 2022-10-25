@@ -113,7 +113,7 @@ void BaseObjectView::setSourceObject(BaseObject *object)
 
 		graph_obj->disconnect();
 		graph_obj->setReceiverObject(this);
-		connect(graph_obj, SIGNAL(s_objectProtected(bool)), this, SLOT(toggleProtectionIcon(bool)));
+		connect(graph_obj, &BaseGraphicObject::s_objectProtected, this, &BaseObjectView::toggleProtectionIcon);
 
 		//By default the item can be selected and send geometry changes to the scene
 		this->setFlags(QGraphicsItem::ItemIsSelectable |
