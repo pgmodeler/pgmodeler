@@ -20,7 +20,7 @@
 
 TextboxView::TextboxView(Textbox *txtbox, bool override_style) : BaseObjectView(txtbox)
 {
-	connect(txtbox, SIGNAL(s_objectModified()), this, SLOT(configureObject()));
+	connect(txtbox, &Textbox::s_objectModified, this, &TextboxView::configureObject);
 
 	text_item = new TextPolygonItem;
 	this->addToGroup(text_item);
