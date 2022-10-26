@@ -536,11 +536,11 @@ void RelationshipView::connectTables()
 			tables[i]->disconnect(this);
 
 			if(BaseObjectView::isPlaceholderEnabled())
-				connect(tables[i], SIGNAL(s_relUpdateRequest()), this, SLOT(configureLine()));
+				connect(tables[i], &BaseTableView::s_relUpdateRequest, this, &RelationshipView::configureLine);
 			else
-				connect(tables[i], SIGNAL(s_objectMoved()), this, SLOT(configureLine()));
+				connect(tables[i], &BaseTableView::s_objectMoved, this, &RelationshipView::configureLine);
 
-			connect(tables[i], SIGNAL(s_objectDimensionChanged()), this, SLOT(configureLine()));
+			connect(tables[i], &BaseTableView::s_objectDimensionChanged, this, &RelationshipView::configureLine);
 		}
 	}
 }
@@ -559,7 +559,7 @@ void RelationshipView::configureObject()
 
 	configureLine();
 	connectTables();
-	connect(rel_base, SIGNAL(s_objectModified()), this, SLOT(configureLine()));
+	connect(rel_base, &BaseRelationship::s_objectModified, this, &RelationshipView::configureLine);
 }
 
 void RelationshipView::configurePositionInfo()
