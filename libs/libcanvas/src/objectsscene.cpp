@@ -62,8 +62,11 @@ ObjectsScene::ObjectsScene()
 
 	scene_move_dx=scene_move_dy=0;
 
-	connect(&scene_move_timer, SIGNAL(timeout()), this, SLOT(moveObjectScene()));
-	connect(&corner_hover_timer, SIGNAL(timeout()), this, SLOT(enableSceneMove()));
+	connect(&scene_move_timer, &QTimer::timeout, this, &ObjectsScene::moveObjectScene);
+
+	connect(&corner_hover_timer, &QTimer::timeout, [&](){
+		enableSceneMove();
+	});
 
 	connect(&object_move_timer, &QTimer::timeout, [&](){
 		//If the timer reaches its timeout we execute the procedures to finish the objects movement
@@ -899,15 +902,15 @@ void ObjectsScene::addItem(QGraphicsItem *item)
 		TextboxView *txtbox=dynamic_cast<TextboxView *>(item);
 
 		if(rel)
-			connect(rel, SIGNAL(s_relationshipModified(BaseGraphicObject*)), this, SIGNAL(s_objectModified(BaseGraphicObject*)));
+			connect(rel, &RelationshipView::s_relationshipModified, this, &ObjectsScene::s_objectModified);
 		else if(tab)
 		{
-			connect(tab, SIGNAL(s_popupMenuRequested(TableObject*)), this, SLOT(handlePopupMenuRequested(TableObject*)));
-			connect(tab, SIGNAL(s_childrenSelectionChanged()), this, SLOT(handleChildrenSelectionChanged()));
-			connect(tab, SIGNAL(s_collapseModeChanged()), this, SIGNAL(s_collapseModeChanged()));
-			connect(tab, SIGNAL(s_paginationToggled()), this, SIGNAL(s_paginationToggled()));
-			connect(tab, SIGNAL(s_currentPageChanged()), this, SIGNAL(s_currentPageChanged()));
-			connect(tab, SIGNAL(s_sceneClearRequested()), this, SLOT(clearSelection()));
+			connect(tab, &BaseTableView::s_popupMenuRequested, this, &ObjectsScene::handlePopupMenuRequested);
+			connect(tab, &BaseTableView::s_childrenSelectionChanged, this, &ObjectsScene::handleChildrenSelectionChanged);
+			connect(tab, &BaseTableView::s_collapseModeChanged, this, &ObjectsScene::s_collapseModeChanged);
+			connect(tab, &BaseTableView::s_paginationToggled, this, &ObjectsScene::s_paginationToggled);
+			connect(tab, &BaseTableView::s_currentPageChanged, this, &ObjectsScene::s_currentPageChanged);
+			connect(tab, &BaseTableView::s_sceneClearRequested, this, &ObjectsScene::clearSelection);
 		}
 
 		if(obj)
@@ -918,11 +921,11 @@ void ObjectsScene::addItem(QGraphicsItem *item)
 			if(!rel && !dynamic_cast<SchemaView *>(item))
 				obj->setZValue(dynamic_cast<BaseGraphicObject *>(obj->getUnderlyingObject())->getZValue());
 
-			connect(obj, SIGNAL(s_objectSelected(BaseGraphicObject*,bool)), this, SLOT(handleObjectSelection(BaseGraphicObject*,bool)));
+			connect(obj, &BaseObjectView::s_objectSelected, this, &ObjectsScene::handleObjectSelection);
 
 			// Tables and textboxes are observed for dimension changes so the layers they are in are correctly updated
 			if(tab || txtbox)
-				connect(obj, SIGNAL(s_objectDimensionChanged()), this, SLOT(updateLayerRects()));
+				connect(obj, &BaseObjectView::s_objectDimensionChanged, this, &ObjectsScene::updateLayerRects);
 		}
 
 		QGraphicsScene::addItem(item);
