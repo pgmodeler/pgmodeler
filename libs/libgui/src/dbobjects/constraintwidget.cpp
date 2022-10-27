@@ -64,13 +64,13 @@ ConstraintWidget::ConstraintWidget(QWidget *parent): BaseObjectWidget(parent, Ob
 		constraint_grid->addWidget(info_frm, constraint_grid->count()+1, 0, 1, 0);
 		info_frm->setParent(this);
 
-		connect(constr_type_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(selectConstraintType()));
-		connect(deferrable_chk, SIGNAL(toggled(bool)), deferral_cmb, SLOT(setEnabled(bool)));
-		connect(deferrable_chk, SIGNAL(toggled(bool)), deferral_lbl, SLOT(setEnabled(bool)));
-		connect(indexing_chk, SIGNAL(toggled(bool)), indexing_cmb, SLOT(setEnabled(bool)));
-		connect(ref_table_sel, SIGNAL(s_selectorCleared()), this, SLOT(selectReferencedTable()));
-		connect(ref_table_sel, SIGNAL(s_objectSelected()), this, SLOT(selectReferencedTable()));
-		connect(fill_factor_chk, SIGNAL(toggled(bool)), fill_factor_sb, SLOT(setEnabled(bool)));
+		connect(constr_type_cmb, &QComboBox::currentIndexChanged, this, &ConstraintWidget::selectConstraintType);
+		connect(deferrable_chk, &QCheckBox::toggled, deferral_cmb, &QComboBox::setEnabled);
+		connect(deferrable_chk, &QCheckBox::toggled, deferral_lbl, &QLabel::setEnabled);
+		connect(indexing_chk, &QCheckBox::toggled, indexing_cmb, &QComboBox::setEnabled);
+		connect(ref_table_sel, &ObjectSelectorWidget::s_selectorCleared, this, &ConstraintWidget::selectReferencedTable);
+		connect(ref_table_sel, &ObjectSelectorWidget::s_objectSelected, this, &ConstraintWidget::selectReferencedTable);
+		connect(fill_factor_chk, &QCheckBox::toggled, fill_factor_sb, &QSpinBox::setEnabled);
 
 		selectConstraintType();
 		configureTabOrder();
