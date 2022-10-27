@@ -64,14 +64,11 @@ CollationWidget::CollationWidget(QWidget *parent): BaseObjectWidget(parent, Obje
 		providers.push_front(tr("Default"));
 		provider_cmb->addItems(providers);
 
-		connect(collation_sel, SIGNAL(s_objectSelected()), this, SLOT(resetFields()));
-		connect(collation_sel, SIGNAL(s_selectorCleared()), this, SLOT(resetFields()));
-		connect(locale_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(resetFields()));
-		connect(lcctype_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(resetFields()));
-		connect(lccollate_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(resetFields()));
-
-		/*configureTabOrder({ locale_cmb, encoding_cmb, lccollate_cmb,
-												lcctype_cmb, provider_cmb, deterministic_chk });*/
+		connect(collation_sel, &ObjectSelectorWidget::s_objectSelected, this, &CollationWidget::resetFields);
+		connect(collation_sel, &ObjectSelectorWidget::s_selectorCleared, this, &CollationWidget::resetFields);
+		connect(locale_cmb, &QComboBox::currentIndexChanged, this, &CollationWidget::resetFields);
+		connect(lcctype_cmb, &QComboBox::currentIndexChanged, this, &CollationWidget::resetFields);
+		connect(lccollate_cmb, &QComboBox::currentIndexChanged, this, &CollationWidget::resetFields);
 
 		locale_mod_lbl->setToolTip(tr("<p>The modifier is any value specified after the character <strong>@</strong>. For example: <em>en_US.utf8<strong>@modifier</strong></em></p>"));
 		lcctype_mod_lbl->setToolTip(locale_mod_lbl->toolTip());
