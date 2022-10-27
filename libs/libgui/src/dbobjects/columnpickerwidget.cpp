@@ -37,9 +37,17 @@ ColumnPickerWidget::ColumnPickerWidget(QWidget *parent) :	QWidget(parent)
 
 	col_picker_grid->addWidget(columns_tab, 1, 0, 1, 3);
 
-	connect(columns_tab, SIGNAL(s_rowAdded(int)), this, SLOT(addColumn(int)));
-	connect(columns_tab, &ObjectsTableWidget::s_rowRemoved, [&](int){ 	updateColumnsCombo(); });
-	connect(columns_tab, &ObjectsTableWidget::s_rowsRemoved, [&](){ 	updateColumnsCombo(); });
+	connect(columns_tab, &ObjectsTableWidget::s_rowAdded, [&](int idx){
+		addColumn(idx);
+	});
+
+	connect(columns_tab, &ObjectsTableWidget::s_rowRemoved, [&](int){
+		updateColumnsCombo();
+	});
+
+	connect(columns_tab, &ObjectsTableWidget::s_rowsRemoved, [&](){
+		updateColumnsCombo();
+	});
 
 	setParentObject(nullptr);
 }
