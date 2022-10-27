@@ -45,17 +45,18 @@ EventTriggerWidget::EventTriggerWidget(QWidget *parent): BaseObjectWidget(parent
 
 	event_cmb->addItems(EventTriggerType::getTypes());
 
-	connect(filter_tab, SIGNAL(s_rowAdded(int)), this, SLOT(handleTagValue(int)));
-	connect(filter_tab, SIGNAL(s_rowUpdated(int)), this, SLOT(handleTagValue(int)));
+	connect(filter_tab, &ObjectsTableWidget::s_rowAdded, this, &EventTriggerWidget::handleTagValue);
+	connect(filter_tab, &ObjectsTableWidget::s_rowUpdated, this, &EventTriggerWidget::handleTagValue);
 
-	connect(filter_tab, &ObjectsTableWidget::s_rowsRemoved,
-			[&](){ filter_tab->setButtonsEnabled(ObjectsTableWidget::AddButton, false); });
+	connect(filter_tab, &ObjectsTableWidget::s_rowsRemoved,	[&](){
+		filter_tab->setButtonsEnabled(ObjectsTableWidget::AddButton, false);
+	});
 
-	connect(filter_tab, &ObjectsTableWidget::s_rowEdited,
-			[&](int row){ tag_edt->setText(filter_tab->getCellText(row, 0)); });
+	connect(filter_tab, &ObjectsTableWidget::s_rowEdited,	[&](int row){
+		tag_edt->setText(filter_tab->getCellText(row, 0));
+	});
 
-	connect(tag_edt, &QLineEdit::textChanged,
-			[&](){
+	connect(tag_edt, &QLineEdit::textChanged, [&](){
 		filter_tab->setButtonsEnabled(ObjectsTableWidget::AddButton, !tag_edt->text().isEmpty());
 		filter_tab->setButtonsEnabled(ObjectsTableWidget::UpdateButton, !tag_edt->text().isEmpty());
 	});
