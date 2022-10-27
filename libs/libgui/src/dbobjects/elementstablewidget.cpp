@@ -30,7 +30,7 @@ ElementsTableWidget::ElementsTableWidget(QWidget *parent) : QWidget(parent)
 		element_wgt = new ElementWidget;
 		element_form.setMainWidget(element_wgt);
 		element_form.setButtonConfiguration();
-		connect(&element_form, SIGNAL(accepted()), element_wgt, SLOT(applyConfiguration()));
+		connect(&element_form, &BaseForm::accepted, element_wgt, &ElementWidget::applyConfiguration);
 
 		QVBoxLayout *vbox = new QVBoxLayout(this);
 		elements_tab=new ObjectsTableWidget(ObjectsTableWidget::AllButtons ^
@@ -53,8 +53,8 @@ ElementsTableWidget::ElementsTableWidget(QWidget *parent) : QWidget(parent)
 		vbox->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
 		vbox->addWidget(elements_tab);
 
-		connect(elements_tab, SIGNAL(s_rowAdded(int)), this, SLOT(addElement(int)));
-		connect(elements_tab, SIGNAL(s_rowEdited(int)), this, SLOT(editElement(int)));
+		connect(elements_tab, &ObjectsTableWidget::s_rowAdded, this, &ElementsTableWidget::addElement);
+		connect(elements_tab, &ObjectsTableWidget::s_rowEdited, this, &ElementsTableWidget::editElement);
 	}
 	catch(Exception &e)
 	{
