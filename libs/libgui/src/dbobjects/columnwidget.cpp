@@ -57,16 +57,17 @@ ColumnWidget::ColumnWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType
 		fields_map[generateVersionsInterval(AfterVersion, PgSqlVersions::PgSqlVersion120)].push_back(generated_chk);
 		highlightVersionSpecificFields(fields_map);
 
-		connect(expression_rb, SIGNAL(toggled(bool)), this, SLOT(enableDefaultValueFields()));
-		connect(sequence_rb, SIGNAL(toggled(bool)), this, SLOT(enableDefaultValueFields()));
-		connect(identity_rb, SIGNAL(toggled(bool)), this, SLOT(enableDefaultValueFields()));
+		connect(expression_rb, &QRadioButton::toggled, this, &ColumnWidget::enableDefaultValueFields);
+		connect(sequence_rb, &QRadioButton::toggled, this, &ColumnWidget::enableDefaultValueFields);
+		connect(identity_rb, &QRadioButton::toggled, this, &ColumnWidget::enableDefaultValueFields);
 
 		connect(generated_chk, &QCheckBox::toggled, [&](bool value){
 			notnull_chk->setDisabled(value);
 			notnull_chk->setChecked(false);
 		});
 
-		connect(edit_seq_btn, SIGNAL(clicked(bool)), this, SLOT(editSequenceAttributes()));
+		connect(edit_seq_btn, &QPushButton::clicked, this, &ColumnWidget::editSequenceAttributes);
+
 		setMinimumSize(540, 480);
 	}
 	catch(Exception &e)
