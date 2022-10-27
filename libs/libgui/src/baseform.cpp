@@ -127,10 +127,10 @@ void BaseForm::setMainWidget(BaseObjectWidget *widget)
 	resizeForm(widget);
 	setButtonConfiguration(Messagebox::OkCancelButtons);
 
-	connect(cancel_btn, SIGNAL(clicked(bool)), widget, SLOT(cancelConfiguration()));
-	connect(cancel_btn, SIGNAL(clicked(bool)), this, SLOT(reject()));
-	connect(apply_ok_btn, SIGNAL(clicked(bool)), widget, SLOT(applyConfiguration()));
-	connect(widget, SIGNAL(s_closeRequested()), this, SLOT(accept()));
+	connect(cancel_btn, &QPushButton::clicked, widget, &BaseObjectWidget::cancelConfiguration);
+	connect(cancel_btn, &QPushButton::clicked, this, &BaseForm::reject);
+	connect(apply_ok_btn, &QPushButton::clicked, widget, &BaseObjectWidget::applyConfiguration);
+	connect(widget, &BaseObjectWidget::s_closeRequested, this, &BaseForm::accept);
 }
 
 void BaseForm::setMainWidget(QWidget *widget, const char *accept_slot, const char *reject_slot)
@@ -143,12 +143,12 @@ void BaseForm::setMainWidget(QWidget *widget, const char *accept_slot, const cha
 	setButtonConfiguration(Messagebox::OkButton);
 
 	if(!reject_slot)
-		connect(cancel_btn, SIGNAL(clicked(bool)), this, SLOT(reject()));
+		connect(cancel_btn, &QPushButton::clicked, this, &BaseForm::reject);
 	else
 		connect(cancel_btn, SIGNAL(clicked(bool)), widget, reject_slot);
 
 	if(!accept_slot)
-		connect(apply_ok_btn, SIGNAL(clicked(bool)), this, SLOT(accept()));
+		connect(apply_ok_btn, &QPushButton::clicked, this, &BaseForm::accept);
 	else
 		connect(apply_ok_btn, SIGNAL(clicked(bool)), widget, accept_slot);
 }
