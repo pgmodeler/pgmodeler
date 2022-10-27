@@ -49,8 +49,8 @@ BaseObjectWidget::BaseObjectWidget(QWidget *parent, ObjectType obj_type): QWidge
 
 		GuiUtilsNs::configureWidgetFont(protected_obj_lbl, GuiUtilsNs::MediumFontFactor);
 
-		connect(edt_perms_tb, SIGNAL(clicked(bool)),this, SLOT(editPermissions()));
-		connect(append_sql_tb, SIGNAL(clicked(bool)),this, SLOT(editCustomSQL()));
+		connect(edt_perms_tb, &QPushButton::clicked, this, &BaseObjectWidget::editPermissions);
+		connect(append_sql_tb, &QPushButton::clicked, this, &BaseObjectWidget::editCustomSQL);
 
 		schema_sel=new ObjectSelectorWidget(ObjectType::Schema, this);
 		collation_sel=new ObjectSelectorWidget(ObjectType::Collation, this);
