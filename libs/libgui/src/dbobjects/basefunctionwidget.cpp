@@ -80,7 +80,7 @@ BaseFunctionWidget::BaseFunctionWidget(QWidget *parent, ObjectType obj_type) : B
 		grid->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
 		func_config_twg->widget(4)->setLayout(grid);
 
-		connect(language_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(selectLanguage()));
+		connect(language_cmb, &QComboBox::currentIndexChanged, this, &BaseFunctionWidget::selectLanguage);
 
 		connect(transform_types_tab, &ObjectsTableWidget::s_rowAdded, [&](int row){
 			transform_types_tab->setCellText(~transform_type_wgt->getPgSQLType(), row, 0);
@@ -276,9 +276,8 @@ void BaseFunctionWidget::setAttributes(DatabaseModel *model, OperationList *op_l
 
 void BaseFunctionWidget::selectLanguage()
 {
-	bool c_lang;
+	bool c_lang = (language_cmb->currentText() == DefaultLanguages::C);
 
-	c_lang = (language_cmb->currentText() == DefaultLanguages::C);
 	source_code_frm->setVisible(!c_lang);
 	library_frm->setVisible(c_lang);
 
