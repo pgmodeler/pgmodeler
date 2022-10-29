@@ -47,16 +47,11 @@ void ObjectSelectorWidget::configureSelector()
 
 bool ObjectSelectorWidget::eventFilter(QObject *obj, QEvent *evnt)
 {
-	if(this->isEnabled() && evnt->type()==QEvent::FocusIn &&
-		 QApplication::mouseButtons()==Qt::LeftButton && obj==obj_name_edt)
+	if(this->isEnabled() && evnt->type()==QEvent::MouseButtonPress
+		 && QApplication::mouseButtons()==Qt::LeftButton && obj==obj_name_edt)
 	{
-		QFocusEvent *focus_evnt = dynamic_cast<QFocusEvent *>(evnt);
-
-		if(focus_evnt->reason() == Qt::MouseFocusReason)
-		{
-			showObjectView();
-			return true;
-		}
+		showObjectView();
+		return true;
 	}
 
 	return QWidget::eventFilter(obj, evnt);

@@ -49,12 +49,10 @@ FileSelectorWidget::FileSelectorWidget(QWidget *parent) : QWidget(parent)
 
 bool FileSelectorWidget::eventFilter(QObject *obj, QEvent *evnt)
 {
-	if(isEnabled() && evnt->type() == QEvent::FocusIn &&
+	if(isEnabled() && evnt->type() == QEvent::MouseButtonPress &&
 		 QApplication::mouseButtons() == Qt::LeftButton && obj == filename_edt)
 	{
-		QFocusEvent *focus_evnt = dynamic_cast<QFocusEvent *>(evnt);
-
-		if(!allow_filename_input && !read_only && focus_evnt->reason() == Qt::MouseFocusReason)
+		if(!allow_filename_input && !read_only)
 		{
 			openFileDialog();
 			return true;
