@@ -80,9 +80,9 @@ GenericSQLWidget::GenericSQLWidget(QWidget *parent): BaseObjectWidget(parent, Ob
 			sel_obj_icon_lbl->setToolTip(selected ? object_sel->getSelectedObject()->getTypeName() : "");
 	});
 
-	connect(objects_refs_tab, SIGNAL(s_rowAdded(int)), this, SLOT(addObjectReference(int)));
-	connect(objects_refs_tab, SIGNAL(s_rowEdited(int)), this, SLOT(editObjectReference(int)));
-	connect(objects_refs_tab, SIGNAL(s_rowUpdated(int)), this, SLOT(updateObjectReference(int)));
+	connect(objects_refs_tab, &ObjectsTableWidget::s_rowAdded, this, &GenericSQLWidget::addObjectReference);
+	connect(objects_refs_tab, &ObjectsTableWidget::s_rowEdited, this, &GenericSQLWidget::editObjectReference);
+	connect(objects_refs_tab, &ObjectsTableWidget::s_rowUpdated, this, &GenericSQLWidget::updateObjectReference);
 
 	connect(objects_refs_tab, &ObjectsTableWidget::s_rowAboutToRemove, [&](int row){
 		QString ref_name = objects_refs_tab->getCellText(row, 0);
