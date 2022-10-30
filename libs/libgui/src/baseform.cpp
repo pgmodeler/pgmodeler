@@ -21,7 +21,7 @@
 BaseForm::BaseForm(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 {
 	setupUi(this);
-	this->setWindowFlags((this->windowFlags() | Qt::WindowMinMaxButtonsHint) ^ Qt::WindowContextHelpButtonHint);
+	this->setWindowFlags((this->windowFlags() | Qt::WindowMinMaxButtonsHint) /* ^ Qt::WindowContextHelpButtonHint */);
 }
 
 void BaseForm::setButtonConfiguration(unsigned button_conf)

@@ -329,8 +329,8 @@ void TableWidget::__setAttributes(DatabaseModel *model, OperationList *op_list, 
 		for(auto &type : types)
 		{
 			listObjects(type);
-			objects_tab_map[type]->setButtonConfiguration(ObjectsTableWidget::AllButtons ^
-																										(ObjectsTableWidget::UpdateButton));
+			/* objects_tab_map[type]->setButtonConfiguration(ObjectsTableWidget::AllButtons ^
+																									(ObjectsTableWidget::UpdateButton)); */
 		}
 
 		//Listing the ancestor tables
