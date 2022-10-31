@@ -81,7 +81,7 @@ RelationshipWidget::RelationshipWidget(QWidget *parent): BaseObjectWidget(parent
 		advanced_objs_tab->setHeaderLabel(tr("Type"), 1);
 		advanced_objs_tab->setHeaderIcon(QPixmap(GuiUtilsNs::getIconPath("usertype")),1);
 
-		connect(advanced_objs_tab, SIGNAL(s_rowEdited(int)), this, SLOT(showAdvancedObject(int)));
+		connect(advanced_objs_tab, &ObjectsTableWidget::s_rowEdited, this, &RelationshipWidget::showAdvancedObject);
 
 		grid=new QGridLayout;
 		grid->addWidget(attributes_tab, 0,0,1,1);
@@ -148,8 +148,8 @@ RelationshipWidget::RelationshipWidget(QWidget *parent): BaseObjectWidget(parent
 		part_bound_expr_hl->loadConfiguration(GlobalAttributes::getSQLHighlightConfPath());
 		dynamic_cast<QGridLayout *>(part_bound_expr_gb->layout())->addWidget(part_bound_expr_txt, 1, 0);
 
-		connect(deferrable_chk, SIGNAL(toggled(bool)), deferral_cmb, SLOT(setEnabled(bool)));
-		connect(deferrable_chk, SIGNAL(toggled(bool)), deferral_lbl, SLOT(setEnabled(bool)));
+		connect(deferrable_chk, &QCheckBox::toggled, deferral_cmb, &QComboBox::setEnabled);
+		connect(deferrable_chk, &QCheckBox::toggled, deferral_lbl, &QLabel::setEnabled);
 
 		connect(identifier_chk, &QCheckBox::toggled, [&](){
 			table1_mand_chk->setDisabled(identifier_chk->isChecked());
@@ -158,35 +158,35 @@ RelationshipWidget::RelationshipWidget(QWidget *parent): BaseObjectWidget(parent
 																	dynamic_cast<BaseRelationship *>(this->object)->getRelationshipType() != BaseRelationship::Relationship1n);
 		});
 
-		connect(attributes_tab, SIGNAL(s_rowsRemoved()), this, SLOT(removeObjects()));
-		connect(attributes_tab, SIGNAL(s_rowAdded(int)), this, SLOT(addObject()));
-		connect(attributes_tab, SIGNAL(s_rowEdited(int)), this, SLOT(editObject(int)));
-		connect(attributes_tab, SIGNAL(s_rowRemoved(int)), this, SLOT(removeObject(int)));
-		connect(attributes_tab, SIGNAL(s_rowDuplicated(int,int)), this, SLOT(duplicateObject(int,int)));
+		connect(attributes_tab, &ObjectsTableWidget::s_rowsRemoved, this, &RelationshipWidget::removeObjects);
+		connect(attributes_tab, &ObjectsTableWidget::s_rowAdded, this, &RelationshipWidget::addObject);
+		connect(attributes_tab, &ObjectsTableWidget::s_rowEdited, this, &RelationshipWidget::editObject);
+		connect(attributes_tab, &ObjectsTableWidget::s_rowRemoved, this, &RelationshipWidget::removeObject);
+		connect(attributes_tab, &ObjectsTableWidget::s_rowDuplicated, this, &RelationshipWidget::duplicateObject);
 
-		connect(constraints_tab, SIGNAL(s_rowsRemoved()), this, SLOT(removeObjects()));
-		connect(constraints_tab, SIGNAL(s_rowAdded(int)), this, SLOT(addObject()));
-		connect(constraints_tab, SIGNAL(s_rowEdited(int)), this, SLOT(editObject(int)));
-		connect(constraints_tab, SIGNAL(s_rowRemoved(int)), this, SLOT(removeObject(int)));
-		connect(constraints_tab, SIGNAL(s_rowDuplicated(int,int)), this, SLOT(duplicateObject(int,int)));
+		connect(constraints_tab, &ObjectsTableWidget::s_rowsRemoved, this, &RelationshipWidget::removeObjects);
+		connect(constraints_tab, &ObjectsTableWidget::s_rowAdded, this, &RelationshipWidget::addObject);
+		connect(constraints_tab, &ObjectsTableWidget::s_rowEdited, this, &RelationshipWidget::editObject);
+		connect(constraints_tab, &ObjectsTableWidget::s_rowRemoved, this, &RelationshipWidget::removeObject);
+		connect(constraints_tab, &ObjectsTableWidget::s_rowDuplicated, this, &RelationshipWidget::duplicateObject);
 
-		connect(defaults_rb, SIGNAL(toggled(bool)), this, SLOT(selectCopyOptions()));
-		connect(including_rb, SIGNAL(toggled(bool)), this, SLOT(selectCopyOptions()));
-		connect(excluding_rb, SIGNAL(toggled(bool)), this, SLOT(selectCopyOptions()));
+		connect(defaults_rb, &QRadioButton::toggled, this, &RelationshipWidget::selectCopyOptions);
+		connect(including_rb, &QRadioButton::toggled, this, &RelationshipWidget::selectCopyOptions);
+		connect(excluding_rb, &QRadioButton::toggled, this, &RelationshipWidget::selectCopyOptions);
 
-		connect(defaults_chk, SIGNAL(toggled(bool)), this, SLOT(selectCopyOptions()));
-		connect(constraints_chk, SIGNAL(toggled(bool)), this, SLOT(selectCopyOptions()));
-		connect(comments_chk, SIGNAL(toggled(bool)), this, SLOT(selectCopyOptions()));
-		connect(indexes_chk, SIGNAL(toggled(bool)), this, SLOT(selectCopyOptions()));
-		connect(storage_chk, SIGNAL(toggled(bool)), this, SLOT(selectCopyOptions()));
-		connect(all_chk, SIGNAL(toggled(bool)), this, SLOT(selectCopyOptions()));
+		connect(defaults_chk, &QCheckBox::toggled, this, &RelationshipWidget::selectCopyOptions);
+		connect(constraints_chk, &QCheckBox::toggled, this, &RelationshipWidget::selectCopyOptions);
+		connect(comments_chk, &QCheckBox::toggled, this, &RelationshipWidget::selectCopyOptions);
+		connect(indexes_chk, &QCheckBox::toggled, this, &RelationshipWidget::selectCopyOptions);
+		connect(storage_chk, &QCheckBox::toggled, this, &RelationshipWidget::selectCopyOptions);
+		connect(all_chk, &QCheckBox::toggled, this, &RelationshipWidget::selectCopyOptions);
 
-		connect(custom_color_chk, SIGNAL(toggled(bool)), color_picker, SLOT(setEnabled(bool)));
+		connect(custom_color_chk, &QCheckBox::toggled, color_picker, &ColorPickerWidget::setEnabled);
 
-		connect(fk_gconf_chk, SIGNAL(toggled(bool)), this, SLOT(useFKGlobalSettings(bool)));
-		connect(patterns_gconf_chk, SIGNAL(toggled(bool)), this, SLOT(usePatternGlobalSettings(bool)));
-		connect(gen_bound_expr_tb, SIGNAL(clicked(bool)), this, SLOT(generateBoundingExpr()));
-		connect(default_part_chk, SIGNAL(toggled(bool)), part_bound_expr_txt, SLOT(setDisabled(bool)));
+		connect(fk_gconf_chk, &QCheckBox::toggled, this, &RelationshipWidget::useFKGlobalSettings);
+		connect(patterns_gconf_chk, &QCheckBox::toggled, this, &RelationshipWidget::usePatternGlobalSettings);
+		connect(gen_bound_expr_tb, &QToolButton::clicked, this, &RelationshipWidget::generateBoundingExpr);
+		connect(default_part_chk, &QCheckBox::toggled, part_bound_expr_txt, &NumberedTextEditor::setDisabled);
 
 		setMinimumSize(600, 380);
 	}
@@ -537,11 +537,11 @@ void RelationshipWidget::generateBoundingExpr()
 	QString tmpl;
 
 	if(part_type == PartitioningType::List)
-		tmpl = QString("IN (value)");
+		tmpl = "IN (value)";
 	else if(part_type == PartitioningType::Range)
-		tmpl = QString("FROM (value) TO (value)");
+		tmpl = "FROM (value) TO (value)";
 	else
-		tmpl = QString("WITH (MODULUS m, REMAINDER r)");
+		tmpl = "WITH (MODULUS m, REMAINDER r)";
 
 	part_bound_expr_txt->setPlainText("");
 	part_bound_expr_txt->setPlainText(tmpl);
