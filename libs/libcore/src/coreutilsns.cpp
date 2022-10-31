@@ -175,64 +175,64 @@ namespace CoreUtilsNs {
 	bool isReservedKeyword(const QString &word)
 	{
 		static QHash<QChar, QStringList> keywords={
-			{QChar('A'), {QString("ALL"), QString("ANALYSE"), QString("ANALYZE"), QString("AND"),
-										QString("ANY"), QString("AS"),      QString("ASC"),     QString("AUTHORIZATION")}},
+			{QChar('A'), {"ALL", "ANALYSE", "ANALYZE", "AND",
+										"ANY", "AS",      "ASC",     "AUTHORIZATION"}},
 
-			{QChar('B'), {QString("BETWEEN"), QString("BIGINT"), QString("BINARY"), QString("BIT"),
-										QString("BOOLEAN"), QString("BOTH")}},
+			{QChar('B'), {"BETWEEN", "BIGINT", "BINARY", "BIT",
+										"BOOLEAN", "BOTH"}},
 
-			{QChar('C'), {QString("CASE"),         QString("CAST"),         QString("CHAR"),    QString("CHARACTER"),
-										QString("CHECK"),        QString("COALESCE"),     QString("COLLATE"), QString("COLUMN"),
-										QString("CONSTRAINT"),   QString("CONVERT"),      QString("CREATE"),  QString("CROSS"),
-										QString("CURRENT_DATE"), QString("CURRENT_TIME"), QString("CURRENT_TIMESTAMP"), QString("CURRENT_USER")}},
+			{QChar('C'), {"CASE",         "CAST",         "CHAR",    "CHARACTER",
+										"CHECK",        "COALESCE",     "COLLATE", "COLUMN",
+										"CONSTRAINT",   "CONVERT",      "CREATE",  "CROSS",
+										"CURRENT_DATE", "CURRENT_TIME", "CURRENT_TIMESTAMP", "CURRENT_USER"}},
 
-			{QChar('D'), {QString("DEC"),  QString("DECIMAL"),  QString("DEFAULT"), QString("DEFERRABLE"),
-										QString("DESC"), QString("DISTINCT"), QString("DO")}},
+			{QChar('D'), {"DEC",  "DECIMAL",  "DEFAULT", "DEFERRABLE",
+										"DESC", "DISTINCT", "DO"}},
 
-			{QChar('E'), {QString("ELSE"), QString("END"), QString("EXCEPT"), QString("EXISTS"),
-										QString("EXTRACT")}},
+			{QChar('E'), {"ELSE", "END", "EXCEPT", "EXISTS",
+										"EXTRACT"}},
 
-			{QChar('F'), {QString("FALSE"),  QString("FLOAT"), QString("FOR"), QString("FOREIGN"),
-										QString("FREEZE"), QString("FROM"),  QString("FULL")}},
+			{QChar('F'), {"FALSE",  "FLOAT", "FOR", "FOREIGN",
+										"FREEZE", "FROM",  "FULL"}},
 
-			{QChar('G'), {QString("GRANT"), QString("GROUP")}},
+			{QChar('G'), {"GRANT", "GROUP"}},
 
-			{QChar('H'), {QString("HAVING")}},
+			{QChar('H'), {"HAVING"}},
 
-			{QChar('I'), {QString("ILIKE"), QString("IN"),      QString("INITIALLY"), QString("INNER"),
-										QString("INT"),   QString("INTEGER"), QString("INTERSECT"), QString("INTERVAL"),
-										QString("INTO"),  QString("IS"),      QString("ISNULL")}},
+			{QChar('I'), {"ILIKE", "IN",      "INITIALLY", "INNER",
+										"INT",   "INTEGER", "INTERSECT", "INTERVAL",
+										"INTO",  "IS",      "ISNULL"}},
 
-			{QChar('J'), {QString("JOIN")}},
+			{QChar('J'), {"JOIN"}},
 
-			{QChar('L'), {QString("LEADING"),   QString("LEFT"), QString("LIKE"), QString("LIMIT"),
-										QString("LOCALTIME"), QString("LOCALTIMESTAMP")}},
+			{QChar('L'), {"LEADING",   "LEFT", "LIKE", "LIMIT",
+										"LOCALTIME", "LOCALTIMESTAMP"}},
 
-			{QChar('N'), {QString("NATURAL"),      QString("NCHAR"),   QString("NEW"), QString("NOCREATEDB"),
-										QString("NOCREATEUSER"), QString("NONE"),    QString("NOT"), QString("NOTHING"),
-										QString("NOTIFY"),       QString("NOTNULL"), QString("NULL"), QString("NULLIF"),
-										QString("NUMERIC")}},
+			{QChar('N'), {"NATURAL",      "NCHAR",   "NEW", "NOCREATEDB",
+										"NOCREATEUSER", "NONE",    "NOT", "NOTHING",
+										"NOTIFY",       "NOTNULL", "NULL", "NULLIF",
+										"NUMERIC"}},
 
-			{QChar('O'), {QString("OFF"),   QString("OFFSET"),  QString("OLD"),   QString("ON"),
-										QString("ONLY"),  QString("OR"),      QString("ORDER"), QString("OUTER"),
-										QString("OVERLAPS"), QString("OVERLAY")}},
+			{QChar('O'), {"OFF",   "OFFSET",  "OLD",   "ON",
+										"ONLY",  "OR",      "ORDER", "OUTER",
+										"OVERLAPS", "OVERLAY"}},
 
-			{QChar('P'), {QString("PLACING"), QString("POSITION"), QString("PRIMARY")}},
+			{QChar('P'), {"PLACING", "POSITION", "PRIMARY"}},
 
-			{QChar('R'), {QString("REAL"), QString("REFERENCES"), QString("RIGHT"), QString("ROW")}},
+			{QChar('R'), {"REAL", "REFERENCES", "RIGHT", "ROW"}},
 
-			{QChar('S'), {QString("SELECT"),   QString("SESSION_USER"), QString("SETOF"), QString("SIMILAR"),
-										QString("SMALLINT"), QString("SOME"),         QString("SUBSTRING")}},
+			{QChar('S'), {"SELECT",   "SESSION_USER", "SETOF", "SIMILAR",
+										"SMALLINT", "SOME",         "SUBSTRING"}},
 
-			{QChar('T'), {QString("TABLE"), QString("THEN"),  QString("TIME"),  QString("TIMESTAMP"),
-										QString("TO"), QString("TRAILING"), QString("TREAT"), QString("TRIM"),
-										QString("TRUE")}},
+			{QChar('T'), {"TABLE", "THEN",  "TIME",  "TIMESTAMP",
+										"TO", "TRAILING", "TREAT", "TRIM",
+										"TRUE"}},
 
-			{QChar('U'), {QString("UNION"), QString("UNIQUE"), QString("USER"), QString("USING")}},
+			{QChar('U'), {"UNION", "UNIQUE", "USER", "USING"}},
 
-			{QChar('V'), {QString("VARCHAR"), QString("VERBOSE")}},
+			{QChar('V'), {"VARCHAR", "VERBOSE"}},
 
-			{QChar('W'), {QString("WHEN"), QString("WHERE")}}
+			{QChar('W'), {"WHEN", "WHERE"}}
 		};
 
 		if(word.isEmpty())
