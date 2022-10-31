@@ -88,24 +88,24 @@ ReferenceWidget::ReferenceWidget(QWidget *parent) : QWidget(parent)
 	selectReferenceType();
 	setMinimumSize(640, 480);
 
-	connect(columns_tab, SIGNAL(s_rowAdded(int)), this, SLOT(addColumn(int)));
-	connect(columns_tab, SIGNAL(s_rowUpdated(int)), this, SLOT(updateColumn(int)));
-	connect(columns_tab, SIGNAL(s_rowEdited(int)), this, SLOT(editColumn(int)));
-	connect(columns_tab, SIGNAL(s_rowDuplicated(int,int)), this, SLOT(duplicateColumn(int,int)));
+	connect(columns_tab, &ObjectsTableWidget::s_rowAdded, this, &ReferenceWidget::addColumn);
+	connect(columns_tab, &ObjectsTableWidget::s_rowUpdated, this, &ReferenceWidget::updateColumn);
+	connect(columns_tab, &ObjectsTableWidget::s_rowEdited, this, &ReferenceWidget::editColumn);
+	connect(columns_tab, &ObjectsTableWidget::s_rowDuplicated, this, &ReferenceWidget::duplicateColumn);
 
-	connect(ref_tables_tab, SIGNAL(s_rowAdded(int)), this, SLOT(addRefTable(int)));
+	connect(ref_tables_tab, &ObjectsTableWidget::s_rowAdded, this, &ReferenceWidget::addRefTable);
 
-	connect(view_def_chk, SIGNAL(toggled(bool)), select_from_chk, SLOT(setDisabled(bool)));
-	connect(view_def_chk, SIGNAL(toggled(bool)), from_where_chk, SLOT(setDisabled(bool)));
-	connect(view_def_chk, SIGNAL(toggled(bool)), after_where_chk, SLOT(setDisabled(bool)));
-	connect(view_def_chk, SIGNAL(toggled(bool)), end_expr_chk, SLOT(setDisabled(bool)));
+	connect(view_def_chk, &QCheckBox::toggled, select_from_chk, &QCheckBox::setDisabled);
+	connect(view_def_chk, &QCheckBox::toggled, from_where_chk, &QCheckBox::setDisabled);
+	connect(view_def_chk, &QCheckBox::toggled, after_where_chk, &QCheckBox::setDisabled);
+	connect(view_def_chk, &QCheckBox::toggled, end_expr_chk, &QCheckBox::setDisabled);
 
 	connect(view_def_chk, &QCheckBox::toggled, [&](bool checked){
 		properties_tbw->setTabEnabled(1, checked);
 		properties_tbw->setTabEnabled(2, checked);
 	});
 
-	connect(ref_type_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(selectReferenceType()));
+	connect(ref_type_cmb, &QComboBox::currentIndexChanged, this, &ReferenceWidget::selectReferenceType);
 
 	connect(ref_object_sel, &ObjectSelectorWidget::s_objectSelected, [&](){
 		col_alias_edt->setEnabled(dynamic_cast<Column *>(ref_object_sel->getSelectedObject()));
