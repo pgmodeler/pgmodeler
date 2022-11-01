@@ -66,14 +66,12 @@ GeneralConfigWidget::GeneralConfigWidget(QWidget * parent) : BaseConfigWidget(pa
 	check_versions_cmb->setItemData(1, Attributes::StableBeta);
 	check_versions_cmb->setItemData(2, Attributes::StableOnly);
 
-	connect(check_update_chk, SIGNAL(toggled(bool)), check_versions_cmb, SLOT(setEnabled(bool)));
-
-	connect(unity_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(convertMarginUnity()));
-	connect(autosave_interv_chk, SIGNAL(toggled(bool)), autosave_interv_spb, SLOT(setEnabled(bool)));
-	connect(paper_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(selectPaperSize()));
-
-	connect(save_restore_geometry_chk, SIGNAL(toggled(bool)), reset_sizes_tb, SLOT(setEnabled(bool)));
-	connect(reset_sizes_tb, SIGNAL(clicked(bool)), this, SLOT(resetDialogsSizes()));
+	connect(check_update_chk, &QCheckBox::toggled, check_versions_cmb, &QComboBox::setEnabled);
+	connect(unity_cmb, &QComboBox::currentIndexChanged, this, &GeneralConfigWidget::convertMarginUnity);
+	connect(autosave_interv_chk, &QCheckBox::toggled, autosave_interv_spb, &QSpinBox::setEnabled);
+	connect(paper_cmb, &QComboBox::currentIndexChanged, this,  &GeneralConfigWidget::selectPaperSize);
+	connect(save_restore_geometry_chk, &QCheckBox::toggled, reset_sizes_tb, &QToolButton::setEnabled);
+	connect(reset_sizes_tb, &QToolButton::clicked, this, &GeneralConfigWidget::resetDialogsSizes);
 
 	config_params[Attributes::Configuration][Attributes::GridSize]="";
 	config_params[Attributes::Configuration][Attributes::OpListSize]="";
@@ -120,31 +118,31 @@ GeneralConfigWidget::GeneralConfigWidget(QWidget * parent) : BaseConfigWidget(pa
 	for(QCheckBox *chk : chk_boxes)
 	{
 		child_wgts.push_back(chk);
-		connect(chk, SIGNAL(clicked()), this, SLOT(setConfigurationChanged()));
+		connect(chk, &QCheckBox::clicked, this, &GeneralConfigWidget::setConfigurationChanged);
 	}
 
 	for(QSpinBox *spin : spin_boxes)
 	{
 		child_wgts.push_back(spin);
-		connect(spin, SIGNAL(valueChanged(int)), this, SLOT(setConfigurationChanged()));
+		connect(spin, &QSpinBox::valueChanged, this, &GeneralConfigWidget::setConfigurationChanged);
 	}
 
 	for(QDoubleSpinBox *dspin : dspin_boxes)
 	{
 		child_wgts.push_back(dspin);
-		connect(dspin, SIGNAL(valueChanged(double)), this, SLOT(setConfigurationChanged()));
+		connect(dspin,  &QDoubleSpinBox::valueChanged, this, &GeneralConfigWidget::setConfigurationChanged);
 	}
 
 	for(QComboBox *cmb : combos)
 	{
 		child_wgts.push_back(cmb);
-		connect(cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(setConfigurationChanged()));
+		connect(cmb, &QComboBox::currentIndexChanged, this, &GeneralConfigWidget::setConfigurationChanged);
 	}
 
 	for(QRadioButton *radio : radios)
 	{
 		child_wgts.push_back(radio);
-		connect(radio, SIGNAL(clicked()), this, SLOT(setConfigurationChanged()));
+		connect(radio, &QRadioButton::clicked, this, &GeneralConfigWidget::setConfigurationChanged);
 	}
 
 	connect(clear_sql_history_tb, &QToolButton::clicked, [](){
