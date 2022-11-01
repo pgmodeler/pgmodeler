@@ -28,9 +28,10 @@ Messagebox::Messagebox(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 	show_errors_tb->setVisible(false);
 	custom_option_chk->setVisible(false);
 
-	connect(yes_ok_btn,SIGNAL(clicked()),this,SLOT(handleYesOkClick()));
-	connect(no_btn,SIGNAL(clicked()),this,SLOT(handleNoCancelClick()));
-	connect(cancel_btn,SIGNAL(clicked()),this,SLOT(handleNoCancelClick()));
+	connect(yes_ok_btn, &QPushButton::clicked, this, &Messagebox::handleYesOkClick);
+	connect(no_btn, &QPushButton::clicked, this, &Messagebox::handleNoCancelClick);
+	connect(cancel_btn, &QPushButton::clicked, this, &Messagebox::handleNoCancelClick);
+
 	connect(show_errors_tb, &QToolButton::toggled, [&](bool checked){
 			objs_group_wgt->setCurrentIndex(checked ? 1 : 0);
 
