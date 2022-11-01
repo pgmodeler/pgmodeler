@@ -28,23 +28,23 @@ ConnectionsConfigWidget::ConnectionsConfigWidget(QWidget * parent) : BaseConfigW
 {
 	Ui_ConnectionsConfigWidget::setupUi(this);
 
-	connect(ssl_mode_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(enableCertificates()));
+	connect(ssl_mode_cmb, &QComboBox::currentIndexChanged, this, &ConnectionsConfigWidget::enableCertificates);
 
-	connect(new_tb, SIGNAL(clicked(bool)), this, SLOT(newConnection()));
-	connect(cancel_tb, SIGNAL(clicked(bool)), this, SLOT(newConnection()));
-	connect(duplicate_tb, SIGNAL(clicked(bool)), this, SLOT(duplicateConnection()));
+	connect(new_tb, &QToolButton::clicked, this, &ConnectionsConfigWidget::newConnection);
+	connect(cancel_tb, &QToolButton::clicked, this, &ConnectionsConfigWidget::newConnection);
+	connect(duplicate_tb, &QToolButton::clicked, this, &ConnectionsConfigWidget::duplicateConnection);
+	connect(update_tb, &QToolButton::clicked, this, &ConnectionsConfigWidget::handleConnection);
+	connect(edit_tb, &QToolButton::clicked, this, &ConnectionsConfigWidget::editConnection);
+	connect(remove_tb, &QToolButton::clicked, this, &ConnectionsConfigWidget::removeConnection);
 
-	connect(test_tb, SIGNAL(clicked(bool)), this, SLOT(testConnection()));
-	connect(add_tb, SIGNAL(clicked(bool)), this, SLOT(handleConnection()));
-	connect(update_tb, SIGNAL(clicked(bool)), this, SLOT(handleConnection()));
-	connect(edit_tb, SIGNAL(clicked(bool)), this, SLOT(editConnection()));
-	connect(remove_tb, SIGNAL(clicked(bool)), this, SLOT(removeConnection()));
+	connect(test_tb, &QPushButton::clicked, this, &ConnectionsConfigWidget::testConnection);
+	connect(add_tb, &QPushButton::clicked, this, &ConnectionsConfigWidget::handleConnection);
 
-	connect(alias_edt, SIGNAL(textChanged(QString)), this, SLOT(enableConnectionTest()));
-	connect(host_edt, SIGNAL(textChanged(QString)), this, SLOT(enableConnectionTest()));
-	connect(user_edt, SIGNAL(textChanged(QString)), this, SLOT(enableConnectionTest()));
-	connect(passwd_edt, SIGNAL(textChanged(QString)), this, SLOT(enableConnectionTest()));
-	connect(conn_db_edt, SIGNAL(textChanged(QString)), this, SLOT(enableConnectionTest()));
+	connect(alias_edt, &QLineEdit::textChanged, this, &ConnectionsConfigWidget::enableConnectionTest);
+	connect(host_edt, &QLineEdit::textChanged, this, &ConnectionsConfigWidget::enableConnectionTest);
+	connect(user_edt, &QLineEdit::textChanged, this, &ConnectionsConfigWidget::enableConnectionTest);
+	connect(passwd_edt, &QLineEdit::textChanged, this, &ConnectionsConfigWidget::enableConnectionTest);
+	connect(conn_db_edt, &QLineEdit::textChanged, this, &ConnectionsConfigWidget::enableConnectionTest);
 
 	update_tb->setVisible(false);
 	cancel_tb->setVisible(false);
