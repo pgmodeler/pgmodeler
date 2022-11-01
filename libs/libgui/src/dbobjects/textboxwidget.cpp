@@ -24,7 +24,7 @@ TextboxWidget::TextboxWidget(QWidget *parent): BaseObjectWidget(parent, ObjectTy
 	configureFormLayout(textbox_grid, ObjectType::Textbox);
 
 	text_txt->removeEventFilter(this);
-	connect(color_select_tb, SIGNAL(clicked()), this, SLOT(selectTextColor()));
+	connect(color_select_tb, &QToolButton::clicked, this, &TextboxWidget::selectTextColor);
 
 	setMinimumSize(500, 200);
 }
