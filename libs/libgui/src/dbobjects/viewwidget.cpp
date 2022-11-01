@@ -80,11 +80,11 @@ ViewWidget::ViewWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Vi
 			grid->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
 			tabWidget->widget(tab_id)->setLayout(grid);
 
-			connect(tab, SIGNAL(s_rowsRemoved()), this, SLOT(removeObjects()));
-			connect(tab, SIGNAL(s_rowRemoved(int)), this, SLOT(removeObject(int)));
-			connect(tab, SIGNAL(s_rowAdded(int)), this, SLOT(handleObject()));
-			connect(tab, SIGNAL(s_rowEdited(int)), this, SLOT(handleObject()));
-			connect(tab, SIGNAL(s_rowDuplicated(int,int)), this, SLOT(duplicateObject(int,int)));
+			connect(tab, &ObjectsTableWidget::s_rowsRemoved, this, &ViewWidget::removeObjects);
+			connect(tab, &ObjectsTableWidget::s_rowRemoved, this, &ViewWidget::removeObject);
+			connect(tab, &ObjectsTableWidget::s_rowAdded, this, &ViewWidget::handleObject);
+			connect(tab, &ObjectsTableWidget::s_rowEdited, this, &ViewWidget::handleObject);
+			connect(tab, &ObjectsTableWidget::s_rowDuplicated, this, &ViewWidget::duplicateObject);
 		}
 
 		objects_tab_map[ObjectType::Trigger]->setColumnCount(6);
@@ -118,22 +118,22 @@ ViewWidget::ViewWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Vi
 		tablespace_lbl->setEnabled(false);
 		configureFormLayout(view_grid, ObjectType::View);
 
-		connect(references_tab, SIGNAL(s_rowAdded(int)), this, SLOT(addReference(int)));
-		connect(references_tab, SIGNAL(s_rowEdited(int)), this, SLOT(editReference(int)));
-		connect(references_tab, SIGNAL(s_rowDuplicated(int,int)), this, SLOT(duplicateReference(int,int)));
-		connect(tabWidget, SIGNAL(currentChanged(int)), this, SLOT(updateCodePreview()));
+		connect(references_tab, &ObjectsTableWidget::s_rowAdded, this, &ViewWidget::addReference);
+		connect(references_tab, &ObjectsTableWidget::s_rowEdited, this, &ViewWidget::editReference);
+		connect(references_tab, &ObjectsTableWidget::s_rowDuplicated, this, &ViewWidget::duplicateReference);
+		connect(tabWidget, &QTabWidget::currentChanged, this, &ViewWidget::updateCodePreview);
 
-		connect(materialized_rb, SIGNAL(toggled(bool)), with_no_data_chk, SLOT(setEnabled(bool)));
-		connect(materialized_rb, SIGNAL(toggled(bool)), tablespace_sel, SLOT(setEnabled(bool)));
-		connect(materialized_rb, SIGNAL(toggled(bool)), tablespace_lbl, SLOT(setEnabled(bool)));
+		connect(materialized_rb, &QRadioButton::toggled, with_no_data_chk, &QCheckBox::setEnabled);
+		connect(materialized_rb, &QRadioButton::toggled, tablespace_sel, &ObjectSelectorWidget::setEnabled);
+		connect(materialized_rb, &QRadioButton::toggled, tablespace_lbl, &QLabel::setEnabled);
 
-		connect(materialized_rb, SIGNAL(toggled(bool)), this, SLOT(updateCodePreview()));
-		connect(recursive_rb, SIGNAL(toggled(bool)),  this, SLOT(updateCodePreview()));
-		connect(with_no_data_chk, SIGNAL(toggled(bool)), this, SLOT(updateCodePreview()));
-		connect(tablespace_sel, SIGNAL(s_objectSelected()), this, SLOT(updateCodePreview()));
-		connect(tablespace_sel, SIGNAL(s_selectorCleared()), this, SLOT(updateCodePreview()));
-		connect(schema_sel, SIGNAL(s_objectSelected()), this, SLOT(updateCodePreview()));
-		connect(schema_sel, SIGNAL(s_selectorCleared()), this, SLOT(updateCodePreview()));
+		connect(materialized_rb, &QRadioButton::toggled, this, &ViewWidget::updateCodePreview);
+		connect(recursive_rb,  &QRadioButton::toggled,  this, &ViewWidget::updateCodePreview);
+		connect(with_no_data_chk, &QCheckBox::toggled, this, &ViewWidget::updateCodePreview);
+		connect(tablespace_sel, &ObjectSelectorWidget::s_objectSelected, this, &ViewWidget::updateCodePreview);
+		connect(tablespace_sel, &ObjectSelectorWidget::s_selectorCleared, this, &ViewWidget::updateCodePreview);
+		connect(schema_sel, &ObjectSelectorWidget::s_objectSelected, this, &ViewWidget::updateCodePreview);
+		connect(schema_sel, &ObjectSelectorWidget::s_selectorCleared, this, &ViewWidget::updateCodePreview);
 
 		configureTabOrder({ tag_sel, ordinary_rb, recursive_rb, with_no_data_chk, tabWidget });
 		setMinimumSize(660, 650);
@@ -437,9 +437,9 @@ int ViewWidget::openReferenceForm(Reference ref, int row, bool update)
 	editing_form.setMainWidget(ref_wgt);
 	editing_form.setButtonConfiguration(Messagebox::OkCancelButtons);
 
-	disconnect(editing_form.apply_ok_btn, SIGNAL(clicked(bool)), &editing_form, SLOT(accept()));
-	connect(editing_form.apply_ok_btn, SIGNAL(clicked(bool)), ref_wgt, SLOT(applyConfiguration()));
-	connect(ref_wgt, SIGNAL(s_closeRequested()), &editing_form, SLOT(accept()));
+	disconnect(editing_form.apply_ok_btn, &QPushButton::clicked, &editing_form, &BaseForm::accept);
+	connect(editing_form.apply_ok_btn, &QPushButton::clicked, ref_wgt, &ReferenceWidget::applyConfiguration);
+	connect(ref_wgt, &ReferenceWidget::s_closeRequested, &editing_form, &BaseForm::accept);
 
 	ref_wgt->setAttributes(ref, getReferenceFlag(row), model);
 	result = editing_form.exec();
