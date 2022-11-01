@@ -49,7 +49,7 @@ TableWidget::TableWidget(QWidget *parent, ObjectType tab_type): BaseObjectWidget
 	edt_data_tb->setIcon(icon);
 	edt_data_tb->setIconSize(edt_perms_tb->iconSize());
 
-	connect(edt_data_tb, SIGNAL(clicked(bool)), this, SLOT(editData()));
+	connect(edt_data_tb, &QPushButton::clicked, this, &TableWidget::editData);
 	misc_btns_lt->insertWidget(1, edt_data_tb);
 
 	fields_map[generateVersionsInterval(UntilVersion, PgSqlVersions::PgSqlVersion110)].push_back(with_oids_chk);
@@ -100,7 +100,7 @@ TableWidget::TableWidget(QWidget *parent, ObjectType tab_type): BaseObjectWidget
 	for(unsigned i=0; i <= 5; i++)
 	{
 		tab=new ObjectsTableWidget(ObjectsTableWidget::AllButtons ^
-								  (ObjectsTableWidget::UpdateButton), true, this);
+								ObjectsTableWidget::UpdateButton, true, this);
 
 		objects_tab_map[types[i]]=tab;
 
@@ -109,12 +109,12 @@ TableWidget::TableWidget(QWidget *parent, ObjectType tab_type): BaseObjectWidget
 		grid->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
 		attributes_tbw->widget(i)->setLayout(grid);
 
-		connect(tab, SIGNAL(s_rowsRemoved()), this, SLOT(removeObjects()));
-		connect(tab, SIGNAL(s_rowRemoved(int)), this, SLOT(removeObject(int)));
-		connect(tab, SIGNAL(s_rowAdded(int)), this, SLOT(handleObject()));
-		connect(tab, SIGNAL(s_rowEdited(int)), this, SLOT(handleObject()));
-		connect(tab, SIGNAL(s_rowDuplicated(int,int)), this, SLOT(duplicateObject(int,int)));
-		connect(tab, SIGNAL(s_rowsMoved(int,int)), this, SLOT(swapObjects(int,int)));
+		connect(tab, &ObjectsTableWidget::s_rowsRemoved, this, &TableWidget::removeObjects);
+		connect(tab, &ObjectsTableWidget::s_rowRemoved, this, &TableWidget::removeObject);
+		connect(tab, &ObjectsTableWidget::s_rowAdded, this, &TableWidget::handleObject);
+		connect(tab, &ObjectsTableWidget::s_rowEdited, this, &TableWidget::handleObject);
+		connect(tab, &ObjectsTableWidget::s_rowDuplicated, this, &TableWidget::duplicateObject);
+		connect(tab, &ObjectsTableWidget::s_rowsMoved, this, &TableWidget::swapObjects);
 	}
 
 	objects_tab_map[ObjectType::Column]->setColumnCount(7);
