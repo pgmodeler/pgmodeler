@@ -42,7 +42,7 @@ RelationshipConfigWidget::RelationshipConfigWidget(QWidget * parent) : BaseConfi
 		pattern_hl=new SyntaxHighlighter(pattern_fields[i], true);
 		pattern_hl->loadConfiguration(GlobalAttributes::getPatternHighlightConfPath());
 
-		connect(pattern_fields[i], SIGNAL(textChanged()), this, SLOT(updatePattern()));
+		connect(pattern_fields[i], &QPlainTextEdit::textChanged, this, &RelationshipConfigWidget::updatePattern);
 	}
 
 	deferral_cmb->addItems(DeferralType::getTypes());
@@ -58,16 +58,16 @@ RelationshipConfigWidget::RelationshipConfigWidget(QWidget * parent) : BaseConfi
 	settings_twg->widget(0)->setFocusProxy(crows_foot_rb);
 	foreign_key_gb->setFocusProxy(deferrable_chk);
 
-	connect(crows_foot_rb, SIGNAL(toggled(bool)), this, SLOT(enableConnModePreview()));
-	connect(fk_to_pk_rb, SIGNAL(toggled(bool)), this, SLOT(enableConnModePreview()));
-	connect(center_pnts_rb, SIGNAL(toggled(bool)), this, SLOT(enableConnModePreview()));
-	connect(tab_edges_rb, SIGNAL(toggled(bool)), this, SLOT(enableConnModePreview()));
+	connect(crows_foot_rb, &QRadioButton::toggled, this, &RelationshipConfigWidget::enableConnModePreview);
+	connect(fk_to_pk_rb, &QRadioButton::toggled, this, &RelationshipConfigWidget::enableConnModePreview);
+	connect(center_pnts_rb, &QRadioButton::toggled, this, &RelationshipConfigWidget::enableConnModePreview);
+	connect(tab_edges_rb, &QRadioButton::toggled, this, &RelationshipConfigWidget::enableConnModePreview);
 
-	connect(deferrable_chk, SIGNAL(toggled(bool)), deferral_lbl, SLOT(setEnabled(bool)));
-	connect(deferrable_chk, SIGNAL(toggled(bool)), deferral_cmb, SLOT(setEnabled(bool)));
-	connect(deferrable_chk, SIGNAL(toggled(bool)), this, SLOT(setConfigurationChanged(bool)));
+	connect(deferrable_chk, &QCheckBox::toggled, deferral_lbl, &QLabel::setEnabled);
+	connect(deferrable_chk, &QCheckBox::toggled, deferral_cmb, &QComboBox::setEnabled);
+	connect(deferrable_chk, &QCheckBox::toggled, this, &RelationshipConfigWidget::setConfigurationChanged);
 
-	connect(rel_type_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(fillNamePatterns()));
+	connect(rel_type_cmb,  &QComboBox::currentIndexChanged, this,&RelationshipConfigWidget::fillNamePatterns);
 	connect(del_action_cmb, &QComboBox::currentTextChanged, [&](){ setConfigurationChanged(true); });
 	connect(upd_action_cmb, &QComboBox::currentTextChanged, [&](){ setConfigurationChanged(true); });
 	connect(deferral_cmb, &QComboBox::currentTextChanged, [&](){ setConfigurationChanged(true); });
