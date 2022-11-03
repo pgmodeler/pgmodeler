@@ -60,8 +60,11 @@ class PluginsConfigWidget: public BaseConfigWidget, public Ui::PluginsConfigWidg
 		void loadConfiguration();
 
 		/*! \brief Install the created actions on menu. Additionally the user must specify the
-		 receiver object and slot executed when the actions is activated */
-		void installPluginsActions(QMenu *menu, QObject *recv, const char *slot);
+		 receiver object and slot executed when the actions are activated. The parameters recv and slot
+			must object the same log as the QObject::connect() where recv is the recever object and slot is the
+			method called (in format &Class::method) when the action sends the triggered signal. */
+		template <class Class, typename Slot>
+		void installPluginsActions(QMenu *menu, const Class *recv, Slot slot);
 
 		//! \brief Performs the initialization of all loaded plugins (see PgModelerPlugin::initPlugin())
 		void initPlugins(MainWindow *main_window);
@@ -69,5 +72,20 @@ class PluginsConfigWidget: public BaseConfigWidget, public Ui::PluginsConfigWidg
 	private slots:
 		void showPluginInfo(int idx);
 };
+
+template <class Class, typename Slot>
+void PluginsConfigWidget::installPluginsActions(QMenu *menu, const Class *recv, Slot slot)
+{
+	if(!menu || !slot)
+		return;
+
+	for(auto &act : plugins_actions)
+	{
+		if(menu)
+			menu->addAction(act);
+
+		connect(act, &QAction::triggered, recv, slot);
+	}
+}
 
 #endif
