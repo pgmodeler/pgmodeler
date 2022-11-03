@@ -4924,7 +4924,7 @@ void ModelWidget::swapObjectsIds()
 	if(!selected_objects.empty())
 		swap_ids_wgt->setSelectedObjects(selected_objects[0], selected_objects.size() == 2 ? selected_objects[1] : nullptr);
 
-	parent_form.setMainWidget(swap_ids_wgt, SLOT(swapObjectsIds()));
+	parent_form.setMainWidget(swap_ids_wgt, &SwapObjectsIdsWidget::swapObjectsIds);
 	parent_form.setButtonConfiguration(Messagebox::OkCancelButtons);
 	parent_form.apply_ok_btn->setEnabled(false);
 	parent_form.apply_ok_btn->setIcon(QPixmap(GuiUtilsNs::getIconPath("swapobjs")));

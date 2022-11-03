@@ -116,7 +116,8 @@ void BaseForm::closeEvent(QCloseEvent *)
 
 void BaseForm::setMainWidget(BaseObjectWidget *widget)
 {
-	if(!widget)	return;
+	if(!widget)
+		return;
 
 	if(widget->getHandledObjectType()!=ObjectType::BaseObject && widget->windowTitle().isEmpty())
 		setWindowTitle(tr("%1 properties").arg(BaseObject::getTypeName(widget->getHandledObjectType())));
@@ -133,7 +134,7 @@ void BaseForm::setMainWidget(BaseObjectWidget *widget)
 	connect(widget, &BaseObjectWidget::s_closeRequested, this, &BaseForm::accept);
 }
 
-void BaseForm::setMainWidget(QWidget *widget, const char *accept_slot, const char *reject_slot)
+void BaseForm::setMainWidget(QWidget *widget)
 {
 	if(!widget)	return;
 
@@ -141,14 +142,6 @@ void BaseForm::setMainWidget(QWidget *widget, const char *accept_slot, const cha
 	setWindowIcon(widget->windowIcon());
 	resizeForm(widget);
 	setButtonConfiguration(Messagebox::OkButton);
-
-	if(!reject_slot)
-		connect(cancel_btn, &QPushButton::clicked, this, &BaseForm::reject);
-	else
-		connect(cancel_btn, SIGNAL(clicked(bool)), widget, reject_slot);
-
-	if(!accept_slot)
-		connect(apply_ok_btn, &QPushButton::clicked, this, &BaseForm::accept);
-	else
-		connect(apply_ok_btn, SIGNAL(clicked(bool)), widget, accept_slot);
+	connect(cancel_btn, &QPushButton::clicked, this, &BaseForm::reject);
+	connect(apply_ok_btn, &QPushButton::clicked, this, &BaseForm::accept);
 }
