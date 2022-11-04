@@ -38,12 +38,12 @@ BugReportForm::BugReportForm(QWidget *parent, Qt::WindowFlags f) : QDialog(paren
 	output_sel->setSelectedFile(GlobalAttributes::getTemporaryDir());
 
 	output_lt->addWidget(output_sel);
-	connect(close_btn, SIGNAL(clicked()), this, SLOT(close()));
-	connect(create_btn, SIGNAL(clicked()), this, SLOT(generateReport()));
-	connect(attach_mod_chk, SIGNAL(toggled(bool)), attach_tb, SLOT(setEnabled(bool)));
-	connect(attach_tb, SIGNAL(clicked()), this, SLOT(attachModel()));
-	connect(details_txt, SIGNAL(textChanged()), this, SLOT(enableGeneration()));
-	connect(output_sel, SIGNAL(s_selectorChanged(bool)), this, SLOT(enableGeneration()));
+	connect(close_btn, &QPushButton::clicked, this, &BugReportForm::close);
+	connect(create_btn, &QPushButton::clicked, this, qOverload<>(&BugReportForm::generateReport));
+	connect(attach_mod_chk, &QCheckBox::toggled, attach_tb, &QToolButton::setEnabled);
+	connect(attach_tb, &QToolButton::clicked, this, qOverload<>(&BugReportForm::attachModel));
+	connect(details_txt, &QPlainTextEdit::textChanged, this,  &BugReportForm::enableGeneration);
+	connect(output_sel, &FileSelectorWidget::s_selectorChanged, this, &BugReportForm::enableGeneration);
 
 	//Installs a syntax highlighter on model_txt widget
 	hl_model_txt=new SyntaxHighlighter(model_txt);
