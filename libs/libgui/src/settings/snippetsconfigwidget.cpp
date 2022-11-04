@@ -67,21 +67,24 @@ SnippetsConfigWidget::SnippetsConfigWidget(QWidget * parent) : BaseConfigWidget(
 
 	enableEditMode(false);
 
-	connect(new_tb, SIGNAL(clicked()), this, SLOT(resetForm()));
-	connect(edit_tb, SIGNAL(clicked()), this, SLOT(editSnippet()));
-	connect(remove_tb, SIGNAL(clicked()), this, SLOT(removeSnippet()));
-	connect(remove_all_tb, SIGNAL(clicked()), this, SLOT(removeAllSnippets()));
+	connect(new_tb, &QToolButton::clicked, this, &SnippetsConfigWidget::resetForm);
+	connect(edit_tb, &QToolButton::clicked, this, &SnippetsConfigWidget::editSnippet);
+	connect(remove_tb, &QToolButton::clicked, this, &SnippetsConfigWidget::removeSnippet);
+	connect(remove_all_tb, &QToolButton::clicked, this, &SnippetsConfigWidget::removeAllSnippets);
+
 	connect(cancel_tb, &QToolButton::clicked, [&](){ enableEditMode(false); });
 	connect(snippets_cmb, &QComboBox::currentTextChanged, [&](){ enableEditMode(false); });
-	connect(id_edt, SIGNAL(textChanged(QString)), this, SLOT(enableSaveButtons()));
-	connect(label_edt, SIGNAL(textChanged(QString)), this, SLOT(enableSaveButtons()));
-	connect(snippet_txt, SIGNAL(textChanged()), this, SLOT(enableSaveButtons()));
-	connect(parsable_chk, SIGNAL(toggled(bool)), this, SLOT(enableSaveButtons()));
-	connect(filter_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(filterSnippets(int)));
-	connect(update_tb, SIGNAL(clicked()), this, SLOT(handleSnippet()));
-	connect(add_tb, SIGNAL(clicked()), this, SLOT(handleSnippet()));
-	connect(parse_tb, SIGNAL(clicked()), this, SLOT(parseSnippet()));
-	connect(parsable_chk, SIGNAL(toggled(bool)), placeholders_chk, SLOT(setEnabled(bool)));
+
+	connect(id_edt, &QLineEdit::textChanged, this, &SnippetsConfigWidget::enableSaveButtons);
+	connect(label_edt, &QLineEdit::textChanged, this, &SnippetsConfigWidget::enableSaveButtons);
+	connect(snippet_txt, &NumberedTextEditor::textChanged, this, &SnippetsConfigWidget::enableSaveButtons);
+	connect(parsable_chk, &QCheckBox::toggled, this, &SnippetsConfigWidget::enableSaveButtons);
+	connect(filter_cmb, &QComboBox::currentIndexChanged, this, &SnippetsConfigWidget::filterSnippets);
+	connect(update_tb, &QPushButton::clicked, this, &SnippetsConfigWidget::handleSnippet);
+	connect(add_tb, &QPushButton::clicked, this, &SnippetsConfigWidget::handleSnippet);
+	connect(parse_tb, &QPushButton::clicked, this, qOverload<>(&SnippetsConfigWidget::parseSnippet));
+
+	connect(parsable_chk, &QCheckBox::toggled, placeholders_chk, &QCheckBox::setEnabled);
 }
 
 std::map<QString, attribs_map> SnippetsConfigWidget::getConfigurationParams()
@@ -274,7 +277,7 @@ void SnippetsConfigWidget::loadConfiguration()
 		}
 
 		//Destroy any invalid snippets
-		for(QString id : inv_snippets)
+		for(auto &id : inv_snippets)
 			config_params.erase(id);
 
 		fillSnippetsCombo(config_params);
