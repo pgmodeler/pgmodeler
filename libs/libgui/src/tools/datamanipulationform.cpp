@@ -157,30 +157,30 @@ DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f):
 	  setColumnsCheckState(Qt::Unchecked);
 	});
 
-	connect(columns_lst, SIGNAL(itemClicked(QListWidgetItem*)), this, SLOT(toggleColumnDisplay(QListWidgetItem*)));
-	connect(csv_load_tb, SIGNAL(toggled(bool)), csv_load_parent, SLOT(setVisible(bool)));
-	connect(close_btn, SIGNAL(clicked()), this, SLOT(reject()));
-	connect(schema_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(listTables()));
-	connect(hide_views_chk, SIGNAL(toggled(bool)), this, SLOT(listTables()));
-	connect(schema_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(disableControlButtons()));
-	connect(table_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(disableControlButtons()));
-	connect(table_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(listColumns()));
-	connect(table_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(retrieveData()));
-	connect(refresh_tb, SIGNAL(clicked()), this, SLOT(retrieveData()));
-	connect(add_ord_col_tb, SIGNAL(clicked()), this, SLOT(addSortColumnToList()));
-	connect(ord_columns_lst, SIGNAL(itemDoubleClicked(QListWidgetItem*)), this, SLOT(removeSortColumnFromList()));
-	connect(ord_columns_lst, SIGNAL(itemPressed(QListWidgetItem*)), this, SLOT(changeOrderMode(QListWidgetItem*)));
-	connect(rem_ord_col_tb, SIGNAL(clicked()), this, SLOT(removeSortColumnFromList()));
-	connect(clear_ord_cols_tb, SIGNAL(clicked()), this, SLOT(clearSortColumnList()));
-	connect(results_tbw, SIGNAL(itemChanged(QTableWidgetItem*)), this, SLOT(markUpdateOnRow(QTableWidgetItem *)));
-	connect(undo_tb, SIGNAL(clicked()), this, SLOT(undoOperations()));
-	connect(save_tb, SIGNAL(clicked()), this, SLOT(saveChanges()));
-	connect(ord_columns_lst, SIGNAL(currentRowChanged(int)), this, SLOT(enableColumnControlButtons()));
-	connect(move_down_tb, SIGNAL(clicked()), this, SLOT(swapColumns()));
-	connect(move_up_tb, SIGNAL(clicked()), this, SLOT(swapColumns()));
-	connect(filter_tb, SIGNAL(toggled(bool)), filter_tbw, SLOT(setVisible(bool)));
-	connect(truncate_tb, SIGNAL(clicked(bool)), this, SLOT(truncateTable()));
-	connect(new_window_tb, SIGNAL(clicked(bool)), this, SLOT(openNewWindow()));
+	connect(columns_lst, &QListWidget::itemClicked, this, &DataManipulationForm::toggleColumnDisplay);
+	connect(csv_load_tb, &QToolButton::toggled, csv_load_parent, &QWidget::setVisible);
+	connect(close_btn, &QPushButton::clicked, this, &DataManipulationForm::reject);
+	connect(schema_cmb, &QComboBox::currentIndexChanged, this, &DataManipulationForm::listTables);
+	connect(hide_views_chk, &QCheckBox::toggled, this, &DataManipulationForm::listTables);
+	connect(schema_cmb, &QComboBox::currentIndexChanged, this, &DataManipulationForm::disableControlButtons);
+	connect(table_cmb, &QComboBox::currentIndexChanged, this, &DataManipulationForm::disableControlButtons);
+	connect(table_cmb, &QComboBox::currentIndexChanged, this, &DataManipulationForm::listColumns);
+	connect(table_cmb, &QComboBox::currentIndexChanged, this, &DataManipulationForm::retrieveData);
+	connect(refresh_tb, &QToolButton::clicked, this, &DataManipulationForm::retrieveData);
+	connect(add_ord_col_tb, &QToolButton::clicked, this, &DataManipulationForm::addSortColumnToList);
+	connect(ord_columns_lst, &QListWidget::itemDoubleClicked, this, &DataManipulationForm::removeSortColumnFromList);
+	connect(ord_columns_lst, &QListWidget::itemPressed, this, &DataManipulationForm::changeOrderMode);
+	connect(rem_ord_col_tb, &QToolButton::clicked, this, &DataManipulationForm::removeSortColumnFromList);
+	connect(clear_ord_cols_tb, &QToolButton::clicked, this, &DataManipulationForm::clearSortColumnList);
+	connect(results_tbw, &QTableWidget::itemChanged, this, &DataManipulationForm::markUpdateOnRow);
+	connect(undo_tb, &QToolButton::clicked, this, &DataManipulationForm::undoOperations);
+	connect(save_tb, &QToolButton::clicked, this, &DataManipulationForm::saveChanges);
+	connect(ord_columns_lst, &QListWidget::currentRowChanged, this, &DataManipulationForm::enableColumnControlButtons);
+	connect(move_down_tb,  &QToolButton::clicked, this, &DataManipulationForm::swapColumns);
+	connect(move_up_tb,  &QToolButton::clicked, this, &DataManipulationForm::swapColumns);
+	connect(filter_tb,  &QToolButton::toggled, filter_tbw, &QTabWidget::setVisible);
+	connect(truncate_tb,  &QToolButton::clicked, this, &DataManipulationForm::truncateTable);
+	connect(new_window_tb, &QToolButton::clicked, this, &DataManipulationForm::openNewWindow);
 
 	connect(filter_tb, &QToolButton::toggled,
 			[&](bool checked){
@@ -192,15 +192,17 @@ DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f):
 	});
 
 	//Using the QueuedConnection here to avoid the "edit: editing failed" when editing and navigating through items using tab key
-	connect(results_tbw, SIGNAL(currentCellChanged(int,int,int,int)), this, SLOT(insertRowOnTabPress(int,int,int,int)), Qt::QueuedConnection);
-
-	connect(results_tbw, SIGNAL(itemPressed(QTableWidgetItem *)), this, SLOT(showPopupMenu()));
+	connect(results_tbw, &QTableWidget::currentCellChanged, this, &DataManipulationForm::insertRowOnTabPress, Qt::QueuedConnection);
+	connect(results_tbw, &QTableWidget::itemPressed, this, &DataManipulationForm::showPopupMenu);
 
 	connect(export_tb, &QToolButton::clicked,
 			[&](){ SQLExecutionWidget::exportResults(results_tbw); });
 
-	connect(results_tbw, SIGNAL(itemSelectionChanged()), this, SLOT(enableRowControlButtons()));
-	connect(csv_load_wgt, SIGNAL(s_csvFileLoaded()), this, SLOT(loadDataFromCsv()));
+	connect(results_tbw, &QTableWidget::itemSelectionChanged, this, &DataManipulationForm::enableRowControlButtons);
+
+	connect(csv_load_wgt, &CsvLoadWidget::s_csvFileLoaded, [&](){
+		loadDataFromCsv();
+	});
 
 	connect(results_tbw->horizontalHeader(), &QHeaderView::sortIndicatorChanged, [&](int section, Qt::SortOrder sort_order){
 		// Applying the sorting on the clicked column when the Control key is pressed
