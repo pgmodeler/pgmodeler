@@ -157,17 +157,17 @@ DatabaseExplorerWidget::DatabaseExplorerWidget(QWidget *parent): QWidget(parent)
 
 	act = toggle_disp_menu.addAction(tr("Show objects filter"));
 	act->setCheckable(true);
-	connect(act, SIGNAL(toggled(bool)), filter_parent, SLOT(setVisible(bool)));
+	connect(act, &QAction::toggled, filter_parent, &QWidget::setVisible);
 
 	toggle_disp_menu.addSeparator();
 
 	show_sys_objs = toggle_disp_menu.addAction(tr("Show system objects"));
 	show_sys_objs->setCheckable(true);
-	connect(show_sys_objs, SIGNAL(toggled(bool)), this, SLOT(listObjects()));
+	connect(show_sys_objs, &QAction::toggled, this, &DatabaseExplorerWidget::listObjects);
 
 	show_ext_objs = toggle_disp_menu.addAction(tr("Show extension objects"));
 	show_ext_objs->setCheckable(true);
-	connect(show_ext_objs, SIGNAL(toggled(bool)), this, SLOT(listObjects()));
+	connect(show_ext_objs, &QAction::toggled, this, &DatabaseExplorerWidget::listObjects);
 
 	toggle_display_tb->setMenu(&toggle_disp_menu);
 
@@ -198,19 +198,22 @@ DatabaseExplorerWidget::DatabaseExplorerWidget(QWidget *parent): QWidget(parent)
 
 	objects_trw->installEventFilter(this);
 
-	connect(refresh_tb, SIGNAL(clicked()), this, SLOT(listObjects()));
-	connect(objects_trw, SIGNAL(itemPressed(QTreeWidgetItem*,int)), this, SLOT(handleObject(QTreeWidgetItem *,int)));
-	connect(objects_trw, SIGNAL(currentItemChanged(QTreeWidgetItem*,QTreeWidgetItem*)), this, SLOT(showObjectProperties()));
-	connect(raw_attrib_names_chk, SIGNAL(toggled(bool)), this, SLOT(showObjectProperties()));
+	connect(refresh_tb, &QToolButton::clicked, this, &DatabaseExplorerWidget::listObjects);
+	connect(objects_trw, &QTreeWidget::itemPressed, this, &DatabaseExplorerWidget::handleObject);
+	connect(objects_trw, &QTreeWidget::currentItemChanged, this, &DatabaseExplorerWidget::showObjectProperties);
+	connect(raw_attrib_names_chk, &QCheckBox::toggled, this, &DatabaseExplorerWidget::showObjectProperties);
 
-	connect(objects_trw, SIGNAL(currentItemChanged(QTreeWidgetItem*,QTreeWidgetItem*)), this, SLOT(cancelObjectRename()));
-	connect(objects_trw, SIGNAL(itemCollapsed(QTreeWidgetItem*)), this, SLOT(cancelObjectRename()));
-	connect(objects_trw, SIGNAL(itemExpanded(QTreeWidgetItem*)), this, SLOT(cancelObjectRename()));
+	connect(objects_trw, &QTreeWidget::currentItemChanged, this, &DatabaseExplorerWidget::cancelObjectRename);
+	connect(objects_trw, &QTreeWidget::itemCollapsed, this, &DatabaseExplorerWidget::cancelObjectRename);
+	connect(objects_trw, &QTreeWidget::itemExpanded, this, &DatabaseExplorerWidget::cancelObjectRename);
 
-	connect(data_grid_tb, SIGNAL(clicked(bool)), this, SLOT(openDataGrid()));
-	connect(collapse_all_tb, SIGNAL(clicked(bool)), objects_trw, SLOT(collapseAll()));
-	connect(by_oid_chk, SIGNAL(toggled(bool)), this, SLOT(filterObjects()));
-	connect(filter_edt, SIGNAL(textChanged(QString)), this, SLOT(filterObjects()));
+	connect(data_grid_tb, &QToolButton::clicked, [&](){
+		openDataGrid();
+	});
+
+	connect(collapse_all_tb, &QToolButton::clicked, objects_trw, &QTreeWidget::collapseAll);
+	connect(by_oid_chk, &QCheckBox::toggled, this, &DatabaseExplorerWidget::filterObjects);
+	connect(filter_edt, &QLineEdit::textChanged, this, &DatabaseExplorerWidget::filterObjects);
 
 	connect(drop_db_tb,  &QToolButton::clicked,
 			[&]() { emit s_databaseDropRequested(connection.getConnectionParam(Connection::ParamDbName)); });
