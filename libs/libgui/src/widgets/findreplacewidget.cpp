@@ -43,9 +43,9 @@ FindReplaceWidget::FindReplaceWidget(QPlainTextEdit *txt_edit, QWidget *parent):
 	next_tb->setToolTip(next_tb->toolTip() + QString(" (%1)").arg(next_tb->shortcut().toString()));
 	previous_tb->setToolTip(previous_tb->toolTip() + QString(" (%1)").arg(previous_tb->shortcut().toString()));
 
-	connect(replace_tb, SIGNAL(clicked()), this, SLOT(replaceText()));
-	connect(replace_find_tb, SIGNAL(clicked()), this, SLOT(replaceFindText()));
-	connect(replace_all_tb, SIGNAL(clicked()), this, SLOT(replaceAll()));
+	connect(replace_tb, &QToolButton::clicked, this, &FindReplaceWidget::replaceText);
+	connect(replace_find_tb, &QToolButton::clicked, this, &FindReplaceWidget::replaceFindText);
+	connect(replace_all_tb, &QToolButton::clicked, this, &FindReplaceWidget::replaceAll);
 
 	connect(next_tb, &QToolButton::clicked,
 	[&]() {
@@ -65,7 +65,7 @@ FindReplaceWidget::FindReplaceWidget(QPlainTextEdit *txt_edit, QWidget *parent):
 		replace_all_tb->setEnabled(enable);
 		replace_find_tb->setEnabled(enable); });
 
-	connect(hide_tb, SIGNAL(clicked()), this, SIGNAL(s_hideRequested()));
+	connect(hide_tb, &QToolButton::clicked, this, &FindReplaceWidget::s_hideRequested);
 
 	connect(&search_info_timer, &QTimer::timeout, search_info_lbl, &QLabel::hide);
 }
