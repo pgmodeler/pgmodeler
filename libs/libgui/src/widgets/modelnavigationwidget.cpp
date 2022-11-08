@@ -23,7 +23,7 @@ ModelNavigationWidget::ModelNavigationWidget(QWidget *parent): QWidget(parent)
 {
 	setupUi(this);
 
-	connect(models_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(setCurrentModel()));
+	connect(models_cmb, &QComboBox::currentIndexChanged, this, &ModelNavigationWidget::setCurrentModel);
 
 	connect(close_tb, &QToolButton::clicked,
 			[&](){ emit s_modelCloseRequested(models_cmb->currentIndex()); });
@@ -34,7 +34,7 @@ ModelNavigationWidget::ModelNavigationWidget(QWidget *parent): QWidget(parent)
 	connect(previous_tb, &QToolButton::clicked,
 			[&](){ models_cmb->setCurrentIndex(models_cmb->currentIndex()-1); });
 
-	connect(models_cmb, SIGNAL(highlighted(int)), this, SLOT(showTooltip(int)));
+	connect(models_cmb, &QComboBox::highlighted, this, &ModelNavigationWidget::showTooltip);
 
 	previous_tb->setToolTip(previous_tb->toolTip() + QString(" (%1)").arg(previous_tb->shortcut().toString()));
 	next_tb->setToolTip(next_tb->toolTip() + QString(" (%1)").arg(next_tb->shortcut().toString()));
