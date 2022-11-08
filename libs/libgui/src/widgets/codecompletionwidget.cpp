@@ -64,8 +64,8 @@ CodeCompletionWidget::CodeCompletionWidget(QPlainTextEdit *code_field_txt, bool 
 	db_model=nullptr;
 	setQualifyingLevel(nullptr);
 
-	connect(name_list, SIGNAL(itemDoubleClicked(QListWidgetItem*)), this, SLOT(selectItem()));
-	connect(name_list, SIGNAL(currentRowChanged(int)), this, SLOT(showItemTooltip()));
+	connect(name_list, &QListWidget::itemDoubleClicked, this, &CodeCompletionWidget::selectItem);
+	connect(name_list, &QListWidget::currentRowChanged, this, &CodeCompletionWidget::showItemTooltip);
 
 	connect(&popup_timer, &QTimer::timeout, [&](){
 		if(qualifying_level < 2)
@@ -78,7 +78,7 @@ CodeCompletionWidget::CodeCompletionWidget(QPlainTextEdit *code_field_txt, bool 
 	this->setVisible(false);
 
 	if(enable_snippets)
-		connect(this, SIGNAL(s_wordSelected(QString)), this, SLOT(handleSelectedWord(QString)));
+		connect(this, &CodeCompletionWidget::s_wordSelected, this, &CodeCompletionWidget::handleSelectedWord);
 }
 
 void CodeCompletionWidget::handleSelectedWord(QString word)
