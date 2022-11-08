@@ -35,8 +35,8 @@ LineNumbersWidget::LineNumbersWidget(QPlainTextEdit * parent) : QWidget(parent)
 	has_selection = false;
 	start_sel_line = -1;
 
-	connect(parent_edt, SIGNAL(selectionChanged()), this, SLOT(update()));
-	connect(parent_edt, SIGNAL(cursorPositionChanged()), this, SLOT(update()));
+	connect(parent_edt, &QPlainTextEdit::selectionChanged, this, qOverload<>(&LineNumbersWidget::update));
+	connect(parent_edt, &QPlainTextEdit::cursorPositionChanged, this, qOverload<>(&LineNumbersWidget::update));
 }
 
 void LineNumbersWidget::drawLineNumbers(int first_line, int line_count, int dy)
