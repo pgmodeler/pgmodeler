@@ -47,7 +47,7 @@ BaseObjectWidget::BaseObjectWidget(QWidget *parent, ObjectType obj_type): QWidge
 		tablespace_sel=nullptr;
 		object_protected = false;
 
-		GuiUtilsNs::configureWidgetFont(protected_obj_lbl, GuiUtilsNs::MediumFontFactor);
+		//GuiUtilsNs::configureWidgetFont(protected_obj_lbl, GuiUtilsNs::MediumFontFactor);
 
 		connect(edt_perms_tb, &QPushButton::clicked, this, &BaseObjectWidget::editPermissions);
 		connect(append_sql_tb, &QPushButton::clicked, this, &BaseObjectWidget::editCustomSQL);
@@ -529,7 +529,7 @@ QFrame *BaseObjectWidget::generateInformationFrame(const QString &msg)
 	font.setBold(false);
 	info_frm->setFont(font);
 
-	GuiUtilsNs::configureWidgetFont(info_frm, GuiUtilsNs::MediumFontFactor);
+	//GuiUtilsNs::configureWidgetFont(info_frm, GuiUtilsNs::MediumFontFactor);
 
 	info_frm->setObjectName("info_frm");
 	info_frm->setFrameShape(QFrame::StyledPanel);
@@ -606,7 +606,7 @@ QFrame *BaseObjectWidget::generateVersionWarningFrame(std::map<QString, std::vec
 	font.setItalic(false);
 	font.setBold(false);
 
-	GuiUtilsNs::configureWidgetFont(alert_frm, GuiUtilsNs::MediumFontFactor);
+	//GuiUtilsNs::configureWidgetFont(alert_frm, GuiUtilsNs::MediumFontFactor);
 
 	alert_frm->setObjectName("alert_frm");
 	alert_frm->setFrameShape(QFrame::StyledPanel);

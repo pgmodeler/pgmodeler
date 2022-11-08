@@ -132,7 +132,7 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	label->setFont(font);
 	label->setWordWrap(true);
 	label->setText(tr("<strong>ATTENTION:</strong> The database model is protected! Operations that could modify it are disabled!"));
-	GuiUtilsNs::configureWidgetFont(label, GuiUtilsNs::MediumFontFactor);
+	//GuiUtilsNs::configureWidgetFont(label, GuiUtilsNs::MediumFontFactor);
 
 	grid->addWidget(label, 0, 1, 1, 1);
 	protected_model_frm->setLayout(grid);

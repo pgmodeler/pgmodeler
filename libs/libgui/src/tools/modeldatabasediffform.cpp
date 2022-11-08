@@ -84,7 +84,7 @@ ModelDatabaseDiffForm::ModelDatabaseDiffForm(QWidget *parent, Qt::WindowFlags fl
 		sqlcode_hl->loadConfiguration(GlobalAttributes::getSQLHighlightConfPath());
 
 		pgsql_ver_cmb->addItems(PgSqlVersions::AllVersions);
-		GuiUtilsNs::configureWidgetFont(message_lbl, GuiUtilsNs::MediumFontFactor);
+		//GuiUtilsNs::configureWidgetFont(message_lbl, GuiUtilsNs::MediumFontFactor);
 
 		cancel_preset_edit_tb->setVisible(false);
 		preset_name_edt->setVisible(false);
