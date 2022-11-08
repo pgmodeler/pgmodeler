@@ -24,11 +24,11 @@ ModelRestorationForm::ModelRestorationForm(QWidget *parent, Qt::WindowFlags f) :
 {
 	setupUi(this);
 
-	GuiUtilsNs::configureWidgetFont(message_lbl, GuiUtilsNs::MediumFontFactor);
+	//GuiUtilsNs::configureWidgetFont(message_lbl, GuiUtilsNs::MediumFontFactor);
 
-	connect(restore_btn, SIGNAL(clicked()), this, SLOT(accept()));
-	connect(cancel_btn, SIGNAL(clicked()), this, SLOT(reject()));
-	connect(tmp_files_tbw, SIGNAL(itemSelectionChanged()), this, SLOT(enableRestoration()));
+	connect(restore_btn, &QPushButton::clicked, this, &ModelRestorationForm::accept);
+	connect(cancel_btn, &QPushButton::clicked, this, &ModelRestorationForm::reject);
+	connect(tmp_files_tbw, &QTableWidget::itemSelectionChanged, this, &ModelRestorationForm::enableRestoration);
 }
 
 QStringList ModelRestorationForm::getTemporaryModels()
