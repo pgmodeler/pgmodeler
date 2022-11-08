@@ -74,20 +74,20 @@ CustomSQLWidget::CustomSQLWidget(QWidget *parent) : BaseObjectWidget(parent)
 		delete_menu.addAction(action_tab_delete);
 		delete_menu.addAction(action_gen_delete);
 
-		connect(clear_tb, SIGNAL(clicked(bool)), this, SLOT(clearCode()));
-		connect(insert_tb, SIGNAL(clicked(bool)), this, SLOT(addCommand()));
-		connect(select_tb, SIGNAL(clicked(bool)), this, SLOT(addCommand()));
-		connect(update_tb, SIGNAL(clicked(bool)), this, SLOT(addCommand()));
-		connect(delete_tb, SIGNAL(clicked(bool)), this, SLOT(addCommand()));
-		connect(action_gen_insert, SIGNAL(triggered()), this, SLOT(addCommand()));
-		connect(action_inc_serials, SIGNAL(triggered()), this, SLOT(addCommand()));
-		connect(action_exc_serials, SIGNAL(triggered()), this, SLOT(addCommand()));
-		connect(action_gen_select, SIGNAL(triggered()), this, SLOT(addCommand()));
-		connect(action_tab_select, SIGNAL(triggered()), this, SLOT(addCommand()));
-		connect(action_gen_update, SIGNAL(triggered()), this, SLOT(addCommand()));
-		connect(action_tab_update, SIGNAL(triggered()), this, SLOT(addCommand()));
-		connect(action_gen_delete, SIGNAL(triggered()), this, SLOT(addCommand()));
-		connect(action_tab_delete, SIGNAL(triggered()), this, SLOT(addCommand()));
+		connect(clear_tb, &QToolButton::clicked, this, &CustomSQLWidget::clearCode);
+		connect(insert_tb, &QToolButton::clicked, this, &CustomSQLWidget::addCommand);
+		connect(select_tb, &QToolButton::clicked, this, &CustomSQLWidget::addCommand);
+		connect(update_tb, &QToolButton::clicked, this, &CustomSQLWidget::addCommand);
+		connect(delete_tb, &QToolButton::clicked, this, &CustomSQLWidget::addCommand);
+		connect(action_gen_insert, &QAction::triggered, this, &CustomSQLWidget::addCommand);
+		connect(action_inc_serials, &QAction::triggered, this, &CustomSQLWidget::addCommand);
+		connect(action_exc_serials, &QAction::triggered, this, &CustomSQLWidget::addCommand);
+		connect(action_gen_select, &QAction::triggered, this, &CustomSQLWidget::addCommand);
+		connect(action_tab_select, &QAction::triggered, this, &CustomSQLWidget::addCommand);
+		connect(action_gen_update, &QAction::triggered, this, &CustomSQLWidget::addCommand);
+		connect(action_tab_update, &QAction::triggered, this, &CustomSQLWidget::addCommand);
+		connect(action_gen_delete, &QAction::triggered, this, &CustomSQLWidget::addCommand);
+		connect(action_tab_delete, &QAction::triggered, this, &CustomSQLWidget::addCommand);
 
 		setMinimumSize(640, 480);
 	}
@@ -101,10 +101,9 @@ void CustomSQLWidget::configureMenus()
 {
 	ObjectType obj_type=this->object->getObjectType();
 	QToolButton *btns[]={ insert_tb, select_tb , delete_tb, update_tb };
-	int count=sizeof(btns)/sizeof(QToolButton *);
 
-	for(int i=0; i < count; i++)
-		btns[i]->setMenu(nullptr);
+	for(auto &btn : btns)
+		btn->setMenu(nullptr);
 
 	if(BaseTable::isBaseTable(obj_type))
 	{
