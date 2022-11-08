@@ -24,15 +24,15 @@ ObjectDepsRefsWidget::ObjectDepsRefsWidget(QWidget *parent): BaseObjectWidget(pa
 	Ui_ObjectDepsRefsWidget::setupUi(this);
 	configureFormLayout(objectdepsrefs_grid, ObjectType::BaseObject);
 
-	GuiUtilsNs::configureWidgetFont(message_lbl, GuiUtilsNs::MediumFontFactor);
+	//GuiUtilsNs::configureWidgetFont(message_lbl, GuiUtilsNs::MediumFontFactor);
 
 	model_wgt=nullptr;
 	alert_frm->setVisible(false);
 
-	connect(exc_ind_deps_chk,	SIGNAL(toggled(bool)), this, SLOT(updateObjectTables()));
-	connect(inc_ind_refs_chk,	SIGNAL(toggled(bool)), this, SLOT(updateObjectTables()));
-	connect(dependences_tbw, SIGNAL(itemDoubleClicked(QTableWidgetItem*)), this, SLOT(handleItemSelection(QTableWidgetItem*)));
-	connect(references_tbw, SIGNAL(itemDoubleClicked(QTableWidgetItem*)), this, SLOT(handleItemSelection(QTableWidgetItem*)));
+	connect(exc_ind_deps_chk,	&QCheckBox::toggled, this, &ObjectDepsRefsWidget::updateObjectTables);
+	connect(inc_ind_refs_chk,	&QCheckBox::toggled, this, &ObjectDepsRefsWidget::updateObjectTables);
+	connect(dependences_tbw, &QTableWidget::itemDoubleClicked, this, &ObjectDepsRefsWidget::handleItemSelection);
+	connect(references_tbw, &QTableWidget::itemDoubleClicked, this, &ObjectDepsRefsWidget::handleItemSelection);
 
 	setMinimumSize(580, 350);
 }
