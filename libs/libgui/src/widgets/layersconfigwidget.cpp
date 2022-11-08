@@ -46,20 +46,24 @@ LayersConfigWidget::LayersConfigWidget(QWidget *parent) : QWidget(parent)
 	visibility_tb->setMenu(&visibility_menu);
 	GuiUtilsNs::createDropShadow(this, 5, 5, 30);
 
-	connect(toggle_layers_rects_chk, SIGNAL(toggled(bool)), this, SLOT(toggleLayersRects()));
-	connect(toggle_layers_rects_chk, SIGNAL(toggled(bool)), toggle_layers_names_chk, SLOT(setEnabled(bool)));
-	connect(toggle_layers_names_chk, SIGNAL(toggled(bool)), this, SLOT(toggleLayersRects()));
+	connect(toggle_layers_rects_chk, &QCheckBox::toggled, this, &LayersConfigWidget::toggleLayersRects);
+	connect(toggle_layers_rects_chk, &QCheckBox::toggled, toggle_layers_names_chk, &QCheckBox::setEnabled);
+	connect(toggle_layers_names_chk, &QCheckBox::toggled, this, &LayersConfigWidget::toggleLayersRects);
 
-	connect(hide_tb, SIGNAL(clicked(bool)), this, SIGNAL(s_visibilityChanged(bool)));
-	connect(add_tb, SIGNAL(clicked(bool)), this, SLOT(addLayer()));
-	connect(remove_tb, SIGNAL(clicked(bool)), this, SLOT(removeLayer(bool)));
+	connect(hide_tb, &QToolButton::clicked, this, &LayersConfigWidget::s_visibilityChanged);
 
-	connect(layers_tab, SIGNAL(itemDoubleClicked(QTableWidgetItem*)), this, SLOT(startLayerRenaming()));
-	connect(layers_tab, SIGNAL(itemChanged(QTableWidgetItem*)), this, SLOT(updateActiveLayers()));
-	connect(layers_tab, SIGNAL(itemSelectionChanged()), this, SLOT(finishLayerRenaming()));
-	connect(layers_tab, SIGNAL(itemSelectionChanged()), this, SLOT(enableButtons()));
+	connect(add_tb, &QToolButton::clicked, this, [&](){
+		addLayer();
+	});
 
-	connect(remove_all_tb, &QToolButton::clicked, [&](){
+	connect(remove_tb, &QToolButton::clicked, this, &LayersConfigWidget::removeLayer);
+
+	connect(layers_tab, &QTableWidget::itemDoubleClicked, this, &LayersConfigWidget::startLayerRenaming);
+	connect(layers_tab, &QTableWidget::itemChanged, this, &LayersConfigWidget::updateActiveLayers);
+	connect(layers_tab, &QTableWidget::itemSelectionChanged, this, &LayersConfigWidget::finishLayerRenaming);
+	connect(layers_tab, &QTableWidget::itemSelectionChanged, this, &LayersConfigWidget::enableButtons);
+
+	connect(remove_all_tb, &QToolButton::clicked, this, [&](){
 		removeLayer(true);
 	});
 }
@@ -328,8 +332,12 @@ void LayersConfigWidget::__addLayer(const QString &name, Qt::CheckState chk_stat
 	color_picker->layout()->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
 	color_picker->setColor(0, QColor(0,0,0));
 	name_color_pickers.append(color_picker);
-	connect(color_picker, SIGNAL(s_colorChanged(unsigned, QColor)), this, SLOT(updateLayerColors()));
-	connect(color_picker, SIGNAL(s_colorsChanged()), this, SLOT(updateLayerColors()));
+
+	connect(color_picker, &ColorPickerWidget::s_colorChanged, this, &LayersConfigWidget::updateLayerColors);
+	connect(color_picker, &ColorPickerWidget::s_colorsChanged, this, [&]() {
+		updateLayerColors();
+	});
+
 	layers_tab->setCellWidget(row, 1, color_picker);
 
 	color_picker = new ColorPickerWidget(1, layers_tab);
@@ -337,8 +345,11 @@ void LayersConfigWidget::__addLayer(const QString &name, Qt::CheckState chk_stat
 	color_picker->layout()->setContentsMargins(5,5,5,5);
 	color_picker->generateRandomColors();
 	rect_color_pickers.append(color_picker);
-	connect(color_picker, SIGNAL(s_colorChanged(unsigned, QColor)), this, SLOT(updateLayerColors()));
-	connect(color_picker, SIGNAL(s_colorsChanged()), this, SLOT(updateLayerColors()));
+	connect(color_picker, &ColorPickerWidget::s_colorChanged, this, &LayersConfigWidget::updateLayerColors);
+	connect(color_picker, &ColorPickerWidget::s_colorsChanged, this, [&]() {
+		updateLayerColors();
+	});
+
 	layers_tab->setCellWidget(row, 2, color_picker);
 
 	layers_tab->horizontalHeader()->setStretchLastSection(false);
