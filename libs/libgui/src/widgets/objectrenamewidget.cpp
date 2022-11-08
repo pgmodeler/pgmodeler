@@ -28,9 +28,9 @@ ObjectRenameWidget::ObjectRenameWidget(QWidget * parent) : QDialog(parent)
 	setupUi(this);
 	setWindowFlags(Qt::Dialog | Qt::FramelessWindowHint);
 
-	connect(new_name_edt, SIGNAL(returnPressed()), apply_tb, SLOT(click()));
-	connect(apply_tb, SIGNAL(clicked()), this, SLOT(applyRenaming()));
-	connect(cancel_tb, SIGNAL(clicked()), this, SLOT(reject()));
+	connect(new_name_edt, &QLineEdit::returnPressed, apply_tb, &QToolButton::click);
+	connect(apply_tb, &QToolButton::clicked, this, &ObjectRenameWidget::applyRenaming);
+	connect(cancel_tb, &QToolButton::clicked, this, &ObjectRenameWidget::reject);
 
 	connect(new_name_edt, &QLineEdit::textChanged, [&](){
 		apply_tb->setEnabled(!new_name_edt->text().isEmpty());
