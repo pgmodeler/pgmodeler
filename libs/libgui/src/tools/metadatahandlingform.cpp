@@ -36,22 +36,22 @@ MetadataHandlingForm::MetadataHandlingForm(QWidget *parent, Qt::WindowFlags f) :
 	backup_file_sel->setWindowTitle(tr("Select backup file"));
 	settings_grid->addWidget(backup_file_sel, 6, 2);
 
-	connect(cancel_btn, SIGNAL(clicked()), this, SLOT(reject()));
-	connect(apply_btn, SIGNAL(clicked()), this, SLOT(handleObjectsMetada()));
+	connect(cancel_btn, &QPushButton::clicked, this, &MetadataHandlingForm::reject);
+	connect(apply_btn, &QPushButton::clicked, this, &MetadataHandlingForm::handleObjectsMetada);
 
 	connect(extract_from_cmb, &QComboBox::currentTextChanged,
 					[&](){ apply_btn->setDisabled(extract_from_cmb->count() == 0); });
 
-	connect(extract_from_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(enableMetadataHandling()));
-	connect(backup_file_sel, SIGNAL(s_selectorChanged(bool)), this, SLOT(enableMetadataHandling()));
-	connect(restore_rb, SIGNAL(toggled(bool)), this, SLOT(configureSelector()));
-	connect(restore_rb, SIGNAL(toggled(bool)), this, SLOT(enableMetadataHandling()));
-	connect(extract_restore_rb, SIGNAL(toggled(bool)), this, SLOT(configureSelector()));
-	connect(extract_restore_rb, SIGNAL(toggled(bool)), this, SLOT(enableMetadataHandling()));
-	connect(extract_only_rb, SIGNAL(toggled(bool)), this, SLOT(configureSelector()));
-	connect(extract_only_rb, SIGNAL(toggled(bool)), this, SLOT(enableMetadataHandling()));
-	connect(select_all_btn, SIGNAL(clicked(bool)), this, SLOT(selectAllOptions()));
-	connect(clear_all_btn, SIGNAL(clicked(bool)), this, SLOT(selectAllOptions()));
+	connect(extract_from_cmb, &QComboBox::currentIndexChanged, this, &MetadataHandlingForm::enableMetadataHandling);
+	connect(backup_file_sel, &FileSelectorWidget::s_selectorChanged, this, &MetadataHandlingForm::enableMetadataHandling);
+	connect(restore_rb, &QRadioButton::toggled, this, &MetadataHandlingForm::configureSelector);
+	connect(restore_rb, &QRadioButton::toggled, this, &MetadataHandlingForm::enableMetadataHandling);
+	connect(extract_restore_rb, &QRadioButton::toggled, this, &MetadataHandlingForm::configureSelector);
+	connect(extract_restore_rb, &QRadioButton::toggled, this, &MetadataHandlingForm::enableMetadataHandling);
+	connect(extract_only_rb, &QRadioButton::toggled, this, &MetadataHandlingForm::configureSelector);
+	connect(extract_only_rb, &QRadioButton::toggled, this, &MetadataHandlingForm::enableMetadataHandling);
+	connect(select_all_btn, &QPushButton::clicked, this, &MetadataHandlingForm::selectAllOptions);
+	connect(clear_all_btn,  &QPushButton::clicked, this, &MetadataHandlingForm::selectAllOptions);
 
 	configureSelector();
 }
@@ -148,7 +148,7 @@ void MetadataHandlingForm::handleObjectsMetada()
 		options|=(objs_layers_config_chk->isChecked() ? DatabaseModel::MetaObjsLayersConfig : DatabaseModel::MetaNoOpts);
 		options|=(merge_dup_objs_chk->isChecked() ? DatabaseModel::MetaMergeDuplicatedObjs : DatabaseModel::MetaNoOpts);
 
-		connect(model_wgt->getDatabaseModel(), SIGNAL(s_objectLoaded(int,QString,unsigned)), this, SLOT(updateProgress(int,QString,unsigned)), Qt::UniqueConnection);
+		connect(model_wgt->getDatabaseModel(), &DatabaseModel::s_objectLoaded, this, &MetadataHandlingForm::updateProgress, Qt::UniqueConnection);
 
 		if(extract_restore_rb->isChecked() || extract_only_rb->isChecked())
 		{
@@ -169,7 +169,7 @@ void MetadataHandlingForm::handleObjectsMetada()
 				tmp_file.close();
 			}
 
-			connect(extract_model, SIGNAL(s_objectLoaded(int,QString,unsigned)), this, SLOT(updateProgress(int,QString,unsigned)), Qt::UniqueConnection);
+			connect(extract_model, &DatabaseModel::s_objectLoaded, this, &MetadataHandlingForm::updateProgress, Qt::UniqueConnection);
 
 			root_item=GuiUtilsNs::createOutputTreeItem(output_trw,
 																										GuiUtilsNs::formatMessage(tr("Extracting metadata to file `%1'").arg(metadata_file)),
