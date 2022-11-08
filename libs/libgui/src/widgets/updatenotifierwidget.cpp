@@ -30,12 +30,9 @@ UpdateNotifierWidget::UpdateNotifierWidget(QWidget *parent) : QWidget(parent)
 	frame->installEventFilter(this);
 	GuiUtilsNs::createDropShadow(this, 5, 5, 30);
 
-	connect(&update_chk_manager, SIGNAL(finished(QNetworkReply*)), this, SLOT(handleUpdateChecked(QNetworkReply*)));
-
-	//C++11 lambda slots
+	connect(&update_chk_manager, &QNetworkAccessManager::finished, this, &UpdateNotifierWidget::handleUpdateChecked);
 	connect(get_source_tb, &QToolButton::clicked, this, [&](){ activateLink(GlobalAttributes::PgModelerSourceURL); });
 	connect(get_binary_tb, &QToolButton::clicked, this, [&](){ activateLink(GlobalAttributes::PgModelerDownloadURL); });
-
 
 	connect(hide_tb, &QToolButton::clicked, this,	[&](){
 		hide();
