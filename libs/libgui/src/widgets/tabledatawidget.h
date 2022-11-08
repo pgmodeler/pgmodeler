@@ -79,6 +79,7 @@ class TableDataWidget: public BaseObjectWidget, public Ui::TableDataWidget {
 		void clearColumns();
 		void changeColumnName(int col_idx);
 		void enableButtons();
+		void handleItemPressed();
 };
 
 #endif

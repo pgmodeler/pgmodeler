@@ -61,17 +61,19 @@ TableDataWidget::TableDataWidget(QWidget *parent): BaseObjectWidget(parent, Obje
 
 	setMinimumSize(640, 480);
 
-	connect(add_row_tb, SIGNAL(clicked(bool)), this, SLOT(addRow()));
-	connect(dup_rows_tb, SIGNAL(clicked(bool)), this, SLOT(duplicateRows()));
-	connect(del_rows_tb, SIGNAL(clicked(bool)), this, SLOT(deleteRows()));
-	connect(del_cols_tb, SIGNAL(clicked(bool)), this, SLOT(deleteColumns()));
-	connect(clear_rows_tb, SIGNAL(clicked(bool)), this, SLOT(clearRows()));
-	connect(clear_cols_tb, SIGNAL(clicked(bool)), this, SLOT(clearColumns()));
-	connect(data_tbw, SIGNAL(currentCellChanged(int,int,int,int)), this, SLOT(insertRowOnTabPress(int,int,int,int)), Qt::QueuedConnection);
-	connect(&col_names_menu, SIGNAL(triggered(QAction*)), this, SLOT(addColumn(QAction *)));
-	connect(data_tbw, SIGNAL(itemSelectionChanged()), this, SLOT(enableButtons()));
-	connect(data_tbw->horizontalHeader(), SIGNAL(sectionDoubleClicked(int)), this, SLOT(changeColumnName(int)));
-	connect(csv_load_tb, SIGNAL(toggled(bool)), csv_load_parent, SLOT(setVisible(bool)));
+	connect(add_row_tb, &QToolButton::clicked, this, &TableDataWidget::addRow);
+	connect(dup_rows_tb, &QToolButton::clicked, this, &TableDataWidget::duplicateRows);
+	connect(del_rows_tb, &QToolButton::clicked, this, &TableDataWidget::deleteRows);
+	connect(del_cols_tb, &QToolButton::clicked, this, &TableDataWidget::deleteColumns);
+	connect(clear_rows_tb, &QToolButton::clicked, this, &TableDataWidget::clearRows);
+	connect(clear_cols_tb, &QToolButton::clicked, this, &TableDataWidget::clearColumns);
+
+	connect(data_tbw, &QTableWidget::currentCellChanged, this, &TableDataWidget::insertRowOnTabPress, Qt::QueuedConnection);
+	connect(&col_names_menu, &QMenu::triggered, this, &TableDataWidget::addColumn);
+	connect(data_tbw, &QTableWidget::itemSelectionChanged, this, &TableDataWidget::enableButtons);
+	connect(data_tbw->horizontalHeader(), &QHeaderView::sectionDoubleClicked, this, &TableDataWidget::changeColumnName);
+
+	connect(csv_load_tb, &QToolButton::toggled, csv_load_parent, &QWidget::setVisible);
 
 	connect(csv_load_wgt, &CsvLoadWidget::s_csvFileLoaded, [&](){
 		populateDataGrid(csv_load_wgt->getCsvDocument());
@@ -96,42 +98,44 @@ TableDataWidget::TableDataWidget(QWidget *parent): BaseObjectWidget(parent, Obje
 		paste_tb->setEnabled(true);
 	});
 
-	connect(data_tbw, &QTableWidget::itemPressed,
-	[&](){
-					if(QApplication::mouseButtons()==Qt::RightButton)
-					{
-						QMenu item_menu;
-						QAction *act = nullptr;
-						QList<QToolButton *> btns = { add_row_tb, add_col_tb, dup_rows_tb, bulkedit_tb, nullptr,
-																					del_rows_tb, del_cols_tb, nullptr,
-																					clear_rows_tb, clear_cols_tb, nullptr,
-																					copy_tb, paste_tb };
+	connect(data_tbw, &QTableWidget::itemPressed, this, &TableDataWidget::handleItemPressed);
+}
 
-						for(auto &btn : btns)
-						{
-							if(!btn)
-							{
-								item_menu.addSeparator();
-								continue;
-							}
+void TableDataWidget::handleItemPressed()
+{
+	if(QApplication::mouseButtons() != Qt::RightButton)
+		return;
 
-							if(btn->menu())
-							{
-								act = btn->menu()->menuAction();
-								act->setIcon(btn->icon());
-								act->setText(btn->text());
-								act->setShortcut(btn->shortcut());
-								item_menu.addAction(act);
-							}
-							else
-								act = item_menu.addAction(btn->icon(), btn->text(), btn, SLOT(click()), btn->shortcut());
+	QMenu item_menu;
+	QAction *act = nullptr;
+	QList<QToolButton *> btns = { add_row_tb, add_col_tb, dup_rows_tb, bulkedit_tb, nullptr,
+																del_rows_tb, del_cols_tb, nullptr,
+																clear_rows_tb, clear_cols_tb, nullptr,
+																copy_tb, paste_tb };
 
-							act->setEnabled(btn->isEnabled());
-						}
+	for(auto &btn : btns)
+	{
+		if(!btn)
+		{
+			item_menu.addSeparator();
+			continue;
+		}
 
-						item_menu.exec(QCursor::pos());
-					}
-		});
+		if(btn->menu())
+		{
+			act = btn->menu()->menuAction();
+			act->setIcon(btn->icon());
+			act->setText(btn->text());
+			act->setShortcut(btn->shortcut());
+			item_menu.addAction(act);
+		}
+		else
+			act = item_menu.addAction(btn->icon(), btn->text(), btn, SLOT(click()), btn->shortcut());
+
+		act->setEnabled(btn->isEnabled());
+	}
+
+	item_menu.exec(QCursor::pos());
 }
 
 void TableDataWidget::insertRowOnTabPress(int curr_row, int curr_col, int prev_row, int prev_col)
