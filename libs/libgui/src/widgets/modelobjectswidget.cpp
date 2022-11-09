@@ -41,25 +41,25 @@ ModelObjectsWidget::ModelObjectsWidget(bool simplified_view, QWidget *parent) : 
 	filter_wgt->setVisible(simplified_view);
 	splitter->handle(1)->setEnabled(false);
 
-	connect(objectstree_tw, SIGNAL(itemPressed(QTreeWidgetItem*,int)), this, SLOT(selectObject()));
-	connect(objectstree_tw, SIGNAL(itemPressed(QTreeWidgetItem*,int)), this, SLOT(showObjectMenu()));
-	connect(objectslist_tbw, SIGNAL(itemPressed(QTableWidgetItem*)), this, SLOT(selectObject()));
-	connect(objectslist_tbw, SIGNAL(itemPressed(QTableWidgetItem*)), this, SLOT(showObjectMenu()));
-	connect(objectstree_tw,SIGNAL(itemSelectionChanged()),this, SLOT(selectObject()));
-	connect(objectslist_tbw,SIGNAL(itemSelectionChanged()),this, SLOT(selectObject()));
-	connect(expand_all_tb, SIGNAL(clicked()), objectstree_tw, SLOT(expandAll()));
-	connect(collapse_all_tb, SIGNAL(clicked()), this, SLOT(collapseAll()));
+	connect(objectstree_tw, &QTreeWidget::itemPressed, this, &ModelObjectsWidget::selectObject);
+	connect(objectstree_tw, &QTreeWidget::itemPressed, this, &ModelObjectsWidget::showObjectMenu);
+	connect(objectslist_tbw, &QTableWidget::itemPressed, this, &ModelObjectsWidget::selectObject);
+	connect(objectslist_tbw, &QTableWidget::itemPressed, this, &ModelObjectsWidget::showObjectMenu);
+	connect(objectstree_tw, &QTreeWidget::itemSelectionChanged, this, &ModelObjectsWidget::selectObject);
+	connect(objectslist_tbw, &QTableWidget::itemSelectionChanged, this, &ModelObjectsWidget::selectObject);
+	connect(expand_all_tb, &QToolButton::clicked, objectstree_tw, &QTreeWidget::expandAll);
+	connect(collapse_all_tb, &QToolButton::clicked, this, &ModelObjectsWidget::collapseAll);
 
 	if(!simplified_view)
 	{
 		widgets_conf.setValue(QString("splitterSize"), splitter->saveState());
-		connect(options_tb,SIGNAL(clicked()),this,SLOT(changeObjectsView()));
-		connect(visibleobjects_lst,SIGNAL(itemClicked(QListWidgetItem*)), this, SLOT(setObjectVisible(QListWidgetItem*)));
-		connect(select_all_tb,SIGNAL(clicked(bool)), this, SLOT(setAllObjectsVisible(bool)));
-		connect(clear_all_tb,SIGNAL(clicked(bool)), this, SLOT(setAllObjectsVisible(bool)));
-		connect(objectstree_tw,SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)),this, SLOT(editObject()));
-		connect(objectslist_tbw,SIGNAL(itemDoubleClicked(QTableWidgetItem*)),this, SLOT(editObject()));
-		connect(hide_tb, SIGNAL(clicked(bool)), this, SLOT(hide()));
+		connect(options_tb, &QToolButton::clicked,this, &ModelObjectsWidget::changeObjectsView);
+		connect(visibleobjects_lst, &QListWidget::itemClicked, this, qOverload<QListWidgetItem *>(&ModelObjectsWidget::setObjectVisible));
+		connect(select_all_tb, &QToolButton::clicked, this, &ModelObjectsWidget::setAllObjectsVisible);
+		connect(clear_all_tb, &QToolButton::clicked, this, &ModelObjectsWidget::setAllObjectsVisible);
+		connect(objectstree_tw, &QTreeWidget::itemDoubleClicked, this, &ModelObjectsWidget::editObject);
+		connect(objectslist_tbw, &QTableWidget::itemDoubleClicked, this, &ModelObjectsWidget::editObject);
+		connect(hide_tb, &QToolButton::clicked, this, &ModelObjectsWidget::hide);
 
 		ObjectFinderWidget::updateObjectTypeList(visibleobjects_lst);
 		setAllObjectsVisible(true);
@@ -73,16 +73,16 @@ ModelObjectsWidget::ModelObjectsWidget(bool simplified_view, QWidget *parent) : 
 		setMinimumSize(250, 300);
 		setWindowModality(Qt::ApplicationModal);
 		setWindowFlags(Qt::Dialog | Qt::WindowCloseButtonHint | Qt::WindowTitleHint);
-		connect(objectstree_tw,SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)),this, SLOT(close()));
-		connect(objectslist_tbw,SIGNAL(itemDoubleClicked(QTableWidgetItem*)),this, SLOT(close()));
-		connect(select_tb,SIGNAL(clicked()),this,SLOT(close()));
-		connect(cancel_tb,SIGNAL(clicked()),this,SLOT(close()));
+		connect(objectstree_tw, &QTreeWidget::itemDoubleClicked, this, &ModelObjectsWidget::close);
+		connect(objectslist_tbw, &QTableWidget::itemDoubleClicked, this, &ModelObjectsWidget::close);
+		connect(select_tb, &QToolButton::clicked, this, &ModelObjectsWidget::close);
+		connect(cancel_tb, &QToolButton::clicked, this, &ModelObjectsWidget::close);
 	}
 
-	connect(tree_view_tb,SIGNAL(clicked()),this,SLOT(changeObjectsView()));
-	connect(list_view_tb,SIGNAL(clicked()),this,SLOT(changeObjectsView()));
-	connect(filter_edt, SIGNAL(textChanged(QString)), this, SLOT(filterObjects()));
-	connect(by_id_chk, SIGNAL(toggled(bool)), this, SLOT(filterObjects()));
+	connect(tree_view_tb, &QToolButton::clicked, this, &ModelObjectsWidget::changeObjectsView);
+	connect(list_view_tb, &QToolButton::clicked, this, &ModelObjectsWidget::changeObjectsView);
+	connect(filter_edt, &QLineEdit::textChanged, this, &ModelObjectsWidget::filterObjects);
+	connect(by_id_chk, &QCheckBox::toggled, this, &ModelObjectsWidget::filterObjects);
 }
 
 bool ModelObjectsWidget::eventFilter(QObject *object, QEvent *event)
@@ -193,14 +193,14 @@ void ModelObjectsWidget::selectObject()
 			{
 				act.setData(QVariant(enum_t(obj_type)));
 				p_act = &act;
-				connect(p_act, SIGNAL(triggered()), model_wgt, SLOT(addNewObject()));
+				connect(p_act, &QAction::triggered, model_wgt, &ModelWidget::addNewObject);
 			}
 			//Case is a relationship, insert the relationship menu of the model wiget into the action
 			else
 				p_act = model_wgt->rels_menu->menuAction();
 
 			if(simplified_view && enable_obj_creation)
-				connect(model_wgt->getDatabaseModel(), SIGNAL(s_objectAdded(BaseObject*)), this, SLOT(selectCreatedObject(BaseObject *)), Qt::QueuedConnection);
+				connect(model_wgt->getDatabaseModel(), &DatabaseModel::s_objectAdded, this, &ModelObjectsWidget::selectCreatedObject, Qt::QueuedConnection);
 
 			p_act->setIcon(QPixmap(GuiUtilsNs::getIconPath(obj_type)));
 			p_act->setText(tr("New") + QString(" ") + BaseObject::getTypeName(obj_type));
@@ -766,7 +766,7 @@ void ModelObjectsWidget::updateDatabaseTree()
 			if(save_tree_state)
 				saveTreeState(tree_state);
 
-			objectstree_tw->setUpdatesEnabled(false);
+			//objectstree_tw->setUpdatesEnabled(false);
 			objectstree_tw->clear();
 
 			if(visible_objs_map[ObjectType::Database])
@@ -818,7 +818,7 @@ void ModelObjectsWidget::updateDatabaseTree()
 					}
 				}
 
-				objectstree_tw->setUpdatesEnabled(true);
+				//objectstree_tw->setUpdatesEnabled(true);
 				objectstree_tw->expandItem(root);
 
 				if(save_tree_state)
