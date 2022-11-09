@@ -96,9 +96,9 @@ SQLExecutionWidget::SQLExecutionWidget(QWidget * parent) : QWidget(parent)
 
 	filter_wgt->setVisible(false);
 
-	connect(columns_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(filterResults()));
-	connect(filter_edt, SIGNAL(textChanged(QString)), this, SLOT(filterResults()));
-	connect(hide_tb, SIGNAL(clicked(bool)), filter_tb, SLOT(click()));
+	connect(columns_cmb, &QComboBox::currentIndexChanged, this, &SQLExecutionWidget::filterResults);
+	connect(filter_edt, &QLineEdit::textChanged, this, &SQLExecutionWidget::filterResults);
+	connect(hide_tb, &QToolButton::clicked, filter_tb, &QToolButton::click);
 
 	connect(filter_tb, &QToolButton::toggled, [&](bool checked){
 		filter_wgt->setVisible(checked);
@@ -109,7 +109,7 @@ SQLExecutionWidget::SQLExecutionWidget(QWidget * parent) : QWidget(parent)
 			sql_cmd_txt->setFocus();
 	});
 
-	connect(exact_chk, SIGNAL(toggled(bool)), this, SLOT(filterResults()));
+	connect(exact_chk, &QCheckBox::toggled, this, &SQLExecutionWidget::filterResults);
 	connect(exact_chk, &QCheckBox::toggled, [&](bool checked){
 		regexp_chk->setChecked(false);
 		regexp_chk->setEnabled(!checked);
@@ -117,23 +117,22 @@ SQLExecutionWidget::SQLExecutionWidget(QWidget * parent) : QWidget(parent)
 		case_sensitive_chk->setEnabled(!checked);
 	});
 
-	connect(regexp_chk, SIGNAL(toggled(bool)), this, SLOT(filterResults()));
-	connect(case_sensitive_chk, SIGNAL(toggled(bool)), this, SLOT(filterResults()));
+	connect(regexp_chk, &QCheckBox::toggled, this, &SQLExecutionWidget::filterResults);
+	connect(case_sensitive_chk, &QCheckBox::toggled, this, &SQLExecutionWidget::filterResults);
 
-	connect(action_load, SIGNAL(triggered(bool)), this, SLOT(loadCommands()));
-	connect(action_save, SIGNAL(triggered(bool)), this, SLOT(saveCommands()));
-	connect(action_save_as, SIGNAL(triggered(bool)), this, SLOT(saveCommands()));
+	connect(action_load, &QAction::triggered, this, &SQLExecutionWidget::loadCommands);
+	connect(action_save, &QAction::triggered, this, &SQLExecutionWidget::saveCommands);
+	connect(action_save_as, &QAction::triggered, this, &SQLExecutionWidget::saveCommands);
 
-	connect(clear_btn, SIGNAL(clicked()), this, SLOT(clearAll()));
-	connect(sql_cmd_txt, SIGNAL(textChanged()), this, SLOT(enableCommandButtons()));
-	connect(run_sql_tb, SIGNAL(clicked()), this, SLOT(runSQLCommand()));
-	connect(output_tb, SIGNAL(toggled(bool)), this, SLOT(toggleOutputPane(bool)));
+	connect(clear_btn, &QToolButton::clicked, this, &SQLExecutionWidget::clearAll);
+	connect(sql_cmd_txt, &NumberedTextEditor::textChanged, this, &SQLExecutionWidget::enableCommandButtons);
+	connect(run_sql_tb, &QToolButton::clicked, this, &SQLExecutionWidget::runSQLCommand);
+	connect(output_tb, &QToolButton::toggled, this, &SQLExecutionWidget::toggleOutputPane);
 
-	connect(find_tb, SIGNAL(toggled(bool)), find_wgt_parent, SLOT(setVisible(bool)));
-	connect(find_replace_wgt, SIGNAL(s_hideRequested()), find_tb, SLOT(toggle()));
-	connect(find_history_wgt, SIGNAL(s_hideRequested()), find_history_parent, SLOT(hide()));
+	connect(find_tb, &QToolButton::toggled, find_wgt_parent, &QWidget::setVisible);
+	connect(find_replace_wgt, &FindReplaceWidget::s_hideRequested, find_tb, &QToolButton::toggle);
+	connect(find_history_wgt, &FindReplaceWidget::s_hideRequested, find_history_parent, &QWidget::hide);
 
-	//Signal handling with C++11 lambdas Slots
 	connect(results_tbw, &QTableView::pressed,
 			[&](){ SQLExecutionWidget::copySelection(results_tbw); });
 
@@ -149,8 +148,8 @@ SQLExecutionWidget::SQLExecutionWidget(QWidget * parent) : QWidget(parent)
 			}
 	});
 
-	connect(&snippets_menu, SIGNAL(triggered(QAction*)), this, SLOT(selectSnippet(QAction *)));
-	connect(cmd_history_txt, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(showHistoryContextMenu()));
+	connect(&snippets_menu, &QMenu::triggered, this, &SQLExecutionWidget::selectSnippet);
+	connect(cmd_history_txt, &NumberedTextEditor::customContextMenuRequested, this, &SQLExecutionWidget::showHistoryContextMenu);
 
 	configureSnippets();
 	toggleOutputPane(false);
@@ -160,11 +159,11 @@ SQLExecutionWidget::SQLExecutionWidget(QWidget * parent) : QWidget(parent)
 	stop_tb->setVisible(false);
 	sql_exec_hlp.moveToThread(&sql_exec_thread);
 
-	connect(&sql_exec_thread, SIGNAL(started()), &sql_exec_hlp, SLOT(executeCommand()));
-	connect(&sql_exec_hlp, SIGNAL(s_executionFinished(int)), this, SLOT(finishExecution(int)));
-	connect(&sql_exec_hlp, SIGNAL(s_executionAborted(Exception)), &sql_exec_thread, SLOT(quit()));
-	connect(&sql_exec_hlp, SIGNAL(s_executionAborted(Exception)), this, SLOT(handleExecutionAborted(Exception)));
-	connect(stop_tb, SIGNAL(clicked(bool)), &sql_exec_hlp, SLOT(cancelCommand()), Qt::DirectConnection);
+	connect(&sql_exec_thread, &QThread::started, &sql_exec_hlp, &SQLExecutionHelper::executeCommand);
+	connect(&sql_exec_hlp, &SQLExecutionHelper::s_executionFinished, this, &SQLExecutionWidget::finishExecution);
+	connect(&sql_exec_hlp, &SQLExecutionHelper::s_executionAborted, &sql_exec_thread, &QThread::quit);
+	connect(&sql_exec_hlp, &SQLExecutionHelper::s_executionAborted, this, &SQLExecutionWidget::handleExecutionAborted);
+	connect(stop_tb, &QToolButton::clicked, &sql_exec_hlp, &SQLExecutionHelper::cancelCommand, Qt::DirectConnection);
 }
 
 SQLExecutionWidget::~SQLExecutionWidget()
