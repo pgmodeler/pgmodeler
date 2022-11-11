@@ -290,7 +290,7 @@ class DatabaseImportHelper: public QObject {
 		void s_progressUpdated(int progress, QString msg, ObjectType obj_type=ObjectType::BaseObject);
 		
 		//! \brief This signal is emited when the import has finished
-		void s_importFinished(Exception e=Exception());
+		void s_importFinished(Exception e = Exception());
 		
 		//! \brief This signal is emited when the import has been cancelled
 		void s_importCanceled();

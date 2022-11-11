@@ -96,10 +96,10 @@ ModelDatabaseDiffForm::ModelDatabaseDiffForm(QWidget *parent, Qt::WindowFlags fl
 		remove_preset_tb->setToolTip(remove_preset_tb->toolTip() + QString(" (%1)").arg(remove_preset_tb->shortcut().toString()));
 		default_presets_tb->setToolTip(default_presets_tb->toolTip() + QString(" (%1)").arg(default_presets_tb->shortcut().toString()));
 
-		connect(gen_filters_from_log_chk, SIGNAL(toggled(bool)), dates_wgt, SLOT(setVisible(bool)));
-		connect(start_date_chk, SIGNAL(toggled(bool)), this, SLOT(enableFilterByDate()));
-		connect(end_date_chk, SIGNAL(toggled(bool)), this, SLOT(enableFilterByDate()));
-		connect(generate_filters_tb, SIGNAL(clicked()), this, SLOT(generateFiltersFromChangelog()));
+		connect(gen_filters_from_log_chk, &QCheckBox::toggled, dates_wgt, &QWidget::setVisible);
+		connect(start_date_chk, &QCheckBox::toggled, this, &ModelDatabaseDiffForm::enableFilterByDate);
+		connect(end_date_chk, &QCheckBox::toggled, this, &ModelDatabaseDiffForm::enableFilterByDate);
+		connect(generate_filters_tb, &QToolButton::clicked, this, &ModelDatabaseDiffForm::generateFiltersFromChangelog);
 
 		connect(first_change_dt_tb, &QToolButton::clicked, [&](){
 			start_date_dt->setDateTime(loaded_model->getFirstChangelogDate());
@@ -109,33 +109,36 @@ ModelDatabaseDiffForm::ModelDatabaseDiffForm(QWidget *parent, Qt::WindowFlags fl
 			end_date_dt->setDateTime(loaded_model->getLastChangelogDate());
 		});
 
-		connect(cancel_btn, &QToolButton::clicked, [&](){ cancelOperation(true); });
-		connect(pgsql_ver_chk, SIGNAL(toggled(bool)), pgsql_ver_cmb, SLOT(setEnabled(bool)));
-		connect(connections_cmb, SIGNAL(activated(int)), this, SLOT(listDatabases()));
-		connect(store_in_file_rb, SIGNAL(clicked()), this, SLOT(enableDiffMode()));
-		connect(apply_on_server_rb, SIGNAL(clicked()), this, SLOT(enableDiffMode()));
-		connect(file_sel, SIGNAL(s_selectorChanged(bool)), this, SLOT(enableDiffMode()));
-		connect(database_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(enableDiffMode()));
-		connect(generate_btn, SIGNAL(clicked()), this, SLOT(generateDiff()));
-		connect(close_btn, SIGNAL(clicked()), this, SLOT(close()));
-		connect(store_in_file_rb, SIGNAL(clicked(bool)), store_in_file_wgt, SLOT(setEnabled(bool)));
-		connect(force_recreation_chk, SIGNAL(toggled(bool)), recreate_unmod_chk, SLOT(setEnabled(bool)));
-		connect(dont_drop_missing_objs_chk, SIGNAL(toggled(bool)), drop_missing_cols_constr_chk, SLOT(setEnabled(bool)));
-		connect(create_tb, SIGNAL(toggled(bool)), this, SLOT(filterDiffInfos()));
-		connect(drop_tb, SIGNAL(toggled(bool)), this, SLOT(filterDiffInfos()));
-		connect(alter_tb, SIGNAL(toggled(bool)), this, SLOT(filterDiffInfos()));
-		connect(ignore_tb, SIGNAL(toggled(bool)), this, SLOT(filterDiffInfos()));
-		connect(ignore_error_codes_chk, SIGNAL(toggled(bool)), error_codes_edt, SLOT(setEnabled(bool)));
-		connect(src_model_rb, SIGNAL(toggled(bool)), src_model_name_lbl, SLOT(setEnabled(bool)));
-		connect(src_connections_cmb, SIGNAL(activated(int)), this, SLOT(listDatabases()));
-		connect(src_database_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(enableDiffMode()));
-		connect(src_model_rb, SIGNAL(toggled(bool)), this, SLOT(enableDiffMode()));
-		connect(open_in_sql_tool_btn, SIGNAL(clicked(bool)), this, SLOT(loadDiffInSQLTool()));
-		connect(presets_cmb, SIGNAL(activated(int)), this, SLOT(selectPreset()));
+		connect(cancel_btn, &QToolButton::clicked, [&](){
+			cancelOperation(true);
+		});
 
-		connect(default_presets_tb, SIGNAL(clicked(bool)), this, SLOT(restoreDefaults()));
-		connect(remove_preset_tb, SIGNAL(clicked(bool)), this, SLOT(removePreset()));
-		connect(save_preset_tb, SIGNAL(clicked(bool)), this, SLOT(savePreset()));
+		connect(pgsql_ver_chk, &QCheckBox::toggled, pgsql_ver_cmb, &QComboBox::setEnabled);
+		connect(connections_cmb, &QComboBox::activated, this, &ModelDatabaseDiffForm::listDatabases);
+		connect(store_in_file_rb, &QRadioButton::clicked, this, &ModelDatabaseDiffForm::enableDiffMode);
+		connect(apply_on_server_rb, &QRadioButton::clicked, this, &ModelDatabaseDiffForm::enableDiffMode);
+		connect(file_sel, &FileSelectorWidget::s_selectorChanged, this, &ModelDatabaseDiffForm::enableDiffMode);
+		connect(database_cmb, &QComboBox::currentIndexChanged, this, &ModelDatabaseDiffForm::enableDiffMode);
+		connect(generate_btn, &QPushButton::clicked, this, &ModelDatabaseDiffForm::generateDiff);
+		connect(close_btn, &QPushButton::clicked, this, &ModelDatabaseDiffForm::close);
+		connect(store_in_file_rb, &QRadioButton::clicked, store_in_file_wgt, &QWidget::setEnabled);
+		connect(force_recreation_chk, &QCheckBox::toggled, recreate_unmod_chk, &QCheckBox::setEnabled);
+		connect(dont_drop_missing_objs_chk, &QCheckBox::toggled, drop_missing_cols_constr_chk, &QCheckBox::setEnabled);
+		connect(create_tb, &QToolButton::toggled, this, &ModelDatabaseDiffForm::filterDiffInfos);
+		connect(drop_tb, &QToolButton::toggled, this, &ModelDatabaseDiffForm::filterDiffInfos);
+		connect(alter_tb, &QToolButton::toggled, this, &ModelDatabaseDiffForm::filterDiffInfos);
+		connect(ignore_tb, &QToolButton::toggled, this, &ModelDatabaseDiffForm::filterDiffInfos);
+		connect(ignore_error_codes_chk, &QCheckBox::toggled, error_codes_edt, &QLineEdit::setEnabled);
+		connect(src_model_rb, &QRadioButton::toggled, src_model_name_lbl, &QLabel::setEnabled);
+		connect(src_connections_cmb, &QComboBox::activated, this, &ModelDatabaseDiffForm::listDatabases);
+		connect(src_database_cmb, &QComboBox::currentIndexChanged, this, &ModelDatabaseDiffForm::enableDiffMode);
+		connect(src_model_rb, &QRadioButton::toggled, this, &ModelDatabaseDiffForm::enableDiffMode);
+		connect(open_in_sql_tool_btn, &QPushButton::clicked, this, &ModelDatabaseDiffForm::loadDiffInSQLTool);
+		connect(presets_cmb, &QComboBox::activated, this, &ModelDatabaseDiffForm::selectPreset);
+
+		connect(default_presets_tb, &QToolButton::clicked, this, &ModelDatabaseDiffForm::restoreDefaults);
+		connect(remove_preset_tb, &QToolButton::clicked, this, &ModelDatabaseDiffForm::removePreset);
+		connect(save_preset_tb, &QToolButton::clicked, this, &ModelDatabaseDiffForm::savePreset);
 
 		connect(src_database_rb, &QRadioButton::toggled, [&](bool toggle){
 			src_database_wgt->setEnabled(toggle);
@@ -160,10 +163,10 @@ ModelDatabaseDiffForm::ModelDatabaseDiffForm(QWidget *parent, Qt::WindowFlags fl
 			save_preset_tb->setEnabled(!text.isEmpty());
 		});
 
-		connect(src_model_rb, SIGNAL(toggled(bool)), this, SLOT(enablePartialDiff()));
-		connect(src_database_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(enablePartialDiff()));
-		connect(database_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(enablePartialDiff()));
-		connect(pd_filter_wgt, SIGNAL(s_filterApplyingRequested()), this, SLOT(applyPartialDiffFilters()));
+		connect(src_model_rb, &QRadioButton::toggled, this, &ModelDatabaseDiffForm::enablePartialDiff);
+		connect(src_database_cmb, &QComboBox::currentIndexChanged, this, &ModelDatabaseDiffForm::enablePartialDiff);
+		connect(database_cmb, &QComboBox::currentIndexChanged, this, &ModelDatabaseDiffForm::enablePartialDiff);
+		connect(pd_filter_wgt, &ObjectsFilterWidget::s_filterApplyingRequested, this, &ModelDatabaseDiffForm::applyPartialDiffFilters);
 
 		connect(pd_filter_wgt, &ObjectsFilterWidget::s_filtersRemoved, [&](){
 			filtered_objs_tbw->setRowCount(0);
@@ -284,10 +287,15 @@ void ModelDatabaseDiffForm::createThread(ThreadId thread_id)
 		src_import_helper=new DatabaseImportHelper;
 		src_import_helper->moveToThread(src_import_thread);
 
-		connect(src_import_thread, SIGNAL(started()), src_import_helper, SLOT(importDatabase()));
-		connect(src_import_helper, SIGNAL(s_progressUpdated(int,QString,ObjectType)), this, SLOT(updateProgress(int,QString,ObjectType)), Qt::BlockingQueuedConnection);
-		connect(src_import_helper, SIGNAL(s_importFinished(Exception)), this, SLOT(handleImportFinished(Exception)));
-		connect(src_import_helper, SIGNAL(s_importAborted(Exception)), this, SLOT(captureThreadError(Exception)));
+		connect(src_import_thread, &QThread::started, src_import_helper, &DatabaseImportHelper::importDatabase);
+
+		connect(src_import_helper, &DatabaseImportHelper::s_progressUpdated, this,
+						[&](int progress, QString msg, ObjectType obj_type) {
+			updateProgress(progress, msg, obj_type);
+		}, Qt::BlockingQueuedConnection);
+
+		connect(src_import_helper, &DatabaseImportHelper::s_importFinished, this, &ModelDatabaseDiffForm::handleImportFinished);
+		connect(src_import_helper, &DatabaseImportHelper::s_importAborted, this, &ModelDatabaseDiffForm::captureThreadError);
 	}
 	else if(thread_id==ImportThread)
 	{
@@ -295,10 +303,15 @@ void ModelDatabaseDiffForm::createThread(ThreadId thread_id)
 		import_helper=new DatabaseImportHelper;
 		import_helper->moveToThread(import_thread);
 
-		connect(import_thread, SIGNAL(started()), import_helper, SLOT(importDatabase()));
-		connect(import_helper, SIGNAL(s_progressUpdated(int,QString,ObjectType)), this, SLOT(updateProgress(int,QString,ObjectType)), Qt::BlockingQueuedConnection);
-		connect(import_helper, SIGNAL(s_importFinished(Exception)), this, SLOT(handleImportFinished(Exception)));
-		connect(import_helper, SIGNAL(s_importAborted(Exception)), this, SLOT(captureThreadError(Exception)));
+		connect(import_thread, &QThread::started, import_helper, &DatabaseImportHelper::importDatabase);
+
+		connect(import_helper, &DatabaseImportHelper::s_progressUpdated, this,
+						[&](int progress, QString msg, ObjectType obj_type) {
+			updateProgress(progress, msg, obj_type);
+		}, Qt::BlockingQueuedConnection);
+
+		connect(import_helper, &DatabaseImportHelper::s_importFinished, this, &ModelDatabaseDiffForm::handleImportFinished);
+		connect(import_helper, &DatabaseImportHelper::s_importAborted, this, &ModelDatabaseDiffForm::captureThreadError);
 	}
 	else if(thread_id==DiffThread)
 	{
@@ -306,11 +319,16 @@ void ModelDatabaseDiffForm::createThread(ThreadId thread_id)
 		diff_helper=new ModelsDiffHelper;
 		diff_helper->moveToThread(diff_thread);
 
-		connect(diff_thread, SIGNAL(started()), diff_helper, SLOT(diffModels()));
-		connect(diff_helper, SIGNAL(s_progressUpdated(int,QString,ObjectType)), this, SLOT(updateProgress(int,QString,ObjectType)));
-		connect(diff_helper, SIGNAL(s_diffFinished()), this, SLOT(handleDiffFinished()));
-		connect(diff_helper, SIGNAL(s_diffAborted(Exception)), this, SLOT(captureThreadError(Exception)));
-		connect(diff_helper, SIGNAL(s_objectsDiffInfoGenerated(ObjectsDiffInfo)), this, SLOT(updateDiffInfo(ObjectsDiffInfo)), Qt::BlockingQueuedConnection);
+		connect(diff_thread, &QThread::started, diff_helper, qOverload<>(&ModelsDiffHelper::diffModels));
+
+		connect(diff_helper, &ModelsDiffHelper::s_progressUpdated, this,
+						[&](int progress, QString msg, ObjectType obj_type) {
+			updateProgress(progress, msg, obj_type);
+		});
+
+		connect(diff_helper, &ModelsDiffHelper::s_diffFinished, this, &ModelDatabaseDiffForm::handleDiffFinished);
+		connect(diff_helper, &ModelsDiffHelper::s_diffAborted, this, &ModelDatabaseDiffForm::captureThreadError);
+		connect(diff_helper, &ModelsDiffHelper::s_objectsDiffInfoGenerated, this, &ModelDatabaseDiffForm::updateDiffInfo, Qt::BlockingQueuedConnection);
 	}
 	else
 	{
@@ -319,18 +337,17 @@ void ModelDatabaseDiffForm::createThread(ThreadId thread_id)
 		export_helper->setIgnoredErrors({ QString("0A000") });
 		export_helper->moveToThread(export_thread);
 
-		connect(apply_on_server_btn, &QPushButton::clicked,
-			[&](){
-						apply_on_server_btn->setEnabled(false);
-						if(!export_thread->isRunning())
-							exportDiff(false);
-			});
+		connect(apply_on_server_btn, &QPushButton::clicked, [&](){
+			apply_on_server_btn->setEnabled(false);
+			if(!export_thread->isRunning())
+				exportDiff(false);
+		});
 
-		connect(export_thread, SIGNAL(started()), export_helper, SLOT(exportToDBMS()));
-		connect(export_helper, SIGNAL(s_progressUpdated(int,QString,ObjectType,QString)), this, SLOT(updateProgress(int,QString,ObjectType,QString)), Qt::BlockingQueuedConnection);
-		connect(export_helper, SIGNAL(s_errorIgnored(QString,QString, QString)), this, SLOT(handleErrorIgnored(QString,QString,QString)));
-		connect(export_helper, SIGNAL(s_exportFinished()), this, SLOT(handleExportFinished()));
-		connect(export_helper, SIGNAL(s_exportAborted(Exception)), this, SLOT(captureThreadError(Exception)));
+		connect(export_thread, &QThread::started, export_helper, qOverload<>(&ModelExportHelper::exportToDBMS));
+		connect(export_helper, &ModelExportHelper::s_progressUpdated, this, &ModelDatabaseDiffForm::updateProgress, Qt::BlockingQueuedConnection);
+		connect(export_helper, &ModelExportHelper::s_errorIgnored, this, &ModelDatabaseDiffForm::handleErrorIgnored);
+		connect(export_helper, &ModelExportHelper::s_exportFinished, this, &ModelDatabaseDiffForm::handleExportFinished);
+		connect(export_helper, &ModelExportHelper::s_exportAborted, this, &ModelDatabaseDiffForm::captureThreadError);
 	}
 }
 
