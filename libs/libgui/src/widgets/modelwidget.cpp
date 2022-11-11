@@ -315,11 +315,11 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 
 	action = pagination_menu.addAction(tr("Enable"));
 	action->setData(true);
-	connect(action, SIGNAL(triggered(bool)), this, SLOT(togglePagination()));
+	connect(action, &QAction::triggered, this, &ModelWidget::togglePagination);
 
 	action = pagination_menu.addAction(tr("Disable"));
 	action->setData(false);
-	connect(action, SIGNAL(triggered(bool)), this, SLOT(togglePagination()));
+	connect(action, &QAction::triggered, this, &ModelWidget::togglePagination);
 
 	action_jump_to_table = jump_to_tab_menu.menuAction();
 	action_jump_to_table->setIcon(QIcon(GuiUtilsNs::getIconPath("jumptotable")));
@@ -391,29 +391,29 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 
 	action_edit_creation_order=new QAction(QIcon(GuiUtilsNs::getIconPath("swapobjs")), tr("Swap ids"), this);
 	action_edit_creation_order->setToolTip(tr("Edit the objects creation order by swapping their ids"));
-	connect(action_edit_creation_order, SIGNAL(triggered(bool)), this, SLOT(swapObjectsIds()));
+	connect(action_edit_creation_order, &QAction::triggered, this, &ModelWidget::swapObjectsIds);
 
 	action_break_rel_line = break_rel_menu.menuAction();
 	action_break_rel_line->setIcon(QIcon(GuiUtilsNs::getIconPath("breakrelline")));
 	action_break_rel_line->setText(tr("Break line"));
 
 	action=new QAction(QIcon(GuiUtilsNs::getIconPath("breakline_90dv")), tr("90° (vertical)"), this);
-	connect(action, SIGNAL(triggered(bool)), this, SLOT(breakRelationshipLine()));
+	connect(action, &QAction::triggered, this, qOverload<>(&ModelWidget::breakRelationshipLine));
 	action->setData(BreakVertNinetyDegrees);
 	break_rel_menu.addAction(action);
 
 	action=new QAction(QIcon(GuiUtilsNs::getIconPath("breakline_90dh")), tr("90° (horizontal)"), this);
-	connect(action, SIGNAL(triggered(bool)), this, SLOT(breakRelationshipLine()));
+	connect(action, &QAction::triggered, this, qOverload<>(&ModelWidget::breakRelationshipLine));
 	action->setData(BreakHorizNinetyDegrees);
 	break_rel_menu.addAction(action);
 
 	action=new QAction(QIcon(GuiUtilsNs::getIconPath("breakline_290dv")), tr("90° + 90° (vertical)"), this);
-	connect(action, SIGNAL(triggered(bool)), this, SLOT(breakRelationshipLine()));
+	connect(action, &QAction::triggered, this, qOverload<>(&ModelWidget::breakRelationshipLine));
 	action->setData(BreakVert2NinetyDegrees);
 	break_rel_menu.addAction(action);
 
 	action=new QAction(QIcon(GuiUtilsNs::getIconPath("breakline_290dh")), tr("90° + 90° (horizontal)"), this);
-	connect(action, SIGNAL(triggered(bool)), this, SLOT(breakRelationshipLine()));
+	connect(action, &QAction::triggered, this, qOverload<>(&ModelWidget::breakRelationshipLine));
 	action->setData(BreakHoriz2NinetyDegrees);
 	break_rel_menu.addAction(action);
 
@@ -422,7 +422,7 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	{
 		actions_new_objects[type]=new QAction(QIcon(GuiUtilsNs::getIconPath(type)), BaseObject::getTypeName(type), this);
 		actions_new_objects[type]->setData(QVariant(enum_t(type)));
-		connect(actions_new_objects[type], SIGNAL(triggered(bool)), this, SLOT(addNewObject()));
+		connect(actions_new_objects[type], &QAction::triggered, this, &ModelWidget::addNewObject);
 	}
 
 	// Configuring the submenu of database level objects
@@ -460,7 +460,7 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 		//Storing a unique identifier for the relationship type
 		action->setData(QVariant(enum_t(ObjectType::Relationship) + rel_types_id[i]));
 
-		connect(action, SIGNAL(triggered(bool)), this, SLOT(addNewObject()));
+		connect(action, &QAction::triggered, this, &ModelWidget::addNewObject);
 		rels_menu->addAction(action);
 	}
 
@@ -491,7 +491,7 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 		}
 
 		action->setData(QVariant(enum_t(obj_type)));
-		connect(action, SIGNAL(triggered(bool)), this, SLOT(selectAllObjects()));
+		connect(action, &QAction::triggered, this, &ModelWidget::selectAllObjects);
 	}
 
 	action_stacking = stacking_menu.menuAction();
@@ -502,75 +502,97 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	stacking_menu.addAction(action_send_to_back);
 	stacking_menu.addAction(action_bring_to_front);
 
-	connect(action_send_to_back, SIGNAL(triggered(bool)), this, SLOT(sendToBack()));
-	connect(action_bring_to_front, SIGNAL(triggered(bool)), this, SLOT(bringToFront()));
+	connect(action_send_to_back, &QAction::triggered, this, &ModelWidget::sendToBack);
+	connect(action_bring_to_front, &QAction::triggered, this, &ModelWidget::bringToFront);
+	connect(action_edit_data, &QAction::triggered, this, &ModelWidget::editTableData);
+	connect(&zoom_info_timer, &QTimer::timeout, zoom_info_lbl, &QLabel::hide);
+	connect(action_source_code, &QAction::triggered, this, &ModelWidget::showSourceCode);
+	connect(action_edit, &QAction::triggered, this, &ModelWidget::editObject);
+	connect(action_protect, &QAction::triggered, this, &ModelWidget::protectObject);
+	connect(action_unprotect, &QAction::triggered, this, &ModelWidget::protectObject);
+	connect(action_select_all, &QAction::triggered, this, &ModelWidget::selectAllObjects);
+	connect(action_convert_relnn, &QAction::triggered, this, &ModelWidget::convertRelationshipNN);
+	connect(action_convert_rel1n, &QAction::triggered, this, &ModelWidget::convertRelationship1N);
+	connect(action_deps_refs, &QAction::triggered, this, &ModelWidget::showDependenciesReferences);
+	connect(action_copy, &QAction::triggered, this, &ModelWidget::copyObjects);
+	connect(action_paste, &QAction::triggered, this, &ModelWidget::pasteObjects);
+	connect(action_cut, &QAction::triggered, this, &ModelWidget::cutObjects);
+	connect(action_duplicate, &QAction::triggered, this, &ModelWidget::duplicateObject);
+	connect(action_rename, &QAction::triggered, this, &ModelWidget::renameObjects);
+	connect(action_edit_perms, &QAction::triggered, this, &ModelWidget::editPermissions);
+	connect(action_sel_sch_children, &QAction::triggered, this, &ModelWidget::selectSchemaChildren);
+	connect(action_sel_table_rels, &QAction::triggered, this, &ModelWidget::selectTableRelationships);
+	connect(action_sel_tagged_tabs, &QAction::triggered, this, &ModelWidget::selectTaggedTables);
+	connect(action_select_object, &QAction::triggered, this, &ModelWidget::highlightObject);
+	connect(action_parent_rel, &QAction::triggered, this, &ModelWidget::editObject);
+	connect(action_append_sql, &QAction::triggered, this, &ModelWidget::editCustomSQL);
+	connect(action_create_seq_col, &QAction::triggered, this, &ModelWidget::createSequenceFromColumn);
+	connect(action_conv_int_serial, &QAction::triggered, this, &ModelWidget::convertIntegerToSerial);
+	connect(action_remove_rel_points, &QAction::triggered, this, &ModelWidget::removeRelationshipPoints);
+	connect(action_enable_sql, &QAction::triggered, this, &ModelWidget::toggleObjectSQL);
+	connect(action_disable_sql, &QAction::triggered, this, &ModelWidget::toggleObjectSQL);
 
-	connect(action_edit_data, SIGNAL(triggered(bool)), this, SLOT(editTableData()));
-	connect(&zoom_info_timer, SIGNAL(timeout()), zoom_info_lbl, SLOT(hide()));
-	connect(action_source_code, SIGNAL(triggered(bool)), this, SLOT(showSourceCode()));
-	connect(action_edit, SIGNAL(triggered(bool)),this,SLOT(editObject()));
-	connect(action_protect, SIGNAL(triggered(bool)),this,SLOT(protectObject()));
-	connect(action_unprotect, SIGNAL(triggered(bool)),this,SLOT(protectObject()));
-	connect(action_select_all, SIGNAL(triggered(bool)),this,SLOT(selectAllObjects()));
-	connect(action_convert_relnn, SIGNAL(triggered(bool)), this, SLOT(convertRelationshipNN()));
-	connect(action_convert_rel1n, SIGNAL(triggered(bool)), this, SLOT(convertRelationship1N()));
-	connect(action_deps_refs, SIGNAL(triggered(bool)), this, SLOT(showDependenciesReferences()));
-	connect(action_copy, SIGNAL(triggered(bool)),this,SLOT(copyObjects()));
-	connect(action_paste, SIGNAL(triggered(bool)),this,SLOT(pasteObjects()));
-	connect(action_cut, SIGNAL(triggered(bool)),this,SLOT(cutObjects()));
-	connect(action_duplicate, SIGNAL(triggered(bool)),this,SLOT(duplicateObject()));
-	connect(action_rename, SIGNAL(triggered(bool)), this, SLOT(renameObjects()));
-	connect(action_edit_perms, SIGNAL(triggered(bool)), this, SLOT(editPermissions()));
-	connect(action_sel_sch_children, SIGNAL(triggered(bool)), this, SLOT(selectSchemaChildren()));
-	connect(action_sel_table_rels, SIGNAL(triggered(bool)), this, SLOT(selectTableRelationships()));
-	connect(action_sel_tagged_tabs, SIGNAL(triggered(bool)), this, SLOT(selectTaggedTables()));
-	connect(action_select_object, SIGNAL(triggered(bool)), this, SLOT(highlightObject()));
-	connect(action_parent_rel, SIGNAL(triggered(bool)), this, SLOT(editObject()));
-	connect(action_append_sql, SIGNAL(triggered(bool)), this, SLOT(editCustomSQL()));
-	connect(action_create_seq_col, SIGNAL(triggered(bool)), this, SLOT(createSequenceFromColumn()));
-	connect(action_conv_int_serial, SIGNAL(triggered(bool)), this, SLOT(convertIntegerToSerial()));
-	connect(action_remove_rel_points, SIGNAL(triggered(bool)), this, SLOT(removeRelationshipPoints()));
-	connect(action_enable_sql, SIGNAL(triggered(bool)), this, SLOT(toggleObjectSQL()));
-	connect(action_disable_sql, SIGNAL(triggered(bool)), this, SLOT(toggleObjectSQL()));
-	connect(action_remove, &QAction::triggered, [&](){ removeObjects(false); });
-	connect(action_cascade_del, &QAction::triggered, [&](){ removeObjects(true); });
-	connect(action_fade_in, SIGNAL(triggered(bool)), this, SLOT(fadeObjectsIn()));
-	connect(action_fade_out, SIGNAL(triggered(bool)), this, SLOT(fadeObjectsOut()));
-	connect(action_fade_objs_in, SIGNAL(triggered(bool)), this, SLOT(fadeObjectsIn()));
-	connect(action_fade_objs_out, SIGNAL(triggered(bool)), this, SLOT(fadeObjectsOut()));
-	connect(action_fade_rels_in, SIGNAL(triggered(bool)), this, SLOT(fadeObjectsIn()));
-	connect(action_fade_rels_out, SIGNAL(triggered(bool)), this, SLOT(fadeObjectsOut()));
-	connect(action_fade_peer_tables_in, SIGNAL(triggered(bool)), this, SLOT(fadeObjectsIn()));
-	connect(action_fade_peer_tables_out, SIGNAL(triggered(bool)), this, SLOT(fadeObjectsOut()));
-	connect(action_fade_tabs_rels_in, SIGNAL(triggered(bool)), this, SLOT(fadeObjectsIn()));
-	connect(action_fade_tabs_rels_out, SIGNAL(triggered(bool)), this, SLOT(fadeObjectsOut()));
-	connect(action_collapse_ext_attribs, SIGNAL(triggered(bool)), this, SLOT(setCollapseMode()));
-	connect(action_collpase_all_attribs, SIGNAL(triggered(bool)), this, SLOT(setCollapseMode()));
-	connect(action_no_collapse_attribs, SIGNAL(triggered(bool)), this, SLOT(setCollapseMode()));
-	connect(action_show_schemas_rects, SIGNAL(triggered(bool)), this, SLOT(toggleSchemasRectangles()));
-	connect(action_hide_schemas_rects, SIGNAL(triggered(bool)), this, SLOT(toggleSchemasRectangles()));
-	connect(db_model, SIGNAL(s_objectAdded(BaseObject*)), this, SLOT(handleObjectAddition(BaseObject *)));
-	connect(db_model, SIGNAL(s_objectRemoved(BaseObject*)), this, SLOT(handleObjectRemoval(BaseObject *)));
-	connect(scene, SIGNAL(s_objectsMoved(bool)), this, SLOT(handleObjectsMovement(bool)));
-	connect(scene, SIGNAL(s_objectModified(BaseGraphicObject*)), this, SLOT(handleObjectModification(BaseGraphicObject*)));
-	connect(scene, SIGNAL(s_objectDoubleClicked(BaseGraphicObject*)), this, SLOT(handleObjectDoubleClick(BaseGraphicObject*)));
-	connect(scene, SIGNAL(s_objectSelected(BaseGraphicObject*,bool)), this, SLOT(configureObjectSelection()), Qt::QueuedConnection);
-	connect(scene, SIGNAL(s_popupMenuRequested(BaseObject*)), this, SLOT(configurePopupMenu(BaseObject *)), Qt::QueuedConnection);
-	connect(scene, SIGNAL(s_popupMenuRequested()), this, SLOT(showObjectMenu()), Qt::QueuedConnection);
-	connect(scene, SIGNAL(s_childrenSelectionChanged()), this, SLOT(configureObjectSelection()));
-	connect(scene, SIGNAL(s_objectsSelectedInRange()), this, SLOT(configureObjectSelection()));
-	connect(scene, &ObjectsScene::s_collapseModeChanged, [&](){ setModified(true); });
-	connect(scene, &ObjectsScene::s_paginationToggled, [&](){ setModified(true); });
-	connect(scene, &ObjectsScene::s_currentPageChanged, [&](){ setModified(true); });
-	connect(scene, &ObjectsScene::s_objectsMovedLayer, [&](){ setModified(true); });
-	connect(scene, SIGNAL(s_layersChanged()), this, SLOT(updateModelLayersInfo()));
-	connect(scene, SIGNAL(s_activeLayersChanged()), this, SLOT(updateModelLayersInfo()));
-	connect(scene, SIGNAL(s_popupMenuRequested(BaseObject*)), new_obj_overlay_wgt, SLOT(hide()));
-	connect(scene, SIGNAL(s_popupMenuRequested()), new_obj_overlay_wgt, SLOT(hide()));
-	connect(scene, SIGNAL(s_objectSelected(BaseGraphicObject*,bool)), new_obj_overlay_wgt, SLOT(hide()));
-	connect(scene, SIGNAL(s_childrenSelectionChanged()), new_obj_overlay_wgt, SLOT(hide()));
-	connect(scene, SIGNAL(s_objectsScenePressed(Qt::MouseButtons)), new_obj_overlay_wgt, SLOT(hide()));
-	connect(&popup_menu, SIGNAL(aboutToHide()), this, SLOT(updateObjectsLayers()));
+	connect(action_remove, &QAction::triggered, [&](){
+		removeObjects(false);
+	});
+
+	connect(action_cascade_del, &QAction::triggered, [&](){
+		removeObjects(true);
+	});
+
+	connect(action_fade_in, &QAction::triggered, this, &ModelWidget::fadeObjectsIn);
+	connect(action_fade_out, &QAction::triggered, this, &ModelWidget::fadeObjectsOut);
+	connect(action_fade_objs_in, &QAction::triggered, this, &ModelWidget::fadeObjectsIn);
+	connect(action_fade_objs_out, &QAction::triggered, this, &ModelWidget::fadeObjectsOut);
+	connect(action_fade_rels_in, &QAction::triggered, this, &ModelWidget::fadeObjectsIn);
+	connect(action_fade_rels_out, &QAction::triggered, this, &ModelWidget::fadeObjectsOut);
+	connect(action_fade_peer_tables_in, &QAction::triggered, this, &ModelWidget::fadeObjectsIn);
+	connect(action_fade_peer_tables_out, &QAction::triggered, this, &ModelWidget::fadeObjectsOut);
+	connect(action_fade_tabs_rels_in, &QAction::triggered, this, &ModelWidget::fadeObjectsIn);
+	connect(action_fade_tabs_rels_out, &QAction::triggered, this, &ModelWidget::fadeObjectsOut);
+	connect(action_collapse_ext_attribs, &QAction::triggered, this, &ModelWidget::setCollapseMode);
+	connect(action_collpase_all_attribs, &QAction::triggered, this, &ModelWidget::setCollapseMode);
+	connect(action_no_collapse_attribs, &QAction::triggered, this, &ModelWidget::setCollapseMode);
+	connect(action_show_schemas_rects, &QAction::triggered, this, &ModelWidget::toggleSchemasRectangles);
+	connect(action_hide_schemas_rects, &QAction::triggered, this, &ModelWidget::toggleSchemasRectangles);
+
+	connect(db_model, &DatabaseModel::s_objectAdded, this, &ModelWidget::handleObjectAddition);
+	connect(db_model, &DatabaseModel::s_objectRemoved, this, &ModelWidget::handleObjectRemoval);
+
+	connect(scene, &ObjectsScene::s_objectsMoved, this, &ModelWidget::handleObjectsMovement);
+	connect(scene, &ObjectsScene::s_objectModified, this,  &ModelWidget::handleObjectModification);
+	connect(scene, &ObjectsScene::s_objectDoubleClicked, this,  &ModelWidget::handleObjectDoubleClick);
+	connect(scene, &ObjectsScene::s_objectSelected, this,  &ModelWidget::configureObjectSelection, Qt::QueuedConnection);
+	connect(scene, qOverload<BaseObject *>(&ObjectsScene::s_popupMenuRequested), this, qOverload<BaseObject *>(&ModelWidget::configurePopupMenu), Qt::QueuedConnection);
+	connect(scene, qOverload<>(&ObjectsScene::s_popupMenuRequested), this,  &ModelWidget::showObjectMenu, Qt::QueuedConnection);
+	connect(scene, &ObjectsScene::s_childrenSelectionChanged, this, &ModelWidget::configureObjectSelection);
+	connect(scene, &ObjectsScene::s_objectsSelectedInRange, this, &ModelWidget::configureObjectSelection);
+
+	connect(scene, &ObjectsScene::s_collapseModeChanged, [&](){
+		setModified(true);
+	});
+
+	connect(scene, &ObjectsScene::s_paginationToggled, [&](){
+		setModified(true);
+	});
+
+	connect(scene, &ObjectsScene::s_currentPageChanged, [&](){
+		setModified(true);
+	});
+
+	connect(scene, &ObjectsScene::s_objectsMovedLayer, [&](){
+		setModified(true);
+	});
+
+	connect(scene, &ObjectsScene::s_layersChanged, this, &ModelWidget::updateModelLayersInfo);
+	connect(scene, &ObjectsScene::s_activeLayersChanged, this, &ModelWidget::updateModelLayersInfo);
+	connect(scene, qOverload<BaseObject *>(&ObjectsScene::s_popupMenuRequested), new_obj_overlay_wgt, &NewObjectOverlayWidget::hide);
+	connect(scene, qOverload<>(&ObjectsScene::s_popupMenuRequested), new_obj_overlay_wgt, &NewObjectOverlayWidget::hide);
+	connect(scene, &ObjectsScene::s_objectSelected, new_obj_overlay_wgt, &NewObjectOverlayWidget::hide);
+	connect(scene, &ObjectsScene::s_childrenSelectionChanged, new_obj_overlay_wgt, &NewObjectOverlayWidget::hide);
+	connect(scene, &ObjectsScene::s_objectsScenePressed, new_obj_overlay_wgt, &NewObjectOverlayWidget::hide);
+
+	connect(&popup_menu, &QMenu::aboutToHide, this, &ModelWidget::updateObjectsLayers);
 
 	viewport->installEventFilter(this);
 	viewport->horizontalScrollBar()->installEventFilter(this);
@@ -1620,7 +1642,7 @@ void ModelWidget::loadModel(const QString &filename)
 
 	try
 	{
-		connect(db_model, SIGNAL(s_objectLoaded(int,QString,unsigned)), &task_prog_wgt, SLOT(updateProgress(int,QString,unsigned)));
+		connect(db_model, &DatabaseModel::s_objectLoaded, &task_prog_wgt, qOverload<int, QString, unsigned>(&TaskProgressWidget::updateProgress));
 		task_prog_wgt.addIcon(enum_t(ObjectType::BaseObject), QPixmap(GuiUtilsNs::getIconPath("design")));
 		task_prog_wgt.setWindowTitle(tr("Loading database model"));
 		task_prog_wgt.show();
@@ -1799,7 +1821,7 @@ void ModelWidget::saveModel(const QString &filename)
 
 	try
 	{
-		connect(db_model, SIGNAL(s_objectLoaded(int,QString,unsigned)), &task_prog_wgt, SLOT(updateProgress(int,QString,unsigned)));
+		connect(db_model, &DatabaseModel::s_objectLoaded, &task_prog_wgt, qOverload<int, QString, unsigned>(&TaskProgressWidget::updateProgress));
 		task_prog_wgt.setWindowTitle(tr("Saving database model"));
 		task_prog_wgt.show();
 
@@ -3581,11 +3603,11 @@ void ModelWidget::configureQuickMenu(BaseObject *object)
 							act->setData(QVariant::fromValue<void *>(obj_list.back()));
 
 							if(i==0)
-								connect(act, SIGNAL(triggered(bool)), this, SLOT(moveToSchema()));
+								connect(act, &QAction::triggered, this, &ModelWidget::moveToSchema);
 							else if(i==1)
-								connect(act, SIGNAL(triggered(bool)), this, SLOT(changeOwner()));
+								connect(act, &QAction::triggered, this, &ModelWidget::changeOwner);
 							else
-								connect(act, SIGNAL(triggered(bool)), this, SLOT(setTag()));
+								connect(act, &QAction::triggered, this, &ModelWidget::setTag);
 
 							act_map[obj_list.back()->getName()]=act;
 							name_list.push_back(obj_list.back()->getName());
@@ -3687,7 +3709,7 @@ void ModelWidget::configureFadeMenu()
 																		 labels[id], &fade_in_menu);
 				action->setData(enum_t(type));
 				fade_in_menu.addAction(action);
-				connect(action, SIGNAL(triggered(bool)), this, SLOT(fadeObjectsIn()));
+				connect(action, &QAction::triggered, this, &ModelWidget::fadeObjectsIn);
 
 				action = new QAction(QPixmap(GuiUtilsNs::getIconPath(BaseObject::getSchemaName(type))),
 																		 labels[id], &fade_out_menu);
@@ -3695,18 +3717,18 @@ void ModelWidget::configureFadeMenu()
 				fade_out_menu.addAction(action);
 
 				id++;
-				connect(action, SIGNAL(triggered(bool)), this, SLOT(fadeObjectsOut()));
+				connect(action, &QAction::triggered, this, &ModelWidget::fadeObjectsOut);
 			}
 
 			action = new QAction(tr("All objects"), &fade_in_menu);
 			action->setData(enum_t(ObjectType::BaseObject));
-			connect(action, SIGNAL(triggered(bool)), this, SLOT(fadeObjectsIn()));
+			connect(action, &QAction::triggered, this, &ModelWidget::fadeObjectsIn);
 			fade_in_menu.addSeparator();
 			fade_in_menu.addAction(action);
 
 			action = new QAction(tr("All objects"), &fade_out_menu);
 			action->setData(enum_t(ObjectType::BaseObject));
-			connect(action, SIGNAL(triggered(bool)), this, SLOT(fadeObjectsOut()));
+			connect(action, &QAction::triggered, this, &ModelWidget::fadeObjectsOut);
 			fade_out_menu.addSeparator();
 			fade_out_menu.addAction(action);
 		}
@@ -4096,14 +4118,14 @@ void ModelWidget::configureConstraintsMenu(TableObject *tab_obj)
 				action->setIcon(QPixmap(GuiUtilsNs::getIconPath("edit")));
 				action->setText(tr("Properties"));
 				action->setData(QVariant::fromValue<void *>(dynamic_cast<BaseObject *>(constr)));
-				connect(action, SIGNAL(triggered(bool)), this, SLOT(editObject()));
+				connect(action, &QAction::triggered, this, &ModelWidget::editObject);
 				submenu->addAction(action);
 
 				action=new QAction(dynamic_cast<QObject *>(submenu));
 				action->setIcon(QPixmap(GuiUtilsNs::getIconPath("sourcecode")));
 				action->setText(tr("Source code"));
 				action->setData(QVariant::fromValue<void *>(dynamic_cast<BaseObject *>(constr)));
-				connect(action, SIGNAL(triggered(bool)), this, SLOT(showSourceCode()));
+				connect(action, &QAction::triggered, this, &ModelWidget::showSourceCode);
 				submenu->addAction(action);
 
 				if(!constr->isAddedByRelationship())
@@ -4112,7 +4134,7 @@ void ModelWidget::configureConstraintsMenu(TableObject *tab_obj)
 					{
 						action=new QAction(dynamic_cast<QObject *>(&popup_menu));
 						action->setData(QVariant::fromValue<void *>(dynamic_cast<BaseObject *>(constr)));
-						connect(action, SIGNAL(triggered(bool)), this, SLOT(protectObject()));
+						connect(action, &QAction::triggered, this, &ModelWidget::protectObject);
 						submenu->addAction(action);
 
 						if(constr->isProtected())
@@ -4132,14 +4154,14 @@ void ModelWidget::configureConstraintsMenu(TableObject *tab_obj)
 					action->setData(QVariant::fromValue<void *>(dynamic_cast<BaseObject *>(constr)));
 					action->setText(tr("Delete"));
 					submenu->addAction(action);
-					connect(action, SIGNAL(triggered()), this, SLOT(removeObjects()));
+					connect(action, &QAction::triggered, this, &ModelWidget::removeObjects);
 
 					action=new QAction(dynamic_cast<QObject *>(submenu));
 					action->setIcon(QPixmap(GuiUtilsNs::getIconPath("delcascade")));
 					action->setData(QVariant::fromValue<void *>(dynamic_cast<BaseObject *>(constr)));
 					action->setText(tr("Del. cascade"));
 					submenu->addAction(action);
-					connect(action, SIGNAL(triggered()), this, SLOT(removeObjectsCascade()));
+					connect(action, &QAction::triggered, this, &ModelWidget::removeObjectsCascade);
 				}
 				submenus.push_back(submenu);
 			}
@@ -4931,7 +4953,7 @@ void ModelWidget::swapObjectsIds()
 	parent_form.apply_ok_btn->setText(tr("Swap ids"));
 
 	connect(swap_ids_wgt, &SwapObjectsIdsWidget::s_objectsIdsSwapped, [&](){ swapped = true; });
-	connect(swap_ids_wgt, SIGNAL(s_objectsIdsSwapReady(bool)), parent_form.apply_ok_btn, SLOT(setEnabled(bool)));
+	connect(swap_ids_wgt, &SwapObjectsIdsWidget::s_objectsIdsSwapReady, parent_form.apply_ok_btn, &QPushButton::setEnabled);
 
 	GeneralConfigWidget::restoreWidgetGeometry(&parent_form, swap_ids_wgt->metaObject()->className());
 	parent_form.exec();
