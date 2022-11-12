@@ -532,11 +532,11 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	connect(action_enable_sql, &QAction::triggered, this, &ModelWidget::toggleObjectSQL);
 	connect(action_disable_sql, &QAction::triggered, this, &ModelWidget::toggleObjectSQL);
 
-	connect(action_remove, &QAction::triggered, [&](){
+	connect(action_remove, &QAction::triggered, this, [&](){
 		removeObjects(false);
 	});
 
-	connect(action_cascade_del, &QAction::triggered, [&](){
+	connect(action_cascade_del, &QAction::triggered, this, [&](){
 		removeObjects(true);
 	});
 
@@ -568,19 +568,19 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	connect(scene, &ObjectsScene::s_childrenSelectionChanged, this, &ModelWidget::configureObjectSelection);
 	connect(scene, &ObjectsScene::s_objectsSelectedInRange, this, &ModelWidget::configureObjectSelection);
 
-	connect(scene, &ObjectsScene::s_collapseModeChanged, [&](){
+	connect(scene, &ObjectsScene::s_collapseModeChanged, this, [&](){
 		setModified(true);
 	});
 
-	connect(scene, &ObjectsScene::s_paginationToggled, [&](){
+	connect(scene, &ObjectsScene::s_paginationToggled, this, [&](){
 		setModified(true);
 	});
 
-	connect(scene, &ObjectsScene::s_currentPageChanged, [&](){
+	connect(scene, &ObjectsScene::s_currentPageChanged, this, [&](){
 		setModified(true);
 	});
 
-	connect(scene, &ObjectsScene::s_objectsMovedLayer, [&](){
+	connect(scene, &ObjectsScene::s_objectsMovedLayer, this, [&](){
 		setModified(true);
 	});
 
@@ -4952,7 +4952,7 @@ void ModelWidget::swapObjectsIds()
 	parent_form.apply_ok_btn->setIcon(QPixmap(GuiUtilsNs::getIconPath("swapobjs")));
 	parent_form.apply_ok_btn->setText(tr("Swap ids"));
 
-	connect(swap_ids_wgt, &SwapObjectsIdsWidget::s_objectsIdsSwapped, [&](){ swapped = true; });
+	connect(swap_ids_wgt, &SwapObjectsIdsWidget::s_objectsIdsSwapped, this, [&](){ swapped = true; });
 	connect(swap_ids_wgt, &SwapObjectsIdsWidget::s_objectsIdsSwapReady, parent_form.apply_ok_btn, &QPushButton::setEnabled);
 
 	GeneralConfigWidget::restoreWidgetGeometry(&parent_form, swap_ids_wgt->metaObject()->className());

@@ -75,11 +75,11 @@ TableDataWidget::TableDataWidget(QWidget *parent): BaseObjectWidget(parent, Obje
 
 	connect(csv_load_tb, &QToolButton::toggled, csv_load_parent, &QWidget::setVisible);
 
-	connect(csv_load_wgt, &CsvLoadWidget::s_csvFileLoaded, [&](){
+	connect(csv_load_wgt, &CsvLoadWidget::s_csvFileLoaded, this, [&](){
 		populateDataGrid(csv_load_wgt->getCsvDocument());
 	});
 
-	connect(paste_tb, &QToolButton::clicked, [&](){
+	connect(paste_tb, &QToolButton::clicked, this, [&](){
 		csv_load_wgt->loadCsvFromBuffer(qApp->clipboard()->text(),
 																	CsvDocument::Separator,
 																	CsvDocument::TextDelimiter,
@@ -89,11 +89,11 @@ TableDataWidget::TableDataWidget(QWidget *parent): BaseObjectWidget(parent, Obje
 		paste_tb->setEnabled(false);
 	});
 
-	connect(bulkedit_tb, &QToolButton::clicked, [&](){
+	connect(bulkedit_tb, &QToolButton::clicked, this, [&](){
 		GuiUtilsNs::bulkDataEdit(data_tbw);
 	});
 
-	connect(copy_tb, &QToolButton::clicked, [&](){
+	connect(copy_tb, &QToolButton::clicked, this, [&](){
 		SQLExecutionWidget::copySelection(data_tbw, false, true);
 		paste_tb->setEnabled(true);
 	});

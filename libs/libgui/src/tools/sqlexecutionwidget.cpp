@@ -100,7 +100,7 @@ SQLExecutionWidget::SQLExecutionWidget(QWidget * parent) : QWidget(parent)
 	connect(filter_edt, &QLineEdit::textChanged, this, &SQLExecutionWidget::filterResults);
 	connect(hide_tb, &QToolButton::clicked, filter_tb, &QToolButton::click);
 
-	connect(filter_tb, &QToolButton::toggled, [&](bool checked){
+	connect(filter_tb, &QToolButton::toggled, this, [&](bool checked){
 		filter_wgt->setVisible(checked);
 
 		if(checked)
@@ -110,7 +110,7 @@ SQLExecutionWidget::SQLExecutionWidget(QWidget * parent) : QWidget(parent)
 	});
 
 	connect(exact_chk, &QCheckBox::toggled, this, &SQLExecutionWidget::filterResults);
-	connect(exact_chk, &QCheckBox::toggled, [&](bool checked){
+	connect(exact_chk, &QCheckBox::toggled, this, [&](bool checked){
 		regexp_chk->setChecked(false);
 		regexp_chk->setEnabled(!checked);
 		case_sensitive_chk->setChecked(false);

@@ -68,9 +68,9 @@ RelationshipConfigWidget::RelationshipConfigWidget(QWidget * parent) : BaseConfi
 	connect(deferrable_chk, &QCheckBox::toggled, this, &RelationshipConfigWidget::setConfigurationChanged);
 
 	connect(rel_type_cmb,  &QComboBox::currentIndexChanged, this,&RelationshipConfigWidget::fillNamePatterns);
-	connect(del_action_cmb, &QComboBox::currentTextChanged, [&](){ setConfigurationChanged(true); });
-	connect(upd_action_cmb, &QComboBox::currentTextChanged, [&](){ setConfigurationChanged(true); });
-	connect(deferral_cmb, &QComboBox::currentTextChanged, [&](){ setConfigurationChanged(true); });
+	connect(del_action_cmb, &QComboBox::currentTextChanged, this, [&](){ setConfigurationChanged(true); });
+	connect(upd_action_cmb, &QComboBox::currentTextChanged, this, [&](){ setConfigurationChanged(true); });
+	connect(deferral_cmb, &QComboBox::currentTextChanged, this, [&](){ setConfigurationChanged(true); });
 }
 
 std::map<QString, attribs_map> RelationshipConfigWidget::getConfigurationParams()

@@ -311,24 +311,24 @@ CREATE TABLE public.table_b (\n \
 	connect(ui_theme_cmb, &QComboBox::currentTextChanged, this, &AppearanceConfigWidget::previewUiSettings);
 	connect(icons_size_cmb, &QComboBox::currentTextChanged, this, &AppearanceConfigWidget::previewUiSettings);
 
-	connect(custom_scale_chk, &QCheckBox::toggled, [&](bool toggled){
+	connect(custom_scale_chk, &QCheckBox::toggled, this, [&](bool toggled){
 		custom_scale_spb->setEnabled(toggled);
 		setConfigurationChanged(true);
 	});
 
-	connect(custom_scale_spb, &QDoubleSpinBox::valueChanged, [&](){
+	connect(custom_scale_spb, &QDoubleSpinBox::valueChanged, this, [&](){
 		setConfigurationChanged(true);
 	});
 
-	connect(min_obj_opacity_spb, &QSpinBox::valueChanged, [&](){
+	connect(min_obj_opacity_spb, &QSpinBox::valueChanged, this, [&](){
 		setConfigurationChanged(true);
 	});
 
-	connect(ext_attribs_per_page_spb, &QSpinBox::valueChanged, [&](){
+	connect(ext_attribs_per_page_spb, &QSpinBox::valueChanged, this, [&](){
 		setConfigurationChanged(true);
 	});
 
-	connect(attribs_per_page_spb, &QSpinBox::valueChanged, [&](){
+	connect(attribs_per_page_spb, &QSpinBox::valueChanged, this, [&](){
 		setConfigurationChanged(true);
 	});
 }

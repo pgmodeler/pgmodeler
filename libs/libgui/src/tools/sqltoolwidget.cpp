@@ -68,7 +68,7 @@ SQLToolWidget::SQLToolWidget(QWidget * parent) : QWidget(parent)
 	connect(database_cmb, &QComboBox::activated, this, &SQLToolWidget::browseDatabase);
 	connect(disconnect_tb, &QToolButton::clicked, this, &SQLToolWidget::disconnectFromDatabases);
 	connect(source_pane_tb, &QToolButton::toggled, sourcecode_gb, &QGroupBox::setVisible);
-	connect(sql_exec_corner_btn, &QToolButton::clicked, [&](){
+	connect(sql_exec_corner_btn, &QToolButton::clicked, this, [&](){
 		addSQLExecutionTab();
 	});
 
@@ -263,7 +263,7 @@ DatabaseExplorerWidget *SQLToolWidget::browseDatabase()
 			databases_tbw->setTabToolTip(databases_tbw->count() - 1, db_explorer_wgt->getConnection().getConnectionId(true, true));
 			databases_tbw->setCurrentWidget(db_explorer_wgt);
 
-			connect(db_explorer_wgt, &DatabaseExplorerWidget::s_sqlExecutionRequested, [&](){
+			connect(db_explorer_wgt, &DatabaseExplorerWidget::s_sqlExecutionRequested, this, [&](){
 				addSQLExecutionTab();
 			});
 

@@ -207,7 +207,7 @@ DatabaseExplorerWidget::DatabaseExplorerWidget(QWidget *parent): QWidget(parent)
 	connect(objects_trw, &QTreeWidget::itemCollapsed, this, &DatabaseExplorerWidget::cancelObjectRename);
 	connect(objects_trw, &QTreeWidget::itemExpanded, this, &DatabaseExplorerWidget::cancelObjectRename);
 
-	connect(data_grid_tb, &QToolButton::clicked, [&](){
+	connect(data_grid_tb, &QToolButton::clicked, this, [&](){
 		openDataGrid();
 	});
 

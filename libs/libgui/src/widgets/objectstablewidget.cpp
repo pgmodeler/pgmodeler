@@ -48,11 +48,11 @@ ObjectsTableWidget::ObjectsTableWidget(ButtonConf button_conf, bool conf_exclusi
 	connect(table_tbw, &QTableWidget::itemSelectionChanged, this, qOverload<>(&ObjectsTableWidget::setButtonsEnabled));
 	connect(table_tbw, &QTableWidget::itemSelectionChanged, this, &ObjectsTableWidget::emitRowSelected);
 
-	connect(table_tbw, &QTableWidget::cellClicked, [&](int row, int col){
+	connect(table_tbw, &QTableWidget::cellClicked, this, [&](int row, int col){
 		emit s_cellClicked(row, col);
 	});
 
-	connect(resize_cols_tb, &QToolButton::clicked, [&](){
+	connect(resize_cols_tb, &QToolButton::clicked, this, [&](){
 	  table_tbw->resizeColumnsToContents();
 	  table_tbw->resizeRowsToContents();
 	  table_tbw->horizontalHeader()->setSectionResizeMode(table_tbw->horizontalHeader()->count() - 1, QHeaderView::Stretch);

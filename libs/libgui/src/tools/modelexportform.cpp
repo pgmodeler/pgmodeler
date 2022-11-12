@@ -91,7 +91,7 @@ ModelExportForm::ModelExportForm(QWidget *parent, Qt::WindowFlags f) : QDialog(p
 			export_hlp.exportToSQL();
 	});
 
-	connect(export_thread, &QThread::finished, [&](){
+	connect(export_thread, &QThread::finished, this, [&](){
 		output_trw->setUniformRowHeights(false);
 	});
 

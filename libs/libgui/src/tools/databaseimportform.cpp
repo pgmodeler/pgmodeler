@@ -62,7 +62,7 @@ DatabaseImportForm::DatabaseImportForm(QWidget *parent, Qt::WindowFlags f) : QDi
 	connect(cancel_btn, &QPushButton::clicked, this,  &DatabaseImportForm::cancelImport);
 	connect(objs_filter_wgt, &ObjectsFilterWidget::s_filterApplyingRequested, this, qOverload<>(&DatabaseImportForm::listObjects));
 
-	connect(objs_filter_wgt, &ObjectsFilterWidget::s_filtersRemoved, [&](){
+	connect(objs_filter_wgt, &ObjectsFilterWidget::s_filtersRemoved, this, [&](){
 		listObjects();
 	});
 
@@ -119,7 +119,7 @@ void DatabaseImportForm::createThread()
 		output_trw->setUniformRowHeights(true);
 	});
 
-	connect(import_thread, &QThread::finished, [&](){
+	connect(import_thread, &QThread::finished, this, [&](){
 		output_trw->setUniformRowHeights(false);
 	});
 

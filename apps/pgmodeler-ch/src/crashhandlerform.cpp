@@ -107,7 +107,7 @@ CrashHandlerForm::CrashHandlerForm(bool analysis_mode, QWidget *parent, Qt::Wind
 	connect(input_sel, &FileSelectorWidget::s_selectorCleared, stack_txt, &QPlainTextEdit::clear);
 	connect(save_tb, &QToolButton::clicked, this, &CrashHandlerForm::saveModel);
 
-	connect(model_txt, &QPlainTextEdit::textChanged, [&](){
+	connect(model_txt, &QPlainTextEdit::textChanged, this, [&](){
 			save_tb->setEnabled(!model_txt->toPlainText().isEmpty());
 	});
 }

@@ -54,22 +54,22 @@ ModelValidationWidget::ModelValidationWidget(QWidget *parent): QWidget(parent)
 		connect(connections_cmb, &QComboBox::activated, this, &ModelValidationWidget::editConnections);
 		connect(swap_ids_btn, &QToolButton::clicked, this, &ModelValidationWidget::swapObjectsIds);
 
-		connect(sql_validation_chk, &QCheckBox::toggled, [&](){
+		connect(sql_validation_chk, &QCheckBox::toggled, this, [&](){
 			configureValidation();
 			clearOutput();
 		});
 
-		connect(use_tmp_names_chk, &QCheckBox::toggled, [&](){
+		connect(use_tmp_names_chk, &QCheckBox::toggled, this, [&](){
 			configureValidation();
 			clearOutput();
 		});
 
-		connect(connections_cmb, &QComboBox::currentTextChanged, [&](){
+		connect(connections_cmb, &QComboBox::currentTextChanged, this, [&](){
 			configureValidation();
 			clearOutput();
 		});
 
-		connect(version_cmb, &QComboBox::currentTextChanged, [&](){
+		connect(version_cmb, &QComboBox::currentTextChanged, this, [&](){
 			configureValidation();
 			clearOutput();
 		});
@@ -139,15 +139,15 @@ void ModelValidationWidget::createThread()
 		connect(validation_helper, &ModelValidationHelper::s_fixApplied, prog_info_wgt, &QWidget::show, Qt::QueuedConnection);
 		connect(validation_helper, &ModelValidationHelper::s_relsValidationRequested, this, &ModelValidationWidget::validateRelationships);
 
-		connect(validation_helper, &ModelValidationHelper::s_validationCanceled, [&](){
+		connect(validation_helper, &ModelValidationHelper::s_validationCanceled, this, [&](){
 			emit s_validationCanceled();
 		});
 
-		connect(validation_helper, &ModelValidationHelper::s_fixApplied, [&](){
+		connect(validation_helper, &ModelValidationHelper::s_fixApplied, this, [&](){
 			emit s_fixApplied();
 		});
 
-		connect(validation_helper, &ModelValidationHelper::s_objectIdChanged, [&](BaseObject *obj) {
+		connect(validation_helper, &ModelValidationHelper::s_objectIdChanged, this, [&](BaseObject *obj) {
 			BaseGraphicObject *graph_obj=dynamic_cast<BaseGraphicObject *>(obj);
 			if(graph_obj) graph_objects.push_back(graph_obj);
 		});

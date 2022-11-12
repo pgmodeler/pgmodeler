@@ -437,7 +437,7 @@ void MainWindow::connectSignalsToSlots()
 
 	connect(action_print, &QAction::triggered, this, &MainWindow::printModel);
 
-	connect(action_configuration, &QAction::triggered, [&](){
+	connect(action_configuration, &QAction::triggered, this, [&](){
 		GeneralConfigWidget::restoreWidgetGeometry(configuration_form);
 		configuration_form->exec();
 		GeneralConfigWidget::saveWidgetGeometry(configuration_form);
@@ -453,7 +453,7 @@ void MainWindow::connectSignalsToSlots()
 		updateConnections();
 	});
 
-	connect(configuration_form, &ConfigurationForm::s_invalidateModelsRequested, [&](){
+	connect(configuration_form, &ConfigurationForm::s_invalidateModelsRequested, this, [&](){
 		//Forcing the models code invalidation if the user changes the escape comments option
 		for(int idx = 0; idx < models_tbw->count(); idx++)
 			dynamic_cast<ModelWidget *>(models_tbw->widget(idx))->getDatabaseModel()->setCodesInvalidated();
@@ -472,11 +472,11 @@ void MainWindow::connectSignalsToSlots()
 	connect(action_bug_report, &QAction::triggered, this, &MainWindow::reportBug);
 	connect(action_handle_metadata, &QAction::triggered, this, &MainWindow::handleObjectsMetadata);
 
-	connect(model_valid_wgt, &ModelValidationWidget::s_connectionsUpdateRequest, [&](){
+	connect(model_valid_wgt, &ModelValidationWidget::s_connectionsUpdateRequest, this, [&](){
 		updateConnections(true);
 	});
 
-	connect(sql_tool_wgt, &SQLToolWidget::s_connectionsUpdateRequest, [&](){
+	connect(sql_tool_wgt, &SQLToolWidget::s_connectionsUpdateRequest, this, [&](){
 		updateConnections(true);
 	});
 
@@ -520,7 +520,7 @@ void MainWindow::connectSignalsToSlots()
 	connect(model_valid_wgt, &ModelValidationWidget::s_validationInProgress, changelog_btn, &QToolButton::setDisabled);
 	connect(model_valid_wgt, &ModelValidationWidget::s_validationInProgress, changelog_wgt, &ChangelogWidget::close);
 
-	connect(model_valid_wgt, &ModelValidationWidget::s_validationCanceled, [&](){
+	connect(model_valid_wgt, &ModelValidationWidget::s_validationCanceled, this, [&](){
 		pending_op=NoPendingOp;
 	});
 
@@ -1630,7 +1630,7 @@ void MainWindow::exportModel()
 			(!db_model->isInvalidated() || (confirm_validation && !msg_box.isCancelled() && msg_box.result()==QDialog::Rejected)))
 	{
 		stopTimers(true);
-		connect(&model_export_form, &ModelExportForm::s_connectionsUpdateRequest, [&](){ updateConnections(true); });
+		connect(&model_export_form, &ModelExportForm::s_connectionsUpdateRequest, this, [&](){ updateConnections(true); });
 
 		GuiUtilsNs::resizeDialog(&model_export_form);
 		GeneralConfigWidget::restoreWidgetGeometry(&model_export_form);
@@ -1647,7 +1647,7 @@ void MainWindow::importDatabase()
 
 	stopTimers(true);
 
-	connect(&db_import_form, &DatabaseImportForm::s_connectionsUpdateRequest, [&](){ updateConnections(true); });
+	connect(&db_import_form, &DatabaseImportForm::s_connectionsUpdateRequest, this, [&](){ updateConnections(true); });
 
 	db_import_form.setModelWidget(current_model);
 	GuiUtilsNs::resizeDialog(&db_import_form);
@@ -1695,8 +1695,8 @@ void MainWindow::diffModelDatabase()
 		modeldb_diff_frm.setModelWidget(current_model);
 
 		stopTimers(true);
-		connect(&modeldb_diff_frm, &ModelDatabaseDiffForm::s_connectionsUpdateRequest, [&](){ updateConnections(true); });
-		connect(&modeldb_diff_frm, &ModelDatabaseDiffForm::s_loadDiffInSQLTool, [&](QString conn_id, QString database, QString filename){
+		connect(&modeldb_diff_frm, &ModelDatabaseDiffForm::s_connectionsUpdateRequest, this, [&](){ updateConnections(true); });
+		connect(&modeldb_diff_frm, &ModelDatabaseDiffForm::s_loadDiffInSQLTool, this, [&](QString conn_id, QString database, QString filename){
 			action_manage->toggle();
 			sql_tool_wgt->addSQLExecutionTab(conn_id, database, filename);
 		});

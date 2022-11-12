@@ -595,11 +595,11 @@ bool ConnectionsConfigWidget::openConnectionsConfiguration(QComboBox *combo, boo
 		conn_cfg_wgt.layout()->setContentsMargins(0,0,0,0);
 		conn_cfg_wgt.frame->layout()->setContentsMargins(0,0,0,0);
 
-		connect(parent_form.cancel_btn, &QPushButton::clicked, [&](){
+		connect(parent_form.cancel_btn, &QPushButton::clicked, &parent_form, [&](){
 			conn_cfg_wgt.loadConfiguration();
 		});
 
-		connect(parent_form.apply_ok_btn, &QPushButton::clicked, [&](){
+		connect(parent_form.apply_ok_btn, &QPushButton::clicked, &parent_form, [&](){
 			conn_cfg_wgt.saveConfiguration();
 			parent_form.accept();
 		});
