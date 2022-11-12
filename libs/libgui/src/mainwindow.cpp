@@ -517,6 +517,8 @@ void MainWindow::connectSignalsToSlots()
 	connect(model_valid_wgt, &ModelValidationWidget::s_validationInProgress, this, &MainWindow::stopTimers);
 	connect(model_valid_wgt, &ModelValidationWidget::s_validationInProgress, layers_btn, &QToolButton::setDisabled);
 	connect(model_valid_wgt, &ModelValidationWidget::s_validationInProgress, layers_cfg_wgt, &LayersConfigWidget::close);
+	connect(model_valid_wgt, &ModelValidationWidget::s_validationInProgress, changelog_btn, &QToolButton::setDisabled);
+	connect(model_valid_wgt, &ModelValidationWidget::s_validationInProgress, changelog_wgt, &ChangelogWidget::close);
 
 	connect(model_valid_wgt, &ModelValidationWidget::s_validationCanceled, [&](){
 		pending_op=NoPendingOp;
