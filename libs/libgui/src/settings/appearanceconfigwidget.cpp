@@ -293,7 +293,7 @@ CREATE TABLE public.table_b (\n \
 
 	connect(elem_color_cp, &ColorPickerWidget::s_colorChanged, this, &AppearanceConfigWidget::applyElementColor);
 
-	connect(elem_color_cp, &ColorPickerWidget::s_colorsChanged, this, [&](){
+	connect(elem_color_cp, &ColorPickerWidget::s_colorsChanged, this, [this](){
 		for(unsigned i=0; i < elem_color_cp->getColorCount(); i++)
 			applyElementColor(i, elem_color_cp->getColor(i));
 	});
@@ -311,24 +311,24 @@ CREATE TABLE public.table_b (\n \
 	connect(ui_theme_cmb, &QComboBox::currentTextChanged, this, &AppearanceConfigWidget::previewUiSettings);
 	connect(icons_size_cmb, &QComboBox::currentTextChanged, this, &AppearanceConfigWidget::previewUiSettings);
 
-	connect(custom_scale_chk, &QCheckBox::toggled, this, [&](bool toggled){
+	connect(custom_scale_chk, &QCheckBox::toggled, this, [this](bool toggled){
 		custom_scale_spb->setEnabled(toggled);
 		setConfigurationChanged(true);
 	});
 
-	connect(custom_scale_spb, &QDoubleSpinBox::valueChanged, this, [&](){
+	connect(custom_scale_spb, &QDoubleSpinBox::valueChanged, this, [this](){
 		setConfigurationChanged(true);
 	});
 
-	connect(min_obj_opacity_spb, &QSpinBox::valueChanged, this, [&](){
+	connect(min_obj_opacity_spb, &QSpinBox::valueChanged, this, [this](){
 		setConfigurationChanged(true);
 	});
 
-	connect(ext_attribs_per_page_spb, &QSpinBox::valueChanged, this, [&](){
+	connect(ext_attribs_per_page_spb, &QSpinBox::valueChanged, this, [this](){
 		setConfigurationChanged(true);
 	});
 
-	connect(attribs_per_page_spb, &QSpinBox::valueChanged, this, [&](){
+	connect(attribs_per_page_spb, &QSpinBox::valueChanged, this, [this](){
 		setConfigurationChanged(true);
 	});
 }

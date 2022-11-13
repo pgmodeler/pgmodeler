@@ -101,15 +101,15 @@ ModelDatabaseDiffForm::ModelDatabaseDiffForm(QWidget *parent, Qt::WindowFlags fl
 		connect(end_date_chk, &QCheckBox::toggled, this, &ModelDatabaseDiffForm::enableFilterByDate);
 		connect(generate_filters_tb, &QToolButton::clicked, this, &ModelDatabaseDiffForm::generateFiltersFromChangelog);
 
-		connect(first_change_dt_tb, &QToolButton::clicked, this, [&](){
+		connect(first_change_dt_tb, &QToolButton::clicked, this, [this](){
 			start_date_dt->setDateTime(loaded_model->getFirstChangelogDate());
 		});
 
-		connect(last_change_dt_tb, &QToolButton::clicked, this, [&](){
+		connect(last_change_dt_tb, &QToolButton::clicked, this, [this](){
 			end_date_dt->setDateTime(loaded_model->getLastChangelogDate());
 		});
 
-		connect(cancel_btn, &QToolButton::clicked, this, [&](){
+		connect(cancel_btn, &QToolButton::clicked, this, [this](){
 			cancelOperation(true);
 		});
 
@@ -140,26 +140,26 @@ ModelDatabaseDiffForm::ModelDatabaseDiffForm(QWidget *parent, Qt::WindowFlags fl
 		connect(remove_preset_tb, &QToolButton::clicked, this, &ModelDatabaseDiffForm::removePreset);
 		connect(save_preset_tb, &QToolButton::clicked, this, &ModelDatabaseDiffForm::savePreset);
 
-		connect(src_database_rb, &QRadioButton::toggled, this, [&](bool toggle){
+		connect(src_database_rb, &QRadioButton::toggled, this, [this](bool toggle){
 			src_database_wgt->setEnabled(toggle);
 			src_connection_lbl->setEnabled(toggle && src_connections_cmb->count() > 0);
 			enableDiffMode();
 		});
 
-		connect(new_preset_tb, &QToolButton::clicked, this, [&](){
+		connect(new_preset_tb, &QToolButton::clicked, this, [this](){
 			togglePresetConfiguration(true);
 		});
 
-		connect(edit_preset_tb, &QToolButton::clicked, this, [&](){
+		connect(edit_preset_tb, &QToolButton::clicked, this, [this](){
 			togglePresetConfiguration(true, true);
 		});
 
-		connect(cancel_preset_edit_tb, &QToolButton::clicked, this, [&](){
+		connect(cancel_preset_edit_tb, &QToolButton::clicked, this, [this](){
 			togglePresetConfiguration(false);
 			enablePresetButtons();
 		});
 
-		connect(preset_name_edt, &QLineEdit::textChanged, this, [&](const QString &text){
+		connect(preset_name_edt, &QLineEdit::textChanged, this, [this](const QString &text){
 			save_preset_tb->setEnabled(!text.isEmpty());
 		});
 
@@ -168,7 +168,7 @@ ModelDatabaseDiffForm::ModelDatabaseDiffForm(QWidget *parent, Qt::WindowFlags fl
 		connect(database_cmb, &QComboBox::currentIndexChanged, this, &ModelDatabaseDiffForm::enablePartialDiff);
 		connect(pd_filter_wgt, &ObjectsFilterWidget::s_filterApplyingRequested, this, &ModelDatabaseDiffForm::applyPartialDiffFilters);
 
-		connect(pd_filter_wgt, &ObjectsFilterWidget::s_filtersRemoved, this, [&](){
+		connect(pd_filter_wgt, &ObjectsFilterWidget::s_filtersRemoved, this, [this](){
 			filtered_objs_tbw->setRowCount(0);
 		});
 
@@ -290,7 +290,7 @@ void ModelDatabaseDiffForm::createThread(ThreadId thread_id)
 		connect(src_import_thread, &QThread::started, src_import_helper, &DatabaseImportHelper::importDatabase);
 
 		connect(src_import_helper, &DatabaseImportHelper::s_progressUpdated, this,
-						[&](int progress, QString msg, ObjectType obj_type) {
+						[this](int progress, QString msg, ObjectType obj_type) {
 			updateProgress(progress, msg, obj_type);
 		}, Qt::BlockingQueuedConnection);
 
@@ -306,7 +306,7 @@ void ModelDatabaseDiffForm::createThread(ThreadId thread_id)
 		connect(import_thread, &QThread::started, import_helper, &DatabaseImportHelper::importDatabase);
 
 		connect(import_helper, &DatabaseImportHelper::s_progressUpdated, this,
-						[&](int progress, QString msg, ObjectType obj_type) {
+						[this](int progress, QString msg, ObjectType obj_type) {
 			updateProgress(progress, msg, obj_type);
 		}, Qt::BlockingQueuedConnection);
 
@@ -322,7 +322,7 @@ void ModelDatabaseDiffForm::createThread(ThreadId thread_id)
 		connect(diff_thread, &QThread::started, diff_helper, qOverload<>(&ModelsDiffHelper::diffModels));
 
 		connect(diff_helper, &ModelsDiffHelper::s_progressUpdated, this,
-						[&](int progress, QString msg, ObjectType obj_type) {
+						[this](int progress, QString msg, ObjectType obj_type) {
 			updateProgress(progress, msg, obj_type);
 		});
 
@@ -337,7 +337,7 @@ void ModelDatabaseDiffForm::createThread(ThreadId thread_id)
 		export_helper->setIgnoredErrors({ QString("0A000") });
 		export_helper->moveToThread(export_thread);
 
-		connect(apply_on_server_btn, &QPushButton::clicked, this, [&](){
+		connect(apply_on_server_btn, &QPushButton::clicked, this, [this](){
 			apply_on_server_btn->setEnabled(false);
 			if(!export_thread->isRunning())
 				exportDiff(false);

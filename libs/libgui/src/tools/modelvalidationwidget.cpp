@@ -54,22 +54,22 @@ ModelValidationWidget::ModelValidationWidget(QWidget *parent): QWidget(parent)
 		connect(connections_cmb, &QComboBox::activated, this, &ModelValidationWidget::editConnections);
 		connect(swap_ids_btn, &QToolButton::clicked, this, &ModelValidationWidget::swapObjectsIds);
 
-		connect(sql_validation_chk, &QCheckBox::toggled, this, [&](){
+		connect(sql_validation_chk, &QCheckBox::toggled, this, [this](){
 			configureValidation();
 			clearOutput();
 		});
 
-		connect(use_tmp_names_chk, &QCheckBox::toggled, this, [&](){
+		connect(use_tmp_names_chk, &QCheckBox::toggled, this, [this](){
 			configureValidation();
 			clearOutput();
 		});
 
-		connect(connections_cmb, &QComboBox::currentTextChanged, this, [&](){
+		connect(connections_cmb, &QComboBox::currentTextChanged, this, [this](){
 			configureValidation();
 			clearOutput();
 		});
 
-		connect(version_cmb, &QComboBox::currentTextChanged, this, [&](){
+		connect(version_cmb, &QComboBox::currentTextChanged, this, [this](){
 			configureValidation();
 			clearOutput();
 		});
@@ -113,11 +113,11 @@ void ModelValidationWidget::createThread()
 		validation_helper=new ModelValidationHelper;
 		validation_helper->moveToThread(validation_thread);
 
-		connect(validation_thread, &QThread::started, this, [&](){
+		connect(validation_thread, &QThread::started, this, [this](){
 			output_trw->setUniformRowHeights(true);
 		});
 
-		connect(validation_thread, &QThread::finished, this, [&](){
+		connect(validation_thread, &QThread::finished, this, [this](){
 			output_trw->setUniformRowHeights(false);
 		});
 
@@ -125,7 +125,7 @@ void ModelValidationWidget::createThread()
 		connect(validation_thread, &QThread::started, validation_helper, &ModelValidationHelper::applyFixes);
 		connect(validation_thread, &QThread::finished, this, &ModelValidationWidget::updateGraphicalObjects);
 
-		connect(validation_thread, &QThread::finished, this, [&](){
+		connect(validation_thread, &QThread::finished, this, [this](){
 			destroyThread();
 		});
 
@@ -139,15 +139,15 @@ void ModelValidationWidget::createThread()
 		connect(validation_helper, &ModelValidationHelper::s_fixApplied, prog_info_wgt, &QWidget::show, Qt::QueuedConnection);
 		connect(validation_helper, &ModelValidationHelper::s_relsValidationRequested, this, &ModelValidationWidget::validateRelationships);
 
-		connect(validation_helper, &ModelValidationHelper::s_validationCanceled, this, [&](){
+		connect(validation_helper, &ModelValidationHelper::s_validationCanceled, this, [this](){
 			emit s_validationCanceled();
 		});
 
-		connect(validation_helper, &ModelValidationHelper::s_fixApplied, this, [&](){
+		connect(validation_helper, &ModelValidationHelper::s_fixApplied, this, [this](){
 			emit s_fixApplied();
 		});
 
-		connect(validation_helper, &ModelValidationHelper::s_objectIdChanged, this, [&](BaseObject *obj) {
+		connect(validation_helper, &ModelValidationHelper::s_objectIdChanged, this, [this](BaseObject *obj) {
 			BaseGraphicObject *graph_obj=dynamic_cast<BaseGraphicObject *>(obj);
 			if(graph_obj) graph_objects.push_back(graph_obj);
 		});

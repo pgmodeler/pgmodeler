@@ -31,7 +31,7 @@ DeletableItemDelegate::DeletableItemDelegate(QComboBox *parent, const QString &t
 	del_btn->setShortcut(shortcut);
 	del_btn->setToolTip(tooltip + QString(" (%1)").arg(del_btn->shortcut().toString()));
 
-	QObject::connect(del_btn, &QToolButton::clicked, this, [&]() {
+	QObject::connect(del_btn, &QToolButton::clicked, this, [this]() {
 		emit s_itemDeleteRequested(combo->view()->currentIndex().row());
 	});
 }

@@ -29,12 +29,12 @@ DonateWidget::DonateWidget(QWidget *parent) : QWidget(parent)
 
 	GuiUtilsNs::createDropShadow(this, 5, 5, 30);
 
-	connect(hide_tb, &QToolButton::clicked, this, [&](){
+	connect(hide_tb, &QToolButton::clicked, this, [this](){
 		hide();
 		emit s_hideRequested();
 	});
 
-	connect(donate_tb, &QToolButton::clicked, this, [&](){
+	connect(donate_tb, &QToolButton::clicked, this, [this](){
 		QDesktopServices::openUrl(QUrl(GlobalAttributes::PgModelerDonateURL));
 		hide();
 		emit s_hideRequested();

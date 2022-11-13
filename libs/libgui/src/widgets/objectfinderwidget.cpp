@@ -53,7 +53,7 @@ ObjectFinderWidget::ObjectFinderWidget(QWidget *parent) : QWidget(parent)
 	fade_btn->setMenu(&fade_menu);
 
 	connect(filter_btn, &QToolButton::toggled, filter_frm, &QFrame::setVisible);
-	connect(filter_btn, &QToolButton::toggled, this, [&](){
+	connect(filter_btn, &QToolButton::toggled, this, [this](){
 		splitter->setSizes({0, 1000});
 		splitter->handle(1)->setEnabled(filter_btn->isChecked());
 	});
@@ -67,7 +67,7 @@ ObjectFinderWidget::ObjectFinderWidget(QWidget *parent) : QWidget(parent)
 	connect(select_all_btn, &QPushButton::clicked, this, &ObjectFinderWidget::setAllObjectsChecked);
 	connect(clear_all_btn, &QToolButton::clicked, this, &ObjectFinderWidget::setAllObjectsChecked);
 
-	connect(regexp_chk, &QCheckBox::toggled, this, [&](bool checked){
+	connect(regexp_chk, &QCheckBox::toggled, this, [this](bool checked){
 		exact_match_chk->setEnabled(checked);
 
 		if(!checked)

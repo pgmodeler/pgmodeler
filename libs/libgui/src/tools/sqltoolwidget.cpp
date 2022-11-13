@@ -69,12 +69,12 @@ SQLToolWidget::SQLToolWidget(QWidget * parent) : QWidget(parent)
 	connect(disconnect_tb, &QToolButton::clicked, this, &SQLToolWidget::disconnectFromDatabases);
 	connect(source_pane_tb, &QToolButton::toggled, sourcecode_gb, &QGroupBox::setVisible);
 
-	connect(sql_exec_corner_btn, &QToolButton::clicked, this, [&](){
+	connect(sql_exec_corner_btn, &QToolButton::clicked, this, [this](){
 		addSQLExecutionTab();
 	});
 
 	connect(databases_tbw, &QTabWidget::currentChanged,
-			[&](){
+			[this](){
 				DatabaseExplorerWidget *dbexplorer=qobject_cast<DatabaseExplorerWidget *>(databases_tbw->currentWidget());
 				QMap<QWidget *, QWidgetList> ::iterator itr=sql_exec_wgts.begin();
 
@@ -264,7 +264,7 @@ DatabaseExplorerWidget *SQLToolWidget::browseDatabase()
 			databases_tbw->setTabToolTip(databases_tbw->count() - 1, db_explorer_wgt->getConnection().getConnectionId(true, true));
 			databases_tbw->setCurrentWidget(db_explorer_wgt);
 
-			connect(db_explorer_wgt, &DatabaseExplorerWidget::s_sqlExecutionRequested, this, [&](){
+			connect(db_explorer_wgt, &DatabaseExplorerWidget::s_sqlExecutionRequested, this, [this](){
 				addSQLExecutionTab();
 			});
 

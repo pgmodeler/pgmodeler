@@ -111,7 +111,7 @@ subcontrol-position: right center; }");
 	connect(save_conf_tb, &QToolButton::clicked, this, &SchemaEditorForm::saveSyntaxConfig);
 	connect(reload_conf_tb, &QToolButton::clicked, this, &SchemaEditorForm::loadSyntaxConfig);
 
-	connect(new_tb, &QToolButton::clicked, this, [&](){
+	connect(new_tb, &QToolButton::clicked, this, [this](){
 		addEditorTab();
 	});
 
@@ -122,22 +122,22 @@ subcontrol-position: right center; }");
 	connect(save_all_tb, &QToolButton::clicked, this, &SchemaEditorForm::saveAll);
 	connect(close_all_tb, &QToolButton::clicked, this, &SchemaEditorForm::closeAll);
 
-	connect(editors_tbw, &QTabWidget::tabCloseRequested, this, [&](int idx){
+	connect(editors_tbw, &QTabWidget::tabCloseRequested, this, [this](int idx){
 		closeEditorTab(idx);
 	});
 
 	connect(editors_tbw, &QTabWidget::currentChanged, this, &SchemaEditorForm::loadSyntaxFromCurrentTab);
 	connect(use_tmpl_file_chk, &QCheckBox::toggled, this, &SchemaEditorForm::loadSyntaxConfig);
 
-	connect(syntax_txt, &NumberedTextEditor::textChanged, this, [&](){
+	connect(syntax_txt, &NumberedTextEditor::textChanged, this, [this](){
 		alert_frm->setVisible(true);
 	});
 
-	connect(save_as_tb, &QToolButton::clicked, this, [&](){
+	connect(save_as_tb, &QToolButton::clicked, this, [this](){
 		saveFile(true);
 	});
 
-	connect(about_tb, &QToolButton::clicked, this, [&](){
+	connect(about_tb, &QToolButton::clicked, this, [this](){
 		AboutSEWidget *info_wgt = new AboutSEWidget;
 		BaseForm base_frm;
 		base_frm.setMainWidget(info_wgt);
@@ -438,7 +438,7 @@ QStringList SchemaEditorForm::showFileDialog(bool save_mode)
 	if(save_mode)
 	{
 		file_dlg.setDefaultSuffix(".sch");
-		connect(&file_dlg, &QFileDialog::filterSelected, this, [&](QString filter){
+		connect(&file_dlg, &QFileDialog::filterSelected, this, [&file_dlg](QString filter){
 			filter.remove(QRegularExpression("(.)+(\\*)"));
 			filter.remove(")");
 			file_dlg.setDefaultSuffix(filter);

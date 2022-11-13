@@ -71,7 +71,7 @@ ModelExportForm::ModelExportForm(QWidget *parent, Qt::WindowFlags f) : QDialog(p
 	connect(drop_chk, &QCheckBox::toggled, drop_db_rb, &QRadioButton::setEnabled);
 	connect(drop_chk, &QCheckBox::toggled, drop_objs_rb, &QRadioButton::setEnabled);
 
-	connect(export_thread, &QThread::started, this, [&](){
+	connect(export_thread, &QThread::started, this, [this](){
 		output_trw->setUniformRowHeights(true);
 
 		if(export_to_dbms_rb->isChecked())
@@ -89,7 +89,7 @@ ModelExportForm::ModelExportForm(QWidget *parent, Qt::WindowFlags f) : QDialog(p
 			export_hlp.exportToSQL();
 	});
 
-	connect(export_thread, &QThread::finished, this, [&](){
+	connect(export_thread, &QThread::finished, this, [this](){
 		output_trw->setUniformRowHeights(false);
 	});
 

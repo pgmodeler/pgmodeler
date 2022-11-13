@@ -32,7 +32,7 @@ Messagebox::Messagebox(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 	connect(no_btn, &QPushButton::clicked, this, &Messagebox::handleNoCancelClick);
 	connect(cancel_btn, &QPushButton::clicked, this, &Messagebox::handleNoCancelClick);
 
-	connect(show_errors_tb, &QToolButton::toggled, this, [&](bool checked){
+	connect(show_errors_tb, &QToolButton::toggled, this, [this](bool checked){
 			objs_group_wgt->setCurrentIndex(checked ? 1 : 0);
 
 			if(!has_custom_size)

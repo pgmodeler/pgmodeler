@@ -69,15 +69,15 @@ RelationshipConfigWidget::RelationshipConfigWidget(QWidget * parent) : BaseConfi
 
 	connect(rel_type_cmb,  &QComboBox::currentIndexChanged, this,&RelationshipConfigWidget::fillNamePatterns);
 
-	connect(del_action_cmb, &QComboBox::currentTextChanged, this, [&](){
+	connect(del_action_cmb, &QComboBox::currentTextChanged, this, [this](){
 		setConfigurationChanged(true);
 	});
 
-	connect(upd_action_cmb, &QComboBox::currentTextChanged, this, [&](){
+	connect(upd_action_cmb, &QComboBox::currentTextChanged, this, [this](){
 		setConfigurationChanged(true);
 	});
 
-	connect(deferral_cmb, &QComboBox::currentTextChanged, this, [&](){
+	connect(deferral_cmb, &QComboBox::currentTextChanged, this, [this](){
 		setConfigurationChanged(true);
 	});
 }

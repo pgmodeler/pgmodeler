@@ -532,11 +532,11 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	connect(action_enable_sql, &QAction::triggered, this, &ModelWidget::toggleObjectSQL);
 	connect(action_disable_sql, &QAction::triggered, this, &ModelWidget::toggleObjectSQL);
 
-	connect(action_remove, &QAction::triggered, this, [&](){
+	connect(action_remove, &QAction::triggered, this, [this](){
 		removeObjects(false);
 	});
 
-	connect(action_cascade_del, &QAction::triggered, this, [&](){
+	connect(action_cascade_del, &QAction::triggered, this, [this](){
 		removeObjects(true);
 	});
 
@@ -568,19 +568,19 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	connect(scene, &ObjectsScene::s_childrenSelectionChanged, this, &ModelWidget::configureObjectSelection);
 	connect(scene, &ObjectsScene::s_objectsSelectedInRange, this, &ModelWidget::configureObjectSelection);
 
-	connect(scene, &ObjectsScene::s_collapseModeChanged, this, [&](){
+	connect(scene, &ObjectsScene::s_collapseModeChanged, this, [this](){
 		setModified(true);
 	});
 
-	connect(scene, &ObjectsScene::s_paginationToggled, this, [&](){
+	connect(scene, &ObjectsScene::s_paginationToggled, this, [this](){
 		setModified(true);
 	});
 
-	connect(scene, &ObjectsScene::s_currentPageChanged, this, [&](){
+	connect(scene, &ObjectsScene::s_currentPageChanged, this, [this](){
 		setModified(true);
 	});
 
-	connect(scene, &ObjectsScene::s_objectsMovedLayer, this, [&](){
+	connect(scene, &ObjectsScene::s_objectsMovedLayer, this, [this](){
 		setModified(true);
 	});
 

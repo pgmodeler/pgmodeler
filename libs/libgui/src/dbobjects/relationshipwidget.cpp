@@ -151,7 +151,7 @@ RelationshipWidget::RelationshipWidget(QWidget *parent): BaseObjectWidget(parent
 		connect(deferrable_chk, &QCheckBox::toggled, deferral_cmb, &QComboBox::setEnabled);
 		connect(deferrable_chk, &QCheckBox::toggled, deferral_lbl, &QLabel::setEnabled);
 
-		connect(identifier_chk, &QCheckBox::toggled, this, [&](){
+		connect(identifier_chk, &QCheckBox::toggled, this, [this](){
 			table1_mand_chk->setDisabled(identifier_chk->isChecked());
 			table2_mand_chk->setEnabled(!identifier_chk->isChecked() &&
 																	this->object &&

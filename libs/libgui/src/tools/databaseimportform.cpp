@@ -62,15 +62,15 @@ DatabaseImportForm::DatabaseImportForm(QWidget *parent, Qt::WindowFlags f) : QDi
 	connect(cancel_btn, &QPushButton::clicked, this,  &DatabaseImportForm::cancelImport);
 	connect(objs_filter_wgt, &ObjectsFilterWidget::s_filterApplyingRequested, this, qOverload<>(&DatabaseImportForm::listObjects));
 
-	connect(objs_filter_wgt, &ObjectsFilterWidget::s_filtersRemoved, this, [&](){
+	connect(objs_filter_wgt, &ObjectsFilterWidget::s_filtersRemoved, this, [this](){
 		listObjects();
 	});
 
-	connect(import_to_model_chk, &QCheckBox::toggled, this, [&](bool checked){
+	connect(import_to_model_chk, &QCheckBox::toggled, this, [this](bool checked){
 		create_model=!checked;
 	});
 
-	connect(database_cmb, &QComboBox::currentTextChanged, this, [&]() {
+	connect(database_cmb, &QComboBox::currentTextChanged, this, [this]() {
 		bool enable = database_cmb->currentIndex() > 0;
 
 		if(database_cmb->currentIndex()==0)
@@ -115,11 +115,11 @@ void DatabaseImportForm::createThread()
 	import_helper=new DatabaseImportHelper;
 	import_helper->moveToThread(import_thread);
 
-	connect(import_thread, &QThread::started, this, [&](){
+	connect(import_thread, &QThread::started, this, [this](){
 		output_trw->setUniformRowHeights(true);
 	});
 
-	connect(import_thread, &QThread::finished, this, [&](){
+	connect(import_thread, &QThread::finished, this, [this](){
 		output_trw->setUniformRowHeights(false);
 	});
 

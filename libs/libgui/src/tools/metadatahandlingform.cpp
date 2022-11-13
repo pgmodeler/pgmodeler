@@ -39,7 +39,7 @@ MetadataHandlingForm::MetadataHandlingForm(QWidget *parent, Qt::WindowFlags f) :
 	connect(cancel_btn, &QPushButton::clicked, this, &MetadataHandlingForm::reject);
 	connect(apply_btn, &QPushButton::clicked, this, &MetadataHandlingForm::handleObjectsMetada);
 
-	connect(extract_from_cmb, &QComboBox::currentTextChanged, [&](){
+	connect(extract_from_cmb, &QComboBox::currentTextChanged, [this](){
 		apply_btn->setDisabled(extract_from_cmb->count() == 0);
 	});
 

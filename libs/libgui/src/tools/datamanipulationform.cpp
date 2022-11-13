@@ -61,7 +61,7 @@ DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f):
 	act = copy_menu.addAction(tr("Copy as text"));
 	act->setShortcut(QKeySequence("Ctrl+C"));
 
-	connect(act, &QAction::triggered,	this, [&](){
+	connect(act, &QAction::triggered,	this, [this](){
 		SQLExecutionWidget::copySelection(results_tbw, false, false);
 		paste_tb->setEnabled(true);
 	});
@@ -69,7 +69,7 @@ DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f):
 	act = copy_menu.addAction(tr("Copy as CSV"));
 	act->setShortcut(QKeySequence("Ctrl+Shift+C"));
 
-	connect(act, &QAction::triggered, this, [&](){
+	connect(act, &QAction::triggered, this, [this](){
 		SQLExecutionWidget::copySelection(results_tbw, false, true);
 		paste_tb->setEnabled(true);
 	});
@@ -77,7 +77,7 @@ DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f):
 	act = paste_menu.addAction(tr("Paste as text"));
 	act->setShortcut(QKeySequence("Ctrl+V"));
 
-	connect(act, &QAction::triggered,	this, [&](){
+	connect(act, &QAction::triggered,	this, [this](){
 		loadDataFromCsv(true, false);
 		paste_tb->setEnabled(false);
 	});
@@ -85,7 +85,7 @@ DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f):
 	act = paste_menu.addAction(tr("Paste as CSV"));
 	act->setShortcut(QKeySequence("Ctrl+Shift+V"));
 
-	connect(act, &QAction::triggered,	this, [&](){
+	connect(act, &QAction::triggered,	this, [this](){
 		loadDataFromCsv(true, true);
 		paste_tb->setEnabled(false);
 	});
@@ -102,7 +102,7 @@ DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f):
 	action_bulk_edit->setShortcut(QKeySequence("Ctrl+E"));
 	action_bulk_edit->setToolTip(tr("Change the values of all selected cells at once"));
 
-	connect(action_bulk_edit, &QAction::triggered, this, [&](){
+	connect(action_bulk_edit, &QAction::triggered, this, [this](){
 		GuiUtilsNs::bulkDataEdit(results_tbw);
 	});
 
@@ -143,7 +143,7 @@ DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f):
 
 	columns_lst->installEventFilter(this);
 
-	connect(columns_lst, &QListWidget::itemDoubleClicked, this, [&](QListWidgetItem *item){
+	connect(columns_lst, &QListWidget::itemDoubleClicked, this, [this](QListWidgetItem *item){
 		if(item->checkState() == Qt::Checked)
 			item->setCheckState(Qt::Unchecked);
 		else
@@ -152,11 +152,11 @@ DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f):
 		toggleColumnDisplay(item);
 	});
 
-	connect(select_all_tb, &QToolButton::clicked, this, [&](){
+	connect(select_all_tb, &QToolButton::clicked, this, [this](){
 	  setColumnsCheckState(Qt::Checked);
 	});
 
-	connect(clear_all_tb, &QToolButton::clicked, this, [&](){
+	connect(clear_all_tb, &QToolButton::clicked, this, [this](){
 	  setColumnsCheckState(Qt::Unchecked);
 	});
 
@@ -185,7 +185,7 @@ DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f):
 	connect(truncate_tb,  &QToolButton::clicked, this, &DataManipulationForm::truncateTable);
 	connect(new_window_tb, &QToolButton::clicked, this, &DataManipulationForm::openNewWindow);
 
-	connect(filter_tb, &QToolButton::toggled, this, [&](bool checked){
+	connect(filter_tb, &QToolButton::toggled, this, [this](bool checked){
 		v_splitter->setVisible(checked);
 
 		if(checked)
@@ -196,17 +196,17 @@ DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f):
 	connect(results_tbw, &QTableWidget::currentCellChanged, this, &DataManipulationForm::insertRowOnTabPress, Qt::QueuedConnection);
 	connect(results_tbw, &QTableWidget::itemPressed, this, &DataManipulationForm::showPopupMenu);
 
-	connect(export_tb, &QToolButton::clicked, this, [&](){
+	connect(export_tb, &QToolButton::clicked, this, [this](){
 		SQLExecutionWidget::exportResults(results_tbw);
 	});
 
 	connect(results_tbw, &QTableWidget::itemSelectionChanged, this, &DataManipulationForm::enableRowControlButtons);
 
-	connect(csv_load_wgt, &CsvLoadWidget::s_csvFileLoaded, this, [&](){
+	connect(csv_load_wgt, &CsvLoadWidget::s_csvFileLoaded, this, [this](){
 		loadDataFromCsv();
 	});
 
-	connect(results_tbw->horizontalHeader(), &QHeaderView::sortIndicatorChanged, this, [&](int section, Qt::SortOrder sort_order){
+	connect(results_tbw->horizontalHeader(), &QHeaderView::sortIndicatorChanged, this, [this](int section, Qt::SortOrder sort_order){
 		// Applying the sorting on the clicked column when the Control key is pressed
 		if(qApp->keyboardModifiers() == Qt::ControlModifier)
 			sortResults(section, sort_order);

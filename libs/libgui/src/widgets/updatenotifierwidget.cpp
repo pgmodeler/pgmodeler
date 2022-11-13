@@ -32,15 +32,15 @@ UpdateNotifierWidget::UpdateNotifierWidget(QWidget *parent) : QWidget(parent)
 
 	connect(&update_chk_manager, &QNetworkAccessManager::finished, this, &UpdateNotifierWidget::handleUpdateChecked);
 
-	connect(get_source_tb, &QToolButton::clicked, this, [&](){
+	connect(get_source_tb, &QToolButton::clicked, this, [this](){
 		activateLink(GlobalAttributes::PgModelerSourceURL);
 	});
 
-	connect(get_binary_tb, &QToolButton::clicked, this, [&](){
+	connect(get_binary_tb, &QToolButton::clicked, this, [this](){
 		activateLink(GlobalAttributes::PgModelerDownloadURL);
 	});
 
-	connect(hide_tb, &QToolButton::clicked, this,	[&](){
+	connect(hide_tb, &QToolButton::clicked, this,	[this](){
 		hide();
 		emit s_hideRequested();
 	});

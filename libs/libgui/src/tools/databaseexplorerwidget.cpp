@@ -207,7 +207,7 @@ DatabaseExplorerWidget::DatabaseExplorerWidget(QWidget *parent): QWidget(parent)
 	connect(objects_trw, &QTreeWidget::itemCollapsed, this, &DatabaseExplorerWidget::cancelObjectRename);
 	connect(objects_trw, &QTreeWidget::itemExpanded, this, &DatabaseExplorerWidget::cancelObjectRename);
 
-	connect(data_grid_tb, &QToolButton::clicked, this, [&](){
+	connect(data_grid_tb, &QToolButton::clicked, this, [this](){
 		openDataGrid();
 	});
 
@@ -215,25 +215,25 @@ DatabaseExplorerWidget::DatabaseExplorerWidget(QWidget *parent): QWidget(parent)
 	connect(by_oid_chk, &QCheckBox::toggled, this, &DatabaseExplorerWidget::filterObjects);
 	connect(filter_edt, &QLineEdit::textChanged, this, &DatabaseExplorerWidget::filterObjects);
 
-	connect(drop_db_tb,  &QToolButton::clicked, this, [&]() {
+	connect(drop_db_tb,  &QToolButton::clicked, this, [this]() {
 		emit s_databaseDropRequested(connection.getConnectionParam(Connection::ParamDbName));
 	});
 
-	connect(runsql_tb, &QToolButton::clicked, this, [&]() {
+	connect(runsql_tb, &QToolButton::clicked, this, [this]() {
 		emit s_sqlExecutionRequested();
 	});
 
-	connect(properties_tbw, &QTableWidget::itemPressed, this, [&]() {
+	connect(properties_tbw, &QTableWidget::itemPressed, this, [this]() {
 		SQLExecutionWidget::copySelection(properties_tbw, true);
 	});
 
-	connect(expand_all_tb, &QToolButton::clicked, this, [&](){
+	connect(expand_all_tb, &QToolButton::clicked, this, [this](){
 		objects_trw->blockSignals(true);
 		objects_trw->expandAll();
 		objects_trw->blockSignals(false);
 	});
 
-	connect(objects_trw, &QTreeWidget::itemExpanded, this, [&](QTreeWidgetItem *item){
+	connect(objects_trw, &QTreeWidget::itemExpanded, this, [this](QTreeWidgetItem *item){
 		ObjectType obj_type=static_cast<ObjectType>(item->data(DatabaseImportForm::ObjectTypeId, Qt::UserRole).toUInt());
 		unsigned oid=item->data(DatabaseImportForm::ObjectId, Qt::UserRole).toUInt();
 
@@ -243,7 +243,7 @@ DatabaseExplorerWidget::DatabaseExplorerWidget(QWidget *parent): QWidget(parent)
 		}
 	});
 
-	connect(sort_by_name_tb, &QToolButton::clicked, this, [&]() {
+	connect(sort_by_name_tb, &QToolButton::clicked, this, [this]() {
 			sort_column = sort_by_name_tb->isChecked() ? 0 : DatabaseImportForm::ObjectId;
 			objects_trw->sortByColumn(sort_column, Qt::AscendingOrder);
 	});

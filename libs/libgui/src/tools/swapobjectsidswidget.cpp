@@ -55,13 +55,13 @@ SwapObjectsIdsWidget::SwapObjectsIdsWidget(QWidget *parent, Qt::WindowFlags f) :
 		connect(src_object_sel, &ObjectSelectorWidget::s_selectorCleared, this, &SwapObjectsIdsWidget::showObjectId);
 		connect(dst_object_sel, &ObjectSelectorWidget::s_selectorCleared, this, &SwapObjectsIdsWidget::showObjectId);
 
-		connect(swap_values_tb, &QToolButton::clicked, this, [&](){
+		connect(swap_values_tb, &QToolButton::clicked, this, [this](){
 			BaseObject *obj=src_object_sel->getSelectedObject();
 			src_object_sel->setSelectedObject(dst_object_sel->getSelectedObject());
 			dst_object_sel->setSelectedObject(obj);
 		});
 
-		connect(objects_tbw, &QTableWidget::itemDoubleClicked, this, [&](QTableWidgetItem *item){
+		connect(objects_tbw, &QTableWidget::itemDoubleClicked, this, [this](QTableWidgetItem *item){
 			if(QApplication::mouseButtons() == Qt::LeftButton)
 				selectItem(item);
 		});
