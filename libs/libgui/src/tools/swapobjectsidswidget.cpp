@@ -55,15 +55,13 @@ SwapObjectsIdsWidget::SwapObjectsIdsWidget(QWidget *parent, Qt::WindowFlags f) :
 		connect(src_object_sel, &ObjectSelectorWidget::s_selectorCleared, this, &SwapObjectsIdsWidget::showObjectId);
 		connect(dst_object_sel, &ObjectSelectorWidget::s_selectorCleared, this, &SwapObjectsIdsWidget::showObjectId);
 
-		connect(swap_values_tb, &QToolButton::clicked,
-		[&](){
+		connect(swap_values_tb, &QToolButton::clicked, this, [&](){
 			BaseObject *obj=src_object_sel->getSelectedObject();
 			src_object_sel->setSelectedObject(dst_object_sel->getSelectedObject());
 			dst_object_sel->setSelectedObject(obj);
 		});
 
-		connect(objects_tbw, &QTableWidget::itemDoubleClicked,
-		[&](QTableWidgetItem *item){
+		connect(objects_tbw, &QTableWidget::itemDoubleClicked, this, [&](QTableWidgetItem *item){
 			if(QApplication::mouseButtons() == Qt::LeftButton)
 				selectItem(item);
 		});
@@ -118,7 +116,7 @@ void SwapObjectsIdsWidget::fillCreationOrderGrid()
 	std::vector<BaseObject *> objects;
 
 	//Using an stl function to extract all the values (objects) from the map and put them into a list
-	std::for_each(creation_order.begin(), creation_order.end(), [&](const std::pair<unsigned, BaseObject *> &itr) {
+	std::for_each(creation_order.begin(), creation_order.end(), [&objects](const std::pair<unsigned, BaseObject *> &itr) {
 		if(itr.second->getObjectType() != ObjectType::Constraint) {
 			objects.push_back(itr.second);
 		}

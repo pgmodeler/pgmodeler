@@ -4952,7 +4952,10 @@ void ModelWidget::swapObjectsIds()
 	parent_form.apply_ok_btn->setIcon(QPixmap(GuiUtilsNs::getIconPath("swapobjs")));
 	parent_form.apply_ok_btn->setText(tr("Swap ids"));
 
-	connect(swap_ids_wgt, &SwapObjectsIdsWidget::s_objectsIdsSwapped, this, [&](){ swapped = true; });
+	connect(swap_ids_wgt, &SwapObjectsIdsWidget::s_objectsIdsSwapped, this, [&swapped](){
+		swapped = true;
+	});
+
 	connect(swap_ids_wgt, &SwapObjectsIdsWidget::s_objectsIdsSwapReady, parent_form.apply_ok_btn, &QPushButton::setEnabled);
 
 	GeneralConfigWidget::restoreWidgetGeometry(&parent_form, swap_ids_wgt->metaObject()->className());

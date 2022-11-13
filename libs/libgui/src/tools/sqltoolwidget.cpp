@@ -68,6 +68,7 @@ SQLToolWidget::SQLToolWidget(QWidget * parent) : QWidget(parent)
 	connect(database_cmb, &QComboBox::activated, this, &SQLToolWidget::browseDatabase);
 	connect(disconnect_tb, &QToolButton::clicked, this, &SQLToolWidget::disconnectFromDatabases);
 	connect(source_pane_tb, &QToolButton::toggled, sourcecode_gb, &QGroupBox::setVisible);
+
 	connect(sql_exec_corner_btn, &QToolButton::clicked, this, [&](){
 		addSQLExecutionTab();
 	});

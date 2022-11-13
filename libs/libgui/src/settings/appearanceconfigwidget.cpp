@@ -292,8 +292,8 @@ CREATE TABLE public.table_b (\n \
 	connect(font_preview_txt, &NumberedTextEditor::cursorPositionChanged, this, &AppearanceConfigWidget::previewCodeFontStyle);
 
 	connect(elem_color_cp, &ColorPickerWidget::s_colorChanged, this, &AppearanceConfigWidget::applyElementColor);
-	connect(elem_color_cp, &ColorPickerWidget::s_colorsChanged,
-			[&](){
+
+	connect(elem_color_cp, &ColorPickerWidget::s_colorsChanged, this, [&](){
 		for(unsigned i=0; i < elem_color_cp->getColorCount(); i++)
 			applyElementColor(i, elem_color_cp->getColor(i));
 	});

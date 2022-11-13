@@ -133,14 +133,15 @@ SQLExecutionWidget::SQLExecutionWidget(QWidget * parent) : QWidget(parent)
 	connect(find_replace_wgt, &FindReplaceWidget::s_hideRequested, find_tb, &QToolButton::toggle);
 	connect(find_history_wgt, &FindReplaceWidget::s_hideRequested, find_history_parent, &QWidget::hide);
 
-	connect(results_tbw, &QTableView::pressed,
-			[&](){ SQLExecutionWidget::copySelection(results_tbw); });
+	connect(results_tbw, &QTableView::pressed, this, [&](){
+		SQLExecutionWidget::copySelection(results_tbw);
+	});
 
-	connect(export_tb, &QToolButton::clicked,
-			[&](){ SQLExecutionWidget::exportResults(results_tbw); });
+	connect(export_tb, &QToolButton::clicked, this, [&](){
+		SQLExecutionWidget::exportResults(results_tbw);
+	});
 
-	connect(close_file_tb, &QToolButton::clicked,
-	[&](){
+	connect(close_file_tb, &QToolButton::clicked, this, [&](){
 			if(clearAll() == QDialog::Accepted)
 			{
 				filename_edt->clear();

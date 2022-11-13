@@ -39,8 +39,9 @@ MetadataHandlingForm::MetadataHandlingForm(QWidget *parent, Qt::WindowFlags f) :
 	connect(cancel_btn, &QPushButton::clicked, this, &MetadataHandlingForm::reject);
 	connect(apply_btn, &QPushButton::clicked, this, &MetadataHandlingForm::handleObjectsMetada);
 
-	connect(extract_from_cmb, &QComboBox::currentTextChanged,
-					[&](){ apply_btn->setDisabled(extract_from_cmb->count() == 0); });
+	connect(extract_from_cmb, &QComboBox::currentTextChanged, [&](){
+		apply_btn->setDisabled(extract_from_cmb->count() == 0);
+	});
 
 	connect(extract_from_cmb, &QComboBox::currentIndexChanged, this, &MetadataHandlingForm::enableMetadataHandling);
 	connect(backup_file_sel, &FileSelectorWidget::s_selectorChanged, this, &MetadataHandlingForm::enableMetadataHandling);

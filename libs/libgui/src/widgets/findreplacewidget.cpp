@@ -47,23 +47,22 @@ FindReplaceWidget::FindReplaceWidget(QPlainTextEdit *txt_edit, QWidget *parent):
 	connect(replace_find_tb, &QToolButton::clicked, this, &FindReplaceWidget::replaceFindText);
 	connect(replace_all_tb, &QToolButton::clicked, this, &FindReplaceWidget::replaceAll);
 
-	connect(next_tb, &QToolButton::clicked,
-	[&]() {
+	connect(next_tb, &QToolButton::clicked, this, [&]() {
 		findText(false, true);
 	});
 
-	connect(previous_tb, &QToolButton::clicked,
-	[&]() {
+	connect(previous_tb, &QToolButton::clicked, this, [&]() {
 		findText(true, true);
 	});
 
-	connect(find_edt, &QLineEdit::textChanged,
-			[&]() { bool enable=!find_edt->text().isEmpty();
+	connect(find_edt, &QLineEdit::textChanged, this, [&]() {
+		bool enable=!find_edt->text().isEmpty();
 		next_tb->setEnabled(enable);
 		previous_tb->setEnabled(enable);
 		replace_tb->setEnabled(enable);
 		replace_all_tb->setEnabled(enable);
-		replace_find_tb->setEnabled(enable); });
+		replace_find_tb->setEnabled(enable);
+	});
 
 	connect(hide_tb, &QToolButton::clicked, this, &FindReplaceWidget::s_hideRequested);
 

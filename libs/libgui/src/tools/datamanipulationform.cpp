@@ -60,6 +60,7 @@ DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f):
 
 	act = copy_menu.addAction(tr("Copy as text"));
 	act->setShortcut(QKeySequence("Ctrl+C"));
+
 	connect(act, &QAction::triggered,	this, [&](){
 		SQLExecutionWidget::copySelection(results_tbw, false, false);
 		paste_tb->setEnabled(true);
@@ -75,6 +76,7 @@ DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f):
 
 	act = paste_menu.addAction(tr("Paste as text"));
 	act->setShortcut(QKeySequence("Ctrl+V"));
+
 	connect(act, &QAction::triggered,	this, [&](){
 		loadDataFromCsv(true, false);
 		paste_tb->setEnabled(false);
@@ -82,6 +84,7 @@ DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f):
 
 	act = paste_menu.addAction(tr("Paste as CSV"));
 	act->setShortcut(QKeySequence("Ctrl+Shift+V"));
+
 	connect(act, &QAction::triggered,	this, [&](){
 		loadDataFromCsv(true, true);
 		paste_tb->setEnabled(false);
@@ -182,21 +185,20 @@ DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f):
 	connect(truncate_tb,  &QToolButton::clicked, this, &DataManipulationForm::truncateTable);
 	connect(new_window_tb, &QToolButton::clicked, this, &DataManipulationForm::openNewWindow);
 
-	connect(filter_tb, &QToolButton::toggled,
-			[&](bool checked){
+	connect(filter_tb, &QToolButton::toggled, this, [&](bool checked){
+		v_splitter->setVisible(checked);
 
-				v_splitter->setVisible(checked);
-
-				if(checked)
-					filter_txt->setFocus();
+		if(checked)
+			filter_txt->setFocus();
 	});
 
 	//Using the QueuedConnection here to avoid the "edit: editing failed" when editing and navigating through items using tab key
 	connect(results_tbw, &QTableWidget::currentCellChanged, this, &DataManipulationForm::insertRowOnTabPress, Qt::QueuedConnection);
 	connect(results_tbw, &QTableWidget::itemPressed, this, &DataManipulationForm::showPopupMenu);
 
-	connect(export_tb, &QToolButton::clicked,
-			[&](){ SQLExecutionWidget::exportResults(results_tbw); });
+	connect(export_tb, &QToolButton::clicked, this, [&](){
+		SQLExecutionWidget::exportResults(results_tbw);
+	});
 
 	connect(results_tbw, &QTableWidget::itemSelectionChanged, this, &DataManipulationForm::enableRowControlButtons);
 
