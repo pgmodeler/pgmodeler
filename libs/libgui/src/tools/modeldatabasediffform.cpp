@@ -1329,7 +1329,7 @@ void ModelDatabaseDiffForm::enablePartialDiff()
 	{
 		pd_input_lbl->setText(QString("<strong>%1</strong>").arg(src_model_name_lbl->text()));
 		pd_input_lbl->setToolTip(src_model_name_lbl->toolTip());
-		pd_input_ico_lbl->setPixmap(QPixmap(GuiUtilsNs::getIconPath("pgmodeler_logo")));
+		pd_input_ico_lbl->setPixmap(QPixmap(GuiUtilsNs::getIconPath("dbmodel")));
 	}
 	else if(src_database_cmb->currentIndex() >= 0)
 	{
