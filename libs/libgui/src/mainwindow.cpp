@@ -168,6 +168,7 @@ void MainWindow::configureMenusActionsWidgets()
 	QToolButton *plugins_btn = dynamic_cast<QToolButton *>(model_acts_tb->widgetForAction(plugins_menu->menuAction()));
 	plugins_btn->setPopupMode(QToolButton::InstantPopup);
 	plugins_btn->setIcon(QIcon(GuiUtilsNs::getIconPath("plugins")));
+	plugins_btn->setToolButtonStyle(Qt::ToolButtonIconOnly);
 
 	model_acts_tb->addAction(action_bug_report);
 	model_acts_tb->addAction(action_donate);
