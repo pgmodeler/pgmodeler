@@ -137,14 +137,14 @@ void MainWindow::configureMenusActionsWidgets()
 	QToolButton *tool_btn = qobject_cast<QToolButton *>(tools_acts_tb->widgetForAction(fix_menu.menuAction()));
 	tool_btn->setPopupMode(QToolButton::InstantPopup);
 
-	action_arrange_objects = show_menu->insertMenu(action_compact_view, &arrange_menu);
-	action_arrange_objects->setText(tr("Arrange objects"));
-	action_arrange_objects->setToolTip(tr("Rearrange objects over the canvas"));
-	action_arrange_objects->setIcon(QIcon(GuiUtilsNs::getIconPath("arrangetables")));
-	action_arrange_objects->setEnabled(false);
-	model_acts_tb->insertAction(action_compact_view, action_arrange_objects);
+	QAction *act_arrange_objs = show_menu->insertMenu(action_compact_view, &arrange_menu);
+	act_arrange_objs->setText(tr("Arrange objects"));
+	act_arrange_objs->setToolTip(tr("Rearrange objects over the canvas"));
+	act_arrange_objs->setIcon(QIcon(GuiUtilsNs::getIconPath("arrangetables")));
+	act_arrange_objs->setEnabled(false);
+	model_acts_tb->insertAction(action_compact_view, act_arrange_objs);
 
-	tool_btn = qobject_cast<QToolButton *>(model_acts_tb->widgetForAction(action_arrange_objects));
+	tool_btn = qobject_cast<QToolButton *>(model_acts_tb->widgetForAction(act_arrange_objs));
 	tool_btn->setPopupMode(QToolButton::InstantPopup);
 
 	arrange_menu.addAction(tr("Grid"), this, &MainWindow::arrangeObjects);
@@ -165,7 +165,9 @@ void MainWindow::configureMenusActionsWidgets()
 	model_acts_tb->addSeparator();
 
 	model_acts_tb->addAction(plugins_menu->menuAction());
-	dynamic_cast<QToolButton *>(model_acts_tb->widgetForAction(plugins_menu->menuAction()))->setPopupMode(QToolButton::InstantPopup);
+	QToolButton *plugins_btn = dynamic_cast<QToolButton *>(model_acts_tb->widgetForAction(plugins_menu->menuAction()));
+	plugins_btn->setPopupMode(QToolButton::InstantPopup);
+	plugins_btn->setIcon(QIcon(GuiUtilsNs::getIconPath("plugins")));
 
 	model_acts_tb->addAction(action_bug_report);
 	model_acts_tb->addAction(action_donate);
@@ -343,7 +345,6 @@ void MainWindow::loadConfigurations()
 		plugins_menu->setEnabled(!plugins_menu->isEmpty());
 
 		QAction *action_plugins = plugins_menu->menuAction();
-		action_plugins->setIcon(QIcon(GuiUtilsNs::getIconPath("plugins")));
 		action_plugins->setText(tr("Plug-ins"));
 		action_plugins->setToolTip(tr("Access the list of loaded plugins"));
 		action_plugins->setEnabled(!plugins_menu->isEmpty());
@@ -1161,7 +1162,7 @@ void MainWindow::setCurrentModel()
 
 	models_tbw->setCurrentIndex(model_nav_wgt->getCurrentIndex());
 	current_model=dynamic_cast<ModelWidget *>(models_tbw->currentWidget());
-	action_arrange_objects->setEnabled(current_model != nullptr);
+	arrange_menu.menuAction()->setEnabled(current_model != nullptr);
 
 	QFile::remove(GlobalAttributes::getTemporaryFilePath(GlobalAttributes::LastModelFile));
 
