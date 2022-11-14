@@ -36,7 +36,7 @@ MetadataHandlingForm::MetadataHandlingForm(QWidget *parent, Qt::WindowFlags f) :
 	backup_file_sel->setWindowTitle(tr("Select backup file"));
 	settings_grid->addWidget(backup_file_sel, 6, 2);
 
-	connect(cancel_btn, &QPushButton::clicked, this, &MetadataHandlingForm::reject);
+	connect(close_btn, &QPushButton::clicked, this, &MetadataHandlingForm::reject);
 	connect(apply_btn, &QPushButton::clicked, this, &MetadataHandlingForm::handleObjectsMetada);
 
 	connect(extract_from_cmb, &QComboBox::currentTextChanged, [this](){
