@@ -55,9 +55,6 @@ ModelFixForm::ModelFixForm(QWidget *parent, Qt::WindowFlags f) : QDialog(parent,
 	pgmodeler_cli_sel->setVisible(false);
 	model_fix_grid->addWidget(pgmodeler_cli_sel, 1, 2);
 
-
-	//GuiUtilsNs::configureWidgetFont(not_found_lbl, GuiUtilsNs::MediumFontFactor);
-
 	//Configuring font style for output widget
 	if(!confs[Attributes::Code][Attributes::Font].isEmpty())
 	{
@@ -77,10 +74,10 @@ ModelFixForm::ModelFixForm(QWidget *parent, Qt::WindowFlags f) : QDialog(parent,
 	connect(pgmodeler_cli_sel, &FileSelectorWidget::s_selectorChanged, this, &ModelFixForm::enableFix);
 	connect(close_btn, &QPushButton::clicked, this, &ModelFixForm::reject);
 
-	hideEvent(nullptr);
+	resetFixForm();
 }
 
-void ModelFixForm::hideEvent(QHideEvent *)
+void ModelFixForm::resetFixForm()
 {
 	alert_frm->setVisible(false);
 	pgmodeler_cli_lbl->setVisible(false);
@@ -89,6 +86,11 @@ void ModelFixForm::hideEvent(QHideEvent *)
 	output_file_sel->clearSelector();
 	output_txt->setPlainText(tr("Waiting process to start..."));
 	load_model_chk->setChecked(true);
+}
+
+void ModelFixForm::hideEvent(QHideEvent *)
+{
+	resetFixForm();
 }
 
 int ModelFixForm::exec()
