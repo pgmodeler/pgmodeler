@@ -44,12 +44,12 @@ ObjectFinderWidget::ObjectFinderWidget(QWidget *parent) : QWidget(parent)
 	splitter->handle(1)->setEnabled(false);
 	updateObjectTypeList(obj_types_lst);
 
-	select_menu.addAction(tr("Listed"), this, SLOT(selectObjects()));
-	select_menu.addAction(tr("Not listed"), this, SLOT(selectObjects()));
+	select_menu.addAction(tr("Listed"), this, &ObjectFinderWidget::selectObjects);
+	select_menu.addAction(tr("Not listed"), this, &ObjectFinderWidget::selectObjects);
 	select_btn->setMenu(&select_menu);
 
-	fade_menu.addAction(tr("Listed"), this, SLOT(fadeObjects()));
-	fade_menu.addAction(tr("Not listed"), this, SLOT(fadeObjects()));
+	fade_menu.addAction(tr("Listed"), this, &ObjectFinderWidget::fadeObjects);
+	fade_menu.addAction(tr("Not listed"), this, &ObjectFinderWidget::fadeObjects);
 	fade_btn->setMenu(&fade_menu);
 
 	connect(filter_btn, &QToolButton::toggled, filter_frm, &QFrame::setVisible);

@@ -82,19 +82,19 @@ SchemaEditorForm::SchemaEditorForm(QWidget *parent) : QWidget(parent)
 	QAction *act = nullptr;
 	stx_action_grp = new QActionGroup(&syntax_cfg_menu);
 
-	act = syntax_cfg_menu.addAction("Schema file", this, SLOT(loadSyntaxConfig()));
+	act = syntax_cfg_menu.addAction("Schema file", this, &SchemaEditorForm::loadSyntaxConfig);
 	stx_action_grp->addAction(act);
 	act->setCheckable(true);
 	act->setChecked(true);
 	act->setData(GlobalAttributes::SchHighlightConf);
 
-	act = syntax_cfg_menu.addAction("XML script", this, SLOT(loadSyntaxConfig()));
+	act = syntax_cfg_menu.addAction("XML script", this, &SchemaEditorForm::loadSyntaxConfig);
 	stx_action_grp->addAction(act);
 	act->setCheckable(true);
 	act->setChecked(false);
 	act->setData(GlobalAttributes::XMLHighlightConf);
 
-	act = syntax_cfg_menu.addAction("SQL script", this, SLOT(loadSyntaxConfig()));
+	act = syntax_cfg_menu.addAction("SQL script", this, &SchemaEditorForm::loadSyntaxConfig);
 	stx_action_grp->addAction(act);
 	act->setData(GlobalAttributes::SQLHighlightConf);
 	act->setCheckable(true);

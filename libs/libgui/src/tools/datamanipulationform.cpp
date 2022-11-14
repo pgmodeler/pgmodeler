@@ -92,10 +92,10 @@ DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f):
 
 	edit_tb->setMenu(&edit_menu);
 
-	action_add = edit_menu.addAction(QIcon(GuiUtilsNs::getIconPath("addrow")), tr("Add row(s)"), this, SLOT(addRow()), QKeySequence("Ins"));
+	action_add = edit_menu.addAction(QIcon(GuiUtilsNs::getIconPath("addrow")), tr("Add row(s)"), this, &DataManipulationForm::addRow, QKeySequence("Ins"));
 	action_add->setToolTip(tr("Add empty rows"));
 
-	action_delete = edit_menu.addAction(QIcon(GuiUtilsNs::getIconPath("delrow")), tr("Delete row(s)"), this, SLOT(markDeleteOnRows()), QKeySequence("Del"));
+	action_delete = edit_menu.addAction(QIcon(GuiUtilsNs::getIconPath("delrow")), tr("Delete row(s)"), this, &DataManipulationForm::markDeleteOnRows, QKeySequence("Del"));
 	action_delete->setToolTip(tr("Mark the selected rows to be deleted"));
 
 	action_bulk_edit = edit_menu.addAction(QIcon(GuiUtilsNs::getIconPath("bulkedit")), tr("Edit cells"));
@@ -106,16 +106,16 @@ DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f):
 		GuiUtilsNs::bulkDataEdit(results_tbw);
 	});
 
-	action_duplicate = edit_menu.addAction(QIcon(GuiUtilsNs::getIconPath("duprow")), tr("Duplicate row(s)"), this, SLOT(duplicateRows()), QKeySequence("Ctrl+D"));
+	action_duplicate = edit_menu.addAction(QIcon(GuiUtilsNs::getIconPath("duprow")), tr("Duplicate row(s)"), this, &DataManipulationForm::duplicateRows, QKeySequence("Ctrl+D"));
 	action_duplicate->setToolTip(tr("Duplicate the selected rows"));
 
-	action_clear = edit_menu.addAction(QIcon(GuiUtilsNs::getIconPath("cleartext")), tr("Clear cell(s)"), this, SLOT(clearItemsText()), QKeySequence("Ctrl+R"));
+	action_clear = edit_menu.addAction(QIcon(GuiUtilsNs::getIconPath("cleartext")), tr("Clear cell(s)"), this, &DataManipulationForm::clearItemsText, QKeySequence("Ctrl+R"));
 	action_clear->setToolTip(tr("Clears the items selected on the grid"));
 
 	paste_tb->setMenu(&paste_menu);
 	truncate_tb->setMenu(&truncate_menu);
-	truncate_menu.addAction(QIcon(GuiUtilsNs::getIconPath("truncate")), tr("Truncate"), this, SLOT(truncateTable()), QKeySequence("Ctrl+Del"))->setData(QVariant::fromValue<bool>(false));
-	truncate_menu.addAction(QIcon(GuiUtilsNs::getIconPath("trunccascade")), tr("Truncate cascade"), this, SLOT(truncateTable()), QKeySequence("Ctrl+Shift+Del"))->setData(QVariant::fromValue<bool>(true));
+	truncate_menu.addAction(QIcon(GuiUtilsNs::getIconPath("truncate")), tr("Truncate"), this, &DataManipulationForm::truncateTable, QKeySequence("Ctrl+Del"))->setData(QVariant::fromValue<bool>(false));
+	truncate_menu.addAction(QIcon(GuiUtilsNs::getIconPath("trunccascade")), tr("Truncate cascade"), this, &DataManipulationForm::truncateTable, QKeySequence("Ctrl+Shift+Del"))->setData(QVariant::fromValue<bool>(true));
 
 	copy_tb->setMenu(&copy_menu);
 	refresh_tb->setToolTip(refresh_tb->toolTip() + QString(" (%1)").arg(refresh_tb->shortcut().toString()));
@@ -931,7 +931,7 @@ void DataManipulationForm::retrieveFKColumns(const QString &schema, const QStrin
 				action = submenu->addAction(QPixmap(GuiUtilsNs::getIconPath("table")),
 																		QString("%1.%2 (%3)").arg(aux_schema[Attributes::Name])
 																													.arg(aux_table[Attributes::Name])
-																													.arg(fk[Attributes::Name]), this, SLOT(browseReferencedTable()));
+																													.arg(fk[Attributes::Name]), this, &DataManipulationForm::browseReferencedTable);
 				action->setData(fk_name);
 
 				col_ids.clear();
@@ -982,7 +982,7 @@ void DataManipulationForm::retrieveFKColumns(const QString &schema, const QStrin
 									.arg(fk[Attributes::Name]);
 
 				//Storing the source columns in a string
-				for(QString id : Catalog::parseArrayValues(fk[Attributes::SrcColumns]))
+				for(auto &id : Catalog::parseArrayValues(fk[Attributes::SrcColumns]))
 					col_ids.push_back(id.toUInt());
 
 				for(auto &col : catalog.getObjectsAttributes(ObjectType::Column, aux_schema[Attributes::Name], aux_table[Attributes::Name], col_ids))
@@ -991,7 +991,7 @@ void DataManipulationForm::retrieveFKColumns(const QString &schema, const QStrin
 				action = submenu->addAction(QPixmap(GuiUtilsNs::getIconPath("table")),
 																		QString("%1.%2 (%3)").arg(aux_schema[Attributes::Name])
 																													.arg(aux_table[Attributes::Name])
-																													.arg(fk[Attributes::Name]), this, SLOT(browseReferrerTable()));
+																													.arg(fk[Attributes::Name]), this, &DataManipulationForm::browseReferrerTable);
 				action->setData(fk_name);
 
 				ref_fk_infos[fk_name][Attributes::SrcColumns] = name_list.join(UtilsNs::DataSeparator);
@@ -1670,7 +1670,7 @@ void DataManipulationForm::showPopupMenu()
 		act->setEnabled(paste_tb->isEnabled());
 		item_menu.addAction(act);
 
-		act = item_menu.addAction(QIcon(GuiUtilsNs::getIconPath("cleartext")), tr("Clear items"), this, SLOT(clearItemsText()));
+		act = item_menu.addAction(QIcon(GuiUtilsNs::getIconPath("cleartext")), tr("Clear items"), this, &DataManipulationForm::clearItemsText);
 		act->setEnabled(!results_tbw->selectedRanges().isEmpty());
 
 		if(obj_type == ObjectType::Table)

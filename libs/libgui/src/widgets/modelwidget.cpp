@@ -3577,12 +3577,12 @@ void ModelWidget::configureQuickMenu(BaseObject *object)
 					{
 						if(types[i] == ObjectType::Tag)
 						{
-							menus[i]->addAction(tr("None"), this, SLOT(setTag()));
+							menus[i]->addAction(tr("None"), this, &ModelWidget::setTag);
 							menus[i]->addSeparator();
 						}
 						else if(types[i] == ObjectType::Role)
 						{
-							act = menus[i]->addAction(tr("None"), this, SLOT(changeOwner()));
+							act = menus[i]->addAction(tr("None"), this, &ModelWidget::changeOwner);
 							menus[i]->addSeparator();
 						}
 
@@ -4251,11 +4251,11 @@ void ModelWidget::configureBasicActions(BaseObject *obj)
 				jump_to_tab_menu.clear();
 
 				action = jump_to_tab_menu.addAction(QIcon(GuiUtilsNs::getIconPath(rel->getTable(BaseRelationship::SrcTable)->getObjectType())),
-																						rel->getTable(BaseRelationship::SrcTable)->getSignature(), this, SLOT(jumpToTable()));
+																						rel->getTable(BaseRelationship::SrcTable)->getSignature(), this, &ModelWidget::jumpToTable);
 				action->setData(QVariant::fromValue<void *>(reinterpret_cast<void *>(rel->getTable(BaseRelationship::SrcTable))));
 
 				action = jump_to_tab_menu.addAction(QIcon(GuiUtilsNs::getIconPath(rel->getTable(BaseRelationship::DstTable)->getObjectType())),
-																						rel->getTable(BaseRelationship::DstTable)->getSignature(), this, SLOT(jumpToTable()));
+																						rel->getTable(BaseRelationship::DstTable)->getSignature(), this, &ModelWidget::jumpToTable);
 				action->setData(QVariant::fromValue<void *>(reinterpret_cast<void *>(rel->getTable(BaseRelationship::DstTable))));
 			}
 		}

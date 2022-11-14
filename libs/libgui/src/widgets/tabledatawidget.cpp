@@ -130,7 +130,7 @@ void TableDataWidget::handleItemPressed()
 			item_menu.addAction(act);
 		}
 		else
-			act = item_menu.addAction(btn->icon(), btn->text(), btn, SLOT(click()), btn->shortcut());
+			act = item_menu.addAction(btn->icon(), btn->text(), btn, &QToolButton::click, btn->shortcut());
 
 		act->setEnabled(btn->isEnabled());
 	}

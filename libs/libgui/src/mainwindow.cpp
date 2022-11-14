@@ -83,7 +83,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	//Positioning the update notifier widget before showing it (if there is an update)
 	setFloatingWidgetPos(update_notifier_wgt, action_update_found, model_acts_tb, false);
 	action_update_found->setVisible(false);
-	QTimer::singleShot(1000, this, SLOT(restoreTemporaryModels()));
+	QTimer::singleShot(1000, this, &MainWindow::restoreTemporaryModels);
 
 	//If there's no previuos geometry registered for the mainwindow display it maximized
 	if(!GeneralConfigWidget::restoreWidgetGeometry(this))
@@ -95,13 +95,13 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 		//Enabling update check at startup
 		if(confs[Attributes::Configuration][Attributes::CheckUpdate]==Attributes::True) {
 			update_notifier_wgt->setCheckVersions(confs[Attributes::Configuration][Attributes::CheckVersions]);
-			QTimer::singleShot(10000, update_notifier_wgt, SLOT(checkForUpdate()));
+			QTimer::singleShot(10000, update_notifier_wgt, &UpdateNotifierWidget::checkForUpdate);
 		}
 	#endif
 
 	#ifdef DEMO_VERSION
 		#warning "DEMO VERSION: demonstration version startup alert."
-		QTimer::singleShot(5000, this, SLOT(showDemoVersionWarning()));
+		QTimer::singleShot(5000, this, &MainWindow::showDemoVersionWarning);
 	#endif
 
 	#ifndef Q_OS_LINUX
@@ -137,12 +137,19 @@ void MainWindow::configureMenusActionsWidgets()
 	QToolButton *tool_btn = qobject_cast<QToolButton *>(tools_acts_tb->widgetForAction(fix_menu.menuAction()));
 	tool_btn->setPopupMode(QToolButton::InstantPopup);
 
+	action_arrange_objects = show_menu->insertMenu(action_compact_view, &arrange_menu);
+	action_arrange_objects->setText(tr("Arrange objects"));
+	action_arrange_objects->setToolTip(tr("Rearrange objects over the canvas"));
+	action_arrange_objects->setIcon(QIcon(GuiUtilsNs::getIconPath("arrangetables")));
+	action_arrange_objects->setEnabled(false);
+	model_acts_tb->insertAction(action_compact_view, action_arrange_objects);
+
 	tool_btn = qobject_cast<QToolButton *>(model_acts_tb->widgetForAction(action_arrange_objects));
-	tool_btn->setMenu(&arrange_menu);
 	tool_btn->setPopupMode(QToolButton::InstantPopup);
-	arrange_menu.addAction(tr("Grid"), this, SLOT(arrangeObjects()));
-	arrange_menu.addAction(tr("Hierarchical"), this, SLOT(arrangeObjects()));
-	arrange_menu.addAction(tr("Scattered"), this, SLOT(arrangeObjects()));
+
+	arrange_menu.addAction(tr("Grid"), this, &MainWindow::arrangeObjects);
+	arrange_menu.addAction(tr("Hierarchical"), this, &MainWindow::arrangeObjects);
+	arrange_menu.addAction(tr("Scattered"), this, &MainWindow::arrangeObjects);
 
 	models_tbw->tabBar()->setVisible(false);
 	action_welcome->setData(WelcomeView);
@@ -929,7 +936,7 @@ void MainWindow::updateRecentModelsMenu()
 
 	for(int i=0; i < recent_models.size() && i < GeneralConfigWidget::MaxRecentModels; i++)
 	{
-		act=recent_mdls_menu.addAction(QFileInfo(recent_models[i]).fileName(),this,SLOT(loadModelFromAction()));
+		act=recent_mdls_menu.addAction(QFileInfo(recent_models[i]).fileName(),this, &MainWindow::loadModelFromAction);
 		act->setToolTip(recent_models[i]);
 		act->setData(recent_models[i]);
 	}
@@ -937,7 +944,7 @@ void MainWindow::updateRecentModelsMenu()
 	if(!recent_mdls_menu.isEmpty())
 	{
 		recent_mdls_menu.addSeparator();
-		recent_mdls_menu.addAction(tr("Clear Menu"), this, SLOT(clearRecentModelsMenu()));
+		recent_mdls_menu.addAction(tr("Clear Menu"), this, &MainWindow::clearRecentModelsMenu);
 	}
 
 	recent_mdls_menu.menuAction()->setEnabled(!recent_mdls_menu.isEmpty());
@@ -1518,7 +1525,7 @@ void MainWindow::saveModel(ModelWidget *model)
 					model_save_timer.stop();
 
 					//The autosave timer will be reactivated in 5 minutes
-					QTimer::singleShot(300000, &model_save_timer, SLOT(start()));
+					QTimer::singleShot(300000, &model_save_timer, qOverload<>(&QTimer::start));
 				}
 				else if(msg_box.result()==QDialog::Accepted)
 				{
@@ -1990,7 +1997,7 @@ void MainWindow::configureSamplesMenu()
 
 	while(!files.isEmpty())
 	{
-		act=sample_mdls_menu.addAction(files.front(),this,SLOT(loadModelFromAction()));
+		act=sample_mdls_menu.addAction(files.front(), this, &MainWindow::loadModelFromAction);
 		path=QFileInfo(GlobalAttributes::getSamplesDir() + GlobalAttributes::DirSeparator + files.front()).absoluteFilePath();
 		act->setToolTip(path);
 		act->setData(path);

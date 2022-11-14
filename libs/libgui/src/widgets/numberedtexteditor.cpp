@@ -216,18 +216,18 @@ void NumberedTextEditor::showContextMenu()
 	{
 		ctx_menu->addSeparator();
 
-		act=ctx_menu->addAction(tr("Upper case"), this, SLOT(changeSelectionToUpper()), QKeySequence(QString("Ctrl+U")));
+		act=ctx_menu->addAction(tr("Upper case"), this, &NumberedTextEditor::changeSelectionToUpper, QKeySequence(QString("Ctrl+U")));
 		act->setEnabled(textCursor().hasSelection());
 
-		act=ctx_menu->addAction(tr("Lower case"), this, SLOT(changeSelectionToLower()), QKeySequence(QString("Ctrl+Shift+U")));
+		act=ctx_menu->addAction(tr("Lower case"), this, &NumberedTextEditor::changeSelectionToLower, QKeySequence(QString("Ctrl+Shift+U")));
 		act->setEnabled(textCursor().hasSelection());
 
 		ctx_menu->addSeparator();
 
-		act=ctx_menu->addAction(tr("Ident right"), this, SLOT(identSelectionRight()), QKeySequence(QString("Tab")));
+		act=ctx_menu->addAction(tr("Ident right"), this, &NumberedTextEditor::identSelectionRight, QKeySequence(QString("Tab")));
 		act->setEnabled(textCursor().hasSelection());
 
-		act=ctx_menu->addAction(tr("Ident left"), this, SLOT(identSelectionLeft()), QKeySequence(QString("Shift+Tab")));
+		act=ctx_menu->addAction(tr("Ident left"), this, &NumberedTextEditor::identSelectionLeft, QKeySequence(QString("Shift+Tab")));
 		act->setEnabled(textCursor().hasSelection());
 	}
 

@@ -749,7 +749,7 @@
      <x>0</x>
      <y>0</y>
      <width>1668</width>
-     <height>27</height>
+     <height>26</height>
     </rect>
    </property>
    <property name="autoFillBackground">
@@ -812,7 +812,6 @@
     <addaction name="action_inc_zoom"/>
     <addaction name="action_dec_zoom"/>
     <addaction name="separator"/>
-    <addaction name="action_arrange_objects"/>
     <addaction name="action_compact_view"/>
     <addaction name="action_overview"/>
    </widget>
@@ -953,7 +952,6 @@
    <addaction name="action_show_delimiters"/>
    <addaction name="action_alin_objs_grade"/>
    <addaction name="action_compact_view"/>
-   <addaction name="action_arrange_objects"/>
    <addaction name="separator"/>
   </widget>
   <action name="action_new_model">
@@ -1546,21 +1544,6 @@
    </property>
    <property name="toolTip">
     <string>Perform the objects metadata handling</string>
-   </property>
-  </action>
-  <action name="action_arrange_objects">
-   <property name="enabled">
-    <bool>false</bool>
-   </property>
-   <property name="icon">
-    <iconset resource="../res/resources.qrc">
-     <normaloff>:/icons/icons/arrangetables.png</normaloff>:/icons/icons/arrangetables.png</iconset>
-   </property>
-   <property name="text">
-    <string>Arrange objects</string>
-   </property>
-   <property name="toolTip">
-    <string>Rearrange objects over the canvas</string>
    </property>
   </action>
   <action name="action_compact_view">

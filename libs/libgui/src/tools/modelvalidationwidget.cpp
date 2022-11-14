@@ -26,8 +26,8 @@ ModelValidationWidget::ModelValidationWidget(QWidget *parent): QWidget(parent)
 	{
 		setupUi(this);
 
-		output_menu.addAction(tr("Copy as text"), this, SLOT(copyTextOutput()), QKeySequence("Ctrl+Shift+C"));
-		output_menu.addAction(tr("Clear"), this, SLOT(clearOutput()));
+		output_menu.addAction(tr("Copy as text"), this, &ModelValidationWidget::copyTextOutput, QKeySequence("Ctrl+Shift+C"));
+		output_menu.addAction(tr("Clear"), this, &ModelValidationWidget::clearOutput);
 		output_btn->setMenu(&output_menu);
 
 		htmlitem_del=new HtmlItemDelegate(this);

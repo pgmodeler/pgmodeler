@@ -33,10 +33,10 @@ LayersConfigWidget::LayersConfigWidget(QWidget *parent) : QWidget(parent)
 	layers_tab->installEventFilter(this);
 	frame->installEventFilter(this);
 
-	QAction *act = visibility_menu.addAction(tr("Show all"), this, SLOT(setLayersActive()));
+	QAction *act = visibility_menu.addAction(tr("Show all"), this, &LayersConfigWidget::setLayersActive);
 	act->setData(true);
 
-	act = visibility_menu.addAction(tr("Hide all"), this, SLOT(setLayersActive()));
+	act = visibility_menu.addAction(tr("Hide all"), this, &LayersConfigWidget::setLayersActive);
 	act->setData(false);
 
 	add_tb->setToolTip(add_tb->toolTip() + QString(" (%1)").arg(add_tb->shortcut().toString()));
