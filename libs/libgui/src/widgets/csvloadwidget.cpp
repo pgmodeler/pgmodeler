@@ -43,7 +43,7 @@ CsvLoadWidget::CsvLoadWidget(QWidget * parent, bool cols_in_first_row) : QWidget
 	connect(txt_delim_chk, &QCheckBox::toggled, txt_delim_edt, &QLineEdit::setEnabled);
 	connect(load_btn, &QPushButton::clicked, this, &CsvLoadWidget::loadCsvFile);
 
-	connect(separator_cmb, &QComboBox::currentTextChanged, [&](){
+	connect(separator_cmb, &QComboBox::currentTextChanged, this, [this](){
 			separator_edt->setVisible(separator_cmb->currentIndex() == separator_cmb->count()-1);
 	});
 

@@ -246,6 +246,7 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 
 		//! \brief Updates the state (enable/disable) of the buttons of toolbars
 		void updateToolsState(bool model_closed=false);
+
 		void __updateToolsState();
 
 		//! \brief Updates the operation list and model objects dockwidgets

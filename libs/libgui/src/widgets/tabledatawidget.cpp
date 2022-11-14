@@ -75,11 +75,11 @@ TableDataWidget::TableDataWidget(QWidget *parent): BaseObjectWidget(parent, Obje
 
 	connect(csv_load_tb, &QToolButton::toggled, csv_load_parent, &QWidget::setVisible);
 
-	connect(csv_load_wgt, &CsvLoadWidget::s_csvFileLoaded, [&](){
+	connect(csv_load_wgt, &CsvLoadWidget::s_csvFileLoaded, this, [this](){
 		populateDataGrid(csv_load_wgt->getCsvDocument());
 	});
 
-	connect(paste_tb, &QToolButton::clicked, [&](){
+	connect(paste_tb, &QToolButton::clicked, this, [this](){
 		csv_load_wgt->loadCsvFromBuffer(qApp->clipboard()->text(),
 																	CsvDocument::Separator,
 																	CsvDocument::TextDelimiter,
@@ -89,11 +89,11 @@ TableDataWidget::TableDataWidget(QWidget *parent): BaseObjectWidget(parent, Obje
 		paste_tb->setEnabled(false);
 	});
 
-	connect(bulkedit_tb, &QToolButton::clicked, [&](){
+	connect(bulkedit_tb, &QToolButton::clicked, this, [this](){
 		GuiUtilsNs::bulkDataEdit(data_tbw);
 	});
 
-	connect(copy_tb, &QToolButton::clicked, [&](){
+	connect(copy_tb, &QToolButton::clicked, this, [this](){
 		SQLExecutionWidget::copySelection(data_tbw, false, true);
 		paste_tb->setEnabled(true);
 	});
@@ -130,7 +130,7 @@ void TableDataWidget::handleItemPressed()
 			item_menu.addAction(act);
 		}
 		else
-			act = item_menu.addAction(btn->icon(), btn->text(), btn, SLOT(click()), btn->shortcut());
+			act = item_menu.addAction(btn->icon(), btn->text(), btn, &QToolButton::click, btn->shortcut());
 
 		act->setEnabled(btn->isEnabled());
 	}

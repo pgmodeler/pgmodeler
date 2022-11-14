@@ -207,7 +207,7 @@ DatabaseExplorerWidget::DatabaseExplorerWidget(QWidget *parent): QWidget(parent)
 	connect(objects_trw, &QTreeWidget::itemCollapsed, this, &DatabaseExplorerWidget::cancelObjectRename);
 	connect(objects_trw, &QTreeWidget::itemExpanded, this, &DatabaseExplorerWidget::cancelObjectRename);
 
-	connect(data_grid_tb, &QToolButton::clicked, [&](){
+	connect(data_grid_tb, &QToolButton::clicked, this, [this](){
 		openDataGrid();
 	});
 
@@ -215,45 +215,45 @@ DatabaseExplorerWidget::DatabaseExplorerWidget(QWidget *parent): QWidget(parent)
 	connect(by_oid_chk, &QCheckBox::toggled, this, &DatabaseExplorerWidget::filterObjects);
 	connect(filter_edt, &QLineEdit::textChanged, this, &DatabaseExplorerWidget::filterObjects);
 
-	connect(drop_db_tb,  &QToolButton::clicked,
-			[&]() { emit s_databaseDropRequested(connection.getConnectionParam(Connection::ParamDbName)); });
+	connect(drop_db_tb,  &QToolButton::clicked, this, [this]() {
+		emit s_databaseDropRequested(connection.getConnectionParam(Connection::ParamDbName));
+	});
 
-	connect(runsql_tb, &QToolButton::clicked,
-			[&]() { emit s_sqlExecutionRequested(); });
+	connect(runsql_tb, &QToolButton::clicked, this, [this]() {
+		emit s_sqlExecutionRequested();
+	});
 
-	connect(properties_tbw, &QTableWidget::itemPressed,
-			[&]() { SQLExecutionWidget::copySelection(properties_tbw, true); });
+	connect(properties_tbw, &QTableWidget::itemPressed, this, [this]() {
+		SQLExecutionWidget::copySelection(properties_tbw, true);
+	});
 
-	connect(expand_all_tb, &QToolButton::clicked,
-			[&](){
-						objects_trw->blockSignals(true);
-						objects_trw->expandAll();
-						objects_trw->blockSignals(false);
-			});
+	connect(expand_all_tb, &QToolButton::clicked, this, [this](){
+		objects_trw->blockSignals(true);
+		objects_trw->expandAll();
+		objects_trw->blockSignals(false);
+	});
 
-	connect(objects_trw, &QTreeWidget::itemExpanded,
-			[&](QTreeWidgetItem *item){
-				ObjectType obj_type=static_cast<ObjectType>(item->data(DatabaseImportForm::ObjectTypeId, Qt::UserRole).toUInt());
-				unsigned oid=item->data(DatabaseImportForm::ObjectId, Qt::UserRole).toUInt();
+	connect(objects_trw, &QTreeWidget::itemExpanded, this, [this](QTreeWidgetItem *item){
+		ObjectType obj_type=static_cast<ObjectType>(item->data(DatabaseImportForm::ObjectTypeId, Qt::UserRole).toUInt());
+		unsigned oid=item->data(DatabaseImportForm::ObjectId, Qt::UserRole).toUInt();
 
-				if((obj_type==ObjectType::Schema || BaseTable::isBaseTable(obj_type)) && oid > 0 && item->childCount() <= 1)
-				{
-					updateItem(item, false);
-				}
-			});
+		if((obj_type==ObjectType::Schema || BaseTable::isBaseTable(obj_type)) && oid > 0 && item->childCount() <= 1)
+		{
+			updateItem(item, false);
+		}
+	});
 
-	connect(sort_by_name_tb, &QToolButton::clicked,
-	[&]() {
+	connect(sort_by_name_tb, &QToolButton::clicked, this, [this]() {
 			sort_column = sort_by_name_tb->isChecked() ? 0 : DatabaseImportForm::ObjectId;
 			objects_trw->sortByColumn(sort_column, Qt::AscendingOrder);
 	});
 
 	QMenu *refresh_menu=new QMenu(refresh_tb);
 
-	act=refresh_menu->addAction(tr("Quick refresh"), this, SLOT(listObjects()), QKeySequence("Alt+F5"));
+	act=refresh_menu->addAction(tr("Quick refresh"), this, &DatabaseExplorerWidget::listObjects, QKeySequence("Alt+F5"));
 	act->setData(QVariant::fromValue<bool>(true));
 
-	act=refresh_menu->addAction(tr("Full refresh"), this, SLOT(listObjects()), QKeySequence("Ctrl+F5"));
+	act=refresh_menu->addAction(tr("Full refresh"), this, &DatabaseExplorerWidget::listObjects, QKeySequence("Ctrl+F5"));
 	act->setData(QVariant::fromValue<bool>(false));
 
 	refresh_tb->setPopupMode(QToolButton::InstantPopup);
@@ -1873,6 +1873,7 @@ void DatabaseExplorerWidget::finishObjectRename()
 			conn.executeDDLCommand(rename_cmd);
 
 			rename_item->setFlags(rename_item->flags() ^ Qt::ItemIsEditable);
+			rename_item->setData(DatabaseImportForm::ObjectName, Qt::UserRole, rename_item->text(0));
 			rename_item=nullptr;
 		}
 	}
@@ -1902,7 +1903,7 @@ void DatabaseExplorerWidget::loadObjectSource()
 	{
 		if(item == objects_trw->topLevelItem(0))
 		{
-			QString n = item->text(0);
+			//QString n = item->text(0);
 			emit s_sourceCodeShowRequested(item->data(DatabaseImportForm::ObjectSource, Qt::UserRole).toString());
 		}
 		else if(item)

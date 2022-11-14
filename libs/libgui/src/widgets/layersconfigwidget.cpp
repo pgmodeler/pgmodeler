@@ -33,10 +33,10 @@ LayersConfigWidget::LayersConfigWidget(QWidget *parent) : QWidget(parent)
 	layers_tab->installEventFilter(this);
 	frame->installEventFilter(this);
 
-	QAction *act = visibility_menu.addAction(tr("Show all"), this, SLOT(setLayersActive()));
+	QAction *act = visibility_menu.addAction(tr("Show all"), this, &LayersConfigWidget::setLayersActive);
 	act->setData(true);
 
-	act = visibility_menu.addAction(tr("Hide all"), this, SLOT(setLayersActive()));
+	act = visibility_menu.addAction(tr("Hide all"), this, &LayersConfigWidget::setLayersActive);
 	act->setData(false);
 
 	add_tb->setToolTip(add_tb->toolTip() + QString(" (%1)").arg(add_tb->shortcut().toString()));
@@ -52,7 +52,7 @@ LayersConfigWidget::LayersConfigWidget(QWidget *parent) : QWidget(parent)
 
 	connect(hide_tb, &QToolButton::clicked, this, &LayersConfigWidget::s_visibilityChanged);
 
-	connect(add_tb, &QToolButton::clicked, this, [&](){
+	connect(add_tb, &QToolButton::clicked, this, [this](){
 		addLayer();
 	});
 
@@ -63,7 +63,7 @@ LayersConfigWidget::LayersConfigWidget(QWidget *parent) : QWidget(parent)
 	connect(layers_tab, &QTableWidget::itemSelectionChanged, this, &LayersConfigWidget::finishLayerRenaming);
 	connect(layers_tab, &QTableWidget::itemSelectionChanged, this, &LayersConfigWidget::enableButtons);
 
-	connect(remove_all_tb, &QToolButton::clicked, this, [&](){
+	connect(remove_all_tb, &QToolButton::clicked, this, [this](){
 		removeLayer(true);
 	});
 }
@@ -334,7 +334,7 @@ void LayersConfigWidget::__addLayer(const QString &name, Qt::CheckState chk_stat
 	name_color_pickers.append(color_picker);
 
 	connect(color_picker, &ColorPickerWidget::s_colorChanged, this, &LayersConfigWidget::updateLayerColors);
-	connect(color_picker, &ColorPickerWidget::s_colorsChanged, this, [&]() {
+	connect(color_picker, &ColorPickerWidget::s_colorsChanged, this, [this]() {
 		updateLayerColors();
 	});
 
@@ -346,7 +346,7 @@ void LayersConfigWidget::__addLayer(const QString &name, Qt::CheckState chk_stat
 	color_picker->generateRandomColors();
 	rect_color_pickers.append(color_picker);
 	connect(color_picker, &ColorPickerWidget::s_colorChanged, this, &LayersConfigWidget::updateLayerColors);
-	connect(color_picker, &ColorPickerWidget::s_colorsChanged, this, [&]() {
+	connect(color_picker, &ColorPickerWidget::s_colorsChanged, this, [this]() {
 		updateLayerColors();
 	});
 

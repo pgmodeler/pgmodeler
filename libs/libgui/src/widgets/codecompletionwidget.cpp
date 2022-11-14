@@ -67,7 +67,7 @@ CodeCompletionWidget::CodeCompletionWidget(QPlainTextEdit *code_field_txt, bool 
 	connect(name_list, &QListWidget::itemDoubleClicked, this, &CodeCompletionWidget::selectItem);
 	connect(name_list, &QListWidget::currentRowChanged, this, &CodeCompletionWidget::showItemTooltip);
 
-	connect(&popup_timer, &QTimer::timeout, [&](){
+	connect(&popup_timer, &QTimer::timeout, this, [this](){
 		if(qualifying_level < 2)
 		{
 			auto_triggered=true;

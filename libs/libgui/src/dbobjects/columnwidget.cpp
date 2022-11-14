@@ -61,7 +61,7 @@ ColumnWidget::ColumnWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType
 		connect(sequence_rb, &QRadioButton::toggled, this, &ColumnWidget::enableDefaultValueFields);
 		connect(identity_rb, &QRadioButton::toggled, this, &ColumnWidget::enableDefaultValueFields);
 
-		connect(generated_chk, &QCheckBox::toggled, [&](bool value){
+		connect(generated_chk, &QCheckBox::toggled, this, [this](bool value){
 			notnull_chk->setDisabled(value);
 			notnull_chk->setChecked(false);
 		});

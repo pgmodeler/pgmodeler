@@ -40,7 +40,8 @@ FileSelectorWidget::FileSelectorWidget(QWidget *parent) : QWidget(parent)
 
 	connect(sel_file_tb, &QToolButton::clicked, this, &FileSelectorWidget::openFileDialog);
 	connect(rem_file_tb, &QToolButton::clicked, this, &FileSelectorWidget::clearSelector);
-	connect(filename_edt, &QLineEdit::textChanged, [&](const QString &text){
+
+	connect(filename_edt, &QLineEdit::textChanged, this, [this](const QString &text){
 		rem_file_tb->setEnabled(!text.isEmpty());
 		validateSelectedFile();
 		emit s_selectorChanged(!text.isEmpty());

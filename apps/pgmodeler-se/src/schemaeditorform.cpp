@@ -82,19 +82,19 @@ SchemaEditorForm::SchemaEditorForm(QWidget *parent) : QWidget(parent)
 	QAction *act = nullptr;
 	stx_action_grp = new QActionGroup(&syntax_cfg_menu);
 
-	act = syntax_cfg_menu.addAction("Schema file", this, SLOT(loadSyntaxConfig()));
+	act = syntax_cfg_menu.addAction("Schema file", this, &SchemaEditorForm::loadSyntaxConfig);
 	stx_action_grp->addAction(act);
 	act->setCheckable(true);
 	act->setChecked(true);
 	act->setData(GlobalAttributes::SchHighlightConf);
 
-	act = syntax_cfg_menu.addAction("XML script", this, SLOT(loadSyntaxConfig()));
+	act = syntax_cfg_menu.addAction("XML script", this, &SchemaEditorForm::loadSyntaxConfig);
 	stx_action_grp->addAction(act);
 	act->setCheckable(true);
 	act->setChecked(false);
 	act->setData(GlobalAttributes::XMLHighlightConf);
 
-	act = syntax_cfg_menu.addAction("SQL script", this, SLOT(loadSyntaxConfig()));
+	act = syntax_cfg_menu.addAction("SQL script", this, &SchemaEditorForm::loadSyntaxConfig);
 	stx_action_grp->addAction(act);
 	act->setData(GlobalAttributes::SQLHighlightConf);
 	act->setCheckable(true);
@@ -111,7 +111,7 @@ subcontrol-position: right center; }");
 	connect(save_conf_tb, &QToolButton::clicked, this, &SchemaEditorForm::saveSyntaxConfig);
 	connect(reload_conf_tb, &QToolButton::clicked, this, &SchemaEditorForm::loadSyntaxConfig);
 
-	connect(new_tb, &QToolButton::clicked, [&](){
+	connect(new_tb, &QToolButton::clicked, this, [this](){
 		addEditorTab();
 	});
 
@@ -122,22 +122,22 @@ subcontrol-position: right center; }");
 	connect(save_all_tb, &QToolButton::clicked, this, &SchemaEditorForm::saveAll);
 	connect(close_all_tb, &QToolButton::clicked, this, &SchemaEditorForm::closeAll);
 
-	connect(editors_tbw, &QTabWidget::tabCloseRequested, [&](int idx){
+	connect(editors_tbw, &QTabWidget::tabCloseRequested, this, [this](int idx){
 		closeEditorTab(idx);
 	});
 
 	connect(editors_tbw, &QTabWidget::currentChanged, this, &SchemaEditorForm::loadSyntaxFromCurrentTab);
 	connect(use_tmpl_file_chk, &QCheckBox::toggled, this, &SchemaEditorForm::loadSyntaxConfig);
 
-	connect(syntax_txt, &NumberedTextEditor::textChanged, [&](){
+	connect(syntax_txt, &NumberedTextEditor::textChanged, this, [this](){
 		alert_frm->setVisible(true);
 	});
 
-	connect(save_as_tb, &QToolButton::clicked, [&](){
+	connect(save_as_tb, &QToolButton::clicked, this, [this](){
 		saveFile(true);
 	});
 
-	connect(about_tb, &QToolButton::clicked, [&](){
+	connect(about_tb, &QToolButton::clicked, this, [this](){
 		AboutSEWidget *info_wgt = new AboutSEWidget;
 		BaseForm base_frm;
 		base_frm.setMainWidget(info_wgt);
@@ -438,7 +438,7 @@ QStringList SchemaEditorForm::showFileDialog(bool save_mode)
 	if(save_mode)
 	{
 		file_dlg.setDefaultSuffix(".sch");
-		connect(&file_dlg, &QFileDialog::filterSelected, [&](QString filter){
+		connect(&file_dlg, &QFileDialog::filterSelected, this, [&file_dlg](QString filter){
 			filter.remove(QRegularExpression("(.)+(\\*)"));
 			filter.remove(")");
 			file_dlg.setDefaultSuffix(filter);

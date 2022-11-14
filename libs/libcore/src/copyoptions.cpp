@@ -21,7 +21,8 @@
 
 CopyOptions::CopyOptions()
 {
-
+	copy_mode = NoMode;
+	copy_opts = NoOpts;
 }
 
 CopyOptions::CopyOptions(CopyMode copy_mode, CopyOpts copy_opts)

@@ -100,7 +100,7 @@ SQLExecutionWidget::SQLExecutionWidget(QWidget * parent) : QWidget(parent)
 	connect(filter_edt, &QLineEdit::textChanged, this, &SQLExecutionWidget::filterResults);
 	connect(hide_tb, &QToolButton::clicked, filter_tb, &QToolButton::click);
 
-	connect(filter_tb, &QToolButton::toggled, [&](bool checked){
+	connect(filter_tb, &QToolButton::toggled, this, [this](bool checked){
 		filter_wgt->setVisible(checked);
 
 		if(checked)
@@ -110,7 +110,7 @@ SQLExecutionWidget::SQLExecutionWidget(QWidget * parent) : QWidget(parent)
 	});
 
 	connect(exact_chk, &QCheckBox::toggled, this, &SQLExecutionWidget::filterResults);
-	connect(exact_chk, &QCheckBox::toggled, [&](bool checked){
+	connect(exact_chk, &QCheckBox::toggled, this, [this](bool checked){
 		regexp_chk->setChecked(false);
 		regexp_chk->setEnabled(!checked);
 		case_sensitive_chk->setChecked(false);
@@ -133,14 +133,15 @@ SQLExecutionWidget::SQLExecutionWidget(QWidget * parent) : QWidget(parent)
 	connect(find_replace_wgt, &FindReplaceWidget::s_hideRequested, find_tb, &QToolButton::toggle);
 	connect(find_history_wgt, &FindReplaceWidget::s_hideRequested, find_history_parent, &QWidget::hide);
 
-	connect(results_tbw, &QTableView::pressed,
-			[&](){ SQLExecutionWidget::copySelection(results_tbw); });
+	connect(results_tbw, &QTableView::pressed, this, [this](){
+		SQLExecutionWidget::copySelection(results_tbw);
+	});
 
-	connect(export_tb, &QToolButton::clicked,
-			[&](){ SQLExecutionWidget::exportResults(results_tbw); });
+	connect(export_tb, &QToolButton::clicked, this, [this](){
+		SQLExecutionWidget::exportResults(results_tbw);
+	});
 
-	connect(close_file_tb, &QToolButton::clicked,
-	[&](){
+	connect(close_file_tb, &QToolButton::clicked, this, [this](){
 			if(clearAll() == QDialog::Accepted)
 			{
 				filename_edt->clear();

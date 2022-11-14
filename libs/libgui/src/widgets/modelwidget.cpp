@@ -532,11 +532,11 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	connect(action_enable_sql, &QAction::triggered, this, &ModelWidget::toggleObjectSQL);
 	connect(action_disable_sql, &QAction::triggered, this, &ModelWidget::toggleObjectSQL);
 
-	connect(action_remove, &QAction::triggered, [&](){
+	connect(action_remove, &QAction::triggered, this, [this](){
 		removeObjects(false);
 	});
 
-	connect(action_cascade_del, &QAction::triggered, [&](){
+	connect(action_cascade_del, &QAction::triggered, this, [this](){
 		removeObjects(true);
 	});
 
@@ -568,19 +568,19 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	connect(scene, &ObjectsScene::s_childrenSelectionChanged, this, &ModelWidget::configureObjectSelection);
 	connect(scene, &ObjectsScene::s_objectsSelectedInRange, this, &ModelWidget::configureObjectSelection);
 
-	connect(scene, &ObjectsScene::s_collapseModeChanged, [&](){
+	connect(scene, &ObjectsScene::s_collapseModeChanged, this, [this](){
 		setModified(true);
 	});
 
-	connect(scene, &ObjectsScene::s_paginationToggled, [&](){
+	connect(scene, &ObjectsScene::s_paginationToggled, this, [this](){
 		setModified(true);
 	});
 
-	connect(scene, &ObjectsScene::s_currentPageChanged, [&](){
+	connect(scene, &ObjectsScene::s_currentPageChanged, this, [this](){
 		setModified(true);
 	});
 
-	connect(scene, &ObjectsScene::s_objectsMovedLayer, [&](){
+	connect(scene, &ObjectsScene::s_objectsMovedLayer, this, [this](){
 		setModified(true);
 	});
 
@@ -3577,12 +3577,12 @@ void ModelWidget::configureQuickMenu(BaseObject *object)
 					{
 						if(types[i] == ObjectType::Tag)
 						{
-							menus[i]->addAction(tr("None"), this, SLOT(setTag()));
+							menus[i]->addAction(tr("None"), this, &ModelWidget::setTag);
 							menus[i]->addSeparator();
 						}
 						else if(types[i] == ObjectType::Role)
 						{
-							act = menus[i]->addAction(tr("None"), this, SLOT(changeOwner()));
+							act = menus[i]->addAction(tr("None"), this, &ModelWidget::changeOwner);
 							menus[i]->addSeparator();
 						}
 
@@ -4251,11 +4251,11 @@ void ModelWidget::configureBasicActions(BaseObject *obj)
 				jump_to_tab_menu.clear();
 
 				action = jump_to_tab_menu.addAction(QIcon(GuiUtilsNs::getIconPath(rel->getTable(BaseRelationship::SrcTable)->getObjectType())),
-																						rel->getTable(BaseRelationship::SrcTable)->getSignature(), this, SLOT(jumpToTable()));
+																						rel->getTable(BaseRelationship::SrcTable)->getSignature(), this, &ModelWidget::jumpToTable);
 				action->setData(QVariant::fromValue<void *>(reinterpret_cast<void *>(rel->getTable(BaseRelationship::SrcTable))));
 
 				action = jump_to_tab_menu.addAction(QIcon(GuiUtilsNs::getIconPath(rel->getTable(BaseRelationship::DstTable)->getObjectType())),
-																						rel->getTable(BaseRelationship::DstTable)->getSignature(), this, SLOT(jumpToTable()));
+																						rel->getTable(BaseRelationship::DstTable)->getSignature(), this, &ModelWidget::jumpToTable);
 				action->setData(QVariant::fromValue<void *>(reinterpret_cast<void *>(rel->getTable(BaseRelationship::DstTable))));
 			}
 		}
@@ -4952,7 +4952,10 @@ void ModelWidget::swapObjectsIds()
 	parent_form.apply_ok_btn->setIcon(QPixmap(GuiUtilsNs::getIconPath("swapobjs")));
 	parent_form.apply_ok_btn->setText(tr("Swap ids"));
 
-	connect(swap_ids_wgt, &SwapObjectsIdsWidget::s_objectsIdsSwapped, [&](){ swapped = true; });
+	connect(swap_ids_wgt, &SwapObjectsIdsWidget::s_objectsIdsSwapped, this, [&swapped](){
+		swapped = true;
+	});
+
 	connect(swap_ids_wgt, &SwapObjectsIdsWidget::s_objectsIdsSwapReady, parent_form.apply_ok_btn, &QPushButton::setEnabled);
 
 	GeneralConfigWidget::restoreWidgetGeometry(&parent_form, swap_ids_wgt->metaObject()->className());

@@ -32,7 +32,7 @@ ObjectRenameWidget::ObjectRenameWidget(QWidget * parent) : QDialog(parent)
 	connect(apply_tb, &QToolButton::clicked, this, &ObjectRenameWidget::applyRenaming);
 	connect(cancel_tb, &QToolButton::clicked, this, &ObjectRenameWidget::reject);
 
-	connect(new_name_edt, &QLineEdit::textChanged, [&](){
+	connect(new_name_edt, &QLineEdit::textChanged, this, [this](){
 		apply_tb->setEnabled(!new_name_edt->text().isEmpty());
 	});
 }

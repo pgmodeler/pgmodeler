@@ -82,7 +82,7 @@ is present has the same effect as performing an exact match searching on the nam
 	connect(clear_all_tb, &QToolButton::clicked, this, &ObjectsFilterWidget::clearFilters);
 	connect(action_only_matching, &QAction::toggled, action_forced_filter,  &QAction::setEnabled);
 
-	connect(apply_tb, &QToolButton::clicked, [&](){
+	connect(apply_tb, &QToolButton::clicked, this, [this](){
 		emit s_filterApplyingRequested();
 	});
 

@@ -31,10 +31,16 @@ UpdateNotifierWidget::UpdateNotifierWidget(QWidget *parent) : QWidget(parent)
 	GuiUtilsNs::createDropShadow(this, 5, 5, 30);
 
 	connect(&update_chk_manager, &QNetworkAccessManager::finished, this, &UpdateNotifierWidget::handleUpdateChecked);
-	connect(get_source_tb, &QToolButton::clicked, this, [&](){ activateLink(GlobalAttributes::PgModelerSourceURL); });
-	connect(get_binary_tb, &QToolButton::clicked, this, [&](){ activateLink(GlobalAttributes::PgModelerDownloadURL); });
 
-	connect(hide_tb, &QToolButton::clicked, this,	[&](){
+	connect(get_source_tb, &QToolButton::clicked, this, [this](){
+		activateLink(GlobalAttributes::PgModelerSourceURL);
+	});
+
+	connect(get_binary_tb, &QToolButton::clicked, this, [this](){
+		activateLink(GlobalAttributes::PgModelerDownloadURL);
+	});
+
+	connect(hide_tb, &QToolButton::clicked, this,	[this](){
 		hide();
 		emit s_hideRequested();
 	});

@@ -100,22 +100,22 @@ ReferenceWidget::ReferenceWidget(QWidget *parent) : QWidget(parent)
 	connect(view_def_chk, &QCheckBox::toggled, after_where_chk, &QCheckBox::setDisabled);
 	connect(view_def_chk, &QCheckBox::toggled, end_expr_chk, &QCheckBox::setDisabled);
 
-	connect(view_def_chk, &QCheckBox::toggled, [&](bool checked){
+	connect(view_def_chk, &QCheckBox::toggled, this, [this](bool checked){
 		properties_tbw->setTabEnabled(1, checked);
 		properties_tbw->setTabEnabled(2, checked);
 	});
 
 	connect(ref_type_cmb, &QComboBox::currentIndexChanged, this, &ReferenceWidget::selectReferenceType);
 
-	connect(ref_object_sel, &ObjectSelectorWidget::s_objectSelected, [&](){
+	connect(ref_object_sel, &ObjectSelectorWidget::s_objectSelected, this, [this](){
 		col_alias_edt->setEnabled(dynamic_cast<Column *>(ref_object_sel->getSelectedObject()));
 	});
 
-	connect(ref_object_sel, &ObjectSelectorWidget::s_selectorCleared, [&](){
+	connect(ref_object_sel, &ObjectSelectorWidget::s_selectorCleared, this, [this](){
 		col_alias_edt->setEnabled(false);
 	});
 
-	connect(ref_table_sel, &ObjectSelectorWidget::s_selectorChanged, [&](bool selected){
+	connect(ref_table_sel, &ObjectSelectorWidget::s_selectorChanged, this, [this](bool selected){
 		ref_tables_tab->setButtonsEnabled(ObjectsTableWidget::AddButton, selected);
 	});
 

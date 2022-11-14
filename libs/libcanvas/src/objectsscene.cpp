@@ -64,11 +64,11 @@ ObjectsScene::ObjectsScene()
 
 	connect(&scene_move_timer, &QTimer::timeout, this, &ObjectsScene::moveObjectScene);
 
-	connect(&corner_hover_timer, &QTimer::timeout, [&](){
+	connect(&corner_hover_timer, &QTimer::timeout, this, [this](){
 		enableSceneMove();
 	});
 
-	connect(&object_move_timer, &QTimer::timeout, [&](){
+	connect(&object_move_timer, &QTimer::timeout, this, [this](){
 		//If the timer reaches its timeout we execute the procedures to finish the objects movement
 		finishObjectsMove(itemsBoundingRect(true, true).center());
 		object_move_timer.stop();

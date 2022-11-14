@@ -44,6 +44,7 @@ class ModelFixForm: public QDialog, public Ui::ModelFixForm {
 		*pgmodeler_cli_sel;
 
 		void hideEvent(QHideEvent *);
+		void resetFixForm();
 
 	public:
 		ModelFixForm(QWidget * parent = nullptr, Qt::WindowFlags f = Qt::Widget);

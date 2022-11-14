@@ -78,7 +78,7 @@ BaseTableView::BaseTableView(BaseTable *base_tab) : BaseObjectView(base_tab)
 	connect(attribs_toggler, &AttributesTogglerItem::s_paginationToggled, this, &BaseTableView::togglePagination);
 	connect(attribs_toggler, &AttributesTogglerItem::s_currentPageChanged, this, &BaseTableView::configureCurrentPage);
 
-	connect(&sel_enabler_timer, &QTimer::timeout, [&](){
+	connect(&sel_enabler_timer, &QTimer::timeout, this, [this](){
 		this->setFlag(QGraphicsItem::ItemIsSelectable, true);
 	});
 }

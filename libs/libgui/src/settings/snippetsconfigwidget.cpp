@@ -72,8 +72,13 @@ SnippetsConfigWidget::SnippetsConfigWidget(QWidget * parent) : BaseConfigWidget(
 	connect(remove_tb, &QToolButton::clicked, this, &SnippetsConfigWidget::removeSnippet);
 	connect(remove_all_tb, &QToolButton::clicked, this, &SnippetsConfigWidget::removeAllSnippets);
 
-	connect(cancel_tb, &QToolButton::clicked, [&](){ enableEditMode(false); });
-	connect(snippets_cmb, &QComboBox::currentTextChanged, [&](){ enableEditMode(false); });
+	connect(cancel_tb, &QToolButton::clicked, this, [this](){
+		enableEditMode(false);
+	});
+
+	connect(snippets_cmb, &QComboBox::currentTextChanged, this, [this](){
+		enableEditMode(false);
+	});
 
 	connect(id_edt, &QLineEdit::textChanged, this, &SnippetsConfigWidget::enableSaveButtons);
 	connect(label_edt, &QLineEdit::textChanged, this, &SnippetsConfigWidget::enableSaveButtons);

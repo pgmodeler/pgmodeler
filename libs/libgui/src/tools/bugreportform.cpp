@@ -92,11 +92,11 @@ void BugReportForm::generateReport(const QByteArray &buf)
 {
 	Messagebox msgbox;
 	QFile output;
-	QString filename=QFileInfo(QString(output_sel->getSelectedFile() +
-																		 GlobalAttributes::DirSeparator +
-																		 GlobalAttributes::BugReportFile)
-														 .arg(QDateTime::currentDateTime().toString(QString("_yyyyMMdd_hhmm"))))
-									 .absoluteFilePath();
+	QFileInfo fi(QString(output_sel->getSelectedFile() +
+											 GlobalAttributes::DirSeparator +
+											 GlobalAttributes::BugReportFile)
+											.arg(QDateTime::currentDateTime().toString(QString("_yyyyMMdd_hhmm"))));
+	QString filename=fi.absoluteFilePath();
 
 	//Opens the file for writting
 	output.setFileName(filename);
@@ -115,8 +115,8 @@ void BugReportForm::generateReport(const QByteArray &buf)
 		output.write(comp_buf.data(), comp_buf.size());
 		output.close();
 
-		msgbox.show(tr("Bug report successfuly generated! Please, send the file <strong>%1</strong> to <em>%2</em> in order be analyzed. Thank you for the collaboration!")
-								.arg(QDir::toNativeSeparators(filename)).arg(GlobalAttributes::BugReportEmail),
+		msgbox.show(tr("Bug report successfuly generated! Please, send the file <strong><a href='file://%1'>%2<a/></strong> to <em>%3</em> in order be analyzed. Thank you for the collaboration!")
+								.arg(fi.absolutePath(), QDir::toNativeSeparators(filename), GlobalAttributes::BugReportEmail),
 					Messagebox::InfoIcon);
 	}
 }
