@@ -1968,7 +1968,9 @@ void MainWindow::setFloatingWidgetPos(QWidget *widget, QAction *act, QToolBar *t
 	QWidget *wgt=toolbar->widgetForAction(act);
 	QPoint pos_orig=(wgt ? wgt->pos() : QPoint(0,0)), pos;
 
-	if(map_to_window) pos=wgt->mapTo(this, pos);
+	if(map_to_window)
+		pos=wgt->mapTo(this, pos);
+
 	pos.setX(pos_orig.x() - 10);
 	pos.setY(toolbar->pos().y() + toolbar->height() - 10);
 
@@ -1986,8 +1988,12 @@ void MainWindow::setBottomFloatingWidgetPos(QWidget *widget, QToolButton *btn)
 	QPoint btn_parent_pos = mapTo(this, tool_btns_bar_wgt->pos()),
 			btn_pos = mapTo(this, btn->pos());
 
-	widget->move(btn_pos.x() + tools_acts_tb->width() + 1,
-									 btn_parent_pos.y() - (widget->height() - btn->height() - (2 * v_splitter1->handleWidth())) + 1);
+	int py = btn_parent_pos.y() - (widget->height() - btn->height() - (2 * v_splitter1->handleWidth())) + 1;
+
+	if(main_menu_mb->isVisible())
+		py += main_menu_mb->height();
+
+	widget->move(btn_pos.x() + tools_acts_tb->width() + 1, py);
 }
 
 void MainWindow::configureSamplesMenu()
