@@ -30,7 +30,7 @@
 #include "numberedtexteditor.h"
 #include "widgets/findreplacewidget.h"
 
-class SourceCodeWidget: public BaseObjectWidget, public Ui::SourceCodeWidget {
+class EXPORT_SYM SourceCodeWidget: public BaseObjectWidget, public Ui::SourceCodeWidget {
 	private:
 		Q_OBJECT
 

@@ -33,7 +33,7 @@
 #include <QTime>
 #include <random>
 
-class ColorPickerWidget: public QWidget, public Ui::ColorPickerWidget {
+class EXPORT_SYM ColorPickerWidget: public QWidget, public Ui::ColorPickerWidget {
 	private:
 		Q_OBJECT
 		

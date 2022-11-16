@@ -30,7 +30,7 @@
 #include "pgsqltypes/functiontype.h"
 #include "pgsqltypes/paralleltype.h"
 
-class Function: public BaseFunction {
+class EXPORT_SYM Function: public BaseFunction {
 	private:
 		//! \brief Indicates whether the function returns a set of data (RETURNS SET OF)
 		bool returns_setof,

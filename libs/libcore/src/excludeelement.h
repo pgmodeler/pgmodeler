@@ -26,7 +26,7 @@
 
 #include "element.h"
 
-class ExcludeElement: public Element {
+class EXPORT_SYM ExcludeElement: public Element {
 	private:
 		Operator *_operator;
 

@@ -19,10 +19,11 @@
 #ifndef BULK_DATA_EDIT_WIDGET_H
 #define BULK_DATA_EDIT_WIDGET_H
 
+#include "exportsym.h"
 #include <QWidget>
 #include "ui_bulkdataeditwidget.h"
 
-class BulkDataEditWidget: public QWidget, public Ui::BulkDataEditWidget {
+class EXPORT_SYM BulkDataEditWidget: public QWidget, public Ui::BulkDataEditWidget {
 	private:
 		Q_OBJECT
 

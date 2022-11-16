@@ -29,7 +29,7 @@
 #include "pgsqltypewidget.h"
 #include "ui_operatorwidget.h"
 
-class OperatorWidget: public BaseObjectWidget, public Ui::OperatorWidget {
+class EXPORT_SYM OperatorWidget: public BaseObjectWidget, public Ui::OperatorWidget {
 	private:
 		Q_OBJECT
 

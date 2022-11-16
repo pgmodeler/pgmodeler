@@ -30,7 +30,7 @@
 #include "tabletitleview.h"
 #include "tableobjectview.h"
 
-class TableView: public BaseTableView {
+class EXPORT_SYM TableView: public BaseTableView {
 	private:
 		Q_OBJECT
 

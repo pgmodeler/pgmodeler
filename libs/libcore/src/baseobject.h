@@ -80,7 +80,7 @@ enum class ObjectType: unsigned {
 	BaseTable
 };
 
-class BaseObject {
+class EXPORT_SYM BaseObject {
 	private:
 		//! \brief Current PostgreSQL version used in SQL code generation
 		static QString pgsql_ver;

@@ -29,7 +29,7 @@
 #include "widgets/objectstablewidget.h"
 #include "ui_eventtriggerwidget.h"
 
-class EventTriggerWidget: public BaseObjectWidget, public Ui::EventTriggerWidget {
+class EXPORT_SYM EventTriggerWidget: public BaseObjectWidget, public Ui::EventTriggerWidget {
 	private:
 		Q_OBJECT
 		

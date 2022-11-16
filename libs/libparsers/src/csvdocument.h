@@ -28,7 +28,7 @@
 #include "exception.h"
 #include <QStringList>
 
-class CsvDocument {
+class EXPORT_SYM CsvDocument {
 	private:
 		//! \brief Indicates the character used as values separator
 		QChar separator,

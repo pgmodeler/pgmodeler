@@ -29,7 +29,7 @@
 #include "basegraphicobject.h"
 #include "tag.h"
 
-class BaseTable: public BaseGraphicObject {
+class EXPORT_SYM BaseTable: public BaseGraphicObject {
 	public:
 		//! \brief This enum is used to control the collapsing of the tables
 		enum CollapseMode: unsigned {

@@ -30,7 +30,7 @@
 #include "roundedrectitem.h"
 #include "basetable.h"
 
-class AttributesTogglerItem: public QObject, public RoundedRectItem {
+class EXPORT_SYM AttributesTogglerItem: public QObject, public RoundedRectItem {
 	private:
 		Q_OBJECT
 

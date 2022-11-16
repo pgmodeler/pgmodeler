@@ -28,7 +28,7 @@
 #include "baseobject.h"
 #include "pgsqltypes/pgsqltype.h"
 
-class TypeAttribute: public BaseObject {
+class EXPORT_SYM TypeAttribute: public BaseObject {
 	private:
 		PgSqlType type;
 

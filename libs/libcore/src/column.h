@@ -30,7 +30,7 @@
 #include "pgsqltypes/pgsqltype.h"
 #include "pgsqltypes/identitytype.h"
 
-class Column: public TableObject{
+class EXPORT_SYM Column: public TableObject{
 	protected:
 		/*! \brief Stores the previous name of the column before its name has changed.
 		 This attribute assists in the process of reference columns added

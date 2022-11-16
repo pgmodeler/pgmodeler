@@ -33,7 +33,7 @@
 #include <algorithm>
 #include <QWidget>
 
-class BaseConfigWidget: public QWidget {
+class EXPORT_SYM BaseConfigWidget: public QWidget {
 	private:
 		Q_OBJECT
 		

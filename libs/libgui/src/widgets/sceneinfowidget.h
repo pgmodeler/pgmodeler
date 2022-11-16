@@ -28,7 +28,7 @@
 #include "ui_sceneinfowidget.h"
 #include "baseobjectview.h"
 
-class SceneInfoWidget: public QWidget, public Ui::SceneInfoWidget {
+class EXPORT_SYM SceneInfoWidget: public QWidget, public Ui::SceneInfoWidget {
 	private:
 		Q_OBJECT
 

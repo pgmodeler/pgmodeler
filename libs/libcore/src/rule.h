@@ -31,7 +31,7 @@
 #include "pgsqltypes/executiontype.h"
 #include "pgsqltypes/eventtype.h"
 
-class Rule: public TableObject{
+class EXPORT_SYM Rule: public TableObject{
 	private:
 		//! \brief Commands executed by the rule when activated
 		std::vector<QString> commands;

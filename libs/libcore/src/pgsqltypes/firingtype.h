@@ -27,7 +27,7 @@
 
 #include "templatetype.h"
 
-class FiringType: public TemplateType<FiringType>{
+class EXPORT_SYM FiringType: public TemplateType<FiringType>{
 	public:
 		static constexpr unsigned Before = 1,
 		After = 2,

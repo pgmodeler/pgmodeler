@@ -29,7 +29,7 @@
 #include "baseobject.h"
 #include "pgsqltypes/indexingtype.h"
 
-class OperatorFamily: public BaseObject {
+class EXPORT_SYM OperatorFamily: public BaseObject {
 	private:
 		//! \brief Indexing type used by the operator family
 		IndexingType indexing_type;

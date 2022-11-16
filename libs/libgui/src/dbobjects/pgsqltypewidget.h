@@ -31,7 +31,7 @@
 #include "databasemodel.h"
 #include "messagebox.h"
 
-class PgSQLTypeWidget: public QWidget, public Ui::PgSQLTypeWidget {
+class EXPORT_SYM PgSQLTypeWidget: public QWidget, public Ui::PgSQLTypeWidget {
 	private:
 		Q_OBJECT
 

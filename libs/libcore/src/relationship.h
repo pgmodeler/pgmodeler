@@ -116,7 +116,7 @@ Must be manually simulated using the available binary relationships.
 			weak entity tuples must be destroyed also because this latter exists only because
 			the first. */
 
-class Relationship: public BaseRelationship {
+class EXPORT_SYM Relationship: public BaseRelationship {
 	public:
 		//! \brief Patterns ids
 		enum PatternId: unsigned {

@@ -29,7 +29,7 @@
 #include "baseobject.h"
 #include "function.h"
 
-class Cast: public BaseObject {
+class EXPORT_SYM  Cast: public BaseObject {
 	public:
 		//! \brief Constants used to access the data types envolved in the cast
 		enum DataTypeId: unsigned {

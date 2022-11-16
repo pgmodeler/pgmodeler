@@ -35,7 +35,7 @@
 #include "pgsqltypes/storagetype.h"
 #include "pgsqltypes/categorytype.h"
 
-class Type: public BaseObject {
+class EXPORT_SYM Type: public BaseObject {
 	public:
 		enum TypeConfig: unsigned {
 			BaseType,

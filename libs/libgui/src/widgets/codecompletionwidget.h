@@ -30,7 +30,7 @@ the syntax highlighter installed on it.
 #include "utils/syntaxhighlighter.h"
 #include "databasemodel.h"
 
-class CodeCompletionWidget: public QWidget
+class EXPORT_SYM CodeCompletionWidget: public QWidget
 {
 	private:
 		Q_OBJECT

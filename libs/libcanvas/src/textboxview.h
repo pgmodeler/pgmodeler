@@ -29,7 +29,7 @@
 #include "baseobjectview.h"
 #include "textpolygonitem.h"
 
-class TextboxView: public BaseObjectView {
+class EXPORT_SYM TextboxView: public BaseObjectView {
 	private:
 		Q_OBJECT
 

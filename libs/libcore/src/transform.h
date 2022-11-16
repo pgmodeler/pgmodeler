@@ -29,7 +29,7 @@
 #include "function.h"
 #include "language.h"
 
-class Transform : public BaseObject {
+class EXPORT_SYM Transform : public BaseObject {
 	public:
 		enum FunctionId: unsigned {
 			FromSqlFunc,

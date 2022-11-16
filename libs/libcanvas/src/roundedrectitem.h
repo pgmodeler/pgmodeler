@@ -25,10 +25,11 @@
 #ifndef ROUNDED_RECT_ITEM_H
 #define ROUNDED_RECT_ITEM_H
 
+#include "exportsym.h"
 #include <QGraphicsRectItem>
 #include <QPainter>
 
-class RoundedRectItem: public QGraphicsRectItem {
+class EXPORT_SYM RoundedRectItem: public QGraphicsRectItem {
 	public:
 		enum RectCorners: unsigned {
 			//! \brief Implies a normal rectangle (no rounded corner)

@@ -27,7 +27,7 @@
 
 #include "templatetype.h"
 
-class BehaviorType: public TemplateType<BehaviorType>{
+class EXPORT_SYM BehaviorType: public TemplateType<BehaviorType>{
 	public:
 		static constexpr unsigned CalledOnNullInput = 1,
 		ReturnsNullOnNullInput = 2,

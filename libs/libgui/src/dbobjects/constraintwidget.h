@@ -32,7 +32,7 @@
 #include "elementstablewidget.h"
 #include "columnpickerwidget.h"
 
-class ConstraintWidget: public BaseObjectWidget, public Ui::ConstraintWidget {
+class EXPORT_SYM ConstraintWidget: public BaseObjectWidget, public Ui::ConstraintWidget {
 	private:
 		Q_OBJECT
 		

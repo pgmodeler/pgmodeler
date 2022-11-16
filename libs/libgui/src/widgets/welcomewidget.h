@@ -24,9 +24,10 @@
 #ifndef WELCOME_WIDGET_H
 #define WELCOME_WIDGET_H
 
+#include "exportsym.h"
 #include "ui_welcomewidget.h"
 
-class WelcomeWidget: public QWidget, public Ui::WelcomeWidget {
+class EXPORT_SYM WelcomeWidget: public QWidget, public Ui::WelcomeWidget {
 	private:
 		Q_OBJECT
 		

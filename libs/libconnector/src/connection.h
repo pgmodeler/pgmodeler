@@ -31,7 +31,7 @@
 #include <QRegularExpression>
 #include <QDateTime>
 
-class Connection {
+class EXPORT_SYM Connection {
 	private:
 		//! \brief Database connection descriptor
 		PGconn *connection;

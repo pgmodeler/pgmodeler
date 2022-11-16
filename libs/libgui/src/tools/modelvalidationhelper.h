@@ -31,7 +31,7 @@
 #include "connection.h"
 #include "tools/modelexporthelper.h"
 
-class ModelValidationHelper: public QObject {
+class EXPORT_SYM ModelValidationHelper: public QObject {
 	private:
 		Q_OBJECT
 

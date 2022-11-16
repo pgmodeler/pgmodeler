@@ -31,7 +31,7 @@
 #include "physicaltable.h"
 #include <QStringList>
 
-class Table: public PhysicalTable {
+class EXPORT_SYM Table: public PhysicalTable {
 	private:
 		//! \brief Stores the indexes
 		std::vector<TableObject *> indexes;

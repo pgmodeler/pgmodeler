@@ -42,7 +42,7 @@ https://www.fluentcpp.com/2017/05/12/curiously-recurring-template-pattern/
 #include "exception.h"
 
 template<class Class>
-class TemplateType {
+class EXPORT_SYM TemplateType {
 	protected:
 		static QStringList type_names;
 

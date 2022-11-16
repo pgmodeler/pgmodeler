@@ -31,7 +31,7 @@
 #include "widgets/modelwidget.h"
 #include <random>
 
-class DatabaseImportHelper: public QObject {
+class EXPORT_SYM DatabaseImportHelper: public QObject {
 	private:
 		Q_OBJECT
 		

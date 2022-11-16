@@ -28,7 +28,7 @@
 #include "baseobjectwidget.h"
 #include "ui_languagewidget.h"
 
-class LanguageWidget: public BaseObjectWidget, public Ui::LanguageWidget {
+class EXPORT_SYM LanguageWidget: public BaseObjectWidget, public Ui::LanguageWidget {
 	private:
 		Q_OBJECT
 

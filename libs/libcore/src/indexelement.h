@@ -30,7 +30,7 @@
 #include "element.h"
 #include "simplecolumn.h"
 
-class IndexElement: public Element {
+class EXPORT_SYM IndexElement: public Element {
 	private:
 		//! \brief Collation referenced by the element
 		Collation *collation;

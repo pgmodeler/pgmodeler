@@ -26,7 +26,7 @@
 
 #include "basefunction.h"
 
-class Procedure: public BaseFunction {
+class EXPORT_SYM Procedure: public BaseFunction {
 	public:
 		Procedure();
 

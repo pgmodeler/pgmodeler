@@ -34,7 +34,7 @@
 #include "utils/syntaxhighlighter.h"
 #include <algorithm>
 
-class AppearanceConfigWidget: public BaseConfigWidget, public Ui::AppearanceConfigWidget  {
+class EXPORT_SYM AppearanceConfigWidget: public BaseConfigWidget, public Ui::AppearanceConfigWidget  {
 	private:
 		Q_OBJECT
 		

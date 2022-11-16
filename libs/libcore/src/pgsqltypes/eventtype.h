@@ -27,7 +27,7 @@
 
 #include "templatetype.h"
 
-class EventType: public TemplateType<EventType>{
+class EXPORT_SYM EventType: public TemplateType<EventType>{
 	public:
 		static constexpr unsigned OnSelect = 1,
 		OnInsert = 2,

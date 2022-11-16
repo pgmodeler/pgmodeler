@@ -30,7 +30,7 @@
 #include "elementstablewidget.h"
 #include "columnpickerwidget.h"
 
-class IndexWidget: public BaseObjectWidget, public Ui::IndexWidget {
+class EXPORT_SYM IndexWidget: public BaseObjectWidget, public Ui::IndexWidget {
 	private:
 		Q_OBJECT
 

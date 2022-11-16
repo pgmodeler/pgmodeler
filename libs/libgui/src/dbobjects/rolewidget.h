@@ -29,7 +29,7 @@
 #include "ui_rolewidget.h"
 #include "widgets/objectstablewidget.h"
 
-class RoleWidget: public BaseObjectWidget, public Ui::RoleWidget {
+class EXPORT_SYM RoleWidget: public BaseObjectWidget, public Ui::RoleWidget {
 	private:
 		Q_OBJECT
 

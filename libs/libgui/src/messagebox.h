@@ -28,7 +28,7 @@
 #include "ui_messagebox.h"
 #include "exception.h"
 
-class Messagebox: public QDialog, public Ui::Messagebox {
+class EXPORT_SYM Messagebox: public QDialog, public Ui::Messagebox {
 	private:
 		Q_OBJECT
 

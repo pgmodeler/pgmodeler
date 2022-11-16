@@ -29,7 +29,7 @@
 #include "operatorclass.h"
 #include "collation.h"
 
-class Element {
+class EXPORT_SYM Element {
 	private:
 		/*! \brief Column referenced by the  element. This attribute is
 		 mutually exclusive with the expression attribute and simple column */

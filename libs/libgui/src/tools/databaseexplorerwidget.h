@@ -29,7 +29,7 @@
 #include "databaseimporthelper.h"
 #include "schemaparser.h"
 
-class DatabaseExplorerWidget: public QWidget, public Ui::DatabaseExplorerWidget {
+class EXPORT_SYM DatabaseExplorerWidget: public QWidget, public Ui::DatabaseExplorerWidget {
 	private:
 		Q_OBJECT
 

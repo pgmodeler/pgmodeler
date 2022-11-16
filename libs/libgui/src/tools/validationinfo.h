@@ -29,7 +29,7 @@ are emitted during the validation process on ModelValidationHelper class.
 #include "baseobject.h"
 #include <vector>
 
-class ValidationInfo {
+class EXPORT_SYM ValidationInfo {
 	public:
 		enum ValType: unsigned {
 			NoUniqueName,

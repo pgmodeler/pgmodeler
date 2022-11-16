@@ -28,7 +28,7 @@ are emitted during the diff process on ModelsDiffHelper class.
 
 #include "tableobject.h"
 
-class ObjectsDiffInfo {
+class EXPORT_SYM ObjectsDiffInfo {
 	public:
 		enum DiffType: unsigned {
 			CreateObject,

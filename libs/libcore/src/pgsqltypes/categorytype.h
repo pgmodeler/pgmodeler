@@ -27,7 +27,7 @@
 
 #include "templatetype.h"
 
-class CategoryType: public TemplateType<CategoryType>{
+class EXPORT_SYM CategoryType: public TemplateType<CategoryType>{
 	public:
 		static constexpr unsigned UserDefined = 1,
 		Array = 2,

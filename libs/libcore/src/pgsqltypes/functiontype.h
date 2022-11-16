@@ -27,7 +27,7 @@
 
 #include "templatetype.h"
 
-class FunctionType: public TemplateType<FunctionType>{
+class EXPORT_SYM FunctionType: public TemplateType<FunctionType>{
 	public:
 		static constexpr unsigned Volatile = 1,
 		Stable = 2,

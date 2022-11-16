@@ -30,7 +30,7 @@
 #include "relationship.h"
 #include "beziercurveitem.h"
 
-class RelationshipView: public BaseObjectView {
+class EXPORT_SYM RelationshipView: public BaseObjectView {
 	public:
 		enum LineConnectionMode: unsigned {
 			ConnectCenterPoints,

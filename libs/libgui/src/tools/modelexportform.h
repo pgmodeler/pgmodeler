@@ -32,7 +32,7 @@
 #include "utils/htmlitemdelegate.h"
 #include "widgets/fileselectorwidget.h"
 
-class ModelExportForm: public QDialog, public Ui::ModelExportForm {
+class EXPORT_SYM ModelExportForm: public QDialog, public Ui::ModelExportForm {
 	private:
 		Q_OBJECT
 

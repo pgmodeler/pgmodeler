@@ -36,7 +36,7 @@
 #include "databaseexplorerwidget.h"
 #include "sqlexecutionwidget.h"
 
-class SQLToolWidget: public QWidget, public Ui::SQLToolWidget {
+class EXPORT_SYM SQLToolWidget: public QWidget, public Ui::SQLToolWidget {
 	private:
 		Q_OBJECT
 

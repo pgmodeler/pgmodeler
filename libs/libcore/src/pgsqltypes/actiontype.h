@@ -27,7 +27,7 @@
 
 #include "templatetype.h"
 
-class ActionType: public TemplateType<ActionType>{
+class EXPORT_SYM ActionType: public TemplateType<ActionType>{
 	public:
 		static constexpr unsigned NoAction = 1,
 		Restrict = 2,

@@ -33,7 +33,7 @@
 #include "baseobject.h"
 #include "ui_objectsfilterwidget.h"
 
-class ObjectsFilterWidget : public QWidget, Ui::ObjectsFilterWidget {
+class EXPORT_SYM ObjectsFilterWidget : public QWidget, Ui::ObjectsFilterWidget {
 	private:
 		Q_OBJECT
 

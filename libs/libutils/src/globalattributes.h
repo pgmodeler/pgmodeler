@@ -27,10 +27,11 @@
 #ifndef GLOBAL_ATTRIBUTES_H
 #define GLOBAL_ATTRIBUTES_H
 
+#include "exportsym.h"
 #include <QString>
 #include <QStandardPaths>
 
-class GlobalAttributes {
+class EXPORT_SYM GlobalAttributes {
 	private:
 		/*! \brief Environment variables used to reference the pgModeler directories.
 

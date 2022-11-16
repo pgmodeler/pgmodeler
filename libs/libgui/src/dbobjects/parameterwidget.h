@@ -29,7 +29,7 @@
 #include "ui_parameterwidget.h"
 #include "pgsqltypewidget.h"
 
-class ParameterWidget: public BaseObjectWidget, public Ui::ParameterWidget {
+class EXPORT_SYM ParameterWidget: public BaseObjectWidget, public Ui::ParameterWidget {
 	private:
 		Q_OBJECT
 

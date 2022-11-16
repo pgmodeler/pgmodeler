@@ -30,7 +30,7 @@
 #include "schema.h"
 #include "simplecolumn.h"
 
-class Reference {
+class EXPORT_SYM Reference {
 	private:
 		//! \brief Stores the table used by the reference
 		PhysicalTable *table;

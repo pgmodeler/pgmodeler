@@ -27,7 +27,7 @@
 
 #include "templatetype.h"
 
-class ExecutionType: public TemplateType<ExecutionType>{
+class EXPORT_SYM ExecutionType: public TemplateType<ExecutionType>{
 	public:
 		static constexpr unsigned Also = 1,
 		Instead = 2;

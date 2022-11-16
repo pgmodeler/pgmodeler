@@ -28,7 +28,7 @@
 #include "ui_textboxwidget.h"
 #include "baseobjectwidget.h"
 
-class TextboxWidget: public BaseObjectWidget, public Ui::TextboxWidget {
+class EXPORT_SYM TextboxWidget: public BaseObjectWidget, public Ui::TextboxWidget {
 	private:
 		Q_OBJECT
 

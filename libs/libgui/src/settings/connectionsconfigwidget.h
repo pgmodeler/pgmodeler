@@ -30,7 +30,7 @@
 #include "connection.h"
 #include "messagebox.h"
 
-class ConnectionsConfigWidget: public BaseConfigWidget, public Ui::ConnectionsConfigWidget {
+class EXPORT_SYM ConnectionsConfigWidget: public BaseConfigWidget, public Ui::ConnectionsConfigWidget {
 	private:
 		Q_OBJECT
 		

@@ -26,7 +26,7 @@
 
 #include "element.h"
 
-class PartitionKey: public Element {
+class EXPORT_SYM PartitionKey: public Element {
 	private:
 		//! \brief Collation referenced by the element
 		Collation *collation;

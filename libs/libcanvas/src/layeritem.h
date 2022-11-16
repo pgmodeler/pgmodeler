@@ -25,11 +25,12 @@
 #ifndef LAYER_ITEM_H
 #define LAYER_ITEM_H
 
+#include "exportsym.h"
 #include <QGraphicsPathItem>
 #include <QPainter>
 #include <QStyleOptionGraphicsItem>
 
-class LayerItem : public QGraphicsPathItem {
+class EXPORT_SYM LayerItem : public QGraphicsPathItem {
 	private:
 		//! \brief Stores the text color of the item
 		QColor txt_color;

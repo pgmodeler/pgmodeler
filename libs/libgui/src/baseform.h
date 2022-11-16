@@ -31,7 +31,7 @@
 #include "messagebox.h"
 #include "dbobjects/baseobjectwidget.h"
 
-class BaseForm: public QDialog, public Ui::BaseForm {
+class EXPORT_SYM BaseForm: public QDialog, public Ui::BaseForm {
 	private:
 		Q_OBJECT
 		/*! \brief Resizes the dialog according to the minimum sizes of the provided widget.

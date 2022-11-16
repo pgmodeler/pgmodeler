@@ -27,7 +27,7 @@
 
 #include "templatetype.h"
 
-class DeferralType: public TemplateType<DeferralType>{
+class EXPORT_SYM DeferralType: public TemplateType<DeferralType>{
 	public:
 		static constexpr unsigned Immediate = 1,
 		Deferred = 2;

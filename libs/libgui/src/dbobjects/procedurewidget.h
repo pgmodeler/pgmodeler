@@ -27,7 +27,7 @@
 
 #include "basefunctionwidget.h"
 
-class ProcedureWidget: public BaseFunctionWidget  {
+class EXPORT_SYM ProcedureWidget: public BaseFunctionWidget  {
 	private:
 		Q_OBJECT
 

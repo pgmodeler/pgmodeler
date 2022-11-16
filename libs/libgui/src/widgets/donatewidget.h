@@ -25,11 +25,12 @@
 #ifndef DONATE_WIDGET_H
 #define DONATE_WIDGET_H
 
+#include "exportsym.h"
 #include <QWidget>
 #include <QGraphicsDropShadowEffect>
 #include "ui_donatewidget.h"
 
-class DonateWidget: public QWidget, public Ui::DonateWidget {
+class EXPORT_SYM DonateWidget: public QWidget, public Ui::DonateWidget {
 	private:
 		Q_OBJECT
 		

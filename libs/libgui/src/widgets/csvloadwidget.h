@@ -29,7 +29,7 @@
 #include "fileselectorwidget.h"
 #include "csvparser.h"
 
-class CsvLoadWidget : public QWidget, Ui::CsvLoadWidget {
+class EXPORT_SYM CsvLoadWidget : public QWidget, Ui::CsvLoadWidget {
 	private:
 		Q_OBJECT
 

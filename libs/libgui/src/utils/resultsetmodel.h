@@ -29,7 +29,7 @@
 #include "resultset.h"
 #include "catalog.h"
 
-class ResultSetModel: public QAbstractTableModel {
+class EXPORT_SYM ResultSetModel: public QAbstractTableModel {
 	private:
 		Q_OBJECT
 

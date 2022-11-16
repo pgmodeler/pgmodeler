@@ -35,7 +35,7 @@
 #include "pgsqlversions.h"
 #include <QRegularExpression>
 
-class SchemaParser {
+class EXPORT_SYM SchemaParser {
 	private:
 		/*! \brief Indicates that the parser should ignore unknown
 		 attributes avoiding raising exceptions */

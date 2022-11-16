@@ -34,7 +34,7 @@
 #include "attributes.h"
 #include <algorithm>
 
-class SyntaxHighlighter: public QSyntaxHighlighter {
+class EXPORT_SYM SyntaxHighlighter: public QSyntaxHighlighter {
 	private:
 		Q_OBJECT
 

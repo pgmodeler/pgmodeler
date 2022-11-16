@@ -31,7 +31,7 @@
 #include "pgmodelerplugin.h"
 #include "widgets/fileselectorwidget.h"
 
-class PluginsConfigWidget: public BaseConfigWidget, public Ui::PluginsConfigWidget {
+class EXPORT_SYM PluginsConfigWidget: public BaseConfigWidget, public Ui::PluginsConfigWidget {
 	private:
 		Q_OBJECT
 

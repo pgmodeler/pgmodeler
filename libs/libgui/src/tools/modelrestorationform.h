@@ -29,7 +29,7 @@
 #include "globalattributes.h"
 #include "ui_modelrestorationform.h"
 
-class ModelRestorationForm: public QDialog, public Ui::ModelRestorationForm {
+class EXPORT_SYM ModelRestorationForm: public QDialog, public Ui::ModelRestorationForm {
 	private:
 		Q_OBJECT
 

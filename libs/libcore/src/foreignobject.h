@@ -28,7 +28,7 @@
 #include "attribsmap.h"
 #include "schemaparser.h"
 
-class ForeignObject {
+class EXPORT_SYM ForeignObject {
 	protected:
 		//! \brief A set of key/value options associated to the foreign object
 		attribs_map options;

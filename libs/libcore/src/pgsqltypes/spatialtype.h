@@ -27,7 +27,7 @@
 
 #include "templatetype.h"
 
-class SpatialType: public TemplateType<SpatialType>{
+class EXPORT_SYM SpatialType: public TemplateType<SpatialType>{
 	public:
 		enum VariationId: unsigned {
 			NoVar,

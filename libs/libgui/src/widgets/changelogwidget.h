@@ -29,7 +29,7 @@
 #include "ui_changelogwidget.h"
 #include "modelwidget.h"
 
-class ChangelogWidget : public QWidget, Ui::ChangelogWidget {
+class EXPORT_SYM ChangelogWidget : public QWidget, Ui::ChangelogWidget {
 	private:
 		Q_OBJECT
 

@@ -29,7 +29,7 @@
 #include "ui_layerswidget.h"
 #include "basegraphicobject.h"
 
-class LayersWidget : public QWidget, Ui::LayersWidget {
+class EXPORT_SYM LayersWidget : public QWidget, Ui::LayersWidget {
 	private:
 		Q_OBJECT
 

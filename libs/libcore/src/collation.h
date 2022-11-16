@@ -29,7 +29,7 @@
 #include "pgsqltypes/encodingtype.h"
 #include "pgsqltypes/providertype.h"
 
-class Collation : public BaseObject {
+class EXPORT_SYM Collation : public BaseObject {
 	public:
 		enum LocaleId: unsigned {
 			LcCtype,

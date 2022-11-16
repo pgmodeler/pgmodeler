@@ -25,10 +25,11 @@
 #ifndef LINE_NUMBERS_WIDGET_H
 #define LINE_NUMBERS_WIDGET_H
 
+#include "exportsym.h"
 #include <QWidget>
 #include <QPlainTextEdit>
 
-class LineNumbersWidget : public QWidget {
+class EXPORT_SYM LineNumbersWidget : public QWidget {
 	private:
 		Q_OBJECT
 

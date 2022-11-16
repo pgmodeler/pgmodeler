@@ -27,7 +27,7 @@
 
 #include "templatetype.h"
 
-class EventTriggerType: public TemplateType<EventTriggerType>{
+class EXPORT_SYM EventTriggerType: public TemplateType<EventTriggerType>{
 	public:
 		static constexpr unsigned DdlCommandStart = 1,
 		DdlCommandEnd = 2,

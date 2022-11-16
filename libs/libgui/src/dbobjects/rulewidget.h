@@ -30,7 +30,7 @@
 #include "widgets/objectstablewidget.h"
 #include "codecompletionwidget.h"
 
-class RuleWidget: public BaseObjectWidget, public Ui::RuleWidget {
+class EXPORT_SYM RuleWidget: public BaseObjectWidget, public Ui::RuleWidget {
 	private:
 		Q_OBJECT
 

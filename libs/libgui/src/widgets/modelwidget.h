@@ -34,7 +34,7 @@
 #include "newobjectoverlaywidget.h"
 #include "layerswidget.h"
 
-class ModelWidget: public QWidget {
+class EXPORT_SYM ModelWidget: public QWidget {
 	private:
 		Q_OBJECT
 

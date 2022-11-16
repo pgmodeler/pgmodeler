@@ -30,7 +30,7 @@
 #include "connection.h"
 #include "utils/resultsetmodel.h"
 
-class SQLExecutionHelper : public QObject {
+class EXPORT_SYM SQLExecutionHelper : public QObject {
 	private:
 		Q_OBJECT
 

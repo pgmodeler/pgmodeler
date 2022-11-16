@@ -31,7 +31,7 @@ undo / redo all the operations made.
 #include "databasemodel.h"
 #include "operation.h"
 
-class OperationList: public QObject {
+class EXPORT_SYM OperationList: public QObject {
 	private:
 		Q_OBJECT
 

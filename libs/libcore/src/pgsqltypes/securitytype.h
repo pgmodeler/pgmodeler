@@ -27,7 +27,7 @@
 
 #include "templatetype.h"
 
-class SecurityType: public TemplateType<SecurityType>{
+class EXPORT_SYM SecurityType: public TemplateType<SecurityType>{
 	public:
 		static constexpr unsigned Invoker = 1,
 		Definer = 2;

@@ -30,7 +30,7 @@
 #include "modelwidget.h"
 #include "colorpickerwidget.h"
 
-class LayersConfigWidget : public QWidget, Ui::LayersConfigWidget {
+class EXPORT_SYM LayersConfigWidget : public QWidget, Ui::LayersConfigWidget {
 	private:
 		Q_OBJECT
 

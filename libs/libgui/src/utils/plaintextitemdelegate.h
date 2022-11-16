@@ -25,10 +25,11 @@
 #ifndef PLAIN_TEXT_ITEM_DELEGATE_H
 #define PLAIN_TEXT_ITEM_DELEGATE_H
 
+#include "exportsym.h"
 #include <QObject>
 #include <QStyledItemDelegate>
 
-class PlainTextItemDelegate : public QStyledItemDelegate {
+class EXPORT_SYM PlainTextItemDelegate : public QStyledItemDelegate {
 	private:
 		Q_OBJECT
 		bool read_only;

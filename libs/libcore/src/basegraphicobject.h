@@ -39,7 +39,7 @@ enum class ColorId: unsigned {
 	BorderColor,
 };
 
-class BaseGraphicObject: public QObject, public BaseObject {
+class EXPORT_SYM BaseGraphicObject: public QObject, public BaseObject {
 	private:
 		Q_OBJECT
 

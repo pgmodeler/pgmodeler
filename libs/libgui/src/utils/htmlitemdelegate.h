@@ -25,11 +25,12 @@
 #ifndef HTML_ITEM_DELEGATE_H
 #define HTML_ITEM_DELEGATE_H
 
+#include "exportsym.h"
 #include <QObject>
 #include <QPainter>
 #include "plaintextitemdelegate.h"
 
-class HtmlItemDelegate : public PlainTextItemDelegate {
+class EXPORT_SYM HtmlItemDelegate : public PlainTextItemDelegate {
 	private:
 		Q_OBJECT
 

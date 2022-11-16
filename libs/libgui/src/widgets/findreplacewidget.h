@@ -30,7 +30,7 @@
 #include "exception.h"
 #include <QTimer>
 
-class FindReplaceWidget: public QWidget, public Ui::FindReplaceWidget {
+class EXPORT_SYM FindReplaceWidget: public QWidget, public Ui::FindReplaceWidget {
 	private:
 		Q_OBJECT
 		
