@@ -769,10 +769,6 @@ void ModelWidget::keyPressEvent(QKeyEvent *event)
 	{
 		toggleNewObjectOverlay();
 	}
-	else if(event->key() == Qt::Key_F9 && current_zoom < 1)
-	{
-		showMagnifierArea(!magnifier_area_lbl->isVisible());
-	}
 }
 
 void ModelWidget::mousePressEvent(QMouseEvent *event)
@@ -5007,6 +5003,14 @@ void ModelWidget::updateModelLayersInfo()
 	db_model->setLayerNamesVisible(scene->isLayerNamesVisible());
 	db_model->setLayerRectsVisible(scene->isLayerRectsVisible());
 	setModified(true);
+}
+
+void ModelWidget::toggleMagnifierArea()
+{
+	if(!magnifier_area_lbl->isVisible())
+		showMagnifierArea(current_zoom < 1);
+	else
+		showMagnifierArea(false);
 }
 
 void ModelWidget::rearrangeTablesHierarchically()

@@ -574,6 +574,8 @@ class ModelWidget: public QWidget {
 		 * so the correct info is written into the xml code of the model file */
 		void updateModelLayersInfo();
 
+		void toggleMagnifierArea();
+
 	public slots:
 		void loadModel(const QString &filename);
 		void saveModel(const QString &filename);
