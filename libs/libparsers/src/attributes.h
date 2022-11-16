@@ -28,13 +28,11 @@
 #ifndef ATTRIBUTES_H
 #define ATTRIBUTES_H
 
-/* Including QByteArray due to 'QByteArray has no toStdString()'
-   error on Qt 5.4 (Windows only) */
-#include <QByteArray>
+#include "exportsym.h"
 #include <QString>
 
 namespace Attributes {
-	extern const QString
+	extern EXPORT_SYM const QString
 	Action,
 	ActiveLayers,
 	AdminOption,

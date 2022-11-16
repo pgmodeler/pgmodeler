@@ -25,6 +25,7 @@
 #ifndef UTILS_NS_H
 #define UTILS_NS_H
 
+#include "exportsym.h"
 #include <QString>
 
 namespace UtilsNs {
@@ -51,11 +52,11 @@ namespace UtilsNs {
 
 	/*! \brief Writes the provided buffer to the file specified by its filename
 	 * Raises an exception in case of the file couldn,t be open */
-	extern void saveFile(const QString &filename, const QByteArray &buffer);
+	extern EXPORT_SYM void saveFile(const QString &filename, const QByteArray &buffer);
 
 	/*! \brief Read the contents of the file specified by its filename returning its contents.
 	 * Raises an exception in case of the file couldn,t be open */
-	extern QByteArray loadFile(const QString &filename);
+	extern EXPORT_SYM QByteArray loadFile(const QString &filename);
 }
 
 #endif
