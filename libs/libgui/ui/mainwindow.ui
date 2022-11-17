@@ -749,7 +749,7 @@
      <x>0</x>
      <y>0</y>
      <width>1668</width>
-     <height>26</height>
+     <height>27</height>
     </rect>
    </property>
    <property name="autoFillBackground">
@@ -812,8 +812,9 @@
     <addaction name="action_inc_zoom"/>
     <addaction name="action_dec_zoom"/>
     <addaction name="separator"/>
-    <addaction name="action_compact_view"/>
+    <addaction name="action_magnifier"/>
     <addaction name="action_overview"/>
+    <addaction name="action_compact_view"/>
    </widget>
    <widget class="QMenu" name="plugins_menu">
     <property name="enabled">
@@ -947,6 +948,8 @@
    <addaction name="action_dec_zoom"/>
    <addaction name="action_normal_zoom"/>
    <addaction name="action_inc_zoom"/>
+   <addaction name="separator"/>
+   <addaction name="action_magnifier"/>
    <addaction name="action_overview"/>
    <addaction name="action_show_grid"/>
    <addaction name="action_show_delimiters"/>
@@ -1562,6 +1565,24 @@
    </property>
    <property name="toolTip">
     <string>Toggle the compact view on the model(s)</string>
+   </property>
+  </action>
+  <action name="action_magnifier">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../res/resources.qrc">
+     <normaloff>:/icons/icons/magnifier.png</normaloff>:/icons/icons/magnifier.png</iconset>
+   </property>
+   <property name="text">
+    <string>Magnifier</string>
+   </property>
+   <property name="shortcut">
+    <string>F9</string>
    </property>
   </action>
  </widget>

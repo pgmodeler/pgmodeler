@@ -549,6 +549,11 @@ void MainWindow::connectSignalsToSlots()
 	connect(action_show_main_menu, &QAction::triggered, this, &MainWindow::showMainMenu);
 	connect(action_hide_main_menu, &QAction::triggered, this, &MainWindow::showMainMenu);
 #endif
+
+	connect(action_magnifier, &QAction::triggered, this, [this](){
+		if(current_model)
+			current_model->toggleMagnifierArea();
+	});
 }
 
 void MainWindow::restoreTemporaryModels()
@@ -1140,7 +1145,9 @@ void MainWindow::setCurrentModel()
 {
 	layers_cfg_wgt->setVisible(false);
 	models_tbw->setVisible(models_tbw->count() > 0);
+
 	action_design->setEnabled(models_tbw->count() > 0);
+	action_magnifier->setChecked(false);
 
 	if(models_tbw->count() > 0)
 		action_design->activate(QAction::Trigger);
@@ -1339,6 +1346,7 @@ void MainWindow::applyZoom()
 			zoom-=ModelWidget::ZoomIncrement;
 
 		current_model->applyZoom(zoom);
+		updateToolsState();
 	}
 }
 
@@ -1854,7 +1862,7 @@ void MainWindow::updateToolsState(bool model_closed)
 
 	action_print->setEnabled(enabled);
 	action_save_as->setEnabled(enabled);
-	action_save_model->setEnabled(!model_closed && current_model && current_model->isModified());
+	action_save_model->setEnabled(enabled && current_model->isModified());
 	action_save_all->setEnabled(enabled);
 	action_export->setEnabled(enabled);
 	action_close_model->setEnabled(enabled);
@@ -1863,12 +1871,14 @@ void MainWindow::updateToolsState(bool model_closed)
 	action_overview->setEnabled(enabled);
 
 	action_normal_zoom->setEnabled(enabled);
-	action_inc_zoom->setEnabled(enabled);
-	action_dec_zoom->setEnabled(enabled);
+	action_inc_zoom->setEnabled(enabled && current_model->getCurrentZoom() < ModelWidget::MaximumZoom);
+	action_dec_zoom->setEnabled(enabled && current_model->getCurrentZoom() > ModelWidget::MinimumZoom);
+	action_normal_zoom->setEnabled(enabled && static_cast<int>(current_model->getCurrentZoom()) != 1);
 	action_alin_objs_grade->setEnabled(enabled);
 	action_undo->setEnabled(enabled);
 	action_redo->setEnabled(enabled);
 	action_compact_view->setEnabled(enabled);
+	action_magnifier->setEnabled(enabled && current_model->getCurrentZoom() < 1);
 
 	action_handle_metadata->setEnabled(enabled);
 
@@ -1876,10 +1886,6 @@ void MainWindow::updateToolsState(bool model_closed)
 	{
 		action_undo->setEnabled(current_model->op_list->isUndoAvailable());
 		action_redo->setEnabled(current_model->op_list->isRedoAvailable());
-
-		action_inc_zoom->setEnabled(current_model->getCurrentZoom() <= (ModelWidget::MaximumZoom - ModelWidget::ZoomIncrement));
-		action_normal_zoom->setEnabled(current_model->getCurrentZoom()!=0);
-		action_dec_zoom->setEnabled(current_model->getCurrentZoom() >= ModelWidget::MinimumZoom);
 	}
 }
 
