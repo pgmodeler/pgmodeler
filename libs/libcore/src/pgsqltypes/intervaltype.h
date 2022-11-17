@@ -27,7 +27,7 @@
 
 #include "templatetype.h"
 
-class IntervalType: public TemplateType<IntervalType>{
+class __libcore IntervalType: public TemplateType<IntervalType>{
 	public:
 		static constexpr unsigned Year = 1,
 		Month = 2,

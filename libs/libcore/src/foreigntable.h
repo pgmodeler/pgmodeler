@@ -28,7 +28,7 @@
 #include "foreignobject.h"
 #include "foreignserver.h"
 
-class ForeignTable: public PhysicalTable, public ForeignObject {
+class __libcore ForeignTable: public PhysicalTable, public ForeignObject {
 	private:
 		//! \brief The foreign server in which the foreign table resides
 		ForeignServer *foreign_server;

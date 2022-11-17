@@ -97,15 +97,14 @@ TypeWidget::TypeWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Ty
 
 		range_attribs_gb->setVisible(false);
 
-		//connect(parent_form->apply_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration()));
-		connect(base_type_rb, SIGNAL(toggled(bool)), this, SLOT(selectTypeConfiguration()));
-		connect(composite_rb, SIGNAL(toggled(bool)), this, SLOT(selectTypeConfiguration()));
-		connect(enumeration_rb, SIGNAL(toggled(bool)), this, SLOT(selectTypeConfiguration()));
-		connect(enumerations_tab, SIGNAL(s_rowAdded(int)), this, SLOT(handleEnumeration(int)));
-		connect(enumerations_tab, SIGNAL(s_rowUpdated(int)), this, SLOT(handleEnumeration(int)));
-		connect(attributes_tab, SIGNAL(s_rowAdded(int)), this, SLOT(handleAttribute(int)));
-		connect(attributes_tab, SIGNAL(s_rowUpdated(int)), this, SLOT(handleAttribute(int)));
-		connect(attributes_tab, SIGNAL(s_rowEdited(int)), this, SLOT(editAttribute(int)));
+		connect(base_type_rb, &QRadioButton::toggled, this, &TypeWidget::selectTypeConfiguration);
+		connect(composite_rb, &QRadioButton::toggled, this, &TypeWidget::selectTypeConfiguration);
+		connect(enumeration_rb, &QRadioButton::toggled, this, &TypeWidget::selectTypeConfiguration);
+		connect(enumerations_tab, &ObjectsTableWidget::s_rowAdded, this, &TypeWidget::handleEnumeration);
+		connect(enumerations_tab, &ObjectsTableWidget::s_rowUpdated, this, &TypeWidget::handleEnumeration);
+		connect(attributes_tab, &ObjectsTableWidget::s_rowAdded, this, &TypeWidget::handleAttribute);
+		connect(attributes_tab, &ObjectsTableWidget::s_rowUpdated, this, &TypeWidget::handleAttribute);
+		connect(attributes_tab, &ObjectsTableWidget::s_rowEdited, this, &TypeWidget::editAttribute);
 
 		storage_cmb->addItems(StorageType::getTypes());
 		category_cmb->addItems(CategoryType::getTypes());

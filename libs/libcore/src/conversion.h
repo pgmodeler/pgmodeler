@@ -31,7 +31,7 @@
 #include "role.h"
 #include "pgsqltypes/encodingtype.h"
 
-class Conversion: public BaseObject {
+class __libcore Conversion: public BaseObject {
 	private:
 		/*! \brief Encoding types vector:
 		 0 -> Source encoding

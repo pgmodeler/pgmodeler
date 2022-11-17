@@ -29,7 +29,7 @@
 #include "basegraphicobject.h"
 #include <QColor>
 
-class Schema: public BaseGraphicObject {
+class __libcore Schema: public BaseGraphicObject {
 	private:
 		static unsigned schema_id;
 		QColor fill_color;

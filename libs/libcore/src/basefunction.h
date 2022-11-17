@@ -31,7 +31,7 @@
 #include "pgsqltypes/functiontype.h"
 #include "pgsqltypes/securitytype.h"
 
-class BaseFunction: public BaseObject {
+class __libcore BaseFunction: public BaseObject {
 	protected:	
 		//! \brief Function unique signature
 		QString signature;

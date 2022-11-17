@@ -30,7 +30,7 @@
 #include "schema.h"
 #include "pgsqltypes/pgsqltype.h"
 
-class Domain: public BaseObject{
+class __libcore Domain: public BaseObject{
 	private:
 		//! \brief Domain default data type value
 		QString default_value;

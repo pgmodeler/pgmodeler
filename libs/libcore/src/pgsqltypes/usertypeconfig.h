@@ -25,13 +25,14 @@
 #ifndef USER_TYPE_CONFIG
 #define USER_TYPE_CONFIG
 
+#include "../coreglobal.h"
 #include <QString>
 
 /*! \brief This class stores the user defined type configureation.
 	 When the user creates a Type, Sequence, Domain, even a Table,
 	 it can be used as a type on certain configurations so this
 	 class implements a basic structure to control these types */
-class UserTypeConfig {
+class __libcore UserTypeConfig {
 	public:
 		enum TypeConf: unsigned {
 			BaseType=1, //! \brief The type refers to a user-defined base type (class Type)

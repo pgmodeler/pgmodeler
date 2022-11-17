@@ -29,7 +29,7 @@
 #include "ui_functionwidget.h"
 #include "pgsqltypewidget.h"
 
-class FunctionWidget: public BaseFunctionWidget, public Ui::FunctionWidget  {
+class __libgui FunctionWidget: public BaseFunctionWidget, public Ui::FunctionWidget  {
 	private:
 		Q_OBJECT
 

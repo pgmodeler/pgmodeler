@@ -4,7 +4,11 @@ TEMPLATE = lib
 TARGET = core
 windows: DESTDIR = $$PWD
 
-HEADERS += src/textbox.h \
+# Enables shared library symbols exporting
+DEFINES += CORE_SYMBOLS
+
+HEADERS += src/coreglobal.h \
+	   src/textbox.h \
 	   src/basefunction.h \
 	   src/cast.h \
 	   src/defaultlanguages.h \

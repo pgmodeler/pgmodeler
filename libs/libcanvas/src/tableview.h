@@ -30,7 +30,7 @@
 #include "tabletitleview.h"
 #include "tableobjectview.h"
 
-class TableView: public BaseTableView {
+class __libcanvas TableView: public BaseTableView {
 	private:
 		Q_OBJECT
 

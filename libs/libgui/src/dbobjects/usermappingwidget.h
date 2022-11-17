@@ -29,7 +29,7 @@
 #include "ui_usermappingwidget.h"
 #include "widgets/objectstablewidget.h"
 
-class UserMappingWidget: public BaseObjectWidget, public Ui::UserMappingWidget {
+class __libgui UserMappingWidget: public BaseObjectWidget, public Ui::UserMappingWidget {
 	private:
 		Q_OBJECT
 

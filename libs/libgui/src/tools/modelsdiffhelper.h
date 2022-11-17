@@ -29,7 +29,7 @@
 #include "databasemodel.h"
 #include "objectsdiffinfo.h"
 
-class ModelsDiffHelper: public QObject {
+class __libgui ModelsDiffHelper: public QObject {
 	private:
 		Q_OBJECT
 

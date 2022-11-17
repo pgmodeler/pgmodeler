@@ -216,7 +216,7 @@ QString Exception::messages[Exception::ErrorCount][2]={
 	{"InvUseConstraintTriggerAttribs", QT_TR_NOOP("Only constraint triggers can be deferrable or reference another table!")},
 	{"RefInvalidFunctionIdTypeConfig", QT_TR_NOOP("Reference to a function id which is incompatible with the user define type configuration!")},
 	{"AsgInvalidOpClassObject", QT_TR_NOOP("The operator class assigned to the object `%1' (%2) must use `btree' as indexing method!")},
-	{"InvPostgreSQLVersion", QT_TR_NOOP("Unsupported PostgreSQL version (%1) detected! Valid versions are between %2 and %3.")},
+	{"InvPostgreSQLVersion", QT_TR_NOOP("Unsupported PostgreSQL version (%1) detected! Valid versions must be between %2 and %3.")},
 	{"ValidationFailure", QT_TR_NOOP("The validation process failed due to an error triggered by the validation helper. For more details about the error check the exception stack!")},
 	{"ExtensionHandlingTypeImmutable", QT_TR_NOOP("The extension `%1' is registered as a data type and cannot have the attribute `handles datatype' modified!")},
 	{"InvAllocationFKRelationship", QT_TR_NOOP("The fk relationship `%1' cannot be created because the foreign-key that represents it was not created on table `%2'!")},

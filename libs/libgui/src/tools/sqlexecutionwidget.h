@@ -36,7 +36,7 @@
 #include "utils/resultsetmodel.h"
 #include "sqlexecutionhelper.h"
 
-class SQLExecutionWidget: public QWidget, public Ui::SQLExecutionWidget {
+class __libgui SQLExecutionWidget: public QWidget, public Ui::SQLExecutionWidget {
 	private:
 		Q_OBJECT
 

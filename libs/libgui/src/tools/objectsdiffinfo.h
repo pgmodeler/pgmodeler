@@ -26,9 +26,10 @@ are emitted during the diff process on ModelsDiffHelper class.
 #ifndef OBJECTS_DIFF_INFO_H
 #define OBJECTS_DIFF_INFO_H
 
+#include "guiglobal.h"
 #include "tableobject.h"
 
-class ObjectsDiffInfo {
+class __libgui ObjectsDiffInfo {
 	public:
 		enum DiffType: unsigned {
 			CreateObject,

@@ -27,7 +27,7 @@
 
 #include "templatetype.h"
 
-class ConstraintType: public TemplateType<ConstraintType>{
+class __libcore ConstraintType: public TemplateType<ConstraintType>{
 	public:
 		static constexpr unsigned PrimaryKey = 1,
 		ForeignKey = 2,

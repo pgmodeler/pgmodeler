@@ -53,7 +53,7 @@
 #include "widgets/layersconfigwidget.h"
 #include "widgets/changelogwidget.h"
 
-class MainWindow: public QMainWindow, public Ui::MainWindow {
+class __libgui MainWindow: public QMainWindow, public Ui::MainWindow {
 	private:
 		Q_OBJECT
 
@@ -246,6 +246,7 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 
 		//! \brief Updates the state (enable/disable) of the buttons of toolbars
 		void updateToolsState(bool model_closed=false);
+
 		void __updateToolsState();
 
 		//! \brief Updates the operation list and model objects dockwidgets

@@ -26,9 +26,10 @@
 #define CSV_DOCUMENT_H
 
 #include "exception.h"
+#include "parsersglobal.h"
 #include <QStringList>
 
-class CsvDocument {
+class __libparsers CsvDocument {
 	private:
 		//! \brief Indicates the character used as values separator
 		QChar separator,

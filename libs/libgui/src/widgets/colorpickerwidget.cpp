@@ -52,7 +52,7 @@ ColorPickerWidget::ColorPickerWidget(int color_count, QWidget * parent) : QWidge
 		colors.push_back(disable_color);
 
 		hbox->addWidget(btn);
-		connect(btn, SIGNAL(clicked()), this, SLOT(selectColor()));
+		connect(btn, &QToolButton::clicked, this, &ColorPickerWidget::selectColor);
 	}
 
 	QList<QToolButton *> btns = buttons;
@@ -66,7 +66,7 @@ ColorPickerWidget::ColorPickerWidget(int color_count, QWidget * parent) : QWidge
 	this->adjustSize();
 	setMaximumWidth(width());
 
-	connect(random_color_tb, SIGNAL(clicked()), this, SLOT(generateRandomColors()));
+	connect(random_color_tb, &QToolButton::clicked, this, &ColorPickerWidget::generateRandomColors);
 }
 
 bool ColorPickerWidget::eventFilter(QObject *object, QEvent *event)

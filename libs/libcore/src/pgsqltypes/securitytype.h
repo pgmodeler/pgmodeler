@@ -27,7 +27,7 @@
 
 #include "templatetype.h"
 
-class SecurityType: public TemplateType<SecurityType>{
+class __libcore SecurityType: public TemplateType<SecurityType>{
 	public:
 		static constexpr unsigned Invoker = 1,
 		Definer = 2;

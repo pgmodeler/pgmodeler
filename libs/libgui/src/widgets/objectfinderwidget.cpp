@@ -44,30 +44,30 @@ ObjectFinderWidget::ObjectFinderWidget(QWidget *parent) : QWidget(parent)
 	splitter->handle(1)->setEnabled(false);
 	updateObjectTypeList(obj_types_lst);
 
-	select_menu.addAction(tr("Listed"), this, SLOT(selectObjects()));
-	select_menu.addAction(tr("Not listed"), this, SLOT(selectObjects()));
+	select_menu.addAction(tr("Listed"), this, &ObjectFinderWidget::selectObjects);
+	select_menu.addAction(tr("Not listed"), this, &ObjectFinderWidget::selectObjects);
 	select_btn->setMenu(&select_menu);
 
-	fade_menu.addAction(tr("Listed"), this, SLOT(fadeObjects()));
-	fade_menu.addAction(tr("Not listed"), this, SLOT(fadeObjects()));
+	fade_menu.addAction(tr("Listed"), this, &ObjectFinderWidget::fadeObjects);
+	fade_menu.addAction(tr("Not listed"), this, &ObjectFinderWidget::fadeObjects);
 	fade_btn->setMenu(&fade_menu);
 
-	connect(filter_btn, SIGNAL(toggled(bool)), filter_frm, SLOT(setVisible(bool)));
-	connect(filter_btn, &QToolButton::toggled, this, [&](){
+	connect(filter_btn, &QToolButton::toggled, filter_frm, &QFrame::setVisible);
+	connect(filter_btn, &QToolButton::toggled, this, [this](){
 		splitter->setSizes({0, 1000});
 		splitter->handle(1)->setEnabled(filter_btn->isChecked());
 	});
 
-	connect(find_btn, SIGNAL(clicked(bool)), this, SLOT(findObjects()));
-	connect(hide_tb, SIGNAL(clicked()), this, SLOT(hide()));
-	connect(result_tbw, SIGNAL(itemSelectionChanged()), this, SLOT(selectObject()));
-	connect(result_tbw, SIGNAL(itemDoubleClicked(QTableWidgetItem*)), this, SLOT(editObject()));
-	connect(result_tbw, SIGNAL(itemPressed(QTableWidgetItem*)), this, SLOT(showObjectMenu()));
-	connect(clear_res_btn, SIGNAL(clicked()), this, SLOT(clearResult()));
-	connect(select_all_btn, SIGNAL(clicked()), this, SLOT(setAllObjectsChecked()));
-	connect(clear_all_btn, SIGNAL(clicked()), this, SLOT(setAllObjectsChecked()));
+	connect(find_btn, &QToolButton::clicked, this, &ObjectFinderWidget::findObjects);
+	connect(hide_tb, &QToolButton::clicked, this, &ObjectFinderWidget::hide);
+	connect(result_tbw, &QTableWidget::itemSelectionChanged, this, &ObjectFinderWidget::selectObject);
+	connect(result_tbw, &QTableWidget::itemDoubleClicked, this, &ObjectFinderWidget::editObject);
+	connect(result_tbw, &QTableWidget::itemPressed, this, &ObjectFinderWidget::showObjectMenu);
+	connect(clear_res_btn, &QToolButton::clicked, this, &ObjectFinderWidget::clearResult);
+	connect(select_all_btn, &QPushButton::clicked, this, &ObjectFinderWidget::setAllObjectsChecked);
+	connect(clear_all_btn, &QToolButton::clicked, this, &ObjectFinderWidget::setAllObjectsChecked);
 
-	connect(regexp_chk, &QCheckBox::toggled, this, [&](bool checked){
+	connect(regexp_chk, &QCheckBox::toggled, this, [this](bool checked){
 		exact_match_chk->setEnabled(checked);
 
 		if(!checked)

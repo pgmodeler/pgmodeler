@@ -31,7 +31,7 @@
 #include "widgets/codecompletionwidget.h"
 #include "widgets/csvloadwidget.h"
 
-class DataManipulationForm: public QDialog, public Ui::DataManipulationForm {
+class __libgui DataManipulationForm: public QDialog, public Ui::DataManipulationForm {
 	private:
 		Q_OBJECT
 		

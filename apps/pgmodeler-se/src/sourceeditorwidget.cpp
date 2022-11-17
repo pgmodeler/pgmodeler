@@ -41,8 +41,6 @@ SourceEditorWidget::SourceEditorWidget(QWidget *parent) : QWidget(parent)
 	vbox->setContentsMargins(0, 0, 0, 0);
 	vbox->addWidget(source_file_sel);
 
-	QStringList snippets_id;
-
 	for(auto &itr : snippets)
 		code_compl_wgt->insertCustomItem(itr.first, itr.second, QPixmap(GuiUtilsNs::getIconPath("codesnippet")));
 
@@ -55,21 +53,20 @@ SourceEditorWidget::SourceEditorWidget(QWidget *parent) : QWidget(parent)
 	act_break_inline_ifs->setCheckable(true);
 	act_break_inline_ifs->setChecked(false);
 
-	connect(code_compl_wgt, SIGNAL(s_wordSelected(QString)), this, SLOT(handleSelectedSnippet(QString)));
-	connect(find_wgt, SIGNAL(s_hideRequested()), find_tb, SLOT(toggle()));
-	connect(validate_tb, SIGNAL(clicked(bool)), this, SLOT(validateSyntax()));
-	connect(indent_tb, SIGNAL(clicked(bool)), this, SLOT(	applyIndentation()));
-	connect(editor_txt, SIGNAL(modificationChanged(bool)), this, SLOT(restoreEditorPalette()));
-	connect(editor_txt, SIGNAL(undoAvailable(bool)), this, SLOT(setModified(bool)));
-	connect(editor_txt, SIGNAL(cursorPositionChanged()), this, SLOT(restoreEditorPalette()));
-	connect(find_tb, SIGNAL(toggled(bool)), find_parent, SLOT(setVisible(bool)));
+	connect(code_compl_wgt, &CodeCompletionWidget::s_wordSelected, this, &SourceEditorWidget::handleSelectedSnippet);
+	connect(find_wgt, &FindReplaceWidget::s_hideRequested, find_tb, &QToolButton::toggle);
+	connect(validate_tb, &QToolButton::clicked, this, &SourceEditorWidget::validateSyntax);
+	connect(indent_tb, &QToolButton::clicked, this, &SourceEditorWidget::applyIndentation);
+	connect(editor_txt, &NumberedTextEditor::modificationChanged, this, &SourceEditorWidget::restoreEditorPalette);
+	connect(editor_txt, &NumberedTextEditor::undoAvailable, this, &SourceEditorWidget::setModified);
+	connect(editor_txt, &NumberedTextEditor::cursorPositionChanged, this, &SourceEditorWidget::restoreEditorPalette);
+	connect(find_tb, &QToolButton::toggled, find_parent, &QWidget::setVisible);
 }
 
 void SourceEditorWidget::saveFile(const QString &filename)
 {
 	UtilsNs::saveFile(filename, editor_txt->toPlainText().toUtf8());
 
-	QFileInfo fi(filename);
 	validate_tb->setEnabled(filename.endsWith(GlobalAttributes::SchemaExt));
 	indent_tb->setEnabled(filename.endsWith(GlobalAttributes::SchemaExt));
 	this->filename = filename;

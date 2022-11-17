@@ -25,11 +25,12 @@
 #ifndef MODEL_RESTORATION_FORM_H
 #define MODEL_RESTORATION_FORM_H
 
+#include "guiglobal.h"
 #include <QtWidgets>
 #include "globalattributes.h"
 #include "ui_modelrestorationform.h"
 
-class ModelRestorationForm: public QDialog, public Ui::ModelRestorationForm {
+class __libgui ModelRestorationForm: public QDialog, public Ui::ModelRestorationForm {
 	private:
 		Q_OBJECT
 

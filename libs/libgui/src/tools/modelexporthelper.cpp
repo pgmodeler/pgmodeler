@@ -66,7 +66,7 @@ void ModelExportHelper::exportToSQL(DatabaseModel *db_model, const QString &file
 	if(!db_model)
 		throw Exception(ErrorCode::AsgNotAllocattedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	connect(db_model, SIGNAL(s_objectLoaded(int,QString,uint)), this, SLOT(updateProgress(int,QString,uint)));
+	connect(db_model, &DatabaseModel::s_objectLoaded, this, &ModelExportHelper::updateProgress);
 
 	try
 	{
@@ -352,7 +352,7 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
 		else if(drop_db && drop_objs)
 			throw Exception(ErrorCode::MixingIncompDropOptions,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-		connect(db_model, SIGNAL(s_objectLoaded(int,QString,uint)), this, SLOT(updateProgress(int,QString,uint)), Qt::DirectConnection);
+		connect(db_model, &DatabaseModel::s_objectLoaded, this, &ModelExportHelper::updateProgress, Qt::DirectConnection);
 
 		export_canceled=false;
 		db_created=false;
@@ -603,7 +603,7 @@ void ModelExportHelper::exportToDataDict(DatabaseModel *db_model, const QString 
 	if(!db_model)
 		throw Exception(ErrorCode::AsgNotAllocattedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	connect(db_model, SIGNAL(s_objectLoaded(int,QString,uint)), this, SLOT(updateProgress(int,QString,uint)));
+	connect(db_model, &DatabaseModel::s_objectLoaded, this, &ModelExportHelper::updateProgress);
 
 	try
 	{

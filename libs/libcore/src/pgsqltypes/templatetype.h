@@ -38,11 +38,12 @@ https://www.fluentcpp.com/2017/05/12/curiously-recurring-template-pattern/
 #ifndef TEMPLATE_BASE_TYPE_H
 #define TEMPLATE_BASE_TYPE_H
 
+#include "../coreglobal.h"
 #include <QStringList>
 #include "exception.h"
 
 template<class Class>
-class TemplateType {
+class __libcore TemplateType {
 	protected:
 		static QStringList type_names;
 

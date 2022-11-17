@@ -32,7 +32,7 @@ of rows on the table.
 #include "messagebox.h"
 #include "dbobjects/baseobjectwidget.h"
 
-class ObjectsTableWidget: public QWidget, public Ui::ObjectsTableWidget {
+class __libgui ObjectsTableWidget: public QWidget, public Ui::ObjectsTableWidget {
 	private:
 		Q_OBJECT
 
@@ -220,7 +220,7 @@ class ObjectsTableWidget: public QWidget, public Ui::ObjectsTableWidget {
 		void selectRow(int lin_idx);
 
 		//! \brief Controls the enable state of each button
-		void setButtonsEnabled(ButtonConf button_conf, bool value);
+		void setButtonsEnabled(ObjectsTableWidget::ButtonConf button_conf, bool value);
 
 		void setCellsEditable(bool value);
 

@@ -67,7 +67,7 @@ Additionally, this class, saves, loads and generates the XML/SQL definition of a
 
 class ModelWidget;
 
-class DatabaseModel:  public QObject, public BaseObject {
+class __libcore DatabaseModel:  public QObject, public BaseObject {
 	private:
 		Q_OBJECT
 

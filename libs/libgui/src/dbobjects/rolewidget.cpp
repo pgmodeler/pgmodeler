@@ -38,8 +38,8 @@ RoleWidget::RoleWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Ro
 	role_grid->addWidget(frame, role_grid->count()+1, 0, 1, 4);
 	frame->setParent(this);
 
-	connect(validity_chk, SIGNAL(toggled(bool)), validity_dte, SLOT(setEnabled(bool)));
-	connect(members_twg, SIGNAL(currentChanged(int)), this, SLOT(configureRoleSelection()));
+	connect(validity_chk, &QCheckBox::toggled, validity_dte, &QDateTimeEdit::setEnabled);
+	connect(members_twg, &QTabWidget::currentChanged, this, &RoleWidget::configureRoleSelection);
 
 	//Alocation of the member role tables
 	for(i=0; i < 3; i++)
@@ -68,7 +68,7 @@ RoleWidget::RoleWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Ro
 		members_twg->widget(i)->setLayout(grid);
 	}
 
-	connect(object_selection_wgt, SIGNAL(s_visibilityChanged(BaseObject*,bool)), this, SLOT(showSelectedRoleData()));
+	connect(object_selection_wgt, qOverload<BaseObject *, bool>(&ModelObjectsWidget::s_visibilityChanged), this, &RoleWidget::showSelectedRoleData);
 
 	setMinimumSize(580, 550);
 }
@@ -80,15 +80,13 @@ RoleWidget::~RoleWidget()
 
 void RoleWidget::configureRoleSelection()
 {
-	unsigned i;
-
 	//Disconnects all signals from the member role tables
-	for(i=0; i < 3; i++)
+	for(unsigned i=0; i < 3; i++)
 		disconnect(members_tab[i], nullptr,this, nullptr);
 
 	//Connects the signal/slots only on the current table
-	connect(members_tab[members_twg->currentIndex()], SIGNAL(s_rowAdded(int)), this, SLOT(selectMemberRole()));
-	connect(members_tab[members_twg->currentIndex()], SIGNAL(s_rowEdited(int)), this, SLOT(selectMemberRole()));
+	connect(members_tab[members_twg->currentIndex()], &ObjectsTableWidget::s_rowAdded, this, &RoleWidget::selectMemberRole);
+	connect(members_tab[members_twg->currentIndex()], &ObjectsTableWidget::s_rowEdited, this, &RoleWidget::selectMemberRole);
 }
 
 void RoleWidget::selectMemberRole()

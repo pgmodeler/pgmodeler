@@ -75,25 +75,25 @@ GenericSQLWidget::GenericSQLWidget(QWidget *parent): BaseObjectWidget(parent, Ob
 
 	setMinimumSize(700, 500);
 
-	connect(object_sel, &ObjectSelectorWidget::s_selectorChanged, [&](bool selected){
+	connect(object_sel, &ObjectSelectorWidget::s_selectorChanged, this, [this](bool selected){
 			sel_obj_icon_lbl->setPixmap(selected ? GuiUtilsNs::getIconPath(object_sel->getSelectedObject()->getSchemaName()) : QPixmap());
 			sel_obj_icon_lbl->setToolTip(selected ? object_sel->getSelectedObject()->getTypeName() : "");
 	});
 
-	connect(objects_refs_tab, SIGNAL(s_rowAdded(int)), this, SLOT(addObjectReference(int)));
-	connect(objects_refs_tab, SIGNAL(s_rowEdited(int)), this, SLOT(editObjectReference(int)));
-	connect(objects_refs_tab, SIGNAL(s_rowUpdated(int)), this, SLOT(updateObjectReference(int)));
+	connect(objects_refs_tab, &ObjectsTableWidget::s_rowAdded, this, &GenericSQLWidget::addObjectReference);
+	connect(objects_refs_tab, &ObjectsTableWidget::s_rowEdited, this, &GenericSQLWidget::editObjectReference);
+	connect(objects_refs_tab, &ObjectsTableWidget::s_rowUpdated, this, &GenericSQLWidget::updateObjectReference);
 
-	connect(objects_refs_tab, &ObjectsTableWidget::s_rowAboutToRemove, [&](int row){
+	connect(objects_refs_tab, &ObjectsTableWidget::s_rowAboutToRemove, this, [this](int row){
 		QString ref_name = objects_refs_tab->getCellText(row, 0);
 		dummy_gsql.removeObjectReference(ref_name);
 	});
 
-	connect(objects_refs_tab, &ObjectsTableWidget::s_rowsRemoved, [&](){
+	connect(objects_refs_tab, &ObjectsTableWidget::s_rowsRemoved, this, [this](){
 		dummy_gsql.removeObjectReferences();
 	});
 
-	connect(attribs_tbw, &QTabWidget::currentChanged, [&](int idx){
+	connect(attribs_tbw, &QTabWidget::currentChanged, this, [this](int idx){
 		if(idx == attribs_tbw->count() - 1)
 			updateCodePreview();
 	});

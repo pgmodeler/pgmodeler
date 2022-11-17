@@ -26,7 +26,7 @@
 
 #include "element.h"
 
-class ExcludeElement: public Element {
+class __libcore ExcludeElement: public Element {
 	private:
 		Operator *_operator;
 

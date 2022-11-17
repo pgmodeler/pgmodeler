@@ -27,7 +27,7 @@
 
 #include "templatetype.h"
 
-class CategoryType: public TemplateType<CategoryType>{
+class __libcore CategoryType: public TemplateType<CategoryType>{
 	public:
 		static constexpr unsigned UserDefined = 1,
 		Array = 2,

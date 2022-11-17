@@ -34,7 +34,7 @@
 #include <iostream>
 #include "attribsmap.h"
 
-class XmlParser {
+class __libparsers XmlParser {
 	private:
 		/*! \brief This global counter holds the number of parsers instances created on the application. This is done to control
 		 * when to call xmlInitParser() and xmlCleanupParser() as these functions need to be called only once in the application.

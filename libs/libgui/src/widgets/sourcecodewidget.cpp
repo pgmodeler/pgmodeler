@@ -42,10 +42,10 @@ SourceCodeWidget::SourceCodeWidget(QWidget *parent): BaseObjectWidget(parent)
 		name_edt->setReadOnly(true);
 		version_cmb->addItems(PgSqlVersions::AllVersions);
 
-		connect(version_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(generateSourceCode(int)));
-		connect(code_options_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(generateSourceCode()));
-		connect(sourcecode_twg, SIGNAL(currentChanged(int)), this, SLOT(setSourceCodeTab(int)));
-		connect(save_sql_tb, SIGNAL(clicked()), this, SLOT(saveSQLCode()));
+		connect(version_cmb, &QComboBox::currentIndexChanged, this, &SourceCodeWidget::generateSourceCode);
+		connect(code_options_cmb, &QComboBox::currentIndexChanged, this, &SourceCodeWidget::generateSourceCode);
+		connect(sourcecode_twg, &QTabWidget::currentChanged, this, &SourceCodeWidget::setSourceCodeTab);
+		connect(save_sql_tb, &QToolButton::clicked, this, &SourceCodeWidget::saveSQLCode);
 
 		find_sql_wgt = new FindReplaceWidget(sqlcode_txt, find_wgt_parent);
 		find_wgt_parent->setVisible(false);
@@ -126,7 +126,7 @@ void SourceCodeWidget::generateSourceCode(int)
 				task_prog_wgt=new TaskProgressWidget;
 				task_prog_wgt->setWindowTitle(tr("Generating source code..."));
 				task_prog_wgt->show();
-				connect(this->model, SIGNAL(s_objectLoaded(int,QString,unsigned)), task_prog_wgt, SLOT(updateProgress(int,QString,unsigned)));
+				connect(this->model, &DatabaseModel::s_objectLoaded, task_prog_wgt, qOverload<int, QString, unsigned>(&TaskProgressWidget::updateProgress));
 				sqlcode_txt->setPlainText(object->getSourceCode(SchemaParser::SqlCode));
 			}
 			else

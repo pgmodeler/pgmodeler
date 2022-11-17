@@ -57,21 +57,21 @@ TriggerWidget::TriggerWidget(QWidget *parent): BaseObjectWidget(parent, ObjectTy
 
 		configureFormLayout(trigger_grid, ObjectType::Trigger);
 
-		connect(deferrable_chk, SIGNAL(toggled(bool)), deferral_type_cmb, SLOT(setEnabled(bool)));
-		connect(columns_tab, SIGNAL(s_rowAdded(int)), this, SLOT(addColumn(int)));
-		connect(columns_tab, SIGNAL(s_rowRemoved(int)), this, SLOT(updateColumnsCombo()));
-		connect(columns_tab, SIGNAL(s_rowsRemoved()), this, SLOT(updateColumnsCombo()));
-		connect(arguments_tab, SIGNAL(s_rowAdded(int)), this, SLOT(handleArgument(int)));
-		connect(arguments_tab, SIGNAL(s_rowUpdated(int)), this, SLOT(handleArgument(int)));
-		connect(arguments_tab, SIGNAL(s_rowEdited(int)), this, SLOT(editArgument(int)));
-		connect(constraint_rb, SIGNAL(toggled(bool)), this, SLOT(setConstraintTrigger(bool)));
-		connect(update_chk, SIGNAL(toggled(bool)), this, SLOT(selectUpdateEvent()));
+		connect(deferrable_chk, &QCheckBox::toggled, deferral_type_cmb, &QComboBox::setEnabled);
+		connect(columns_tab, &ObjectsTableWidget::s_rowAdded, this, qOverload<int>(&TriggerWidget::addColumn));
+		connect(columns_tab, &ObjectsTableWidget::s_rowRemoved, this, &TriggerWidget::updateColumnsCombo);
+		connect(columns_tab, &ObjectsTableWidget::s_rowsRemoved, this, &TriggerWidget::updateColumnsCombo);
+		connect(arguments_tab, &ObjectsTableWidget::s_rowAdded, this, &TriggerWidget::handleArgument);
+		connect(arguments_tab, &ObjectsTableWidget::s_rowUpdated, this, &TriggerWidget::handleArgument);
+		connect(arguments_tab, &ObjectsTableWidget::s_rowEdited, this, &TriggerWidget::editArgument);
+		connect(constraint_rb, &QRadioButton::toggled, this, &TriggerWidget::setConstraintTrigger);
+		connect(update_chk, &QCheckBox::toggled, this, &TriggerWidget::selectUpdateEvent);
 
-		connect(insert_chk, SIGNAL(toggled(bool)), this, SLOT(enableTransitionTableNames()));
-		connect(delete_chk, SIGNAL(toggled(bool)), this, SLOT(enableTransitionTableNames()));
-		connect(update_chk, SIGNAL(toggled(bool)), this, SLOT(enableTransitionTableNames()));
-		connect(truncate_chk, SIGNAL(toggled(bool)), this, SLOT(enableTransitionTableNames()));
-		connect(firing_mode_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(enableTransitionTableNames()));
+		connect(insert_chk, &QCheckBox::toggled, this, &TriggerWidget::enableTransitionTableNames);
+		connect(delete_chk, &QCheckBox::toggled, this, &TriggerWidget::enableTransitionTableNames);
+		connect(update_chk, &QCheckBox::toggled, this, &TriggerWidget::enableTransitionTableNames);
+		connect(truncate_chk, &QCheckBox::toggled, this, &TriggerWidget::enableTransitionTableNames);
+		connect(firing_mode_cmb, &QComboBox::currentIndexChanged, this, &TriggerWidget::enableTransitionTableNames);
 
 		setRequiredField(event_lbl);
 		setRequiredField(firing_mode_lbl);

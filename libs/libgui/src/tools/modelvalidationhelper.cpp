@@ -28,12 +28,10 @@ ModelValidationHelper::ModelValidationHelper()
 	export_thread=new QThread;
 	export_helper.moveToThread(export_thread);
 
-	connect(export_thread, SIGNAL(started()), &export_helper, SLOT(exportToDBMS()));
-	connect(&export_helper, SIGNAL(s_progressUpdated(int,QString, ObjectType,QString,bool)),
-			this, SLOT(redirectExportProgress(int,QString,ObjectType,QString,bool)));
-
-	connect(&export_helper, SIGNAL(s_exportFinished()), this, SLOT(emitValidationFinished()));
-	connect(&export_helper, SIGNAL(s_exportAborted(Exception)), this, SLOT(captureThreadError(Exception)));
+	connect(export_thread, &QThread::started, &export_helper, qOverload<>(&ModelExportHelper::exportToDBMS));
+	connect(&export_helper, &ModelExportHelper::s_progressUpdated, this, &ModelValidationHelper::redirectExportProgress);
+	connect(&export_helper, &ModelExportHelper::s_exportFinished, this, &ModelValidationHelper::emitValidationFinished);
+	connect(&export_helper, &ModelExportHelper::s_exportAborted, this, &ModelValidationHelper::captureThreadError);
 }
 
 ModelValidationHelper::~ModelValidationHelper()

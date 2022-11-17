@@ -25,11 +25,12 @@
 #ifndef LAYERS_WIDGET_H
 #define LAYERS_WIDGET_H
 
+#include "guiglobal.h"
 #include <QWidget>
 #include "ui_layerswidget.h"
 #include "basegraphicobject.h"
 
-class LayersWidget : public QWidget, Ui::LayersWidget {
+class __libgui LayersWidget : public QWidget, Ui::LayersWidget {
 	private:
 		Q_OBJECT
 

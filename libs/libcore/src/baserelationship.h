@@ -32,7 +32,7 @@
 #include <cmath>
 #include <QColor>
 
-class BaseRelationship: public BaseGraphicObject  {
+class __libcore BaseRelationship: public BaseGraphicObject  {
 	public:
 		//! \brief Constants used to assign the type to relationship
 		enum RelType: unsigned {

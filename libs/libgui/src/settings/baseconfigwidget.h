@@ -27,13 +27,14 @@
 #ifndef BASE_CONF_WIDGET_H
 #define BASE_CONF_WIDGET_H
 
+#include "guiglobal.h"
 #include "exception.h"
 #include "xmlparser.h"
 #include "attributes.h"
 #include <algorithm>
 #include <QWidget>
 
-class BaseConfigWidget: public QWidget {
+class __libgui BaseConfigWidget: public QWidget {
 	private:
 		Q_OBJECT
 		

@@ -26,7 +26,7 @@
 #include "widgets/objectstablewidget.h"
 #include "widgets/modelobjectswidget.h"
 
-class PolicyWidget : public BaseObjectWidget, Ui::PolicyWidget {
+class __libgui PolicyWidget : public BaseObjectWidget, Ui::PolicyWidget {
 	private:
 		Q_OBJECT
 

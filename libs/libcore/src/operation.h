@@ -29,7 +29,7 @@
 #include "permission.h"
 #include <QString>
 
-class Operation {
+class __libcore Operation {
 	public:
 		//! \brief Constants used to reference the type of operations
 		enum OperType: unsigned {

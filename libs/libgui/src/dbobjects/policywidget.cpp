@@ -60,8 +60,8 @@ PolicyWidget::PolicyWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType
 		configureFormLayout(policy_grid, ObjectType::Policy);
 		configureTabOrder({ command_cmb, permissive_chk, attribs_tbw });
 
-		connect(roles_tab, SIGNAL(s_rowAdded(int)), model_objs_wgt, SLOT(show()));
-		connect(model_objs_wgt, SIGNAL(s_visibilityChanged(BaseObject*, bool)), this, SLOT(selectRole(BaseObject*, bool)));
+		connect(roles_tab, &ObjectsTableWidget::s_rowAdded, model_objs_wgt, &ModelObjectsWidget::show);
+		connect(model_objs_wgt, qOverload<BaseObject *, bool>(&ModelObjectsWidget::s_visibilityChanged), this, &PolicyWidget::selectRole);
 	}
 	catch(Exception &e)
 	{

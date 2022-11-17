@@ -34,7 +34,7 @@
 #include <QCryptographicHash>
 #include <QRegularExpression>
 
-class Permission: public BaseObject {
+class __libcore Permission: public BaseObject {
 		/*! \brief Permissions on PostgreSQL are only applied to the following
 				object type:
 

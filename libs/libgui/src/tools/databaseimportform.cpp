@@ -46,31 +46,31 @@ DatabaseImportForm::DatabaseImportForm(QWidget *parent, Qt::WindowFlags f) : QDi
 	buttons_wgt->setEnabled(false);
 	connection_gb->setFocusProxy(connections_cmb);
 
-	connect(close_btn, SIGNAL(clicked(bool)), this, SLOT(close()));
-	connect(connections_cmb, SIGNAL(activated(int)), this, SLOT(listDatabases()));
-	connect(database_cmb, SIGNAL(activated(int)), this, SLOT(listObjects()));
-	connect(import_sys_objs_chk, SIGNAL(clicked(bool)), this, SLOT(listObjects()));
-	connect(import_ext_objs_chk, SIGNAL(clicked(bool)), this, SLOT(listObjects()));
-	connect(by_oid_chk, SIGNAL(toggled(bool)), this, SLOT(filterObjects()));
-	connect(expand_all_tb, SIGNAL(clicked(bool)), db_objects_tw, SLOT(expandAll()));
-	connect(collapse_all_tb, SIGNAL(clicked(bool)), db_objects_tw, SLOT(collapseAll()));
-	connect(db_objects_tw, SIGNAL(itemChanged(QTreeWidgetItem*,int)), this, SLOT(setItemCheckState(QTreeWidgetItem*,int)));
-	connect(select_all_tb, SIGNAL(clicked(bool)), this, SLOT(setItemsCheckState()));
-	connect(clear_all_tb, SIGNAL(clicked(bool)), this, SLOT(setItemsCheckState()));
-	connect(filter_edt, SIGNAL(textChanged(QString)), this, SLOT(filterObjects()));
-	connect(import_btn, SIGNAL(clicked(bool)), this, SLOT(importDatabase()));
-	connect(cancel_btn, SIGNAL(clicked(bool)), this, SLOT(cancelImport()));
-	connect(objs_filter_wgt, SIGNAL(s_filterApplyingRequested()), this, SLOT(listObjects()));
+	connect(close_btn, &QPushButton::clicked, this, &DatabaseImportForm::close);
+	connect(connections_cmb, &QComboBox::activated, this, qOverload<>(&DatabaseImportForm::listDatabases));
+	connect(database_cmb, &QComboBox::activated, this, qOverload<>(&DatabaseImportForm::listObjects));
+	connect(import_sys_objs_chk, &QCheckBox::clicked, this, qOverload<>(&DatabaseImportForm::listObjects));
+	connect(import_ext_objs_chk, &QCheckBox::clicked, this, qOverload<>(&DatabaseImportForm::listObjects));
+	connect(by_oid_chk,  &QCheckBox::toggled, this, qOverload<>(&DatabaseImportForm::filterObjects));
+	connect(expand_all_tb, &QToolButton::clicked, db_objects_tw, &QTreeWidget::expandAll);
+	connect(collapse_all_tb, &QToolButton::clicked, db_objects_tw, &QTreeWidget::collapseAll);
+	connect(db_objects_tw, &QTreeWidget::itemChanged, this, qOverload<QTreeWidgetItem *, int>(&DatabaseImportForm::setItemCheckState));
+	connect(select_all_tb, &QToolButton::clicked, this, &DatabaseImportForm::setItemsCheckState);
+	connect(clear_all_tb, &QToolButton::clicked, this, &DatabaseImportForm::setItemsCheckState);
+	connect(filter_edt, &QLineEdit::textChanged, this, qOverload<>(&DatabaseImportForm::filterObjects));
+	connect(import_btn, &QPushButton::clicked, this,  &DatabaseImportForm::importDatabase);
+	connect(cancel_btn, &QPushButton::clicked, this,  &DatabaseImportForm::cancelImport);
+	connect(objs_filter_wgt, &ObjectsFilterWidget::s_filterApplyingRequested, this, qOverload<>(&DatabaseImportForm::listObjects));
 
-	connect(objs_filter_wgt, &ObjectsFilterWidget::s_filtersRemoved, [&](){
+	connect(objs_filter_wgt, &ObjectsFilterWidget::s_filtersRemoved, this, [this](){
 		listObjects();
 	});
 
-	connect(import_to_model_chk, &QCheckBox::toggled,
-			[&](bool checked){ create_model=!checked; });
+	connect(import_to_model_chk, &QCheckBox::toggled, this, [this](bool checked){
+		create_model=!checked;
+	});
 
-	connect(database_cmb, &QComboBox::currentTextChanged,
-	[&]() {
+	connect(database_cmb, &QComboBox::currentTextChanged, this, [this]() {
 		bool enable = database_cmb->currentIndex() > 0;
 
 		if(database_cmb->currentIndex()==0)
@@ -115,19 +115,19 @@ void DatabaseImportForm::createThread()
 	import_helper=new DatabaseImportHelper;
 	import_helper->moveToThread(import_thread);
 
-	connect(import_thread, &QThread::started, [&](){
+	connect(import_thread, &QThread::started, this, [this](){
 		output_trw->setUniformRowHeights(true);
 	});
 
-	connect(import_thread, &QThread::finished, [&](){
+	connect(import_thread, &QThread::finished, this, [this](){
 		output_trw->setUniformRowHeights(false);
 	});
 
-	connect(import_thread, SIGNAL(started()), import_helper, SLOT(importDatabase()));
-	connect(import_helper, SIGNAL(s_importCanceled()), this, SLOT(handleImportCanceled()));
-	connect(import_helper, SIGNAL(s_importFinished(Exception)), this, SLOT(handleImportFinished(Exception)));
-	connect(import_helper, SIGNAL(s_importAborted(Exception)), this, SLOT(captureThreadError(Exception)));
-	connect(import_helper, SIGNAL(s_progressUpdated(int,QString,ObjectType)), this, SLOT(updateProgress(int,QString,ObjectType)), Qt::BlockingQueuedConnection);
+	connect(import_thread, &QThread::started, import_helper, &DatabaseImportHelper::importDatabase);
+	connect(import_helper, &DatabaseImportHelper::s_importCanceled, this, &DatabaseImportForm::handleImportCanceled);
+	connect(import_helper, &DatabaseImportHelper::s_importFinished, this, &DatabaseImportForm::handleImportFinished);
+	connect(import_helper, &DatabaseImportHelper::s_importAborted, this, &DatabaseImportForm::captureThreadError);
+	connect(import_helper, &DatabaseImportHelper::s_progressUpdated, this, &DatabaseImportForm::updateProgress, Qt::BlockingQueuedConnection);
 }
 
 void DatabaseImportForm::destroyThread()

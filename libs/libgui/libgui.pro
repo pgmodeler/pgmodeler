@@ -6,6 +6,9 @@ RESOURCES += res/resources.qrc
 windows:RCC_DIR += src
 windows:DESTDIR = $$PWD
 
+# Enables shared library symbols exporting
+DEFINES += GUI_SYMBOLS
+
 SOURCES += src/baseform.cpp \
 src/guiutilsns.cpp \
 src/mainwindow.cpp \
@@ -122,7 +125,8 @@ src/widgets/newobjectoverlaywidget.cpp \
 src/widgets/objectstablewidget.cpp \
 src/widgets/updatenotifierwidget.cpp \
 
-HEADERS += src/baseform.h \
+HEADERS += src/guiglobal.h \
+src/baseform.h \
 src/guiutilsns.h \
 src/mainwindow.h \
 src/messagebox.h \

@@ -29,7 +29,7 @@
 #include <QList>
 #include "csvdocument.h"
 
-class CsvParser {
+class __libparsers CsvParser {
 	private:
 		//! \brief Indicates the character used as values separator
 		QChar separator,

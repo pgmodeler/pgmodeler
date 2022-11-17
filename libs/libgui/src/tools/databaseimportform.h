@@ -31,7 +31,7 @@
 #include "widgets/objectsfilterwidget.h"
 #include <QTimer>
 
-class DatabaseImportForm: public QDialog, public Ui::DatabaseImportForm {
+class __libgui DatabaseImportForm: public QDialog, public Ui::DatabaseImportForm {
 	private:
 		Q_OBJECT
 

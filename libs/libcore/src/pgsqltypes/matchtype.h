@@ -27,7 +27,7 @@
 
 #include "templatetype.h"
 
-class MatchType: public TemplateType<MatchType>{
+class __libcore MatchType: public TemplateType<MatchType>{
 	public:
 		static constexpr unsigned Simple = 1,
 		Full = 2,

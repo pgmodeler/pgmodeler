@@ -21,7 +21,7 @@
 
 SchemaView::SchemaView(Schema *schema) : BaseObjectView(schema)
 {
-	connect(schema, SIGNAL(s_objectModified()), this, SLOT(configureObject()));
+	connect(schema, &Schema::s_objectModified, this, &SchemaView::configureObject);
 
 	sch_name=new QGraphicsSimpleTextItem;
 	sch_name->setZValue(1);

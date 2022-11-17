@@ -2815,7 +2815,7 @@ QString Relationship::getSourceCode(SchemaParser::CodeType def_type)
 
 		attributes[Attributes::SpecialPkCols] = sp_pk_cols.join(',');
 
-		if(copy_options.getCopyMode()!=0)
+		if(copy_options.getCopyMode() != CopyOptions::NoMode)
 		{
 			attributes[Attributes::CopyOptions]=QString("%1").arg(copy_options.getCopyOptions());
 			attributes[Attributes::CopyMode]=QString("%1").arg(copy_options.getCopyMode());

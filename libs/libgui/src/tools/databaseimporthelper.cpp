@@ -1087,7 +1087,6 @@ void DatabaseImportHelper::configureBaseFunctionAttribs(attribs_map &attribs)
 {
 	Parameter param;
 	PgSqlType type;
-	unsigned dim = 0;
 	QStringList param_types, param_names, param_modes,
 			param_def_vals, param_xmls, used_names, transform_types,
 			config_params, list;
@@ -1120,7 +1119,6 @@ void DatabaseImportHelper::configureBaseFunctionAttribs(attribs_map &attribs)
 			attribs[Attributes::ConfigParams] +=	schparser.getSourceCode(Attributes::ConfigParam, cfg_attrs, SchemaParser::XmlCode);
 		}
 
-
 		for(int i=0; i < param_types.size(); i++)
 		{
 			/* If the function is to be used as a user-defined data type support functions
@@ -1129,17 +1127,9 @@ void DatabaseImportHelper::configureBaseFunctionAttribs(attribs_map &attribs)
 					(attribs[Attributes::RefType] == Attributes::SendFunc ||
 					 attribs[Attributes::RefType] == Attributes::OutputFunc ||
 					 attribs[Attributes::RefType] == Attributes::CanonicalFunc))
-				type=PgSqlType(QString("\"any\""));
+				type = PgSqlType("\"any\"");
 			else
-			{
-				//If the type contains array descriptor [] set the dimension to 1
-				dim = (param_types[i].contains(QString("[]")) ? 1 : 0);
-
-				//Create the type
-				param_types[i].remove(QString("[]"));
 				type = PgSqlType::parseString(param_types[i]);
-				type.setDimension(dim);
-			}
 
 			//Alocates a new parameter
 			param = Parameter();
@@ -2879,10 +2869,11 @@ void DatabaseImportHelper::assignSequencesToColumns()
 						seq = dbmodel->getSequence(seq_name);
 					}
 				}
-				catch(Exception &)
+				catch(Exception &e)
 				{
 					// Failing to create the sequence will not abort the entire process, instead, it'll dump a debug message
 					qDebug() << QString("assignSequencesToColumns(): Failed to create the sequence: %1").arg(seq_name) << Qt::endl;
+					qDebug() << e.getExceptionsText() << Qt::endl;
 				}
 
 				if(seq)
@@ -3174,9 +3165,9 @@ QString DatabaseImportHelper::getType(const QString &oid_str, bool generate_xml,
 				 * while retrieving system types (see retrieveSystemObjects()).User defined types are created on demand,
 				 * this way pgModeler will import its attributes so it can be created correctly below. */
 			Catalog::QueryFilter curr_filter = catalog.getQueryFilter();
+
 			catalog.setQueryFilter(Catalog::ListAllObjects);
 			type_attr = catalog.getObjectAttributes(ObjectType::Type, type_oid);
-			types[type_oid] = type_attr;
 			catalog.setQueryFilter(curr_filter);
 
 			/* Formatting/Quoting the name of the type (if necessary) in order to avoid
@@ -3195,10 +3186,12 @@ QString DatabaseImportHelper::getType(const QString &oid_str, bool generate_xml,
 				for(int i = 0; i < num_brkt; i++)
 					aux_name.append("[]");
 
-				types[type_oid][Attributes::Name] = aux_name;
+				type_attr[Attributes::Name] = aux_name;
 			}
 			else
-				types[type_oid][Attributes::Name] = BaseObject::formatName(type_attr[Attributes::Name]);
+				type_attr[Attributes::Name] = BaseObject::formatName(type_attr[Attributes::Name]);
+
+			types[type_oid] = type_attr;
 		}
 
 		object_id = type_attr[Attributes::ObjectId].toUInt();
@@ -3285,7 +3278,7 @@ QString DatabaseImportHelper::getType(const QString &oid_str, bool generate_xml,
 			 * was not created in the database model but its attributes were retrieved, the object
 			 * will be created to avoid reference errors */
 		aux_name = obj_name;
-		aux_name.remove(QString("[]"));
+		aux_name.remove("[]");
 		if(auto_resolve_deps && !type_attr.empty() && !is_derivated_from_obj && !is_postgis_type &&
 			 type_oid > catalog.getLastSysObjectOID() && !dbmodel->getType(aux_name))
 		{

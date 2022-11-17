@@ -27,7 +27,7 @@
 
 #include "templatetype.h"
 
-class PolicyCmdType: public TemplateType<PolicyCmdType> {
+class __libcore PolicyCmdType: public TemplateType<PolicyCmdType> {
 	public:
 		static constexpr unsigned All = 1,
 		Select = 2,

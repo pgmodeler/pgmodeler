@@ -28,7 +28,7 @@
 #include "baseobject.h"
 #include <QString>
 
-class CopyOptions {
+class __libcore CopyOptions {
 	public:
 		enum CopyOpts: unsigned {
 			NoOpts = 0,

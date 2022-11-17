@@ -20,7 +20,7 @@
 
 TableView::TableView(PhysicalTable *table) : BaseTableView(table)
 {
-	connect(table, SIGNAL(s_objectModified()), this, SLOT(configureObject()));
+	connect(table, &PhysicalTable::s_objectModified, this, &TableView::configureObject);
 	this->configureObject();
 }
 

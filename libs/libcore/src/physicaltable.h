@@ -36,7 +36,7 @@
 #include "copyoptions.h"
 #include "pgsqltypes/partitioningtype.h"
 
-class PhysicalTable: public BaseTable {
+class __libcore PhysicalTable: public BaseTable {
 	protected:
 		//! \brief Specifies the table from which columns are copied
 		PhysicalTable *copy_table;

@@ -25,11 +25,12 @@
 #ifndef HTML_ITEM_DELEGATE_H
 #define HTML_ITEM_DELEGATE_H
 
+#include "guiglobal.h"
 #include <QObject>
 #include <QPainter>
 #include "plaintextitemdelegate.h"
 
-class HtmlItemDelegate : public PlainTextItemDelegate {
+class __libgui HtmlItemDelegate : public PlainTextItemDelegate {
 	private:
 		Q_OBJECT
 

@@ -90,17 +90,17 @@ FunctionWidget::FunctionWidget(QWidget *parent): BaseFunctionWidget(parent, Obje
 	behavior_cmb->addItems(BehaviorType::getTypes());
 	parallel_cmb->addItems(ParallelType::getTypes());
 
-	connect(simple_rb, SIGNAL(clicked(bool)), this, SLOT(alternateReturnTypes()));
-	connect(set_rb, SIGNAL(clicked(bool)), this, SLOT(alternateReturnTypes()));
-	connect(table_rb, SIGNAL(clicked(bool)), this, SLOT(alternateReturnTypes()));
+	connect(simple_rb, &QRadioButton::clicked, this, &FunctionWidget::alternateReturnTypes);
+	connect(set_rb, &QRadioButton::clicked, this, &FunctionWidget::alternateReturnTypes);
+	connect(table_rb, &QRadioButton::clicked, this, &FunctionWidget::alternateReturnTypes);
 
-	connect(parameters_tab, SIGNAL(s_rowAdded(int)), this, SLOT(showParameterForm()));
-	connect(parameters_tab, SIGNAL(s_rowEdited(int)), this, SLOT(showParameterForm()));
-	connect(parameters_tab, SIGNAL(s_rowDuplicated(int,int)), this, SLOT(duplicateParameter(int,int)));
+	connect(parameters_tab, &ObjectsTableWidget::s_rowAdded, this, &FunctionWidget::showParameterForm);
+	connect(parameters_tab, &ObjectsTableWidget::s_rowEdited, this, &FunctionWidget::showParameterForm);
+	connect(parameters_tab,  &ObjectsTableWidget::s_rowDuplicated, this, &FunctionWidget::duplicateParameter);
 
-	connect(return_tab, SIGNAL(s_rowAdded(int)), this, SLOT(showParameterForm()));
-	connect(return_tab, SIGNAL(s_rowEdited(int)), this, SLOT(showParameterForm()));
-	connect(return_tab, SIGNAL(s_rowDuplicated(int,int)), this, SLOT(duplicateParameter(int,int)));
+	connect(return_tab, &ObjectsTableWidget::s_rowAdded, this, &FunctionWidget::showParameterForm);
+	connect(return_tab, &ObjectsTableWidget::s_rowEdited, this, &FunctionWidget::showParameterForm);
+	connect(return_tab, &ObjectsTableWidget::s_rowDuplicated, this, &FunctionWidget::duplicateParameter);
 
 	setRequiredField(ret_method_lbl);
 	configureTabOrder();

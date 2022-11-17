@@ -292,8 +292,8 @@ CREATE TABLE public.table_b (\n \
 	connect(font_preview_txt, &NumberedTextEditor::cursorPositionChanged, this, &AppearanceConfigWidget::previewCodeFontStyle);
 
 	connect(elem_color_cp, &ColorPickerWidget::s_colorChanged, this, &AppearanceConfigWidget::applyElementColor);
-	connect(elem_color_cp, &ColorPickerWidget::s_colorsChanged,
-			[&](){
+
+	connect(elem_color_cp, &ColorPickerWidget::s_colorsChanged, this, [this](){
 		for(unsigned i=0; i < elem_color_cp->getColorCount(); i++)
 			applyElementColor(i, elem_color_cp->getColor(i));
 	});
@@ -311,24 +311,24 @@ CREATE TABLE public.table_b (\n \
 	connect(ui_theme_cmb, &QComboBox::currentTextChanged, this, &AppearanceConfigWidget::previewUiSettings);
 	connect(icons_size_cmb, &QComboBox::currentTextChanged, this, &AppearanceConfigWidget::previewUiSettings);
 
-	connect(custom_scale_chk, &QCheckBox::toggled, [&](bool toggled){
+	connect(custom_scale_chk, &QCheckBox::toggled, this, [this](bool toggled){
 		custom_scale_spb->setEnabled(toggled);
 		setConfigurationChanged(true);
 	});
 
-	connect(custom_scale_spb, &QDoubleSpinBox::valueChanged, [&](){
+	connect(custom_scale_spb, &QDoubleSpinBox::valueChanged, this, [this](){
 		setConfigurationChanged(true);
 	});
 
-	connect(min_obj_opacity_spb, &QSpinBox::valueChanged, [&](){
+	connect(min_obj_opacity_spb, &QSpinBox::valueChanged, this, [this](){
 		setConfigurationChanged(true);
 	});
 
-	connect(ext_attribs_per_page_spb, &QSpinBox::valueChanged, [&](){
+	connect(ext_attribs_per_page_spb, &QSpinBox::valueChanged, this, [this](){
 		setConfigurationChanged(true);
 	});
 
-	connect(attribs_per_page_spb, &QSpinBox::valueChanged, [&](){
+	connect(attribs_per_page_spb, &QSpinBox::valueChanged, this, [this](){
 		setConfigurationChanged(true);
 	});
 }
@@ -904,7 +904,7 @@ void AppearanceConfigWidget::applyUiTheme()
 	QString ui_theme = ui_theme_cmb->currentData(Qt::UserRole).toString();
 	std::map<QPalette::ColorRole, QStringList> *color_map = color_maps[ui_theme];
 	QStringList *item_colors = item_color_lists[ui_theme];
-	QPalette pal;
+	QPalette pal = qApp->palette();
 
 	for(unsigned idx = 0; idx < static_cast<unsigned>(item_colors->size()); idx++)
 	{

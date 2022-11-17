@@ -53,17 +53,17 @@ PgSQLTypeWidget::PgSQLTypeWidget(QWidget *parent, const QString &label) : QWidge
 		type_cmb->completer()->setFilterMode(Qt::MatchContains);
 		type_cmb->completer()->setCompletionMode(QCompleter::PopupCompletion);
 
-		connect(type_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(updateTypeFormat()));
-		connect(type_cmb, SIGNAL(currentTextChanged(QString)), this, SLOT(updateTypeFormat()));
-		connect(precision_sb, SIGNAL(valueChanged(int)), this, SLOT(updateTypeFormat()));
-		connect(length_sb, SIGNAL(valueChanged(int)), this, SLOT(updateTypeFormat()));
-		connect(dimension_sb, SIGNAL(valueChanged(int)), this, SLOT(updateTypeFormat()));
-		connect(interval_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(updateTypeFormat()));
-		connect(timezone_chk, SIGNAL(toggled(bool)), this, SLOT(updateTypeFormat()));
-		connect(spatial_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(updateTypeFormat()));
-		connect(var_m_chk, SIGNAL(toggled(bool)), this, SLOT(updateTypeFormat()));
-		connect(var_z_chk, SIGNAL(toggled(bool)), this, SLOT(updateTypeFormat()));
-		connect(srid_spb, SIGNAL(valueChanged(int)), this, SLOT(updateTypeFormat()));
+		connect(type_cmb, &QComboBox::currentIndexChanged, this, &PgSQLTypeWidget::updateTypeFormat);
+		connect(type_cmb, &QComboBox::currentTextChanged, this, &PgSQLTypeWidget::updateTypeFormat);
+		connect(precision_sb, &QSpinBox::valueChanged, this, &PgSQLTypeWidget::updateTypeFormat);
+		connect(length_sb, &QSpinBox::valueChanged, this, &PgSQLTypeWidget::updateTypeFormat);
+		connect(dimension_sb, &QSpinBox::valueChanged, this, &PgSQLTypeWidget::updateTypeFormat);
+		connect(interval_cmb, &QComboBox::currentIndexChanged, this, &PgSQLTypeWidget::updateTypeFormat);
+		connect(timezone_chk, &QCheckBox::toggled, this, &PgSQLTypeWidget::updateTypeFormat);
+		connect(spatial_cmb,  &QComboBox::currentIndexChanged, this, &PgSQLTypeWidget::updateTypeFormat);
+		connect(var_m_chk, &QCheckBox::toggled, this, &PgSQLTypeWidget::updateTypeFormat);
+		connect(var_z_chk, &QCheckBox::toggled, this, &PgSQLTypeWidget::updateTypeFormat);
+		connect(srid_spb, &QSpinBox::valueChanged, this, &PgSQLTypeWidget::updateTypeFormat);
 	}
 	catch(Exception &e)
 	{

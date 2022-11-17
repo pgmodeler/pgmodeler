@@ -31,7 +31,7 @@
 #include "pgsqltypewidget.h"
 #include "widgets/objectstablewidget.h"
 
-class AggregateWidget: public BaseObjectWidget, public Ui::AggregateWidget {
+class __libgui AggregateWidget: public BaseObjectWidget, public Ui::AggregateWidget {
 	private:
 		Q_OBJECT
 		

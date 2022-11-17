@@ -25,10 +25,11 @@
 #ifndef LINE_NUMBERS_WIDGET_H
 #define LINE_NUMBERS_WIDGET_H
 
+#include "guiglobal.h"
 #include <QWidget>
 #include <QPlainTextEdit>
 
-class LineNumbersWidget : public QWidget {
+class __libgui LineNumbersWidget : public QWidget {
 	private:
 		Q_OBJECT
 

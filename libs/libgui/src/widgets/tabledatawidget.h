@@ -29,7 +29,7 @@
 #include "ui_tabledatawidget.h"
 #include "csvloadwidget.h"
 
-class TableDataWidget: public BaseObjectWidget, public Ui::TableDataWidget {
+class __libgui TableDataWidget: public BaseObjectWidget, public Ui::TableDataWidget {
 	private:
 		Q_OBJECT
 
@@ -79,6 +79,7 @@ class TableDataWidget: public BaseObjectWidget, public Ui::TableDataWidget {
 		void clearColumns();
 		void changeColumnName(int col_idx);
 		void enableButtons();
+		void handleItemPressed();
 };
 
 #endif

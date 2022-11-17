@@ -32,7 +32,7 @@
 #include "function.h"
 #include "operatorfamily.h"
 
-class OperatorClassElement {
+class __libcore OperatorClassElement {
 	public:
 		//! \brief Constants used to reference the element types
 		enum ElementType: unsigned {

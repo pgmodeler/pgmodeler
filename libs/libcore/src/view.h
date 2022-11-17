@@ -28,7 +28,7 @@
 #include "reference.h"
 #include "basetable.h"
 
-class View: public BaseTable {
+class __libcore View: public BaseTable {
 	private:
 		//! \brief Stores the references to expressions and objects
 		std::vector<Reference> references;

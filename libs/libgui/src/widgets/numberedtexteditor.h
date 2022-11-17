@@ -32,7 +32,7 @@ based upon the code editor example provided by Qt
 #include <QLabel>
 #include "linenumberswidget.h"
 
-class NumberedTextEditor : public QPlainTextEdit {
+class __libgui NumberedTextEditor : public QPlainTextEdit {
 	private:
 		Q_OBJECT
 

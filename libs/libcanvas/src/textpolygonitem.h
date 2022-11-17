@@ -25,12 +25,13 @@
 #ifndef TEXT_POLYGON_ITEM_H
 #define TEXT_POLYGON_ITEM_H
 
+#include "canvasglobal.h"
 #include <QGraphicsPolygonItem>
 #include <QPainter>
 #include <QFont>
 #include <QStyleOptionGraphicsItem>
 
-class TextPolygonItem : public QGraphicsPolygonItem {
+class __libcanvas TextPolygonItem : public QGraphicsPolygonItem {
 	private:
 		QGraphicsSimpleTextItem *text_item;
 

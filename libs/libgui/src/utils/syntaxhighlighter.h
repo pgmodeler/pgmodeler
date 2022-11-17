@@ -25,6 +25,7 @@
 #ifndef SYNTAX_HIGHLIGHTER_H
 #define SYNTAX_HIGHLIGHTER_H
 
+#include "guiglobal.h"
 #include <QtWidgets>
 #include <map>
 #include <vector>
@@ -34,7 +35,7 @@
 #include "attributes.h"
 #include <algorithm>
 
-class SyntaxHighlighter: public QSyntaxHighlighter {
+class __libgui SyntaxHighlighter: public QSyntaxHighlighter {
 	private:
 		Q_OBJECT
 

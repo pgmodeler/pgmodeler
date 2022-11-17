@@ -27,7 +27,7 @@
 
 #include "templatetype.h"
 
-class ExecutionType: public TemplateType<ExecutionType>{
+class __libcore ExecutionType: public TemplateType<ExecutionType>{
 	public:
 		static constexpr unsigned Also = 1,
 		Instead = 2;

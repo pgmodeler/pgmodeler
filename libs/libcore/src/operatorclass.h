@@ -28,11 +28,11 @@ can be used in a particular indexing method.
 #ifndef OPERATOR_CLASS_H
 #define OPERATOR_CLASS_H
 
-#include "baseobject.h"                                                                                                                                                                                            
-#include "operatorclasselement.h"                                                                                                                                                                                  
+#include "baseobject.h"
+#include "operatorclasselement.h"
 #include "operatorfamily.h"
 
-class OperatorClass: public BaseObject {
+class __libcore OperatorClass: public BaseObject {
 	private:
 		//! \brief Data type witch the operator class acts on
 		PgSqlType data_type;

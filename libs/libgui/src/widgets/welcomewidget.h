@@ -24,9 +24,10 @@
 #ifndef WELCOME_WIDGET_H
 #define WELCOME_WIDGET_H
 
+#include "guiglobal.h"
 #include "ui_welcomewidget.h"
 
-class WelcomeWidget: public QWidget, public Ui::WelcomeWidget {
+class __libgui WelcomeWidget: public QWidget, public Ui::WelcomeWidget {
 	private:
 		Q_OBJECT
 		

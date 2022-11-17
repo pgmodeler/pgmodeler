@@ -30,7 +30,7 @@
 #include "widgets/objectstablewidget.h"
 #include "widgets/colorpickerwidget.h"
 
-class RelationshipWidget: public BaseObjectWidget, public Ui::RelationshipWidget {
+class __libgui RelationshipWidget: public BaseObjectWidget, public Ui::RelationshipWidget {
 	private:
 		Q_OBJECT
 

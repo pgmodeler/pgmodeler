@@ -25,10 +25,11 @@
 #ifndef FOREIGN_OBJECT_H
 #define FOREIGN_OBJECT_H
 
+#include "coreglobal.h"
 #include "attribsmap.h"
 #include "schemaparser.h"
 
-class ForeignObject {
+class __libcore ForeignObject {
 	protected:
 		//! \brief A set of key/value options associated to the foreign object
 		attribs_map options;

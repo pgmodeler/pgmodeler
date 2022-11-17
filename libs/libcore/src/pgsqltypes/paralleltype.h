@@ -27,7 +27,7 @@
 
 #include "templatetype.h"
 
-class ParallelType: public TemplateType<ParallelType>{
+class __libcore ParallelType: public TemplateType<ParallelType>{
 	public:
 		static constexpr unsigned Unsafe = 1,
 		Restricted = 2,

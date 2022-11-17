@@ -26,6 +26,7 @@
 #ifndef EXCEPTION_H
 #define EXCEPTION_H
 
+#include "utilsglobal.h"
 #include <QObject>
 #include "doublenan.h"
 #include <exception>
@@ -302,7 +303,7 @@ enum class ErrorCode: unsigned {
 	ModelFileSaveFailure
 };
 
-class Exception {
+class __libutils Exception {
 	private:
 		static constexpr unsigned ErrorCount=265;
 

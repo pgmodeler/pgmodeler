@@ -27,7 +27,7 @@
 
 #include "baseobject.h"
 
-class Extension: public BaseObject {
+class __libcore Extension: public BaseObject {
 	private:
 		/*! \brief Indicates if the extension handles a datatype. When
 		this attribute is set pgModeler will consider the extension as
