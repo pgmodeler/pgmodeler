@@ -235,8 +235,6 @@ class __libgui ModelWidget: public QWidget {
 
 		void updateMagnifierArea();
 
-		void showMagnifierArea(bool show);
-
 		/*! \brief Move the selected objects in the Z coordenate either to bottom or top.
 		 * The direction is defined by the constants BringToTop or SendToBottom. */
 		void moveObjectsInZStack(int direction);
@@ -574,7 +572,7 @@ class __libgui ModelWidget: public QWidget {
 		 * so the correct info is written into the xml code of the model file */
 		void updateModelLayersInfo();
 
-		void toggleMagnifierArea();
+		void showMagnifierArea(bool show);
 
 	public slots:
 		void loadModel(const QString &filename);
@@ -592,6 +590,7 @@ class __libgui ModelWidget: public QWidget {
 		void s_objectCreated();
 		void s_objectRemoved();
 		void s_zoomModified(double);
+		void s_maginifierAreaVisible(bool);
 		void s_modelResized();
 
 		//! \brief Signal emitted whenever the modified status of the model changes

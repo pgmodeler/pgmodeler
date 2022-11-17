@@ -749,7 +749,7 @@
      <x>0</x>
      <y>0</y>
      <width>1668</width>
-     <height>27</height>
+     <height>26</height>
     </rect>
    </property>
    <property name="autoFillBackground">
@@ -1314,7 +1314,7 @@
     <string>&amp;Overview</string>
    </property>
    <property name="toolTip">
-    <string>Show the model overview</string>
+    <string>Toggles the model overview</string>
    </property>
    <property name="shortcut">
     <string>F10</string>
@@ -1580,6 +1580,9 @@
    </property>
    <property name="text">
     <string>Magnifier</string>
+   </property>
+   <property name="toolTip">
+    <string>Toggles the magnifier tool</string>
    </property>
    <property name="shortcut">
     <string>F9</string>

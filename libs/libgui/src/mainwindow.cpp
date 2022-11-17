@@ -549,11 +549,6 @@ void MainWindow::connectSignalsToSlots()
 	connect(action_show_main_menu, &QAction::triggered, this, &MainWindow::showMainMenu);
 	connect(action_hide_main_menu, &QAction::triggered, this, &MainWindow::showMainMenu);
 #endif
-
-	connect(action_magnifier, &QAction::triggered, this, [this](){
-		if(current_model)
-			current_model->toggleMagnifierArea();
-	});
 }
 
 void MainWindow::restoreTemporaryModels()
@@ -1266,8 +1261,15 @@ void MainWindow::setCurrentModel()
 		connect(action_show_grid, &QAction::triggered, this, &MainWindow::setGridOptions, Qt::UniqueConnection);
 		connect(action_show_delimiters, &QAction::triggered, this, &MainWindow::setGridOptions, Qt::UniqueConnection);
 
+		connect(action_magnifier, &QAction::toggled, current_model, &ModelWidget::showMagnifierArea, Qt::UniqueConnection);
 		connect(action_overview, &QAction::toggled, this, &MainWindow::showOverview, Qt::UniqueConnection);
-		connect(overview_wgt, &ModelOverviewWidget::s_overviewVisible, action_overview, &QAction::setChecked, Qt::UniqueConnection);
+		connect(overview_wgt, &ModelOverviewWidget::s_overviewVisible, action_overview, &QAction::setChecked, Qt::UniqueConnection);\
+
+		connect(current_model, &ModelWidget::s_maginifierAreaVisible, this, [this](bool show) {
+			action_magnifier->blockSignals(true);
+			action_magnifier->setChecked(show);
+			action_magnifier->blockSignals(false);
+		});
 
 		if(action_overview->isChecked())
 			overview_wgt->show(current_model);
@@ -1397,9 +1399,9 @@ void MainWindow::closeModel(int model_id)
 			model_tree_states.erase(model);
 
 			disconnect(model, nullptr, nullptr, nullptr);
-			disconnect(action_alin_objs_grade, nullptr, this, nullptr);
-			disconnect(action_show_grid, nullptr, this, nullptr);
-			disconnect(action_show_delimiters, nullptr, this, nullptr);
+			//disconnect(action_alin_objs_grade, nullptr, this, nullptr);
+			//disconnect(action_show_grid, nullptr, this, nullptr);
+			//disconnect(action_show_delimiters, nullptr, this, nullptr);
 
 			//Remove the temporary file related to the closed model
 			QDir arq_tmp;
@@ -1873,7 +1875,7 @@ void MainWindow::updateToolsState(bool model_closed)
 	action_normal_zoom->setEnabled(enabled);
 	action_inc_zoom->setEnabled(enabled && current_model->getCurrentZoom() < ModelWidget::MaximumZoom);
 	action_dec_zoom->setEnabled(enabled && current_model->getCurrentZoom() > ModelWidget::MinimumZoom);
-	action_normal_zoom->setEnabled(enabled && static_cast<int>(current_model->getCurrentZoom()) != 1);
+	action_normal_zoom->setEnabled(enabled && (current_model->getCurrentZoom() * 100) != 100);
 	action_alin_objs_grade->setEnabled(enabled);
 	action_undo->setEnabled(enabled);
 	action_redo->setEnabled(enabled);

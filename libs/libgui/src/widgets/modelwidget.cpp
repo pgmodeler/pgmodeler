@@ -5005,13 +5005,13 @@ void ModelWidget::updateModelLayersInfo()
 	setModified(true);
 }
 
-void ModelWidget::toggleMagnifierArea()
+/*void ModelWidget::toggleMagnifierArea()
 {
 	if(!magnifier_area_lbl->isVisible())
 		showMagnifierArea(current_zoom < 1);
 	else
 		showMagnifierArea(false);
-}
+}*/
 
 void ModelWidget::rearrangeTablesHierarchically()
 {
@@ -5498,6 +5498,8 @@ void ModelWidget::updateMagnifierArea()
 
 void ModelWidget::showMagnifierArea(bool show)
 {
+	show = show && (current_zoom < 1);
+
 	if(show)
 	{
 		updateMagnifierArea();
@@ -5507,4 +5509,6 @@ void ModelWidget::showMagnifierArea(bool show)
 		viewport->setCursor(Qt::ArrowCursor);
 
 	magnifier_area_lbl->setVisible(show);
+
+	emit s_maginifierAreaVisible(show);
 }
