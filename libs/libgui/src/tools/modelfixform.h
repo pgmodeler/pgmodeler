@@ -30,7 +30,7 @@
 #include "ui_modelfixform.h"
 #include "widgets/fileselectorwidget.h"
 
-class EXPORT_SYM ModelFixForm: public QDialog, public Ui::ModelFixForm {
+class __libgui ModelFixForm: public QDialog, public Ui::ModelFixForm {
 	private:
 		Q_OBJECT
 

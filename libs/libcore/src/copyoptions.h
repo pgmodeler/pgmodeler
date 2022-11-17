@@ -28,7 +28,7 @@
 #include "baseobject.h"
 #include <QString>
 
-class EXPORT_SYM CopyOptions {
+class __libcore CopyOptions {
 	public:
 		enum CopyOpts: unsigned {
 			NoOpts = 0,

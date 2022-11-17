@@ -26,10 +26,11 @@ are emitted during the validation process on ModelValidationHelper class.
 #ifndef VALIDATION_INFO_H
 #define VALIDATION_INFO_H
 
+#include "guiglobal.h"
 #include "baseobject.h"
 #include <vector>
 
-class EXPORT_SYM ValidationInfo {
+class __libgui ValidationInfo {
 	public:
 		enum ValType: unsigned {
 			NoUniqueName,

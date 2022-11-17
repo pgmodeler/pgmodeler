@@ -50,7 +50,7 @@
 // Making the MainWindow class of pgModeler be known by the plugin interface
 class MainWindow;
 
-class EXPORT_SYM PgModelerPlugin {
+class __libgui PgModelerPlugin {
 	protected:
 		BaseForm *plugin_info_frm;
 

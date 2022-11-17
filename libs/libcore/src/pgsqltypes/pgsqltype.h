@@ -31,7 +31,7 @@
 #include "templatetype.h"
 #include "schemaparser.h"
 
-class EXPORT_SYM PgSqlType: public TemplateType<PgSqlType>{
+class __libcore PgSqlType: public TemplateType<PgSqlType>{
 	private:
 		//! \brief Offset for all PostGiS types
 		static constexpr unsigned PostGiSStart = 64,

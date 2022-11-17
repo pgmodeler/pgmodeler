@@ -30,7 +30,7 @@
 #include "modelobjectswidget.h"
 #include "ui_objectselectorwidget.h"
 
-class EXPORT_SYM ObjectSelectorWidget: public QWidget, public Ui::ObjectSelectorWidget {
+class __libgui ObjectSelectorWidget: public QWidget, public Ui::ObjectSelectorWidget {
 	private:
 		Q_OBJECT
 

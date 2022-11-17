@@ -29,7 +29,7 @@
 #include "role.h"
 #include "pgsqltypes/policycmdtype.h"
 
-class EXPORT_SYM Policy : public TableObject {
+class __libcore Policy : public TableObject {
 	private:
 		/*! \brief Roles that has permissions over the object. This vector can be
 			empty indicating that all roles on the cluster has permission over

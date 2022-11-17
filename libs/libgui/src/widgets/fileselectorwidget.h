@@ -25,11 +25,11 @@
 #ifndef FILE_SELECTOR_WIDGET_H
 #define FILE_SELECTOR_WIDGET_H
 
-#include "exportsym.h"
+#include "guiglobal.h"
 #include <QtWidgets>
 #include "ui_fileselectorwidget.h"
 
-class EXPORT_SYM FileSelectorWidget: public QWidget, public Ui::FileSelectorWidget {
+class __libgui FileSelectorWidget: public QWidget, public Ui::FileSelectorWidget {
 	private:
 		Q_OBJECT
 

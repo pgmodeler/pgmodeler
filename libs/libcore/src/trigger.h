@@ -32,7 +32,7 @@
 #include "pgsqltypes/eventtype.h"
 #include "pgsqltypes/deferraltype.h"
 
-class EXPORT_SYM Trigger: public TableObject{
+class __libcore Trigger: public TableObject{
 	private:
 		//! \brief Stores the transtion tables names (OLD and NEW) [REFERENCING { OLD | NEW } TABLE name]
 		QString transition_tabs_names[2];

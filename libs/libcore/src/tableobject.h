@@ -29,7 +29,7 @@ like columns, rules, triggers, indexes, constraints.
 
 #include "basetable.h"
 
-class EXPORT_SYM TableObject: public BaseObject {
+class __libcore TableObject: public BaseObject {
 	private:
 		//! \brief Stores the table that owns this object
 		BaseTable *parent_table;

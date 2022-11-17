@@ -30,7 +30,7 @@
 #include <QDir>
 #include "globalattributes.h"
 
-class EXPORT_SYM Application: public QApplication {
+class __libutils Application: public QApplication {
 	private:
 		//! \brief Copy files from a path to another recursively
 		void copyFilesRecursively(const QString &src_path, const QString &dst_path, bool missing_only);

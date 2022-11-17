@@ -30,7 +30,7 @@
 #include "indexelement.h"
 #include "simplecolumn.h"
 
-class EXPORT_SYM Index: public TableObject{
+class __libcore Index: public TableObject{
 	private:
 		//! \brief Stores the elements that defines the index
 		std::vector<IndexElement> idx_elements;

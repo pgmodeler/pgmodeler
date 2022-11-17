@@ -31,7 +31,7 @@
 #include "utils/htmlitemdelegate.h"
 #include "widgets/fileselectorwidget.h"
 
-class EXPORT_SYM MetadataHandlingForm: public QDialog, public Ui::MetadataHandlingForm {
+class __libgui MetadataHandlingForm: public QDialog, public Ui::MetadataHandlingForm {
 	private:
 		Q_OBJECT
 

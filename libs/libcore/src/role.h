@@ -28,7 +28,7 @@
 
 #include "baseobject.h"
 
-class EXPORT_SYM Role: public BaseObject {
+class __libcore Role: public BaseObject {
 	private:
 		static unsigned role_id;
 

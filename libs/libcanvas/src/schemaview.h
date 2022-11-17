@@ -31,7 +31,7 @@
 #include "textboxview.h"
 #include "roundedrectitem.h"
 
-class EXPORT_SYM SchemaView: public BaseObjectView {
+class __libcanvas SchemaView: public BaseObjectView {
 	private:
 		Q_OBJECT
 

@@ -11,9 +11,6 @@ UI_DIR = src
 # Disables all the APIs deprecated before Qt 6.0.0
 DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000
 
-# Enables shared libraries symbols exporting
-DEFINES += EXPORT_SYMBOLS
-
 # Store the absolute paths to library subprojects to be referenced in other .pro files
 # *_ROOT -> the path to the root folder of the subproject
 # *_LIB -> the libary flags (-L -l) (LIBS on qmake) passed to the compiler that points to the library generated from a subproject

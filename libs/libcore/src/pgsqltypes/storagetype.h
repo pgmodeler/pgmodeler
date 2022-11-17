@@ -27,7 +27,7 @@
 
 #include "templatetype.h"
 
-class EXPORT_SYM StorageType: public TemplateType<StorageType>{
+class __libcore StorageType: public TemplateType<StorageType>{
 	public:
 		static constexpr unsigned Plain = 1,
 		External = 2,

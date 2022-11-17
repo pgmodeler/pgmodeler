@@ -33,7 +33,7 @@
 #include "relationshipconfigwidget.h"
 #include "snippetsconfigwidget.h"
 
-class EXPORT_SYM ConfigurationForm: public QDialog, public Ui::ConfigurationForm {
+class __libgui ConfigurationForm: public QDialog, public Ui::ConfigurationForm {
 	private:
 		Q_OBJECT
 		

@@ -30,7 +30,7 @@
 #include "physicaltable.h"
 #include "objectstablewidget.h"
 
-class EXPORT_SYM ColumnPickerWidget: public QWidget, public Ui::ColumnPickerWidget {
+class __libgui ColumnPickerWidget: public QWidget, public Ui::ColumnPickerWidget {
 	private:
 		Q_OBJECT
 

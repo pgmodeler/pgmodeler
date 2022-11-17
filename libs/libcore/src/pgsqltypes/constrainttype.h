@@ -27,7 +27,7 @@
 
 #include "templatetype.h"
 
-class EXPORT_SYM ConstraintType: public TemplateType<ConstraintType>{
+class __libcore ConstraintType: public TemplateType<ConstraintType>{
 	public:
 		static constexpr unsigned PrimaryKey = 1,
 		ForeignKey = 2,

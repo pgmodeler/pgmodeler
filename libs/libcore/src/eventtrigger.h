@@ -29,7 +29,7 @@
 #include "function.h"
 #include "pgsqltypes/eventtriggertype.h"
 
-class EXPORT_SYM EventTrigger: public BaseObject {
+class __libcore EventTrigger: public BaseObject {
 	private:
 
 		//! \brief Function that is excuted when the event trigger is activated

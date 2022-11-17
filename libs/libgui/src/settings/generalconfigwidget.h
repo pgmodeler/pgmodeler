@@ -32,7 +32,7 @@
 #include "widgets/numberedtexteditor.h"
 #include "widgets/fileselectorwidget.h"
 
-class EXPORT_SYM GeneralConfigWidget: public BaseConfigWidget, public Ui::GeneralConfigWidget {
+class __libgui GeneralConfigWidget: public BaseConfigWidget, public Ui::GeneralConfigWidget {
 	private:
 		Q_OBJECT
 

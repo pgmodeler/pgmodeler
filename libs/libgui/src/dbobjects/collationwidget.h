@@ -28,7 +28,7 @@
 #include "baseobjectwidget.h"
 #include "ui_collationwidget.h"
 
-class EXPORT_SYM CollationWidget: public BaseObjectWidget, public Ui::CollationWidget {
+class __libgui CollationWidget: public BaseObjectWidget, public Ui::CollationWidget {
 	private:
 		Q_OBJECT
 		

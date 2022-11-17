@@ -27,6 +27,7 @@ It the resultset contains data the user must call ResultSet::accessTuple() to ac
 #ifndef RESULTSET_H
 #define RESULTSET_H
 
+#include "connectorglobal.h"
 #include "exception.h"
 #include "attribsmap.h"
 #include <libpq-fe.h>
@@ -36,7 +37,7 @@ It the resultset contains data the user must call ResultSet::accessTuple() to ac
 //This constant is defined on PostgreSQL source code src/catalog/pg_type.h
 #define BYTEAOID 17
 
-class EXPORT_SYM ResultSet {
+class __libconnector ResultSet {
 	private:
 		/*! \brief Indicates whether the result was copied, this flag is used
 	 to avoid segmentation faults when calling the destructor.

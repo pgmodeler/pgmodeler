@@ -28,7 +28,7 @@
 
 #include "baseobject.h"
 
-class EXPORT_SYM Tablespace: public BaseObject{
+class __libcore Tablespace: public BaseObject{
 	private:
 		static unsigned tabspace_id;
 

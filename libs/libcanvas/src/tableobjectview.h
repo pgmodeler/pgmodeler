@@ -29,7 +29,7 @@
 #include "table.h"
 #include "baseobjectview.h"
 
-class EXPORT_SYM TableObjectView: public BaseObjectView {
+class __libcanvas TableObjectView: public BaseObjectView {
 	private:
 		Q_OBJECT
 

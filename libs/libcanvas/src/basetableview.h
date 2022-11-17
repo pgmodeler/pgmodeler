@@ -34,7 +34,7 @@
 #include "textpolygonitem.h"
 #include "attributestoggleritem.h"
 
-class EXPORT_SYM BaseTableView: public BaseObjectView {
+class __libcanvas BaseTableView: public BaseObjectView {
 	private:
 		Q_OBJECT
 

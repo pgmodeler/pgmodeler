@@ -29,7 +29,7 @@
 #include "ui_foreigndatawrapperwidget.h"
 #include "widgets/objectstablewidget.h"
 
-class EXPORT_SYM ForeignDataWrapperWidget: public BaseObjectWidget, public Ui::ForeignDataWrapperWidget {
+class __libgui ForeignDataWrapperWidget: public BaseObjectWidget, public Ui::ForeignDataWrapperWidget {
 	private:
 		Q_OBJECT
 

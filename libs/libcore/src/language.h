@@ -30,7 +30,7 @@
 #include "function.h"
 #include "role.h"
 
-class EXPORT_SYM Language: public BaseObject{
+class __libcore Language: public BaseObject{
 	private:
 		/*! \brief Indicates whether the language is trusted on the database which means
 		that the object can be used by an unprivileged user without compromise

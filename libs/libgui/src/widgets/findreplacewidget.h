@@ -25,12 +25,13 @@
 #ifndef FIND_REPLACE_WIDGET_H
 #define FIND_REPLACE_WIDGET_H
 
+#include "guiglobal.h"
 #include "ui_findreplacewidget.h"
 #include <QPlainTextEdit>
 #include "exception.h"
 #include <QTimer>
 
-class EXPORT_SYM FindReplaceWidget: public QWidget, public Ui::FindReplaceWidget {
+class __libgui FindReplaceWidget: public QWidget, public Ui::FindReplaceWidget {
 	private:
 		Q_OBJECT
 		

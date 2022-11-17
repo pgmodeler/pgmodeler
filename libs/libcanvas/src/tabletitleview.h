@@ -31,7 +31,7 @@
 #include "textboxview.h"
 #include "roundedrectitem.h"
 
-class EXPORT_SYM TableTitleView: public BaseObjectView {
+class __libcanvas TableTitleView: public BaseObjectView {
 	private:
 		Q_OBJECT
 

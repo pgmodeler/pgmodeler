@@ -31,7 +31,7 @@
 #include "operationlist.h"
 #include "messagebox.h"
 
-class EXPORT_SYM ObjectRenameWidget: public QDialog, public Ui::ObjectRenameWidget {
+class __libgui ObjectRenameWidget: public QDialog, public Ui::ObjectRenameWidget {
 	private:
 		Q_OBJECT
 

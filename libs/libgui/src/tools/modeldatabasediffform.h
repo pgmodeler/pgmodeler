@@ -38,7 +38,7 @@
 #include "widgets/findreplacewidget.h"
 #include <QThread>
 
-class EXPORT_SYM ModelDatabaseDiffForm: public BaseConfigWidget, public Ui::ModelDatabaseDiffForm {
+class __libgui ModelDatabaseDiffForm: public BaseConfigWidget, public Ui::ModelDatabaseDiffForm {
 	private:
 		Q_OBJECT
 

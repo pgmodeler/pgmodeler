@@ -25,12 +25,12 @@
 #ifndef TASK_PROGRESS_WIDGET_H
 #define TASK_PROGRESS_WIDGET_H
 
-#include "exportsym.h"
+#include "guiglobal.h"
 #include <QtWidgets>
 #include "ui_taskprogresswidget.h"
 #include <map>
 
-class EXPORT_SYM TaskProgressWidget: public QDialog, public Ui::TaskProgressWidget
+class __libgui TaskProgressWidget: public QDialog, public Ui::TaskProgressWidget
 {
 	private:
 		Q_OBJECT

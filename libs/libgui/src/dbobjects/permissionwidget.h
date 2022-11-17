@@ -30,7 +30,7 @@
 #include "widgets/objectstablewidget.h"
 #include "widgets/modelobjectswidget.h"
 
-class EXPORT_SYM PermissionWidget: public BaseObjectWidget, public Ui::PermissionWidget {
+class __libgui PermissionWidget: public BaseObjectWidget, public Ui::PermissionWidget {
 	private:
 		Q_OBJECT
 

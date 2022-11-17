@@ -28,7 +28,7 @@
 #include "baseobject.h"
 #include <unordered_map>
 
-class EXPORT_SYM GenericSQL: public BaseObject{
+class __libcore GenericSQL: public BaseObject{
 	protected:
 
 		//! \brief This is a internal structure used to hold object references configuration

@@ -27,7 +27,7 @@
 
 #include "templatetype.h"
 
-class EXPORT_SYM IndexingType: public TemplateType<IndexingType>{
+class __libcore IndexingType: public TemplateType<IndexingType>{
 	public:
 		static constexpr unsigned Btree = 1,
 		Gist = 2,

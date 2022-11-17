@@ -27,7 +27,7 @@
 
 #include "templatetype.h"
 
-class EXPORT_SYM PartitioningType: public TemplateType<PartitioningType> {
+class __libcore PartitioningType: public TemplateType<PartitioningType> {
 	public:
 		static constexpr unsigned Range = 1,
 		List = 2,

@@ -29,7 +29,7 @@
 #include "ui_columnwidget.h"
 #include "pgsqltypewidget.h"
 
-class EXPORT_SYM ColumnWidget: public BaseObjectWidget, public Ui::ColumnWidget {
+class __libgui ColumnWidget: public BaseObjectWidget, public Ui::ColumnWidget {
 	private:
 		Q_OBJECT
 		

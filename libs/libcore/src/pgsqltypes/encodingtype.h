@@ -27,7 +27,7 @@
 
 #include "templatetype.h"
 
-class EXPORT_SYM EncodingType: public TemplateType<EncodingType>{
+class __libcore EncodingType: public TemplateType<EncodingType>{
 	public:
 		EncodingType();
 		EncodingType(const QString &type_name);

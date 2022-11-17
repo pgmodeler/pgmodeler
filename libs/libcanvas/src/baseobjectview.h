@@ -32,7 +32,7 @@
 #include "roundedrectitem.h"
 #include "textpolygonitem.h"
 
-class EXPORT_SYM BaseObjectView: public QObject, public QGraphicsItemGroup {
+class __libcanvas BaseObjectView: public QObject, public QGraphicsItemGroup {
 	private:
 		Q_OBJECT
 

@@ -34,7 +34,7 @@
 #include "styledtextboxview.h"
 #include "layeritem.h"
 
-class EXPORT_SYM ObjectsScene: public QGraphicsScene {
+class __libcanvas ObjectsScene: public QGraphicsScene {
 	private:
 		Q_OBJECT
 

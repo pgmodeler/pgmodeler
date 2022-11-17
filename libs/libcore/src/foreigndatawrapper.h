@@ -29,7 +29,7 @@
 #include "function.h"
 #include "foreignobject.h"
 
-class EXPORT_SYM ForeignDataWrapper: public BaseObject, public ForeignObject {
+class __libcore ForeignDataWrapper: public BaseObject, public ForeignObject {
 	private:
 		//! \brief Function that executes the functions related to the foreign data wrapper
 		Function *handler_func,

@@ -28,11 +28,11 @@
 #ifndef ATTRIBUTES_H
 #define ATTRIBUTES_H
 
-#include "exportsym.h"
+#include "parsersglobal.h"
 #include <QString>
 
 namespace Attributes {
-	extern EXPORT_SYM const QString
+	extern __libparsers const QString
 	Action,
 	ActiveLayers,
 	AdminOption,

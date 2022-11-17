@@ -51,7 +51,7 @@
 #include "globalattributes.h"
 #include "attributes.h"
 
-class EXPORT_SYM UpdateNotifierWidget: public QWidget, public Ui::UpdateNotifierWidget {
+class __libgui UpdateNotifierWidget: public QWidget, public Ui::UpdateNotifierWidget {
 	private:
 		Q_OBJECT
 

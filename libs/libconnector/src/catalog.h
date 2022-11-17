@@ -32,7 +32,7 @@ This class is the basis for the reverse engineering feature.
 #include <QTextStream>
 #include <QApplication>
 
-class EXPORT_SYM Catalog {
+class __libconnector Catalog {
 	public:
 		enum QueryFilter: unsigned {
 			//! \brief Excludes the system objects from listing

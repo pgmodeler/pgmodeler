@@ -32,7 +32,7 @@ of rows on the table.
 #include "messagebox.h"
 #include "dbobjects/baseobjectwidget.h"
 
-class EXPORT_SYM ObjectsTableWidget: public QWidget, public Ui::ObjectsTableWidget {
+class __libgui ObjectsTableWidget: public QWidget, public Ui::ObjectsTableWidget {
 	private:
 		Q_OBJECT
 

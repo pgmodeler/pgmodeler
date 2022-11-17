@@ -28,7 +28,7 @@
 #include "pgsqltypewidget.h"
 #include "widgets/objectstablewidget.h"
 
-class EXPORT_SYM ReferenceWidget : public QWidget, Ui::ReferenceWidget {
+class __libgui ReferenceWidget : public QWidget, Ui::ReferenceWidget {
 	private:
 		Q_OBJECT
 

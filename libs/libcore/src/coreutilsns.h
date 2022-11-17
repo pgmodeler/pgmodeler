@@ -25,7 +25,6 @@
 #ifndef CORE_UTILS_NS_H
 #define CORE_UTILS_NS_H
 
-#include "exportsym.h"
 #include "baseobject.h"
 #include "tableobject.h"
 #include <QCryptographicHash>
@@ -40,14 +39,14 @@ namespace CoreUtilsNs {
 		 before copying. Both objects must be the same type if both are allocated.
 		 -- Brainfuck syntax style! :p -- */
 	template <class Class>
-	extern EXPORT_SYM void copyObject(BaseObject **psrc_obj, Class *copy_obj);
+	extern __libcore void copyObject(BaseObject **psrc_obj, Class *copy_obj);
 
 	/*! \brief This functions is a second way to make a copy between two objects. It simply calls
 		 the template function above. */
-	extern EXPORT_SYM void copyObject(BaseObject **psrc_obj, BaseObject *copy_obj, ObjectType obj_type);
+	extern __libcore void copyObject(BaseObject **psrc_obj, BaseObject *copy_obj, ObjectType obj_type);
 
 	//! \brief Returns true if the specified word is a PostgreSQL reserved word.
-	extern EXPORT_SYM bool isReservedKeyword(const QString &word);
+	extern __libcore bool isReservedKeyword(const QString &word);
 
 	/*! \brief Generates a unique name based upon the specified object and the list of objects of the same type.
 	 * User can specify a suffix for the generated name as well if the comparison inside the method must be done with
@@ -56,9 +55,9 @@ namespace CoreUtilsNs {
 	 * when false the name of the input object (obj) will always be compared to itself if it is present in the provided list. When that
 	 * parameter is true the comparison is not made. */
 	template <class Class>
-	QString EXPORT_SYM generateUniqueName(BaseObject *obj, std::vector<Class *> &obj_vector,
-																				bool fmt_name = false, const QString &suffix = "",
-																				bool use_suf_on_conflict = false, bool discard_input_obj = false)
+	QString generateUniqueName(BaseObject *obj, std::vector<Class *> &obj_vector,
+														 bool fmt_name = false, const QString &suffix = "",
+														 bool use_suf_on_conflict = false, bool discard_input_obj = false)
 	{
 		unsigned counter=0;
 		int len=0;

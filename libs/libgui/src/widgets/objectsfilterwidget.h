@@ -25,6 +25,7 @@
 #ifndef OBJECTS_FILTER_WIDGET_H
 #define OBJECTS_FILTER_WIDGET_H
 
+#include "guiglobal.h"
 #include <QWidget>
 #include <QComboBox>
 #include <QMenu>
@@ -33,7 +34,7 @@
 #include "baseobject.h"
 #include "ui_objectsfilterwidget.h"
 
-class EXPORT_SYM ObjectsFilterWidget : public QWidget, Ui::ObjectsFilterWidget {
+class __libgui ObjectsFilterWidget : public QWidget, Ui::ObjectsFilterWidget {
 	private:
 		Q_OBJECT
 

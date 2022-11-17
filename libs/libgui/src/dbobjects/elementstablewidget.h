@@ -40,7 +40,7 @@ Q_DECLARE_METATYPE(IndexElement)
 Q_DECLARE_METATYPE(ExcludeElement)
 Q_DECLARE_METATYPE(PartitionKey)
 
-class EXPORT_SYM ElementsTableWidget: public QWidget {
+class __libgui ElementsTableWidget: public QWidget {
 	private:
 		Q_OBJECT
 

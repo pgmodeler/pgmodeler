@@ -31,7 +31,7 @@
 #include "widgets/objectstablewidget.h"
 #include "widgets/objectselectorwidget.h"
 
-class EXPORT_SYM GenericSQLWidget: public BaseObjectWidget, public Ui::GenericSQLWidget {
+class __libgui GenericSQLWidget: public BaseObjectWidget, public Ui::GenericSQLWidget {
 	private:
 		Q_OBJECT
 

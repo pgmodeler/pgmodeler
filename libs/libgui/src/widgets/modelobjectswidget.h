@@ -31,7 +31,7 @@
 #include "messagebox.h"
 #include "objectfinderwidget.h"
 
-class EXPORT_SYM ModelObjectsWidget: public QWidget, public Ui::ModelObjectsWidget {
+class __libgui ModelObjectsWidget: public QWidget, public Ui::ModelObjectsWidget {
 	private:
 		Q_OBJECT
 

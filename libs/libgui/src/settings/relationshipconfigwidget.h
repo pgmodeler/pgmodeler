@@ -30,7 +30,7 @@
 #include "utils/syntaxhighlighter.h"
 #include "relationshipview.h"
 
-class EXPORT_SYM RelationshipConfigWidget:  public BaseConfigWidget, public Ui::RelationshipConfigWidget {
+class __libgui RelationshipConfigWidget:  public BaseConfigWidget, public Ui::RelationshipConfigWidget {
 	private:
 		Q_OBJECT
 

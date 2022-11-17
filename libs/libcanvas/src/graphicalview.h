@@ -28,7 +28,7 @@
 #include "view.h"
 #include "basetableview.h"
 
-class EXPORT_SYM GraphicalView: public BaseTableView {
+class __libcanvas GraphicalView: public BaseTableView {
 	private:
 		Q_OBJECT
 

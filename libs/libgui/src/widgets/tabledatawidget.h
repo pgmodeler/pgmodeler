@@ -29,7 +29,7 @@
 #include "ui_tabledatawidget.h"
 #include "csvloadwidget.h"
 
-class EXPORT_SYM TableDataWidget: public BaseObjectWidget, public Ui::TableDataWidget {
+class __libgui TableDataWidget: public BaseObjectWidget, public Ui::TableDataWidget {
 	private:
 		Q_OBJECT
 

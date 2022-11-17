@@ -25,6 +25,7 @@
 #ifndef NEW_OBJECT_OVERLAY_WIDGET_H
 #define NEW_OBJECT_OVERLAY_WIDGET_H
 
+#include "guiglobal.h"
 #include <vector>
 #include <QWidget>
 #include "baseobject.h"
@@ -33,7 +34,7 @@
 //Adding the declaration of ModelWidget class in order to be visible to NewObjectOverlayWidget
 class ModelWidget;
 
-class EXPORT_SYM NewObjectOverlayWidget: public QWidget, public Ui::NewObjectOverlayWidget {
+class __libgui NewObjectOverlayWidget: public QWidget, public Ui::NewObjectOverlayWidget {
 	private:
 		Q_OBJECT
 

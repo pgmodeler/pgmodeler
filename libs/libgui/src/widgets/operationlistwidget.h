@@ -30,7 +30,7 @@
 #include "modelwidget.h"
 #include "messagebox.h"
 
-class EXPORT_SYM OperationListWidget: public QWidget, public Ui::OperationListWidget {
+class __libgui OperationListWidget: public QWidget, public Ui::OperationListWidget {
 	private:
 		Q_OBJECT
 

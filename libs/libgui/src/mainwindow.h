@@ -53,7 +53,7 @@
 #include "widgets/layersconfigwidget.h"
 #include "widgets/changelogwidget.h"
 
-class EXPORT_SYM MainWindow: public QMainWindow, public Ui::MainWindow {
+class __libgui MainWindow: public QMainWindow, public Ui::MainWindow {
 	private:
 		Q_OBJECT
 

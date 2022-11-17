@@ -27,7 +27,7 @@
 
 #include "templatetype.h"
 
-class EXPORT_SYM ProviderType: public TemplateType<ProviderType>{
+class __libcore ProviderType: public TemplateType<ProviderType>{
 	public:
 		static constexpr unsigned 	LibC = 1,
 		Icu = 2;

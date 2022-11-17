@@ -34,7 +34,7 @@ treat other attribute of those classes.
 #include "parameterwidget.h"
 #include "widgets/numberedtexteditor.h"
 
-class EXPORT_SYM BaseFunctionWidget: public BaseObjectWidget, public Ui::BaseFunctionWidget  {
+class __libgui BaseFunctionWidget: public BaseObjectWidget, public Ui::BaseFunctionWidget  {
 	private:
 		Q_OBJECT
 

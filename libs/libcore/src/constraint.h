@@ -35,7 +35,7 @@
 #include "pgsqltypes/matchtype.h"
 #include "pgsqltypes/actiontype.h"
 
-class EXPORT_SYM Constraint: public TableObject{
+class __libcore Constraint: public TableObject{
 	public:
 		enum ColumnsId: unsigned {
 			/*! \brief Access the source columns that means the columns that constrais

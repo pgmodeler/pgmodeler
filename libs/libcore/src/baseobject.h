@@ -25,6 +25,7 @@
 #ifndef BASE_OBJECT_H
 #define BASE_OBJECT_H
 
+#include "coreglobal.h"
 #include "attributes.h"
 #include "exception.h"
 #include "schemaparser.h"
@@ -80,7 +81,7 @@ enum class ObjectType: unsigned {
 	BaseTable
 };
 
-class EXPORT_SYM BaseObject {
+class __libcore BaseObject {
 	private:
 		//! \brief Current PostgreSQL version used in SQL code generation
 		static QString pgsql_ver;

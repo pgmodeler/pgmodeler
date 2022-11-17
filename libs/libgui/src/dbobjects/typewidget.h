@@ -35,7 +35,7 @@
 #include <QMetaType>
 Q_DECLARE_METATYPE(TypeAttribute)
 
-class EXPORT_SYM TypeWidget: public BaseObjectWidget, public Ui::TypeWidget {
+class __libgui TypeWidget: public BaseObjectWidget, public Ui::TypeWidget {
 	private:
 		Q_OBJECT
 

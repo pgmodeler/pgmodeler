@@ -31,7 +31,7 @@ that replaces the original colors of tables/views that owns them.
 #include <QColor>
 #include <QLinearGradient>
 
-class EXPORT_SYM Tag: public BaseObject {
+class __libcore Tag: public BaseObject {
 	private:
 		static unsigned tag_id;
 

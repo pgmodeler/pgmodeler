@@ -26,11 +26,11 @@
 #ifndef PGSQL_VERSIONS_H
 #define PGSQL_VERSIONS_H
 
-#include "exportsym.h"
+#include "utilsglobal.h"
 #include <QStringList>
 
 namespace PgSqlVersions {
-	extern EXPORT_SYM const QString
+	extern __libutils const QString
 	PgSqlVersion100,
 	PgSqlVersion110,
 	PgSqlVersion120,
@@ -38,14 +38,14 @@ namespace PgSqlVersions {
 	PgSqlVersion140,
 	DefaulVersion;
 
-	extern EXPORT_SYM const QStringList AllVersions;
+	extern __libutils const QStringList AllVersions;
 
 	/*! \brief Parses and checks a string contaning a PostgreSQL version in the form [major.minor]
 	 * This method will raise an error if an invalid version is provided. An invalid version
 	 * is considered any string in incorrect format or a valid string but that is for a
 	 * obsolete version (< 9.0). If an invalid major version is proveded then the function
 	 * will return the DefaultVersion as a fallback. */
-	extern EXPORT_SYM QString parseString(const QString &pgsql_ver);
+	extern __libutils QString parseString(const QString &pgsql_ver);
 }
 
 #endif

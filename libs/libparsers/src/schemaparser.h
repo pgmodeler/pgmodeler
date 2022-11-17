@@ -25,6 +25,7 @@
 #ifndef SCHEMA_PARSER_H
 #define SCHEMA_PARSER_H
 
+#include "parsersglobal.h"
 #include "globalattributes.h"
 #include "exception.h"
 #include <map>
@@ -35,7 +36,7 @@
 #include "pgsqlversions.h"
 #include <QRegularExpression>
 
-class EXPORT_SYM SchemaParser {
+class __libparsers SchemaParser {
 	private:
 		/*! \brief Indicates that the parser should ignore unknown
 		 attributes avoiding raising exceptions */

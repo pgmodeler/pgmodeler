@@ -31,7 +31,7 @@
 #include "baseobject.h"
 #include "widgets/numberedtexteditor.h"
 
-class EXPORT_SYM SnippetsConfigWidget: public BaseConfigWidget, public Ui::SnippetsConfigWidget {
+class __libgui SnippetsConfigWidget: public BaseConfigWidget, public Ui::SnippetsConfigWidget {
 	private:
 		Q_OBJECT
 

@@ -25,10 +25,11 @@
 #ifndef SCENE_INFO_WIDGET_H
 #define SCENE_INFO_WIDGET_H
 
+#include "guiglobal.h"
 #include "ui_sceneinfowidget.h"
 #include "baseobjectview.h"
 
-class EXPORT_SYM SceneInfoWidget: public QWidget, public Ui::SceneInfoWidget {
+class __libgui SceneInfoWidget: public QWidget, public Ui::SceneInfoWidget {
 	private:
 		Q_OBJECT
 

@@ -39,7 +39,7 @@
 #include <QMetaType>
 Q_DECLARE_METATYPE(PgSqlType)
 
-class EXPORT_SYM BaseObjectWidget: public QWidget, public Ui::BaseObjectWidget {
+class __libgui BaseObjectWidget: public QWidget, public Ui::BaseObjectWidget {
 	private:
 		Q_OBJECT
 		

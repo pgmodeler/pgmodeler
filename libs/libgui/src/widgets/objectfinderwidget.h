@@ -29,7 +29,7 @@
 #include "modelwidget.h"
 #include <QWidget>
 
-class EXPORT_SYM ObjectFinderWidget : public QWidget, public Ui::ObjectFinderWidget {
+class __libgui ObjectFinderWidget : public QWidget, public Ui::ObjectFinderWidget {
 	private:
 		Q_OBJECT
 

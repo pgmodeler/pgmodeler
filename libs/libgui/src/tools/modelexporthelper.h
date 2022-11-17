@@ -28,7 +28,7 @@
 #include "widgets/modelwidget.h"
 #include "connection.h"
 
-class EXPORT_SYM ModelExportHelper: public QObject {
+class __libgui ModelExportHelper: public QObject {
 	private:
 		Q_OBJECT
 

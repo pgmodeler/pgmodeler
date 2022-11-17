@@ -27,7 +27,7 @@
 
 #include "textboxview.h"
 
-class EXPORT_SYM StyledTextboxView: public TextboxView {
+class __libcanvas StyledTextboxView: public TextboxView {
 	private:
 		Q_OBJECT
 

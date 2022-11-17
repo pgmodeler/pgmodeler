@@ -25,11 +25,11 @@
 #ifndef TEXT_BLOCK_INFO_H
 #define TEXT_BLOCK_INFO_H
 
-#include "exportsym.h"
+#include "guiglobal.h"
 #include <QString>
 #include <QTextBlockUserData>
 
-class EXPORT_SYM TextBlockInfo: public QTextBlockUserData {
+class __libgui TextBlockInfo: public QTextBlockUserData {
 	private:
 		//! \brief The name of the group that holds the formatting applied to the block
 		QString group;

@@ -25,12 +25,13 @@
 #ifndef ABOUT_WIDGET_H
 #define ABOUT_WIDGET_H
 
+#include "guiglobal.h"
 #include <QWidget>
 #include <QGraphicsDropShadowEffect>
 #include "ui_aboutwidget.h"
 #include "globalattributes.h"
 
-class EXPORT_SYM AboutWidget: public QWidget, public Ui::AboutWidget {
+class __libgui AboutWidget: public QWidget, public Ui::AboutWidget {
 	private:
 		Q_OBJECT
 		

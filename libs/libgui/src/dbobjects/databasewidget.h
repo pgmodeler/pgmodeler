@@ -28,7 +28,7 @@
 #include "ui_databasewidget.h"
 #include "baseobjectwidget.h"
 
-class EXPORT_SYM DatabaseWidget: public BaseObjectWidget, public Ui::DatabaseWidget {
+class __libgui DatabaseWidget: public BaseObjectWidget, public Ui::DatabaseWidget {
 	private:
 		Q_OBJECT
 		

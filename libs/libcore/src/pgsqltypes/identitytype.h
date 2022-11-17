@@ -27,7 +27,7 @@
 
 #include "templatetype.h"
 
-class EXPORT_SYM IdentityType: public TemplateType<IdentityType>{
+class __libcore IdentityType: public TemplateType<IdentityType>{
 	public:
 		static constexpr unsigned Always = 1,
 		ByDefault = 2;
