@@ -904,7 +904,7 @@ void AppearanceConfigWidget::applyUiTheme()
 	QString ui_theme = ui_theme_cmb->currentData(Qt::UserRole).toString();
 	std::map<QPalette::ColorRole, QStringList> *color_map = color_maps[ui_theme];
 	QStringList *item_colors = item_color_lists[ui_theme];
-	QPalette pal;
+	QPalette pal = qApp->palette();
 
 	for(unsigned idx = 0; idx < static_cast<unsigned>(item_colors->size()); idx++)
 	{
