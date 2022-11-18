@@ -37,4 +37,7 @@ class __libcore ExecutionType: public TemplateType<ExecutionType>{
 		ExecutionType();
 };
 
+template<>
+QStringList ExecutionType::TemplateType<ExecutionType>::type_names;
+
 #endif 

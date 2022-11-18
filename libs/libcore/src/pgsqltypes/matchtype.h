@@ -38,4 +38,7 @@ class __libcore MatchType: public TemplateType<MatchType>{
 		MatchType();
 };
 
+template<>
+QStringList MatchType::TemplateType<MatchType>::type_names;
+
 #endif 

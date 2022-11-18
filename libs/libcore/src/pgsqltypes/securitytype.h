@@ -37,4 +37,7 @@ class __libcore SecurityType: public TemplateType<SecurityType>{
 		SecurityType();
 };
 
+template<>
+QStringList SecurityType::TemplateType<SecurityType>::type_names;
+
 #endif 

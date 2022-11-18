@@ -38,4 +38,7 @@ class __libcore BehaviorType: public TemplateType<BehaviorType>{
 		BehaviorType();
 };
 
+template<>
+QStringList BehaviorType::TemplateType<BehaviorType>::type_names;
+
 #endif

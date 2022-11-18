@@ -40,4 +40,7 @@ class __libcore ActionType: public TemplateType<ActionType>{
 		ActionType();
 };
 
+template<>
+QStringList ActionType::TemplateType<ActionType>::type_names;
+
 #endif

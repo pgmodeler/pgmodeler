@@ -38,4 +38,7 @@ class __libcore FiringType: public TemplateType<FiringType>{
 		FiringType();
 };
 
+template<>
+QStringList FiringType::TemplateType<FiringType>::type_names;
+
 #endif 

@@ -40,4 +40,7 @@ class __libcore EncodingType: public TemplateType<EncodingType>{
 		bool operator != (unsigned tipo_id);
 };
 
+template<>
+QStringList EncodingType::TemplateType<EncodingType>::type_names;
+
 #endif 

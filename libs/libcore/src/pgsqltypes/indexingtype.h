@@ -41,4 +41,7 @@ class __libcore IndexingType: public TemplateType<IndexingType>{
 		IndexingType();
 };
 
+template<>
+QStringList IndexingType::TemplateType<IndexingType>::type_names;
+
 #endif 

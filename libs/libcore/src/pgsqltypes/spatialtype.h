@@ -66,4 +66,7 @@ class __libcore SpatialType: public TemplateType<SpatialType>{
 		QString operator * ();
 };
 
+template<>
+QStringList SpatialType::TemplateType<SpatialType>::type_names;
+
 #endif 

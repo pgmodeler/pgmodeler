@@ -48,4 +48,7 @@ class __libcore IntervalType: public TemplateType<IntervalType>{
 		IntervalType();
 };
 
+template<>
+QStringList IntervalType::TemplateType<IntervalType>::type_names;
+
 #endif 

@@ -38,4 +38,7 @@ class __libcore ParallelType: public TemplateType<ParallelType>{
 		ParallelType();
 };
 
+template<>
+QStringList ParallelType::TemplateType<ParallelType>::type_names;
+
 #endif

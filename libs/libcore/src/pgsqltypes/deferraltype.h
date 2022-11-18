@@ -37,4 +37,7 @@ class __libcore DeferralType: public TemplateType<DeferralType>{
 		DeferralType();
 };
 
+template<>
+QStringList DeferralType::TemplateType<DeferralType>::type_names;
+
 #endif

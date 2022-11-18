@@ -37,4 +37,7 @@ class __libcore ProviderType: public TemplateType<ProviderType>{
 		ProviderType();
 };
 
+template<>
+QStringList ProviderType::TemplateType<ProviderType>::type_names;
+
 #endif

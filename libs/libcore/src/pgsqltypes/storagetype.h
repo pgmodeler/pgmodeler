@@ -44,5 +44,7 @@ class __libcore StorageType: public TemplateType<StorageType>{
 		bool operator != (StorageType type);
 };
 
+template<>
+QStringList StorageType::TemplateType<StorageType>::type_names;
 
 #endif 

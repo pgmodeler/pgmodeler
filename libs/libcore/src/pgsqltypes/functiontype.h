@@ -38,4 +38,7 @@ class __libcore FunctionType: public TemplateType<FunctionType>{
 		FunctionType();
 };
 
+template<>
+QStringList FunctionType::TemplateType<FunctionType>::type_names;
+
 #endif 

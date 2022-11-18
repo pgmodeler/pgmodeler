@@ -40,4 +40,7 @@ class __libcore ConstraintType: public TemplateType<ConstraintType>{
 		ConstraintType();
 };
 
+template<>
+QStringList ConstraintType::TemplateType<ConstraintType>::type_names;
+
 #endif 

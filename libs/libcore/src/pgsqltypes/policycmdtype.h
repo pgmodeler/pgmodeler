@@ -40,4 +40,7 @@ class __libcore PolicyCmdType: public TemplateType<PolicyCmdType> {
 		PolicyCmdType();
 };
 
+template<>
+QStringList PolicyCmdType::TemplateType<PolicyCmdType>::type_names;
+
 #endif 

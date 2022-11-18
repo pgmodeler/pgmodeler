@@ -45,4 +45,7 @@ class __libcore EventType: public TemplateType<EventType>{
 		bool operator < (unsigned type_id) const;
 };
 
+template<>
+QStringList EventType::TemplateType<EventType>::type_names;
+
 #endif 

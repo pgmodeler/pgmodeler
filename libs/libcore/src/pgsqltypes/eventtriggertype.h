@@ -39,4 +39,7 @@ class __libcore EventTriggerType: public TemplateType<EventTriggerType>{
 		EventTriggerType();
 };
 
+template<>
+QStringList EventTriggerType::TemplateType<EventTriggerType>::type_names;
+
 #endif 

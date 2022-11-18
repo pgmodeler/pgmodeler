@@ -37,4 +37,7 @@ class __libcore IdentityType: public TemplateType<IdentityType>{
 		IdentityType();
 };
 
+template<>
+QStringList IdentityType::TemplateType<IdentityType>::type_names;
+
 #endif 

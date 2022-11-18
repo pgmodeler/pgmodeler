@@ -49,4 +49,7 @@ class __libcore CategoryType: public TemplateType<CategoryType>{
 		CategoryType();
 };
 
+template<>
+QStringList CategoryType::TemplateType<CategoryType>::type_names;
+
 #endif

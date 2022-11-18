@@ -38,4 +38,7 @@ class __libcore PartitioningType: public TemplateType<PartitioningType> {
 		PartitioningType();
 };
 
+template<>
+QStringList PartitioningType::TemplateType<PartitioningType>::type_names;
+
 #endif 

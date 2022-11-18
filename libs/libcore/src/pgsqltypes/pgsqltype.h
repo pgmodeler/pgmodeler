@@ -270,4 +270,7 @@ class __libcore PgSqlType: public TemplateType<PgSqlType>{
 		friend class DatabaseModel;
 };
 
+template<>
+QStringList PgSqlType::TemplateType<PgSqlType>::type_names;
+
 #endif 
