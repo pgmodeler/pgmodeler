@@ -28,6 +28,9 @@
 #include "templatetype.h"
 
 class __libcore FiringType: public TemplateType<FiringType>{
+	private:
+		static QStringList type_names;
+
 	public:
 		static constexpr unsigned Before = 1,
 		After = 2,
@@ -36,9 +39,12 @@ class __libcore FiringType: public TemplateType<FiringType>{
 		FiringType(const QString &type_name);
 		FiringType(unsigned type_id);
 		FiringType();
-};
 
-template<>
-QStringList FiringType::TemplateType<FiringType>::type_names;
+		static QStringList getTypes();
+
+		unsigned setType(unsigned type_id) override;
+		unsigned setType(const QString &type_name) override;
+		QString getTypeName(unsigned type_id) override;
+};
 
 #endif 

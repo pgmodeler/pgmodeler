@@ -21,8 +21,7 @@
 
 std::vector<UserTypeConfig> PgSqlType::user_types;
 
-template<>
-QStringList PgSqlType::TemplateType<PgSqlType>::type_names =
+QStringList PgSqlType::type_names =
 {
 	"", // Reserved for Class::Null
 
@@ -272,7 +271,7 @@ unsigned PgSqlType::setType(unsigned type_id)
 	if(type_id >= static_cast<unsigned>(type_names.size()))
 		return setUserType(type_id);
 
-	unsigned tp_idx = TemplateType<PgSqlType>::setType(type_id);
+	unsigned tp_idx = TemplateType<PgSqlType>::setType(type_id, type_names);
 
 	return tp_idx;
 }
@@ -288,7 +287,7 @@ unsigned PgSqlType::setType(const QString &type_name)
 		throw Exception(ErrorCode::AsgInvalidTypeObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	if(type_id != Null)
-		return setType(type_id);
+		return TemplateType<PgSqlType>::setType(type_id, type_names);
 
 	return setUserType(usr_type_id);
 }
@@ -399,6 +398,11 @@ QString PgSqlType::getSQLTypeName()
 	}
 
 	return fmt_type;
+}
+
+QStringList PgSqlType::getTypes()
+{
+	return TemplateType<PgSqlType>::getTypes(type_names);
 }
 
 bool PgSqlType::isRegistered(const QString &type, void *pmodel)

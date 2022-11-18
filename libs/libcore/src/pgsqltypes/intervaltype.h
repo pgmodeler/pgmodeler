@@ -28,6 +28,9 @@
 #include "templatetype.h"
 
 class __libcore IntervalType: public TemplateType<IntervalType>{
+	private:
+		static QStringList type_names;
+
 	public:
 		static constexpr unsigned Year = 1,
 		Month = 2,
@@ -46,9 +49,12 @@ class __libcore IntervalType: public TemplateType<IntervalType>{
 		IntervalType(const QString &type_name);
 		IntervalType(unsigned type_id);
 		IntervalType();
-};
 
-template<>
-QStringList IntervalType::TemplateType<IntervalType>::type_names;
+		static QStringList getTypes();
+
+		unsigned setType(unsigned type_id) override;
+		unsigned setType(const QString &type_name) override;
+		QString getTypeName(unsigned type_id) override;
+};
 
 #endif 

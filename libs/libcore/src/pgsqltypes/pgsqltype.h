@@ -33,6 +33,9 @@
 
 class __libcore PgSqlType: public TemplateType<PgSqlType>{
 	private:
+		static QStringList type_names;
+
+	private:
 		//! \brief Offset for all PostGiS types
 		static constexpr unsigned PostGiSStart = 64,
 		PostGiSEnd = 82;
@@ -94,11 +97,11 @@ class __libcore PgSqlType: public TemplateType<PgSqlType>{
 
 		/*! \brief Sets the type based on the id. This version also looks into the user_types vector
 		 * in order to check if the type id being assigend belongs to an user defined type */
-		unsigned setType(unsigned type_id);
+		unsigned setType(unsigned type_id) override;
 
 		/*! \brief Sets the type based on the name. This version also looks into the user_types vector
 		 * in order to check if the name being assigend belongs to an user defined type */
-		unsigned setType(const QString &type_name);
+		unsigned setType(const QString &type_name) override;
 
 	public:
 		PgSqlType();
@@ -216,18 +219,20 @@ class __libcore PgSqlType: public TemplateType<PgSqlType>{
 		bool isExactTo(PgSqlType type);
 
 		PgSqlType getAliasType();
+
 		QString getSourceCode(SchemaParser::CodeType def_type, QString ref_type="");
-		virtual QString operator ~ ();
+
+		virtual QString operator ~ () override;
 
 		//! \brief Returns the complet SQL definition for the type (same as calling getSQLTypeName(true))
 		QString operator * ();
 
 		unsigned operator << (void *ptype);
-		unsigned operator = (unsigned type_id);
-		unsigned operator = (const QString &type_name);
+		unsigned operator = (unsigned type_id) override;
+		unsigned operator = (const QString &type_name) override;
 
 		//! \brief Compares the index of the "this" with the provided type index. If an exact match is needed use isExactTo()
-		bool operator == (unsigned type_idx);
+		bool operator == (unsigned type_idx) override;
 
 		//! \brief Compares the index of the "this" with the provided type. If an exact match is needed use isExactTo()
 		bool operator == (PgSqlType type);
@@ -240,7 +245,7 @@ class __libcore PgSqlType: public TemplateType<PgSqlType>{
 
 		bool operator != (const QString &type_name);
 		bool operator != (PgSqlType type);
-		bool operator != (unsigned type_idx);
+		bool operator != (unsigned type_idx) override;
 
 		//! \brief Returns the pointer to the user defined type which denotes the the pgsql type
 		void *getUserTypeReference();
@@ -249,7 +254,7 @@ class __libcore PgSqlType: public TemplateType<PgSqlType>{
 		unsigned getUserTypeConfig();
 
 		//! \brief Returns the code (id) of the type. This is equivalent to call !type
-		unsigned getTypeId();
+		unsigned getTypeId() override;
 
 		/*! \brief Returns the name of the type. This is equivalent to call ~type.
 		 * If incl_dimension is true then returns only the type name appending the dimension descriptor [] if the type's dimension is > 0.
@@ -260,6 +265,10 @@ class __libcore PgSqlType: public TemplateType<PgSqlType>{
 		 * Includes the length, precision and other quantifiers of the type. */
 		QString getSQLTypeName();
 
+		static QStringList getTypes();
+
+		QString getTypeName(unsigned) override { return ""; };
+
 		friend class Type;
 		friend class Domain;
 		friend class PhysicalTable;
@@ -269,8 +278,5 @@ class __libcore PgSqlType: public TemplateType<PgSqlType>{
 		friend class Extension;
 		friend class DatabaseModel;
 };
-
-template<>
-QStringList PgSqlType::TemplateType<PgSqlType>::type_names;
 
 #endif 

@@ -18,8 +18,7 @@
 
 #include "eventtype.h"
 
-template<>
-QStringList EventType::TemplateType<EventType>::type_names =
+QStringList EventType::type_names =
 {
 	"", // Reserved for Class::Null
 
@@ -33,6 +32,11 @@ QStringList EventType::TemplateType<EventType>::type_names =
 EventType::EventType()
 {
 	type_idx = OnSelect;
+}
+
+QStringList EventType::getTypes()
+{
+	return TemplateType<EventType>::getTypes(type_names);
 }
 
 EventType::EventType(const QString &type_name)
@@ -53,4 +57,19 @@ bool EventType::operator < (EventType type) const
 bool EventType::operator < (unsigned type_id) const
 {
 	return (type_idx < type_id);
+}
+
+unsigned EventType::setType(unsigned type_id)
+{
+	return TemplateType<EventType>::setType(type_id, type_names);
+}
+
+unsigned EventType::setType(const QString &type_name)
+{
+	return TemplateType<EventType>::setType(type_name, type_names);
+}
+
+QString EventType::getTypeName(unsigned type_id)
+{
+	return TemplateType<EventType>::getTypeName(type_id, type_names);
 }

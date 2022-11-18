@@ -28,6 +28,9 @@
 #include "templatetype.h"
 
 class __libcore PartitioningType: public TemplateType<PartitioningType> {
+	private:
+		static QStringList type_names;
+
 	public:
 		static constexpr unsigned Range = 1,
 		List = 2,
@@ -36,9 +39,12 @@ class __libcore PartitioningType: public TemplateType<PartitioningType> {
 		PartitioningType(const QString &type_name);
 		PartitioningType(unsigned type_id);
 		PartitioningType();
-};
 
-template<>
-QStringList PartitioningType::TemplateType<PartitioningType>::type_names;
+		static QStringList getTypes();
+
+		unsigned setType(unsigned type_id) override;
+		unsigned setType(const QString &type_name) override;
+		QString getTypeName(unsigned type_id) override;
+};
 
 #endif 

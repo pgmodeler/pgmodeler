@@ -18,8 +18,7 @@
 
 #include "matchtype.h"
 
-template<>
-QStringList MatchType::TemplateType<MatchType>::type_names =
+QStringList MatchType::type_names =
 {
 	"", // Reserved for Class::Null
 
@@ -33,6 +32,11 @@ MatchType::MatchType()
 	type_idx = Full;
 }
 
+QStringList MatchType::getTypes()
+{
+	return TemplateType<MatchType>::getTypes(type_names);
+}
+
 MatchType::MatchType(const QString &type_name)
 {
 	setType(type_name);
@@ -41,4 +45,19 @@ MatchType::MatchType(const QString &type_name)
 MatchType::MatchType(unsigned type_id)
 {
 	setType(type_id);
+}
+
+unsigned MatchType::setType(unsigned type_id)
+{
+	return TemplateType<MatchType>::setType(type_id, type_names);
+}
+
+unsigned MatchType::setType(const QString &type_name)
+{
+	return TemplateType<MatchType>::setType(type_name, type_names);
+}
+
+QString MatchType::getTypeName(unsigned type_id)
+{
+	return TemplateType<MatchType>::getTypeName(type_id, type_names);
 }

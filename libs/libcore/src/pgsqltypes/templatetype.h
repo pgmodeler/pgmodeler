@@ -44,9 +44,7 @@ https://www.fluentcpp.com/2017/05/12/curiously-recurring-template-pattern/
 
 template<class Class>
 class __libcore TemplateType {
-	protected:
-		static QStringList type_names;
-
+	protected:	
 		//! \brief Index of the type on the type_list vector
 		unsigned type_idx;
 
@@ -73,24 +71,24 @@ class __libcore TemplateType {
 		TemplateType();
 		virtual ~TemplateType();
 
-		unsigned setType(unsigned type_id);
-		unsigned setType(const QString &type_name);
-		static QStringList getTypes();
+		virtual unsigned setType(unsigned type_id) = 0;
+		virtual unsigned setType(const QString &type_name) = 0;
+		virtual QString getTypeName(unsigned type_id) = 0;
 
-		unsigned operator = (unsigned type_id);
-		unsigned operator = (const QString &type_name);
-		QString operator ~();
-
-		//! \brief Returns the code (id) of the type
-		unsigned operator ! ();
+		virtual unsigned operator = (unsigned type_id);
+		virtual unsigned operator = (const QString &type_name);
+		virtual QString operator ~();
 
 		//! \brief Returns the code (id) of the type
-		unsigned getTypeId();
+		virtual unsigned operator ! ();
 
-		bool operator == (Class &type);
-		bool operator == (unsigned type_id);
-		bool operator != (Class &type);
-		bool operator != (unsigned type_id);
+		//! \brief Returns the code (id) of the type
+		virtual unsigned getTypeId();
+
+		virtual bool operator == (Class &type);
+		virtual bool operator == (unsigned type_id);
+		virtual bool operator != (Class &type);
+		virtual bool operator != (unsigned type_id);
 };
 
 template<class Class>
@@ -103,39 +101,21 @@ template<class Class>
 TemplateType<Class>::~TemplateType(){ }
 
 template<class Class>
-unsigned TemplateType<Class>::setType(unsigned type_id)
-{
-	return setType(type_id, type_names);
-}
-
-template<class Class>
-unsigned TemplateType<Class>::setType(const QString &type_name)
-{
-	return setType(type_name, type_names);
-}
-
-template<class Class>
-QStringList TemplateType<Class>::getTypes()
-{
-	return getTypes(type_names);
-}
-
-template<class Class>
 unsigned TemplateType<Class>::operator = (unsigned type_id)
 {
-	return setType(type_id, type_names);
+	return setType(type_id);
 }
 
 template<class Class>
 unsigned TemplateType<Class>::operator = (const QString &type_name)
 {
-	return setType(type_name, type_names);
+	return setType(type_name);
 }
 
 template<class Class>
 QString TemplateType<Class>::operator ~ ()
 {
-	return getTypeName(type_idx, type_names);
+	return getTypeName(type_idx);
 }
 
 template<class Class>
