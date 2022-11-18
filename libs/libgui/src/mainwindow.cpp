@@ -253,7 +253,7 @@ void MainWindow::configureMenusActionsWidgets()
 			font = btn->font();
 			font.setWeight(QFont::Medium);
 			btn->setFont(font);
-			GuiUtilsNs::createDropShadow(btn);
+			GuiUtilsNs::createDropShadow(btn, 1, 1, 5);
 		}
 	}
 
@@ -262,7 +262,7 @@ void MainWindow::configureMenusActionsWidgets()
 		btn = qobject_cast<QToolButton *>(model_acts_tb->widgetForAction(act));
 
 		if(btn)
-			GuiUtilsNs::createDropShadow(btn);
+			GuiUtilsNs::createDropShadow(btn, 1, 1, 5);
 	}
 
 	ToolsActionsCount = tools_acts_tb->actions().size();
@@ -1220,7 +1220,7 @@ void MainWindow::setCurrentModel()
 			font = btn->font();
 			font.setWeight(QFont::Medium);
 			btn->setFont(font);
-			GuiUtilsNs::createDropShadow(btn);
+			GuiUtilsNs::createDropShadow(btn, 1, 1, 5);
 		}
 
 		edit_menu->addAction(current_model->action_copy);
