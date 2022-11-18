@@ -18,8 +18,7 @@
 
 #include "providertype.h"
 
-template<>
-QStringList ProviderType::TemplateType<ProviderType>::type_names =
+QStringList ProviderType::type_names =
 {
 	"", // Reserved for Class::Null
 
@@ -40,4 +39,24 @@ ProviderType::ProviderType(const QString &type_name)
 ProviderType::ProviderType()
 {
 	type_idx = LibC;
+}
+
+QStringList ProviderType::getTypes()
+{
+	return TemplateType<ProviderType>::getTypes(type_names);
+}
+
+unsigned ProviderType::setType(unsigned type_id)
+{
+	return TemplateType<ProviderType>::setType(type_id, type_names);
+}
+
+unsigned ProviderType::setType(const QString &type_name)
+{
+	return TemplateType<ProviderType>::setType(type_name, type_names);
+}
+
+QString ProviderType::getTypeName(unsigned type_id)
+{
+	return TemplateType<ProviderType>::getTypeName(type_id, type_names);
 }

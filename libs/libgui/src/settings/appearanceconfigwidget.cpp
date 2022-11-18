@@ -904,7 +904,15 @@ void AppearanceConfigWidget::applyUiTheme()
 	QString ui_theme = ui_theme_cmb->currentData(Qt::UserRole).toString();
 	std::map<QPalette::ColorRole, QStringList> *color_map = color_maps[ui_theme];
 	QStringList *item_colors = item_color_lists[ui_theme];
-	QPalette pal = qApp->palette();
+
+	/* Storing an immutable copy of the original application's palette
+	 * in order to use it on each time the UI theme changes.
+	 *
+	 * NOTE: if we just copy the qApp palette everytime to pal we don't get
+	 * the desired result, instead, the color theme switches randomly from dark to
+	 * light and vice-versa.*/
+	static const QPalette orig_pal = qApp->palette();
+	QPalette pal = orig_pal;
 
 	for(unsigned idx = 0; idx < static_cast<unsigned>(item_colors->size()); idx++)
 	{
@@ -940,7 +948,10 @@ void AppearanceConfigWidget::applyUiTheme()
 void AppearanceConfigWidget::previewUiSettings()
 {
 	int idx = ui_theme_cmb->currentIndex() - 1;
-	if(idx < 0 ) idx = 0;
+
+	if(idx < 0 )
+		idx = 0;
+
 	syntax_hl_theme_cmb->blockSignals(true);
 	syntax_hl_theme_cmb->setCurrentIndex(idx);
 	syntax_hl_theme_cmb->blockSignals(false);
@@ -996,10 +1007,6 @@ void AppearanceConfigWidget::applyDesignCodeTheme()
 
 void AppearanceConfigWidget::applyUiStyleSheet()
 {
-	QString ico_style_conf = GlobalAttributes::getTmplConfigurationFilePath("",
-																																					"icons-" + icons_size_cmb->currentData().toString().toLower() +
-																																					GlobalAttributes::ConfigurationExt);
-
 	QFile ui_style(GlobalAttributes::getTmplConfigurationFilePath("",
 																																GlobalAttributes::UiStyleConf +
 																																GlobalAttributes::ConfigurationExt));
@@ -1015,6 +1022,9 @@ void AppearanceConfigWidget::applyUiStyleSheet()
 	else
 	{
 		QByteArray ui_stylesheet = ui_style.readAll();
+		QString ico_style_conf = GlobalAttributes::getTmplConfigurationFilePath("",
+																																						"icons-" + icons_size_cmb->currentData().toString().toLower() +
+																																						GlobalAttributes::ConfigurationExt);
 		QString ui_theme = ui_theme_cmb->currentData(Qt::UserRole).toString(),
 		extra_style_conf = GlobalAttributes::getTmplConfigurationFilePath(GlobalAttributes::ThemesDir +
 																																		 GlobalAttributes::DirSeparator +

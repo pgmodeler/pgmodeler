@@ -28,6 +28,9 @@
 #include "templatetype.h"
 
 class __libcore IdentityType: public TemplateType<IdentityType>{
+	private:
+		static QStringList type_names;
+
 	public:
 		static constexpr unsigned Always = 1,
 		ByDefault = 2;
@@ -35,9 +38,12 @@ class __libcore IdentityType: public TemplateType<IdentityType>{
 		IdentityType(const QString &type_name);
 		IdentityType(unsigned type_id);
 		IdentityType();
-};
 
-template<>
-QStringList IdentityType::TemplateType<IdentityType>::type_names;
+		static QStringList getTypes();
+
+		unsigned setType(unsigned type_id) override;
+		unsigned setType(const QString &type_name) override;
+		QString getTypeName(unsigned type_id) override;
+};
 
 #endif 

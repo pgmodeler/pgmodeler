@@ -18,8 +18,7 @@
 
 #include "actiontype.h"
 
-template<>
-QStringList ActionType::TemplateType<ActionType>::type_names =
+QStringList ActionType::type_names =
 {
 	"", // Reserved for Class::Null
 
@@ -43,4 +42,24 @@ ActionType::ActionType(const QString &type_name)
 ActionType::ActionType()
 {
 	type_idx = NoAction;
+}
+
+QStringList ActionType::getTypes()
+{
+	return TemplateType<ActionType>::getTypes(type_names);
+}
+
+unsigned ActionType::setType(unsigned type_id)
+{
+	return TemplateType<ActionType>::setType(type_id, type_names);
+}
+
+unsigned ActionType::setType(const QString &type_name)
+{
+	return TemplateType<ActionType>::setType(type_name, type_names);
+}
+
+QString ActionType::getTypeName(unsigned type_id)
+{
+	return TemplateType<ActionType>::getTypeName(type_id, type_names);
 }

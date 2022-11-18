@@ -18,8 +18,7 @@
 
 #include "executiontype.h"
 
-template<>
-QStringList ExecutionType::TemplateType<ExecutionType>::type_names =
+QStringList ExecutionType::type_names =
 {
 	"", // Reserved for Class::Null
 
@@ -32,6 +31,11 @@ ExecutionType::ExecutionType()
 	type_idx = Also;
 }
 
+QStringList ExecutionType::getTypes()
+{
+	return TemplateType<ExecutionType>::getTypes(type_names);
+}
+
 ExecutionType::ExecutionType(unsigned type_id)
 {
 	setType(type_id);
@@ -40,4 +44,19 @@ ExecutionType::ExecutionType(unsigned type_id)
 ExecutionType::ExecutionType(const QString &type_name)
 {
 	setType(type_name);
+}
+
+unsigned ExecutionType::setType(unsigned type_id)
+{
+	return TemplateType<ExecutionType>::setType(type_id, type_names);
+}
+
+unsigned ExecutionType::setType(const QString &type_name)
+{
+	return TemplateType<ExecutionType>::setType(type_name, type_names);
+}
+
+QString ExecutionType::getTypeName(unsigned type_id)
+{
+	return TemplateType<ExecutionType>::getTypeName(type_id, type_names);
 }

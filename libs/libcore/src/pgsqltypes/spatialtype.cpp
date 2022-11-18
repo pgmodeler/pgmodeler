@@ -18,8 +18,7 @@
 
 #include "spatialtype.h"
 
-template<>
-QStringList SpatialType::TemplateType<SpatialType>::type_names =
+QStringList SpatialType::type_names =
 {
 	"", // Reserved for Class::Null
 
@@ -117,4 +116,24 @@ QString SpatialType::operator * ()
 	}
 	else
 		return "";
+}
+
+QStringList SpatialType::getTypes()
+{
+	return TemplateType<SpatialType>::getTypes(type_names);
+}
+
+unsigned SpatialType::setType(unsigned type_id)
+{
+	return TemplateType<SpatialType>::setType(type_id, type_names);
+}
+
+unsigned SpatialType::setType(const QString &type_name)
+{
+	return TemplateType<SpatialType>::setType(type_name, type_names);
+}
+
+QString SpatialType::getTypeName(unsigned type_id)
+{
+	return TemplateType<SpatialType>::getTypeName(type_id, type_names);
 }

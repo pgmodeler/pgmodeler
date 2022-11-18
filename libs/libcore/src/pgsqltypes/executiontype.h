@@ -28,6 +28,9 @@
 #include "templatetype.h"
 
 class __libcore ExecutionType: public TemplateType<ExecutionType>{
+	private:
+		static QStringList type_names;
+
 	public:
 		static constexpr unsigned Also = 1,
 		Instead = 2;
@@ -35,9 +38,12 @@ class __libcore ExecutionType: public TemplateType<ExecutionType>{
 		ExecutionType(const QString &type_name);
 		ExecutionType(unsigned type_id);
 		ExecutionType();
+
+		static QStringList getTypes();
+
+		unsigned setType(unsigned type_id) override;
+		unsigned setType(const QString &type_name) override;
+		QString getTypeName(unsigned type_id) override;
 };
 
-template<>
-QStringList ExecutionType::TemplateType<ExecutionType>::type_names;
-
-#endif 
+#endif

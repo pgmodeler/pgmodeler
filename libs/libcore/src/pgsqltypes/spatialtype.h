@@ -28,6 +28,9 @@
 #include "templatetype.h"
 
 class __libcore SpatialType: public TemplateType<SpatialType>{
+	private:
+		static QStringList type_names;
+
 	public:
 		enum VariationId: unsigned {
 			NoVar,
@@ -64,9 +67,12 @@ class __libcore SpatialType: public TemplateType<SpatialType>{
 		int getSRID();
 
 		QString operator * ();
-};
 
-template<>
-QStringList SpatialType::TemplateType<SpatialType>::type_names;
+		static QStringList getTypes();
+
+		unsigned setType(unsigned type_id) override;
+		unsigned setType(const QString &type_name) override;
+		QString getTypeName(unsigned type_id) override;
+};
 
 #endif 

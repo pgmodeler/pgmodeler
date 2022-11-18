@@ -18,8 +18,7 @@
 
 #include "encodingtype.h"
 
-template<>
-QStringList EncodingType::TemplateType<EncodingType>::type_names = {
+QStringList EncodingType::type_names = {
 	"", // Reserved for Class::Null
 
 	"UTF8", "BIG5", "EUC_CN", "EUC_JP", "EUC_JIS_2004",
@@ -49,6 +48,11 @@ EncodingType::EncodingType(unsigned type_id)
 	setType(type_id);
 }
 
+QStringList EncodingType::getTypes()
+{
+	return TemplateType<EncodingType>::getTypes(type_names);
+}
+
 bool EncodingType::operator == (const char *type_name)
 {
 	return ((*this) == QString(type_name));
@@ -72,4 +76,19 @@ bool EncodingType::operator != (EncodingType type)
 bool EncodingType::operator != (unsigned type_id)
 {
 	return (this->type_idx != type_id);
+}
+
+unsigned EncodingType::setType(unsigned type_id)
+{
+	return TemplateType<EncodingType>::setType(type_id, type_names);
+}
+
+unsigned EncodingType::setType(const QString &type_name)
+{
+	return TemplateType<EncodingType>::setType(type_name, type_names);
+}
+
+QString EncodingType::getTypeName(unsigned type_id)
+{
+	return TemplateType<EncodingType>::getTypeName(type_id, type_names);
 }

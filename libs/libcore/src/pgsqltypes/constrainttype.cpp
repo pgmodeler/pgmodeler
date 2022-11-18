@@ -18,8 +18,7 @@
 
 #include "constrainttype.h"
 
-template<>
-QStringList ConstraintType::TemplateType<ConstraintType>::type_names =
+QStringList ConstraintType::type_names =
 {
 	"", // Reserved for Class::Null
 
@@ -43,4 +42,24 @@ ConstraintType::ConstraintType(const QString &type_name)
 ConstraintType::ConstraintType()
 {
 	type_idx = PrimaryKey;
+}
+
+QStringList ConstraintType::getTypes()
+{
+	return TemplateType<ConstraintType>::getTypes(type_names);
+}
+
+unsigned ConstraintType::setType(unsigned type_id)
+{
+	return TemplateType<ConstraintType>::setType(type_id, type_names);
+}
+
+unsigned ConstraintType::setType(const QString &type_name)
+{
+	return TemplateType<ConstraintType>::setType(type_name, type_names);
+}
+
+QString ConstraintType::getTypeName(unsigned type_id)
+{
+	return TemplateType<ConstraintType>::getTypeName(type_id, type_names);
 }

@@ -28,6 +28,9 @@
 #include "templatetype.h"
 
 class __libcore SecurityType: public TemplateType<SecurityType>{
+	private:
+		static QStringList type_names;
+
 	public:
 		static constexpr unsigned Invoker = 1,
 		Definer = 2;
@@ -35,9 +38,12 @@ class __libcore SecurityType: public TemplateType<SecurityType>{
 		SecurityType(unsigned type_id);
 		SecurityType(const QString &type_name);
 		SecurityType();
-};
 
-template<>
-QStringList SecurityType::TemplateType<SecurityType>::type_names;
+		static QStringList getTypes();
+
+		unsigned setType(unsigned type_id) override;
+		unsigned setType(const QString &type_name) override;
+		QString getTypeName(unsigned type_id) override;
+};
 
 #endif 

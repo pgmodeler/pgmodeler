@@ -18,8 +18,7 @@
 
 #include "intervaltype.h"
 
-template<>
-QStringList IntervalType::TemplateType<IntervalType>::type_names =
+QStringList IntervalType::type_names =
 {
 	"", // Reserved for Class::Null
 
@@ -39,7 +38,27 @@ IntervalType::IntervalType()
 	type_idx = Null;
 }
 
+QStringList IntervalType::getTypes()
+{
+	return TemplateType<IntervalType>::getTypes(type_names);
+}
+
 IntervalType::IntervalType(const QString &type_name)
 {
 	setType(type_name);
+}
+
+unsigned IntervalType::setType(unsigned type_id)
+{
+	return TemplateType<IntervalType>::setType(type_id, type_names);
+}
+
+unsigned IntervalType::setType(const QString &type_name)
+{
+	return TemplateType<IntervalType>::setType(type_name, type_names);
+}
+
+QString IntervalType::getTypeName(unsigned type_id)
+{
+	return TemplateType<IntervalType>::getTypeName(type_id, type_names);
 }

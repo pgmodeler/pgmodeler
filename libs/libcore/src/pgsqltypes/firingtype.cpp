@@ -18,8 +18,7 @@
 
 #include "firingtype.h"
 
-template<>
-QStringList FiringType::TemplateType<FiringType>::type_names =
+QStringList FiringType::type_names =
 {
 	"", // Reserved for Class::Null
 
@@ -33,6 +32,11 @@ FiringType::FiringType()
 	type_idx = Before;
 }
 
+QStringList FiringType::getTypes()
+{
+	return TemplateType<FiringType>::getTypes(type_names);
+}
+
 FiringType::FiringType(unsigned type_id)
 {
 	setType(type_id);
@@ -41,4 +45,19 @@ FiringType::FiringType(unsigned type_id)
 FiringType::FiringType(const QString &type_name)
 {
 	setType(type_name);
+}
+
+unsigned FiringType::setType(unsigned type_id)
+{
+	return TemplateType<FiringType>::setType(type_id, type_names);
+}
+
+unsigned FiringType::setType(const QString &type_name)
+{
+	return TemplateType<FiringType>::setType(type_name, type_names);
+}
+
+QString FiringType::getTypeName(unsigned type_id)
+{
+	return TemplateType<FiringType>::getTypeName(type_id, type_names);
 }

@@ -28,6 +28,9 @@
 #include "templatetype.h"
 
 class __libcore EventTriggerType: public TemplateType<EventTriggerType>{
+	private:
+		static QStringList type_names;
+
 	public:
 		static constexpr unsigned DdlCommandStart = 1,
 		DdlCommandEnd = 2,
@@ -37,9 +40,12 @@ class __libcore EventTriggerType: public TemplateType<EventTriggerType>{
 		EventTriggerType(const QString &type_name);
 		EventTriggerType(unsigned type_id);
 		EventTriggerType();
-};
 
-template<>
-QStringList EventTriggerType::TemplateType<EventTriggerType>::type_names;
+		static QStringList getTypes();
+
+		unsigned setType(unsigned type_id) override;
+		unsigned setType(const QString &type_name) override;
+		QString getTypeName(unsigned type_id) override;
+};
 
 #endif 
