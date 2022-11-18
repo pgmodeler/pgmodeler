@@ -1015,6 +1015,20 @@ void AppearanceConfigWidget::applyUiStyleSheet()
 	else
 	{
 		QByteArray ui_stylesheet = ui_style.readAll();
+		QString ui_theme = ui_theme_cmb->currentData(Qt::UserRole).toString(),
+		extra_style_conf = GlobalAttributes::getTmplConfigurationFilePath(GlobalAttributes::ThemesDir +
+																																		 GlobalAttributes::DirSeparator +
+																																		 ui_theme,
+																																		 "extra-" + GlobalAttributes::UiStyleConf +
+																																		 GlobalAttributes::ConfigurationExt);
+
+		if(QFileInfo::exists(extra_style_conf))
+		{
+			QFile extra_style(extra_style_conf);
+
+			if(extra_style.open(QFile::ReadOnly))
+				ui_stylesheet.append(extra_style.readAll());
+		}
 
 		if(!ico_style_conf.isEmpty())
 		{
@@ -1028,7 +1042,7 @@ void AppearanceConfigWidget::applyUiStyleSheet()
 													 ErrorCode::FileDirectoryNotAccessed,__PRETTY_FUNCTION__,__FILE__,__LINE__));
 			}
 			else
-				ui_stylesheet.append(ico_style.readAll());
+				ui_stylesheet.append(ico_style.readAll());		
 		}
 
 		qApp->setStyleSheet(ui_stylesheet);
