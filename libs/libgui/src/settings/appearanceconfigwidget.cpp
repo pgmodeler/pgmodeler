@@ -927,10 +927,6 @@ void AppearanceConfigWidget::applyUiTheme()
 		pal.setColor(QPalette::Disabled, itr.first, itr.second[2]);
 	}
 
-	/* Workaround: Forcing the assignment of palette to QPushButton and QTabWidget because
-	 * some instances seem not to be accepting the parent palette change. */
-	//qApp->setPalette(pal, "QPushButton");
-	//qApp->setPalette(pal, "QTabWidget");
 	qApp->setPalette(pal);
 
 	// For dark theme, we force QMenu class to use a lighter base color

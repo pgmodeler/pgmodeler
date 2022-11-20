@@ -93,7 +93,8 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 		#warning "NO UPDATE CHECK: Update checking is disabled."
 	#else
 		//Enabling update check at startup
-		if(confs[Attributes::Configuration][Attributes::CheckUpdate]==Attributes::True) {
+		if(confs[Attributes::Configuration][Attributes::CheckUpdate]==Attributes::True)
+		{
 			update_notifier_wgt->setCheckVersions(confs[Attributes::Configuration][Attributes::CheckVersions]);
 			QTimer::singleShot(10000, update_notifier_wgt, &UpdateNotifierWidget::checkForUpdate);
 		}
@@ -101,12 +102,20 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 
 	#ifdef DEMO_VERSION
 		#warning "DEMO VERSION: demonstration version startup alert."
-		QTimer::singleShot(5000, this, &MainWindow::showDemoVersionWarning);
+		QTimer::singleShot(5000, this, [this](){
+			showDemoVersionWarning();
+		});
 	#endif
 
 	#ifndef Q_OS_LINUX
 		AppearanceConfigWidget *appearance_wgt = dynamic_cast<AppearanceConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::AppearanceConfWgt));
 		appearance_wgt->applyUiTheme();
+	#endif
+
+	#ifndef NON_OSS_BUILD
+		//Showing the donate widget in the first run
+		if(confs[Attributes::Configuration][Attributes::FirstRun] != Attributes::False)
+			QTimer::singleShot(2000, action_donate, &QAction::trigger);
 	#endif
 }
 
@@ -805,6 +814,9 @@ void MainWindow::closeEvent(QCloseEvent *event)
 			conf_wgt=dynamic_cast<GeneralConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::GeneralConfWgt));
 			confs=conf_wgt->getConfigurationParams();
 
+			attribs[Attributes::PgModelerVersion]=GlobalAttributes::PgModelerVersion;
+			attribs[Attributes::FirstRun]=Attributes::False;
+
 			attribs[Attributes::CompactView]=action_compact_view->isChecked() ? Attributes::True : "";
 			attribs[Attributes::ShowMainMenu]=main_menu_mb->isVisible() ? Attributes::True : "";
 
@@ -1399,9 +1411,6 @@ void MainWindow::closeModel(int model_id)
 			model_tree_states.erase(model);
 
 			disconnect(model, nullptr, nullptr, nullptr);
-			//disconnect(action_alin_objs_grade, nullptr, this, nullptr);
-			//disconnect(action_show_grid, nullptr, this, nullptr);
-			//disconnect(action_show_delimiters, nullptr, this, nullptr);
 
 			//Remove the temporary file related to the closed model
 			QDir arq_tmp;
@@ -1980,7 +1989,7 @@ void MainWindow::setFloatingWidgetPos(QWidget *widget, QAction *act, QToolBar *t
 		pos=wgt->mapTo(this, pos);
 
 	pos.setX(pos_orig.x() - 10);
-	pos.setY(toolbar->pos().y() + toolbar->height() - 10);
+	pos.setY(toolbar->pos().y() + toolbar->height() /* - 10 */);
 
 	if((pos.x() + widget->width()) > this->width())
 		pos.setX(pos_orig.x() - (widget->width() - 40));

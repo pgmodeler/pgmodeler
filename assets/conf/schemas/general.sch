@@ -9,7 +9,9 @@
 %set {spc}  $tb $tb
 
 <general> $br
-$tb [<configuration op-list-size="] {op-list-size} ["] $br
+$tb [<configuration pgmodeler-ver="] {pgmodeler-ver} ["] $br 
+{spc} [first-run="] {first-run} ["] $br
+{spc} [op-list-size="] {op-list-size} ["] $br
 {spc} [autosave-interval="] {autosave-interval} ["] $br
 {spc} [paper-type="] {paper-type} ["] $br
 {spc} [paper-orientation="] {paper-orientation} ["] $br

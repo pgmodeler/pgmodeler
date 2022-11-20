@@ -251,6 +251,7 @@ namespace Attributes {
 	FilterTableTypes,
 	FinalFunc,
 	FiringType,
+	FirstRun,
 	FkColumn,
 	FkConstr,
 	FkDefs,
