@@ -96,7 +96,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 		if(confs[Attributes::Configuration][Attributes::CheckUpdate]==Attributes::True)
 		{
 			update_notifier_wgt->setCheckVersions(confs[Attributes::Configuration][Attributes::CheckVersions]);
-			QTimer::singleShot(10000, update_notifier_wgt, &UpdateNotifierWidget::checkForUpdate);
+			QTimer::singleShot(15000, update_notifier_wgt, &UpdateNotifierWidget::checkForUpdate);
 		}
 	#endif
 
@@ -112,10 +112,11 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 		appearance_wgt->applyUiTheme();
 	#endif
 
-	#ifndef NON_OSS_BUILD
-		//Showing the donate widget in the first run
-		if(confs[Attributes::Configuration][Attributes::FirstRun] != Attributes::False)
-			QTimer::singleShot(2000, action_donate, &QAction::trigger);
+	#ifdef CHECK_CURR_VER
+		//Showing the donate widget in the first run or if the version registered in the file diverges from the current
+		if(confs[Attributes::Configuration][Attributes::FirstRun] != Attributes::False ||
+			 confs[Attributes::Configuration][Attributes::PgModelerVersion] != GlobalAttributes::PgModelerVersion)
+			QTimer::singleShot(1000, action_donate, &QAction::trigger);
 	#endif
 }
 
@@ -1949,6 +1950,7 @@ void MainWindow::toggleUpdateNotifier(bool show)
 		action_donate->setChecked(false);
 	}
 
+	update_notifier_wgt->adjustSize();
 	update_notifier_wgt->setVisible(show);
 #endif
 }
@@ -1962,6 +1964,7 @@ void MainWindow::toggleAboutWidget(bool show)
 		action_donate->setChecked(false);
 	}
 
+	about_wgt->adjustSize();
 	about_wgt->setVisible(show);
 }
 
@@ -1974,6 +1977,7 @@ void MainWindow::toggleDonateWidget(bool show)
 		action_update_found->setChecked(false);
 	}
 
+	donate_wgt->adjustSize();
 	donate_wgt->setVisible(show);
 }
 

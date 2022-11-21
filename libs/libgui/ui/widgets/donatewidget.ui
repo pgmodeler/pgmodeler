@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>440</width>
-    <height>343</height>
+    <height>365</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -37,6 +37,9 @@
    </property>
    <property name="bottomMargin">
     <number>0</number>
+   </property>
+   <property name="spacing">
+    <number>5</number>
    </property>
    <item row="0" column="0">
     <widget class="QFrame" name="frame">
@@ -130,7 +133,7 @@
          <enum>QFrame::NoFrame</enum>
         </property>
         <property name="text">
-         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;pgModeler is brought to you thanks to a &lt;span style=&quot; font-style:italic;&quot;&gt;great effort to create and distribute a quality product&lt;/span&gt;. This project is reaching levels of maturity never imagined. All this results from joint work between its author and the &lt;span style=&quot; font-weight:600;&quot;&gt;Open Source community&lt;/span&gt;. There is no sponsorship involved.&lt;br/&gt;&lt;br/&gt;This software has a long way to go yet and with your help, we'll keep maintaining a good job and bringing new improvements on each release. If you like pgModeler and think it deserves a contribution, please consider supporting it! :)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;pgModeler is brought to you thanks to a &lt;span style=&quot; font-style:italic;&quot;&gt;great effort to create and distribute a quality product&lt;/span&gt;. This project is reaching levels of maturity never imagined. All this results from joint work between its author and the &lt;span style=&quot; font-weight:600;&quot;&gt;Open Source community&lt;/span&gt;. There is no sponsorship involved.&lt;br/&gt;&lt;br/&gt;This software has a long way to go yet and with your help, we'll keep maintaining a good job and bringing new improvements on each release. If you like pgModeler and think it deserves a contribution, please consider supporting it!&lt;br/&gt;&lt;br/&gt;Thank you!&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
         </property>
         <property name="textFormat">
          <enum>Qt::RichText</enum>
