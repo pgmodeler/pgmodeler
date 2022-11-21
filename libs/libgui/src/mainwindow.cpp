@@ -107,10 +107,10 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 		});
 	#endif
 
-	#ifndef Q_OS_LINUX
-		AppearanceConfigWidget *appearance_wgt = dynamic_cast<AppearanceConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::AppearanceConfWgt));
-		appearance_wgt->applyUiTheme();
-	#endif
+	//#ifndef Q_OS_LINUX
+	//	AppearanceConfigWidget *appearance_wgt = dynamic_cast<AppearanceConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::AppearanceConfWgt));
+	//	appearance_wgt->applyUiTheme();
+	//#endif
 
 	#ifdef CHECK_CURR_VER
 		//Showing the donate widget in the first run or if the version registered in the file diverges from the current
