@@ -49,7 +49,7 @@ ConfigurationForm::ConfigurationForm(QWidget *parent, Qt::WindowFlags f) : QDial
 	for(auto &btn : btns)
 	{
 		fnt = btn->font();
-		fnt.setWeight(QFont::Medium);
+		fnt.setWeight(QFont::Normal);
 		btn->setFont(fnt);
 		GuiUtilsNs::createDropShadow(btn, 1, 1, 5);
 		btn->setProperty(Attributes::ObjectId.toStdString().c_str(), view_idx++);

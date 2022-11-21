@@ -261,7 +261,7 @@ void MainWindow::configureMenusActionsWidgets()
 		if(btn)
 		{
 			font = btn->font();
-			font.setWeight(QFont::Medium);
+			font.setWeight(QFont::Normal);
 			btn->setFont(font);
 			GuiUtilsNs::createDropShadow(btn, 1, 1, 5);
 		}
@@ -1231,7 +1231,7 @@ void MainWindow::setCurrentModel()
 		for(QToolButton *btn : btns)
 		{
 			font = btn->font();
-			font.setWeight(QFont::Medium);
+			font.setWeight(QFont::Normal);
 			btn->setFont(font);
 			GuiUtilsNs::createDropShadow(btn, 1, 1, 5);
 		}

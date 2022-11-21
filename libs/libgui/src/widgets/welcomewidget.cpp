@@ -30,7 +30,7 @@ WelcomeWidget::WelcomeWidget(QWidget *parent): QWidget(parent)
 	{
 		GuiUtilsNs::createDropShadow(btn, 1, 1, 10);
 		fnt = btn->font();
-		fnt.setWeight(QFont::Medium);
+		fnt.setWeight(QFont::Normal);
 		btn->setFont(fnt);
 
 #ifdef Q_OS_LINUX

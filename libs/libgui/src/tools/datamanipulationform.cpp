@@ -42,7 +42,7 @@ DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f):
 		if(!btn) continue;
 
 		fnt = btn->font();
-		fnt.setWeight(QFont::Medium);
+		fnt.setWeight(QFont::Normal);
 		btn->setFont(fnt);
 		GuiUtilsNs::createDropShadow(btn, 1, 1, 5);
 	}

@@ -137,7 +137,7 @@ subcontrol-position: right center; }");
 		saveFile(true);
 	});
 
-	connect(about_tb, &QToolButton::clicked, this, [this](){
+	connect(about_tb, &QToolButton::clicked, this, [](){
 		AboutSEWidget *info_wgt = new AboutSEWidget;
 		BaseForm base_frm;
 		base_frm.setMainWidget(info_wgt);
