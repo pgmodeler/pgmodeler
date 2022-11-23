@@ -284,15 +284,13 @@ void PhysicalTable::setColumnsAttribute(SchemaParser::CodeType def_type, bool in
 void PhysicalTable::setConstraintsAttribute(SchemaParser::CodeType def_type)
 {
 	QString str_constr;
-	unsigned i, count;
 	bool inc_added_by_rel;
 	Constraint *constr=nullptr;
 	std::vector<QString> lines;
 
-	count=constraints.size();
-	for(i=0; i < count; i++)
+	for(auto &tab_obj : constraints)
 	{
-		constr=dynamic_cast<Constraint *>(constraints[i]);
+		constr=dynamic_cast<Constraint *>(tab_obj);
 
 		if(constr->getConstraintType()!=ConstraintType::ForeignKey &&
 
@@ -320,6 +318,8 @@ void PhysicalTable::setConstraintsAttribute(SchemaParser::CodeType def_type)
 
 	if(def_type==SchemaParser::SqlCode && !lines.empty())
 	{
+		unsigned i = 0;
+
 		/* When the coistraints are being generated in form of ALTER commands
 		simply concatenates all the lines */
 		if(gen_alter_cmds)

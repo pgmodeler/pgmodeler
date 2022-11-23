@@ -832,7 +832,7 @@ void ModelsDiffHelper::processDiffInfos()
 			sch_names.push_back(schema->getName(true));
 
 		//Separating the base types
-		for(ObjectsDiffInfo diff : diff_infos)
+		for(auto &diff : diff_infos)
 		{
 			type=dynamic_cast<Type *>(diff.getObject());
 
@@ -843,7 +843,7 @@ void ModelsDiffHelper::processDiffInfos()
 			}
 		}
 
-		for(ObjectsDiffInfo diff : diff_infos)
+		for(auto &diff : diff_infos)
 		{
 			diff_type=diff.getDiffType();
 			object=diff.getObject();
@@ -933,10 +933,16 @@ void ModelsDiffHelper::processDiffInfos()
 					{
 						Constraint *constr = dynamic_cast<Constraint *>(object);
 
-						if(constr->getConstraintType()==ConstraintType::ForeignKey)
+						if(constr->getConstraintType() == ConstraintType::ForeignKey)
 							create_fks[constr->getObjectId()]=getSourceCode(constr, false);
 						// We only create a constraint if the parent is not being created
-						else if(create_objs.count(constr->getParentTable()->getObjectId()) == 0)
+						else if(create_objs.count(constr->getParentTable()->getObjectId()) == 0 ||
+									 /* Special case for unique constraints: in a very specific scenario, when diff against an empty database,
+										* unique keys that reference columns added by relationship need to be forcibly created. This is needed because
+										* these objects are not created in the parent table's definition, instead, the are created via separated
+										* ALTER TABLE command. */
+										(create_objs.count(constr->getParentTable()->getObjectId()) &&
+										 constr->isReferRelationshipAddedColumn() && constr->getConstraintType() == ConstraintType::Unique))
 							create_constrs[constr->getObjectId()]=getSourceCode(constr, false);
 					}
 					else
@@ -993,18 +999,17 @@ void ModelsDiffHelper::processDiffInfos()
 						alter_def=diff.getOldObject()->getAlterCode(object);
 
 					if(obj_type == ObjectType::Database && diff_opts[OptPreserveDbName])
-						alter_def.remove(QRegularExpression(QString("(ALTER)( )+(DATABASE)( )+(%1)( )+(RENAME)( )+(TO)(.)*(\\n)").arg(diff.getOldObject()->getSignature())));
+						alter_def.remove(QRegularExpression(QString("(ALTER)( )+(DATABASE)( )+(%1)( )+(RENAME)( )+(TO)(.)*(\\n)")
+																								.arg(diff.getOldObject()->getSignature()), QRegularExpression::DotMatchesEverythingOption));
 
 					if(!alter_def.isEmpty())
-					{
 						alter_objs[object->getObjectId()]=alter_def;
-					}
 				}
 			}
 		}
 
 		//Creating the shell types declaration right below on the DDL that creates their schemas
-		for(Type *type : types)
+		for(auto &type : types)
 		{
 			schema_id=type->getSchema()->getObjectId();
 
@@ -1017,7 +1022,7 @@ void ModelsDiffHelper::processDiffInfos()
 		}
 
 		//Generating the drop command for columns
-		for(BaseObject *col : drop_cols)
+		for(auto &col : drop_cols)
 			col_drop_def+=getSourceCode(col, true);
 
 		diff_def.clear();
