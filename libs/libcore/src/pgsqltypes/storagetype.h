@@ -27,7 +27,10 @@
 
 #include "templatetype.h"
 
-class StorageType: public TemplateType<StorageType>{
+class __libcore StorageType: public TemplateType<StorageType>{
+	private:
+		static QStringList type_names;
+
 	public:
 		static constexpr unsigned Plain = 1,
 		External = 2,
@@ -38,11 +41,16 @@ class StorageType: public TemplateType<StorageType>{
 		StorageType(const QString &type_name);
 		StorageType(unsigned type_id);
 
+		static QStringList getTypes();
+
+		unsigned setType(unsigned type_id) override;
+		unsigned setType(const QString &type_name) override;
+		QString getTypeName(unsigned type_id) override;
+
 		bool operator == (const QString &type_name);
 		bool operator == (const char *type_name);
 		bool operator != (const QString &type_name);
 		bool operator != (StorageType type);
 };
-
 
 #endif 

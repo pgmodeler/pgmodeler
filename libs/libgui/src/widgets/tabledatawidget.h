@@ -29,7 +29,7 @@
 #include "ui_tabledatawidget.h"
 #include "csvloadwidget.h"
 
-class TableDataWidget: public BaseObjectWidget, public Ui::TableDataWidget {
+class __libgui TableDataWidget: public BaseObjectWidget, public Ui::TableDataWidget {
 	private:
 		Q_OBJECT
 
@@ -40,7 +40,7 @@ class TableDataWidget: public BaseObjectWidget, public Ui::TableDataWidget {
 		QMenu col_names_menu;
 
 		//! brief Loads the grid with the initial data of the curret table object
-		void populateDataGrid(const QString &data = "");
+		void populateDataGrid(const CsvDocument &csv_doc = CsvDocument());
 
 		//! brief Configures the col_name_menu with the not used columns names
 		void configureColumnNamesMenu();
@@ -79,6 +79,7 @@ class TableDataWidget: public BaseObjectWidget, public Ui::TableDataWidget {
 		void clearColumns();
 		void changeColumnName(int col_idx);
 		void enableButtons();
+		void handleItemPressed();
 };
 
 #endif

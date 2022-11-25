@@ -443,7 +443,7 @@
          </font>
         </property>
         <property name="text">
-         <string>This object does not exists anymore. The dependencies and references listing are disabled.</string>
+         <string>This object does not exist anymore. The dependencies and references listing is disabled.</string>
         </property>
         <property name="wordWrap">
          <bool>true</bool>

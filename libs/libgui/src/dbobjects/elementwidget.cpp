@@ -37,11 +37,11 @@ ElementWidget::ElementWidget(QWidget *parent) : QWidget(parent)
 		element_grid->addWidget(op_class_sel, 4,1,1,2);
 		element_grid->addWidget(operator_sel, 5,1,1,2);
 
-		connect(column_rb, SIGNAL(toggled(bool)), this, SLOT(selectElementObject()));
-		connect(expression_rb, SIGNAL(toggled(bool)), this, SLOT(selectElementObject()));
-		connect(sorting_chk, SIGNAL(toggled(bool)), ascending_rb, SLOT(setEnabled(bool)));
-		connect(sorting_chk, SIGNAL(toggled(bool)), descending_rb, SLOT(setEnabled(bool)));
-		connect(sorting_chk, SIGNAL(toggled(bool)), nulls_first_chk, SLOT(setEnabled(bool)));
+		connect(column_rb, &QRadioButton::toggled, this, &ElementWidget::selectElementObject);
+		connect(expression_rb, &QRadioButton::toggled, this, &ElementWidget::selectElementObject);
+		connect(sorting_chk, &QCheckBox::toggled, ascending_rb, &QRadioButton::setEnabled);
+		connect(sorting_chk, &QCheckBox::toggled, descending_rb, &QRadioButton::setEnabled);
+		connect(sorting_chk, &QCheckBox::toggled, nulls_first_chk, &QCheckBox::setEnabled);
 
 		this->setEnabled(false);
 		collation_sel->setVisible(false);

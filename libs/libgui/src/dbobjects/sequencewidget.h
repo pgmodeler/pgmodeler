@@ -28,7 +28,7 @@
 #include "baseobjectwidget.h"
 #include "ui_sequencewidget.h"
 
-class SequenceWidget: public BaseObjectWidget, public Ui::SequenceWidget {
+class __libgui SequenceWidget: public BaseObjectWidget, public Ui::SequenceWidget {
 	private:
 		Q_OBJECT
 

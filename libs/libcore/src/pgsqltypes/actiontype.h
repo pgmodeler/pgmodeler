@@ -27,7 +27,10 @@
 
 #include "templatetype.h"
 
-class ActionType: public TemplateType<ActionType>{
+class __libcore ActionType: public TemplateType<ActionType>{
+	private:
+		static QStringList type_names;
+
 	public:
 		static constexpr unsigned NoAction = 1,
 		Restrict = 2,
@@ -38,6 +41,12 @@ class ActionType: public TemplateType<ActionType>{
 		ActionType(const QString &type_name);
 		ActionType(unsigned type_id);
 		ActionType();
+
+		static QStringList getTypes();
+
+		unsigned setType(unsigned type_id) override;
+		unsigned setType(const QString &type_name) override;
+		QString getTypeName(unsigned type_id) override;
 };
 
 #endif

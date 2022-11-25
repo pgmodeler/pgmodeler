@@ -905,25 +905,25 @@ QString SchemaParser::translateMetaCharacter(const QString &meta)
 	return metas.at(meta);
 }
 
-QString SchemaParser::getCodeDefinition(const QString & obj_name, attribs_map &attribs, unsigned def_type)
+QString SchemaParser::getSourceCode(const QString & obj_name, attribs_map &attribs, CodeType def_type)
 {
 	try
 	{
 		QString filename;
 
-		if(def_type==SqlDefinition)
+		if(def_type==SqlCode)
 		{
 			//Formats the filename
 			filename = GlobalAttributes::getSchemaFilePath(GlobalAttributes::SQLSchemaDir, obj_name);
 			attribs[Attributes::PgSqlVersion]=pgsql_version;
 
 			//Try to get the object definitin from the specified path
-			return getCodeDefinition(filename, attribs);
+			return getSourceCode(filename, attribs);
 		}
 		else
 		{
 			filename = GlobalAttributes::getSchemaFilePath(GlobalAttributes::XMLSchemaDir, obj_name);
-			return XmlParser::convertCharsToXMLEntities(getCodeDefinition(filename, attribs));
+			return XmlParser::convertCharsToXMLEntities(getSourceCode(filename, attribs));
 		}
 	}
 	catch(Exception &e)
@@ -942,7 +942,7 @@ void SchemaParser::ignoreEmptyAttributes(bool ignore)
 	ignore_empty_atribs=ignore;
 }
 
-QString SchemaParser::getCodeDefinition(const attribs_map &attribs)
+QString SchemaParser::getSourceCode(const attribs_map &attribs)
 {
 	QString object_def;
 	unsigned end_cnt, if_cnt;
@@ -1366,13 +1366,13 @@ QString SchemaParser::getCodeDefinition(const attribs_map &attribs)
 	return object_def;
 }
 
-QString SchemaParser::getCodeDefinition(const QString &filename, attribs_map &attribs)
+QString SchemaParser::getSourceCode(const QString &filename, attribs_map &attribs)
 {
 	try
 	{
 		loadFile(filename);
 		attribs[Attributes::PgSqlVersion]=pgsql_version;
-		return getCodeDefinition(attribs);
+		return getSourceCode(attribs);
 	}
 	catch(Exception &e)
 	{

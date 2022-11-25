@@ -18,26 +18,20 @@
 
 #include "objectsdiffinfo.h"
 
-constexpr unsigned ObjectsDiffInfo::CreateObject;
-constexpr unsigned ObjectsDiffInfo::DropObject;
-constexpr unsigned ObjectsDiffInfo::AlterObject;
-constexpr unsigned ObjectsDiffInfo::IgnoreObject;
-constexpr unsigned ObjectsDiffInfo::NoDifference;
-
 ObjectsDiffInfo::ObjectsDiffInfo()
 {
 	object=old_object=nullptr;
 	diff_type=NoDifference;
 }
 
-ObjectsDiffInfo::ObjectsDiffInfo(unsigned diff_type, BaseObject *object, BaseObject *new_object)
+ObjectsDiffInfo::ObjectsDiffInfo(DiffType diff_type, BaseObject *object, BaseObject *new_object)
 {
 	this->diff_type=diff_type;
 	this->object=object;
 	this->old_object=new_object;
 }
 
-unsigned ObjectsDiffInfo::getDiffType()
+ObjectsDiffInfo::DiffType ObjectsDiffInfo::getDiffType()
 {
 	return diff_type;
 }

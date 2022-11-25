@@ -27,7 +27,10 @@
 
 #include "templatetype.h"
 
-class ParallelType: public TemplateType<ParallelType>{
+class __libcore ParallelType: public TemplateType<ParallelType>{
+	private:
+		static QStringList type_names;
+
 	public:
 		static constexpr unsigned Unsafe = 1,
 		Restricted = 2,
@@ -36,6 +39,12 @@ class ParallelType: public TemplateType<ParallelType>{
 		ParallelType(const QString &type_name);
 		ParallelType(unsigned type_id);
 		ParallelType();
+
+		static QStringList getTypes();
+
+		unsigned setType(unsigned type_id) override;
+		unsigned setType(const QString &type_name) override;
+		QString getTypeName(unsigned type_id) override;
 };
 
 #endif

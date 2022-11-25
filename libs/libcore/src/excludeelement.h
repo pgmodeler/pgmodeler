@@ -26,7 +26,7 @@
 
 #include "element.h"
 
-class ExcludeElement: public Element {
+class __libcore ExcludeElement: public Element {
 	private:
 		Operator *_operator;
 
@@ -40,7 +40,7 @@ class ExcludeElement: public Element {
 		//! \brief Returns the operator used by the exclude element
 		Operator *getOperator();
 
-		virtual QString getCodeDefinition(unsigned def_type) final;
+		virtual QString getSourceCode(SchemaParser::CodeType def_type) final;
 
 		bool operator == (ExcludeElement &elem);
 };

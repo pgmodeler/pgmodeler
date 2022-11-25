@@ -37,38 +37,34 @@ void Cast::setName(const QString &)
 	this->obj_name=QString("cast(%1,%2)").arg(~types[SrcType]).arg(~types[DstType]);
 }
 
-void Cast::setDataType(unsigned type_idx, PgSqlType type)
+void Cast::setDataType(DataTypeId type_idx, PgSqlType type)
 {
 	type.reset();
 
-	//Check if the type index is valid
-	if(type_idx<=DstType)
-	{
-		//Raises an error if the passed data type is null
-		if((*type).isEmpty())
-			throw Exception(Exception::getErrorMessage(ErrorCode::AsgNullTypeObject)
-							.arg(this->getName())
-							.arg(BaseObject::getTypeName(ObjectType::Cast)),
-							ErrorCode::AsgNullTypeObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-
-		setCodeInvalidated(this->types[type_idx] != type);
-		this->types[type_idx]=type;
-	}
-	else
-		//Raises an error if the type index is invalid
+	if(type_idx > DstType)
 		throw Exception(ErrorCode::RefTypeInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+	//Raises an error if the passed data type is null
+	if((*type).isEmpty())
+		throw Exception(Exception::getErrorMessage(ErrorCode::AsgNullTypeObject)
+						.arg(this->getName())
+						.arg(BaseObject::getTypeName(ObjectType::Cast)),
+						ErrorCode::AsgNullTypeObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+	setCodeInvalidated(this->types[type_idx] != type);
+	this->types[type_idx]=type;
 
 	setName("");
 }
 
-void Cast::setCastType(unsigned cast_type)
+void Cast::setCastType(CastType cast_type)
 {
 	//Raises an error if the user tries to assign an invalid cast type
 	if(cast_type > Implicit)
 		throw Exception(ErrorCode::AsgInvalidTypeObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	setCodeInvalidated(this->cast_type != cast_type);
-	this->cast_type=cast_type;
+	this->cast_type = cast_type;
 }
 
 void Cast::setInOut(bool value)
@@ -137,7 +133,7 @@ void Cast::setCastFunction(Function *cast_func)
 	this->cast_function=cast_func;
 }
 
-PgSqlType Cast::getDataType(unsigned type_idx)
+PgSqlType Cast::getDataType(DataTypeId type_idx)
 {
 	if(type_idx > DstType)
 		throw Exception(ErrorCode::RefTypeInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -155,39 +151,39 @@ Function *Cast::getCastFunction()
 	return cast_function;
 }
 
-unsigned Cast::getCastType()
+Cast::CastType Cast::getCastType()
 {
 	return cast_type;
 }
 
-QString Cast::getDropDefinition(bool cascade)
+QString Cast::getDropCode(bool cascade)
 {
 	attributes[Attributes::Signature].replace(QString(","), QString(" AS "));
-	return BaseObject::getDropDefinition(cascade);
+	return BaseObject::getDropCode(cascade);
 }
 
-QString Cast::getCodeDefinition(unsigned def_type)
+QString Cast::getSourceCode(SchemaParser::CodeType def_type)
 {
 	QString code_def=getCachedCode(def_type, false);
 	if(!code_def.isEmpty()) return code_def;
 
-	if(def_type==SchemaParser::SqlDefinition)
+	if(def_type==SchemaParser::SqlCode)
 	{
 		attributes[Attributes::SourceType]=(*types[SrcType]);
 		attributes[Attributes::DestType]=(*types[DstType]);
 	}
 	else
 	{
-		attributes[Attributes::SourceType]=types[SrcType].getCodeDefinition(def_type);
-		attributes[Attributes::DestType]=types[DstType].getCodeDefinition(def_type);
+		attributes[Attributes::SourceType]=types[SrcType].getSourceCode(def_type);
+		attributes[Attributes::DestType]=types[DstType].getSourceCode(def_type);
 	}
 
 	if(!is_in_out && cast_function)
 	{
-		if(def_type==SchemaParser::SqlDefinition)
+		if(def_type==SchemaParser::SqlCode)
 			attributes[Attributes::Function]=cast_function->getSignature();
 		else
-			attributes[Attributes::Function]=cast_function->getCodeDefinition(def_type, true);
+			attributes[Attributes::Function]=cast_function->getSourceCode(def_type, true);
 	}
 	else
 		attributes[Attributes::IoCast]=(is_in_out ? Attributes::True : "");
@@ -199,10 +195,10 @@ QString Cast::getCodeDefinition(unsigned def_type)
 	else
 		attributes[Attributes::CastType]="";
 
-	if(def_type==SchemaParser::SqlDefinition)
+	if(def_type==SchemaParser::SqlCode)
 		attributes[Attributes::CastType]=attributes[Attributes::CastType].toUpper();
 
-	return BaseObject::__getCodeDefinition(def_type);
+	return BaseObject::__getSourceCode(def_type);
 }
 
 QString Cast::getSignature(bool)

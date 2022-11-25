@@ -25,9 +25,10 @@
 #ifndef BEZIER_CURVE_ITEM_H
 #define BEZIER_CURVE_ITEM_H
 
+#include "canvasglobal.h"
 #include <QGraphicsPathItem>
 
-class BezierCurveItem: public QGraphicsPathItem {
+class __libcanvas BezierCurveItem: public QGraphicsPathItem {
 	private:
 		/*! \brief Stores the stroke of the curve itself.
 		 * This object is used to do a better colision detection */

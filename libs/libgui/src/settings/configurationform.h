@@ -33,7 +33,7 @@
 #include "relationshipconfigwidget.h"
 #include "snippetsconfigwidget.h"
 
-class ConfigurationForm: public QDialog, public Ui::ConfigurationForm {
+class __libgui ConfigurationForm: public QDialog, public Ui::ConfigurationForm {
 	private:
 		Q_OBJECT
 		
@@ -48,12 +48,14 @@ class ConfigurationForm: public QDialog, public Ui::ConfigurationForm {
 		void showEvent(QShowEvent *);
 		
 	public:
-		static constexpr int	GeneralConfWgt=0,
-		AppearanceConfWgt=1,
-		RelationshipsConfWgt=2,
-		ConnectionsConfWgt=3,
-		SnippetsConfWgt=4,
-		PluginsConfWgt=5;
+		enum ConfWidgetsId {
+			GeneralConfWgt,
+			AppearanceConfWgt,
+			RelationshipsConfWgt,
+			ConnectionsConfWgt,
+			SnippetsConfWgt,
+			PluginsConfWgt
+		};
 		
 		ConfigurationForm(QWidget * parent = nullptr, Qt::WindowFlags f = Qt::Widget);
 		virtual ~ConfigurationForm();

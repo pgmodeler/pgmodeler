@@ -31,7 +31,7 @@
 #include "tableview.h"
 #include "elementstablewidget.h"
 
-class TableWidget: public BaseObjectWidget, public Ui::TableWidget {
+class __libgui TableWidget: public BaseObjectWidget, public Ui::TableWidget {
 	private:
 		Q_OBJECT
 

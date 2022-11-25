@@ -31,7 +31,7 @@
 #include "widgets/objectselectorwidget.h"
 #include "partitionkey.h"
 
-class ElementWidget: public QWidget, public Ui::ElementWidget {
+class __libgui ElementWidget: public QWidget, public Ui::ElementWidget {
 	private:
 		Q_OBJECT
 

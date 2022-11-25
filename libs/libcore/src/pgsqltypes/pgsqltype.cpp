@@ -17,15 +17,13 @@
 */
 
 #include "pgsqltype.h"
-#include "schemaparser.h"
 #include "attributes.h"
 
 std::vector<UserTypeConfig> PgSqlType::user_types;
 
-template<>
-QStringList PgSqlType::TemplateType<PgSqlType>::type_names =
+QStringList PgSqlType::type_names =
 {
-	"", // Reserved for BaseType::null
+	"", // Reserved for Class::Null
 
 	//Types used by the class PgSQLType
 	//offsets 1 to 63
@@ -273,7 +271,7 @@ unsigned PgSqlType::setType(unsigned type_id)
 	if(type_id >= static_cast<unsigned>(type_names.size()))
 		return setUserType(type_id);
 
-	unsigned tp_idx = TemplateType<PgSqlType>::setType(type_id);
+	unsigned tp_idx = TemplateType<PgSqlType>::setType(type_id, type_names);
 
 	return tp_idx;
 }
@@ -289,7 +287,7 @@ unsigned PgSqlType::setType(const QString &type_name)
 		throw Exception(ErrorCode::AsgInvalidTypeObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	if(type_id != Null)
-		return setType(type_id);
+		return TemplateType<PgSqlType>::setType(type_id, type_names);
 
 	return setUserType(usr_type_id);
 }
@@ -382,7 +380,7 @@ QString PgSqlType::getSQLTypeName()
 		{
 			aux = type_names[type_idx];
 
-			if(interval_type!=BaseType::Null)
+			if(interval_type!=IntervalType::Null)
 				aux+=QString(" %1 ").arg(~interval_type);
 
 			if(precision >= 0)
@@ -402,12 +400,17 @@ QString PgSqlType::getSQLTypeName()
 	return fmt_type;
 }
 
+QStringList PgSqlType::getTypes()
+{
+	return TemplateType<PgSqlType>::getTypes(type_names);
+}
+
 bool PgSqlType::isRegistered(const QString &type, void *pmodel)
 {
-	if(getBaseTypeIndex(type)!=BaseType::Null)
+	if(getBaseTypeIndex(type)!=PgSqlType::Null)
 		return true;
 	else
-		return (getUserTypeIndex(type, nullptr, pmodel)!=BaseType::Null);
+		return (getUserTypeIndex(type, nullptr, pmodel)!=PgSqlType::Null);
 }
 
 bool PgSqlType::operator == (unsigned type_id)
@@ -517,16 +520,17 @@ unsigned PgSqlType::setUserType(void *ptype)
 	return type_idx;
 }
 
-void PgSqlType::addUserType(const QString &type_name, void *ptype, void *pmodel, unsigned type_conf)
+void PgSqlType::addUserType(const QString &type_name, void *ptype, void *pmodel, UserTypeConfig::TypeConf type_conf)
 {
 	if(!type_name.isEmpty() && ptype && pmodel &&
-			(type_conf==UserTypeConfig::DomainType ||
+			/*(type_conf==UserTypeConfig::DomainType ||
 			 type_conf==UserTypeConfig::SequenceType ||
 			 type_conf==UserTypeConfig::TableType ||
 			 type_conf==UserTypeConfig::ViewType ||
 			 type_conf==UserTypeConfig::ExtensionType ||
 			 type_conf==UserTypeConfig::ForeignTableType ||
-			 type_conf==UserTypeConfig::BaseType) &&
+			 type_conf==UserTypeConfig::BaseType)*/
+			type_conf != UserTypeConfig::AllUserTypes &&
 			getUserTypeIndex(type_name,ptype,pmodel)==0)
 	{
 		UserTypeConfig cfg;
@@ -644,9 +648,9 @@ unsigned PgSqlType::getUserTypeIndex(const QString &type_name, void *ptype, void
 		if(itr!=itr_end)
 			return (PseudoEnd + 1 + idx);
 		else
-			return BaseType::Null;
+			return PgSqlType::Null;
 	}
-	else return BaseType::Null;
+	else return PgSqlType::Null;
 }
 
 QString PgSqlType::getUserTypeName(unsigned type_id)
@@ -856,7 +860,7 @@ bool PgSqlType::acceptsPrecision()
 
 void PgSqlType::reset(bool all_attrs)
 {
-	setIntervalType(BaseType::Null);
+	setIntervalType(IntervalType::Null);
 	setSpatialType(SpatialType());
 	setPrecision(-1);
 	setLength(0);
@@ -1020,9 +1024,9 @@ int PgSqlType::getPrecision()
 	return precision;
 }
 
-QString PgSqlType::getCodeDefinition(unsigned def_type,QString ref_type)
+QString PgSqlType::getSourceCode(SchemaParser::CodeType def_type, QString ref_type)
 {
-	if(def_type==SchemaParser::SqlDefinition)
+	if(def_type==SchemaParser::SqlCode)
 		return getSQLTypeName();
 
 	attribs_map attribs;
@@ -1047,7 +1051,7 @@ QString PgSqlType::getCodeDefinition(unsigned def_type,QString ref_type)
 	if(precision >= 0)
 		attribs[Attributes::Precision]=QString("%1").arg(this->precision);
 
-	if(interval_type != BaseType::Null)
+	if(interval_type != IntervalType::Null)
 		attribs[Attributes::IntervalType]=(~interval_type);
 
 	if(isGeoType())
@@ -1060,7 +1064,7 @@ QString PgSqlType::getCodeDefinition(unsigned def_type,QString ref_type)
 	if(with_timezone)
 		attribs[Attributes::WithTimezone]=Attributes::True;
 
-	return schparser.getCodeDefinition(Attributes::PgSqlBaseType, attribs, def_type);
+	return schparser.getSourceCode(Attributes::PgSqlBaseType, attribs, def_type);
 }
 
 QString PgSqlType::operator * ()

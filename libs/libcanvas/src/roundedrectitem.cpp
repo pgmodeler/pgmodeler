@@ -35,21 +35,21 @@ double RoundedRectItem::getBorderRadius()
 	return radius;
 }
 
-void RoundedRectItem::setRoundedCorners(unsigned corners)
+void RoundedRectItem::setRoundedCorners(RectCorners corners)
 {
 	if(corners > AllCorners)
-		corners=AllCorners;
+		corners = AllCorners;
 
 	this->corners=corners;
 	createPolygon();
 }
 
-unsigned RoundedRectItem::getRoundedCorners()
+RoundedRectItem::RectCorners RoundedRectItem::getRoundedCorners()
 {
 	return corners;
 }
 
-bool RoundedRectItem::isCornerRounded(unsigned corner)
+bool RoundedRectItem::isCornerRounded(RectCorners corner)
 {
 	return (corners & corner)==corner;
 }

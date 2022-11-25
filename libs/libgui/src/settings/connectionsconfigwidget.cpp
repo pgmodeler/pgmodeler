@@ -28,23 +28,23 @@ ConnectionsConfigWidget::ConnectionsConfigWidget(QWidget * parent) : BaseConfigW
 {
 	Ui_ConnectionsConfigWidget::setupUi(this);
 
-	connect(ssl_mode_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(enableCertificates()));
+	connect(ssl_mode_cmb, &QComboBox::currentIndexChanged, this, &ConnectionsConfigWidget::enableCertificates);
 
-	connect(new_tb, SIGNAL(clicked(bool)), this, SLOT(newConnection()));
-	connect(cancel_tb, SIGNAL(clicked(bool)), this, SLOT(newConnection()));
-	connect(duplicate_tb, SIGNAL(clicked(bool)), this, SLOT(duplicateConnection()));
+	connect(new_tb, &QToolButton::clicked, this, &ConnectionsConfigWidget::newConnection);
+	connect(cancel_tb, &QToolButton::clicked, this, &ConnectionsConfigWidget::newConnection);
+	connect(duplicate_tb, &QToolButton::clicked, this, &ConnectionsConfigWidget::duplicateConnection);
+	connect(update_tb, &QToolButton::clicked, this, &ConnectionsConfigWidget::handleConnection);
+	connect(edit_tb, &QToolButton::clicked, this, &ConnectionsConfigWidget::editConnection);
+	connect(remove_tb, &QToolButton::clicked, this, &ConnectionsConfigWidget::removeConnection);
 
-	connect(test_tb, SIGNAL(clicked(bool)), this, SLOT(testConnection()));
-	connect(add_tb, SIGNAL(clicked(bool)), this, SLOT(handleConnection()));
-	connect(update_tb, SIGNAL(clicked(bool)), this, SLOT(handleConnection()));
-	connect(edit_tb, SIGNAL(clicked(bool)), this, SLOT(editConnection()));
-	connect(remove_tb, SIGNAL(clicked(bool)), this, SLOT(removeConnection()));
+	connect(test_tb, &QPushButton::clicked, this, &ConnectionsConfigWidget::testConnection);
+	connect(add_tb, &QPushButton::clicked, this, &ConnectionsConfigWidget::handleConnection);
 
-	connect(alias_edt, SIGNAL(textChanged(QString)), this, SLOT(enableConnectionTest()));
-	connect(host_edt, SIGNAL(textChanged(QString)), this, SLOT(enableConnectionTest()));
-	connect(user_edt, SIGNAL(textChanged(QString)), this, SLOT(enableConnectionTest()));
-	connect(passwd_edt, SIGNAL(textChanged(QString)), this, SLOT(enableConnectionTest()));
-	connect(conn_db_edt, SIGNAL(textChanged(QString)), this, SLOT(enableConnectionTest()));
+	connect(alias_edt, &QLineEdit::textChanged, this, &ConnectionsConfigWidget::enableConnectionTest);
+	connect(host_edt, &QLineEdit::textChanged, this, &ConnectionsConfigWidget::enableConnectionTest);
+	connect(user_edt, &QLineEdit::textChanged, this, &ConnectionsConfigWidget::enableConnectionTest);
+	connect(passwd_edt, &QLineEdit::textChanged, this, &ConnectionsConfigWidget::enableConnectionTest);
+	connect(conn_db_edt, &QLineEdit::textChanged, this, &ConnectionsConfigWidget::enableConnectionTest);
 
 	update_tb->setVisible(false);
 	cancel_tb->setVisible(false);
@@ -494,7 +494,7 @@ void ConnectionsConfigWidget::saveConfiguration()
 
 				schparser.ignoreUnkownAttributes(true);
 				config_params[GlobalAttributes::ConnectionsConf][Attributes::Connections]+=
-						schparser.getCodeDefinition(GlobalAttributes::getTmplConfigurationFilePath(GlobalAttributes::SchemasDir,
+						schparser.getSourceCode(GlobalAttributes::getTmplConfigurationFilePath(GlobalAttributes::SchemasDir,
 																																											 GlobalAttributes::ConnectionsConf +
 																																											 GlobalAttributes::SchemaExt), attribs);
 
@@ -539,7 +539,7 @@ Connection *ConnectionsConfigWidget::getConnection(const QString &conn_id)
 	return nullptr;
 }
 
-void ConnectionsConfigWidget::fillConnectionsComboBox(QComboBox *combo, bool incl_placeholder, unsigned check_def_for)
+void ConnectionsConfigWidget::fillConnectionsComboBox(QComboBox *combo, bool incl_placeholder, Connection::ConnOperation check_def_for)
 {
 	std::map<QString, Connection *> connections;
 	Connection *def_conn=nullptr;
@@ -595,11 +595,11 @@ bool ConnectionsConfigWidget::openConnectionsConfiguration(QComboBox *combo, boo
 		conn_cfg_wgt.layout()->setContentsMargins(0,0,0,0);
 		conn_cfg_wgt.frame->layout()->setContentsMargins(0,0,0,0);
 
-		connect(parent_form.cancel_btn, &QPushButton::clicked, [&](){
+		connect(parent_form.cancel_btn, &QPushButton::clicked, &parent_form, [&conn_cfg_wgt](){
 			conn_cfg_wgt.loadConfiguration();
 		});
 
-		connect(parent_form.apply_ok_btn, &QPushButton::clicked, [&](){
+		connect(parent_form.apply_ok_btn, &QPushButton::clicked, &parent_form, [&conn_cfg_wgt, &parent_form](){
 			conn_cfg_wgt.saveConfiguration();
 			parent_form.accept();
 		});
@@ -619,7 +619,7 @@ bool ConnectionsConfigWidget::openConnectionsConfiguration(QComboBox *combo, boo
 	return parent_form.result() == QDialog::Accepted;
 }
 
-Connection *ConnectionsConfigWidget::getDefaultConnection(unsigned operation)
+Connection *ConnectionsConfigWidget::getDefaultConnection(Connection::ConnOperation operation)
 {
 	Connection *conn=nullptr;
 

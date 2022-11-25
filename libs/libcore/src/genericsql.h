@@ -28,7 +28,7 @@
 #include "baseobject.h"
 #include <unordered_map>
 
-class GenericSQL: public BaseObject{
+class __libcore GenericSQL: public BaseObject{
 	protected:
 
 		//! \brief This is a internal structure used to hold object references configuration
@@ -86,7 +86,7 @@ class GenericSQL: public BaseObject{
 		 * the retunring list*/
 		std::vector<BaseObject *> getReferencedObjects();
 
-		virtual QString getCodeDefinition(unsigned def_type);
+		virtual QString getSourceCode(SchemaParser::CodeType def_type);
 
 		friend class GenericSQLWidget;
 };

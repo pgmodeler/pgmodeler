@@ -27,7 +27,10 @@
 
 #include "templatetype.h"
 
-class IndexingType: public TemplateType<IndexingType>{
+class __libcore IndexingType: public TemplateType<IndexingType>{
+	private:
+		static QStringList type_names;
+
 	public:
 		static constexpr unsigned Btree = 1,
 		Gist = 2,
@@ -39,6 +42,12 @@ class IndexingType: public TemplateType<IndexingType>{
 		IndexingType(const QString &type_name);
 		IndexingType(unsigned type_id);
 		IndexingType();
+
+		static QStringList getTypes();
+
+		unsigned setType(unsigned type_id) override;
+		unsigned setType(const QString &type_name) override;
+		QString getTypeName(unsigned type_id) override;
 };
 
 #endif 

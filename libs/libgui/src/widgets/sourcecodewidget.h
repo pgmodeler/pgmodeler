@@ -30,13 +30,9 @@
 #include "numberedtexteditor.h"
 #include "widgets/findreplacewidget.h"
 
-class SourceCodeWidget: public BaseObjectWidget, public Ui::SourceCodeWidget {
+class __libgui SourceCodeWidget: public BaseObjectWidget, public Ui::SourceCodeWidget {
 	private:
 		Q_OBJECT
-
-		static constexpr int OriginalSql=0,
-		DependenciesSql=1,
-		ChildrenSql=2;
 
 		NumberedTextEditor *sqlcode_txt,
 		*xmlcode_txt;

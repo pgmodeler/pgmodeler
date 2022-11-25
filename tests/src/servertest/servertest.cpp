@@ -74,10 +74,10 @@ COMMENT ON SERVER server_test IS E'This is a test comment on server'; \
 		server.setComment("This is a test comment on server");
 		server.setForeignDataWrapper(&fdw);
 
-		QString res_sql_code = server.getCodeDefinition(SchemaParser::SqlDefinition).simplified();
+		QString res_sql_code = server.getSourceCode(SchemaParser::SqlCode).simplified();
 		QCOMPARE(sql_code, res_sql_code);
 
-		QString res_xml_code = server.getCodeDefinition(SchemaParser::XmlDefinition).simplified();
+		QString res_xml_code = server.getSourceCode(SchemaParser::XmlCode).simplified();
 		QCOMPARE(xml_code, res_xml_code);
 	}
 	catch (Exception &e)
@@ -159,7 +159,7 @@ void ServerTest::modelCreatesServerfromXMLandResultingXMLisEqual()
 
 		QVERIFY(server != nullptr);
 
-		res_xml_code = server->getCodeDefinition(SchemaParser::XmlDefinition).simplified();
+		res_xml_code = server->getSourceCode(SchemaParser::XmlCode).simplified();
 		xml_code = xml_code.simplified();
 
 		model.removeForeignServer(server);

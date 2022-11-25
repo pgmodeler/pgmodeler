@@ -14,7 +14,7 @@ SwapObjectsIdsWidget::SwapObjectsIdsWidget(QWidget *parent, Qt::WindowFlags f) :
 																															 ObjectType::Constraint });
 		setupUi(this);
 
-		GuiUtilsNs::configureWidgetFont(message_lbl, GuiUtilsNs::MediumFontFactor);
+		//GuiUtilsNs::configureWidgetFont(message_lbl, GuiUtilsNs::MediumFontFactor);
 
 		selector_idx = 0;
 		src_object_sel=nullptr;
@@ -49,32 +49,29 @@ SwapObjectsIdsWidget::SwapObjectsIdsWidget(QWidget *parent, Qt::WindowFlags f) :
 		setModel(nullptr);
 		filter_wgt->setVisible(false);
 
-		connect(filter_btn, SIGNAL(toggled(bool)), filter_wgt, SLOT(setVisible(bool)));
-		connect(src_object_sel, SIGNAL(s_objectSelected()), this, SLOT(showObjectId()));
-		connect(dst_object_sel, SIGNAL(s_objectSelected()), this, SLOT(showObjectId()));
-		connect(src_object_sel, SIGNAL(s_selectorCleared()), this, SLOT(showObjectId()));
-		connect(dst_object_sel, SIGNAL(s_selectorCleared()), this, SLOT(showObjectId()));
+		connect(filter_btn, &QToolButton::toggled, filter_wgt, &QWidget::setVisible);
+		connect(src_object_sel, &ObjectSelectorWidget::s_objectSelected, this, &SwapObjectsIdsWidget::showObjectId);
+		connect(dst_object_sel, &ObjectSelectorWidget::s_objectSelected, this, &SwapObjectsIdsWidget::showObjectId);
+		connect(src_object_sel, &ObjectSelectorWidget::s_selectorCleared, this, &SwapObjectsIdsWidget::showObjectId);
+		connect(dst_object_sel, &ObjectSelectorWidget::s_selectorCleared, this, &SwapObjectsIdsWidget::showObjectId);
 
-		connect(swap_values_tb, &QToolButton::clicked,
-		[&](){
+		connect(swap_values_tb, &QToolButton::clicked, this, [this](){
 			BaseObject *obj=src_object_sel->getSelectedObject();
 			src_object_sel->setSelectedObject(dst_object_sel->getSelectedObject());
 			dst_object_sel->setSelectedObject(obj);
 		});
 
-		connect(objects_tbw, &QTableWidget::itemDoubleClicked,
-		[&](QTableWidgetItem *item){
+		connect(objects_tbw, &QTableWidget::itemDoubleClicked, this, [this](QTableWidgetItem *item){
 			if(QApplication::mouseButtons() == Qt::LeftButton)
 				selectItem(item);
 		});
 
-		setMinimumSize(640,480);
-
-		connect(filter_edt, SIGNAL(textChanged(QString)), this, SLOT(filterObjects()));
-		connect(hide_rels_chk, SIGNAL(toggled(bool)), this, SLOT(filterObjects()));
-		connect(hide_sys_objs_chk, SIGNAL(toggled(bool)), this, SLOT(filterObjects()));
+		connect(filter_edt, &QLineEdit::textChanged, this, &SwapObjectsIdsWidget::filterObjects);
+		connect(hide_rels_chk, &QCheckBox::toggled, this, &SwapObjectsIdsWidget::filterObjects);
+		connect(hide_sys_objs_chk, &QCheckBox::toggled, this, &SwapObjectsIdsWidget::filterObjects);
 
 		objects_tbw->installEventFilter(this);
+		setMinimumSize(640,480);
 	}
 	catch(Exception &e)
 	{
@@ -115,11 +112,11 @@ void SwapObjectsIdsWidget::fillCreationOrderGrid()
 	if(!model)
 		return;
 
-	std::map<unsigned, BaseObject *> creation_order = model->getCreationOrder(SchemaParser::SqlDefinition);
+	std::map<unsigned, BaseObject *> creation_order = model->getCreationOrder(SchemaParser::SqlCode);
 	std::vector<BaseObject *> objects;
 
 	//Using an stl function to extract all the values (objects) from the map and put them into a list
-	std::for_each(creation_order.begin(), creation_order.end(), [&](const std::pair<unsigned, BaseObject *> &itr) {
+	std::for_each(creation_order.begin(), creation_order.end(), [&objects](const std::pair<unsigned, BaseObject *> &itr) {
 		if(itr.second->getObjectType() != ObjectType::Constraint) {
 			objects.push_back(itr.second);
 		}

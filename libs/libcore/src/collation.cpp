@@ -21,7 +21,7 @@
 Collation::Collation()
 {
 	obj_type = ObjectType::Collation;
-	encoding = BaseType::Null;
+	encoding = EncodingType::Null;
 	is_deterministic = false;
 
 	attributes[Attributes::LcCtype] = "";
@@ -42,7 +42,7 @@ void Collation::setLocale(const QString &locale)
 	this->locale=locale;
 }
 
-void Collation::setLocalization(unsigned lc_id, QString lc_name)
+void Collation::setLocalization(LocaleId lc_id, QString lc_name)
 {
 	if(locale.isEmpty())
 	{
@@ -72,7 +72,7 @@ void Collation::setLocalization(unsigned lc_id, QString lc_name)
 	}
 }
 
-void Collation::setModifier(unsigned lc_id, QString mod)
+void Collation::setModifier(LocaleId lc_id, QString mod)
 {
 	if(lc_id > Locale)
 		throw Exception(ErrorCode::RefElementInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -81,7 +81,7 @@ void Collation::setModifier(unsigned lc_id, QString mod)
 	modifier[lc_id] = mod;
 }
 
-QString Collation::getModifier(unsigned lc_id)
+QString Collation::getModifier(LocaleId lc_id)
 {
 	if(lc_id > Locale)
 		throw Exception(ErrorCode::RefElementInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -104,7 +104,7 @@ void Collation::setCollation(BaseObject *collation)
 
 	BaseObject::setCollation(collation);
 
-	encoding = BaseType::Null;
+	encoding = EncodingType::Null;
 	locale.clear();
 	localization[0] = localization[1]= "";
 	provider = ProviderType::Null;
@@ -117,7 +117,7 @@ QString Collation::getLocale()
 	return locale;
 }
 
-QString Collation::getLocalization(unsigned lc_id)
+QString Collation::getLocalization(LocaleId lc_id)
 {
 	if(lc_id > LcCollate)
 		throw Exception(ErrorCode::RefElementInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -152,12 +152,12 @@ bool Collation::isDeterministic()
 	return is_deterministic;
 }
 
-QString Collation::getCodeDefinition(unsigned def_type)
+QString Collation::getSourceCode(SchemaParser::CodeType def_type)
 {
-	return getCodeDefinition(def_type, false);
+	return getSourceCode(def_type, false);
 }
 
-QString Collation::getCodeDefinition(unsigned def_type, bool reduced_form)
+QString Collation::getSourceCode(SchemaParser::CodeType def_type, bool reduced_form)
 {
 	QString code_def=getCachedCode(def_type, reduced_form);
 	if(!code_def.isEmpty()) return code_def;
@@ -169,7 +169,7 @@ QString Collation::getCodeDefinition(unsigned def_type, bool reduced_form)
 	{
 		attributes[Attributes::Locale]=locale;
 
-		if(def_type==SchemaParser::SqlDefinition && encoding!=BaseType::Null)
+		if(def_type==SchemaParser::SqlCode && encoding != EncodingType::Null)
 			attributes[Attributes::Locale]=locale + fmt_encoding;
 	}
 	else if(collation)
@@ -181,11 +181,11 @@ QString Collation::getCodeDefinition(unsigned def_type, bool reduced_form)
 		if(localization[LcCtype].isEmpty() && localization[LcCollate].isEmpty())
 			throw Exception(ErrorCode::EmptyLCCollationAttributes,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-		for(unsigned int i=LcCtype; i <= LcCollate; i++)
+		for(unsigned i=LcCtype; i <= LcCollate; i++)
 		{
-			attributes[lc_attribs[i]]=getLocalization(i);
+			attributes[lc_attribs[i]]=getLocalization(static_cast<LocaleId>(i));
 
-			if(def_type==SchemaParser::SqlDefinition && encoding!=BaseType::Null && !attributes[lc_attribs[i]].isEmpty())
+			if(def_type==SchemaParser::SqlCode && encoding != EncodingType::Null && !attributes[lc_attribs[i]].isEmpty())
 				attributes[lc_attribs[i]] += fmt_encoding;
 		}
 	}
@@ -197,5 +197,5 @@ QString Collation::getCodeDefinition(unsigned def_type, bool reduced_form)
 	attributes[Attributes::LcCollateMod] = modifier[LcCollate];
 	attributes[Attributes::LcCtypeMod] = modifier[LcCtype];
 
-	return BaseObject::getCodeDefinition(def_type, reduced_form);
+	return BaseObject::getSourceCode(def_type, reduced_form);
 }

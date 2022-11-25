@@ -38,12 +38,12 @@ BugReportForm::BugReportForm(QWidget *parent, Qt::WindowFlags f) : QDialog(paren
 	output_sel->setSelectedFile(GlobalAttributes::getTemporaryDir());
 
 	output_lt->addWidget(output_sel);
-	connect(close_btn, SIGNAL(clicked()), this, SLOT(close()));
-	connect(create_btn, SIGNAL(clicked()), this, SLOT(generateReport()));
-	connect(attach_mod_chk, SIGNAL(toggled(bool)), attach_tb, SLOT(setEnabled(bool)));
-	connect(attach_tb, SIGNAL(clicked()), this, SLOT(attachModel()));
-	connect(details_txt, SIGNAL(textChanged()), this, SLOT(enableGeneration()));
-	connect(output_sel, SIGNAL(s_selectorChanged(bool)), this, SLOT(enableGeneration()));
+	connect(close_btn, &QPushButton::clicked, this, &BugReportForm::close);
+	connect(create_btn, &QPushButton::clicked, this, qOverload<>(&BugReportForm::generateReport));
+	connect(attach_mod_chk, &QCheckBox::toggled, attach_tb, &QToolButton::setEnabled);
+	connect(attach_tb, &QToolButton::clicked, this, qOverload<>(&BugReportForm::attachModel));
+	connect(details_txt, &QPlainTextEdit::textChanged, this,  &BugReportForm::enableGeneration);
+	connect(output_sel, &FileSelectorWidget::s_selectorChanged, this, &BugReportForm::enableGeneration);
 
 	//Installs a syntax highlighter on model_txt widget
 	hl_model_txt=new SyntaxHighlighter(model_txt);
@@ -92,11 +92,11 @@ void BugReportForm::generateReport(const QByteArray &buf)
 {
 	Messagebox msgbox;
 	QFile output;
-	QString filename=QFileInfo(QString(output_sel->getSelectedFile() +
-																		 GlobalAttributes::DirSeparator +
-																		 GlobalAttributes::BugReportFile)
-														 .arg(QDateTime::currentDateTime().toString(QString("_yyyyMMdd_hhmm"))))
-									 .absoluteFilePath();
+	QFileInfo fi(QString(output_sel->getSelectedFile() +
+											 GlobalAttributes::DirSeparator +
+											 GlobalAttributes::BugReportFile)
+											.arg(QDateTime::currentDateTime().toString(QString("_yyyyMMdd_hhmm"))));
+	QString filename=fi.absoluteFilePath();
 
 	//Opens the file for writting
 	output.setFileName(filename);
@@ -115,8 +115,8 @@ void BugReportForm::generateReport(const QByteArray &buf)
 		output.write(comp_buf.data(), comp_buf.size());
 		output.close();
 
-		msgbox.show(tr("Bug report successfuly generated! Please, send the file <strong>%1</strong> to <em>%2</em> in order be analyzed. Thank you for the collaboration!")
-								.arg(QDir::toNativeSeparators(filename)).arg(GlobalAttributes::BugReportEmail),
+		msgbox.show(tr("Bug report successfuly generated! Please, send the file <strong><a href='file://%1'>%2<a/></strong> to <em>%3</em> in order be analyzed. Thank you for the collaboration!")
+								.arg(fi.absolutePath(), QDir::toNativeSeparators(filename), GlobalAttributes::BugReportEmail),
 					Messagebox::InfoIcon);
 	}
 }

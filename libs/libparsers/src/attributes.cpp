@@ -237,6 +237,7 @@ namespace Attributes {
 	FilterTableTypes("filter-tab-types"),
 	FinalFunc("final"),
 	FiringType("firing-type"),
+	FirstRun("first-run"),
 	FkColumn("fk-column"),
 	FkConstr("fk-constr"),
 	FkDefs("fk-defs"),

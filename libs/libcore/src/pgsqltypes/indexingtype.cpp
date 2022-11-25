@@ -18,10 +18,9 @@
 
 #include "indexingtype.h"
 
-template<>
-QStringList IndexingType::TemplateType<IndexingType>::type_names =
+QStringList IndexingType::type_names =
 {
-	"", // Reserved for BaseType::null
+	"", // Reserved for Class::Null
 
 	"btree",
 	"gist",
@@ -41,7 +40,27 @@ IndexingType::IndexingType()
 	type_idx = Btree;
 }
 
+QStringList IndexingType::getTypes()
+{
+	return TemplateType<IndexingType>::getTypes(type_names);
+}
+
 IndexingType::IndexingType(const QString &type_name)
 {
 	setType(type_name);
+}
+
+unsigned IndexingType::setType(unsigned type_id)
+{
+	return TemplateType<IndexingType>::setType(type_id, type_names);
+}
+
+unsigned IndexingType::setType(const QString &type_name)
+{
+	return TemplateType<IndexingType>::setType(type_name, type_names);
+}
+
+QString IndexingType::getTypeName(unsigned type_id)
+{
+	return TemplateType<IndexingType>::getTypeName(type_id, type_names);
 }

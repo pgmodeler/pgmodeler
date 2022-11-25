@@ -21,8 +21,8 @@
   </property>
   <property name="minimumSize">
    <size>
-    <width>800</width>
-    <height>660</height>
+    <width>600</width>
+    <height>400</height>
    </size>
   </property>
   <property name="windowTitle">

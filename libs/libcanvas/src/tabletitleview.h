@@ -31,8 +31,7 @@
 #include "textboxview.h"
 #include "roundedrectitem.h"
 
-class TableTitleView: public BaseObjectView
-{
+class __libcanvas TableTitleView: public BaseObjectView {
 	private:
 		Q_OBJECT
 

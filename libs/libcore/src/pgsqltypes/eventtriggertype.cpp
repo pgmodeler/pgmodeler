@@ -18,10 +18,9 @@
 
 #include "eventtriggertype.h"
 
-template<>
-QStringList EventTriggerType::TemplateType<EventTriggerType>::type_names =
+QStringList EventTriggerType::type_names =
 {
-	"", // Reserved for BaseType::null
+	"", // Reserved for Class::Null
 
 	"ddl_command_start",
 	"ddl_command_end",
@@ -34,6 +33,11 @@ EventTriggerType::EventTriggerType()
 	type_idx = DdlCommandStart;
 }
 
+QStringList EventTriggerType::getTypes()
+{
+	return TemplateType<EventTriggerType>::getTypes(type_names);
+}
+
 EventTriggerType::EventTriggerType(unsigned type_id)
 {
 	setType(type_id);
@@ -42,4 +46,19 @@ EventTriggerType::EventTriggerType(unsigned type_id)
 EventTriggerType::EventTriggerType(const QString &type_name)
 {
 	setType(type_name);
+}
+
+unsigned EventTriggerType::setType(unsigned type_id)
+{
+	return TemplateType<EventTriggerType>::setType(type_id, type_names);
+}
+
+unsigned EventTriggerType::setType(const QString &type_name)
+{
+	return TemplateType<EventTriggerType>::setType(type_name, type_names);
+}
+
+QString EventTriggerType::getTypeName(unsigned type_id)
+{
+	return TemplateType<EventTriggerType>::getTypeName(type_id, type_names);
 }

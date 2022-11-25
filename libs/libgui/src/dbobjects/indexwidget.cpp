@@ -46,8 +46,8 @@ IndexWidget::IndexWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::
 		configureFormLayout(index_grid, ObjectType::Index);
 		indexing_cmb->addItems(IndexingType::getTypes());
 
-		connect(indexing_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(selectIndexingType()));
-		connect(fill_factor_chk, SIGNAL(toggled(bool)), fill_factor_sb, SLOT(setEnabled(bool)));
+		connect(indexing_cmb, &QComboBox::currentIndexChanged, this, &IndexWidget::selectIndexingType);
+		connect(fill_factor_chk, &QCheckBox::toggled, fill_factor_sb, &QSpinBox::setEnabled);
 
 		configureTabOrder();
 		selectIndexingType();

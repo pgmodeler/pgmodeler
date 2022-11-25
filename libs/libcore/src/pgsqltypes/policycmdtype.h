@@ -27,7 +27,10 @@
 
 #include "templatetype.h"
 
-class PolicyCmdType: public TemplateType<PolicyCmdType> {
+class __libcore PolicyCmdType: public TemplateType<PolicyCmdType> {
+	private:
+		static QStringList type_names;
+
 	public:
 		static constexpr unsigned All = 1,
 		Select = 2,
@@ -38,6 +41,12 @@ class PolicyCmdType: public TemplateType<PolicyCmdType> {
 		PolicyCmdType(const QString &type_name);
 		PolicyCmdType(unsigned type_id);
 		PolicyCmdType();
+
+		static QStringList getTypes();
+
+		unsigned setType(unsigned type_id) override;
+		unsigned setType(const QString &type_name) override;
+		QString getTypeName(unsigned type_id) override;
 };
 
 #endif 

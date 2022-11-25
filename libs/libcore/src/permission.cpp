@@ -141,7 +141,7 @@ void Permission::addRole(Role *role)
 	generatePermissionId();
 }
 
-void Permission::setPrivilege(unsigned priv_id, bool value, bool grant_op)
+void Permission::setPrivilege(PrivilegeId priv_id, bool value, bool grant_op)
 {
 	//Caso o tipo de privilégio sejá inválido dispara uma exceção
 	if(priv_id > PrivUsage)
@@ -247,7 +247,7 @@ BaseObject *Permission::getObject()
 	return object;
 }
 
-bool Permission::getPrivilege(unsigned priv_id)
+bool Permission::getPrivilege(PrivilegeId priv_id)
 {
 	//Raises an error if the privilege is invalid
 	if(priv_id > PrivUsage)
@@ -256,7 +256,7 @@ bool Permission::getPrivilege(unsigned priv_id)
 	return privileges[priv_id];
 }
 
-bool Permission::getGrantOption(unsigned priv_id)
+bool Permission::getGrantOption(PrivilegeId priv_id)
 {
 	//Raises an error if the privilege is invalid
 	if(priv_id > PrivUsage)
@@ -303,7 +303,7 @@ QString Permission::getPermissionString()
 	return str_priv;
 }
 
-QString Permission::parsePermissionString(QString perm_str, std::vector<unsigned> &privs, std::vector<unsigned> &gop_privs)
+QString Permission::parsePermissionString(QString perm_str, std::vector<PrivilegeId> &privs, std::vector<PrivilegeId> &gop_privs)
 {
 	QString role;
 	QRegularExpression regexp(QRegularExpression::anchoredPattern(QString("(.)*(\\=)([%1*])+((\\/)(.)+)?").arg(priv_codes)));
@@ -344,12 +344,12 @@ QString Permission::parsePermissionString(QString perm_str, std::vector<unsigned
 				/* If the grant option flag is checked insert the privilege
 				on the grant option list instead of ordinary privilete list */
 				if(gop)
-					gop_privs.push_back(priv);
+					gop_privs.push_back(static_cast<PrivilegeId>(priv));
 				else
-					privs.push_back(priv);
+					privs.push_back(static_cast<PrivilegeId>(priv));
 
-				priv=-1;
-				gop=false;
+				priv = -1;
+				gop = false;
 			}
 		}
 	}
@@ -381,7 +381,7 @@ void Permission::generatePermissionId()
 	this->obj_name = (!revoke ? "grant_" : "revoke_") + getPermissionString() + '_' + hash_id.mid(0, 10);
 }
 
-QString Permission::getCodeDefinition(unsigned def_type)
+QString Permission::getSourceCode(SchemaParser::CodeType def_type)
 {
 	QString code_def=getCachedCode(def_type, false);
 	if(!code_def.isEmpty()) return code_def;
@@ -400,7 +400,7 @@ QString Permission::getCodeDefinition(unsigned def_type)
 	attributes[Attributes::Revoke]=(revoke ? Attributes::True : "");
 	attributes[Attributes::Cascade]=(cascade ? Attributes::True : "");
 
-	if(def_type==SchemaParser::SqlDefinition)
+	if(def_type==SchemaParser::SqlCode)
 	{
 		if(obj_type == ObjectType::View || obj_type == ObjectType::ForeignTable)
 			//Views, Tables and foreign tables use the same keyword when setting permission (TABLE)
@@ -421,7 +421,7 @@ QString Permission::getCodeDefinition(unsigned def_type)
 	else
 		attributes[Attributes::Object]=object->getSignature();
 
-	if(def_type==SchemaParser::XmlDefinition)
+	if(def_type==SchemaParser::XmlCode)
 	{
 		for(i=0; i < 12; i++)
 		{
@@ -456,7 +456,7 @@ QString Permission::getCodeDefinition(unsigned def_type)
 
 	attributes[Attributes::Roles].remove(attributes[Attributes::Roles].size()-1,1);
 
-	return BaseObject::__getCodeDefinition(def_type);
+	return BaseObject::__getSourceCode(def_type);
 }
 
 QString Permission::getSignature(bool)
@@ -464,7 +464,7 @@ QString Permission::getSignature(bool)
 	return obj_name;
 }
 
-QString Permission::getDropDefinition(bool cascade)
+QString Permission::getDropCode(bool cascade)
 {
 	try
 	{
@@ -472,7 +472,7 @@ QString Permission::getDropDefinition(bool cascade)
 
 		this->setRevoke(!revoke);
 		this->setCascade(cascade);
-		def=this->getCodeDefinition(SchemaParser::SqlDefinition);
+		def=this->getSourceCode(SchemaParser::SqlCode);
 		this->setRevoke(revoke);
 		this->setCascade(this->cascade);
 

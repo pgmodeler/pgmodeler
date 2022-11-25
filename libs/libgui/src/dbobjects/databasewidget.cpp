@@ -130,7 +130,7 @@ void DatabaseWidget::applyConfiguration()
 		if(encoding_cmb->currentIndex() > 0)
 			model->setEncoding(EncodingType(encoding_cmb->currentText()));
 		else
-			model->setEncoding(EncodingType(BaseType::Null));
+			model->setEncoding(EncodingType(EncodingType::Null));
 
 		if(lccollate_cmb->currentText()!=tr("Default"))
 			model->setLocalization(Collation::LcCollate, lccollate_cmb->currentText());

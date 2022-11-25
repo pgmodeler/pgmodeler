@@ -25,10 +25,11 @@
 #ifndef PLAIN_TEXT_ITEM_DELEGATE_H
 #define PLAIN_TEXT_ITEM_DELEGATE_H
 
+#include "guiglobal.h"
 #include <QObject>
 #include <QStyledItemDelegate>
 
-class PlainTextItemDelegate : public QStyledItemDelegate {
+class __libgui PlainTextItemDelegate : public QStyledItemDelegate {
 	private:
 		Q_OBJECT
 		bool read_only;

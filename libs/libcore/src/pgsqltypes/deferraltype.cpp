@@ -18,10 +18,9 @@
 
 #include "deferraltype.h"
 
-template<>
-QStringList DeferralType::TemplateType<DeferralType>::type_names =
+QStringList DeferralType::type_names =
 {
-	"", // Reserved for BaseType::null
+	"", // Reserved for Class::Null
 
 	"INITIALLY IMMEDIATE",
 	"INITIALLY DEFERRED"
@@ -40,4 +39,24 @@ DeferralType::DeferralType(unsigned type_id)
 DeferralType::DeferralType()
 {
 	type_idx = Immediate;
+}
+
+QStringList DeferralType::getTypes()
+{
+	return TemplateType<DeferralType>::getTypes(type_names);
+}
+
+unsigned DeferralType::setType(unsigned type_id)
+{
+	return TemplateType<DeferralType>::setType(type_id, type_names);
+}
+
+unsigned DeferralType::setType(const QString &type_name)
+{
+	return TemplateType<DeferralType>::setType(type_name, type_names);
+}
+
+QString DeferralType::getTypeName(unsigned type_id)
+{
+	return TemplateType<DeferralType>::getTypeName(type_id, type_names);
 }

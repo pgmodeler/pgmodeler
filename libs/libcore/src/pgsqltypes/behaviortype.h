@@ -27,7 +27,10 @@
 
 #include "templatetype.h"
 
-class BehaviorType: public TemplateType<BehaviorType>{
+class __libcore BehaviorType: public TemplateType<BehaviorType>{
+	private:
+		static QStringList type_names;
+
 	public:
 		static constexpr unsigned CalledOnNullInput = 1,
 		ReturnsNullOnNullInput = 2,
@@ -36,6 +39,12 @@ class BehaviorType: public TemplateType<BehaviorType>{
 		BehaviorType(const QString &type_name);
 		BehaviorType(unsigned type_id);
 		BehaviorType();
+
+		static QStringList getTypes();
+
+		unsigned setType(unsigned type_id) override;
+		unsigned setType(const QString &type_name) override;
+		QString getTypeName(unsigned type_id) override;
 };
 
 #endif

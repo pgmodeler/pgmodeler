@@ -41,25 +41,25 @@ ModelObjectsWidget::ModelObjectsWidget(bool simplified_view, QWidget *parent) : 
 	filter_wgt->setVisible(simplified_view);
 	splitter->handle(1)->setEnabled(false);
 
-	connect(objectstree_tw, SIGNAL(itemPressed(QTreeWidgetItem*,int)), this, SLOT(selectObject()));
-	connect(objectstree_tw, SIGNAL(itemPressed(QTreeWidgetItem*,int)), this, SLOT(showObjectMenu()));
-	connect(objectslist_tbw, SIGNAL(itemPressed(QTableWidgetItem*)), this, SLOT(selectObject()));
-	connect(objectslist_tbw, SIGNAL(itemPressed(QTableWidgetItem*)), this, SLOT(showObjectMenu()));
-	connect(objectstree_tw,SIGNAL(itemSelectionChanged()),this, SLOT(selectObject()));
-	connect(objectslist_tbw,SIGNAL(itemSelectionChanged()),this, SLOT(selectObject()));
-	connect(expand_all_tb, SIGNAL(clicked()), objectstree_tw, SLOT(expandAll()));
-	connect(collapse_all_tb, SIGNAL(clicked()), this, SLOT(collapseAll()));
+	connect(objectstree_tw, &QTreeWidget::itemPressed, this, &ModelObjectsWidget::selectObject);
+	connect(objectstree_tw, &QTreeWidget::itemPressed, this, &ModelObjectsWidget::showObjectMenu);
+	connect(objectslist_tbw, &QTableWidget::itemPressed, this, &ModelObjectsWidget::selectObject);
+	connect(objectslist_tbw, &QTableWidget::itemPressed, this, &ModelObjectsWidget::showObjectMenu);
+	connect(objectstree_tw, &QTreeWidget::itemSelectionChanged, this, &ModelObjectsWidget::selectObject);
+	connect(objectslist_tbw, &QTableWidget::itemSelectionChanged, this, &ModelObjectsWidget::selectObject);
+	connect(expand_all_tb, &QToolButton::clicked, objectstree_tw, &QTreeWidget::expandAll);
+	connect(collapse_all_tb, &QToolButton::clicked, this, &ModelObjectsWidget::collapseAll);
 
 	if(!simplified_view)
 	{
 		widgets_conf.setValue(QString("splitterSize"), splitter->saveState());
-		connect(options_tb,SIGNAL(clicked()),this,SLOT(changeObjectsView()));
-		connect(visibleobjects_lst,SIGNAL(itemClicked(QListWidgetItem*)), this, SLOT(setObjectVisible(QListWidgetItem*)));
-		connect(select_all_tb,SIGNAL(clicked(bool)), this, SLOT(setAllObjectsVisible(bool)));
-		connect(clear_all_tb,SIGNAL(clicked(bool)), this, SLOT(setAllObjectsVisible(bool)));
-		connect(objectstree_tw,SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)),this, SLOT(editObject()));
-		connect(objectslist_tbw,SIGNAL(itemDoubleClicked(QTableWidgetItem*)),this, SLOT(editObject()));
-		connect(hide_tb, SIGNAL(clicked(bool)), this, SLOT(hide()));
+		connect(options_tb, &QToolButton::clicked,this, &ModelObjectsWidget::changeObjectsView);
+		connect(visibleobjects_lst, &QListWidget::itemClicked, this, qOverload<QListWidgetItem *>(&ModelObjectsWidget::setObjectVisible));
+		connect(select_all_tb, &QToolButton::clicked, this, &ModelObjectsWidget::setAllObjectsVisible);
+		connect(clear_all_tb, &QToolButton::clicked, this, &ModelObjectsWidget::setAllObjectsVisible);
+		connect(objectstree_tw, &QTreeWidget::itemDoubleClicked, this, &ModelObjectsWidget::editObject);
+		connect(objectslist_tbw, &QTableWidget::itemDoubleClicked, this, &ModelObjectsWidget::editObject);
+		connect(hide_tb, &QToolButton::clicked, this, &ModelObjectsWidget::hide);
 
 		ObjectFinderWidget::updateObjectTypeList(visibleobjects_lst);
 		setAllObjectsVisible(true);
@@ -73,16 +73,16 @@ ModelObjectsWidget::ModelObjectsWidget(bool simplified_view, QWidget *parent) : 
 		setMinimumSize(250, 300);
 		setWindowModality(Qt::ApplicationModal);
 		setWindowFlags(Qt::Dialog | Qt::WindowCloseButtonHint | Qt::WindowTitleHint);
-		connect(objectstree_tw,SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)),this, SLOT(close()));
-		connect(objectslist_tbw,SIGNAL(itemDoubleClicked(QTableWidgetItem*)),this, SLOT(close()));
-		connect(select_tb,SIGNAL(clicked()),this,SLOT(close()));
-		connect(cancel_tb,SIGNAL(clicked()),this,SLOT(close()));
+		connect(objectstree_tw, &QTreeWidget::itemDoubleClicked, this, &ModelObjectsWidget::close);
+		connect(objectslist_tbw, &QTableWidget::itemDoubleClicked, this, &ModelObjectsWidget::close);
+		connect(select_tb, &QToolButton::clicked, this, &ModelObjectsWidget::close);
+		connect(cancel_tb, &QToolButton::clicked, this, &ModelObjectsWidget::close);
 	}
 
-	connect(tree_view_tb,SIGNAL(clicked()),this,SLOT(changeObjectsView()));
-	connect(list_view_tb,SIGNAL(clicked()),this,SLOT(changeObjectsView()));
-	connect(filter_edt, SIGNAL(textChanged(QString)), this, SLOT(filterObjects()));
-	connect(by_id_chk, SIGNAL(toggled(bool)), this, SLOT(filterObjects()));
+	connect(tree_view_tb, &QToolButton::clicked, this, &ModelObjectsWidget::changeObjectsView);
+	connect(list_view_tb, &QToolButton::clicked, this, &ModelObjectsWidget::changeObjectsView);
+	connect(filter_edt, &QLineEdit::textChanged, this, &ModelObjectsWidget::filterObjects);
+	connect(by_id_chk, &QCheckBox::toggled, this, &ModelObjectsWidget::filterObjects);
 }
 
 bool ModelObjectsWidget::eventFilter(QObject *object, QEvent *event)
@@ -128,7 +128,7 @@ void ModelObjectsWidget::editObject()
 	{
 		//If the user double-clicked the item "Permission (n)" on tree view
 		if(sender()==objectstree_tw && objectstree_tw->currentItem() &&
-			 objectstree_tw->currentItem()->data(1, Qt::UserRole).toUInt() == enum_cast(ObjectType::Permission))
+			 objectstree_tw->currentItem()->data(1, Qt::UserRole).toUInt() == enum_t(ObjectType::Permission))
 			model_wgt->showObjectForm(ObjectType::Permission, reinterpret_cast<BaseObject *>(objectstree_tw->currentItem()->data(0, Qt::UserRole).value<void *>()));
 		//If the user double-clicked a permission on  list view
 		else if(sender() == objectslist_tbw && objectslist_tbw->currentRow() >= 0)
@@ -191,16 +191,16 @@ void ModelObjectsWidget::selectObject()
 			//If not a relationship, connect the action to the addNewObject method of the model wiget
 			if(obj_type != ObjectType::Relationship)
 			{
-				act.setData(QVariant(enum_cast(obj_type)));
+				act.setData(QVariant(enum_t(obj_type)));
 				p_act = &act;
-				connect(p_act, SIGNAL(triggered()), model_wgt, SLOT(addNewObject()));
+				connect(p_act, &QAction::triggered, model_wgt, &ModelWidget::addNewObject);
 			}
 			//Case is a relationship, insert the relationship menu of the model wiget into the action
 			else
 				p_act = model_wgt->rels_menu->menuAction();
 
 			if(simplified_view && enable_obj_creation)
-				connect(model_wgt->getDatabaseModel(), SIGNAL(s_objectAdded(BaseObject*)), this, SLOT(selectCreatedObject(BaseObject *)), Qt::QueuedConnection);
+				connect(model_wgt->getDatabaseModel(), &DatabaseModel::s_objectAdded, this, &ModelObjectsWidget::selectCreatedObject, Qt::QueuedConnection);
 
 			p_act->setIcon(QPixmap(GuiUtilsNs::getIconPath(obj_type)));
 			p_act->setText(tr("New") + QString(" ") + BaseObject::getTypeName(obj_type));
@@ -250,7 +250,7 @@ QTreeWidgetItem *ModelObjectsWidget::createItemForObject(BaseObject *object, QTr
 	QTreeWidgetItem *item=nullptr;
 	QFont font;
 	QString str_aux;
-	unsigned rel_type=0;
+	BaseRelationship::RelType rel_type;
 	ConstraintType constr_type;
 	ObjectType obj_type;
 	TableObject *tab_obj=nullptr;
@@ -522,7 +522,7 @@ void ModelObjectsWidget::updateSchemaTree(QTreeWidgetItem *root)
 		count=(db_model->getObjectCount(ObjectType::Schema));
 		item=new QTreeWidgetItem(root);
 		item->setIcon(0,group_icon);
-		item->setData(1, Qt::UserRole, QVariant(enum_cast(ObjectType::Schema)));
+		item->setData(1, Qt::UserRole, QVariant(enum_t(ObjectType::Schema)));
 
 		//Create the schema group item
 		item->setText(0, QString("%1 (%2)").arg(BaseObject::getTypeName(ObjectType::Schema)).arg(count));
@@ -569,7 +569,7 @@ void ModelObjectsWidget::updateSchemaTree(QTreeWidgetItem *root)
 
 						count2=obj_list.size();
 						item3->setText(0, QString("%1 (%2)").arg(BaseObject::getTypeName(type)).arg(count2));
-						item3->setData(1, Qt::UserRole, QVariant(enum_cast(type)));
+						item3->setData(1, Qt::UserRole, QVariant(enum_t(type)));
 
 						font=item3->font(0);
 						font.setItalic(true);
@@ -609,7 +609,7 @@ void ModelObjectsWidget::updateTableTree(QTreeWidgetItem *root, BaseObject *sche
 			item->setIcon(0,group_icon);
 			item->setText(0,BaseObject::getTypeName(table_type) +
 						  QString(" (%1)").arg(obj_list.size()));
-			item->setData(1, Qt::UserRole, QVariant(enum_cast(table_type)));
+			item->setData(1, Qt::UserRole, QVariant(enum_t(table_type)));
 
 			font=item->font(0);
 			font.setItalic(true);
@@ -668,7 +668,7 @@ void ModelObjectsWidget::updateViewTree(QTreeWidgetItem *root, BaseObject *schem
 			item=new QTreeWidgetItem(root);
 			item->setIcon(0,group_icon);
 			item->setText(0,BaseObject::getTypeName(ObjectType::View) + QString(" (%1)").arg(obj_list.size()));
-			item->setData(1, Qt::UserRole, QVariant(enum_cast(ObjectType::View)));
+			item->setData(1, Qt::UserRole, QVariant(enum_t(ObjectType::View)));
 
 			font=item->font(0);
 			font.setItalic(true);
@@ -766,7 +766,7 @@ void ModelObjectsWidget::updateDatabaseTree()
 			if(save_tree_state)
 				saveTreeState(tree_state);
 
-			objectstree_tw->setUpdatesEnabled(false);
+			//objectstree_tw->setUpdatesEnabled(false);
 			objectstree_tw->clear();
 
 			if(visible_objs_map[ObjectType::Database])
@@ -784,7 +784,7 @@ void ModelObjectsWidget::updateDatabaseTree()
 						str_aux=QString(BaseObject::getSchemaName(type));
 
 						item1->setIcon(0,QPixmap(GuiUtilsNs::getIconPath(str_aux)));
-						item1->setData(1, Qt::UserRole, QVariant(enum_cast(type)));
+						item1->setData(1, Qt::UserRole, QVariant(enum_t(type)));
 
 						obj_list=(*db_model->getObjectList(type));
 
@@ -818,7 +818,7 @@ void ModelObjectsWidget::updateDatabaseTree()
 					}
 				}
 
-				objectstree_tw->setUpdatesEnabled(true);
+				//objectstree_tw->setUpdatesEnabled(true);
 				objectstree_tw->expandItem(root);
 
 				if(save_tree_state)

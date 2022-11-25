@@ -29,7 +29,7 @@
 #include "dbobjects/baseobjectwidget.h"
 #include "baseobjectview.h"
 
-class ObjectDepsRefsWidget: public BaseObjectWidget, public Ui::ObjectDepsRefsWidget {
+class __libgui ObjectDepsRefsWidget: public BaseObjectWidget, public Ui::ObjectDepsRefsWidget {
 	private:
 		Q_OBJECT
 

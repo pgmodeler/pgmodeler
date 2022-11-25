@@ -27,7 +27,10 @@
 
 #include "templatetype.h"
 
-class DeferralType: public TemplateType<DeferralType>{
+class __libcore DeferralType: public TemplateType<DeferralType>{
+	private:
+		static QStringList type_names;
+
 	public:
 		static constexpr unsigned Immediate = 1,
 		Deferred = 2;
@@ -35,6 +38,12 @@ class DeferralType: public TemplateType<DeferralType>{
 		DeferralType(unsigned type_id);
 		DeferralType(const QString &type_name);
 		DeferralType();
+
+		static QStringList getTypes();
+
+		unsigned setType(unsigned type_id) override;
+		unsigned setType(const QString &type_name) override;
+		QString getTypeName(unsigned type_id ) override;
 };
 
 #endif

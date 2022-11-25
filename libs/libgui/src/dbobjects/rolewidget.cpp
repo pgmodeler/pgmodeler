@@ -38,8 +38,8 @@ RoleWidget::RoleWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Ro
 	role_grid->addWidget(frame, role_grid->count()+1, 0, 1, 4);
 	frame->setParent(this);
 
-	connect(validity_chk, SIGNAL(toggled(bool)), validity_dte, SLOT(setEnabled(bool)));
-	connect(members_twg, SIGNAL(currentChanged(int)), this, SLOT(configureRoleSelection()));
+	connect(validity_chk, &QCheckBox::toggled, validity_dte, &QDateTimeEdit::setEnabled);
+	connect(members_twg, &QTabWidget::currentChanged, this, &RoleWidget::configureRoleSelection);
 
 	//Alocation of the member role tables
 	for(i=0; i < 3; i++)
@@ -68,7 +68,7 @@ RoleWidget::RoleWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Ro
 		members_twg->widget(i)->setLayout(grid);
 	}
 
-	connect(object_selection_wgt, SIGNAL(s_visibilityChanged(BaseObject*,bool)), this, SLOT(showSelectedRoleData()));
+	connect(object_selection_wgt, qOverload<BaseObject *, bool>(&ModelObjectsWidget::s_visibilityChanged), this, &RoleWidget::showSelectedRoleData);
 
 	setMinimumSize(580, 550);
 }
@@ -80,15 +80,13 @@ RoleWidget::~RoleWidget()
 
 void RoleWidget::configureRoleSelection()
 {
-	unsigned i;
-
 	//Disconnects all signals from the member role tables
-	for(i=0; i < 3; i++)
+	for(unsigned i=0; i < 3; i++)
 		disconnect(members_tab[i], nullptr,this, nullptr);
 
 	//Connects the signal/slots only on the current table
-	connect(members_tab[members_twg->currentIndex()], SIGNAL(s_rowAdded(int)), this, SLOT(selectMemberRole()));
-	connect(members_tab[members_twg->currentIndex()], SIGNAL(s_rowEdited(int)), this, SLOT(selectMemberRole()));
+	connect(members_tab[members_twg->currentIndex()], &ObjectsTableWidget::s_rowAdded, this, &RoleWidget::selectMemberRole);
+	connect(members_tab[members_twg->currentIndex()], &ObjectsTableWidget::s_rowEdited, this, &RoleWidget::selectMemberRole);
 }
 
 void RoleWidget::selectMemberRole()
@@ -127,9 +125,8 @@ void RoleWidget::showRoleData(Role *role, unsigned table_id, unsigned row)
 {
 	if(role)
 	{
-		QString str_aux;
+		QStringList rl_names;
 		Role *aux_role=nullptr;
-		unsigned count, i, type_id;
 
 		if(table_id > 3)
 			throw Exception(ErrorCode::RefObjectInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -138,19 +135,16 @@ void RoleWidget::showRoleData(Role *role, unsigned table_id, unsigned row)
 		members_tab[table_id]->setCellText(role->getName(), row, 0);
 		members_tab[table_id]->setCellText(role->getValidity(), row, 1);
 
-		for(type_id = Role::MemberRole; type_id <= Role::AdminRole; type_id++)
+		for(auto type_id : { Role::MemberRole, Role::AdminRole })
 		{
-			count=role->getRoleCount(type_id);
-
-			for(i=0; i < count; i++)
+			for(unsigned i=0; i < role->getRoleCount(type_id); i++)
 			{
-				aux_role=role->getRole(type_id, i);
-				str_aux+=aux_role->getName();
-				if(i < count-1) str_aux+=QString(", ");
+				aux_role = role->getRole(type_id, i);
+				rl_names.append(aux_role->getName());
 			}
 
-			members_tab[table_id]->setCellText(str_aux, row, 2 + type_id);
-			str_aux.clear();
+			members_tab[table_id]->setCellText(rl_names.join(", "), row, 2 + type_id);
+			rl_names.clear();
 		}
 	}
 }
@@ -160,16 +154,13 @@ void RoleWidget::fillMembersTable()
 	if(this->object)
 	{
 		Role *aux_role=nullptr, *role=nullptr;
-		unsigned count, i, type_id;
-
 		role=dynamic_cast<Role *>(this->object);
 
-		for(type_id = Role::MemberRole; type_id <= Role::AdminRole; type_id++)
+		for(auto type_id : { Role::MemberRole, Role::AdminRole })
 		{
-			count=role->getRoleCount(type_id);
 			members_tab[type_id]->blockSignals(true);
 
-			for(i=0; i < count; i++)
+			for(unsigned i=0; i < role->getRoleCount(type_id); i++)
 			{
 				aux_role=role->getRole(type_id, i);
 				members_tab[type_id]->addRow();
@@ -222,7 +213,6 @@ void RoleWidget::showSelectedRoleData()
 void RoleWidget::applyConfiguration()
 {
 	Role *role=nullptr, *aux_role=nullptr;
-	unsigned count, i, rl_type;
 
 	try
 	{
@@ -245,12 +235,11 @@ void RoleWidget::applyConfiguration()
 		role->setOption(Role::OpReplication, can_replicate_chk->isChecked());
 		role->setOption(Role::OpBypassRls, bypass_rls_chk->isChecked());
 
-		for(rl_type = Role::MemberRole; rl_type <= Role::AdminRole; rl_type++)
+		for(auto rl_type : { Role::MemberRole, Role::AdminRole })
 		{
-			count = members_tab[rl_type]->getRowCount();
 			role->removeRoles(rl_type);
 
-			for(i = 0; i < count; i++)
+			for(unsigned i = 0; i < members_tab[rl_type]->getRowCount(); i++)
 			{
 				aux_role=reinterpret_cast<Role *>(members_tab[rl_type]->getRowData(i).value<void *>());
 				role->addRole(rl_type, aux_role);
@@ -259,11 +248,9 @@ void RoleWidget::applyConfiguration()
 
 		/* Special case for Member Of tab, here we try to add the role being edited
 		 * as a member of the the roles in the table */
-		count = members_tab[2]->getRowCount();
-
-		for(i = 0; i < count; i++)
+		for(unsigned i = 0; i < members_tab[2]->getRowCount(); i++)
 		{
-			aux_role = reinterpret_cast<Role *>(members_tab[rl_type]->getRowData(i).value<void *>());
+			aux_role = reinterpret_cast<Role *>(members_tab[2]->getRowData(i).value<void *>());
 
 			/* Raises an error if the role to be added is the postgres one
 			 * For now, there is no way to assign roles direct to the postgres role due to
@@ -274,7 +261,7 @@ void RoleWidget::applyConfiguration()
 												ErrorCode::OprReservedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 			}
 
-			op_list->registerObject(aux_role, Operation::ObjectModified);
+			op_list->registerObject(aux_role, Operation::ObjModified);
 			aux_role->addRole(Role::MemberRole, role);
 		}
 

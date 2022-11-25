@@ -111,14 +111,14 @@ void TableObject::setCodeInvalidated(bool value)
 	BaseObject::setCodeInvalidated(value);
 }
 
-QString TableObject::getDropDefinition(bool cascade)
+QString TableObject::getDropCode(bool cascade)
 {
 	if(getParentTable())
 		attributes[Attributes::Table]=getParentTable()->getName(true);
 
 	attributes[this->getSchemaName()]=Attributes::True;
 
-	return BaseObject::getDropDefinition(cascade);
+	return BaseObject::getDropCode(cascade);
 }
 
 QString TableObject::getSignature(bool format)

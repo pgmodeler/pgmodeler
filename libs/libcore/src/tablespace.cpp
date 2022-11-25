@@ -62,7 +62,7 @@ QString Tablespace::getDirectory()
 	return directory;
 }
 
-QString Tablespace::getCodeDefinition(unsigned def_type)
+QString Tablespace::getSourceCode(SchemaParser::CodeType def_type)
 {
 	QString code_def=getCachedCode(def_type, false);
 	if(!code_def.isEmpty()) return code_def;
@@ -70,6 +70,6 @@ QString Tablespace::getCodeDefinition(unsigned def_type)
 	if(!directory.isEmpty())
 		attributes[Attributes::Directory]=QString("'") + directory + QString("'");
 
-	return BaseObject::__getCodeDefinition(def_type);
+	return BaseObject::__getSourceCode(def_type);
 }
 

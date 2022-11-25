@@ -18,10 +18,9 @@
 
 #include "paralleltype.h"
 
-template<>
-QStringList ParallelType::TemplateType<ParallelType>::type_names =
+QStringList ParallelType::type_names =
 {
-	"", // Reserved for BaseType::null
+	"", // Reserved for Class::Null
 
 	"PARALLEL UNSAFE",
 	"PARALLEL RESTRICTED",
@@ -41,4 +40,24 @@ ParallelType::ParallelType(const QString &type_name)
 ParallelType::ParallelType()
 {
 	type_idx = Unsafe;
+}
+
+QStringList ParallelType::getTypes()
+{
+	return TemplateType<ParallelType>::getTypes(type_names);
+}
+
+unsigned ParallelType::setType(unsigned type_id)
+{
+	return TemplateType<ParallelType>::setType(type_id, type_names);
+}
+
+unsigned ParallelType::setType(const QString &type_name)
+{
+	return TemplateType<ParallelType>::setType(type_name, type_names);
+}
+
+QString ParallelType::getTypeName(unsigned type_id)
+{
+	return TemplateType<ParallelType>::getTypeName(type_id, type_names);
 }

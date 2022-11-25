@@ -233,7 +233,7 @@ COMMENT ON TRANSFORM FOR varchar LANGUAGE plpgsql IS E'This is a comment!';\n\
 
 		transf.setComment("This is a comment!");
 
-		sql_code = transf.getCodeDefinition(SchemaParser::SqlDefinition);
+		sql_code = transf.getSourceCode(SchemaParser::SqlCode);
 		//QTextStream out(stdout);
 		//out <<  sql_code << Qt::endl;
 		//out <<  expect_code <<  Qt::endl;
@@ -288,7 +288,7 @@ void TransformTest::generatesXMLCorrectly()
 		transf.setAppendedSQL("-- APPENDED SQL --;");
 		transf.setPrependedSQL("-- PREPENDED SQL --;");
 
-		xml_code = transf.getCodeDefinition(SchemaParser::XmlDefinition);
+		xml_code = transf.getSourceCode(SchemaParser::XmlCode);
 		/*QTextStream out(stdout);
 		out <<  xml_code << Qt::endl;
 		out <<  expect_code <<  Qt::endl;
@@ -335,7 +335,7 @@ void TransformTest::modelReturnsTransformDepsRefsToFuncs()
 		to_sql_func.setSchema(&schema);
 		to_sql_func.addParameter(Parameter("p1", PgSqlType("internal")));
 		to_sql_func.setReturnType(PgSqlType("public.custom_type"));
-		to_sql_func.setSourceCode("begin; end");
+		to_sql_func.setFunctionSource("begin; end");
 		to_sql_func.setLanguage(&lang);
 		transf.setFunction(&to_sql_func, Transform::ToSqlFunc);
 
@@ -343,7 +343,7 @@ void TransformTest::modelReturnsTransformDepsRefsToFuncs()
 		from_sql_func.setSchema(&schema);
 		from_sql_func.addParameter(Parameter("p1", PgSqlType("internal")));
 		from_sql_func.setReturnType(PgSqlType("internal"));
-		from_sql_func.setSourceCode("begin; end");
+		from_sql_func.setFunctionSource("begin; end");
 		from_sql_func.setLanguage(&lang);
 		transf.setFunction(&from_sql_func, Transform::FromSqlFunc);
 
@@ -413,14 +413,14 @@ void TransformTest::modelCreatesTransformFromXML()
 		to_sql_func.setSchema(&schema);
 		to_sql_func.addParameter(Parameter("p1", PgSqlType("internal")));
 		to_sql_func.setReturnType(PgSqlType("text"));
-		to_sql_func.setSourceCode("begin; end");
+		to_sql_func.setFunctionSource("begin; end");
 		to_sql_func.setLanguage(&lang);
 
 		from_sql_func.setName("from_sql_func");
 		from_sql_func.setSchema(&schema);
 		from_sql_func.addParameter(Parameter("p1", PgSqlType("internal")));
 		from_sql_func.setReturnType(PgSqlType("internal"));
-		from_sql_func.setSourceCode("begin; end");
+		from_sql_func.setFunctionSource("begin; end");
 		from_sql_func.setLanguage(&lang);
 
 		dbmodel.addObject(&from_sql_func);
@@ -447,9 +447,9 @@ void TransformTest::modelCreatesTransformFromXML()
 		out << xml_code << Qt::endl;
 		out << "---" << Qt::endl;
 		out << "Result:" << Qt::endl;
-		out << transf->getCodeDefinition(SchemaParser::XmlDefinition) << Qt::endl;*/
+		out << transf->getSourceCode(SchemaParser::XmlCode) << Qt::endl;*/
 
-		QVERIFY(transf->getCodeDefinition(SchemaParser::XmlDefinition).simplified() == xml_code.simplified());
+		QVERIFY(transf->getSourceCode(SchemaParser::XmlCode).simplified() == xml_code.simplified());
 	}
 	catch(Exception &e)
 	{

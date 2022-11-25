@@ -30,7 +30,7 @@
 #include "ui_modelfixform.h"
 #include "widgets/fileselectorwidget.h"
 
-class ModelFixForm: public QDialog, public Ui::ModelFixForm {
+class __libgui ModelFixForm: public QDialog, public Ui::ModelFixForm {
 	private:
 		Q_OBJECT
 
@@ -44,6 +44,7 @@ class ModelFixForm: public QDialog, public Ui::ModelFixForm {
 		*pgmodeler_cli_sel;
 
 		void hideEvent(QHideEvent *);
+		void resetFixForm();
 
 	public:
 		ModelFixForm(QWidget * parent = nullptr, Qt::WindowFlags f = Qt::Widget);

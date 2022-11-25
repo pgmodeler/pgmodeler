@@ -30,9 +30,9 @@ Textbox::Textbox()
 	attributes[Attributes::FontSize]="";
 }
 
-QString Textbox::getCodeDefinition(unsigned def_type)
+QString Textbox::getSourceCode(SchemaParser::CodeType def_type)
 {
-	if(def_type==SchemaParser::SqlDefinition)
+	if(def_type==SchemaParser::SqlCode)
 		return "";
 	else
 	{
@@ -58,7 +58,7 @@ QString Textbox::getCodeDefinition(unsigned def_type)
 		attributes[Attributes::FontSize]=QString("%1").arg(font_size);
 		attributes[Attributes::ZValue]=QString::number(z_value);
 
-		return this->BaseObject::__getCodeDefinition(SchemaParser::XmlDefinition);
+		return this->BaseObject::__getSourceCode(SchemaParser::XmlCode);
 	}
 }
 
@@ -74,7 +74,7 @@ void Textbox::operator = (Textbox &txtbox)
 	this->layers = txtbox.layers;
 }
 
-void Textbox::setTextAttribute(unsigned attrib, bool value)
+void Textbox::setTextAttribute(TextAttrib attrib, bool value)
 {
 	if(attrib > UnderlineText)
 		throw Exception(ErrorCode::RefAttributeInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -92,7 +92,7 @@ QColor Textbox::getTextColor()
 	return text_color;
 }
 
-bool Textbox::getTextAttribute(unsigned attrib)
+bool Textbox::getTextAttribute(TextAttrib attrib)
 {
 	if(attrib > UnderlineText)
 		throw Exception(ErrorCode::RefAttributeInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);

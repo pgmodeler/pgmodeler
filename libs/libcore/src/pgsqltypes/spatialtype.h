@@ -27,20 +27,26 @@
 
 #include "templatetype.h"
 
-class SpatialType: public TemplateType<SpatialType>{
+class __libcore SpatialType: public TemplateType<SpatialType>{
 	private:
-		unsigned variation;
+		static QStringList type_names;
+
+	public:
+		enum VariationId: unsigned {
+			NoVar,
+			VarZ,
+			VarM,
+			VarZm
+		};
+
+	private:
+		VariationId variation;
 
 		/*! \brief Used in conjunction with spatial_type, and denotes the SRID value
 	 for the spatial type. This value goes from -1 to n. */
 		int srid;
 
 	public:
-		static constexpr unsigned NoVar = 0,
-		VarZ = 1,
-		VarM = 2,
-		VarZm = 3;
-
 		static constexpr unsigned Point = 1,
 		LineString = 2,
 		Polygon = 3,
@@ -50,17 +56,23 @@ class SpatialType: public TemplateType<SpatialType>{
 		Geometry = 7,
 		GeometryCollection = 8;
 
-		SpatialType(const QString &type_name, int srid, unsigned variation_id=SpatialType::NoVar);
-		SpatialType(unsigned type_id, int srid, unsigned var_id=SpatialType::NoVar);
+		SpatialType(const QString &type_name, int srid, VariationId variation_id=SpatialType::NoVar);
+		SpatialType(unsigned type_id, int srid, VariationId var_id=SpatialType::NoVar);
 		SpatialType();
 
-		void setVariation(unsigned var);
-		unsigned getVariation();
+		void setVariation(VariationId var);
+		VariationId getVariation();
 
 		void setSRID(int srid);
 		int getSRID();
 
 		QString operator * ();
+
+		static QStringList getTypes();
+
+		unsigned setType(unsigned type_id) override;
+		unsigned setType(const QString &type_name) override;
+		QString getTypeName(unsigned type_id) override;
 };
 
 #endif 

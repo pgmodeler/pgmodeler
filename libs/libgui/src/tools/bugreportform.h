@@ -30,7 +30,7 @@
 #include "utils/syntaxhighlighter.h"
 #include "widgets/fileselectorwidget.h"
 
-class BugReportForm : public QDialog, public Ui::BugReportForm {
+class __libgui BugReportForm : public QDialog, public Ui::BugReportForm {
 	private:
 		Q_OBJECT
 		

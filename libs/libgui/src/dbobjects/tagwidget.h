@@ -29,7 +29,7 @@
 #include "widgets/colorpickerwidget.h"
 #include "ui_tagwidget.h"
 
-class TagWidget: public BaseObjectWidget, public Ui::TagWidget {
+class __libgui TagWidget: public BaseObjectWidget, public Ui::TagWidget {
 	private:
 		Q_OBJECT
 

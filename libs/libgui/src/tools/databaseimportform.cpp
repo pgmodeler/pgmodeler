@@ -46,31 +46,31 @@ DatabaseImportForm::DatabaseImportForm(QWidget *parent, Qt::WindowFlags f) : QDi
 	buttons_wgt->setEnabled(false);
 	connection_gb->setFocusProxy(connections_cmb);
 
-	connect(close_btn, SIGNAL(clicked(bool)), this, SLOT(close()));
-	connect(connections_cmb, SIGNAL(activated(int)), this, SLOT(listDatabases()));
-	connect(database_cmb, SIGNAL(activated(int)), this, SLOT(listObjects()));
-	connect(import_sys_objs_chk, SIGNAL(clicked(bool)), this, SLOT(listObjects()));
-	connect(import_ext_objs_chk, SIGNAL(clicked(bool)), this, SLOT(listObjects()));
-	connect(by_oid_chk, SIGNAL(toggled(bool)), this, SLOT(filterObjects()));
-	connect(expand_all_tb, SIGNAL(clicked(bool)), db_objects_tw, SLOT(expandAll()));
-	connect(collapse_all_tb, SIGNAL(clicked(bool)), db_objects_tw, SLOT(collapseAll()));
-	connect(db_objects_tw, SIGNAL(itemChanged(QTreeWidgetItem*,int)), this, SLOT(setItemCheckState(QTreeWidgetItem*,int)));
-	connect(select_all_tb, SIGNAL(clicked(bool)), this, SLOT(setItemsCheckState()));
-	connect(clear_all_tb, SIGNAL(clicked(bool)), this, SLOT(setItemsCheckState()));
-	connect(filter_edt, SIGNAL(textChanged(QString)), this, SLOT(filterObjects()));
-	connect(import_btn, SIGNAL(clicked(bool)), this, SLOT(importDatabase()));
-	connect(cancel_btn, SIGNAL(clicked(bool)), this, SLOT(cancelImport()));
-	connect(objs_filter_wgt, SIGNAL(s_filterApplyingRequested()), this, SLOT(listObjects()));
+	connect(close_btn, &QPushButton::clicked, this, &DatabaseImportForm::close);
+	connect(connections_cmb, &QComboBox::activated, this, qOverload<>(&DatabaseImportForm::listDatabases));
+	connect(database_cmb, &QComboBox::activated, this, qOverload<>(&DatabaseImportForm::listObjects));
+	connect(import_sys_objs_chk, &QCheckBox::clicked, this, qOverload<>(&DatabaseImportForm::listObjects));
+	connect(import_ext_objs_chk, &QCheckBox::clicked, this, qOverload<>(&DatabaseImportForm::listObjects));
+	connect(by_oid_chk,  &QCheckBox::toggled, this, qOverload<>(&DatabaseImportForm::filterObjects));
+	connect(expand_all_tb, &QToolButton::clicked, db_objects_tw, &QTreeWidget::expandAll);
+	connect(collapse_all_tb, &QToolButton::clicked, db_objects_tw, &QTreeWidget::collapseAll);
+	connect(db_objects_tw, &QTreeWidget::itemChanged, this, qOverload<QTreeWidgetItem *, int>(&DatabaseImportForm::setItemCheckState));
+	connect(select_all_tb, &QToolButton::clicked, this, &DatabaseImportForm::setItemsCheckState);
+	connect(clear_all_tb, &QToolButton::clicked, this, &DatabaseImportForm::setItemsCheckState);
+	connect(filter_edt, &QLineEdit::textChanged, this, qOverload<>(&DatabaseImportForm::filterObjects));
+	connect(import_btn, &QPushButton::clicked, this,  &DatabaseImportForm::importDatabase);
+	connect(cancel_btn, &QPushButton::clicked, this,  &DatabaseImportForm::cancelImport);
+	connect(objs_filter_wgt, &ObjectsFilterWidget::s_filterApplyingRequested, this, qOverload<>(&DatabaseImportForm::listObjects));
 
-	connect(objs_filter_wgt, &ObjectsFilterWidget::s_filtersRemoved, [&](){
+	connect(objs_filter_wgt, &ObjectsFilterWidget::s_filtersRemoved, this, [this](){
 		listObjects();
 	});
 
-	connect(import_to_model_chk, &QCheckBox::toggled,
-			[&](bool checked){ create_model=!checked; });
+	connect(import_to_model_chk, &QCheckBox::toggled, this, [this](bool checked){
+		create_model=!checked;
+	});
 
-	connect(database_cmb, &QComboBox::currentTextChanged,
-	[&]() {
+	connect(database_cmb, &QComboBox::currentTextChanged, this, [this]() {
 		bool enable = database_cmb->currentIndex() > 0;
 
 		if(database_cmb->currentIndex()==0)
@@ -115,19 +115,19 @@ void DatabaseImportForm::createThread()
 	import_helper=new DatabaseImportHelper;
 	import_helper->moveToThread(import_thread);
 
-	connect(import_thread, &QThread::started, [&](){
+	connect(import_thread, &QThread::started, this, [this](){
 		output_trw->setUniformRowHeights(true);
 	});
 
-	connect(import_thread, &QThread::finished, [&](){
+	connect(import_thread, &QThread::finished, this, [this](){
 		output_trw->setUniformRowHeights(false);
 	});
 
-	connect(import_thread, SIGNAL(started()), import_helper, SLOT(importDatabase()));
-	connect(import_helper, SIGNAL(s_importCanceled()), this, SLOT(handleImportCanceled()));
-	connect(import_helper, SIGNAL(s_importFinished(Exception)), this, SLOT(handleImportFinished(Exception)));
-	connect(import_helper, SIGNAL(s_importAborted(Exception)), this, SLOT(captureThreadError(Exception)));
-	connect(import_helper, SIGNAL(s_progressUpdated(int,QString,ObjectType)), this, SLOT(updateProgress(int,QString,ObjectType)), Qt::BlockingQueuedConnection);
+	connect(import_thread, &QThread::started, import_helper, &DatabaseImportHelper::importDatabase);
+	connect(import_helper, &DatabaseImportHelper::s_importCanceled, this, &DatabaseImportForm::handleImportCanceled);
+	connect(import_helper, &DatabaseImportHelper::s_importFinished, this, &DatabaseImportForm::handleImportFinished);
+	connect(import_helper, &DatabaseImportHelper::s_importAborted, this, &DatabaseImportForm::captureThreadError);
+	connect(import_helper, &DatabaseImportHelper::s_progressUpdated, this, &DatabaseImportForm::updateProgress, Qt::BlockingQueuedConnection);
 }
 
 void DatabaseImportForm::destroyThread()
@@ -187,7 +187,7 @@ void DatabaseImportForm::listFilteredObjects(DatabaseImportHelper &import_hlp, Q
 			obj_type = static_cast<ObjectType>(attr[Attributes::ObjectType].toUInt());
 			item->setText(BaseObject::getTypeName(obj_type));
 			item->setIcon(QIcon(GuiUtilsNs::getIconPath(obj_type)));
-			item->setData(Qt::UserRole, enum_cast(obj_type));
+			item->setData(Qt::UserRole, enum_t(obj_type));
 			flt_objects_tbw->setItem(row, 1, item);
 
 			// Object OID column
@@ -270,17 +270,6 @@ void DatabaseImportForm::setItemsCheckState()
 		}
 		db_objects_tw->blockSignals(false);
 	}
-	/*else
-	{
-		int row_cnt = filtered_objs_tbw->rowCount();
-
-		filtered_objs_tbw->blockSignals(true);
-
-		for(int row = 0; row < row_cnt; row++)
-			filtered_objs_tbw->item(row, 0)->setCheckState(chk_state);
-
-		filtered_objs_tbw->blockSignals(false);
-	}*/
 
 	import_btn->setEnabled(chk_state == Qt::Checked);
 }
@@ -824,7 +813,7 @@ void DatabaseImportForm::listObjects(DatabaseImportHelper &import_helper, QTreeW
 			{
 				task_prog_wgt.setWindowTitle(tr("Retrieving objects from database..."));
 				task_prog_wgt.show();
-				task_prog_wgt.updateProgress(1, tr("Retrieving cluster level objects..."), enum_cast(ObjectType::Database));
+				task_prog_wgt.updateProgress(1, tr("Retrieving cluster level objects..."), enum_t(ObjectType::Database));
 			}
 
 			tree_wgt->clear();
@@ -842,7 +831,7 @@ void DatabaseImportForm::listObjects(DatabaseImportHelper &import_helper, QTreeW
 				attribs=catalog.getObjectsAttributes(ObjectType::Database, "", "", {}, {{Attributes::Name, import_helper.getCurrentDatabase()}});
 
 				db_item->setData(ObjectId, Qt::UserRole, attribs[0].at(Attributes::Oid).toUInt());
-				db_item->setData(ObjectTypeId, Qt::UserRole, enum_cast(ObjectType::Database));
+				db_item->setData(ObjectTypeId, Qt::UserRole, enum_t(ObjectType::Database));
 
 				db_item->setToolTip(0, QString("OID: %1").arg(attribs[0].at(Attributes::Oid)));
 				tree_wgt->addTopLevelItem(db_item);
@@ -871,7 +860,7 @@ void DatabaseImportForm::listObjects(DatabaseImportHelper &import_helper, QTreeW
 
 				while(!sch_items.empty())
 				{
-					task_prog_wgt.updateProgress(static_cast<int>(aux_prog), tr("Retrieving objects of schema `%1'...").arg(sch_items.back()->text(0)), enum_cast(ObjectType::Schema));
+					task_prog_wgt.updateProgress(static_cast<int>(aux_prog), tr("Retrieving objects of schema `%1'...").arg(sch_items.back()->text(0)), enum_t(ObjectType::Schema));
 
 					//Retrieving and listing the schema scoped objects
 					tab_items=DatabaseImportForm::updateObjectsTree(import_helper, tree_wgt,
@@ -886,7 +875,7 @@ void DatabaseImportForm::listObjects(DatabaseImportHelper &import_helper, QTreeW
 						if(aux_prog > 99)	aux_prog=99;
 
 						obj_type = static_cast<ObjectType>(tab_items.back()->data(ObjectTypeId, Qt::UserRole).toUInt());
-						task_prog_wgt.updateProgress(static_cast<int>(aux_prog), tr("Retrieving objects of `%1' (%2)...").arg(tab_items.back()->text(0)).arg(BaseObject::getTypeName(obj_type)), enum_cast(obj_type));
+						task_prog_wgt.updateProgress(static_cast<int>(aux_prog), tr("Retrieving objects of `%1' (%2)...").arg(tab_items.back()->text(0)).arg(BaseObject::getTypeName(obj_type)), enum_t(obj_type));
 						DatabaseImportForm::updateObjectsTree(import_helper, tree_wgt,
 																									BaseObject::getChildObjectTypes(obj_type), checkable_items, disable_empty_grps,
 																									tab_items.back(), sch_items.back()->text(0), tab_items.back()->text(0));
@@ -957,11 +946,11 @@ std::vector<QTreeWidgetItem *> DatabaseImportForm::updateObjectsTree(DatabaseImp
 
 				//Group items does contains a zero valued id to indicate that is not a valide object
 				group->setData(ObjectId, Qt::UserRole, 0);
-				group->setData(ObjectTypeId, Qt::UserRole, enum_cast(grp_type));
+				group->setData(ObjectTypeId, Qt::UserRole, enum_t(grp_type));
 				group->setData(ObjectCount, Qt::UserRole, 0);
 				group->setData(ObjectSchema, Qt::UserRole, schema);
 				group->setData(ObjectTable, Qt::UserRole, table);
-				group->setData(ObjectGroupId, Qt::UserRole, -(enum_cast(grp_type) + (root ? root->data(ObjectId, 0).toUInt() : 0)));
+				group->setData(ObjectGroupId, Qt::UserRole, -(enum_t(grp_type) + (root ? root->data(ObjectId, 0).toUInt() : 0)));
 
 				gen_groups[grp_type]=group;
 				groups_list.push_back(group);
@@ -1042,7 +1031,7 @@ std::vector<QTreeWidgetItem *> DatabaseImportForm::updateObjectsTree(DatabaseImp
 					item->setToolTip(0,tooltip.arg(oid));
 
 				//Stores the object's type as the second data of the item
-				item->setData(ObjectTypeId, Qt::UserRole, enum_cast(obj_type));
+				item->setData(ObjectTypeId, Qt::UserRole, enum_t(obj_type));
 
 				//Stores the schema and the table's name of the object
 				item->setData(ObjectSchema, Qt::UserRole, schema);

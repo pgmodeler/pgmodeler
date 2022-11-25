@@ -30,7 +30,7 @@
 #include "ui_modeloverviewwidget.h"
 #include "modelwidget.h"
 
-class ModelOverviewWidget: public QWidget, public Ui::ModelOverviewWidget {
+class __libgui ModelOverviewWidget: public QWidget, public Ui::ModelOverviewWidget {
 	private:
 		Q_OBJECT
 

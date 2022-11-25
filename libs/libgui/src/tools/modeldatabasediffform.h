@@ -35,11 +35,20 @@
 #include "settings/baseconfigwidget.h"
 #include "widgets/fileselectorwidget.h"
 #include "widgets/objectsfilterwidget.h"
+#include "widgets/findreplacewidget.h"
 #include <QThread>
 
-class ModelDatabaseDiffForm: public BaseConfigWidget, public Ui::ModelDatabaseDiffForm {
+class __libgui ModelDatabaseDiffForm: public BaseConfigWidget, public Ui::ModelDatabaseDiffForm {
 	private:
 		Q_OBJECT
+
+		//! \brief Constants used to reference the thread/helper to be handled in createThread() and destroyThread()
+		enum ThreadId {
+			SrcImportThread,
+			ImportThread,
+			DiffThread,
+			ExportThread
+		};
 
 		/*! \brief Indicates if the full output generated during the process should be displayed
 		 * When this attribute is true, only errors and some key info messages are displayed. */
@@ -56,6 +65,8 @@ class ModelDatabaseDiffForm: public BaseConfigWidget, public Ui::ModelDatabaseDi
 		FileSelectorWidget *file_sel;
 
 		ObjectsFilterWidget *pd_filter_wgt;
+
+		FindReplaceWidget *find_sql_wgt;
 
 		//! \brief Custom delegate used to paint html texts in output tree
 		HtmlItemDelegate *htmlitem_del;
@@ -105,10 +116,10 @@ class ModelDatabaseDiffForm: public BaseConfigWidget, public Ui::ModelDatabaseDi
 		void showEvent(QShowEvent *);
 
 		//! \brief Creates the helpers and threads
-		void createThread(unsigned thread_id);
+		void createThread(ThreadId thread_id);
 
 		//! \brief Destroy the helpers and threads
-		void destroyThread(unsigned thread_id);
+		void destroyThread(ThreadId thread_id);
 
 		//! \brief Destroy the imported model
 		void destroyModel();
@@ -121,12 +132,6 @@ class ModelDatabaseDiffForm: public BaseConfigWidget, public Ui::ModelDatabaseDi
 
 		//! \brief Returns true when one or more threads of the whole diff process are running.
 		bool isThreadsRunning();
-
-		//! \brief Constants used to reference the thread/helper to be handled in createThread() and destroyThread()
-		static constexpr unsigned SrcImportThread=0,
-		ImportThread=1,
-		DiffThread=2,
-		ExportThread=3;
 
 		//! \brief Applies the loaded configurations to the form. In this widget only list the loaded presets
 		virtual void applyConfiguration();
@@ -173,7 +178,7 @@ class ModelDatabaseDiffForm: public BaseConfigWidget, public Ui::ModelDatabaseDi
 		void handleDiffFinished();
 		void handleExportFinished();
 		void handleErrorIgnored(QString err_code, QString err_msg, QString cmd);
-		void importDatabase(unsigned thread_id);
+		void importDatabase(ThreadId thread_id);
 		void diffModels();
 		void exportDiff(bool confirm=true);
 		void filterDiffInfos();

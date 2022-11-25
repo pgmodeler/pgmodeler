@@ -28,7 +28,7 @@
 #include "baseobject.h"
 #include "foreigndatawrapper.h"
 
-class ForeignServer: public BaseObject, public ForeignObject {
+class __libcore ForeignServer: public BaseObject, public ForeignObject {
 	private:
 		//! \brief The foreign data wrapper which manages the server
 		ForeignDataWrapper *fdata_wrapper;
@@ -46,9 +46,9 @@ class ForeignServer: public BaseObject, public ForeignObject {
 		QString getVersion();
 		ForeignDataWrapper *getForeignDataWrapper();
 
-		virtual QString getCodeDefinition(unsigned def_type);
-		virtual QString getCodeDefinition(unsigned def_type, bool reduced_form);
-		virtual QString getAlterDefinition(BaseObject *object);
+		virtual QString getSourceCode(SchemaParser::CodeType def_type);
+		virtual QString getSourceCode(SchemaParser::CodeType def_type, bool reduced_form);
+		virtual QString getAlterCode(BaseObject *object);
 };
 
 #endif

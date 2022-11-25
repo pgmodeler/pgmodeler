@@ -59,12 +59,12 @@ ForeignDataWrapper *ForeignServer::getForeignDataWrapper()
 	return fdata_wrapper;
 }
 
-QString ForeignServer::getCodeDefinition(unsigned def_type)
+QString ForeignServer::getSourceCode(SchemaParser::CodeType def_type)
 {
-	return getCodeDefinition(def_type, false);
+	return getSourceCode(def_type, false);
 }
 
-QString ForeignServer::getCodeDefinition(unsigned def_type, bool reduced_form)
+QString ForeignServer::getSourceCode(SchemaParser::CodeType def_type, bool reduced_form)
 {
 	QString code_def=getCachedCode(def_type, reduced_form);
 	if(!code_def.isEmpty()) return code_def;
@@ -75,32 +75,32 @@ QString ForeignServer::getCodeDefinition(unsigned def_type, bool reduced_form)
 
 	if(fdata_wrapper)
 	{
-		if(def_type == SchemaParser::SqlDefinition)
+		if(def_type == SchemaParser::SqlCode)
 			attributes[Attributes::Fdw] = fdata_wrapper->getName(true);
 		else
-			attributes[Attributes::Fdw] = fdata_wrapper->getCodeDefinition(def_type, true);
+			attributes[Attributes::Fdw] = fdata_wrapper->getSourceCode(def_type, true);
 	}
 
 	attributes[Attributes::Options] = getOptionsAttribute(def_type);
 
-	return this->BaseObject::getCodeDefinition(def_type, reduced_form);
+	return this->BaseObject::getSourceCode(def_type, reduced_form);
 }
 
-QString ForeignServer::getAlterDefinition(BaseObject *object)
+QString ForeignServer::getAlterCode(BaseObject *object)
 {
 	try
 	{
 		ForeignServer *server=dynamic_cast<ForeignServer *>(object);
 		attribs_map attribs;
 
-		attributes[Attributes::AlterCmds] = BaseObject::getAlterDefinition(server);
+		attributes[Attributes::AlterCmds] = BaseObject::getAlterCode(server);
 		getAlteredAttributes(server, attribs);
 
 		if(this->version != server->version)
 			attribs[Attributes::Version] = server->version;
 
 		copyAttributes(attribs);
-		return BaseObject::getAlterDefinition(this->getSchemaName(), attributes, false, true);
+		return BaseObject::getAlterCode(this->getSchemaName(), attributes, false, true);
 	}
 	catch(Exception &e)
 	{

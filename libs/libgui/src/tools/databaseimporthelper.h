@@ -31,7 +31,7 @@
 #include "widgets/modelwidget.h"
 #include <random>
 
-class DatabaseImportHelper: public QObject {
+class __libgui DatabaseImportHelper: public QObject {
 	private:
 		Q_OBJECT
 		
@@ -54,7 +54,7 @@ class DatabaseImportHelper: public QObject {
 		Connection connection;
 		
 		//! \brief Stores the current configured catalog filter
-		unsigned import_filter;
+		Catalog::QueryFilter import_filter;
 		
 		//! \brief Indicates that import was canceled by user (only on thread mode)
 		bool import_canceled,
@@ -290,7 +290,7 @@ class DatabaseImportHelper: public QObject {
 		void s_progressUpdated(int progress, QString msg, ObjectType obj_type=ObjectType::BaseObject);
 		
 		//! \brief This signal is emited when the import has finished
-		void s_importFinished(Exception e=Exception());
+		void s_importFinished(Exception e = Exception());
 		
 		//! \brief This signal is emited when the import has been cancelled
 		void s_importCanceled();

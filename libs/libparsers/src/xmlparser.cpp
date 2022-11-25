@@ -267,7 +267,7 @@ void XmlParser::restartParser()
 	xmlResetLastError();
 }
 
-bool XmlParser::accessElement(unsigned elem_type)
+bool XmlParser::accessElement(ElementType elem_type)
 {
 	bool has_elem;
 	xmlNode *elems[4];
@@ -310,29 +310,35 @@ bool XmlParser::accessElement(unsigned elem_type)
 	return has_elem;
 }
 
-bool XmlParser::hasElement(unsigned elem_type, xmlElementType xml_node_type)
+bool XmlParser::hasElement(ElementType elem_type, xmlElementType xml_node_type)
 {
 	if(!root_elem)
 		throw Exception(ErrorCode::OprNotAllocatedElementTree,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	if(elem_type==RootElement)
+	{
 		/* Returns the verification if the current element has a parent.
 		 The element must be different from the root, because the root element
 		 is not connected to a parent */
 		return (curr_elem!=root_elem && curr_elem->parent!=nullptr &&
 						(xml_node_type==0 || (xml_node_type!=0 && curr_elem->parent->type==xml_node_type)));
+	}
 	else if(elem_type==ChildElement)
+	{
 		//Returns the verification if the current element has children
 		return (curr_elem->children!=nullptr &&
 						(xml_node_type==0 || (xml_node_type!=0 && curr_elem->children->type==xml_node_type)));
+	}
 	else if(elem_type==NextElement)
+	{
 		return (curr_elem->next!=nullptr &&
 						(xml_node_type==0 || (xml_node_type!=0 && curr_elem->next->type==xml_node_type)));
+	}
 	else
 		/* The second comparison in the expression is made for the root element
-		 because libxml2 places the previous element as the root itself */
+		 * because libxml2 places the previous element as the root itself */
 		return (curr_elem->prev!=nullptr && curr_elem->prev!=root_elem &&
-															(xml_node_type==0 || (xml_node_type!=0 && curr_elem->prev->type==xml_node_type)));
+						(xml_node_type==0 || (xml_node_type!=0 && curr_elem->prev->type==xml_node_type)));
 }
 
 bool XmlParser::hasAttributes()

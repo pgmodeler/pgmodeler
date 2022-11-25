@@ -30,7 +30,7 @@
 #include "pgsqltypewidget.h"
 #include "widgets/objectstablewidget.h"
 
-class DomainWidget: public BaseObjectWidget, public Ui::DomainWidget {
+class __libgui DomainWidget: public BaseObjectWidget, public Ui::DomainWidget {
 	private:
 		Q_OBJECT
 		

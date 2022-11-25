@@ -27,7 +27,10 @@
 
 #include "templatetype.h"
 
-class EventType: public TemplateType<EventType>{
+class __libcore EventType: public TemplateType<EventType>{
+	private:
+		static QStringList type_names;
+
 	public:
 		static constexpr unsigned OnSelect = 1,
 		OnInsert = 2,
@@ -38,6 +41,12 @@ class EventType: public TemplateType<EventType>{
 		EventType(const QString &type_name);
 		EventType(unsigned type_id);
 		EventType();
+
+		static QStringList getTypes();
+
+		unsigned setType(unsigned type_id) override;
+		unsigned setType(const QString &type_name) override;
+		QString getTypeName(unsigned type_id) override;
 
 		/*! \brief These two operators were created to permit the use of the
 		 class EventType on STL containers (specially maps) */

@@ -30,7 +30,7 @@
 #include "element.h"
 #include "simplecolumn.h"
 
-class IndexElement: public Element {
+class __libcore IndexElement: public Element {
 	private:
 		//! \brief Collation referenced by the element
 		Collation *collation;
@@ -47,7 +47,7 @@ class IndexElement: public Element {
 		Collation *getCollation();
 
 		//! \brief Returns the SQL / XML code definition for the index element
-		virtual QString getCodeDefinition(unsigned def_type) final;
+		virtual QString getSourceCode(SchemaParser::CodeType def_type) final;
 };
 
 #endif

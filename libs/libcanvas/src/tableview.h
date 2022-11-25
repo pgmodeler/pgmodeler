@@ -30,7 +30,7 @@
 #include "tabletitleview.h"
 #include "tableobjectview.h"
 
-class TableView: public BaseTableView {
+class __libcanvas TableView: public BaseTableView {
 	private:
 		Q_OBJECT
 
@@ -38,7 +38,7 @@ class TableView: public BaseTableView {
 
 	public:
 		TableView(PhysicalTable *table);
-		QPointF getConnectionPoints(TableObject *tab_obj, unsigned pnt_type);
+		QPointF getConnectionPoints(TableObject *tab_obj, ConnectionPoint conn_pnt);
 
 	private slots:
 		void configureObject();

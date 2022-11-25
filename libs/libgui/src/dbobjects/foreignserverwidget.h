@@ -29,7 +29,7 @@
 #include "ui_foreignserverwidget.h"
 #include "widgets/objectstablewidget.h"
 
-class ForeignServerWidget: public BaseObjectWidget, public Ui::ForeignServerWidget {
+class __libgui ForeignServerWidget: public BaseObjectWidget, public Ui::ForeignServerWidget {
 	private:
 		Q_OBJECT
 

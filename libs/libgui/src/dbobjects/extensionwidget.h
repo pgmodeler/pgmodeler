@@ -28,7 +28,7 @@
 #include "baseobjectwidget.h"
 #include "ui_extensionwidget.h"
 
-class ExtensionWidget: public BaseObjectWidget, public Ui::ExtensionWidget {
+class __libgui ExtensionWidget: public BaseObjectWidget, public Ui::ExtensionWidget {
 	private:
 		Q_OBJECT
 		

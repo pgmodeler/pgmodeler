@@ -38,9 +38,10 @@ FileSelectorWidget::FileSelectorWidget(QWidget *parent) : QWidget(parent)
 	warn_ico_lbl->setPixmap(QPixmap(GuiUtilsNs::getIconPath("alert")));
 	warn_ico_lbl->setToolTip(tr("No such file or directory!"));
 
-	connect(sel_file_tb, SIGNAL(clicked(bool)), this, SLOT(openFileDialog()));
-	connect(rem_file_tb, SIGNAL(clicked(bool)), this, SLOT(clearSelector()));
-	connect(filename_edt, &QLineEdit::textChanged, [&](const QString &text){
+	connect(sel_file_tb, &QToolButton::clicked, this, &FileSelectorWidget::openFileDialog);
+	connect(rem_file_tb, &QToolButton::clicked, this, &FileSelectorWidget::clearSelector);
+
+	connect(filename_edt, &QLineEdit::textChanged, this, [this](const QString &text){
 		rem_file_tb->setEnabled(!text.isEmpty());
 		validateSelectedFile();
 		emit s_selectorChanged(!text.isEmpty());
@@ -49,12 +50,10 @@ FileSelectorWidget::FileSelectorWidget(QWidget *parent) : QWidget(parent)
 
 bool FileSelectorWidget::eventFilter(QObject *obj, QEvent *evnt)
 {
-	if(isEnabled() && evnt->type() == QEvent::FocusIn &&
+	if(isEnabled() && evnt->type() == QEvent::MouseButtonPress &&
 		 QApplication::mouseButtons() == Qt::LeftButton && obj == filename_edt)
 	{
-		QFocusEvent *focus_evnt = dynamic_cast<QFocusEvent *>(evnt);
-
-		if(!allow_filename_input && !read_only && focus_evnt->reason() == Qt::MouseFocusReason)
+		if(!allow_filename_input && !read_only)
 		{
 			openFileDialog();
 			return true;
@@ -144,13 +143,13 @@ void FileSelectorWidget::setReadOnly(bool value)
 
 	if(value)
 	{
-		disconnect(sel_file_tb, SIGNAL(clicked(bool)), this, SLOT(openFileDialog()));
-		connect(sel_file_tb, SIGNAL(clicked(bool)), this, SLOT(openFileExternally()));
+		disconnect(sel_file_tb, &QToolButton::clicked, this, &FileSelectorWidget::openFileDialog);
+		connect(sel_file_tb, &QToolButton::clicked, this, &FileSelectorWidget::openFileExternally);
 	}
 	else
 	{
-		connect(sel_file_tb, SIGNAL(clicked(bool)), this, SLOT(openFileDialog()));
-		disconnect(sel_file_tb, SIGNAL(clicked(bool)), this, SLOT(openFileExternally()));
+		connect(sel_file_tb, &QToolButton::clicked, this, &FileSelectorWidget::openFileDialog);
+		disconnect(sel_file_tb, &QToolButton::clicked, this, &FileSelectorWidget::openFileExternally);
 	}
 }
 

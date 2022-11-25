@@ -1,6 +1,221 @@
 Changelog
 ---------
 
+v1.0.0-beta1
+------
+<em>Release date: November 25, 2022</em><br/>
+
+* [New] Added the file themes/light/extra-ui-style.conf that holds extra style for the light theme.
+* [New] Added dllexport symbol __lib* to functions and static attributes declarations in all namespaces.
+* [New] Created defines for each library name __lib[NAME] in file [NAME]global.h which wraps Q_DECL_EXPORT/Q_DECL_IMPORT to export or import symbols of the libraries (needed for Windows).
+* [New] Added the ability to toggle the magnifier tool in the main window.
+* [New] Added a text search widget in the diff code preview on ModelDatabaseDiffForm.
+* [New] Added unary operators for enum operations: |= , &= , ^=
+* [New] Added a new implementation of CSV file loading based on RFC4180. Now the classes CsvParse and CsvDocument are responsible for parsing CSV files.
+* [Change] Disabled unneeded conditional code in MainWindow.
+* [Change] Adjusted the font weight in toolbar actions.
+* [Change] Minor text adjustment in DonateWidget.
+* [Change] Minor adjustments in UI stylesheets.
+* [Change] Refactored TemplateType and all its derived classes to avoid the error "explicit specialization of 'type_names'" when building with clang.
+* [Change] Adjusted the zoom in/out actions enabled state according to the current model's zoom factor.
+* [Change] Adjusted AppearanceConfigWidget to load the extra-ui-style.conf.
+* [Change] Adjusted the behavior of the magnifier action in MainWindow.
+* [Change] Minor adjustment in MainWindow::setBottomFloatingWidgetPos to take into account the main menu bar height when visible.
+* [Change] Changed the MetadataHandlingForm's Apply and Cancel actions to Execute and Close.
+* [Change] Minor refactor in ModelFixForm to remove clangd warning.
+* [Change] Adjusted the icon of the current input model/DB in the partial diff tab in ModelDatabaseDiffForm.
+* [Change] Adjusting the context object in thread signal/slot connections in ModelExportForm.
+* [Change] Adjusted plugins and arranged object actions in the main menu.
+* [Change] Adjusted the captured variables in lambda slots avoiding default capturing [&].
+* [Change] Added a context object parameter in connect() which receives lambda slots.
+* [Change] Refactored MainWindow signal/slot connections to the new syntax.
+* [Change] Refactored ModelWidget signal/slot connections to the new syntax.
+* [Change] Refactored ModelDatabaseDiffForm signal/slot connections to the new syntax.
+* [Change] Refactored ModelExportForm signal/slot connections to the new syntax.
+* [Change] Refactored ModelObjectsWidget signal/slot connections to the new syntax.
+* [Change] Refactored ModelValidationWidget signal/slot connections to the new syntax.
+* [Change] Refactored SQLExecutionWidget signal/slot connections to the new syntax.
+* [Change] Refactored TableDataWidget signal/slot connections to the new syntax.
+* [Change] Refactored SourceCodeWidget signal/slot connections to the new syntax.
+* [Change] Refactored UpdateNotifierWidget signal/slot connections to the new syntax.
+* [Change] Refactored OperationListWidget signal/slot connections to the new syntax.
+* [Change] Refactored ObjectsTableWidget signal/slot connections to the new syntax.
+* [Change] Refactored ObjectsFilterWidget signal/slot connections to the new syntax.
+* [Change] Refactored ObjectSelectorWidget signal/slot connections to the new syntax.
+* [Change] Refactored ObjectRenameWidget signal/slot connections to the new syntax.
+* [Change] Refactored ObjectFinderWidget signal/slot connections to the new syntax.
+* [Change] Refactored ObjectDepsRefsWidget signal/slot connections to the new syntax.
+* [Change] Refactored NumberedTextEditor signal/slot connections to the new syntax.
+* [Change] Refactored NewObjectOverlayWidget signal/slot connections to the new syntax.
+* [Change] Refactored ModelOverviewWidget signal/slot connections to the new syntax.
+* [Change] Refactored ModelNavigationWidget signal/slot connections to the new syntax.
+* [Change] Refactored LineNumbersWidget signal/slot connections to the new syntax.
+* [Change] Refactored LayersWidget signal/slot connections to the new syntax.
+* [Change] Refactored LayersConfigWidget signal/slot connections to the new syntax.
+* [Change] Refactored FindReplaceWidget signal/slot connections to the new syntax.
+* [Change] Refactored FileSelectorWidget signal/slot connections to the new syntax.
+* [Change] Refactored CustomSQLWidget signal/slot connections to the new syntax.
+* [Change] Refactored CsvLoadWidget signal/slot connections to the new syntax.
+* [Change] Refactored ColorPickerWidget signal/slot connections to the new syntax.
+* [Change] Refactored CodeCompletionWidget signal/slot connections to the new syntax.
+* [Change] Refactored ChangelogWidget signal/slot connections to the new syntax.
+* [Change] Refactored SQLToolWidget signal/slot connections to the new syntax.
+* [Change] Disabled custom font size for hint boxes in BaseObjectWidget, ModelDatabaseDiffForm, ModelFixForm, and ModelWidget.
+* [Change] Refactored SwapObjectsIdsWidget signal/slot connections to the new syntax.
+* [Change] Refactored ModelValidationHelper signal/slot connections to the new syntax.
+* [Change] Refactored ModelRestorationForm signal/slot connections to the new syntax.
+* [Change] Refactored ModelFixForm signal/slot connections to the new syntax.
+* [Change] Refactored ModelExportHelper signal/slot connections to the new syntax.
+* [Change] Refactored MetadataHandlingForm signal/slot connections to the new syntax.
+* [Change] Refactored DataManipulationForm signal/slot connections to the new syntax.
+* [Change] Refactored DatabaseImportForm signal/slot connections to the new syntax.
+* [Change] Refactored DatabaseExplorerWidget signal/slot connections to the new syntax.
+* [Change] Refactored BugReportForm signal/slot connections to the new syntax.
+* [Change] Refactored SnippetsConfigWidget signal/slot connections to the new syntax.
+* [Change] Refactored RelationshipConfigWidget signal/slot connections to the new syntax.
+* [Change] Refactored BaseForm::setMainWidget to use the new signal/slot connections to syntax
+* [Change] Refactored PluginsConfigWidget signal/slot connections to the new syntax.
+* [Change] Refactored GeneralConfigWidget signal/slot connections to the new syntax.
+* [Change] Refactored ConnectionConfigWidget signal/slot connections to the new syntax.
+* [Change] Refactored Messagebox signal/slot connections to the new syntax.
+* [Change] Refactored ViewWidget signal/slot connections to the new syntax.
+* [Change] Refactored TypeWidget signal/slot connections to the new syntax.
+* [Change] Refactored TriggerWidget signal/slot connections to the new syntax.
+* [Change] Refactored TextboxWidget signal/slot connections to the new syntax.
+* [Change] Refactored TableWidget signal/slot connections to the new syntax.
+* [Change] Refactored SequenceWidget signal/slot connections to the new syntax.
+* [Change] Refactored RuleWidget signal/slot connections to the new syntax.
+* [Change] Refactored RoleWidget signal/slot connections to the new syntax.
+* [Change] Refactored RelationshipWidget signal/slot connections to the new syntax.
+* [Change] Refactored ReferenceWidget signal/slot connections to the new syntax.
+* [Change] Refactored ProcedureWidget signal/slot connections to the new syntax.
+* [Change] Refactored PolicyWidget signal/slot connections to the new syntax.
+* [Change] Refactored PgSqlTypeWidget signal/slot connections to the new syntax.
+* [Change] Refactored PermissionWidget signal/slot connections to the new syntax.
+* [Change] Refactored ParameterWidget signal/slot connections to the new syntax.
+* [Change] Refactored OperatorClassWidget signal/slot connections to the new syntax.
+* [Change] Minor refactor in CoreUtilsNs::isReservedKeyword.
+* [Change] Removed Qt::WindowContextHelpButtonHint from default window flags in BaseForm constructor.
+* [Change] Refactored IndexWidget signal/slot connections to the new syntax.
+* [Change] Refactored GenericSqlWidget signal/slot connections to the new syntax.
+* [Change] Refactored FunctionWidget signal/slot connections to the new syntax.
+* [Change] Refactored EventTriggerWidget signal/slot connections to the new syntax.
+* [Change] Refactored ElementWidget signal/slot connections to the new syntax.
+* [Change] Refactored ElementsTableWidget signal/slot connections to the new syntax.
+* [Change] Refactored DomainWidget signal/slot connections to the new syntax.
+* [Change] Refactored ConstraintWidget signal/slot connections to the new syntax.
+* [Change] Refactored ColumnWidget signal/slot connections to the new syntax.
+* [Change] Refactored ColumnPickerWidget signal/slot connections to the new syntax.
+* [Change] Refactored CollationWidget signal/slot connections to the new syntax.
+* [Change] Refactored BaseObjectWidget signal/slot connections to the new syntax.
+* [Change] Refactored BaseFunctionWidget signal/slot connections to the new syntax.
+* [Change] Refactored AggregateWidget signal/slot connections to the new syntax.
+* [Change] Refactored BaseForm signal/slot connections to the new syntax.
+* [Change] Refactored SchemaView signal/slot connections to the new syntax.
+* [Change] Refactored TableView signal/slot connections to the new syntax.
+* [Change] Refactored TextboxView signal/slot connections to the new syntax.
+* [Change] Refactored RelationshipView signal/slot connections to the new syntax.
+* [Change] Refactored ObjectsScene signal/slot connections to the new syntax.
+* [Change] Refactored GraphicalView signal/slot connections to the new syntax.
+* [Change] Refactored BaseObjectView signal/slot connections to the new syntax.
+* [Change] Refactored SourceEditorWidget signal/slot connections to the new syntax.
+* [Change] Refactored SchemaEditorForm signal/slot connections to the new syntax.
+* [Change] Refactored PgModelerCliApp signal/slot connections to the new syntax.
+* [Change] Refactored CrashHandlerForm signal/slot connections to the new syntax.
+* [Change] Removed the files basetype.h and basetype.cpp.
+* [Change] Moved all the code from BaseType to TemplateType.
+* [Change] Renamed getCodeDefinition, getAlterDefinition, and getDropDefintion to respectively getSourceCode, getAlterCode, and getDropCode.
+* [Change] Moved the element type ids in XmlParser to XmlParser::ElementType.
+* [Change] Removed unused constants in SourceCodeWidget.
+* [Change] Moved config widget ids constants in ConfigurationForm to ConfigurationForm::ConfWidgetsId.
+* [Change] Moved main window view ids to MainWindow::MWViewsId.
+* [Change] Moved table buttons and item color constants in ObjectsTableWidget to ObjectsTableWidget::ButtonConf and ObjectsTableWidget::TableItemColor.
+* [Change] Moved index attributes (buffering, concurrent, unique) constants to Index::IndexAttribs.
+* [Change] Moved relationship break mode ids in ModelWidget to ModelWidget::RelBreakMode.
+* [Change] Moved validation info type constants in ValidationInfo to ValidationInfo::ValType.
+* [Change] Moved diff type constants in ObjectsDiffInfo to ObjectsDiffInfo::DiffType.
+* [Change] Moved diff options constants in ModelsDiffHelper to ModelsDiffHelper::DiffOptions.
+* [Change] Moved thread ids constants in ModelDatabaseDiffForm to ModelDatabaseDiffForm::ThreadId.
+* [Change] Moved row operation ids constants in DataManipulationForm to DataManipulationForm::OperationId.
+* [Change] Moved object attribute ids in DatabaseImportForm to DatabaseImportForm::ObjectAttrId
+* [Change] Moved icon types and button ids constants in Messagebox to, respectively, Messagebox::IconType and Messagebox::ButtonsId.
+* [Change] Moved tab id constants in RelationshipWidget to RelationshipWidget::TabId.
+* [Change] Moved pending operations ids in MainWindow to MainWindow::PendingOpId.
+* [Change] Minor adjustment in cached name/signature checking in DatabaseImportHelper::getObjectName.
+* [Change] Minor improvement in DatabaseImportHelper::getObjectName to cache names and signatures to avoid repeatedly configuring names on each call.
+* [Change] Moved the type function ids constants in Type to Type::FunctionId.
+* [Change] Moved the type config constants in Type to Type::TypeConfig.
+* [Change] Moved font factor constants in namespace GuiUtils to GuiUtilsNs::FontFactorId.
+* [Change] Moved transition table ids in Trigger to Trigger::TransitionTableId.
+* [Change] Moved transform functions constants in Transform to Transform::FunctionId.
+* [Change] Moved text attributes constants in Textbox to Textbox::TextAttribs.
+* [Change] Minor change in ModelWidget::saveModel to create a backup file in the same places as the original model file.
+* [Change] Refactored BaseObjectView to use ColorId enum.
+* [Change] Moved the Tag::ColorId to the global scope in basegraphicobject.h since the enum usage is not exclusive to tags.
+* [Change] Fixed the underlying type of some enums.
+* [Change] Moved role type and options constants from Role to, respectively, Role::RoleType and Role::RoleOpts.
+* [Change] Moved name pattern constants in Relationship to Relationship::PatternId.
+* [Change] Moved SQL type constants in Reference to Reference::SqlType.
+* [Change] Moved the reference type constants in Reference to Reference::ReferType.
+* [Change] Moved privileges ids constants in Permission to Permission::PrivilegeId.
+* [Change] Moved operator class element type constants in OperatorClassElement to OperatorClassElement::ElementType.
+* [Change] Moved constants related to argument ids and operators ids in Operator to, respectively, Operator::ArgumentId and Operator::OperatorId.
+* [Change] Minor change in databaseimportform.ui, moved the tool buttons that control items selection/collapsing to the top of the section.
+* [Change] Moved function ids constants in Operator to Operator::FunctionId.
+* [Change] Moved chain type constants in Operation to Operation::ChainType.
+* [Change] Moved operation types in Operation to Operation::OperType.
+* [Change] Moved function constants in Language to Language::FunctionId.
+* [Change] Moved version constants in Extension to Extension::VersionId.
+* [Change] Moved the sorting constants of Element to Element::SortOrder.
+* [Change] Moved DatabaseModel change log constants to DatabaseModel::LogFields.
+* [Change] Moved DatabaseModel metadata attributes constants to DatabaseModel::MetaAttrOptions.
+* [Change] Moved the code generation mode constants of DatabaseModel to DatabaseModel::CodeGenMode.
+* [Change] Moved CopyOptions constants to CopyOptions::CopyOpts and CopyOptions::CopyMode.
+* [Change] Moved SpatialType variation constants to enum SpatialType::VariationId.
+* [Change] Moved UserTypeConfig type config constants to enum UserTypeConfig::TypeConf.
+* [Change] Moved Constraint columns constants to enum Constraint::ColumnsId.
+* [Change] Moved Constraint actions events constants to enum Constraint::ActionEvent.
+* [Change] Moved Conversion constants to enum Conversion::EncondingId.
+* [Change] Moved constants Collation::Lc* to Collation::LocaleId.
+* [Change] Moved Cast::*Type to enum Cast::DataTypeId.
+* [Change] Move cast type constants to enum Cast::CastType.
+* [Change] Moved BaseTable::*Section constants to BaseTable::TableSection.
+* [Change] Constants related to relationship type and label ids were moved, respectively, to enums BaseRelationship::RelationshipType and BaseRelationship::RelationshipLabel
+* [Change] Moved the Aggregate::*Func constants to Aggregate::FunctionId enum.
+* [Change] Moved all ResultSet::*Tuple constants to the enum ResultSet::TupleId.
+* [Change] Moved the Catalog query filter constants to Catalog::QueryFilter enum.
+* [Change] Created bitwise operators for enums in enumtype.h.
+* [Change] Moved the constants ObjDescriptor, NameLabel, TypeLabel, and ConstrAliasLabel of TableObjectView to TableObjectView::ChildObjectId.
+* [Change] Moved the constants Connection::Op* to the enum Connection::ConnOperation.
+* [Change] Moved RoundRectItem corner constants to RoundedRectItem::RectCorners.
+* [Change] Moved the global enum CollapseMode to BaseTable::CollapseMode.
+* [Change] The static attributes ObjectsScene::Layer*Color were moved to LayerAttributes scoped enum.
+* [Change] Renamed the enum_cast() to enum_t and moved to enumtype.h.
+* [Change] Moved the constexpr attributes that reference toggler buttons to enum AttributesTogglerItem::TogglerButton.
+* [Change] Reunited all row editing actions in DataManipulationForm in a single menu under "Edit" action.
+* [Change] In SQLToolWidget when requesting the source code display of an object in the objects' tree, the source code pane will be popped up if not being shown.
+* [Change] Minor improvement in CsvParser::parserBuffer to replace Windows/MacOs line breaks (\r\n and \r) by Unix only line break (\n).
+* [Change] Refactored PhysicalTable::getInitialDataCommands to use CsvParser/CsvDocument.
+* [Change] Minor adjustment in CsvParser to raise an exception on the malformed document due to missing close text delimiter.
+* [Change] Fixes the loading of complex CSV files in TableDataWidget.
+* [Change] Changed the way pgModeler imports CSV files to be used as initial table data.
+* [Fix] Minor fix in MainWindow when building with DEMO_VERSION flag.
+* [Fix] Fixed a bug in AppearanceConfigWidget that was randomly changing the UI theme when the user tweaks the UI style form.
+* [Fix] Additional fix for false-positive diffs when functions were using an array of user-defined types.
+* [Fix] Fixed a crash happening in the moment a renamed object got its source reloaded in DatabaseExplorerWidget.
+* [Fix] Fixed a bug in CopyOptions that was not initializing attributes in the default constructor.
+* [Fix] Minor fix in BugReportForm message box text.
+* [Fix] Fixed the tool button style of plugins action in model_actions_tb in MainWindow.
+* [Fix] Minor fix in FileSelectorWidget and ObjectSelectorWidget to capture mouse press instead of focus to display the respective selection dialogs.
+* [Fix] Fixed a bug in StyledTextboxView that was not emitting s_objectDimensionChanged when (re)configuring it.
+* [Fix] Fixed UpdateNotifierWidget style for the dark theme.
+* [Fix] Fixed a bug in Catalog::getCatalogQuery that was not placing the custom filter in the right place in the query.
+* [Fix] Fixed a bug that was resetting the fade-out state of objects.
+* [Fix] Fixed a bug in database import that was failing to import operators in certain cases.
+* [Fix] Fixed a bug when importing functions that contain parameters composed of arrays of user-defined types.
+* [Fix] Fixed a bug in AppearanceConfigWidget that was not persisting changes in minimum opacity and attributes numbers per page spin boxes.
+* [Fix] Minor fix in DatabaseModel::getObject(QString,ObjectType) to search for an object by its signature and name.
+
 v1.0.0-beta
 ------
 <em>Release date: September 10, 2022</em><br/>

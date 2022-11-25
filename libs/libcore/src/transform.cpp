@@ -82,7 +82,7 @@ void Transform::setLanguage(Language *lang)
 	setName("");
 }
 
-void Transform::setFunction(Function *func, unsigned func_id)
+void Transform::setFunction(Function *func, FunctionId func_id)
 {
 	try
 	{
@@ -96,7 +96,7 @@ void Transform::setFunction(Function *func, unsigned func_id)
 	}
 }
 
-void Transform::validateFunction(Function *func, unsigned func_id)
+void Transform::validateFunction(Function *func, FunctionId func_id)
 {
 	if(func_id > ToSqlFunc)
 		throw Exception(ErrorCode::RefFunctionInvalidType, __PRETTY_FUNCTION__, __FILE__, __LINE__);
@@ -144,7 +144,7 @@ Language *Transform::getLanguage()
 	return language;
 }
 
-Function *Transform::getFunction(unsigned func_id)
+Function *Transform::getFunction(FunctionId func_id)
 {
 	if(func_id > ToSqlFunc)
 		throw Exception(ErrorCode::RefFunctionInvalidType, __PRETTY_FUNCTION__, __FILE__, __LINE__);
@@ -152,7 +152,7 @@ Function *Transform::getFunction(unsigned func_id)
 	return functions[func_id];
 }
 
-QString Transform::getCodeDefinition(unsigned def_type)
+QString Transform::getSourceCode(SchemaParser::CodeType def_type)
 {
 	QString code_def=getCachedCode(def_type, false);
 	if(!code_def.isEmpty()) return code_def;
@@ -160,14 +160,14 @@ QString Transform::getCodeDefinition(unsigned def_type)
 	QStringList funcs_attr = {  Attributes::FromSqlFunc,Attributes::ToSqlFunc };
 
 
-	if(def_type == SchemaParser::SqlDefinition)
+	if(def_type == SchemaParser::SqlCode)
 	{
 		attributes[Attributes::Type] = ~type;
 
 		if(language)
 			attributes[Attributes::Language] = language->getName(true);
 
-		for(unsigned func_id = FromSqlFunc; func_id <= ToSqlFunc; func_id++)
+		for(auto func_id : { FromSqlFunc, ToSqlFunc })
 		{
 			if(functions[func_id])
 				attributes[funcs_attr[func_id]] = functions[func_id]->getSignature();
@@ -175,22 +175,22 @@ QString Transform::getCodeDefinition(unsigned def_type)
 	}
 	else
 	{
-		attributes[Attributes::Type] = type.getCodeDefinition(def_type);
+		attributes[Attributes::Type] = type.getSourceCode(def_type);
 
 		if(language)
-			attributes[Attributes::Language] = language->getCodeDefinition(def_type, true);
+			attributes[Attributes::Language] = language->getSourceCode(def_type, true);
 
-		for(unsigned func_id = FromSqlFunc; func_id <= ToSqlFunc; func_id++)
+		for(auto func_id : { FromSqlFunc, ToSqlFunc })
 		{
 			if(functions[func_id])
 			{
 				functions[func_id]->setAttribute(Attributes::RefType, funcs_attr[func_id]);
-				attributes[funcs_attr[func_id]] = functions[func_id]->getCodeDefinition(def_type, true);
+				attributes[funcs_attr[func_id]] = functions[func_id]->getSourceCode(def_type, true);
 			}
 		}
 	}
 
-	return BaseObject::__getCodeDefinition(def_type);
+	return BaseObject::__getSourceCode(def_type);
 }
 
 QString Transform::getSignature(bool)
@@ -198,10 +198,10 @@ QString Transform::getSignature(bool)
 	return obj_name;
 }
 
-QString Transform::getDropDefinition(bool cascade)
+QString Transform::getDropCode(bool cascade)
 {
 	attributes[Attributes::Signature] = QString("FOR %1 LANGUAGE %2").arg(~type).arg(language ? language->getName(true) : Attributes::Undefined);
-	return BaseObject::getDropDefinition(cascade);
+	return BaseObject::getDropCode(cascade);
 }
 
 void Transform::operator = (Transform &transf)

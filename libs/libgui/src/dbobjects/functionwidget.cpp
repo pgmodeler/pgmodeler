@@ -90,17 +90,17 @@ FunctionWidget::FunctionWidget(QWidget *parent): BaseFunctionWidget(parent, Obje
 	behavior_cmb->addItems(BehaviorType::getTypes());
 	parallel_cmb->addItems(ParallelType::getTypes());
 
-	connect(simple_rb, SIGNAL(clicked(bool)), this, SLOT(alternateReturnTypes()));
-	connect(set_rb, SIGNAL(clicked(bool)), this, SLOT(alternateReturnTypes()));
-	connect(table_rb, SIGNAL(clicked(bool)), this, SLOT(alternateReturnTypes()));
+	connect(simple_rb, &QRadioButton::clicked, this, &FunctionWidget::alternateReturnTypes);
+	connect(set_rb, &QRadioButton::clicked, this, &FunctionWidget::alternateReturnTypes);
+	connect(table_rb, &QRadioButton::clicked, this, &FunctionWidget::alternateReturnTypes);
 
-	connect(parameters_tab, SIGNAL(s_rowAdded(int)), this, SLOT(showParameterForm()));
-	connect(parameters_tab, SIGNAL(s_rowEdited(int)), this, SLOT(showParameterForm()));
-	connect(parameters_tab, SIGNAL(s_rowDuplicated(int,int)), this, SLOT(duplicateParameter(int,int)));
+	connect(parameters_tab, &ObjectsTableWidget::s_rowAdded, this, &FunctionWidget::showParameterForm);
+	connect(parameters_tab, &ObjectsTableWidget::s_rowEdited, this, &FunctionWidget::showParameterForm);
+	connect(parameters_tab,  &ObjectsTableWidget::s_rowDuplicated, this, &FunctionWidget::duplicateParameter);
 
-	connect(return_tab, SIGNAL(s_rowAdded(int)), this, SLOT(showParameterForm()));
-	connect(return_tab, SIGNAL(s_rowEdited(int)), this, SLOT(showParameterForm()));
-	connect(return_tab, SIGNAL(s_rowDuplicated(int,int)), this, SLOT(duplicateParameter(int,int)));
+	connect(return_tab, &ObjectsTableWidget::s_rowAdded, this, &FunctionWidget::showParameterForm);
+	connect(return_tab, &ObjectsTableWidget::s_rowEdited, this, &FunctionWidget::showParameterForm);
+	connect(return_tab, &ObjectsTableWidget::s_rowDuplicated, this, &FunctionWidget::duplicateParameter);
 
 	setRequiredField(ret_method_lbl);
 	configureTabOrder();
@@ -186,7 +186,7 @@ void FunctionWidget::setAttributes(DatabaseModel *model, OperationList *op_list,
 		}
 		else
 		{
-			source_code_txt->setPlainText(func->getSourceCode());
+			source_code_txt->setPlainText(func->getFunctionSource());
 		}
 	}
 
@@ -272,8 +272,8 @@ void FunctionWidget::validateConfiguredFunction()
 
 				for(idx = Language::ValidatorFunc; idx <= Language::InlineFunc; idx++)
 				{
-					if(lang->getFunction(idx)==func)
-						lang->setFunction(func, idx);
+					if(lang->getFunction(static_cast<Language::FunctionId>(idx))==func)
+						lang->setFunction(func, static_cast<Language::FunctionId>(idx));
 				}
 			}
 			else if(obj_type == ObjectType::Operator)
@@ -281,8 +281,8 @@ void FunctionWidget::validateConfiguredFunction()
 				oper = dynamic_cast<Operator *>(object);
 				for(idx = Operator::FuncOperator; idx <= Operator::FuncRestrict; idx++)
 				{
-					if(oper->getFunction(idx) == func)
-						oper->setFunction(func, idx);
+					if(oper->getFunction(static_cast<Operator::FunctionId>(idx)) == func)
+						oper->setFunction(func, static_cast<Operator::FunctionId>(idx));
 				}
 			}
 			else if(obj_type == ObjectType::Type)
@@ -292,8 +292,8 @@ void FunctionWidget::validateConfiguredFunction()
 				{
 					for(idx = Type::InputFunc; idx <= Type::AnalyzeFunc; idx++)
 					{
-						if(type->getFunction(idx)==func)
-							type->setFunction(idx, func);
+						if(type->getFunction(static_cast<Type::FunctionId>(idx))==func)
+							type->setFunction(static_cast<Type::FunctionId>(idx), func);
 					}
 				}
 			}
@@ -305,10 +305,10 @@ void FunctionWidget::validateConfiguredFunction()
 			{
 				transf = dynamic_cast<Transform *>(object);
 
-				for(idx = Transform::FromSqlFunc; idx <= Transform::ToSqlFunc; idx++)
+				for(auto func_id : { Transform::FromSqlFunc, Transform::ToSqlFunc })
 				{
-					if(func == transf->getFunction(idx))
-						transf->setFunction(func, idx);
+					if(func == transf->getFunction(func_id))
+						transf->setFunction(func, func_id);
 				}
 			}
 			else if(obj_type == 	ObjectType::ForeignDataWrapper)

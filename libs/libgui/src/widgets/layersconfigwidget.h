@@ -30,7 +30,7 @@
 #include "modelwidget.h"
 #include "colorpickerwidget.h"
 
-class LayersConfigWidget : public QWidget, Ui::LayersConfigWidget {
+class __libgui LayersConfigWidget : public QWidget, Ui::LayersConfigWidget {
 	private:
 		Q_OBJECT
 

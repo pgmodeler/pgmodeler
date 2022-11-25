@@ -27,7 +27,10 @@
 
 #include "templatetype.h"
 
-class CategoryType: public TemplateType<CategoryType>{
+class __libcore CategoryType: public TemplateType<CategoryType>{
+	private:
+		static QStringList type_names;
+
 	public:
 		static constexpr unsigned UserDefined = 1,
 		Array = 2,
@@ -47,6 +50,12 @@ class CategoryType: public TemplateType<CategoryType>{
 		CategoryType(unsigned type_id);
 		CategoryType(const QString &type_name);
 		CategoryType();
+
+		static QStringList getTypes();
+
+		unsigned setType(unsigned type_id) override;
+		unsigned setType(const QString &type_name) override;
+		QString getTypeName(unsigned type_id) override;
 };
 
 #endif

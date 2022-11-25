@@ -25,6 +25,7 @@
 #ifndef COLOR_PICKER_WIDGET_H
 #define COLOR_PICKER_WIDGET_H
 
+#include "guiglobal.h"
 #include <QWidget>
 #include <QColorDialog>
 #include <QHBoxLayout>
@@ -33,7 +34,7 @@
 #include <QTime>
 #include <random>
 
-class ColorPickerWidget: public QWidget, public Ui::ColorPickerWidget {
+class __libgui ColorPickerWidget: public QWidget, public Ui::ColorPickerWidget {
 	private:
 		Q_OBJECT
 		

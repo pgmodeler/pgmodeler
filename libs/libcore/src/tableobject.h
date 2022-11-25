@@ -29,7 +29,7 @@ like columns, rules, triggers, indexes, constraints.
 
 #include "basetable.h"
 
-class TableObject: public BaseObject {
+class __libcore TableObject: public BaseObject {
 	private:
 		//! \brief Stores the table that owns this object
 		BaseTable *parent_table;
@@ -76,9 +76,9 @@ class TableObject: public BaseObject {
 		/*! \brief This method is purely virtual to force the derived classes
 	overload this method. This also makes class TableObject
 	not instantiable */
-		virtual QString getCodeDefinition(unsigned def_type)=0;
+		virtual QString getSourceCode(SchemaParser::CodeType def_type)=0;
 
-		virtual QString getDropDefinition(bool cascade);
+		virtual QString getDropCode(bool cascade);
 
 		virtual QString getSignature(bool format = true);
 

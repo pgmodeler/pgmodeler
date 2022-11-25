@@ -21,7 +21,7 @@
 BaseForm::BaseForm(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 {
 	setupUi(this);
-	this->setWindowFlags((this->windowFlags() | Qt::WindowMinMaxButtonsHint) ^ Qt::WindowContextHelpButtonHint);
+	this->setWindowFlags((this->windowFlags() | Qt::WindowMinMaxButtonsHint) /* ^ Qt::WindowContextHelpButtonHint */);
 }
 
 void BaseForm::setButtonConfiguration(unsigned button_conf)
@@ -116,7 +116,8 @@ void BaseForm::closeEvent(QCloseEvent *)
 
 void BaseForm::setMainWidget(BaseObjectWidget *widget)
 {
-	if(!widget)	return;
+	if(!widget)
+		return;
 
 	if(widget->getHandledObjectType()!=ObjectType::BaseObject && widget->windowTitle().isEmpty())
 		setWindowTitle(tr("%1 properties").arg(BaseObject::getTypeName(widget->getHandledObjectType())));
@@ -127,13 +128,13 @@ void BaseForm::setMainWidget(BaseObjectWidget *widget)
 	resizeForm(widget);
 	setButtonConfiguration(Messagebox::OkCancelButtons);
 
-	connect(cancel_btn, SIGNAL(clicked(bool)), widget, SLOT(cancelConfiguration()));
-	connect(cancel_btn, SIGNAL(clicked(bool)), this, SLOT(reject()));
-	connect(apply_ok_btn, SIGNAL(clicked(bool)), widget, SLOT(applyConfiguration()));
-	connect(widget, SIGNAL(s_closeRequested()), this, SLOT(accept()));
+	connect(cancel_btn, &QPushButton::clicked, widget, &BaseObjectWidget::cancelConfiguration);
+	connect(cancel_btn, &QPushButton::clicked, this, &BaseForm::reject);
+	connect(apply_ok_btn, &QPushButton::clicked, widget, &BaseObjectWidget::applyConfiguration);
+	connect(widget, &BaseObjectWidget::s_closeRequested, this, &BaseForm::accept);
 }
 
-void BaseForm::setMainWidget(QWidget *widget, const char *accept_slot, const char *reject_slot)
+void BaseForm::setMainWidget(QWidget *widget)
 {
 	if(!widget)	return;
 
@@ -141,14 +142,6 @@ void BaseForm::setMainWidget(QWidget *widget, const char *accept_slot, const cha
 	setWindowIcon(widget->windowIcon());
 	resizeForm(widget);
 	setButtonConfiguration(Messagebox::OkButton);
-
-	if(!reject_slot)
-		connect(cancel_btn, SIGNAL(clicked(bool)), this, SLOT(reject()));
-	else
-		connect(cancel_btn, SIGNAL(clicked(bool)), widget, reject_slot);
-
-	if(!accept_slot)
-		connect(apply_ok_btn, SIGNAL(clicked(bool)), this, SLOT(accept()));
-	else
-		connect(apply_ok_btn, SIGNAL(clicked(bool)), widget, accept_slot);
+	connect(cancel_btn, &QPushButton::clicked, this, &BaseForm::reject);
+	connect(apply_ok_btn, &QPushButton::clicked, this, &BaseForm::accept);
 }

@@ -29,7 +29,7 @@
 #include "modelwidget.h"
 #include "ui_modelnavigationwidget.h"
 
-class ModelNavigationWidget: public QWidget, public Ui::ModelNavigationWidget {
+class __libgui ModelNavigationWidget: public QWidget, public Ui::ModelNavigationWidget {
 	private:
 		Q_OBJECT
 

@@ -53,25 +53,25 @@ ModelExportForm::ModelExportForm(QWidget *parent, Qt::WindowFlags f) : QDialog(p
 	export_to_dict_gb->setFocusProxy(export_to_dict_rb);
 	export_to_img_gb->setFocusProxy(export_to_img_rb);
 
-	connect(sql_file_sel, SIGNAL(s_fileSelected(QString)), this, SLOT(enableExport()));
-	connect(sql_file_sel, SIGNAL(s_selectorCleared()), this, SLOT(enableExport()));
-	connect(img_file_sel, SIGNAL(s_fileSelected(QString)), this, SLOT(enableExport()));
-	connect(img_file_sel, SIGNAL(s_selectorCleared()), this, SLOT(enableExport()));
-	connect(dict_file_sel, SIGNAL(s_fileSelected(QString)), this, SLOT(enableExport()));
-	connect(dict_file_sel, SIGNAL(s_selectorCleared()), this, SLOT(enableExport()));
-	connect(export_to_file_rb, SIGNAL(clicked()), this, SLOT(selectExportMode()));
-	connect(export_to_dbms_rb, SIGNAL(clicked()), this, SLOT(selectExportMode()));
-	connect(export_to_img_rb, SIGNAL(clicked()), this, SLOT(selectExportMode()));
-	connect(export_to_dict_rb, SIGNAL(clicked()), this, SLOT(selectExportMode()));
-	connect(pgsqlvers_chk, SIGNAL(toggled(bool)), pgsqlvers1_cmb, SLOT(setEnabled(bool)));
-	connect(close_btn, SIGNAL(clicked(bool)), this, SLOT(close()));
-	connect(export_btn, SIGNAL(clicked()), this, SLOT(exportModel()));
-	connect(drop_chk, SIGNAL(toggled(bool)), drop_db_rb, SLOT(setEnabled(bool)));
-	connect(drop_chk, SIGNAL(toggled(bool)), drop_objs_rb, SLOT(setEnabled(bool)));
+	connect(sql_file_sel, &FileSelectorWidget::s_fileSelected, this, &ModelExportForm::enableExport);
+	connect(sql_file_sel, &FileSelectorWidget::s_selectorCleared, this, &ModelExportForm::enableExport);
+	connect(img_file_sel, &FileSelectorWidget::s_fileSelected, this, &ModelExportForm::enableExport);
+	connect(img_file_sel, &FileSelectorWidget::s_selectorCleared, this, &ModelExportForm::enableExport);
+	connect(dict_file_sel, &FileSelectorWidget::s_fileSelected, this, &ModelExportForm::enableExport);
+	connect(dict_file_sel, &FileSelectorWidget::s_selectorCleared, this, &ModelExportForm::enableExport);
 
-	connect(export_thread, &QThread::started,
-	[&](){
+	connect(export_to_file_rb, &QRadioButton::clicked, this, &ModelExportForm::selectExportMode);
+	connect(export_to_dbms_rb, &QRadioButton::clicked, this, &ModelExportForm::selectExportMode);
+	connect(export_to_img_rb, &QRadioButton::clicked, this, &ModelExportForm::selectExportMode);
+	connect(export_to_dict_rb, &QRadioButton::clicked, this, &ModelExportForm::selectExportMode);
 
+	connect(pgsqlvers_chk, &QCheckBox::toggled, pgsqlvers1_cmb, &QComboBox::setEnabled);
+	connect(close_btn, &QPushButton::clicked, this, &ModelExportForm::close);
+	connect(export_btn, &QPushButton::clicked, this, &ModelExportForm::exportModel);
+	connect(drop_chk, &QCheckBox::toggled, drop_db_rb, &QRadioButton::setEnabled);
+	connect(drop_chk, &QCheckBox::toggled, drop_objs_rb, &QRadioButton::setEnabled);
+
+	connect(export_thread, &QThread::started, &export_hlp, [this](){
 		output_trw->setUniformRowHeights(true);
 
 		if(export_to_dbms_rb->isChecked())
@@ -89,27 +89,30 @@ ModelExportForm::ModelExportForm(QWidget *parent, Qt::WindowFlags f) : QDialog(p
 			export_hlp.exportToSQL();
 	});
 
-	connect(export_thread, &QThread::finished, [&](){
+	connect(export_thread, &QThread::finished, &export_hlp, [this](){
 		output_trw->setUniformRowHeights(false);
 	});
 
-	connect(&export_hlp, SIGNAL(s_progressUpdated(int,QString,ObjectType,QString,bool)), this, SLOT(updateProgress(int,QString,ObjectType,QString,bool)), Qt::BlockingQueuedConnection);
-	connect(&export_hlp, SIGNAL(s_exportFinished()), this, SLOT(handleExportFinished()));
-	connect(&export_hlp, SIGNAL(s_exportCanceled()), this, SLOT(handleExportCanceled()));
-	connect(&export_hlp, SIGNAL(s_errorIgnored(QString,QString,QString)), this, SLOT(handleErrorIgnored(QString,QString,QString)));
-	connect(&export_hlp, SIGNAL(s_exportAborted(Exception)), this, SLOT(captureThreadError(Exception)));
-	connect(cancel_btn, SIGNAL(clicked(bool)), this, SLOT(cancelExport()));
-	connect(connections_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(editConnections()));
-	connect(svg_rb, SIGNAL(toggled(bool)), zoom_cmb, SLOT(setDisabled(bool)));
-	connect(svg_rb, SIGNAL(toggled(bool)), zoom_lbl, SLOT(setDisabled(bool)));
-	connect(svg_rb, SIGNAL(toggled(bool)), page_by_page_chk, SLOT(setDisabled(bool)));
-	connect(svg_rb, SIGNAL(toggled(bool)), this, SLOT(selectImageFormat()));
-	connect(png_rb, SIGNAL(toggled(bool)), this, SLOT(selectImageFormat()));
-	connect(ignore_error_codes_chk, SIGNAL(toggled(bool)), error_codes_edt, SLOT(setEnabled(bool)));
-	connect(dict_standalone_rb, SIGNAL(toggled(bool)), this, SLOT(selectDataDictMode()));
-	connect(dict_split_rb, SIGNAL(toggled(bool)), this, SLOT(selectDataDictMode()));
-	connect(sql_standalone_rb, SIGNAL(toggled(bool)), this, SLOT(selectSQLExportMode()));
-	connect(sql_split_rb, SIGNAL(toggled(bool)), this, SLOT(selectSQLExportMode()));	
+	connect(&export_hlp, &ModelExportHelper::s_progressUpdated, this, &ModelExportForm::updateProgress, Qt::BlockingQueuedConnection);
+	connect(&export_hlp, &ModelExportHelper::s_exportFinished, this, &ModelExportForm::handleExportFinished);
+	connect(&export_hlp, &ModelExportHelper::s_exportCanceled, this, &ModelExportForm::handleExportCanceled);
+	connect(&export_hlp, &ModelExportHelper::s_errorIgnored, this, &ModelExportForm::handleErrorIgnored);
+	connect(&export_hlp, &ModelExportHelper::s_exportAborted, this, &ModelExportForm::captureThreadError);
+
+	connect(cancel_btn, &QToolButton::clicked, this, &ModelExportForm::cancelExport);
+	connect(connections_cmb, &QComboBox::currentIndexChanged, this, &ModelExportForm::editConnections);
+
+	connect(svg_rb, &QRadioButton::toggled, zoom_cmb, &QComboBox::setDisabled);
+	connect(svg_rb, &QRadioButton::toggled, zoom_lbl, &QLabel::setDisabled);
+	connect(svg_rb, &QRadioButton::toggled, page_by_page_chk, &QCheckBox::setDisabled);
+	connect(svg_rb, &QRadioButton::toggled, this, &ModelExportForm::selectImageFormat);
+	connect(png_rb, &QRadioButton::toggled, this, &ModelExportForm::selectImageFormat);
+
+	connect(ignore_error_codes_chk, &QCheckBox::toggled, error_codes_edt, &QLineEdit::setEnabled);
+	connect(dict_standalone_rb, &QRadioButton::toggled, this, &ModelExportForm::selectDataDictMode);
+	connect(dict_split_rb, &QRadioButton::toggled, this, &ModelExportForm::selectDataDictMode);
+	connect(sql_standalone_rb, &QRadioButton::toggled, this, &ModelExportForm::selectSQLExportMode);
+	connect(sql_split_rb, &QRadioButton::toggled, this, &ModelExportForm::selectSQLExportMode);
 	connect(sql_split_rb, &QRadioButton::toggled, code_options_cmb, &QComboBox::setEnabled);
 
 	pgsqlvers_cmb->addItems(PgSqlVersions::AllVersions);
@@ -228,7 +231,7 @@ void ModelExportForm::exportModel()
 				progress_lbl->setText(tr("Saving file '%1'").arg(sql_file_sel->getSelectedFile()));
 				export_hlp.setExportToSQLParams(model->db_model, sql_file_sel->getSelectedFile(),
 																				pgsqlvers_cmb->currentText(), sql_split_rb->isChecked(),
-																				static_cast<unsigned>(code_options_cmb->currentIndex()));
+																				static_cast<DatabaseModel::CodeGenMode>(code_options_cmb->currentIndex()));
 				export_thread->start();
 			}
 			else if(export_to_dict_rb->isChecked())

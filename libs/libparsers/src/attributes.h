@@ -28,13 +28,11 @@
 #ifndef ATTRIBUTES_H
 #define ATTRIBUTES_H
 
-/* Including QByteArray due to 'QByteArray has no toStdString()'
-   error on Qt 5.4 (Windows only) */
-#include <QByteArray>
+#include "parsersglobal.h"
 #include <QString>
 
 namespace Attributes {
-	extern const QString
+	extern __libparsers const QString
 	Action,
 	ActiveLayers,
 	AdminOption,
@@ -253,6 +251,7 @@ namespace Attributes {
 	FilterTableTypes,
 	FinalFunc,
 	FiringType,
+	FirstRun,
 	FkColumn,
 	FkConstr,
 	FkDefs,

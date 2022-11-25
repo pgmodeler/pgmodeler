@@ -220,7 +220,7 @@ namespace GuiUtilsNs {
 		return fmt_msg;
 	}
 
-	void configureWidgetFont(QWidget *widget, unsigned factor_id)
+	void configureWidgetFont(QWidget *widget, FontFactorId factor_id)
 	{
 		double factor = 1;
 
@@ -277,7 +277,7 @@ namespace GuiUtilsNs {
 			text=QString("%1 (%2)").arg(itr->getFile()).arg(itr->getLine());
 			createOutputTreeItem(exceptions_trw, text, QPixmap(getIconPath("sourcecode")), item, false, true);
 
-			text=QString("%1 (%2)").arg(Exception::getErrorCode(itr->getErrorCode())).arg(enum_cast(itr->getErrorCode()));
+			text=QString("%1 (%2)").arg(Exception::getErrorCode(itr->getErrorCode())).arg(enum_t(itr->getErrorCode()));
 			createOutputTreeItem(exceptions_trw, text, QPixmap(getIconPath("alert")), item, false, true);
 
 			child_item=createOutputTreeItem(exceptions_trw, itr->getErrorMessage(), QPixmap(getIconPath("error")), item, false, true);

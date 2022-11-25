@@ -39,7 +39,7 @@
 #include <QMetaType>
 Q_DECLARE_METATYPE(PgSqlType)
 
-class BaseObjectWidget: public QWidget, public Ui::BaseObjectWidget {
+class __libgui BaseObjectWidget: public QWidget, public Ui::BaseObjectWidget {
 	private:
 		Q_OBJECT
 		
@@ -202,9 +202,9 @@ void BaseObjectWidget::startConfiguration(void)
 				this->object->getObjectType()!=ObjectType::Database)
 		{
 			if(this->table)
-				op_list->registerObject(this->object, Operation::ObjectModified, -1, this->table);
+				op_list->registerObject(this->object, Operation::ObjModified, -1, this->table);
 			else
-				op_list->registerObject(this->object, Operation::ObjectModified, -1, this->relationship);
+				op_list->registerObject(this->object, Operation::ObjModified, -1, this->relationship);
 			new_object=false;
 		}
 		//! \brief If there is need to allocate the object

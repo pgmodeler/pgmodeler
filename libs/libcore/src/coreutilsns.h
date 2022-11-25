@@ -39,14 +39,14 @@ namespace CoreUtilsNs {
 		 before copying. Both objects must be the same type if both are allocated.
 		 -- Brainfuck syntax style! :p -- */
 	template <class Class>
-	extern void copyObject(BaseObject **psrc_obj, Class *copy_obj);
+	extern __libcore void copyObject(BaseObject **psrc_obj, Class *copy_obj);
 
 	/*! \brief This functions is a second way to make a copy between two objects. It simply calls
 		 the template function above. */
-	extern void copyObject(BaseObject **psrc_obj, BaseObject *copy_obj, ObjectType obj_type);
+	extern __libcore void copyObject(BaseObject **psrc_obj, BaseObject *copy_obj, ObjectType obj_type);
 
 	//! \brief Returns true if the specified word is a PostgreSQL reserved word.
-	extern bool isReservedKeyword(const QString &word);
+	extern __libcore bool isReservedKeyword(const QString &word);
 
 	/*! \brief Generates a unique name based upon the specified object and the list of objects of the same type.
 	 * User can specify a suffix for the generated name as well if the comparison inside the method must be done with

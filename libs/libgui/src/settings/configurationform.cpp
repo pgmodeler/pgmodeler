@@ -49,9 +49,9 @@ ConfigurationForm::ConfigurationForm(QWidget *parent, Qt::WindowFlags f) : QDial
 	for(auto &btn : btns)
 	{
 		fnt = btn->font();
-		fnt.setBold(true);
+		fnt.setWeight(QFont::Normal);
 		btn->setFont(fnt);
-		GuiUtilsNs::createDropShadow(btn);
+		GuiUtilsNs::createDropShadow(btn, 1, 1, 5);
 		btn->setProperty(Attributes::ObjectId.toStdString().c_str(), view_idx++);
 		connect(btn, &QToolButton::toggled, this, &ConfigurationForm::changeCurrentView);
 	}

@@ -26,11 +26,12 @@ This button is used to trigger a delete action via signal.
 #ifndef DELETABLE_ITEM_DELEGATE_H
 #define DELETABLE_ITEM_DELEGATE_H
 
+#include "guiglobal.h"
 #include <QStyledItemDelegate>
 #include <QToolButton>
 #include <QComboBox>
 
-class DeletableItemDelegate: public QStyledItemDelegate {
+class __libgui DeletableItemDelegate: public QStyledItemDelegate {
 	private:
 		Q_OBJECT
 

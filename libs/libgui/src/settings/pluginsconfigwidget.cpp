@@ -39,7 +39,7 @@ PluginsConfigWidget::PluginsConfigWidget(QWidget *parent) : BaseConfigWidget(par
 	plugins_tab->setHeaderLabel(tr("Version"),1);
 	plugins_tab->setHeaderLabel(tr("Library"),2);
 
-	connect(plugins_tab, SIGNAL(s_rowEdited(int)), this, SLOT(showPluginInfo(int)));
+	connect(plugins_tab, &ObjectsTableWidget::s_rowEdited, this, &PluginsConfigWidget::showPluginInfo);
 
 	grid->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
 	grid->addWidget(plugins_tab,0,0,1,1);
@@ -151,7 +151,7 @@ void PluginsConfigWidget::loadConfiguration()
 		throw Exception(ErrorCode::PluginsNotLoaded,__PRETTY_FUNCTION__,__FILE__,__LINE__, errors);
 }
 
-void PluginsConfigWidget::installPluginsActions(QMenu *menu, QObject *recv, const char *slot)
+/*void PluginsConfigWidget::installPluginsActions(QMenu *menu, QObject *recv, const char *slot)
 {
 	if(menu && slot)
 	{
@@ -162,11 +162,11 @@ void PluginsConfigWidget::installPluginsActions(QMenu *menu, QObject *recv, cons
 			if(menu)
 				menu->addAction(*itr);
 
-			connect(*itr, SIGNAL(triggered()), recv, slot);
+			connect(*itr, &QAction::triggered, recv, slot);
 			itr++;
 		}
 	}
-}
+}*/
 
 void PluginsConfigWidget::initPlugins(MainWindow *main_window)
 {

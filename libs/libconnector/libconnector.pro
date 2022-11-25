@@ -4,7 +4,11 @@ TEMPLATE = lib
 TARGET = connector
 windows: DESTDIR = $$PWD
 
-HEADERS += src/resultset.h \
+# Enables shared library symbols exporting
+DEFINES += CONNECTOR_SYMBOLS
+
+HEADERS += src/connectorglobal.h \
+	   src/resultset.h \
 	   src/connection.h \
 	   src/catalog.h
 

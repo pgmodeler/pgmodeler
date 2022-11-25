@@ -64,7 +64,7 @@ void OperatorClass::setDefault(bool value)
 	is_default=value;
 }
 
-void OperatorClass::setElementsAttribute(unsigned def_type)
+void OperatorClass::setElementsAttribute(SchemaParser::CodeType def_type)
 {
 	QString str_elems;
 	unsigned i, count;
@@ -74,8 +74,8 @@ void OperatorClass::setElementsAttribute(unsigned def_type)
 	count=elements.size();
 	for(i=0; i < count; i++)
 	{
-		str_elems+=elements[i].getCodeDefinition(def_type);
-		if(def_type==SchemaParser::SqlDefinition &&
+		str_elems+=elements[i].getSourceCode(def_type);
+		if(def_type==SchemaParser::SqlCode &&
 				i < count-1) str_elems+=QString(",\n");
 	}
 
@@ -162,12 +162,12 @@ bool OperatorClass::isDefault()
 	return is_default;
 }
 
-QString OperatorClass::getCodeDefinition(unsigned def_type)
+QString OperatorClass::getSourceCode(SchemaParser::CodeType def_type)
 {
-	return this->getCodeDefinition(def_type, false);
+	return this->getSourceCode(def_type, false);
 }
 
-QString OperatorClass::getCodeDefinition(unsigned def_type, bool reduced_form)
+QString OperatorClass::getSourceCode(SchemaParser::CodeType def_type, bool reduced_form)
 {
 	QString code_def=getCachedCode(def_type, reduced_form);
 	if(!code_def.isEmpty()) return code_def;
@@ -176,21 +176,21 @@ QString OperatorClass::getCodeDefinition(unsigned def_type, bool reduced_form)
 	attributes[Attributes::IndexType]=(~indexing_type);
 	attributes[Attributes::Default]=(is_default ? Attributes::True : "");
 
-	if(def_type==SchemaParser::SqlDefinition)
+	if(def_type==SchemaParser::SqlCode)
 		attributes[Attributes::Type]=(*data_type);
 	else
-		attributes[Attributes::Type]=data_type.getCodeDefinition(def_type);
+		attributes[Attributes::Type]=data_type.getSourceCode(def_type);
 
 	if(family)
 	{
-		if(def_type==SchemaParser::SqlDefinition)
+		if(def_type==SchemaParser::SqlCode)
 			attributes[Attributes::Family]=family->getName(true);
 		else
 			attributes[Attributes::Family]=family->getSignature();
 	}
 
 	attributes[Attributes::Signature]=getSignature();
-	return BaseObject::getCodeDefinition(def_type, reduced_form);
+	return BaseObject::getSourceCode(def_type, reduced_form);
 }
 
 QString OperatorClass::getSignature(bool format)

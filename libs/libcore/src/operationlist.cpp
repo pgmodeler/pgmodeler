@@ -108,7 +108,7 @@ bool OperationList::isOperationChainStarted()
 					next_op_chain==Operation::ChainMiddle);
 }
 
-bool OperationList::isObjectRegistered(BaseObject *object, unsigned op_type)
+bool OperationList::isObjectRegistered(BaseObject *object, Operation::OperType op_type)
 {
 	bool registered=false;
 	std::vector<Operation *>::iterator itr=operations.begin();
@@ -146,7 +146,7 @@ void OperationList::setMaximumSize(unsigned max)
 	max_size=max;
 }
 
-void OperationList::addToPool(BaseObject *object, unsigned op_type)
+void OperationList::addToPool(BaseObject *object, Operation::OperType op_type)
 {
 	ObjectType obj_type;
 
@@ -160,8 +160,8 @@ void OperationList::addToPool(BaseObject *object, unsigned op_type)
 		obj_type=object->getObjectType();
 
 		//Stores a copy of the object if its about to be moved or modified
-		if(op_type==Operation::ObjectModified ||
-				op_type==Operation::ObjectMoved)
+		if(op_type==Operation::ObjModified ||
+				op_type==Operation::ObjMoved)
 		{
 			BaseObject *copy_obj=nullptr;
 
@@ -335,7 +335,7 @@ void OperationList::removeFromPool(unsigned obj_idx)
 }
 
 
-int OperationList::registerObject(BaseObject *object, unsigned op_type, int object_idx, BaseObject *parent_obj)
+int OperationList::registerObject(BaseObject *object, Operation::OperType op_type, int object_idx, BaseObject *parent_obj)
 {
 	ObjectType obj_type;
 	Operation *operation=nullptr;
@@ -399,7 +399,7 @@ int OperationList::registerObject(BaseObject *object, unsigned op_type, int obje
 		operation->setPoolObject(object_pool.back());
 
 		//Stores the object's permission befor its removal
-		if(op_type==Operation::ObjectRemoved)
+		if(op_type==Operation::ObjRemoved)
 		{
 			std::vector<Permission *> perms;
 			model->getPermissions(object, perms);
@@ -424,13 +424,13 @@ int OperationList::registerObject(BaseObject *object, unsigned op_type, int obje
 				(obj_type==ObjectType::Index && dynamic_cast<Index *>(tab_obj)->isReferRelationshipAddedColumn()) ||
 				(obj_type==ObjectType::Constraint && dynamic_cast<Constraint *>(tab_obj)->isReferRelationshipAddedColumn())))
 			{
-				if(op_type==Operation::ObjectRemoved)
+				if(op_type==Operation::ObjRemoved)
 					tab_obj->setParentTable(parent_tab);
 
 				if(tab_obj->getObjectType()==ObjectType::Constraint)
-					operation->setXMLDefinition(dynamic_cast<Constraint *>(tab_obj)->getCodeDefinition(SchemaParser::XmlDefinition, true));
+					operation->setXMLDefinition(dynamic_cast<Constraint *>(tab_obj)->getSourceCode(SchemaParser::XmlCode, true));
 				else
-					operation->setXMLDefinition(tab_obj->getCodeDefinition(SchemaParser::XmlDefinition));
+					operation->setXMLDefinition(tab_obj->getSourceCode(SchemaParser::XmlCode));
 			}
 
 			operation->setParentObject(parent_obj);
@@ -465,7 +465,7 @@ int OperationList::registerObject(BaseObject *object, unsigned op_type, int obje
 			if((obj_type==ObjectType::Sequence && dynamic_cast<Sequence *>(object)->isReferRelationshipAddedColumn()) ||
 					(obj_type==ObjectType::View && dynamic_cast<View *>(object)->isReferRelationshipAddedColumn()) ||
 					(obj_type==ObjectType::GenericSql && dynamic_cast<GenericSQL *>(object)->isReferRelationshipAddedObject()))
-				operation->setXMLDefinition(object->getCodeDefinition(SchemaParser::XmlDefinition));
+				operation->setXMLDefinition(object->getSourceCode(SchemaParser::XmlCode));
 
 			//Case a specific index wasn't specified
 			if(object_idx < 0)
@@ -477,7 +477,7 @@ int OperationList::registerObject(BaseObject *object, unsigned op_type, int obje
 		}
 
 		if(obj_type==ObjectType::Column && dynamic_cast<Column *>(object)->getType().isUserType())
-			operation->setXMLDefinition(object->getCodeDefinition(SchemaParser::XmlDefinition));
+			operation->setXMLDefinition(object->getSourceCode(SchemaParser::XmlCode));
 
 		operation->setObjectIndex(obj_idx);
 		operations.push_back(operation);
@@ -539,7 +539,7 @@ unsigned OperationList::getChainSize()
 	if(!operations.empty() &&
 			operations[i]->getChainType()!=Operation::NoChain)
 	{
-		unsigned chain_type=Operation::NoChain;
+		Operation::ChainType chain_type=Operation::NoChain;
 		int inc=0;
 
 		//Case the operation is the end of a chain  runs the list in reverse order (from end to start)
@@ -692,7 +692,7 @@ void OperationList::executeOperation(Operation *oper, bool redo)
 		BaseTable *parent_tab=nullptr;
 		Relationship *parent_rel=nullptr;
 		QString xml_def;
-		unsigned op_type=Operation::NoOperation;
+		Operation::OperType op_type=Operation::NoOperation;
 		int obj_idx=-1;
 
 		object=oper->getPoolObject();
@@ -718,10 +718,10 @@ void OperationList::executeOperation(Operation *oper, bool redo)
 		/* If the XML definition of object is set indicates that it is referencing a column
 			included by relationship (special object) */
 		if(!xml_def.isEmpty() &&
-				((op_type==Operation::ObjectRemoved && !redo) ||
-				 (op_type==Operation::ObjectCreated && redo) ||
-				 (op_type==Operation::ObjectModified ||
-				  op_type==Operation::ObjectMoved)))
+				((op_type==Operation::ObjRemoved && !redo) ||
+				 (op_type==Operation::ObjCreated && redo) ||
+				 (op_type==Operation::ObjModified ||
+					op_type==Operation::ObjMoved)))
 		{
 			//Resets the XML parser and loads the buffer xml from the operation
 			xmlparser->restartParser();
@@ -745,7 +745,7 @@ void OperationList::executeOperation(Operation *oper, bool redo)
 
 		/* If the operation is a modified/moved object, the object copy
 			stored in the pool will be restored */
-		if(op_type==Operation::ObjectModified || op_type==Operation::ObjectMoved)
+		if(op_type==Operation::ObjModified || op_type==Operation::ObjMoved)
 		{
 			if(obj_type==ObjectType::Relationship)
 			{
@@ -766,7 +766,7 @@ void OperationList::executeOperation(Operation *oper, bool redo)
 				orig_obj=model->getObject(obj_idx, obj_type);
 
 			if(aux_obj)
-				oper->setXMLDefinition(orig_obj->getCodeDefinition(SchemaParser::XmlDefinition));
+				oper->setXMLDefinition(orig_obj->getSourceCode(SchemaParser::XmlCode));
 
 
 			//For pk constraint, before restore the previous configuration, uncheck the not-null flag of the source columns
@@ -794,8 +794,8 @@ void OperationList::executeOperation(Operation *oper, bool redo)
 			if the object was previously created and wants to redo the operation
 			the existing pool object will be inserted into table or in your relationship
 			on its original index */
-		else if((op_type==Operation::ObjectRemoved && !redo) ||
-				(op_type==Operation::ObjectCreated && redo))
+		else if((op_type==Operation::ObjRemoved && !redo) ||
+				(op_type==Operation::ObjCreated && redo))
 		{
 			if(aux_obj)
 				CoreUtilsNs::copyObject(reinterpret_cast<BaseObject **>(&object), aux_obj, obj_type);
@@ -811,18 +811,18 @@ void OperationList::executeOperation(Operation *oper, bool redo)
 			else if(parent_rel)
 				parent_rel->addObject(dynamic_cast<TableObject *>(object), obj_idx);
 			else if(object->getObjectType()==ObjectType::Table)
-				dynamic_cast<Table *>(object)->getCodeDefinition(SchemaParser::SqlDefinition);
+				dynamic_cast<Table *>(object)->getSourceCode(SchemaParser::SqlCode);
 
 			model->addObject(object, obj_idx);
 
-			if(op_type==Operation::ObjectRemoved)
+			if(op_type==Operation::ObjRemoved)
 				model->addPermissions(oper->getPermissions());
 		}
 		/* If the operation is a previously created object or if the object
 			was removed and wants to redo the operation it'll be
 			excluded from the table or relationship */
-		else if((op_type==Operation::ObjectCreated && !redo) ||
-				(op_type==Operation::ObjectRemoved && redo))
+		else if((op_type==Operation::ObjCreated && !redo) ||
+				(op_type==Operation::ObjRemoved && redo))
 		{
 			if(parent_tab)
 				parent_tab->removeObject(object);
@@ -897,30 +897,30 @@ void OperationList::executeOperation(Operation *oper, bool redo)
 		{
 			BaseGraphicObject *graph_obj=dynamic_cast<BaseGraphicObject *>(object);
 
-			if(op_type==Operation::ObjectModified ||
-					op_type==Operation::ObjectMoved)
+			if(op_type==Operation::ObjModified ||
+					op_type==Operation::ObjMoved)
 				graph_obj->setModified(true);
 
 			//Case the object is a view is necessary to update the table-view relationships on the model
-			if(obj_type==ObjectType::View && op_type==Operation::ObjectModified)
+			if(obj_type==ObjectType::View && op_type==Operation::ObjModified)
 				model->updateViewRelationships(dynamic_cast<View *>(graph_obj));
 			else if((obj_type==ObjectType::Relationship ||
 							(PhysicalTable::isPhysicalTable(obj_type) && model->getRelationship(dynamic_cast<BaseTable *>(object), nullptr))) &&
-							op_type==Operation::ObjectModified)
+							op_type==Operation::ObjModified)
 				model->validateRelationships();
 
 			//If a object had its schema restored is necessary to update the envolved schemas
 			if(BaseTable::isBaseTable(obj_type) &&
-				 ((bkp_obj && graph_obj->getSchema()!=bkp_obj->getSchema() && op_type==Operation::ObjectModified) ||
-					op_type==Operation::ObjectMoved))
+				 ((bkp_obj && graph_obj->getSchema()!=bkp_obj->getSchema() && op_type==Operation::ObjModified) ||
+					op_type==Operation::ObjMoved))
 			{
 				dynamic_cast<BaseGraphicObject *>(graph_obj->getSchema())->setModified(true);
 
 				if(bkp_obj)
-					dynamic_cast<BaseGraphicObject *>(bkp_obj->getSchema())->setModified(op_type==Operation::ObjectModified);
+					dynamic_cast<BaseGraphicObject *>(bkp_obj->getSchema())->setModified(op_type==Operation::ObjModified);
 			}
 		}
-		else if(op_type==Operation::ObjectModified)
+		else if(op_type==Operation::ObjModified)
 		{			
 			if(obj_type==ObjectType::Schema)
 			{
@@ -941,7 +941,7 @@ void OperationList::executeOperation(Operation *oper, bool redo)
 		}
 
 		//Case the object is a type update the tables that are referencing it
-		if(op_type==Operation::ObjectModified &&
+		if(op_type==Operation::ObjModified &&
 				(object->getObjectType()==ObjectType::Type || object->getObjectType()==ObjectType::Domain ||
 				 object->getObjectType()==ObjectType::Table || object->getObjectType()==ObjectType::ForeignTable ||
 				 object->getObjectType()==ObjectType::View || object->getObjectType()==ObjectType::Extension))

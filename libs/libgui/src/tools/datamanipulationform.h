@@ -31,15 +31,17 @@
 #include "widgets/codecompletionwidget.h"
 #include "widgets/csvloadwidget.h"
 
-class DataManipulationForm: public QDialog, public Ui::DataManipulationForm {
+class __libgui DataManipulationForm: public QDialog, public Ui::DataManipulationForm {
 	private:
 		Q_OBJECT
 		
 		//! \brief Constants used to mark the type of operation performed on rows
-		static constexpr unsigned NoOperation=0,
-		OpInsert=1,
-		OpUpdate=2,
-		OpDelete=3;
+		enum OperationId: unsigned {
+			NoOperation,
+			OpInsert,
+			OpUpdate,
+			OpDelete
+		};
 
 		CsvLoadWidget *csv_load_wgt;
 
@@ -47,7 +49,10 @@ class DataManipulationForm: public QDialog, public Ui::DataManipulationForm {
 		
 		CodeCompletionWidget *code_compl_wgt;
 
-		QMenu fks_menu, copy_menu, truncate_menu, paste_menu;
+		QAction *action_add, *action_delete, *action_bulk_edit,
+		*action_duplicate, *action_clear;
+
+		QMenu fks_menu, copy_menu, truncate_menu, paste_menu, edit_menu;
 
 		//! \brief Store the template connection params to be used by catalogs and command execution connections
 		attribs_map tmpl_conn_params;
@@ -91,7 +96,7 @@ class DataManipulationForm: public QDialog, public Ui::DataManipulationForm {
 		
 		/*! \brief Mark the line as changed, changing its background color and applying the respective operation (see OP_??? constant)
 				when user call saveChanged() */
-		void markOperationOnRow(unsigned operation, int row);
+		void markOperationOnRow(OperationId operation, int row);
 		
 		//! \brief Generates a DML command for the row depending on the it's operation type
 		QString getDMLCommand(int row);

@@ -18,10 +18,9 @@
 
 #include "partitioningtype.h"
 
-template<>
-QStringList PartitioningType::TemplateType<PartitioningType>::type_names =
+QStringList PartitioningType::type_names =
 {
-	"", // Reserved for BaseType::null
+	"", // Reserved for Class::Null
 
 	"RANGE",
 	"LIST",
@@ -33,6 +32,11 @@ PartitioningType::PartitioningType()
 	type_idx = Range;
 }
 
+QStringList PartitioningType::getTypes()
+{
+	return TemplateType<PartitioningType>::getTypes(type_names);
+}
+
 PartitioningType::PartitioningType(unsigned type_id)
 {
 	setType(type_id);
@@ -41,4 +45,19 @@ PartitioningType::PartitioningType(unsigned type_id)
 PartitioningType::PartitioningType(const QString &type_name)
 {
 	setType(type_name);
+}
+
+unsigned PartitioningType::setType(unsigned type_id)
+{
+	return TemplateType<PartitioningType>::setType(type_id, type_names);
+}
+
+unsigned PartitioningType::setType(const QString &type_name)
+{
+	return TemplateType<PartitioningType>::setType(type_name, type_names);
+}
+
+QString PartitioningType::getTypeName(unsigned type_id)
+{
+	return TemplateType<PartitioningType>::getTypeName(type_id, type_names);
 }

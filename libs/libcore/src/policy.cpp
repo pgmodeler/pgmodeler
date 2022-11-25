@@ -108,7 +108,7 @@ std::vector<Role *> Policy::getRoles()
 	return roles;
 }
 
-QString Policy::getCodeDefinition(unsigned def_type)
+QString Policy::getSourceCode(SchemaParser::CodeType def_type)
 {
 	QString code_def=getCachedCode(def_type, false);
 	if(!code_def.isEmpty()) return code_def;
@@ -128,7 +128,7 @@ QString Policy::getCodeDefinition(unsigned def_type)
 	attributes[Attributes::CheckExp] = check_expr;
 	attributes[Attributes::Roles] = rol_names.join(QString(", "));
 
-	return BaseObject::__getCodeDefinition(def_type);
+	return BaseObject::__getSourceCode(def_type);
 }
 
 QString Policy::getSignature(bool format)
@@ -139,7 +139,7 @@ QString Policy::getSignature(bool format)
 	return (QString("%1 ON %2").arg(this->getName(format)).arg(getParentTable()->getSignature(true)));
 }
 
-QString Policy::getAlterDefinition(BaseObject *object)
+QString Policy::getAlterCode(BaseObject *object)
 {
 	Policy *policy=dynamic_cast<Policy *>(object);
 
@@ -151,7 +151,7 @@ QString Policy::getAlterDefinition(BaseObject *object)
 		QStringList rol_names, aux_rol_names;
 		attribs_map attribs;
 
-		attributes[Attributes::AlterCmds]=BaseObject::getAlterDefinition(object);
+		attributes[Attributes::AlterCmds]=BaseObject::getAlterCode(object);
 
 		if(this->using_expr.simplified() != policy->using_expr.simplified())
 			attribs[Attributes::UsingExp] = policy->using_expr;
@@ -174,7 +174,7 @@ QString Policy::getAlterDefinition(BaseObject *object)
 			attribs[Attributes::Roles] = aux_rol_names.join(QString(", "));
 
 		copyAttributes(attribs);
-		return BaseObject::getAlterDefinition(this->getSchemaName(), attributes, false, true);
+		return BaseObject::getAlterCode(this->getSchemaName(), attributes, false, true);
 	}
 	catch(Exception &e)
 	{

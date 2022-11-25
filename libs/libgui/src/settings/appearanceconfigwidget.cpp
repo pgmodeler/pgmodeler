@@ -292,8 +292,8 @@ CREATE TABLE public.table_b (\n \
 	connect(font_preview_txt, &NumberedTextEditor::cursorPositionChanged, this, &AppearanceConfigWidget::previewCodeFontStyle);
 
 	connect(elem_color_cp, &ColorPickerWidget::s_colorChanged, this, &AppearanceConfigWidget::applyElementColor);
-	connect(elem_color_cp, &ColorPickerWidget::s_colorsChanged,
-			[&](){
+
+	connect(elem_color_cp, &ColorPickerWidget::s_colorsChanged, this, [this](){
 		for(unsigned i=0; i < elem_color_cp->getColorCount(); i++)
 			applyElementColor(i, elem_color_cp->getColor(i));
 	});
@@ -311,12 +311,24 @@ CREATE TABLE public.table_b (\n \
 	connect(ui_theme_cmb, &QComboBox::currentTextChanged, this, &AppearanceConfigWidget::previewUiSettings);
 	connect(icons_size_cmb, &QComboBox::currentTextChanged, this, &AppearanceConfigWidget::previewUiSettings);
 
-	connect(custom_scale_chk, &QCheckBox::toggled, [&](bool toggled){
+	connect(custom_scale_chk, &QCheckBox::toggled, this, [this](bool toggled){
 		custom_scale_spb->setEnabled(toggled);
 		setConfigurationChanged(true);
 	});
 
-	connect(custom_scale_spb, &QDoubleSpinBox::valueChanged, [&](){
+	connect(custom_scale_spb, &QDoubleSpinBox::valueChanged, this, [this](){
+		setConfigurationChanged(true);
+	});
+
+	connect(min_obj_opacity_spb, &QSpinBox::valueChanged, this, [this](){
+		setConfigurationChanged(true);
+	});
+
+	connect(ext_attribs_per_page_spb, &QSpinBox::valueChanged, this, [this](){
+		setConfigurationChanged(true);
+	});
+
+	connect(attribs_per_page_spb, &QSpinBox::valueChanged, this, [this](){
 		setConfigurationChanged(true);
 	});
 }
@@ -543,9 +555,9 @@ void AppearanceConfigWidget::applyObjectsStyle()
 			colors.clear();
 			colors.append(!list.isEmpty() ? list.at(0) : "#000");
 			colors.append(list.size()==2 ? list.at(1) : colors.at(0));
-			BaseObjectView::setElementColor(elem, QColor(colors.at(0)), 0);
-			BaseObjectView::setElementColor(elem, QColor(colors.at(1)), 1);
-			BaseObjectView::setElementColor(elem, QColor(attribs[Attributes::BorderColor]), 2);
+			BaseObjectView::setElementColor(elem, QColor(colors.at(0)), ColorId::FillColor1);
+			BaseObjectView::setElementColor(elem, QColor(colors.at(1)), ColorId::FillColor2);
+			BaseObjectView::setElementColor(elem, QColor(attribs[Attributes::BorderColor]), ColorId::BorderColor);
 		}
 	}
 
@@ -756,7 +768,8 @@ void AppearanceConfigWidget::applyElementColor(unsigned color_idx, QColor color)
 	if(conf_items[element_cmb->currentIndex()].obj_conf)
 	{
 		conf_items[element_cmb->currentIndex()].colors[color_idx]=color;
-		BaseObjectView::setElementColor(conf_items[element_cmb->currentIndex()].conf_id, color, color_idx);
+		BaseObjectView::setElementColor(conf_items[element_cmb->currentIndex()].conf_id,
+				color, static_cast<ColorId>(color_idx));
 		updatePlaceholderItem();
 	}
 	else if(color_idx == 0)
@@ -891,10 +904,21 @@ void AppearanceConfigWidget::applyUiTheme()
 	QString ui_theme = ui_theme_cmb->currentData(Qt::UserRole).toString();
 	std::map<QPalette::ColorRole, QStringList> *color_map = color_maps[ui_theme];
 	QStringList *item_colors = item_color_lists[ui_theme];
-	QPalette pal;
+
+	/* Storing an immutable copy of the original application's palette
+	 * in order to use it on each time the UI theme changes.
+	 *
+	 * NOTE: if we just copy the qApp palette everytime to pal we don't get
+	 * the desired result, instead, the color theme switches randomly from dark to
+	 * light and vice-versa.*/
+	static const QPalette orig_pal = qApp->palette();
+	QPalette pal = orig_pal;
 
 	for(unsigned idx = 0; idx < static_cast<unsigned>(item_colors->size()); idx++)
-		ObjectsTableWidget::setTableItemColor(idx, QColor(item_colors->at(idx)));
+	{
+		ObjectsTableWidget::setTableItemColor(static_cast<ObjectsTableWidget::TableItemColor>(idx),
+																					QColor(item_colors->at(idx)));
+	}
 
 	for(auto &itr : *color_map)
 	{
@@ -903,10 +927,6 @@ void AppearanceConfigWidget::applyUiTheme()
 		pal.setColor(QPalette::Disabled, itr.first, itr.second[2]);
 	}
 
-	/* Workaround: Forcing the assignment of palette to QPushButton and QTabWidget because
-	 * some instances seem not to be accepting the parent palette change. */
-	qApp->setPalette(pal, "QPushButton");
-	qApp->setPalette(pal, "QTabWidget");
 	qApp->setPalette(pal);
 
 	// For dark theme, we force QMenu class to use a lighter base color
@@ -924,7 +944,10 @@ void AppearanceConfigWidget::applyUiTheme()
 void AppearanceConfigWidget::previewUiSettings()
 {
 	int idx = ui_theme_cmb->currentIndex() - 1;
-	if(idx < 0 ) idx = 0;
+
+	if(idx < 0 )
+		idx = 0;
+
 	syntax_hl_theme_cmb->blockSignals(true);
 	syntax_hl_theme_cmb->setCurrentIndex(idx);
 	syntax_hl_theme_cmb->blockSignals(false);
@@ -980,10 +1003,6 @@ void AppearanceConfigWidget::applyDesignCodeTheme()
 
 void AppearanceConfigWidget::applyUiStyleSheet()
 {
-	QString ico_style_conf = GlobalAttributes::getTmplConfigurationFilePath("",
-																																					"icons-" + icons_size_cmb->currentData().toString().toLower() +
-																																					GlobalAttributes::ConfigurationExt);
-
 	QFile ui_style(GlobalAttributes::getTmplConfigurationFilePath("",
 																																GlobalAttributes::UiStyleConf +
 																																GlobalAttributes::ConfigurationExt));
@@ -999,6 +1018,23 @@ void AppearanceConfigWidget::applyUiStyleSheet()
 	else
 	{
 		QByteArray ui_stylesheet = ui_style.readAll();
+		QString ico_style_conf = GlobalAttributes::getTmplConfigurationFilePath("",
+																																						"icons-" + icons_size_cmb->currentData().toString().toLower() +
+																																						GlobalAttributes::ConfigurationExt);
+		QString ui_theme = ui_theme_cmb->currentData(Qt::UserRole).toString(),
+		extra_style_conf = GlobalAttributes::getTmplConfigurationFilePath(GlobalAttributes::ThemesDir +
+																																		 GlobalAttributes::DirSeparator +
+																																		 ui_theme,
+																																		 "extra-" + GlobalAttributes::UiStyleConf +
+																																		 GlobalAttributes::ConfigurationExt);
+
+		if(QFileInfo::exists(extra_style_conf))
+		{
+			QFile extra_style(extra_style_conf);
+
+			if(extra_style.open(QFile::ReadOnly))
+				ui_stylesheet.append(extra_style.readAll());
+		}
 
 		if(!ico_style_conf.isEmpty())
 		{
@@ -1012,7 +1048,7 @@ void AppearanceConfigWidget::applyUiStyleSheet()
 													 ErrorCode::FileDirectoryNotAccessed,__PRETTY_FUNCTION__,__FILE__,__LINE__));
 			}
 			else
-				ui_stylesheet.append(ico_style.readAll());
+				ui_stylesheet.append(ico_style.readAll());		
 		}
 
 		qApp->setStyleSheet(ui_stylesheet);

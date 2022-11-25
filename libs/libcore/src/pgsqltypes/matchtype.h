@@ -27,7 +27,10 @@
 
 #include "templatetype.h"
 
-class MatchType: public TemplateType<MatchType>{
+class __libcore MatchType: public TemplateType<MatchType>{
+	private:
+		static QStringList type_names;
+
 	public:
 		static constexpr unsigned Simple = 1,
 		Full = 2,
@@ -36,6 +39,12 @@ class MatchType: public TemplateType<MatchType>{
 		MatchType(unsigned type_id);
 		MatchType(const QString &type_name);
 		MatchType();
+
+		static QStringList getTypes();
+
+		unsigned setType(unsigned type_id) override;
+		unsigned setType(const QString &type_name) override;
+		QString getTypeName(unsigned type_id) override;
 };
 
 #endif 

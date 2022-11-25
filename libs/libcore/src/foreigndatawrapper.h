@@ -29,7 +29,7 @@
 #include "function.h"
 #include "foreignobject.h"
 
-class ForeignDataWrapper: public BaseObject, public ForeignObject {
+class __libcore ForeignDataWrapper: public BaseObject, public ForeignObject {
 	private:
 		//! \brief Function that executes the functions related to the foreign data wrapper
 		Function *handler_func,
@@ -46,9 +46,9 @@ class ForeignDataWrapper: public BaseObject, public ForeignObject {
 		Function *getHandlerFunction();
 		Function *getValidatorFunction();
 
-		virtual QString getCodeDefinition(unsigned def_type);
-		virtual QString getCodeDefinition(unsigned def_type, bool reduced_form);
-		virtual QString getAlterDefinition(BaseObject *object);
+		virtual QString getSourceCode(SchemaParser::CodeType def_type);
+		virtual QString getSourceCode(SchemaParser::CodeType def_type, bool reduced_form);
+		virtual QString getAlterCode(BaseObject *object);
 };
 
 #endif

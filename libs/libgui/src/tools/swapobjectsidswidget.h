@@ -29,7 +29,7 @@
 #include "ui_swapobjectsidswidget.h"
 #include "widgets/objectselectorwidget.h"
 
-class SwapObjectsIdsWidget: public QWidget, public Ui::SwapObjectsIdsWidget {
+class __libgui SwapObjectsIdsWidget: public QWidget, public Ui::SwapObjectsIdsWidget {
 	private:
 		Q_OBJECT
 

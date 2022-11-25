@@ -30,7 +30,7 @@
 #include "widgets/objectselectorwidget.h"
 #include "ui_transformwidget.h"
 
-class TransformWidget: public BaseObjectWidget, public Ui::TransformWidget {
+class __libgui TransformWidget: public BaseObjectWidget, public Ui::TransformWidget {
 	private:
 		Q_OBJECT
 

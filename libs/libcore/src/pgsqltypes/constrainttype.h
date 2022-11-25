@@ -27,7 +27,10 @@
 
 #include "templatetype.h"
 
-class ConstraintType: public TemplateType<ConstraintType>{
+class __libcore ConstraintType: public TemplateType<ConstraintType>{
+	private:
+		static QStringList type_names;
+
 	public:
 		static constexpr unsigned PrimaryKey = 1,
 		ForeignKey = 2,
@@ -38,6 +41,12 @@ class ConstraintType: public TemplateType<ConstraintType>{
 		ConstraintType(const QString &type_name);
 		ConstraintType(unsigned type_id);
 		ConstraintType();
+
+		static QStringList getTypes();
+
+		unsigned setType(unsigned type_id) override;
+		unsigned setType(const QString &type_name) override;
+		QString getTypeName(unsigned type_id) override;
 };
 
 #endif 

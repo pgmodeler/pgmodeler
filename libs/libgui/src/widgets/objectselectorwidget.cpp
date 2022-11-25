@@ -38,25 +38,21 @@ void ObjectSelectorWidget::configureSelector()
 	model=nullptr;
 	selected_obj=nullptr;
 
-	connect(sel_object_tb, SIGNAL(clicked(bool)), this, SLOT(showObjectView()));
-	connect(rem_object_tb, SIGNAL(clicked(bool)), this, SLOT(clearSelector()));
-	connect(obj_view_wgt, SIGNAL(s_visibilityChanged(BaseObject*,bool)), this, SLOT(showSelectedObject(BaseObject*, bool)));
+	connect(sel_object_tb, &QToolButton::clicked, this, &ObjectSelectorWidget::showObjectView);
+	connect(rem_object_tb, &QToolButton::clicked, this, &ObjectSelectorWidget::clearSelector);
+	connect(obj_view_wgt, qOverload<BaseObject*, bool>(&ModelObjectsWidget::s_visibilityChanged),
+					this, qOverload<BaseObject*, bool>(&ObjectSelectorWidget::showSelectedObject));
 
 	obj_name_edt->installEventFilter(this);
 }
 
 bool ObjectSelectorWidget::eventFilter(QObject *obj, QEvent *evnt)
 {
-	if(this->isEnabled() && evnt->type()==QEvent::FocusIn &&
-		 QApplication::mouseButtons()==Qt::LeftButton && obj==obj_name_edt)
+	if(this->isEnabled() && evnt->type()==QEvent::MouseButtonPress
+		 && QApplication::mouseButtons()==Qt::LeftButton && obj==obj_name_edt)
 	{
-		QFocusEvent *focus_evnt = dynamic_cast<QFocusEvent *>(evnt);
-
-		if(focus_evnt->reason() == Qt::MouseFocusReason)
-		{
-			showObjectView();
-			return true;
-		}
+		showObjectView();
+		return true;
 	}
 
 	return QWidget::eventFilter(obj, evnt);

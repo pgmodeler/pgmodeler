@@ -64,13 +64,13 @@ ConstraintWidget::ConstraintWidget(QWidget *parent): BaseObjectWidget(parent, Ob
 		constraint_grid->addWidget(info_frm, constraint_grid->count()+1, 0, 1, 0);
 		info_frm->setParent(this);
 
-		connect(constr_type_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(selectConstraintType()));
-		connect(deferrable_chk, SIGNAL(toggled(bool)), deferral_cmb, SLOT(setEnabled(bool)));
-		connect(deferrable_chk, SIGNAL(toggled(bool)), deferral_lbl, SLOT(setEnabled(bool)));
-		connect(indexing_chk, SIGNAL(toggled(bool)), indexing_cmb, SLOT(setEnabled(bool)));
-		connect(ref_table_sel, SIGNAL(s_selectorCleared()), this, SLOT(selectReferencedTable()));
-		connect(ref_table_sel, SIGNAL(s_objectSelected()), this, SLOT(selectReferencedTable()));
-		connect(fill_factor_chk, SIGNAL(toggled(bool)), fill_factor_sb, SLOT(setEnabled(bool)));
+		connect(constr_type_cmb, &QComboBox::currentIndexChanged, this, &ConstraintWidget::selectConstraintType);
+		connect(deferrable_chk, &QCheckBox::toggled, deferral_cmb, &QComboBox::setEnabled);
+		connect(deferrable_chk, &QCheckBox::toggled, deferral_lbl, &QLabel::setEnabled);
+		connect(indexing_chk, &QCheckBox::toggled, indexing_cmb, &QComboBox::setEnabled);
+		connect(ref_table_sel, &ObjectSelectorWidget::s_selectorCleared, this, &ConstraintWidget::selectReferencedTable);
+		connect(ref_table_sel, &ObjectSelectorWidget::s_objectSelected, this, &ConstraintWidget::selectReferencedTable);
+		connect(fill_factor_chk, &QCheckBox::toggled, fill_factor_sb, &QSpinBox::setEnabled);
 
 		selectConstraintType();
 		configureTabOrder();
@@ -163,7 +163,7 @@ void ConstraintWidget::setAttributes(DatabaseModel *model, OperationList *op_lis
 	{
 		excl_elems = constr->getExcludeElements();
 
-		indexing_chk->setChecked(constr->getIndexType()!=BaseType::Null);
+		indexing_chk->setChecked(constr->getIndexType()!=IndexingType::Null);
 		indexing_cmb->setCurrentIndex(indexing_cmb->findText(~constr->getIndexType()));
 
 		constr_type_cmb->setCurrentIndex(constr_type_cmb->findText(~constr->getConstraintType()));
@@ -219,7 +219,7 @@ void ConstraintWidget::applyConfiguration()
 		if(indexing_chk->isChecked())
 			constr->setIndexType(IndexingType(indexing_cmb->currentText()));
 		else
-			constr->setIndexType(BaseType::Null);
+			constr->setIndexType(IndexingType::Null);
 
 		if(constr->getConstraintType()==ConstraintType::ForeignKey)
 			constr->setReferencedTable(dynamic_cast<BaseTable *>(ref_table_sel->getSelectedObject()));

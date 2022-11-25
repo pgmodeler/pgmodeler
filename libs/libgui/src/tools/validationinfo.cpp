@@ -24,7 +24,7 @@ ValidationInfo::ValidationInfo()
 	val_type=ValidationAborted;
 }
 
-ValidationInfo::ValidationInfo(unsigned val_type, BaseObject *object, std::vector<BaseObject *> references)
+ValidationInfo::ValidationInfo(ValType val_type, BaseObject *object, std::vector<BaseObject *> references)
 {
 	if(val_type >= SqlValidationError)
 		throw Exception(ErrorCode::AsgInvalidTypeObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -59,7 +59,7 @@ ValidationInfo::ValidationInfo(const QString &msg)
 	errors.push_back(msg);
 }
 
-unsigned ValidationInfo::getValidationType()
+ValidationInfo::ValType ValidationInfo::getValidationType()
 {
 	return val_type;
 }

@@ -25,11 +25,12 @@
 #ifndef RESULT_SET_MODEL_H
 #define RESULT_SET_MODEL_H
 
+#include "guiglobal.h"
 #include <QAbstractTableModel>
 #include "resultset.h"
 #include "catalog.h"
 
-class ResultSetModel: public QAbstractTableModel {
+class __libgui ResultSetModel: public QAbstractTableModel {
 	private:
 		Q_OBJECT
 

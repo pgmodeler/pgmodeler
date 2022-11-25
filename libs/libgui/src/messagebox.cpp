@@ -28,10 +28,11 @@ Messagebox::Messagebox(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 	show_errors_tb->setVisible(false);
 	custom_option_chk->setVisible(false);
 
-	connect(yes_ok_btn,SIGNAL(clicked()),this,SLOT(handleYesOkClick()));
-	connect(no_btn,SIGNAL(clicked()),this,SLOT(handleNoCancelClick()));
-	connect(cancel_btn,SIGNAL(clicked()),this,SLOT(handleNoCancelClick()));
-	connect(show_errors_tb, &QToolButton::toggled, [&](bool checked){
+	connect(yes_ok_btn, &QPushButton::clicked, this, &Messagebox::handleYesOkClick);
+	connect(no_btn, &QPushButton::clicked, this, &Messagebox::handleNoCancelClick);
+	connect(cancel_btn, &QPushButton::clicked, this, &Messagebox::handleNoCancelClick);
+
+	connect(show_errors_tb, &QToolButton::toggled, this, [this](bool checked){
 			objs_group_wgt->setCurrentIndex(checked ? 1 : 0);
 
 			if(!has_custom_size)
@@ -80,8 +81,8 @@ bool Messagebox::isCustomOptionChecked()
 	return custom_option_chk->isChecked();
 }
 
-void Messagebox::show(Exception e, const QString &msg, unsigned icon_type, unsigned buttons, const QString &yes_lbl, const QString &no_lbl, const QString &cancel_lbl,
-					  const QString &yes_ico, const QString &no_ico, const QString &cancel_ico)
+void Messagebox::show(Exception e, const QString &msg, IconType icon_type, ButtonsId buttons, const QString &yes_lbl, const QString &no_lbl, const QString &cancel_lbl,
+						const QString &yes_ico, const QString &no_ico, const QString &cancel_ico)
 {
 	QString fmt_msg, fmt_extra_info, title;
 
@@ -101,13 +102,13 @@ void Messagebox::show(Exception e, const QString &msg, unsigned icon_type, unsig
 	this->show(title, fmt_msg, icon_type, buttons, yes_lbl, no_lbl, cancel_lbl, yes_ico, no_ico, cancel_ico);
 }
 
-void Messagebox::show(const QString &msg, unsigned icon_type, unsigned buttons)
+void Messagebox::show(const QString &msg, IconType icon_type, ButtonsId buttons)
 {
 	this->show("", msg,  icon_type, buttons);
 }
 
-void Messagebox::show(const QString &title, const QString &msg, unsigned icon_type, unsigned buttons, const QString &yes_lbl, const QString &no_lbl,
-					  const QString &cancel_lbl, const QString &yes_ico, const QString &no_ico, const QString &cancel_ico)
+void Messagebox::show(const QString &title, const QString &msg, IconType icon_type, ButtonsId buttons, const QString &yes_lbl, const QString &no_lbl,
+						const QString &cancel_lbl, const QString &yes_ico, const QString &no_ico, const QString &cancel_ico)
 {
 	QString icon_name, aux_title=title;
 
@@ -145,6 +146,9 @@ void Messagebox::show(const QString &title, const QString &msg, unsigned icon_ty
 
 			case ConfirmIcon:
 				aux_title=tr("Confirmation");
+			break;
+
+			default:
 			break;
 		}
 	}

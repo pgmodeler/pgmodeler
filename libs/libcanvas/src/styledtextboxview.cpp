@@ -19,6 +19,8 @@ void StyledTextboxView::configureObject()
 	QPolygonF pol;
 	QPointF pnt;
 	RoundedRectItem rect_item;
+	double old_width = bounding_rect.width(),
+			old_height = bounding_rect.height();
 
 	this->__configureObject();
 
@@ -56,4 +58,8 @@ void StyledTextboxView::configureObject()
 
 	this->configureObjectShadow();
 	this->configureObjectSelection();
+
+	if((old_width != 0 && bounding_rect.width() != old_width) ||
+		 (old_height != 0 && bounding_rect.height()!= old_height))
+		emit s_objectDimensionChanged();
 }

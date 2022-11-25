@@ -29,7 +29,7 @@
 #include "ui_triggerwidget.h"
 #include "widgets/objectstablewidget.h"
 
-class TriggerWidget: public BaseObjectWidget, public Ui::TriggerWidget {
+class __libgui TriggerWidget: public BaseObjectWidget, public Ui::TriggerWidget {
 	private:
 		Q_OBJECT
 

@@ -140,7 +140,7 @@ void Catalog::closeConnection()
 	connection.close();
 }
 
-void Catalog::setQueryFilter(unsigned filter)
+void Catalog::setQueryFilter(QueryFilter filter)
 {
 	bool list_all=(ListAllObjects & filter) == ListAllObjects;
 
@@ -434,20 +434,44 @@ QString Catalog::getCatalogQuery(const QString &qry_type, ObjectType obj_type, b
 	schparser.ignoreEmptyAttributes(true);
 
 	attribs[Attributes::PgSqlVersion]=schparser.getPgSQLVersion();
-	sql=schparser.getCodeDefinition(attribs).simplified();
+	sql=schparser.getSourceCode(attribs).simplified();
 
 	//Appeding the custom filter to the whole catalog query
 	if(!custom_filter.isEmpty())
 	{
-		int order_by_idx = sql.indexOf(QString("ORDER BY"), 0, Qt::CaseInsensitive);
+		int order_by_idx = sql.lastIndexOf("ORDER BY", -1, Qt::CaseInsensitive),
+				where_idx = sql.lastIndexOf("WHERE", -1, Qt::CaseInsensitive),
+				pos = -1;
 
-		if(order_by_idx < 0)
-			order_by_idx = sql.length();
+		// If there's no where in the catalog query
+		if(where_idx < 0)
+		{
+			// Adding the custom filter with a WHERE statement
+			custom_filter.prepend("WHERE ");
 
-		if(!sql.contains(QString("WHERE"), Qt::CaseInsensitive))
-			sql.insert(order_by_idx, QString(" WHERE ") + custom_filter);
-		else
-			sql.insert(order_by_idx, QString(" AND (%1) ").arg(custom_filter));
+			/* If we have and order by then the where statement will
+			 * be placed before the order by */
+			if(order_by_idx > 0)
+				pos = order_by_idx;
+			// Otherwise, it will be placed at query end
+			else
+				pos = sql.length();
+		}
+		// If we have an order by and a where
+		else if(where_idx > 0)
+		{
+			custom_filter = QString(" AND (%1) ").arg(custom_filter);
+
+			// If the order by at left of the where (inside a subquery for example)
+			if(order_by_idx < 0 || order_by_idx < where_idx)
+				// The custom filter will be placed at the end of the query
+				pos = sql.length();
+			else
+				//Otherwise, before the order by
+				pos = order_by_idx;
+		}
+
+		sql.insert(pos, custom_filter);
 	}
 
 	//Append a LIMIT clause when the single_result is set
@@ -492,7 +516,7 @@ unsigned Catalog::getObjectCount(ObjectType obj_type, const QString &sch_name, c
 	}
 }
 
-unsigned Catalog::getQueryFilter()
+Catalog::QueryFilter Catalog::getQueryFilter()
 {
 	return filter;
 }
@@ -623,7 +647,7 @@ std::vector<attribs_map> Catalog::getObjectsNames(std::vector<ObjectType> obj_ty
 			{
 				//Injecting the object type integer code in order to sort the final result
 				sql.replace(sql.indexOf(select_kw), select_kw.size(),
-										QString("%1 %2 AS object_type, ").arg(select_kw).arg(enum_cast(obj_type)));
+										QString("%1 %2 AS object_type, ").arg(select_kw).arg(enum_t(obj_type)));
 
 				sql+=QChar('\n');
 				queries.push_back(sql);
@@ -680,7 +704,7 @@ attribs_map Catalog::getAttributes(const QString &obj_name, ObjectType obj_type,
 
 		/* Insert the object type as an attribute of the query result to facilitate the
 		import process on the classes that uses the Catalog */
-		obj_attribs[Attributes::ObjectType]=QString("%1").arg(enum_cast(obj_type));
+		obj_attribs[Attributes::ObjectType]=QString("%1").arg(enum_t(obj_type));
 
 		return obj_attribs;
 	}
@@ -707,7 +731,7 @@ std::vector<attribs_map> Catalog::getMultipleAttributes(ObjectType obj_type, att
 
 				/* Insert the object type as an attribute of the query result to facilitate the
 				import process on the classes that uses the Catalog */
-				tuple[Attributes::ObjectType]=QString("%1").arg(enum_cast(obj_type));
+				tuple[Attributes::ObjectType]=QString("%1").arg(enum_t(obj_type));
 
 				obj_attribs.push_back(tuple);
 				tuple.clear();
@@ -736,7 +760,7 @@ std::vector<attribs_map> Catalog::getMultipleAttributes(const QString &catalog_s
 		schparser.ignoreEmptyAttributes(true);
 
 		attribs[Attributes::PgSqlVersion]=schparser.getPgSQLVersion();
-		connection.executeDMLCommand(schparser.getCodeDefinition(attribs).simplified(), res);
+		connection.executeDMLCommand(schparser.getSourceCode(attribs).simplified(), res);
 
 		if(res.accessTuple(ResultSet::FirstTuple))
 		{
@@ -767,7 +791,7 @@ QString Catalog::getCommentQuery(const QString &oid_field, bool is_shared_obj)
 												 {Attributes::SharedObj, (is_shared_obj ? Attributes::True : "")}};
 
 		loadCatalogQuery(query_id);
-		return schparser.getCodeDefinition(attribs).simplified();
+		return schparser.getSourceCode(attribs).simplified();
 	}
 	catch(Exception &e)
 	{
@@ -787,7 +811,7 @@ QString Catalog::getNotExtObjectQuery(const QString &oid_field)
 
 
 		loadCatalogQuery(query_id);
-		return schparser.getCodeDefinition(attribs).simplified();
+		return schparser.getSourceCode(attribs).simplified();
 	}
 	catch(Exception &e)
 	{
@@ -920,7 +944,7 @@ attribs_map Catalog::getServerAttributes()
 		loadCatalogQuery(QString("server"));
 		schparser.ignoreUnkownAttributes(true);
 		schparser.ignoreEmptyAttributes(true);
-		sql = schparser.getCodeDefinition(attribs).simplified();
+		sql = schparser.getSourceCode(attribs).simplified();
 		connection.executeDMLCommand(sql, res);
 
 		if(res.accessTuple(ResultSet::FirstTuple))
@@ -964,7 +988,7 @@ unsigned Catalog::getObjectCount(bool incl_sys_objs)
 		loadCatalogQuery(Attributes::ObjCount);
 		schparser.ignoreUnkownAttributes(true);
 		schparser.ignoreEmptyAttributes(true);
-		sql = schparser.getCodeDefinition(attribs).simplified();
+		sql = schparser.getSourceCode(attribs).simplified();
 		connection.executeDMLCommand(sql, res);
 
 		if(res.accessTuple(ResultSet::FirstTuple))

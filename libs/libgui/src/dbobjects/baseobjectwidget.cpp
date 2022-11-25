@@ -47,10 +47,10 @@ BaseObjectWidget::BaseObjectWidget(QWidget *parent, ObjectType obj_type): QWidge
 		tablespace_sel=nullptr;
 		object_protected = false;
 
-		GuiUtilsNs::configureWidgetFont(protected_obj_lbl, GuiUtilsNs::MediumFontFactor);
+		//GuiUtilsNs::configureWidgetFont(protected_obj_lbl, GuiUtilsNs::MediumFontFactor);
 
-		connect(edt_perms_tb, SIGNAL(clicked(bool)),this, SLOT(editPermissions()));
-		connect(append_sql_tb, SIGNAL(clicked(bool)),this, SLOT(editCustomSQL()));
+		connect(edt_perms_tb, &QPushButton::clicked, this, &BaseObjectWidget::editPermissions);
+		connect(append_sql_tb, &QPushButton::clicked, this, &BaseObjectWidget::editCustomSQL);
 
 		schema_sel=new ObjectSelectorWidget(ObjectType::Schema, this);
 		collation_sel=new ObjectSelectorWidget(ObjectType::Collation, this);
@@ -529,7 +529,7 @@ QFrame *BaseObjectWidget::generateInformationFrame(const QString &msg)
 	font.setBold(false);
 	info_frm->setFont(font);
 
-	GuiUtilsNs::configureWidgetFont(info_frm, GuiUtilsNs::MediumFontFactor);
+	//GuiUtilsNs::configureWidgetFont(info_frm, GuiUtilsNs::MediumFontFactor);
 
 	info_frm->setObjectName("info_frm");
 	info_frm->setFrameShape(QFrame::StyledPanel);
@@ -606,7 +606,7 @@ QFrame *BaseObjectWidget::generateVersionWarningFrame(std::map<QString, std::vec
 	font.setItalic(false);
 	font.setBold(false);
 
-	GuiUtilsNs::configureWidgetFont(alert_frm, GuiUtilsNs::MediumFontFactor);
+	//GuiUtilsNs::configureWidgetFont(alert_frm, GuiUtilsNs::MediumFontFactor);
 
 	alert_frm->setObjectName("alert_frm");
 	alert_frm->setFrameShape(QFrame::StyledPanel);
@@ -813,9 +813,9 @@ void BaseObjectWidget::finishConfiguration()
 			{
 				//If the object is being updated, validates its SQL definition
 				if(obj_type==ObjectType::BaseRelationship || obj_type==ObjectType::Textbox || obj_type==ObjectType::Tag)
-					this->object->getCodeDefinition(SchemaParser::XmlDefinition);
+					this->object->getSourceCode(SchemaParser::XmlCode);
 				else
-					this->object->getCodeDefinition(SchemaParser::SqlDefinition);
+					this->object->getSourceCode(SchemaParser::SqlCode);
 			}
 
 			model->getObjectReferences(object, ref_objs);
@@ -899,7 +899,7 @@ void BaseObjectWidget::cancelConfiguration()
 
 		if(!BaseTable::isBaseTable(obj_type) && obj_type != ObjectType::Relationship)
 		{
-			if(!op_list->isObjectRegistered(this->object, Operation::ObjectCreated))
+			if(!op_list->isObjectRegistered(this->object, Operation::ObjCreated))
 				delete this->object;
 
 			this->object=nullptr;
@@ -927,15 +927,15 @@ void BaseObjectWidget::registerNewObject()
 {
 	try
 	{
-		if(this->new_object && op_list && !op_list->isObjectRegistered(this->object, Operation::ObjectCreated))
+		if(this->new_object && op_list && !op_list->isObjectRegistered(this->object, Operation::ObjCreated))
 		{
 			//If the object is a new one is necessary register it on the operation list
 			if(this->table)
-				op_list->registerObject(this->object, Operation::ObjectCreated, -1, this->table);
+				op_list->registerObject(this->object, Operation::ObjCreated, -1, this->table);
 			else if(this->relationship)
-				op_list->registerObject(this->object, Operation::ObjectCreated, -1, this->relationship);
+				op_list->registerObject(this->object, Operation::ObjCreated, -1, this->relationship);
 			else
-				op_list->registerObject(this->object, Operation::ObjectCreated);
+				op_list->registerObject(this->object, Operation::ObjCreated);
 		}
 	}
 	catch(Exception &e)

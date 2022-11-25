@@ -29,7 +29,7 @@
 #include "basegraphicobject.h"
 #include <QColor>
 
-class Schema: public BaseGraphicObject {
+class __libcore Schema: public BaseGraphicObject {
 	private:
 		static unsigned schema_id;
 		QColor fill_color;
@@ -46,7 +46,7 @@ class Schema: public BaseGraphicObject {
 		void setRectVisible(bool value);
 		bool isRectVisible();
 
-		virtual QString getCodeDefinition(unsigned def_type) final;
+		virtual QString getSourceCode(SchemaParser::CodeType def_type) final;
 };
 
 #endif

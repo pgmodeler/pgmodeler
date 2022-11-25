@@ -29,7 +29,7 @@
 #include "function.h"
 #include "pgsqltypes/eventtriggertype.h"
 
-class EventTrigger: public BaseObject {
+class __libcore EventTrigger: public BaseObject {
 	private:
 
 		//! \brief Function that is excuted when the event trigger is activated
@@ -58,7 +58,7 @@ class EventTrigger: public BaseObject {
 		Function *getFunction();
 		QStringList getFilter(const QString &variable);
 
-		virtual QString getCodeDefinition(unsigned def_type) final;
+		virtual QString getSourceCode(SchemaParser::CodeType def_type) final;
 };
 
 #endif
