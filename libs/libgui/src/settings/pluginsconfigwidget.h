@@ -39,7 +39,7 @@ class __libgui PluginsConfigWidget: public BaseConfigWidget, public Ui::PluginsC
 		std::vector<PgModelerPlugin *> plugins;
 
 		//! \brief Stores the actions assigned for each plugin
-		std::vector<QAction *> plugins_actions;
+		std::map<PgModelerPlugin *, QAction *> plugins_actions;
 
 		//! \brief Table used to show the loaded plugins
 		ObjectsTableWidget *plugins_tab;
@@ -82,9 +82,9 @@ void PluginsConfigWidget::installPluginsActions(QMenu *menu, const Class *recv, 
 	for(auto &act : plugins_actions)
 	{
 		if(menu)
-			menu->addAction(act);
+			menu->addAction(act.second);
 
-		connect(act, &QAction::triggered, recv, slot);
+		connect(act.second, &QAction::triggered, recv, slot);
 	}
 }
 

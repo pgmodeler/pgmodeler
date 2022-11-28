@@ -31,14 +31,15 @@
 /*	The plugins in pgModeler must be within the "plugins" folder in its own
 		directory and must have the following basic structure:
 
-
 		 [PGMODELER_PLUGINS_DIR]/
 					|
 					+ - pluginA/
 							 |
 							 + ---- (lib)*(pluginA.)(so|dylib|dll) (library)
 							 |
-							 + ---- pluginA.png (icon)
+							 + ---- res/
+											 |
+											 +--- pluginA.png (icon)
 
 		> Library: it is the shared object that represents the plugin. The prefix (lib) and suffix (so|dylib|dll) are plataform dependent.
 		> Icon: it is a PNG image that represents the plugin on the plugins toolbar.
@@ -49,6 +50,7 @@
 
 // Making the MainWindow class of pgModeler be known by the plugin interface
 class MainWindow;
+class PluginsConfigWidget;
 
 class __libgui PgModelerPlugin {
 	protected:
@@ -56,7 +58,12 @@ class __libgui PgModelerPlugin {
 
 		MainWindow *main_window;
 
+		////! \brief Defines the name of the library from where the plugin is being loaded
+		void setLibraryName(const QString &lib);
+
 	private:
+		QString libname;
+
 		QLabel	*icon_lbl,
 		*title_lbl,
 		*author_lbl,
@@ -90,7 +97,7 @@ class __libgui PgModelerPlugin {
 		virtual QString getPluginDescription(void)=0;
 
 		//! \brief Shows the plugin's information dialog
-		virtual void showPluginInfo(void) = 0;
+		virtual void showPluginInfo(void);
 
 		/*! \brief Returns the plugin's action shortcut
 		 * The default implementation is to return an empty shortcut */
@@ -100,14 +107,25 @@ class __libgui PgModelerPlugin {
 		 * The default implementation is to indicate the presence of an action */
 		virtual bool hasMenuAction();
 
+		virtual bool hasConfigurationForm();
+
+		virtual void showConfigurationForm() = 0;
+
+		virtual QList<QAction *> getModelActions() = 0;
+
+		//! \brief Returns the name of the library of the plugin
+		QString getLibraryName();
+
 		//! \brief Sets the plugin's all attributes at once.
 		void configurePluginInfo(const QString &title, const QString &version, const QString &author,
 														 const QString &description, const QString &ico_filename);
+
+		friend class PluginsConfigWidget;
 };
 
 /* Declares the class PgModelerPlugin as interface, this means that the class is a base
 	 for plugin implementation. All plugin must inherit this class and use the Q_INTERFACE
 	 directive in its declaration  */
-Q_DECLARE_INTERFACE(PgModelerPlugin,"br.com.pgmodeler.PgModelerPlugin")
+Q_DECLARE_INTERFACE(PgModelerPlugin,"io.pgmodeler.PgModelerPlugin")
 
 #endif

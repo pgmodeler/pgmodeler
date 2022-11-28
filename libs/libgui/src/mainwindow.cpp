@@ -351,8 +351,8 @@ void MainWindow::loadConfigurations()
 		configuration_form->loadConfiguration();
 
 		PluginsConfigWidget *plugins_conf_wgt = dynamic_cast<PluginsConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::PluginsConfWgt));
-		plugins_conf_wgt->installPluginsActions(plugins_menu, this, &MainWindow::executePlugin);
 		plugins_conf_wgt->initPlugins(this);
+		plugins_conf_wgt->installPluginsActions(plugins_menu, this, &MainWindow::executePlugin);
 		plugins_menu->setEnabled(!plugins_menu->isEmpty());
 
 		QAction *action_plugins = plugins_menu->menuAction();

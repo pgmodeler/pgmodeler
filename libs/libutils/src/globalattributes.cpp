@@ -46,6 +46,7 @@ const QString GlobalAttributes::StacktraceFile(".stacktrace");
 const QString GlobalAttributes::LastModelFile("lastmodel");
 
 const QString GlobalAttributes::DirSeparator("/");
+const QString GlobalAttributes::ResourcesDir("res");
 const QString GlobalAttributes::DefaultConfsDir("defaults");
 const QString GlobalAttributes::ConfsBackupsDir("backups");
 const QString GlobalAttributes::SchemasDir("schemas");

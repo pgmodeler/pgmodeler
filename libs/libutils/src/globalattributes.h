@@ -98,6 +98,7 @@ class __libutils GlobalAttributes {
 		LastModelFile,
 
 		DirSeparator,
+		ResourcesDir, //! \brief Directory name which holds the pgModeler's plug-ins resources directory (res)
 		DefaultConfsDir,
 		ConfsBackupsDir,  //! \brief Directory name which holds the pgModeler configuration backups
 		SchemasDir,        //! \brief Default name for the schemas directory

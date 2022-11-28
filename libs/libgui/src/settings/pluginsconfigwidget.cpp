@@ -78,7 +78,7 @@ void PluginsConfigWidget::loadConfiguration()
 
 	/* Configures an QDir instance to list only directories on the plugins/ subdir.
 		If the user does not put the plugin in it's directory the file is ignored  */
-	dir_list=QDir(dir_plugins, QString("*"), QDir::Name, QDir::AllDirs | QDir::NoDotAndDotDot).entryList();
+	dir_list=QDir(dir_plugins, "*", QDir::Name, QDir::AllDirs | QDir::NoDotAndDotDot).entryList();
 
 	while(!dir_list.isEmpty())
 	{
@@ -90,27 +90,29 @@ void PluginsConfigWidget::loadConfiguration()
 #ifdef Q_OS_WIN
 		lib=dir_plugins + plugin_name +
             GlobalAttributes::DirSeparator  +
-			plugin_name + QString(".dll");
+			plugin_name + ".dll";
 #else
 #ifdef Q_OS_MAC
 		lib=dir_plugins + plugin_name +
             GlobalAttributes::DirSeparator  +
-			QString("lib") + plugin_name + QString(".dylib");
+			"lib" + plugin_name + ".dylib";
 #else
 		lib=dir_plugins + plugin_name +
 			GlobalAttributes::DirSeparator  +
-			QString("lib") + plugin_name + QString(".so");
+			"lib" + plugin_name + ".so";
 #endif
 #endif
 
 		//Try to load the library
 		plugin_loader.setFileName(lib);
+
 		if(plugin_loader.load())
 		{
 			fi.setFile(lib);
 
 			//Inserts the loaded plugin on the vector
 			plugin = qobject_cast<PgModelerPlugin *>(plugin_loader.instance());
+			plugin->setLibraryName(QFileInfo(lib).fileName());
 			plugins.push_back(plugin);
 
 			if(plugin->hasMenuAction())
@@ -122,11 +124,13 @@ void PluginsConfigWidget::loadConfiguration()
 				plugin_action->setShortcut(plugin->getPluginShortcut());
 
 				icon.load(dir_plugins + plugin_name +
-									GlobalAttributes::DirSeparator  +
-									plugin_name + QString(".png"));
+									GlobalAttributes::DirSeparator +
+									GlobalAttributes::ResourcesDir +
+									GlobalAttributes::DirSeparator +
+									plugin_name + ".png");
 
 				plugin_action->setIcon(icon);
-				plugins_actions.push_back(plugin_action);
+				plugins_actions[plugin] = plugin_action;
 			}
 
 			plugins_tab->addRow();
@@ -151,25 +155,43 @@ void PluginsConfigWidget::loadConfiguration()
 		throw Exception(ErrorCode::PluginsNotLoaded,__PRETTY_FUNCTION__,__FILE__,__LINE__, errors);
 }
 
-/*void PluginsConfigWidget::installPluginsActions(QMenu *menu, QObject *recv, const char *slot)
-{
-	if(menu && slot)
-	{
-		std::vector<QAction *>::iterator itr=plugins_actions.begin();
-
-		while(itr!=plugins_actions.end())
-		{
-			if(menu)
-				menu->addAction(*itr);
-
-			connect(*itr, &QAction::triggered, recv, slot);
-			itr++;
-		}
-	}
-}*/
-
 void PluginsConfigWidget::initPlugins(MainWindow *main_window)
 {
+	std::vector<PgModelerPlugin *> inv_plugins;
+	std::vector<Exception> errors;
+
 	for(auto &plugin : plugins)
-		plugin->initPlugin(main_window);
+	{
+		try
+		{
+			plugin->initPlugin(main_window);
+		}
+		catch(Exception &e)
+		{
+			inv_plugins.push_back(plugin);
+			errors.push_back(e);
+		}
+	}
+
+	// Erasing the plugins/actions related to the ones that failed to initialize
+	while(!inv_plugins.empty())
+	{
+		plugins.erase(std::find(plugins.begin(), plugins.end(), inv_plugins.back()));
+
+		if(plugins_actions.count(inv_plugins.back()))
+		{
+			delete plugins_actions[inv_plugins.back()];
+			plugins_actions.erase(inv_plugins.back());
+		}
+
+		delete inv_plugins.back();
+		inv_plugins.pop_back();
+	}
+
+	if(!errors.empty())
+	{
+		Messagebox msgbox;
+		msgbox.show(Exception(tr("One or more plug-ins could not be initialized due to minimum pgModeler version requirements! The failed ones were unloaded. Please, check the error stack for more details."),
+													ErrorCode::Custom, __PRETTY_FUNCTION__, __FILE__, __LINE__, errors));
+	}
 }

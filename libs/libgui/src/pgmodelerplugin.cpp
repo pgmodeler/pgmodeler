@@ -30,10 +30,10 @@ PgModelerPlugin::PgModelerPlugin()
 	gridLayout=new QGridLayout;
 
 	widget=new QWidget;
-	widget->setWindowTitle(QT_TRANSLATE_NOOP("PgModelerPlugin", "Plugin Information"));
+	widget->setWindowTitle(QT_TRANSLATE_NOOP("PgModelerPlugin", "Plug-in information"));
 
-	gridLayout->setHorizontalSpacing(10);
-	gridLayout->setVerticalSpacing(6);
+	gridLayout->setHorizontalSpacing(GuiUtilsNs::LtSpacing);
+	gridLayout->setVerticalSpacing(GuiUtilsNs::LtSpacing);
 	gridLayout->setContentsMargins(GuiUtilsNs::LtMargin, GuiUtilsNs::LtMargin, GuiUtilsNs::LtMargin, GuiUtilsNs::LtMargin);
 
 	icon_lbl = new QLabel(widget);
@@ -82,6 +82,11 @@ void PgModelerPlugin::initPlugin(MainWindow *main_window)
 	this->main_window = main_window;
 }
 
+void PgModelerPlugin::showPluginInfo()
+{
+	plugin_info_frm->show();
+}
+
 QKeySequence PgModelerPlugin::getPluginShortcut()
 {
 	return QKeySequence();
@@ -92,8 +97,23 @@ bool PgModelerPlugin::hasMenuAction()
 	return true;
 }
 
+bool PgModelerPlugin::hasConfigurationForm()
+{
+	return false;
+}
+
+void PgModelerPlugin::setLibraryName(const QString &lib)
+{
+	libname = lib;
+}
+
+QString PgModelerPlugin::getLibraryName()
+{
+	return libname;
+}
+
 void PgModelerPlugin::configurePluginInfo(const QString &title, const QString &version, const QString &author,
-										  const QString &description, const QString &ico_filename)
+																					const QString &description, const QString &ico_filename)
 {
 	QPixmap ico;
 
