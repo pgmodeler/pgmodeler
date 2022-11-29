@@ -38,8 +38,9 @@ PgModelerPlugin::PgModelerPlugin()
 
 	icon_lbl = new QLabel(widget);
 	icon_lbl->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-	icon_lbl->setMinimumSize(QSize(32, 32));
-	icon_lbl->setMaximumSize(QSize(32, 32));
+	icon_lbl->setMinimumSize(QSize(40, 40));
+	icon_lbl->setMaximumSize(QSize(40, 40));
+	icon_lbl->setScaledContents(true);
 	gridLayout->addWidget(icon_lbl, 0, 0, 2, 1);
 
 	title_lbl = new QLabel(widget);
@@ -68,7 +69,7 @@ PgModelerPlugin::PgModelerPlugin()
 	gridLayout->addWidget(description_lbl, 4, 0, 1, 2);
 
 	widget->setLayout(gridLayout);
-	widget->setMinimumSize(400, 200);
+	widget->setMinimumSize(480, 240);
 	plugin_info_frm->setMainWidget(widget);
 }
 
@@ -85,21 +86,6 @@ void PgModelerPlugin::initPlugin(MainWindow *main_window)
 void PgModelerPlugin::showPluginInfo()
 {
 	plugin_info_frm->show();
-}
-
-QKeySequence PgModelerPlugin::getPluginShortcut()
-{
-	return QKeySequence();
-}
-
-bool PgModelerPlugin::hasMenuAction()
-{
-	return true;
-}
-
-bool PgModelerPlugin::hasConfigurationForm()
-{
-	return false;
 }
 
 void PgModelerPlugin::setLibraryName(const QString &lib)

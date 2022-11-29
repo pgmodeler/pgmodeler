@@ -69,8 +69,6 @@ void PluginsConfigWidget::loadConfiguration()
 	QPluginLoader plugin_loader;
 	QStringList dir_list;
 	PgModelerPlugin *plugin=nullptr;
-	QAction *plugin_action=nullptr;
-	QPixmap icon;
 	QFileInfo fi;
 
 	//The plugin loader must resolve all symbols otherwise return an error if some symbol is missing on library
@@ -115,24 +113,6 @@ void PluginsConfigWidget::loadConfiguration()
 			plugin->setLibraryName(QFileInfo(lib).fileName());
 			plugins.push_back(plugin);
 
-			if(plugin->hasMenuAction())
-			{
-				//Configures the action related to plugin
-				plugin_action=new QAction(this);
-				plugin_action->setText(plugin->getPluginTitle());
-				plugin_action->setData(QVariant::fromValue<void *>(reinterpret_cast<void *>(plugin)));
-				plugin_action->setShortcut(plugin->getPluginShortcut());
-
-				icon.load(dir_plugins + plugin_name +
-									GlobalAttributes::DirSeparator +
-									GlobalAttributes::ResourcesDir +
-									GlobalAttributes::DirSeparator +
-									plugin_name + ".png");
-
-				plugin_action->setIcon(icon);
-				plugins_actions[plugin] = plugin_action;
-			}
-
 			plugins_tab->addRow();
 			plugins_tab->setCellText(plugin->getPluginTitle(), plugins_tab->getRowCount()-1, 0);
 			plugins_tab->setCellText(plugin->getPluginVersion(), plugins_tab->getRowCount()-1, 1);
@@ -165,7 +145,6 @@ void PluginsConfigWidget::initPlugins(MainWindow *main_window)
 		try
 		{
 			plugin->initPlugin(main_window);
-			__plugins_actions.append(plugin->getPluginActions());
 		}
 		catch(Exception &e)
 		{
@@ -178,13 +157,6 @@ void PluginsConfigWidget::initPlugins(MainWindow *main_window)
 	while(!inv_plugins.empty())
 	{
 		plugins.erase(std::find(plugins.begin(), plugins.end(), inv_plugins.back()));
-
-		if(plugins_actions.count(inv_plugins.back()))
-		{
-			delete plugins_actions[inv_plugins.back()];
-			plugins_actions.erase(inv_plugins.back());
-		}
-
 		delete inv_plugins.back();
 		inv_plugins.pop_back();
 	}
@@ -197,7 +169,48 @@ void PluginsConfigWidget::initPlugins(MainWindow *main_window)
 	}
 }
 
-QList<PluginActions> PluginsConfigWidget::getPluginsActions()
+QList<QAction *> PluginsConfigWidget::getPluginsModelsActions()
 {
-	return __plugins_actions;
+	QList<QAction *> list;
+
+	for(auto &plugin : plugins)
+	{
+		if(plugin->getModelAction())
+			list.append(plugin->getModelAction());
+	}
+
+	return list;
+}
+
+void PluginsConfigWidget::installPluginsActions(QMenu *menu)
+{
+	if(!menu)
+		return;
+
+	std::vector<PgModelerPlugin *> aux_plugins;
+
+	for(auto &plugin : plugins)
+	{
+		if(!plugin->getMenuAction())
+			continue;
+
+		if(plugin->getConfigAction())
+			aux_plugins.push_back(plugin);
+
+		menu->addAction(plugin->getMenuAction());
+	}
+
+	if(!aux_plugins.empty())
+	{
+		QMenu *conf_menu = new QMenu(this);
+		conf_menu->menuAction()->setText(tr("Settings"));
+		conf_menu->menuAction()->setIcon(QIcon(GuiUtilsNs::getIconPath("config")));
+
+		menu->addSeparator();
+
+		for(auto &plug : aux_plugins)
+			conf_menu->addAction(plug->getConfigAction());
+
+		menu->addMenu(conf_menu);
+	}
 }

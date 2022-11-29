@@ -503,7 +503,7 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	stacking_menu.addAction(action_bring_to_front);
 
 	plugins_acts_menu.setTitle(tr("Plug-ins"));
-	plugins_acts_menu.setIcon(QIcon(GuiUtilsNs::getIconPath("plugin")));
+	plugins_acts_menu.setIcon(QIcon(GuiUtilsNs::getIconPath("plugins")));
 
 	connect(action_send_to_back, &QAction::triggered, this, &ModelWidget::sendToBack);
 	connect(action_bring_to_front, &QAction::triggered, this, &ModelWidget::bringToFront);
@@ -1679,15 +1679,9 @@ void ModelWidget::updateSceneLayers()
 	scene->blockSignals(false);
 }
 
-void ModelWidget::addPluginActions(const QList<PluginActions> &plugin_acts)
+void ModelWidget::setPluginActions(const QList<QAction *> &plugin_acts)
 {
-	for(auto &plug_act : plugin_acts)
-	{
-		if(!plug_act.isValid())
-			continue;
-
-		plugins_actions.append(plug_act);
-	}
+	plugins_actions = plugin_acts;
 }
 
 void ModelWidget::adjustSceneSize()
@@ -1974,14 +1968,10 @@ int ModelWidget::openTableEditingForm(ObjectType tab_type, PhysicalTable *object
 
 void ModelWidget::configurePluginsActionsMenu()
 {
-	QList<QAction *> list;
 	plugins_acts_menu.clear();
 
-	for(auto &plug_act : plugins_actions)
-	{
-		for(auto &act : plug_act.getActions())
-			plugins_acts_menu.addAction(new QAction(act));
-	}
+	for(auto &act : plugins_actions)
+		plugins_acts_menu.addAction(act);
 }
 
 void ModelWidget::showObjectForm(ObjectType obj_type, BaseObject *object, BaseObject *parent_obj, const QPointF &pos)

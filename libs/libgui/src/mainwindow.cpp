@@ -294,7 +294,7 @@ void MainWindow::setPluginsActions(ModelWidget *model_wgt)
 		return;
 
 	PluginsConfigWidget *plugins_conf_wgt = dynamic_cast<PluginsConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::PluginsConfWgt));
-	model_wgt->addPluginActions(plugins_conf_wgt->getPluginsActions());
+	model_wgt->setPluginActions(plugins_conf_wgt->getPluginsModelsActions());
 }
 
 void MainWindow::createMainWidgets()
@@ -361,7 +361,7 @@ void MainWindow::loadConfigurations()
 
 		PluginsConfigWidget *plugins_conf_wgt = dynamic_cast<PluginsConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::PluginsConfWgt));
 		plugins_conf_wgt->initPlugins(this);
-		plugins_conf_wgt->installPluginsActions(plugins_menu, this, &MainWindow::executePlugin);
+		plugins_conf_wgt->installPluginsActions(plugins_menu);
 		plugins_menu->setEnabled(!plugins_menu->isEmpty());
 
 		QAction *action_plugins = plugins_menu->menuAction();
@@ -1924,19 +1924,6 @@ void MainWindow::updateDockWidgets()
 
 	if(current_model && obj_finder_wgt->result_tbw->rowCount() > 0)
 	  obj_finder_wgt->findObjects();
-}
-
-void MainWindow::executePlugin()
-{
-	QAction *action=dynamic_cast<QAction *>(sender());
-
-	if(action)
-	{
-		PgModelerPlugin *plugin=reinterpret_cast<PgModelerPlugin *>(action->data().value<void *>());
-
-		if(plugin)
-			plugin->executePlugin(current_model);
-	}
 }
 
 void MainWindow::showOverview(bool show)

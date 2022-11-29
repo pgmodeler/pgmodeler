@@ -38,11 +38,6 @@ class __libgui PluginsConfigWidget: public BaseConfigWidget, public Ui::PluginsC
 		//! \brief Loaded plugins
 		std::vector<PgModelerPlugin *> plugins;
 
-		//! \brief Stores the actions assigned for each plugin
-		std::map<PgModelerPlugin *, QAction *> plugins_actions;
-
-		QList<PluginActions> __plugins_actions;
-
 		//! \brief Table used to show the loaded plugins
 		ObjectsTableWidget *plugins_tab;
 
@@ -65,32 +60,16 @@ class __libgui PluginsConfigWidget: public BaseConfigWidget, public Ui::PluginsC
 		 receiver object and slot executed when the actions are activated. The parameters recv and slot
 			must object the same log as the QObject::connect() where recv is the recever object and slot is the
 			method called (in format &Class::method) when the action sends the triggered signal. */
-		template <class Class, typename Slot>
-		void installPluginsActions(QMenu *menu, const Class *recv, Slot slot);
+		void installPluginsActions(QMenu *menu);
 
 		//! \brief Performs the initialization of all loaded plugins (see PgModelerPlugin::initPlugin())
 		void initPlugins(MainWindow *main_window);
 
-		//! \brief Returns a list of actions of the loaded plugins
-		QList<PluginActions> getPluginsActions();
+		//! \brief Returns a list of actions of the loaded plugins related to model actions only
+		QList<QAction *> getPluginsModelsActions();
 
 	private slots:
 		void showPluginInfo(int idx);
 };
-
-template <class Class, typename Slot>
-void PluginsConfigWidget::installPluginsActions(QMenu *menu, const Class *recv, Slot slot)
-{
-	if(!menu || !slot)
-		return;
-
-	for(auto &act : plugins_actions)
-	{
-		if(menu)
-			menu->addAction(act.second);
-
-		connect(act.second, &QAction::triggered, recv, slot);
-	}
-}
 
 #endif

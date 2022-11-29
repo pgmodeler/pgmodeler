@@ -43,11 +43,12 @@
 											 +--- pluginA.png (icon)
 
 		> Library: it is the shared object that represents the plugin. The prefix (lib) and suffix (so|dylib|dll) are plataform dependent.
-		> Icon: it is a PNG image that represents the plugin on the plugins toolbar.
-	> Plugins can have a optional lang subdir in which are stored the translation for them. The translation files must be named
-	  as [plugin name].[lang code].qm, for instance, Brazilian Portuguese translation for "dummy" would be: "dummy.pt_BR.qm".
+		> Icon: it is a PNG image that represents the plugin's icon.
 
-	Note: Plugins can have another additional subdirectories but any reference to them must be made programatically by the plugin author. */
+		> Plug-ins can have an optional "lang" subdir in which is stored the translations for them. The translation files must be named
+			as [plugin name].[lang code].qm, for instance, Brazilian Portuguese translation for "dummy" would be: "dummy.pt_BR.qm".
+
+	Note: Plug-ins can have additional subdirectories but any reference to them must be made programatically by the plugin author. */
 
 // Making the MainWindow class of pgModeler be known by the plugin interface
 class MainWindow;
@@ -82,8 +83,8 @@ class __libgui PgModelerPlugin {
 		 * customization on the UI. The default implementation is to do nothing else then only expose main window to the plugin. */
 		virtual void initPlugin(MainWindow *main_window);
 
-		//! \brief Executes the plugins having a ModelWidget as input parameter.
-		virtual void executePlugin(ModelWidget *modelo)=0;
+		//! \brief Implements the plugin execution
+		virtual void executePlugin() = 0;
 
 		//! \brief Returns the plugin's title, this same text is used as action's text on plugins toolbar.
 		virtual QString getPluginTitle(void)=0;
@@ -100,19 +101,14 @@ class __libgui PgModelerPlugin {
 		//! \brief Shows the plugin's information dialog
 		virtual void showPluginInfo(void);
 
-		/*! \brief Returns the plugin's action shortcut
-		 * The default implementation is to return an empty shortcut */
-		virtual QKeySequence getPluginShortcut();
+		//! \brief Returns the action that will be put in the main window top menu
+		virtual QAction *getMenuAction() = 0;
 
-		/*! \brief Indicates if the plugin's has an action to be installed in a Qmenu instance
-		 * The default implementation is to indicate the presence of an action */
-		virtual bool hasMenuAction();
+		//! \brief Returns the action that will be put in the model's context menu
+		virtual QAction *getModelAction() = 0;
 
-		virtual bool hasConfigurationForm();
-
-		virtual void showConfigurationForm() = 0;
-
-		virtual PluginActions getPluginActions() = 0;
+		//! \brief Returns the action that will be put in the main window top menu, section plugin settings
+		virtual QAction *getConfigAction() = 0;
 
 		//! \brief Returns the name of the library of the plugin
 		QString getLibraryName();

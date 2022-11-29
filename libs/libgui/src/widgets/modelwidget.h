@@ -189,7 +189,7 @@ class __libgui ModelWidget: public QWidget {
 		QTimer zoom_info_timer;
 
 		//! \brief Stores the installed plugins actions to be used in the model context menu
-		QList<PluginActions> plugins_actions;
+		QList<QAction *> plugins_actions;
 
 		//! \brief Opens a editing form for objects at database level
 		template<class Class, class WidgetClass>
@@ -251,7 +251,7 @@ class __libgui ModelWidget: public QWidget {
 
 		/*! \brief Define the list of actions executed by installed plugins that is exposed in
 		 *  the ModelWidget context menu */
-		void addPluginActions(const QList<PluginActions> &plugin_acts);
+		void setPluginActions(const QList<QAction *> &plugin_acts);
 
 	protected:
 		QAction *action_source_code,

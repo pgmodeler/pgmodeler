@@ -287,9 +287,6 @@ class __libgui MainWindow: public QMainWindow, public Ui::MainWindow {
 		//! \brief Applies the zoom to the currently focused model
 		void applyZoom();
 
-		//! \brief Execute the plugin represented by the action that calls the slot
-		void executePlugin();
-
 		//! \brief Toggles the overview widget for the currently opened model
 		void showOverview(bool show);
 
