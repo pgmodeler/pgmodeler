@@ -91,9 +91,9 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	std::vector<ObjectType> types_vect = BaseObject::getObjectTypes(true, { ObjectType::Database, ObjectType::Permission,
 																																					ObjectType::BaseRelationship, ObjectType::Relationship });
 
-	current_zoom=1;
+	current_zoom = 1;
 	modified = panning_mode = false;
-	new_obj_type=ObjectType::BaseObject;
+	new_obj_type = ObjectType::BaseObject;
 
 	//Generating a temporary file name for the model
 	QTemporaryFile tmp_file;
@@ -501,6 +501,9 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	action_bring_to_front=new QAction(QIcon(GuiUtilsNs::getIconPath("bringtofront")), tr("Bring to front"), this);
 	stacking_menu.addAction(action_send_to_back);
 	stacking_menu.addAction(action_bring_to_front);
+
+	plugins_acts_menu.setTitle(tr("Plug-ins"));
+	plugins_acts_menu.setIcon(QIcon(GuiUtilsNs::getIconPath("plugin")));
 
 	connect(action_send_to_back, &QAction::triggered, this, &ModelWidget::sendToBack);
 	connect(action_bring_to_front, &QAction::triggered, this, &ModelWidget::bringToFront);
@@ -1676,6 +1679,17 @@ void ModelWidget::updateSceneLayers()
 	scene->blockSignals(false);
 }
 
+void ModelWidget::addPluginActions(const QList<PluginActions> &plugin_acts)
+{
+	for(auto &plug_act : plugin_acts)
+	{
+		if(!plug_act.isValid())
+			continue;
+
+		plugins_actions.append(plug_act);
+	}
+}
+
 void ModelWidget::adjustSceneSize()
 {
 	QRectF scene_rect, objs_rect;
@@ -1956,6 +1970,18 @@ int ModelWidget::openTableEditingForm(ObjectType tab_type, PhysicalTable *object
 		tab_wgt->setAttributes(db_model, op_list, schema, dynamic_cast<ForeignTable *>(object), pos.x(), pos.y());
 
 	return openEditingForm(tab_wgt);
+}
+
+void ModelWidget::configurePluginsActionsMenu()
+{
+	QList<QAction *> list;
+	plugins_acts_menu.clear();
+
+	for(auto &plug_act : plugins_actions)
+	{
+		for(auto &act : plug_act.getActions())
+			plugins_acts_menu.addAction(new QAction(act));
+	}
 }
 
 void ModelWidget::showObjectForm(ObjectType obj_type, BaseObject *object, BaseObject *parent_obj, const QPointF &pos)
@@ -4508,6 +4534,14 @@ void ModelWidget::configurePopupMenu(const std::vector<BaseObject *> &objects)
 	{
 		popup_menu.addSeparator();
 		popup_menu.addAction(action_edit_creation_order);
+	}
+
+	configurePluginsActionsMenu();
+
+	if(!plugins_acts_menu.isEmpty())
+	{
+		popup_menu.addSeparator();
+		popup_menu.addMenu(&plugins_acts_menu);
 	}
 }
 

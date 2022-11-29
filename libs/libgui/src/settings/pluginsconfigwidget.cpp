@@ -165,6 +165,7 @@ void PluginsConfigWidget::initPlugins(MainWindow *main_window)
 		try
 		{
 			plugin->initPlugin(main_window);
+			__plugins_actions.append(plugin->getPluginActions());
 		}
 		catch(Exception &e)
 		{
@@ -194,4 +195,9 @@ void PluginsConfigWidget::initPlugins(MainWindow *main_window)
 		msgbox.show(Exception(tr("One or more plug-ins could not be initialized due to minimum pgModeler version requirements! The failed ones were unloaded. Please, check the error stack for more details."),
 													ErrorCode::Custom, __PRETTY_FUNCTION__, __FILE__, __LINE__, errors));
 	}
+}
+
+QList<PluginActions> PluginsConfigWidget::getPluginsActions()
+{
+	return __plugins_actions;
 }

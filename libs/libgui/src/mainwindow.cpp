@@ -288,6 +288,15 @@ void MainWindow::configureMenusActionsWidgets()
 	resizeGeneralToolbarButtons();
 }
 
+void MainWindow::setPluginsActions(ModelWidget *model_wgt)
+{
+	if(!model_wgt)
+		return;
+
+	PluginsConfigWidget *plugins_conf_wgt = dynamic_cast<PluginsConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::PluginsConfWgt));
+	model_wgt->addPluginActions(plugins_conf_wgt->getPluginsActions());
+}
+
 void MainWindow::createMainWidgets()
 {
 	try
@@ -1024,6 +1033,7 @@ void MainWindow::addModel(const QString &filename)
 
 		model_tab=new ModelWidget;
 		model_tab->setObjectName(obj_name);
+		setPluginsActions(model_tab);
 
 		//Add the tab to the tab widget
 		obj_name=model_tab->db_model->getName();
@@ -1106,6 +1116,8 @@ void MainWindow::addModel(ModelWidget *model_wgt)
 			throw Exception(ErrorCode::AsgNotAllocattedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		else if(model_wgt->parent())
 			throw Exception(ErrorCode::AsgWidgetAlreadyHasParent,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+		setPluginsActions(model_wgt);
 
 		model_nav_wgt->addModel(model_wgt);
 		models_tbw->blockSignals(true);

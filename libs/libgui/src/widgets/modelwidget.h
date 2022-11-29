@@ -33,6 +33,7 @@
 #include "taskprogresswidget.h"
 #include "newobjectoverlaywidget.h"
 #include "layerswidget.h"
+#include "pluginactions.h"
 
 class __libgui ModelWidget: public QWidget {
 	private:
@@ -187,6 +188,9 @@ class __libgui ModelWidget: public QWidget {
 		//! \brief This timer controls the interval the zoom label is visible
 		QTimer zoom_info_timer;
 
+		//! \brief Stores the installed plugins actions to be used in the model context menu
+		QList<PluginActions> plugins_actions;
+
 		//! \brief Opens a editing form for objects at database level
 		template<class Class, class WidgetClass>
 		int openEditingForm(BaseObject *object);
@@ -202,6 +206,9 @@ class __libgui ModelWidget: public QWidget {
 
 		//! \brief Opens a editing form specific for tables and foreign tables
 		int openTableEditingForm(ObjectType tab_type, PhysicalTable *object, Schema *parent_obj, const QPointF &pos);
+
+		//! \brief Configures the submenu related to the installed plugins actions
+		void configurePluginsActionsMenu();
 
 		//! \brief Configures the submenu related to the object
 		void configureQuickMenu(BaseObject *object);
@@ -241,6 +248,10 @@ class __libgui ModelWidget: public QWidget {
 
 		//! \brief Applies the layer settings from the internal database model to the scene object
 		void updateSceneLayers();
+
+		/*! \brief Define the list of actions executed by installed plugins that is exposed in
+		 *  the ModelWidget context menu */
+		void addPluginActions(const QList<PluginActions> &plugin_acts);
 
 	protected:
 		QAction *action_source_code,
@@ -314,7 +325,9 @@ class __libgui ModelWidget: public QWidget {
 		std::map<ObjectType, QAction *> actions_new_objects;
 
 		//! \brief Stores the relationship types menu
-		QMenu *rels_menu;
+		QMenu *rels_menu,
+
+		plugins_acts_menu;
 
 		void resizeEvent(QResizeEvent *);
 		void mousePressEvent(QMouseEvent *event);
@@ -580,7 +593,6 @@ class __libgui ModelWidget: public QWidget {
 		void saveModel();
 		void printModel(QPrinter *printer, bool print_grid, bool print_page_nums);
 		void update();
-
 		void bringToFront();
 		void sendToBack();
 

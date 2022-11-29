@@ -192,6 +192,8 @@ class __libgui MainWindow: public QMainWindow, public Ui::MainWindow {
 
 		void configureMenusActionsWidgets();
 
+		void setPluginsActions(ModelWidget *model_wgt);
+
 	public:
 		enum MWViewsId {
 			WelcomeView,

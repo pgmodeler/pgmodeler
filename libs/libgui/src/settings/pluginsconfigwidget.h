@@ -41,6 +41,8 @@ class __libgui PluginsConfigWidget: public BaseConfigWidget, public Ui::PluginsC
 		//! \brief Stores the actions assigned for each plugin
 		std::map<PgModelerPlugin *, QAction *> plugins_actions;
 
+		QList<PluginActions> __plugins_actions;
+
 		//! \brief Table used to show the loaded plugins
 		ObjectsTableWidget *plugins_tab;
 
@@ -68,6 +70,9 @@ class __libgui PluginsConfigWidget: public BaseConfigWidget, public Ui::PluginsC
 
 		//! \brief Performs the initialization of all loaded plugins (see PgModelerPlugin::initPlugin())
 		void initPlugins(MainWindow *main_window);
+
+		//! \brief Returns a list of actions of the loaded plugins
+		QList<PluginActions> getPluginsActions();
 
 	private slots:
 		void showPluginInfo(int idx);

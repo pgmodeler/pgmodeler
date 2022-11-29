@@ -27,6 +27,7 @@
 
 #include "widgets/modelwidget.h"
 #include "baseform.h"
+#include "pluginactions.h"
 
 /*	The plugins in pgModeler must be within the "plugins" folder in its own
 		directory and must have the following basic structure:
@@ -111,7 +112,7 @@ class __libgui PgModelerPlugin {
 
 		virtual void showConfigurationForm() = 0;
 
-		virtual QList<QAction *> getModelActions() = 0;
+		virtual PluginActions getPluginActions() = 0;
 
 		//! \brief Returns the name of the library of the plugin
 		QString getLibraryName();

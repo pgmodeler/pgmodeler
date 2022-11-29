@@ -58,6 +58,7 @@ src/dbobjects/procedurewidget.cpp \
 src/dbobjects/tagwidget.cpp \
 src/dbobjects/elementstablewidget.cpp \
 src/dbobjects/columnpickerwidget.cpp \
+    src/pluginactions.cpp \
 src/settings/appearanceconfigwidget.cpp \
 src/settings/configurationform.cpp \
 src/settings/generalconfigwidget.cpp \
@@ -175,6 +176,7 @@ src/dbobjects/procedurewidget.h \
 src/dbobjects/tagwidget.h \
 src/dbobjects/elementstablewidget.h \
 src/dbobjects/columnpickerwidget.h \
+    src/pluginactions.h \
 src/settings/appearanceconfigwidget.h \
 src/settings/configurationform.h \
 src/settings/generalconfigwidget.h \
