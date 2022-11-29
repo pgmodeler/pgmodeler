@@ -1239,7 +1239,7 @@ void PgModelerCliApp::recreateObjects()
 				 * and putting their xml on the list of object to be created */
 				if(BaseTable::isBaseTable(obj_type) && xml_def.contains(QRegularExpression("(<)(index|trigger|rule)")))
 				{
-					for(ObjectType type : types)
+					for(auto &type : types)
 					{
 						do
 						{
@@ -1701,6 +1701,15 @@ void PgModelerCliApp::fixModel()
 	recreateObjects();
 
 	printMessage(tr("Updating relationships..."));
+
+	// Forcing a full relationship revalidation so the special objects can be created properly
+	if(model->getObjectCount(ObjectType::Relationship) > 0)
+	{
+		model->storeSpecialObjectsXML();
+		model->disconnectRelationships();
+		model->validateRelationships();
+	}
+
 	model->updateTablesFKRelationships();
 
 	printMessage(tr("Saving fixed output model..."));
