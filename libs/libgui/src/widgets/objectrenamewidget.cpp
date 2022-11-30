@@ -27,6 +27,7 @@ ObjectRenameWidget::ObjectRenameWidget(QWidget * parent) : QDialog(parent)
 
 	setupUi(this);
 	setWindowFlags(Qt::Dialog | Qt::FramelessWindowHint);
+	setAttribute(Qt::WA_TranslucentBackground, true);
 
 	connect(new_name_edt, &QLineEdit::returnPressed, apply_tb, &QToolButton::click);
 	connect(apply_tb, &QToolButton::clicked, this, &ObjectRenameWidget::applyRenaming);
