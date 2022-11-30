@@ -1875,6 +1875,11 @@ void MainWindow::setConfirmValidation(bool value)
 	confirm_validation=value;
 }
 
+ModelWidget *MainWindow::getCurrentModel()
+{
+	return current_model;
+}
+
 void MainWindow::__updateToolsState()
 {
 	updateToolsState(false);

@@ -211,6 +211,9 @@ class __libgui MainWindow: public QMainWindow, public Ui::MainWindow {
 		//! \brief Indicates if model must be validated before save, diff or export
 		static void setConfirmValidation(bool value);
 
+		//! \brief Returns the current working database model widget
+		ModelWidget *getCurrentModel();
+
 	public slots:
 		/*! \brief Creates a new empty model inside the main window. If the parameter 'filename' is specified,
 		creates the model loading it from a file */
