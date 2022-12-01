@@ -20,14 +20,37 @@
 #include <QTextDocument>
 #include <QLineEdit>
 
-HtmlItemDelegate::HtmlItemDelegate(QObject *parent) : PlainTextItemDelegate(parent, true)
-{
+const QRegularExpression HtmlItemDelegate::TagRegExp("<(\\/)?[a-z]+(>|\\/>)");
 
+HtmlItemDelegate::HtmlItemDelegate(QObject *parent, bool ignore_tags_sz_hint) : PlainTextItemDelegate(parent, true)
+{
+	this->ignore_tags_sz_hint = ignore_tags_sz_hint;
 }
 
 HtmlItemDelegate::~HtmlItemDelegate()
 {
 
+}
+
+QSize HtmlItemDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const
+{
+	if(ignore_tags_sz_hint)
+	{
+		QString text = index.data().toString();
+		QSize sz = PlainTextItemDelegate::sizeHint(option, index);
+
+		if(text.contains(TagRegExp))
+		{
+			/* When ignoring html tags in size hint calculation we erase all tags from
+			 * the text and calculates the new size */
+			text.remove(TagRegExp);
+			sz.setWidth(option.fontMetrics.averageCharWidth() * (text.size() - 1));
+		}
+
+		return sz;
+	}
+
+	return PlainTextItemDelegate::sizeHint(option, index);
 }
 
 void HtmlItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
@@ -37,7 +60,7 @@ void HtmlItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
 	painter->save();
 	QStyledItemDelegate::paint(painter, option, index);
 
-	if(text.contains(QRegularExpression("(<)(\\/)?(.+)((>)|(\\/>))(\n)?")))
+	if(text.contains(TagRegExp))
 	{
 		static QTextDocument doc;
 		static QRect rect;

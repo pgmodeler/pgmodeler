@@ -34,9 +34,18 @@ class __libgui HtmlItemDelegate : public PlainTextItemDelegate {
 	private:
 		Q_OBJECT
 
+		/*! \brief Indicates whether the html tags should be ignored when
+		 *  determining the size hint of the item. See sizeHint() */
+		bool ignore_tags_sz_hint;
+
+		static const QRegularExpression TagRegExp;
+
 	public:
-		HtmlItemDelegate(QObject * parent = nullptr);
+		HtmlItemDelegate(QObject * parent = nullptr, bool ignore_tags_sz_hint = false);
+
 		virtual ~HtmlItemDelegate();
+
+		QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const;
 
 	protected:
 		virtual void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
