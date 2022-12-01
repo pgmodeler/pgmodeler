@@ -5,9 +5,9 @@
 [ALTER ] 
 
 # Special condition for materialized views
-%if {materialized} %then
-	[MATERIALIZED ]
-%end
+#%if {materialized} %then
+#	[MATERIALIZED ]
+#%end
 
 {sql-object} $sp {signature} [ OWNER TO ] {owner};
 
