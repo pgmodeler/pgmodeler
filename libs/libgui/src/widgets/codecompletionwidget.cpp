@@ -493,7 +493,7 @@ void CodeCompletionWidget::updateList()
 
 	if(name_list->count()==0)
 	{
-		name_list->addItem(tr("(no items found.)"));
+		name_list->addItem(tr("(no items found)"));
 		name_list->item(0)->setFlags(Qt::NoItemFlags);
 		QToolTip::hideText();
 	}
