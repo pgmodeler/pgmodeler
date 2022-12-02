@@ -44,7 +44,7 @@ QSize HtmlItemDelegate::sizeHint(const QStyleOptionViewItem &option, const QMode
 			/* When ignoring html tags in size hint calculation we erase all tags from
 			 * the text and calculates the new size */
 			text.remove(TagRegExp);
-			sz.setWidth(option.fontMetrics.averageCharWidth() * (text.size() - 1));
+			sz.setWidth(option.fontMetrics.boundingRect(text).width() + option.decorationSize.width() * 2);
 		}
 
 		return sz;
@@ -67,7 +67,7 @@ void HtmlItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
 		static QColor bg_color;
 		static int dy = 0;
 
-		text.replace(QString("\n"), QString("<br/>"));
+		text.replace("\n", "<br/>");
 		rect.setTop(option.rect.top());
 		rect.setLeft(option.rect.left() + option.decorationSize.width() + 5);
 		rect.setSize(option.rect.size());
