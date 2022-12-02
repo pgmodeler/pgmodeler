@@ -54,11 +54,6 @@ class MainWindow;
 class PluginsConfigWidget;
 
 class __libgui PgModelerPlugin {
-	protected:
-		BaseForm *plugin_info_frm;
-
-		MainWindow *main_window;
-
 	private:
 		QString libname,
 
@@ -73,8 +68,13 @@ class __libgui PgModelerPlugin {
 		//! \brief Defines the name of the library from where the plugin is being loaded
 		void setLibraryName(const QString &lib);
 
-		////! \brief Defines the name of plugin itself. In practical terms, it's the plugin's root folder name
+		//! \brief Defines the name of plugin itself. In practical terms, it's the plugin's root folder name
 		void setPluginName(const QString &name);
+
+	protected:
+		BaseForm *plugin_info_frm;
+
+		MainWindow *main_window;
 
 		/*! \brief This method is executed right before the main window is created and can be used to perform
 		 * plugin's initializations like UI modications and other miscellaneous initialization that can't be done

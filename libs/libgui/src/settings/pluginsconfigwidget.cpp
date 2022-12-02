@@ -116,6 +116,7 @@ void PluginsConfigWidget::loadConfiguration()
 
 			plugins_tab->addRow();
 			plugins_tab->setCellText(plugin->getPluginTitle(), plugins_tab->getRowCount()-1, 0);
+			plugins_tab->setCellIcon(QIcon(plugin->getPluginIcon(plugin_name)), plugins_tab->getRowCount()-1, 0);
 			plugins_tab->setCellText(plugin->getPluginVersion(), plugins_tab->getRowCount()-1, 1);
 			plugins_tab->setCellText(fi.fileName(), plugins_tab->getRowCount()-1, 2);
 		}
@@ -130,6 +131,7 @@ void PluginsConfigWidget::loadConfiguration()
 
 		dir_list.pop_front();
 		plugins_tab->clearSelection();
+		plugins_tab->adjustColumnToContents(0);
 	}
 
 	if(!errors.empty())
