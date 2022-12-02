@@ -110,7 +110,8 @@ void PluginsConfigWidget::loadConfiguration()
 
 			//Inserts the loaded plugin on the vector
 			plugin = qobject_cast<PgModelerPlugin *>(plugin_loader.instance());
-			plugin->setLibraryName(QFileInfo(lib).fileName());
+			plugin->setLibraryName(fi.fileName());
+			plugin->setPluginName(plugin_name);
 			plugins.push_back(plugin);
 
 			plugins_tab->addRow();

@@ -27,7 +27,6 @@
 
 #include "widgets/modelwidget.h"
 #include "baseform.h"
-#include "pluginactions.h"
 
 /*	The plugins in pgModeler must be within the "plugins" folder in its own
 		directory and must have the following basic structure:
@@ -60,11 +59,10 @@ class __libgui PgModelerPlugin {
 
 		MainWindow *main_window;
 
-		////! \brief Defines the name of the library from where the plugin is being loaded
-		void setLibraryName(const QString &lib);
-
 	private:
-		QString libname;
+		QString libname,
+
+		plugin_name;
 
 		QLabel	*icon_lbl,
 		*title_lbl,
@@ -72,16 +70,25 @@ class __libgui PgModelerPlugin {
 		*version_lbl,
 		*description_lbl;
 
-	public:
-		PgModelerPlugin();
+		//! \brief Defines the name of the library from where the plugin is being loaded
+		void setLibraryName(const QString &lib);
 
-		virtual ~PgModelerPlugin();
+		////! \brief Defines the name of plugin itself. In practical terms, it's the plugin's root folder name
+		void setPluginName(const QString &name);
 
 		/*! \brief This method is executed right before the main window is created and can be used to perform
 		 * plugin's initializations like UI modications and other miscellaneous initialization that can't be done
 		 * in the constructor. Additionally, a main window instance can be passed to the plugin in order to facilitate
 		 * customization on the UI. The default implementation is to do nothing else then only expose main window to the plugin. */
 		virtual void initPlugin(MainWindow *main_window);
+
+		//! \brief Sets the plugin's all attributes at once.
+		void configurePluginInfo(const QString &title, const QString &version, const QString &author, const QString &description);
+
+	public:
+		PgModelerPlugin();
+
+		virtual ~PgModelerPlugin();
 
 		//! \brief Implements the plugin execution
 		virtual void executePlugin() = 0;
@@ -113,9 +120,11 @@ class __libgui PgModelerPlugin {
 		//! \brief Returns the name of the library of the plugin
 		QString getLibraryName();
 
-		//! \brief Sets the plugin's all attributes at once.
-		void configurePluginInfo(const QString &title, const QString &version, const QString &author,
-														 const QString &description, const QString &ico_filename);
+		//! \brief Returns the name of the plugin
+		QString getPluginName();
+
+		//! \brief Returns the path to the default plugin icon
+		QString getPluginIconPath();
 
 		friend class PluginsConfigWidget;
 };

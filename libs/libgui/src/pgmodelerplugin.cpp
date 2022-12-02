@@ -81,6 +81,11 @@ PgModelerPlugin::~PgModelerPlugin()
 void PgModelerPlugin::initPlugin(MainWindow *main_window)
 {
 	this->main_window = main_window;
+
+	configurePluginInfo(getPluginTitle(),
+						getPluginVersion(),
+						getPluginAuthor(),
+						getPluginDescription());
 }
 
 void PgModelerPlugin::showPluginInfo()
@@ -93,21 +98,37 @@ void PgModelerPlugin::setLibraryName(const QString &lib)
 	libname = lib;
 }
 
+void PgModelerPlugin::setPluginName(const QString &name)
+{
+	plugin_name = name;
+}
+
 QString PgModelerPlugin::getLibraryName()
 {
 	return libname;
 }
 
-void PgModelerPlugin::configurePluginInfo(const QString &title, const QString &version, const QString &author,
-																					const QString &description, const QString &ico_filename)
+QString PgModelerPlugin::getPluginName()
 {
-	QPixmap ico;
+	return plugin_name;
+}
 
+QString PgModelerPlugin::getPluginIconPath()
+{
+	return GlobalAttributes::getPluginsDir() +
+			GlobalAttributes::DirSeparator +
+			plugin_name +
+			GlobalAttributes::DirSeparator +
+			GlobalAttributes::ResourcesDir +
+			GlobalAttributes::DirSeparator +
+			plugin_name + ".png";
+}
+
+void PgModelerPlugin::configurePluginInfo(const QString &title, const QString &version, const QString &author, const QString &description)
+{
 	title_lbl->setText(title);
 	version_lbl->setText(QString(QT_TRANSLATE_NOOP("PgModelerPlugin", "Version: %1")).arg(version));
 	author_lbl->setText(QString(QT_TRANSLATE_NOOP("PgModelerPlugin","Author: %1")).arg(author));
 	description_lbl->setText(description);
-
-	ico.load(ico_filename);
-	icon_lbl->setPixmap(ico);
+	icon_lbl->setPixmap(QPixmap(getPluginIconPath()));
 }

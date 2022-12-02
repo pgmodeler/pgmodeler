@@ -33,7 +33,6 @@
 #include "taskprogresswidget.h"
 #include "newobjectoverlaywidget.h"
 #include "layerswidget.h"
-#include "pluginactions.h"
 
 class __libgui ModelWidget: public QWidget {
 	private:
