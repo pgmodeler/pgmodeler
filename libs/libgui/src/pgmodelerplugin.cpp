@@ -113,15 +113,9 @@ QString PgModelerPlugin::getPluginName()
 	return plugin_name;
 }
 
-QString PgModelerPlugin::getPluginIconPath()
+QString PgModelerPlugin::getPluginIcon(const QString &icon_name)
 {
-	return GlobalAttributes::getPluginsDir() +
-			GlobalAttributes::DirSeparator +
-			plugin_name +
-			GlobalAttributes::DirSeparator +
-			GlobalAttributes::ResourcesDir +
-			GlobalAttributes::DirSeparator +
-			plugin_name + ".png";
+	return QString(":/%1/%2.png").arg(plugin_name, icon_name);
 }
 
 void PgModelerPlugin::configurePluginInfo(const QString &title, const QString &version, const QString &author, const QString &description)
@@ -130,5 +124,5 @@ void PgModelerPlugin::configurePluginInfo(const QString &title, const QString &v
 	version_lbl->setText(QString(QT_TRANSLATE_NOOP("PgModelerPlugin", "Version: %1")).arg(version));
 	author_lbl->setText(QString(QT_TRANSLATE_NOOP("PgModelerPlugin","Author: %1")).arg(author));
 	description_lbl->setText(description);
-	icon_lbl->setPixmap(QPixmap(getPluginIconPath()));
+	icon_lbl->setPixmap(QPixmap(getPluginIcon(plugin_name)));
 }

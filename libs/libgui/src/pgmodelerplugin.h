@@ -123,8 +123,8 @@ class __libgui PgModelerPlugin {
 		//! \brief Returns the name of the plugin
 		QString getPluginName();
 
-		//! \brief Returns the path to the default plugin icon
-		QString getPluginIconPath();
+		//! \brief Returns the path to the a plugin icon in the plugin's qrc file
+		QString getPluginIcon(const QString &icon_name);
 
 		friend class PluginsConfigWidget;
 };
