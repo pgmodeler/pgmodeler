@@ -359,6 +359,10 @@ DEPENDPATH += $$LIBCANVAS_ROOT \
 	      $$LIBPARSERS_ROOT \
 	      $$LIBUTILS_ROOT
 
+defined(PRIVATE_PLUGINS,var){
+   SOURCES+=$$PLUGINS_SRC_ROOT/src/privpluginssymbols.cpp
+}
+
 # Deployment settings
 target.path = $$PRIVATELIBDIR
 INSTALLS = target

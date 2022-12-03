@@ -28,6 +28,10 @@
 #include "widgets/modelwidget.h"
 #include "baseform.h"
 
+#if defined(PRIVATE_PLUGINS_SYMBOLS)
+	#include "privpluginssymbols.h"
+#endif
+
 /*	The plugins in pgModeler must be within the "plugins" folder in its own
 		directory and must have the following basic structure:
 

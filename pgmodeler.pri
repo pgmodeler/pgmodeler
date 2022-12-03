@@ -46,14 +46,24 @@ LIBUTILS_ROOT = $$absolute_path($$PWD/libs/$$LIBUTILS)
 LIBUTILS_LIB = -L$$LIBUTILS_ROOT -lutils
 LIBUTILS_INC = $$LIBUTILS_ROOT/src
 
-# Setting up the flag passed to compiler to indicate a snapshot build
+# Set the flag passed to compiler to indicate a snapshot build
 defined(SNAPSHOT_BUILD, var): DEFINES+=SNAPSHOT_BUILD
 
-# Setting up the flag passed to compiler to build the demo version
+# Set the flag passed to compiler to build the demo version
 defined(DEMO_VERSION, var): DEFINES+=DEMO_VERSION
 
-# Setting up the flag passed to compiler to disable all code related to update checking
+# Set up the flag passed to compiler to disable all code related to update checking
 defined(NO_UPDATE_CHECK, var): DEFINES+=NO_UPDATE_CHECK
+
+defined(PRIVATE_PLUGINS, var): DEFINES+=PRIVATE_PLUGINS_SYMBOLS
+
+PLUGINS_FOLDER=plugins
+defined(PRIVATE_PLUGINS,var): PLUGINS_FOLDER=priv-plugins
+
+# Include the plugins subprojects only if exists
+PLUGINS_SRC_ROOT=$$PWD/$$PLUGINS_FOLDER
+PLUGINS_PRO_FILE=$$PLUGINS_SRC_ROOT/$${PLUGINS_FOLDER}.pro
+INCLUDEPATH+=$$PLUGINS_SRC_ROOT/src
 
 # Properly defining build number/date constant
 unix {

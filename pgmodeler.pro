@@ -12,36 +12,20 @@ SUBDIRS = libs/$$LIBUTILS \
 # Include the tests subprojects only on debug mode
 CONFIG(debug, debug|release): SUBDIRS += tests
 
-# Include the plugins subprojects only if exists
-PLUGINS_SRC_ROOT=$$PWD/plugins/plugins.pro
+#exists($$PLUGINS_PRO_FILE):INCLUDEPATH+=$$PLUGINS_SRC_ROOT/src
+!exists($$PLUGINS_PRO_FILE) {
+   !defined(PRIVATE_PLUGINS,var) {
+     warning("The subproject $$PLUGINS_SRC_ROOT wasn't found! pgModeler will be build without plug-ins.")
+     warning("If you want to compile pgModeler with plug-ins make sure to clone https://github.com/pgmodeler/plugins inside pgModeler's root folder and rerun qmake.")
+   }
 
-!exists($$PLUGINS_SRC_ROOT) {
-  warning("The subproject $$PLUGINS_SRC_ROOT wasn't found! pgModeler will be build without plugins.")
-  warning("If you want to compile pgModeler with plugins make sure to clone https://github.com/pgmodeler/plugins inside pgModeler's root folder and rerun qmake.")
+   defined(PRIVATE_PLUGINS,var) {
+     error("The private plug-ins build was specified but the subproject $$PLUGINS_SRC_ROOT wasn't found! Aborting.")
+   }
 }
 
 exists($$PLUGINS_SRC_ROOT) {
-  SUBDIRS += plugins
-}
-
-# Handling private plugins build
-defined(PRIVATE_PLUGINS, var):{
-   DEFINES+=PRIVATE_PLUGINS
-
-   # Include the tests subprojects only on debug mode
-   PRIV_PLUGINS_SRC_ROOT=$$PWD/priv-plugins/priv-plugins.pro
-
-   !exists($$PRIV_PLUGINS_SRC_ROOT) {
-      error("Private plug-ins build enabled but the subproject $$PRIV_PLUGINS_SRC_ROOT wasn't found! Aborting.")
-    }
-
-    exists($$PLUGINS_SRC_ROOT) {
-      error("pgModeler can't be build with both standard plug-ins and private plug-ins! Remove one of the plug-ins subproject. Aborting.")
-    }
-
-    exists($$PRIV_PLUGINS_SRC_ROOT) {
-       SUBDIRS += priv-plugins
-    }
+   SUBDIRS += $$PLUGINS_FOLDER
 }
 
 # Including executables subprojects
