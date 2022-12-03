@@ -10682,7 +10682,6 @@ std::vector<BaseObject *> DatabaseModel::findObjects(const QString &pattern, std
 	bool inc_tabs=false, inc_views=false;
 	ObjectType obj_type;
 	QRegularExpression regexp;
-	BaseObject *object = nullptr;
 	attribs_map srch_attribs;
 
 	if(!case_sensitive)
