@@ -10752,16 +10752,13 @@ std::vector<BaseObject *> DatabaseModel::findObjects(const QString &pattern, std
 	}
 
 	//Try to find  the objects on the configured list
-	while(!objs.empty())
+	for(auto &obj : objs)
 	{
-		object = objs.back();
-		object->configureSearchAttributes();
-		srch_attribs = object->getSearchAttributes();
+		obj->configureSearchAttributes();
+		srch_attribs = obj->getSearchAttributes();
 
 		if(regexp.match(srch_attribs[search_attr]).hasMatch())
-			list.push_back(object);
-
-		objs.pop_back();
+			list.push_back(obj);
 	}
 
 	//Removing the duplicate items on the list

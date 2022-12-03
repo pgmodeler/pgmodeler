@@ -693,6 +693,8 @@ void Constraint::setDeclInTableAttribute()
 
 void Constraint::configureSearchAttributes()
 {
+	TableObject::configureSearchAttributes();
+
 	QStringList src_col_names, ref_col_names;
 
 	for(auto &col : columns)
@@ -703,7 +705,7 @@ void Constraint::configureSearchAttributes()
 
 	search_attribs[Attributes::SrcColumns] = src_col_names.join(", ");
 	search_attribs[Attributes::RefColumns] = ref_col_names.join(", ");
-	TableObject::configureSearchAttributes();
+	search_attribs[Attributes::Signature] = (getParentTable() ? getParentTable()->getSignature() + "." : "") + getName(true);
 }
 
 QString Constraint::getSourceCode(SchemaParser::CodeType def_type, bool inc_addedbyrel)

@@ -1020,7 +1020,7 @@ std::vector<ObjectType> BaseObject::getObjectTypes(bool inc_table_objs, std::vec
 		vet_types.push_back(ObjectType::Policy);
 	}
 
-	for(ObjectType type : exclude_types)
+	for(auto &type : exclude_types)
 	{
 		itr=std::remove(vet_types.begin(), vet_types.end(), type);
 		if(itr!=vet_types.end())
