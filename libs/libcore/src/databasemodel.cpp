@@ -10679,8 +10679,7 @@ std::vector<BaseObject *> DatabaseModel::findObjects(const QString &pattern, std
 	std::vector<BaseObject *>::iterator end;
 	std::vector<ObjectType>::iterator itr_tp=types.begin();
 	std::vector<BaseObject *> tables;
-	bool inc_tabs=false, inc_views=false;
-	ObjectType obj_type;
+	bool inc_tabs=false, inc_views=false, inc_rels = false;
 	QRegularExpression regexp;
 	attribs_map srch_attribs;
 
@@ -10717,28 +10716,26 @@ std::vector<BaseObject *> DatabaseModel::findObjects(const QString &pattern, std
 	}
 
 	//Gathering all other objects
-	itr_tp=types.begin();
-	while(itr_tp!=types.end())
+	for(auto &obj_type : types)
 	{
-		obj_type=(*itr_tp);
-		itr_tp++;
-
-		if(obj_type==ObjectType::Database)
+		if(obj_type == ObjectType::Database)
 			objs.push_back(this);
+		// Base relationships (fk rels and table-view rels) are treated as table to table relationship in the search
+		else if(!inc_rels && (obj_type == ObjectType::BaseRelationship || obj_type == ObjectType::Relationship))
+		{
+			inc_rels = true;
+			objs.insert(objs.end(), getObjectList(ObjectType::BaseRelationship)->begin(), getObjectList(ObjectType::BaseRelationship)->end());
+			objs.insert(objs.end(), getObjectList(ObjectType::Relationship)->begin(), getObjectList(ObjectType::Relationship)->end());
+		}
 		else if(!TableObject::isTableObject(obj_type))
 			objs.insert(objs.end(), getObjectList(obj_type)->begin(), getObjectList(obj_type)->end());
 		else
 		{
 			//Including table object on the object list
 			std::vector<TableObject *> *tab_objs=nullptr;
-			std::vector<BaseObject *>::iterator itr=tables.begin();
-			BaseObject *tab=nullptr;
 
-			while(itr!=tables.end())
+			for(auto &tab : tables)
 			{
-				tab=(*itr);
-				itr++;
-
 				if(PhysicalTable::isPhysicalTable(tab->getObjectType()))
 					tab_objs=dynamic_cast<PhysicalTable *>(tab)->getObjectList(obj_type);
 				else if(tab->getObjectType()==ObjectType::View &&	(obj_type==ObjectType::Trigger || obj_type==ObjectType::Rule))
