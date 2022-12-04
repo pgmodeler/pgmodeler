@@ -426,7 +426,7 @@ void TransformTest::modelCreatesTransformFromXML()
 		dbmodel.addObject(&from_sql_func);
 		dbmodel.addObject(&to_sql_func);
 
-		dbmodel.getXMLParser()->setDTDFile(GlobalAttributes::getSchemasRootDir() +
+		dbmodel.getXMLParser()->setDTDFile(GlobalAttributes::getSchemasRootPath() +
 																			 GlobalAttributes::DirSeparator +
 																			 GlobalAttributes::XMLSchemaDir +
 																			 GlobalAttributes::DirSeparator +

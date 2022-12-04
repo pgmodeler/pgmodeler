@@ -35,7 +35,7 @@ BugReportForm::BugReportForm(QWidget *parent, Qt::WindowFlags f) : QDialog(paren
 	output_sel->setWindowTitle(tr("Select report output folder"));
 	output_sel->setFileMode(QFileDialog::Directory);
 	output_sel->setAllowFilenameInput(true);
-	output_sel->setSelectedFile(GlobalAttributes::getTemporaryDir());
+	output_sel->setSelectedFile(GlobalAttributes::getTemporaryPath());
 
 	output_lt->addWidget(output_sel);
 	connect(close_btn, &QPushButton::clicked, this, &BugReportForm::close);

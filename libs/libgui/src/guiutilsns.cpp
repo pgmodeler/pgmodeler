@@ -411,7 +411,7 @@ namespace GuiUtilsNs {
 
 		try
 		{
-			QString filename = GlobalAttributes::getConfigurationsDir() +
+			QString filename = GlobalAttributes::getConfigurationsPath() +
 												 GlobalAttributes::DirSeparator +
 												 GlobalAttributes::FileDialogConf +
 												 GlobalAttributes::ConfigurationExt;

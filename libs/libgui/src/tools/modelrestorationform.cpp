@@ -34,7 +34,7 @@ ModelRestorationForm::ModelRestorationForm(QWidget *parent, Qt::WindowFlags f) :
 QStringList ModelRestorationForm::getTemporaryModels()
 {
 	//Returns if there is some .dbm file on the tmp dir
-	QStringList list = QDir(GlobalAttributes::getTemporaryDir(), "*.dbm", QDir::Time, QDir::Files | QDir::NoDotAndDotDot).entryList();
+	QStringList list = QDir(GlobalAttributes::getTemporaryPath(), "*.dbm", QDir::Time, QDir::Files | QDir::NoDotAndDotDot).entryList();
 
 	for(auto &file : ignored_files)
 		list.removeAll(file);
@@ -54,7 +54,7 @@ int ModelRestorationForm::exec()
 
 	while(!file_list.isEmpty())
 	{
-		info.setFile(GlobalAttributes::getTemporaryDir(), file_list.front());
+		info.setFile(GlobalAttributes::getTemporaryPath(), file_list.front());
 		filename=GlobalAttributes::getTemporaryFilePath(file_list.front());
 
 		buffer.append(UtilsNs::loadFile(filename));
@@ -107,7 +107,7 @@ bool ModelRestorationForm::hasTemporaryModels()
 void ModelRestorationForm::removeTemporaryFiles()
 {
 	QDir tmp_file;
-	QStringList tmp_files = QDir(GlobalAttributes::getTemporaryDir(), QString("*"),
+	QStringList tmp_files = QDir(GlobalAttributes::getTemporaryPath(), QString("*"),
 															 QDir::Name, QDir::Files | QDir::NoDotAndDotDot).entryList();
 
 	for(auto &file : tmp_files)

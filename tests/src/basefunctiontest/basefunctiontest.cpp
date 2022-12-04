@@ -297,7 +297,7 @@ row-amount=\"1000\"> \
 </function>").simplified();
 
 		dbmodel.createSystemObjects(true);
-		dbmodel.getXMLParser()->setDTDFile(GlobalAttributes::getSchemasRootDir() +
+		dbmodel.getXMLParser()->setDTDFile(GlobalAttributes::getSchemasRootPath() +
 																			 GlobalAttributes::DirSeparator +
 																			 GlobalAttributes::XMLSchemaDir +
 																			 GlobalAttributes::DirSeparator +
@@ -335,7 +335,7 @@ security-type=\"SECURITY INVOKER\"> \
 </procedure>").simplified();
 
 		dbmodel.createSystemObjects(true);
-		dbmodel.getXMLParser()->setDTDFile(GlobalAttributes::getSchemasRootDir() +
+		dbmodel.getXMLParser()->setDTDFile(GlobalAttributes::getSchemasRootPath() +
 																			 GlobalAttributes::DirSeparator +
 																			 GlobalAttributes::XMLSchemaDir +
 																			 GlobalAttributes::DirSeparator +

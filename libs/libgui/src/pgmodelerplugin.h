@@ -29,7 +29,7 @@
 #include "baseform.h"
 
 #if defined(PRIVATE_PLUGINS_SYMBOLS)
-	#include "privpluginssymbols.h"
+	#include "privpluginsns.h"
 #endif
 
 /*	The plugins in pgModeler must be within the "plugins" folder in its own

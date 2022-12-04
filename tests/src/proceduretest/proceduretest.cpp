@@ -356,7 +356,7 @@ void ProcedureTest::modelCreatesProcedureFromXML()
 	{
 		model.createSystemObjects(true);
 
-		model.getXMLParser()->setDTDFile(GlobalAttributes::getSchemasRootDir() +
+		model.getXMLParser()->setDTDFile(GlobalAttributes::getSchemasRootPath() +
 																		 GlobalAttributes::DirSeparator +
 																		 GlobalAttributes::XMLSchemaDir +
 																		 GlobalAttributes::DirSeparator +

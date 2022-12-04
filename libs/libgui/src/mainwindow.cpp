@@ -2023,7 +2023,7 @@ void MainWindow::setBottomFloatingWidgetPos(QWidget *widget, QToolButton *btn)
 
 void MainWindow::configureSamplesMenu()
 {
-	QDir dir(GlobalAttributes::getSamplesDir());
+	QDir dir(GlobalAttributes::getSamplesPath());
 	QStringList files=dir.entryList({QString("*.dbm")});
 	QAction *act=nullptr;
 	QString path;
@@ -2031,7 +2031,7 @@ void MainWindow::configureSamplesMenu()
 	while(!files.isEmpty())
 	{
 		act=sample_mdls_menu.addAction(files.front(), this, &MainWindow::loadModelFromAction);
-		path=QFileInfo(GlobalAttributes::getSamplesDir() + GlobalAttributes::DirSeparator + files.front()).absoluteFilePath();
+		path=QFileInfo(GlobalAttributes::getSamplesPath() + GlobalAttributes::DirSeparator + files.front()).absoluteFilePath();
 		act->setToolTip(path);
 		act->setData(path);
 		files.pop_front();

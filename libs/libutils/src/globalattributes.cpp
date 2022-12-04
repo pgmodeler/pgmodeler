@@ -47,6 +47,7 @@ const QString GlobalAttributes::LastModelFile("lastmodel");
 
 const QString GlobalAttributes::DirSeparator("/");
 const QString GlobalAttributes::ResourcesDir("res");
+const QString GlobalAttributes::ConfigurationsDir("conf");
 const QString GlobalAttributes::DefaultConfsDir("defaults");
 const QString GlobalAttributes::ConfsBackupsDir("backups");
 const QString GlobalAttributes::SchemasDir("schemas");
@@ -55,6 +56,9 @@ const QString GlobalAttributes::XMLSchemaDir("xml");
 const QString GlobalAttributes::CatalogSchemasDir("catalog");
 const QString GlobalAttributes::DataDictSchemaDir("datadict");
 const QString GlobalAttributes::AlterSchemaDir("alter");
+const QString GlobalAttributes::LanguagesDir("lang");
+const QString GlobalAttributes::SamplesDir("samples");
+const QString GlobalAttributes::PluginsDir("plugins");
 const QString GlobalAttributes::SchemaExt(".sch");
 const QString GlobalAttributes::ObjectDTDDir("dtd");
 const QString GlobalAttributes::ObjectDTDExt(".dtd");
@@ -89,13 +93,13 @@ const QString GlobalAttributes::FileDialogConf("filedlg");
 const QString GlobalAttributes::DefaultQtStyle("Fusion");
 const QString GlobalAttributes::UiStyleOption("-style");
 
-QString GlobalAttributes::SchemasRootDir;
-QString GlobalAttributes::LanguagesDir;
-QString GlobalAttributes::SamplesDir;
-QString GlobalAttributes::TmplConfigurationDir;
-QString GlobalAttributes::PluginsDir;
-QString GlobalAttributes::ConfigurationsDir;
-QString GlobalAttributes::TemporaryDir;
+QString GlobalAttributes::SchemasRootPath;
+QString GlobalAttributes::LanguagesPath;
+QString GlobalAttributes::SamplesPath;
+QString GlobalAttributes::TmplConfigurationPath;
+QString GlobalAttributes::PluginsPath;
+QString GlobalAttributes::ConfigurationsPath;
+QString GlobalAttributes::TemporaryPath;
 QString GlobalAttributes::SQLHighlightConfPath;
 QString GlobalAttributes::XMLHighlightConfPath;
 QString GlobalAttributes::SchHighlightConfPath;
@@ -122,62 +126,62 @@ QString GlobalAttributes::getPathFromEnv(const QString &varname, const QString &
 	return fi.absoluteFilePath();
 }
 
-QString GlobalAttributes::getSchemasRootDir()
+QString GlobalAttributes::getSchemasRootPath()
 {
-	return SchemasRootDir;
+	return SchemasRootPath;
 }
 
 QString GlobalAttributes::getSchemaFilePath(const QString &subfolder, const QString &file)
 {
-	return SchemasRootDir + DirSeparator +
+	return SchemasRootPath + DirSeparator +
 				 (subfolder.isEmpty() ? "" : subfolder + DirSeparator) +
 				 file + SchemaExt;
 }
 
-QString GlobalAttributes::getLanguagesDir()
+QString GlobalAttributes::getLanguagesPath()
 {
-	return LanguagesDir;
+	return LanguagesPath;
 }
 
-QString GlobalAttributes::getPluginsDir()
+QString GlobalAttributes::getPluginsPath()
 {
-	return PluginsDir;
+	return PluginsPath;
 }
 
-QString GlobalAttributes::getTemporaryDir()
+QString GlobalAttributes::getTemporaryPath()
 {
-	return TemporaryDir;
+	return TemporaryPath;
 }
 
 QString GlobalAttributes::getTemporaryFilePath(const QString &file)
 {
-	return TemporaryDir + DirSeparator + file;
+	return TemporaryPath + DirSeparator + file;
 }
 
-QString GlobalAttributes::getSamplesDir()
+QString GlobalAttributes::getSamplesPath()
 {
-	return SamplesDir;
+	return SamplesPath;
 }
 
-QString GlobalAttributes::getTmplConfigurationDir()
+QString GlobalAttributes::getTmplConfigurationPath()
 {
-	return TmplConfigurationDir;
+	return TmplConfigurationPath;
 }
 
 QString GlobalAttributes::getTmplConfigurationFilePath(const QString &subfolder, const QString &file)
 {
-	return TmplConfigurationDir + DirSeparator +
+	return TmplConfigurationPath + DirSeparator +
 				 (subfolder.isEmpty() ? "" : subfolder + DirSeparator) + file;
 }
 
-QString GlobalAttributes::getConfigurationsDir()
+QString GlobalAttributes::getConfigurationsPath()
 {
-	return ConfigurationsDir;
+	return ConfigurationsPath;
 }
 
 QString GlobalAttributes::getConfigurationFilePath(const QString &file)
 {
-	return ConfigurationsDir + DirSeparator + file + ConfigurationExt;
+	return ConfigurationsPath + DirSeparator + file + ConfigurationExt;
 }
 
 QString GlobalAttributes::getSQLHighlightConfPath()
@@ -252,28 +256,28 @@ QString GlobalAttributes::getConfigParamFromFile(const QString &param_name, cons
 void GlobalAttributes::setConfigFilesPaths()
 {
 	#if defined(Q_OS_WINDOWS)
-		ConfigurationsDir=getPathFromEnv("PGMODELER_CONF_DIR", QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation) + QString("/%1").arg(PgModelerAppName));
-		TemporaryDir=getPathFromEnv("PGMODELER_TMP_DIR", QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation) + QString("/%1/tmp").arg(PgModelerAppName));
+		ConfigurationsDir=getPathFromEnv("PGMODELER_CONF_PATH", QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation) + QString("/%1").arg(PgModelerAppName));
+		TemporaryDir=getPathFromEnv("PGMODELER_TMP_PATH", QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation) + QString("/%1/tmp").arg(PgModelerAppName));
 	#else
-		ConfigurationsDir=getPathFromEnv("PGMODELER_CONF_DIR", QStandardPaths::writableLocation(QStandardPaths::ConfigLocation) + QString("/%1").arg(PgModelerAppName));
-		TemporaryDir=getPathFromEnv("PGMODELER_TMP_DIR", QStandardPaths::writableLocation(QStandardPaths::ConfigLocation) + QString("/%1/tmp").arg(PgModelerAppName));
+		ConfigurationsPath=getPathFromEnv("PGMODELER_CONF_PATH", QStandardPaths::writableLocation(QStandardPaths::ConfigLocation) + QString("/%1").arg(PgModelerAppName));
+		TemporaryPath=getPathFromEnv("PGMODELER_TMP_PATH", QStandardPaths::writableLocation(QStandardPaths::ConfigLocation) + QString("/%1/tmp").arg(PgModelerAppName));
 	#endif
 
-	SQLHighlightConfPath=ConfigurationsDir + DirSeparator + SQLHighlightConf + ConfigurationExt;
-	XMLHighlightConfPath=ConfigurationsDir + DirSeparator + XMLHighlightConf + ConfigurationExt;
-	SchHighlightConfPath=ConfigurationsDir + DirSeparator + SchHighlightConf + ConfigurationExt;
-	PatternHighlightConfPath=ConfigurationsDir + DirSeparator + PatternHighlightConf + ConfigurationExt;
+	SQLHighlightConfPath=ConfigurationsPath + DirSeparator + SQLHighlightConf + ConfigurationExt;
+	XMLHighlightConfPath=ConfigurationsPath + DirSeparator + XMLHighlightConf + ConfigurationExt;
+	SchHighlightConfPath=ConfigurationsPath + DirSeparator + SchHighlightConf + ConfigurationExt;
+	PatternHighlightConfPath=ConfigurationsPath + DirSeparator + PatternHighlightConf + ConfigurationExt;
 }
 
 void GlobalAttributes::setSearchPath(const QString &search_path)
 {
 	setConfigFilesPaths();
 
-	SchemasRootDir=GlobalAttributes::getPathFromEnv("PGMODELER_SCHEMAS_DIR", SCHEMASDIR, QString("%1/schemas").arg(search_path));
-	LanguagesDir=GlobalAttributes::getPathFromEnv("PGMODELER_LANG_DIR", LANGDIR, QString("%1/lang").arg(search_path));
-	SamplesDir=getPathFromEnv("PGMODELER_SAMPLES_DIR", SAMPLESDIR, QString("%1/samples").arg(search_path));
-	TmplConfigurationDir=getPathFromEnv("PGMODELER_TMPL_CONF_DIR", CONFDIR, QString("%1/conf").arg(search_path));
-	PluginsDir=getPathFromEnv("PGMODELER_PLUGINS_DIR", PLUGINSDIR, QString("%1/plugins").arg(search_path));
+	SchemasRootPath=GlobalAttributes::getPathFromEnv("PGMODELER_SCHEMAS_PATH", SCHEMASDIR, QString("%1/%2").arg(search_path, SchemasDir));
+	LanguagesPath=GlobalAttributes::getPathFromEnv("PGMODELER_LANG_PATH", LANGDIR, QString("%1/%2").arg(search_path, LanguagesDir));
+	SamplesPath=getPathFromEnv("PGMODELER_SAMPLES_PATH", SAMPLESDIR, QString("%1/%2").arg(search_path, SamplesDir));
+	TmplConfigurationPath=getPathFromEnv("PGMODELER_TMPL_CONF_PATH", CONFDIR, QString("%1/%2").arg(search_path, ConfigurationsDir));
+	PluginsPath=getPathFromEnv("PGMODELER_PLUGINS_PATH", PLUGINSDIR, QString("%1/%2").arg(search_path, PluginsDir));
 
 	#if defined(Q_OS_UNIX)
 		#if defined(Q_OS_MAC)

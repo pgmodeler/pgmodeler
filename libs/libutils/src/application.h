@@ -46,7 +46,7 @@ class __libutils Application: public QApplication {
 		/*! \brief Loads the translation file by its id (e.g. pt_BR, en_US, etc) in the provided directory.
 		 * By default, the files are searched in the pgModeler's default lang files location.
 		 * In case of success installs a translator object in the application */
-		bool loadTranslation(const QString &lang_id, const QString &directory = GlobalAttributes::LanguagesDir);
+		bool loadTranslation(const QString &lang_id, const QString &directory = GlobalAttributes::LanguagesPath);
 };
 
 #endif

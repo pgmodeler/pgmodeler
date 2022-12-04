@@ -3153,7 +3153,7 @@ void DatabaseModel::loadModel(const QString &filename)
 		std::map<ObjectType, QString> def_objs;
 
 		//Configuring the path to the base path for objects DTD
-		dtd_file=GlobalAttributes::getSchemasRootDir() +
+		dtd_file=GlobalAttributes::getSchemasRootPath() +
 						 GlobalAttributes::DirSeparator +
 						 GlobalAttributes::XMLSchemaDir +
 						 GlobalAttributes::DirSeparator +
@@ -11209,7 +11209,7 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, MetaAttrOptions
 void DatabaseModel::loadObjectsMetadata(const QString &filename, MetaAttrOptions options)
 {
 	QString elem_name, aux_elem, obj_name, ref_type,
-			dtd_file=GlobalAttributes::getSchemasRootDir() +
+			dtd_file=GlobalAttributes::getSchemasRootPath() +
 							 GlobalAttributes::DirSeparator +
 							 GlobalAttributes::XMLSchemaDir +
 							 GlobalAttributes::DirSeparator +

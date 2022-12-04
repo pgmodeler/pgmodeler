@@ -46,7 +46,7 @@ GeneralConfigWidget::GeneralConfigWidget(QWidget * parent) : BaseConfigWidget(pa
 	confs_dir_sel->setToolTip(tr("pgModeler configurations directory for the current user"));
 	confs_dir_sel->setReadOnly(true);
 	confs_dir_sel->setFileMode(QFileDialog::Directory);
-	confs_dir_sel->setSelectedFile(GlobalAttributes::getConfigurationsDir());
+	confs_dir_sel->setSelectedFile(GlobalAttributes::getConfigurationsPath());
 	general_grid->addWidget(confs_dir_sel, 1, 1, 1, 1);
 
 	source_editor_sel = new FileSelectorWidget(this);
@@ -155,7 +155,7 @@ GeneralConfigWidget::GeneralConfigWidget(QWidget * parent) : BaseConfigWidget(pa
 #endif
 
 	//Retrieving the available UI dictionaries
-	QStringList langs = QDir(GlobalAttributes::getLanguagesDir() +
+	QStringList langs = QDir(GlobalAttributes::getLanguagesPath() +
 													 GlobalAttributes::DirSeparator,
 													 QString("*.qm"), QDir::Name, QDir::AllEntries | QDir::NoDotAndDotDot).entryList();
 

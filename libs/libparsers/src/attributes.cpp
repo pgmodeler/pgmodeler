@@ -463,6 +463,7 @@ namespace Attributes {
 	PkPattern("pk-pattern"),
 	Placeholder("placeholder"),
 	Placeholders("placeholders"),
+	Plugin("plugin"),
 	Points("points"),
 	Port("port"),
 	Portrait("portrait"),

@@ -360,7 +360,7 @@ DEPENDPATH += $$LIBCANVAS_ROOT \
 	      $$LIBUTILS_ROOT
 
 defined(PRIVATE_PLUGINS,var){
-   SOURCES+=$$PLUGINS_SRC_ROOT/src/privpluginssymbols.cpp
+   SOURCES+=$$PLUGINS_SRC_ROOT/src/privpluginsns.cpp
 }
 
 # Deployment settings
