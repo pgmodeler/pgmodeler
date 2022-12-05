@@ -44,7 +44,7 @@ void SchemaFilesSyntaxTest::schemasDontGenerateSyntaxErrors()
 
 	for(auto folder : sch_folders)
 	{
-		path = GlobalAttributes::getSchemasRootDir() + GlobalAttributes::DirSeparator + folder;
+		path = GlobalAttributes::getSchemasRootPath() + GlobalAttributes::DirSeparator + folder;
 		dir.setCurrent(path);
 		sch_files = dir.entryList({ "*.sch" }, QDir::Files | QDir::NoDotAndDotDot);
 

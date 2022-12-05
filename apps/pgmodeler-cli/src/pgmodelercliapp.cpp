@@ -2369,7 +2369,7 @@ void PgModelerCliApp::handleWindowsMimeDatabase(bool uninstall, bool system_wide
 
 void PgModelerCliApp::createConfigurations()
 {
-	QString conf_dir = GlobalAttributes::getConfigurationsDir();
+	QString conf_dir = GlobalAttributes::getConfigurationsPath();
 
 	printMessage(tr("Creating configuration files..."));
 	printMessage(tr("Destination path: %1").arg(conf_dir));
@@ -2377,7 +2377,7 @@ void PgModelerCliApp::createConfigurations()
 	bool missing_only = parsed_opts.count(MissingOnly) > 0,
 			force = parsed_opts.count(Force) > 0;
 
-	if(!missing_only && !force && QDir(GlobalAttributes::getConfigurationsDir()).exists())
+	if(!missing_only && !force && QDir(GlobalAttributes::getConfigurationsPath()).exists())
 		throw Exception(tr("Configuration files already exist!"), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	try

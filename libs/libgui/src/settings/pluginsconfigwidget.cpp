@@ -23,13 +23,13 @@ PluginsConfigWidget::PluginsConfigWidget(QWidget *parent) : BaseConfigWidget(par
 	setupUi(this);
 
 	QGridLayout *grid=new QGridLayout(loaded_plugins_gb);
-	QDir dir=QDir(GlobalAttributes::getPluginsDir());
+	QDir dir=QDir(GlobalAttributes::getPluginsPath());
 
 	root_dir_sel = new FileSelectorWidget(this);
 	root_dir_sel->setToolTip(tr("pgModeler plugins directory"));
 	root_dir_sel->setReadOnly(true);
 	root_dir_sel->setFileMode(QFileDialog::Directory);
-	root_dir_sel->setSelectedFile(GlobalAttributes::getPluginsDir());
+	root_dir_sel->setSelectedFile(GlobalAttributes::getPluginsPath());
 	plugins_layout->insertWidget(1, root_dir_sel);
 
 	plugins_tab=new ObjectsTableWidget(ObjectsTableWidget::EditButton, false, this);
@@ -64,7 +64,7 @@ void PluginsConfigWidget::loadConfiguration()
 {
 	std::vector<Exception> errors;
 	QString lib, plugin_name,
-			dir_plugins=GlobalAttributes::getPluginsDir() +
+			dir_plugins=GlobalAttributes::getPluginsPath() +
 						GlobalAttributes::DirSeparator;
 	QPluginLoader plugin_loader;
 	QStringList dir_list;
@@ -77,6 +77,10 @@ void PluginsConfigWidget::loadConfiguration()
 	/* Configures an QDir instance to list only directories on the plugins/ subdir.
 		If the user does not put the plugin in it's directory the file is ignored  */
 	dir_list=QDir(dir_plugins, "*", QDir::Name, QDir::AllDirs | QDir::NoDotAndDotDot).entryList();
+
+	/* Removing the "schemas" dir from the list since it is reserved to shared schema files
+	 * for configuration file generation */
+	dir_list.removeAll(GlobalAttributes::SchemasDir);
 
 	while(!dir_list.isEmpty())
 	{
@@ -167,7 +171,7 @@ void PluginsConfigWidget::initPlugins(MainWindow *main_window)
 	if(!errors.empty())
 	{
 		Messagebox msgbox;
-		msgbox.show(Exception(tr("One or more plug-ins could not be initialized due to minimum pgModeler version requirements! The failed ones were unloaded. Please, check the error stack for more details."),
+		msgbox.show(Exception(tr("One or more plug-ins failed to initialize and were discarded! Please, check the error stack for more details."),
 													ErrorCode::Custom, __PRETTY_FUNCTION__, __FILE__, __LINE__, errors));
 	}
 }
@@ -194,11 +198,11 @@ void PluginsConfigWidget::installPluginsActions(QMenu *menu)
 
 	for(auto &plugin : plugins)
 	{
-		if(!plugin->getMenuAction())
-			continue;
-
 		if(plugin->getConfigAction())
 			aux_plugins.push_back(plugin);
+
+		if(!plugin->getMenuAction())
+			continue;
 
 		menu->addAction(plugin->getMenuAction());
 	}
@@ -209,7 +213,8 @@ void PluginsConfigWidget::installPluginsActions(QMenu *menu)
 		conf_menu->menuAction()->setText(tr("Settings"));
 		conf_menu->menuAction()->setIcon(QIcon(GuiUtilsNs::getIconPath("config")));
 
-		menu->addSeparator();
+		if(!menu->isEmpty())
+			menu->addSeparator();
 
 		for(auto &plug : aux_plugins)
 			conf_menu->addAction(plug->getConfigAction());

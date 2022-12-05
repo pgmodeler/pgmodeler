@@ -55,16 +55,16 @@ PgModelerApp::PgModelerApp(int &argc, char **argv) : Application(argc,argv)
 	this->addLibraryPath(this->applicationDirPath());
 
 	//If pgModeler bundles plugins, add the root plugins path to lib search paths
-	if(dir.exists(GlobalAttributes::getPluginsDir()))
-		this->addLibraryPath(GlobalAttributes::getPluginsDir());
+	if(dir.exists(GlobalAttributes::getPluginsPath()))
+		this->addLibraryPath(GlobalAttributes::getPluginsPath());
 
 	//Check if the temporary dir exists, if not, creates it.
-	if(!dir.exists(GlobalAttributes::getTemporaryDir()))
+	if(!dir.exists(GlobalAttributes::getTemporaryPath()))
 	{
-		if(!dir.mkdir(GlobalAttributes::getTemporaryDir()))
+		if(!dir.mkdir(GlobalAttributes::getTemporaryPath()))
 		{
 			Messagebox msg;
-			msg.show(Exception(Exception::getErrorMessage(ErrorCode::FileDirectoryNotWritten).arg(GlobalAttributes::getTemporaryDir()),
+			msg.show(Exception(Exception::getErrorMessage(ErrorCode::FileDirectoryNotWritten).arg(GlobalAttributes::getTemporaryPath()),
 												 ErrorCode::FileDirectoryNotWritten, __PRETTY_FUNCTION__,__FILE__,__LINE__));
 		}
 	}
@@ -78,7 +78,7 @@ PgModelerApp::PgModelerApp(int &argc, char **argv) : Application(argc,argv)
 	loadTranslation(lang_id);
 
 	//Trying to load plugins translations
-	dir_list=QDir(GlobalAttributes::getPluginsDir() +
+	dir_list=QDir(GlobalAttributes::getPluginsPath() +
 								GlobalAttributes::DirSeparator,
 								QString("*"), QDir::Name, QDir::AllDirs | QDir::NoDotAndDotDot).entryList();
 
@@ -88,7 +88,7 @@ PgModelerApp::PgModelerApp(int &argc, char **argv) : Application(argc,argv)
 		dir_list.pop_front();
 
 		//Configure the path to "lang" subdir at current plugin directory
-		plug_lang_dir=GlobalAttributes::getPluginsDir() +
+		plug_lang_dir=GlobalAttributes::getPluginsPath() +
 					  GlobalAttributes::DirSeparator + plugin_name +
 					  GlobalAttributes::DirSeparator + QString("lang") +
 					  GlobalAttributes::DirSeparator;

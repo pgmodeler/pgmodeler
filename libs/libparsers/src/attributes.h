@@ -478,6 +478,7 @@ namespace Attributes {
 	PkPattern,
 	Placeholder,
 	Placeholders,
+	Plugin,
 	Points,
 	Port,
 	Portrait,
