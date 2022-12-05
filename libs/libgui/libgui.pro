@@ -96,6 +96,7 @@ src/widgets/aboutwidget.cpp \
 src/widgets/donatewidget.cpp \
 src/widgets/modelnavigationwidget.cpp \
 src/widgets/numberedtexteditor.cpp \
+	src/widgets/objecttypeslistwidget.cpp \
 src/widgets/operationlistwidget.cpp \
 src/widgets/bulkdataeditwidget.cpp \
 src/widgets/modelobjectswidget.cpp \
@@ -123,7 +124,7 @@ src/widgets/customsqlwidget.cpp \
 src/widgets/linenumberswidget.cpp \
 src/widgets/newobjectoverlaywidget.cpp \
 src/widgets/objectstablewidget.cpp \
-src/widgets/updatenotifierwidget.cpp \
+src/widgets/updatenotifierwidget.cpp
 
 HEADERS += src/guiglobal.h \
 src/baseform.h \
@@ -213,6 +214,7 @@ src/widgets/aboutwidget.h \
 src/widgets/donatewidget.h \
 src/widgets/modelnavigationwidget.h \
 src/widgets/numberedtexteditor.h \
+	src/widgets/objecttypeslistwidget.h \
 src/widgets/operationlistwidget.h \
 src/widgets/bulkdataeditwidget.h \
 src/widgets/modelobjectswidget.h \
@@ -240,7 +242,7 @@ src/widgets/customsqlwidget.h \
 src/widgets/linenumberswidget.h \
 src/widgets/newobjectoverlaywidget.h \
 src/widgets/objectstablewidget.h \
-src/widgets/updatenotifierwidget.h \
+src/widgets/updatenotifierwidget.h
 
 FORMS += ui/baseform.ui \
 ui/dbobjects/columnpickerwidget.ui \
@@ -311,6 +313,7 @@ ui/widgets/aboutwidget.ui \
 ui/widgets/donatewidget.ui \
 ui/widgets/modelobjectswidget.ui \
 ui/widgets/objectrenamewidget.ui \
+	ui/widgets/objecttypeslistwidget.ui \
 ui/widgets/sourcecodewidget.ui \
 ui/widgets/bulkdataeditwidget.ui \
 ui/widgets/fileselectorwidget.ui \
