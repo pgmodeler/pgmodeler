@@ -27,6 +27,7 @@
 
 #include "ui_objectfinderwidget.h"
 #include "modelwidget.h"
+#include "objecttypeslistwidget.h"
 #include <QWidget>
 
 class __libgui ObjectFinderWidget : public QWidget, public Ui::ObjectFinderWidget {
@@ -45,13 +46,19 @@ class __libgui ObjectFinderWidget : public QWidget, public Ui::ObjectFinderWidge
 
 		selected_objs;
 
-		QMenu select_menu, fade_menu;
+		QMenu select_menu, fade_menu, filter_menu;
 
 		//! \brief Reference model widget
 		ModelWidget *model_wgt;
 
 		//! \brief Stores the selected object on the result list
 		BaseObject *selected_obj;
+
+		QWidget *filter_wgt;
+
+		QCheckBox *regexp_chk, *exact_match_chk, *case_sensitive_chk;
+
+		ObjectTypesListWidget *obj_types_lst;
 
 		//! \brief Captures the ENTER press to execute search
 		bool eventFilter(QObject *object, QEvent *event);
@@ -88,10 +95,11 @@ class __libgui ObjectFinderWidget : public QWidget, public Ui::ObjectFinderWidge
 		//! \brief Selects a object on result list
 		void selectObject();
 
-		void setAllObjectsChecked();
 		void fadeObjects();
 		void selectObjects();
 		void showObjectMenu();
+
+		friend class MainWindow;
 };
 
 #endif

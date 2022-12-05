@@ -35,20 +35,39 @@ ObjectTypesListWidget::ObjectTypesListWidget(QWidget *parent)	: QWidget(parent)
 		obj_types_lst->addItem(item);
 	}
 
-	obj_types_lst->adjustSize();
+	obj_types_lst->adjustSize();	
+
+	connect(check_all_tb, &QToolButton::clicked, this, [this](){
+		setItemsCheckState(Qt::Checked);
+	});
+
+	connect(uncheck_all_tb, &QToolButton::clicked, this, [this](){
+		setItemsCheckState(Qt::Unchecked);
+	});
 }
 
-void ObjectTypesListWidget::setTypeNamesState(const QStringList &obj_types, Qt::CheckState state)
+void ObjectTypesListWidget::setItemsCheckState(Qt::CheckState state)
+{
+	QListWidgetItem *item = nullptr;
+
+	for(int idx = 0; idx < obj_types_lst->count(); idx++)
+	{
+		item = obj_types_lst->item(idx);
+		item->setCheckState(state);
+	}
+}
+
+void ObjectTypesListWidget::setTypeNamesCheckState(const QStringList &obj_types, Qt::CheckState state)
 {
 	std::vector<ObjectType> types;
 
 	for(auto &obj_type : obj_types)
 		types.push_back(BaseObject::getObjectType(obj_type));
 
-	setTypesState(types, state);
+	setTypesCheckState(types, state);
 }
 
-void ObjectTypesListWidget::setTypesState(const std::vector<ObjectType> &obj_types, Qt::CheckState state)
+void ObjectTypesListWidget::setTypesCheckState(const std::vector<ObjectType> &obj_types, Qt::CheckState state)
 {
 	ObjectType obj_type;
 	QListWidgetItem *item = nullptr;
@@ -63,7 +82,7 @@ void ObjectTypesListWidget::setTypesState(const std::vector<ObjectType> &obj_typ
 	}
 }
 
-std::vector<ObjectType> ObjectTypesListWidget::getTypesPerState(Qt::CheckState state)
+std::vector<ObjectType> ObjectTypesListWidget::getTypesPerCheckState(Qt::CheckState state)
 {
 	std::vector<ObjectType> types;
 	QListWidgetItem *item = nullptr;
@@ -79,7 +98,7 @@ std::vector<ObjectType> ObjectTypesListWidget::getTypesPerState(Qt::CheckState s
 	return types;
 }
 
-QStringList ObjectTypesListWidget::getTypeNamesPerState(Qt::CheckState state)
+QStringList ObjectTypesListWidget::getTypeNamesPerCheckState(Qt::CheckState state)
 {
 	QStringList types;
 	QListWidgetItem *item = nullptr;

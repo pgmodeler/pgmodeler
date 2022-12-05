@@ -33,14 +33,16 @@ class ObjectTypesListWidget : public QWidget, public Ui::ObjectTypesListWidget {
 	private:
 		Q_OBJECT
 
+		void setItemsCheckState(Qt::CheckState state);
+
 	public:
 		explicit ObjectTypesListWidget(QWidget *parent = nullptr);
 
-		void setTypeNamesState(const QStringList &obj_types, Qt::CheckState state);
-		void setTypesState(const std::vector<ObjectType> &obj_types, Qt::CheckState state);
+		void setTypeNamesCheckState(const QStringList &obj_types, Qt::CheckState state);
+		void setTypesCheckState(const std::vector<ObjectType> &obj_types, Qt::CheckState state);
 
-		std::vector<ObjectType> getTypesPerState(Qt::CheckState state);
-		QStringList getTypeNamesPerState(Qt::CheckState state);
+		std::vector<ObjectType> getTypesPerCheckState(Qt::CheckState state);
+		QStringList getTypeNamesPerCheckState(Qt::CheckState state);
 
 	signals:
 

@@ -40,9 +40,32 @@ ObjectFinderWidget::ObjectFinderWidget(QWidget *parent) : QWidget(parent)
 {
 	setupUi(this);
 
-	filter_frm->setVisible(false);
-	splitter->handle(1)->setEnabled(false);
-	updateObjectTypeList(obj_types_lst);
+	filter_wgt = new QWidget(this);
+	obj_types_lst = new ObjectTypesListWidget(this);
+	obj_types_lst->layout()->setContentsMargins(0,0,0,0);
+
+	regexp_chk = new QCheckBox(this);
+	regexp_chk->setText(tr("Regular expression"));
+
+	exact_match_chk = new QCheckBox(this);
+	exact_match_chk->setText(tr("Exact match"));
+
+	case_sensitive_chk = new QCheckBox(this);
+	case_sensitive_chk->setText(tr("Case sensitive"));
+
+	QVBoxLayout *vbox = new QVBoxLayout(filter_wgt);
+	vbox->addWidget(obj_types_lst);
+	vbox->addWidget(regexp_chk);
+	vbox->addWidget(exact_match_chk);
+	vbox->addWidget(case_sensitive_chk);
+	vbox->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
+	vbox->setSpacing(GuiUtilsNs::LtSpacing);
+	filter_wgt->setLayout(vbox);
+
+	QWidgetAction *wgt_act_filter = new QWidgetAction(this);
+	wgt_act_filter->setDefaultWidget(filter_wgt);
+	filter_menu.addAction(wgt_act_filter);
+	filter_btn->setMenu(&filter_menu);
 
 	select_menu.addAction(tr("Listed"), this, &ObjectFinderWidget::selectObjects);
 	select_menu.addAction(tr("Not listed"), this, &ObjectFinderWidget::selectObjects);
@@ -52,20 +75,12 @@ ObjectFinderWidget::ObjectFinderWidget(QWidget *parent) : QWidget(parent)
 	fade_menu.addAction(tr("Not listed"), this, &ObjectFinderWidget::fadeObjects);
 	fade_btn->setMenu(&fade_menu);
 
-	connect(filter_btn, &QToolButton::toggled, filter_frm, &QFrame::setVisible);
-	connect(filter_btn, &QToolButton::toggled, this, [this](){
-		splitter->setSizes({0, 1000});
-		splitter->handle(1)->setEnabled(filter_btn->isChecked());
-	});
-
 	connect(find_btn, &QToolButton::clicked, this, &ObjectFinderWidget::findObjects);
 	connect(hide_tb, &QToolButton::clicked, this, &ObjectFinderWidget::hide);
 	connect(result_tbw, &QTableWidget::itemSelectionChanged, this, &ObjectFinderWidget::selectObject);
 	connect(result_tbw, &QTableWidget::itemDoubleClicked, this, &ObjectFinderWidget::editObject);
 	connect(result_tbw, &QTableWidget::itemPressed, this, &ObjectFinderWidget::showObjectMenu);
 	connect(clear_res_btn, &QToolButton::clicked, this, &ObjectFinderWidget::clearResult);
-	connect(select_all_btn, &QPushButton::clicked, this, &ObjectFinderWidget::setAllObjectsChecked);
-	connect(clear_all_btn, &QToolButton::clicked, this, &ObjectFinderWidget::setAllObjectsChecked);
 
 	connect(regexp_chk, &QCheckBox::toggled, this, [this](bool checked){
 		exact_match_chk->setEnabled(checked);
@@ -219,7 +234,6 @@ void ObjectFinderWidget::setModel(ModelWidget *model_wgt)
 	this->model_wgt=model_wgt;
 	filter_btn->setEnabled(enable);
 	pattern_edt->setEnabled(enable);
-	filter_frm->setEnabled(enable);
 	pattern_lbl->setEnabled(enable);
 	find_btn->setEnabled(enable);
 	result_tbw->setEnabled(enable);
@@ -250,13 +264,7 @@ void ObjectFinderWidget::findObjects()
 		QTableWidgetItem *item = result_tbw->horizontalHeaderItem(result_tbw->columnCount() - 1);
 
 		clearResult();
-
-		//Getting the selected object types
-		for(int i=0; i < obj_types_lst->count(); i++)
-		{
-			if(obj_types_lst->item(i)->checkState()==Qt::Checked)
-				types.push_back(static_cast<ObjectType>(obj_types_lst->item(i)->data(Qt::UserRole).toUInt()));
-		}
+		types = obj_types_lst->getTypesPerCheckState(Qt::Checked);
 
 		//Search the objects on model
 		found_objs=model_wgt->getDatabaseModel()->findObjects(pattern_edt->text(), types,
@@ -372,14 +380,6 @@ void ObjectFinderWidget::editObject()
 
 		selected_obj=nullptr;
 	}
-}
-
-void ObjectFinderWidget::setAllObjectsChecked()
-{
-	bool checked=(sender()==select_all_btn);
-
-	for(int i=0; i < obj_types_lst->count(); i++)
-		obj_types_lst->item(i)->setCheckState((checked ? Qt::Checked : Qt::Unchecked));
 }
 
 void ObjectFinderWidget::updateObjectTable(QTableWidget *tab_wgt, std::vector<BaseObject *> &objs, const QString &search_attr, bool checkable_items)
