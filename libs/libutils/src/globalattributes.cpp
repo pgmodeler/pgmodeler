@@ -256,8 +256,8 @@ QString GlobalAttributes::getConfigParamFromFile(const QString &param_name, cons
 void GlobalAttributes::setConfigFilesPaths()
 {
 	#if defined(Q_OS_WINDOWS)
-		ConfigurationsDir=getPathFromEnv("PGMODELER_CONF_PATH", QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation) + QString("/%1").arg(PgModelerAppName));
-		TemporaryDir=getPathFromEnv("PGMODELER_TMP_PATH", QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation) + QString("/%1/tmp").arg(PgModelerAppName));
+		ConfigurationsPath=getPathFromEnv("PGMODELER_CONF_PATH", QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation) + QString("/%1").arg(PgModelerAppName));
+		TemporaryPath=getPathFromEnv("PGMODELER_TMP_PATH", QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation) + QString("/%1/tmp").arg(PgModelerAppName));
 	#else
 		ConfigurationsPath=getPathFromEnv("PGMODELER_CONF_PATH", QStandardPaths::writableLocation(QStandardPaths::ConfigLocation) + QString("/%1").arg(PgModelerAppName));
 		TemporaryPath=getPathFromEnv("PGMODELER_TMP_PATH", QStandardPaths::writableLocation(QStandardPaths::ConfigLocation) + QString("/%1/tmp").arg(PgModelerAppName));
