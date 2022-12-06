@@ -28,8 +28,9 @@
 #include <QWidget>
 #include "ui_objecttypeslistwidget.h"
 #include "baseobject.h"
+#include "guiglobal.h"
 
-class ObjectTypesListWidget : public QWidget, public Ui::ObjectTypesListWidget {
+class __libgui ObjectTypesListWidget : public QWidget, public Ui::ObjectTypesListWidget {
 	private:
 		Q_OBJECT
 
