@@ -88,7 +88,7 @@ void HtmlItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
 
 		//Set the text to a html document instance and draw it to the painter
 		doc.setHtml(text);
-		dy = abs(option.rect.height() - option.decorationSize.height()) / 2;
+		dy = abs(option.rect.height() - option.decorationSize.height());
 		painter->translate(rect.topLeft() - QPoint(0, dy));
 		doc.drawContents(painter);
 	}
