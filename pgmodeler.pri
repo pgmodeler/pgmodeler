@@ -55,9 +55,9 @@ defined(DEMO_VERSION, var): DEFINES+=DEMO_VERSION
 # Set up the flag passed to compiler to disable all code related to update checking
 defined(NO_UPDATE_CHECK, var): DEFINES+=NO_UPDATE_CHECK
 
-defined(PRIVATE_PLUGINS, var): DEFINES+=PRIVATE_PLUGINS_SYMBOLS
-
+# Set up the plugin folder to be used
 PLUGINS_FOLDER=plugins
+defined(PRIVATE_PLUGINS, var): DEFINES+=PRIVATE_PLUGINS_SYMBOLS
 defined(PRIVATE_PLUGINS,var): PLUGINS_FOLDER=priv-plugins
 
 # Include the plugins subprojects only if exists
