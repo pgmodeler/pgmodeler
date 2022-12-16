@@ -94,9 +94,6 @@ class __libgui PgModelerPlugin {
 
 		virtual ~PgModelerPlugin();
 
-		//! \brief Implements the plugin execution
-		virtual void executePlugin() = 0;
-
 		//! \brief Returns the plugin's title, this same text is used as action's text on plugins toolbar.
 		virtual QString getPluginTitle(void)=0;
 

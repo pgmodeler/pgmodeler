@@ -533,7 +533,7 @@ class __libcore DatabaseModel:  public QObject, public BaseObject {
 		The parameter incl_rel1n_constr when 'true' includes the generated foreign and unique keys
 		of one-to-one|many relationships instead of the relationships themselves. This parameter is
 		is accepted only when the creation order for SQL code is being generated, for XML, it'll simply ignored. */
-		std::map<unsigned, BaseObject *> getCreationOrder(unsigned def_type, bool incl_relnn_objs=false, bool incl_rel1n_constrs=false);
+		std::map<unsigned, BaseObject *> getCreationOrder(SchemaParser::CodeType def_type, bool incl_relnn_objs=false, bool incl_rel1n_constrs=false);
 
 		/*! \brief Returns a list containig all the object need to create the 'object' in the proper order.
 		If 'only_children' is set only children objects will be included in the list (for tables, views or schemas).
@@ -899,6 +899,10 @@ class __libcore DatabaseModel:  public QObject, public BaseObject {
 
 		bool isLayerNamesVisible();
 		bool isLayerRectsVisible();
+
+		/*! \brief Fills the provided attributes map with the database model attributes only.
+		 *  The result varies according to the code_type provided */
+		void setDatabaseModelAttributes(attribs_map &attribs, SchemaParser::CodeType code_type);
 
 	signals:
 		//! \brief Signal emitted when a new object is added to the model
