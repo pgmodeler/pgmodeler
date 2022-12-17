@@ -705,7 +705,6 @@ void Constraint::configureSearchAttributes()
 
 	search_attribs[Attributes::SrcColumns] = src_col_names.join(", ");
 	search_attribs[Attributes::RefColumns] = ref_col_names.join(", ");
-	search_attribs[Attributes::Signature] = (getParentTable() ? getParentTable()->getSignature() + "." : "") + getName(true);
 }
 
 QString Constraint::getSourceCode(SchemaParser::CodeType def_type, bool inc_addedbyrel)
@@ -786,14 +785,6 @@ QString Constraint::getDropCode(bool cascade)
 {
 	setDeclInTableAttribute();
 	return TableObject::getDropCode(cascade);
-}
-
-QString Constraint::getSignature(bool format)
-{
-	if(!getParentTable())
-		return BaseObject::getSignature(format);
-
-	return QString("%1 ON %2 ").arg(this->getName(format)).arg(getParentTable()->getSignature(true));
 }
 
 QString Constraint::getDataDictionary(const attribs_map &extra_attribs)

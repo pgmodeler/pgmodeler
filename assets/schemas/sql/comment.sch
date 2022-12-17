@@ -3,7 +3,15 @@
 # Code generation can be broken if incorrect changes are made.
 
 %if {comment} %or ({comment}=="unset") %then
-	[COMMENT ON ] {sql-object} $sp {signature} [ IS ]
+	[COMMENT ON ] {sql-object} $sp 
+
+	%if ({sql-object}=="CONSTRAINT") %then
+		{name} [ ON ] {table}
+	%else
+		{signature} 
+	%end
+
+	[ IS ]
 
 	%if ({comment}=="unset") %then
 		''

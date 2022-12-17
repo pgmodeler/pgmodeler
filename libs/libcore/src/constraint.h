@@ -275,8 +275,6 @@ class __libcore Constraint: public TableObject{
 		//! \brief Toggles the not-null flag from source columns on primary key constraints. This methods has no effect in other constraint types
 		void setColumnsNotNull(bool value);
 
-		virtual QString getSignature(bool format) final;
-
 		QString getDataDictionary(const attribs_map &extra_attribs);
 
 		/*! \brief Compares two constratins XML definition and returns if they differs. This methods varies a little from
