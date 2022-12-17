@@ -131,14 +131,6 @@ QString Policy::getSourceCode(SchemaParser::CodeType def_type)
 	return BaseObject::__getSourceCode(def_type);
 }
 
-QString Policy::getSignature(bool format)
-{
-	if(!getParentTable())
-		return BaseObject::getSignature(format);
-
-	return (QString("%1 ON %2").arg(this->getName(format)).arg(getParentTable()->getSignature(true)));
-}
-
 QString Policy::getAlterCode(BaseObject *object)
 {
 	Policy *policy=dynamic_cast<Policy *>(object);

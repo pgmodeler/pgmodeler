@@ -136,11 +136,3 @@ QString Rule::getSourceCode(SchemaParser::CodeType def_type)
 
 	return BaseObject::__getSourceCode(def_type);
 }
-
-QString Rule::getSignature(bool format)
-{
-	if(!getParentTable())
-		return BaseObject::getSignature(format);
-
-	return QString("%1 ON %2").arg(this->getName(format)).arg(getParentTable()->getSignature(true));
-}

@@ -5,7 +5,8 @@
 %if {comment} %or ({comment}=="unset") %then
 	[COMMENT ON ] {sql-object} $sp 
 
-	%if ({sql-object}=="CONSTRAINT") %then
+	%if ({sql-object}=="CONSTRAINT") %or ({sql-object}=="TRIGGER") %or 
+		({sql-object}=="RULE") %or ({sql-object}=="POLICY")  %then
 		{name} [ ON ] {table}
 	%else
 		{signature} 

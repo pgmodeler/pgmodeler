@@ -90,8 +90,6 @@ class __libcore Policy : public TableObject {
 		//! \brief Returns the SQL / XML definition for the policy
 		virtual QString getSourceCode(SchemaParser::CodeType def_type) final;
 
-		virtual QString getSignature(bool format=false) final;
-
 		virtual QString getAlterCode(BaseObject *object) final;
 
 		bool isRoleExists(Role *role);

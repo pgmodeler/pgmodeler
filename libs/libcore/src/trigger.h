@@ -201,8 +201,6 @@ class __libcore Trigger: public TableObject{
 		Normally the user don't need to call it explicitly */
 		void validateTrigger();
 
-		virtual QString getSignature(bool format=true) final;
-
 		QString getDataDictionary(const attribs_map &extra_attribs);
 };
 
