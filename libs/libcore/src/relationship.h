@@ -122,10 +122,10 @@ class __libcore Relationship: public BaseRelationship {
 		enum PatternId: unsigned {
 			SrcColPattern,
 			DstColPattern,
-			PkPattern,
-			UqPattern,
 			SrcFkPattern,
 			DstFkPattern,
+			PkPattern,
+			UqPattern,
 			PkColPattern
 		};
 
