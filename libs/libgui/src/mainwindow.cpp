@@ -29,7 +29,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 {
 	setupUi(this);
 	pending_op=NoPendingOp;
-	central_wgt=nullptr;
+	welcome_wgt=nullptr;
 	window_title=this->windowTitle() + QString(" ") + GlobalAttributes::PgModelerVersion;
 
 	#ifdef DEMO_VERSION
@@ -163,7 +163,7 @@ void MainWindow::configureMenusActionsWidgets()
 
 	//Enables the action to restore session when there are registered session files
 	action_restore_session->setEnabled(!prev_session_files.isEmpty());
-	central_wgt->last_session_tb->setEnabled(action_restore_session->isEnabled());
+	welcome_wgt->last_session_tb->setEnabled(action_restore_session->isEnabled());
 
 	this->setFocusPolicy(Qt::WheelFocus);
 	model_acts_tb->addWidget(model_nav_wgt);
@@ -191,7 +191,7 @@ void MainWindow::configureMenusActionsWidgets()
 	about_wgt->setVisible(false);
 	donate_wgt->setVisible(false);
 	models_tbw_parent->lower();
-	central_wgt->lower();
+	welcome_wgt->lower();
 	v_splitter1->lower();
 
 	QVBoxLayout *vlayout=new QVBoxLayout;
@@ -308,14 +308,16 @@ void MainWindow::createMainWidgets()
 		hbox->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
 		scene_info_parent->setLayout(hbox);
 
-		central_wgt=new WelcomeWidget(views_stw);
+		welcome_wgt=new WelcomeWidget(views_stw);
+		welcome_wgt->setObjectName("welcome_wgt");
 		QGridLayout *grid=new QGridLayout;
 		grid->setContentsMargins(0,0,0,0);
 		grid->setSpacing(0);
-		grid->addWidget(central_wgt, 0, 0);
+		grid->addWidget(welcome_wgt, 0, 0);
 		views_stw->widget(WelcomeView)->setLayout(grid);
 
 		sql_tool_wgt=new SQLToolWidget;
+		sql_tool_wgt->setObjectName("sql_tool_wgt");
 		grid=new QGridLayout;
 		grid->setContentsMargins(0,0,0,0);
 		grid->setSpacing(0);
@@ -398,13 +400,13 @@ void MainWindow::loadConfigurations()
 
 void MainWindow::connectSignalsToSlots()
 {
-	connect(central_wgt->new_tb, &QToolButton::clicked, this, [this]() {
+	connect(welcome_wgt->new_tb, &QToolButton::clicked, this, [this]() {
 		addModel();
 	});
 
-	connect(central_wgt->open_tb, &QToolButton::clicked, this, qOverload<>(&MainWindow::loadModel));
-	connect(central_wgt->last_session_tb, &QToolButton::clicked, this, &MainWindow::restoreLastSession);
-	connect(central_wgt->support_tb, &QToolButton::clicked, this, &MainWindow::openSupport);
+	connect(welcome_wgt->load_tb, &QToolButton::clicked, this, qOverload<>(&MainWindow::loadModel));
+	connect(welcome_wgt->last_session_tb, &QToolButton::clicked, this, &MainWindow::restoreLastSession);
+	connect(welcome_wgt->support_tb, &QToolButton::clicked, this, &MainWindow::openSupport);
 
 #ifndef NO_UPDATE_CHECK
 	connect(update_notifier_wgt, &UpdateNotifierWidget::s_updateAvailable, action_update_found, &QAction::setVisible, Qt::QueuedConnection);
@@ -690,7 +692,7 @@ void MainWindow::restoreLastSession()
 			}
 
 			action_restore_session->setEnabled(false);
-			central_wgt->last_session_tb->setEnabled(false);
+			welcome_wgt->last_session_tb->setEnabled(false);
 			qApp->restoreOverrideCursor();
 		}
 		catch(Exception &e)
@@ -741,10 +743,10 @@ void MainWindow::fixModel(const QString &filename)
 
 void MainWindow::resizeEvent(QResizeEvent *)
 {
-	if(central_wgt)
+	if(welcome_wgt)
 	{
-		central_wgt->move(bg_widget->width()/2 - central_wgt->width()/2 ,
-						  bg_widget->height()/2 - central_wgt->height()/2);
+		welcome_wgt->move(bg_widget->width()/2 - welcome_wgt->width()/2 ,
+							bg_widget->height()/2 - welcome_wgt->height()/2);
 	}
 
 	action_about->setChecked(false);
@@ -967,8 +969,8 @@ void MainWindow::updateRecentModelsMenu()
 	}
 
 	recent_mdls_menu.menuAction()->setEnabled(!recent_mdls_menu.isEmpty());
-	central_wgt->recent_tb->setEnabled(recent_mdls_menu.menuAction()->isEnabled());
-	central_wgt->recent_tb->setMenu(recent_mdls_menu.isEmpty() ? nullptr : &recent_mdls_menu);
+	welcome_wgt->recent_tb->setEnabled(recent_mdls_menu.menuAction()->isEnabled());
+	welcome_wgt->recent_tb->setMenu(recent_mdls_menu.isEmpty() ? nullptr : &recent_mdls_menu);
 }
 
 void MainWindow::loadModelFromAction()
@@ -1065,7 +1067,7 @@ void MainWindow::addModel(const QString &filename)
 			catch(Exception &e)
 			{
 				models_tbw->setUpdatesEnabled(true);
-				central_wgt->update();
+				welcome_wgt->update();
 				models_tbw->removeTab(models_tbw->indexOf(model_tab));
 				model_tab->setParent(nullptr);
 
@@ -2038,7 +2040,7 @@ void MainWindow::configureSamplesMenu()
 		act->setEnabled(false);
 	}
 
-	central_wgt->sample_tb->setMenu(&sample_mdls_menu);
+	welcome_wgt->sample_tb->setMenu(&sample_mdls_menu);
 }
 
 void MainWindow::storeDockWidgetsSettings()
@@ -2193,6 +2195,7 @@ void MainWindow::changeCurrentView(bool checked)
 		model_nav_wgt->setEnabled(enable);
 		action_print->setEnabled(enable);
 		action_close_model->setEnabled(enable);
+		action_save_as->setEnabled(enable);
 	}
 	else
 	{

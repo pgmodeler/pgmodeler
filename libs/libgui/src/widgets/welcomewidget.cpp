@@ -23,7 +23,7 @@ WelcomeWidget::WelcomeWidget(QWidget *parent): QWidget(parent)
 {
 	setupUi(this);
 
-	QList<QToolButton *> btns= { new_tb, open_tb, recent_tb, last_session_tb, sample_tb, support_tb };
+	QList<QToolButton *> btns= { new_tb, load_tb, recent_tb, last_session_tb, sample_tb, support_tb };
 	QFont fnt;
 
 	for(auto &btn : btns)

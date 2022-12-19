@@ -91,7 +91,7 @@ class __libgui MainWindow: public QMainWindow, public Ui::MainWindow {
 
 		/*! \brief Widget positioned on the center of main window that contains some basic operations like
 		create new model, open a file, restore session */
-		WelcomeWidget *central_wgt;
+		WelcomeWidget *welcome_wgt;
 
 		//! \brief Model overview widget
 		ModelOverviewWidget *overview_wgt;
