@@ -118,6 +118,19 @@ QString PgModelerPlugin::getPluginIcon(const QString &icon_name)
 	return QString(":/%1/%2.png").arg(plugin_name, icon_name);
 }
 
+QString PgModelerPlugin::getPluginFilePath(const QString &subdir, const QString &filename)
+{
+	QString file_pth = GlobalAttributes::getPluginsPath() + GlobalAttributes::DirSeparator + getPluginName();
+
+	if(!subdir.isEmpty())
+		file_pth += GlobalAttributes::DirSeparator + subdir;
+
+	if(!filename.isEmpty())
+		file_pth += GlobalAttributes::DirSeparator + filename;
+
+	return file_pth;
+}
+
 void PgModelerPlugin::configurePluginInfo(const QString &title, const QString &version, const QString &author, const QString &description)
 {
 	title_lbl->setText(title);

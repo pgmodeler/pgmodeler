@@ -127,6 +127,13 @@ class __libgui PgModelerPlugin {
 		//! \brief Returns the path to the a plugin icon in the plugin's qrc file
 		QString getPluginIcon(const QString &icon_name);
 
+		/*! \brief This method mimics the behavior of GlobalAttributes::getTmplConfigurationFilePath
+		 * returning the full path to a file inside a subdirectory in the plugin's root directory.
+		 * If both subdir and filename are empty, only the full path to the plugin's root directory is returned.
+		 * If subdir is empty and filename not then a path in the format [plugin-root]/filename is returned.
+		 * If both subdir and filename are set then a path in the format [plugin-root]/subdir/filename is returned. */
+		QString getPluginFilePath(const QString &subdir, const QString &filename);
+
 		friend class PluginsConfigWidget;
 };
 
