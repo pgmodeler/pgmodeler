@@ -28,9 +28,12 @@ int MainWindow::ToolsActionsCount=0;
 MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(parent, flags)
 {
 	setupUi(this);
-	pending_op=NoPendingOp;
-	welcome_wgt=nullptr;
-	window_title=this->windowTitle() + QString(" ") + GlobalAttributes::PgModelerVersion;
+	pending_op = NoPendingOp;
+	welcome_wgt = nullptr;
+	window_title = this->windowTitle() + QString(" ") + GlobalAttributes::PgModelerVersion;
+
+	recent_models_menu = new QMenu(this);
+	recent_models_menu->setObjectName("recent_models_menu");
 
 	#ifdef DEMO_VERSION
 		window_title+=tr(" (Demo)");
@@ -239,7 +242,7 @@ void MainWindow::configureMenusActionsWidgets()
 	dynamic_cast<QToolButton *>(model_acts_tb->widgetForAction(main_menu.menuAction()))->setPopupMode(QToolButton::InstantPopup);
 #endif
 
-	QAction *act = recent_mdls_menu.menuAction();
+	QAction *act = recent_models_menu->menuAction();
 	act->setIcon(QIcon(GuiUtilsNs::getIconPath("loadrecent")));
 	act->setText(tr("Recent models"));
 	act->setToolTip(tr("Load recently opened model"));
@@ -840,7 +843,10 @@ void MainWindow::closeEvent(QCloseEvent *event)
 			{
 				model=dynamic_cast<ModelWidget *>(models_tbw->widget(i));
 
-				if(!model->getFilename().isEmpty())
+				if(!model->getFilename().isEmpty() &&
+					 /* Models loaded from temporary dir are not included in the session
+						* since they are removed once pgModeler is closed */
+					 !model->getFilename().contains(GlobalAttributes::getTemporaryPath()))
 				{
 					param_id=QString("%1%2").arg(Attributes::File).arg(i);
 					attribs[Attributes::Id]=param_id;
@@ -867,7 +873,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
 					recent_models.pop_front();
 				}
 
-				recent_mdls_menu.clear();
+				recent_models_menu->clear();
 			}
 			else
 				conf_wgt->removeConfigurationParam(QRegularExpression(QString("(%1)(.)+").arg(Attributes::Recent)));
@@ -952,25 +958,25 @@ void MainWindow::saveTemporaryModels()
 void MainWindow::updateRecentModelsMenu()
 {
 	QAction *act=nullptr;
-	recent_mdls_menu.clear();
+	recent_models_menu->clear();
 	recent_models.removeDuplicates();
 
 	for(int i=0; i < recent_models.size() && i < GeneralConfigWidget::MaxRecentModels; i++)
 	{
-		act=recent_mdls_menu.addAction(QFileInfo(recent_models[i]).fileName(),this, &MainWindow::loadModelFromAction);
+		act=recent_models_menu->addAction(QFileInfo(recent_models[i]).fileName(),this, &MainWindow::loadModelFromAction);
 		act->setToolTip(recent_models[i]);
 		act->setData(recent_models[i]);
 	}
 
-	if(!recent_mdls_menu.isEmpty())
+	if(!recent_models_menu->isEmpty())
 	{
-		recent_mdls_menu.addSeparator();
-		recent_mdls_menu.addAction(tr("Clear Menu"), this, &MainWindow::clearRecentModelsMenu);
+		recent_models_menu->addSeparator();
+		recent_models_menu->addAction(tr("Clear Menu"), this, &MainWindow::clearRecentModelsMenu);
 	}
 
-	recent_mdls_menu.menuAction()->setEnabled(!recent_mdls_menu.isEmpty());
-	welcome_wgt->recent_tb->setEnabled(recent_mdls_menu.menuAction()->isEnabled());
-	welcome_wgt->recent_tb->setMenu(recent_mdls_menu.isEmpty() ? nullptr : &recent_mdls_menu);
+	recent_models_menu->menuAction()->setEnabled(!recent_models_menu->isEmpty());
+	welcome_wgt->recent_tb->setEnabled(recent_models_menu->menuAction()->isEnabled());
+	welcome_wgt->recent_tb->setMenu(recent_models_menu->isEmpty() ? nullptr : recent_models_menu);
 }
 
 void MainWindow::loadModelFromAction()
@@ -985,8 +991,7 @@ void MainWindow::loadModelFromAction()
 		{
 			qApp->setOverrideCursor(Qt::WaitCursor);
 			addModel(filename);
-			recent_models.push_back(act->data().toString());
-			updateRecentModelsMenu();
+			registerRecentModel(filename);
 			qApp->restoreOverrideCursor();
 		}
 		catch(Exception &e)
@@ -1591,8 +1596,7 @@ void MainWindow::saveModel(ModelWidget *model)
 					if(file_dlg.exec()==QFileDialog::Accepted && !file_dlg.selectedFiles().isEmpty())
 					{
 						model->saveModel(file_dlg.selectedFiles().at(0));
-						recent_models.push_front(file_dlg.selectedFiles().at(0));
-						updateRecentModelsMenu();
+						registerRecentModel(file_dlg.selectedFiles().at(0));
 						model_nav_wgt->updateModelText(models_tbw->indexOf(model), model->getDatabaseModel()->getName(), file_dlg.selectedFiles().at(0));
 					}
 
@@ -1842,7 +1846,7 @@ void MainWindow::loadModels(const QStringList &list)
 			recent_models.push_front(list[i]);
 		}
 
-		updateRecentModelsMenu();		
+		updateRecentModelsMenu();
 		qApp->restoreOverrideCursor();
 	}
 	catch(Exception &e)
@@ -2359,4 +2363,13 @@ void MainWindow::addExecTabInSQLTool(const QString &sql_cmd)
 bool MainWindow::hasDbsListedInSQLTool()
 {
 	return sql_tool_wgt->hasDatabasesBrowsed();
+}
+
+void MainWindow::registerRecentModel(const QString &filename)
+{
+	if(!QFileInfo(filename).exists())
+		return;
+
+	recent_models.append(filename);
+	updateRecentModelsMenu();
 }

@@ -139,7 +139,7 @@ class __libgui MainWindow: public QMainWindow, public Ui::MainWindow {
 		prev_session_files;
 
 		//! \brief Stores the actions related to recent models
-		QMenu recent_mdls_menu,
+		QMenu *recent_models_menu,
 
 		main_menu,
 
@@ -208,6 +208,9 @@ class __libgui MainWindow: public QMainWindow, public Ui::MainWindow {
 		//! \brief Loads a set of models from string list
 		void loadModels(const QStringList &list);
 
+		//! \brief Loads a model from a specified filename
+		void loadModel(const QString &filename);
+
 		//! \brief Indicates if model must be validated before save, diff or export
 		static void setConfirmValidation(bool value);
 
@@ -243,6 +246,9 @@ class __libgui MainWindow: public QMainWindow, public Ui::MainWindow {
 		 *  expose the SQL Tool widget itself (useful for plugin developers) */
 		bool hasDbsListedInSQLTool();
 
+		//! \brief Adds an entry to the recent models menu
+		void registerRecentModel(const QString &filename);
+
 	private slots:
 		void showMainMenu();
 
@@ -262,9 +268,6 @@ class __libgui MainWindow: public QMainWindow, public Ui::MainWindow {
 
 		//! \brief Loads a model from a file via file dialog
 		void loadModel();
-
-		//! \brief Loads a model from a specified filename
-		void loadModel(const QString &filename);
 
 		//! \brief Saves the currently focused model. If the parameter 'model' is set, saves the passed model
 		void saveModel(ModelWidget *model=nullptr);
