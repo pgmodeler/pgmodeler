@@ -1634,6 +1634,7 @@ void MainWindow::saveModel(ModelWidget *model)
 
 			stopTimers(false);
 			action_save_model->setEnabled(model->isModified());
+			s_modelSaved(model);
 		}
 	}
 	catch(Exception &e)

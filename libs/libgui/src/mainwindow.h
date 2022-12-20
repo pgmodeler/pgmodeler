@@ -351,6 +351,7 @@ class __libgui MainWindow: public QMainWindow, public Ui::MainWindow {
 
 	signals:
 		void s_currentModelChanged(ModelWidget *model_wgt);
+		void s_modelSaved(ModelWidget *model_wgt);
 };
 
 #endif
