@@ -12,7 +12,6 @@ SUBDIRS = libs/$$LIBUTILS \
 # Include the tests subprojects only on debug mode
 CONFIG(debug, debug|release): SUBDIRS += tests
 
-#exists($$PLUGINS_PRO_FILE):INCLUDEPATH+=$$PLUGINS_SRC_ROOT/src
 !exists($$PLUGINS_PRO_FILE) {
    !defined(PRIVATE_PLUGINS,var) {
      warning("The subproject $$PLUGINS_SRC_ROOT wasn't found! pgModeler will be build without plug-ins.")

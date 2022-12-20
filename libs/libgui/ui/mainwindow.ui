@@ -1415,7 +1415,7 @@
     <string>Expands the main menu bar in classical mode</string>
    </property>
    <property name="shortcut">
-    <string>Ctrl+Shift+S</string>
+    <string>Ctrl+Shift+M</string>
    </property>
   </action>
   <action name="action_hide_main_menu">
