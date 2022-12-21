@@ -246,7 +246,7 @@ void MainWindow::configureMenusActionsWidgets()
 	act->setIcon(QIcon(GuiUtilsNs::getIconPath("loadrecent")));
 	act->setText(tr("Recent models"));
 	act->setToolTip(tr("Load recently opened model"));
-	model_acts_tb->insertAction(action_save_model, act);
+	model_acts_tb->insertAction(action_load_model, act);
 	dynamic_cast<QToolButton *>(model_acts_tb->widgetForAction(act))->setPopupMode(QToolButton::InstantPopup);
 
 	QToolButton *btn=nullptr;
