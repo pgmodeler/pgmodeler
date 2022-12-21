@@ -38,8 +38,8 @@ PgModelerPlugin::PgModelerPlugin()
 
 	icon_lbl = new QLabel(widget);
 	icon_lbl->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-	icon_lbl->setMinimumSize(QSize(40, 40));
-	icon_lbl->setMaximumSize(QSize(40, 40));
+	icon_lbl->setMinimumSize(QSize(64, 64));
+	icon_lbl->setMaximumSize(QSize(64, 64));
 	icon_lbl->setScaledContents(true);
 	gridLayout->addWidget(icon_lbl, 0, 0, 2, 1);
 
@@ -53,6 +53,7 @@ PgModelerPlugin::PgModelerPlugin()
 
 	author_lbl = new QLabel(widget);
 	author_lbl->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
+	author_lbl->setTextInteractionFlags(Qt::TextBrowserInteraction);
 	gridLayout->addWidget(author_lbl, 1, 1, 2, 1);
 
 	verticalSpacer = new QSpacerItem(20, 18, QSizePolicy::Minimum, QSizePolicy::Expanding);
@@ -60,12 +61,14 @@ PgModelerPlugin::PgModelerPlugin()
 
 	version_lbl = new QLabel(widget);
 	version_lbl->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
+	version_lbl->setTextInteractionFlags(Qt::TextBrowserInteraction);
 	gridLayout->addWidget(version_lbl, 3, 1, 1, 1);
 
 	description_lbl = new QLabel(widget);
 	description_lbl->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
 	description_lbl->setAlignment(Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop);
 	description_lbl->setWordWrap(true);
+	description_lbl->setTextInteractionFlags(Qt::TextBrowserInteraction);
 	gridLayout->addWidget(description_lbl, 4, 0, 1, 2);
 
 	widget->setLayout(gridLayout);
@@ -134,8 +137,8 @@ QString PgModelerPlugin::getPluginFilePath(const QString &subdir, const QString 
 void PgModelerPlugin::configurePluginInfo(const QString &title, const QString &version, const QString &author, const QString &description)
 {
 	title_lbl->setText(title);
-	version_lbl->setText(QString(QT_TRANSLATE_NOOP("PgModelerPlugin", "Version: %1")).arg(version));
-	author_lbl->setText(QString(QT_TRANSLATE_NOOP("PgModelerPlugin","Author: %1")).arg(author));
+	version_lbl->setText(QString(QT_TRANSLATE_NOOP("PgModelerPlugin", "<strong>Version:</strong> %1")).arg(version));
+	author_lbl->setText(QString(QT_TRANSLATE_NOOP("PgModelerPlugin","<strong>Author:</strong> %1")).arg(author));
 	description_lbl->setText(description);
 	icon_lbl->setPixmap(QPixmap(getPluginIcon(plugin_name)));
 }

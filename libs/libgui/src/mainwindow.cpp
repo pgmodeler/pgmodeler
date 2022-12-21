@@ -1631,11 +1631,11 @@ void MainWindow::saveModel(ModelWidget *model)
 
 				this->setWindowTitle(window_title + QString(" - ") + QDir::toNativeSeparators(model->getFilename()));
 				model_valid_wgt->clearOutput();
+				s_modelSaved(model);
 			}
 
 			stopTimers(false);
 			action_save_model->setEnabled(model->isModified());
-			s_modelSaved(model);
 		}
 	}
 	catch(Exception &e)
