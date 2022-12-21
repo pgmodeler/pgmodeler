@@ -306,6 +306,7 @@ void MainWindow::createMainWidgets()
 		changelog_wgt->setVisible(false);
 
 		scene_info_wgt = new SceneInfoWidget(this);
+		scene_info_wgt->setObjectName("scene_info_wgt");
 		QHBoxLayout *hbox = new QHBoxLayout(scene_info_parent);
 		hbox->addWidget(scene_info_wgt);
 		hbox->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
