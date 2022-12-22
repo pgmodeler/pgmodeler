@@ -116,11 +116,14 @@ void SourceEditorWidget::loadFile(const QString &filename)
 	source_file_sel->setSelectedFile(filename);
 	source_file_parent->setVisible(true);
 
-	QString ext = QFileInfo(filename).suffix();
+	QString ext = "." + QFileInfo(filename).suffix();
 
-	if(ext == "dbm" || ext == "xml" || ext == "conf" || ext == "omf")
+	if(ext == GlobalAttributes::DbModelExt ||
+		 ext == ".xml" ||
+		 ext == GlobalAttributes::ConfigurationExt ||
+		 ext == GlobalAttributes::ObjMetadataExt)
 		curr_sytax_cfg = GlobalAttributes::XMLHighlightConf;
-	else if(ext == "sql")
+	else if(ext == ".sql")
 		curr_sytax_cfg = GlobalAttributes::SQLHighlightConf;
 	else
 		curr_sytax_cfg = GlobalAttributes::SchHighlightConf;

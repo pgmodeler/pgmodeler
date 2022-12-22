@@ -171,9 +171,9 @@ void CrashHandlerForm::saveModel()
 
 	try
 	{
-		file_dlg.setDefaultSuffix(QString("dbm"));
+		file_dlg.setDefaultSuffix(GlobalAttributes::DbModelExt);
 		file_dlg.setWindowTitle(tr("Save model"));
-		file_dlg.setNameFilter(tr("Database model (*.dbm);;All files (*.*)"));
+		file_dlg.setNameFilter(tr("Database model (*%1);;All files (*.*)").arg(GlobalAttributes::DbModelExt));
 		file_dlg.setFileMode(QFileDialog::AnyFile);
 		file_dlg.setAcceptMode(QFileDialog::AcceptSave);
 		file_dlg.setModal(true);

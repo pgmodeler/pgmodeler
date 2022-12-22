@@ -963,6 +963,9 @@ void MainWindow::saveTemporaryModels()
 void MainWindow::updateRecentModelsMenu()
 {
 	QAction *act=nullptr;
+	QFileInfo fi;
+
+	recent_models_menu->setToolTipsVisible(true);
 	recent_models_menu->clear();
 	recent_models.removeDuplicates();
 
@@ -971,12 +974,21 @@ void MainWindow::updateRecentModelsMenu()
 		act=recent_models_menu->addAction(QFileInfo(recent_models[i]).fileName(),this, &MainWindow::loadModelFromAction);
 		act->setToolTip(recent_models[i]);
 		act->setData(recent_models[i]);
+
+		if(recent_models[i].endsWith(GlobalAttributes::DbModelExt))
+			act->setIcon(QIcon(GuiUtilsNs::getIconPath("dbmfile")));
+		else
+		{
+			fi.setFile(recent_models[i]);
+			if(recent_models_icons.contains(fi.suffix()))
+				act->setIcon(recent_models_icons[fi.suffix()]);
+		}
 	}
 
 	if(!recent_models_menu->isEmpty())
 	{
 		recent_models_menu->addSeparator();
-		recent_models_menu->addAction(tr("Clear Menu"), this, &MainWindow::clearRecentModelsMenu);
+		recent_models_menu->addAction(QIcon(GuiUtilsNs::getIconPath("delete")), tr("Clear menu"), this, &MainWindow::clearRecentModelsMenu);
 	}
 
 	recent_models_menu->menuAction()->setEnabled(!recent_models_menu->isEmpty());
@@ -2053,6 +2065,7 @@ void MainWindow::configureSamplesMenu()
 		path=QFileInfo(GlobalAttributes::getSamplesPath() + GlobalAttributes::DirSeparator + files.front()).absoluteFilePath();
 		act->setToolTip(path);
 		act->setData(path);
+		act->setIcon(QIcon(GuiUtilsNs::getIconPath("dbmfile")));
 		files.pop_front();
 	}
 
@@ -2062,6 +2075,7 @@ void MainWindow::configureSamplesMenu()
 		act->setEnabled(false);
 	}
 
+	sample_mdls_menu.setToolTipsVisible(true);
 	welcome_wgt->sample_tb->setMenu(&sample_mdls_menu);
 }
 
@@ -2385,9 +2399,23 @@ bool MainWindow::hasDbsListedInSQLTool()
 
 void MainWindow::registerRecentModel(const QString &filename)
 {
-	if(!QFileInfo(filename).exists())
+	if(!QFileInfo::exists(filename))
 		return;
 
 	recent_models.append(filename);
 	updateRecentModelsMenu();
+}
+
+void MainWindow::registerRecentModelIcon(const QString &suffix, const QIcon &file_type_icon)
+{
+	QString fmt_suffix = suffix;
+
+	fmt_suffix.remove(".").simplified();
+
+	if(fmt_suffix.isEmpty() || file_type_icon.isNull() ||
+		 GlobalAttributes::DbModelExt.contains(suffix))
+		return;
+
+	if(!recent_models_icons.contains(fmt_suffix))
+		recent_models_icons[fmt_suffix] = file_type_icon;
 }

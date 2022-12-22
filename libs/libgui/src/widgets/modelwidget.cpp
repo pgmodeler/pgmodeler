@@ -99,7 +99,7 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	QTemporaryFile tmp_file;
 
 	//Configuring the template mask which includes the full path to temporary dir
-	tmp_file.setFileTemplate(GlobalAttributes::getTemporaryFilePath("model_XXXXXX.dbm"));
+	tmp_file.setFileTemplate(GlobalAttributes::getTemporaryFilePath("model_XXXXXX" + GlobalAttributes::DbModelExt));
 	tmp_file.open();
 	tmp_filename=tmp_file.fileName();
 	tmp_file.close();
@@ -1838,7 +1838,7 @@ void ModelWidget::saveModel(const QString &filename)
 			// Generate a temporary backup filename
 			tmpfile.setFileTemplate(fi.absolutePath() +
 															GlobalAttributes::DirSeparator +
-															QString("%1_XXXXXX.dbk").arg(db_model->getName()));
+															QString("%1_XXXXXX%2").arg(db_model->getName(), GlobalAttributes::DbModelBkpExt));
 			tmpfile.open();
 			bkpfile = tmpfile.fileName();
 			tmpfile.close();

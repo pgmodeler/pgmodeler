@@ -77,7 +77,7 @@ SchemaEditorForm::SchemaEditorForm(QWidget *parent) : QWidget(parent)
 	vbox->addWidget(syntax_conf_sel);
 	vbox->setContentsMargins(0, 0, 0, 0);
 
-	syntax_conf_sel->setNameFilters({ tr("Syntax highlight config file (*.conf)") });
+	syntax_conf_sel->setNameFilters({ tr("Syntax highlight config file (*%1)").arg(GlobalAttributes::ConfigurationExt) });
 
 	QAction *act = nullptr;
 	stx_action_grp = new QActionGroup(&syntax_cfg_menu);
@@ -268,7 +268,7 @@ void SchemaEditorForm::applySyntaxConfig(bool from_temp_file)
 	if(from_temp_file)
 	{
 		tmp_file.setAutoRemove(false);
-		tmp_file.setFileTemplate(GlobalAttributes::getTemporaryFilePath("temp_XXXXXX.conf"));
+		tmp_file.setFileTemplate(GlobalAttributes::getTemporaryFilePath(QString("temp_XXXXXX%1").arg(GlobalAttributes::ConfigurationExt)));
 		tmp_file.open();
 		filename = tmp_file.fileName();
 
@@ -416,10 +416,10 @@ QStringList SchemaEditorForm::showFileDialog(bool save_mode)
 {
 	QFileDialog file_dlg;
 	QStringList files, filters= {
-		tr("Schema file (*.sch)"),
-		tr("Database model file (*.dbm)"),
-		tr("pgModeler config file (*.conf)"),
-		tr("Objects metadata file (*.omf)"),
+		tr("Schema file (*%1)").arg(GlobalAttributes::SchemaExt),
+		tr("Database model file (*%1)").arg(GlobalAttributes::DbModelExt),
+		tr("pgModeler config file (*%1)").arg(GlobalAttributes::ConfigurationExt),
+		tr("Objects metadata file (*%1)").arg(GlobalAttributes::ObjMetadataExt),
 		tr("SQL script file (*.sql)"),
 		tr("XML file (*.xml)"),
 		tr("DTD file (*.dtd)"),
@@ -427,7 +427,9 @@ QStringList SchemaEditorForm::showFileDialog(bool save_mode)
 	};
 
 	if(!save_mode)
-		filters.prepend(tr("All supported files (*.sch *.dbm *.conf *.omf *.sql *.xml *.dtd)"));
+		filters.prepend(tr("All supported files (*%1 *%2 *%3 *%4 *.sql *.xml *.dtd)")
+										.arg(GlobalAttributes::SchemaExt, GlobalAttributes::DbModelExt,
+												 GlobalAttributes::ConfigurationExt, GlobalAttributes::ObjMetadataExt));
 
 	file_dlg.setNameFilters(filters);
 

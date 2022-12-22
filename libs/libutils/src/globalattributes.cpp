@@ -46,6 +46,8 @@ const QString GlobalAttributes::StacktraceFile(".stacktrace");
 const QString GlobalAttributes::LastModelFile("lastmodel");
 
 const QString GlobalAttributes::DbModelExt(".dbm");
+const QString GlobalAttributes::DbModelBkpExt(".dbk");
+const QString GlobalAttributes::ObjMetadataExt(".omf");
 const QString GlobalAttributes::DirSeparator("/");
 const QString GlobalAttributes::ResourcesDir("res");
 const QString GlobalAttributes::ConfigurationsDir("conf");

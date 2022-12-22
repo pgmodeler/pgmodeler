@@ -98,8 +98,8 @@ const QString PgModelerCliApp::TagExpr("<%1");
 const QString PgModelerCliApp::EndTagExpr("</%1");
 const QString PgModelerCliApp::AttributeExpr("(%1)( )*(=)(\")(\\w|\\d|,|\\.|\\&|\\;|\\)|\\(|\\-| )+(\")");
 
-const QString PgModelerCliApp::MsgFileAssociated(tr("Database model files (*.dbm) are already associated with pgModeler! Try using the option `%1' to install the file association anyway.").arg(Force));
-const QString PgModelerCliApp::MsgNoFileAssociation(tr("There is no file association related to pgModeler and *.dbm files! Try using the option `%1' to uninstall the file association anyway.").arg(Force));
+const QString PgModelerCliApp::MsgFileAssociated(tr("Database model files (*%1) are already associated with pgModeler! Try using the option `%2' to install the file association anyway.").arg(GlobalAttributes::DbModelExt, Force));
+const QString PgModelerCliApp::MsgNoFileAssociation(tr("There is no file association related to pgModeler and *%1 files! Try using the option `%2' to uninstall the file association anyway.").arg(GlobalAttributes::DbModelExt, Force));
 
 attribs_map PgModelerCliApp::short_opts = {
 	{ Input, "-if" },		{ Output, "-of" },	{ InputDb, "-id" },
@@ -417,7 +417,7 @@ void PgModelerCliApp::showMenu()
 	printText();
 
 	printText(tr("General options: "));
-	printText(tr("  %1, %2 [FILE]\t\t    Input model file (.dbm). This is mandatory for export and model fix operations.").arg(short_opts[Input]).arg(Input));
+	printText(tr("  %1, %2 [FILE]\t\t    Input model file (%3). This is mandatory for export and model fix operations.").arg(short_opts[Input], Input, GlobalAttributes::DbModelExt));
 	printText(tr("  %1, %2 [DBNAME]\t    Input database name. This is mandatory for import operation.").arg(short_opts[InputDb]).arg(InputDb));
 	printText(tr("  %1, %2 [FILE|DIRECTORY]    Output file or directory. This is mandatory for fixing models or exporting to SQL, HTML, PNG, or SVG.").arg(short_opts[Output]).arg(Output));
 	printText(tr("  %1, %2\t\t    Force the PostgreSQL syntax to the specified version when generating SQL code. The version string must be in the form of [major].[minor], e.g., %3.").arg(short_opts[PgSqlVer]).arg(PgSqlVer).arg(PgSqlVersions::DefaulVersion));
@@ -2300,30 +2300,30 @@ void PgModelerCliApp::handleLinuxMimeDatabase(bool uninstall, bool system_wide, 
 void PgModelerCliApp::handleWindowsMimeDatabase(bool uninstall, bool system_wide, bool force)
 {
 	SchemaParser schparser;
-	QString base_reg_key = system_wide ? QString("HKEY_LOCAL_MACHINE\\SOFTWARE") : QString("HKEY_CURRENT_USER\\Software");
+	QString base_reg_key = system_wide ? "HKEY_LOCAL_MACHINE\\SOFTWARE" : "HKEY_CURRENT_USER\\Software";
 
 	//Checking if the .dbm registry key exists
-		QSettings dbm_ext(QString("%1\\Classes\\.dbm").arg(base_reg_key), QSettings::NativeFormat),
+	QSettings dbm_ext(QString("%1\\Classes\\%2").arg(base_reg_key, GlobalAttributes::DbModelExt), QSettings::NativeFormat),
 				sch_ext(QString("%1\\Classes\\.sch").arg(base_reg_key), QSettings::NativeFormat);
 	QString exe_path=QDir::toNativeSeparators(GlobalAttributes::getPgModelerAppPath()),
 			sc_exe_path=QDir::toNativeSeparators(GlobalAttributes::getPgModelerSchemaEditorPath());
 
 	//If there is no value assigned to (.dbm | .sch)/Default key and the user wants to uninstall file association, raises an error
 	if(uninstall && !force &&
-		 (dbm_ext.value(QString("Default")).toString().isEmpty() ||
-			sch_ext.value(QString("Default")).toString().isEmpty()))
+		 (dbm_ext.value("Default").toString().isEmpty() ||
+			sch_ext.value("Default").toString().isEmpty()))
 		throw Exception(MsgNoFileAssociation, ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	if(!uninstall && !force &&
-		 (!dbm_ext.value(QString("Default")).toString().isEmpty() ||
-			!sch_ext.value(QString("Default")).toString().isEmpty()))
+		 (!dbm_ext.value("Default").toString().isEmpty() ||
+			!sch_ext.value("Default").toString().isEmpty()))
 		throw Exception(MsgFileAssociated, ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	if(!uninstall)
 	{
 		//Write the default value for .dbm registry key
-		dbm_ext.setValue(QString("Default"), QString("dbm_auto_file"));
-		sch_ext.setValue(QString("Default"), QString("sch_auto_file"));
+		dbm_ext.setValue("Default", "dbm_auto_file");
+		sch_ext.setValue("Default", "sch_auto_file");
 	}
 	else
 	{
@@ -2336,14 +2336,14 @@ void PgModelerCliApp::handleWindowsMimeDatabase(bool uninstall, bool system_wide
 
 	//Other registry keys values
 	std::map<QString, QStringList> confs = {
-				{ QString("\\%1\\Classes\\dbm_auto_file").arg(base_reg_key), { QString("FriendlyTypeName") , QString("pgModeler Database Model") } },
-				{ QString("\\%1\\Classes\\dbm_auto_file\\DefaultIcon").arg(base_reg_key), { QString("Default") , QString("%1,1").arg(exe_path) } },
-				{ QString("\\%1\\Classes\\dbm_auto_file\\shell\\open\\command").arg(base_reg_key), { QString("Default") , QString("\"%1\" \"%2\"").arg(exe_path).arg("%1") } },
-				{ QString("\\%1\\Microsoft\\Windows\\CurrentVersion\\Explorer\\FileExts\\.dbm").arg(base_reg_key), { QString("OpenWithList/a"), QString("pgmodeler.exe"), QString("OpenWithList/MRUList"), QString("a")} },
-				{ QString("\\%1\\Classes\\sch_auto_file").arg(base_reg_key), { QString("FriendlyTypeName") , QString("pgModeler Schema File") } },
-				{ QString("\\%1\\Classes\\sch_auto_file\\DefaultIcon").arg(base_reg_key), { QString("Default") , QString("%1,1").arg(sc_exe_path) } },
-				{ QString("\\%1\\Classes\\sch_auto_file\\shell\\open\\command").arg(base_reg_key), { QString("Default") , QString("\"%1\" \"%2\"").arg(sc_exe_path).arg("%1") } },
-				{ QString("\\%1\\Microsoft\\Windows\\CurrentVersion\\Explorer\\FileExts\\.sch").arg(base_reg_key), { QString("OpenWithList/a"), QString("pgmodeler-sc.exe"), QString("OpenWithList/MRUList"), QString("a")} }
+				{ QString("\\%1\\Classes\\dbm_auto_file").arg(base_reg_key), { "FriendlyTypeName" , "pgModeler Database Model" } },
+				{ QString("\\%1\\Classes\\dbm_auto_file\\DefaultIcon").arg(base_reg_key), { "Default" , QString("%1,1").arg(exe_path) } },
+				{ QString("\\%1\\Classes\\dbm_auto_file\\shell\\open\\command").arg(base_reg_key), { "Default", QString("\"%1\" \"%2\"").arg(exe_path).arg("%1") } },
+				{ QString("\\%1\\Microsoft\\Windows\\CurrentVersion\\Explorer\\FileExts\\%2").arg(base_reg_key, GlobalAttributes::DbModelExt), { "OpenWithList/a", "pgmodeler.exe", "OpenWithList/MRUList", "a"} },
+				{ QString("\\%1\\Classes\\sch_auto_file").arg(base_reg_key), { "FriendlyTypeName" , "pgModeler Schema File" } },
+				{ QString("\\%1\\Classes\\sch_auto_file\\DefaultIcon").arg(base_reg_key), { "Default" , QString("%1,1").arg(sc_exe_path) } },
+				{ QString("\\%1\\Classes\\sch_auto_file\\shell\\open\\command").arg(base_reg_key), { "Default" , QString("\"%1\" \"%2\"").arg(sc_exe_path).arg("%1") } },
+				{ QString("\\%1\\Microsoft\\Windows\\CurrentVersion\\Explorer\\FileExts\\.sch").arg(base_reg_key), { "OpenWithList/a", "pgmodeler-sc.exe", "OpenWithList/MRUList", "a"} }
 	};
 
 	std::map<QString, QStringList>::iterator itr;

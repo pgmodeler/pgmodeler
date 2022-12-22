@@ -151,6 +151,8 @@ class __libgui MainWindow: public QMainWindow, public Ui::MainWindow {
 
 		fix_menu;
 
+		QMap<QString, QIcon> recent_models_icons;
+
 		//! \brief QMainWindow::closeEvent() overload: Saves the configurations before close the application
 		void closeEvent(QCloseEvent *event);
 
@@ -248,6 +250,8 @@ class __libgui MainWindow: public QMainWindow, public Ui::MainWindow {
 
 		//! \brief Adds an entry to the recent models menu
 		void registerRecentModel(const QString &filename);
+
+		void registerRecentModelIcon(const QString &suffix, const QIcon &file_type_icon);
 
 	private slots:
 		void showMainMenu();
