@@ -91,6 +91,15 @@ void PgModelerPlugin::initPlugin(MainWindow *main_window)
 						getPluginDescription());
 }
 
+void PgModelerPlugin::postInitPlugin()
+{
+	if(!main_window)
+	{
+		throw Exception(QT_TRANSLATE_NOOP("PgModelerPlugin", "Trying to perform a post initialization on a plug-in without initializing the application's main window!"),
+										ErrorCode::Custom, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+	}
+}
+
 void PgModelerPlugin::showPluginInfo()
 {
 	plugin_info_frm->show();

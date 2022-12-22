@@ -82,9 +82,14 @@ class __libgui PgModelerPlugin {
 
 		/*! \brief This method is executed right before the main window is created and can be used to perform
 		 * plugin's initializations like UI modications and other miscellaneous initialization that can't be done
-		 * in the constructor. Additionally, a main window instance can be passed to the plugin in order to facilitate
-		 * customization on the UI. The default implementation is to do nothing else then only expose main window to the plugin. */
+		 * in the plug-in constructor. Additionally, a main window instance must be passed to the plugin in order to facilitate
+		 * customization on the UI. The default implementation is to do nothing else than only expose the main window to the plugin. */
 		virtual void initPlugin(MainWindow *main_window);
+
+		/*! \brief Performs operations after the main window is completely loaded/initialized.
+		 *  This is useful, for example, to perform signal/slot connections when all components of the
+		 *  main window are properly initilized. */
+		virtual void postInitPlugin();
 
 		//! \brief Sets the plugin's all attributes at once.
 		void configurePluginInfo(const QString &title, const QString &version, const QString &author, const QString &description);

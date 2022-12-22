@@ -45,6 +45,7 @@ const QString GlobalAttributes::BugReportFile("pgmodeler%1.bug");
 const QString GlobalAttributes::StacktraceFile(".stacktrace");
 const QString GlobalAttributes::LastModelFile("lastmodel");
 
+const QString GlobalAttributes::DbModelExt(".dbm");
 const QString GlobalAttributes::DirSeparator("/");
 const QString GlobalAttributes::ResourcesDir("res");
 const QString GlobalAttributes::ConfigurationsDir("conf");

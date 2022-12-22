@@ -129,7 +129,7 @@ void BugReportForm::attachModel()
 	{
 		file_dlg.setDefaultSuffix(QString("dbm"));
 		file_dlg.setWindowTitle(tr("Load model"));
-		file_dlg.setNameFilter(tr("Database model (*.dbm);;All files (*.*)"));
+		file_dlg.setNameFilter(tr("Database model (*%1);;All files (*.*)").arg(GlobalAttributes::DbModelExt));
 		file_dlg.setFileMode(QFileDialog::ExistingFile);
 		file_dlg.setModal(true);
 

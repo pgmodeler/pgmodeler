@@ -176,6 +176,30 @@ void PluginsConfigWidget::initPlugins(MainWindow *main_window)
 	}
 }
 
+void PluginsConfigWidget::postInitPlugins()
+{
+	std::vector<Exception> errors;
+
+	for(auto &plugin : plugins)
+	{
+		try
+		{
+			plugin->postInitPlugin();
+		}
+		catch(Exception &e)
+		{
+			errors.push_back(e);
+		}
+	}
+
+	if(!errors.empty())
+	{
+		Messagebox msgbox;
+		msgbox.show(Exception(tr("One or more plug-ins failed to perform post initialization operations! Please, check the error stack for more details."),
+													ErrorCode::Custom, __PRETTY_FUNCTION__, __FILE__, __LINE__, errors));
+	}
+}
+
 QList<QAction *> PluginsConfigWidget::getPluginsModelsActions()
 {
 	QList<QAction *> list;

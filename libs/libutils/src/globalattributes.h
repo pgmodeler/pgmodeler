@@ -97,6 +97,7 @@ class __libutils GlobalAttributes {
 		StacktraceFile,
 		LastModelFile,
 
+		DbModelExt,
 		DirSeparator,
 		ResourcesDir, //! \brief Directory name which holds the pgModeler's plug-ins resources directory (res)
 		ConfigurationsDir,//! \brief Default name for the configurations directory

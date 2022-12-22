@@ -206,7 +206,7 @@ class __libgui MainWindow: public QMainWindow, public Ui::MainWindow {
 		virtual ~MainWindow();
 
 		//! \brief Loads a set of models from string list
-		void loadModels(const QStringList &list);
+		void loadModels(const QStringList &files);
 
 		//! \brief Loads a model from a specified filename
 		void loadModel(const QString &filename);
@@ -352,6 +352,11 @@ class __libgui MainWindow: public QMainWindow, public Ui::MainWindow {
 	signals:
 		void s_currentModelChanged(ModelWidget *model_wgt);
 		void s_modelSaved(ModelWidget *model_wgt);
+
+		/*! \brief This signal is emitted when an extraneous file (not .dbm) is among
+		 * the list of models to be loaded in loadModels(). The intention of this signal
+		 * is to notify any plugin that may handle the file type to be loaded */
+		void s_modelLoadRequested(const QString &filename);
 };
 
 #endif

@@ -51,6 +51,7 @@ class __libgui PluginsConfigWidget: public BaseConfigWidget, public Ui::PluginsC
 
 	public:
 		PluginsConfigWidget(QWidget *parent = nullptr);
+
 		virtual ~PluginsConfigWidget();
 
 		//! \brief Since plugins has its own configurations this method load all plugins instead
@@ -64,6 +65,9 @@ class __libgui PluginsConfigWidget: public BaseConfigWidget, public Ui::PluginsC
 
 		//! \brief Performs the initialization of all loaded plugins (see PgModelerPlugin::initPlugin())
 		void initPlugins(MainWindow *main_window);
+
+		//! \brief Execute the post initialization of all loaded plugins
+		void postInitPlugins();
 
 		//! \brief Returns a list of actions of the loaded plugins related to model actions only
 		QList<QAction *> getPluginsModelsActions();

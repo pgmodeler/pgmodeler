@@ -116,6 +116,10 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 			 confs[Attributes::Configuration][Attributes::PgModelerVersion] != GlobalAttributes::PgModelerVersion)
 			QTimer::singleShot(1000, action_donate, &QAction::trigger);
 	#endif
+
+	// Post initilize plug-ins
+	PluginsConfigWidget *plugins_conf_wgt = dynamic_cast<PluginsConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::PluginsConfWgt));
+	plugins_conf_wgt->postInitPlugins();
 }
 
 MainWindow::~MainWindow()
@@ -1585,9 +1589,9 @@ void MainWindow::saveModel(ModelWidget *model)
 				{
 					QFileDialog file_dlg;
 
-					file_dlg.setDefaultSuffix(QString("dbm"));
+					file_dlg.setDefaultSuffix(QString(GlobalAttributes::DbModelExt).remove('.'));
 					file_dlg.setWindowTitle(tr("Save '%1' as...").arg(model->db_model->getName()));
-					file_dlg.setNameFilter(tr("Database model (*.dbm);;All files (*.*)"));
+					file_dlg.setNameFilter(tr("Database model (*%1);;All files (*.*)").arg(GlobalAttributes::DbModelExt));
 					file_dlg.setFileMode(QFileDialog::AnyFile);
 					file_dlg.setAcceptMode(QFileDialog::AcceptSave);
 					file_dlg.setModal(true);
@@ -1809,7 +1813,7 @@ void MainWindow::loadModel()
 
 	try
 	{
-		file_dlg.setNameFilter(tr("Database model (*.dbm);;All files (*.*)"));
+		file_dlg.setNameFilter(tr("Database model (*%1);;All files (*.*)").arg(GlobalAttributes::DbModelExt));
 		file_dlg.setWindowIcon(QPixmap(GuiUtilsNs::getIconPath("pgmodeler_logo")));
 		file_dlg.setWindowTitle(tr("Load model"));
 		file_dlg.setFileMode(QFileDialog::ExistingFiles);
@@ -1834,18 +1838,26 @@ void MainWindow::loadModel(const QString &filename)
 	loadModels({ filename });
 }
 
-void MainWindow::loadModels(const QStringList &list)
+void MainWindow::loadModels(const QStringList &files)
 {
-	int i=0;
+	int i = -1;
 
 	try
 	{
 		qApp->setOverrideCursor(Qt::WaitCursor);
 
-		for(i=0; i < list.count(); i++)
+		for(auto &file : files)
 		{
-			addModel(list[i]);
-			recent_models.push_front(list[i]);
+			i++;
+
+			if(!file.endsWith(GlobalAttributes::DbModelExt))
+			{
+				emit s_modelLoadRequested(file);
+				continue;
+			}
+
+			addModel(file);
+			recent_models.push_front(file);
 		}
 
 		updateRecentModelsMenu();
@@ -1854,7 +1866,11 @@ void MainWindow::loadModels(const QStringList &list)
 	catch(Exception &e)
 	{
 		qApp->restoreOverrideCursor();
-		showFixMessage(e, list[i]);
+
+		if( files[i].endsWith(GlobalAttributes::DbModelExt))
+			showFixMessage(e, files[i]);
+		else
+			throw Exception(e.getErrorMessage(), e.getErrorCode(), __PRETTY_FUNCTION__, __FILE__, __LINE__, &e);
 	}
 }
 
@@ -2027,7 +2043,7 @@ void MainWindow::setBottomFloatingWidgetPos(QWidget *widget, QToolButton *btn)
 void MainWindow::configureSamplesMenu()
 {
 	QDir dir(GlobalAttributes::getSamplesPath());
-	QStringList files=dir.entryList({QString("*.dbm")});
+	QStringList files=dir.entryList({ QString("*%1").arg(GlobalAttributes::DbModelExt) });
 	QAction *act=nullptr;
 	QString path;
 
