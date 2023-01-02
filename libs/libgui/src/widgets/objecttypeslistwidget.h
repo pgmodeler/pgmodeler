@@ -46,7 +46,8 @@ class __libgui ObjectTypesListWidget : public QWidget, public Ui::ObjectTypesLis
 		QStringList getTypeNamesPerCheckState(Qt::CheckState state);
 
 	signals:
-
+		void s_typeCheckStateChanged(ObjectType, Qt::CheckState);
+		void s_typesCheckStateChanged(Qt::CheckState);
 };
 
 #endif

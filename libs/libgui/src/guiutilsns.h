@@ -101,6 +101,10 @@ namespace GuiUtilsNs {
 
 	//! \brief Restores the saved filed dialog from file/memory and applies to the provided file dialog
 	extern __libgui void restoreFileDialogState(QFileDialog *file_dlg);
+
+	/*! \brief Lists the objects of a vector in a QTableWidget. The first column on each row of table contains thereference to the object
+	 * The parameter search_attr is used to display the attribute value in which the search was performed. */
+	extern void updateObjectTable(QTableWidget *tab_wgt, std::vector<BaseObject *> &objects, const QString &search_attr = Attributes::Name, bool checkable_items = false);
 }
 
 #endif

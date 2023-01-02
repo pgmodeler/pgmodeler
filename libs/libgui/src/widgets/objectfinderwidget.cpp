@@ -274,7 +274,7 @@ void ObjectFinderWidget::findObjects()
 																													search_attr);
 
 		//Show the found objects on the result table
-		updateObjectTable(result_tbw, found_objs, search_attr);
+		GuiUtilsNs::updateObjectTable(result_tbw, found_objs, search_attr);
 
 		//Rename the last column of the results grid wth the name of the field used to search objects
 		if(search_attr != Attributes::Name &&
@@ -382,7 +382,7 @@ void ObjectFinderWidget::editObject()
 	}
 }
 
-void ObjectFinderWidget::updateObjectTable(QTableWidget *tab_wgt, std::vector<BaseObject *> &objs, const QString &search_attr, bool checkable_items)
+/* void ObjectFinderWidget::updateObjectTable(QTableWidget *tab_wgt, std::vector<BaseObject *> &objs, const QString &search_attr, bool checkable_items)
 {
 	if(tab_wgt && tab_wgt->columnCount()!=0)
 	{
@@ -530,38 +530,4 @@ void ObjectFinderWidget::updateObjectTable(QTableWidget *tab_wgt, std::vector<Ba
 
 		tab_wgt->resizeRowsToContents();
 	}
-}
-
-void ObjectFinderWidget::updateObjectTypeList(QListWidget *list_wgt)
-{
-	std::vector<ObjectType> types=BaseObject::getObjectTypes();
-	QListWidgetItem *item=nullptr;
-	QPixmap icon;
-	QString str_aux;
-
-	if(list_wgt)
-	{
-		list_wgt->clear();
-
-		//Creating the visible object list
-		for(unsigned type_id=0; type_id < types.size(); type_id++)
-		{
-			item=new QListWidgetItem;
-
-			if(types[type_id]==ObjectType::BaseRelationship)
-				str_aux=QString(BaseObject::getSchemaName(types[type_id])) + QString("tv");
-			else
-				str_aux=QString(BaseObject::getSchemaName(types[type_id]));
-
-			icon=QPixmap(GuiUtilsNs::getIconPath(str_aux));
-
-			item->setText(BaseObject::getTypeName(types[type_id]));
-			item->setIcon(icon);
-
-			//By default all object types are checked
-			item->setCheckState(Qt::Checked);
-			item->setData(Qt::UserRole, QVariant(enum_t(types[type_id])));
-			list_wgt->insertItem(type_id, item);
-		}
-	}
-}
+} */

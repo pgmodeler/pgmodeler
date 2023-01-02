@@ -7,6 +7,7 @@
 #include "baseform.h"
 #include "widgets/bulkdataeditwidget.h"
 #include "utilsns.h"
+#include "objectstablewidget.h"
 
 namespace GuiUtilsNs {
 
@@ -441,5 +442,155 @@ namespace GuiUtilsNs {
 	void restoreFileDialogState(QFileDialog *file_dlg)
 	{
 		handleFileDialogSatate(file_dlg, false);
+	}
+
+	void updateObjectTable(QTableWidget *tab_wgt, std::vector<BaseObject *> &objs, const QString &search_attr, bool checkable_items)
+	{
+		if(!tab_wgt || tab_wgt->columnCount() == 0)
+			return;
+
+		unsigned lin_idx = 0, i = 0;
+		QTableWidgetItem *tab_item=nullptr;
+		BaseObject *parent_obj=nullptr;
+		QFont fnt;
+		QString str_aux;
+		bool new_row = false;
+
+		tab_wgt->setUpdatesEnabled(false);
+		tab_wgt->setSortingEnabled(false);
+
+		for(lin_idx=0, i=0; i < objs.size(); i++)
+		{
+			if(objs[i]->getObjectType()==ObjectType::BaseRelationship)
+				str_aux = QString("tv");
+			else
+				str_aux.clear();
+
+			new_row = false;
+
+			if(static_cast<int>(lin_idx) >= tab_wgt->rowCount())
+			{
+				tab_wgt->insertRow(lin_idx);
+				new_row = true;
+			}
+
+			//First column: Object name
+			tab_item=(new_row ? new QTableWidgetItem : tab_wgt->item(lin_idx, 0));
+			tab_item->setData(Qt::UserRole, QVariant::fromValue<void *>(reinterpret_cast<void *>(objs[i])));
+			fnt=tab_item->font();
+
+			tab_item->setText(objs[i]->getName());
+			tab_item->setIcon(QPixmap(GuiUtilsNs::getIconPath(BaseObject::getSchemaName(objs[i]->getObjectType()) + str_aux)));
+			if(new_row) tab_wgt->setItem(lin_idx, 0, tab_item);
+			if(checkable_items)	tab_item->setCheckState(Qt::Checked);
+
+			if(objs[i]->isProtected() || objs[i]->isSystemObject())
+			{
+				fnt.setItalic(true);
+				tab_item->setForeground(ObjectsTableWidget::getTableItemColor(ObjectsTableWidget::ProtItemAltFgColor));
+			}
+			else if(dynamic_cast<TableObject *>(objs[i]) &&
+					dynamic_cast<TableObject *>(objs[i])->isAddedByRelationship())
+			{
+				fnt.setItalic(true);
+				tab_item->setForeground(ObjectsTableWidget::getTableItemColor(ObjectsTableWidget::RelAddedItemAltFgColor));
+			}
+			else
+				fnt.setItalic(false);
+
+			fnt.setStrikeOut(objs[i]->isSQLDisabled() && !objs[i]->isSystemObject());
+			tab_item->setFont(fnt);
+			fnt.setStrikeOut(false);
+
+			//Second column: Object type
+			if(tab_wgt->columnCount() > 1)
+			{
+				fnt.setItalic(true);
+				tab_item=(new_row ? new QTableWidgetItem : tab_wgt->item(lin_idx, 1));
+				tab_item->setFont(fnt);
+				tab_item->setText(objs[i]->getTypeName());
+				if(new_row) tab_wgt->setItem(lin_idx, 1, tab_item);
+			}
+
+			//Third column: Object id
+			if(tab_wgt->columnCount() > 2)
+			{
+				tab_item=(new_row ? new QTableWidgetItem : tab_wgt->item(lin_idx, 2));
+				tab_item->setText(QString::number(objs[i]->getObjectId()));
+				if(new_row) tab_wgt->setItem(lin_idx, 2, tab_item);
+			}
+
+			//Fourth column: Parent object name
+			if(tab_wgt->columnCount() > 3)
+			{
+				tab_item=(new_row ? new QTableWidgetItem : tab_wgt->item(lin_idx, 3));
+
+				if(dynamic_cast<TableObject *>(objs[i]))
+					parent_obj=dynamic_cast<TableObject *>(objs[i])->getParentTable();
+				else if(objs[i]->getSchema())
+					parent_obj=objs[i]->getSchema();
+				else if(dynamic_cast<Permission *>(objs[i]))
+					parent_obj=dynamic_cast<Permission *>(objs[i])->getObject();
+				else
+					parent_obj=objs[i]->getDatabase();
+
+				tab_item->setText(parent_obj ? parent_obj->getName() : QString("-"));
+				tab_item->setData(Qt::UserRole, QVariant::fromValue<void *>(reinterpret_cast<void *>(parent_obj)));
+				if(new_row) tab_wgt->setItem(lin_idx, 3, tab_item);
+
+				if(parent_obj)
+				{
+					if(parent_obj->isProtected() || parent_obj->isSystemObject())
+					{
+						fnt.setItalic(true);
+						tab_item->setForeground(ObjectsTableWidget::getTableItemColor(ObjectsTableWidget::ProtItemAltFgColor));
+					}
+					else
+						fnt.setItalic(false);
+
+					tab_item->setFont(fnt);
+					tab_item->setIcon(QPixmap(GuiUtilsNs::getIconPath(parent_obj->getObjectType())));
+				}
+			}
+
+			//Fifth column: Parent object type
+			if(tab_wgt->columnCount() > 4)
+			{
+				tab_item=(new_row ? new QTableWidgetItem : tab_wgt->item(lin_idx, 4));
+				fnt.setItalic(true);
+				tab_item->setFont(fnt);
+				tab_item->setText(parent_obj ? parent_obj->getTypeName() : QString("-"));
+				if(new_row) tab_wgt->setItem(lin_idx, 4, tab_item);
+			}
+
+			//Sixth column: object comment
+			if(tab_wgt->columnCount() > 5)
+			{
+				attribs_map search_attribs = objs[i]->getSearchAttributes();
+				tab_item=(new_row ? new QTableWidgetItem : tab_wgt->item(lin_idx, 5));
+				fnt.setItalic(false);
+				tab_item->setFont(fnt);
+
+				if(search_attr != Attributes::Name &&
+					 search_attr != Attributes::Schema &&
+					 search_attr != Attributes::Comment)
+					tab_item->setText(search_attribs[search_attr]);
+				else
+					tab_item->setText(objs[i]->getComment());
+
+				if(new_row) tab_wgt->setItem(lin_idx, 5, tab_item);
+			}
+
+			lin_idx++;
+		}
+
+		if(static_cast<int>(objs.size()) != tab_wgt->rowCount())
+			tab_wgt->setRowCount(objs.size());
+
+		tab_wgt->setUpdatesEnabled(true);
+		tab_wgt->setSortingEnabled(true);
+		tab_wgt->resizeColumnsToContents();
+
+		tab_wgt->resizeRowsToContents();
 	}
 }

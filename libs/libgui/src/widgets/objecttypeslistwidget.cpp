@@ -44,6 +44,10 @@ ObjectTypesListWidget::ObjectTypesListWidget(QWidget *parent)	: QWidget(parent)
 	connect(uncheck_all_tb, &QToolButton::clicked, this, [this](){
 		setItemsCheckState(Qt::Unchecked);
 	});
+
+	connect(obj_types_lst, &QListWidget::itemChanged, this, [this](QListWidgetItem *item){
+		emit s_typeCheckStateChanged(item->data(Qt::UserRole).value<ObjectType>(), item->checkState());
+	});
 }
 
 void ObjectTypesListWidget::setItemsCheckState(Qt::CheckState state)
@@ -55,6 +59,8 @@ void ObjectTypesListWidget::setItemsCheckState(Qt::CheckState state)
 		item = obj_types_lst->item(idx);
 		item->setCheckState(state);
 	}
+
+	emit s_typesCheckStateChanged(state);
 }
 
 void ObjectTypesListWidget::setTypeNamesCheckState(const QStringList &obj_types, Qt::CheckState state)
