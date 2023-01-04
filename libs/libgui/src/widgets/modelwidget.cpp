@@ -502,9 +502,6 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	stacking_menu.addAction(action_send_to_back);
 	stacking_menu.addAction(action_bring_to_front);
 
-	plugins_acts_menu.setTitle(tr("Plug-ins"));
-	plugins_acts_menu.setIcon(QIcon(GuiUtilsNs::getIconPath("plugins")));
-
 	connect(action_send_to_back, &QAction::triggered, this, &ModelWidget::sendToBack);
 	connect(action_bring_to_front, &QAction::triggered, this, &ModelWidget::bringToFront);
 	connect(action_edit_data, &QAction::triggered, this, &ModelWidget::editTableData);
@@ -1968,10 +1965,10 @@ int ModelWidget::openTableEditingForm(ObjectType tab_type, PhysicalTable *object
 
 void ModelWidget::configurePluginsActionsMenu()
 {
-	plugins_acts_menu.clear();
+	popup_menu.addSeparator();
 
 	for(auto &act : plugins_actions)
-		plugins_acts_menu.addAction(act);
+		popup_menu.addAction(act);
 }
 
 void ModelWidget::showObjectForm(ObjectType obj_type, BaseObject *object, BaseObject *parent_obj, const QPointF &pos)
@@ -4527,12 +4524,6 @@ void ModelWidget::configurePopupMenu(const std::vector<BaseObject *> &objects)
 	}
 
 	configurePluginsActionsMenu();
-
-	if(!plugins_acts_menu.isEmpty())
-	{
-		popup_menu.addSeparator();
-		popup_menu.addMenu(&plugins_acts_menu);
-	}
 }
 
 bool ModelWidget::isModified()

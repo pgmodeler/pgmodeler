@@ -176,11 +176,19 @@ void MainWindow::configureMenusActionsWidgets()
 	model_acts_tb->addWidget(model_nav_wgt);
 	model_acts_tb->addSeparator();
 
-	model_acts_tb->addAction(plugins_menu->menuAction());
-	QToolButton *plugins_btn = dynamic_cast<QToolButton *>(model_acts_tb->widgetForAction(plugins_menu->menuAction()));
+	model_acts_tb->addAction(plugins_config_menu->menuAction());
+	QToolButton *plugins_btn = dynamic_cast<QToolButton *>(model_acts_tb->widgetForAction(plugins_config_menu->menuAction()));
 	plugins_btn->setPopupMode(QToolButton::InstantPopup);
-	plugins_btn->setIcon(QIcon(GuiUtilsNs::getIconPath("plugins")));
+	plugins_btn->setIcon(QIcon(GuiUtilsNs::getIconPath("pluginsconfig")));
 	plugins_btn->setToolButtonStyle(Qt::ToolButtonIconOnly);
+
+	if(!plugins_tb_acts.isEmpty())
+	{
+		for(auto &act : plugins_tb_acts)
+			model_acts_tb->addAction(act);
+
+		model_acts_tb->addSeparator();
+	}
 
 	model_acts_tb->addAction(action_bug_report);
 	model_acts_tb->addAction(action_donate);
@@ -230,11 +238,11 @@ void MainWindow::configureMenusActionsWidgets()
 //	model_acts_tb->removeAction(action_main_menu);
 //	action_main_menu->setEnabled(false);
 #else
-	plugins_menu->menuAction()->setIconVisibleInMenu(false);
+	plugins_config_menu->menuAction()->setIconVisibleInMenu(false);
 	main_menu.addMenu(file_menu);
 	main_menu.addMenu(edit_menu);
 	main_menu.addMenu(show_menu);
-	main_menu.addMenu(plugins_menu);
+	main_menu.addMenu(plugins_config_menu);
 	main_menu.addMenu(about_menu);
 	main_menu.addSeparator();
 	main_menu.addAction(action_show_main_menu);
@@ -366,13 +374,13 @@ void MainWindow::loadConfigurations()
 
 		PluginsConfigWidget *plugins_conf_wgt = dynamic_cast<PluginsConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::PluginsConfWgt));
 		plugins_conf_wgt->initPlugins(this);
-		plugins_conf_wgt->installPluginsActions(plugins_menu);
-		plugins_menu->setEnabled(!plugins_menu->isEmpty());
+		plugins_tb_acts = plugins_conf_wgt->installPluginsActions(plugins_config_menu);
+		plugins_config_menu->setEnabled(!plugins_config_menu->isEmpty());
 
-		QAction *action_plugins = plugins_menu->menuAction();
-		action_plugins->setText(tr("Plug-ins"));
-		action_plugins->setToolTip(tr("Access the list of loaded plugins"));
-		action_plugins->setEnabled(!plugins_menu->isEmpty());
+		QAction *action_plugins_config = plugins_config_menu->menuAction();
+		action_plugins_config->setText(tr("Plug-ins"));
+		action_plugins_config->setToolTip(tr("Access the loaded plug-ins settings"));
+		action_plugins_config->setEnabled(!plugins_config_menu->isEmpty());
 
 		//Configuring the widget visibility according to the configurations
 		for(auto &itr : GeneralConfigWidget::getConfigurationParams())
@@ -780,7 +788,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
 		//Stops the saving timers as well the temp. model saving thread before close pgmodeler
 		model_save_timer.stop();
 		tmpmodel_save_timer.stop();
-		plugins_menu->clear();
+		plugins_config_menu->clear();
 
 		//If not in demo version there is no confirmation before close the software
 #ifndef DEMO_VERSION
@@ -2410,7 +2418,8 @@ void MainWindow::registerRecentModelIcon(const QString &suffix, const QIcon &fil
 {
 	QString fmt_suffix = suffix;
 
-	fmt_suffix.remove(".").simplified();
+	fmt_suffix.remove(".");
+	fmt_suffix = fmt_suffix.simplified();
 
 	if(fmt_suffix.isEmpty() || file_type_icon.isNull() ||
 		 GlobalAttributes::DbModelExt.contains(suffix))

@@ -57,11 +57,9 @@ class __libgui PluginsConfigWidget: public BaseConfigWidget, public Ui::PluginsC
 		//! \brief Since plugins has its own configurations this method load all plugins instead
 		void loadConfiguration();
 
-		/*! \brief Install the created actions on menu. Additionally the user must specify the
-		 receiver object and slot executed when the actions are activated. The parameters recv and slot
-			must object the same log as the QObject::connect() where recv is the recever object and slot is the
-			method called (in format &Class::method) when the action sends the triggered signal. */
-		void installPluginsActions(QMenu *menu);
+		/*! \brief Installs the plugins's ocnfiguration action in the provided menu.
+		 *  Additionally, it returns a list of actions that is meant to be placed in a toolbar. */
+		QList<QAction *> installPluginsActions(QMenu *menu);
 
 		//! \brief Performs the initialization of all loaded plugins (see PgModelerPlugin::initPlugin())
 		void initPlugins(MainWindow *main_window);

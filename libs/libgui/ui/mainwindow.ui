@@ -816,7 +816,7 @@
     <addaction name="action_overview"/>
     <addaction name="action_compact_view"/>
    </widget>
-   <widget class="QMenu" name="plugins_menu">
+   <widget class="QMenu" name="plugins_config_menu">
     <property name="enabled">
      <bool>false</bool>
     </property>
@@ -827,7 +827,7 @@
    <addaction name="file_menu"/>
    <addaction name="edit_menu"/>
    <addaction name="show_menu"/>
-   <addaction name="plugins_menu"/>
+   <addaction name="plugins_config_menu"/>
    <addaction name="about_menu"/>
   </widget>
   <widget class="QToolBar" name="tools_acts_tb">

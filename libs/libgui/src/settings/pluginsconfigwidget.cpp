@@ -213,36 +213,18 @@ QList<QAction *> PluginsConfigWidget::getPluginsModelsActions()
 	return list;
 }
 
-void PluginsConfigWidget::installPluginsActions(QMenu *menu)
+QList<QAction *> PluginsConfigWidget::installPluginsActions(QMenu *conf_menu)
 {
-	if(!menu)
-		return;
-
-	std::vector<PgModelerPlugin *> aux_plugins;
+	QList<QAction  *> tb_actions;
 
 	for(auto &plugin : plugins)
 	{
-		if(plugin->getConfigAction())
-			aux_plugins.push_back(plugin);
+		if(conf_menu && plugin->getConfigAction())
+			conf_menu->addAction(plugin->getConfigAction());
 
-		if(!plugin->getMenuAction())
-			continue;
+		if(plugin->getToolbarAction())
+			tb_actions.append(plugin->getToolbarAction());
+	}	
 
-		menu->addAction(plugin->getMenuAction());
-	}
-
-	if(!aux_plugins.empty())
-	{
-		QMenu *conf_menu = new QMenu(this);
-		conf_menu->menuAction()->setText(tr("Settings"));
-		conf_menu->menuAction()->setIcon(QIcon(GuiUtilsNs::getIconPath("config")));
-
-		if(!menu->isEmpty())
-			menu->addSeparator();
-
-		for(auto &plug : aux_plugins)
-			conf_menu->addAction(plug->getConfigAction());
-
-		menu->addMenu(conf_menu);
-	}
+	return tb_actions;
 }

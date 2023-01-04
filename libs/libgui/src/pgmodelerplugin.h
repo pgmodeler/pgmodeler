@@ -114,13 +114,13 @@ class __libgui PgModelerPlugin {
 		//! \brief Shows the plugin's information dialog
 		virtual void showPluginInfo(void);
 
-		//! \brief Returns the action that will be put in the main window top menu
-		virtual QAction *getMenuAction() = 0;
+		//! \brief Returns the action that will be put in the toolbar at main window
+		virtual QAction *getToolbarAction() = 0;
 
 		//! \brief Returns the action that will be put in the model's context menu
 		virtual QAction *getModelAction() = 0;
 
-		//! \brief Returns the action that will be put in the main window top menu, section plugin settings
+		//! \brief Returns the action that will be put in the main window menu reserved for plugins settings
 		virtual QAction *getConfigAction() = 0;
 
 		//! \brief Returns the name of the library of the plugin

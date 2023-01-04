@@ -151,6 +151,9 @@ class __libgui MainWindow: public QMainWindow, public Ui::MainWindow {
 
 		fix_menu;
 
+		//! \brief Stores the loaded plugins toolbar actions
+		QList<QAction *> plugins_tb_acts;
+
 		QMap<QString, QIcon> recent_models_icons;
 
 		//! \brief QMainWindow::closeEvent() overload: Saves the configurations before close the application

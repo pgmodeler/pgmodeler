@@ -324,9 +324,7 @@ class __libgui ModelWidget: public QWidget {
 		std::map<ObjectType, QAction *> actions_new_objects;
 
 		//! \brief Stores the relationship types menu
-		QMenu *rels_menu,
-
-		plugins_acts_menu;
+		QMenu *rels_menu;
 
 		void resizeEvent(QResizeEvent *);
 		void mousePressEvent(QMouseEvent *event);
