@@ -24,7 +24,7 @@ BaseForm::BaseForm(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 	this->setWindowFlags((this->windowFlags() | Qt::WindowMinMaxButtonsHint) /* ^ Qt::WindowContextHelpButtonHint */);
 }
 
-void BaseForm::setButtonConfiguration(unsigned button_conf)
+void BaseForm::setButtonConfiguration(Messagebox::ButtonsId button_conf)
 {
 	if(button_conf==Messagebox::OkCancelButtons)
 	{

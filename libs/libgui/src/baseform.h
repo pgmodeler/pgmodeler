@@ -46,7 +46,7 @@ class __libgui BaseForm: public QDialog, public Ui::BaseForm {
 	public:
 		BaseForm(QWidget * parent = nullptr, Qt::WindowFlags f = Qt::Widget);
 
-		void setButtonConfiguration(unsigned button_conf = Messagebox::OkCancelButtons);
+		void setButtonConfiguration(Messagebox::ButtonsId button_conf = Messagebox::OkCancelButtons);
 
 		/*! \brief Injects the specified object into the form and turns it the main widget.
 		 * The widget is reparented to the stack widget within the form. */

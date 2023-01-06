@@ -1900,7 +1900,7 @@ QString ModelWidget::getTempFilename()
 	return this->tmp_filename;
 }
 
-int ModelWidget::openEditingForm(QWidget *widget, unsigned button_conf)
+int ModelWidget::openEditingForm(QWidget *widget, Messagebox::ButtonsId button_conf)
 {
 	BaseForm editing_form(this);
 	BaseObjectWidget *base_obj_wgt=qobject_cast<BaseObjectWidget *>(widget);
