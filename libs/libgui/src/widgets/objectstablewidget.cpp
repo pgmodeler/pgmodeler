@@ -52,11 +52,7 @@ ObjectsTableWidget::ObjectsTableWidget(ButtonConf button_conf, bool conf_exclusi
 		emit s_cellClicked(row, col);
 	});
 
-	connect(resize_cols_tb, &QToolButton::clicked, this, [this](){
-	  table_tbw->resizeColumnsToContents();
-	  table_tbw->resizeRowsToContents();
-	  table_tbw->horizontalHeader()->setSectionResizeMode(table_tbw->horizontalHeader()->count() - 1, QHeaderView::Stretch);
-	});
+	connect(resize_cols_tb, &QToolButton::clicked, this, &ObjectsTableWidget::resizeContents);
 
 	this->conf_exclusion=conf_exclusion;
 	cells_editable = false;
@@ -652,6 +648,13 @@ void ObjectsTableWidget::setCellsEditable(bool value)
 {
 	table_tbw->setSelectionBehavior(value ? QAbstractItemView::SelectItems : QAbstractItemView::SelectRows);
 	table_tbw->setEditTriggers(value ? QAbstractItemView::AllEditTriggers : QAbstractItemView::NoEditTriggers);
+}
+
+void ObjectsTableWidget::resizeContents()
+{
+	table_tbw->resizeColumnsToContents();
+	table_tbw->resizeRowsToContents();
+	table_tbw->horizontalHeader()->setSectionResizeMode(table_tbw->horizontalHeader()->count() - 1, QHeaderView::Stretch);
 }
 
 void ObjectsTableWidget::setButtonsEnabled()

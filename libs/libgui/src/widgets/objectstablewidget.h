@@ -224,6 +224,9 @@ class __libgui ObjectsTableWidget: public QWidget, public Ui::ObjectsTableWidget
 
 		void setCellsEditable(bool value);
 
+		//! \brief Resize equally the rows and columns to their contents
+		void resizeContents();
+
 	signals:
 		//! \brief Signal emitted when a new row is added. The new row index is send with the signal
 		void s_rowAdded(int);

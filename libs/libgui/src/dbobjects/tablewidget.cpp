@@ -455,6 +455,7 @@ void TableWidget::listObjects(ObjectType obj_type)
 			showObjectData(dynamic_cast<TableObject*>(table->getObject(idx, obj_type)), idx);
 		}
 
+		tab->resizeContents();
 		tab->clearSelection();
 		tab->blockSignals(false);
 
