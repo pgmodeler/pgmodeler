@@ -84,7 +84,7 @@ bool Messagebox::isCustomOptionChecked()
 void Messagebox::show(Exception e, const QString &msg, IconType icon_type, ButtonsId buttons, const QString &yes_lbl, const QString &no_lbl, const QString &cancel_lbl,
 						const QString &yes_ico, const QString &no_ico, const QString &cancel_ico)
 {
-	QString fmt_msg, fmt_extra_info, title;
+	QString fmt_msg, title;
 
 	raw_info_txt->setPlainText(e.getExceptionsText());
 	extra_info_txt->setPlainText(e.getExceptiosExtraInfo());
