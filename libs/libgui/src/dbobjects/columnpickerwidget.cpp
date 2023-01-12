@@ -208,15 +208,17 @@ void ColumnPickerWidget::addColumn(Column *column, int row)
 
 		if(column->isAddedByRelationship())
 		{
-			columns_tab->setRowFont(row, fnt,
-											ObjectsTableWidget::getTableItemColor(ObjectsTableWidget::RelAddedItemFgColor),
-											ObjectsTableWidget::getTableItemColor(ObjectsTableWidget::RelAddedItemBgColor));
+			columns_tab->setRowFont(row, fnt);
+			columns_tab->setRowColors(row,
+																ObjectsTableWidget::getTableItemColor(ObjectsTableWidget::RelAddedItemFgColor),
+																ObjectsTableWidget::getTableItemColor(ObjectsTableWidget::RelAddedItemBgColor));
 		}
 		else
 		{
-			columns_tab->setRowFont(row, fnt,
-															ObjectsTableWidget::getTableItemColor(ObjectsTableWidget::ProtItemFgColor),
-															ObjectsTableWidget::getTableItemColor(ObjectsTableWidget::ProtItemBgColor));
+			columns_tab->setRowFont(row, fnt);
+			columns_tab->setRowColors(row,
+																ObjectsTableWidget::getTableItemColor(ObjectsTableWidget::ProtItemFgColor),
+																ObjectsTableWidget::getTableItemColor(ObjectsTableWidget::ProtItemBgColor));
 		}
 	}
 }

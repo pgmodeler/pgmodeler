@@ -212,19 +212,29 @@ void ObjectsTableWidget::clearCellText(unsigned row_idx, unsigned col_idx)
 	}
 }
 
-void ObjectsTableWidget::setRowFont(int row_idx, const QFont &font, const QColor &fg_color, const QColor &bg_color)
+void ObjectsTableWidget::setRowFont(int row_idx, const QFont &font)
 {
-	QTableWidgetItem *item=nullptr;
-	int col_count, i;
-
 	if(row_idx >= table_tbw->rowCount())
 		throw Exception(ErrorCode::RefRowObjectTabInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	col_count=table_tbw->columnCount();
-	for(i=0; i < col_count; i++)
+	QTableWidgetItem *item = nullptr;
+	int col_count = table_tbw->columnCount();
+
+	for(int col = 0; col < col_count; col++)
+		table_tbw->item(row_idx, col)->setFont(font);
+}
+
+void ObjectsTableWidget::setRowColors(int row_idx, const QColor &fg_color, const QColor &bg_color)
+{
+	if(row_idx >= table_tbw->rowCount())
+		throw Exception(ErrorCode::RefRowObjectTabInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+	QTableWidgetItem *item=nullptr;
+	int col_count = table_tbw->columnCount();
+
+	for(int col = 0; col < col_count; col++)
 	{
-		item=table_tbw->item(row_idx, i);
-		item->setFont(font);
+		item = table_tbw->item(row_idx, col);
 		item->setForeground(fg_color);
 		item->setBackground(bg_color);
 	}

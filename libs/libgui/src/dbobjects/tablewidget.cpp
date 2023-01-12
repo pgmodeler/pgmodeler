@@ -708,15 +708,17 @@ void TableWidget::showObjectData(TableObject *object, int row)
 
 		if(object->isAddedByRelationship())
 		{
-			tab->setRowFont(row, font,
-											ObjectsTableWidget::getTableItemColor(ObjectsTableWidget::RelAddedItemFgColor),
-											ObjectsTableWidget::getTableItemColor(ObjectsTableWidget::RelAddedItemBgColor));
+			tab->setRowFont(row, font);
+			tab->setRowColors(row,
+												ObjectsTableWidget::getTableItemColor(ObjectsTableWidget::RelAddedItemFgColor),
+												ObjectsTableWidget::getTableItemColor(ObjectsTableWidget::RelAddedItemBgColor));
 		}
 		else
 		{
-			tab->setRowFont(row, font,
-											ObjectsTableWidget::getTableItemColor(ObjectsTableWidget::ProtItemFgColor),
-											ObjectsTableWidget::getTableItemColor(ObjectsTableWidget::ProtItemBgColor));
+			tab->setRowFont(row, font);
+			tab->setRowColors(row,
+												ObjectsTableWidget::getTableItemColor(ObjectsTableWidget::ProtItemFgColor),
+												ObjectsTableWidget::getTableItemColor(ObjectsTableWidget::ProtItemBgColor));
 		}
 	}
 

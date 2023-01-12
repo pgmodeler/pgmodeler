@@ -125,7 +125,10 @@ class __libgui ObjectsTableWidget: public QWidget, public Ui::ObjectsTableWidget
 		void setRowData(const QVariant &data, unsigned row_idx);
 
 		//! \brief Sets a individual font configuration for the specified row
-		void setRowFont(int row_idx, const QFont &font, const QColor &fg_color, const QColor &bg_color);
+		void setRowFont(int row_idx, const QFont &font);
+
+		//! \brief Sets a individual foreground/background configuration for the specified row
+		void setRowColors(int row_idx, const QColor &fg_color, const QColor &bg_color);
 
 		//! \brief Returns the table column count
 		unsigned getColumnCount();
