@@ -44,7 +44,7 @@ class __libgui ConnectionsConfigWidget: public BaseConfigWidget, public Ui::Conn
 		static std::map<QString, attribs_map> config_params;
 		
 		//! \brief Configures the passed connection setting it's attributes using the values from the form
-		void configureConnection(Connection *conn);
+		void configureConnection(Connection *conn, bool is_update);
 
 		void hideEvent(QHideEvent *);
 		void showEvent(QShowEvent *);
