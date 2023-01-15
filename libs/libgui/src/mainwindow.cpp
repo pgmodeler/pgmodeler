@@ -341,6 +341,8 @@ void MainWindow::createMainWidgets()
 		views_stw->widget(ManageView)->setLayout(grid);
 
 		model_nav_wgt=new ModelNavigationWidget(this);
+		model_nav_wgt->setObjectName("model_nav_wgt");
+
 		about_wgt=new AboutWidget(this);
 		donate_wgt=new DonateWidget(this);
 		restoration_form=new ModelRestorationForm(nullptr, Qt::Dialog | Qt::WindowTitleHint | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint);
@@ -1282,10 +1284,11 @@ void MainWindow::setCurrentModel()
 		edit_menu->addAction(current_model->action_remove);
 		edit_menu->addAction(current_model->action_cascade_del);
 
-		if(current_model->getFilename().isEmpty())
+		/* if(current_model->getFilename().isEmpty())
 			this->setWindowTitle(window_title);
 		else
-			this->setWindowTitle(window_title + QString(" - ") + QDir::toNativeSeparators(current_model->getFilename()));
+			this->setWindowTitle(window_title + QString(" - ") + QDir::toNativeSeparators(current_model->getFilename())); */
+		//updateWidowTitle();
 
 		connect(current_model, &ModelWidget::s_modelModified, model_nav_wgt, &ModelNavigationWidget::setCurrentModelModified, Qt::UniqueConnection);
 
@@ -1330,8 +1333,10 @@ void MainWindow::setCurrentModel()
 		scene_info_wgt->updateSceneZoom(current_model->getCurrentZoom());
 		current_model->emitSceneInteracted();
 	}
-	else
-		this->setWindowTitle(window_title);
+	//else
+	//	this->setWindowTitle(window_title);
+
+	updateWindowTitle();
 
 	edit_menu->addSeparator();
 	edit_menu->addAction(action_configuration);
@@ -1482,8 +1487,16 @@ void MainWindow::closeModel(int model_id)
 
 void MainWindow::updateModelTabName()
 {
-	if(current_model && current_model->db_model->getName()!=models_tbw->tabText(models_tbw->currentIndex()))
+	if(current_model && current_model->db_model->getName() != models_tbw->tabText(models_tbw->currentIndex()))
 		model_nav_wgt->updateModelText(models_tbw->currentIndex(), current_model->db_model->getName(), current_model->getFilename());
+}
+
+void MainWindow::updateWindowTitle()
+{
+	if(!current_model || current_model->getFilename().isEmpty())
+		setWindowTitle(window_title);
+	else
+		setWindowTitle(window_title + QString(" - ") + QDir::toNativeSeparators(current_model->getFilename()));
 }
 
 void MainWindow::applyConfigurations()
@@ -1653,9 +1666,10 @@ void MainWindow::saveModel(ModelWidget *model)
 						model->saveModel();
 				}
 
-				this->setWindowTitle(window_title + QString(" - ") + QDir::toNativeSeparators(model->getFilename()));
+				//this->setWindowTitle(window_title + QString(" - ") + QDir::toNativeSeparators(model->getFilename()));
+				updateWindowTitle();
 				model_valid_wgt->clearOutput();
-				s_modelSaved(model);
+				emit s_modelSaved(model);
 			}
 
 			stopTimers(false);

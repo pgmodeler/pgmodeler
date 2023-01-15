@@ -256,6 +256,12 @@ class __libgui MainWindow: public QMainWindow, public Ui::MainWindow {
 
 		void registerRecentModelIcon(const QString &suffix, const QIcon &file_type_icon);
 
+				//! \brief Updates the window title taking into account the current model filename
+		void updateWindowTitle();
+
+		//! \brief Updates the tab name of the currently opened model if the database name is changed
+		void updateModelTabName();
+
 	private slots:
 		void showMainMenu();
 
@@ -302,9 +308,6 @@ class __libgui MainWindow: public QMainWindow, public Ui::MainWindow {
 
 		//! \brief Toggles the overview widget for the currently opened model
 		void showOverview(bool show);
-
-		//! \brief Updates the tab name of the currently opened model if the database name is changed
-		void updateModelTabName();
 
 		//! \brief Loads a recent model. The filename is get from the action that triggered the slot
 		void loadModelFromAction();
