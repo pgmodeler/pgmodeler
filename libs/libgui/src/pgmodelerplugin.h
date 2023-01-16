@@ -32,7 +32,7 @@
 	#include "privpluginsns.h"
 #endif
 
-/*	The plugins in pgModeler must be within the "plugins" folder in its own
+/*	The plug-ins in pgModeler must be within the "plugins" folder in their own
 		directory and must have the following basic structure:
 
 		 [PGMODELER_PLUGINS_DIR]/
@@ -43,15 +43,22 @@
 							 |
 							 + ---- res/
 											 |
-											 +--- pluginA.png (icon)
+											 +--- pluginA.qrc (resource file)
+														|
+														+--- /pluginA (context)
+																 |
+																 +--- pluginA.png (icon)
 
-		> Library: it is the shared object that represents the plugin. The prefix (lib) and suffix (so|dylib|dll) are plataform dependent.
-		> Icon: it is a PNG image that represents the plugin's icon.
+		> Library: it's the shared object that represents the plugin. The prefix (lib) and suffix (so|dylib|dll) are plataform dependent.
+		> Resource file: it's the file where all icons used by the plug-in are registered.
+		> Context: it's is the default namespace where the plug-ins are organized logically inside the .qrc file.
+		> Icon: it is a PNG image that represents an icon of the plug-in
 
-		> Plug-ins can have an optional "lang" subdir in which is stored the translations for them. The translation files must be named
-			as [plugin name].[lang code].qm, for instance, Brazilian Portuguese translation for "dummy" would be: "dummy.pt_BR.qm".
+		> Plug-ins can have an optional "lang" subdir to store the UI translations for them. The translation files must be named
+			in the form [plugin name].[lang code].qm, for instance, Brazilian Portuguese translation for "sampleplugin"
+			would be: "sampleplugin.pt_BR.qm".
 
-	Note: Plug-ins can have additional subdirectories but any reference to them must be made programatically by the plugin author. */
+	Note: Plug-ins can have additional subdirectories but any reference to them must be made programatically by the plug-in author. */
 
 // Making the MainWindow class of pgModeler be known by the plugin interface
 class MainWindow;
@@ -83,7 +90,7 @@ class __libgui PgModelerPlugin {
 		/*! \brief This method is executed right before the main window is created and can be used to perform
 		 * plugin's initializations like UI modications and other miscellaneous initialization that can't be done
 		 * in the plug-in constructor. Additionally, a main window instance must be passed to the plugin in order to facilitate
-		 * customization on the UI. The default implementation is to do nothing else than only expose the main window to the plugin. */
+		 * customizations on the UI. The default implementation is to do nothing else than only expose the main window to the plugin. */
 		virtual void initPlugin(MainWindow *main_window);
 
 		/*! \brief Performs operations after the main window is completely loaded/initialized.
@@ -91,7 +98,7 @@ class __libgui PgModelerPlugin {
 		 *  main window are properly initilized. */
 		virtual void postInitPlugin();
 
-		//! \brief Sets the plugin's all attributes at once.
+		//! \brief Sets all the plugin's attributes at once.
 		void configurePluginInfo(const QString &title, const QString &version, const QString &author, const QString &description);
 
 	public:
@@ -129,7 +136,7 @@ class __libgui PgModelerPlugin {
 		//! \brief Returns the name of the plugin
 		QString getPluginName();
 
-		//! \brief Returns the path to the a plugin icon in the plugin's qrc file
+		//! \brief Returns the path to a plugin icon in the plugin's qrc file
 		QString getPluginIcon(const QString &icon_name);
 
 		/*! \brief This method mimics the behavior of GlobalAttributes::getTmplConfigurationFilePath
