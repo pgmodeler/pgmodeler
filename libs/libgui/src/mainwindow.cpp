@@ -176,6 +176,7 @@ void MainWindow::configureMenusActionsWidgets()
 	model_acts_tb->addWidget(model_nav_wgt);
 	model_acts_tb->addSeparator();
 
+	QAction *act_plugins_conf = plugins_config_menu->menuAction();
 	model_acts_tb->addAction(plugins_config_menu->menuAction());
 	QToolButton *plugins_btn = dynamic_cast<QToolButton *>(model_acts_tb->widgetForAction(plugins_config_menu->menuAction()));
 	plugins_btn->setPopupMode(QToolButton::InstantPopup);
@@ -185,7 +186,7 @@ void MainWindow::configureMenusActionsWidgets()
 	if(!plugins_tb_acts.isEmpty())
 	{
 		for(auto &act : plugins_tb_acts)
-			model_acts_tb->addAction(act);
+			model_acts_tb->insertAction(act_plugins_conf, act);
 
 		model_acts_tb->addSeparator();
 	}
