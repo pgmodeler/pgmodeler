@@ -1706,33 +1706,35 @@ void ModelWidget::adjustSceneSize()
 	emit s_sceneInteracted(scene_rect.size());
 }
 
-void ModelWidget::printModel(QPrinter *printer, bool print_grid, bool print_page_nums)
+void ModelWidget::printModel(QPrinter *printer, bool print_grid, bool print_page_nums, double scale)
 {
 	if(!printer)
 		return;
 
 	bool show_grid = false, align_objs = false, show_delims = false;
 	unsigned page_cnt = 0, page = 0, h_page_cnt = 0, v_page_cnt = 0, h_pg_id = 0, v_pg_id = 0;
-	std::vector<QRectF> pages;
+	QList<QRectF> pages;
 	QMarginsF margins;
 	QFont font;
 	QString page_info;
-	QColor color;
+	QColor color, bg_color;
 	QRectF brect;
 
 	//Make a backup of the current grid options
+	bg_color = ObjectsScene::getCanvasColor();
 	show_grid = ObjectsScene::isShowGrid();
 	align_objs = ObjectsScene::isAlignObjectsToGrid();
 	show_delims = ObjectsScene::isShowPageDelimiters();
 
 	//Reconfigure the grid options based upon the passed settings
+	ObjectsScene::setCanvasColor(QColor(255, 255, 255));
 	ObjectsScene::setGridOptions(print_grid, align_objs, false);
 
 	scene->update();
 	scene->clearSelection();
 
 	//Get the pages rect for printing
-	pages = scene->getPagesForPrinting(printer->pageLayout(), h_page_cnt, v_page_cnt);
+	pages = scene->getPagesForPrinting(printer->pageLayout(), h_page_cnt, v_page_cnt, scale);
 
 	//Creates a painter to draw the model directly on the printer
 	QPainter painter(printer);
@@ -1780,6 +1782,7 @@ void ModelWidget::printModel(QPrinter *printer, bool print_grid, bool print_page
 	}
 
 	//Restore the grid option backup
+	ObjectsScene::setCanvasColor(bg_color);
 	ObjectsScene::setGridOptions(show_grid, align_objs, show_delims);
 	scene->update();
 }

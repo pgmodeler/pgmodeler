@@ -588,7 +588,7 @@ class __libgui ModelWidget: public QWidget {
 		void loadModel(const QString &filename);
 		void saveModel(const QString &filename);
 		void saveModel();
-		void printModel(QPrinter *printer, bool print_grid, bool print_page_nums);
+		void printModel(QPrinter *printer, bool print_grid, bool print_page_nums, double scale);
 		void update();
 		void bringToFront();
 		void sendToBack();

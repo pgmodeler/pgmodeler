@@ -288,10 +288,10 @@ class __libcanvas ObjectsScene: public QGraphicsScene {
 		QRectF itemsBoundingRect(bool seek_only_db_objs=false, bool selected_only = false, bool incl_layer_rects = false);
 
 		//! \brief Returns a vector containing all the page rects considering the provided page layout settings
-		std::vector<QRectF> getPagesForPrinting(const QPageLayout &page_lt, unsigned &h_page_cnt, unsigned &v_page_cnt);
+		QList<QRectF> getPagesForPrinting(const QPageLayout &page_lt, unsigned &h_page_cnt, unsigned &v_page_cnt, double scale);
 
 		//! \brief Returns a vector containing all the page rects considering the current scene's page layout settings
-		std::vector<QRectF> getPagesForPrinting(unsigned &h_page_cnt, unsigned &v_page_cnt);
+		QList<QRectF> getPagesForPrinting(unsigned &h_page_cnt, unsigned &v_page_cnt, double scale);
 
 		bool isRangeSelectionEnabled();
 		bool isRangeSelectionTriggerInverted();

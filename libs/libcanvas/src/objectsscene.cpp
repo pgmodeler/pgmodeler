@@ -1653,70 +1653,24 @@ void ObjectsScene::clearSelection()
 	QGraphicsScene::clearSelection();
 }
 
-/* std::vector<QRectF> ObjectsScene::getPagesForPrinting(const QSizeF &paper_size, const QSizeF &margin, unsigned &h_page_cnt, unsigned &v_page_cnt)
+QList<QRectF> ObjectsScene::getPagesForPrinting(const QPageLayout &page_lt, unsigned &h_page_cnt, unsigned &v_page_cnt, double scale)
 {
-	std::vector<QRectF> pages;
-	QRectF page_rect, max_rect;
-	double width, height, page_width, page_height;
-	unsigned h_page=0, v_page=0, start_h=99999, start_v=99999;
-	QList<QGraphicsItem *> list;
-
-	page_width=ceil(paper_size.width() - margin.width()-1);
-	page_height=ceil(paper_size.height() - margin.height()-1);
-
-	//Calculates the horizontal and vertical page count based upon the passed paper size
-	h_page_cnt=round(this->sceneRect().width()/page_width) + 1;
-	v_page_cnt=round(this->sceneRect().height()/page_height) + 1;
-
-	//Calculates the maximum count of horizontal and vertical pages
-	for(v_page=0; v_page < v_page_cnt; v_page++)
-	{
-		for(h_page=0; h_page < h_page_cnt; h_page++)
-		{
-			//Calculates the current page rectangle
-			page_rect=QRectF(QPointF(h_page * page_width, v_page * page_height), QSizeF(page_width, page_height));
-
-			//Case there is selected items recalculates the maximum page size
-			list=this->items(page_rect, Qt::IntersectsItemShape);
-			if(!list.isEmpty())
-			{
-				if(start_h > h_page) start_h=h_page;
-				if(start_v > v_page) start_v=v_page;
-
-				width=page_rect.left() + page_rect.width();
-				height=page_rect.top() + page_rect.height();
-
-				if(width > max_rect.width())
-					max_rect.setWidth(width);
-
-				if(height > max_rect.height())
-					max_rect.setHeight(height);
-			}
-		}
-	}
-
-	//Re calculates the maximum page count based upon the maximum page size
-	h_page_cnt=round(max_rect.width()/page_width);
-	v_page_cnt=round(max_rect.height()/page_height);
-
-	//Inserts the page rectangles on the list
-	for(v_page=static_cast<unsigned>(start_v); v_page < v_page_cnt; v_page++)
-		for(h_page=static_cast<unsigned>(start_h); h_page < h_page_cnt; h_page++)
-			pages.push_back(QRectF(QPointF(h_page * page_width, v_page * page_height), QSizeF(page_width, page_height)));
-
-	return pages;
-} */
-
-std::vector<QRectF> ObjectsScene::getPagesForPrinting(const QPageLayout &page_lt, unsigned &h_page_cnt, unsigned &v_page_cnt)
-{
-	std::vector<QRectF> pages;
+	QList<QRectF> pages;
 	QRectF page_rect, max_rect;
 	double width = 0, height = 0, page_width = 0, page_height = 0;
 	unsigned h_page=0, v_page=0, start_h=99999, start_v=99999;
 	QList<QGraphicsItem *> list;
 
+	if(scale < 0.05)
+		scale = 0.05;
+	else if(scale > 5)
+		scale = 5;
+
 	page_width = page_lt.paintRect(QPageLayout::Point).width();
+	page_width /= scale;
+
 	page_height = page_lt.paintRect(QPageLayout::Point).height();
+	page_height /= scale;
 
 	//Calculates the horizontal and vertical page count based upon the passed paper size
 	h_page_cnt=round(this->sceneRect().width()/page_width) + 1;
@@ -1756,14 +1710,14 @@ std::vector<QRectF> ObjectsScene::getPagesForPrinting(const QPageLayout &page_lt
 	//Inserts the page rectangles on the list
 	for(v_page=static_cast<unsigned>(start_v); v_page < v_page_cnt; v_page++)
 		for(h_page=static_cast<unsigned>(start_h); h_page < h_page_cnt; h_page++)
-			pages.push_back(QRectF(QPointF(h_page * page_width, v_page * page_height), QSizeF(page_width, page_height)));
+			pages.append(QRectF(QPointF(h_page * page_width, v_page * page_height), QSizeF(page_width, page_height)));
 
 	return pages;
 }
 
-std::vector<QRectF> ObjectsScene::getPagesForPrinting(unsigned &h_page_cnt, unsigned &v_page_cnt)
+QList<QRectF> ObjectsScene::getPagesForPrinting(unsigned &h_page_cnt, unsigned &v_page_cnt, double scale)
 {
-	return getPagesForPrinting(page_layout, h_page_cnt, v_page_cnt);
+	return getPagesForPrinting(page_layout, h_page_cnt, v_page_cnt, scale);
 }
 
 bool ObjectsScene::isRangeSelectionEnabled()
