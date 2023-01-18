@@ -111,21 +111,19 @@ void ModelExportHelper::exportToPNG(ObjectsScene *scene, const QString &filename
 	{
 		QPixmap pix;
 		bool shw_grd, shw_dlm, align_objs;
-		QGraphicsView *view=nullptr;
-		QRect retv;
-		QPolygon pol;
-		std::vector<QRectF> pages;
+		QGraphicsView *view = nullptr;
+		QList<QRectF> pages;
 		unsigned v_cnt=0, h_cnt=0, page_idx=1;
 		QString tmpl_filename, file;
+		QColor bg_color = ObjectsScene::getCanvasColor();
 
 		/* If an external view is specified it will be used instead of creating a local one,
-	   this is a workaround to the error below when running the helper in a separated thread
-
-	   QCoreApplication::sendPostedEvents: Cannot send posted events for objects in another thread */
+		 * this is a workaround to the error below when running the helper in a separated thread
+		 * QCoreApplication::sendPostedEvents: Cannot send posted events for objects in another thread */
 		if(viewp)
-			view=viewp;
+			view = viewp;
 		else
-			view=new QGraphicsView(scene);
+			view = new QGraphicsView(scene);
 
 		//Clear the object scene selection to avoid drawing the selectoin rectangle of the objects
 		scene->clearSelection();
@@ -134,8 +132,10 @@ void ModelExportHelper::exportToPNG(ObjectsScene *scene, const QString &filename
 		shw_grd = ObjectsScene::isShowGrid();
 		align_objs = ObjectsScene::isAlignObjectsToGrid();
 		shw_dlm = ObjectsScene::isShowPageDelimiters();
+		bg_color = ObjectsScene::getCanvasColor();
 
 		//Sets the options passed by the user
+		ObjectsScene::setCanvasColor(QColor(255,255,255));
 		ObjectsScene::setGridOptions(show_grid, false, show_delim);
 
 		if(page_by_page)
@@ -143,14 +143,14 @@ void ModelExportHelper::exportToPNG(ObjectsScene *scene, const QString &filename
 			QFileInfo fi(filename);
 
 			//Calculates the page count to be exported
-			pages=scene->getPagesForPrinting(h_cnt, v_cnt);
+			pages = scene->getPagesForPrinting(h_cnt, v_cnt, zoom);
 
 			//Configures the template filename for pages pixmaps
-			tmpl_filename=fi.absolutePath() + GlobalAttributes::DirSeparator + fi.baseName() + QString("_p%1.") + fi.completeSuffix();
+			tmpl_filename = fi.absolutePath() + GlobalAttributes::DirSeparator + fi.baseName() + QString("_p%1.") + fi.completeSuffix();
 		}
 		else
 		{
-			QRectF rect=scene->itemsBoundingRect(true, false, true);
+			QRectF rect = scene->itemsBoundingRect(true, false, true);
 
 			//Give some margin to the resulting image
 			QSizeF margin=QSizeF(5 * BaseObjectView::HorizSpacing, 5 * BaseObjectView::VertSpacing);
@@ -158,37 +158,29 @@ void ModelExportHelper::exportToPNG(ObjectsScene *scene, const QString &filename
 			rect.setSize(rect.size() + margin);
 
 			pages.push_back(rect);
-			file=filename;
+			file = filename;
 		}
 
 		//Updates the scene to apply the change on grid and delimiter
 		scene->update();
 
-		//Configures the viewport alignment to top-left coordinates.
-		view->setAlignment(Qt::AlignLeft | Qt::AlignTop);
+		QPainter painter;
+		QRect rect;
 
-		//Apply the zoom factor on the viewport
+		view->setAlignment(Qt::AlignLeft | Qt::AlignTop);
 		view->resetTransform();
 		view->centerOn(0,0);
-		view->scale(zoom, zoom);
 
-		QPainter painter;
-		std::vector<QRectF>::iterator itr=pages.begin(), itr_end=pages.end();
+		/* We consider the device pixel ration when applying scale to the viewport
+		 * so the resulting pixmap can have a compatible size in hi-dpi screens */
+		view->scale(zoom * qApp->devicePixelRatio(), zoom * qApp->devicePixelRatio());
 
-		while(itr!=itr_end && !export_canceled)
+		for(auto &pg_rect : pages)
 		{
-			//Convert the objects bounding rect to viewport coordinates to correctly draw them onto pixmap
-			pol = view->mapFromScene(*itr);
-			itr++;
+			if(export_canceled) break;
 
-			//Configure the viewport area to be copied
-			retv.setTopLeft(pol.at(0));
-			retv.setTopRight(pol.at(1));
-			retv.setBottomRight(pol.at(2));
-			retv.setBottomLeft(pol.at(3));
-
-			//Creates the output pixmap
-			pix=QPixmap(retv.size());
+			rect = view->mapFromScene(pg_rect).boundingRect();
+			pix = QPixmap(rect.size());
 			pix.fill();
 
 			//Setting optimizations on the painter
@@ -200,17 +192,17 @@ void ModelExportHelper::exportToPNG(ObjectsScene *scene, const QString &filename
 			emit s_progressUpdated((page_idx/static_cast<double>(pages.size())) * 90,
 														 tr("Rendering objects to page %1/%2.").arg(page_idx).arg(pages.size()), ObjectType::BaseObject);
 
-			//Render the entire viewport onto the pixmap
-			view->render(&painter, QRectF(QPointF(0,0), pix.size()), retv);
+			view->render(&painter, QRect(), rect);
 			painter.end();
 
 			if(page_by_page)
-				file=tmpl_filename.arg(page_idx++);
+				file = tmpl_filename.arg(page_idx++);
 
 			//If the pixmap is not saved raises an error
 			if(!pix.save(file))
 			{
 				//Restoring the scene settings before throw error
+				ObjectsScene::setCanvasColor(bg_color);
 				ObjectsScene::setGridOptions(shw_grd, align_objs, shw_dlm);
 				scene->update();
 
@@ -220,6 +212,7 @@ void ModelExportHelper::exportToPNG(ObjectsScene *scene, const QString &filename
 		}
 
 		//Restoring the scene settings
+		ObjectsScene::setCanvasColor(bg_color);
 		ObjectsScene::setGridOptions(shw_grd, align_objs, shw_dlm);
 		scene->update();
 
@@ -231,7 +224,7 @@ void ModelExportHelper::exportToPNG(ObjectsScene *scene, const QString &filename
 		else
 			emit s_exportCanceled();
 
-		if(view!=viewp)
+		if(view != viewp)
 			delete view;
 	}
 	catch(Exception &e)

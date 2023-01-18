@@ -1706,7 +1706,7 @@ void ModelWidget::adjustSceneSize()
 	emit s_sceneInteracted(scene_rect.size());
 }
 
-void ModelWidget::printModel(QPrinter *printer, bool print_grid, bool print_page_nums, double scale)
+void ModelWidget::printModel(QPrinter *printer, bool print_grid, bool print_page_nums, bool resize_delims)
 {
 	if(!printer)
 		return;
@@ -1734,7 +1734,8 @@ void ModelWidget::printModel(QPrinter *printer, bool print_grid, bool print_page
 	scene->clearSelection();
 
 	//Get the pages rect for printing
-	pages = scene->getPagesForPrinting(printer->pageLayout(), h_page_cnt, v_page_cnt, scale);
+	pages = scene->getPagesForPrinting(printer->pageLayout(), h_page_cnt, v_page_cnt,
+																		 resize_delims && current_zoom < 1 ? current_zoom : 1);
 
 	//Creates a painter to draw the model directly on the printer
 	QPainter painter(printer);

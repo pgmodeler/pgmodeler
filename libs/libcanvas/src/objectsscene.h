@@ -66,7 +66,9 @@ class __libcanvas ObjectsScene: public QGraphicsScene {
 
 		/*! \brief Indicates that panning mode and range selection model are activate in inverse mode.
 		By default panning model is activated with a single left-click and range selection with SHIFT + left-click */
-		invert_rangesel_trigger;
+		invert_rangesel_trigger,
+
+		lock_delim_scale;
 
 		//! \brief Indicates if the scene need to be moved
 		bool move_scene;
@@ -105,6 +107,8 @@ class __libcanvas ObjectsScene: public QGraphicsScene {
 
 		//! \brief Used to store the canvas/printer page layout (size, orientation, margins)
 		static QPageLayout page_layout;
+
+		static double delimiter_scale;
 
 		//! \brief Indicates that there are objects being moved and the signal s_objectsMoved must be emitted
 		bool moving_objs,
@@ -183,6 +187,9 @@ class __libcanvas ObjectsScene: public QGraphicsScene {
 			LayerRectColor
 		};
 
+		static constexpr double MinScaleFactor = 0.100000,
+		MaxScaleFactor = 5.000001;
+
 		static constexpr unsigned DefaultLayer = 0;
 
 		//! \brief Stores the default grid line color
@@ -260,7 +267,13 @@ class __libcanvas ObjectsScene: public QGraphicsScene {
 		static bool isShowGrid();
 		static bool isShowPageDelimiters();
 
-		/* ! \brief Configures the canvas page layout. This method invalidates the grid to force it to be recreated
+		/*! \brief Determines if the delimiter lines must have their scale locked when the
+		 * curr_scale factor is less than 1.0. This allows the user to fit a greater amount
+		 * of objects on a single page. This feature works only for printing. */
+		static void setLockDelimiterScale(bool lock, double curr_scale);
+		static bool isDelimiterScaleLocked();
+
+		/*! \brief Configures the canvas page layout. This method invalidates the grid to force it to be recreated
 		 * taking into account the new page settings */
 		static void setPageLayout(const QPageLayout &page_lt);
 
@@ -287,10 +300,12 @@ class __libcanvas ObjectsScene: public QGraphicsScene {
 		Note: using this method with seek_only_db_objs=true can be time expensive depending on the size of the model so use it wisely. */
 		QRectF itemsBoundingRect(bool seek_only_db_objs=false, bool selected_only = false, bool incl_layer_rects = false);
 
-		//! \brief Returns a vector containing all the page rects considering the provided page layout settings
+		/*! \brief Returns a vector containing all the page rects considering the provided page layout settings
+		 * A scale factor can be provided so the method returns the amount of pages in a certain zoom factor (scale) */
 		QList<QRectF> getPagesForPrinting(const QPageLayout &page_lt, unsigned &h_page_cnt, unsigned &v_page_cnt, double scale);
 
-		//! \brief Returns a vector containing all the page rects considering the current scene's page layout settings
+		/*! \brief Returns a vector containing all the page rects considering the current scene's page layout settings
+		 * A scale factor can be provided so the method returns the amount of pages in a certain zoom factor (scale) */
 		QList<QRectF> getPagesForPrinting(unsigned &h_page_cnt, unsigned &v_page_cnt, double scale);
 
 		bool isRangeSelectionEnabled();

@@ -21,7 +21,9 @@
 bool ObjectsScene::align_objs_grid=false;
 bool ObjectsScene::show_grid=true;
 bool ObjectsScene::show_page_delim=true;
+bool ObjectsScene::lock_delim_scale = false;
 unsigned ObjectsScene::grid_size=20;
+double ObjectsScene::delimiter_scale = 1;
 
 QPageLayout ObjectsScene::page_layout(QPageSize(QPageSize::A4), QPageLayout::Landscape, QMarginsF(10,10,10,10));
 QSizeF ObjectsScene::custom_paper_size(0,0);
@@ -554,9 +556,6 @@ void ObjectsScene::updateActiveLayers()
 
 QStringList ObjectsScene::getLayerColorNames(LayerAttrColor color_id)
 {
-	//if(color_id > LayerRectColor)
-	//	return {};
-
 	QStringList colors;
 
 	for(auto &path : layers_paths)
@@ -581,9 +580,6 @@ void ObjectsScene::setLayerColors(int layer_id, QColor txt_color, QColor bg_colo
 
 void ObjectsScene::setLayerColors(LayerAttrColor layer_attr_id, const QStringList &colors)
 {
-	//if(layer_attr_id > LayerRectColor)
-	//	return;
-
 	int idx = 0;
 	QColor color;
 
@@ -606,6 +602,22 @@ void ObjectsScene::setLayerColors(LayerAttrColor layer_attr_id, const QStringLis
 
 		idx++;
 	}
+}
+
+void ObjectsScene::setLockDelimiterScale(bool lock, double curr_scale)
+{
+	if(lock && curr_scale > 0 && curr_scale < 1)
+		delimiter_scale = curr_scale;
+	else
+		delimiter_scale = 1;
+
+	lock_delim_scale = lock;
+	setGridSize(grid_size);
+}
+
+bool ObjectsScene::isDelimiterScaleLocked()
+{
+	return lock_delim_scale;
 }
 
 void ObjectsScene::setEnableCornerMove(bool enable)
@@ -724,14 +736,17 @@ void ObjectsScene::setGridSize(unsigned size)
 	if(size >= 20 || grid.style()==Qt::NoBrush)
 	{
 		QImage grid_img;
-		double width = 0, height = 0, x = 0, y = 0;
+		double width = 0, height = 0, x = 0, y = 0, delim_factor = 1/delimiter_scale;
 		int img_w = 0, img_h = 0;
 		QSizeF aux_size;
 		QPainter painter;
-		QPen pen;
+		QPen pen = QPen(QColor(),
+										BaseObjectView::ObjectBorderWidth *
+										BaseObjectView::getScreenDpiFactor() *
+										delim_factor);
 
 		// Retrieve the page rect considering the orientation, margin and page size
-		aux_size = page_layout.paintRect(QPageLayout::Point).size();
+		aux_size = page_layout.paintRect(QPageLayout::Point).size() * delim_factor;
 
 		//Calculates where the extreme width and height where delimiter lines will be drawn
 		width=aux_size.width()/static_cast<double>(size) * size;
@@ -744,25 +759,29 @@ void ObjectsScene::setGridSize(unsigned size)
 		grid_size=size;
 		grid_img=QImage(img_w, img_h, QImage::Format_ARGB32);
 		grid_img.fill(canvas_color);
+
 		painter.begin(&grid_img);
 
 		if(show_grid)
 		{
-			painter.setPen(QPen(grid_color,
-													BaseObjectView::ObjectBorderWidth * BaseObjectView::getScreenDpiFactor()));
+			pen.setColor(grid_color);
+			painter.setPen(pen);
 
 			//Draws the grid
 			for(x=0; x < width; x+=size)
+			{
 				for(y=0; y < height; y+=size)
-					painter.drawRect(QRectF(QPointF(x,y),QPointF(x + size,y + size)));
+				{
+					painter.drawRect(QRectF(QPointF(x,y), QPointF(x + size,y + size)));
+				}
+			}
 		}
 
 		//Creates the page delimiter lines
 		if(show_page_delim)
 		{
-			QPen pen(delimiters_color,
-							 BaseObjectView::ObjectBorderWidth * BaseObjectView::getScreenDpiFactor(),
-							 Qt::CustomDashLine);
+			pen.setColor(delimiters_color);
+			pen.setStyle(Qt::CustomDashLine);
 			pen.setDashPattern({3, 5});
 			painter.setPen(pen);
 			painter.drawLine(width-1, 0,width-1,img_h-1);
@@ -1661,10 +1680,10 @@ QList<QRectF> ObjectsScene::getPagesForPrinting(const QPageLayout &page_lt, unsi
 	unsigned h_page=0, v_page=0, start_h=99999, start_v=99999;
 	QList<QGraphicsItem *> list;
 
-	if(scale < 0.05)
-		scale = 0.05;
-	else if(scale > 5)
-		scale = 5;
+	if(scale < MinScaleFactor)
+		scale = MinScaleFactor;
+	else if(scale > MaxScaleFactor)
+		scale = MaxScaleFactor;
 
 	page_width = page_lt.paintRect(QPageLayout::Point).width();
 	page_width /= scale;

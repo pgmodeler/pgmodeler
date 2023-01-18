@@ -362,6 +362,7 @@ namespace Attributes {
 	LocaleMod("locale-mod"),
 	LockerArc("locker-arc"),
 	LockerBody("locker-body"),
+	LockPageDelimResize("lock-page-delim-resize"),
 	Login("login"),
 	LookaheadChar("lookahead-char"),
 	LowVerbosity("low-verbosity"),

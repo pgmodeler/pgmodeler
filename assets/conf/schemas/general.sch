@@ -39,6 +39,7 @@ $tb [<configuration pgmodeler-ver="] {pgmodeler-ver} ["] $br
 {spc} [use-placeholders="] %if {use-placeholders} %then true %else false %end ["] $br
 {spc} [show-canvas-grid="] %if {show-canvas-grid} %then true %else false %end ["] $br
 {spc} [show-page-delimiters="] %if {show-page-delimiters} %then true %else false %end ["] $br
+{spc} [lock-page-delim-resize="] %if {lock-page-delim-resize} %then true %else false %end ["] $br
 {spc} [align-objs-to-grid="] %if {align-objs-to-grid} %then true %else false %end ["] $br
 {spc} [history-max-length="] {history-max-length} ["] $br
 {spc} [use-curved-lines="] %if {use-curved-lines} %then true %else false %end ["] $br

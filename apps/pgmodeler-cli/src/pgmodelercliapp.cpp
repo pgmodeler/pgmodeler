@@ -1738,9 +1738,7 @@ void PgModelerCliApp::loadModel()
 		scene->setLayerColors(ObjectsScene::LayerRectColor, model->getLayerRectColors());
 		scene->setLayerNamesVisible(model->isLayerNamesVisible());
 		scene->setLayerRectsVisible(model->isLayerRectsVisible());
-
-		if(model->isLayerRectsVisible())
-			model->setObjectsModified({ ObjectType::Schema });
+		model->setObjectsModified({ ObjectType::Schema });
 
 		scene->blockSignals(false);
 	}

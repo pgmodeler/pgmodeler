@@ -64,6 +64,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	action_show_grid->setChecked(confs[Attributes::Configuration][Attributes::ShowCanvasGrid]==Attributes::True);
 	action_alin_objs_grade->setChecked(confs[Attributes::Configuration][Attributes::AlignObjsToGrid]==Attributes::True);
 	action_show_delimiters->setChecked(confs[Attributes::Configuration][Attributes::ShowPageDelimiters]==Attributes::True);
+	action_lock_delim->setChecked(confs[Attributes::Configuration][Attributes::LockPageDelimResize]==Attributes::True);
 	action_compact_view->setChecked(confs[Attributes::Configuration][Attributes::CompactView]==Attributes::True);
 
 	ObjectsScene::setGridOptions(action_show_grid->isChecked(),
@@ -1285,12 +1286,6 @@ void MainWindow::setCurrentModel()
 		edit_menu->addAction(current_model->action_remove);
 		edit_menu->addAction(current_model->action_cascade_del);
 
-		/* if(current_model->getFilename().isEmpty())
-			this->setWindowTitle(window_title);
-		else
-			this->setWindowTitle(window_title + QString(" - ") + QDir::toNativeSeparators(current_model->getFilename())); */
-		//updateWidowTitle();
-
 		connect(current_model, &ModelWidget::s_modelModified, model_nav_wgt, &ModelNavigationWidget::setCurrentModelModified, Qt::UniqueConnection);
 
 		connect(current_model, &ModelWidget::s_modelModified, this, [this](bool modified) {
@@ -1313,9 +1308,15 @@ void MainWindow::setCurrentModel()
 		connect(current_model, qOverload<const QPointF &>(&ModelWidget::s_sceneInteracted), scene_info_wgt, &SceneInfoWidget::updateMousePosition, Qt::UniqueConnection);
 		connect(current_model, &ModelWidget::s_zoomModified, scene_info_wgt, &SceneInfoWidget::updateSceneZoom, Qt::UniqueConnection);
 
+		connect(current_model, &ModelWidget::s_zoomModified, this, [this](double zoom) {
+			ObjectsScene::setLockDelimiterScale(action_lock_delim->isChecked(), zoom);
+			current_model->scene->update();
+		});
+
 		connect(action_alin_objs_grade, &QAction::triggered, this, &MainWindow::setGridOptions, Qt::UniqueConnection);
 		connect(action_show_grid, &QAction::triggered, this, &MainWindow::setGridOptions, Qt::UniqueConnection);
 		connect(action_show_delimiters, &QAction::triggered, this, &MainWindow::setGridOptions, Qt::UniqueConnection);
+		connect(action_lock_delim, &QAction::triggered, this, &MainWindow::setGridOptions, Qt::UniqueConnection);
 
 		connect(action_magnifier, &QAction::toggled, current_model, &ModelWidget::showMagnifierArea, Qt::UniqueConnection);
 		connect(action_overview, &QAction::toggled, this, &MainWindow::showOverview, Qt::UniqueConnection);
@@ -1333,9 +1334,11 @@ void MainWindow::setCurrentModel()
 		scene_info_wgt->updateMousePosition(QPointF(0,0));
 		scene_info_wgt->updateSceneZoom(current_model->getCurrentZoom());
 		current_model->emitSceneInteracted();
+
+		ObjectsScene::setLockDelimiterScale(action_lock_delim->isChecked(),
+																				current_model->getCurrentZoom());
+		current_model->scene->update();
 	}
-	//else
-	//	this->setWindowTitle(window_title);
 
 	updateWindowTitle();
 
@@ -1367,12 +1370,11 @@ void MainWindow::setGridOptions()
 
 	//Configures the global settings for the scene grid
 	ObjectsScene::setGridOptions(action_show_grid->isChecked(),
-								 action_alin_objs_grade->isChecked(),
-								 action_show_delimiters->isChecked());
+															 action_alin_objs_grade->isChecked(),
+															 action_show_delimiters->isChecked());
 
-	attribs[Attributes::Configuration][Attributes::AlignObjsToGrid] = (action_alin_objs_grade->isChecked() ? Attributes::True : Attributes::False);
-	attribs[Attributes::Configuration][Attributes::ShowCanvasGrid] = (action_show_grid->isChecked() ? Attributes::True : Attributes::False);
-	attribs[Attributes::Configuration][Attributes::ShowPageDelimiters] = (action_show_delimiters->isChecked() ? Attributes::True : Attributes::False);
+	ObjectsScene::setLockDelimiterScale(action_lock_delim->isChecked(),
+																			current_model ? current_model->getCurrentZoom() : 1);
 
 	if(current_model)
 	{
@@ -1396,14 +1398,14 @@ void MainWindow::applyZoom()
 {
 	if(current_model)
 	{
-		double zoom=current_model->getCurrentZoom();
+		double zoom = current_model->getCurrentZoom();
 
-		if(sender()==action_normal_zoom)
-			zoom=1;
-		else if(sender()==action_inc_zoom && zoom < ModelWidget::MaximumZoom)
-			zoom+=ModelWidget::ZoomIncrement;
-		else if(sender()==action_dec_zoom && zoom > ModelWidget::MinimumZoom)
-			zoom-=ModelWidget::ZoomIncrement;
+		if(sender() == action_normal_zoom)
+			zoom = 1;
+		else if(sender() == action_inc_zoom && zoom < ModelWidget::MaximumZoom)
+			zoom += ModelWidget::ZoomIncrement;
+		else if(sender() == action_dec_zoom && zoom > ModelWidget::MinimumZoom)
+			zoom -= ModelWidget::ZoomIncrement;
 
 		current_model->applyZoom(zoom);
 		updateToolsState();
@@ -1824,8 +1826,8 @@ void MainWindow::printModel()
 
 			if(orig_page_lt != curr_page_lt)
 			{
-				msg_box.show(tr("Changes were detected in the definitions of paper/margin which may cause the incorrect print of the objects. Do you want to continue printing using the new settings? To use the default settings click 'No' or 'Cancel' to abort printing."),
-							 Messagebox::AlertIcon, Messagebox::AllButtons);
+				msg_box.show("", tr("Changes were detected in the definitions of paper/margin which may cause the incorrect print of the objects. How do you want to proceed?"),
+										 Messagebox::AlertIcon, Messagebox::AllButtons, tr("Use new settings"), tr("Use default settings"), tr("Cancel printing"));
 			}
 
 			if(!msg_box.isCancelled())
@@ -1836,7 +1838,10 @@ void MainWindow::printModel()
 					printer->setPageLayout(orig_page_lt);
 				}
 
-				current_model->printModel(printer, conf_wgt->print_grid_chk->isChecked(), conf_wgt->print_pg_num_chk->isChecked());
+				current_model->printModel(printer,
+																	conf_wgt->print_grid_chk->isChecked(),
+																	conf_wgt->print_pg_num_chk->isChecked(),
+																	true);
 			}
 		}
 	}
@@ -1951,6 +1956,7 @@ void MainWindow::updateToolsState(bool model_closed)
 	action_close_model->setEnabled(enabled);
 	action_show_grid->setEnabled(enabled);
 	action_show_delimiters->setEnabled(enabled);
+	action_lock_delim->setEnabled(enabled);
 	action_overview->setEnabled(enabled);
 
 	action_normal_zoom->setEnabled(enabled);

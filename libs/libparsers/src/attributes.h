@@ -377,6 +377,7 @@ namespace Attributes {
 	LocaleMod,
 	LockerArc,
 	LockerBody,
+	LockPageDelimResize,
 	Login,
 	LookaheadChar,
 	LowVerbosity,

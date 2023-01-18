@@ -953,6 +953,7 @@
    <addaction name="action_overview"/>
    <addaction name="action_show_grid"/>
    <addaction name="action_show_delimiters"/>
+   <addaction name="action_lock_delim"/>
    <addaction name="action_alin_objs_grade"/>
    <addaction name="action_compact_view"/>
    <addaction name="separator"/>
@@ -1586,6 +1587,30 @@
    </property>
    <property name="shortcut">
     <string>F9</string>
+   </property>
+  </action>
+  <action name="action_lock_delim">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>false</bool>
+   </property>
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../res/resources.qrc">
+     <normaloff>:/icons/icons/lockdelim.png</normaloff>:/icons/icons/lockdelim.png</iconset>
+   </property>
+   <property name="text">
+    <string>action_lock_delim</string>
+   </property>
+   <property name="toolTip">
+    <string>&lt;p&gt;Locks the delimiter lines resizing when the zoom factor is less than 100% so more objects can fit on a single page.&lt;/p&gt;</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+K</string>
    </property>
   </action>
  </widget>

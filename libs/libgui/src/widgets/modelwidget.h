@@ -350,9 +350,9 @@ class __libgui ModelWidget: public QWidget {
 		void setAllCollapseMode(BaseTable::CollapseMode mode);
 
 	public:
-		static constexpr double MinimumZoom=0.050000,
-		MaximumZoom=5.000001,
-		ZoomIncrement=0.050000;
+		static constexpr double MinimumZoom = ObjectsScene::MinScaleFactor,
+		MaximumZoom = ObjectsScene::MaxScaleFactor,
+		ZoomIncrement = 0.050000;
 
 		ModelWidget(QWidget *parent = nullptr);
 		virtual ~ModelWidget();
@@ -588,7 +588,7 @@ class __libgui ModelWidget: public QWidget {
 		void loadModel(const QString &filename);
 		void saveModel(const QString &filename);
 		void saveModel();
-		void printModel(QPrinter *printer, bool print_grid, bool print_page_nums, double scale);
+		void printModel(QPrinter *printer, bool print_grid, bool print_page_nums, bool resize_delims);
 		void update();
 		void bringToFront();
 		void sendToBack();
