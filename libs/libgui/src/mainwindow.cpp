@@ -1799,7 +1799,6 @@ void MainWindow::printModel()
 	{
 		QPrintDialog print_dlg;
 		QPrinter *printer=nullptr;
-		QPageSize page_size, curr_page_size;
 		QPageLayout curr_page_lt, orig_page_lt;
 		GeneralConfigWidget *conf_wgt=dynamic_cast<GeneralConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::GeneralConfWgt));
 
@@ -1824,10 +1823,15 @@ void MainWindow::printModel()
 			// Checking If the user modified the default settings on the printer overriding the scene configurations
 			curr_page_lt = printer->pageLayout();
 
-			if(orig_page_lt != curr_page_lt)
+			if(orig_page_lt.marginsPoints() != curr_page_lt.marginsPoints() ||
+				 orig_page_lt.pageSize().id() != curr_page_lt.pageSize().id() ||
+				 orig_page_lt.pageSize().rectPoints() != curr_page_lt.pageSize().rectPoints())
 			{
-				msg_box.show("", tr("Changes were detected in the definitions of paper/margin which may cause the incorrect print of the objects. How do you want to proceed?"),
-										 Messagebox::AlertIcon, Messagebox::AllButtons, tr("Use new settings"), tr("Use default settings"), tr("Cancel printing"));
+				msg_box.show("", tr("Changes were detected in the definitions of paper/margin which may cause the incorrect printing of the objects. Which configurations do you want to use?"),
+										 Messagebox::AlertIcon, Messagebox::AllButtons,
+										 tr("New settings"), tr("Defaults"), tr("Cancel"),
+										 GuiUtilsNs::getIconPath("new"),
+										 GuiUtilsNs::getIconPath("defaults"));
 			}
 
 			if(!msg_box.isCancelled())
