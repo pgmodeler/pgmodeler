@@ -541,6 +541,7 @@ void GeneralConfigWidget::applyConfiguration()
 	ObjectsScene::setGridOptions(config_params[Attributes::Configuration][Attributes::ShowCanvasGrid]==Attributes::True,
 															 config_params[Attributes::Configuration][Attributes::AlignObjsToGrid]==Attributes::True,
 															 config_params[Attributes::Configuration][Attributes::ShowPageDelimiters]==Attributes::True);
+	ObjectsScene::setLockDelimiterScale(config_params[Attributes::Configuration][Attributes::LockPageDelimResize]==Attributes::True, 1);
 
 	OperationList::setMaximumSize(oplist_size_spb->value());
 	BaseTableView::setHideExtAttributes(hide_ext_attribs_chk->isChecked());
@@ -556,9 +557,11 @@ void GeneralConfigWidget::applyConfiguration()
 	ModelWidget::setRenderSmoothnessDisabled(disable_smooth_chk->isChecked());
 	ModelWidget::setSimplifiedObjectCreation(simple_obj_creation_chk->isChecked());
 	MainWindow::setConfirmValidation(confirm_validation_chk->isChecked());
-	BaseObjectView::setPlaceholderEnabled(use_placeholders_chk->isChecked());
-	SQLExecutionWidget::setSQLHistoryMaxLength(history_max_length_spb->value());
 
+	BaseObjectView::setCompactViewEnabled(config_params[Attributes::Configuration][Attributes::CompactView]==Attributes::True);
+	BaseObjectView::setPlaceholderEnabled(use_placeholders_chk->isChecked());
+
+	SQLExecutionWidget::setSQLHistoryMaxLength(history_max_length_spb->value());
 	ModelDatabaseDiffForm::setLowVerbosity(low_verbosity_chk->isChecked());
 	DatabaseImportForm::setLowVerbosity(low_verbosity_chk->isChecked());
 	ModelExportForm::setLowVerbosity(low_verbosity_chk->isChecked());
