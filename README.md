@@ -1,4 +1,5 @@
-![pgmodeler_mainwindow](https://user-images.githubusercontent.com/2205476/157575453-34366735-480c-4ed3-b1c4-b0abfa50ecf1.png)
+![pgmodeler_mainwindow](https://user-images.githubusercontent.com/2205476/213446508-9bd549b3-ee7f-476d-9249-f537c31fce04.png)
+
 
 [![Linux build](https://github.com/pgmodeler/pgmodeler/workflows/Linux%20build/badge.svg)](https://github.com/pgmodeler/pgmodeler/actions?query=workflow%3A%22Linux+build%22)
 [![Windows build](https://github.com/pgmodeler/pgmodeler/workflows/Windows%20build/badge.svg)](https://github.com/pgmodeler/pgmodeler/actions?query=workflow%3A%22Windows+build%22)
@@ -7,16 +8,16 @@
 :rocket: What's pgModeler?
 ------------
 
-An **open-source, multiplatform database modeler for PostgreSQL**. This project aims to be a reference database design tool when it comes to FOSS in PostgreSQL ecosystem.
-Its feature-rich interface allows quick data modeling and fast code deployment in a server. It also supports reverse engineering by creating a visual representation of existing databases. Besides, pgModeler can also generate SQL scripts to sync a model and a database through the process called diff.
-This tool is not about modeling only, it also counts with a minimalist but functional database server administration module that allows the execution of any sort of SQL commands, and provides database objects browsing and data handling in a simple and intuitive UI.
+An **open-source, multiplatform database modeler for PostgreSQL**. This project aims to be a reference database design tool when it comes to FOSS in the PostgreSQL ecosystem.
+Its feature-rich interface allows quick data modeling and fast code deployment on a server. It also supports reverse engineering by creating a visual representation of existing databases. Besides, pgModeler can also generate SQL scripts to sync a model and a database through the process called diff.
+This tool is not about modeling only, it also counts with a minimalist but functional database server administration module that allows the execution of any sort of SQL commands, and provides database browsing and data handling in a simple and intuitive UI.
 
 For more details about additional features, screenshots, and other useful information, please, visit the [project's official website](https://pgmodeler.io). For any feedback about the software visit the [Issues](https://github.com/pgmodeler/pgmodeler/issues) page. Additionally, follow pgModeler on [Twitter](https://twitter.com/pgmodeler) and be up-to-date with new features, fixes, and releases.
 
 :hammer_and_wrench: Building & Installing
 ----------------------
 
-Being multiplatform, the building process differs slightly on each supported OS. This way, the installation procedures are fully described in the [Installation](https://www.pgmodeler.io/support/installation) section on the project's website.
+Being a multiplatform software, the building process differs slightly on each supported OS. This way, the installation procedures are fully described in the [Installation](https://www.pgmodeler.io/support/installation) section on the project's website.
 
 You may want to check the [official plugin repository](https://github.com/pgmodeler/plugins) as well for information regarding extending pgModeler's features.
 
@@ -34,9 +35,9 @@ See [LICENSE](https://github.com/pgmodeler/pgmodeler/blob/master/LICENSE) for de
 
 * :coin: **Financial support:** a lot of knowledge and effort is being put into this project during the last **16 years** so that a reliable and constantly improved product can be delivered to the community. pgModeler is an independent project and has no sponsorship, living exclusively from [donations](https://pgmodeler.io/#donationForm) and [pre-compiled packages purchases](http://www.pgmodeler.io/purchase). If you like pgModeler and think it deserves a financial contribution, go ahead and help it!
 
-* :man_technologist: **Developers:** pgModeler has reached a state where its solo developer can't handle all the modifications and new feature requests by himself anymore. So if you know C++ and Qt framework, and want to contribute with coding, let me know! I'll be grateful for any help with the project maintenance!
+* :man_technologist: **Developers:** pgModeler has reached a state where its solo developer can't handle all the modifications and new feature requests by himself anymore in a reasonable time. So if you know how to code in C++ using the Qt framework, and want to contribute to the development, let me know! I'll be grateful for any help with the project maintenance!
 
-* :speaking_head: **Other contributors:** developer or not you can always help this project by spreading the word about it. Share this repository in your social networks, workplaces, family & friends. The more the people know about pgModeler the bigger will be the support to the project, thus creating a virtuous cycle.
+* :speaking_head: **Other contributors:** developer or not you can always help this project by spreading the word about it. Share this repository in your social networks, workplaces, family & friends. The more the people know about pgModeler the bigger will be the support for the project, thus creating a virtuous cycle.
 
 :bookmark_tabs: Changelog
 ----------
@@ -53,20 +54,14 @@ Older releases of pgModeler can be found on [Sourceforge.net](http://sourceforge
 
 * Due to the usage of Qt's raster engine to draw objects, the process of handling objects on the canvas tends to get slower as lots of objects are created causing constant CPU usage. Heavy performance degradation can be noticed when dealing with models with ~500+ tables and/or relationships. There're plans to improve the speed of drawing operations, for large models, in future releases. Changing the relationship connection mode and render smoothness options may help in the performance when handling big database models.
  
-* pgModeler can't handle correctly the importing of complex CSV files (multi-lined cell values) in data manipulation form.
-
-* Due to the CSV importing limitations, any value copied or exported from pgModeler in CSV format will be automatically formatted in the proper way that the tool can handle (by escaping any special character like line breaks and tabulations). If you intend to use CSV files generated by the tool in other software you have to revert back that characters escaping so the file can be read properly by third-party software.
-
 * The diff process still presents false-positive results due to its limitations. Sometimes, there is the need to run the process twice and/or tweaking the options to get the full changes.
 
 * pgModeler does not fully support the [quoted identifier notation](http://www.postgresql.org/docs/current/static/sql-syntax-lexical.html#SQL-SYNTAX-IDENTIFIERS). When using quoted identifiers only the following characters are accepted in the middle of names: a-z A-Z 0-9 _ . @ $ - / \ space. The use of non-ASCII characters in the objects' names also implies in automatic usage of quoted notation.
-
-* pgModeler is unusable in sandboxed environments on macOS. To work around this issue you'll need to deactivate sandbox usage to run pgModeler properly. There is no plan to fix pgModeler to support this kind of environment.
 
 * pgModeler can't be compiled with Microsoft Visual Studio due to the use of some GCC and clang extensions.
 
 * Compiling the source using '-Wconversion' (disabled by Qt in its defaults) generates a lot of warnings. These warnings are 99% harmless and there are no plans to fix them in a near future.
 
-* pgModeler can sometimes crash during the export, import, or validation process due to some threaded operations that, depending on the size and the arrangement of the model, cause race conditions between threads.
+* pgModeler can sometimes crash during the export, import, validation or diff processes due to some threaded operations that, depending on the size and the arrangement of the model, cause race conditions between threads. 
 
 * Due to the particularities of executing bundles on macOS, the file association does not work correctly on this system. So it's not possible to open a model file by clicking it on Finder.
