@@ -31,5 +31,5 @@ Another improvement was the ability to generate split SQL code in the command li
 
 * **SSH tunnel plug-in:** this plug-in brings to pgModeler another long-requested feature, the SSH tunnel. This feature allows one to connect to a database server by encrypting the data transferred between the client and server using the OpenSSH application without the need to expose the PostgreSQL server to the internet or even use an SSL certificate. It is sufficient to have the ability to log in via SSH in the database server to use the tunnel.
 
-Finally, for more details about all changes in the release, please, read the CHANGELOG.md file. For less technical details of the new features in pgModeler 1.0.0, please, visit our [blog](https://pgmodeler.io/blog)
+Finally, for more details about all changes in the release, please, read the CHANGELOG.md file. For less technical details of the new features in pgModeler 1.0.0, please, visit our [blog](https://pgmodeler.io/blog).
 
