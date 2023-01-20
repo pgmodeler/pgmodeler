@@ -23,7 +23,7 @@ CONFIG(debug, debug|release): SUBDIRS += tests
    }
 }
 
-exists($$PLUGINS_SRC_ROOT) {
+exists($$PLUGINS_PRO_FILE) {
    SUBDIRS += $$PLUGINS_FOLDER
 }
 
