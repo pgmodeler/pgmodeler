@@ -57,8 +57,12 @@ defined(NO_UPDATE_CHECK, var): DEFINES+=NO_UPDATE_CHECK
 
 # Set up the plugin folder to be used
 PLUGINS_FOLDER=plugins
-defined(PRIVATE_PLUGINS, var): DEFINES+=PRIVATE_PLUGINS_SYMBOLS
-defined(PRIVATE_PLUGINS,var): PLUGINS_FOLDER=priv-plugins
+!defined(DEMO_VERSION, var) {
+  defined(PRIVATE_PLUGINS, var) {
+    DEFINES+=PRIVATE_PLUGINS_SYMBOLS
+    PLUGINS_FOLDER=priv-plugins
+  }
+}
 
 # Include the plugins subprojects only if exists
 PLUGINS_SRC_ROOT=$$PWD/$$PLUGINS_FOLDER
