@@ -50,18 +50,19 @@ LIBUTILS_INC = $$LIBUTILS_ROOT/src
 defined(SNAPSHOT_BUILD, var): DEFINES+=SNAPSHOT_BUILD
 
 # Set the flag passed to compiler to build the demo version
-defined(DEMO_VERSION, var): DEFINES+=DEMO_VERSION
+defined(DEMO_VERSION, var) {
+ DEFINES+=DEMO_VERSION
+ unset(PRIVATE_PLUGINS)
+}
 
 # Set up the flag passed to compiler to disable all code related to update checking
 defined(NO_UPDATE_CHECK, var): DEFINES+=NO_UPDATE_CHECK
 
 # Set up the plugin folder to be used
 PLUGINS_FOLDER=plugins
-!defined(DEMO_VERSION, var) {
-  defined(PRIVATE_PLUGINS, var) {
-    DEFINES+=PRIVATE_PLUGINS_SYMBOLS
-    PLUGINS_FOLDER=priv-plugins
-  }
+defined(PRIVATE_PLUGINS, var) {
+  DEFINES+=PRIVATE_PLUGINS_SYMBOLS
+  PLUGINS_FOLDER=priv-plugins
 }
 
 # Include the plugins subprojects only if exists
