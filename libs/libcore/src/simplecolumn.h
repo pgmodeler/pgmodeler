@@ -63,7 +63,9 @@ struct SimpleColumn {
 		}
 };
 
-// Declaring SimpleColumn as a metatype in order to use it in QVariant
+/* Registering the SimpleColumn class as a Qt MetaType in order to make
+ * it liable to be sent through signal parameters as well as to be
+ * to be used by QVariant */
 Q_DECLARE_METATYPE(SimpleColumn)
 
 #endif

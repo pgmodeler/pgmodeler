@@ -32,11 +32,6 @@
 #include "codecompletionwidget.h"
 #include "widgets/numberedtexteditor.h"
 
-/* Declaring the Reference class as a Qt metatype in order to permit
-	 that instances of the class be used as data of QVariant and QMetaType */
-#include <QMetaType>
-Q_DECLARE_METATYPE(Reference)
-
 class __libgui ViewWidget: public BaseObjectWidget, public Ui::ViewWidget {
 	private:
 		Q_OBJECT

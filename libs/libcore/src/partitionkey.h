@@ -44,4 +44,9 @@ class __libcore PartitionKey: public Element {
 		virtual QString getSourceCode(SchemaParser::CodeType def_type) final;
 };
 
+/* Registering the PartitionKey class as a Qt MetaType in order to make
+ * it liable to be sent through signal parameters as well as to be
+ * to be used by QVariant */
+Q_DECLARE_METATYPE(PartitionKey)
+
 #endif

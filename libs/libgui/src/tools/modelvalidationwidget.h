@@ -32,11 +32,6 @@
 #include "swapobjectsidswidget.h"
 #include "utils/htmlitemdelegate.h"
 
-/* Declaring the ValidationInfo class as a Qt metatype in order to permit
-	 that instances of the class be used as data of QVariant and QMetaType */
-#include <QMetaType>
-Q_DECLARE_METATYPE(ValidationInfo)
-
 class __libgui ModelValidationWidget: public QWidget, public Ui::ModelValidationWidget {
 	private:
 		Q_OBJECT

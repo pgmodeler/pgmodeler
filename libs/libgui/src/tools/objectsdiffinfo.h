@@ -61,4 +61,9 @@ class __libgui ObjectsDiffInfo {
 		friend class QVariant;
 };
 
+/* Registering the ObjectsDiffInfo class as a Qt MetaType in order to make
+ * it liable to be sent through signal parameters as well as to be
+ * to be used by QVariant */
+Q_DECLARE_METATYPE(ObjectsDiffInfo)
+
 #endif

@@ -81,6 +81,11 @@ enum class ObjectType: unsigned {
 	BaseTable
 };
 
+/* Registering the ObjectType struct as a Qt MetaType in order to make
+ * it liable to be sent through signal parameters as well as to be
+ * to be used by QVariant */
+Q_DECLARE_METATYPE(ObjectType)
+
 class __libcore BaseObject {
 	private:
 		//! \brief Current PostgreSQL version used in SQL code generation

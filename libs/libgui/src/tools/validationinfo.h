@@ -81,5 +81,9 @@ class __libgui ValidationInfo {
 		friend class ModelValidationHelper;
 		friend class QVariant;
 };
-
 #endif
+
+/* Registering the ValidationInfo class as a Qt MetaType in order to make
+ * it liable to be sent through signal parameters as well as to be
+ * to be used by QVariant */
+Q_DECLARE_METATYPE(ValidationInfo)

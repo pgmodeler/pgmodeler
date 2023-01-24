@@ -30,11 +30,6 @@
 #include "pgsqltypewidget.h"
 #include "widgets/objectstablewidget.h"
 
-/* Declaring the TypeAttribute class as a Qt metatype in order to permit
-	 that instances of the class be used as data of QVariant and QMetaType */
-#include <QMetaType>
-Q_DECLARE_METATYPE(TypeAttribute)
-
 class __libgui TypeWidget: public BaseObjectWidget, public Ui::TypeWidget {
 	private:
 		Q_OBJECT

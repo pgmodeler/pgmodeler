@@ -46,4 +46,9 @@ class __libcore TypeAttribute: public BaseObject {
 		void operator = (const TypeAttribute &tpattrib);
 };
 
+/* Registering the TypeAttribute class as a Qt MetaType in order to make
+ * it liable to be sent through signal parameters as well as to be
+ * to be used by QVariant */
+Q_DECLARE_METATYPE(TypeAttribute)
+
 #endif

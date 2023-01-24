@@ -267,7 +267,7 @@ class __libcore PgSqlType: public TemplateType<PgSqlType>{
 
 		static QStringList getTypes();
 
-		QString getTypeName(unsigned) override { return ""; };
+		QString getTypeName(unsigned) override { return ""; }
 
 		friend class Type;
 		friend class Domain;
@@ -278,5 +278,10 @@ class __libcore PgSqlType: public TemplateType<PgSqlType>{
 		friend class Extension;
 		friend class DatabaseModel;
 };
+
+/* Registering the PgSqlType class as a Qt MetaType in order to make
+ * it liable to be sent through signal parameters as well as to be
+ * to be used by QVariant */
+Q_DECLARE_METATYPE(PgSqlType)
 
 #endif 

@@ -217,7 +217,6 @@ void ObjectsTableWidget::setRowFont(int row_idx, const QFont &font)
 	if(row_idx >= table_tbw->rowCount())
 		throw Exception(ErrorCode::RefRowObjectTabInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	QTableWidgetItem *item = nullptr;
 	int col_count = table_tbw->columnCount();
 
 	for(int col = 0; col < col_count; col++)

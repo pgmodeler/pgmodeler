@@ -30,11 +30,6 @@
 #include "pgsqltypewidget.h"
 #include "widgets/objectstablewidget.h"
 
-/* Declaring the OperatorClassElement class as a Qt metatype in order to permit
-	 that instances of the class be used as data of QVariant and QMetaType */
-#include <QMetaType>
-Q_DECLARE_METATYPE(OperatorClassElement)
-
 class __libgui OperatorClassWidget: public BaseObjectWidget, public Ui::OperatorClassWidget {
 	private:
 		Q_OBJECT
