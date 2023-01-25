@@ -35,8 +35,16 @@
 #include "layeritem.h"
 
 class __libcanvas ObjectsScene: public QGraphicsScene {
+	public:
+		enum GridPattern: unsigned {
+			SquarePattern,
+			DotPattern
+		};
+
 	private:
 		Q_OBJECT
+
+		static GridPattern grid_pattern;
 
 		//! \brief Stores the grid line color
 		static QColor grid_color,
@@ -260,6 +268,7 @@ class __libcanvas ObjectsScene: public QGraphicsScene {
 		static void setInvertRangeSelectionTrigger(bool invert);
 		static bool isCornerMoveEnabled();
 
+		static void setGridPattern(GridPattern pattern);
 		static void setGridSize(unsigned size);
 		static void setGridOptions(bool show_grd, bool align_objs_grd, bool show_page_dlm);
 

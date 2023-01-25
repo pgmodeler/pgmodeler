@@ -18,6 +18,8 @@
 
 #include "objectsscene.h"
 
+ObjectsScene::GridPattern ObjectsScene::grid_pattern = ObjectsScene::SquarePattern;
+
 bool ObjectsScene::align_objs_grid=false;
 bool ObjectsScene::show_grid=true;
 bool ObjectsScene::show_page_delim=true;
@@ -635,6 +637,11 @@ bool ObjectsScene::isCornerMoveEnabled()
 	return ObjectsScene::corner_move;
 }
 
+void ObjectsScene::setGridPattern(GridPattern pattern)
+{
+	grid_pattern = pattern;
+}
+
 QPointF ObjectsScene::alignPointToGrid(const QPointF &pnt)
 {
 	int px = static_cast<int>(round(pnt.x()/static_cast<double>(grid_size))) * grid_size,
@@ -736,14 +743,15 @@ void ObjectsScene::setGridSize(unsigned size)
 	if(size >= 20 || grid.style()==Qt::NoBrush)
 	{
 		QImage grid_img;
-		double width = 0, height = 0, x = 0, y = 0, delim_factor = 1/delimiter_scale;
+		double width = 0, height = 0, x = 0, y = 0,
+				delim_factor = 1/delimiter_scale,
+				pen_width = BaseObjectView::ObjectBorderWidth *
+										BaseObjectView::getScreenDpiFactor() *
+										delim_factor;
 		int img_w = 0, img_h = 0;
 		QSizeF aux_size;
-		QPainter painter;
-		QPen pen = QPen(QColor(),
-										BaseObjectView::ObjectBorderWidth *
-										BaseObjectView::getScreenDpiFactor() *
-										delim_factor);
+		QPainter painter;		
+		QPen pen = QPen(QColor(), pen_width);
 
 		// Retrieve the page rect considering the orientation, margin and page size
 		aux_size = page_layout.paintRect(QPageLayout::Point).size() * delim_factor;
@@ -764,6 +772,8 @@ void ObjectsScene::setGridSize(unsigned size)
 
 		if(show_grid)
 		{
+			pen.setWidthF(pen_width *
+										(grid_pattern == GridPattern::DotPattern ? 1.5 : 1));
 			pen.setColor(grid_color);
 			painter.setPen(pen);
 
@@ -772,7 +782,15 @@ void ObjectsScene::setGridSize(unsigned size)
 			{
 				for(y=0; y < height; y+=size)
 				{
-					painter.drawRect(QRectF(QPointF(x,y), QPointF(x + size,y + size)));
+					if(grid_pattern == GridPattern::SquarePattern)
+						painter.drawRect(QRectF(QPointF(x,y), QPointF(x + size, y + size)));
+					else
+					{
+						painter.drawPoint(x, y);
+						painter.drawPoint(x + size, y);
+						painter.drawPoint(x + size, y + size);
+						painter.drawPoint(x, y + size);
+					}
 				}
 			}
 		}
@@ -780,6 +798,7 @@ void ObjectsScene::setGridSize(unsigned size)
 		//Creates the page delimiter lines
 		if(show_page_delim)
 		{
+			pen.setWidthF(pen_width);
 			pen.setColor(delimiters_color);
 			pen.setStyle(Qt::CustomDashLine);
 			pen.setDashPattern({3, 5});

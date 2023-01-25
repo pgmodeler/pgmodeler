@@ -305,6 +305,7 @@ CREATE TABLE public.table_b (\n \
 	connect(grid_color_cp, &ColorPickerWidget::s_colorChanged, this, &AppearanceConfigWidget::previewCanvasColors);
 	connect(grid_color_cp, &ColorPickerWidget::s_colorsChanged, this, &AppearanceConfigWidget::previewCanvasColors);
 	connect(grid_size_spb, &QSpinBox::textChanged, this, &AppearanceConfigWidget::previewCanvasColors);
+	connect(grid_pattern_cmb, &QComboBox::currentIndexChanged, this, &AppearanceConfigWidget::previewCanvasColors);
 
 	connect(syntax_hl_theme_cmb, &QComboBox::currentTextChanged, this, &AppearanceConfigWidget::applySyntaxHighlightTheme);
 
@@ -477,6 +478,8 @@ void AppearanceConfigWidget::loadConfiguration()
 
 void AppearanceConfigWidget::applyDesignCodeStyle()
 {
+	grid_pattern_cmb->setCurrentIndex((config_params[Attributes::Design][Attributes::GridPattern].isEmpty() ||
+																		 config_params[Attributes::Design][Attributes::GridPattern] == Attributes::Square) ? 0 : 1);
 	grid_size_spb->setValue((config_params[Attributes::Design][Attributes::GridSize]).toUInt());
 	min_obj_opacity_spb->setValue(config_params[Attributes::Design][Attributes::MinObjectOpacity].toUInt());
 	attribs_per_page_spb->setValue(config_params[Attributes::Design][Attributes::AttribsPerPage].toUInt());
@@ -596,7 +599,8 @@ void AppearanceConfigWidget::saveConfiguration()
 		config_params[Attributes::UiTheme] = attribs;
 		attribs.clear();
 
-		attribs[Attributes::GridSize]=QString::number(grid_size_spb->value());
+		attribs[Attributes::GridSize]= QString::number(grid_size_spb->value());
+		attribs[Attributes::GridPattern] = grid_pattern_cmb->currentIndex() == 0 ? Attributes::Square : Attributes::Dot;
 		attribs[Attributes::MinObjectOpacity]=QString::number(min_obj_opacity_spb->value());
 		attribs[Attributes::AttribsPerPage]=QString::number(attribs_per_page_spb->value());
 		attribs[Attributes::ExtAttribsPerPage]=QString::number(ext_attribs_per_page_spb->value());
@@ -793,6 +797,8 @@ void AppearanceConfigWidget::applyConfiguration()
 	ObjectsScene::setCanvasColor(canvas_color_cp->getColor(0));
 	ObjectsScene::setGridColor(grid_color_cp->getColor(0));
 	ObjectsScene::setDelimitersColor(delimiters_color_cp->getColor(0));
+	ObjectsScene::setGridPattern(grid_pattern_cmb->currentIndex() == 0 ?
+																 ObjectsScene::SquarePattern : ObjectsScene::DotPattern);
 	ObjectsScene::setGridSize(grid_size_spb->value());
 	BaseTableView::setAttributesPerPage(BaseTable::AttribsSection, attribs_per_page_spb->value());
 	BaseTableView::setAttributesPerPage(BaseTable::ExtAttribsSection, ext_attribs_per_page_spb->value());
@@ -880,6 +886,8 @@ void AppearanceConfigWidget::previewCodeFontStyle()
 void AppearanceConfigWidget::previewCanvasColors()
 {
 	ObjectsScene::setCanvasColor(canvas_color_cp->getColor(0));
+	ObjectsScene::setGridPattern(grid_pattern_cmb->currentIndex() == 0 ?
+																 ObjectsScene::SquarePattern : ObjectsScene::DotPattern);
 	ObjectsScene::setGridColor(grid_color_cp->getColor(0));
 	ObjectsScene::setDelimitersColor(delimiters_color_cp->getColor(0));
 	ObjectsScene::setGridSize(grid_size_spb->value());
