@@ -411,6 +411,7 @@ namespace Attributes {
 	OidFilterOp("oid-filter-op"),
 	Oids("oids"),
 	OldName("old-name"),
+	OldPgSqlVersions("old-pgsql-versions"),
 	OldTableName("old-table-name"),
 	OldVersion("old-version"),
 	OpClass("opclass"),

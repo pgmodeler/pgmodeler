@@ -252,7 +252,7 @@ class __libgui DatabaseImportHelper: public QObject {
 		
 		//! \brief Returns a copy of the current catalog instance being used
 		Catalog getCatalog();
-		
+
 		/*! \brief Returns an attribute map for the specified object type. The parameters "schema" and "table"
 				must be used only when retrieving table children objects.
 

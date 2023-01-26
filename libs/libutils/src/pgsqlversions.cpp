@@ -36,13 +36,13 @@ namespace PgSqlVersions {
 		PgSqlVersion110, PgSqlVersion100
 	};
 
-	QString parseString(const QString &pgsql_ver)
+	QString parseString(const QString &pgsql_ver, bool ignore_legacy_ver)
 	{
 		unsigned curr_ver = QString(pgsql_ver).remove('.').toUInt(),
 				minor_ver = QString(PgSqlVersion100).remove('.').toUInt(),
 				default_ver = QString(DefaulVersion).remove('.').toUInt();
 
-		if(curr_ver != 0 && (curr_ver < minor_ver))
+		if(!ignore_legacy_ver && curr_ver != 0 && (curr_ver < minor_ver))
 		{
 			throw Exception(Exception::getErrorMessage(ErrorCode::InvPostgreSQLVersion)
 							.arg(pgsql_ver)

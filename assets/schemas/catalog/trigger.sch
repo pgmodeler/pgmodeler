@@ -89,9 +89,13 @@
 		WHEN (tg.tgconstraint > 0) THEN
 		regexp_replace(regexp_replace(pg_get_triggerdef(tg.oid), '(.)+((INSERT|DELETE|UPDATE)|( OF))', ''), '( ON)(.)*','')
 		ELSE NULL
-		END AS columns, 
+		END AS columns, ]
 
-		tgoldtable AS old_table_name, tgnewtable AS new_table_name, ]
+		%if ({pgsql-ver} >=f "10.0") %then
+			[ tgoldtable AS old_table_name, tgnewtable AS new_table_name, ]
+		%else
+			[ NULL AS old_table_name, NULL AS new_table_name, ]
+		%end
 
 		({comment}) [ AS comment ]
 

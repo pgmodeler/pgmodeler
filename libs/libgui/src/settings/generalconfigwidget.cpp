@@ -202,7 +202,8 @@ void GeneralConfigWidget::loadConfiguration()
 		check_update_chk->setChecked(config_params[Attributes::Configuration][Attributes::CheckUpdate]==Attributes::True);
 		idx = check_versions_cmb->findData(config_params[Attributes::Configuration][Attributes::CheckVersions]);
 		check_versions_cmb->setCurrentIndex(idx < 0 ? 0 : idx);
-		check_versions_cmb->setEnabled(check_update_chk->isChecked());
+		check_versions_cmb->setEnabled(check_update_chk->isChecked());	
+		old_pgsql_versions_chk->setChecked(config_params[Attributes::Configuration][Attributes::OldPgSqlVersions]==Attributes::True);
 
 		save_last_pos_chk->setChecked(config_params[Attributes::Configuration][Attributes::SaveLastPosition]==Attributes::True);
 		disable_smooth_chk->setChecked(config_params[Attributes::Configuration][Attributes::DisableSmoothness]==Attributes::True);
@@ -434,6 +435,7 @@ void GeneralConfigWidget::saveConfiguration()
 		config_params[Attributes::Configuration][Attributes::SaveRestoreGeometry]=(save_restore_geometry_chk->isChecked() ? Attributes::True : "");
 		config_params[Attributes::Configuration][Attributes::LowVerbosity]=(low_verbosity_chk->isChecked() ? Attributes::True : "");
 		config_params[Attributes::Configuration][Attributes::EscapeComment]=(escape_comments_chk->isChecked() ? Attributes::True : "");
+		config_params[Attributes::Configuration][Attributes::OldPgSqlVersions]=(old_pgsql_versions_chk->isChecked() ? Attributes::True : "");
 
 		config_params[Attributes::Configuration][Attributes::File]="";
 		config_params[Attributes::Configuration][Attributes::RecentModels]="";
@@ -565,6 +567,7 @@ void GeneralConfigWidget::applyConfiguration()
 	ModelDatabaseDiffForm::setLowVerbosity(low_verbosity_chk->isChecked());
 	DatabaseImportForm::setLowVerbosity(low_verbosity_chk->isChecked());
 	ModelExportForm::setLowVerbosity(low_verbosity_chk->isChecked());
+	Connection::setIgnoreDbVersion(old_pgsql_versions_chk->isChecked());
 }
 
 void GeneralConfigWidget::restoreDefaults()
@@ -575,7 +578,6 @@ void GeneralConfigWidget::restoreDefaults()
 		BaseConfigWidget::restoreDefaults(GlobalAttributes::XMLHighlightConf, true);
 		BaseConfigWidget::restoreDefaults(GlobalAttributes::SQLHighlightConf, true);
 		BaseConfigWidget::restoreDefaults(GlobalAttributes::SchHighlightConf, true);
-		//BaseConfigWidget::restoreDefaults(GlobalAttributes::UiDefaulStyleConf, true);
 		this->loadConfiguration();
 		this->applyConfiguration();
 		setConfigurationChanged(true);

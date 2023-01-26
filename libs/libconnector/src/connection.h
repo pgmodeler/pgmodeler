@@ -78,7 +78,11 @@ class __libconnector Connection {
 		print_sql,
 
 		//! \brief Indicates if error silence is enabled
-		silence_conn_err;
+		silence_conn_err,
+
+		/*! \brief Indicates if the PostgreSQL version checking must be ignored during connection.
+		 * This flag allows connecting (poorly!) to older versions ( < 10). */
+		ignore_db_version;
 
 		/*! \brief Indicates that the initial database configured in the connection can be automatically
 		browsed after connect the server. This attribute is useful only in SQLTool */
@@ -161,6 +165,15 @@ class __libconnector Connection {
 
 		//! \brief Returns the current state for silence connection errors
 		static bool isConnErrorSilenced();
+
+		/*! \brief Ignores the PostgreSQL version checking during connection.
+		 *  When false (the default behavior), when connecting to a server which version is < 10, an error
+		 *  is raised. When true, the error is not raised, but the overall usage of the tool may be affected
+		 *  since pgModeler is strictly tied to newer version. */
+		static void setIgnoreDbVersion(bool ignore);
+
+		//! \brief Indicates if the database version is ignored in the connection
+		static bool isDbVersionIgnored();
 
 		/*! \brief Sets one connection parameter. This method can only be called before
 		 the connection to the database */

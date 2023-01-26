@@ -1067,7 +1067,7 @@ void BaseObject::setPgSQLVersion(const QString &version)
 {
 	try
 	{
-		pgsql_ver = PgSqlVersions::parseString(version);
+		pgsql_ver = PgSqlVersions::parseString(version, false);
 	}
 	catch(Exception &e)
 	{

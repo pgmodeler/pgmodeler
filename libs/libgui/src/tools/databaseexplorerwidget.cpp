@@ -141,6 +141,7 @@ DatabaseExplorerWidget::DatabaseExplorerWidget(QWidget *parent): QWidget(parent)
 {
 	setupUi(this);
 
+	version_alert_frm->setVisible(false);
 	curr_scroll_value = 0;
 	filter_parent->setVisible(false);
 	sort_column = 0;
@@ -1021,6 +1022,18 @@ void DatabaseExplorerWidget::listObjects()
 		configureImportHelper();
 		objects_trw->blockSignals(true);
 
+
+		/* If the database version is ignored we display the
+		 * alert message if the current db version is unsupported */
+		if(Connection::isDbVersionIgnored())
+		{
+			attribs_map server_attr = catalog.getServerAttributes();
+			QStringList list = server_attr[Attributes::ServerVersion].split('.');
+
+			if(list[0].toDouble() < PgSqlVersions::PgSqlVersion100.toDouble())
+				version_alert_frm->setVisible(true);
+		}
+
 		saveTreeState();
 		clearObjectProperties();
 
@@ -1498,7 +1511,10 @@ void DatabaseExplorerWidget::truncateTable(QTreeWidgetItem *item, bool cascade)
 
 void DatabaseExplorerWidget::updateItem(QTreeWidgetItem *item, bool restore_tree_state)
 {
-	if(item && item->data(DatabaseImportForm::ObjectId, Qt::UserRole).toInt() >= 0)
+	if(!item || item->data(DatabaseImportForm::ObjectId, Qt::UserRole).toInt() < 0)
+		return;
+
+	try
 	{
 		QTreeWidgetItem *root=nullptr, *parent=nullptr, *aux_item=nullptr;
 		ObjectType obj_type=static_cast<ObjectType>(item->data(DatabaseImportForm::ObjectTypeId, Qt::UserRole).toUInt());
@@ -1586,6 +1602,13 @@ void DatabaseExplorerWidget::updateItem(QTreeWidgetItem *item, bool restore_tree
 			restoreTreeState();
 
 		QApplication::restoreOverrideCursor();
+	}
+	catch(Exception &e)
+	{
+		objects_trw->blockSignals(false);
+		objects_trw->setUpdatesEnabled(true);
+		QApplication::restoreOverrideCursor();
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 	}
 }
 

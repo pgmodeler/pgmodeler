@@ -426,6 +426,7 @@ namespace Attributes {
 	OidFilterOp,
 	Oids,
 	OldName,
+	OldPgSqlVersions,
 	OldTableName,
 	OldVersion,
 	OpClass,

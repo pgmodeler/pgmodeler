@@ -389,7 +389,8 @@ QString Catalog::getCatalogQuery(const QString &qry_type, ObjectType obj_type, b
 			attr.second.replace(QChar('\''), QString("''"));
 	}
 
-	schparser.setPgSQLVersion(connection.getPgSQLVersion(true));
+	schparser.__setPgSQLVersion(connection.getPgSQLVersion(true),
+															Connection::isDbVersionIgnored());
 	attribs[qry_type]=Attributes::True;
 
 	if(exclude_sys_objs || list_only_sys_objs)

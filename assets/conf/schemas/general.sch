@@ -48,6 +48,7 @@ $tb [<configuration pgmodeler-ver="] {pgmodeler-ver} ["] $br
 {spc} [low-verbosity="] %if {low-verbosity} %then true %else false %end ["] $br
 {spc} [escape-comment="] %if {escape-comment} %then true %else false %end ["] $br
 {spc} [hide-schema-names-of-types="] %if {hide-schema-names-of-types} %then true %else false %end ["] $br
+{spc} [old-pgsql-versions="] %if {old-pgsql-versions} %then true %else false %end ["] $br
 
 %if {source-editor-app} %then
 	{spc} [source-editor-app="] {source-editor-app} ["] $br

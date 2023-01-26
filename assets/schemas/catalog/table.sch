@@ -45,45 +45,59 @@
 		END
 		AS unlogged_bool, 
 		tb.relrowsecurity AS rls_enabled_bool, 
-		tb.relforcerowsecurity AS rls_forced_bool, 
+		tb.relforcerowsecurity AS rls_forced_bool, ]
 
-		(SELECT array_agg(inhparent) AS parents FROM pg_inherits WHERE inhrelid = tb.oid 
- 		 AND inhparent NOT IN (SELECT partrelid FROM pg_partitioned_table)),
+		%if ({pgsql-ver} >=f "10.0") %then
+			[ (SELECT array_agg(inhparent) AS parents FROM pg_inherits WHERE inhrelid = tb.oid 
+	 		 AND inhparent NOT IN (SELECT partrelid FROM pg_partitioned_table)),
 
-		 CASE relkind
-			WHEN 'p' THEN TRUE
-			ELSE FALSE
-			END AS is_partitioned_bool,
+			 CASE relkind
+				WHEN 'p' THEN TRUE
+				ELSE FALSE
+				END AS is_partitioned_bool,
 
-			CASE relispartition
-			WHEN TRUE THEN
-			(SELECT inhparent FROM pg_inherits WHERE inhrelid = tb.oid)
-			ELSE
-			NULL
-		END AS partitioned_table,
-		pg_get_expr(relpartbound, tb.oid) AS partition_bound_expr, 	]
+				CASE relispartition
+				WHEN TRUE THEN
+				(SELECT inhparent FROM pg_inherits WHERE inhrelid = tb.oid)
+				ELSE
+				NULL
+			END AS partitioned_table,
+			pg_get_expr(relpartbound, tb.oid) AS partition_bound_expr, ]
+		%else
+			[NULL AS partitioned_table, NULL AS partition_bound_expr, ]
+		%end
 
 		({comment}) [ AS comment ]
 
 		[ , st.n_tup_ins AS tuples_ins, st.n_tup_upd AS tuples_upd, st.n_tup_del AS tuples_del, st.n_live_tup AS row_amount,
 		st.n_dead_tup AS dead_rows_amount, st.last_vacuum, st.last_autovacuum, st.last_analyze, ]
 
-		[ CASE partstrat
-			WHEN 'l' then 'LIST'
-			WHEN 'r' then 'RANGE'
-			WHEN 'h' then 'HASH'
-			ELSE NULL
-		END AS partitioning,
-		pg_get_expr(partexprs, partrelid) AS part_key_exprs,
-		partattrs::oid] $ob $cb [ AS part_key_cols,
-		partclass::oid] $ob $cb [ AS part_key_opcls,
-		partcollation::oid] $ob $cb [ AS part_key_colls ]
+		%if ({pgsql-ver} >=f "10.0") %then
+			[ CASE partstrat
+				WHEN 'l' then 'LIST'
+				WHEN 'r' then 'RANGE'
+				WHEN 'h' then 'HASH'
+				ELSE NULL
+			END AS partitioning,
+			pg_get_expr(partexprs, partrelid) AS part_key_exprs,
+			partattrs::oid] $ob $cb [ AS part_key_cols,
+			partclass::oid] $ob $cb [ AS part_key_opcls,
+			partcollation::oid] $ob $cb [ AS part_key_colls ]
+		%else
+			[ NULL AS partitioning, NULL AS part_key_exprs,
+			  NULL AS part_key_cols, NULL AS part_key_opcls,
+			  NULL AS part_key_colls ]
+		%end
 
 		[ FROM pg_class AS tb
 		LEFT JOIN pg_tables AS _tb1 ON _tb1.tablename=tb.relname
-		LEFT JOIN pg_stat_all_tables AS st ON st.relid=tb.oid 
-		LEFT JOIN pg_partitioned_table AS pt ON pt.partrelid = tb.oid 
-		WHERE tb.relkind IN ('r','p') ]
+		LEFT JOIN pg_stat_all_tables AS st ON st.relid=tb.oid  ]
+
+		%if ({pgsql-ver} >=f "10.0") %then
+			[ LEFT JOIN pg_partitioned_table AS pt ON pt.partrelid = tb.oid ]
+		%end
+
+		[ WHERE tb.relkind IN ('r','p') ]
 
 		%if {last-sys-oid} %then
 			[ AND tb.oid ] {oid-filter-op} $sp {last-sys-oid}

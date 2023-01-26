@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1172</width>
+    <width>936</width>
     <height>1176</height>
    </rect>
   </property>
@@ -94,13 +94,6 @@
           <property name="spacing">
            <number>5</number>
           </property>
-          <item row="0" column="0">
-           <widget class="QLabel" name="label_5">
-            <property name="text">
-             <string>User interface language:</string>
-            </property>
-           </widget>
-          </item>
           <item row="0" column="1">
            <widget class="QComboBox" name="ui_language_cmb">
             <property name="toolTip">
@@ -117,37 +110,10 @@
             </property>
            </widget>
           </item>
-          <item row="1" column="0">
-           <widget class="QLabel" name="label_2">
-            <property name="text">
-             <string>Configurations directory:</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="0">
-           <widget class="QLabel" name="label_3">
-            <property name="text">
-             <string>Souce code editor:</string>
-            </property>
-           </widget>
-          </item>
           <item row="3" column="0">
            <widget class="QLabel" name="label_4">
             <property name="text">
              <string>Souce code editor args:</string>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="1">
-           <widget class="QLineEdit" name="source_editor_args_edt">
-            <property name="toolTip">
-             <string/>
-            </property>
-            <property name="readOnly">
-             <bool>false</bool>
-            </property>
-            <property name="clearButtonEnabled">
-             <bool>true</bool>
             </property>
            </widget>
           </item>
@@ -172,75 +138,6 @@
               </property>
               <property name="text">
                <string>SQL history max. lines:</string>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="1" colspan="2">
-             <widget class="QComboBox" name="check_versions_cmb">
-              <property name="enabled">
-               <bool>false</bool>
-              </property>
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="iconSize">
-               <size>
-                <width>28</width>
-                <height>28</height>
-               </size>
-              </property>
-              <item>
-               <property name="text">
-                <string>All versions</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>Stable and beta versions</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>Stable version only</string>
-               </property>
-              </item>
-             </widget>
-            </item>
-            <item row="4" column="2">
-             <spacer name="horizontalSpacer_8">
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-              <property name="sizeType">
-               <enum>QSizePolicy::Preferred</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>40</width>
-                <height>20</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-            <item row="1" column="0">
-             <widget class="QCheckBox" name="check_update_chk">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="toolTip">
-               <string>Check if there is a new version on the server at the startup</string>
-              </property>
-              <property name="text">
-               <string>Check for new versions:</string>
-              </property>
-              <property name="checked">
-               <bool>false</bool>
               </property>
              </widget>
             </item>
@@ -317,6 +214,59 @@
               </item>
              </layout>
             </item>
+            <item row="1" column="1" colspan="2">
+             <widget class="QComboBox" name="check_versions_cmb">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="iconSize">
+               <size>
+                <width>28</width>
+                <height>28</height>
+               </size>
+              </property>
+              <item>
+               <property name="text">
+                <string>All versions</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Stable and beta versions</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Stable version only</string>
+               </property>
+              </item>
+             </widget>
+            </item>
+            <item row="1" column="0">
+             <widget class="QCheckBox" name="check_update_chk">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="toolTip">
+               <string>Check if there is a new version on the server at the startup</string>
+              </property>
+              <property name="text">
+               <string>Check for new versions:</string>
+              </property>
+              <property name="checked">
+               <bool>false</bool>
+              </property>
+             </widget>
+            </item>
             <item row="4" column="1">
              <widget class="QSpinBox" name="autosave_interv_spb">
               <property name="sizePolicy">
@@ -361,24 +311,39 @@
               </property>
              </widget>
             </item>
-            <item row="0" column="3">
+            <item row="4" column="2">
+             <spacer name="horizontalSpacer_8">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeType">
+               <enum>QSizePolicy::Preferred</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item row="5" column="1">
              <layout class="QHBoxLayout" name="horizontalLayout_4">
               <property name="spacing">
                <number>5</number>
               </property>
-              <item>
-               <widget class="QLabel" name="oplist_size_lbl">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="text">
-                 <string>Operation history size:</string>
-                </property>
-               </widget>
-              </item>
+              <property name="leftMargin">
+               <number>0</number>
+              </property>
+              <property name="topMargin">
+               <number>0</number>
+              </property>
+              <property name="rightMargin">
+               <number>0</number>
+              </property>
+              <property name="bottomMargin">
+               <number>0</number>
+              </property>
               <item>
                <widget class="QSpinBox" name="oplist_size_spb">
                 <property name="sizePolicy">
@@ -407,44 +372,38 @@
                 </property>
                </widget>
               </item>
-              <item>
-               <spacer name="horizontalSpacer_6">
-                <property name="orientation">
-                 <enum>Qt::Horizontal</enum>
-                </property>
-                <property name="sizeType">
-                 <enum>QSizePolicy::Expanding</enum>
-                </property>
-                <property name="sizeHint" stdset="0">
-                 <size>
-                  <width>40</width>
-                  <height>20</height>
-                 </size>
-                </property>
-               </spacer>
-              </item>
              </layout>
             </item>
-            <item row="4" column="3">
-             <widget class="QCheckBox" name="low_verbosity_chk">
+            <item row="5" column="2">
+             <spacer name="horizontalSpacer_6">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeType">
+               <enum>QSizePolicy::Expanding</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item row="5" column="0">
+             <widget class="QLabel" name="oplist_size_lbl">
               <property name="sizePolicy">
-               <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+               <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
               </property>
-              <property name="toolTip">
-               <string>&lt;p&gt;Reduces the verbosity of the export, import and diff process causing only key info messages and errors to be displayed. This option causes less rendering operations to be performed when displaying progress messages and, as a consequence, it makes these processes run faster.&lt;/p&gt;</string>
-              </property>
-              <property name="statusTip">
-               <string/>
-              </property>
               <property name="text">
-               <string>Low verbosity for export, import and diff </string>
+               <string>Operation history size:</string>
               </property>
              </widget>
             </item>
-            <item row="1" column="3">
+            <item row="0" column="3">
              <layout class="QHBoxLayout" name="horizontalLayout_7">
               <property name="spacing">
                <number>5</number>
@@ -518,7 +477,67 @@
               </item>
              </layout>
             </item>
+            <item row="1" column="3">
+             <widget class="QCheckBox" name="low_verbosity_chk">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="toolTip">
+               <string>&lt;p&gt;Reduces the verbosity of the export, import and diff process causing only key info messages and errors to be displayed. This option causes less rendering operations to be performed when displaying progress messages and, as a consequence, it makes these processes run faster.&lt;/p&gt;</string>
+              </property>
+              <property name="statusTip">
+               <string/>
+              </property>
+              <property name="text">
+               <string>Low verbosity for export, import and diff </string>
+              </property>
+             </widget>
+            </item>
+            <item row="4" column="3">
+             <widget class="QCheckBox" name="old_pgsql_versions_chk">
+              <property name="text">
+               <string>Allow unsupported PostgreSQL versions</string>
+              </property>
+             </widget>
+            </item>
            </layout>
+          </item>
+          <item row="3" column="1">
+           <widget class="QLineEdit" name="source_editor_args_edt">
+            <property name="toolTip">
+             <string/>
+            </property>
+            <property name="readOnly">
+             <bool>false</bool>
+            </property>
+            <property name="clearButtonEnabled">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="0">
+           <widget class="QLabel" name="label_5">
+            <property name="text">
+             <string>User interface language:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0">
+           <widget class="QLabel" name="label_3">
+            <property name="text">
+             <string>Souce code editor:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="label_2">
+            <property name="text">
+             <string>Configurations directory:</string>
+            </property>
+           </widget>
           </item>
          </layout>
         </widget>
@@ -1445,7 +1464,6 @@
   <tabstop>reset_sizes_tb</tabstop>
   <tabstop>autosave_interv_chk</tabstop>
   <tabstop>autosave_interv_spb</tabstop>
-  <tabstop>low_verbosity_chk</tabstop>
   <tabstop>confirm_validation_chk</tabstop>
   <tabstop>simple_obj_creation_chk</tabstop>
   <tabstop>use_placeholders_chk</tabstop>

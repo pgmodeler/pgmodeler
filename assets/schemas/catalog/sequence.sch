@@ -40,13 +40,19 @@
 		res record;
 		BEGIN ]
 
-		[ EXECUTE 'SELECT s.seqstart AS start_value, s.seqmin AS min_value, s.seqmax AS max_value, ' ||
-		' s.seqincrement AS increment_by, seqcache as cache_value, ' ||
-		' CASE WHEN seqcycle IS FALSE THEN NULL ELSE seqcycle END AS is_cycled ' ||
-		' FROM pg_sequence AS s ' ||
-		' LEFT JOIN pg_class AS c ON s.seqrelid = c.oid ' ||
-		' LEFT JOIN pg_namespace AS n ON n.oid = c.relnamespace ' ||
-		' WHERE n.nspname = ''' || $1 ||''' AND c.relname = ''' || $2 ||''' LIMIT 1;' INTO res; ]
+		%if ({pgsql-ver} >=f "10.0") %then
+			[ EXECUTE 'SELECT s.seqstart AS start_value, s.seqmin AS min_value, s.seqmax AS max_value, ' ||
+			' s.seqincrement AS increment_by, seqcache as cache_value, ' ||
+			' CASE WHEN seqcycle IS FALSE THEN NULL ELSE seqcycle END AS is_cycled ' ||
+			' FROM pg_sequence AS s ' ||
+			' LEFT JOIN pg_class AS c ON s.seqrelid = c.oid ' ||
+			' LEFT JOIN pg_namespace AS n ON n.oid = c.relnamespace ' ||
+			' WHERE n.nspname = ''' || $1 ||''' AND c.relname = ''' || $2 ||''' LIMIT 1;' INTO res; ]
+		%else
+			[ EXECUTE 'SELECT start_value, min_value, max_value, increment_by, cache_value, ' ||
+			' CASE WHEN is_cycled IS FALSE THEN NULL ' ||
+			' ELSE is_cycled END FROM ' || '"' || $1 || '"' || '.' || '"' || $2 || '"' || ' LIMIT 1;' INTO res; ]
+		%end
 
 		[ RETURN replace(replace(res::text,'(','{'),')','}');
 		END
