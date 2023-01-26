@@ -745,9 +745,9 @@ void ObjectsScene::setGridSize(unsigned size)
 		QImage grid_img;
 		double width = 0, height = 0, x = 0, y = 0,
 				delim_factor = 1/delimiter_scale,
-				pen_width = BaseObjectView::ObjectBorderWidth *
-										BaseObjectView::getScreenDpiFactor() *
-										delim_factor;
+				pen_width = round(BaseObjectView::ObjectBorderWidth *
+													BaseObjectView::getScreenDpiFactor() *
+													delim_factor);
 		int img_w = 0, img_h = 0;
 		QSizeF aux_size;
 		QPainter painter;		
