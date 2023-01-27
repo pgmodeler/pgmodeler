@@ -2865,7 +2865,7 @@ void DatabaseImportHelper::assignSequencesToColumns()
 
 						catalog.clearObjectFilter(ObjectType::Sequence);
 						seq_oid = catalog.getObjectOID(names[1], ObjectType::Sequence, names[0]);
-						seq_name = getDependencyObject(seq_oid, ObjectType::Sequence, false, true, false);
+						seq_name = getDependencyObject(seq_oid, ObjectType::Sequence, true, true, false);
 						seq = dbmodel->getSequence(seq_name);
 					}
 				}
@@ -3012,7 +3012,7 @@ QString DatabaseImportHelper::getObjectName(const QString &oid, bool signature_f
 		if(BaseObject::acceptsSchema(obj_type))
 			sch_name = getObjectName(obj_attr[Attributes::Schema]);
 
-		if(!sch_name.isEmpty())
+		if(!sch_name.isEmpty() && signature_form)
 			obj_name.prepend(sch_name + QString("."));
 	}
 
