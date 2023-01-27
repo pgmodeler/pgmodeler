@@ -3012,7 +3012,7 @@ QString DatabaseImportHelper::getObjectName(const QString &oid, bool signature_f
 		if(BaseObject::acceptsSchema(obj_type))
 			sch_name = getObjectName(obj_attr[Attributes::Schema]);
 
-		if(!sch_name.isEmpty() && signature_form)
+		if(!sch_name.isEmpty())
 			obj_name.prepend(sch_name + QString("."));
 	}
 
