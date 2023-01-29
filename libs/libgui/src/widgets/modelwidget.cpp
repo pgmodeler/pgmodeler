@@ -1731,6 +1731,7 @@ void ModelWidget::printModel(QPrinter *printer, bool print_grid, bool print_page
 	ObjectsScene::setCanvasColor(QColor(255, 255, 255));
 	ObjectsScene::setGridOptions(print_grid, align_objs, false);
 
+	scene->setShowSceneLimits(false);
 	scene->update();
 	scene->clearSelection();
 
@@ -1786,6 +1787,7 @@ void ModelWidget::printModel(QPrinter *printer, bool print_grid, bool print_page
 	//Restore the grid option backup
 	ObjectsScene::setCanvasColor(bg_color);
 	ObjectsScene::setGridOptions(show_grid, align_objs, show_delims);
+	scene->setShowSceneLimits(true);
 	scene->update();
 }
 
