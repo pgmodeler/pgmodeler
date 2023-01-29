@@ -132,7 +132,6 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	label->setFont(font);
 	label->setWordWrap(true);
 	label->setText(tr("<strong>ATTENTION:</strong> The database model is protected! Operations that could modify it are disabled!"));
-	//GuiUtilsNs::configureWidgetFont(label, GuiUtilsNs::MediumFontFactor);
 
 	grid->addWidget(label, 0, 1, 1, 1);
 	protected_model_frm->setLayout(grid);
@@ -597,6 +596,14 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	viewport->installEventFilter(this);
 	viewport->horizontalScrollBar()->installEventFilter(this);
 	viewport->verticalScrollBar()->installEventFilter(this);
+
+	connect(viewport->verticalScrollBar(), &QScrollBar::valueChanged, this, [this]() {
+		viewport->resetCachedContent();
+	});
+
+	connect(viewport->horizontalScrollBar(), &QScrollBar::valueChanged, this, [this]() {
+		viewport->resetCachedContent();
+	});
 }
 
 ModelWidget::~ModelWidget()
@@ -1798,6 +1805,7 @@ void ModelWidget::updateRenderHints()
 void ModelWidget::update()
 {
 	updateRenderHints();
+	viewport->resetCachedContent();
 	scene->update();
 	QWidget::update();
 }
@@ -5488,6 +5496,7 @@ void ModelWidget::updateMagnifierArea()
 	double cx = magnifier_area_lbl->width() / 2, cy =  magnifier_area_lbl->height() / 2;
 
 	pix.setDevicePixelRatio(qApp->devicePixelRatio());
+	pix.fill(ObjectsScene::getCanvasColor());
 
 	magnifier_rect.setRect(0, 0,
 												 magnifier_area_lbl->width() * current_zoom,

@@ -1310,7 +1310,7 @@ void MainWindow::setCurrentModel()
 
 		connect(current_model, &ModelWidget::s_zoomModified, this, [this](double zoom) {
 			ObjectsScene::setLockDelimiterScale(action_lock_delim->isChecked(), zoom);
-			current_model->scene->update();
+			current_model->update();
 		});
 
 		connect(action_alin_objs_grade, &QAction::triggered, this, &MainWindow::setGridOptions, Qt::UniqueConnection);
@@ -1337,7 +1337,7 @@ void MainWindow::setCurrentModel()
 
 		ObjectsScene::setLockDelimiterScale(action_lock_delim->isChecked(),
 																				current_model->getCurrentZoom());
-		current_model->scene->update();
+		current_model->update();
 	}
 
 	updateWindowTitle();
@@ -1388,7 +1388,7 @@ void MainWindow::setGridOptions()
 		}
 
 		//Redraw the scene to apply the new grid options
-		current_model->scene->update();
+		current_model->update();
 	}
 
 	conf_wgt->addConfigurationParam(Attributes::Configuration, attribs[Attributes::Configuration]);

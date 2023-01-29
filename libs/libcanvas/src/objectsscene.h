@@ -159,8 +159,7 @@ class __libcanvas ObjectsScene: public QGraphicsScene {
 		void clearTablesChildrenSelection();
 
 	protected:
-		//! \brief Brush used to draw the grid over the scene
-		static QBrush grid;
+		void drawBackground(QPainter *painter, const QRectF &rect);
 
 		void mousePressEvent(QGraphicsSceneMouseEvent *event);
 		void mouseMoveEvent(QGraphicsSceneMouseEvent *event);

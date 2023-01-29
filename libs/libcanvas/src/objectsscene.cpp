@@ -29,7 +29,6 @@ double ObjectsScene::delimiter_scale = 1;
 
 QPageLayout ObjectsScene::page_layout(QPageSize(QPageSize::A4), QPageLayout::Landscape, QMarginsF(10,10,10,10));
 QSizeF ObjectsScene::custom_paper_size(0,0);
-QBrush ObjectsScene::grid;
 
 const QColor ObjectsScene::DefaultGridColor(225, 225, 225);
 const QColor ObjectsScene::DefaultCanvasColor(255, 255, 255);
@@ -47,7 +46,6 @@ ObjectsScene::ObjectsScene()
 	is_layer_rects_visible=is_layer_names_visible=false;
 	moving_objs=move_scene=false;
 	enable_range_sel=true;
-	this->setBackgroundBrush(grid);
 
 	sel_ini_pnt.setX(DNaN);
 	sel_ini_pnt.setY(DNaN);
@@ -614,7 +612,7 @@ void ObjectsScene::setLockDelimiterScale(bool lock, double curr_scale)
 		delimiter_scale = 1;
 
 	lock_delim_scale = lock;
-	setGridSize(grid_size);
+	//setGridSize(grid_size);
 }
 
 bool ObjectsScene::isDelimiterScaleLocked()
@@ -738,78 +736,94 @@ QRectF ObjectsScene::itemsBoundingRect(bool seek_only_db_objs, bool selected_onl
 	}
 }
 
-void ObjectsScene::setGridSize(unsigned size)
+void ObjectsScene::drawBackground(QPainter *painter, const QRectF &rect)
 {
-	if(size >= 20 || grid.style()==Qt::NoBrush)
+	double page_w = 0, page_h = 0,
+			delim_factor = 1/delimiter_scale,
+			scene_w = width(),
+			scene_h = height(),
+			pen_width = BaseObjectView::ObjectBorderWidth *
+									BaseObjectView::getScreenDpiFactor();
+	QSizeF aux_size;
+	QPen pen = QPen(QColor(), pen_width);
+	int scene_lim_x = 0, scene_lim_y = 0;
+
+	// Retrieve the page rect considering the orientation, margin and page size
+	aux_size = page_layout.paintRect(QPageLayout::Point).size() * delim_factor;
+
+	//Calculates where the extreme width and height where delimiter lines will be drawn
+	page_w = ceil(aux_size.width() / static_cast<double>(grid_size) * grid_size);
+	page_h = ceil(aux_size.height() / static_cast<double>(grid_size) * grid_size);
+
+	painter->setClipping(true);
+	painter->setClipRect(rect);
+	painter->setRenderHint(QPainter::Antialiasing, false);
+	painter->setRenderHint(QPainter::TextAntialiasing, false);
+
+	if(show_grid)
 	{
-		QImage grid_img;
-		double width = 0, height = 0, x = 0, y = 0,
-				delim_factor = 1/delimiter_scale,
-				pen_width = round(BaseObjectView::ObjectBorderWidth *
-													BaseObjectView::getScreenDpiFactor() *
-													delim_factor);
-		int img_w = 0, img_h = 0;
-		QSizeF aux_size;
-		QPainter painter;		
-		QPen pen = QPen(QColor(), pen_width);
+		int px = 0, py = 0;
 
-		// Retrieve the page rect considering the orientation, margin and page size
-		aux_size = page_layout.paintRect(QPageLayout::Point).size() * delim_factor;
+		pen.setWidthF(pen_width *	(grid_pattern == GridPattern::DotPattern ? 1.50 : 1));
+		pen.setColor(grid_color);
+		painter->setPen(pen);
 
-		//Calculates where the extreme width and height where delimiter lines will be drawn
-		width=aux_size.width()/static_cast<double>(size) * size;
-		height=aux_size.height()/static_cast<double>(size) * size;
-
-		//Calculates the grid pixmpa size
-		img_w=ceil(width/size) * size;
-		img_h=ceil(height/size) * size;
-
-		grid_size=size;
-		grid_img=QImage(img_w, img_h, QImage::Format_ARGB32);
-		grid_img.fill(canvas_color);
-
-		painter.begin(&grid_img);
-
-		if(show_grid)
+		//Draws the grid
+		for(px = 0; px < scene_w; px += grid_size)
 		{
-			pen.setWidthF(pen_width *
-										(grid_pattern == GridPattern::DotPattern ? 1.5 : 1));
-			pen.setColor(grid_color);
-			painter.setPen(pen);
-
-			//Draws the grid
-			for(x=0; x < width; x+=size)
+			for(py = 0; py < scene_h; py += grid_size)
 			{
-				for(y=0; y < height; y+=size)
+				if(grid_pattern == GridPattern::SquarePattern)
+					painter->drawRect(QRectF(QPointF(px, py), QPointF(px + grid_size, py + grid_size)));
+				else
 				{
-					if(grid_pattern == GridPattern::SquarePattern)
-						painter.drawRect(QRectF(QPointF(x,y), QPointF(x + size, y + size)));
-					else
-					{
-						painter.drawPoint(x, y);
-						painter.drawPoint(x + size, y);
-						painter.drawPoint(x + size, y + size);
-						painter.drawPoint(x, y + size);
-					}
+					painter->drawPoint(px, py);
+					painter->drawPoint(px + grid_size, py);
+					painter->drawPoint(px + grid_size, py + grid_size);
+					painter->drawPoint(px, py + grid_size);
 				}
 			}
 		}
 
-		//Creates the page delimiter lines
-		if(show_page_delim)
-		{
-			pen.setWidthF(pen_width);
-			pen.setColor(delimiters_color);
-			pen.setStyle(Qt::CustomDashLine);
-			pen.setDashPattern({3, 5});
-			painter.setPen(pen);
-			painter.drawLine(width-1, 0,width-1,img_h-1);
-			painter.drawLine(0, height-1,img_w-1,height-1);
-		}
-
-		painter.end();
-		grid.setTextureImage(grid_img);
+		scene_lim_x = px;
+		scene_lim_y = py;
 	}
+	else
+	{
+		scene_lim_x = scene_w;
+		scene_lim_y = scene_h;
+	}
+
+	//Creates the page delimiter lines
+	if(show_page_delim)
+	{
+		pen.setWidthF(pen_width * 1.15);
+		pen.setColor(delimiters_color);
+		pen.setStyle(Qt::CustomDashLine);
+		pen.setDashPattern({3, 5});
+		painter->setPen(pen);
+
+		for(int px = 0; px < scene_w; px += page_w)
+		{
+			for(int py = 0; py < scene_h; py += page_h)
+			{
+				painter->drawLine(px + page_w, py, px + page_w, py + page_h);
+				painter->drawLine(px, py + page_h, px + page_w, py + page_h);
+			}
+		}
+	}
+
+	pen.setColor(QColor(255, 0, 0));
+	pen.setStyle(Qt::SolidLine);
+	painter->setPen(pen);
+	painter->drawLine(0, scene_lim_y, scene_lim_x, scene_lim_y);
+	painter->drawLine(scene_lim_x, 0, scene_lim_x, scene_lim_y);
+}
+
+void ObjectsScene::setGridSize(unsigned size)
+{
+	if(size < 20)	size = 20;
+	grid_size = size;
 }
 
 void ObjectsScene::showRelationshipLine(bool value, const QPointF &p_start)
@@ -861,19 +875,9 @@ void ObjectsScene::showRelationshipLine(bool value, const QPointF &p_start)
 
 void ObjectsScene::setGridOptions(bool show_grd, bool align_objs_grd, bool show_pag_dlm)
 {
-	bool redef_grid=(ObjectsScene::show_grid != show_grd ||
-									 ObjectsScene::show_page_delim != show_pag_dlm ||
-									 grid.style() == Qt::NoBrush);
-
 	ObjectsScene::show_grid=show_grd;
 	ObjectsScene::show_page_delim=show_pag_dlm;
 	ObjectsScene::align_objs_grid=align_objs_grd;
-
-	if(redef_grid)
-	{
-		grid.setStyle(Qt::NoBrush);
-		setGridSize(ObjectsScene::grid_size);
-	}
 }
 
 bool ObjectsScene::isAlignObjectsToGrid()
@@ -893,9 +897,6 @@ bool ObjectsScene::isShowPageDelimiters()
 
 void ObjectsScene::setPageLayout(const QPageLayout &page_lt)
 {
-	if(page_layout != page_lt)
-		grid = Qt::NoBrush;
-
 	page_layout = page_lt;
 }
 
@@ -1583,6 +1584,7 @@ void ObjectsScene::finishObjectsMove(const QPointF &pnt_end)
 		rect.setWidth(rect.width() * 1.05);
 		rect.setHeight(rect.height() * 1.05);
 		this->setSceneRect(rect);
+		invalidate();
 	}
 
 	for(auto &obj : tables)
@@ -1608,7 +1610,6 @@ void ObjectsScene::finishObjectsMove(const QPointF &pnt_end)
 	moving_objs=false;
 	sel_ini_pnt.setX(DNaN);
 	sel_ini_pnt.setY(DNaN);
-
 	updateLayerRects();
 }
 
@@ -1673,7 +1674,6 @@ void ObjectsScene::alignObjectsToGrid()
 
 void ObjectsScene::update()
 {
-	this->setBackgroundBrush(grid);
 	QGraphicsScene::update(this->sceneRect());
 }
 
