@@ -757,8 +757,8 @@ void ObjectsScene::drawBackground(QPainter *painter, const QRectF &rect)
 	aux_size = page_layout.paintRect(QPageLayout::Point).size() * delim_factor;
 
 	//Calculates where the extreme width and height where delimiter lines will be drawn
-	page_w = ceil(aux_size.width() / static_cast<double>(grid_size) * grid_size);
-	page_h = ceil(aux_size.height() / static_cast<double>(grid_size) * grid_size);
+	page_w = aux_size.width() / static_cast<double>(grid_size) * grid_size;
+	page_h = aux_size.height() / static_cast<double>(grid_size) * grid_size;
 
 	painter->setClipping(true);
 	painter->setClipRect(rect);
@@ -833,6 +833,11 @@ void ObjectsScene::setGridSize(unsigned size)
 {
 	if(size < 20)	size = 20;
 	grid_size = size;
+}
+
+unsigned int ObjectsScene::getGridSize()
+{
+	return grid_size;
 }
 
 void ObjectsScene::showRelationshipLine(bool value, const QPointF &p_start)
@@ -1419,7 +1424,7 @@ void ObjectsScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 		enableSceneMove(false);
 
 	//If there is selected object and the user ends the object moviment
-	if(!this->selectedItems().isEmpty() && moving_objs && event->button()==Qt::LeftButton/* && event->modifiers()==Qt::NoModifier */)
+	if(!this->selectedItems().isEmpty() && moving_objs && event->button()==Qt::LeftButton)
 	{
 		finishObjectsMove(event->scenePos());
 	}
@@ -1578,8 +1583,6 @@ void ObjectsScene::finishObjectsMove(const QPointF &pnt_end)
 	for(auto &obj : schemas)
 		obj->setModified(true);
 
-	emit s_objectsMoved(true);
-
 	moving_objs=false;
 	sel_ini_pnt.setX(DNaN);
 	sel_ini_pnt.setY(DNaN);
@@ -1587,8 +1590,12 @@ void ObjectsScene::finishObjectsMove(const QPointF &pnt_end)
 
 	QRectF rect = this->itemsBoundingRect();
 	rect.setTopLeft(QPointF(0,0));
-	this->setSceneRect(rect);
+	rect.setWidth(rect.width() + (2 * grid_size));
+	rect.setHeight(rect.height() + (2 * grid_size));
+	setSceneRect(rect);
 	invalidate();
+
+	emit s_objectsMoved(true);
 }
 
 void ObjectsScene::alignObjectsToGrid()

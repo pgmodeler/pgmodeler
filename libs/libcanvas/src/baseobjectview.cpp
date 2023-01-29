@@ -510,7 +510,13 @@ void BaseObjectView::togglePlaceholder(bool visible)
 			placeholder->setRect(QRectF(QPointF(0,0),this->bounding_rect.size()));
 			placeholder->setPos(this->mapToScene(this->bounding_rect.topLeft()));
 		}
+		else
+		{
+			placeholder->setRect(QRectF());
+			placeholder->setPos(0, 0);
+		}
 
+		placeholder->setFlag(QGraphicsItem::ItemHasNoContents, !visible);
 		placeholder->setVisible(visible);
 	}
 }

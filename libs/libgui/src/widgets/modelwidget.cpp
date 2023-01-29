@@ -1652,9 +1652,9 @@ void ModelWidget::loadModel(const QString &filename)
 
 		db_model->loadModel(filename);		
 		this->filename=filename;
-		adjustSceneSize();
 		updateObjectsOpacity();
 		updateSceneLayers();
+		adjustSceneSize();
 
 		task_prog_wgt.close();
 		protected_model_frm->setVisible(db_model->isProtected());
@@ -1690,27 +1690,21 @@ void ModelWidget::setPluginActions(const QList<QAction *> &plugin_acts)
 
 void ModelWidget::adjustSceneSize()
 {
-	QRectF scene_rect, objs_rect;
-
-	scene_rect=scene->sceneRect();
-	objs_rect=scene->itemsBoundingRect();
-
-	if(scene_rect.width() < objs_rect.left() + objs_rect.width())
-		scene_rect.setWidth(objs_rect.left() + objs_rect.width());
-
-	if(scene_rect.height() < objs_rect.top() + objs_rect.height())
-		scene_rect.setHeight(objs_rect.top() + objs_rect.height());
-
-	scene->setSceneRect(scene_rect);
 	viewport->centerOn(0,0);
 
 	if(ObjectsScene::isAlignObjectsToGrid())
 	{
 		scene->alignObjectsToGrid();
-		db_model->setObjectsModified({ ObjectType::Relationship, ObjectType::BaseRelationship });
+		db_model->setObjectsModified();
 	}
 
-	emit s_sceneInteracted(scene_rect.size());
+	QRectF rect = scene->itemsBoundingRect();
+	rect.setTopLeft(QPointF(0,0));
+	rect.setWidth(rect.width() + (2 * ObjectsScene::getGridSize()));
+	rect.setHeight(rect.height() + (2 * ObjectsScene::getGridSize()));
+	scene->setSceneRect(rect);
+
+	emit s_sceneInteracted(rect.size());
 }
 
 void ModelWidget::printModel(QPrinter *printer, bool print_grid, bool print_page_nums, bool resize_delims)
