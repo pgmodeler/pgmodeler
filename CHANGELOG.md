@@ -5,6 +5,8 @@ v1.0.0
 ------
 <em>Release date: February 3, 2023</em><br/>
 
+* [New] Added an option in GeneralConfigWidget to allow pgModeler to connect to older PostgreSQL server versions, below 10 using a minimum (not reliable) compatibility mode.
+* [New] Added an option to change ObjectsScene grid pattern. Available options are square and dot.
 * [New] Added an option to lock the page delimiters resize during zoom out (<100%) to allow the user to place more objects on one page.
 * [New] Added the ability to print models with a specified scale factor.
 * [New] Added the method MainWindow::updateWindowTitle.
@@ -18,6 +20,15 @@ v1.0.0
 * [New] Added the class ObjectTypesListWidget that implements a QListWidget specialization for object types handling.
 * [New] Added the method PgModelerPlugin::getPluginIconPath.
 * [New] Added the method MainWindow::getCurrentModel.
+* [Change] Minor adjustment in the factor applied to delimiter lines in ObjectsScene::setGridSize.
+* [Change] Minor tooltip adjustment in generalconfigwidget.ui
+* [Change] pgModeler now allows to import and diff in PostgreSQL versions below 10 using the minimum compatibility mode without guaranteeing reliable results.
+* [Change] Moved the Q_DECLARE_METATYPE macro call to the header files of classes that use it.
+* [Change] Dropped outdated UI translations.
+* [Change] Minor adjustment in ModelWidget::printModel to hide scene boundary lines when printing model.
+* [Change] Minor adjustment in ObjectsScene::finishObjectsMove and ModelWidget::adjustSceneSize to give extra size to the scene rectangle.
+* [Change] The scene rectangle is now always resized to the current objects' bounding rectangle.
+* [Change] Overloaded the method QGraphicsScene::drawBackground in ObjectsScene to draw the grid, page delimiters, and scene limits instead of using pixmap-based background.
 * [Change] Minor adjustment in the plugins' actions in the toolbar.
 * [Change] Minor adjustment in the data retrieving message in DataManipulationForm.
 * [Change] Allowing plugins to insert actions in the top toolbar at the main window via PgModelerPlugin::getToolbarAction.
@@ -43,6 +54,8 @@ v1.0.0
 * [Change] Refactored PluginsConfigWidget::installPluginsActions to receive only a QMenu instance.
 * [Change] Removed MainWindow::executePlugin slot since the plugin execution must be triggered by the plugin itself via menu action or model action.
 * [Change] Minor improvement in PluginsConfigWidget to force the unloading of plugins that do not meet a version requirement.
+* [Fix] Fixed a bug in ModelOverviewWidget that was causing generated pixmap to be blurry on hi-dpi screens.
+* [Fix] Fixed a crash when the user tried to browse a DB in PostgreSQL 15.
 * [Fix] Fixed how printer settings are changed compared to the default one and triggers a message box so the user can decide which conf to use.
 * [Fix] Fixed the use of zoom factor in the PNG export process.
 * [Fix] Fixed the ConnectionsConfigWidget::handleConnection alias desambiguation routine.
