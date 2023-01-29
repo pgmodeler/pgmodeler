@@ -692,6 +692,7 @@ bool ModelWidget::eventFilter(QObject *object, QEvent *event)
 	else if(object == scene)
 	{
 		QGraphicsSceneMouseEvent *m_event = dynamic_cast<QGraphicsSceneMouseEvent *>(event);
+		static bool show_grid = false, show_delim = false;
 
 		if(!m_event)
 			return false;
@@ -739,6 +740,13 @@ bool ModelWidget::eventFilter(QObject *object, QEvent *event)
 		//Activating the panning mode
 		else if(m_event->button() == Qt::MiddleButton && event->type() == QEvent::GraphicsSceneMousePress)
 		{
+			show_grid = ObjectsScene::isShowGrid();
+			show_delim = ObjectsScene::isShowPageDelimiters();
+
+			ObjectsScene::setShowGrid(false);
+			ObjectsScene::setShowPageDelimiters(false);
+			scene->setShowSceneLimits(false);
+
 			viewport->setDragMode(QGraphicsView::ScrollHandDrag);
 			QApplication::restoreOverrideCursor();
 			QApplication::setOverrideCursor(Qt::OpenHandCursor);
@@ -749,6 +757,13 @@ bool ModelWidget::eventFilter(QObject *object, QEvent *event)
 		{
 			panning_mode = false;
 			viewport->setDragMode(QGraphicsView::NoDrag);
+
+			ObjectsScene::setShowGrid(show_grid);
+			ObjectsScene::setShowPageDelimiters(show_delim);
+
+			scene->setShowSceneLimits(true);
+			scene->invalidate(viewport->sceneRect());
+
 			QApplication::restoreOverrideCursor();
 			QApplication::restoreOverrideCursor();
 			return true;
@@ -1712,7 +1727,7 @@ void ModelWidget::printModel(QPrinter *printer, bool print_grid, bool print_page
 	if(!printer)
 		return;
 
-	bool show_grid = false, align_objs = false, show_delims = false;
+	bool show_grid = false, show_delims = false;
 	unsigned page_cnt = 0, page = 0, h_page_cnt = 0, v_page_cnt = 0, h_pg_id = 0, v_pg_id = 0;
 	QList<QRectF> pages;
 	QMarginsF margins;
@@ -1724,12 +1739,12 @@ void ModelWidget::printModel(QPrinter *printer, bool print_grid, bool print_page
 	//Make a backup of the current grid options
 	bg_color = ObjectsScene::getCanvasColor();
 	show_grid = ObjectsScene::isShowGrid();
-	align_objs = ObjectsScene::isAlignObjectsToGrid();
 	show_delims = ObjectsScene::isShowPageDelimiters();
 
 	//Reconfigure the grid options based upon the passed settings
 	ObjectsScene::setCanvasColor(QColor(255, 255, 255));
-	ObjectsScene::setGridOptions(print_grid, align_objs, false);
+	ObjectsScene::setShowGrid(print_grid);
+	ObjectsScene::setShowPageDelimiters(false);
 
 	scene->setShowSceneLimits(false);
 	scene->update();
@@ -1786,7 +1801,8 @@ void ModelWidget::printModel(QPrinter *printer, bool print_grid, bool print_page
 
 	//Restore the grid option backup
 	ObjectsScene::setCanvasColor(bg_color);
-	ObjectsScene::setGridOptions(show_grid, align_objs, show_delims);
+	ObjectsScene::setShowGrid(show_grid);
+	ObjectsScene::setShowPageDelimiters(show_delims);
 	scene->setShowSceneLimits(true);
 	scene->update();
 }

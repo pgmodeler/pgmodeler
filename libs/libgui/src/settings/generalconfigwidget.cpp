@@ -540,9 +540,9 @@ void GeneralConfigWidget::applyConfiguration()
 
 	ObjectsScene::setEnableCornerMove(corner_move_chk->isChecked());
 	ObjectsScene::setInvertRangeSelectionTrigger(invert_rangesel_chk->isChecked());
-	ObjectsScene::setGridOptions(config_params[Attributes::Configuration][Attributes::ShowCanvasGrid]==Attributes::True,
-															 config_params[Attributes::Configuration][Attributes::AlignObjsToGrid]==Attributes::True,
-															 config_params[Attributes::Configuration][Attributes::ShowPageDelimiters]==Attributes::True);
+	ObjectsScene::setShowGrid(config_params[Attributes::Configuration][Attributes::ShowCanvasGrid]==Attributes::True);
+	ObjectsScene::setAlignObjectsToGrid(config_params[Attributes::Configuration][Attributes::AlignObjsToGrid]==Attributes::True);
+	ObjectsScene::setShowPageDelimiters(config_params[Attributes::Configuration][Attributes::ShowPageDelimiters]==Attributes::True);
 	ObjectsScene::setLockDelimiterScale(config_params[Attributes::Configuration][Attributes::LockPageDelimResize]==Attributes::True, 1);
 
 	OperationList::setMaximumSize(oplist_size_spb->value());

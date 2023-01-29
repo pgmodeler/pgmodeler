@@ -67,9 +67,9 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	action_lock_delim->setChecked(confs[Attributes::Configuration][Attributes::LockPageDelimResize]==Attributes::True);
 	action_compact_view->setChecked(confs[Attributes::Configuration][Attributes::CompactView]==Attributes::True);
 
-	ObjectsScene::setGridOptions(action_show_grid->isChecked(),
-															 action_alin_objs_grade->isChecked(),
-															 action_show_delimiters->isChecked());
+	ObjectsScene::setShowGrid(action_show_grid->isChecked());
+	ObjectsScene::setShowPageDelimiters(action_show_delimiters->isChecked());
+	ObjectsScene::setAlignObjectsToGrid(action_alin_objs_grade->isChecked());
 
 	#ifndef Q_OS_MAC
 		//Hiding/showing the main menu bar depending on the retrieved conf
@@ -1368,11 +1368,9 @@ void MainWindow::setGridOptions()
 	GeneralConfigWidget *conf_wgt = dynamic_cast<GeneralConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::GeneralConfWgt));
 	std::map<QString, attribs_map> attribs = conf_wgt->getConfigurationParams();
 
-	//Configures the global settings for the scene grid
-	ObjectsScene::setGridOptions(action_show_grid->isChecked(),
-															 action_alin_objs_grade->isChecked(),
-															 action_show_delimiters->isChecked());
-
+	ObjectsScene::setShowGrid(action_show_grid->isChecked());
+	ObjectsScene::setShowPageDelimiters(action_show_delimiters->isChecked());
+	ObjectsScene::setAlignObjectsToGrid(action_alin_objs_grade->isChecked());
 	ObjectsScene::setLockDelimiterScale(action_lock_delim->isChecked(),
 																			current_model ? current_model->getCurrentZoom() : 1);
 

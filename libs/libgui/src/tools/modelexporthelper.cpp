@@ -110,7 +110,7 @@ void ModelExportHelper::exportToPNG(ObjectsScene *scene, const QString &filename
 	try
 	{
 		QPixmap pix;
-		bool shw_grd, shw_dlm, align_objs;
+		bool prev_show_grd, prev_show_dlm, align_objs;
 		QGraphicsView *view = nullptr;
 		QList<QRectF> pages;
 		unsigned v_cnt=0, h_cnt=0, page_idx=1;
@@ -129,14 +129,14 @@ void ModelExportHelper::exportToPNG(ObjectsScene *scene, const QString &filename
 		scene->clearSelection();
 
 		//Make a backup of the current scene options
-		shw_grd = ObjectsScene::isShowGrid();
-		align_objs = ObjectsScene::isAlignObjectsToGrid();
-		shw_dlm = ObjectsScene::isShowPageDelimiters();
+		prev_show_grd = ObjectsScene::isShowGrid();
+		prev_show_dlm = ObjectsScene::isShowPageDelimiters();
 		bg_color = ObjectsScene::getCanvasColor();
 
 		//Sets the options passed by the user
 		ObjectsScene::setCanvasColor(QColor(255,255,255));
-		ObjectsScene::setGridOptions(show_grid, false, show_delim);
+		ObjectsScene::setShowGrid(show_grid);
+		ObjectsScene::setShowPageDelimiters(show_delim);
 		scene->setShowSceneLimits(false);
 
 		if(page_by_page)
@@ -204,7 +204,8 @@ void ModelExportHelper::exportToPNG(ObjectsScene *scene, const QString &filename
 			{
 				//Restoring the scene settings before throw error
 				ObjectsScene::setCanvasColor(bg_color);
-				ObjectsScene::setGridOptions(shw_grd, align_objs, shw_dlm);
+				ObjectsScene::setShowGrid(prev_show_grd);
+				ObjectsScene::setShowPageDelimiters(prev_show_dlm);
 				scene->update();
 
 				throw Exception(Exception::getErrorMessage(ErrorCode::FileDirectoryNotWritten).arg(file),
@@ -214,7 +215,8 @@ void ModelExportHelper::exportToPNG(ObjectsScene *scene, const QString &filename
 
 		//Restoring the scene settings
 		ObjectsScene::setCanvasColor(bg_color);
-		ObjectsScene::setGridOptions(shw_grd, align_objs, shw_dlm);
+		ObjectsScene::setShowGrid(prev_show_grd);
+		ObjectsScene::setShowPageDelimiters(prev_show_dlm);
 		scene->setShowSceneLimits(true);
 		scene->update();
 
@@ -240,7 +242,7 @@ void ModelExportHelper::exportToSVG(ObjectsScene *scene, const QString &filename
 	if(!scene)
 		throw Exception(ErrorCode::AsgNotAllocattedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	bool shw_dlm=false, shw_grd=false, align_objs=false;
+	bool prev_show_dlm=false, prev_show_grd=false;
 	QSvgGenerator svg_gen;
 	QRectF scene_rect=scene->itemsBoundingRect(true, false, true), svg_rect;
 	QFileInfo fi(filename);
@@ -265,11 +267,11 @@ void ModelExportHelper::exportToSVG(ObjectsScene *scene, const QString &filename
 	svg_gen.setResolution(dpi);
 
 	//Making a backup of the current scene options
-	shw_grd = ObjectsScene::isShowGrid();
-	shw_dlm = ObjectsScene::isShowPageDelimiters();
-	align_objs = ObjectsScene::isAlignObjectsToGrid();
+	prev_show_grd = ObjectsScene::isShowGrid();
+	prev_show_dlm = ObjectsScene::isShowPageDelimiters();
 
-	ObjectsScene::setGridOptions(show_grid, false, show_delim);
+	ObjectsScene::setShowGrid(show_grid);
+	ObjectsScene::setShowPageDelimiters(show_delim);
 	scene->setShowSceneLimits(false);
 	scene->update();
 
@@ -310,7 +312,8 @@ void ModelExportHelper::exportToSVG(ObjectsScene *scene, const QString &filename
 	delete view;
 
 	//Restoring the scene settings
-	ObjectsScene::setGridOptions(shw_grd, align_objs, shw_dlm);
+	ObjectsScene::setShowGrid(prev_show_grd);
+	ObjectsScene::setShowPageDelimiters(prev_show_dlm);
 	scene->setShowSceneLimits(true);
 	scene->update();
 

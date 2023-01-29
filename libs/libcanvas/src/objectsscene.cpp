@@ -887,11 +887,9 @@ void ObjectsScene::showRelationshipLine(bool value, const QPointF &p_start)
 	}
 }
 
-void ObjectsScene::setGridOptions(bool show_grd, bool align_objs_grd, bool show_pag_dlm)
+bool ObjectsScene::setAlignObjectsToGrid(bool value)
 {
-	ObjectsScene::show_grid=show_grd;
-	ObjectsScene::show_page_delim=show_pag_dlm;
-	ObjectsScene::align_objs_grid=align_objs_grd;
+	align_objs_grid = value;
 }
 
 bool ObjectsScene::isAlignObjectsToGrid()
@@ -899,9 +897,19 @@ bool ObjectsScene::isAlignObjectsToGrid()
 	return align_objs_grid;
 }
 
+void ObjectsScene::setShowGrid(bool value)
+{
+	show_grid = value;
+}
+
 bool ObjectsScene::isShowGrid()
 {
 	return show_grid;
+}
+
+void ObjectsScene::setShowPageDelimiters(bool value)
+{
+	show_page_delim = value;
 }
 
 bool ObjectsScene::isShowPageDelimiters()
