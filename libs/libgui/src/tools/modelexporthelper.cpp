@@ -137,6 +137,7 @@ void ModelExportHelper::exportToPNG(ObjectsScene *scene, const QString &filename
 		//Sets the options passed by the user
 		ObjectsScene::setCanvasColor(QColor(255,255,255));
 		ObjectsScene::setGridOptions(show_grid, false, show_delim);
+		scene->setShowSceneLimits(false);
 
 		if(page_by_page)
 		{
@@ -214,6 +215,7 @@ void ModelExportHelper::exportToPNG(ObjectsScene *scene, const QString &filename
 		//Restoring the scene settings
 		ObjectsScene::setCanvasColor(bg_color);
 		ObjectsScene::setGridOptions(shw_grd, align_objs, shw_dlm);
+		scene->setShowSceneLimits(true);
 		scene->update();
 
 		if(!export_canceled)
@@ -268,6 +270,7 @@ void ModelExportHelper::exportToSVG(ObjectsScene *scene, const QString &filename
 	align_objs = ObjectsScene::isAlignObjectsToGrid();
 
 	ObjectsScene::setGridOptions(show_grid, false, show_delim);
+	scene->setShowSceneLimits(false);
 	scene->update();
 
 	QPainter *svg_painter = new QPainter(&svg_gen);
@@ -308,6 +311,7 @@ void ModelExportHelper::exportToSVG(ObjectsScene *scene, const QString &filename
 
 	//Restoring the scene settings
 	ObjectsScene::setGridOptions(shw_grd, align_objs, shw_dlm);
+	scene->setShowSceneLimits(true);
 	scene->update();
 
 	if(!fi.exists() || !fi.isWritable() || !fi.isReadable())

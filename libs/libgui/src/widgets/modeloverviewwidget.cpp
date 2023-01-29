@@ -129,7 +129,8 @@ void ModelOverviewWidget::updateOverview(bool force_update)
 		QApplication::setOverrideCursor(Qt::WaitCursor);
 
 		//Creates a pixmap with the size of the scene
-		pix=QPixmap(pixmap_size);
+		pix = QPixmap(pixmap_size);
+		pix.fill(ObjectsScene::getCanvasColor());
 
 		//Draw the scene onto the pixmap
 		QPainter p(&pix);
@@ -147,10 +148,10 @@ void ModelOverviewWidget::updateOverview(bool force_update)
 
 			p.setRenderHints(QPainter::Antialiasing, false);
 			p.setRenderHints(QPainter::TextAntialiasing, false);
-			this->model->scene->render(&p, pix.rect(), scene_rect.toRect());
+			this->model->scene->render(&p, QRect(), scene_rect);
 
 			//Resizes the pixmap to the previous configured QSize
-			label->setPixmap(pix.scaled(curr_size.toSize(), Qt::KeepAspectRatio, Qt::SmoothTransformation));
+			label->setPixmap(pix);
 		}
 
 		label->resize(curr_size.toSize());

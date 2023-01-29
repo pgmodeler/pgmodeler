@@ -79,7 +79,9 @@ class __libcanvas ObjectsScene: public QGraphicsScene {
 		lock_delim_scale;
 
 		//! \brief Indicates if the scene need to be moved
-		bool move_scene;
+		bool move_scene,
+
+		show_scene_limits;
 
 		static constexpr int SceneMoveStep=20,
 		SceneMoveTimeout=50,
@@ -262,6 +264,9 @@ class __libcanvas ObjectsScene: public QGraphicsScene {
 		/*! \brief This method sets up the layers name/rect colors. The layer_attr_id is either LayerNameColor or LayerRectColor.
 		 * This method adjust the alpha channel for the background color to a make it semi transparent */
 		void setLayerColors(LayerAttrColor layer_attr_id, const QStringList &colors);
+
+		//! \brief Toggles the display of the red lines that denotes the scene boundaries
+		void setShowSceneLimits(bool show);
 
 		static void setEnableCornerMove(bool enable);
 		static void setInvertRangeSelectionTrigger(bool invert);

@@ -45,7 +45,7 @@ ObjectsScene::ObjectsScene()
 {		
 	is_layer_rects_visible=is_layer_names_visible=false;
 	moving_objs=move_scene=false;
-	enable_range_sel=true;
+	show_scene_limits=enable_range_sel=true;
 
 	sel_ini_pnt.setX(DNaN);
 	sel_ini_pnt.setY(DNaN);
@@ -604,6 +604,11 @@ void ObjectsScene::setLayerColors(LayerAttrColor layer_attr_id, const QStringLis
 	}
 }
 
+void ObjectsScene::setShowSceneLimits(bool show)
+{
+	show_scene_limits = show;
+}
+
 void ObjectsScene::setLockDelimiterScale(bool lock, double curr_scale)
 {
 	if(lock && curr_scale > 0 && curr_scale < 1)
@@ -813,11 +818,15 @@ void ObjectsScene::drawBackground(QPainter *painter, const QRectF &rect)
 		}
 	}
 
-	pen.setColor(QColor(255, 0, 0));
-	pen.setStyle(Qt::SolidLine);
-	painter->setPen(pen);
-	painter->drawLine(0, scene_lim_y, scene_lim_x, scene_lim_y);
-	painter->drawLine(scene_lim_x, 0, scene_lim_x, scene_lim_y);
+	// Drawing the scene boundaries
+	if(show_scene_limits)
+	{
+		pen.setColor(QColor(255, 0, 0));
+		pen.setStyle(Qt::SolidLine);
+		painter->setPen(pen);
+		painter->drawLine(0, scene_lim_y, scene_lim_x, scene_lim_y);
+		painter->drawLine(scene_lim_x, 0, scene_lim_x, scene_lim_y);
+	}
 }
 
 void ObjectsScene::setGridSize(unsigned size)
@@ -1577,12 +1586,12 @@ void ObjectsScene::finishObjectsMove(const QPointF &pnt_end)
 	rect.setCoords(x1, y1, x2, y2);
 
 	//If the new rect is greater than the scene bounding rect, this latter is resized
-	if(rect!=this->sceneRect())
+	if(rect.width() != width() || rect.height() != height())
 	{
-		rect=this->itemsBoundingRect();
+		rect = this->itemsBoundingRect();
 		rect.setTopLeft(QPointF(0,0));
-		rect.setWidth(rect.width() * 1.05);
-		rect.setHeight(rect.height() * 1.05);
+		//rect.setWidth(rect.width() * 1.05);
+		//rect.setHeight(rect.height() * 1.05);
 		this->setSceneRect(rect);
 		invalidate();
 	}
