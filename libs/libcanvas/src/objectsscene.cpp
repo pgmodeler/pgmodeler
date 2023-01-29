@@ -1447,8 +1447,7 @@ void ObjectsScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 void ObjectsScene::finishObjectsMove(const QPointF &pnt_end)
 {
 	QList<QGraphicsItem *> items=this->selectedItems(), rel_list;
-	double x1,y1,x2,y2, dx, dy;
-	QRectF rect;
+	double dx, dy;
 	SchemaView *sch_view=nullptr;
 	std::vector<QPointF> points;
 	std::vector<QPointF>::iterator itr;
@@ -1501,31 +1500,20 @@ void ObjectsScene::finishObjectsMove(const QPointF &pnt_end)
 						rel_list.push_back(dynamic_cast<QGraphicsItem *>(base_rel->getOverlyingObject()));
 				}
 
-				#if (QT_VERSION < QT_VERSION_CHECK(5, 14, 0))
-					tables.unite(sch_view->getChildren().toSet());
-				#else
-					QList<BaseObjectView *> list = sch_view->getChildren();
-					tables.unite(QSet<BaseObjectView *>(list.begin(), list.end()));
-				#endif
+				QList<BaseObjectView *> list = sch_view->getChildren();
+				tables.unite(QSet<BaseObjectView *>(list.begin(), list.end()));
 			}
 		}
 	}
 
 	items.append(rel_list);
-
-	/* Get the extreme points of the scene to check if some objects are out the area
-	forcing the scene to be resized */
-	x1=this->sceneRect().left();
-	y1=this->sceneRect().top();
-	x2=this->sceneRect().right();
-	y2=this->sceneRect().bottom();
 	dx=pnt_end.x() - sel_ini_pnt.x();
 	dy=pnt_end.y() - sel_ini_pnt.y();
 
 	for(auto &item : items)
 	{
 		// Ignoring table objects items
-		tab_obj_view=dynamic_cast<TableObjectView *>(item);
+		tab_obj_view = dynamic_cast<TableObjectView *>(item);
 		if(tab_obj_view) continue;
 
 		rel=dynamic_cast<RelationshipView *>(item);
@@ -1541,16 +1529,13 @@ void ObjectsScene::finishObjectsMove(const QPointF &pnt_end)
 				if(p.y() < 0) p.setY(0);
 				item->setPos(p);
 			}
-
-			rect.setTopLeft(item->pos());
-			rect.setSize(item->boundingRect().size());
 		}
 		else
 		{
 			/* If the relationship has points added to the line is necessary to move the points
 				 too. Since relationships cannot be moved naturally (by user) this will be done
 				 by the scene. NOTE: this operation is done ONLY WHEN there is more than one object selected! */
-			points=rel->getUnderlyingObject()->getPoints();
+			points = rel->getUnderlyingObject()->getPoints();
 			if(items.size() > 1 && !points.empty())
 			{
 				itr=points.begin();
@@ -1571,29 +1556,7 @@ void ObjectsScene::finishObjectsMove(const QPointF &pnt_end)
 				rel->getUnderlyingObject()->setPoints(points);
 				rel->configureLine();
 			}
-
-			rect=rel->__boundingRect();
 		}
-
-		//Made the comparisson between the scene extremity and the object's bounding rect
-		if(rect.left() < x1) x1=rect.left();
-		if(rect.top() < y1) y1=rect.top();
-		if(rect.right() > x2) x2=rect.right();
-		if(rect.bottom() > y2) y2=rect.bottom();
-	}
-
-	//Reconfigures the rectangle with the most extreme points
-	rect.setCoords(x1, y1, x2, y2);
-
-	//If the new rect is greater than the scene bounding rect, this latter is resized
-	if(rect.width() != width() || rect.height() != height())
-	{
-		rect = this->itemsBoundingRect();
-		rect.setTopLeft(QPointF(0,0));
-		//rect.setWidth(rect.width() * 1.05);
-		//rect.setHeight(rect.height() * 1.05);
-		this->setSceneRect(rect);
-		invalidate();
 	}
 
 	for(auto &obj : tables)
@@ -1616,10 +1579,16 @@ void ObjectsScene::finishObjectsMove(const QPointF &pnt_end)
 		obj->setModified(true);
 
 	emit s_objectsMoved(true);
+
 	moving_objs=false;
 	sel_ini_pnt.setX(DNaN);
 	sel_ini_pnt.setY(DNaN);
 	updateLayerRects();
+
+	QRectF rect = this->itemsBoundingRect();
+	rect.setTopLeft(QPointF(0,0));
+	this->setSceneRect(rect);
+	invalidate();
 }
 
 void ObjectsScene::alignObjectsToGrid()
