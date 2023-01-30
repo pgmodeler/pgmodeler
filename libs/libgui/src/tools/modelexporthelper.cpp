@@ -110,7 +110,7 @@ void ModelExportHelper::exportToPNG(ObjectsScene *scene, const QString &filename
 	try
 	{
 		QPixmap pix;
-		bool prev_show_grd, prev_show_dlm, align_objs;
+		bool prev_show_grd, prev_show_dlm;
 		QGraphicsView *view = nullptr;
 		QList<QRectF> pages;
 		unsigned v_cnt=0, h_cnt=0, page_idx=1;

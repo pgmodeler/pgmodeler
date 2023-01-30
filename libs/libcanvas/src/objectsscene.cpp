@@ -887,7 +887,7 @@ void ObjectsScene::showRelationshipLine(bool value, const QPointF &p_start)
 	}
 }
 
-bool ObjectsScene::setAlignObjectsToGrid(bool value)
+void ObjectsScene::setAlignObjectsToGrid(bool value)
 {
 	align_objs_grid = value;
 }

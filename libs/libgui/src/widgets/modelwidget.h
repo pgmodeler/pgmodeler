@@ -70,7 +70,13 @@ class __libgui ModelWidget: public QWidget {
 		bool modified,
 
 		//! \brief Indicates if the panning mode was activated via event filter (see eventFilter())
-		panning_mode;
+		panning_mode,
+
+		//! \brief Stores the current state of grid visibility prior a panning move
+		curr_show_grid,
+
+		//! \brief Stores the current state of page delimiters visibility prior a panning move
+		curr_show_delim;
 
 		/*! \brief Indicates if the cut operation is currently activated. This flag modifies
 		the way the methods copyObjects() and removeObject() works. */
@@ -348,6 +354,12 @@ class __libgui ModelWidget: public QWidget {
 		void fadeObjects(const std::vector<BaseObject *> &objects, bool fade_in);
 
 		void setAllCollapseMode(BaseTable::CollapseMode mode);
+
+		//! \brief Prepares the viewport to a panning move by hiding grid/delimiters
+		void startPanningMove();
+
+		//! \brief Restores the previous grid/delimiter visibility state after finishing a panning move
+		void finishPanningMove();
 
 	public:
 		static constexpr double MinimumZoom = ObjectsScene::MinScaleFactor,

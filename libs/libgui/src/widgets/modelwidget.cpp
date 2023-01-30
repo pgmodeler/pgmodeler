@@ -93,6 +93,7 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 
 	current_zoom = 1;
 	modified = panning_mode = false;
+	curr_show_grid = curr_show_delim = true;
 	new_obj_type = ObjectType::BaseObject;
 
 	//Generating a temporary file name for the model
@@ -665,24 +666,35 @@ void ModelWidget::resizeEvent(QResizeEvent *)
 
 bool ModelWidget::eventFilter(QObject *object, QEvent *event)
 {
-	//Filters the Wheel event if it is raised by the viewport scrollbars
-	if((object == viewport->horizontalScrollBar() ||
-			object == viewport->verticalScrollBar())
-		 && event->type() == QEvent::Wheel)
+
+	if(object == viewport->horizontalScrollBar() ||
+		 object == viewport->verticalScrollBar())
 	{
-		QWheelEvent *w_event=dynamic_cast<QWheelEvent *>(event);
+		if(event->type() == QEvent::MouseButtonPress)
+		{
+			startPanningMove();
+		}
+		else if(event->type() == QEvent::MouseButtonRelease)
+		{
+			finishPanningMove();
+		}
+		//Filters the Wheel event if it is raised by the viewport scrollbars
+		else if(event->type() == QEvent::Wheel)
+		{
+			QWheelEvent *w_event=dynamic_cast<QWheelEvent *>(event);
 
-		if(w_event->modifiers() != Qt::ControlModifier)
-			return false;
+			if(w_event->modifiers() != Qt::ControlModifier)
+				return false;
 
-		double zoom_inc = round(fabs(w_event->angleDelta().y()/120.0)) * ZoomIncrement;
+			double zoom_inc = round(fabs(w_event->angleDelta().y()/120.0)) * ZoomIncrement;
 
-		if(w_event->angleDelta().y() < 0)
-			this->applyZoom(this->current_zoom - zoom_inc);
-		else
-			this->applyZoom(this->current_zoom + zoom_inc);
+			if(w_event->angleDelta().y() < 0)
+				this->applyZoom(this->current_zoom - zoom_inc);
+			else
+				this->applyZoom(this->current_zoom + zoom_inc);
 
-		return true;
+			return true;
+		}
 	}
 	else if(object == magnifier_area_lbl && event->type() == QEvent::MouseMove)
 	{
@@ -692,7 +704,6 @@ bool ModelWidget::eventFilter(QObject *object, QEvent *event)
 	else if(object == scene)
 	{
 		QGraphicsSceneMouseEvent *m_event = dynamic_cast<QGraphicsSceneMouseEvent *>(event);
-		static bool show_grid = false, show_delim = false;
 
 		if(!m_event)
 			return false;
@@ -740,13 +751,7 @@ bool ModelWidget::eventFilter(QObject *object, QEvent *event)
 		//Activating the panning mode
 		else if(m_event->button() == Qt::MiddleButton && event->type() == QEvent::GraphicsSceneMousePress)
 		{
-			show_grid = ObjectsScene::isShowGrid();
-			show_delim = ObjectsScene::isShowPageDelimiters();
-
-			ObjectsScene::setShowGrid(false);
-			ObjectsScene::setShowPageDelimiters(false);
-			scene->setShowSceneLimits(false);
-
+			startPanningMove();
 			viewport->setDragMode(QGraphicsView::ScrollHandDrag);
 			QApplication::restoreOverrideCursor();
 			QApplication::setOverrideCursor(Qt::OpenHandCursor);
@@ -757,12 +762,7 @@ bool ModelWidget::eventFilter(QObject *object, QEvent *event)
 		{
 			panning_mode = false;
 			viewport->setDragMode(QGraphicsView::NoDrag);
-
-			ObjectsScene::setShowGrid(show_grid);
-			ObjectsScene::setShowPageDelimiters(show_delim);
-
-			scene->setShowSceneLimits(true);
-			scene->invalidate(viewport->sceneRect());
+			finishPanningMove();
 
 			QApplication::restoreOverrideCursor();
 			QApplication::restoreOverrideCursor();
@@ -1142,6 +1142,23 @@ void ModelWidget::emitSceneInteracted()
 	}
 	else
 		emit s_sceneInteracted(static_cast<int>(selected_objects.size()), scene->itemsBoundingRect(true, true));
+}
+
+void ModelWidget::startPanningMove()
+{
+	curr_show_grid = ObjectsScene::isShowGrid();
+	curr_show_delim = ObjectsScene::isShowPageDelimiters();
+	ObjectsScene::setShowGrid(false);
+	ObjectsScene::setShowPageDelimiters(false);
+	scene->setShowSceneLimits(false);
+}
+
+void ModelWidget::finishPanningMove()
+{
+	ObjectsScene::setShowGrid(curr_show_grid);
+	ObjectsScene::setShowPageDelimiters(curr_show_delim);
+	scene->setShowSceneLimits(true);
+	scene->invalidate(viewport->sceneRect());
 }
 
 void ModelWidget::configureObjectSelection()

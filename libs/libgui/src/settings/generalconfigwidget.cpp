@@ -386,6 +386,9 @@ void GeneralConfigWidget::saveConfiguration()
 																															Attributes::Widget +
 																															GlobalAttributes::SchemaExt);
 
+		config_params[Attributes::Configuration][Attributes::PgModelerVersion]=GlobalAttributes::PgModelerVersion;
+		config_params[Attributes::Configuration][Attributes::FirstRun]=Attributes::False;
+
 		config_params[Attributes::Configuration][Attributes::OpListSize]=QString::number(oplist_size_spb->value());
 		config_params[Attributes::Configuration][Attributes::AutoSaveInterval]=QString::number(autosave_interv_chk->isChecked() ? autosave_interv_spb->value() : 0);
 		config_params[Attributes::Configuration][Attributes::PaperType]=QString::number(paper_cmb->currentIndex());

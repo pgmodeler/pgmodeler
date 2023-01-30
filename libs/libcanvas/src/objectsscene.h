@@ -276,7 +276,7 @@ class __libcanvas ObjectsScene: public QGraphicsScene {
 		static void setGridSize(unsigned size);
 		static unsigned getGridSize();
 
-		static bool setAlignObjectsToGrid(bool value);
+		static void setAlignObjectsToGrid(bool value);
 		static bool isAlignObjectsToGrid();
 
 		static void setShowGrid(bool value);

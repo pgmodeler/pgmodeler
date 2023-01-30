@@ -22,7 +22,6 @@
 ModelOverviewWidget::ModelOverviewWidget(QWidget *parent) : QWidget(parent, Qt::WindowCloseButtonHint | Qt::Tool)
 {
 	setupUi(this);
-
 	scrollarea = nullptr;
 	this->model=nullptr;
 	zoom_factor=1;
@@ -317,6 +316,7 @@ void ModelOverviewWidget::mousePressEvent(QMouseEvent *event)
 	{
 		window_frm->setCursor(QCursor(Qt::OpenHandCursor));
 		this->setCursor(QCursor(Qt::OpenHandCursor));
+		model->startPanningMove();
 	}
 }
 
@@ -326,6 +326,7 @@ void ModelOverviewWidget::mouseReleaseEvent(QMouseEvent *event)
 	{
 		window_frm->setCursor(QCursor(Qt::ArrowCursor));
 		this->setCursor(QCursor(Qt::ArrowCursor));
+		model->finishPanningMove();
 	}
 }
 
