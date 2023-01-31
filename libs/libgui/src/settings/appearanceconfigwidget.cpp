@@ -937,11 +937,27 @@ void AppearanceConfigWidget::applyUiTheme()
 
 	qApp->setPalette(pal);
 
-	// For dark theme, we force QMenu class to use a lighter base color
 	if(ui_theme == Attributes::Dark)
 	{
+		// Forcing QMenu class to use a lighter base color
 		pal.setColor(QPalette::Base, color_map->at(QPalette::Mid).at(0));
 		qApp->setPalette(pal, "QMenu");
+
+		// Forcing QCheckBox and QRadioButton classes to use a lighter border color
+		pal = orig_pal;
+		pal.setColor(QPalette::Window, QColor(color_map->at(QPalette::Mid).at(0)).lighter());
+		qApp->setPalette(pal, "QCheckBox");
+		qApp->setPalette(pal, "QRadioButton");
+
+		/* Forcing checkboxes inside QTableWidget, QListWidget and QTreeWidget classes
+			 to use a lighter border color when their parent widgets use alternate row colors */
+		pal = orig_pal;
+		pal.setColor(QPalette::AlternateBase, color_map->at(QPalette::Mid).at(0));
+		pal.setColor(QPalette::Base, color_map->at(QPalette::Window).at(0));
+		pal.setColor(QPalette::Window, QColor(color_map->at(QPalette::Mid).at(0)).lighter(50));
+		qApp->setPalette(pal, "QTableWidget");
+		qApp->setPalette(pal, "QListWidget");
+		qApp->setPalette(pal, "QTreeWidget");
 	}
 
 	applySyntaxHighlightTheme();
