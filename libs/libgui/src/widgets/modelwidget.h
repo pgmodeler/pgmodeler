@@ -76,7 +76,10 @@ class __libgui ModelWidget: public QWidget {
 		curr_show_grid,
 
 		//! \brief Stores the current state of page delimiters visibility prior a panning move
-		curr_show_delim;
+		curr_show_delim,
+
+		//! \brief Indicates if the canvas panning move is being made via mouse wheel
+		wheel_move;
 
 		/*! \brief Indicates if the cut operation is currently activated. This flag modifies
 		the way the methods copyObjects() and removeObject() works. */
@@ -191,7 +194,11 @@ class __libgui ModelWidget: public QWidget {
 		QRect magnifier_rect;
 
 		//! \brief This timer controls the interval the zoom label is visible
-		QTimer zoom_info_timer;
+		QTimer zoom_info_timer,
+
+		/*! \brief This timer controls the interval that the background of the scene is hidden while
+		 *  using the mouse wheel to zoom or move the scene */
+		wheel_timer;
 
 		//! \brief Stores the installed plugins actions to be used in the model context menu
 		QList<QAction *> plugins_actions;
@@ -354,12 +361,6 @@ class __libgui ModelWidget: public QWidget {
 		void fadeObjects(const std::vector<BaseObject *> &objects, bool fade_in);
 
 		void setAllCollapseMode(BaseTable::CollapseMode mode);
-
-		//! \brief Prepares the viewport to a panning move by hiding grid/delimiters
-		void startPanningMove();
-
-		//! \brief Restores the previous grid/delimiter visibility state after finishing a panning move
-		void finishPanningMove();
 
 	public:
 		static constexpr double MinimumZoom = ObjectsScene::MinScaleFactor,
@@ -595,6 +596,12 @@ class __libgui ModelWidget: public QWidget {
 		void updateModelLayersInfo();
 
 		void showMagnifierArea(bool show);
+
+		//! \brief Prepares the viewport to a panning move by hiding grid/delimiters
+		void startPanningMove();
+
+		//! \brief Restores the previous grid/delimiter visibility state after finishing a panning move
+		void finishPanningMove();
 
 	public slots:
 		void loadModel(const QString &filename);

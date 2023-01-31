@@ -92,7 +92,7 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 																																					ObjectType::BaseRelationship, ObjectType::Relationship });
 
 	current_zoom = 1;
-	modified = panning_mode = false;
+	modified = panning_mode = wheel_move = false;
 	curr_show_grid = curr_show_delim = true;
 	new_obj_type = ObjectType::BaseObject;
 
@@ -594,6 +594,14 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 
 	connect(&popup_menu, &QMenu::aboutToHide, this, &ModelWidget::updateObjectsLayers);
 
+	wheel_timer.setInterval(300);
+
+	connect(&wheel_timer, &QTimer::timeout, this, [this](){
+		finishPanningMove();
+		wheel_timer.stop();
+		wheel_move = false;
+	});
+
 	viewport->installEventFilter(this);
 	viewport->horizontalScrollBar()->installEventFilter(this);
 	viewport->verticalScrollBar()->installEventFilter(this);
@@ -682,6 +690,14 @@ bool ModelWidget::eventFilter(QObject *object, QEvent *event)
 		else if(event->type() == QEvent::Wheel)
 		{
 			QWheelEvent *w_event=dynamic_cast<QWheelEvent *>(event);
+
+			wheel_timer.start();
+
+			if(!wheel_move)
+			{
+				startPanningMove();
+				wheel_move = true;
+			}
 
 			if(w_event->modifiers() != Qt::ControlModifier)
 				return false;
@@ -1158,6 +1174,7 @@ void ModelWidget::finishPanningMove()
 	ObjectsScene::setShowGrid(curr_show_grid);
 	ObjectsScene::setShowPageDelimiters(curr_show_delim);
 	scene->setShowSceneLimits(true);
+	viewport->resetCachedContent();
 	scene->invalidate(viewport->sceneRect());
 }
 
