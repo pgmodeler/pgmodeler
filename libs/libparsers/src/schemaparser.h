@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2022 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -146,6 +146,8 @@ class __libparsers SchemaParser {
 		template<typename Type>
 		bool getExpressionResult(const QString &oper, const QVariant &left_val, const QVariant &right_val);
 
+		void __setPgSQLVersion(const QString &pgsql_ver, bool ignore_db_version);
+
 	public:
 		static const char CharComment,	//! \brief Character that starts a comment
 		CharLineEnd,	//! \brief Character that indicates end of line
@@ -251,6 +253,7 @@ class __libparsers SchemaParser {
 		//! \brief Returns the current columnm of the current line where the parser is reading
 		int getCurrentColumn();
 
+		friend class Catalog;
 };
 
 #endif

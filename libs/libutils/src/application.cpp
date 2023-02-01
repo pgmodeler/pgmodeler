@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2022 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -45,8 +45,8 @@ bool Application::loadTranslation(const QString &lang_id, const QString &directo
 
 void Application::createUserConfiguration(bool missing_only)
 {
-	QDir config_dir(GlobalAttributes::getConfigurationsDir()),
-			old_cfg_dir(GlobalAttributes::getConfigurationsDir().replace(GlobalAttributes::PgModelerAppName, "pgmodeler"));
+	QDir config_dir(GlobalAttributes::getConfigurationsPath()),
+			old_cfg_dir(GlobalAttributes::getConfigurationsPath().replace(GlobalAttributes::PgModelerAppName, "pgmodeler"));
 
 	/* First, we check if there are pgModeler 0.9.x config files in the user's local storage.
 	 * If that's the case, we copy some files that are compatible with pgModeler 1.x+ */
@@ -76,12 +76,12 @@ void Application::createUserConfiguration(bool missing_only)
 			 config_dir.entryList({QString("*%1").arg(GlobalAttributes::ConfigurationExt)},
 														QDir::Files | QDir::Dirs | QDir::NoDotAndDotDot).isEmpty()))
 		{
-			copyFilesRecursively(GlobalAttributes::getTmplConfigurationDir(), GlobalAttributes::getConfigurationsDir(), missing_only);
+			copyFilesRecursively(GlobalAttributes::getTmplConfigurationPath(), GlobalAttributes::getConfigurationsPath(), missing_only);
 		}
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(ErrorCode::InitialUserConfigNotCreated).arg(GlobalAttributes::getConfigurationsDir(), GlobalAttributes::getTmplConfigurationDir()), ErrorCode::InitialUserConfigNotCreated,__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(ErrorCode::InitialUserConfigNotCreated).arg(GlobalAttributes::getConfigurationsPath(), GlobalAttributes::getTmplConfigurationPath()), ErrorCode::InitialUserConfigNotCreated,__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 

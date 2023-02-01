@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2022 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -91,7 +91,7 @@ class __libgui MainWindow: public QMainWindow, public Ui::MainWindow {
 
 		/*! \brief Widget positioned on the center of main window that contains some basic operations like
 		create new model, open a file, restore session */
-		WelcomeWidget *central_wgt;
+		WelcomeWidget *welcome_wgt;
 
 		//! \brief Model overview widget
 		ModelOverviewWidget *overview_wgt;
@@ -139,7 +139,7 @@ class __libgui MainWindow: public QMainWindow, public Ui::MainWindow {
 		prev_session_files;
 
 		//! \brief Stores the actions related to recent models
-		QMenu recent_mdls_menu,
+		QMenu *recent_models_menu,
 
 		main_menu,
 
@@ -150,6 +150,11 @@ class __libgui MainWindow: public QMainWindow, public Ui::MainWindow {
 		more_actions_menu,
 
 		fix_menu;
+
+		//! \brief Stores the loaded plugins toolbar actions
+		QList<QAction *> plugins_tb_acts;
+
+		QMap<QString, QIcon> recent_models_icons;
 
 		//! \brief QMainWindow::closeEvent() overload: Saves the configurations before close the application
 		void closeEvent(QCloseEvent *event);
@@ -192,6 +197,8 @@ class __libgui MainWindow: public QMainWindow, public Ui::MainWindow {
 
 		void configureMenusActionsWidgets();
 
+		void setPluginsActions(ModelWidget *model_wgt);
+
 	public:
 		enum MWViewsId {
 			WelcomeView,
@@ -204,10 +211,16 @@ class __libgui MainWindow: public QMainWindow, public Ui::MainWindow {
 		virtual ~MainWindow();
 
 		//! \brief Loads a set of models from string list
-		void loadModels(const QStringList &list);
+		void loadModels(const QStringList &files);
+
+		//! \brief Loads a model from a specified filename
+		void loadModel(const QString &filename);
 
 		//! \brief Indicates if model must be validated before save, diff or export
 		static void setConfirmValidation(bool value);
+
+		//! \brief Returns the current working database model widget
+		ModelWidget *getCurrentModel();
 
 	public slots:
 		/*! \brief Creates a new empty model inside the main window. If the parameter 'filename' is specified,
@@ -238,6 +251,17 @@ class __libgui MainWindow: public QMainWindow, public Ui::MainWindow {
 		 *  expose the SQL Tool widget itself (useful for plugin developers) */
 		bool hasDbsListedInSQLTool();
 
+		//! \brief Adds an entry to the recent models menu
+		void registerRecentModel(const QString &filename);
+
+		void registerRecentModelIcon(const QString &suffix, const QIcon &file_type_icon);
+
+				//! \brief Updates the window title taking into account the current model filename
+		void updateWindowTitle();
+
+		//! \brief Updates the tab name of the currently opened model if the database name is changed
+		void updateModelTabName();
+
 	private slots:
 		void showMainMenu();
 
@@ -257,9 +281,6 @@ class __libgui MainWindow: public QMainWindow, public Ui::MainWindow {
 
 		//! \brief Loads a model from a file via file dialog
 		void loadModel();
-
-		//! \brief Loads a model from a specified filename
-		void loadModel(const QString &filename);
 
 		//! \brief Saves the currently focused model. If the parameter 'model' is set, saves the passed model
 		void saveModel(ModelWidget *model=nullptr);
@@ -285,14 +306,8 @@ class __libgui MainWindow: public QMainWindow, public Ui::MainWindow {
 		//! \brief Applies the zoom to the currently focused model
 		void applyZoom();
 
-		//! \brief Execute the plugin represented by the action that calls the slot
-		void executePlugin();
-
 		//! \brief Toggles the overview widget for the currently opened model
 		void showOverview(bool show);
-
-		//! \brief Updates the tab name of the currently opened model if the database name is changed
-		void updateModelTabName();
 
 		//! \brief Loads a recent model. The filename is get from the action that triggered the slot
 		void loadModelFromAction();
@@ -346,6 +361,12 @@ class __libgui MainWindow: public QMainWindow, public Ui::MainWindow {
 
 	signals:
 		void s_currentModelChanged(ModelWidget *model_wgt);
+		void s_modelSaved(ModelWidget *model_wgt);
+
+		/*! \brief This signal is emitted when an extraneous file (not .dbm) is among
+		 * the list of models to be loaded in loadModels(). The intention of this signal
+		 * is to notify any plugin that may handle the file type to be loaded */
+		void s_modelLoadRequested(const QString &filename);
 };
 
 #endif

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2022 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -426,7 +426,7 @@ void TransformTest::modelCreatesTransformFromXML()
 		dbmodel.addObject(&from_sql_func);
 		dbmodel.addObject(&to_sql_func);
 
-		dbmodel.getXMLParser()->setDTDFile(GlobalAttributes::getSchemasRootDir() +
+		dbmodel.getXMLParser()->setDTDFile(GlobalAttributes::getSchemasRootPath() +
 																			 GlobalAttributes::DirSeparator +
 																			 GlobalAttributes::XMLSchemaDir +
 																			 GlobalAttributes::DirSeparator +

@@ -1,5 +1,6 @@
 #include "swapobjectsidswidget.h"
 #include "guiutilsns.h"
+#include "objectfinderwidget.h"
 
 const QString SwapObjectsIdsWidget::IdLabel("ID: <strong>%1</strong>");
 
@@ -122,7 +123,7 @@ void SwapObjectsIdsWidget::fillCreationOrderGrid()
 		}
 	});
 
-	ObjectFinderWidget::updateObjectTable(objects_tbw, objects);
+	GuiUtilsNs::updateObjectTable(objects_tbw, objects);
 	objects_tbw->resizeColumnsToContents();
 
 	if(!filter_edt->text().isEmpty() || hide_rels_chk->isChecked() || hide_sys_objs_chk->isChecked())

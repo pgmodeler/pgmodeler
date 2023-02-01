@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2022 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@ WelcomeWidget::WelcomeWidget(QWidget *parent): QWidget(parent)
 {
 	setupUi(this);
 
-	QList<QToolButton *> btns= { new_tb, open_tb, recent_tb, last_session_tb, sample_tb, support_tb };
+	QList<QToolButton *> btns= { new_tb, load_tb, recent_tb, last_session_tb, sample_tb, support_tb };
 	QFont fnt;
 
 	for(auto &btn : btns)

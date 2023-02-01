@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2022 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -35,7 +35,7 @@ BugReportForm::BugReportForm(QWidget *parent, Qt::WindowFlags f) : QDialog(paren
 	output_sel->setWindowTitle(tr("Select report output folder"));
 	output_sel->setFileMode(QFileDialog::Directory);
 	output_sel->setAllowFilenameInput(true);
-	output_sel->setSelectedFile(GlobalAttributes::getTemporaryDir());
+	output_sel->setSelectedFile(GlobalAttributes::getTemporaryPath());
 
 	output_lt->addWidget(output_sel);
 	connect(close_btn, &QPushButton::clicked, this, &BugReportForm::close);
@@ -127,9 +127,9 @@ void BugReportForm::attachModel()
 
 	try
 	{
-		file_dlg.setDefaultSuffix(QString("dbm"));
+		file_dlg.setDefaultSuffix(GlobalAttributes::DbModelExt);
 		file_dlg.setWindowTitle(tr("Load model"));
-		file_dlg.setNameFilter(tr("Database model (*.dbm);;All files (*.*)"));
+		file_dlg.setNameFilter(tr("Database model (*%1);;All files (*.*)").arg(GlobalAttributes::DbModelExt));
 		file_dlg.setFileMode(QFileDialog::ExistingFile);
 		file_dlg.setModal(true);
 

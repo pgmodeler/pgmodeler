@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2022 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -46,7 +46,7 @@ GeneralConfigWidget::GeneralConfigWidget(QWidget * parent) : BaseConfigWidget(pa
 	confs_dir_sel->setToolTip(tr("pgModeler configurations directory for the current user"));
 	confs_dir_sel->setReadOnly(true);
 	confs_dir_sel->setFileMode(QFileDialog::Directory);
-	confs_dir_sel->setSelectedFile(GlobalAttributes::getConfigurationsDir());
+	confs_dir_sel->setSelectedFile(GlobalAttributes::getConfigurationsPath());
 	general_grid->addWidget(confs_dir_sel, 1, 1, 1, 1);
 
 	source_editor_sel = new FileSelectorWidget(this);
@@ -155,7 +155,7 @@ GeneralConfigWidget::GeneralConfigWidget(QWidget * parent) : BaseConfigWidget(pa
 #endif
 
 	//Retrieving the available UI dictionaries
-	QStringList langs = QDir(GlobalAttributes::getLanguagesDir() +
+	QStringList langs = QDir(GlobalAttributes::getLanguagesPath() +
 													 GlobalAttributes::DirSeparator,
 													 QString("*.qm"), QDir::Name, QDir::AllEntries | QDir::NoDotAndDotDot).entryList();
 
@@ -202,7 +202,8 @@ void GeneralConfigWidget::loadConfiguration()
 		check_update_chk->setChecked(config_params[Attributes::Configuration][Attributes::CheckUpdate]==Attributes::True);
 		idx = check_versions_cmb->findData(config_params[Attributes::Configuration][Attributes::CheckVersions]);
 		check_versions_cmb->setCurrentIndex(idx < 0 ? 0 : idx);
-		check_versions_cmb->setEnabled(check_update_chk->isChecked());
+		check_versions_cmb->setEnabled(check_update_chk->isChecked());	
+		old_pgsql_versions_chk->setChecked(config_params[Attributes::Configuration][Attributes::OldPgSqlVersions]==Attributes::True);
 
 		save_last_pos_chk->setChecked(config_params[Attributes::Configuration][Attributes::SaveLastPosition]==Attributes::True);
 		disable_smooth_chk->setChecked(config_params[Attributes::Configuration][Attributes::DisableSmoothness]==Attributes::True);
@@ -385,6 +386,9 @@ void GeneralConfigWidget::saveConfiguration()
 																															Attributes::Widget +
 																															GlobalAttributes::SchemaExt);
 
+		config_params[Attributes::Configuration][Attributes::PgModelerVersion]=GlobalAttributes::PgModelerVersion;
+		config_params[Attributes::Configuration][Attributes::FirstRun]=Attributes::False;
+
 		config_params[Attributes::Configuration][Attributes::OpListSize]=QString::number(oplist_size_spb->value());
 		config_params[Attributes::Configuration][Attributes::AutoSaveInterval]=QString::number(autosave_interv_chk->isChecked() ? autosave_interv_spb->value() : 0);
 		config_params[Attributes::Configuration][Attributes::PaperType]=QString::number(paper_cmb->currentIndex());
@@ -405,6 +409,7 @@ void GeneralConfigWidget::saveConfiguration()
 		config_params[Attributes::Configuration][Attributes::ShowCanvasGrid]=(ObjectsScene::isShowGrid() ? Attributes::True : "");
 		config_params[Attributes::Configuration][Attributes::ShowPageDelimiters]=(ObjectsScene::isShowPageDelimiters() ? Attributes::True : "");
 		config_params[Attributes::Configuration][Attributes::AlignObjsToGrid]=(ObjectsScene::isAlignObjectsToGrid() ? Attributes::True : "");
+		config_params[Attributes::Configuration][Attributes::LockPageDelimResize]=(ObjectsScene::isDelimiterScaleLocked() ? Attributes::True : "");
 
 		unity_cmb->setCurrentIndex(UnitMilimeters);
 		config_params[Attributes::Configuration][Attributes::PaperMargin]=QString("%1,%2,%3,%4").arg(left_marg->value())
@@ -433,6 +438,7 @@ void GeneralConfigWidget::saveConfiguration()
 		config_params[Attributes::Configuration][Attributes::SaveRestoreGeometry]=(save_restore_geometry_chk->isChecked() ? Attributes::True : "");
 		config_params[Attributes::Configuration][Attributes::LowVerbosity]=(low_verbosity_chk->isChecked() ? Attributes::True : "");
 		config_params[Attributes::Configuration][Attributes::EscapeComment]=(escape_comments_chk->isChecked() ? Attributes::True : "");
+		config_params[Attributes::Configuration][Attributes::OldPgSqlVersions]=(old_pgsql_versions_chk->isChecked() ? Attributes::True : "");
 
 		config_params[Attributes::Configuration][Attributes::File]="";
 		config_params[Attributes::Configuration][Attributes::RecentModels]="";
@@ -537,9 +543,10 @@ void GeneralConfigWidget::applyConfiguration()
 
 	ObjectsScene::setEnableCornerMove(corner_move_chk->isChecked());
 	ObjectsScene::setInvertRangeSelectionTrigger(invert_rangesel_chk->isChecked());
-	ObjectsScene::setGridOptions(config_params[Attributes::Configuration][Attributes::ShowCanvasGrid]==Attributes::True,
-															 config_params[Attributes::Configuration][Attributes::AlignObjsToGrid]==Attributes::True,
-															 config_params[Attributes::Configuration][Attributes::ShowPageDelimiters]==Attributes::True);
+	ObjectsScene::setShowGrid(config_params[Attributes::Configuration][Attributes::ShowCanvasGrid]==Attributes::True);
+	ObjectsScene::setAlignObjectsToGrid(config_params[Attributes::Configuration][Attributes::AlignObjsToGrid]==Attributes::True);
+	ObjectsScene::setShowPageDelimiters(config_params[Attributes::Configuration][Attributes::ShowPageDelimiters]==Attributes::True);
+	ObjectsScene::setLockDelimiterScale(config_params[Attributes::Configuration][Attributes::LockPageDelimResize]==Attributes::True, 1);
 
 	OperationList::setMaximumSize(oplist_size_spb->value());
 	BaseTableView::setHideExtAttributes(hide_ext_attribs_chk->isChecked());
@@ -555,12 +562,15 @@ void GeneralConfigWidget::applyConfiguration()
 	ModelWidget::setRenderSmoothnessDisabled(disable_smooth_chk->isChecked());
 	ModelWidget::setSimplifiedObjectCreation(simple_obj_creation_chk->isChecked());
 	MainWindow::setConfirmValidation(confirm_validation_chk->isChecked());
-	BaseObjectView::setPlaceholderEnabled(use_placeholders_chk->isChecked());
-	SQLExecutionWidget::setSQLHistoryMaxLength(history_max_length_spb->value());
 
+	BaseObjectView::setCompactViewEnabled(config_params[Attributes::Configuration][Attributes::CompactView]==Attributes::True);
+	BaseObjectView::setPlaceholderEnabled(use_placeholders_chk->isChecked());
+
+	SQLExecutionWidget::setSQLHistoryMaxLength(history_max_length_spb->value());
 	ModelDatabaseDiffForm::setLowVerbosity(low_verbosity_chk->isChecked());
 	DatabaseImportForm::setLowVerbosity(low_verbosity_chk->isChecked());
 	ModelExportForm::setLowVerbosity(low_verbosity_chk->isChecked());
+	Connection::setIgnoreDbVersion(old_pgsql_versions_chk->isChecked());
 }
 
 void GeneralConfigWidget::restoreDefaults()
@@ -571,7 +581,6 @@ void GeneralConfigWidget::restoreDefaults()
 		BaseConfigWidget::restoreDefaults(GlobalAttributes::XMLHighlightConf, true);
 		BaseConfigWidget::restoreDefaults(GlobalAttributes::SQLHighlightConf, true);
 		BaseConfigWidget::restoreDefaults(GlobalAttributes::SchHighlightConf, true);
-		//BaseConfigWidget::restoreDefaults(GlobalAttributes::UiDefaulStyleConf, true);
 		this->loadConfiguration();
 		this->applyConfiguration();
 		setConfigurationChanged(true);

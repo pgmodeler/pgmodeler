@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2022 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -21,10 +21,12 @@
 #include "guiutilsns.h"
 #include "settings/generalconfigwidget.h"
 #include "objectstablewidget.h"
+#include "objectfinderwidget.h"
 
 ModelObjectsWidget::ModelObjectsWidget(bool simplified_view, QWidget *parent) : QWidget(parent)
 {
 	setupUi(this);
+	obj_types_wgt = nullptr;
 	model_wgt=nullptr;
 	db_model=nullptr;
 	setModel(db_model);
@@ -52,16 +54,25 @@ ModelObjectsWidget::ModelObjectsWidget(bool simplified_view, QWidget *parent) : 
 
 	if(!simplified_view)
 	{
+		obj_types_wgt = new ObjectTypesListWidget(this);
+		visibleobjects_grp->layout()->addWidget(obj_types_wgt);
+
 		widgets_conf.setValue(QString("splitterSize"), splitter->saveState());
 		connect(options_tb, &QToolButton::clicked,this, &ModelObjectsWidget::changeObjectsView);
-		connect(visibleobjects_lst, &QListWidget::itemClicked, this, qOverload<QListWidgetItem *>(&ModelObjectsWidget::setObjectVisible));
-		connect(select_all_tb, &QToolButton::clicked, this, &ModelObjectsWidget::setAllObjectsVisible);
-		connect(clear_all_tb, &QToolButton::clicked, this, &ModelObjectsWidget::setAllObjectsVisible);
+
+		connect(obj_types_wgt, &ObjectTypesListWidget::s_typeCheckStateChanged, [this](ObjectType obj_type, Qt::CheckState state) {
+			setObjectVisible(obj_type, state == Qt::Checked);
+			updateObjectsView();
+		});
+
+		connect(obj_types_wgt, &ObjectTypesListWidget::s_typesCheckStateChanged, [this](Qt::CheckState state) {
+			setAllObjectsVisible(state == Qt::Checked);
+		});
+
 		connect(objectstree_tw, &QTreeWidget::itemDoubleClicked, this, &ModelObjectsWidget::editObject);
 		connect(objectslist_tbw, &QTableWidget::itemDoubleClicked, this, &ModelObjectsWidget::editObject);
 		connect(hide_tb, &QToolButton::clicked, this, &ModelObjectsWidget::hide);
 
-		ObjectFinderWidget::updateObjectTypeList(visibleobjects_lst);
 		setAllObjectsVisible(true);
 		objectslist_tbw->installEventFilter(this);
 		objectstree_tw->installEventFilter(this);
@@ -381,34 +392,10 @@ void ModelObjectsWidget::setObjectVisible(ObjectType obj_type, bool visible)
 	}
 }
 
-void ModelObjectsWidget::setObjectVisible(QListWidgetItem *item)
-{
-	ObjectType obj_type;
-
-	//Get the object type related to the selected item
-	obj_type=static_cast<ObjectType>(item->data(Qt::UserRole).toInt());
-
-	//Set the visibility of the object type
-	setObjectVisible(obj_type, item->checkState()==Qt::Checked);
-
-	//Updates the entire objects view (list and tree) to reflect the modification
-	updateObjectsView();
-}
-
 void ModelObjectsWidget::setAllObjectsVisible(bool value)
 {
-	ObjectType obj_type;
-	QListWidgetItem *item=nullptr;
-	bool checked;
-
-	checked=(sender()==select_all_tb || value);
-	for(int i=0; i < visibleobjects_lst->count(); i++)
-	{
-		item=visibleobjects_lst->item(i);
-		obj_type=static_cast<ObjectType>(item->data(Qt::UserRole).toInt());
-		visible_objs_map[obj_type]=checked;
-		item->setCheckState((checked ? Qt::Checked : Qt::Unchecked));
-	}
+	for(auto &type : BaseObject::getObjectTypes(true, { ObjectType::BaseRelationship }))
+		visible_objs_map[type] = value;
 
 	updateObjectsView();
 }
@@ -497,7 +484,7 @@ void ModelObjectsWidget::updateObjectsList()
 		objects = db_model->findObjects("*", visible_types, false, false, false);
 	}
 
-	ObjectFinderWidget::updateObjectTable(objectslist_tbw, objects);
+	GuiUtilsNs::updateObjectTable(objectslist_tbw, objects);
 	objectslist_tbw->clearSelection();
 }
 

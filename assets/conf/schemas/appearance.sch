@@ -21,6 +21,7 @@ $sp icons-size="{icons-size}"
 
 $br $tb <design
 $sp grid-size="{grid-size}"
+$sp grid-pattern="{grid-pattern}"
 $sp grid-color="{grid-color}"
 $sp canvas-color="{canvas-color}"
 $sp delimiters-color="{delimiters-color}" $br

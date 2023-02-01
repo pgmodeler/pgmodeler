@@ -50,13 +50,17 @@
 		cl.collowner AS owner, pg_encoding_to_char(cl.collencoding) AS encoding,
 		cl.collcollate AS lc_collate, cl.collctype AS lc_ctype,
 		split_part(collctype, '@', 2) AS lc_ctype_mod,
-		split_part(collcollate, '@', 2) AS lc_collate_mod, 
-
-		CASE
-			WHEN collprovider = 'i' THEN 'icu'
-			WHEN collprovider = 'c' THEN 'libc'
-			ELSE ''
-		END AS provider, ]
+		split_part(collcollate, '@', 2) AS lc_collate_mod, ]
+		
+		%if ({pgsql-ver} >=f "10.0") %then
+			[ CASE
+				WHEN collprovider = 'i' THEN 'icu'
+				WHEN collprovider = 'c' THEN 'libc'
+				ELSE ''
+			END AS provider, ]
+		%else
+			[ '' AS provider, ]
+		%end
 
 		%if ({pgsql-ver} >=f "12.0") %then
 			[ collisdeterministic AS deterministic_bool, ]

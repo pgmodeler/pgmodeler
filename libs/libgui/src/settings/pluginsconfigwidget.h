@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2022 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -38,9 +38,6 @@ class __libgui PluginsConfigWidget: public BaseConfigWidget, public Ui::PluginsC
 		//! \brief Loaded plugins
 		std::vector<PgModelerPlugin *> plugins;
 
-		//! \brief Stores the actions assigned for each plugin
-		std::vector<QAction *> plugins_actions;
-
 		//! \brief Table used to show the loaded plugins
 		ObjectsTableWidget *plugins_tab;
 
@@ -54,38 +51,27 @@ class __libgui PluginsConfigWidget: public BaseConfigWidget, public Ui::PluginsC
 
 	public:
 		PluginsConfigWidget(QWidget *parent = nullptr);
+
 		virtual ~PluginsConfigWidget();
 
 		//! \brief Since plugins has its own configurations this method load all plugins instead
 		void loadConfiguration();
 
-		/*! \brief Install the created actions on menu. Additionally the user must specify the
-		 receiver object and slot executed when the actions are activated. The parameters recv and slot
-			must object the same log as the QObject::connect() where recv is the recever object and slot is the
-			method called (in format &Class::method) when the action sends the triggered signal. */
-		template <class Class, typename Slot>
-		void installPluginsActions(QMenu *menu, const Class *recv, Slot slot);
+		/*! \brief Installs the plugins's ocnfiguration action in the provided menu.
+		 *  Additionally, it returns a list of actions that is meant to be placed in a toolbar. */
+		QList<QAction *> installPluginsActions(QMenu *menu);
 
 		//! \brief Performs the initialization of all loaded plugins (see PgModelerPlugin::initPlugin())
 		void initPlugins(MainWindow *main_window);
 
+		//! \brief Execute the post initialization of all loaded plugins
+		void postInitPlugins();
+
+		//! \brief Returns a list of actions of the loaded plugins related to model actions only
+		QList<QAction *> getPluginsModelsActions();
+
 	private slots:
 		void showPluginInfo(int idx);
 };
-
-template <class Class, typename Slot>
-void PluginsConfigWidget::installPluginsActions(QMenu *menu, const Class *recv, Slot slot)
-{
-	if(!menu || !slot)
-		return;
-
-	for(auto &act : plugins_actions)
-	{
-		if(menu)
-			menu->addAction(act);
-
-		connect(act, &QAction::triggered, recv, slot);
-	}
-}
 
 #endif

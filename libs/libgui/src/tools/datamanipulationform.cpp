@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2022 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -385,6 +385,7 @@ void DataManipulationForm::retrieveData()
 		ObjectType obj_type = static_cast<ObjectType>(table_cmb->currentData(Qt::UserRole).toUInt());
 		std::vector<int> curr_hidden_cols;
 		int col_cnt = results_tbw->horizontalHeader()->count();
+		QDateTime start_dt = QDateTime::currentDateTime(), end_dt;
 
 		prev_tab_name = curr_table_name;
 		curr_table_name = QString("%1.%2").arg(schema_cmb->currentText()).arg(table_cmb->currentText());
@@ -431,12 +432,16 @@ void DataManipulationForm::retrieveData()
 		retrieveFKColumns(schema_cmb->currentText(), table_cmb->currentText());
 		SQLExecutionWidget::fillResultsTable(catalog, res, results_tbw, true);
 
+		end_dt = QDateTime::currentDateTime();
+		qint64 total_exec = end_dt.toMSecsSinceEpoch() - start_dt.toMSecsSinceEpoch();
+		QString exec_time_str = total_exec >= 1000 ? QString("%1 s").arg(total_exec/1000.0) : QString("%1 ms").arg(total_exec);
+
 		edit_tb->setEnabled(true);
 		export_tb->setEnabled(results_tbw->rowCount() > 0);
 		result_info_wgt->setVisible(results_tbw->rowCount() > 0);
-		result_info_lbl->setText(QString("<em>[%1]</em> ").arg(QTime::currentTime().toString(QString("hh:mm:ss.zzz"))) +
-								 tr("Rows returned: <strong>%1</strong>&nbsp;&nbsp;&nbsp;").arg(results_tbw->rowCount()) +
-								 tr("<em>(Limit: <strong>%1</strong>)</em>").arg(limit_spb->value()==0 ? tr("none") : QString::number(limit_spb->value())));
+		result_info_lbl->setText(QString("<em>[%1]</em> ").arg(end_dt.toString("hh:mm:ss.zzz")) +
+								 tr("Rows returned: <strong>%1</strong> in <em><strong>%2</strong></em> ").arg(results_tbw->rowCount()).arg(exec_time_str) +
+								 tr("<em>(Limit: <strong>%1</strong> rows)</em>").arg(limit_spb->value()==0 ? tr("none") : QString::number(limit_spb->value())));
 
 		//Reset the changed rows state
 		enableRowControlButtons();

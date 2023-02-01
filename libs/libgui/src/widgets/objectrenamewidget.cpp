@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2022 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -27,6 +27,7 @@ ObjectRenameWidget::ObjectRenameWidget(QWidget * parent) : QDialog(parent)
 
 	setupUi(this);
 	setWindowFlags(Qt::Dialog | Qt::FramelessWindowHint);
+	setAttribute(Qt::WA_TranslucentBackground, true);
 
 	connect(new_name_edt, &QLineEdit::returnPressed, apply_tb, &QToolButton::click);
 	connect(apply_tb, &QToolButton::clicked, this, &ObjectRenameWidget::applyRenaming);

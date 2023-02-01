@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2022 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -118,7 +118,7 @@ ModelExportForm::ModelExportForm(QWidget *parent, Qt::WindowFlags f) : QDialog(p
 	pgsqlvers_cmb->addItems(PgSqlVersions::AllVersions);
 	pgsqlvers1_cmb->addItems(PgSqlVersions::AllVersions);
 
-	double values[]={ ModelWidget::MinimumZoom, 0.10, 0.25, 0.5, 0.75, 1, 1.25, 1.50, 1.75, 2,
+	double values[]={ ModelWidget::MinimumZoom, 0.20, 0.30, 0.5, 0.75, 1, 1.25, 1.50, 1.75, 2,
 										2.25, 2.50, 2.75, 3, 3.25, 3.50, 3.75, ModelWidget::MaximumZoom };
 	unsigned cnt=sizeof(values)/sizeof(double);
 

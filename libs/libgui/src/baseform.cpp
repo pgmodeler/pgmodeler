@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2022 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -24,7 +24,7 @@ BaseForm::BaseForm(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 	this->setWindowFlags((this->windowFlags() | Qt::WindowMinMaxButtonsHint) /* ^ Qt::WindowContextHelpButtonHint */);
 }
 
-void BaseForm::setButtonConfiguration(unsigned button_conf)
+void BaseForm::setButtonConfiguration(Messagebox::ButtonsId button_conf)
 {
 	if(button_conf==Messagebox::OkCancelButtons)
 	{

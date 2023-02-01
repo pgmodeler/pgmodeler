@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2022 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -216,7 +216,7 @@ void ConnectionsConfigWidget::duplicateConnection()
 		connections.push_back(new_conn);
 
 		new_conn->setConnectionParam(Connection::ParamAlias, QString("cp_%1").arg(conn->getConnectionParam(Connection::ParamAlias)));
-		connections_cmb->addItem(QIcon(QString(":icons/icons/server.png")), new_conn->getConnectionId());
+		connections_cmb->addItem(QIcon(GuiUtilsNs::getIconPath("server")), new_conn->getConnectionId());
 		connections_cmb->setCurrentIndex(connections_cmb->count()-1);
 		setConfigurationChanged(true);
 	}
@@ -238,14 +238,14 @@ void ConnectionsConfigWidget::handleConnection()
 		if(!update_tb->isVisible())
 		{
 			conn=new Connection;
-			this->configureConnection(conn);
-			connections_cmb->addItem(QIcon(QString(":icons/icons/server.png")), conn->getConnectionId());
+			this->configureConnection(conn, false);
+			connections_cmb->addItem(QIcon(GuiUtilsNs::getIconPath("server")), conn->getConnectionId());
 			connections.push_back(conn);
 		}
 		else
 		{
 			conn=connections.at(connections_cmb->currentIndex());
-			this->configureConnection(conn);
+			this->configureConnection(conn, true);
 			connections_cmb->setItemText(connections_cmb->currentIndex(), conn->getConnectionId());
 		}
 
@@ -337,17 +337,22 @@ void ConnectionsConfigWidget::editConnection()
 	}
 }
 
-void ConnectionsConfigWidget::configureConnection(Connection *conn)
+void ConnectionsConfigWidget::configureConnection(Connection *conn, bool is_update)
 {
 	if(conn)
 	{
 		conn->setAutoBrowseDB(auto_browse_chk->isChecked());
 
 		// Avoiding add duplicated aliases in the combo
-		int idx = 0;
 		QString alias = alias_edt->text();
-		while(connections_cmb->findText(alias, Qt::MatchStartsWith) > 0)
+		int idx = 0, conn_idx = connections_cmb->findText(alias, Qt::MatchStartsWith);
+
+		while(conn_idx >= 0 &&
+					(!is_update || (is_update && conn_idx != connections_cmb->currentIndex())))
+		{
 			alias = alias_edt->text() + QString::number(++idx);
+			conn_idx = connections_cmb->findText(alias, Qt::MatchStartsWith);
+		}
 
 		conn->setConnectionParam(Connection::ParamAlias, alias);
 		conn->setConnectionParam(Connection::ParamServerIp, "");
@@ -410,7 +415,7 @@ void ConnectionsConfigWidget::testConnection()
 
 	try
 	{
-		this->configureConnection(&conn);
+		this->configureConnection(&conn, false);
 		conn.connect();
 		srv_info=conn.getServerInfo();
 		msg_box.show(tr("Success"),
@@ -569,7 +574,7 @@ void ConnectionsConfigWidget::fillConnectionsComboBox(QComboBox *combo, bool inc
 	}
 
 	if(incl_placeholder)
-		combo->addItem(QIcon(QString(":icons/icons/connection.png")), tr("Edit connections"));
+		combo->addItem(QIcon(GuiUtilsNs::getIconPath("connection")), tr("Edit connections"));
 
 	if(def_conn)
 		combo->setCurrentText(def_conn->getConnectionId());

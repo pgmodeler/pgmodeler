@@ -105,7 +105,10 @@
     </spacer>
    </item>
    <item row="2" column="0" colspan="4">
-    <layout class="QGridLayout" name="gridLayout">
+    <layout class="QHBoxLayout" name="buttons_lt">
+     <property name="spacing">
+      <number>5</number>
+     </property>
      <property name="leftMargin">
       <number>0</number>
      </property>
@@ -118,48 +121,20 @@
      <property name="bottomMargin">
       <number>0</number>
      </property>
-     <property name="spacing">
-      <number>5</number>
-     </property>
-     <item row="0" column="6" rowspan="2">
-      <widget class="QToolButton" name="support_tb">
-       <property name="enabled">
-        <bool>true</bool>
+     <item>
+      <spacer name="horizontalSpacer_3">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
        </property>
-       <property name="font">
-        <font>
-         <bold>false</bold>
-         <stylestrategy>PreferAntialias</stylestrategy>
-        </font>
-       </property>
-       <property name="mouseTracking">
-        <bool>false</bool>
-       </property>
-       <property name="focusPolicy">
-        <enum>Qt::NoFocus</enum>
-       </property>
-       <property name="text">
-        <string>Support</string>
-       </property>
-       <property name="icon">
-        <iconset resource="../../res/resources.qrc">
-         <normaloff>:/icons/icons/help.png</normaloff>:/icons/icons/help.png</iconset>
-       </property>
-       <property name="iconSize">
+       <property name="sizeHint" stdset="0">
         <size>
-         <width>50</width>
-         <height>50</height>
+         <width>40</width>
+         <height>20</height>
         </size>
        </property>
-       <property name="toolButtonStyle">
-        <enum>Qt::ToolButtonTextUnderIcon</enum>
-       </property>
-       <property name="autoRaise">
-        <bool>true</bool>
-       </property>
-      </widget>
+      </spacer>
      </item>
-     <item row="0" column="1" rowspan="2">
+     <item>
       <widget class="QToolButton" name="new_tb">
        <property name="font">
         <font>
@@ -193,11 +168,8 @@
        </property>
       </widget>
      </item>
-     <item row="0" column="4" rowspan="2">
-      <widget class="QToolButton" name="recent_tb">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
+     <item>
+      <widget class="QToolButton" name="load_tb">
        <property name="font">
         <font>
          <bold>false</bold>
@@ -210,20 +182,17 @@
         <enum>Qt::NoFocus</enum>
        </property>
        <property name="text">
-        <string>Recent models</string>
+        <string>Load model</string>
        </property>
        <property name="icon">
         <iconset resource="../../res/resources.qrc">
-         <normaloff>:/icons/icons/loadrecent.png</normaloff>:/icons/icons/loadrecent.png</iconset>
+         <normaloff>:/icons/icons/open.png</normaloff>:/icons/icons/open.png</iconset>
        </property>
        <property name="iconSize">
         <size>
          <width>50</width>
          <height>50</height>
         </size>
-       </property>
-       <property name="popupMode">
-        <enum>QToolButton::InstantPopup</enum>
        </property>
        <property name="toolButtonStyle">
         <enum>Qt::ToolButtonTextUnderIcon</enum>
@@ -233,7 +202,7 @@
        </property>
       </widget>
      </item>
-     <item row="0" column="3" rowspan="2">
+     <item>
       <widget class="QToolButton" name="sample_tb">
        <property name="enabled">
         <bool>true</bool>
@@ -273,7 +242,47 @@
        </property>
       </widget>
      </item>
-     <item row="0" column="5" rowspan="2">
+     <item>
+      <widget class="QToolButton" name="recent_tb">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="font">
+        <font>
+         <bold>false</bold>
+        </font>
+       </property>
+       <property name="mouseTracking">
+        <bool>false</bool>
+       </property>
+       <property name="focusPolicy">
+        <enum>Qt::NoFocus</enum>
+       </property>
+       <property name="text">
+        <string>Recent models</string>
+       </property>
+       <property name="icon">
+        <iconset resource="../../res/resources.qrc">
+         <normaloff>:/icons/icons/loadrecent.png</normaloff>:/icons/icons/loadrecent.png</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>50</width>
+         <height>50</height>
+        </size>
+       </property>
+       <property name="popupMode">
+        <enum>QToolButton::InstantPopup</enum>
+       </property>
+       <property name="toolButtonStyle">
+        <enum>Qt::ToolButtonTextUnderIcon</enum>
+       </property>
+       <property name="autoRaise">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
       <widget class="QToolButton" name="last_session_tb">
        <property name="enabled">
         <bool>false</bool>
@@ -311,11 +320,15 @@
        </property>
       </widget>
      </item>
-     <item row="0" column="2" rowspan="2">
-      <widget class="QToolButton" name="open_tb">
+     <item>
+      <widget class="QToolButton" name="support_tb">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
        <property name="font">
         <font>
          <bold>false</bold>
+         <stylestrategy>PreferAntialias</stylestrategy>
         </font>
        </property>
        <property name="mouseTracking">
@@ -325,11 +338,11 @@
         <enum>Qt::NoFocus</enum>
        </property>
        <property name="text">
-        <string>Open model</string>
+        <string>Support</string>
        </property>
        <property name="icon">
         <iconset resource="../../res/resources.qrc">
-         <normaloff>:/icons/icons/open.png</normaloff>:/icons/icons/open.png</iconset>
+         <normaloff>:/icons/icons/help.png</normaloff>:/icons/icons/help.png</iconset>
        </property>
        <property name="iconSize">
         <size>
@@ -345,21 +358,8 @@
        </property>
       </widget>
      </item>
-     <item row="0" column="7" rowspan="2">
+     <item>
       <spacer name="horizontalSpacer_4">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>40</width>
-         <height>20</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-     <item row="0" column="0" rowspan="2">
-      <spacer name="horizontalSpacer_3">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
@@ -403,7 +403,7 @@
  </widget>
  <tabstops>
   <tabstop>new_tb</tabstop>
-  <tabstop>open_tb</tabstop>
+  <tabstop>load_tb</tabstop>
   <tabstop>sample_tb</tabstop>
   <tabstop>recent_tb</tabstop>
   <tabstop>last_session_tb</tabstop>

@@ -236,6 +236,9 @@
         <file>icons/editrows.png</file>
         <file>icons/reloadattribs.png</file>
         <file>icons/magnifier.png</file>
+        <file>icons/dbmfile.png</file>
+        <file>icons/pluginsconfig.png</file>
+        <file>icons/lockdelim.png</file>
     </qresource>
     <qresource prefix="/images">
         <file>images/brazil_flag.png</file>

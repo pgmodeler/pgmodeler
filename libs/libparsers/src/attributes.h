@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2022 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -192,6 +192,7 @@ namespace Attributes {
 	DockWidgets,
 	DomConstraint,
 	DontDropMissingObjs,
+	Dot,
 	Drop,
 	DropCmds,
 	DropMissingColsConstrs,
@@ -279,6 +280,7 @@ namespace Attributes {
 	GrantOp,
 	GridSize,
 	GridColor,
+	GridPattern,
 	Group,
 	HandlerFunc,
 	HandlesType,
@@ -377,6 +379,7 @@ namespace Attributes {
 	LocaleMod,
 	LockerArc,
 	LockerBody,
+	LockPageDelimResize,
 	Login,
 	LookaheadChar,
 	LowVerbosity,
@@ -423,6 +426,7 @@ namespace Attributes {
 	OidFilterOp,
 	Oids,
 	OldName,
+	OldPgSqlVersions,
 	OldTableName,
 	OldVersion,
 	OpClass,
@@ -478,6 +482,7 @@ namespace Attributes {
 	PkPattern,
 	Placeholder,
 	Placeholders,
+	Plugin,
 	Points,
 	Port,
 	Portrait,
@@ -598,6 +603,7 @@ namespace Attributes {
 	SqlObject,
 	SqlTool,
 	SqlValidation,
+	Square,
 	SrcColPattern,
 	SrcColumns,
 	SrcEncoding,

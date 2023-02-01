@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2022 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -208,15 +208,17 @@ void ColumnPickerWidget::addColumn(Column *column, int row)
 
 		if(column->isAddedByRelationship())
 		{
-			columns_tab->setRowFont(row, fnt,
-											ObjectsTableWidget::getTableItemColor(ObjectsTableWidget::RelAddedItemFgColor),
-											ObjectsTableWidget::getTableItemColor(ObjectsTableWidget::RelAddedItemBgColor));
+			columns_tab->setRowFont(row, fnt);
+			columns_tab->setRowColors(row,
+																ObjectsTableWidget::getTableItemColor(ObjectsTableWidget::RelAddedItemFgColor),
+																ObjectsTableWidget::getTableItemColor(ObjectsTableWidget::RelAddedItemBgColor));
 		}
 		else
 		{
-			columns_tab->setRowFont(row, fnt,
-															ObjectsTableWidget::getTableItemColor(ObjectsTableWidget::ProtItemFgColor),
-															ObjectsTableWidget::getTableItemColor(ObjectsTableWidget::ProtItemBgColor));
+			columns_tab->setRowFont(row, fnt);
+			columns_tab->setRowColors(row,
+																ObjectsTableWidget::getTableItemColor(ObjectsTableWidget::ProtItemFgColor),
+																ObjectsTableWidget::getTableItemColor(ObjectsTableWidget::ProtItemBgColor));
 		}
 	}
 }

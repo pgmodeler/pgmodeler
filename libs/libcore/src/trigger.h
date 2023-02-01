@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2022 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -200,8 +200,6 @@ class __libcore Trigger: public TableObject{
 		This method is executed whenever the trigger is added to a table or view.
 		Normally the user don't need to call it explicitly */
 		void validateTrigger();
-
-		virtual QString getSignature(bool format=true) final;
 
 		QString getDataDictionary(const attribs_map &extra_attribs);
 };

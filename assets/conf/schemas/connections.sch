@@ -16,24 +16,25 @@
 
 %else
 
-	%set {spc} $br $br
+	%set {spc} $br $tb
 
-	$tb [<connection alias="] {alias} [" host=] "{host}" [ port=] "{port}" [ dbname=] "{dbname}" $br
+	$tb [<connection alias="] {alias} [" host=] "{host}" [ port=] "{port}" [ dbname=] "{dbname}"
+
 	{spc} [user=] "{user}"
 
 	%if {password} %then [ password=] "{password}" %end
 
 	[ connection-timeout=] "{connection-timeout}"
 
-	$br {spc} [sslmode=] "{sslmode}"
+	{spc} [sslmode=] "{sslmode}"
 
-	%if {sslcert} %then $br {spc} [sslcert=] "{sslcert}" %end
-	%if {sslkey} %then $br {spc} [sslkey=] "{sslkey}" %end
-	%if {sslrootcert} %then $br {spc} [sslrootcert=] "{sslrootcert}" %end
-	%if {sslcrl} %then $br {spc} [sslcrl=] "{sslcrl}" %end
+	%if {sslcert} %then {spc} [sslcert=] "{sslcert}" %end
+	%if {sslkey} %then {spc} [sslkey=] "{sslkey}" %end
+	%if {sslrootcert} %then {spc} [sslrootcert=] "{sslrootcert}" %end
+	%if {sslcrl} %then {spc} [sslcrl=] "{sslcrl}" %end
 
 	%if {krbsrvname} %then
-		$br {spc} [krbsrvname=] "{krbsrvname}"
+		 {spc} [krbsrvname=] "{krbsrvname}"
 
 		%if {gsslib} %then
 			[ gsslib=] "{gsslib}"
@@ -41,17 +42,17 @@
 	%end
 
 	%if {auto-browse-db} %then
-		$br {spc} auto-browse-db="true"
+		{spc} auto-browse-db="true"
 	%end
 
 	%if {options} %then
-		$br {spc} options="{options}"
+		{spc} options="{options}"
 	%end
 
-	%if {default-for-export} %then $br {spc} [default-for-export=] "{default-for-export}" %end
-	%if {default-for-import} %then $br {spc} [default-for-import=] "{default-for-import}" %end
-	%if {default-for-diff} %then $br {spc} [default-for-diff=] "{default-for-diff}" %end
-	%if {default-for-validation} %then $br {spc} [default-for-validation=] "{default-for-validation}" %end    
+	%if {default-for-export} %then {spc} [default-for-export=] "{default-for-export}" %end
+	%if {default-for-import} %then {spc} [default-for-import=] "{default-for-import}" %end
+	%if {default-for-diff} %then  {spc} [default-for-diff=] "{default-for-diff}" %end
+	%if {default-for-validation} %then {spc} [default-for-validation=] "{default-for-validation}" %end    
 
 	/> $br
 %end

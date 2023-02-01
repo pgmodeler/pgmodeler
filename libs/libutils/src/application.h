@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2022 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -46,7 +46,7 @@ class __libutils Application: public QApplication {
 		/*! \brief Loads the translation file by its id (e.g. pt_BR, en_US, etc) in the provided directory.
 		 * By default, the files are searched in the pgModeler's default lang files location.
 		 * In case of success installs a translator object in the application */
-		bool loadTranslation(const QString &lang_id, const QString &directory = GlobalAttributes::LanguagesDir);
+		bool loadTranslation(const QString &lang_id, const QString &directory = GlobalAttributes::LanguagesPath);
 };
 
 #endif

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2022 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -821,14 +821,14 @@ void DatabaseImportForm::listObjects(DatabaseImportHelper &import_helper, QTreeW
 
 			if(create_db_item)
 			{
-				Catalog catalog=import_helper.getCatalog();
+				Catalog catalog = import_helper.getCatalog();
 				std::vector<attribs_map> attribs;
 
 				//Creating database item
 				db_item=new QTreeWidgetItem;
 				db_item->setText(0, import_helper.getCurrentDatabase());
 				db_item->setIcon(0, QPixmap(GuiUtilsNs::getIconPath(ObjectType::Database)));
-				attribs=catalog.getObjectsAttributes(ObjectType::Database, "", "", {}, {{Attributes::Name, import_helper.getCurrentDatabase()}});
+				attribs = catalog.getObjectsAttributes(ObjectType::Database, "", "", {}, {{Attributes::Name, import_helper.getCurrentDatabase()}});
 
 				db_item->setData(ObjectId, Qt::UserRole, attribs[0].at(Attributes::Oid).toUInt());
 				db_item->setData(ObjectTypeId, Qt::UserRole, enum_t(ObjectType::Database));

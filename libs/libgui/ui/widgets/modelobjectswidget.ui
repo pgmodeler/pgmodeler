@@ -320,18 +320,6 @@
              </attribute>
              <column>
               <property name="text">
-               <string>ID</string>
-              </property>
-              <property name="textAlignment">
-               <set>AlignLeading|AlignVCenter</set>
-              </property>
-              <property name="icon">
-               <iconset resource="../../res/resources.qrc">
-                <normaloff>:/icons/icons/uid.png</normaloff>:/icons/icons/uid.png</iconset>
-              </property>
-             </column>
-             <column>
-              <property name="text">
                <string>Object</string>
               </property>
               <property name="textAlignment">
@@ -352,6 +340,18 @@
               <property name="icon">
                <iconset resource="../../res/resources.qrc">
                 <normaloff>:/icons/icons/usertype.png</normaloff>:/icons/icons/usertype.png</iconset>
+              </property>
+             </column>
+             <column>
+              <property name="text">
+               <string>ID</string>
+              </property>
+              <property name="textAlignment">
+               <set>AlignLeading|AlignVCenter</set>
+              </property>
+              <property name="icon">
+               <iconset resource="../../res/resources.qrc">
+                <normaloff>:/icons/icons/uid.png</normaloff>:/icons/icons/uid.png</iconset>
               </property>
              </column>
              <column>
@@ -421,99 +421,6 @@
              <property name="spacing">
               <number>5</number>
              </property>
-             <item row="0" column="0">
-              <widget class="QListWidget" name="visibleobjects_lst">
-               <property name="minimumSize">
-                <size>
-                 <width>0</width>
-                 <height>0</height>
-                </size>
-               </property>
-               <property name="maximumSize">
-                <size>
-                 <width>16777215</width>
-                 <height>16777215</height>
-                </size>
-               </property>
-               <property name="editTriggers">
-                <set>QAbstractItemView::NoEditTriggers</set>
-               </property>
-               <property name="alternatingRowColors">
-                <bool>true</bool>
-               </property>
-               <property name="iconSize">
-                <size>
-                 <width>22</width>
-                 <height>22</height>
-                </size>
-               </property>
-               <property name="currentRow">
-                <number>-1</number>
-               </property>
-               <property name="sortingEnabled">
-                <bool>true</bool>
-               </property>
-              </widget>
-             </item>
-             <item row="1" column="0">
-              <layout class="QHBoxLayout" name="horizontalLayout_2">
-               <property name="spacing">
-                <number>5</number>
-               </property>
-               <item>
-                <spacer name="horizontalSpacer_3">
-                 <property name="orientation">
-                  <enum>Qt::Horizontal</enum>
-                 </property>
-                 <property name="sizeHint" stdset="0">
-                  <size>
-                   <width>58</width>
-                   <height>20</height>
-                  </size>
-                 </property>
-                </spacer>
-               </item>
-               <item>
-                <widget class="QToolButton" name="select_all_tb">
-                 <property name="sizePolicy">
-                  <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                   <horstretch>0</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
-                 </property>
-                 <property name="text">
-                  <string>Select All</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QToolButton" name="clear_all_tb">
-                 <property name="sizePolicy">
-                  <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                   <horstretch>0</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
-                 </property>
-                 <property name="text">
-                  <string>Clear All</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <spacer name="horizontalSpacer_2">
-                 <property name="orientation">
-                  <enum>Qt::Horizontal</enum>
-                 </property>
-                 <property name="sizeHint" stdset="0">
-                  <size>
-                   <width>58</width>
-                   <height>20</height>
-                  </size>
-                 </property>
-                </spacer>
-               </item>
-              </layout>
-             </item>
             </layout>
            </widget>
           </item>
@@ -953,9 +860,6 @@
  </widget>
  <tabstops>
   <tabstop>objectstree_tw</tabstop>
-  <tabstop>visibleobjects_lst</tabstop>
-  <tabstop>select_all_tb</tabstop>
-  <tabstop>clear_all_tb</tabstop>
   <tabstop>filter_edt</tabstop>
   <tabstop>by_id_chk</tabstop>
   <tabstop>select_tb</tabstop>

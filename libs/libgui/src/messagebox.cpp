@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2022 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -84,7 +84,7 @@ bool Messagebox::isCustomOptionChecked()
 void Messagebox::show(Exception e, const QString &msg, IconType icon_type, ButtonsId buttons, const QString &yes_lbl, const QString &no_lbl, const QString &cancel_lbl,
 						const QString &yes_ico, const QString &no_ico, const QString &cancel_ico)
 {
-	QString fmt_msg, fmt_extra_info, title;
+	QString fmt_msg, title;
 
 	raw_info_txt->setPlainText(e.getExceptionsText());
 	extra_info_txt->setPlainText(e.getExceptiosExtraInfo());

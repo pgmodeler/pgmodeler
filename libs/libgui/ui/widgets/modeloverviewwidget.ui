@@ -162,6 +162,9 @@
       <property name="text">
        <string/>
       </property>
+      <property name="scaledContents">
+       <bool>true</bool>
+      </property>
       <property name="alignment">
        <set>Qt::AlignCenter</set>
       </property>
@@ -173,6 +176,7 @@
   </layout>
  </widget>
  <resources>
+  <include location="../../res/resources.qrc"/>
   <include location="../../res/resources.qrc"/>
  </resources>
  <connections/>

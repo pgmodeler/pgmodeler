@@ -30,9 +30,9 @@
 		({comment}) [ AS comment, datallowconn AS allow_conns_bool, datistemplate AS is_template_bool 
 		FROM pg_database WHERE datistemplate = FALSE ]
 
-		%if {last-sys-oid} %then
-			[ AND oid ] {oid-filter-op} $sp {last-sys-oid}
-		%end
+		#%if {last-sys-oid} %then
+		#	[ AND oid ] {oid-filter-op} $sp {last-sys-oid}
+		#%end
 
 		%if {filter-oids} %then
 			[ AND oid IN (] {filter-oids} )

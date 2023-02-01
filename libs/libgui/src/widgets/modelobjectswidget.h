@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2022 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -29,7 +29,7 @@
 #include "ui_modelobjectswidget.h"
 #include "modelwidget.h"
 #include "messagebox.h"
-#include "objectfinderwidget.h"
+#include "objecttypeslistwidget.h"
 
 class __libgui ModelObjectsWidget: public QWidget, public Ui::ModelObjectsWidget {
 	private:
@@ -64,6 +64,8 @@ class __libgui ModelObjectsWidget: public QWidget, public Ui::ModelObjectsWidget
 
 		//! \brief Stores which object types are visible on the view
 		std::map<ObjectType, bool> visible_objs_map;
+
+		ObjectTypesListWidget *obj_types_wgt;
 
 		//! \brief Updates only a schema tree starting from the 'root' item
 		void updateSchemaTree(QTreeWidgetItem *root);
@@ -128,7 +130,6 @@ class __libgui ModelObjectsWidget: public QWidget, public Ui::ModelObjectsWidget
 		void hide();
 
 	private slots:
-		void setObjectVisible(QListWidgetItem *item);
 		void setAllObjectsVisible(bool value);
 		void selectObject();
 		void showObjectMenu();

@@ -1,6 +1,74 @@
 Changelog
 ---------
 
+v1.0.0
+------
+<em>Release date: February 3, 2023</em><br/>
+
+* [New] Added an option in GeneralConfigWidget to allow pgModeler to connect to older PostgreSQL server versions, below 10 using a minimum (not reliable) compatibility mode.
+* [New] Added an option to change ObjectsScene grid pattern. Available options are square and dot.
+* [New] Added an option to lock the page delimiters resize during zoom out (<100%) to allow the user to place more objects on one page.
+* [New] Added the ability to print models with a specified scale factor.
+* [New] Added the method MainWindow::updateWindowTitle.
+* [New] Created the method ObjectsTableWidget::setRowColors.
+* [New] Added the public slot ObjectsTableWidget::resizeContents.
+* [New] Added the signal MainWindow::s_modelLoadRequested.
+* [New] Added the method PgModelerPlugin::postInitPlugin which is called when the main window initialization is ready.
+* [New] Added the method MainWindow::registerRecentModel.
+* [New] Added the method PgModelerPlugin::getPluginFilePath.
+* [New] Created the method DatabaseModel::setDatabaseModelAttributes.
+* [New] Added the class ObjectTypesListWidget that implements a QListWidget specialization for object types handling.
+* [New] Added the method PgModelerPlugin::getPluginIconPath.
+* [New] Added the method MainWindow::getCurrentModel.
+* [Change] Minor adjustment in the factor applied to delimiter lines in ObjectsScene::setGridSize.
+* [Change] Minor tooltip adjustment in generalconfigwidget.ui
+* [Change] pgModeler now allows to import and diff in PostgreSQL versions below 10 using the minimum compatibility mode without guaranteeing reliable results.
+* [Change] Moved the Q_DECLARE_METATYPE macro call to the header files of classes that use it.
+* [Change] Dropped outdated UI translations.
+* [Change] Minor adjustment in ModelWidget::printModel to hide scene boundary lines when printing model.
+* [Change] Minor adjustment in ObjectsScene::finishObjectsMove and ModelWidget::adjustSceneSize to give extra size to the scene rectangle.
+* [Change] The scene rectangle is now always resized to the current objects' bounding rectangle.
+* [Change] Overloaded the method QGraphicsScene::drawBackground in ObjectsScene to draw the grid, page delimiters, and scene limits instead of using pixmap-based background.
+* [Change] Minor adjustment in the plugins' actions in the toolbar.
+* [Change] Minor adjustment in the data retrieving message in DataManipulationForm.
+* [Change] Allowing plugins to insert actions in the top toolbar at the main window via PgModelerPlugin::getToolbarAction.
+* [Change] Replaced the object type filter in ModelObjectsWidget with an instance of ObjectTypesListWidget.
+* [Change] Moved the method ObjectFinderWidget::updateObjectTable to GuiUtilsNs.
+* [Change] Minor refactor by replacing hardcoded references to .dbm extension by GlobalAttributes::DbModelExt.
+* [Change] Changed the location where the MainWindow::s_modelSaved signal is emitted. 
+* [Change] Minor adjustment in the plugin's info dialog.
+* [Change] Minor adjust in icons CSS.
+* [Change] Changed the position of the recent model actions.
+* [Change] Minor adjustment in mainwindow.ui.
+* [Change] Minor refactor in MainWindow and WelcomeWidget.
+* [Change] Removed the overloaded version of getSignature from Trigger, Policy, and Rule.
+* [Change] Minor adjust in pgmodeler.pri.
+* [Change] Replaced the clunky filter options in ObjectFinderWidget with a menu action associated with the "Filter" button.
+* [Change] Changed the behavior of DatabaseModel::findObjects. Now it treats BaseRelationship and Relationship as the same object type to make the search results more accurate.
+* [Change] Renamed some GlobalAttributes consts *Dir to *Path for a better semantics.
+* [Change] Removed unused variable in DatabaseModel::findObjects.
+* [Change] Adjusted Constraint::configureSearchAttributes to create a "signature" attribute in the form schema.table.name.
+* [Change] Changed getPluginIconPath to retrieve icons from .qrc file instead of from the filesystem.
+* [Change] Minor improvement in HtmlItemDelegate. Now one can construct this object by opting to ignore the HTML tags in sizeHint calculation.
+* [Change] Refactored PgModelerPlugin by removing methods hasMenuAction, hasConfigurationForm, and getPluginShortcut.
+* [Change] Refactored PluginsConfigWidget::installPluginsActions to receive only a QMenu instance.
+* [Change] Removed MainWindow::executePlugin slot since the plugin execution must be triggered by the plugin itself via menu action or model action.
+* [Change] Minor improvement in PluginsConfigWidget to force the unloading of plugins that do not meet a version requirement.
+* [Fix] Fixed a bug in ModelOverviewWidget that was causing generated pixmap to be blurry on hi-dpi screens.
+* [Fix] Fixed a crash when the user tried to browse a DB in PostgreSQL 15.
+* [Fix] Fixed how printer settings are changed compared to the default one and triggers a message box so the user can decide which conf to use.
+* [Fix] Fixed the use of zoom factor in the PNG export process.
+* [Fix] Fixed the ConnectionsConfigWidget::handleConnection alias desambiguation routine.
+* [Fix] Minor fix in the BaseForm::setButtonConfiguration signature.
+* [Fix] Fixed a bug that was causing relationship name patterns to be loaded in the wrong order.
+* [Fix] Fixed the generation of the COMMENT command for constraints.
+* [Fix] Fixed the class ObjectTypesListWidget by adding __libgui directive (Windows only).
+* [Fix] Minor fix in HtmlItemDelegate to display text in the correct position.
+* [Fix] Minor fix in CodeCompletionWidget.
+* [Fix] Fixed a bug in the generation of the ALTER OWNER command for materialized views.
+* [Fix] Minor fix in ObjectRenameWidget and TaskProgressWidget window style.
+* [Fix] Minor fix in PgModelerCliApp to properly restore special objects when fixing models.
+
 v1.0.0-beta1
 ------
 <em>Release date: November 25, 2022</em><br/>

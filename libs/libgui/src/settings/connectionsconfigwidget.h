@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2022 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -44,7 +44,7 @@ class __libgui ConnectionsConfigWidget: public BaseConfigWidget, public Ui::Conn
 		static std::map<QString, attribs_map> config_params;
 		
 		//! \brief Configures the passed connection setting it's attributes using the values from the form
-		void configureConnection(Connection *conn);
+		void configureConnection(Connection *conn, bool is_update);
 
 		void hideEvent(QHideEvent *);
 		void showEvent(QShowEvent *);

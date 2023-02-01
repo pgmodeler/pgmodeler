@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2022 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -91,15 +91,16 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	std::vector<ObjectType> types_vect = BaseObject::getObjectTypes(true, { ObjectType::Database, ObjectType::Permission,
 																																					ObjectType::BaseRelationship, ObjectType::Relationship });
 
-	current_zoom=1;
-	modified = panning_mode = false;
-	new_obj_type=ObjectType::BaseObject;
+	current_zoom = 1;
+	modified = panning_mode = wheel_move = false;
+	curr_show_grid = curr_show_delim = true;
+	new_obj_type = ObjectType::BaseObject;
 
 	//Generating a temporary file name for the model
 	QTemporaryFile tmp_file;
 
 	//Configuring the template mask which includes the full path to temporary dir
-	tmp_file.setFileTemplate(GlobalAttributes::getTemporaryFilePath("model_XXXXXX.dbm"));
+	tmp_file.setFileTemplate(GlobalAttributes::getTemporaryFilePath("model_XXXXXX" + GlobalAttributes::DbModelExt));
 	tmp_file.open();
 	tmp_filename=tmp_file.fileName();
 	tmp_file.close();
@@ -132,7 +133,6 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	label->setFont(font);
 	label->setWordWrap(true);
 	label->setText(tr("<strong>ATTENTION:</strong> The database model is protected! Operations that could modify it are disabled!"));
-	//GuiUtilsNs::configureWidgetFont(label, GuiUtilsNs::MediumFontFactor);
 
 	grid->addWidget(label, 0, 1, 1, 1);
 	protected_model_frm->setLayout(grid);
@@ -594,9 +594,25 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 
 	connect(&popup_menu, &QMenu::aboutToHide, this, &ModelWidget::updateObjectsLayers);
 
+	wheel_timer.setInterval(300);
+
+	connect(&wheel_timer, &QTimer::timeout, this, [this](){
+		finishPanningMove();
+		wheel_timer.stop();
+		wheel_move = false;
+	});
+
 	viewport->installEventFilter(this);
 	viewport->horizontalScrollBar()->installEventFilter(this);
 	viewport->verticalScrollBar()->installEventFilter(this);
+
+	connect(viewport->verticalScrollBar(), &QScrollBar::valueChanged, this, [this]() {
+		viewport->resetCachedContent();
+	});
+
+	connect(viewport->horizontalScrollBar(), &QScrollBar::valueChanged, this, [this]() {
+		viewport->resetCachedContent();
+	});
 }
 
 ModelWidget::~ModelWidget()
@@ -658,24 +674,43 @@ void ModelWidget::resizeEvent(QResizeEvent *)
 
 bool ModelWidget::eventFilter(QObject *object, QEvent *event)
 {
-	//Filters the Wheel event if it is raised by the viewport scrollbars
-	if((object == viewport->horizontalScrollBar() ||
-			object == viewport->verticalScrollBar())
-		 && event->type() == QEvent::Wheel)
+
+	if(object == viewport->horizontalScrollBar() ||
+		 object == viewport->verticalScrollBar())
 	{
-		QWheelEvent *w_event=dynamic_cast<QWheelEvent *>(event);
+		if(event->type() == QEvent::MouseButtonPress)
+		{
+			startPanningMove();
+		}
+		else if(event->type() == QEvent::MouseButtonRelease)
+		{
+			finishPanningMove();
+		}
+		//Filters the Wheel event if it is raised by the viewport scrollbars
+		else if(event->type() == QEvent::Wheel)
+		{
+			QWheelEvent *w_event=dynamic_cast<QWheelEvent *>(event);
 
-		if(w_event->modifiers() != Qt::ControlModifier)
-			return false;
+			wheel_timer.start();
 
-		double zoom_inc = round(fabs(w_event->angleDelta().y()/120.0)) * ZoomIncrement;
+			if(!wheel_move)
+			{
+				startPanningMove();
+				wheel_move = true;
+			}
 
-		if(w_event->angleDelta().y() < 0)
-			this->applyZoom(this->current_zoom - zoom_inc);
-		else
-			this->applyZoom(this->current_zoom + zoom_inc);
+			if(w_event->modifiers() != Qt::ControlModifier)
+				return false;
 
-		return true;
+			double zoom_inc = round(fabs(w_event->angleDelta().y()/120.0)) * ZoomIncrement;
+
+			if(w_event->angleDelta().y() < 0)
+				this->applyZoom(this->current_zoom - zoom_inc);
+			else
+				this->applyZoom(this->current_zoom + zoom_inc);
+
+			return true;
+		}
 	}
 	else if(object == magnifier_area_lbl && event->type() == QEvent::MouseMove)
 	{
@@ -732,6 +767,7 @@ bool ModelWidget::eventFilter(QObject *object, QEvent *event)
 		//Activating the panning mode
 		else if(m_event->button() == Qt::MiddleButton && event->type() == QEvent::GraphicsSceneMousePress)
 		{
+			startPanningMove();
 			viewport->setDragMode(QGraphicsView::ScrollHandDrag);
 			QApplication::restoreOverrideCursor();
 			QApplication::setOverrideCursor(Qt::OpenHandCursor);
@@ -742,6 +778,8 @@ bool ModelWidget::eventFilter(QObject *object, QEvent *event)
 		{
 			panning_mode = false;
 			viewport->setDragMode(QGraphicsView::NoDrag);
+			finishPanningMove();
+
 			QApplication::restoreOverrideCursor();
 			QApplication::restoreOverrideCursor();
 			return true;
@@ -1120,6 +1158,24 @@ void ModelWidget::emitSceneInteracted()
 	}
 	else
 		emit s_sceneInteracted(static_cast<int>(selected_objects.size()), scene->itemsBoundingRect(true, true));
+}
+
+void ModelWidget::startPanningMove()
+{
+	curr_show_grid = ObjectsScene::isShowGrid();
+	curr_show_delim = ObjectsScene::isShowPageDelimiters();
+	ObjectsScene::setShowGrid(false);
+	ObjectsScene::setShowPageDelimiters(false);
+	scene->setShowSceneLimits(false);
+}
+
+void ModelWidget::finishPanningMove()
+{
+	ObjectsScene::setShowGrid(curr_show_grid);
+	ObjectsScene::setShowPageDelimiters(curr_show_delim);
+	scene->setShowSceneLimits(true);
+	viewport->resetCachedContent();
+	scene->invalidate(viewport->sceneRect());
 }
 
 void ModelWidget::configureObjectSelection()
@@ -1645,9 +1701,9 @@ void ModelWidget::loadModel(const QString &filename)
 
 		db_model->loadModel(filename);		
 		this->filename=filename;
-		adjustSceneSize();
 		updateObjectsOpacity();
 		updateSceneLayers();
+		adjustSceneSize();
 
 		task_prog_wgt.close();
 		protected_model_frm->setVisible(db_model->isProtected());
@@ -1676,58 +1732,61 @@ void ModelWidget::updateSceneLayers()
 	scene->blockSignals(false);
 }
 
+void ModelWidget::setPluginActions(const QList<QAction *> &plugin_acts)
+{
+	plugins_actions = plugin_acts;
+}
+
 void ModelWidget::adjustSceneSize()
 {
-	QRectF scene_rect, objs_rect;
-
-	scene_rect=scene->sceneRect();
-	objs_rect=scene->itemsBoundingRect();
-
-	if(scene_rect.width() < objs_rect.left() + objs_rect.width())
-		scene_rect.setWidth(objs_rect.left() + objs_rect.width());
-
-	if(scene_rect.height() < objs_rect.top() + objs_rect.height())
-		scene_rect.setHeight(objs_rect.top() + objs_rect.height());
-
-	scene->setSceneRect(scene_rect);
 	viewport->centerOn(0,0);
 
 	if(ObjectsScene::isAlignObjectsToGrid())
 	{
 		scene->alignObjectsToGrid();
-		db_model->setObjectsModified({ ObjectType::Relationship, ObjectType::BaseRelationship });
+		db_model->setObjectsModified();
 	}
 
-	emit s_sceneInteracted(scene_rect.size());
+	QRectF rect = scene->itemsBoundingRect();
+	rect.setTopLeft(QPointF(0,0));
+	rect.setWidth(rect.width() + (2 * ObjectsScene::getGridSize()));
+	rect.setHeight(rect.height() + (2 * ObjectsScene::getGridSize()));
+	scene->setSceneRect(rect);
+
+	emit s_sceneInteracted(rect.size());
 }
 
-void ModelWidget::printModel(QPrinter *printer, bool print_grid, bool print_page_nums)
+void ModelWidget::printModel(QPrinter *printer, bool print_grid, bool print_page_nums, bool resize_delims)
 {
 	if(!printer)
 		return;
 
-	bool show_grid = false, align_objs = false, show_delims = false;
+	bool show_grid = false, show_delims = false;
 	unsigned page_cnt = 0, page = 0, h_page_cnt = 0, v_page_cnt = 0, h_pg_id = 0, v_pg_id = 0;
-	std::vector<QRectF> pages;
+	QList<QRectF> pages;
 	QMarginsF margins;
 	QFont font;
 	QString page_info;
-	QColor color;
+	QColor color, bg_color;
 	QRectF brect;
 
 	//Make a backup of the current grid options
+	bg_color = ObjectsScene::getCanvasColor();
 	show_grid = ObjectsScene::isShowGrid();
-	align_objs = ObjectsScene::isAlignObjectsToGrid();
 	show_delims = ObjectsScene::isShowPageDelimiters();
 
 	//Reconfigure the grid options based upon the passed settings
-	ObjectsScene::setGridOptions(print_grid, align_objs, false);
+	ObjectsScene::setCanvasColor(QColor(255, 255, 255));
+	ObjectsScene::setShowGrid(print_grid);
+	ObjectsScene::setShowPageDelimiters(false);
 
+	scene->setShowSceneLimits(false);
 	scene->update();
 	scene->clearSelection();
 
 	//Get the pages rect for printing
-	pages = scene->getPagesForPrinting(printer->pageLayout(), h_page_cnt, v_page_cnt);
+	pages = scene->getPagesForPrinting(printer->pageLayout(), h_page_cnt, v_page_cnt,
+																		 resize_delims && current_zoom < 1 ? current_zoom : 1);
 
 	//Creates a painter to draw the model directly on the printer
 	QPainter painter(printer);
@@ -1775,7 +1834,10 @@ void ModelWidget::printModel(QPrinter *printer, bool print_grid, bool print_page
 	}
 
 	//Restore the grid option backup
-	ObjectsScene::setGridOptions(show_grid, align_objs, show_delims);
+	ObjectsScene::setCanvasColor(bg_color);
+	ObjectsScene::setShowGrid(show_grid);
+	ObjectsScene::setShowPageDelimiters(show_delims);
+	scene->setShowSceneLimits(true);
 	scene->update();
 }
 
@@ -1789,6 +1851,7 @@ void ModelWidget::updateRenderHints()
 void ModelWidget::update()
 {
 	updateRenderHints();
+	viewport->resetCachedContent();
 	scene->update();
 	QWidget::update();
 }
@@ -1830,7 +1893,7 @@ void ModelWidget::saveModel(const QString &filename)
 			// Generate a temporary backup filename
 			tmpfile.setFileTemplate(fi.absolutePath() +
 															GlobalAttributes::DirSeparator +
-															QString("%1_XXXXXX.dbk").arg(db_model->getName()));
+															QString("%1_XXXXXX%2").arg(db_model->getName(), GlobalAttributes::DbModelBkpExt));
 			tmpfile.open();
 			bkpfile = tmpfile.fileName();
 			tmpfile.close();
@@ -1895,7 +1958,7 @@ QString ModelWidget::getTempFilename()
 	return this->tmp_filename;
 }
 
-int ModelWidget::openEditingForm(QWidget *widget, unsigned button_conf)
+int ModelWidget::openEditingForm(QWidget *widget, Messagebox::ButtonsId button_conf)
 {
 	BaseForm editing_form(this);
 	BaseObjectWidget *base_obj_wgt=qobject_cast<BaseObjectWidget *>(widget);
@@ -1956,6 +2019,14 @@ int ModelWidget::openTableEditingForm(ObjectType tab_type, PhysicalTable *object
 		tab_wgt->setAttributes(db_model, op_list, schema, dynamic_cast<ForeignTable *>(object), pos.x(), pos.y());
 
 	return openEditingForm(tab_wgt);
+}
+
+void ModelWidget::configurePluginsActionsMenu()
+{
+	popup_menu.addSeparator();
+
+	for(auto &act : plugins_actions)
+		popup_menu.addAction(act);
 }
 
 void ModelWidget::showObjectForm(ObjectType obj_type, BaseObject *object, BaseObject *parent_obj, const QPointF &pos)
@@ -4509,6 +4580,8 @@ void ModelWidget::configurePopupMenu(const std::vector<BaseObject *> &objects)
 		popup_menu.addSeparator();
 		popup_menu.addAction(action_edit_creation_order);
 	}
+
+	configurePluginsActionsMenu();
 }
 
 bool ModelWidget::isModified()
@@ -5469,6 +5542,7 @@ void ModelWidget::updateMagnifierArea()
 	double cx = magnifier_area_lbl->width() / 2, cy =  magnifier_area_lbl->height() / 2;
 
 	pix.setDevicePixelRatio(qApp->devicePixelRatio());
+	pix.fill(ObjectsScene::getCanvasColor());
 
 	magnifier_rect.setRect(0, 0,
 												 magnifier_area_lbl->width() * current_zoom,

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2022 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -1073,13 +1073,13 @@ void RelationshipWidget::applyConfiguration()
 		if(this->object->getObjectType()==ObjectType::Relationship)
 		{
 			std::vector<QPlainTextEdit *> pattern_fields={ src_col_pattern_txt, dst_col_pattern_txt,
-																								pk_pattern_txt, uq_pattern_txt,
-																								src_fk_pattern_txt, dst_fk_pattern_txt,
-																								pk_col_pattern_txt };
+																										 src_fk_pattern_txt, dst_fk_pattern_txt,
+																										 pk_pattern_txt, uq_pattern_txt,
+																										 pk_col_pattern_txt };
 
 			std::vector<Relationship::PatternId> pattern_ids= { Relationship::SrcColPattern, Relationship::DstColPattern,
-																													Relationship::PkPattern, Relationship::UqPattern,
 																													Relationship::SrcFkPattern, Relationship::DstFkPattern,
+																													Relationship::PkPattern, Relationship::UqPattern,
 																													Relationship::PkColPattern };
 
 			rel = dynamic_cast<Relationship *>(base_rel);

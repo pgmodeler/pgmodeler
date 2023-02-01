@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2022 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -3153,7 +3153,7 @@ void DatabaseModel::loadModel(const QString &filename)
 		std::map<ObjectType, QString> def_objs;
 
 		//Configuring the path to the base path for objects DTD
-		dtd_file=GlobalAttributes::getSchemasRootDir() +
+		dtd_file=GlobalAttributes::getSchemasRootPath() +
 						 GlobalAttributes::DirSeparator +
 						 GlobalAttributes::XMLSchemaDir +
 						 GlobalAttributes::DirSeparator +
@@ -7597,12 +7597,14 @@ QString DatabaseModel::getSourceCode(SchemaParser::CodeType def_type, bool expor
 			attribs_aux[Attributes::Function]=(!functions.empty() ? Attributes::True : "");
 			attribs_aux[Attributes::ShellTypes] = configureShellTypes(false);
 		}
-		else
+		/*else
 		{
 			//Configuring the changelog attributes when generating XML code
 			attribs_aux[Attributes::UseChangelog] = persist_changelog ? Attributes::True : Attributes::False;
 			attribs_aux[Attributes::Changelog] = getChangelogDefinition();
-		}
+		} */
+
+		setDatabaseModelAttributes(attribs_aux, def_type);
 
 		for(auto &obj_itr : objects_map)
 		{
@@ -7679,7 +7681,7 @@ QString DatabaseModel::getSourceCode(SchemaParser::CodeType def_type, bool expor
 		}
 
 		attribs_aux[Attributes::SearchPath]=search_path;
-		attribs_aux[Attributes::ModelAuthor]=author;
+		/*attribs_aux[Attributes::ModelAuthor]=author;
 		attribs_aux[Attributes::PgModelerVersion]=GlobalAttributes::PgModelerVersion;
 
 		if(def_type==SchemaParser::XmlCode)
@@ -7705,6 +7707,9 @@ QString DatabaseModel::getSourceCode(SchemaParser::CodeType def_type, bool expor
 			attribs_aux[Attributes::DefaultCollation]=(default_objs[ObjectType::Collation] ? default_objs[ObjectType::Collation]->getName(true) : "");
 		}
 		else
+			configureShellTypes(true); */
+
+		if(def_type == SchemaParser::SqlCode)
 			configureShellTypes(true);
 	}
 	catch(Exception &e)
@@ -7727,7 +7732,47 @@ QString DatabaseModel::getSourceCode(SchemaParser::CodeType def_type, bool expor
 	return def;
 }
 
-std::map<unsigned, BaseObject *> DatabaseModel::getCreationOrder(unsigned def_type, bool incl_relnn_objs, bool incl_rel1n_constrs)
+void DatabaseModel::setDatabaseModelAttributes(attribs_map &attribs, SchemaParser::CodeType code_type)
+{
+	attribs[Attributes::ModelAuthor] = author;
+	attribs[Attributes::PgModelerVersion] = GlobalAttributes::PgModelerVersion;
+
+	if(code_type == SchemaParser::XmlCode)
+	{
+		try
+		{
+			//Configuring the changelog attributes when generating XML code
+			attribs[Attributes::UseChangelog] = persist_changelog ? Attributes::True : Attributes::False;
+			attribs[Attributes::Changelog] = getChangelogDefinition();
+		}
+		catch (Exception &e)
+		{
+			throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		}
+
+		QStringList act_layers;
+
+		for(auto &layer_id : active_layers)
+			act_layers.push_back(QString::number(layer_id));
+
+		attribs[Attributes::Layers]=layers.join(',');
+		attribs[Attributes::ActiveLayers]=act_layers.join(',');
+		attribs[Attributes::LayerNameColors]=layer_name_colors.join(',');
+		attribs[Attributes::LayerRectColors]=layer_rect_colors.join(',');
+		attribs[Attributes::ShowLayerNames]=(is_layer_names_visible ? Attributes::True : Attributes::False);
+		attribs[Attributes::ShowLayerRects]=(is_layer_rects_visible ? Attributes::True : Attributes::False);
+		attribs[Attributes::MaxObjCount]=QString::number(static_cast<unsigned>(getMaxObjectCount() * 1.20));
+		attribs[Attributes::Protected]=(this->is_protected ? Attributes::True : "");
+		attribs[Attributes::LastPosition]=QString("%1,%2").arg(last_pos.x()).arg(last_pos.y());
+		attribs[Attributes::LastZoom]=QString::number(last_zoom);
+		attribs[Attributes::DefaultSchema]=(default_objs[ObjectType::Schema] ? default_objs[ObjectType::Schema]->getName(true) : "");
+		attribs[Attributes::DefaultOwner]=(default_objs[ObjectType::Role] ? default_objs[ObjectType::Role]->getName(true) : "");
+		attribs[Attributes::DefaultTablespace]=(default_objs[ObjectType::Tablespace] ? default_objs[ObjectType::Tablespace]->getName(true) : "");
+		attribs[Attributes::DefaultCollation]=(default_objs[ObjectType::Collation] ? default_objs[ObjectType::Collation]->getName(true) : "");
+	}
+}
+
+std::map<unsigned, BaseObject *> DatabaseModel::getCreationOrder(SchemaParser::CodeType def_type, bool incl_relnn_objs, bool incl_rel1n_constrs)
 {
 	BaseObject *object=nullptr;
 	std::vector<BaseObject *> fkeys, fk_rels, aux_tables;
@@ -10679,10 +10724,8 @@ std::vector<BaseObject *> DatabaseModel::findObjects(const QString &pattern, std
 	std::vector<BaseObject *>::iterator end;
 	std::vector<ObjectType>::iterator itr_tp=types.begin();
 	std::vector<BaseObject *> tables;
-	bool inc_tabs=false, inc_views=false;
-	ObjectType obj_type;
+	bool inc_tabs=false, inc_views=false, inc_rels = false;
 	QRegularExpression regexp;
-	BaseObject *object = nullptr;
 	attribs_map srch_attribs;
 
 	if(!case_sensitive)
@@ -10718,28 +10761,26 @@ std::vector<BaseObject *> DatabaseModel::findObjects(const QString &pattern, std
 	}
 
 	//Gathering all other objects
-	itr_tp=types.begin();
-	while(itr_tp!=types.end())
+	for(auto &obj_type : types)
 	{
-		obj_type=(*itr_tp);
-		itr_tp++;
-
-		if(obj_type==ObjectType::Database)
+		if(obj_type == ObjectType::Database)
 			objs.push_back(this);
+		// Base relationships (fk rels and table-view rels) are treated as table to table relationship in the search
+		else if(!inc_rels && (obj_type == ObjectType::BaseRelationship || obj_type == ObjectType::Relationship))
+		{
+			inc_rels = true;
+			objs.insert(objs.end(), getObjectList(ObjectType::BaseRelationship)->begin(), getObjectList(ObjectType::BaseRelationship)->end());
+			objs.insert(objs.end(), getObjectList(ObjectType::Relationship)->begin(), getObjectList(ObjectType::Relationship)->end());
+		}
 		else if(!TableObject::isTableObject(obj_type))
 			objs.insert(objs.end(), getObjectList(obj_type)->begin(), getObjectList(obj_type)->end());
 		else
 		{
 			//Including table object on the object list
 			std::vector<TableObject *> *tab_objs=nullptr;
-			std::vector<BaseObject *>::iterator itr=tables.begin();
-			BaseObject *tab=nullptr;
 
-			while(itr!=tables.end())
+			for(auto &tab : tables)
 			{
-				tab=(*itr);
-				itr++;
-
 				if(PhysicalTable::isPhysicalTable(tab->getObjectType()))
 					tab_objs=dynamic_cast<PhysicalTable *>(tab)->getObjectList(obj_type);
 				else if(tab->getObjectType()==ObjectType::View &&	(obj_type==ObjectType::Trigger || obj_type==ObjectType::Rule))
@@ -10752,16 +10793,13 @@ std::vector<BaseObject *> DatabaseModel::findObjects(const QString &pattern, std
 	}
 
 	//Try to find  the objects on the configured list
-	while(!objs.empty())
+	for(auto &obj : objs)
 	{
-		object = objs.back();
-		object->configureSearchAttributes();
-		srch_attribs = object->getSearchAttributes();
+		obj->configureSearchAttributes();
+		srch_attribs = obj->getSearchAttributes();
 
 		if(regexp.match(srch_attribs[search_attr]).hasMatch())
-			list.push_back(object);
-
-		objs.pop_back();
+			list.push_back(obj);
 	}
 
 	//Removing the duplicate items on the list
@@ -11213,7 +11251,7 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, MetaAttrOptions
 void DatabaseModel::loadObjectsMetadata(const QString &filename, MetaAttrOptions options)
 {
 	QString elem_name, aux_elem, obj_name, ref_type,
-			dtd_file=GlobalAttributes::getSchemasRootDir() +
+			dtd_file=GlobalAttributes::getSchemasRootPath() +
 							 GlobalAttributes::DirSeparator +
 							 GlobalAttributes::XMLSchemaDir +
 							 GlobalAttributes::DirSeparator +

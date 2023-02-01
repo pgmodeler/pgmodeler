@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2022 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -1020,7 +1020,7 @@ std::vector<ObjectType> BaseObject::getObjectTypes(bool inc_table_objs, std::vec
 		vet_types.push_back(ObjectType::Policy);
 	}
 
-	for(ObjectType type : exclude_types)
+	for(auto &type : exclude_types)
 	{
 		itr=std::remove(vet_types.begin(), vet_types.end(), type);
 		if(itr!=vet_types.end())
@@ -1067,7 +1067,7 @@ void BaseObject::setPgSQLVersion(const QString &version)
 {
 	try
 	{
-		pgsql_ver = PgSqlVersions::parseString(version);
+		pgsql_ver = PgSqlVersions::parseString(version, false);
 	}
 	catch(Exception &e)
 	{

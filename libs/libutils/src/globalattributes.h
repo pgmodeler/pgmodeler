@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2022 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -35,13 +35,13 @@ class __libutils GlobalAttributes {
 	private:
 		/*! \brief Environment variables used to reference the pgModeler directories.
 
-		 PGMODELER_SCHEMAS_DIR   --> "schemas" folder  (SQL/XML generation schema files)
-		 PGMODELER_CONF_DIR      --> "conf" folder    (user's own settings for pgModeler)
-		 PGMODELER_TMPL_CONF_DIR --> "conf" folder    (used as template settings and copied to user's settings)
-		 PGMODELER_LANG_DIR      --> "lang" folder    (ui translations)
-		 PGMODELER_PLUGINS_DIR   --> "plugins" folder (where plugins are installed)
-		 PGMODELER_TMP_DIR       --> "tmp" folder     (where temporary work are saved)
-		 PGMODELER_SAMPLES_DIR   --> "samples" folder (contains sample dbm files)
+		 PGMODELER_SCHEMAS_PATH   --> full path to the "schemas" folder  (SQL/XML generation schema files)
+		 PGMODELER_CONF_PATH      --> full path to the "conf" folder    (user's own settings for pgModeler)
+		 PGMODELER_TMPL_CONF_PATH --> full path to the "conf" folder    (used as template settings and copied to user's settings)
+		 PGMODELER_LANG_PATH      --> full path to the "lang" folder    (ui translations)
+		 PGMODELER_PLUGINS_PATH   --> full path to the "plugins" folder (where plugins are installed)
+		 PGMODELER_TMP_PATH       --> full path to the "tmp" folder     (where temporary work are saved)
+		 PGMODELER_SAMPLES_PATH   --> full path to the "samples" folder (contains sample dbm files)
 
 		 Additional vars are used to specify where to find crash handler, command line interface
 		 and main application.
@@ -52,13 +52,13 @@ class __libutils GlobalAttributes {
 		 PGMDOELER_PATH     --> Full path to pgmodeler executable */
 
 		static QString
-		SchemasRootDir,
-		LanguagesDir,
-		PluginsDir,
-		TemporaryDir,
-		SamplesDir,
-		TmplConfigurationDir,
-		ConfigurationsDir,
+		SchemasRootPath,
+		LanguagesPath,
+		PluginsPath,
+		TemporaryPath,
+		SamplesPath,
+		TmplConfigurationPath,
+		ConfigurationsPath,
 		SQLHighlightConfPath,
 		XMLHighlightConfPath,
 		SchHighlightConfPath,
@@ -97,15 +97,23 @@ class __libutils GlobalAttributes {
 		StacktraceFile,
 		LastModelFile,
 
+		DbModelExt,
+		DbModelBkpExt,
+		ObjMetadataExt,
 		DirSeparator,
-		DefaultConfsDir,
+		ResourcesDir, //! \brief Directory name which holds the pgModeler's plug-ins resources directory (res)
+		ConfigurationsDir,//! \brief Default name for the configurations directory
+		DefaultConfsDir,  //! \brief Default name for the default configurations directory
 		ConfsBackupsDir,  //! \brief Directory name which holds the pgModeler configuration backups
-		SchemasDir,        //! \brief Default name for the schemas directory
+		SchemasDir,       //! \brief Default name for the schemas directory
 		SQLSchemaDir,     //! \brief Default name for the sql schemas directory
 		XMLSchemaDir,     //! \brief Default name for the xml schemas directory
 		CatalogSchemasDir,//! \brief Default name for the catalog schemas directory
 		DataDictSchemaDir,//! \brief Default name for the data dictionary schemas directory
 		AlterSchemaDir,   //! \brief Default name for the alter schemas directory
+		LanguagesDir,     //! \brief Default name for the translation files directory
+		SamplesDir,       //! \brief Default name for the samples database models directory
+		PluginsDir,       //! \brief Default name for the plug-ins directory
 		SchemaExt,        //! \brief Default extension for schema files
 		ObjectDTDDir,     //! \brief Default directory for dtd files
 		ObjectDTDExt,     //! \brief Default extension for dtd files
@@ -148,7 +156,7 @@ class __libutils GlobalAttributes {
 		#endif
 
 		//! \brief Returns the path to the "schemas" folder
-		static QString getSchemasRootDir();
+		static QString getSchemasRootPath();
 
 		/*! \brief Returns the path to a schema file under "schemas" folder.
 		 * Since this method only operates over schemas folder there's no need to
@@ -157,13 +165,13 @@ class __libutils GlobalAttributes {
 		static QString getSchemaFilePath(const QString &subfolder, const QString &file);
 
 		//! \brief Returns the path to the "tmp" folder in user's local storage
-		static QString getTemporaryDir();
+		static QString getTemporaryPath();
 
 		//! \brief Returns the path to a temp file under "tmp" folder at user's local storage
 		static QString getTemporaryFilePath(const QString &file);
 
 		//! \brief Returns the path to the template "conf" folder in pgModeler's installation
-		static QString getTmplConfigurationDir();
+		static QString getTmplConfigurationPath();
 
 		/*! \brief Returns the path to the template file at template "conf" folder in pgModeler's installation
 		 * This method will not append any extension to the file since this folder has several kinds of
@@ -171,20 +179,20 @@ class __libutils GlobalAttributes {
 		static QString getTmplConfigurationFilePath(const QString &subfolder, const QString &file);
 
 		//! \brief Returns the path to the "conf" folder in user's local storage
-		static QString getConfigurationsDir();
+		static QString getConfigurationsPath();
 
 		/*! \brief Returns the path to a config file under "conf" folder at user's local storage.
 		 * There's no need to specify the extension (.conf) since the method will automatically append it. */
 		static QString getConfigurationFilePath(const QString &file);
 
 		//! \brief Returns the path to the "samples" folder in pgModeler's installation
-		static QString getSamplesDir();
+		static QString getSamplesPath();
 
 		//! \brief Returns the path to the "lang" folder in pgModeler's installation
-		static QString getLanguagesDir();
+		static QString getLanguagesPath();
 
 		//! \brief Returns the path to the "plugins" folder in pgModeler's installation
-		static QString getPluginsDir();
+		static QString getPluginsPath();
 
 		//! \brief Returns the path to the "sql-highlight.conf" file in user's local storage
 		static QString getSQLHighlightConfPath();

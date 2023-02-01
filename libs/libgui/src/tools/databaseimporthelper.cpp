@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2022 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -2865,7 +2865,7 @@ void DatabaseImportHelper::assignSequencesToColumns()
 
 						catalog.clearObjectFilter(ObjectType::Sequence);
 						seq_oid = catalog.getObjectOID(names[1], ObjectType::Sequence, names[0]);
-						seq_name = getDependencyObject(seq_oid, ObjectType::Sequence, false, true, false);
+						seq_name = getDependencyObject(seq_oid, ObjectType::Sequence, true, true, false);
 						seq = dbmodel->getSequence(seq_name);
 					}
 				}

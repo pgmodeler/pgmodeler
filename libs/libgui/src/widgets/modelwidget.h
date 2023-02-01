@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2022 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -70,7 +70,16 @@ class __libgui ModelWidget: public QWidget {
 		bool modified,
 
 		//! \brief Indicates if the panning mode was activated via event filter (see eventFilter())
-		panning_mode;
+		panning_mode,
+
+		//! \brief Stores the current state of grid visibility prior a panning move
+		curr_show_grid,
+
+		//! \brief Stores the current state of page delimiters visibility prior a panning move
+		curr_show_delim,
+
+		//! \brief Indicates if the canvas panning move is being made via mouse wheel
+		wheel_move;
 
 		/*! \brief Indicates if the cut operation is currently activated. This flag modifies
 		the way the methods copyObjects() and removeObject() works. */
@@ -185,7 +194,14 @@ class __libgui ModelWidget: public QWidget {
 		QRect magnifier_rect;
 
 		//! \brief This timer controls the interval the zoom label is visible
-		QTimer zoom_info_timer;
+		QTimer zoom_info_timer,
+
+		/*! \brief This timer controls the interval that the background of the scene is hidden while
+		 *  using the mouse wheel to zoom or move the scene */
+		wheel_timer;
+
+		//! \brief Stores the installed plugins actions to be used in the model context menu
+		QList<QAction *> plugins_actions;
 
 		//! \brief Opens a editing form for objects at database level
 		template<class Class, class WidgetClass>
@@ -202,6 +218,9 @@ class __libgui ModelWidget: public QWidget {
 
 		//! \brief Opens a editing form specific for tables and foreign tables
 		int openTableEditingForm(ObjectType tab_type, PhysicalTable *object, Schema *parent_obj, const QPointF &pos);
+
+		//! \brief Configures the submenu related to the installed plugins actions
+		void configurePluginsActionsMenu();
 
 		//! \brief Configures the submenu related to the object
 		void configureQuickMenu(BaseObject *object);
@@ -241,6 +260,10 @@ class __libgui ModelWidget: public QWidget {
 
 		//! \brief Applies the layer settings from the internal database model to the scene object
 		void updateSceneLayers();
+
+		/*! \brief Define the list of actions executed by installed plugins that is exposed in
+		 *  the ModelWidget context menu */
+		void setPluginActions(const QList<QAction *> &plugin_acts);
 
 	protected:
 		QAction *action_source_code,
@@ -340,15 +363,15 @@ class __libgui ModelWidget: public QWidget {
 		void setAllCollapseMode(BaseTable::CollapseMode mode);
 
 	public:
-		static constexpr double MinimumZoom=0.050000,
-		MaximumZoom=5.000001,
-		ZoomIncrement=0.050000;
+		static constexpr double MinimumZoom = ObjectsScene::MinScaleFactor,
+		MaximumZoom = ObjectsScene::MaxScaleFactor,
+		ZoomIncrement = 0.050000;
 
 		ModelWidget(QWidget *parent = nullptr);
 		virtual ~ModelWidget();
 
 		//! \brief Creates a BaseForm instance and insert the widget into it. A custom configuration for dialog buttons can be passed
-		int openEditingForm(QWidget *widget, unsigned button_conf = Messagebox::OkCancelButtons);
+		int openEditingForm(QWidget *widget, Messagebox::ButtonsId button_conf = Messagebox::OkCancelButtons);
 
 		/*! \brief Configures the scene aligning the object to the grid and resizing the scene
 		rect when some object is out of bound */
@@ -574,13 +597,18 @@ class __libgui ModelWidget: public QWidget {
 
 		void showMagnifierArea(bool show);
 
+		//! \brief Prepares the viewport to a panning move by hiding grid/delimiters
+		void startPanningMove();
+
+		//! \brief Restores the previous grid/delimiter visibility state after finishing a panning move
+		void finishPanningMove();
+
 	public slots:
 		void loadModel(const QString &filename);
 		void saveModel(const QString &filename);
 		void saveModel();
-		void printModel(QPrinter *printer, bool print_grid, bool print_page_nums);
+		void printModel(QPrinter *printer, bool print_grid, bool print_page_nums, bool resize_delims);
 		void update();
-
 		void bringToFront();
 		void sendToBack();
 

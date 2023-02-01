@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2022 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -31,7 +31,7 @@ ModelFixForm::ModelFixForm(QWidget *parent, Qt::WindowFlags f) : QDialog(parent,
 
 	input_file_sel = new FileSelectorWidget(this);
 	input_file_sel->setFileMode(QFileDialog::ExistingFile);
-	input_file_sel->setNameFilters({tr("Database model (*.dbm)"), tr("All files (*.*)")});
+	input_file_sel->setNameFilters({tr("Database model (*%1)").arg(GlobalAttributes::DbModelExt), tr("All files (*.*)")});
 	input_file_sel->setAcceptMode(QFileDialog::AcceptOpen);
 	input_file_sel->setAllowFilenameInput(true);
 	input_file_sel->setWindowTitle(tr("Select input file"));
@@ -39,8 +39,8 @@ ModelFixForm::ModelFixForm(QWidget *parent, Qt::WindowFlags f) : QDialog(parent,
 
 	output_file_sel = new FileSelectorWidget(this);
 	output_file_sel->setFileMode(QFileDialog::AnyFile);
-	output_file_sel->setNameFilters({tr("Database model (*.dbm)"), tr("All files (*.*)")});
-	output_file_sel->setDefaultSuffix("dbm");
+	output_file_sel->setNameFilters({tr("Database model (*%1)").arg(GlobalAttributes::DbModelExt), tr("All files (*.*)")});
+	output_file_sel->setDefaultSuffix(GlobalAttributes::DbModelExt);
 	output_file_sel->setAcceptMode(QFileDialog::AcceptSave);
 	output_file_sel->setAllowFilenameInput(true);
 	input_file_sel->setWindowTitle(tr("Select output file"));

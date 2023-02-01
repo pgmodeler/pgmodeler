@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2022 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -178,6 +178,7 @@ namespace Attributes {
 	DockWidgets("dock-widgets"),
 	DomConstraint("domconstraint"),
 	DontDropMissingObjs="dont-drop-missing-objs",
+	Dot("dot"),
 	Drop("drop"),
 	DropCmds("drop-cmds"),
 	DropMissingColsConstrs="drop-missing-cols-constrs",
@@ -265,6 +266,7 @@ namespace Attributes {
 	GrantOp("grant-op"),
 	GridSize("grid-size"),
 	GridColor("grid-color"),
+	GridPattern("grid-pattern"),
 	Group("group"),
 	HandlerFunc("handler"),
 	HandlesType("handles-type"),
@@ -362,6 +364,7 @@ namespace Attributes {
 	LocaleMod("locale-mod"),
 	LockerArc("locker-arc"),
 	LockerBody("locker-body"),
+	LockPageDelimResize("lock-page-delim-resize"),
 	Login("login"),
 	LookaheadChar("lookahead-char"),
 	LowVerbosity("low-verbosity"),
@@ -408,6 +411,7 @@ namespace Attributes {
 	OidFilterOp("oid-filter-op"),
 	Oids("oids"),
 	OldName("old-name"),
+	OldPgSqlVersions("old-pgsql-versions"),
 	OldTableName("old-table-name"),
 	OldVersion("old-version"),
 	OpClass("opclass"),
@@ -463,6 +467,7 @@ namespace Attributes {
 	PkPattern("pk-pattern"),
 	Placeholder("placeholder"),
 	Placeholders("placeholders"),
+	Plugin("plugin"),
 	Points("points"),
 	Port("port"),
 	Portrait("portrait"),
@@ -583,6 +588,7 @@ namespace Attributes {
 	SqlObject("sql-object"),
 	SqlTool("sqltool"),
 	SqlValidation("sql-validation"),
+	Square("square"),
 	SrcColPattern("src-col-pattern"),
 	SrcColumns("src-columns"),
 	SrcEncoding("src-encoding"),

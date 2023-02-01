@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2022 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -472,14 +472,6 @@ void Trigger::validateTrigger()
 				throw Exception(ErrorCode::InvConstrTriggerNotAfterRow,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		}
 	}
-}
-
-QString Trigger::getSignature(bool format)
-{
-	if(!getParentTable())
-		return BaseObject::getSignature(format);
-
-	return (QString("%1 ON %2").arg(this->getName(format)).arg(getParentTable()->getSignature(true)));
 }
 
 QString Trigger::getDataDictionary(const attribs_map &extra_attribs)

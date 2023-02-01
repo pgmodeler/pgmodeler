@@ -1168,7 +1168,7 @@
                     <string/>
                    </property>
                    <property name="text">
-                    <string>Force recreation of objects</string>
+                    <string>Forced object recreate</string>
                    </property>
                    <property name="checkable">
                     <bool>true</bool>

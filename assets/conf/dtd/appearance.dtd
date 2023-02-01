@@ -11,6 +11,7 @@
 <!ELEMENT design EMPTY>
 <!ATTLIST design grid-size CDATA #REQUIRED>
 <!ATTLIST design grid-color CDATA #IMPLIED>
+<!ATTLIST design grid-pattern (square|dot) "square">
 <!ATTLIST design canvas-color CDATA #IMPLIED>
 <!ATTLIST design delimiters-color CDATA #IMPLIED>
 <!ATTLIST design min-object-opacity CDATA #IMPLIED>

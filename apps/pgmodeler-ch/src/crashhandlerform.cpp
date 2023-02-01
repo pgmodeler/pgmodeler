@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2022 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -171,9 +171,9 @@ void CrashHandlerForm::saveModel()
 
 	try
 	{
-		file_dlg.setDefaultSuffix(QString("dbm"));
+		file_dlg.setDefaultSuffix(GlobalAttributes::DbModelExt);
 		file_dlg.setWindowTitle(tr("Save model"));
-		file_dlg.setNameFilter(tr("Database model (*.dbm);;All files (*.*)"));
+		file_dlg.setNameFilter(tr("Database model (*%1);;All files (*.*)").arg(GlobalAttributes::DbModelExt));
 		file_dlg.setFileMode(QFileDialog::AnyFile);
 		file_dlg.setAcceptMode(QFileDialog::AcceptSave);
 		file_dlg.setModal(true);

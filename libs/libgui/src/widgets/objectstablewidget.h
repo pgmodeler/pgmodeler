@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2022 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -125,7 +125,10 @@ class __libgui ObjectsTableWidget: public QWidget, public Ui::ObjectsTableWidget
 		void setRowData(const QVariant &data, unsigned row_idx);
 
 		//! \brief Sets a individual font configuration for the specified row
-		void setRowFont(int row_idx, const QFont &font, const QColor &fg_color, const QColor &bg_color);
+		void setRowFont(int row_idx, const QFont &font);
+
+		//! \brief Sets a individual foreground/background configuration for the specified row
+		void setRowColors(int row_idx, const QColor &fg_color, const QColor &bg_color);
 
 		//! \brief Returns the table column count
 		unsigned getColumnCount();
@@ -223,6 +226,9 @@ class __libgui ObjectsTableWidget: public QWidget, public Ui::ObjectsTableWidget
 		void setButtonsEnabled(ObjectsTableWidget::ButtonConf button_conf, bool value);
 
 		void setCellsEditable(bool value);
+
+		//! \brief Resize equally the rows and columns to their contents
+		void resizeContents();
 
 	signals:
 		//! \brief Signal emitted when a new row is added. The new row index is send with the signal

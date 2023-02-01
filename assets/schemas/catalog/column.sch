@@ -22,12 +22,17 @@
 	%if {attribs} %then
 		[SELECT cl.attnum AS oid, cl.attname AS name, cl.attnotnull AS not_null_bool,
 		cl.attacl AS permission, pg_get_expr(df.adbin, df.adrelid) AS default_value,
-		ds.description AS comment, tb.oid AS table, 
-		CASE
-			WHEN cl.attidentity = 'a' THEN 'ALWAYS'
-			WHEN cl.attidentity = 'd' THEN 'BY DEFAULT'
-			ELSE NULL
-		END AS identity_type, ]
+		ds.description AS comment, tb.oid AS table, ]
+		
+		%if ({pgsql-ver} >=f "10.0") %then
+			[ CASE
+				WHEN cl.attidentity = 'a' THEN 'ALWAYS'
+				WHEN cl.attidentity = 'd' THEN 'BY DEFAULT'
+				ELSE NULL
+			END AS identity_type, ]
+		%else
+			[ NULL AS identity_type, ]
+		%end
 
 		%if ({pgsql-ver} >=f "12.0") %then
 			[ CASE

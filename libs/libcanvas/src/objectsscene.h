@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2022 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -35,8 +35,16 @@
 #include "layeritem.h"
 
 class __libcanvas ObjectsScene: public QGraphicsScene {
+	public:
+		enum GridPattern: unsigned {
+			SquarePattern,
+			DotPattern
+		};
+
 	private:
 		Q_OBJECT
+
+		static GridPattern grid_pattern;
 
 		//! \brief Stores the grid line color
 		static QColor grid_color,
@@ -66,10 +74,14 @@ class __libcanvas ObjectsScene: public QGraphicsScene {
 
 		/*! \brief Indicates that panning mode and range selection model are activate in inverse mode.
 		By default panning model is activated with a single left-click and range selection with SHIFT + left-click */
-		invert_rangesel_trigger;
+		invert_rangesel_trigger,
+
+		lock_delim_scale;
 
 		//! \brief Indicates if the scene need to be moved
-		bool move_scene;
+		bool move_scene,
+
+		show_scene_limits;
 
 		static constexpr int SceneMoveStep=20,
 		SceneMoveTimeout=50,
@@ -105,6 +117,8 @@ class __libcanvas ObjectsScene: public QGraphicsScene {
 
 		//! \brief Used to store the canvas/printer page layout (size, orientation, margins)
 		static QPageLayout page_layout;
+
+		static double delimiter_scale;
 
 		//! \brief Indicates that there are objects being moved and the signal s_objectsMoved must be emitted
 		bool moving_objs,
@@ -147,8 +161,7 @@ class __libcanvas ObjectsScene: public QGraphicsScene {
 		void clearTablesChildrenSelection();
 
 	protected:
-		//! \brief Brush used to draw the grid over the scene
-		static QBrush grid;
+		void drawBackground(QPainter *painter, const QRectF &rect);
 
 		void mousePressEvent(QGraphicsSceneMouseEvent *event);
 		void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
@@ -182,6 +195,9 @@ class __libcanvas ObjectsScene: public QGraphicsScene {
 			LayerNameColor,
 			LayerRectColor
 		};
+
+		static constexpr double MinScaleFactor = 0.100000,
+		MaxScaleFactor = 5.000001;
 
 		static constexpr unsigned DefaultLayer = 0;
 
@@ -249,18 +265,33 @@ class __libcanvas ObjectsScene: public QGraphicsScene {
 		 * This method adjust the alpha channel for the background color to a make it semi transparent */
 		void setLayerColors(LayerAttrColor layer_attr_id, const QStringList &colors);
 
+		//! \brief Toggles the display of the red lines that denotes the scene boundaries
+		void setShowSceneLimits(bool show);
+
 		static void setEnableCornerMove(bool enable);
 		static void setInvertRangeSelectionTrigger(bool invert);
 		static bool isCornerMoveEnabled();
 
+		static void setGridPattern(GridPattern pattern);
 		static void setGridSize(unsigned size);
-		static void setGridOptions(bool show_grd, bool align_objs_grd, bool show_page_dlm);
+		static unsigned getGridSize();
 
+		static void setAlignObjectsToGrid(bool value);
 		static bool isAlignObjectsToGrid();
+
+		static void setShowGrid(bool value);
 		static bool isShowGrid();
+
+		static void setShowPageDelimiters(bool value);
 		static bool isShowPageDelimiters();
 
-		/* ! \brief Configures the canvas page layout. This method invalidates the grid to force it to be recreated
+		/*! \brief Determines if the delimiter lines must have their scale locked when the
+		 * curr_scale factor is less than 1.0. This allows the user to fit a greater amount
+		 * of objects on a single page. This feature works only for printing. */
+		static void setLockDelimiterScale(bool lock, double curr_scale);
+		static bool isDelimiterScaleLocked();
+
+		/*! \brief Configures the canvas page layout. This method invalidates the grid to force it to be recreated
 		 * taking into account the new page settings */
 		static void setPageLayout(const QPageLayout &page_lt);
 
@@ -287,11 +318,13 @@ class __libcanvas ObjectsScene: public QGraphicsScene {
 		Note: using this method with seek_only_db_objs=true can be time expensive depending on the size of the model so use it wisely. */
 		QRectF itemsBoundingRect(bool seek_only_db_objs=false, bool selected_only = false, bool incl_layer_rects = false);
 
-		//! \brief Returns a vector containing all the page rects considering the provided page layout settings
-		std::vector<QRectF> getPagesForPrinting(const QPageLayout &page_lt, unsigned &h_page_cnt, unsigned &v_page_cnt);
+		/*! \brief Returns a vector containing all the page rects considering the provided page layout settings
+		 * A scale factor can be provided so the method returns the amount of pages in a certain zoom factor (scale) */
+		QList<QRectF> getPagesForPrinting(const QPageLayout &page_lt, unsigned &h_page_cnt, unsigned &v_page_cnt, double scale);
 
-		//! \brief Returns a vector containing all the page rects considering the current scene's page layout settings
-		std::vector<QRectF> getPagesForPrinting(unsigned &h_page_cnt, unsigned &v_page_cnt);
+		/*! \brief Returns a vector containing all the page rects considering the current scene's page layout settings
+		 * A scale factor can be provided so the method returns the amount of pages in a certain zoom factor (scale) */
+		QList<QRectF> getPagesForPrinting(unsigned &h_page_cnt, unsigned &v_page_cnt, double scale);
 
 		bool isRangeSelectionEnabled();
 		bool isRangeSelectionTriggerInverted();

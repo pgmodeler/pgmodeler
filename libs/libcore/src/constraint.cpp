@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2022 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -693,6 +693,8 @@ void Constraint::setDeclInTableAttribute()
 
 void Constraint::configureSearchAttributes()
 {
+	TableObject::configureSearchAttributes();
+
 	QStringList src_col_names, ref_col_names;
 
 	for(auto &col : columns)
@@ -703,7 +705,6 @@ void Constraint::configureSearchAttributes()
 
 	search_attribs[Attributes::SrcColumns] = src_col_names.join(", ");
 	search_attribs[Attributes::RefColumns] = ref_col_names.join(", ");
-	TableObject::configureSearchAttributes();
 }
 
 QString Constraint::getSourceCode(SchemaParser::CodeType def_type, bool inc_addedbyrel)
@@ -784,14 +785,6 @@ QString Constraint::getDropCode(bool cascade)
 {
 	setDeclInTableAttribute();
 	return TableObject::getDropCode(cascade);
-}
-
-QString Constraint::getSignature(bool format)
-{
-	if(!getParentTable())
-		return BaseObject::getSignature(format);
-
-	return QString("%1 ON %2 ").arg(this->getName(format)).arg(getParentTable()->getSignature(true));
 }
 
 QString Constraint::getDataDictionary(const attribs_map &extra_attribs)

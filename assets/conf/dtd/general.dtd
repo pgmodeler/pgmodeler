@@ -29,6 +29,7 @@
 <!ATTLIST configuration use-placeholders (false|true) "true">
 <!ATTLIST configuration show-canvas-grid (false|true) "true">
 <!ATTLIST configuration show-page-delimiters (false|true) "true">
+<!ATTLIST configuration lock-page-delim-resize (false|true) "false">
 <!ATTLIST configuration align-objs-to-grid (false|true) "true">
 <!ATTLIST configuration history-max-length CDATA #IMPLIED>
 <!ATTLIST configuration source-editor-app CDATA #IMPLIED>
@@ -42,6 +43,7 @@
 <!ATTLIST configuration hide-schema-names-of-types (false|true) "false">
 <!ATTLIST configuration pgmodeler-ver CDATA #IMPLIED>
 <!ATTLIST configuration first-run CDATA #IMPLIED>
+<!ATTLIST configuration old-pgsql-versions (false|true) "false">
 
 <!ELEMENT session (file+)>
 <!ELEMENT recent-models (file+)>

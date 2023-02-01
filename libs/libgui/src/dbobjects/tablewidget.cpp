@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2022 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -455,6 +455,7 @@ void TableWidget::listObjects(ObjectType obj_type)
 			showObjectData(dynamic_cast<TableObject*>(table->getObject(idx, obj_type)), idx);
 		}
 
+		tab->resizeContents();
 		tab->clearSelection();
 		tab->blockSignals(false);
 
@@ -707,15 +708,17 @@ void TableWidget::showObjectData(TableObject *object, int row)
 
 		if(object->isAddedByRelationship())
 		{
-			tab->setRowFont(row, font,
-											ObjectsTableWidget::getTableItemColor(ObjectsTableWidget::RelAddedItemFgColor),
-											ObjectsTableWidget::getTableItemColor(ObjectsTableWidget::RelAddedItemBgColor));
+			tab->setRowFont(row, font);
+			tab->setRowColors(row,
+												ObjectsTableWidget::getTableItemColor(ObjectsTableWidget::RelAddedItemFgColor),
+												ObjectsTableWidget::getTableItemColor(ObjectsTableWidget::RelAddedItemBgColor));
 		}
 		else
 		{
-			tab->setRowFont(row, font,
-											ObjectsTableWidget::getTableItemColor(ObjectsTableWidget::ProtItemFgColor),
-											ObjectsTableWidget::getTableItemColor(ObjectsTableWidget::ProtItemBgColor));
+			tab->setRowFont(row, font);
+			tab->setRowColors(row,
+												ObjectsTableWidget::getTableItemColor(ObjectsTableWidget::ProtItemFgColor),
+												ObjectsTableWidget::getTableItemColor(ObjectsTableWidget::ProtItemBgColor));
 		}
 	}
 

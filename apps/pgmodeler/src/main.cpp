@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2022 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -85,13 +85,6 @@ int main(int argc, char **argv)
 {
 	try
 	{		
-		/* Registering the below classes as metatypes in order to make
-		 * them liable to be sent through signal parameters */
-		qRegisterMetaType<ObjectType>("ObjectType");
-		qRegisterMetaType<Exception>("Exception");
-		qRegisterMetaType<ValidationInfo>("ValidationInfo");
-		qRegisterMetaType<ObjectsDiffInfo>("ObjectsDiffInfo");
-
 		//Install a signal handler to start crashhandler when SIGSEGV or SIGABRT is emitted
 		signal(SIGSEGV, startCrashHandler);
 		signal(SIGABRT, startCrashHandler);

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2022 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@
 #include "guiutilsns.h"
 #include <QTemporaryFile>
 #include "utilsns.h"
+#include "objectfinderwidget.h"
 
 bool ModelDatabaseDiffForm::low_verbosity = false;
 std::map<QString, attribs_map> ModelDatabaseDiffForm::config_params;
@@ -1358,7 +1359,7 @@ void ModelDatabaseDiffForm::applyPartialDiffFilters()
 													 pd_filter_wgt->isMatchSignature()) ?
 														Attributes::Signature : Attributes::Name;
 		std::vector<BaseObject *> filterd_objs = loaded_model->findObjects(pd_filter_wgt->getObjectFilters(), search_attr);
-		ObjectFinderWidget::updateObjectTable(filtered_objs_tbw, filterd_objs, search_attr);
+		GuiUtilsNs::updateObjectTable(filtered_objs_tbw, filterd_objs, search_attr);
 		getFilteredObjects(filtered_objs);
 	}
 	else if(src_connections_cmb->currentIndex() > 0 &&

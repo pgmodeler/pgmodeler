@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2022 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -129,14 +129,6 @@ QString Policy::getSourceCode(SchemaParser::CodeType def_type)
 	attributes[Attributes::Roles] = rol_names.join(QString(", "));
 
 	return BaseObject::__getSourceCode(def_type);
-}
-
-QString Policy::getSignature(bool format)
-{
-	if(!getParentTable())
-		return BaseObject::getSignature(format);
-
-	return (QString("%1 ON %2").arg(this->getName(format)).arg(getParentTable()->getSignature(true)));
 }
 
 QString Policy::getAlterCode(BaseObject *object)

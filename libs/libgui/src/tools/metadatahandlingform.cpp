@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2022 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -32,7 +32,7 @@ MetadataHandlingForm::MetadataHandlingForm(QWidget *parent, Qt::WindowFlags f) :
 	output_trw->setItemDelegateForColumn(0, htmlitem_deleg);
 
 	backup_file_sel = new FileSelectorWidget(this);
-	backup_file_sel->setNameFilters({tr("Objects metadata file (*.omf)"), tr("All files (*.*)")});
+	backup_file_sel->setNameFilters({tr("Objects metadata file (*%1)").arg(GlobalAttributes::ObjMetadataExt), tr("All files (*.*)")});
 	backup_file_sel->setWindowTitle(tr("Select backup file"));
 	settings_grid->addWidget(backup_file_sel, 6, 2);
 
@@ -161,9 +161,8 @@ void MetadataHandlingForm::handleObjectsMetada()
 			{
 				//Configuring the temporary metadata file
 				tmp_file.setFileTemplate(GlobalAttributes::getTemporaryFilePath(
-																	 QString("%1_metadata_XXXXXX.%2")
-																	 .arg(extract_model->getName())
-																	 .arg(QString("omf"))));
+																	 QString("%1_metadata_XXXXXX%2")
+																	 .arg(extract_model->getName(), GlobalAttributes::ObjMetadataExt)));
 
 				tmp_file.open();
 				metadata_file=tmp_file.fileName();

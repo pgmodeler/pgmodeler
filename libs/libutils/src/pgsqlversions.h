@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2022 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -41,11 +41,11 @@ namespace PgSqlVersions {
 	extern __libutils const QStringList AllVersions;
 
 	/*! \brief Parses and checks a string contaning a PostgreSQL version in the form [major.minor]
-	 * This method will raise an error if an invalid version is provided. An invalid version
-	 * is considered any string in incorrect format or a valid string but that is for a
-	 * obsolete version (< 9.0). If an invalid major version is proveded then the function
+	 * When the flag ignore_legacy_ver is true, this method will raise an error if an invalid version
+	 * is provided. An invalid version is considered any string in incorrect format or a valid string
+	 * but that is for a obsolete version (< 9.0). If an invalid major version is proveded then the function
 	 * will return the DefaultVersion as a fallback. */
-	extern __libutils QString parseString(const QString &pgsql_ver);
+	extern __libutils QString parseString(const QString &pgsql_ver, bool ignore_legacy_ver);
 }
 
 #endif

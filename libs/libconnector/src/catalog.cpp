@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2022 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -389,7 +389,8 @@ QString Catalog::getCatalogQuery(const QString &qry_type, ObjectType obj_type, b
 			attr.second.replace(QChar('\''), QString("''"));
 	}
 
-	schparser.setPgSQLVersion(connection.getPgSQLVersion(true));
+	schparser.__setPgSQLVersion(connection.getPgSQLVersion(true),
+															Connection::isDbVersionIgnored());
 	attribs[qry_type]=Attributes::True;
 
 	if(exclude_sys_objs || list_only_sys_objs)

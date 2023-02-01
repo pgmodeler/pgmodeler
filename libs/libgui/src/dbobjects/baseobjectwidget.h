@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2022 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -33,11 +33,6 @@
 #include "ui_baseobjectwidget.h"
 #include "pgsqltypewidget.h"
 #include "guiutilsns.h"
-
-/* Declaring the PgSQLType class as a Qt metatype in order to permit
-	 that instances of the class be used as data of QVariant and QMetaType */
-#include <QMetaType>
-Q_DECLARE_METATYPE(PgSqlType)
 
 class __libgui BaseObjectWidget: public QWidget, public Ui::BaseObjectWidget {
 	private:

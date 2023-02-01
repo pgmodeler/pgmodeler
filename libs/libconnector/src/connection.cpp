@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2022 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -55,6 +55,8 @@ const QString Connection::ServerVersion=QString("server-version");
 bool Connection::notice_enabled=false;
 bool Connection::print_sql=false;
 bool Connection::silence_conn_err=true;
+bool Connection::ignore_db_version=false;
+
 QStringList Connection::notices;
 
 Connection::Connection()
@@ -222,6 +224,16 @@ bool Connection::isConnErrorSilenced()
 	return silence_conn_err;
 }
 
+void Connection::setIgnoreDbVersion(bool ignore)
+{
+	ignore_db_version = ignore;
+}
+
+bool Connection::isDbVersionIgnored()
+{
+	return ignore_db_version;
+}
+
 void Connection::connect()
 {
 	/* If the connection string is not established indicates that the user
@@ -267,7 +279,7 @@ void Connection::connect()
 
 	// Aborts the connection is PostgreSQL 9x is detected
 	QString pgver = getPgSQLVersion(true);
-	if(pgver.toFloat() < PgSqlVersions::PgSqlVersion100.toFloat())
+	if(!ignore_db_version && pgver.toFloat() < PgSqlVersions::PgSqlVersion100.toFloat())
 	{
 		close();
 		throw Exception(Exception::getErrorMessage(ErrorCode::UnsupportedPGVersion).arg(pgver),

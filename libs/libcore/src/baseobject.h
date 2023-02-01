@@ -1,6 +1,6 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
-# Copyright 2006-2022 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -80,6 +80,11 @@ enum class ObjectType: unsigned {
 	BaseObject,
 	BaseTable
 };
+
+/* Registering the ObjectType struct as a Qt MetaType in order to make
+ * it liable to be sent through signal parameters as well as to be
+ * to be used by QVariant */
+Q_DECLARE_METATYPE(ObjectType)
 
 class __libcore BaseObject {
 	private:

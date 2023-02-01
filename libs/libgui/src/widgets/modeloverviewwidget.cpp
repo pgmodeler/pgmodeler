@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2022 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -22,7 +22,6 @@
 ModelOverviewWidget::ModelOverviewWidget(QWidget *parent) : QWidget(parent, Qt::WindowCloseButtonHint | Qt::Tool)
 {
 	setupUi(this);
-
 	scrollarea = nullptr;
 	this->model=nullptr;
 	zoom_factor=1;
@@ -129,7 +128,8 @@ void ModelOverviewWidget::updateOverview(bool force_update)
 		QApplication::setOverrideCursor(Qt::WaitCursor);
 
 		//Creates a pixmap with the size of the scene
-		pix=QPixmap(pixmap_size);
+		pix = QPixmap(pixmap_size);
+		pix.fill(ObjectsScene::getCanvasColor());
 
 		//Draw the scene onto the pixmap
 		QPainter p(&pix);
@@ -147,10 +147,10 @@ void ModelOverviewWidget::updateOverview(bool force_update)
 
 			p.setRenderHints(QPainter::Antialiasing, false);
 			p.setRenderHints(QPainter::TextAntialiasing, false);
-			this->model->scene->render(&p, pix.rect(), scene_rect.toRect());
+			this->model->scene->render(&p, QRect(), scene_rect);
 
 			//Resizes the pixmap to the previous configured QSize
-			label->setPixmap(pix.scaled(curr_size.toSize(), Qt::KeepAspectRatio, Qt::SmoothTransformation));
+			label->setPixmap(pix);
 		}
 
 		label->resize(curr_size.toSize());
@@ -316,6 +316,7 @@ void ModelOverviewWidget::mousePressEvent(QMouseEvent *event)
 	{
 		window_frm->setCursor(QCursor(Qt::OpenHandCursor));
 		this->setCursor(QCursor(Qt::OpenHandCursor));
+		model->startPanningMove();
 	}
 }
 
@@ -325,6 +326,7 @@ void ModelOverviewWidget::mouseReleaseEvent(QMouseEvent *event)
 	{
 		window_frm->setCursor(QCursor(Qt::ArrowCursor));
 		this->setCursor(QCursor(Qt::ArrowCursor));
+		model->finishPanningMove();
 	}
 }
 

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2022 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -252,7 +252,7 @@ class __libgui DatabaseImportHelper: public QObject {
 		
 		//! \brief Returns a copy of the current catalog instance being used
 		Catalog getCatalog();
-		
+
 		/*! \brief Returns an attribute map for the specified object type. The parameters "schema" and "table"
 				must be used only when retrieving table children objects.
 

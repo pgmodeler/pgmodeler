@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2022 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -228,7 +228,7 @@ QString Exception::messages[Exception::ErrorCount][2]={
 	{"InvIdSwapSameObject", QT_TR_NOOP("Invalid object id swapping operation! The objects involved are the same!")},
 	{"InvIdSwapInvalidObjectType", QT_TR_NOOP("Invalid object swapping operation! The database, tablespaces and roles can have the ids swapped with only other objects of the same kind!")},
 	{"AsgWidgetAlreadyHasParent", QT_TR_NOOP("The widget already has a parent and cannot be assigned to a different object!")},
-	{"ObjectNotImported",  QT_TR_NOOP("The object `%1' (%2), oid `%3', could not be imported due to one or more errors! Check the exception stack for more details. `HINT:' if the object somehow references objects in `pg_catalog' or `information_schema' consider enable the importing of system objects.")},
+	{"ObjectNotImported",  QT_TR_NOOP("The object `%1' (%2), oid `%3', could not be imported due to one or more errors! Check the exception stack for more details. `HINT:' if the object somehow references objects in `pg_catalog' or `information_schema' consider enable the importing of system/extension objects.")},
 	{"ModelFileNotLoaded", QT_TR_NOOP("Could not load the database model file `%1'. Check the error stack to see details. Try to run `pgmodeler-cli --fix-model' in order to correct the structure of the file if that is the case.")},
 	{"InvColumnTableType", QT_TR_NOOP("The column `%1' cannot reference it's parent table `%2' as data type!")},
 	{"OprInvalidElementId", QT_TR_NOOP("Operation with an invalid element id `%1'!")},
@@ -241,7 +241,7 @@ QString Exception::messages[Exception::ErrorCount][2]={
 	{"RowDataNotManipulated", QT_TR_NOOP("Could not perform the `%1' operation on `%2' using the data on row `%3'! All changes were rolled back. \n\n ** Returned error ** \n\n%4")},
 	{"MalformedUnescapedValue", QT_TR_NOOP("Malformed unescaped value on row `%1' column `%2'!")},
 	{"UndoRedoOperationInvalidObject", QT_TR_NOOP("Trying to undo/redo an invalid operation over an object that does not exists anymore or can't be handled! The operation history will be cleaned up.")},
-	{"RequiredFieldsNotFilled", QT_TR_NOOP("The object `%1' (%2) can't be handled because some needed fields are not set! Please, make sure to fill at least the requires fields in order to properly create or update the object.")},
+	{"RequiredFieldsNotFilled", QT_TR_NOOP("The object `%1' (%2) can't be handled because some needed fields are not set! Please, make sure to fill at least the required fields in order to properly create or update the object.")},
 	{"InvRelationshipIdSwap", QT_TR_NOOP("A relationship can only be swapped by other object of the same kind!")},
 	{"InvInheritParentTableNotFound", QT_TR_NOOP("A parent table of `%1' which OID is `%2' was not found in the set of imported objects!")},
 	{"AsgEnumInvalidChars", QT_TR_NOOP("The enumeration `%1' can't be assigned to the type `%2' because contains invalid characters!")},
