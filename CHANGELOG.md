@@ -3,7 +3,7 @@ Changelog
 
 v1.0.0
 ------
-<em>Release date: February 3, 2023</em><br/>
+<em>Release date: February 1, 2023</em><br/>
 
 * [New] Added an option in GeneralConfigWidget to allow pgModeler to connect to older PostgreSQL server versions, below 10 using a minimum (not reliable) compatibility mode.
 * [New] Added an option to change ObjectsScene grid pattern. Available options are square and dot.
