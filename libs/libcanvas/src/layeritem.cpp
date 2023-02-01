@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -18,7 +18,6 @@
 
 #include "layeritem.h"
 #include "baseobjectview.h"
-#include "qtcompat/qfontmetricscompat.h"
 
 LayerItem::LayerItem(QGraphicsItem *parent) : QGraphicsPathItem(parent)
 {
@@ -82,7 +81,7 @@ void LayerItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
 		if(text_align == Qt::AlignLeft)
 			pnt.setX(brect.left() + LayerPadding);
 		else
-			pnt.setX(brect.right() - (LayerPadding + QtCompat::horizontalAdvance(font, text)));
+			pnt.setX(brect.right() - (LayerPadding + fm.horizontalAdvance(text)));
 
 		pnt.setY(brect.top() + dy);
 		painter->drawText(pnt, text);

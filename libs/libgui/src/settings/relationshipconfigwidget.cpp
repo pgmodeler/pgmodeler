@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -18,16 +18,17 @@
 
 #include "relationshipconfigwidget.h"
 
-map<QString, attribs_map> RelationshipConfigWidget::config_params;
+std::map<QString, attribs_map> RelationshipConfigWidget::config_params;
 
 RelationshipConfigWidget::RelationshipConfigWidget(QWidget * parent) : BaseConfigWidget(parent)
 {
 	QStringList list, rel_types={ Attributes::Relationship11, Attributes::Relationship1n,
-								  Attributes::RelationshipNn, Attributes::RelationshipGen,
-								  Attributes::RelationshipDep, Attributes::RelationshipPart };
-	unsigned rel_types_id[]={ BaseRelationship::Relationship11, BaseRelationship::Relationship1n,
-							  BaseRelationship::RelationshipNn, BaseRelationship::RelationshipGen,
-							  BaseRelationship::RelationshipDep, BaseRelationship::RelationshipPart};
+																Attributes::RelationshipNn, Attributes::RelationshipGen,
+																Attributes::RelationshipDep, Attributes::RelationshipPart };
+	BaseRelationship::RelType rel_types_id[]={
+								BaseRelationship::Relationship11, BaseRelationship::Relationship1n,
+								BaseRelationship::RelationshipNn, BaseRelationship::RelationshipGen,
+								BaseRelationship::RelationshipDep, BaseRelationship::RelationshipPart };
 
 	Ui_RelationshipConfigWidget::setupUi(this);
 
@@ -39,9 +40,9 @@ RelationshipConfigWidget::RelationshipConfigWidget(QWidget * parent) : BaseConfi
 	for(int i=0; i < pattern_fields.size(); i++)
 	{
 		pattern_hl=new SyntaxHighlighter(pattern_fields[i], true);
-		pattern_hl->loadConfiguration(GlobalAttributes::getConfigurationFilePath(GlobalAttributes::PatternHighlightConf));
+		pattern_hl->loadConfiguration(GlobalAttributes::getPatternHighlightConfPath());
 
-		connect(pattern_fields[i], SIGNAL(textChanged()), this, SLOT(updatePattern()));
+		connect(pattern_fields[i], &QPlainTextEdit::textChanged, this, &RelationshipConfigWidget::updatePattern);
 	}
 
 	deferral_cmb->addItems(DeferralType::getTypes());
@@ -54,22 +55,34 @@ RelationshipConfigWidget::RelationshipConfigWidget(QWidget * parent) : BaseConfi
 	for(int i=0; i < rel_types.size(); i++)
 		rel_type_cmb->addItem(BaseRelationship::getRelationshipTypeName(rel_types_id[i]), rel_types[i]);
 
-	connect(crows_foot_rb, SIGNAL(toggled(bool)), this, SLOT(enableConnModePreview()));
-	connect(fk_to_pk_rb, SIGNAL(toggled(bool)), this, SLOT(enableConnModePreview()));
-	connect(center_pnts_rb, SIGNAL(toggled(bool)), this, SLOT(enableConnModePreview()));
-	connect(tab_edges_rb, SIGNAL(toggled(bool)), this, SLOT(enableConnModePreview()));
+	settings_twg->widget(0)->setFocusProxy(crows_foot_rb);
+	foreign_key_gb->setFocusProxy(deferrable_chk);
 
-	connect(deferrable_chk, SIGNAL(toggled(bool)), deferral_lbl, SLOT(setEnabled(bool)));
-	connect(deferrable_chk, SIGNAL(toggled(bool)), deferral_cmb, SLOT(setEnabled(bool)));
-	connect(deferrable_chk, SIGNAL(toggled(bool)), this, SLOT(setConfigurationChanged(bool)));
+	connect(crows_foot_rb, &QRadioButton::toggled, this, &RelationshipConfigWidget::enableConnModePreview);
+	connect(fk_to_pk_rb, &QRadioButton::toggled, this, &RelationshipConfigWidget::enableConnModePreview);
+	connect(center_pnts_rb, &QRadioButton::toggled, this, &RelationshipConfigWidget::enableConnModePreview);
+	connect(tab_edges_rb, &QRadioButton::toggled, this, &RelationshipConfigWidget::enableConnModePreview);
 
-	connect(rel_type_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(fillNamePatterns()));
-	connect(del_action_cmb, &QComboBox::currentTextChanged, [&](){ setConfigurationChanged(true); });
-	connect(upd_action_cmb, &QComboBox::currentTextChanged, [&](){ setConfigurationChanged(true); });
-	connect(deferral_cmb, &QComboBox::currentTextChanged, [&](){ setConfigurationChanged(true); });
+	connect(deferrable_chk, &QCheckBox::toggled, deferral_lbl, &QLabel::setEnabled);
+	connect(deferrable_chk, &QCheckBox::toggled, deferral_cmb, &QComboBox::setEnabled);
+	connect(deferrable_chk, &QCheckBox::toggled, this, &RelationshipConfigWidget::setConfigurationChanged);
+
+	connect(rel_type_cmb,  &QComboBox::currentIndexChanged, this,&RelationshipConfigWidget::fillNamePatterns);
+
+	connect(del_action_cmb, &QComboBox::currentTextChanged, this, [this](){
+		setConfigurationChanged(true);
+	});
+
+	connect(upd_action_cmb, &QComboBox::currentTextChanged, this, [this](){
+		setConfigurationChanged(true);
+	});
+
+	connect(deferral_cmb, &QComboBox::currentTextChanged, this, [this](){
+		setConfigurationChanged(true);
+	});
 }
 
-map<QString, attribs_map> RelationshipConfigWidget::getConfigurationParams()
+std::map<QString, attribs_map> RelationshipConfigWidget::getConfigurationParams()
 {
 	return config_params;
 }
@@ -79,13 +92,12 @@ void RelationshipConfigWidget::loadConfiguration()
 	try
 	{
 		int idx;
-		vector<QString> key_attribs={Attributes::Type};
-		BaseConfigWidget::loadConfiguration(GlobalAttributes::RelationshipsConf, config_params, key_attribs);
+		BaseConfigWidget::loadConfiguration(GlobalAttributes::RelationshipsConf, config_params, { Attributes::Type });
 
-		fk_to_pk_rb->setChecked(config_params[Attributes::Connection][Attributes::Mode]==Attributes::ConnectFkToPk);
-		center_pnts_rb->setChecked(config_params[Attributes::Connection][Attributes::Mode]==Attributes::ConnectCenterPnts);
-		tab_edges_rb->setChecked(config_params[Attributes::Connection][Attributes::Mode]==Attributes::ConnectTableEdges);
-		crows_foot_rb->setChecked(config_params[Attributes::Connection][Attributes::Mode]==Attributes::CrowsFoot);
+		fk_to_pk_rb->setChecked(config_params[GlobalAttributes::RelationshipsConf][Attributes::LinkMode]==Attributes::ConnectFkToPk);
+		center_pnts_rb->setChecked(config_params[GlobalAttributes::RelationshipsConf][Attributes::LinkMode]==Attributes::ConnectCenterPnts);
+		tab_edges_rb->setChecked(config_params[GlobalAttributes::RelationshipsConf][Attributes::LinkMode]==Attributes::ConnectTableEdges);
+		crows_foot_rb->setChecked(config_params[GlobalAttributes::RelationshipsConf][Attributes::LinkMode]==Attributes::CrowsFoot);
 
 		deferrable_chk->setChecked(config_params[Attributes::ForeignKeys][Attributes::Deferrable]==Attributes::True);
 		deferral_cmb->setCurrentText(config_params[Attributes::ForeignKeys][Attributes::DeferType]);
@@ -122,13 +134,13 @@ void RelationshipConfigWidget::saveConfiguration()
 																																Attributes::Patterns +
 																																GlobalAttributes::SchemaExt);
 		if(crows_foot_rb->isChecked())
-			config_params[Attributes::Connection][Attributes::Mode]=Attributes::CrowsFoot;
+			config_params[GlobalAttributes::RelationshipsConf][Attributes::LinkMode]=Attributes::CrowsFoot;
 		else if(fk_to_pk_rb->isChecked())
-			config_params[Attributes::Connection][Attributes::Mode]=Attributes::ConnectFkToPk;
+			config_params[GlobalAttributes::RelationshipsConf][Attributes::LinkMode]=Attributes::ConnectFkToPk;
 		else if(tab_edges_rb->isChecked())
-			config_params[Attributes::Connection][Attributes::Mode]=Attributes::ConnectTableEdges;
+			config_params[GlobalAttributes::RelationshipsConf][Attributes::LinkMode]=Attributes::ConnectTableEdges;
 		else
-			config_params[Attributes::Connection][Attributes::Mode]=Attributes::ConnectCenterPnts;
+			config_params[GlobalAttributes::RelationshipsConf][Attributes::LinkMode]=Attributes::ConnectCenterPnts;
 
 		config_params[Attributes::ForeignKeys][Attributes::Deferrable]=(deferrable_chk->isChecked() ? Attributes::True : Attributes::False);
 		config_params[Attributes::ForeignKeys][Attributes::DeferType]=deferral_cmb->currentText();
@@ -142,7 +154,7 @@ void RelationshipConfigWidget::saveConfiguration()
 			schparser.ignoreUnkownAttributes(true);
 			schparser.ignoreEmptyAttributes(true);
 			config_params[itr.first]=itr.second;
-			config_params[Attributes::NamePatterns][Attributes::Patterns]+=schparser.getCodeDefinition(patterns_sch, itr.second);
+			config_params[Attributes::NamePatterns][Attributes::Patterns]+=schparser.getSourceCode(patterns_sch, itr.second);
 		}
 
 		BaseConfigWidget::saveConfiguration(GlobalAttributes::RelationshipsConf, config_params);
@@ -229,7 +241,7 @@ void RelationshipConfigWidget::updatePattern()
 {
 	QPlainTextEdit *input=qobject_cast<QPlainTextEdit *>(sender());
 	QString rel_type=rel_type_cmb->currentData().toString();
-	map<QPlainTextEdit *, QString> inputs_map={ { pk_pattern_txt, Attributes::PkPattern },
+	std::map<QPlainTextEdit *, QString> inputs_map={ { pk_pattern_txt, Attributes::PkPattern },
 												{ uq_pattern_txt, Attributes::UqPattern },
 												{ src_col_pattern_txt, Attributes::SrcColPattern },
 												{ dst_col_pattern_txt, Attributes::DstColPattern },

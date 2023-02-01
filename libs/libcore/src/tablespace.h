@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -28,7 +28,7 @@
 
 #include "baseobject.h"
 
-class Tablespace: public BaseObject{
+class __libcore Tablespace: public BaseObject{
 	private:
 		static unsigned tabspace_id;
 
@@ -47,7 +47,7 @@ class Tablespace: public BaseObject{
 		QString getDirectory();
 
 		//! \brief Returns the SQL / XML code for the tablespace
-		virtual QString getCodeDefinition(unsigned def_type) final;
+		virtual QString getSourceCode(SchemaParser::CodeType def_type) final;
 };
 
 #endif

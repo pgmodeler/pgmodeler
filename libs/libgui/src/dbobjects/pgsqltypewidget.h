@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -31,7 +31,7 @@
 #include "databasemodel.h"
 #include "messagebox.h"
 
-class PgSQLTypeWidget: public QWidget, public Ui::PgSQLTypeWidget {
+class __libgui PgSQLTypeWidget: public QWidget, public Ui::PgSQLTypeWidget {
 	private:
 		Q_OBJECT
 
@@ -54,7 +54,7 @@ class PgSQLTypeWidget: public QWidget, public Ui::PgSQLTypeWidget {
 		must be shown using the last tree parameters. The DatabaseModel parameter is used to
 		gather the user-defined types of the specified model. */
 		static void listPgSQLTypes(QComboBox *combo, DatabaseModel *model,
-								   unsigned user_type_conf=UserTypeConfig::AllUserTypes,
+									 UserTypeConfig::TypeConf user_type_conf=UserTypeConfig::AllUserTypes,
 								   bool oid_types=true, bool pseudo_types=true);
 
 	private slots:
@@ -68,7 +68,7 @@ class PgSQLTypeWidget: public QWidget, public Ui::PgSQLTypeWidget {
 		 *  The pseudo_types indicates if pseudo data types are allowed */
 		void setAttributes(PgSqlType type, DatabaseModel *model,
 											 bool allow_qualifiers = true,
-											 unsigned usr_type_conf=UserTypeConfig::AllUserTypes,
+											 UserTypeConfig::TypeConf usr_type_conf=UserTypeConfig::AllUserTypes,
 											 bool oid_types=true, bool pseudo_types=true);
 
 		//! \brief Returns the PostgreSQL type configured via form

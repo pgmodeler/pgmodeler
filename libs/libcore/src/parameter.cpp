@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -118,17 +118,17 @@ void Parameter::operator = (const Parameter &param)
 	setCodeInvalidated(true);
 }
 
-QString Parameter::getCodeDefinition(unsigned def_type)
+QString Parameter::getSourceCode(SchemaParser::CodeType def_type)
 {
 	QString code_def=getCachedCode(def_type, false);
 	if(!code_def.isEmpty()) return code_def;
 
-	return this->getCodeDefinition(def_type, false);
+	return this->getSourceCode(def_type, false);
 }
 
-QString Parameter::getCodeDefinition(unsigned def_type, bool reduced_form)
+QString Parameter::getSourceCode(SchemaParser::CodeType def_type, bool reduced_form)
 {
-	if(def_type==SchemaParser::SqlDefinition)
+	if(def_type==SchemaParser::SqlCode)
 		attributes[Attributes::Name]=BaseObject::formatName(obj_name);
 	else
 		attributes[Attributes::Name]=obj_name;
@@ -137,7 +137,7 @@ QString Parameter::getCodeDefinition(unsigned def_type, bool reduced_form)
 	attributes[Attributes::ParamOut]=(is_out ? Attributes::True : "");
 	attributes[Attributes::ParamVariadic]=(is_variadic ? Attributes::True : "");
 	attributes[Attributes::DefaultValue]=default_value;
-	attributes[Attributes::Type]=type.getCodeDefinition(def_type);
+	attributes[Attributes::Type]=type.getSourceCode(def_type);
 
-	return BaseObject::getCodeDefinition(def_type, reduced_form);
+	return BaseObject::getSourceCode(def_type, reduced_form);
 }

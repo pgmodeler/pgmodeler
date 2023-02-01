@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@
 #include "objectfinderwidget.h"
 #include "guiutilsns.h"
 #include "coreutilsns.h"
+#include "objectstablewidget.h"
 
 const QStringList ObjectFinderWidget::search_attribs =
 { Attributes::Name, Attributes::Comment, Attributes::Signature,
@@ -39,32 +40,54 @@ ObjectFinderWidget::ObjectFinderWidget(QWidget *parent) : QWidget(parent)
 {
 	setupUi(this);
 
-	filter_frm->setVisible(false);
-	splitter->handle(1)->setEnabled(false);
-	updateObjectTypeList(obj_types_lst);
+	filter_wgt = new QWidget(this);
+	obj_types_lst = new ObjectTypesListWidget(this);
+	obj_types_lst->layout()->setContentsMargins(0,0,0,0);
 
-	select_menu.addAction(tr("Listed"), this, SLOT(selectObjects()));
-	select_menu.addAction(tr("Not listed"), this, SLOT(selectObjects()));
+	regexp_chk = new QCheckBox(this);
+	regexp_chk->setText(tr("Regular expression"));
+
+	exact_match_chk = new QCheckBox(this);
+	exact_match_chk->setText(tr("Exact match"));
+
+	case_sensitive_chk = new QCheckBox(this);
+	case_sensitive_chk->setText(tr("Case sensitive"));
+
+	QVBoxLayout *vbox = new QVBoxLayout(filter_wgt);
+	vbox->addWidget(obj_types_lst);
+	vbox->addWidget(regexp_chk);
+	vbox->addWidget(exact_match_chk);
+	vbox->addWidget(case_sensitive_chk);
+	vbox->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
+	vbox->setSpacing(GuiUtilsNs::LtSpacing);
+	filter_wgt->setLayout(vbox);
+
+	QWidgetAction *wgt_act_filter = new QWidgetAction(this);
+	wgt_act_filter->setDefaultWidget(filter_wgt);
+	filter_menu.addAction(wgt_act_filter);
+	filter_btn->setMenu(&filter_menu);
+
+	select_menu.addAction(tr("Listed"), this, &ObjectFinderWidget::selectObjects);
+	select_menu.addAction(tr("Not listed"), this, &ObjectFinderWidget::selectObjects);
 	select_btn->setMenu(&select_menu);
 
-	fade_menu.addAction(tr("Listed"), this, SLOT(fadeObjects()));
-	fade_menu.addAction(tr("Not listed"), this, SLOT(fadeObjects()));
+	fade_menu.addAction(tr("Listed"), this, &ObjectFinderWidget::fadeObjects);
+	fade_menu.addAction(tr("Not listed"), this, &ObjectFinderWidget::fadeObjects);
 	fade_btn->setMenu(&fade_menu);
 
-	connect(filter_btn, SIGNAL(toggled(bool)), filter_frm, SLOT(setVisible(bool)));
-	connect(filter_btn, &QToolButton::toggled, [&](){
-		splitter->setSizes({0, 1000});
-		splitter->handle(1)->setEnabled(filter_btn->isChecked());
-	});
+	connect(find_btn, &QToolButton::clicked, this, &ObjectFinderWidget::findObjects);
+	connect(hide_tb, &QToolButton::clicked, this, &ObjectFinderWidget::hide);
+	connect(result_tbw, &QTableWidget::itemSelectionChanged, this, &ObjectFinderWidget::selectObject);
+	connect(result_tbw, &QTableWidget::itemDoubleClicked, this, &ObjectFinderWidget::editObject);
+	connect(result_tbw, &QTableWidget::itemPressed, this, &ObjectFinderWidget::showObjectMenu);
+	connect(clear_res_btn, &QToolButton::clicked, this, &ObjectFinderWidget::clearResult);
 
-	connect(find_btn, SIGNAL(clicked(bool)), this, SLOT(findObjects()));
-	connect(hide_tb, SIGNAL(clicked()), this, SLOT(hide()));
-	connect(result_tbw, SIGNAL(itemSelectionChanged()), this, SLOT(selectObject()));
-	connect(result_tbw, SIGNAL(itemDoubleClicked(QTableWidgetItem*)), this, SLOT(editObject()));
-	connect(result_tbw, SIGNAL(itemPressed(QTableWidgetItem*)), this, SLOT(showObjectMenu()));
-	connect(clear_res_btn, SIGNAL(clicked()), this, SLOT(clearResult()));
-	connect(select_all_btn, SIGNAL(clicked()), this, SLOT(setAllObjectsChecked()));
-	connect(clear_all_btn, SIGNAL(clicked()), this, SLOT(setAllObjectsChecked()));
+	connect(regexp_chk, &QCheckBox::toggled, this, [this](bool checked){
+		exact_match_chk->setEnabled(checked);
+
+		if(!checked)
+			exact_match_chk->setChecked(false);
+	});
 
 	for(auto &attr : search_attribs_i18n)
 		search_attrs_cmb->addItem(attr);
@@ -77,15 +100,15 @@ bool ObjectFinderWidget::eventFilter(QObject *object, QEvent *event)
 {
 	QKeyEvent *k_event=dynamic_cast<QKeyEvent *>(event);
 
-	//Executes the search when user press enter/return on the pattern field
-	if(event->type() == QEvent::KeyPress &&
+	//Executes the search when user press and releases enter/return on the pattern field
+	if(event->type() == QEvent::KeyRelease &&
 			(k_event->key()==Qt::Key_Return || k_event->key()==Qt::Key_Enter))
 	{
 		find_btn->click();
 		return true;
 	}
-	else
-		return QWidget::eventFilter(object, event);
+
+	return QWidget::eventFilter(object, event);
 }
 
 void ObjectFinderWidget::hide()
@@ -121,7 +144,7 @@ void ObjectFinderWidget::fadeObjects()
 	if(!model_wgt)
 		return;
 
-	vector<BaseObject *> objects, other_objs;
+	std::vector<BaseObject *> objects, other_objs;
 	bool fade_listed = false;
 
 	for(auto obj_type : {ObjectType::Table, ObjectType::ForeignTable, ObjectType::View, ObjectType::Textbox,
@@ -153,7 +176,7 @@ void ObjectFinderWidget::selectObjects()
 	if(!model_wgt)
 		return;
 
-	vector<BaseObject *> objects, other_objs;
+	std::vector<BaseObject *> objects, other_objs;
 	BaseObjectView *obj_view = nullptr;
 	BaseGraphicObject *graph_obj = nullptr;
 	bool sel_listed = false;
@@ -166,7 +189,7 @@ void ObjectFinderWidget::selectObjects()
 	}
 
 	model_wgt->scene->blockSignals(true);
-	fadeObjects();
+	//fadeObjects();
 	model_wgt->scene->blockSignals(false);
 
 	sel_listed = qobject_cast<QAction *>(sender()) == select_menu.actions().at(0);
@@ -211,7 +234,6 @@ void ObjectFinderWidget::setModel(ModelWidget *model_wgt)
 	this->model_wgt=model_wgt;
 	filter_btn->setEnabled(enable);
 	pattern_edt->setEnabled(enable);
-	filter_frm->setEnabled(enable);
 	pattern_lbl->setEnabled(enable);
 	find_btn->setEnabled(enable);
 	result_tbw->setEnabled(enable);
@@ -237,27 +259,22 @@ void ObjectFinderWidget::findObjects()
 {
 	if(model_wgt)
 	{
-		vector<ObjectType> types;
+		std::vector<ObjectType> types;
 		QString search_attr = search_attribs.at(search_attrs_cmb->currentIndex());
 		QTableWidgetItem *item = result_tbw->horizontalHeaderItem(result_tbw->columnCount() - 1);
 
 		clearResult();
-
-		//Getting the selected object types
-		for(int i=0; i < obj_types_lst->count(); i++)
-		{
-			if(obj_types_lst->item(i)->checkState()==Qt::Checked)
-				types.push_back(static_cast<ObjectType>(obj_types_lst->item(i)->data(Qt::UserRole).toUInt()));
-		}
+		types = obj_types_lst->getTypesPerCheckState(Qt::Checked);
 
 		//Search the objects on model
 		found_objs=model_wgt->getDatabaseModel()->findObjects(pattern_edt->text(), types,
-																													case_sensitive_chk->isChecked(), regexp_chk->isChecked(),
+																													case_sensitive_chk->isChecked(),
+																													regexp_chk->isChecked(),
 																													exact_match_chk->isChecked(),
 																													search_attr);
 
 		//Show the found objects on the result table
-		updateObjectTable(result_tbw, found_objs, search_attr);
+		GuiUtilsNs::updateObjectTable(result_tbw, found_objs, search_attr);
 
 		//Rename the last column of the results grid wth the name of the field used to search objects
 		if(search_attr != Attributes::Name &&
@@ -282,7 +299,7 @@ void ObjectFinderWidget::findObjects()
 		clear_res_btn->setEnabled(!found_objs.empty());
 		select_btn->setEnabled(!found_objs.empty());
 		fade_btn->setEnabled(!found_objs.empty());
-		fadeObjects();
+		//fadeObjects();
 	}
 }
 
@@ -354,7 +371,7 @@ void ObjectFinderWidget::editObject()
 			model_wgt->showObjectForm(ObjectType::Permission, dynamic_cast<Permission *>(selected_obj)->getObject());
 		else
 		{
-			vector<BaseObject *> vect;
+			std::vector<BaseObject *> vect;
 			vect.push_back(selected_obj);
 			model_wgt->scene->clearSelection();
 			model_wgt->configurePopupMenu(vect);
@@ -365,15 +382,7 @@ void ObjectFinderWidget::editObject()
 	}
 }
 
-void ObjectFinderWidget::setAllObjectsChecked()
-{
-	bool checked=(sender()==select_all_btn);
-
-	for(int i=0; i < obj_types_lst->count(); i++)
-		obj_types_lst->item(i)->setCheckState((checked ? Qt::Checked : Qt::Unchecked));
-}
-
-void ObjectFinderWidget::updateObjectTable(QTableWidget *tab_wgt, vector<BaseObject *> &objs, const QString &search_attr, bool checkable_items)
+/* void ObjectFinderWidget::updateObjectTable(QTableWidget *tab_wgt, std::vector<BaseObject *> &objs, const QString &search_attr, bool checkable_items)
 {
 	if(tab_wgt && tab_wgt->columnCount()!=0)
 	{
@@ -415,19 +424,16 @@ void ObjectFinderWidget::updateObjectTable(QTableWidget *tab_wgt, vector<BaseObj
 			if(objs[i]->isProtected() || objs[i]->isSystemObject())
 			{
 				fnt.setItalic(true);
-				tab_item->setForeground(BaseObjectView::getFontStyle(Attributes::ProtColumn).foreground());
+				tab_item->setForeground(ObjectsTableWidget::getTableItemColor(ObjectsTableWidget::ProtItemAltFgColor));
 			}
 			else if(dynamic_cast<TableObject *>(objs[i]) &&
 					dynamic_cast<TableObject *>(objs[i])->isAddedByRelationship())
 			{
 				fnt.setItalic(true);
-				tab_item->setForeground(BaseObjectView::getFontStyle(Attributes::InhColumn).foreground());
+				tab_item->setForeground(ObjectsTableWidget::getTableItemColor(ObjectsTableWidget::RelAddedItemAltFgColor));
 			}
 			else
-			{
 				fnt.setItalic(false);
-				tab_item->setForeground(BaseObjectView::getFontStyle(Attributes::Column).foreground());
-			}
 
 			fnt.setStrikeOut(objs[i]->isSQLDisabled() && !objs[i]->isSystemObject());
 			tab_item->setFont(fnt);
@@ -474,13 +480,10 @@ void ObjectFinderWidget::updateObjectTable(QTableWidget *tab_wgt, vector<BaseObj
 					if(parent_obj->isProtected() || parent_obj->isSystemObject())
 					{
 						fnt.setItalic(true);
-						tab_item->setForeground(BaseObjectView::getFontStyle(Attributes::ProtColumn).foreground());
+						tab_item->setForeground(ObjectsTableWidget::getTableItemColor(ObjectsTableWidget::ProtItemAltFgColor));
 					}
 					else
-					{
 						fnt.setItalic(false);
-						tab_item->setForeground(BaseObjectView::getFontStyle(Attributes::Column).foreground());
-					}
 
 					tab_item->setFont(fnt);
 					tab_item->setIcon(QPixmap(GuiUtilsNs::getIconPath(parent_obj->getObjectType())));
@@ -500,6 +503,7 @@ void ObjectFinderWidget::updateObjectTable(QTableWidget *tab_wgt, vector<BaseObj
 			//Sixth column: object comment
 			if(tab_wgt->columnCount() > 5)
 			{				
+				attribs_map search_attribs = objs[i]->getSearchAttributes();
 				tab_item=(new_row ? new QTableWidgetItem : tab_wgt->item(lin_idx, 5));
 				fnt.setItalic(false);
 				tab_item->setFont(fnt);
@@ -507,7 +511,7 @@ void ObjectFinderWidget::updateObjectTable(QTableWidget *tab_wgt, vector<BaseObj
 				if(search_attr != Attributes::Name &&
 					 search_attr != Attributes::Schema &&
 					 search_attr != Attributes::Comment)
-					tab_item->setText(objs[i]->getSearchAttributes().at(search_attr));
+					tab_item->setText(search_attribs[search_attr]);
 				else
 					tab_item->setText(objs[i]->getComment());
 
@@ -526,38 +530,4 @@ void ObjectFinderWidget::updateObjectTable(QTableWidget *tab_wgt, vector<BaseObj
 
 		tab_wgt->resizeRowsToContents();
 	}
-}
-
-void ObjectFinderWidget::updateObjectTypeList(QListWidget *list_wgt)
-{
-	vector<ObjectType> types=BaseObject::getObjectTypes();
-	QListWidgetItem *item=nullptr;
-	QPixmap icon;
-	QString str_aux;
-
-	if(list_wgt)
-	{
-		list_wgt->clear();
-
-		//Creating the visible object list
-		for(unsigned type_id=0; type_id < types.size(); type_id++)
-		{
-			item=new QListWidgetItem;
-
-			if(types[type_id]==ObjectType::BaseRelationship)
-				str_aux=QString(BaseObject::getSchemaName(types[type_id])) + QString("tv");
-			else
-				str_aux=QString(BaseObject::getSchemaName(types[type_id]));
-
-			icon=QPixmap(GuiUtilsNs::getIconPath(str_aux));
-
-			item->setText(BaseObject::getTypeName(types[type_id]));
-			item->setIcon(icon);
-
-			//By default all object types are checked
-			item->setCheckState(Qt::Checked);
-			item->setData(Qt::UserRole, QVariant(enum_cast(types[type_id])));
-			list_wgt->insertItem(type_id, item);
-		}
-	}
-}
+} */

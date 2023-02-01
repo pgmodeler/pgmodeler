@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -28,25 +28,32 @@ CodeCompletionWidget::CodeCompletionWidget(QPlainTextEdit *code_field_txt, bool 
 
 	this->enable_snippets = enable_snippets;
 	popup_timer.setInterval(300);
+	setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
 
 	completion_wgt=new QWidget(this);
 	completion_wgt->setWindowFlags(Qt::Popup);
+	completion_wgt->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
+	completion_wgt->setMinimumSize(200, 150);
+	completion_wgt->setMaximumHeight(300);
+
+	always_on_top_chk=new QCheckBox(completion_wgt);
+	always_on_top_chk->setText(tr("&Always on top"));
+	always_on_top_chk->setToolTip(tr("The widget will be always displayed while typing. It can be closable only by ESC key or when focus changes to another widget."));
+	always_on_top_chk->setFocusPolicy(Qt::NoFocus);
 
 	name_list=new QListWidget(completion_wgt);
 	name_list->setSpacing(2);
-	name_list->setIconSize(QSize(20,20));
+	name_list->setIconSize(QSize(22, 22));
 	name_list->setSortingEnabled(false);
-
-	persistent_chk=new QCheckBox(completion_wgt);
-	persistent_chk->setText(tr("Make &persistent"));
-	persistent_chk->setToolTip(tr("Makes the widget closable only by ESC key or mouse click on other controls."));
-	persistent_chk->setFocusPolicy(Qt::NoFocus);
+	name_list->setSizeAdjustPolicy(QListWidget::AdjustToContents);
+	name_list->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
+	name_list->setMaximumHeight(completion_wgt->maximumHeight() - always_on_top_chk->height() - GuiUtilsNs::LtSpacing);
 
 	QVBoxLayout *vbox=new QVBoxLayout(completion_wgt);
 	vbox->addWidget(name_list);
-	vbox->addWidget(persistent_chk);
-	vbox->setContentsMargins(4,4,4,4);
-	vbox->setSpacing(6);
+	vbox->addWidget(always_on_top_chk);
+	vbox->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
+	vbox->setSpacing(GuiUtilsNs::LtSpacing);
 	completion_wgt->setLayout(vbox);
 
 	GuiUtilsNs::configureWidgetFont(name_list, GuiUtilsNs::MediumFontFactor);
@@ -57,10 +64,10 @@ CodeCompletionWidget::CodeCompletionWidget(QPlainTextEdit *code_field_txt, bool 
 	db_model=nullptr;
 	setQualifyingLevel(nullptr);
 
-	connect(name_list, SIGNAL(itemDoubleClicked(QListWidgetItem*)), this, SLOT(selectItem()));
-	connect(name_list, SIGNAL(currentRowChanged(int)), this, SLOT(showItemTooltip()));
+	connect(name_list, &QListWidget::itemDoubleClicked, this, &CodeCompletionWidget::selectItem);
+	connect(name_list, &QListWidget::currentRowChanged, this, &CodeCompletionWidget::showItemTooltip);
 
-	connect(&popup_timer, &QTimer::timeout, [&](){
+	connect(&popup_timer, &QTimer::timeout, this, [this](){
 		if(qualifying_level < 2)
 		{
 			auto_triggered=true;
@@ -71,7 +78,7 @@ CodeCompletionWidget::CodeCompletionWidget(QPlainTextEdit *code_field_txt, bool 
 	this->setVisible(false);
 
 	if(enable_snippets)
-		connect(this, SIGNAL(s_wordSelected(QString)), this, SLOT(handleSelectedWord(QString)));
+		connect(this, &CodeCompletionWidget::s_wordSelected, this, &CodeCompletionWidget::handleSelectedWord);
 }
 
 void CodeCompletionWidget::handleSelectedWord(QString word)
@@ -94,7 +101,7 @@ bool CodeCompletionWidget::eventFilter(QObject *object, QEvent *event)
 		if(object==code_field_txt)
 		{
 			//Filters the trigger char and shows up the code completion only if there is a valid database model in use
-			if(QChar(k_event->key())==completion_trigger && db_model)
+			if(k_event->key() == completion_trigger.unicode() && db_model)
 			{
 				/* If the completion widget is not visible start the timer to give the user
 				a small delay in order to type another character. If no char is typed the completion is triggered */
@@ -136,11 +143,11 @@ bool CodeCompletionWidget::eventFilter(QObject *object, QEvent *event)
 					{
 						setQualifyingLevel(nullptr);
 
-						if(!persistent_chk->isChecked())
+						if(!always_on_top_chk->isChecked())
 							this->close();
 					}
 
-					if(persistent_chk->isChecked())
+					if(always_on_top_chk->isChecked())
 						this->show();
 				}
 			}
@@ -155,7 +162,7 @@ bool CodeCompletionWidget::eventFilter(QObject *object, QEvent *event)
 			//Filters the ENTER/RETURN press to close the code completion widget select the name
 			else if(k_event->key()==Qt::Key_Enter || k_event->key()==Qt::Key_Return)
 			{
-				if(!persistent_chk->isChecked())
+				if(!always_on_top_chk->isChecked())
 					this->selectItem();
 				else
 				{
@@ -187,6 +194,9 @@ bool CodeCompletionWidget::eventFilter(QObject *object, QEvent *event)
 				return true;
 			}
 		}
+
+		name_list->adjustSize();
+		adjustSize();
 	}
 
 	return QWidget::eventFilter(object, event);
@@ -194,7 +204,7 @@ bool CodeCompletionWidget::eventFilter(QObject *object, QEvent *event)
 
 void CodeCompletionWidget::configureCompletion(DatabaseModel *db_model, SyntaxHighlighter *syntax_hl, const QString &keywords_grp)
 {
-	map<QString, attribs_map> confs=GeneralConfigWidget::getConfigurationParams();
+	std::map<QString, attribs_map> confs=GeneralConfigWidget::getConfigurationParams();
 
 	name_list->clear();
 	word.clear();
@@ -210,11 +220,14 @@ void CodeCompletionWidget::configureCompletion(DatabaseModel *db_model, SyntaxHi
 		if(syntax_hl && keywords.isEmpty())
 		{
 			//Get the keywords from the highlighter
-			vector<QRegExp> exprs=syntax_hl->getExpressions(keywords_grp);
+			std::vector<QRegularExpression> exprs=syntax_hl->getExpressions(keywords_grp);
 
 			while(!exprs.empty())
 			{
-				keywords.push_front(exprs.back().pattern());
+				/* Since keywords are exact match patterns in the form \A(?:keyword)\z"
+				 * we need to remove from the pattern the initial and final regexp operators in
+				 * order to use only the word itself */
+				keywords.push_front(exprs.back().pattern().remove("\\A(?:").remove(")\\z"));
 				exprs.pop_back();
 			}
 
@@ -267,37 +280,39 @@ void CodeCompletionWidget::clearCustomItems()
 	custom_items.clear();
 }
 
-void CodeCompletionWidget::populateNameList(vector<BaseObject *> &objects, QString filter)
+void CodeCompletionWidget::populateNameList(std::vector<BaseObject *> &objects, QString filter)
 {
 	QListWidgetItem *item=nullptr;
 	QString obj_name;
 	ObjectType obj_type;
-	QRegExp regexp(filter.remove('"') + QString("*"), Qt::CaseInsensitive, QRegExp::Wildcard);
+	QRegularExpression regexp(QRegularExpression::wildcardToRegularExpression(filter.remove('"') + QString("*")),
+														QRegularExpression::CaseInsensitiveOption);
 
 	name_list->clear();
 
-	for(unsigned i=0; i < objects.size(); i++)
+	//for(unsigned i=0; i < objects.size(); i++)
+	for(auto &obj : objects)
 	{
-		obj_type=objects[i]->getObjectType();
+		obj_type = obj->getObjectType();
 		obj_name.clear();
 
 		//Formatting the object name according to the object type
-		if(obj_type==ObjectType::Function)
+		if(obj_type == ObjectType::Function)
 		{
-			dynamic_cast<Function *>(objects[i])->createSignature(false);
-			obj_name=dynamic_cast<Function *>(objects[i])->getSignature();
+			dynamic_cast<Function *>(obj)->createSignature(false);
+			obj_name = dynamic_cast<Function *>(obj)->getSignature();
 		}
-		else if(obj_type==ObjectType::Operator)
-			obj_name=dynamic_cast<Operator *>(objects[i])->getSignature(false);
+		else if(obj_type == ObjectType::Operator)
+			obj_name = dynamic_cast<Operator *>(obj)->getSignature(false);
 		else
-			obj_name+=objects[i]->getName(false, false);
+			obj_name += obj->getName(false, false);
 
 		//The object will be inserted if its name matches the filter or there is no filter set
-		if(filter.isEmpty() || regexp.exactMatch(obj_name))
+		if(filter.isEmpty() || regexp.match(obj_name).hasMatch())
 		{
-			item=new QListWidgetItem(QPixmap(GuiUtilsNs::getIconPath(objects[i]->getSchemaName())), obj_name);
-			item->setToolTip(QString("%1 (%2)").arg(objects[i]->getName(true)).arg(objects[i]->getTypeName()));
-			item->setData(Qt::UserRole, QVariant::fromValue<void *>(objects[i]));
+			item= new QListWidgetItem(QPixmap(GuiUtilsNs::getIconPath(obj->getSchemaName())), obj_name);
+			item->setToolTip(QString("%1 (%2)").arg(obj->getName(true)).arg(obj->getTypeName()));
+			item->setData(Qt::UserRole, QVariant::fromValue<void *>(obj));
 			item->setToolTip(BaseObject::getTypeName(obj_type));
 			name_list->addItem(item);
 		}
@@ -308,11 +323,13 @@ void CodeCompletionWidget::populateNameList(vector<BaseObject *> &objects, QStri
 
 void CodeCompletionWidget::show()
 {
-	prev_txt_cur=code_field_txt->textCursor();
-	this->updateList();
-	completion_wgt->show();
-	this->showItemTooltip();
+	prev_txt_cur = code_field_txt->textCursor();
+	updateList();
+	completion_wgt->show();	
+	showItemTooltip();
 	popup_timer.stop();
+	completion_wgt->adjustSize();
+	adjustSize();
 }
 
 void CodeCompletionWidget::setQualifyingLevel(BaseObject *obj)
@@ -341,9 +358,8 @@ void CodeCompletionWidget::updateList()
 {
 	QListWidgetItem *item=nullptr;
 	QString pattern;
-	QStringList list;
-	vector<BaseObject *> objects;
-	vector<ObjectType> types=BaseObject::getObjectTypes(false, 	{ ObjectType::Textbox, ObjectType::Relationship, ObjectType::BaseRelationship });
+	std::vector<BaseObject *> objects;
+	std::vector<ObjectType> types=BaseObject::getObjectTypes(false, 	{ ObjectType::Textbox, ObjectType::Relationship, ObjectType::BaseRelationship });
 	QTextCursor tc;
 
 	name_list->clear();
@@ -441,12 +457,11 @@ void CodeCompletionWidget::updateList()
 	completion wasn't triggered using the special char */
 	if(qualifying_level < 0 && !auto_triggered)
 	{
-		QRegExp regexp(pattern, Qt::CaseInsensitive);
+		QRegularExpression regexp(pattern, QRegularExpression::CaseInsensitiveOption);
 
-		list=keywords.filter(regexp);
-		for(int i=0; i < list.size(); i++)
+		for(auto &kw : keywords.filter(regexp))
 		{
-			item=new QListWidgetItem(QPixmap(GuiUtilsNs::getIconPath("keyword")), list[i]);
+			item=new QListWidgetItem(QPixmap(GuiUtilsNs::getIconPath("keyword")), kw);
 			item->setToolTip(tr("SQL Keyword"));
 			name_list->addItem(item);
 		}
@@ -478,7 +493,7 @@ void CodeCompletionWidget::updateList()
 
 	if(name_list->count()==0)
 	{
-		name_list->addItem(tr("(no items found.)"));
+		name_list->addItem(tr("(no items found)"));
 		name_list->item(0)->setFlags(Qt::NoItemFlags);
 		QToolTip::hideText();
 	}
@@ -486,7 +501,7 @@ void CodeCompletionWidget::updateList()
 		name_list->item(0)->setSelected(true);
 
 	//Sets the list position right below of text cursor
-	completion_wgt->move(code_field_txt->mapToGlobal(code_field_txt->cursorRect().topLeft() + QPoint(0,20)));
+	completion_wgt->move(code_field_txt->viewport()->mapToGlobal(code_field_txt->cursorRect().bottomLeft()));
 	name_list->setFocus();
 }
 
@@ -517,7 +532,7 @@ void CodeCompletionWidget::selectItem()
 			/* An small workaround to correctly write the object name in the current
 			qualifying level without remove the parent's name. This happens only when
 			the completion is marked as persistent */
-			if(persistent_chk->isChecked())
+			if(always_on_top_chk->isChecked())
 			{
 				if(tc.selectedText().startsWith('.'))
 				{
@@ -554,7 +569,7 @@ void CodeCompletionWidget::selectItem()
 	name_list->clearSelection();
 	auto_triggered=false;
 
-	if(!persistent_chk->isChecked())
+	if(!always_on_top_chk->isChecked())
 		this->close();
 }
 

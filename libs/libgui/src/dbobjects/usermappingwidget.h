@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -29,7 +29,7 @@
 #include "ui_usermappingwidget.h"
 #include "widgets/objectstablewidget.h"
 
-class UserMappingWidget: public BaseObjectWidget, public Ui::UserMappingWidget {
+class __libgui UserMappingWidget: public BaseObjectWidget, public Ui::UserMappingWidget {
 	private:
 		Q_OBJECT
 

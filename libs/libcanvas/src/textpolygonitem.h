@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -25,12 +25,13 @@
 #ifndef TEXT_POLYGON_ITEM_H
 #define TEXT_POLYGON_ITEM_H
 
+#include "canvasglobal.h"
 #include <QGraphicsPolygonItem>
 #include <QPainter>
 #include <QFont>
 #include <QStyleOptionGraphicsItem>
 
-class TextPolygonItem : public QGraphicsPolygonItem {
+class __libcanvas TextPolygonItem : public QGraphicsPolygonItem {
 	private:
 		QGraphicsSimpleTextItem *text_item;
 
@@ -60,9 +61,6 @@ class TextPolygonItem : public QGraphicsPolygonItem {
 		QFont getFont();
 
 		virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = nullptr);
-
-		//! \brief Resizes to the specified dimension the passed polygon
-		static void resizePolygon(QPolygonF &pol, double width, double height);
 };
 
 #endif

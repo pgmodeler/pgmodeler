@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -39,11 +39,11 @@ BaseTableView::BaseTableView(BaseTable *base_tab) : BaseObjectView(base_tab)
 
 	ext_attribs=new QGraphicsItemGroup;
 	ext_attribs->setZValue(1);
-	ext_attribs->setFlag(QGraphicsItem::ItemClipsChildrenToShape);
+	//ext_attribs->setFlag(QGraphicsItem::ItemClipsChildrenToShape);
 
 	columns=new QGraphicsItemGroup;
 	columns->setZValue(1);
-	columns->setFlag(QGraphicsItem::ItemClipsChildrenToShape);
+	//columns->setFlag(QGraphicsItem::ItemClipsChildrenToShape);
 
 	tag_item = new TextPolygonItem;
 	tag_item->setZValue(3);
@@ -74,11 +74,11 @@ BaseTableView::BaseTableView(BaseTable *base_tab) : BaseObjectView(base_tab)
 
 	sel_enabler_timer.setInterval(500);
 
-	connect(attribs_toggler, SIGNAL(s_collapseModeChanged(CollapseMode)), this, SLOT(configureCollapsedSections(CollapseMode)));
-	connect(attribs_toggler, SIGNAL(s_paginationToggled(bool)), this, SLOT(togglePagination(bool)));
-	connect(attribs_toggler, SIGNAL(s_currentPageChanged(unsigned,unsigned)), this, SLOT(configureCurrentPage(unsigned,unsigned)));
+	connect(attribs_toggler, &AttributesTogglerItem::s_collapseModeChanged, this, &BaseTableView::configureCollapsedSections);
+	connect(attribs_toggler, &AttributesTogglerItem::s_paginationToggled, this, &BaseTableView::togglePagination);
+	connect(attribs_toggler, &AttributesTogglerItem::s_currentPageChanged, this, &BaseTableView::configureCurrentPage);
 
-	connect(&sel_enabler_timer, &QTimer::timeout, [&](){
+	connect(&sel_enabler_timer, &QTimer::timeout, this, [this](){
 		this->setFlag(QGraphicsItem::ItemIsSelectable, true);
 	});
 }
@@ -210,7 +210,7 @@ void BaseTableView::mousePressEvent(QGraphicsSceneMouseEvent *event)
 	}
 }
 
-void BaseTableView::setAttributesPerPage(unsigned section_id, unsigned value)
+void BaseTableView::setAttributesPerPage(BaseTable::TableSection section_id, unsigned value)
 {
 	if(section_id > BaseTable::ExtAttribsSection)
 		throw Exception(ErrorCode::RefElementInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -219,7 +219,7 @@ void BaseTableView::setAttributesPerPage(unsigned section_id, unsigned value)
 		attribs_per_page[section_id] = value;
 }
 
-unsigned BaseTableView::getAttributesPerPage(unsigned section_id)
+unsigned BaseTableView::getAttributesPerPage(BaseTable::TableSection section_id)
 {
 	if(section_id > BaseTable::ExtAttribsSection)
 		throw Exception(ErrorCode::RefElementInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -250,7 +250,7 @@ void BaseTableView::hoverMoveEvent(QGraphicsSceneHoverEvent *event)
 		items.append(columns->childItems());
 
 		if(!hide_ext_attribs &&
-			 dynamic_cast<BaseTable *>(this->getUnderlyingObject())->getCollapseMode() == CollapseMode::NotCollapsed)
+			 dynamic_cast<BaseTable *>(this->getUnderlyingObject())->getCollapseMode() == BaseTable::NotCollapsed)
 		{
 			items.append(ext_attribs->childItems());
 			ext_height=ext_attribs->boundingRect().height();
@@ -280,7 +280,7 @@ void BaseTableView::hoverMoveEvent(QGraphicsSceneHoverEvent *event)
 			//Configures the selection with the item's dimension
 			if(obj_selection->boundingRect().height() != item->boundingRect().height())
 			{
-				dynamic_cast<RoundedRectItem *>(obj_selection)->setBorderRadius(2);
+				dynamic_cast<RoundedRectItem *>(obj_selection)->setBorderRadius(4);
 				dynamic_cast<RoundedRectItem *>(obj_selection)->setRect(QRectF(0, 0,
 																																			 title->boundingRect().width() - (2.5 * HorizSpacing),
 																																			 item->boundingRect().height() - VertSpacing));
@@ -318,8 +318,8 @@ void BaseTableView::removeConnectedRelationship(BaseRelationship *base_rel)
 
 int BaseTableView::getConnectedRelationshipIndex(BaseRelationship *base_rel, bool only_self_rels)
 {
-	vector<BaseRelationship *>::iterator itr;
-	vector<BaseRelationship *> self_rels, *vet_rels = nullptr;
+	std::vector<BaseRelationship *>::iterator itr;
+	std::vector<BaseRelationship *> self_rels, *vet_rels = nullptr;
 
 	if(!only_self_rels)
 		vet_rels = &connected_rels;
@@ -372,7 +372,7 @@ void BaseTableView::configureTag()
 		double bottom;
 		QFont fnt=BaseObjectView::getFontStyle(Attributes::Tag).font();
 
-		fnt.setPointSizeF(fnt.pointSizeF() * 0.80);
+		fnt.setPointSizeF(fnt.pointSizeF() * 0.90);
 		tag_item->setFont(fnt);
 		tag_item->setText(tag->getName());
 		tag_item->setBrush(BaseObjectView::getFontStyle(Attributes::Tag).foreground());
@@ -403,15 +403,14 @@ void BaseTableView::__configureObject(double width)
 	Tag *tag = tab->getTag();
 	QBrush togg_brush, togg_btns_brush;
 	QPen togg_pen, togg_btns_pen;
-
 	double height = 0;
 
 	if(tag)
 	{
 		togg_brush = tag->getFillStyle(Attributes::TableTogglerBody);
-		togg_pen = tag->getElementColor(Attributes::TableTogglerBody, Tag::BorderColor);
+		togg_pen = tag->getElementColor(Attributes::TableTogglerBody, ColorId::BorderColor);
 		togg_btns_brush = tag->getFillStyle(Attributes::TableTogglerButtons);
-		togg_btns_pen = tag->getElementColor(Attributes::TableTogglerButtons, Tag::BorderColor);
+		togg_btns_pen = tag->getElementColor(Attributes::TableTogglerButtons, ColorId::BorderColor);
 	}
 	else
 	{
@@ -441,7 +440,7 @@ void BaseTableView::__configureObject(double width)
 	attribs_toggler->setPen(togg_pen);
 	attribs_toggler->setButtonsBrush(togg_btns_brush);
 	attribs_toggler->setButtonsPen(togg_btns_pen);
-	attribs_toggler->setRect(QRectF(0, 0, width, 12 * BaseObjectView::getFontFactor() * BaseObjectView::getScreenDpiFactor()));
+	attribs_toggler->configureButtons(QRectF(0, 0, width, 12 * BaseObjectView::getFontFactor() * BaseObjectView::getScreenDpiFactor()));
 	attribs_toggler->setCollapseMode(tab->getCollapseMode());
 
 	//Set the protected icon position to the top-right on the title
@@ -475,7 +474,7 @@ double BaseTableView::calculateWidth()
 {
 	/* Calculating the maximum width between the title, columns, extended attributes and the attribs toggler.
 	 * This width is used to set the uniform width of table */
-	vector<double> widths = { columns->isVisible() ? columns->boundingRect().width() : 0,
+	std::vector<double> widths = { columns->isVisible() ? columns->boundingRect().width() : 0,
 														ext_attribs->isVisible() ? ext_attribs->boundingRect().width() : 0,
 														attribs_toggler->isVisible() ? attribs_toggler->getButtonsWidth() : 0,
 														title->boundingRect().width() };
@@ -502,11 +501,10 @@ void BaseTableView::togglePlaceholder(bool value)
 void BaseTableView::configureObjectShadow()
 {
 	RoundedRectItem *rect_item=dynamic_cast<RoundedRectItem *>(obj_shadow);
-
-	rect_item->setPen(Qt::NoPen);
-	rect_item->setBrush(QColor(50,50,50,60));
+	rect_item->setPen(getBorderStyle(Attributes::ObjShadow));
+	rect_item->setBrush(getFillStyle(Attributes::ObjShadow));
 	rect_item->setRect(this->boundingRect());
-	rect_item->setPos(3.5, 4.5);
+	rect_item->setPos(ObjectShadowXPos, ObjectShadowYPos);
 }
 
 QList<TableObjectView *> BaseTableView::getSelectedChidren()
@@ -545,7 +543,7 @@ void BaseTableView::finishGeometryUpdate()
 	dynamic_cast<Schema *>(this->getUnderlyingObject()->getSchema())->setModified(true);
 }
 
-bool BaseTableView::configurePaginationParams(unsigned section_id, unsigned total_attrs, unsigned &start_attr, unsigned &end_attr)
+bool BaseTableView::configurePaginationParams(BaseTable::TableSection section_id, unsigned total_attrs, unsigned &start_attr, unsigned &end_attr)
 {
 	if(section_id > BaseTable::ExtAttribsSection)
 		return false;
@@ -592,7 +590,7 @@ bool BaseTableView::configurePaginationParams(unsigned section_id, unsigned tota
 	}
 }
 
-void BaseTableView::configureCollapsedSections(CollapseMode coll_mode)
+void BaseTableView::configureCollapsedSections(BaseTable::CollapseMode coll_mode)
 {
 	startGeometryUpdate();
 	dynamic_cast<BaseTable *>(this->getUnderlyingObject())->setCollapseMode(coll_mode);
@@ -611,7 +609,7 @@ void BaseTableView::togglePagination(bool enabled)
 	emit s_paginationToggled();
 }
 
-void BaseTableView::configureCurrentPage(unsigned section_id, unsigned page)
+void BaseTableView::configureCurrentPage(BaseTable::TableSection section_id, unsigned page)
 {
 	startGeometryUpdate();
 	dynamic_cast<BaseTable *>(this->getUnderlyingObject())->setCurrentPage(section_id, page);

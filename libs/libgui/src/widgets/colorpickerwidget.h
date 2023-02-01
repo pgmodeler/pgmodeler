@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -25,6 +25,7 @@
 #ifndef COLOR_PICKER_WIDGET_H
 #define COLOR_PICKER_WIDGET_H
 
+#include "guiglobal.h"
 #include <QWidget>
 #include <QColorDialog>
 #include <QHBoxLayout>
@@ -33,12 +34,12 @@
 #include <QTime>
 #include <random>
 
-class ColorPickerWidget: public QWidget, public Ui::ColorPickerWidget {
+class __libgui ColorPickerWidget: public QWidget, public Ui::ColorPickerWidget {
 	private:
 		Q_OBJECT
 		
 		//! \brief Random number generator engine used to generate random colors for buttons
-		default_random_engine rand_num_engine;
+		std::default_random_engine rand_num_engine;
 		
 		//! \brief List of buttons used to configure each color
 		QList<QToolButton *> buttons;

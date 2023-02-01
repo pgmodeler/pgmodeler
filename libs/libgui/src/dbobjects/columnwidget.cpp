@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -41,7 +41,7 @@ ColumnWidget::ColumnWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType
 		hl_default_value=new SyntaxHighlighter(def_value_txt, true);
 		hl_default_value->loadConfiguration(GlobalAttributes::getSQLHighlightConfPath());
 
-		sequence_sel=new ObjectSelectorWidget(ObjectType::Sequence, true, this);
+		sequence_sel=new ObjectSelectorWidget(ObjectType::Sequence, this);
 		sequence_sel->setEnabled(false);
 
 		column_grid->addWidget(data_type,0,0,1,0);
@@ -53,21 +53,21 @@ ColumnWidget::ColumnWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType
 		configureFormLayout(column_grid, ObjectType::Column);
 		configureTabOrder({ data_type });
 
-		map<QString, vector<QWidget *> > fields_map;
-		fields_map[generateVersionsInterval(AfterVersion, PgSqlVersions::PgSqlVersion100)].push_back(identity_rb);
+		std::map<QString, std::vector<QWidget *> > fields_map;
 		fields_map[generateVersionsInterval(AfterVersion, PgSqlVersions::PgSqlVersion120)].push_back(generated_chk);
 		highlightVersionSpecificFields(fields_map);
 
-		connect(expression_rb, SIGNAL(toggled(bool)), this, SLOT(enableDefaultValueFields()));
-		connect(sequence_rb, SIGNAL(toggled(bool)), this, SLOT(enableDefaultValueFields()));
-		connect(identity_rb, SIGNAL(toggled(bool)), this, SLOT(enableDefaultValueFields()));
+		connect(expression_rb, &QRadioButton::toggled, this, &ColumnWidget::enableDefaultValueFields);
+		connect(sequence_rb, &QRadioButton::toggled, this, &ColumnWidget::enableDefaultValueFields);
+		connect(identity_rb, &QRadioButton::toggled, this, &ColumnWidget::enableDefaultValueFields);
 
-		connect(generated_chk, &QCheckBox::toggled, [&](bool value){
+		connect(generated_chk, &QCheckBox::toggled, this, [this](bool value){
 			notnull_chk->setDisabled(value);
 			notnull_chk->setChecked(false);
 		});
 
-		connect(edit_seq_btn, SIGNAL(clicked(bool)), this, SLOT(editSequenceAttributes()));
+		connect(edit_seq_btn, &QPushButton::clicked, this, &ColumnWidget::editSequenceAttributes);
+
 		setMinimumSize(540, 480);
 	}
 	catch(Exception &e)
@@ -117,7 +117,7 @@ void ColumnWidget::setAttributes(DatabaseModel *model, OperationList *op_list, B
 			sequence_sel->setEnabled(true);
 			sequence_sel->setSelectedObject(column->getSequence());
 		}
-		else if(column->getIdentityType() != BaseType::Null)
+		else if(column->getIdentityType() != IdentityType::Null)
 		{
 			identity_rb->click();
 			identity_type_cmb->setEnabled(true);
@@ -170,7 +170,7 @@ void ColumnWidget::applyConfiguration()
 		Column *column=nullptr;
 		Constraint *pk = nullptr, *constr = nullptr;
 		PhysicalTable *parent_tab = dynamic_cast<PhysicalTable *>(table);
-		vector<Constraint *> fks;
+		std::vector<Constraint *> fks;
 		BaseRelationship *rel = nullptr;
 		startConfiguration<Column>();
 

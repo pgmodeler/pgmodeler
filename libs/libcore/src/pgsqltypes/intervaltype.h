@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -27,7 +27,10 @@
 
 #include "templatetype.h"
 
-class IntervalType: public TemplateType<IntervalType>{
+class __libcore IntervalType: public TemplateType<IntervalType>{
+	private:
+		static QStringList type_names;
+
 	public:
 		static constexpr unsigned Year = 1,
 		Month = 2,
@@ -46,6 +49,12 @@ class IntervalType: public TemplateType<IntervalType>{
 		IntervalType(const QString &type_name);
 		IntervalType(unsigned type_id);
 		IntervalType();
+
+		static QStringList getTypes();
+
+		unsigned setType(unsigned type_id) override;
+		unsigned setType(const QString &type_name) override;
+		QString getTypeName(unsigned type_id) override;
 };
 
 #endif 

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -32,7 +32,7 @@
 #include "roundedrectitem.h"
 #include "textpolygonitem.h"
 
-class BaseObjectView: public QObject, public QGraphicsItemGroup {
+class __libcanvas BaseObjectView: public QObject, public QGraphicsItemGroup {
 	private:
 		Q_OBJECT
 
@@ -81,10 +81,10 @@ class BaseObjectView: public QObject, public QGraphicsItemGroup {
 		TextPolygonItem *sql_disabled_item;
 
 		//! \brief Stores the object font configuration
-		static map<QString, QTextCharFormat> font_config;
+		static std::map<QString, QTextCharFormat> font_config;
 
 		//! \brief Stores the object colors configuration
-		static map<QString, vector<QColor>> color_config;
+		static std::map<QString, std::vector<QColor>> color_config;
 
 		//! \brief Configures the objects shadow polygon
 		void configureObjectShadow(void) {}
@@ -123,10 +123,13 @@ class BaseObjectView: public QObject, public QGraphicsItemGroup {
 		static constexpr double VertSpacing=2.0,
 		HorizSpacing=2.0,
 		DefaultFontSize=10.0,
-		ObjectBorderWidth=0.85,
-		MaxDpiFactor=1.4;
+		ObjectBorderWidth=1.00,
+		MaxDpiFactor=1.4,
+		ObjectShadowXPos=8,
+		ObjectShadowYPos=8;
 
-		static constexpr int ObjectAlphaChannel=128;
+		static constexpr int ObjectAlphaChannel=128,
+		ObjectShadowAlphaChannel=50;
 
 		BaseObjectView(BaseObject *object=nullptr);
 		virtual ~BaseObjectView();
@@ -139,9 +142,6 @@ class BaseObjectView: public QObject, public QGraphicsItemGroup {
 
 		//! \brief Returns the object that is representend by the graphical object
 		BaseObject *getUnderlyingObject();
-
-		//! \brief Loads the font / color styels for the objects from a XML configuration file
-		static void loadObjectsStyle();
 
 		//! \brief Returns the objects bounding rect in local coordination
 		QRectF boundingRect(void) const;
@@ -171,10 +171,10 @@ class BaseObjectView: public QObject, public QGraphicsItemGroup {
 		static void setFontStyle(const QString &id, QTextCharFormat font_fmt);
 
 		//! \brief Sets the color for the specified element id (used to set color for objects and font)
-		static void setElementColor(const QString &id, QColor color, unsigned color_id);
+		static void setElementColor(const QString &id, QColor color, ColorId color_id);
 
 		//! \brief Returns the color for the specified element id (used to get color for objects and font)
-		static QColor getElementColor(const QString &id, unsigned color_id);
+		static QColor getElementColor(const QString &id, ColorId color_id);
 
 		//! \brief Defines the object that the view represents
 		void setSourceObject(BaseObject *object);
@@ -204,6 +204,9 @@ class BaseObjectView: public QObject, public QGraphicsItemGroup {
 		bool isInLayer(unsigned layer_id);
 
 		int getLayersCount();
+
+		//! \brief Resizes to the specified dimension the passed polygon
+		static void resizePolygon(QPolygonF &pol, double width, double height);
 
 	protected slots:
 		//! \brief Make the basic object operations

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -28,10 +28,10 @@
 
 #include "resultset.h"
 #include "attribsmap.h"
-#include <QRegExp>
+#include <QRegularExpression>
 #include <QDateTime>
 
-class Connection {
+class __libconnector Connection {
 	private:
 		//! \brief Database connection descriptor
 		PGconn *connection;
@@ -78,7 +78,11 @@ class Connection {
 		print_sql,
 
 		//! \brief Indicates if error silence is enabled
-		silence_conn_err;
+		silence_conn_err,
+
+		/*! \brief Indicates if the PostgreSQL version checking must be ignored during connection.
+		 * This flag allows connecting (poorly!) to older versions ( < 10). */
+		ignore_db_version;
 
 		/*! \brief Indicates that the initial database configured in the connection can be automatically
 		browsed after connect the server. This attribute is useful only in SQLTool */
@@ -125,14 +129,16 @@ class Connection {
 		ServerPid;
 
 		//! \brief Constants used to reference the default usage in model operations (see setDefaultForOperation())
-		static constexpr unsigned OpValidation=0,
-		OpExport=1,
-		OpImport=2,
-		OpDiff=3,
-		OpNone=4;
+		enum ConnOperation: unsigned {
+			OpValidation = 0,
+			OpExport = 1,
+			OpImport = 2,
+			OpDiff = 3,
+			OpNone = 4
+		};
 
 		Connection();
-        Connection(const Connection &);
+		Connection(const Connection &);
 		Connection(const attribs_map &params);
 		~Connection();
 
@@ -159,6 +165,15 @@ class Connection {
 
 		//! \brief Returns the current state for silence connection errors
 		static bool isConnErrorSilenced();
+
+		/*! \brief Ignores the PostgreSQL version checking during connection.
+		 *  When false (the default behavior), when connecting to a server which version is < 10, an error
+		 *  is raised. When true, the error is not raised, but the overall usage of the tool may be affected
+		 *  since pgModeler is strictly tied to newer version. */
+		static void setIgnoreDbVersion(bool ignore);
+
+		//! \brief Indicates if the database version is ignored in the connection
+		static bool isDbVersionIgnored();
 
 		/*! \brief Sets one connection parameter. This method can only be called before
 		 the connection to the database */
@@ -233,10 +248,10 @@ class Connection {
 		void executeDDLCommand(const QString &sql);
 
 		//! \brief Toggles the default status for the connect in the specified operation (OP_??? constants).
-		void setDefaultForOperation(unsigned op_id, bool value);
+		void setDefaultForOperation(ConnOperation op_id, bool value);
 
 		//! \brief Returns if the connection is the default for the specifed operation
-		bool isDefaultForOperation(unsigned op_id);
+		bool isDefaultForOperation(ConnOperation op_id);
 
 		//! \brief Makes an copy between two connections
 		void operator = (const Connection &conn);

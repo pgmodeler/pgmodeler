@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -45,7 +45,7 @@ void SchemaParserTest::testExpressionEvaluationWithCasts()
 	try
 	{
 		schparser.loadBuffer(buffer);
-		QCOMPARE(schparser.getCodeDefinition(attribs) == "10.0", true);
+		QCOMPARE(schparser.getSourceCode(attribs) == "10.0", true);
 	}
 	catch(Exception &e)
 	{
@@ -72,7 +72,7 @@ void SchemaParserTest::testSetOperationInIf()
 	try
 	{
 		schparser.loadBuffer(buffer);
-		QCOMPARE(schparser.getCodeDefinition(attribs) == "extract in else", true);
+		QCOMPARE(schparser.getSourceCode(attribs) == "extract in else", true);
 	}
 	catch(Exception &e)
 	{
@@ -102,7 +102,7 @@ void SchemaParserTest::testSetOperationUnderIfEvaluatedAsFalse()
 		//QTextStream out(stdout);
 		//out <<  buffer;
 		schparser.loadBuffer(buffer);
-		QCOMPARE(schparser.getCodeDefinition(attribs) == "", true);
+		QCOMPARE(schparser.getSourceCode(attribs) == "", true);
 	}
 	catch(Exception &e)
 	{

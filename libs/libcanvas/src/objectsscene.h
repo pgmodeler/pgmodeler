@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -34,9 +34,17 @@
 #include "styledtextboxview.h"
 #include "layeritem.h"
 
-class ObjectsScene: public QGraphicsScene {
+class __libcanvas ObjectsScene: public QGraphicsScene {
+	public:
+		enum GridPattern: unsigned {
+			SquarePattern,
+			DotPattern
+		};
+
 	private:
 		Q_OBJECT
+
+		static GridPattern grid_pattern;
 
 		//! \brief Stores the grid line color
 		static QColor grid_color,
@@ -56,7 +64,7 @@ class ObjectsScene: public QGraphicsScene {
 		//! \brief Stores the items used to represent layers around objects
 		QList<LayerItem *> layers_paths;
 
-		vector<BaseObjectView *> removed_objs;
+		std::vector<BaseObjectView *> removed_objs;
 
 		//! \brief Holds the tables/views which have selected children objects
 		QList<BaseTableView *> tabs_sel_children;
@@ -66,10 +74,14 @@ class ObjectsScene: public QGraphicsScene {
 
 		/*! \brief Indicates that panning mode and range selection model are activate in inverse mode.
 		By default panning model is activated with a single left-click and range selection with SHIFT + left-click */
-		invert_rangesel_trigger;
+		invert_rangesel_trigger,
+
+		lock_delim_scale;
 
 		//! \brief Indicates if the scene need to be moved
-		bool move_scene;
+		bool move_scene,
+
+		show_scene_limits;
 
 		static constexpr int SceneMoveStep=20,
 		SceneMoveTimeout=50,
@@ -100,17 +112,13 @@ class ObjectsScene: public QGraphicsScene {
 		//! \brief Scene grid size
 		static unsigned grid_size;
 
-		//! \brief Paper size, used to segmentate the view (via page delimiters) and printing the model
-		static QPrinter::PaperSize paper_size;
-
 		//! \brief Used to store the custom paper size. This attribute is used only when paper_size=QPrinter::Custom
 		static QSizeF custom_paper_size;
 
-		//! \brief Page orientation (landscape / portrait)
-		static QPrinter::Orientation page_orientation;
+		//! \brief Used to store the canvas/printer page layout (size, orientation, margins)
+		static QPageLayout page_layout;
 
-		//! \brief Page margins (applied to paper total size)
-		static QRectF page_margins;
+		static double delimiter_scale;
 
 		//! \brief Indicates that there are objects being moved and the signal s_objectsMoved must be emitted
 		bool moving_objs,
@@ -153,8 +161,7 @@ class ObjectsScene: public QGraphicsScene {
 		void clearTablesChildrenSelection();
 
 	protected:
-		//! \brief Brush used to draw the grid over the scene
-		static QBrush grid;
+		void drawBackground(QPainter *painter, const QRectF &rect);
 
 		void mousePressEvent(QGraphicsSceneMouseEvent *event);
 		void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
@@ -184,9 +191,15 @@ class ObjectsScene: public QGraphicsScene {
 		void removeLayers(bool reset_obj_layers);
 
 	public:
-		static constexpr unsigned DefaultLayer = 0,
-		LayerNameColor = 0,
-		LayerRectColor = 1;
+		enum LayerAttrColor: unsigned {
+			LayerNameColor,
+			LayerRectColor
+		};
+
+		static constexpr double MinScaleFactor = 0.100000,
+		MaxScaleFactor = 5.000001;
+
+		static constexpr unsigned DefaultLayer = 0;
 
 		//! \brief Stores the default grid line color
 		static const QColor DefaultGridColor,
@@ -242,7 +255,7 @@ class ObjectsScene: public QGraphicsScene {
 		void updateActiveLayers();
 
 		//! \brief Retuns a list of the layers colors names. The color ids must be LayerNameColor or LayerRectColor
-		QStringList getLayerColorNames(unsigned color_id);
+		QStringList getLayerColorNames(LayerAttrColor color_id);
 
 		/*! \brief This method sets up the text and background color of the layer referenced by the id.
 		 * This method adjust the alpha channel for the background color to a make it semi transparent */
@@ -250,24 +263,39 @@ class ObjectsScene: public QGraphicsScene {
 
 		/*! \brief This method sets up the layers name/rect colors. The layer_attr_id is either LayerNameColor or LayerRectColor.
 		 * This method adjust the alpha channel for the background color to a make it semi transparent */
-		void setLayerColors(unsigned layer_attr_id, const QStringList &colors);
+		void setLayerColors(LayerAttrColor layer_attr_id, const QStringList &colors);
+
+		//! \brief Toggles the display of the red lines that denotes the scene boundaries
+		void setShowSceneLimits(bool show);
 
 		static void setEnableCornerMove(bool enable);
 		static void setInvertRangeSelectionTrigger(bool invert);
 		static bool isCornerMoveEnabled();
 
+		static void setGridPattern(GridPattern pattern);
 		static void setGridSize(unsigned size);
-		static void setGridOptions(bool show_grd, bool align_objs_grd, bool show_page_dlm);
+		static unsigned getGridSize();
 
+		static void setAlignObjectsToGrid(bool value);
 		static bool isAlignObjectsToGrid();
+
+		static void setShowGrid(bool value);
 		static bool isShowGrid();
+
+		static void setShowPageDelimiters(bool value);
 		static bool isShowPageDelimiters();
 
-		static void setPaperConfiguration(QPrinter::PaperSize paper_sz, QPrinter::Orientation orient, QRectF margins, QSizeF custom_size=QSizeF(0,0));
-		static void getPaperConfiguration(QPrinter::PaperSize &paper_sz, QPrinter::Orientation &orient, QRectF &margins, QSizeF &custom_size);
+		/*! \brief Determines if the delimiter lines must have their scale locked when the
+		 * curr_scale factor is less than 1.0. This allows the user to fit a greater amount
+		 * of objects on a single page. This feature works only for printing. */
+		static void setLockDelimiterScale(bool lock, double curr_scale);
+		static bool isDelimiterScaleLocked();
 
-		static void configurePrinter(QPrinter *printer);
-		static void configurePrinter(QPrinter *printer, const QSizeF &custom_size, QPrinter::Orientation orient);
+		/*! \brief Configures the canvas page layout. This method invalidates the grid to force it to be recreated
+		 * taking into account the new page settings */
+		static void setPageLayout(const QPageLayout &page_lt);
+
+		static QPageLayout getPageLayout();
 
 		void addItem(QGraphicsItem *item);
 		void removeItem(QGraphicsItem *item);
@@ -283,11 +311,20 @@ class ObjectsScene: public QGraphicsScene {
 		If the paramenter selected_only is true only selected objects will have the bounding rect calculated.
 		Currently this parameter is ignored when using seek_only_db_objs = false
 
-		Note: using this method with seek_only_db_objs=true can be time expensive depending on the size of the model so use it wisely. */
-		QRectF itemsBoundingRect(bool seek_only_db_objs=false, bool selected_only = false);
+		If the parameter incl_layer_rects is true the layer rects (when visible) will be considered when calculating the items bounding rects.
+		This is useful only when determining the brect during exporting to graphics file avoiding cutting layer rects at the edges of the
+		resulting	image.
 
-		//! \brief Returns a vector containing all the page rects.
-		vector<QRectF> getPagesForPrinting(const QSizeF &paper_size, const QSizeF &margin, unsigned &h_page_cnt, unsigned &v_page_cnt);
+		Note: using this method with seek_only_db_objs=true can be time expensive depending on the size of the model so use it wisely. */
+		QRectF itemsBoundingRect(bool seek_only_db_objs=false, bool selected_only = false, bool incl_layer_rects = false);
+
+		/*! \brief Returns a vector containing all the page rects considering the provided page layout settings
+		 * A scale factor can be provided so the method returns the amount of pages in a certain zoom factor (scale) */
+		QList<QRectF> getPagesForPrinting(const QPageLayout &page_lt, unsigned &h_page_cnt, unsigned &v_page_cnt, double scale);
+
+		/*! \brief Returns a vector containing all the page rects considering the current scene's page layout settings
+		 * A scale factor can be provided so the method returns the amount of pages in a certain zoom factor (scale) */
+		QList<QRectF> getPagesForPrinting(unsigned &h_page_cnt, unsigned &v_page_cnt, double scale);
 
 		bool isRangeSelectionEnabled();
 		bool isRangeSelectionTriggerInverted();

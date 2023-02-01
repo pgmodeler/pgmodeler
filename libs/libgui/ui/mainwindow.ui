@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1364</width>
-    <height>768</height>
+    <width>1668</width>
+    <height>1162</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -30,7 +30,7 @@
   </property>
   <property name="windowIcon">
    <iconset resource="../res/resources.qrc">
-    <normaloff>:/icons/icons/pgsqlModeler48x48.png</normaloff>:/icons/icons/pgsqlModeler48x48.png</iconset>
+    <normaloff>:/icons/icons/pgmodeler_logo.png</normaloff>:/icons/icons/pgmodeler_logo.png</iconset>
   </property>
   <property name="statusTip">
    <string/>
@@ -73,6 +73,9 @@
     <property name="bottomMargin">
      <number>0</number>
     </property>
+    <property name="spacing">
+     <number>5</number>
+    </property>
     <item row="0" column="0">
      <widget class="QStackedWidget" name="views_stw">
       <property name="sizePolicy">
@@ -99,8 +102,8 @@
         <property name="bottomMargin">
          <number>0</number>
         </property>
-        <property name="horizontalSpacing">
-         <number>6</number>
+        <property name="spacing">
+         <number>5</number>
         </property>
         <item row="0" column="0">
          <layout class="QVBoxLayout" name="verticalLayout">
@@ -170,21 +173,8 @@
                 <widget class="QWidget" name="layoutWidget">
                  <layout class="QHBoxLayout" name="horizontalLayout">
                   <property name="spacing">
-                   <number>6</number>
+                   <number>5</number>
                   </property>
-                  <item>
-                   <spacer name="verticalSpacer_2">
-                    <property name="orientation">
-                     <enum>Qt::Vertical</enum>
-                    </property>
-                    <property name="sizeHint" stdset="0">
-                     <size>
-                      <width>0</width>
-                      <height>398</height>
-                     </size>
-                    </property>
-                   </spacer>
-                  </item>
                   <item>
                    <widget class="QTabWidget" name="models_tbw">
                     <property name="minimumSize">
@@ -385,13 +375,16 @@
              <item row="0" column="0" colspan="2">
               <layout class="QHBoxLayout" name="horiz_wgts_btns_layout">
                <property name="spacing">
-                <number>6</number>
+                <number>5</number>
                </property>
                <property name="leftMargin">
-                <number>3</number>
+                <number>5</number>
+               </property>
+               <property name="topMargin">
+                <number>5</number>
                </property>
                <property name="bottomMargin">
-                <number>3</number>
+                <number>5</number>
                </property>
                <item>
                 <widget class="QToolButton" name="validation_btn">
@@ -405,7 +398,7 @@
                   <string>Toogle the model validation widget</string>
                  </property>
                  <property name="text">
-                  <string>&amp;Validation</string>
+                  <string>Validation</string>
                  </property>
                  <property name="icon">
                   <iconset resource="../res/resources.qrc">
@@ -413,8 +406,8 @@
                  </property>
                  <property name="iconSize">
                   <size>
-                   <width>22</width>
-                   <height>22</height>
+                   <width>25</width>
+                   <height>25</height>
                   </size>
                  </property>
                  <property name="shortcut">
@@ -447,12 +440,12 @@
                  </property>
                  <property name="icon">
                   <iconset resource="../res/resources.qrc">
-                   <normaloff>:/icons/icons/findtext.png</normaloff>:/icons/icons/findtext.png</iconset>
+                   <normaloff>:/icons/icons/objfinder.png</normaloff>:/icons/icons/objfinder.png</iconset>
                  </property>
                  <property name="iconSize">
                   <size>
-                   <width>22</width>
-                   <height>22</height>
+                   <width>25</width>
+                   <height>25</height>
                   </size>
                  </property>
                  <property name="shortcut">
@@ -489,8 +482,8 @@
                  </property>
                  <property name="iconSize">
                   <size>
-                   <width>22</width>
-                   <height>22</height>
+                   <width>25</width>
+                   <height>25</height>
                   </size>
                  </property>
                  <property name="checkable">
@@ -524,8 +517,8 @@
                  </property>
                  <property name="iconSize">
                   <size>
-                   <width>22</width>
-                   <height>22</height>
+                   <width>25</width>
+                   <height>25</height>
                   </size>
                  </property>
                  <property name="checkable">
@@ -560,13 +553,16 @@
              <item row="0" column="13">
               <layout class="QHBoxLayout" name="vert_wgts_btns_layout">
                <property name="spacing">
-                <number>6</number>
+                <number>5</number>
+               </property>
+               <property name="topMargin">
+                <number>5</number>
                </property>
                <property name="rightMargin">
-                <number>3</number>
+                <number>5</number>
                </property>
                <property name="bottomMargin">
-                <number>3</number>
+                <number>5</number>
                </property>
                <item>
                 <widget class="QToolButton" name="objects_btn">
@@ -580,16 +576,16 @@
                   <string>Toggle the model objects widget</string>
                  </property>
                  <property name="text">
-                  <string>O&amp;bjects</string>
+                  <string>Objects</string>
                  </property>
                  <property name="icon">
                   <iconset resource="../res/resources.qrc">
-                   <normaloff>:/icons/icons/tablespace.png</normaloff>:/icons/icons/tablespace.png</iconset>
+                   <normaloff>:/icons/icons/objects.png</normaloff>:/icons/icons/objects.png</iconset>
                  </property>
                  <property name="iconSize">
                   <size>
-                   <width>22</width>
-                   <height>22</height>
+                   <width>25</width>
+                   <height>25</height>
                   </size>
                  </property>
                  <property name="shortcut">
@@ -618,16 +614,16 @@
                   <string>Toggle the operation history widget</string>
                  </property>
                  <property name="text">
-                  <string>&amp;Operations</string>
+                  <string>Operations</string>
                  </property>
                  <property name="icon">
                   <iconset resource="../res/resources.qrc">
-                   <normaloff>:/icons/icons/function1.png</normaloff>:/icons/icons/function1.png</iconset>
+                   <normaloff>:/icons/icons/oprhistory.png</normaloff>:/icons/icons/oprhistory.png</iconset>
                  </property>
                  <property name="iconSize">
                   <size>
-                   <width>22</width>
-                   <height>22</height>
+                   <width>25</width>
+                   <height>25</height>
                   </size>
                  </property>
                  <property name="shortcut">
@@ -655,6 +651,9 @@
                 </sizepolicy>
                </property>
                <layout class="QHBoxLayout" name="horizontalLayout_2">
+                <property name="spacing">
+                 <number>5</number>
+                </property>
                 <property name="leftMargin">
                  <number>0</number>
                 </property>
@@ -669,8 +668,11 @@
                 </property>
                 <item>
                  <layout class="QHBoxLayout" name="horizontalLayout_5">
+                  <property name="spacing">
+                   <number>5</number>
+                  </property>
                   <property name="bottomMargin">
-                   <number>3</number>
+                   <number>5</number>
                   </property>
                   <item>
                    <widget class="QLabel" name="bg_saving_lbl">
@@ -746,8 +748,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1364</width>
-     <height>36</height>
+     <width>1668</width>
+     <height>26</height>
     </rect>
    </property>
    <property name="autoFillBackground">
@@ -762,8 +764,6 @@
     </property>
     <addaction name="action_new_model"/>
     <addaction name="action_load_model"/>
-    <addaction name="action_recent_models"/>
-    <addaction name="action_fix"/>
     <addaction name="action_close_model"/>
     <addaction name="action_save_model"/>
     <addaction name="action_save_as"/>
@@ -812,11 +812,11 @@
     <addaction name="action_inc_zoom"/>
     <addaction name="action_dec_zoom"/>
     <addaction name="separator"/>
-    <addaction name="action_arrange_objects"/>
-    <addaction name="action_compact_view"/>
+    <addaction name="action_magnifier"/>
     <addaction name="action_overview"/>
+    <addaction name="action_compact_view"/>
    </widget>
-   <widget class="QMenu" name="plugins_menu">
+   <widget class="QMenu" name="plugins_config_menu">
     <property name="enabled">
      <bool>false</bool>
     </property>
@@ -827,10 +827,16 @@
    <addaction name="file_menu"/>
    <addaction name="edit_menu"/>
    <addaction name="show_menu"/>
-   <addaction name="plugins_menu"/>
+   <addaction name="plugins_config_menu"/>
    <addaction name="about_menu"/>
   </widget>
-  <widget class="QToolBar" name="general_tb">
+  <widget class="QToolBar" name="tools_acts_tb">
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
    <property name="minimumSize">
     <size>
      <width>0</width>
@@ -839,15 +845,17 @@
    </property>
    <property name="font">
     <font>
-     <weight>50</weight>
      <bold>false</bold>
     </font>
    </property>
    <property name="windowTitle">
-    <string>General</string>
+    <string>Tools</string>
    </property>
    <property name="toolTip">
     <string/>
+   </property>
+   <property name="styleSheet">
+    <string notr="true"/>
    </property>
    <property name="movable">
     <bool>false</bool>
@@ -857,8 +865,8 @@
    </property>
    <property name="iconSize">
     <size>
-     <width>32</width>
-     <height>32</height>
+     <width>40</width>
+     <height>40</height>
     </size>
    </property>
    <property name="toolButtonStyle">
@@ -880,10 +888,9 @@
    <addaction name="action_import"/>
    <addaction name="action_export"/>
    <addaction name="action_diff"/>
-   <addaction name="action_fix"/>
    <addaction name="action_configuration"/>
   </widget>
-  <widget class="QToolBar" name="control_tb">
+  <widget class="QToolBar" name="model_acts_tb">
    <property name="enabled">
     <bool>true</bool>
    </property>
@@ -906,7 +913,7 @@
     </size>
    </property>
    <property name="windowTitle">
-    <string>Controls</string>
+    <string>Model actions</string>
    </property>
    <property name="layoutDirection">
     <enum>Qt::LeftToRight</enum>
@@ -919,8 +926,8 @@
    </property>
    <property name="iconSize">
     <size>
-     <width>22</width>
-     <height>22</height>
+     <width>32</width>
+     <height>32</height>
     </size>
    </property>
    <property name="toolButtonStyle">
@@ -932,10 +939,8 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
-   <addaction name="action_main_menu"/>
    <addaction name="action_new_model"/>
    <addaction name="action_load_model"/>
-   <addaction name="action_recent_models"/>
    <addaction name="action_save_model"/>
    <addaction name="action_save_as"/>
    <addaction name="action_print"/>
@@ -943,10 +948,12 @@
    <addaction name="action_dec_zoom"/>
    <addaction name="action_normal_zoom"/>
    <addaction name="action_inc_zoom"/>
+   <addaction name="separator"/>
+   <addaction name="action_magnifier"/>
    <addaction name="action_overview"/>
-   <addaction name="action_arrange_objects"/>
-   <addaction name="action_show_delimiters"/>
    <addaction name="action_show_grid"/>
+   <addaction name="action_show_delimiters"/>
+   <addaction name="action_lock_delim"/>
    <addaction name="action_alin_objs_grade"/>
    <addaction name="action_compact_view"/>
    <addaction name="separator"/>
@@ -1077,7 +1084,7 @@
    </property>
    <property name="icon">
     <iconset resource="../res/resources.qrc">
-     <normaloff>:/icons/icons/pgsqlModeler48x48.png</normaloff>:/icons/icons/pgsqlModeler48x48.png</iconset>
+     <normaloff>:/icons/icons/about.png</normaloff>:/icons/icons/about.png</iconset>
    </property>
    <property name="text">
     <string>&amp;About pgModeler</string>
@@ -1095,7 +1102,7 @@
    </property>
    <property name="icon">
     <iconset resource="../res/resources.qrc">
-     <normaloff>:/icons/icons/imprimir.png</normaloff>:/icons/icons/imprimir.png</iconset>
+     <normaloff>:/icons/icons/print.png</normaloff>:/icons/icons/print.png</iconset>
    </property>
    <property name="text">
     <string>&amp;Print</string>
@@ -1285,6 +1292,10 @@
    <property name="enabled">
     <bool>false</bool>
    </property>
+   <property name="icon">
+    <iconset resource="../res/resources.qrc">
+     <normaloff>:/icons/icons/saveall.png</normaloff>:/icons/icons/saveall.png</iconset>
+   </property>
    <property name="text">
     <string>Save all</string>
    </property>
@@ -1304,7 +1315,7 @@
     <string>&amp;Overview</string>
    </property>
    <property name="toolTip">
-    <string>Show the model overview</string>
+    <string>Toggles the model overview</string>
    </property>
    <property name="shortcut">
     <string>F10</string>
@@ -1335,33 +1346,6 @@
    </property>
    <property name="toolTip">
     <string>New object</string>
-   </property>
-  </action>
-  <action name="action_plugins">
-   <property name="icon">
-    <iconset resource="../res/resources.qrc">
-     <normaloff>:/icons/icons/plugins.png</normaloff>:/icons/icons/plugins.png</iconset>
-   </property>
-   <property name="text">
-    <string>Plugins</string>
-   </property>
-   <property name="toolTip">
-    <string>Access the list of loaded plugins</string>
-   </property>
-  </action>
-  <action name="action_recent_models">
-   <property name="icon">
-    <iconset resource="../res/resources.qrc">
-     <normaloff>:/icons/icons/loadrecent.png</normaloff>:/icons/icons/loadrecent.png</iconset>
-   </property>
-   <property name="text">
-    <string>&amp;Recent Models</string>
-   </property>
-   <property name="toolTip">
-    <string>Load recently opened model</string>
-   </property>
-   <property name="iconVisibleInMenu">
-    <bool>true</bool>
    </property>
   </action>
   <action name="action_import">
@@ -1424,18 +1408,6 @@
     <string>&amp;Check for update</string>
    </property>
   </action>
-  <action name="action_main_menu">
-   <property name="icon">
-    <iconset resource="../res/resources.qrc">
-     <normaloff>:/icons/icons/mainmenu.png</normaloff>:/icons/icons/mainmenu.png</iconset>
-   </property>
-   <property name="text">
-    <string>action_main_menu</string>
-   </property>
-   <property name="toolTip">
-    <string>Main menu</string>
-   </property>
-  </action>
   <action name="action_show_main_menu">
    <property name="text">
     <string>Show expanded</string>
@@ -1444,7 +1416,7 @@
     <string>Expands the main menu bar in classical mode</string>
    </property>
    <property name="shortcut">
-    <string>Ctrl+Shift+S</string>
+    <string>Ctrl+Shift+M</string>
    </property>
   </action>
   <action name="action_hide_main_menu">
@@ -1485,7 +1457,7 @@
    </property>
    <property name="icon">
     <iconset resource="../res/resources.qrc">
-     <normaloff>:/icons/icons/pgsqlModeler48x48.png</normaloff>:/icons/icons/pgsqlModeler48x48.png</iconset>
+     <normaloff>:/icons/icons/pgmodeler_logo.png</normaloff>:/icons/icons/pgmodeler_logo.png</iconset>
    </property>
    <property name="text">
     <string>Welcome</string>
@@ -1578,21 +1550,6 @@
     <string>Perform the objects metadata handling</string>
    </property>
   </action>
-  <action name="action_arrange_objects">
-   <property name="enabled">
-    <bool>false</bool>
-   </property>
-   <property name="icon">
-    <iconset resource="../res/resources.qrc">
-     <normaloff>:/icons/icons/arrangetables.png</normaloff>:/icons/icons/arrangetables.png</iconset>
-   </property>
-   <property name="text">
-    <string>Arrange objects</string>
-   </property>
-   <property name="toolTip">
-    <string>Rearrange objects over the canvas</string>
-   </property>
-  </action>
   <action name="action_compact_view">
    <property name="checkable">
     <bool>true</bool>
@@ -1611,30 +1568,49 @@
     <string>Toggle the compact view on the model(s)</string>
    </property>
   </action>
-  <action name="action_more_actions">
+  <action name="action_magnifier">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="icon">
     <iconset resource="../res/resources.qrc">
-     <normaloff>:/icons/icons/moreactions.png</normaloff>:/icons/icons/moreactions.png</iconset>
+     <normaloff>:/icons/icons/magnifier.png</normaloff>:/icons/icons/magnifier.png</iconset>
    </property>
    <property name="text">
-    <string>More</string>
+    <string>Magnifier</string>
    </property>
    <property name="toolTip">
-    <string>Addition action over the model</string>
+    <string>Toggles the magnifier tool</string>
+   </property>
+   <property name="shortcut">
+    <string>F9</string>
    </property>
   </action>
-  <action name="action_fix">
+  <action name="action_lock_delim">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>false</bool>
+   </property>
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="icon">
     <iconset resource="../res/resources.qrc">
-     <normaloff>:/icons/icons/fix.png</normaloff>:/icons/icons/fix.png</iconset>
+     <normaloff>:/icons/icons/lockdelim.png</normaloff>:/icons/icons/lockdelim.png</iconset>
    </property>
    <property name="text">
-    <string>Fix</string>
+    <string>action_lock_delim</string>
    </property>
-  </action>
-  <action name="actionFix">
-   <property name="text">
-    <string>Fix</string>
+   <property name="toolTip">
+    <string>&lt;p&gt;Locks the delimiter lines resizing when the zoom factor is less than 100% so more objects can fit on a single page.&lt;/p&gt;</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+K</string>
    </property>
   </action>
  </widget>
@@ -1642,6 +1618,7 @@
   <tabstop>models_tbw</tabstop>
  </tabstops>
  <resources>
+  <include location="../res/resources.qrc"/>
   <include location="../res/resources.qrc"/>
  </resources>
  <connections/>

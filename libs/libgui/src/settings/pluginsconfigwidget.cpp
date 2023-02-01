@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -23,13 +23,13 @@ PluginsConfigWidget::PluginsConfigWidget(QWidget *parent) : BaseConfigWidget(par
 	setupUi(this);
 
 	QGridLayout *grid=new QGridLayout(loaded_plugins_gb);
-	QDir dir=QDir(GlobalAttributes::getPluginsDir());
+	QDir dir=QDir(GlobalAttributes::getPluginsPath());
 
 	root_dir_sel = new FileSelectorWidget(this);
 	root_dir_sel->setToolTip(tr("pgModeler plugins directory"));
 	root_dir_sel->setReadOnly(true);
 	root_dir_sel->setFileMode(QFileDialog::Directory);
-	root_dir_sel->setSelectedFile(GlobalAttributes::getPluginsDir());
+	root_dir_sel->setSelectedFile(GlobalAttributes::getPluginsPath());
 	plugins_layout->insertWidget(1, root_dir_sel);
 
 	plugins_tab=new ObjectsTableWidget(ObjectsTableWidget::EditButton, false, this);
@@ -39,9 +39,9 @@ PluginsConfigWidget::PluginsConfigWidget(QWidget *parent) : BaseConfigWidget(par
 	plugins_tab->setHeaderLabel(tr("Version"),1);
 	plugins_tab->setHeaderLabel(tr("Library"),2);
 
-	connect(plugins_tab, SIGNAL(s_rowEdited(int)), this, SLOT(showPluginInfo(int)));
+	connect(plugins_tab, &ObjectsTableWidget::s_rowEdited, this, &PluginsConfigWidget::showPluginInfo);
 
-	grid->setContentsMargins(4,4,4,4);
+	grid->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
 	grid->addWidget(plugins_tab,0,0,1,1);
 	loaded_plugins_gb->setLayout(grid);
 }
@@ -62,15 +62,13 @@ void PluginsConfigWidget::showPluginInfo(int idx)
 
 void PluginsConfigWidget::loadConfiguration()
 {
-	vector<Exception> errors;
+	std::vector<Exception> errors;
 	QString lib, plugin_name,
-			dir_plugins=GlobalAttributes::getPluginsDir() +
+			dir_plugins=GlobalAttributes::getPluginsPath() +
 						GlobalAttributes::DirSeparator;
 	QPluginLoader plugin_loader;
 	QStringList dir_list;
 	PgModelerPlugin *plugin=nullptr;
-	QAction *plugin_action=nullptr;
-	QPixmap icon;
 	QFileInfo fi;
 
 	//The plugin loader must resolve all symbols otherwise return an error if some symbol is missing on library
@@ -78,7 +76,11 @@ void PluginsConfigWidget::loadConfiguration()
 
 	/* Configures an QDir instance to list only directories on the plugins/ subdir.
 		If the user does not put the plugin in it's directory the file is ignored  */
-	dir_list=QDir(dir_plugins, QString("*"), QDir::Name, QDir::AllDirs | QDir::NoDotAndDotDot).entryList();
+	dir_list=QDir(dir_plugins, "*", QDir::Name, QDir::AllDirs | QDir::NoDotAndDotDot).entryList();
+
+	/* Removing the "schemas" dir from the list since it is reserved to shared schema files
+	 * for configuration file generation */
+	dir_list.removeAll(GlobalAttributes::SchemasDir);
 
 	while(!dir_list.isEmpty())
 	{
@@ -90,47 +92,35 @@ void PluginsConfigWidget::loadConfiguration()
 #ifdef Q_OS_WIN
 		lib=dir_plugins + plugin_name +
             GlobalAttributes::DirSeparator  +
-			plugin_name + QString(".dll");
+			plugin_name + ".dll";
 #else
 #ifdef Q_OS_MAC
 		lib=dir_plugins + plugin_name +
             GlobalAttributes::DirSeparator  +
-			QString("lib") + plugin_name + QString(".dylib");
+			"lib" + plugin_name + ".dylib";
 #else
 		lib=dir_plugins + plugin_name +
 			GlobalAttributes::DirSeparator  +
-			QString("lib") + plugin_name + QString(".so");
+			"lib" + plugin_name + ".so";
 #endif
 #endif
 
 		//Try to load the library
 		plugin_loader.setFileName(lib);
+
 		if(plugin_loader.load())
 		{
 			fi.setFile(lib);
 
 			//Inserts the loaded plugin on the vector
 			plugin = qobject_cast<PgModelerPlugin *>(plugin_loader.instance());
+			plugin->setLibraryName(fi.fileName());
+			plugin->setPluginName(plugin_name);
 			plugins.push_back(plugin);
-
-			if(plugin->hasMenuAction())
-			{
-				//Configures the action related to plugin
-				plugin_action=new QAction(this);
-				plugin_action->setText(plugin->getPluginTitle());
-				plugin_action->setData(QVariant::fromValue<void *>(reinterpret_cast<void *>(plugin)));
-				plugin_action->setShortcut(plugin->getPluginShortcut());
-
-				icon.load(dir_plugins + plugin_name +
-									GlobalAttributes::DirSeparator  +
-									plugin_name + QString(".png"));
-
-				plugin_action->setIcon(icon);
-				plugins_actions.push_back(plugin_action);
-			}
 
 			plugins_tab->addRow();
 			plugins_tab->setCellText(plugin->getPluginTitle(), plugins_tab->getRowCount()-1, 0);
+			plugins_tab->setCellIcon(QIcon(plugin->getPluginIcon(plugin_name)), plugins_tab->getRowCount()-1, 0);
 			plugins_tab->setCellText(plugin->getPluginVersion(), plugins_tab->getRowCount()-1, 1);
 			plugins_tab->setCellText(fi.fileName(), plugins_tab->getRowCount()-1, 2);
 		}
@@ -145,31 +135,96 @@ void PluginsConfigWidget::loadConfiguration()
 
 		dir_list.pop_front();
 		plugins_tab->clearSelection();
+		plugins_tab->adjustColumnToContents(0);
 	}
 
 	if(!errors.empty())
 		throw Exception(ErrorCode::PluginsNotLoaded,__PRETTY_FUNCTION__,__FILE__,__LINE__, errors);
 }
 
-void PluginsConfigWidget::installPluginsActions(QMenu *menu, QObject *recv, const char *slot)
+void PluginsConfigWidget::initPlugins(MainWindow *main_window)
 {
-	if(menu && slot)
+	std::vector<PgModelerPlugin *> inv_plugins;
+	std::vector<Exception> errors;
+
+	for(auto &plugin : plugins)
 	{
-		vector<QAction *>::iterator itr=plugins_actions.begin();
-
-		while(itr!=plugins_actions.end())
+		try
 		{
-			if(menu)
-				menu->addAction(*itr);
-
-			connect(*itr, SIGNAL(triggered()), recv, slot);
-			itr++;
+			plugin->initPlugin(main_window);
 		}
+		catch(Exception &e)
+		{
+			inv_plugins.push_back(plugin);
+			errors.push_back(e);
+		}
+	}
+
+	// Erasing the plugins/actions related to the ones that failed to initialize
+	while(!inv_plugins.empty())
+	{
+		plugins.erase(std::find(plugins.begin(), plugins.end(), inv_plugins.back()));
+		delete inv_plugins.back();
+		inv_plugins.pop_back();
+	}
+
+	if(!errors.empty())
+	{
+		Messagebox msgbox;
+		msgbox.show(Exception(tr("One or more plug-ins failed to initialize and were discarded! Please, check the error stack for more details."),
+													ErrorCode::Custom, __PRETTY_FUNCTION__, __FILE__, __LINE__, errors));
 	}
 }
 
-void PluginsConfigWidget::initPlugins(MainWindow *main_window)
+void PluginsConfigWidget::postInitPlugins()
 {
+	std::vector<Exception> errors;
+
 	for(auto &plugin : plugins)
-		plugin->initPlugin(main_window);
+	{
+		try
+		{
+			plugin->postInitPlugin();
+		}
+		catch(Exception &e)
+		{
+			errors.push_back(e);
+		}
+	}
+
+	if(!errors.empty())
+	{
+		Messagebox msgbox;
+		msgbox.show(Exception(tr("One or more plug-ins failed to perform post initialization operations! Please, check the error stack for more details."),
+													ErrorCode::Custom, __PRETTY_FUNCTION__, __FILE__, __LINE__, errors));
+	}
+}
+
+QList<QAction *> PluginsConfigWidget::getPluginsModelsActions()
+{
+	QList<QAction *> list;
+
+	for(auto &plugin : plugins)
+	{
+		if(plugin->getModelAction())
+			list.append(plugin->getModelAction());
+	}
+
+	return list;
+}
+
+QList<QAction *> PluginsConfigWidget::installPluginsActions(QMenu *conf_menu)
+{
+	QList<QAction  *> tb_actions;
+
+	for(auto &plugin : plugins)
+	{
+		if(conf_menu && plugin->getConfigAction())
+			conf_menu->addAction(plugin->getConfigAction());
+
+		if(plugin->getToolbarAction())
+			tb_actions.append(plugin->getToolbarAction());
+	}	
+
+	return tb_actions;
 }

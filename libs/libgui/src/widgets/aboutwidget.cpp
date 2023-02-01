@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -19,8 +19,6 @@
 #include "aboutwidget.h"
 #include "guiutilsns.h"
 #include "baseobjectview.h"
-#include <QScreen>
-#include <QDesktopWidget>
 
 AboutWidget::AboutWidget(QWidget *parent) : QWidget(parent)
 {
@@ -34,7 +32,7 @@ AboutWidget::AboutWidget(QWidget *parent) : QWidget(parent)
 	pgmodeler_ver_lbl->setText(QString("v%1 ").arg(GlobalAttributes::PgModelerVersion));
 	build_num_lbl->setText(QString("%1 Qt %2").arg(GlobalAttributes::PgModelerBuildNumber).arg(QT_VERSION_STR));
 
-	connect(hide_tb, &QToolButton::clicked, this, [&](){
+	connect(hide_tb, &QToolButton::clicked, this, [this](){
 		hide();
 		emit s_hideRequested();
 	});

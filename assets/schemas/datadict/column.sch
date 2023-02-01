@@ -2,20 +2,22 @@
 # CAUTION: Do not modify this file unless you know what you are doing.
 # Code generation can be broken if incorrect changes are made.
 
-$br [ ] <tr>
-$br [ ] <td>{name}</td>
-$br [ ] <td $sp class="data-type">{type}</td>
+%set {spc} $br [ ]
+
+{spc} <tr>
+{spc} <td>{name}</td>
+{spc} <td $sp class="data-type">{type}</td>
 
 %if ({parent} != "view") %then
 	%if ({parent} == "table") %then
-		$br [ ] <td $sp class="bool-field">{pk-constr}</td>
-		$br [ ] <td $sp class="bool-field">{fk-constr}</td>
-		$br [ ] <td $sp class="bool-field">{uq-constr}</td>
+		{spc} <td $sp class="bool-field">{pk-constr}</td>
+		{spc} <td $sp class="bool-field">{fk-constr}</td>
+		{spc} <td $sp class="bool-field">{uq-constr}</td>
 	%end
 
-	$br [ ] <td $sp class="bool-field">{not-null}</td>
-	$br [ ] <td $sp class="value">{default-value}</td>
-	$br [ ] <td><p $sp class="max-td-wth"><em>{comment}</em></p></td>
+	{spc} <td $sp class="bool-field">{not-null}</td>
+	{spc} <td $sp class="value">{default-value}</td>
+	{spc} <td><p $sp class="max-td-wth"><em>{comment}</em></p></td>
 %end
 
-$br [ ] </tr>
+{spc} </tr>

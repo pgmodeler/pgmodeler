@@ -14,20 +14,18 @@
 	{ddl-end}
 %end
 
-%if ({pgsql-ver} >=f "9.5") %then
-	%if {allow-conns} %or {is-template} %then
 
-		[ALTER ] {sql-object} $sp {signature} [ WITH ]
+%if {allow-conns} %or {is-template} %then
 
-		%if {allow-conns} %then
-			$br $tb [ ALLOW_CONNECTIONS ] {allow-conns}
-		%end
+	[ALTER ] {sql-object} $sp {signature} [ WITH ]
 
-		%if {is-template} %then
-			$br $tb [ IS_TEMPLATE ] {is-template}
-		%end
-
-		{ddl-end}
-
+	%if {allow-conns} %then
+		$br $tb [ ALLOW_CONNECTIONS ] {allow-conns}
 	%end
+
+	%if {is-template} %then
+		$br $tb [ IS_TEMPLATE ] {is-template}
+	%end
+
+	{ddl-end}
 %end

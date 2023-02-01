@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -32,14 +32,22 @@
 #include "function.h"
 #include "operatorfamily.h"
 
-class OperatorClassElement {
+class __libcore OperatorClassElement {
+	public:
+		//! \brief Constants used to reference the element types
+		enum ElementType: unsigned {
+			OperatorElem,
+			FunctionElem,
+			StorageElem
+		};
+
 	private:
 		/*! \brief Type of the operator class element.
 		 This can have 3 possible values:
 		 0 -> OPERATOR_ELEM
 		 1 -> FUNCTION_ELEM
 		 2 -> STORAGE_ELEM */
-		unsigned element_type;
+		ElementType element_type;
 
 		//! \brief Function used by the element (only for type FUNCTION_ELEM)
 		Function *function;
@@ -59,11 +67,6 @@ class OperatorClassElement {
 		unsigned strategy_number;
 
 	public:
-		//! \brief Constants used to reference the element types
-		static constexpr unsigned OperatorElem=0,
-		FunctionElem=1,
-		StorageElem=2;
-
 		OperatorClassElement();
 		virtual ~OperatorClassElement(void){}
 
@@ -80,7 +83,7 @@ class OperatorClassElement {
 		void setStorage(PgSqlType storage);
 
 		//! \brief Returns the element type
-		unsigned getElementType();
+		ElementType getElementType();
 
 		/*! \brief Returns the current assigned function.
 		 This method returns nullptr when the element is not an FUNCTION_ELEM */
@@ -101,10 +104,15 @@ class OperatorClassElement {
 		unsigned getStrategyNumber();
 
 		//! \brief Returns the SQL / XML code definition for the element
-		virtual QString getCodeDefinition(unsigned def_type) final;
+		virtual QString getSourceCode(SchemaParser::CodeType def_type) final;
 
 		//! \brief Operator to compare two elements, returns true when all atributes has the same configuration
 		bool operator == (OperatorClassElement &elem);
 };
+
+/* Registering the OperatorClassElement class as a Qt MetaType in order to make
+ * it liable to be sent through signal parameters as well as to be
+ * to be used by QVariant */
+Q_DECLARE_METATYPE(OperatorClassElement)
 
 #endif

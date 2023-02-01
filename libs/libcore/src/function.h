@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -30,7 +30,7 @@
 #include "pgsqltypes/functiontype.h"
 #include "pgsqltypes/paralleltype.h"
 
-class Function: public BaseFunction {
+class __libcore Function: public BaseFunction {
 	private:
 		//! \brief Indicates whether the function returns a set of data (RETURNS SET OF)
 		bool returns_setof,
@@ -56,7 +56,7 @@ class Function: public BaseFunction {
 		/*! \brief Stores the table columns returned by the clause RETURNS TABLE. This clause instead
 		 of return a specific element returns a whole table. This structure is available
 		 only on PostgreSQL 8.4 and later */
-		vector<Parameter> ret_table_columns;
+		std::vector<Parameter> ret_table_columns;
 
 		//! \brief Execution cost for the function
 		unsigned execution_cost;
@@ -65,7 +65,7 @@ class Function: public BaseFunction {
 		unsigned row_amount;
 
 		//! \brief Formats the function return type to be used by the SchemaParser
-		void setTableReturnTypeAttribute(unsigned def_type);
+		void setTableReturnTypeAttribute(SchemaParser::CodeType def_type);
 
 	protected:
 		virtual void configureSearchAttributes();
@@ -146,11 +146,11 @@ class Function: public BaseFunction {
 		void removeReturnedTableColumns();
 
 		//! \brief Returns the SQL / XML code definition for the function
-		virtual QString getCodeDefinition(unsigned def_type, bool reduced_form) final;
+		virtual QString getSourceCode(SchemaParser::CodeType def_type, bool reduced_form) final;
 
-		virtual QString getCodeDefinition(unsigned def_type) final;
+		virtual QString getSourceCode(SchemaParser::CodeType def_type) final;
 
-		virtual QString getAlterDefinition(BaseObject *object) final;
+		virtual QString getAlterCode(BaseObject *object) final;
 };
 
 #endif

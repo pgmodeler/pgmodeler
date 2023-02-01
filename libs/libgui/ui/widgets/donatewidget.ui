@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>245</height>
+    <width>440</width>
+    <height>365</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -38,6 +38,9 @@
    <property name="bottomMargin">
     <number>0</number>
    </property>
+   <property name="spacing">
+    <number>5</number>
+   </property>
    <item row="0" column="0">
     <widget class="QFrame" name="frame">
      <property name="frameShape">
@@ -48,27 +51,30 @@
      </property>
      <layout class="QGridLayout" name="gridLayout">
       <property name="leftMargin">
-       <number>6</number>
+       <number>5</number>
       </property>
       <property name="topMargin">
-       <number>6</number>
+       <number>5</number>
       </property>
       <property name="rightMargin">
-       <number>6</number>
+       <number>5</number>
       </property>
       <property name="bottomMargin">
-       <number>6</number>
+       <number>5</number>
+      </property>
+      <property name="spacing">
+       <number>5</number>
       </property>
       <item row="0" column="0">
        <widget class="QLabel" name="title_lbl">
         <property name="font">
          <font>
-          <weight>75</weight>
+          <pointsize>12</pointsize>
           <bold>true</bold>
          </font>
         </property>
         <property name="text">
-         <string>Donate to pgModeler</string>
+         <string>pgModeler needs your support!</string>
         </property>
         <property name="alignment">
          <set>Qt::AlignCenter</set>
@@ -80,18 +86,6 @@
       </item>
       <item row="0" column="1">
        <widget class="QToolButton" name="hide_tb">
-        <property name="minimumSize">
-         <size>
-          <width>20</width>
-          <height>20</height>
-         </size>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>20</width>
-          <height>20</height>
-         </size>
-        </property>
         <property name="toolTip">
          <string>Hide this widget</string>
         </property>
@@ -101,6 +95,15 @@
         <property name="icon">
          <iconset resource="../../res/resources.qrc">
           <normaloff>:/icons/icons/close1.png</normaloff>:/icons/icons/close1.png</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>20</width>
+          <height>20</height>
+         </size>
+        </property>
+        <property name="shortcut">
+         <string>Esc</string>
         </property>
         <property name="autoRaise">
          <bool>true</bool>
@@ -130,7 +133,7 @@
          <enum>QFrame::NoFrame</enum>
         </property>
         <property name="text">
-         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;pgModeler is brought to you thanks to a &lt;span style=&quot; font-style:italic;&quot;&gt;great effort to create and distribute a quality product&lt;/span&gt;. This project is reaching out levels of maturity never imagined. All this is the result of a joint work between its author and the &lt;span style=&quot; font-weight:600;&quot;&gt;Open Source community&lt;/span&gt;. &lt;br/&gt;&lt;br/&gt;This software has a long way to go yet and with your help we'll keep maintaining the good job and bringing new improvements on each release. If you did like pgModeler and thinks it deserves a contribution please make a donation!&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;pgModeler is brought to you thanks to a &lt;span style=&quot; font-style:italic;&quot;&gt;great effort to create and distribute a quality product&lt;/span&gt;. This project is reaching levels of maturity never imagined. All this results from joint work between its author and the &lt;span style=&quot; font-weight:600;&quot;&gt;Open Source community&lt;/span&gt;. There is no sponsorship involved.&lt;br/&gt;&lt;br/&gt;This software has a long way to go yet and with your help, we'll keep maintaining a good job and bringing new improvements on each release. If you like pgModeler and think it deserves a contribution, please consider supporting it!&lt;br/&gt;&lt;br/&gt;Thank you!&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
         </property>
         <property name="textFormat">
          <enum>Qt::RichText</enum>
@@ -151,6 +154,9 @@
       </item>
       <item row="2" column="0" colspan="2">
        <layout class="QHBoxLayout" name="horizontalLayout">
+        <property name="spacing">
+         <number>5</number>
+        </property>
         <item>
          <spacer name="horizontalSpacer_2">
           <property name="orientation">
@@ -167,16 +173,10 @@
         <item>
          <widget class="QToolButton" name="donate_tb">
           <property name="sizePolicy">
-           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
-          </property>
-          <property name="minimumSize">
-           <size>
-            <width>0</width>
-            <height>30</height>
-           </size>
           </property>
           <property name="text">
            <string>I want to help!</string>
@@ -187,8 +187,8 @@
           </property>
           <property name="iconSize">
            <size>
-            <width>22</width>
-            <height>22</height>
+            <width>25</width>
+            <height>25</height>
            </size>
           </property>
           <property name="checkable">
@@ -223,6 +223,7 @@
   </layout>
  </widget>
  <resources>
+  <include location="../../res/resources.qrc"/>
   <include location="../../res/resources.qrc"/>
  </resources>
  <connections/>

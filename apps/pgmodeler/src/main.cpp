@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -85,27 +85,24 @@ int main(int argc, char **argv)
 {
 	try
 	{		
-		/* Registering the below classes as metatypes in order to make
-		 * them liable to be sent through signal parameters */
-		qRegisterMetaType<ObjectType>("ObjectType");
-		qRegisterMetaType<Exception>("Exception");
-		qRegisterMetaType<ValidationInfo>("ValidationInfo");
-		qRegisterMetaType<ObjectsDiffInfo>("ObjectsDiffInfo");
-
 		//Install a signal handler to start crashhandler when SIGSEGV or SIGABRT is emitted
 		signal(SIGSEGV, startCrashHandler);
 		signal(SIGABRT, startCrashHandler);
 
-		PgModelerApp::setAttribute(Qt::AA_UseHighDpiPixmaps);
-		PgModelerApp::setAttribute(Qt::AA_EnableHighDpiScaling);
+		GlobalAttributes::setCustomUiScaleFactor();
 		PgModelerApp app(argc,argv);
 		int res=0;
 
 		//Loading the application splash screen
 		QSplashScreen splash;
-		QPixmap pix(QPixmap(QString(":images/images/pgmodeler_splash.png")));
+		QPixmap pix(":images/images/pgmodeler_splash.png");
+
+		if(qApp->primaryScreen()->devicePixelRatio() > 1)
+			pix.setDevicePixelRatio(qApp->primaryScreen()->devicePixelRatio());
+		else
+			pix = pix.scaledToWidth(320, Qt::SmoothTransformation);
+
 		splash.setPixmap(pix);
-		splash.setMask(pix.mask());
 		splash.show();
 		app.processEvents();
 
@@ -134,6 +131,6 @@ int main(int argc, char **argv)
 	{
 		QTextStream ts(stdout);
 		ts << e.getExceptionsText();
-		return enum_cast(e.getErrorCode());
+		return enum_t(e.getErrorCode());
 	}
 }

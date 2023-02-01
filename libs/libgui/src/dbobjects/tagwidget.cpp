@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -54,9 +54,9 @@ void TagWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Tag 
 		for(i=0; i < color_count; i++)
 		{
 			if(tag)
-				color_pickers[attr]->setColor(i, tag->getElementColor(attr, i));
+				color_pickers[attr]->setColor(i, tag->getElementColor(attr, static_cast<ColorId>(i)));
 			else
-				color_pickers[attr]->setColor(i, BaseObjectView::getElementColor(attr, i));
+				color_pickers[attr]->setColor(i, BaseObjectView::getElementColor(attr, static_cast<ColorId>(i)));
 		}
 	}
 }
@@ -66,15 +66,15 @@ void TagWidget::applyConfiguration()
 	try
 	{
 		Tag *tag=nullptr;
-		vector<BaseObject *> tagged_tabs;
+		std::vector<BaseObject *> tagged_tabs;
 
 		startConfiguration<Tag>();
 		tag=dynamic_cast<Tag *>(this->object);
 
 		BaseObjectWidget::applyConfiguration();
 
-		tag->setElementColor(Attributes::TableName, color_pickers[Attributes::TableName]->getColor(0), Tag::FillColor1);
-		tag->setElementColor(Attributes::TableSchemaName, color_pickers[Attributes::TableSchemaName]->getColor(0), Tag::FillColor1);
+		tag->setElementColor(Attributes::TableName, color_pickers[Attributes::TableName]->getColor(0), ColorId::FillColor1);
+		tag->setElementColor(Attributes::TableSchemaName, color_pickers[Attributes::TableSchemaName]->getColor(0), ColorId::FillColor1);
 
 		for(auto &attr : Tag::getColorAttributes())
 		{
@@ -83,9 +83,9 @@ void TagWidget::applyConfiguration()
 
 			tag->setElementColors(attr,
 								  QString("%1,%2,%3")
-								  .arg(color_pickers[attr]->getColor(Tag::FillColor1).name())
-								  .arg(color_pickers[attr]->getColor(Tag::FillColor2).name())
-								  .arg(color_pickers[attr]->getColor(Tag::BorderColor).name()));
+									.arg(color_pickers[attr]->getColor(enum_t(ColorId::FillColor1)).name())
+									.arg(color_pickers[attr]->getColor(enum_t(ColorId::FillColor2)).name())
+									.arg(color_pickers[attr]->getColor(enum_t(ColorId::BorderColor)).name()));
 		}
 
 		model->getObjectReferences(tag, tagged_tabs);

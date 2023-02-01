@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -37,7 +37,6 @@ Role::Role()
 	attributes[Attributes::Login]="";
 	attributes[Attributes::ConnLimit]="";
 	attributes[Attributes::Password]="";
-	attributes[Attributes::Encrypted]="";
 	attributes[Attributes::Validity]="";
 	attributes[Attributes::MemberRoles]="";
 	attributes[Attributes::AdminRoles]="";
@@ -47,7 +46,7 @@ Role::Role()
 	attributes[Attributes::EmptyPassword]="";
 }
 
-void Role::setOption(unsigned op_type, bool value)
+void Role::setOption(RoleOpts op_type, bool value)
 {
 	if(op_type > OpBypassRls)
 		//Raises an error if the option type is invalid
@@ -57,7 +56,7 @@ void Role::setOption(unsigned op_type, bool value)
 	options[op_type]=value;
 }
 
-void Role::addRole(unsigned role_type, Role *role)
+void Role::addRole(RoleType role_type, Role *role)
 {
 	//Raises an error if the role to be added is not allocated
 	if(!role)
@@ -127,7 +126,7 @@ void Role::setRoleAttribute(unsigned role_type)
 {
 	QString attrib;
 	QStringList rol_names;
-	vector<Role *> *roles_vect = getRoleList(role_type);
+	std::vector<Role *> *roles_vect = getRoleList(role_type);
 
 	if(role_type == MemberRole)
 		attrib = Attributes::MemberRoles;
@@ -140,7 +139,7 @@ void Role::setRoleAttribute(unsigned role_type)
 	attributes[attrib]= rol_names.join(',');
 }
 
-vector<Role *> *Role::getRoleList(unsigned role_type)
+std::vector<Role *> *Role::getRoleList(unsigned role_type)
 {
 	if(role_type == MemberRole)
 	 return &member_roles;
@@ -151,10 +150,10 @@ vector<Role *> *Role::getRoleList(unsigned role_type)
 	throw Exception(ErrorCode::RefInvalidRoleType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 }
 
-void Role::removeRole(unsigned role_type, unsigned role_idx)
+void Role::removeRole(RoleType role_type, unsigned role_idx)
 {
-	vector<Role *> *list = getRoleList(role_type);
-	vector<Role *>::iterator itr;
+	std::vector<Role *> *list = getRoleList(role_type);
+	std::vector<Role *>::iterator itr;
 
 	if(role_idx >= list->size())
 		throw Exception(ErrorCode::RefObjectInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -164,17 +163,17 @@ void Role::removeRole(unsigned role_type, unsigned role_idx)
 	setCodeInvalidated(true);
 }
 
-void Role::removeRoles(unsigned role_type)
+void Role::removeRoles(RoleType role_type)
 {
-	vector<Role *> *list = getRoleList(role_type);
+	std::vector<Role *> *list = getRoleList(role_type);
 	list->clear();
 	setCodeInvalidated(true);
 }
 
-bool Role::isRoleExists(unsigned role_type, Role *role)
+bool Role::isRoleExists(RoleType role_type, Role *role)
 {
-	vector<Role *> *list = getRoleList(role_type);
-	vector<Role *>::iterator itr, itr_end;
+	std::vector<Role *> *list = getRoleList(role_type);
+	std::vector<Role *>::iterator itr, itr_end;
 	bool found=false;
 
 	itr = list->begin();
@@ -188,9 +187,9 @@ bool Role::isRoleExists(unsigned role_type, Role *role)
 	return found;
 }
 
-bool Role::isRoleExists(unsigned role_type, const QString &rl_name)
+bool Role::isRoleExists(RoleType role_type, const QString &rl_name)
 {
-	vector<Role *> *list = getRoleList(role_type);
+	std::vector<Role *> *list = getRoleList(role_type);
 
 	for(auto &rl : *list)
 	{
@@ -201,7 +200,7 @@ bool Role::isRoleExists(unsigned role_type, const QString &rl_name)
 	return false;
 }
 
-bool Role::getOption(unsigned op_type)
+bool Role::getOption(RoleOpts op_type)
 {
 	if(op_type > OpBypassRls)
 		throw Exception(ErrorCode::AsgValueInvalidRoleOptionType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -209,9 +208,9 @@ bool Role::getOption(unsigned op_type)
 	return options[op_type];
 }
 
-Role *Role::getRole(unsigned role_type, unsigned role_idx)
+Role *Role::getRole(RoleType role_type, unsigned role_idx)
 {
-	vector<Role *> *list = getRoleList(role_type);
+	std::vector<Role *> *list = getRoleList(role_type);
 
 	//Raises an error if the role index is invalid (out of bound)
 	if(role_idx > list->size())
@@ -220,7 +219,7 @@ Role *Role::getRole(unsigned role_type, unsigned role_idx)
 	return list->at(role_idx);
 }
 
-unsigned Role::getRoleCount(unsigned role_type)
+unsigned Role::getRoleCount(RoleType role_type)
 {
 	return getRoleList(role_type)->size();
 }
@@ -240,12 +239,12 @@ QString Role::getPassword()
 	return password;
 }
 
-QString Role::getCodeDefinition(unsigned def_type)
+QString Role::getSourceCode(SchemaParser::CodeType def_type)
 {
-	return (getCodeDefinition(def_type, false));
+	return (getSourceCode(def_type, false));
 }
 
-QString Role::getCodeDefinition(unsigned def_type, bool reduced_form)
+QString Role::getSourceCode(SchemaParser::CodeType def_type, bool reduced_form)
 {
 	QString code_def=getCachedCode(def_type, reduced_form);
 	if(!code_def.isEmpty()) return code_def;
@@ -253,8 +252,8 @@ QString Role::getCodeDefinition(unsigned def_type, bool reduced_form)
 	unsigned i;
 	QString op_attribs[]={ Attributes::Superuser, Attributes::CreateDb,
 						   Attributes::CreateRole, Attributes::Inherit,
-						   Attributes::Login, Attributes::Encrypted,
-							 Attributes::Replication, Attributes::BypassRls };
+							 Attributes::Login, Attributes::Replication,
+							 Attributes::BypassRls };
 
 	setRoleAttribute(MemberRole);
 	setRoleAttribute(AdminRole);
@@ -268,12 +267,12 @@ QString Role::getCodeDefinition(unsigned def_type, bool reduced_form)
 	if(conn_limit >= 0)
 		attributes[Attributes::ConnLimit]=QString("%1").arg(conn_limit);
 
-	return BaseObject::getCodeDefinition(def_type, reduced_form);
+	return BaseObject::getSourceCode(def_type, reduced_form);
 }
 
 QString Role::getAlterMembershipCommands(Role *imp_role, Role *ref_role, bool revoke)
 {
-	unsigned role_types[2] = { MemberRole, AdminRole };
+	Role::RoleType role_types[] = { MemberRole, AdminRole };
 	QStringList rl_names, role_attrs = { Attributes::MemberRoles, Attributes::AdminRoles };
 	attribs_map member_attrs;
 	QString cmds;
@@ -298,7 +297,7 @@ QString Role::getAlterMembershipCommands(Role *imp_role, Role *ref_role, bool re
 
 			try
 			{
-				cmds += schparser.getCodeDefinition(
+				cmds += schparser.getSourceCode(
 									GlobalAttributes::getSchemaFilePath(GlobalAttributes::AlterSchemaDir, Attributes::RoleMembers),
 									member_attrs);
 			}
@@ -315,7 +314,7 @@ QString Role::getAlterMembershipCommands(Role *imp_role, Role *ref_role, bool re
 	return cmds;
 }
 
-QString Role::getAlterDefinition(BaseObject *object)
+QString Role::getAlterCode(BaseObject *object)
 {
 	Role *role=dynamic_cast<Role *>(object);
 
@@ -327,10 +326,10 @@ QString Role::getAlterDefinition(BaseObject *object)
 		attribs_map attribs;
 		QString op_attribs[]={ Attributes::Superuser, Attributes::CreateDb,
 							   Attributes::CreateRole, Attributes::Inherit,
-							   Attributes::Login, Attributes::Encrypted,
-								 Attributes::Replication, Attributes::BypassRls };
+								 Attributes::Login, Attributes::Replication,
+								 Attributes::BypassRls };
 
-		attributes[Attributes::AlterCmds]=BaseObject::getAlterDefinition(object);
+		attributes[Attributes::AlterCmds]=BaseObject::getAlterCode(object);
 
 		if(this->password!=role->password)
 		{
@@ -343,7 +342,7 @@ QString Role::getAlterDefinition(BaseObject *object)
 
 		for(unsigned i=0; i <= OpBypassRls; i++)
 		{
-			if((attribs.count(Attributes::Password) && i==OpEncrypted) ||	this->options[i]!=role->options[i])
+			if(this->options[i]!=role->options[i])
 				attribs[op_attribs[i]]=(role->options[i] ? Attributes::True : Attributes::Unset);
 		}
 
@@ -352,7 +351,7 @@ QString Role::getAlterDefinition(BaseObject *object)
 
 		copyAttributes(attribs);
 
-		return BaseObject::getAlterDefinition(this->getSchemaName(), attributes, false, true);
+		return BaseObject::getAlterCode(this->getSchemaName(), attributes, false, true);
 	}
 	catch(Exception &e)
 	{

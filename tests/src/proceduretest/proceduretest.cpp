@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -21,7 +21,6 @@
 #include "globalattributes.h"
 #include "pgmodelerunittest.h"
 #include "defaultlanguages.h"
-#include "qtcompat/qtextstreamcompat.h"
 
 class ProcedureTest: public QObject, public PgModelerUnitTest {
 	private:
@@ -131,7 +130,7 @@ COMMENT ON PROCEDURE public.procedure(smallint,text,integer,VARIADIC \"any\") IS
 		proc.setSchema(&schema);
 		proc.setLanguage(&lang);
 		proc.setName("procedure");
-		proc.setSourceCode("select 1+1;");
+		proc.setFunctionSource("select 1+1;");
 		proc.setComment("This is a comment!");
 
 		param.setName("p1");
@@ -157,11 +156,11 @@ COMMENT ON PROCEDURE public.procedure(smallint,text,integer,VARIADIC \"any\") IS
 		param.setVariadic(true);
 		proc.addParameter(param);
 
-		result_code = proc.getCodeDefinition(SchemaParser::SqlDefinition);
+		result_code = proc.getSourceCode(SchemaParser::SqlCode);
 
 		/*QTextStream out(stdout);
-		out << result_code.simplified() << QtCompat::endl;
-		out << expected_code.simplified() << QtCompat::endl;*/
+		out << result_code.simplified() << Qt::endl;
+		out << expected_code.simplified() << Qt::endl;*/
 		QCOMPARE(result_code.simplified(), expected_code.simplified());
 	}
 	catch(Exception &e)
@@ -211,7 +210,7 @@ void ProcedureTest::generatesXMLCorrectly()
 		proc.setSchema(&schema);
 		proc.setLanguage(&lang);
 		proc.setName("procedure");
-		proc.setSourceCode("select 1+1;");
+		proc.setFunctionSource("select 1+1;");
 		proc.setComment("This is a comment!");
 
 		param.setName("p1");
@@ -237,12 +236,12 @@ void ProcedureTest::generatesXMLCorrectly()
 		param.setVariadic(true);
 		proc.addParameter(param);
 
-		result_code = proc.getCodeDefinition(SchemaParser::XmlDefinition);
+		result_code = proc.getSourceCode(SchemaParser::XmlCode);
 
 		/*QTextStream out(stdout);
-		out << result_code << QtCompat::endl;
-		out << "---" << QtCompat::endl;
-		out << expected_code << QtCompat::endl;*/
+		out << result_code << Qt::endl;
+		out << "---" << Qt::endl;
+		out << expected_code << Qt::endl;*/
 		QCOMPARE(result_code.simplified(), expected_code.simplified());
 	}
 	catch(Exception &e)
@@ -260,7 +259,7 @@ void ProcedureTest::modelReturnsProcedureDepsRefs()
 	Language *lang = nullptr;
 	Role *owner = nullptr;
 	Type type;
-	vector<BaseObject *> deps, refs;
+	std::vector<BaseObject *> deps, refs;
 
 	try
 	{
@@ -280,7 +279,7 @@ void ProcedureTest::modelReturnsProcedureDepsRefs()
 		proc.setSchema(schema);
 		proc.setLanguage(lang);
 		proc.setName("procedure");
-		proc.setSourceCode("select 1+1;");
+		proc.setFunctionSource("select 1+1;");
 		proc.setComment("This is a comment!");
 
 		param.setName("p1");
@@ -357,7 +356,7 @@ void ProcedureTest::modelCreatesProcedureFromXML()
 	{
 		model.createSystemObjects(true);
 
-		model.getXMLParser()->setDTDFile(GlobalAttributes::getSchemasRootDir() +
+		model.getXMLParser()->setDTDFile(GlobalAttributes::getSchemasRootPath() +
 																		 GlobalAttributes::DirSeparator +
 																		 GlobalAttributes::XMLSchemaDir +
 																		 GlobalAttributes::DirSeparator +
@@ -367,11 +366,11 @@ void ProcedureTest::modelCreatesProcedureFromXML()
 		proc = model.createProcedure();
 
 		QTextStream out(stdout);
-		out << proc->getCodeDefinition(SchemaParser::XmlDefinition) << QtCompat::endl;
-		out << "---" << QtCompat::endl;
-		out << xml_code << QtCompat::endl;
+		out << proc->getSourceCode(SchemaParser::XmlCode) << Qt::endl;
+		out << "---" << Qt::endl;
+		out << xml_code << Qt::endl;
 
-		QCOMPARE(proc->getCodeDefinition(SchemaParser::XmlDefinition).simplified(), xml_code.simplified());
+		QCOMPARE(proc->getSourceCode(SchemaParser::XmlCode).simplified(), xml_code.simplified());
 	}
 	catch(Exception &e)
 	{

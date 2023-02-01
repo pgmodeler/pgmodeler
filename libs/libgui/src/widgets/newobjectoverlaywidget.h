@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -25,6 +25,7 @@
 #ifndef NEW_OBJECT_OVERLAY_WIDGET_H
 #define NEW_OBJECT_OVERLAY_WIDGET_H
 
+#include "guiglobal.h"
 #include <vector>
 #include <QWidget>
 #include "baseobject.h"
@@ -33,16 +34,16 @@
 //Adding the declaration of ModelWidget class in order to be visible to NewObjectOverlayWidget
 class ModelWidget;
 
-class NewObjectOverlayWidget: public QWidget, public Ui::NewObjectOverlayWidget {
+class __libgui NewObjectOverlayWidget: public QWidget, public Ui::NewObjectOverlayWidget {
 	private:
 		Q_OBJECT
 
 		//! \brief Store the actions in the ModelWidget corresponding to each button the in overlay
-		map<QToolButton *, QAction *> btn_actions;
+		std::map<QToolButton *, QAction *> btn_actions;
 
 	public:
 		explicit NewObjectOverlayWidget(ModelWidget * parent);
-		void setSelectedObjects(vector<BaseObject *> &sel_objs);
+		void setSelectedObjects(std::vector<BaseObject *> &sel_objs);
 		void configureOverlayButtons();
 
 	private slots:

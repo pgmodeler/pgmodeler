@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -27,13 +27,12 @@ based upon the code editor example provided by Qt
 #define NUMBERED_TEXT_EDITOR_H
 
 #include <QPlainTextEdit>
-#include <QMenu>
 #include <QToolButton>
 #include <QProcess>
 #include <QLabel>
 #include "linenumberswidget.h"
 
-class NumberedTextEditor : public QPlainTextEdit {
+class __libgui NumberedTextEditor : public QPlainTextEdit {
 	private:
 		Q_OBJECT
 

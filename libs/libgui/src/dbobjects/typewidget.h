@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -30,12 +30,7 @@
 #include "pgsqltypewidget.h"
 #include "widgets/objectstablewidget.h"
 
-/* Declaring the TypeAttribute class as a Qt metatype in order to permit
-	 that instances of the class be used as data of QVariant and QMetaType */
-#include <QMetaType>
-Q_DECLARE_METATYPE(TypeAttribute)
-
-class TypeWidget: public BaseObjectWidget, public Ui::TypeWidget {
+class __libgui TypeWidget: public BaseObjectWidget, public Ui::TypeWidget {
 	private:
 		Q_OBJECT
 

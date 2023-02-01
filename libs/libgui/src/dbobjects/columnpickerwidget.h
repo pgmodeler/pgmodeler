@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -30,7 +30,7 @@
 #include "physicaltable.h"
 #include "objectstablewidget.h"
 
-class ColumnPickerWidget: public QWidget, public Ui::ColumnPickerWidget {
+class __libgui ColumnPickerWidget: public QWidget, public Ui::ColumnPickerWidget {
 	private:
 		Q_OBJECT
 
@@ -56,16 +56,16 @@ class ColumnPickerWidget: public QWidget, public Ui::ColumnPickerWidget {
 		/*! \brief Fills the columns grid with the elements in the vector.
 		 * Columns that aren't child of the parent object specified by setParentObject()
 		 * will be ignored */
-		void setColumns(const vector<Column *> &cols);
+		void setColumns(const std::vector<Column *> &cols);
 
 		//! \brief Fills the columns grid with the elements view's columns
-		void setColumns(const vector<SimpleColumn> &cols);
+		void setColumns(const std::vector<SimpleColumn> &cols);
 
 		//! \brief Returns a list of the columns that are in the grid.
-		vector<Column *> getColumns();
+		std::vector<Column *> getColumns();
 
 		//! \brief Returns a list of the view columns that are in the grid.
-		vector<SimpleColumn> getSimpleColumns();
+		std::vector<SimpleColumn> getSimpleColumns();
 
 	private slots:
 		void updateColumnsCombo();

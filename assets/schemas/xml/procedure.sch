@@ -35,7 +35,7 @@
 
 	/> $br
 %else
-	$tb <definition><! $ob CDATA $ob {definition} $cb $cb ></definition> $br
+	$tb <definition> $sp <! $ob CDATA $ob {definition} $cb $cb > $sp </definition> $br
 %end
 
 </procedure> $br $br

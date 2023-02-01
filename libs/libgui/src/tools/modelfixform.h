@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -30,7 +30,7 @@
 #include "ui_modelfixform.h"
 #include "widgets/fileselectorwidget.h"
 
-class ModelFixForm: public QDialog, public Ui::ModelFixForm {
+class __libgui ModelFixForm: public QDialog, public Ui::ModelFixForm {
 	private:
 		Q_OBJECT
 
@@ -44,6 +44,7 @@ class ModelFixForm: public QDialog, public Ui::ModelFixForm {
 		*pgmodeler_cli_sel;
 
 		void hideEvent(QHideEvent *);
+		void resetFixForm();
 
 	public:
 		ModelFixForm(QWidget * parent = nullptr, Qt::WindowFlags f = Qt::Widget);

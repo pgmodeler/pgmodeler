@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -111,14 +111,14 @@ void TableObject::setCodeInvalidated(bool value)
 	BaseObject::setCodeInvalidated(value);
 }
 
-QString TableObject::getDropDefinition(bool cascade)
+QString TableObject::getDropCode(bool cascade)
 {
 	if(getParentTable())
 		attributes[Attributes::Table]=getParentTable()->getName(true);
 
 	attributes[this->getSchemaName()]=Attributes::True;
 
-	return BaseObject::getDropDefinition(cascade);
+	return BaseObject::getDropCode(cascade);
 }
 
 QString TableObject::getSignature(bool format)

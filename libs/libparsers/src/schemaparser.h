@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -25,17 +25,18 @@
 #ifndef SCHEMA_PARSER_H
 #define SCHEMA_PARSER_H
 
+#include "parsersglobal.h"
 #include "globalattributes.h"
 #include "exception.h"
 #include <map>
 #include <vector>
 #include <QDir>
 #include <QTextStream>
-#include "xmlparser.h"
 #include "attribsmap.h"
 #include "pgsqlversions.h"
+#include <QRegularExpression>
 
-class SchemaParser {
+class __libparsers SchemaParser {
 	private:
 		/*! \brief Indicates that the parser should ignore unknown
 		 attributes avoiding raising exceptions */
@@ -46,7 +47,7 @@ class SchemaParser {
 		bool ignore_empty_atribs;
 
 		//! \brief RegExp used to validate attribute names
-		static const QRegExp AttribRegExp;
+		static const QRegularExpression AttribRegExp;
 
 		//! \brief Get an attribute name from the buffer on the current position
 		QString getAttribute();
@@ -145,6 +146,8 @@ class SchemaParser {
 		template<typename Type>
 		bool getExpressionResult(const QString &oper, const QVariant &left_val, const QVariant &right_val);
 
+		void __setPgSQLVersion(const QString &pgsql_ver, bool ignore_db_version);
+
 	public:
 		static const char CharComment,	//! \brief Character that starts a comment
 		CharLineEnd,	//! \brief Character that indicates end of line
@@ -195,8 +198,10 @@ class SchemaParser {
 		TokenLtEqOper;// <= (less or equal to)
 
 		//! \brief Constants used to get a specific object definition
-		static constexpr unsigned SqlDefinition=0,
-		XmlDefinition=1;
+		enum CodeType {
+			SqlCode,
+			XmlCode
+		};
 
 		SchemaParser();
 
@@ -209,17 +214,17 @@ class SchemaParser {
 		/*! \brief Returns the complete xml/sql definition for an database object represented by the
 		 map 'attributes'. For SQL definition is necessary to indicate the version of PostgreSQL
 		 in order to the to correct schema be loaded */
-		QString getCodeDefinition(const QString &obj_name, attribs_map &attribs, unsigned def_type);
+		QString getSourceCode(const QString &obj_name, attribs_map &attribs, CodeType def_type);
 
 		/*! \brief Generic method that loads a schema file and for a given map of attributes
 		 this method returns the data of the file analyzed and filled with the values ​​of the
 		 attributes map */
-		QString getCodeDefinition(const QString &filename, attribs_map &attribs);
+		QString getSourceCode(const QString &filename, attribs_map &attribs);
 
 		/*! \brief Generic method that interprets a pre-specified buffer (see loadBuffer()) and for a given map
 		 of attributes this method returns the data of the buffer analyzed and filled with the values ​​of the
 		 attributes map */
-		QString getCodeDefinition(const attribs_map &attribs);
+		QString getSourceCode(const attribs_map &attribs);
 
 		//! \brief Loads the buffer with a string
 		void loadBuffer(const QString &buf);
@@ -248,6 +253,7 @@ class SchemaParser {
 		//! \brief Returns the current columnm of the current line where the parser is reading
 		int getCurrentColumn();
 
+		friend class Catalog;
 };
 
 #endif

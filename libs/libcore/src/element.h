@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -29,7 +29,7 @@
 #include "operatorclass.h"
 #include "collation.h"
 
-class Element {
+class __libcore Element {
 	private:
 		/*! \brief Column referenced by the  element. This attribute is
 		 mutually exclusive with the expression attribute and simple column */
@@ -59,12 +59,14 @@ class Element {
 	protected:
 		SchemaParser schparser;
 
-		void configureAttributes(attribs_map &attributes, unsigned def_type);
+		void configureAttributes(attribs_map &attributes, SchemaParser::CodeType def_type);
 
 	public:
 		//! \brief Constants used to reference the sorting method of the element
-		static constexpr unsigned AscOrder=0,
-		NullsFirst=1;
+		enum SortOrder: unsigned {
+			AscOrder,
+			NullsFirst
+		};
 
 		Element();
 		virtual ~Element(void) {}
@@ -79,10 +81,10 @@ class Element {
 		void setSortingEnabled(bool value);
 
 		//! \brief Sets the state of one of the element sorting method
-		void setSortingAttribute(unsigned attrib, bool value);
+		void setSortingAttribute(SortOrder attrib, bool value);
 
 		//! \brief Gets the curret state of the element sorting attribute
-		bool getSortingAttribute(unsigned attrib);
+		bool getSortingAttribute(SortOrder attrib);
 
 		Column *getColumn();
 		QString getExpression();
@@ -93,7 +95,7 @@ class Element {
 
 		bool isSortingEnabled();
 
-		virtual QString getCodeDefinition(unsigned) { return ""; }
+		virtual QString getSourceCode(SchemaParser::CodeType) { return ""; }
 		bool operator == (Element &elem);
 		bool operator ==(const Element &elem);
 };

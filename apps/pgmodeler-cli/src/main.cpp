@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -18,45 +18,43 @@
 
 #include <QTranslator>
 #include "pgmodelercliapp.h"
-#include "qtcompat/qtextstreamcompat.h"
 
 int main(int argc, char **argv)
 {
 	QTextStream out(stdout);
 
 #ifdef DEMO_VERSION
-	out << QtCompat::endl;
-	out << QString("pgModeler ") << GlobalAttributes::PgModelerVersion << QT_TR_NOOP(" command line interface.") << QtCompat::endl;
-	out << QT_TR_NOOP("PostgreSQL Database Modeler Project - pgmodeler.io") << QtCompat::endl;
-	out << QT_TR_NOOP("Copyright 2006-2020 Raphael A. Silva <raphael@pgmodeler.io>") << QtCompat::endl;
-	out << QT_TR_NOOP("\n** CLI disabled in demonstration version! **") << QtCompat::endl << QtCompat::endl;
+	out << Qt::endl;
+	out << QString("pgModeler ") << GlobalAttributes::PgModelerVersion << QT_TR_NOOP(" command line interface.") << Qt::endl;
+	out << QT_TR_NOOP("PostgreSQL Database Modeler Project - pgmodeler.io") << Qt::endl;
+	out << QT_TR_NOOP("Copyright 2006-2022 Raphael Araújo e Silva <raphael@pgmodeler.io>") << Qt::endl;
+	out << QT_TR_NOOP("\n** CLI disabled in demonstration version! **") << Qt::endl << Qt::endl;
 #else
 	try
 	{
 		#ifdef Q_OS_LINUX
 			/* Workaround to make the CLI work on Linux systems without graphical interface.
+			 * In that case, we just check if there's a DISPLAY env var defined. If not defined
+			 * we force the usage of the "offscreen" plugin via QT_QPA_PLATFORM so the portions of
+			 * the application that contains GUI elements can work properly.
+			 *
 			 * Details at https://github.com/pgmodeler/pgmodeler/issues/1604 */
-			qputenv("QT_QPA_PLATFORM", "offscreen");
+			if(qgetenv("DISPLAY").isEmpty())
+				qputenv("QT_QPA_PLATFORM", "offscreen");
 		#endif
 
 		PgModelerCliApp pgmodeler_cli(argc, argv);
-		QTranslator translator(&pgmodeler_cli);
-
-		//Tries to load the ui translation according to the system's locale
-		translator.load(QLocale::system().name(), GlobalAttributes::getLanguagesDir());
-
-		//Installs the translator on the application
-		pgmodeler_cli.installTranslator(&translator);
+		pgmodeler_cli.loadTranslation(QLocale::system().name());
 
 		//Executes the cli
 		return pgmodeler_cli.exec();
 	}
 	catch(Exception &e)
 	{
-		out << QtCompat::endl;
+		out << Qt::endl;
 		out << e.getExceptionsText();
-		out << QString("** pgmodeler-cli aborted due to critical error(s). **") << QtCompat::endl << QtCompat::endl;
-		return (e.getErrorCode()==ErrorCode::Custom ? -1 : enum_cast(e.getErrorCode()));
+		out << QString("** pgmodeler-cli aborted due to critical error(s). **") << Qt::endl << Qt::endl;
+		return (e.getErrorCode()==ErrorCode::Custom ? -1 : enum_t(e.getErrorCode()));
 	}
 #endif
 }

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -18,10 +18,9 @@
 
 #include "intervaltype.h"
 
-template<>
-QStringList IntervalType::TemplateType<IntervalType>::type_names =
+QStringList IntervalType::type_names =
 {
-	"", // Reserved for BaseType::null
+	"", // Reserved for Class::Null
 
 	"YEAR", "MONTH", "DAY", "HOUR",
 	"MINUTE", "SECOND","YEAR TO MONTH",
@@ -39,7 +38,27 @@ IntervalType::IntervalType()
 	type_idx = Null;
 }
 
+QStringList IntervalType::getTypes()
+{
+	return TemplateType<IntervalType>::getTypes(type_names);
+}
+
 IntervalType::IntervalType(const QString &type_name)
 {
 	setType(type_name);
+}
+
+unsigned IntervalType::setType(unsigned type_id)
+{
+	return TemplateType<IntervalType>::setType(type_id, type_names);
+}
+
+unsigned IntervalType::setType(const QString &type_name)
+{
+	return TemplateType<IntervalType>::setType(type_name, type_names);
+}
+
+QString IntervalType::getTypeName(unsigned type_id)
+{
+	return TemplateType<IntervalType>::getTypeName(type_id, type_names);
 }

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -176,10 +176,10 @@ ALTER FOREIGN DATA WRAPPER fdw OWNER TO postgres; \
 		fdw.setOption("opt2", "value2");
 		fdw.setComment("This is a test comment on FDW");
 
-		QString res_sql_code = fdw.getCodeDefinition(SchemaParser::SqlDefinition).simplified();
+		QString res_sql_code = fdw.getSourceCode(SchemaParser::SqlCode).simplified();
 		QCOMPARE(sql_code, res_sql_code);
 
-		QString res_xml_code = fdw.getCodeDefinition(SchemaParser::XmlDefinition).simplified();
+		QString res_xml_code = fdw.getSourceCode(SchemaParser::XmlCode).simplified();
 		QCOMPARE(xml_code, res_xml_code);
 	}
 	catch (Exception &e)
@@ -210,7 +210,7 @@ void ForeignDataWrapperTest::modelReturnsDepsAndRefsForFDW()
 		func_handler.setName("func_handler");
 		func_handler.setReturnType(PgSqlType("fdw_handler"));
 		func_handler.setSchema(&public_sch);
-		func_handler.setSourceCode("foo");
+		func_handler.setFunctionSource("foo");
 		func_handler.setOwner(&owner);
 		func_handler.setLanguage(&lang);
 		fdw.setHandlerFunction(&func_handler);
@@ -219,7 +219,7 @@ void ForeignDataWrapperTest::modelReturnsDepsAndRefsForFDW()
 		func_validator.addParameter(Parameter("param1", PgSqlType("text", 1)));
 		func_validator.addParameter(Parameter("param2", PgSqlType("oid")));
 		func_validator.setSchema(&public_sch);
-		func_validator.setSourceCode("foo");
+		func_validator.setFunctionSource("foo");
 		func_validator.setOwner(&owner);
 		func_validator.setLanguage(&lang);
 		fdw.setValidatorFunction(&func_validator);
@@ -232,7 +232,7 @@ void ForeignDataWrapperTest::modelReturnsDepsAndRefsForFDW()
 		model.addFunction(&func_validator);
 		model.addForeignDataWrapper(&fdw);
 
-		vector<BaseObject *> deps;
+		std::vector<BaseObject *> deps;
 		model.getObjectDependecies(&fdw, deps);
 
 		QVERIFY(deps.size() >= 3);
@@ -279,7 +279,7 @@ void ForeignDataWrapperTest::modelCreatesFDWfromXMLandResultingXMLisEqual()
 		func_handler.setName("func_handler");
 		func_handler.setReturnType(PgSqlType("fdw_handler"));
 		func_handler.setSchema(&public_sch);
-		func_handler.setSourceCode("foo");
+		func_handler.setFunctionSource("foo");
 		func_handler.setOwner(&owner);
 		func_handler.setLanguage(&lang);
 
@@ -287,7 +287,7 @@ void ForeignDataWrapperTest::modelCreatesFDWfromXMLandResultingXMLisEqual()
 		func_validator.addParameter(Parameter("param1", PgSqlType("text", 1)));
 		func_validator.addParameter(Parameter("param2", PgSqlType("oid")));
 		func_validator.setSchema(&public_sch);
-		func_validator.setSourceCode("foo");
+		func_validator.setFunctionSource("foo");
 		func_validator.setOwner(&owner);
 		func_validator.setLanguage(&lang);
 
@@ -314,7 +314,7 @@ void ForeignDataWrapperTest::modelCreatesFDWfromXMLandResultingXMLisEqual()
 
 		QVERIFY(fdw != nullptr);
 
-		res_xml_code = fdw->getCodeDefinition(SchemaParser::XmlDefinition).simplified();
+		res_xml_code = fdw->getSourceCode(SchemaParser::XmlCode).simplified();
 		xml_code = xml_code.simplified();
 		QCOMPARE(xml_code, res_xml_code);
 	}

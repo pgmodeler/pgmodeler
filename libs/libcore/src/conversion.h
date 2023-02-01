@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -31,7 +31,7 @@
 #include "role.h"
 #include "pgsqltypes/encodingtype.h"
 
-class Conversion: public BaseObject {
+class __libcore Conversion: public BaseObject {
 	private:
 		/*! \brief Encoding types vector:
 		 0 -> Source encoding
@@ -46,8 +46,10 @@ class Conversion: public BaseObject {
 
 	public:
 		//! \brief Constants used to access the conversion encodings
-		static constexpr unsigned SrcEncoding=0,
-		DstEncoding=1;
+		enum EncodingId: unsigned {
+			SrcEncoding,
+			DstEncoding
+		};
 
 		Conversion();
 
@@ -55,13 +57,13 @@ class Conversion: public BaseObject {
 		void setDefault(bool value);
 
 		//! \brief Sets one of the conversion encodings (using the encoding index constants)
-		void setEncoding(unsigned encoding_idx, EncodingType encoding_type);
+		void setEncoding(EncodingId encoding_id, EncodingType encoding_type);
 
 		//! \brief Sets the conversion function used to convert character between encodings
 		void setConversionFunction(Function *conv_func);
 
 		//! \brief Returns the encoding related to the index (using the encoding index constants)
-		EncodingType getEncoding(unsigned encoding_idx);
+		EncodingType getEncoding(EncodingId encoding_id);
 
 		//! \brief Returns the current used conversion function
 		Function *getConversionFunction();
@@ -70,7 +72,7 @@ class Conversion: public BaseObject {
 		bool isDefault();
 
 		//! \brief Returns the SQL/XML code definition for the conversion
-		virtual QString getCodeDefinition(unsigned def_type) final;
+		virtual QString getSourceCode(SchemaParser::CodeType def_type) final;
 };
 
 #endif

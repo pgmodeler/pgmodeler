@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -27,9 +27,10 @@
 
 #include "ui_objectfinderwidget.h"
 #include "modelwidget.h"
+#include "objecttypeslistwidget.h"
 #include <QWidget>
 
-class ObjectFinderWidget : public QWidget, public Ui::ObjectFinderWidget {
+class __libgui ObjectFinderWidget : public QWidget, public Ui::ObjectFinderWidget {
 	private:
 		Q_OBJECT
 
@@ -41,17 +42,23 @@ class ObjectFinderWidget : public QWidget, public Ui::ObjectFinderWidget {
 		 * populate the combo box used to select which attribute will be used to search objects */
 		search_attribs_i18n;
 
-		vector<BaseObject *> found_objs,
+		std::vector<BaseObject *> found_objs,
 
 		selected_objs;
 
-		QMenu select_menu, fade_menu;
+		QMenu select_menu, fade_menu, filter_menu;
 
 		//! \brief Reference model widget
 		ModelWidget *model_wgt;
 
 		//! \brief Stores the selected object on the result list
 		BaseObject *selected_obj;
+
+		QWidget *filter_wgt;
+
+		QCheckBox *regexp_chk, *exact_match_chk, *case_sensitive_chk;
+
+		ObjectTypesListWidget *obj_types_lst;
 
 		//! \brief Captures the ENTER press to execute search
 		bool eventFilter(QObject *object, QEvent *event);
@@ -63,12 +70,9 @@ class ObjectFinderWidget : public QWidget, public Ui::ObjectFinderWidget {
 	public:
 		ObjectFinderWidget(QWidget *parent = nullptr);
 
-		//! \brief Lists all valid types in a QListWidget
-		static void updateObjectTypeList(QListWidget *list_wgt);
-
 		/*! \brief Lists the objects of a vector in a QTableWidget. The first column on each row of table contains thereference to the object
 		 * The parameter search_attr is used to display the attribute value in which the search was performed. */
-		static void updateObjectTable(QTableWidget *tab_wgt, vector<BaseObject *> &objects, const QString &search_attr = Attributes::Name, bool checkable_items = false);
+		//static void updateObjectTable(QTableWidget *tab_wgt, std::vector<BaseObject *> &objects, const QString &search_attr = Attributes::Name, bool checkable_items = false);
 		
 		//! \brief Sets the database model to work on
 		void setModel(ModelWidget *model_wgt);
@@ -88,10 +92,11 @@ class ObjectFinderWidget : public QWidget, public Ui::ObjectFinderWidget {
 		//! \brief Selects a object on result list
 		void selectObject();
 
-		void setAllObjectsChecked();
 		void fadeObjects();
 		void selectObjects();
 		void showObjectMenu();
+
+		friend class MainWindow;
 };
 
 #endif

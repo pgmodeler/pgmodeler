@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -30,7 +30,7 @@
 #include "element.h"
 #include "simplecolumn.h"
 
-class IndexElement: public Element {
+class __libcore IndexElement: public Element {
 	private:
 		//! \brief Collation referenced by the element
 		Collation *collation;
@@ -47,7 +47,12 @@ class IndexElement: public Element {
 		Collation *getCollation();
 
 		//! \brief Returns the SQL / XML code definition for the index element
-		virtual QString getCodeDefinition(unsigned def_type) final;
+		virtual QString getSourceCode(SchemaParser::CodeType def_type) final;
 };
+
+/* Registering the IndexElement class as a Qt MetaType in order to make
+ * it liable to be sent through signal parameters as well as to be
+ * to be used by QVariant */
+Q_DECLARE_METATYPE(IndexElement)
 
 #endif

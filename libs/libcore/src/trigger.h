@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -32,7 +32,7 @@
 #include "pgsqltypes/eventtype.h"
 #include "pgsqltypes/deferraltype.h"
 
-class Trigger: public TableObject{
+class __libcore Trigger: public TableObject{
 	private:
 		//! \brief Stores the transtion tables names (OLD and NEW) [REFERENCING { OLD | NEW } TABLE name]
 		QString transition_tabs_names[2];
@@ -43,7 +43,7 @@ class Trigger: public TableObject{
 		/*! \brief Column list used as the trigger firing condition. This attribute was
 		 introduced in PostgreSQL 9.1 and it is used only when the UPDATE event
 		 is assigned to trigger. */
-		vector<Column *> upd_columns;
+		std::vector<Column *> upd_columns;
 
 		//! \brief Function that is excuted when the trigger is activated
 		Function *function;
@@ -55,7 +55,7 @@ class Trigger: public TableObject{
 		FiringType firing_type;
 
 		//! \brief Map that marks which events activates the trigger
-		map<EventType, bool> events;
+		std::map<EventType, bool> events;
 
 		//! \brief Flag that indicates whether the function must be executed by row
 		bool is_exec_per_row;
@@ -73,13 +73,16 @@ class Trigger: public TableObject{
 		DeferralType deferral_type;
 
 		//! \brief Formats the basic trigger attributes to be used by SchemaParser
-		void setBasicAttributes(unsigned def_type);
+		void setBasicAttributes(SchemaParser::CodeType def_type);
 
 		//! \brief Format the function arguments to be used by the SchemaParser
 		void setArgumentAttribute(unsigned tipo_def);
 
 	public:
-		static constexpr unsigned OldTableName=0, NewTableName=1;
+		enum TransitionTableId: unsigned {
+			OldTableName,
+			NewTableName
+		};
 
 		Trigger();
 
@@ -124,10 +127,10 @@ class Trigger: public TableObject{
 		void setConstraint(bool value);
 
 		//! \brief Defines the transition table name (OLD|NEW) referenced by the trigger
-		void setTransitionTableName(unsigned tab_idx, const QString &name);
+		void setTransitionTableName(TransitionTableId tab_idx, const QString &name);
 
 		//! \brief Returns the transition table name (OLD|NEW) referenced by the trigger
-		QString getTransitionTableName(unsigned tab_idx);
+		QString getTransitionTableName(TransitionTableId tab_idx);
 
 		//! \brief Returns true if the trigger executes on the passed event
 		bool isExecuteOnEvent(EventType event);
@@ -188,17 +191,17 @@ class Trigger: public TableObject{
 	This method is slower than isReferRelationshipAddedColumn() so it's not
 	recommended to use it only check if the object is referencing columns
 	added by relationship */
-		vector<Column *> getRelationshipAddedColumns();
+		std::vector<Column *> getRelationshipAddedColumns();
 
 		//! \brief Returns the SQL / XML definition for the trigger
-		virtual QString getCodeDefinition(unsigned def_type) final;
+		virtual QString getSourceCode(SchemaParser::CodeType def_type) final;
 
 		/*! \brief Validates the trigger attributes according to the docs.
 		This method is executed whenever the trigger is added to a table or view.
 		Normally the user don't need to call it explicitly */
 		void validateTrigger();
 
-		virtual QString getSignature(bool format=true) final;
+		QString getDataDictionary(const attribs_map &extra_attribs);
 };
 
 #endif

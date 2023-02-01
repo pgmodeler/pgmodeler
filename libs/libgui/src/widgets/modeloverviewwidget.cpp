@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -22,7 +22,6 @@
 ModelOverviewWidget::ModelOverviewWidget(QWidget *parent) : QWidget(parent, Qt::WindowCloseButtonHint | Qt::Tool)
 {
 	setupUi(this);
-
 	scrollarea = nullptr;
 	this->model=nullptr;
 	zoom_factor=1;
@@ -54,22 +53,21 @@ void ModelOverviewWidget::show(ModelWidget *model)
 
 	if(this->model)
 	{
-		connect(this->model, SIGNAL(s_objectCreated()), this, SLOT(updateOverview()));
-		connect(this->model, SIGNAL(s_objectRemoved()), this, SLOT(updateOverview()));
-		connect(this->model, SIGNAL(s_objectsMoved()), this, SLOT(updateOverview()));
-		connect(this->model, SIGNAL(s_objectModified()), this, SLOT(updateOverview()));
-		connect(this->model, SIGNAL(s_zoomModified(double)), this, SLOT(updateZoomFactor(double)));
+		connect(this->model, &ModelWidget::s_objectCreated, this, qOverload<>(&ModelOverviewWidget::updateOverview));
+		connect(this->model, &ModelWidget::s_objectRemoved, this, qOverload<>(&ModelOverviewWidget::updateOverview));
+		connect(this->model, &ModelWidget::s_objectsMoved, this, qOverload<>(&ModelOverviewWidget::updateOverview));
+		connect(this->model, &ModelWidget::s_objectModified, this, qOverload<>(&ModelOverviewWidget::updateOverview));
+		connect(this->model, &ModelWidget::s_zoomModified, this, &ModelOverviewWidget::updateZoomFactor);
+		connect(this->model, &ModelWidget::s_modelResized, this, &ModelOverviewWidget::resizeOverview);
+		connect(this->model, &ModelWidget::s_modelResized, this, &ModelOverviewWidget::resizeWindowFrame);
+		connect(this->model, &ModelWidget::s_modelResized, this, qOverload<>(&ModelOverviewWidget::updateOverview));
 
-		connect(this->model, SIGNAL(s_modelResized()), this, SLOT(resizeOverview()));
-		connect(this->model, SIGNAL(s_modelResized()), this, SLOT(resizeWindowFrame()));
-		connect(this->model, SIGNAL(s_modelResized()), this, SLOT(updateOverview()));
+		connect(this->model->viewport->horizontalScrollBar(), &QScrollBar::valueChanged, this, &ModelOverviewWidget::resizeWindowFrame);
+		connect(this->model->viewport->verticalScrollBar(), &QScrollBar::valueChanged, this, &ModelOverviewWidget::resizeWindowFrame);
 
-		connect(this->model->viewport->horizontalScrollBar(), SIGNAL(valueChanged(int)), this, SLOT(resizeWindowFrame()));
-		connect(this->model->viewport->verticalScrollBar(), SIGNAL(valueChanged(int)), this, SLOT(resizeWindowFrame()));
-
-		connect(this->model->scene, SIGNAL(selectionChanged()), this, SLOT(updateOverview()));
-		connect(this->model->scene, SIGNAL(sceneRectChanged(QRectF)),this, SLOT(resizeOverview()));
-		connect(this->model->scene, SIGNAL(sceneRectChanged(QRectF)),this, SLOT(updateOverview()));
+		connect(this->model->scene, &ObjectsScene::selectionChanged, this, qOverload<>(&ModelOverviewWidget::updateOverview));
+		connect(this->model->scene, &ObjectsScene::sceneRectChanged,this, &ModelOverviewWidget::resizeOverview);
+		connect(this->model->scene, &ObjectsScene::sceneRectChanged,this, qOverload<>(&ModelOverviewWidget::updateOverview));
 
 		this->resizeOverview();
 		this->updateZoomFactor(this->model->getCurrentZoom());
@@ -130,7 +128,8 @@ void ModelOverviewWidget::updateOverview(bool force_update)
 		QApplication::setOverrideCursor(Qt::WaitCursor);
 
 		//Creates a pixmap with the size of the scene
-		pix=QPixmap(pixmap_size);
+		pix = QPixmap(pixmap_size);
+		pix.fill(ObjectsScene::getCanvasColor());
 
 		//Draw the scene onto the pixmap
 		QPainter p(&pix);
@@ -148,10 +147,10 @@ void ModelOverviewWidget::updateOverview(bool force_update)
 
 			p.setRenderHints(QPainter::Antialiasing, false);
 			p.setRenderHints(QPainter::TextAntialiasing, false);
-			this->model->scene->render(&p, pix.rect(), scene_rect.toRect());
+			this->model->scene->render(&p, QRect(), scene_rect);
 
 			//Resizes the pixmap to the previous configured QSize
-			label->setPixmap(pix.scaled(curr_size.toSize(), Qt::KeepAspectRatio, Qt::SmoothTransformation));
+			label->setPixmap(pix);
 		}
 
 		label->resize(curr_size.toSize());
@@ -197,8 +196,7 @@ void ModelOverviewWidget::resizeOverview()
 {
 	if(this->model)
 	{
-		QDesktopWidget desktop;
-		QRect screen_rect=qApp->primaryScreen()->geometry();
+		QRect screen_rect = this->screen()->geometry();
 
 		//Make an initial calculation of the overview window size
 		scene_rect=this->model->scene->sceneRect();
@@ -295,7 +293,7 @@ void ModelOverviewWidget::mouseMoveEvent(QMouseEvent *event)
 	if(event->buttons()==Qt::LeftButton)
 	{
 		QRect rect=window_frm->geometry(), rect1;
-		int width = 0, height = 0, x=event->x(), y=event->y() + scrollarea->verticalScrollBar()->value();
+		int width = 0, height = 0, x=event->pos().x(), y=event->pos().y() + scrollarea->verticalScrollBar()->value();
 
 		width=rect.width()/2;
 		height=rect.height()/2;
@@ -318,6 +316,7 @@ void ModelOverviewWidget::mousePressEvent(QMouseEvent *event)
 	{
 		window_frm->setCursor(QCursor(Qt::OpenHandCursor));
 		this->setCursor(QCursor(Qt::OpenHandCursor));
+		model->startPanningMove();
 	}
 }
 
@@ -327,6 +326,7 @@ void ModelOverviewWidget::mouseReleaseEvent(QMouseEvent *event)
 	{
 		window_frm->setCursor(QCursor(Qt::ArrowCursor));
 		this->setCursor(QCursor(Qt::ArrowCursor));
+		model->finishPanningMove();
 	}
 }
 

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -53,17 +53,17 @@ PgSQLTypeWidget::PgSQLTypeWidget(QWidget *parent, const QString &label) : QWidge
 		type_cmb->completer()->setFilterMode(Qt::MatchContains);
 		type_cmb->completer()->setCompletionMode(QCompleter::PopupCompletion);
 
-		connect(type_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(updateTypeFormat()));
-		connect(type_cmb, SIGNAL(currentTextChanged(QString)), this, SLOT(updateTypeFormat()));
-		connect(precision_sb, SIGNAL(valueChanged(int)), this, SLOT(updateTypeFormat()));
-		connect(length_sb, SIGNAL(valueChanged(int)), this, SLOT(updateTypeFormat()));
-		connect(dimension_sb, SIGNAL(valueChanged(int)), this, SLOT(updateTypeFormat()));
-		connect(interval_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(updateTypeFormat()));
-		connect(timezone_chk, SIGNAL(toggled(bool)), this, SLOT(updateTypeFormat()));
-		connect(spatial_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(updateTypeFormat()));
-		connect(var_m_chk, SIGNAL(toggled(bool)), this, SLOT(updateTypeFormat()));
-		connect(var_z_chk, SIGNAL(toggled(bool)), this, SLOT(updateTypeFormat()));
-		connect(srid_spb, SIGNAL(valueChanged(int)), this, SLOT(updateTypeFormat()));
+		connect(type_cmb, &QComboBox::currentIndexChanged, this, &PgSQLTypeWidget::updateTypeFormat);
+		connect(type_cmb, &QComboBox::currentTextChanged, this, &PgSQLTypeWidget::updateTypeFormat);
+		connect(precision_sb, &QSpinBox::valueChanged, this, &PgSQLTypeWidget::updateTypeFormat);
+		connect(length_sb, &QSpinBox::valueChanged, this, &PgSQLTypeWidget::updateTypeFormat);
+		connect(dimension_sb, &QSpinBox::valueChanged, this, &PgSQLTypeWidget::updateTypeFormat);
+		connect(interval_cmb, &QComboBox::currentIndexChanged, this, &PgSQLTypeWidget::updateTypeFormat);
+		connect(timezone_chk, &QCheckBox::toggled, this, &PgSQLTypeWidget::updateTypeFormat);
+		connect(spatial_cmb,  &QComboBox::currentIndexChanged, this, &PgSQLTypeWidget::updateTypeFormat);
+		connect(var_m_chk, &QCheckBox::toggled, this, &PgSQLTypeWidget::updateTypeFormat);
+		connect(var_z_chk, &QCheckBox::toggled, this, &PgSQLTypeWidget::updateTypeFormat);
+		connect(srid_spb, &QSpinBox::valueChanged, this, &PgSQLTypeWidget::updateTypeFormat);
 	}
 	catch(Exception &e)
 	{
@@ -150,7 +150,7 @@ void PgSQLTypeWidget::updateTypeFormat()
 	}
 }
 
-void PgSQLTypeWidget::listPgSQLTypes(QComboBox *combo, DatabaseModel *model, unsigned user_type_conf, bool oid_types, bool pseudo_types)
+void PgSQLTypeWidget::listPgSQLTypes(QComboBox *combo, DatabaseModel *model, UserTypeConfig::TypeConf user_type_conf, bool oid_types, bool pseudo_types)
 {
 	if(combo)
 	{
@@ -174,7 +174,7 @@ void PgSQLTypeWidget::listPgSQLTypes(QComboBox *combo, DatabaseModel *model, uns
 	}
 }
 
-void PgSQLTypeWidget::setAttributes(PgSqlType type, DatabaseModel *model, bool allow_qualifiers,  unsigned usr_type_conf, bool oid_types, bool pseudo_types)
+void PgSQLTypeWidget::setAttributes(PgSqlType type, DatabaseModel *model, bool allow_qualifiers,  UserTypeConfig::TypeConf usr_type_conf, bool oid_types, bool pseudo_types)
 {
 	try
 	{
@@ -189,7 +189,7 @@ void PgSQLTypeWidget::setAttributes(PgSqlType type, DatabaseModel *model, bool a
 
 		//Get the passed type index
 		type_name=~type;
-		type_name.remove(QRegExp(QString("( )(with)(out)?(.)*")));
+		type_name.remove(QRegularExpression(QString("( )(with)(out)?(.)*")));
 		idx=type_cmb->findText(type_name);
 
 		//Select the type on the combo

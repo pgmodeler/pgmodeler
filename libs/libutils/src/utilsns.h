@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -25,6 +25,7 @@
 #ifndef UTILS_NS_H
 #define UTILS_NS_H
 
+#include "utilsglobal.h"
 #include <QString>
 
 namespace UtilsNs {
@@ -51,11 +52,11 @@ namespace UtilsNs {
 
 	/*! \brief Writes the provided buffer to the file specified by its filename
 	 * Raises an exception in case of the file couldn,t be open */
-	extern void saveFile(const QString &filename, const QByteArray &buffer);
+	extern __libutils void saveFile(const QString &filename, const QByteArray &buffer);
 
 	/*! \brief Read the contents of the file specified by its filename returning its contents.
 	 * Raises an exception in case of the file couldn,t be open */
-	extern QByteArray loadFile(const QString &filename);
+	extern __libutils QByteArray loadFile(const QString &filename);
 }
 
 #endif

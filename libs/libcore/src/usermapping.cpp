@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -63,7 +63,7 @@ QString UserMapping::getSignature(bool)
 																		.arg(foreign_server ? foreign_server->getName() : "");
 }
 
-QString UserMapping::getCodeDefinition(unsigned def_type)
+QString UserMapping::getSourceCode(SchemaParser::CodeType def_type)
 {
 	QString code_def=getCachedCode(def_type, false);
 	if(!code_def.isEmpty()) return code_def;
@@ -73,24 +73,24 @@ QString UserMapping::getCodeDefinition(unsigned def_type)
 
 	if(foreign_server)
 	{
-		if(def_type == SchemaParser::SqlDefinition)
+		if(def_type == SchemaParser::SqlCode)
 			attributes[Attributes::Server] = foreign_server->getName(true);
 		else
-			attributes[Attributes::Server] = foreign_server->getCodeDefinition(def_type, true);
+			attributes[Attributes::Server] = foreign_server->getSourceCode(def_type, true);
 	}
 
 	attributes[Attributes::Options] = getOptionsAttribute(def_type);
 
-	return this->BaseObject::__getCodeDefinition(def_type);
+	return this->BaseObject::__getSourceCode(def_type);
 }
 
-QString UserMapping::getAlterDefinition(BaseObject *object)
+QString UserMapping::getAlterCode(BaseObject *object)
 {
 	try
 	{
-		attributes[Attributes::AlterCmds] = BaseObject::getAlterDefinition(object);
+		attributes[Attributes::AlterCmds] = BaseObject::getAlterCode(object);
 		getAlteredAttributes(dynamic_cast<ForeignObject *>(object), attributes);
-		return BaseObject::getAlterDefinition(this->getSchemaName(), attributes, false, true);
+		return BaseObject::getAlterCode(this->getSchemaName(), attributes, false, true);
 	}
 	catch(Exception &e)
 	{
@@ -98,7 +98,7 @@ QString UserMapping::getAlterDefinition(BaseObject *object)
 	}
 }
 
-QString UserMapping::getDropDefinition(bool)
+QString UserMapping::getDropCode(bool)
 {
-	return BaseObject::getDropDefinition(false);
+	return BaseObject::getDropCode(false);
 }

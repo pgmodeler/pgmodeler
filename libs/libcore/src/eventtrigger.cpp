@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -105,14 +105,14 @@ QStringList EventTrigger::getFilter(const QString &variable)
 		return QStringList();
 }
 
-QString EventTrigger::getCodeDefinition(unsigned def_type)
+QString EventTrigger::getSourceCode(SchemaParser::CodeType def_type)
 {
 	QString code_def=getCachedCode(def_type, false);
 	if(!code_def.isEmpty()) return code_def;
 
 	attributes[Attributes::Event]=~event;
 
-	if(def_type==SchemaParser::SqlDefinition)
+	if(def_type==SchemaParser::SqlCode)
 	{
 		QStringList str_list;
 
@@ -127,7 +127,7 @@ QString EventTrigger::getCodeDefinition(unsigned def_type)
 	else
 	{
 		if(function)
-			attributes[Attributes::Function]=function->getCodeDefinition(def_type, true);
+			attributes[Attributes::Function]=function->getSourceCode(def_type, true);
 
 		for(auto &flt : filter)
 			//Creating an element <filter variable="" values=""/>
@@ -137,18 +137,5 @@ QString EventTrigger::getCodeDefinition(unsigned def_type)
 												   .arg(Attributes::Values).arg(flt.second.join(','));
 	}
 
-	return BaseObject::__getCodeDefinition(def_type);
-}
-
-QString EventTrigger::getAlterDefinition(BaseObject *object)
-{
-	try
-	{
-		attributes[Attributes::AlterCmds]=BaseObject::getAlterDefinition(object);
-		return BaseObject::getAlterDefinition(this->getSchemaName(), attributes, false, false);
-	}
-	catch(Exception &e)
-	{
-		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
-	}
+	return BaseObject::__getSourceCode(def_type);
 }

@@ -20,7 +20,6 @@
 	[ (typtype IN ('p','b','c','e','r') AND (typname = 'pg_lsn' OR typname NOT LIKE 'pg_%')) ]
 
 	#Excluding types related to tables/views/sequeces/materialized views/foreign tables
-
 	%if {filter-tab-types} %then
 		[ AND (SELECT count(oid) FROM pg_class WHERE relname=typname AND relkind IN ('r','S','v','m','p','f'))=0 ]
 	%end
@@ -48,99 +47,66 @@
 		#Retrieve the OID for table/view/sequence that generates the composite type
 		[
 		CASE
-		WHEN cl.relkind = 'r' THEN 'table'
-		WHEN cl.relkind = 'S' THEN 'sequence'
-		WHEN cl.relkind = 'v' THEN 'view'
-		WHEN cl.relkind = 'm' THEN 'view'
-		WHEN cl.relkind = 'p' THEN 'table'
-		WHEN cl.relkind = 'f' THEN 'foreigntable'
-		END AS type_class, tp.typrelid AS object_id, ]
+			WHEN cl.relkind = 'r' THEN 'table'
+			WHEN cl.relkind = 'S' THEN 'sequence'
+			WHEN cl.relkind = 'v' THEN 'view'
+			WHEN cl.relkind = 'm' THEN 'view'
+			WHEN cl.relkind = 'p' THEN 'table'
+			WHEN cl.relkind = 'f' THEN 'foreigntable'
+		END AS type_class, tp.typrelid AS object_id, 
 
-		#TODO: Discover which field is the acl for user defined types on PgSQL 9.0
+		tp.typacl AS permission, tp.typcollation AS collation,
 
-		%if ({pgsql-ver} <=f "9.1") %then
-			[ NULL AS permission, ]
-		%else
-			[ tp.typacl AS permission,]
-		%end
-
-		%if ({pgsql-ver} == "9.0") %then
-			[ NULL AS collations, ]
-		%else
-			[ tp.typcollation AS collation, ]
-		%end
-
-		[ CASE
-		WHEN typtype = 'e' THEN 'enumeration'
-		WHEN typtype = 'b' THEN 'base'
-		WHEN typtype = 'c' THEN 'composite'
-		WHEN typtype = 'r' THEN 'range'
-		WHEN typtype = 'd' THEN 'domain'
-		WHEN typtype = 'p' THEN 'pseudo'
+		CASE
+			WHEN typtype = 'e' THEN 'enumeration'
+			WHEN typtype = 'b' THEN 'base'
+			WHEN typtype = 'c' THEN 'composite'
+			WHEN typtype = 'r' THEN 'range'
+			WHEN typtype = 'd' THEN 'domain'
+			WHEN typtype = 'p' THEN 'pseudo'
 		END AS configuration, ]
 
 		# Retrieve the enumaration labels (is null when the type is not an enumeration)
 		[ CASE WHEN typtype = 'e' THEN 
 			(SELECT array_to_string(array_agg(enumlabel),'] $ds [', '') 
 			FROM pg_enum WHERE enumtypid=tp.oid)
-		END AS labels, ]
+		END AS labels,
 
-		%if ({pgsql-ver} >=f "9.3") %then
-			[ ta.typeattrib, ]
-		%else
-			# Retrieve the composite attributes in the sequence: name, type, dimension (for array types), collation (pgsql > 9.0)
-			# separating them by colon.
-			# (this field is null when the type is not a composite)
-			[ CASE WHEN typtype = 'c' THEN
-			(
-			SELECT array_agg(attname ||':'||
-			(SELECT CASE WHEN ns.nspname='public' THEN ns.nspname || '.' ELSE '' END
-			FROM pg_namespace AS ns
-			LEFT JOIN pg_type AS _tp ON _tp.oid = at.atttypid WHERE ns.oid=_tp.typnamespace) ||
-			format_type(atttypid,atttypmod) || ':' || ] %if ({pgsql-ver} == "9.0") %then '0' %else attcollation %end [) FROM pg_attribute AS at
-			WHERE attrelid = cl.oid
-			)
-			END AS typeattrib, ]
-		%end
+		ta.typeattrib, ]
 
 		# Retrieve the range type attributes (is null when the type is not a range) (pgsql >= 9.2)
 
-		%if ({pgsql-ver} >=f "9.2") %then
-			[ CASE WHEN typtype = 'r' THEN (SELECT string_to_array(rngsubtype||':'||rngcollation||':'||rngsubopc::oid||':'||
-			rngcanonical::oid||':'||rngsubdiff::oid, ':')
-			FROM pg_range WHERE rngtypid=tp.oid)
-			END AS range_attribs, ]
-		%end
+		[ CASE WHEN typtype = 'r' THEN (SELECT string_to_array(rngsubtype||':'||rngcollation||':'||rngsubopc::oid||':'||
+		rngcanonical::oid||':'||rngsubdiff::oid, ':')
+		FROM pg_range WHERE rngtypid=tp.oid)
+		END AS range_attribs, 
 
-		[ tp.typinput::oid AS input, tp.typoutput::oid AS output, tp.typreceive::oid AS receive, tp.typsend::oid AS send,
+		tp.typinput::oid AS input, tp.typoutput::oid AS output, tp.typreceive::oid AS receive, tp.typsend::oid AS send,
 		tp.typmodin::oid AS tpmodin, tp.typmodout::oid AS tpmodout, tp.typanalyze::oid AS analyze,
 		tp.typlen AS internal_length, tp.typbyval AS by_value_bool,
 
 		CASE tp.typalign
-		WHEN 'i' THEN 'integer'
-		WHEN 'c' THEN 'char'
-		WHEN 's' THEN 'smallint'
-		ELSE 'double precision'
+			WHEN 'i' THEN 'integer'
+			WHEN 'c' THEN 'char'
+			WHEN 's' THEN 'smallint'
+			ELSE 'double precision'
 		END AS alignment,
 
 		CASE tp.typstorage
-		WHEN 'p' THEN 'plain'
-		WHEN 'm' THEN 'main'
-		WHEN 'x' THEN 'extended'
-		ELSE 'external'
+			WHEN 'p' THEN 'plain'
+			WHEN 'm' THEN 'main'
+			WHEN 'x' THEN 'extended'
+			ELSE 'external'
 		END AS storage,
 
 		tp.typdefault AS default_value, tp.typelem AS element,
 		tp.typdelim AS delimiter, tp.typispreferred AS preferred_bool,
-		tp.typcategory AS category, ]
+		tp.typcategory AS category, 
 
-		%if ({pgsql-ver} == "9.0") %then
-			[ FALSE AS collatable_bool, ]
-		%else
-			[ CASE WHEN tp.typcollation <> 0 THEN TRUE
+		CASE 
+			WHEN tp.typcollation <> 0 THEN TRUE
 			ELSE FALSE
-			END AS collatable_bool, ]
-		%end
+		END AS collatable_bool, ]
 
 		({comment}) [ AS comment ]
 
@@ -149,9 +115,7 @@
 		LEFT JOIN pg_namespace AS ns ON tp.typnamespace = ns.oid ]
 
 		# Retrieving composite type attributes using lateral join on 9.3+ (way more performatic)
-
-		%if ({pgsql-ver} >=f "9.3") %then
-			[ LEFT JOIN LATERAl (
+		[ LEFT JOIN LATERAl (
 			SELECT array_agg(
 			attname
 			|| ':'
@@ -165,13 +129,11 @@
 			JOIN pg_namespace AS ns ON ns.oid = _tp.typnamespace
 			WHERE at.attrelid = cl.oid
 			) ta ON (TRUE) ]
-		%end
 
 		#Excluding types related to tables/views/sequeces
 		[ WHERE typtype IN ('p','b','c','e','r', 'd') AND (typname = 'pg_lsn' OR typname NOT LIKE 'pg_%') ]
 
 		#Excluding types related to tables/views/sequeces/materialized views
-
 		%if {filter-tab-types} %then
 			[ AND (SELECT count(oid) FROM pg_class WHERE relname=typname AND relkind IN ('r','S','v','m','p','f'))=0 ]
 		%end

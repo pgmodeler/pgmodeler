@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -31,10 +31,10 @@
 #include "pgsqltypes/executiontype.h"
 #include "pgsqltypes/eventtype.h"
 
-class Rule: public TableObject{
+class __libcore Rule: public TableObject{
 	private:
 		//! \brief Commands executed by the rule when activated
-		vector<QString> commands;
+		std::vector<QString> commands;
 
 		//! \brief Conditional expression for the rule activation
 		QString conditional_expr;
@@ -85,9 +85,7 @@ class Rule: public TableObject{
 		void removeCommands();
 
 		//! \brief Returns the SQL / XML definition for the rule
-		virtual QString getCodeDefinition(unsigned def_type) final;
-
-		virtual QString getSignature(bool format=true) final;
+		virtual QString getSourceCode(SchemaParser::CodeType def_type) final;
 };
 
 #endif

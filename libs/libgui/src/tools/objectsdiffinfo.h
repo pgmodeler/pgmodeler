@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -26,26 +26,30 @@ are emitted during the diff process on ModelsDiffHelper class.
 #ifndef OBJECTS_DIFF_INFO_H
 #define OBJECTS_DIFF_INFO_H
 
+#include "guiglobal.h"
 #include "tableobject.h"
 
-class ObjectsDiffInfo {
+class __libgui ObjectsDiffInfo {
+	public:
+		enum DiffType: unsigned {
+			CreateObject,
+			DropObject,
+			AlterObject,
+			IgnoreObject,
+			NoDifference
+		};
+
 	private:
 		//! \brief Difference type (see constants below)
-		unsigned diff_type;
+		DiffType diff_type;
 
 		BaseObject *object, *old_object;
 
 	public:
-		static constexpr unsigned CreateObject=0,
-		DropObject=1,
-		AlterObject=2,
-		IgnoreObject=3,
-		NoDifference=4;
-
 		ObjectsDiffInfo();
-		ObjectsDiffInfo(unsigned diff_type, BaseObject *ref_object, BaseObject *old_object);
+		ObjectsDiffInfo(DiffType diff_type, BaseObject *ref_object, BaseObject *old_object);
 
-		unsigned getDiffType();
+		DiffType getDiffType();
 		QString getInfoMessage();
 		QString getDiffTypeString();
 		BaseObject *getObject();
@@ -56,5 +60,10 @@ class ObjectsDiffInfo {
 		friend class ModelsDiffHelper;
 		friend class QVariant;
 };
+
+/* Registering the ObjectsDiffInfo class as a Qt MetaType in order to make
+ * it liable to be sent through signal parameters as well as to be
+ * to be used by QVariant */
+Q_DECLARE_METATYPE(ObjectsDiffInfo)
 
 #endif

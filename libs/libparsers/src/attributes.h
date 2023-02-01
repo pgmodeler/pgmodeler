@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -28,13 +28,11 @@
 #ifndef ATTRIBUTES_H
 #define ATTRIBUTES_H
 
-/* Including QByteArray due to 'QByteArray has no toStdString()'
-   error on Qt 5.4 (Windows only) */
-#include <QByteArray>
+#include "parsersglobal.h"
 #include <QString>
 
 namespace Attributes {
-	extern const QString
+	extern __libparsers const QString
 	Action,
 	ActiveLayers,
 	AdminOption,
@@ -63,12 +61,14 @@ namespace Attributes {
 	AttribsPage,
 	AttribsPerPage,
 	Attribute,
+	Attributes,
 	AutoBrowseDb,
 	AutoSaveInterval,
 	BackgroundColor,
 	BaseType,
 	Before,
 	BehaviorType,
+	Big,
 	Bold,
 	BorderColor,
 	Bottom,
@@ -91,10 +91,8 @@ namespace Attributes {
 	CheckVersions,
 	CkConstr,
 	ClientEncoding,
+	Code,
 	CodeCompletion,
-	CodeFont,
-	CodeFontSize,
-	CodeTabWidth,
 	ColIndexes,
 	ColIsIdentity,
 	CollapseMode,
@@ -155,9 +153,12 @@ namespace Attributes {
 	CustomColor,
 	CustomFilter,
 	CustomIdxs,
+	CustomScale,
 	Cycle,
+	Dark,
 	Database,
 	DataDirectory,
+	DataDictIndex,
 	Date,
 	DbModel,
 	DdlEndToken,
@@ -180,6 +181,7 @@ namespace Attributes {
 	DelEvent,
 	Delimiter,
 	DelimitersColor,
+	Design,
 	DestType,
 	Deterministic,
 	Diff,
@@ -190,6 +192,7 @@ namespace Attributes {
 	DockWidgets,
 	DomConstraint,
 	DontDropMissingObjs,
+	Dot,
 	Drop,
 	DropCmds,
 	DropMissingColsConstrs,
@@ -249,6 +252,7 @@ namespace Attributes {
 	FilterTableTypes,
 	FinalFunc,
 	FiringType,
+	FirstRun,
 	FkColumn,
 	FkConstr,
 	FkDefs,
@@ -276,6 +280,7 @@ namespace Attributes {
 	GrantOp,
 	GridSize,
 	GridColor,
+	GridPattern,
 	Group,
 	HandlerFunc,
 	HandlesType,
@@ -291,6 +296,7 @@ namespace Attributes {
 	HighlightOrder,
 	HistoryMaxLength,
 	Icon,
+	IconsSize,
 	Id,
 	IdentFile,
 	Identifier,
@@ -360,17 +366,20 @@ namespace Attributes {
 	LeftType,
 	Length,
 	Library,
+	Light,
 	LikeType,
 	Line,
 	LineHighlightColor,
 	LineNumbersBgColor,
 	LineNumbersColor,
 	Link,
+	LinkMode,
 	ListenAddresses,
 	Locale,
 	LocaleMod,
 	LockerArc,
 	LockerBody,
+	LockPageDelimResize,
 	Login,
 	LookaheadChar,
 	LowVerbosity,
@@ -379,6 +388,7 @@ namespace Attributes {
 	Maximized,
 	MaxObjCount,
 	MaxValue,
+	Medium,
 	Member,
 	MemberRoles,
 	Merges,
@@ -411,10 +421,12 @@ namespace Attributes {
 	ObjectType,
 	ObjCount,
 	ObjSelection,
+	ObjShadow,
 	Oid,
 	OidFilterOp,
 	Oids,
 	OldName,
+	OldPgSqlVersions,
 	OldTableName,
 	OldVersion,
 	OpClass,
@@ -470,6 +482,7 @@ namespace Attributes {
 	PkPattern,
 	Placeholder,
 	Placeholders,
+	Plugin,
 	Points,
 	Port,
 	Portrait,
@@ -555,6 +568,7 @@ namespace Attributes {
 	SelectPriv,
 	SendFunc,
 	Sequence,
+	Sequences,
 	Server,
 	ServerEncoding,
 	ServerPid,
@@ -576,6 +590,7 @@ namespace Attributes {
 	SimplifiedObjCreation,
 	SinglePkColumn,
 	Size,
+	Small,
 	Snippet,
 	SortOp,
 	SourceEditorApp,
@@ -588,6 +603,7 @@ namespace Attributes {
 	SqlObject,
 	SqlTool,
 	SqlValidation,
+	Square,
 	SrcColPattern,
 	SrcColumns,
 	SrcEncoding,
@@ -617,6 +633,8 @@ namespace Attributes {
 	SubtypeDiffFunc,
 	Superuser,
 	Symbol,
+	SyntaxHlTheme,
+	System,
 	Table,
 	TableTogglerButtons,
 	TableTogglerBody,
@@ -629,6 +647,7 @@ namespace Attributes {
 	TableTitle,
 	TableType,
 	Tag,
+	TabWidth,
 	TemplateDb,
 	TemporaryPriv,
 	Top,
@@ -654,6 +673,7 @@ namespace Attributes {
 	Types,
 	TyplesUpd,
 	UiLanguage,
+	UiTheme,
 	Undefined,
 	Underline,
 	Unique,

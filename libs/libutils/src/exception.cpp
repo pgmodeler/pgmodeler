@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -88,7 +88,7 @@ QString Exception::messages[Exception::ErrorCount][2]={
 	{"RefTypeInvalidIndex", QT_TR_NOOP("Reference to data type with an index outside the capacity of data types list!")},
 	{"AsgNullTypeObject", QT_TR_NOOP("Assignment of a null type to object `%1' (%2)!")},
 	{"AsgInvalidTypeObject", QT_TR_NOOP("Assignment of invalid type to the object!")},
-	{"AsgEmptyDirectoryName", QT_TR_NOOP("Assignment of an empty directory to object `%1' (%2)!")},
+	{"AsgEmptyDirectoryName", QT_TR_NOOP("Assignment of an empty directory to tablespace `%1'!")},
 	{"ObtTypesInvalidQuantity", QT_TR_NOOP("Obtaining types with invalid quantity!")},
 	{"InsDuplicatedItems", QT_TR_NOOP("Insertion of item which already exists in the attributes list of the type!")},
 	{"InsInvalidTypeAttribute", QT_TR_NOOP("Insertion of invalid item in the attributes list of the type!")},
@@ -216,7 +216,7 @@ QString Exception::messages[Exception::ErrorCount][2]={
 	{"InvUseConstraintTriggerAttribs", QT_TR_NOOP("Only constraint triggers can be deferrable or reference another table!")},
 	{"RefInvalidFunctionIdTypeConfig", QT_TR_NOOP("Reference to a function id which is incompatible with the user define type configuration!")},
 	{"AsgInvalidOpClassObject", QT_TR_NOOP("The operator class assigned to the object `%1' (%2) must use `btree' as indexing method!")},
-	{"InvPostgreSQLVersion", QT_TR_NOOP("Unsupported PostgreSQL version (%1) detected! Valid versions are between %2 and %3.")},
+	{"InvPostgreSQLVersion", QT_TR_NOOP("Unsupported PostgreSQL version (%1) detected! Valid versions must be between %2 and %3.")},
 	{"ValidationFailure", QT_TR_NOOP("The validation process failed due to an error triggered by the validation helper. For more details about the error check the exception stack!")},
 	{"ExtensionHandlingTypeImmutable", QT_TR_NOOP("The extension `%1' is registered as a data type and cannot have the attribute `handles datatype' modified!")},
 	{"InvAllocationFKRelationship", QT_TR_NOOP("The fk relationship `%1' cannot be created because the foreign-key that represents it was not created on table `%2'!")},
@@ -228,7 +228,7 @@ QString Exception::messages[Exception::ErrorCount][2]={
 	{"InvIdSwapSameObject", QT_TR_NOOP("Invalid object id swapping operation! The objects involved are the same!")},
 	{"InvIdSwapInvalidObjectType", QT_TR_NOOP("Invalid object swapping operation! The database, tablespaces and roles can have the ids swapped with only other objects of the same kind!")},
 	{"AsgWidgetAlreadyHasParent", QT_TR_NOOP("The widget already has a parent and cannot be assigned to a different object!")},
-	{"ObjectNotImported",  QT_TR_NOOP("The object `%1' (%2), oid `%3', could not be imported due to one or more errors! Check the exception stack for more details. `HINT:' if the object somehow references objects in `pg_catalog' or `information_schema' consider enable the importing of system objects.")},
+	{"ObjectNotImported",  QT_TR_NOOP("The object `%1' (%2), oid `%3', could not be imported due to one or more errors! Check the exception stack for more details. `HINT:' if the object somehow references objects in `pg_catalog' or `information_schema' consider enable the importing of system/extension objects.")},
 	{"ModelFileNotLoaded", QT_TR_NOOP("Could not load the database model file `%1'. Check the error stack to see details. Try to run `pgmodeler-cli --fix-model' in order to correct the structure of the file if that is the case.")},
 	{"InvColumnTableType", QT_TR_NOOP("The column `%1' cannot reference it's parent table `%2' as data type!")},
 	{"OprInvalidElementId", QT_TR_NOOP("Operation with an invalid element id `%1'!")},
@@ -241,7 +241,7 @@ QString Exception::messages[Exception::ErrorCount][2]={
 	{"RowDataNotManipulated", QT_TR_NOOP("Could not perform the `%1' operation on `%2' using the data on row `%3'! All changes were rolled back. \n\n ** Returned error ** \n\n%4")},
 	{"MalformedUnescapedValue", QT_TR_NOOP("Malformed unescaped value on row `%1' column `%2'!")},
 	{"UndoRedoOperationInvalidObject", QT_TR_NOOP("Trying to undo/redo an invalid operation over an object that does not exists anymore or can't be handled! The operation history will be cleaned up.")},
-	{"RequiredFieldsNotFilled", QT_TR_NOOP("The object `%1' (%2) can't be handled because some needed fields are not set! Please, make sure to fill at least the requires fields in order to properly create or update the object.")},
+	{"RequiredFieldsNotFilled", QT_TR_NOOP("The object `%1' (%2) can't be handled because some needed fields are not set! Please, make sure to fill at least the required fields in order to properly create or update the object.")},
 	{"InvRelationshipIdSwap", QT_TR_NOOP("A relationship can only be swapped by other object of the same kind!")},
 	{"InvInheritParentTableNotFound", QT_TR_NOOP("A parent table of `%1' which OID is `%2' was not found in the set of imported objects!")},
 	{"AsgEnumInvalidChars", QT_TR_NOOP("The enumeration `%1' can't be assigned to the type `%2' because contains invalid characters!")},
@@ -263,7 +263,7 @@ QString Exception::messages[Exception::ErrorCount][2]={
 	{"AsgInvalidNameObjReference", QT_TR_NOOP("Assignment of an invalid name to the object reference!")},
 	{"AsgNotAllocatedObjectReference", QT_TR_NOOP("Assignment of a not allocated object to the object reference!")},
 	{"InsDuplicatedObjectReference", QT_TR_NOOP("The object reference name `%1' is already defined!")},
-	{"ModelFileInvalidSize", QT_TR_NOOP("A zero-byte file was detected while saving to `%1'. In order to avoid data loss the original contents of the file prior to the last saving was restored and a security copy kept on `%2'. You can copy that backup file to a safe place as a last resort to avoid the complete data loss! Note that the backup file will be erased when the application is closed.")},
+	{"ModelFileInvalidSize", QT_TR_NOOP("An empty file was detected after saving the database model to `%1'. In order to avoid data loss, the original contents of the file prior to the last saving was saved to `%2'!")},
 	{"AsgInvalidObjectForeignTable", QT_TR_NOOP("The object `%1' (%2) can't be assigned to the foreign table `%3' because it's unsupported! Foreign tables only accepts columns, check constraints and triggers.")},
 	{"InvRelTypeForeignTable", QT_TR_NOOP("The creation of the relationship `%1' between the tables `%2' and `%3' can't be done because one of the entities is a foreign table. Foreign tables can only be part of a inheritance, copy or partitioning relationship!")},
 	{"InvCopyRelForeignTable", QT_TR_NOOP("The creation of the copy relationship `%1' between the tables `%2' and `%3' can't be done because a foreign table is not allowed to copy table columns!")},
@@ -271,11 +271,19 @@ QString Exception::messages[Exception::ErrorCount][2]={
 	{"InitialUserConfigNotCreated", QT_TR_NOOP("Failed to create initial configuration in `%1'! Check if the current user has write permission over that path and at least read permission over `%2'.")},
 	{"InvalidObjectFilter", QT_TR_NOOP("An invalid object filter was detected: `%1'! Filters should have the following format: `[object type]:[pattern]:[%2]'.")},
 	{"InvChildObjectTypeFilter", QT_TR_NOOP("The object type `%1' is not a valid table child object type!")},
-	{"InvChangelogEntryValues", QT_TR_NOOP("Trying to register a changelog entry with invalid values(s)!")},
+	{"InvChangelogEntryValues", QT_TR_NOOP("Trying to register a changelog entry with invalid values: `%1', `%2', `%3', `%4'!")},
 	{"InvProcedureParamOutMode", QT_TR_NOOP("Parameters using `out' mode are not supported by procedures! Use `inout' instead.") },
 	{"ExportFailureDbSQLDisabled", QT_TR_NOOP("The SQL code of the database `%1' is disabled! The export process can't proceed. Please, enable the SQL code of the mentioned object and try again.")},
 	{"InvConfigParameterName", QT_TR_NOOP("Invalid configuration parameter `%1' assigned to the function `%2'!")},
-	{"EmptyConfigParameterValue", QT_TR_NOOP("Empty value assigned to the configuration parameter `%1' in the function `%2'!")}
+	{"EmptyConfigParameterValue", QT_TR_NOOP("Empty value assigned to the configuration parameter `%1' in the function `%2'!")},
+	{"InvGroupRegExpPattern", QT_TR_NOOP("Invalid regexp pattern detected in syntax highlighting group `%1' at file `%2'! Error detected: `%3'")},
+	{"UnsupportedPGVersion", QT_TR_NOOP("Unsupported PostgreSQL version `%1' detected! pgModeler supports only PostgreSQL 10 and above.")},
+	{"InvCodeGenerationMode", QT_TR_NOOP("Invalid code generation mode `%1' specified!")},
+	{"InvCsvParserOptions", QT_TR_NOOP("The characters for text delimiter, value separator, and line break in CSV document must be different from each other!")},
+	{"MalformedCsvInvalidCols", QT_TR_NOOP("Malformed CSV document detected! The number of columns is `%1' but the row `%2' has `%3' columns!")},
+	{"MalformedCsvMissingDelim", QT_TR_NOOP("Malformed CSV document detected! Missing close text delimiter `%1' row `%2'!")},
+	{"RefInvCsvDocumentValue", QT_TR_NOOP("Trying to get a value from the CSV document in an invalid position: row `%1', column `%2'!")},
+	{"ModelFileSaveFailure", QT_TR_NOOP("Failed to save the database model to file `%1'! In order to avoid data loss, the backup file `%2' was restored. Note that the backup file will not be erased automatically, the user must delete it manually or, if preferred, copy it to a safe place to have an extra security copy!")},
 };
 
 Exception::Exception()
@@ -294,7 +302,7 @@ Exception::Exception(ErrorCode error_code, const QString &method, const QString 
 	/* Because the Exception class is not derived from QObject the function tr() is inefficient to translate messages
 		so the translation method is called  directly from the application specifying the
 		context (Exception) in the ts file and the text to be translated */
-	configureException(QApplication::translate("Exception",messages[enum_cast(error_code)][ErrorMessage].toStdString().c_str(),"", -1),
+	configureException(QApplication::translate("Exception",messages[enum_t(error_code)][ErrorMessage].toStdString().c_str(),"", -1),
 						 error_code, method, file, line, extra_info);
 
 	if(exception) addException(*exception);
@@ -306,14 +314,14 @@ Exception::Exception(const QString &msg, ErrorCode error_code, const QString &me
 	if(exception) addException(*exception);
 }
 
-Exception::Exception(ErrorCode error_code, const QString &method, const QString &file, int line, vector<Exception> &exceptions, const QString &extra_info)
+Exception::Exception(ErrorCode error_code, const QString &method, const QString &file, int line, std::vector<Exception> &exceptions, const QString &extra_info)
 {
-	vector<Exception>::iterator itr, itr_end;
+	std::vector<Exception>::iterator itr, itr_end;
 
 	/* Because the Exception class is not derived from QObject the function tr() is inefficient to translate messages
 		so the translation method is called  directly from the application specifying the
 		context (Exception) in the ts file and the text to be translated */
-	configureException(QApplication::translate("Exception",messages[enum_cast(error_code)][ErrorMessage].toStdString().c_str(),"",-1),
+	configureException(QApplication::translate("Exception",messages[enum_t(error_code)][ErrorMessage].toStdString().c_str(),"",-1),
 						 error_code, method, file, line, extra_info);
 
 	itr=exceptions.begin();
@@ -325,9 +333,9 @@ Exception::Exception(ErrorCode error_code, const QString &method, const QString 
 	}
 }
 
-Exception::Exception(const QString &msg, const QString &method, const QString &file, int line, vector<Exception> &exceptions, const QString &extra_info)
+Exception::Exception(const QString &msg, const QString &method, const QString &file, int line, std::vector<Exception> &exceptions, const QString &extra_info)
 {
-	vector<Exception>::iterator itr, itr_end;
+	std::vector<Exception>::iterator itr, itr_end;
 
 	configureException(msg,ErrorCode::Custom, method, file, line, extra_info);
 
@@ -340,27 +348,27 @@ Exception::Exception(const QString &msg, const QString &method, const QString &f
 	}
 }
 
-Exception::Exception(const QString &msg, ErrorCode error_code, const QString &method, const QString &file, int line, vector<Exception> &exceptions, const QString &extra_info)
+Exception::Exception(const QString &msg, ErrorCode error_code, const QString &method, const QString &file, int line, std::vector<Exception> &exceptions, const QString &extra_info)
 {
-	vector<Exception>::iterator itr=exceptions.begin();
+	std::vector<Exception>::iterator itr=exceptions.begin();
 
 	configureException(msg,error_code, method, file, line, extra_info);
 
 	while(itr!=exceptions.end())
 	{
-		addException((*itr));
+		addException(*itr);
 		itr++;
 	}
 }
 
 void Exception::configureException(const QString &msg, ErrorCode error_code, const QString &method, const QString &file, int line, const QString &extra_info)
 {
-	this->error_code=error_code;
-	this->error_msg=msg;
-	this->method=method;
-	this->file=file;
-	this->line=line;
-	this->extra_info=QString(extra_info);
+	this->error_code = error_code;
+	this->error_msg = msg;
+	this->method = method;
+	this->file = file;
+	this->line = line;
+	this->extra_info = extra_info;
 }
 
 QString Exception::getErrorMessage()
@@ -370,21 +378,15 @@ QString Exception::getErrorMessage()
 
 QString Exception::getErrorMessage(ErrorCode error_code)
 {
-	if(enum_cast(error_code) < ErrorCount)
-		/* Because the Exception class is not derived from QObject the function tr() is inefficient to translate messages
-		 so the translation method is called  directly from the application specifying the
-		 context (Exception) in the ts file and the text to be translated */
-		return QApplication::translate("Exception", messages[enum_cast(error_code)][ErrorMessage].toStdString().c_str(), "", -1);
-	else
-		return "";
+	/* Because the Exception class is not derived from QObject the function tr() is inefficient to translate messages
+	 so the translation method is called  directly from the application specifying the
+	 context (Exception) in the ts file and the text to be translated */
+	return QApplication::translate("Exception", messages[enum_t(error_code)][ErrorMessage].toStdString().c_str(), "", -1);
 }
 
 QString Exception::getErrorCode(ErrorCode error_code)
 {
-	if(enum_cast(error_code) < ErrorCount)
-		return messages[enum_cast(error_code)][ErrorCodeId];
-	else
-		return "";
+	return messages[enum_t(error_code)][ErrorCodeId];
 }
 
 QString Exception::getMethod()
@@ -414,23 +416,26 @@ QString Exception::getExtraInfo()
 
 void Exception::addException(Exception &exception)
 {
-	vector<Exception>::iterator itr, itr_end;
+	std::vector<Exception>::iterator itr, itr_end;
 
 	itr=exception.exceptions.begin();
 	itr_end=exception.exceptions.end();
 
-	while(itr!=itr_end)
+	for(auto &itr : exception.exceptions)
 	{
-		this->exceptions.push_back(Exception(itr->error_msg,itr->error_code,
-											 itr->method,itr->file,itr->line,nullptr,itr->extra_info));
-		itr++;
+		this->exceptions.push_back(Exception(itr.error_msg,itr.error_code,
+																				 itr.method, itr.file, itr.line, nullptr,
+																				 itr.extra_info));
 	}
+
 	exception.exceptions.clear();
+
 	this->exceptions.push_back(Exception(exception.error_msg,exception.error_code,
-										 exception.method,exception.file,exception.line,nullptr,exception.extra_info));
+																			 exception.method,exception.file,exception.line,
+																			 nullptr,exception.extra_info));
 }
 
-void Exception::getExceptionsList(vector<Exception> &list)
+void Exception::getExceptionsList(std::vector<Exception> &list)
 {
 	list.assign(this->exceptions.begin(), this->exceptions.end());
 	list.push_back(Exception(this->error_msg,this->error_code,
@@ -439,8 +444,8 @@ void Exception::getExceptionsList(vector<Exception> &list)
 
 QString Exception::getExceptionsText()
 {
-	vector<Exception> exceptions;
-	vector<Exception>::reverse_iterator itr, itr_end;
+	std::vector<Exception> exceptions;
+	std::vector<Exception>::reverse_iterator itr, itr_end;
 	unsigned idx=0, hidden_errors_cnt = 0;
 	QString exceptions_txt;
 	bool stack_truncated = false;
@@ -481,3 +486,16 @@ QString Exception::getExceptionsText()
 	return exceptions_txt;
 }
 
+QString Exception::getExceptiosExtraInfo()
+{
+	QStringList list;
+
+	for(auto &ex : exceptions)
+		list.prepend(ex.extra_info);
+
+	list.prepend(extra_info);
+	list.removeAll("");
+	list.removeDuplicates();
+
+	return list.join('\n');
+}

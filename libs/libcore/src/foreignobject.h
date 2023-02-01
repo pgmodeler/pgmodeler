@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -25,10 +25,11 @@
 #ifndef FOREIGN_OBJECT_H
 #define FOREIGN_OBJECT_H
 
+#include "coreglobal.h"
 #include "attribsmap.h"
 #include "schemaparser.h"
 
-class ForeignObject {
+class __libcore ForeignObject {
 	protected:
 		//! \brief A set of key/value options associated to the foreign object
 		attribs_map options;

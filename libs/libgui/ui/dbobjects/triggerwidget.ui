@@ -18,16 +18,19 @@
   </property>
   <layout class="QGridLayout" name="trigger_grid">
    <property name="leftMargin">
-    <number>4</number>
+    <number>5</number>
    </property>
    <property name="topMargin">
-    <number>4</number>
+    <number>5</number>
    </property>
    <property name="rightMargin">
-    <number>4</number>
+    <number>5</number>
    </property>
    <property name="bottomMargin">
-    <number>4</number>
+    <number>5</number>
+   </property>
+   <property name="spacing">
+    <number>5</number>
    </property>
    <item row="1" column="0">
     <widget class="QLabel" name="event_lbl">
@@ -72,25 +75,35 @@
      <property name="currentIndex">
       <number>0</number>
      </property>
+     <property name="iconSize">
+      <size>
+       <width>22</width>
+       <height>22</height>
+      </size>
+     </property>
      <widget class="QWidget" name="tab">
+      <attribute name="icon">
+       <iconset resource="../../res/resources.qrc">
+        <normaloff>:/icons/icons/usertype.png</normaloff>:/icons/icons/usertype.png</iconset>
+      </attribute>
       <attribute name="title">
-       <string>Arguments</string>
+       <string>&amp;Arguments</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout">
        <property name="leftMargin">
-        <number>4</number>
+        <number>5</number>
        </property>
        <property name="topMargin">
-        <number>4</number>
+        <number>5</number>
        </property>
        <property name="rightMargin">
-        <number>4</number>
+        <number>5</number>
        </property>
        <property name="bottomMargin">
-        <number>4</number>
+        <number>5</number>
        </property>
        <property name="spacing">
-        <number>6</number>
+        <number>5</number>
        </property>
        <item row="0" column="0">
         <widget class="QLabel" name="argument_lbl">
@@ -118,24 +131,28 @@
       <property name="enabled">
        <bool>false</bool>
       </property>
+      <attribute name="icon">
+       <iconset resource="../../res/resources.qrc">
+        <normaloff>:/icons/icons/column.png</normaloff>:/icons/icons/column.png</iconset>
+      </attribute>
       <attribute name="title">
-       <string>Columns</string>
+       <string>Co&amp;lumns</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout_2">
        <property name="leftMargin">
-        <number>4</number>
+        <number>5</number>
        </property>
        <property name="topMargin">
-        <number>4</number>
+        <number>5</number>
        </property>
        <property name="rightMargin">
-        <number>4</number>
+        <number>5</number>
        </property>
        <property name="bottomMargin">
-        <number>4</number>
+        <number>5</number>
        </property>
        <property name="spacing">
-        <number>6</number>
+        <number>5</number>
        </property>
        <item row="0" column="0">
         <widget class="QLabel" name="column_lbl">
@@ -176,26 +193,39 @@
            <height>16777215</height>
           </size>
          </property>
+         <property name="iconSize">
+          <size>
+           <width>28</width>
+           <height>28</height>
+          </size>
+         </property>
         </widget>
        </item>
       </layout>
      </widget>
      <widget class="QWidget" name="tab_3">
+      <attribute name="icon">
+       <iconset resource="../../res/resources.qrc">
+        <normaloff>:/icons/icons/constraint.png</normaloff>:/icons/icons/constraint.png</iconset>
+      </attribute>
       <attribute name="title">
-       <string>Constraint</string>
+       <string>Co&amp;nstraint</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout_3">
        <property name="leftMargin">
-        <number>4</number>
+        <number>5</number>
        </property>
        <property name="topMargin">
-        <number>4</number>
+        <number>5</number>
        </property>
        <property name="rightMargin">
-        <number>4</number>
+        <number>5</number>
        </property>
        <property name="bottomMargin">
-        <number>4</number>
+        <number>5</number>
+       </property>
+       <property name="spacing">
+        <number>5</number>
        </property>
        <item row="0" column="0">
         <widget class="QLabel" name="options_lbl">
@@ -227,6 +257,9 @@
        </item>
        <item row="0" column="1">
         <layout class="QHBoxLayout" name="horizontalLayout">
+         <property name="spacing">
+          <number>5</number>
+         </property>
          <item>
           <widget class="QCheckBox" name="deferrable_chk">
            <property name="enabled">
@@ -276,6 +309,12 @@
             <size>
              <width>16777215</width>
              <height>16777215</height>
+            </size>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>28</width>
+             <height>28</height>
             </size>
            </property>
           </widget>
@@ -385,6 +424,9 @@
       </size>
      </property>
      <layout class="QHBoxLayout" name="horizontalLayout_2">
+      <property name="spacing">
+       <number>5</number>
+      </property>
       <property name="leftMargin">
        <number>0</number>
       </property>
@@ -577,6 +619,12 @@
        <height>16777215</height>
       </size>
      </property>
+     <property name="iconSize">
+      <size>
+       <width>28</width>
+       <height>28</height>
+      </size>
+     </property>
     </widget>
    </item>
    <item row="2" column="0">
@@ -648,16 +696,19 @@
      </property>
      <layout class="QGridLayout" name="gridLayout_5">
       <property name="leftMargin">
-       <number>4</number>
+       <number>5</number>
       </property>
       <property name="topMargin">
-       <number>4</number>
+       <number>5</number>
       </property>
       <property name="rightMargin">
-       <number>4</number>
+       <number>5</number>
       </property>
       <property name="bottomMargin">
-       <number>4</number>
+       <number>5</number>
+      </property>
+      <property name="spacing">
+       <number>5</number>
       </property>
       <item row="0" column="1">
        <widget class="QLineEdit" name="old_table_edt">
@@ -705,12 +756,26 @@
   </layout>
  </widget>
  <tabstops>
-  <tabstop>deferrable_chk</tabstop>
-  <tabstop>deferral_type_cmb</tabstop>
+  <tabstop>ordinary_rb</tabstop>
+  <tabstop>constraint_rb</tabstop>
+  <tabstop>insert_chk</tabstop>
+  <tabstop>delete_chk</tabstop>
+  <tabstop>update_chk</tabstop>
+  <tabstop>truncate_chk</tabstop>
+  <tabstop>firing_mode_cmb</tabstop>
+  <tabstop>exec_per_row_chk</tabstop>
+  <tabstop>old_table_edt</tabstop>
+  <tabstop>new_table_edt</tabstop>
   <tabstop>arg_cols_tbw</tabstop>
   <tabstop>argument_edt</tabstop>
   <tabstop>column_cmb</tabstop>
+  <tabstop>deferrable_chk</tabstop>
+  <tabstop>deferral_type_cmb</tabstop>
+  <tabstop>cond_expr_txt</tabstop>
  </tabstops>
- <resources/>
+ <resources>
+  <include location="../../res/resources.qrc"/>
+  <include location="../../res/resources.qrc"/>
+ </resources>
  <connections/>
 </ui>

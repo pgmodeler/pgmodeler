@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -35,7 +35,23 @@
 #include "pgsqltypes/matchtype.h"
 #include "pgsqltypes/actiontype.h"
 
-class Constraint: public TableObject{
+class __libcore Constraint: public TableObject{
+	public:
+		enum ColumnsId: unsigned {
+			/*! \brief Access the source columns that means the columns that constrais
+			is applied (from the constraint's parent table) */
+			SourceCols,
+
+			/*! \brief Access the referenced columns that means the columns from the
+															 referenced table primary key (only for foreign keys) */
+			ReferencedCols
+		};
+
+		enum ActionEvent: unsigned {
+			DeleteAction,
+			UpdateAction
+		};
+
 	private:
 		//! \brief Type of the constraint (primary key, foreign key, unique or check)
 		ConstraintType constr_type;
@@ -65,13 +81,13 @@ class Constraint: public TableObject{
 		ActionType del_action, upd_action;
 
 		//! \brief Stores the columns that is referenced by the constraint (except for check constraints)
-		vector<Column *> columns;
+		std::vector<Column *> columns;
 
 		//! \brief Stores the referenced columns from the referenced table primary key
-		vector<Column *> ref_columns;
+		std::vector<Column *> ref_columns;
 
 		//! \brief Stores the exclude elements of the exclude constraint
-		vector<ExcludeElement> excl_elements;
+		std::vector<ExcludeElement> excl_elements;
 
 		//! \brief Stores the check expression or the exclude predicate (only for check and exclude constraints)
 		QString expression;
@@ -80,10 +96,10 @@ class Constraint: public TableObject{
 		BaseTable *ref_table;
 
 		//! \brief Formats the string for constraint columns to be used by the SchemaParser
-		void setColumnsAttribute(unsigned col_type, unsigned def_type, bool inc_addedbyrel=false);
+		void setColumnsAttribute(ColumnsId cols_id, unsigned def_type, bool inc_addedbyrel=false);
 
 		//! \brief Formats the exclude elements string used by the SchemaParser
-		void setExcludeElementsAttribute(unsigned def_type);
+		void setExcludeElementsAttribute(SchemaParser::CodeType def_type);
 
 		void setDeclInTableAttribute();
 
@@ -91,36 +107,25 @@ class Constraint: public TableObject{
 		virtual void configureSearchAttributes();
 
 	public:
-		/*! \brief Access the source columns that means the columns that constrais
-		is applied (from the constraint's parent table) */
-		static constexpr unsigned SourceCols=0,
-
-		/*! \brief Access the referenced columns that means the columns from the
-														 referenced table primary key (only for foreign keys) */
-		ReferencedCols=1;
-
-		static constexpr unsigned DeleteAction=0,
-		UpdateAction=1;
-
 		Constraint();
 		virtual ~Constraint();
 
 		/*! \brief Adds one column to the internal column list referenced by the
 		 constants SOURCE_COLS or REFERENCED_COLS */
-		void addColumn(Column *column, unsigned col_type);
+		void addColumn(Column *column, ColumnsId cols_id);
 
 		/*! \brief Adds columns to the internal column list referenced by the
 		 constants SOURCE_COLS or REFERENCED_COLS. Previously columns added are removed. */
-		void addColumns(const vector<Column *> &cols, unsigned col_type);
+		void addColumns(const std::vector<Column *> &cols, ColumnsId cols_id);
 
 		//! \brief Adds several elements to the constraint using a defined vector
-		void addExcludeElements(vector<ExcludeElement> &elems);
+		void addExcludeElements(std::vector<ExcludeElement> &elems);
 
 		//! \brief Defines the constraint type
 		void setConstraintType(ConstraintType constr_type);
 
 		//! \brief Defines the type of action on foreign keys (ON DELETE and ON UPDATE). (only for foreign key)
-		void setActionType(ActionType action_type, unsigned act_id);
+		void setActionType(ActionType action_type, ActionEvent act_event);
 
 		//! \brief Defines the deferral type for the constraint (except for check contraints)
 		void setDeferralType(DeferralType deferral_type);
@@ -155,32 +160,32 @@ class Constraint: public TableObject{
 		unsigned getFillFactor();
 
 		//! \brief Retuns the action type (ON DELETE or ON UPDATE) of a foreign key
-		ActionType getActionType(unsigned act_id);
+		ActionType getActionType(ActionEvent act_event);
 
 		//! \brief Returns the list of columns of the specified type SOURCE_COLS or REFERENCED_COLS
-		vector<Column *> getColumns(unsigned col_type);
+		std::vector<Column *> getColumns(ColumnsId cols_id);
 
 		/*! \brief Returns one column (using its index) from the internal constraint column lists.
 		 Use the constants SOURCE_COLS or REFERENCED_COLS to access the lists */
-		Column *getColumn(unsigned col_idx, unsigned col_type);
+		Column *getColumn(unsigned col_idx, ColumnsId cols_id);
 
 		/*! \brief Returns one column (using its name) from the internal constraint column lists.
 		 Use the constants SOURCE_COLS or REFERENCED_COLS to access the lists */
-		Column *getColumn(const QString &name, unsigned col_type);
+		Column *getColumn(const QString &name, ColumnsId cols_id);
 
 		/*! \brief Returns the column count for one internal list.
 		 Use the constants SOURCE_COLS or REFERENCED_COLS to access the lists */
-		unsigned getColumnCount(unsigned col_type);
+		unsigned getColumnCount(ColumnsId cols_id);
 
 		//! \brief Returns the exclude constraint element count
 		unsigned getExcludeElementCount();
 
 		//! \brief Returns a list of exclude elements
-		vector<ExcludeElement> getExcludeElements();
+		std::vector<ExcludeElement> getExcludeElements();
 
 		/*! \brief Removes one column from internal list using its name.
 		 Use the constants SOURCE_COLS or REFERENCED_COLS to access the lists */
-		void removeColumn(const QString &name, unsigned col_type);
+		void removeColumn(const QString &name, ColumnsId cols_id);
 
 		//! \brief Remove all columns from the internal lists
 		void removeColumns();
@@ -214,7 +219,7 @@ class Constraint: public TableObject{
 	This method is slower than isReferRelationshipAddedColumn() so it's not
 	recommended to use it only check if the object is referencing columns
 	added by relationship */
-		vector<Column *> getRelationshipAddedColumns();
+		std::vector<Column *> getRelationshipAddedColumns();
 
 		//! \brief Returns the matching type adopted by the constraint
 		MatchType getMatchType();
@@ -225,23 +230,26 @@ class Constraint: public TableObject{
 		/*! \brief Returns the SQL / XML definition for the constraint.
 		 This method calls getCodeDefintion(unsigned, bool) with the
 		 second parameter as false */
-		virtual QString getCodeDefinition(unsigned def_type) final;
+		virtual QString getSourceCode(SchemaParser::CodeType def_type) final;
 
 		/*! \brief Returns the SQL / XML definition for the constraint. The boolean parameter indicates
 		 whether the columns added by relationship must appear on the code definition */
-		virtual QString getCodeDefinition(unsigned def_type, bool inc_addedbyrel) final;
+		virtual QString getSourceCode(SchemaParser::CodeType def_type, bool inc_addedbyrel) final;
 
-		virtual QString getDropDefinition(bool cascade) final;
+		virtual QString getDropCode(bool cascade) final;
 
 		//! \brief Indicates whether the column exists on the specified internal column list
-		bool isColumnExists(Column *column, unsigned col_type);
+		bool isColumnExists(Column *column, ColumnsId cols_id);
 
 		/*! \brief Indicates whether the column is referenced in internal column list or exclude element list.
 		The second parameter is useful to permit or not the search of column only on referenced columns list. */
 		bool isColumnReferenced(Column *column, bool search_only_ref_cols = false);
 
-		//! \brief Indicates whether the columns are referenced in internal column list
-		bool isColumnsExist(vector<Column *> columns, unsigned col_type);
+		/*! \brief Indicates whether the columns are referenced in internal column list
+		 * The parameter strict_check will cause the method to return true if and only if all the columns
+		 * provided in the list are in the constraint and the provided columns list has the same size as
+		 * the one in the constraint */
+		bool isColumnsExist(std::vector<Column *> columns, ColumnsId cols_id, bool strict_check);
 
 		//! \brief Adds an exclude element to the constraint using an column (only exclude constraint)
 		void addExcludeElement(Column *column, Operator *oper, OperatorClass *op_class, bool use_sorting, bool asc_order, bool nulls_first);
@@ -267,7 +275,7 @@ class Constraint: public TableObject{
 		//! \brief Toggles the not-null flag from source columns on primary key constraints. This methods has no effect in other constraint types
 		void setColumnsNotNull(bool value);
 
-		virtual QString getSignature(bool format) final;
+		QString getDataDictionary(const attribs_map &extra_attribs);
 
 		/*! \brief Compares two constratins XML definition and returns if they differs. This methods varies a little from
 		BaseObject::isCodeDiffersFrom() because here we need to generate xml code including relationship added columns */

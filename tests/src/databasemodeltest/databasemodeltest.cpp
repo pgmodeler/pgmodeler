@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -18,7 +18,6 @@
 
 #include <QtTest/QtTest>
 #include "databasemodel.h"
-#include "qtcompat/qtextstreamcompat.h"
 #include "pgmodelerunittest.h"
 
 class DatabaseModelTest: public QObject, public PgModelerUnitTest {
@@ -51,7 +50,7 @@ void DatabaseModelTest::saveObjectsMetadata()
 	}
 	catch (Exception &e)
 	{
-		out << e.getExceptionsText() << QtCompat::endl;
+		out << e.getExceptionsText() << Qt::endl;
 	}
 
 	QCOMPARE(QFileInfo(output).exists(), true);
@@ -70,12 +69,12 @@ void DatabaseModelTest::loadObjectsMetadata()
 		dbmodel.createSystemObjects(false);
 		dbmodel.loadModel(input_dbm);
 		dbmodel.loadObjectsMetadata(input_opf);
-		dbmodel.saveModel(output, SchemaParser::XmlDefinition);
+		dbmodel.saveModel(output, SchemaParser::XmlCode);
 		QCOMPARE(true, true);
 	}
 	catch (Exception &e)
 	{
-		out << e.getExceptionsText() << QtCompat::endl;
+		out << e.getExceptionsText() << Qt::endl;
 		QCOMPARE(false, true);
 	}
 }
@@ -98,7 +97,7 @@ void DatabaseModelTest::saveSplitSQLDefinition()
 	}
 	catch (Exception &e)
 	{
-		out << e.getExceptionsText() << QtCompat::endl;
+		out << e.getExceptionsText() << Qt::endl;
 		QCOMPARE(false, true);
 	}
 }

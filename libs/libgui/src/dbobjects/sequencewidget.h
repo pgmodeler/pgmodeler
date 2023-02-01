@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -28,7 +28,7 @@
 #include "baseobjectwidget.h"
 #include "ui_sequencewidget.h"
 
-class SequenceWidget: public BaseObjectWidget, public Ui::SequenceWidget {
+class __libgui SequenceWidget: public BaseObjectWidget, public Ui::SequenceWidget {
 	private:
 		Q_OBJECT
 

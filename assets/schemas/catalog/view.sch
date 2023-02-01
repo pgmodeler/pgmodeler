@@ -8,14 +8,9 @@
 	%end
 
 	[SELECT vw.oid, vw.relname AS name, ns.nspname AS parent, 'schema' AS parent_type
-	FROM pg_class AS vw
-	LEFT JOIN pg_namespace AS ns ON ns.oid=vw.relnamespace ]
-
-	%if ({pgsql-ver} <=f "9.2") %then
-		[ WHERE vw.relkind='v']
-	%else
-		[ WHERE vw.relkind IN ('v','m') ]
-	%end
+	 FROM pg_class AS vw
+ 	 LEFT JOIN pg_namespace AS ns ON ns.oid=vw.relnamespace 
+	 WHERE vw.relkind IN ('v','m') ]
 
 	%if {schema} %then
 		[ AND ns.nspname= ] '{schema}'
@@ -63,13 +58,8 @@
 		({comment}) [ AS comment ]
 
 		[ FROM pg_class AS vw
-		LEFT JOIN pg_namespace AS ns ON ns.oid = vw.relnamespace ]
-
-		%if ({pgsql-ver} <=f "9.2") %then
-			[ WHERE vw.relkind='v']
-		%else
-			[ WHERE vw.relkind IN ('v','m') ]
-		%end
+		  LEFT JOIN pg_namespace AS ns ON ns.oid = vw.relnamespace 
+	      WHERE vw.relkind IN ('v','m') ]
 
 		%if {last-sys-oid} %then
 			[ AND vw.oid ] {oid-filter-op} $sp {last-sys-oid}

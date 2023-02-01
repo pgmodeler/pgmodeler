@@ -47,7 +47,7 @@ void Extension::setHandlesType(bool value)
 	/* Raises an error if the extension is already registered as a data type and the
 	try to change the attribute value. This cannot be done to avoid cascade reference breaking
 	on table columns/functions or any other objects that references PgSQLType */
-	if(!value && PgSqlType::getUserTypeIndex(getName(true, true), this) != BaseType::Null)
+	if(!value && PgSqlType::getUserTypeIndex(getName(true, true), this) != PgSqlType::Null)
 		throw Exception(Exception::getErrorMessage(ErrorCode::ExtensionHandlingTypeImmutable)
 						.arg(getName(true)),
 						ErrorCode::ExtensionHandlingTypeImmutable,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -55,7 +55,7 @@ void Extension::setHandlesType(bool value)
 	this->handles_type=value;
 }
 
-void Extension::setVersion(unsigned ver, const QString &value)
+void Extension::setVersion(VersionId ver, const QString &value)
 {
 	if(ver > OldVersion)
 		throw Exception(ErrorCode::RefAttributeInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -69,7 +69,7 @@ bool Extension::handlesType()
 	return handles_type;
 }
 
-QString Extension::getVersion(unsigned ver)
+QString Extension::getVersion(VersionId ver)
 {
 	if(ver > OldVersion)
 		throw Exception(ErrorCode::RefAttributeInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -77,20 +77,20 @@ QString Extension::getVersion(unsigned ver)
 	return versions[ver];
 }
 
-QString Extension::getCodeDefinition(unsigned def_type)
+QString Extension::getSourceCode(SchemaParser::CodeType def_type)
 {
 	QString code_def=getCachedCode(def_type, false);
 	if(!code_def.isEmpty()) return code_def;
 
-	attributes[Attributes::Name]=getName(def_type==SchemaParser::SqlDefinition, false);
+	attributes[Attributes::Name]=getName(def_type==SchemaParser::SqlCode, false);
 	attributes[Attributes::HandlesType]=(handles_type ? Attributes::True : "");
 	attributes[Attributes::CurVersion]=versions[CurVersion];
 	attributes[Attributes::OldVersion]=versions[OldVersion];
 
-	return BaseObject::__getCodeDefinition(def_type);
+	return BaseObject::__getSourceCode(def_type);
 }
 
-QString Extension::getAlterDefinition(BaseObject *object)
+QString Extension::getAlterCode(BaseObject *object)
 {
 	Extension *ext=dynamic_cast<Extension *>(object);
 
@@ -99,14 +99,14 @@ QString Extension::getAlterDefinition(BaseObject *object)
 
 	try
 	{
-		attributes[Attributes::AlterCmds]=BaseObject::getAlterDefinition(object);
+		attributes[Attributes::AlterCmds]=BaseObject::getAlterCode(object);
 		attributes[Attributes::NewVersion]="";
 
 		if(!this->versions[CurVersion].isEmpty() && !ext->versions[CurVersion].isEmpty() &&
 				this->versions[CurVersion].isEmpty() < ext->versions[CurVersion].isEmpty())
 			attributes[Attributes::NewVersion]=ext->versions[CurVersion];
 
-		return BaseObject::getAlterDefinition(this->getSchemaName(), attributes, false, true);
+		return BaseObject::getAlterCode(this->getSchemaName(), attributes, false, true);
 	}
 	catch(Exception &e)
 	{
@@ -114,10 +114,10 @@ QString Extension::getAlterDefinition(BaseObject *object)
 	}
 }
 
-QString Extension::getDropDefinition(bool cascade)
+QString Extension::getDropCode(bool cascade)
 {
 	attributes[Attributes::Name] = getName(true);
-	return BaseObject::getDropDefinition(cascade);
+	return BaseObject::getDropCode(cascade);
 }
 
 QString Extension::getSignature(bool format)

@@ -1,5 +1,6 @@
 #include "modelexporthelper.h"
 #include <QSvgGenerator>
+#include "guiutilsns.h"
 
 ModelExportHelper::ModelExportHelper(QObject *parent) : QObject(parent)
 {
@@ -18,6 +19,7 @@ void ModelExportHelper::resetExportParams()
 	zoom=100;
 	show_grid=show_delim=page_by_page=split=browsable=false;
 	viewp=nullptr;
+	code_gen_mode=DatabaseModel::OriginalSql;
 }
 
 void ModelExportHelper::abortExport(Exception &e)
@@ -46,25 +48,25 @@ void ModelExportHelper::handleSQLError(Exception &e, const QString &sql_cmd, boo
 
 void ModelExportHelper::setIgnoredErrors(const QStringList &err_codes)
 {
-	QRegExp valid_code = QRegExp("([a-z]|[A-Z]|[0-9])+");
-	QStringList error_codes=err_codes;
+	QRegularExpression valid_code = QRegularExpression(QRegularExpression::anchoredPattern("([a-z]|[A-Z]|[0-9])+"));
 
 	ignored_errors.clear();
-	error_codes.removeDuplicates();
 
-	for(QString code : error_codes)
+	for(auto &code : err_codes)
 	{
-		if(valid_code.exactMatch(code))
+		if(valid_code.match(code).hasMatch())
 			ignored_errors.push_back(code);
 	}
+
+	ignored_errors.removeDuplicates();
 }
 
-void ModelExportHelper::exportToSQL(DatabaseModel *db_model, const QString &filename, const QString &pgsql_ver, bool split)
+void ModelExportHelper::exportToSQL(DatabaseModel *db_model, const QString &filename, const QString &pgsql_ver, bool split, DatabaseModel::CodeGenMode code_gen_mode)
 {
 	if(!db_model)
 		throw Exception(ErrorCode::AsgNotAllocattedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	connect(db_model, SIGNAL(s_objectLoaded(int,QString,uint)), this, SLOT(updateProgress(int,QString,uint)));
+	connect(db_model, &DatabaseModel::s_objectLoaded, this, &ModelExportHelper::updateProgress);
 
 	try
 	{
@@ -77,12 +79,12 @@ void ModelExportHelper::exportToSQL(DatabaseModel *db_model, const QString &file
 
 		if(!split)
 		{
-			db_model->saveModel(filename, SchemaParser::SqlDefinition);
+			db_model->saveModel(filename, SchemaParser::SqlCode);
 			emit s_progressUpdated(100, tr("SQL file `%1' successfully written.").arg(filename), ObjectType::BaseObject);
 		}
 		else
 		{
-			db_model->saveSplitSQLDefinition(filename);
+			db_model->saveSplitSQLDefinition(filename, code_gen_mode);
 			emit s_progressUpdated(100, tr("SQL files successfully written in `%1'.").arg(filename), ObjectType::BaseObject);
 		}
 
@@ -108,63 +110,48 @@ void ModelExportHelper::exportToPNG(ObjectsScene *scene, const QString &filename
 	try
 	{
 		QPixmap pix;
-		bool shw_grd, shw_dlm, align_objs;
-		QGraphicsView *view=nullptr;
-		QRect retv;
-		QPolygon pol;
-		vector<QRectF> pages;
+		bool prev_show_grd, prev_show_dlm;
+		QGraphicsView *view = nullptr;
+		QList<QRectF> pages;
 		unsigned v_cnt=0, h_cnt=0, page_idx=1;
 		QString tmpl_filename, file;
+		QColor bg_color = ObjectsScene::getCanvasColor();
 
 		/* If an external view is specified it will be used instead of creating a local one,
-	   this is a workaround to the error below when running the helper in a separated thread
-
-	   QCoreApplication::sendPostedEvents: Cannot send posted events for objects in another thread */
+		 * this is a workaround to the error below when running the helper in a separated thread
+		 * QCoreApplication::sendPostedEvents: Cannot send posted events for objects in another thread */
 		if(viewp)
-			view=viewp;
+			view = viewp;
 		else
-			view=new QGraphicsView(scene);
+			view = new QGraphicsView(scene);
 
 		//Clear the object scene selection to avoid drawing the selectoin rectangle of the objects
 		scene->clearSelection();
 
 		//Make a backup of the current scene options
-		shw_grd = ObjectsScene::isShowGrid();
-		align_objs = ObjectsScene::isAlignObjectsToGrid();
-		shw_dlm = ObjectsScene::isShowPageDelimiters();
+		prev_show_grd = ObjectsScene::isShowGrid();
+		prev_show_dlm = ObjectsScene::isShowPageDelimiters();
+		bg_color = ObjectsScene::getCanvasColor();
 
 		//Sets the options passed by the user
-		ObjectsScene::setGridOptions(show_grid, false, show_delim);
+		ObjectsScene::setCanvasColor(QColor(255,255,255));
+		ObjectsScene::setShowGrid(show_grid);
+		ObjectsScene::setShowPageDelimiters(show_delim);
+		scene->setShowSceneLimits(false);
 
 		if(page_by_page)
 		{
-			QPrinter::Orientation orient;
-			QRectF margins;
-			QSizeF custom_sz, page_sz;
-			QPrinter::PaperSize paper_sz;
-			QPrinter prt;
 			QFileInfo fi(filename);
 
-			ObjectsScene::getPaperConfiguration(paper_sz, orient, margins, custom_sz);
-
-			if(paper_sz==QPrinter::Custom)
-				page_sz=custom_sz;
-			else
-			{
-				prt.setPaperSize(paper_sz);
-				prt.setOrientation(orient);
-				page_sz=prt.paperSize(QPrinter::Point);
-			}
-
 			//Calculates the page count to be exported
-			pages=scene->getPagesForPrinting(page_sz, margins.size(), h_cnt, v_cnt);
+			pages = scene->getPagesForPrinting(h_cnt, v_cnt, zoom);
 
 			//Configures the template filename for pages pixmaps
-			tmpl_filename=fi.absolutePath() + GlobalAttributes::DirSeparator + fi.baseName() + QString("_p%1.") + fi.completeSuffix();
+			tmpl_filename = fi.absolutePath() + GlobalAttributes::DirSeparator + fi.baseName() + QString("_p%1.") + fi.completeSuffix();
 		}
 		else
 		{
-			QRectF rect=scene->itemsBoundingRect(true);
+			QRectF rect = scene->itemsBoundingRect(true, false, true);
 
 			//Give some margin to the resulting image
 			QSizeF margin=QSizeF(5 * BaseObjectView::HorizSpacing, 5 * BaseObjectView::VertSpacing);
@@ -172,37 +159,29 @@ void ModelExportHelper::exportToPNG(ObjectsScene *scene, const QString &filename
 			rect.setSize(rect.size() + margin);
 
 			pages.push_back(rect);
-			file=filename;
+			file = filename;
 		}
 
 		//Updates the scene to apply the change on grid and delimiter
 		scene->update();
 
-		//Configures the viewport alignment to top-left coordinates.
-		view->setAlignment(Qt::AlignLeft | Qt::AlignTop);
+		QPainter painter;
+		QRect rect;
 
-		//Apply the zoom factor on the viewport
+		view->setAlignment(Qt::AlignLeft | Qt::AlignTop);
 		view->resetTransform();
 		view->centerOn(0,0);
-		view->scale(zoom, zoom);
 
-		QPainter painter;
-		vector<QRectF>::iterator itr=pages.begin(), itr_end=pages.end();
+		/* We consider the device pixel ration when applying scale to the viewport
+		 * so the resulting pixmap can have a compatible size in hi-dpi screens */
+		view->scale(zoom * qApp->devicePixelRatio(), zoom * qApp->devicePixelRatio());
 
-		while(itr!=itr_end && !export_canceled)
+		for(auto &pg_rect : pages)
 		{
-			//Convert the objects bounding rect to viewport coordinates to correctly draw them onto pixmap
-			pol=view->mapFromScene(*itr);
-			itr++;
+			if(export_canceled) break;
 
-			//Configure the viewport area to be copied
-			retv.setTopLeft(pol.at(0));
-			retv.setTopRight(pol.at(1));
-			retv.setBottomRight(pol.at(2));
-			retv.setBottomLeft(pol.at(3));
-
-			//Creates the output pixmap
-			pix=QPixmap(retv.size());
+			rect = view->mapFromScene(pg_rect).boundingRect();
+			pix = QPixmap(rect.size());
 			pix.fill();
 
 			//Setting optimizations on the painter
@@ -214,18 +193,19 @@ void ModelExportHelper::exportToPNG(ObjectsScene *scene, const QString &filename
 			emit s_progressUpdated((page_idx/static_cast<double>(pages.size())) * 90,
 														 tr("Rendering objects to page %1/%2.").arg(page_idx).arg(pages.size()), ObjectType::BaseObject);
 
-			//Render the entire viewport onto the pixmap
-			view->render(&painter, QRectF(QPointF(0,0), pix.size()), retv);
+			view->render(&painter, QRect(), rect);
 			painter.end();
 
 			if(page_by_page)
-				file=tmpl_filename.arg(page_idx++);
+				file = tmpl_filename.arg(page_idx++);
 
 			//If the pixmap is not saved raises an error
 			if(!pix.save(file))
 			{
 				//Restoring the scene settings before throw error
-				ObjectsScene::setGridOptions(shw_grd, align_objs, shw_dlm);
+				ObjectsScene::setCanvasColor(bg_color);
+				ObjectsScene::setShowGrid(prev_show_grd);
+				ObjectsScene::setShowPageDelimiters(prev_show_dlm);
 				scene->update();
 
 				throw Exception(Exception::getErrorMessage(ErrorCode::FileDirectoryNotWritten).arg(file),
@@ -234,7 +214,10 @@ void ModelExportHelper::exportToPNG(ObjectsScene *scene, const QString &filename
 		}
 
 		//Restoring the scene settings
-		ObjectsScene::setGridOptions(shw_grd, align_objs, shw_dlm);
+		ObjectsScene::setCanvasColor(bg_color);
+		ObjectsScene::setShowGrid(prev_show_grd);
+		ObjectsScene::setShowPageDelimiters(prev_show_dlm);
+		scene->setShowSceneLimits(true);
 		scene->update();
 
 		if(!export_canceled)
@@ -245,7 +228,7 @@ void ModelExportHelper::exportToPNG(ObjectsScene *scene, const QString &filename
 		else
 			emit s_exportCanceled();
 
-		if(view!=viewp)
+		if(view != viewp)
 			delete view;
 	}
 	catch(Exception &e)
@@ -259,65 +242,85 @@ void ModelExportHelper::exportToSVG(ObjectsScene *scene, const QString &filename
 	if(!scene)
 		throw Exception(ErrorCode::AsgNotAllocattedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	bool shw_dlm=false, shw_grd=false, align_objs=false;
+	bool prev_show_dlm=false, prev_show_grd=false;
 	QSvgGenerator svg_gen;
-	QRectF scene_rect=scene->itemsBoundingRect(true);
+	QRectF scene_rect=scene->itemsBoundingRect(true, false, true), svg_rect;
 	QFileInfo fi(filename);
-
-	//Making a backup of the current scene options
-	shw_grd = ObjectsScene::isShowGrid();
-	shw_dlm = ObjectsScene::isShowPageDelimiters();
-	align_objs = ObjectsScene::isAlignObjectsToGrid();
-	scene->setBackgroundBrush(Qt::NoBrush);
-
-	//Disabling grid and delimiters
-	ObjectsScene::setGridOptions(show_grid, false, show_delim);
-	scene->update();
 
 	emit s_progressUpdated(0, tr("Exporting model to SVG file."));
 
+	//Give some margin to the resulting image
+	QSizeF margin = QSizeF(5 * BaseObjectView::HorizSpacing, 5 * BaseObjectView::VertSpacing);
+	scene_rect.setTopLeft(scene_rect.topLeft() - QPointF(margin.width(), margin.height()));
+	scene_rect.setSize(scene_rect.size() + margin);
+
+	svg_rect = QRectF(0, 0, scene_rect.size().width(), scene_rect.size().height());
 	svg_gen.setFileName(filename);
 	svg_gen.setTitle(tr("SVG representation of database model"));
 	svg_gen.setDescription(tr("SVG file generated by pgModeler"));
+	svg_gen.setSize(svg_rect.size().toSize());
+	svg_gen.setViewBox(svg_rect);
 
-	QPainter *painter=new QPainter(&svg_gen);
-	scene->render(painter, QRectF(0, 0, scene_rect.size().width(), scene_rect.size().height()), scene_rect);
-	delete painter;
+	// The SVG's dpi is calculated from the logical DPI of the viewport associated to the scene
+	QGraphicsView *view = new QGraphicsView(scene);
+	int dpi = (view->logicalDpiX() + view->logicalDpiY())/2;
+	svg_gen.setResolution(dpi);
+
+	//Making a backup of the current scene options
+	prev_show_grd = ObjectsScene::isShowGrid();
+	prev_show_dlm = ObjectsScene::isShowPageDelimiters();
+
+	ObjectsScene::setShowGrid(show_grid);
+	ObjectsScene::setShowPageDelimiters(show_delim);
+	scene->setShowSceneLimits(false);
+	scene->update();
+
+	QPainter *svg_painter = new QPainter(&svg_gen);
+
+	/* Workaround: In order to force the QSvgGenerator to render
+	 * the grid and the delimiter lines we have to write the scene
+	 * background to a separated pixmap and then render it in the
+	 * painter responsible to draw elements in the SVG output.
+	 * It seems that the QSvgGenerator doesn't render for itself the
+	 * scene's brackground brush when this one is composed by a
+	 * texture image (grid + delimiter lines). */
+	if(show_grid || show_delim)
+	{
+		QPixmap bg_img = QPixmap(svg_rect.size().toSize());
+		QPainter *bg_painter = new QPainter(&bg_img);
+		QStringList act_layers = scene->getActiveLayers();
+
+		/* In order to make a background clip we first hide all objects
+		 * by deactivating the layers the draw the background in the
+		 * bg painter in the dimensions defined by the scene rect,
+		 * this will clip the background in the right position and size.
+		 * After getting the bg pixmap we restore the active layers. */
+		scene->blockSignals(true);
+		scene->setActiveLayers(QStringList());
+		scene->render(bg_painter, svg_rect, scene_rect);
+		scene->setActiveLayers(act_layers);
+		scene->blockSignals(false);
+
+		// Drawing the bg pixmap in the svg painter
+		svg_painter->drawPixmap(svg_rect, bg_img, svg_rect);
+		delete bg_painter;
+	}
+
+	// Rendering the objects in the svg painter
+	scene->render(svg_painter, svg_rect, scene_rect);
+	delete svg_painter;
+	delete view;
 
 	//Restoring the scene settings
-	ObjectsScene::setGridOptions(shw_grd, align_objs, shw_dlm);
+	ObjectsScene::setShowGrid(prev_show_grd);
+	ObjectsScene::setShowPageDelimiters(prev_show_dlm);
+	scene->setShowSceneLimits(true);
 	scene->update();
 
 	if(!fi.exists() || !fi.isWritable() || !fi.isReadable())
+	{
 			throw Exception(Exception::getErrorMessage(ErrorCode::FileDirectoryNotWritten).arg(filename),
 											ErrorCode::FileDirectoryNotWritten,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-
-	QFile svg_file;
-	svg_file.setFileName(filename);
-	svg_file.open(QFile::ReadOnly);
-
-	if(svg_file.isOpen())
-	{
-		QByteArray buf;
-		QString svg_def, font_attr=QString("font-family=\"%1\"");
-
-		svg_def.append(svg_file.readAll());
-		svg_file.close();
-
-		//Forcing the usage of the font settings defined for BaseObjectView and its subclasses
-		svg_def.replace(font_attr.arg(scene->font().family()),
-										font_attr.arg(BaseObjectView::getFontStyle(Attributes::Global).font().family()));
-
-		/* Removing the empty (transparent) backgound object in order to save some space in the file if
-		the grid or delimiter is displayed */
-		if(!show_delim && !show_grid)
-			svg_def.replace(QRegExp("(<image)(.)*(xlink:href)(=)(\")(\\w|=|/|\\+|:|;|,|\n)+(\")( )+(/>)"), "");
-
-		buf.append(svg_def.toUtf8());
-
-		svg_file.open(QFile::WriteOnly | QFile::Truncate);
-		svg_file.write(buf);
-		svg_file.close();
 	}
 
 	emit s_progressUpdated(100, tr("Output file `%1' successfully written.").arg(filename), ObjectType::BaseObject);
@@ -333,7 +336,8 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
 	ObjectType types[]={ObjectType::Role, ObjectType::Tablespace};
 	BaseObject *object=nullptr;
 	QString tmpl_comm_regexp = QString("(COMMENT)( )+(ON)( )+(%1)(.)+(\n)(") + Attributes::DdlEndToken + QString(")");
-	QRegExp comm_regexp;
+	QRegularExpression comm_regexp;
+	QRegularExpressionMatch match;
 
 	try
 	{
@@ -348,7 +352,7 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
 		else if(drop_db && drop_objs)
 			throw Exception(ErrorCode::MixingIncompDropOptions,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-		connect(db_model, SIGNAL(s_objectLoaded(int,QString,uint)), this, SLOT(updateProgress(int,QString,uint)), Qt::DirectConnection);
+		connect(db_model, &DatabaseModel::s_objectLoaded, this, &ModelExportHelper::updateProgress, Qt::DirectConnection);
 
 		export_canceled=false;
 		db_created=false;
@@ -440,7 +444,7 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
 				{
 					if(!object->isSQLDisabled())
 					{
-						sql_cmd=object->getCodeDefinition(SchemaParser::SqlDefinition);
+						sql_cmd=object->getSourceCode(SchemaParser::SqlCode);
 
 						//Emits a signal indicating that the object is being exported
 						emit s_progressUpdated(progress,
@@ -449,15 +453,16 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
 
 						if(types[type_id] == ObjectType::Tablespace)
 						{
-							comm_regexp = QRegExp(tmpl_comm_regexp.arg(object->getSQLName()));
-							pos = comm_regexp.indexIn(sql_cmd);
+							comm_regexp = QRegularExpression(tmpl_comm_regexp.arg(object->getSQLName()));
+							match = comm_regexp.match(sql_cmd);
+							pos = match.capturedStart();
 
 							/* If we find a comment on statement we should strip it from the tablespace definition in
 							 * order to execute it after creating the db */
 							if(pos >= 0)
 							{
-								sql_cmd_comment = sql_cmd.mid(pos, comm_regexp.matchedLength());
-								sql_cmd.remove(pos, comm_regexp.matchedLength());
+								sql_cmd_comment = sql_cmd.mid(pos, match.capturedLength());
+								sql_cmd.remove(pos, match.capturedLength());
 								pos = -1;
 							}
 						}
@@ -481,17 +486,17 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
 		{
 			if(!db_model->isSQLDisabled() && !export_canceled)
 			{
-				comm_regexp = QRegExp(tmpl_comm_regexp.arg(db_model->getSQLName()));
-
-				sql_cmd=db_model->__getCodeDefinition(SchemaParser::SqlDefinition);
-				pos = comm_regexp.indexIn(sql_cmd);
+				comm_regexp = QRegularExpression(tmpl_comm_regexp.arg(db_model->getSQLName()));
+				sql_cmd = db_model->__getSourceCode(SchemaParser::SqlCode);
+				match = comm_regexp.match(sql_cmd);
+				pos = match.capturedStart();
 
 				/* If we find a comment on statment we should strip it from the DB definition in
 				 * order to execute it after creating the db */
 				if(pos >= 0)
 				{
-					sql_cmd_comment = sql_cmd.mid(pos, comm_regexp.matchedLength());
-					sql_cmd.remove(pos, comm_regexp.matchedLength());
+					sql_cmd_comment = sql_cmd.mid(pos, match.capturedLength());
+					sql_cmd.remove(pos, match.capturedLength());
 				}
 
 				//Creating the database on the DBMS
@@ -528,7 +533,7 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
 			emit s_progressUpdated(progress, tr("Generating SQL for `%1' objects...").arg(db_model->getObjectCount()));
 
 			//Exporting the database model definition using the opened connection
-			buf=db_model->getCodeDefinition(SchemaParser::SqlDefinition, false);
+			buf=db_model->getSourceCode(SchemaParser::SqlCode, false);
 			progress=40;
 			exportBufferToDBMS(buf, new_db_conn, drop_objs);
 		}
@@ -598,7 +603,7 @@ void ModelExportHelper::exportToDataDict(DatabaseModel *db_model, const QString 
 	if(!db_model)
 		throw Exception(ErrorCode::AsgNotAllocattedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	connect(db_model, SIGNAL(s_objectLoaded(int,QString,uint)), this, SLOT(updateProgress(int,QString,uint)));
+	connect(db_model, &DatabaseModel::s_objectLoaded, this, &ModelExportHelper::updateProgress);
 
 	try
 	{
@@ -623,7 +628,7 @@ void ModelExportHelper::exportToDataDict(DatabaseModel *db_model, const QString 
 
 void ModelExportHelper::saveGenAtlerCmdsStatus(DatabaseModel *db_model)
 {
-	vector<BaseObject *> objects;
+	std::vector<BaseObject *> objects;
 	PhysicalTable *tab=nullptr;
 	Relationship *rel=nullptr;
 
@@ -724,7 +729,7 @@ void ModelExportHelper::generateTempObjectNames(DatabaseModel *db_model)
 	QTextStream stream(&tmp_name);
 	QDateTime dt=QDateTime::currentDateTime();
 	QCryptographicHash hash(QCryptographicHash::Md5);
-	map<ObjectType, QString> obj_suffixes={ { ObjectType::Database, QString("db_") },
+	std::map<ObjectType, QString> obj_suffixes={ { ObjectType::Database, QString("db_") },
 											{ ObjectType::Role, QString("rl_")},
 											{ ObjectType::Tablespace, QString("tb_")} };
 
@@ -746,7 +751,7 @@ void ModelExportHelper::generateTempObjectNames(DatabaseModel *db_model)
 
 	for(auto &obj : orig_obj_names)
 	{
-		stream << reinterpret_cast<unsigned *>(obj.first) << QString("_") << dt.toTime_t();
+		stream << reinterpret_cast<unsigned *>(obj.first) << QString("_") << dt.toMSecsSinceEpoch();
 
 		//Generates an unique name for the object through md5 hash
 		hash.addData(QByteArray(tmp_name.toStdString().c_str()));
@@ -804,7 +809,7 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
 	QString sql_buf=buffer, sql_cmd, aux_cmd, lin, msg,
 			obj_name, obj_tp_name, tab_name, orig_conn_db_name,
 			alter_tab=QString("ALTER TABLE");
-	vector<QString> db_sql_cmds;
+	std::vector<QString> db_sql_cmds;
 	QTextStream ts;
 	ObjectType obj_type=ObjectType::BaseObject;
 	bool ddl_tk_found=false, is_create=false, is_drop=false;
@@ -813,13 +818,14 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
 	int pos=0, pos1=0, comm_cnt=0;
 
 	//Regexp used to extract the object being created
-	QRegExp obj_reg(QString("(CREATE|DROP|ALTER)(.)+(\n)")),
+	QRegularExpression obj_reg("(CREATE|DROP|ALTER)(.)+(\n)"),
 			tab_obj_reg(QString("^(%1)(.)+(ADD|DROP)( )(COLUMN|CONSTRAINT)( )*").arg(alter_tab)),
-			drop_reg(QString("^((\\-\\-)+( )*)+(DROP)(.)+")),
+			drop_reg("^((\\-\\-)+( )*)+(DROP)(.)+"),
 			drop_tab_obj_reg(QString("^((\\-\\-)+( )*)+(%1)(.)+(DROP)(.)+").arg(alter_tab)),
 			reg_aux;
+	QRegularExpressionMatch match;
 
-	vector<ObjectType> obj_types={ ObjectType::Role, ObjectType::Function, ObjectType::Trigger, ObjectType::Index,
+	std::vector<ObjectType> obj_types={ ObjectType::Role, ObjectType::Function, ObjectType::Trigger, ObjectType::Index,
 																 ObjectType::Policy, ObjectType::Rule,	ObjectType::Table, ObjectType::View, ObjectType::Domain,
 																 ObjectType::Schema,	ObjectType::Aggregate, ObjectType::OpFamily,
 																 ObjectType::OpClass, ObjectType::Operator,  ObjectType::Sequence,
@@ -855,64 +861,64 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
 			/* If the simulation mode is off and the drop objects option is checked,
 		 check if the current line matches one of the accepted drop commands
 		 (DROP [OBJECT] or ALTER TABLE...DROP) */
-			if(drop_objs && (drop_reg.exactMatch(lin) || drop_tab_obj_reg.exactMatch(lin)))
+			if(drop_objs && (drop_reg.match(lin).hasMatch() || drop_tab_obj_reg.match(lin).hasMatch()))
 			{
-				comm_cnt=lin.count(QString("--"));
-				lin=lin.remove(QString("--")).trimmed();
+				comm_cnt=lin.count("--");
+				lin=lin.remove("--").trimmed();
 
 				/* If the count of comment indicators (--) is 1 indicates that the DDL of the
 		   object related to the DROP is enabled, so the DROP is executed otherwise ignored */
 				if(comm_cnt==1)
 				{
-					sql_cmd=lin + QString("\n");
+					sql_cmd=lin + "\n";
 					ddl_tk_found=true;
 				}
 			}
 			else
 			{
 				ddl_tk_found=(lin.indexOf(Attributes::DdlEndToken) >= 0);
-				lin.remove(QRegExp(QString("^(--)+(.)+$")));
+				lin.remove(QRegularExpression("^(--)+(.)+$"));
 
 				//If the line isn't empty after cleanup it will be included on sql command
 				if(!lin.isEmpty())
-					sql_cmd += lin + QString("\n");
+					sql_cmd += lin + "\n";
 			}
 
 			//If the ddl end token is found
 			if(ddl_tk_found || (!sql_cmd.isEmpty() && ts.atEnd()))
 			{
 				//Checking if the command is a column or constraint creation via ALTER TABLE
-				aux_cmd=sql_cmd;
-				pos=tab_obj_reg.indexIn(aux_cmd);
+				aux_cmd = sql_cmd;
 
-				if(pos >= 0)
+				if(tab_obj_reg.match(aux_cmd).hasMatch())
 				{
 					aux_cmd.remove('"');
-					aux_cmd.remove(QString("IF EXISTS "));
-					obj_type=(aux_cmd.contains(QString("COLUMN")) ? ObjectType::Column : ObjectType::Constraint);
-					reg_aux=QRegExp(QString("(COLUMN|CONSTRAINT)( )+"));
+					aux_cmd.remove("IF EXISTS ");
+					obj_type=(aux_cmd.contains("COLUMN") ? ObjectType::Column : ObjectType::Constraint);
+					reg_aux.setPattern("(COLUMN|CONSTRAINT)( )+");
 
 					//Extracting the table name
-					pos=aux_cmd.indexOf(alter_tab) + alter_tab.size();
-					pos1=aux_cmd.indexOf(QString("ADD"));
+					pos = aux_cmd.indexOf(alter_tab) + alter_tab.size();
+					pos1 = aux_cmd.indexOf("ADD");
 
 					if(pos1 < 0)
 					{
-						pos1=aux_cmd.indexOf(QString("DROP"));
+						pos1=aux_cmd.indexOf("DROP");
 						is_drop=true;
 					}
 
 					tab_name=aux_cmd.mid(pos, pos1 - pos).simplified();
 
 					//Extracting the child object name (column | constraint) the one between
-					pos=reg_aux.indexIn(aux_cmd, pos1);
-					pos+=reg_aux.matchedLength();
+					match = reg_aux.match(aux_cmd, pos1);
+					pos = match.capturedStart();
+					pos += match.capturedLength();
 
 					pos1=aux_cmd.indexOf(" ", pos);
 					obj_name=aux_cmd.mid(pos, pos1 - pos).simplified();
 
 					//Creating a fully qualified name for the object (schema.table.name)
-					obj_name=tab_name + QString(".") + obj_name;
+					obj_name=tab_name + "." + obj_name;
 
 					if(is_drop)
 						msg=tr("Dropping object `%1' (%2)").arg(obj_name).arg(BaseObject::getTypeName(obj_type));
@@ -923,7 +929,7 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
 					is_drop=false;
 				}
 				//Check if the regex matches the sql command
-				else if(obj_reg.exactMatch(sql_cmd))
+				else if(obj_reg.match(sql_cmd).hasMatch())
 				{
 					//Get the fisrt line of the sql command, that contains the CREATE/DROP/ALTER ... statement
 					lin=sql_cmd.mid(0, sql_cmd.indexOf('\n'));
@@ -935,52 +941,53 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
 						obj_type=obj_tp;
 
 						//Removing/replacing noisy keywords in order to extract more easily the object's name
-						if(lin.startsWith(QString("CREATE")) || lin.startsWith(QString("ALTER")))
+						if(lin.startsWith("CREATE") || lin.startsWith("ALTER"))
 						{
 							if(obj_tp==ObjectType::Index)
 							{
-								lin.remove(QString("UNIQUE"));
-								lin.remove(QString("CONCURRENTLY"));
+								lin.remove("UNIQUE");
+								lin.remove("CONCURRENTLY");
 							}
 							else if(obj_tp==ObjectType::View)
 							{
-								lin.remove(QString("MATERIALIZED"));
-								lin.remove(QString("RECURSIVE"));
+								lin.remove("MATERIALIZED");
+								lin.remove("RECURSIVE");
 							}
 							else if(obj_tp==ObjectType::Table)
 							{
-								lin.remove(QString("UNLOGGED"));
+								lin.remove("UNLOGGED");
 							}
 							else if(obj_tp==ObjectType::Function || obj_tp==ObjectType::Procedure)
 							{
-								lin.remove(QString("OR REPLACE"));
+								lin.remove("OR REPLACE");
 							}
 							else if(obj_tp==ObjectType::Transform)
 							{
-								lin.remove(QString(" FOR"));
-								lin.replace(QString(" LANGUAGE "), "_");
-								lin.replace(QRegExp("(TRANSFORM)(.)+(\\.)"), "TRANSFORM ");
+								lin.remove(" FOR");
+								lin.replace(" LANGUAGE ", "_");
+								lin.replace(QRegularExpression("(TRANSFORM)(.)+(\\.)"), "TRANSFORM ");
 							}
 						}
-						else if(lin.startsWith(QString("DROP")))
+						else if(lin.startsWith("DROP"))
 						{
-							lin.remove(QString("IF EXISTS"));
-							lin.remove(QString("MATERIALIZED"));
+							lin.remove("IF EXISTS");
+							lin.remove("MATERIALIZED");
 						}
 
 						lin=lin.simplified();
 
 						//Check if the keyword for the current object exists on string
 						reg_aux.setPattern(QString("(CREATE|DROP|ALTER)( )(%1)").arg(BaseObject::getSQLName(obj_tp)));
-						pos=reg_aux.indexIn(lin);
+						match = reg_aux.match(lin);
 
-						if(pos >= 0)
+						if(match.hasMatch())
 						{
-							is_create=lin.startsWith(QString("CREATE"));
-							is_drop=(!is_create && lin.startsWith(QString("DROP")));
+							is_create=lin.startsWith("CREATE");
+							is_drop=(!is_create && lin.startsWith("DROP"));
 
 							//Extracts from the line the string starting with the object's name
-							lin=lin.mid(reg_aux.matchedLength(), sql_cmd.indexOf('\n')).simplified();
+							//lin=lin.mid(reg_aux.matchedLength(), sql_cmd.indexOf('\n')).simplified();
+							lin = lin.mid(match.capturedLength(), sql_cmd.indexOf('\n')).simplified();
 							lin.remove('"');
 
 							if(obj_tp != ObjectType::BaseObject)
@@ -998,11 +1005,11 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
 								}
 								else if(obj_tp == ObjectType::UserMapping)
 								{
-									obj_name.prepend(lin.remove(QString("FOR")).trimmed() + QChar('@'));
+									obj_name.prepend(lin.remove("FOR").trimmed() + "@");
 								}
 								else
 								{
-									obj_name=QString("cast") + lin.replace(QString(" AS "),QString(","));
+									obj_name="cast" + lin.replace(" AS ",",");
 								}
 
 								//Stores the object type name
@@ -1022,11 +1029,11 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
 								QString aux_cmd_type;
 
 								if(is_create)
-									aux_cmd_type = QString("CREATE");
+									aux_cmd_type = "CREATE";
 								else if(is_drop)
-									aux_cmd_type = QString("DROP");
+									aux_cmd_type = "DROP";
 								else
-									aux_cmd_type = QString("ALTER");
+									aux_cmd_type = "ALTER";
 
 								msg=tr("Running auxiliary `%1' command...").arg(aux_cmd_type);
 							}
@@ -1121,12 +1128,13 @@ void ModelExportHelper::setExportToDBMSParams(const QString &sql_buffer, Connect
 	this->errors.clear();
 }
 
-void ModelExportHelper::setExportToSQLParams(DatabaseModel *db_model, const QString &filename, const QString &pgsql_ver, bool split)
+void ModelExportHelper::setExportToSQLParams(DatabaseModel *db_model, const QString &filename, const QString &pgsql_ver, bool split, DatabaseModel::CodeGenMode code_gen_mode)
 {
 	this->db_model=db_model;
 	this->filename=filename;
 	this->pgsql_ver=pgsql_ver;
 	this->split=split;
+	this->code_gen_mode=code_gen_mode;
 }
 
 void ModelExportHelper::setExportToPNGParams(ObjectsScene *scene, QGraphicsView *viewp, const QString &filename, double zoom, bool show_grid, bool show_delim, bool page_by_page)
@@ -1212,7 +1220,7 @@ void ModelExportHelper::exportToSQL()
 {
 	try
 	{
-		exportToSQL(db_model, filename, pgsql_ver, split);
+		exportToSQL(db_model, filename, pgsql_ver, split, code_gen_mode);
 		resetExportParams();
 	}
 	catch(Exception &e)

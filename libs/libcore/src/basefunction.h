@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -31,7 +31,7 @@
 #include "pgsqltypes/functiontype.h"
 #include "pgsqltypes/securitytype.h"
 
-class BaseFunction: public BaseObject {
+class __libcore BaseFunction: public BaseObject {
 	protected:	
 		//! \brief Function unique signature
 		QString signature;
@@ -43,36 +43,36 @@ class BaseFunction: public BaseObject {
 		QString symbol;
 
 		//! \brief Function source code (except for C language defined functions)
-		QString source_code;
+		QString func_source;
 
 		//! \brief Language that is used to construct the language
 		BaseObject *language;
 
 		//! \brief Function parameters
-		vector<Parameter> parameters;
+		std::vector<Parameter> parameters;
 
 		//! \brief Function security type. It can be SECURITY [INVOKER | DEFINER]
 		SecurityType security_type;
 
 		//! \brief Transforms types that are applied to this function
-		vector<PgSqlType> transform_types;
+		std::vector<PgSqlType> transform_types;
 
 		//! \brief The user-defined configuration parameters of the function
 		attribs_map config_params;
 
 		//! \brief Formats the function parameter attribute to be used by the SchemaParser
-		void setParametersAttribute(unsigned def_type);
+		void setParametersAttribute(SchemaParser::CodeType def_type);
 
 		//! \brief Formats the basic function's attributes to used in the code generation
-		void setBasicFunctionAttributes(unsigned def_type);
+		void setBasicFunctionAttributes(SchemaParser::CodeType def_type);
 
 		//! \brief Returns a code snippet that is used to configure atler commands in order to change configuration parameters
-		attribs_map getAlterDefinitionAttributes(BaseFunction *func);
+		attribs_map getAlterCodeAttributes(BaseFunction *func);
 
 		virtual void configureSearchAttributes();
 
 	public:
-		static const QRegExp ConfigParamPattern;
+		static const QRegularExpression ConfigParamPattern;
 
 		BaseFunction();
 
@@ -86,7 +86,7 @@ class BaseFunction: public BaseObject {
 		virtual void addParameter(Parameter param);
 
 		//! \brief Defines the function source code (if its not use the C language)
-		void setSourceCode(const QString &src_code);
+		void setFunctionSource(const QString &src_code);
 
 		//! \brief Defines the shared library that stores the function routine
 		void setLibrary(const QString &library);
@@ -121,7 +121,7 @@ class BaseFunction: public BaseObject {
 		attribs_map getConfigurationParams();
 
 		//! \brief Returns the function's source code
-		QString getSourceCode();
+		QString getFunctionSource();
 
 		//! \brief Returns the shared library that stores the function definition
 		QString getLibrary();
@@ -142,7 +142,7 @@ class BaseFunction: public BaseObject {
 		SecurityType getSecurityType();
 
 		//! \brief Returns the transform types of the function
-		vector<PgSqlType> getTransformTypes();
+		std::vector<PgSqlType> getTransformTypes();
 
 		//! \brief Removes a parameter using its name and type
 		void removeParameter(const QString &name, PgSqlType type);
@@ -167,9 +167,9 @@ class BaseFunction: public BaseObject {
 		 this formating is always done. */
 		void createSignature(bool format=true, bool prepend_schema=true);
 
-		virtual QString getCodeDefinition(unsigned def_type, bool) = 0;
-		virtual QString getCodeDefinition(unsigned def_type) = 0;
-		virtual QString getAlterDefinition(BaseObject *object) = 0;
+		virtual QString getSourceCode(SchemaParser::CodeType def_type, bool) = 0;
+		virtual QString getSourceCode(SchemaParser::CodeType def_type) = 0;
+		virtual QString getAlterCode(BaseObject *object) = 0;
 };
 
 #endif

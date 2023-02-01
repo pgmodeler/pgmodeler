@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 */
 
 #include "column.h"
+#include "coreutilsns.h"
 
 const QString Column::NextValFuncTmpl("nextval('%1'::regclass)");
 
@@ -40,7 +41,7 @@ Column::Column()
 	attributes[Attributes::Cycle]="";
 
 	parent_rel=sequence=nullptr;
-	identity_type=BaseType::Null;
+	identity_type = IdentityType::Null;
 }
 
 void Column::setName(const QString &name)
@@ -70,7 +71,7 @@ void Column::setType(PgSqlType type)
 	//An error is raised if the column receive a pseudo-type as data type.
 	if(type.isPseudoType())
 		throw Exception(ErrorCode::AsgPseudoTypeColumn,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-	else if(this->identity_type != BaseType::Null && !type.isIntegerType())
+	else if(this->identity_type != IdentityType::Null && !type.isIntegerType())
 	{
 		throw Exception(Exception::getErrorMessage(ErrorCode::InvalidIdentityColumn).arg(getSignature()),
 										ErrorCode::InvalidIdentityColumn, __PRETTY_FUNCTION__, __FILE__, __LINE__);
@@ -82,7 +83,7 @@ void Column::setType(PgSqlType type)
 
 void Column::setIdentityType(IdentityType id_type)
 {
-	if(id_type != BaseType::Null && !type.isIntegerType())
+	if(id_type != IdentityType::Null && !type.isIntegerType())
 	{
 		throw Exception(Exception::getErrorMessage(ErrorCode::InvalidIdentityColumn).arg(getSignature()),
 										ErrorCode::InvalidIdentityColumn, __PRETTY_FUNCTION__, __FILE__, __LINE__);
@@ -95,7 +96,7 @@ void Column::setIdentityType(IdentityType id_type)
 	generated = false;
 
 	//Identity column implies NOT NULL constraint
-	if(id_type != BaseType::Null)
+	if(id_type != IdentityType::Null)
 		setNotNull(true);
 }
 
@@ -104,7 +105,7 @@ void Column::setDefaultValue(const QString &value)
 	setCodeInvalidated(default_value != value);
 	default_value = value.trimmed();
 	sequence = nullptr;
-	identity_type = BaseType::Null;
+	identity_type = IdentityType::Null;
 }
 
 void Column::setNotNull(bool value)
@@ -117,7 +118,7 @@ void Column::setGenerated(bool value)
 {
 	setCodeInvalidated(generated != value);
 	generated = value;
-	identity_type = BaseType::Null;
+	identity_type = IdentityType::Null;
 	sequence = nullptr;
 }
 
@@ -143,7 +144,7 @@ bool Column::isGenerated()
 
 bool Column::isIdentity()
 {
-	return (identity_type != BaseType::Null);
+	return (identity_type != IdentityType::Null);
 }
 
 QString Column::getTypeReference()
@@ -197,7 +198,7 @@ void Column::setSequence(BaseObject *seq)
 							ErrorCode::IncompColumnTypeForSequence,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		default_value="";
-		identity_type=BaseType::Null;
+		identity_type=IdentityType::Null;
 		generated = false;
 	}
 
@@ -250,7 +251,7 @@ void Column::setIdSeqAttributes(QString minv, QString maxv, QString inc, QString
 	seq_cycle = cycle;
 }
 
-QString Column::getCodeDefinition(unsigned def_type)
+QString Column::getSourceCode(SchemaParser::CodeType def_type)
 {
 	QString code_def=getCachedCode(def_type, false);
 	if(!code_def.isEmpty()) return code_def;
@@ -258,11 +259,11 @@ QString Column::getCodeDefinition(unsigned def_type)
 	if(getParentTable())
 		attributes[Attributes::Table]=getParentTable()->getName(true);
 
-	attributes[Attributes::Type]=type.getCodeDefinition(def_type);	
+	attributes[Attributes::Type]=type.getSourceCode(def_type);	
 	attributes[Attributes::DefaultValue]="";
 	attributes[Attributes::IdentityType]="";
 
-	if(identity_type != BaseType::Null)
+	if(identity_type != IdentityType::Null)
 	{
 		attributes[Attributes::IdentityType] = ~identity_type;	
 		attributes[Attributes::Increment]=seq_increment;
@@ -279,7 +280,7 @@ QString Column::getCodeDefinition(unsigned def_type)
 		else
 		{
 			//Configuring the default value of the column to get the next value of the sequence
-			if(def_type==SchemaParser::SqlDefinition)
+			if(def_type==SchemaParser::SqlCode)
 				attributes[Attributes::DefaultValue]=NextValFuncTmpl.arg(sequence->getSignature());
 
 			attributes[Attributes::Sequence]=sequence->getName(true);
@@ -290,10 +291,10 @@ QString Column::getCodeDefinition(unsigned def_type)
 	attributes[Attributes::Generated]=(generated ? Attributes::True : "");
 	attributes[Attributes::DeclInTable]=(isDeclaredInTable() ? Attributes::True : "");
 
-	return BaseObject::__getCodeDefinition(def_type);
+	return BaseObject::__getSourceCode(def_type);
 }
 
-QString Column::getAlterDefinition(BaseObject *object)
+QString Column::getAlterCode(BaseObject *object)
 {
 	Column *col=dynamic_cast<Column *>(object);
 
@@ -315,7 +316,7 @@ QString Column::getAlterDefinition(BaseObject *object)
 				(this->type.isEquivalentTo(col->type) &&
 				 ((this->type.hasVariableLength() && (this->type.getLength()!=col->type.getLength())) ||
 					(this->type.acceptsPrecision() && (this->type.getPrecision()!=col->type.getPrecision())))))
-			attribs[Attributes::Type]=col->type.getCodeDefinition(SchemaParser::SqlDefinition);
+			attribs[Attributes::Type]=col->type.getSourceCode(SchemaParser::SqlCode);
 
 		if(col->sequence)
 			def_val=NextValFuncTmpl.arg(col->sequence->getSignature());
@@ -332,11 +333,11 @@ QString Column::getAlterDefinition(BaseObject *object)
 
 		attribs[Attributes::NewIdentityType] = "";
 
-		if(this->identity_type == BaseType::Null && col->identity_type != BaseType::Null)
+		if(this->identity_type == IdentityType::Null && col->identity_type != IdentityType::Null)
 			attribs[Attributes::IdentityType] = ~col->identity_type;
-		else if(this->identity_type != BaseType::Null && col->identity_type == BaseType::Null)
+		else if(this->identity_type != IdentityType::Null && col->identity_type == IdentityType::Null)
 			attribs[Attributes::IdentityType] = Attributes::Unset;
-		else if(this->identity_type != BaseType::Null && col->identity_type != BaseType::Null &&
+		else if(this->identity_type != IdentityType::Null && col->identity_type != IdentityType::Null &&
 						this->identity_type != col->identity_type)
 			attribs[Attributes::NewIdentityType] = ~col->identity_type;
 
@@ -392,7 +393,7 @@ QString Column::getAlterDefinition(BaseObject *object)
 		}
 
 		copyAttributes(attribs);
-		alter_def = BaseObject::getAlterDefinition(this->getSchemaName(), attributes, false, true);
+		alter_def = BaseObject::getAlterCode(this->getSchemaName(), attributes, false, true);
 		alter_def += getAlterCommentDefinition(object, attributes);
 
 		return alter_def;
@@ -439,4 +440,28 @@ void Column::operator = (Column &col)
 	this->setAddedByGeneralization(false);
 	this->setAddedByLinking(false);
 	this->setCodeInvalidated(true);
+}
+
+QString Column::getDataDictionary(const attribs_map &extra_attribs)
+{
+	try
+	{
+		attribs_map attribs;
+
+		attribs.insert(extra_attribs.begin(), extra_attribs.end());
+		attribs[Attributes::Parent] = getParentTable()->getSchemaName();
+		attribs[Attributes::Name] = obj_name;
+		attribs[Attributes::Type] = *type;
+		attribs[Attributes::DefaultValue] = sequence ? NextValFuncTmpl.arg(sequence->getSignature()) : default_value;
+		attribs[Attributes::Comment] = comment;
+		attribs[Attributes::NotNull] = not_null ? CoreUtilsNs::DataDictCheckMark : "";
+
+		schparser.ignoreEmptyAttributes(true);
+		return schparser.getSourceCode(GlobalAttributes::getSchemaFilePath(GlobalAttributes::DataDictSchemaDir,
+																																					 getSchemaName()), attribs);
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorCode(), __PRETTY_FUNCTION__, __FILE__, __LINE__, &e);
+	}
 }

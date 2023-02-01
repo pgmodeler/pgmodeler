@@ -35,7 +35,7 @@
 		[);]
 	%end
 
-	%if ({pgsql-ver} >=f "9.2") %and {range} %then
+	%if {range} %then
 		[RANGE (] $br
 		[SUBTYPE = ] {subtype}
 

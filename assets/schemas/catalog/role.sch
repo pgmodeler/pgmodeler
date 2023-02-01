@@ -25,23 +25,14 @@
 		rolconnlimit AS connlimit, TRUE AS encrypted_bool, rolpassword AS password,
 
 		CASE
-		WHEN rolvaliduntil = 'infinity' THEN NULL
-		ELSE rolvaliduntil
-		END AS validity, ]
+			WHEN rolvaliduntil = 'infinity' THEN NULL
+			ELSE rolvaliduntil
+		END AS validity, 
 
-		%if ({pgsql-ver} != "9.0") %then
-			[ rolreplication AS replication_bool, ]
-		%else
-			[ NULL AS replication_bool, ]
-		%end
+		rolreplication AS replication_bool, 
+		rolbypassrls AS bypassrls_bool, 
 
-		%if ({pgsql-ver} >=f "9.5") %then
-			[ rolbypassrls AS bypassrls_bool, ]
-		%else
-			[ NULL AS bypassrls_bool, ]
-		%end
-
-		[ (SELECT array_agg(rl.oid) AS member_roles FROM pg_auth_members AS am
+		(SELECT array_agg(rl.oid) AS member_roles FROM pg_auth_members AS am
 		LEFT JOIN pg_roles AS rl ON rl.oid=am.member
 		WHERE am.roleid=rl1.oid AND am.admin_option IS FALSE),
 

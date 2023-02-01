@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
 
 SchemaView::SchemaView(Schema *schema) : BaseObjectView(schema)
 {
-	connect(schema, SIGNAL(s_objectModified()), this, SLOT(configureObject()));
+	connect(schema, &Schema::s_objectModified, this, &SchemaView::configureObject);
 
 	sch_name=new QGraphicsSimpleTextItem;
 	sch_name->setZValue(1);
@@ -75,8 +75,8 @@ void SchemaView::fetchChildren()
 {
 	Schema *schema=dynamic_cast<Schema *>(this->getUnderlyingObject());
 	DatabaseModel *model=dynamic_cast<DatabaseModel *>(schema->getDatabase());
-	vector<BaseObject *> objs, list;
-	vector<ObjectType> types = { ObjectType::Table, ObjectType::ForeignTable, ObjectType::View };
+	std::vector<BaseObject *> objs, list;
+	std::vector<ObjectType> types = { ObjectType::Table, ObjectType::ForeignTable, ObjectType::View };
 
 	//Gets all tables and views that belongs to the schema
 	for(auto &type : types)

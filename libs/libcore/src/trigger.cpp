@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -18,6 +18,7 @@
 
 #include "trigger.h"
 #include "utilsns.h"
+#include "coreutilsns.h"
 
 Trigger::Trigger()
 {
@@ -71,13 +72,13 @@ void Trigger::setArgumentAttribute(unsigned def_type)
 
 	for(auto &arg : arguments)
 	{
-		if(def_type==SchemaParser::SqlDefinition)
+		if(def_type==SchemaParser::SqlCode)
 			str_args.append(QString("'") + arg + QString("'"));
 		else
 			str_args.append(arg);
 	}
 
-	attributes[Attributes::Arguments] = str_args.join(def_type == SchemaParser::SqlDefinition ? "," : UtilsNs::DataSeparator);
+	attributes[Attributes::Arguments] = str_args.join(def_type == SchemaParser::SqlCode ? "," : UtilsNs::DataSeparator);
 }
 
 void Trigger::setFiringType(FiringType firing_type)
@@ -286,7 +287,7 @@ void Trigger::setConstraint(bool value)
 	is_constraint=value;
 }
 
-void Trigger::setTransitionTableName(unsigned tab_idx, const QString &name)
+void Trigger::setTransitionTableName(TransitionTableId tab_idx, const QString &name)
 {
 	if(tab_idx > NewTableName)
 		throw Exception(ErrorCode::RefElementInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -295,7 +296,7 @@ void Trigger::setTransitionTableName(unsigned tab_idx, const QString &name)
 	transition_tabs_names[tab_idx] = name;
 }
 
-QString Trigger::getTransitionTableName(unsigned tab_idx)
+QString Trigger::getTransitionTableName(TransitionTableId tab_idx)
 {
 	if(tab_idx > NewTableName)
 		throw Exception(ErrorCode::RefElementInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -310,7 +311,7 @@ bool Trigger::isConstraint()
 
 bool Trigger::isReferRelationshipAddedColumn()
 {
-	vector<Column *>::iterator itr, itr_end;
+	std::vector<Column *>::iterator itr, itr_end;
 	Column *col=nullptr;
 	bool found=false;
 
@@ -327,9 +328,9 @@ bool Trigger::isReferRelationshipAddedColumn()
 	return found;
 }
 
-vector<Column *> Trigger::getRelationshipAddedColumns()
+std::vector<Column *> Trigger::getRelationshipAddedColumns()
 {
-	vector<Column *> cols;
+	std::vector<Column *> cols;
 
 	for(auto &col : upd_columns)
 	{
@@ -340,15 +341,14 @@ vector<Column *> Trigger::getRelationshipAddedColumns()
 	return cols;
 }
 
-void Trigger::setBasicAttributes(unsigned def_type)
+void Trigger::setBasicAttributes(SchemaParser::CodeType def_type)
 {
 	QString str_aux,
 			attribs[4]={Attributes::InsEvent, Attributes::DelEvent,
-						Attributes::TruncEvent, Attributes::UpdEvent },
+									Attributes::TruncEvent, Attributes::UpdEvent },
 			sql_event[4]={"INSERT OR ", "DELETE OR ", "TRUNCATE OR ", "UPDATE   "};
 	unsigned count, i, i1, event_types[4]={EventType::OnInsert, EventType::OnDelete,
 										   EventType::OnTruncate, EventType::OnUpdate};
-
 
 	setArgumentAttribute(def_type);
 
@@ -376,21 +376,21 @@ void Trigger::setBasicAttributes(unsigned def_type)
 
 	if(!str_aux.isEmpty()) str_aux.remove(str_aux.size()-3,3);
 
-	if(def_type==SchemaParser::SqlDefinition && !attributes[Attributes::Columns].isEmpty())
+	if(def_type==SchemaParser::SqlCode && !attributes[Attributes::Columns].isEmpty())
 		str_aux+=QString(" OF ") + attributes[Attributes::Columns];
 
 	attributes[Attributes::Events]=str_aux;
 
 	if(function)
 	{
-		if(def_type==SchemaParser::SqlDefinition)
+		if(def_type==SchemaParser::SqlCode)
 			attributes[Attributes::TriggerFunc]=function->getName(true);
 		else
-			attributes[Attributes::TriggerFunc]=function->getCodeDefinition(def_type, true);
+			attributes[Attributes::TriggerFunc]=function->getSourceCode(def_type, true);
 	}
 }
 
-QString Trigger::getCodeDefinition(unsigned def_type)
+QString Trigger::getSourceCode(SchemaParser::CodeType def_type)
 {
 	QString code_def=getCachedCode(def_type, false);
 	if(!code_def.isEmpty()) return code_def;
@@ -419,7 +419,7 @@ QString Trigger::getCodeDefinition(unsigned def_type)
 	attributes[Attributes::Deferrable]=(is_deferrable ? Attributes::True : "");
 	attributes[Attributes::DeferType]=(~deferral_type);
 
-	if(def_type == SchemaParser::XmlDefinition)
+	if(def_type == SchemaParser::XmlCode)
 	{
 		attributes[Attributes::OldTableName]=transition_tabs_names[OldTableName];
 		attributes[Attributes::NewTableName]=transition_tabs_names[NewTableName];
@@ -430,7 +430,7 @@ QString Trigger::getCodeDefinition(unsigned def_type)
 		attributes[Attributes::NewTableName]=BaseObject::formatName(transition_tabs_names[NewTableName]);
 	}
 
-	return BaseObject::__getCodeDefinition(def_type);
+	return BaseObject::__getSourceCode(def_type);
 }
 
 void Trigger::validateTrigger()
@@ -474,10 +474,52 @@ void Trigger::validateTrigger()
 	}
 }
 
-QString Trigger::getSignature(bool format)
+QString Trigger::getDataDictionary(const attribs_map &extra_attribs)
 {
-	if(!getParentTable())
-		return BaseObject::getSignature(format);
+	try
+	{
+		attribs_map attribs;
+		QStringList aux_list;
+		std::vector<EventType> events = { EventType::OnInsert, EventType::OnDelete,
+																			EventType::OnTruncate, EventType::OnUpdate };
 
-	return (QString("%1 ON %2").arg(this->getName(format)).arg(getParentTable()->getSignature(true)));
+		attribs.insert(extra_attribs.begin(), extra_attribs.end());
+		attribs[Attributes::Name] = obj_name;
+		attribs[Attributes::Comment] = comment;
+		attribs[Attributes::RefTable] = referenced_table ? referenced_table->getSignature().remove('"') : "";
+		attribs[Attributes::Function] = function ? function->getSignature() : "";
+		attribs[Attributes::FiringType] = ~firing_type;
+		attribs[Attributes::Condition] = condition;
+		attribs[Attributes::PerRow] = is_exec_per_row ? CoreUtilsNs::DataDictCheckMark : "";
+
+		if(is_constraint)
+			aux_list.append(Attributes::Constraint.toUpper());
+
+		aux_list.clear();
+		if(is_deferrable)
+			aux_list.append(Attributes::Deferrable.toUpper() + QString(" (%1)").arg(~deferral_type));
+		else
+			aux_list.append("NOT " + Attributes::Deferrable.toUpper());
+
+		attribs[Attributes::Attributes] = aux_list.join(", ");
+
+		aux_list.clear();
+		for(auto &event : events)
+		{
+			if(!isExecuteOnEvent(event))
+				continue;
+
+			aux_list.append(~event);
+		}
+
+		attribs[Attributes::Events] = aux_list.join(", ");
+
+		schparser.ignoreEmptyAttributes(true);
+		return schparser.getSourceCode(GlobalAttributes::getSchemaFilePath(GlobalAttributes::DataDictSchemaDir,
+																																					 BaseObject::getSchemaName(ObjectType::Trigger)), attribs);
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorCode(), __PRETTY_FUNCTION__, __FILE__, __LINE__, &e);
+	}
 }

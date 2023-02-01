@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -26,14 +26,6 @@ const QString Relationship::DstTabToken("{dt}");
 const QString Relationship::GenTabToken("{gt}");
 const QString Relationship::SrcColToken("{sc}");
 
-constexpr unsigned Relationship::SrcColPattern;
-constexpr unsigned Relationship::DstColPattern;
-constexpr unsigned Relationship::PkPattern;
-constexpr unsigned Relationship::UqPattern;
-constexpr unsigned Relationship::SrcFkPattern;
-constexpr unsigned Relationship::DstFkPattern;
-constexpr unsigned Relationship::PkColPattern;
-
 Relationship::Relationship(Relationship *rel) : BaseRelationship(rel)
 {
 	if(!rel)
@@ -42,7 +34,7 @@ Relationship::Relationship(Relationship *rel) : BaseRelationship(rel)
 	(*(this))=(*rel);
 }
 
-Relationship::Relationship(unsigned rel_type, PhysicalTable *src_tab,
+Relationship::Relationship(BaseRelationship::RelType rel_type, PhysicalTable *src_tab,
 							 PhysicalTable *dst_tab, bool src_mdtry, bool dst_mdtry,
 							 bool identifier,  bool deferrable, DeferralType deferral_type,
 							 ActionType fk_del_act, ActionType fk_upd_act, CopyOptions copy_op) :
@@ -169,21 +161,21 @@ Relationship::Relationship(unsigned rel_type, PhysicalTable *src_tab,
 			if(tab_name_relnn.size() > BaseObject::ObjectNameMaxLength)
 				tab_name_relnn.resize(BaseObject::ObjectNameMaxLength);
 
-			setNamePattern(PkPattern, GenTabToken + SuffixSeparator + QString("pk"));
-			setNamePattern(SrcFkPattern, SrcTabToken + SuffixSeparator + QString("fk"));
-			setNamePattern(DstFkPattern, DstTabToken + SuffixSeparator + QString("fk"));
-			setNamePattern(UqPattern, GenTabToken + SuffixSeparator + QString("uq"));
+			setNamePattern(PkPattern, GenTabToken + SuffixSeparator + "pk");
+			setNamePattern(SrcFkPattern, SrcTabToken + SuffixSeparator + "fk");
+			setNamePattern(DstFkPattern, DstTabToken + SuffixSeparator + "fk");
+			setNamePattern(UqPattern, GenTabToken + SuffixSeparator + "uq");
 			setNamePattern(SrcColPattern, SrcColToken + SuffixSeparator + SrcTabToken);
 			setNamePattern(DstColPattern, SrcColToken + SuffixSeparator + DstTabToken);
-			setNamePattern(PkColPattern, QString("id"));
+			setNamePattern(PkColPattern, "id");
 		}
 		else if(rel_type==RelationshipDep || rel_type==RelationshipGen)
-			setNamePattern(PkPattern, DstTabToken + SuffixSeparator + QString("pk"));
+			setNamePattern(PkPattern, DstTabToken + SuffixSeparator + "pk");
 		else
 		{
-			setNamePattern(PkPattern, DstTabToken + SuffixSeparator + QString("pk"));
-			setNamePattern(SrcFkPattern, SrcTabToken + SuffixSeparator + QString("fk"));
-			setNamePattern(UqPattern, DstTabToken + SuffixSeparator + QString("uq"));
+			setNamePattern(PkPattern, DstTabToken + SuffixSeparator + "pk");
+			setNamePattern(SrcFkPattern, SrcTabToken + SuffixSeparator + "fk");
+			setNamePattern(UqPattern, DstTabToken + SuffixSeparator + "uq");
 			setNamePattern(SrcColPattern, SrcColToken + SuffixSeparator + SrcTabToken);
 		}
 
@@ -196,16 +188,15 @@ Relationship::Relationship(unsigned rel_type, PhysicalTable *src_tab,
 	}
 }
 
-void Relationship::setNamePattern(unsigned pat_id, const QString &pattern)
+void Relationship::setNamePattern(PatternId pat_id, const QString &pattern)
 {
 	if(!pattern.isEmpty())
 	{
 		QString aux_name=pattern,
 				pat_tokens[]={ SrcTabToken, DstTabToken,
 											 GenTabToken, SrcColToken };
-		unsigned i, count=sizeof(pat_tokens)/sizeof(QString);
 
-		for(i=0; i < count; i++)
+		for(unsigned i=0; i < 4; i++)
 			aux_name.replace(pat_tokens[i], QString("%1").arg(static_cast<char>('a' + i)));
 
 		if(pat_id > PkColPattern)
@@ -220,7 +211,7 @@ void Relationship::setNamePattern(unsigned pat_id, const QString &pattern)
 	}
 }
 
-QString Relationship::getNamePattern(unsigned pat_id)
+QString Relationship::getNamePattern(PatternId pat_id)
 {
 	if(pat_id > PkColPattern)
 		throw Exception(ErrorCode::RefInvalidNamePatternId,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -228,7 +219,7 @@ QString Relationship::getNamePattern(unsigned pat_id)
 	return name_patterns[pat_id];
 }
 
-QString Relationship::generateObjectName(unsigned pat_id, Column *id_col, bool use_alias)
+QString Relationship::generateObjectName(PatternId pat_id, Column *id_col, bool use_alias)
 {
 	QString name, aux_name;
 
@@ -270,7 +261,7 @@ void Relationship::setOriginalPrimaryKey(Constraint *pk)
 	pk_original = pk;
 }
 
-void Relationship::setMandatoryTable(unsigned table_id, bool value)
+void Relationship::setMandatoryTable(TableId table_id, bool value)
 {
 	BaseRelationship::setMandatoryTable(table_id, value);
 	this->invalidated=true;
@@ -298,7 +289,7 @@ void Relationship::setIdentifier(bool value)
 	this->invalidated=true;
 }
 
-void Relationship::setSpecialPrimaryKeyCols(vector<unsigned> &cols)
+void Relationship::setSpecialPrimaryKeyCols(std::vector<unsigned> &cols)
 {
 	/* Raises an error if the user try to set columns for special primary key when the
 		relationship type is identifier or self relationship */
@@ -310,17 +301,36 @@ void Relationship::setSpecialPrimaryKeyCols(vector<unsigned> &cols)
 	this->column_ids_pk_rel=cols;
 }
 
-vector<unsigned> Relationship::getSpecialPrimaryKeyCols()
+std::vector<unsigned> Relationship::getSpecialPrimaryKeyCols()
 {
 	return this->column_ids_pk_rel;
+}
+
+void Relationship::addGeneratedColsToSpecialPk()
+{
+	if(!pk_special)
+		return;
+
+	auto gen_cols = gen_columns;
+
+	for(auto &attrib : rel_attributes)
+		gen_cols.push_back(dynamic_cast<Column *>(attrib));
+
+	//Adds the columns to the primary key
+	for(auto &col_idx : column_ids_pk_rel)
+	{
+		if(col_idx < gen_cols.size() &&
+			 !pk_special->isColumnExists(gen_cols[col_idx], Constraint::SourceCols))
+			pk_special->addColumn(gen_cols[col_idx], Constraint::SourceCols);
+	}
 }
 
 void Relationship::createSpecialPrimaryKey()
 {
 	if(!column_ids_pk_rel.empty())
 	{
-		unsigned i, count;
-		vector<Column *> gen_cols;
+		unsigned i = 0;
+		std::vector<Column *> gen_cols;
 		PhysicalTable *table = getReceiverTable();
 
 		// First we need to remove the original primary key in order to use the special pk
@@ -350,18 +360,8 @@ void Relationship::createSpecialPrimaryKey()
 		for(i=0; pk_original && i < pk_original->getColumnCount(Constraint::SourceCols); i++)
 			pk_special->addColumn(pk_original->getColumn(i, Constraint::SourceCols), Constraint::SourceCols);
 
-		gen_cols=gen_columns;
-		for(auto &attrib : rel_attributes)
-			gen_cols.push_back(dynamic_cast<Column *>(attrib));
-
-		//Adds the columns to the primary key
-		count=column_ids_pk_rel.size();
-		for(i=0; i < count; i++)
-		{
-			if(column_ids_pk_rel[i] < gen_cols.size() &&
-					!pk_special->isColumnExists(gen_cols[column_ids_pk_rel[i]], Constraint::SourceCols))
-				pk_special->addColumn(gen_cols[column_ids_pk_rel[i]], Constraint::SourceCols);
-		}
+		//Adding generated columns and relationship attributes to the special primary key
+		addGeneratedColsToSpecialPk();
 
 		try
 		{
@@ -441,8 +441,8 @@ ActionType Relationship::getActionType(unsigned act_id)
 
 int Relationship::getObjectIndex(TableObject *object)
 {
-	vector<TableObject *>::iterator itr, itr_end;
-	vector<TableObject *> *list=nullptr;
+	std::vector<TableObject *>::iterator itr, itr_end;
+	std::vector<TableObject *> *list=nullptr;
 	TableObject *obj_aux=nullptr;
 	ObjectType obj_type;
 	bool found=false;
@@ -479,7 +479,7 @@ int Relationship::getObjectIndex(TableObject *object)
 
 bool Relationship::isColumnExists(Column *column)
 {
-	vector<Column *>::iterator itr, itr_end;
+	std::vector<Column *>::iterator itr, itr_end;
 	Column *col_aux=nullptr;
 	bool found=false;
 
@@ -503,7 +503,7 @@ bool Relationship::isColumnExists(Column *column)
 void Relationship::addObject(TableObject *tab_obj, int obj_idx)
 {
 	ObjectType obj_type;
-	vector<TableObject *> *obj_list=nullptr;
+	std::vector<TableObject *> *obj_list=nullptr;
 
 	/* Raises an error if the user try to add  manually a special primary key on
 		the relationship and the relationship type is not generalization or copy */
@@ -518,60 +518,59 @@ void Relationship::addObject(TableObject *tab_obj, int obj_idx)
 	try
 	{
 		//Checks if the object isn't exists on the relationshi and doesn't belongs to a table
-		if(!tab_obj->getParentTable() &&
-				getObjectIndex(tab_obj) < 0)
+		if(tab_obj->getParentTable() || getObjectIndex(tab_obj) >= 0)
 		{
-			//Gets the object list according the object type
-			obj_type=tab_obj->getObjectType();
-			if(obj_type==ObjectType::Column)
-				obj_list=&rel_attributes;
-			else if(obj_type==ObjectType::Constraint)
-				obj_list=&rel_constraints;
-			else
-				//Raises an error if the object type isn't valid (not a column or constraint)
-				throw Exception(ErrorCode::AsgObjectInvalidType, __PRETTY_FUNCTION__,__FILE__,__LINE__);
-
-			//Defines the parent table for the object only for validation
-			tab_obj->setParentTable(src_table);
-
-			//Generates the code for the object only for validation
-			if(obj_type==ObjectType::Column)
-				dynamic_cast<Column *>(tab_obj)->getCodeDefinition(SchemaParser::SqlDefinition);
-			else
-			{
-				Constraint *rest=nullptr;
-				rest=dynamic_cast<Constraint *>(tab_obj);
-
-				//Raises an error if the user try to add as foreign key to relationship
-				if(rest->getConstraintType()==ConstraintType::ForeignKey)
-					throw Exception(ErrorCode::AsgForeignKeyRelationship,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-
-				rest->getCodeDefinition(SchemaParser::SqlDefinition);
-			}
-
-			//Switch back to null the object parent
-			tab_obj->setParentTable(nullptr);
-
-			if(obj_idx < 0 || obj_idx >= static_cast<int>(obj_list->size()))
-				obj_list->push_back(tab_obj);
-			else
-			{
-				if(obj_list->size() > 0)
-					obj_list->insert((obj_list->begin() + obj_idx), tab_obj);
-				else
-					obj_list->push_back(tab_obj);
-			}
-
-			tab_obj->setAddedByLinking(true);
-			this->invalidated=true;
-		}
-		else
 			throw Exception(Exception::getErrorMessage(ErrorCode::AsgDuplicatedObject)
 							.arg(tab_obj->getName(true))
 							.arg(tab_obj->getTypeName())
 							.arg(this->getName(true))
 							.arg(this->getTypeName()),
 							ErrorCode::AsgDuplicatedObject, __PRETTY_FUNCTION__,__FILE__,__LINE__);
+		}
+
+		//Gets the object list according the object type
+		obj_type=tab_obj->getObjectType();
+		if(obj_type==ObjectType::Column)
+			obj_list=&rel_attributes;
+		else if(obj_type==ObjectType::Constraint)
+			obj_list=&rel_constraints;
+		else
+			//Raises an error if the object type isn't valid (not a column or constraint)
+			throw Exception(ErrorCode::AsgObjectInvalidType, __PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+		//Defines the parent table for the object only for validation
+		tab_obj->setParentTable(src_table);
+
+		//Generates the code for the object only for validation
+		if(obj_type==ObjectType::Column)
+			dynamic_cast<Column *>(tab_obj)->getSourceCode(SchemaParser::SqlCode);
+		else
+		{
+			Constraint *rest=nullptr;
+			rest=dynamic_cast<Constraint *>(tab_obj);
+
+			//Raises an error if the user try to add as foreign key to relationship
+			if(rest->getConstraintType()==ConstraintType::ForeignKey)
+				throw Exception(ErrorCode::AsgForeignKeyRelationship,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+			rest->getSourceCode(SchemaParser::SqlCode);
+		}
+
+		//Switch back to null the object parent
+		tab_obj->setParentTable(nullptr);
+
+		if(obj_idx < 0 || obj_idx >= static_cast<int>(obj_list->size()))
+			obj_list->push_back(tab_obj);
+		else
+		{
+			if(obj_list->size() > 0)
+				obj_list->insert((obj_list->begin() + obj_idx), tab_obj);
+			else
+				obj_list->push_back(tab_obj);
+		}
+
+		tab_obj->setAddedByLinking(true);
+		this->invalidated=true;
 	}
 	catch(Exception &e)
 	{
@@ -602,7 +601,7 @@ void Relationship::destroyObjects()
 
 void Relationship::removeObject(unsigned obj_id, ObjectType obj_type)
 {
-	vector<TableObject *> *obj_list=nullptr;
+	std::vector<TableObject *> *obj_list=nullptr;
 	TableObject *tab_obj=nullptr;
 	PhysicalTable *recv_table=nullptr;
 
@@ -624,8 +623,8 @@ void Relationship::removeObject(unsigned obj_id, ObjectType obj_type)
 	{
 		Column *col=nullptr;
 		Constraint *constr=nullptr;
-		vector<TableObject *>::iterator itr, itr_end;
-		vector<unsigned>::iterator sp_pk_itr;
+		std::vector<TableObject *>::iterator itr, itr_end;
+		std::vector<unsigned>::iterator sp_pk_itr;
 		bool refer=false;
 		int col_idx=0;
 
@@ -694,7 +693,7 @@ void Relationship::removeConstraint(unsigned constr_idx)
 	removeObject(constr_idx, ObjectType::Constraint);
 }
 
-vector<Column *> Relationship::getGeneratedColumns()
+std::vector<Column *> Relationship::getGeneratedColumns()
 {
 	return gen_columns;
 }
@@ -704,9 +703,9 @@ Table *Relationship::getGeneratedTable()
 	return table_relnn;
 }
 
-vector<Constraint *> Relationship::getGeneratedConstraints()
+std::vector<Constraint *> Relationship::getGeneratedConstraints()
 {
-	vector<Constraint *> vect;
+	std::vector<Constraint *> vect;
 
 	if(fk_rel1n)
 		vect.push_back(fk_rel1n);
@@ -723,12 +722,12 @@ vector<Constraint *> Relationship::getGeneratedConstraints()
 void Relationship::configureSearchAttributes()
 {
 	BaseRelationship::configureSearchAttributes();
-	search_attribs[Attributes::RelatedForeignKey] = fk_rel1n ? fk_rel1n->getName() : "";
+	search_attribs[Attributes::RelatedForeignKey] = fk_rel1n ? fk_rel1n->getSignature(true) : "";
 }
 
 TableObject *Relationship::getObject(unsigned obj_idx, ObjectType obj_type)
 {
-	vector<TableObject *> *list=nullptr;
+	std::vector<TableObject *> *list=nullptr;
 
 	if(obj_type==ObjectType::Column)
 		list=&rel_attributes;
@@ -745,8 +744,8 @@ TableObject *Relationship::getObject(unsigned obj_idx, ObjectType obj_type)
 
 TableObject *Relationship::getObject(const QString &name, ObjectType obj_type)
 {
-	vector<TableObject *>::iterator itr, itr_end;
-	vector<TableObject *> *list=nullptr;
+	std::vector<TableObject *>::iterator itr, itr_end;
+	std::vector<TableObject *> *list=nullptr;
 	TableObject *obj_aux=nullptr;
 	bool found=false;
 
@@ -787,7 +786,7 @@ Column *Relationship::getAttribute(const QString &name)
 	return dynamic_cast<Column *>(getObject(name,ObjectType::Column));
 }
 
-vector<TableObject *> Relationship::getAttributes()
+std::vector<TableObject *> Relationship::getAttributes()
 {
 	return rel_attributes;
 }
@@ -806,7 +805,7 @@ Constraint *Relationship::getConstraint(const QString &name)
 	return dynamic_cast<Constraint *>(getObject(name,ObjectType::Constraint));
 }
 
-vector<TableObject *> Relationship::getConstraints()
+std::vector<TableObject *> Relationship::getConstraints()
 {
 	return rel_constraints;
 }
@@ -885,7 +884,7 @@ void Relationship::addConstraints(PhysicalTable *recv_tab)
 	}
 	catch(Exception &e)
 	{
-		vector<TableObject *>::iterator itr=rel_constraints.begin();
+		std::vector<TableObject *>::iterator itr=rel_constraints.begin();
 
 		while(itr!=rel_constraints.end())
 		{
@@ -897,7 +896,7 @@ void Relationship::addConstraints(PhysicalTable *recv_tab)
 	}
 }
 
-void Relationship::addColumnsRelGenPart()
+void Relationship::addColumnsRelGenPart(bool missing_only)
 {
 	PhysicalTable *src_tab=nullptr, *dst_tab=nullptr,
 			*parent_tab=nullptr, *aux_tab=nullptr;
@@ -906,7 +905,7 @@ void Relationship::addColumnsRelGenPart()
 	unsigned src_count, dst_count,
 			i, i1, i2, id_tab,
 			idx, tab_count;
-	vector<Column *> columns;
+	std::vector<Column *> columns;
 	ObjectType types[2]={ ObjectType::Table, ObjectType::BaseTable };
 	ErrorCode err_code=ErrorCode::Custom;
 	bool duplic=false, cond=false,
@@ -947,9 +946,12 @@ void Relationship::addColumnsRelGenPart()
 			relationship foreign key */
 			dst_type=dst_col->getType();
 
-			if(dst_type==QString("serial")) dst_type=QString("integer");
-			else if(dst_type==QString("bigserial")) dst_type=QString("bigint");
-			else if(dst_type==QString("smallserial")) dst_type=QString("smallint");
+			/* if(dst_type == "serial") dst_type = "integer";
+			else if(dst_type == "bigserial") dst_type = "bigint";
+			else if(dst_type == "smallserial") dst_type = "smallint"; */
+
+			if(dst_type.isSerialType())
+				dst_type = dst_type.getAliasType();
 
 			/* This flag indicates that the column name is registered
 			in the other table column (duplication). This situation need
@@ -963,9 +965,12 @@ void Relationship::addColumnsRelGenPart()
 				src_col=src_tab->getColumn(i1);
 				src_type=src_col->getType();
 
-				if(src_type==QString("serial")) src_type=QString("integer");
-				else if(src_type==QString("bigserial")) src_type=QString("bigint");
-				else if(dst_type==QString("smallserial")) dst_type=QString("smallint");
+				/*if(src_type == "serial") src_type = "integer";
+				else if(src_type == "bigserial") src_type = "bigint";
+				else if(dst_type == "smallserial") dst_type = "smallint";*/
+
+				if(src_type.isSerialType())
+					src_type = src_type.getAliasType();
 
 				//Check the duplication on the column names
 				duplic=(src_col->getName()==dst_col->getName());
@@ -1052,6 +1057,24 @@ void Relationship::addColumnsRelGenPart()
 				//In case there is no column duplicity
 				if(!duplic)
 				{
+					if(missing_only)
+					{
+						bool found = false;
+
+						for(auto &col : gen_columns)
+						{
+							if(col->getName() == dst_col->getName())
+							{
+								found = true;
+								break;
+							}
+						}
+
+						if(found)
+							continue;
+					}
+
+
 					//Creates a new column making the initial configurations
 					column=new Column;
 
@@ -1066,21 +1089,18 @@ void Relationship::addColumnsRelGenPart()
 					column->setParentRelationship(this);
 
 					//Converts the type
-					if(column->getType()==QString("serial"))
-						column->setType(PgSqlType(QString("integer")));
-					else if(column->getType()==QString("bigserial"))
-						column->setType(PgSqlType(QString("bigint")));
-					else if(column->getType()==QString("smallserial"))
-						column->setType(PgSqlType(QString("smallint")));
+					if(column->getType().isSerialType())
+						column->setType(column->getType().getAliasType());
 
 					//Adds the new column to the temporary column list
 					columns.push_back(column);
 				}
-				else
+				// We count the rejected columns only when not creating the missing ones
+				else if(!missing_only)
 					/* If there is duplicity, the column is discarded and not included in the list,
-				instead, increases the attribute which counts the amount
-				duplicate columns of which were rejected by already exist
-				in the target (receiver) table */
+					 * instead, increases the attribute which counts the amount
+					 * duplicate columns of which were rejected by already exist
+					 * in the target (receiver) table */
 					rejected_col_count++;
 			}
 		}
@@ -1091,19 +1111,28 @@ void Relationship::addColumnsRelGenPart()
 		//In case that no duplicity error is detected
 		if(err_code==ErrorCode::Custom)
 		{
-			vector<Column *>::iterator itr, itr_end;
-
-			/* The columns of the temporary list will be inserted
-			in the list of referencing columns, and additionally the
-			relationship columns will also be inserted directly in the
-			source table, which inherits or copy table columns from target table */
-			gen_columns=columns;
-			itr=gen_columns.begin();
-			itr_end=gen_columns.end();
-			while(itr!=itr_end)
+			/* If we're creating the missing columns the columns
+			 * in the above iteration are added to both the source table
+			 * and the generated columns vector in order to reflect the
+			 * correct state of the relationship */
+			if(missing_only)
 			{
-				src_tab->addColumn((*itr));
-				itr++;
+				for(auto &col : columns)
+				{
+					src_tab->addColumn(col);
+					gen_columns.push_back(col);
+				}
+			}
+			else
+			{
+				/* The columns of the temporary list will be inserted
+				in the list of referencing columns, and additionally the
+				relationship columns will also be inserted directly in the
+				source table, which inherits or copy table columns from target table */
+				gen_columns = columns;
+
+				for(auto &col : gen_columns)
+					src_tab->addColumn(col);
 			}
 		}
 		else
@@ -1144,11 +1173,11 @@ void Relationship::addColumnsRelGenPart()
 
 		/* Creates the special primary key if exists and if the receiver table is not a foreign table .
 		 * This kind of table still don't support pks and fks */
-		if(getReceiverTable()->getObjectType() != ObjectType::ForeignTable)
-			this->createSpecialPrimaryKey();
+		//if(getReceiverTable()->getObjectType() != ObjectType::ForeignTable)
+		//	this->createSpecialPrimaryKey();
 
 		//Adds the constraint on the receiver table
-		this->addConstraints(getReceiverTable());
+		//this->addConstraints(getReceiverTable());
 	}
 	catch(Exception &e)
 	{
@@ -1160,11 +1189,11 @@ void Relationship::addColumnsRelGenPart()
 	}
 }
 
-void Relationship::addConstraintsRelGenPart()
+void Relationship::addCheckConstrsRelGenPart()
 {
 	PhysicalTable *parent_tab=getReferenceTable(),
 								*child_tab=getReceiverTable();
-	vector<TableObject *> *constrs=parent_tab->getObjectList(ObjectType::Constraint);
+	std::vector<TableObject *> *constrs=parent_tab->getObjectList(ObjectType::Constraint);
 	Constraint *ck_constr=nullptr, *constr=nullptr, *aux_constr=nullptr;
 
 	try
@@ -1201,6 +1230,17 @@ void Relationship::addConstraintsRelGenPart()
 	}
 }
 
+void Relationship::addConstraintsRelGenPart()
+{
+	/* Creates the special primary key if exists and if the receiver table is not a foreign table .
+	 * This kind of table still don't support pks and fks */
+	if(getReceiverTable()->getObjectType() != ObjectType::ForeignTable)
+		createSpecialPrimaryKey();
+
+	//Adds the constraint on the receiver table
+	addConstraints(getReceiverTable());
+}
+
 void Relationship::connectRelationship()
 {
 	try
@@ -1210,10 +1250,12 @@ void Relationship::connectRelationship()
 			if(rel_type==RelationshipGen)
 			{
 				//Copying the CHECK constraints before adding custom constraints like special pk
-				addConstraintsRelGenPart();
+				addCheckConstrsRelGenPart();
 
 				//Creates the columns on the receiver table following the rules for generalization rules
 				addColumnsRelGenPart();
+
+				addConstraintsRelGenPart();
 
 				//The reference table is added as parent table on the receiver
 				getReceiverTable()->addAncestorTable(getReferenceTable());
@@ -1223,6 +1265,8 @@ void Relationship::connectRelationship()
 				//Creates the columns on the receiver table following the rules for copy rules
 				addColumnsRelGenPart();
 
+				addConstraintsRelGenPart();
+
 				//The reference table is added as copy table on the receiver
 				getReceiverTable()->setCopyTable(getReferenceTable());
 				getReceiverTable()->setCopyTableOptions(this->copy_options);
@@ -1230,15 +1274,17 @@ void Relationship::connectRelationship()
 			else if(rel_type == RelationshipPart)
 			{
 				//Copying the CHECK constraints before adding custom constraints like special pk
-				addConstraintsRelGenPart();
+				addCheckConstrsRelGenPart();
 
 				//Creates the columns on the receiver table following the rules for copy rules
 				addColumnsRelGenPart();
+
+				addConstraintsRelGenPart();
+
 				getReceiverTable()->setPartionedTable(getReferenceTable());
 				getReceiverTable()->setPartitionBoundingExpr(part_bounding_expr);
 			}
-			else if(rel_type==Relationship11 ||
-					rel_type==Relationship1n)
+			else if(rel_type==Relationship11 || rel_type==Relationship1n)
 			{
 				if(rel_type==Relationship11)
 					addColumnsRel11();
@@ -1249,7 +1295,7 @@ void Relationship::connectRelationship()
 			{
 				if(!table_relnn)
 					//Allocates the table that represents the Many-to-Many relationship
-					table_relnn=new Table;
+					table_relnn = new Table;
 
 				/* By default the schema and tablespace for the new table is the same as
 			 the relationship source table */
@@ -1280,6 +1326,69 @@ void Relationship::connectRelationship()
 		}
 		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 	}
+}
+
+bool Relationship::updateGeneratedObjects()
+{
+	if(!connected || !isInvalidated())
+		return false;
+
+	Table *recv_tab = dynamic_cast<Table *>(getReceiverTable()),
+			*ref_tab = dynamic_cast<Table *>(getReferenceTable());
+
+	if(rel_type == Relationship11 || rel_type == Relationship1n || rel_type == RelationshipNn)
+	{
+		copyColumns(ref_tab, recv_tab, gen_columns.front()->isNotNull(), false, true);
+
+		// Refreshing the generated foreign key columns
+		if(fk_rel1n)
+		{
+			fk_rel1n->removeColumns();
+			fk_rel1n->addColumns(gen_columns, Constraint::SourceCols);
+			fk_rel1n->addColumns(pk_columns, Constraint::ReferencedCols);
+		}
+
+		// Refreshing the generated unique key columns
+		if(uq_rel11)
+		{
+			uq_rel11->removeColumns();
+			uq_rel11->addColumns(gen_columns, Constraint::SourceCols);
+		}
+
+		if(isIdentifier())
+		{
+			/* For identifier relationships we need to make two different updates:
+			 * 1) When the primary key in receiver table was created by the relationship itself (pk_relident)
+			 * 2) When the primary ky in receiver table already existed before the relationship connection
+			 *
+			 * In both cases we add the missing generated columns to the primary key in order to propagate
+			 * columns to other tables correctly */
+			if(pk_relident)
+			{
+				pk_relident->removeColumns();
+				pk_relident->addColumns(gen_columns, Constraint::SourceCols);
+			}
+			else
+			{
+				Constraint *pk = recv_tab->getPrimaryKey();
+
+				for(auto &col : gen_columns)
+				{
+					if(!pk->isColumnExists(col, Constraint::SourceCols))
+						pk->addColumn(col, Constraint::SourceCols);
+				}
+			}
+		}
+	}
+	else
+		// Creating missing columns of Generalization, Copy or Partition relationship
+		addColumnsRelGenPart(true);
+
+	// Update special primary key
+	if(pk_special)
+		addGeneratedColsToSpecialPk();
+
+	return true;
 }
 
 void Relationship::configureIndentifierRel(PhysicalTable *recv_tab)
@@ -1463,7 +1572,7 @@ void Relationship::addForeignKey(PhysicalTable *ref_tab, PhysicalTable *recv_tab
 							source table because they is always inserted after this position. */
 		if(rel_type==RelationshipNn)
 		{
-			vector<Constraint *> fks;
+			std::vector<Constraint *> fks;
 
 			/* Get the created foreign keys created on the self relationship in order to
 				 create them properly */
@@ -1560,7 +1669,7 @@ void Relationship::addAttributes(PhysicalTable *recv_tab)
 	}
 	catch(Exception &e)
 	{
-		vector<TableObject *>::iterator itr=rel_attributes.begin();
+		std::vector<TableObject *>::iterator itr=rel_attributes.begin();
 
 		while(itr!=rel_attributes.end())
 		{
@@ -1572,7 +1681,7 @@ void Relationship::addAttributes(PhysicalTable *recv_tab)
 	}
 }
 
-void Relationship::copyColumns(PhysicalTable *ref_tab, PhysicalTable *recv_tab, bool not_null, bool is_dst_table)
+void Relationship::copyColumns(PhysicalTable *ref_tab, PhysicalTable *recv_tab, bool not_null, bool is_dst_table, bool missing_only)
 {
 	Constraint *dst_pk=nullptr, *src_pk=nullptr, *pk=nullptr;
 	unsigned i, count;
@@ -1600,12 +1709,16 @@ void Relationship::copyColumns(PhysicalTable *ref_tab, PhysicalTable *recv_tab, 
 		 to the referenced column list of the relationship */
 		for(i=0; i < count; i++)
 		{
+			//Add the current primary key source column on the list
+			column_aux = pk->getColumn(i, Constraint::SourceCols);
+
+			if(missing_only && std::find(pk_columns.begin(), pk_columns.end(), column_aux) != pk_columns.end())
+				continue;
+
+			pk_columns.push_back(column_aux);
+
 			column=new Column;
 			gen_columns.push_back(column);
-
-			//Add the current primary key source column on the list
-			column_aux=pk->getColumn(i, Constraint::SourceCols);
-			pk_columns.push_back(column_aux);
 
 			(*column)=(*column_aux);
 			column->setNotNull(not_null);
@@ -1643,12 +1756,15 @@ void Relationship::copyColumns(PhysicalTable *ref_tab, PhysicalTable *recv_tab, 
 			column->setParentRelationship(this);
 
 			//Converting the serial like types
-			if(column->getType()==QString("serial"))
-				column->setType(PgSqlType(QString("integer")));
-			else if(column->getType()==QString("bigserial"))
-				column->setType(PgSqlType(QString("bigint")));
-			else if(column->getType()==QString("smallserial"))
-				column->setType(PgSqlType(QString("smallint")));
+			/* if(column->getType() == "serial")
+				column->setType(PgSqlType("integer"));
+			else if(column->getType() == "bigserial")
+				column->setType(PgSqlType("bigint"));
+			else if(column->getType() == "smallserial")
+				column->setType(PgSqlType("smallint")); */
+
+			if(column->getType().isSerialType())
+				column->setType(column->getType().getAliasType());
 
 			column->setName(name);
 			name=CoreUtilsNs::generateUniqueName(column, (*recv_tab->getObjectList(ObjectType::Column)));
@@ -1879,7 +1995,7 @@ void Relationship::addColumnsRelNn()
 			pk_col=new Column;
 			pk_col->setName(generateObjectName(PkColPattern));
 			pk_col->setAlias(generateObjectName(PkColPattern, nullptr, true));
-			pk_col->setType(PgSqlType(QString("serial")));
+			pk_col->setType(PgSqlType("serial"));
 			pk_col->setAddedByLinking(true);
 			table_relnn->addColumn(pk_col);
 		}
@@ -2122,12 +2238,12 @@ void Relationship::disconnectRelationship(bool rem_tab_objs)
 				  but is related to relationship disconnection, mixing fk rels and 1:n rels, and validation. */
 				(!connected && (fk_rel1n || pk_relident || uq_rel11 || table_relnn || pk_special)))
 		{
-			vector<Column *>::iterator itr, itr_end;
+			std::vector<Column *>::iterator itr, itr_end;
 			Column *column=nullptr;
 			PhysicalTable *table=nullptr;
 			unsigned list_idx=0;
-			vector<TableObject *> *attr_list=nullptr;
-			vector<TableObject *>::iterator itr_atrib, itr_atrib_end;
+			std::vector<TableObject *> *attr_list=nullptr;
+			std::vector<TableObject *>::iterator itr_atrib, itr_atrib_end;
 			TableObject *tab_obj=nullptr;
 
 			if(rel_type==RelationshipGen || rel_type==RelationshipDep || rel_type== RelationshipPart)
@@ -2342,7 +2458,7 @@ CopyOptions Relationship::getCopyOptions()
 
 bool Relationship::hasIndentifierAttribute()
 {
-	vector<TableObject *>::iterator itr, itr_end;
+	std::vector<TableObject *>::iterator itr, itr_end;
 	Constraint *constr=nullptr;
 	bool found=false;
 
@@ -2447,9 +2563,9 @@ bool Relationship::isInvalidated()
 					valid=(rel_pk_col==pk_col &&
 							(gen_col->getName()==col_name ||gen_col->getName().contains(pk_col->getName())) &&
 							(rel_pk_col->getType()==gen_col->getType() ||
-							(rel_pk_col->getType()==QString("serial") && gen_col->getType()==QString("integer")) ||
-							(rel_pk_col->getType()==QString("bigserial") && gen_col->getType()==QString("bigint")) ||
-							(rel_pk_col->getType()==QString("smallserial") && gen_col->getType()==QString("smallint"))));
+							(rel_pk_col->getType()=="serial" && gen_col->getType() == "integer") ||
+							(rel_pk_col->getType()=="bigserial" && gen_col->getType()=="bigint") ||
+							(rel_pk_col->getType()=="smallserial" && gen_col->getType()=="smallint")));
 				}
 			}
 		}
@@ -2590,28 +2706,28 @@ bool Relationship::isInvalidated()
 		return true;
 }
 
-QString Relationship::getCodeDefinition(unsigned def_type)
+QString Relationship::getSourceCode(SchemaParser::CodeType def_type)
 {
 	QString code_def=getCachedCode(def_type);
 	if(!code_def.isEmpty()) return code_def;
 
-	if(def_type==SchemaParser::SqlDefinition)
+	if(def_type==SchemaParser::SqlCode)
 	{
 		if(fk_rel1n && (rel_type==Relationship11 || rel_type==Relationship1n))
 		{
 			unsigned count, i;
 
 			attributes[Attributes::Relationship1n]=Attributes::True;
-			attributes[Attributes::Constraints]=fk_rel1n->getCodeDefinition(def_type);
+			attributes[Attributes::Constraints]=fk_rel1n->getSourceCode(def_type);
 
 			if(uq_rel11)
-				attributes[Attributes::Constraints]+=uq_rel11->getCodeDefinition(def_type);
+				attributes[Attributes::Constraints]+=uq_rel11->getSourceCode(def_type);
 
 			count=rel_constraints.size();
 			for(i=0; i < count; i++)
 			{
 				if(dynamic_cast<Constraint *>(rel_constraints[i])->getConstraintType()!=ConstraintType::PrimaryKey)
-					attributes[Attributes::Constraints]+=dynamic_cast<Constraint *>(rel_constraints[i])->getCodeDefinition(def_type, false);
+					attributes[Attributes::Constraints]+=dynamic_cast<Constraint *>(rel_constraints[i])->getSourceCode(def_type, false);
 
 			}
 
@@ -2622,14 +2738,14 @@ QString Relationship::getCodeDefinition(unsigned def_type)
 			unsigned count, i;
 
 			attributes[Attributes::RelationshipNn]=Attributes::True;
-			attributes[Attributes::Table]=table_relnn->getCodeDefinition(def_type);
+			attributes[Attributes::Table]=table_relnn->getSourceCode(def_type);
 
 			count=table_relnn->getConstraintCount();
 			for(i=0; i < count; i++)
 			{
 				if(table_relnn->getConstraint(i)->getConstraintType()!=ConstraintType::PrimaryKey &&
 						table_relnn->getConstraint(i)->getConstraintType()!=ConstraintType::Check)
-					attributes[Attributes::Constraints]+=table_relnn->getConstraint(i)->getCodeDefinition(def_type, true);
+					attributes[Attributes::Constraints]+=table_relnn->getConstraint(i)->getSourceCode(def_type, true);
 			}
 		}
 		else if(rel_type==RelationshipGen)
@@ -2638,7 +2754,7 @@ QString Relationship::getCodeDefinition(unsigned def_type)
 			attributes[Attributes::Table]=getReceiverTable()->getName(true);
 		}
 
-		return this->BaseObject::__getCodeDefinition(SchemaParser::SqlDefinition);
+		return this->BaseObject::__getSourceCode(SchemaParser::SqlCode);
 	}
 	else
 	{
@@ -2674,7 +2790,7 @@ QString Relationship::getCodeDefinition(unsigned def_type)
 		for(i=0; i < count; i++)
 		{
 			attributes[Attributes::Columns]+=dynamic_cast<Column *>(rel_attributes[i])->
-													getCodeDefinition(SchemaParser::XmlDefinition);
+													getSourceCode(SchemaParser::XmlCode);
 		}
 
 		attributes[Attributes::Constraints]="";
@@ -2683,13 +2799,13 @@ QString Relationship::getCodeDefinition(unsigned def_type)
 		{
 			if(!rel_constraints[i]->isProtected())
 				attributes[Attributes::Constraints]+=dynamic_cast<Constraint *>(rel_constraints[i])->
-															getCodeDefinition(SchemaParser::XmlDefinition, true);
+															getSourceCode(SchemaParser::XmlCode, true);
 		}
 
 		if(pk_original)
 		{
 			pk_original->setParentTable(getReceiverTable());
-			attributes[Attributes::OriginalPk]=pk_original->getCodeDefinition(SchemaParser::XmlDefinition);
+			attributes[Attributes::OriginalPk]=pk_original->getSourceCode(SchemaParser::XmlCode);
 			pk_original->setParentTable(nullptr);
 		}
 
@@ -2699,9 +2815,9 @@ QString Relationship::getCodeDefinition(unsigned def_type)
 
 		attributes[Attributes::SpecialPkCols] = sp_pk_cols.join(',');
 
-		if(copy_options.getCopyMode()!=0)
+		if(copy_options.getCopyMode() != CopyOptions::NoMode)
 		{
-			attributes[Attributes::CopyOptions]=QString("%1").arg(copy_options.getCopyOptionsIds());
+			attributes[Attributes::CopyOptions]=QString("%1").arg(copy_options.getCopyOptions());
 			attributes[Attributes::CopyMode]=QString("%1").arg(copy_options.getCopyMode());
 		}
 
@@ -2716,7 +2832,7 @@ QString Relationship::getCodeDefinition(unsigned def_type)
 		if(!reduced_form)
 			cached_reduced_code.clear();
 
-		return this->BaseObject::getCodeDefinition(SchemaParser::XmlDefinition, reduced_form);
+		return this->BaseObject::getSourceCode(SchemaParser::XmlCode, reduced_form);
 	}
 
 }
@@ -2769,7 +2885,7 @@ QString Relationship::getAlterRelationshipDefinition(bool undo_inh_part)
 		attributes[Attributes::PartitionBoundExpr]=getReceiverTable()->getPartitionBoundingExpr();
 	}
 
-	return BaseObject::getAlterDefinition(this->getSchemaName(), attributes);
+	return BaseObject::getAlterCode(this->getSchemaName(), attributes);
 }
 
 

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -25,15 +25,10 @@ int main(int argc, char **argv)
 {
 	try
 	{
-		Application::setAttribute(Qt::AA_UseHighDpiPixmaps);
-		Application::setAttribute(Qt::AA_EnableHighDpiScaling);
+		GlobalAttributes::setCustomUiScaleFactor();
 		Application app(argc,argv);
 		QStringList args = app.arguments();
-		QTranslator translator;
-
-		//Loads the ui translation for crashhandler
-		translator.load(QLocale::system().name(), GlobalAttributes::getLanguagesDir());
-		app.installTranslator(&translator);
+		app.loadTranslation(QLocale::system().name());
 
 		CrashHandlerForm crashhandler(args.size() > 1 && args[1]==CrashHandlerForm::AnalysisMode);
 		GuiUtilsNs::resizeDialog(&crashhandler);
@@ -46,6 +41,6 @@ int main(int argc, char **argv)
 	{
 		QTextStream out(stdout);
 		out << e.getExceptionsText();
-		return enum_cast(e.getErrorCode());
+		return enum_t(e.getErrorCode());
 	}
 }

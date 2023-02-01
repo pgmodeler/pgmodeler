@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>536</width>
-    <height>203</height>
+    <width>575</width>
+    <height>236</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -18,19 +18,19 @@
   </property>
   <layout class="QGridLayout" name="rule_grid">
    <property name="leftMargin">
-    <number>2</number>
+    <number>5</number>
    </property>
    <property name="topMargin">
-    <number>2</number>
+    <number>5</number>
    </property>
    <property name="rightMargin">
-    <number>2</number>
+    <number>5</number>
    </property>
    <property name="bottomMargin">
-    <number>2</number>
+    <number>5</number>
    </property>
    <property name="spacing">
-    <number>6</number>
+    <number>5</number>
    </property>
    <item row="0" column="0">
     <widget class="QLabel" name="event_lbl">
@@ -53,6 +53,9 @@
    </item>
    <item row="0" column="1">
     <layout class="QHBoxLayout" name="horizontalLayout">
+     <property name="spacing">
+      <number>5</number>
+     </property>
      <item>
       <widget class="QComboBox" name="event_cmb">
        <property name="sizePolicy">
@@ -75,6 +78,12 @@
        </property>
        <property name="sizeAdjustPolicy">
         <enum>QComboBox::AdjustToContents</enum>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>28</width>
+         <height>28</height>
+        </size>
        </property>
       </widget>
      </item>
@@ -129,6 +138,12 @@
        <property name="sizeAdjustPolicy">
         <enum>QComboBox::AdjustToContents</enum>
        </property>
+       <property name="iconSize">
+        <size>
+         <width>28</width>
+         <height>28</height>
+        </size>
+       </property>
       </widget>
      </item>
     </layout>
@@ -155,23 +170,23 @@
    <item row="2" column="0" colspan="2">
     <widget class="QGroupBox" name="commands_gb">
      <property name="title">
-      <string>Commands</string>
+      <string>C&amp;ommands</string>
      </property>
      <layout class="QGridLayout" name="gridLayout">
       <property name="leftMargin">
-       <number>4</number>
+       <number>5</number>
       </property>
       <property name="topMargin">
-       <number>4</number>
+       <number>5</number>
       </property>
       <property name="rightMargin">
-       <number>4</number>
+       <number>5</number>
       </property>
       <property name="bottomMargin">
-       <number>4</number>
+       <number>5</number>
       </property>
       <property name="spacing">
-       <number>6</number>
+       <number>5</number>
       </property>
       <item row="0" column="0">
        <widget class="QLabel" name="comando_lbl">

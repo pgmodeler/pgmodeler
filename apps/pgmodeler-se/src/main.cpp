@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -26,12 +26,13 @@ int main(int argc, char **argv)
 {
 	try
 	{
-		PgModelerApp::setAttribute(Qt::AA_UseHighDpiPixmaps);
-		PgModelerApp::setAttribute(Qt::AA_EnableHighDpiScaling);
+		GlobalAttributes::setCustomUiScaleFactor();
 		PgModelerApp app(argc,argv);
 		QStringList args = app.arguments();
-
 		SchemaEditorForm syntaxchk;
+
+		app.loadTranslation(QLocale::system().name());
+
 		args.pop_front();
 		syntaxchk.loadFiles(args);
 		syntaxchk.showMaximized();
@@ -43,6 +44,6 @@ int main(int argc, char **argv)
 	{
 		QTextStream out(stdout);
 		out << e.getExceptionsText();
-		return enum_cast(e.getErrorCode());
+		return enum_t(e.getErrorCode());
 	}
 }

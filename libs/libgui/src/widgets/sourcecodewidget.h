@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -28,20 +28,19 @@
 #include "ui_sourcecodewidget.h"
 #include "dbobjects/baseobjectwidget.h"
 #include "numberedtexteditor.h"
+#include "widgets/findreplacewidget.h"
 
-class SourceCodeWidget: public BaseObjectWidget, public Ui::SourceCodeWidget {
+class __libgui SourceCodeWidget: public BaseObjectWidget, public Ui::SourceCodeWidget {
 	private:
 		Q_OBJECT
-
-		static constexpr int OriginalSql=0,
-		DependenciesSql=1,
-		ChildrenSql=2;
 
 		NumberedTextEditor *sqlcode_txt,
 		*xmlcode_txt;
 
 		SyntaxHighlighter *hl_sqlcode,
 		*hl_xmlcode;
+
+		FindReplaceWidget *find_sql_wgt;
 
 	public:
 		SourceCodeWidget(QWidget * parent = nullptr);

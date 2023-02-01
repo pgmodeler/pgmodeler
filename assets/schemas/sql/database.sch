@@ -44,16 +44,13 @@
 	$br $tb [CONNECTION LIMIT = ] {connlimit}
 %end
 
-%if ({pgsql-ver} >=f "9.5") %then
-	%if ({is-template} == "true") %then
-		$br $tb [IS_TEMPLATE = ] {is-template}
-	%end
-
-	%if ({allow-conns} == "false") %then
-		$br $tb [ALLOW_CONNECTIONS = ] {allow-conns}
-	%end
+%if ({is-template} == "true") %then
+	$br $tb [IS_TEMPLATE = ] {is-template}
 %end
 
+%if ({allow-conns} == "false") %then
+	$br $tb [ALLOW_CONNECTIONS = ] {allow-conns}
+%end
 ;
 
 {ddl-end}

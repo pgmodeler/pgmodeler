@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>562</width>
-    <height>611</height>
+    <width>1358</width>
+    <height>1020</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -18,19 +18,19 @@
   </property>
   <layout class="QGridLayout" name="type_grid">
    <property name="leftMargin">
-    <number>2</number>
+    <number>5</number>
    </property>
    <property name="topMargin">
-    <number>2</number>
+    <number>5</number>
    </property>
    <property name="rightMargin">
-    <number>2</number>
+    <number>5</number>
    </property>
    <property name="bottomMargin">
-    <number>2</number>
+    <number>5</number>
    </property>
    <property name="spacing">
-    <number>6</number>
+    <number>5</number>
    </property>
    <item row="0" column="4">
     <widget class="QRadioButton" name="range_rb">
@@ -50,25 +50,35 @@
      <property name="currentIndex">
       <number>0</number>
      </property>
+     <property name="iconSize">
+      <size>
+       <width>22</width>
+       <height>22</height>
+      </size>
+     </property>
      <widget class="QWidget" name="tab_2">
+      <attribute name="icon">
+       <iconset resource="../../res/resources.qrc">
+        <normaloff>:/icons/icons/function.png</normaloff>:/icons/icons/function.png</iconset>
+      </attribute>
       <attribute name="title">
-       <string>Functions</string>
+       <string>&amp;Functions</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout_3">
        <property name="leftMargin">
-        <number>4</number>
+        <number>5</number>
        </property>
        <property name="topMargin">
-        <number>4</number>
+        <number>5</number>
        </property>
        <property name="rightMargin">
-        <number>4</number>
+        <number>5</number>
        </property>
        <property name="bottomMargin">
-        <number>4</number>
+        <number>5</number>
        </property>
        <property name="spacing">
-        <number>6</number>
+        <number>5</number>
        </property>
        <item row="0" column="0">
         <widget class="QLabel" name="input_lbl">
@@ -122,24 +132,28 @@
       </layout>
      </widget>
      <widget class="QWidget" name="tab">
+      <attribute name="icon">
+       <iconset resource="../../res/resources.qrc">
+        <normaloff>:/icons/icons/attribute.png</normaloff>:/icons/icons/attribute.png</iconset>
+      </attribute>
       <attribute name="title">
-       <string>Attributes</string>
+       <string>A&amp;ttributes</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout_2">
        <property name="leftMargin">
-        <number>4</number>
+        <number>5</number>
        </property>
        <property name="topMargin">
-        <number>4</number>
+        <number>5</number>
        </property>
        <property name="rightMargin">
-        <number>4</number>
+        <number>5</number>
        </property>
        <property name="bottomMargin">
-        <number>4</number>
+        <number>5</number>
        </property>
        <property name="spacing">
-        <number>6</number>
+        <number>5</number>
        </property>
        <item row="0" column="0">
         <widget class="QLabel" name="internal_len_lbl">
@@ -172,7 +186,14 @@
         </widget>
        </item>
        <item row="0" column="3">
-        <widget class="QComboBox" name="storage_cmb"/>
+        <widget class="QComboBox" name="storage_cmb">
+         <property name="iconSize">
+          <size>
+           <width>28</width>
+           <height>28</height>
+          </size>
+         </property>
+        </widget>
        </item>
        <item row="1" column="0" rowspan="3">
         <widget class="QLabel" name="by_value_lbl">
@@ -183,6 +204,9 @@
        </item>
        <item row="1" column="1" rowspan="3">
         <layout class="QVBoxLayout" name="verticalLayout">
+         <property name="spacing">
+          <number>5</number>
+         </property>
          <item>
           <widget class="QCheckBox" name="by_value_chk">
            <property name="sizePolicy">
@@ -226,7 +250,14 @@
         </widget>
        </item>
        <item row="1" column="3">
-        <widget class="QComboBox" name="category_cmb"/>
+        <widget class="QComboBox" name="category_cmb">
+         <property name="iconSize">
+          <size>
+           <width>28</width>
+           <height>28</height>
+          </size>
+         </property>
+        </widget>
        </item>
        <item row="2" column="2">
         <widget class="QLabel" name="delimiter_lbl">
@@ -278,6 +309,12 @@
           <size>
            <width>90</width>
            <height>0</height>
+          </size>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>28</width>
+           <height>28</height>
           </size>
          </property>
          <item>
@@ -395,23 +432,23 @@
       </size>
      </property>
      <property name="title">
-      <string>Enumerations</string>
+      <string>&amp;Enumerations</string>
      </property>
      <layout class="QGridLayout" name="gridLayout">
       <property name="leftMargin">
-       <number>4</number>
+       <number>5</number>
       </property>
       <property name="topMargin">
-       <number>4</number>
+       <number>5</number>
       </property>
       <property name="rightMargin">
-       <number>4</number>
+       <number>5</number>
       </property>
       <property name="bottomMargin">
-       <number>4</number>
+       <number>5</number>
       </property>
       <property name="spacing">
-       <number>6</number>
+       <number>5</number>
       </property>
       <item row="0" column="0">
        <widget class="QLabel" name="enum_name_lbl">
@@ -445,23 +482,23 @@
       </size>
      </property>
      <property name="title">
-      <string>Attributes</string>
+      <string>&amp;Attributes</string>
      </property>
      <layout class="QGridLayout" name="gridLayout_4">
       <property name="leftMargin">
-       <number>4</number>
+       <number>5</number>
       </property>
       <property name="topMargin">
-       <number>4</number>
+       <number>5</number>
       </property>
       <property name="rightMargin">
-       <number>4</number>
+       <number>5</number>
       </property>
       <property name="bottomMargin">
-       <number>4</number>
+       <number>5</number>
       </property>
       <property name="spacing">
-       <number>6</number>
+       <number>5</number>
       </property>
       <item row="0" column="0">
        <widget class="QLabel" name="attrib_name_lbl">
@@ -502,23 +539,23 @@
       </sizepolicy>
      </property>
      <property name="title">
-      <string>Attributes</string>
+      <string>&amp;Attributes</string>
      </property>
      <layout class="QGridLayout" name="gridLayout_5">
       <property name="leftMargin">
-       <number>4</number>
+       <number>5</number>
       </property>
       <property name="topMargin">
-       <number>4</number>
+       <number>5</number>
       </property>
       <property name="rightMargin">
-       <number>4</number>
+       <number>5</number>
       </property>
       <property name="bottomMargin">
-       <number>4</number>
+       <number>5</number>
       </property>
       <property name="spacing">
-       <number>6</number>
+       <number>5</number>
       </property>
       <item row="2" column="0">
        <widget class="QLabel" name="diff_func_lbl">
@@ -564,6 +601,9 @@
   <tabstop>default_value_edt</tabstop>
   <tabstop>alignment_cmb</tabstop>
  </tabstops>
- <resources/>
+ <resources>
+  <include location="../../res/resources.qrc"/>
+  <include location="../../res/resources.qrc"/>
+ </resources>
  <connections/>
 </ui>

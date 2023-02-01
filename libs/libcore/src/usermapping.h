@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -28,7 +28,7 @@
 #include "baseobject.h"
 #include "foreignserver.h"
 
-class UserMapping: public BaseObject, public ForeignObject {
+class __libcore UserMapping: public BaseObject, public ForeignObject {
 	private:
 		//! \brief The foreign server which is managed by this user mapping the server
 		ForeignServer *foreign_server;
@@ -45,9 +45,9 @@ class UserMapping: public BaseObject, public ForeignObject {
 		virtual void setOwner(BaseObject *role);
 		virtual QString getName(bool = false, bool = false);
 		virtual QString getSignature(bool = false);
-		virtual QString getCodeDefinition(unsigned def_type);
-		virtual QString getAlterDefinition(BaseObject *object);
-		virtual QString getDropDefinition(bool);
+		virtual QString getSourceCode(SchemaParser::CodeType def_type);
+		virtual QString getAlterCode(BaseObject *object);
+		virtual QString getDropCode(bool);
 };
 
 #endif

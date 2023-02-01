@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -26,11 +26,11 @@ OperationListWidget::OperationListWidget(QWidget *parent) : QWidget(parent)
 	setModel(nullptr);
 
 	operations_tw->headerItem()->setHidden(true);
-	connect(undo_tb,SIGNAL(clicked()),this,SLOT(undoOperation()));
-	connect(redo_tb,SIGNAL(clicked()),this,SLOT(redoOperation()));
-	connect(rem_operations_tb,SIGNAL(clicked()),this,SLOT(removeOperations()));
-	connect(operations_tw,SIGNAL(itemClicked(QTreeWidgetItem *, int)),this,SLOT(selectItem(QTreeWidgetItem *, int)));
-	connect(hide_tb, SIGNAL(clicked(bool)), this, SLOT(hide()));
+	connect(undo_tb, &QToolButton::clicked, this, &OperationListWidget::undoOperation);
+	connect(redo_tb, &QToolButton::clicked, this, &OperationListWidget::redoOperation);
+	connect(rem_operations_tb, &QToolButton::clicked, this, &OperationListWidget::removeOperations);
+	connect(operations_tw, &QTreeWidget::itemClicked, this, &OperationListWidget::selectItem);
+	connect(hide_tb, &QToolButton::clicked, this, &OperationListWidget::hide);
 }
 
 void OperationListWidget::hide()
@@ -93,7 +93,7 @@ void OperationListWidget::updateOperationList()
 
 			item=new QTreeWidgetItem;
 			str_aux=QString(BaseObject::getSchemaName(obj_type));
-			item->setData(0, Qt::UserRole, QVariant(enum_cast(obj_type)));
+			item->setData(0, Qt::UserRole, QVariant(enum_t(obj_type)));
 
 			if(obj_type==ObjectType::BaseRelationship)
 				str_aux+=QString("tv");
@@ -104,22 +104,22 @@ void OperationListWidget::updateOperationList()
 			item->setFont(0,font);
 			item->setText(0, QString("%1 (%2)").arg(obj_name).arg(BaseObject::getTypeName(obj_type)));
 
-			if(op_type==Operation::ObjectCreated)
+			if(op_type==Operation::ObjCreated)
 			{
-				op_icon=QString("criated");
+				op_icon=QString("created");
 				op_name=tr("created");
 			}
-			else if(op_type==Operation::ObjectRemoved)
+			else if(op_type==Operation::ObjRemoved)
 			{
 				op_icon=QString("removed");
 				op_name=tr("removed");
 			}
-			else if(op_type==Operation::ObjectModified)
+			else if(op_type==Operation::ObjModified)
 			{
 				op_icon=QString("modified");
 				op_name=tr("modified");
 			}
-			else if(op_type==Operation::ObjectMoved)
+			else if(op_type==Operation::ObjMoved)
 			{
 				op_icon=QString("moved");
 				op_name=tr("moved");

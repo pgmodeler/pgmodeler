@@ -37,13 +37,13 @@
 		LOGIN
 	%end
 
-	%if {replication} %and ({pgsql-ver} != "9.0") %then
+	%if {replication} %then
 		$br $tb
 		%if ({replication}=="unset") %then NO %end
 		REPLICATION
 	%end
 
-	%if {bypassrls} %and ({pgsql-ver} >=f "9.5") %then
+	%if {bypassrls} %then
 		$br $tb
 		%if ({bypassrls}=="unset") %then NO %end
 		BYPASSRLS
@@ -55,14 +55,6 @@
 		%if {empty-password} %then
 			[PASSWORD ] ''
 		%else
-			%if {encrypted} %then
-				%if ({encrypted}=="unset") %then
-					[UNENCRYPTED ]
-				%else
-					[ENCRYPTED ]
-				%end
-			%end
-
 			[PASSWORD ] '{password}'
 		%end
 	%end

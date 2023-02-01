@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -30,7 +30,7 @@ ReferenceWidget::ReferenceWidget(QWidget *parent) : QWidget(parent)
 	expression_hl=new SyntaxHighlighter(expression_txt, false, true);
 	expression_hl->loadConfiguration(GlobalAttributes::getSQLHighlightConfPath());
 
-	ref_object_sel=new ObjectSelectorWidget({ ObjectType::Table, ObjectType::ForeignTable, ObjectType::Column }, true, this);
+	ref_object_sel=new ObjectSelectorWidget({ ObjectType::Table, ObjectType::ForeignTable, ObjectType::Column }, this);
 	ref_object_sel->enableObjectCreation(false);
 	ref_object_sel->setToolTip(tr("To reference all columns of a table select only a table in the object selector, this is the same as write <em><strong>[schema].[table].*</strong></em>. In order to reference a only a single column of a table select a column object in the selector."));
 	expression_cp=new CodeCompletionWidget(expression_txt, true);
@@ -70,7 +70,7 @@ ReferenceWidget::ReferenceWidget(QWidget *parent) : QWidget(parent)
 	ref_tables_tab->setHeaderLabel(tr("Schema"), 1);
 	ref_tables_tab->setHeaderIcon(QPixmap(GuiUtilsNs::getIconPath("schema")),1);
 
-	ref_table_sel=new ObjectSelectorWidget({ ObjectType::Table, ObjectType::ForeignTable }, true, this);
+	ref_table_sel=new ObjectSelectorWidget({ ObjectType::Table, ObjectType::ForeignTable }, this);
 	ref_table_sel->enableObjectCreation(false);
 
 	QHBoxLayout *hbox = new QHBoxLayout;
@@ -79,7 +79,7 @@ ReferenceWidget::ReferenceWidget(QWidget *parent) : QWidget(parent)
 
 	info_frm=BaseObjectWidget::generateInformationFrame(tr("This tab can be used to inform the tables that the view references. This is just a convenience to make the visualization of this kind of object more intuitive. If no table is specified here no relationship will be displayed in the canvas. Note that no validation will be done to check if the provided tables are really referenced by the view."));
 	vbox = new QVBoxLayout;
-	vbox->setContentsMargins(4,4,4,4);
+	vbox->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
 	vbox->addLayout(hbox);
 	vbox->addWidget(ref_tables_tab);
 	vbox->addWidget(info_frm);
@@ -88,34 +88,34 @@ ReferenceWidget::ReferenceWidget(QWidget *parent) : QWidget(parent)
 	selectReferenceType();
 	setMinimumSize(640, 480);
 
-	connect(columns_tab, SIGNAL(s_rowAdded(int)), this, SLOT(addColumn(int)));
-	connect(columns_tab, SIGNAL(s_rowUpdated(int)), this, SLOT(updateColumn(int)));
-	connect(columns_tab, SIGNAL(s_rowEdited(int)), this, SLOT(editColumn(int)));
-	connect(columns_tab, SIGNAL(s_rowDuplicated(int,int)), this, SLOT(duplicateColumn(int,int)));
+	connect(columns_tab, &ObjectsTableWidget::s_rowAdded, this, &ReferenceWidget::addColumn);
+	connect(columns_tab, &ObjectsTableWidget::s_rowUpdated, this, &ReferenceWidget::updateColumn);
+	connect(columns_tab, &ObjectsTableWidget::s_rowEdited, this, &ReferenceWidget::editColumn);
+	connect(columns_tab, &ObjectsTableWidget::s_rowDuplicated, this, &ReferenceWidget::duplicateColumn);
 
-	connect(ref_tables_tab, SIGNAL(s_rowAdded(int)), this, SLOT(addRefTable(int)));
+	connect(ref_tables_tab, &ObjectsTableWidget::s_rowAdded, this, &ReferenceWidget::addRefTable);
 
-	connect(view_def_chk, SIGNAL(toggled(bool)), select_from_chk, SLOT(setDisabled(bool)));
-	connect(view_def_chk, SIGNAL(toggled(bool)), from_where_chk, SLOT(setDisabled(bool)));
-	connect(view_def_chk, SIGNAL(toggled(bool)), after_where_chk, SLOT(setDisabled(bool)));
-	connect(view_def_chk, SIGNAL(toggled(bool)), end_expr_chk, SLOT(setDisabled(bool)));
+	connect(view_def_chk, &QCheckBox::toggled, select_from_chk, &QCheckBox::setDisabled);
+	connect(view_def_chk, &QCheckBox::toggled, from_where_chk, &QCheckBox::setDisabled);
+	connect(view_def_chk, &QCheckBox::toggled, after_where_chk, &QCheckBox::setDisabled);
+	connect(view_def_chk, &QCheckBox::toggled, end_expr_chk, &QCheckBox::setDisabled);
 
-	connect(view_def_chk, &QCheckBox::toggled, [&](bool checked){
+	connect(view_def_chk, &QCheckBox::toggled, this, [this](bool checked){
 		properties_tbw->setTabEnabled(1, checked);
 		properties_tbw->setTabEnabled(2, checked);
 	});
 
-	connect(ref_type_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(selectReferenceType()));
+	connect(ref_type_cmb, &QComboBox::currentIndexChanged, this, &ReferenceWidget::selectReferenceType);
 
-	connect(ref_object_sel, &ObjectSelectorWidget::s_objectSelected, [&](){
+	connect(ref_object_sel, &ObjectSelectorWidget::s_objectSelected, this, [this](){
 		col_alias_edt->setEnabled(dynamic_cast<Column *>(ref_object_sel->getSelectedObject()));
 	});
 
-	connect(ref_object_sel, &ObjectSelectorWidget::s_selectorCleared, [&](){
+	connect(ref_object_sel, &ObjectSelectorWidget::s_selectorCleared, this, [this](){
 		col_alias_edt->setEnabled(false);
 	});
 
-	connect(ref_table_sel, &ObjectSelectorWidget::s_selectorChanged, [&](bool selected){
+	connect(ref_table_sel, &ObjectSelectorWidget::s_selectorChanged, this, [this](bool selected){
 		ref_tables_tab->setButtonsEnabled(ObjectsTableWidget::AddButton, selected);
 	});
 
@@ -153,7 +153,7 @@ void ReferenceWidget::setAttributes(Reference ref, unsigned ref_flags, DatabaseM
 		expr_alias_edt->setText(ref.getAlias());
 	}
 
-	if(ref_flags == Reference::SqlViewDefinition)
+	if(ref_flags == Reference::SqlViewDef)
 	{
 		int row = 0;
 		view_def_chk->setChecked(true);
@@ -188,10 +188,10 @@ void ReferenceWidget::setAttributes(Reference ref, unsigned ref_flags, DatabaseM
 	}
 	else
 	{
-		select_from_chk->setChecked((ref_flags & Reference::SqlReferSelect) == Reference::SqlReferSelect);
-		from_where_chk->setChecked((ref_flags & Reference::SqlReferFrom) == Reference::SqlReferFrom);
-		after_where_chk->setChecked((ref_flags & Reference::SqlReferWhere) == Reference::SqlReferWhere);
-		end_expr_chk->setChecked((ref_flags & Reference::SqlReferEndExpr) == Reference::SqlReferEndExpr);
+		select_from_chk->setChecked((ref_flags & Reference::SqlSelect) == Reference::SqlSelect);
+		from_where_chk->setChecked((ref_flags & Reference::SqlFrom) == Reference::SqlFrom);
+		after_where_chk->setChecked((ref_flags & Reference::SqlWhere) == Reference::SqlWhere);
+		end_expr_chk->setChecked((ref_flags & Reference::SqlEndExpr) == Reference::SqlEndExpr);
 	}
 
 	ref_tables_tab->setButtonsEnabled(ObjectsTableWidget::AddButton, false);
@@ -236,7 +236,7 @@ void ReferenceWidget::applyConfiguration()
 
 		if(view_def_chk->isChecked())
 		{
-			ref_flags = Reference::SqlViewDefinition;
+			ref_flags = Reference::SqlViewDef;
 			reference.removeColumns();
 
 			for(unsigned row = 0; row < columns_tab->getRowCount(); row++)
@@ -249,16 +249,16 @@ void ReferenceWidget::applyConfiguration()
 		}
 
 		if(select_from_chk->isChecked())
-			ref_flags |= Reference::SqlReferSelect;
+			ref_flags |= Reference::SqlSelect;
 
 		if(from_where_chk->isChecked())
-			ref_flags |= Reference::SqlReferFrom;
+			ref_flags |= Reference::SqlFrom;
 
 		if(after_where_chk->isChecked())
-			ref_flags |= Reference::SqlReferWhere;
+			ref_flags |= Reference::SqlWhere;
 
 		if(end_expr_chk->isChecked())
-			ref_flags |= Reference::SqlReferEndExpr;
+			ref_flags |= Reference::SqlEndExpr;
 
 
 		emit s_closeRequested();

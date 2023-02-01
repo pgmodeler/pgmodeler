@@ -14,7 +14,6 @@
 	%if {inherit} %then $br [ inherit="true"] %end
 	%if {login} %then $br [ login="true"] %end
 	%if {bypassrls} %then $br [ bypassrls="true"] %end
-	%if {encrypted} %then $br [ encrypted="true"] %end
 	%if {connlimit} %then $br [ connlimit=]"{connlimit}" %end
 	%if {validity} %then $br [ validity=]"{validity}" %end
 	%if {password} %then $br [ password=]"{password}" %end

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -30,19 +30,23 @@
 #include <QCryptographicHash>
 
 namespace CoreUtilsNs {
+	/*! \brief Holds the check mark character for use in data dictionary
+	 *  to indicate constraints applied to the column */
+	const QString DataDictCheckMark("&#10003;");
+
 	/*! \brief Template function that makes a copy from 'copy_obj' to 'psrc_obj' doing the cast to the
 		 correct object type. If the source object (psrc_obj) is not allocated the function allocates the attributes
 		 before copying. Both objects must be the same type if both are allocated.
 		 -- Brainfuck syntax style! :p -- */
 	template <class Class>
-	extern void copyObject(BaseObject **psrc_obj, Class *copy_obj);
+	extern __libcore void copyObject(BaseObject **psrc_obj, Class *copy_obj);
 
 	/*! \brief This functions is a second way to make a copy between two objects. It simply calls
 		 the template function above. */
-	extern void copyObject(BaseObject **psrc_obj, BaseObject *copy_obj, ObjectType obj_type);
+	extern __libcore void copyObject(BaseObject **psrc_obj, BaseObject *copy_obj, ObjectType obj_type);
 
 	//! \brief Returns true if the specified word is a PostgreSQL reserved word.
-	extern bool isReservedKeyword(const QString &word);
+	extern __libcore bool isReservedKeyword(const QString &word);
 
 	/*! \brief Generates a unique name based upon the specified object and the list of objects of the same type.
 	 * User can specify a suffix for the generated name as well if the comparison inside the method must be done with
@@ -51,7 +55,7 @@ namespace CoreUtilsNs {
 	 * when false the name of the input object (obj) will always be compared to itself if it is present in the provided list. When that
 	 * parameter is true the comparison is not made. */
 	template <class Class>
-	QString generateUniqueName(BaseObject *obj, vector<Class *> &obj_vector,
+	QString generateUniqueName(BaseObject *obj, std::vector<Class *> &obj_vector,
 														 bool fmt_name = false, const QString &suffix = "",
 														 bool use_suf_on_conflict = false, bool discard_input_obj = false)
 	{

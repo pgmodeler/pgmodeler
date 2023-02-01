@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -71,7 +71,7 @@ class PgModelerCliApp: public Application {
 		extra_connection;
 
 		//! \brief Loaded connections
-		map<QString, Connection *> connections;
+		std::map<QString, Connection *> connections;
 
 		//! \brief Connection configuration widget used to load available connections from file
 		ConnectionsConfigWidget *conn_conf;
@@ -85,13 +85,13 @@ class PgModelerCliApp: public Application {
 		static QTextStream out;
 
 		//! \brief Stores the long option names. The boolean indicates if the option accepts a value
-		static map<QString, bool> long_opts;
+		static std::map<QString, bool> long_opts;
 
 		//! \brief Stores the short option names.
 		static attribs_map short_opts;
 
 		//! \brief Stores the accepted options by the different operations
-		static map<QString, QStringList> accepted_opts;
+		static std::map<QString, QStringList> accepted_opts;
 
 		//! \brief Stores the parsed options names and values.
 		attribs_map parsed_opts;
@@ -116,9 +116,12 @@ class PgModelerCliApp: public Application {
 
 		/*! \brief Stores the member of role names that appear in deprecated tags <roles ... role-type="refer">
 		 * This map is used to reconfigure the role memberships after all objects are created */
-		map<QString, QStringList> member_roles;
+		std::map<QString, QStringList> member_roles;
 
-		static const QRegExp PasswordRegExp;
+		//! \brief Stores the changelog of the model that is being fixed to reproduce it in the output model
+		QString changelog;
+
+		static const QRegularExpression PasswordRegExp;
 		static const QString PasswordPlaceholder;
 
 		//! \brief Option names constants
@@ -160,6 +163,9 @@ class PgModelerCliApp: public Application {
 		SystemWide,
 		NoIndex,
 		Split,
+		OriginalSql,
+		DependenciesSql,
+		ChildrenSql,
 
 		IgnoreImportErrors,
 		ImportSystemObjs,

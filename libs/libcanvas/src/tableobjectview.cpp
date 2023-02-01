@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -67,7 +67,7 @@ void TableObjectView::configureDescriptor(ConstraintType constr_type)
 
 	/* Elliptical descriptor is used to columns (with or without not-null constraint),
 		for other object types, polygonal descriptor is usded */
-	ellipse_desc=((column && constr_type==BaseType::Null) || (!TableObject::isTableObject(obj_type)));
+	ellipse_desc=((column && constr_type==ConstraintType::Null) || (!TableObject::isTableObject(obj_type)));
 
 	if(descriptor && ((ellipse_desc && !dynamic_cast<QGraphicsEllipseItem *>(descriptor)) ||
 										(!ellipse_desc && dynamic_cast<QGraphicsEllipseItem *>(descriptor))))
@@ -89,11 +89,11 @@ void TableObjectView::configureDescriptor(ConstraintType constr_type)
 		QString attrib;
 		QPolygonF pol;
 
-		if(constr_type==BaseType::Null)
+		if(constr_type==ConstraintType::Null)
 		{
 			QGraphicsEllipseItem *desc=dynamic_cast<QGraphicsEllipseItem *>(descriptor);
 
-			desc->setRect(QRectF(QPointF(0,0), QSizeF(9.0 * factor, 9.0 * factor)));
+			desc->setRect(QRectF(QPointF(0,0), QSizeF(10.0 * factor, 10.0 * factor)));
 
 			if(column->isNotNull())
 				attrib=Attributes::NnColumn;
@@ -117,7 +117,7 @@ void TableObjectView::configureDescriptor(ConstraintType constr_type)
 				pol.append(QPointF(2,9)); pol.append(QPointF(3,8)); pol.append(QPointF(3,6));
 				pol.append(QPointF(4,6)); pol.append(QPointF(5,7)); pol.append(QPointF(6,6));
 				pol.append(QPointF(7,5)); pol.append(QPointF(9,7)); pol.append(QPointF(9,3));
-				pol.append(QPointF(3,3)); pol.append(QPointF(3,1));
+				pol.append(QPointF(3,3)); pol.append(QPointF(3,1));				
 			}
 			else if(constr_type==ConstraintType::ForeignKey)
 			{
@@ -135,9 +135,9 @@ void TableObjectView::configureDescriptor(ConstraintType constr_type)
 				pol.append(QPointF(9,4)); pol.append(QPointF(5,0));
 			}
 
-			if(factor!=1.0)
-				TextPolygonItem::resizePolygon(pol, pol.boundingRect().width() * factor,
-																						pol.boundingRect().height()  * factor);
+			resizePolygon(pol,
+										(pol.boundingRect().width() + HorizSpacing) * factor,
+										(pol.boundingRect().height() + VertSpacing) * factor);
 
 			desc->setPolygon(pol);
 			desc->setBrush(this->getFillStyle(attrib));
@@ -156,8 +156,9 @@ void TableObjectView::configureDescriptor(ConstraintType constr_type)
 		pol.append(QPointF(5,0)); pol.append(QPointF(0,5)); pol.append(QPointF(4,9));
 		pol.append(QPointF(9,9)); pol.append(QPointF(9,4));
 
-		if(factor!=1.0)
-			TextPolygonItem::resizePolygon(pol,	pol.boundingRect().width() * factor ,	pol.boundingRect().height() * factor);
+		resizePolygon(pol,
+									(pol.boundingRect().width() + HorizSpacing) * factor,
+									(pol.boundingRect().height() + VertSpacing) * factor);
 
 		desc->setPolygon(pol);
 		desc->setBrush(this->getFillStyle(tab_obj->getSchemaName()));
@@ -268,8 +269,8 @@ void TableObjectView::configureObject()
 
 		configureDescriptor(constr_type);
 
-		descriptor->setPos(HorizSpacing, 0);
-		px=HorizSpacing + descriptor->boundingRect().width() + (2 * HorizSpacing);
+		descriptor->setPos(HorizSpacing * 3, 0);
+		px=descriptor->pos().x() + descriptor->boundingRect().width() + (2 * HorizSpacing);
 
 		//Configuring the labels as follow: [object name] [type] [constraints]
 		lables[0]->setText(compact_view && !tab_obj->getAlias().isEmpty() ? tab_obj->getAlias() : tab_obj->getName());
@@ -442,7 +443,7 @@ void TableObjectView::configureObject(Reference reference)
 	QString str_aux;
 
 	configureDescriptor();
-	descriptor->setPos(HorizSpacing, 0);
+	descriptor->setPos(HorizSpacing * 3, 0);
 	px=descriptor->pos().x() + descriptor->boundingRect().width() + (2 * HorizSpacing);
 
 	if(reference.getReferenceType()==Reference::ReferColumn)
@@ -525,7 +526,7 @@ void TableObjectView::configureObject(const SimpleColumn &col)
 	double px;
 
 	configureDescriptor();
-	descriptor->setPos(HorizSpacing, 0);
+	descriptor->setPos(HorizSpacing * 3, 0);
 	px=descriptor->pos().x() + descriptor->boundingRect().width() + (2 * HorizSpacing);
 
 	fmt = font_config[Attributes::Column];
@@ -561,15 +562,15 @@ void TableObjectView::configureObject(const SimpleColumn &col)
 	calculateBoundingRect();
 }
 
-void TableObjectView::setChildObjectXPos(unsigned obj_idx, double px)
+void TableObjectView::setChildObjectXPos(ChildObjectId obj_id, double px)
 {
-	if(obj_idx >= 4)
+	if(obj_id > ConstrAliasLabel)
 		throw Exception(ErrorCode::RefObjectInvalidIndex, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 
-	if(obj_idx==0)
+	if(obj_id == ObjDescriptor)
 		descriptor->setPos(px, descriptor->pos().y());
 	else
-		lables[obj_idx-1]->setPos(px, lables[obj_idx-1]->pos().y());
+		lables[obj_id-1]->setPos(px, lables[obj_id-1]->pos().y());
 
 	calculateBoundingRect();
 }
@@ -604,15 +605,15 @@ void TableObjectView::calculateBoundingRect()
 		lables[i]->setPos(lables[i]->pos().x(), py);
 }
 
-QGraphicsItem *TableObjectView::getChildObject(unsigned obj_idx)
+QGraphicsItem *TableObjectView::getChildObject(ChildObjectId obj_id)
 {
-	if(obj_idx > ConstrAliasLabel)
+	if(obj_id > ConstrAliasLabel)
 		throw Exception(ErrorCode::RefObjectInvalidIndex, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 
-	if(obj_idx == ObjDescriptor)
+	if(obj_id == ObjDescriptor)
 		return descriptor;
 	else
-		return lables[obj_idx - 1];
+		return lables[obj_id - 1];
 }
 
 QString TableObjectView::getConstraintString(Column *column)
@@ -622,7 +623,7 @@ QString TableObjectView::getConstraintString(Column *column)
 		PhysicalTable *table=dynamic_cast<PhysicalTable *>(column->getParentTable());
 		QString str_constr;
 		Constraint *constr=nullptr;
-		vector<TableObject *>::iterator itr,itr_end;
+		std::vector<TableObject *>::iterator itr,itr_end;
 		ConstraintType constr_type;
 
 		itr=table->getObjectList(ObjectType::Constraint)->begin();
@@ -721,7 +722,7 @@ void TableObjectView::configureObjectSelection()
 	else
 		rect.setWidth(rect.width() - (3.5 * HorizSpacing));
 
-	rect_item->setBorderRadius(2);
+	rect_item->setBorderRadius(4);
 	rect_item->setRect(rect);
 	rect_item->setPos(0, VertSpacing/2);
 	rect_item->setBrush(this->getFillStyle(Attributes::ObjSelection));

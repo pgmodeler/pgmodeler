@@ -84,6 +84,12 @@
      <verstretch>0</verstretch>
     </sizepolicy>
    </property>
+   <property name="iconSize">
+    <size>
+     <width>28</width>
+     <height>28</height>
+    </size>
+   </property>
   </widget>
   <widget class="QSpinBox" name="rows_ret_spb">
    <property name="geometry">
@@ -199,6 +205,12 @@
      <horstretch>0</horstretch>
      <verstretch>0</verstretch>
     </sizepolicy>
+   </property>
+   <property name="iconSize">
+    <size>
+     <width>28</width>
+     <height>28</height>
+    </size>
    </property>
   </widget>
   <widget class="QCheckBox" name="window_func_chk">
@@ -367,7 +379,7 @@
     </sizepolicy>
    </property>
    <property name="title">
-    <string>Return table</string>
+    <string>&amp;Return table</string>
    </property>
   </widget>
   <widget class="QRadioButton" name="simple_rb">
@@ -454,6 +466,12 @@
      <verstretch>0</verstretch>
     </sizepolicy>
    </property>
+   <property name="iconSize">
+    <size>
+     <width>28</width>
+     <height>28</height>
+    </size>
+   </property>
   </widget>
   <widget class="QLabel" name="parallel_lbl">
    <property name="geometry">
@@ -482,6 +500,13 @@
   </widget>
  </widget>
  <tabstops>
+  <tabstop>func_type_cmb</tabstop>
+  <tabstop>rows_ret_spb</tabstop>
+  <tabstop>behavior_cmb</tabstop>
+  <tabstop>exec_cost_spb</tabstop>
+  <tabstop>parallel_cmb</tabstop>
+  <tabstop>window_func_chk</tabstop>
+  <tabstop>leakproof_chk</tabstop>
   <tabstop>simple_rb</tabstop>
   <tabstop>set_rb</tabstop>
   <tabstop>table_rb</tabstop>

@@ -16,11 +16,11 @@
 
 [CREATE FOREIGN TABLE ] {name}
 
-%if ({pgsql-ver} >=f "10.0") %and {partitioned-table} %then
+%if {partitioned-table} %then
 	$br [PARTITION OF ] {partitioned-table} $sp
 %end
 
-%if %not {partitioned-table} %or ({pgsql-ver} <f "10.0") %then
+%if %not {partitioned-table} %then
 
 	[ (] $br
 
@@ -47,7 +47,7 @@
 	%end
 %end
 
-%if ({pgsql-ver} >=f "10.0") %and {partitioned-table} %then
+%if {partitioned-table} %then
 	$br [FOR VALUES ] {partition-bound-expr}
 %end
 

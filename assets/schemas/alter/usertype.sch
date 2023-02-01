@@ -2,7 +2,7 @@
 # CAUTION: Do not modify this file unless you know what you are doing.
 # Code generation can be broken if incorrect changes are made.
 
-%if ({pgsql-ver} != "9.0") %and {has-changes} %then
+%if {has-changes} %then
 	%set {alter-type} [ALTER ] {sql-object} $sp {name}
 	%set {ddl-end} ; $br [-- ddl-end --] $br
 

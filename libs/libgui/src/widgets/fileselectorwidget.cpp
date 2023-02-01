@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -24,23 +24,24 @@ FileSelectorWidget::FileSelectorWidget(QWidget *parent) : QWidget(parent)
 	setupUi(this);
 	allow_filename_input = read_only = false;
 
-	file_dlg.setWindowIcon(QPixmap(GuiUtilsNs::getIconPath("pgsqlModeler48x48")));
+	file_dlg.setWindowIcon(QPixmap(GuiUtilsNs::getIconPath("pgmodeler_logo")));
 
 	filename_edt->setReadOnly(true);
 	filename_edt->installEventFilter(this);
 
 	warn_ico_lbl = new QLabel(this);
 	warn_ico_lbl->setVisible(false);
-	warn_ico_lbl->setMinimumSize(filename_edt->height(), filename_edt->height());
+	warn_ico_lbl->setMinimumSize(filename_edt->height() * 0.75, filename_edt->height() * 0.75);
 	warn_ico_lbl->setMaximumSize(warn_ico_lbl->minimumSize());
 	warn_ico_lbl->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 	warn_ico_lbl->setScaledContents(true);
 	warn_ico_lbl->setPixmap(QPixmap(GuiUtilsNs::getIconPath("alert")));
 	warn_ico_lbl->setToolTip(tr("No such file or directory!"));
 
-	connect(sel_file_tb, SIGNAL(clicked(bool)), this, SLOT(openFileDialog()));
-	connect(rem_file_tb, SIGNAL(clicked(bool)), this, SLOT(clearSelector()));
-	connect(filename_edt, &QLineEdit::textChanged, [&](const QString &text){
+	connect(sel_file_tb, &QToolButton::clicked, this, &FileSelectorWidget::openFileDialog);
+	connect(rem_file_tb, &QToolButton::clicked, this, &FileSelectorWidget::clearSelector);
+
+	connect(filename_edt, &QLineEdit::textChanged, this, [this](const QString &text){
 		rem_file_tb->setEnabled(!text.isEmpty());
 		validateSelectedFile();
 		emit s_selectorChanged(!text.isEmpty());
@@ -49,12 +50,10 @@ FileSelectorWidget::FileSelectorWidget(QWidget *parent) : QWidget(parent)
 
 bool FileSelectorWidget::eventFilter(QObject *obj, QEvent *evnt)
 {
-	if(isEnabled() && evnt->type() == QEvent::FocusIn &&
+	if(isEnabled() && evnt->type() == QEvent::MouseButtonPress &&
 		 QApplication::mouseButtons() == Qt::LeftButton && obj == filename_edt)
 	{
-		QFocusEvent *focus_evnt = dynamic_cast<QFocusEvent *>(evnt);
-
-		if(!allow_filename_input && !read_only && focus_evnt->reason() == Qt::MouseFocusReason)
+		if(!allow_filename_input && !read_only)
 		{
 			openFileDialog();
 			return true;
@@ -66,8 +65,8 @@ bool FileSelectorWidget::eventFilter(QObject *obj, QEvent *evnt)
 
 void FileSelectorWidget::resizeEvent(QResizeEvent *)
 {
-	warn_ico_lbl->move(filename_edt->width() - warn_ico_lbl->width(),
-										 (filename_edt->height() - warn_ico_lbl->height())/2);
+	warn_ico_lbl->move(filename_edt->width() - warn_ico_lbl->width() - 5,
+										 (filename_edt->height() - warn_ico_lbl->height()) / 2);
 }
 
 void FileSelectorWidget::setAllowFilenameInput(bool allow_fl_input)
@@ -144,13 +143,13 @@ void FileSelectorWidget::setReadOnly(bool value)
 
 	if(value)
 	{
-		disconnect(sel_file_tb, SIGNAL(clicked(bool)), this, SLOT(openFileDialog()));
-		connect(sel_file_tb, SIGNAL(clicked(bool)), this, SLOT(openFileExternally()));
+		disconnect(sel_file_tb, &QToolButton::clicked, this, &FileSelectorWidget::openFileDialog);
+		connect(sel_file_tb, &QToolButton::clicked, this, &FileSelectorWidget::openFileExternally);
 	}
 	else
 	{
-		connect(sel_file_tb, SIGNAL(clicked(bool)), this, SLOT(openFileDialog()));
-		disconnect(sel_file_tb, SIGNAL(clicked(bool)), this, SLOT(openFileExternally()));
+		connect(sel_file_tb, &QToolButton::clicked, this, &FileSelectorWidget::openFileDialog);
+		disconnect(sel_file_tb, &QToolButton::clicked, this, &FileSelectorWidget::openFileExternally);
 	}
 }
 
@@ -169,7 +168,10 @@ void FileSelectorWidget::openFileDialog()
 {
 	filename_edt->clearFocus();
 	file_dlg.selectFile(filename_edt->text());
+
+	GuiUtilsNs::restoreFileDialogState(&file_dlg);
 	file_dlg.exec();
+	GuiUtilsNs::saveFileDialogState(&file_dlg);
 
 	if(file_dlg.result() == QDialog::Accepted && !file_dlg.selectedFiles().isEmpty())
 	{

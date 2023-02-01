@@ -12,14 +12,19 @@ SUBDIRS = libs/$$LIBUTILS \
 # Include the tests subprojects only on debug mode
 CONFIG(debug, debug|release): SUBDIRS += tests
 
-# Include the plugins subprojects only if exists
-PLUGINS_SRC_ROOT=$$PWD/plugins/plugins.pro
-!exists($$PLUGINS_SRC_ROOT) {
-    warning("The subproject $$PLUGINS_SRC_ROOT wasn't found! pgModeler will be build without plugins.")
-    warning("If you want to compile pgModeler with plugins make sure to clone https://github.com/pgmodeler/plugins inside pgModeler's root folder and rerun qmake.")
+!exists($$PLUGINS_PRO_FILE) {
+   !defined(PRIVATE_PLUGINS,var) {
+     warning("The subproject $$PLUGINS_SRC_ROOT wasn't found! pgModeler will be build without plug-ins.")
+     warning("If you want to compile pgModeler with plug-ins make sure to clone https://github.com/pgmodeler/plugins inside pgModeler's root folder and rerun qmake.")
+   }
+
+   defined(PRIVATE_PLUGINS,var) {
+     error("The private plug-ins build was specified but the subproject $$PLUGINS_SRC_ROOT wasn't found! Aborting.")
+   }
 }
-exists($$PLUGINS_SRC_ROOT) {
-   SUBDIRS += plugins
+
+exists($$PLUGINS_PRO_FILE) {
+   SUBDIRS += $$PLUGINS_FOLDER
 }
 
 # Including executables subprojects
@@ -29,7 +34,8 @@ SUBDIRS += apps/pgmodeler \
 	   apps/pgmodeler-se
 
 # Deployment settings
-samples.files = assets/samples/*
+defined(DEMO_VERSION, var): samples.files = assets/samples/demo.dbm
+!defined(DEMO_VERSION, var): samples.files = assets/samples/*
 samples.path = $$SAMPLESDIR
 
 schemas.files = assets/schemas/*

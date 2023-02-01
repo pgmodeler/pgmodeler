@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -34,10 +34,9 @@ OperatorWidget::OperatorWidget(QWidget *parent): BaseObjectWidget(parent, Object
 		arg_types[1]=new PgSQLTypeWidget(this, tr("Right Argument Type"));
 
 		grid=new QGridLayout;
-		grid->setContentsMargins(4,4,4,4);
+		grid->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
 		grid->addWidget(arg_types[0],0,0);
 		grid->addWidget(arg_types[1],1,0);
-
 
 		grid->addItem(new QSpacerItem(10,1,QSizePolicy::Fixed,QSizePolicy::Expanding), 2, 0);
 
@@ -50,7 +49,7 @@ OperatorWidget::OperatorWidget(QWidget *parent): BaseObjectWidget(parent, Object
 		for(i=Operator::FuncOperator; i <= Operator::FuncRestrict; i++)
 		{
 			functions_sel[i]=nullptr;
-			functions_sel[i]=new ObjectSelectorWidget(ObjectType::Function, true, this);
+			functions_sel[i]=new ObjectSelectorWidget(ObjectType::Function, this);
 
 			if(i!=Operator::FuncOperator)
 				grid->addWidget(functions_sel[i],i,1,1,1);
@@ -59,7 +58,7 @@ OperatorWidget::OperatorWidget(QWidget *parent): BaseObjectWidget(parent, Object
 		for(i=Operator::OperCommutator, i1=3; i <= Operator::OperNegator; i++,i1++)
 		{
 			operators_sel[i]=nullptr;
-			operators_sel[i]=new ObjectSelectorWidget(ObjectType::Operator, true, this);
+			operators_sel[i]=new ObjectSelectorWidget(ObjectType::Operator, this);
 			grid->addWidget(operators_sel[i],i1,1,1,1);
 		}
 
@@ -68,7 +67,7 @@ OperatorWidget::OperatorWidget(QWidget *parent): BaseObjectWidget(parent, Object
 
 		setRequiredField(operator_func_lbl);
 		setRequiredField(functions_sel[0]);
-		configureTabOrder({ functions_sel[0], arg_types[0], arg_types[1] });
+		configureTabOrder({ functions_sel[0], merges_chk, hashes_chk, arg_types[0], arg_types[1] });
 
 		setMinimumSize(600, 620);
 	}
@@ -97,10 +96,10 @@ void OperatorWidget::setAttributes(DatabaseModel *model, OperationList *op_list,
 		merges_chk->setChecked(oper->isMerges());
 
 		for(i=Operator::FuncOperator; i <= Operator::FuncRestrict; i++)
-			functions_sel[i]->setSelectedObject(oper->getFunction(i));
+			functions_sel[i]->setSelectedObject(oper->getFunction(static_cast<Operator::FunctionId>(i)));
 
 		for(i=Operator::OperCommutator; i <= Operator::OperNegator; i++)
-			operators_sel[i]->setSelectedObject(oper->getOperator(i));
+			operators_sel[i]->setSelectedObject(oper->getOperator(static_cast<Operator::OperatorId>(i)));
 
 		left_type=oper->getArgumentType(Operator::LeftArg);
 		right_type=oper->getArgumentType(Operator::RightArg);
@@ -126,13 +125,16 @@ void OperatorWidget::applyConfiguration()
 		oper->setMerges(merges_chk->isChecked());
 
 		for(i=Operator::LeftArg; i <= Operator::RightArg; i++)
-			oper->setArgumentType(arg_types[i]->getPgSQLType(), i);
+			oper->setArgumentType(arg_types[i]->getPgSQLType(),
+														static_cast<Operator::ArgumentId>(i));
 
 		for(i=Operator::FuncOperator; i <= Operator::FuncRestrict; i++)
-			oper->setFunction(dynamic_cast<Function *>(functions_sel[i]->getSelectedObject()), i);
+			oper->setFunction(dynamic_cast<Function *>(functions_sel[i]->getSelectedObject()),
+												static_cast<Operator::FunctionId>(i));
 
 		for(i=Operator::OperCommutator; i <= Operator::OperNegator; i++)
-			oper->setOperator(dynamic_cast<Operator *>(operators_sel[i]->getSelectedObject()), i);
+			oper->setOperator(dynamic_cast<Operator *>(operators_sel[i]->getSelectedObject()),
+												static_cast<Operator::OperatorId>(i));
 
 		finishConfiguration();
 	}

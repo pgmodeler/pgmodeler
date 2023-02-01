@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -25,6 +25,7 @@
 #ifndef OBJECTS_FILTER_WIDGET_H
 #define OBJECTS_FILTER_WIDGET_H
 
+#include "guiglobal.h"
 #include <QWidget>
 #include <QComboBox>
 #include <QMenu>
@@ -33,11 +34,11 @@
 #include "baseobject.h"
 #include "ui_objectsfilterwidget.h"
 
-class ObjectsFilterWidget : public QWidget, Ui::ObjectsFilterWidget {
+class __libgui ObjectsFilterWidget : public QWidget, Ui::ObjectsFilterWidget {
 	private:
 		Q_OBJECT
 
-		vector<ObjectType> extra_obj_types;
+		std::vector<ObjectType> extra_obj_types;
 
 		QMenu tab_objs_menu, options_menu;
 
@@ -68,7 +69,7 @@ class ObjectsFilterWidget : public QWidget, Ui::ObjectsFilterWidget {
 		/*! \brief When value is true the widget disable some features that aren't used
 		 * by the object filtering in database models. Additionally, when the model filtering is enabled
 		 * extra object types can be provided so they can be enabled in the filters construction */
-		void setModelFilteringMode(bool value, const vector<ObjectType> &extra_types = {});
+		void setModelFilteringMode(bool value, const std::vector<ObjectType> &extra_types = {});
 
 		//! \brief Populates the widget using a list of preconfigured filters
 		void addFilters(const QStringList &filters);

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -35,7 +35,7 @@ BaseRelationship::BaseRelationship(BaseRelationship *rel)
 	reference_fk = nullptr;
 }
 
-BaseRelationship::BaseRelationship(unsigned rel_type, BaseTable *src_tab, BaseTable *dst_tab, bool src_mandatory, bool dst_mandatory)
+BaseRelationship::BaseRelationship(RelType rel_type, BaseTable *src_tab, BaseTable *dst_tab, bool src_mandatory, bool dst_mandatory)
 
 {
 	try
@@ -181,10 +181,10 @@ void BaseRelationship::setName(const QString &name)
 	}
 }
 
-void BaseRelationship::setMandatoryTable(unsigned table_id, bool value)
+void BaseRelationship::setMandatoryTable(TableId table_id, bool value)
 {
 	QString cmin, aux;
-	unsigned label_id;
+	LabelId label_id;
 
 	/* Raises an error if the user tries to create an relationship
 		One to One where both tables are mandatory partitipation
@@ -255,22 +255,23 @@ void BaseRelationship::setMandatoryTable(unsigned table_id, bool value)
 	}
 }
 
-BaseTable *BaseRelationship::getTable(unsigned table_id)
+BaseTable *BaseRelationship::getTable(TableId table_id)
 {
 	if(table_id==SrcTable)
 		return src_table;
-	else if(table_id==DstTable)
+
+	if(table_id==DstTable)
 		return dst_table;
-	else
-		return nullptr;
+
+	return nullptr;
 }
 
-bool BaseRelationship::isTableMandatory(unsigned table_id)
+bool BaseRelationship::isTableMandatory(TableId table_id)
 {
 	if(table_id==SrcTable)
 		return src_mandatory;
-	else
-		return dst_mandatory;
+
+	return dst_mandatory;
 }
 
 void BaseRelationship::setConnected(bool value)
@@ -311,16 +312,15 @@ void BaseRelationship::connectRelationship()
 	}
 }
 
-Textbox *BaseRelationship::getLabel(unsigned label_id)
+Textbox *BaseRelationship::getLabel(LabelId label_id)
 {
-	if(label_id<=RelNameLabel)
-		return lables[label_id];
+	if(label_id > RelNameLabel)
+		throw Exception(ErrorCode::RefLabelInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	//Raises an error when the label id is invalid
-	throw Exception(ErrorCode::RefLabelInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+	return lables[label_id];
 }
 
-unsigned BaseRelationship::getRelationshipType()
+BaseRelationship::RelType BaseRelationship::getRelationshipType()
 {
 	return rel_type;
 }
@@ -359,7 +359,7 @@ void BaseRelationship::setRelationshipAttributes()
 	{
 		attributes[Attributes::XPos]=QString("%1").arg(points[i].x());
 		attributes[Attributes::YPos]=QString("%1").arg(points[i].y());
-		str_aux+=schparser.getCodeDefinition(Attributes::Position, attributes, SchemaParser::XmlDefinition);
+		str_aux+=schparser.getSourceCode(Attributes::Position, attributes, SchemaParser::XmlCode);
 	}
 	attributes[Attributes::Points]=str_aux;
 
@@ -370,9 +370,9 @@ void BaseRelationship::setRelationshipAttributes()
 		{
 			attributes[Attributes::XPos]=QString("%1").arg(lables_dist[i].x());
 			attributes[Attributes::YPos]=QString("%1").arg(lables_dist[i].y());
-			attributes[Attributes::Position]=schparser.getCodeDefinition(Attributes::Position, attributes, SchemaParser::XmlDefinition);
+			attributes[Attributes::Position]=schparser.getSourceCode(Attributes::Position, attributes, SchemaParser::XmlCode);
 			attributes[Attributes::RefType]=label_attribs[i];
-			str_aux+=schparser.getCodeDefinition(Attributes::Label, attributes, SchemaParser::XmlDefinition);
+			str_aux+=schparser.getSourceCode(Attributes::Label, attributes, SchemaParser::XmlCode);
 		}
 	}
 
@@ -388,9 +388,9 @@ QString BaseRelationship::getCachedCode(unsigned def_type)
 {
 	if(!code_invalidated &&
 			((!cached_code[def_type].isEmpty()) ||
-			 (def_type==SchemaParser::XmlDefinition  && !cached_reduced_code.isEmpty())))
+			 (def_type==SchemaParser::XmlCode  && !cached_reduced_code.isEmpty())))
 	{
-		if(def_type==SchemaParser::XmlDefinition  && !cached_reduced_code.isEmpty())
+		if(def_type==SchemaParser::XmlCode  && !cached_reduced_code.isEmpty())
 			return cached_reduced_code;
 		else
 			return cached_code[def_type];
@@ -410,7 +410,7 @@ void BaseRelationship::configureSearchAttributes()
 {
 	search_attribs[Attributes::SrcTable] = src_table->getSignature();
 	search_attribs[Attributes::DstTable] = dst_table->getSignature();
-	search_attribs[Attributes::RelatedForeignKey] = reference_fk ? reference_fk->getName() : "";
+	search_attribs[Attributes::RelatedForeignKey] = reference_fk ? reference_fk->getSignature(true) : "";
 	BaseGraphicObject::configureSearchAttributes();
 }
 
@@ -424,14 +424,13 @@ bool BaseRelationship::canSimulateRelationship11()
 	if(rel_type != BaseRelationship::RelationshipFk)
 		return false;
 
-	bool fake_rel11 = false;
 	PhysicalTable *table = dynamic_cast<PhysicalTable *>(getTable(BaseRelationship::SrcTable));
 
 	if(table)
 	{
 		Constraint *constr = nullptr, *uq_constr = nullptr;
 
-		for(unsigned idx = 0; idx < table->getConstraintCount() && !fake_rel11; idx++)
+		for(unsigned idx = 0; idx < table->getConstraintCount(); idx++)
 		{
 			constr = table->getConstraint(idx);
 
@@ -442,31 +441,30 @@ bool BaseRelationship::canSimulateRelationship11()
 					uq_constr = table->getConstraint(idx1);
 
 					if(uq_constr->getConstraintType() == ConstraintType::Unique &&
-						 uq_constr->isColumnsExist(constr->getColumns(Constraint::SourceCols), Constraint::SourceCols))
+						 uq_constr->isColumnsExist(constr->getColumns(Constraint::SourceCols), Constraint::SourceCols, true))
 					{
-						fake_rel11 = true;
-						break;
+						return true;
 					}
 				}
 			}
 		}
 	}
 
-	return fake_rel11;
+	return false;
 }
 
-QString BaseRelationship::getCodeDefinition(unsigned def_type)
+QString BaseRelationship::getSourceCode(SchemaParser::CodeType def_type)
 {
 	QString code_def=getCachedCode(def_type);
 	if(!code_def.isEmpty()) return code_def;
 
-	if(def_type==SchemaParser::SqlDefinition)
+	if(def_type==SchemaParser::SqlCode)
 	{
 		if(rel_type!=RelationshipFk)
 			return "";
 		else
 		{
-			cached_code[def_type] = reference_fk->getCodeDefinition(SchemaParser::SqlDefinition);
+			cached_code[def_type] = reference_fk->getSourceCode(SchemaParser::SqlCode);
 			return cached_code[def_type];
 		}
 	}
@@ -480,31 +478,31 @@ QString BaseRelationship::getCodeDefinition(unsigned def_type)
 		if(!reduced_form)
 			cached_reduced_code.clear();
 
-		return BaseObject::getCodeDefinition(SchemaParser::XmlDefinition,reduced_form);
+		return BaseObject::getSourceCode(SchemaParser::XmlCode,reduced_form);
 	}
 }
 
-void BaseRelationship::setPoints(const vector<QPointF> &points)
+void BaseRelationship::setPoints(const std::vector<QPointF> &points)
 {
-	this->setCodeInvalidated(true);
+	setCodeInvalidated(true);
 	this->points=points;
 }
 
-void BaseRelationship::setLabelDistance(unsigned label_id, QPointF label_dist)
+void BaseRelationship::setLabelDistance(LabelId label_id, QPointF label_dist)
 {
 	if(label_id > RelNameLabel)
 		throw Exception(ErrorCode::RefObjectInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	this->lables_dist[label_id]=label_dist;
-	this->setCodeInvalidated(true);
+	lables_dist[label_id]=label_dist;
+	setCodeInvalidated(true);
 }
 
-QPointF BaseRelationship::getLabelDistance(unsigned label_id)
+QPointF BaseRelationship::getLabelDistance(LabelId label_id)
 {
 	if(label_id > RelNameLabel)
 		throw Exception(ErrorCode::RefObjectInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	return this->lables_dist[label_id];
+	return lables_dist[label_id];
 }
 
 void BaseRelationship::setCustomColor(const QColor &color)
@@ -519,11 +517,11 @@ QColor BaseRelationship::getCustomColor()
 
 void BaseRelationship::resetLabelsDistance()
 {
-	for(unsigned i=0; i < 3; i++)
-		this->setLabelDistance(i, QPointF(DNaN,DNaN));
+	for(unsigned i = SrcCardLabel; i < RelNameLabel; i++)
+		this->setLabelDistance(static_cast<LabelId>(i), QPointF(DNaN,DNaN));
 }
 
-vector<QPointF> BaseRelationship::getPoints()
+std::vector<QPointF> BaseRelationship::getPoints()
 {
 	return points;
 }
@@ -577,7 +575,7 @@ QString BaseRelationship::getRelTypeAttribute()
 	}
 }
 
-QString BaseRelationship::getRelationshipTypeName(unsigned rel_type, bool is_view)
+QString BaseRelationship::getRelationshipTypeName(RelType rel_type, bool is_view)
 {
   switch(rel_type)
   {

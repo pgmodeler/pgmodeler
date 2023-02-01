@@ -2,10 +2,8 @@
   CAUTION: Do not modify this file directly on it's code unless you know what you are doing.
            Unexpected results may occur if the code is changed deliberately.
 -->
-<!ELEMENT relationships (connection, foreign-keys, name-patterns)>
-
-<!ELEMENT connection EMPTY>
-<!ATTLIST connection mode (fk-to-pk|center-pnts|table-edges|crows-foot) "fk-to-pk">
+<!ELEMENT relationships (foreign-keys, name-patterns)>
+<!ATTLIST relationships link-mode (fk-to-pk|center-pnts|table-edges|crows-foot) "fk-to-pk">
 
 <!ELEMENT foreign-keys EMPTY>
 <!ATTLIST foreign-keys deferrable (false|true) "false">

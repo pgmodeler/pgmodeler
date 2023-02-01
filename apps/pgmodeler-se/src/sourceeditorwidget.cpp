@@ -1,7 +1,6 @@
 #include "sourceeditorwidget.h"
 #include "messagebox.h"
 #include "guiutilsns.h"
-#include "qtcompat/splitbehaviorcompat.h"
 #include "utilsns.h"
 
 QPalette SourceEditorWidget::def_editor_pal;
@@ -42,13 +41,11 @@ SourceEditorWidget::SourceEditorWidget(QWidget *parent) : QWidget(parent)
 	vbox->setContentsMargins(0, 0, 0, 0);
 	vbox->addWidget(source_file_sel);
 
-	QStringList snippets_id;
-
 	for(auto &itr : snippets)
 		code_compl_wgt->insertCustomItem(itr.first, itr.second, QPixmap(GuiUtilsNs::getIconPath("codesnippet")));
 
 	vbox = new QVBoxLayout(find_parent);
-	vbox->setContentsMargins(0, 0, 0, 4);
+	vbox->setContentsMargins(0, 0, 0, GuiUtilsNs::LtMargin);
 	vbox->addWidget(find_wgt);
 
 	indent_tb->setMenu(&indent_opts_menu);
@@ -56,21 +53,20 @@ SourceEditorWidget::SourceEditorWidget(QWidget *parent) : QWidget(parent)
 	act_break_inline_ifs->setCheckable(true);
 	act_break_inline_ifs->setChecked(false);
 
-	connect(code_compl_wgt, SIGNAL(s_wordSelected(QString)), this, SLOT(handleSelectedSnippet(QString)));
-	connect(find_wgt, SIGNAL(s_hideRequested()), find_tb, SLOT(toggle()));
-	connect(validate_tb, SIGNAL(clicked(bool)), this, SLOT(validateSyntax()));
-	connect(indent_tb, SIGNAL(clicked(bool)), this, SLOT(	applyIndentation()));
-	connect(editor_txt, SIGNAL(modificationChanged(bool)), this, SLOT(restoreEditorPalette()));
-	connect(editor_txt, SIGNAL(undoAvailable(bool)), this, SLOT(setModified(bool)));
-	connect(editor_txt, SIGNAL(cursorPositionChanged()), this, SLOT(restoreEditorPalette()));
-	connect(find_tb, SIGNAL(toggled(bool)), find_parent, SLOT(setVisible(bool)));
+	connect(code_compl_wgt, &CodeCompletionWidget::s_wordSelected, this, &SourceEditorWidget::handleSelectedSnippet);
+	connect(find_wgt, &FindReplaceWidget::s_hideRequested, find_tb, &QToolButton::toggle);
+	connect(validate_tb, &QToolButton::clicked, this, &SourceEditorWidget::validateSyntax);
+	connect(indent_tb, &QToolButton::clicked, this, &SourceEditorWidget::applyIndentation);
+	connect(editor_txt, &NumberedTextEditor::modificationChanged, this, &SourceEditorWidget::restoreEditorPalette);
+	connect(editor_txt, &NumberedTextEditor::undoAvailable, this, &SourceEditorWidget::setModified);
+	connect(editor_txt, &NumberedTextEditor::cursorPositionChanged, this, &SourceEditorWidget::restoreEditorPalette);
+	connect(find_tb, &QToolButton::toggled, find_parent, &QWidget::setVisible);
 }
 
 void SourceEditorWidget::saveFile(const QString &filename)
 {
 	UtilsNs::saveFile(filename, editor_txt->toPlainText().toUtf8());
 
-	QFileInfo fi(filename);
 	validate_tb->setEnabled(filename.endsWith(GlobalAttributes::SchemaExt));
 	indent_tb->setEnabled(filename.endsWith(GlobalAttributes::SchemaExt));
 	this->filename = filename;
@@ -120,11 +116,14 @@ void SourceEditorWidget::loadFile(const QString &filename)
 	source_file_sel->setSelectedFile(filename);
 	source_file_parent->setVisible(true);
 
-	QString ext = QFileInfo(filename).suffix();
+	QString ext = "." + QFileInfo(filename).suffix();
 
-	if(ext == "dbm" || ext == "xml" || ext == "conf" || ext == "omf")
+	if(ext == GlobalAttributes::DbModelExt ||
+		 ext == ".xml" ||
+		 ext == GlobalAttributes::ConfigurationExt ||
+		 ext == GlobalAttributes::ObjMetadataExt)
 		curr_sytax_cfg = GlobalAttributes::XMLHighlightConf;
-	else if(ext == "sql")
+	else if(ext == ".sql")
 		curr_sytax_cfg = GlobalAttributes::SQLHighlightConf;
 	else
 		curr_sytax_cfg = GlobalAttributes::SchHighlightConf;
@@ -141,7 +140,7 @@ void SourceEditorWidget::validateSyntax()
 		schparser.ignoreEmptyAttributes(true);
 		schparser.ignoreUnkownAttributes(true);
 		schparser.loadBuffer(editor_txt->toPlainText());
-		schparser.getCodeDefinition({});
+		schparser.getSourceCode({});
 
 		msgbox.show(tr("No lexical or sytactical errors found."), Messagebox::InfoIcon);
 	}
@@ -181,7 +180,7 @@ void SourceEditorWidget::applyIndentation()
 			tk_then = SchemaParser::CharStartConditional + SchemaParser::TokenThen,
 			tk_else = SchemaParser::CharStartConditional + SchemaParser::TokenElse,
 			tk_end = SchemaParser::CharStartConditional + SchemaParser::TokenEnd;
-	QRegExp inline_if_regexp(QString("(%1)(.)+(%2)").arg(tk_if).arg(tk_end));
+	QRegularExpression inline_if_regexp(QString("(%1)(.)+(%2)").arg(tk_if).arg(tk_end));
 
 	for(int ln_idx = 0; ln_idx < line_count; ln_idx++)
 	{
@@ -189,13 +188,13 @@ void SourceEditorWidget::applyIndentation()
 		comment_pos = line.indexOf(SchemaParser::CharComment);
 		inline_ifend = line.contains(inline_if_regexp);
 
-		if(line.contains(QRegExp(cond_pattern.arg(tk_if))) && !inline_ifend)
+		if(line.contains(QRegularExpression(cond_pattern.arg(tk_if))) && !inline_ifend)
 		{
 			if_level++;
 			found_if = found_cond = true;
 		}
-		else if(line.contains(QRegExp(cond_pattern.arg(tk_else))) ||
-						line.contains(QRegExp(cond_pattern.arg(tk_end))))
+		else if(line.contains(QRegularExpression(cond_pattern.arg(tk_else))) ||
+						line.contains(QRegularExpression(cond_pattern.arg(tk_end))))
 			found_cond = true;
 
 		// If the current line is an inline if: %if ... %then ... %end, we break it
@@ -210,7 +209,7 @@ void SourceEditorWidget::applyIndentation()
 			 * and insert the new lines in the buffer and restart the indentation process */
 			if(line.contains(QChar::LineFeed))
 			{
-				QStringList buf_aux = line.split(QChar::LineFeed, QtCompat::SkipEmptyParts);
+				QStringList buf_aux = line.split(QChar::LineFeed, Qt::SkipEmptyParts);
 				buffer.removeAt(ln_idx);
 
 				for(auto itr = buf_aux.rbegin(); itr != buf_aux.rend(); itr++)
@@ -238,7 +237,7 @@ void SourceEditorWidget::applyIndentation()
 		found_cond = found_if = false;
 	}
 
-	QRegExp cond_tk_regexp(QString("^(( )|(\\t))*(%1)[a-z]+").arg(SchemaParser::CharStartConditional));
+	QRegularExpression cond_tk_regexp(QString("^(( )|(\\t))*(%1)[a-z]+").arg(SchemaParser::CharStartConditional));
 	QString prev_line, next_line, next_next_line,
 			tk_set = SchemaParser::CharStartConditional + SchemaParser::TokenSet,
 			tk_unset = SchemaParser::CharStartConditional + SchemaParser::TokenUnset;
@@ -262,15 +261,15 @@ void SourceEditorWidget::applyIndentation()
 		 * 3) Between an two %if tokens
 		 * 4) Between an %else and %if | %set | %unset */
 		if(next_line.isEmpty() && !next_next_line.isEmpty() &&
-			 ((line.contains(QRegExp(cond_pattern.arg(tk_end))) &&
-					(next_next_line.contains(QRegExp(cond_pattern.arg(tk_else))) ||
-					 next_next_line.contains(QRegExp(cond_pattern.arg(tk_end))))) ||
+			 ((line.contains(QRegularExpression(cond_pattern.arg(tk_end))) &&
+					(next_next_line.contains(QRegularExpression(cond_pattern.arg(tk_else))) ||
+					 next_next_line.contains(QRegularExpression(cond_pattern.arg(tk_end))))) ||
 
-				 ((line.contains(QRegExp(cond_pattern.arg(tk_if))) ||
-					 line.contains(QRegExp(cond_pattern.arg(tk_else)))) &&
-					(next_next_line.contains(QRegExp(cond_pattern.arg(tk_if))) ||
-					 next_next_line.contains(QRegExp(cond_pattern.arg(tk_set))) ||
-					 next_next_line.contains(QRegExp(cond_pattern.arg(tk_unset)))))))
+				 ((line.contains(QRegularExpression(cond_pattern.arg(tk_if))) ||
+					 line.contains(QRegularExpression(cond_pattern.arg(tk_else)))) &&
+					(next_next_line.contains(QRegularExpression(cond_pattern.arg(tk_if))) ||
+					 next_next_line.contains(QRegularExpression(cond_pattern.arg(tk_set))) ||
+					 next_next_line.contains(QRegularExpression(cond_pattern.arg(tk_unset)))))))
 		{
 			buffer.removeAt(ln_idx + 1);
 			ln_idx--;
@@ -278,7 +277,7 @@ void SourceEditorWidget::applyIndentation()
 		}
 
 		// Separating an end token from any conditional token in the next line
-		if(line.contains(QRegExp(cond_pattern.arg(tk_end))) &&
+		if(line.contains(QRegularExpression(cond_pattern.arg(tk_end))) &&
 			 !next_line.isEmpty() &&
 			 !next_line.contains(cond_tk_regexp))
 			buffer[ln_idx].append(QChar::LineFeed);
@@ -290,13 +289,13 @@ void SourceEditorWidget::applyIndentation()
 			buffer[ln_idx].append(QChar::LineFeed);
 
 		// If the current line has an %if and the previous is not a conditional instruction %
-		else if(line.contains(QRegExp(cond_pattern.arg(tk_if))) &&
+		else if(line.contains(QRegularExpression(cond_pattern.arg(tk_if))) &&
 						!prev_line.isEmpty() &&
 						!prev_line.contains(cond_tk_regexp))
 			buffer[ln_idx].prepend(QChar::LineFeed);
 
 		// Separating an if token from previous end, set and unset
-		else if(line.contains(QRegExp(cond_pattern.arg(tk_if))) &&
+		else if(line.contains(QRegularExpression(cond_pattern.arg(tk_if))) &&
 						(prev_line.contains(tk_end) ||
 						 prev_line.contains(tk_set) ||
 						 prev_line.contains(tk_unset)))

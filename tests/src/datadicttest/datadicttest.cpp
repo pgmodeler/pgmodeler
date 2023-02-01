@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -74,6 +74,21 @@ void DataDictTest::generateASimpleDataDict()
 		col->setName("col_4");
 		col->setType(PgSqlType::parseString("timestamp with time zone"));
 		col->setDefaultValue("now()");
+		table->addColumn(col);
+
+		col = new Column;
+		col->setName("col_5");
+		col->setType(PgSqlType::parseString("varchar(200)"));
+		table->addColumn(col);
+
+		col = new Column;
+		col->setName("col_6");
+		col->setType(PgSqlType::parseString("numeric(10,6)"));
+		table->addColumn(col);
+
+		col = new Column;
+		col->setName("col_7");
+		col->setType(PgSqlType::parseString("geography(POINTZ, 4296)"));
 		table->addColumn(col);
 
 		constr = new Constraint;

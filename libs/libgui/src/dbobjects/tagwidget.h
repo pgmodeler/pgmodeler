@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -29,12 +29,12 @@
 #include "widgets/colorpickerwidget.h"
 #include "ui_tagwidget.h"
 
-class TagWidget: public BaseObjectWidget, public Ui::TagWidget {
+class __libgui TagWidget: public BaseObjectWidget, public Ui::TagWidget {
 	private:
 		Q_OBJECT
 
 		//! \brief Stores all color picker using the attribute the represents as map key.
-		map<QString, ColorPickerWidget *> color_pickers;
+		std::map<QString, ColorPickerWidget *> color_pickers;
 
 	public:
 		TagWidget(QWidget * parent = nullptr);

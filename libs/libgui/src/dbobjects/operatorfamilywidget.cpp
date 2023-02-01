@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -20,25 +20,13 @@
 
 OperatorFamilyWidget::OperatorFamilyWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::OpFamily)
 {
-	QStringList types;
-	map<QString, vector<QWidget *> > fields_map;
-	map<QWidget *, vector<QString> > values_map;
-	QFrame *frame=nullptr;
-
 	Ui_OperatorFamilyWidget::setupUi(this);
 	configureFormLayout(opfamily_grid, ObjectType::OpFamily);
 
 	indexing_cmb->addItems(IndexingType::getTypes());
 
-	setRequiredField(indexing_lbl);
-	fields_map[BaseObjectWidget::generateVersionsInterval(BaseObjectWidget::AfterVersion, PgSqlVersions::PgSqlVersion95)].push_back(indexing_lbl);
-	values_map[indexing_lbl].push_back(~IndexingType(IndexingType::Brin));
-
+	setRequiredField(indexing_lbl);	
 	opfamily_grid->addItem(new QSpacerItem(10,10,QSizePolicy::Minimum,QSizePolicy::Expanding), opfamily_grid->count()+1, 0, 1, 0);
-
-	frame=BaseObjectWidget::generateVersionWarningFrame(fields_map, &values_map);
-	frame->setParent(this);
-	opfamily_grid->addWidget(frame, opfamily_grid->count()+1, 0, 1, 5);
 
 	configureTabOrder();
 	setMinimumSize(500, 290);

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -36,8 +36,8 @@ TriggerWidget::TriggerWidget(QWidget *parent): BaseObjectWidget(parent, ObjectTy
 
 		arguments_tab=new ObjectsTableWidget(ObjectsTableWidget::AllButtons ^ ObjectsTableWidget::DuplicateButton, true, this);
 
-		ref_table_sel=new ObjectSelectorWidget(ObjectType::Table, true, this);
-		function_sel=new ObjectSelectorWidget(ObjectType::Function, true, this);
+		ref_table_sel=new ObjectSelectorWidget(ObjectType::Table, this);
+		function_sel=new ObjectSelectorWidget(ObjectType::Function, this);
 		ref_table_sel->setEnabled(false);
 
 		trigger_grid->addWidget(function_sel, 3, 1, 1, 5);
@@ -57,21 +57,21 @@ TriggerWidget::TriggerWidget(QWidget *parent): BaseObjectWidget(parent, ObjectTy
 
 		configureFormLayout(trigger_grid, ObjectType::Trigger);
 
-		connect(deferrable_chk, SIGNAL(toggled(bool)), deferral_type_cmb, SLOT(setEnabled(bool)));
-		connect(columns_tab, SIGNAL(s_rowAdded(int)), this, SLOT(addColumn(int)));
-		connect(columns_tab, SIGNAL(s_rowRemoved(int)), this, SLOT(updateColumnsCombo()));
-		connect(columns_tab, SIGNAL(s_rowsRemoved()), this, SLOT(updateColumnsCombo()));
-		connect(arguments_tab, SIGNAL(s_rowAdded(int)), this, SLOT(handleArgument(int)));
-		connect(arguments_tab, SIGNAL(s_rowUpdated(int)), this, SLOT(handleArgument(int)));
-		connect(arguments_tab, SIGNAL(s_rowEdited(int)), this, SLOT(editArgument(int)));
-		connect(constraint_rb, SIGNAL(toggled(bool)), this, SLOT(setConstraintTrigger(bool)));
-		connect(update_chk, SIGNAL(toggled(bool)), this, SLOT(selectUpdateEvent()));
+		connect(deferrable_chk, &QCheckBox::toggled, deferral_type_cmb, &QComboBox::setEnabled);
+		connect(columns_tab, &ObjectsTableWidget::s_rowAdded, this, qOverload<int>(&TriggerWidget::addColumn));
+		connect(columns_tab, &ObjectsTableWidget::s_rowRemoved, this, &TriggerWidget::updateColumnsCombo);
+		connect(columns_tab, &ObjectsTableWidget::s_rowsRemoved, this, &TriggerWidget::updateColumnsCombo);
+		connect(arguments_tab, &ObjectsTableWidget::s_rowAdded, this, &TriggerWidget::handleArgument);
+		connect(arguments_tab, &ObjectsTableWidget::s_rowUpdated, this, &TriggerWidget::handleArgument);
+		connect(arguments_tab, &ObjectsTableWidget::s_rowEdited, this, &TriggerWidget::editArgument);
+		connect(constraint_rb, &QRadioButton::toggled, this, &TriggerWidget::setConstraintTrigger);
+		connect(update_chk, &QCheckBox::toggled, this, &TriggerWidget::selectUpdateEvent);
 
-		connect(insert_chk, SIGNAL(toggled(bool)), this, SLOT(enableTransitionTableNames()));
-		connect(delete_chk, SIGNAL(toggled(bool)), this, SLOT(enableTransitionTableNames()));
-		connect(update_chk, SIGNAL(toggled(bool)), this, SLOT(enableTransitionTableNames()));
-		connect(truncate_chk, SIGNAL(toggled(bool)), this, SLOT(enableTransitionTableNames()));
-		connect(firing_mode_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(enableTransitionTableNames()));
+		connect(insert_chk, &QCheckBox::toggled, this, &TriggerWidget::enableTransitionTableNames);
+		connect(delete_chk, &QCheckBox::toggled, this, &TriggerWidget::enableTransitionTableNames);
+		connect(update_chk, &QCheckBox::toggled, this, &TriggerWidget::enableTransitionTableNames);
+		connect(truncate_chk, &QCheckBox::toggled, this, &TriggerWidget::enableTransitionTableNames);
+		connect(firing_mode_cmb, &QComboBox::currentIndexChanged, this, &TriggerWidget::enableTransitionTableNames);
 
 		setRequiredField(event_lbl);
 		setRequiredField(firing_mode_lbl);
@@ -79,6 +79,11 @@ TriggerWidget::TriggerWidget(QWidget *parent): BaseObjectWidget(parent, ObjectTy
 		setRequiredField(function_sel);
 
 		setMinimumSize(580, 500);
+		configureTabOrder({ ordinary_rb, constraint_rb, insert_chk, delete_chk, update_chk,
+												truncate_chk, firing_mode_cmb, exec_per_row_chk, function_sel,
+												old_table_edt, new_table_edt, argument_edt, arguments_tab,
+												column_cmb, columns_tab, deferrable_chk, deferral_type_cmb,
+												ref_table_sel, cond_expr_txt });
 	}
 	catch(Exception &e)
 	{

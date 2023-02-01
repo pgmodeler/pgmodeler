@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -24,7 +24,7 @@ ValidationInfo::ValidationInfo()
 	val_type=ValidationAborted;
 }
 
-ValidationInfo::ValidationInfo(unsigned val_type, BaseObject *object, vector<BaseObject *> references)
+ValidationInfo::ValidationInfo(ValType val_type, BaseObject *object, std::vector<BaseObject *> references)
 {
 	if(val_type >= SqlValidationError)
 		throw Exception(ErrorCode::AsgInvalidTypeObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -39,7 +39,7 @@ ValidationInfo::ValidationInfo(unsigned val_type, BaseObject *object, vector<Bas
 
 ValidationInfo::ValidationInfo(Exception e)
 {
-	vector<Exception> err_list;
+	std::vector<Exception> err_list;
 
 	val_type=SqlValidationError;
 	e.getExceptionsList(err_list);
@@ -59,7 +59,7 @@ ValidationInfo::ValidationInfo(const QString &msg)
 	errors.push_back(msg);
 }
 
-unsigned ValidationInfo::getValidationType()
+ValidationInfo::ValType ValidationInfo::getValidationType()
 {
 	return val_type;
 }
@@ -69,7 +69,7 @@ BaseObject *ValidationInfo::getObject()
 	return object;
 }
 
-vector<BaseObject *> ValidationInfo::getReferences()
+std::vector<BaseObject *> ValidationInfo::getReferences()
 {
 	return references;
 }

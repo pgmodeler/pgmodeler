@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -28,29 +28,39 @@
 #include "baseobject.h"
 #include <QString>
 
-class CopyOptions {
+class __libcore CopyOptions {
+	public:
+		enum CopyOpts: unsigned {
+			NoOpts = 0,
+			Defaults = 1,
+			Constraints = 2,
+			Indexes = 4,
+			Storage = 8,
+			Comments = 16,
+			Identity = 32,
+			Statistics = 64,
+			All = 127
+		};
+
+		enum CopyMode: unsigned {
+			NoMode,
+			Including,
+			Excluding
+		};
+
 	private:
-		unsigned copy_mode, copy_op_ids;
+		CopyMode copy_mode;
+
+		CopyOpts copy_opts;
 
 	public:
-		static constexpr unsigned Defaults=1,
-		Constraints=2,
-		Indexes=4,
-		Storage=8,
-		Comments=16,
-		Identity=32,
-		Statistics=64,
-		All=127,
-		Including=256,
-		Excluding=512;
-
 		CopyOptions();
-		CopyOptions(unsigned copy_mode, unsigned copy_op_ids);
+		CopyOptions(CopyMode copy_mode, CopyOpts copy_op_ids);
 
-		unsigned getCopyMode();
-		unsigned getCopyOptionsIds();
+		CopyMode getCopyMode();
+		CopyOpts getCopyOptions();
 
-		bool isOptionSet(unsigned op);
+		bool isOptionSet(CopyOpts op);
 		bool isIncluding();
 		bool isExcluding();
 

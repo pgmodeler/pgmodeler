@@ -16,15 +16,17 @@
 
 [CREATE]
 
-%if ({pgsql-ver} != "9.0") %and {unlogged} %then
+%if {unlogged} %then
 	[ UNLOGGED]
 %end
 
 [ TABLE ] {name}
 
-%if ({pgsql-ver} >=f "10.0") %and {partitioned-table} %then $br [PARTITION OF ] {partitioned-table} $sp %end
+%if {partitioned-table} %then
+	$br [PARTITION OF ] {partitioned-table} $sp
+%end
 
-%if %not {partitioned-table} %or ({pgsql-ver} <f "10.0") %then
+%if %not {partitioned-table} %then
 
 	[ (] $br
 
@@ -32,7 +34,9 @@
 		$tb LIKE $sp {copy-table}
 
 		%if %not {gen-alter-cmds} %then
-			%if {columns} %or {constraints} %then [,] %end
+			%if {columns} %or {constraints} %then
+				[,]
+			%end
 		%end
 
 		$br
@@ -51,16 +55,20 @@
 			{constraints}
 		%end
 	%end
-	
-	%if %not {constraints} %then $br %end
-)
+
+
+	%if %not {constraints} %then
+		$br
+	%end
+
+	)
 %else
 	%if %not {gen-alter-cmds} %and {partitioned-table} %and {constraints} %then
 		[ (] $br {constraints} $br [)]
 	%end
 %end
 
-%if ({pgsql-ver} >=f "10.0") %and {partitioned-table} %then
+%if {partitioned-table} %then
 	%if {partition-bound-expr} %then
 		$br [FOR VALUES ] {partition-bound-expr}
 	%else
@@ -68,9 +76,17 @@
 	%end
 %end
 
-%if ({pgsql-ver} >=f "10.0") %and {partitioning} %then $br [PARTITION BY ] {partitioning} [ (] {partitionkey} [)] %end
-%if {ancestor-table} %then $br [ INHERITS(] {ancestor-table} [)] %end
-%if ({pgsql-ver} <=f "11.0") %and {oids} %then $br [WITH ( OIDS = TRUE )] %end
+%if {partitioning} %then
+	$br [PARTITION BY ] {partitioning} [ (] {partitionkey} [)]
+%end
+
+%if {ancestor-table} %then
+	$br [ INHERITS(] {ancestor-table} [)]
+%end
+
+%if ({pgsql-ver} <=f "11.0") %and {oids} %then
+	$br [WITH ( OIDS = TRUE )]
+%end
 
 %if {tablespace} %then
 	$br [TABLESPACE ] {tablespace}
@@ -81,15 +97,28 @@
 {ddl-end}
 
 %if {gen-alter-cmds} %then
-	%if {columns} %then $br {columns} %end
-	%if {constraints} %then $br {constraints} %end
+	%if {columns} %then
+		$br {columns}
+	%end
+
+	%if {constraints} %then
+		$br {constraints}
+	%end
 %end
 
-%if {comment} %then {comment} %end
-%if {cols-comment} %then {cols-comment} %end
-%if {owner} %then {owner} %end
+%if {comment} %then
+	{comment}
+%end
 
-%if ({pgsql-ver} >=f "9.5") %and {rls-enabled} %then
+%if {cols-comment} %then
+	{cols-comment}
+%end
+
+%if {owner} %then
+	{owner}
+%end
+
+%if {rls-enabled} %then
 	[ALTER TABLE ] {name} [ ENABLE ROW LEVEL SECURITY;]
 
 	{ddl-end}

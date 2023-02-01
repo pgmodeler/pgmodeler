@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -27,6 +27,7 @@ It the resultset contains data the user must call ResultSet::accessTuple() to ac
 #ifndef RESULTSET_H
 #define RESULTSET_H
 
+#include "connectorglobal.h"
 #include "exception.h"
 #include "attribsmap.h"
 #include <libpq-fe.h>
@@ -36,7 +37,7 @@ It the resultset contains data the user must call ResultSet::accessTuple() to ac
 //This constant is defined on PostgreSQL source code src/catalog/pg_type.h
 #define BYTEAOID 17
 
-class ResultSet {
+class __libconnector ResultSet {
 	private:
 		/*! \brief Indicates whether the result was copied, this flag is used
 	 to avoid segmentation faults when calling the destructor.
@@ -67,10 +68,12 @@ class ResultSet {
 
 	public:
 		//! \brief Constants used to navigate through the resultset
-		static constexpr unsigned FirstTuple=0,
-		LastTuple=1,
-		PreviousTuple=2,
-		NextTuple=3;
+		enum TupleId: unsigned {
+			FirstTuple = 0,
+			LastTuple = 1,
+			PreviousTuple = 2,
+			NextTuple = 3
+		};
 
 		ResultSet();
 		~ResultSet();
@@ -115,7 +118,7 @@ class ResultSet {
 		bool isColumnValueNull(const QString &column_name);
 
 		//! \brief Access on tuple on result set via navigation constants
-		bool accessTuple(unsigned tuple_type);
+		bool accessTuple(TupleId tuple_id);
 
 		//! \brief Returns if the result set is empty due a DML command that does not returned any data
 		bool isEmpty();

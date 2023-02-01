@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -74,10 +74,10 @@ COMMENT ON SERVER server_test IS E'This is a test comment on server'; \
 		server.setComment("This is a test comment on server");
 		server.setForeignDataWrapper(&fdw);
 
-		QString res_sql_code = server.getCodeDefinition(SchemaParser::SqlDefinition).simplified();
+		QString res_sql_code = server.getSourceCode(SchemaParser::SqlCode).simplified();
 		QCOMPARE(sql_code, res_sql_code);
 
-		QString res_xml_code = server.getCodeDefinition(SchemaParser::XmlDefinition).simplified();
+		QString res_xml_code = server.getSourceCode(SchemaParser::XmlCode).simplified();
 		QCOMPARE(xml_code, res_xml_code);
 	}
 	catch (Exception &e)
@@ -109,7 +109,7 @@ void ServerTest::modelReturnsDepsAndRefsForServer()
 		server.setForeignDataWrapper(&fdw);
 		model.addForeignServer(&server);
 
-		vector<BaseObject *> refs, deps;
+		std::vector<BaseObject *> refs, deps;
 		model.getObjectDependecies(&server, deps);
 
 		model.getObjectReferences(&fdw, refs);
@@ -159,7 +159,7 @@ void ServerTest::modelCreatesServerfromXMLandResultingXMLisEqual()
 
 		QVERIFY(server != nullptr);
 
-		res_xml_code = server->getCodeDefinition(SchemaParser::XmlDefinition).simplified();
+		res_xml_code = server->getSourceCode(SchemaParser::XmlCode).simplified();
 		xml_code = xml_code.simplified();
 
 		model.removeForeignServer(server);

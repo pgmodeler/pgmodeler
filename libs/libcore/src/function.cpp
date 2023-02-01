@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -49,7 +49,7 @@ void Function::addReturnedTableColumn(const QString &name, PgSqlType type)
 	if(name.isEmpty())
 		throw Exception(ErrorCode::AsgEmptyNameTableReturnType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	vector<Parameter>::iterator itr,itr_end;
+	std::vector<Parameter>::iterator itr,itr_end;
 	bool found=false;
 
 	type.reset();
@@ -79,7 +79,7 @@ void Function::addReturnedTableColumn(const QString &name, PgSqlType type)
 	setCodeInvalidated(true);
 }
 
-void Function::setTableReturnTypeAttribute(unsigned def_type)
+void Function::setTableReturnTypeAttribute(SchemaParser::CodeType def_type)
 {
 	QString str_type;
 	unsigned i, count;
@@ -87,10 +87,10 @@ void Function::setTableReturnTypeAttribute(unsigned def_type)
 	count=ret_table_columns.size();
 	for(i=0; i < count; i++)
 	{
-		str_type+=ret_table_columns[i].getCodeDefinition(def_type);
+		str_type+=ret_table_columns[i].getSourceCode(def_type);
 	}
 
-	if(def_type==SchemaParser::SqlDefinition)
+	if(def_type==SchemaParser::SqlCode)
 		str_type.remove(str_type.size()-2,2);
 
 	attributes[Attributes::ReturnTable]=str_type;
@@ -228,18 +228,18 @@ void Function::removeReturnedTableColumn(unsigned column_idx)
 	if(column_idx>=ret_table_columns.size())
 		throw Exception(ErrorCode::RefObjectInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	vector<Parameter>::iterator itr;
+	std::vector<Parameter>::iterator itr;
 	itr=ret_table_columns.begin()+column_idx;
 	ret_table_columns.erase(itr);
 	setCodeInvalidated(true);
 }
 
-QString Function::getCodeDefinition(unsigned def_type)
+QString Function::getSourceCode(SchemaParser::CodeType def_type)
 {
-	return this->getCodeDefinition(def_type, false);
+	return this->getSourceCode(def_type, false);
 }
 
-QString Function::getCodeDefinition(unsigned def_type, bool reduced_form)
+QString Function::getSourceCode(SchemaParser::CodeType def_type, bool reduced_form)
 {
 	QString code_def=getCachedCode(def_type, reduced_form);
 	if(!code_def.isEmpty()) return code_def;
@@ -251,10 +251,10 @@ QString Function::getCodeDefinition(unsigned def_type, bool reduced_form)
 	attributes[Attributes::FunctionType]=(~function_type);
 	attributes[Attributes::ParallelType]=(~parallel_type);
 
-	if(def_type==SchemaParser::SqlDefinition)
+	if(def_type==SchemaParser::SqlCode)
 		attributes[Attributes::ReturnType]=(*return_type);
 	else
-		attributes[Attributes::ReturnType]=return_type.getCodeDefinition(def_type);
+		attributes[Attributes::ReturnType]=return_type.getSourceCode(def_type);
 
 	setTableReturnTypeAttribute(def_type);
 
@@ -263,10 +263,10 @@ QString Function::getCodeDefinition(unsigned def_type, bool reduced_form)
 	attributes[Attributes::LeakProof]=(is_leakproof ? Attributes::True : "");
 	attributes[Attributes::BehaviorType]=~behavior_type;
 
-	return BaseObject::getCodeDefinition(def_type, reduced_form);
+	return BaseObject::getSourceCode(def_type, reduced_form);
 }
 
-QString Function::getAlterDefinition(BaseObject *object)
+QString Function::getAlterCode(BaseObject *object)
 {
 	Function *func=dynamic_cast<Function *>(object);
 
@@ -276,12 +276,12 @@ QString Function::getAlterDefinition(BaseObject *object)
 	try
 	{
 		attribs_map attribs;
-		attribs = BaseFunction::getAlterDefinitionAttributes(func);
+		attribs = BaseFunction::getAlterCodeAttributes(func);
 
-		if(this->source_code.simplified() != func->source_code.simplified() ||
+		if(this->func_source.simplified() != func->func_source.simplified() ||
 			 this->library!=func->library || this->symbol!=func->symbol)
 		{
-			attribs[Attributes::Definition]=func->getCodeDefinition(SchemaParser::SqlDefinition);
+			attribs[Attributes::Definition]=func->getSourceCode(SchemaParser::SqlCode);
 			attribs[Attributes::Definition].replace(QString("CREATE FUNCTION"), QString("CREATE OR REPLACE FUNCTION"));
 		}
 		else
@@ -313,7 +313,7 @@ QString Function::getAlterDefinition(BaseObject *object)
 
 		copyAttributes(attribs);
 
-		return BaseObject::getAlterDefinition(this->getSchemaName(), attributes, false, true);
+		return BaseObject::getAlterCode(this->getSchemaName(), attributes, false, true);
 	}
 	catch(Exception &e)
 	{

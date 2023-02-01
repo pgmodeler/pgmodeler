@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -29,7 +29,7 @@
 #include "function.h"
 #include "pgsqltypes/eventtriggertype.h"
 
-class EventTrigger: public BaseObject {
+class __libcore EventTrigger: public BaseObject {
 	private:
 
 		//! \brief Function that is excuted when the event trigger is activated
@@ -41,7 +41,7 @@ class EventTrigger: public BaseObject {
 		/*! \brief This map contains the values used as condition on WHEN clause.
 				Currently the only supported variable is TAG, and the object will raise
 				error is other variable name is used on setFilter() call */
-		map<QString, QStringList> filter;
+		std::map<QString, QStringList> filter;
 
 	public:
 		EventTrigger();
@@ -58,8 +58,7 @@ class EventTrigger: public BaseObject {
 		Function *getFunction();
 		QStringList getFilter(const QString &variable);
 
-		virtual QString getCodeDefinition(unsigned def_type) final;
-		virtual QString getAlterDefinition(BaseObject *object) final;
+		virtual QString getSourceCode(SchemaParser::CodeType def_type) final;
 };
 
 #endif

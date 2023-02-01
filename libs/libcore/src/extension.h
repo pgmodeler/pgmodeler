@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -27,7 +27,7 @@
 
 #include "baseobject.h"
 
-class Extension: public BaseObject {
+class __libcore Extension: public BaseObject {
 	private:
 		/*! \brief Indicates if the extension handles a datatype. When
 		this attribute is set pgModeler will consider the extension as
@@ -40,8 +40,11 @@ class Extension: public BaseObject {
 		QString versions[2];
 
 	public:
-		static constexpr unsigned CurVersion=0,
-		OldVersion=1;
+		enum VersionId: unsigned {
+			CurVersion,
+			OldVersion
+		};
+
 		Extension();
 
 		void setName(const QString &name);
@@ -53,20 +56,20 @@ class Extension: public BaseObject {
 		void setHandlesType(bool value);
 
 		//! \brief Set the versions of the extension
-		void setVersion(unsigned ver, const QString &value);
+		void setVersion(VersionId ver, const QString &value);
 
 		//! \brief Returns if the extension handles a datatype
 		bool handlesType();
 
 		//! \brief Returns on of the versions of the extension
-		QString getVersion(unsigned ver);
+		QString getVersion(VersionId ver);
 
 		//! \brief Returns the SQL / XML code definition for the extension
-		virtual QString getCodeDefinition(unsigned def_type) final;
+		virtual QString getSourceCode(SchemaParser::CodeType def_type) final;
 
-		virtual QString getAlterDefinition(BaseObject *object) final;
+		virtual QString getAlterCode(BaseObject *object) final;
 
-		virtual QString getDropDefinition(bool cascade) final;
+		virtual QString getDropCode(bool cascade) final;
 
 		virtual QString getSignature(bool format = true) final;
 

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -35,28 +35,24 @@ TableWidget::TableWidget(QWidget *parent, ObjectType tab_type): BaseObjectWidget
 	ObjectsTableWidget *tab=nullptr;
 	ObjectType types[]={ ObjectType::Column, ObjectType::Constraint, ObjectType::Trigger,
 											 ObjectType::Rule, ObjectType::Index, ObjectType::Policy };
-	map<QString, vector<QWidget *> > fields_map;	
+	std::map<QString, std::vector<QWidget *> > fields_map;	
 	QPushButton *edt_data_tb=nullptr;
 	QStringList part_types;
 
 	Ui_TableWidget::setupUi(this);
 
 	edt_data_tb=new QPushButton(this);
-	QPixmap icon=QPixmap(GuiUtilsNs::getIconPath("editdata"));
+	QPixmap icon=QPixmap(GuiUtilsNs::getIconPath("editrows"));
 	edt_data_tb->setMinimumSize(edt_perms_tb->minimumSize());
 	edt_data_tb->setText(tr("Edit data"));
 	edt_data_tb->setToolTip(tr("Define initial data for the table"));
 	edt_data_tb->setIcon(icon);
 	edt_data_tb->setIconSize(edt_perms_tb->iconSize());
 
-	connect(edt_data_tb, SIGNAL(clicked(bool)), this, SLOT(editData()));
+	connect(edt_data_tb, &QPushButton::clicked, this, &TableWidget::editData);
 	misc_btns_lt->insertWidget(1, edt_data_tb);
 
 	fields_map[generateVersionsInterval(UntilVersion, PgSqlVersions::PgSqlVersion110)].push_back(with_oids_chk);
-	fields_map[generateVersionsInterval(AfterVersion, PgSqlVersions::PgSqlVersion91)].push_back(unlogged_chk);
-	fields_map[generateVersionsInterval(AfterVersion, PgSqlVersions::PgSqlVersion95)].push_back(enable_rls_chk);
-	fields_map[generateVersionsInterval(AfterVersion, PgSqlVersions::PgSqlVersion95)].push_back(force_rls_chk);
-	fields_map[generateVersionsInterval(AfterVersion, PgSqlVersions::PgSqlVersion100)].push_back(partitioning_type_lbl);
 	warn_frame=generateVersionWarningFrame(fields_map);
 	table_grid->addWidget(warn_frame, table_grid->count()+1, 0, 1, 2);
 	warn_frame->setParent(this);
@@ -71,7 +67,7 @@ TableWidget::TableWidget(QWidget *parent, ObjectType tab_type): BaseObjectWidget
 	parent_tables->setHeaderIcon(QPixmap(GuiUtilsNs::getIconPath("usertype")),2);
 
 	server_sel=nullptr;
-	server_sel=new ObjectSelectorWidget(ObjectType::ForeignServer, true, this);
+	server_sel=new ObjectSelectorWidget(ObjectType::ForeignServer, this);
 
 	vbox = new QVBoxLayout;
 	vbox->setContentsMargins(0,0,0,0);
@@ -86,39 +82,39 @@ TableWidget::TableWidget(QWidget *parent, ObjectType tab_type): BaseObjectWidget
 	options_tab->setHeaderLabel(tr("Value"), 1);
 
 	vbox = new QVBoxLayout;
-	vbox->setContentsMargins(4,4,4,4);
+	vbox->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
 	vbox->addWidget(options_tab);
 	attributes_tbw->widget(8)->setLayout(vbox);
 
-	tag_sel = new ObjectSelectorWidget(ObjectType::Tag, false, this);
+	tag_sel = new ObjectSelectorWidget(ObjectType::Tag, this);
 	vbox = new QVBoxLayout(tag_sel_parent);
 	vbox->addWidget(tag_sel);
 	vbox->setContentsMargins(0,0,0,0);
 
 	grid=new QGridLayout;
 	grid->addWidget(parent_tables, 0,0,1,1);
-	grid->setContentsMargins(4,4,4,4);
+	grid->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
 	attributes_tbw->widget(7)->setLayout(grid);
 
 	//Configuring the table objects that stores the columns, triggers, constraints, rules and indexes
 	for(unsigned i=0; i <= 5; i++)
 	{
 		tab=new ObjectsTableWidget(ObjectsTableWidget::AllButtons ^
-								  (ObjectsTableWidget::UpdateButton), true, this);
+								ObjectsTableWidget::UpdateButton, true, this);
 
 		objects_tab_map[types[i]]=tab;
 
 		grid=new QGridLayout;
 		grid->addWidget(tab, 0,0,1,1);
-		grid->setContentsMargins(4,4,4,4);
+		grid->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
 		attributes_tbw->widget(i)->setLayout(grid);
 
-		connect(tab, SIGNAL(s_rowsRemoved()), this, SLOT(removeObjects()));
-		connect(tab, SIGNAL(s_rowRemoved(int)), this, SLOT(removeObject(int)));
-		connect(tab, SIGNAL(s_rowAdded(int)), this, SLOT(handleObject()));
-		connect(tab, SIGNAL(s_rowEdited(int)), this, SLOT(handleObject()));
-		connect(tab, SIGNAL(s_rowDuplicated(int,int)), this, SLOT(duplicateObject(int,int)));
-		connect(tab, SIGNAL(s_rowsMoved(int,int)), this, SLOT(swapObjects(int,int)));
+		connect(tab, &ObjectsTableWidget::s_rowsRemoved, this, &TableWidget::removeObjects);
+		connect(tab, &ObjectsTableWidget::s_rowRemoved, this, &TableWidget::removeObject);
+		connect(tab, &ObjectsTableWidget::s_rowAdded, this, &TableWidget::handleObject);
+		connect(tab, &ObjectsTableWidget::s_rowEdited, this, &TableWidget::handleObject);
+		connect(tab, &ObjectsTableWidget::s_rowDuplicated, this, &TableWidget::duplicateObject);
+		connect(tab, &ObjectsTableWidget::s_rowsMoved, this, &TableWidget::swapObjects);
 	}
 
 	objects_tab_map[ObjectType::Column]->setColumnCount(7);
@@ -133,7 +129,7 @@ TableWidget::TableWidget(QWidget *parent, ObjectType tab_type): BaseObjectWidget
 	objects_tab_map[ObjectType::Column]->setHeaderLabel(tr("Comment"), 6);
 	objects_tab_map[ObjectType::Column]->adjustColumnToContents(0);
 
-	connect(objects_tab_map[ObjectType::Column], &ObjectsTableWidget::s_cellClicked, [&](int row, int col){
+	connect(objects_tab_map[ObjectType::Column], &ObjectsTableWidget::s_cellClicked, this, [this](int row, int col){
 		if(col == 0 && objects_tab_map[ObjectType::Column]->isCellDisabled(static_cast<unsigned>(row), static_cast<unsigned>(col)))
 		{
 			Messagebox msg_box;
@@ -205,7 +201,7 @@ TableWidget::TableWidget(QWidget *parent, ObjectType tab_type): BaseObjectWidget
 	part_types.push_front(tr("None"));
 	partitioning_type_cmb->addItems(part_types);
 
-	connect(partitioning_type_cmb, &QComboBox::currentTextChanged, [&](){
+	connect(partitioning_type_cmb, &QComboBox::currentTextChanged, this, [this](){
 	  partition_keys_tab->setEnabled(partitioning_type_cmb->currentIndex() != 0);
 	});
 
@@ -247,7 +243,7 @@ ObjectType TableWidget::getObjectType(QObject *sender)
 
 	if(sender)
 	{
-		map<ObjectType, ObjectsTableWidget *>::iterator itr, itr_end;
+		std::map<ObjectType, ObjectsTableWidget *>::iterator itr, itr_end;
 
 		itr=objects_tab_map.begin();
 		itr_end=objects_tab_map.end();
@@ -320,8 +316,8 @@ void TableWidget::__setAttributes(DatabaseModel *model, OperationList *op_list, 
 	{
 		unsigned i, count;
 		PhysicalTable *aux_tab=nullptr;
-		vector<ObjectType> types=BaseObject::getChildObjectTypes(ObjectType::Table);
-		vector<PartitionKey> part_keys;
+		std::vector<ObjectType> types=BaseObject::getChildObjectTypes(ObjectType::Table);
+		std::vector<PartitionKey> part_keys;
 
 		BaseObjectWidget::setAttributes(model, op_list, table, schema, pos_x, pos_y);
 
@@ -333,8 +329,8 @@ void TableWidget::__setAttributes(DatabaseModel *model, OperationList *op_list, 
 		for(auto &type : types)
 		{
 			listObjects(type);
-			objects_tab_map[type]->setButtonConfiguration(ObjectsTableWidget::AllButtons ^
-																										(ObjectsTableWidget::UpdateButton));
+			/* objects_tab_map[type]->setButtonConfiguration(ObjectsTableWidget::AllButtons ^
+																									(ObjectsTableWidget::UpdateButton)); */
 		}
 
 		//Listing the ancestor tables
@@ -428,7 +424,7 @@ void TableWidget::listObjects(ObjectType obj_type)
 	ObjectsTableWidget *tab=nullptr;
 	unsigned idx = 0, count = 0;
 	PhysicalTable *table=nullptr;
-	vector<int> checked_cols;
+	std::vector<int> checked_cols;
 
 	try
 	{
@@ -459,6 +455,7 @@ void TableWidget::listObjects(ObjectType obj_type)
 			showObjectData(dynamic_cast<TableObject*>(table->getObject(idx, obj_type)), idx);
 		}
 
+		tab->resizeContents();
 		tab->clearSelection();
 		tab->blockSignals(false);
 
@@ -576,7 +573,7 @@ void TableWidget::showObjectData(TableObject *object, int row)
 		//Column 3: Column defaul value
 		if(column->getSequence())
 			str_aux=QString("nextval('%1'::regclass)").arg(column->getSequence()->getName(true).remove('"'));
-		else if(column->getIdentityType() != BaseType::Null)
+		else if(column->getIdentityType() != IdentityType::Null)
 			str_aux=QString("GENERATED %1 AS IDENTITY").arg(~column->getIdentityType());
 		else
 			str_aux=column->getDefaultValue();
@@ -620,10 +617,10 @@ void TableWidget::showObjectData(TableObject *object, int row)
 		if(constr->getConstraintType()==ConstraintType::ForeignKey)
 		{
 			//Column 2: ON DELETE action
-			tab->setCellText(~constr->getActionType(false),row,2);
+			tab->setCellText(~constr->getActionType(Constraint::DeleteAction),row,2);
 
 			//Column 3: ON UPDATE action
-			tab->setCellText(~constr->getActionType(true),row,3);
+			tab->setCellText(~constr->getActionType(Constraint::UpdateAction),row,3);
 		}
 		else
 		{
@@ -710,9 +707,19 @@ void TableWidget::showObjectData(TableObject *object, int row)
 		font.setItalic(true);
 
 		if(object->isAddedByRelationship())
-			tab->setRowFont(row, font, GuiUtilsNs::RelAddedRowFgColor, GuiUtilsNs::RelAddedRowBgColor);
+		{
+			tab->setRowFont(row, font);
+			tab->setRowColors(row,
+												ObjectsTableWidget::getTableItemColor(ObjectsTableWidget::RelAddedItemFgColor),
+												ObjectsTableWidget::getTableItemColor(ObjectsTableWidget::RelAddedItemBgColor));
+		}
 		else
-			tab->setRowFont(row, font, GuiUtilsNs::ProtRowFgColor, GuiUtilsNs::ProtRowBgColor);
+		{
+			tab->setRowFont(row, font);
+			tab->setRowColors(row,
+												ObjectsTableWidget::getTableItemColor(ObjectsTableWidget::ProtItemFgColor),
+												ObjectsTableWidget::getTableItemColor(ObjectsTableWidget::ProtItemBgColor));
+		}
 	}
 
 	tab->setCellText(object->getComment(), row, tab->getColumnCount() - 1);
@@ -740,7 +747,7 @@ void TableWidget::removeObjects()
 			if(!object->isProtected() &&
 					!dynamic_cast<TableObject *>(object)->isAddedByRelationship())
 			{
-				op_list->registerObject(object, Operation::ObjectRemoved, 0, this->object);
+				op_list->registerObject(object, Operation::ObjRemoved, 0, this->object);
 				table->removeObject(object);
 			}
 			else
@@ -791,7 +798,7 @@ void TableWidget::removeObject(int row)
 		if(!object->isProtected() &&
 				!dynamic_cast<TableObject *>(object)->isAddedByRelationship())
 		{
-			op_id=op_list->registerObject(object, Operation::ObjectRemoved, row, this->object);
+			op_id=op_list->registerObject(object, Operation::ObjRemoved, row, this->object);
 			table->removeObject(object);
 			table->setModified(true);
 		}
@@ -841,7 +848,7 @@ void TableWidget::duplicateObject(int sel_row, int new_row)
 		CoreUtilsNs::copyObject(&dup_object, object, obj_type);
 		dup_object->setName(CoreUtilsNs::generateUniqueName(dup_object, *table->getObjectList(obj_type), false, QString("_cp")));
 
-		op_id=op_list->registerObject(dup_object, Operation::ObjectCreated, new_row, this->object);
+		op_id=op_list->registerObject(dup_object, Operation::ObjCreated, new_row, this->object);
 
 		table->addObject(dup_object);
 		table->setModified(true);
@@ -916,14 +923,14 @@ void TableWidget::applyConfiguration()
 		PhysicalTable *table=nullptr;
 		Table *aux_tab = nullptr;
 		Constraint *pk = nullptr;
-		vector<BaseRelationship *> rels;
-		vector<Column *> pk_cols;
-		vector<PartitionKey> part_keys;
+		std::vector<BaseRelationship *> rels;
+		std::vector<Column *> pk_cols;
+		std::vector<PartitionKey> part_keys;
 		ObjectsTableWidget *col_tab = objects_tab_map[ObjectType::Column];
 		PartitioningType part_type;
 
 		if(!this->new_object)
-			op_list->registerObject(this->object, Operation::ObjectModified);
+			op_list->registerObject(this->object, Operation::ObjModified);
 		else
 			registerNewObject();
 
@@ -952,16 +959,16 @@ void TableWidget::applyConfiguration()
 				ftable->setOption(options_tab->getCellText(row, 0), options_tab->getCellText(row, 1));
 		}
 
-		part_type = partitioning_type_cmb->currentIndex() == 0 ? BaseType::Null : PartitioningType(partitioning_type_cmb->currentText());
+		part_type = partitioning_type_cmb->currentIndex() == 0 ? PartitioningType::Null : PartitioningType(partitioning_type_cmb->currentText());
 		table->setPartitioningType(part_type);
 
-		if(part_type != BaseType::Null)
+		if(part_type != PartitioningType::Null)
 		{
 			partition_keys_tab->getElements<PartitionKey>(part_keys);
 			table->addPartitionKeys(part_keys);
 
 			if(part_keys.empty())
-				part_type = BaseType::Null;
+				part_type = PartitioningType::Null;
 		}
 
 		BaseObjectWidget::applyConfiguration();
@@ -991,14 +998,14 @@ void TableWidget::applyConfiguration()
 					pk->addColumn(col, Constraint::SourceCols);
 
 				table->addConstraint(pk);
-				op_list->registerObject(pk, Operation::ObjectCreated, -1, table);
+				op_list->registerObject(pk, Operation::ObjCreated, -1, table);
 			}
 			else if(!pk->isAddedByRelationship())
 			{
-			  vector<Column *> orig_pk_cols = pk->getColumns(Constraint::SourceCols);
+			  std::vector<Column *> orig_pk_cols = pk->getColumns(Constraint::SourceCols);
 
 				//If the table owns a pk we only update the columns
-				op_list->registerObject(pk, Operation::ObjectModified, -1, table);
+				op_list->registerObject(pk, Operation::ObjModified, -1, table);
 				pk->removeColumns();
 
 				/* Adding the original primary key columns if they also exists in the
@@ -1018,7 +1025,7 @@ void TableWidget::applyConfiguration()
 		else if(pk_cols.empty() && pk && !pk->isAddedByRelationship())
 		{
 			//Removing the primary key from the table when no column is checked as pk
-			op_list->registerObject(pk, Operation::ObjectRemoved, -1, table);
+			op_list->registerObject(pk, Operation::ObjRemoved, -1, table);
 			table->removeObject(pk);
 		}
 

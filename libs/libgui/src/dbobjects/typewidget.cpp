@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -42,7 +42,7 @@ TypeWidget::TypeWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Ty
 		for(i=Type::InputFunc; i <= Type::AnalyzeFunc; i++)
 		{
 			functions_sel[i]=nullptr;
-			functions_sel[i]=new ObjectSelectorWidget(ObjectType::Function, true, this);
+			functions_sel[i]=new ObjectSelectorWidget(ObjectType::Function, this);
 			grid->addWidget(functions_sel[i],i,1,1,1);
 		}
 
@@ -63,7 +63,7 @@ TypeWidget::TypeWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Ty
 
 		grid=dynamic_cast<QGridLayout *>(attributes_gb->layout());
 
-		attrib_collation_sel=new ObjectSelectorWidget(ObjectType::Collation, true, this);
+		attrib_collation_sel=new ObjectSelectorWidget(ObjectType::Collation, this);
 		grid->addWidget(attrib_collation_sel, 1,1,1,2);
 
 		attrib_type_wgt=new PgSQLTypeWidget(this);
@@ -80,13 +80,13 @@ TypeWidget::TypeWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Ty
 		frame->setParent(base_attribs_twg->widget(0));
 
 		grid=dynamic_cast<QGridLayout *>(range_attribs_gb->layout());
-		opclass_sel=new ObjectSelectorWidget(ObjectType::OpClass, true, this);
+		opclass_sel=new ObjectSelectorWidget(ObjectType::OpClass, this);
 		grid->addWidget(opclass_sel,0,1,1,1);
 
 		for(i1=1, i=Type::CanonicalFunc; i <= Type::SubtypeDiffFunc; i++,i1++)
 		{
 			functions_sel[i]=nullptr;
-			functions_sel[i]=new ObjectSelectorWidget(ObjectType::Function, true, this);
+			functions_sel[i]=new ObjectSelectorWidget(ObjectType::Function, this);
 			grid->addWidget(functions_sel[i],i1,1,1,1);
 		}
 
@@ -97,15 +97,14 @@ TypeWidget::TypeWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Ty
 
 		range_attribs_gb->setVisible(false);
 
-		//connect(parent_form->apply_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration()));
-		connect(base_type_rb, SIGNAL(toggled(bool)), this, SLOT(selectTypeConfiguration()));
-		connect(composite_rb, SIGNAL(toggled(bool)), this, SLOT(selectTypeConfiguration()));
-		connect(enumeration_rb, SIGNAL(toggled(bool)), this, SLOT(selectTypeConfiguration()));
-		connect(enumerations_tab, SIGNAL(s_rowAdded(int)), this, SLOT(handleEnumeration(int)));
-		connect(enumerations_tab, SIGNAL(s_rowUpdated(int)), this, SLOT(handleEnumeration(int)));
-		connect(attributes_tab, SIGNAL(s_rowAdded(int)), this, SLOT(handleAttribute(int)));
-		connect(attributes_tab, SIGNAL(s_rowUpdated(int)), this, SLOT(handleAttribute(int)));
-		connect(attributes_tab, SIGNAL(s_rowEdited(int)), this, SLOT(editAttribute(int)));
+		connect(base_type_rb, &QRadioButton::toggled, this, &TypeWidget::selectTypeConfiguration);
+		connect(composite_rb, &QRadioButton::toggled, this, &TypeWidget::selectTypeConfiguration);
+		connect(enumeration_rb, &QRadioButton::toggled, this, &TypeWidget::selectTypeConfiguration);
+		connect(enumerations_tab, &ObjectsTableWidget::s_rowAdded, this, &TypeWidget::handleEnumeration);
+		connect(enumerations_tab, &ObjectsTableWidget::s_rowUpdated, this, &TypeWidget::handleEnumeration);
+		connect(attributes_tab, &ObjectsTableWidget::s_rowAdded, this, &TypeWidget::handleAttribute);
+		connect(attributes_tab, &ObjectsTableWidget::s_rowUpdated, this, &TypeWidget::handleAttribute);
+		connect(attributes_tab, &ObjectsTableWidget::s_rowEdited, this, &TypeWidget::editAttribute);
 
 		storage_cmb->addItems(StorageType::getTypes());
 		category_cmb->addItems(CategoryType::getTypes());
@@ -276,7 +275,7 @@ void TypeWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Sch
 			alignment_cmb->setCurrentIndex(alignment_cmb->findText(~type->getAlignment()));
 
 			for(i=Type::InputFunc; i <= Type::AnalyzeFunc; i++)
-				functions_sel[i]->setSelectedObject(type->getFunction(i));
+				functions_sel[i]->setSelectedObject(type->getFunction(static_cast<Type::FunctionId>(i)));
 		}
 	}
 	else
@@ -346,7 +345,8 @@ void TypeWidget::applyConfiguration()
 			type->setStorage(StorageType(storage_cmb->currentText()));
 
 			for(i=Type::InputFunc; i <= Type::AnalyzeFunc; i++)
-				type->setFunction(i, dynamic_cast<Function *>(functions_sel[i]->getSelectedObject()));
+				type->setFunction(static_cast<Type::FunctionId>(i),
+													dynamic_cast<Function *>(functions_sel[i]->getSelectedObject()));
 		}
 
 		finishConfiguration();

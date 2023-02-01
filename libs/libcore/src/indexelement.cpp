@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -33,7 +33,7 @@ Collation *IndexElement::getCollation()
 	return collation;
 }
 
-QString IndexElement::getCodeDefinition(unsigned def_type)
+QString IndexElement::getSourceCode(SchemaParser::CodeType def_type)
 {
 	attribs_map attributes;
 
@@ -43,12 +43,12 @@ QString IndexElement::getCodeDefinition(unsigned def_type)
 
 	if(collation)
 	{
-		if(def_type==SchemaParser::SqlDefinition)
+		if(def_type==SchemaParser::SqlCode)
 			attributes[Attributes::Collation]=collation->getName(true);
 		else
-			attributes[Attributes::Collation]=collation->getCodeDefinition(def_type, true);
+			attributes[Attributes::Collation]=collation->getSourceCode(def_type, true);
 	}
 
-	return schparser.getCodeDefinition(Attributes::IndexElement, attributes, def_type);
+	return schparser.getSourceCode(Attributes::IndexElement, attributes, def_type);
 }
 

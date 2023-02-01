@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -35,17 +35,26 @@
 #include "settings/baseconfigwidget.h"
 #include "widgets/fileselectorwidget.h"
 #include "widgets/objectsfilterwidget.h"
+#include "widgets/findreplacewidget.h"
 #include <QThread>
 
-class ModelDatabaseDiffForm: public BaseConfigWidget, public Ui::ModelDatabaseDiffForm {
+class __libgui ModelDatabaseDiffForm: public BaseConfigWidget, public Ui::ModelDatabaseDiffForm {
 	private:
 		Q_OBJECT
+
+		//! \brief Constants used to reference the thread/helper to be handled in createThread() and destroyThread()
+		enum ThreadId {
+			SrcImportThread,
+			ImportThread,
+			DiffThread,
+			ExportThread
+		};
 
 		/*! \brief Indicates if the full output generated during the process should be displayed
 		 * When this attribute is true, only errors and some key info messages are displayed. */
 		static bool low_verbosity;
 
-		static map<QString, attribs_map> config_params;
+		static std::map<QString, attribs_map> config_params;
 
 		QEventLoop event_loop;
 
@@ -56,6 +65,8 @@ class ModelDatabaseDiffForm: public BaseConfigWidget, public Ui::ModelDatabaseDi
 		FileSelectorWidget *file_sel;
 
 		ObjectsFilterWidget *pd_filter_wgt;
+
+		FindReplaceWidget *find_sql_wgt;
 
 		//! \brief Custom delegate used to paint html texts in output tree
 		HtmlItemDelegate *htmlitem_del;
@@ -79,7 +90,7 @@ class ModelDatabaseDiffForm: public BaseConfigWidget, public Ui::ModelDatabaseDi
 		QTreeWidgetItem *import_item, *diff_item, *export_item, *src_import_item;
 
 		//! \brief Stores the objects filtered from the database model
-		vector<BaseObject *> filtered_objs;
+		std::vector<BaseObject *> filtered_objs;
 
 		/*! \brief This is the model used in the diff process representing the source.
 		 * It can be the modelo loaded from file or a representation of the source database (when comparing two dbs) */
@@ -105,10 +116,10 @@ class ModelDatabaseDiffForm: public BaseConfigWidget, public Ui::ModelDatabaseDi
 		void showEvent(QShowEvent *);
 
 		//! \brief Creates the helpers and threads
-		void createThread(unsigned thread_id);
+		void createThread(ThreadId thread_id);
 
 		//! \brief Destroy the helpers and threads
-		void destroyThread(unsigned thread_id);
+		void destroyThread(ThreadId thread_id);
 
 		//! \brief Destroy the imported model
 		void destroyModel();
@@ -121,12 +132,6 @@ class ModelDatabaseDiffForm: public BaseConfigWidget, public Ui::ModelDatabaseDi
 
 		//! \brief Returns true when one or more threads of the whole diff process are running.
 		bool isThreadsRunning();
-
-		//! \brief Constants used to reference the thread/helper to be handled in createThread() and destroyThread()
-		static constexpr unsigned SrcImportThread=0,
-		ImportThread=1,
-		DiffThread=2,
-		ExportThread=3;
 
 		//! \brief Applies the loaded configurations to the form. In this widget only list the loaded presets
 		virtual void applyConfiguration();
@@ -143,11 +148,11 @@ class ModelDatabaseDiffForm: public BaseConfigWidget, public Ui::ModelDatabaseDi
 
 		/*! \brief When performing a partial diff between a model and database this method fills a vector with the
 		 * filtered objects in the source database model */
-		void getFilteredObjects(vector<BaseObject *> &objects);
+		void getFilteredObjects(std::vector<BaseObject *> &objects);
 
 		/*! \brief When performing a partial diff between two databases this method fills a map with the
 		 * filtered objects (type -> oids) in the database */
-		void getFilteredObjects(map<ObjectType, vector<unsigned> > &obj_oids);
+		void getFilteredObjects(std::map<ObjectType, std::vector<unsigned> > &obj_oids);
 
 	public:
 		ModelDatabaseDiffForm(QWidget * parent = nullptr, Qt::WindowFlags flags = Qt::Widget);
@@ -173,7 +178,7 @@ class ModelDatabaseDiffForm: public BaseConfigWidget, public Ui::ModelDatabaseDi
 		void handleDiffFinished();
 		void handleExportFinished();
 		void handleErrorIgnored(QString err_code, QString err_msg, QString cmd);
-		void importDatabase(unsigned thread_id);
+		void importDatabase(ThreadId thread_id);
 		void diffModels();
 		void exportDiff(bool confirm=true);
 		void filterDiffInfos();

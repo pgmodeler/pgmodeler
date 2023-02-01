@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -25,9 +25,10 @@
 #ifndef BEZIER_CURVE_ITEM_H
 #define BEZIER_CURVE_ITEM_H
 
+#include "canvasglobal.h"
 #include <QGraphicsPathItem>
 
-class BezierCurveItem: public QGraphicsPathItem {
+class __libcanvas BezierCurveItem: public QGraphicsPathItem {
 	private:
 		/*! \brief Stores the stroke of the curve itself.
 		 * This object is used to do a better colision detection */

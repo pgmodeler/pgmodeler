@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -42,10 +42,20 @@ SourceCodeWidget::SourceCodeWidget(QWidget *parent): BaseObjectWidget(parent)
 		name_edt->setReadOnly(true);
 		version_cmb->addItems(PgSqlVersions::AllVersions);
 
-		connect(version_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(generateSourceCode(int)));
-		connect(code_options_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(generateSourceCode()));
-		connect(sourcecode_twg, SIGNAL(currentChanged(int)), this, SLOT(setSourceCodeTab(int)));
-		connect(save_sql_tb, SIGNAL(clicked()), this, SLOT(saveSQLCode()));
+		connect(version_cmb, &QComboBox::currentIndexChanged, this, &SourceCodeWidget::generateSourceCode);
+		connect(code_options_cmb, &QComboBox::currentIndexChanged, this, &SourceCodeWidget::generateSourceCode);
+		connect(sourcecode_twg, &QTabWidget::currentChanged, this, &SourceCodeWidget::setSourceCodeTab);
+		connect(save_sql_tb, &QToolButton::clicked, this, &SourceCodeWidget::saveSQLCode);
+
+		find_sql_wgt = new FindReplaceWidget(sqlcode_txt, find_wgt_parent);
+		find_wgt_parent->setVisible(false);
+
+		QVBoxLayout *vbox = new QVBoxLayout(find_wgt_parent);
+		vbox->addWidget(find_sql_wgt);
+		vbox->setContentsMargins(0,0,0,0);
+
+		connect(find_tb, &QToolButton::toggled, find_wgt_parent, &QWidget::setVisible);
+		connect(find_sql_wgt, &FindReplaceWidget::s_hideRequested, find_tb, &QToolButton::toggle);
 
 		hl_sqlcode=new SyntaxHighlighter(sqlcode_txt);
 		hl_xmlcode=new SyntaxHighlighter(xmlcode_txt);
@@ -62,24 +72,15 @@ void SourceCodeWidget::setSourceCodeTab(int)
 {
 	QString code_icon;
 	bool enabled=false;
-	QPixmap icone;
 	ObjectType obj_type=object->getObjectType();
-
-	if(sourcecode_twg->currentIndex()==0)
-		code_icon=QString("sqlcode");
-	else
-		code_icon=QString("xmlcode");
 
 	enabled=(sourcecode_twg->currentIndex()==0 &&
 			 ((obj_type==ObjectType::BaseRelationship &&
 			   dynamic_cast<BaseRelationship *>(object)->getRelationshipType()==BaseRelationship::RelationshipFk)
 			  || (obj_type!=ObjectType::BaseRelationship && obj_type!=ObjectType::Textbox)));
 
-	icone=QPixmap(GuiUtilsNs::getIconPath(code_icon));
-	icon_lbl->setPixmap(icone);
 	version_cmb->setEnabled(enabled);
 	pgsql_lbl->setEnabled(enabled);
-	version_lbl->setEnabled(enabled);
 }
 
 void SourceCodeWidget::saveSQLCode()
@@ -94,8 +95,12 @@ void SourceCodeWidget::saveSQLCode()
 	file_dlg.setNameFilter(tr("SQL code (*.sql);;All files (*.*)"));
 	file_dlg.selectFile(QString("%1-%2.sql").arg(object->getSchemaName()).arg(object->getName()));
 
+	GuiUtilsNs::restoreFileDialogState(&file_dlg);
+
 	if(file_dlg.exec() == QFileDialog::Accepted && !file_dlg.selectedFiles().isEmpty())
 		UtilsNs::saveFile(file_dlg.selectedFiles().at(0), sqlcode_txt->toPlainText().toUtf8());
+
+	GuiUtilsNs::saveFileDialogState(&file_dlg);
 }
 
 void SourceCodeWidget::generateSourceCode(int)
@@ -113,7 +118,7 @@ void SourceCodeWidget::generateSourceCode(int)
 				(obj_type==ObjectType::BaseRelationship &&
 				 dynamic_cast<BaseRelationship *>(object)->getRelationshipType()==BaseRelationship::RelationshipFk))
 		{
-			QString aux_def;
+
 			BaseObject::setPgSQLVersion(version_cmb->currentText());
 
 			if(obj_type==ObjectType::Database)
@@ -121,34 +126,12 @@ void SourceCodeWidget::generateSourceCode(int)
 				task_prog_wgt=new TaskProgressWidget;
 				task_prog_wgt->setWindowTitle(tr("Generating source code..."));
 				task_prog_wgt->show();
-				connect(this->model, SIGNAL(s_objectLoaded(int,QString,unsigned)), task_prog_wgt, SLOT(updateProgress(int,QString,unsigned)));
-				sqlcode_txt->setPlainText(object->getCodeDefinition(SchemaParser::SqlDefinition));
+				connect(this->model, &DatabaseModel::s_objectLoaded, task_prog_wgt, qOverload<int, QString, unsigned>(&TaskProgressWidget::updateProgress));
+				sqlcode_txt->setPlainText(object->getSourceCode(SchemaParser::SqlCode));
 			}
 			else
 			{
-				if(code_options_cmb->currentIndex()==OriginalSql)
-					sqlcode_txt->setPlainText(object->getCodeDefinition(SchemaParser::SqlDefinition));
-				else
-				{
-					vector<BaseObject *> objs=model->getCreationOrder(object, code_options_cmb->currentIndex()==ChildrenSql);
-
-					for(BaseObject *obj : objs)
-						aux_def+=obj->getCodeDefinition(SchemaParser::SqlDefinition);
-				}
-
-				if(!aux_def.isEmpty())
-				{
-					aux_def=tr("-- NOTE: the code below contains the SQL for the selected object\n\
--- as well for its dependencies and children (if applicable).\n\
--- \n\
--- This feature is only a convinience in order to permit you to test\n\
--- the whole object's SQL definition at once.\n\
--- \n\
--- When exporting or generating the SQL for the whole database model\n\
--- all objects will be placed at their original positions.\n\n\n") + aux_def;
-
-					sqlcode_txt->setPlainText(sqlcode_txt->toPlainText() + aux_def);
-				}
+				sqlcode_txt->setPlainText(model->getSQLDefinition(object, static_cast<DatabaseModel::CodeGenMode>(code_options_cmb->currentIndex())));
 			}
 
 #ifdef DEMO_VERSION
@@ -179,7 +162,7 @@ void SourceCodeWidget::generateSourceCode(int)
 #warning "DEMO VERSION: XML code preview disabled."
 		xmlcode_txt->setPlainText(tr("<!-- XML code preview disabled in demonstration version -->"));
 #else
-		xmlcode_txt->setPlainText(object->getCodeDefinition(SchemaParser::XmlDefinition));
+		xmlcode_txt->setPlainText(object->getSourceCode(SchemaParser::XmlCode));
 #endif
 
 		setSourceCodeTab();

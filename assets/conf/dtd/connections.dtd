@@ -3,7 +3,6 @@
            Unexpected results may occur if the code is changed deliberately.
 -->
 <!ELEMENT connections (connection*)>
-
 <!ELEMENT connection EMPTY>
 <!ATTLIST connection alias CDATA #REQUIRED>
 <!ATTLIST connection host CDATA #REQUIRED>

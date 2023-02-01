@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -37,7 +37,7 @@ QString GenericSQL::getDefinition()
 	return definition;
 }
 
-vector<GenericSQL::ObjectRefConfig> GenericSQL::getObjectsReferences()
+std::vector<GenericSQL::ObjectRefConfig> GenericSQL::getObjectsReferences()
 {
 	return objects_refs;
 }
@@ -45,7 +45,7 @@ vector<GenericSQL::ObjectRefConfig> GenericSQL::getObjectsReferences()
 int GenericSQL::getObjectRefNameIndex(const QString &ref_name)
 {
 	int idx = -1;
-	vector<ObjectRefConfig>::iterator itr = objects_refs.begin(),
+	std::vector<ObjectRefConfig>::iterator itr = objects_refs.begin(),
 			itr_end = objects_refs.end();
 
 	if(ref_name.isEmpty())
@@ -69,7 +69,7 @@ bool GenericSQL::isObjectReferenced(BaseObject *object)
 {
 	bool found = false;
 	BaseObject *ref_obj = nullptr;
-	vector<ObjectRefConfig>::iterator itr = objects_refs.begin(),
+	std::vector<ObjectRefConfig>::iterator itr = objects_refs.begin(),
 			itr_end = objects_refs.end();
 
 	if(!object)
@@ -92,7 +92,7 @@ bool GenericSQL::isObjectReferenced(BaseObject *object)
 bool GenericSQL::isReferRelationshipAddedObject()
 {
 	bool found = false;
-	vector<ObjectRefConfig>::iterator itr = objects_refs.begin(),
+	std::vector<ObjectRefConfig>::iterator itr = objects_refs.begin(),
 			itr_end = objects_refs.end();
 	TableObject *tab_obj = nullptr;
 
@@ -106,9 +106,9 @@ bool GenericSQL::isReferRelationshipAddedObject()
 	return found;
 }
 
-vector<BaseObject *> GenericSQL::getReferencedObjects()
+std::vector<BaseObject *> GenericSQL::getReferencedObjects()
 {
-	vector<BaseObject *> ref_objs;
+	std::vector<BaseObject *> ref_objs;
 
 	for(auto &ref : objects_refs)
 		ref_objs.push_back(ref.object);
@@ -154,7 +154,7 @@ void GenericSQL::updateObjectReference(const QString &ref_name, BaseObject *obje
 	try
 	{
 		ObjectRefConfig ref = ObjectRefConfig(new_ref_name, object, use_signature, format_name);
-		vector<ObjectRefConfig>::iterator itr = objects_refs.begin() + idx;
+		std::vector<ObjectRefConfig>::iterator itr = objects_refs.begin() + idx;
 		int idx_aux = getObjectRefNameIndex(new_ref_name);
 
 		if(idx_aux >= 0 && idx_aux != idx)
@@ -187,7 +187,7 @@ void GenericSQL::removeObjectReferences()
 	setCodeInvalidated(true);
 }
 
-QString GenericSQL::getCodeDefinition(unsigned def_type)
+QString GenericSQL::getSourceCode(SchemaParser::CodeType def_type)
 {
 	QString code_def=getCachedCode(def_type, false);
 	if(!code_def.isEmpty()) return code_def;
@@ -204,7 +204,7 @@ QString GenericSQL::getCodeDefinition(unsigned def_type)
 
 		for(auto &ref : objects_refs)
 		{
-			if(def_type == SchemaParser::XmlDefinition)
+			if(def_type == SchemaParser::XmlCode)
 			{
 				obj_attrs[Attributes::Name] = ref.object->getSignature();
 				obj_attrs[Attributes::Type] = ref.object->getSchemaName();
@@ -213,7 +213,7 @@ QString GenericSQL::getCodeDefinition(unsigned def_type)
 				obj_attrs[Attributes::UseSignature] = ref.use_signature ? Attributes::True : "";
 
 				schparser.ignoreUnkownAttributes(true);
-				attributes[Attributes::Objects] += schparser.getCodeDefinition(Attributes::Object, obj_attrs, SchemaParser::XmlDefinition);
+				attributes[Attributes::Objects] += schparser.getSourceCode(Attributes::Object, obj_attrs, SchemaParser::XmlCode);
 			}
 			else
 			{
@@ -234,11 +234,11 @@ QString GenericSQL::getCodeDefinition(unsigned def_type)
 	}
 
 	// Special case for the {name} attribute which is created automatically when there's no one defined by the user
-	if(def_type == SchemaParser::SqlDefinition &&
+	if(def_type == SchemaParser::SqlCode &&
 		 fmt_definition.contains(name_attr) && getObjectRefNameIndex(Attributes::Name) < 0)
 		fmt_definition = fmt_definition.replace(name_attr, this->getName(true));
 
 	attributes[Attributes::Definition] = fmt_definition;
 
-	return this->BaseObject::__getCodeDefinition(def_type);
+	return this->BaseObject::__getSourceCode(def_type);
 }

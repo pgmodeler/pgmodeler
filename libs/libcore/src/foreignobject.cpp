@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -96,7 +96,7 @@ QString ForeignObject::getOptionsAttribute(unsigned def_type)
 	QStringList fmt_options;
 
 	for(auto &itr : options)
-		fmt_options += def_type == SchemaParser::SqlDefinition ?
+		fmt_options += def_type == SchemaParser::SqlCode ?
 																QString("%1 '%2'").arg(itr.first).arg(itr.second) :
 																QString("%1%2%3").arg(itr.first).arg(OptionValueSeparator).arg(itr.second);
 

@@ -21,13 +21,8 @@
 	%end
 %else
 	%if {attribs} %then
-		[SELECT oid, spcname AS name, spcacl AS permission, spcowner AS owner, ]
-
-		%if ({pgsql-ver} >=f "9.2") %then
-			[ pg_tablespace_location(oid) AS directory, ]
-		%else
-			[ spclocation AS directory, ]
-		%end
+		[SELECT oid, spcname AS name, spcacl AS permission, spcowner AS owner, 
+		 pg_tablespace_location(oid) AS directory, ]
 
 		({comment}) [ AS comment ]
 

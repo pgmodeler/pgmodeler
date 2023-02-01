@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -30,7 +30,7 @@ the syntax highlighter installed on it.
 #include "utils/syntaxhighlighter.h"
 #include "databasemodel.h"
 
-class CodeCompletionWidget: public QWidget
+class __libgui CodeCompletionWidget: public QWidget
 {
 	private:
 		Q_OBJECT
@@ -41,7 +41,7 @@ class CodeCompletionWidget: public QWidget
 		QWidget *completion_wgt;
 		
 		//! \brief Marks the completion widget as persistent (available only when there is no a database model assinged)
-		QCheckBox *persistent_chk;
+		QCheckBox *always_on_top_chk;
 		
 		//! \brief Input field that is associated with the code completion
 		QPlainTextEdit *code_field_txt;
@@ -85,9 +85,9 @@ class CodeCompletionWidget: public QWidget
 		enable_snippets;
 		
 		//! \brief Store the objects selected for each qualifying level
-		vector<BaseObject *> sel_objects;
+		std::vector<BaseObject *> sel_objects;
 		
-		map<QString, QPixmap> custom_items;
+		std::map<QString, QPixmap> custom_items;
 		
 		attribs_map custom_items_tips;
 		
@@ -99,7 +99,7 @@ class CodeCompletionWidget: public QWidget
 		
 		/*! \brief Insert the objects of the vector into the name listing. The filter parameter is used to
 		insert only the object which names matches the filter */
-		void populateNameList(vector<BaseObject *> &objects, QString filter="");
+		void populateNameList(std::vector<BaseObject *> &objects, QString filter="");
 		
 		//! \brief Configures the current qualifying level according to the passed object
 		void setQualifyingLevel(BaseObject *obj);

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -36,11 +36,11 @@
 #include "utils/resultsetmodel.h"
 #include "sqlexecutionhelper.h"
 
-class SQLExecutionWidget: public QWidget, public Ui::SQLExecutionWidget {
+class __libgui SQLExecutionWidget: public QWidget, public Ui::SQLExecutionWidget {
 	private:
 		Q_OBJECT
 
-		static map<QString, QString> cmd_history;
+		static std::map<QString, QString> cmd_history;
 
 		static int cmd_history_max_len;
 
@@ -124,8 +124,9 @@ class SQLExecutionWidget: public QWidget, public Ui::SQLExecutionWidget {
 		//! \brief Generates a Plain text buffer based upon the selection on the results grid (this method does not include the column names)
 		static QByteArray generateTextBuffer(QTableView *results_tbw);
 
-		//! \brief Generates a custom text buffer. User can specify a separator for columns, include column names and quote values
-		static QByteArray generateBuffer(QTableView *results_tbw, QChar separator, bool incl_col_names, bool use_quotes, bool escape_chars);
+		/*! \brief Generates a custom text buffer. User can specify a separator for columns, include column names and if the output
+		 *  buffer is whether in CSV format or not */
+		static QByteArray generateBuffer(QTableView *results_tbw, QChar separator, bool incl_col_names, bool csv_format);
 
 		//! \brief Exports the results to csv file
 		static void exportResults(QTableView *results_tbw);

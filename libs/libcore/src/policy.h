@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -29,12 +29,12 @@
 #include "role.h"
 #include "pgsqltypes/policycmdtype.h"
 
-class Policy : public TableObject {
+class __libcore Policy : public TableObject {
 	private:
 		/*! \brief Roles that has permissions over the object. This vector can be
 			empty indicating that all roles on the cluster has permission over
 			the object. */
-		vector<Role *> roles;
+		std::vector<Role *> roles;
 
 		//! \brief Defines the USING expression applied to queries referencing the table which policy is applied
 		QString using_expr,
@@ -85,14 +85,12 @@ class Policy : public TableObject {
 		void removeRoles();
 
 		//! \brief Returns all the roles that is used by the policy
-		vector<Role *> getRoles();
+		std::vector<Role *> getRoles();
 
 		//! \brief Returns the SQL / XML definition for the policy
-		virtual QString getCodeDefinition(unsigned def_type) final;
+		virtual QString getSourceCode(SchemaParser::CodeType def_type) final;
 
-		virtual QString getSignature(bool format=false) final;
-
-		virtual QString getAlterDefinition(BaseObject *object) final;
+		virtual QString getAlterCode(BaseObject *object) final;
 
 		bool isRoleExists(Role *role);
 };

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -49,13 +49,23 @@ struct SimpleColumn {
 			return name == col.name && type == col.type && alias == col.alias;
 		}
 
+		SimpleColumn & operator = (const SimpleColumn &col)
+		{
+			this->name = col.name;
+			this->type = col.type;
+			this->alias = col.alias;
+			return *this;
+		}
+
 		bool isValid() const
 		{
 			return !name.isEmpty() && !type.isEmpty();
 		}
 };
 
-// Declaring SimpleColumn as a metatype in order to use it in QVariant
+/* Registering the SimpleColumn class as a Qt MetaType in order to make
+ * it liable to be sent through signal parameters as well as to be
+ * to be used by QVariant */
 Q_DECLARE_METATYPE(SimpleColumn)
 
 #endif

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -49,14 +49,14 @@ void Operation::setObjectIndex(int idx)
 	object_idx=idx;
 }
 
-void Operation::setChainType(unsigned type)
+void Operation::setChainType(ChainType type)
 {
 	chain_type=(type > ChainEnd ? NoChain : type);
 }
 
-void Operation::setOperationType(unsigned type)
+void Operation::setOperationType(OperType type)
 {
-	op_type=(type > ObjectMoved ? NoOperation : type);
+	op_type=(type > ObjMoved ? NoOperation : type);
 }
 
 void Operation::setOriginalObject(BaseObject *object)
@@ -77,7 +77,7 @@ void Operation::setParentObject(BaseObject *object)
 	operation_id=generateOperationId();
 }
 
-void Operation::setPermissions(const vector<Permission *> &perms)
+void Operation::setPermissions(const std::vector<Permission *> &perms)
 {
 	permissions=perms;
 }
@@ -92,12 +92,12 @@ int Operation::getObjectIndex()
 	return object_idx;
 }
 
-unsigned Operation::getChainType()
+Operation::ChainType Operation::getChainType()
 {
 	return chain_type;
 }
 
-unsigned Operation::getOperationType()
+Operation::OperType Operation::getOperationType()
 {
 	return op_type;
 }
@@ -117,7 +117,7 @@ BaseObject *Operation::getParentObject()
 	return parent_obj;
 }
 
-vector<Permission *> Operation::getPermissions()
+std::vector<Permission *> Operation::getPermissions()
 {
 	return permissions;
 }

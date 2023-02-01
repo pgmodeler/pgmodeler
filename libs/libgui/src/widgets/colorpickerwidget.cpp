@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
 
 ColorPickerWidget::ColorPickerWidget(int color_count, QWidget * parent) : QWidget(parent)
 {
-	random_device rand_seed;
+	std::random_device rand_seed;
 	rand_num_engine.seed(rand_seed());
 
 	QToolButton *btn=nullptr;
@@ -41,10 +41,10 @@ ColorPickerWidget::ColorPickerWidget(int color_count, QWidget * parent) : QWidge
 	for(int i=0; i < color_count; i++)
 	{
 		btn=new QToolButton(this);
-		btn->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
-		btn->setMinimumHeight(25);
-		btn->setMaximumHeight(random_color_tb->height() - 10);
-		btn->setMinimumWidth(55);
+		btn->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+		btn->setMinimumHeight(random_color_tb->iconSize().height());
+		btn->setMaximumHeight(random_color_tb->iconSize().height() * 1.5);
+		btn->setMinimumWidth(random_color_tb->iconSize().width() * 2);
 		btn->installEventFilter(this);
 
 		disable_color=btn->palette().color(QPalette::Button);
@@ -52,14 +52,21 @@ ColorPickerWidget::ColorPickerWidget(int color_count, QWidget * parent) : QWidge
 		colors.push_back(disable_color);
 
 		hbox->addWidget(btn);
-		connect(btn, SIGNAL(clicked()), this, SLOT(selectColor()));
+		connect(btn, &QToolButton::clicked, this, &ColorPickerWidget::selectColor);
 	}
+
+	QList<QToolButton *> btns = buttons;
+	btns.append(random_color_tb);
+
+	for(int i = 0; i < btns.size() - 1; i++)
+		setTabOrder(btns[i], btns[i + 1]);
 
 	hbox->addWidget(random_color_tb);
 	hbox->addSpacerItem(spacer);
 	this->adjustSize();
+	setMaximumWidth(width());
 
-	connect(random_color_tb, SIGNAL(clicked()), this, SLOT(generateRandomColors()));
+	connect(random_color_tb, &QToolButton::clicked, this, &ColorPickerWidget::generateRandomColors);
 }
 
 bool ColorPickerWidget::eventFilter(QObject *object, QEvent *event)
@@ -159,7 +166,7 @@ void ColorPickerWidget::selectColor()
 void ColorPickerWidget::generateRandomColors()
 {
 	QColor color;
-	uniform_int_distribution<unsigned> dist(0,255);
+	std::uniform_int_distribution<unsigned> dist(0,255);
 	int i=0;
 
 	for(i=0; i < buttons.size(); i++)
