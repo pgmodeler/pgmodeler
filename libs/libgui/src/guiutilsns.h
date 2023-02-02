@@ -89,7 +89,7 @@ namespace GuiUtilsNs {
 	extern __libgui void bulkDataEdit(QTableWidget *results_tbw);
 
 	//! \brief Creates drop shadown on a widget
-	extern __libgui void createDropShadow(QWidget *wgt, int x_offset = 2, int y_offset = 2, int radius = 5);
+	extern __libgui void createDropShadow(QWidget *wgt, int x_offset = 2, int y_offset = 2, int radius = 5, const QColor &color = QColor(0, 0, 0, 100));
 
 	/*! \brief Handles the currently provided file dialog state to file.
 	 * If save_state is true, then the dialog's state is saved to file
