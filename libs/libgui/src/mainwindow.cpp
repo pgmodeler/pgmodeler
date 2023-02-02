@@ -121,6 +121,10 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	// Post initilize plug-ins
 	PluginsConfigWidget *plugins_conf_wgt = dynamic_cast<PluginsConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::PluginsConfWgt));
 	plugins_conf_wgt->postInitPlugins();
+
+	// Updating drop shadows settings to match the current UI theme
+	confs = AppearanceConfigWidget::getConfigurationParams();
+	AppearanceConfigWidget::updateDropShadows(confs[GlobalAttributes::AppearanceConf][Attributes::UiTheme]);
 }
 
 MainWindow::~MainWindow()

@@ -53,6 +53,8 @@ SchemaEditorForm::SchemaEditorForm(QWidget *parent) : QWidget(parent)
 
 	AppearanceConfigWidget appearance_conf_wgt;
 	appearance_conf_wgt.loadConfiguration();
+	std::map<QString, attribs_map> confs = AppearanceConfigWidget::getConfigurationParams();
+	AppearanceConfigWidget::updateDropShadows(confs[GlobalAttributes::AppearanceConf][Attributes::UiTheme]);
 
 	GeneralConfigWidget general_conf_wgt;
 	general_conf_wgt.loadConfiguration();

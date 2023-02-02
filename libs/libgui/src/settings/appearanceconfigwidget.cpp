@@ -349,6 +349,32 @@ std::map<QString, attribs_map> AppearanceConfigWidget::getConfigurationParams()
 	return config_params;
 }
 
+void AppearanceConfigWidget::updateDropShadows(const QString theme_id)
+{
+	QColor color(0, 0, 0, 80);
+	int radius = 6, x = 1, y = 1;
+	QGraphicsDropShadowEffect *shadow = nullptr;
+	QString class_name = "QToolButton";
+
+	if(theme_id == Attributes::Light)
+	{
+		radius = 1;
+		color.setRgb(225, 225, 225);
+		color.setAlpha(255);
+	}
+
+	for(auto &wgt : qApp->allWidgets())
+	{
+		if(wgt->metaObject()->className() == class_name && wgt->graphicsEffect())
+		{
+			shadow = qobject_cast<QGraphicsDropShadowEffect *>(wgt->graphicsEffect());
+			shadow->setColor(color);
+			shadow->setOffset(x, y);
+			shadow->setBlurRadius(radius);
+		}
+	}
+}
+
 void AppearanceConfigWidget::loadExampleModel()
 {
 	try
@@ -963,6 +989,7 @@ void AppearanceConfigWidget::previewUiSettings()
 	QApplication::setOverrideCursor(Qt::WaitCursor);
 	applyUiTheme();
 	applyDesignCodeTheme();
+	updateDropShadows(ui_theme_cmb->currentData(Qt::UserRole).toString());
 	QApplication::restoreOverrideCursor();
 }
 
