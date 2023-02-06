@@ -806,6 +806,7 @@
     </property>
     <addaction name="action_show_grid"/>
     <addaction name="action_show_delimiters"/>
+    <addaction name="action_lock_delim"/>
     <addaction name="action_alin_objs_grade"/>
     <addaction name="separator"/>
     <addaction name="action_normal_zoom"/>
@@ -1604,7 +1605,7 @@
      <normaloff>:/icons/icons/lockdelim.png</normaloff>:/icons/icons/lockdelim.png</iconset>
    </property>
    <property name="text">
-    <string>action_lock_delim</string>
+    <string>Lock delimiters</string>
    </property>
    <property name="toolTip">
     <string>&lt;p&gt;Locks the delimiter lines resizing when the zoom factor is less than 100% so more objects can fit on a single page.&lt;/p&gt;</string>
