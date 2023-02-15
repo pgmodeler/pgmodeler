@@ -3215,16 +3215,17 @@ void DatabaseModel::loadModel(const QString &filename)
 			if(layers.isEmpty())
 				layers.push_back(tr("Default layer"));
 
-			if(layer_rect_colors.isEmpty())
+			if(layer_rect_colors.size() != layers.size())
 			{
 				std::random_device rand_seed;
 				std::default_random_engine rand_num_engine;
 				std::uniform_int_distribution<unsigned> dist(0,255);
 
 				layer_name_colors.clear();
+				layer_rect_colors.clear();
 				rand_num_engine.seed(rand_seed());
 
-				for(int i =0; i <= layers.size(); i++)
+				for(int i = 0; i < layers.size(); i++)
 				{
 					layer_rect_colors.append(QColor(dist(rand_num_engine),
 																					dist(rand_num_engine),
