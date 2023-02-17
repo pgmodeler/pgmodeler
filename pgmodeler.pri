@@ -194,7 +194,7 @@ DEFINES += BINDIR=\\\"$${BINDIR}\\\" \
            DOCDIR=\\\"$${DOCDIR}\\\" \
            LANGDIR=\\\"$${LANGDIR}\\\" \
            SAMPLESDIR=\\\"$${SAMPLESDIR}\\\" \
-           SCHEMASDIR=\\\"$${SCHEMASDIR}\\\"
+		   SCHEMASDIR=\\\"$${SCHEMASDIR}\\\"
 
 
 # pgModeler depends on libpq and libxml2 this way to variables

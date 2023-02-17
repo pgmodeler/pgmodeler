@@ -1557,6 +1557,9 @@
          <property name="editTriggers">
           <set>QAbstractItemView::SelectedClicked</set>
          </property>
+         <property name="alternatingRowColors">
+          <bool>true</bool>
+         </property>
          <property name="selectionMode">
           <enum>QAbstractItemView::NoSelection</enum>
          </property>

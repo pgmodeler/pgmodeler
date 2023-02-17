@@ -4118,6 +4118,9 @@ void ModelWidget::toggleSchemasRectangles()
 		}
 	}
 
+	db_model->setObjectsModified({ ObjectType::Table,
+																 ObjectType::ForeignTable,
+																 ObjectType::View });
 	this->setModified(true);
 }
 

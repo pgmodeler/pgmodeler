@@ -254,8 +254,8 @@
         <file>images/exporttodatadict.png</file>
         <file>images/exporttodbms.png</file>
         <file>images/exporttoimg.png</file>
-    </qresource>
-    <qresource prefix="/">
-        <file>icons/partitionkey.png</file>
+        <file>images/checkmark_white.png</file>
+        <file>images/checkmark_black.png</file>
+        <file>images/checkmark_disabled.png</file>
     </qresource>
 </RCC>
