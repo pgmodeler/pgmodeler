@@ -182,7 +182,7 @@ void FileSelectorWidget::openFileDialog()
 
 void FileSelectorWidget::openFileExternally()
 {
-	QDesktopServices::openUrl(QUrl(QString("file://") + filename_edt->text()));
+	QDesktopServices::openUrl(QUrl("file:///" + filename_edt->text()));
 }
 
 void FileSelectorWidget::showWarning()

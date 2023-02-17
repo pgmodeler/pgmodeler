@@ -50,8 +50,8 @@ std::map<QPalette::ColorRole, QStringList> AppearanceConfigWidget::dark_ui_color
 	{ QPalette::Button, {"#31363b", "#31363b", "#31363b"} },
 	{ QPalette::Light, {"#181b1d", "#181b1d", "#181b1d"} },
 	{ QPalette::Midlight, {"#25292c", "#25292c", "#25292c"} },
-	{ QPalette::Dark, {"#626c76", "#626c76", "#626c76"} },
 	{ QPalette::Mid, {"#41484e", "#41484e", "#41484e"} },
+	{ QPalette::Dark, {"#626c76", "#626c76", "#626c76"} },
 	{ QPalette::Text, {"#eff0f1", "#eff0f1", "#626c76"} },
 	{ QPalette::BrightText, {"#ffffff", "#ffffff", "#ffffff"} },
 	{ QPalette::ButtonText, {"#eff0f1", "#eff0f1", "#626c76"} },
@@ -73,8 +73,8 @@ std::map<QPalette::ColorRole, QStringList> AppearanceConfigWidget::light_ui_colo
 	{ QPalette::Button, {"#eff0f1", "#eff0f1", "#eff0f1"} },
 	{ QPalette::Light, {"#ffffff", "#ffffff", "#ffffff"} },
 	{ QPalette::Midlight, {"#ffffff", "#ffffff", "#ffffff"} },
-	{ QPalette::Dark, {"#777878", "#777878", "#777878"} },
 	{ QPalette::Mid, {"#9fa0a1", "#9fa0a1", "#9fa0a1"} },
+	{ QPalette::Dark, {"#777878", "#777878", "#777878"} },
 	{ QPalette::Text, {"#232627", "#232627", "#777878"} },
 	{ QPalette::BrightText, {"#ffffff", "#ffffff", "#ffffff"} },
 	{ QPalette::ButtonText, {"#232627", "#232627", "#777878"} },
@@ -347,6 +347,32 @@ AppearanceConfigWidget::~AppearanceConfigWidget()
 std::map<QString, attribs_map> AppearanceConfigWidget::getConfigurationParams()
 {
 	return config_params;
+}
+
+void AppearanceConfigWidget::updateDropShadows(const QString theme_id)
+{
+	QColor color(0, 0, 0, 80);
+	int radius = 6, x = 1, y = 1;
+	QGraphicsDropShadowEffect *shadow = nullptr;
+	QString class_name = "QToolButton";
+
+	if(theme_id == Attributes::Light)
+	{
+		radius = 1;
+		color.setRgb(225, 225, 225);
+		color.setAlpha(255);
+	}
+
+	for(auto &wgt : qApp->allWidgets())
+	{
+		if(wgt->metaObject()->className() == class_name && wgt->graphicsEffect())
+		{
+			shadow = qobject_cast<QGraphicsDropShadowEffect *>(wgt->graphicsEffect());
+			shadow->setColor(color);
+			shadow->setOffset(x, y);
+			shadow->setBlurRadius(radius);
+		}
+	}
 }
 
 void AppearanceConfigWidget::loadExampleModel()
@@ -963,6 +989,7 @@ void AppearanceConfigWidget::previewUiSettings()
 	QApplication::setOverrideCursor(Qt::WaitCursor);
 	applyUiTheme();
 	applyDesignCodeTheme();
+	updateDropShadows(ui_theme_cmb->currentData(Qt::UserRole).toString());
 	QApplication::restoreOverrideCursor();
 }
 

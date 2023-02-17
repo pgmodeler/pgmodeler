@@ -65,6 +65,8 @@ class __libgui TableWidget: public BaseObjectWidget, public Ui::TableWidget {
 
 		void __setAttributes(DatabaseModel *model, OperationList *op_list, Schema *schema, PhysicalTable *table, double pos_x, double pos_y);
 
+		void updatePkColumnsCheckState(bool has_pk);
+
 	public:
 		TableWidget(QWidget * parent = nullptr, ObjectType tab_type = ObjectType::Table);
 

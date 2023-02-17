@@ -424,26 +424,12 @@ void TableWidget::listObjects(ObjectType obj_type)
 	ObjectsTableWidget *tab=nullptr;
 	unsigned idx = 0, count = 0;
 	PhysicalTable *table=nullptr;
-	std::vector<int> checked_cols;
 
 	try
 	{
 		//Gets the object table related to the object type
 		tab=objects_tab_map[obj_type];
 		table=dynamic_cast<PhysicalTable *>(this->object);
-
-		/* Since the object grid is cleared we need to register the checked PK columns
-		 * so after (re)populating the cols list the check state of that columns
-		 * can be restored properly */
-		if(obj_type == ObjectType::Column)
-		{
-			count = tab->getRowCount();
-			for(idx = 0; idx < count; idx++)
-			{
-				if(tab->getCellCheckState(idx, 0) == Qt::Checked)
-					checked_cols.push_back(idx);
-			}
-		}
 
 		tab->blockSignals(true);
 		tab->removeRows();
@@ -468,13 +454,6 @@ void TableWidget::listObjects(ObjectType obj_type)
 																															objects_tab_map[ObjectType::Column]->getRowCount() > 0);
 			objects_tab_map[ObjectType::Index]->setButtonsEnabled(ObjectsTableWidget::AddButton,
 																														objects_tab_map[ObjectType::Column]->getRowCount() > 0);
-
-			// Restoring the PK columns check state
-			while(!checked_cols.empty())
-			{
-				tab->setCellCheckState(checked_cols.back(), 0, Qt::Checked);
-				checked_cols.pop_back();
-			}
 		}
 	}
 	catch(Exception &e)
@@ -732,6 +711,7 @@ void TableWidget::removeObjects()
 	unsigned count, op_count=0, i;
 	BaseObject *object=nullptr;
 	ObjectType obj_type=ObjectType::BaseObject;
+	bool has_pk = false;
 
 	try
 	{
@@ -749,6 +729,10 @@ void TableWidget::removeObjects()
 			{
 				op_list->registerObject(object, Operation::ObjRemoved, 0, this->object);
 				table->removeObject(object);
+
+				if(obj_type == ObjectType::Constraint && !has_pk &&
+					 dynamic_cast<Constraint *>(object)->getConstraintType() == ConstraintType::PrimaryKey)
+					has_pk = true;
 			}
 			else
 				throw Exception(Exception::getErrorMessage(ErrorCode::RemProtectedObject)
@@ -758,7 +742,7 @@ void TableWidget::removeObjects()
 		}
 
 		if(obj_type == ObjectType::Constraint)
-			listObjects(ObjectType::Column);
+			updatePkColumnsCheckState(has_pk);
 	}
 	catch(Exception &e)
 	{
@@ -784,10 +768,10 @@ void TableWidget::removeObjects()
 
 void TableWidget::removeObject(int row)
 {
-	PhysicalTable *table=nullptr;
-	BaseObject *object=nullptr;
-	ObjectType obj_type=ObjectType::BaseObject;
-	int op_id=-1;
+	PhysicalTable *table = nullptr;
+	BaseObject *object = nullptr;
+	ObjectType obj_type = ObjectType::BaseObject;
+	int op_id = -1;
 
 	try
 	{
@@ -809,7 +793,7 @@ void TableWidget::removeObject(int row)
 							ErrorCode::RemProtectedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		if(obj_type == ObjectType::Constraint)
-			listObjects(ObjectType::Column);
+			updatePkColumnsCheckState(dynamic_cast<Constraint *>(object)->getConstraintType() == ConstraintType::PrimaryKey);
 	}
 	catch(Exception &e)
 	{
@@ -823,6 +807,37 @@ void TableWidget::removeObject(int row)
 
 		listObjects(obj_type);
 		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
+}
+
+void TableWidget::updatePkColumnsCheckState(bool has_pk)
+{
+	Messagebox msgbox;
+	QList<unsigned> pk_col_rows;
+	ObjectsTableWidget *tab = objects_tab_map[ObjectType::Column];
+
+	if(has_pk)
+	{
+		for(unsigned row = 0; row < tab->getRowCount(); row++)
+		{
+			if(tab->getCellCheckState(row, 0) == Qt::Checked)
+				pk_col_rows.push_back(row);
+		}
+
+		if(!pk_col_rows.isEmpty())
+		{
+			msgbox.show(tr("Confirmation"),
+									tr("The primary key of the table was removed, do you want to uncheck the columns marked as <strong>PK</strong> in the <strong>Columns</strong> tab in order to avoid the primary key being created again?"),
+									Messagebox::ConfirmIcon, Messagebox::YesNoButtons);
+		}
+	}
+
+	listObjects(ObjectType::Column);
+
+	if(has_pk && !pk_col_rows.isEmpty() && msgbox.result() == QDialog::Rejected)
+	{
+		for(auto &row : pk_col_rows)
+			tab->setCellCheckState(row, 0, Qt::Checked);
 	}
 }
 

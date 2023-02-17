@@ -134,6 +134,9 @@ class __libgui AppearanceConfigWidget: public BaseConfigWidget, public Ui::Appea
 
 		static std::map<QString, attribs_map> getConfigurationParams();
 
+		//! \brief Changes the tool buttons drop shadows color and offset to match the current theme.
+		static void updateDropShadows(const QString theme_id);
+
 	private slots:
 		void enableConfigElement();
 		void applyElementFontStyle();

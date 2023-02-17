@@ -1,6 +1,19 @@
 Changelog
 ---------
 
+v1.0.1
+------
+<em>Release date: February 17, 2023</em><br/>
+
+* [New] AppearanceConfigWidget now adjusts the drop shadows on tool buttons according to the current theme.
+* [Change] pgModeler will now ask for PK columns uncheck when removing a primary key in the Constraints tab at TableWidget
+* [Change] Disabling catalog query for transform objects in PG9.x
+* [Change] Improving the visibility of some elements in QMenu and AboutWidget
+* [Fix] Fixed the assignment of layer colors when loading the model in compatibility mode.
+* [Fix] Minor fix in ModelWidget::toggleSchemasRectangles
+* [Fix] Fixed the disable state change for delimiter scale lock action when changing the current main window view.
+* [Fix] Fixed the method FileSelectorWidget::openFileExternally.
+
 v1.0.0
 ------
 <em>Release date: February 1, 2023</em><br/>
