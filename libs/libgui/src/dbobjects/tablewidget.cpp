@@ -827,7 +827,7 @@ void TableWidget::updatePkColumnsCheckState(bool has_pk)
 		if(!pk_col_rows.isEmpty())
 		{
 			msgbox.show(tr("Confirmation"),
-									tr("The primary key constraint of the table was removed, do you want to uncheck the columns marked as <strong>PK</strong> in the <strong>Columns</strong> tab in order to avoid the primary key being created again?"),
+									tr("The primary key of the table was removed, do you want to uncheck the columns marked as <strong>PK</strong> in the <strong>Columns</strong> tab in order to avoid the primary key being created again?"),
 									Messagebox::ConfirmIcon, Messagebox::YesNoButtons);
 		}
 	}
