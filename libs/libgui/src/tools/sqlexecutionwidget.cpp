@@ -215,6 +215,7 @@ void SQLExecutionWidget::setConnection(Connection conn)
 	sql_exec_hlp.setConnection(conn);
 	sql_cmd_conn = conn;
 	db_name_lbl->setText(conn.getConnectionId(true, true, true));
+	code_compl_wgt->setConnectionParams(conn.getConnectionParams());
 }
 
 void SQLExecutionWidget::setSQLCommand(const QString &sql)

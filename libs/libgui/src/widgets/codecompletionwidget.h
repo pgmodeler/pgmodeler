@@ -29,9 +29,9 @@ the syntax highlighter installed on it.
 #include <QWidget>
 #include "utils/syntaxhighlighter.h"
 #include "databasemodel.h"
+#include "connection.h"
 
-class __libgui CodeCompletionWidget: public QWidget
-{
+class __libgui CodeCompletionWidget: public QWidget {
 	private:
 		Q_OBJECT
 
@@ -89,7 +89,10 @@ class __libgui CodeCompletionWidget: public QWidget
 		
 		std::map<QString, QPixmap> custom_items;
 		
-		attribs_map custom_items_tips;
+		attribs_map custom_items_tips,
+
+		//! \brief Connection params used to retrieve column names from system catalogs
+		conn_params;
 		
 		//! \brief Puts the selected object name on the current cursor position.
 		void insertObjectName(BaseObject *obj);
@@ -103,6 +106,10 @@ class __libgui CodeCompletionWidget: public QWidget
 		
 		//! \brief Configures the current qualifying level according to the passed object
 		void setQualifyingLevel(BaseObject *obj);
+
+		/*! \brief If a connection is configured, populates the list with the columns of
+		 *  tables listed in FROM/JOIN clauses */
+		void updateColumnsList();
 		
 	public:
 		CodeCompletionWidget(QPlainTextEdit *code_field_txt, bool enable_snippets = false);
@@ -123,6 +130,9 @@ class __libgui CodeCompletionWidget: public QWidget
 		
 		//! \brief Clear the custom added items
 		void clearCustomItems();
+
+		//! \brief Sets the connection params used to retrive column names
+		void setConnectionParams(const attribs_map &conn_params);
 		
 	public slots:
 		//! \brief Updates the completion list based upon the typed word

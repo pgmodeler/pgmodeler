@@ -280,6 +280,11 @@ void CodeCompletionWidget::clearCustomItems()
 	custom_items.clear();
 }
 
+void CodeCompletionWidget::setConnectionParams(const attribs_map &conn_params)
+{
+	this->conn_params = conn_params;
+}
+
 void CodeCompletionWidget::populateNameList(std::vector<BaseObject *> &objects, QString filter)
 {
 	QListWidgetItem *item=nullptr;
@@ -352,6 +357,11 @@ void CodeCompletionWidget::setQualifyingLevel(BaseObject *obj)
 		sel_objects[qualifying_level]=obj;
 		lvl_cur=code_field_txt->textCursor();
 	}
+}
+
+void CodeCompletionWidget::updateColumnsList()
+{
+
 }
 
 void CodeCompletionWidget::updateList()
