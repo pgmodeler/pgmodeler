@@ -295,7 +295,6 @@ void CodeCompletionWidget::populateNameList(std::vector<BaseObject *> &objects, 
 
 	name_list->clear();
 
-	//for(unsigned i=0; i < objects.size(); i++)
 	for(auto &obj : objects)
 	{
 		obj_type = obj->getObjectType();
@@ -361,7 +360,31 @@ void CodeCompletionWidget::setQualifyingLevel(BaseObject *obj)
 
 void CodeCompletionWidget::updateColumnsList()
 {
+	QTextCursor tc = code_field_txt->textCursor();
+	QString prev_txt, next_txt;
+	QStringList keywords = { "select", "from", "join" };
+	QList<int> kw_pos;
 
+	for(auto &kw : keywords)
+	{
+		if(!code_field_txt->find(kw, QTextDocument::FindBackward | QTextDocument::FindWholeWords) &&
+			 !code_field_txt->find(kw, QTextDocument::FindWholeWords))
+		{
+			 kw_pos.append(-1);
+		}
+		else
+			kw_pos.append(code_field_txt->textCursor().position());
+
+		code_field_txt->setTextCursor(tc);
+	}
+
+	QTextStream out(stdout);
+	out << "---" << Qt::endl;
+	out << "word      :" << word << Qt::endl;
+	out << "cursor_pos: " << tc.position() << Qt::endl;
+	out << "select_pos: " << kw_pos[0] << Qt::endl;
+	out << "from_pos  : " << kw_pos[1] << Qt::endl;
+	out << "join_pos  : " << kw_pos[2] << Qt::endl;
 }
 
 void CodeCompletionWidget::updateList()
@@ -408,9 +431,11 @@ void CodeCompletionWidget::updateList()
 	}
 
 	if(!word.isEmpty() && !auto_triggered)
-		pattern=QString("(^") + word.simplified() + QString(")");
+		pattern = "(^" + word.simplified() + ")";
 	else if(auto_triggered)
 		pattern=word;
+
+	pattern.replace("*", "\\*");
 
 	if(db_model)
 	{
@@ -462,6 +487,9 @@ void CodeCompletionWidget::updateList()
 
 		populateNameList(objects, word);
 	}
+
+	if(!conn_params.empty())
+		updateColumnsList();
 
 	/* List the keywords if the qualifying level is negative or the
 	completion wasn't triggered using the special char */
