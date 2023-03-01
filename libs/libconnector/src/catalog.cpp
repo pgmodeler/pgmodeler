@@ -140,6 +140,11 @@ void Catalog::closeConnection()
 	connection.close();
 }
 
+bool Catalog::isConnectionValid()
+{
+	return !connection.getConnectionParams().empty();
+}
+
 void Catalog::setQueryFilter(QueryFilter filter)
 {
 	bool list_all=(ListAllObjects & filter) == ListAllObjects;

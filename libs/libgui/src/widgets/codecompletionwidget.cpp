@@ -101,7 +101,7 @@ bool CodeCompletionWidget::eventFilter(QObject *object, QEvent *event)
 		if(object==code_field_txt)
 		{
 			//Filters the trigger char and shows up the code completion only if there is a valid database model in use
-			if(k_event->key() == completion_trigger.unicode() && db_model)
+			if(k_event->key() == completion_trigger.unicode() && (db_model || catalog.isConnectionValid()))
 			{
 				/* If the completion widget is not visible start the timer to give the user
 				a small delay in order to type another character. If no char is typed the completion is triggered */
@@ -280,9 +280,12 @@ void CodeCompletionWidget::clearCustomItems()
 	custom_items.clear();
 }
 
-void CodeCompletionWidget::setConnectionParams(const attribs_map &conn_params)
+void CodeCompletionWidget::setConnection(Connection conn)
 {
-	this->conn_params = conn_params;
+	// When setting a connection, we disable the lookup in the database model
+	db_model = nullptr;
+	catalog.closeConnection();
+	catalog.setConnection(conn);
 }
 
 void CodeCompletionWidget::populateNameList(std::vector<BaseObject *> &objects, QString filter)
@@ -358,12 +361,13 @@ void CodeCompletionWidget::setQualifyingLevel(BaseObject *obj)
 	}
 }
 
-void CodeCompletionWidget::updateColumnsList()
+void CodeCompletionWidget::updateObjectsList()
 {
 	QTextCursor tc = code_field_txt->textCursor();
 	QString prev_txt, next_txt;
 	QStringList keywords = { "select", "from", "join" };
 	QList<int> kw_pos;
+	static const unsigned SelectPos = 0, FromPos = 1, JoinPos = 2;
 
 	for(auto &kw : keywords)
 	{
@@ -382,9 +386,83 @@ void CodeCompletionWidget::updateColumnsList()
 	out << "---" << Qt::endl;
 	out << "word      :" << word << Qt::endl;
 	out << "cursor_pos: " << tc.position() << Qt::endl;
-	out << "select_pos: " << kw_pos[0] << Qt::endl;
-	out << "from_pos  : " << kw_pos[1] << Qt::endl;
-	out << "join_pos  : " << kw_pos[2] << Qt::endl;
+	out << "select_pos: " << kw_pos[SelectPos] << Qt::endl;
+	out << "from_pos  : " << kw_pos[FromPos] << Qt::endl;
+	out << "join_pos  : " << kw_pos[JoinPos] << Qt::endl;
+
+	if(tc.position() >= 0 && tc.position() > kw_pos[FromPos])
+	{
+		try
+		{
+			attribs_map attribs, filter;
+			QListWidgetItem *item = nullptr;
+			QString curr_word = word, obj_name;
+			QTextCursor new_tc = tc;
+
+			if(auto_triggered || completion_trigger == word)
+			{
+				while(!curr_word.isEmpty())
+				{
+					new_tc.movePosition(QTextCursor::EndOfWord, QTextCursor::MoveAnchor);
+					new_tc.movePosition(QTextCursor::PreviousWord, QTextCursor::KeepAnchor);
+					curr_word = new_tc.selectedText();
+
+					if(keywords.contains(curr_word))
+						break;
+
+					obj_name.prepend(curr_word);
+					new_tc.movePosition(QTextCursor::PreviousWord, QTextCursor::MoveAnchor);
+				}
+			}
+			else
+				 obj_name = word;
+
+			QStringList names = obj_name.split(completion_trigger);
+			QList<ObjectType> obj_types;
+			QString sch_name;
+
+			if(names.size() == 1)
+				obj_types.append(ObjectType::Schema);
+			else if(names.size() == 2)
+			{
+				obj_types.append({ ObjectType::Table,
+													 ObjectType::ForeignTable,
+													 ObjectType::View,
+													 ObjectType::Function,
+													 ObjectType::Procedure });
+				sch_name = names[0];
+				obj_name = names[1];
+			}
+
+			name_list->clear();
+			QApplication::setOverrideCursor(Qt::WaitCursor);
+
+			for(auto &obj_type : obj_types)
+			{
+				catalog.setQueryFilter(Catalog::ListAllObjects);
+
+				if(!obj_name.isEmpty())
+					filter[Attributes::NameFilter] = obj_name;
+
+				attribs = catalog.getObjectsNames(obj_type, sch_name, "", filter);
+
+				for(auto &attr : attribs)
+				{
+					name_list->addItem(attr.second);
+					item = name_list->item(name_list->count() - 1);
+					item->setIcon(QIcon(GuiUtilsNs::getIconPath(obj_type)));
+					item->setToolTip(BaseObject::getTypeName(obj_type));
+				}
+			}
+
+			QApplication::restoreOverrideCursor();
+		}
+		catch(Exception &e)
+		{
+			QApplication::restoreOverrideCursor();
+			qDebug() << e.getExceptionsText() << Qt::endl;
+		}
+	}
 }
 
 void CodeCompletionWidget::updateList()
@@ -488,29 +566,21 @@ void CodeCompletionWidget::updateList()
 		populateNameList(objects, word);
 	}
 
-	if(!conn_params.empty())
-		updateColumnsList();
+	if(catalog.isConnectionValid())
+		updateObjectsList();
 
 	/* List the keywords if the qualifying level is negative or the
 	completion wasn't triggered using the special char */
 	if(qualifying_level < 0 && !auto_triggered)
 	{
 		QRegularExpression regexp(pattern, QRegularExpression::CaseInsensitiveOption);
-
-		for(auto &kw : keywords.filter(regexp))
-		{
-			item=new QListWidgetItem(QPixmap(GuiUtilsNs::getIconPath("keyword")), kw);
-			item->setToolTip(tr("SQL Keyword"));
-			name_list->addItem(item);
-		}
-
-		name_list->sortItems();
+		//name_list->sortItems();
 
 		//If there are custom items, they wiill be placed at the very beggining of the list
 		if(!custom_items.empty())
 		{
 			QStringList list;
-			int row=0;
+			//int row=0;
 			QListWidgetItem *item=nullptr;
 
 			for(auto &itr : custom_items)
@@ -524,8 +594,16 @@ void CodeCompletionWidget::updateList()
 			{
 				item=new QListWidgetItem(custom_items[item_name], item_name);
 				item->setToolTip(custom_items_tips[item_name]);
-				name_list->insertItem(row++, item);
+				//name_list->insertItem(row++, item);
+				name_list->addItem(item);
 			}
+		}
+
+		for(auto &kw : keywords.filter(regexp))
+		{
+			item=new QListWidgetItem(QPixmap(GuiUtilsNs::getIconPath("keyword")), kw);
+			item->setToolTip(tr("SQL Keyword"));
+			name_list->addItem(item);
 		}
 	}
 

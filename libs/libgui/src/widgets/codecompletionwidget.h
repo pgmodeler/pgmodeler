@@ -29,7 +29,7 @@ the syntax highlighter installed on it.
 #include <QWidget>
 #include "utils/syntaxhighlighter.h"
 #include "databasemodel.h"
-#include "connection.h"
+#include "catalog.h"
 
 class __libgui CodeCompletionWidget: public QWidget {
 	private:
@@ -73,6 +73,9 @@ class __libgui CodeCompletionWidget: public QWidget {
 		//! \brief Stores the database model used to search for objects and list them on completion
 		DatabaseModel *db_model;
 		
+		//! \brief Catalog object used to retrieve object names from the database system catalogs
+		Catalog catalog;
+
 		/*! \brief This is used to simulate an history of selected object
 		whenever the user types the completion trigger char. An example of qualifying is access a column
 		of a table by typing the full path to it: public[0].table[1].column[2]. The numbers between brace
@@ -89,10 +92,7 @@ class __libgui CodeCompletionWidget: public QWidget {
 		
 		std::map<QString, QPixmap> custom_items;
 		
-		attribs_map custom_items_tips,
-
-		//! \brief Connection params used to retrieve column names from system catalogs
-		conn_params;
+		attribs_map custom_items_tips;
 		
 		//! \brief Puts the selected object name on the current cursor position.
 		void insertObjectName(BaseObject *obj);
@@ -108,8 +108,8 @@ class __libgui CodeCompletionWidget: public QWidget {
 		void setQualifyingLevel(BaseObject *obj);
 
 		/*! \brief If a connection is configured, populates the list with the columns of
-		 *  tables listed in FROM/JOIN clauses */
-		void updateColumnsList();
+		 *  tables, tables, schemas and functions listed in FROM/JOIN clauses */
+		void updateObjectsList();
 		
 	public:
 		CodeCompletionWidget(QPlainTextEdit *code_field_txt, bool enable_snippets = false);
@@ -132,7 +132,7 @@ class __libgui CodeCompletionWidget: public QWidget {
 		void clearCustomItems();
 
 		//! \brief Sets the connection params used to retrive column names
-		void setConnectionParams(const attribs_map &conn_params);
+		void setConnection(Connection conn);
 		
 	public slots:
 		//! \brief Updates the completion list based upon the typed word
