@@ -142,7 +142,7 @@ void Catalog::closeConnection()
 
 bool Catalog::isConnectionValid()
 {
-	return !connection.getConnectionParams().empty();
+	return connection.isConfigured();
 }
 
 void Catalog::setQueryFilter(QueryFilter filter)

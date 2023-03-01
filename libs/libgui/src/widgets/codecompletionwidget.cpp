@@ -436,6 +436,7 @@ void CodeCompletionWidget::updateObjectsList()
 
 			name_list->clear();
 			QApplication::setOverrideCursor(Qt::WaitCursor);
+			QString aux_name;
 
 			for(auto &obj_type : obj_types)
 			{
@@ -448,7 +449,13 @@ void CodeCompletionWidget::updateObjectsList()
 
 				for(auto &attr : attribs)
 				{
-					name_list->addItem(attr.second);
+					aux_name = attr.second;
+
+					if(obj_type == ObjectType::Function ||
+						 obj_type == ObjectType::Procedure)
+						aux_name.remove(QRegularExpression("(\\()(.*)(\\))"));
+
+					name_list->addItem(aux_name);
 					item = name_list->item(name_list->count() - 1);
 					item->setIcon(QIcon(GuiUtilsNs::getIconPath(obj_type)));
 					item->setToolTip(BaseObject::getTypeName(obj_type));
