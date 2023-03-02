@@ -35,6 +35,13 @@ class __libgui CodeCompletionWidget: public QWidget {
 	private:
 		Q_OBJECT
 
+		enum KeywordPosId: unsigned{
+			SelectPos,
+			FromPos,
+			JoinPos,
+			WherePos
+		};
+
 		//! \brief A timer that controls the completion popup
 		QTimer popup_timer;
 		
@@ -93,7 +100,9 @@ class __libgui CodeCompletionWidget: public QWidget {
 		std::map<QString, QPixmap> custom_items;
 		
 		attribs_map custom_items_tips;
-		
+
+		int keywords_pos[4];
+
 		//! \brief Puts the selected object name on the current cursor position.
 		void insertObjectName(BaseObject *obj);
 		
@@ -110,6 +119,10 @@ class __libgui CodeCompletionWidget: public QWidget {
 		/*! \brief If a connection is configured, populates the list with the columns of
 		 *  tables, tables, schemas and functions listed in FROM/JOIN clauses */
 		void updateObjectsList();
+
+		void resetKeywordsPos();
+		void retrieveColumnNames();
+		void retrieveObjectNames();
 		
 	public:
 		CodeCompletionWidget(QPlainTextEdit *code_field_txt, bool enable_snippets = false);

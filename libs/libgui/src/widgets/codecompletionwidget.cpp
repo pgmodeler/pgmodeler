@@ -26,6 +26,8 @@ CodeCompletionWidget::CodeCompletionWidget(QPlainTextEdit *code_field_txt, bool 
 	if(!code_field_txt)
 		throw Exception(ErrorCode::AsgNotAllocattedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
+	resetKeywordsPos();
+
 	this->enable_snippets = enable_snippets;
 	popup_timer.setInterval(300);
 	setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
@@ -209,6 +211,7 @@ void CodeCompletionWidget::configureCompletion(DatabaseModel *db_model, SyntaxHi
 	name_list->clear();
 	word.clear();
 	setQualifyingLevel(nullptr);
+	resetKeywordsPos();
 	auto_triggered=false;
 	this->db_model=db_model;
 
@@ -361,22 +364,140 @@ void CodeCompletionWidget::setQualifyingLevel(BaseObject *obj)
 	}
 }
 
+void CodeCompletionWidget::resetKeywordsPos()
+{
+	for(unsigned id = SelectPos; id <= WherePos; id++)
+		keywords_pos[id] = -1;
+}
+
+void CodeCompletionWidget::retrieveColumnNames()
+{
+	QTextCursor tc = code_field_txt->textCursor();
+	QString curr_word, tab_name;
+
+	tc.setPosition(keywords_pos[FromPos], QTextCursor::MoveAnchor);
+
+	do
+	{
+		tc.movePosition(QTextCursor::NextWord, QTextCursor::KeepAnchor);
+		curr_word = tc.selectedText();
+
+		if(keywords.contains(curr_word, Qt::CaseInsensitive))
+			break;
+
+		tab_name.append(curr_word);
+		tc.movePosition(QTextCursor::NextCharacter, QTextCursor::MoveAnchor);
+	}
+	while(!curr_word.isEmpty());
+
+	QListWidgetItem *item = nullptr;
+	attribs_map filter, attribs;
+	QStringList names = tab_name.split(completion_trigger);
+	QString sch_name;
+
+	if(names.size() <= 1)
+		return;
+
+	sch_name = names[0].trimmed();
+	tab_name = names[1].trimmed();
+
+	name_list->clear();
+	catalog.setQueryFilter(Catalog::ListAllObjects);
+
+	if(!tab_name.isEmpty())
+		filter[Attributes::NameFilter] = word;
+
+	attribs = catalog.getObjectsNames(ObjectType::Column, sch_name, tab_name, filter);
+
+	for(auto &attr : attribs)
+	{
+		name_list->addItem(attr.second);
+		item = name_list->item(name_list->count() - 1);
+		item->setIcon(QIcon(GuiUtilsNs::getIconPath(ObjectType::Column)));
+		item->setToolTip(BaseObject::getTypeName(ObjectType::Column));
+	}
+}
+
+void CodeCompletionWidget::retrieveObjectNames()
+{
+	attribs_map attribs, filter;
+	QListWidgetItem *item = nullptr;
+	QString curr_word = word, obj_name;
+	QTextCursor tc = code_field_txt->textCursor();
+
+	while(!curr_word.isEmpty())
+	{
+		tc.movePosition(QTextCursor::EndOfWord, QTextCursor::MoveAnchor);
+		tc.movePosition(QTextCursor::PreviousWord, QTextCursor::KeepAnchor);
+		curr_word = tc.selectedText();
+
+		if(keywords.contains(curr_word, Qt::CaseInsensitive))
+			break;
+
+		obj_name.prepend(curr_word);
+		tc.movePosition(QTextCursor::PreviousWord, QTextCursor::MoveAnchor);
+	}
+
+	QStringList names = obj_name.split(completion_trigger);
+	QList<ObjectType> obj_types;
+	QString sch_name;
+
+	if(names.size() == 1)
+		obj_types.append(ObjectType::Schema);
+	else if(names.size() == 2)
+	{
+		obj_types.append({ ObjectType::Table,
+											 ObjectType::ForeignTable,
+											 ObjectType::View,
+											 ObjectType::Function,
+											 ObjectType::Procedure });
+		sch_name = names[0];
+		obj_name = names[1];
+	}
+
+	name_list->clear();
+	QString aux_name;
+
+	for(auto &obj_type : obj_types)
+	{
+		catalog.setQueryFilter(Catalog::ListAllObjects);
+
+		if(!obj_name.isEmpty())
+			filter[Attributes::NameFilter] = obj_name;
+
+		attribs = catalog.getObjectsNames(obj_type, sch_name, "", filter);
+
+		for(auto &attr : attribs)
+		{
+			aux_name = attr.second;
+
+			if(obj_type == ObjectType::Function ||
+				 obj_type == ObjectType::Procedure)
+				aux_name.remove(QRegularExpression("(\\()(.*)(\\))"));
+
+			name_list->addItem(aux_name);
+			item = name_list->item(name_list->count() - 1);
+			item->setIcon(QIcon(GuiUtilsNs::getIconPath(obj_type)));
+			item->setToolTip(BaseObject::getTypeName(obj_type));
+		}
+	}
+}
+
 void CodeCompletionWidget::updateObjectsList()
 {
 	QTextCursor tc = code_field_txt->textCursor();
 	QStringList keywords = { "select", "from", "join", "where" };
-	QList<int> kw_pos;
-	static const unsigned SelectPos = 0, FromPos = 1, JoinPos = 2, WherePos = 3;
+	unsigned kw_id = SelectPos;
 
 	for(auto &kw : keywords)
 	{
 		if(!code_field_txt->find(kw, QTextDocument::FindBackward | QTextDocument::FindWholeWords) &&
 			 !code_field_txt->find(kw, QTextDocument::FindWholeWords))
 		{
-			 kw_pos.append(-1);
+			 keywords_pos[kw_id++] = -1;
 		}
 		else
-			kw_pos.append(code_field_txt->textCursor().position());
+			keywords_pos[kw_id++] = code_field_txt->textCursor().position();
 
 		code_field_txt->setTextCursor(tc);
 	}
@@ -386,150 +507,34 @@ void CodeCompletionWidget::updateObjectsList()
 	out << "---" << Qt::endl;
 	out << "word      :" << word << Qt::endl;
 	out << "cursor_pos: " << cur_pos << Qt::endl;
-	out << "select_pos: " << kw_pos[SelectPos] << Qt::endl;
-	out << "from_pos  : " << kw_pos[FromPos] << Qt::endl;
-	out << "join_pos  : " << kw_pos[JoinPos] << Qt::endl;
-	out << "where_pos  : " << kw_pos[WherePos] << Qt::endl;
+	out << "select_pos: " << keywords_pos[SelectPos] << Qt::endl;
+	out << "from_pos  : " << keywords_pos[FromPos] << Qt::endl;
+	out << "join_pos  : " << keywords_pos[JoinPos] << Qt::endl;
+	out << "where_pos  : " << keywords_pos[WherePos] << Qt::endl;
 
 	if(cur_pos < 0)
 		return;
 
-	// List columns of tables in FROM/JOIN clauses
-	if(cur_pos > kw_pos[SelectPos] && cur_pos < kw_pos[FromPos])
+	try
 	{
-		QTextCursor new_tc = tc;
-		QString curr_word, tab_name;
+		QApplication::setOverrideCursor(Qt::WaitCursor);
 
-		new_tc.setPosition(kw_pos[FromPos], QTextCursor::MoveAnchor);
+		// List columns of tables in FROM/JOIN clauses
+		if(cur_pos > keywords_pos[SelectPos] && cur_pos < keywords_pos[FromPos])
+			retrieveColumnNames();
 
-		do
-		{
-			new_tc.movePosition(QTextCursor::NextWord, QTextCursor::KeepAnchor);
-			curr_word = new_tc.selectedText();
+		// List tables, views, foreign tables and functions after FROM/JOIN/WHERE clauses
+		else if(cur_pos > keywords_pos[FromPos] ||
+						cur_pos > keywords_pos[JoinPos] ||
+						cur_pos > keywords_pos[WherePos])
+			retrieveObjectNames();
 
-			if(keywords.contains(curr_word))
-				break;
-
-			tab_name.append(curr_word);
-			new_tc.movePosition(QTextCursor::NextCharacter, QTextCursor::MoveAnchor);
-		}
-		while(!curr_word.isEmpty());
-
-		QListWidgetItem *item = nullptr;
-		attribs_map filter, attribs;
-		QStringList names = tab_name.split(completion_trigger);
-		QString sch_name;
-
-		if(names.size() <= 1)
-			return;
-
-		sch_name = names[0].trimmed();
-		tab_name = names[1].trimmed();
-
-		try
-		{
-			name_list->clear();
-			QApplication::setOverrideCursor(Qt::WaitCursor);
-			catalog.setQueryFilter(Catalog::ListAllObjects);
-
-			if(!tab_name.isEmpty())
-				filter[Attributes::NameFilter] = word;
-
-			attribs = catalog.getObjectsNames(ObjectType::Column, sch_name, tab_name, filter);
-
-			for(auto &attr : attribs)
-			{
-				name_list->addItem(attr.second);
-				item = name_list->item(name_list->count() - 1);
-				item->setIcon(QIcon(GuiUtilsNs::getIconPath(ObjectType::Column)));
-				item->setToolTip(BaseObject::getTypeName(ObjectType::Column));
-			}
-
-			QApplication::restoreOverrideCursor();
-		}
-		catch(Exception &e)
-		{
-			QApplication::restoreOverrideCursor();
-			qDebug() << e.getExceptionsText() << Qt::endl;
-		}
+		QApplication::restoreOverrideCursor();
 	}
-	// List tables, views, foreign tables and functions after FROM/JOIN/WHERE clauses
-	else if(cur_pos > kw_pos[FromPos] ||
-					cur_pos > kw_pos[JoinPos] ||
-					cur_pos > kw_pos[WherePos])
+	catch(Exception &e)
 	{
-		try
-		{
-			attribs_map attribs, filter;
-			QListWidgetItem *item = nullptr;
-			QString curr_word = word, obj_name;
-			QTextCursor new_tc = tc;
-
-			while(!curr_word.isEmpty())
-			{
-				new_tc.movePosition(QTextCursor::EndOfWord, QTextCursor::MoveAnchor);
-				new_tc.movePosition(QTextCursor::PreviousWord, QTextCursor::KeepAnchor);
-				curr_word = new_tc.selectedText();
-
-				if(keywords.contains(curr_word))
-					break;
-
-				obj_name.prepend(curr_word);
-				new_tc.movePosition(QTextCursor::PreviousWord, QTextCursor::MoveAnchor);
-			}
-
-			QStringList names = obj_name.split(completion_trigger);
-			QList<ObjectType> obj_types;
-			QString sch_name;
-
-			if(names.size() == 1)
-				obj_types.append(ObjectType::Schema);
-			else if(names.size() == 2)
-			{
-				obj_types.append({ ObjectType::Table,
-													 ObjectType::ForeignTable,
-													 ObjectType::View,
-													 ObjectType::Function,
-													 ObjectType::Procedure });
-				sch_name = names[0];
-				obj_name = names[1];
-			}
-
-			name_list->clear();
-			QApplication::setOverrideCursor(Qt::WaitCursor);
-			QString aux_name;
-
-			for(auto &obj_type : obj_types)
-			{
-				catalog.setQueryFilter(Catalog::ListAllObjects);
-
-				if(!obj_name.isEmpty())
-					filter[Attributes::NameFilter] = obj_name;
-
-				attribs = catalog.getObjectsNames(obj_type, sch_name, "", filter);
-
-				for(auto &attr : attribs)
-				{
-					aux_name = attr.second;
-
-					if(obj_type == ObjectType::Function ||
-						 obj_type == ObjectType::Procedure)
-						aux_name.remove(QRegularExpression("(\\()(.*)(\\))"));
-
-					name_list->addItem(aux_name);
-					item = name_list->item(name_list->count() - 1);
-					item->setIcon(QIcon(GuiUtilsNs::getIconPath(obj_type)));
-					item->setToolTip(BaseObject::getTypeName(obj_type));
-				}
-			}
-
-			QApplication::restoreOverrideCursor();
-		}
-		catch(Exception &e)
-		{
-			QApplication::restoreOverrideCursor();
-			qDebug() << e.getExceptionsText() << Qt::endl;
-		}
+		QApplication::restoreOverrideCursor();
+		qDebug() << e.getExceptionsText() << Qt::endl;
 	}
 }
 
