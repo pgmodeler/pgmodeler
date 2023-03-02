@@ -364,10 +364,9 @@ void CodeCompletionWidget::setQualifyingLevel(BaseObject *obj)
 void CodeCompletionWidget::updateObjectsList()
 {
 	QTextCursor tc = code_field_txt->textCursor();
-	QString prev_txt, next_txt;
-	QStringList keywords = { "select", "from", "join" };
+	QStringList keywords = { "select", "from", "join", "where" };
 	QList<int> kw_pos;
-	static const unsigned SelectPos = 0, FromPos = 1, JoinPos = 2;
+	static const unsigned SelectPos = 0, FromPos = 1, JoinPos = 2, WherePos = 3;
 
 	for(auto &kw : keywords)
 	{
@@ -382,15 +381,82 @@ void CodeCompletionWidget::updateObjectsList()
 		code_field_txt->setTextCursor(tc);
 	}
 
+	int cur_pos = tc.position();
 	QTextStream out(stdout);
 	out << "---" << Qt::endl;
 	out << "word      :" << word << Qt::endl;
-	out << "cursor_pos: " << tc.position() << Qt::endl;
+	out << "cursor_pos: " << cur_pos << Qt::endl;
 	out << "select_pos: " << kw_pos[SelectPos] << Qt::endl;
 	out << "from_pos  : " << kw_pos[FromPos] << Qt::endl;
 	out << "join_pos  : " << kw_pos[JoinPos] << Qt::endl;
+	out << "where_pos  : " << kw_pos[WherePos] << Qt::endl;
 
-	if(tc.position() >= 0 && tc.position() > kw_pos[FromPos])
+	if(cur_pos < 0)
+		return;
+
+	// List columns of tables in FROM/JOIN clauses
+	if(cur_pos > kw_pos[SelectPos] && cur_pos < kw_pos[FromPos])
+	{
+		QTextCursor new_tc = tc;
+		QString curr_word, tab_name;
+
+		new_tc.setPosition(kw_pos[FromPos], QTextCursor::MoveAnchor);
+
+		do
+		{
+			new_tc.movePosition(QTextCursor::NextWord, QTextCursor::KeepAnchor);
+			curr_word = new_tc.selectedText();
+
+			if(keywords.contains(curr_word))
+				break;
+
+			tab_name.append(curr_word);
+			new_tc.movePosition(QTextCursor::NextCharacter, QTextCursor::MoveAnchor);
+		}
+		while(!curr_word.isEmpty());
+
+		QListWidgetItem *item = nullptr;
+		attribs_map filter, attribs;
+		QStringList names = tab_name.split(completion_trigger);
+		QString sch_name;
+
+		if(names.size() <= 1)
+			return;
+
+		sch_name = names[0].trimmed();
+		tab_name = names[1].trimmed();
+
+		try
+		{
+			name_list->clear();
+			QApplication::setOverrideCursor(Qt::WaitCursor);
+			catalog.setQueryFilter(Catalog::ListAllObjects);
+
+			if(!tab_name.isEmpty())
+				filter[Attributes::NameFilter] = word;
+
+			attribs = catalog.getObjectsNames(ObjectType::Column, sch_name, tab_name, filter);
+
+			for(auto &attr : attribs)
+			{
+				name_list->addItem(attr.second);
+				item = name_list->item(name_list->count() - 1);
+				item->setIcon(QIcon(GuiUtilsNs::getIconPath(ObjectType::Column)));
+				item->setToolTip(BaseObject::getTypeName(ObjectType::Column));
+			}
+
+			QApplication::restoreOverrideCursor();
+		}
+		catch(Exception &e)
+		{
+			QApplication::restoreOverrideCursor();
+			qDebug() << e.getExceptionsText() << Qt::endl;
+		}
+	}
+	// List tables, views, foreign tables and functions after FROM/JOIN/WHERE clauses
+	else if(cur_pos > kw_pos[FromPos] ||
+					cur_pos > kw_pos[JoinPos] ||
+					cur_pos > kw_pos[WherePos])
 	{
 		try
 		{
@@ -399,23 +465,18 @@ void CodeCompletionWidget::updateObjectsList()
 			QString curr_word = word, obj_name;
 			QTextCursor new_tc = tc;
 
-			if(auto_triggered || completion_trigger == word)
+			while(!curr_word.isEmpty())
 			{
-				while(!curr_word.isEmpty())
-				{
-					new_tc.movePosition(QTextCursor::EndOfWord, QTextCursor::MoveAnchor);
-					new_tc.movePosition(QTextCursor::PreviousWord, QTextCursor::KeepAnchor);
-					curr_word = new_tc.selectedText();
+				new_tc.movePosition(QTextCursor::EndOfWord, QTextCursor::MoveAnchor);
+				new_tc.movePosition(QTextCursor::PreviousWord, QTextCursor::KeepAnchor);
+				curr_word = new_tc.selectedText();
 
-					if(keywords.contains(curr_word))
-						break;
+				if(keywords.contains(curr_word))
+					break;
 
-					obj_name.prepend(curr_word);
-					new_tc.movePosition(QTextCursor::PreviousWord, QTextCursor::MoveAnchor);
-				}
+				obj_name.prepend(curr_word);
+				new_tc.movePosition(QTextCursor::PreviousWord, QTextCursor::MoveAnchor);
 			}
-			else
-				 obj_name = word;
 
 			QStringList names = obj_name.split(completion_trigger);
 			QList<ObjectType> obj_types;
@@ -639,10 +700,10 @@ void CodeCompletionWidget::selectItem()
 		if(qualifying_level < 0)
 			code_field_txt->setTextCursor(new_txt_cur);
 
-		//If the selected item is a object (data not null)
-		if(!item->data(Qt::UserRole).isNull())
+		//If the selected item is a object (data not null) or the object name is from a living database
+		if(!item->data(Qt::UserRole).isNull() || catalog.isConnectionValid())
 		{
-			//Retrieve the object
+			//Try to retrieve the object's reference
 			object=reinterpret_cast<BaseObject *>(item->data(Qt::UserRole).value<void *>());
 
 			/* Move the cursor to the start of the word because all the chars will be replaced
@@ -657,14 +718,14 @@ void CodeCompletionWidget::selectItem()
 			the completion is marked as persistent */
 			if(always_on_top_chk->isChecked())
 			{
-				if(tc.selectedText().startsWith('.'))
+				if(tc.selectedText().startsWith(completion_trigger))
 				{
 					prev_txt_cur.movePosition(QTextCursor::EndOfWord, QTextCursor::MoveAnchor);
 
-					if(!tc.selectedText().endsWith('.'))
+					if(!tc.selectedText().endsWith(completion_trigger))
 						prev_txt_cur.insertText(completion_trigger);
 				}
-				else if(qualifying_level >= 0 && !tc.selectedText().endsWith('.'))
+				else if(qualifying_level >= 0 && !tc.selectedText().endsWith(completion_trigger))
 				{
 					prev_txt_cur.movePosition(QTextCursor::EndOfWord, QTextCursor::MoveAnchor);
 					prev_txt_cur.insertText(completion_trigger);
@@ -675,12 +736,17 @@ void CodeCompletionWidget::selectItem()
 
 			code_field_txt->setTextCursor(prev_txt_cur);
 
-			insertObjectName(object);
-			setQualifyingLevel(object);
+			if(object)
+			{
+				insertObjectName(object);
+				setQualifyingLevel(object);
+			}
+			else
+				code_field_txt->insertPlainText(item->text());
 		}
 		else
 		{
-			code_field_txt->insertPlainText(item->text() + QString(" "));
+			code_field_txt->insertPlainText(item->text() + " ");
 			setQualifyingLevel(nullptr);
 		}
 
