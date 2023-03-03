@@ -719,7 +719,9 @@ void BaseObjectWidget::applyConfiguration()
 					checking on table list when the configured object is a view or a checking
 					on view list when the configured object is a table, this because PostgreSQL
 					does not accepts tables and views have the same name on the same schema */
-					aux_obj = model->getObject(obj_name, { ObjectType::Table, ObjectType::ForeignTable, ObjectType::View });
+					if(BaseTable::isBaseTable(obj_type))
+						aux_obj = model->getObject(obj_name, { ObjectType::Table, ObjectType::ForeignTable, ObjectType::View });
+
 					new_obj = (aux_obj == nullptr);
 				}
 
