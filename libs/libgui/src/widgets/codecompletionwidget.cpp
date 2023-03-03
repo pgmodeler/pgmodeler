@@ -485,24 +485,54 @@ void CodeCompletionWidget::retrieveObjectNames()
 
 void CodeCompletionWidget::updateObjectsList()
 {
-	QTextCursor tc = code_field_txt->textCursor();
-	QStringList keywords = { "select", "from", "join", "where" };
-	unsigned kw_id = SelectPos;
+	QTextCursor orig_tc, tc;
+	QStringList keywords = { "from", "join", "where" };
+	unsigned kw_id = SelectPos;	
+	QTextDocument::FindFlags find_flags[2] = { (QTextDocument::FindWholeWords |
+																							QTextDocument::FindBackward),
 
+																						 QTextDocument::FindWholeWords };
+
+	orig_tc = tc = code_field_txt->textCursor();
+
+	/* Finding the postion of the SELECT keyword. This
+	 * will be the starting point of the search for the other
+	 * keywords */
+	for(auto &flag : find_flags)
+	{
+		if(code_field_txt->find("select", flag))
+			keywords_pos[SelectPos] = code_field_txt->textCursor().position();
+		else
+			keywords_pos[SelectPos] = -1;
+
+		code_field_txt->setTextCursor(tc);
+
+		if(keywords_pos[SelectPos] >= 0)
+			break;
+	}
+
+	if(keywords_pos[SelectPos] < 0)
+		return;
+
+	// Move the cursor right after the select keyword
+	tc.setPosition(keywords_pos[SelectPos] + 1);
+	code_field_txt->setTextCursor(tc);
+	kw_id = FromPos;
+
+	// Finding the position of the FROM/JOIN/WHERE keywords
 	for(auto &kw : keywords)
 	{
-		if(!code_field_txt->find(kw, QTextDocument::FindBackward | QTextDocument::FindWholeWords) &&
-			 !code_field_txt->find(kw, QTextDocument::FindWholeWords))
-		{
-			 keywords_pos[kw_id++] = -1;
-		}
-		else
+		if(code_field_txt->find(kw, QTextDocument::FindWholeWords))
 			keywords_pos[kw_id++] = code_field_txt->textCursor().position();
+		else
+			keywords_pos[kw_id++] = -1;
 
 		code_field_txt->setTextCursor(tc);
 	}
 
-	int cur_pos = tc.position();
+	int cur_pos = orig_tc.position();
+	code_field_txt->setTextCursor(orig_tc);
+
 	QTextStream out(stdout);
 	out << "---" << Qt::endl;
 	out << "word      :" << word << Qt::endl;
@@ -534,7 +564,8 @@ void CodeCompletionWidget::updateObjectsList()
 	catch(Exception &e)
 	{
 		QApplication::restoreOverrideCursor();
-		qDebug() << e.getExceptionsText() << Qt::endl;
+		QTextStream out(stdout);
+		out << e.getExceptionsText() << Qt::endl;
 	}
 }
 
