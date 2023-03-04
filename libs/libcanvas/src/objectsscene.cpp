@@ -765,6 +765,7 @@ void ObjectsScene::drawBackground(QPainter *painter, const QRectF &rect)
 	painter->setClipRect(rect);
 	painter->setRenderHint(QPainter::Antialiasing, false);
 	painter->setRenderHint(QPainter::TextAntialiasing, false);
+	painter->fillRect(rect, canvas_color);
 
 	if(show_grid)
 	{
