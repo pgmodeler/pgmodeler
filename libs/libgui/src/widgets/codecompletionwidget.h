@@ -37,10 +37,19 @@ class __libgui CodeCompletionWidget: public QWidget {
 
 		enum KeywordPosId: unsigned{
 			SelectPos,
+			InsertPos,
+			UpdatePos,
+			DeletePos,
+			TruncatePos,
 			FromPos,
 			JoinPos,
-			WherePos
+			IntoPos,
+			WherePos,
 		};
+
+		int dml_kwords_pos[WherePos + 1];
+
+		static const QStringList dml_keywords;
 
 		//! \brief A timer that controls the completion popup
 		QTimer popup_timer;
@@ -100,8 +109,6 @@ class __libgui CodeCompletionWidget: public QWidget {
 		std::map<QString, QPixmap> custom_items;
 		
 		attribs_map custom_items_tips;
-
-		int keywords_pos[4];
 
 		//! \brief Puts the selected object name on the current cursor position.
 		void insertObjectName(BaseObject *obj);

@@ -21,6 +21,11 @@
 #include "guiutilsns.h"
 #include "settings/snippetsconfigwidget.h"
 
+const QStringList CodeCompletionWidget::dml_keywords = {
+	"select", "insert", "update", "delete",
+	"truncate", "from", "join", "into", "where"
+};
+
 CodeCompletionWidget::CodeCompletionWidget(QPlainTextEdit *code_field_txt, bool enable_snippets) :	QWidget(dynamic_cast<QWidget *>(code_field_txt))
 {
 	if(!code_field_txt)
@@ -371,7 +376,7 @@ void CodeCompletionWidget::setQualifyingLevel(BaseObject *obj)
 void CodeCompletionWidget::resetKeywordsPos()
 {
 	for(unsigned id = SelectPos; id <= WherePos; id++)
-		keywords_pos[id] = -1;
+		dml_kwords_pos[id] = -1;
 }
 
 void CodeCompletionWidget::retrieveColumnNames()
@@ -380,14 +385,14 @@ void CodeCompletionWidget::retrieveColumnNames()
 	QString curr_word, tab_name;
 
 	// Moving the cursor to the FROM keyword so we can start to search for the column name
-	tc.setPosition(keywords_pos[FromPos], QTextCursor::MoveAnchor);
+	tc.setPosition(dml_kwords_pos[FromPos], QTextCursor::MoveAnchor);
 
 	do
 	{
 		tc.movePosition(QTextCursor::NextWord, QTextCursor::KeepAnchor);
 		curr_word = tc.selectedText();
 
-		if(keywords.contains(curr_word, Qt::CaseInsensitive))
+		if(dml_keywords.contains(curr_word, Qt::CaseInsensitive))
 			break;
 
 		tab_name.append(curr_word);
@@ -400,7 +405,7 @@ void CodeCompletionWidget::retrieveColumnNames()
 	QStringList names = tab_name.split(',', Qt::SkipEmptyParts);
 	QString sch_name;
 
-	if(names.size() <= 1)
+	if(names.isEmpty())
 		return;
 
 	QStringList aux_names, col_names;
@@ -453,7 +458,7 @@ void CodeCompletionWidget::retrieveObjectNames()
 		tc.movePosition(QTextCursor::PreviousWord, QTextCursor::KeepAnchor);
 		curr_word = tc.selectedText();
 
-		if(curr_word == "," || keywords.contains(curr_word, Qt::CaseInsensitive))
+		if(curr_word == "," || dml_keywords.contains(curr_word, Qt::CaseInsensitive))
 			break;
 
 		obj_name.prepend(curr_word);
@@ -487,6 +492,7 @@ void CodeCompletionWidget::retrieveObjectNames()
 		if(!obj_name.isEmpty())
 			filter[Attributes::NameFilter] = obj_name;
 
+		//Connection::setPrintSQL(true);
 		attribs = catalog.getObjectsNames(obj_type, sch_name, "", filter);
 
 		for(auto &attr : attribs)
@@ -508,46 +514,58 @@ void CodeCompletionWidget::retrieveObjectNames()
 void CodeCompletionWidget::updateObjectsList()
 {
 	QTextCursor orig_tc, tc;
-	QStringList keywords = { "from", "join", "where" };
-	unsigned kw_id = SelectPos;	
+	QStringList dml_cmds,	dml_clauses;
+	unsigned kw_id = SelectPos;
+	int found_kw = -1;
 	QTextDocument::FindFlags find_flags[2] = { (QTextDocument::FindWholeWords |
 																							QTextDocument::FindBackward),
 
 																						 QTextDocument::FindWholeWords };
 
+	dml_cmds = dml_keywords.mid(SelectPos, 5);
+	dml_clauses = dml_keywords.mid(FromPos);
 	orig_tc = tc = code_field_txt->textCursor();
 
-	/* Finding the postion of the SELECT keyword. This
-	 * will be the starting point of the search for the other
-	 * keywords */
-	for(auto &flag : find_flags)
+	for(auto &cmd : dml_cmds)
 	{
-		if(code_field_txt->find("select", flag))
-			keywords_pos[SelectPos] = code_field_txt->textCursor().position();
-		else
-			keywords_pos[SelectPos] = -1;
+		/* Finding the postion of the DML command start (SELECT, INSERT, UPDATE, DELETE, TRUNCATE).
+		 * This will be the starting point of the search for the other keywords */
+		for(auto &flag : find_flags)
+		{
+			code_field_txt->setTextCursor(tc);
+
+			if(code_field_txt->find(cmd, flag))
+			{
+				dml_kwords_pos[kw_id] = code_field_txt->textCursor().position();
+				found_kw = kw_id;
+			}
+			else
+				dml_kwords_pos[kw_id] = -1;
+
+			if(dml_kwords_pos[kw_id] >= 0)
+				break;
+		}
 
 		code_field_txt->setTextCursor(tc);
-
-		if(keywords_pos[SelectPos] >= 0)
-			break;
+		kw_id++;
 	}
 
-	if(keywords_pos[SelectPos] < 0)
+	// If none of the dml command start are found, abort the completion
+	if(found_kw < 0)
 		return;
 
 	// Move the cursor right after the select keyword
-	tc.setPosition(keywords_pos[SelectPos] + 1);
+	tc.setPosition(dml_kwords_pos[found_kw] + 1);
 	code_field_txt->setTextCursor(tc);
 	kw_id = FromPos;
 
 	// Finding the position of the FROM/JOIN/WHERE keywords
-	for(auto &kw : keywords)
+	for(auto &kw : dml_clauses)
 	{
 		if(code_field_txt->find(kw, QTextDocument::FindWholeWords))
-			keywords_pos[kw_id++] = code_field_txt->textCursor().position();
+			dml_kwords_pos[kw_id++] = code_field_txt->textCursor().position();
 		else
-			keywords_pos[kw_id++] = -1;
+			dml_kwords_pos[kw_id++] = -1;
 
 		code_field_txt->setTextCursor(tc);
 	}
@@ -557,12 +575,17 @@ void CodeCompletionWidget::updateObjectsList()
 
 	QTextStream out(stdout);
 	out << "---" << Qt::endl;
-	out << "word      :" << word << Qt::endl;
-	out << "cursor_pos: " << cur_pos << Qt::endl;
-	out << "select_pos: " << keywords_pos[SelectPos] << Qt::endl;
-	out << "from_pos  : " << keywords_pos[FromPos] << Qt::endl;
-	out << "join_pos  : " << keywords_pos[JoinPos] << Qt::endl;
-	out << "where_pos  : " << keywords_pos[WherePos] << Qt::endl;
+	out << "word        : " << word << Qt::endl;
+	out << "cursor_pos  : " << cur_pos << Qt::endl;
+	out << "select_pos  : " << dml_kwords_pos[SelectPos] << Qt::endl;
+	out << "insert_pos  : " << dml_kwords_pos[InsertPos] << Qt::endl;
+	out << "update_pos  : " << dml_kwords_pos[UpdatePos] << Qt::endl;
+	out << "delete_pos  : " << dml_kwords_pos[DeletePos] << Qt::endl;
+	out << "truncate_pos: " << dml_kwords_pos[TruncatePos] << Qt::endl;
+	out << "from_pos    : " << dml_kwords_pos[FromPos] << Qt::endl;
+	out << "join_pos    : " << dml_kwords_pos[JoinPos] << Qt::endl;
+	out << "into_pos    : " << dml_kwords_pos[IntoPos] << Qt::endl;
+	out << "where_pos   : " << dml_kwords_pos[WherePos] << Qt::endl;
 
 	if(cur_pos < 0)
 		return;
@@ -572,13 +595,33 @@ void CodeCompletionWidget::updateObjectsList()
 		QApplication::setOverrideCursor(Qt::WaitCursor);
 
 		// List columns of tables in FROM/JOIN clauses
-		if(cur_pos > keywords_pos[SelectPos] && cur_pos < keywords_pos[FromPos])
+		if(cur_pos > dml_kwords_pos[SelectPos] && cur_pos < dml_kwords_pos[FromPos])
 			retrieveColumnNames();
 
-		// List tables, views, foreign tables and functions after FROM/JOIN/WHERE clauses
-		else if(cur_pos > keywords_pos[FromPos] ||
-						cur_pos > keywords_pos[JoinPos] ||
-						cur_pos > keywords_pos[WherePos])
+		// List tables, views, foreign tables after INSERT INTO
+		else if((dml_kwords_pos[InsertPos] >= 0 &&
+						 dml_kwords_pos[IntoPos] > dml_kwords_pos[InsertPos] &&
+						 cur_pos > dml_kwords_pos[IntoPos]) ||
+
+						// After DELETE FROM
+						(dml_kwords_pos[DeletePos] >= 0 &&
+						 dml_kwords_pos[FromPos] > dml_kwords_pos[DeletePos] &&
+						 cur_pos > dml_kwords_pos[FromPos]) ||
+
+						// After UPDATE
+						(dml_kwords_pos[UpdatePos] >= 0 &&
+						 cur_pos > dml_kwords_pos[UpdatePos]) ||
+
+						// After TRUNCATE
+						(dml_kwords_pos[TruncatePos] >= 0 &&
+						 cur_pos > dml_kwords_pos[TruncatePos]) ||
+
+						// After any clause keyword preceded by a DML command
+						(found_kw &&
+						 cur_pos >= 0 &&
+						 (dml_kwords_pos[FromPos] >= 0 ||
+							dml_kwords_pos[JoinPos] >= 0 ||
+							dml_kwords_pos[WherePos] >= 0)))
 			retrieveObjectNames();
 
 		QApplication::restoreOverrideCursor();
