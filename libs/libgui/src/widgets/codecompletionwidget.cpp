@@ -33,7 +33,11 @@ CodeCompletionWidget::CodeCompletionWidget(QPlainTextEdit *code_field_txt, bool 
 	setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
 
 	completion_wgt=new QWidget(this);
-	completion_wgt->setWindowFlags(Qt::Popup);
+
+	#warning "Debug!"
+	//completion_wgt->setWindowFlags(Qt::Popup);
+	completion_wgt->setWindowFlags(Qt::Dialog);
+
 	completion_wgt->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
 	completion_wgt->setMinimumSize(200, 150);
 	completion_wgt->setMaximumHeight(300);
@@ -375,6 +379,7 @@ void CodeCompletionWidget::retrieveColumnNames()
 	QTextCursor tc = code_field_txt->textCursor();
 	QString curr_word, tab_name;
 
+	// Moving the cursor to the FROM keyword so we can start to search for the column name
 	tc.setPosition(keywords_pos[FromPos], QTextCursor::MoveAnchor);
 
 	do
@@ -392,29 +397,46 @@ void CodeCompletionWidget::retrieveColumnNames()
 
 	QListWidgetItem *item = nullptr;
 	attribs_map filter, attribs;
-	QStringList names = tab_name.split(completion_trigger);
+	QStringList names = tab_name.split(',', Qt::SkipEmptyParts);
 	QString sch_name;
 
 	if(names.size() <= 1)
 		return;
 
-	sch_name = names[0].trimmed();
-	tab_name = names[1].trimmed();
+	QStringList aux_names, col_names;
 
+	curr_word = word;
+	curr_word.remove(',');
 	name_list->clear();
-	catalog.setQueryFilter(Catalog::ListAllObjects);
 
-	if(!tab_name.isEmpty())
-		filter[Attributes::NameFilter] = word;
-
-	attribs = catalog.getObjectsNames(ObjectType::Column, sch_name, tab_name, filter);
-
-	for(auto &attr : attribs)
+	for(auto &name : names)
 	{
-		name_list->addItem(attr.second);
-		item = name_list->item(name_list->count() - 1);
-		item->setIcon(QIcon(GuiUtilsNs::getIconPath(ObjectType::Column)));
+		aux_names = name.split(completion_trigger);
+
+		if(aux_names.size() <= 1)
+			continue;
+
+		sch_name = aux_names[0].trimmed();
+		tab_name = aux_names[1].trimmed();
+		catalog.setQueryFilter(Catalog::ListAllObjects);
+
+		if(!tab_name.isEmpty())
+			filter[Attributes::NameFilter] = curr_word;
+
+		attribs = catalog.getObjectsNames(ObjectType::Column, sch_name, tab_name, filter);
+
+		for(auto &attr : attribs)
+			col_names.append(attr.second);
+	}
+
+	col_names.sort();
+	col_names.removeDuplicates();
+
+	for(auto &col : col_names)
+	{
+		item = new QListWidgetItem(QIcon(GuiUtilsNs::getIconPath(ObjectType::Column)), col);
 		item->setToolTip(BaseObject::getTypeName(ObjectType::Column));
+		name_list->addItem(item);
 	}
 }
 
@@ -431,7 +453,7 @@ void CodeCompletionWidget::retrieveObjectNames()
 		tc.movePosition(QTextCursor::PreviousWord, QTextCursor::KeepAnchor);
 		curr_word = tc.selectedText();
 
-		if(keywords.contains(curr_word, Qt::CaseInsensitive))
+		if(curr_word == "," || keywords.contains(curr_word, Qt::CaseInsensitive))
 			break;
 
 		obj_name.prepend(curr_word);
@@ -730,15 +752,16 @@ void CodeCompletionWidget::selectItem()
 	if(!name_list->selectedItems().isEmpty())
 	{
 		QListWidgetItem *item=name_list->selectedItems().at(0);
-		BaseObject *object=nullptr;
-		QTextCursor tc;
 
 		if(qualifying_level < 0)
 			code_field_txt->setTextCursor(new_txt_cur);
 
-		//If the selected item is a object (data not null) or the object name is from a living database
-		if(!item->data(Qt::UserRole).isNull() || catalog.isConnectionValid())
+		//If the selected item is a object (data not null)
+		if(!item->data(Qt::UserRole).isNull())
 		{
+			BaseObject *object=nullptr;
+			QTextCursor tc;
+
 			//Try to retrieve the object's reference
 			object=reinterpret_cast<BaseObject *>(item->data(Qt::UserRole).value<void *>());
 
@@ -771,14 +794,23 @@ void CodeCompletionWidget::selectItem()
 				prev_txt_cur=tc;
 
 			code_field_txt->setTextCursor(prev_txt_cur);
+			insertObjectName(object);
+			setQualifyingLevel(object);
+		}
+		// If we are selecting items from the database catalog
+		else if(catalog.isConnectionValid())
+		{
+			QTextCursor tc = code_field_txt->textCursor();
 
-			if(object)
-			{
-				insertObjectName(object);
-				setQualifyingLevel(object);
-			}
-			else
-				code_field_txt->insertPlainText(item->text());
+			// If the word is not empty we replace it by the selected item in the list
+			if(!word.isEmpty() && word != completion_trigger && word != ",")
+				tc.movePosition(QTextCursor::StartOfWord, QTextCursor::KeepAnchor);
+			// If the current word is the completion trigger or a comma we preserve the char
+			else if(word == completion_trigger || word == ",")
+				tc.movePosition(QTextCursor::EndOfWord, QTextCursor::MoveAnchor);
+
+			code_field_txt->setTextCursor(tc);
+			code_field_txt->insertPlainText(item->text());
 		}
 		else
 		{
