@@ -515,7 +515,47 @@ void CodeCompletionWidget::retrieveObjectNames()
 
 void CodeCompletionWidget::extractTableAliases()
 {
+	QTextCursor tc = code_field_txt->textCursor();
+	QString curr_word, tab_name, alias;
+	bool extract_alias = false;
 
+	tc.movePosition(QTextCursor::Start, QTextCursor::MoveAnchor);
+
+	while(!tc.atEnd())
+	{
+		tc.movePosition(QTextCursor::EndOfWord, QTextCursor::KeepAnchor);
+		curr_word = tc.selectedText();
+		tc.movePosition(QTextCursor::NextCharacter, QTextCursor::MoveAnchor);
+
+		if(curr_word.compare("from", Qt::CaseInsensitive) == 0 ||
+			 curr_word.compare("join", Qt::CaseInsensitive) == 0)
+		{
+			tc.movePosition(QTextCursor::EndOfWord, QTextCursor::MoveAnchor);
+			extract_alias = false;
+			tab_name.clear();
+			alias.clear();
+
+			while(!tc.atEnd())
+			{
+				tc.movePosition(QTextCursor::NextWord, QTextCursor::KeepAnchor);
+				curr_word = tc.selectedText().trimmed();
+				tc.movePosition(QTextCursor::NextCharacter, QTextCursor::MoveAnchor);
+
+				if(!extract_alias && curr_word.compare("as", Qt::CaseInsensitive) == 0)
+					extract_alias = true;
+				else if(!extract_alias)
+					tab_name.append(curr_word);
+				else if(extract_alias)
+				{
+					alias.append(curr_word);
+
+					QTextStream out(stdout);
+					out << alias << " --> " << tab_name << Qt::endl;
+					break;
+				}
+			}
+		}
+	}
 }
 
 void CodeCompletionWidget::updateObjectsList()
@@ -600,6 +640,8 @@ void CodeCompletionWidget::updateObjectsList()
 	try
 	{
 		QApplication::setOverrideCursor(Qt::WaitCursor);
+
+		extractTableAliases();
 
 		// List columns of tables in FROM/JOIN clauses
 		if(cur_pos > dml_kwords_pos[SelectPos] && cur_pos < dml_kwords_pos[FromPos])
