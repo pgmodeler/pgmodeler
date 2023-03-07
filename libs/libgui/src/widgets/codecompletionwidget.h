@@ -49,6 +49,8 @@ class __libgui CodeCompletionWidget: public QWidget {
 
 		int dml_kwords_pos[WherePos + 1];
 
+		attribs_map tab_aliases;
+
 		static const QStringList dml_keywords;
 
 		//! \brief A timer that controls the completion popup
@@ -130,6 +132,7 @@ class __libgui CodeCompletionWidget: public QWidget {
 		void resetKeywordsPos();
 		void retrieveColumnNames();
 		void retrieveObjectNames();
+		void extractTableAliases();
 		
 	public:
 		CodeCompletionWidget(QPlainTextEdit *code_field_txt, bool enable_snippets = false);

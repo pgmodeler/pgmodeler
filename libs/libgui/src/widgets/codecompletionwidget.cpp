@@ -477,7 +477,8 @@ void CodeCompletionWidget::retrieveObjectNames()
 											 ObjectType::ForeignTable,
 											 ObjectType::View,
 											 ObjectType::Function,
-											 ObjectType::Procedure });
+											 ObjectType::Procedure,
+											 ObjectType::Aggregate });
 		sch_name = names[0];
 		obj_name = names[1];
 	}
@@ -500,7 +501,8 @@ void CodeCompletionWidget::retrieveObjectNames()
 			aux_name = attr.second;
 
 			if(obj_type == ObjectType::Function ||
-				 obj_type == ObjectType::Procedure)
+				 obj_type == ObjectType::Procedure ||
+				 obj_type == ObjectType::Aggregate)
 				aux_name.remove(QRegularExpression("(\\()(.*)(\\))"));
 
 			name_list->addItem(aux_name);
@@ -511,12 +513,17 @@ void CodeCompletionWidget::retrieveObjectNames()
 	}
 }
 
+void CodeCompletionWidget::extractTableAliases()
+{
+
+}
+
 void CodeCompletionWidget::updateObjectsList()
 {
 	QTextCursor orig_tc, tc;
 	QStringList dml_cmds,	dml_clauses;
 	unsigned kw_id = SelectPos;
-	int found_kw = -1;
+	int found_kw_id = -1;
 	QTextDocument::FindFlags find_flags[2] = { (QTextDocument::FindWholeWords |
 																							QTextDocument::FindBackward),
 
@@ -537,7 +544,7 @@ void CodeCompletionWidget::updateObjectsList()
 			if(code_field_txt->find(cmd, flag))
 			{
 				dml_kwords_pos[kw_id] = code_field_txt->textCursor().position();
-				found_kw = kw_id;
+				found_kw_id = kw_id;
 			}
 			else
 				dml_kwords_pos[kw_id] = -1;
@@ -551,11 +558,11 @@ void CodeCompletionWidget::updateObjectsList()
 	}
 
 	// If none of the dml command start are found, abort the completion
-	if(found_kw < 0)
+	if(found_kw_id < 0)
 		return;
 
 	// Move the cursor right after the select keyword
-	tc.setPosition(dml_kwords_pos[found_kw] + 1);
+	tc.setPosition(dml_kwords_pos[found_kw_id] + 1);
 	code_field_txt->setTextCursor(tc);
 	kw_id = FromPos;
 
@@ -617,7 +624,7 @@ void CodeCompletionWidget::updateObjectsList()
 						 cur_pos > dml_kwords_pos[TruncatePos]) ||
 
 						// After any clause keyword preceded by a DML command
-						(found_kw &&
+						(found_kw_id >= 0 &&
 						 cur_pos >= 0 &&
 						 (dml_kwords_pos[FromPos] >= 0 ||
 							dml_kwords_pos[JoinPos] >= 0 ||
