@@ -42,9 +42,9 @@ CodeCompletionWidget::CodeCompletionWidget(QPlainTextEdit *code_field_txt, bool 
 
 	completion_wgt=new QWidget(this);
 
-	//#warning "Debug!"
-	completion_wgt->setWindowFlags(Qt::Popup);
-	//completion_wgt->setWindowFlags(Qt::Dialog);
+	#warning "Debug!"
+	//completion_wgt->setWindowFlags(Qt::Popup);
+	completion_wgt->setWindowFlags(Qt::Dialog);
 
 	completion_wgt->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
 	completion_wgt->setMinimumSize(200, 150);
@@ -396,7 +396,8 @@ void CodeCompletionWidget::retrieveColumnNames()
 		curr_word = tc.selectedText().trimmed();
 
 		if(dml_keywords.contains(curr_word, Qt::CaseInsensitive) ||
-			 curr_word == '(' || curr_word == ')')
+			 curr_word == '(' || curr_word == ')' ||
+			tab_aliases.count(curr_word))
 			break;
 
 		tab_name.append(curr_word);
@@ -448,7 +449,7 @@ void CodeCompletionWidget::retrieveColumnNames()
 		catalog.setQueryFilter(Catalog::ListAllObjects);
 
 		if(!tab_name.isEmpty())
-			filter[Attributes::NameFilter] = curr_word;
+			filter[Attributes::NameFilter] = QString("^(%1)").arg(curr_word);
 
 		attribs = catalog.getObjectsNames(ObjectType::Column, sch_name, tab_name, filter);
 
@@ -510,7 +511,7 @@ void CodeCompletionWidget::retrieveObjectNames()
 		catalog.setQueryFilter(Catalog::ListAllObjects);
 
 		if(!obj_name.isEmpty())
-			filter[Attributes::NameFilter] = obj_name;
+			filter[Attributes::NameFilter] = QString("^(%1)").arg(obj_name);
 
 		//Connection::setPrintSQL(true);
 		attribs = catalog.getObjectsNames(obj_type, sch_name, "", filter);
@@ -547,8 +548,14 @@ void CodeCompletionWidget::extractTableAliases()
 		curr_word = tc.selectedText();
 		tc.movePosition(QTextCursor::NextCharacter, QTextCursor::MoveAnchor);
 
+		/* Aliases can appear in the following forms:
+		 * SELECT/DELETE ... FROM tabname [AS] alias ...
+		 * JOIN tabname [AS] alias
+		 * UPDATE tabname [AS] alias */
 		if(curr_word.compare("from", Qt::CaseInsensitive) == 0 ||
-			 curr_word.compare("join", Qt::CaseInsensitive) == 0)
+			 curr_word.compare("join", Qt::CaseInsensitive) == 0 ||
+			 curr_word.compare("into", Qt::CaseInsensitive) == 0 ||
+			 curr_word.compare("update", Qt::CaseInsensitive) == 0)
 		{
 			tc.movePosition(QTextCursor::EndOfWord, QTextCursor::MoveAnchor);
 			extract_alias = tab_name_extracted = false;
