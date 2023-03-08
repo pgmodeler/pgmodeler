@@ -44,6 +44,7 @@ class __libgui CodeCompletionWidget: public QWidget {
 			FromPos,
 			JoinPos,
 			IntoPos,
+			AsPos,
 			WherePos,
 		};
 
@@ -52,6 +53,8 @@ class __libgui CodeCompletionWidget: public QWidget {
 		attribs_map tab_aliases;
 
 		static const QStringList dml_keywords;
+
+		static const QString special_chars;
 
 		//! \brief A timer that controls the completion popup
 		QTimer popup_timer;

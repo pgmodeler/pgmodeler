@@ -23,8 +23,11 @@
 
 const QStringList CodeCompletionWidget::dml_keywords = {
 	"select", "insert", "update", "delete",
-	"truncate", "from", "join", "into", "where"
+	"truncate", "from", "join", "into", "as",
+	"where"
 };
+
+const QString CodeCompletionWidget::special_chars("(),*;");
 
 CodeCompletionWidget::CodeCompletionWidget(QPlainTextEdit *code_field_txt, bool enable_snippets) :	QWidget(dynamic_cast<QWidget *>(code_field_txt))
 {
@@ -39,9 +42,9 @@ CodeCompletionWidget::CodeCompletionWidget(QPlainTextEdit *code_field_txt, bool 
 
 	completion_wgt=new QWidget(this);
 
-	#warning "Debug!"
-	//completion_wgt->setWindowFlags(Qt::Popup);
-	completion_wgt->setWindowFlags(Qt::Dialog);
+	//#warning "Debug!"
+	completion_wgt->setWindowFlags(Qt::Popup);
+	//completion_wgt->setWindowFlags(Qt::Dialog);
 
 	completion_wgt->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
 	completion_wgt->setMinimumSize(200, 150);
@@ -390,29 +393,48 @@ void CodeCompletionWidget::retrieveColumnNames()
 	do
 	{
 		tc.movePosition(QTextCursor::NextWord, QTextCursor::KeepAnchor);
-		curr_word = tc.selectedText();
+		curr_word = tc.selectedText().trimmed();
 
-		if(dml_keywords.contains(curr_word, Qt::CaseInsensitive))
+		if(dml_keywords.contains(curr_word, Qt::CaseInsensitive) ||
+			 curr_word == '(' || curr_word == ')')
 			break;
 
 		tab_name.append(curr_word);
 		tc.movePosition(QTextCursor::NextCharacter, QTextCursor::MoveAnchor);
 	}
-	while(!curr_word.isEmpty());
+	while(!tc.atEnd());
 
 	QListWidgetItem *item = nullptr;
 	attribs_map filter, attribs;
-	QStringList names = tab_name.split(',', Qt::SkipEmptyParts);
+	QStringList names;
 	QString sch_name;
+	QStringList aux_names, col_names;
+
+	// If a table alias is being referenced we use the name of the table aliased
+	if(word == completion_trigger)
+	{
+		tc = code_field_txt->textCursor();
+		tc.movePosition(QTextCursor::EndOfWord, QTextCursor::MoveAnchor);
+		tc.movePosition(QTextCursor::PreviousWord, QTextCursor::KeepAnchor, 2);
+		curr_word = tc.selectedText();
+		curr_word.remove(completion_trigger);
+
+		if(tab_aliases.count(curr_word))
+			names.append(tab_aliases[curr_word]);
+
+		curr_word.clear();
+	}
+	// If no alias is being used then we use the table names captured in FROM
+	else
+	{
+		names = tab_name.split(',', Qt::SkipEmptyParts);
+		curr_word = word;
+	}
+
+	curr_word.remove(',');
 
 	if(names.isEmpty())
 		return;
-
-	QStringList aux_names, col_names;
-
-	curr_word = word;
-	curr_word.remove(',');
-	name_list->clear();
 
 	for(auto &name : names)
 	{
@@ -467,7 +489,7 @@ void CodeCompletionWidget::retrieveObjectNames()
 
 	QStringList names = obj_name.split(completion_trigger);
 	QList<ObjectType> obj_types;
-	QString sch_name;
+	QString sch_name, aux_name;
 
 	if(names.size() == 1)
 		obj_types.append(ObjectType::Schema);
@@ -482,9 +504,6 @@ void CodeCompletionWidget::retrieveObjectNames()
 		sch_name = names[0];
 		obj_name = names[1];
 	}
-
-	name_list->clear();
-	QString aux_name;
 
 	for(auto &obj_type : obj_types)
 	{
@@ -517,8 +536,9 @@ void CodeCompletionWidget::extractTableAliases()
 {
 	QTextCursor tc = code_field_txt->textCursor();
 	QString curr_word, tab_name, alias;
-	bool extract_alias = false;
+	bool extract_alias = false, tab_name_extracted = false;
 
+	tab_aliases.clear();
 	tc.movePosition(QTextCursor::Start, QTextCursor::MoveAnchor);
 
 	while(!tc.atEnd())
@@ -531,7 +551,7 @@ void CodeCompletionWidget::extractTableAliases()
 			 curr_word.compare("join", Qt::CaseInsensitive) == 0)
 		{
 			tc.movePosition(QTextCursor::EndOfWord, QTextCursor::MoveAnchor);
-			extract_alias = false;
+			extract_alias = tab_name_extracted = false;
 			tab_name.clear();
 			alias.clear();
 
@@ -541,13 +561,30 @@ void CodeCompletionWidget::extractTableAliases()
 				curr_word = tc.selectedText().trimmed();
 				tc.movePosition(QTextCursor::NextCharacter, QTextCursor::MoveAnchor);
 
-				if(!extract_alias && curr_word.compare("as", Qt::CaseInsensitive) == 0)
+				/* If the word is a keyword or a parenthesis, may indicate that
+				 * we are in the middle of a subquery, this way, we just ignore
+				 * the current word */
+				if(curr_word.isEmpty() ||
+					 (curr_word.compare("as", Qt::CaseInsensitive) != 0 &&
+						(dml_keywords.contains(curr_word, Qt::CaseInsensitive) ||
+						special_chars.contains(curr_word))))
+					continue;
+
+				if(!extract_alias && !curr_word.isEmpty() &&
+					 (curr_word.compare("as", Qt::CaseInsensitive) == 0 || tab_name_extracted))
 					extract_alias = true;
-				else if(!extract_alias)
+
+				if(!extract_alias)
+				{
+					if(tab_name.endsWith(completion_trigger))
+						tab_name_extracted = true;
+
 					tab_name.append(curr_word);
-				else if(extract_alias)
+				}
+				else if(extract_alias && curr_word.compare("as", Qt::CaseInsensitive) != 0)
 				{
 					alias.append(curr_word);
+					tab_aliases[alias] = tab_name;
 
 					QTextStream out(stdout);
 					out << alias << " --> " << tab_name << Qt::endl;
@@ -641,10 +678,13 @@ void CodeCompletionWidget::updateObjectsList()
 	{
 		QApplication::setOverrideCursor(Qt::WaitCursor);
 
+		name_list->clear();
 		extractTableAliases();
+		retrieveColumnNames();
+		retrieveObjectNames();
 
 		// List columns of tables in FROM/JOIN clauses
-		if(cur_pos > dml_kwords_pos[SelectPos] && cur_pos < dml_kwords_pos[FromPos])
+		/* if(cur_pos > dml_kwords_pos[SelectPos] && cur_pos < dml_kwords_pos[FromPos])
 			retrieveColumnNames();
 
 		// List tables, views, foreign tables after INSERT INTO
@@ -672,6 +712,7 @@ void CodeCompletionWidget::updateObjectsList()
 							dml_kwords_pos[JoinPos] >= 0 ||
 							dml_kwords_pos[WherePos] >= 0)))
 			retrieveObjectNames();
+		*/
 
 		QApplication::restoreOverrideCursor();
 	}
@@ -784,6 +825,7 @@ void CodeCompletionWidget::updateList()
 		populateNameList(objects, word);
 	}
 
+	// Retrieving object names from the database if a valid connection is configured
 	if(catalog.isConnectionValid())
 		updateObjectsList();
 
