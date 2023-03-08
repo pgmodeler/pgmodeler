@@ -850,7 +850,8 @@ QString DatabaseImportHelper::getDependencyObject(const QString &oid, ObjectType
 			if(use_signature)
 				obj_name = obj_attr[Attributes::Signature] = getObjectName(oid, true);
 			else
-				obj_name = obj_attr[Attributes::Name] = getObjectName(oid);
+				//obj_name = obj_attr[Attributes::Name] = getObjectName(oid);
+				obj_name = getObjectName(oid);
 
 			/* If the attributes of the dependency exists but it was not created on the model yet,
 				 pgModeler will create it and it's dependencies recursively */
@@ -2673,8 +2674,7 @@ void DatabaseImportHelper::createColumns(attribs_map &attribs, std::vector<unsig
 	//Retrieving columns if they were not retrieved yet
 	if(columns[attribs[Attributes::Oid].toUInt()].empty() && auto_resolve_deps)
 	{
-		QString sch_name;
-		sch_name = getDependencyObject(attribs[Attributes::SchemaOid], ObjectType::Schema, true, auto_resolve_deps, false);
+		QString sch_name = getDependencyObject(attribs[Attributes::SchemaOid], ObjectType::Schema, true, auto_resolve_deps, false);
 		retrieveTableColumns(sch_name, attribs[Attributes::Name]);
 	}
 
