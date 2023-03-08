@@ -14,7 +14,7 @@
 	WHERE cl.attisdropped IS FALSE AND relname=]'{table}' [ AND nspname= ] '{schema}'
 
 	%if {name-filter} %then
-		[ AND ] ( {name-filter} )
+		[ AND ] ( cl.attname ~* E'{name-filter}' )
 	%end
 
 	[ AND attnum >= 0 ORDER BY attnum ASC ]
