@@ -130,11 +130,11 @@ class __libgui CodeCompletionWidget: public QWidget {
 
 		/*! \brief If a connection is configured, populates the list with the columns of
 		 *  tables, tables, schemas and functions listed in FROM/JOIN clauses */
-		void updateObjectsList();
+		bool updateObjectsList();
 
 		void resetKeywordsPos();
-		void retrieveColumnNames();
-		void retrieveObjectNames();
+		bool retrieveColumnNames();
+		bool retrieveObjectNames();
 		void extractTableAliases();
 		
 	public:

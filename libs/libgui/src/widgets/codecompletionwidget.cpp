@@ -42,9 +42,9 @@ CodeCompletionWidget::CodeCompletionWidget(QPlainTextEdit *code_field_txt, bool 
 
 	completion_wgt=new QWidget(this);
 
-	#warning "Debug!"
-	//completion_wgt->setWindowFlags(Qt::Popup);
-	completion_wgt->setWindowFlags(Qt::Dialog);
+	//#warning "Debug!"
+	completion_wgt->setWindowFlags(Qt::Popup);
+	//completion_wgt->setWindowFlags(Qt::Dialog);
 
 	completion_wgt->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
 	completion_wgt->setMinimumSize(200, 150);
@@ -382,7 +382,7 @@ void CodeCompletionWidget::resetKeywordsPos()
 		dml_kwords_pos[id] = -1;
 }
 
-void CodeCompletionWidget::retrieveColumnNames()
+bool CodeCompletionWidget::retrieveColumnNames()
 {
 	QTextCursor tc = code_field_txt->textCursor();
 	QString curr_word, tab_name;
@@ -435,7 +435,7 @@ void CodeCompletionWidget::retrieveColumnNames()
 	curr_word.remove(',');
 
 	if(names.isEmpty())
-		return;
+		return false;
 
 	for(auto &name : names)
 	{
@@ -466,14 +466,17 @@ void CodeCompletionWidget::retrieveColumnNames()
 		item->setToolTip(BaseObject::getTypeName(ObjectType::Column));
 		name_list->addItem(item);
 	}
+
+	return !col_names.isEmpty();
 }
 
-void CodeCompletionWidget::retrieveObjectNames()
+bool CodeCompletionWidget::retrieveObjectNames()
 {
 	attribs_map attribs, filter;
 	QListWidgetItem *item = nullptr;
 	QString curr_word = word, obj_name;
 	QTextCursor tc = code_field_txt->textCursor();
+	bool retrieved = false;
 
 	while(!curr_word.isEmpty())
 	{
@@ -529,8 +532,11 @@ void CodeCompletionWidget::retrieveObjectNames()
 			item = name_list->item(name_list->count() - 1);
 			item->setIcon(QIcon(GuiUtilsNs::getIconPath(obj_type)));
 			item->setToolTip(BaseObject::getTypeName(obj_type));
+			retrieved = true;
 		}
 	}
+
+	return retrieved;
 }
 
 void CodeCompletionWidget::extractTableAliases()
@@ -602,7 +608,7 @@ void CodeCompletionWidget::extractTableAliases()
 	}
 }
 
-void CodeCompletionWidget::updateObjectsList()
+bool CodeCompletionWidget::updateObjectsList()
 {
 	QTextCursor orig_tc, tc;
 	QStringList dml_cmds,	dml_clauses;
@@ -643,7 +649,7 @@ void CodeCompletionWidget::updateObjectsList()
 
 	// If none of the dml command start are found, abort the completion
 	if(found_kw_id < 0)
-		return;
+		return false;
 
 	// Move the cursor right after the select keyword
 	tc.setPosition(dml_kwords_pos[found_kw_id] + 1);
@@ -679,55 +685,32 @@ void CodeCompletionWidget::updateObjectsList()
 	out << "where_pos   : " << dml_kwords_pos[WherePos] << Qt::endl;
 
 	if(cur_pos < 0)
-		return;
+		return false;
 
 	try
 	{
 		QApplication::setOverrideCursor(Qt::WaitCursor);
 
+		bool cols_retrieved = false, objs_retrieved = false;
+
 		name_list->clear();
 		extractTableAliases();
-		retrieveColumnNames();
-		retrieveObjectNames();
+		cols_retrieved = retrieveColumnNames();
 
-		// List columns of tables in FROM/JOIN clauses
-		/* if(cur_pos > dml_kwords_pos[SelectPos] && cur_pos < dml_kwords_pos[FromPos])
-			retrieveColumnNames();
-
-		// List tables, views, foreign tables after INSERT INTO
-		else if((dml_kwords_pos[InsertPos] >= 0 &&
-						 dml_kwords_pos[IntoPos] > dml_kwords_pos[InsertPos] &&
-						 cur_pos > dml_kwords_pos[IntoPos]) ||
-
-						// After DELETE FROM
-						(dml_kwords_pos[DeletePos] >= 0 &&
-						 dml_kwords_pos[FromPos] > dml_kwords_pos[DeletePos] &&
-						 cur_pos > dml_kwords_pos[FromPos]) ||
-
-						// After UPDATE
-						(dml_kwords_pos[UpdatePos] >= 0 &&
-						 cur_pos > dml_kwords_pos[UpdatePos]) ||
-
-						// After TRUNCATE
-						(dml_kwords_pos[TruncatePos] >= 0 &&
-						 cur_pos > dml_kwords_pos[TruncatePos]) ||
-
-						// After any clause keyword preceded by a DML command
-						(found_kw_id >= 0 &&
-						 cur_pos >= 0 &&
-						 (dml_kwords_pos[FromPos] >= 0 ||
-							dml_kwords_pos[JoinPos] >= 0 ||
-							dml_kwords_pos[WherePos] >= 0)))
-			retrieveObjectNames();
-		*/
+		if(!cols_retrieved)
+			objs_retrieved = retrieveObjectNames();
 
 		QApplication::restoreOverrideCursor();
+
+		return cols_retrieved || objs_retrieved;
 	}
 	catch(Exception &e)
 	{
 		QApplication::restoreOverrideCursor();
 		QTextStream out(stdout);
 		out << e.getExceptionsText() << Qt::endl;
+
+		return false;
 	}
 }
 
@@ -833,21 +816,22 @@ void CodeCompletionWidget::updateList()
 	}
 
 	// Retrieving object names from the database if a valid connection is configured
-	if(catalog.isConnectionValid())
-		updateObjectsList();
+	bool db_objs_retrieved = false;
 
-	/* List the keywords if the qualifying level is negative or the
-	completion wasn't triggered using the special char */
-	if(qualifying_level < 0 && !auto_triggered)
+	if(catalog.isConnectionValid())
+		db_objs_retrieved = updateObjectsList();
+
+	/* List the keywords if no object was retrived from databas or
+	 * the qualifying level is negative or the completion wasn't triggered
+	 * using the special char */
+	if(!db_objs_retrieved && qualifying_level < 0 && !auto_triggered)
 	{
 		QRegularExpression regexp(pattern, QRegularExpression::CaseInsensitiveOption);
-		//name_list->sortItems();
 
 		//If there are custom items, they wiill be placed at the very beggining of the list
 		if(!custom_items.empty())
 		{
 			QStringList list;
-			//int row=0;
 			QListWidgetItem *item=nullptr;
 
 			for(auto &itr : custom_items)
@@ -861,7 +845,6 @@ void CodeCompletionWidget::updateList()
 			{
 				item=new QListWidgetItem(custom_items[item_name], item_name);
 				item->setToolTip(custom_items_tips[item_name]);
-				//name_list->insertItem(row++, item);
 				name_list->addItem(item);
 			}
 		}
