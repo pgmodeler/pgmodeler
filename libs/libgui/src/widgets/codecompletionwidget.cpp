@@ -24,7 +24,7 @@
 const QStringList CodeCompletionWidget::dml_keywords = {
 	"select", "insert", "update", "delete",
 	"truncate", "from", "join", "into", "as",
-	"where"
+	"set", "table", "only", "where"
 };
 
 const QString CodeCompletionWidget::special_chars("(),*;");
@@ -43,8 +43,8 @@ CodeCompletionWidget::CodeCompletionWidget(QPlainTextEdit *code_field_txt, bool 
 	completion_wgt=new QWidget(this);
 
 	//#warning "Debug!"
-	completion_wgt->setWindowFlags(Qt::Popup);
-	//completion_wgt->setWindowFlags(Qt::Dialog);
+	//completion_wgt->setWindowFlags(Qt::Popup);
+	completion_wgt->setWindowFlags(Qt::Dialog);
 
 	completion_wgt->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
 	completion_wgt->setMinimumSize(200, 150);
@@ -378,7 +378,7 @@ void CodeCompletionWidget::setQualifyingLevel(BaseObject *obj)
 
 void CodeCompletionWidget::resetKeywordsPos()
 {
-	for(unsigned id = SelectPos; id <= WherePos; id++)
+	for(unsigned id = Select; id <= Where; id++)
 		dml_kwords_pos[id] = -1;
 }
 
@@ -388,7 +388,7 @@ bool CodeCompletionWidget::retrieveColumnNames()
 	QString curr_word, tab_name;
 
 	// Moving the cursor to the FROM keyword so we can start to search for the column name
-	tc.setPosition(dml_kwords_pos[FromPos], QTextCursor::MoveAnchor);
+	tc.setPosition(dml_kwords_pos[From], QTextCursor::MoveAnchor);
 
 	do
 	{
@@ -397,7 +397,7 @@ bool CodeCompletionWidget::retrieveColumnNames()
 
 		if(dml_keywords.contains(curr_word, Qt::CaseInsensitive) ||
 			 curr_word == '(' || curr_word == ')' ||
-			tab_aliases.count(curr_word))
+			 tab_aliases.count(curr_word))
 			break;
 
 		tab_name.append(curr_word);
@@ -543,7 +543,9 @@ void CodeCompletionWidget::extractTableAliases()
 {
 	QTextCursor tc = code_field_txt->textCursor();
 	QString curr_word, tab_name, alias;
-	bool extract_alias = false, tab_name_extracted = false;
+	bool extract_alias = false, tab_name_extracted = false,
+			parse_next = false;
+	int prev_pos = -1;
 
 	tab_aliases.clear();
 	tc.movePosition(QTextCursor::Start, QTextCursor::MoveAnchor);
@@ -561,10 +563,15 @@ void CodeCompletionWidget::extractTableAliases()
 		if(curr_word.compare("from", Qt::CaseInsensitive) == 0 ||
 			 curr_word.compare("join", Qt::CaseInsensitive) == 0 ||
 			 curr_word.compare("into", Qt::CaseInsensitive) == 0 ||
-			 curr_word.compare("update", Qt::CaseInsensitive) == 0)
+			 curr_word.compare("update", Qt::CaseInsensitive) == 0 ||
+			 (parse_next && !dml_keywords.contains(curr_word, Qt::CaseInsensitive)))
 		{
-			tc.movePosition(QTextCursor::EndOfWord, QTextCursor::MoveAnchor);
-			extract_alias = tab_name_extracted = false;
+			if(parse_next)
+				tc.setPosition(prev_pos);
+			else
+				tc.movePosition(QTextCursor::EndOfWord, QTextCursor::MoveAnchor);
+
+			extract_alias = tab_name_extracted = parse_next = false;
 			tab_name.clear();
 			alias.clear();
 
@@ -579,8 +586,7 @@ void CodeCompletionWidget::extractTableAliases()
 				 * the current word */
 				if(curr_word.isEmpty() ||
 					 (curr_word.compare("as", Qt::CaseInsensitive) != 0 &&
-						(dml_keywords.contains(curr_word, Qt::CaseInsensitive) ||
-						special_chars.contains(curr_word))))
+						(dml_keywords.contains(curr_word, Qt::CaseInsensitive))))
 					continue;
 
 				if(!extract_alias && !curr_word.isEmpty() &&
@@ -594,14 +600,22 @@ void CodeCompletionWidget::extractTableAliases()
 
 					tab_name.append(curr_word);
 				}
-				else if(extract_alias && curr_word.compare("as", Qt::CaseInsensitive) != 0)
+				else
 				{
-					alias.append(curr_word);
-					tab_aliases[alias] = tab_name;
+					if(extract_alias &&
+						 !special_chars.contains(curr_word) &&
+						 curr_word.compare("as", Qt::CaseInsensitive) != 0)
+					{
+						alias.append(curr_word);
+						tab_aliases[alias] = tab_name;
+					}
 
-					QTextStream out(stdout);
-					out << alias << " --> " << tab_name << Qt::endl;
-					break;
+					if(special_chars.contains(curr_word) || !alias.isEmpty())
+					{
+						prev_pos = tc.position();
+						parse_next = true;
+						break;
+					}
 				}
 			}
 		}
@@ -612,15 +626,15 @@ bool CodeCompletionWidget::updateObjectsList()
 {
 	QTextCursor orig_tc, tc;
 	QStringList dml_cmds,	dml_clauses;
-	unsigned kw_id = SelectPos;
+	unsigned kw_id = Select;
 	int found_kw_id = -1;
 	QTextDocument::FindFlags find_flags[2] = { (QTextDocument::FindWholeWords |
 																							QTextDocument::FindBackward),
 
 																						 QTextDocument::FindWholeWords };
 
-	dml_cmds = dml_keywords.mid(SelectPos, 5);
-	dml_clauses = dml_keywords.mid(FromPos);
+	dml_cmds = dml_keywords.mid(Select, 5);
+	dml_clauses = dml_keywords.mid(From);
 	orig_tc = tc = code_field_txt->textCursor();
 
 	for(auto &cmd : dml_cmds)
@@ -654,7 +668,7 @@ bool CodeCompletionWidget::updateObjectsList()
 	// Move the cursor right after the select keyword
 	tc.setPosition(dml_kwords_pos[found_kw_id] + 1);
 	code_field_txt->setTextCursor(tc);
-	kw_id = FromPos;
+	kw_id = From;
 
 	// Finding the position of the FROM/JOIN/WHERE keywords
 	for(auto &kw : dml_clauses)
@@ -672,17 +686,11 @@ bool CodeCompletionWidget::updateObjectsList()
 
 	QTextStream out(stdout);
 	out << "---" << Qt::endl;
-	out << "word        : " << word << Qt::endl;
-	out << "cursor_pos  : " << cur_pos << Qt::endl;
-	out << "select_pos  : " << dml_kwords_pos[SelectPos] << Qt::endl;
-	out << "insert_pos  : " << dml_kwords_pos[InsertPos] << Qt::endl;
-	out << "update_pos  : " << dml_kwords_pos[UpdatePos] << Qt::endl;
-	out << "delete_pos  : " << dml_kwords_pos[DeletePos] << Qt::endl;
-	out << "truncate_pos: " << dml_kwords_pos[TruncatePos] << Qt::endl;
-	out << "from_pos    : " << dml_kwords_pos[FromPos] << Qt::endl;
-	out << "join_pos    : " << dml_kwords_pos[JoinPos] << Qt::endl;
-	out << "into_pos    : " << dml_kwords_pos[IntoPos] << Qt::endl;
-	out << "where_pos   : " << dml_kwords_pos[WherePos] << Qt::endl;
+	out << "word      : " << word << Qt::endl;
+	out << "cursor_pos: " << cur_pos << Qt::endl;
+
+	for(unsigned kw = Select; kw <= Where; kw++)
+		out << dml_keywords[kw].leftJustified(10, ' ') << ": " << dml_kwords_pos[kw] << Qt::endl;
 
 	if(cur_pos < 0)
 		return false;
@@ -695,7 +703,11 @@ bool CodeCompletionWidget::updateObjectsList()
 
 		name_list->clear();
 		extractTableAliases();
-		cols_retrieved = retrieveColumnNames();
+
+		if(cur_pos >= 0 &&
+			 (dml_kwords_pos[Select] >= 0 && dml_kwords_pos[From] >= 0 &&
+				cur_pos > dml_kwords_pos[Select] && cur_pos < dml_kwords_pos[From]))
+			cols_retrieved = retrieveColumnNames();
 
 		if(!cols_retrieved)
 			objs_retrieved = retrieveObjectNames();

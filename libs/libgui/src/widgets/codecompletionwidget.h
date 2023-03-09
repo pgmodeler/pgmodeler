@@ -35,20 +35,23 @@ class __libgui CodeCompletionWidget: public QWidget {
 	private:
 		Q_OBJECT
 
-		enum KeywordPosId: unsigned{
-			SelectPos,
-			InsertPos,
-			UpdatePos,
-			DeletePos,
-			TruncatePos,
-			FromPos,
-			JoinPos,
-			IntoPos,
-			AsPos,
-			WherePos,
+		enum DmlKeywordId: unsigned{
+			Select,
+			Insert,
+			Update,
+			Delete,
+			Truncate,
+			From,
+			Join,
+			Into,
+			As,
+			Set,
+			Table,
+			Only,
+			Where,
 		};
 
-		int dml_kwords_pos[WherePos + 1];
+		int dml_kwords_pos[Where + 1];
 
 		attribs_map tab_aliases;
 
