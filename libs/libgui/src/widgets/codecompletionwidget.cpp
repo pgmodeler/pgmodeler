@@ -344,10 +344,13 @@ void CodeCompletionWidget::show()
 	prev_txt_cur = code_field_txt->textCursor();
 	updateList();
 	completion_wgt->show();	
-	showItemTooltip();
 	popup_timer.stop();
 	completion_wgt->adjustSize();
 	adjustSize();
+
+	QTimer::singleShot(500, this, [this](){
+		showItemTooltip();
+	});
 }
 
 void CodeCompletionWidget::setQualifyingLevel(BaseObject *obj)
@@ -386,7 +389,8 @@ bool CodeCompletionWidget::retrieveColumnNames()
 	QListWidgetItem *item = nullptr;
 	attribs_map filter, attribs;
 	QString sch_name, tab_name, curr_word;
-	QStringList aux_names, col_names;
+	QStringList aux_names;
+	bool cols_added = false;
 
 	// If a table alias is being referenced we use the name of the table aliased
 	if(word == completion_trigger)
@@ -445,20 +449,18 @@ bool CodeCompletionWidget::retrieveColumnNames()
 		attribs = catalog.getObjectsNames(ObjectType::Column, sch_name, tab_name, filter);
 
 		for(auto &attr : attribs)
-			col_names.append(attr.second);
+		{
+			cols_added = true;
+			item = new QListWidgetItem(QIcon(GuiUtilsNs::getIconPath(ObjectType::Column)), attr.second);
+			item->setToolTip(tr("Object: <em>%1</em><br/>Table: %2")
+											 .arg(BaseObject::getTypeName(ObjectType::Column),
+														QString("<strong>%1</strong>.%2").arg(sch_name, tab_name)));
+			name_list->addItem(item);
+		}
 	}
 
-	col_names.sort();
-	col_names.removeDuplicates();
-
-	for(auto &col : col_names)
-	{
-		item = new QListWidgetItem(QIcon(GuiUtilsNs::getIconPath(ObjectType::Column)), col);
-		item->setToolTip(BaseObject::getTypeName(ObjectType::Column));
-		name_list->addItem(item);
-	}
-
-	return !col_names.isEmpty();
+	name_list->sortItems();
+	return cols_added;
 }
 
 bool CodeCompletionWidget::retrieveObjectNames()
@@ -522,7 +524,16 @@ bool CodeCompletionWidget::retrieveObjectNames()
 			name_list->addItem(aux_name);
 			item = name_list->item(name_list->count() - 1);
 			item->setIcon(QIcon(GuiUtilsNs::getIconPath(obj_type)));
-			item->setToolTip(BaseObject::getTypeName(obj_type));
+
+			if(obj_type != ObjectType::Schema)
+			{
+				item->setToolTip(tr("Object: <em>%1</em><br/>Signature: %2")
+												 .arg(BaseObject::getTypeName(obj_type),
+															QString("<strong>%1</strong>.%2").arg(sch_name, attr.second)));
+			}
+			else
+				item->setToolTip(tr("Object: <em>%1</em>").arg(BaseObject::getTypeName(obj_type)));
+
 			retrieved = true;
 		}
 	}
@@ -884,6 +895,7 @@ void CodeCompletionWidget::updateList()
 
 	//Sets the list position right below of text cursor
 	completion_wgt->move(code_field_txt->viewport()->mapToGlobal(code_field_txt->cursorRect().bottomLeft()));
+	name_list->scrollToTop();
 	name_list->setFocus();
 }
 
@@ -972,11 +984,11 @@ void CodeCompletionWidget::selectItem()
 
 void CodeCompletionWidget::showItemTooltip()
 {
-	QListWidgetItem *item=name_list->currentItem();
+	QListWidgetItem *item = name_list->currentItem();
 
 	if(item)
 	{
-		QPoint pos=name_list->mapToGlobal(QPoint(name_list->width(), name_list->geometry().top()));
+		QPoint pos = name_list->mapToGlobal(QPoint(name_list->width(), name_list->geometry().top()));
 		QToolTip::showText(pos, item->toolTip());
 	}
 }
