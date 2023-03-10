@@ -41,13 +41,9 @@ CodeCompletionWidget::CodeCompletionWidget(QPlainTextEdit *code_field_txt, bool 
 	setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
 
 	completion_wgt=new QWidget(this);
-
-	//#warning "Debug!"
-	//completion_wgt->setWindowFlags(Qt::Popup);
-	completion_wgt->setWindowFlags(Qt::Dialog);
-
+	completion_wgt->setWindowFlags(Qt::Popup);
 	completion_wgt->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
-	completion_wgt->setMinimumSize(200, 150);
+	completion_wgt->setMinimumSize(200, 200);
 	completion_wgt->setMaximumHeight(300);
 
 	always_on_top_chk=new QCheckBox(completion_wgt);
@@ -385,30 +381,11 @@ void CodeCompletionWidget::resetKeywordsPos()
 bool CodeCompletionWidget::retrieveColumnNames()
 {
 	QTextCursor tc = code_field_txt->textCursor();
-	QString curr_word, tab_name;
-
-	// Moving the cursor to the FROM keyword so we can start to search for the column name
-	tc.setPosition(dml_kwords_pos[From], QTextCursor::MoveAnchor);
-
-	do
-	{
-		tc.movePosition(QTextCursor::NextWord, QTextCursor::KeepAnchor);
-		curr_word = tc.selectedText().trimmed();
-
-		if(dml_keywords.contains(curr_word, Qt::CaseInsensitive) ||
-			 curr_word == '(' || curr_word == ')' ||
-			 tab_aliases.count(curr_word))
-			break;
-
-		tab_name.append(curr_word);
-		tc.movePosition(QTextCursor::NextCharacter, QTextCursor::MoveAnchor);
-	}
-	while(!tc.atEnd());
-
+	int cur_pos = tc.position();
+	QStringList tab_names;
 	QListWidgetItem *item = nullptr;
 	attribs_map filter, attribs;
-	QStringList names;
-	QString sch_name;
+	QString sch_name, tab_name, curr_word;
 	QStringList aux_names, col_names;
 
 	// If a table alias is being referenced we use the name of the table aliased
@@ -421,29 +398,43 @@ bool CodeCompletionWidget::retrieveColumnNames()
 		curr_word.remove(completion_trigger);
 
 		if(tab_aliases.count(curr_word))
-			names.append(tab_aliases[curr_word]);
+			tab_names.append(tab_aliases[curr_word]);
 
 		curr_word.clear();
 	}
-	// If no alias is being used then we use the table names captured in FROM
 	else
-	{
-		names = tab_name.split(',', Qt::SkipEmptyParts);
 		curr_word = word;
-	}
 
 	curr_word.remove(',');
 
-	if(names.isEmpty())
+	// Retrieving the table name between FROM ... JOIN/WHERE
+	if(((dml_kwords_pos[Select] >= 0 && dml_kwords_pos[From] >= 0 &&
+			 cur_pos > dml_kwords_pos[Select] && cur_pos < dml_kwords_pos[From]) ||
+		 (dml_kwords_pos[Select] >= 0 &&
+			dml_kwords_pos[Where] >= 0 && cur_pos > dml_kwords_pos[Where])))
+	{
+		tab_names = getTableNames(dml_kwords_pos[From],
+															dml_kwords_pos[Join] >= 0 ? dml_kwords_pos[Join] : dml_kwords_pos[Where]);
+	}
+	// Retrieving the table name after DELETE FROM ...
+	else if((dml_kwords_pos[Delete] >= 0 && dml_kwords_pos[From] >= 0 &&
+					 cur_pos > dml_kwords_pos[From]))
+	{
+		tab_names = getTableNames(dml_kwords_pos[From], dml_kwords_pos[Where]);
+	}
+	// Retrieving the table name between UPDATE ... SET
+	else if((dml_kwords_pos[Update] >= 0 && dml_kwords_pos[Set] >= 0 &&
+					 cur_pos > dml_kwords_pos[Set]))
+	{
+		tab_names = getTableNames(dml_kwords_pos[Update], dml_kwords_pos[Set]);
+	}
+
+	if(tab_names.isEmpty())
 		return false;
 
-	for(auto &name : names)
+	for(auto &name : tab_names)
 	{
 		aux_names = name.split(completion_trigger);
-
-		if(aux_names.size() <= 1)
-			continue;
-
 		sch_name = aux_names[0].trimmed();
 		tab_name = aux_names[1].trimmed();
 		catalog.setQueryFilter(Catalog::ListAllObjects);
@@ -502,9 +493,9 @@ bool CodeCompletionWidget::retrieveObjectNames()
 		obj_types.append({ ObjectType::Table,
 											 ObjectType::ForeignTable,
 											 ObjectType::View,
+											 ObjectType::Aggregate,
 											 ObjectType::Function,
-											 ObjectType::Procedure,
-											 ObjectType::Aggregate });
+											 ObjectType::Procedure });
 		sch_name = names[0];
 		obj_name = names[1];
 	}
@@ -516,13 +507,13 @@ bool CodeCompletionWidget::retrieveObjectNames()
 		if(!obj_name.isEmpty())
 			filter[Attributes::NameFilter] = QString("^(%1)").arg(obj_name);
 
-		//Connection::setPrintSQL(true);
 		attribs = catalog.getObjectsNames(obj_type, sch_name, "", filter);
 
 		for(auto &attr : attribs)
 		{
 			aux_name = attr.second;
 
+			// Removing parameter names from functions/procedures/aggregates
 			if(obj_type == ObjectType::Function ||
 				 obj_type == ObjectType::Procedure ||
 				 obj_type == ObjectType::Aggregate)
@@ -539,7 +530,7 @@ bool CodeCompletionWidget::retrieveObjectNames()
 	return retrieved;
 }
 
-void CodeCompletionWidget::extractTableAliases()
+void CodeCompletionWidget::extractTableNames()
 {
 	QTextCursor tc = code_field_txt->textCursor();
 	QString curr_word, tab_name, alias;
@@ -548,6 +539,7 @@ void CodeCompletionWidget::extractTableAliases()
 	int prev_pos = -1;
 
 	tab_aliases.clear();
+	tab_names_pos.clear();
 	tc.movePosition(QTextCursor::Start, QTextCursor::MoveAnchor);
 
 	while(!tc.atEnd())
@@ -567,7 +559,10 @@ void CodeCompletionWidget::extractTableAliases()
 			 (parse_next && !dml_keywords.contains(curr_word, Qt::CaseInsensitive)))
 		{
 			if(parse_next)
+			{
 				tc.setPosition(prev_pos);
+				tc.movePosition(QTextCursor::StartOfWord, QTextCursor::MoveAnchor);
+			}
 			else
 				tc.movePosition(QTextCursor::EndOfWord, QTextCursor::MoveAnchor);
 
@@ -581,9 +576,6 @@ void CodeCompletionWidget::extractTableAliases()
 				curr_word = tc.selectedText().trimmed();
 				tc.movePosition(QTextCursor::NextCharacter, QTextCursor::MoveAnchor);
 
-				/* If the word is a keyword or a parenthesis, may indicate that
-				 * we are in the middle of a subquery, this way, we just ignore
-				 * the current word */
 				if(curr_word.isEmpty() ||
 					 (curr_word.compare("as", Qt::CaseInsensitive) != 0 &&
 						(dml_keywords.contains(curr_word, Qt::CaseInsensitive))))
@@ -593,17 +585,20 @@ void CodeCompletionWidget::extractTableAliases()
 					 (curr_word.compare("as", Qt::CaseInsensitive) == 0 || tab_name_extracted))
 					extract_alias = true;
 
-				if(!extract_alias)
+				if(!extract_alias && !special_chars.contains(curr_word))
 				{
 					if(tab_name.endsWith(completion_trigger))
 						tab_name_extracted = true;
 
 					tab_name.append(curr_word);
+
+					// Register the table name and position
+					if(tab_name_extracted)
+						tab_names_pos[tc.position() - tab_name.length()] = tab_name;
 				}
 				else
 				{
-					if(extract_alias &&
-						 !special_chars.contains(curr_word) &&
+					if(extract_alias &&	 !special_chars.contains(curr_word) &&
 						 curr_word.compare("as", Qt::CaseInsensitive) != 0)
 					{
 						alias.append(curr_word);
@@ -620,6 +615,26 @@ void CodeCompletionWidget::extractTableAliases()
 			}
 		}
 	}
+}
+
+QStringList CodeCompletionWidget::getTableNames(int start_pos, int stop_pos)
+{
+	if(start_pos < 0)
+		return QStringList();
+
+	QStringList names;
+
+	for(auto &itr : tab_names_pos)
+	{
+		if(stop_pos >= 0 && itr.first > stop_pos)
+			break;
+
+		if(itr.first >= start_pos)
+			names.append(itr.second);
+	}
+
+	names.removeDuplicates();
+	return names;
 }
 
 bool CodeCompletionWidget::updateObjectsList()
@@ -684,14 +699,6 @@ bool CodeCompletionWidget::updateObjectsList()
 	int cur_pos = orig_tc.position();
 	code_field_txt->setTextCursor(orig_tc);
 
-	QTextStream out(stdout);
-	out << "---" << Qt::endl;
-	out << "word      : " << word << Qt::endl;
-	out << "cursor_pos: " << cur_pos << Qt::endl;
-
-	for(unsigned kw = Select; kw <= Where; kw++)
-		out << dml_keywords[kw].leftJustified(10, ' ') << ": " << dml_kwords_pos[kw] << Qt::endl;
-
 	if(cur_pos < 0)
 		return false;
 
@@ -702,12 +709,8 @@ bool CodeCompletionWidget::updateObjectsList()
 		bool cols_retrieved = false, objs_retrieved = false;
 
 		name_list->clear();
-		extractTableAliases();
-
-		if(cur_pos >= 0 &&
-			 (dml_kwords_pos[Select] >= 0 && dml_kwords_pos[From] >= 0 &&
-				cur_pos > dml_kwords_pos[Select] && cur_pos < dml_kwords_pos[From]))
-			cols_retrieved = retrieveColumnNames();
+		extractTableNames();
+		cols_retrieved = retrieveColumnNames();
 
 		if(!cols_retrieved)
 			objs_retrieved = retrieveObjectNames();
@@ -721,7 +724,6 @@ bool CodeCompletionWidget::updateObjectsList()
 		QApplication::restoreOverrideCursor();
 		QTextStream out(stdout);
 		out << e.getExceptionsText() << Qt::endl;
-
 		return false;
 	}
 }
@@ -731,7 +733,9 @@ void CodeCompletionWidget::updateList()
 	QListWidgetItem *item=nullptr;
 	QString pattern;
 	std::vector<BaseObject *> objects;
-	std::vector<ObjectType> types=BaseObject::getObjectTypes(false, 	{ ObjectType::Textbox, ObjectType::Relationship, ObjectType::BaseRelationship });
+	std::vector<ObjectType> types=BaseObject::getObjectTypes(false, 	{ ObjectType::Textbox,
+																																			ObjectType::Relationship,
+																																			ObjectType::BaseRelationship });
 	QTextCursor tc;
 
 	name_list->clear();
