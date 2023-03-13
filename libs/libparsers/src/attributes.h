@@ -289,6 +289,7 @@ namespace Attributes {
 	HbaFile,
 	Height,
 	HideExtAttribs,
+	HideObjShadows,
 	HideRelName,
 	HideSchNameUserTypes,
 	HideTableTags,

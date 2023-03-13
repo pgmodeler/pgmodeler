@@ -505,6 +505,8 @@ void BaseTableView::configureObjectShadow()
 	rect_item->setBrush(getFillStyle(Attributes::ObjShadow));
 	rect_item->setRect(this->boundingRect());
 	rect_item->setPos(ObjectShadowXPos, ObjectShadowYPos);
+
+	BaseObjectView::configureObjectShadow();
 }
 
 QList<TableObjectView *> BaseTableView::getSelectedChidren()

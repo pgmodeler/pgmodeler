@@ -318,7 +318,7 @@ void GraphicalView::configureObject()
 		table_tooltip += QString("\n---\n%1").arg(view->getComment());
 
 	BaseObjectView::__configureObject();
-	BaseObjectView::configureObjectShadow();
+	BaseTableView::configureObjectShadow();
 	BaseObjectView::configureObjectSelection();
 	configureTag();
 	configureSQLDisabledInfo();

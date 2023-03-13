@@ -275,6 +275,7 @@ namespace Attributes {
 	HbaFile("hba-file"),
 	Height("height"),
 	HideExtAttribs("hide-ext-attribs"),
+	HideObjShadows("hide-obj-shadows"),
 	HideRelName("hide-rel-name"),
 	HideSchNameUserTypes("hide-schema-names-of-types"),
 	HideTableTags("hide-table-tags"),

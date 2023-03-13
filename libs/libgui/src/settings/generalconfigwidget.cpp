@@ -235,6 +235,7 @@ void GeneralConfigWidget::loadConfiguration()
 		hide_rel_name_chk->setChecked(config_params[Attributes::Configuration][Attributes::HideRelName]==Attributes::True);
 		hide_table_tags_chk->setChecked(config_params[Attributes::Configuration][Attributes::HideTableTags]==Attributes::True);
 		hide_sch_name_usr_types_chk->setChecked(config_params[Attributes::Configuration][Attributes::HideSchNameUserTypes]==Attributes::True);
+		hide_obj_shadows_chk->setChecked(config_params[Attributes::Configuration][Attributes::HideObjShadows]==Attributes::True);
 
 		source_editor_sel->setSelectedFile(config_params[Attributes::Configuration][Attributes::SourceEditorApp]);
 		source_editor_args_edt->setText(config_params[Attributes::Configuration][Attributes::SourceEditorArgs]);
@@ -429,6 +430,7 @@ void GeneralConfigWidget::saveConfiguration()
 		config_params[Attributes::Configuration][Attributes::HideRelName]=(hide_rel_name_chk->isChecked() ? Attributes::True : "");
 		config_params[Attributes::Configuration][Attributes::HideTableTags]=(hide_table_tags_chk->isChecked() ? Attributes::True : "");
 		config_params[Attributes::Configuration][Attributes::HideSchNameUserTypes]=(hide_sch_name_usr_types_chk->isChecked() ? Attributes::True : "");
+		config_params[Attributes::Configuration][Attributes::HideObjShadows]=(hide_obj_shadows_chk->isChecked() ? Attributes::True : "");
 
 		config_params[Attributes::Configuration][Attributes::SourceEditorApp]=source_editor_sel->getSelectedFile();
 		config_params[Attributes::Configuration][Attributes::SourceEditorArgs]=source_editor_args_edt->text();
@@ -565,6 +567,7 @@ void GeneralConfigWidget::applyConfiguration()
 
 	BaseObjectView::setCompactViewEnabled(config_params[Attributes::Configuration][Attributes::CompactView]==Attributes::True);
 	BaseObjectView::setPlaceholderEnabled(use_placeholders_chk->isChecked());
+	BaseObjectView::setShadowHidden(hide_obj_shadows_chk->isChecked());
 
 	SQLExecutionWidget::setSQLHistoryMaxLength(history_max_length_spb->value());
 	ModelDatabaseDiffForm::setLowVerbosity(low_verbosity_chk->isChecked());
