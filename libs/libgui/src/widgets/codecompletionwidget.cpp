@@ -400,6 +400,10 @@ bool CodeCompletionWidget::retrieveColumnNames()
 		tc.movePosition(QTextCursor::PreviousWord, QTextCursor::KeepAnchor, 2);
 		curr_word = tc.selectedText();
 		curr_word.remove(completion_trigger);
+		curr_word = curr_word.trimmed();
+
+		if(curr_word.isEmpty() || dml_keywords.contains(curr_word, Qt::CaseInsensitive))
+			return false;
 
 		if(tab_aliases.count(curr_word))
 			tab_names.append(tab_aliases[curr_word]);
@@ -410,6 +414,7 @@ bool CodeCompletionWidget::retrieveColumnNames()
 		curr_word = word;
 
 	curr_word.remove(',');
+	curr_word.remove('\"');
 
 	// Retrieving the table name between FROM ... JOIN/WHERE
 	if(((dml_kwords_pos[Select] >= 0 && dml_kwords_pos[From] >= 0 &&
@@ -484,6 +489,9 @@ bool CodeCompletionWidget::retrieveObjectNames()
 		tc.movePosition(QTextCursor::PreviousWord, QTextCursor::MoveAnchor);
 	}
 
+	if(obj_name == completion_trigger)
+		return false;
+
 	QStringList names = obj_name.split(completion_trigger);
 	QList<ObjectType> obj_types;
 	QString sch_name, aux_name;
@@ -506,7 +514,7 @@ bool CodeCompletionWidget::retrieveObjectNames()
 	{
 		catalog.setQueryFilter(Catalog::ListAllObjects);
 
-		if(!obj_name.isEmpty())
+		if(!obj_name.isEmpty() && obj_name != completion_trigger)
 			filter[Attributes::NameFilter] = QString("^(%1)").arg(obj_name);
 
 		attribs = catalog.getObjectsNames(obj_type, sch_name, "", filter);
@@ -559,6 +567,9 @@ void CodeCompletionWidget::extractTableNames()
 		curr_word = tc.selectedText();
 		tc.movePosition(QTextCursor::NextCharacter, QTextCursor::MoveAnchor);
 
+		if(curr_word == '"')
+			curr_word.clear();
+
 		/* Aliases can appear in the following forms:
 		 * SELECT/DELETE ... FROM tabname [AS] alias ...
 		 * JOIN tabname [AS] alias
@@ -586,6 +597,9 @@ void CodeCompletionWidget::extractTableNames()
 				tc.movePosition(QTextCursor::NextWord, QTextCursor::KeepAnchor);
 				curr_word = tc.selectedText().trimmed();
 				tc.movePosition(QTextCursor::NextCharacter, QTextCursor::MoveAnchor);
+
+				if(curr_word == '\"')
+					curr_word.clear();
 
 				if(curr_word.isEmpty() ||
 					 (curr_word.compare("as", Qt::CaseInsensitive) != 0 &&
@@ -962,7 +976,7 @@ void CodeCompletionWidget::selectItem()
 				tc.movePosition(QTextCursor::EndOfWord, QTextCursor::MoveAnchor);
 
 			code_field_txt->setTextCursor(tc);
-			code_field_txt->insertPlainText(item->text());
+			code_field_txt->insertPlainText(BaseObject::formatName(item->text()));
 		}
 		else
 		{
