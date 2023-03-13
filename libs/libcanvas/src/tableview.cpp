@@ -246,7 +246,12 @@ void TableView::configureObject()
 		table_tooltip += QString("\n%1 (%2)").arg(tr("Partitioned")).arg(~table->getPartitioningType());
 
 	if(table->isPartition())
+	{
 		table_tooltip += QString("\n%1 of %2").arg(tr("Partition")).arg(table->getPartitionedTable()->getSignature(true));
+		pen = attribs_toggler->pen();
+		pen.setStyle(Qt::DashLine);
+		attribs_toggler->setPen(pen);
+	}
 
 	if(!table->getAlias().isEmpty())
 		table_tooltip += QString("\nAlias: %1").arg(table->getAlias());

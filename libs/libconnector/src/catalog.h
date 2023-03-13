@@ -184,6 +184,8 @@ class __libconnector Catalog {
 	catalog queries will fail */
 		void closeConnection();
 
+		bool isConnectionValid();
+
 		//! \brief Configures the catalog query filter
 		void setQueryFilter(QueryFilter filter);
 
