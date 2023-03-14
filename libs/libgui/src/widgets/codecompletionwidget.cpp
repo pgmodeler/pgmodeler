@@ -412,6 +412,8 @@ bool CodeCompletionWidget::retrieveColumnNames()
 		if(curr_word.isEmpty() || dml_keywords.contains(curr_word, Qt::CaseInsensitive))
 			return false;
 
+		/* If the word is an registered table alias then we will use the related table
+		 * to retrieve the columns */
 		if(tab_aliases.count(curr_word))
 			tab_names.append(tab_aliases[curr_word]);
 
@@ -423,30 +425,31 @@ bool CodeCompletionWidget::retrieveColumnNames()
 	curr_word.remove(',');
 	curr_word.remove('"');
 
-	// Retrieving the table name between FROM ... JOIN/WHERE
-	if(((dml_kwords_pos[Select] >= 0 && dml_kwords_pos[From] >= 0 &&
-			 cur_pos > dml_kwords_pos[Select] && cur_pos < dml_kwords_pos[From]) ||
-		 (dml_kwords_pos[Select] >= 0 &&
-			dml_kwords_pos[Where] >= 0 && cur_pos > dml_kwords_pos[Where])))
+	// If no table name was retrieved from aliases names
+	if(word != completion_trigger)
 	{
-		tab_names = getTableNames(dml_kwords_pos[From],
-															dml_kwords_pos[Join] >= 0 ? dml_kwords_pos[Join] : dml_kwords_pos[Where]);
+		// Retrieving the table name between FROM ... JOIN/WHERE
+		if(((dml_kwords_pos[Select] >= 0 && dml_kwords_pos[From] >= 0 &&
+				 cur_pos > dml_kwords_pos[Select] && cur_pos < dml_kwords_pos[From]) ||
+			 (dml_kwords_pos[Select] >= 0 &&
+				dml_kwords_pos[Where] >= 0 && cur_pos > dml_kwords_pos[Where])))
+		{
+			tab_names = getTableNames(dml_kwords_pos[From],
+																dml_kwords_pos[Join] >= 0 ? dml_kwords_pos[Join] : dml_kwords_pos[Where]);
+		}
+		// Retrieving the table name after DELETE FROM ...
+		else if((dml_kwords_pos[Delete] >= 0 && dml_kwords_pos[From] >= 0 &&
+						 cur_pos > dml_kwords_pos[From]))
+		{
+			tab_names = getTableNames(dml_kwords_pos[From], dml_kwords_pos[Where]);
+		}
+		// Retrieving the table name between UPDATE ... SET
+		else if((dml_kwords_pos[Update] >= 0 && dml_kwords_pos[Set] >= 0 &&
+						 cur_pos > dml_kwords_pos[Set]))
+		{
+			tab_names = getTableNames(dml_kwords_pos[Update], dml_kwords_pos[Set]);
+		}
 	}
-	// Retrieving the table name after DELETE FROM ...
-	else if((dml_kwords_pos[Delete] >= 0 && dml_kwords_pos[From] >= 0 &&
-					 cur_pos > dml_kwords_pos[From]))
-	{
-		tab_names = getTableNames(dml_kwords_pos[From], dml_kwords_pos[Where]);
-	}
-	// Retrieving the table name between UPDATE ... SET
-	else if((dml_kwords_pos[Update] >= 0 && dml_kwords_pos[Set] >= 0 &&
-					 cur_pos > dml_kwords_pos[Set]))
-	{
-		tab_names = getTableNames(dml_kwords_pos[Update], dml_kwords_pos[Set]);
-	}
-
-	if(tab_names.isEmpty())
-		return false;
 
 	for(auto &name : tab_names)
 	{
