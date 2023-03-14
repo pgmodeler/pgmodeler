@@ -77,7 +77,7 @@ SchemaParser::SchemaParser()
 	pgsql_version=PgSqlVersions::DefaulVersion;
 }
 
-void SchemaParser::__setPgSQLVersion(const QString &pgsql_ver, bool ignore_db_version)
+void SchemaParser::setPgSQLVersion(const QString &pgsql_ver, bool ignore_db_version)
 {
 	try
 	{
@@ -89,10 +89,10 @@ void SchemaParser::__setPgSQLVersion(const QString &pgsql_ver, bool ignore_db_ve
 	}
 }
 
-void SchemaParser::setPgSQLVersion(const QString &pgsql_ver)
+/* void SchemaParser::setPgSQLVersion(const QString &pgsql_ver)
 {
 	__setPgSQLVersion(pgsql_ver, false);
-}
+} */
 
 QString SchemaParser::getPgSQLVersion()
 {

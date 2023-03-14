@@ -146,8 +146,6 @@ class __libparsers SchemaParser {
 		template<typename Type>
 		bool getExpressionResult(const QString &oper, const QVariant &left_val, const QVariant &right_val);
 
-		void __setPgSQLVersion(const QString &pgsql_ver, bool ignore_db_version);
-
 	public:
 		static const char CharComment,	//! \brief Character that starts a comment
 		CharLineEnd,	//! \brief Character that indicates end of line
@@ -209,7 +207,8 @@ class __libparsers SchemaParser {
 		 the definition of the objects. This function should always be called at
 		 software startup or when the user wants to change the default version
 		 of the database */
-		void setPgSQLVersion(const QString &pgsql_ver);
+		//void setPgSQLVersion(const QString &pgsql_ver);
+		void setPgSQLVersion(const QString &pgsql_ver, bool ignore_db_version);
 
 		/*! \brief Returns the complete xml/sql definition for an database object represented by the
 		 map 'attributes'. For SQL definition is necessary to indicate the version of PostgreSQL

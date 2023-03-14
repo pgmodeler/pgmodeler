@@ -517,6 +517,7 @@ void MainWindow::connectSignalsToSlots()
 	connect(action_welcome, &QAction::triggered, this, &MainWindow::changeCurrentView);
 	connect(action_design, &QAction::triggered, this, &MainWindow::changeCurrentView);
 	connect(action_manage, &QAction::triggered, this, &MainWindow::changeCurrentView);
+	connect(action_manage, &QAction::toggled, this, &MainWindow::changeCurrentView);
 
 	connect(action_bug_report, &QAction::triggered, this, &MainWindow::reportBug);
 	connect(action_handle_metadata, &QAction::triggered, this, &MainWindow::handleObjectsMetadata);
@@ -1784,7 +1785,7 @@ void MainWindow::diffModelDatabase()
 		stopTimers(true);
 		connect(&modeldb_diff_frm, &ModelDatabaseDiffForm::s_connectionsUpdateRequest, this, [this](){ updateConnections(true); });
 		connect(&modeldb_diff_frm, &ModelDatabaseDiffForm::s_loadDiffInSQLTool, this, [this](QString conn_id, QString database, QString filename){
-			action_manage->toggle();
+			action_manage->setChecked(true);
 			sql_tool_wgt->addSQLExecutionTab(conn_id, database, filename);
 		});
 

@@ -27,7 +27,8 @@ namespace PgSqlVersions {
 	PgSqlVersion130 = QString("13.0"),
 	PgSqlVersion140 = QString("14.0"),
 	PgSqlVersion150 = QString("15.0"),
-	DefaulVersion = PgSqlVersion150;
+	DefaulVersion = PgSqlVersion150,
+	MinimumVersion = PgSqlVersion100;
 
 	const QStringList
 	AllVersions = {
@@ -54,6 +55,6 @@ namespace PgSqlVersions {
 		if(curr_ver > 0 && curr_ver <= default_ver)
 			return pgsql_ver;
 
-		return PgSqlVersions::DefaulVersion;
+		return PgSqlVersions::MinimumVersion;
 	}
 }

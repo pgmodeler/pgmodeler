@@ -822,6 +822,7 @@ void ModelsDiffHelper::processDiffInfos()
 	try
 	{
 		//Overriding the global PostgreSQL version so the diff code can match the destination server version
+		BaseObject::setIgnoreDbVersion(Connection::isDbVersionIgnored());
 		BaseObject::setPgSQLVersion(pgsql_version);
 
 		if(!diff_infos.empty())
@@ -1086,7 +1087,7 @@ void ModelsDiffHelper::processDiffInfos()
 				attribs[Attributes::AlterCmds]+=itr.second;
 
 			//Generating the whole diff buffer
-			schparser.setPgSQLVersion(pgsql_version);
+			schparser.setPgSQLVersion(pgsql_version, Connection::isDbVersionIgnored());
 			diff_def=schparser.getSourceCode(GlobalAttributes::getSchemaFilePath(GlobalAttributes::AlterSchemaDir, Attributes::Diff),
 																					 attribs);
 		}

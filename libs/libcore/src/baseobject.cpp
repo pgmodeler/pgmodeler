@@ -20,6 +20,8 @@
 #include "coreutilsns.h"
 #include <QApplication>
 
+bool BaseObject::ignore_db_version = false;
+
 const QByteArray BaseObject::special_chars = QByteArray("'_-.@ $:()/<>+*\\=~!#%^&|?{}[]`;");
 
 /* CAUTION: If both amount and order of the enumerations are modified
@@ -758,7 +760,7 @@ QString BaseObject::getSourceCode(SchemaParser::CodeType def_type, bool reduced_
 	{
 		bool format=false;
 
-		schparser.setPgSQLVersion(BaseObject::pgsql_ver);
+		schparser.setPgSQLVersion(BaseObject::pgsql_ver, ignore_db_version);
 		attributes[Attributes::SqlDisabled]=(sql_disabled ? Attributes::True : "");
 
 		//Formats the object's name in case the SQL definition is being generated
@@ -1067,7 +1069,7 @@ void BaseObject::setPgSQLVersion(const QString &version)
 {
 	try
 	{
-		pgsql_ver = PgSqlVersions::parseString(version, false);
+		pgsql_ver = PgSqlVersions::parseString(version, ignore_db_version);
 	}
 	catch(Exception &e)
 	{
@@ -1083,6 +1085,16 @@ QString BaseObject::getPgSQLVersion()
 attribs_map BaseObject::getSearchAttributes()
 {
 	return search_attribs;
+}
+
+void BaseObject::setIgnoreDbVersion(bool ignore)
+{
+	ignore_db_version = ignore;
+}
+
+bool BaseObject::isDbVersionIgnored()
+{
+	return ignore_db_version;
 }
 
 void BaseObject::enableCachedCode(bool value)
@@ -1227,7 +1239,7 @@ QString BaseObject::getDropCode(bool cascade)
 			attribs_map attribs;
 
 			setBasicAttributes(true);
-			schparser.setPgSQLVersion(BaseObject::pgsql_ver);
+			schparser.setPgSQLVersion(BaseObject::pgsql_ver, ignore_db_version);
 			schparser.ignoreUnkownAttributes(true);
 			schparser.ignoreEmptyAttributes(true);
 
@@ -1258,7 +1270,7 @@ QString BaseObject::getAlterCode(QString sch_name, attribs_map &attribs, bool ig
 		SchemaParser schparser;
 		QString alter_sch_file=GlobalAttributes::getSchemaFilePath(GlobalAttributes::AlterSchemaDir, sch_name);
 
-		schparser.setPgSQLVersion(BaseObject::pgsql_ver);
+		schparser.setPgSQLVersion(BaseObject::pgsql_ver, ignore_db_version);
 		schparser.ignoreEmptyAttributes(ignore_empty_attribs);
 		schparser.ignoreUnkownAttributes(ignore_ukn_attribs);
 		return schparser.getSourceCode(alter_sch_file, attribs);
