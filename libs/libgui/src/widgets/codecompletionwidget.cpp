@@ -22,9 +22,16 @@
 #include "settings/snippetsconfigwidget.h"
 
 const QStringList CodeCompletionWidget::dml_keywords = {
+	/* Insert here the keywords that need have their position determined
+	 * in order to call retriveColumnNames() and retrieveObjectsName().
+	 * New keywords here need a new entry in DmlKeywordId enum */
 	"select", "insert", "update", "delete",
 	"truncate", "from", "join", "into", "as",
-	"set", "table", "only", "where"
+	"set", "table", "only", "where",
+
+	/* Insert new keywords after this point if their position in the SQL command
+	 * is not important but they are need to do some extra checkings */
+	"inner", "outer", "left", "right",	"full"
 };
 
 const QString CodeCompletionWidget::special_chars("(),*;");
@@ -41,7 +48,7 @@ CodeCompletionWidget::CodeCompletionWidget(QPlainTextEdit *code_field_txt, bool 
 	setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
 
 	completion_wgt=new QWidget(this);
-	completion_wgt->setWindowFlags(Qt::Popup);
+	completion_wgt->setWindowFlags(Qt::Dialog);
 	completion_wgt->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
 	completion_wgt->setMinimumSize(200, 200);
 	completion_wgt->setMaximumHeight(300);
@@ -581,7 +588,7 @@ void CodeCompletionWidget::extractTableNames()
 			if(parse_next)
 			{
 				tc.setPosition(prev_pos);
-				tc.movePosition(QTextCursor::StartOfWord, QTextCursor::MoveAnchor);
+				//tc.movePosition(QTextCursor::EndOfWord, QTextCursor::MoveAnchor);
 			}
 			else
 				tc.movePosition(QTextCursor::EndOfWord, QTextCursor::MoveAnchor);
