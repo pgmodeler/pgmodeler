@@ -5,7 +5,7 @@
 {alter-cmds}
 
 %if {has-changes} %then
-	[ALTER ] {sql-object} $sp {signature}
+	[ALTER POLICY ] {name} [ ON ] {table}
 
 	%if {roles} %then
 		$br $tb [TO ]

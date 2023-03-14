@@ -1,6 +1,21 @@
 Changelog
 ---------
 
+v1.0.2
+------
+<em>Release date: March 14, 2023</em><br/>
+
+* [Fix] Fixed a bug related to importing referenced tables of FKs in partial import mode.
+* [Fix] Fixed the attributes toggler item border style in partition tables.
+* [Fix] Fixed a regression that was preventing the canvas color to be changed.
+* [Fix] Fixed a bug in BaseObjectWidget::finishConfiguration that was preventing the creation of a role and a table with the same names.
+* [Fix] Fixed the generation of DROP command for policy, trigger, and rule.
+* [Fix] Fixed a bug that was causing objects to be selected in the sample model at appearance settings.
+* [Fix] Forcing the usage of Qt 6.x due to problems on Windows when compiling with Qt 5.
+* [Fix] Minor adjustment in CodeCompletionWidget stylesheet.
+* [Fix] Saving/restoring the painter settings after drawing the background in ObjectsScene.
+* [Fix] Fixed a malformed diff code for policies.
+
 v1.0.1
 ------
 <em>Release date: February 17, 2023</em><br/>

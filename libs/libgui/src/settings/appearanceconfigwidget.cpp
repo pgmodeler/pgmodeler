@@ -442,10 +442,7 @@ void AppearanceConfigWidget::loadExampleModel()
 		}
 
 		for(auto &obj : graph_objs)
-		{
-			obj->setFlag(QGraphicsItem::ItemIsSelectable, false);
-			obj->setFlag(QGraphicsItem::ItemIsMovable, false);
-		}
+			obj->setEnabled(false);
 
 		placeholder->setRect(QRectF(400, 280, 200, 150));
 		updatePlaceholderItem();

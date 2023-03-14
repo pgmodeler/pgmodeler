@@ -760,10 +760,12 @@ void ObjectsScene::drawBackground(QPainter *painter, const QRectF &rect)
 	page_w = aux_size.width() / static_cast<double>(grid_size) * grid_size;
 	page_h = aux_size.height() / static_cast<double>(grid_size) * grid_size;
 
+	painter->save();
 	painter->setClipping(true);
 	painter->setClipRect(rect);
 	painter->setRenderHint(QPainter::Antialiasing, false);
 	painter->setRenderHint(QPainter::TextAntialiasing, false);
+	painter->fillRect(rect, canvas_color);
 
 	if(show_grid)
 	{
@@ -827,6 +829,8 @@ void ObjectsScene::drawBackground(QPainter *painter, const QRectF &rect)
 		painter->drawLine(0, scene_lim_y, scene_lim_x, scene_lim_y);
 		painter->drawLine(scene_lim_x, 0, scene_lim_x, scene_lim_y);
 	}
+
+	painter->restore();
 }
 
 void ObjectsScene::setGridSize(unsigned size)

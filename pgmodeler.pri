@@ -12,6 +12,11 @@ UI_DIR = src
 DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000
 !defined(NO_CHECK_CURR_VER, var):DEFINES+=CHECK_CURR_VER
 
+# Forcing the compilation using Qt 6.x
+!versionAtLeast(QT_VERSION, "6.0.0") {
+   error("Unsupported Qt version detected: $${QT_VERSION}! pgModeler must be compiled with at least Qt 6.0.0.")
+}
+
 # Store the absolute paths to library subprojects to be referenced in other .pro files
 # *_ROOT -> the path to the root folder of the subproject
 # *_LIB -> the libary flags (-L -l) (LIBS on qmake) passed to the compiler that points to the library generated from a subproject

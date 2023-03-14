@@ -10,10 +10,14 @@
 	[DROP ] {sql-object} [ IF EXISTS ]
 %end
 
-%if {column} %or {constraint} %and %not {decl-in-table} %or {extension} %then
+%if {column} %or {constraint} %and %not {decl-in-table} %or {extension} %or {rule} %or {trigger} %or {policy} %then
 	{name}
 %else
 	{signature}
+%end
+
+%if {trigger} %or {rule} %or {policy} %then
+	[ ON ] {table}
 %end
 
 %if {cascade} %and %not {database} %and %not {tablespace} %and %not {role} %and %not {usermapping} %then
