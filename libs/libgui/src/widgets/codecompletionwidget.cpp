@@ -414,7 +414,7 @@ bool CodeCompletionWidget::retrieveColumnNames()
 		curr_word = word;
 
 	curr_word.remove(',');
-	curr_word.remove('\"');
+	curr_word.remove('"');
 
 	// Retrieving the table name between FROM ... JOIN/WHERE
 	if(((dml_kwords_pos[Select] >= 0 && dml_kwords_pos[From] >= 0 &&
@@ -565,10 +565,8 @@ void CodeCompletionWidget::extractTableNames()
 	{
 		tc.movePosition(QTextCursor::EndOfWord, QTextCursor::KeepAnchor);
 		curr_word = tc.selectedText();
+		curr_word.remove('"');
 		tc.movePosition(QTextCursor::NextCharacter, QTextCursor::MoveAnchor);
-
-		if(curr_word == '"')
-			curr_word.clear();
 
 		/* Aliases can appear in the following forms:
 		 * SELECT/DELETE ... FROM tabname [AS] alias ...
@@ -596,10 +594,8 @@ void CodeCompletionWidget::extractTableNames()
 			{
 				tc.movePosition(QTextCursor::NextWord, QTextCursor::KeepAnchor);
 				curr_word = tc.selectedText().trimmed();
+				curr_word.remove('"');
 				tc.movePosition(QTextCursor::NextCharacter, QTextCursor::MoveAnchor);
-
-				if(curr_word == '\"')
-					curr_word.clear();
 
 				if(curr_word.isEmpty() ||
 					 (curr_word.compare("as", Qt::CaseInsensitive) != 0 &&
