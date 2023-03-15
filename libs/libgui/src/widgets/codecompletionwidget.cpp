@@ -48,7 +48,7 @@ CodeCompletionWidget::CodeCompletionWidget(QPlainTextEdit *code_field_txt, bool 
 	setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
 
 	completion_wgt=new QWidget(this);
-	completion_wgt->setWindowFlags(Qt::Popup);
+	completion_wgt->setWindowFlags(Qt::Dialog);
 	completion_wgt->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
 	completion_wgt->setMinimumSize(200, 200);
 	completion_wgt->setMaximumHeight(300);
@@ -648,8 +648,9 @@ void CodeCompletionWidget::extractTableNames()
 				}
 				else
 				{
-					if(extract_alias &&	 !special_chars.contains(curr_word) &&
-						 curr_word.compare("as", Qt::CaseInsensitive) != 0)
+					// Register the alias only if it does not exist and a table name is fully specified
+					if(extract_alias &&	 !special_chars.contains(curr_word) && !tab_aliases.count(curr_word) &&
+						 !tab_name.isEmpty() && curr_word.compare("as", Qt::CaseInsensitive) != 0)
 					{
 						alias.append(curr_word);
 						tab_aliases[alias] = tab_name;
