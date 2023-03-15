@@ -34,7 +34,7 @@ const QStringList CodeCompletionWidget::dml_keywords = {
 	"inner", "outer", "left", "right",	"full"
 };
 
-const QString CodeCompletionWidget::special_chars("(),*;");
+const QString CodeCompletionWidget::special_chars("(),*;=><|:!@^+-/&~#");
 
 CodeCompletionWidget::CodeCompletionWidget(QPlainTextEdit *code_field_txt, bool enable_snippets) :	QWidget(dynamic_cast<QWidget *>(code_field_txt))
 {
@@ -420,7 +420,26 @@ bool CodeCompletionWidget::retrieveColumnNames()
 		curr_word.clear();
 	}
 	else
+	{
 		curr_word = word;
+
+		tc = code_field_txt->textCursor();
+		tc.movePosition(QTextCursor::StartOfWord, QTextCursor::MoveAnchor);
+		tc.movePosition(QTextCursor::PreviousWord, QTextCursor::KeepAnchor);
+
+		/* In case of the current word is possibly a portion of the name of a column
+		 * related to an alias we try to retrieve the previous word which may be
+		 * the alias. */
+		if(tc.selectedText() == completion_trigger)
+		{
+			QString alias;
+			tc.movePosition(QTextCursor::PreviousWord, QTextCursor::KeepAnchor);
+			alias = tc.selectedText().remove(completion_trigger);
+
+			if(tab_aliases.count(alias))
+				tab_names.append(tab_aliases[alias]);
+		}
+	}
 
 	curr_word.remove(',');
 	curr_word.remove('"');
