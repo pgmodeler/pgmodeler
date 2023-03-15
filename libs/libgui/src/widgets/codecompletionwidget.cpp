@@ -48,7 +48,7 @@ CodeCompletionWidget::CodeCompletionWidget(QPlainTextEdit *code_field_txt, bool 
 	setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
 
 	completion_wgt=new QWidget(this);
-	completion_wgt->setWindowFlags(Qt::Dialog);
+	completion_wgt->setWindowFlags(Qt::Popup);
 	completion_wgt->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
 	completion_wgt->setMinimumSize(200, 200);
 	completion_wgt->setMaximumHeight(300);
