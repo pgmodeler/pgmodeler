@@ -48,7 +48,7 @@ CodeCompletionWidget::CodeCompletionWidget(QPlainTextEdit *code_field_txt, bool 
 	setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
 
 	completion_wgt=new QWidget(this);
-	completion_wgt->setWindowFlags(Qt::Popup);
+	completion_wgt->setWindowFlags(Qt::Dialog);
 	completion_wgt->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
 	completion_wgt->setMinimumSize(200, 200);
 	completion_wgt->setMaximumHeight(300);
@@ -409,6 +409,10 @@ bool CodeCompletionWidget::retrieveColumnNames()
 		curr_word.remove(completion_trigger);
 		curr_word = curr_word.trimmed();
 
+		curr_word.removeIf([](const QChar &chr){
+			return special_chars.contains(chr);
+		});
+
 		if(curr_word.isEmpty() || dml_keywords.contains(curr_word, Qt::CaseInsensitive))
 			return false;
 
@@ -439,10 +443,11 @@ bool CodeCompletionWidget::retrieveColumnNames()
 			if(tab_aliases.count(alias))
 				tab_names.append(tab_aliases[alias]);
 		}
-	}
 
-	curr_word.remove(',');
-	curr_word.remove('"');
+		curr_word.removeIf([](const QChar &chr){
+			return special_chars.contains(chr);
+		});
+	}
 
 	// If no table name was retrieved from aliases names
 	if(word != completion_trigger)
@@ -511,8 +516,14 @@ bool CodeCompletionWidget::retrieveObjectNames()
 		tc.movePosition(QTextCursor::PreviousWord, QTextCursor::KeepAnchor);
 		curr_word = tc.selectedText();
 
-		if(curr_word == "," || dml_keywords.contains(curr_word, Qt::CaseInsensitive))
+		if(curr_word == "," ||
+			 dml_keywords.contains(curr_word, Qt::CaseInsensitive) ||
+			 keywords.contains(curr_word))
 			break;
+
+		curr_word.removeIf([](const QChar &chr){
+			return special_chars.contains(chr);
+		});
 
 		obj_name.prepend(curr_word);
 		tc.movePosition(QTextCursor::PreviousWord, QTextCursor::MoveAnchor);
@@ -608,10 +619,7 @@ void CodeCompletionWidget::extractTableNames()
 			 (parse_next && !dml_keywords.contains(curr_word, Qt::CaseInsensitive)))
 		{
 			if(parse_next)
-			{
 				tc.setPosition(prev_pos);
-				//tc.movePosition(QTextCursor::EndOfWord, QTextCursor::MoveAnchor);
-			}
 			else
 				tc.movePosition(QTextCursor::EndOfWord, QTextCursor::MoveAnchor);
 
@@ -993,16 +1001,18 @@ void CodeCompletionWidget::selectItem()
 		else if(catalog.isConnectionValid())
 		{
 			QTextCursor tc = code_field_txt->textCursor();
+			QString prefix;
 
 			// If the word is not empty we replace it by the selected item in the list
 			if(!word.isEmpty() && word != completion_trigger && word != ",")
 				tc.movePosition(QTextCursor::StartOfWord, QTextCursor::KeepAnchor);
 			// If the current word is the completion trigger or a comma we preserve the char
 			else if(word == completion_trigger || word == ",")
-				tc.movePosition(QTextCursor::EndOfWord, QTextCursor::MoveAnchor);
+				prefix = word;
+				//tc.movePosition(QTextCursor::EndOfWord, QTextCursor::MoveAnchor);
 
 			code_field_txt->setTextCursor(tc);
-			code_field_txt->insertPlainText(BaseObject::formatName(item->text()));
+			code_field_txt->insertPlainText(prefix + BaseObject::formatName(item->text()));
 		}
 		else
 		{
