@@ -1001,15 +1001,18 @@ void CodeCompletionWidget::selectItem()
 		else if(catalog.isConnectionValid())
 		{
 			QTextCursor tc = code_field_txt->textCursor();
+			QChar last_chr = word.isEmpty() ? QChar::Null : word.at(word.length() - 1);
 			QString prefix;
 
-			// If the word is not empty we replace it by the selected item in the list
-			if(!word.isEmpty() && word != completion_trigger && word != ",")
+			// If the word and doesn't end in a special char is not empty we replace it by the selected item in the list
+			if(!word.isEmpty() && word != completion_trigger && !special_chars.contains(last_chr))
 				tc.movePosition(QTextCursor::StartOfWord, QTextCursor::KeepAnchor);
+			// If it ends with an special char we preserve the cursor position so the selected item text can be insert after
+			else if(!word.isEmpty() && special_chars.contains(last_chr))
+				tc = prev_txt_cur;
 			// If the current word is the completion trigger or a comma we preserve the char
 			else if(word == completion_trigger || word == ",")
 				prefix = word;
-				//tc.movePosition(QTextCursor::EndOfWord, QTextCursor::MoveAnchor);
 
 			code_field_txt->setTextCursor(tc);
 			code_field_txt->insertPlainText(prefix + BaseObject::formatName(item->text()));
