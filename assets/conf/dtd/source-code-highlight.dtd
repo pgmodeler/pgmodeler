@@ -2,7 +2,7 @@
   CAUTION: Do not modify this file directly on it's code unless you know what you are doing.
            Unexpected results may occur if the code is changed deliberately.
 -->
-<!ELEMENT source-code-highlight (word-delimiters?, word-separators?, ignored-chars?, completion-trigger?, highlight-order, group+)>
+<!ELEMENT source-code-highlight (word-delimiters?, word-separators?, ignored-chars?, completion-trigger?, enclosing-chars*, highlight-order, group+)>
 
 <!-- 
 The order in which the group expressions must be matched against extracted words. All groups withing this tag must be 
@@ -56,13 +56,34 @@ value: a single character that must be used as completion trigger.
 <!ELEMENT completion-trigger EMPTY>
 <!ATTLIST completion-trigger value CDATA #IMPLIED>
 
+<!-- 
+The characters in the current syntax that delimits values or other attributes somehow.
+More the one instance of this tag can appear in the configuration file.
+
+An example of that chars are:
+
+1) Parentenshis in SQL to delimit subqueries: select * from (select ... FROM ...)
+2) Chevron characters in XML to delimit tag name: <tag>
+3) Curly braces in SCH to delimit attributes: {attribute}
+
+open-char: the character that indicates the open delimitation
+close-char: the character that indicates the close delimitation
+background-color: the color of the background of enclosing chars
+foreground-color: the color of the foreground of enclosing chars
+-->
+<!ELEMENT enclosing-chars EMPTY>
+<!ATTLIST enclosing-chars open-char CDATA #REQUIRED>
+<!ATTLIST enclosing-chars close-char CDATA #REQUIRED>
+<!ATTLIST enclosing-chars background-color CDATA #REQUIRED>
+<!ATTLIST enclosing-chars foreground-color CDATA #REQUIRED>
+
 <!--
 The configuration of a highlight group. The group itself contains a set of formatting attributes and elements which 
 store the expressions that are matched against the captured words.
 
 name: the name of the group
 background-color: the color of the background of words matching the group (omitting this attribute causes transparent background to be applied).
-background-color: the color of the foreground of words matching the group (omitting this attribute causes black foreground to be applied)
+foreground-color: the color of the foreground of words matching the group (omitting this attribute causes black foreground to be applied)
 lookahead-char: the character used to break the highlight for a group. This character itself is not highlighted.
 case-sensitive: indicates if the expressions matching must be case sensitive or not.
 bold: words matching the group will have a bold style.

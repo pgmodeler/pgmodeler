@@ -71,6 +71,8 @@ class __libgui LineNumbersWidget : public QWidget {
 		static void setColors(const QColor &font_color, const QColor &bg_color);
 
 		static QColor getBackgroundColor();
+
+		static QColor getFontColor();
 };
 
 #endif

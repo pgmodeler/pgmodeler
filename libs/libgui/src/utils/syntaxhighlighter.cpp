@@ -48,6 +48,16 @@ SyntaxHighlighter::SyntaxHighlighter(QPlainTextEdit *parent, bool single_line_mo
 		parent->adjustSize();
 		parent->setTabChangesFocus(true);
 	}
+
+	highlight_timer.setInterval(300);
+	connect(parent, &QPlainTextEdit::cursorPositionChanged, &highlight_timer, qOverload<>(&QTimer::start));
+
+	connect(&highlight_timer, &QTimer::timeout, this, [this](){
+		highlight_timer.stop();
+
+		for(auto &cfg : enclosing_chrs)
+			highlightEnclosingChars(cfg);
+	});
 }
 
 bool SyntaxHighlighter::eventFilter(QObject *object, QEvent *event)
@@ -93,10 +103,6 @@ void SyntaxHighlighter::highlightBlock(const QString &txt)
 {
 	TextBlockInfo *info=nullptr;
 	TextBlockInfo *prev_info=dynamic_cast<TextBlockInfo *>(currentBlock().previous().userData());
-
-	QTextStream out(stdout);
-
-	out << "SyntaxHighlighter::highlightBlock" << Qt::endl;
 
 	if(!currentBlockUserData())
 	{
@@ -406,6 +412,84 @@ bool SyntaxHighlighter::isWordMatchGroup(const QString &word, const QString &gro
 	return has_match;
 }
 
+void SyntaxHighlighter::highlightEnclosingChars(const EnclosingCharsCfg &cfg)
+{
+	QTextCursor tc;
+	QString curr_txt;
+	QPlainTextEdit *code_txt = qobject_cast<QPlainTextEdit *>(parent());
+
+	tc = code_txt->textCursor();
+	tc.movePosition(QTextCursor::NextCharacter, QTextCursor::KeepAnchor);
+	curr_txt = tc.selectedText();
+	tc.movePosition(QTextCursor::PreviousCharacter, QTextCursor::MoveAnchor);
+
+	if(curr_txt != cfg.open_char && curr_txt != cfg.close_char)
+	{
+		tc = code_txt->textCursor();
+		tc.movePosition(QTextCursor::PreviousCharacter, QTextCursor::KeepAnchor);
+		curr_txt = tc.selectedText();
+	}
+
+	if(curr_txt != cfg.open_char && curr_txt != cfg.close_char)
+		return;
+
+	QChar inc_chr, dec_chr;
+	QString code = code_txt->toPlainText();
+	int chr_cnt = 0,
+			pos = tc.position(),
+			ini_pos = pos,
+			inc = curr_txt == cfg.open_char ? 1 : -1;
+
+	inc_chr = curr_txt == cfg.open_char ? cfg.open_char : cfg.close_char;
+	dec_chr = curr_txt == cfg.open_char ? cfg.close_char : cfg.open_char;
+
+	while(pos >= 0 && pos < code.size())
+	{
+		if(code[pos] == inc_chr)
+			chr_cnt++;
+		else if(code[pos] == dec_chr)
+			chr_cnt--;
+
+		if(chr_cnt == 0)
+			break;
+
+		pos += inc;
+	}
+
+	if(ini_pos != pos && pos >= 0 && pos < code.size())
+	{
+		QTextCharFormat fmt;
+		QList<QTextEdit::ExtraSelection> selections;
+		QTextEdit::ExtraSelection sel;
+
+		if(NumberedTextEditor::isHighlightLines())
+		{
+			sel.format.setBackground(NumberedTextEditor::getLineHighlightColor());
+			sel.format.setProperty(QTextFormat::FullWidthSelection, true);
+			sel.cursor = tc;
+			sel.cursor.clearSelection();
+			selections.append(sel);
+		}
+
+		fmt = tc.charFormat();
+		fmt.setBackground(cfg.bg_color);
+		fmt.setForeground(cfg.fg_color);
+		sel.format = fmt;
+
+		tc.setPosition(ini_pos);
+		tc.setPosition(ini_pos + 1, QTextCursor::KeepAnchor);
+		sel.cursor = tc;
+		selections.append(sel);
+
+		tc.setPosition(pos);
+		tc.setPosition(pos + 1, QTextCursor::KeepAnchor);
+		sel.cursor = tc;
+		selections.append(sel);
+
+		code_txt->setExtraSelections(selections);
+	}
+}
+
 bool SyntaxHighlighter::isConfigurationLoaded()
 {
 	return conf_loaded;
@@ -480,6 +564,18 @@ void SyntaxHighlighter::loadConfiguration(const QString &filename)
 
 							if(attribs[Attributes::Value].size() >= 1)
 								completion_trigger=attribs[Attributes::Value].at(0);
+						}
+						else if(elem == Attributes::EnclosingChars)
+						{
+							xmlparser.getElementAttributes(attribs);
+
+							EnclosingCharsCfg cfg;
+							cfg.open_char = attribs[Attributes::OpenChar].front();
+							cfg.close_char = attribs[Attributes::CloseChar].front();
+							cfg.fg_color = QColor::fromString(attribs[Attributes::ForegroundColor]);
+							cfg.bg_color = QColor::fromString(attribs[Attributes::BackgroundColor]);
+
+							enclosing_chrs.push_back(cfg);
 						}
 
 						/*	If the element is what defines the order of application of the groups
@@ -675,11 +771,6 @@ void SyntaxHighlighter::setFormat(int start, int count, const QString &group)
 	format.setFontFamily(default_font.family());
 	format.setFontPointSize(default_font.pointSizeF());
 	QSyntaxHighlighter::setFormat(start, count, format);
-}
-
-void SyntaxHighlighter::setFormat(int start, int count, const QTextCharFormat &fmt)
-{
-	QSyntaxHighlighter::setFormat(start, count, fmt);
 }
 
 void SyntaxHighlighter::setDefaultFont(const QFont &fnt)

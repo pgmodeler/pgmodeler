@@ -174,9 +174,19 @@ void NumberedTextEditor::setHighlightLines(bool value)
 	highlight_lines=value;
 }
 
+bool NumberedTextEditor::isHighlightLines()
+{
+	return highlight_lines;
+}
+
 void NumberedTextEditor::setLineHighlightColor(const QColor &color)
 {
 	line_hl_color=color;
+}
+
+QColor NumberedTextEditor::getLineHighlightColor()
+{
+	return line_hl_color;
 }
 
 void NumberedTextEditor::setTabDistance(double value)

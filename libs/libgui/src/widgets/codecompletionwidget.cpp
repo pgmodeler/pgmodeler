@@ -43,10 +43,8 @@ CodeCompletionWidget::CodeCompletionWidget(QPlainTextEdit *code_field_txt, bool 
 
 	resetKeywordsPos();
 
-	syntax_hl = nullptr;
 	this->enable_snippets = enable_snippets;
 	popup_timer.setInterval(300);
-	highlight_timer.setInterval(300);
 	setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
 
 	completion_wgt=new QWidget(this);
@@ -85,14 +83,6 @@ CodeCompletionWidget::CodeCompletionWidget(QPlainTextEdit *code_field_txt, bool 
 
 	connect(name_list, &QListWidget::itemDoubleClicked, this, &CodeCompletionWidget::selectItem);
 	connect(name_list, &QListWidget::currentRowChanged, this, &CodeCompletionWidget::showItemTooltip);
-	connect(code_field_txt, &QPlainTextEdit::cursorPositionChanged, &highlight_timer, qOverload<>(&QTimer::start));
-
-	connect(&highlight_timer, &QTimer::timeout, this, [this](){
-		highlight_timer.stop();
-
-		if(catalog.isConnectionValid())
-			highlightEncloseChars('(', ')');
-	});
 
 	connect(&popup_timer, &QTimer::timeout, this, [this](){
 		if(qualifying_level < 2)
@@ -229,7 +219,7 @@ bool CodeCompletionWidget::eventFilter(QObject *object, QEvent *event)
 	return QWidget::eventFilter(object, event);
 }
 
-void CodeCompletionWidget::configureCompletion(DatabaseModel *db_model, SyntaxHighlighter *stx_hl, const QString &keywords_grp)
+void CodeCompletionWidget::configureCompletion(DatabaseModel *db_model, SyntaxHighlighter *syntax_hl, const QString &keywords_grp)
 {
 	std::map<QString, attribs_map> confs=GeneralConfigWidget::getConfigurationParams();
 
@@ -245,11 +235,10 @@ void CodeCompletionWidget::configureCompletion(DatabaseModel *db_model, SyntaxHi
 		code_field_txt->installEventFilter(this);
 		name_list->installEventFilter(this);
 
-		if(stx_hl && keywords.isEmpty())
+		if(syntax_hl && keywords.isEmpty())
 		{
 			//Get the keywords from the highlighter
-			std::vector<QRegularExpression> exprs=stx_hl->getExpressions(keywords_grp);
-			syntax_hl = stx_hl;
+			std::vector<QRegularExpression> exprs=syntax_hl->getExpressions(keywords_grp);
 
 			while(!exprs.empty())
 			{
@@ -260,7 +249,7 @@ void CodeCompletionWidget::configureCompletion(DatabaseModel *db_model, SyntaxHi
 				exprs.pop_back();
 			}
 
-			completion_trigger=stx_hl->getCompletionTrigger();
+			completion_trigger=syntax_hl->getCompletionTrigger();
 		}
 		else
 			completion_trigger=QChar('.');
@@ -705,74 +694,6 @@ QStringList CodeCompletionWidget::getTableNames(int start_pos, int stop_pos)
 
 	names.removeDuplicates();
 	return names;
-}
-
-void CodeCompletionWidget::highlightEncloseChars(const QChar &start_chr, const QChar &end_chr)
-{
-	QTextCursor tc;
-	QString curr_txt;
-
-	tc = code_field_txt->textCursor();
-	tc.movePosition(QTextCursor::NextCharacter, QTextCursor::KeepAnchor);
-	curr_txt = tc.selectedText();
-	tc.movePosition(QTextCursor::PreviousCharacter, QTextCursor::MoveAnchor);
-
-	if(curr_txt != start_chr && curr_txt != end_chr)
-	{
-		tc = code_field_txt->textCursor();
-		tc.movePosition(QTextCursor::PreviousCharacter, QTextCursor::KeepAnchor);
-		curr_txt = tc.selectedText();
-	}
-
-	if(curr_txt != start_chr && curr_txt != end_chr)
-		return;
-
-
-	QTextStream out(stdout);
-	out << curr_txt << Qt::endl;
-
-	QChar inc_chr, dec_chr;
-	QString code = code_field_txt->toPlainText();
-	int chr_cnt = 0,
-			pos = tc.position(),
-			ini_pos = pos,
-			inc = curr_txt == start_chr ? 1 : -1;
-
-	inc_chr = curr_txt == start_chr ? start_chr : end_chr;
-	dec_chr = curr_txt == start_chr ? end_chr : start_chr;
-
-	while(pos >= 0 && pos < code.size())
-	{
-		if(code[pos] == inc_chr)
-			chr_cnt++;
-		else if(code[pos] == dec_chr)
-			chr_cnt--;
-
-		if(chr_cnt == 0)
-			break;
-
-		pos += inc;
-	}
-
-	if(ini_pos != pos && syntax_hl)
-	{
-		QTextCharFormat fmt;
-		out << ini_pos << " - " << pos << Qt::endl;
-
-		fmt = tc.charFormat();
-		fmt.setBackground(QColor(255,0,0));
-		fmt.setForeground(QColor(255,0,255));
-		fmt.setFontItalic(true);
-
-		tc.setPosition(ini_pos);
-		tc.setPosition(ini_pos + 1, QTextCursor::KeepAnchor);
-		tc.setCharFormat(fmt);
-
-		//code_field_txt->setTextCursor(tc);
-		syntax_hl->setFormat(ini_pos, 1, fmt);
-	}
-
-	out << "---" << Qt::endl;
 }
 
 bool CodeCompletionWidget::updateObjectsList()

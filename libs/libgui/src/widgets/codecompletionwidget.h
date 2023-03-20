@@ -66,10 +66,8 @@ class __libgui CodeCompletionWidget: public QWidget {
 
 		static const QString special_chars;
 
-		//! \brief A timer that controls the completion popup
-		QTimer popup_timer,
-
-		highlight_timer;
+;		//! \brief A timer that controls the completion popup
+		QTimer popup_timer;
 		
 		QWidget *completion_wgt;
 		
@@ -95,8 +93,6 @@ class __libgui CodeCompletionWidget: public QWidget {
 		
 		lvl_cur;
 
-		SyntaxHighlighter *syntax_hl;
-		
 		//! \brief Current typed word
 		QString word;
 		
@@ -164,8 +160,6 @@ class __libgui CodeCompletionWidget: public QWidget {
 		 *  The stop_pos forces the method to return the list once the position of any searched table
 		 *  exceeds the specified value */
 		QStringList getTableNames(int start_pos, int stop_pos);
-
-		void highlightEncloseChars(const QChar &start_chr, const QChar &end_chr);
 		
 	public:
 		CodeCompletionWidget(QPlainTextEdit *code_field_txt, bool enable_snippets = false);
@@ -173,7 +167,7 @@ class __libgui CodeCompletionWidget: public QWidget {
 		/*! \brief Configures the completion. If an syntax highlighter is specified, the completion widget will
 		retrive the keywords and the trigger char from it. The keyword group name can be also specified in case the
 		highlighter uses an different configuration */
-		void configureCompletion(DatabaseModel *db_model, SyntaxHighlighter *stx_hl=nullptr, const QString &keywords_grp=QString("keywords"));
+		void configureCompletion(DatabaseModel *db_model, SyntaxHighlighter *syntax_hl=nullptr, const QString &keywords_grp=QString("keywords"));
 		
 		//! \brief Inserts a custom named item on the list with a custom icon. Custom item will always appear at the beggining of the list
 		void insertCustomItem(const QString &name, const QString &tooltip, const QPixmap &icon);
