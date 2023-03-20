@@ -121,6 +121,9 @@ class __libgui SyntaxHighlighter: public QSyntaxHighlighter {
 		//! \brief Renders the block format using the configuration of the specified group
 		void setFormat(int start, int count, const QString &group);
 
+		//! \brief Renders the block format using the specified char format
+		void setFormat(int start, int count, const QTextCharFormat &fmt);
+
 		/*! \brief Check if the word matches the specified group by searching the vector of expressions related to it.
 		If the word matches then the match_idx and match_len parameters will be configured with the index and length of chars that
 		the expression could match. Additionally this method returns a boolean indicating the if the match was successful */
@@ -154,6 +157,8 @@ class __libgui SyntaxHighlighter: public QSyntaxHighlighter {
 
 		//! \brief Clears the loaded configuration
 		void clearConfiguration();
+
+	friend class CodeCompletionWidget;
 };
 
 #endif

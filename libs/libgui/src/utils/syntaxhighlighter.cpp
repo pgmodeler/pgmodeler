@@ -94,6 +94,10 @@ void SyntaxHighlighter::highlightBlock(const QString &txt)
 	TextBlockInfo *info=nullptr;
 	TextBlockInfo *prev_info=dynamic_cast<TextBlockInfo *>(currentBlock().previous().userData());
 
+	QTextStream out(stdout);
+
+	out << "SyntaxHighlighter::highlightBlock" << Qt::endl;
+
 	if(!currentBlockUserData())
 	{
 		info=new TextBlockInfo;
@@ -671,6 +675,11 @@ void SyntaxHighlighter::setFormat(int start, int count, const QString &group)
 	format.setFontFamily(default_font.family());
 	format.setFontPointSize(default_font.pointSizeF());
 	QSyntaxHighlighter::setFormat(start, count, format);
+}
+
+void SyntaxHighlighter::setFormat(int start, int count, const QTextCharFormat &fmt)
+{
+	QSyntaxHighlighter::setFormat(start, count, fmt);
 }
 
 void SyntaxHighlighter::setDefaultFont(const QFont &fnt)
