@@ -98,6 +98,7 @@ class __libgui SQLExecutionWidget: public QWidget, public Ui::SQLExecutionWidget
 		void showEvent(QShowEvent *);
 		void resizeEvent(QResizeEvent *);
 		bool eventFilter(QObject *object, QEvent *event);
+		void reloadHighlightConfigs();
 
 	public:
 		static const QString ColumnNullValue;

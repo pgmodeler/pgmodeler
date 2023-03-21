@@ -1549,6 +1549,7 @@ void MainWindow::applyConfigurations()
 
 		updateConnections();
 		sql_tool_wgt->configureSnippets();
+		sql_tool_wgt->reloadHighlightConfigs();
 
 		QApplication::restoreOverrideCursor();
 	}

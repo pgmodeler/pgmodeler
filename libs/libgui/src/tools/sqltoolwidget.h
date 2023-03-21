@@ -77,6 +77,9 @@ class __libgui SQLToolWidget: public QWidget, public Ui::SQLToolWidget {
 		//! \brief Add a tab by browsing a database in the specified connection, loads the sql file and put its contents on a SQL execution
 		void addSQLExecutionTab(const QString &conn_id, const QString &database, const QString &sql_file);
 
+		//! \brief Force all SQL execution widget to reload the syntax highlight configuration
+		void reloadHighlightConfigs();
+
 	private slots:
 		//! \brief Opens a connection to the selected server
 		void connectToServer();

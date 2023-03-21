@@ -48,7 +48,7 @@ CodeCompletionWidget::CodeCompletionWidget(QPlainTextEdit *code_field_txt, bool 
 	setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
 
 	completion_wgt=new QWidget(this);
-	completion_wgt->setWindowFlags(Qt::Dialog);
+	completion_wgt->setWindowFlags(Qt::Popup);
 	completion_wgt->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
 	completion_wgt->setMinimumSize(200, 200);
 	completion_wgt->setMaximumHeight(300);
@@ -704,7 +704,6 @@ bool CodeCompletionWidget::updateObjectsList()
 	int found_kw_id = -1;
 	QTextDocument::FindFlags find_flags[2] = { (QTextDocument::FindWholeWords |
 																							QTextDocument::FindBackward),
-
 																						 QTextDocument::FindWholeWords };
 
 	dml_cmds = dml_keywords.mid(Select, 5);
@@ -1051,6 +1050,7 @@ void CodeCompletionWidget::close()
 	name_list->clearSelection();
 	completion_wgt->close();
 	auto_triggered=false;
+	QToolTip::hideText();
 }
 
 void CodeCompletionWidget::insertObjectName(BaseObject *obj)
@@ -1060,7 +1060,6 @@ void CodeCompletionWidget::insertObjectName(BaseObject *obj)
 	QString name=obj->getName(true, sch_qualified);
 	ObjectType obj_type=obj->getObjectType();
 	int move_cnt=0;
-
 
 	if(modify_name &&
 			(PhysicalTable::isPhysicalTable(obj_type) || TableObject::isTableObject(obj_type)))

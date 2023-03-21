@@ -159,5 +159,10 @@ void LineNumbersWidget::mouseReleaseEvent(QMouseEvent *)
 
 QColor LineNumbersWidget::getBackgroundColor()
 {
-	return LineNumbersWidget::bg_color;
+	return bg_color;
+}
+
+QColor LineNumbersWidget::getFontColor()
+{
+	return font_color;
 }

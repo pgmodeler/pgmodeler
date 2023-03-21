@@ -346,6 +346,27 @@ void SQLToolWidget::addSQLExecutionTab(const QString &conn_id, const QString &da
 	sql_exec_wgt->setSQLCommand(buf);
 }
 
+void SQLToolWidget::reloadHighlightConfigs()
+{
+	try
+	{
+		SQLExecutionWidget *sql_exec_wgt = nullptr;
+
+		for(int i = 0; i < sql_exec_tbw->count(); i++)
+		{
+			sql_exec_wgt = dynamic_cast<SQLExecutionWidget *>(sql_exec_tbw->widget(i));
+			sql_exec_wgt->reloadHighlightConfigs();
+		}
+
+		sourcecode_hl->loadConfiguration(GlobalAttributes::getSQLHighlightConfPath());
+	}
+	catch(Exception &e)
+	{
+		Messagebox msgbox;
+		msgbox.show(e);
+	}
+}
+
 void SQLToolWidget::closeDatabaseExplorer(int idx)
 {
 	DatabaseExplorerWidget *db_explorer=dynamic_cast<DatabaseExplorerWidget *>(databases_tbw->widget(idx));
