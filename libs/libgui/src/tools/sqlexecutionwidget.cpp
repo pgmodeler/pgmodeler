@@ -210,6 +210,20 @@ bool SQLExecutionWidget::eventFilter(QObject *object, QEvent *event)
 	return QWidget::eventFilter(object, event);
 }
 
+void SQLExecutionWidget::reloadHighlightConfigs()
+{
+	try
+	{
+		sql_cmd_hl->loadConfiguration(GlobalAttributes::getSQLHighlightConfPath());
+		sql_cmd_txt->highlightCurrentLine();
+		cmd_history_hl->loadConfiguration(GlobalAttributes::getSQLHighlightConfPath());
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
+}
+
 void SQLExecutionWidget::setConnection(Connection conn)
 {
 	sql_exec_hlp.setConnection(conn);

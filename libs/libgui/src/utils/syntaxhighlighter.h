@@ -39,6 +39,8 @@ class __libgui SyntaxHighlighter: public QSyntaxHighlighter {
 	private:
 		Q_OBJECT
 
+		/*! \brief This struct stores the configuration of enclosing characters
+		 *  and their respective foreground/background color */
 		struct EnclosingCharsCfg {
 				QChar open_char, close_char;
 				QColor fg_color, bg_color;
@@ -80,6 +82,7 @@ class __libgui SyntaxHighlighter: public QSyntaxHighlighter {
 		//! \brief Stores the order in which the groups must be applied
 		std::vector<QString> groups_order;
 
+		//! \brief Stores the enclosing characters config read from file
 		std::vector<EnclosingCharsCfg> enclosing_chrs;
 
 		//! \brief Indicates if the configuration is loaded or not
@@ -135,6 +138,7 @@ class __libgui SyntaxHighlighter: public QSyntaxHighlighter {
 		the expression could match. Additionally this method returns a boolean indicating the if the match was successful */
 		bool isWordMatchGroup(const QString &word, const QString &group, bool use_final_expr, const QChar &lookahead_chr, int &match_idx, int &match_len);
 
+		//! \brief Applies the enclosing char formats based on the current cursor position on the parent input
 		void highlightEnclosingChars(const EnclosingCharsCfg &cfg);
 
 	public:

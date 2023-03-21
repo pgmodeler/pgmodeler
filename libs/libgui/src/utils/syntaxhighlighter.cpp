@@ -456,7 +456,7 @@ void SyntaxHighlighter::highlightEnclosingChars(const EnclosingCharsCfg &cfg)
 		pos += inc;
 	}
 
-	if(ini_pos != pos && pos >= 0 && pos < code.size())
+	if(ini_pos >= 0)
 	{
 		QTextCharFormat fmt;
 		QList<QTextEdit::ExtraSelection> selections;
@@ -472,19 +472,33 @@ void SyntaxHighlighter::highlightEnclosingChars(const EnclosingCharsCfg &cfg)
 		}
 
 		fmt = tc.charFormat();
-		fmt.setBackground(cfg.bg_color);
-		fmt.setForeground(cfg.fg_color);
-		sel.format = fmt;
 
+		if(pos >= 0 && pos < code.size())
+		{
+			// Color config for balanced enclosing chars
+			fmt.setBackground(cfg.bg_color);
+			fmt.setForeground(cfg.fg_color);
+		}
+		else
+		{
+			// Color config for unbalanced enclosing chars
+			fmt.setBackground(QColor(200, 0, 0));
+			fmt.setForeground(Qt::white);
+		}
+
+		sel.format = fmt;
 		tc.setPosition(ini_pos);
 		tc.setPosition(ini_pos + 1, QTextCursor::KeepAnchor);
 		sel.cursor = tc;
 		selections.append(sel);
 
-		tc.setPosition(pos);
-		tc.setPosition(pos + 1, QTextCursor::KeepAnchor);
-		sel.cursor = tc;
-		selections.append(sel);
+		if(pos >= 0 && pos < code.size())
+		{
+			tc.setPosition(pos);
+			tc.setPosition(pos + 1, QTextCursor::KeepAnchor);
+			sel.cursor = tc;
+			selections.append(sel);
+		}
 
 		code_txt->setExtraSelections(selections);
 	}
