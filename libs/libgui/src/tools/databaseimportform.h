@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -31,7 +31,7 @@
 #include "widgets/objectsfilterwidget.h"
 #include <QTimer>
 
-class DatabaseImportForm: public QDialog, public Ui::DatabaseImportForm {
+class __libgui DatabaseImportForm: public QDialog, public Ui::DatabaseImportForm {
 	private:
 		Q_OBJECT
 
@@ -68,7 +68,7 @@ class DatabaseImportForm: public QDialog, public Ui::DatabaseImportForm {
 		
 		/*! \brief Returns the items oids in "obj_oids" map. The second parameter
 		"col_oids" stores the columns oids for each selected table */
-		void getObjectToImport(map<ObjectType, vector<unsigned>> &obj_oids, map<unsigned, vector<unsigned>> &col_oids);
+		void getObjectToImport(std::map<ObjectType, std::vector<unsigned>> &obj_oids, std::map<unsigned, std::vector<unsigned>> &col_oids);
 		
 		void finishImport(const QString &msg);
 		void showEvent(QShowEvent *);
@@ -86,19 +86,21 @@ class DatabaseImportForm: public QDialog, public Ui::DatabaseImportForm {
 
 	public:
 		//! \brief Constants used to access the tree widget items data
-		static constexpr unsigned ObjectId=1,
-		ObjectTypeId=2,
-		ObjectName=3,
-		ObjectSchema=4,
-		ObjectTable=5,
-		ObjectAttribs=6, //Stores the object's attributes returned by catalog query
-		ObjectOtherData=7, //General purpose usage
-		ObjectCount=8,		
-		ObjectSource=9,
+		enum ObjectAttrId {
+			ObjectId=1,
+			ObjectTypeId=2,
+			ObjectName=3,
+			ObjectSchema=4,
+			ObjectTable=5,
+			ObjectAttribs=6, //Stores the object's attributes returned by catalog query
+			ObjectOtherData=7, //General purpose usage
+			ObjectCount=8,
+			ObjectSource=9,
 
-		/* Special field that stores an internal group id in the form -(object type code + root item id [if not null]).
-		 * This is use to save and restore tree state */
-		ObjectGroupId=10;
+			/* Special field that stores an internal group id in the form -(object type code + root item id [if not null]).
+			 * This is use to save and restore tree state */
+			ObjectGroupId=10
+		};
 
 		/*! \brief This constant holds the maximum amount of objects in a database to be imported
 		 * which will not generate an alert message about the possible slowdowns in the process
@@ -140,7 +142,7 @@ class DatabaseImportForm: public QDialog, public Ui::DatabaseImportForm {
 		The "schema" and "table" parameter are used to filter objects by schema and/or table.
 		This method automatically returns a list of QTreeWidgetItem when the vector "types" contains ObjectType::ObjSchema or ObjectType::Table or ObjectType::View,
 		The sort_by param indicates the column index in which the tree should be sorted by. When the sort_by is negative not sorting will be performed.*/
-		static vector<QTreeWidgetItem *> updateObjectsTree(DatabaseImportHelper &import_helper, QTreeWidget *tree_wgt, vector<ObjectType> types,
+		static std::vector<QTreeWidgetItem *> updateObjectsTree(DatabaseImportHelper &import_helper, QTreeWidget *tree_wgt, std::vector<ObjectType> types,
 																											 bool checkable_items=false, bool disable_empty_grps=true, QTreeWidgetItem *root=nullptr,
 																											 const QString &schema="", const QString &table="");
 

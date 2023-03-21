@@ -16,7 +16,7 @@ $tb $tb <excelement
 	$tb $tb $tb [<column name=] "{column}" /> $br
 %else
 	#%if {expression} %then
-	$tb $tb $tb <expression> <! $ob CDATA $ob {expression} $cb $cb > </expression> $br
+	$tb $tb $tb <expression> $sp <! $ob CDATA $ob {expression} $cb $cb > $sp </expression> $br
 	#%end
 %end
 

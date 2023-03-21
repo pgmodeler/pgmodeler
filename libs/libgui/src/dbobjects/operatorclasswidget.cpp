@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -23,17 +23,13 @@ OperatorClassWidget::OperatorClassWidget(QWidget *parent): BaseObjectWidget(pare
 	try
 	{
 		QGridLayout *grid=nullptr;
-		map<QString, vector<QWidget *> > fields_map;
-		map<QWidget *, vector<QString> > values_map;
-		QFrame *frame=nullptr;
-
 		Ui_OperatorClassWidget::setupUi(this);
 
-		family_sel=new ObjectSelectorWidget(ObjectType::OpFamily, true, this);
+		family_sel=new ObjectSelectorWidget(ObjectType::OpFamily, this);
 		data_type=new PgSQLTypeWidget(this);
-		operator_sel=new ObjectSelectorWidget(ObjectType::Operator, true, this);
-		elem_family_sel=new ObjectSelectorWidget(ObjectType::OpFamily, true, this);
-		function_sel=new ObjectSelectorWidget(ObjectType::Function, true, this);
+		operator_sel=new ObjectSelectorWidget(ObjectType::Operator, this);
+		elem_family_sel=new ObjectSelectorWidget(ObjectType::OpFamily, this);
+		function_sel=new ObjectSelectorWidget(ObjectType::Function, this);
 		storage_type=new PgSQLTypeWidget(this, tr("Storage Type"));
 		elements_tab=new ObjectsTableWidget(ObjectsTableWidget::AllButtons ^ ObjectsTableWidget::DuplicateButton, true, this);
 
@@ -61,14 +57,6 @@ OperatorClassWidget::OperatorClassWidget(QWidget *parent): BaseObjectWidget(pare
 		this->setLayout(grid);
 		configureFormLayout(grid, ObjectType::OpClass);
 
-		fields_map[BaseObjectWidget::generateVersionsInterval(BaseObjectWidget::AfterVersion, PgSqlVersions::PgSqlVersion95)].push_back(indexing_lbl);
-		values_map[indexing_lbl].push_back(~IndexingType(IndexingType::Brin));
-
-		frame=BaseObjectWidget::generateVersionWarningFrame(fields_map, &values_map);
-		frame->setParent(this);
-		grid=dynamic_cast<QGridLayout *>(this->layout());
-		grid->addWidget(frame, grid->count(), 0, 1, 5);
-
 		grid=dynamic_cast<QGridLayout *>(elements_grp->layout());
 		grid->addWidget(function_sel, 1,1,1,4);
 		grid->addWidget(operator_sel, 2,1,1,4);
@@ -76,17 +64,18 @@ OperatorClassWidget::OperatorClassWidget(QWidget *parent): BaseObjectWidget(pare
 		grid->addWidget(storage_type, 5,0,1,5);
 		grid->addWidget(elements_tab, 6,0,1,4);
 
-		connect(elem_type_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(selectElementType(int)));
-		connect(elements_tab, SIGNAL(s_rowAdded(int)), this, SLOT(handleElement(int)));
-		connect(elements_tab, SIGNAL(s_rowUpdated(int)), this, SLOT(handleElement(int)));
-		connect(elements_tab, SIGNAL(s_rowEdited(int)), this, SLOT(editElement(int)));
+		connect(elem_type_cmb, &QComboBox::currentIndexChanged, this, &OperatorClassWidget::selectElementType);
+		connect(elements_tab, &ObjectsTableWidget::s_rowAdded, this, &OperatorClassWidget::handleElement);
+		connect(elements_tab, &ObjectsTableWidget::s_rowUpdated, this, &OperatorClassWidget::handleElement);
+		connect(elements_tab, &ObjectsTableWidget::s_rowEdited, this, &OperatorClassWidget::editElement);
 
 		selectElementType(0);
 		indexing_cmb->addItems(IndexingType::getTypes());
 
 		setRequiredField(elements_grp);
 		configureTabOrder({ indexing_cmb, def_class_chk , family_sel, data_type, elem_type_cmb,
-												operator_sel, elem_family_sel, function_sel, stg_num_sb, storage_type });
+												operator_sel, elem_family_sel, function_sel, stg_num_sb, storage_type,
+												elements_tab });
 
 		setMinimumSize(640, 730);
 	}

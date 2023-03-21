@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
 
 RoundedRectItem::RoundedRectItem(QGraphicsItem *parent) :  QGraphicsRectItem(parent)
 {
-	radius=5;
+	radius=12;
 	corners=AllCorners;
 }
 
@@ -35,21 +35,21 @@ double RoundedRectItem::getBorderRadius()
 	return radius;
 }
 
-void RoundedRectItem::setRoundedCorners(unsigned corners)
+void RoundedRectItem::setRoundedCorners(RectCorners corners)
 {
 	if(corners > AllCorners)
-		corners=AllCorners;
+		corners = AllCorners;
 
 	this->corners=corners;
 	createPolygon();
 }
 
-unsigned RoundedRectItem::getRoundedCorners()
+RoundedRectItem::RectCorners RoundedRectItem::getRoundedCorners()
 {
 	return corners;
 }
 
-bool RoundedRectItem::isCornerRounded(unsigned corner)
+bool RoundedRectItem::isCornerRounded(RectCorners corner)
 {
 	return (corners & corner)==corner;
 }
@@ -58,6 +58,11 @@ void RoundedRectItem::setRect(const QRectF &rect)
 {
 	QGraphicsRectItem::setRect(rect);
 	createPolygon();
+}
+
+QPolygonF RoundedRectItem::getPolygon()
+{
+	return polygon;
 }
 
 void RoundedRectItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *)

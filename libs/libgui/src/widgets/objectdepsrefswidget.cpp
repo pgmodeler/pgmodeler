@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -18,21 +18,22 @@
 
 #include "objectdepsrefswidget.h"
 #include "guiutilsns.h"
+#include "objectfinderwidget.h"
 
 ObjectDepsRefsWidget::ObjectDepsRefsWidget(QWidget *parent): BaseObjectWidget(parent)
 {
 	Ui_ObjectDepsRefsWidget::setupUi(this);
 	configureFormLayout(objectdepsrefs_grid, ObjectType::BaseObject);
 
-	GuiUtilsNs::configureWidgetFont(message_lbl, GuiUtilsNs::MediumFontFactor);
+	//GuiUtilsNs::configureWidgetFont(message_lbl, GuiUtilsNs::MediumFontFactor);
 
 	model_wgt=nullptr;
 	alert_frm->setVisible(false);
 
-	connect(exc_ind_deps_chk,	SIGNAL(toggled(bool)), this, SLOT(updateObjectTables()));
-	connect(inc_ind_refs_chk,	SIGNAL(toggled(bool)), this, SLOT(updateObjectTables()));
-	connect(dependences_tbw, SIGNAL(itemDoubleClicked(QTableWidgetItem*)), this, SLOT(handleItemSelection(QTableWidgetItem*)));
-	connect(references_tbw, SIGNAL(itemDoubleClicked(QTableWidgetItem*)), this, SLOT(handleItemSelection(QTableWidgetItem*)));
+	connect(exc_ind_deps_chk,	&QCheckBox::toggled, this, &ObjectDepsRefsWidget::updateObjectTables);
+	connect(inc_ind_refs_chk,	&QCheckBox::toggled, this, &ObjectDepsRefsWidget::updateObjectTables);
+	connect(dependences_tbw, &QTableWidget::itemDoubleClicked, this, &ObjectDepsRefsWidget::handleItemSelection);
+	connect(references_tbw, &QTableWidget::itemDoubleClicked, this, &ObjectDepsRefsWidget::handleItemSelection);
 
 	setMinimumSize(580, 350);
 }
@@ -78,13 +79,13 @@ void ObjectDepsRefsWidget::clearTables()
 
 void ObjectDepsRefsWidget::updateObjectTables()
 {
-	vector<BaseObject *> objs;
+	std::vector<BaseObject *> objs;
 	model->getObjectDependecies(object, objs, !exc_ind_deps_chk->isChecked());
 
 	/* As the list of dependencies include the this->object itself is necessary
 	to remove only for semantics reasons */
 	objs.erase(std::find(objs.begin(), objs.end(), this->object));
-	ObjectFinderWidget::updateObjectTable(dependences_tbw, objs);
+	GuiUtilsNs::updateObjectTable(dependences_tbw, objs);
 
 	objs.clear();
 	if(!inc_ind_refs_chk->isChecked())
@@ -92,7 +93,7 @@ void ObjectDepsRefsWidget::updateObjectTables()
 	else
 		model->__getObjectReferences(object, objs);
 
-	ObjectFinderWidget::updateObjectTable(references_tbw, objs);
+	GuiUtilsNs::updateObjectTable(references_tbw, objs);
 
 	references_tbw->resizeColumnsToContents();
 	dependences_tbw->resizeColumnsToContents();

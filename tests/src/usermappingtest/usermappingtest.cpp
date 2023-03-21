@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -96,10 +96,10 @@ QString xml_code =QString(
 		usr_mapping.setOption("opt1", "value1");
 		usr_mapping.setOption("opt2", "value2");
 
-		QString res_sql_code = usr_mapping.getCodeDefinition(SchemaParser::SqlDefinition).simplified();
+		QString res_sql_code = usr_mapping.getSourceCode(SchemaParser::SqlCode).simplified();
 		QCOMPARE(sql_code, res_sql_code);
 
-		QString res_xml_code = usr_mapping.getCodeDefinition(SchemaParser::XmlDefinition).simplified();
+		QString res_xml_code = usr_mapping.getSourceCode(SchemaParser::XmlCode).simplified();
 		QCOMPARE(xml_code, res_xml_code);
 	}
 	catch (Exception &e)
@@ -133,7 +133,7 @@ void UserMappingTest::modelReturnsDepsAndRefsForUserMapping()
 		model.addForeignServer(&server);
 		model.addUserMapping(&usr_mapping);
 
-		vector<BaseObject *> refs, deps;
+		std::vector<BaseObject *> refs, deps;
 		model.getObjectDependecies(&usr_mapping, deps);
 
 		model.getObjectReferences(&server, refs);
@@ -184,7 +184,7 @@ void UserMappingTest::modelCreatesUserMappingfromXMLandResultingXMLisEqual()
 
 		QVERIFY(usr_map != nullptr);
 
-		res_xml_code = usr_map->getCodeDefinition(SchemaParser::XmlDefinition).simplified();
+		res_xml_code = usr_map->getSourceCode(SchemaParser::XmlCode).simplified();
 		xml_code = xml_code.simplified();
 
 		model.removeUserMapping(usr_map);

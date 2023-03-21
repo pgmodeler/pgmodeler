@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -18,21 +18,21 @@
 
 #include "objectsscene.h"
 
+ObjectsScene::GridPattern ObjectsScene::grid_pattern = ObjectsScene::SquarePattern;
+
 bool ObjectsScene::align_objs_grid=false;
 bool ObjectsScene::show_grid=true;
 bool ObjectsScene::show_page_delim=true;
+bool ObjectsScene::lock_delim_scale = false;
 unsigned ObjectsScene::grid_size=20;
+double ObjectsScene::delimiter_scale = 1;
 
-QPrinter::PageSize ObjectsScene::paper_size=QPrinter::A4;
-QPrinter::Orientation ObjectsScene::page_orientation=QPrinter::Landscape;
+QPageLayout ObjectsScene::page_layout(QPageSize(QPageSize::A4), QPageLayout::Landscape, QMarginsF(10,10,10,10));
+QSizeF ObjectsScene::custom_paper_size(0,0);
 
-QRectF ObjectsScene::page_margins=QRectF(2,2,2,2);
-QSizeF ObjectsScene::custom_paper_size=QSizeF(0,0);
-QBrush ObjectsScene::grid;
-
-const QColor ObjectsScene::DefaultGridColor = QColor(225, 225, 225);
-const QColor ObjectsScene::DefaultCanvasColor = QColor(255, 255, 255);
-const QColor ObjectsScene::DefaultDelimitersColor = QColor(75,115,195);
+const QColor ObjectsScene::DefaultGridColor(225, 225, 225);
+const QColor ObjectsScene::DefaultCanvasColor(255, 255, 255);
+const QColor ObjectsScene::DefaultDelimitersColor(75,115,195);
 
 QColor ObjectsScene::grid_color = ObjectsScene::DefaultGridColor;
 QColor ObjectsScene::canvas_color = ObjectsScene::DefaultCanvasColor;
@@ -45,8 +45,7 @@ ObjectsScene::ObjectsScene()
 {		
 	is_layer_rects_visible=is_layer_names_visible=false;
 	moving_objs=move_scene=false;
-	enable_range_sel=true;
-	this->setBackgroundBrush(grid);
+	show_scene_limits=enable_range_sel=true;
 
 	sel_ini_pnt.setX(DNaN);
 	sel_ini_pnt.setY(DNaN);
@@ -57,18 +56,21 @@ ObjectsScene::ObjectsScene()
 
 	rel_line=new QGraphicsLineItem;
 	rel_line->setVisible(false);
+	rel_line->setEnabled(false);
 	rel_line->setZValue(-1);
-	rel_line->setPen(QColor(80,80,80));
 
 	this->addItem(selection_rect);
 	this->addItem(rel_line);
 
 	scene_move_dx=scene_move_dy=0;
 
-	connect(&scene_move_timer, SIGNAL(timeout()), this, SLOT(moveObjectScene()));
-	connect(&corner_hover_timer, SIGNAL(timeout()), this, SLOT(enableSceneMove()));
+	connect(&scene_move_timer, &QTimer::timeout, this, &ObjectsScene::moveObjectScene);
 
-	connect(&object_move_timer, &QTimer::timeout, [&](){
+	connect(&corner_hover_timer, &QTimer::timeout, this, [this](){
+		enableSceneMove();
+	});
+
+	connect(&object_move_timer, &QTimer::timeout, this, [this](){
 		//If the timer reaches its timeout we execute the procedures to finish the objects movement
 		finishObjectsMove(itemsBoundingRect(true, true).center());
 		object_move_timer.stop();
@@ -83,7 +85,7 @@ ObjectsScene::~ObjectsScene()
 {
 	QGraphicsItemGroup *item=nullptr;
 	QList<QGraphicsItem *> items;
-	vector<ObjectType> obj_types={ ObjectType::Relationship, ObjectType::Textbox, ObjectType::View,
+	std::vector<ObjectType> obj_types={ ObjectType::Relationship, ObjectType::Textbox, ObjectType::View,
 																 ObjectType::Table, ObjectType::ForeignTable, ObjectType::Schema };
 
 	this->removeItem(selection_rect);
@@ -211,7 +213,7 @@ QString ObjectsScene::renameLayer(unsigned idx, const QString &name)
 				new_name = formatLayerName(name);
 
 		layers[idx] = new_name;
-		active_layers.replaceInStrings(QRegExp(QString("^(%1)$").arg(old_name)), new_name);
+		active_layers.replaceInStrings(QRegularExpression(QString("^(%1)$").arg(old_name)), new_name);
 
 		updateLayerRects();
 		emit s_layersChanged();
@@ -552,11 +554,8 @@ void ObjectsScene::updateActiveLayers()
 	setActiveLayers(active_layers);
 }
 
-QStringList ObjectsScene::getLayerColorNames(unsigned color_id)
+QStringList ObjectsScene::getLayerColorNames(LayerAttrColor color_id)
 {
-	if(color_id > LayerRectColor)
-		return {};
-
 	QStringList colors;
 
 	for(auto &path : layers_paths)
@@ -579,11 +578,8 @@ void ObjectsScene::setLayerColors(int layer_id, QColor txt_color, QColor bg_colo
 	layers_paths[layer_id]->update();
 }
 
-void ObjectsScene::setLayerColors(unsigned layer_attr_id, const QStringList &colors)
+void ObjectsScene::setLayerColors(LayerAttrColor layer_attr_id, const QStringList &colors)
 {
-	if(layer_attr_id > LayerRectColor)
-		return;
-
 	int idx = 0;
 	QColor color;
 
@@ -608,6 +604,27 @@ void ObjectsScene::setLayerColors(unsigned layer_attr_id, const QStringList &col
 	}
 }
 
+void ObjectsScene::setShowSceneLimits(bool show)
+{
+	show_scene_limits = show;
+}
+
+void ObjectsScene::setLockDelimiterScale(bool lock, double curr_scale)
+{
+	if(lock && curr_scale > 0 && curr_scale < 1)
+		delimiter_scale = curr_scale;
+	else
+		delimiter_scale = 1;
+
+	lock_delim_scale = lock;
+	//setGridSize(grid_size);
+}
+
+bool ObjectsScene::isDelimiterScaleLocked()
+{
+	return lock_delim_scale;
+}
+
 void ObjectsScene::setEnableCornerMove(bool enable)
 {
 	ObjectsScene::corner_move=enable;
@@ -621,6 +638,11 @@ void ObjectsScene::setInvertRangeSelectionTrigger(bool invert)
 bool ObjectsScene::isCornerMoveEnabled()
 {
 	return ObjectsScene::corner_move;
+}
+
+void ObjectsScene::setGridPattern(GridPattern pattern)
+{
+	grid_pattern = pattern;
 }
 
 QPointF ObjectsScene::alignPointToGrid(const QPointF &pnt)
@@ -719,60 +741,107 @@ QRectF ObjectsScene::itemsBoundingRect(bool seek_only_db_objs, bool selected_onl
 	}
 }
 
+void ObjectsScene::drawBackground(QPainter *painter, const QRectF &rect)
+{
+	double page_w = 0, page_h = 0,
+			delim_factor = 1/delimiter_scale,
+			scene_w = width(),
+			scene_h = height(),
+			pen_width = BaseObjectView::ObjectBorderWidth *
+									BaseObjectView::getScreenDpiFactor();
+	QSizeF aux_size;
+	QPen pen = QPen(QColor(), pen_width);
+	int scene_lim_x = 0, scene_lim_y = 0;
+
+	// Retrieve the page rect considering the orientation, margin and page size
+	aux_size = page_layout.paintRect(QPageLayout::Point).size() * delim_factor;
+
+	//Calculates where the extreme width and height where delimiter lines will be drawn
+	page_w = aux_size.width() / static_cast<double>(grid_size) * grid_size;
+	page_h = aux_size.height() / static_cast<double>(grid_size) * grid_size;
+
+	painter->save();
+	painter->setClipping(true);
+	painter->setClipRect(rect);
+	painter->setRenderHint(QPainter::Antialiasing, false);
+	painter->setRenderHint(QPainter::TextAntialiasing, false);
+	painter->fillRect(rect, canvas_color);
+
+	if(show_grid)
+	{
+		int px = 0, py = 0;
+
+		pen.setWidthF(pen_width *	(grid_pattern == GridPattern::DotPattern ? 1.50 : 1));
+		pen.setColor(grid_color);
+		painter->setPen(pen);
+
+		//Draws the grid
+		for(px = 0; px < scene_w; px += grid_size)
+		{
+			for(py = 0; py < scene_h; py += grid_size)
+			{
+				if(grid_pattern == GridPattern::SquarePattern)
+					painter->drawRect(QRectF(QPointF(px, py), QPointF(px + grid_size, py + grid_size)));
+				else
+				{
+					painter->drawPoint(px, py);
+					painter->drawPoint(px + grid_size, py);
+					painter->drawPoint(px + grid_size, py + grid_size);
+					painter->drawPoint(px, py + grid_size);
+				}
+			}
+		}
+
+		scene_lim_x = px;
+		scene_lim_y = py;
+	}
+	else
+	{
+		scene_lim_x = scene_w;
+		scene_lim_y = scene_h;
+	}
+
+	//Creates the page delimiter lines
+	if(show_page_delim)
+	{
+		pen.setWidthF(pen_width * 1.15);
+		pen.setColor(delimiters_color);
+		pen.setStyle(Qt::CustomDashLine);
+		pen.setDashPattern({3, 5});
+		painter->setPen(pen);
+
+		for(int px = 0; px < scene_w; px += page_w)
+		{
+			for(int py = 0; py < scene_h; py += page_h)
+			{
+				painter->drawLine(px + page_w, py, px + page_w, py + page_h);
+				painter->drawLine(px, py + page_h, px + page_w, py + page_h);
+			}
+		}
+	}
+
+	// Drawing the scene boundaries
+	if(show_scene_limits)
+	{
+		pen.setColor(QColor(255, 0, 0));
+		pen.setStyle(Qt::SolidLine);
+		painter->setPen(pen);
+		painter->drawLine(0, scene_lim_y, scene_lim_x, scene_lim_y);
+		painter->drawLine(scene_lim_x, 0, scene_lim_x, scene_lim_y);
+	}
+
+	painter->restore();
+}
+
 void ObjectsScene::setGridSize(unsigned size)
 {
-	if(size >= 20 || grid.style()==Qt::NoBrush)
-	{
-		QImage grid_img;
-		double width, height, x, y;
-		int img_w, img_h;
-		QSizeF aux_size;
-		QPrinter printer;
-		QPainter painter;
-		QPen pen;
+	if(size < 20)	size = 20;
+	grid_size = size;
+}
 
-		configurePrinter(&printer);
-		aux_size=printer.paperSize(QPrinter::Point);
-		aux_size-=page_margins.size();
-
-		//Calculates where the extreme width and height where delimiter lines will be drawn
-		width=aux_size.width()/static_cast<double>(size) * size;
-		height=aux_size.height()/static_cast<double>(size) * size;
-
-		//Calculates the grid pixmpa size
-		img_w=ceil(width/size) * size;
-		img_h=ceil(height/size) * size;
-
-		grid_size=size;
-		grid_img=QImage(img_w, img_h, QImage::Format_ARGB32);
-		grid_img.fill(canvas_color);
-		painter.begin(&grid_img);
-
-		if(show_grid)
-		{
-			pen.setColor(grid_color);
-			painter.setPen(pen);
-
-			//Draws the grid
-			for(x=0; x < width; x+=size)
-				for(y=0; y < height; y+=size)
-					painter.drawRect(QRectF(QPointF(x,y),QPointF(x + size,y + size)));
-		}
-
-		//Creates the page delimiter lines
-		if(show_page_delim)
-		{
-			pen.setColor(delimiters_color);
-			pen.setStyle(Qt::DashLine);
-			pen.setWidthF(1.0);
-			painter.setPen(pen);
-			painter.drawLine(width-1, 0,width-1,img_h-1);
-			painter.drawLine(0, height-1,img_w-1,height-1);
-		}
-
-		painter.end();
-		grid.setTextureImage(grid_img);
-	}
+unsigned int ObjectsScene::getGridSize()
+{
+	return grid_size;
 }
 
 void ObjectsScene::showRelationshipLine(bool value, const QPointF &p_start)
@@ -786,6 +855,8 @@ void ObjectsScene::showRelationshipLine(bool value, const QPointF &p_start)
 	if(!std::isnan(p_start.x()) && !std::isnan(p_start.y()))
 		rel_line->setLine(QLineF(p_start,p_start));
 
+	rel_line->setPen(QPen(delimiters_color,
+												BaseObjectView::ObjectBorderWidth * BaseObjectView::getScreenDpiFactor()));
 	rel_line->setVisible(value);
 
 	while(!items.isEmpty())
@@ -820,21 +891,9 @@ void ObjectsScene::showRelationshipLine(bool value, const QPointF &p_start)
 	}
 }
 
-void ObjectsScene::setGridOptions(bool show_grd, bool align_objs_grd, bool show_pag_dlm)
+void ObjectsScene::setAlignObjectsToGrid(bool value)
 {
-	bool redef_grid=(ObjectsScene::show_grid!=show_grd ||
-										ObjectsScene::show_page_delim!=show_pag_dlm ||
-										grid.style()==Qt::NoBrush);
-
-	ObjectsScene::show_grid=show_grd;
-	ObjectsScene::show_page_delim=show_pag_dlm;
-	ObjectsScene::align_objs_grid=align_objs_grd;
-
-	if(redef_grid)
-	{
-		grid.setStyle(Qt::NoBrush);
-		setGridSize(ObjectsScene::grid_size);
-	}
+	align_objs_grid = value;
 }
 
 bool ObjectsScene::isAlignObjectsToGrid()
@@ -842,9 +901,19 @@ bool ObjectsScene::isAlignObjectsToGrid()
 	return align_objs_grid;
 }
 
+void ObjectsScene::setShowGrid(bool value)
+{
+	show_grid = value;
+}
+
 bool ObjectsScene::isShowGrid()
 {
 	return show_grid;
+}
+
+void ObjectsScene::setShowPageDelimiters(bool value)
+{
+	show_page_delim = value;
 }
 
 bool ObjectsScene::isShowPageDelimiters()
@@ -852,67 +921,14 @@ bool ObjectsScene::isShowPageDelimiters()
 	return show_page_delim;
 }
 
-void ObjectsScene::setPaperConfiguration(QPrinter::PaperSize paper_sz, QPrinter::Orientation orient, QRectF margins, QSizeF custom_size)
+void ObjectsScene::setPageLayout(const QPageLayout &page_lt)
 {
-	ObjectsScene::paper_size=paper_sz;
-	ObjectsScene::page_orientation=orient;
-	ObjectsScene::page_margins=margins;
-	ObjectsScene::custom_paper_size=custom_size;
+	page_layout = page_lt;
 }
 
-void ObjectsScene::getPaperConfiguration(QPrinter::PaperSize &paper_sz, QPrinter::Orientation &orient, QRectF &margins, QSizeF &custom_size)
+QPageLayout ObjectsScene::getPageLayout()
 {
-	paper_sz=ObjectsScene::paper_size;
-	orient=ObjectsScene::page_orientation;
-	margins=ObjectsScene::page_margins;
-	custom_size=ObjectsScene::custom_paper_size;
-}
-
-void ObjectsScene::configurePrinter(QPrinter *printer)
-{
-	if(!printer)
-		throw Exception(ErrorCode::OprNotAllocatedObject ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-
-	if(paper_size!=QPrinter::Custom)
-		printer->setPaperSize(paper_size);
-	else
-	{
-		QPageLayout pl;
-		QPageSize ps;
-		ps=QPageSize(QSizeF(custom_paper_size.width(), custom_paper_size.height()), QPageSize::Point, "", QPageSize::ExactMatch);
-		pl.setPageSize(ps);
-		pl.setOrientation(page_orientation==QPrinter::Landscape ? QPageLayout::Landscape : QPageLayout::Portrait);
-		printer->setPageSize(pl.pageSize());
-	}
-
-	if(paper_size==QPrinter::Custom)
-	{
-		if(custom_paper_size.width() > custom_paper_size.height())
-			ObjectsScene::page_orientation=QPrinter::Landscape;
-		else
-			ObjectsScene::page_orientation=QPrinter::Portrait;
-	}
-	else
-		printer->setOrientation(page_orientation);
-
-	printer->setPageMargins(page_margins.left(), page_margins.top(), page_margins.width(), page_margins.height(), QPrinter::Millimeter);
-}
-
-void ObjectsScene::configurePrinter(QPrinter *printer, const QSizeF &custom_size, QPrinter::Orientation orient)
-{
-	QPrinter::PaperSize orig_page_sz=paper_size;
-	QPrinter::Orientation orig_orient=page_orientation;
-	QSizeF orig_custom_sz=custom_paper_size;
-
-	paper_size=QPrinter::Custom;
-	page_orientation=orient;
-	custom_paper_size=custom_size;
-
-	configurePrinter(printer);
-
-	paper_size=orig_page_sz;
-	page_orientation=orig_orient;
-	custom_paper_size=orig_custom_sz;
+	return page_layout;
 }
 
 void ObjectsScene::handlePopupMenuRequested(TableObject *child_obj)
@@ -951,15 +967,15 @@ void ObjectsScene::addItem(QGraphicsItem *item)
 		TextboxView *txtbox=dynamic_cast<TextboxView *>(item);
 
 		if(rel)
-			connect(rel, SIGNAL(s_relationshipModified(BaseGraphicObject*)), this, SIGNAL(s_objectModified(BaseGraphicObject*)));
+			connect(rel, &RelationshipView::s_relationshipModified, this, &ObjectsScene::s_objectModified);
 		else if(tab)
 		{
-			connect(tab, SIGNAL(s_popupMenuRequested(TableObject*)), this, SLOT(handlePopupMenuRequested(TableObject*)));
-			connect(tab, SIGNAL(s_childrenSelectionChanged()), this, SLOT(handleChildrenSelectionChanged()));
-			connect(tab, SIGNAL(s_collapseModeChanged()), this, SIGNAL(s_collapseModeChanged()));
-			connect(tab, SIGNAL(s_paginationToggled()), this, SIGNAL(s_paginationToggled()));
-			connect(tab, SIGNAL(s_currentPageChanged()), this, SIGNAL(s_currentPageChanged()));
-			connect(tab, SIGNAL(s_sceneClearRequested()), this, SLOT(clearSelection()));
+			connect(tab, &BaseTableView::s_popupMenuRequested, this, &ObjectsScene::handlePopupMenuRequested);
+			connect(tab, &BaseTableView::s_childrenSelectionChanged, this, &ObjectsScene::handleChildrenSelectionChanged);
+			connect(tab, &BaseTableView::s_collapseModeChanged, this, &ObjectsScene::s_collapseModeChanged);
+			connect(tab, &BaseTableView::s_paginationToggled, this, &ObjectsScene::s_paginationToggled);
+			connect(tab, &BaseTableView::s_currentPageChanged, this, &ObjectsScene::s_currentPageChanged);
+			connect(tab, &BaseTableView::s_sceneClearRequested, this, &ObjectsScene::clearSelection);
 		}
 
 		if(obj)
@@ -970,11 +986,11 @@ void ObjectsScene::addItem(QGraphicsItem *item)
 			if(!rel && !dynamic_cast<SchemaView *>(item))
 				obj->setZValue(dynamic_cast<BaseGraphicObject *>(obj->getUnderlyingObject())->getZValue());
 
-			connect(obj, SIGNAL(s_objectSelected(BaseGraphicObject*,bool)), this, SLOT(handleObjectSelection(BaseGraphicObject*,bool)));
+			connect(obj, &BaseObjectView::s_objectSelected, this, &ObjectsScene::handleObjectSelection);
 
 			// Tables and textboxes are observed for dimension changes so the layers they are in are correctly updated
 			if(tab || txtbox)
-				connect(obj, SIGNAL(s_objectDimensionChanged()), this, SLOT(updateLayerRects()));
+				connect(obj, &BaseObjectView::s_objectDimensionChanged, this, &ObjectsScene::updateLayerRects);
 		}
 
 		QGraphicsScene::addItem(item);
@@ -1392,8 +1408,7 @@ void ObjectsScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 			//If the alignment to grid is active, adjust the event scene position
 			if(align_objs_grid && !selection_rect->isVisible() && sel_items_count <= 1)
 				event->setScenePos(this->alignPointToGrid(event->scenePos()));
-			else
-			if(selection_rect->isVisible())
+			else	if(selection_rect->isVisible())
 			{
 				QPolygonF pol;
 				pol.append(sel_ini_pnt);
@@ -1421,7 +1436,7 @@ void ObjectsScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 		enableSceneMove(false);
 
 	//If there is selected object and the user ends the object moviment
-	if(!this->selectedItems().isEmpty() && moving_objs && event->button()==Qt::LeftButton/* && event->modifiers()==Qt::NoModifier */)
+	if(!this->selectedItems().isEmpty() && moving_objs && event->button()==Qt::LeftButton)
 	{
 		finishObjectsMove(event->scenePos());
 	}
@@ -1433,7 +1448,7 @@ void ObjectsScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 		sel_area.addRect(selection_rect->polygon().boundingRect());
 
 		this->blockItemsSignals(true);
-		this->setSelectionArea(sel_area, Qt::IntersectsItemShape);
+		this->setSelectionArea(sel_area);
 		this->blockItemsSignals(false);
 
 		selection_rect->setVisible(false);
@@ -1449,12 +1464,11 @@ void ObjectsScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 void ObjectsScene::finishObjectsMove(const QPointF &pnt_end)
 {
 	QList<QGraphicsItem *> items=this->selectedItems(), rel_list;
-	double x1,y1,x2,y2, dx, dy;
-	QRectF rect;
+	double dx, dy;
 	SchemaView *sch_view=nullptr;
-	vector<QPointF> points;
-	vector<QPointF>::iterator itr;
-	vector<BaseObject *> rels, base_rels;
+	std::vector<QPointF> points;
+	std::vector<QPointF>::iterator itr;
+	std::vector<BaseObject *> rels, base_rels;
 	QSet<Schema *> schemas;
 	BaseRelationship *base_rel=nullptr;
 	RelationshipView *rel=nullptr;
@@ -1503,31 +1517,20 @@ void ObjectsScene::finishObjectsMove(const QPointF &pnt_end)
 						rel_list.push_back(dynamic_cast<QGraphicsItem *>(base_rel->getOverlyingObject()));
 				}
 
-				#if (QT_VERSION < QT_VERSION_CHECK(5, 14, 0))
-					tables.unite(sch_view->getChildren().toSet());
-				#else
-					QList<BaseObjectView *> list = sch_view->getChildren();
-					tables.unite(QSet<BaseObjectView *>(list.begin(), list.end()));
-				#endif
+				QList<BaseObjectView *> list = sch_view->getChildren();
+				tables.unite(QSet<BaseObjectView *>(list.begin(), list.end()));
 			}
 		}
 	}
 
 	items.append(rel_list);
-
-	/* Get the extreme points of the scene to check if some objects are out the area
-	forcing the scene to be resized */
-	x1=this->sceneRect().left();
-	y1=this->sceneRect().top();
-	x2=this->sceneRect().right();
-	y2=this->sceneRect().bottom();
 	dx=pnt_end.x() - sel_ini_pnt.x();
 	dy=pnt_end.y() - sel_ini_pnt.y();
 
 	for(auto &item : items)
 	{
 		// Ignoring table objects items
-		tab_obj_view=dynamic_cast<TableObjectView *>(item);
+		tab_obj_view = dynamic_cast<TableObjectView *>(item);
 		if(tab_obj_view) continue;
 
 		rel=dynamic_cast<RelationshipView *>(item);
@@ -1543,16 +1546,13 @@ void ObjectsScene::finishObjectsMove(const QPointF &pnt_end)
 				if(p.y() < 0) p.setY(0);
 				item->setPos(p);
 			}
-
-			rect.setTopLeft(item->pos());
-			rect.setSize(item->boundingRect().size());
 		}
 		else
 		{
 			/* If the relationship has points added to the line is necessary to move the points
 				 too. Since relationships cannot be moved naturally (by user) this will be done
 				 by the scene. NOTE: this operation is done ONLY WHEN there is more than one object selected! */
-			points=rel->getUnderlyingObject()->getPoints();
+			points = rel->getUnderlyingObject()->getPoints();
 			if(items.size() > 1 && !points.empty())
 			{
 				itr=points.begin();
@@ -1573,28 +1573,7 @@ void ObjectsScene::finishObjectsMove(const QPointF &pnt_end)
 				rel->getUnderlyingObject()->setPoints(points);
 				rel->configureLine();
 			}
-
-			rect=rel->__boundingRect();
 		}
-
-		//Made the comparisson between the scene extremity and the object's bounding rect
-		if(rect.left() < x1) x1=rect.left();
-		if(rect.top() < y1) y1=rect.top();
-		if(rect.right() > x2) x2=rect.right();
-		if(rect.bottom() > y2) y2=rect.bottom();
-	}
-
-	//Reconfigures the rectangle with the most extreme points
-	rect.setCoords(x1, y1, x2, y2);
-
-	//If the new rect is greater than the scene bounding rect, this latter is resized
-	if(rect!=this->sceneRect())
-	{
-		rect=this->itemsBoundingRect();
-		rect.setTopLeft(QPointF(0,0));
-		rect.setWidth(rect.width() * 1.05);
-		rect.setHeight(rect.height() * 1.05);
-		this->setSceneRect(rect);
 	}
 
 	for(auto &obj : tables)
@@ -1616,12 +1595,19 @@ void ObjectsScene::finishObjectsMove(const QPointF &pnt_end)
 	for(auto &obj : schemas)
 		obj->setModified(true);
 
-	emit s_objectsMoved(true);
 	moving_objs=false;
 	sel_ini_pnt.setX(DNaN);
 	sel_ini_pnt.setY(DNaN);
-
 	updateLayerRects();
+
+	QRectF rect = this->itemsBoundingRect();
+	rect.setTopLeft(QPointF(0,0));
+	rect.setWidth(rect.width() + (2 * grid_size));
+	rect.setHeight(rect.height() + (2 * grid_size));
+	setSceneRect(rect);
+	invalidate();
+
+	emit s_objectsMoved(true);
 }
 
 void ObjectsScene::alignObjectsToGrid()
@@ -1630,8 +1616,8 @@ void ObjectsScene::alignObjectsToGrid()
 	RelationshipView *rel=nullptr;
 	BaseTableView *tab=nullptr;
 	TextboxView *lab=nullptr;
-	vector<QPointF> points;
-	vector<Schema *> schemas;
+	std::vector<QPointF> points;
+	std::vector<Schema *> schemas;
 	unsigned i, count, i1, count1;
 
 	count=items.size();
@@ -1659,10 +1645,9 @@ void ObjectsScene::alignObjectsToGrid()
 				}
 
 				//Align the labels
-				for(i1=BaseRelationship::SrcCardLabel;
-					i1<=BaseRelationship::RelNameLabel; i1++)
+				for(i1=BaseRelationship::SrcCardLabel; i1 <= BaseRelationship::RelNameLabel; i1++)
 				{
-					lab=rel->getLabel(i1);
+					lab=rel->getLabel(static_cast<BaseRelationship::LabelId>(i1));
 					if(lab)
 						lab->setPos(this->alignPointToGrid(lab->pos()));
 				}
@@ -1686,7 +1671,6 @@ void ObjectsScene::alignObjectsToGrid()
 
 void ObjectsScene::update()
 {
-	this->setBackgroundBrush(grid);
 	QGraphicsScene::update(this->sceneRect());
 }
 
@@ -1704,16 +1688,24 @@ void ObjectsScene::clearSelection()
 	QGraphicsScene::clearSelection();
 }
 
-vector<QRectF> ObjectsScene::getPagesForPrinting(const QSizeF &paper_size, const QSizeF &margin, unsigned &h_page_cnt, unsigned &v_page_cnt)
+QList<QRectF> ObjectsScene::getPagesForPrinting(const QPageLayout &page_lt, unsigned &h_page_cnt, unsigned &v_page_cnt, double scale)
 {
-	vector<QRectF> pages;
+	QList<QRectF> pages;
 	QRectF page_rect, max_rect;
-	double width, height, page_width, page_height;
+	double width = 0, height = 0, page_width = 0, page_height = 0;
 	unsigned h_page=0, v_page=0, start_h=99999, start_v=99999;
 	QList<QGraphicsItem *> list;
 
-	page_width=ceil(paper_size.width() - margin.width()-1);
-	page_height=ceil(paper_size.height() - margin.height()-1);
+	if(scale < MinScaleFactor)
+		scale = MinScaleFactor;
+	else if(scale > MaxScaleFactor)
+		scale = MaxScaleFactor;
+
+	page_width = page_lt.paintRect(QPageLayout::Point).width();
+	page_width /= scale;
+
+	page_height = page_lt.paintRect(QPageLayout::Point).height();
+	page_height /= scale;
 
 	//Calculates the horizontal and vertical page count based upon the passed paper size
 	h_page_cnt=round(this->sceneRect().width()/page_width) + 1;
@@ -1753,9 +1745,14 @@ vector<QRectF> ObjectsScene::getPagesForPrinting(const QSizeF &paper_size, const
 	//Inserts the page rectangles on the list
 	for(v_page=static_cast<unsigned>(start_v); v_page < v_page_cnt; v_page++)
 		for(h_page=static_cast<unsigned>(start_h); h_page < h_page_cnt; h_page++)
-			pages.push_back(QRectF(QPointF(h_page * page_width, v_page * page_height), QSizeF(page_width, page_height)));
+			pages.append(QRectF(QPointF(h_page * page_width, v_page * page_height), QSizeF(page_width, page_height)));
 
 	return pages;
+}
+
+QList<QRectF> ObjectsScene::getPagesForPrinting(unsigned &h_page_cnt, unsigned &v_page_cnt, double scale)
+{
+	return getPagesForPrinting(page_layout, h_page_cnt, v_page_cnt, scale);
 }
 
 bool ObjectsScene::isRangeSelectionEnabled()

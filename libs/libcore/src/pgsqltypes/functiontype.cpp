@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -18,9 +18,8 @@
 
 #include "functiontype.h"
 
-template<>
-QStringList FunctionType::TemplateType<FunctionType>::type_names = {
-	"", // Reserved for BaseType::null
+QStringList FunctionType::type_names = {
+	"", // Reserved for Class::Null
 
 	"VOLATILE",
 	"STABLE",
@@ -37,7 +36,27 @@ FunctionType::FunctionType()
 	type_idx = Volatile;
 }
 
+QStringList FunctionType::getTypes()
+{
+	return TemplateType<FunctionType>::getTypes(type_names);
+}
+
 FunctionType::FunctionType(const QString &type_name)
 {
 	setType(type_name);
+}
+
+unsigned FunctionType::setType(unsigned type_id)
+{
+	return TemplateType<FunctionType>::setType(type_id, type_names);
+}
+
+unsigned FunctionType::setType(const QString &type_name)
+{
+	return TemplateType<FunctionType>::setType(type_name, type_names);
+}
+
+QString FunctionType::getTypeName(unsigned type_id)
+{
+	return TemplateType<FunctionType>::getTypeName(type_id, type_names);
 }

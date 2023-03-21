@@ -15,7 +15,7 @@
   </property>
   <property name="windowIcon">
    <iconset resource="../../res/resources.qrc">
-    <normaloff>:/icons/icons/pgsqlModeler48x48.png</normaloff>:/icons/icons/pgsqlModeler48x48.png</iconset>
+    <normaloff>:/icons/icons/pgmodeler_logo.png</normaloff>:/icons/icons/pgmodeler_logo.png</iconset>
   </property>
   <layout class="QGridLayout" name="objectdepsrefs_grid">
    <property name="leftMargin">
@@ -31,7 +31,7 @@
     <number>0</number>
    </property>
    <property name="spacing">
-    <number>6</number>
+    <number>5</number>
    </property>
    <item row="1" column="0">
     <widget class="QTabWidget" name="tabWidget">
@@ -45,24 +45,28 @@
       </size>
      </property>
      <widget class="QWidget" name="dependnces_tab">
+      <attribute name="icon">
+       <iconset resource="../../res/resources.qrc">
+        <normaloff>:/icons/icons/referrer.png</normaloff>:/icons/icons/referrer.png</iconset>
+      </attribute>
       <attribute name="title">
-       <string>Dependencies</string>
+       <string>&amp;Dependencies</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout">
        <property name="leftMargin">
-        <number>4</number>
+        <number>5</number>
        </property>
        <property name="topMargin">
-        <number>4</number>
+        <number>5</number>
        </property>
        <property name="rightMargin">
-        <number>4</number>
+        <number>5</number>
        </property>
        <property name="bottomMargin">
-        <number>4</number>
+        <number>5</number>
        </property>
        <property name="spacing">
-        <number>6</number>
+        <number>5</number>
        </property>
        <item row="0" column="0">
         <widget class="QTableWidget" name="dependences_tbw">
@@ -80,6 +84,12 @@
          </property>
          <property name="selectionBehavior">
           <enum>QAbstractItemView::SelectRows</enum>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>25</width>
+           <height>25</height>
+          </size>
          </property>
          <property name="gridStyle">
           <enum>Qt::SolidLine</enum>
@@ -198,24 +208,28 @@
       </layout>
      </widget>
      <widget class="QWidget" name="references_tab">
+      <attribute name="icon">
+       <iconset resource="../../res/resources.qrc">
+        <normaloff>:/icons/icons/referenced.png</normaloff>:/icons/icons/referenced.png</iconset>
+      </attribute>
       <attribute name="title">
-       <string>References</string>
+       <string>&amp;References</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout_2">
        <property name="leftMargin">
-        <number>4</number>
+        <number>5</number>
        </property>
        <property name="topMargin">
-        <number>4</number>
+        <number>5</number>
        </property>
        <property name="rightMargin">
-        <number>4</number>
+        <number>5</number>
        </property>
        <property name="bottomMargin">
-        <number>4</number>
+        <number>5</number>
        </property>
        <property name="spacing">
-        <number>6</number>
+        <number>5</number>
        </property>
        <item row="0" column="0">
         <widget class="QTableWidget" name="references_tbw">
@@ -233,6 +247,12 @@
          </property>
          <property name="selectionBehavior">
           <enum>QAbstractItemView::SelectRows</enum>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>22</width>
+           <height>22</height>
+          </size>
          </property>
          <property name="gridStyle">
           <enum>Qt::SolidLine</enum>
@@ -371,30 +391,32 @@
      </property>
      <layout class="QGridLayout" name="gridLayout_4">
       <property name="leftMargin">
-       <number>2</number>
+       <number>5</number>
       </property>
       <property name="topMargin">
-       <number>2</number>
+       <number>5</number>
       </property>
       <property name="rightMargin">
-       <number>2</number>
+       <number>5</number>
       </property>
       <property name="bottomMargin">
-       <number>2</number>
+       <number>5</number>
+      </property>
+      <property name="spacing">
+       <number>5</number>
       </property>
       <item row="0" column="0">
-       <widget class="QLabel" name="label_3">
-        <property name="minimumSize">
-         <size>
-          <width>24</width>
-          <height>24</height>
-         </size>
-        </property>
+       <widget class="QLabel" name="icon_lbl">
         <property name="maximumSize">
          <size>
-          <width>24</width>
-          <height>24</height>
+          <width>25</width>
+          <height>25</height>
          </size>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>20</pointsize>
+         </font>
         </property>
         <property name="text">
          <string/>
@@ -414,7 +436,6 @@
        <widget class="QLabel" name="message_lbl">
         <property name="font">
          <font>
-          <weight>50</weight>
           <bold>false</bold>
           <underline>false</underline>
           <strikeout>false</strikeout>
@@ -422,7 +443,7 @@
          </font>
         </property>
         <property name="text">
-         <string>This object does not exists anymore. The dependencies and references listing are disabled.</string>
+         <string>This object does not exist anymore. The dependencies and references listing is disabled.</string>
         </property>
         <property name="wordWrap">
          <bool>true</bool>
@@ -435,6 +456,7 @@
   </layout>
  </widget>
  <resources>
+  <include location="../../res/resources.qrc"/>
   <include location="../../res/resources.qrc"/>
  </resources>
  <connections/>

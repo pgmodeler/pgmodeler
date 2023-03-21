@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -21,16 +21,16 @@
 #include "messagebox.h"
 #include "guiutilsns.h"
 
-map<QString, attribs_map> SnippetsConfigWidget::config_params;
+std::map<QString, attribs_map> SnippetsConfigWidget::config_params;
 
-const QRegExp SnippetsConfigWidget::IdFormatRegExp=QRegExp(QString("^([a-z])([a-z]*|(\\d)*|(_)*)+"), Qt::CaseInsensitive);
+const QRegularExpression SnippetsConfigWidget::IdFormatRegExp(QRegularExpression::anchoredPattern("^([a-z])([a-z]*|(\\d)*|(_)*)+"), QRegularExpression::CaseInsensitiveOption);
 
 SnippetsConfigWidget::SnippetsConfigWidget(QWidget * parent) : BaseConfigWidget(parent)
 {
 	QPixmap ico;
 	QString gen_purpose=tr("General purpose");
-	map<QString, ObjectType> types_map;
-	vector<ObjectType> types=BaseObject::getObjectTypes(true, {ObjectType::Relationship, ObjectType::Tag, ObjectType::Textbox,
+	std::map<QString, ObjectType> types_map;
+	std::vector<ObjectType> types=BaseObject::getObjectTypes(true, {ObjectType::Relationship, ObjectType::Tag, ObjectType::Textbox,
 																														 ObjectType::Permission, ObjectType::BaseRelationship });
 
 	setupUi(this);
@@ -42,14 +42,14 @@ SnippetsConfigWidget::SnippetsConfigWidget(QWidget * parent) : BaseConfigWidget(
 	for(auto &itr : types_map)
 	{
 		ico.load(GuiUtilsNs::getIconPath(itr.second));
-		applies_to_cmb->addItem(ico, itr.first, enum_cast(itr.second));
-		filter_cmb->addItem(ico, itr.first, enum_cast(itr.second));
+		applies_to_cmb->addItem(ico, itr.first, enum_t(itr.second));
+		filter_cmb->addItem(ico, itr.first, enum_t(itr.second));
 	}
 
-	applies_to_cmb->insertItem(0, gen_purpose, enum_cast(ObjectType::BaseObject));
+	applies_to_cmb->insertItem(0, gen_purpose, enum_t(ObjectType::BaseObject));
 	applies_to_cmb->setCurrentIndex(0);
 
-	filter_cmb->insertItem(0, gen_purpose, enum_cast(ObjectType::BaseObject));
+	filter_cmb->insertItem(0, gen_purpose, enum_t(ObjectType::BaseObject));
 	filter_cmb->insertItem(0, tr("All snippets"));
 	filter_cmb->setCurrentIndex(0);
 
@@ -67,24 +67,32 @@ SnippetsConfigWidget::SnippetsConfigWidget(QWidget * parent) : BaseConfigWidget(
 
 	enableEditMode(false);
 
-	connect(new_tb, SIGNAL(clicked()), this, SLOT(resetForm()));
-	connect(edit_tb, SIGNAL(clicked()), this, SLOT(editSnippet()));
-	connect(remove_tb, SIGNAL(clicked()), this, SLOT(removeSnippet()));
-	connect(remove_all_tb, SIGNAL(clicked()), this, SLOT(removeAllSnippets()));
-	connect(cancel_tb, &QToolButton::clicked, [&](){ enableEditMode(false); });
-	connect(snippets_cmb, &QComboBox::currentTextChanged, [&](){ enableEditMode(false); });
-	connect(id_edt, SIGNAL(textChanged(QString)), this, SLOT(enableSaveButtons()));
-	connect(label_edt, SIGNAL(textChanged(QString)), this, SLOT(enableSaveButtons()));
-	connect(snippet_txt, SIGNAL(textChanged()), this, SLOT(enableSaveButtons()));
-	connect(parsable_chk, SIGNAL(toggled(bool)), this, SLOT(enableSaveButtons()));
-	connect(filter_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(filterSnippets(int)));
-	connect(update_tb, SIGNAL(clicked()), this, SLOT(handleSnippet()));
-	connect(add_tb, SIGNAL(clicked()), this, SLOT(handleSnippet()));
-	connect(parse_tb, SIGNAL(clicked()), this, SLOT(parseSnippet()));
-	connect(parsable_chk, SIGNAL(toggled(bool)), placeholders_chk, SLOT(setEnabled(bool)));
+	connect(new_tb, &QToolButton::clicked, this, &SnippetsConfigWidget::resetForm);
+	connect(edit_tb, &QToolButton::clicked, this, &SnippetsConfigWidget::editSnippet);
+	connect(remove_tb, &QToolButton::clicked, this, &SnippetsConfigWidget::removeSnippet);
+	connect(remove_all_tb, &QToolButton::clicked, this, &SnippetsConfigWidget::removeAllSnippets);
+
+	connect(cancel_tb, &QToolButton::clicked, this, [this](){
+		enableEditMode(false);
+	});
+
+	connect(snippets_cmb, &QComboBox::currentTextChanged, this, [this](){
+		enableEditMode(false);
+	});
+
+	connect(id_edt, &QLineEdit::textChanged, this, &SnippetsConfigWidget::enableSaveButtons);
+	connect(label_edt, &QLineEdit::textChanged, this, &SnippetsConfigWidget::enableSaveButtons);
+	connect(snippet_txt, &NumberedTextEditor::textChanged, this, &SnippetsConfigWidget::enableSaveButtons);
+	connect(parsable_chk, &QCheckBox::toggled, this, &SnippetsConfigWidget::enableSaveButtons);
+	connect(filter_cmb, &QComboBox::currentIndexChanged, this, &SnippetsConfigWidget::filterSnippets);
+	connect(update_tb, &QPushButton::clicked, this, &SnippetsConfigWidget::handleSnippet);
+	connect(add_tb, &QPushButton::clicked, this, &SnippetsConfigWidget::handleSnippet);
+	connect(parse_tb, &QPushButton::clicked, this, qOverload<>(&SnippetsConfigWidget::parseSnippet));
+
+	connect(parsable_chk, &QCheckBox::toggled, placeholders_chk, &QCheckBox::setEnabled);
 }
 
-map<QString, attribs_map> SnippetsConfigWidget::getConfigurationParams()
+std::map<QString, attribs_map> SnippetsConfigWidget::getConfigurationParams()
 {
 	return config_params;
 }
@@ -112,9 +120,9 @@ QStringList SnippetsConfigWidget::getSnippetsIdsByObject(ObjectType obj_type)
 	return ids;
 }
 
-vector<attribs_map> SnippetsConfigWidget::getSnippetsByObject(ObjectType obj_type)
+std::vector<attribs_map> SnippetsConfigWidget::getSnippetsByObject(ObjectType obj_type)
 {
-	vector<attribs_map> snippets;
+	std::vector<attribs_map> snippets;
 	QString type_name=(obj_type==ObjectType::BaseObject ?
 						   Attributes::General : BaseObject::getSchemaName(obj_type));
 
@@ -140,9 +148,9 @@ QStringList SnippetsConfigWidget::getAllSnippetsAttribute(const QString &attrib)
 	return attribs;
 }
 
-vector<attribs_map> SnippetsConfigWidget::getAllSnippets()
+std::vector<attribs_map> SnippetsConfigWidget::getAllSnippets()
 {
-	vector<attribs_map> snippets;
+	std::vector<attribs_map> snippets;
 
 	for(auto &snip : config_params)
 		snippets.push_back(snip.second);
@@ -177,7 +185,7 @@ QString SnippetsConfigWidget::parseSnippet(attribs_map snippet, attribs_map attr
 
 		schparser.ignoreEmptyAttributes(true);
 		schparser.ignoreUnkownAttributes(true);
-		return schparser.getCodeDefinition(attribs);
+		return schparser.getSourceCode(attribs);
 	}
 	catch(Exception &e)
 	{
@@ -202,7 +210,7 @@ QString SnippetsConfigWidget::getParsedSnippet(const QString &snip_id, attribs_m
 		return "";
 }
 
-void SnippetsConfigWidget::fillSnippetsCombo(map<QString, attribs_map> &config)
+void SnippetsConfigWidget::fillSnippetsCombo(std::map<QString, attribs_map> &config)
 {
 	snippets_cmb->clear();
 
@@ -218,7 +226,7 @@ bool SnippetsConfigWidget::isSnippetValid(attribs_map &attribs, const QString &o
 
 	if(!orig_id.isEmpty() && snip_id!=orig_id && config_params.count(snip_id)!=0)
 		err_msg=tr("Duplicated snippet id <strong>%1</strong> detected. Please, specify a different one!").arg(snip_id);
-	else if(!IdFormatRegExp.exactMatch(snip_id))
+	else if(!IdFormatRegExp.match(snip_id).hasMatch())
 		err_msg=tr("Invalid ID pattern detected <strong>%1</strong>. This one must start with at leat one letter and be composed by letters, numbers and/or underscore!").arg(snip_id);
 	else if(attribs[Attributes::Label].isEmpty())
 		err_msg=tr("Empty label for snippet <strong>%1</strong>. Please, specify a value for it!").arg(snip_id);
@@ -235,7 +243,7 @@ bool SnippetsConfigWidget::isSnippetValid(attribs_map &attribs, const QString &o
 			schparser.loadBuffer(buf);
 			schparser.ignoreEmptyAttributes(true);
 			schparser.ignoreUnkownAttributes(true);
-			schparser.getCodeDefinition(attribs);
+			schparser.getSourceCode(attribs);
 		}
 		catch(Exception &e)
 		{
@@ -274,7 +282,7 @@ void SnippetsConfigWidget::loadConfiguration()
 		}
 
 		//Destroy any invalid snippets
-		for(QString id : inv_snippets)
+		for(auto &id : inv_snippets)
 			config_params.erase(id);
 
 		fillSnippetsCombo(config_params);
@@ -404,7 +412,7 @@ void SnippetsConfigWidget::filterSnippets(int idx)
 	else
 	{
 		ObjectType obj_type=static_cast<ObjectType>(filter_cmb->currentData().toUInt());
-		map<QString, attribs_map> flt_snippets;
+		std::map<QString, attribs_map> flt_snippets;
 		QString object_id=BaseObject::getSchemaName(obj_type);
 
 		if(object_id.isEmpty())
@@ -444,7 +452,7 @@ void SnippetsConfigWidget::saveConfiguration()
 
 		attribs_map attribs;
 		ObjectType obj_type;
-		vector<attribs_map> snippets;
+		std::vector<attribs_map> snippets;
 
 		//Saving the snippets sorting them by object type in the output file
 		for(int i=0; i < applies_to_cmb->count(); i++)
@@ -455,7 +463,7 @@ void SnippetsConfigWidget::saveConfiguration()
 			for(auto &snip : snippets)
 			{
 				attribs[Attributes::Snippet]+=
-						XmlParser::convertCharsToXMLEntities(schparser.getCodeDefinition(snippet_sch, snip));
+						XmlParser::convertCharsToXMLEntities(schparser.getSourceCode(snippet_sch, snip));
 			}
 		}
 
@@ -482,12 +490,12 @@ void SnippetsConfigWidget::restoreDefaults()
 	}
 }
 
-void SnippetsConfigWidget::configureSnippetsMenu(QMenu *snip_menu, vector<ObjectType> types)
+void SnippetsConfigWidget::configureSnippetsMenu(QMenu *snip_menu, std::vector<ObjectType> types)
 {
-	vector<attribs_map> snippets, vet_aux;
+	std::vector<attribs_map> snippets, vet_aux;
 	QAction *act=nullptr;
 	QMenu *menu=nullptr;
-	map<QString, QMenu *> submenus;
+	std::map<QString, QMenu *> submenus;
 	QString object, snip_id, type_name;
 	QPixmap ico;
 

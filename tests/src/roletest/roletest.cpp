@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -45,7 +45,7 @@ void RoleTest::alterCommandEndsWithSemiColon()
 	role2.setOption(Role::OpCreateRole, false);
 	role2.setOption(Role::OpLogin, false);
 
-	alter_cmd=role1.getAlterDefinition(&role2);
+	alter_cmd=role1.getAlterCode(&role2);
 	alter_cmd.remove(QString("\n%1\n").arg(Attributes::DdlEndToken));
 	QCOMPARE(alter_cmd.endsWith(";"), true);
 }

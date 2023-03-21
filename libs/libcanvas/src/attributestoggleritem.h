@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -30,7 +30,7 @@
 #include "roundedrectitem.h"
 #include "basetable.h"
 
-class AttributesTogglerItem: public QObject, public RoundedRectItem {
+class __libcanvas AttributesTogglerItem: public QObject, public RoundedRectItem {
 	private:
 		Q_OBJECT
 
@@ -40,7 +40,7 @@ class AttributesTogglerItem: public QObject, public RoundedRectItem {
 		QGraphicsRectItem *sel_rect;
 
 		//! \brief Stores the current collasping mode related to the table associated to this toggler
-		CollapseMode collapse_mode;
+		BaseTable::CollapseMode collapse_mode;
 
 		//! \brief Stores the polygonal items denoting the control buttons of the toggler
 		QGraphicsPolygonItem *buttons[7];
@@ -70,31 +70,28 @@ class AttributesTogglerItem: public QObject, public RoundedRectItem {
 		//! \brief The minimum opacity factor used to fade buttons
 		static constexpr double ButtonMinOpacity = 0.40;
 
-		//! \brief Constant used to reference the attributes expand button
-		static constexpr unsigned AttribsExpandBtn=0,
+		enum TogglerButton: unsigned {
+			//! \brief Constant used to reference the attributes expand button
+			AttribsExpandBtn,
 
-		//! \brief Constant used to reference the attributes collapse button
-		AttribsCollapseBtn=1,
+			//! \brief Constant used to reference the attributes collapse button
+			AttribsCollapseBtn,
 
-		//! \brief Constant used to reference the next page button
-		NextAttribsPageBtn=2,
+			//! \brief Constant used to reference the next page button
+			NextAttribsPageBtn,
 
-		//! \brief Constant used to reference the previous page button
-		PrevAttribsPageBtn=3,
+			//! \brief Constant used to reference the previous page button
+			PrevAttribsPageBtn,
 
-		//! \brief Constant used to reference the next page button
-		NextExtAttribsPageBtn=4,
+			//! \brief Constant used to reference the next page button
+			NextExtAttribsPageBtn,
 
-		//! \brief Constant used to reference the previous page button
-		PrevExtAttribsPageBtn=5,
+			//! \brief Constant used to reference the previous page button
+			PrevExtAttribsPageBtn,
 
-		//! \brief Constant used to reference the pagination toggler button
-		PaginationTogglerBtn=6;
-
-		/*! \brief Configures the postion and dimensions of the buttons based on the provided bounding rect
-		 * If the provided rect is smaller than the total width/height of the buttons it will be assumed
-		 * as bouding rect the latter dimensions */
-		void configureButtons(const QRectF &rect);
+			//! \brief Constant used to reference the pagination toggler button
+			PaginationTogglerBtn
+		};
 
 		/*! \brief Configure the buttons visibility and opacity based upon the current values
 		 * of pagination and collapse mode */
@@ -104,7 +101,13 @@ class AttributesTogglerItem: public QObject, public RoundedRectItem {
 
 	public:
 		AttributesTogglerItem(QGraphicsItem *parent = nullptr);
+
 		virtual ~AttributesTogglerItem();
+
+		/*! \brief Configures the postion and dimensions of the buttons based on the provided bounding rect
+		 * If the provided rect is smaller than the total width/height of the buttons it will be assumed
+		 * as bouding rect the latter dimensions */
+		void configureButtons(const QRectF &rect);
 
 		//! \brief Configures the buttons brush
 		void setButtonsBrush(const QBrush &brush);
@@ -112,11 +115,8 @@ class AttributesTogglerItem: public QObject, public RoundedRectItem {
 		//! \brief Configures the buttons pen
 		void setButtonsPen(const QPen &pen);
 
-		//! \brief Configures the bounding rect of the whole toggler item
-		void setRect(const QRectF &rect);
-
 		//! \brief Configures the current collapse mode of the toggler
-		void setCollapseMode(CollapseMode coll_mode);
+		void setCollapseMode(BaseTable::CollapseMode coll_mode);
 
 		/*! \brief Set a button selected (highlighted by the selection rectangle) if the provided
 		 * point is within a button's bouding rect. The parameter 'clicked' indicates if the button
@@ -132,7 +132,7 @@ class AttributesTogglerItem: public QObject, public RoundedRectItem {
 
 		/*! \brief Defines the current values of the pagination (current page and maximum allowed pages)
 		 * Thes values are used to control the buttons fading when the page navigation reaches one of the limits (min/max) */
-		void setPaginationValues(unsigned page_id, unsigned curr_page, unsigned max_page);
+		void setPaginationValues(BaseTable::TableSection page_id, unsigned curr_page, unsigned max_page);
 
 		//! \brief Clears the selection status of the buttons
 		void clearButtonsSelection();
@@ -148,10 +148,10 @@ class AttributesTogglerItem: public QObject, public RoundedRectItem {
 
 	signals:
 		//! \brief Signal emitted when the current collapse mode changes (the user clicks the collpase/expand buttons)
-		void s_collapseModeChanged(CollapseMode);
+		void s_collapseModeChanged(BaseTable::CollapseMode);
 
 		//! \brief Signal emitted when the current page changes (the user clicks the page navigation buttons)
-		void s_currentPageChanged(unsigned, unsigned);
+		void s_currentPageChanged(BaseTable::TableSection, unsigned);
 
 		//! \brief Signal emitted when the user clicks the pagination toggler buttons
 		void s_paginationToggled(bool);

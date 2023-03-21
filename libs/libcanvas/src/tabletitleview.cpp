@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -84,7 +84,7 @@ void TableTitleView::configureObject(BaseGraphicObject *object)
 	if(!tag)
 		schema_name->setBrush(fmt.foreground());
 	else
-		schema_name->setBrush(tag->getElementColor(schema_name_attrib, Tag::FillColor1));
+		schema_name->setBrush(tag->getElementColor(schema_name_attrib, ColorId::FillColor1));
 
 	if(schema->isRectVisible())
 		schema_name->setText(QString(" "));
@@ -109,14 +109,14 @@ void TableTitleView::configureObject(BaseGraphicObject *object)
 	}
 	else
 	{
-		obj_name->setBrush(tag->getElementColor(name_attrib, Tag::FillColor1));
+		obj_name->setBrush(tag->getElementColor(name_attrib, ColorId::FillColor1));
 		box->setBrush(tag->getFillStyle(title_color_attrib));
 	}
 
 	pen=this->getBorderStyle(title_color_attrib);
 
 	if(tag)
-		pen.setColor(tag->getElementColor(title_color_attrib, Tag::BorderColor));
+		pen.setColor(tag->getElementColor(title_color_attrib, ColorId::BorderColor));
 
 	if(object->getObjectType()==ObjectType::View ||
 		 (table && table->isPartition()))

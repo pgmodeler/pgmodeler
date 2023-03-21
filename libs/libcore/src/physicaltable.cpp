@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -18,6 +18,8 @@
 
 #include "physicaltable.h"
 #include "utilsns.h"
+#include "coreutilsns.h"
+#include "csvparser.h"
 
 const QString PhysicalTable::DataLineBreak = QString("%1%2").arg("⸣").arg('\n');
 
@@ -41,12 +43,12 @@ PhysicalTable::PhysicalTable() : BaseTable()
 	attributes[Attributes::CopyTable]="";
 
 	copy_table=partitioned_table=nullptr;
-	partitioning_type=BaseType::Null;
+	partitioning_type=PartitioningType::Null;
 }
 
 void PhysicalTable::destroyObjects()
 {
-	vector<BaseObject *> list=getObjects();
+	std::vector<BaseObject *> list=getObjects();
 
 	while(!list.empty())
 	{
@@ -78,7 +80,7 @@ void PhysicalTable::setCopyTable(PhysicalTable *tab)
 	copy_table=tab;
 
 	if(!copy_table)
-		copy_op=CopyOptions(0,0);
+		copy_op = CopyOptions();
 }
 
 void PhysicalTable::setCopyTableOptions(CopyOptions like_op)
@@ -124,8 +126,8 @@ PhysicalTable *PhysicalTable::getPartitionedTable()
 
 void PhysicalTable::setProtected(bool value)
 {
-	vector<ObjectType> obj_types = getChildObjectTypes(obj_type);
-	vector<TableObject *> *list=nullptr;
+	std::vector<ObjectType> obj_types = getChildObjectTypes(obj_type);
+	std::vector<TableObject *> *list=nullptr;
 
 	//Protected the table child objects
 	for(auto &type : obj_types)
@@ -166,7 +168,7 @@ void PhysicalTable::setCommentAttribute(TableObject *tab_obj)
 		if(tab_obj->isSQLDisabled())
 			attributes[Attributes::ColsComment]+=QString("-- ");
 
-		attributes[Attributes::ColsComment]+=schparser.getCodeDefinition(Attributes::Comment, attribs, SchemaParser::SqlDefinition);
+		attributes[Attributes::ColsComment]+=schparser.getSourceCode(Attributes::Comment, attribs, SchemaParser::SqlCode);
 		schparser.ignoreUnkownAttributes(false);
 	}
 }
@@ -185,7 +187,7 @@ void PhysicalTable::setAncestorTableAttribute()
 void PhysicalTable::setRelObjectsIndexesAttribute()
 {
 	attribs_map aux_attribs;
-	vector<map<QString, unsigned> *> obj_indexes={ &col_indexes, &constr_indexes };
+	std::vector<std::map<QString, unsigned> *> obj_indexes={ &col_indexes, &constr_indexes };
 	QString attribs[]={ Attributes::ColIndexes,  Attributes::ConstrIndexes };
 	ObjectType obj_types[]={ ObjectType::Column, ObjectType::Constraint };
 	unsigned idx=0, size=obj_indexes.size();
@@ -202,17 +204,17 @@ void PhysicalTable::setRelObjectsIndexesAttribute()
 				aux_attribs[Attributes::Index]=QString::number(obj_idx.second);
 
 				schparser.ignoreUnkownAttributes(true);
-				aux_attribs[Attributes::Objects]+=schparser.getCodeDefinition(Attributes::Object, aux_attribs, SchemaParser::XmlDefinition);
+				aux_attribs[Attributes::Objects]+=schparser.getSourceCode(Attributes::Object, aux_attribs, SchemaParser::XmlCode);
 			}
 
 			aux_attribs[Attributes::ObjectType]=BaseObject::getSchemaName(obj_types[idx]);
-			attributes[attribs[idx]]=schparser.getCodeDefinition(Attributes::CustomIdxs, aux_attribs, SchemaParser::XmlDefinition);
+			attributes[attribs[idx]]=schparser.getSourceCode(Attributes::CustomIdxs, aux_attribs, SchemaParser::XmlCode);
 			aux_attribs.clear();
 		}
 	}
 }
 
-void PhysicalTable::setColumnsAttribute(unsigned def_type, bool incl_rel_added_cols)
+void PhysicalTable::setColumnsAttribute(SchemaParser::CodeType def_type, bool incl_rel_added_cols)
 {
 	QStringList cols, inh_cols;
 
@@ -220,21 +222,21 @@ void PhysicalTable::setColumnsAttribute(unsigned def_type, bool incl_rel_added_c
 	{
 		/* Do not generates the column code definition when it is not included by
 		 relatoinship, in case of XML definition. */
-		if((def_type==SchemaParser::SqlDefinition && !col->isAddedByCopy() && !col->isAddedByGeneralization()) ||
-			 (def_type==SchemaParser::XmlDefinition && (!col->isAddedByRelationship() || (incl_rel_added_cols && col->isAddedByRelationship()))))
+		if((def_type==SchemaParser::SqlCode && !col->isAddedByCopy() && !col->isAddedByGeneralization()) ||
+			 (def_type==SchemaParser::XmlCode && (!col->isAddedByRelationship() || (incl_rel_added_cols && col->isAddedByRelationship()))))
 		{
-			cols.append(col->getCodeDefinition(def_type));
+			cols.append(col->getSourceCode(def_type));
 
-			if(def_type==SchemaParser::SqlDefinition)
+			if(def_type==SchemaParser::SqlCode)
 				setCommentAttribute(col);
 		}
-		else if(def_type==SchemaParser::SqlDefinition && col->isAddedByGeneralization() && !gen_alter_cmds)
+		else if(def_type==SchemaParser::SqlCode && col->isAddedByGeneralization() && !gen_alter_cmds)
 		{
-			inh_cols.append("-- " + col->getCodeDefinition(def_type));
+			inh_cols.append("-- " + col->getSourceCode(def_type));
 		}
 	}
 
-	if(def_type == SchemaParser::SqlDefinition)
+	if(def_type == SchemaParser::SqlCode)
 	{
 		if(!cols.isEmpty())
 		{
@@ -245,15 +247,14 @@ void PhysicalTable::setColumnsAttribute(unsigned def_type, bool incl_rel_added_c
 			bool has_constr_enabled = false;
 			Constraint *constr = nullptr;
 
-			/* Checking if we have some primary key or check constraint enabled
+			/* Checking if we have some primary key, check or exclude constraints enabled
 			 * so we can determine if the last comma in the column definition must be removed */
 			for(auto &obj : constraints)
 			{
 				constr = dynamic_cast<Constraint *>(obj);
 
 				if(!constr->isSQLDisabled() &&
-					 (constr->getConstraintType() == ConstraintType::PrimaryKey ||
-						constr->getConstraintType() == ConstraintType::Check))
+					 constr->getConstraintType() != ConstraintType::ForeignKey)
 				{
 					has_constr_enabled = true;
 					break;
@@ -280,45 +281,45 @@ void PhysicalTable::setColumnsAttribute(unsigned def_type, bool incl_rel_added_c
 		attributes[Attributes::Columns] += col;
 }
 
-void PhysicalTable::setConstraintsAttribute(unsigned def_type)
+void PhysicalTable::setConstraintsAttribute(SchemaParser::CodeType def_type)
 {
 	QString str_constr;
-	unsigned i, count;
 	bool inc_added_by_rel;
 	Constraint *constr=nullptr;
-	vector<QString> lines;
+	std::vector<QString> lines;
 
-	count=constraints.size();
-	for(i=0; i < count; i++)
+	for(auto &tab_obj : constraints)
 	{
-		constr=dynamic_cast<Constraint *>(constraints[i]);
+		constr=dynamic_cast<Constraint *>(tab_obj);
 
 		if(constr->getConstraintType()!=ConstraintType::ForeignKey &&
 
-				((def_type==SchemaParser::SqlDefinition &&
+				((def_type==SchemaParser::SqlCode &&
 					((!constr->isReferRelationshipAddedColumn() && constr->getConstraintType()!=ConstraintType::Check) ||
 					 (constr->getConstraintType()==ConstraintType::Check && !constr->isAddedByGeneralization()) ||
 					 constr->getConstraintType()==ConstraintType::PrimaryKey)) ||
 
-				 (def_type==SchemaParser::XmlDefinition && !constr->isAddedByRelationship() &&
+				 (def_type==SchemaParser::XmlCode && !constr->isAddedByRelationship() &&
 					((constr->getConstraintType()!=ConstraintType::PrimaryKey && !constr->isReferRelationshipAddedColumn()) ||
 					 (constr->getConstraintType()==ConstraintType::PrimaryKey)))))
 		{
-			inc_added_by_rel=(def_type==SchemaParser::SqlDefinition);
+			inc_added_by_rel=(def_type==SchemaParser::SqlCode);
 
-			if(def_type==SchemaParser::XmlDefinition)
-				str_constr+=constr->getCodeDefinition(def_type,inc_added_by_rel);
+			if(def_type==SchemaParser::XmlCode)
+				str_constr+=constr->getSourceCode(def_type,inc_added_by_rel);
 			else
 				//For sql definition the generated constraints are stored in a vector to be treated below
-				lines.push_back(constr->getCodeDefinition(def_type,inc_added_by_rel));
+				lines.push_back(constr->getSourceCode(def_type,inc_added_by_rel));
 
-			if(def_type==SchemaParser::SqlDefinition)
+			if(def_type==SchemaParser::SqlCode)
 				setCommentAttribute(constr);
 		}
 	}
 
-	if(def_type==SchemaParser::SqlDefinition && !lines.empty())
+	if(def_type==SchemaParser::SqlCode && !lines.empty())
 	{
+		unsigned i = 0;
+
 		/* When the coistraints are being generated in form of ALTER commands
 		simply concatenates all the lines */
 		if(gen_alter_cmds)
@@ -354,7 +355,7 @@ void PhysicalTable::setConstraintsAttribute(unsigned def_type)
 	attributes[Attributes::Constraints]=str_constr;
 }
 
-vector<TableObject *> *PhysicalTable::getObjectList(ObjectType obj_type)
+std::vector<TableObject *> *PhysicalTable::getObjectList(ObjectType obj_type)
 {
 	if(obj_type==ObjectType::Column)
 		return &columns;
@@ -381,7 +382,7 @@ void PhysicalTable::addObject(BaseObject *obj, int obj_idx)
 
 #ifdef DEMO_VERSION
 #warning "DEMO VERSION: table children objects creation limit."
-		vector<TableObject *> *obj_list=(obj_type!=ObjectType::Table ? getObjectList(obj_type) : nullptr);
+		std::vector<TableObject *> *obj_list=(obj_type!=ObjectType::Table ? getObjectList(obj_type) : nullptr);
 
 		if((obj_list && obj_list->size() >= GlobalAttributes::MaxObjectCount) ||
 				(obj_type==ObjectType::Table && ancestor_tables.size() >= GlobalAttributes::MaxObjectCount))
@@ -412,7 +413,7 @@ void PhysicalTable::addObject(BaseObject *obj, int obj_idx)
 			if(!isPhysicalTable(obj_type))
 			{
 				TableObject *tab_obj;
-				vector<TableObject *> *obj_list;
+				std::vector<TableObject *> *obj_list;
 				Column *col;
 
 				tab_obj=dynamic_cast<TableObject *>(obj);
@@ -426,7 +427,7 @@ void PhysicalTable::addObject(BaseObject *obj, int obj_idx)
 					throw Exception(ErrorCode::AsgObjectBelongsAnotherTable,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 				//Validates the object SQL code befor insert on table
-				obj->getCodeDefinition(SchemaParser::SqlDefinition);
+				obj->getSourceCode(SchemaParser::SqlCode);
 
 				if(col && col->getType()==this)
 				{
@@ -548,7 +549,7 @@ QString PhysicalTable::getPartitionBoundingExpr()
 	return part_bounding_expr;
 }
 
-vector<PhysicalTable *> PhysicalTable::getPartionTables()
+std::vector<PhysicalTable *> PhysicalTable::getPartionTables()
 {
 	return partition_tables;
 }
@@ -601,7 +602,7 @@ int PhysicalTable::getPartitionTableIndex(PhysicalTable *tab, bool compare_names
 	if(!tab)
 		return -1;
 
-	vector<PhysicalTable *>::iterator itr = partition_tables.begin();
+	std::vector<PhysicalTable *>::iterator itr = partition_tables.begin();
 
 	while(itr != partition_tables.end())
 	{
@@ -617,11 +618,11 @@ int PhysicalTable::getPartitionTableIndex(PhysicalTable *tab, bool compare_names
 	return (itr - partition_tables.begin());
 }
 
-void PhysicalTable::addPartitionKeys(vector<PartitionKey> &part_keys)
+void PhysicalTable::addPartitionKeys(std::vector<PartitionKey> &part_keys)
 {
-	vector<PartitionKey> part_keys_bkp = partition_keys;
+	std::vector<PartitionKey> part_keys_bkp = partition_keys;
 
-	if(partitioning_type == BaseType::Null)
+	if(partitioning_type == PartitioningType::Null)
 		return;
 
 	if(partitioning_type == PartitioningType::List && part_keys.size() > 1)
@@ -698,14 +699,14 @@ void PhysicalTable::removeObject(unsigned obj_idx, ObjectType obj_type)
 
 	else if(PhysicalTable::isPhysicalTable(obj_type) && obj_idx < ancestor_tables.size())
 	{
-		vector<PhysicalTable *>::iterator itr;
+		std::vector<PhysicalTable *>::iterator itr;
 		itr=ancestor_tables.begin() + obj_idx;
 		ancestor_tables.erase(itr);
 	}
 	else if(!PhysicalTable::isPhysicalTable(obj_type))
 	{
-		vector<TableObject *> *obj_list=getObjectList(obj_type);
-		vector<TableObject *>::iterator itr;
+		std::vector<TableObject *> *obj_list=getObjectList(obj_type);
+		std::vector<TableObject *>::iterator itr;
 
 		if(!obj_list)
 			return;
@@ -728,7 +729,7 @@ void PhysicalTable::removeObject(unsigned obj_idx, ObjectType obj_type)
 		}
 		else
 		{
-			vector<TableObject *> refs;
+			std::vector<TableObject *> refs;
 			Column *column=nullptr;
 
 			itr=obj_list->begin() + obj_idx;
@@ -872,8 +873,8 @@ int PhysicalTable::getObjectIndex(const QString &name, ObjectType obj_type)
 int PhysicalTable::getObjectIndex(BaseObject *obj)
 {
 	TableObject *tab_obj=dynamic_cast<TableObject *>(obj);
-	vector<TableObject *> *obj_list = nullptr;
-	vector<TableObject *>::iterator itr, itr_end;
+	std::vector<TableObject *> *obj_list = nullptr;
+	std::vector<TableObject *>::iterator itr, itr_end;
 	bool found=false;
 
 	if(!obj) return -1;
@@ -907,14 +908,14 @@ BaseObject *PhysicalTable::getObject(const QString &name, ObjectType obj_type, i
 {
 	BaseObject *object=nullptr;
 	bool found=false, format=false;
-	vector<TableObject *> *obj_list=getObjectList(obj_type);
+	std::vector<TableObject *> *obj_list=getObjectList(obj_type);
 
 	//Checks if the name contains ", if so, the search will consider formatted names
 	format=name.contains('"');
 
 	if(TableObject::isTableObject(obj_type) && obj_list)
 	{
-		vector<TableObject *>::iterator itr, itr_end;
+		std::vector<TableObject *>::iterator itr, itr_end;
 		QString aux_name=name;
 
 		itr=obj_list->begin();
@@ -936,7 +937,7 @@ BaseObject *PhysicalTable::getObject(const QString &name, ObjectType obj_type, i
 	}
 	else if(isPhysicalTable(obj_type))
 	{
-		vector<PhysicalTable *>::iterator itr_tab, itr_end_tab;
+		std::vector<PhysicalTable *>::iterator itr_tab, itr_end_tab;
 		QString tab_name, aux_name=name;
 
 		aux_name.remove('"');
@@ -969,7 +970,7 @@ BaseObject *PhysicalTable::getObject(const QString &name, ObjectType obj_type, i
 
 BaseObject *PhysicalTable::getObject(unsigned obj_idx, ObjectType obj_type)
 {
-	vector<TableObject *> *obj_list=nullptr;
+	std::vector<TableObject *> *obj_list=nullptr;
 
 	if(isPhysicalTable(obj_type))
 	{
@@ -1030,7 +1031,7 @@ Column *PhysicalTable::getColumn(const QString &name, bool ref_old_name)
 	else
 	{
 		Column *column=nullptr;
-		vector<TableObject *>::iterator itr, itr_end;
+		std::vector<TableObject *>::iterator itr, itr_end;
 		bool found=false, format=false;
 
 		format=name.contains('"');
@@ -1106,14 +1107,14 @@ unsigned PhysicalTable::getObjectCount(ObjectType obj_type, bool inc_added_by_re
 		return ancestor_tables.size();
 	else
 	{
-		vector<TableObject *> *list=nullptr;
+		std::vector<TableObject *> *list=nullptr;
 		list = getObjectList(obj_type);
 
 		if(!list) return 0;
 
 		if(!inc_added_by_rel)
 		{
-			vector<TableObject *>::iterator itr, itr_end;
+			std::vector<TableObject *>::iterator itr, itr_end;
 			unsigned count=0;
 
 			itr=list->begin();
@@ -1131,11 +1132,11 @@ unsigned PhysicalTable::getObjectCount(ObjectType obj_type, bool inc_added_by_re
 	}
 }
 
-void PhysicalTable::setRelObjectsIndexes(const vector<QString> &obj_names, const vector<unsigned> &idxs, ObjectType obj_type)
+void PhysicalTable::setRelObjectsIndexes(const std::vector<QString> &obj_names, const std::vector<unsigned> &idxs, ObjectType obj_type)
 {
 	if(!obj_names.empty() && obj_names.size()==idxs.size())
 	{
-		map<QString, unsigned > *obj_idxs_map=nullptr;
+		std::map<QString, unsigned > *obj_idxs_map=nullptr;
 		unsigned idx=0, size=obj_names.size();
 
 		if(obj_type==ObjectType::Column)
@@ -1152,8 +1153,8 @@ void PhysicalTable::setRelObjectsIndexes(const vector<QString> &obj_names, const
 
 void PhysicalTable::saveRelObjectsIndexes(ObjectType obj_type)
 {
-	map<QString, unsigned > *obj_idxs_map=nullptr;
-	vector<TableObject *> *list=nullptr;
+	std::map<QString, unsigned > *obj_idxs_map=nullptr;
+	std::vector<TableObject *> *list=nullptr;
 
 	if(obj_type==ObjectType::Column)
 	{
@@ -1209,7 +1210,7 @@ void PhysicalTable::restoreRelObjectsIndexes()
 
 void PhysicalTable::restoreRelObjectsIndexes(ObjectType obj_type)
 {
-	map<QString, unsigned> *obj_idxs=nullptr;
+	std::map<QString, unsigned> *obj_idxs=nullptr;
 
 	if(obj_type==ObjectType::Column)
 		obj_idxs=&col_indexes;
@@ -1218,8 +1219,8 @@ void PhysicalTable::restoreRelObjectsIndexes(ObjectType obj_type)
 
 	if(!obj_idxs->empty())
 	{
-		vector<TableObject *> *list = getObjectList(obj_type);
-		vector<TableObject *> new_list;
+		std::vector<TableObject *> *list = getObjectList(obj_type);
+		std::vector<TableObject *> new_list;
 		QString name;
 		TableObject *tab_obj = nullptr;
 		unsigned i = 0, pos = 0, size = 0, obj_idx, names_used = 0, aux_size = 0;
@@ -1294,7 +1295,7 @@ void PhysicalTable::restoreRelObjectsIndexes(ObjectType obj_type)
 bool PhysicalTable::isConstraintRefColumn(Column *column, ConstraintType constr_type)
 {
 	bool found=false;
-	vector<TableObject *>::iterator itr, itr_end;
+	std::vector<TableObject *>::iterator itr, itr_end;
 	Constraint *constr=nullptr;
 
 	if(column)
@@ -1369,7 +1370,7 @@ void PhysicalTable::updateAlterCmdsStatus()
 																			 dynamic_cast<Constraint *>(constraints[i])->getConstraintType()!=ConstraintType::ForeignKey);
 }
 
-void PhysicalTable::setTableAttributes(unsigned def_type, bool incl_rel_added_objs)
+void PhysicalTable::setTableAttributes(SchemaParser::CodeType def_type, bool incl_rel_added_objs)
 {
 	QStringList part_keys_code;
 
@@ -1381,29 +1382,29 @@ void PhysicalTable::setTableAttributes(unsigned def_type, bool incl_rel_added_ob
 	attributes[Attributes::PartitionKey]="";
 	attributes[Attributes::PartitionBoundExpr]=part_bounding_expr;
 	attributes[Attributes::Pagination]=(pagination_enabled ? Attributes::True : "");
-	attributes[Attributes::CollapseMode]=QString::number(enum_cast(collapse_mode));
+	attributes[Attributes::CollapseMode]=QString::number(collapse_mode);
 	attributes[Attributes::AttribsPage]=(pagination_enabled ? QString::number(curr_page[AttribsSection]) : "");
 	attributes[Attributes::ExtAttribsPage]=(pagination_enabled ? QString::number(curr_page[ExtAttribsSection]) : "");
 
 	for(auto part_key : partition_keys)
-		part_keys_code+=part_key.getCodeDefinition(def_type);
+		part_keys_code+=part_key.getSourceCode(def_type);
 
-	if(def_type == SchemaParser::SqlDefinition)
+	if(def_type == SchemaParser::SqlCode)
 		attributes[Attributes::PartitionKey]=part_keys_code.join(',');
 	else
 		attributes[Attributes::PartitionKey]=part_keys_code.join(' ');
 
-	if(def_type==SchemaParser::SqlDefinition && partitioned_table)
+	if(def_type==SchemaParser::SqlCode && partitioned_table)
 		attributes[Attributes::PartitionedTable]=partitioned_table->getName(true);
 
-	if(tag && def_type==SchemaParser::XmlDefinition)
-		attributes[Attributes::Tag]=tag->getCodeDefinition(def_type, true);
+	if(tag && def_type==SchemaParser::XmlCode)
+		attributes[Attributes::Tag]=tag->getSourceCode(def_type, true);
 
 	setColumnsAttribute(def_type, incl_rel_added_objs);
 	setConstraintsAttribute(def_type);
 	setAncestorTableAttribute();
 
-	if(def_type==SchemaParser::XmlDefinition)
+	if(def_type==SchemaParser::XmlCode)
 	{
 		setRelObjectsIndexesAttribute();
 		setPositionAttribute();
@@ -1435,7 +1436,7 @@ void PhysicalTable::operator = (PhysicalTable &table)
 
 bool PhysicalTable::isReferRelationshipAddedObject()
 {
-	vector<TableObject *>::iterator itr, itr_end;
+	std::vector<TableObject *>::iterator itr, itr_end;
 	ObjectType types[]={ ObjectType::Column, ObjectType::Constraint };
 	bool found=false;
 
@@ -1461,7 +1462,7 @@ bool PhysicalTable::isPartition()
 
 bool PhysicalTable::isPartitioned()
 {
-	return (partitioning_type != BaseType::Null);
+	return (partitioning_type != PartitioningType::Null);
 }
 
 bool PhysicalTable::isPhysicalTable(ObjectType obj_type)
@@ -1471,8 +1472,8 @@ bool PhysicalTable::isPhysicalTable(ObjectType obj_type)
 
 void PhysicalTable::swapObjectsIndexes(ObjectType obj_type, unsigned idx1, unsigned idx2)
 {
-	vector<TableObject *> *obj_list=nullptr;
-	vector<TableObject *>::iterator itr1, itr2;
+	std::vector<TableObject *> *obj_list=nullptr;
+	std::vector<TableObject *>::iterator itr1, itr2;
 	TableObject *aux_obj=nullptr, *aux_obj1=nullptr;
 
 	try
@@ -1524,13 +1525,13 @@ void PhysicalTable::swapObjectsIndexes(ObjectType obj_type, unsigned idx1, unsig
 	}
 }
 
-void PhysicalTable::getColumnReferences(Column *column, vector<TableObject *> &refs, bool exclusion_mode)
+void PhysicalTable::getColumnReferences(Column *column, std::vector<TableObject *> &refs, bool exclusion_mode)
 {
 	if(column && !column->isAddedByRelationship())
 	{
 		unsigned count, i;
 		Column *col=nullptr, *col1=nullptr;
-		vector<TableObject *>::iterator itr, itr_end;
+		std::vector<TableObject *>::iterator itr, itr_end;
 		bool found=false;
 		Constraint *constr=nullptr;
 		Trigger *trig=nullptr;
@@ -1543,8 +1544,8 @@ void PhysicalTable::getColumnReferences(Column *column, vector<TableObject *> &r
 			constr=dynamic_cast<Constraint *>(*itr);
 			itr++;
 
-			col=constr->getColumn(column->getName(),true);
-			col1=constr->getColumn(column->getName(),false);
+			col=constr->getColumn(column->getName(), Constraint::SourceCols);
+			col1=constr->getColumn(column->getName(), Constraint::ReferencedCols);
 
 			if((col && col==column) || (col1 && col1==column))
 			{
@@ -1574,10 +1575,10 @@ void PhysicalTable::getColumnReferences(Column *column, vector<TableObject *> &r
 	}
 }
 
-vector<BaseObject *> PhysicalTable::getObjects(const vector<ObjectType> &excl_types)
+std::vector<BaseObject *> PhysicalTable::getObjects(const std::vector<ObjectType> &excl_types)
 {
-	vector<BaseObject *> list;
-	vector<ObjectType> types=getChildObjectTypes(obj_type);
+	std::vector<BaseObject *> list;
+	std::vector<ObjectType> types = getChildObjectTypes(obj_type);
 
 	for(auto type : types)
 	{
@@ -1590,14 +1591,14 @@ vector<BaseObject *> PhysicalTable::getObjects(const vector<ObjectType> &excl_ty
 	return list;
 }
 
-vector<PartitionKey> PhysicalTable::getPartitionKeys()
+std::vector<PartitionKey> PhysicalTable::getPartitionKeys()
 {
 	return partition_keys;
 }
 
 void PhysicalTable::setCodeInvalidated(bool value)
 {
-	vector<ObjectType> types = getChildObjectTypes(obj_type);
+	std::vector<ObjectType> types = getChildObjectTypes(obj_type);
 
 	for(auto type : types)
 	{
@@ -1621,50 +1622,56 @@ QString PhysicalTable::getInitialData()
 
 QString PhysicalTable::getInitialDataCommands()
 {
-	QStringList buffer=initial_data.split(DataLineBreak);
+	CsvDocument csv_doc;
+	CsvParser csv_parser;
 
-	if(!buffer.isEmpty() && !buffer.at(0).isEmpty())
+	try
 	{
-		QStringList	col_names, col_values, commands, selected_cols;
-		int curr_col=0;
-		QList<int> ignored_cols;
-
-		col_names=(buffer.at(0)).split(UtilsNs::DataSeparator);
-		col_names.removeDuplicates();
-		buffer.removeFirst();
-
-		//Separating valid columns (selected) from the invalids (ignored)
-		for(QString col_name : col_names)
-		{
-			if(getObjectIndex(col_name, ObjectType::Column) >= 0)
-				selected_cols.append(col_name);
-			else
-				ignored_cols.append(curr_col);
-
-			curr_col++;
-		}
-
-		for(QString buf_row : buffer)
-		{
-			curr_col=0;
-
-			//Filtering the invalid columns' values
-			for(QString value : buf_row.split(UtilsNs::DataSeparator))
-			{
-				if(ignored_cols.contains(curr_col))
-					continue;
-
-				col_values.append(value);
-			}
-
-			commands.append(createInsertCommand(selected_cols, col_values));
-			col_values.clear();
-		}
-
-		return commands.join('\n');
+		csv_parser.setColumnInFirstRow(true);
+		csv_doc = csv_parser.parseBuffer(initial_data);
+	}
+	catch(Exception &e)
+	{
+		return tr("/* Failed to create initial data commands! \n\n %1 */").arg(e.getErrorMessage());
 	}
 
-	return "";
+	if(csv_doc.isEmpty())
+		return "";
+
+	QStringList col_names, col_values, commands, selected_cols;
+	int curr_col=0;
+	QList<int> ignored_cols;
+
+	col_names = csv_doc.getColumnNames();
+	col_names.removeDuplicates();
+
+	//Separating valid columns (selected) from the invalids (ignored)
+	for(auto &col_name : col_names)
+	{
+		if(getObjectIndex(col_name, ObjectType::Column) >= 0)
+			selected_cols.append(col_name);
+		else
+			ignored_cols.append(curr_col);
+
+		curr_col++;
+	}
+
+	for(int row = 0; row < csv_doc.getRowCount(); row++)
+	{
+		//Filtering the invalid columns' values
+		for(int col = 0; col < csv_doc.getColumnCount(); col++)
+		{
+			if(ignored_cols.contains(col))
+				continue;
+
+			col_values.append(csv_doc.getValue(row, col));
+		}
+
+		commands.append(createInsertCommand(selected_cols, col_values));
+		col_values.clear();
+	}
+
+	return commands.join('\n');
 }
 
 QString PhysicalTable::createInsertCommand(const QStringList &col_names, const QStringList &values)
@@ -1673,15 +1680,15 @@ QString PhysicalTable::createInsertCommand(const QStringList &col_names, const Q
 	QStringList val_list, col_list;
 	int curr_col=0;
 
-	for(QString col_name : col_names)
+	for(auto &col_name : col_names)
 		col_list.push_back(BaseObject::formatName(col_name));
 
-	for(QString value : values)
+	for(auto value : values)
 	{
 		//Empty values as considered as DEFAULT
 		if(value.isEmpty())
 		{
-			value=QString("DEFAULT");
+			value = "DEFAULT";
 		}
 		//Unescaped values will not be enclosed in quotes
 		else if(value.startsWith(UtilsNs::UnescValueStart) && value.endsWith(UtilsNs::UnescValueEnd))
@@ -1743,17 +1750,16 @@ unsigned PhysicalTable::getMaxObjectCount()
 	return max;
 }
 
-QString PhysicalTable::getDataDictionary(bool split, attribs_map extra_attribs)
+QString PhysicalTable::getDataDictionary(bool split, const attribs_map &extra_attribs)
 {
 	Column *column = nullptr;
-	Constraint *constr = nullptr;
 	attribs_map attribs, aux_attrs;
-	QStringList tab_names, col_names;
-	QString check_mark = QString("&#10003;"),
-			tab_dict_file = GlobalAttributes::getSchemaFilePath(GlobalAttributes::DataDictSchemaDir, Attributes::Table),
-			col_dict_file = GlobalAttributes::getSchemaFilePath(GlobalAttributes::DataDictSchemaDir, Attributes::Column),
-			constr_dict_file = GlobalAttributes::getSchemaFilePath(GlobalAttributes::DataDictSchemaDir, Attributes::Constraint),
-			link_dict_file = GlobalAttributes::getSchemaFilePath(GlobalAttributes::DataDictSchemaDir, Attributes::Link);
+	QStringList tab_names, aux_list, attr_names = { Attributes::Columns, Attributes::Constraints,
+																									Attributes::Triggers, Attributes::Indexes };
+
+	QString tab_dict_file = GlobalAttributes::getSchemaFilePath(GlobalAttributes::DataDictSchemaDir, BaseObject::getSchemaName(ObjectType::Table)),
+			link_dict_file = GlobalAttributes::getSchemaFilePath(GlobalAttributes::DataDictSchemaDir, Attributes::Link),
+			objs_dict_file = GlobalAttributes::getSchemaFilePath(GlobalAttributes::DataDictSchemaDir, Attributes::Objects);
 
 	attribs.insert(extra_attribs.begin(), extra_attribs.end());
 	attribs[Attributes::Type] = getTypeName();
@@ -1762,77 +1768,71 @@ QString PhysicalTable::getDataDictionary(bool split, attribs_map extra_attribs)
 	attribs[Attributes::Name] = obj_name;
 	attribs[Attributes::Schema] = schema ? schema->getName() : "";
 	attribs[Attributes::Comment] = comment;
-	attribs[Attributes::Columns] = "";
-	attribs[Attributes::Constraints] = "";
+
+	/* Initialize the attributes for columns, trigger, indexes and contraints
+	 * if there one or more missing in the attributes map */
+	for(auto &attr : attr_names)
+	{
+	 if(!attribs.count(attr))
+		 attribs[attr] = "";
+	}
 
 	aux_attrs[Attributes::Split] = attribs[Attributes::Split];
 
-	// Gathering the acestor table names
-	for(auto &tab : ancestor_tables)
+	try
 	{
-		aux_attrs[Attributes::Name] = tab->getSignature().remove(QChar('"'));
-		tab_names.push_back(schparser.getCodeDefinition(link_dict_file, aux_attrs));
-	}
-	attribs[Attributes::Inherit] = tab_names.join(", ");
-	tab_names.clear();
+		// Gathering the acestor table names
+		for(auto &tab : ancestor_tables)
+		{
+			aux_attrs[Attributes::Name] = tab->getSignature().remove(QChar('"'));
+			tab_names.push_back(schparser.getSourceCode(link_dict_file, aux_attrs));
+		}
+		attribs[Attributes::Inherit] = tab_names.join(", ");
+		tab_names.clear();
 
-	attribs[Attributes::PartitionedTable] = "";
-	if(partitioned_table)
-	{
-		aux_attrs[Attributes::Name] = partitioned_table->getSignature().remove(QChar('"'));
-		attribs[Attributes::PartitionedTable] = schparser.getCodeDefinition(link_dict_file, aux_attrs);
-	}
+		attribs[Attributes::PartitionedTable] = "";
+		if(partitioned_table)
+		{
+			aux_attrs[Attributes::Name] = partitioned_table->getSignature().remove(QChar('"'));
+			attribs[Attributes::PartitionedTable] = schparser.getSourceCode(link_dict_file, aux_attrs);
+		}
 
-	// Gathering the patition table names
-	for(auto &tab : partition_tables)
-	{
-		aux_attrs[Attributes::Name] = tab->getSignature().remove(QChar('"'));
-		tab_names.push_back(schparser.getCodeDefinition(link_dict_file, aux_attrs));
-	}
-	attribs[Attributes::PartitionTables] = tab_names.join(", ");
+		// Gathering the patition table names
+		for(auto &tab : partition_tables)
+		{
+			aux_attrs[Attributes::Name] = tab->getSignature().remove(QChar('"'));
+			tab_names.push_back(schparser.getSourceCode(link_dict_file, aux_attrs));
+		}
+		attribs[Attributes::PartitionTables] = tab_names.join(", ");
 
-	for(auto &obj : columns)
-	{
-		column = dynamic_cast<Column *>(obj);
+		for(auto &obj : columns)
+		{
+			column = dynamic_cast<Column *>(obj);
+			aux_attrs[Attributes::PkConstr] = isConstraintRefColumn(column, ConstraintType::PrimaryKey) ? CoreUtilsNs::DataDictCheckMark : "";
+			aux_attrs[Attributes::UqConstr] = isConstraintRefColumn(column, ConstraintType::Unique) ? CoreUtilsNs::DataDictCheckMark : "";
+			aux_attrs[Attributes::FkConstr] = isConstraintRefColumn(column, ConstraintType::ForeignKey) ? CoreUtilsNs::DataDictCheckMark : "";
+			attribs[Attributes::Columns] += column->getDataDictionary(aux_attrs);
+		}
 
-		aux_attrs[Attributes::Parent] = getSchemaName();
-		aux_attrs[Attributes::Name] = column->getName();
-		aux_attrs[Attributes::Type] = *column->getType();
-		aux_attrs[Attributes::DefaultValue] = column->getSequence() ? Column::NextValFuncTmpl.arg(column->getSequence()->getSignature()) : column->getDefaultValue();
-		aux_attrs[Attributes::Comment] = column->getComment();
-		aux_attrs[Attributes::NotNull] = column->isNotNull() ? check_mark : "";
-		aux_attrs[Attributes::PkConstr] = isConstraintRefColumn(column, ConstraintType::PrimaryKey) ? check_mark : "";
-		aux_attrs[Attributes::UqConstr] = isConstraintRefColumn(column, ConstraintType::Unique) ? check_mark : "";
-		aux_attrs[Attributes::FkConstr] = isConstraintRefColumn(column, ConstraintType::ForeignKey) ? check_mark : "";
+		for(auto &obj : constraints)
+		{
+			attribs[Attributes::Constraints] +=
+					dynamic_cast<Constraint *>(obj)->getDataDictionary({{ Attributes::Split, attribs[Attributes::Split] }});
+		}
 
+		for(auto &obj : triggers)
+		{
+			attribs[Attributes::Triggers] +=
+					dynamic_cast<Trigger *>(obj)->getDataDictionary({{ Attributes::Split, attribs[Attributes::Split] }});
+		}
+
+		attribs[Attributes::Objects] += schparser.getSourceCode(GlobalAttributes::getSchemaFilePath(GlobalAttributes::DataDictSchemaDir,
+																																																		Attributes::Objects), attribs);
 		schparser.ignoreEmptyAttributes(true);
-		attribs[Attributes::Columns] += schparser.getCodeDefinition(col_dict_file, aux_attrs);
-		aux_attrs.clear();
+		return schparser.getSourceCode(tab_dict_file, attribs);
 	}
-
-	for(auto &obj : constraints)
+	catch(Exception &e)
 	{
-		constr = dynamic_cast<Constraint *>(obj);
-
-		aux_attrs[Attributes::Split] = attribs[Attributes::Split];
-		aux_attrs[Attributes::Name] = constr->getName();
-		aux_attrs[Attributes::Type] = ~constr->getConstraintType();
-		aux_attrs[Attributes::Comment] = constr->getComment();
-		aux_attrs[Attributes::RefTable] = constr->getReferencedTable() ? constr->getReferencedTable()->getSignature().remove(QChar('"')) : "";
-		aux_attrs[Attributes::Expression] = constr->getExpression();
-
-		// Retrieving the columns that composes the constraint
-		for(auto &col : constr->getColumns(Constraint::SourceCols))
-			 col_names.push_back(col->getName());
-
-		aux_attrs[Attributes::Columns] = col_names.join(", ");
-		col_names.clear();
-
-		schparser.ignoreEmptyAttributes(true);
-		attribs[Attributes::Constraints] += schparser.getCodeDefinition(constr_dict_file, aux_attrs);
-		aux_attrs.clear();
+		throw Exception(e.getErrorMessage(), e.getErrorCode(), __PRETTY_FUNCTION__, __FILE__, __LINE__, &e);
 	}
-
-	schparser.ignoreEmptyAttributes(true);
-	return schparser.getCodeDefinition(tab_dict_file, attribs);
 }

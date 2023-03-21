@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -21,7 +21,6 @@
 #include "globalattributes.h"
 #include "pgmodelerunittest.h"
 #include "defaultlanguages.h"
-#include "qtcompat/qtextstreamcompat.h"
 
 class BaseFunctionTest: public QObject, public PgModelerUnitTest {
 	private:
@@ -48,7 +47,7 @@ class BaseFunctionTest: public QObject, public PgModelerUnitTest {
 void BaseFunctionTest::doesntAddDuplicatedTransformType()
 {
 	Function func;
-	vector<PgSqlType> types, types_aux;
+	std::vector<PgSqlType> types, types_aux;
 
 	func.addTransformType(PgSqlType("integer"));
 	func.addTransformType(PgSqlType("text"));
@@ -109,7 +108,7 @@ void BaseFunctionTest::functionHasTransformTypesAndConfigParamsInSQL()
 		func.addTransformType(PgSqlType("varchar"));
 		func.addTransformType(PgSqlType("text"));
 		func.addTransformType(PgSqlType("numeric", 1, 6, 2));
-		func.setSourceCode("return 0;");
+		func.setFunctionSource("return 0;");
 		func.setConfigurationParam("search_path", "public,foo,bar");
 		func.setConfigurationParam("log_statement_stats", "DEFAULT");
 
@@ -132,7 +131,7 @@ void BaseFunctionTest::functionHasTransformTypesAndConfigParamsInSQL()
  $$;\
  -- ddl-end --").simplified();
 
-		QString generated_code = func.getCodeDefinition(SchemaParser::SqlDefinition).simplified();
+		QString generated_code = func.getSourceCode(SchemaParser::SqlCode).simplified();
 		QCOMPARE(expected_code, generated_code);
 	}
 	catch (Exception &e)
@@ -159,7 +158,7 @@ void BaseFunctionTest::functionHasTransformTypesAndConfigParamsInXML()
 		func.addTransformType(PgSqlType("varchar"));
 		func.addTransformType(PgSqlType("text"));
 		func.addTransformType(PgSqlType("numeric", 1, 6, 2));
-		func.setSourceCode("return 0;");
+		func.setFunctionSource("return 0;");
 		func.setConfigurationParam("search_path", "public,foo,bar");
 		func.setConfigurationParam("log_statement_stats", "DEFAULT");
 
@@ -177,10 +176,10 @@ row-amount=\"1000\"> \
 <transform-types names=\"varchar,text,numeric\"/> \
 <configuration name=\"log_statement_stats\" value=\"DEFAULT\"/> \
 <configuration name=\"search_path\" value=\"public,foo,bar\"/> \
-<definition><![CDATA[return 0;]]></definition> \
+<definition> <![CDATA[return 0;]]> </definition> \
 </function>").simplified();
 
-		QString generated_code = func.getCodeDefinition(SchemaParser::XmlDefinition).simplified();
+		QString generated_code = func.getSourceCode(SchemaParser::XmlCode).simplified();
 		QCOMPARE(expected_code, generated_code);
 	}
 	catch (Exception &e)
@@ -206,7 +205,7 @@ void BaseFunctionTest::procedureHasTransformTypesInSQL()
 		proc.addTransformType(PgSqlType("varchar"));
 		proc.addTransformType(PgSqlType("text"));
 		proc.addTransformType(PgSqlType("numeric", 1, 6, 2));
-		proc.setSourceCode("return 0;");
+		proc.setFunctionSource("return 0;");
 		proc.setConfigurationParam("search_path", "public,foo,bar");
 		proc.setConfigurationParam("log_statement_stats", "DEFAULT");
 
@@ -224,7 +223,7 @@ void BaseFunctionTest::procedureHasTransformTypesInSQL()
  $$;\
  -- ddl-end --").simplified();
 
-		QString generated_code = proc.getCodeDefinition(SchemaParser::SqlDefinition).simplified();
+		QString generated_code = proc.getSourceCode(SchemaParser::SqlCode).simplified();
 		QCOMPARE(expected_code, generated_code);
 	}
 	catch (Exception &e)
@@ -250,7 +249,7 @@ void BaseFunctionTest::procedureHasTransformTypesInXML()
 		proc.addTransformType(PgSqlType("varchar"));
 		proc.addTransformType(PgSqlType("text"));
 		proc.addTransformType(PgSqlType("numeric", 1, 6, 2));
-		proc.setSourceCode("return 0;");
+		proc.setFunctionSource("return 0;");
 		proc.setConfigurationParam("search_path", "public,foo,bar");
 		proc.setConfigurationParam("log_statement_stats", "DEFAULT");
 
@@ -262,10 +261,10 @@ security-type=\"SECURITY INVOKER\"> \
 <transform-types names=\"varchar,text,numeric\"/> \
 <configuration name=\"log_statement_stats\" value=\"DEFAULT\"/> \
 <configuration name=\"search_path\" value=\"public,foo,bar\"/> \
-<definition><![CDATA[return 0;]]></definition> \
+<definition> <![CDATA[return 0;]]> </definition> \
 </procedure>").simplified();
 
-		QString generated_code = proc.getCodeDefinition(SchemaParser::XmlDefinition).simplified();
+		QString generated_code = proc.getSourceCode(SchemaParser::XmlCode).simplified();
 		QCOMPARE(expected_code, generated_code);
 	}
 	catch (Exception &e)
@@ -294,11 +293,11 @@ row-amount=\"1000\"> \
 <transform-types names=\"varchar,text,numeric\"/> \
 <configuration name=\"log_statement_stats\" value=\"DEFAULT\"/> \
 <configuration name=\"search_path\" value=\"public,foo,bar\"/> \
-<definition><![CDATA[return 0;]]></definition> \
+<definition> <![CDATA[return 0;]]> </definition> \
 </function>").simplified();
 
 		dbmodel.createSystemObjects(true);
-		dbmodel.getXMLParser()->setDTDFile(GlobalAttributes::getSchemasRootDir() +
+		dbmodel.getXMLParser()->setDTDFile(GlobalAttributes::getSchemasRootPath() +
 																			 GlobalAttributes::DirSeparator +
 																			 GlobalAttributes::XMLSchemaDir +
 																			 GlobalAttributes::DirSeparator +
@@ -308,7 +307,7 @@ row-amount=\"1000\"> \
 		func = dbmodel.createFunction();
 
 		QVERIFY(nullptr != func);
-		QString generated_code = func->getCodeDefinition(SchemaParser::XmlDefinition).simplified();
+		QString generated_code = func->getSourceCode(SchemaParser::XmlCode).simplified();
 		QCOMPARE(xml_code, generated_code);
 	}
 	catch (Exception &e)
@@ -332,11 +331,11 @@ security-type=\"SECURITY INVOKER\"> \
 <transform-types names=\"varchar,text,numeric\"/> \
 <configuration name=\"log_statement_stats\" value=\"DEFAULT\"/> \
 <configuration name=\"search_path\" value=\"public,foo,bar\"/> \
-<definition><![CDATA[return 0;]]></definition> \
+<definition> <![CDATA[return 0;]]> </definition> \
 </procedure>").simplified();
 
 		dbmodel.createSystemObjects(true);
-		dbmodel.getXMLParser()->setDTDFile(GlobalAttributes::getSchemasRootDir() +
+		dbmodel.getXMLParser()->setDTDFile(GlobalAttributes::getSchemasRootPath() +
 																			 GlobalAttributes::DirSeparator +
 																			 GlobalAttributes::XMLSchemaDir +
 																			 GlobalAttributes::DirSeparator +
@@ -346,7 +345,7 @@ security-type=\"SECURITY INVOKER\"> \
 		proc = dbmodel.createProcedure();
 
 		QVERIFY(nullptr != proc);
-		QString generated_code = proc->getCodeDefinition(SchemaParser::XmlDefinition).simplified();
+		QString generated_code = proc->getSourceCode(SchemaParser::XmlCode).simplified();
 		QCOMPARE(xml_code, generated_code);
 	}
 	catch (Exception &e)

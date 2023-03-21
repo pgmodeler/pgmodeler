@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>277</width>
+    <width>824</width>
     <height>192</height>
    </rect>
   </property>
@@ -48,50 +48,12 @@
     <number>0</number>
    </property>
    <property name="spacing">
-    <number>4</number>
+    <number>5</number>
    </property>
-   <item row="0" column="1">
-    <widget class="QToolButton" name="rem_object_tb">
-     <property name="enabled">
-      <bool>false</bool>
-     </property>
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="minimumSize">
-      <size>
-       <width>0</width>
-       <height>0</height>
-      </size>
-     </property>
-     <property name="focusPolicy">
-      <enum>Qt::WheelFocus</enum>
-     </property>
-     <property name="toolTip">
-      <string>Clear field</string>
-     </property>
-     <property name="text">
-      <string/>
-     </property>
-     <property name="icon">
-      <iconset resource="../../res/resources.qrc">
-       <normaloff>:/icons/icons/cleartext.png</normaloff>:/icons/icons/cleartext.png</iconset>
-     </property>
-     <property name="iconSize">
-      <size>
-       <width>22</width>
-       <height>22</height>
-      </size>
-     </property>
-    </widget>
-   </item>
    <item row="0" column="2">
     <widget class="QToolButton" name="sel_object_tb">
      <property name="sizePolicy">
-      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+      <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
@@ -103,7 +65,7 @@
       </size>
      </property>
      <property name="focusPolicy">
-      <enum>Qt::WheelFocus</enum>
+      <enum>Qt::TabFocus</enum>
      </property>
      <property name="toolTip">
       <string>Select Object</string>
@@ -117,16 +79,19 @@
      </property>
      <property name="iconSize">
       <size>
-       <width>22</width>
-       <height>22</height>
+       <width>25</width>
+       <height>25</height>
       </size>
      </property>
     </widget>
    </item>
-   <item row="0" column="0">
-    <widget class="QPlainTextEdit" name="obj_name_txt">
+   <item row="0" column="1">
+    <widget class="QToolButton" name="rem_object_tb">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
      <property name="sizePolicy">
-      <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+      <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
@@ -137,25 +102,31 @@
        <height>0</height>
       </size>
      </property>
-     <property name="maximumSize">
+     <property name="focusPolicy">
+      <enum>Qt::TabFocus</enum>
+     </property>
+     <property name="toolTip">
+      <string>Clear field</string>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="icon">
+      <iconset resource="../../res/resources.qrc">
+       <normaloff>:/icons/icons/delete.png</normaloff>:/icons/icons/delete.png</iconset>
+     </property>
+     <property name="iconSize">
       <size>
-       <width>16777215</width>
-       <height>16777215</height>
+       <width>25</width>
+       <height>25</height>
       </size>
      </property>
-     <property name="font">
-      <font>
-       <italic>true</italic>
-      </font>
-     </property>
+    </widget>
+   </item>
+   <item row="0" column="0">
+    <widget class="QLineEdit" name="obj_name_edt">
      <property name="focusPolicy">
-      <enum>Qt::WheelFocus</enum>
-     </property>
-     <property name="verticalScrollBarPolicy">
-      <enum>Qt::ScrollBarAlwaysOff</enum>
-     </property>
-     <property name="horizontalScrollBarPolicy">
-      <enum>Qt::ScrollBarAlwaysOff</enum>
+      <enum>Qt::NoFocus</enum>
      </property>
      <property name="readOnly">
       <bool>true</bool>
@@ -164,7 +135,13 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>obj_name_edt</tabstop>
+  <tabstop>rem_object_tb</tabstop>
+  <tabstop>sel_object_tb</tabstop>
+ </tabstops>
  <resources>
+  <include location="../../res/resources.qrc"/>
   <include location="../../res/resources.qrc"/>
  </resources>
  <connections/>

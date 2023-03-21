@@ -2,11 +2,11 @@ name: macOs build
 
 on:
   push:
-    branches: [ master, develop, 0.9.*, '*fix*', '*change*', '*support*' ]
-    tags: 0.9.*
+    branches: [ master, develop, 1.0.* ]
+    tags: 1.0.*
     
   pull_request:
-    branches: [ master, develop, 0.9.* ]
+    branches: [ master, develop, 1.0.* ]
 
 jobs:
   build:
@@ -14,7 +14,7 @@ jobs:
 
     strategy:
       matrix:
-        qt: ['5.15.0', '5.14.2', '5.13.2', '5.12.9', '5.11.3', '5.10.1', '5.9.9']
+        qt: ['6.2.4', '6.3.1', '6.4.1']
 
     steps:
     - uses: actions/checkout@v2

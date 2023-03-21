@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -31,16 +31,16 @@
 #include "physicaltable.h"
 #include <QStringList>
 
-class Table: public PhysicalTable {
+class __libcore Table: public PhysicalTable {
 	private:
 		//! \brief Stores the indexes
-		vector<TableObject *> indexes;
+		std::vector<TableObject *> indexes;
 
 		//! \brief Stores the rules
-		vector<TableObject *> rules;
+		std::vector<TableObject *> rules;
 
 		//! \brief Stores the policies
-		vector<TableObject *> policies;
+		std::vector<TableObject *> policies;
 
 		//! \brief Indicates if the table is unlogged, which means, is not controled by the WAL (write ahead logs)
 		bool unlogged,
@@ -136,12 +136,12 @@ class Table: public PhysicalTable {
 		void removePolicy(unsigned idx);
 
 		//! \brief Returns the SQL / XML definition for table
-		virtual QString getCodeDefinition(unsigned def_type) final;
+		virtual QString getSourceCode(SchemaParser::CodeType def_type) final;
 
 		/*! \brief Stores on the specified vector 'fks' the foreign key present on table. The
 		 boolean paramenter is used to include those foreign keys includes by relationship. The third parameter
 		is used to filter the search, including only the foreign keys that references the specified table */
-		void getForeignKeys(vector<Constraint *> &fks, bool inc_added_by_rel=false, Table *ref_table=nullptr);
+		void getForeignKeys(std::vector<Constraint *> &fks, bool inc_added_by_rel=false, Table *ref_table=nullptr);
 
 		//! \brief Returns if the table is configured as unlogged
 		bool isUnlogged();
@@ -156,7 +156,7 @@ class Table: public PhysicalTable {
 		void operator = (Table &tabela);
 
 		//! \brief Returns the specified object type list
-		virtual vector<TableObject *> *getObjectList(ObjectType obj_type);
+		virtual std::vector<TableObject *> *getObjectList(ObjectType obj_type);
 
 		/*! \brief Returns if some of the foreign keys references the specified table. This method only considers the foreign keys
 		 created by the user. Relationship created foreign keys are discarded from the search. */
@@ -166,10 +166,10 @@ class Table: public PhysicalTable {
 		 The 'exclusion_mode' is used to speed up the execution of the method when it is used to validate the
 		 deletion of the object, getting only the first reference to the object candidate for deletion.
 		 To get ALL references to the object must be specified as 'false' the parameter 'exclusion_mode'. */
-		void getColumnReferences(Column *column, vector<TableObject *> &refs, bool exclusion_mode=false);
+		void getColumnReferences(Column *column, std::vector<TableObject *> &refs, bool exclusion_mode=false);
 
 		//! \brief Returns the alter definition comparing the this table against the one provided via parameter
-		virtual QString getAlterDefinition(BaseObject *object) final;
+		virtual QString getAlterCode(BaseObject *object) final;
 
 		//! \brief Returns the truncate definition for this table
 		QString getTruncateDefinition(bool cascade);
@@ -178,7 +178,9 @@ class Table: public PhysicalTable {
 		 * Note if the method is called with incl_rel_added_objs = true it can produce an SQL/XML code
 		 * that does not reflect the real semantics of the table. So take care to use this method and always
 		 * invalidate the tables code (see setCodeInvalidated()) after retrieving the resulting code */
-		QString __getCodeDefinition(unsigned def_type, bool incl_rel_added_objs);
+		QString __getSourceCode(SchemaParser::CodeType def_type, bool incl_rel_added_objs);
+
+		virtual QString getDataDictionary(bool split, const attribs_map & extra_attribs = {});
 
 		friend class Relationship;
 		friend class OperationList;

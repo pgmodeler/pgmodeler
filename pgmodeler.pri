@@ -2,11 +2,20 @@
 
 # General Qt settings
 QT += core widgets printsupport network svg
-CONFIG += ordered qt stl rtti exceptions warn_on c++14
+CONFIG += ordered qt stl rtti exceptions warn_on c++17
 TEMPLATE = subdirs
 MOC_DIR = moc
 OBJECTS_DIR = obj
 UI_DIR = src
+
+# Disables all the APIs deprecated before Qt 6.0.0
+DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000
+!defined(NO_CHECK_CURR_VER, var):DEFINES+=CHECK_CURR_VER
+
+# Forcing the compilation using Qt 6.x
+!versionAtLeast(QT_VERSION, "6.0.0") {
+   error("Unsupported Qt version detected: $${QT_VERSION}! pgModeler must be compiled with at least Qt 6.0.0.")
+}
 
 # Store the absolute paths to library subprojects to be referenced in other .pro files
 # *_ROOT -> the path to the root folder of the subproject
@@ -42,14 +51,29 @@ LIBUTILS_ROOT = $$absolute_path($$PWD/libs/$$LIBUTILS)
 LIBUTILS_LIB = -L$$LIBUTILS_ROOT -lutils
 LIBUTILS_INC = $$LIBUTILS_ROOT/src
 
-# Setting up the flag passed to compiler to indicate a snapshot build
+# Set the flag passed to compiler to indicate a snapshot build
 defined(SNAPSHOT_BUILD, var): DEFINES+=SNAPSHOT_BUILD
 
-# Setting up the flag passed to compiler to build the demo version
-defined(DEMO_VERSION, var): DEFINES+=DEMO_VERSION
+# Set the flag passed to compiler to build the demo version
+defined(DEMO_VERSION, var) {
+ DEFINES+=DEMO_VERSION
+ unset(PRIVATE_PLUGINS)
+}
 
-# Setting up the flag passed to compiler to disable all code related to update checking
+# Set up the flag passed to compiler to disable all code related to update checking
 defined(NO_UPDATE_CHECK, var): DEFINES+=NO_UPDATE_CHECK
+
+# Set up the plugin folder to be used
+PLUGINS_FOLDER=plugins
+defined(PRIVATE_PLUGINS, var) {
+  DEFINES+=PRIVATE_PLUGINS_SYMBOLS
+  PLUGINS_FOLDER=priv-plugins
+}
+
+# Include the plugins subprojects only if exists
+PLUGINS_SRC_ROOT=$$PWD/$$PLUGINS_FOLDER
+PLUGINS_PRO_FILE=$$PLUGINS_SRC_ROOT/$${PLUGINS_FOLDER}.pro
+INCLUDEPATH+=$$PLUGINS_SRC_ROOT/src
 
 # Properly defining build number/date constant
 unix {
@@ -175,7 +199,7 @@ DEFINES += BINDIR=\\\"$${BINDIR}\\\" \
            DOCDIR=\\\"$${DOCDIR}\\\" \
            LANGDIR=\\\"$${LANGDIR}\\\" \
            SAMPLESDIR=\\\"$${SAMPLESDIR}\\\" \
-           SCHEMASDIR=\\\"$${SCHEMASDIR}\\\"
+		   SCHEMASDIR=\\\"$${SCHEMASDIR}\\\"
 
 
 # pgModeler depends on libpq and libxml2 this way to variables
@@ -187,19 +211,31 @@ DEFINES += BINDIR=\\\"$${BINDIR}\\\" \
 # XML_LIB   -> Full path to libxml2.(so | dll | dylib)
 # XML_INC   -> Root path where XML2 includes can be found
 
-unix:!macx {
-  CONFIG += link_pkgconfig
-  PKGCONFIG = libpq libxml-2.0
-  PGSQL_LIB = -lpq
-  XML_LIB = -lxml2
+linux: {
+  # If all custom variables PGSQL_??? and XML_??? are defined
+  # Then we use them instead of discovering the paths via pkg-config
+  dep_paths = "$$PGSQL_LIB" "$$XML_LIB" "$$PGSQL_INC" "$$XML_INC"
+  if(count(dep_paths, 4)):{
+    INCLUDEPATH += "$$PGSQL_INC" "$$XML_INC"
+	has_dep_paths = true
+  }
+
+  # If not all of the PGSQL_??? and XML_??? vars are defined
+  # Then we default to use pkg-config for libpq and libxml-2.0
+  !defined(has_dep_paths,var): {
+    CONFIG += link_pkgconfig
+	PKGCONFIG = libpq libxml-2.0
+	PGSQL_LIB = -lpq
+	XML_LIB = -lxml2
+  }
 }
 
 macx {
-  !defined(PGSQL_LIB, var): PGSQL_LIB = /Library/PostgreSQL/12/lib/libpq.dylib
-  !defined(PGSQL_INC, var): PGSQL_INC = /Library/PostgreSQL/12/include
+  !defined(PGSQL_LIB, var): PGSQL_LIB = /Library/PostgreSQL/14/lib/libpq.dylib
+  !defined(PGSQL_INC, var): PGSQL_INC = /Library/PostgreSQL/14/include
   !defined(XML_INC, var): XML_INC = /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/libxml2
   !defined(XML_LIB, var): XML_LIB = /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/lib/libxml2.tbd
-  INCLUDEPATH += $$PGSQL_INC $$XML_INC
+  INCLUDEPATH += "$$PGSQL_INC" "$$XML_INC"
 }
 
 windows {
@@ -207,14 +243,10 @@ windows {
   !defined(PGSQL_INC, var): PGSQL_INC = C:/msys64/mingw64/include
   !defined(XML_INC, var): XML_INC = C:/msys64/mingw64/include/libxml2
   !defined(XML_LIB, var): XML_LIB = C:/msys64/mingw64/bin/libxml2-2.dll
-
-  # Workaround to solve bug of timespec struct on MingW + PostgreSQL < 9.4
-  QMAKE_CXXFLAGS+="-DHAVE_STRUCT_TIMESPEC"
-
   INCLUDEPATH += "$$PGSQL_INC" "$$XML_INC"
 }
 
-macx | windows {
+linux:defined(has_dep_paths,var) | macx | windows : {
   !exists($$PGSQL_LIB) {
     PKG_ERROR = "PostgreSQL libraries"
     VARIABLE = "PGSQL_LIB"

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -25,6 +25,7 @@
 #ifndef SYNTAX_HIGHLIGHTER_H
 #define SYNTAX_HIGHLIGHTER_H
 
+#include "guiglobal.h"
 #include <QtWidgets>
 #include <map>
 #include <vector>
@@ -34,7 +35,7 @@
 #include "attributes.h"
 #include <algorithm>
 
-class SyntaxHighlighter: public QSyntaxHighlighter {
+class __libgui SyntaxHighlighter: public QSyntaxHighlighter {
 	private:
 		Q_OBJECT
 
@@ -59,29 +60,27 @@ class SyntaxHighlighter: public QSyntaxHighlighter {
 
 		/*! \brief Stores the regexp used to identify keywords, identifiers, strings, numbers.
 		Also stores initial regexps used to identify a multiline group */
-		map<QString, vector<QRegExp> > initial_exprs;
+		std::map<QString, std::vector<QRegularExpression> > initial_exprs;
 
 		/*! \brief Stores the regexps that indicates the end of a group. This regexps are
 		used mainly to identify the end of multiline comments */
-		map<QString, vector<QRegExp> > final_exprs;
+		std::map<QString, std::vector<QRegularExpression> > final_exprs;
 
 		//! \brief Stores the text formatting to each group
-		map<QString, QTextCharFormat> formats;
-
-		//! \brief Stores the groups related to partial matching
-		map<QString, bool> partial_match;
+		std::map<QString, QTextCharFormat> formats;
 
 		//! \brief Stores the char used to break the highlight for a group. This char is not highlighted itself.
-		map<QString, QChar> lookahead_char;
+		std::map<QString, QChar> lookahead_char;
 
 		//! \brief Stores the order in which the groups must be applied
-		vector<QString> groups_order;
+		std::vector<QString> groups_order;
 
 		//! \brief Indicates if the configuration is loaded or not
 		bool conf_loaded,
 
 		/*! \brief This causes the highlighter to ignores any RETURN/ENTER press on QTextEdit causing
-							the text to be in a single line. */
+		 *  the text to be in a single line. Also, in single line mode, pressing tab on a focused
+		 *  input causes the focus to jump to the next widget in the hierarchy */
 		single_line_mode,
 
 		/*! \brief Indicates that nearby (contiguous) word separators must be captured
@@ -141,7 +140,7 @@ class SyntaxHighlighter: public QSyntaxHighlighter {
 
 		/*! \brief Returns the regexp vector of the specified group. The 'final_expr' bool parameter indicates
 		that the final expressions must be returned instead of initial expression (default) */
-		vector<QRegExp> getExpressions(const QString &group_name, bool final_expr=false);
+		std::vector<QRegularExpression> getExpressions(const QString &group_name, bool final_expr=false);
 
 		//! \brief Returns the current configured code completion trigger char
 		QChar getCompletionTrigger();

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -18,10 +18,9 @@
 
 #include "paralleltype.h"
 
-template<>
-QStringList ParallelType::TemplateType<ParallelType>::type_names =
+QStringList ParallelType::type_names =
 {
-	"", // Reserved for BaseType::null
+	"", // Reserved for Class::Null
 
 	"PARALLEL UNSAFE",
 	"PARALLEL RESTRICTED",
@@ -41,4 +40,24 @@ ParallelType::ParallelType(const QString &type_name)
 ParallelType::ParallelType()
 {
 	type_idx = Unsafe;
+}
+
+QStringList ParallelType::getTypes()
+{
+	return TemplateType<ParallelType>::getTypes(type_names);
+}
+
+unsigned ParallelType::setType(unsigned type_id)
+{
+	return TemplateType<ParallelType>::setType(type_id, type_names);
+}
+
+unsigned ParallelType::setType(const QString &type_name)
+{
+	return TemplateType<ParallelType>::setType(type_name, type_names);
+}
+
+QString ParallelType::getTypeName(unsigned type_id)
+{
+	return TemplateType<ParallelType>::getTypeName(type_id, type_names);
 }

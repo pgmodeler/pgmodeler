@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -18,10 +18,9 @@
 
 #include "behaviortype.h"
 
-template<>
-QStringList BehaviorType::TemplateType<BehaviorType>::type_names =
+QStringList BehaviorType::type_names =
 {
-	"", // Reserved for BaseType::null
+	"", // Reserved for Class::Null
 
 	"CALLED ON NULL INPUT",
 	"RETURNS NULL ON NULL INPUT",
@@ -41,4 +40,24 @@ BehaviorType::BehaviorType(const QString &type_name)
 BehaviorType::BehaviorType()
 {
 	type_idx = CalledOnNullInput;
+}
+
+QStringList BehaviorType::getTypes()
+{
+	return TemplateType<BehaviorType>::getTypes(type_names);
+}
+
+unsigned BehaviorType::setType(unsigned type_id)
+{
+	return TemplateType<BehaviorType>::setType(type_id, type_names);
+}
+
+unsigned BehaviorType::setType(const QString &type_name)
+{
+	return TemplateType<BehaviorType>::setType(type_name, type_names);
+}
+
+QString BehaviorType::getTypeName(unsigned type_id)
+{
+	return TemplateType<BehaviorType>::getTypeName(type_id, type_names);
 }

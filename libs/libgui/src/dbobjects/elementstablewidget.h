@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -33,14 +33,7 @@
 #include "baseform.h"
 #include "elementwidget.h"
 
-/* Declaring the IndexElement and ExcludeElement class as a Qt metatype in order to permit
- * that instances of the class be used as data of QVariant and QMetaType */
-#include <QMetaType>
-Q_DECLARE_METATYPE(IndexElement)
-Q_DECLARE_METATYPE(ExcludeElement)
-Q_DECLARE_METATYPE(PartitionKey)
-
-class ElementsTableWidget: public QWidget {
+class __libgui ElementsTableWidget: public QWidget {
 	private:
 		Q_OBJECT
 
@@ -105,7 +98,7 @@ class ElementsTableWidget: public QWidget {
 
 		//! \brief Fills the grid with the elements on the vector vector
 		template<class Class>
-		void setElements(vector<Class> elems)
+		void setElements(std::vector<Class> elems)
 		{
 			elements_tab->blockSignals(true);
 			for(auto &elem : elems)
@@ -119,7 +112,7 @@ class ElementsTableWidget: public QWidget {
 
 		//! \brief Fills the provided vector with the elements on the grid
 		template<class Class>
-		void getElements(vector<Class> &elems)
+		void getElements(std::vector<Class> &elems)
 		{
 			if(elements_tab->getRowCount() > 0)
 			{

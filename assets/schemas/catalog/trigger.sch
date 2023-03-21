@@ -91,7 +91,6 @@
 		ELSE NULL
 		END AS columns, ]
 
-
 		%if ({pgsql-ver} >=f "10.0") %then
 			[ tgoldtable AS old_table_name, tgnewtable AS new_table_name, ]
 		%else

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -26,8 +26,8 @@ ModelValidationWidget::ModelValidationWidget(QWidget *parent): QWidget(parent)
 	{
 		setupUi(this);
 
-		output_menu.addAction(tr("Copy as text"), this, SLOT(copyTextOutput()), QKeySequence("Ctrl+Shift+C"));
-		output_menu.addAction(tr("Clear"), this, SLOT(clearOutput()));
+		output_menu.addAction(tr("Copy as text"), this, &ModelValidationWidget::copyTextOutput, QKeySequence("Ctrl+Shift+C"));
+		output_menu.addAction(tr("Clear"), this, &ModelValidationWidget::clearOutput);
 		output_btn->setMenu(&output_menu);
 
 		htmlitem_del=new HtmlItemDelegate(this);
@@ -43,33 +43,33 @@ ModelValidationWidget::ModelValidationWidget(QWidget *parent): QWidget(parent)
 		validation_helper=nullptr;
 		this->setModel(nullptr);
 
-		connect(hide_tb, SIGNAL(clicked()), this, SLOT(hide()));
-		connect(options_btn, SIGNAL(toggled(bool)), options_frm, SLOT(setVisible(bool)));
-		connect(sql_validation_chk, SIGNAL(toggled(bool)), connections_cmb, SLOT(setEnabled(bool)));
-		connect(sql_validation_chk, SIGNAL(toggled(bool)), version_cmb, SLOT(setEnabled(bool)));
-		connect(sql_validation_chk, SIGNAL(toggled(bool)), use_tmp_names_chk, SLOT(setEnabled(bool)));
-		connect(validate_btn, SIGNAL(clicked()), this, SLOT(validateModel()));
-		connect(fix_btn, SIGNAL(clicked()), this, SLOT(applyFixes()));
-		connect(cancel_btn, SIGNAL(clicked()), this, SLOT(cancelValidation()));
-		connect(connections_cmb, SIGNAL(activated(int)), this, SLOT(editConnections()));
-		connect(swap_ids_btn, SIGNAL(clicked()), this, SLOT(swapObjectsIds()));
+		connect(hide_tb, &QToolButton::clicked, this, &ModelValidationWidget::hide);
+		connect(options_btn, &QToolButton::toggled, options_frm, &QFrame::setVisible);
+		connect(sql_validation_chk, &QCheckBox::toggled, connections_cmb, &QComboBox::setEnabled);
+		connect(sql_validation_chk, &QCheckBox::toggled, version_cmb, &QComboBox::setEnabled);
+		connect(sql_validation_chk, &QCheckBox::toggled, use_tmp_names_chk, &QCheckBox::setEnabled);
+		connect(validate_btn, &QToolButton::clicked, this, &ModelValidationWidget::validateModel);
+		connect(fix_btn, &QToolButton::clicked, this, &ModelValidationWidget::applyFixes);
+		connect(cancel_btn, &QToolButton::clicked, this, &ModelValidationWidget::cancelValidation);
+		connect(connections_cmb, &QComboBox::activated, this, &ModelValidationWidget::editConnections);
+		connect(swap_ids_btn, &QToolButton::clicked, this, &ModelValidationWidget::swapObjectsIds);
 
-		connect(sql_validation_chk, &QCheckBox::toggled, [&](){
+		connect(sql_validation_chk, &QCheckBox::toggled, this, [this](){
 			configureValidation();
 			clearOutput();
 		});
 
-		connect(use_tmp_names_chk, &QCheckBox::toggled, [&](){
+		connect(use_tmp_names_chk, &QCheckBox::toggled, this, [this](){
 			configureValidation();
 			clearOutput();
 		});
 
-		connect(connections_cmb, &QComboBox::currentTextChanged, [&](){
+		connect(connections_cmb, &QComboBox::currentTextChanged, this, [this](){
 			configureValidation();
 			clearOutput();
 		});
 
-		connect(version_cmb, &QComboBox::currentTextChanged, [&](){
+		connect(version_cmb, &QComboBox::currentTextChanged, this, [this](){
 			configureValidation();
 			clearOutput();
 		});
@@ -113,38 +113,41 @@ void ModelValidationWidget::createThread()
 		validation_helper=new ModelValidationHelper;
 		validation_helper->moveToThread(validation_thread);
 
-		connect(validation_thread, &QThread::started, [&](){
+		connect(validation_thread, &QThread::started, this, [this](){
 			output_trw->setUniformRowHeights(true);
 		});
 
-		connect(validation_thread, &QThread::finished, [&](){
+		connect(validation_thread, &QThread::finished, this, [this](){
 			output_trw->setUniformRowHeights(false);
 		});
 
-		connect(validation_thread, SIGNAL(started()), validation_helper, SLOT(validateModel()));
-		connect(validation_thread, SIGNAL(started()), validation_helper, SLOT(applyFixes()));
-		connect(validation_thread, SIGNAL(finished()), this, SLOT(updateGraphicalObjects()));
-		connect(validation_thread, SIGNAL(finished()), this, SLOT(destroyThread()));
+		connect(validation_thread, &QThread::started, validation_helper, &ModelValidationHelper::validateModel);
+		connect(validation_thread, &QThread::started, validation_helper, &ModelValidationHelper::applyFixes);
+		connect(validation_thread, &QThread::finished, this, &ModelValidationWidget::updateGraphicalObjects);
 
-		connect(validation_helper, SIGNAL(s_validationInfoGenerated(ValidationInfo)), this, SLOT(updateValidation(ValidationInfo)), Qt::QueuedConnection);
-		connect(validation_helper, SIGNAL(s_progressUpdated(int,QString,ObjectType,QString,bool)), this, SLOT(updateProgress(int,QString,ObjectType,QString,bool)), Qt::BlockingQueuedConnection);
-		connect(validation_helper, SIGNAL(s_objectProcessed(QString,ObjectType)), this, SLOT(updateObjectName(QString,ObjectType)), Qt::QueuedConnection);
-		connect(validation_helper, SIGNAL(s_validationFinished()), this, SLOT(reenableValidation()), Qt::QueuedConnection);
-		connect(validation_helper, SIGNAL(s_validationCanceled()), this, SLOT(reenableValidation()), Qt::QueuedConnection);
-		connect(validation_helper, SIGNAL(s_sqlValidationStarted()), this, SLOT(handleSQLValidationStarted()), Qt::QueuedConnection);
-		connect(validation_helper, SIGNAL(s_fixApplied()), this, SLOT(clearOutput()), Qt::QueuedConnection);
-		connect(validation_helper, SIGNAL(s_fixApplied()), prog_info_wgt, SLOT(show()), Qt::QueuedConnection);
-		connect(validation_helper, SIGNAL(s_relsValidationRequested()), this, SLOT(validateRelationships()));
+		connect(validation_thread, &QThread::finished, this, [this](){
+			destroyThread();
+		});
 
-		connect(validation_helper, &ModelValidationHelper::s_validationCanceled, [&](){
+		connect(validation_helper, &ModelValidationHelper::s_validationInfoGenerated, this, &ModelValidationWidget::updateValidation, Qt::QueuedConnection);
+		connect(validation_helper, &ModelValidationHelper::s_progressUpdated, this, &ModelValidationWidget::updateProgress, Qt::BlockingQueuedConnection);
+		connect(validation_helper, &ModelValidationHelper::s_objectProcessed, this, &ModelValidationWidget::updateObjectName, Qt::QueuedConnection);
+		connect(validation_helper, &ModelValidationHelper::s_validationFinished, this, &ModelValidationWidget::reenableValidation, Qt::QueuedConnection);
+		connect(validation_helper, &ModelValidationHelper::s_validationCanceled, this, &ModelValidationWidget::reenableValidation, Qt::QueuedConnection);
+		connect(validation_helper, &ModelValidationHelper::s_sqlValidationStarted, this, &ModelValidationWidget::handleSQLValidationStarted, Qt::QueuedConnection);
+		connect(validation_helper, &ModelValidationHelper::s_fixApplied, this, &ModelValidationWidget::clearOutput, Qt::QueuedConnection);
+		connect(validation_helper, &ModelValidationHelper::s_fixApplied, prog_info_wgt, &QWidget::show, Qt::QueuedConnection);
+		connect(validation_helper, &ModelValidationHelper::s_relsValidationRequested, this, &ModelValidationWidget::validateRelationships);
+
+		connect(validation_helper, &ModelValidationHelper::s_validationCanceled, this, [this](){
 			emit s_validationCanceled();
 		});
 
-		connect(validation_helper, &ModelValidationHelper::s_fixApplied, [&](){
+		connect(validation_helper, &ModelValidationHelper::s_fixApplied, this, [this](){
 			emit s_fixApplied();
 		});
 
-		connect(validation_helper, &ModelValidationHelper::s_objectIdChanged, [&](BaseObject *obj) {
+		connect(validation_helper, &ModelValidationHelper::s_objectIdChanged, this, [this](BaseObject *obj) {
 			BaseGraphicObject *graph_obj=dynamic_cast<BaseGraphicObject *>(obj);
 			if(graph_obj) graph_objects.push_back(graph_obj);
 		});
@@ -256,7 +259,7 @@ void ModelValidationWidget::updateValidation(ValidationInfo val_info)
 
 	QTreeWidgetItem *item=new QTreeWidgetItem, *item1=nullptr, *item2=nullptr;
 	QLabel *label=new QLabel, *label1=nullptr, *label2=nullptr;
-	vector<BaseObject *> refs;
+	std::vector<BaseObject *> refs;
 	BaseTable *table=nullptr;
 	TableObject *tab_obj=nullptr;
 	QString ref_name;
@@ -358,7 +361,7 @@ void ModelValidationWidget::updateValidation(ValidationInfo val_info)
 
 		if(val_info.getValidationType()==ValidationInfo::BrokenRelConfig)
 		{
-			GuiUtilsNs::createOutputTreeItem(output_trw, tr("<strong>HINT:</strong> try to swap the relationship by another ones that somehow are linked to it through generated columns or constraints to solve this issue. Note that other objects may be lost in the swap process."),
+			GuiUtilsNs::createOutputTreeItem(output_trw, tr("<strong>HINT:</strong> try to change the relationship's creation order in the objects swap dialog and run the validation again. Note that other objects may be lost in the swapping process."),
 												QPixmap(GuiUtilsNs::getIconPath("alert")), item);
 		}
 		else if(val_info.getValidationType()==ValidationInfo::MissingExtension)
@@ -465,9 +468,9 @@ void ModelValidationWidget::applyFixes()
 {
 	emitValidationInProgress();
 	validation_helper->switchToFixMode(true);
-	disconnect(validation_thread, SIGNAL(started()), validation_helper, SLOT(validateModel()));
+	disconnect(validation_thread, &QThread::started, validation_helper, &ModelValidationHelper::validateModel);
 	validation_thread->start();
-	connect(validation_thread, SIGNAL(started()), validation_helper, SLOT(validateModel()));
+	connect(validation_thread, &QThread::started, validation_helper, &ModelValidationHelper::validateModel);
 }
 
 void ModelValidationWidget::updateProgress(int prog, QString msg, ObjectType obj_type, QString cmd, bool is_code_gen)
@@ -599,7 +602,7 @@ void ModelValidationWidget::updateGraphicalObjects()
 {
 	if(!graph_objects.empty())
 	{
-		vector<BaseGraphicObject *>::iterator end;
+		std::vector<BaseGraphicObject *>::iterator end;
 
 		std::sort(graph_objects.begin(), graph_objects.end());
 		end=std::unique(graph_objects.begin(), graph_objects.end());
@@ -686,7 +689,7 @@ void ModelValidationWidget::generateOutputItemText(QTreeWidgetItem *item, QStrin
 	if(label && text.isEmpty())
 		text = label->text();
 
-	text.replace(QRegExp("(\\<)(\\/)?(br|strong|em)(\\/)?(\\>)"), "");
+	text.replace(QRegularExpression("(\\<)(\\/)?(br|strong|em)(\\/)?(\\>)"), "");
 	text.prepend(level == 0 ? "* " : "\n");
 
 	text.replace("\n", filler);

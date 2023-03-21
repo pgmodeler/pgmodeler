@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -24,17 +24,19 @@ ModelRestorationForm::ModelRestorationForm(QWidget *parent, Qt::WindowFlags f) :
 {
 	setupUi(this);
 
-	GuiUtilsNs::configureWidgetFont(message_lbl, GuiUtilsNs::MediumFontFactor);
+	//GuiUtilsNs::configureWidgetFont(message_lbl, GuiUtilsNs::MediumFontFactor);
 
-	connect(restore_btn, SIGNAL(clicked()), this, SLOT(accept()));
-	connect(cancel_btn, SIGNAL(clicked()), this, SLOT(reject()));
-	connect(tmp_files_tbw, SIGNAL(itemSelectionChanged()), this, SLOT(enableRestoration()));
+	connect(restore_btn, &QPushButton::clicked, this, &ModelRestorationForm::accept);
+	connect(cancel_btn, &QPushButton::clicked, this, &ModelRestorationForm::reject);
+	connect(tmp_files_tbw, &QTableWidget::itemSelectionChanged, this, &ModelRestorationForm::enableRestoration);
 }
 
 QStringList ModelRestorationForm::getTemporaryModels()
 {
 	//Returns if there is some .dbm file on the tmp dir
-	QStringList list = QDir(GlobalAttributes::getTemporaryDir(), QString("*.dbm"), QDir::Time, QDir::Files | QDir::NoDotAndDotDot).entryList();
+	QStringList list = QDir(GlobalAttributes::getTemporaryPath(),
+													"*" + GlobalAttributes::DbModelExt,
+													QDir::Time, QDir::Files | QDir::NoDotAndDotDot).entryList();
 
 	for(auto &file : ignored_files)
 		list.removeAll(file);
@@ -48,22 +50,24 @@ int ModelRestorationForm::exec()
 	QFileInfo info;
 	QTableWidgetItem *item=nullptr;
 	QString buffer, filename;
-	QRegExp regexp=QRegExp("(\\<database)( )+(name)(=)(\")");
+	QRegularExpression regexp("(\\<database)( )+(name)(=)(\")");
+	QRegularExpressionMatch match;
 	int start=-1, end=-1, col=0;
 
 	while(!file_list.isEmpty())
 	{
-		info.setFile(GlobalAttributes::getTemporaryDir(), file_list.front());
+		info.setFile(GlobalAttributes::getTemporaryPath(), file_list.front());
 		filename=GlobalAttributes::getTemporaryFilePath(file_list.front());
 
 		buffer.append(UtilsNs::loadFile(filename));
 
-		start=regexp.indexIn(buffer) + regexp.matchedLength();
-		end=buffer.indexOf("\"", start);
+		match = regexp.match(buffer);
+		start = match.capturedStart() + match.capturedLength();
+		end = buffer.indexOf("\"", start);
 
 		tmp_info.append(buffer.mid(start, end - start));
 		tmp_info.append(info.fileName());
-		tmp_info.append(info.lastModified().toString(QString("yyyy-MM-dd hh:mm:ss")));
+		tmp_info.append(info.lastModified().toString("yyyy-MM-dd hh:mm:ss"));
 
 		if(info.size() < 1024)
 			tmp_info.append(QString("%1 bytes").arg(info.size()));
@@ -105,7 +109,7 @@ bool ModelRestorationForm::hasTemporaryModels()
 void ModelRestorationForm::removeTemporaryFiles()
 {
 	QDir tmp_file;
-	QStringList tmp_files = QDir(GlobalAttributes::getTemporaryDir(), QString("*"),
+	QStringList tmp_files = QDir(GlobalAttributes::getTemporaryPath(), QString("*"),
 															 QDir::Name, QDir::Files | QDir::NoDotAndDotDot).entryList();
 
 	for(auto &file : tmp_files)

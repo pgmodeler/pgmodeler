@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -32,26 +32,27 @@ MetadataHandlingForm::MetadataHandlingForm(QWidget *parent, Qt::WindowFlags f) :
 	output_trw->setItemDelegateForColumn(0, htmlitem_deleg);
 
 	backup_file_sel = new FileSelectorWidget(this);
-	backup_file_sel->setNameFilters({tr("Objects metadata file (*.omf)"), tr("All files (*.*)")});
+	backup_file_sel->setNameFilters({tr("Objects metadata file (*%1)").arg(GlobalAttributes::ObjMetadataExt), tr("All files (*.*)")});
 	backup_file_sel->setWindowTitle(tr("Select backup file"));
 	settings_grid->addWidget(backup_file_sel, 6, 2);
 
-	connect(cancel_btn, SIGNAL(clicked()), this, SLOT(reject()));
-	connect(apply_btn, SIGNAL(clicked()), this, SLOT(handleObjectsMetada()));
+	connect(close_btn, &QPushButton::clicked, this, &MetadataHandlingForm::reject);
+	connect(apply_btn, &QPushButton::clicked, this, &MetadataHandlingForm::handleObjectsMetada);
 
-	connect(extract_from_cmb, &QComboBox::currentTextChanged,
-					[&](){ apply_btn->setDisabled(extract_from_cmb->count() == 0); });
+	connect(extract_from_cmb, &QComboBox::currentTextChanged, [this](){
+		apply_btn->setDisabled(extract_from_cmb->count() == 0);
+	});
 
-	connect(extract_from_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(enableMetadataHandling()));
-	connect(backup_file_sel, SIGNAL(s_selectorChanged(bool)), this, SLOT(enableMetadataHandling()));
-	connect(restore_rb, SIGNAL(toggled(bool)), this, SLOT(configureSelector()));
-	connect(restore_rb, SIGNAL(toggled(bool)), this, SLOT(enableMetadataHandling()));
-	connect(extract_restore_rb, SIGNAL(toggled(bool)), this, SLOT(configureSelector()));
-	connect(extract_restore_rb, SIGNAL(toggled(bool)), this, SLOT(enableMetadataHandling()));
-	connect(extract_only_rb, SIGNAL(toggled(bool)), this, SLOT(configureSelector()));
-	connect(extract_only_rb, SIGNAL(toggled(bool)), this, SLOT(enableMetadataHandling()));
-	connect(select_all_btn, SIGNAL(clicked(bool)), this, SLOT(selectAllOptions()));
-	connect(clear_all_btn, SIGNAL(clicked(bool)), this, SLOT(selectAllOptions()));
+	connect(extract_from_cmb, &QComboBox::currentIndexChanged, this, &MetadataHandlingForm::enableMetadataHandling);
+	connect(backup_file_sel, &FileSelectorWidget::s_selectorChanged, this, &MetadataHandlingForm::enableMetadataHandling);
+	connect(restore_rb, &QRadioButton::toggled, this, &MetadataHandlingForm::configureSelector);
+	connect(restore_rb, &QRadioButton::toggled, this, &MetadataHandlingForm::enableMetadataHandling);
+	connect(extract_restore_rb, &QRadioButton::toggled, this, &MetadataHandlingForm::configureSelector);
+	connect(extract_restore_rb, &QRadioButton::toggled, this, &MetadataHandlingForm::enableMetadataHandling);
+	connect(extract_only_rb, &QRadioButton::toggled, this, &MetadataHandlingForm::configureSelector);
+	connect(extract_only_rb, &QRadioButton::toggled, this, &MetadataHandlingForm::enableMetadataHandling);
+	connect(select_all_btn, &QPushButton::clicked, this, &MetadataHandlingForm::selectAllOptions);
+	connect(clear_all_btn,  &QPushButton::clicked, this, &MetadataHandlingForm::selectAllOptions);
 
 	configureSelector();
 }
@@ -122,7 +123,7 @@ void MetadataHandlingForm::handleObjectsMetada()
 
 	QTemporaryFile tmp_file;
 	QString metadata_file;
-	unsigned options=0;
+	DatabaseModel::MetaAttrOptions options = DatabaseModel::MetaNoOpts;
 	DatabaseModel *extract_model=nullptr;
 
 	try
@@ -132,23 +133,23 @@ void MetadataHandlingForm::handleObjectsMetada()
 		settings_tbw->setTabEnabled(1, true);
 		settings_tbw->setCurrentIndex(1);
 
-		options+=(db_metadata_chk->isChecked() ? DatabaseModel::MetaDbAttributes : 0);
-		options+=(custom_colors_chk->isChecked() ? DatabaseModel::MetaObjsCustomColors : 0);
-		options+=(custom_sql_chk->isChecked() ? DatabaseModel::MetaObjsCustomSql : 0);
-		options+=(objs_positioning_chk->isChecked() ? DatabaseModel::MetaObjsPositioning : 0);
-		options+=(objs_protection_chk->isChecked() ? DatabaseModel::MetaObjsProtection : 0);
-		options+=(objs_sql_disabled_chk->isChecked() ? DatabaseModel::MetaObjsSqlDisabled : 0);
-		options+=(tag_objs_chk->isChecked() ? DatabaseModel::MetaTagObjs : 0);
-		options+=(textbox_objs_chk->isChecked() ? DatabaseModel::MetaTextboxObjs : 0);
-		options+=(objs_fadedout_chk->isChecked() ? DatabaseModel::MetaObjsFadeOut : 0);
-		options+=(objs_collapse_mode_chk->isChecked() ? DatabaseModel::MetaObjsCollapseMode : 0);
-		options+=(generic_sql_objs_chk->isChecked() ? DatabaseModel::MetaGenericSqlObjs : 0);
-		options+=(objs_aliases_chk->isChecked() ? DatabaseModel::MetaObjsAliases : 0);
-		options+=(objs_z_stack_value_chk->isChecked() ? DatabaseModel::MetaObjsZStackValue : 0);
-		options+=(objs_layers_config_chk->isChecked() ? DatabaseModel::MetaObjsLayersConfig : 0);
-		options+=(merge_dup_objs_chk->isChecked() ? DatabaseModel::MetaMergeDuplicatedObjs : 0);
+		options|=(db_metadata_chk->isChecked() ? DatabaseModel::MetaDbAttributes : DatabaseModel::MetaNoOpts);
+		options|=(custom_colors_chk->isChecked() ? DatabaseModel::MetaObjsCustomColors : DatabaseModel::MetaNoOpts);
+		options|=(custom_sql_chk->isChecked() ? DatabaseModel::MetaObjsCustomSql : DatabaseModel::MetaNoOpts);
+		options|=(objs_positioning_chk->isChecked() ? DatabaseModel::MetaObjsPositioning : DatabaseModel::MetaNoOpts);
+		options|=(objs_protection_chk->isChecked() ? DatabaseModel::MetaObjsProtection : DatabaseModel::MetaNoOpts);
+		options|=(objs_sql_disabled_chk->isChecked() ? DatabaseModel::MetaObjsSqlDisabled : DatabaseModel::MetaNoOpts);
+		options|=(tag_objs_chk->isChecked() ? DatabaseModel::MetaTagObjs : DatabaseModel::MetaNoOpts);
+		options|=(textbox_objs_chk->isChecked() ? DatabaseModel::MetaTextboxObjs : DatabaseModel::MetaNoOpts);
+		options|=(objs_fadedout_chk->isChecked() ? DatabaseModel::MetaObjsFadeOut : DatabaseModel::MetaNoOpts);
+		options|=(objs_collapse_mode_chk->isChecked() ? DatabaseModel::MetaObjsCollapseMode : DatabaseModel::MetaNoOpts);
+		options|=(generic_sql_objs_chk->isChecked() ? DatabaseModel::MetaGenericSqlObjs : DatabaseModel::MetaNoOpts);
+		options|=(objs_aliases_chk->isChecked() ? DatabaseModel::MetaObjsAliases : DatabaseModel::MetaNoOpts);
+		options|=(objs_z_stack_value_chk->isChecked() ? DatabaseModel::MetaObjsZStackValue : DatabaseModel::MetaNoOpts);
+		options|=(objs_layers_config_chk->isChecked() ? DatabaseModel::MetaObjsLayersConfig : DatabaseModel::MetaNoOpts);
+		options|=(merge_dup_objs_chk->isChecked() ? DatabaseModel::MetaMergeDuplicatedObjs : DatabaseModel::MetaNoOpts);
 
-		connect(model_wgt->getDatabaseModel(), SIGNAL(s_objectLoaded(int,QString,unsigned)), this, SLOT(updateProgress(int,QString,unsigned)), Qt::UniqueConnection);
+		connect(model_wgt->getDatabaseModel(), &DatabaseModel::s_objectLoaded, this, &MetadataHandlingForm::updateProgress, Qt::UniqueConnection);
 
 		if(extract_restore_rb->isChecked() || extract_only_rb->isChecked())
 		{
@@ -160,22 +161,21 @@ void MetadataHandlingForm::handleObjectsMetada()
 			{
 				//Configuring the temporary metadata file
 				tmp_file.setFileTemplate(GlobalAttributes::getTemporaryFilePath(
-																	 QString("%1_metadata_XXXXXX.%2")
-																	 .arg(extract_model->getName())
-																	 .arg(QString("omf"))));
+																	 QString("%1_metadata_XXXXXX%2")
+																	 .arg(extract_model->getName(), GlobalAttributes::ObjMetadataExt)));
 
 				tmp_file.open();
 				metadata_file=tmp_file.fileName();
 				tmp_file.close();
 			}
 
-			connect(extract_model, SIGNAL(s_objectLoaded(int,QString,unsigned)), this, SLOT(updateProgress(int,QString,unsigned)), Qt::UniqueConnection);
+			connect(extract_model, &DatabaseModel::s_objectLoaded, this, &MetadataHandlingForm::updateProgress, Qt::UniqueConnection);
 
 			root_item=GuiUtilsNs::createOutputTreeItem(output_trw,
 																										GuiUtilsNs::formatMessage(tr("Extracting metadata to file `%1'").arg(metadata_file)),
 																										QPixmap(GuiUtilsNs::getIconPath("info")), nullptr);
 
-			extract_model->saveObjectsMetadata(metadata_file, options);
+			extract_model->saveObjectsMetadata(metadata_file, static_cast<DatabaseModel::MetaAttrOptions>(options));
 
 			if(extract_restore_rb->isChecked() && !backup_file_sel->getSelectedFile().isEmpty())
 			{
@@ -202,7 +202,7 @@ void MetadataHandlingForm::handleObjectsMetada()
 																										QPixmap(GuiUtilsNs::getIconPath("info")), nullptr);
 
 			model_wgt->setUpdatesEnabled(false);
-			model_wgt->getDatabaseModel()->loadObjectsMetadata(metadata_file, options);
+			model_wgt->getDatabaseModel()->loadObjectsMetadata(metadata_file, static_cast<DatabaseModel::MetaAttrOptions>(options));
 			model_wgt->adjustSceneSize();
 			model_wgt->updateSceneLayers();
 			model_wgt->restoreLastCanvasPosition();

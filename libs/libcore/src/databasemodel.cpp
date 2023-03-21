@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -19,10 +19,7 @@
 #include "databasemodel.h"
 #include "coreutilsns.h"
 #include "defaultlanguages.h"
-#include "operation.h"
 #include <QtDebug>
-#include "qtcompat/splitbehaviorcompat.h"
-#include "qtcompat/qtextstreamcompat.h"
 #include <random>
 #include "utilsns.h"
 
@@ -45,7 +42,7 @@ DatabaseModel::DatabaseModel()
 	allow_conns = true;
 	cancel_saving = false;
 
-	encoding=BaseType::Null;
+	encoding=EncodingType::Null;
 	BaseObject::setName(QObject::tr("new_database"));
 
 	default_objs[ObjectType::Schema]=nullptr;
@@ -151,7 +148,7 @@ void DatabaseModel::setAuthor(const QString &author)
 	this->author=author;
 }
 
-vector<BaseObject *> *DatabaseModel::getObjectList(ObjectType obj_type)
+std::vector<BaseObject *> *DatabaseModel::getObjectList(ObjectType obj_type)
 {
 	if(obj_lists.count(obj_type) == 0)
 		return nullptr;
@@ -319,8 +316,8 @@ void DatabaseModel::__addObject(BaseObject *object, int obj_idx)
 {
 	int idx;
 	ObjectType obj_type;
-	vector<BaseObject *> *obj_list=nullptr;
-	vector<BaseObject *>::iterator itr, itr_end;
+	std::vector<BaseObject *> *obj_list=nullptr;
+	std::vector<BaseObject *>::iterator itr, itr_end;
 
 	if(!object)
 		throw Exception(ErrorCode::AsgNotAllocattedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -399,9 +396,9 @@ void DatabaseModel::__addObject(BaseObject *object, int obj_idx)
 	try
 	{
 		if(obj_type==ObjectType::Textbox || obj_type==ObjectType::BaseRelationship)
-			object->getCodeDefinition(SchemaParser::XmlDefinition);
+			object->getSourceCode(SchemaParser::XmlCode);
 		else
-			object->getCodeDefinition(SchemaParser::SqlDefinition);
+			object->getSourceCode(SchemaParser::SqlCode);
 	}
 	catch(Exception &e)
 	{
@@ -436,7 +433,7 @@ void DatabaseModel::__removeObject(BaseObject *object, int obj_idx, bool check_r
 		throw Exception(ErrorCode::RemNotAllocatedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	else
 	{
-		vector<BaseObject *> *obj_list=nullptr;
+		std::vector<BaseObject *> *obj_list=nullptr;
 		ObjectType obj_type;
 
 		obj_type=object->getObjectType();
@@ -446,7 +443,7 @@ void DatabaseModel::__removeObject(BaseObject *object, int obj_idx, bool check_r
 			throw Exception(ErrorCode::ObtObjectInvalidType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		else
 		{
-			vector<BaseObject *> refs;
+			std::vector<BaseObject *> refs;
 
 			//Get the table references
 			if(check_refs)
@@ -501,10 +498,10 @@ void DatabaseModel::__removeObject(BaseObject *object, int obj_idx, bool check_r
 	}
 }
 
-vector<BaseObject *> DatabaseModel::getObjects(ObjectType obj_type, BaseObject *schema)
+std::vector<BaseObject *> DatabaseModel::getObjects(ObjectType obj_type, BaseObject *schema)
 {
-	vector<BaseObject *> *obj_list=nullptr, sel_list;
-	vector<BaseObject *>::iterator itr, itr_end;
+	std::vector<BaseObject *> *obj_list=nullptr, sel_list;
+	std::vector<BaseObject *>::iterator itr, itr_end;
 	BaseRelationship *rel=nullptr;
 
 	obj_list=getObjectList(obj_type);
@@ -530,10 +527,10 @@ vector<BaseObject *> DatabaseModel::getObjects(ObjectType obj_type, BaseObject *
 	return sel_list;
 }
 
-vector<BaseObject *> DatabaseModel::getObjects(BaseObject *schema)
+std::vector<BaseObject *> DatabaseModel::getObjects(BaseObject *schema)
 {
-	vector<BaseObject *> *obj_list=nullptr, sel_list;
-	vector<ObjectType> types = BaseObject::getChildObjectTypes(ObjectType::Schema);
+	std::vector<BaseObject *> *obj_list=nullptr, sel_list;
+	std::vector<ObjectType> types = BaseObject::getChildObjectTypes(ObjectType::Schema);
 
 	for(auto &type : types)
 	{
@@ -552,8 +549,8 @@ vector<BaseObject *> DatabaseModel::getObjects(BaseObject *schema)
 BaseObject *DatabaseModel::getObject(const QString &name, ObjectType obj_type, int &obj_idx)
 {
 	BaseObject *object=nullptr;
-	vector<BaseObject *> *obj_list=nullptr;
-	vector<BaseObject *>::iterator itr, itr_end;
+	std::vector<BaseObject *> *obj_list=nullptr;
+	std::vector<BaseObject *>::iterator itr, itr_end;
 	bool found=false;
 	QString aux_name1;
 
@@ -563,8 +560,6 @@ BaseObject *DatabaseModel::getObject(const QString &name, ObjectType obj_type, i
 		throw Exception(ErrorCode::ObtObjectInvalidType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	else
 	{
-		QString signature;
-
 		itr=obj_list->begin();
 		itr_end=obj_list->end();
 		obj_idx=-1;
@@ -572,23 +567,27 @@ BaseObject *DatabaseModel::getObject(const QString &name, ObjectType obj_type, i
 
 		while(itr!=itr_end && !found)
 		{
-			signature=(*itr)->getSignature().remove("\"");
-			found=(signature==aux_name1);
-			if(!found) itr++;
+			if((*itr)->getSignature().remove("\"") == aux_name1 ||
+				 (*itr)->getName(false) == aux_name1)
+			{
+				found = true;
+				break;
+			}
+
+			itr++;
 		}
 
 		if(found)
 		{
-			object=(*itr);
-			obj_idx=(itr - obj_list->begin());
+			object = (*itr);
+			obj_idx = (itr - obj_list->begin());
 		}
-		else obj_idx=-1;
 	}
 
 	return object;
 }
 
-BaseObject *DatabaseModel::getObject(const QString &name, const vector<ObjectType> &types)
+BaseObject *DatabaseModel::getObject(const QString &name, const std::vector<ObjectType> &types)
 {
 	BaseObject *object = nullptr;
 
@@ -603,7 +602,7 @@ BaseObject *DatabaseModel::getObject(const QString &name, const vector<ObjectTyp
 
 BaseObject *DatabaseModel::getObject(unsigned obj_idx, ObjectType obj_type)
 {
-	vector<BaseObject *> *obj_list=nullptr;
+	std::vector<BaseObject *> *obj_list=nullptr;
 
 	obj_list=getObjectList(obj_type);
 
@@ -617,7 +616,7 @@ BaseObject *DatabaseModel::getObject(unsigned obj_idx, ObjectType obj_type)
 
 unsigned DatabaseModel::getObjectCount(ObjectType obj_type)
 {
-	vector<BaseObject *> *obj_list=nullptr;
+	std::vector<BaseObject *> *obj_list=nullptr;
 
 	obj_list=getObjectList(obj_type);
 
@@ -629,7 +628,7 @@ unsigned DatabaseModel::getObjectCount(ObjectType obj_type)
 
 unsigned DatabaseModel::getMaxObjectCount()
 {
-	vector<ObjectType> types = getObjectTypes(false, {ObjectType::Database});
+	std::vector<ObjectType> types = getObjectTypes(false, {ObjectType::Database});
   unsigned count = 0, max = 0;
 
   for(auto &type : types)
@@ -643,7 +642,7 @@ unsigned DatabaseModel::getMaxObjectCount()
 
 unsigned DatabaseModel::getObjectCount()
 {
-	vector<ObjectType> types= getObjectTypes(false, {ObjectType::Database});
+	std::vector<ObjectType> types= getObjectTypes(false, {ObjectType::Database});
 	unsigned count=0;
 
 	for(auto &type : types)
@@ -706,9 +705,9 @@ void DatabaseModel::destroyObjects()
 	ObjectType graph_types[]={ ObjectType::Schema, ObjectType::BaseRelationship, ObjectType::Relationship,
 														 ObjectType::Table, ObjectType::ForeignTable, ObjectType::View };
 	BaseObject *object=nullptr;
-	map<unsigned, BaseObject *> objects;
-	map<unsigned, BaseObject *>::reverse_iterator ritr, ritr_end;
-	vector<ObjectType> rem_obj_types;
+	std::map<unsigned, BaseObject *> objects;
+	std::map<unsigned, BaseObject *>::reverse_iterator ritr, ritr_end;
+	std::vector<ObjectType> rem_obj_types;
 	BaseGraphicObject *graph_obj = nullptr;
 
 	//Blocking signals of all graphical objects to avoid uneeded updates in the destruction
@@ -736,11 +735,11 @@ void DatabaseModel::destroyObjects()
 		/* DEBUG: An exception at this point shouldn't never occur but if
 		 * it is raised, we spit out the error to the stdout in order to try to
 		 * find out the problem! */
-		qDebug() << "** FAIL TO DESTROY ALL OBJECTS **" << QtCompat::endl;
-		qDebug() << e.getExceptionsText().toStdString().c_str() << QtCompat::endl;
+		qDebug() << "** FAIL TO DESTROY ALL OBJECTS **" << Qt::endl;
+		qDebug() << e.getExceptionsText().toStdString().c_str() << Qt::endl;
 	}
 
-	objects = getCreationOrder(SchemaParser::XmlDefinition, true);
+	objects = getCreationOrder(SchemaParser::XmlCode, true);
 	ritr = objects.rbegin();
 	ritr_end = objects.rend();
 
@@ -788,7 +787,7 @@ void DatabaseModel::destroyObjects()
 	if(!rem_obj_types.empty())
 	{
 		std::sort(rem_obj_types.begin(), rem_obj_types.end());
-		vector<ObjectType>::iterator end = std::unique(rem_obj_types.begin(), rem_obj_types.end());
+		std::vector<ObjectType>::iterator end = std::unique(rem_obj_types.begin(), rem_obj_types.end());
 		rem_obj_types.erase(end, rem_obj_types.end());
 
 		for(auto type : rem_obj_types)
@@ -1309,8 +1308,8 @@ void DatabaseModel::updateTableFKRelationships(Table *table)
 		Table *ref_tab=nullptr;
 		BaseRelationship *rel=nullptr;
 		unsigned idx;
-		vector<Constraint *> fks;
-		vector<BaseObject *>::iterator itr1, itr1_end;
+		std::vector<Constraint *> fks;
+		std::vector<BaseObject *>::iterator itr1, itr1_end;
 
 		table->getForeignKeys(fks);
 
@@ -1400,7 +1399,7 @@ void DatabaseModel::updateTableFKRelationships(Table *table)
 
 void DatabaseModel::updateTablesFKRelationships()
 {
-	vector<BaseObject *>::iterator itr=tables.begin();
+	std::vector<BaseObject *>::iterator itr=tables.begin();
 
 	while(itr!=tables.end())
 	{
@@ -1415,8 +1414,8 @@ void DatabaseModel::updateViewRelationships(View *view, bool force_rel_removal)
 	BaseRelationship *rel=nullptr;
 	Reference ref;
 	unsigned i, ref_count, idx;
-	vector<BaseObject *>::iterator itr, itr_end;
-	vector<PhysicalTable *> tables;
+	std::vector<BaseObject *>::iterator itr, itr_end;
+	std::vector<PhysicalTable *> tables;
 
 	if(!view)
 		throw Exception(ErrorCode::OprNotAllocatedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -1484,18 +1483,18 @@ void DatabaseModel::updateViewRelationships(View *view, bool force_rel_removal)
 
 		/* Creates the relationships from the view references
 		 * First we try to create relationship from referecences in SELECT portion of view's definition */
-		ref_count=view->getReferenceCount(Reference::SqlReferSelect);
+		ref_count=view->getReferenceCount(Reference::SqlSelect);
 		for(i=0; i < ref_count; i++)
 		{
-			table = view->getReference(i, Reference::SqlReferSelect).getTable();
+			table = view->getReference(i, Reference::SqlSelect).getTable();
 			if(table) tables.push_back(table);
 		}
 
 		/* If the view does have tables referenced from SELECT portion we check if
-		 * the table was constructed from a single reference (Reference::SqlViewDefinition). In
+		 * the table was constructed from a single reference (Reference::SqlViewDef). In
 		 * that case we use the list of referenced tables configured in that view reference object */
-		if(tables.empty() && view->getReferenceCount(Reference::SqlViewDefinition) > 0)
-			tables = view->getReference(0, Reference::SqlViewDefinition).getReferencedTables();
+		if(tables.empty() && view->getReferenceCount(Reference::SqlViewDef) > 0)
+			tables = view->getReference(0, Reference::SqlViewDef).getReferencedTables();
 
 		// Effectively creating the relationships
 		for(auto &tab : tables)
@@ -1518,7 +1517,7 @@ void DatabaseModel::disconnectRelationships()
 	{
 		BaseRelationship *base_rel=nullptr;
 		Relationship *rel=nullptr;
-		vector<BaseObject *>::reverse_iterator ritr_rel, ritr_rel_end;
+		std::vector<BaseObject *>::reverse_iterator ritr_rel, ritr_rel_end;
 
 		//The relationships must be disconnected from the last to the first
 		ritr_rel=relationships.rbegin();
@@ -1547,291 +1546,191 @@ void DatabaseModel::disconnectRelationships()
 	}
 }
 
-void DatabaseModel::validateRelationships()
+bool DatabaseModel::hasInvalidRelatioships()
 {
-	vector<BaseObject *>::iterator itr, itr_end, itr_ant;
-	Relationship *rel=nullptr;
-	BaseRelationship *base_rel=nullptr;
-	vector<BaseObject *> vet_rel, vet_rel_inv, rels, fail_rels;
-	bool found_inval_rel, valid_fail_rels=false;
-	vector<Exception> errors;
-	map<unsigned, QString>::iterator itr1, itr1_end;
-	map<unsigned, Exception> error_map;
-	map<unsigned, Exception>::iterator itr2, itr2_end;
-	map<BaseObject *, unsigned> conn_tries;
-	unsigned idx, rels_gen_pk=0;
-	vector<Schema *> schemas;
-	BaseTable *tab1=nullptr, *tab2=nullptr;
+	Relationship *rel = nullptr;
 
-	itr=relationships.begin();
-	itr_end=relationships.end();
-
-	/* Calculates the quantity of referece tables which has primary keys added by relationship.
-	This type of primary key may cause unexpected relationship invalidation during the validation process
-	because all relationship are disconnected and when reconnecting them the primary key sometimes is not yet
-	created causing other relationships to be broken. This counter is used to try revalidate any relationship
-	that emits ERR_LINK_TABLES_NO_PK exception during its connection */
-	while(itr!=itr_end)
+	for(auto &itr : relationships)
 	{
-		rel=dynamic_cast<Relationship *>(*itr);
-		itr++;
+		rel = dynamic_cast<Relationship *>(itr);
 
-		if(rel &&
-				(rel->getRelationshipType()==Relationship::Relationship11 ||
-				 rel->getRelationshipType()==Relationship::Relationship1n) &&
-				rel->getReferenceTable()->getPrimaryKey() &&
-				rel->getReferenceTable()->getPrimaryKey()->isAddedByRelationship())
-			rels_gen_pk++;
+		if(!rel) continue;
+
+		if(rel && rel->isInvalidated())
+			return true;
 	}
 
-	itr=relationships.begin();
-	itr_end=relationships.end();
+	return false;
+}
 
-	do
+std::vector<Exception> DatabaseModel::createSpecialObjects()
+{
+	//The special objects are created only when the model is not being loaded
+	if(loading_model)
+		return {};
+
+	std::vector<unsigned> created_objs_ids;
+	std::vector<Exception> errors;
+
+	for(auto &itr : xml_special_objs)
 	{
-		found_inval_rel=false;
-
-		while(itr!=itr_end)
+		try
 		{
-			base_rel=dynamic_cast<BaseRelationship *>(*itr);
+			//Try to create the special object
+			createSpecialObject(itr.second, itr.first);
+			created_objs_ids.push_back(itr.first);
+		}
+		catch(Exception &e)
+		{
+			errors.push_back(e);
+		}
+	}
+
+	while(!created_objs_ids.empty())
+	{
+		xml_special_objs.erase(created_objs_ids.back());
+		created_objs_ids.pop_back();
+	}
+
+	return errors;
+}
+
+void DatabaseModel::updateRelsGeneratedObjects()
+{
+	try
+	{
+		Relationship *rel = nullptr;
+		bool rels_updated = false;
+		auto itr = relationships.begin(), itr_end = relationships.end();
+
+		while(itr != itr_end)
+		{
+			rel = dynamic_cast<Relationship *>(*itr);
 			itr++;
 
-			//Validates only table-table relationships
-			if(base_rel->getObjectType()==ObjectType::Relationship)
+			rel->blockSignals(true);
+
+			if(rel->updateGeneratedObjects())
+				rels_updated = true;
+
+			rel->blockSignals(false);
+
+			if(itr == itr_end && rels_updated)
 			{
-				//Makes a cast to the correct object class
-				rel=dynamic_cast<Relationship *>(base_rel);
-
-				//If the relationships is invalid
-				if(rel->isInvalidated())
-				{
-					//Inserts it to the invalid relationship vector
-					vet_rel_inv.push_back(base_rel);
-
-					//Marks the flag indicating the at least one relationship was found invalidated
-					found_inval_rel=true;
-				}
-				else
-					//Otherwise inserts the relationship on the valid relationships
-					vet_rel.push_back(base_rel);
-			}
-		}
-
-		//If there is some invalidated relationship or special objects to be recreated
-		if(found_inval_rel || !xml_special_objs.empty())
-		{
-			//Stores the special objects definition if there is some invalidated relationships
-			if(!loading_model && xml_special_objs.empty())
-				storeSpecialObjectsXML();
-
-			if(found_inval_rel)
-			{
-				//Disconnects all the relationship
-				disconnectRelationships();
-
-				/* Merges the two lists (valid and invalid relationships),
-					 taking care to insert the invalid ones at the end of the list */
-				rels=vet_rel;
-				rels.insert(rels.end(), vet_rel_inv.begin(), vet_rel_inv.end());
-				vet_rel.clear();
-				vet_rel_inv.clear();
-
-				//Walking through the created list connecting the relationships
-				itr=rels.begin();
-				itr_end=rels.end();
-				idx=0;
-
-				while(itr!=itr_end)
-				{
-					rel=dynamic_cast<Relationship *>(*itr);
-
-					//Stores the current iterator in a auxiliary one to remove from list in case of error
-					itr_ant=itr;
-					itr++;
-
-					try
-					{
-						//Try to connect the relationship
-						rel->connectRelationship();
-
-						//Storing the schemas on a auxiliary vector to update them later
-						tab1=rel->getTable(BaseRelationship::SrcTable);
-						tab2=rel->getTable(BaseRelationship::DstTable);
-						schemas.push_back(dynamic_cast<Schema *>(tab1->getSchema()));
-
-						if(tab2 != tab1)
-							schemas.push_back(dynamic_cast<Schema *>(tab2->getSchema()));
-
-						idx++;
-
-						/* Removes the relationship from the current position and inserts it
-							 into the next position after the next relationship to try the reconnection */
-						rels.erase(itr_ant);
-						idx=0;
-
-						/* If the list was emptied and there is relationship that fails to validate,
-							 the method will try to validate them one last time */
-						if(rels.size()==0 && !fail_rels.empty() && !valid_fail_rels)
-						{
-							rels.insert(rels.end(), fail_rels.begin(), fail_rels.end());
-							//Check this flag indicates that the fail_rels list must be copied only one time
-							valid_fail_rels=true;
-						}
-
-						itr=rels.begin();
-						itr_end=rels.end();
-					}
-					/* Case some error is raised during the connection the relationship is
-						 permanently invalidated and need to be removed from the model */
-					catch(Exception &e)
-					{
-						/* If the relationship connection failed after 'rels_gen_pk' times at the
-						different errors or exists on the fail_rels vector (already tried to be validated)
-						it will be deleted from model */
-						if((e.getErrorCode() != ErrorCode::InvLinkTablesNoPrimaryKey && conn_tries[rel] > rels_gen_pk) ||
-								(std::find(fail_rels.begin(), fail_rels.end(), rel)!=fail_rels.end()))
-						{
-							//Removes the relationship
-							__removeObject(rel);
-
-							//Removes the iterator that stores the relationship from the list
-							rels.erase(itr_ant);
-
-							//Stores the error raised in a list
-							errors.push_back(e);
-						}
-						/* If the relationship connection fails with the ERR_LINK_TABLES_NO_PK error and
-								the connection tries exceed the size of the relationship the relationship is isolated
-								on a "failed to validate" list. This list will be appended to the main rel list when
-								there is only one relationship to be validated */
-						else if(e.getErrorCode()==ErrorCode::InvLinkTablesNoPrimaryKey &&
-								(conn_tries[rel] > rels.size() ||
-								 rel->getRelationshipType()==BaseRelationship::RelationshipNn))
-						{
-							fail_rels.push_back(rel);
-							rels.erase(itr_ant);
-							conn_tries[rel]=0;
-
-							/* If the list was emptied and there is relationship that fails to validate,
-								 the method will try to validate them one last time */
-							if(rels.size()==0 && !valid_fail_rels)
-							{
-								rels.insert(rels.end(), fail_rels.begin(), fail_rels.end());
-								valid_fail_rels=true;
-							}
-						}
-						else
-						{
-							//Increments the connection tries
-							conn_tries[rel]++;
-
-							/* Removes the relationship from the current position and inserts it
-								 into the next position after the next relationship to try the reconnection */
-							rels.erase(itr_ant);
-
-							//If the next index doesn't extrapolates the list size insert it on the next position
-							if(idx+1 < rels.size())
-								rels.insert(rels.begin() + idx + 1,rel);
-							else
-								rels.push_back(rel);
-						}
-
-						/* Points the searching to the iterator immediately after the removed iterator
-						evicting to walk on the list from the first item */
-						itr_end=rels.end();
-						itr=rels.begin() + idx;
-					}
-				}
-
-				itr=rels.begin();
-			}
-
-			//Recreating the special objects
-			itr1=xml_special_objs.begin();
-			itr1_end=xml_special_objs.end();
-
-			//The special objects are created only when the model is not being loaded
-			if(!loading_model && itr1!=itr1_end)
-			{
-				do
-				{
-					try
-					{
-						//Try to create the special object
-						createSpecialObject(itr1->second, itr1->first);
-
-						/* If the special object is successfully created, remove the errors
-							 related to a previous attempt to create it */
-						if(error_map.count(itr1->first))
-							error_map.erase(error_map.find(itr1->first));
-
-						//Removes the definition of the special object when it is created successfully
-						xml_special_objs.erase(itr1);
-
-						//Restart the special object creation
-						itr1=xml_special_objs.begin();
-						itr1_end=xml_special_objs.end();
-					}
-					catch(Exception &e)
-					{
-						//If some error related to the special object is raised, stores it for latter creation attempts
-						error_map[itr1->first]=e;
-						itr1++; idx++;
-					}
-				}
-				while(itr1!=itr1_end);
+				rels_updated = false;
+				itr = relationships.begin();
 			}
 		}
 	}
-	//The validation continues until there is some invalid relationship
-	while(found_inval_rel);
+	catch (Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__);
+	}
+}
+
+void DatabaseModel::validateRelationships()
+{
+	Relationship *rel = nullptr;
+	BaseRelationship *base_rel = nullptr;
+	std::vector<Exception> errors;
+	std::map<Relationship *, Exception> rel_errors;
+	std::vector<Relationship *> failed_rels;
+	std::vector<BaseTable *> tabs;
+
+	if(!hasInvalidRelatioships())
+		return;
+
+	//Stores the special objects definition if there is some invalidated relationships
+	if(!loading_model && xml_special_objs.empty())
+		storeSpecialObjectsXML();
+
+	// Disconnecting all relationships in order to force the correct propagation of columns/constraints
+	disconnectRelationships();
+
+	// Trying to connect all relatinships in the order they were created
+	for(auto &rl : relationships)
+	{
+		try
+		{
+			rel = dynamic_cast<Relationship *>(rl);
+			rel->blockSignals(true);
+			rel->connectRelationship();
+			rel->blockSignals(false);
+
+			/* Storing the tables here in an auxiliary list so we can
+			 * update their geometry and their parent schemas rectangles */
+			tabs.push_back(rel->getTable(Relationship::SrcTable));
+			tabs.push_back(rel->getTable(Relationship::DstTable));
+		}
+		catch(Exception &)
+		{
+			failed_rels.push_back(rel);
+		}
+	}
+
+	// Trying to recreate relationships that failed to connect previously
+	unsigned idx = 0, max_tries = failed_rels.size();
+
+	while(idx < max_tries)
+	{
+		for(auto &rel : failed_rels)
+		{
+			try
+			{
+				rel->blockSignals(true);
+				rel->connectRelationship();
+				rel->blockSignals(false);
+			}
+			catch(Exception &e)
+			{
+				rel_errors[rel] = e;
+			}
+		}
+
+		idx++;
+	}
+
+	/* Checking if some failed relationships have generated errors in the connection retry.
+	 * If that's the case, we just remove the relationships from the model since
+	 * they are permanentely invalidated and can't be reconnected */
+	for(auto &re : rel_errors)
+	{
+		if(!re.first->isRelationshipConnected())
+		{
+			errors.push_back(re.second);
+			__removeObject(re.first, -1, false);
+		}
+	}
+
+	/* Updating the relationship generated objects.
+	 * The columns and contraints not created in first connection are properly created */
+	updateRelsGeneratedObjects();
+
+	//Recreating the special objects that depends on the columns created by relationshps
+	errors = createSpecialObjects();
 
 	if(!loading_model && !schemas.empty())
 	{
-		std::sort(schemas.begin(), schemas.end());
-		vector<Schema *>::iterator end = std::unique(schemas.begin(), schemas.end());
-		schemas.erase(end, schemas.end());
+		std::vector<Schema *> schs;
 
-		//Updates the schemas to ajdust its sizes due to the tables resizings
-		for(auto &sch : schemas)
-			sch->setModified(true);
-	}
+		std::sort(tabs.begin(), tabs.end());
+		auto tab_end = std::unique(tabs.begin(), tabs.end());
+		tabs.erase(tab_end, tabs.end());
 
-	//Stores the errors related to creation of special objects on the general error vector
-	itr2=error_map.begin();
-	itr2_end=error_map.end();
-	while(itr2!=itr2_end)
-	{
-		errors.push_back(itr2->second);
-		itr2++;
-	}
-
-	//If errors were caught on the above executions they will be redirected to the user
-	if(!errors.empty())
-	{
-		if(!loading_model)
-			xml_special_objs.clear();
-
-		/* Revalidates the fk relationships at this points because some fks must be removed due
-		 to special object invalidation */
-		itr=base_relationships.begin();
-		itr_end=base_relationships.end();
-
-		while(itr!=itr_end)
+		// Updating the tables to reflect their sizes due to the creationg of new columns/constraints
+		for(auto &tab : tabs)
 		{
-			base_rel=dynamic_cast<BaseRelationship *>(*itr);
-
-			if(base_rel->getRelationshipType()==BaseRelationship::RelationshipFk)
-				this->updateTableFKRelationships(dynamic_cast<Table *>(base_rel->getTable(BaseRelationship::SrcTable)));
-
-			itr++;
+			tab->setModified(true);
+			schs.push_back(dynamic_cast<Schema *>(tab->getSchema()));
 		}
 
-		//Set all the model objects as modified to force the redraw of the entire model
-		this->setObjectsModified();
+		std::sort(schs.begin(), schs.end());
+		auto sch_end = std::unique(schs.begin(), schs.end());
+		schs.erase(sch_end, schs.end());
 
-		//Redirects all the errors captured on the revalidation
-		throw Exception(ErrorCode::RemInvalidatedObjects,__PRETTY_FUNCTION__,__FILE__,__LINE__,errors);
+		//Updates the schemas to ajdust its sizes due to the tables resizings
+		for(auto &sch : schs)
+			sch->setModified(true);
 	}
 
 	if(!loading_model)
@@ -1844,19 +1743,40 @@ void DatabaseModel::validateRelationships()
 
 		xml_special_objs.clear();
 	}
+
+	//If errors were caught on the above executions they will be redirected to the user
+	if(!errors.empty())
+	{
+		if(!loading_model)
+			xml_special_objs.clear();
+
+		/* Revalidates the fk relationships at this points because some fks must be removed due
+		 * to special object invalidation */
+		for(auto &itr : base_relationships)
+		{
+			base_rel = dynamic_cast<BaseRelationship *>(itr);
+
+			if(base_rel->getRelationshipType() == BaseRelationship::RelationshipFk)
+				this->updateTableFKRelationships(dynamic_cast<Table *>(base_rel->getTable(BaseRelationship::SrcTable)));
+		}
+
+		//Set all the model objects as modified to force the redraw of the entire model
+		setObjectsModified();
+
+		//Redirects all the errors captured on the revalidation
+		throw Exception(ErrorCode::RemInvalidatedObjects,__PRETTY_FUNCTION__,__FILE__,__LINE__, errors);
+	}
 }
 
 void DatabaseModel::checkRelationshipRedundancy(Relationship *rel)
 {
 	try
 	{
-		unsigned rel_type;
-
 		//Raises an error if the user try to check the redundancy starting from a unnallocated relationship
 		if(!rel)
 			throw Exception(ErrorCode::OprNotAllocatedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-		rel_type=rel->getRelationshipType();
+		BaseRelationship::RelType rel_type = rel->getRelationshipType();
 
 		/* Only identifier relationships or relationship that has identifier
 		 attributes (primary keys) are checked */
@@ -1871,7 +1791,7 @@ void DatabaseModel::checkRelationshipRedundancy(Relationship *rel)
 			PhysicalTable *recv_table=nullptr;
 			Relationship *rel_aux=nullptr;
 			BaseRelationship *base_rel=nullptr;
-			vector<BaseObject *>::iterator itr, itr_end;
+			std::vector<BaseObject *>::iterator itr, itr_end;
 			bool found_cycle=false;
 			unsigned aux_rel_type;
 			QString str_aux, msg;
@@ -1946,7 +1866,7 @@ void DatabaseModel::checkRelationshipRedundancy(Relationship *rel)
 void DatabaseModel::storeSpecialObjectsXML()
 {
 	unsigned count=0, i=0, type_id=0;
-	vector<BaseObject *>::iterator itr, itr_end;
+	std::vector<BaseObject *>::iterator itr, itr_end;
 	Sequence *sequence=nullptr;
 	Permission *permission=nullptr;
 	PhysicalTable *table=nullptr;
@@ -1960,7 +1880,7 @@ void DatabaseModel::storeSpecialObjectsXML()
 	Reference ref;
 	ObjectType tab_obj_type[3]={ ObjectType::Constraint, ObjectType::Trigger, ObjectType::Index };
 	bool found=false;
-	vector<BaseObject *> objects, rem_objects, upd_tables_rels, aux_tables;
+	std::vector<BaseObject *> objects, rem_objects, upd_tables_rels, aux_tables;
 
 	try
 	{
@@ -2004,7 +1924,7 @@ void DatabaseModel::storeSpecialObjectsXML()
 
 						//When found some special object, stores is xml definition
 						if(found)
-							xml_special_objs[constr->getObjectId()]=constr->getCodeDefinition(SchemaParser::XmlDefinition, true);
+							xml_special_objs[constr->getObjectId()]=constr->getSourceCode(SchemaParser::XmlCode, true);
 					}
 					else if(tab_obj_type[type_id]==ObjectType::Trigger)
 					{
@@ -2012,7 +1932,7 @@ void DatabaseModel::storeSpecialObjectsXML()
 						found=trigger->isReferRelationshipAddedColumn();
 
 						if(found)
-							xml_special_objs[trigger->getObjectId()]=trigger->getCodeDefinition(SchemaParser::XmlDefinition);
+							xml_special_objs[trigger->getObjectId()]=trigger->getSourceCode(SchemaParser::XmlCode);
 					}
 					else
 					{
@@ -2020,7 +1940,7 @@ void DatabaseModel::storeSpecialObjectsXML()
 						found=index->isReferRelationshipAddedColumn();
 
 						if(found)
-							xml_special_objs[index->getObjectId()]=index->getCodeDefinition(SchemaParser::XmlDefinition);
+							xml_special_objs[index->getObjectId()]=index->getSourceCode(SchemaParser::XmlCode);
 					}
 
 					if(found)
@@ -2046,7 +1966,7 @@ void DatabaseModel::storeSpecialObjectsXML()
 		//Updating fk rels of tables which had fks referencing relationship added columns
 		if(!upd_tables_rels.empty())
 		{
-			vector<BaseObject *>::iterator end;
+			std::vector<BaseObject *>::iterator end;
 
 			if(upd_tables_rels.size() > 1)
 			{
@@ -2071,7 +1991,7 @@ void DatabaseModel::storeSpecialObjectsXML()
 
 			if(sequence->isReferRelationshipAddedColumn())
 			{
-				xml_special_objs[sequence->getObjectId()]=sequence->getCodeDefinition(SchemaParser::XmlDefinition);
+				xml_special_objs[sequence->getObjectId()]=sequence->getSourceCode(SchemaParser::XmlCode);
 				removeSequence(sequence);
 				invalid_special_objs.push_back(sequence);
 				//delete sequence;
@@ -2090,16 +2010,16 @@ void DatabaseModel::storeSpecialObjectsXML()
 
 			if(view->isReferRelationshipAddedColumn())
 			{
-				xml_special_objs[view->getObjectId()]=view->getCodeDefinition(SchemaParser::XmlDefinition);
+				xml_special_objs[view->getObjectId()]=view->getSourceCode(SchemaParser::XmlCode);
 
 				/* Relationships linking the view and the referenced tables are considered as
 			 special objects in this case only to be recreated more easely latter */
 
-				count=view->getReferenceCount(Reference::SqlReferSelect);
+				count=view->getReferenceCount(Reference::SqlSelect);
 
 				for(i=0; i < count; i++)
 				{
-					ref=view->getReference(i, Reference::SqlReferSelect);
+					ref=view->getReference(i, Reference::SqlSelect);
 					table=ref.getTable();
 
 					if(table)
@@ -2109,7 +2029,7 @@ void DatabaseModel::storeSpecialObjectsXML()
 
 						if(rel)
 						{
-							xml_special_objs[rel->getObjectId()]=rel->getCodeDefinition(SchemaParser::XmlDefinition);
+							xml_special_objs[rel->getObjectId()]=rel->getSourceCode(SchemaParser::XmlCode);
 							removeRelationship(rel);
 							invalid_special_objs.push_back(rel);
 							//delete rel;
@@ -2122,7 +2042,7 @@ void DatabaseModel::storeSpecialObjectsXML()
 				objects=view->getObjects();
 				for(auto &obj : objects)
 				{
-					xml_special_objs[obj->getObjectId()]=obj->getCodeDefinition(SchemaParser::XmlDefinition);
+					xml_special_objs[obj->getObjectId()]=obj->getSourceCode(SchemaParser::XmlCode);
 					view->removeObject(obj);
 					invalid_special_objs.push_back(obj);
 					//delete obj;
@@ -2147,7 +2067,7 @@ void DatabaseModel::storeSpecialObjectsXML()
 
 			if(tab_obj)
 			{
-				xml_special_objs[permission->getObjectId()]=permission->getCodeDefinition(SchemaParser::XmlDefinition);
+				xml_special_objs[permission->getObjectId()]=permission->getSourceCode(SchemaParser::XmlCode);
 				removePermission(permission);
 				invalid_special_objs.push_back(permission);
 				//delete permission;
@@ -2166,7 +2086,7 @@ void DatabaseModel::storeSpecialObjectsXML()
 
 			if(generic_sql->isReferRelationshipAddedObject())
 			{
-				xml_special_objs[generic_sql->getObjectId()] = generic_sql->getCodeDefinition(SchemaParser::XmlDefinition);
+				xml_special_objs[generic_sql->getObjectId()] = generic_sql->getSourceCode(SchemaParser::XmlCode);
 				removeGenericSQL(generic_sql);
 				invalid_special_objs.push_back(generic_sql);
 				//delete generic_sql;
@@ -2329,8 +2249,8 @@ BaseRelationship *DatabaseModel::getRelationship(const QString &name)
 
 BaseRelationship *DatabaseModel::getRelationship(BaseTable *src_tab, BaseTable *dst_tab, Constraint *ref_fk)
 {
-	vector<BaseObject *>::iterator itr, itr_end;
-	vector<BaseObject *> rel_list;
+	std::vector<BaseObject *>::iterator itr, itr_end;
+	std::vector<BaseObject *> rel_list;
 	BaseRelationship *rel=nullptr;
 	bool found=false, search_uniq_tab=false;
 	BaseTable *tab1=nullptr, *tab2=nullptr;
@@ -2375,10 +2295,10 @@ BaseRelationship *DatabaseModel::getRelationship(BaseTable *src_tab, BaseTable *
 	return rel;
 }
 
-vector<BaseRelationship *> DatabaseModel::getRelationships(BaseTable *tab)
+std::vector<BaseRelationship *> DatabaseModel::getRelationships(BaseTable *tab)
 {
-	vector<BaseRelationship *> aux_rels;
-	vector<BaseObject *> rels;
+	std::vector<BaseRelationship *> aux_rels;
+	std::vector<BaseObject *> rels;
 	BaseRelationship *base_rel=nullptr;
 
 	rels=base_relationships;
@@ -2706,7 +2626,7 @@ void DatabaseModel::addDomain(Domain *domain, int obj_idx)
 {
 	if(domain)
 	{
-		vector<BaseObject *>::iterator itr, itr_end;
+		std::vector<BaseObject *>::iterator itr, itr_end;
 		bool found=false;
 		QString str_aux;
 
@@ -2873,7 +2793,7 @@ void DatabaseModel::addType(Type *type, int obj_idx)
 {
 	if(type)
 	{
-		vector<BaseObject *>::iterator itr, itr_end;
+		std::vector<BaseObject *>::iterator itr, itr_end;
 		bool found=false;
 		QString str_aux;
 
@@ -2948,9 +2868,9 @@ void DatabaseModel::removeUserType(BaseObject *object, int obj_idx)
 	}
 }
 
-void DatabaseModel::addPermissions(const vector<Permission *> &perms)
+void DatabaseModel::addPermissions(const std::vector<Permission *> &perms)
 {
-	vector<Permission *>::const_iterator itr=perms.cbegin(), itr_end=perms.cend();
+	std::vector<Permission *>::const_iterator itr=perms.cbegin(), itr_end=perms.cend();
 
 	try
 	{
@@ -3034,7 +2954,7 @@ void DatabaseModel::removePermission(Permission *perm)
 
 void DatabaseModel::removePermissions(BaseObject *object)
 {
-	vector<BaseObject *>::iterator itr, itr_end;
+	std::vector<BaseObject *>::iterator itr, itr_end;
 	Permission *perm=nullptr;
 	unsigned idx=0;
 
@@ -3063,9 +2983,9 @@ void DatabaseModel::removePermissions(BaseObject *object)
 	}
 }
 
-void DatabaseModel::getPermissions(BaseObject *object, vector<Permission *> &perms)
+void DatabaseModel::getPermissions(BaseObject *object, std::vector<Permission *> &perms)
 {
-	vector<BaseObject *>::iterator itr, itr_end;
+	std::vector<BaseObject *>::iterator itr, itr_end;
 	Permission *perm=nullptr;
 
 	if(!object)
@@ -3094,7 +3014,7 @@ int DatabaseModel::getPermissionIndex(Permission *perm, bool exact_match)
 	if(perm)
 	{
 		Permission *perm_aux=nullptr;
-		vector<BaseObject *>::iterator itr, itr_end;
+		std::vector<BaseObject *>::iterator itr, itr_end;
 
 		itr=permissions.begin();
 		itr_end=permissions.end();
@@ -3176,8 +3096,8 @@ int DatabaseModel::getObjectIndex(BaseObject *object)
 	else
 	{
 		ObjectType obj_type=object->getObjectType();
-		vector<BaseObject *> *obj_list=nullptr;
-		vector<BaseObject *>::iterator itr, itr_end;
+		std::vector<BaseObject *> *obj_list=nullptr;
+		std::vector<BaseObject *>::iterator itr, itr_end;
 		bool found=false;
 
 		obj_list=getObjectList(obj_type);
@@ -3228,12 +3148,12 @@ void DatabaseModel::loadModel(const QString &filename)
 		ObjectType obj_type;
 		attribs_map attribs;
 		BaseObject *object=nullptr;
-		bool protected_model=false, found_inh_rel = false;
+		bool protected_model=false; //, found_inh_rel = false;
 		QStringList pos_str;
-		map<ObjectType, QString> def_objs;
+		std::map<ObjectType, QString> def_objs;
 
 		//Configuring the path to the base path for objects DTD
-		dtd_file=GlobalAttributes::getSchemasRootDir() +
+		dtd_file=GlobalAttributes::getSchemasRootPath() +
 						 GlobalAttributes::DirSeparator +
 						 GlobalAttributes::XMLSchemaDir +
 						 GlobalAttributes::DirSeparator +
@@ -3278,11 +3198,11 @@ void DatabaseModel::loadModel(const QString &filename)
 			 * We need to replace semi-colon by comma in the attribute Layers in order to split the
 			 * string correctly, otherwise, the model will have only one layer no matter the amount of
 			 * layers created preivously (in an older version) */
-			layers = attribs[Attributes::Layers].replace(';',',').split(',', QtCompat::SkipEmptyParts);
+			layers = attribs[Attributes::Layers].replace(';',',').split(',', Qt::SkipEmptyParts);
 			attribs[Attributes::ActiveLayers].replace(';',',');
 
-			layer_name_colors = attribs[Attributes::LayerNameColors].split(',', QtCompat::SkipEmptyParts);
-			layer_rect_colors = attribs[Attributes::LayerRectColors].split(',', QtCompat::SkipEmptyParts);
+			layer_name_colors = attribs[Attributes::LayerNameColors].split(',', Qt::SkipEmptyParts);
+			layer_rect_colors = attribs[Attributes::LayerRectColors].split(',', Qt::SkipEmptyParts);
 
 			is_layer_names_visible = attribs[Attributes::ShowLayerNames] == Attributes::True;
 			is_layer_rects_visible = attribs[Attributes::ShowLayerRects] == Attributes::True;
@@ -3295,16 +3215,17 @@ void DatabaseModel::loadModel(const QString &filename)
 			if(layers.isEmpty())
 				layers.push_back(tr("Default layer"));
 
-			if(layer_rect_colors.isEmpty())
+			if(layer_rect_colors.size() != layers.size())
 			{
-				random_device rand_seed;
-				default_random_engine rand_num_engine;
-				uniform_int_distribution<unsigned> dist(0,255);
+				std::random_device rand_seed;
+				std::default_random_engine rand_num_engine;
+				std::uniform_int_distribution<unsigned> dist(0,255);
 
 				layer_name_colors.clear();
+				layer_rect_colors.clear();
 				rand_num_engine.seed(rand_seed());
 
-				for(int i =0; i <= layers.size(); i++)
+				for(int i = 0; i < layers.size(); i++)
 				{
 					layer_rect_colors.append(QColor(dist(rand_num_engine),
 																					dist(rand_num_engine),
@@ -3318,7 +3239,7 @@ void DatabaseModel::loadModel(const QString &filename)
 			 * If the "active-layers" is absent we make the default layer always visible */
 			active_layers.clear();
 
-			for(auto &layer_id : attribs[Attributes::ActiveLayers].split(',', QtCompat::SkipEmptyParts))
+			for(auto &layer_id : attribs[Attributes::ActiveLayers].split(',', Qt::SkipEmptyParts))
 			{
 				if(layer_id.toInt() >= layers.size())
 					continue;
@@ -3394,15 +3315,15 @@ void DatabaseModel::loadModel(const QString &filename)
 
 									/* If there is at least one inheritance relationship we need to flag this situation
 									 in order to do an addtional rel. validation in the end of loading */
-									if(!found_inh_rel && object->getObjectType()==ObjectType::Relationship &&
+									/* if(!found_inh_rel && object->getObjectType()==ObjectType::Relationship &&
 											dynamic_cast<Relationship *>(object)->getRelationshipType()==BaseRelationship::RelationshipGen)
-										found_inh_rel=true;
+										found_inh_rel=true; */
 
 									emit s_objectLoaded((xmlparser.getCurrentBufferLine()/static_cast<double>(xmlparser.getBufferLineCount()))*100,
 														tr("Loading: `%1' (%2)")
 														.arg(object->getName())
 														.arg(object->getTypeName()),
-														enum_cast(obj_type));
+														enum_t(obj_type));
 								}
 
 								xmlparser.restorePosition();
@@ -3446,24 +3367,24 @@ void DatabaseModel::loadModel(const QString &filename)
 			//If there are relationship make a relationship validation to recreate any special object left behind
 			if(!relationships.empty())
 			{
-				emit s_objectLoaded(100, tr("Validating relationships..."), enum_cast(ObjectType::Relationship));
+				emit s_objectLoaded(100, tr("Validating relationships..."), enum_t(ObjectType::Relationship));
 				storeSpecialObjectsXML();
 				disconnectRelationships();
 				validateRelationships();
 			}
 
 			this->setInvalidated(false);
-			emit s_objectLoaded(100, tr("Validating relationships..."), enum_cast(ObjectType::Relationship));
+			emit s_objectLoaded(100, tr("Validating relationships..."), enum_t(ObjectType::Relationship));
 
 			//Doing another relationship validation when there are inheritances to avoid incomplete tables
-			if(found_inh_rel)
+			/* if(found_inh_rel)
 			{
 				emit s_objectLoaded(100, tr("Validating relationships..."), enum_cast(ObjectType::Relationship));
 				validateRelationships();
-			}
+			} */
 
 			updateTablesFKRelationships();
-			emit s_objectLoaded(100, tr("Rendering database model..."), enum_cast(ObjectType::BaseObject));
+			emit s_objectLoaded(100, tr("Rendering database model..."), enum_t(ObjectType::BaseObject));
 			this->setObjectsModified();
 		}
 		catch(Exception &e)
@@ -3809,17 +3730,17 @@ Role *DatabaseModel::createRole()
 	bool marked;
 	QStringList list;
 	QString elem_name;
-	unsigned role_type;
+	Role::RoleType role_type;
 
 	QString op_attribs[]={ Attributes::Superuser, Attributes::CreateDb,
-							 Attributes::CreateRole, Attributes::Inherit,
-							 Attributes::Login, Attributes::Encrypted,
-							 Attributes::Replication, Attributes::BypassRls };
+												 Attributes::CreateRole, Attributes::Inherit,
+												 Attributes::Login, Attributes::Replication,
+												 Attributes::BypassRls };
 
-	unsigned op_vect[]={ Role::OpSuperuser, Role::OpCreateDb,
-						 Role::OpCreateRole, Role::OpInherit,
-						 Role::OpLogin, Role::OpEncrypted,
-						 Role::OpReplication, Role::OpBypassRls };
+	Role::RoleOpts op_vect[]={ Role::OpSuperuser, Role::OpCreateDb,
+														 Role::OpCreateRole, Role::OpInherit,
+														 Role::OpLogin, Role::OpReplication,
+														 Role::OpBypassRls };
 
 	try
 	{
@@ -3836,7 +3757,7 @@ Role *DatabaseModel::createRole()
 			role->setConnectionLimit(attribs[Attributes::ConnLimit].toInt());
 
 		//Setting up the role options according to the configured on the XML
-		for(i=0; i < 8; i++)
+		for(i=0; i < 7; i++)
 		{
 			marked=attribs[op_attribs[i]]==Attributes::True;
 			role->setOption(op_vect[i], marked);
@@ -3861,10 +3782,6 @@ Role *DatabaseModel::createRole()
 						len=list.size();
 
 						//Identifying the member role type
-						/* if(attribs_aux[Attributes::RoleType]==Attributes::Refer)
-							role_type=Role::RefRole;
-						else */
-
 						if(attribs_aux[Attributes::RoleType]==Attributes::Member)
 							role_type=Role::MemberRole;
 						else
@@ -4089,7 +4006,7 @@ void DatabaseModel::setBasicFunctionAttributes(BaseFunction *func)
 							func->setSymbol(attribs_aux[Attributes::Symbol]);
 						}
 						else if(xmlparser.accessElement(XmlParser::ChildElement))
-							func->setSourceCode(xmlparser.getElementContent());
+							func->setFunctionSource(xmlparser.getElementContent());
 
 						xmlparser.restorePosition();
 					}
@@ -4097,7 +4014,7 @@ void DatabaseModel::setBasicFunctionAttributes(BaseFunction *func)
 					{
 						xmlparser.savePosition();
 						xmlparser.getElementAttributes(attribs_aux);
-						func->addTransformTypes(attribs_aux[Attributes::Names].split(',', QtCompat::SkipEmptyParts));
+						func->addTransformTypes(attribs_aux[Attributes::Names].split(',', Qt::SkipEmptyParts));
 						xmlparser.restorePosition();
 					}
 					else if(xmlparser.getElementName() == Attributes::Configuration)
@@ -4372,7 +4289,7 @@ PgSqlType DatabaseModel::createPgSQLType()
 	if(!attribs[Attributes::SpatialType].isEmpty())
 		spatial_type=SpatialType(attribs[Attributes::SpatialType],
 				attribs[Attributes::Srid].toUInt(),
-				attribs[Attributes::Variation].toUInt());
+				static_cast<SpatialType::VariationId>(attribs[Attributes::Variation].toUInt()));
 
 	name=attribs[Attributes::Name];
 
@@ -4393,7 +4310,7 @@ PgSqlType DatabaseModel::createPgSQLType()
 	else
 	{
 		//Raises an error if the referenced type name doesn't exists
-		if(PgSqlType::getUserTypeIndex(name,nullptr,this) == BaseType::Null)
+		if(PgSqlType::getUserTypeIndex(name,nullptr,this) == PgSqlType::Null)
 			throw Exception(ErrorCode::RefUserTypeInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		type_idx=PgSqlType::getUserTypeIndex(name, ptype);
@@ -4404,7 +4321,7 @@ PgSqlType DatabaseModel::createPgSQLType()
 Type *DatabaseModel::createType()
 {
 	attribs_map attribs;
-	map<QString, unsigned> func_types;
+	std::map<QString, Type::FunctionId> func_types;
 	Type *type=nullptr;
 	QStringList enums;
 	QString elem, str_aux;
@@ -4767,12 +4684,12 @@ Conversion *DatabaseModel::createConversion()
 Operator *DatabaseModel::createOperator()
 {
 	attribs_map attribs;
-	map<QString, unsigned> func_types;
-	map<QString, unsigned> oper_types;
+	std::map<QString, Operator::FunctionId> func_ids;
+	std::map<QString, Operator::OperatorId> oper_ids;
 	Operator *oper=nullptr;
 	QString elem;
 	BaseObject *func=nullptr,*oper_aux=nullptr;
-	unsigned arg_type;
+	Operator::ArgumentId arg_id;
 	PgSqlType type;
 
 	try
@@ -4784,12 +4701,12 @@ Operator *DatabaseModel::createOperator()
 		oper->setMerges(attribs[Attributes::Merges]==Attributes::True);
 		oper->setHashes(attribs[Attributes::Hashes]==Attributes::True);
 
-		func_types[Attributes::OperatorFunc]=Operator::FuncOperator;
-		func_types[Attributes::JoinFunc]=Operator::FuncJoin;
-		func_types[Attributes::RestrictionFunc]=Operator::FuncRestrict;
+		func_ids[Attributes::OperatorFunc]=Operator::FuncOperator;
+		func_ids[Attributes::JoinFunc]=Operator::FuncJoin;
+		func_ids[Attributes::RestrictionFunc]=Operator::FuncRestrict;
 
-		oper_types[Attributes::CommutatorOp]=Operator::OperCommutator;
-		oper_types[Attributes::NegatorOp]=Operator::OperNegator;
+		oper_ids[Attributes::CommutatorOp]=Operator::OperCommutator;
+		oper_ids[Attributes::NegatorOp]=Operator::OperNegator;
 
 		if(xmlparser.accessElement(XmlParser::ChildElement))
 		{
@@ -4799,7 +4716,7 @@ Operator *DatabaseModel::createOperator()
 				{
 					elem=xmlparser.getElementName();
 
-					if(elem==objs_schemas[enum_cast(ObjectType::Operator)])
+					if(elem==objs_schemas[enum_t(ObjectType::Operator)])
 					{
 						xmlparser.getElementAttributes(attribs);
 						oper_aux=getObject(attribs[Attributes::Signature], ObjectType::Operator);
@@ -4814,19 +4731,19 @@ Operator *DatabaseModel::createOperator()
 								ErrorCode::RefObjectInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 						oper->setOperator(dynamic_cast<Operator *>(oper_aux),
-											oper_types[attribs[Attributes::RefType]]);
+											oper_ids[attribs[Attributes::RefType]]);
 					}
 					else if(elem==Attributes::Type)
 					{
 						xmlparser.getElementAttributes(attribs);
 
 						if(attribs[Attributes::RefType]!=Attributes::RightType)
-							arg_type=Operator::LeftArg;
+							arg_id=Operator::LeftArg;
 						else
-							arg_type=Operator::RightArg;
+							arg_id=Operator::RightArg;
 
 						type=createPgSQLType();
-						oper->setArgumentType(type, arg_type);
+						oper->setArgumentType(type, arg_id);
 					}
 					else if(elem==Attributes::Function)
 					{
@@ -4843,7 +4760,7 @@ Operator *DatabaseModel::createOperator()
 								ErrorCode::RefObjectInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 						oper->setFunction(dynamic_cast<Function *>(func),
-											func_types[attribs[Attributes::RefType]]);
+											func_ids[attribs[Attributes::RefType]]);
 					}
 				}
 			}
@@ -4862,7 +4779,7 @@ Operator *DatabaseModel::createOperator()
 OperatorClass *DatabaseModel::createOperatorClass()
 {
 	attribs_map attribs, attribs_aux;
-	map<QString, unsigned> elem_types;
+	std::map<QString, unsigned> elem_types;
 	BaseObject *object=nullptr;
 	QString elem;
 	PgSqlType type;
@@ -4891,7 +4808,7 @@ OperatorClass *DatabaseModel::createOperatorClass()
 				{
 					elem=xmlparser.getElementName();
 
-					if(elem==objs_schemas[enum_cast(ObjectType::OpFamily)])
+					if(elem==objs_schemas[enum_t(ObjectType::OpFamily)])
 					{
 						xmlparser.getElementAttributes(attribs);
 						object=getObject(attribs[Attributes::Signature], ObjectType::OpFamily);
@@ -5166,7 +5083,7 @@ Constraint *DatabaseModel::createConstraint(BaseObject *parent_obj)
 	ConstraintType constr_type;
 	QStringList col_list;
 	int count, i;
-	unsigned col_type;
+	Constraint::ColumnsId cols_id;
 	ObjectType obj_type;
 	ExcludeElement exc_elem;
 
@@ -5311,13 +5228,13 @@ Constraint *DatabaseModel::createConstraint(BaseObject *parent_obj)
 						count=col_list.count();
 
 						if(attribs[Attributes::RefType]==Attributes::SrcColumns)
-							col_type=Constraint::SourceCols;
+							cols_id=Constraint::SourceCols;
 						else
-							col_type=Constraint::ReferencedCols;
+							cols_id=Constraint::ReferencedCols;
 
 						for(i=0; i < count; i++)
 						{
-							if(col_type==Constraint::SourceCols)
+							if(cols_id==Constraint::SourceCols)
 							{
 								if(PhysicalTable::isPhysicalTable(obj_type))
 								{
@@ -5340,7 +5257,7 @@ Constraint *DatabaseModel::createConstraint(BaseObject *parent_obj)
 									column=table_aux->getColumn(col_list[i], true);
 							}
 
-							constr->addColumn(column, col_type);
+							constr->addColumn(column, cols_id);
 						}
 					}
 				}
@@ -5549,7 +5466,7 @@ XmlParser *DatabaseModel::getXMLParser()
 	return &xmlparser;
 }
 
-QString DatabaseModel::getAlterDefinition(BaseObject *object)
+QString DatabaseModel::getAlterCode(BaseObject *object)
 {
 	DatabaseModel *db_aux=dynamic_cast<DatabaseModel *>(object);
 
@@ -5573,8 +5490,8 @@ QString DatabaseModel::getAlterDefinition(BaseObject *object)
 		if(this->allow_conns != db_aux->allow_conns)
 			aux_attribs[Attributes::AllowConns] = (db_aux->allow_conns ? Attributes::True : Attributes::False);
 
-		alter_def+=BaseObject::getAlterDefinition(this->getSchemaName(), aux_attribs, true, false);
-		alter_def+=BaseObject::getAlterDefinition(object);
+		alter_def+=BaseObject::getAlterCode(this->getSchemaName(), aux_attribs, true, false);
+		alter_def+=BaseObject::getAlterCode(object);
 
 		return alter_def;
 	}
@@ -5647,7 +5564,7 @@ Index *DatabaseModel::createIndex()
 					else if(elem == Attributes::Columns)
 					{
 						xmlparser.getElementAttributes(attribs);
-						QStringList col_names =  attribs[Attributes::Names].split(',', QtCompat::SkipEmptyParts);
+						QStringList col_names =  attribs[Attributes::Names].split(',', Qt::SkipEmptyParts);
 
 						if(table->getObjectType() == ObjectType::Table)
 						{
@@ -5771,7 +5688,7 @@ Trigger *DatabaseModel::createTrigger()
 	Column *column=nullptr;
 	BaseTable *table=nullptr;
 	PhysicalTable *aux_table = nullptr;
-	vector<ObjectType> table_types = { ObjectType::Table, ObjectType::ForeignTable, ObjectType::View };
+	std::vector<ObjectType> table_types = { ObjectType::Table, ObjectType::ForeignTable, ObjectType::View };
 
 	try
 	{
@@ -5819,7 +5736,7 @@ Trigger *DatabaseModel::createTrigger()
 		trigger->setTransitionTableName(Trigger::OldTableName, attribs[Attributes::OldTableName]);
 		trigger->setTransitionTableName(Trigger::NewTableName, attribs[Attributes::NewTableName]);
 
-		trigger->addArguments(attribs[Attributes::Arguments].split(UtilsNs::DataSeparator, QtCompat::SkipEmptyParts));
+		trigger->addArguments(attribs[Attributes::Arguments].split(UtilsNs::DataSeparator, Qt::SkipEmptyParts));
 		trigger->setDeferrable(attribs[Attributes::Deferrable]==Attributes::True);
 
 		if(trigger->isDeferrable())
@@ -6603,9 +6520,9 @@ View *DatabaseModel::createView()
 	PhysicalTable *table=nullptr;
 	QString elem, str_aux;
 	QStringList list_aux;
-	vector<Reference> refs;
+	std::vector<Reference> refs;
 	BaseObject *tag=nullptr;
-	unsigned type;
+	Reference::SqlType sql_type;
 	int ref_idx, i, count;
 	bool refs_in_expr=false;
 	Reference reference;
@@ -6620,7 +6537,7 @@ View *DatabaseModel::createView()
 		view->setMaterialized(attribs[Attributes::Materialized]==Attributes::True);
 		view->setRecursive(attribs[Attributes::Recursive]==Attributes::True);
 		view->setWithNoData(attribs[Attributes::WithNoData]==Attributes::True);
-		view->setCollapseMode(attribs[Attributes::CollapseMode].isEmpty() ? CollapseMode::NotCollapsed : static_cast<CollapseMode>(attribs[Attributes::CollapseMode].toUInt()));
+		view->setCollapseMode(attribs[Attributes::CollapseMode].isEmpty() ? BaseTable::NotCollapsed : static_cast<BaseTable::CollapseMode>(attribs[Attributes::CollapseMode].toUInt()));
 		view->setPaginationEnabled(attribs[Attributes::Pagination]==Attributes::True);
 		view->setCurrentPage(BaseTable::AttribsSection, attribs[Attributes::AttribsPage].toUInt());
 		view->setCurrentPage(BaseTable::ExtAttribsSection, attribs[Attributes::ExtAttribsPage].toUInt());
@@ -6743,13 +6660,13 @@ View *DatabaseModel::createView()
 						else
 						{
 							if(attribs[Attributes::Type]==Attributes::SelectExp)
-								type=Reference::SqlReferSelect;
+								sql_type=Reference::SqlSelect;
 							else if(attribs[Attributes::Type]==Attributes::FromExp)
-								type=Reference::SqlReferFrom;
+								sql_type=Reference::SqlFrom;
 							else if(attribs[Attributes::Type]==Attributes::SimpleExp)
-								type=Reference::SqlReferWhere;
+								sql_type=Reference::SqlWhere;
 							else
-								type=Reference::SqlReferEndExpr;
+								sql_type=Reference::SqlEndExpr;
 
 							list_aux=xmlparser.getElementContent().split(',');
 							count=list_aux.size();
@@ -6761,7 +6678,7 @@ View *DatabaseModel::createView()
 							for(i=0; i < count; i++)
 							{
 								ref_idx=list_aux[i].toInt();
-								view->addReference(refs[ref_idx],type);
+								view->addReference(refs[ref_idx],sql_type);
 							}
 						}
 
@@ -6801,12 +6718,12 @@ View *DatabaseModel::createView()
 		order to be used as view definition */
 		if(!refs.empty() && !refs_in_expr)
 		{
-			vector<Reference>::iterator itr;
+			std::vector<Reference>::iterator itr;
 
 			itr=refs.begin();
 			while(itr!=refs.end())
 			{
-				view->addReference(*itr, Reference::SqlViewDefinition);
+				view->addReference(*itr, Reference::SqlViewDef);
 				itr++;
 			}
 		}
@@ -6977,28 +6894,27 @@ Textbox *DatabaseModel::createTextbox()
 
 BaseRelationship *DatabaseModel::createRelationship()
 {
-	vector<unsigned> cols_special_pk;
+	std::vector<unsigned> cols_special_pk;
 	attribs_map attribs, constr_attribs;
-	map<QString, unsigned> labels_id;
 	BaseRelationship *base_rel=nullptr;
 	Relationship *rel=nullptr;
 	BaseTable *tables[2]={nullptr, nullptr};
 	bool src_mand, dst_mand, identifier, protect, deferrable, sql_disabled, single_pk_col, faded_out;
 	DeferralType defer_type;
 	ActionType del_action, upd_action;
-	unsigned rel_type=0, i = 0;
+	BaseRelationship::RelType rel_type;
+	unsigned i = 0;
 	QStringList layers;
 	ObjectType table_types[2]={ ObjectType::View, ObjectType::Table }, obj_rel_type;
 	QString str_aux, elem, tab_attribs[2]={ Attributes::SrcTable, Attributes::DstTable };
 	QColor custom_color=Qt::transparent;
 	Table *table = nullptr;
+	std::map<QString, BaseRelationship::LabelId> 	labels_id= {{ Attributes::NameLabel, BaseRelationship::RelNameLabel },
+																																			{ Attributes::SrcLabel, BaseRelationship::SrcCardLabel },
+																																			{ Attributes::DstLabel, BaseRelationship::DstCardLabel }};
 
 	try
 	{
-		labels_id[Attributes::NameLabel]=BaseRelationship::RelNameLabel;
-		labels_id[Attributes::SrcLabel]=BaseRelationship::SrcCardLabel;
-		labels_id[Attributes::DstLabel]=BaseRelationship::DstCardLabel;
-
 		xmlparser.getElementAttributes(attribs);
 
 		src_mand=attribs[Attributes::SrcRequired]==Attributes::True;
@@ -7067,7 +6983,7 @@ BaseRelationship *DatabaseModel::createRelationship()
 				{
 					Table *src_tab = dynamic_cast<Table *>(base_rel->getTable(BaseRelationship::SrcTable)),
 							*dst_tab = dynamic_cast<Table *>(base_rel->getTable(BaseRelationship::DstTable));
-					vector<Constraint *> fks;
+					std::vector<Constraint *> fks;
 
 					src_tab->getForeignKeys(fks, false, dst_tab);
 
@@ -7112,11 +7028,12 @@ BaseRelationship *DatabaseModel::createRelationship()
 									Attributes::PkPattern, Attributes::UqPattern,
 									Attributes::PkColPattern };
 
-			unsigned 	pattern_id[]= { Relationship::SrcColPattern, Relationship::DstColPattern,
-										Relationship::SrcFkPattern, Relationship::DstFkPattern,
-										Relationship::PkPattern, Relationship::UqPattern,
-										Relationship::PkColPattern },
-					pat_count=sizeof(pattern_id)/sizeof(unsigned);
+			std::vector<Relationship::PatternId>	pattern_ids= {
+				Relationship::SrcColPattern, Relationship::DstColPattern,
+				Relationship::SrcFkPattern, Relationship::DstFkPattern,
+				Relationship::PkPattern, Relationship::UqPattern,
+				Relationship::PkColPattern
+			};
 
 			sql_disabled=attribs[Attributes::SqlDisabled]==Attributes::True;
 			identifier=attribs[Attributes::Identifier]==Attributes::True;
@@ -7136,7 +7053,7 @@ BaseRelationship *DatabaseModel::createRelationship()
 				rel_type=BaseRelationship::RelationshipGen;
 			else if(attribs[Attributes::Type]==Attributes::RelationshipDep)
 				rel_type=BaseRelationship::RelationshipDep;
-			else if(attribs[Attributes::Type]==Attributes::RelationshipPart)
+			else /* if(attribs[Attributes::Type]==Attributes::RelationshipPart) */
 				rel_type=BaseRelationship::RelationshipPart;
 
 			rel=new Relationship(rel_type,
@@ -7144,8 +7061,8 @@ BaseRelationship *DatabaseModel::createRelationship()
 					dynamic_cast<PhysicalTable *>(tables[1]),
 					src_mand, dst_mand,
 					identifier, deferrable, defer_type, del_action, upd_action,
-					CopyOptions(attribs[Attributes::CopyMode].toUInt(),
-					attribs[Attributes::CopyOptions].toUInt()));
+					CopyOptions(static_cast<CopyOptions::CopyMode>(attribs[Attributes::CopyMode].toUInt()),
+											static_cast<CopyOptions::CopyOpts>(attribs[Attributes::CopyOptions].toUInt())));
 
 			rel->setSQLDisabled(sql_disabled);
 			rel->setSiglePKColumn(single_pk_col);
@@ -7158,8 +7075,8 @@ BaseRelationship *DatabaseModel::createRelationship()
 			base_rel=rel;
 
 			//Configuring the name patterns
-			for(i=0; i < pat_count; i++)
-				rel->setNamePattern(pattern_id[i], attribs[pat_attrib[i]]);
+			for(auto &pat_id : pattern_ids)
+				rel->setNamePattern(pat_id, attribs[pat_attrib[pat_id]]);
 		}
 
 		if(xmlparser.accessElement(XmlParser::ChildElement))
@@ -7205,7 +7122,7 @@ BaseRelationship *DatabaseModel::createRelationship()
 					}
 					else if(elem==Attributes::Line)
 					{
-						vector<QPointF> points;
+						std::vector<QPointF> points;
 						xmlparser.savePosition();
 						xmlparser.accessElement(XmlParser::ChildElement);
 
@@ -7296,8 +7213,21 @@ Permission *DatabaseModel::createPermission()
 	ObjectType obj_type;
 	QString parent_name, obj_name;
 	QStringList list;
-	unsigned priv_type=Permission::PrivSelect;
 	bool priv_value, grant_op, revoke, cascade;
+	std::map<QString, Permission::PrivilegeId> priv_ids = {
+		{ Attributes::ConnectPriv, Permission::PrivConnect },
+		{ Attributes::CreatePriv, Permission::PrivCreate },
+		{ Attributes::DeletePriv, Permission::PrivDelete },
+		{ Attributes::ExecutPriv, Permission::PrivExecute },
+		{ Attributes::InsertPriv, Permission::PrivInsert },
+		{ Attributes::ReferencesPriv, Permission::PrivReferences },
+		{ Attributes::SelectPriv, Permission::PrivSelect },
+		{ Attributes::TemporaryPriv, Permission::PrivTemporary },
+		{ Attributes::TriggerPriv, Permission::PrivTrigger },
+		{ Attributes::TruncatePriv, Permission::PrivTruncate },
+		{ Attributes::UpdatePriv, Permission::PrivUpdate },
+		{ Attributes::UsagePriv, Permission::PrivUsage }
+	};
 
 	try
 	{
@@ -7377,7 +7307,7 @@ Permission *DatabaseModel::createPermission()
 						priv_value=(itr->second==Attributes::True);
 						grant_op=(itr->second==Attributes::GrantOp);
 
-						if(itr->first==Attributes::ConnectPriv)
+						/*if(itr->first==Attributes::ConnectPriv)
 							priv_type=Permission::PrivConnect;
 						else if(itr->first==Attributes::CreatePriv)
 							priv_type=Permission::PrivCreate;
@@ -7402,7 +7332,9 @@ Permission *DatabaseModel::createPermission()
 						else if(itr->first==Attributes::UsagePriv)
 							priv_type=Permission::PrivUsage;
 
-						perm->setPrivilege(priv_type, (priv_value || grant_op), grant_op);
+						perm->setPrivilege(priv_type, (priv_value || grant_op), grant_op); */
+
+						perm->setPrivilege(priv_ids[itr->first], (priv_value || grant_op), grant_op);
 					}
 					itr++;
 				}
@@ -7425,7 +7357,7 @@ void DatabaseModel::validateColumnRemoval(Column *column)
 {
 	if(column && column->getParentTable())
 	{
-		vector<BaseObject *> refs;
+		std::vector<BaseObject *> refs;
 		getObjectReferences(column, refs);
 
 		//Raises an error if there are objects referencing the column
@@ -7445,7 +7377,7 @@ void DatabaseModel::validateRelationships(TableObject *object, Table *parent_tab
 	{
 		bool revalidate_rels=false, ref_tab_inheritance=false;
 		Relationship *rel=nullptr;
-		vector<BaseObject *>::iterator itr, itr_end;
+		std::vector<BaseObject *>::iterator itr, itr_end;
 		ObjectType obj_type;
 
 		if(object && parent_tab)
@@ -7492,7 +7424,7 @@ void DatabaseModel::validateRelationships(TableObject *object, Table *parent_tab
 	}
 }
 
-QString DatabaseModel::__getCodeDefinition(unsigned def_type)
+QString DatabaseModel::__getSourceCode(SchemaParser::CodeType def_type)
 {
 	QString def, bkp_appended_sql, bkp_prepended_sql;
 
@@ -7503,11 +7435,11 @@ QString DatabaseModel::__getCodeDefinition(unsigned def_type)
 	if(conn_limit >= 0)
 		attributes[Attributes::ConnLimit]=QString("%1").arg(conn_limit);
 
-	if(def_type==SchemaParser::SqlDefinition)
+	if(def_type==SchemaParser::SqlCode)
 	{
 		QString loc_attribs[]={ Attributes::LcCtype,  Attributes::LcCollate };
 
-		if(encoding!=BaseType::Null)
+		if(encoding!=EncodingType::Null)
 			attributes[Attributes::Encoding]=QString("'%1'").arg(~encoding);
 
 		for(unsigned i=0; i < 2; i++)
@@ -7531,13 +7463,13 @@ QString DatabaseModel::__getCodeDefinition(unsigned def_type)
 	attributes[Attributes::AllowConns]=(allow_conns ? Attributes::True : Attributes::False);
 	attributes[Attributes::TemplateDb]=template_db;
 
-	if(def_type==SchemaParser::SqlDefinition && append_at_eod)
+	if(def_type==SchemaParser::SqlCode && append_at_eod)
 	{
 		bkp_appended_sql=this->appended_sql;
 		this->appended_sql.clear();
 	}
 
-	if(def_type==SchemaParser::SqlDefinition && prepend_at_bod)
+	if(def_type==SchemaParser::SqlCode && prepend_at_bod)
 	{
 		bkp_prepended_sql=this->prepended_sql;
 		this->prepended_sql.clear();
@@ -7545,12 +7477,12 @@ QString DatabaseModel::__getCodeDefinition(unsigned def_type)
 
 	try
 	{
-		def=this->BaseObject::__getCodeDefinition(def_type);
+		def=this->BaseObject::__getSourceCode(def_type);
 
-		if(def_type==SchemaParser::SqlDefinition && append_at_eod)
+		if(def_type==SchemaParser::SqlCode && append_at_eod)
 			this->appended_sql=bkp_appended_sql;
 
-		if(def_type==SchemaParser::SqlDefinition && prepend_at_bod)
+		if(def_type==SchemaParser::SqlCode && prepend_at_bod)
 			this->prepended_sql=bkp_prepended_sql;
 
 		return def;
@@ -7560,6 +7492,47 @@ QString DatabaseModel::__getCodeDefinition(unsigned def_type)
 		this->appended_sql=bkp_appended_sql;
 		this->prepended_sql=bkp_prepended_sql;
 		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
+}
+
+QString DatabaseModel::getSQLDefinition(BaseObject *object, CodeGenMode code_gen_mode)
+{
+	if(!object)
+		throw Exception(ErrorCode::OprNotAllocatedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+	if(code_gen_mode == OriginalSql)
+	{
+		if(object->getObjectType() == ObjectType::Database)
+			return dynamic_cast<DatabaseModel *>(object)->__getSourceCode(SchemaParser::SqlCode);
+
+		return object->getSourceCode(SchemaParser::SqlCode);
+	}
+	else
+	{
+		std::vector<BaseObject *> objs = getCreationOrder(object, code_gen_mode == ChildrenSql);
+		QString aux_def;
+
+		for(auto &obj : objs)
+		{
+			if(obj->getObjectType() == ObjectType::Database)
+				aux_def += dynamic_cast<DatabaseModel *>(obj)->__getSourceCode(SchemaParser::SqlCode);
+			else
+				aux_def += obj->getSourceCode(SchemaParser::SqlCode);
+		}
+
+		if(!aux_def.isEmpty())
+		{
+			aux_def.prepend(tr("-- NOTE: the code below contains the SQL for the object itself\n\
+-- as well as for its dependencies or children (if applicable).\n\
+-- \n\
+-- This feature is only a convenience in order to allow you to test\n\
+-- the whole object's SQL definition at once.\n\
+-- \n\
+-- When exporting or generating the SQL for the whole database model\n\
+-- all objects will be placed at their original positions.\n\n\n"));
+		}
+
+		return aux_def;
 	}
 }
 
@@ -7578,7 +7551,7 @@ QString DatabaseModel::configureShellTypes(bool reset_config)
 
 			//Generating the shell type declaration (only for base types)
 			if(!reset_config)
-				shell_types_def += usr_type->getCodeDefinition(SchemaParser::SqlDefinition, true);
+				shell_types_def += usr_type->getSourceCode(SchemaParser::SqlCode, true);
 
 			/* Forcing the code invalidation for the type so the complete definition can be
 			 * generated in the below iteration */
@@ -7589,12 +7562,12 @@ QString DatabaseModel::configureShellTypes(bool reset_config)
 	return shell_types_def;
 }
 
-QString DatabaseModel::getCodeDefinition(unsigned def_type)
+QString DatabaseModel::getSourceCode(SchemaParser::CodeType def_type)
 {
-	return this->getCodeDefinition(def_type, true);
+	return this->getSourceCode(def_type, true);
 }
 
-QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
+QString DatabaseModel::getSourceCode(SchemaParser::CodeType def_type, bool export_file)
 {
 	attribs_map attribs_aux;
 	unsigned general_obj_cnt, gen_defs_count;
@@ -7602,9 +7575,9 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 	QString def, search_path=QString("pg_catalog,public"),
 			msg=tr("Generating %1 code: `%2' (%3)"),
 			attrib=Attributes::Objects, attrib_aux,
-			def_type_str=(def_type==SchemaParser::SqlDefinition ? QString("SQL") : QString("XML"));
+			def_type_str=(def_type==SchemaParser::SqlCode ? QString("SQL") : QString("XML"));
 	Type *usr_type=nullptr;
-	map<unsigned, BaseObject *> objects_map;
+	std::map<unsigned, BaseObject *> objects_map;
 	ObjectType obj_type;
 
 	try
@@ -7620,17 +7593,19 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 		attribs_aux[Attributes::Tablespace]="";
 		attribs_aux[Attributes::Role]="";
 
-		if(def_type==SchemaParser::SqlDefinition)
+		if(def_type==SchemaParser::SqlCode)
 		{
 			attribs_aux[Attributes::Function]=(!functions.empty() ? Attributes::True : "");
 			attribs_aux[Attributes::ShellTypes] = configureShellTypes(false);
 		}
-		else
+		/*else
 		{
 			//Configuring the changelog attributes when generating XML code
 			attribs_aux[Attributes::UseChangelog] = persist_changelog ? Attributes::True : Attributes::False;
 			attribs_aux[Attributes::Changelog] = getChangelogDefinition();
-		}
+		} */
+
+		setDatabaseModelAttributes(attribs_aux, def_type);
 
 		for(auto &obj_itr : objects_map)
 		{
@@ -7640,49 +7615,49 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 			object=obj_itr.second;
 			obj_type=object->getObjectType();
 
-			if(obj_type==ObjectType::Type && def_type==SchemaParser::SqlDefinition)
+			if(obj_type==ObjectType::Type && def_type==SchemaParser::SqlCode)
 			{
 				usr_type=dynamic_cast<Type *>(object);
-				attribs_aux[attrib]+=usr_type->getCodeDefinition(def_type);
+				attribs_aux[attrib]+=usr_type->getSourceCode(def_type);
 			}
 			else if(obj_type==ObjectType::Database)
 			{
-				if(def_type==SchemaParser::SqlDefinition)
-					attribs_aux[this->getSchemaName()] += this->__getCodeDefinition(def_type);
+				if(def_type==SchemaParser::SqlCode)
+					attribs_aux[this->getSchemaName()] += this->__getSourceCode(def_type);
 				else
-					attribs_aux[attrib]+=this->__getCodeDefinition(def_type);
+					attribs_aux[attrib]+=this->__getSourceCode(def_type);
 			}
 			else if(obj_type==ObjectType::Permission)
 			{
-				attribs_aux[Attributes::Permission]+=dynamic_cast<Permission *>(object)->getCodeDefinition(def_type);
+				attribs_aux[Attributes::Permission]+=dynamic_cast<Permission *>(object)->getSourceCode(def_type);
 			}
 			else if(obj_type==ObjectType::Constraint)
 			{
-				attribs_aux[attrib]+=dynamic_cast<Constraint *>(object)->getCodeDefinition(def_type, true);
+				attribs_aux[attrib]+=dynamic_cast<Constraint *>(object)->getSourceCode(def_type, true);
 			}
 			else if(obj_type==ObjectType::Role || obj_type==ObjectType::Tablespace ||  obj_type==ObjectType::Schema)
 			{
 				//The "public" schema does not have the SQL code definition generated
-				if(def_type==SchemaParser::SqlDefinition)
+				if(def_type==SchemaParser::SqlCode)
 					attrib_aux=BaseObject::getSchemaName(obj_type);
 				else
 					attrib_aux=attrib;
 
 				/* The Tablespace has the SQL code definition disabled when generating the
 				 * code of the entire model because this object cannot be created from a multiline sql command */
-				if(obj_type==ObjectType::Tablespace && !object->isSystemObject() && def_type==SchemaParser::SqlDefinition)
-					attribs_aux[attrib_aux]+=object->getCodeDefinition(def_type);
+				if(obj_type==ObjectType::Tablespace && !object->isSystemObject() && def_type==SchemaParser::SqlCode)
+					attribs_aux[attrib_aux]+=object->getSourceCode(def_type);
 				//System object doesn't has the XML generated (the only exception is for public schema)
 				else if((obj_type!=ObjectType::Schema && !object->isSystemObject()) ||
 								(obj_type==ObjectType::Schema &&
-								 ((object->getName()==QString("public") && def_type==SchemaParser::XmlDefinition) ||
+								 ((object->getName()==QString("public") && def_type==SchemaParser::XmlCode) ||
 									(object->getName()!=QString("public") && object->getName()!=QString("pg_catalog")))))
 				{
 					if(object->getObjectType()==ObjectType::Schema)
 						search_path+=QString(",") + object->getName(true);
 
 					//Generates the code definition and concatenates to the others
-					attribs_aux[attrib_aux]+=object->getCodeDefinition(def_type);
+					attribs_aux[attrib_aux]+=object->getSourceCode(def_type);
 				}
 			}
 			else
@@ -7690,27 +7665,27 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 				if(object->isSystemObject())
 					attribs_aux[attrib]+="";
 				else
-					attribs_aux[attrib]+=object->getCodeDefinition(def_type);
+					attribs_aux[attrib]+=object->getSourceCode(def_type);
 			}
 
 			gen_defs_count++;
 
-			if((def_type==SchemaParser::SqlDefinition && !object->isSQLDisabled()) ||
-					(def_type==SchemaParser::XmlDefinition && !object->isSystemObject()))
+			if((def_type==SchemaParser::SqlCode && !object->isSQLDisabled()) ||
+					(def_type==SchemaParser::XmlCode && !object->isSystemObject()))
 			{
 				emit s_objectLoaded((gen_defs_count/static_cast<double>(general_obj_cnt)) * 100,
 									msg.arg(def_type_str)
 									.arg(object->getName())
 									.arg(object->getTypeName()),
-									enum_cast(object->getObjectType()));
+									enum_t(object->getObjectType()));
 			}
 		}
 
 		attribs_aux[Attributes::SearchPath]=search_path;
-		attribs_aux[Attributes::ModelAuthor]=author;
+		/*attribs_aux[Attributes::ModelAuthor]=author;
 		attribs_aux[Attributes::PgModelerVersion]=GlobalAttributes::PgModelerVersion;
 
-		if(def_type==SchemaParser::XmlDefinition)
+		if(def_type==SchemaParser::XmlCode)
 		{
 			QStringList act_layers;
 
@@ -7733,42 +7708,85 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 			attribs_aux[Attributes::DefaultCollation]=(default_objs[ObjectType::Collation] ? default_objs[ObjectType::Collation]->getName(true) : "");
 		}
 		else
+			configureShellTypes(true); */
+
+		if(def_type == SchemaParser::SqlCode)
 			configureShellTypes(true);
 	}
 	catch(Exception &e)
 	{
-		if(def_type==SchemaParser::SqlDefinition)
+		if(def_type==SchemaParser::SqlCode)
 			configureShellTypes(true);
 
 		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 
 	attribs_aux[Attributes::ExportToFile]=(export_file ? Attributes::True : "");
-	def=schparser.getCodeDefinition(Attributes::DbModel, attribs_aux, def_type);
+	def=schparser.getSourceCode(Attributes::DbModel, attribs_aux, def_type);
 
-	if(prepend_at_bod && def_type==SchemaParser::SqlDefinition)
+	if(prepend_at_bod && def_type==SchemaParser::SqlCode)
 		def=QString("-- Prepended SQL commands --\n") +	this->prepended_sql + Attributes::DdlEndToken + def;
 
-	if(append_at_eod && def_type==SchemaParser::SqlDefinition)
+	if(append_at_eod && def_type==SchemaParser::SqlCode)
 		def+=QString("-- Appended SQL commands --\n") +	this->appended_sql + QChar('\n') + Attributes::DdlEndToken;
 
 	return def;
 }
 
-map<unsigned, BaseObject *> DatabaseModel::getCreationOrder(unsigned def_type, bool incl_relnn_objs, bool incl_rel1n_constrs)
+void DatabaseModel::setDatabaseModelAttributes(attribs_map &attribs, SchemaParser::CodeType code_type)
+{
+	attribs[Attributes::ModelAuthor] = author;
+	attribs[Attributes::PgModelerVersion] = GlobalAttributes::PgModelerVersion;
+
+	if(code_type == SchemaParser::XmlCode)
+	{
+		try
+		{
+			//Configuring the changelog attributes when generating XML code
+			attribs[Attributes::UseChangelog] = persist_changelog ? Attributes::True : Attributes::False;
+			attribs[Attributes::Changelog] = getChangelogDefinition();
+		}
+		catch (Exception &e)
+		{
+			throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		}
+
+		QStringList act_layers;
+
+		for(auto &layer_id : active_layers)
+			act_layers.push_back(QString::number(layer_id));
+
+		attribs[Attributes::Layers]=layers.join(',');
+		attribs[Attributes::ActiveLayers]=act_layers.join(',');
+		attribs[Attributes::LayerNameColors]=layer_name_colors.join(',');
+		attribs[Attributes::LayerRectColors]=layer_rect_colors.join(',');
+		attribs[Attributes::ShowLayerNames]=(is_layer_names_visible ? Attributes::True : Attributes::False);
+		attribs[Attributes::ShowLayerRects]=(is_layer_rects_visible ? Attributes::True : Attributes::False);
+		attribs[Attributes::MaxObjCount]=QString::number(static_cast<unsigned>(getMaxObjectCount() * 1.20));
+		attribs[Attributes::Protected]=(this->is_protected ? Attributes::True : "");
+		attribs[Attributes::LastPosition]=QString("%1,%2").arg(last_pos.x()).arg(last_pos.y());
+		attribs[Attributes::LastZoom]=QString::number(last_zoom);
+		attribs[Attributes::DefaultSchema]=(default_objs[ObjectType::Schema] ? default_objs[ObjectType::Schema]->getName(true) : "");
+		attribs[Attributes::DefaultOwner]=(default_objs[ObjectType::Role] ? default_objs[ObjectType::Role]->getName(true) : "");
+		attribs[Attributes::DefaultTablespace]=(default_objs[ObjectType::Tablespace] ? default_objs[ObjectType::Tablespace]->getName(true) : "");
+		attribs[Attributes::DefaultCollation]=(default_objs[ObjectType::Collation] ? default_objs[ObjectType::Collation]->getName(true) : "");
+	}
+}
+
+std::map<unsigned, BaseObject *> DatabaseModel::getCreationOrder(SchemaParser::CodeType def_type, bool incl_relnn_objs, bool incl_rel1n_constrs)
 {
 	BaseObject *object=nullptr;
-	vector<BaseObject *> fkeys, fk_rels, aux_tables;
-	vector<BaseObject *> *obj_list=nullptr;
-	vector<BaseObject *>::iterator itr, itr_end;
-	map<unsigned, BaseObject *> objects_map;
+	std::vector<BaseObject *> fkeys, fk_rels, aux_tables;
+	std::vector<BaseObject *> *obj_list=nullptr;
+	std::vector<BaseObject *>::iterator itr, itr_end;
+	std::map<unsigned, BaseObject *> objects_map;
 	PhysicalTable *table=nullptr;
 	Constraint *constr=nullptr;
 	View *view=nullptr;
 	Relationship *rel=nullptr;
 	ObjectType aux_obj_types[]={ ObjectType::Role, ObjectType::Tablespace, ObjectType::Schema, ObjectType::Tag };
 
-	vector<ObjectType> obj_types_vect = getObjectTypes(false, { ObjectType::Role, ObjectType::Tablespace, ObjectType::Schema,
+	std::vector<ObjectType> obj_types_vect = getObjectTypes(false, { ObjectType::Role, ObjectType::Tablespace, ObjectType::Schema,
 																															ObjectType::Tag, ObjectType::Database, ObjectType::Permission });
 
 	unsigned i=0, aux_obj_cnt=sizeof(aux_obj_types)/sizeof(ObjectType);
@@ -7776,7 +7794,7 @@ map<unsigned, BaseObject *> DatabaseModel::getCreationOrder(unsigned def_type, b
 	//The first objects on the map will be roles, tablespaces, schemas and tags
 	for(i=0; i < aux_obj_cnt; i++)
 	{
-		if(aux_obj_types[i]!=ObjectType::Tag || def_type==SchemaParser::XmlDefinition)
+		if(aux_obj_types[i]!=ObjectType::Tag || def_type==SchemaParser::XmlCode)
 		{
 			obj_list=getObjectList(aux_obj_types[i]);
 
@@ -7791,7 +7809,7 @@ map<unsigned, BaseObject *> DatabaseModel::getCreationOrder(unsigned def_type, b
 	for(auto &obj_type : obj_types_vect)
 	{
 		//For SQL definition, only the textbox and base relationship does not enters to the code generation list
-		if(def_type==SchemaParser::SqlDefinition &&
+		if(def_type==SchemaParser::SqlCode &&
 			 (obj_type==ObjectType::Textbox || obj_type==ObjectType::BaseRelationship))
 			obj_list=nullptr;
 		else
@@ -7810,7 +7828,7 @@ map<unsigned, BaseObject *> DatabaseModel::getCreationOrder(unsigned def_type, b
 				}
 				else
 				{
-					if(def_type==SchemaParser::XmlDefinition || !incl_relnn_objs)
+					if(def_type==SchemaParser::XmlCode || !incl_relnn_objs)
 						objects_map[object->getObjectId()]=object;
 					else
 					{
@@ -7872,10 +7890,10 @@ map<unsigned, BaseObject *> DatabaseModel::getCreationOrder(unsigned def_type, b
 	 2) Other tables came after the objects on the step 1.
 	 3) The sequences must have their code generated after the tables
 	 4) View are the last objects in the list avoiding table/column reference breaking */
-	if(def_type==SchemaParser::SqlDefinition)
+	if(def_type==SchemaParser::SqlCode)
 	{
 		BaseObject *objs[3]={nullptr, nullptr, nullptr};
-		vector<BaseObject *> vet_aux, rel_constrs;
+		std::vector<BaseObject *> vet_aux, rel_constrs;
 
 		vet_aux=relationships;
 		vet_aux.insert(vet_aux.end(), tables.begin(),tables.end());
@@ -7916,7 +7934,7 @@ map<unsigned, BaseObject *> DatabaseModel::getCreationOrder(unsigned def_type, b
 				}
 				else if(incl_rel1n_constrs)
 				{
-					vector<Constraint *> constrs=rel->getGeneratedConstraints();
+					std::vector<Constraint *> constrs=rel->getGeneratedConstraints();
 
 					for(auto &constr : constrs)
 					{
@@ -7966,9 +7984,9 @@ map<unsigned, BaseObject *> DatabaseModel::getCreationOrder(unsigned def_type, b
 }
 
 
-void DatabaseModel::__getObjectDependencies(BaseObject *object, vector<BaseObject *> &objs)
+void DatabaseModel::__getObjectDependencies(BaseObject *object, std::vector<BaseObject *> &objs)
 {
-	vector<BaseObject *> dep_objs, chld_objs;
+	std::vector<BaseObject *> dep_objs, chld_objs;
 	PhysicalTable *table=dynamic_cast<PhysicalTable *>(object);
 	ObjectType obj_type=ObjectType::BaseObject;
 
@@ -7999,7 +8017,7 @@ void DatabaseModel::__getObjectDependencies(BaseObject *object, vector<BaseObjec
 	//If there is the need to include the children objects
 	if(BaseTable::isBaseTable(obj_type) || obj_type==ObjectType::Schema)
 	{
-		vector<BaseObject *>::iterator end;
+		std::vector<BaseObject *>::iterator end;
 
 		if(obj_type==ObjectType::Schema)
 		{
@@ -8048,15 +8066,15 @@ void DatabaseModel::__getObjectDependencies(BaseObject *object, vector<BaseObjec
 	}
 }
 
-vector<BaseObject *> DatabaseModel::getCreationOrder(BaseObject *object, bool only_children)
+std::vector<BaseObject *> DatabaseModel::getCreationOrder(BaseObject *object, bool only_children)
 {
 	if(!object)
-		return vector<BaseObject *>();
+		return std::vector<BaseObject *>();
 
-	map<unsigned, BaseObject *> objs_map;
-	vector<BaseObject *> objs, children;
-	vector<Permission *> perms_aux, perms;
-	vector<Role *> roles;
+	std::map<unsigned, BaseObject *> objs_map;
+	std::vector<BaseObject *> objs, children;
+	std::vector<Permission *> perms_aux, perms;
+	std::vector<Role *> roles;
 	PhysicalTable *table=nullptr;
 	Relationship *rel=nullptr;
 	ObjectType obj_type=object->getObjectType();
@@ -8096,7 +8114,7 @@ vector<BaseObject *> DatabaseModel::getCreationOrder(BaseObject *object, bool on
 	{
 		BaseTable *table=nullptr;
 		Constraint *constr=nullptr;
-		vector<BaseObject *> objs_aux;
+		std::vector<BaseObject *> objs_aux;
 
 		for(BaseObject *obj : objs)
 		{
@@ -8178,12 +8196,12 @@ vector<BaseObject *> DatabaseModel::getCreationOrder(BaseObject *object, bool on
 	return objs;
 }
 
-void DatabaseModel::saveModel(const QString &filename, unsigned def_type)
+void DatabaseModel::saveModel(const QString &filename, SchemaParser::CodeType def_type)
 {
 	try
 	{
 		if(!cancel_saving)
-			UtilsNs::saveFile(filename, this->getCodeDefinition(def_type).toUtf8());
+			UtilsNs::saveFile(filename, this->getSourceCode(def_type).toUtf8());
 	}
 	catch(Exception &e)
 	{
@@ -8212,7 +8230,7 @@ bool DatabaseModel::saveSplitCustomSQL(bool save_appended, const QString &path, 
 
 	if(!buffer.isEmpty())
 	{
-		emit s_objectLoaded(!save_appended ? 0 : 100, msg, enum_cast(ObjectType::Database));
+		emit s_objectLoaded(!save_appended ? 0 : 100, msg, enum_t(ObjectType::Database));
 		UtilsNs::saveFile(path + GlobalAttributes::DirSeparator + filename, buffer);
 		return true;
 	}
@@ -8220,7 +8238,7 @@ bool DatabaseModel::saveSplitCustomSQL(bool save_appended, const QString &path, 
 	return false;
 }
 
-void DatabaseModel::saveSplitSQLDefinition(const QString &path)
+void DatabaseModel::saveSplitSQLDefinition(const QString &path, CodeGenMode code_gen_mode)
 {
 	QFileInfo fi(path);
 	QDir dir;
@@ -8229,18 +8247,22 @@ void DatabaseModel::saveSplitSQLDefinition(const QString &path)
 		throw Exception(Exception::getErrorMessage(ErrorCode::InvOutputDirectory).arg(path),
 										ErrorCode::InvOutputDirectory,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
+	if(code_gen_mode > ChildrenSql)
+		throw Exception(Exception::getErrorMessage(ErrorCode::InvCodeGenerationMode).arg(code_gen_mode),
+										ErrorCode::InvCodeGenerationMode,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
 	if(!fi.exists())
 		dir.mkdir(path);
 
 	QFile output;
 	QByteArray buffer;
-	map<unsigned, BaseObject *> objects = getCreationOrder(SchemaParser::SqlDefinition);
+	std::map<unsigned, BaseObject *> objects = getCreationOrder(SchemaParser::SqlCode);
 	int pad_size = QString::number(objects.size()).size(), idx = 1;
 	QString filename, name, shell_types;
 	BaseObject *obj = nullptr;
 	Relationship *rel = nullptr;
 	QStringList sch_names;
-	QRegExp name_fmt_regexp("(?!\\-)(\\W)");
+	QRegularExpression name_fmt_regexp("(?!\\-)(\\W)");
 	unsigned 	gen_defs_idx = 0, general_obj_cnt = 0;
 	attribs_map attribs;
 
@@ -8281,7 +8303,7 @@ void DatabaseModel::saveSplitSQLDefinition(const QString &path)
 
 				emit s_objectLoaded((gen_defs_idx/static_cast<double>(general_obj_cnt)) * 100,
 									tr("Saving SQL of shell types to file `%1'.").arg(filename),
-									enum_cast(ObjectType::Type));
+									enum_t(ObjectType::Type));
 
 				buffer.append(shell_types.toUtf8());
 				UtilsNs::saveFile(path + GlobalAttributes::DirSeparator + filename, buffer);
@@ -8289,10 +8311,7 @@ void DatabaseModel::saveSplitSQLDefinition(const QString &path)
 				shell_types.clear();
 			}
 
-			if(obj == this)
-				buffer.append(this->__getCodeDefinition(SchemaParser::SqlDefinition).toUtf8());
-			else
-				buffer.append(obj->getCodeDefinition(SchemaParser::SqlDefinition).toUtf8());
+			buffer.append(getSQLDefinition(obj, code_gen_mode).toUtf8());
 
 			if(buffer.isEmpty())
 				continue;
@@ -8345,7 +8364,7 @@ void DatabaseModel::saveSplitSQLDefinition(const QString &path)
 								.arg(obj->getName())
 								.arg(obj->getTypeName())
 								.arg(filename),
-								enum_cast(obj->getObjectType()));
+								enum_t(obj->getObjectType()));
 
 			UtilsNs::saveFile(path + GlobalAttributes::DirSeparator + filename, buffer);
 			buffer.clear();
@@ -8363,9 +8382,9 @@ void DatabaseModel::saveSplitSQLDefinition(const QString &path)
 									 .arg(Attributes::SessionOpts);
 
 				emit s_objectLoaded((gen_defs_idx/static_cast<double>(general_obj_cnt)) * 100, tr("Saving session options file `%1'.").arg(filename),
-														enum_cast(ObjectType::Database));
+														enum_t(ObjectType::Database));
 
-				buffer.append(schparser.getCodeDefinition(Attributes::SessionOpts, attribs, SchemaParser::SqlDefinition).toUtf8());
+				buffer.append(schparser.getSourceCode(Attributes::SessionOpts, attribs, SchemaParser::SqlCode).toUtf8());
 				UtilsNs::saveFile( path + GlobalAttributes::DirSeparator + filename, buffer);
 				buffer.clear();
 			}
@@ -8382,7 +8401,7 @@ void DatabaseModel::saveSplitSQLDefinition(const QString &path)
 	}
 }
 
-void DatabaseModel::getOpClassDependencies(BaseObject *object, vector<BaseObject *> &deps, bool inc_indirect_deps)
+void DatabaseModel::getOpClassDependencies(BaseObject *object, std::vector<BaseObject *> &deps, bool inc_indirect_deps)
 {
 	OperatorClass *opclass=dynamic_cast<OperatorClass *>(object);
 	BaseObject *usr_type=getObjectPgSQLType(opclass->getDataType());
@@ -8418,7 +8437,7 @@ void DatabaseModel::getOpClassDependencies(BaseObject *object, vector<BaseObject
 	}
 }
 
-void DatabaseModel::getDomainDependencies(BaseObject *object, vector<BaseObject *> &deps, bool inc_indirect_deps)
+void DatabaseModel::getDomainDependencies(BaseObject *object, std::vector<BaseObject *> &deps, bool inc_indirect_deps)
 {
 	BaseObject *usr_type=getObjectPgSQLType(dynamic_cast<Domain *>(object)->getType());
 
@@ -8426,14 +8445,14 @@ void DatabaseModel::getDomainDependencies(BaseObject *object, vector<BaseObject 
 		getObjectDependecies(usr_type, deps, inc_indirect_deps);
 }
 
-void DatabaseModel::getCastDependencies(BaseObject *object, vector<BaseObject *> &deps, bool inc_indirect_deps)
+void DatabaseModel::getCastDependencies(BaseObject *object, std::vector<BaseObject *> &deps, bool inc_indirect_deps)
 {
 	Cast *cast=dynamic_cast<Cast *>(object);
 	BaseObject *usr_type=nullptr;
 
-	for(unsigned i=Cast::SrcType; i <= Cast::DstType; i++)
+	for(unsigned i = Cast::SrcType; i <= Cast::DstType; i++)
 	{
-		usr_type=getObjectPgSQLType(cast->getDataType(i));
+		usr_type=getObjectPgSQLType(cast->getDataType(static_cast<Cast::DataTypeId>(i)));
 
 		if(usr_type)
 			getObjectDependecies(usr_type, deps, inc_indirect_deps);
@@ -8442,7 +8461,7 @@ void DatabaseModel::getCastDependencies(BaseObject *object, vector<BaseObject *>
 	getObjectDependecies(cast->getCastFunction(), deps, inc_indirect_deps);
 }
 
-void DatabaseModel::getProcedureDependencies(BaseObject *object, vector<BaseObject *> &deps, bool inc_indirect_deps)
+void DatabaseModel::getProcedureDependencies(BaseObject *object, std::vector<BaseObject *> &deps, bool inc_indirect_deps)
 {
 	BaseFunction *base_func = dynamic_cast<BaseFunction *>(object);
 	BaseObject *usr_type = nullptr;
@@ -8469,7 +8488,7 @@ void DatabaseModel::getProcedureDependencies(BaseObject *object, vector<BaseObje
 	}
 }
 
-void DatabaseModel::getFunctionDependencies(BaseObject *object, vector<BaseObject *> &deps, bool inc_indirect_deps)
+void DatabaseModel::getFunctionDependencies(BaseObject *object, std::vector<BaseObject *> &deps, bool inc_indirect_deps)
 {
 	Function *func=dynamic_cast<Function *>(object);
 	BaseObject *usr_type = getObjectPgSQLType(func->getReturnType());
@@ -8490,14 +8509,13 @@ void DatabaseModel::getFunctionDependencies(BaseObject *object, vector<BaseObjec
 	}
 }
 
-void DatabaseModel::getAggregateDependencies(BaseObject *object, vector<BaseObject *> &deps, bool inc_indirect_deps)
+void DatabaseModel::getAggregateDependencies(BaseObject *object, std::vector<BaseObject *> &deps, bool inc_indirect_deps)
 {
 	Aggregate *aggreg=dynamic_cast<Aggregate *>(object);
 	BaseObject *usr_type=nullptr;
-	unsigned count, i;
 
-	for(i=Aggregate::FinalFunc; i <= Aggregate::TransitionFunc; i++)
-		getObjectDependecies(aggreg->getFunction(i), deps, inc_indirect_deps);
+	for(unsigned i = Aggregate::FinalFunc; i <= Aggregate::TransitionFunc; i++)
+		getObjectDependecies(aggreg->getFunction(static_cast<Aggregate::FunctionId>(i)), deps, inc_indirect_deps);
 
 	usr_type=getObjectPgSQLType(aggreg->getStateType());
 
@@ -8507,8 +8525,8 @@ void DatabaseModel::getAggregateDependencies(BaseObject *object, vector<BaseObje
 	if(aggreg->getSortOperator())
 		getObjectDependecies(aggreg->getSortOperator(), deps, inc_indirect_deps);
 
-	count=aggreg->getDataTypeCount();
-	for(i=0; i < count; i++)
+	unsigned count=aggreg->getDataTypeCount();
+	for(unsigned i=0; i < count; i++)
 	{
 		usr_type=getObjectPgSQLType(aggreg->getDataType(i));
 
@@ -8517,18 +8535,18 @@ void DatabaseModel::getAggregateDependencies(BaseObject *object, vector<BaseObje
 	}
 }
 
-void DatabaseModel::getLanguageDependencies(BaseObject *object, vector<BaseObject *> &deps, bool inc_indirect_deps)
+void DatabaseModel::getLanguageDependencies(BaseObject *object, std::vector<BaseObject *> &deps, bool inc_indirect_deps)
 {
 	Language *lang=dynamic_cast<Language *>(object);
 
-	for(unsigned i=Language::ValidatorFunc; i <= Language::InlineFunc; i++)
+	for(unsigned i = Language::ValidatorFunc; i <= Language::InlineFunc; i++)
 	{
-		if(lang->getFunction(i))
-			getObjectDependecies(lang->getFunction(i), deps, inc_indirect_deps);
+		if(lang->getFunction(static_cast<Language::FunctionId>(i)))
+			getObjectDependecies(lang->getFunction(static_cast<Language::FunctionId>(i)), deps, inc_indirect_deps);
 	}
 }
 
-void DatabaseModel::getOperatorDependencies(BaseObject *object, vector<BaseObject *> &deps, bool inc_indirect_deps)
+void DatabaseModel::getOperatorDependencies(BaseObject *object, std::vector<BaseObject *> &deps, bool inc_indirect_deps)
 {
 	Operator *oper=dynamic_cast<Operator *>(object);
 	BaseObject *usr_type=nullptr;
@@ -8536,13 +8554,13 @@ void DatabaseModel::getOperatorDependencies(BaseObject *object, vector<BaseObjec
 
 	for(i=Operator::FuncOperator; i <= Operator::FuncRestrict; i++)
 	{
-		if(oper->getFunction(i))
-			getObjectDependecies(oper->getFunction(i), deps, inc_indirect_deps);
+		if(oper->getFunction(static_cast<Operator::FunctionId>(i)))
+			getObjectDependecies(oper->getFunction(static_cast<Operator::FunctionId>(i)), deps, inc_indirect_deps);
 	}
 
 	for(i=Operator::LeftArg; i <= Operator::RightArg; i++)
 	{
-		usr_type=getObjectPgSQLType(oper->getArgumentType(i));
+		usr_type=getObjectPgSQLType(oper->getArgumentType(static_cast<Operator::ArgumentId>(i)));
 
 		if(usr_type)
 			getObjectDependecies(usr_type, deps, inc_indirect_deps);
@@ -8550,26 +8568,23 @@ void DatabaseModel::getOperatorDependencies(BaseObject *object, vector<BaseObjec
 
 	for(i=Operator::OperCommutator; i <= Operator::OperNegator; i++)
 	{
-		if(oper->getOperator(i))
-			getObjectDependecies(oper->getOperator(i), deps, inc_indirect_deps);
+		if(oper->getOperator(static_cast<Operator::OperatorId>(i)))
+			getObjectDependecies(oper->getOperator(static_cast<Operator::OperatorId>(i)), deps, inc_indirect_deps);
 	}
 }
 
-void DatabaseModel::getRoleDependencies(BaseObject *object, vector<BaseObject *> &deps, bool inc_indirect_deps)
+void DatabaseModel::getRoleDependencies(BaseObject *object, std::vector<BaseObject *> &deps, bool inc_indirect_deps)
 {
 	Role *role=dynamic_cast<Role *>(object);
-	unsigned rl_type = 0, idx = 0, count = 0;
 
-	for(rl_type = Role::MemberRole; rl_type <= Role::AdminRole; rl_type++)
+	for(auto rl_type : { Role::MemberRole, Role::AdminRole })
 	{
-		count=role->getRoleCount(rl_type);
-
-		for(idx=0; idx < count; idx++)
+		for(unsigned idx=0; idx < role->getRoleCount(rl_type); idx++)
 			getObjectDependecies(role->getRole(rl_type, idx), deps, inc_indirect_deps);
 	}
 }
 
-void DatabaseModel::getRelationshipDependencies(BaseObject *object, vector<BaseObject *> &deps, bool inc_indirect_deps)
+void DatabaseModel::getRelationshipDependencies(BaseObject *object, std::vector<BaseObject *> &deps, bool inc_indirect_deps)
 {
 	Relationship *rel=dynamic_cast<Relationship *>(object);
 	BaseObject *usr_type=nullptr;
@@ -8598,14 +8613,14 @@ void DatabaseModel::getRelationshipDependencies(BaseObject *object, vector<BaseO
 	}
 }
 
-void DatabaseModel::getSequenceDependencies(BaseObject *object, vector<BaseObject *> &deps, bool inc_indirect_deps)
+void DatabaseModel::getSequenceDependencies(BaseObject *object, std::vector<BaseObject *> &deps, bool inc_indirect_deps)
 {
 	Sequence *seq=dynamic_cast<Sequence *>(object);
 	if(seq->getOwnerColumn())
 		getObjectDependecies(seq->getOwnerColumn()->getParentTable(), deps, inc_indirect_deps);
 }
 
-void DatabaseModel::getColumnDependencies(BaseObject *object, vector<BaseObject *> &deps, bool inc_indirect_deps)
+void DatabaseModel::getColumnDependencies(BaseObject *object, std::vector<BaseObject *> &deps, bool inc_indirect_deps)
 {
 	Column *col=dynamic_cast<Column *>(object);
 	BaseObject *usr_type=getObjectPgSQLType(col->getType()),
@@ -8618,7 +8633,7 @@ void DatabaseModel::getColumnDependencies(BaseObject *object, vector<BaseObject 
 		getObjectDependecies(sequence, deps, inc_indirect_deps);
 }
 
-void DatabaseModel::getTriggerDependencies(BaseObject *object, vector<BaseObject *> &deps, bool inc_indirect_deps)
+void DatabaseModel::getTriggerDependencies(BaseObject *object, std::vector<BaseObject *> &deps, bool inc_indirect_deps)
 {
 	Trigger *trig=dynamic_cast<Trigger *>(object);
 
@@ -8629,7 +8644,7 @@ void DatabaseModel::getTriggerDependencies(BaseObject *object, vector<BaseObject
 		getObjectDependecies(trig->getFunction(), deps, inc_indirect_deps);
 }
 
-void DatabaseModel::getIndexDependencies(BaseObject *object, vector<BaseObject *> &deps, bool inc_indirect_deps)
+void DatabaseModel::getIndexDependencies(BaseObject *object, std::vector<BaseObject *> &deps, bool inc_indirect_deps)
 {
 	Index *index=dynamic_cast<Index *>(object);
 	//BaseObject *usr_type=nullptr;
@@ -8651,7 +8666,7 @@ void DatabaseModel::getIndexDependencies(BaseObject *object, vector<BaseObject *
 		getObjectDependecies(col, deps, inc_indirect_deps);
 }
 
-void DatabaseModel::getPolicyDependencies(BaseObject *object, vector<BaseObject *> &deps, bool inc_indirect_deps)
+void DatabaseModel::getPolicyDependencies(BaseObject *object, std::vector<BaseObject *> &deps, bool inc_indirect_deps)
 {
 	Policy *pol=dynamic_cast<Policy *>(object);
 
@@ -8659,7 +8674,7 @@ void DatabaseModel::getPolicyDependencies(BaseObject *object, vector<BaseObject 
 		getObjectDependecies(role, deps, inc_indirect_deps);
 }
 
-void DatabaseModel::getPhysicalTableDependencies(BaseObject *object, vector<BaseObject *> &deps, bool inc_indirect_deps)
+void DatabaseModel::getPhysicalTableDependencies(BaseObject *object, std::vector<BaseObject *> &deps, bool inc_indirect_deps)
 {
 	PhysicalTable *tab=dynamic_cast<PhysicalTable *>(object);
 	Table *aux_tab = dynamic_cast<Table *>(object);
@@ -8766,7 +8781,7 @@ void DatabaseModel::getPhysicalTableDependencies(BaseObject *object, vector<Base
 	}
 }
 
-void DatabaseModel::getTypeDependencies(BaseObject *object, vector<BaseObject *> &deps, bool inc_indirect_deps)
+void DatabaseModel::getTypeDependencies(BaseObject *object, std::vector<BaseObject *> &deps, bool inc_indirect_deps)
 {
 	Type *usr_type=dynamic_cast<Type *>(object);
 	BaseObject *aux_type=nullptr;
@@ -8780,7 +8795,7 @@ void DatabaseModel::getTypeDependencies(BaseObject *object, vector<BaseObject *>
 			getObjectDependecies(aux_type, deps, inc_indirect_deps);
 
 		for(i=Type::InputFunc; i <= Type::AnalyzeFunc; i++)
-			getObjectDependecies(usr_type->getFunction(i), deps, inc_indirect_deps);
+			getObjectDependecies(usr_type->getFunction(static_cast<Type::FunctionId>(i)), deps, inc_indirect_deps);
 	}
 	else if(usr_type->getConfiguration()==Type::CompositeType)
 	{
@@ -8795,7 +8810,7 @@ void DatabaseModel::getTypeDependencies(BaseObject *object, vector<BaseObject *>
 	}
 }
 
-void DatabaseModel::getViewDependencies(BaseObject *object, vector<BaseObject *> &deps, bool inc_indirect_deps)
+void DatabaseModel::getViewDependencies(BaseObject *object, std::vector<BaseObject *> &deps, bool inc_indirect_deps)
 {
 	View *view=dynamic_cast<View *>(object);
 	unsigned i, count;
@@ -8817,21 +8832,21 @@ void DatabaseModel::getViewDependencies(BaseObject *object, vector<BaseObject *>
 	}
 }
 
-void DatabaseModel::getGenericSQLDependencies(BaseObject *object, vector<BaseObject *> &deps, bool inc_indirect_deps)
+void DatabaseModel::getGenericSQLDependencies(BaseObject *object, std::vector<BaseObject *> &deps, bool inc_indirect_deps)
 {
 	GenericSQL *generic_sql = dynamic_cast<GenericSQL *>(object);
-	vector<BaseObject *> ref_objs = generic_sql->getReferencedObjects();
+	std::vector<BaseObject *> ref_objs = generic_sql->getReferencedObjects();
 	for(auto &obj : ref_objs)
 		getObjectDependecies(obj, deps, inc_indirect_deps);
 }
 
-void DatabaseModel::getTransformDependencies(BaseObject *object, vector<BaseObject *> &deps, bool inc_indirect_deps)
+void DatabaseModel::getTransformDependencies(BaseObject *object, std::vector<BaseObject *> &deps, bool inc_indirect_deps)
 {
 	Transform *transf = dynamic_cast<Transform *>(object);
 
 	getObjectDependecies(transf->getLanguage(), deps, inc_indirect_deps);
 
-	for(unsigned func_id = Transform::FromSqlFunc; func_id <= Transform::ToSqlFunc; func_id++)
+	for(auto func_id : { Transform::FromSqlFunc, Transform::ToSqlFunc })
 		getObjectDependecies(transf->getFunction(func_id), deps, inc_indirect_deps);
 
 	if(transf->getType().isUserType())
@@ -8841,7 +8856,7 @@ void DatabaseModel::getTransformDependencies(BaseObject *object, vector<BaseObje
 	}
 }
 
-void DatabaseModel::getObjectDependecies(BaseObject *object, vector<BaseObject *> &deps, bool inc_indirect_deps)
+void DatabaseModel::getObjectDependecies(BaseObject *object, std::vector<BaseObject *> &deps, bool inc_indirect_deps)
 {
 	//Case the object is allocated and is not included in the dependecies list
 	if(object && std::find(deps.begin(), deps.end(), object)==deps.end())
@@ -8954,15 +8969,15 @@ void DatabaseModel::getObjectDependecies(BaseObject *object, vector<BaseObject *
 	}
 }
 
-void DatabaseModel::getViewReferences(BaseObject *object, vector<BaseObject *> &refs, bool exclusion_mode)
+void DatabaseModel::getViewReferences(BaseObject *object, std::vector<BaseObject *> &refs, bool exclusion_mode)
 {
 	View *view=dynamic_cast<View *>(object);
-	vector<BaseObject *> tab_objs=view->getObjects();
+	std::vector<BaseObject *> tab_objs=view->getObjects();
 	refs.insert(refs.end(), tab_objs.begin(), tab_objs.end());
 
 	if(!exclusion_mode)
 	{
-		vector<BaseRelationship *> base_rels=getRelationships(view);
+		std::vector<BaseRelationship *> base_rels=getRelationships(view);
 		while(!base_rels.empty())
 		{
 			refs.push_back(base_rels.back());
@@ -8971,7 +8986,7 @@ void DatabaseModel::getViewReferences(BaseObject *object, vector<BaseObject *> &
 	}
 }
 
-void DatabaseModel::getPhysicalTableReferences(BaseObject *object, vector<BaseObject *> &refs, bool &refer, bool exclusion_mode)
+void DatabaseModel::getPhysicalTableReferences(BaseObject *object, std::vector<BaseObject *> &refs, bool &refer, bool exclusion_mode)
 {
 	PhysicalTable *table=dynamic_cast<PhysicalTable *>(object);
 	ObjectType obj_type = object->getObjectType();
@@ -8981,11 +8996,11 @@ void DatabaseModel::getPhysicalTableReferences(BaseObject *object, vector<BaseOb
 	Trigger *gat=nullptr;
 	BaseRelationship *base_rel=nullptr;
 	View *view=nullptr;
-	vector<BaseObject *>::iterator itr, itr_end;
-	vector<TableObject *> *tab_objs;
+	std::vector<BaseObject *>::iterator itr, itr_end;
+	std::vector<TableObject *> *tab_objs;
 	unsigned i, count;
-	vector<ObjectType> tab_obj_types={ ObjectType::Trigger, ObjectType::Rule, ObjectType::Index, ObjectType::Policy };
-	vector<BaseObject *> tabs;
+	std::vector<ObjectType> tab_obj_types={ ObjectType::Trigger, ObjectType::Rule, ObjectType::Index, ObjectType::Policy };
+	std::vector<BaseObject *> tabs;
 
 	for(auto &type : tab_obj_types)
 	{
@@ -9115,11 +9130,11 @@ void DatabaseModel::getPhysicalTableReferences(BaseObject *object, vector<BaseOb
 	}
 }
 
-void DatabaseModel::getFunctionReferences(BaseObject *object, vector<BaseObject *> &refs, bool &refer, bool exclusion_mode)
+void DatabaseModel::getFunctionReferences(BaseObject *object, std::vector<BaseObject *> &refs, bool &refer, bool exclusion_mode)
 {
 	Function *func=dynamic_cast<Function *>(object);
-	vector<BaseObject *> *obj_list=nullptr;
-	vector<BaseObject *>::iterator itr, itr_end;
+	std::vector<BaseObject *> *obj_list=nullptr;
+	std::vector<BaseObject *>::iterator itr, itr_end;
 	ObjectType obj_types[]={ObjectType::Cast, ObjectType::EventTrigger, ObjectType::Conversion,
 													ObjectType::Aggregate, ObjectType::Operator, ObjectType::OpClass,
 													ObjectType::Table, ObjectType::Type, ObjectType::Language,
@@ -9256,7 +9271,7 @@ void DatabaseModel::getFunctionReferences(BaseObject *object, vector<BaseObject 
 
 				for(i1=Type::InputFunc; i1 <= Type::AnalyzeFunc && (!exclusion_mode || (exclusion_mode && !refer)); i1++)
 				{
-					if(type->getFunction(i1)==func)
+					if(type->getFunction(static_cast<Type::FunctionId>(i1))==func)
 					{
 						refer=true;
 						refs.push_back(type);
@@ -9310,10 +9325,10 @@ void DatabaseModel::getFunctionReferences(BaseObject *object, vector<BaseObject 
 	}
 }
 
-void DatabaseModel::getSchemaReferences(BaseObject *object, vector<BaseObject *> &refs, bool &refer, bool exclusion_mode)
+void DatabaseModel::getSchemaReferences(BaseObject *object, std::vector<BaseObject *> &refs, bool &refer, bool exclusion_mode)
 {
-	vector<BaseObject *> *obj_list=nullptr;
-	vector<BaseObject *>::iterator itr, itr_end;
+	std::vector<BaseObject *> *obj_list=nullptr;
+	std::vector<BaseObject *>::iterator itr, itr_end;
 	ObjectType obj_types[12]={ObjectType::Function, ObjectType::Table, ObjectType::ForeignTable, ObjectType::View,
 														ObjectType::Domain, ObjectType::Aggregate, ObjectType::Operator,
 														ObjectType::Sequence, ObjectType::Conversion,
@@ -9338,11 +9353,11 @@ void DatabaseModel::getSchemaReferences(BaseObject *object, vector<BaseObject *>
 	}
 }
 
-void DatabaseModel::getUserDefTypesReferences(BaseObject *object, vector<BaseObject *> &refs, bool &refer, bool exclusion_mode)
+void DatabaseModel::getUserDefTypesReferences(BaseObject *object, std::vector<BaseObject *> &refs, bool &refer, bool exclusion_mode)
 {
-	vector<BaseObject *> *obj_list=nullptr;
-	vector<BaseObject *>::iterator itr, itr_end;
-	vector<ObjectType> obj_types={ObjectType::Table, ObjectType::ForeignTable, ObjectType::OpClass,
+	std::vector<BaseObject *> *obj_list=nullptr;
+	std::vector<BaseObject *>::iterator itr, itr_end;
+	std::vector<ObjectType> obj_types={ObjectType::Table, ObjectType::ForeignTable, ObjectType::OpClass,
 																ObjectType::Cast,	ObjectType::Domain, ObjectType::Function,
 																ObjectType::Aggregate, ObjectType::Procedure,
 																ObjectType::Operator, ObjectType::Type, ObjectType::Relationship };
@@ -9605,19 +9620,18 @@ void DatabaseModel::getUserDefTypesReferences(BaseObject *object, vector<BaseObj
 	}
 }
 
-void DatabaseModel::getRoleReferences(BaseObject *object, vector<BaseObject *> &refs, bool &refer, bool exclusion_mode)
+void DatabaseModel::getRoleReferences(BaseObject *object, std::vector<BaseObject *> &refs, bool &refer, bool exclusion_mode)
 {
-	vector<BaseObject *> *obj_list=nullptr;
-	vector<BaseObject *>::iterator itr, itr_end;
-	vector<ObjectType> obj_types = {
+	std::vector<BaseObject *> *obj_list=nullptr;
+	std::vector<BaseObject *>::iterator itr, itr_end;
+	std::vector<ObjectType> obj_types = {
 								ObjectType::Function, ObjectType::Table, ObjectType::ForeignTable, ObjectType::Domain,
 								ObjectType::Aggregate, ObjectType::Schema, ObjectType::Operator,
 								ObjectType::Sequence, ObjectType::Conversion,
 								ObjectType::Language, ObjectType::Tablespace,
 								ObjectType::Type, ObjectType::OpFamily, ObjectType::OpClass,
 								ObjectType::UserMapping };
-	vector<ObjectType>::iterator itr_tp, itr_tp_end;
-	unsigned i, count;
+	std::vector<ObjectType>::iterator itr_tp, itr_tp_end;
 	Role *role_aux=nullptr;
 	Role *role=dynamic_cast<Role *>(object);
 	Permission *perm=nullptr;
@@ -9647,10 +9661,9 @@ void DatabaseModel::getRoleReferences(BaseObject *object, vector<BaseObject *> &
 
 		for(unsigned rl_type = Role::MemberRole; rl_type <= Role::AdminRole && (!exclusion_mode || (exclusion_mode && !refer)); rl_type++)
 		{
-			count = role_aux->getRoleCount(rl_type);
-			for(i=0; i < count && !refer; i++)
+			for(unsigned i = 0; i < role_aux->getRoleCount(static_cast<Role::RoleType>(rl_type)) && !refer; i++)
 			{
-				if(role_aux->getRole(rl_type, i)==role)
+				if(role_aux->getRole(static_cast<Role::RoleType>(rl_type), i)==role)
 				{
 					refer=true;
 					refs.push_back(role_aux);
@@ -9702,9 +9715,9 @@ void DatabaseModel::getRoleReferences(BaseObject *object, vector<BaseObject *> &
 	}
 }
 
-void DatabaseModel::getTablespaceReferences(BaseObject *object, vector<BaseObject *> &refs, bool &refer, bool exclusion_mode)
+void DatabaseModel::getTablespaceReferences(BaseObject *object, std::vector<BaseObject *> &refs, bool &refer, bool exclusion_mode)
 {
-	vector<BaseObject *>::iterator itr, itr_end;
+	std::vector<BaseObject *>::iterator itr, itr_end;
 	unsigned i, count;
 	Table *tab=nullptr;
 	Index *ind=nullptr;
@@ -9755,9 +9768,9 @@ void DatabaseModel::getTablespaceReferences(BaseObject *object, vector<BaseObjec
 	}
 }
 
-void DatabaseModel::getLanguageReferences(BaseObject *object, vector<BaseObject *> &refs, bool &refer, bool exclusion_mode)
+void DatabaseModel::getLanguageReferences(BaseObject *object, std::vector<BaseObject *> &refs, bool &refer, bool exclusion_mode)
 {
-	vector<BaseObject *>::iterator itr, itr_end;
+	std::vector<BaseObject *>::iterator itr, itr_end;
 	Function *func=nullptr;
 	Transform *transf = nullptr;
 
@@ -9791,9 +9804,9 @@ void DatabaseModel::getLanguageReferences(BaseObject *object, vector<BaseObject 
 
 }
 
-void DatabaseModel::getOpClassReferences(BaseObject *object, vector<BaseObject *> &refs, bool &refer, bool exclusion_mode)
+void DatabaseModel::getOpClassReferences(BaseObject *object, std::vector<BaseObject *> &refs, bool &refer, bool exclusion_mode)
 {
-	vector<BaseObject *>::iterator itr, itr_end;
+	std::vector<BaseObject *>::iterator itr, itr_end;
 	Type *usertype=nullptr;
 	Index *ind=nullptr;
 	Constraint *constr=nullptr;
@@ -9891,10 +9904,10 @@ void DatabaseModel::getOpClassReferences(BaseObject *object, vector<BaseObject *
 	}
 }
 
-void DatabaseModel::getOperatorReferences(BaseObject *object, vector<BaseObject *> &refs, bool &refer, bool exclusion_mode)
+void DatabaseModel::getOperatorReferences(BaseObject *object, std::vector<BaseObject *> &refs, bool &refer, bool exclusion_mode)
 {
-	vector<BaseObject *> *obj_list=nullptr;
-	vector<BaseObject *>::iterator itr, itr_end;
+	std::vector<BaseObject *> *obj_list=nullptr;
+	std::vector<BaseObject *>::iterator itr, itr_end;
 	ObjectType obj_types[]={ObjectType::OpClass,
 													ObjectType::Aggregate,
 													ObjectType::Operator,
@@ -9951,7 +9964,7 @@ void DatabaseModel::getOperatorReferences(BaseObject *object, vector<BaseObject 
 				for(i1=Operator::OperCommutator; i1 <= Operator::OperNegator &&
 					(!exclusion_mode || (exclusion_mode && !refer)); i1++)
 				{
-					if(oper_aux->getOperator(i1)==oper)
+					if(oper_aux->getOperator(static_cast<Operator::OperatorId>(i1))==oper)
 					{
 						refer=true;
 						refs.push_back(oper_aux);
@@ -9989,15 +10002,15 @@ void DatabaseModel::getOperatorReferences(BaseObject *object, vector<BaseObject 
 	}
 }
 
-void DatabaseModel::getCollationReferences(BaseObject *object, vector<BaseObject *> &refs, bool &refer, bool exclusion_mode)
+void DatabaseModel::getCollationReferences(BaseObject *object, std::vector<BaseObject *> &refs, bool &refer, bool exclusion_mode)
 {
 	ObjectType  obj_types[]={ ObjectType::Domain, ObjectType::Collation, ObjectType::Type },
 			tab_obj_types[]={ ObjectType::Column, ObjectType::Index };
 	unsigned i, count;
-	vector<BaseObject *> *obj_list=nullptr;
-	vector<BaseObject *>::iterator itr, itr_end;
-	vector<TableObject *> *tab_obj_list=nullptr;
-	vector<TableObject *>::iterator tab_itr, tab_itr_end;
+	std::vector<BaseObject *> *obj_list=nullptr;
+	std::vector<BaseObject *>::iterator itr, itr_end;
+	std::vector<TableObject *> *tab_obj_list=nullptr;
+	std::vector<TableObject *>::iterator tab_itr, tab_itr_end;
 	TableObject *tab_obj=nullptr;
 	PhysicalTable *table = nullptr;
 
@@ -10021,7 +10034,7 @@ void DatabaseModel::getCollationReferences(BaseObject *object, vector<BaseObject
 	}
 
 	count=sizeof(tab_obj_types)/sizeof(ObjectType);
-	vector<BaseObject *> tabs;
+	std::vector<BaseObject *> tabs;
 
 	tabs.insert(tabs.end(), tables.begin(), tables.end());
 	tabs.insert(tabs.end(), foreign_tables.begin(), foreign_tables.end());
@@ -10069,9 +10082,9 @@ void DatabaseModel::getCollationReferences(BaseObject *object, vector<BaseObject
 	}
 }
 
-void DatabaseModel::getOpFamilyReferences(BaseObject *object, vector<BaseObject *> &refs, bool &refer, bool exclusion_mode)
+void DatabaseModel::getOpFamilyReferences(BaseObject *object, std::vector<BaseObject *> &refs, bool &refer, bool exclusion_mode)
 {
-	vector<BaseObject *>::iterator itr, itr_end;
+	std::vector<BaseObject *>::iterator itr, itr_end;
 	OperatorFamily *op_family=dynamic_cast<OperatorFamily *>(object);
 
 	itr=op_classes.begin();
@@ -10088,11 +10101,11 @@ void DatabaseModel::getOpFamilyReferences(BaseObject *object, vector<BaseObject 
 	}
 }
 
-void DatabaseModel::getColumnReferences(BaseObject *object, vector<BaseObject *> &refs, bool &refer, bool exclusion_mode)
+void DatabaseModel::getColumnReferences(BaseObject *object, std::vector<BaseObject *> &refs, bool &refer, bool exclusion_mode)
 {
 	Column *column=dynamic_cast<Column *>(object);
-	vector<BaseObject *> *obj_list=nullptr;
-	vector<BaseObject *>::iterator itr, itr_end;
+	std::vector<BaseObject *> *obj_list=nullptr;
+	std::vector<BaseObject *>::iterator itr, itr_end;
 	ObjectType  obj_types[]={ ObjectType::Sequence, ObjectType::View, ObjectType::Table,
 														ObjectType::ForeignTable, ObjectType::Relationship };
 	unsigned i, count=sizeof(obj_types)/sizeof(ObjectType);
@@ -10119,7 +10132,7 @@ void DatabaseModel::getColumnReferences(BaseObject *object, vector<BaseObject *>
 				Trigger *trig=nullptr;
 				Index *index=nullptr;
 				Constraint *constr=nullptr;
-				vector<PartitionKey> part_keys;
+				std::vector<PartitionKey> part_keys;
 
 				count=tab->getConstraintCount();
 				for(idx=0; idx < count && (!exclusion_mode || (exclusion_mode && !refer)); idx++)
@@ -10194,10 +10207,10 @@ void DatabaseModel::getColumnReferences(BaseObject *object, vector<BaseObject *>
 	}
 }
 
-void DatabaseModel::getTagReferences(BaseObject *object, vector<BaseObject *> &refs, bool &refer, bool exclusion_mode)
+void DatabaseModel::getTagReferences(BaseObject *object, std::vector<BaseObject *> &refs, bool &refer, bool exclusion_mode)
 {
-	vector<BaseObject *>::iterator itr, itr_end;
-	vector<BaseObject *> list;
+	std::vector<BaseObject *>::iterator itr, itr_end;
+	std::vector<BaseObject *> list;
 	Tag *tag=dynamic_cast<Tag *>(object);
 
 	list.assign(tables.begin(), tables.end());
@@ -10218,12 +10231,12 @@ void DatabaseModel::getTagReferences(BaseObject *object, vector<BaseObject *> &r
 	}
 }
 
-void DatabaseModel::getSequenceReferences(BaseObject *object, vector<BaseObject *> &refs, bool &refer, bool exclusion_mode)
+void DatabaseModel::getSequenceReferences(BaseObject *object, std::vector<BaseObject *> &refs, bool &refer, bool exclusion_mode)
 {
 	PhysicalTable *table=nullptr;
-	vector<TableObject *> *cols=nullptr;
-	vector<TableObject *>::iterator itr, itr_end;
-	vector<BaseObject *> tabs;
+	std::vector<TableObject *> *cols=nullptr;
+	std::vector<TableObject *>::iterator itr, itr_end;
+	std::vector<BaseObject *> tabs;
 	unsigned i = 0, cnt = 0;
 
 	tabs = tables;
@@ -10249,10 +10262,10 @@ void DatabaseModel::getSequenceReferences(BaseObject *object, vector<BaseObject 
 	}
 }
 
-void DatabaseModel::getFdwReferences(BaseObject *object, vector<BaseObject *> &refs, bool &refer, bool exclusion_mode)
+void DatabaseModel::getFdwReferences(BaseObject *object, std::vector<BaseObject *> &refs, bool &refer, bool exclusion_mode)
 {
-	vector<BaseObject *>::iterator itr, itr_end;
-	vector<BaseObject *> list;
+	std::vector<BaseObject *>::iterator itr, itr_end;
+	std::vector<BaseObject *> list;
 	ForeignDataWrapper *fdw=dynamic_cast<ForeignDataWrapper *>(object);
 
 	itr=foreign_servers.begin();
@@ -10269,10 +10282,10 @@ void DatabaseModel::getFdwReferences(BaseObject *object, vector<BaseObject *> &r
 	}
 }
 
-void DatabaseModel::getServerReferences(BaseObject *object, vector<BaseObject *> &refs, bool &refer, bool exclusion_mode)
+void DatabaseModel::getServerReferences(BaseObject *object, std::vector<BaseObject *> &refs, bool &refer, bool exclusion_mode)
 {
-	vector<BaseObject *>::iterator itr, itr_end;
-	vector<BaseObject *> list;
+	std::vector<BaseObject *>::iterator itr, itr_end;
+	std::vector<BaseObject *> list;
 	ForeignServer *srv=dynamic_cast<ForeignServer *>(object);
 
 	itr=usermappings.begin();
@@ -10302,14 +10315,14 @@ void DatabaseModel::getServerReferences(BaseObject *object, vector<BaseObject *>
 	}
 }
 
-void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *> &refs, bool exclusion_mode, bool exclude_perms)
+void DatabaseModel::getObjectReferences(BaseObject *object, std::vector<BaseObject *> &refs, bool exclusion_mode, bool exclude_perms)
 {
 	refs.clear();
 
 	if(!object)
 		return;
 
-	vector<BaseObject *>::iterator itr_perm, itr_perm_end;
+	std::vector<BaseObject *>::iterator itr_perm, itr_perm_end;
 	ObjectType obj_type=object->getObjectType();
 	bool refer=false;
 	Permission *perm=nullptr;
@@ -10392,7 +10405,7 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
 		getServerReferences(object, refs, refer, exclusion_mode);
 
 	// Checking if any generic SQL object is referencing the object passed
-	vector<BaseObject *>::iterator itr = genericsqls.begin(),
+	std::vector<BaseObject *>::iterator itr = genericsqls.begin(),
 			itr_end = genericsqls.end();
 
 	while(itr != itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
@@ -10407,10 +10420,10 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
 	}
 }
 
-void DatabaseModel::__getObjectReferences(BaseObject *object, vector<BaseObject *> &refs, bool exclude_perms)
+void DatabaseModel::__getObjectReferences(BaseObject *object, std::vector<BaseObject *> &refs, bool exclude_perms)
 {
-	vector<BaseObject *> refs_aux;
-	vector<BaseObject *>::iterator end;
+	std::vector<BaseObject *> refs_aux;
+	std::vector<BaseObject *>::iterator end;
 
 	getObjectReferences(object, refs_aux, exclude_perms);
 
@@ -10426,7 +10439,7 @@ void DatabaseModel::__getObjectReferences(BaseObject *object, vector<BaseObject 
 	}
 }
 
-void DatabaseModel::setObjectsModified(vector<BaseObject *> &objects)
+void DatabaseModel::setObjectsModified(std::vector<BaseObject *> &objects)
 {
 	for(auto &obj : objects)
 	{
@@ -10435,13 +10448,13 @@ void DatabaseModel::setObjectsModified(vector<BaseObject *> &objects)
 	}
 }
 
-void DatabaseModel::setObjectsModified(vector<ObjectType> types)
+void DatabaseModel::setObjectsModified(std::vector<ObjectType> types)
 {
 	ObjectType obj_types[]={ObjectType::Table, ObjectType::View, ObjectType::ForeignTable,
 							ObjectType::Relationship, ObjectType::BaseRelationship,
 							ObjectType::Textbox, ObjectType::Schema };
-	vector<BaseObject *>::iterator itr, itr_end;
-	vector<BaseObject *> *obj_list=nullptr;
+	std::vector<BaseObject *>::iterator itr, itr_end;
+	std::vector<BaseObject *> *obj_list=nullptr;
 	Textbox *label=nullptr;
 	BaseRelationship *rel=nullptr;
 	unsigned i, i1, count=sizeof(obj_types)/sizeof(ObjectType);
@@ -10462,9 +10475,9 @@ void DatabaseModel::setObjectsModified(vector<ObjectType> types)
 				if(obj_types[i]==ObjectType::Relationship || obj_types[i]==ObjectType::BaseRelationship)
 				{
 					rel=dynamic_cast<BaseRelationship *>(*itr);
-					for(i1=0; i1 < 3; i1++)
+					for(i1 = BaseRelationship::SrcCardLabel; i1 <= BaseRelationship::RelNameLabel; i1++)
 					{
-						label=rel->getLabel(i1);
+						label = rel->getLabel(static_cast<BaseRelationship::LabelId>(i1));
 						if(label) label->setModified(true);
 					}
 				}
@@ -10475,10 +10488,10 @@ void DatabaseModel::setObjectsModified(vector<ObjectType> types)
 	}
 }
 
-void DatabaseModel::setCodesInvalidated(vector<ObjectType> types)
+void DatabaseModel::setCodesInvalidated(std::vector<ObjectType> types)
 {
-	vector<ObjectType> sel_types;
-	vector<BaseObject *> *list=nullptr;
+	std::vector<ObjectType> sel_types;
+	std::vector<BaseObject *> *list=nullptr;
 
 	if(types.empty())
 		sel_types=BaseObject::getObjectTypes(false);
@@ -10534,9 +10547,9 @@ BaseObject *DatabaseModel::getObjectPgSQLType(PgSqlType type)
 
 void DatabaseModel::validateSchemaRenaming(Schema *schema, const QString &prev_sch_name)
 {
-	vector<ObjectType> types = { ObjectType::Table, ObjectType::ForeignTable, ObjectType::View,
+	std::vector<ObjectType> types = { ObjectType::Table, ObjectType::ForeignTable, ObjectType::View,
 															 ObjectType::Domain, ObjectType::Type, ObjectType::Sequence };
-	vector<BaseObject *> list, sch_objs, refs;
+	std::vector<BaseObject *> list, sch_objs, refs;
 	QString prev_name;
 
 	//Raise an error if the schema is not allocated
@@ -10664,9 +10677,9 @@ void DatabaseModel::createSystemObjects(bool create_public)
 	setDefaultObject(getObject(QString("public"), ObjectType::Schema), ObjectType::Schema);
 }
 
-vector<BaseObject *> DatabaseModel::findObjects(const QStringList &filters, const QString &search_attr)
+std::vector<BaseObject *> DatabaseModel::findObjects(const QStringList &filters, const QString &search_attr)
 {
-	vector<BaseObject *> objects, aux_objs;
+	std::vector<BaseObject *> objects, aux_objs;
 	QString pattern, mode;
 	QStringList values, modes = { UtilsNs::FilterWildcard, UtilsNs::FilterRegExp };
 	ObjectType obj_type;
@@ -10700,34 +10713,34 @@ vector<BaseObject *> DatabaseModel::findObjects(const QStringList &filters, cons
 	}
 
 	std::sort(objects.begin(), objects.end());
-	vector<BaseObject *>::iterator end = std::unique(objects.begin(), objects.end());
+	std::vector<BaseObject *>::iterator end = std::unique(objects.begin(), objects.end());
 	objects.erase(end, objects.end());
 
 	return objects;
 }
 
-vector<BaseObject *> DatabaseModel::findObjects(const QString &pattern, vector<ObjectType> types, bool case_sensitive, bool is_regexp, bool exact_match, const QString &search_attr)
+std::vector<BaseObject *> DatabaseModel::findObjects(const QString &pattern, std::vector<ObjectType> types, bool case_sensitive, bool is_regexp, bool exact_match, const QString &search_attr)
 {
-	vector<BaseObject *> list, objs;
-	vector<BaseObject *>::iterator end;
-	vector<ObjectType>::iterator itr_tp=types.begin();
-	vector<BaseObject *> tables;
-	bool inc_tabs=false, inc_views=false;
-	ObjectType obj_type;
-	QRegExp regexp;
-	BaseObject *object = nullptr;
+	std::vector<BaseObject *> list, objs;
+	std::vector<BaseObject *>::iterator end;
+	std::vector<ObjectType>::iterator itr_tp=types.begin();
+	std::vector<BaseObject *> tables;
+	bool inc_tabs=false, inc_views=false, inc_rels = false;
+	QRegularExpression regexp;
 	attribs_map srch_attribs;
 
-	//Configuring the regex style
-	regexp.setPattern(pattern);
-	regexp.setCaseSensitivity(case_sensitive ?  Qt::CaseSensitive :  Qt::CaseInsensitive);
+	if(!case_sensitive)
+		regexp.setPatternOptions(QRegularExpression::CaseInsensitiveOption);
 
 	if(is_regexp)
-		regexp.setPatternSyntax(QRegExp::RegExp2);
-	else if(exact_match)
-		regexp.setPatternSyntax(QRegExp::FixedString);
+	{
+		if(!exact_match)
+			regexp.setPattern(pattern);
+		else
+			regexp.setPattern(QRegularExpression::anchoredPattern(pattern));
+	}
 	else
-		regexp.setPatternSyntax(QRegExp::Wildcard);
+		regexp.setPattern(QRegularExpression::wildcardToRegularExpression(pattern));
 
 	//If there is some table object types on the type list, gather tables and views
 	while(itr_tp!=types.end() && (!inc_views || !inc_tabs))
@@ -10749,28 +10762,26 @@ vector<BaseObject *> DatabaseModel::findObjects(const QString &pattern, vector<O
 	}
 
 	//Gathering all other objects
-	itr_tp=types.begin();
-	while(itr_tp!=types.end())
+	for(auto &obj_type : types)
 	{
-		obj_type=(*itr_tp);
-		itr_tp++;
-
-		if(obj_type==ObjectType::Database)
+		if(obj_type == ObjectType::Database)
 			objs.push_back(this);
+		// Base relationships (fk rels and table-view rels) are treated as table to table relationship in the search
+		else if(!inc_rels && (obj_type == ObjectType::BaseRelationship || obj_type == ObjectType::Relationship))
+		{
+			inc_rels = true;
+			objs.insert(objs.end(), getObjectList(ObjectType::BaseRelationship)->begin(), getObjectList(ObjectType::BaseRelationship)->end());
+			objs.insert(objs.end(), getObjectList(ObjectType::Relationship)->begin(), getObjectList(ObjectType::Relationship)->end());
+		}
 		else if(!TableObject::isTableObject(obj_type))
 			objs.insert(objs.end(), getObjectList(obj_type)->begin(), getObjectList(obj_type)->end());
 		else
 		{
 			//Including table object on the object list
-			vector<TableObject *> *tab_objs=nullptr;
-			vector<BaseObject *>::iterator itr=tables.begin();
-			BaseObject *tab=nullptr;
+			std::vector<TableObject *> *tab_objs=nullptr;
 
-			while(itr!=tables.end())
+			for(auto &tab : tables)
 			{
-				tab=(*itr);
-				itr++;
-
 				if(PhysicalTable::isPhysicalTable(tab->getObjectType()))
 					tab_objs=dynamic_cast<PhysicalTable *>(tab)->getObjectList(obj_type);
 				else if(tab->getObjectType()==ObjectType::View &&	(obj_type==ObjectType::Trigger || obj_type==ObjectType::Rule))
@@ -10783,18 +10794,13 @@ vector<BaseObject *> DatabaseModel::findObjects(const QString &pattern, vector<O
 	}
 
 	//Try to find  the objects on the configured list
-	while(!objs.empty())
+	for(auto &obj : objs)
 	{
-		object = objs.back();
-		object->configureSearchAttributes();
-		srch_attribs = object->getSearchAttributes();
+		obj->configureSearchAttributes();
+		srch_attribs = obj->getSearchAttributes();
 
-		if((exact_match && pattern == srch_attribs[search_attr]) ||
-			 (exact_match && regexp.exactMatch(srch_attribs[search_attr])) ||
-			 (!exact_match && regexp.indexIn(srch_attribs[search_attr]) >= 0))
-			list.push_back(object);
-
-		objs.pop_back();
+		if(regexp.match(srch_attribs[search_attr]).hasMatch())
+			list.push_back(obj);
 	}
 
 	//Removing the duplicate items on the list
@@ -10867,13 +10873,13 @@ bool DatabaseModel::isAllowConnections()
 	return allow_conns;
 }
 
-void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned options)
+void DatabaseModel::saveObjectsMetadata(const QString &filename, MetaAttrOptions options)
 {
 	QFile output(filename);
 	QByteArray buf;
 	QString objs_def;
 	QStringList layer_ids;
-	vector<BaseObject *> objects, tab_objs;
+	std::vector<BaseObject *> objects, tab_objs;
 	attribs_map attribs;
 	BaseGraphicObject *graph_obj=nullptr;
 	Relationship *rel=nullptr;
@@ -10984,7 +10990,7 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned option
 
 		if(save_objs_prot || save_objs_sqldis)
 		{
-			vector<ObjectType> types=getChildObjectTypes(ObjectType::Database), sch_types=getChildObjectTypes(ObjectType::Schema);
+			std::vector<ObjectType> types=getChildObjectTypes(ObjectType::Database), sch_types=getChildObjectTypes(ObjectType::Schema);
 			types.insert(types.end(), sch_types.begin(), sch_types.end());
 
 			//Removing the types for schema, table and view to avoid retrieving the objects twice
@@ -11009,9 +11015,9 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned option
 			{
 				emit s_objectLoaded(((idx++)/static_cast<double>(objects.size()))*100,
 														tr("Saving object `%1' (%2)")
-														.arg(object->getName()).arg(object->getTypeName()), enum_cast(obj_type));
+														.arg(object->getName()).arg(object->getTypeName()), enum_t(obj_type));
 
-				objs_def+=object->getCodeDefinition(SchemaParser::XmlDefinition);
+				objs_def+=object->getSourceCode(SchemaParser::XmlCode);
 				continue;
 			}
 			//Discarding the relationship added table objects (when extracting aliases)
@@ -11031,7 +11037,7 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned option
 			attribs[Attributes::AppendedSql]=object->getAppendedSQL();
 			attribs[Attributes::PrependedSql]=object->getPrependedSQL();			
 			attribs[Attributes::FadedOut]=(save_fadeout && graph_obj && graph_obj->isFadedOut() ? Attributes::True : "");
-			attribs[Attributes::CollapseMode]=(save_collapsemode && base_tab ? QString::number(enum_cast(base_tab->getCollapseMode())) : "");
+			attribs[Attributes::CollapseMode]=(save_collapsemode && base_tab ? QString::number(enum_t(base_tab->getCollapseMode())) : "");
 
 			//Saving layers information
 			if(graph_obj && save_objs_layers_cfg)
@@ -11119,14 +11125,14 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned option
 					{
 						schparser.ignoreUnkownAttributes(true);
 						attribs[Attributes::Position]=
-								schparser.getCodeDefinition(GlobalAttributes::getSchemaFilePath(GlobalAttributes::XMLSchemaDir, Attributes::Position),
+								schparser.getSourceCode(GlobalAttributes::getSchemaFilePath(GlobalAttributes::XMLSchemaDir, Attributes::Position),
 																						attribs);
 					}
 				}
 				else
 				{
 					BaseRelationship *rel=dynamic_cast<BaseRelationship *>(object);
-					vector<QPointF> points=rel->getPoints();
+					std::vector<QPointF> points=rel->getPoints();
 
 					attribs_map aux_attribs;
 
@@ -11145,24 +11151,24 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned option
 
 						schparser.ignoreUnkownAttributes(true);
 						attribs[Attributes::Position]+=
-								schparser.getCodeDefinition(GlobalAttributes::getSchemaFilePath(GlobalAttributes::XMLSchemaDir, Attributes::Position),
+								schparser.getSourceCode(GlobalAttributes::getSchemaFilePath(GlobalAttributes::XMLSchemaDir, Attributes::Position),
 																						attribs);
 					}
 
 					//Saving the labels' custom positions
 					for(unsigned id=BaseRelationship::SrcCardLabel; id <= BaseRelationship::RelNameLabel; id++)
 					{
-						pnt=rel->getLabelDistance(id);
+						pnt=rel->getLabelDistance(static_cast<BaseRelationship::LabelId>(id));
 						if(!std::isnan(pnt.x()) && !std::isnan(pnt.y()))
 						{
 							aux_attribs[Attributes::XPos]=QString::number(pnt.x());
 							aux_attribs[Attributes::YPos]=QString::number(pnt.y());
 							aux_attribs[Attributes::RefType]=labels_attrs[id];
 
-							aux_attribs[Attributes::Position]=schparser.getCodeDefinition(GlobalAttributes::getSchemaFilePath(GlobalAttributes::XMLSchemaDir, Attributes::Position),
+							aux_attribs[Attributes::Position]=schparser.getSourceCode(GlobalAttributes::getSchemaFilePath(GlobalAttributes::XMLSchemaDir, Attributes::Position),
 																																						aux_attribs);
 
-							attribs[Attributes::Position]+=schparser.getCodeDefinition(GlobalAttributes::getSchemaFilePath( GlobalAttributes::XMLSchemaDir, Attributes::Label),
+							attribs[Attributes::Position]+=schparser.getSourceCode(GlobalAttributes::getSchemaFilePath( GlobalAttributes::XMLSchemaDir, Attributes::Label),
 																																				 aux_attribs);
 
 						}
@@ -11174,12 +11180,12 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned option
 			if(save_custom_sql)
 			{
 				if(!object->getAppendedSQL().isEmpty())
-					attribs[Attributes::AppendedSql]=schparser.getCodeDefinition(GlobalAttributes::getSchemaFilePath(GlobalAttributes::XMLSchemaDir, QString(Attributes::AppendedSql).remove(QChar('-'))),
+					attribs[Attributes::AppendedSql]=schparser.getSourceCode(GlobalAttributes::getSchemaFilePath(GlobalAttributes::XMLSchemaDir, QString(Attributes::AppendedSql).remove(QChar('-'))),
 																																			 attribs);
 
 
 				if(!object->getPrependedSQL().isEmpty())
-					attribs[Attributes::PrependedSql]=schparser.getCodeDefinition(GlobalAttributes::getSchemaFilePath(GlobalAttributes::XMLSchemaDir,	QString(Attributes::PrependedSql).remove(QChar('-'))),
+					attribs[Attributes::PrependedSql]=schparser.getSourceCode(GlobalAttributes::getSchemaFilePath(GlobalAttributes::XMLSchemaDir,	QString(Attributes::PrependedSql).remove(QChar('-'))),
 																																				attribs);
 
 			}
@@ -11206,11 +11212,11 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned option
 			{
 				emit s_objectLoaded(((idx++)/static_cast<double>(objects.size()))*100,
 														tr("Saving metadata of the object `%1' (%2)")
-														.arg(object->getSignature()).arg(object->getTypeName()), enum_cast(obj_type));
+														.arg(object->getSignature()).arg(object->getTypeName()), enum_t(obj_type));
 
 				schparser.ignoreUnkownAttributes(true);
 				objs_def+=XmlParser::convertCharsToXMLEntities(
-										schparser.getCodeDefinition(GlobalAttributes::getSchemaFilePath(GlobalAttributes::XMLSchemaDir, Attributes::Info),
+										schparser.getSourceCode(GlobalAttributes::getSchemaFilePath(GlobalAttributes::XMLSchemaDir, Attributes::Info),
 																								attribs));
 			}
 			else
@@ -11223,15 +11229,15 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned option
 		{
 			//Generates the metadata XML buffer
 			attribs[Attributes::Info]=objs_def;
-			buf.append(schparser.getCodeDefinition(GlobalAttributes::getSchemaFilePath(GlobalAttributes::XMLSchemaDir, Attributes::Metadata),
+			buf.append(schparser.getSourceCode(GlobalAttributes::getSchemaFilePath(GlobalAttributes::XMLSchemaDir, Attributes::Metadata),
 																						 attribs).toUtf8());
 
 			output.write(buf.data(),buf.size());
 
-			emit s_objectLoaded(100, tr("Metadata file successfully saved!"), enum_cast(ObjectType::BaseObject));
+			emit s_objectLoaded(100, tr("Metadata file successfully saved!"), enum_t(ObjectType::BaseObject));
 		}
 		else
-			emit s_objectLoaded(100, tr("Process successfully ended but no metadata was saved!"), enum_cast(ObjectType::BaseObject));
+			emit s_objectLoaded(100, tr("Process successfully ended but no metadata was saved!"), enum_t(ObjectType::BaseObject));
 
 		output.close();
 	}
@@ -11243,10 +11249,10 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned option
 	}
 }
 
-void DatabaseModel::loadObjectsMetadata(const QString &filename, unsigned options)
+void DatabaseModel::loadObjectsMetadata(const QString &filename, MetaAttrOptions options)
 {
 	QString elem_name, aux_elem, obj_name, ref_type,
-			dtd_file=GlobalAttributes::getSchemasRootDir() +
+			dtd_file=GlobalAttributes::getSchemasRootPath() +
 							 GlobalAttributes::DirSeparator +
 							 GlobalAttributes::XMLSchemaDir +
 							 GlobalAttributes::DirSeparator +
@@ -11256,9 +11262,9 @@ void DatabaseModel::loadObjectsMetadata(const QString &filename, unsigned option
 	ObjectType obj_type;
 	BaseObject *object=nullptr, *new_object=nullptr, *aux_obj = nullptr;
 	BaseTable *src_tab=nullptr, *dst_tab=nullptr, *base_tab=nullptr;
-	vector<QPointF> points;
-	map<QString, unsigned> labels_attrs;
-	vector<QPointF> labels_pos={ QPointF(DNaN,DNaN), QPointF(DNaN,DNaN), QPointF(DNaN,DNaN) };
+	std::vector<QPointF> points;
+	std::map<QString, unsigned> labels_attrs;
+	std::vector<QPointF> labels_pos={ QPointF(DNaN,DNaN), QPointF(DNaN,DNaN), QPointF(DNaN,DNaN) };
 	BaseRelationship *rel=nullptr;
 	Schema *schema=nullptr;
 	Tag *tag=nullptr;
@@ -11323,7 +11329,7 @@ void DatabaseModel::loadObjectsMetadata(const QString &filename, unsigned option
 						{
 							emit s_objectLoaded(progress, tr("Creating object `%1' (%2)")
 																	.arg(attribs[Attributes::Name])
-																	.arg(BaseObject::getTypeName(obj_type)), enum_cast(obj_type));
+																	.arg(BaseObject::getTypeName(obj_type)), enum_t(obj_type));
 
 							addObject(new_object);
 						}
@@ -11333,7 +11339,7 @@ void DatabaseModel::loadObjectsMetadata(const QString &filename, unsigned option
 																	tr("Object `%1' (%2) already exists. %3.")
 																	.arg(attribs[Attributes::Name])
 																	.arg(BaseObject::getTypeName(obj_type))
-																	.arg(merge_dup_objs ? tr("Merging") : tr("Ignoring")), enum_cast(ObjectType::BaseObject));
+																	.arg(merge_dup_objs ? tr("Merging") : tr("Ignoring")), enum_t(ObjectType::BaseObject));
 
 							if(merge_dup_objs)
 								CoreUtilsNs::copyObject(&aux_obj, new_object, obj_type);
@@ -11376,12 +11382,12 @@ void DatabaseModel::loadObjectsMetadata(const QString &filename, unsigned option
 							{
 								active_layers.clear();
 
-								for(auto &layer_id : attribs[Attributes::ActiveLayers].split(',', QtCompat::SkipEmptyParts))
+								for(auto &layer_id : attribs[Attributes::ActiveLayers].split(',', Qt::SkipEmptyParts))
 									active_layers.append(layer_id.toInt());
 
-								layers = attribs[Attributes::Layers].split(',', QtCompat::SkipEmptyParts);
-								layer_name_colors = attribs[Attributes::LayerNameColors].split(',', QtCompat::SkipEmptyParts);
-								layer_rect_colors = attribs[Attributes::LayerRectColors].split(',', QtCompat::SkipEmptyParts);
+								layers = attribs[Attributes::Layers].split(',', Qt::SkipEmptyParts);
+								layer_name_colors = attribs[Attributes::LayerNameColors].split(',', Qt::SkipEmptyParts);
+								layer_rect_colors = attribs[Attributes::LayerRectColors].split(',', Qt::SkipEmptyParts);
 								is_layer_names_visible = attribs[Attributes::ShowLayerNames] == Attributes::True;
 								is_layer_rects_visible = attribs[Attributes::ShowLayerRects] == Attributes::True;
 							}
@@ -11419,7 +11425,7 @@ void DatabaseModel::loadObjectsMetadata(const QString &filename, unsigned option
 						if(object)
 						{
 							emit s_objectLoaded(progress, tr("Loading metadata for object `%1' (%2)")
-																	.arg(object->getName()).arg(object->getTypeName()), enum_cast(obj_type));
+																	.arg(object->getName()).arg(object->getTypeName()), enum_t(obj_type));
 
 							if(!object->isSystemObject() &&
 								 ((!attribs[Attributes::Protected].isEmpty() && load_objs_prot) ||
@@ -11456,7 +11462,7 @@ void DatabaseModel::loadObjectsMetadata(const QString &filename, unsigned option
 								object->setAlias(attribs[Attributes::Alias]);
 
 							if(load_objs_layers_cfg && BaseGraphicObject::isGraphicObject(obj_type) && !attribs[Attributes::Layers].isEmpty())
-								dynamic_cast<BaseGraphicObject *>(object)->setLayers(attribs[Attributes::Layers].split(',', QtCompat::SkipEmptyParts));
+								dynamic_cast<BaseGraphicObject *>(object)->setLayers(attribs[Attributes::Layers].split(',', Qt::SkipEmptyParts));
 
 							if(xmlparser.accessElement(XmlParser::ChildElement))
 							{
@@ -11530,7 +11536,7 @@ void DatabaseModel::loadObjectsMetadata(const QString &filename, unsigned option
 
 										for(unsigned id=BaseRelationship::SrcCardLabel; id <= BaseRelationship::RelNameLabel; id++)
 										{
-											rel->setLabelDistance(id, labels_pos[id]);
+											rel->setLabelDistance(static_cast<BaseRelationship::LabelId>(id), labels_pos[id]);
 											labels_pos[id]=QPointF(DNaN, DNaN);
 										}
 									}
@@ -11547,7 +11553,7 @@ void DatabaseModel::loadObjectsMetadata(const QString &filename, unsigned option
 									dynamic_cast<BaseGraphicObject *>(object)->setFadedOut(attribs[Attributes::FadedOut]==Attributes::True);
 
 								if(load_collapse_mode && base_tab)
-									base_tab->setCollapseMode(static_cast<CollapseMode>(attribs[Attributes::CollapseMode].toUInt()));
+									base_tab->setCollapseMode(static_cast<BaseTable::CollapseMode>(attribs[Attributes::CollapseMode].toUInt()));
 							}
 
 							points.clear();
@@ -11556,7 +11562,7 @@ void DatabaseModel::loadObjectsMetadata(const QString &filename, unsigned option
 						else if(!object)
 						{
 							emit s_objectLoaded(progress, tr("Object `%1' (%2) not found. Ignoring metadata.")
-																	.arg(obj_name).arg(BaseObject::getTypeName(obj_type)), enum_cast(ObjectType::BaseObject));
+																	.arg(obj_name).arg(BaseObject::getTypeName(obj_type)), enum_t(ObjectType::BaseObject));
 						}
 
 						xmlparser.restorePosition();
@@ -11567,7 +11573,7 @@ void DatabaseModel::loadObjectsMetadata(const QString &filename, unsigned option
 			while(xmlparser.accessElement(XmlParser::NextElement));
 		}
 
-		emit s_objectLoaded(100, tr("Metadata file successfully loaded!"), enum_cast(ObjectType::BaseObject));
+		emit s_objectLoaded(100, tr("Metadata file successfully loaded!"), enum_t(ObjectType::BaseObject));
 		setObjectsModified();
 	}
 	catch(Exception &e)
@@ -11641,16 +11647,29 @@ bool DatabaseModel::isLayerRectsVisible()
 	return is_layer_rects_visible;
 }
 
-void DatabaseModel::addChangelogEntry(BaseObject *object, unsigned op_type, BaseObject *parent_obj)
+void DatabaseModel::addChangelogEntry(BaseObject *object, Operation::OperType op_type, BaseObject *parent_obj)
 {
-	if(op_type == Operation::NoOperation || op_type == Operation::ObjectMoved)
+	if(op_type == Operation::NoOperation || op_type == Operation::ObjMoved)
 		return;
-
-	if(!object || (object && TableObject::isTableObject(object->getObjectType()) && !parent_obj))
-		throw Exception(ErrorCode::InvChangelogEntryValues, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 
 	QString action, obj_signature;
 	QDateTime date_time = QDateTime::currentDateTime();
+
+	if(op_type == Operation::ObjCreated)
+		action = Attributes::Created;
+	else if(op_type == Operation::ObjRemoved)
+		action = Attributes::Deleted;
+	else
+		action = Attributes::Updated;
+
+	if(!object || (object && TableObject::isTableObject(object->getObjectType()) && !parent_obj))
+	{
+		QString obj_name = object ? object->getSignature() : "",
+				obj_type =  object ? object->getTypeName() : "";
+
+		throw Exception(Exception::getErrorMessage(ErrorCode::InvChangelogEntryValues).arg(obj_name, obj_type, action, date_time.toString(Qt::ISODate)),
+										ErrorCode::InvChangelogEntryValues, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+	}
 
 	if(TableObject::isTableObject(object->getObjectType()))
 	{
@@ -11659,13 +11678,6 @@ void DatabaseModel::addChangelogEntry(BaseObject *object, unsigned op_type, Base
 	}
 	else
 		obj_signature = object->getSignature();
-
-	if(op_type == Operation::ObjectCreated)
-		action = Attributes::Created;
-	else if(op_type == Operation::ObjectRemoved)
-		action = Attributes::Deleted;
-	else
-		action = Attributes::Updated;
 
 	changelog.push_back(std::make_tuple(date_time, obj_signature, object->getObjectType(), action));
 }
@@ -11678,7 +11690,10 @@ void DatabaseModel::addChangelogEntry(const QString &signature, const QString &t
 
 	if(!BaseObject::isValidName(signature) || obj_type == ObjectType::BaseObject ||
 		 !date_time.isValid() || !actions.contains(action))
-		throw Exception(ErrorCode::InvChangelogEntryValues, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+	{
+		throw Exception(Exception::getErrorMessage(ErrorCode::InvChangelogEntryValues).arg(signature, type, action, date),
+										ErrorCode::InvChangelogEntryValues, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+	}
 
 	changelog.push_back(std::make_tuple(date_time, signature, obj_type, action));
 }
@@ -11762,10 +11777,10 @@ TableClass *DatabaseModel::createPhysicalTable()
 	TableObject *object=nullptr;
 	BaseObject *tag=nullptr;
 	ObjectType obj_type;
-	vector<unsigned> idxs;
-	vector<QString> names;
+	std::vector<unsigned> idxs;
+	std::vector<QString> names;
 	PartitionKey part_key;
-	vector<PartitionKey> partition_keys;
+	std::vector<PartitionKey> partition_keys;
 
 	try
 	{
@@ -11775,7 +11790,7 @@ TableClass *DatabaseModel::createPhysicalTable()
 
 		table->setObjectListsCapacity(attribs[Attributes::MaxObjCount].toUInt());
 		table->setGenerateAlterCmds(attribs[Attributes::GenAlterCmds]==Attributes::True);
-		table->setCollapseMode(attribs[Attributes::CollapseMode].isEmpty() ? CollapseMode::NotCollapsed : static_cast<CollapseMode>(attribs[Attributes::CollapseMode].toUInt()));
+		table->setCollapseMode(attribs[Attributes::CollapseMode].isEmpty() ? BaseTable::NotCollapsed : static_cast<BaseTable::CollapseMode>(attribs[Attributes::CollapseMode].toUInt()));
 		table->setPaginationEnabled(attribs[Attributes::Pagination]==Attributes::True);
 		table->setCurrentPage(BaseTable::AttribsSection, attribs[Attributes::AttribsPage].toUInt());
 		table->setCurrentPage(BaseTable::ExtAttribsSection, attribs[Attributes::ExtAttribsPage].toUInt());
@@ -11792,11 +11807,11 @@ TableClass *DatabaseModel::createPhysicalTable()
 					xmlparser.savePosition();
 					object=nullptr;
 
-					if(elem==BaseObject::objs_schemas[enum_cast(ObjectType::Column)])
+					if(elem==BaseObject::objs_schemas[enum_t(ObjectType::Column)])
 						object=createColumn();
-					else if(elem==BaseObject::objs_schemas[enum_cast(ObjectType::Constraint)])
+					else if(elem==BaseObject::objs_schemas[enum_t(ObjectType::Constraint)])
 						object=createConstraint(table);
-					else if(elem==BaseObject::objs_schemas[enum_cast(ObjectType::Tag)])
+					else if(elem==BaseObject::objs_schemas[enum_t(ObjectType::Tag)])
 					{
 						xmlparser.getElementAttributes(aux_attribs);
 						tag=getObject(aux_attribs[Attributes::Name], ObjectType::Tag);
@@ -11906,16 +11921,16 @@ TableClass *DatabaseModel::createPhysicalTable()
 void DatabaseModel::getDataDictionary(attribs_map &datadict, bool browsable, bool split)
 {
 	int idx = 0;
-	BaseObject *object = nullptr;
-	vector<BaseObject *> objects;
-	map<QString, BaseObject *> objs_map;
-	QString styles, id, index, items, buffer;
+	BaseTable *base_tab = nullptr;
+	std::vector<BaseObject *> objects;
+	std::map<QString, BaseObject *> objs_map;
+	QString styles, id, dict_index, items, buffer;
 	attribs_map attribs, aux_attribs;
-	QStringList index_list;
+	QStringList dict_index_list;
 	QString dict_sch_file = GlobalAttributes::getSchemaFilePath(GlobalAttributes::DataDictSchemaDir, GlobalAttributes::DataDictSchemaDir),
 			style_sch_file = GlobalAttributes::getSchemaFilePath(GlobalAttributes::DataDictSchemaDir, Attributes::Styles),
 			item_sch_file = GlobalAttributes::getSchemaFilePath(GlobalAttributes::DataDictSchemaDir, Attributes::Item),
-			index_sch_file = GlobalAttributes::getSchemaFilePath(GlobalAttributes::DataDictSchemaDir, Attributes::Index);
+			dict_idx_sch_file = GlobalAttributes::getSchemaFilePath(GlobalAttributes::DataDictSchemaDir, Attributes::DataDictIndex);
 
 	objects.assign(tables.begin(), tables.end());
 	objects.insert(objects.end(), foreign_tables.begin(), foreign_tables.end());
@@ -11938,18 +11953,20 @@ void DatabaseModel::getDataDictionary(attribs_map &datadict, bool browsable, boo
 
 		id = obj->getSignature().remove(QChar('"'));
 		objs_map[id] = obj;
-		index_list.push_back(id);
+		dict_index_list.push_back(id);
 	}
 
-	index_list.sort();
+	dict_index_list.sort();
 	datadict.clear();
 
 	// Generates the the stylesheet
-	styles = schparser.getCodeDefinition(style_sch_file, attribs);
+	styles = schparser.getSourceCode(style_sch_file, attribs);
 	attribs[Attributes::Styles] = "";
-	attribs[Attributes::Index] = "";
+	attribs[Attributes::DataDictIndex] = "";
 	attribs[Attributes::Split] = split ? Attributes::True : "";
 	attribs[Attributes::Year] = QString::number(QDate::currentDate().year());
+	attribs[Attributes::Date] = QDateTime::currentDateTime().toString(Qt::ISODate);
+	attribs[Attributes::Version] = GlobalAttributes::PgModelerVersion;
 
 	// If the generation is a standalone HTML the css is embedded
 	if(!split)
@@ -11961,20 +11978,48 @@ void DatabaseModel::getDataDictionary(attribs_map &datadict, bool browsable, boo
 	// Generating individual data dictionaries
 	for(auto &itr : objs_map)
 	{
-		object = itr.second;
+		base_tab = dynamic_cast<BaseTable *>( itr.second);
 
 		// Generate the individual data dictionaries
-		aux_attribs[Attributes::Index] = browsable ? Attributes::True : "";
-		aux_attribs[Attributes::Previous] = idx - 1 >= 0 ? index_list.at(idx - 1) : "";
-		aux_attribs[Attributes::Next] = (++idx <= index_list.size() - 1) ? index_list.at(idx) : "";
-		attribs[Attributes::Objects] += dynamic_cast<BaseTable *>(object)->getDataDictionary(split, aux_attribs);
+		aux_attribs[Attributes::DataDictIndex] = browsable ? Attributes::True : "";
+		aux_attribs[Attributes::Previous] = idx - 1 >= 0 ? dict_index_list.at(idx - 1) : "";
+		aux_attribs[Attributes::Next] = (++idx <= dict_index_list.size() - 1) ? dict_index_list.at(idx) : "";	
+
+		if(base_tab->getObjectType() != ObjectType::View)
+		{
+			Column *col = nullptr;
+			std::vector<TableObject *> *cols = dynamic_cast<PhysicalTable *>(base_tab)->getObjectList(ObjectType::Column);
+			std::map<Sequence *, QStringList> col_seqs;
+
+			aux_attribs[Attributes::Sequences] = "";
+
+			for(auto itr =  cols->begin(); itr != cols->end(); itr++)
+			{
+				col = dynamic_cast<Column *>(*itr);
+
+				if(col->getSequence())
+					col_seqs[dynamic_cast<Sequence *>(col->getSequence())].append(col->getName());
+			}
+
+			for(auto &itr : col_seqs)
+			{
+				aux_attribs[Attributes::Sequences] +=
+						itr.first->getDataDictionary({{ Attributes::Columns, itr.second.join(", ") }});
+			}
+
+			col_seqs.clear();
+		}
+		else
+			aux_attribs[Attributes::Sequences] = "";
+
+		attribs[Attributes::Objects] += base_tab->getDataDictionary(split, aux_attribs);
 
 		// If the generation is configured to be splitted we generate a complete HTML file for the current table
 		if(split && !attribs[Attributes::Objects].isEmpty())
 		{
 			id = itr.first + QString(".html");
 			schparser.ignoreEmptyAttributes(true);			
-			datadict[id] = schparser.getCodeDefinition(dict_sch_file, attribs);
+			datadict[id] = schparser.getSourceCode(dict_sch_file, attribs);
 			attribs[Attributes::Objects].clear();
 		}
 	}
@@ -11990,28 +12035,28 @@ void DatabaseModel::getDataDictionary(attribs_map &datadict, bool browsable, boo
 		idx_attribs[Attributes::Year] = QString::number(QDate::currentDate().year());
 
 		// Generating the index items
-		for(auto &item : index_list)
+		for(auto &item : dict_index_list)
 		{
 			aux_attribs[Attributes::Split] = attribs[Attributes::Split];
 			aux_attribs[Attributes::Item] = item;
-			idx_attribs[objs_map[item]->getSchemaName()] += schparser.getCodeDefinition(item_sch_file, aux_attribs);
+			idx_attribs[objs_map[item]->getSchemaName()] += schparser.getSourceCode(item_sch_file, aux_attribs);
 		}
 
 		idx_attribs[Attributes::Name] = this->obj_name;
 		idx_attribs[Attributes::Split] = attribs[Attributes::Split];
 
 		schparser.ignoreEmptyAttributes(true);
-		index = schparser.getCodeDefinition(index_sch_file, idx_attribs);
+		dict_index = schparser.getSourceCode(dict_idx_sch_file, idx_attribs);
 	}
 
 	// If the data dictionary is browsable and splitted the index goes into a separated file
 	if(split && browsable)
-		datadict[Attributes::Index + QString(".html")] = index;
+		datadict[Attributes::Index + QString(".html")] = dict_index;
 	else if(!split)
 	{
-		attribs[Attributes::Index] = index;
+		attribs[Attributes::DataDictIndex] = dict_index;
 		schparser.ignoreEmptyAttributes(true);
-		datadict[Attributes::Database] = schparser.getCodeDefinition(dict_sch_file, attribs);
+		datadict[Attributes::Database] = schparser.getSourceCode(dict_sch_file, attribs);
 	}
 }
 
@@ -12078,13 +12123,13 @@ QString DatabaseModel::getChangelogDefinition()
 			attribs[Attributes::Type] = BaseObject::getSchemaName(type);
 			attribs[Attributes::Action] = action;
 
-			xml_code += schparser.getCodeDefinition(Attributes::Entry, attribs, SchemaParser::XmlDefinition);
+			xml_code += schparser.getSourceCode(Attributes::Entry, attribs, SchemaParser::XmlCode);
 		}
 
 		attribs.clear();
 		attribs[Attributes::Entry] = xml_code;
 		schparser.ignoreEmptyAttributes(true);
-		return schparser.getCodeDefinition(Attributes::Changelog, attribs, SchemaParser::XmlDefinition);
+		return schparser.getSourceCode(Attributes::Changelog, attribs, SchemaParser::XmlCode);
 	}
 	catch(Exception &e)
 	{

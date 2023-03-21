@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -18,10 +18,9 @@
 
 #include "syntaxhighlighter.h"
 #include "widgets/numberedtexteditor.h"
-#include "qtcompat/qplaintexteditcompat.h"
 #include "textblockinfo.h"
 
-QFont SyntaxHighlighter::default_font = QFont(QString("Source Code Pro"), 10);
+QFont SyntaxHighlighter::default_font = QFont(QString("Source Code Pro"), 12);
 const QString SyntaxHighlighter::UnformattedGroup = QString("__unformatted__");
 
 SyntaxHighlighter::SyntaxHighlighter(QPlainTextEdit *parent, bool single_line_mode, bool use_custom_tab_width) : QSyntaxHighlighter(parent)
@@ -36,17 +35,18 @@ SyntaxHighlighter::SyntaxHighlighter(QPlainTextEdit *parent, bool single_line_mo
 	parent->installEventFilter(this);
 
 	if(use_custom_tab_width)
-		QtCompat::setTabStopDistance(parent, NumberedTextEditor::getTabDistance());
+		parent->setTabStopDistance(NumberedTextEditor::getTabDistance());
 
 	//Adjusting the size of the parent input according to the current font size
 	if(single_line_mode)
 	{
-		QFontMetrics fm=QFontMetrics(default_font);
-		int height=fm.height() + (fm.lineSpacing()/static_cast<double>(1.3));
+		QFontMetrics fm = QFontMetrics(default_font);
+		int height=fm.height() + fm.lineSpacing()/2;
 		parent->setMinimumHeight(height);
 		parent->setMaximumHeight(height);
 		parent->setSizePolicy(parent->sizePolicy().horizontalPolicy(), QSizePolicy::Fixed);
 		parent->adjustSize();
+		parent->setTabChangesFocus(true);
 	}
 }
 
@@ -209,7 +209,7 @@ void SyntaxHighlighter::highlightBlock(const QString &txt)
 					if(i < len && word_delimiters.contains(text[i]) &&
 						 prev_info && !prev_info->getGroup().isEmpty() && prev_info->isMultiExpr())
 					{
-						for(auto exp : final_exprs[prev_info->getGroup()])
+						for(auto &exp : final_exprs[prev_info->getGroup()])
 						{
 							if(exp.pattern().contains(text[i]))
 							{
@@ -374,43 +374,32 @@ QString SyntaxHighlighter::identifyWordGroup(const QString &word, const QChar &l
 
 bool SyntaxHighlighter::isWordMatchGroup(const QString &word, const QString &group, bool use_final_expr, const QChar &lookahead_chr, int &match_idx, int &match_len)
 {
-	vector<QRegExp> *vet_expr=nullptr;
-	bool match=false, part_match=partial_match[group];
+	std::vector<QRegularExpression> *vet_expr = nullptr;
+	bool has_match = false;
+	QRegularExpressionMatch match;
 
 	if(use_final_expr && final_exprs.count(group))
-		vet_expr=&final_exprs[group];
+		vet_expr = &final_exprs[group];
 	else
-		vet_expr=&initial_exprs[group];
+		vet_expr = &initial_exprs[group];
 
 	for(auto &expr : *vet_expr)
 	{
-		if(part_match)
+		if(expr.match(word).hasMatch())
 		{
-			match_idx=word.indexOf(expr);
-			match_len=expr.matchedLength();
-			match=(match_idx >= 0);
-		}
-		else
-		{
-			if(expr.patternSyntax()==QRegExp::FixedString)
-				match=((expr.pattern().compare(word, expr.caseSensitivity())==0));
-			else
-				match=expr.exactMatch(word);
-
-			if(match)
-			{
-				match_idx=0;
-				match_len=word.length();
-			}
+			match_idx = 0;
+			match_len = word.length();
+			has_match = true;
 		}
 
-		if(match && lookahead_char.count(group) > 0 && lookahead_chr!=lookahead_char.at(group))
-			match=false;
+		if(has_match && lookahead_char.count(group) > 0 && lookahead_chr!=lookahead_char.at(group))
+			has_match =false;
 
-		if(match) break;
+		if(has_match)
+			break;
 	}
 
-	return match;
+	return has_match;
 }
 
 bool SyntaxHighlighter::isConfigurationLoaded()
@@ -423,7 +412,6 @@ void SyntaxHighlighter::clearConfiguration()
 	initial_exprs.clear();
 	final_exprs.clear();
 	formats.clear();
-	partial_match.clear();
 	groups_order.clear();
 	word_separators.clear();
 	word_delimiters.clear();
@@ -441,11 +429,11 @@ void SyntaxHighlighter::loadConfiguration(const QString &filename)
 		QString elem, expr_type, group;
 		bool groups_decl=false, chr_sensitive=false,
 				bold=false, italic=false, strikeout = false,
-				underline=false, partial_match=false;
+				underline=false;
 		QTextCharFormat format;
-		QRegExp regexp;
+		QRegularExpression regexp;
 		QColor bg_color, fg_color;
-		vector<QString>::iterator itr, itr_end;
+		std::vector<QString>::iterator itr, itr_end;
 
 		try
 		{
@@ -557,7 +545,6 @@ void SyntaxHighlighter::loadConfiguration(const QString &filename)
 								bold=(attribs[Attributes::Bold]==Attributes::True);
 								underline=(attribs[Attributes::Underline]==Attributes::True);
 								strikeout=(attribs[Attributes::Stikeout]==Attributes::True);
-								partial_match=(attribs[Attributes::PartialMatch]==Attributes::True);								
 								fg_color.setNamedColor(attribs[Attributes::ForegroundColor]);
 
 								//If the attribute isn't defined the bg color will be transparent
@@ -584,16 +571,11 @@ void SyntaxHighlighter::loadConfiguration(const QString &filename)
 								format.setBackground(bg_color);
 								formats[group]=format;
 
-
 								xmlparser.savePosition();
 								xmlparser.accessElement(XmlParser::ChildElement);
 
-								if(chr_sensitive)
-									regexp.setCaseSensitivity(Qt::CaseSensitive);
-								else
-									regexp.setCaseSensitivity(Qt::CaseInsensitive);
-
-								this->partial_match[group]=partial_match;
+								if(!chr_sensitive)
+									regexp.setPatternOptions(QRegularExpression::CaseInsensitiveOption);
 
 								do
 								{
@@ -601,18 +583,25 @@ void SyntaxHighlighter::loadConfiguration(const QString &filename)
 									{
 										xmlparser.getElementAttributes(attribs);
 										expr_type=attribs[Attributes::Type];
-										regexp.setPattern(attribs[Attributes::Value]);
 
-										if(attribs[Attributes::RegularExp]==Attributes::True)
-											regexp.setPatternSyntax(QRegExp::RegExp2);
-										else if(attribs[Attributes::Wildcard]==Attributes::True)
-											regexp.setPatternSyntax(QRegExp::Wildcard);
+										if(attribs[Attributes::RegularExp] == Attributes::True)
+											regexp.setPattern(attribs[Attributes::Value]);
+										else if(attribs[Attributes::Wildcard] == Attributes::True)
+											regexp.setPattern(QRegularExpression::wildcardToRegularExpression(attribs[Attributes::Value]));
 										else
-											regexp.setPatternSyntax(QRegExp::FixedString);
+											regexp.setPattern(QRegularExpression::anchoredPattern(QRegularExpression::escape(attribs[Attributes::Value])));
+
+										// We thrown an error aborting the loading if the regepx has an invalid pattern
+										if(!regexp.isValid())
+										{
+											throw Exception(Exception::getErrorMessage(ErrorCode::InvGroupRegExpPattern).arg(group, filename, regexp.errorString()),
+																			ErrorCode::InvGroupRegExpPattern,
+																			__PRETTY_FUNCTION__, __FILE__, __LINE__, nullptr, tr("Pattern: %1").arg(regexp.pattern()));
+										}
 
 										if(expr_type.isEmpty() ||
-												expr_type==Attributes::SimpleExp ||
-												expr_type==Attributes::InitialExp)
+											 expr_type==Attributes::SimpleExp ||
+											 expr_type==Attributes::InitialExp)
 											initial_exprs[group].push_back(regexp);
 										else
 											final_exprs[group].push_back(regexp);
@@ -656,19 +645,19 @@ void SyntaxHighlighter::loadConfiguration(const QString &filename)
 		}
 		catch(Exception &e)
 		{
-			throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+			throw Exception(e.getErrorMessage(), e.getErrorCode(), __PRETTY_FUNCTION__, __FILE__, __LINE__, &e, filename);
 		}
 	}
 }
 
-vector<QRegExp> SyntaxHighlighter::getExpressions(const QString &group_name, bool final_expr)
+std::vector<QRegularExpression> SyntaxHighlighter::getExpressions(const QString &group_name, bool final_expr)
 {
-	map<QString, vector<QRegExp> > *expr_map=(!final_expr ? &initial_exprs : &final_exprs);
+	std::map<QString, std::vector<QRegularExpression> > *expr_map=(!final_expr ? &initial_exprs : &final_exprs);
 
 	if(expr_map->count(group_name) > 0)
 		return expr_map->at(group_name);
 	else
-		return vector<QRegExp>();
+		return std::vector<QRegularExpression>();
 }
 
 QChar SyntaxHighlighter::getCompletionTrigger()

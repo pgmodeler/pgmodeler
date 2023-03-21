@@ -29,6 +29,9 @@
    <property name="bottomMargin">
     <number>0</number>
    </property>
+   <property name="spacing">
+    <number>5</number>
+   </property>
    <item row="1" column="0">
     <widget class="QLabel" name="func_validator_lbl">
      <property name="sizePolicy">

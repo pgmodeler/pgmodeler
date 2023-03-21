@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -18,10 +18,9 @@
 
 #include "policycmdtype.h"
 
-template<>
-QStringList PolicyCmdType::TemplateType<PolicyCmdType>::type_names =
+QStringList PolicyCmdType::type_names =
 {
-	"", // Reserved for BaseType::null
+	"", // Reserved for Class::Null
 
 	"ALL",
 	"SELECT",
@@ -35,6 +34,11 @@ PolicyCmdType::PolicyCmdType()
 	type_idx = All;
 }
 
+QStringList PolicyCmdType::getTypes()
+{
+	return TemplateType<PolicyCmdType>::getTypes(type_names);
+}
+
 PolicyCmdType::PolicyCmdType(unsigned type_id)
 {
 	setType(type_id);
@@ -43,4 +47,19 @@ PolicyCmdType::PolicyCmdType(unsigned type_id)
 PolicyCmdType::PolicyCmdType(const QString &type_name)
 {
 	setType(type_name);
+}
+
+unsigned PolicyCmdType::setType(unsigned type_id)
+{
+	return TemplateType<PolicyCmdType>::setType(type_id, type_names);
+}
+
+unsigned PolicyCmdType::setType(const QString &type_name)
+{
+	return TemplateType<PolicyCmdType>::setType(type_name, type_names);
+}
+
+QString PolicyCmdType::getTypeName(unsigned type_id)
+{
+	return TemplateType<PolicyCmdType>::getTypeName(type_id, type_names);
 }

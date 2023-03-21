@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -103,12 +103,12 @@ void Policy::removeRoles()
 	setCodeInvalidated(true);
 }
 
-vector<Role *> Policy::getRoles()
+std::vector<Role *> Policy::getRoles()
 {
 	return roles;
 }
 
-QString Policy::getCodeDefinition(unsigned def_type)
+QString Policy::getSourceCode(SchemaParser::CodeType def_type)
 {
 	QString code_def=getCachedCode(def_type, false);
 	if(!code_def.isEmpty()) return code_def;
@@ -128,18 +128,10 @@ QString Policy::getCodeDefinition(unsigned def_type)
 	attributes[Attributes::CheckExp] = check_expr;
 	attributes[Attributes::Roles] = rol_names.join(QString(", "));
 
-	return BaseObject::__getCodeDefinition(def_type);
+	return BaseObject::__getSourceCode(def_type);
 }
 
-QString Policy::getSignature(bool format)
-{
-	if(!getParentTable())
-		return BaseObject::getSignature(format);
-
-	return (QString("%1 ON %2").arg(this->getName(format)).arg(getParentTable()->getSignature(true)));
-}
-
-QString Policy::getAlterDefinition(BaseObject *object)
+QString Policy::getAlterCode(BaseObject *object)
 {
 	Policy *policy=dynamic_cast<Policy *>(object);
 
@@ -151,7 +143,8 @@ QString Policy::getAlterDefinition(BaseObject *object)
 		QStringList rol_names, aux_rol_names;
 		attribs_map attribs;
 
-		attributes[Attributes::AlterCmds]=BaseObject::getAlterDefinition(object);
+		attributes[Attributes::AlterCmds]=BaseObject::getAlterCode(object);
+		attribs[Attributes::Table] = getParentTable()->getSignature(true);
 
 		if(this->using_expr.simplified() != policy->using_expr.simplified())
 			attribs[Attributes::UsingExp] = policy->using_expr;
@@ -174,7 +167,7 @@ QString Policy::getAlterDefinition(BaseObject *object)
 			attribs[Attributes::Roles] = aux_rol_names.join(QString(", "));
 
 		copyAttributes(attribs);
-		return BaseObject::getAlterDefinition(this->getSchemaName(), attributes, false, true);
+		return BaseObject::getAlterCode(this->getSchemaName(), attributes, false, true);
 	}
 	catch(Exception &e)
 	{

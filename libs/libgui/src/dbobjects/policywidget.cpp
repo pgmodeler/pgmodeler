@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -52,16 +52,16 @@ PolicyWidget::PolicyWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType
 																					 .arg(BaseObject::getTypeName(ObjectType::Policy).toLower()));
 		vbox->addWidget(frame);
 		frame->setParent(this);
-		vbox->setContentsMargins(4,4,4,4);
+		vbox->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
 		attribs_tbw->widget(0)->setLayout(vbox);
 
 		command_cmb->addItems(PolicyCmdType::getTypes());
 
 		configureFormLayout(policy_grid, ObjectType::Policy);
-		configureTabOrder({ basics_grp, attribs_tbw });
+		configureTabOrder({ command_cmb, permissive_chk, attribs_tbw });
 
-		connect(roles_tab, SIGNAL(s_rowAdded(int)), model_objs_wgt, SLOT(show()));
-		connect(model_objs_wgt, SIGNAL(s_visibilityChanged(BaseObject*, bool)), this, SLOT(selectRole(BaseObject*, bool)));
+		connect(roles_tab, &ObjectsTableWidget::s_rowAdded, model_objs_wgt, &ModelObjectsWidget::show);
+		connect(model_objs_wgt, qOverload<BaseObject *, bool>(&ModelObjectsWidget::s_visibilityChanged), this, &PolicyWidget::selectRole);
 	}
 	catch(Exception &e)
 	{

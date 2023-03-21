@@ -36,7 +36,7 @@ $br $tb
 {elements}
 
 %if {predicate} %then
-	$tb <predicate> <! $ob CDATA $ob {predicate} $cb $cb > </predicate> $br
+	$tb <predicate> $sp <! $ob CDATA $ob {predicate} $cb $cb > $sp </predicate> $br
 %end
 
 %if {include-cols} %then

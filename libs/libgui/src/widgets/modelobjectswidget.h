@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -29,9 +29,9 @@
 #include "ui_modelobjectswidget.h"
 #include "modelwidget.h"
 #include "messagebox.h"
-#include "objectfinderwidget.h"
+#include "objecttypeslistwidget.h"
 
-class ModelObjectsWidget: public QWidget, public Ui::ModelObjectsWidget {
+class __libgui ModelObjectsWidget: public QWidget, public Ui::ModelObjectsWidget {
 	private:
 		Q_OBJECT
 
@@ -50,7 +50,7 @@ class ModelObjectsWidget: public QWidget, public Ui::ModelObjectsWidget {
 		enable_obj_creation;
 
 		//! \brief Stores the objects currently selected on the tree/list
-		vector<BaseObject *> selected_objs;
+		std::vector<BaseObject *> selected_objs;
 
 		/*! \brief Stores the  initial splitter size to be used in conjunction with the
 		object type visualization buttons */
@@ -63,7 +63,9 @@ class ModelObjectsWidget: public QWidget, public Ui::ModelObjectsWidget {
 		DatabaseModel *db_model;
 
 		//! \brief Stores which object types are visible on the view
-		map<ObjectType, bool> visible_objs_map;
+		std::map<ObjectType, bool> visible_objs_map;
+
+		ObjectTypesListWidget *obj_types_wgt;
 
 		//! \brief Updates only a schema tree starting from the 'root' item
 		void updateSchemaTree(QTreeWidgetItem *root);
@@ -108,10 +110,10 @@ class ModelObjectsWidget: public QWidget, public Ui::ModelObjectsWidget {
 
 	protected:
 		//! \brief Saves the currently expanded items on the specified vector
-		void saveTreeState(vector<BaseObject *> &tree_items);
+		void saveTreeState(std::vector<BaseObject *> &tree_items);
 
 		//! \brief Restores the tree at a previous state when the specified items were expanded
-		void restoreTreeState(vector<BaseObject *> &tree_items);
+		void restoreTreeState(std::vector<BaseObject *> &tree_items);
 
 		//! \brief Defines if the widget must save/restore the tree state automaticaly
 		void saveTreeState(bool value);
@@ -128,7 +130,6 @@ class ModelObjectsWidget: public QWidget, public Ui::ModelObjectsWidget {
 		void hide();
 
 	private slots:
-		void setObjectVisible(QListWidgetItem *item);
 		void setAllObjectsVisible(bool value);
 		void selectObject();
 		void showObjectMenu();

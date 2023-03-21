@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -43,7 +43,7 @@ Index::Index()
 	attributes[Attributes::IncludedCols]="";
 }
 
-void Index::setIndexElementsAttribute(unsigned def_type)
+void Index::setIndexElementsAttribute(SchemaParser::CodeType def_type)
 {
 	QString str_elem;
 	unsigned i, count;
@@ -51,8 +51,8 @@ void Index::setIndexElementsAttribute(unsigned def_type)
 	count=idx_elements.size();
 	for(i=0; i < count; i++)
 	{
-		str_elem+=idx_elements[i].getCodeDefinition(def_type);
-		if(i < (count-1) && def_type==SchemaParser::SqlDefinition) str_elem+=',';
+		str_elem+=idx_elements[i].getSourceCode(def_type);
+		if(i < (count-1) && def_type==SchemaParser::SqlCode) str_elem+=',';
 	}
 
 	attributes[Attributes::Elements]=str_elem;
@@ -150,9 +150,9 @@ void Index::addIndexElement(Column *column, Collation *coll, OperatorClass *op_c
 	}
 }
 
-void Index::addIndexElements(vector<IndexElement> &elems)
+void Index::addIndexElements(std::vector<IndexElement> &elems)
 {
-	vector<IndexElement> elems_bkp=idx_elements;
+	std::vector<IndexElement> elems_bkp=idx_elements;
 
 	try
 	{
@@ -191,7 +191,7 @@ IndexElement Index::getIndexElement(unsigned elem_idx)
 	return idx_elements[elem_idx];
 }
 
-vector<IndexElement> Index::getIndexElements()
+std::vector<IndexElement> Index::getIndexElements()
 {
 	return idx_elements;
 }
@@ -201,7 +201,7 @@ unsigned Index::getIndexElementCount()
 	return idx_elements.size();
 }
 
-void Index::setIndexAttribute(unsigned attrib_id, bool value)
+void Index::setIndexAttribute(IndexAttrib attrib_id, bool value)
 {
 	if(attrib_id > Buffering)
 		throw Exception(ErrorCode::RefAttributeInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -234,7 +234,7 @@ unsigned Index::getFillFactor()
 	return fill_factor;
 }
 
-bool Index::getIndexAttribute(unsigned attrib_id)
+bool Index::getIndexAttribute(IndexAttrib attrib_id)
 {
 	if(attrib_id > Buffering)
 		throw Exception(ErrorCode::RefAttributeInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -271,9 +271,9 @@ bool Index::isReferRelationshipAddedColumn()
 	return false;
 }
 
-vector<Column *> Index::getRelationshipAddedColumns()
+std::vector<Column *> Index::getRelationshipAddedColumns()
 {
-	vector<Column *> cols;
+	std::vector<Column *> cols;
 	Column *col = nullptr;
 
 	for(auto &elem : idx_elements)
@@ -295,7 +295,7 @@ vector<Column *> Index::getRelationshipAddedColumns()
 
 bool Index::isReferCollation(Collation *coll)
 {
-	vector<IndexElement>::iterator itr, itr_end;
+	std::vector<IndexElement>::iterator itr, itr_end;
 	bool found=false;
 
 	if(!coll) return false;
@@ -367,7 +367,7 @@ void Index::addSimpleColumn(const SimpleColumn &col)
 	}
 }
 
-void Index::setColumns(const vector<Column *> &cols)
+void Index::setColumns(const std::vector<Column *> &cols)
 {
 	try
 	{
@@ -380,7 +380,7 @@ void Index::setColumns(const vector<Column *> &cols)
 	}
 }
 
-void Index::setSimpleColumns(const vector<SimpleColumn> &cols)
+void Index::setSimpleColumns(const std::vector<SimpleColumn> &cols)
 {
 	try
 	{
@@ -393,17 +393,17 @@ void Index::setSimpleColumns(const vector<SimpleColumn> &cols)
 	}
 }
 
-vector<Column *> Index::getColumns()
+std::vector<Column *> Index::getColumns()
 {
 	return included_cols;
 }
 
-vector<SimpleColumn> Index::getSimpleColumns()
+std::vector<SimpleColumn> Index::getSimpleColumns()
 {
 	return incl_simple_cols;
 }
 
-QString Index::getCodeDefinition(unsigned def_type)
+QString Index::getSourceCode(SchemaParser::CodeType def_type)
 {
 	QString code_def=getCachedCode(def_type, false);
 	if(!code_def.isEmpty()) return code_def;
@@ -419,7 +419,7 @@ QString Index::getCodeDefinition(unsigned def_type)
 	{
 		attributes[Attributes::Table]=getParentTable()->getName(true);
 
-		if(def_type==SchemaParser::SqlDefinition && getParentTable()->getSchema())
+		if(def_type==SchemaParser::SqlCode && getParentTable()->getSchema())
 			attributes[Attributes::Schema]=getParentTable()->getSchema()->getName(true);
 	}
 
@@ -434,7 +434,7 @@ QString Index::getCodeDefinition(unsigned def_type)
 		attributes[Attributes::Factor]=QString("%1").arg(fill_factor);
 		attributes[Attributes::StorageParams]=Attributes::True;
 	}
-	else if(def_type==SchemaParser::XmlDefinition)
+	else if(def_type==SchemaParser::XmlCode)
 		attributes[Attributes::Factor]=QString("0");
 
 	QStringList incl_cols;
@@ -452,7 +452,7 @@ QString Index::getCodeDefinition(unsigned def_type)
 	if(!isReferRelationshipAddedColumn())
 		attributes[Attributes::DeclInTable]=Attributes::True;
 
-	return BaseObject::__getCodeDefinition(def_type);
+	return BaseObject::__getSourceCode(def_type);
 }
 
 QString Index::getSignature(bool format)
@@ -463,7 +463,7 @@ QString Index::getSignature(bool format)
 	return QString("%1.%2").arg(getParentTable()->getSchema()->getName(format)).arg(this->getName(format));
 }
 
-QString Index::getAlterDefinition(BaseObject *object)
+QString Index::getAlterCode(BaseObject *object)
 {
 	Index *index=dynamic_cast<Index *>(object);
 
@@ -473,7 +473,7 @@ QString Index::getAlterDefinition(BaseObject *object)
 	try
 	{
 		attribs_map attribs;
-		attributes[Attributes::AlterCmds]=BaseObject::getAlterDefinition(object);
+		attributes[Attributes::AlterCmds]=BaseObject::getAlterCode(object);
 
 		if(this->indexing_type==index->indexing_type)
 		{
@@ -491,7 +491,7 @@ QString Index::getAlterDefinition(BaseObject *object)
 		}
 
 		copyAttributes(attribs);
-		return BaseObject::getAlterDefinition(this->getSchemaName(), attributes, false, true);
+		return BaseObject::getAlterCode(this->getSchemaName(), attributes, false, true);
 	}
 	catch(Exception &e)
 	{
@@ -511,5 +511,41 @@ void Index::validateElements()
 				setCodeInvalidated(true);
 			}
 		}
+	}
+}
+
+QString Index::getDataDictionary(const attribs_map &extra_attribs)
+{
+	try
+	{
+		attribs_map attribs;
+		QStringList exprs, col_names;
+
+		attribs.insert(extra_attribs.begin(), extra_attribs.end());
+		attribs[Attributes::Name] = obj_name;
+		attribs[Attributes::Type] = ~indexing_type;
+		attribs[Attributes::Comment] = comment;
+		attribs[Attributes::Predicate] = predicate;
+
+		for(auto &elem : idx_elements)
+		{
+			if(elem.getColumn())
+				col_names.append(elem.getColumn()->getName());
+			else if(elem.getSimpleColumn().isValid())
+				col_names.append(elem.getSimpleColumn().name);
+			else
+				exprs.append(elem.getExpression());
+		}
+
+		attribs[Attributes::Columns] = col_names.join(", ");
+		attribs[Attributes::Expressions] = exprs.join(", ");
+
+		schparser.ignoreEmptyAttributes(true);
+		return schparser.getSourceCode(GlobalAttributes::getSchemaFilePath(GlobalAttributes::DataDictSchemaDir,
+																																					 getSchemaName()), attribs);
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorCode(), __PRETTY_FUNCTION__, __FILE__, __LINE__, &e);
 	}
 }

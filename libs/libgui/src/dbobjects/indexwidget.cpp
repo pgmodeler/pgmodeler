@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -23,9 +23,8 @@ IndexWidget::IndexWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::
 	try
 	{
 		QGridLayout *grid=nullptr;
-		map<QString, vector<QWidget *> > fields_map;
-		map<QWidget *, vector<QString> > values_map;
-		QFrame *frame=nullptr;
+		std::map<QString, std::vector<QWidget *> > fields_map;
+		std::map<QWidget *, std::vector<QString> > values_map;
 
 		Ui_IndexWidget::setupUi(this);
 
@@ -35,29 +34,20 @@ IndexWidget::IndexWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::
 		elements_tab = new ElementsTableWidget(this);
 
 		grid=new QGridLayout;
-		grid->setContentsMargins(4,4,4,4);
+		grid->setContentsMargins(0,0,0,0);
 		grid->addWidget(elements_tab,0,0);
 		attributes_tbw->widget(1)->setLayout(grid);
 
 		incl_cols_picker_wgt = new ColumnPickerWidget(this);
 		QVBoxLayout *vbox = new QVBoxLayout(attributes_tbw->widget(2));
-		vbox->setContentsMargins(4, 4, 4, 4);
+		vbox->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
 		vbox->addWidget(incl_cols_picker_wgt);
 
 		configureFormLayout(index_grid, ObjectType::Index);
 		indexing_cmb->addItems(IndexingType::getTypes());
 
-		fields_map[BaseObjectWidget::generateVersionsInterval(BaseObjectWidget::AfterVersion, PgSqlVersions::PgSqlVersion92)].push_back(buffering_chk);
-		fields_map[BaseObjectWidget::generateVersionsInterval(BaseObjectWidget::AfterVersion, PgSqlVersions::PgSqlVersion95)].push_back(indexing_lbl);
-		values_map[indexing_lbl].push_back(~IndexingType(IndexingType::Brin));
-
-		frame=BaseObjectWidget::generateVersionWarningFrame(fields_map, &values_map);
-		frame->setParent(this);
-		grid=dynamic_cast<QGridLayout *>(attributes_tbw->widget(0)->layout());
-		grid->addWidget(frame, grid->count(), 0, 1, 5);
-
-		connect(indexing_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(selectIndexingType()));
-		connect(fill_factor_chk, SIGNAL(toggled(bool)), fill_factor_sb, SLOT(setEnabled(bool)));
+		connect(indexing_cmb, &QComboBox::currentIndexChanged, this, &IndexWidget::selectIndexingType);
+		connect(fill_factor_chk, &QCheckBox::toggled, fill_factor_sb, &QSpinBox::setEnabled);
 
 		configureTabOrder();
 		selectIndexingType();
@@ -79,7 +69,7 @@ void IndexWidget::selectIndexingType()
 
 void IndexWidget::setAttributes(DatabaseModel *model, OperationList *op_list, BaseTable *parent_obj, Index *index)
 {
-	vector<IndexElement> idx_elems;
+	std::vector<IndexElement> idx_elems;
 
 	if(!parent_obj)
 		throw Exception(ErrorCode::AsgNotAllocattedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -123,7 +113,7 @@ void IndexWidget::applyConfiguration()
 	try
 	{
 		Index *index=nullptr;
-		vector<IndexElement> idx_elems;
+		std::vector<IndexElement> idx_elems;
 
 		startConfiguration<Index>();
 

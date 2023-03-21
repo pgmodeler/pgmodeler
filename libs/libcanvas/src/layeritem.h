@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -25,11 +25,12 @@
 #ifndef LAYER_ITEM_H
 #define LAYER_ITEM_H
 
+#include "canvasglobal.h"
 #include <QGraphicsPathItem>
 #include <QPainter>
 #include <QStyleOptionGraphicsItem>
 
-class LayerItem : public QGraphicsPathItem {
+class __libcanvas LayerItem : public QGraphicsPathItem {
 	private:
 		//! \brief Stores the text color of the item
 		QColor txt_color;

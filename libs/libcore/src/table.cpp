@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -120,7 +120,7 @@ void Table::removeObject(BaseObject *obj)
 	}
 }
 
-vector<TableObject *> *Table::getObjectList(ObjectType obj_type)
+std::vector<TableObject *> *Table::getObjectList(ObjectType obj_type)
 {
 	if(obj_type==ObjectType::Rule)
 		return &rules;
@@ -290,7 +290,7 @@ unsigned Table::getPolicyCount()
 	return policies.size();
 }
 
-void Table::getForeignKeys(vector<Constraint *> &fks, bool inc_added_by_rel, Table *ref_table)
+void Table::getForeignKeys(std::vector<Constraint *> &fks, bool inc_added_by_rel, Table *ref_table)
 {
 	unsigned count,i;
 	Constraint *constr=nullptr;
@@ -352,7 +352,7 @@ bool Table::isReferTableOnForeignKey(Table *ref_tab)
 	return found;
 }
 
-QString Table::__getCodeDefinition(unsigned def_type, bool incl_rel_added_objs)
+QString Table::__getSourceCode(SchemaParser::CodeType def_type, bool incl_rel_added_objs)
 {
 	setTableAttributes(def_type, incl_rel_added_objs);
 
@@ -362,18 +362,35 @@ QString Table::__getCodeDefinition(unsigned def_type, bool incl_rel_added_objs)
 	attributes[Attributes::RlsForced]=(rls_forced ? Attributes::True : "");
 	attributes[Attributes::CopyTable]="";
 
-	if(def_type==SchemaParser::SqlDefinition && copy_table)
+	if(def_type==SchemaParser::SqlCode && copy_table)
 		attributes[Attributes::CopyTable]=copy_table->getName(true) + copy_op.getSQLDefinition();
 
-	return BaseObject::__getCodeDefinition(def_type);
+	return BaseObject::__getSourceCode(def_type);
 }
 
-QString Table::getCodeDefinition(unsigned def_type)
+QString Table::getDataDictionary(bool split, const attribs_map &extra_attribs)
+{
+	try
+	{
+		attribs_map attribs = extra_attribs;
+
+		for(auto &obj : indexes)
+			attribs[Attributes::Indexes] +=  dynamic_cast<Index *>(obj)->getDataDictionary();
+
+		return PhysicalTable::getDataDictionary(split, attribs);
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorCode(), __PRETTY_FUNCTION__, __FILE__, __LINE__, &e);
+	}
+}
+
+QString Table::getSourceCode(SchemaParser::CodeType def_type)
 {
 	QString code_def=getCachedCode(def_type, false);
 	if(!code_def.isEmpty()) return code_def;
 
-	return __getCodeDefinition(def_type, false);
+	return __getSourceCode(def_type, false);
 }
 
 void Table::operator = (Table &tab)
@@ -387,14 +404,14 @@ void Table::operator = (Table &tab)
 	this->rls_enabled=tab.rls_enabled;
 }
 
-void Table::getColumnReferences(Column *column, vector<TableObject *> &refs, bool exclusion_mode)
+void Table::getColumnReferences(Column *column, std::vector<TableObject *> &refs, bool exclusion_mode)
 {
 	if(column && !column->isAddedByRelationship())
 	{
 		unsigned count, i;
 		IndexElement elem;
 		Column *col=nullptr;
-		vector<TableObject *>::iterator itr, itr_end;
+		std::vector<TableObject *>::iterator itr, itr_end;
 		bool found=false;
 		Index *ind=nullptr;
 
@@ -429,7 +446,7 @@ QString Table::getTruncateDefinition(bool cascade)
 	{
 		BaseObject::setBasicAttributes(true);
 		attributes[Attributes::Cascade]=(cascade ? Attributes::True : "");
-		return BaseObject::getAlterDefinition(Attributes::TruncatePriv, attributes, false, false);
+		return BaseObject::getAlterCode(Attributes::TruncatePriv, attributes, false, false);
 	}
 	catch(Exception &e)
 	{
@@ -437,7 +454,7 @@ QString Table::getTruncateDefinition(bool cascade)
 	}
 }
 
-QString Table::getAlterDefinition(BaseObject *object)
+QString Table::getAlterCode(BaseObject *object)
 {
 	Table *tab=dynamic_cast<Table *>(object);
 
@@ -450,7 +467,7 @@ QString Table::getAlterDefinition(BaseObject *object)
 		attribs_map attribs;
 
 		attribs[Attributes::Oids]="";
-		attribs[Attributes::AlterCmds]=BaseObject::getAlterDefinition(object, true);
+		attribs[Attributes::AlterCmds]=BaseObject::getAlterCode(object, true);
 
 		if(this->getName()==tab->getName())
 		{
@@ -470,7 +487,7 @@ QString Table::getAlterDefinition(BaseObject *object)
 		}
 
 		copyAttributes(attribs);
-		alter_def=BaseObject::getAlterDefinition(this->getSchemaName(), attributes, false, true);
+		alter_def=BaseObject::getAlterCode(this->getSchemaName(), attributes, false, true);
 
 		return alter_def;
 	}

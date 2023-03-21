@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -30,16 +30,18 @@
 #include "widgets/objectstablewidget.h"
 #include "widgets/colorpickerwidget.h"
 
-class RelationshipWidget: public BaseObjectWidget, public Ui::RelationshipWidget {
+class __libgui RelationshipWidget: public BaseObjectWidget, public Ui::RelationshipWidget {
 	private:
 		Q_OBJECT
 
-		static constexpr unsigned GeneralTab=0,
-		SettingsTab=1,
-		AttributesTab=2,
-		ConstraintsTab=3,
-		SpecialPkTab=4,
-		AdvancedTab=5;
+		enum TabId: unsigned {
+			GeneralTab,
+			SettingsTab,
+			AttributesTab,
+			ConstraintsTab,
+			SpecialPkTab,
+			AdvancedTab
+		};
 
 		ColorPickerWidget *color_picker;
 
@@ -80,10 +82,12 @@ class RelationshipWidget: public BaseObjectWidget, public Ui::RelationshipWidget
 		int openEditingForm(TableObject *object, BaseObject *parent = nullptr);
 
 	protected:
-		void setAttributes(DatabaseModel *model, OperationList *op_list, PhysicalTable *src_tab, PhysicalTable *dst_tab, unsigned rel_type);
+		void setAttributes(DatabaseModel *model, OperationList *op_list, PhysicalTable *src_tab,
+											 PhysicalTable *dst_tab, BaseRelationship::RelType rel_type);
 
 	public:
 		RelationshipWidget(QWidget * parent = nullptr);
+
 		void setAttributes(DatabaseModel *model, OperationList *op_list, BaseRelationship *base_rel);
 
 		QSize getIdealSize();

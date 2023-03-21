@@ -36,23 +36,26 @@
   </property>
   <property name="windowIcon">
    <iconset resource="../../res/resources.qrc">
-    <normaloff>:/icons/icons/pgsqlModeler48x48.png</normaloff>:/icons/icons/pgsqlModeler48x48.png</iconset>
+    <normaloff>:/icons/icons/pgmodeler_logo.png</normaloff>:/icons/icons/pgmodeler_logo.png</iconset>
   </property>
   <property name="floating" stdset="0">
    <bool>false</bool>
   </property>
   <layout class="QGridLayout" name="gridLayout_5">
    <property name="leftMargin">
-    <number>2</number>
+    <number>5</number>
    </property>
    <property name="topMargin">
-    <number>2</number>
+    <number>5</number>
    </property>
    <property name="rightMargin">
-    <number>2</number>
+    <number>5</number>
    </property>
    <property name="bottomMargin">
-    <number>4</number>
+    <number>5</number>
+   </property>
+   <property name="spacing">
+    <number>5</number>
    </property>
    <item row="2" column="0">
     <widget class="QWidget" name="content_wgt" native="true">
@@ -69,6 +72,9 @@
       <property name="bottomMargin">
        <number>0</number>
       </property>
+      <property name="horizontalSpacing">
+       <number>5</number>
+      </property>
       <property name="verticalSpacing">
        <number>0</number>
       </property>
@@ -76,6 +82,9 @@
        <widget class="QSplitter" name="splitter">
         <property name="orientation">
          <enum>Qt::Vertical</enum>
+        </property>
+        <property name="handleWidth">
+         <number>5</number>
         </property>
         <widget class="QStackedWidget" name="visaoobjetos_stw">
          <property name="enabled">
@@ -178,8 +187,8 @@
              </property>
              <property name="iconSize">
               <size>
-               <width>20</width>
-               <height>20</height>
+               <width>22</width>
+               <height>22</height>
               </size>
              </property>
              <property name="indentation">
@@ -247,6 +256,9 @@
            <property name="horizontalSpacing">
             <number>0</number>
            </property>
+           <property name="verticalSpacing">
+            <number>5</number>
+           </property>
            <item row="0" column="0">
             <widget class="QTableWidget" name="objectslist_tbw">
              <property name="enabled">
@@ -266,8 +278,8 @@
              </property>
              <property name="iconSize">
               <size>
-               <width>20</width>
-               <height>20</height>
+               <width>22</width>
+               <height>22</height>
               </size>
              </property>
              <property name="gridStyle">
@@ -308,18 +320,6 @@
              </attribute>
              <column>
               <property name="text">
-               <string>ID</string>
-              </property>
-              <property name="textAlignment">
-               <set>AlignLeading|AlignVCenter</set>
-              </property>
-              <property name="icon">
-               <iconset resource="../../res/resources.qrc">
-                <normaloff>:/icons/icons/uid.png</normaloff>:/icons/icons/uid.png</iconset>
-              </property>
-             </column>
-             <column>
-              <property name="text">
                <string>Object</string>
               </property>
               <property name="textAlignment">
@@ -340,6 +340,18 @@
               <property name="icon">
                <iconset resource="../../res/resources.qrc">
                 <normaloff>:/icons/icons/usertype.png</normaloff>:/icons/icons/usertype.png</iconset>
+              </property>
+             </column>
+             <column>
+              <property name="text">
+               <string>ID</string>
+              </property>
+              <property name="textAlignment">
+               <set>AlignLeading|AlignVCenter</set>
+              </property>
+              <property name="icon">
+               <iconset resource="../../res/resources.qrc">
+                <normaloff>:/icons/icons/uid.png</normaloff>:/icons/icons/uid.png</iconset>
               </property>
              </column>
              <column>
@@ -385,7 +397,7 @@
              </size>
             </property>
             <property name="title">
-             <string>Visible object types</string>
+             <string>Visible object &amp;types</string>
             </property>
             <property name="flat">
              <bool>false</bool>
@@ -395,101 +407,20 @@
             </property>
             <layout class="QGridLayout" name="gridLayout">
              <property name="leftMargin">
-              <number>4</number>
+              <number>5</number>
              </property>
              <property name="topMargin">
-              <number>4</number>
+              <number>5</number>
              </property>
              <property name="rightMargin">
-              <number>4</number>
+              <number>5</number>
              </property>
              <property name="bottomMargin">
-              <number>4</number>
+              <number>5</number>
              </property>
-             <item row="0" column="0">
-              <widget class="QListWidget" name="visibleobjects_lst">
-               <property name="minimumSize">
-                <size>
-                 <width>0</width>
-                 <height>0</height>
-                </size>
-               </property>
-               <property name="maximumSize">
-                <size>
-                 <width>16777215</width>
-                 <height>16777215</height>
-                </size>
-               </property>
-               <property name="editTriggers">
-                <set>QAbstractItemView::NoEditTriggers</set>
-               </property>
-               <property name="alternatingRowColors">
-                <bool>true</bool>
-               </property>
-               <property name="currentRow">
-                <number>-1</number>
-               </property>
-               <property name="sortingEnabled">
-                <bool>true</bool>
-               </property>
-              </widget>
-             </item>
-             <item row="1" column="0">
-              <layout class="QHBoxLayout" name="horizontalLayout_2">
-               <item>
-                <spacer name="horizontalSpacer_3">
-                 <property name="orientation">
-                  <enum>Qt::Horizontal</enum>
-                 </property>
-                 <property name="sizeHint" stdset="0">
-                  <size>
-                   <width>58</width>
-                   <height>20</height>
-                  </size>
-                 </property>
-                </spacer>
-               </item>
-               <item>
-                <widget class="QToolButton" name="select_all_tb">
-                 <property name="sizePolicy">
-                  <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                   <horstretch>0</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
-                 </property>
-                 <property name="text">
-                  <string>Select All</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QToolButton" name="clear_all_tb">
-                 <property name="sizePolicy">
-                  <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                   <horstretch>0</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
-                 </property>
-                 <property name="text">
-                  <string>Clear All</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <spacer name="horizontalSpacer_2">
-                 <property name="orientation">
-                  <enum>Qt::Horizontal</enum>
-                 </property>
-                 <property name="sizeHint" stdset="0">
-                  <size>
-                   <width>58</width>
-                   <height>20</height>
-                  </size>
-                 </property>
-                </spacer>
-               </item>
-              </layout>
-             </item>
+             <property name="spacing">
+              <number>5</number>
+             </property>
             </layout>
            </widget>
           </item>
@@ -502,35 +433,24 @@
    </item>
    <item row="0" column="0">
     <widget class="QWidget" name="title_wgt" native="true">
-     <property name="font">
-      <font>
-       <pointsize>9</pointsize>
-      </font>
-     </property>
      <layout class="QHBoxLayout" name="horizontalLayout_3">
       <property name="spacing">
-       <number>0</number>
+       <number>5</number>
       </property>
       <property name="leftMargin">
-       <number>2</number>
+       <number>5</number>
       </property>
       <property name="topMargin">
-       <number>2</number>
+       <number>5</number>
       </property>
       <property name="rightMargin">
-       <number>2</number>
+       <number>0</number>
       </property>
       <property name="bottomMargin">
        <number>0</number>
       </property>
       <item>
        <widget class="QLabel" name="title_lbl">
-        <property name="font">
-         <font>
-          <pointsize>9</pointsize>
-          <italic>false</italic>
-         </font>
-        </property>
         <property name="text">
          <string>Model objects</string>
         </property>
@@ -551,18 +471,6 @@
       </item>
       <item>
        <widget class="QToolButton" name="hide_tb">
-        <property name="minimumSize">
-         <size>
-          <width>20</width>
-          <height>20</height>
-         </size>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>20</width>
-          <height>20</height>
-         </size>
-        </property>
         <property name="toolTip">
          <string>Hide this widget</string>
         </property>
@@ -572,6 +480,15 @@
         <property name="icon">
          <iconset resource="../../res/resources.qrc">
           <normaloff>:/icons/icons/close1.png</normaloff>:/icons/icons/close1.png</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>20</width>
+          <height>20</height>
+         </size>
+        </property>
+        <property name="shortcut">
+         <string>Esc</string>
         </property>
         <property name="autoRaise">
          <bool>true</bool>
@@ -590,6 +507,9 @@
       </size>
      </property>
      <layout class="QHBoxLayout" name="horizontalLayout_4">
+      <property name="spacing">
+       <number>5</number>
+      </property>
       <property name="leftMargin">
        <number>0</number>
       </property>
@@ -640,6 +560,9 @@
    </item>
    <item row="4" column="0">
     <layout class="QHBoxLayout" name="horizontalLayout">
+     <property name="spacing">
+      <number>5</number>
+     </property>
      <item>
       <spacer name="horizontalSpacer">
        <property name="orientation">
@@ -682,12 +605,15 @@
        </property>
        <property name="iconSize">
         <size>
-         <width>22</width>
-         <height>22</height>
+         <width>25</width>
+         <height>25</height>
         </size>
        </property>
        <property name="shortcut">
         <string>Return</string>
+       </property>
+       <property name="autoRaise">
+        <bool>false</bool>
        </property>
       </widget>
      </item>
@@ -717,12 +643,15 @@
        </property>
        <property name="iconSize">
         <size>
-         <width>22</width>
-         <height>22</height>
+         <width>25</width>
+         <height>25</height>
         </size>
        </property>
        <property name="shortcut">
         <string>Esc</string>
+       </property>
+       <property name="autoRaise">
+        <bool>false</bool>
        </property>
       </widget>
      </item>
@@ -755,8 +684,8 @@
        </property>
        <property name="iconSize">
         <size>
-         <width>22</width>
-         <height>22</height>
+         <width>25</width>
+         <height>25</height>
         </size>
        </property>
        <property name="checkable">
@@ -764,6 +693,9 @@
        </property>
        <property name="checked">
         <bool>true</bool>
+       </property>
+       <property name="autoRaise">
+        <bool>false</bool>
        </property>
       </widget>
      </item>
@@ -793,12 +725,15 @@
        </property>
        <property name="iconSize">
         <size>
-         <width>22</width>
-         <height>22</height>
+         <width>25</width>
+         <height>25</height>
         </size>
        </property>
        <property name="checkable">
         <bool>true</bool>
+       </property>
+       <property name="autoRaise">
+        <bool>false</bool>
        </property>
       </widget>
      </item>
@@ -828,14 +763,17 @@
        </property>
        <property name="iconSize">
         <size>
-         <width>22</width>
-         <height>22</height>
+         <width>25</width>
+         <height>25</height>
         </size>
        </property>
        <property name="checkable">
         <bool>true</bool>
        </property>
        <property name="checked">
+        <bool>false</bool>
+       </property>
+       <property name="autoRaise">
         <bool>false</bool>
        </property>
       </widget>
@@ -866,11 +804,14 @@
        </property>
        <property name="iconSize">
         <size>
-         <width>22</width>
-         <height>22</height>
+         <width>25</width>
+         <height>25</height>
         </size>
        </property>
        <property name="checkable">
+        <bool>false</bool>
+       </property>
+       <property name="autoRaise">
         <bool>false</bool>
        </property>
       </widget>
@@ -901,11 +842,14 @@
        </property>
        <property name="iconSize">
         <size>
-         <width>22</width>
-         <height>22</height>
+         <width>25</width>
+         <height>25</height>
         </size>
        </property>
        <property name="checkable">
+        <bool>false</bool>
+       </property>
+       <property name="autoRaise">
         <bool>false</bool>
        </property>
       </widget>
@@ -916,9 +860,8 @@
  </widget>
  <tabstops>
   <tabstop>objectstree_tw</tabstop>
-  <tabstop>visibleobjects_lst</tabstop>
-  <tabstop>select_all_tb</tabstop>
-  <tabstop>clear_all_tb</tabstop>
+  <tabstop>filter_edt</tabstop>
+  <tabstop>by_id_chk</tabstop>
   <tabstop>select_tb</tabstop>
   <tabstop>cancel_tb</tabstop>
   <tabstop>tree_view_tb</tabstop>
@@ -926,10 +869,11 @@
   <tabstop>options_tb</tabstop>
   <tabstop>expand_all_tb</tabstop>
   <tabstop>collapse_all_tb</tabstop>
-  <tabstop>objectslist_tbw</tabstop>
   <tabstop>hide_tb</tabstop>
+  <tabstop>objectslist_tbw</tabstop>
  </tabstops>
  <resources>
+  <include location="../../res/resources.qrc"/>
   <include location="../../res/resources.qrc"/>
  </resources>
  <connections/>

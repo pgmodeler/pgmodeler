@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>521</width>
-    <height>200</height>
+    <width>728</width>
+    <height>218</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -18,44 +18,54 @@
   </property>
   <layout class="QGridLayout" name="index_grid">
    <property name="leftMargin">
-    <number>2</number>
+    <number>5</number>
    </property>
    <property name="topMargin">
-    <number>2</number>
+    <number>5</number>
    </property>
    <property name="rightMargin">
-    <number>2</number>
+    <number>5</number>
    </property>
    <property name="bottomMargin">
-    <number>2</number>
+    <number>5</number>
    </property>
    <property name="spacing">
-    <number>6</number>
+    <number>5</number>
    </property>
    <item row="0" column="0">
     <widget class="QTabWidget" name="attributes_tbw">
      <property name="currentIndex">
       <number>0</number>
      </property>
+     <property name="iconSize">
+      <size>
+       <width>22</width>
+       <height>22</height>
+      </size>
+     </property>
      <widget class="QWidget" name="tab_3">
+      <attribute name="icon">
+       <iconset resource="../../res/resources.qrc">
+        <normaloff>:/icons/icons/attribute.png</normaloff>:/icons/icons/attribute.png</iconset>
+      </attribute>
       <attribute name="title">
-       <string>Attributes</string>
+       <string>&amp;Attributes</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout_2">
        <property name="leftMargin">
-        <number>4</number>
+        <number>5</number>
        </property>
        <property name="topMargin">
-        <number>4</number>
+        <number>5</number>
        </property>
        <property name="rightMargin">
-        <number>4</number>
+        <number>5</number>
        </property>
        <property name="bottomMargin">
-        <number>4</number>
+        <number>5</number>
        </property>
        <property name="spacing">
-        <number>6</number>
+        <number>5</number>
        </property>
        <item row="0" column="0">
         <widget class="QLabel" name="indexing_lbl">
@@ -79,7 +89,6 @@
          </property>
          <property name="font">
           <font>
-           <weight>50</weight>
            <italic>false</italic>
            <bold>false</bold>
           </font>
@@ -107,6 +116,12 @@
           <size>
            <width>127</width>
            <height>16777215</height>
+          </size>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>28</width>
+           <height>28</height>
           </size>
          </property>
         </widget>
@@ -196,7 +211,7 @@
        <item row="1" column="1" colspan="4">
         <layout class="QHBoxLayout" name="horizontalLayout_2">
          <property name="spacing">
-          <number>6</number>
+          <number>5</number>
          </property>
          <item>
           <widget class="QCheckBox" name="concurrent_chk">
@@ -353,13 +368,21 @@
       </layout>
      </widget>
      <widget class="QWidget" name="tab_4">
+      <attribute name="icon">
+       <iconset resource="../../res/resources.qrc">
+        <normaloff>:/icons/icons/usertype.png</normaloff>:/icons/icons/usertype.png</iconset>
+      </attribute>
       <attribute name="title">
-       <string>Elements</string>
+       <string>&amp;Elements</string>
       </attribute>
      </widget>
      <widget class="QWidget" name="tab">
+      <attribute name="icon">
+       <iconset resource="../../res/resources.qrc">
+        <normaloff>:/icons/icons/column.png</normaloff>:/icons/icons/column.png</iconset>
+      </attribute>
       <attribute name="title">
-       <string>Include columns</string>
+       <string>&amp;Include columns</string>
       </attribute>
      </widget>
     </widget>
@@ -376,6 +399,9 @@
   <tabstop>fast_update_chk</tabstop>
   <tabstop>predicate_txt</tabstop>
  </tabstops>
- <resources/>
+ <resources>
+  <include location="../../res/resources.qrc"/>
+  <include location="../../res/resources.qrc"/>
+ </resources>
  <connections/>
 </ui>

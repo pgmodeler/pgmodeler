@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -22,9 +22,6 @@ ElementWidget::ElementWidget(QWidget *parent) : QWidget(parent)
 {
 	try
 	{
-		map<QString, vector<QWidget *> > fields_map;
-
-		warning_frame=nullptr;
 		element = nullptr;
 
 		setupUi(this);
@@ -32,24 +29,19 @@ ElementWidget::ElementWidget(QWidget *parent) : QWidget(parent)
 		elem_expr_hl->loadConfiguration(GlobalAttributes::getSQLHighlightConfPath());
 
 		parent_obj=nullptr;
-		op_class_sel=new ObjectSelectorWidget(ObjectType::OpClass, true, this);
-		collation_sel=new ObjectSelectorWidget(ObjectType::Collation, true, this);
-		operator_sel=new ObjectSelectorWidget(ObjectType::Operator, true, this);
+		op_class_sel=new ObjectSelectorWidget(ObjectType::OpClass, this);
+		collation_sel=new ObjectSelectorWidget(ObjectType::Collation, this);
+		operator_sel=new ObjectSelectorWidget(ObjectType::Operator, this);
 
 		element_grid->addWidget(collation_sel, 3,1,1,2);
 		element_grid->addWidget(op_class_sel, 4,1,1,2);
 		element_grid->addWidget(operator_sel, 5,1,1,2);
 
-		fields_map[BaseObjectWidget::generateVersionsInterval(BaseObjectWidget::AfterVersion, PgSqlVersions::PgSqlVersion91)].push_back(collation_lbl);
-		warning_frame=BaseObjectWidget::generateVersionWarningFrame(fields_map);
-		element_grid->addWidget(warning_frame, element_grid->count()+1, 0, 1, 3);
-		warning_frame->setParent(this);
-
-		connect(column_rb, SIGNAL(toggled(bool)), this, SLOT(selectElementObject()));
-		connect(expression_rb, SIGNAL(toggled(bool)), this, SLOT(selectElementObject()));
-		connect(sorting_chk, SIGNAL(toggled(bool)), ascending_rb, SLOT(setEnabled(bool)));
-		connect(sorting_chk, SIGNAL(toggled(bool)), descending_rb, SLOT(setEnabled(bool)));
-		connect(sorting_chk, SIGNAL(toggled(bool)), nulls_first_chk, SLOT(setEnabled(bool)));
+		connect(column_rb, &QRadioButton::toggled, this, &ElementWidget::selectElementObject);
+		connect(expression_rb, &QRadioButton::toggled, this, &ElementWidget::selectElementObject);
+		connect(sorting_chk, &QCheckBox::toggled, ascending_rb, &QRadioButton::setEnabled);
+		connect(sorting_chk, &QCheckBox::toggled, descending_rb, &QRadioButton::setEnabled);
+		connect(sorting_chk, &QCheckBox::toggled, nulls_first_chk, &QCheckBox::setEnabled);
 
 		this->setEnabled(false);
 		collation_sel->setVisible(false);
@@ -166,7 +158,6 @@ void ElementWidget::setIndexElement(IndexElement *elem)
 	setWindowTitle(tr("Index element properties"));
 	collation_sel->setVisible(true);
 	collation_lbl->setVisible(true);
-	warning_frame->setVisible(true);
 }
 
 void ElementWidget::setExcludeElement(ExcludeElement *elem)
@@ -175,7 +166,6 @@ void ElementWidget::setExcludeElement(ExcludeElement *elem)
 	setWindowTitle(tr("Exclude element properties"));
 	operator_sel->setVisible(true);
 	operator_lbl->setVisible(true);
-	warning_frame->setVisible(false);
 }
 
 void ElementWidget::setPartitionKey(PartitionKey *elem)
@@ -188,7 +178,6 @@ void ElementWidget::setPartitionKey(PartitionKey *elem)
 	ascending_rb->setVisible(false);
 	descending_rb->setVisible(false);
 	nulls_first_chk->setVisible(false);
-	warning_frame->setVisible(true);
 }
 
 Element *ElementWidget::getElement()

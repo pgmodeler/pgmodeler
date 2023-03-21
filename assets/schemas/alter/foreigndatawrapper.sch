@@ -7,7 +7,7 @@
 %if {has-changes} %then
 	[ALTER ] {sql-object} $sp {signature}
 
-	%if ({pgsql-ver} >=f "9.1") %and {handler} %then
+	%if {handler} %then
 		$br $tb
 
 		%if ({handler} == "unset") %then

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -19,13 +19,10 @@
 #include "globalattributes.h"
 #include "messagebox.h"
 #include "attributes.h"
+#include <QScreen>
 
 PgModelerApp::PgModelerApp(int &argc, char **argv) : Application(argc,argv)
 {
-	QTranslator *main_translator=nullptr, *plugin_translator=nullptr;
-	QFile ui_style(GlobalAttributes::getTmplConfigurationFilePath("",
-																																GlobalAttributes::UiStyleConf +
-																																GlobalAttributes::ConfigurationExt));
 	QString plugin_name, plug_lang_dir, plug_lang_file;
 	QStringList dir_list;
 	QDir dir;
@@ -58,46 +55,30 @@ PgModelerApp::PgModelerApp(int &argc, char **argv) : Application(argc,argv)
 	this->addLibraryPath(this->applicationDirPath());
 
 	//If pgModeler bundles plugins, add the root plugins path to lib search paths
-	if(dir.exists(GlobalAttributes::getPluginsDir()))
-		this->addLibraryPath(GlobalAttributes::getPluginsDir());
+	if(dir.exists(GlobalAttributes::getPluginsPath()))
+		this->addLibraryPath(GlobalAttributes::getPluginsPath());
 
 	//Check if the temporary dir exists, if not, creates it.
-	if(!dir.exists(GlobalAttributes::getTemporaryDir()))
+	if(!dir.exists(GlobalAttributes::getTemporaryPath()))
 	{
-		if(!dir.mkdir(GlobalAttributes::getTemporaryDir()))
+		if(!dir.mkdir(GlobalAttributes::getTemporaryPath()))
 		{
 			Messagebox msg;
-			msg.show(Exception(Exception::getErrorMessage(ErrorCode::FileDirectoryNotWritten).arg(GlobalAttributes::getTemporaryDir()),
+			msg.show(Exception(Exception::getErrorMessage(ErrorCode::FileDirectoryNotWritten).arg(GlobalAttributes::getTemporaryPath()),
 												 ErrorCode::FileDirectoryNotWritten, __PRETTY_FUNCTION__,__FILE__,__LINE__));
 		}
 	}
 
 	//Trying to identify if the user defined a custom UI language in the pgmodeler.conf file
-	QString conf_file =	GlobalAttributes::getConfigurationFilePath(GlobalAttributes::GeneralConf);
-	QFile input;
-	QString lang_id = QLocale::system().name();
+	QString lang_id = GlobalAttributes::getConfigParamFromFile(Attributes::UiLanguage, GlobalAttributes::GeneralConf);
 
-	input.setFileName(conf_file);
+	if(lang_id.isEmpty())
+		lang_id = QLocale::system().name();
 
-	if(input.open(QFile::ReadOnly))
-	{
-		QString buf = QString(input.readAll());
-		QRegExp regexp = QRegExp(QString("(%1)(.*)(=)(\\\")(.)+(\\\")(\\\n)").arg(Attributes::UiLanguage));
-		int idx =	regexp.indexIn(QString(buf));
-
-		//Extract the value of the ui-language attribute in the conf file
-		lang_id = buf.mid(idx, regexp.matchedLength());
-		lang_id.remove(Attributes::UiLanguage);
-		lang_id.remove(QChar('"')).remove(QChar('=')).remove(QChar('\n'));
-	}
-
-	//Tries to load the main ui translation according to the system's locale
-	main_translator=new QTranslator(this);
-	main_translator->load(lang_id, GlobalAttributes::getLanguagesDir());
-	this->installTranslator(main_translator);
+	loadTranslation(lang_id);
 
 	//Trying to load plugins translations
-	dir_list=QDir(GlobalAttributes::getPluginsDir() +
+	dir_list=QDir(GlobalAttributes::getPluginsPath() +
 								GlobalAttributes::DirSeparator,
 								QString("*"), QDir::Name, QDir::AllDirs | QDir::NoDotAndDotDot).entryList();
 
@@ -107,34 +88,14 @@ PgModelerApp::PgModelerApp(int &argc, char **argv) : Application(argc,argv)
 		dir_list.pop_front();
 
 		//Configure the path to "lang" subdir at current plugin directory
-		plug_lang_dir=GlobalAttributes::getPluginsDir() +
+		plug_lang_dir=GlobalAttributes::getPluginsPath() +
 					  GlobalAttributes::DirSeparator + plugin_name +
 					  GlobalAttributes::DirSeparator + QString("lang") +
 					  GlobalAttributes::DirSeparator;
 
 		plug_lang_file=plugin_name + QString(".") + lang_id;
-
-		//Check if the .qm file exists for the current plugin. If so create and install a translator
-		if(QFileInfo(plug_lang_dir + plug_lang_file + QString(".qm")).exists())
-		{
-			plugin_translator=new QTranslator(this);
-			plugin_translator->load(plug_lang_file, plug_lang_dir);
-			this->installTranslator(plugin_translator);
-		}
+		loadTranslation(plug_lang_file, plug_lang_dir);
 	}
-
-	//Loading app style sheet
-	ui_style.open(QFile::ReadOnly);
-
-	//Raises an error if ui style is not found
-	if(!ui_style.isOpen())
-	{
-		Messagebox msg;
-		msg.show(Exception(Exception::getErrorMessage(ErrorCode::FileDirectoryNotAccessed).arg(ui_style.fileName()),
-											 ErrorCode::FileDirectoryNotAccessed,__PRETTY_FUNCTION__,__FILE__,__LINE__));
-	}
-	else
-		this->setStyleSheet(ui_style.readAll());
 }
 
 bool PgModelerApp::notify(QObject *receiver, QEvent *event)

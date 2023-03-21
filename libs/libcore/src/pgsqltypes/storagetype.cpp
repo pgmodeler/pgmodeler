@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -18,10 +18,9 @@
 
 #include "storagetype.h"
 
-template<>
-QStringList StorageType::TemplateType<StorageType>::type_names =
+QStringList StorageType::type_names =
 {
-	"", // Reserved for BaseType::null
+	"", // Reserved for Class::Null
 
 	"plain",
 	"external",
@@ -37,6 +36,11 @@ StorageType::StorageType()
 StorageType::StorageType(unsigned type_id)
 {
 	setType(type_id);
+}
+
+QStringList StorageType::getTypes()
+{
+	return TemplateType<StorageType>::getTypes(type_names);
 }
 
 StorageType::StorageType(const QString &type_name)
@@ -62,4 +66,19 @@ bool StorageType::operator != (const QString &type_name)
 bool StorageType::operator != (StorageType type)
 {
 	return (this->type_idx!=type.type_idx);
+}
+
+unsigned StorageType::setType(unsigned type_id)
+{
+	return TemplateType<StorageType>::setType(type_id, type_names);
+}
+
+unsigned StorageType::setType(const QString &type_name)
+{
+	return TemplateType<StorageType>::setType(type_name, type_names);
+}
+
+QString StorageType::getTypeName(unsigned type_id)
+{
+	return TemplateType<StorageType>::getTypeName(type_id, type_names);
 }

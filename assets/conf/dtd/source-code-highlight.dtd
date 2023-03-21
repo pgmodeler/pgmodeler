@@ -65,7 +65,6 @@ background-color: the color of the background of words matching the group (omitt
 background-color: the color of the foreground of words matching the group (omitting this attribute causes black foreground to be applied)
 lookahead-char: the character used to break the highlight for a group. This character itself is not highlighted.
 case-sensitive: indicates if the expressions matching must be case sensitive or not.
-partial-match: indicates if the expressions matching must be partial or not
 bold: words matching the group will have a bold style.
 italic: words matching the group will have a italic style.
 underline: words matching the group will have a underline style.
@@ -77,7 +76,6 @@ strikeout: words matching the group will have a strikeout style.
 <!ATTLIST group foreground-color CDATA #IMPLIED>
 <!ATTLIST group lookahead-char CDATA #IMPLIED>
 <!ATTLIST group case-sensitive (false|true) "false">
-<!ATTLIST group partial-match (false|true) "false">
 <!ATTLIST group bold (false|true) "false">
 <!ATTLIST group italic (false|true) "false">
 <!ATTLIST group underline (false|true) "false">

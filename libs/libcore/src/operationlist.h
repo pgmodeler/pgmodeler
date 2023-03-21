@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -31,7 +31,7 @@ undo / redo all the operations made.
 #include "databasemodel.h"
 #include "operation.h"
 
-class OperationList: public QObject {
+class __libcore OperationList: public QObject {
 	private:
 		Q_OBJECT
 
@@ -41,19 +41,19 @@ class OperationList: public QObject {
 		XmlParser *xmlparser;
 
 		//! \brief List of objects that were removed / modified on the model
-		vector<BaseObject *> object_pool;
+		std::vector<BaseObject *> object_pool;
 
 		/*! \brief List of objects that at the time of deletion from pool were still referenced
 		 somehow on the model. The object is stored in this secondary list and
 		 deleted when the whole list of operations is destroyed */
-		vector<BaseObject *> not_removed_objs;
+		std::vector<BaseObject *> not_removed_objs;
 
 		/*! \brief Stores the objects that were unallocated on the removeOperations() method. This maps
 		is used in order to avoid double delete on pointers. */
-		map<BaseObject *, bool> unallocated_objs;
+		std::map<BaseObject *, bool> unallocated_objs;
 
 		//! \brief Stores the operations executed by the user
-		vector<Operation *> operations;
+		std::vector<Operation *> operations;
 
 		//! \brief Database model that is linked with this operation list
 		DatabaseModel *model;
@@ -64,7 +64,7 @@ class OperationList: public QObject {
 		/*! \brief Stores the type of chain to the next operation to be stored
 		 in the list. This attribute is used in conjunction with the chaining
 		 initialization / finalization methods. */
-		unsigned next_op_chain;
+		Operation::ChainType next_op_chain;
 
 		//! \brief Current operation index
 		int current_index;
@@ -79,7 +79,7 @@ class OperationList: public QObject {
 		bool isObjectOnPool(BaseObject *object);
 
 		//! \brief Adds the object on the pool according to the operation type passed
-		void addToPool(BaseObject *object, unsigned op_type);
+		void addToPool(BaseObject *object, Operation::OperType op_type);
 
 		/*! \brief Removes one object from the pool using its index and deallocating
 		 it in case the object is not referenced on the model */
@@ -121,7 +121,7 @@ class OperationList: public QObject {
 		bool isOperationChainStarted();
 
 		//! \brief Returns if an operation of the specified op_type is already registered for the object
-		bool isObjectRegistered(BaseObject *object, unsigned op_type);
+		bool isObjectRegistered(BaseObject *object, Operation::OperType op_type);
 
 		//! \brief Undo the current operation on the list
 		void undoOperation();
@@ -147,7 +147,7 @@ class OperationList: public QObject {
 	 segmentations fault.
 
 	 In case of success this method returns an integer indicating the last registered operation ID */
-		int registerObject(BaseObject *object, unsigned op_type, int object_idx=-1, BaseObject *parent_obj=nullptr);
+		int registerObject(BaseObject *object, Operation::OperType op_type, int object_idx=-1, BaseObject *parent_obj=nullptr);
 
 		//! \brief Gets the maximum size for the operation list
 		unsigned getMaximumSize();

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -28,23 +28,23 @@
 #include "reference.h"
 #include "basetable.h"
 
-class View: public BaseTable {
+class __libcore View: public BaseTable {
 	private:
 		//! \brief Stores the references to expressions and objects
-		vector<Reference> references;
+		std::vector<Reference> references;
 
 		/*! \brief Vectors that stores indexes to the view references in each
 		 SQL part: SELECT-FROM, FROM-WHERE, after WHERE, expressions at the very end of definition (e.g. group by) */
-		vector<unsigned>	exp_select,
+		std::vector<unsigned>	exp_select,
 		exp_from,
 		exp_where,
 		exp_end;
 
-		vector<TableObject *> triggers;
-		vector<TableObject *> rules;
-		vector<TableObject *> indexes;
+		std::vector<TableObject *> triggers;
+		std::vector<TableObject *> rules;
+		std::vector<TableObject *> indexes;
 
-		vector<SimpleColumn> columns;
+		std::vector<SimpleColumn> columns;
 
 		/*! \brief Commom table expression. This is prepend on the views definition.
 		CTE's are available since PostgreSQL 8.4:
@@ -71,7 +71,7 @@ class View: public BaseTable {
 		int getReferenceIndex(Reference &refer);
 
 		//! \brief Returns the reference to internal expression list according to the SQL expression type
-		vector<unsigned> *getExpressionList(unsigned sql_type);
+		std::vector<unsigned> *getExpressionList(Reference::SqlType sql_type);
 
 		void setSQLObjectAttribute();
 
@@ -103,7 +103,7 @@ class View: public BaseTable {
 		 (refer to class Reference::SQL_??? constants). The 'expr_id' parameter is the
 		 index where the reference must be inserted. By defaul the method always adds
 		 new references at the end of the list */
-		void addReference(Reference &refer, unsigned sql_type, int expr_id=-1);
+		void addReference(Reference &refer, Reference::SqlType sql_type, int expr_id=-1);
 
 		/*! \brief Adds a trigger or rule into the view. If the index is specified ( obj_idx >= 0)
 		inserts the object at the position */
@@ -143,7 +143,7 @@ class View: public BaseTable {
 		int getObjectIndex(const QString &name, ObjectType obj_type);
 
 		//! \brief Returns the children objects of the view excluding the provided children types (does not include references)
-		vector<BaseObject *> getObjects(const vector<ObjectType> &excl_types = {});
+		std::vector<BaseObject *> getObjects(const std::vector<ObjectType> &excl_types = {});
 
 		//! \brief Returns the view's child object using its index and type
 		TableObject *getObject(unsigned obj_idx, ObjectType obj_type);
@@ -176,7 +176,7 @@ class View: public BaseTable {
 		void removeObjects();
 
 		//! \brief Returns the object list according to specified type
-		vector<TableObject *> *getObjectList(ObjectType obj_type);
+		std::vector<TableObject *> *getObjectList(ObjectType obj_type);
 
 		//! \brief Sets the commom table expression for the view
 		void setCommomTableExpression(const QString &expr);
@@ -189,7 +189,7 @@ class View: public BaseTable {
 		void removeReferences();
 
 		//! \brief Removes an element from the expression list specified by the 'sql_type' parameter
-		void removeReference(unsigned expr_id, unsigned sql_type);
+		void removeReference(unsigned expr_id, Reference::SqlType sql_type);
 
 		//! \brief Returns the commom table expression
 		QString getCommomTableExpression();
@@ -200,22 +200,22 @@ class View: public BaseTable {
 		/*! \brief Returns the element count on the specified SQL expression type list (sql_type).
 		 It possible to filter the reference type via 'ref_type' which must be filled
 		 with the Reference::REFER_??? constants */
-		unsigned getReferenceCount(unsigned sql_type, int ref_type=-1);
+		unsigned getReferenceCount(Reference::SqlType sql_type, int ref_type = -1);
 
 		//! \brief Returs one reference using its index
 		Reference getReference(unsigned ref_id);
 
 		/*! \brief Retuns one reference in the specified position (ref_id) on the
 		 specified expression list (sql_type) */
-		Reference getReference(unsigned ref_id, unsigned sql_type);
+		Reference getReference(unsigned ref_id, Reference::SqlType sql_type);
 
 		//! \brief Returns the specified reference index on the specified expression list
-		int getReferenceIndex(Reference &ref, unsigned sql_type);
+		int getReferenceIndex(Reference &ref, Reference::SqlType sql_type);
 
 		//! \brief Returns the SQL / XML definition for the view
-		virtual QString getCodeDefinition(unsigned def_type) final;
+		virtual QString getSourceCode(SchemaParser::CodeType def_type) final;
 
-		virtual QString getDropDefinition(bool cascade) final;
+		virtual QString getDropCode(bool cascade) final;
 
 		/*! \brief Returns whether the view references columns added
 		 by relationship. This method is used as auxiliary
@@ -228,7 +228,7 @@ class View: public BaseTable {
 	This method is slower than isReferRelationshipAddedColumn() so it's not
 	recommended to use it only check if the object is referencing columns
 	added by relationship */
-		vector<Column *> getRelationshipAddedColumns();
+		std::vector<Column *> getRelationshipAddedColumns();
 
 		//! \brief Returns if the view is referencing the specified table
 		bool isReferencingTable(PhysicalTable *tab);
@@ -250,9 +250,10 @@ class View: public BaseTable {
 		void generateColumns();
 
 		//! \brief Returns the deduced columns of the view
-		vector<SimpleColumn> getColumns();
+		std::vector<SimpleColumn> getColumns();
 
-		virtual QString getDataDictionary(bool split, attribs_map extra_attribs = {});
+		virtual QString getDataDictionary(bool split, const attribs_map &extra_attribs = {});
+		virtual QString getAlterCode(BaseObject *object) final;
 
 		//! \brief Copy the attributes between two views
 		void operator = (View &visao);

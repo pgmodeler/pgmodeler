@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -34,12 +34,27 @@
 #include "newobjectoverlaywidget.h"
 #include "layerswidget.h"
 
-class ModelWidget: public QWidget {
+class __libgui ModelWidget: public QWidget {
 	private:
 		Q_OBJECT
 
+		enum RelBreakMode {
+			//Break vertically the line in one 90° angle
+			BreakVertNinetyDegrees,
+
+			//Break horizontally the line in one 90° angle
+			BreakHorizNinetyDegrees,
+
+			//Break vertically the line in two 90° angles
+			BreakVert2NinetyDegrees,
+
+			//Break horizontally the line in two 90° angles
+			BreakHoriz2NinetyDegrees
+		};
+
 		//! \brief Constants used to control the object stacking method
 		static constexpr int BringToFront = 1,
+
 		SendToBack = -1;
 
 		XmlParser *xmlparser;
@@ -55,7 +70,16 @@ class ModelWidget: public QWidget {
 		bool modified,
 
 		//! \brief Indicates if the panning mode was activated via event filter (see eventFilter())
-		panning_mode;
+		panning_mode,
+
+		//! \brief Stores the current state of grid visibility prior a panning move
+		curr_show_grid,
+
+		//! \brief Stores the current state of page delimiters visibility prior a panning move
+		curr_show_delim,
+
+		//! \brief Indicates if the canvas panning move is being made via mouse wheel
+		wheel_move;
 
 		/*! \brief Indicates if the cut operation is currently activated. This flag modifies
 		the way the methods copyObjects() and removeObject() works. */
@@ -77,10 +101,10 @@ class ModelWidget: public QWidget {
 		static ModelWidget *src_model;
 
 		//! \brief Copied object on the source model
-		static vector<BaseObject *> copied_objects;
+		static std::vector<BaseObject *> copied_objects;
 
 		//! \brief Stores the cutted object on source model (only when executing cut command)
-		static vector<BaseObject *> cutted_objects;
+		static std::vector<BaseObject *> cut_objects;
 
 		//! \brief Frame that indicates if the model is protected
 		QFrame *protected_model_frm;
@@ -143,7 +167,7 @@ class ModelWidget: public QWidget {
 		stacking_menu;
 
 		//! \brief Stores the selected object on the scene
-		vector<BaseObject *> selected_objects;
+		std::vector<BaseObject *> selected_objects;
 
 		//! \brief Type of the object to be inserted on the model
 		ObjectType new_obj_type;
@@ -166,10 +190,18 @@ class ModelWidget: public QWidget {
 		//! \brief This label shows a small portion of the canvas in normal zoom at the current cursor position
 		*magnifier_area_lbl;
 
-		QFrame	*magnifier_frm;
+		//! \brief This rect stores the current size of the magnifier area in viewport that is drawn in the magnifier area label
+		QRect magnifier_rect;
 
 		//! \brief This timer controls the interval the zoom label is visible
-		QTimer zoom_info_timer;
+		QTimer zoom_info_timer,
+
+		/*! \brief This timer controls the interval that the background of the scene is hidden while
+		 *  using the mouse wheel to zoom or move the scene */
+		wheel_timer;
+
+		//! \brief Stores the installed plugins actions to be used in the model context menu
+		QList<QAction *> plugins_actions;
 
 		//! \brief Opens a editing form for objects at database level
 		template<class Class, class WidgetClass>
@@ -186,6 +218,9 @@ class ModelWidget: public QWidget {
 
 		//! \brief Opens a editing form specific for tables and foreign tables
 		int openTableEditingForm(ObjectType tab_type, PhysicalTable *object, Schema *parent_obj, const QPointF &pos);
+
+		//! \brief Configures the submenu related to the installed plugins actions
+		void configurePluginsActionsMenu();
 
 		//! \brief Configures the submenu related to the object
 		void configureQuickMenu(BaseObject *object);
@@ -205,12 +240,12 @@ class ModelWidget: public QWidget {
 		//! \brief Fades in our out the object types held by the specified action
 		void fadeObjects(QAction *action, bool fade_in);
 
-		void breakRelationshipLine(BaseRelationship *rel, unsigned break_type);
+		void breakRelationshipLine(BaseRelationship *rel, RelBreakMode break_type);
 
 		/*! \brief Arrange tables starting from a specified root in a hierarchical way
 		where for a certain table its child (or related) tables are places aside from left to right and top to bottom.
 		This method returns the bounding rect of the items after the rearrangement */
-		QRectF rearrangeTablesHierarchically(BaseTableView *root, vector<BaseObject *> &evaluated_tabs);
+		QRectF rearrangeTablesHierarchically(BaseTableView *root, std::vector<BaseObject *> &evaluated_tabs);
 
 		/*! \brief Arrange tables inside the provided schema randomly (scattered). An start point should
 		 * be provided. The method will avoid to put two or more tables in the same position causing
@@ -219,8 +254,6 @@ class ModelWidget: public QWidget {
 
 		void updateMagnifierArea();
 
-		void showMagnifierArea(bool show);
-
 		/*! \brief Move the selected objects in the Z coordenate either to bottom or top.
 		 * The direction is defined by the constants BringToTop or SendToBottom. */
 		void moveObjectsInZStack(int direction);
@@ -228,12 +261,11 @@ class ModelWidget: public QWidget {
 		//! \brief Applies the layer settings from the internal database model to the scene object
 		void updateSceneLayers();
 
-	protected:
-		static constexpr unsigned BreakVertNinetyDegrees=0, //Break vertically the line in one 90° angle
-		BreakHorizNinetyDegrees=1, //Break horizontally the line in one 90° angle
-		BreakVert2NinetyDegrees=2, //Break vertically the line in two 90° angles
-		BreakHoriz2NinetyDegrees=3;//Break horizontally the line in two 90° angles
+		/*! \brief Define the list of actions executed by installed plugins that is exposed in
+		 *  the ModelWidget context menu */
+		void setPluginActions(const QList<QAction *> &plugin_acts);
 
+	protected:
 		QAction *action_source_code,
 		*action_edit,
 		*action_protect,
@@ -271,15 +303,17 @@ class ModelWidget: public QWidget {
 		*action_fade,
 		*action_fade_in,
 		*action_fade_out,
+		*action_fade_objs_in,
+		*action_fade_objs_out,
 		*action_fade_rels,
 		*action_fade_rels_in,
 		*action_fade_rels_out,
 		*action_fade_peer_tables,
 		*action_fade_peer_tables_in,
 		*action_fade_peer_tables_out,
-		*action_fade_both_objs,
-		*action_fade_both_objs_in,
-		*action_fade_both_objs_out,
+		*action_fade_tabs_rels,
+		*action_fade_tabs_rels_in,
+		*action_fade_tabs_rels_out,
 		*action_pagination,
 		*action_collapse_mode,
 		*action_collapse_ext_attribs,
@@ -300,7 +334,7 @@ class ModelWidget: public QWidget {
 		QWidgetAction *wgt_action_layers;
 
 		//! \brief Actions used to create new objects on the model
-		map<ObjectType, QAction *> actions_new_objects;
+		std::map<ObjectType, QAction *> actions_new_objects;
 
 		//! \brief Stores the relationship types menu
 		QMenu *rels_menu;
@@ -308,7 +342,6 @@ class ModelWidget: public QWidget {
 		void resizeEvent(QResizeEvent *);
 		void mousePressEvent(QMouseEvent *event);
 		void keyPressEvent(QKeyEvent *event);
-		void keyReleaseEvent(QKeyEvent *event);
 		void hideEvent(QHideEvent *);
 
 		//! \brief Captures and handles the QWeelEvent raised on the viewport scrollbars
@@ -325,20 +358,20 @@ class ModelWidget: public QWidget {
 		 a object spacing */
 		void rearrangeTablesInGrid(Schema *schema, unsigned tabs_per_row, QPointF origin, double obj_spacing);
 
-		void fadeObjects(const vector<BaseObject *> &objects, bool fade_in);
+		void fadeObjects(const std::vector<BaseObject *> &objects, bool fade_in);
 
-		void setAllCollapseMode(CollapseMode mode);
+		void setAllCollapseMode(BaseTable::CollapseMode mode);
 
 	public:
-		static constexpr double MinimumZoom=0.050000,
-		MaximumZoom=5.000001,
-		ZoomIncrement=0.050000;
+		static constexpr double MinimumZoom = ObjectsScene::MinScaleFactor,
+		MaximumZoom = ObjectsScene::MaxScaleFactor,
+		ZoomIncrement = 0.050000;
 
 		ModelWidget(QWidget *parent = nullptr);
 		virtual ~ModelWidget();
 
 		//! \brief Creates a BaseForm instance and insert the widget into it. A custom configuration for dialog buttons can be passed
-		int openEditingForm(QWidget *widget, unsigned button_conf = Messagebox::OkCancelButtons);
+		int openEditingForm(QWidget *widget, Messagebox::ButtonsId button_conf = Messagebox::OkCancelButtons);
 
 		/*! \brief Configures the scene aligning the object to the grid and resizing the scene
 		rect when some object is out of bound */
@@ -437,7 +470,7 @@ class ModelWidget: public QWidget {
 		void configurePopupMenu(BaseObject *object);
 
 		//! \brief Configures the popup menu according the the selected objects list
-		void configurePopupMenu(const vector<BaseObject *> &objects=vector<BaseObject *>());
+		void configurePopupMenu(const std::vector<BaseObject *> &objects=std::vector<BaseObject *>());
 
 		//! \brief Shows the configured popup menu
 		void showObjectMenu();
@@ -562,13 +595,20 @@ class ModelWidget: public QWidget {
 		 * so the correct info is written into the xml code of the model file */
 		void updateModelLayersInfo();
 
+		void showMagnifierArea(bool show);
+
+		//! \brief Prepares the viewport to a panning move by hiding grid/delimiters
+		void startPanningMove();
+
+		//! \brief Restores the previous grid/delimiter visibility state after finishing a panning move
+		void finishPanningMove();
+
 	public slots:
 		void loadModel(const QString &filename);
 		void saveModel(const QString &filename);
 		void saveModel();
-		void printModel(QPrinter *printer, bool print_grid, bool print_page_nums);
+		void printModel(QPrinter *printer, bool print_grid, bool print_page_nums, bool resize_delims);
 		void update();
-
 		void bringToFront();
 		void sendToBack();
 
@@ -578,6 +618,7 @@ class ModelWidget: public QWidget {
 		void s_objectCreated();
 		void s_objectRemoved();
 		void s_zoomModified(double);
+		void s_maginifierAreaVisible(bool);
 		void s_modelResized();
 
 		//! \brief Signal emitted whenever the modified status of the model changes

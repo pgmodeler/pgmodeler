@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -25,7 +25,7 @@ Constraint::Constraint()
 	deferrable=false;
 	no_inherit=false;
 	fill_factor=0;
-	index_type=BaseType::Null;
+	index_type=IndexingType::Null;
 
 	attributes[Attributes::PkConstr]="";
 	attributes[Attributes::FkConstr]="";
@@ -61,9 +61,9 @@ void Constraint::setConstraintType(ConstraintType constr_type)
 	this->constr_type=constr_type;
 }
 
-void Constraint::setActionType(ActionType action_type, unsigned act_id)
+void Constraint::setActionType(ActionType action_type, ActionEvent act_event)
 {
-	if(act_id==DeleteAction)
+	if(act_event == DeleteAction)
 	{
 		setCodeInvalidated(this->del_action != action_type);
 		this->del_action=action_type;
@@ -81,9 +81,9 @@ void Constraint::setExpression(const QString &expr)
 	expression=expr;
 }
 
-bool Constraint::isColumnExists(Column *column, unsigned col_type)
+bool Constraint::isColumnExists(Column *column, ColumnsId cols_id)
 {
-	vector<Column *>::iterator itr, itr_end;
+	std::vector<Column *>::iterator itr, itr_end;
 	bool found=false;
 
 	//Raises an error if the column is not allocated
@@ -91,7 +91,7 @@ bool Constraint::isColumnExists(Column *column, unsigned col_type)
 		throw Exception(ErrorCode::OprNotAllocatedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	//Gets the iterators from the specified internal list
-	if(col_type==SourceCols)
+	if(cols_id==SourceCols)
 	{
 		itr=columns.begin();
 		itr_end=columns.end();
@@ -112,26 +112,26 @@ bool Constraint::isColumnExists(Column *column, unsigned col_type)
 	return found;
 }
 
-bool Constraint::isColumnsExist(vector<Column *> columns, unsigned col_type, bool strict_check)
+bool Constraint::isColumnsExist(std::vector<Column *> columns, ColumnsId cols_id, bool strict_check)
 {
 	bool is_ref = false;
 	unsigned found_cols = 0;
 
 	for(auto &col : columns)
 	{
-		is_ref = isColumnExists(col, col_type);
+		is_ref = isColumnExists(col, cols_id);
 		if(!strict_check && !is_ref) break;
 		if(strict_check) found_cols++;
 	}
 
 	return (!strict_check && is_ref) ||
-					(strict_check && found_cols == getColumnCount(col_type));
+					(strict_check && found_cols == getColumnCount(cols_id));
 }
 
 bool Constraint::isColumnReferenced(Column *column, bool search_only_ref_cols)
 {
 	bool found=false;
-	vector<ExcludeElement>::iterator itr, itr_end;
+	std::vector<ExcludeElement>::iterator itr, itr_end;
 
 	if(constr_type == ConstraintType::PrimaryKey ||
 			constr_type == ConstraintType::Unique ||
@@ -159,7 +159,7 @@ bool Constraint::isColumnReferenced(Column *column, bool search_only_ref_cols)
 	return found;
 }
 
-void Constraint::addColumn(Column *column, unsigned col_type)
+void Constraint::addColumn(Column *column, ColumnsId cols_id)
 {
 	//Raises an error if the column is not allocated
 	if(!column)
@@ -167,12 +167,13 @@ void Constraint::addColumn(Column *column, unsigned col_type)
 						.arg(this->getName())
 						.arg(BaseObject::getTypeName(ObjectType::Constraint)),
 						ErrorCode::AsgNotAllocatedColumn,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-	else if(constr_type!=ConstraintType::Check)
+
+	if(constr_type!=ConstraintType::Check)
 	{
 		//Adds the column only if the column doesn't exists on the internal list
-		if(!isColumnExists(column,col_type))
+		if(!isColumnExists(column,cols_id))
 		{
-			if(col_type==ReferencedCols)
+			if(cols_id==ReferencedCols)
 				ref_columns.push_back(column);
 			else
 			{
@@ -185,17 +186,17 @@ void Constraint::addColumn(Column *column, unsigned col_type)
 	}
 }
 
-void Constraint::addColumns(const vector<Column *> &cols, unsigned col_type)
+void Constraint::addColumns(const std::vector<Column *> &cols, ColumnsId cols_id)
 {
 	try
 	{
-		if(col_type == ReferencedCols)
+		if(cols_id == ReferencedCols)
 			ref_columns.clear();
 		else
 			columns.clear();
 
 		for(auto &col : cols)
-			addColumn(col, col_type);
+			addColumn(col, cols_id);
 	}
 	catch(Exception &e)
 	{
@@ -220,15 +221,15 @@ void Constraint::setTablespace(BaseObject *tabspc)
 	}
 }
 
-void Constraint::setColumnsAttribute(unsigned col_type, unsigned def_type, bool inc_addedbyrel)
+void Constraint::setColumnsAttribute(ColumnsId cols_id, unsigned def_type, bool inc_addedbyrel)
 {
-	vector<Column *> *col_vector=nullptr;
+	std::vector<Column *> *col_vector=nullptr;
 	Column *col=nullptr;
 	QString str_cols, attrib;
 	unsigned i, count;
-	bool format=(def_type==SchemaParser::SqlDefinition);
+	bool format=(def_type==SchemaParser::SqlCode);
 
-	if(col_type==ReferencedCols)
+	if(cols_id==ReferencedCols)
 	{
 		col_vector=&ref_columns;
 		attrib=Attributes::DstColumns;
@@ -248,8 +249,8 @@ void Constraint::setColumnsAttribute(unsigned col_type, unsigned def_type, bool 
 		 through relationship can not be included because they are inserted
 		 to the restriction on the time of creation of the relationship from its XML
 		 so the parameter 'inc_addedbyrel' can be used to solve this case. */
-		if((def_type==SchemaParser::SqlDefinition) ||
-				((def_type==SchemaParser::XmlDefinition) &&
+		if((def_type==SchemaParser::SqlCode) ||
+				((def_type==SchemaParser::XmlCode) &&
 				 ((inc_addedbyrel && col->isAddedByRelationship()) ||
 				  (inc_addedbyrel && !col->isAddedByRelationship()) ||
 				  (!inc_addedbyrel && !col->isAddedByRelationship()))))
@@ -305,17 +306,17 @@ ConstraintType Constraint::getConstraintType()
 	return constr_type;
 }
 
-ActionType Constraint::getActionType(unsigned act_id)
+ActionType Constraint::getActionType(ActionEvent act_event)
 {
-	if(act_id==DeleteAction)
+	if(act_event == DeleteAction)
 		return del_action;
-	else
-		return upd_action;
+
+	return upd_action;
 }
 
-vector<Column *> Constraint::getColumns(unsigned col_type)
+std::vector<Column *> Constraint::getColumns(ColumnsId cols_id)
 {
-  return (col_type==SourceCols ? columns : ref_columns);
+	return (cols_id == SourceCols ? columns : ref_columns);
 }
 
 QString Constraint::getExpression()
@@ -323,11 +324,11 @@ QString Constraint::getExpression()
 	return expression;
 }
 
-Column *Constraint::getColumn(unsigned col_idx, unsigned col_type)
+Column *Constraint::getColumn(unsigned col_idx, ColumnsId cols_id)
 {
-	vector<Column *> *col_list=nullptr;
+	std::vector<Column *> *col_list=nullptr;
 
-	col_list=(col_type==SourceCols ? &columns : &ref_columns);
+	col_list=(cols_id==SourceCols ? &columns : &ref_columns);
 
 	//Raises an error if the column index is invalid (out of bound)
 	if(col_idx>=col_list->size())
@@ -336,13 +337,13 @@ Column *Constraint::getColumn(unsigned col_idx, unsigned col_type)
 	return col_list->at(col_idx);
 }
 
-Column *Constraint::getColumn(const QString &name, unsigned col_type)
+Column *Constraint::getColumn(const QString &name, ColumnsId cols_id)
 {
 	bool found=false;
-	vector<Column *> *col_list=nullptr;
-	vector<Column *>::iterator itr_col, itr_end_col;
+	std::vector<Column *> *col_list=nullptr;
+	std::vector<Column *>::iterator itr_col, itr_end_col;
 
-	col_list=(col_type==SourceCols? &columns : &ref_columns);
+	col_list=(cols_id==SourceCols? &columns : &ref_columns);
 
 	itr_col=col_list->begin();
 	itr_end_col=col_list->end();
@@ -363,12 +364,12 @@ BaseTable *Constraint::getReferencedTable()
 	return ref_table;
 }
 
-unsigned Constraint::getColumnCount(unsigned col_type)
+unsigned Constraint::getColumnCount(ColumnsId cols_id)
 {
-	if(col_type==ReferencedCols)
+	if(cols_id==ReferencedCols)
 		return ref_columns.size();
-	else
-		return columns.size();
+
+	return columns.size();
 }
 
 void Constraint::removeColumns()
@@ -379,14 +380,14 @@ void Constraint::removeColumns()
 	setCodeInvalidated(true);
 }
 
-void Constraint::removeColumn(const QString &name, unsigned col_type)
+void Constraint::removeColumn(const QString &name, ColumnsId cols_id)
 {
-	vector<Column *>::iterator itr, itr_end;
-	vector<Column *> *cols=nullptr;
+	std::vector<Column *>::iterator itr, itr_end;
+	std::vector<Column *> *cols=nullptr;
 	Column *col=nullptr;
 
 	//Gets the column list using the specified internal list type
-	if(col_type==ReferencedCols)
+	if(cols_id==ReferencedCols)
 		cols=&ref_columns;
 	else
 		cols=&columns;
@@ -430,8 +431,8 @@ bool Constraint::isNoInherit()
 
 bool Constraint::isReferRelationshipAddedColumn()
 {
-	vector<Column *>::iterator itr, itr_end;
-	vector<ExcludeElement>::iterator itr1, itr1_end;
+	std::vector<Column *>::iterator itr, itr_end;
+	std::vector<ExcludeElement>::iterator itr1, itr1_end;
 	Column *col=nullptr;
 	bool found=false;
 
@@ -469,11 +470,11 @@ bool Constraint::isReferRelationshipAddedColumn()
 	return found;
 }
 
-vector<Column *> Constraint::getRelationshipAddedColumns()
+std::vector<Column *> Constraint::getRelationshipAddedColumns()
 {
 	Column *column=nullptr;
-	vector<Column *> cols;
-	vector<vector<Column *> *> lists = { &columns, &ref_columns };
+	std::vector<Column *> cols;
+	std::vector<std::vector<Column *> *> lists = { &columns, &ref_columns };
 
 	for(auto &p_lst : lists)
 	{
@@ -514,14 +515,14 @@ int Constraint::getExcludeElementIndex(ExcludeElement elem)
 	return (found ? idx : -1);
 }
 
-vector<ExcludeElement> Constraint::getExcludeElements()
+std::vector<ExcludeElement> Constraint::getExcludeElements()
 {
 	return excl_elements;
 }
 
-void Constraint::addExcludeElements(vector<ExcludeElement> &elems)
+void Constraint::addExcludeElements(std::vector<ExcludeElement> &elems)
 {
-	vector<ExcludeElement> elems_bkp=excl_elements;
+	std::vector<ExcludeElement> elems_bkp=excl_elements;
 
 	try
 	{
@@ -652,7 +653,7 @@ unsigned Constraint::getExcludeElementCount()
 	return excl_elements.size();
 }
 
-void Constraint::setExcludeElementsAttribute(unsigned def_type)
+void Constraint::setExcludeElementsAttribute(SchemaParser::CodeType def_type)
 {
 	QString str_elem;
 	unsigned i, count;
@@ -660,8 +661,8 @@ void Constraint::setExcludeElementsAttribute(unsigned def_type)
 	count=excl_elements.size();
 	for(i=0; i < count; i++)
 	{
-		str_elem+=excl_elements[i].getCodeDefinition(def_type);
-		if(i < (count-1) && def_type==SchemaParser::SqlDefinition) str_elem+=',';
+		str_elem+=excl_elements[i].getSourceCode(def_type);
+		if(i < (count-1) && def_type==SchemaParser::SqlCode) str_elem+=',';
 	}
 
 	attributes[Attributes::Elements]=str_elem;
@@ -677,9 +678,9 @@ IndexingType Constraint::getIndexType()
 	return index_type;
 }
 
-QString Constraint::getCodeDefinition(unsigned def_type)
+QString Constraint::getSourceCode(SchemaParser::CodeType def_type)
 {
-	return getCodeDefinition(def_type, false);
+	return getSourceCode(def_type, false);
 }
 
 void Constraint::setDeclInTableAttribute()
@@ -692,6 +693,8 @@ void Constraint::setDeclInTableAttribute()
 
 void Constraint::configureSearchAttributes()
 {
+	TableObject::configureSearchAttributes();
+
 	QStringList src_col_names, ref_col_names;
 
 	for(auto &col : columns)
@@ -702,10 +705,9 @@ void Constraint::configureSearchAttributes()
 
 	search_attribs[Attributes::SrcColumns] = src_col_names.join(", ");
 	search_attribs[Attributes::RefColumns] = ref_col_names.join(", ");
-	TableObject::configureSearchAttributes();
 }
 
-QString Constraint::getCodeDefinition(unsigned def_type, bool inc_addedbyrel)
+QString Constraint::getSourceCode(SchemaParser::CodeType def_type, bool inc_addedbyrel)
 {
 	QString code_def=getCachedCode(def_type, false);
 	if(!inc_addedbyrel && !code_def.isEmpty()) return code_def;
@@ -776,21 +778,43 @@ QString Constraint::getCodeDefinition(unsigned def_type, bool inc_addedbyrel)
 	else
 		attributes[Attributes::Factor]="";
 
-	return BaseObject::__getCodeDefinition(def_type);
+	return BaseObject::__getSourceCode(def_type);
 }
 
-QString Constraint::getDropDefinition(bool cascade)
+QString Constraint::getDropCode(bool cascade)
 {
 	setDeclInTableAttribute();
-	return TableObject::getDropDefinition(cascade);
+	return TableObject::getDropCode(cascade);
 }
 
-QString Constraint::getSignature(bool format)
+QString Constraint::getDataDictionary(const attribs_map &extra_attribs)
 {
-	if(!getParentTable())
-		return BaseObject::getSignature(format);
+	try
+	{
+		attribs_map attribs;
+		QStringList col_names;
 
-	return QString("%1 ON %2 ").arg(this->getName(format)).arg(getParentTable()->getSignature(true));
+		attribs.insert(extra_attribs.begin(), extra_attribs.end());
+		attribs[Attributes::Name] = obj_name;
+		attribs[Attributes::Type] = ~constr_type;
+		attribs[Attributes::Comment] = comment;
+		attribs[Attributes::RefTable] = ref_table ? ref_table->getSignature().remove('"') : "";
+		attribs[Attributes::Expression] = expression;
+
+		// Retrieving the columns that composes the constraint
+		for(auto &col : columns)
+			 col_names.push_back(col->getName());
+
+		attribs[Attributes::Columns] = col_names.join(", ");
+
+		schparser.ignoreEmptyAttributes(true);
+		return schparser.getSourceCode(GlobalAttributes::getSchemaFilePath(GlobalAttributes::DataDictSchemaDir,
+																																					 getSchemaName()), attribs);
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorCode(), __PRETTY_FUNCTION__, __FILE__, __LINE__, &e);
+	}
 }
 
 bool Constraint::isCodeDiffersFrom(BaseObject *object, const QStringList &ignored_attribs, const QStringList &ignored_tags)
@@ -802,8 +826,8 @@ bool Constraint::isCodeDiffersFrom(BaseObject *object, const QStringList &ignore
 
 	try
 	{
-		return BaseObject::isCodeDiffersFrom(this->getCodeDefinition(SchemaParser::XmlDefinition, true),
-											 object->getCodeDefinition(SchemaParser::XmlDefinition, true),
+		return BaseObject::isCodeDiffersFrom(this->getSourceCode(SchemaParser::XmlCode, true),
+											 object->getSourceCode(SchemaParser::XmlCode, true),
 											 ignored_attribs, ignored_tags);
 	}
 	catch(Exception &e)

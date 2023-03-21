@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -45,7 +45,7 @@ BaseFunctionWidget::BaseFunctionWidget(QWidget *parent, ObjectType obj_type) : B
 
 		grid = new QGridLayout;
 		grid->addWidget(parameters_tab, 0, 0, 1, 1);
-		grid->setContentsMargins(4, 4, 4, 4);
+		grid->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
 		func_config_twg->widget(1)->setLayout(grid);
 		security_cmb->addItems(SecurityType::getTypes());
 
@@ -62,7 +62,7 @@ BaseFunctionWidget::BaseFunctionWidget(QWidget *parent, ObjectType obj_type) : B
 		grid = new QGridLayout;
 		grid->addWidget(transform_type_wgt, 0, 0, 1, 1);
 		grid->addWidget(transform_types_tab, 1, 0, 1, 1);
-		grid->setContentsMargins(4, 4, 4, 4);
+		grid->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
 		func_config_twg->widget(2)->setLayout(grid);
 
 
@@ -77,12 +77,12 @@ BaseFunctionWidget::BaseFunctionWidget(QWidget *parent, ObjectType obj_type) : B
 		grid = new QGridLayout;
 		grid->addWidget(config_params_tab, 0, 0, 1, 1);
 		grid->addWidget(hint_frm, 1, 0, 1, 1);
-		grid->setContentsMargins(4, 4, 4, 4);
+		grid->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
 		func_config_twg->widget(4)->setLayout(grid);
 
-		connect(language_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(selectLanguage()));
+		connect(language_cmb, &QComboBox::currentIndexChanged, this, &BaseFunctionWidget::selectLanguage);
 
-		connect(transform_types_tab, &ObjectsTableWidget::s_rowAdded, [&](int row){
+		connect(transform_types_tab, &ObjectsTableWidget::s_rowAdded, this, [this](int row){
 			transform_types_tab->setCellText(~transform_type_wgt->getPgSQLType(), row, 0);
 		});
 
@@ -206,7 +206,7 @@ void BaseFunctionWidget::showParameterData(ObjectsTableWidget *params_tab, Param
 
 void BaseFunctionWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Schema *schema, BaseFunction *func)
 {
-	vector<BaseObject *> languages;
+	std::vector<BaseObject *> languages;
 	Language *lang = nullptr;
 	QStringList list;
 	unsigned count = 0, i = 0;
@@ -254,7 +254,7 @@ void BaseFunctionWidget::setAttributes(DatabaseModel *model, OperationList *op_l
 			library_edt->setText(func->getLibrary());
 		}
 		else
-			source_code_txt->setPlainText(func->getSourceCode());
+			source_code_txt->setPlainText(func->getFunctionSource());
 
 		for(auto &type : func->getTransformTypes())
 		{
@@ -276,9 +276,8 @@ void BaseFunctionWidget::setAttributes(DatabaseModel *model, OperationList *op_l
 
 void BaseFunctionWidget::selectLanguage()
 {
-	bool c_lang;
+	bool c_lang = (language_cmb->currentText() == DefaultLanguages::C);
 
-	c_lang = (language_cmb->currentText() == DefaultLanguages::C);
 	source_code_frm->setVisible(!c_lang);
 	library_frm->setVisible(c_lang);
 
@@ -346,7 +345,7 @@ void BaseFunctionWidget::applyBasicConfiguration(BaseFunction *func)
 			func->setSymbol(symbol_edt->text());
 		}
 		else
-			func->setSourceCode(source_code_txt->toPlainText().toUtf8());
+			func->setFunctionSource(source_code_txt->toPlainText().toUtf8());
 	}
 	catch(Exception &e)
 	{

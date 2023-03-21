@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -31,7 +31,7 @@ DeletableItemDelegate::DeletableItemDelegate(QComboBox *parent, const QString &t
 	del_btn->setShortcut(shortcut);
 	del_btn->setToolTip(tooltip + QString(" (%1)").arg(del_btn->shortcut().toString()));
 
-	QObject::connect(del_btn, &QToolButton::clicked, [&]() {
+	QObject::connect(del_btn, &QToolButton::clicked, this, [this]() {
 		emit s_itemDeleteRequested(combo->view()->currentIndex().row());
 	});
 }

@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>886</width>
-    <height>702</height>
+    <width>1075</width>
+    <height>1002</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -36,20 +36,23 @@
   </property>
   <property name="windowIcon">
    <iconset resource="../../res/resources.qrc">
-    <normaloff>:/icons/icons/pgsqlModeler48x48.png</normaloff>:/icons/icons/pgsqlModeler48x48.png</iconset>
+    <normaloff>:/icons/icons/pgmodeler_logo.png</normaloff>:/icons/icons/pgmodeler_logo.png</iconset>
   </property>
   <layout class="QGridLayout" name="gridLayout_6">
    <property name="leftMargin">
-    <number>4</number>
+    <number>5</number>
    </property>
    <property name="topMargin">
-    <number>4</number>
+    <number>5</number>
    </property>
    <property name="rightMargin">
-    <number>4</number>
+    <number>5</number>
    </property>
    <property name="bottomMargin">
-    <number>4</number>
+    <number>5</number>
+   </property>
+   <property name="spacing">
+    <number>5</number>
    </property>
    <item row="0" column="0" colspan="3">
     <widget class="QFrame" name="frame">
@@ -70,16 +73,19 @@
      </property>
      <layout class="QGridLayout" name="gridLayout_7">
       <property name="leftMargin">
-       <number>4</number>
+       <number>5</number>
       </property>
       <property name="topMargin">
-       <number>4</number>
+       <number>5</number>
       </property>
       <property name="rightMargin">
-       <number>4</number>
+       <number>5</number>
       </property>
       <property name="bottomMargin">
-       <number>4</number>
+       <number>5</number>
+      </property>
+      <property name="spacing">
+       <number>5</number>
       </property>
       <item row="0" column="0">
        <widget class="QTabWidget" name="settings_tbw">
@@ -89,52 +95,77 @@
           <verstretch>0</verstretch>
          </sizepolicy>
         </property>
+        <property name="maximumSize">
+         <size>
+          <width>16777215</width>
+          <height>16777215</height>
+         </size>
+        </property>
         <property name="currentIndex">
          <number>0</number>
         </property>
+        <property name="iconSize">
+         <size>
+          <width>22</width>
+          <height>22</height>
+         </size>
+        </property>
         <widget class="QWidget" name="tab">
+         <attribute name="icon">
+          <iconset resource="../../res/resources.qrc">
+           <normaloff>:/icons/icons/config.png</normaloff>:/icons/icons/config.png</iconset>
+         </attribute>
          <attribute name="title">
           <string>Settings</string>
          </attribute>
          <layout class="QVBoxLayout" name="verticalLayout">
+          <property name="spacing">
+           <number>5</number>
+          </property>
           <property name="leftMargin">
-           <number>4</number>
+           <number>5</number>
           </property>
           <property name="topMargin">
-           <number>4</number>
+           <number>5</number>
           </property>
           <property name="rightMargin">
-           <number>4</number>
+           <number>5</number>
           </property>
           <property name="bottomMargin">
-           <number>4</number>
+           <number>5</number>
           </property>
           <item>
-           <widget class="QGroupBox" name="groupBox">
+           <widget class="QGroupBox" name="export_to_dbms_gb">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
+            <property name="focusPolicy">
+             <enum>Qt::StrongFocus</enum>
+            </property>
             <property name="title">
-             <string>Database server</string>
+             <string>&amp;Database server</string>
             </property>
             <property name="checkable">
              <bool>false</bool>
             </property>
             <layout class="QGridLayout" name="gridLayout_9">
              <property name="leftMargin">
-              <number>4</number>
+              <number>5</number>
              </property>
              <property name="topMargin">
-              <number>4</number>
+              <number>5</number>
              </property>
              <property name="rightMargin">
-              <number>4</number>
+              <number>5</number>
              </property>
              <property name="bottomMargin">
-              <number>4</number>
+              <number>5</number>
+             </property>
+             <property name="spacing">
+              <number>5</number>
              </property>
              <item row="0" column="2">
               <widget class="QWidget" name="export_to_dbms_wgt" native="true">
@@ -146,139 +177,25 @@
                </property>
                <layout class="QGridLayout" name="gridLayout_8">
                 <property name="leftMargin">
-                 <number>4</number>
+                 <number>5</number>
                 </property>
                 <property name="topMargin">
-                 <number>4</number>
+                 <number>5</number>
                 </property>
                 <property name="rightMargin">
                  <number>0</number>
                 </property>
                 <property name="bottomMargin">
-                 <number>4</number>
+                 <number>5</number>
                 </property>
-                <item row="0" column="0" rowspan="3">
-                 <layout class="QVBoxLayout" name="verticalLayout_2">
-                  <item>
-                   <spacer name="verticalSpacer_2">
-                    <property name="orientation">
-                     <enum>Qt::Vertical</enum>
-                    </property>
-                    <property name="sizeType">
-                     <enum>QSizePolicy::Preferred</enum>
-                    </property>
-                    <property name="sizeHint" stdset="0">
-                     <size>
-                      <width>20</width>
-                      <height>13</height>
-                     </size>
-                    </property>
-                   </spacer>
-                  </item>
-                  <item>
-                   <widget class="QLabel" name="modelo_sgbd">
-                    <property name="enabled">
-                     <bool>true</bool>
-                    </property>
-                    <property name="sizePolicy">
-                     <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
-                      <horstretch>0</horstretch>
-                      <verstretch>0</verstretch>
-                     </sizepolicy>
-                    </property>
-                    <property name="minimumSize">
-                     <size>
-                      <width>30</width>
-                      <height>60</height>
-                     </size>
-                    </property>
-                    <property name="maximumSize">
-                     <size>
-                      <width>30</width>
-                      <height>60</height>
-                     </size>
-                    </property>
-                    <property name="text">
-                     <string/>
-                    </property>
-                    <property name="pixmap">
-                     <pixmap resource="../../res/resources.qrc">:/images/images/model2sgdb.png</pixmap>
-                    </property>
-                    <property name="scaledContents">
-                     <bool>true</bool>
-                    </property>
-                    <property name="alignment">
-                     <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-                    </property>
-                   </widget>
-                  </item>
-                  <item>
-                   <spacer name="verticalSpacer_3">
-                    <property name="orientation">
-                     <enum>Qt::Vertical</enum>
-                    </property>
-                    <property name="sizeType">
-                     <enum>QSizePolicy::Preferred</enum>
-                    </property>
-                    <property name="sizeHint" stdset="0">
-                     <size>
-                      <width>20</width>
-                      <height>18</height>
-                     </size>
-                    </property>
-                   </spacer>
-                  </item>
-                 </layout>
-                </item>
-                <item row="0" column="1">
-                 <widget class="QLabel" name="connections_lbl">
-                  <property name="enabled">
-                   <bool>true</bool>
-                  </property>
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                  <property name="minimumSize">
-                   <size>
-                    <width>0</width>
-                    <height>0</height>
-                   </size>
-                  </property>
-                  <property name="text">
-                   <string>Connection:</string>
-                  </property>
-                 </widget>
-                </item>
+                <property name="spacing">
+                 <number>5</number>
+                </property>
                 <item row="0" column="2">
-                 <widget class="QComboBox" name="connections_cmb">
-                  <property name="enabled">
-                   <bool>true</bool>
-                  </property>
-                  <property name="minimumSize">
-                   <size>
-                    <width>0</width>
-                    <height>0</height>
-                   </size>
-                  </property>
-                  <property name="insertPolicy">
-                   <enum>QComboBox::InsertAlphabetically</enum>
-                  </property>
-                  <property name="sizeAdjustPolicy">
-                   <enum>QComboBox::AdjustToMinimumContentsLengthWithIcon</enum>
-                  </property>
-                  <property name="iconSize">
-                   <size>
-                    <width>18</width>
-                    <height>18</height>
-                   </size>
-                  </property>
-                 </widget>
-                </item>
-                <item row="0" column="3">
                  <layout class="QHBoxLayout" name="horizontalLayout_2">
+                  <property name="spacing">
+                   <number>5</number>
+                  </property>
                   <item>
                    <widget class="QCheckBox" name="ignore_dup_chk">
                     <property name="enabled">
@@ -303,106 +220,11 @@
                   </item>
                  </layout>
                 </item>
-                <item row="1" column="1">
-                 <widget class="QCheckBox" name="pgsqlvers_chk">
-                  <property name="enabled">
-                   <bool>true</bool>
-                  </property>
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                  <property name="statusTip">
-                   <string>PostgreSQL version in which the SQL code should be generated. It is recommended to select this option only when the version of the DBMS, somehow, is not identifiable or if you need to generate a specific version of SQL code for test purposes.</string>
-                  </property>
-                  <property name="text">
-                   <string>PostgreSQL:</string>
-                  </property>
-                  <property name="checked">
-                   <bool>false</bool>
-                  </property>
-                  <property name="autoExclusive">
-                   <bool>false</bool>
-                  </property>
-                 </widget>
-                </item>
-                <item row="1" column="2">
-                 <layout class="QGridLayout" name="gridLayout">
-                  <item row="0" column="1">
-                   <widget class="QWidget" name="pgsqlvers_hint" native="true">
-                    <property name="sizePolicy">
-                     <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                      <horstretch>0</horstretch>
-                      <verstretch>0</verstretch>
-                     </sizepolicy>
-                    </property>
-                    <property name="minimumSize">
-                     <size>
-                      <width>22</width>
-                      <height>22</height>
-                     </size>
-                    </property>
-                    <property name="maximumSize">
-                     <size>
-                      <width>22</width>
-                      <height>22</height>
-                     </size>
-                    </property>
-                    <property name="statusTip">
-                     <string/>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="0" column="0">
-                   <widget class="QComboBox" name="pgsqlvers1_cmb">
-                    <property name="enabled">
-                     <bool>false</bool>
-                    </property>
-                    <property name="sizePolicy">
-                     <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                      <horstretch>0</horstretch>
-                      <verstretch>0</verstretch>
-                     </sizepolicy>
-                    </property>
-                    <property name="minimumSize">
-                     <size>
-                      <width>0</width>
-                      <height>0</height>
-                     </size>
-                    </property>
-                    <property name="maximumSize">
-                     <size>
-                      <width>16777215</width>
-                      <height>16777215</height>
-                     </size>
-                    </property>
-                    <property name="toolTip">
-                     <string/>
-                    </property>
-                    <property name="insertPolicy">
-                     <enum>QComboBox::InsertAtBottom</enum>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="0" column="2">
-                   <spacer name="horizontalSpacer_2">
-                    <property name="orientation">
-                     <enum>Qt::Horizontal</enum>
-                    </property>
-                    <property name="sizeHint" stdset="0">
-                     <size>
-                      <width>40</width>
-                      <height>20</height>
-                     </size>
-                    </property>
-                   </spacer>
-                  </item>
-                 </layout>
-                </item>
-                <item row="1" column="3" rowspan="2">
+                <item row="1" column="2" rowspan="2">
                  <layout class="QGridLayout" name="gridLayout_5">
+                  <property name="spacing">
+                   <number>5</number>
+                  </property>
                   <item row="1" column="0" colspan="3">
                    <widget class="QLineEdit" name="error_codes_edt">
                     <property name="enabled">
@@ -437,8 +259,33 @@
                   </item>
                  </layout>
                 </item>
-                <item row="2" column="2">
+                <item row="0" column="0">
+                 <widget class="QLabel" name="connections_lbl">
+                  <property name="enabled">
+                   <bool>true</bool>
+                  </property>
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="minimumSize">
+                   <size>
+                    <width>0</width>
+                    <height>0</height>
+                   </size>
+                  </property>
+                  <property name="text">
+                   <string>Connection:</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="2" column="1">
                  <layout class="QHBoxLayout" name="horizontalLayout_12">
+                  <property name="spacing">
+                   <number>5</number>
+                  </property>
                   <item>
                    <widget class="QCheckBox" name="drop_chk">
                     <property name="enabled">
@@ -502,6 +349,113 @@
                   </item>
                  </layout>
                 </item>
+                <item row="1" column="0">
+                 <widget class="QCheckBox" name="pgsqlvers_chk">
+                  <property name="enabled">
+                   <bool>true</bool>
+                  </property>
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="statusTip">
+                   <string>PostgreSQL version in which the SQL code should be generated. It is recommended to select this option only when the version of the DBMS, somehow, is not identifiable or if you need to generate a specific version of SQL code for test purposes.</string>
+                  </property>
+                  <property name="text">
+                   <string>PostgreSQL:</string>
+                  </property>
+                  <property name="checked">
+                   <bool>false</bool>
+                  </property>
+                  <property name="autoExclusive">
+                   <bool>false</bool>
+                  </property>
+                 </widget>
+                </item>
+                <item row="1" column="1">
+                 <layout class="QGridLayout" name="gridLayout">
+                  <property name="spacing">
+                   <number>5</number>
+                  </property>
+                  <item row="0" column="0">
+                   <widget class="QComboBox" name="pgsqlvers1_cmb">
+                    <property name="enabled">
+                     <bool>false</bool>
+                    </property>
+                    <property name="sizePolicy">
+                     <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                      <horstretch>0</horstretch>
+                      <verstretch>0</verstretch>
+                     </sizepolicy>
+                    </property>
+                    <property name="minimumSize">
+                     <size>
+                      <width>0</width>
+                      <height>0</height>
+                     </size>
+                    </property>
+                    <property name="maximumSize">
+                     <size>
+                      <width>16777215</width>
+                      <height>16777215</height>
+                     </size>
+                    </property>
+                    <property name="toolTip">
+                     <string/>
+                    </property>
+                    <property name="insertPolicy">
+                     <enum>QComboBox::InsertAtBottom</enum>
+                    </property>
+                    <property name="iconSize">
+                     <size>
+                      <width>28</width>
+                      <height>28</height>
+                     </size>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="0" column="1">
+                   <spacer name="horizontalSpacer_2">
+                    <property name="orientation">
+                     <enum>Qt::Horizontal</enum>
+                    </property>
+                    <property name="sizeHint" stdset="0">
+                     <size>
+                      <width>40</width>
+                      <height>20</height>
+                     </size>
+                    </property>
+                   </spacer>
+                  </item>
+                 </layout>
+                </item>
+                <item row="0" column="1">
+                 <widget class="QComboBox" name="connections_cmb">
+                  <property name="enabled">
+                   <bool>true</bool>
+                  </property>
+                  <property name="minimumSize">
+                   <size>
+                    <width>0</width>
+                    <height>0</height>
+                   </size>
+                  </property>
+                  <property name="insertPolicy">
+                   <enum>QComboBox::InsertAlphabetically</enum>
+                  </property>
+                  <property name="sizeAdjustPolicy">
+                   <enum>QComboBox::AdjustToMinimumContentsLengthWithIcon</enum>
+                  </property>
+                  <property name="iconSize">
+                   <size>
+                    <width>22</width>
+                    <height>22</height>
+                   </size>
+                  </property>
+                 </widget>
+                </item>
                </layout>
               </widget>
              </item>
@@ -519,6 +473,16 @@
                <property name="text">
                 <string/>
                </property>
+               <property name="icon">
+                <iconset resource="../../res/resources.qrc">
+                 <normaloff>:/images/images/exporttodbms.png</normaloff>:/images/images/exporttodbms.png</iconset>
+               </property>
+               <property name="iconSize">
+                <size>
+                 <width>37</width>
+                 <height>90</height>
+                </size>
+               </property>
                <property name="checked">
                 <bool>true</bool>
                </property>
@@ -531,22 +495,28 @@
            </widget>
           </item>
           <item>
-           <widget class="QGroupBox" name="groupBox_2">
+           <widget class="QGroupBox" name="export_to_file_gb">
+            <property name="focusPolicy">
+             <enum>Qt::StrongFocus</enum>
+            </property>
             <property name="title">
-             <string>SQL file</string>
+             <string>&amp;SQL file</string>
             </property>
             <layout class="QGridLayout" name="gridLayout_10">
              <property name="leftMargin">
-              <number>4</number>
+              <number>5</number>
              </property>
              <property name="topMargin">
-              <number>4</number>
+              <number>5</number>
              </property>
              <property name="rightMargin">
-              <number>4</number>
+              <number>5</number>
              </property>
              <property name="bottomMargin">
-              <number>4</number>
+              <number>5</number>
+             </property>
+             <property name="spacing">
+              <number>5</number>
              </property>
              <item row="0" column="0" rowspan="2">
               <widget class="QRadioButton" name="export_to_file_rb">
@@ -558,6 +528,16 @@
                </property>
                <property name="text">
                 <string/>
+               </property>
+               <property name="icon">
+                <iconset resource="../../res/resources.qrc">
+                 <normaloff>:/images/images/exporttosql.png</normaloff>:/images/images/exporttosql.png</iconset>
+               </property>
+               <property name="iconSize">
+                <size>
+                 <width>37</width>
+                 <height>90</height>
+                </size>
                </property>
                <property name="checked">
                 <bool>false</bool>
@@ -586,19 +566,22 @@
                </property>
                <layout class="QGridLayout" name="export_to_file_grid">
                 <property name="leftMargin">
-                 <number>4</number>
+                 <number>5</number>
                 </property>
                 <property name="topMargin">
-                 <number>4</number>
+                 <number>5</number>
                 </property>
                 <property name="rightMargin">
                  <number>0</number>
                 </property>
                 <property name="bottomMargin">
-                 <number>4</number>
+                 <number>5</number>
                 </property>
-                <item row="0" column="1">
-                 <widget class="QLabel" name="mode_lbl">
+                <property name="spacing">
+                 <number>5</number>
+                </property>
+                <item row="1" column="0">
+                 <widget class="QLabel" name="output_lbl">
                   <property name="enabled">
                    <bool>true</bool>
                   </property>
@@ -614,16 +597,16 @@
                     <height>0</height>
                    </size>
                   </property>
-                  <property name="statusTip">
-                   <string/>
-                  </property>
                   <property name="text">
-                   <string>Mode:</string>
+                   <string>Output:</string>
                   </property>
                  </widget>
                 </item>
-                <item row="2" column="2">
+                <item row="2" column="1">
                  <layout class="QHBoxLayout" name="horizontalLayout_5">
+                  <property name="spacing">
+                   <number>5</number>
+                  </property>
                   <item>
                    <widget class="QComboBox" name="pgsqlvers_cmb">
                     <property name="enabled">
@@ -647,6 +630,12 @@
                     <property name="insertPolicy">
                      <enum>QComboBox::InsertAtBottom</enum>
                     </property>
+                    <property name="iconSize">
+                     <size>
+                      <width>28</width>
+                      <height>28</height>
+                     </size>
+                    </property>
                    </widget>
                   </item>
                   <item>
@@ -664,54 +653,11 @@
                   </item>
                  </layout>
                 </item>
-                <item row="1" column="1">
-                 <widget class="QLabel" name="output_lbl">
-                  <property name="enabled">
-                   <bool>true</bool>
-                  </property>
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                  <property name="minimumSize">
-                   <size>
-                    <width>0</width>
-                    <height>0</height>
-                   </size>
-                  </property>
-                  <property name="text">
-                   <string>Output:</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="2" column="1">
-                 <widget class="QLabel" name="pgsql_lbl">
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                  <property name="minimumSize">
-                   <size>
-                    <width>0</width>
-                    <height>0</height>
-                   </size>
-                  </property>
-                  <property name="font">
-                   <font>
-                    <italic>false</italic>
-                   </font>
-                  </property>
-                  <property name="text">
-                   <string>PostgreSQL:</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="0" column="2">
+                <item row="0" column="1">
                  <layout class="QHBoxLayout" name="horizontalLayout">
+                  <property name="spacing">
+                   <number>5</number>
+                  </property>
                   <item>
                    <widget class="QRadioButton" name="sql_standalone_rb">
                     <property name="sizePolicy">
@@ -754,6 +700,40 @@
                    </widget>
                   </item>
                   <item>
+                   <widget class="QComboBox" name="code_options_cmb">
+                    <property name="enabled">
+                     <bool>false</bool>
+                    </property>
+                    <property name="sizePolicy">
+                     <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                      <horstretch>0</horstretch>
+                      <verstretch>0</verstretch>
+                     </sizepolicy>
+                    </property>
+                    <property name="toolTip">
+                     <string>&lt;strong&gt;Original:&lt;/strong&gt; generates only the original SQL code of the selected object.&lt;br/&gt;&lt;br/&gt;&lt;strong&gt;Dependencies:&lt;/strong&gt; generates the original code including all dependencies needed to properly create the selected  object. &lt;br/&gt;&lt;br/&gt;&lt;strong&gt;Children:&lt;/strong&gt; generates the original code including all children's SQL code. This option is used only for schemas, tables, and views.</string>
+                    </property>
+                    <property name="statusTip">
+                     <string/>
+                    </property>
+                    <item>
+                     <property name="text">
+                      <string>Original</string>
+                     </property>
+                    </item>
+                    <item>
+                     <property name="text">
+                      <string>Original + depedencies' SQL</string>
+                     </property>
+                    </item>
+                    <item>
+                     <property name="text">
+                      <string>Original + children's SQL</string>
+                     </property>
+                    </item>
+                   </widget>
+                  </item>
+                  <item>
                    <spacer name="horizontalSpacer_8">
                     <property name="orientation">
                      <enum>Qt::Horizontal</enum>
@@ -768,37 +748,52 @@
                   </item>
                  </layout>
                 </item>
-                <item row="0" column="0" rowspan="3">
-                 <widget class="QLabel" name="model_sql_lbl">
-                  <property name="enabled">
-                   <bool>true</bool>
-                  </property>
+                <item row="2" column="0">
+                 <widget class="QLabel" name="pgsql_lbl">
                   <property name="sizePolicy">
-                   <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
+                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                     <horstretch>0</horstretch>
                     <verstretch>0</verstretch>
                    </sizepolicy>
                   </property>
                   <property name="minimumSize">
                    <size>
-                    <width>30</width>
-                    <height>60</height>
+                    <width>0</width>
+                    <height>0</height>
                    </size>
                   </property>
-                  <property name="maximumSize">
-                   <size>
-                    <width>30</width>
-                    <height>60</height>
-                   </size>
+                  <property name="font">
+                   <font>
+                    <italic>false</italic>
+                   </font>
                   </property>
                   <property name="text">
+                   <string>PostgreSQL:</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="0" column="0">
+                 <widget class="QLabel" name="mode_lbl">
+                  <property name="enabled">
+                   <bool>true</bool>
+                  </property>
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="minimumSize">
+                   <size>
+                    <width>0</width>
+                    <height>0</height>
+                   </size>
+                  </property>
+                  <property name="statusTip">
                    <string/>
                   </property>
-                  <property name="pixmap">
-                   <pixmap resource="../../res/resources.qrc">:/images/images/model2sql.png</pixmap>
-                  </property>
-                  <property name="scaledContents">
-                   <bool>true</bool>
+                  <property name="text">
+                   <string>Mode:</string>
                   </property>
                  </widget>
                 </item>
@@ -809,28 +804,34 @@
            </widget>
           </item>
           <item>
-           <widget class="QGroupBox" name="groupBox_3">
+           <widget class="QGroupBox" name="export_to_img_gb">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
+            <property name="focusPolicy">
+             <enum>Qt::StrongFocus</enum>
+            </property>
             <property name="title">
-             <string>Graphics file</string>
+             <string>&amp;Graphics file</string>
             </property>
             <layout class="QGridLayout" name="gridLayout_11">
              <property name="leftMargin">
-              <number>4</number>
+              <number>5</number>
              </property>
              <property name="topMargin">
-              <number>4</number>
+              <number>5</number>
              </property>
              <property name="rightMargin">
-              <number>4</number>
+              <number>5</number>
              </property>
              <property name="bottomMargin">
-              <number>4</number>
+              <number>5</number>
+             </property>
+             <property name="spacing">
+              <number>5</number>
              </property>
              <item row="0" column="0" rowspan="2">
               <widget class="QRadioButton" name="export_to_img_rb">
@@ -842,6 +843,16 @@
                </property>
                <property name="text">
                 <string/>
+               </property>
+               <property name="icon">
+                <iconset resource="../../res/resources.qrc">
+                 <normaloff>:/images/images/exporttoimg.png</normaloff>:/images/images/exporttoimg.png</iconset>
+               </property>
+               <property name="iconSize">
+                <size>
+                 <width>37</width>
+                 <height>90</height>
+                </size>
                </property>
                <property name="checked">
                 <bool>false</bool>
@@ -870,155 +881,21 @@
                </property>
                <layout class="QGridLayout" name="export_to_img_grid">
                 <property name="leftMargin">
-                 <number>4</number>
+                 <number>5</number>
                 </property>
                 <property name="topMargin">
-                 <number>4</number>
+                 <number>5</number>
                 </property>
                 <property name="rightMargin">
                  <number>0</number>
                 </property>
                 <property name="bottomMargin">
-                 <number>4</number>
+                 <number>5</number>
                 </property>
-                <item row="0" column="0" rowspan="3">
-                 <layout class="QVBoxLayout" name="verticalLayout_3">
-                  <item>
-                   <spacer name="verticalSpacer_4">
-                    <property name="orientation">
-                     <enum>Qt::Vertical</enum>
-                    </property>
-                    <property name="sizeType">
-                     <enum>QSizePolicy::Preferred</enum>
-                    </property>
-                    <property name="sizeHint" stdset="0">
-                     <size>
-                      <width>20</width>
-                      <height>18</height>
-                     </size>
-                    </property>
-                   </spacer>
-                  </item>
-                  <item>
-                   <widget class="QLabel" name="model_png_lbl">
-                    <property name="enabled">
-                     <bool>true</bool>
-                    </property>
-                    <property name="sizePolicy">
-                     <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
-                      <horstretch>0</horstretch>
-                      <verstretch>0</verstretch>
-                     </sizepolicy>
-                    </property>
-                    <property name="minimumSize">
-                     <size>
-                      <width>30</width>
-                      <height>60</height>
-                     </size>
-                    </property>
-                    <property name="maximumSize">
-                     <size>
-                      <width>30</width>
-                      <height>60</height>
-                     </size>
-                    </property>
-                    <property name="text">
-                     <string/>
-                    </property>
-                    <property name="pixmap">
-                     <pixmap resource="../../res/resources.qrc">:/images/images/model2png.png</pixmap>
-                    </property>
-                    <property name="scaledContents">
-                     <bool>true</bool>
-                    </property>
-                   </widget>
-                  </item>
-                  <item>
-                   <spacer name="verticalSpacer_5">
-                    <property name="orientation">
-                     <enum>Qt::Vertical</enum>
-                    </property>
-                    <property name="sizeType">
-                     <enum>QSizePolicy::Preferred</enum>
-                    </property>
-                    <property name="sizeHint" stdset="0">
-                     <size>
-                      <width>20</width>
-                      <height>28</height>
-                     </size>
-                    </property>
-                   </spacer>
-                  </item>
-                 </layout>
-                </item>
-                <item row="0" column="1">
-                 <widget class="QLabel" name="image_lbl_2">
-                  <property name="enabled">
-                   <bool>true</bool>
-                  </property>
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                  <property name="minimumSize">
-                   <size>
-                    <width>0</width>
-                    <height>0</height>
-                   </size>
-                  </property>
-                  <property name="text">
-                   <string>Type:</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="0" column="2">
-                 <widget class="QRadioButton" name="png_rb">
-                  <property name="text">
-                   <string>I&amp;mage (PNG)</string>
-                  </property>
-                  <property name="checked">
-                   <bool>true</bool>
-                  </property>
-                 </widget>
-                </item>
-                <item row="0" column="3">
-                 <widget class="QRadioButton" name="svg_rb">
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                  <property name="text">
-                   <string>&amp;Vectorial (SVG)</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="1" column="1">
-                 <widget class="QLabel" name="image_lbl">
-                  <property name="enabled">
-                   <bool>true</bool>
-                  </property>
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                  <property name="minimumSize">
-                   <size>
-                    <width>0</width>
-                    <height>0</height>
-                   </size>
-                  </property>
-                  <property name="text">
-                   <string>File:</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="2" column="1">
+                <property name="spacing">
+                 <number>5</number>
+                </property>
+                <item row="2" column="0">
                  <widget class="QLabel" name="zoom_lbl">
                   <property name="enabled">
                    <bool>true</bool>
@@ -1045,8 +922,78 @@
                   </property>
                  </widget>
                 </item>
-                <item row="2" column="2" colspan="2">
+                <item row="0" column="0">
+                 <widget class="QLabel" name="image_lbl_2">
+                  <property name="enabled">
+                   <bool>true</bool>
+                  </property>
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="minimumSize">
+                   <size>
+                    <width>0</width>
+                    <height>0</height>
+                   </size>
+                  </property>
+                  <property name="text">
+                   <string>Type:</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="0" column="2">
+                 <widget class="QRadioButton" name="svg_rb">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="text">
+                   <string>&amp;Vectorial (SVG)</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="1" column="0">
+                 <widget class="QLabel" name="image_lbl">
+                  <property name="enabled">
+                   <bool>true</bool>
+                  </property>
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="minimumSize">
+                   <size>
+                    <width>0</width>
+                    <height>0</height>
+                   </size>
+                  </property>
+                  <property name="text">
+                   <string>File:</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="0" column="1">
+                 <widget class="QRadioButton" name="png_rb">
+                  <property name="text">
+                   <string>I&amp;mage (PNG)</string>
+                  </property>
+                  <property name="checked">
+                   <bool>true</bool>
+                  </property>
+                 </widget>
+                </item>
+                <item row="2" column="1" colspan="2">
                  <layout class="QHBoxLayout" name="horizontalLayout_8">
+                  <property name="spacing">
+                   <number>5</number>
+                  </property>
                   <item>
                    <widget class="QComboBox" name="zoom_cmb">
                     <property name="enabled">
@@ -1057,6 +1004,12 @@
                       <horstretch>0</horstretch>
                       <verstretch>0</verstretch>
                      </sizepolicy>
+                    </property>
+                    <property name="iconSize">
+                     <size>
+                      <width>28</width>
+                      <height>28</height>
+                     </size>
                     </property>
                    </widget>
                   </item>
@@ -1136,28 +1089,34 @@
            </widget>
           </item>
           <item>
-           <widget class="QGroupBox" name="groupBox_4">
+           <widget class="QGroupBox" name="export_to_dict_gb">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
+            <property name="focusPolicy">
+             <enum>Qt::StrongFocus</enum>
+            </property>
             <property name="title">
-             <string>Data dictionary</string>
+             <string>Da&amp;ta dictionary</string>
             </property>
             <layout class="QGridLayout" name="gridLayout_12">
              <property name="leftMargin">
-              <number>4</number>
+              <number>5</number>
              </property>
              <property name="topMargin">
-              <number>4</number>
+              <number>5</number>
              </property>
              <property name="rightMargin">
-              <number>4</number>
+              <number>5</number>
              </property>
              <property name="bottomMargin">
-              <number>4</number>
+              <number>5</number>
+             </property>
+             <property name="spacing">
+              <number>5</number>
              </property>
              <item row="0" column="0" rowspan="2">
               <widget class="QRadioButton" name="export_to_dict_rb">
@@ -1169,6 +1128,16 @@
                </property>
                <property name="text">
                 <string/>
+               </property>
+               <property name="icon">
+                <iconset resource="../../res/resources.qrc">
+                 <normaloff>:/images/images/exporttodatadict.png</normaloff>:/images/images/exporttodatadict.png</iconset>
+               </property>
+               <property name="iconSize">
+                <size>
+                 <width>37</width>
+                 <height>90</height>
+                </size>
                </property>
                <property name="checked">
                 <bool>false</bool>
@@ -1197,94 +1166,21 @@
                </property>
                <layout class="QGridLayout" name="export_to_dict_grid">
                 <property name="leftMargin">
-                 <number>4</number>
+                 <number>5</number>
                 </property>
                 <property name="topMargin">
-                 <number>4</number>
+                 <number>5</number>
                 </property>
                 <property name="rightMargin">
                  <number>0</number>
                 </property>
                 <property name="bottomMargin">
-                 <number>4</number>
+                 <number>5</number>
                 </property>
-                <item row="0" column="5">
-                 <widget class="QCheckBox" name="incl_index_chk">
-                  <property name="enabled">
-                   <bool>true</bool>
-                  </property>
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                  <property name="toolTip">
-                   <string>pgModeler will generate an index to help navigate through the data dictionary. If splitted mode is set then a separated file named &lt;em&gt;index.html&lt;/em&gt; will be saved into the destination folder.</string>
-                  </property>
-                  <property name="statusTip">
-                   <string/>
-                  </property>
-                  <property name="text">
-                   <string>Include index</string>
-                  </property>
-                  <property name="checked">
-                   <bool>true</bool>
-                  </property>
-                 </widget>
-                </item>
-                <item row="0" column="0" rowspan="3">
-                 <layout class="QVBoxLayout" name="verticalLayout_4">
-                  <item>
-                   <widget class="QLabel" name="model_datadict_lbl">
-                    <property name="enabled">
-                     <bool>true</bool>
-                    </property>
-                    <property name="sizePolicy">
-                     <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
-                      <horstretch>0</horstretch>
-                      <verstretch>0</verstretch>
-                     </sizepolicy>
-                    </property>
-                    <property name="minimumSize">
-                     <size>
-                      <width>30</width>
-                      <height>60</height>
-                     </size>
-                    </property>
-                    <property name="maximumSize">
-                     <size>
-                      <width>30</width>
-                      <height>60</height>
-                     </size>
-                    </property>
-                    <property name="text">
-                     <string/>
-                    </property>
-                    <property name="pixmap">
-                     <pixmap resource="../../res/resources.qrc">:/images/images/model2datadict.png</pixmap>
-                    </property>
-                    <property name="scaledContents">
-                     <bool>true</bool>
-                    </property>
-                   </widget>
-                  </item>
-                 </layout>
-                </item>
-                <item row="0" column="6">
-                 <spacer name="horizontalSpacer_5">
-                  <property name="orientation">
-                   <enum>Qt::Horizontal</enum>
-                  </property>
-                  <property name="sizeHint" stdset="0">
-                   <size>
-                    <width>40</width>
-                    <height>20</height>
-                   </size>
-                  </property>
-                 </spacer>
-                </item>
-                <item row="0" column="1">
+                <property name="spacing">
+                 <number>5</number>
+                </property>
+                <item row="0" column="0">
                  <widget class="QLabel" name="data_dict_mode_lbl">
                   <property name="enabled">
                    <bool>true</bool>
@@ -1309,7 +1205,32 @@
                   </property>
                  </widget>
                 </item>
-                <item row="0" column="2">
+                <item row="0" column="4">
+                 <widget class="QCheckBox" name="incl_index_chk">
+                  <property name="enabled">
+                   <bool>true</bool>
+                  </property>
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="toolTip">
+                   <string>pgModeler will generate an index to help navigate through the data dictionary. If splitted mode is set then a separated file named &lt;em&gt;index.html&lt;/em&gt; will be saved into the destination folder.</string>
+                  </property>
+                  <property name="statusTip">
+                   <string/>
+                  </property>
+                  <property name="text">
+                   <string>Include index</string>
+                  </property>
+                  <property name="checked">
+                   <bool>true</bool>
+                  </property>
+                 </widget>
+                </item>
+                <item row="0" column="1">
                  <widget class="QRadioButton" name="dict_standalone_rb">
                   <property name="toolTip">
                    <string>&lt;strong&gt;Standalone:&lt;/strong&gt; pgModeler will generate a single HTML file containing the data dictionaries of all tables in the database model. </string>
@@ -1325,7 +1246,7 @@
                   </property>
                  </widget>
                 </item>
-                <item row="0" column="4">
+                <item row="0" column="3">
                  <spacer name="horizontalSpacer_7">
                   <property name="orientation">
                    <enum>Qt::Horizontal</enum>
@@ -1341,7 +1262,20 @@
                   </property>
                  </spacer>
                 </item>
-                <item row="1" column="1">
+                <item row="0" column="5">
+                 <spacer name="horizontalSpacer_5">
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>40</width>
+                    <height>20</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+                <item row="1" column="0">
                  <widget class="QLabel" name="data_dict_ouput_lbl">
                   <property name="enabled">
                    <bool>true</bool>
@@ -1363,7 +1297,7 @@
                   </property>
                  </widget>
                 </item>
-                <item row="0" column="3">
+                <item row="0" column="2">
                  <widget class="QRadioButton" name="dict_split_rb">
                   <property name="sizePolicy">
                    <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -1404,21 +1338,28 @@
          </layout>
         </widget>
         <widget class="QWidget" name="tab_2">
+         <attribute name="icon">
+          <iconset resource="../../res/resources.qrc">
+           <normaloff>:/icons/icons/outputpane.png</normaloff>:/icons/icons/outputpane.png</iconset>
+         </attribute>
          <attribute name="title">
           <string>Output</string>
          </attribute>
          <layout class="QGridLayout" name="gridLayout_15">
           <property name="leftMargin">
-           <number>4</number>
+           <number>5</number>
           </property>
           <property name="topMargin">
-           <number>4</number>
+           <number>5</number>
           </property>
           <property name="rightMargin">
-           <number>4</number>
+           <number>5</number>
           </property>
           <property name="bottomMargin">
-           <number>4</number>
+           <number>5</number>
+          </property>
+          <property name="spacing">
+           <number>5</number>
           </property>
           <item row="1" column="0">
            <widget class="QWidget" name="progress_wgt" native="true">
@@ -1431,7 +1372,7 @@
             <property name="maximumSize">
              <size>
               <width>16777215</width>
-              <height>65</height>
+              <height>16777215</height>
              </size>
             </property>
             <layout class="QGridLayout" name="gridLayout_4">
@@ -1447,8 +1388,8 @@
              <property name="bottomMargin">
               <number>0</number>
              </property>
-             <property name="verticalSpacing">
-              <number>6</number>
+             <property name="spacing">
+              <number>5</number>
              </property>
              <item row="1" column="0">
               <widget class="QLabel" name="ico_lbl">
@@ -1460,14 +1401,14 @@
                </property>
                <property name="minimumSize">
                 <size>
-                 <width>20</width>
-                 <height>20</height>
+                 <width>32</width>
+                 <height>32</height>
                 </size>
                </property>
                <property name="maximumSize">
                 <size>
-                 <width>20</width>
-                 <height>20</height>
+                 <width>32</width>
+                 <height>32</height>
                 </size>
                </property>
                <property name="text">
@@ -1490,17 +1431,23 @@
                <property name="enabled">
                 <bool>false</bool>
                </property>
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
                <property name="text">
                 <string>&amp;Cancel</string>
                </property>
                <property name="icon">
                 <iconset resource="../../res/resources.qrc">
-                 <normaloff>:/icons/icons/error.png</normaloff>:/icons/icons/error.png</iconset>
+                 <normaloff>:/icons/icons/cancel.png</normaloff>:/icons/icons/cancel.png</iconset>
                </property>
                <property name="iconSize">
                 <size>
-                 <width>20</width>
-                 <height>20</height>
+                 <width>25</width>
+                 <height>25</height>
                 </size>
                </property>
                <property name="toolButtonStyle">
@@ -1549,8 +1496,8 @@
             </property>
             <property name="iconSize">
              <size>
-              <width>20</width>
-              <height>20</height>
+              <width>22</width>
+              <height>22</height>
              </size>
             </property>
             <property name="indentation">
@@ -1581,19 +1528,31 @@
    </item>
    <item row="1" column="0" colspan="3">
     <layout class="QHBoxLayout" name="horizontalLayout_10">
+     <property name="spacing">
+      <number>5</number>
+     </property>
      <item>
-      <widget class="QLabel" name="label">
+      <widget class="QLabel" name="pgmodeler_name_lbl">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>
+       <property name="maximumSize">
+        <size>
+         <width>169</width>
+         <height>35</height>
+        </size>
+       </property>
        <property name="text">
         <string/>
        </property>
        <property name="pixmap">
         <pixmap resource="../../res/resources.qrc">:/images/images/pgmodeler_name.png</pixmap>
+       </property>
+       <property name="scaledContents">
+        <bool>true</bool>
        </property>
       </widget>
      </item>
@@ -1613,16 +1572,10 @@
      <item>
       <widget class="QPushButton" name="export_btn">
        <property name="sizePolicy">
-        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
-       </property>
-       <property name="minimumSize">
-        <size>
-         <width>90</width>
-         <height>32</height>
-        </size>
        </property>
        <property name="maximumSize">
         <size>
@@ -1639,8 +1592,8 @@
        </property>
        <property name="iconSize">
         <size>
-         <width>20</width>
-         <height>20</height>
+         <width>28</width>
+         <height>28</height>
         </size>
        </property>
        <property name="default">
@@ -1651,16 +1604,10 @@
      <item>
       <widget class="QPushButton" name="close_btn">
        <property name="sizePolicy">
-        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
-       </property>
-       <property name="minimumSize">
-        <size>
-         <width>90</width>
-         <height>32</height>
-        </size>
        </property>
        <property name="maximumSize">
         <size>
@@ -1677,8 +1624,8 @@
        </property>
        <property name="iconSize">
         <size>
-         <width>20</width>
-         <height>20</height>
+         <width>28</width>
+         <height>28</height>
         </size>
        </property>
        <property name="flat">
@@ -1691,20 +1638,40 @@
   </layout>
  </widget>
  <tabstops>
+  <tabstop>settings_tbw</tabstop>
+  <tabstop>export_to_dbms_rb</tabstop>
   <tabstop>connections_cmb</tabstop>
+  <tabstop>ignore_dup_chk</tabstop>
   <tabstop>pgsqlvers_chk</tabstop>
   <tabstop>pgsqlvers1_cmb</tabstop>
-  <tabstop>ignore_dup_chk</tabstop>
+  <tabstop>ignore_error_codes_chk</tabstop>
   <tabstop>drop_chk</tabstop>
+  <tabstop>drop_db_rb</tabstop>
+  <tabstop>drop_objs_rb</tabstop>
+  <tabstop>error_codes_edt</tabstop>
+  <tabstop>export_to_file_rb</tabstop>
+  <tabstop>sql_standalone_rb</tabstop>
+  <tabstop>sql_split_rb</tabstop>
+  <tabstop>code_options_cmb</tabstop>
   <tabstop>pgsqlvers_cmb</tabstop>
+  <tabstop>export_to_img_rb</tabstop>
+  <tabstop>png_rb</tabstop>
+  <tabstop>svg_rb</tabstop>
+  <tabstop>zoom_cmb</tabstop>
   <tabstop>show_grid_chk</tabstop>
   <tabstop>show_delim_chk</tabstop>
   <tabstop>page_by_page_chk</tabstop>
+  <tabstop>export_to_dict_rb</tabstop>
+  <tabstop>dict_standalone_rb</tabstop>
+  <tabstop>dict_split_rb</tabstop>
+  <tabstop>incl_index_chk</tabstop>
+  <tabstop>output_trw</tabstop>
   <tabstop>cancel_btn</tabstop>
   <tabstop>export_btn</tabstop>
   <tabstop>close_btn</tabstop>
  </tabstops>
  <resources>
+  <include location="../../res/resources.qrc"/>
   <include location="../../res/resources.qrc"/>
  </resources>
  <connections/>

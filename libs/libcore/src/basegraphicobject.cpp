@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -97,7 +97,7 @@ void BaseGraphicObject::setPositionAttribute()
 {
 	attributes[Attributes::XPos]=QString("%1").arg(position.x());
 	attributes[Attributes::YPos]=QString("%1").arg(position.y());
-	attributes[Attributes::Position]=schparser.getCodeDefinition(Attributes::Position, attributes, SchemaParser::XmlDefinition);
+	attributes[Attributes::Position]=schparser.getSourceCode(Attributes::Position, attributes, SchemaParser::XmlCode);
 }
 
 void  BaseGraphicObject::setPosition(QPointF pos)
@@ -163,7 +163,7 @@ void BaseGraphicObject::setLayers(QStringList list)
 	setCodeInvalidated(true);
 
 	//Sanitizing the string list by removing non-numbers
-	list.replaceInStrings(QRegExp("^(.)*(\\D)+(.)*$"), "0");
+	list.replaceInStrings(QRegularExpression("^(.)*(\\D)+(.)*$"), "0");
 	list.removeDuplicates();
 	layers.clear();
 

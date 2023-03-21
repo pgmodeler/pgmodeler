@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@
 #include "schemaparser.h"
 #include "attributes.h"
 #include "utilsns.h"
+#include "xmlparser.h"
 
 const char SchemaParser::CharComment='#';
 const char SchemaParser::CharLineEnd='\n';
@@ -65,7 +66,9 @@ const QString SchemaParser::TokenLtOper=QString("<");
 const QString SchemaParser::TokenGtEqOper=QString(">=");
 const QString SchemaParser::TokenLtEqOper=QString("<=");
 
-const QRegExp SchemaParser::AttribRegExp=QRegExp("^([a-z])([a-z]*|(\\d)*|(\\-)*|(_)*)+", Qt::CaseInsensitive);
+// QRegularExpression::anchoredPattern is used to force the exact match
+const QRegularExpression SchemaParser::AttribRegExp(QRegularExpression::anchoredPattern("^([a-z])([a-z]*|(\\d)*|(\\-)*|(_)*)+"),
+																										QRegularExpression::CaseInsensitiveOption);
 
 SchemaParser::SchemaParser()
 {
@@ -74,16 +77,21 @@ SchemaParser::SchemaParser()
 	pgsql_version=PgSqlVersions::DefaulVersion;
 }
 
-void SchemaParser::setPgSQLVersion(const QString &pgsql_ver)
+void SchemaParser::__setPgSQLVersion(const QString &pgsql_ver, bool ignore_db_version)
 {
 	try
 	{
-		pgsql_version = PgSqlVersions::parseString(pgsql_ver);
+		pgsql_version = PgSqlVersions::parseString(pgsql_ver, ignore_db_version);
 	}
 	catch(Exception &e)
 	{
 		throw Exception(e.getErrorMessage(), e.getErrorCode(), __PRETTY_FUNCTION__, __FILE__, __LINE__, &e);
 	}
+}
+
+void SchemaParser::setPgSQLVersion(const QString &pgsql_ver)
+{
+	__setPgSQLVersion(pgsql_ver, false);
 }
 
 QString SchemaParser::getPgSQLVersion()
@@ -265,7 +273,7 @@ QString SchemaParser::getAttribute()
 					QString(QT_TR_NOOP("Expected a valid attribute token enclosed by `%1%2'.")).arg(CharStartAttribute).arg(CharEndAttribute),
 					ErrorCode::InvalidSyntax,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	}
-	else if(!AttribRegExp.exactMatch(atrib))
+	else if(!AttribRegExp.match(atrib).hasMatch())
 	{
 		throw Exception(Exception::getErrorMessage(ErrorCode::InvalidAttribute)
 						.arg(atrib).arg(filename).arg(getCurrentLine()).arg(getCurrentColumn()),
@@ -662,7 +670,7 @@ void SchemaParser::defineAttribute()
 		attrib=(use_val_as_name ? attributes[new_attrib] : new_attrib);
 
 		//Checking if the attribute has a valid name
-		if(!AttribRegExp.exactMatch(attrib))
+		if(!AttribRegExp.match(attrib).hasMatch())
 		{
 			throw Exception(Exception::getErrorMessage(ErrorCode::InvalidAttribute)
 							.arg(attrib).arg(filename).arg(getCurrentLine()).arg(getCurrentColumn()),
@@ -707,7 +715,7 @@ void SchemaParser::unsetAttribute()
 										.arg(attrib).arg(filename).arg(getCurrentLine()).arg(getCurrentColumn()),
 										ErrorCode::UnkownAttribute,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 					}
-					else if(!AttribRegExp.exactMatch(attrib))
+					else if(!AttribRegExp.match(attrib).hasMatch())
 					{
 						throw Exception(Exception::getErrorMessage(ErrorCode::InvalidAttribute)
 										.arg(attrib).arg(filename).arg(getCurrentLine()).arg(getCurrentColumn()),
@@ -902,25 +910,25 @@ QString SchemaParser::translateMetaCharacter(const QString &meta)
 	return metas.at(meta);
 }
 
-QString SchemaParser::getCodeDefinition(const QString & obj_name, attribs_map &attribs, unsigned def_type)
+QString SchemaParser::getSourceCode(const QString & obj_name, attribs_map &attribs, CodeType def_type)
 {
 	try
 	{
 		QString filename;
 
-		if(def_type==SqlDefinition)
+		if(def_type==SqlCode)
 		{
 			//Formats the filename
 			filename = GlobalAttributes::getSchemaFilePath(GlobalAttributes::SQLSchemaDir, obj_name);
 			attribs[Attributes::PgSqlVersion]=pgsql_version;
 
 			//Try to get the object definitin from the specified path
-			return getCodeDefinition(filename, attribs);
+			return getSourceCode(filename, attribs);
 		}
 		else
 		{
 			filename = GlobalAttributes::getSchemaFilePath(GlobalAttributes::XMLSchemaDir, obj_name);
-			return XmlParser::convertCharsToXMLEntities(getCodeDefinition(filename, attribs));
+			return XmlParser::convertCharsToXMLEntities(getSourceCode(filename, attribs));
 		}
 	}
 	catch(Exception &e)
@@ -939,7 +947,7 @@ void SchemaParser::ignoreEmptyAttributes(bool ignore)
 	ignore_empty_atribs=ignore;
 }
 
-QString SchemaParser::getCodeDefinition(const attribs_map &attribs)
+QString SchemaParser::getSourceCode(const attribs_map &attribs)
 {
 	QString object_def;
 	unsigned end_cnt, if_cnt;
@@ -947,11 +955,11 @@ QString SchemaParser::getCodeDefinition(const attribs_map &attribs)
 	QString atrib, cond, prev_cond, word, meta;
 	bool error, if_expr;
 	char chr;
-	vector<bool> vet_expif, vet_tk_if, vet_tk_then, vet_tk_else;
-	map<int, vector<QString> > if_map, else_map;
-	vector<QString>::iterator itr, itr_end;
-	vector<int> vet_prev_level;
-	vector<QString> *vet_aux;
+	std::vector<bool> vet_expif, vet_tk_if, vet_tk_then, vet_tk_else;
+	std::map<int, std::vector<QString> > if_map, else_map;
+	std::vector<QString>::iterator itr, itr_end;
+	std::vector<int> vet_prev_level;
+	std::vector<QString> *vet_aux;
 
 	//In case the file was successfuly loaded
 	if(buffer.size() > 0)
@@ -1363,13 +1371,13 @@ QString SchemaParser::getCodeDefinition(const attribs_map &attribs)
 	return object_def;
 }
 
-QString SchemaParser::getCodeDefinition(const QString &filename, attribs_map &attribs)
+QString SchemaParser::getSourceCode(const QString &filename, attribs_map &attribs)
 {
 	try
 	{
 		loadFile(filename);
 		attribs[Attributes::PgSqlVersion]=pgsql_version;
-		return getCodeDefinition(attribs);
+		return getSourceCode(attribs);
 	}
 	catch(Exception &e)
 	{

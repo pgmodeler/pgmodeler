@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -36,7 +36,7 @@
 #include "copyoptions.h"
 #include "pgsqltypes/partitioningtype.h"
 
-class PhysicalTable: public BaseTable {
+class __libcore PhysicalTable: public BaseTable {
 	protected:
 		//! \brief Specifies the table from which columns are copied
 		PhysicalTable *copy_table;
@@ -52,18 +52,18 @@ class PhysicalTable: public BaseTable {
 		QString part_bounding_expr;
 
 		//! \brief Vectors that store basic table attributes
-		vector<TableObject *> columns;
-		vector<TableObject *> constraints;
-		vector<TableObject *> triggers;
+		std::vector<TableObject *> columns;
+		std::vector<TableObject *> constraints;
+		std::vector<TableObject *> triggers;
 
 		//! \brief Stores the tables that 'this' object inherits attributes
-		vector<PhysicalTable *> ancestor_tables;
+		std::vector<PhysicalTable *> ancestor_tables;
 
 		//! \brief Stores the tables that 'this' object has as its partitions
-		vector<PhysicalTable *> partition_tables;
+		std::vector<PhysicalTable *> partition_tables;
 		
 		//! \brief Stores the partition keys of the table partitioning being used
-		vector<PartitionKey> partition_keys;
+		std::vector<PartitionKey> partition_keys;
 
 		//! \brief Stores the table which this one is partition of
 		PhysicalTable *partitioned_table;
@@ -74,7 +74,7 @@ class PhysicalTable: public BaseTable {
 		bool gen_alter_cmds;
 
 		//! \brief Stores the relationship added column / constraints indexes
-		map<QString, unsigned> col_indexes,	constr_indexes;
+		std::map<QString, unsigned> col_indexes,	constr_indexes;
 
 		//! \brief The partitioning mode/type used by the table
 		PartitioningType partitioning_type;
@@ -84,8 +84,8 @@ class PhysicalTable: public BaseTable {
 		BaseObject *getObject(const QString &name, ObjectType obj_type, int &obj_idx);
 
 		//! \brief The methods below generates the table attributes used by the SchemaParser
-		void setColumnsAttribute(unsigned def_type, bool incl_rel_added_cols);
-		void setConstraintsAttribute(unsigned def_type);
+		void setColumnsAttribute(SchemaParser::CodeType def_type, bool incl_rel_added_cols);
+		void setConstraintsAttribute(SchemaParser::CodeType def_type);
 		void setCommentAttribute(TableObject *tab_obj);
 		void setAncestorTableAttribute();
 		void setRelObjectsIndexesAttribute();		
@@ -197,13 +197,13 @@ class PhysicalTable: public BaseTable {
 		QString getPartitionBoundingExpr();
 
 		//! \brief Returns the partition tables
-		vector<PhysicalTable *> getPartionTables();
+		std::vector<PhysicalTable *> getPartionTables();
 
 		//! \brief Returs if the provided table is amongst the partitions
 		bool isPartitionTableExists(PhysicalTable *table, bool compare_names);
 
 		//! \brief Adds partition keys to the table. This method overrides the currently configure partition keys.
-		void addPartitionKeys(vector<PartitionKey> &part_keys);
+		void addPartitionKeys(std::vector<PartitionKey> &part_keys);
 
 		//! \brief Remove all partition keys configured for the table
 		void removePartitionKeys();
@@ -271,7 +271,7 @@ class PhysicalTable: public BaseTable {
 		void removeTrigger(unsigned idx);
 
 		//! \brief Returns the SQL / XML definition for table
-		virtual QString getCodeDefinition(unsigned def_type) = 0;
+		virtual QString getSourceCode(SchemaParser::CodeType def_type) = 0;
 
 		//! \brief Gets the object index using its name and type
 		int getObjectIndex(const QString &name, ObjectType obj_type);
@@ -282,10 +282,10 @@ class PhysicalTable: public BaseTable {
 		int getObjectIndex(BaseObject *obj);
 
 		//! \brief Returns the children objects of the table excluding the provided children types
-		vector<BaseObject *> getObjects(const vector<ObjectType> &excl_types = {});
+		std::vector<BaseObject *> getObjects(const std::vector<ObjectType> &excl_types = {});
 
 		//! \brief Returns all the partition keys used by the table
-		vector<PartitionKey> getPartitionKeys();
+		std::vector<PartitionKey> getPartitionKeys();
 
 		//! \brief Protects the table and its aggregated objects against modification
 		void setProtected(bool value);
@@ -313,20 +313,20 @@ class PhysicalTable: public BaseTable {
 		//! \brief Returns if the table is a partition of another table
 		bool isPartition();
 
-		//! \brief Returns if the table is a partitioned. This is the same as getPartitioningType() != BaseType::null
+		//! \brief Returns if the table is a partitioned. This is the same as getPartitioningType() != null
 		bool isPartitioned();
 
 		//! \brief Copy the attributes between two tables
 		void operator = (PhysicalTable &table);
 
 		//! \brief Returns the specified object type list. Returns null if an invalid object type is provided
-		virtual vector<TableObject *> *getObjectList(ObjectType obj_type);
+		virtual std::vector<TableObject *> *getObjectList(ObjectType obj_type);
 
 		/*! \brief Gets objects which refer to object of the parameter (directly or indirectly) and stores them in a vector.
 		 The 'exclusion_mode' is used to speed up the execution of the method when it is used to validate the
 		 deletion of the object, getting only the first reference to the object candidate for deletion.
 		 To get ALL references to the object must be specified as 'false' the parameter 'exclusion_mode'. */
-		void getColumnReferences(Column *column, vector<TableObject *> &refs, bool exclusion_mode=false);
+		void getColumnReferences(Column *column, std::vector<TableObject *> &refs, bool exclusion_mode=false);
 
 		//! \brief Reset the current index of the objects created by relationship
 		void resetRelObjectsIndexes();
@@ -340,14 +340,14 @@ class PhysicalTable: public BaseTable {
 		void restoreRelObjectsIndexes();
 
 		//! \brief Creates custom index from rel. created object using a name and index vectors as input.
-		void setRelObjectsIndexes(const vector<QString> &obj_names, const vector<unsigned> &idxs, ObjectType obj_type);
+		void setRelObjectsIndexes(const std::vector<QString> &obj_names, const std::vector<unsigned> &idxs, ObjectType obj_type);
 
 		//! \brief Invalidates the cached code forcing the generation of both SQL and XML
 		void setCodeInvalidated(bool value);
 
 		/*! \brief Returns the alter definition by comparing the this table against the one provided via parameter
 		 * This is a pure virtual method and must be implemented by children classes */
-		virtual QString getAlterDefinition(BaseObject *object) = 0;
+		virtual QString getAlterCode(BaseObject *object) = 0;
 
 		/*! \brief Defines an initial set of data for the table in a CSV-like buffer.
 		In order to separate columns and values use the DATA_SEPARATOR char and to separate
@@ -365,13 +365,13 @@ class PhysicalTable: public BaseTable {
 		 * Note if the method is called with incl_rel_added_objs = true it can produce an SQL/XML code
 		 * that does not reflect the real semantics of the table. So take care to use this method and always
 		 * invalidate the tables code (see setCodeInvalidated()) after retrieving the resulting code */
-		void setTableAttributes(unsigned def_type, bool incl_rel_added_objs);
+		void setTableAttributes(SchemaParser::CodeType def_type, bool incl_rel_added_objs);
 
 		virtual void setObjectListsCapacity(unsigned capacity);
 
 		virtual unsigned getMaxObjectCount();
 
-		virtual QString getDataDictionary(bool split, attribs_map extra_attribs = {});
+		virtual QString getDataDictionary(bool split, const attribs_map &extra_attribs = {});
 
 		friend class Relationship;
 		friend class OperationList;

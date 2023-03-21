@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -18,34 +18,41 @@
 
 #include "objectstablewidget.h"
 
-ObjectsTableWidget::ObjectsTableWidget(unsigned button_conf, bool conf_exclusion, QWidget *parent): QWidget(parent)
+QColor ObjectsTableWidget::item_colors[12] = { QColor("#ffb4b4"), QColor("#303030"),
+																							 QColor("#a4f9b0"), QColor("#303030"),
+																							 QColor("#c0ffc0"), QColor("#000"),
+																							 QColor("#ffffc0"), QColor("#000"),
+																							 QColor("#ffc0c0"), QColor("#000"),
+																							 QColor("#f00000"), QColor("#00f000")};
+
+ObjectsTableWidget::ObjectsTableWidget(ButtonConf button_conf, bool conf_exclusion, QWidget *parent): QWidget(parent)
 {
 	setupUi(this);
-	connect(move_down_tb, SIGNAL(clicked(bool)), this, SLOT(moveRows()));
-	connect(move_up_tb, SIGNAL(clicked(bool)), this, SLOT(moveRows()));
-	connect(move_first_tb, SIGNAL(clicked(bool)), this, SLOT(moveRows()));
-	connect(move_last_tb, SIGNAL(clicked(bool)), this, SLOT(moveRows()));
-	connect(add_tb, SIGNAL(clicked(bool)), this, SLOT(addRow()));
-	connect(remove_tb, SIGNAL(clicked(bool)), this, SLOT(removeRow()));
-	connect(edit_tb, SIGNAL(clicked(bool)), this, SLOT(editRow()));
-	connect(update_tb, SIGNAL(clicked(bool)), this, SLOT(updateRow()));
-	connect(duplicate_tb, SIGNAL(clicked(bool)), this, SLOT(duplicateRow()));
-	connect(remove_all_tb, SIGNAL(clicked(bool)), this, SLOT(removeRows()));
-	connect(table_tbw, SIGNAL(cellClicked(int,int)), this, SLOT(setButtonsEnabled()));
-	connect(table_tbw, SIGNAL(cellActivated(int,int)), this, SLOT(setButtonsEnabled()));
-	connect(table_tbw, SIGNAL(cellDoubleClicked(int,int)), this, SLOT(editRow()));
-	connect(table_tbw, SIGNAL(itemSelectionChanged()), this, SLOT(setButtonsEnabled()));
-	connect(table_tbw, SIGNAL(itemSelectionChanged()), this, SLOT(emitRowSelected()));
+	connect(move_down_tb, &QToolButton::clicked, this, &ObjectsTableWidget::moveRows);
+	connect(move_up_tb, &QToolButton::clicked, this, &ObjectsTableWidget::moveRows);
+	connect(move_first_tb, &QToolButton::clicked, this, &ObjectsTableWidget::moveRows);
+	connect(move_last_tb, &QToolButton::clicked, this, &ObjectsTableWidget::moveRows);
+	connect(add_tb, &QToolButton::clicked, this, qOverload<>(&ObjectsTableWidget::addRow));
 
-	connect(table_tbw, &QTableWidget::cellClicked, [&](int row, int col){
+	connect(remove_tb, &QToolButton::clicked, this, [this]() {
+		removeRow();
+	});
+
+	connect(edit_tb, &QToolButton::clicked, this, &ObjectsTableWidget::editRow);
+	connect(update_tb, &QToolButton::clicked, this, &ObjectsTableWidget::updateRow);
+	connect(duplicate_tb, &QToolButton::clicked, this, &ObjectsTableWidget::duplicateRow);
+	connect(remove_all_tb, &QToolButton::clicked, this, &ObjectsTableWidget::removeRows);
+	connect(table_tbw, &QTableWidget::cellClicked, this, qOverload<>(&ObjectsTableWidget::setButtonsEnabled));
+	connect(table_tbw, &QTableWidget::cellActivated, this, qOverload<>(&ObjectsTableWidget::setButtonsEnabled));
+	connect(table_tbw, &QTableWidget::cellDoubleClicked, this, &ObjectsTableWidget::editRow);
+	connect(table_tbw, &QTableWidget::itemSelectionChanged, this, qOverload<>(&ObjectsTableWidget::setButtonsEnabled));
+	connect(table_tbw, &QTableWidget::itemSelectionChanged, this, &ObjectsTableWidget::emitRowSelected);
+
+	connect(table_tbw, &QTableWidget::cellClicked, this, [this](int row, int col){
 		emit s_cellClicked(row, col);
 	});
 
-	connect(resize_cols_tb, &QToolButton::clicked, [&](){
-	  table_tbw->resizeColumnsToContents();
-	  table_tbw->resizeRowsToContents();
-	  table_tbw->horizontalHeader()->setSectionResizeMode(table_tbw->horizontalHeader()->count() - 1, QHeaderView::Stretch);
-	});
+	connect(resize_cols_tb, &QToolButton::clicked, this, &ObjectsTableWidget::resizeContents);
 
 	this->conf_exclusion=conf_exclusion;
 	cells_editable = false;
@@ -65,7 +72,23 @@ ObjectsTableWidget::ObjectsTableWidget(unsigned button_conf, bool conf_exclusion
 	move_down_tb->setToolTip(move_down_tb->toolTip() + QString(" (%1)").arg(move_down_tb->shortcut().toString()));
 }
 
-void ObjectsTableWidget::setButtonConfiguration(unsigned button_conf)
+void ObjectsTableWidget::setTableItemColor(TableItemColor color_idx, const QColor color)
+{
+	if(color_idx > RelAddedItemAltFgColor)
+		return;
+
+	item_colors[color_idx] = color;
+}
+
+QColor ObjectsTableWidget::getTableItemColor(TableItemColor color_idx)
+{
+	if(color_idx > RelAddedItemAltFgColor)
+		return QColor();
+
+	return item_colors[color_idx];
+}
+
+void ObjectsTableWidget::setButtonConfiguration(ButtonConf button_conf)
 {
 	bool move_btn = false;
 
@@ -189,19 +212,28 @@ void ObjectsTableWidget::clearCellText(unsigned row_idx, unsigned col_idx)
 	}
 }
 
-void ObjectsTableWidget::setRowFont(int row_idx, const QFont &font, const QColor &fg_color, const QColor &bg_color)
+void ObjectsTableWidget::setRowFont(int row_idx, const QFont &font)
 {
-	QTableWidgetItem *item=nullptr;
-	int col_count, i;
-
 	if(row_idx >= table_tbw->rowCount())
 		throw Exception(ErrorCode::RefRowObjectTabInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	col_count=table_tbw->columnCount();
-	for(i=0; i < col_count; i++)
+	int col_count = table_tbw->columnCount();
+
+	for(int col = 0; col < col_count; col++)
+		table_tbw->item(row_idx, col)->setFont(font);
+}
+
+void ObjectsTableWidget::setRowColors(int row_idx, const QColor &fg_color, const QColor &bg_color)
+{
+	if(row_idx >= table_tbw->rowCount())
+		throw Exception(ErrorCode::RefRowObjectTabInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+	QTableWidgetItem *item=nullptr;
+	int col_count = table_tbw->columnCount();
+
+	for(int col = 0; col < col_count; col++)
 	{
-		item=table_tbw->item(row_idx, i);
-		item->setFont(font);
+		item = table_tbw->item(row_idx, col);
 		item->setForeground(fg_color);
 		item->setBackground(bg_color);
 	}
@@ -583,7 +615,7 @@ void ObjectsTableWidget::clearSelection()
 	setButtonsEnabled();
 }
 
-void ObjectsTableWidget::setButtonsEnabled(unsigned button_conf, bool value)
+void ObjectsTableWidget::setButtonsEnabled(ButtonConf button_conf, bool value)
 {
 	int lin=-1;
 	QTableWidgetItem *item=table_tbw->currentItem();
@@ -625,6 +657,13 @@ void ObjectsTableWidget::setCellsEditable(bool value)
 {
 	table_tbw->setSelectionBehavior(value ? QAbstractItemView::SelectItems : QAbstractItemView::SelectRows);
 	table_tbw->setEditTriggers(value ? QAbstractItemView::AllEditTriggers : QAbstractItemView::NoEditTriggers);
+}
+
+void ObjectsTableWidget::resizeContents()
+{
+	table_tbw->resizeColumnsToContents();
+	table_tbw->resizeRowsToContents();
+	table_tbw->horizontalHeader()->setSectionResizeMode(table_tbw->horizontalHeader()->count() - 1, QHeaderView::Stretch);
 }
 
 void ObjectsTableWidget::setButtonsEnabled()

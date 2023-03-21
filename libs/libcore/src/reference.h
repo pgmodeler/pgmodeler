@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -30,7 +30,7 @@
 #include "schema.h"
 #include "simplecolumn.h"
 
-class Reference {
+class __libcore Reference {
 	private:
 		//! \brief Stores the table used by the reference
 		PhysicalTable *table;
@@ -57,23 +57,27 @@ class Reference {
 		 * These columns are used when drawing a view and that has only on definition expression.
 		 * By having columns, instead of drawing the expression as a column of the view, the ones in
 		 * this vector are displayed */
-		vector<SimpleColumn> columns;
+		std::vector<SimpleColumn> columns;
 
 		/*! \brief Stores the tables that the reference object is using within the expression which defines the view
 		 * when is_def_expr is set. These tables are used to hint the user which tables the view is using. */
-		vector<PhysicalTable *> ref_tables;
+		std::vector<PhysicalTable *> ref_tables;
 
 	public:
 		//! \brief Constants used to define the reference type
-		static constexpr unsigned ReferColumn=0, //! \brief The reference is based on a table column
-		ReferExpression=1; //! \brief The reference is based on an expression
+		enum ReferType: unsigned {
+			ReferColumn, //! \brief The reference is based on a table column
+			ReferExpression //! \brief The reference is based on an expression
+		};
 
 		//! \brief Constants used on the view code generation
-		static constexpr unsigned SqlReferWhere=1,
-		SqlReferSelect=2,
-		SqlReferFrom=4,
-		SqlReferEndExpr=8,
-		SqlViewDefinition=16;
+		enum SqlType: unsigned {
+			SqlWhere=1,
+			SqlSelect=2,
+			SqlFrom=4,
+			SqlEndExpr=8,
+			SqlViewDef=16
+		};
 
 		Reference();
 
@@ -90,7 +94,7 @@ class Reference {
 		void addReferencedTable(PhysicalTable *ref_table);
 		int getReferencedTableIndex(PhysicalTable *ref_table);
 		void clearReferencedTables();
-		vector<PhysicalTable *> getReferencedTables();
+		std::vector<PhysicalTable *> getReferencedTables();
 
 		//! \brief Gets the referenced table
 		PhysicalTable *getTable();
@@ -108,14 +112,14 @@ class Reference {
 		QString getExpression();
 
 		//! \brief Returns the reference typ (see REFER_??? constants)
-		unsigned getReferenceType();
+		ReferType getReferenceType();
 
 		void setReferenceAlias(const QString &alias);
 
 		QString getReferenceAlias();
 
 		//! \brief Returns the SQL code definition
-		QString getSQLDefinition(unsigned sql_type);
+		QString getSQLDefinition(SqlType sql_type);
 
 		//! \brief Returns the XML code definition
 		QString getXMLDefinition();
@@ -131,11 +135,16 @@ class Reference {
 		void removeColumns();
 
 		//! \brief Returns the columns which the reference generates
-		vector<SimpleColumn> getColumns();
+		std::vector<SimpleColumn> getColumns();
 
 		/*! \brief Compare the attributes of two references returning true
 		 when they have the same values */
 		bool operator == (Reference &refer);
 };
+
+/* Registering the Reference class as a Qt MetaType in order to make
+ * it liable to be sent through signal parameters as well as to be
+ * to be used by QVariant */
+Q_DECLARE_METATYPE(Reference)
 
 #endif

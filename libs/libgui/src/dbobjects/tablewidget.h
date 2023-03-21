@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -31,7 +31,7 @@
 #include "tableview.h"
 #include "elementstablewidget.h"
 
-class TableWidget: public BaseObjectWidget, public Ui::TableWidget {
+class __libgui TableWidget: public BaseObjectWidget, public Ui::TableWidget {
 	private:
 		Q_OBJECT
 
@@ -44,7 +44,7 @@ class TableWidget: public BaseObjectWidget, public Ui::TableWidget {
 		QFrame *warn_frame;
 
 		//! \brief Stores the objects tables used to handle columns, constraints, indexes, rules and triggers
-		map<ObjectType, ObjectsTableWidget *> objects_tab_map;
+		std::map<ObjectType, ObjectsTableWidget *> objects_tab_map;
 
 		//! \brief Lists (on the correct object table) the table objects according to the specified type
 		void listObjects(ObjectType obj_type);
@@ -65,11 +65,16 @@ class TableWidget: public BaseObjectWidget, public Ui::TableWidget {
 
 		void __setAttributes(DatabaseModel *model, OperationList *op_list, Schema *schema, PhysicalTable *table, double pos_x, double pos_y);
 
+		void updatePkColumnsCheckState(bool has_pk);
+
 	public:
 		TableWidget(QWidget * parent = nullptr, ObjectType tab_type = ObjectType::Table);
 
 		void setAttributes(DatabaseModel *model, OperationList *op_list, Schema *schema, Table *table, double pos_x, double pos_y);
 		void setAttributes(DatabaseModel *model, OperationList *op_list, Schema *schema, ForeignTable *ftable, double pos_x, double pos_y);
+
+		static void setTableItemColor(unsigned color_idx, const QColor color);
+		static QColor getTableItemColor(unsigned color_idx);
 
 	private slots:
 		//! \brief Adds or edit a object on the object table that calls the slot

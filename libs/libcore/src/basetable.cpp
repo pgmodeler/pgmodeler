@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -58,11 +58,11 @@ bool BaseTable::isBaseTable(ObjectType obj_tp)
 				 obj_tp == ObjectType::View);
 }
 
-QString BaseTable::getAlterDefinition(BaseObject *object)
+QString BaseTable::getAlterCode(BaseObject *object)
 {
 	try
 	{
-		return BaseObject::getAlterDefinition(object);
+		return BaseObject::getAlterCode(object);
 	}
 	catch(Exception &e)
 	{
@@ -76,7 +76,7 @@ void BaseTable::operator = (BaseTable &tab)
 	this->tag=tab.tag;
 }
 
-CollapseMode BaseTable::getCollapseMode()
+BaseTable::CollapseMode BaseTable::getCollapseMode()
 {
 	return collapse_mode;
 }
@@ -95,7 +95,7 @@ bool BaseTable::isPaginationEnabled()
 	return pagination_enabled;
 }
 
-void BaseTable::setCurrentPage(unsigned section_id, unsigned value)
+void BaseTable::setCurrentPage(TableSection section_id, unsigned value)
 {
 	if(section_id > ExtAttribsSection)
 		throw Exception(ErrorCode::RefElementInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -104,7 +104,7 @@ void BaseTable::setCurrentPage(unsigned section_id, unsigned value)
 	curr_page[section_id] = value;
 }
 
-unsigned BaseTable::getCurrentPage(unsigned section_id)
+unsigned BaseTable::getCurrentPage(TableSection section_id)
 {
 	if(section_id > ExtAttribsSection)
 		throw Exception(ErrorCode::RefElementInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);

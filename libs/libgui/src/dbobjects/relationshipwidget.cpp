@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -50,7 +50,7 @@ RelationshipWidget::RelationshipWidget(QWidget *parent): BaseObjectWidget(parent
 		for(int i=0; i < pattern_fields.size(); i++)
 		{
 			patterns_hl[i]=new SyntaxHighlighter(qobject_cast<QPlainTextEdit *>(pattern_fields[i]), true);
-			patterns_hl[i]->loadConfiguration(GlobalAttributes::getConfigurationFilePath(GlobalAttributes::PatternHighlightConf));
+			patterns_hl[i]->loadConfiguration(GlobalAttributes::getPatternHighlightConfPath());
 		}
 
 		attributes_tab=new ObjectsTableWidget(ObjectsTableWidget::AllButtons ^
@@ -81,16 +81,16 @@ RelationshipWidget::RelationshipWidget(QWidget *parent): BaseObjectWidget(parent
 		advanced_objs_tab->setHeaderLabel(tr("Type"), 1);
 		advanced_objs_tab->setHeaderIcon(QPixmap(GuiUtilsNs::getIconPath("usertype")),1);
 
-		connect(advanced_objs_tab, SIGNAL(s_rowEdited(int)), this, SLOT(showAdvancedObject(int)));
+		connect(advanced_objs_tab, &ObjectsTableWidget::s_rowEdited, this, &RelationshipWidget::showAdvancedObject);
 
 		grid=new QGridLayout;
 		grid->addWidget(attributes_tab, 0,0,1,1);
-		grid->setContentsMargins(4,4,4,4);
+		grid->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
 		rel_attribs_tbw->widget(AttributesTab)->setLayout(grid);
 
 		grid=new QGridLayout;
 		grid->addWidget(constraints_tab, 0,0,1,1);
-		grid->setContentsMargins(4,4,4,4);
+		grid->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
 		rel_attribs_tbw->widget(ConstraintsTab)->setLayout(grid);
 
 		grid=dynamic_cast<QGridLayout *>(rel_attribs_tbw->widget(SpecialPkTab)->layout());
@@ -100,7 +100,7 @@ RelationshipWidget::RelationshipWidget(QWidget *parent): BaseObjectWidget(parent
 		frame->setParent(rel_attribs_tbw->widget(SpecialPkTab));
 
 		grid=new QGridLayout;
-		grid->setContentsMargins(4,4,4,4);
+		grid->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
 
 		grid->addWidget(advanced_objs_tab, 0, 0, 1, 1);
 
@@ -148,45 +148,45 @@ RelationshipWidget::RelationshipWidget(QWidget *parent): BaseObjectWidget(parent
 		part_bound_expr_hl->loadConfiguration(GlobalAttributes::getSQLHighlightConfPath());
 		dynamic_cast<QGridLayout *>(part_bound_expr_gb->layout())->addWidget(part_bound_expr_txt, 1, 0);
 
-		connect(deferrable_chk, SIGNAL(toggled(bool)), deferral_cmb, SLOT(setEnabled(bool)));
-		connect(deferrable_chk, SIGNAL(toggled(bool)), deferral_lbl, SLOT(setEnabled(bool)));
+		connect(deferrable_chk, &QCheckBox::toggled, deferral_cmb, &QComboBox::setEnabled);
+		connect(deferrable_chk, &QCheckBox::toggled, deferral_lbl, &QLabel::setEnabled);
 
-		connect(identifier_chk, &QCheckBox::toggled, [&](){
+		connect(identifier_chk, &QCheckBox::toggled, this, [this](){
 			table1_mand_chk->setDisabled(identifier_chk->isChecked());
 			table2_mand_chk->setEnabled(!identifier_chk->isChecked() &&
 																	this->object &&
 																	dynamic_cast<BaseRelationship *>(this->object)->getRelationshipType() != BaseRelationship::Relationship1n);
 		});
 
-		connect(attributes_tab, SIGNAL(s_rowsRemoved()), this, SLOT(removeObjects()));
-		connect(attributes_tab, SIGNAL(s_rowAdded(int)), this, SLOT(addObject()));
-		connect(attributes_tab, SIGNAL(s_rowEdited(int)), this, SLOT(editObject(int)));
-		connect(attributes_tab, SIGNAL(s_rowRemoved(int)), this, SLOT(removeObject(int)));
-		connect(attributes_tab, SIGNAL(s_rowDuplicated(int,int)), this, SLOT(duplicateObject(int,int)));
+		connect(attributes_tab, &ObjectsTableWidget::s_rowsRemoved, this, &RelationshipWidget::removeObjects);
+		connect(attributes_tab, &ObjectsTableWidget::s_rowAdded, this, &RelationshipWidget::addObject);
+		connect(attributes_tab, &ObjectsTableWidget::s_rowEdited, this, &RelationshipWidget::editObject);
+		connect(attributes_tab, &ObjectsTableWidget::s_rowRemoved, this, &RelationshipWidget::removeObject);
+		connect(attributes_tab, &ObjectsTableWidget::s_rowDuplicated, this, &RelationshipWidget::duplicateObject);
 
-		connect(constraints_tab, SIGNAL(s_rowsRemoved()), this, SLOT(removeObjects()));
-		connect(constraints_tab, SIGNAL(s_rowAdded(int)), this, SLOT(addObject()));
-		connect(constraints_tab, SIGNAL(s_rowEdited(int)), this, SLOT(editObject(int)));
-		connect(constraints_tab, SIGNAL(s_rowRemoved(int)), this, SLOT(removeObject(int)));
-		connect(constraints_tab, SIGNAL(s_rowDuplicated(int,int)), this, SLOT(duplicateObject(int,int)));
+		connect(constraints_tab, &ObjectsTableWidget::s_rowsRemoved, this, &RelationshipWidget::removeObjects);
+		connect(constraints_tab, &ObjectsTableWidget::s_rowAdded, this, &RelationshipWidget::addObject);
+		connect(constraints_tab, &ObjectsTableWidget::s_rowEdited, this, &RelationshipWidget::editObject);
+		connect(constraints_tab, &ObjectsTableWidget::s_rowRemoved, this, &RelationshipWidget::removeObject);
+		connect(constraints_tab, &ObjectsTableWidget::s_rowDuplicated, this, &RelationshipWidget::duplicateObject);
 
-		connect(defaults_rb, SIGNAL(toggled(bool)), this, SLOT(selectCopyOptions()));
-		connect(including_rb, SIGNAL(toggled(bool)), this, SLOT(selectCopyOptions()));
-		connect(excluding_rb, SIGNAL(toggled(bool)), this, SLOT(selectCopyOptions()));
+		connect(defaults_rb, &QRadioButton::toggled, this, &RelationshipWidget::selectCopyOptions);
+		connect(including_rb, &QRadioButton::toggled, this, &RelationshipWidget::selectCopyOptions);
+		connect(excluding_rb, &QRadioButton::toggled, this, &RelationshipWidget::selectCopyOptions);
 
-		connect(defaults_chk, SIGNAL(toggled(bool)), this, SLOT(selectCopyOptions()));
-		connect(constraints_chk, SIGNAL(toggled(bool)), this, SLOT(selectCopyOptions()));
-		connect(comments_chk, SIGNAL(toggled(bool)), this, SLOT(selectCopyOptions()));
-		connect(indexes_chk, SIGNAL(toggled(bool)), this, SLOT(selectCopyOptions()));
-		connect(storage_chk, SIGNAL(toggled(bool)), this, SLOT(selectCopyOptions()));
-		connect(all_chk, SIGNAL(toggled(bool)), this, SLOT(selectCopyOptions()));
+		connect(defaults_chk, &QCheckBox::toggled, this, &RelationshipWidget::selectCopyOptions);
+		connect(constraints_chk, &QCheckBox::toggled, this, &RelationshipWidget::selectCopyOptions);
+		connect(comments_chk, &QCheckBox::toggled, this, &RelationshipWidget::selectCopyOptions);
+		connect(indexes_chk, &QCheckBox::toggled, this, &RelationshipWidget::selectCopyOptions);
+		connect(storage_chk, &QCheckBox::toggled, this, &RelationshipWidget::selectCopyOptions);
+		connect(all_chk, &QCheckBox::toggled, this, &RelationshipWidget::selectCopyOptions);
 
-		connect(custom_color_chk, SIGNAL(toggled(bool)), color_picker, SLOT(setEnabled(bool)));
+		connect(custom_color_chk, &QCheckBox::toggled, color_picker, &ColorPickerWidget::setEnabled);
 
-		connect(fk_gconf_chk, SIGNAL(toggled(bool)), this, SLOT(useFKGlobalSettings(bool)));
-		connect(patterns_gconf_chk, SIGNAL(toggled(bool)), this, SLOT(usePatternGlobalSettings(bool)));
-		connect(gen_bound_expr_tb, SIGNAL(clicked(bool)), this, SLOT(generateBoundingExpr()));
-		connect(default_part_chk, SIGNAL(toggled(bool)), part_bound_expr_txt, SLOT(setDisabled(bool)));
+		connect(fk_gconf_chk, &QCheckBox::toggled, this, &RelationshipWidget::useFKGlobalSettings);
+		connect(patterns_gconf_chk, &QCheckBox::toggled, this, &RelationshipWidget::usePatternGlobalSettings);
+		connect(gen_bound_expr_tb, &QToolButton::clicked, this, &RelationshipWidget::generateBoundingExpr);
+		connect(default_part_chk, &QCheckBox::toggled, part_bound_expr_txt, &NumberedTextEditor::setDisabled);
 
 		setMinimumSize(600, 380);
 	}
@@ -196,7 +196,7 @@ RelationshipWidget::RelationshipWidget(QWidget *parent): BaseObjectWidget(parent
 	}
 }
 
-void RelationshipWidget::setAttributes(DatabaseModel *model, OperationList *op_list, PhysicalTable *src_tab, PhysicalTable *dst_tab, unsigned rel_type)
+void RelationshipWidget::setAttributes(DatabaseModel *model, OperationList *op_list, PhysicalTable *src_tab, PhysicalTable *dst_tab, BaseRelationship::RelType rel_type)
 {
 	Relationship *rel=nullptr;
 
@@ -221,13 +221,12 @@ void RelationshipWidget::setAttributes(DatabaseModel *model, OperationList *op_l
 
 void RelationshipWidget::setAttributes(DatabaseModel *model, OperationList *op_list, BaseRelationship *base_rel)
 {
-	unsigned rel_type, i;
-	Relationship *aux_rel=nullptr;
-	bool rel1n=false, relnn=false, relgen_dep=false, has_foreign_tab=false;
-
 	if(!base_rel)
 		throw Exception(ErrorCode::AsgNotAllocattedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
+	BaseRelationship::RelType rel_type;
+	Relationship *aux_rel=nullptr;
+	bool rel1n=false, relnn=false, relgen_dep=false, has_foreign_tab=false;
 	BaseObjectWidget::setAttributes(model, op_list, base_rel);
 
 	if(!this->new_object)
@@ -399,24 +398,24 @@ void RelationshipWidget::setAttributes(DatabaseModel *model, OperationList *op_l
 
 	part_bound_expr_gb->setVisible(rel_type==BaseRelationship::RelationshipPart);
 
-	for(i=SettingsTab; i <= AdvancedTab; i++)
-		rel_attribs_tbw->removeTab(1);
+	for(unsigned i=SettingsTab; i <= AdvancedTab; i++)
+		rel_attribs_tbw->setTabVisible(i, false);
 
 	if(!relgen_dep)
 	{
-		for(i=SettingsTab; i <= SpecialPkTab; i++)
-			rel_attribs_tbw->addTab(tabs[i], tab_labels[i]);
+		for(unsigned i=SettingsTab; i <= SpecialPkTab; i++)
+			rel_attribs_tbw->setTabVisible(i, true);
 	}
 	else if(relgen_dep && base_rel->getObjectType()==ObjectType::Relationship && !has_foreign_tab)
 	{
-		rel_attribs_tbw->addTab(tabs[SettingsTab], tab_labels[SettingsTab]);
-		rel_attribs_tbw->addTab(tabs[SpecialPkTab], tab_labels[SpecialPkTab]);
+		rel_attribs_tbw->setTabVisible(SettingsTab, true);
+		rel_attribs_tbw->setTabVisible(SpecialPkTab, true);
 	}
 
 	if(base_rel->getObjectType()==ObjectType::Relationship ||
 		 (base_rel->getObjectType()==ObjectType::BaseRelationship &&
 			base_rel->getRelationshipType()==BaseRelationship::RelationshipFk))
-		rel_attribs_tbw->addTab(tabs[AdvancedTab], tab_labels[AdvancedTab]);
+		rel_attribs_tbw->setTabVisible(AdvancedTab, true);
 
 	copy_options_grp->setVisible(base_rel->getObjectType()==ObjectType::Relationship &&
 															 base_rel->getRelationshipType()==BaseRelationship::RelationshipDep);
@@ -431,7 +430,12 @@ void RelationshipWidget::setAttributes(DatabaseModel *model, OperationList *op_l
 		fk_gconf_chk->setChecked(this->new_object);
 		useFKGlobalSettings(this->new_object);
 		fk_gconf_chk->blockSignals(false);
+		rel_attribs_tbw->widget(SettingsTab)->setFocusProxy(fk_gconf_chk);
 	}
+	else if(relgen_dep)
+		rel_attribs_tbw->widget(SettingsTab)->setFocusProxy(defaults_rb);
+	else
+		rel_attribs_tbw->widget(SettingsTab)->setFocusProxy(patterns_gconf_chk);
 
 	if(use_name_patterns)
 	{
@@ -444,15 +448,16 @@ void RelationshipWidget::setAttributes(DatabaseModel *model, OperationList *op_l
 
 QSize RelationshipWidget::getIdealSize()
 {
-	unsigned rel_type = 0;
+	BaseRelationship::RelType rel_type = BaseRelationship::Relationship11;
 
 	if(this->object)
-	  rel_type = dynamic_cast<BaseRelationship *>(this->object)->getRelationshipType();
+		rel_type = dynamic_cast<BaseRelationship *>(this->object)->getRelationshipType();
 
 	if(rel_type == BaseRelationship::RelationshipFk ||
-	   (BaseRelationship::RelationshipDep && this->object && this->object->getObjectType()==ObjectType::BaseRelationship))
+		 (rel_type == BaseRelationship::RelationshipDep &&
+			this->object && this->object->getObjectType()==ObjectType::BaseRelationship))
 		return QSize(640, 320);
-	else if(BaseRelationship::RelationshipGen)
+	else if(rel_type == BaseRelationship::RelationshipGen)
 		return QSize(640, 520);
 	else
 		return QSize(640, 680);
@@ -464,7 +469,7 @@ void RelationshipWidget::useFKGlobalSettings(bool value)
 
 	if(value)
 	{
-		map<QString, attribs_map> confs=RelationshipConfigWidget::getConfigurationParams();
+		std::map<QString, attribs_map> confs=RelationshipConfigWidget::getConfigurationParams();
 		deferrable_chk->setChecked(confs[Attributes::ForeignKeys][Attributes::Deferrable]==Attributes::True);
 		deferral_cmb->setCurrentText(confs[Attributes::ForeignKeys][Attributes::DeferType]);
 		upd_action_cmb->setCurrentText(confs[Attributes::ForeignKeys][Attributes::UpdAction]);
@@ -500,7 +505,7 @@ void RelationshipWidget::usePatternGlobalSettings(bool value)
 	{
 		if(value)
 		{
-			map<QString, attribs_map> confs=RelationshipConfigWidget::getConfigurationParams();
+			std::map<QString, attribs_map> confs=RelationshipConfigWidget::getConfigurationParams();
 			QString rel_type=rel->getRelTypeAttribute();
 
 			//Using the global settings
@@ -532,11 +537,11 @@ void RelationshipWidget::generateBoundingExpr()
 	QString tmpl;
 
 	if(part_type == PartitioningType::List)
-		tmpl = QString("IN (value)");
+		tmpl = "IN (value)";
 	else if(part_type == PartitioningType::Range)
-		tmpl = QString("FROM (value) TO (value)");
+		tmpl = "FROM (value) TO (value)";
 	else
-		tmpl = QString("WITH (MODULUS m, REMAINDER r)");
+		tmpl = "WITH (MODULUS m, REMAINDER r)";
 
 	part_bound_expr_txt->setPlainText("");
 	part_bound_expr_txt->setPlainText(tmpl);
@@ -584,8 +589,8 @@ void RelationshipWidget::listAdvancedObjects()
 	BaseRelationship *base_rel=nullptr;
 	Relationship *rel=nullptr;
 	Table *tab=nullptr;
-	vector<Column *> cols;
-	vector<Constraint *> constrs;
+	std::vector<Column *> cols;
+	std::vector<Constraint *> constrs;
 	unsigned count=0, i,i1;
 
 	try
@@ -771,7 +776,7 @@ void RelationshipWidget::duplicateObject(int curr_row, int new_row)
 	ObjectType obj_type=ObjectType::BaseObject;
 	BaseObject *object = nullptr, *dup_object = nullptr;
 	Relationship *rel = dynamic_cast<Relationship *>(this->object);
-	vector<TableObject *> obj_list;
+	std::vector<TableObject *> obj_list;
 	ObjectsTableWidget *tab = nullptr;
 	int op_id = -1;
 
@@ -799,9 +804,9 @@ void RelationshipWidget::duplicateObject(int curr_row, int new_row)
 
 		CoreUtilsNs::copyObject(&dup_object, object, obj_type);
 		dup_object->setName(CoreUtilsNs::generateUniqueName(dup_object, obj_list, false, QString("_cp")));
+		op_id=op_list->registerObject(dup_object, Operation::ObjCreated, new_row, rel);
 
-		op_id=op_list->registerObject(dup_object, Operation::ObjectCreated, new_row, rel);
-
+		dynamic_cast<TableObject*>(dup_object)->setParentTable(nullptr);
 		rel->addObject(dynamic_cast<TableObject *>(dup_object));
 		listObjects(obj_type);
 	}
@@ -900,7 +905,7 @@ void RelationshipWidget::removeObjects()
 		for(i=0; i < count; i++)
 		{
 			object=rel->getObject(0, obj_type);
-			op_list->registerObject(object, Operation::ObjectRemoved, 0, rel);
+			op_list->registerObject(object, Operation::ObjRemoved, 0, rel);
 			rel->removeObject(object);
 		}
 
@@ -945,7 +950,7 @@ void RelationshipWidget::removeObject(int row)
 			obj_type=ObjectType::Constraint;
 
 		object=rel->getObject(row, obj_type);
-		op_id=op_list->registerObject(object, Operation::ObjectRemoved, 0, rel);
+		op_id=op_list->registerObject(object, Operation::ObjRemoved, 0, rel);
 		rel->removeObject(object);
 
 		if(obj_type==ObjectType::Column)
@@ -999,8 +1004,8 @@ void RelationshipWidget::listSpecialPkColumns()
 
 	if(aux_rel)
 	{
-		vector<Column *> cols;
-		vector<unsigned> col_ids;
+		std::vector<Column *> cols;
+		std::vector<unsigned> col_ids;
 		int count, idx;
 		QListWidgetItem *item=nullptr;
 
@@ -1039,8 +1044,10 @@ void RelationshipWidget::applyConfiguration()
 	{
 		Relationship *rel=nullptr;
 		BaseRelationship *base_rel=dynamic_cast<BaseRelationship *>(this->object);
-		unsigned rel_type, count, i, copy_mode=0, copy_ops=0;
-		vector<unsigned> col_ids;
+		BaseRelationship::RelType rel_type;
+		unsigned count, i, copy_ops = CopyOptions::NoOpts;
+		CopyOptions::CopyMode copy_mode = CopyOptions::NoMode;
+		std::vector<unsigned> col_ids;
 
 		/* Due to the complexity of the Relationship class and the strong link between all
 		 the relationships on the model is necessary to store the XML of the special objects
@@ -1052,7 +1059,7 @@ void RelationshipWidget::applyConfiguration()
 		}
 
 		if(!this->new_object && this->object->getObjectType()==ObjectType::Relationship)
-			op_list->registerObject(this->object, Operation::ObjectModified);
+			op_list->registerObject(this->object, Operation::ObjModified);
 		else
 			registerNewObject();
 
@@ -1065,15 +1072,15 @@ void RelationshipWidget::applyConfiguration()
 
 		if(this->object->getObjectType()==ObjectType::Relationship)
 		{
-			vector<QPlainTextEdit *> pattern_fields={ src_col_pattern_txt, dst_col_pattern_txt,
-																								pk_pattern_txt, uq_pattern_txt,
-																								src_fk_pattern_txt, dst_fk_pattern_txt,
-																								pk_col_pattern_txt };
+			std::vector<QPlainTextEdit *> pattern_fields={ src_col_pattern_txt, dst_col_pattern_txt,
+																										 src_fk_pattern_txt, dst_fk_pattern_txt,
+																										 pk_pattern_txt, uq_pattern_txt,
+																										 pk_col_pattern_txt };
 
-			vector<unsigned> pattern_ids= { Relationship::SrcColPattern, Relationship::DstColPattern,
-																			Relationship::PkPattern, Relationship::UqPattern,
-																			Relationship::SrcFkPattern, Relationship::DstFkPattern,
-																			Relationship::PkColPattern };
+			std::vector<Relationship::PatternId> pattern_ids= { Relationship::SrcColPattern, Relationship::DstColPattern,
+																													Relationship::SrcFkPattern, Relationship::DstFkPattern,
+																													Relationship::PkPattern, Relationship::UqPattern,
+																													Relationship::PkColPattern };
 
 			rel = dynamic_cast<Relationship *>(base_rel);
 
@@ -1095,17 +1102,17 @@ void RelationshipWidget::applyConfiguration()
 				else
 					copy_mode=CopyOptions::Excluding;
 
-				copy_ops+=(all_chk->isChecked() ? CopyOptions::All : 0);
-				copy_ops+=(defaults_chk->isChecked() ? CopyOptions::Defaults : 0);
-				copy_ops+=(constraints_chk->isChecked() ? CopyOptions::Constraints : 0);
-				copy_ops+=(comments_chk->isChecked() ? CopyOptions::Comments : 0);
-				copy_ops+=(indexes_chk->isChecked() ? CopyOptions::Indexes : 0);
-				copy_ops+=(storage_chk->isChecked() ? CopyOptions::Storage : 0);
-				copy_ops+=(identity_chk->isChecked() ? CopyOptions::Identity : 0);
-				copy_ops+=(statistics_chk->isChecked() ? CopyOptions::Statistics : 0);
+				copy_ops+=(all_chk->isChecked() ? CopyOptions::All : CopyOptions::NoOpts);
+				copy_ops+=(defaults_chk->isChecked() ? CopyOptions::Defaults : CopyOptions::NoOpts);
+				copy_ops+=(constraints_chk->isChecked() ? CopyOptions::Constraints : CopyOptions::NoOpts);
+				copy_ops+=(comments_chk->isChecked() ? CopyOptions::Comments : CopyOptions::NoOpts);
+				copy_ops+=(indexes_chk->isChecked() ? CopyOptions::Indexes : CopyOptions::NoOpts);
+				copy_ops+=(storage_chk->isChecked() ? CopyOptions::Storage : CopyOptions::NoOpts);
+				copy_ops+=(identity_chk->isChecked() ? CopyOptions::Identity : CopyOptions::NoOpts);
+				copy_ops+=(statistics_chk->isChecked() ? CopyOptions::Statistics : CopyOptions::NoOpts);
 			}
 
-			rel->setCopyOptions(CopyOptions(copy_mode, copy_ops));
+			rel->setCopyOptions(CopyOptions(copy_mode, static_cast<CopyOptions::CopyOpts>(copy_ops)));
 			rel->setMandatoryTable(BaseRelationship::SrcTable, false);
 			rel->setMandatoryTable(BaseRelationship::DstTable, false);
 

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -24,10 +24,10 @@ LayersWidget::LayersWidget(QWidget *parent) : QWidget(parent)
 
 	layers_changed = false;
 
-	connect(layers_lst, SIGNAL(itemChanged(QListWidgetItem*)), this, SLOT(updateObjectsLayers()));
+	connect(layers_lst, &QListWidget::itemChanged, this, &LayersWidget::updateObjectsLayers);
 }
 
-void LayersWidget::setAttributes(const QStringList &layers, const vector<BaseObject *> &sel_objs)
+void LayersWidget::setAttributes(const QStringList &layers, const std::vector<BaseObject *> &sel_objs)
 {
 	QListWidgetItem *item = nullptr;
 	BaseGraphicObject *graph_obj = nullptr;

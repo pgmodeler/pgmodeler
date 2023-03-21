@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -25,10 +25,11 @@
 #ifndef PLAIN_TEXT_ITEM_DELEGATE_H
 #define PLAIN_TEXT_ITEM_DELEGATE_H
 
+#include "guiglobal.h"
 #include <QObject>
 #include <QStyledItemDelegate>
 
-class PlainTextItemDelegate : public QStyledItemDelegate {
+class __libgui PlainTextItemDelegate : public QStyledItemDelegate {
 	private:
 		Q_OBJECT
 		bool read_only;

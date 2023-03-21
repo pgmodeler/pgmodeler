@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -25,19 +25,18 @@
 #ifndef TASK_PROGRESS_WIDGET_H
 #define TASK_PROGRESS_WIDGET_H
 
+#include "guiglobal.h"
 #include <QtWidgets>
 #include "ui_taskprogresswidget.h"
 #include <map>
 
-using namespace std;
-
-class TaskProgressWidget: public QDialog, public Ui::TaskProgressWidget
+class __libgui TaskProgressWidget: public QDialog, public Ui::TaskProgressWidget
 {
 	private:
 		Q_OBJECT
 
 		//! \brief Stores the icons that are shown as the icons tokens are send via	updateProgress() slot
-		map<unsigned, QIcon> icons;
+		std::map<unsigned, QIcon> icons;
 
 	public:
 		TaskProgressWidget(QWidget *parent = nullptr, Qt::WindowFlags f = Qt::Widget);

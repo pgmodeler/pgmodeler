@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -18,10 +18,9 @@
 
 #include "securitytype.h"
 
-template<>
-QStringList SecurityType::TemplateType<SecurityType>::type_names =
+QStringList SecurityType::type_names =
 {
-	"", // Reserved for BaseType::null
+	"", // Reserved for Class::Null
 
 	"SECURITY INVOKER",
 	"SECURITY DEFINER"
@@ -32,6 +31,11 @@ SecurityType::SecurityType()
 	type_idx = Invoker;
 }
 
+QStringList SecurityType::getTypes()
+{
+	return TemplateType<SecurityType>::getTypes(type_names);
+}
+
 SecurityType::SecurityType(const QString &type_name)
 {
 	setType(type_name);
@@ -40,4 +44,19 @@ SecurityType::SecurityType(const QString &type_name)
 SecurityType::SecurityType(unsigned type_id)
 {
 	setType(type_id);
+}
+
+unsigned SecurityType::setType(unsigned type_id)
+{
+	return TemplateType<SecurityType>::setType(type_id, type_names);
+}
+
+unsigned SecurityType::setType(const QString &type_name)
+{
+	return TemplateType<SecurityType>::setType(type_name, type_names);
+}
+
+QString SecurityType::getTypeName(unsigned type_id)
+{
+	return TemplateType<SecurityType>::getTypeName(type_id, type_names);
 }

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -34,12 +34,7 @@
 #include "pgsqltypewidget.h"
 #include "guiutilsns.h"
 
-/* Declaring the PgSQLType class as a Qt metatype in order to permit
-	 that instances of the class be used as data of QVariant and QMetaType */
-#include <QMetaType>
-Q_DECLARE_METATYPE(PgSqlType)
-
-class BaseObjectWidget: public QWidget, public Ui::BaseObjectWidget {
+class __libgui BaseObjectWidget: public QWidget, public Ui::BaseObjectWidget {
 	private:
 		Q_OBJECT
 		
@@ -126,7 +121,7 @@ class BaseObjectWidget: public QWidget, public Ui::BaseObjectWidget {
 		//! \brief Disable the object's refereces SQL code
 		void disableReferencesSQL(BaseObject *object);
 		
-		void configureTabOrder(vector<QWidget *> widgets={});
+		void configureTabOrder(std::vector<QWidget *> widgets={});
 
 		BaseObject *getHandledObject();
 			
@@ -147,12 +142,12 @@ class BaseObjectWidget: public QWidget, public Ui::BaseObjectWidget {
 			PostgreSQL versions. On the first map (fields) the key is the PostgreSQL versions and
 			the values are the reference to the widget. The second map is used to specify the values
 			of widgets specific for each version. */
-		static QFrame *generateVersionWarningFrame(map<QString, vector<QWidget *> > &fields, map<QWidget *, vector<QString> > *values=nullptr);
+		static QFrame *generateVersionWarningFrame(std::map<QString, std::vector<QWidget *> > &fields, std::map<QWidget *, std::vector<QString> > *values=nullptr);
 		
 		//! \brief Generates a informative frame containing the specified message
 		static QFrame *generateInformationFrame(const QString &msg);
 
-		static void highlightVersionSpecificFields(map<QString, vector<QWidget *> > &fields, map<QWidget *, vector<QString> > *values=nullptr);
+		static void highlightVersionSpecificFields(std::map<QString, std::vector<QWidget *> > &fields, std::map<QWidget *, std::vector<QString> > *values=nullptr);
 		
 		//! \brief Highlights the specified widget as a required field
 		static void setRequiredField(QWidget *widget);
@@ -202,9 +197,9 @@ void BaseObjectWidget::startConfiguration(void)
 				this->object->getObjectType()!=ObjectType::Database)
 		{
 			if(this->table)
-				op_list->registerObject(this->object, Operation::ObjectModified, -1, this->table);
+				op_list->registerObject(this->object, Operation::ObjModified, -1, this->table);
 			else
-				op_list->registerObject(this->object, Operation::ObjectModified, -1, this->relationship);
+				op_list->registerObject(this->object, Operation::ObjModified, -1, this->relationship);
 			new_object=false;
 		}
 		//! \brief If there is need to allocate the object

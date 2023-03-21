@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -31,6 +31,7 @@ CrashHandlerForm::CrashHandlerForm(bool analysis_mode, QWidget *parent, Qt::Wind
 	QHBoxLayout *layout=new QHBoxLayout;
 
 	setWindowTitle(tr("pgModeler crash handler"));
+	setWindowIcon(QPixmap(":/images/images/crashhandler.png"));
 
 	stack_txt=new QPlainTextEdit(this);
 	stack_txt->setReadOnly(true);
@@ -38,10 +39,10 @@ CrashHandlerForm::CrashHandlerForm(bool analysis_mode, QWidget *parent, Qt::Wind
 	stack_txt->setLineWrapMode(QPlainTextEdit::NoWrap);
 
 	layout->addWidget(stack_txt);
-	layout->setContentsMargins(4,4,4,4);
+	layout->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
 	wgt->setLayout(layout);
 
-	logo_lbl->setPixmap(QPixmap(QString(":/images/images/crashhandler.png")));
+	logo_lbl->setPixmap(QPixmap(":/images/images/crashhandler.png"));
 	report_twg->addTab(wgt, tr("Stack trace"));
 
 	//Open for reading the stack trace file generated on the last crash
@@ -91,22 +92,22 @@ CrashHandlerForm::CrashHandlerForm(bool analysis_mode, QWidget *parent, Qt::Wind
 
 	report_tab_grid->removeWidget(details_gb);
 	report_tab_grid->removeWidget(output_wgt);
-	report_tab_grid->removeWidget(message_frm);
+	report_tab_grid->removeWidget(hint_frm);
 
 	report_tab_grid->addWidget(input_wgt);
 	report_tab_grid->addWidget(details_gb);
 	report_tab_grid->addWidget(output_wgt);
-	report_tab_grid->addWidget(message_frm);
+	report_tab_grid->addWidget(hint_frm);
 
 	setAnalysisMode(analysis_mode);
 
-	connect(input_sel, SIGNAL(s_fileSelected(QString)), this, SLOT(loadReport(QString)));
-	connect(input_sel, SIGNAL(s_selectorCleared()), model_txt, SLOT(clear()));
-	connect(input_sel, SIGNAL(s_selectorCleared()), details_txt, SLOT(clear()));
-	connect(input_sel, SIGNAL(s_selectorCleared()), stack_txt, SLOT(clear()));
-	connect(save_tb, SIGNAL(clicked()), this, SLOT(saveModel()));
+	connect(input_sel, &FileSelectorWidget::s_fileSelected, this, &CrashHandlerForm::loadReport);
+	connect(input_sel, &FileSelectorWidget::s_selectorCleared, model_txt, &QPlainTextEdit::clear);
+	connect(input_sel, &FileSelectorWidget::s_selectorCleared, details_txt, &QPlainTextEdit::clear);
+	connect(input_sel, &FileSelectorWidget::s_selectorCleared, stack_txt, &QPlainTextEdit::clear);
+	connect(save_tb, &QToolButton::clicked, this, &CrashHandlerForm::saveModel);
 
-	connect(model_txt, &QPlainTextEdit::textChanged, [&](){
+	connect(model_txt, &QPlainTextEdit::textChanged, this, [this](){
 			save_tb->setEnabled(!model_txt->toPlainText().isEmpty());
 	});
 }
@@ -170,15 +171,19 @@ void CrashHandlerForm::saveModel()
 
 	try
 	{
-		file_dlg.setDefaultSuffix(QString("dbm"));
+		file_dlg.setDefaultSuffix(GlobalAttributes::DbModelExt);
 		file_dlg.setWindowTitle(tr("Save model"));
-		file_dlg.setNameFilter(tr("Database model (*.dbm);;All files (*.*)"));
+		file_dlg.setNameFilter(tr("Database model (*%1);;All files (*.*)").arg(GlobalAttributes::DbModelExt));
 		file_dlg.setFileMode(QFileDialog::AnyFile);
 		file_dlg.setAcceptMode(QFileDialog::AcceptSave);
 		file_dlg.setModal(true);
 
+		GuiUtilsNs::restoreFileDialogState(&file_dlg);
+
 		if(file_dlg.exec()==QFileDialog::Accepted)
 			UtilsNs::saveFile(file_dlg.selectedFiles().at(0), model_txt->toPlainText().toUtf8());
+
+		GuiUtilsNs::saveFileDialogState(&file_dlg);
 	}
 	catch(Exception &e)
 	{
@@ -204,8 +209,8 @@ void CrashHandlerForm::setAnalysisMode(bool value)
 	}
 	else
 	{
-		title_lbl->setText(tr("Oops! pgModeler just crashed!"));
-		msg_lbl->setText(tr("We apologize for what happened! It is clear that a nasty bug caused that. Please fill out the form below describing your actions before pgModeler quit unexpectedly. This will help on bug extermination and improve the software."));
+		title_lbl->setText(tr("Oh no! pgModeler just crashed!"));
+		msg_lbl->setText(tr("We apologize for what happened! It's clear that a nasty bug caused that. Please, fill out the form below describing your actions that somehow caused the unexpected closing. This will help us to investigate the causes and provide the proper fix for the problem."));
 	}
 }
 

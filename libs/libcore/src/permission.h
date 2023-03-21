@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -32,9 +32,9 @@
 #include <algorithm>
 #include <QTextStream>
 #include <QCryptographicHash>
-#include <QRegExp>
+#include <QRegularExpression>
 
-class Permission: public BaseObject {
+class __libcore Permission: public BaseObject {
 		/*! \brief Permissions on PostgreSQL are only applied to the following
 				object type:
 
@@ -60,7 +60,7 @@ class Permission: public BaseObject {
 		/*! \brief Roles that has permissions over the object. This vector can be
 			empty indicating that all roles on the cluster has permission over
 			the object. */
-		vector<Role *> roles;
+		std::vector<Role *> roles;
 
 		//! \brief Privileges set applied to the object (Accessed via constants PRIV_???)
 		bool privileges[13],
@@ -84,18 +84,20 @@ class Permission: public BaseObject {
 
 	public:
 		//! \brief Constants used to reference the privileges
-		static constexpr unsigned PrivSelect=0,
-		PrivInsert=1,
-		PrivUpdate=2,
-		PrivDelete=3,
-		PrivTruncate=4,
-		PrivReferences=5,
-		PrivTrigger=6,
-		PrivCreate=7,
-		PrivConnect=8,
-		PrivTemporary=9,
-		PrivExecute=10,
-		PrivUsage=11;
+		enum PrivilegeId: unsigned {
+			PrivSelect,
+			PrivInsert,
+			PrivUpdate,
+			PrivDelete,
+			PrivTruncate,
+			PrivReferences,
+			PrivTrigger,
+			PrivCreate,
+			PrivConnect,
+			PrivTemporary,
+			PrivExecute,
+			PrivUsage
+		};
 
 		/*! \brief In the constructor is required to specify which object will receive
 		 the permissions this can not be changed after the object instance of
@@ -106,7 +108,7 @@ class Permission: public BaseObject {
 		void addRole(Role *role);
 
 		//! \brief Sets the state of one permission's privilege (Accessed via constants PRIV_???)
-		void setPrivilege(unsigned priv_id, bool value, bool grant_op);
+		void setPrivilege(PrivilegeId priv_id, bool value, bool grant_op);
 
 		void setRevoke(bool value);
 
@@ -125,16 +127,16 @@ class Permission: public BaseObject {
 		Role *getRole(unsigned role_idx);
 
 		//! \brief Returns all the roles that is used by the permission
-		vector<Role *> getRoles();
+		std::vector<Role *> getRoles();
 
 		//! \brief Gets the object that is subject to the privileges
 		BaseObject *getObject();
 
 		//! \brief Gets the actual state of the GRANT OPTION for the given privilege
-		bool getGrantOption(unsigned priv_id);
+		bool getGrantOption(PrivilegeId priv_id);
 
 		//! \brief Gets the current state for the given privilege
-		bool getPrivilege(unsigned priv_id);
+		bool getPrivilege(PrivilegeId priv_id);
 
 		/*! \brief Returns a string containing all the privileges
 		 configured as the internal format of permissions
@@ -143,7 +145,7 @@ class Permission: public BaseObject {
 
 		/*! \brief Parses the permission string (e.g. postgres=arwdDxt/postgres) and returns the role name
 		which owns the permission. The parameter vectors stores the ordinary privileges as well the GRANT OPTION privileges */
-		static QString parsePermissionString(QString perm_str, vector<unsigned> &privs, vector<unsigned> &gop_privs);
+		static QString parsePermissionString(QString perm_str, std::vector<PrivilegeId> &privs, std::vector<PrivilegeId> &gop_privs);
 
 		//! \brief Indicates whether the role is present on the permission
 		bool isRoleExists(Role *role);
@@ -157,11 +159,11 @@ class Permission: public BaseObject {
 		static bool acceptsPermission(ObjectType obj_type, int privilege=-1);
 
 		//! \brief Returns the SQL / XML definition for the permission
-		virtual QString getCodeDefinition(unsigned def_type) final;
+		virtual QString getSourceCode(SchemaParser::CodeType def_type) final;
 
 		virtual QString getSignature(bool = false) final;
 
-		virtual QString getDropDefinition(bool cascade) final;
+		virtual QString getDropCode(bool cascade) final;
 };
 
 #endif

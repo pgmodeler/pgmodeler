@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -25,13 +25,16 @@
 #ifndef PGSQL_TYPE
 #define PGSQL_TYPE
 
-#include "basetype.h"
 #include "usertypeconfig.h"
 #include "intervaltype.h"
 #include "spatialtype.h"
 #include "templatetype.h"
+#include "schemaparser.h"
 
-class PgSqlType: public TemplateType<PgSqlType>{
+class __libcore PgSqlType: public TemplateType<PgSqlType>{
+	private:
+		static QStringList type_names;
+
 	private:
 		//! \brief Offset for all PostGiS types
 		static constexpr unsigned PostGiSStart = 64,
@@ -46,7 +49,7 @@ class PgSqlType: public TemplateType<PgSqlType>{
 		PseudoEnd = 118;
 
 		//! \brief Configuration for user defined types
-		static vector<UserTypeConfig> user_types;
+		static std::vector<UserTypeConfig> user_types;
 
 		//! \brief Dimension of the type if it's configured as array
 		unsigned dimension,
@@ -68,7 +71,7 @@ class PgSqlType: public TemplateType<PgSqlType>{
 
 	protected:
 		//! \brief Adds a new reference to the user defined type
-		static void addUserType(const QString &type_name, void *ptype, void *pmodel, unsigned type_conf);
+		static void addUserType(const QString &type_name, void *ptype, void *pmodel, UserTypeConfig::TypeConf type_conf);
 
 		//! \brief Removes a reference to the user defined type
 		static void removeUserType(const QString &type_name, void *ptype);
@@ -94,11 +97,11 @@ class PgSqlType: public TemplateType<PgSqlType>{
 
 		/*! \brief Sets the type based on the id. This version also looks into the user_types vector
 		 * in order to check if the type id being assigend belongs to an user defined type */
-		unsigned setType(unsigned type_id);
+		unsigned setType(unsigned type_id) override;
 
 		/*! \brief Sets the type based on the name. This version also looks into the user_types vector
 		 * in order to check if the name being assigend belongs to an user defined type */
-		unsigned setType(const QString &type_name);
+		unsigned setType(const QString &type_name) override;
 
 	public:
 		PgSqlType();
@@ -151,7 +154,7 @@ class PgSqlType: public TemplateType<PgSqlType>{
 		static bool isRegistered(const QString &type, void *pmodel=nullptr);
 
 		static void getUserTypes(QStringList &type_list, void *pmodel, unsigned inc_usr_types);
-		static void getUserTypes(vector<void *> &ptypes, void *pmodel, unsigned inc_usr_types);
+		static void getUserTypes(std::vector<void *> &ptypes, void *pmodel, unsigned inc_usr_types);
 		static QStringList getTypes(bool oids = true, bool pseudos = true);
 
 		void setDimension(unsigned dim);
@@ -216,18 +219,20 @@ class PgSqlType: public TemplateType<PgSqlType>{
 		bool isExactTo(PgSqlType type);
 
 		PgSqlType getAliasType();
-		QString getCodeDefinition(unsigned def_type, QString ref_type="");
-		virtual QString operator ~ ();
+
+		QString getSourceCode(SchemaParser::CodeType def_type, QString ref_type="");
+
+		virtual QString operator ~ () override;
 
 		//! \brief Returns the complet SQL definition for the type (same as calling getSQLTypeName(true))
 		QString operator * ();
 
 		unsigned operator << (void *ptype);
-		unsigned operator = (unsigned type_id);
-		unsigned operator = (const QString &type_name);
+		unsigned operator = (unsigned type_id) override;
+		unsigned operator = (const QString &type_name) override;
 
 		//! \brief Compares the index of the "this" with the provided type index. If an exact match is needed use isExactTo()
-		bool operator == (unsigned type_idx);
+		bool operator == (unsigned type_idx) override;
 
 		//! \brief Compares the index of the "this" with the provided type. If an exact match is needed use isExactTo()
 		bool operator == (PgSqlType type);
@@ -240,7 +245,7 @@ class PgSqlType: public TemplateType<PgSqlType>{
 
 		bool operator != (const QString &type_name);
 		bool operator != (PgSqlType type);
-		bool operator != (unsigned type_idx);
+		bool operator != (unsigned type_idx) override;
 
 		//! \brief Returns the pointer to the user defined type which denotes the the pgsql type
 		void *getUserTypeReference();
@@ -249,7 +254,7 @@ class PgSqlType: public TemplateType<PgSqlType>{
 		unsigned getUserTypeConfig();
 
 		//! \brief Returns the code (id) of the type. This is equivalent to call !type
-		unsigned getTypeId();
+		unsigned getTypeId() override;
 
 		/*! \brief Returns the name of the type. This is equivalent to call ~type.
 		 * If incl_dimension is true then returns only the type name appending the dimension descriptor [] if the type's dimension is > 0.
@@ -260,6 +265,10 @@ class PgSqlType: public TemplateType<PgSqlType>{
 		 * Includes the length, precision and other quantifiers of the type. */
 		QString getSQLTypeName();
 
+		static QStringList getTypes();
+
+		QString getTypeName(unsigned) override { return ""; }
+
 		friend class Type;
 		friend class Domain;
 		friend class PhysicalTable;
@@ -269,5 +278,10 @@ class PgSqlType: public TemplateType<PgSqlType>{
 		friend class Extension;
 		friend class DatabaseModel;
 };
+
+/* Registering the PgSqlType class as a Qt MetaType in order to make
+ * it liable to be sent through signal parameters as well as to be
+ * to be used by QVariant */
+Q_DECLARE_METATYPE(PgSqlType)
 
 #endif 

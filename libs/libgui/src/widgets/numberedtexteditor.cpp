@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -24,9 +24,8 @@
 #include <QFileDialog>
 #include <QTemporaryFile>
 #include "guiutilsns.h"
-#include "qtcompat/qplaintexteditcompat.h"
-#include "qtcompat/qfontmetricscompat.h"
 #include "utilsns.h"
+#include <QMenu>
 
 bool NumberedTextEditor::line_nums_visible=true;
 bool NumberedTextEditor::highlight_lines=true;
@@ -49,7 +48,7 @@ NumberedTextEditor::NumberedTextEditor(QWidget * parent, bool handle_ext_files) 
 		QHBoxLayout *hbox = new QHBoxLayout, *hbox1 = new QHBoxLayout;
 		QFont font = this->font();
 
-		font.setPointSizeF(font.pointSizeF() * 0.95);
+		font.setPointSizeF(font.pointSizeF() * 0.90);
 
 		top_widget = new QWidget(this);
 		top_widget->setAutoFillBackground(true);
@@ -59,14 +58,13 @@ NumberedTextEditor::NumberedTextEditor(QWidget * parent, bool handle_ext_files) 
 		top_widget->setVisible(handle_ext_files);
 		top_widget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
 
-		hbox->setContentsMargins(2,2,2,2);
+		hbox->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
 		hbox1->setContentsMargins(0,0,0,0);
 
 		QLabel *ico = new QLabel(this);
 		msg_lbl = new QLabel(this);
 		msg_lbl->setTextInteractionFlags(Qt::TextSelectableByMouse);
 
-		ico->setMaximumSize(22,22);
 		ico->setPixmap(QPixmap(GuiUtilsNs::getIconPath("alert")));
 		ico->setScaledContents(true);
 
@@ -82,57 +80,56 @@ NumberedTextEditor::NumberedTextEditor(QWidget * parent, bool handle_ext_files) 
 
 		load_file_btn = new QToolButton(top_widget);
 		load_file_btn->setIcon(QPixmap(GuiUtilsNs::getIconPath("open")));
-		load_file_btn->setIconSize(QSize(20,20));
 		load_file_btn->setAutoRaise(true);
 		load_file_btn->setText(tr("Load"));
 		load_file_btn->setToolTip(tr("Load the object's source code from an external file"));
 		load_file_btn->setFont(font);
 		load_file_btn->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
 		hbox->addWidget(load_file_btn);
-		connect(load_file_btn, SIGNAL(clicked(bool)), this, SLOT(loadFile()));
+		connect(load_file_btn, &QToolButton::clicked, this, &NumberedTextEditor::loadFile);
 
 		edit_src_btn = new QToolButton(top_widget);
 		edit_src_btn->setIcon(QPixmap(GuiUtilsNs::getIconPath("edit")));
-		edit_src_btn->setIconSize(QSize(20,20));
 		edit_src_btn->setAutoRaise(true);
 		edit_src_btn->setText(tr("Edit"));
 		edit_src_btn->setToolTip(tr("Edit the source code in the preferred external editor"));
 		edit_src_btn->setFont(font);
 		edit_src_btn->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
 		hbox->addWidget(edit_src_btn);
-		connect(edit_src_btn, SIGNAL(clicked(bool)), this, SLOT(editSource()));
+		connect(edit_src_btn,  &QToolButton::clicked, this, &NumberedTextEditor::editSource);
 
 		clear_btn = new QToolButton(top_widget);
 		clear_btn->setIcon(QPixmap(GuiUtilsNs::getIconPath("cleartext")));
-		clear_btn->setIconSize(QSize(20,20));
 		clear_btn->setAutoRaise(true);
 		clear_btn->setText(tr("Clear"));
 		clear_btn->setFont(font);
 		clear_btn->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
 		clear_btn->setDisabled(true);
 
-		connect(clear_btn, &QToolButton::clicked, [&](){
+		connect(clear_btn, &QToolButton::clicked, this, [this](){
 			this->clear();
 			clear_btn->setEnabled(false);
 		});
 
-		connect(this, &NumberedTextEditor::textChanged, [&](){
+		connect(this, &NumberedTextEditor::textChanged, this, [this](){
 			clear_btn->setEnabled(!this->toPlainText().isEmpty() && !this->isReadOnly());
 		});
 
+		ico->setMaximumSize(edit_src_btn->iconSize());
 		hbox->addWidget(clear_btn);
 		top_widget->setLayout(hbox);
+		top_widget->adjustSize();
 
-		connect(&src_editor_proc, SIGNAL(finished(int)), this, SLOT(updateSource(int)));
-		connect(&src_editor_proc, SIGNAL(started()), this, SLOT(handleProcessStart()));
-		connect(&src_editor_proc, SIGNAL(errorOccurred(QProcess::ProcessError)), this, SLOT(handleProcessError()));
+		connect(&src_editor_proc, &QProcess::finished, this, &NumberedTextEditor::updateSource);
+		connect(&src_editor_proc, &QProcess::started, this, &NumberedTextEditor::handleProcessStart);
+		connect(&src_editor_proc, &QProcess::errorOccurred, this, &NumberedTextEditor::handleProcessError);
 	}
 
 	setWordWrapMode(QTextOption::NoWrap);
 
-	connect(this, SIGNAL(cursorPositionChanged()), this, SLOT(highlightCurrentLine()));
-	connect(this, SIGNAL(updateRequest(QRect,int)), this, SLOT(updateLineNumbers()));
-	connect(this, SIGNAL(blockCountChanged(int)), this, SLOT(updateLineNumbersSize()));
+	connect(this, &NumberedTextEditor::cursorPositionChanged, this, &NumberedTextEditor::highlightCurrentLine);
+	connect(this, &NumberedTextEditor::updateRequest, this, &NumberedTextEditor::updateLineNumbers);
+	connect(this, &NumberedTextEditor::blockCountChanged, this, &NumberedTextEditor::updateLineNumbersSize);
 
 	setCustomContextMenuEnabled(true);
 }
@@ -153,12 +150,12 @@ void NumberedTextEditor::setCustomContextMenuEnabled(bool enabled)
 	if(!enabled)
 	{
 		setContextMenuPolicy(Qt::NoContextMenu);
-		disconnect(this, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(showContextMenu()));
+		disconnect(this, &NumberedTextEditor::customContextMenuRequested, this, &NumberedTextEditor::showContextMenu);
 	}
 	else
 	{
 		setContextMenuPolicy(Qt::CustomContextMenu);
-		connect(this, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(showContextMenu()), Qt::UniqueConnection);
+		connect(this, &NumberedTextEditor::customContextMenuRequested, this, &NumberedTextEditor::showContextMenu, Qt::UniqueConnection);
 	}
 }
 
@@ -195,7 +192,7 @@ double NumberedTextEditor::getTabDistance()
 	if(static_cast<int>(tab_width) == 0)
 		return 80;
 
-	return tab_width * QtCompat::horizontalAdvance(default_font, ' ');
+	return tab_width * QFontMetrics(default_font).horizontalAdvance(' ');
 }
 
 void NumberedTextEditor::setSourceEditorApp(const QString &app)
@@ -219,18 +216,18 @@ void NumberedTextEditor::showContextMenu()
 	{
 		ctx_menu->addSeparator();
 
-		act=ctx_menu->addAction(tr("Upper case"), this, SLOT(changeSelectionToUpper()), QKeySequence(QString("Ctrl+U")));
+		act=ctx_menu->addAction(tr("Upper case"), this, &NumberedTextEditor::changeSelectionToUpper, QKeySequence(QString("Ctrl+U")));
 		act->setEnabled(textCursor().hasSelection());
 
-		act=ctx_menu->addAction(tr("Lower case"), this, SLOT(changeSelectionToLower()), QKeySequence(QString("Ctrl+Shift+U")));
+		act=ctx_menu->addAction(tr("Lower case"), this, &NumberedTextEditor::changeSelectionToLower, QKeySequence(QString("Ctrl+Shift+U")));
 		act->setEnabled(textCursor().hasSelection());
 
 		ctx_menu->addSeparator();
 
-		act=ctx_menu->addAction(tr("Ident right"), this, SLOT(identSelectionRight()), QKeySequence(QString("Tab")));
+		act=ctx_menu->addAction(tr("Ident right"), this, &NumberedTextEditor::identSelectionRight, QKeySequence(QString("Tab")));
 		act->setEnabled(textCursor().hasSelection());
 
-		act=ctx_menu->addAction(tr("Ident left"), this, SLOT(identSelectionLeft()), QKeySequence(QString("Shift+Tab")));
+		act=ctx_menu->addAction(tr("Ident left"), this, &NumberedTextEditor::identSelectionLeft, QKeySequence(QString("Shift+Tab")));
 		act->setEnabled(textCursor().hasSelection());
 	}
 
@@ -336,7 +333,10 @@ void NumberedTextEditor::loadFile()
 	sql_file_dlg.setModal(true);
 	sql_file_dlg.setWindowTitle(tr("Load file"));
 	sql_file_dlg.setAcceptMode(QFileDialog::AcceptOpen);
+
+	GuiUtilsNs::restoreFileDialogState(&sql_file_dlg);
 	sql_file_dlg.exec();
+	GuiUtilsNs::saveFileDialogState(&sql_file_dlg);
 
 	if(sql_file_dlg.result()==QDialog::Accepted)
 	{
@@ -501,10 +501,10 @@ void NumberedTextEditor::updateLineNumbers()
 	}
 
 	line_number_wgt->drawLineNumbers(first_line, line_count, dy);
-	tab_stop_dist = QtCompat::tabStopDistance(this);
+	tab_stop_dist = this->tabStopDistance();
 
 	if(round(tab_stop_dist) != round(NumberedTextEditor::getTabDistance()))
-		QtCompat::setTabStopDistance(this, NumberedTextEditor::getTabDistance());
+		setTabStopDistance(NumberedTextEditor::getTabDistance());
 }
 
 void NumberedTextEditor::updateLineNumbersSize()
@@ -538,7 +538,7 @@ int NumberedTextEditor::getLineNumbersWidth()
 		++digits;
 	}
 
-	chr_width = QtCompat::horizontalAdvance(this->font(), QChar('9'));
+	chr_width = this->fontMetrics().horizontalAdvance(QChar('9'));
 	return (15 + chr_width * digits);
 }
 

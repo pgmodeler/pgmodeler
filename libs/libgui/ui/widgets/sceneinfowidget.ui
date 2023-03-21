@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>429</width>
+    <width>425</width>
     <height>34</height>
    </rect>
   </property>
@@ -21,7 +21,7 @@
   </property>
   <layout class="QHBoxLayout" name="horizontalLayout_2">
    <property name="spacing">
-    <number>15</number>
+    <number>5</number>
    </property>
    <property name="leftMargin">
     <number>0</number>
@@ -38,7 +38,7 @@
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_5">
      <property name="spacing">
-      <number>6</number>
+      <number>5</number>
      </property>
      <item>
       <widget class="QLabel" name="mouse_pos_ico_lbl">
@@ -48,16 +48,10 @@
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>
-       <property name="minimumSize">
-        <size>
-         <width>18</width>
-         <height>18</height>
-        </size>
-       </property>
        <property name="maximumSize">
         <size>
-         <width>20</width>
-         <height>20</height>
+         <width>25</width>
+         <height>25</height>
         </size>
        </property>
        <property name="toolTip">
@@ -73,7 +67,7 @@
         <string/>
        </property>
        <property name="pixmap">
-        <pixmap resource="../../res/resources.qrc">:/icons/icons/select.png</pixmap>
+        <pixmap resource="../../res/resources.qrc">:/icons/icons/cursor.png</pixmap>
        </property>
        <property name="scaledContents">
         <bool>true</bool>
@@ -113,7 +107,7 @@
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_4">
      <property name="spacing">
-      <number>6</number>
+      <number>5</number>
      </property>
      <item>
       <widget class="QLabel" name="zoom_ico_lbl">
@@ -123,16 +117,10 @@
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>
-       <property name="minimumSize">
-        <size>
-         <width>18</width>
-         <height>18</height>
-        </size>
-       </property>
        <property name="maximumSize">
         <size>
-         <width>20</width>
-         <height>20</height>
+         <width>25</width>
+         <height>25</height>
         </size>
        </property>
        <property name="toolTip">
@@ -188,7 +176,7 @@
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout">
      <property name="spacing">
-      <number>6</number>
+      <number>5</number>
      </property>
      <item>
       <widget class="QLabel" name="obj_icon_lbl">
@@ -198,16 +186,10 @@
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>
-       <property name="minimumSize">
-        <size>
-         <width>18</width>
-         <height>18</height>
-        </size>
-       </property>
        <property name="maximumSize">
         <size>
-         <width>20</width>
-         <height>20</height>
+         <width>25</width>
+         <height>25</height>
         </size>
        </property>
        <property name="toolTip">
@@ -263,7 +245,7 @@
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_3">
      <property name="spacing">
-      <number>6</number>
+      <number>5</number>
      </property>
      <item>
       <widget class="QLabel" name="obj_pos_ico_lbl">
@@ -273,16 +255,10 @@
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>
-       <property name="minimumSize">
-        <size>
-         <width>18</width>
-         <height>18</height>
-        </size>
-       </property>
        <property name="maximumSize">
         <size>
-         <width>20</width>
-         <height>20</height>
+         <width>25</width>
+         <height>25</height>
         </size>
        </property>
        <property name="toolTip">
@@ -338,6 +314,7 @@
   </layout>
  </widget>
  <resources>
+  <include location="../../res/resources.qrc"/>
   <include location="../../res/resources.qrc"/>
  </resources>
  <connections/>

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -17,13 +17,12 @@
 */
 
 #include "pgmodelercliapp.h"
-#include "qtcompat/qtextstreamcompat.h"
-#include "qtcompat/splitbehaviorcompat.h"
 #include "utilsns.h"
+#include "settings/appearanceconfigwidget.h"
 
 QTextStream PgModelerCliApp::out(stdout);
 
-const QRegExp PgModelerCliApp::PasswordRegExp=QRegExp("(password)(=)(.)*( )");
+const QRegularExpression PgModelerCliApp::PasswordRegExp=QRegularExpression("(password)(=)(.)*( )");
 const QString PgModelerCliApp::PasswordPlaceholder("password=******");
 
 const QString PgModelerCliApp::AllChildren("all");
@@ -38,6 +37,8 @@ const QString PgModelerCliApp::ExportToDict("--export-to-dict");
 const QString PgModelerCliApp::ImportDb("--import-db");
 const QString PgModelerCliApp::NoIndex("--no-index");
 const QString PgModelerCliApp::Split("--split");
+const QString PgModelerCliApp::DependenciesSql("--dependencies");
+const QString PgModelerCliApp::ChildrenSql("--children");
 const QString PgModelerCliApp::Diff("--diff");
 const QString PgModelerCliApp::DropDatabase("--drop-database");
 const QString PgModelerCliApp::DropObjects("--drop-objects");
@@ -97,8 +98,8 @@ const QString PgModelerCliApp::TagExpr("<%1");
 const QString PgModelerCliApp::EndTagExpr("</%1");
 const QString PgModelerCliApp::AttributeExpr("(%1)( )*(=)(\")(\\w|\\d|,|\\.|\\&|\\;|\\)|\\(|\\-| )+(\")");
 
-const QString PgModelerCliApp::MsgFileAssociated(tr("Database model files (*.dbm) are already associated to pgModeler! Try use the option `%1' to install the file association anyway.").arg(Force));
-const QString PgModelerCliApp::MsgNoFileAssociation(tr("There is no file association related to pgModeler and *.dbm files! Try use the option `%1' to uninstall the file association anyway.").arg(Force));
+const QString PgModelerCliApp::MsgFileAssociated(tr("Database model files (*%1) are already associated with pgModeler! Try using the option `%2' to install the file association anyway.").arg(GlobalAttributes::DbModelExt, Force));
+const QString PgModelerCliApp::MsgNoFileAssociation(tr("There is no file association related to pgModeler and *%1 files! Try using the option `%2' to uninstall the file association anyway.").arg(GlobalAttributes::DbModelExt, Force));
 
 attribs_map PgModelerCliApp::short_opts = {
 	{ Input, "-if" },		{ Output, "-of" },	{ InputDb, "-id" },
@@ -121,10 +122,11 @@ attribs_map PgModelerCliApp::short_opts = {
 	{ ForceDropColsConstrs, "-fd" },	{ RenameDb, "-rn" },
 	{ NoSequenceReuse, "-ns" },	{ NoCascadeDrop, "-nd" },	{ ForceRecreateObjs, "-nf" },
 	{ OnlyUnmodifiable, "-nu" },	{ NoIndex, "-ni" },	{ Split, "-sp" },
-	{ SystemWide, "-sw" },	{ CreateConfigs, "-cc" }, { Force, "-ff" }, { MissingOnly, "-mo" }
+	{ SystemWide, "-sw" },	{ CreateConfigs, "-cc" }, { Force, "-ff" },
+	{ MissingOnly, "-mo" }, { DependenciesSql, "-ds" }, { ChildrenSql, "-cs" }
 };
 
-map<QString, bool> PgModelerCliApp::long_opts = {
+std::map<QString, bool> PgModelerCliApp::long_opts = {
 	{ Input, true }, { Output, true }, { InputDb, true },
 	{ ExportToFile, false },	{ ExportToPng, false },	{ ExportToSvg, false },
 	{ ExportToDbms, false },	{ ImportDb, false },	{ Diff, false },
@@ -145,12 +147,13 @@ map<QString, bool> PgModelerCliApp::long_opts = {
 	{ NoSequenceReuse, false },	{ NoCascadeDrop, false },
 	{ ForceRecreateObjs, false },	{ OnlyUnmodifiable, false },	{ ExportToDict, false },
 	{ NoIndex, false },	{ Split, false },	{ SystemWide, false },
-	{ CreateConfigs, false }, { Force, false }, { MissingOnly, false }
+	{ CreateConfigs, false }, { Force, false }, { MissingOnly, false },
+	{ DependenciesSql, false }, { ChildrenSql, false }
 };
 
-map<QString, QStringList> PgModelerCliApp::accepted_opts = {
+std::map<QString, QStringList> PgModelerCliApp::accepted_opts = {
 	{{ Attributes::Connection }, { ConnAlias, Host, Port, User, Passwd, InitialDb }},
-	{{ ExportToFile }, { Input, Output, PgSqlVer, Split }},
+	{{ ExportToFile }, { Input, Output, PgSqlVer, Split, DependenciesSql, ChildrenSql }},
 	{{ ExportToPng },  { Input, Output, ShowGrid, ShowDelimiters, PageByPage, ZoomFactor }},
 	{{ ExportToSvg },  { Input, Output, ShowGrid, ShowDelimiters }},
 	{{ ExportToDict }, { Input, Output, Split, NoIndex }},
@@ -244,15 +247,12 @@ PgModelerCliApp::PgModelerCliApp(int argc, char **argv) : Application(argc, argv
 			//If the export is to png or svg loads additional configurations
 			if(parsed_opts.count(ExportToPng) || parsed_opts.count(ExportToSvg) || parsed_opts.count(ImportDb))
 			{
-				connect(model, SIGNAL(s_objectAdded(BaseObject *)), this, SLOT(handleObjectAddition(BaseObject *)));
-				connect(model, SIGNAL(s_objectRemoved(BaseObject *)), this, SLOT(handleObjectRemoval(BaseObject *)));
+				connect(model, &DatabaseModel::s_objectAdded, this, &PgModelerCliApp::handleObjectAddition);
+				connect(model, &DatabaseModel::s_objectRemoved, this, &PgModelerCliApp::handleObjectRemoval);
 
-				//Load the general configuration including grid and delimiter options
-				GeneralConfigWidget conf_wgt;
-				conf_wgt.loadConfiguration();
-
-				//Load the objects styles
-				BaseObjectView::loadObjectsStyle();
+				//Load the appearance settings including grid and delimiter options
+				AppearanceConfigWidget appearance_wgt;
+				appearance_wgt.loadConfiguration();
 
 				scene=new ObjectsScene;
 				scene->setParent(this);
@@ -280,10 +280,10 @@ PgModelerCliApp::PgModelerCliApp(int argc, char **argv) : Application(argc, argv
 
 			if(!silent_mode && export_hlp && import_hlp && diff_hlp)
 			{
-				connect(export_hlp, SIGNAL(s_progressUpdated(int,QString)), this, SLOT(updateProgress(int,QString)));
-				connect(export_hlp, SIGNAL(s_errorIgnored(QString,QString,QString)), this, SLOT(printIgnoredError(QString,QString,QString)));
-				connect(import_hlp, SIGNAL(s_progressUpdated(int,QString,ObjectType)), this, SLOT(updateProgress(int,QString)));
-				connect(diff_hlp, SIGNAL(s_progressUpdated(int,QString,ObjectType)), this, SLOT(updateProgress(int,QString)));
+				connect(export_hlp, &ModelExportHelper::s_progressUpdated, this, &PgModelerCliApp::updateProgress);
+				connect(export_hlp, &ModelExportHelper::s_errorIgnored, this,  &PgModelerCliApp::printIgnoredError);
+				connect(import_hlp, &DatabaseImportHelper::s_progressUpdated, this, &PgModelerCliApp::updateProgress);
+				connect(diff_hlp, &ModelsDiffHelper::s_progressUpdated, this, &PgModelerCliApp::updateProgress);
 			}
 		}
 	}
@@ -321,7 +321,7 @@ PgModelerCliApp::~PgModelerCliApp()
 
 void PgModelerCliApp::printText(const QString &txt)
 {
-	out << txt << QtCompat::endl;
+	out << txt << Qt::endl;
 }
 
 void PgModelerCliApp::printMessage(const QString &txt)
@@ -396,48 +396,59 @@ void PgModelerCliApp::showMenu()
 	showVersionInfo();
 
 	printText(tr("Usage: pgmodeler-cli [OPTIONS]"));
-	printText(tr("This CLI tool provides several operations over models and databases without the need to perform them\nin pgModeler's graphical interface. All available options are described below."));
+	printText(tr("This CLI tool provides several operations over models and databases without the need to perform them\n in the pgModeler's graphical interface. All available options are described below."));
 	printText();
 
 	printText(tr("Operation mode options: "));
-	printText(tr("  %1, %2\t\t    Export the input model to sql script file(s).").arg(short_opts[ExportToFile]).arg(ExportToFile));
-	printText(tr("  %1, %2\t\t    Export the input model to a png image.").arg(short_opts[ExportToPng]).arg(ExportToPng) );
-	printText(tr("  %1, %2\t\t    Export the input model to a svg file.").arg(short_opts[ExportToSvg]).arg(ExportToSvg) );
-	printText(tr("  %1, %2\t\t    Export the input model to a data directory in HTML format.").arg(short_opts[ExportToDict]).arg(ExportToDict));
-	printText(tr("  %1, %2\t\t    Export the input model directly to a PostgreSQL server.").arg(short_opts[ExportToDbms]).arg(ExportToDbms));
-	printText(tr("  %1, %2\t\t    List available connections in file %3.").arg(short_opts[ListConns]).arg(ListConns).arg(GlobalAttributes::ConnectionsConf + GlobalAttributes::ConfigurationExt));
-	printText(tr("  %1, %2\t\t    Import a database to an output file.").arg(short_opts[ImportDb]).arg(ImportDb));
+	printText(tr("  %1, %2\t\t    Exports the input model to SQL script file(s).").arg(short_opts[ExportToFile]).arg(ExportToFile));
+	printText(tr("  %1, %2\t\t    Exports the input model to a PNG image.").arg(short_opts[ExportToPng]).arg(ExportToPng) );
+	printText(tr("  %1, %2\t\t    Exports the input model to a SVG file.").arg(short_opts[ExportToSvg]).arg(ExportToSvg) );
+	printText(tr("  %1, %2\t\t    Exports the input model to a data dictionary in HTML format.").arg(short_opts[ExportToDict]).arg(ExportToDict));
+	printText(tr("  %1, %2\t\t    Exports the input model directly to a PostgreSQL server.").arg(short_opts[ExportToDbms]).arg(ExportToDbms));
+	printText(tr("  %1, %2\t\t    Lists the available connections in file %3.").arg(short_opts[ListConns]).arg(ListConns).arg(GlobalAttributes::ConnectionsConf + GlobalAttributes::ConfigurationExt));
+	printText(tr("  %1, %2\t\t    Importa a database to an output file.").arg(short_opts[ImportDb]).arg(ImportDb));
 	printText(tr("  %1, %2\t\t\t    Compares a model and a database or two databases generating the SQL script to sync the latter in relation to the first.").arg(short_opts[Diff]).arg(Diff));
-	printText(tr("  %1, %2\t\t    Try to fix the structure of the input model file in order to make it loadable again.").arg(short_opts[FixModel]).arg(FixModel));
-	printText(tr("  %1, %2\t\t    Create the pgModeler's configuration folder and files in the user's local storage.").arg(short_opts[CreateConfigs]).arg(CreateConfigs));
+	printText(tr("  %1, %2\t\t    Tries to fix the structure of the input model file to make it loadable again.").arg(short_opts[FixModel]).arg(FixModel));
+	printText(tr("  %1, %2\t\t    Creates the pgModeler's configuration folder and files in the user's local storage.").arg(short_opts[CreateConfigs]).arg(CreateConfigs));
 #ifndef Q_OS_MAC
-	printText(tr("  %1, %2 [ACTION]\t    Handles the file association to .dbm files. The ACTION can be [%3 | %4].").arg(short_opts[DbmMimeType]).arg(DbmMimeType).arg(Install).arg(Uninstall));
+	printText(tr("  %1, %2 [ACTION]\t    Handles the DBM file association to pgModeler binaries. The ACTION can be [%3 | %4].").arg(short_opts[DbmMimeType]).arg(DbmMimeType).arg(Install).arg(Uninstall));
 #endif
-	printText(tr("  %1, %2\t\t\t    Show this help menu.").arg(short_opts[Help]).arg(Help));
+	printText(tr("  %1, %2\t\t\t    Shows this help menu.").arg(short_opts[Help]).arg(Help));
 	printText();
 
 	printText(tr("General options: "));
-	printText(tr("  %1, %2 [FILE]\t\t    Input model file (.dbm). This is mandatory for export and fix operations.").arg(short_opts[Input]).arg(Input));
+	printText(tr("  %1, %2 [FILE]\t\t    Input model file (%3). This is mandatory for export and model fix operations.").arg(short_opts[Input], Input, GlobalAttributes::DbModelExt));
 	printText(tr("  %1, %2 [DBNAME]\t    Input database name. This is mandatory for import operation.").arg(short_opts[InputDb]).arg(InputDb));
-	printText(tr("  %1, %2 [FILE|DIRECTORY]    Output file or directory. This is mandatory for fixing model or exporting to file, png or svg.").arg(short_opts[Output]).arg(Output));
-	printText(tr("  %1, %2\t\t    Force the PostgreSQL syntax to the specified version when generating SQL code. The version string must be in form major.minor.").arg(short_opts[PgSqlVer]).arg(PgSqlVer));
-	printText(tr("  %1, %2\t\t\t    Silent execution. Only critical messages and errors are shown during process.").arg(short_opts[Silent]).arg(Silent));
+	printText(tr("  %1, %2 [FILE|DIRECTORY]    Output file or directory. This is mandatory for fixing models or exporting to SQL, HTML, PNG, or SVG.").arg(short_opts[Output]).arg(Output));
+	printText(tr("  %1, %2\t\t    Force the PostgreSQL syntax to the specified version when generating SQL code. The version string must be in the form of [major].[minor], e.g., %3.").arg(short_opts[PgSqlVer]).arg(PgSqlVer).arg(PgSqlVersions::DefaulVersion));
+	printText(tr("  %1, %2\t\t\t    Silent execution. Only critical messages and errors are shown during the process.").arg(short_opts[Silent]).arg(Silent));
 	printText();
 
 	printText(tr("SQL file export options: "));
 	printText(tr("  %1, %2\t\t\t    The SQL file is generated per object. The files will be named in such a way to reflect the correct creation order of the objects.").arg(short_opts[Split]).arg(Split));
+	printText(tr("  %1, %2\t\t    Includes the object's dependencies SQL code in the generated file. (Only for split mode)").arg(short_opts[DependenciesSql]).arg(DependenciesSql));
+	printText(tr("  %1, %2\t\t    Includes the object's children SQL code in the generated file. (Only for split mode)").arg(short_opts[ChildrenSql]).arg(ChildrenSql));
 	printText();
 
 	printText(tr("PNG and SVG export options: "));
 	printText(tr("  %1, %2\t\t    Draws the grid in the exported image.").arg(short_opts[ShowGrid]).arg(ShowGrid));
 	printText(tr("  %1, %2\t    Draws the page delimiters in the exported image.").arg(short_opts[ShowDelimiters]).arg(ShowDelimiters));
-	printText(tr("  %1, %2\t\t    Each page will be exported in a separated png image. (Only for PNG images)").arg(short_opts[PageByPage]).arg(PageByPage));
-	printText(tr("  %1, %2 [FACTOR]\t\t    Applies a zoom (in percent) before export to png image. Accepted zoom interval: %3-%4 (Only for PNG images)").arg(short_opts[ZoomFactor]).arg(ZoomFactor).arg(ModelWidget::MinimumZoom*100).arg(ModelWidget::MaximumZoom*100));
+	printText(tr("  %1, %2\t\t    Each page will be exported in a separated image. (Only for PNG images)").arg(short_opts[PageByPage]).arg(PageByPage));
+	printText(tr("  %1, %2 [FACTOR]\t\t    Applies a zoom (in percent) before export to an image. Accepted zoom interval: %3-%4 (Only for PNG images)").arg(short_opts[ZoomFactor]).arg(ZoomFactor).arg(ModelWidget::MinimumZoom*100).arg(ModelWidget::MaximumZoom*100));
 	printText();
 
 	printText(tr("Data dictionary export options: "));
-	printText(tr("  %1, %2\t\t\t    The data dictionaries are generated in separated files inside the selected output directory.").arg(short_opts[Split]).arg(Split));
-	printText(tr("  %1, %2\t\t    Avoids the generation of the index that is used to help navigating through the data dictionary.").arg(short_opts[NoIndex]).arg(NoIndex));
+	printText(tr("  %1, %2\t\t\t    The data dictionaries are generated in separated files inside the specified output directory.").arg(short_opts[Split]).arg(Split));
+	printText(tr("  %1, %2\t\t    Avoids the generation of the index that is used to help navigate through the data dictionary.").arg(short_opts[NoIndex]).arg(NoIndex));
+	printText();
+
+	printText(tr("DBMS export options: "));
+	printText(tr("  %1, %2\t    Ignores errors related to duplicate objects that eventually exist in the server.").arg(short_opts[IgnoreDuplicates]).arg(IgnoreDuplicates));
+	printText(tr("  %1, %2 [CODES] Ignores additional errors by their codes. A comma-separated list of alphanumeric codes should be provided.").arg(short_opts[IgnoreErrorCodes]).arg(IgnoreErrorCodes));
+	printText(tr("  %1, %2\t\t    Drop the database before executing an export process.").arg(short_opts[DropDatabase]).arg(DropDatabase));
+	printText(tr("  %1, %2\t\t    Runs the DROP commands attached to objects in which SQL code is enabled.").arg(short_opts[DropObjects]).arg(DropObjects));
+	printText(tr("  %1, %2\t\t    Simulates an export process by executing all steps but undoing any modification in the end.").arg(short_opts[Simulate]).arg(Simulate));
+	printText(tr("  %1, %2\t\t    Generates temporary names for database, roles, and tablespaces when in simulation mode.").arg(short_opts[UseTmpNames]).arg(UseTmpNames));
 	printText();
 
 	printText(tr("Connection options: "));
@@ -449,44 +460,35 @@ void PgModelerCliApp::showMenu()
 	printText(tr("  %1, %2 [DBNAME]\t    Connection's initial database.").arg(short_opts[InitialDb]).arg(InitialDb));
 	printText();
 
-	printText(tr("DBMS export options: "));
-	printText(tr("  %1, %2\t    Ignores errors related to duplicated objects that eventually exist in the server.").arg(short_opts[IgnoreDuplicates]).arg(IgnoreDuplicates));
-	printText(tr("  %1, %2 [CODES] Ignores additional errors by their codes. A comma-separated list of alphanumeric codes should be provided.").arg(short_opts[IgnoreErrorCodes]).arg(IgnoreErrorCodes));
-	printText(tr("  %1, %2\t\t    Drop the database before execute a export process.").arg(short_opts[DropDatabase]).arg(DropDatabase));
-	printText(tr("  %1, %2\t\t    Runs the DROP commands attached to SQL-enabled objects.").arg(short_opts[DropObjects]).arg(DropObjects));
-	printText(tr("  %1, %2\t\t    Simulates an export process by executing all steps but undoing any modification in the end.").arg(short_opts[Simulate]).arg(Simulate));
-	printText(tr("  %1, %2\t\t    Generates temporary names for database, roles and tablespaces when in simulation mode.").arg(short_opts[UseTmpNames]).arg(UseTmpNames));
-	printText();
-
 	printText(tr("Database import options: "));
-	printText(tr("  %1, %2\t\t    Ignore all errors and try to create as many as possible objects.").arg(short_opts[IgnoreImportErrors]).arg(IgnoreImportErrors));
-	printText(tr("  %1, %2\t    Import system built-in objects. This option causes the model bloating due to the importing of unneeded objects.").arg(short_opts[ImportSystemObjs]).arg(ImportSystemObjs));
-	printText(tr("  %1, %2\t    Import extension objects. This option causes the model bloating due to the importing of unneeded objects.").arg(short_opts[ImportExtensionObjs]).arg(ImportExtensionObjs));
-	printText(tr("  %1, %2 [FILTER]    Causes the import process to import only those objects matching the filter(s). The FILTER should be in the form type:pattern:mode.").arg(short_opts[FilterObjects]).arg(FilterObjects));
-	printText(tr("  %1, %2\t\t    Causes only objects matching the provided filter(s) to be imported. Those not matching filter(s) are discarded.").arg(short_opts[OnlyMatching]).arg(OnlyMatching));
-	printText(tr("  %1, %2\t\t    Causes the objects matching to be performed over their names instead of their signature ([schema].[name]).").arg(short_opts[MatchByName]).arg(MatchByName));
+	printText(tr("  %1, %2\t\t    Ignores all errors and tries to create as many as possible objects.").arg(short_opts[IgnoreImportErrors]).arg(IgnoreImportErrors));
+	printText(tr("  %1, %2\t    Imports built-in system objects. This option causes the model to bloat due to the importing of unneeded objects.").arg(short_opts[ImportSystemObjs]).arg(ImportSystemObjs));
+	printText(tr("  %1, %2\t    Imports extension objects. This option causes the model to bloat due to the importing of unneeded objects.").arg(short_opts[ImportExtensionObjs]).arg(ImportExtensionObjs));
+	printText(tr("  %1, %2 [FILTER]    Makes the import process retrieve only those objects matching the filter(s). The FILTER should be in the form type:pattern:mode.").arg(short_opts[FilterObjects]).arg(FilterObjects));
+	printText(tr("  %1, %2\t\t    Makes only objects matching the provided filter(s) to be imported. Those not matching filter(s) are discarded.").arg(short_opts[OnlyMatching]).arg(OnlyMatching));
+	printText(tr("  %1, %2\t\t    Makes the objects matching to be performed over their names instead of their signature ([schema].[name]).").arg(short_opts[MatchByName]).arg(MatchByName));
 	printText(tr("  %1, %2 [OBJECTS]   Forces the importing of children objects related to tables/views/foreign tables matched by the filter(s). The OBJECTS is a comma separated list types.").arg(short_opts[ForceChildren]).arg(ForceChildren));
-	printText(tr("  %1, %2\t\t    Run import in debug mode printing all queries executed in the server.").arg(short_opts[DebugMode]).arg(DebugMode));
+	printText(tr("  %1, %2\t\t    Runs the import in debug mode printing all queries executed in the server.").arg(short_opts[DebugMode]).arg(DebugMode));
 	printText();
 
 	printText(tr("Diff options: "));
 	printText(tr("  %1, %2 [DBNAME]\t    The database used in the comparison. All the SQL code generated is applied to it.").arg(short_opts[CompareTo]).arg(CompareTo));
-	printText(tr("  %1, %2\t\t    Toggles the partial diff operation. A set of objects filters should be provided using the import option %3.").arg(short_opts[PartialDiff]).arg(PartialDiff).arg(FilterObjects));
+	printText(tr("  %1, %2\t\t    Switches to the partial diff operation. A set of object filters should be provided using the import option %3.").arg(short_opts[PartialDiff]).arg(PartialDiff).arg(FilterObjects));
 	printText(tr("  %1, %2\t\t\t    Forces a full diff if the provided filters were not able to retrieve objects for a partial diff operation.").arg(short_opts[Force]).arg(Force));
-	printText(tr("  %1, %2\t\t    Matches all database model objects in which modification date starts in the specified date. (Only for partial diff)").arg(short_opts[StartDate]).arg(StartDate));
-	printText(tr("  %1, %2\t\t    Matches all database model objects in which modification date ends in the specified date. (Only for partial diff)").arg(short_opts[EndDate]).arg(EndDate));
-	printText(tr("  %1, %2\t\t\t    Save the generated diff code to output file.").arg(short_opts[SaveDiff]).arg(SaveDiff));
-	printText(tr("  %1, %2\t\t\t    Apply the generated diff code on the database server.").arg(short_opts[ApplyDiff]).arg(ApplyDiff));
-	printText(tr("  %1, %2\t\t    Don't preview the generated diff code when applying it to the server.").arg(short_opts[NoDiffPreview]).arg(NoDiffPreview));
-	printText(tr("  %1, %2\t    Drop cluster level objects like roles and tablespaces.").arg(short_opts[DropClusterObjs]).arg(DropClusterObjs));
-	printText(tr("  %1, %2\t\t    Revoke permissions already set on the database. New permissions configured in the input model are still applied.").arg(short_opts[RevokePermissions]).arg(RevokePermissions));
-	printText(tr("  %1, %2\t\t    Drop missing objects. Generates DROP commands for objects that are present in the input model but not in the compared database.").arg(short_opts[DropMissingObjs]).arg(DropMissingObjs));
-	printText(tr("  %1, %2\t    Force the drop of missing columns and constraints. Causes only columns and constraints to be dropped, other missing objects aren't removed.").arg(short_opts[ForceDropColsConstrs]).arg(ForceDropColsConstrs));
-	printText(tr("  %1, %2\t\t    Rename the destination database when the names of the involved databases are different.").arg(short_opts[RenameDb]).arg(RenameDb));
+	printText(tr("  %1, %2\t\t    Matches all database model objects in which the modification date starts on the specified date. (Only for partial diff)").arg(short_opts[StartDate]).arg(StartDate));
+	printText(tr("  %1, %2\t\t    Matches all database model objects in which the modification date ends on the specified date. (Only for partial diff)").arg(short_opts[EndDate]).arg(EndDate));
+	printText(tr("  %1, %2\t\t\t    Saves the generated diff code to the output file.").arg(short_opts[SaveDiff]).arg(SaveDiff));
+	printText(tr("  %1, %2\t\t\t    Applies the generated diff code on the database server.").arg(short_opts[ApplyDiff]).arg(ApplyDiff));
+	printText(tr("  %1, %2\t\t    Don't preview the generated diff code before applying it to the server.").arg(short_opts[NoDiffPreview]).arg(NoDiffPreview));
+	printText(tr("  %1, %2\t    Drop cluster-level objects like roles and tablespaces.").arg(short_opts[DropClusterObjs]).arg(DropClusterObjs));
+	printText(tr("  %1, %2\t\t    Revokes permissions already set on the database. New permissions configured in the input model are still applied.").arg(short_opts[RevokePermissions]).arg(RevokePermissions));
+	printText(tr("  %1, %2\t\t    Drops missing objects. Generates DROP commands for objects that are present in the input model but not in the compared database.").arg(short_opts[DropMissingObjs]).arg(DropMissingObjs));
+	printText(tr("  %1, %2\t    Forces the drop of missing columns and constraints. Causes only columns and constraints to be dropped, other missing objects aren't removed.").arg(short_opts[ForceDropColsConstrs]).arg(ForceDropColsConstrs));
+	printText(tr("  %1, %2\t\t    Renames the destination database when the names of the involved databases are different.").arg(short_opts[RenameDb]).arg(RenameDb));
 	printText(tr("  %1, %2\t\t    Don't drop objects in cascade mode.").arg(short_opts[NoCascadeDrop]).arg(NoCascadeDrop));
 	printText(tr("  %1, %2\t    Don't reuse sequences on serial columns. Drop the old sequence assigned to a serial column and creates a new one.").arg(short_opts[NoSequenceReuse]).arg(NoSequenceReuse));
-	printText(tr("  %1, %2\t    Force the recreating of objects. Instead of an ALTER command a DROP and CREATE commands are used to create a new version of the objects.").arg(short_opts[ForceRecreateObjs]).arg(ForceRecreateObjs));
-	printText(tr("  %1, %2\t    Recreate only the unmodifiable objects. These objects are the ones which can't be changed via ALTER command.").arg(short_opts[OnlyUnmodifiable]).arg(OnlyUnmodifiable));
+	printText(tr("  %1, %2\t    Forces recreating the objects. Instead of an ALTER command, the DROP and CREATE commands are used to create new versions of the objects.").arg(short_opts[ForceRecreateObjs]).arg(ForceRecreateObjs));
+	printText(tr("  %1, %2\t    Recreates only the unmodifiable objects. These objects are the ones that can't be changed via ALTER command.").arg(short_opts[OnlyUnmodifiable]).arg(OnlyUnmodifiable));
 	printText();
 
 	printText(tr("Model fix options: ") );
@@ -495,19 +497,19 @@ void PgModelerCliApp::showMenu()
 
 #ifndef Q_OS_MAC
 	printText(tr("File association options: "));
-	printText(tr("  %1, %2\t\t    The file association to .dbm files will be applied in a system wide level instead of to the current user.").arg(short_opts[SystemWide]).arg(SystemWide));
+	printText(tr("  %1, %2\t\t    The file association to DBM files will be applied on a system-wide level instead of to the current user only.").arg(short_opts[SystemWide]).arg(SystemWide));
 	printText(tr("  %1, %2 \t\t\t    Forces the mime type install or uninstall. ").arg(short_opts[Force]).arg(Force));
 	printText();
 #endif
 
 	printText(tr("Config files creation options: "));
-	printText(tr("  %1, %2 \t\t    Copy only missing configuration files to the user's local storage.").arg(short_opts[MissingOnly]).arg(MissingOnly));
+	printText(tr("  %1, %2 \t\t    Copies only missing configuration files to the user's local storage.").arg(short_opts[MissingOnly]).arg(MissingOnly));
 	printText(tr("  %1, %2 \t\t\t    Forces the recreation of all configuration files. This option implies the backup of the current settings.").arg(short_opts[Force]).arg(Force));
 	printText();
 
 	printText();
 	printText(tr("** The FILTER value in %1 option has the form type:pattern:mode. ").arg(FilterObjects));
-	printText(tr("   * The `type' is the type of object to be filtered and accepts the following values (invalid types ignored): "));
+	printText(tr("   * The section `type' is the type of object to be filtered and accepts the following values (invalid types ignored): "));
 
 	QStringList list;
 	QString child_list;
@@ -539,22 +541,22 @@ void PgModelerCliApp::showMenu()
 	printText(lines.join('\n'));
 
 	printText();
-	printText(tr("   * The `pattern' is the text pattern which is matched against the objects names."));
+	printText(tr("   * The section `pattern' is the text pattern that is matched against the objects' names."));
 	printText();
-	printText(tr("   * The `mode' is the way the pattern is matched. This one accepts two values: "));
-	printText(tr("     > `%1' causes the pattern to be used as a wildcard string while matching objects names.").arg(UtilsNs::FilterWildcard));
-	printText(tr("     > `%1' causes the pattern to be treated as a POSIX regular expression while matching objects names.").arg(UtilsNs::FilterRegExp));
+	printText(tr("   * The section `mode' is the way the pattern is matched. This one accepts two values: "));
+	printText(tr("     > `%1' causes the pattern to be used as a wildcard string while matching objects' names.").arg(UtilsNs::FilterWildcard));
+	printText(tr("     > `%1' causes the pattern to be treated as a Perl-like regular expression while matching objects' names.").arg(UtilsNs::FilterRegExp));
 	printText();
-	printText(tr("   * The option %1 has effect only when used with %2 and will avoid discarding children of matched tables.").arg(ForceChildren).arg(OnlyMatching));
+	printText(tr("   * The option %1 takes effect only when used with %2 and will avoid discarding children of matched tables.").arg(ForceChildren).arg(OnlyMatching));
 	printText(tr("     Other tables eventually imported which are dependencies of the matched objects will have their children discarded."));
-	printText(tr("     The comma separated list of table children objects accepts the values:"));
+	printText(tr("     The comma-separated list of table children objects accepts the values:"));
 	printText(tr("     > %1").arg(child_list) );
 	printText(tr("     > Use the special keyword `%1' to force all children objects.").arg(AllChildren) );
 	printText();
-	printText(tr("   * NOTES: all comparisons during filtering process are case insensitive."));
+	printText(tr("   * NOTES: all comparisons during the filtering process are case insensitive."));
 	printText(tr("     Using the filtering options may cause the importing of additional objects due to the automatic dependency resolution."));
 	printText();
-	printText(tr("** The diff process allows the usage all options related to the import operation."));
+	printText(tr("** The diff process allows the usage of all options related to the import operation."));
 	printText(tr("   It also accepts the following export operation options: `%1', `%2'").arg(IgnoreDuplicates).arg(IgnoreErrorCodes));
 	printText();
 	printText(tr("** The partial diff operation will always force the options %1 and %2 = %3 for more reliable results.").arg(OnlyMatching).arg(ForceChildren).arg(AllChildren));
@@ -569,7 +571,7 @@ void PgModelerCliApp::showMenu()
 
 void PgModelerCliApp::listConnections()
 {
-	map<QString, Connection *>::iterator itr=connections.begin();
+	std::map<QString, Connection *>::iterator itr=connections.begin();
 
 	if(connections.empty())
 		printText(tr("There are no connections configured."));
@@ -662,7 +664,7 @@ void PgModelerCliApp::parseOptions(attribs_map &opts)
 			throw Exception(tr("Multiple operation modes were specified!"), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		
 		if(!fix_model && !upd_mime && exp_mode_cnt > 1)
-			throw Exception(tr("Multiple export mode was specified!"), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			throw Exception(tr("Multiple export modes were specified!"), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		
 		if(!list_conns && !upd_mime && !import_db && !diff && !create_configs && !opts.count(Input))
 			throw Exception(tr("No input file was specified!"), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -676,7 +678,7 @@ void PgModelerCliApp::parseOptions(attribs_map &opts)
 		if(!opts.count(ExportToDbms) && !upd_mime && !import_db && !list_conns && !create_configs &&
 			 opts.count(Input) && opts.count(Output) &&
 			 QFileInfo(opts[Input]).absoluteFilePath() == QFileInfo(opts[Output]).absoluteFilePath())
-			throw Exception(tr("Input file must be different from output!"), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			throw Exception(tr("The input file must be different from the output!"), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		
 		if(opts.count(ExportToDbms) && !opts.count(ConnAlias) &&
 			 (!opts.count(Host) || !opts.count(User) || !opts.count(Passwd) || !opts.count(InitialDb)) )
@@ -686,10 +688,18 @@ void PgModelerCliApp::parseOptions(attribs_map &opts)
 			throw Exception(tr("Invalid zoom specified!"), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		
 		if(upd_mime && opts[DbmMimeType]!=Install && opts[DbmMimeType]!=Uninstall)
-			throw Exception(tr("Invalid action specified to update mime option!"), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			throw Exception(tr("Invalid action specified to mime type update option!"), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		if(create_configs && opts.count(Force) && opts.count(MissingOnly))
 			throw Exception(tr("The options `%1' and `%2' can't be used together when handling configuration files!").arg(Force).arg(MissingOnly), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+		if(opts.count(DependenciesSql) || opts.count(ChildrenSql))
+		{
+			if(!opts.count(ExportToFile) || (opts.count(ExportToFile) && !opts.count(Split)))
+				throw Exception(tr("The options `%1' and `%2' must be used together with the split mode option `%3'!").arg(DependenciesSql, ChildrenSql, Split), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			else if(opts.count(DependenciesSql) && opts.count(ChildrenSql))
+				throw Exception(tr("The options `%1' and `%2' can't be used at the same time!").arg(DependenciesSql, ChildrenSql), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		}
 
 		if(diff)
 		{
@@ -697,7 +707,7 @@ void PgModelerCliApp::parseOptions(attribs_map &opts)
 				throw Exception(tr("No input file or database was specified!"), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 			if(opts.count(Input) && opts.count(InputDb))
-				throw Exception(tr("The input file and database can't be used at the same time!"), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+				throw Exception(tr("The input file and the input database can't be used at the same time!"), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 			if(!opts.count(CompareTo))
 				throw Exception(tr("No database to be compared was specified!"), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -709,10 +719,10 @@ void PgModelerCliApp::parseOptions(attribs_map &opts)
 				throw Exception(tr("No output file for the diff code was specified!"), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 			if(opts.count(PartialDiff) && !opts[Input].count() && (opts.count(StartDate) || opts.count(EndDate)))
-				throw Exception(tr("Date filters are allowed only on partial diff using an input model!"), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+				throw Exception(tr("The date filters are allowed only on partial diff using an input model!"), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 			if(opts.count(PartialDiff) && opts.count(FilterObjects) && (opts.count(StartDate) || opts.count(EndDate)))
-				throw Exception(tr("Date filters and object filters can't be used together!"), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+				throw Exception(tr("The date filters and object filters can't be used together!"), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 			if(opts.count(PartialDiff) && !opts.count(FilterObjects) && !opts.count(StartDate) && !opts.count(EndDate))
 				throw Exception(tr("Partial diff enabled but no object filter was provided!"), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -794,7 +804,7 @@ void PgModelerCliApp::parseOptions(attribs_map &opts)
 
 			/* Before validate the option we need to remove any appended number to the option name
 			 * This happens for options related to objects filters and connections */
-			long_opt.remove(QRegExp("[0-9]+$"));
+			long_opt.remove(QRegularExpression("[0-9]+$"));
 
 			if(!acc_opts.contains(long_opt))
 				throw Exception(tr("The option `%1' is not accepted by the operation mode `%2'!").arg(long_opt).arg(curr_op_mode),
@@ -918,192 +928,212 @@ void PgModelerCliApp::extractObjectXML()
 {
 	QString buf, lin, def_xml, end_tag, pgmodeler_ver;
 	QTextStream ts;
-	QRegExp regexp(QString("^(\\<\\?xml)(.)*(\\<%1)( )*").arg(Attributes::DbModel)),
-
-			//[schema].[func_name](...OUT [type]...)
-			func_signature=QRegExp(QString("(\")(.)+(\\.)(.)+(\\()(.)*(OUT )(.)+(\\))(\")")),
-
-			//[,]OUT [schema].[type]
-			out_param=QRegExp(QString("(,)?(OUT )([a-z]|[0-9]|(\\.)|(\\_)|(\\-)|( )|(\\[)|(\\])|(&quot;))+((\\()([0-9])+(\\)))?"));
 	int start=-1, end=-1;
 	bool open_tag=false, close_tag=false, is_rel=false, short_tag=false, end_extract_rel=false, is_change_log=false;
 
 	printMessage(tr("Extracting objects' XML..."));
-
 	buf.append(UtilsNs::loadFile(parsed_opts[Input]));
 
 	// Extracting pgModeler version from input model
-	QRegExp ver_expr(AttributeExpr.arg(Attributes::PgModelerVersion));
-	start = ver_expr.indexIn(buf);
-	model_version = buf.mid(start, ver_expr.matchedLength());
-	model_version.remove(Attributes::PgModelerVersion);
-	model_version.remove(QRegExp("(\\\"|\\=| )+"));
+	QRegularExpression ver_expr(AttributeExpr.arg(Attributes::PgModelerVersion));
+	QRegularExpressionMatch match;
 
-	if(!model_version.contains(QRegExp("(\\d\\.\\d\\.\\d)((\\-)(alpha|beta)(\\d))?")))
+	match = ver_expr.match(buf);
+	start = match.capturedStart();
+	model_version = buf.mid(start, match.capturedLength());
+	model_version.remove(Attributes::PgModelerVersion);
+	model_version.remove(QRegularExpression("(\\\"|\\=| )+"));
+
+	if(!model_version.contains(QRegularExpression("(\\d\\.\\d\\.\\d)((\\-)(alpha|beta)(\\d))?")))
 	{
-		printMessage(tr("** WARNING: Could't determine the pgModeler version in which the input model was created!"));
+		printMessage(tr("** WARNING: Couldn't determine the pgModeler version in which the input model was created!"));
 		printMessage(tr("            Some fix actions that depend on the model version will not be applied!"));
 		model_version.clear();
 	}
 
+	QRegularExpressionMatch header_match;
+	QRegularExpression header_regexp(QString("^<\\?xml.+<%1").arg(Attributes::DbModel),
+														QRegularExpression::DotMatchesEverythingOption);
+
 	//Check if the file contains a valid header (for .dbm file)
-	start=regexp.indexIn(buf);
+	/* ATTENTION: PCRE2 (base implementation of QRegularExpression) limits the amount of groups (defined by  (expr) ) to
+	 * be captured. So, in large buffer expression such (.)+ must be used with caution. In some cases the matching won't
+	 * work even if it works on smaller text buffers. The workaround is to avoid capture groups using (.). In the case below
+	 * we just need to know the position of a certain regexp in the buffer, so we use a simplified expression
+	 * Reference: https://stackoverflow.com/questions/52980957/qregularexpression-lazy-matching-not-working-for-very-large-strings */
+	header_match = header_regexp.match(buf);
+	start = header_match.capturedStart();
 
 	if(start < 0)
 		throw Exception(tr("Invalid input file! It seems that is not a pgModeler generated model or the file is corrupted!"), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+	//Extracting layers informations from the tag <dbmodel>
+	QRegularExpression dbm_regexp = QRegularExpression(TagExpr.arg(Attributes::DbModel)),
+
+			db_end_regexp =  QRegularExpression(EndTagExpr.arg(Attributes::Database)),
+
+			//[schema].[func_name](...OUT [type]...)
+			func_signature=QRegularExpression("(\")(.)+(\\.)(.)+(\\()(.)*(OUT )(.)+(\\))(\")"),
+
+			//[,]OUT [schema].[type]
+			out_param=QRegularExpression("(,)?(OUT )([a-z]|[0-9]|(\\.)|(\\_)|(\\-)|( )|(\\[)|(\\])|(&quot;))+((\\()([0-9])+(\\)))?");
+
+	int attr_start =-1, attr_end = -1, dbm_start = -1;
+	QString aux_buf,
+			layers, active_layers, attr_expr = "(%1)( )*(=)(\")";
+	QList<unsigned> act_layers_ids;
+
+	match = dbm_regexp.match(buf);
+	dbm_start = match.capturedStart();
+	aux_buf = buf.mid(dbm_start, buf.indexOf(db_end_regexp) - dbm_start);
+
+	//Layers names
+	attr_start = aux_buf.indexOf(Attributes::Layers);
+	attr_end = aux_buf.indexOf(Attributes::ActiveLayers);
+	layers = aux_buf.mid(attr_start, attr_end - attr_start);
+	layers.remove(QRegularExpression(attr_expr.arg(Attributes::Layers)));
+	layers.remove('"');
+	model->setLayers(layers.trimmed().split(',', Qt::SkipEmptyParts));
+
+	//Active layers
+	attr_start = attr_end;
+	attr_end = aux_buf.indexOf(Attributes::LayerNameColors, attr_start);
+	active_layers = aux_buf.mid(attr_start, attr_end - attr_start);
+	active_layers.remove(QRegularExpression(attr_expr.arg(Attributes::ActiveLayers)));
+	active_layers.remove('"');
+	active_layers.replace(',', ';');
+
+	for(auto &id : active_layers.trimmed().split(';', Qt::SkipEmptyParts))
+		act_layers_ids.push_back(id.toUInt());
+
+	model->setActiveLayers(act_layers_ids);
+	buf.remove(0, dbm_start);
+
+	//Checking if the header ends on a role declaration
+	/* ATTENTION: PCRE2 (base implementation of QRegularExpression) limits the amount of groups (defined by  (expr) ) to
+	 * be captured. So, in large buffer expression such (.)+ must be used with caution. In some cases the matching won't
+	 * work even if it works on smaller text buffers. The workaround is to avoid capture groups using (.). In the case below
+	 * we just need to know the position of a certain regexp in the buffer, so we use a simplified expression
+	 * Reference: https://stackoverflow.com/questions/52980957/qregularexpression-lazy-matching-not-working-for-very-large-strings */
+	QRegularExpression role_regexp = QRegularExpression(QString("<%1.*<\\/%1>").arg(Attributes::Role),
+																											QRegularExpression::DotMatchesEverythingOption);
+	end = buf.indexOf(role_regexp);
+
+	// If we found role declarations we clear the header until there
+	if(end >= 0)
+		buf.remove(0, end);
 	else
+		// Instead, we clear the header until the starting of database declaration
+		buf.remove(0, buf.indexOf(QString("<%1").arg(Attributes::Database)));
+
+	buf.remove(QString("<\\%1>").arg(Attributes::DbModel));
+	ts.setString(&buf);
+
+	//Extracts the objects xml line by line
+	while(!ts.atEnd())
 	{
-		//Extracting layers informations from the tag <dbmodel>
-		QRegExp dbm_regexp = QRegExp(TagExpr.arg(Attributes::DbModel)),
-				db_end_regexp =  QRegExp(EndTagExpr.arg(Attributes::Database));
-		int attr_start =-1, attr_end = -1, dbm_start = dbm_regexp.indexIn(buf);
-		QString aux_buf = buf.mid(dbm_start, buf.indexOf(db_end_regexp) - dbm_start),
-				layers, active_layers, attr_expr = QString("(%1)( )*(=)(\")");
-		QList<unsigned> act_layers_ids;
+		lin=ts.readLine();
 
-		//Layers names
-		attr_start = aux_buf.indexOf(Attributes::Layers);
-		attr_end = aux_buf.indexOf(Attributes::ActiveLayers);
-		layers = aux_buf.mid(attr_start, attr_end - attr_start);
-		layers.remove(QRegExp(attr_expr.arg(Attributes::Layers)));
-		layers.remove('"');
-		model->setLayers(layers.trimmed().split(',', QtCompat::SkipEmptyParts));
+		/* Collecting changelog entries if present and storing in a separated buffer
+		 * so it can be restored in the fixed model during objects' reconstruction */
+		if(!is_change_log && lin.contains(TagExpr.arg(Attributes::Changelog)))
+			is_change_log = true;
 
-		//Active layers
-		attr_start = attr_end;
-		attr_end = aux_buf.indexOf('>', attr_start);
-		active_layers = aux_buf.mid(attr_start, attr_end - attr_start);
-		active_layers.remove(QRegExp(attr_expr.arg(Attributes::ActiveLayers)));
-		active_layers.remove('"');
-
-		for(auto id : active_layers.trimmed().split(';', QtCompat::SkipEmptyParts))
-			act_layers_ids.push_back(id.toUInt());
-
-		model->setActiveLayers(act_layers_ids);
-
-		//Remove the header entry from buffer
-		buf.remove(start, regexp.matchedLength()+1);
-
-		//Checking if the header ends on a role declaration
-		QRegExp role_regexp = QRegExp(QString("(<%1)(.)*(<\\/%2>)").arg(Attributes::Role).arg(Attributes::Role));
-		end = buf.indexOf(role_regexp);
-
-		// If we found role declarations we clear the header until there
-		if(end >= 0)
-			buf.remove(0, end);
-		else
-			// Instead, we clear the header until the starting of database declaration
-			buf.remove(0, buf.indexOf(QString("<%1").arg(Attributes::Database)));
-
-		buf.remove(QString("<\\%1>").arg(Attributes::DbModel));
-		ts.setString(&buf);
-
-		//Extracts the objects xml line by line
-		while(!ts.atEnd())
+		if(is_change_log)
 		{
-			lin=ts.readLine();
+			changelog.append(lin);
 
-			/* Collecting changelog entries if present and storing in a separated buffer
-			 * so it can be restored in the fixed model during objects' reconstruction */
-			if(!is_change_log && lin.contains(TagExpr.arg(Attributes::Changelog)))
-				is_change_log = true;
-
-			if(is_change_log)
-			{
-				changelog.append(lin);
-
-				if(lin.contains(EndTagExpr.arg(Attributes::Changelog)))
-					is_change_log = false;
-				else
-					continue;
-			}
-
-			/*  Special case for empty tags like <language />, they will be converted to
-		  <language></language> in order to be correctly extracted further. Currently only language has this
-		  behaviour, so additional object may be added in the future. */
-			if(lin.contains(QString("<%1").arg(BaseObject::getSchemaName(ObjectType::Language))))
-			{
-				lin=lin.simplified();
-
-				if(lin.contains(QString("/>")))
-					lin.replace(QString("/>"), QString("></%1>").arg(BaseObject::getSchemaName(ObjectType::Language)));
-			}
-			/* Special case for function signatures. In previous releases, the function's signature was wrongly
-		 including OUT parameters and according to docs they are not part of the signature, so it is needed
-		 to remove them if the current line contains a valid signature with parameters. */
-			else if(lin.contains(func_signature))
-				lin.remove(out_param);
-
-			if(is_rel && (((short_tag && lin.contains(QString("/>"))) ||
-										 (lin.contains(QString("[a-z]+")) && !containsRelAttributes(lin)))))
-				open_tag=close_tag=true;
+			if(lin.contains(EndTagExpr.arg(Attributes::Changelog)))
+				is_change_log = false;
 			else
+				continue;
+		}
+
+		/*  Special case for empty tags like <language />, they will be converted to
+		<language></language> in order to be correctly extracted further. Currently only language has this
+		behaviour, so additional object may be added in the future. */
+		if(lin.contains(QString("<%1").arg(BaseObject::getSchemaName(ObjectType::Language))))
+		{
+			lin=lin.simplified();
+
+			if(lin.contains(QString("/>")))
+				lin.replace(QString("/>"), QString("></%1>").arg(BaseObject::getSchemaName(ObjectType::Language)));
+		}
+		/* Special case for function signatures. In previous releases, the function's signature was wrongly
+	 including OUT parameters and according to docs they are not part of the signature, so it is needed
+	 to remove them if the current line contains a valid signature with parameters. */
+		else if(lin.contains(func_signature))
+			lin.remove(out_param);
+
+		if(is_rel && (((short_tag && lin.contains(QString("/>"))) ||
+									 (lin.contains(QString("[a-z]+")) && !containsRelAttributes(lin)))))
+			open_tag=close_tag=true;
+		else
+		{
+			//If the line contains an objects open tag
+			if(lin.contains(QRegularExpression("^(((\n)|(\t))*(<))")) && !open_tag)
 			{
-				//If the line contains an objects open tag
-				if(lin.contains(QRegExp("^(((\n)|(\t))*(<))")) && !open_tag)
+				//Check the flag indicating an open tag
+				open_tag=true;
+
+				start=lin.indexOf('<');
+				end=lin.indexOf(' ');
+				if(end < 0)	end=lin.indexOf('>');
+
+				//Configures the end tag with the same word extracted from open tag
+				end_tag=lin.mid(start, end-start+1).trimmed();
+				end_tag.replace(QString("<"),QString("</"));
+
+				if(!end_tag.endsWith('>'))
+					end_tag+=QString(">");
+
+				/* Checking if the line start a relationship. Relationships are treated
+		a little different because they can be empty <relationship attribs /> or
+		contain open and close tags <relationship attribs></relationship> */
+				is_rel=lin.contains(Attributes::Relationship);
+
+				if(is_rel)
 				{
-					//Check the flag indicating an open tag
-					open_tag=true;
+					end_extract_rel=short_tag=false;
 
-					start=lin.indexOf('<');
-					end=lin.indexOf(' ');
-					if(end < 0)	end=lin.indexOf('>');
-
-					//Configures the end tag with the same word extracted from open tag
-					end_tag=lin.mid(start, end-start+1).trimmed();
-					end_tag.replace(QString("<"),QString("</"));
-
-					if(!end_tag.endsWith('>'))
-						end_tag+=QString(">");
-
-					/* Checking if the line start a relationship. Relationships are treated
-		  a little different because they can be empty <relationship attribs /> or
-		  contain open and close tags <relationship attribs></relationship> */
-					is_rel=lin.contains(Attributes::Relationship);
-
-					if(is_rel)
+					while(!end_extract_rel && !ts.atEnd())
 					{
-						end_extract_rel=short_tag=false;
+						def_xml+=lin + QString("\n");
+						lin=lin.trimmed();
 
-						while(!end_extract_rel && !ts.atEnd())
-						{
-							def_xml+=lin + QString("\n");
-							lin=lin.trimmed();
+						//Checking if the current line is the end of a short-tag relationship
+						if(!short_tag && !lin.startsWith('<') && lin.endsWith(QString("/>")))
+							short_tag=true;
 
-							//Checking if the current line is the end of a short-tag relationship
-							if(!short_tag && !lin.startsWith('<') && lin.endsWith(QString("/>")))
-								short_tag=true;
+						end_extract_rel=((!short_tag && lin.contains(end_tag)) || short_tag);
 
-							end_extract_rel=((!short_tag && lin.contains(end_tag)) || short_tag);
-
-							if(!end_extract_rel)
-								lin=ts.readLine();
-						}
-
-						close_tag=true;
+						if(!end_extract_rel)
+							lin=ts.readLine();
 					}
-					else
-						close_tag=lin.contains(end_tag);
-				}
-				else if(open_tag && lin.contains(end_tag))
+
 					close_tag=true;
+				}
+				else
+					close_tag=lin.contains(end_tag);
 			}
+			else if(open_tag && lin.contains(end_tag))
+				close_tag=true;
+		}
 
-			if(!is_rel && !lin.isEmpty())
-				def_xml+=lin + QString("\n");
-			else if(lin.isEmpty())
-				def_xml+=QString("\n");
+		if(!is_rel && !lin.isEmpty())
+			def_xml+=lin + QString("\n");
+		else if(lin.isEmpty())
+			def_xml+=QString("\n");
 
-			//If the iteration reached the end of the object's definition
-			if(open_tag && close_tag)
-			{
-				//Pushes the extracted definition to the list (only if not empty)
-				if(def_xml!=QString("\n"))
-					objs_xml.push_back(def_xml);
+		//If the iteration reached the end of the object's definition
+		if(open_tag && close_tag)
+		{
+			//Pushes the extracted definition to the list (only if not empty)
+			if(def_xml!=QString("\n"))
+				objs_xml.push_back(def_xml);
 
-				def_xml.clear();
-				open_tag=close_tag=is_rel=false;
-			}
+			def_xml.clear();
+			open_tag=close_tag=is_rel=false;
 		}
 	}
 }
@@ -1114,7 +1144,7 @@ void PgModelerCliApp::recreateObjects()
 	QString xml_def, aux_def, start_tag = "<%1", end_tag = "</%1>", aux_tag, type_tag = "<type name=\"%1\"";
 	BaseObject *object=nullptr;
 	ObjectType obj_type=ObjectType::BaseObject;
-	vector<ObjectType> types={ ObjectType::Index, ObjectType::Trigger, ObjectType::Rule };
+	std::vector<ObjectType> types={ ObjectType::Index, ObjectType::Trigger, ObjectType::Rule };
 	attribs_map attribs, fmt_ext_names;
 	bool use_fail_obj=false;
 	unsigned tries=0, max_tries=parsed_opts[FixTries].toUInt();
@@ -1207,9 +1237,9 @@ void PgModelerCliApp::recreateObjects()
 
 				/* Additional step to extract indexes/triggers/rules from within tables/views
 				 * and putting their xml on the list of object to be created */
-				if(BaseTable::isBaseTable(obj_type) && xml_def.contains(QRegExp("(<)(index|trigger|rule)")))
+				if(BaseTable::isBaseTable(obj_type) && xml_def.contains(QRegularExpression("(<)(index|trigger|rule)")))
 				{
-					for(ObjectType type : types)
+					for(auto &type : types)
 					{
 						do
 						{
@@ -1262,7 +1292,7 @@ void PgModelerCliApp::recreateObjects()
 			{
 				//Outputs the code of the objects that wasn't created
 				printText();
-				printText(tr("** Object(s) that couldn't fixed: "));
+				printText(tr("** Object(s) that couldn't be fixed: "));
 
 				while(!fail_objs.isEmpty())
 				{
@@ -1294,7 +1324,7 @@ void PgModelerCliApp::recreateObjects()
 
 		if(!role)
 		{
-			printMessage(tr("** WARNING: Could not find the role `%1'! Ignoring it...").arg(rl.first));
+			printMessage(tr("** WARNING: Couldn't find the role `%1'! Ignoring it...").arg(rl.first));
 			continue;
 		}
 
@@ -1304,7 +1334,7 @@ void PgModelerCliApp::recreateObjects()
 
 			if(!mem_role)
 			{
-				printMessage(tr("** WARNING: Could not find the role `%1' of `%2`! Igorning it...").arg(name, rl.first));
+				printMessage(tr("** WARNING: Couldn't find the role `%1' of `%2`! Igorning it...").arg(name, rl.first));
 				continue;
 			}
 
@@ -1394,7 +1424,7 @@ void PgModelerCliApp::fixObjectAttributes(QString &obj_xml)
 
 	//Remove recheck attribute from <element> tags.
 	if(obj_xml.contains(TagExpr.arg(Attributes::Element)))
-		obj_xml.remove(QRegExp(AttributeExpr.arg(QString("recheck"))));
+		obj_xml.remove(QRegularExpression(AttributeExpr.arg(QString("recheck"))));
 
 	//Remove values greater-op, less-op, sort-op or sort2-op from ref-type attribute from <operator> tags.
 	if(obj_xml.contains(TagExpr.arg(BaseObject::getSchemaName(ObjectType::Operator))))
@@ -1407,21 +1437,26 @@ void PgModelerCliApp::fixObjectAttributes(QString &obj_xml)
 
 	//Replacing attribute owner by onwer-col for sequences
 	if(obj_xml.contains(TagExpr.arg(BaseObject::getSchemaName(ObjectType::Sequence))))
-		obj_xml.replace(QRegExp(QString("(%1)( )*(=)(\")").arg(Attributes::Owner)), QString("%1 = \"").arg(Attributes::OwnerColumn));
+		obj_xml.replace(QRegularExpression(QString("(%1)( )*(=)(\")").arg(Attributes::Owner)), QString("%1 = \"").arg(Attributes::OwnerColumn));
 
-	/* Remove sysid attribute from <role> tags and storing the referenced roles (ref-roles)
+	/* Remove sysid attribute and encrypted from <role> tags and storing the referenced roles (ref-roles)
 	 * for later re-assignment. */
 	if(obj_xml.contains(TagExpr.arg(BaseObject::getSchemaName(ObjectType::Role))))
 	{
-		obj_xml.remove(QRegExp(AttributeExpr.arg(QString("sysid"))));
+		obj_xml.remove(QRegularExpression(AttributeExpr.arg("sysid")));
+		obj_xml.remove(QRegularExpression(AttributeExpr.arg("encrypted")));
 
-		QRegExp ref_roles_expr = QRegExp(QString("(\\<%1)(.)+(%2)( )*(=)(\")(%3)(\")(.)+(\\/\\>)").arg(Attributes::Roles, Attributes::RoleType, Attributes::Refer));
-		int pos = ref_roles_expr.indexIn(obj_xml);
+		QRegularExpression ref_roles_expr = QRegularExpression(QString("(<%1)(.)+(%2)( )*(=)(\")(%3)(\")(.)+(>)").arg(Attributes::Roles, Attributes::RoleType, Attributes::Refer));
+		QRegularExpressionMatch match;
+		int pos = -1;
+
+		match = ref_roles_expr.match(obj_xml);
+		pos = match.capturedStart();
 
 		if(pos >= 0)
 		{
-			QString buf = obj_xml.mid(pos, ref_roles_expr.matchedLength()),
-					name_attr = QString("name=\""), role_name;
+			QString buf = obj_xml.mid(pos, match.capturedLength()),
+					name_attr = "name=\"", role_name;
 			int start_idx = 0, end_idx = 0;
 
 			// Extracting the role name
@@ -1430,15 +1465,15 @@ void PgModelerCliApp::fixObjectAttributes(QString &obj_xml)
 			role_name = obj_xml.mid(start_idx, end_idx - start_idx).remove(name_attr);
 
 			// Removing the element <roles ... role-type="refer"/>
-			obj_xml.remove(pos, ref_roles_expr.matchedLength());
+			obj_xml.remove(pos, match.capturedLength());
 
 			// Retrieve the name of the ref-roles
-			buf.remove(QRegExp("^(.)+(names=\")"));
+			buf.remove(QRegularExpression("^(.)+(names=\")"));
 			buf.remove(buf.indexOf("\""), buf.size());
 
 			/* Storing the association between the current role and the ref-roles
 			 * in a map for further processing */
-			for(auto &rl_name : buf.split(',', QtCompat::SkipEmptyParts))
+			for(auto &rl_name : buf.split(',', Qt::SkipEmptyParts))
 				member_roles[rl_name].append(role_name);
 		}
 	}
@@ -1456,20 +1491,23 @@ void PgModelerCliApp::fixObjectAttributes(QString &obj_xml)
 			 * In pgModeler 0.9.4, enum labels separators where UtilsNs::DataSeparator */
 			QString sep = (model_version == "0.9.4-beta1" ? UtilsNs::DataSeparator : ","),
 					values, labels;
-			QRegExp enum_start_expr("(" + TagExpr.arg(Attributes::EnumType) + ")( )*(values)( )*(=)( )*(\\\")"),
+			QRegularExpression enum_start_expr("(" + TagExpr.arg(Attributes::EnumType) + ")( )*(values)( )*(=)( )*(\\\")"),
 					enum_end_expr("(\\\")( )*(\\/>)"),
 					enum_tag_expr("(" + TagExpr.arg(Attributes::EnumType) + ")(.)+(/>)");
 			int start = -1, end = -1;
+			QRegularExpressionMatch match;
 
-			// Extracting the values of the <enumeration> tag
-			start = enum_start_expr.indexIn(obj_xml) + enum_start_expr.matchedLength();
-			end = enum_end_expr.indexIn(obj_xml, start);
+			match = enum_start_expr.match(obj_xml);
+			start = match.capturedStart() + match.capturedLength();
+
+			match = enum_end_expr.match(obj_xml, start);
+			end = match.capturedStart();
 			values = obj_xml.mid(start, end - start);
 
 			if(!values.isEmpty())
 			{
 				// Converting each value extract into a separated <enumeration> tag
-				for(auto &label : values.split(sep, QtCompat::SkipEmptyParts))
+				for(auto &label : values.split(sep, Qt::SkipEmptyParts))
 					labels.append(QString("\t<%1 label=\"%2\"/>\n").arg(Attributes::EnumType, label));
 
 				obj_xml.replace(enum_tag_expr, labels);
@@ -1480,12 +1518,12 @@ void PgModelerCliApp::fixObjectAttributes(QString &obj_xml)
 	if(obj_xml.contains(TagExpr.arg(BaseObject::getSchemaName(ObjectType::Relationship))))
 	{
 		//Remove auto-sufix, src-sufix, dst-sufix, col-indexes, constr-indexes, attrib-indexes from <relationship> tags.
-		obj_xml.remove(QRegExp(AttributeExpr.arg(QString("auto-sufix"))));
-		obj_xml.remove(QRegExp(AttributeExpr.arg(QString("src-sufix"))));
-		obj_xml.remove(QRegExp(AttributeExpr.arg(QString("dst-sufix"))));
-		obj_xml.remove(QRegExp(AttributeExpr.arg(QString("col-indexes"))));
-		obj_xml.remove(QRegExp(AttributeExpr.arg(QString("constr-indexes"))));
-		obj_xml.remove(QRegExp(AttributeExpr.arg(QString("attrib-indexes"))));
+		obj_xml.remove(QRegularExpression(AttributeExpr.arg(QString("auto-sufix"))));
+		obj_xml.remove(QRegularExpression(AttributeExpr.arg(QString("src-sufix"))));
+		obj_xml.remove(QRegularExpression(AttributeExpr.arg(QString("dst-sufix"))));
+		obj_xml.remove(QRegularExpression(AttributeExpr.arg(QString("col-indexes"))));
+		obj_xml.remove(QRegularExpression(AttributeExpr.arg(QString("constr-indexes"))));
+		obj_xml.remove(QRegularExpression(AttributeExpr.arg(QString("attrib-indexes"))));
 
 		obj_xml.replace(QString("line-color"), Attributes::CustomColor);
 	}
@@ -1513,15 +1551,28 @@ void PgModelerCliApp::fixObjectAttributes(QString &obj_xml)
 		 obj_xml.contains(TagExpr.arg(Attributes::Expression)))
 	{
 		int start_idx=-1, end_idx=-1;
-		QRegExp regexp = QRegExp(AttributeExpr.arg(Attributes::Constraint));
+		QRegularExpression regexp = QRegularExpression(AttributeExpr.arg(Attributes::Constraint));
 		QString constr_name;
+		QRegularExpressionMatch match;
 
-		regexp.indexIn(obj_xml);
-		constr_name = regexp.capturedTexts().at(0);
-		constr_name.remove(QString("%1=\"").arg(Attributes::Constraint));
-		constr_name.remove(constr_name.length() - 1, 1);
+		match = regexp.match(obj_xml);
 
-		obj_xml.remove(QRegExp(AttributeExpr.arg(Attributes::Constraint)));
+		/* In pgModeler 0.8.2, there wasn't the constraint attribute in domains
+		 * so we just create a name for it based on the domain's name */
+		if(!match.hasMatch())
+		{
+			QString	name_attr="name=\"";
+			start_idx = obj_xml.indexOf(name_attr);
+			end_idx = obj_xml.indexOf("\"", start_idx + name_attr.size());
+			constr_name = obj_xml.mid(start_idx, end_idx - start_idx).remove(name_attr) + "_ck";
+		}
+		else
+		{
+			constr_name = match.capturedTexts().at(0);
+			constr_name.remove(QString("%1=\"").arg(Attributes::Constraint));
+			constr_name.remove(constr_name.length() - 1, 1);
+			obj_xml.remove(QRegularExpression(AttributeExpr.arg(Attributes::Constraint)));
+		}
 
 		start_idx = obj_xml.indexOf(TagExpr.arg(Attributes::Expression));
 		obj_xml.insert(start_idx, QString("\n\t<constraint name=\"%1\" type=\"check\">\n\t\t").arg(constr_name));
@@ -1539,29 +1590,36 @@ void PgModelerCliApp::fixObjectAttributes(QString &obj_xml)
 	}
 
 	//Remove the usage of IN keyword in functions' signatures since it is the default if absent
-	QRegExp regexp = QRegExp(AttributeExpr.arg(Attributes::Signature));
-	int sig_idx = regexp.indexIn(obj_xml),	len = 0;
-	QString signature, in_keyw = QString("IN ");
+	QRegularExpression regexp = QRegularExpression(AttributeExpr.arg(Attributes::Signature));
+	QRegularExpressionMatch match;
+	int sig_idx = -1,	len = 0;
+	QString signature, in_keyw = "IN ";
+
+	match = regexp.match(obj_xml);
+	sig_idx = match.capturedStart();
 
 	while(sig_idx >= 0)
 	{
-		signature = obj_xml.mid(sig_idx, regexp.matchedLength());
+		signature = obj_xml.mid(sig_idx,  match.capturedLength());
 		len = signature.length();
 
 		if(!signature.contains(in_keyw))
 		{
-			sig_idx = regexp.indexIn(obj_xml, sig_idx + len);
+			match = regexp.match(obj_xml, sig_idx + len);
+			sig_idx = match.capturedStart();
 			continue;
 		}
 
 		signature.remove(in_keyw);
 		obj_xml.remove(sig_idx, len);
 		obj_xml.insert(sig_idx, signature);
-		sig_idx = regexp.indexIn(obj_xml, sig_idx + len);
+
+		match = regexp.match(obj_xml, sig_idx + len);
+		sig_idx = match.capturedStart();
 	}
 
 	//Rename the attribute layer to layers
-	if(obj_xml.contains(QRegExp("(layer)( )*(=)")))
+	if(obj_xml.contains(QRegularExpression("(layer)( )*(=)")))
 		obj_xml.replace("layer", Attributes::Layers);
 
 	//Fix the references to op. classes and families if needed
@@ -1573,7 +1631,7 @@ void PgModelerCliApp::fixOpClassesFamiliesReferences(QString &obj_xml)
 	ObjectType ref_obj_type;
 
 	if(obj_xml.contains(TagExpr.arg(BaseObject::getSchemaName(ObjectType::Index))) ||
-			obj_xml.contains(QRegExp(QString("(%1)(.)+(type=)(\")(%2)(\")")
+			obj_xml.contains(QRegularExpression(QString("(%1)(.)+(type=)(\")(%2)(\")")
 									 .arg(TagExpr.arg(BaseObject::getSchemaName(ObjectType::Constraint)))
 									 .arg(Attributes::ExConstr))))
 		ref_obj_type=ObjectType::OpClass;
@@ -1586,27 +1644,29 @@ void PgModelerCliApp::fixOpClassesFamiliesReferences(QString &obj_xml)
 	if(!obj_xml.contains(TagExpr.arg(ref_obj_name)))
 		return;
 
-	QString obj_name, aux_obj_name, signature=QString("%1 USING %2");
-	QRegExp sign_regexp=QRegExp(AttributeExpr.arg(QString("signature")));
+	QString obj_name, aux_obj_name, signature=("%1 USING %2");
+	QRegularExpression sign_regexp=QRegularExpression(AttributeExpr.arg("signature"));
+	QRegularExpressionMatch match;
 	QStringList index_types;
 	int pos=0;
 
-	obj_xml.replace(TagExpr.arg(ref_obj_name) + QString(" name="),
-					TagExpr.arg(ref_obj_name) + QString(" signature="));
+	obj_xml.replace(TagExpr.arg(ref_obj_name) + " name=",
+					TagExpr.arg(ref_obj_name) +" signature=");
 
 	index_types = IndexingType::getTypes();
 
 	do
 	{
-		pos=sign_regexp.indexIn(obj_xml, pos);
+		match = sign_regexp.match(obj_xml, pos);
+		pos = match.capturedStart();
 
 		if(pos >= 0)
 		{
 			//Extracting the signature attribute
-			obj_name=obj_xml.mid(pos, sign_regexp.matchedLength());
+			obj_name=obj_xml.mid(pos, match.capturedLength());
 
 			//Removing useless portions signature=" in order to retrive only the object's name
-			obj_name.remove(QRegExp("(signature)( )*(=)"));
+			obj_name.remove(QRegularExpression("(signature)( )*(=)"));
 			obj_name.remove('"');
 
 			//Transforming xml entity for quote into the char
@@ -1614,19 +1674,18 @@ void PgModelerCliApp::fixOpClassesFamiliesReferences(QString &obj_xml)
 
 			for(auto &idx_type : index_types)
 			{
-				//Building a name by appe
 				aux_obj_name=signature.arg(obj_name).arg(idx_type);
 
 				if(model->getObjectIndex(aux_obj_name, ref_obj_type) >= 0)
 				{
 					//Replacing the old signature with the corrected form
 					aux_obj_name.replace(QString("\""), XmlParser::CharQuot);
-					obj_xml.replace(pos, sign_regexp.matchedLength(), QString("signature=\"%1\"").arg(aux_obj_name));
+					obj_xml.replace(pos, match.capturedLength(), QString("signature=\"%1\"").arg(aux_obj_name));
 					break;
 				}
 			}
 
-			pos+=sign_regexp.matchedLength();
+			pos += match.capturedLength();
 		}
 	}
 	while(pos >= 0);
@@ -1642,10 +1701,19 @@ void PgModelerCliApp::fixModel()
 	recreateObjects();
 
 	printMessage(tr("Updating relationships..."));
+
+	// Forcing a full relationship revalidation so the special objects can be created properly
+	if(model->getObjectCount(ObjectType::Relationship) > 0)
+	{
+		model->storeSpecialObjectsXML();
+		model->disconnectRelationships();
+		model->validateRelationships();
+	}
+
 	model->updateTablesFKRelationships();
 
 	printMessage(tr("Saving fixed output model..."));
-	model->saveModel(parsed_opts[Output], SchemaParser::XmlDefinition);
+	model->saveModel(parsed_opts[Output], SchemaParser::XmlCode);
 
 	printMessage(tr("Model successfully fixed!"));
 }
@@ -1670,9 +1738,7 @@ void PgModelerCliApp::loadModel()
 		scene->setLayerColors(ObjectsScene::LayerRectColor, model->getLayerRectColors());
 		scene->setLayerNamesVisible(model->isLayerNamesVisible());
 		scene->setLayerRectsVisible(model->isLayerRectsVisible());
-
-		if(model->isLayerRectsVisible())
-			model->setObjectsModified({ ObjectType::Schema });
+		model->setObjectsModified({ ObjectType::Schema });
 
 		scene->blockSignals(false);
 	}
@@ -1707,8 +1773,20 @@ void PgModelerCliApp::exportModel()
 	//Export to SQL file
 	else if(parsed_opts.count(ExportToFile))
 	{
-		printMessage(tr("Export to SQL script file: %1").arg(parsed_opts[Output]));
-		export_hlp->exportToSQL(model, parsed_opts[Output], parsed_opts[PgSqlVer], parsed_opts.count(Split) > 0);
+		DatabaseModel::CodeGenMode code_gen_option = DatabaseModel::OriginalSql;
+
+		if(parsed_opts.count(DependenciesSql))
+			code_gen_option = DatabaseModel::DependenciesSql;
+		else if(parsed_opts.count(ChildrenSql))
+			code_gen_option = DatabaseModel::ChildrenSql;
+
+		if(!parsed_opts.count(Split))
+			printMessage(tr("Export to SQL script file: %1").arg(parsed_opts[Output]));
+		else
+			printMessage(tr("Export to output directory: %1").arg(parsed_opts[Output]));
+
+		export_hlp->exportToSQL(model, parsed_opts[Output], parsed_opts[PgSqlVer],
+														parsed_opts.count(Split) > 0, code_gen_option);
 	}
 	//Export data dictionary
 	else if(parsed_opts.count(ExportToDict))
@@ -1749,7 +1827,7 @@ void PgModelerCliApp::importDatabase()
 
 	printMessage(tr("Saving the imported database to file..."));
 
-	model_wgt->getDatabaseModel()->saveModel(parsed_opts[Output], SchemaParser::XmlDefinition);
+	model_wgt->getDatabaseModel()->saveModel(parsed_opts[Output], SchemaParser::XmlCode);
 
 	printMessage(tr("Import successfully ended!\n"));
 
@@ -1760,8 +1838,8 @@ void PgModelerCliApp::importDatabase(DatabaseModel *model, Connection conn)
 {
 	try
 	{
-		map<ObjectType, vector<unsigned>> obj_oids;
-		map<unsigned, vector<unsigned>> col_oids;
+		std::map<ObjectType, std::vector<unsigned>> obj_oids;
+		std::map<unsigned, std::vector<unsigned>> col_oids;
 		Catalog catalog;
 		QString db_oid;
 		QStringList force_tab_objs;
@@ -1779,15 +1857,18 @@ void PgModelerCliApp::importDatabase(DatabaseModel *model, Connection conn)
 			}
 		}
 		else
-			force_tab_objs = parsed_opts[ForceChildren].split(',', QtCompat::SkipEmptyParts);
+			force_tab_objs = parsed_opts[ForceChildren].split(',', Qt::SkipEmptyParts);
+
+		Connection::setPrintSQL(parsed_opts.count(DebugMode) > 0);
 
 		catalog.setConnection(conn);
+
 		catalog.setQueryFilter(Catalog::ListAllObjects | Catalog::ExclBuiltinArrayTypes |
-													 (!imp_ext_objs ? Catalog::ExclExtensionObjs : 0) |
-													 (!imp_sys_objs ? Catalog::ExclSystemObjs : 0));
+													 Catalog::ExclExtensionObjs | Catalog::ExclSystemObjs);
 
 		catalog.setObjectFilters(obj_filters, parsed_opts.count(OnlyMatching) > 0,
 														 parsed_opts.count(MatchByName) == 0, force_tab_objs);
+
 		catalog.getObjectsOIDs(obj_oids, col_oids, {{Attributes::FilterTableTypes, Attributes::True}});
 
 		db_oid = catalog.getObjectOID(conn.getConnectionParam(Connection::ParamDbName), ObjectType::Database);
@@ -1817,7 +1898,7 @@ void PgModelerCliApp::diffModelDatabase()
 {
 	DatabaseModel *model_aux = new DatabaseModel();
 	QString dbname;
-	vector<BaseObject *> filtered_objs;
+	std::vector<BaseObject *> filtered_objs;
 
 	printMessage(tr("Starting diff process..."));
 
@@ -1946,8 +2027,8 @@ void PgModelerCliApp::diffModelDatabase()
 					}
 				}
 
-				out << QtCompat::endl;
-				out << tr("** WARNING: You are about to apply the generated diff code to the server. Data can be lost in the process!") << QtCompat::endl;
+				out << Qt::endl;
+				out << tr("** WARNING: You are about to apply the generated diff code to the server. Some data can be lost in the process!") << Qt::endl;
 
 				do
 				{
@@ -2040,7 +2121,7 @@ QStringList PgModelerCliApp::extractForeignKeys(QString &obj_xml)
 bool PgModelerCliApp::containsRelAttributes(const QString &str)
 {
 	bool found=false;
-	static vector<QString> attribs={ Attributes::Relationship,
+	static std::vector<QString> attribs={ Attributes::Relationship,
 									 Attributes::Type, Attributes::SrcRequired, Attributes::DstRequired,
 									 Attributes::SrcTable, Attributes::DstTable,	Attributes::Points,
 									 Attributes::Columns,	Attributes::Column, Attributes::Constraint,
@@ -2142,7 +2223,7 @@ void PgModelerCliApp::handleLinuxMimeDatabase(bool uninstall, bool system_wide, 
 
 				schparser.loadFile(schemas[i]);
 				schparser.ignoreEmptyAttributes(true);
-				buf.append(schparser.getCodeDefinition(attribs).toUtf8());
+				buf.append(schparser.getSourceCode(attribs).toUtf8());
 				QDir(QString(".")).mkpath(QFileInfo(files[i]).absolutePath());
 
 				UtilsNs::saveFile(files[i], buf);
@@ -2179,19 +2260,19 @@ void PgModelerCliApp::handleLinuxMimeDatabase(bool uninstall, bool system_wide, 
 			{
 				//Remove any reference to application/dbm mime from file
 				str_aux=ts.readLine();
-				str_aux.replace(QRegExp(QString("application/dbm*"),Qt::CaseSensitive,QRegExp::Wildcard),"");
+				str_aux.replace(QRegularExpression(QRegularExpression::wildcardToRegularExpression("application/dbm*")),"");
 
 				if(!str_aux.isEmpty())
 				{
 					//Updates the application/dbm mime association
-					if(!uninstall && (str_aux.contains(QString("[Added Associations]")) ||
-										str_aux.contains(QString("[Default Applications]"))))
-						str_aux.append(QString("\napplication/dbm=pgModeler.desktop;\n"));
+					if(!uninstall && (str_aux.contains("[Added Associations]") ||
+										str_aux.contains("[Default Applications]")))
+						str_aux.append("\napplication/dbm=pgModeler.desktop;\n");
 					else
-						str_aux+=QString("\n");
+						str_aux+="\n";
 
 					if(str_aux.startsWith("[") && !str_aux.contains("Added Associations"))
-						str_aux=QString("\n") + str_aux;
+						str_aux="\n" + str_aux;
 
 					buf_aux.append(str_aux.toUtf8());
 				}
@@ -2206,7 +2287,7 @@ void PgModelerCliApp::handleLinuxMimeDatabase(bool uninstall, bool system_wide, 
 		//Update the mime database
 		printMessage(tr("Running update-mime-database command..."));
 
-		QProcess::execute(QString("update-mime-database"), QStringList { mime_db_dir });
+		QProcess::execute("update-mime-database", QStringList { mime_db_dir });
 	}
 	catch(Exception &e)
 	{
@@ -2217,30 +2298,30 @@ void PgModelerCliApp::handleLinuxMimeDatabase(bool uninstall, bool system_wide, 
 void PgModelerCliApp::handleWindowsMimeDatabase(bool uninstall, bool system_wide, bool force)
 {
 	SchemaParser schparser;
-	QString base_reg_key = system_wide ? QString("HKEY_LOCAL_MACHINE\\SOFTWARE") : QString("HKEY_CURRENT_USER\\Software");
+	QString base_reg_key = system_wide ? "HKEY_LOCAL_MACHINE\\SOFTWARE" : "HKEY_CURRENT_USER\\Software";
 
 	//Checking if the .dbm registry key exists
-		QSettings dbm_ext(QString("%1\\Classes\\.dbm").arg(base_reg_key), QSettings::NativeFormat),
+	QSettings dbm_ext(QString("%1\\Classes\\%2").arg(base_reg_key, GlobalAttributes::DbModelExt), QSettings::NativeFormat),
 				sch_ext(QString("%1\\Classes\\.sch").arg(base_reg_key), QSettings::NativeFormat);
 	QString exe_path=QDir::toNativeSeparators(GlobalAttributes::getPgModelerAppPath()),
 			sc_exe_path=QDir::toNativeSeparators(GlobalAttributes::getPgModelerSchemaEditorPath());
 
 	//If there is no value assigned to (.dbm | .sch)/Default key and the user wants to uninstall file association, raises an error
 	if(uninstall && !force &&
-		 (dbm_ext.value(QString("Default")).toString().isEmpty() ||
-			sch_ext.value(QString("Default")).toString().isEmpty()))
+		 (dbm_ext.value("Default").toString().isEmpty() ||
+			sch_ext.value("Default").toString().isEmpty()))
 		throw Exception(MsgNoFileAssociation, ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	if(!uninstall && !force &&
-		 (!dbm_ext.value(QString("Default")).toString().isEmpty() ||
-			!sch_ext.value(QString("Default")).toString().isEmpty()))
+		 (!dbm_ext.value("Default").toString().isEmpty() ||
+			!sch_ext.value("Default").toString().isEmpty()))
 		throw Exception(MsgFileAssociated, ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	if(!uninstall)
 	{
 		//Write the default value for .dbm registry key
-		dbm_ext.setValue(QString("Default"), QString("dbm_auto_file"));
-		sch_ext.setValue(QString("Default"), QString("sch_auto_file"));
+		dbm_ext.setValue("Default", "dbm_auto_file");
+		sch_ext.setValue("Default", "sch_auto_file");
 	}
 	else
 	{
@@ -2252,18 +2333,18 @@ void PgModelerCliApp::handleWindowsMimeDatabase(bool uninstall, bool system_wide
 	sch_ext.sync();
 
 	//Other registry keys values
-	map<QString, QStringList> confs = {
-				{ QString("\\%1\\Classes\\dbm_auto_file").arg(base_reg_key), { QString("FriendlyTypeName") , QString("pgModeler Database Model") } },
-				{ QString("\\%1\\Classes\\dbm_auto_file\\DefaultIcon").arg(base_reg_key), { QString("Default") , QString("%1,1").arg(exe_path) } },
-				{ QString("\\%1\\Classes\\dbm_auto_file\\shell\\open\\command").arg(base_reg_key), { QString("Default") , QString("\"%1\" \"%2\"").arg(exe_path).arg("%1") } },
-				{ QString("\\%1\\Microsoft\\Windows\\CurrentVersion\\Explorer\\FileExts\\.dbm").arg(base_reg_key), { QString("OpenWithList/a"), QString("pgmodeler.exe"), QString("OpenWithList/MRUList"), QString("a")} },
-				{ QString("\\%1\\Classes\\sch_auto_file").arg(base_reg_key), { QString("FriendlyTypeName") , QString("pgModeler Schema File") } },
-				{ QString("\\%1\\Classes\\sch_auto_file\\DefaultIcon").arg(base_reg_key), { QString("Default") , QString("%1,1").arg(sc_exe_path) } },
-				{ QString("\\%1\\Classes\\sch_auto_file\\shell\\open\\command").arg(base_reg_key), { QString("Default") , QString("\"%1\" \"%2\"").arg(sc_exe_path).arg("%1") } },
-				{ QString("\\%1\\Microsoft\\Windows\\CurrentVersion\\Explorer\\FileExts\\.sch").arg(base_reg_key), { QString("OpenWithList/a"), QString("pgmodeler-sc.exe"), QString("OpenWithList/MRUList"), QString("a")} }
+	std::map<QString, QStringList> confs = {
+				{ QString("\\%1\\Classes\\dbm_auto_file").arg(base_reg_key), { "FriendlyTypeName" , "pgModeler Database Model" } },
+				{ QString("\\%1\\Classes\\dbm_auto_file\\DefaultIcon").arg(base_reg_key), { "Default" , QString("%1,1").arg(exe_path) } },
+				{ QString("\\%1\\Classes\\dbm_auto_file\\shell\\open\\command").arg(base_reg_key), { "Default", QString("\"%1\" \"%2\"").arg(exe_path).arg("%1") } },
+				{ QString("\\%1\\Microsoft\\Windows\\CurrentVersion\\Explorer\\FileExts\\%2").arg(base_reg_key, GlobalAttributes::DbModelExt), { "OpenWithList/a", "pgmodeler.exe", "OpenWithList/MRUList", "a"} },
+				{ QString("\\%1\\Classes\\sch_auto_file").arg(base_reg_key), { "FriendlyTypeName" , "pgModeler Schema File" } },
+				{ QString("\\%1\\Classes\\sch_auto_file\\DefaultIcon").arg(base_reg_key), { "Default" , QString("%1,1").arg(sc_exe_path) } },
+				{ QString("\\%1\\Classes\\sch_auto_file\\shell\\open\\command").arg(base_reg_key), { "Default" , QString("\"%1\" \"%2\"").arg(sc_exe_path).arg("%1") } },
+				{ QString("\\%1\\Microsoft\\Windows\\CurrentVersion\\Explorer\\FileExts\\.sch").arg(base_reg_key), { "OpenWithList/a", "pgmodeler-sc.exe", "OpenWithList/MRUList", "a"} }
 	};
 
-	map<QString, QStringList>::iterator itr;
+	std::map<QString, QStringList>::iterator itr;
 	itr=confs.begin();
 
 	//Iterates over the configuration map writing the other keys on registry
@@ -2286,7 +2367,7 @@ void PgModelerCliApp::handleWindowsMimeDatabase(bool uninstall, bool system_wide
 
 void PgModelerCliApp::createConfigurations()
 {
-	QString conf_dir = GlobalAttributes::getConfigurationsDir();
+	QString conf_dir = GlobalAttributes::getConfigurationsPath();
 
 	printMessage(tr("Creating configuration files..."));
 	printMessage(tr("Destination path: %1").arg(conf_dir));
@@ -2294,7 +2375,7 @@ void PgModelerCliApp::createConfigurations()
 	bool missing_only = parsed_opts.count(MissingOnly) > 0,
 			force = parsed_opts.count(Force) > 0;
 
-	if(!missing_only && !force && QDir(GlobalAttributes::getConfigurationsDir()).exists())
+	if(!missing_only && !force && QDir(GlobalAttributes::getConfigurationsPath()).exists())
 		throw Exception(tr("Configuration files already exist!"), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	try

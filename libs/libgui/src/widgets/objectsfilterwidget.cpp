@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@
 
 ObjectsFilterWidget::ObjectsFilterWidget(QWidget *parent) : QWidget(parent)
 {
-	vector<ObjectType> types = BaseObject::getChildObjectTypes(ObjectType::Table);
+	std::vector<ObjectType> types = BaseObject::getChildObjectTypes(ObjectType::Table);
 
 	setupUi(this);
 
@@ -41,7 +41,7 @@ is present has the same effect as performing an exact match searching on the nam
 
 	QVBoxLayout *vbox = new QVBoxLayout;
 	vbox->addWidget(tab_objs_lst);
-	vbox->setContentsMargins(4,4,4,4);
+	vbox->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
 	frame->setLayout(vbox);
 
 	wgt_act_forced_filter = new QWidgetAction(this);
@@ -71,16 +71,18 @@ is present has the same effect as performing an exact match searching on the nam
 
 	options_menu.addAction(action_match_signature);
 	options_menu.addAction(action_only_matching);
-	action_forced_filter = options_menu.addAction(tr("Forced filtering"));
-	action_forced_filter->setMenu(&tab_objs_menu);
+
+	action_forced_filter = tab_objs_menu.menuAction();
+	action_forced_filter->setText(tr("Forced filtering"));
+	options_menu.addAction(action_forced_filter);
 
 	options_tb->setMenu(&options_menu);
 
-	connect(add_tb, SIGNAL(clicked(bool)), this, SLOT(addFilter()));
-	connect(clear_all_tb, SIGNAL(clicked(bool)), this, SLOT(clearFilters()));
-	connect(action_only_matching, SIGNAL(toggled(bool)), action_forced_filter, SLOT(setEnabled(bool)));
+	connect(add_tb, &QToolButton::clicked, this, &ObjectsFilterWidget::addFilter);
+	connect(clear_all_tb, &QToolButton::clicked, this, &ObjectsFilterWidget::clearFilters);
+	connect(action_only_matching, &QAction::toggled, action_forced_filter,  &QAction::setEnabled);
 
-	connect(apply_tb, &QToolButton::clicked, [&](){
+	connect(apply_tb, &QToolButton::clicked, this, [this](){
 		emit s_filterApplyingRequested();
 	});
 
@@ -89,7 +91,7 @@ is present has the same effect as performing an exact match searching on the nam
 	filters_tbw->horizontalHeader()->resizeSection(2, 100);
 }
 
-void ObjectsFilterWidget::setModelFilteringMode(bool value, const vector<ObjectType> &extra_types)
+void ObjectsFilterWidget::setModelFilteringMode(bool value, const std::vector<ObjectType> &extra_types)
 {
 	for(auto &item : tab_objs_lst->findItems("*", Qt::MatchWildcard))
 		item->setCheckState(Qt::Checked);
@@ -251,7 +253,7 @@ void ObjectsFilterWidget::addFilter()
 	rem_tb->setIcon(QIcon(GuiUtilsNs::getIconPath("delete")));
 	rem_tb->setToolTip(tr("Remove filter"));
 	rem_tb->setAutoRaise(true);
-	connect(rem_tb, SIGNAL(clicked(bool)), this, SLOT(removeFilter()));
+	connect(rem_tb, &QToolButton::clicked, this, &ObjectsFilterWidget::removeFilter);
 	filters_tbw->setCellWidget(row, 3, rem_tb);
 
 	clear_all_tb->setEnabled(true);

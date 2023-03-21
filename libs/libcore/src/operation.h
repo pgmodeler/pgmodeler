@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -29,7 +29,30 @@
 #include "permission.h"
 #include <QString>
 
-class Operation {
+class __libcore Operation {
+	public:
+		//! \brief Constants used to reference the type of operations
+		enum OperType: unsigned {
+			NoOperation,
+			ObjModified,
+			ObjCreated,
+			ObjRemoved,
+
+			/*! \brief This type of operation has the same effect of operation OBJECT_MODIFIED
+								except that it not (re)validate relationships as happens with operations.
+								This type of operation (OBJECT_MOVED) is useful to undo position changes of
+								graphical objects without executing unnecessary revalidations of relationships */
+			ObjMoved
+		};
+
+		//! \brief Operation chain types
+		enum ChainType: unsigned {
+			NoChain, //! \brief The operation is not part of a chain
+			ChainStart, //! \brief The operation is the head of the chain
+			ChainMiddle, //! \brief The operation is in the middle of the chain
+			ChainEnd //! \brief The operation is the last on the chain
+		};
+
 	private:
 		/*! \brief Uniquely identifies the object. This id is used to check if the operation object's somehow
 		where delete (changing their addresses). This will avoid the operation list to try to execute
@@ -54,56 +77,39 @@ class Operation {
 		QString xml_definition;
 
 		//! \brief Operation type (Constants OBJECT_[MODIFIED | CREATED | REMOVED | MOVED]
-		unsigned op_type;
+		OperType op_type;
 
 		//! \brief Operation chain type. This attribute is used to redo/undo several operations at once
-		unsigned chain_type;
+		ChainType chain_type;
 
 		//! \brief Object index inside the list on its parent object
 		int object_idx;
 
 		//! \brief Stores the object's permission before it's removal
-		vector<Permission *> permissions;
+		std::vector<Permission *> permissions;
 
 		//! \brief Generate an unique id for the operation based upon the memory addresses of objects held by it
 		QString generateOperationId();
 
 	public:
-		//! \brief Constants used to reference the type of operations
-		static constexpr unsigned NoOperation=0,
-		ObjectModified=1,
-		ObjectCreated=2,
-		ObjectRemoved=3,
-		/*! \brief This type of operation has the same effect of operation OBJECT_MODIFIED
-							except that it not (re)validate relationships as happens with operations.
-							This type of operation (OBJECT_MOVED) is useful to undo position changes of
-							graphical objects without executing unnecessary revalidations of relationships */
-		ObjectMoved=4;
-
-		//! \brief Operation chain types
-		static constexpr unsigned NoChain=0, //! \brief The operation is not part of a chain
-		ChainStart=1, //! \brief The operation is the head of the chain
-		ChainMiddle=2, //! \brief The operation is in the middle of the chain
-		ChainEnd=3; //! \brief The operation is the last on the chain
-
 		Operation();
 
 		void setObjectIndex(int idx);
-		void setChainType(unsigned type);
-		void setOperationType(unsigned type);
+		void setChainType(ChainType type);
+		void setOperationType(OperType type);
 		void setOriginalObject(BaseObject *object);
 		void setPoolObject(BaseObject *object);
 		void setParentObject(BaseObject *object);
-		void setPermissions(const vector<Permission *> &perms);
+		void setPermissions(const std::vector<Permission *> &perms);
 		void setXMLDefinition(const QString &xml_def);
 
 		int getObjectIndex();
-		unsigned getChainType();
-		unsigned getOperationType();
+		ChainType getChainType();
+		OperType getOperationType();
 		BaseObject *getOriginalObject();
 		BaseObject *getPoolObject();
 		BaseObject *getParentObject();
-		vector<Permission *> getPermissions();
+		std::vector<Permission *> getPermissions();
 		QString getXMLDefinition();
 		bool isOperationValid();
 };

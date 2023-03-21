@@ -34,4 +34,3 @@
 %if {prepended-sql} %then {prepended-sql} %end
 
 </extension> $br $br
-

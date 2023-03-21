@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -48,9 +48,9 @@ RuleWidget::RuleWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Ru
 		event_cmb->addItems(EventType::getTypes());
 		exec_type_cmb->addItems(ExecutionType::getTypes());
 
-		connect(commands_tab, SIGNAL(s_rowAdded(int)), this, SLOT(handleCommand(int)));
-		connect(commands_tab, SIGNAL(s_rowUpdated(int)), this, SLOT(handleCommand(int)));
-		connect(commands_tab, SIGNAL(s_rowEdited(int)), this, SLOT(editCommand(int)));
+		connect(commands_tab, &ObjectsTableWidget::s_rowAdded, this, &RuleWidget::handleCommand);
+		connect(commands_tab, &ObjectsTableWidget::s_rowUpdated, this, &RuleWidget::handleCommand);
+		connect(commands_tab, &ObjectsTableWidget::s_rowEdited, this, &RuleWidget::editCommand);
 
 		setRequiredField(event_lbl);
 		configureTabOrder();

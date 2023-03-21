@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -31,15 +31,12 @@
 #include "pgmodelerplugin.h"
 #include "widgets/fileselectorwidget.h"
 
-class PluginsConfigWidget: public BaseConfigWidget, public Ui::PluginsConfigWidget {
+class __libgui PluginsConfigWidget: public BaseConfigWidget, public Ui::PluginsConfigWidget {
 	private:
 		Q_OBJECT
 
 		//! \brief Loaded plugins
-		vector<PgModelerPlugin *> plugins;
-
-		//! \brief Stores the actions assigned for each plugin
-		vector<QAction *> plugins_actions;
+		std::vector<PgModelerPlugin *> plugins;
 
 		//! \brief Table used to show the loaded plugins
 		ObjectsTableWidget *plugins_tab;
@@ -54,17 +51,24 @@ class PluginsConfigWidget: public BaseConfigWidget, public Ui::PluginsConfigWidg
 
 	public:
 		PluginsConfigWidget(QWidget *parent = nullptr);
+
 		virtual ~PluginsConfigWidget();
 
 		//! \brief Since plugins has its own configurations this method load all plugins instead
 		void loadConfiguration();
 
-		/*! \brief Install the created actions on menu. Additionally the user must specify the
-		 receiver object and slot executed when the actions is activated */
-		void installPluginsActions(QMenu *menu, QObject *recv, const char *slot);
+		/*! \brief Installs the plugins's ocnfiguration action in the provided menu.
+		 *  Additionally, it returns a list of actions that is meant to be placed in a toolbar. */
+		QList<QAction *> installPluginsActions(QMenu *menu);
 
 		//! \brief Performs the initialization of all loaded plugins (see PgModelerPlugin::initPlugin())
 		void initPlugins(MainWindow *main_window);
+
+		//! \brief Execute the post initialization of all loaded plugins
+		void postInitPlugins();
+
+		//! \brief Returns a list of actions of the loaded plugins related to model actions only
+		QList<QAction *> getPluginsModelsActions();
 
 	private slots:
 		void showPluginInfo(int idx);

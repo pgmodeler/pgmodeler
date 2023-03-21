@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -21,7 +21,6 @@
 #include "globalattributes.h"
 #include "pgmodelerunittest.h"
 #include "defaultlanguages.h"
-#include "qtcompat/qtextstreamcompat.h"
 
 class TransformTest: public QObject, public PgModelerUnitTest {
 	private:
@@ -234,11 +233,11 @@ COMMENT ON TRANSFORM FOR varchar LANGUAGE plpgsql IS E'This is a comment!';\n\
 
 		transf.setComment("This is a comment!");
 
-		sql_code = transf.getCodeDefinition(SchemaParser::SqlDefinition);
+		sql_code = transf.getSourceCode(SchemaParser::SqlCode);
 		//QTextStream out(stdout);
-		//out <<  sql_code << QtCompat::endl;
-		//out <<  expect_code <<  QtCompat::endl;
-		//out << "---" <<  QtCompat::endl;
+		//out <<  sql_code << Qt::endl;
+		//out <<  expect_code <<  Qt::endl;
+		//out << "---" <<  Qt::endl;
 		QCOMPARE(sql_code.simplified(), expect_code.simplified());
 	}
 	catch(Exception &e)
@@ -289,11 +288,11 @@ void TransformTest::generatesXMLCorrectly()
 		transf.setAppendedSQL("-- APPENDED SQL --;");
 		transf.setPrependedSQL("-- PREPENDED SQL --;");
 
-		xml_code = transf.getCodeDefinition(SchemaParser::XmlDefinition);
+		xml_code = transf.getSourceCode(SchemaParser::XmlCode);
 		/*QTextStream out(stdout);
-		out <<  xml_code << QtCompat::endl;
-		out <<  expect_code <<  QtCompat::endl;
-		out << "---" <<  QtCompat::endl;*/
+		out <<  xml_code << Qt::endl;
+		out <<  expect_code <<  Qt::endl;
+		out << "---" <<  Qt::endl;*/
 		QCOMPARE(xml_code.simplified(), expect_code.simplified());
 	}
 	catch(Exception &e)
@@ -310,7 +309,7 @@ void TransformTest::modelReturnsTransformDepsRefsToFuncs()
 	QString xml_code, expect_code;
 	Schema schema;
 	DatabaseModel dbmodel;
-	vector<BaseObject *> refs, deps;
+	std::vector<BaseObject *> refs, deps;
 	unsigned to_sql_refs, from_sql_refs, transf_deps;
 	Type custom_type;
 
@@ -336,7 +335,7 @@ void TransformTest::modelReturnsTransformDepsRefsToFuncs()
 		to_sql_func.setSchema(&schema);
 		to_sql_func.addParameter(Parameter("p1", PgSqlType("internal")));
 		to_sql_func.setReturnType(PgSqlType("public.custom_type"));
-		to_sql_func.setSourceCode("begin; end");
+		to_sql_func.setFunctionSource("begin; end");
 		to_sql_func.setLanguage(&lang);
 		transf.setFunction(&to_sql_func, Transform::ToSqlFunc);
 
@@ -344,7 +343,7 @@ void TransformTest::modelReturnsTransformDepsRefsToFuncs()
 		from_sql_func.setSchema(&schema);
 		from_sql_func.addParameter(Parameter("p1", PgSqlType("internal")));
 		from_sql_func.setReturnType(PgSqlType("internal"));
-		from_sql_func.setSourceCode("begin; end");
+		from_sql_func.setFunctionSource("begin; end");
 		from_sql_func.setLanguage(&lang);
 		transf.setFunction(&from_sql_func, Transform::FromSqlFunc);
 
@@ -414,20 +413,20 @@ void TransformTest::modelCreatesTransformFromXML()
 		to_sql_func.setSchema(&schema);
 		to_sql_func.addParameter(Parameter("p1", PgSqlType("internal")));
 		to_sql_func.setReturnType(PgSqlType("text"));
-		to_sql_func.setSourceCode("begin; end");
+		to_sql_func.setFunctionSource("begin; end");
 		to_sql_func.setLanguage(&lang);
 
 		from_sql_func.setName("from_sql_func");
 		from_sql_func.setSchema(&schema);
 		from_sql_func.addParameter(Parameter("p1", PgSqlType("internal")));
 		from_sql_func.setReturnType(PgSqlType("internal"));
-		from_sql_func.setSourceCode("begin; end");
+		from_sql_func.setFunctionSource("begin; end");
 		from_sql_func.setLanguage(&lang);
 
 		dbmodel.addObject(&from_sql_func);
 		dbmodel.addObject(&to_sql_func);
 
-		dbmodel.getXMLParser()->setDTDFile(GlobalAttributes::getSchemasRootDir() +
+		dbmodel.getXMLParser()->setDTDFile(GlobalAttributes::getSchemasRootPath() +
 																			 GlobalAttributes::DirSeparator +
 																			 GlobalAttributes::XMLSchemaDir +
 																			 GlobalAttributes::DirSeparator +
@@ -444,13 +443,13 @@ void TransformTest::modelCreatesTransformFromXML()
 		QVERIFY(nullptr != transf);
 
 		/*QTextStream out(stdout);
-		out << "Expected:" << QtCompat::endl;
-		out << xml_code << QtCompat::endl;
-		out << "---" << QtCompat::endl;
-		out << "Result:" << QtCompat::endl;
-		out << transf->getCodeDefinition(SchemaParser::XmlDefinition) << QtCompat::endl;*/
+		out << "Expected:" << Qt::endl;
+		out << xml_code << Qt::endl;
+		out << "---" << Qt::endl;
+		out << "Result:" << Qt::endl;
+		out << transf->getSourceCode(SchemaParser::XmlCode) << Qt::endl;*/
 
-		QVERIFY(transf->getCodeDefinition(SchemaParser::XmlDefinition).simplified() == xml_code.simplified());
+		QVERIFY(transf->getSourceCode(SchemaParser::XmlCode).simplified() == xml_code.simplified());
 	}
 	catch(Exception &e)
 	{

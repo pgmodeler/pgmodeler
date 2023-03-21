@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -25,11 +25,12 @@
 #ifndef RESULT_SET_MODEL_H
 #define RESULT_SET_MODEL_H
 
+#include "guiglobal.h"
 #include <QAbstractTableModel>
 #include "resultset.h"
 #include "catalog.h"
 
-class ResultSetModel: public QAbstractTableModel {
+class __libgui ResultSetModel: public QAbstractTableModel {
 	private:
 		Q_OBJECT
 

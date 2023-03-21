@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -37,9 +37,17 @@ ColumnPickerWidget::ColumnPickerWidget(QWidget *parent) :	QWidget(parent)
 
 	col_picker_grid->addWidget(columns_tab, 1, 0, 1, 3);
 
-	connect(columns_tab, SIGNAL(s_rowAdded(int)), this, SLOT(addColumn(int)));
-	connect(columns_tab, &ObjectsTableWidget::s_rowRemoved, [&](int){ 	updateColumnsCombo(); });
-	connect(columns_tab, &ObjectsTableWidget::s_rowsRemoved, [&](){ 	updateColumnsCombo(); });
+	connect(columns_tab, &ObjectsTableWidget::s_rowAdded, this, [this](int idx){
+		addColumn(idx);
+	});
+
+	connect(columns_tab, &ObjectsTableWidget::s_rowRemoved, this, [this](int){
+		updateColumnsCombo();
+	});
+
+	connect(columns_tab, &ObjectsTableWidget::s_rowsRemoved, this, [this](){
+		updateColumnsCombo();
+	});
 
 	setParentObject(nullptr);
 }
@@ -64,7 +72,7 @@ void ColumnPickerWidget::setParentObject(BaseObject *p_obj)
 	updateColumnsCombo();
 }
 
-void ColumnPickerWidget::setColumns(const vector<Column *> &cols)
+void ColumnPickerWidget::setColumns(const std::vector<Column *> &cols)
 {
 	int row = 0;
 
@@ -87,7 +95,7 @@ void ColumnPickerWidget::setColumns(const vector<Column *> &cols)
 	columns_tab->blockSignals(false);
 }
 
-void ColumnPickerWidget::setColumns(const vector<SimpleColumn> &cols)
+void ColumnPickerWidget::setColumns(const std::vector<SimpleColumn> &cols)
 {
 	int row = 0;
 
@@ -113,8 +121,8 @@ void ColumnPickerWidget::updateColumnsCombo()
 	try
 	{
 		Column *column=nullptr;
-		vector<TableObject *> columns;
-		vector<SimpleColumn> simple_cols;
+		std::vector<TableObject *> columns;
+		std::vector<SimpleColumn> simple_cols;
 		Table *table = dynamic_cast<Table *>(parent_obj);
 		View *view = dynamic_cast<View *>(parent_obj);
 		Relationship *relationship = dynamic_cast<Relationship *>(parent_obj);
@@ -194,14 +202,24 @@ void ColumnPickerWidget::addColumn(Column *column, int row)
 	//Change the table row background color if the column is protected or added by relationship
 	if(column->isAddedByRelationship() || column->isProtected())
 	{
-		QFont fonte;
-		fonte=columns_tab->font();
-		fonte.setItalic(true);
+		QFont fnt;
+		fnt=columns_tab->font();
+		fnt.setItalic(true);
 
-		if(column->isProtected())
-			columns_tab->setRowFont(row, fonte, GuiUtilsNs::ProtRowFgColor, GuiUtilsNs::ProtRowBgColor);
+		if(column->isAddedByRelationship())
+		{
+			columns_tab->setRowFont(row, fnt);
+			columns_tab->setRowColors(row,
+																ObjectsTableWidget::getTableItemColor(ObjectsTableWidget::RelAddedItemFgColor),
+																ObjectsTableWidget::getTableItemColor(ObjectsTableWidget::RelAddedItemBgColor));
+		}
 		else
-			columns_tab->setRowFont(row, fonte, GuiUtilsNs::RelAddedRowFgColor, GuiUtilsNs::RelAddedRowBgColor);
+		{
+			columns_tab->setRowFont(row, fnt);
+			columns_tab->setRowColors(row,
+																ObjectsTableWidget::getTableItemColor(ObjectsTableWidget::ProtItemFgColor),
+																ObjectsTableWidget::getTableItemColor(ObjectsTableWidget::ProtItemBgColor));
+		}
 	}
 }
 
@@ -215,9 +233,9 @@ void ColumnPickerWidget::addColumn(const SimpleColumn &column, int row)
 	columns_tab->setRowData(QVariant::fromValue<SimpleColumn>(column), row);
 }
 
-vector<Column *> ColumnPickerWidget::getColumns()
+std::vector<Column *> ColumnPickerWidget::getColumns()
 {
-	vector<Column *> cols;
+	std::vector<Column *> cols;
 
 	for(unsigned row = 0; row < columns_tab->getRowCount(); row++)
 		cols.push_back(reinterpret_cast<Column *>(columns_tab->getRowData(row).value<void *>()));
@@ -225,12 +243,12 @@ vector<Column *> ColumnPickerWidget::getColumns()
 	return cols;
 }
 
-vector<SimpleColumn> ColumnPickerWidget::getSimpleColumns()
+std::vector<SimpleColumn> ColumnPickerWidget::getSimpleColumns()
 {
 	if(parent_obj && parent_obj->getObjectType() != ObjectType::View)
 		return {};
 
-	vector<SimpleColumn> cols;
+	std::vector<SimpleColumn> cols;
 
 	for(unsigned row = 0; row < columns_tab->getRowCount(); row++)
 		cols.push_back(columns_tab->getRowData(row).value<SimpleColumn>());

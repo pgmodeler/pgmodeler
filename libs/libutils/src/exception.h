@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -26,22 +26,13 @@
 #ifndef EXCEPTION_H
 #define EXCEPTION_H
 
+#include "utilsglobal.h"
 #include <QObject>
 #include "doublenan.h"
 #include <exception>
 #include <signal.h>
 #include <vector>
-#include <deque>
-#include <type_traits>
-
-using namespace std;
-
-//! \brief This function causes the provided enum to be converted to its underlying datatype
-template<typename Enum>
-constexpr std::underlying_type_t<Enum> enum_cast (Enum obj_type) noexcept
-{
-	return static_cast<typename std::underlying_type_t<Enum>>(obj_type);
-}
+#include "enumtype.h"
 
 //! \brief This enum defines the global error codes used throughout the application
 enum class ErrorCode: unsigned {
@@ -301,22 +292,30 @@ enum class ErrorCode: unsigned {
 	InvProcedureParamOutMode,
 	ExportFailureDbSQLDisabled,
 	InvConfigParameterName,
-	EmptyConfigParameterValue
+	EmptyConfigParameterValue,
+	InvGroupRegExpPattern,
+	UnsupportedPGVersion,
+	InvCodeGenerationMode,
+	InvCsvParserOptions,
+	MalformedCsvInvalidCols,
+	MalformedCsvMissingDelim,
+	RefInvCsvDocumentValue,
+	ModelFileSaveFailure
 };
 
-class Exception {
+class __libutils Exception {
 	private:
-		static constexpr unsigned ErrorCount=257;
-
-		/*! \brief Stores other exceptions before raise the 'this' exception.
-		 This structure can be used to simulate a stack trace to improve the debug */
-		vector<Exception> exceptions;
-
-		//! \brief Stores the error messages and codes (names of errors) in string format
-		static QString messages[ErrorCount][2];
+		static constexpr unsigned ErrorCount=265;
 
 		//! \brief Constants used to access the error details
 		static constexpr unsigned ErrorCodeId=0, ErrorMessage=1;
+
+		/*! \brief Stores other exceptions before raise the 'this' exception.
+		 This structure can be used to simulate a stack trace to improve the debug */
+		std::vector<Exception> exceptions;
+
+		//! \brief Stores the error messages and codes (names of errors) in string format
+		static QString messages[ErrorCount][2];
 
 		//! \brief Error type related to the exception
 		ErrorCode error_code;
@@ -350,11 +349,11 @@ class Exception {
 
 		Exception();
 		Exception(const QString &msg, const QString &method, const QString &file, int line, Exception *exception=nullptr, const QString &extra_info="");
-		Exception(const QString &msg, const QString &method, const QString &file, int line, vector<Exception> &exceptions, const QString &extra_info="");
+		Exception(const QString &msg, const QString &method, const QString &file, int line, std::vector<Exception> &exceptions, const QString &extra_info="");
 		Exception(const QString &msg, ErrorCode error_code, const QString &method, const QString &file, int line, Exception *exception=nullptr, const QString &extra_info="");
-		Exception(const QString &msg, ErrorCode error_code, const QString &method, const QString &file, int line, vector<Exception> &exceptions, const QString &extra_info="");
+		Exception(const QString &msg, ErrorCode error_code, const QString &method, const QString &file, int line, std::vector<Exception> &exceptions, const QString &extra_info="");
 		Exception(ErrorCode error_code, const QString &method, const QString &file, int line, Exception *exception=nullptr, const QString &extra_info="");
-		Exception(ErrorCode error_code, const QString &method, const QString &file, int line, vector<Exception> &exceptions, const QString &extra_info="");
+		Exception(ErrorCode error_code, const QString &method, const QString &file, int line, std::vector<Exception> &exceptions, const QString &extra_info="");
 
 		~Exception(void){}
 		QString getErrorMessage();
@@ -367,10 +366,19 @@ class Exception {
 		QString getExtraInfo();
 
 		//! \brief Gets the full exception stack
-		void getExceptionsList(vector<Exception> &list);
+		void getExceptionsList(std::vector<Exception> &list);
 
 		//! \brief Gets the exception stack in a formatted text
 		QString getExceptionsText();
+
+		/*! \brief Returns in one string all the extra info from the exceptions in the error stack
+		 * Duplicated extra information is discarded */
+		QString getExceptiosExtraInfo();
 };
+
+/* Registering the Exception class as a Qt MetaType in order to make
+ * it liable to be sent through signal parameters as well as to be
+ * to be used by QVariant */
+Q_DECLARE_METATYPE(Exception)
 
 #endif

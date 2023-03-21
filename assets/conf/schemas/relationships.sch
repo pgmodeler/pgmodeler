@@ -6,9 +6,8 @@
 [ Unexpected results may occur if the code is changed deliberately.] $br
 [-->] $br
 
-<relationships> $br
-
-$tb [<connection mode=] "{mode}" [/>] $br
+<relationships $sp link-mode="{link-mode}" > $br
+    
 $tb [<foreign-keys deferrable=] "{deferrable}" [ defer-type=] "{defer-type}" [ upd-action=] "{upd-action}" [ del-action=] "{del-action}" [/>] $br
 $tb <name-patterns> $br
 {patterns}

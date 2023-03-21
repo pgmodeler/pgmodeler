@@ -6,7 +6,7 @@ $tb $tb <partitionkey> $br
 %if {column} %then
 	$tb $tb $tb [<column name=] "{column}" /> $br
 %else
-	$tb $tb $tb <expression> <! $ob CDATA $ob {expression} $cb $cb > </expression> $br
+	$tb $tb $tb <expression> $sp <! $ob CDATA $ob {expression} $cb $cb > $sp </expression> $br
 %end
 
 %if {collation} %then

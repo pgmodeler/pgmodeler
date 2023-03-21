@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -27,7 +27,10 @@
 
 #include "templatetype.h"
 
-class SecurityType: public TemplateType<SecurityType>{
+class __libcore SecurityType: public TemplateType<SecurityType>{
+	private:
+		static QStringList type_names;
+
 	public:
 		static constexpr unsigned Invoker = 1,
 		Definer = 2;
@@ -35,6 +38,12 @@ class SecurityType: public TemplateType<SecurityType>{
 		SecurityType(unsigned type_id);
 		SecurityType(const QString &type_name);
 		SecurityType();
+
+		static QStringList getTypes();
+
+		unsigned setType(unsigned type_id) override;
+		unsigned setType(const QString &type_name) override;
+		QString getTypeName(unsigned type_id) override;
 };
 
 #endif 

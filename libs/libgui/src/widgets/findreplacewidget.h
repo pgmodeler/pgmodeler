@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -25,11 +25,13 @@
 #ifndef FIND_REPLACE_WIDGET_H
 #define FIND_REPLACE_WIDGET_H
 
+#include "guiglobal.h"
 #include "ui_findreplacewidget.h"
 #include <QPlainTextEdit>
 #include "exception.h"
+#include <QTimer>
 
-class FindReplaceWidget: public QWidget, public Ui::FindReplaceWidget {
+class __libgui FindReplaceWidget: public QWidget, public Ui::FindReplaceWidget {
 	private:
 		Q_OBJECT
 		
@@ -43,7 +45,13 @@ class FindReplaceWidget: public QWidget, public Ui::FindReplaceWidget {
 		bool findText(const QString &text, bool regexp, QTextDocument::FindFlags flags);
 		
 		void showEvent(QShowEvent *);
-		
+
+		QLabel *search_info_lbl;
+
+		QTimer search_info_timer;
+
+		void showSearchInfo(const QString &msg);
+
 	public:
 		FindReplaceWidget(QPlainTextEdit *txt_edit, QWidget * parent = nullptr);
 		

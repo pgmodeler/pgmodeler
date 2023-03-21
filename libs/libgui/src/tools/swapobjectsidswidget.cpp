@@ -1,5 +1,6 @@
 #include "swapobjectsidswidget.h"
 #include "guiutilsns.h"
+#include "objectfinderwidget.h"
 
 const QString SwapObjectsIdsWidget::IdLabel("ID: <strong>%1</strong>");
 
@@ -8,26 +9,26 @@ SwapObjectsIdsWidget::SwapObjectsIdsWidget(QWidget *parent, Qt::WindowFlags f) :
 	try
 	{
 		QGridLayout *swap_objs_grid=new QGridLayout(this);
-		vector<ObjectType> types=BaseObject::getObjectTypes(true, {ObjectType::Permission,
+		std::vector<ObjectType> types=BaseObject::getObjectTypes(true, {ObjectType::Permission,
 																															 ObjectType::Textbox,
 																															 ObjectType::Column,
 																															 ObjectType::Constraint });
 		setupUi(this);
 
-		GuiUtilsNs::configureWidgetFont(message_lbl, GuiUtilsNs::MediumFontFactor);
+		//GuiUtilsNs::configureWidgetFont(message_lbl, GuiUtilsNs::MediumFontFactor);
 
 		selector_idx = 0;
 		src_object_sel=nullptr;
 		dst_object_sel=nullptr;
 
-		src_object_sel=new ObjectSelectorWidget(types, true, this);
+		src_object_sel=new ObjectSelectorWidget(types, this);
 		src_object_sel->enableObjectCreation(false);
 
-		dst_object_sel=new ObjectSelectorWidget(types, true, this);
+		dst_object_sel=new ObjectSelectorWidget(types, this);
 		dst_object_sel->enableObjectCreation(false);
 
-		swap_objs_grid->setContentsMargins(4,4,4,4);
-		swap_objs_grid->setSpacing(6);
+		swap_objs_grid->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
+		swap_objs_grid->setSpacing(GuiUtilsNs::LtSpacing);
 
 		swap_objs_grid->addWidget(create_lbl, 0, 0);
 		swap_objs_grid->addWidget(src_object_sel, 0, 1);
@@ -49,32 +50,29 @@ SwapObjectsIdsWidget::SwapObjectsIdsWidget(QWidget *parent, Qt::WindowFlags f) :
 		setModel(nullptr);
 		filter_wgt->setVisible(false);
 
-		connect(filter_btn, SIGNAL(toggled(bool)), filter_wgt, SLOT(setVisible(bool)));
-		connect(src_object_sel, SIGNAL(s_objectSelected()), this, SLOT(showObjectId()));
-		connect(dst_object_sel, SIGNAL(s_objectSelected()), this, SLOT(showObjectId()));
-		connect(src_object_sel, SIGNAL(s_selectorCleared()), this, SLOT(showObjectId()));
-		connect(dst_object_sel, SIGNAL(s_selectorCleared()), this, SLOT(showObjectId()));
+		connect(filter_btn, &QToolButton::toggled, filter_wgt, &QWidget::setVisible);
+		connect(src_object_sel, &ObjectSelectorWidget::s_objectSelected, this, &SwapObjectsIdsWidget::showObjectId);
+		connect(dst_object_sel, &ObjectSelectorWidget::s_objectSelected, this, &SwapObjectsIdsWidget::showObjectId);
+		connect(src_object_sel, &ObjectSelectorWidget::s_selectorCleared, this, &SwapObjectsIdsWidget::showObjectId);
+		connect(dst_object_sel, &ObjectSelectorWidget::s_selectorCleared, this, &SwapObjectsIdsWidget::showObjectId);
 
-		connect(swap_values_tb, &QToolButton::clicked,
-		[&](){
+		connect(swap_values_tb, &QToolButton::clicked, this, [this](){
 			BaseObject *obj=src_object_sel->getSelectedObject();
 			src_object_sel->setSelectedObject(dst_object_sel->getSelectedObject());
 			dst_object_sel->setSelectedObject(obj);
 		});
 
-		connect(objects_tbw, &QTableWidget::itemDoubleClicked,
-		[&](QTableWidgetItem *item){
+		connect(objects_tbw, &QTableWidget::itemDoubleClicked, this, [this](QTableWidgetItem *item){
 			if(QApplication::mouseButtons() == Qt::LeftButton)
 				selectItem(item);
 		});
 
-		setMinimumSize(640,480);
-
-		connect(filter_edt, SIGNAL(textChanged(QString)), this, SLOT(filterObjects()));
-		connect(hide_rels_chk, SIGNAL(toggled(bool)), this, SLOT(filterObjects()));
-		connect(hide_sys_objs_chk, SIGNAL(toggled(bool)), this, SLOT(filterObjects()));
+		connect(filter_edt, &QLineEdit::textChanged, this, &SwapObjectsIdsWidget::filterObjects);
+		connect(hide_rels_chk, &QCheckBox::toggled, this, &SwapObjectsIdsWidget::filterObjects);
+		connect(hide_sys_objs_chk, &QCheckBox::toggled, this, &SwapObjectsIdsWidget::filterObjects);
 
 		objects_tbw->installEventFilter(this);
+		setMinimumSize(640,480);
 	}
 	catch(Exception &e)
 	{
@@ -115,17 +113,17 @@ void SwapObjectsIdsWidget::fillCreationOrderGrid()
 	if(!model)
 		return;
 
-	map<unsigned, BaseObject *> creation_order = model->getCreationOrder(SchemaParser::SqlDefinition);
-	vector<BaseObject *> objects;
+	std::map<unsigned, BaseObject *> creation_order = model->getCreationOrder(SchemaParser::SqlCode);
+	std::vector<BaseObject *> objects;
 
 	//Using an stl function to extract all the values (objects) from the map and put them into a list
-	std::for_each(creation_order.begin(), creation_order.end(), [&](const std::pair<unsigned, BaseObject *> &itr) {
+	std::for_each(creation_order.begin(), creation_order.end(), [&objects](const std::pair<unsigned, BaseObject *> &itr) {
 		if(itr.second->getObjectType() != ObjectType::Constraint) {
 			objects.push_back(itr.second);
 		}
 	});
 
-	ObjectFinderWidget::updateObjectTable(objects_tbw, objects);
+	GuiUtilsNs::updateObjectTable(objects_tbw, objects);
 	objects_tbw->resizeColumnsToContents();
 
 	if(!filter_edt->text().isEmpty() || hide_rels_chk->isChecked() || hide_sys_objs_chk->isChecked())
@@ -243,13 +241,14 @@ void SwapObjectsIdsWidget::swapObjectsIds()
 
 	try
 	{
+		QApplication::setOverrideCursor(Qt::WaitCursor);
 		BaseObject::swapObjectsIds(src_obj, dst_obj, false);
 
 		//Special id swap for relationship
 		if(src_obj->getObjectType()==ObjectType::Relationship)
 		{
-			vector<BaseObject *>::iterator itr, itr1;
-			vector<BaseObject *> *list=model->getObjectList(ObjectType::Relationship);
+			std::vector<BaseObject *>::iterator itr, itr1;
+			std::vector<BaseObject *> *list=model->getObjectList(ObjectType::Relationship);
 
 			//Find the relationships in the list and swap the memory position too
 			itr=std::find(list->begin(), list->end(), src_obj);
@@ -274,10 +273,12 @@ void SwapObjectsIdsWidget::swapObjectsIds()
 		src_id_lbl->setText(IdLabel.arg(src_object_sel->getSelectedObject()->getObjectId()));
 		dst_id_lbl->setText(IdLabel.arg(dst_object_sel->getSelectedObject()->getObjectId()));
 
+		QApplication::restoreOverrideCursor();
 		emit s_objectsIdsSwapped();
 	}
 	catch(Exception &e)
 	{
+		QApplication::restoreOverrideCursor();
 		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }

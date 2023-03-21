@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -29,7 +29,7 @@
 #include "baseobject.h"
 #include "table.h"
 
-class Sequence: public BaseObject {
+class __libcore Sequence: public BaseObject {
 	private:
 		/*! \brief Indicates taht the sequence is cyclic
 		 (the counter resets when maximum value is reached) */
@@ -121,9 +121,11 @@ class Sequence: public BaseObject {
 		void operator = (Sequence &seq);
 
 		//! \brief Returns the SQL / XML definition for the sequence
-		virtual QString getCodeDefinition(unsigned def_type) final;
+		virtual QString getSourceCode(SchemaParser::CodeType def_type) final;
 
-		virtual QString getAlterDefinition(BaseObject *object) final;
+		virtual QString getAlterCode(BaseObject *object) final;
+
+		QString getDataDictionary(const attribs_map &extra_attribs = {});
 };
 
 #endif

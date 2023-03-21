@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -27,12 +27,12 @@ AggregateWidget::AggregateWidget(QWidget *parent): BaseObjectWidget(parent, Obje
 		QSpacerItem *spacer=nullptr;
 		QFrame *frame=nullptr;
 
-		initial_cond_hl=new SyntaxHighlighter(initial_cond_txt);
+		initial_cond_hl=new SyntaxHighlighter(initial_cond_txt, true);
 		initial_cond_hl->loadConfiguration(GlobalAttributes::getSQLHighlightConfPath());
 
-		final_func_sel=new ObjectSelectorWidget(ObjectType::Function, true, this);
-		transition_func_sel=new ObjectSelectorWidget(ObjectType::Function, true, this);
-		sort_op_sel=new ObjectSelectorWidget(ObjectType::Operator, true, this);
+		final_func_sel=new ObjectSelectorWidget(ObjectType::Function, this);
+		transition_func_sel=new ObjectSelectorWidget(ObjectType::Function, this);
+		sort_op_sel=new ObjectSelectorWidget(ObjectType::Operator, this);
 
 		input_type=new PgSQLTypeWidget(this, tr("Input Data Type"));
 		state_type=new PgSQLTypeWidget(this, tr("State Data Type"));
@@ -46,7 +46,7 @@ AggregateWidget::AggregateWidget(QWidget *parent): BaseObjectWidget(parent, Obje
 		funcaoagregacao_grid->addWidget(sort_op_sel,2,1,1,1);
 
 		grid=new QGridLayout;
-		grid->setContentsMargins(2,2,2,2);
+		grid->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
 		grid->addWidget(input_type,0,0);
 		grid->addWidget(input_types_tab,1,0);
 		state_input_types_twg->widget(0)->setLayout(grid);
@@ -54,13 +54,13 @@ AggregateWidget::AggregateWidget(QWidget *parent): BaseObjectWidget(parent, Obje
 		grid=new QGridLayout;
 		spacer=new QSpacerItem(20, 1, QSizePolicy::Minimum, QSizePolicy::Expanding);
 
-		grid->setContentsMargins(2,2,2,2);
+		grid->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
 		grid->addWidget(state_type,0,0);
 		grid->addItem(spacer,1,0);
 		state_input_types_twg->widget(1)->setLayout(grid);
 
-		connect(input_types_tab, SIGNAL(s_rowAdded(int)), this, SLOT(handleDataType(int)));
-		connect(input_types_tab, SIGNAL(s_rowUpdated(int)), this, SLOT(handleDataType(int)));
+		connect(input_types_tab, &ObjectsTableWidget::s_rowAdded, this, &AggregateWidget::handleDataType);
+		connect(input_types_tab, &ObjectsTableWidget::s_rowUpdated, this, &AggregateWidget::handleDataType);
 
 		frame=generateInformationFrame(tr("An aggregate function that accepts the types <em><strong>typeA</strong></em> and <em><strong>typeB</strong></em> as input types and which type of state is <em><strong>state_type</strong></em>, must obey the following rules: <br/><br/> <strong> &nbsp;&nbsp;&nbsp;• Final Function:</strong> <em>void final_function(<strong>state_type</strong>)</em><br/>  <strong> &nbsp;&nbsp;&nbsp;• Transition Function:</strong> <em><strong>state_type</strong> transition_function(<strong>state_type</strong>, <strong>typeA</strong>, <strong>typeB</strong>)</em>"));
 		funcaoagregacao_grid->addWidget(frame, funcaoagregacao_grid->count()+1, 0, 1, 2);

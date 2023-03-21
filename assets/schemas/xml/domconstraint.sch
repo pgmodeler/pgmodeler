@@ -4,5 +4,5 @@
 # Code generation can be broken if incorrect changes are made.
 
 $tb [<constraint name="] {name} [" type="check">] $br
-$tb $tb <expression> <! $ob CDATA $ob {expression} $cb $cb > </expression> $br
+$tb $tb <expression> $sp <! $ob CDATA $ob {expression} $cb $cb > $sp </expression> $br
 $tb [</constraint>] $br

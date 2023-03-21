@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -26,7 +26,7 @@
 
 #include "column.h"
 
-class Parameter: public Column {
+class __libcore Parameter: public Column {
 	private:
 		/*! \brief This attributes indicates whether the parameter
 		is in, out or both (IN, OUT, INOUT, VARIADIC) */
@@ -49,8 +49,8 @@ class Parameter: public Column {
 		QString getModeString();
 
 		//! \brief Returns the SQL / XML code definition for the parameter
-		virtual QString getCodeDefinition(unsigned def_type) final;
-		virtual QString getCodeDefinition(unsigned def_type, bool reduced_form) final;
+		virtual QString getSourceCode(SchemaParser::CodeType def_type) final;
+		virtual QString getSourceCode(SchemaParser::CodeType def_type, bool reduced_form) final;
 
 		void operator = (const Parameter &param);
 };

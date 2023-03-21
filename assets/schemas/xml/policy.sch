@@ -25,11 +25,11 @@
 %end
 
 %if {using-exp} %then
-	$br $tb [<expression type="using-exp">] <! $ob CDATA $ob {using-exp} $cb $cb > </expression>
+	$br $tb [<expression type="using-exp">] $sp <! $ob CDATA $ob {using-exp} $cb $cb > $sp </expression>
 %end
 
 %if {check-exp} %then
-	$br $tb [<expression type="check-exp">] <! $ob CDATA $ob {check-exp} $cb $cb > </expression>
+	$br $tb [<expression type="check-exp">] $sp <! $ob CDATA $ob {check-exp} $cb $cb > $sp </expression>
 %end
 
 $br

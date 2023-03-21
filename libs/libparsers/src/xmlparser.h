@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -34,7 +34,7 @@
 #include <iostream>
 #include "attribsmap.h"
 
-class XmlParser {
+class __libparsers XmlParser {
 	private:
 		/*! \brief This global counter holds the number of parsers instances created on the application. This is done to control
 		 * when to call xmlInitParser() and xmlCleanupParser() as these functions need to be called only once in the application.
@@ -61,7 +61,7 @@ class XmlParser {
 		 a subsequent operation. To configure this element it is necessary
 		 call the method savePosition() and to return the navigation to the saved
 		 position is necessary call restorePosition() */
-		stack<xmlNode *> elems_stack;
+		std::stack<xmlNode *> elems_stack;
 
 		//! \brief Stores the document DTD declaration
 		QString	dtd_decl,
@@ -83,16 +83,18 @@ class XmlParser {
 
 	public:
 		//! \brief Constants used to referência the elements on the element tree
-		static constexpr unsigned RootElement=0,
-		ChildElement=1,
-		NextElement=2,
-		PreviousElement=3;
+		enum ElementType: unsigned {
+			RootElement,
+			ChildElement,
+			NextElement,
+			PreviousElement
+		};
 
 		static const QString CharAmp, //! \brief & = &amp;
 		CharLt, //! \brief  < = &lt;
 		CharGt, //! \brief  < = &gt;
-		CharQuot, //! \brief  < = &quot;
-		CharApos, //! \brief  < = &apos;
+		CharQuot, //! \brief  " = &quot;
+		CharApos, //! \brief  ' = &apos;
 		CdataStart, //! \brief Constant that indicates <![CDATA instruction start
 		CdataEnd, //! \brief Constant that indicates <![CDATA instruction end (]]>)
 		CommentStart, //! \brief Constant that indicates xml comments start
@@ -124,10 +126,10 @@ class XmlParser {
 		/*! \brief Moves one level in the element tree according to the type of element
 		 to be accessed. Returns true if the position was moved to the
 		 desired element. */
-		bool accessElement(unsigned elem_type);
+		bool accessElement(ElementType elem_type);
 
 		//! \brief Returns if an element has a root, child, previous or next element
-		bool hasElement(unsigned elem_type, xmlElementType xml_node_type=static_cast<xmlElementType>(0));
+		bool hasElement(ElementType elem_type, xmlElementType xml_node_type=static_cast<xmlElementType>(0));
 
 		//! \brief Retorns if an element has attributes
 		bool hasAttributes();

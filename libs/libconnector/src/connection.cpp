@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
 #include <iostream>
 #include "attributes.h"
 #include "globalattributes.h"
-#include "qtcompat/qtextstreamcompat.h"
+#include "pgsqlversions.h"
 
 const QString Connection::SslDisable=QString("disable");
 const QString Connection::SslAllow=QString("allow");
@@ -55,6 +55,8 @@ const QString Connection::ServerVersion=QString("server-version");
 bool Connection::notice_enabled=false;
 bool Connection::print_sql=false;
 bool Connection::silence_conn_err=true;
+bool Connection::ignore_db_version=false;
+
 QStringList Connection::notices;
 
 Connection::Connection()
@@ -96,17 +98,17 @@ void Connection::setSQLExecutionTimout(unsigned timeout)
 void Connection::setConnectionParam(const QString &param, const QString &value)
 {
 	//Regexp used to validate the host address
-	QRegExp ip_regexp("[0-9]+\\.[0-9]+\\.[0-9]+\\.[0-9]+");
+	QRegularExpression ip_regexp(QRegularExpression::anchoredPattern("[0-9]+\\.[0-9]+\\.[0-9]+\\.[0-9]+"));
 
 	//Raise an error in case the param name is empty
 	if(param.isEmpty())
 		throw Exception(ErrorCode::AsgInvalidConnParameter, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 
 	/* Set the value to the specified param on the map.
-
 	One special case is treated here, if user use the parameter SERVER_FQDN and the value
 	is a IP address, the method will assign the value to the SERVER_IP parameter */
-	if(param==ParamServerFqdn && ip_regexp.exactMatch(value))
+
+	if(param==ParamServerFqdn && ip_regexp.match(value).hasMatch())
 	{
 		connection_params[Connection::ParamServerIp]=value;
 		connection_params[Connection::ParamServerFqdn]="";
@@ -222,6 +224,16 @@ bool Connection::isConnErrorSilenced()
 	return silence_conn_err;
 }
 
+void Connection::setIgnoreDbVersion(bool ignore)
+{
+	ignore_db_version = ignore;
+}
+
+bool Connection::isDbVersionIgnored()
+{
+	return ignore_db_version;
+}
+
 void Connection::connect()
 {
 	/* If the connection string is not established indicates that the user
@@ -236,8 +248,8 @@ void Connection::connect()
 		else
 		{
 			QTextStream err(stderr);
-			err << QT_TR_NOOP("ERROR: trying to open an already stablished connection.") << QtCompat::endl
-				<< QString("Conn. info: [ ") << connection_str << QString("]") << QtCompat::endl;
+			err << QT_TR_NOOP("ERROR: trying to open an already stablished connection.") << Qt::endl
+				<< QString("Conn. info: [ ") << connection_str << QString("]") << Qt::endl;
 			this->close();
 		}
 	}
@@ -264,6 +276,16 @@ void Connection::connect()
 	else
 		//Enable the notice/warnings in the connection by pushing them into the list of generated notices
 		PQsetNoticeProcessor(connection, noticeProcessor, nullptr);
+
+	// Aborts the connection is PostgreSQL 9x is detected
+	QString pgver = getPgSQLVersion(true);
+	if(!ignore_db_version && pgver.toFloat() < PgSqlVersions::PgSqlVersion100.toFloat())
+	{
+		close();
+		throw Exception(Exception::getErrorMessage(ErrorCode::UnsupportedPGVersion).arg(pgver),
+										ErrorCode::UnsupportedPGVersion,
+										__PRETTY_FUNCTION__, __FILE__, __LINE__);
+	}
 }
 
 void Connection::close()
@@ -376,7 +398,7 @@ QString  Connection::getPgSQLVersion(bool major_only)
 	raw_ver=QString("%1").arg(PQserverVersion(connection));
 
 	//If the version is 10+
-	if(raw_ver.contains(QRegExp("^((1)[0-9])(.)+")))
+	if(raw_ver.contains(QRegularExpression("^((1)[0-9])(.)+")))
 	{
 		//New PostgreSQL 10+ versioning: 100001 means 10.1 (Major.Minor)
 		fmt_ver=QString("%1.%2")
@@ -424,7 +446,7 @@ void Connection::executeDMLCommand(const QString &sql, ResultSet &result)
 	if(print_sql)
 	{
 		QTextStream out(stdout);
-		out << QString("\n---\n") << sql << QtCompat::endl;
+		out << QString("\n---\n") << sql << Qt::endl;
 	}
 
 	//Raise an error in case the command sql execution is not sucessful
@@ -463,7 +485,7 @@ void Connection::executeDDLCommand(const QString &sql)
 	if(print_sql)
 	{
 		QTextStream out(stdout);
-		out << QString("\n---\n") << sql << QtCompat::endl;
+		out << QString("\n---\n") << sql << Qt::endl;
 	}
 
 	//Raise an error in case the command sql execution is not sucessful
@@ -481,19 +503,21 @@ void Connection::executeDDLCommand(const QString &sql)
 	PQclear(sql_res);
 }
 
-void Connection::setDefaultForOperation(unsigned op_id, bool value)
+void Connection::setDefaultForOperation(ConnOperation op_id, bool value)
 {
 	if(op_id > OpNone)
 		throw Exception(ErrorCode::RefElementInvalidIndex,  __PRETTY_FUNCTION__, __FILE__, __LINE__);
-	else if(op_id!=OpNone)
+
+	if(op_id != OpNone)
 		default_for_oper[op_id]=value;
 }
 
-bool Connection::isDefaultForOperation(unsigned op_id)
+bool Connection::isDefaultForOperation(ConnOperation op_id)
 {
 	if(op_id > OpNone)
 		throw Exception(ErrorCode::RefElementInvalidIndex,  __PRETTY_FUNCTION__, __FILE__, __LINE__);
-	else if(op_id==OpNone)
+
+	if(op_id==OpNone)
 		return false;
 
 	return default_for_oper[op_id];

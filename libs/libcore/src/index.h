@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -30,16 +30,16 @@
 #include "indexelement.h"
 #include "simplecolumn.h"
 
-class Index: public TableObject{
+class __libcore Index: public TableObject{
 	private:
 		//! \brief Stores the elements that defines the index
-		vector<IndexElement> idx_elements;
+		std::vector<IndexElement> idx_elements;
 
 		//! \brief Stores the non-key (included) table columns associated with the INCLUDE clause in the index's DDL
-		vector<Column *> included_cols;
+		std::vector<Column *> included_cols;
 
 		//! \brief Stores the non-key (included) view columns associated with the INCLUDE clause in the index's DDL
-		vector<SimpleColumn> incl_simple_cols;
+		std::vector<SimpleColumn> incl_simple_cols;
 
 		//! \brief Predicate expression for the index
 		QString predicate;
@@ -54,17 +54,19 @@ class Index: public TableObject{
 		bool index_attribs[4];
 
 		//! \brief Formats the elements string used by the SchemaParser
-		void setIndexElementsAttribute(unsigned def_type);
+		void setIndexElementsAttribute(SchemaParser::CodeType def_type);
 
 		/*! \brief Executes any validation over the index's elements. Currently, this method disable sorting
 		when the indexing type is 'gin' */
 		void validateElements();
 
 	public:
-		static constexpr  unsigned Unique=0,
-		Concurrent=1,
-		FastUpdate=2,
-		Buffering=3;
+		enum IndexAttrib: unsigned {
+			Unique,
+			Concurrent,
+			FastUpdate,
+			Buffering
+		};
 
 		Index();
 
@@ -78,7 +80,7 @@ class Index: public TableObject{
 		void addIndexElement(IndexElement elem);
 
 		//! \brief Adds several elements to the index using a defined vector
-		void addIndexElements(vector<IndexElement> &elems);
+		void addIndexElements(std::vector<IndexElement> &elems);
 
 		//! \brief Returns the specified element index
 		int getElementIndex(IndexElement elem);
@@ -87,7 +89,7 @@ class Index: public TableObject{
 		IndexElement getIndexElement(unsigned elem_idx);
 
 		//! \brief Returns a list of the index elements
-		vector<IndexElement> getIndexElements();
+		std::vector<IndexElement> getIndexElements();
 
 		//! \brief Remove an element using its index
 		void removeIndexElement(unsigned idx_elem);
@@ -103,7 +105,7 @@ class Index: public TableObject{
 
 		/*! \brief Configures the attributes for the indexs. These attributes can be
 		 referencede using the UNIQUE, CONCURRENT and FAST_UPDATE constants */
-		void setIndexAttribute(unsigned attrib_id, bool value);
+		void setIndexAttribute(IndexAttrib attrib_id, bool value);
 
 		//! \brief Defines the index fill factor
 		void setFillFactor(unsigned factor);
@@ -118,17 +120,17 @@ class Index: public TableObject{
 		IndexingType getIndexingType();
 
 		//! \brief Returns the current state of one index attribute (UNIQUE, CONCURRENT, FAST UPDATE)
-		bool getIndexAttribute(unsigned attrib_id);
+		bool getIndexAttribute(IndexAttrib attrib_id);
 
 		//! \brief Returns the index fill factor
 		unsigned getFillFactor();
 
 		//! \brief Returns the SQL / XML definition for the index
-		virtual QString getCodeDefinition(unsigned def_type) final;
+		virtual QString getSourceCode(SchemaParser::CodeType def_type) final;
 
 		virtual QString getSignature(bool format=true) final ;
 
-		virtual QString getAlterDefinition(BaseObject *object) final;
+		virtual QString getAlterCode(BaseObject *object) final;
 
 		/*! \brief Returns whether the index references columns added
 		 by relationship. This method is used as auxiliary
@@ -141,7 +143,7 @@ class Index: public TableObject{
 	This method is slower than isReferRelationshipAddedColumn() so it's not
 	recommended to use it only check if the object is referencing columns
 	added by relationship */
-		vector<Column *> getRelationshipAddedColumns();
+		std::vector<Column *> getRelationshipAddedColumns();
 
 		//! \brief Returns if some index element is referencing the specified collation
 		bool isReferCollation(Collation *coll);
@@ -150,10 +152,10 @@ class Index: public TableObject{
 		bool isReferColumn(Column *column);
 
 		//! \brief Defines the non-key table columns (INCLUDE clause) of the index.
-		void setColumns(const vector<Column *> &cols);
+		void setColumns(const std::vector<Column *> &cols);
 
 		//! \brief Defines the non-key view columns (INCLUDE clause) of the index.
-		void setSimpleColumns(const vector<SimpleColumn> &cols);
+		void setSimpleColumns(const std::vector<SimpleColumn> &cols);
 
 		//! \brief Adds a single non-key column (INCLUDE clause) to the index.
 		void addColumn(Column *col);
@@ -162,10 +164,12 @@ class Index: public TableObject{
 		void addSimpleColumn(const SimpleColumn &col);
 
 		//! \brief Returns the non-key table columns (INCLUDE clause) of the index
-		vector<Column *> getColumns();
+		std::vector<Column *> getColumns();
 
 		//! \brief Returns the non-key view columns (INCLUDE clause) of the index
-		vector<SimpleColumn> getSimpleColumns();
+		std::vector<SimpleColumn> getSimpleColumns();
+
+		QString getDataDictionary(const attribs_map &extra_attribs = {});
 };
 
 #endif

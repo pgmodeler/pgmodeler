@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -18,13 +18,13 @@
 
 #include "genericsqlwidget.h"
 
-const QRegExp GenericSQLWidget::AttrDelimRegexp = QRegExp(QString("(\\%1)+|(\\%2)+")
+const QRegularExpression GenericSQLWidget::AttrDelimRegexp = QRegularExpression(QString("(\\%1)+|(\\%2)+")
 																													.arg(SchemaParser::CharStartAttribute)
 																													.arg(SchemaParser::CharEndAttribute));
 
 GenericSQLWidget::GenericSQLWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::GenericSql)
 {
-	vector<ObjectType> types;
+	std::vector<ObjectType> types;
 
 	Ui_GenericSQLWidget::setupUi(this);
 	configureFormLayout(genericsql_grid, ObjectType::GenericSql);
@@ -42,10 +42,10 @@ GenericSQLWidget::GenericSQLWidget(QWidget *parent): BaseObjectWidget(parent, Ob
 	preview_hl = new SyntaxHighlighter(preview_txt);
 	preview_hl->loadConfiguration(GlobalAttributes::getSQLHighlightConfPath());
 
-	attribs_tbw->widget(0)->layout()->setContentsMargins(4,4,4,4);
+	attribs_tbw->widget(0)->layout()->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
 	attribs_tbw->widget(0)->layout()->addWidget(definition_txt);
 
-	attribs_tbw->widget(2)->layout()->setContentsMargins(4,4,4,4);
+	attribs_tbw->widget(2)->layout()->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
 	attribs_tbw->widget(2)->layout()->addWidget(preview_txt);
 
 	// Configuring the object types accepted by object references
@@ -54,7 +54,7 @@ GenericSQLWidget::GenericSQLWidget(QWidget *parent): BaseObjectWidget(parent, Ob
 																							ObjectType::Tag, ObjectType::Textbox });
 	types.push_back(ObjectType::Column);
 
-	object_sel = new ObjectSelectorWidget(types, true, this);
+	object_sel = new ObjectSelectorWidget(types, this);
 
 	objects_refs_tab = new ObjectsTableWidget(ObjectsTableWidget::AllButtons, true, this);
 	references_grid->addWidget(object_sel, 0, 1, 1, 1);
@@ -75,25 +75,25 @@ GenericSQLWidget::GenericSQLWidget(QWidget *parent): BaseObjectWidget(parent, Ob
 
 	setMinimumSize(700, 500);
 
-	connect(object_sel, &ObjectSelectorWidget::s_selectorChanged, [&](bool selected){
+	connect(object_sel, &ObjectSelectorWidget::s_selectorChanged, this, [this](bool selected){
 			sel_obj_icon_lbl->setPixmap(selected ? GuiUtilsNs::getIconPath(object_sel->getSelectedObject()->getSchemaName()) : QPixmap());
 			sel_obj_icon_lbl->setToolTip(selected ? object_sel->getSelectedObject()->getTypeName() : "");
 	});
 
-	connect(objects_refs_tab, SIGNAL(s_rowAdded(int)), this, SLOT(addObjectReference(int)));
-	connect(objects_refs_tab, SIGNAL(s_rowEdited(int)), this, SLOT(editObjectReference(int)));
-	connect(objects_refs_tab, SIGNAL(s_rowUpdated(int)), this, SLOT(updateObjectReference(int)));
+	connect(objects_refs_tab, &ObjectsTableWidget::s_rowAdded, this, &GenericSQLWidget::addObjectReference);
+	connect(objects_refs_tab, &ObjectsTableWidget::s_rowEdited, this, &GenericSQLWidget::editObjectReference);
+	connect(objects_refs_tab, &ObjectsTableWidget::s_rowUpdated, this, &GenericSQLWidget::updateObjectReference);
 
-	connect(objects_refs_tab, &ObjectsTableWidget::s_rowAboutToRemove, [&](int row){
+	connect(objects_refs_tab, &ObjectsTableWidget::s_rowAboutToRemove, this, [this](int row){
 		QString ref_name = objects_refs_tab->getCellText(row, 0);
 		dummy_gsql.removeObjectReference(ref_name);
 	});
 
-	connect(objects_refs_tab, &ObjectsTableWidget::s_rowsRemoved, [&](){
+	connect(objects_refs_tab, &ObjectsTableWidget::s_rowsRemoved, this, [this](){
 		dummy_gsql.removeObjectReferences();
 	});
 
-	connect(attribs_tbw, &QTabWidget::currentChanged, [&](int idx){
+	connect(attribs_tbw, &QTabWidget::currentChanged, this, [this](int idx){
 		if(idx == attribs_tbw->count() - 1)
 			updateCodePreview();
 	});
@@ -193,7 +193,7 @@ void GenericSQLWidget::updateCodePreview()
 
 			dummy_gsql.setDefinition(definition_txt->toPlainText());
 			dummy_gsql.setCodeInvalidated(true);
-			preview_txt->setPlainText(dummy_gsql.getCodeDefinition(SchemaParser::SqlDefinition));
+			preview_txt->setPlainText(dummy_gsql.getSourceCode(SchemaParser::SqlCode));
 		}
 		else
 			preview_txt->setPlainText(QString("-- %1 --").arg(tr("No object name, SQL code or references defined! Preview unavailable.")));

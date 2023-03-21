@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -31,7 +31,7 @@
 #include "widgets/objectstablewidget.h"
 #include "widgets/objectselectorwidget.h"
 
-class GenericSQLWidget: public BaseObjectWidget, public Ui::GenericSQLWidget {
+class __libgui GenericSQLWidget: public BaseObjectWidget, public Ui::GenericSQLWidget {
 	private:
 		Q_OBJECT
 
@@ -50,7 +50,7 @@ class GenericSQLWidget: public BaseObjectWidget, public Ui::GenericSQLWidget {
 		GenericSQL dummy_gsql;
 
 		//! \brief A regular expression used to remove attribute/reference delimiters {} from the names of configured references
-		static const QRegExp AttrDelimRegexp;
+		static const QRegularExpression AttrDelimRegexp;
 
 		void showObjectReferenceData(int row, BaseObject *object, const QString &ref_name, bool use_signature, bool format_name);
 

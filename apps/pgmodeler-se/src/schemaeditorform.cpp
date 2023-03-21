@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -19,10 +19,11 @@
 #include "schemaeditorform.h"
 #include "guiutilsns.h"
 #include "globalattributes.h"
+#include "settings/appearanceconfigwidget.h"
 #include "settings/generalconfigwidget.h"
 #include "guiutilsns.h"
 #include "sourceeditorwidget.h"
-#include "aboutwidget.h"
+#include "aboutsewidget.h"
 #include "baseform.h"
 #include "utilsns.h"
 
@@ -42,14 +43,18 @@ SchemaEditorForm::SchemaEditorForm(QWidget *parent) : QWidget(parent)
 		if(!btn) continue;
 
 		fnt = btn->font();
-		fnt.setBold(true);
+		fnt.setWeight(QFont::Normal);
 		btn->setFont(fnt);
-		GuiUtilsNs::createDropShadow(btn);
-		GuiUtilsNs::configureWidgetFont(btn, GuiUtilsNs::SmallFontFactor);
+		GuiUtilsNs::createDropShadow(btn, 1, 1, 5);
 
 		if(!btn->toolTip().isEmpty() && !btn->shortcut().toString().isEmpty())
 			btn->setToolTip(btn->toolTip() + QString(" (%1)").arg(btn->shortcut().toString()));
 	}
+
+	AppearanceConfigWidget appearance_conf_wgt;
+	appearance_conf_wgt.loadConfiguration();
+	std::map<QString, attribs_map> confs = AppearanceConfigWidget::getConfigurationParams();
+	AppearanceConfigWidget::updateDropShadows(confs[GlobalAttributes::AppearanceConf][Attributes::UiTheme]);
 
 	GeneralConfigWidget general_conf_wgt;
 	general_conf_wgt.loadConfiguration();
@@ -74,24 +79,24 @@ SchemaEditorForm::SchemaEditorForm(QWidget *parent) : QWidget(parent)
 	vbox->addWidget(syntax_conf_sel);
 	vbox->setContentsMargins(0, 0, 0, 0);
 
-	syntax_conf_sel->setNameFilters({ tr("Syntax highlight config file (*.conf)") });
+	syntax_conf_sel->setNameFilters({ tr("Syntax highlight config file (*%1)").arg(GlobalAttributes::ConfigurationExt) });
 
 	QAction *act = nullptr;
 	stx_action_grp = new QActionGroup(&syntax_cfg_menu);
 
-	act = syntax_cfg_menu.addAction("Schema file", this, SLOT(loadSyntaxConfig()));
+	act = syntax_cfg_menu.addAction("Schema file", this, &SchemaEditorForm::loadSyntaxConfig);
 	stx_action_grp->addAction(act);
 	act->setCheckable(true);
 	act->setChecked(true);
 	act->setData(GlobalAttributes::SchHighlightConf);
 
-	act = syntax_cfg_menu.addAction("XML script", this, SLOT(loadSyntaxConfig()));
+	act = syntax_cfg_menu.addAction("XML script", this, &SchemaEditorForm::loadSyntaxConfig);
 	stx_action_grp->addAction(act);
 	act->setCheckable(true);
 	act->setChecked(false);
 	act->setData(GlobalAttributes::XMLHighlightConf);
 
-	act = syntax_cfg_menu.addAction("SQL script", this, SLOT(loadSyntaxConfig()));
+	act = syntax_cfg_menu.addAction("SQL script", this, &SchemaEditorForm::loadSyntaxConfig);
 	stx_action_grp->addAction(act);
 	act->setData(GlobalAttributes::SQLHighlightConf);
 	act->setCheckable(true);
@@ -104,30 +109,38 @@ subcontrol-position: right center; }");
 
 	syntax_cfg_menu.installEventFilter(this);
 
-	connect(apply_conf_tb, SIGNAL(clicked(bool)), this, SLOT(applySyntaxConfig()));
-	connect(save_conf_tb, SIGNAL(clicked(bool)), this, SLOT(saveSyntaxConfig()));
-	connect(reload_conf_tb, SIGNAL(clicked(bool)), this, SLOT(loadSyntaxConfig()));
-	connect(new_tb, SIGNAL(clicked(bool)), this, SLOT(addEditorTab()));
-	connect(load_tb, SIGNAL(clicked(bool)), this, SLOT(loadFile()));
-	connect(exit_tb, SIGNAL(clicked(bool)), this, SLOT(close()));
-	connect(save_tb, SIGNAL(clicked(bool)), this, SLOT(saveFile()));
-	connect(editors_tbw, SIGNAL(tabCloseRequested(int)), this, SLOT(closeEditorTab(int)));
-	connect(editors_tbw, SIGNAL(currentChanged(int)), this, SLOT(loadSyntaxFromCurrentTab()));
-	connect(use_tmpl_file_chk, SIGNAL(toggled(bool)), this, SLOT(loadSyntaxConfig()));
-	connect(indent_all_tb, SIGNAL(clicked(bool)), this, SLOT(indentAll()));
-	connect(save_all_tb, SIGNAL(clicked(bool)), this, SLOT(saveAll()));
-	connect(close_all_tb, SIGNAL(clicked(bool)), this, SLOT(closeAll()));
+	connect(apply_conf_tb, &QToolButton::clicked, this, &SchemaEditorForm::applySyntaxConfig);
+	connect(save_conf_tb, &QToolButton::clicked, this, &SchemaEditorForm::saveSyntaxConfig);
+	connect(reload_conf_tb, &QToolButton::clicked, this, &SchemaEditorForm::loadSyntaxConfig);
 
-	connect(syntax_txt, &NumberedTextEditor::textChanged, [&](){
+	connect(new_tb, &QToolButton::clicked, this, [this](){
+		addEditorTab();
+	});
+
+	connect(load_tb, &QToolButton::clicked, this, &SchemaEditorForm::loadFile);
+	connect(exit_tb, &QToolButton::clicked, this, &SchemaEditorForm::close);
+	connect(save_tb, &QToolButton::clicked, this, &SchemaEditorForm::saveFile);
+	connect(indent_all_tb, &QToolButton::clicked, this, &SchemaEditorForm::indentAll);
+	connect(save_all_tb, &QToolButton::clicked, this, &SchemaEditorForm::saveAll);
+	connect(close_all_tb, &QToolButton::clicked, this, &SchemaEditorForm::closeAll);
+
+	connect(editors_tbw, &QTabWidget::tabCloseRequested, this, [this](int idx){
+		closeEditorTab(idx);
+	});
+
+	connect(editors_tbw, &QTabWidget::currentChanged, this, &SchemaEditorForm::loadSyntaxFromCurrentTab);
+	connect(use_tmpl_file_chk, &QCheckBox::toggled, this, &SchemaEditorForm::loadSyntaxConfig);
+
+	connect(syntax_txt, &NumberedTextEditor::textChanged, this, [this](){
 		alert_frm->setVisible(true);
 	});
 
-	connect(save_as_tb, &QToolButton::clicked, [&](){
+	connect(save_as_tb, &QToolButton::clicked, this, [this](){
 		saveFile(true);
 	});
 
-	connect(about_tb, &QToolButton::clicked, [&](){
-		AboutWidget *info_wgt = new AboutWidget;
+	connect(about_tb, &QToolButton::clicked, this, [](){
+		AboutSEWidget *info_wgt = new AboutSEWidget;
 		BaseForm base_frm;
 		base_frm.setMainWidget(info_wgt);
 		base_frm.exec();
@@ -257,7 +270,7 @@ void SchemaEditorForm::applySyntaxConfig(bool from_temp_file)
 	if(from_temp_file)
 	{
 		tmp_file.setAutoRemove(false);
-		tmp_file.setFileTemplate(GlobalAttributes::getTemporaryFilePath("temp_XXXXXX.conf"));
+		tmp_file.setFileTemplate(GlobalAttributes::getTemporaryFilePath(QString("temp_XXXXXX%1").arg(GlobalAttributes::ConfigurationExt)));
 		tmp_file.open();
 		filename = tmp_file.fileName();
 
@@ -405,10 +418,10 @@ QStringList SchemaEditorForm::showFileDialog(bool save_mode)
 {
 	QFileDialog file_dlg;
 	QStringList files, filters= {
-		tr("Schema file (*.sch)"),
-		tr("Database model file (*.dbm)"),
-		tr("pgModeler config file (*.conf)"),
-		tr("Objects metadata file (*.omf)"),
+		tr("Schema file (*%1)").arg(GlobalAttributes::SchemaExt),
+		tr("Database model file (*%1)").arg(GlobalAttributes::DbModelExt),
+		tr("pgModeler config file (*%1)").arg(GlobalAttributes::ConfigurationExt),
+		tr("Objects metadata file (*%1)").arg(GlobalAttributes::ObjMetadataExt),
 		tr("SQL script file (*.sql)"),
 		tr("XML file (*.xml)"),
 		tr("DTD file (*.dtd)"),
@@ -416,7 +429,9 @@ QStringList SchemaEditorForm::showFileDialog(bool save_mode)
 	};
 
 	if(!save_mode)
-		filters.prepend(tr("All supported files (*.sch *.dbm *.conf *.omf *.sql *.xml *.dtd)"));
+		filters.prepend(tr("All supported files (*%1 *%2 *%3 *%4 *.sql *.xml *.dtd)")
+										.arg(GlobalAttributes::SchemaExt, GlobalAttributes::DbModelExt,
+												 GlobalAttributes::ConfigurationExt, GlobalAttributes::ObjMetadataExt));
 
 	file_dlg.setNameFilters(filters);
 
@@ -427,15 +442,19 @@ QStringList SchemaEditorForm::showFileDialog(bool save_mode)
 	if(save_mode)
 	{
 		file_dlg.setDefaultSuffix(".sch");
-		connect(&file_dlg, &QFileDialog::filterSelected, [&](QString filter){
-			filter.remove(QRegExp("(.)+(\\*)"));
+		connect(&file_dlg, &QFileDialog::filterSelected, this, [&file_dlg](QString filter){
+			filter.remove(QRegularExpression("(.)+(\\*)"));
 			filter.remove(")");
 			file_dlg.setDefaultSuffix(filter);
 		});
 	}
 
+	GuiUtilsNs::restoreFileDialogState(&file_dlg);
+
 	if(file_dlg.exec() == QFileDialog::Accepted)
 		files = file_dlg.selectedFiles();
+
+	GuiUtilsNs::saveFileDialogState(&file_dlg);
 
 	return files;
 }
@@ -485,7 +504,7 @@ void SchemaEditorForm::addEditorTab(const QString &filename)
 		if(!filename.isEmpty())
 			editor_wgt->loadFile(filename);
 
-		connect(editor_wgt, SIGNAL(s_editorModified(bool)), this, SLOT(setTabModified(bool)));		
+		connect(editor_wgt, &SourceEditorWidget::s_editorModified, this, &SchemaEditorForm::setTabModified);
 	}
 	catch(Exception &e)
 	{

@@ -12,7 +12,6 @@
 <!ATTLIST role login (true|false) "false">
 <!ATTLIST role bypassrls (true|false) "false">
 <!ATTLIST role connlimit CDATA #IMPLIED>
-<!ATTLIST role encrypted (true|false) "false">
 <!ATTLIST role password CDATA #IMPLIED>
 <!ATTLIST role validity CDATA #IMPLIED>
 <!ATTLIST role protected (false|true) "false">

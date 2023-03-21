@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -18,8 +18,6 @@
 
 #include "attributestoggleritem.h"
 #include <QApplication>
-#include <QDesktopWidget>
-#include <QScreen>
 #include "baseobjectview.h"
 
 QPolygonF AttributesTogglerItem::btn_polygons[7];
@@ -27,6 +25,7 @@ QPolygonF AttributesTogglerItem::btn_polygons[7];
 AttributesTogglerItem::AttributesTogglerItem(QGraphicsItem *parent) : RoundedRectItem(parent)
 {
 	createButtonPolygons();
+
 	this->setRoundedCorners(RoundedRectItem::BottomLeftCorner | RoundedRectItem::BottomRightCorner);
 	sel_rect = new QGraphicsRectItem;
 
@@ -47,7 +46,7 @@ AttributesTogglerItem::AttributesTogglerItem(QGraphicsItem *parent) : RoundedRec
 
 	has_ext_attribs = false;
 	pagination_enabled = false;
-	collapse_mode = CollapseMode::NotCollapsed;
+	collapse_mode = BaseTable::NotCollapsed;
 	btns_width = btns_height = 0;
 
 	for(unsigned idx = 0; idx < 2; idx++)
@@ -76,16 +75,11 @@ void AttributesTogglerItem::setButtonsPen(const QPen &pen)
 		buttons[arr_id]->setPen(pen);
 }
 
-void AttributesTogglerItem::setRect(const QRectF &rect)
-{
-	configureButtons(rect);
-}
-
-void AttributesTogglerItem::setCollapseMode(CollapseMode coll_mode)
+void AttributesTogglerItem::setCollapseMode(BaseTable::CollapseMode coll_mode)
 {
 	//Avoiding setting up extended attributes collapsed when the toggler is configured to not having extended attribs
-	if(!has_ext_attribs && coll_mode == CollapseMode::ExtAttribsCollapsed)
-		collapse_mode = CollapseMode::NotCollapsed;
+	if(!has_ext_attribs && coll_mode == BaseTable::ExtAttribsCollapsed)
+		collapse_mode = BaseTable::NotCollapsed;
 	else
 		collapse_mode = coll_mode;
 
@@ -96,7 +90,8 @@ void AttributesTogglerItem::setButtonSelected(const QPointF &pnt, bool clicked)
 {
 	QRectF rect;
 	double h_spacing = 4 * BaseObjectView::HorizSpacing;
-	unsigned coll_mode = static_cast<unsigned>(collapse_mode), section_id = 0;
+	unsigned coll_mode = static_cast<unsigned>(collapse_mode);
+	BaseTable::TableSection section_id;
 
 	this->setToolTip("");
 	clearButtonsSelection();
@@ -113,20 +108,24 @@ void AttributesTogglerItem::setButtonSelected(const QPointF &pnt, bool clicked)
 
 			if(clicked)
 			{
-				if(arr_id == AttribsExpandBtn || arr_id == AttribsCollapseBtn)
+				if(arr_id == AttribsExpandBtn ||
+					 arr_id == AttribsCollapseBtn)
 				{
 					if(arr_id == AttribsExpandBtn)
 						coll_mode++;
 					else if(arr_id == AttribsCollapseBtn)
 						coll_mode--;
 
-					if(!has_ext_attribs && static_cast<CollapseMode>(coll_mode) == CollapseMode::ExtAttribsCollapsed)
+					if(!has_ext_attribs && coll_mode == enum_t(BaseTable::ExtAttribsCollapsed))
 						coll_mode += (arr_id == AttribsExpandBtn ? 1 : -1);
 
-					if(coll_mode > enum_cast(CollapseMode::NotCollapsed))
-						collapse_mode = (arr_id == AttribsExpandBtn ? CollapseMode::NotCollapsed : CollapseMode::AllAttribsCollapsed);
+					if(coll_mode > enum_t(BaseTable::NotCollapsed))
+					{
+						collapse_mode = (arr_id == AttribsExpandBtn ?
+															 BaseTable::NotCollapsed : BaseTable::AllAttribsCollapsed);
+					}
 					else
-						collapse_mode = static_cast<CollapseMode>(coll_mode);
+						collapse_mode = static_cast<BaseTable::CollapseMode>(coll_mode);
 				}
 				else if(arr_id == PaginationTogglerBtn)
 				{
@@ -134,20 +133,23 @@ void AttributesTogglerItem::setButtonSelected(const QPointF &pnt, bool clicked)
 				}
 				else
 				{
-					if(arr_id == PrevAttribsPageBtn || arr_id == NextAttribsPageBtn)
+					if(arr_id == PrevAttribsPageBtn ||
+						 arr_id == NextAttribsPageBtn)
 						section_id = BaseTable::AttribsSection;
 					else
 						section_id = BaseTable::ExtAttribsSection;
 
 					if(max_pages[section_id] != 0)
 					{
-						if(arr_id == PrevAttribsPageBtn || arr_id == PrevExtAttribsPageBtn)
+						if(arr_id == PrevAttribsPageBtn ||
+							 arr_id == PrevExtAttribsPageBtn)
 							current_page[section_id]--;
 						else
 							current_page[section_id]++;
 
 						if(current_page[section_id] >= max_pages[section_id])
-							current_page[section_id] = (arr_id == PrevAttribsPageBtn || arr_id == PrevExtAttribsPageBtn ? 0 : max_pages[section_id] - 1);
+							current_page[section_id] = (arr_id == PrevAttribsPageBtn ||
+																					arr_id == PrevExtAttribsPageBtn ? 0 : max_pages[section_id] - 1);
 					}
 				}
 
@@ -157,7 +159,8 @@ void AttributesTogglerItem::setButtonSelected(const QPointF &pnt, bool clicked)
 
 				if(arr_id == PaginationTogglerBtn)
 					emit s_paginationToggled(pagination_enabled);
-				else if(arr_id == AttribsExpandBtn || arr_id == AttribsCollapseBtn)
+				else if(arr_id == AttribsExpandBtn ||
+								arr_id == AttribsCollapseBtn)
 					emit s_collapseModeChanged(collapse_mode);
 				else
 					emit s_currentPageChanged(section_id, current_page[section_id]);
@@ -187,19 +190,24 @@ void AttributesTogglerItem::setButtonSelected(const QPointF &pnt, bool clicked)
 
 void AttributesTogglerItem::configureButtonsState()
 {
-	buttons[AttribsExpandBtn]->setOpacity(collapse_mode == CollapseMode::ExtAttribsCollapsed ||
-																				 collapse_mode == CollapseMode::AllAttribsCollapsed? 1 : ButtonMinOpacity);
+	buttons[AttribsExpandBtn]->setOpacity(collapse_mode == BaseTable::ExtAttribsCollapsed ||
+																															 collapse_mode == BaseTable::AllAttribsCollapsed? 1 : ButtonMinOpacity);
 
-	buttons[AttribsCollapseBtn]->setOpacity(collapse_mode == CollapseMode::ExtAttribsCollapsed ||
-																					 collapse_mode == CollapseMode::NotCollapsed ? 1 : ButtonMinOpacity);
+	buttons[AttribsCollapseBtn]->setOpacity(collapse_mode == BaseTable::ExtAttribsCollapsed ||
+																																 collapse_mode == BaseTable::NotCollapsed ? 1 : ButtonMinOpacity);
 
-	buttons[PrevAttribsPageBtn]->setOpacity(max_pages[BaseTable::AttribsSection] != 0 && current_page[BaseTable::AttribsSection] > 0 ? 1 : ButtonMinOpacity);
+	buttons[PrevAttribsPageBtn]->setOpacity(max_pages[BaseTable::AttribsSection] != 0 &&
+																																 current_page[BaseTable::AttribsSection] > 0 ? 1 : ButtonMinOpacity);
+
 	buttons[NextAttribsPageBtn]->setOpacity(max_pages[BaseTable::AttribsSection] != 0 &&
-																					current_page[BaseTable::AttribsSection] < max_pages[BaseTable::AttribsSection] - 1 ? 1 : ButtonMinOpacity);
+																																 current_page[BaseTable::AttribsSection] < max_pages[BaseTable::AttribsSection] - 1 ? 1 : ButtonMinOpacity);
 
-	buttons[PrevExtAttribsPageBtn]->setOpacity(has_ext_attribs && max_pages[BaseTable::ExtAttribsSection] != 0 && current_page[BaseTable::ExtAttribsSection] > 0 ? 1 : ButtonMinOpacity);
+	buttons[PrevExtAttribsPageBtn]->setOpacity(has_ext_attribs &&
+																																		max_pages[BaseTable::ExtAttribsSection] != 0 &&
+																																		current_page[BaseTable::ExtAttribsSection] > 0 ? 1 : ButtonMinOpacity);
+
 	buttons[NextExtAttribsPageBtn]->setOpacity(has_ext_attribs && max_pages[BaseTable::ExtAttribsSection] != 0 &&
-																						 current_page[BaseTable::ExtAttribsSection] < max_pages[BaseTable::ExtAttribsSection] - 1 ? 1 : ButtonMinOpacity);
+																																		current_page[BaseTable::ExtAttribsSection] < max_pages[BaseTable::ExtAttribsSection] - 1 ? 1 : ButtonMinOpacity);
 
 	buttons[PrevAttribsPageBtn]->setVisible(pagination_enabled);
 	buttons[NextAttribsPageBtn]->setVisible(pagination_enabled);
@@ -221,7 +229,7 @@ void AttributesTogglerItem::setPaginationEnabled(bool value, bool hide_pag_toggl
 	configureButtonsState();
 }
 
-void AttributesTogglerItem::setPaginationValues(unsigned section_id, unsigned curr_page, unsigned max_page)
+void AttributesTogglerItem::setPaginationValues(BaseTable::TableSection section_id, unsigned curr_page, unsigned max_page)
 {
 	if(!pagination_enabled || section_id > BaseTable::ExtAttribsSection)
 		return;
@@ -259,24 +267,34 @@ void AttributesTogglerItem::configureButtons(const QRectF &rect)
 			h_spacing = 6 * BaseObjectView::HorizSpacing,
 			height =  4 * BaseObjectView::VertSpacing;
 	QRectF new_rect = rect;
+	QPolygonF pol;
+	double factor = BaseObjectView::getFontFactor() * BaseObjectView::getScreenDpiFactor();
 
-	btns_height = btn_polygons[PrevAttribsPageBtn].boundingRect().height();
+	// Resizing the buttons polygons to reflect any font size change
+	for(auto arr_id = 0; arr_id < 7; arr_id++)
+	{
+		pol = btn_polygons[arr_id];
+		BaseObjectView::resizePolygon(pol, pol.boundingRect().width() * factor, pol.boundingRect().height() * factor);
+		buttons[arr_id]->setPolygon(pol);
+	}
+
+	btns_height = buttons[PrevAttribsPageBtn]->boundingRect().height();
 	height += btns_height;
 
 	if(pagination_enabled)
 	{
-		arr_width = btn_polygons[PrevAttribsPageBtn].boundingRect().width() +
-								btn_polygons[NextAttribsPageBtn].boundingRect().width() +
-								btn_polygons[PrevExtAttribsPageBtn].boundingRect().width() +
-								btn_polygons[NextExtAttribsPageBtn].boundingRect().width() +
+		arr_width = buttons[PrevAttribsPageBtn]->boundingRect().width() +
+								buttons[NextAttribsPageBtn]->boundingRect().width() +
+								buttons[PrevExtAttribsPageBtn]->boundingRect().width() +
+								buttons[NextExtAttribsPageBtn]->boundingRect().width() +
 								(4 * h_spacing);
 	}
 
-	arr_width += btn_polygons[AttribsCollapseBtn].boundingRect().width() +
-							 btn_polygons[AttribsExpandBtn].boundingRect().width() + (2 * h_spacing);
+	arr_width += buttons[AttribsCollapseBtn]->boundingRect().width() +
+							 buttons[AttribsExpandBtn]->boundingRect().width() + (2 * h_spacing);
 
 	if(buttons[PaginationTogglerBtn]->isVisible())
-		arr_width += btn_polygons[AttribsExpandBtn].boundingRect().width() + h_spacing;
+		arr_width += buttons[AttribsExpandBtn]->boundingRect().width() + h_spacing;
 
 	btns_width = arr_width;
 	new_rect.setHeight(height);
@@ -286,29 +304,36 @@ void AttributesTogglerItem::configureButtons(const QRectF &rect)
 
 	if(buttons[PaginationTogglerBtn]->isVisible())
 	{
-		buttons[PaginationTogglerBtn]->setPos(px, (new_rect.height() - buttons[PaginationTogglerBtn]->boundingRect().height())/2);
+		buttons[PaginationTogglerBtn]->setPos(px, (new_rect.height() -
+																																			buttons[PaginationTogglerBtn]->boundingRect().height())/2);
 		px += buttons[PaginationTogglerBtn]->boundingRect().width() + h_spacing;
 
 		if(pagination_enabled)
 		{
-			buttons[PrevExtAttribsPageBtn]->setPos(px, (new_rect.height() - buttons[PrevExtAttribsPageBtn]->boundingRect().height())/2);
+			buttons[PrevExtAttribsPageBtn]->setPos(px, (new_rect.height() -
+																																				 buttons[PrevExtAttribsPageBtn]->boundingRect().height())/2);
 			px += buttons[PrevExtAttribsPageBtn]->boundingRect().width() + h_spacing;
 
-			buttons[PrevAttribsPageBtn]->setPos(px, (new_rect.height() - buttons[PrevAttribsPageBtn]->boundingRect().height())/2);
+			buttons[PrevAttribsPageBtn]->setPos(px, (new_rect.height() -
+																																			buttons[PrevAttribsPageBtn]->boundingRect().height())/2);
 			px += buttons[PrevAttribsPageBtn]->boundingRect().width() + h_spacing;
 
-			buttons[NextAttribsPageBtn]->setPos(px, (new_rect.height() - buttons[NextAttribsPageBtn]->boundingRect().height())/2);
+			buttons[NextAttribsPageBtn]->setPos(px, (new_rect.height() -
+																																			buttons[NextAttribsPageBtn]->boundingRect().height())/2);
 			px += buttons[PrevExtAttribsPageBtn]->boundingRect().width() + h_spacing;
 
-			buttons[NextExtAttribsPageBtn]->setPos(px, (new_rect.height() - buttons[NextExtAttribsPageBtn]->boundingRect().height())/2);
+			buttons[NextExtAttribsPageBtn]->setPos(px, (new_rect.height() -
+																																				 buttons[NextExtAttribsPageBtn]->boundingRect().height())/2);
 			px += buttons[NextExtAttribsPageBtn]->boundingRect().width() + h_spacing;
 		}
 	}
 
-	buttons[AttribsCollapseBtn]->setPos(px, (new_rect.height() - buttons[AttribsCollapseBtn]->boundingRect().height())/2);
+	buttons[AttribsCollapseBtn]->setPos(px, (new_rect.height() -
+																																	buttons[AttribsCollapseBtn]->boundingRect().height())/2);
 	px += buttons[AttribsCollapseBtn]->boundingRect().width() + h_spacing * 0.80;
 
-	buttons[AttribsExpandBtn]->setPos(px, (new_rect.height() - buttons[AttribsExpandBtn]->boundingRect().height())/2);
+	buttons[AttribsExpandBtn]->setPos(px, (new_rect.height() -
+																																buttons[AttribsExpandBtn]->boundingRect().height())/2);
 }
 
 void AttributesTogglerItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
@@ -344,51 +369,50 @@ void AttributesTogglerItem::createButtonPolygons()
 		return;
 
 	QPolygonF *pol = nullptr;
-	double factor = BaseObjectView::getFontFactor() * BaseObjectView::getScreenDpiFactor();
 
 	pol = &btn_polygons[PrevAttribsPageBtn];
-	pol->append(QPointF(0, 5 * factor));
-	pol->append(QPointF(8 * factor, 0));
-	pol->append(QPointF(8 * factor, 10 * factor));
+	pol->append(QPointF(0, 5 ));
+	pol->append(QPointF(8 , 0));
+	pol->append(QPointF(8 , 10 ));
 
 	pol = &btn_polygons[NextAttribsPageBtn];
 	pol->append(QPointF(0, 0));
-	pol->append(QPointF(8 * factor, 5 * factor));
-	pol->append(QPointF(0, 10 * factor));
+	pol->append(QPointF(8 , 5 ));
+	pol->append(QPointF(0, 10 ));
 
 	pol = &btn_polygons[PrevExtAttribsPageBtn];
 	pol->append(QPointF(0, 0));
-	pol->append(QPointF(2 * factor, 0));
-	pol->append(QPointF(2 * factor, 4 * factor));
-	pol->append(QPointF(8 * factor, 0));
-	pol->append(QPointF(8 * factor, 10 * factor));
-	pol->append(QPointF(2 * factor, 6 * factor));
-	pol->append(QPointF(2 * factor, 10 * factor));
-	pol->append(QPointF(0, 10 * factor));
+	pol->append(QPointF(2 , 0));
+	pol->append(QPointF(2 , 4 ));
+	pol->append(QPointF(8 , 0));
+	pol->append(QPointF(8 , 10 ));
+	pol->append(QPointF(2 , 6 ));
+	pol->append(QPointF(2 , 10 ));
+	pol->append(QPointF(0, 10 ));
 
 	pol = &btn_polygons[NextExtAttribsPageBtn];
 	pol->append(QPointF(0, 0));
-	pol->append(QPointF(6 * factor, 4 * factor));
-	pol->append(QPointF(6 * factor, 0 * factor));
-	pol->append(QPointF(8 * factor, 0));
-	pol->append(QPointF(8 * factor, 10 * factor));
-	pol->append(QPointF(6 * factor, 10 * factor));
-	pol->append(QPointF(6 * factor, 6 * factor));
-	pol->append(QPointF(0, 10 * factor));
+	pol->append(QPointF(6 , 4 ));
+	pol->append(QPointF(6 , 0 ));
+	pol->append(QPointF(8 , 0));
+	pol->append(QPointF(8 , 10 ));
+	pol->append(QPointF(6 , 10 ));
+	pol->append(QPointF(6 , 6 ));
+	pol->append(QPointF(0, 10 ));
 
 	pol = &btn_polygons[AttribsCollapseBtn];
-	pol->append(QPointF(5 * factor, 0));
-	pol->append(QPointF(0, 8 * factor));
-	pol->append(QPointF(10 * factor, 8 * factor));
+	pol->append(QPointF(5 , 0));
+	pol->append(QPointF(0, 8 ));
+	pol->append(QPointF(10 , 8 ));
 
 	pol = &btn_polygons[AttribsExpandBtn];
 	pol->append(QPointF(0, 0));
-	pol->append(QPointF(10 * factor, 0));
-	pol->append(QPointF(5 * factor, 8 * factor));
+	pol->append(QPointF(10 , 0));
+	pol->append(QPointF(5 , 8 ));
 
 	pol = &btn_polygons[PaginationTogglerBtn];
-	pol->append(QPointF(4 * factor, 0));
-	pol->append(QPointF(8 * factor, 4 * factor));
-	pol->append(QPointF(4 * factor, 8 * factor));
-	pol->append(QPointF(0, 4 * factor));
+	pol->append(QPointF(4 , 0));
+	pol->append(QPointF(8 , 4 ));
+	pol->append(QPointF(4 , 8 ));
+	pol->append(QPointF(0, 4 ));
 }

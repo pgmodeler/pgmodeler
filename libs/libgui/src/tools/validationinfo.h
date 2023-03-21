@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -26,47 +26,49 @@ are emitted during the validation process on ModelValidationHelper class.
 #ifndef VALIDATION_INFO_H
 #define VALIDATION_INFO_H
 
-/* Including QByteArray due to 'QByteArray has no toStdString()'
-   error on Qt 5.4 (Windows only) */
+#include "guiglobal.h"
 #include "baseobject.h"
 #include <vector>
 
-class ValidationInfo {
+class __libgui ValidationInfo {
+	public:
+		enum ValType: unsigned {
+			NoUniqueName,
+			BrokenReference,
+			SpObjBrokenReference,
+			BrokenRelConfig,
+			MissingExtension,
+			SqlValidationError,
+			ValidationAborted
+		};
+
 	private:
 		//! \brief Validation type (see constants below)
-		unsigned val_type;
+		ValType val_type;
 
 		//! \brief Object which the validation info belongs to
 		BaseObject *object;
 
 		/*! \brief References to the validated object. This vector isn't filled when
 		the info is about SQL validation */
-		vector<BaseObject *> references;
+		std::vector<BaseObject *> references;
 
 		QStringList errors;
 
 	public:
-		static constexpr unsigned NoUniqueName=0,
-		BrokenReference=1,
-		SpObjBrokenReference=2,
-		BrokenRelConfig=3,
-		MissingExtension=4,
-		SqlValidationError=5,
-		ValidationAborted=6;
-
 		ValidationInfo();
-		ValidationInfo(unsigned val_type, BaseObject *object, vector<BaseObject *> references);
+		ValidationInfo(ValType val_type, BaseObject *object, std::vector<BaseObject *> references);
 		ValidationInfo(const QString &msg);
 		ValidationInfo(Exception e);
 
 		//! \brief Returns the validation type
-		unsigned getValidationType();
+		ValType getValidationType();
 
 		//! \brief Returns the object which the validation info belongs to
 		BaseObject *getObject();
 
 		//! \brief Returns the objects that somehow references the validation info object
-		vector<BaseObject *> getReferences();
+		std::vector<BaseObject *> getReferences();
 
 		//! \brief Returns the SQL errors generated during the SQL validation
 		QStringList getErrors();
@@ -79,5 +81,9 @@ class ValidationInfo {
 		friend class ModelValidationHelper;
 		friend class QVariant;
 };
-
 #endif
+
+/* Registering the ValidationInfo class as a Qt MetaType in order to make
+ * it liable to be sent through signal parameters as well as to be
+ * to be used by QVariant */
+Q_DECLARE_METATYPE(ValidationInfo)

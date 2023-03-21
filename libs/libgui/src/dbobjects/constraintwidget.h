@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -32,13 +32,13 @@
 #include "elementstablewidget.h"
 #include "columnpickerwidget.h"
 
-class ConstraintWidget: public BaseObjectWidget, public Ui::ConstraintWidget {
+class __libgui ConstraintWidget: public BaseObjectWidget, public Ui::ConstraintWidget {
 	private:
 		Q_OBJECT
 		
 		ColumnPickerWidget *col_picker_wgt, *ref_col_picker_wgt;
 
-		QFrame *info_frm, *warn_frm;
+		QFrame *info_frm;
 		
 		SyntaxHighlighter *expression_hl;
 		

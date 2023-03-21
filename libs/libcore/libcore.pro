@@ -4,7 +4,11 @@ TEMPLATE = lib
 TARGET = core
 windows: DESTDIR = $$PWD
 
-HEADERS += src/textbox.h \
+# Enables shared library symbols exporting
+DEFINES += CORE_SYMBOLS
+
+HEADERS += src/coreglobal.h \
+	   src/textbox.h \
 	   src/basefunction.h \
 	   src/cast.h \
 	   src/defaultlanguages.h \
@@ -19,7 +23,6 @@ HEADERS += src/textbox.h \
 	   src/permission.h \
 	   src/databasemodel.h \
 	   src/pgsqltypes/actiontype.h \
-	   src/pgsqltypes/basetype.h \
 	   src/pgsqltypes/behaviortype.h \
 	   src/pgsqltypes/categorytype.h \
 	   src/pgsqltypes/constrainttype.h \
@@ -94,7 +97,6 @@ SOURCES +=  src/textbox.cpp \
 	    src/basefunction.cpp \
 	    src/domain.cpp \
 	    src/pgsqltypes/actiontype.cpp \
-	    src/pgsqltypes/basetype.cpp \
 	    src/pgsqltypes/behaviortype.cpp \
 	    src/pgsqltypes/categorytype.cpp \
 	    src/pgsqltypes/constrainttype.cpp \

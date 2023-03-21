@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -30,13 +30,13 @@
 #include "utils/syntaxhighlighter.h"
 #include "relationshipview.h"
 
-class RelationshipConfigWidget:  public BaseConfigWidget, public Ui::RelationshipConfigWidget {
+class __libgui RelationshipConfigWidget:  public BaseConfigWidget, public Ui::RelationshipConfigWidget {
 	private:
 		Q_OBJECT
 
-		static map<QString, attribs_map> config_params;
+		static std::map<QString, attribs_map> config_params;
 
-		map<QString, attribs_map> patterns;
+		std::map<QString, attribs_map> patterns;
 
 		void hideEvent(QHideEvent *);
 
@@ -45,7 +45,7 @@ class RelationshipConfigWidget:  public BaseConfigWidget, public Ui::Relationshi
 
 		void saveConfiguration();
 		void loadConfiguration();
-		static map<QString, attribs_map> getConfigurationParams();
+		static std::map<QString, attribs_map> getConfigurationParams();
 
 	public slots:
 		void applyConfiguration();

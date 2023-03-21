@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -18,8 +18,7 @@
 
 #include "categorytype.h"
 
-template<>
-QStringList CategoryType::TemplateType<CategoryType>::type_names =
+QStringList CategoryType::type_names =
 {
 	"", // Reserved for null value
 
@@ -53,4 +52,24 @@ CategoryType::CategoryType(unsigned type_id)
 CategoryType::CategoryType()
 {
 	type_idx = UserDefined;
+}
+
+QStringList CategoryType::getTypes()
+{
+	return TemplateType<CategoryType>::getTypes(type_names);
+}
+
+unsigned CategoryType::setType(unsigned type_id)
+{
+	return TemplateType<CategoryType>::setType(type_id, type_names);
+}
+
+unsigned CategoryType::setType(const QString &type_name)
+{
+	return TemplateType<CategoryType>::setType(type_name, type_names);
+}
+
+QString CategoryType::getTypeName(unsigned type_id)
+{
+	return TemplateType<CategoryType>::getTypeName(type_id, type_names);
 }

@@ -30,7 +30,7 @@
   </property>
   <layout class="QHBoxLayout" name="horizontalLayout">
    <property name="spacing">
-    <number>4</number>
+    <number>5</number>
    </property>
    <property name="leftMargin">
     <number>0</number>
@@ -73,8 +73,8 @@
      </property>
      <property name="iconSize">
       <size>
-       <width>22</width>
-       <height>22</height>
+       <width>32</width>
+       <height>32</height>
       </size>
      </property>
      <property name="shortcut">
@@ -114,8 +114,8 @@
      </property>
      <property name="iconSize">
       <size>
-       <width>22</width>
-       <height>22</height>
+       <width>32</width>
+       <height>32</height>
       </size>
      </property>
      <property name="shortcut">
@@ -149,6 +149,12 @@
      <property name="sizeAdjustPolicy">
       <enum>QComboBox::AdjustToContents</enum>
      </property>
+     <property name="iconSize">
+      <size>
+       <width>25</width>
+       <height>25</height>
+      </size>
+     </property>
     </widget>
    </item>
    <item>
@@ -177,8 +183,8 @@
      </property>
      <property name="iconSize">
       <size>
-       <width>22</width>
-       <height>22</height>
+       <width>32</width>
+       <height>32</height>
       </size>
      </property>
      <property name="shortcut">
@@ -192,6 +198,7 @@
   </layout>
  </widget>
  <resources>
+  <include location="../../res/resources.qrc"/>
   <include location="../../res/resources.qrc"/>
  </resources>
  <connections/>

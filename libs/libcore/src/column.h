@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -30,7 +30,7 @@
 #include "pgsqltypes/pgsqltype.h"
 #include "pgsqltypes/identitytype.h"
 
-class Column: public TableObject{
+class __libcore Column: public TableObject{
 	protected:
 		/*! \brief Stores the previous name of the column before its name has changed.
 		 This attribute assists in the process of reference columns added
@@ -130,9 +130,9 @@ class Column: public TableObject{
 		QString getDefaultValue();
 
 		//! \brief Returns the SQL/XML code definition for the column
-		virtual QString getCodeDefinition(unsigned def_type);
+		virtual QString getSourceCode(SchemaParser::CodeType def_type);
 
-		virtual QString getAlterDefinition(BaseObject *object);
+		virtual QString getAlterCode(BaseObject *object);
 
 		/*! \brief Returns the old column name. The parameter 'format' indicates
 		 whether the name must be formatted or not */
@@ -163,6 +163,8 @@ class Column: public TableObject{
 
 		//! \brief Copies on column to other
 		void operator = (Column &col);
+
+		QString getDataDictionary(const attribs_map &extra_attribs = {});
 };
 
 #endif

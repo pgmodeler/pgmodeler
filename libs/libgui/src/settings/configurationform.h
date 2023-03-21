@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -33,7 +33,7 @@
 #include "relationshipconfigwidget.h"
 #include "snippetsconfigwidget.h"
 
-class ConfigurationForm: public QDialog, public Ui::ConfigurationForm {
+class __libgui ConfigurationForm: public QDialog, public Ui::ConfigurationForm {
 	private:
 		Q_OBJECT
 		
@@ -48,12 +48,14 @@ class ConfigurationForm: public QDialog, public Ui::ConfigurationForm {
 		void showEvent(QShowEvent *);
 		
 	public:
-		static constexpr int	GeneralConfWgt=0,
-		RelationshipsConfWgt=1,
-		AppearanceConfWgt=2,
-		ConnectionsConfWgt=3,
-		SnippetsConfWgt=4,
-		PluginsConfWgt=5;
+		enum ConfWidgetsId {
+			GeneralConfWgt,
+			AppearanceConfWgt,
+			RelationshipsConfWgt,
+			ConnectionsConfWgt,
+			SnippetsConfWgt,
+			PluginsConfWgt
+		};
 		
 		ConfigurationForm(QWidget * parent = nullptr, Qt::WindowFlags f = Qt::Widget);
 		virtual ~ConfigurationForm();
@@ -67,6 +69,7 @@ class ConfigurationForm: public QDialog, public Ui::ConfigurationForm {
 		
 	private slots:
 		void restoreDefaults();
+		void changeCurrentView();
 
 	signals:
 		void s_invalidateModelsRequested();

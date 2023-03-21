@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -20,13 +20,12 @@
 
 EventTriggerWidget::EventTriggerWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::EventTrigger)
 {
-	map<QString, vector<QWidget *> > fields_map;
-	map<QWidget *, vector<QString> > values_map;
-	QFrame *frame=nullptr;
+	std::map<QString, std::vector<QWidget *> > fields_map;
+	std::map<QWidget *, std::vector<QString> > values_map;
 
 	Ui_EventTriggerWidget::setupUi(this);
 
-	function_sel=new ObjectSelectorWidget(ObjectType::Function, true, this);
+	function_sel=new ObjectSelectorWidget(ObjectType::Function, this);
 	filter_tab=new ObjectsTableWidget(ObjectsTableWidget::AddButton |
 									 ObjectsTableWidget::EditButton |
 									 ObjectsTableWidget::UpdateButton |
@@ -42,28 +41,22 @@ EventTriggerWidget::EventTriggerWidget(QWidget *parent): BaseObjectWidget(parent
 	configureFormLayout(eventtrigger_grid, ObjectType::EventTrigger);
 	setRequiredField(function_lbl);
 
-	fields_map[BaseObjectWidget::generateVersionsInterval(BaseObjectWidget::AfterVersion, PgSqlVersions::PgSqlVersion95)].push_back(event_lbl);
-	values_map[event_lbl].push_back(~EventTriggerType(EventTriggerType::TableRewrite));
-
-	frame=BaseObjectWidget::generateVersionWarningFrame(fields_map, &values_map);
-	frame->setParent(this);
-	eventtrigger_grid->addWidget(frame, eventtrigger_grid->count(), 0, 1, 2);
-
 	configureTabOrder({ event_cmb, function_sel, tag_edt, filter_tab });
 
 	event_cmb->addItems(EventTriggerType::getTypes());
 
-	connect(filter_tab, SIGNAL(s_rowAdded(int)), this, SLOT(handleTagValue(int)));
-	connect(filter_tab, SIGNAL(s_rowUpdated(int)), this, SLOT(handleTagValue(int)));
+	connect(filter_tab, &ObjectsTableWidget::s_rowAdded, this, &EventTriggerWidget::handleTagValue);
+	connect(filter_tab, &ObjectsTableWidget::s_rowUpdated, this, &EventTriggerWidget::handleTagValue);
 
-	connect(filter_tab, &ObjectsTableWidget::s_rowsRemoved,
-			[&](){ filter_tab->setButtonsEnabled(ObjectsTableWidget::AddButton, false); });
+	connect(filter_tab, &ObjectsTableWidget::s_rowsRemoved,	this,[this](){
+		filter_tab->setButtonsEnabled(ObjectsTableWidget::AddButton, false);
+	});
 
-	connect(filter_tab, &ObjectsTableWidget::s_rowEdited,
-			[&](int row){ tag_edt->setText(filter_tab->getCellText(row, 0)); });
+	connect(filter_tab, &ObjectsTableWidget::s_rowEdited,	this, [this](int row){
+		tag_edt->setText(filter_tab->getCellText(row, 0));
+	});
 
-	connect(tag_edt, &QLineEdit::textChanged,
-			[&](){
+	connect(tag_edt, &QLineEdit::textChanged, this, [this](){
 		filter_tab->setButtonsEnabled(ObjectsTableWidget::AddButton, !tag_edt->text().isEmpty());
 		filter_tab->setButtonsEnabled(ObjectsTableWidget::UpdateButton, !tag_edt->text().isEmpty());
 	});

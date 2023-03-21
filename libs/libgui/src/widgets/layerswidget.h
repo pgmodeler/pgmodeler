@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -25,16 +25,17 @@
 #ifndef LAYERS_WIDGET_H
 #define LAYERS_WIDGET_H
 
+#include "guiglobal.h"
 #include <QWidget>
 #include "ui_layerswidget.h"
 #include "basegraphicobject.h"
 
-class LayersWidget : public QWidget, Ui::LayersWidget {
+class __libgui LayersWidget : public QWidget, Ui::LayersWidget {
 	private:
 		Q_OBJECT
 
 		//! \brief The current object selection in a model widget that the layer widget will operate on.
-		vector<BaseGraphicObject *> selected_objs;
+		std::vector<BaseGraphicObject *> selected_objs;
 
 		//! \brief Indicates if the user have interacted with the layers checkboxes changing objects layers.
 		bool layers_changed;
@@ -43,7 +44,7 @@ class LayersWidget : public QWidget, Ui::LayersWidget {
 		explicit LayersWidget(QWidget *parent = nullptr);
 
 		//! \brief Configures the widget with layer names and a set of object selected in a model widget
-		void setAttributes(const QStringList &layers, const vector<BaseObject *> &selected_objs);
+		void setAttributes(const QStringList &layers, const std::vector<BaseObject *> &selected_objs);
 
 		//! \brief Returns true if the layers of the selected object have been changed by the user.
 		bool isLayersChanged();

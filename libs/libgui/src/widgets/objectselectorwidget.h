@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -27,37 +27,33 @@
 
 #include <QtWidgets>
 #include "databasemodel.h"
-#include "utils/syntaxhighlighter.h"
 #include "modelobjectswidget.h"
 #include "ui_objectselectorwidget.h"
 
-class ObjectSelectorWidget: public QWidget, public Ui::ObjectSelectorWidget {
+class __libgui ObjectSelectorWidget: public QWidget, public Ui::ObjectSelectorWidget {
 	private:
 		Q_OBJECT
 
 		//! \brief An object view widget instance used as object picker
 		ModelObjectsWidget *obj_view_wgt;
 
-		//! \brief Selected object name highlighter
-		SyntaxHighlighter *obj_name_hl;
-
 		//! \brief Selected object reference
 		BaseObject *selected_obj;
 
 		//! \brief Object types that the selector is able to pick
-		vector<ObjectType> sel_obj_types;
+		std::vector<ObjectType> sel_obj_types;
 
 		//! \brief Stores the database model which the selector must search the object
 		DatabaseModel *model;
 
 		//! \brief Configures the selectors attributes at construction time
-		void configureSelector(bool install_highlighter);
+		void configureSelector();
 
 		bool eventFilter(QObject *obj, QEvent *evnt);
 
 	public:
-		ObjectSelectorWidget(ObjectType sel_obj_type, bool install_highlighter, QWidget * parent = nullptr);
-		ObjectSelectorWidget(vector<ObjectType> sel_obj_types, bool install_highlighter, QWidget * parent = nullptr);
+		ObjectSelectorWidget(ObjectType sel_obj_type, QWidget * parent = nullptr);
+		ObjectSelectorWidget(std::vector<ObjectType> sel_obj_types, QWidget * parent = nullptr);
 		virtual ~ObjectSelectorWidget();
 
 		//! \brief Enables the creation of new objects from withing the object selector dialog

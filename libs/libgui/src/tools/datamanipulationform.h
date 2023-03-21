@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -31,18 +31,17 @@
 #include "widgets/codecompletionwidget.h"
 #include "widgets/csvloadwidget.h"
 
-class DataManipulationForm: public QDialog, public Ui::DataManipulationForm {
+class __libgui DataManipulationForm: public QDialog, public Ui::DataManipulationForm {
 	private:
 		Q_OBJECT
 		
 		//! \brief Constants used to mark the type of operation performed on rows
-		static constexpr unsigned NoOperation=0,
-		OpInsert=1,
-		OpUpdate=2,
-		OpDelete=3;
-
-		//! \brief Default row colors for each operation type
-		static const QColor RowColors[3];
+		enum OperationId: unsigned {
+			NoOperation,
+			OpInsert,
+			OpUpdate,
+			OpDelete
+		};
 
 		CsvLoadWidget *csv_load_wgt;
 
@@ -50,7 +49,10 @@ class DataManipulationForm: public QDialog, public Ui::DataManipulationForm {
 		
 		CodeCompletionWidget *code_compl_wgt;
 
-		QMenu fks_menu, copy_menu, truncate_menu, paste_menu;
+		QAction *action_add, *action_delete, *action_bulk_edit,
+		*action_duplicate, *action_clear;
+
+		QMenu fks_menu, copy_menu, truncate_menu, paste_menu, edit_menu;
 
 		//! \brief Store the template connection params to be used by catalogs and command execution connections
 		attribs_map tmpl_conn_params;
@@ -71,19 +73,19 @@ class DataManipulationForm: public QDialog, public Ui::DataManipulationForm {
 		unsigned table_oid;
 		
 		//! \brief Stores the ids of changed rows. These ids are handled on saveChanges() method
-		vector<int> changed_rows;
+		std::vector<int> changed_rows;
 		
 		//! \brief Stores the previous color of the rows before being marked with some operation
-		map<int, QBrush> prev_row_colors;
+		std::map<int, QBrush> prev_row_colors;
 
 		//! \brief Stores the fk informations about referenced tables
-		map<QString, attribs_map> fk_infos,
+		std::map<QString, attribs_map> fk_infos,
 
 		//! \brief Stores the fk informations about referencing tables
 		ref_fk_infos;
 		
 		//! \brief Fills a combobox with the names of objects retrieved from catalog
-		void listObjects(QComboBox *combo, vector<ObjectType> obj_types, const QString &schema="");
+		void listObjects(QComboBox *combo, std::vector<ObjectType> obj_types, const QString &schema="");
 		
 		//! \brief Retrieve the primary key column ids for the specified table
 		void retrievePKColumns(const QString &schema, const QString &table);
@@ -94,13 +96,13 @@ class DataManipulationForm: public QDialog, public Ui::DataManipulationForm {
 		
 		/*! \brief Mark the line as changed, changing its background color and applying the respective operation (see OP_??? constant)
 				when user call saveChanged() */
-		void markOperationOnRow(unsigned operation, int row);
+		void markOperationOnRow(OperationId operation, int row);
 		
 		//! \brief Generates a DML command for the row depending on the it's operation type
 		QString getDMLCommand(int row);
 		
 		//! \brief Remove the rows marked as OP_INSERT which ids are specified on the parameter vector
-		void removeNewRows(vector<int> ins_rows);
+		void removeNewRows(std::vector<int> ins_rows);
 		
 		//! \brief Reset the state of changed rows, clearing all attributes used to control the modifications on them
 		void clearChangedRows();

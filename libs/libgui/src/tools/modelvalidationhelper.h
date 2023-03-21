@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -31,7 +31,7 @@
 #include "connection.h"
 #include "tools/modelexporthelper.h"
 
-class ModelValidationHelper: public QObject {
+class __libgui ModelValidationHelper: public QObject {
 	private:
 		Q_OBJECT
 
@@ -65,12 +65,12 @@ class ModelValidationHelper: public QObject {
 
 		/*! \brief Stores the validation infos generated during validation steps.
 		This vector is read when applying fixes */
-		vector<ValidationInfo> val_infos;
+		std::vector<ValidationInfo> val_infos;
 
 		//! \brief Stores the analyzed relationship marked as invalidated
-		vector<BaseObject *> inv_rels;
+		std::vector<BaseObject *> inv_rels;
 
-		void generateValidationInfo(unsigned val_type, BaseObject *object, vector<BaseObject *> refs);
+		void generateValidationInfo(ValidationInfo::ValType val_type, BaseObject *object, std::vector<BaseObject *> refs);
 
 	public:
 		ModelValidationHelper();

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -32,7 +32,14 @@ this is treated in the BaseObjectView class on libobjrenderer library
 #include <QPointF>
 #include "baseobject.h"
 
-class BaseGraphicObject: public QObject, public BaseObject {
+//! \brief Enum used to reference object color ids
+enum class ColorId: unsigned {
+	FillColor1,
+	FillColor2,
+	BorderColor,
+};
+
+class __libcore BaseGraphicObject: public QObject, public BaseObject {
 	private:
 		Q_OBJECT
 
@@ -44,7 +51,7 @@ class BaseGraphicObject: public QObject, public BaseObject {
 		 and it is needed to be updated or specially treated */
 		bool is_modified,
 
-		//! \bried Indicates if the graphical representation of this object is faded out
+		//! \brief Indicates if the graphical representation of this object is faded out
 		is_faded_out;
 
 		/*! \brief Stores a reference to the object which is currently the receiver
@@ -118,7 +125,7 @@ class BaseGraphicObject: public QObject, public BaseObject {
 		QObject *getOverlyingObject();
 
 		//! \brief Returns the code definition of the object
-		virtual QString getCodeDefinition(unsigned)=0;
+		virtual QString getSourceCode(SchemaParser::CodeType)=0;
 
 		//! \brief Returns if the passed type one that has a graphical representation (table, view, schema, relationship or textbox)
 		static bool isGraphicObject(ObjectType type);

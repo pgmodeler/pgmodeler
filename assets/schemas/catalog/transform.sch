@@ -2,8 +2,8 @@
 # CAUTION: Do not modify this file unless you know what you are doing.
 # Code generation can be broken if incorrect changes are made.
 
-%if ({pgsql-ver} >=f "9.5") %then
-	%set {transf-name} [trftype::regtype::text || '_' || lg.lanname ]
+%if ({pgsql-ver} >=f "10.0") %then
+	%set {transf-name} [trftype::regtype::text || '_' || lg.lanname ]	
 
 	%if {list} %then
 

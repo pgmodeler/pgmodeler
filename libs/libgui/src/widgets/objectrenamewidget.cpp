@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -27,17 +27,18 @@ ObjectRenameWidget::ObjectRenameWidget(QWidget * parent) : QDialog(parent)
 
 	setupUi(this);
 	setWindowFlags(Qt::Dialog | Qt::FramelessWindowHint);
+	setAttribute(Qt::WA_TranslucentBackground, true);
 
-	connect(new_name_edt, SIGNAL(returnPressed()), apply_tb, SLOT(click()));
-	connect(apply_tb, SIGNAL(clicked()), this, SLOT(applyRenaming()));
-	connect(cancel_tb, SIGNAL(clicked()), this, SLOT(reject()));
+	connect(new_name_edt, &QLineEdit::returnPressed, apply_tb, &QToolButton::click);
+	connect(apply_tb, &QToolButton::clicked, this, &ObjectRenameWidget::applyRenaming);
+	connect(cancel_tb, &QToolButton::clicked, this, &ObjectRenameWidget::reject);
 
-	connect(new_name_edt, &QLineEdit::textChanged, [&](){
+	connect(new_name_edt, &QLineEdit::textChanged, this, [this](){
 		apply_tb->setEnabled(!new_name_edt->text().isEmpty());
 	});
 }
 
-void ObjectRenameWidget::setAttributes(vector<BaseObject *> objs, DatabaseModel *model, OperationList *op_list)
+void ObjectRenameWidget::setAttributes(std::vector<BaseObject *> objs, DatabaseModel *model, OperationList *op_list)
 {
 	TableObject *tab_obj = nullptr;
 
@@ -115,14 +116,14 @@ void ObjectRenameWidget::applyRenaming()
 					return;
 			}
 
-			map<unsigned, BaseObject *> sel_objs_map;
-			map<unsigned, BaseObject *>::reverse_iterator itr;
+			std::map<unsigned, BaseObject *> sel_objs_map;
+			std::map<unsigned, BaseObject *>::reverse_iterator itr;
 			BaseGraphicObject *graph_obj = nullptr;
 			TableObject *tab_obj = nullptr;
 			QString fmt_name, new_name;
-			vector<BaseObject *> ref_objs, obj_list;
-			vector<TableObject *> tab_objs;
-			map<ObjectType, vector<BaseObject *>> obj_map;
+			std::vector<BaseObject *> ref_objs, obj_list;
+			std::vector<TableObject *> tab_objs;
+			std::map<ObjectType, std::vector<BaseObject *>> obj_map;
 			BaseObject *object = nullptr;
 			bool revalidate_rels = false;
 
@@ -144,7 +145,7 @@ void ObjectRenameWidget::applyRenaming()
 				if(obj_type != ObjectType::Database)
 				{
 					//Register the object on operations list before the modification
-					op_list->registerObject(object, Operation::ObjectModified, -1, (tab_obj ? tab_obj->getParentTable() : nullptr));
+					op_list->registerObject(object, Operation::ObjModified, -1, (tab_obj ? tab_obj->getParentTable() : nullptr));
 					object->setName(new_name);
 
 					//For table child object, generate an unique name among the other objects of the same type in the table

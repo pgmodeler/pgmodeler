@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -42,10 +42,10 @@ ParameterWidget::ParameterWidget(QWidget *parent): BaseObjectWidget(parent, Obje
 		parameter_grid->addItem(spacer, parameter_grid->count()+1,0);
 
 		configureFormLayout(parameter_grid, ObjectType::Parameter);
-		connect(param_variadic_chk, SIGNAL(toggled(bool)), param_in_chk, SLOT(setDisabled(bool)));
-		connect(param_variadic_chk, SIGNAL(toggled(bool)), param_out_chk, SLOT(setDisabled(bool)));
-		connect(param_in_chk, SIGNAL(toggled(bool)), this, SLOT(enableVariadic()));
-		connect(param_out_chk, SIGNAL(toggled(bool)), this, SLOT(enableVariadic()));
+		connect(param_variadic_chk, &QCheckBox::toggled, param_in_chk, &QCheckBox::setDisabled);
+		connect(param_variadic_chk, &QCheckBox::toggled, param_out_chk, &QCheckBox::setDisabled);
+		connect(param_in_chk, &QCheckBox::toggled, this, &ParameterWidget::enableVariadic);
+		connect(param_out_chk, &QCheckBox::toggled, this, &ParameterWidget::enableVariadic);
 
 		setMinimumSize(500, 200);
 	}

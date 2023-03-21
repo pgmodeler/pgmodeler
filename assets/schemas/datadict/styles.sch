@@ -12,7 +12,7 @@ background-color: white;
 footer {
 margin-top: 3em;
 margin-bottom: .5em;
-font-size: 75%;
+font-size: 90%;
 }
 
 h3 {
@@ -53,6 +53,7 @@ font-size: 11pt;
 border-collapse: collapse;
 margin-top: 3em;
 margin-bottom: 1em;
+page-break-inside: avoid;
 }
 
 .table caption {

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -47,7 +47,11 @@ void Tablespace::setDirectory(const QString &dir)
 
 	//Raises an error if the directory is an empty path
 	if(dir_aux.isEmpty())
-		throw Exception(ErrorCode::AsgEmptyDirectoryName,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+	{
+		throw Exception(Exception::getErrorMessage(ErrorCode::AsgEmptyDirectoryName).arg(obj_name),
+										ErrorCode::AsgEmptyDirectoryName,
+										__PRETTY_FUNCTION__,__FILE__,__LINE__);
+	}
 
 	setCodeInvalidated(this->directory != dir_aux);
 	this->directory=dir_aux;
@@ -58,7 +62,7 @@ QString Tablespace::getDirectory()
 	return directory;
 }
 
-QString Tablespace::getCodeDefinition(unsigned def_type)
+QString Tablespace::getSourceCode(SchemaParser::CodeType def_type)
 {
 	QString code_def=getCachedCode(def_type, false);
 	if(!code_def.isEmpty()) return code_def;
@@ -66,6 +70,6 @@ QString Tablespace::getCodeDefinition(unsigned def_type)
 	if(!directory.isEmpty())
 		attributes[Attributes::Directory]=QString("'") + directory + QString("'");
 
-	return BaseObject::__getCodeDefinition(def_type);
+	return BaseObject::__getSourceCode(def_type);
 }
 

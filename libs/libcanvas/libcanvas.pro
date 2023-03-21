@@ -4,8 +4,12 @@ TEMPLATE = lib
 TARGET = canvas
 windows: DESTDIR = $$PWD
 
-HEADERS +=  src/baseobjectview.h \
-	src/layeritem.h \
+# Enables shared library symbols exporting
+DEFINES += CANVAS_SYMBOLS
+
+HEADERS += src/canvasglobal.h \
+		src/baseobjectview.h \
+		src/layeritem.h \
 	    src/textboxview.h \
 	    src/tableview.h \
 	    src/graphicalview.h \

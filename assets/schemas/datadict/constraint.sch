@@ -2,11 +2,13 @@
 # CAUTION: Do not modify this file unless you know what you are doing.
 # Code generation can be broken if incorrect changes are made.
 
-$br [ ] <tr>
-$br [ ] <td>{name}</td>
-$br [ ] <td [ class="value constr-type"]>{type}</td>
-$br [ ] <td>{columns}</td>
-$br [ ] <td>
+%set {spc} $br [ ]
+
+{spc} <tr>
+{spc} <td>{name}</td>
+{spc} <td [ class="value constr-type"]>{type}</td>
+{spc} <td>{columns}</td>
+{spc} <td>
 
 %if {ref-table} %then
 	%if {split} %then
@@ -18,7 +20,7 @@ $br [ ] <td>
 
 </td>
 
-$br [ ] <td [ class="value"]>
+{spc} <td [ class="value"]>
 
 %if ({type} == "CHECK") %then
 	<p $sp class="max-td-wth">{expression}</p>
@@ -26,5 +28,5 @@ $br [ ] <td [ class="value"]>
 
 </td>
 
-$br [ ] <td [ colspan="3"]><p $sp class="max-td-wth"><em>{comment}</em></p></td>
-$br [ ] </tr>
+{spc} <td [ colspan="3"]><p $sp class="max-td-wth"><em>{comment}</em></p></td>
+{spc} </tr>

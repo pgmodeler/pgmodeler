@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -30,7 +30,7 @@ ElementsTableWidget::ElementsTableWidget(QWidget *parent) : QWidget(parent)
 		element_wgt = new ElementWidget;
 		element_form.setMainWidget(element_wgt);
 		element_form.setButtonConfiguration();
-		connect(&element_form, SIGNAL(accepted()), element_wgt, SLOT(applyConfiguration()));
+		connect(&element_form, &BaseForm::accepted, element_wgt, &ElementWidget::applyConfiguration);
 
 		QVBoxLayout *vbox = new QVBoxLayout(this);
 		elements_tab=new ObjectsTableWidget(ObjectsTableWidget::AllButtons ^
@@ -48,13 +48,13 @@ ElementsTableWidget::ElementsTableWidget(QWidget *parent) : QWidget(parent)
 		elements_tab->setHeaderLabel(tr("Collation"), 4);
 		elements_tab->setHeaderIcon(QPixmap(GuiUtilsNs::getIconPath("collation")),4);
 		elements_tab->setHeaderLabel(tr("Sorting"), 5);
-		elements_tab->setHeaderLabel(tr("Nulls First"), 6);
+		elements_tab->setHeaderLabel(tr("Nulls"), 6);
 
-		vbox->setContentsMargins(4,4,4,4);
+		vbox->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
 		vbox->addWidget(elements_tab);
 
-		connect(elements_tab, SIGNAL(s_rowAdded(int)), this, SLOT(addElement(int)));
-		connect(elements_tab, SIGNAL(s_rowEdited(int)), this, SLOT(editElement(int)));
+		connect(elements_tab, &ObjectsTableWidget::s_rowAdded, this, &ElementsTableWidget::addElement);
+		connect(elements_tab, &ObjectsTableWidget::s_rowEdited, this, &ElementsTableWidget::editElement);
 	}
 	catch(Exception &e)
 	{
@@ -109,14 +109,14 @@ void ElementsTableWidget::showElementData(Element *elem, int elem_idx)
 			elements_tab->setCellText(tr("Descending"), elem_idx, 5);
 
 		if(elem->getSortingAttribute(IndexElement::NullsFirst))
-			elements_tab->setCellText(tr("Yes"), elem_idx, 6);
+			elements_tab->setCellText(tr("First"), elem_idx, 6);
 		else
-			elements_tab->setCellText(tr("No"), elem_idx, 6);
+			elements_tab->setCellText(tr("Last"), elem_idx, 6);
 	}
 	else
 	{
-		elements_tab->clearCellText(elem_idx, 4);
-		elements_tab->clearCellText(elem_idx, 5);
+		elements_tab->setCellText(tr("Default"), elem_idx, 5);
+		elements_tab->setCellText(tr("Default"), elem_idx, 6);
 	}
 
 	elements_tab->setRowData(copyElementData(elem), elem_idx);

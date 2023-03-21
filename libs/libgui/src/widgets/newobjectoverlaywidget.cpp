@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2021 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -29,7 +29,7 @@ NewObjectOverlayWidget::NewObjectOverlayWidget(ModelWidget *parent): QWidget(par
 	QString shortcut;
 	int action_idx=0;
 	QList<QAction *> rel_actions=parent->rels_menu->actions();
-	map<QToolButton *, tuple<QString, ObjectType>>  obj_shortcuts={
+	std::map<QToolButton *, std::tuple<QString, ObjectType>>  obj_shortcuts={
 										{ aggregate_tb,    std::make_tuple(tr("A"), ObjectType::Aggregate) },
 										{ cast_tb,         std::make_tuple(tr("G"), ObjectType::Cast) },
 										{ eventtrigger_tb, std::make_tuple(tr("K"), ObjectType::EventTrigger) },
@@ -65,7 +65,7 @@ NewObjectOverlayWidget::NewObjectOverlayWidget(ModelWidget *parent): QWidget(par
 										{ transform_tb,    std::make_tuple(tr("3"), ObjectType::Transform) },
 										{ procedure_tb,    std::make_tuple(tr("2"), ObjectType::Procedure) }};
 
-	map<QToolButton *, tuple<QString, int>> rel_shortcuts={
+	std::map<QToolButton *, std::tuple<QString, int>> rel_shortcuts={
 										{ rel11_tb,  std::make_tuple(tr("1"), 0) },
 										{ rel1n_tb,  std::make_tuple(tr("2"), 1) },
 										{ relnn_tb,  std::make_tuple(tr("3"), 2) },
@@ -73,7 +73,7 @@ NewObjectOverlayWidget::NewObjectOverlayWidget(ModelWidget *parent): QWidget(par
 										{ relgen_tb, std::make_tuple(tr("4"), 4) },
 										{ relpart_tb, std::make_tuple(tr("6"), 5) }};
 
-	vector<QToolButton *> permission_btns={db_sch_perms_tb, tab_perms_tb };
+	std::vector<QToolButton *> permission_btns={db_sch_perms_tb, tab_perms_tb };
 
 	for(auto &itr : obj_shortcuts)
 	{
@@ -81,7 +81,6 @@ NewObjectOverlayWidget::NewObjectOverlayWidget(ModelWidget *parent): QWidget(par
 		shortcut=std::get<0>(itr.second);
 		obj_type=std::get<1>(itr.second);
 
-		GuiUtilsNs::configureWidgetFont(button, GuiUtilsNs::BigFontFactor);
 		button->setText(shortcut + QString(": ") + button->text());
 		button->setShortcut(QKeySequence(shortcut));
 		btn_actions[button] = parent->actions_new_objects[obj_type];
@@ -93,7 +92,6 @@ NewObjectOverlayWidget::NewObjectOverlayWidget(ModelWidget *parent): QWidget(par
 		shortcut=std::get<0>(itr.second);
 		action_idx=std::get<1>(itr.second);
 
-		GuiUtilsNs::configureWidgetFont(button, GuiUtilsNs::BigFontFactor);
 		button->setText(shortcut + QString(": ") + button->text());
 		button->setShortcut(QKeySequence(shortcut));
 		btn_actions[button] = rel_actions[action_idx];
@@ -105,15 +103,14 @@ NewObjectOverlayWidget::NewObjectOverlayWidget(ModelWidget *parent): QWidget(par
 		button = itr;
 		button->setText(shortcut + QString(": ") + button->text());
 		button->setShortcut(QKeySequence(shortcut));
-		GuiUtilsNs::configureWidgetFont(button, GuiUtilsNs::BigFontFactor);
 		btn_actions[button] = parent->action_edit_perms;
 	}
 
 	for(auto &itr : btn_actions)
-		connect(itr.first, SIGNAL(clicked()), this, SLOT(executeAction()), Qt::QueuedConnection);
+		connect(itr.first, &QToolButton::clicked, this, &NewObjectOverlayWidget::executeAction, Qt::QueuedConnection);
 }
 
-void NewObjectOverlayWidget::setSelectedObjects(vector<BaseObject *> &sel_objs)
+void NewObjectOverlayWidget::setSelectedObjects(std::vector<BaseObject *> &sel_objs)
 {
 	ObjectType obj_type=ObjectType::BaseObject;
 

@@ -19,7 +19,7 @@
 	[ NOT NULL]
 %end
 
-%if ({pgsql-ver} >=f "10.0") %and {identity-type} %then
+%if {identity-type} %then
 	[ GENERATED ] {identity-type} [ AS IDENTITY ]
 
 	%if {increment} %or {min-value} %or {max-value} %or {start} %or {cache} %or {cycle} %then
