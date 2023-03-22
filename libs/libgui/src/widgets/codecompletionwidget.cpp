@@ -589,13 +589,12 @@ bool CodeCompletionWidget::retrieveObjectNames()
 	return retrieved;
 }
 
+
 void CodeCompletionWidget::extractTableNames()
 {
 	QTextCursor tc = code_field_txt->textCursor();
 	QString curr_word, tab_name, alias;
-	bool extract_alias = false, tab_name_extracted = false,
-			parse_next = false;
-	int prev_pos = -1;
+	bool extract_alias = false, tab_name_extracted = false;
 
 	tab_aliases.clear();
 	tab_names_pos.clear();
@@ -608,22 +607,15 @@ void CodeCompletionWidget::extractTableNames()
 		curr_word.remove('"');
 		tc.movePosition(QTextCursor::NextCharacter, QTextCursor::MoveAnchor);
 
-		/* Aliases can appear in the following forms:
-		 * SELECT/DELETE ... FROM tabname [AS] alias ...
-		 * JOIN tabname [AS] alias
-		 * UPDATE tabname [AS] alias */
-		if(curr_word.compare("from", Qt::CaseInsensitive) == 0 ||
-			 curr_word.compare("join", Qt::CaseInsensitive) == 0 ||
-			 curr_word.compare("into", Qt::CaseInsensitive) == 0 ||
-			 curr_word.compare("update", Qt::CaseInsensitive) == 0 ||
-			 (parse_next && !dml_keywords.contains(curr_word, Qt::CaseInsensitive)))
+		if(!curr_word.isEmpty() &&
+			 (curr_word.compare("from", Qt::CaseInsensitive) == 0 ||
+				curr_word.compare("join", Qt::CaseInsensitive) == 0 ||
+				curr_word.compare("into", Qt::CaseInsensitive) == 0 ||
+				curr_word.compare("update", Qt::CaseInsensitive) == 0 ||
+				(extract_alias && !alias.isEmpty() && curr_word == ",")))
 		{
-			if(parse_next)
-				tc.setPosition(prev_pos);
-			else
-				tc.movePosition(QTextCursor::EndOfWord, QTextCursor::MoveAnchor);
-
-			extract_alias = tab_name_extracted = parse_next = false;
+			tc.movePosition(QTextCursor::EndOfWord, QTextCursor::MoveAnchor);
+			extract_alias = tab_name_extracted = false;
 			tab_name.clear();
 			alias.clear();
 
@@ -634,10 +626,12 @@ void CodeCompletionWidget::extractTableNames()
 				curr_word.remove('"');
 				tc.movePosition(QTextCursor::NextCharacter, QTextCursor::MoveAnchor);
 
-				if(curr_word.isEmpty() ||
-					 (curr_word.compare("as", Qt::CaseInsensitive) != 0 &&
-						(dml_keywords.contains(curr_word, Qt::CaseInsensitive))))
+				if(curr_word.isEmpty())
 					continue;
+
+				if(curr_word.compare("as", Qt::CaseInsensitive) != 0 &&
+					 dml_keywords.contains(curr_word, Qt::CaseInsensitive))
+					break;
 
 				if(!extract_alias && !curr_word.isEmpty() &&
 					 (curr_word.compare("as", Qt::CaseInsensitive) == 0 || tab_name_extracted))
@@ -664,12 +658,8 @@ void CodeCompletionWidget::extractTableNames()
 						tab_aliases[alias] = tab_name;
 					}
 
-					if(special_chars.contains(curr_word) || !alias.isEmpty())
-					{
-						prev_pos = tc.position();
-						parse_next = true;
+					if(!alias.isEmpty())
 						break;
-					}
 				}
 			}
 		}
