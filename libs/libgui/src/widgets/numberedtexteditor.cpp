@@ -226,23 +226,48 @@ void NumberedTextEditor::showContextMenu()
 	{
 		ctx_menu->addSeparator();
 
-		act=ctx_menu->addAction(tr("Upper case"), this, &NumberedTextEditor::changeSelectionToUpper, QKeySequence(QString("Ctrl+U")));
+		act = ctx_menu->addAction(tr("Paste code"), this, &NumberedTextEditor::pasteCode, QKeySequence(QString("Ctrl+Shift+V")));
+		act->setEnabled(!qApp->clipboard()->text().isEmpty());
+
+		act = ctx_menu->addAction(tr("Upper case"), this, &NumberedTextEditor::changeSelectionToUpper, QKeySequence(QString("Ctrl+U")));
 		act->setEnabled(textCursor().hasSelection());
 
-		act=ctx_menu->addAction(tr("Lower case"), this, &NumberedTextEditor::changeSelectionToLower, QKeySequence(QString("Ctrl+Shift+U")));
+		act = ctx_menu->addAction(tr("Lower case"), this, &NumberedTextEditor::changeSelectionToLower, QKeySequence(QString("Ctrl+Shift+U")));
 		act->setEnabled(textCursor().hasSelection());
 
 		ctx_menu->addSeparator();
 
-		act=ctx_menu->addAction(tr("Ident right"), this, &NumberedTextEditor::identSelectionRight, QKeySequence(QString("Tab")));
+		act = ctx_menu->addAction(tr("Ident right"), this, &NumberedTextEditor::identSelectionRight, QKeySequence(QString("Tab")));
 		act->setEnabled(textCursor().hasSelection());
 
-		act=ctx_menu->addAction(tr("Ident left"), this, &NumberedTextEditor::identSelectionLeft, QKeySequence(QString("Shift+Tab")));
+		act = ctx_menu->addAction(tr("Ident left"), this, &NumberedTextEditor::identSelectionLeft, QKeySequence(QString("Shift+Tab")));
 		act->setEnabled(textCursor().hasSelection());
 	}
 
 	ctx_menu->exec(QCursor::pos());
 	delete ctx_menu;
+}
+
+void NumberedTextEditor::pasteCode()
+{
+	QString code = qApp->clipboard()->text();
+	QList<QRegularExpression> regexps = {
+			QRegularExpression(QString("^(\\s)*((\\+)?(\\s)*)*(%1|%2)").arg('"').arg("'")),
+			QRegularExpression(QString("(%1|%2)((\\s)*(\\+)?)*$").arg('"').arg("'")),
+			QRegularExpression(QString("(%1|%2)(\\s)*(\\+)(\\s)*(%1|%2)").arg('"').arg("'")),
+			QRegularExpression(QString("(%1|%2)(\\s)*(\\+)").arg('"').arg("'")),
+			QRegularExpression(QString("(\\+)(\\s)*(%1|%2)").arg('"').arg("'"))
+		};
+
+	QStringList buffer = code.split(QChar::LineFeed);
+
+	for(auto &line : buffer)
+	{
+		for(auto &regexp : regexps)
+			line.remove(regexp);
+	}
+
+	insertPlainText(buffer.join(QChar::LineFeed));
 }
 
 void NumberedTextEditor::changeSelectionToLower()
@@ -560,7 +585,11 @@ void NumberedTextEditor::resizeEvent(QResizeEvent *event)
 
 void NumberedTextEditor::keyPressEvent(QKeyEvent *event)
 {
-	if(!isReadOnly() && textCursor().hasSelection())
+	if(!isReadOnly() && event->key()==Qt::Key_V && event->modifiers() == (Qt::ControlModifier | Qt::ShiftModifier))
+	{
+		pasteCode();
+	}
+	else if(!isReadOnly() && textCursor().hasSelection())
 	{
 		if(event->key()==Qt::Key_U && event->modifiers()!=Qt::NoModifier)
 		{
@@ -579,8 +608,8 @@ void NumberedTextEditor::keyPressEvent(QKeyEvent *event)
 		else
 			QPlainTextEdit::keyPressEvent(event);
 	}
-	else
-		QPlainTextEdit::keyPressEvent(event);
+
+	QPlainTextEdit::keyPressEvent(event);
 }
 
 void NumberedTextEditor::highlightCurrentLine()

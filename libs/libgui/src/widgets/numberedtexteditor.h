@@ -105,6 +105,8 @@ class __libgui NumberedTextEditor : public QPlainTextEdit {
 	private slots:
 		void showContextMenu();
 
+		void pasteCode();
+
 		void changeSelectionToLower();
 		void changeSelectionToUpper();
 		void changeSelectionCase(bool lower);
