@@ -251,20 +251,39 @@ void NumberedTextEditor::showContextMenu()
 void NumberedTextEditor::pasteCode()
 {
 	QString code = qApp->clipboard()->text();
-	QList<QRegularExpression> regexps = {
-			QRegularExpression(QString("^(\\s)*((\\+)?(\\s)*)*(%1|%2)").arg('"').arg("'")),
-			QRegularExpression(QString("(%1|%2)((\\s)*(\\+)?)*$").arg('"').arg("'")),
-			QRegularExpression(QString("(%1|%2)(\\s)*(\\+)(\\s)*(%1|%2)").arg('"').arg("'")),
-			QRegularExpression(QString("(%1|%2)(\\s)*(\\+)").arg('"').arg("'")),
-			QRegularExpression(QString("(\\+)(\\s)*(%1|%2)").arg('"').arg("'"))
-		};
-
-	QStringList buffer = code.split(QChar::LineFeed);
+	QStringList buffer = code.split(QChar::LineFeed),
+		patterns = {
+			"^(\\s)*((\\%2)?(\\s)*)*(%1)",
+			"(%1)((\\s)*(\\%2)?)*$",
+			"(%1)(\\s)*(\\%2)(\\s)*(%1)",
+			"(%1)(\\s)*(\\%2)",
+			"(\\%2)(\\s)*(%1)"
+		},
+			opers = { "\"+", "'.", "'+", "\"." };
+	QChar concat_opr = '+', str_delim = '"';
+	QRegularExpression regexp;
 
 	for(auto &line : buffer)
 	{
-		for(auto &regexp : regexps)
+		/* Detecting the combination of string delimiter and concatenation operator
+		 * present in the current buffer line */
+		for(auto &opr : opers)
+		{
+			str_delim = opr[0];
+			concat_opr = opr[1];
+
+			if(line.contains(QRegularExpression(QString("^(\\s)*(\\%1|\\%2)+(\\s)*").arg(str_delim, concat_opr))) &&
+				 line.contains(QRegularExpression(QString("(\\s)*(\\%1|\\%2)+(\\s)*$").arg(str_delim, concat_opr))))
+				break;
+		}
+
+		/* Cleaning up the line using the patterns configured with the
+		 * determined string delimiter and concatation operator */
+		for(auto &pattern : patterns)
+		{
+			regexp.setPattern(pattern.arg(str_delim, concat_opr));
 			line.remove(regexp);
+		}
 	}
 
 	insertPlainText(buffer.join(QChar::LineFeed));
