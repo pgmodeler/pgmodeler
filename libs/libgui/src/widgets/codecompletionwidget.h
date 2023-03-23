@@ -160,6 +160,8 @@ class __libgui CodeCompletionWidget: public QWidget {
 		 *  The stop_pos forces the method to return the list once the position of any searched table
 		 *  exceeds the specified value */
 		QStringList getTableNames(int start_pos, int stop_pos);
+
+		QStringList getTableAliases(const QString &name);
 		
 	public:
 		CodeCompletionWidget(QPlainTextEdit *code_field_txt, bool enable_snippets = false);
