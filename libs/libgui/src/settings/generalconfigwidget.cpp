@@ -152,6 +152,7 @@ GeneralConfigWidget::GeneralConfigWidget(QWidget * parent) : BaseConfigWidget(pa
 #ifdef NO_UPDATE_CHECK
 	check_update_chk->setChecked(false);
 	check_update_chk->setVisible(false);
+	check_versions_cmb->setVisible(false);
 #endif
 
 	//Retrieving the available UI dictionaries
