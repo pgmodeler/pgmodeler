@@ -396,6 +396,7 @@ bool CodeCompletionWidget::retrieveColumnNames()
 	int cur_pos = tc.position();
 	QStringList tab_names;
 	QString curr_word;
+	bool found_alias = false;
 
 	// If a table alias is being referenced we use the name of the table aliased
 	if(word == completion_trigger)
@@ -419,6 +420,7 @@ bool CodeCompletionWidget::retrieveColumnNames()
 		if(tab_aliases.count(curr_word))
 			tab_names.append(tab_aliases[curr_word]);
 
+		found_alias = true;
 		curr_word.clear();
 	}
 	else
@@ -481,7 +483,7 @@ bool CodeCompletionWidget::retrieveColumnNames()
 
 	for(auto &name : tab_names)
 	{
-		if(word.isEmpty())
+		if(!found_alias && curr_word.isEmpty())
 			aliases = getTableAliases(name);
 
 		aux_names = name.split(completion_trigger);
@@ -597,6 +599,7 @@ bool CodeCompletionWidget::retrieveObjectNames()
 			name_list->addItem(aux_name);
 			item = name_list->item(name_list->count() - 1);
 			item->setIcon(QIcon(GuiUtilsNs::getIconPath(obj_type)));
+			item->setData(Qt::UserRole, BaseObject::formatName(attr.second));
 
 			if(obj_type != ObjectType::Schema)
 			{
