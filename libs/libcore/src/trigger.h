@@ -90,6 +90,8 @@ class __libcore Trigger: public TableObject{
 		 The columns added by this method must belongs to the trigger owner table. */
 		void addColumn(Column *column);
 
+		void addColumns(const std::vector<Column *> &cols);
+
 		//! \brief Adds an argument to the trigger
 		void addArgument(const QString &arg);
 
@@ -140,6 +142,8 @@ class __libcore Trigger: public TableObject{
 
 		//! \brief Gets one reference column by its index
 		Column *getColumn(unsigned col_idx);
+
+		std::vector<Column *> getColumns();
 
 		//! \brief Gets one argument by its index
 		QString getArgument(unsigned arg_idx);

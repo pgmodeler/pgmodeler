@@ -28,24 +28,24 @@
 #include "baseobjectwidget.h"
 #include "ui_triggerwidget.h"
 #include "widgets/objectstablewidget.h"
+#include "dbobjects/columnpickerwidget.h"
 
 class __libgui TriggerWidget: public BaseObjectWidget, public Ui::TriggerWidget {
 	private:
 		Q_OBJECT
 
+		ColumnPickerWidget *col_picker_wgt;
+
 		//! \brief Conditional expression syntax highlighter
 		SyntaxHighlighter *cond_expr_hl;
 
 		//! \brief Object tables used to control columns and agruments
-		ObjectsTableWidget *columns_tab,
-		*arguments_tab;
+		ObjectsTableWidget *arguments_tab;
 
 		//! \brief Selectors for reference table and trigger function
 		ObjectSelectorWidget *ref_table_sel,
-		*function_sel;
 
-		//! \brief Adds a column to the referenced columns table
-		void addColumn(Column *column, int row);
+		*function_sel;
 
 	public:
 		TriggerWidget(QWidget * parent  = nullptr);
@@ -53,11 +53,9 @@ class __libgui TriggerWidget: public BaseObjectWidget, public Ui::TriggerWidget 
 		void setAttributes(DatabaseModel *model, OperationList *op_list, BaseTable *parent_table, Trigger *trigger);
 
 	private slots:
-		void addColumn(int lin_idx);
 		void selectUpdateEvent();
 		void handleArgument(int lin_idx);
 		void editArgument(int lin_idx);
-		void updateColumnsCombo();
 		void setConstraintTrigger(bool value);
 		void enableTransitionTableNames();
 
