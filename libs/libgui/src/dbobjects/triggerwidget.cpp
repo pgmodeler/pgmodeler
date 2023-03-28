@@ -29,11 +29,7 @@ TriggerWidget::TriggerWidget(QWidget *parent): BaseObjectWidget(parent, ObjectTy
 		cond_expr_hl=new SyntaxHighlighter(cond_expr_txt, false, true);
 		cond_expr_hl->loadConfiguration(GlobalAttributes::getSQLHighlightConfPath());
 
-		columns_tab=new ObjectsTableWidget(ObjectsTableWidget::AllButtons ^
-										  (ObjectsTableWidget::EditButton |
-											 ObjectsTableWidget::UpdateButton |
-											 ObjectsTableWidget::DuplicateButton), true, this);
-
+		col_picker_wgt = new ColumnPickerWidget(this);
 		arguments_tab=new ObjectsTableWidget(ObjectsTableWidget::AllButtons ^ ObjectsTableWidget::DuplicateButton, true, this);
 
 		ref_table_sel=new ObjectSelectorWidget(ObjectType::Table, this);
@@ -42,13 +38,7 @@ TriggerWidget::TriggerWidget(QWidget *parent): BaseObjectWidget(parent, ObjectTy
 
 		trigger_grid->addWidget(function_sel, 3, 1, 1, 5);
 
-		columns_tab->setColumnCount(2);
-		columns_tab->setHeaderLabel(tr("Column"), 0);
-		columns_tab->setHeaderIcon(QPixmap(GuiUtilsNs::getIconPath("column")),0);
-		columns_tab->setHeaderLabel(tr("Type"), 1);
-		columns_tab->setHeaderIcon(QPixmap(GuiUtilsNs::getIconPath("usertype")),1);
-
-		dynamic_cast<QGridLayout *>(arg_cols_tbw->widget(1)->layout())->addWidget(columns_tab, 1,0,1,3);
+		dynamic_cast<QGridLayout *>(arg_cols_tbw->widget(1)->layout())->addWidget(col_picker_wgt, 1,0,1,3);
 		dynamic_cast<QGridLayout *>(arg_cols_tbw->widget(0)->layout())->addWidget(arguments_tab, 1,0,1,3);
 		dynamic_cast<QGridLayout *>(arg_cols_tbw->widget(2)->layout())->addWidget(ref_table_sel, 1, 1, 1, 1);
 
@@ -58,9 +48,6 @@ TriggerWidget::TriggerWidget(QWidget *parent): BaseObjectWidget(parent, ObjectTy
 		configureFormLayout(trigger_grid, ObjectType::Trigger);
 
 		connect(deferrable_chk, &QCheckBox::toggled, deferral_type_cmb, &QComboBox::setEnabled);
-		connect(columns_tab, &ObjectsTableWidget::s_rowAdded, this, qOverload<int>(&TriggerWidget::addColumn));
-		connect(columns_tab, &ObjectsTableWidget::s_rowRemoved, this, &TriggerWidget::updateColumnsCombo);
-		connect(columns_tab, &ObjectsTableWidget::s_rowsRemoved, this, &TriggerWidget::updateColumnsCombo);
 		connect(arguments_tab, &ObjectsTableWidget::s_rowAdded, this, &TriggerWidget::handleArgument);
 		connect(arguments_tab, &ObjectsTableWidget::s_rowUpdated, this, &TriggerWidget::handleArgument);
 		connect(arguments_tab, &ObjectsTableWidget::s_rowEdited, this, &TriggerWidget::editArgument);
@@ -82,7 +69,7 @@ TriggerWidget::TriggerWidget(QWidget *parent): BaseObjectWidget(parent, ObjectTy
 		configureTabOrder({ ordinary_rb, constraint_rb, insert_chk, delete_chk, update_chk,
 												truncate_chk, firing_mode_cmb, exec_per_row_chk, function_sel,
 												old_table_edt, new_table_edt, argument_edt, arguments_tab,
-												column_cmb, columns_tab, deferrable_chk, deferral_type_cmb,
+												col_picker_wgt, deferrable_chk, deferral_type_cmb,
 												ref_table_sel, cond_expr_txt });
 	}
 	catch(Exception &e)
@@ -94,12 +81,12 @@ TriggerWidget::TriggerWidget(QWidget *parent): BaseObjectWidget(parent, ObjectTy
 void TriggerWidget::selectUpdateEvent()
 {
 	if(!update_chk->isChecked())
-		columns_tab->removeRows();
+		col_picker_wgt->clear();
 
 	/* Disable the columns tab when the trigger belongs to a view.
 	pgModeler does not support triggers reference view columns (yet) */
 	arg_cols_tbw->widget(1)->setEnabled(update_chk->isChecked() &&
-										table->getObjectType()==ObjectType::Table);
+																			table->getObjectType()==ObjectType::Table);
 }
 
 void TriggerWidget::setConstraintTrigger(bool value)
@@ -140,67 +127,6 @@ void TriggerWidget::enableTransitionTableNames()
 	new_table_edt->setEnabled(firing_type == FiringType::After && num_evnts == 1 && (update_chk->isChecked() || insert_chk->isChecked()));
 }
 
-void TriggerWidget::addColumn(int lin_idx)
-{
-	Column *column=nullptr;
-
-	try
-	{
-		column=reinterpret_cast<Column *>(column_cmb->itemData(column_cmb->currentIndex(),Qt::UserRole).value<void *>());
-		column_cmb->removeItem(column_cmb->currentIndex());
-		addColumn(column, lin_idx);
-		columns_tab->setButtonsEnabled(ObjectsTableWidget::AddButton, (column_cmb->count()!=0));
-	}
-	catch(Exception &e)
-	{
-		columns_tab->removeRow(lin_idx);
-		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
-	}
-}
-
-void TriggerWidget::addColumn(Column *column, int row)
-{
-	if(column && row >= 0)
-	{
-		columns_tab->setCellText(column->getName(),row,0);
-		columns_tab->setCellText(~column->getType(),row,1);
-		columns_tab->setRowData(QVariant::fromValue<void *>(column), row);
-	}
-}
-
-void TriggerWidget::updateColumnsCombo()
-{
-	Column *column=nullptr;
-	unsigned i, col_count=0;
-
-	try
-	{
-		if(this->table->getObjectType()==ObjectType::Table)
-		{
-			col_count=table->getObjectCount(ObjectType::Column);
-			column_cmb->clear();
-
-			for(i=0; i < col_count; i++)
-			{
-				column=dynamic_cast<Column *>(table->getObject(i, ObjectType::Column));
-
-				if(columns_tab->getRowIndex(QVariant::fromValue<void *>(column)) < 0)
-				{
-					column_cmb->addItem(column->getName() +
-										QString(" (") + ~column->getType() + QString(")"),
-										QVariant::fromValue<void *>(column));
-				}
-			}
-
-			columns_tab->setButtonsEnabled(ObjectsTableWidget::AddButton, (column_cmb->count()!=0));
-		}
-	}
-	catch(Exception &e)
-	{
-		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
-	}
-}
-
 void TriggerWidget::handleArgument(int lin_idx)
 {
 	if(!argument_edt->text().isEmpty())
@@ -220,7 +146,6 @@ void TriggerWidget::editArgument(int lin_idx)
 void TriggerWidget::setAttributes(DatabaseModel *model, OperationList *op_list, BaseTable *parent_table, Trigger *trigger)
 {
 	unsigned count=0, i;
-	Column *column=nullptr;
 
 	if(!parent_table)
 		throw Exception(ErrorCode::AsgNotAllocattedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -228,6 +153,7 @@ void TriggerWidget::setAttributes(DatabaseModel *model, OperationList *op_list, 
 	BaseObjectWidget::setAttributes(model, op_list, trigger, parent_table);
 	ref_table_sel->setModel(model);
 	function_sel->setModel(model);
+	col_picker_wgt->setParentObject(parent_table);
 
 	if(trigger)
 	{
@@ -245,44 +171,28 @@ void TriggerWidget::setAttributes(DatabaseModel *model, OperationList *op_list, 
 		truncate_chk->setChecked(trigger->isExecuteOnEvent(EventType::OnTruncate));
 		ref_table_sel->setSelectedObject(trigger->getReferencedTable());
 		function_sel->setSelectedObject(trigger->getFunction());
+		col_picker_wgt->setColumns(trigger->getColumns());
 
-		columns_tab->blockSignals(true);
 		arguments_tab->blockSignals(true);
-
-		count=trigger->getColumnCount();
-		for(i=0; i < count; i++)
-		{
-			column=trigger->getColumn(i);
-			columns_tab->addRow();
-			addColumn(column, i);
-		}
-
 		count=trigger->getArgumentCount();
+
 		for(i=0; i < count; i++)
 		{
 			arguments_tab->addRow();
 			arguments_tab->setCellText(trigger->getArgument(i), i, 0);
 		}
 
-		columns_tab->setButtonsEnabled(ObjectsTableWidget::AddButton, (column_cmb->count()!=0));
 		arguments_tab->blockSignals(false);
-		columns_tab->blockSignals(false);
-
 		old_table_edt->setText(trigger->getTransitionTableName(Trigger::OldTableName));
 		new_table_edt->setText(trigger->getTransitionTableName(Trigger::NewTableName));
 	}
-
-	updateColumnsCombo();
 }
 
 void TriggerWidget::applyConfiguration()
 {
 	try
 	{
-		Trigger *trigger=nullptr;
-		unsigned i, count;
-		Column *column=nullptr;
-
+		Trigger *trigger = nullptr;
 		startConfiguration<Trigger>();
 
 		trigger=dynamic_cast<Trigger *>(this->object);
@@ -303,16 +213,10 @@ void TriggerWidget::applyConfiguration()
 		trigger->removeArguments();
 		trigger->removeColumns();
 
-		count=arguments_tab->getRowCount();
-		for(i=0; i < count; i++)
+		for(auto i = 0; i < arguments_tab->getRowCount(); i++)
 			trigger->addArgument(arguments_tab->getCellText(i, 0));
 
-		count=columns_tab->getRowCount();
-		for(i=0; i < count; i++)
-		{
-			column=reinterpret_cast<Column *>(columns_tab->getRowData(i).value<void *>());
-			trigger->addColumn(column);
-		}
+		trigger->addColumns(col_picker_wgt->getColumns());
 
 		if(!this->new_object)
 			trigger->validateTrigger();
