@@ -43,6 +43,17 @@ void Schema::setName(const QString &name)
 	BaseObject::setName(name);
 }
 
+void Schema::setNameColor(const QColor &color)
+{
+	setCodeInvalidated(name_color != color);
+	name_color = color;
+}
+
+QColor Schema::getNameColor()
+{
+ return name_color;
+}
+
 void Schema::setFillColor(const QColor &color)
 {
 	setCodeInvalidated(fill_color != color);
