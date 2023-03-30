@@ -238,6 +238,7 @@ void SchemaView::configureObject()
 		font.setPointSizeF(font.pointSizeF() * 1.3);
 
 		sch_name->setFont(font);
+		sch_name->setBrush(schema->getNameColor());
 		sch_name->setPos(HorizSpacing, VertSpacing);
 		txt_h=sch_name->boundingRect().height() + (2 * VertSpacing);
 

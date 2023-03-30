@@ -401,6 +401,7 @@ namespace Attributes {
 	Mode,
 	ModelAuthor,
 	Name,
+	NameColor,
 	NameFilter,
 	NameLabel,
 	NamePatterns,

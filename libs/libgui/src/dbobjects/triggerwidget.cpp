@@ -213,7 +213,7 @@ void TriggerWidget::applyConfiguration()
 		trigger->removeArguments();
 		trigger->removeColumns();
 
-		for(auto i = 0; i < arguments_tab->getRowCount(); i++)
+		for(unsigned i = 0; i < arguments_tab->getRowCount(); i++)
 			trigger->addArgument(arguments_tab->getCellText(i, 0));
 
 		trigger->addColumns(col_picker_wgt->getColumns());
