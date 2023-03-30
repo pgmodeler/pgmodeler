@@ -3852,8 +3852,9 @@ Schema *DatabaseModel::createSchema()
 		xmlparser.getElementAttributes(attribs);
 		setBasicAttributes(schema);
 		schema->setFillColor(QColor(attribs[Attributes::FillColor]));
-		schema->setRectVisible(attribs[Attributes::RectVisible]==Attributes::True);
-		schema->setFadedOut(attribs[Attributes::FadedOut]==Attributes::True);
+		schema->setNameColor(QColor(attribs[Attributes::NameColor]));
+		schema->setRectVisible(attribs[Attributes::RectVisible] == Attributes::True);
+		schema->setFadedOut(attribs[Attributes::FadedOut] == Attributes::True);
 		schema->setLayers(attribs[Attributes::Layers].split(','));
 	}
 	catch(Exception &e)

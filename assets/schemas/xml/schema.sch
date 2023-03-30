@@ -27,6 +27,10 @@
 		[ fill-color=] "{fill-color}"
 	%end
 
+	%if {name-color} %then
+		[ name-color=] "{name-color}"
+	%end
+
 	%if {sql-disabled} %then
 		[ sql-disabled=] "true"
 	%end

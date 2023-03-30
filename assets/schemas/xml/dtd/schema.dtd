@@ -1,4 +1,4 @@
-﻿<!--
+<!--
   CAUTION: Do not modify this file directly on it's code unless you know what you are doing.
            Unexpected results may occur if the code is changed deliberately.
 -->
@@ -9,5 +9,6 @@
 <!ATTLIST schema protected (false|true) "false">
 <!ATTLIST schema rect-visible (false|true) "false">
 <!ATTLIST schema fill-color CDATA #IMPLIED>
+<!ATTLIST schema name-color CDATA #IMPLIED>
 <!ATTLIST schema sql-disabled (false|true) "false">
 <!ATTLIST schema faded-out (false|true) "false">
