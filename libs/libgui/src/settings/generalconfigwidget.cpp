@@ -56,6 +56,7 @@ GeneralConfigWidget::GeneralConfigWidget(QWidget * parent) : BaseConfigWidget(pa
 	source_editor_sel->setAcceptMode(QFileDialog::AcceptOpen);
 	source_editor_sel->setWindowTitle(tr("Select application"));
 	source_editor_sel->setToolTip(tr("External source code editor application"));
+	source_editor_sel->setCheckExecutionFlag(true);
 	general_grid->addWidget(source_editor_sel, 2, 1, 1, 1);
 
 	int i = 0;

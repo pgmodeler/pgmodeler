@@ -39,7 +39,10 @@ class __libgui FileSelectorWidget: public QWidget, public Ui::FileSelectorWidget
 
 		QLabel *warn_ico_lbl;
 
-		bool allow_filename_input, read_only;
+		bool allow_filename_input, read_only,
+		check_exec_flag, file_is_mandatory;
+
+		QRegularExpression name_regexp;
 
 		void showWarning();
 
@@ -64,6 +67,15 @@ class __libgui FileSelectorWidget: public QWidget, public Ui::FileSelectorWidget
 
 		//! \brief Configures the name filters of the internal QFileDialog (see QFileDialog::setNameFilters)
 		void setNameFilters(const QStringList &filters);
+
+		//! \brief Configures a name pattern to validate the selected file/director name
+		void setNamePattern(const QString &pattern);
+
+		//! \brief If true, the selected file must be executable otherwise an warning is displayed
+		void setCheckExecutionFlag(bool value);
+
+		//! \brief If true, the selected file must be provided otherwise an warning is displayed
+		void setFileIsMandatory(bool value);
 
 		//! \brief Configures the window title of the file dialog instance
 		void setFileDialogTitle(const QString &title);

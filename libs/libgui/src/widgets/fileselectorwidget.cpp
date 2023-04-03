@@ -23,6 +23,7 @@ FileSelectorWidget::FileSelectorWidget(QWidget *parent) : QWidget(parent)
 {
 	setupUi(this);
 	allow_filename_input = read_only = false;
+	file_is_mandatory = check_exec_flag = false;
 
 	file_dlg.setWindowIcon(QPixmap(GuiUtilsNs::getIconPath("pgmodeler_logo")));
 
@@ -93,6 +94,21 @@ void FileSelectorWidget::setAcceptMode(QFileDialog::AcceptMode accept_mode)
 void FileSelectorWidget::setNameFilters(const QStringList &filters)
 {
 	file_dlg.setNameFilters(filters);
+}
+
+void FileSelectorWidget::setNamePattern(const QString &pattern)
+{
+	name_regexp.setPattern(pattern);
+}
+
+void FileSelectorWidget::setCheckExecutionFlag(bool value)
+{
+	check_exec_flag = value;
+}
+
+void FileSelectorWidget::setFileIsMandatory(bool value)
+{
+	file_is_mandatory = value;
 }
 
 void FileSelectorWidget::setFileDialogTitle(const QString &title)
@@ -210,7 +226,14 @@ void FileSelectorWidget::validateSelectedFile()
 	QFileInfo fi(filename_edt->text());
 	warn_ico_lbl->setToolTip("");
 
-	if(!filename_edt->text().isEmpty())
+	if(file_is_mandatory && fi.absoluteFilePath().isEmpty())
+	{
+		if(file_dlg.fileMode() == QFileDialog::Directory)
+			warn_ico_lbl->setToolTip(tr("A path to a directory must be provided!"));
+		else
+			warn_ico_lbl->setToolTip(tr("A path to a file must be provided!"));
+	}
+	else if(!fi.absoluteFilePath().isEmpty())
 	{
 		if(fi.exists() && fi.isDir() && file_dlg.fileMode() != QFileDialog::Directory)
 			warn_ico_lbl->setToolTip(tr("The provided path is not a file!"));
@@ -222,6 +245,19 @@ void FileSelectorWidget::validateSelectedFile()
 				warn_ico_lbl->setToolTip(tr("No such directory!"));
 			else
 				warn_ico_lbl->setToolTip(tr("No such file!"));
+		}
+		else if(fi.exists())
+		{
+			// Validating the name pattern against the selected filename
+			if(name_regexp.isValid() && !fi.absoluteFilePath().contains(name_regexp))
+			{
+				if(file_dlg.fileMode() == QFileDialog::Directory)
+					warn_ico_lbl->setToolTip(tr("The selected directory is not valid!"));
+				else
+					warn_ico_lbl->setToolTip(tr("The selected file is not valid!"));
+			}
+			else if(check_exec_flag && !fi.isDir() && !fi.isExecutable())
+				warn_ico_lbl->setToolTip(tr("The selected file is not executable!"));
 		}
 	}
 

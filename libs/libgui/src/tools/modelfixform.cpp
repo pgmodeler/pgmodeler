@@ -35,7 +35,7 @@ ModelFixForm::ModelFixForm(QWidget *parent, Qt::WindowFlags f) : QDialog(parent,
 	input_file_sel->setAcceptMode(QFileDialog::AcceptOpen);
 	input_file_sel->setAllowFilenameInput(true);
 	input_file_sel->setWindowTitle(tr("Select input file"));
-	model_fix_grid->addWidget(input_file_sel, 2, 2);
+	model_fix_grid->addWidget(input_file_sel, 1, 2);
 
 	output_file_sel = new FileSelectorWidget(this);
 	output_file_sel->setFileMode(QFileDialog::AnyFile);
@@ -44,7 +44,7 @@ ModelFixForm::ModelFixForm(QWidget *parent, Qt::WindowFlags f) : QDialog(parent,
 	output_file_sel->setAcceptMode(QFileDialog::AcceptSave);
 	output_file_sel->setAllowFilenameInput(true);
 	input_file_sel->setWindowTitle(tr("Select output file"));
-	model_fix_grid->addWidget(output_file_sel, 3, 2);
+	model_fix_grid->addWidget(output_file_sel, 2, 2);
 
 	pgmodeler_cli_sel = new FileSelectorWidget(this);
 	pgmodeler_cli_sel->setFileMode(QFileDialog::ExistingFile);
@@ -53,7 +53,10 @@ ModelFixForm::ModelFixForm(QWidget *parent, Qt::WindowFlags f) : QDialog(parent,
 	pgmodeler_cli_sel->setAllowFilenameInput(true);
 	pgmodeler_cli_sel->setWindowTitle(tr("Select pgmodeler-cli executable"));
 	pgmodeler_cli_sel->setVisible(false);
-	model_fix_grid->addWidget(pgmodeler_cli_sel, 1, 2);
+	pgmodeler_cli_sel->setCheckExecutionFlag(true);
+	pgmodeler_cli_sel->setFileIsMandatory(true);
+	pgmodeler_cli_sel->setNamePattern(QString("(.)+(%1)$").arg(PgModelerCli));
+	model_fix_grid->addWidget(pgmodeler_cli_sel, 0, 2);
 
 	//Configuring font style for output widget
 	if(!confs[Attributes::Code][Attributes::Font].isEmpty())
@@ -79,7 +82,6 @@ ModelFixForm::ModelFixForm(QWidget *parent, Qt::WindowFlags f) : QDialog(parent,
 
 void ModelFixForm::resetFixForm()
 {
-	alert_frm->setVisible(false);
 	pgmodeler_cli_lbl->setVisible(false);
 	pgmodeler_cli_sel->setVisible(false);
 	input_file_sel->clearSelector();
@@ -95,20 +97,7 @@ void ModelFixForm::hideEvent(QHideEvent *)
 
 int ModelFixForm::exec()
 {
-	QFileInfo fi(GlobalAttributes::getPgModelerCLIPath());
-
-	//Show an warning if the cli command doesn't exists
-	if(!fi.exists())
-	{
-		not_found_lbl->setText(tr("Could not locate <strong>%1</strong> tool on <strong>%2</strong>. The fix process can't continue! Please check pgModeler installation or try to manually specify the command below.")
-							   .arg(PgModelerCli).arg(fi.absoluteDir().absolutePath()));
-		alert_frm->setVisible(true);
-		pgmodeler_cli_lbl->setVisible(true);
-		pgmodeler_cli_sel->setVisible(true);
-	}
-	else
-		pgmodeler_cli_sel->setSelectedFile(GlobalAttributes::getPgModelerCLIPath());
-
+	pgmodeler_cli_sel->setSelectedFile(GlobalAttributes::getPgModelerCLIPath());
 	return QDialog::exec();
 }
 
@@ -123,13 +112,10 @@ void ModelFixForm::enableFix()
 			pgmodeler_cli_sel->setCustomWarning(tr("The specified file is not the pgModeler command line tool (pgmodeler-cli)."));
 		else
 			pgmodeler_cli_sel->clearCustomWarning();
-
-		alert_frm->setVisible(invalid_cli);
 	}
 	else
 	{
 		pgmodeler_cli_sel->clearCustomWarning();
-		alert_frm->setVisible(false);
 	}
 
 	fix_btn->setEnabled(!input_file_sel->hasWarning() && !input_file_sel->getSelectedFile().isEmpty() &&
