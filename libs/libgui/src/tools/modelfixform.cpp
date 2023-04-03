@@ -103,20 +103,8 @@ int ModelFixForm::exec()
 
 void ModelFixForm::enableFix()
 {
-	if(!pgmodeler_cli_sel->getSelectedFile().isEmpty())
-	{
-		QFileInfo fi(pgmodeler_cli_sel->getSelectedFile());
-		bool invalid_cli = !fi.exists() || fi.baseName() != PgModelerCli;
-
-		if(invalid_cli)
-			pgmodeler_cli_sel->setCustomWarning(tr("The specified file is not the pgModeler command line tool (pgmodeler-cli)."));
-		else
-			pgmodeler_cli_sel->clearCustomWarning();
-	}
-	else
-	{
-		pgmodeler_cli_sel->clearCustomWarning();
-	}
+	pgmodeler_cli_sel->setVisible(pgmodeler_cli_sel->hasWarning());
+	pgmodeler_cli_lbl->setVisible(pgmodeler_cli_sel->hasWarning());
 
 	fix_btn->setEnabled(!input_file_sel->hasWarning() && !input_file_sel->getSelectedFile().isEmpty() &&
 											!output_file_sel->hasWarning() && !output_file_sel->getSelectedFile().isEmpty() &&
