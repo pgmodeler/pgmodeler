@@ -191,7 +191,10 @@ void MainWindow::configureMenusActionsWidgets()
 	if(!plugins_tb_acts.isEmpty())
 	{
 		for(auto &act : plugins_tb_acts)
+		{
 			model_acts_tb->insertAction(act_plugins_conf, act);
+			dynamic_cast<QToolButton *>(model_acts_tb->widgetForAction(act))->setPopupMode(QToolButton::InstantPopup);
+		}
 
 		model_acts_tb->addSeparator();
 	}
@@ -267,12 +270,12 @@ void MainWindow::configureMenusActionsWidgets()
 	model_acts_tb->insertAction(action_load_model, act);
 	dynamic_cast<QToolButton *>(model_acts_tb->widgetForAction(act))->setPopupMode(QToolButton::InstantPopup);
 
-	QToolButton *btn=nullptr;
+	QToolButton *btn = nullptr;
 	QFont font;
 
 	for(auto &act : tools_acts_tb->actions())
 	{
-		btn=qobject_cast<QToolButton *>(tools_acts_tb->widgetForAction(act));
+		btn = qobject_cast<QToolButton *>(tools_acts_tb->widgetForAction(act));
 
 		if(btn)
 		{
@@ -382,8 +385,9 @@ void MainWindow::loadConfigurations()
 
 		PluginsConfigWidget *plugins_conf_wgt = dynamic_cast<PluginsConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::PluginsConfWgt));
 		plugins_conf_wgt->initPlugins(this);
-		plugins_tb_acts = plugins_conf_wgt->installPluginsActions(plugins_config_menu);
+		plugins_conf_wgt->installPluginsActions(plugins_config_menu, plugins_tb_acts, plugins_db_expl_btns);
 		plugins_config_menu->setEnabled(!plugins_config_menu->isEmpty());
+		sql_tool_wgt->setPluginsToolButtons(plugins_db_expl_btns);
 
 		QAction *action_plugins_config = plugins_config_menu->menuAction();
 		action_plugins_config->setText(tr("Plug-ins"));

@@ -130,6 +130,9 @@ class __libgui PgModelerPlugin {
 		//! \brief Returns the action that will be put in the main window menu reserved for plugins settings
 		virtual QAction *getConfigAction() = 0;
 
+		//! \brief Returns the tool button that will be put in every DatabaseExplorerWidget instance when browsing databases
+		virtual QToolButton *getDbExplorerButton() = 0;
+
 		//! \brief Returns the name of the library of the plugin
 		QString getLibraryName();
 

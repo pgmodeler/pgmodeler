@@ -155,6 +155,11 @@ class __libgui DatabaseExplorerWidget: public QWidget, public Ui::DatabaseExplor
 		//! \brief Generate the SQL code for the specified object appending the permissions code for it as well
 		QString getObjectSource(BaseObject *object, DatabaseModel *dbmodel);
 
+	protected:
+		/*! \brief Add a custom tool button in the set of buttons in the top of database tree.
+		 *  This can be used to add custom actions for the current database explorer instance */
+		void addPluginToolButton(QToolButton *plugin_btn);
+
 	public:
 		DatabaseExplorerWidget(QWidget * parent = nullptr);
 		
@@ -217,6 +222,8 @@ class __libgui DatabaseExplorerWidget: public QWidget, public Ui::DatabaseExplor
 
 		//! \brief This signal is emmited containing the source code to be shown in an input field
 		void s_sourceCodeShowRequested(QString source);
+
+	friend class SQLToolWidget;
 };
 
 #endif

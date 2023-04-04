@@ -224,10 +224,8 @@ QList<QAction *> PluginsConfigWidget::getPluginsModelsActions()
 	return list;
 }
 
-QList<QAction *> PluginsConfigWidget::installPluginsActions(QMenu *conf_menu)
+void PluginsConfigWidget::installPluginsActions(QMenu *conf_menu, QList<QAction *> &tb_actions, QList<QToolButton *> &db_expl_btns)
 {
-	QList<QAction  *> tb_actions;
-
 	for(auto &plugin : plugins)
 	{
 		if(conf_menu && plugin->getConfigAction())
@@ -235,7 +233,8 @@ QList<QAction *> PluginsConfigWidget::installPluginsActions(QMenu *conf_menu)
 
 		if(plugin->getToolbarAction())
 			tb_actions.append(plugin->getToolbarAction());
-	}	
 
-	return tb_actions;
+		if(plugin->getDbExplorerButton())
+			db_expl_btns.append(plugin->getDbExplorerButton());
+	}
 }
