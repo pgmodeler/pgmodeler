@@ -213,7 +213,7 @@ void ModelObjectsWidget::selectObject()
 			if(simplified_view && enable_obj_creation)
 				connect(model_wgt->getDatabaseModel(), &DatabaseModel::s_objectAdded, this, &ModelObjectsWidget::selectCreatedObject, Qt::QueuedConnection);
 
-			p_act->setIcon(QPixmap(GuiUtilsNs::getIconPath(obj_type)));
+			p_act->setIcon(QIcon(GuiUtilsNs::getIconPath(obj_type)));
 			p_act->setText(tr("New") + QString(" ") + BaseObject::getTypeName(obj_type));
 			popup.addAction(p_act);
 			popup.exec(QCursor::pos());

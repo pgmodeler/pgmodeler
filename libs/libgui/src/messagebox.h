@@ -59,6 +59,7 @@ class __libgui Messagebox: public QDialog, public Ui::Messagebox {
 			YesNoButtons,
 			OkCancelButtons,
 			OkButton,
+			CloseButton,
 			AllButtons
 		};
 

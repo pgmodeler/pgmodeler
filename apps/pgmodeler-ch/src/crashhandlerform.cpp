@@ -82,7 +82,7 @@ CrashHandlerForm::CrashHandlerForm(bool analysis_mode, QWidget *parent, Qt::Wind
 	layout->addWidget(input_sel);
 
 	save_tb=new QToolButton(input_wgt);
-	save_tb->setIcon(QPixmap(GuiUtilsNs::getIconPath("save")));
+	save_tb->setIcon(QIcon(GuiUtilsNs::getIconPath("save")));
 	save_tb->setSizePolicy(attach_tb->sizePolicy());
 	save_tb->setToolButtonStyle(attach_tb->toolButtonStyle());
 	save_tb->setIconSize(attach_tb->iconSize());

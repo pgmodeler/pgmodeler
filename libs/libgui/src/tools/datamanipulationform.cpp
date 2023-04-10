@@ -913,7 +913,7 @@ void DataManipulationForm::retrieveFKColumns(const QString &schema, const QStrin
 			submenu = new QMenu(this);
 
 			QAction *act = submenu->menuAction();
-			act->setIcon(QPixmap(GuiUtilsNs::getIconPath("referenced")));
+			act->setIcon(QIcon(GuiUtilsNs::getIconPath("referenced")));
 			act->setText(tr("Referenced tables"));
 			fks_menu.addAction(act);
 
@@ -966,7 +966,7 @@ void DataManipulationForm::retrieveFKColumns(const QString &schema, const QStrin
 			submenu = new QMenu(this);
 
 			act = submenu->menuAction();
-			act->setIcon(QPixmap(GuiUtilsNs::getIconPath("referrer")));
+			act->setIcon(QIcon(GuiUtilsNs::getIconPath("referrer")));
 			act->setText(tr("Referrer tables"));
 			fks_menu.addAction(act);
 

@@ -480,7 +480,7 @@ namespace GuiUtilsNs {
 			fnt=tab_item->font();
 
 			tab_item->setText(objs[i]->getName());
-			tab_item->setIcon(QPixmap(GuiUtilsNs::getIconPath(BaseObject::getSchemaName(objs[i]->getObjectType()) + str_aux)));
+			tab_item->setIcon(QIcon(GuiUtilsNs::getIconPath(BaseObject::getSchemaName(objs[i]->getObjectType()) + str_aux)));
 			if(new_row) tab_wgt->setItem(lin_idx, 0, tab_item);
 			if(checkable_items)	tab_item->setCheckState(Qt::Checked);
 
@@ -549,7 +549,7 @@ namespace GuiUtilsNs {
 						fnt.setItalic(false);
 
 					tab_item->setFont(fnt);
-					tab_item->setIcon(QPixmap(GuiUtilsNs::getIconPath(parent_obj->getObjectType())));
+					tab_item->setIcon(QIcon(GuiUtilsNs::getIconPath(parent_obj->getObjectType())));
 				}
 			}
 

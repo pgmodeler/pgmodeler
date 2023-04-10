@@ -1743,7 +1743,7 @@ void DatabaseExplorerWidget::showObjectProperties(bool force_reload)
 					font.setItalic(true);
 					tab_item->setText(attrib.first);
 					tab_item->setFont(font);
-					tab_item->setIcon(QPixmap(GuiUtilsNs::getIconPath("attribute")));
+					tab_item->setIcon(QIcon(GuiUtilsNs::getIconPath("attribute")));
 					properties_tbw->setItem(row, 0, tab_item);
 
 					values=attrib.second.split(UtilsNs::DataSeparator);

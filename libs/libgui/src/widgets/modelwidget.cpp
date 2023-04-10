@@ -2165,7 +2165,7 @@ void ModelWidget::showObjectForm(ObjectType obj_type, BaseObject *object, BaseOb
 			PermissionWidget *permission_wgt=new PermissionWidget;
 			Permission *perm=dynamic_cast<Permission *>(object);
 			permission_wgt->setAttributes(db_model, nullptr, (perm ? perm->getObject() : object));
-			res=openEditingForm(permission_wgt, Messagebox::OkButton);
+			res=openEditingForm(permission_wgt, Messagebox::CloseButton);
 		}
 		else if(obj_type==ObjectType::GenericSql)
 		{
@@ -2220,7 +2220,7 @@ void ModelWidget::showDependenciesReferences()
 		{
 			ObjectDepsRefsWidget *deps_refs_wgt=new ObjectDepsRefsWidget;
 			deps_refs_wgt->setAttributes(this, object);
-			openEditingForm(deps_refs_wgt, Messagebox::OkButton);
+			openEditingForm(deps_refs_wgt, Messagebox::CloseButton);
 		}
 	}
 }
@@ -2237,7 +2237,7 @@ void ModelWidget::showSourceCode()
 		{
 			SourceCodeWidget *sourcecode_wgt=new SourceCodeWidget;
 			sourcecode_wgt->setAttributes(this->db_model, object);
-			openEditingForm(sourcecode_wgt, Messagebox::OkButton);
+			openEditingForm(sourcecode_wgt, Messagebox::CloseButton);
 		}
 	}
 }
@@ -2440,7 +2440,7 @@ void ModelWidget::editPermissions()
 	BaseObject *obj=reinterpret_cast<BaseObject *>(act->data().value<void *>());
 
 	permission_wgt->setAttributes(this->db_model, nullptr, obj);
-	openEditingForm(permission_wgt, Messagebox::OkButton);
+	openEditingForm(permission_wgt, Messagebox::CloseButton);
 
 	this->setModified(true);
 	emit s_objectManipulated();
@@ -3656,7 +3656,7 @@ void ModelWidget::configureQuickMenu(BaseObject *object)
 						while(!obj_list.empty())
 						{
 							act=new QAction(obj_list.back()->getName(), menus[i]);
-							act->setIcon(QPixmap(GuiUtilsNs::getIconPath(types[i])));
+							act->setIcon(QIcon(GuiUtilsNs::getIconPath(types[i])));
 
 							/* Check the current action only if there is only one selected object and the object representing
 								 the action is assigned to the selected object */
@@ -4181,18 +4181,18 @@ void ModelWidget::configureConstraintsMenu(TableObject *tab_obj)
 
 				//For each constaint is created a menu with the edit, source code, protect/unprotect and delete actions
 				submenu=new QMenu(&popup_menu);
-				submenu->setIcon(QPixmap(GuiUtilsNs::getIconPath(BaseObject::getSchemaName(ObjectType::Constraint) + str_aux)));
+				submenu->setIcon(QIcon(GuiUtilsNs::getIconPath(BaseObject::getSchemaName(ObjectType::Constraint) + str_aux)));
 				submenu->setTitle(constr->getName());
 
 				action=new QAction(dynamic_cast<QObject *>(submenu));
-				action->setIcon(QPixmap(GuiUtilsNs::getIconPath("edit")));
+				action->setIcon(QIcon(GuiUtilsNs::getIconPath("edit")));
 				action->setText(tr("Properties"));
 				action->setData(QVariant::fromValue<void *>(dynamic_cast<BaseObject *>(constr)));
 				connect(action, &QAction::triggered, this, &ModelWidget::editObject);
 				submenu->addAction(action);
 
 				action=new QAction(dynamic_cast<QObject *>(submenu));
-				action->setIcon(QPixmap(GuiUtilsNs::getIconPath("sourcecode")));
+				action->setIcon(QIcon(GuiUtilsNs::getIconPath("sourcecode")));
 				action->setText(tr("Source code"));
 				action->setData(QVariant::fromValue<void *>(dynamic_cast<BaseObject *>(constr)));
 				connect(action, &QAction::triggered, this, &ModelWidget::showSourceCode);
@@ -4209,25 +4209,25 @@ void ModelWidget::configureConstraintsMenu(TableObject *tab_obj)
 
 						if(constr->isProtected())
 						{
-							action->setIcon(QPixmap(GuiUtilsNs::getIconPath("unprotect")));
+							action->setIcon(QIcon(GuiUtilsNs::getIconPath("unprotect")));
 							action->setText(tr("Unprotect"));
 						}
 						else
 						{
-							action->setIcon(QPixmap(GuiUtilsNs::getIconPath("protect")));
+							action->setIcon(QIcon(GuiUtilsNs::getIconPath("protect")));
 							action->setText(tr("Protect"));
 						}
 					}
 
 					action=new QAction(dynamic_cast<QObject *>(submenu));
-					action->setIcon(QPixmap(GuiUtilsNs::getIconPath("delete")));
+					action->setIcon(QIcon(GuiUtilsNs::getIconPath("delete")));
 					action->setData(QVariant::fromValue<void *>(dynamic_cast<BaseObject *>(constr)));
 					action->setText(tr("Delete"));
 					submenu->addAction(action);
 					connect(action, &QAction::triggered, this, &ModelWidget::removeObjects);
 
 					action=new QAction(dynamic_cast<QObject *>(submenu));
-					action->setIcon(QPixmap(GuiUtilsNs::getIconPath("delcascade")));
+					action->setIcon(QIcon(GuiUtilsNs::getIconPath("delcascade")));
 					action->setData(QVariant::fromValue<void *>(dynamic_cast<BaseObject *>(constr)));
 					action->setText(tr("Del. cascade"));
 					submenu->addAction(action);
@@ -4242,7 +4242,7 @@ void ModelWidget::configureConstraintsMenu(TableObject *tab_obj)
 		{
 			submenu=new QMenu(&popup_menu);
 			submenu->setTitle(tr("Constraints"));
-			submenu->setIcon(QPixmap(GuiUtilsNs::getIconPath(BaseObject::getSchemaName(ObjectType::Constraint))));
+			submenu->setIcon(QIcon(GuiUtilsNs::getIconPath(BaseObject::getSchemaName(ObjectType::Constraint))));
 
 			for(auto &menu : submenus)
 				submenu->addMenu(menu);
@@ -5021,7 +5021,7 @@ void ModelWidget::swapObjectsIds()
 	parent_form.setMainWidget(swap_ids_wgt, &SwapObjectsIdsWidget::swapObjectsIds);
 	parent_form.setButtonConfiguration(Messagebox::OkCancelButtons);
 	parent_form.apply_ok_btn->setEnabled(false);
-	parent_form.apply_ok_btn->setIcon(QPixmap(GuiUtilsNs::getIconPath("swapobjs")));
+	parent_form.apply_ok_btn->setIcon(QIcon(GuiUtilsNs::getIconPath("swapobjs")));
 	parent_form.apply_ok_btn->setText(tr("Swap ids"));
 
 	connect(swap_ids_wgt, &SwapObjectsIdsWidget::s_objectsIdsSwapped, this, [&swapped](){

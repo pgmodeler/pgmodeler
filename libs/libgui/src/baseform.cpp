@@ -33,7 +33,17 @@ void BaseForm::setButtonConfiguration(Messagebox::ButtonsId button_conf)
 	}
 	else
 	{
-		apply_ok_btn->setText(tr("&Ok"));
+		if(button_conf==Messagebox::CloseButton)
+		{
+			apply_ok_btn->setText(tr("&Close"));
+			apply_ok_btn->setIcon(QIcon(GuiUtilsNs::getIconPath("close1")));
+		}
+		else
+		{
+			apply_ok_btn->setText(tr("&Ok"));
+			apply_ok_btn->setIcon(QIcon(GuiUtilsNs::getIconPath("confirm")));
+		}
+
 		cancel_btn->setVisible(false);
 	}
 }

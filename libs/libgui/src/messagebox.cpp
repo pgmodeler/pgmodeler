@@ -115,15 +115,29 @@ void Messagebox::show(const QString &title, const QString &msg, IconType icon_ty
 	if(!yes_lbl.isEmpty())
 		yes_ok_btn->setText(yes_lbl);
 	else
-		yes_ok_btn->setText(buttons==OkButton ? tr("&Ok") : tr("&Yes"));
+	{
+		QString btn_txt;
 
-	yes_ok_btn->setIcon(!yes_ico.isEmpty() ? QIcon(yes_ico) : QPixmap(GuiUtilsNs::getIconPath("confirm")));
+		if(buttons == CloseButton)
+			btn_txt = tr("&Close");
+		else if(buttons == OkButton)
+			btn_txt = tr("&Ok");
+		else
+			btn_txt = tr("&Yes");
+
+		yes_ok_btn->setText(btn_txt);
+	}
+
+	if(!yes_ico.isEmpty())
+		yes_ok_btn->setIcon(QIcon(yes_ico));
+	else
+		yes_ok_btn->setIcon(buttons != CloseButton ? QIcon(GuiUtilsNs::getIconPath("confirm")) : QIcon(GuiUtilsNs::getIconPath("close1")));
 
 	no_btn->setText(!no_lbl.isEmpty() ? no_lbl : tr("&No"));
-	no_btn->setIcon(!no_ico.isEmpty() ? QIcon(no_ico) : QPixmap(GuiUtilsNs::getIconPath("close1")));
+	no_btn->setIcon(!no_ico.isEmpty() ? QIcon(no_ico) : QIcon(GuiUtilsNs::getIconPath("close1")));
 
 	cancel_btn->setText(!cancel_lbl.isEmpty() ? cancel_lbl : tr("&Cancel"));
-	cancel_btn->setIcon(!cancel_ico.isEmpty() ? QIcon(cancel_ico) : QPixmap(GuiUtilsNs::getIconPath("cancel")));
+	cancel_btn->setIcon(!cancel_ico.isEmpty() ? QIcon(cancel_ico) : QIcon(GuiUtilsNs::getIconPath("cancel")));
 
 	no_btn->setVisible(buttons==YesNoButtons || buttons==AllButtons);
 	cancel_btn->setVisible(buttons==OkCancelButtons || buttons==AllButtons);
