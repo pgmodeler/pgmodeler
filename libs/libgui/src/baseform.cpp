@@ -48,6 +48,12 @@ void BaseForm::setButtonConfiguration(Messagebox::ButtonsId button_conf)
 	}
 }
 
+void BaseForm::adjustMinimumSize()
+{
+	adjustSize();
+	setMinimumSize(size());
+}
+
 void BaseForm::resizeForm(QWidget *widget)
 {
 	if(!widget)

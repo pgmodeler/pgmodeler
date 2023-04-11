@@ -597,7 +597,8 @@ bool ConnectionsConfigWidget::openConnectionsConfiguration(QComboBox *combo, boo
 	{
 		conn_cfg_wgt.loadConfiguration();
 		conn_cfg_wgt.frame->setFrameShape(QFrame::NoFrame);
-		conn_cfg_wgt.layout()->setContentsMargins(0,0,0,0);
+		conn_cfg_wgt.layout()->setContentsMargins(GuiUtilsNs::LtMargin, GuiUtilsNs::LtMargin,
+																							GuiUtilsNs::LtMargin, GuiUtilsNs::LtMargin);
 		conn_cfg_wgt.frame->layout()->setContentsMargins(0,0,0,0);
 
 		connect(parent_form.cancel_btn, &QPushButton::clicked, &parent_form, [&conn_cfg_wgt](){
@@ -611,6 +612,7 @@ bool ConnectionsConfigWidget::openConnectionsConfiguration(QComboBox *combo, boo
 
 		parent_form.setMainWidget(&conn_cfg_wgt);
 		parent_form.setButtonConfiguration(Messagebox::OkCancelButtons);
+		parent_form.adjustMinimumSize();
 		parent_form.exec();
 
 		conn_cfg_wgt.fillConnectionsComboBox(combo, incl_placeholder);
