@@ -192,9 +192,7 @@ void SQLToolWidget::connectToServer()
 
 			if(conn)
 			{
-				import_helper.setConnection(*conn);								
-				DatabaseImportForm::listDatabases(import_helper, database_cmb);
-				import_helper.closeConnection();
+				DatabaseImportForm::listDatabases(*conn, database_cmb);
 
 				if(sender()==connections_cmb && conn->isAutoBrowseDB())
 				{

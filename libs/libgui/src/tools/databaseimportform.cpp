@@ -747,52 +747,67 @@ ModelWidget *DatabaseImportForm::getModelWidget()
 	return nullptr;
 }
 
+void DatabaseImportForm::listDatabases(Connection conn, QComboBox *dbcombo)
+{
+	try
+	{
+		DatabaseImportHelper import_hlp;
+
+		import_hlp.setConnection(conn);
+		listDatabases(import_hlp, dbcombo);
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
+}
+
 void DatabaseImportForm::listDatabases(DatabaseImportHelper &import_helper, QComboBox *dbcombo)
 {
-	if(dbcombo)
+	if(!dbcombo)
+		return;
+
+	try
 	{
-		try
+		attribs_map db_attribs;
+		attribs_map::iterator itr;
+		QStringList list;
+		std::map<QString, unsigned> oids;
+
+		db_attribs=import_helper.getObjects(ObjectType::Database);
+		dbcombo->blockSignals(true);
+		dbcombo->clear();
+
+		if(db_attribs.empty())
+			dbcombo->addItem(tr("No databases found"));
+		else
 		{
-			attribs_map db_attribs;
-			attribs_map::iterator itr;
-			QStringList list;
-			std::map<QString, unsigned> oids;
-
-			db_attribs=import_helper.getObjects(ObjectType::Database);
-			dbcombo->blockSignals(true);
-			dbcombo->clear();
-
-			if(db_attribs.empty())
-				dbcombo->addItem(tr("No databases found"));
-			else
+			itr=db_attribs.begin();
+			while(itr!=db_attribs.end())
 			{
-				itr=db_attribs.begin();
-				while(itr!=db_attribs.end())
-				{
-					list.push_back(itr->second);
-					oids[itr->second]=itr->first.toUInt();
-					itr++;
-				}
-
-				list.sort();
-				dbcombo->addItems(list);
-
-				for(int i=0; i < list.count(); i++)
-				{
-					dbcombo->setItemIcon(i, QPixmap(GuiUtilsNs::getIconPath(ObjectType::Database)));
-					dbcombo->setItemData(i, oids[list[i]]);
-				}
-
-				dbcombo->insertItem(0, tr("Found %1 database(s)").arg(db_attribs.size()));
+				list.push_back(itr->second);
+				oids[itr->second]=itr->first.toUInt();
+				itr++;
 			}
 
-			dbcombo->setCurrentIndex(0);
-			dbcombo->blockSignals(false);
+			list.sort();
+			dbcombo->addItems(list);
+
+			for(int i=0; i < list.count(); i++)
+			{
+				dbcombo->setItemIcon(i, QPixmap(GuiUtilsNs::getIconPath(ObjectType::Database)));
+				dbcombo->setItemData(i, oids[list[i]]);
+			}
+
+			dbcombo->insertItem(0, tr("Found %1 database(s)").arg(db_attribs.size()));
 		}
-		catch(Exception &e)
-		{
-			throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
-		}
+
+		dbcombo->setCurrentIndex(0);
+		dbcombo->blockSignals(false);
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 

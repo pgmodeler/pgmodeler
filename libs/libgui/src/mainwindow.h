@@ -265,6 +265,9 @@ class __libgui MainWindow: public QMainWindow, public Ui::MainWindow {
 		//! \brief Updates the tab name of the currently opened model if the database name is changed
 		void updateModelTabName();
 
+		//! \brief Updates the connections list of the validator widget
+		void updateConnections(bool force = false);
+
 	private slots:
 		void showMainMenu();
 
@@ -320,9 +323,6 @@ class __libgui MainWindow: public QMainWindow, public Ui::MainWindow {
 
 		//! \brief Update the recent models menu entries
 		void updateRecentModelsMenu();
-
-		//! \brief Updates the connections list of the validator widget
-		void updateConnections(bool force = false);
 
 		//! \brief Save the temp files for all opened models
 		void saveTemporaryModels();

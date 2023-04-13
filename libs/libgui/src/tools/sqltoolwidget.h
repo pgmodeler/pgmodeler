@@ -48,9 +48,6 @@ class __libgui SQLToolWidget: public QWidget, public Ui::SQLToolWidget {
 
 		SyntaxHighlighter *sourcecode_hl;
 
-		//! \brief Database import helper used to list objects from current connection
-		DatabaseImportHelper import_helper;
-
 		/*! \brief Controls the link between a database explorer instance and SQL execution widgets.
 		When a database explorer is closed all the SQL execution panes related to it are closed too.
 		(see addSQLExecutionTab and closeSQLExecutionTab for deitails) */
