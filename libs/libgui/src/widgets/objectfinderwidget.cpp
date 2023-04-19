@@ -75,6 +75,10 @@ ObjectFinderWidget::ObjectFinderWidget(QWidget *parent) : QWidget(parent)
 	fade_menu.addAction(tr("Not listed"), this, &ObjectFinderWidget::fadeObjects);
 	fade_btn->setMenu(&fade_menu);
 
+	connect(pattern_edt, &QLineEdit::textChanged, this, [this](const QString &txt) {
+		find_btn->setEnabled(!txt.isEmpty());
+	});
+
 	connect(find_btn, &QToolButton::clicked, this, &ObjectFinderWidget::findObjects);
 	connect(hide_tb, &QToolButton::clicked, this, &ObjectFinderWidget::hide);
 	connect(result_tbw, &QTableWidget::itemSelectionChanged, this, &ObjectFinderWidget::selectObject);
@@ -235,7 +239,7 @@ void ObjectFinderWidget::setModel(ModelWidget *model_wgt)
 	filter_btn->setEnabled(enable);
 	pattern_edt->setEnabled(enable);
 	pattern_lbl->setEnabled(enable);
-	find_btn->setEnabled(enable);
+	find_btn->setEnabled(enable && !pattern_edt->text().isEmpty());
 	result_tbw->setEnabled(enable);
 }
 
@@ -263,6 +267,7 @@ void ObjectFinderWidget::findObjects()
 		QString search_attr = search_attribs.at(search_attrs_cmb->currentIndex());
 		QTableWidgetItem *item = result_tbw->horizontalHeaderItem(result_tbw->columnCount() - 1);
 
+		QApplication::setOverrideCursor(Qt::WaitCursor);
 		clearResult();
 		types = obj_types_lst->getTypesPerCheckState(Qt::Checked);
 
@@ -300,6 +305,7 @@ void ObjectFinderWidget::findObjects()
 		select_btn->setEnabled(!found_objs.empty());
 		fade_btn->setEnabled(!found_objs.empty());
 		//fadeObjects();
+		QApplication::restoreOverrideCursor();
 	}
 }
 

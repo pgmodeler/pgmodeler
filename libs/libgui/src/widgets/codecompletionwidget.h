@@ -66,7 +66,7 @@ class __libgui CodeCompletionWidget: public QWidget {
 
 		static const QString special_chars;
 
-;		//! \brief A timer that controls the completion popup
+		//! \brief A timer that controls the completion popup
 		QTimer popup_timer;
 		
 		QWidget *completion_wgt;
