@@ -23,34 +23,34 @@
 #include "globalattributes.h"
 #include "pgsqlversions.h"
 
-const QString Connection::SslDisable=QString("disable");
-const QString Connection::SslAllow=QString("allow");
-const QString Connection::SslPrefer=QString("prefer");
-const QString Connection::SslRequire=QString("require");
-const QString Connection::SslCaVerify=QString("verify-ca");
-const QString Connection::SslFullVerify=QString("verify-full");
+const QString Connection::SslDisable("disable");
+const QString Connection::SslAllow("allow");
+const QString Connection::SslPrefer("prefer");
+const QString Connection::SslRequire("require");
+const QString Connection::SslCaVerify("verify-ca");
+const QString Connection::SslFullVerify("verify-full");
 
-const QString Connection::ParamAlias=QString("alias");
-const QString Connection::ParamApplicationName=QString("application_name");
-const QString Connection::ParamServerFqdn=QString("host");
-const QString Connection::ParamServerIp=QString("hostaddr");
-const QString Connection::ParamPort=QString("port");
-const QString Connection::ParamDbName=QString("dbname");
-const QString Connection::ParamUser=QString("user");
-const QString Connection::ParamPassword=QString("password");
-const QString Connection::ParamConnTimeout=QString("connect_timeout");
-const QString Connection::ParamOthers=QString("options");
-const QString Connection::ParamSslMode=QString("sslmode");
-const QString Connection::ParamSslCert=QString("sslcert");
-const QString Connection::ParamSslKey=QString("sslkey");
-const QString Connection::ParamSslRootCert=QString("sslrootcert");
-const QString Connection::ParamSslCrl=QString("sslcrl");
-const QString Connection::ParamKerberosServer=QString("krbsrvname");
-const QString Connection::ParamLibGssapi=QString("gsslib");
+const QString Connection::ParamAlias("alias");
+const QString Connection::ParamApplicationName("application_name");
+const QString Connection::ParamServerFqdn("host");
+const QString Connection::ParamServerIp("hostaddr");
+const QString Connection::ParamPort("port");
+const QString Connection::ParamDbName("dbname");
+const QString Connection::ParamUser("user");
+const QString Connection::ParamPassword("password");
+const QString Connection::ParamConnTimeout("connect_timeout");
+const QString Connection::ParamOthers("options");
+const QString Connection::ParamSslMode("sslmode");
+const QString Connection::ParamSslCert("sslcert");
+const QString Connection::ParamSslKey("sslkey");
+const QString Connection::ParamSslRootCert("sslrootcert");
+const QString Connection::ParamSslCrl("sslcrl");
+const QString Connection::ParamKerberosServer("krbsrvname");
+const QString Connection::ParamLibGssapi("gsslib");
 
-const QString Connection::ServerPid=QString("server-pid");
-const QString Connection::ServerProtocol=QString("server-protocol");
-const QString Connection::ServerVersion=QString("server-version");
+const QString Connection::ServerPid("server-pid");
+const QString Connection::ServerProtocol("server-protocol");
+const QString Connection::ServerVersion("server-version");
 
 bool Connection::notice_enabled=false;
 bool Connection::print_sql=false;

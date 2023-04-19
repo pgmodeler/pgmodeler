@@ -19,16 +19,16 @@
 #include "tableobjectview.h"
 
 bool TableObjectView::hide_sch_name_usr_type = false;
-const QString TableObjectView::TypeSeparator=QString(" ");
-const QString TableObjectView::ConstrSeparator=QString(" ");
-const QString TableObjectView::TextUnique=QString("uq");
-const QString TableObjectView::TextExclude=QString("ex");
-const QString TableObjectView::TextCheck=QString("ck");
-const QString TableObjectView::TextPrimaryKey=QString("pk");
-const QString TableObjectView::TextForeignKey=QString("fk");
-const QString TableObjectView::TextNotNull=QString("nn");
-const QString TableObjectView::ConstrDelimStart=QString("«");
-const QString TableObjectView::ConstrDelimEnd=QString("»");
+const QString TableObjectView::TypeSeparator(" ");
+const QString TableObjectView::ConstrSeparator(" ");
+const QString TableObjectView::TextUnique("uq");
+const QString TableObjectView::TextExclude("ex");
+const QString TableObjectView::TextCheck("ck");
+const QString TableObjectView::TextPrimaryKey("pk");
+const QString TableObjectView::TextForeignKey("fk");
+const QString TableObjectView::TextNotNull("nn");
+const QString TableObjectView::ConstrDelimStart("«");
+const QString TableObjectView::ConstrDelimEnd("»");
 
 TableObjectView::TableObjectView(TableObject *object) : BaseObjectView(object)
 {

@@ -36,35 +36,35 @@ const char SchemaParser::CharEndCompExpr=')';
 const char SchemaParser::CharValueDelim='"';
 const char SchemaParser::CharValueOf='@';
 
-const QString SchemaParser::TokenIf=QString("if");
-const QString SchemaParser::TokenThen=QString("then");
-const QString SchemaParser::TokenElse=QString("else");
-const QString SchemaParser::TokenEnd=QString("end");
-const QString SchemaParser::TokenOr=QString("or");
-const QString SchemaParser::TokenAnd=QString("and");
-const QString SchemaParser::TokenNot=QString("not");
-const QString SchemaParser::TokenSet=QString("set");
-const QString SchemaParser::TokenUnset=QString("unset");
+const QString SchemaParser::TokenIf("if");
+const QString SchemaParser::TokenThen("then");
+const QString SchemaParser::TokenElse("else");
+const QString SchemaParser::TokenEnd("end");
+const QString SchemaParser::TokenOr("or");
+const QString SchemaParser::TokenAnd("and");
+const QString SchemaParser::TokenNot("not");
+const QString SchemaParser::TokenSet("set");
+const QString SchemaParser::TokenUnset("unset");
 
-const QString SchemaParser::TokenMetaSp=QString("sp");
-const QString SchemaParser::TokenMetaBr=QString("br");
-const QString SchemaParser::TokenMetaTb=QString("tb");
-const QString SchemaParser::TokenMetaOb=QString("ob");
-const QString SchemaParser::TokenMetaCb=QString("cb");
-const QString SchemaParser::TokenMetaOc=QString("oc");
-const QString SchemaParser::TokenMetaCc=QString("cc");
-const QString SchemaParser::TokenMetaMs=QString("ms");
-const QString SchemaParser::TokenMetaPs=QString("ps");
-const QString SchemaParser::TokenMetaHs=QString("hs");
-const QString SchemaParser::TokenMetaAt=QString("at");
-const QString SchemaParser::TokenMetaDs=QString("ds");
+const QString SchemaParser::TokenMetaSp("sp");
+const QString SchemaParser::TokenMetaBr("br");
+const QString SchemaParser::TokenMetaTb("tb");
+const QString SchemaParser::TokenMetaOb("ob");
+const QString SchemaParser::TokenMetaCb("cb");
+const QString SchemaParser::TokenMetaOc("oc");
+const QString SchemaParser::TokenMetaCc("cc");
+const QString SchemaParser::TokenMetaMs("ms");
+const QString SchemaParser::TokenMetaPs("ps");
+const QString SchemaParser::TokenMetaHs("hs");
+const QString SchemaParser::TokenMetaAt("at");
+const QString SchemaParser::TokenMetaDs("ds");
 
-const QString SchemaParser::TokenEqOper=QString("==");
-const QString SchemaParser::TokenNeOper=QString("!=");
-const QString SchemaParser::TokenGtOper=QString(">");
-const QString SchemaParser::TokenLtOper=QString("<");
-const QString SchemaParser::TokenGtEqOper=QString(">=");
-const QString SchemaParser::TokenLtEqOper=QString("<=");
+const QString SchemaParser::TokenEqOper("==");
+const QString SchemaParser::TokenNeOper("!=");
+const QString SchemaParser::TokenGtOper(">");
+const QString SchemaParser::TokenLtOper("<");
+const QString SchemaParser::TokenGtEqOper(">=");
+const QString SchemaParser::TokenLtEqOper("<=");
 
 // QRegularExpression::anchoredPattern is used to force the exact match
 const QRegularExpression SchemaParser::AttribRegExp(QRegularExpression::anchoredPattern("^([a-z])([a-z]*|(\\d)*|(\\-)*|(_)*)+"),
