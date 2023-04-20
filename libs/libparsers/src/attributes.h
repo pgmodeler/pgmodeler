@@ -41,6 +41,7 @@ namespace Attributes {
 	Alignment,
 	AlignObjsToGrid,
 	AllVersions,
+	AllowCompletion,
 	AllowConns,
 	AlterCmds,
 	AnalyzeFunc,

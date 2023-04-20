@@ -27,6 +27,7 @@ namespace Attributes {
 	Alias("alias"),
 	Alignment("alignment"),
 	AlignObjsToGrid("align-objs-to-grid"),
+	AllowCompletion("allow-completion"),
 	AllowConns("allow-conns"),
 	AllVersions("all"),
 	AlterCmds("alter-cmds"),

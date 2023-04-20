@@ -128,6 +128,7 @@ void SyntaxHighlighter::highlightBlock(const QString &txt)
 		 (currentBlockState() == OpenExprBlock || (txt.isEmpty() && currentBlockState() < 0)))
 	{
 		info->setGroup(prev_info->getGroup());
+		info->setAllowCompletion(prev_info->isCompletionAllowed());
 		info->setMultiExpr(prev_info->isMultiExpr());
 		info->setClosed(false);
 		setCurrentBlockState(OpenExprBlock);
@@ -327,6 +328,7 @@ QString SyntaxHighlighter::identifyWordGroup(const QString &word, const QChar &l
 			/* We force unformmated group to stay closed so in the next interaction (word extraction / validation)
 			 * the group that matches the word can be properly found */
 			info->setGroup(UnformattedGroup);
+			info->setAllowCompletion(allow_completion[UnformattedGroup]);
 			info->setMultiExpr(true);
 			info->setClosed(true);
 			return info->getGroup();
@@ -345,6 +347,7 @@ QString SyntaxHighlighter::identifyWordGroup(const QString &word, const QChar &l
 		else if(prev_info && !prev_info->getGroup().isEmpty() && prev_info->isMultiExpr() && !prev_info->isClosed())
 		{
 			info->setGroup(prev_info->getGroup());
+			info->setAllowCompletion(prev_info->isCompletionAllowed());
 
 			/* We force the current info to be a multi expression one (like the previous)
 			 * and close it only if the word is a closing token of the group */
@@ -365,6 +368,7 @@ QString SyntaxHighlighter::identifyWordGroup(const QString &word, const QChar &l
 			 prev_info && prev_info->isMultiExpr() && !prev_info->isClosed())
 		{
 			info->setGroup(prev_info->getGroup());
+			info->setAllowCompletion(prev_info->isCompletionAllowed());
 			info->setMultiExpr(true);
 
 			/* We try to check if the current work matches a final expression of the previous block group
@@ -375,6 +379,7 @@ QString SyntaxHighlighter::identifyWordGroup(const QString &word, const QChar &l
 		}
 
 		info->setGroup(group);
+		info->setAllowCompletion(group.isEmpty() ? true : allow_completion[group]);
 		info->setMultiExpr(hasInitialAndFinalExprs(group));
 		info->setClosed(match && match_final_expr);
 
@@ -684,6 +689,9 @@ void SyntaxHighlighter::loadConfiguration(const QString &filename)
 								format.setForeground(fg_color);
 								format.setBackground(bg_color);
 								formats[group]=format;
+
+								allow_completion[group] =
+										attribs[Attributes::AllowCompletion] != Attributes::False;
 
 								xmlparser.savePosition();
 								xmlparser.accessElement(XmlParser::ChildElement);

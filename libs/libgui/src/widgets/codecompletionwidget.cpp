@@ -21,6 +21,7 @@
 #include "guiutilsns.h"
 #include "settings/snippetsconfigwidget.h"
 #include "utils/htmlitemdelegate.h"
+#include "utils/textblockinfo.h"
 
 const QStringList CodeCompletionWidget::dml_keywords = {
 	/* Insert here the keywords that need have their position determined
@@ -119,8 +120,11 @@ bool CodeCompletionWidget::eventFilter(QObject *object, QEvent *event)
 	{
 		if(object==code_field_txt)
 		{
+			TextBlockInfo *blk_info = dynamic_cast<TextBlockInfo *>(code_field_txt->textCursor().block().userData());
+
 			//Filters the trigger char and shows up the code completion only if there is a valid database model in use
-			if(k_event->key() == completion_trigger.unicode() && (db_model || catalog.isConnectionValid()))
+			if(k_event->key() == completion_trigger.unicode() && (db_model || catalog.isConnectionValid()) &&
+				 (!blk_info || (blk_info && blk_info->isCompletionAllowed())))
 			{
 				/* If the completion widget is not visible start the timer to give the user
 				a small delay in order to type another character. If no char is typed the completion is triggered */

@@ -76,6 +76,9 @@ class __libgui SyntaxHighlighter: public QSyntaxHighlighter {
 		//! \brief Stores the text formatting to each group
 		std::map<QString, QTextCharFormat> formats;
 
+		//! \brief Stores the completion allowed status for each group
+		std::map<QString, bool> allow_completion;
+
 		//! \brief Stores the char used to break the highlight for a group. This char is not highlighted itself.
 		std::map<QString, QChar> lookahead_char;
 

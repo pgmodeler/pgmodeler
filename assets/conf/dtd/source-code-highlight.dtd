@@ -90,6 +90,7 @@ bold: words matching the group will have a bold style.
 italic: words matching the group will have a italic style.
 underline: words matching the group will have a underline style.
 strikeout: words matching the group will have a strikeout style.
+allow-completion: enable/disable the code completion via completion trigger char for this group.
 -->
 <!ELEMENT group (element*)>
 <!ATTLIST group name CDATA #REQUIRED>
@@ -101,6 +102,7 @@ strikeout: words matching the group will have a strikeout style.
 <!ATTLIST group italic (false|true) "false">
 <!ATTLIST group underline (false|true) "false">
 <!ATTLIST group strikeout (false|true) "false">
+<!ATTLIST group allow-completion (false|true) "true">
 
 <!--
 The element of a group. The element stores an expression that is matched against a captured word.
