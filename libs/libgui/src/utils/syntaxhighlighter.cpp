@@ -28,6 +28,7 @@ SyntaxHighlighter::SyntaxHighlighter(QPlainTextEdit *parent, bool single_line_mo
 	if(!parent)
 		throw Exception(ErrorCode::AsgNotAllocattedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
+	code_field_txt = parent;
 	capt_nearby_separators = false;
 	this->setDocument(parent->document());
 	this->single_line_mode=single_line_mode;
@@ -140,6 +141,7 @@ void SyntaxHighlighter::highlightBlock(const QString &txt)
 		unsigned i=0, len, idx=0, i1;
 		int match_idx, match_len, aux_len, start_col;
 		QChar chr_delim, lookahead_chr;
+		bool force_disable_compl = false;
 
 		text = txt + QString("\n");
 		len = text.length();
@@ -253,6 +255,23 @@ void SyntaxHighlighter::highlightBlock(const QString &txt)
 				{
 					start_col=idx + match_idx;
 					setFormat(start_col, match_len, group);
+
+					/* Workaround to avoid the code completion to be triggered inside a delimited string when typing the
+					 * completion trigger char. If the cursor is within a delimited string like:
+					 *
+					 * 'some [cursor]string' other text outside delimiter)
+					 *
+					 * And there are other text typed ahead of the end of the delimited string, we need to force the code
+					 * completion disabling inside that block delimited even the other texts (outside the delimiters) are
+					 * from a group in which the completion is allowed in the settings. */
+					int cursor_pos = code_field_txt->textCursor().positionInBlock();
+					if(!info->isCompletionAllowed() && !force_disable_compl &&
+						 cursor_pos >= static_cast<int>(idx) && cursor_pos <= static_cast<int>(idx + match_len))
+					{
+						force_disable_compl = true;
+					}
+					else if(force_disable_compl)
+						info->setAllowCompletion(false);
 				}
 
 				if(info->isMultiExpr() && !info->isClosed() && hasInitialAndFinalExprs(group))

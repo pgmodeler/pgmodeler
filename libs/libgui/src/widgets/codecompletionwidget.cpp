@@ -1052,7 +1052,7 @@ void CodeCompletionWidget::selectItem()
 		{
 			QTextCursor tc = code_field_txt->textCursor();
 			QChar last_chr = word.isEmpty() ? QChar::Null : word.at(word.length() - 1);
-			QString prefix;
+			QString prefix, item_data = item->data(Qt::UserRole).toString();
 
 			// If the word and doesn't end in a special char is not empty we replace it by the selected item in the list
 			if(!word.isEmpty() && word != completion_trigger && !special_chars.contains(last_chr))
@@ -1065,7 +1065,7 @@ void CodeCompletionWidget::selectItem()
 				prefix = word;
 
 			code_field_txt->setTextCursor(tc);
-			code_field_txt->insertPlainText(prefix + item->data(Qt::UserRole).toString());
+			code_field_txt->insertPlainText(prefix + (!item_data.isEmpty() ? item_data : item->text()));
 		}
 		else
 		{

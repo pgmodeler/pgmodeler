@@ -46,6 +46,8 @@ class __libgui SyntaxHighlighter: public QSyntaxHighlighter {
 				QColor fg_color, bg_color;
 		};
 
+		QPlainTextEdit *code_field_txt;
+
 		/*! \brief The default name of the group related to unformatted words.
 		 * This is just a dummy group and just serves to force the non-formatting of
 		 * any word that doesn't fit the configured groups */
