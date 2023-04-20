@@ -526,7 +526,8 @@ QString TableDataWidget::generateDataBuffer()
 	if(buffer.size() <= 1)
 		return "";
 
-	return buffer.join(CsvDocument::LineBreak);
+	// CSV documents need to end with a line break in order to be parsed correctly
+	return 	buffer.join(CsvDocument::LineBreak) + CsvDocument::LineBreak;
 }
 
 void TableDataWidget::enterEvent(QEnterEvent *)
