@@ -103,15 +103,12 @@ void ModelFixForm::enableFixOptions(bool enable)
 	load_model_chk->setEnabled(enable);
 }
 
-void ModelFixForm::hideEvent(QHideEvent *)
-{
-	resetFixForm();
-}
-
 void ModelFixForm::closeEvent(QCloseEvent *event)
 {
 	if(pgmodeler_cli_proc.state() == QProcess::Running)
 		event->ignore();
+	else
+		resetFixForm();
 }
 
 int ModelFixForm::exec()
@@ -193,7 +190,7 @@ void ModelFixForm::cancelFix()
 	cancel_btn->setEnabled(false);
 	pgmodeler_cli_proc.terminate();
 	pgmodeler_cli_proc.waitForFinished();
-	output_txt->insertPlainText(tr("** Process cancelled by the user!"));
+	output_txt->insertPlainText(QString("\n%1\n").arg(tr("** Process cancelled by the user!")));
 	output_txt->moveCursor(QTextCursor::End);
 	enableFixOptions(true);
 }
@@ -206,7 +203,7 @@ void ModelFixForm::updateOutput()
 	txt.append(pgmodeler_cli_proc.readAllStandardOutput());
 	txt.append(pgmodeler_cli_proc.readAllStandardError());
 
-	if(txt.startsWith('['))
+	if(txt.contains(QRegularExpression("^\\[\\d+\\%\\]")))
 	{
 		QStringList list = txt.split(QChar::LineFeed, Qt::SkipEmptyParts);
 		int pos = -1;
@@ -239,11 +236,11 @@ void ModelFixForm::handleProcessFinish(int res)
 {
 	enableFixOptions(true);
 	pgmodeler_cli_proc.blockSignals(true);
+	cancel_btn->setEnabled(false);
 
 	if(res == 0)
 	{
 		progress_pb->setValue(100);
-		cancel_btn->setEnabled(false);
 
 		/* If the model as sucessfully fixed and user
 		 requested the loading */

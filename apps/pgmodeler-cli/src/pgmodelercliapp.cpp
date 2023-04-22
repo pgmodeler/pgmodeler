@@ -330,6 +330,7 @@ PgModelerCliApp::~PgModelerCliApp()
 void PgModelerCliApp::printText(const QString &txt)
 {
 	out << txt << Qt::endl;
+	out.flush();
 }
 
 void PgModelerCliApp::printMessage(const QString &txt)
@@ -542,7 +543,7 @@ void PgModelerCliApp::showMenu()
 		i++;
 		if(i % 8 == 0 || i == type_list.size() - 1)
 		{
-			lines.append(QString("     > ") + fmt_types.join(", "));
+			lines.append("     > " + fmt_types.join(", "));
 			fmt_types.clear();
 		}
 	}
@@ -591,7 +592,7 @@ void PgModelerCliApp::listConnections()
 
 		while(itr != connections.end())
 		{
-			printText(QString("[") + QString::number(id++) + QString("] ") + itr->first + QString(" : ") +
+			printText("[" + QString::number(id++) + "] " + itr->first + " : " +
 								itr->second->getConnectionString().replace(PasswordRegExp, PasswordPlaceholder));
 			itr++;
 		}
@@ -946,9 +947,11 @@ void PgModelerCliApp::extractObjectXML()
 	QRegularExpression ver_expr(AttributeExpr.arg(Attributes::PgModelerVersion));
 	QRegularExpressionMatch match;
 
+	QStringList capt_txts;
 	match = ver_expr.match(buf);
 	start = match.capturedStart();
-	model_version = buf.mid(start, match.capturedLength());
+	capt_txts = match.capturedTexts();
+	model_version = !capt_txts.isEmpty() ? capt_txts.at(0) : "";
 	model_version.remove(Attributes::PgModelerVersion);
 	model_version.remove(QRegularExpression("(\\\"|\\=| )+"));
 
@@ -961,15 +964,18 @@ void PgModelerCliApp::extractObjectXML()
 
 	QRegularExpressionMatch header_match;
 	QRegularExpression header_regexp(QString("^<\\?xml.+<%1").arg(Attributes::DbModel),
-														QRegularExpression::DotMatchesEverythingOption);
+														QRegularExpression::DotMatchesEverythingOption |
+														QRegularExpression::DontCaptureOption);
 
 	//Check if the file contains a valid header (for .dbm file)
 	/* ATTENTION: PCRE2 (base implementation of QRegularExpression) limits the amount of groups (defined by  (expr) ) to
 	 * be captured. So, in large buffer expression such (.)+ must be used with caution. In some cases the matching won't
-	 * work even if it works on smaller text buffers. The workaround is to avoid capture groups using (.). In the case below
-	 * we just need to know the position of a certain regexp in the buffer, so we use a simplified expression
+	 * work even if it works on smaller text buffers. The workaround is to use a small portion of the buffer as well as avoiding
+	 * capture groups. In the case below we just need to know the position of a certain regexp in the buffer,
+	 * so we use a small portion of the entire buffer as subject of the searching.
+	 *
 	 * Reference: https://stackoverflow.com/questions/52980957/qregularexpression-lazy-matching-not-working-for-very-large-strings */
-	header_match = header_regexp.match(buf);
+	header_match = header_regexp.match(buf.mid(0, 5000));
 	start = header_match.capturedStart();
 
 	if(start < 0)
@@ -1018,13 +1024,7 @@ void PgModelerCliApp::extractObjectXML()
 	buf.remove(0, dbm_start);
 
 	//Checking if the header ends on a role declaration
-	/* ATTENTION: PCRE2 (base implementation of QRegularExpression) limits the amount of groups (defined by  (expr) ) to
-	 * be captured. So, in large buffer expression such (.)+ must be used with caution. In some cases the matching won't
-	 * work even if it works on smaller text buffers. The workaround is to avoid capture groups using (.). In the case below
-	 * we just need to know the position of a certain regexp in the buffer, so we use a simplified expression
-	 * Reference: https://stackoverflow.com/questions/52980957/qregularexpression-lazy-matching-not-working-for-very-large-strings */
-	QRegularExpression role_regexp = QRegularExpression(QString("<%1.*<\\/%1>").arg(Attributes::Role),
-																											QRegularExpression::DotMatchesEverythingOption);
+	QRegularExpression role_regexp = QRegularExpression(QString("<%1").arg(Attributes::Role));
 	end = buf.indexOf(role_regexp);
 
 	// If we found role declarations we clear the header until there
@@ -1064,8 +1064,8 @@ void PgModelerCliApp::extractObjectXML()
 		{
 			lin=lin.simplified();
 
-			if(lin.contains(QString("/>")))
-				lin.replace(QString("/>"), QString("></%1>").arg(BaseObject::getSchemaName(ObjectType::Language)));
+			if(lin.contains("/>"))
+				lin.replace("/>", QString("></%1>").arg(BaseObject::getSchemaName(ObjectType::Language)));
 		}
 		/* Special case for function signatures. In previous releases, the function's signature was wrongly
 	 including OUT parameters and according to docs they are not part of the signature, so it is needed
@@ -1073,8 +1073,8 @@ void PgModelerCliApp::extractObjectXML()
 		else if(lin.contains(func_signature))
 			lin.remove(out_param);
 
-		if(is_rel && (((short_tag && lin.contains(QString("/>"))) ||
-									 (lin.contains(QString("[a-z]+")) && !containsRelAttributes(lin)))))
+		if(is_rel && (((short_tag && lin.contains("/>")) ||
+									 (lin.contains("[a-z]+") && !containsRelAttributes(lin)))))
 			open_tag=close_tag=true;
 		else
 		{
@@ -1090,10 +1090,10 @@ void PgModelerCliApp::extractObjectXML()
 
 				//Configures the end tag with the same word extracted from open tag
 				end_tag=lin.mid(start, end-start+1).trimmed();
-				end_tag.replace(QString("<"),QString("</"));
+				end_tag.replace("<", "</");
 
 				if(!end_tag.endsWith('>'))
-					end_tag+=QString(">");
+					end_tag+=">";
 
 				/* Checking if the line start a relationship. Relationships are treated
 		a little different because they can be empty <relationship attribs /> or
@@ -1106,11 +1106,11 @@ void PgModelerCliApp::extractObjectXML()
 
 					while(!end_extract_rel && !ts.atEnd())
 					{
-						def_xml+=lin + QString("\n");
+						def_xml+=lin + "\n";
 						lin=lin.trimmed();
 
 						//Checking if the current line is the end of a short-tag relationship
-						if(!short_tag && !lin.startsWith('<') && lin.endsWith(QString("/>")))
+						if(!short_tag && !lin.startsWith('<') && lin.endsWith("/>"))
 							short_tag=true;
 
 						end_extract_rel=((!short_tag && lin.contains(end_tag)) || short_tag);
@@ -1129,15 +1129,15 @@ void PgModelerCliApp::extractObjectXML()
 		}
 
 		if(!is_rel && !lin.isEmpty())
-			def_xml+=lin + QString("\n");
+			def_xml+=lin + "\n";
 		else if(lin.isEmpty())
-			def_xml+=QString("\n");
+			def_xml+="\n";
 
 		//If the iteration reached the end of the object's definition
 		if(open_tag && close_tag)
 		{
 			//Pushes the extracted definition to the list (only if not empty)
-			if(def_xml!=QString("\n"))
+			if(def_xml!="\n")
 				objs_xml.push_back(def_xml);
 
 			def_xml.clear();
@@ -1385,8 +1385,8 @@ void PgModelerCliApp::fixObjectAttributes(QString &obj_xml)
 		int start_idx=-1, end_idx=-1, len=0;
 		ObjectType obj_types[3]={ ObjectType::Rule, ObjectType::Trigger, ObjectType::Index  };
 		QString  curr_tag, curr_end_tag, def, tab_name, sch_name,
-				name_attr=QString("name=\""),
-				sch_name_attr=TagExpr.arg(BaseObject::getSchemaName(ObjectType::Schema)) + QString(" ") + name_attr;
+				name_attr="name=\"",
+				sch_name_attr=TagExpr.arg(BaseObject::getSchemaName(ObjectType::Schema)) + " " + name_attr;
 
 		//Extracting the table's name
 		start_idx=obj_xml.indexOf(name_attr);
@@ -1404,21 +1404,21 @@ void PgModelerCliApp::fixObjectAttributes(QString &obj_xml)
 		for(unsigned idx=0; idx < 3; idx++)
 		{
 			curr_tag=TagExpr.arg(BaseObject::getSchemaName(obj_types[idx]));
-			curr_end_tag=EndTagExpr.arg(BaseObject::getSchemaName(obj_types[idx])) + QString(">");
+			curr_end_tag=EndTagExpr.arg(BaseObject::getSchemaName(obj_types[idx])) + ">";
 			start_idx=obj_xml.indexOf(curr_tag);
 
 			while(start_idx >=0)
 			{
 				end_idx=obj_xml.indexOf(curr_end_tag);
 				len=(end_idx - start_idx) + curr_end_tag.size();
-				def=obj_xml.mid(start_idx, len) + QString("\n\n");
+				def=obj_xml.mid(start_idx, len) + "\n\n";
 				obj_xml.remove(start_idx, len);
 
 				//If the object is a rule include the table attribute
 				if(def.startsWith(TagExpr.arg(BaseObject::getSchemaName(ObjectType::Rule))))
 				{
 					start_idx=def.indexOf('>');
-					def.replace(start_idx, 1, QString(" ") + tab_name + QString(">"));
+					def.replace(start_idx, 1, " " + tab_name + ">");
 				}
 
 				start_idx=obj_xml.indexOf(curr_tag);
@@ -1432,15 +1432,15 @@ void PgModelerCliApp::fixObjectAttributes(QString &obj_xml)
 
 	//Remove recheck attribute from <element> tags.
 	if(obj_xml.contains(TagExpr.arg(Attributes::Element)))
-		obj_xml.remove(QRegularExpression(AttributeExpr.arg(QString("recheck"))));
+		obj_xml.remove(QRegularExpression(AttributeExpr.arg("recheck")));
 
 	//Remove values greater-op, less-op, sort-op or sort2-op from ref-type attribute from <operator> tags.
 	if(obj_xml.contains(TagExpr.arg(BaseObject::getSchemaName(ObjectType::Operator))))
 	{
-		obj_xml.remove(QString("greater-op"));
-		obj_xml.remove(QString("less-op"));
-		obj_xml.remove(QString("sort-op"));
-		obj_xml.remove(QString("sort2-op"));
+		obj_xml.remove("greater-op");
+		obj_xml.remove("less-op");
+		obj_xml.remove("sort-op");
+		obj_xml.remove("sort2-op");
 	}
 
 	//Replacing attribute owner by onwer-col for sequences
@@ -1487,7 +1487,7 @@ void PgModelerCliApp::fixObjectAttributes(QString &obj_xml)
 	}
 
 	//Replace <parameter> tag by <typeattrib> on <usertype> tags.
-	if(obj_xml.contains(TagExpr.arg(QString("usertype"))))
+	if(obj_xml.contains(TagExpr.arg("usertype")))
 	{
 		obj_xml.replace(TagExpr.arg(Attributes::Parameter), TagExpr.arg(Attributes::TypeAttribute));
 		obj_xml.replace(EndTagExpr.arg(Attributes::Parameter), EndTagExpr.arg(Attributes::TypeAttribute));
@@ -1526,14 +1526,14 @@ void PgModelerCliApp::fixObjectAttributes(QString &obj_xml)
 	if(obj_xml.contains(TagExpr.arg(BaseObject::getSchemaName(ObjectType::Relationship))))
 	{
 		//Remove auto-sufix, src-sufix, dst-sufix, col-indexes, constr-indexes, attrib-indexes from <relationship> tags.
-		obj_xml.remove(QRegularExpression(AttributeExpr.arg(QString("auto-sufix"))));
-		obj_xml.remove(QRegularExpression(AttributeExpr.arg(QString("src-sufix"))));
-		obj_xml.remove(QRegularExpression(AttributeExpr.arg(QString("dst-sufix"))));
-		obj_xml.remove(QRegularExpression(AttributeExpr.arg(QString("col-indexes"))));
-		obj_xml.remove(QRegularExpression(AttributeExpr.arg(QString("constr-indexes"))));
-		obj_xml.remove(QRegularExpression(AttributeExpr.arg(QString("attrib-indexes"))));
+		obj_xml.remove(QRegularExpression(AttributeExpr.arg("auto-sufix")));
+		obj_xml.remove(QRegularExpression(AttributeExpr.arg("src-sufix")));
+		obj_xml.remove(QRegularExpression(AttributeExpr.arg("dst-sufix")));
+		obj_xml.remove(QRegularExpression(AttributeExpr.arg("col-indexes")));
+		obj_xml.remove(QRegularExpression(AttributeExpr.arg("constr-indexes")));
+		obj_xml.remove(QRegularExpression(AttributeExpr.arg("attrib-indexes")));
 
-		obj_xml.replace(QString("line-color"), Attributes::CustomColor);
+		obj_xml.replace("line-color", Attributes::CustomColor);
 	}
 
 	//Renaming the tag <condition> to <predicate> on indexes
@@ -1548,10 +1548,10 @@ void PgModelerCliApp::fixObjectAttributes(QString &obj_xml)
 		obj_xml.replace(Attributes::Default, Attributes::DefaultValue);
 
 	//Renaming the tag <grant> to <permission>
-	if(obj_xml.contains(TagExpr.arg(QString("grant"))))
+	if(obj_xml.contains(TagExpr.arg("grant")))
 	{
-		obj_xml.replace(TagExpr.arg(QString("grant")), TagExpr.arg(BaseObject::getSchemaName(ObjectType::Permission)));
-		obj_xml.replace(EndTagExpr.arg(QString("grant")), EndTagExpr.arg(BaseObject::getSchemaName(ObjectType::Permission)));
+		obj_xml.replace(TagExpr.arg("grant"), TagExpr.arg(BaseObject::getSchemaName(ObjectType::Permission)));
+		obj_xml.replace(EndTagExpr.arg("grant"), EndTagExpr.arg(BaseObject::getSchemaName(ObjectType::Permission)));
 	}
 
 	//Replace the constraint attribute and tag expression by constraint tag in <domain>.
@@ -1586,7 +1586,7 @@ void PgModelerCliApp::fixObjectAttributes(QString &obj_xml)
 		obj_xml.insert(start_idx, QString("\n\t<constraint name=\"%1\" type=\"check\">\n\t\t").arg(constr_name));
 
 		end_idx = obj_xml.indexOf(EndTagExpr.arg(Attributes::Expression));
-		obj_xml.insert(end_idx + EndTagExpr.arg(Attributes::Expression).length() + 1, QString("\n\t</constraint>\n"));
+		obj_xml.insert(end_idx + EndTagExpr.arg(Attributes::Expression).length() + 1, "\n\t</constraint>\n");
 	}
 
 	//Replace the deprecated attribute hide-ext-attribs="false|true" from <table> and <views> by collapse-mode="0|1"
@@ -1678,7 +1678,7 @@ void PgModelerCliApp::fixOpClassesFamiliesReferences(QString &obj_xml)
 			obj_name.remove('"');
 
 			//Transforming xml entity for quote into the char
-			obj_name.replace(XmlParser::CharQuot, QString("\""));
+			obj_name.replace(XmlParser::CharQuot, "\"");
 
 			for(auto &idx_type : index_types)
 			{
@@ -1687,7 +1687,7 @@ void PgModelerCliApp::fixOpClassesFamiliesReferences(QString &obj_xml)
 				if(model->getObjectIndex(aux_obj_name, ref_obj_type) >= 0)
 				{
 					//Replacing the old signature with the corrected form
-					aux_obj_name.replace(QString("\""), XmlParser::CharQuot);
+					aux_obj_name.replace("\"", XmlParser::CharQuot);
 					obj_xml.replace(pos, match.capturedLength(), QString("signature=\"%1\"").arg(aux_obj_name));
 					break;
 				}
@@ -2148,7 +2148,7 @@ bool PgModelerCliApp::containsRelAttributes(const QString &str)
 
 void PgModelerCliApp::handleMimeDatabase(bool uninstall, bool system_wide, bool force)
 {
-	printMessage(tr("Mime database operation: %1").arg(uninstall ? QString("uninstall") : QString("install")));
+	printMessage(tr("Mime database operation: %1").arg(uninstall ? "uninstall" : "install"));
 
 	#ifdef Q_OS_LINUX
 		handleLinuxMimeDatabase(uninstall, system_wide, force);
@@ -2165,7 +2165,7 @@ void PgModelerCliApp::handleLinuxMimeDatabase(bool uninstall, bool system_wide, 
 	attribs_map attribs;
 	QString str_aux,
 
-			share_path = !system_wide ? QDir::homePath() + QString("/.local/share") : QString("/usr/share"),
+			share_path = !system_wide ? QDir::homePath() + "/.local/share" : "/usr/share",
 
 			//Configures the path to the application logo
 			exec_icon=GlobalAttributes::getTmplConfigurationFilePath("", "pgmodeler_logo.png"),
@@ -2184,13 +2184,13 @@ void PgModelerCliApp::handleLinuxMimeDatabase(bool uninstall, bool system_wide, 
 		//Files generated after update file association (application-dbm.xml and pgModeler.desktop)
 		QStringList	files = { QString("%1/applications/pgModeler.desktop").arg(share_path),
 													QString("%1/applications/pgModelerSchEditor.desktop").arg(share_path),
-													mime_db_dir + QString("/packages/application-dbm.xml"),
-													mime_db_dir + QString("/packages/application-sch.xml")},
+													mime_db_dir + "/packages/application-dbm.xml",
+													mime_db_dir + "/packages/application-sch.xml"},
 
-			schemas = { GlobalAttributes::getTmplConfigurationFilePath(GlobalAttributes::SchemasDir, QString("desktop") + GlobalAttributes::SchemaExt),
-									GlobalAttributes::getTmplConfigurationFilePath(GlobalAttributes::SchemasDir, QString("desktop-sch") + GlobalAttributes::SchemaExt),
-									GlobalAttributes::getTmplConfigurationFilePath(GlobalAttributes::SchemasDir, QString("application-dbm") + GlobalAttributes::SchemaExt),
-									GlobalAttributes::getTmplConfigurationFilePath(GlobalAttributes::SchemasDir, QString("application-sch") + GlobalAttributes::SchemaExt) },
+			schemas = { GlobalAttributes::getTmplConfigurationFilePath(GlobalAttributes::SchemasDir, "desktop" + GlobalAttributes::SchemaExt),
+									GlobalAttributes::getTmplConfigurationFilePath(GlobalAttributes::SchemasDir, "desktop-sch" + GlobalAttributes::SchemaExt),
+									GlobalAttributes::getTmplConfigurationFilePath(GlobalAttributes::SchemasDir, "application-dbm" + GlobalAttributes::SchemaExt),
+									GlobalAttributes::getTmplConfigurationFilePath(GlobalAttributes::SchemasDir, "application-sch" + GlobalAttributes::SchemaExt) },
 
 			icons = { exec_icon, sch_icon, dbm_icon, sch_icon };
 
@@ -2232,7 +2232,7 @@ void PgModelerCliApp::handleLinuxMimeDatabase(bool uninstall, bool system_wide, 
 				schparser.loadFile(schemas[i]);
 				schparser.ignoreEmptyAttributes(true);
 				buf.append(schparser.getSourceCode(attribs).toUtf8());
-				QDir(QString(".")).mkpath(QFileInfo(files[i]).absolutePath());
+				QDir(".").mkpath(QFileInfo(files[i]).absolutePath());
 
 				UtilsNs::saveFile(files[i], buf);
 				buf.clear();

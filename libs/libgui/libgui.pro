@@ -362,7 +362,7 @@ DEPENDPATH += $$LIBCANVAS_ROOT \
 	      $$LIBPARSERS_ROOT \
 	      $$LIBUTILS_ROOT
 
-defined(PRIVATE_PLUGINS,var) {
+isEqual(PRIVATE_PLUGINS, true) {
   HEADERS+=$$PLUGINS_SRC_ROOT/src/privpluginsns.h
   SOURCES+=$$PLUGINS_SRC_ROOT/src/privpluginsns.cpp
 }
