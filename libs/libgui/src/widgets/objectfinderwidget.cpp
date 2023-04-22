@@ -49,6 +49,7 @@ ObjectFinderWidget::ObjectFinderWidget(QWidget *parent) : QWidget(parent)
 
 	exact_match_chk = new QCheckBox(this);
 	exact_match_chk->setText(tr("Exact match"));
+	exact_match_chk->setEnabled(false);
 
 	case_sensitive_chk = new QCheckBox(this);
 	case_sensitive_chk->setText(tr("Case sensitive"));
