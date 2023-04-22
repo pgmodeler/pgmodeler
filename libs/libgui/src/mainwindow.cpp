@@ -748,7 +748,9 @@ void MainWindow::fixModel(const QString &filename)
 {
 	ModelFixForm model_fix_form(nullptr, Qt::Dialog | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint);
 
-	connect(&model_fix_form, &ModelFixForm::s_modelLoadRequested, this, qOverload<const QString &>(&MainWindow::loadModel));
+	connect(&model_fix_form, &ModelFixForm::s_modelLoadRequested,
+					this, qOverload<const QString &>(&MainWindow::loadModel),
+					Qt::QueuedConnection);
 
 	if(!filename.isEmpty())
 	{

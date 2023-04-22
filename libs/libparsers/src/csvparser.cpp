@@ -158,6 +158,11 @@ QString CsvParser::extractValue()
 			{
 				value.append(chr);
 				curr_pos++;
+
+				/* If the current position reaches the end of the buffer without finding a
+				 * line break we force the return of the value and increment the current row value */
+				if(curr_pos >= buffer.length())
+					curr_row++;
 			}
 		}
 	}
