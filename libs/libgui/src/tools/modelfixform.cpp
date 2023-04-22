@@ -18,7 +18,6 @@
 
 #include "modelfixform.h"
 #include "settings/configurationform.h"
-#include <iostream>
 #include "guiutilsns.h"
 
 const QString ModelFixForm::PgModelerCli("pgmodeler-cli");
