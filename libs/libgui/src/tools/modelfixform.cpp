@@ -111,17 +111,7 @@ void ModelFixForm::hideEvent(QHideEvent *)
 void ModelFixForm::closeEvent(QCloseEvent *event)
 {
 	if(pgmodeler_cli_proc.state() == QProcess::Running)
-	{
-		Messagebox msgbox;
-
-		msgbox.show(tr("The fix process is still running! Do you really want to abort it?"),
-								Messagebox::ConfirmIcon, Messagebox::YesNoButtons);
-
-		if(msgbox.result() == QDialog::Accepted)
-			cancelFix();
-		else
-			event->ignore();
-	}
+		event->ignore();
 }
 
 int ModelFixForm::exec()
