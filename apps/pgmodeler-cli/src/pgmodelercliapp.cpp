@@ -330,7 +330,6 @@ PgModelerCliApp::~PgModelerCliApp()
 void PgModelerCliApp::printText(const QString &txt)
 {
 	out << txt << Qt::endl;
-	out.flush();
 }
 
 void PgModelerCliApp::printMessage(const QString &txt)
@@ -1224,9 +1223,14 @@ void PgModelerCliApp::recreateObjects()
 						if(!dynamic_cast<TableObject *>(object) && obj_type!=ObjectType::Relationship && obj_type!=ObjectType::BaseRelationship)
 							model->addObject(object);
 
+						obj_id++;
 						printMessage(QString("[%1%] %2")
-												 .arg(static_cast<int>((++obj_id/static_cast<double>(obj_cnt)) * 100))
-												 .arg(tr("Object recreated: `%1' (%2)").arg(object->getName(true), object->getTypeName())));
+												 .arg(static_cast<int>((obj_id/static_cast<double>(obj_cnt)) * 100))
+												 .arg(tr("Object %1 of %2 recreated: `%3' (%4)")
+															.arg(obj_id)
+															.arg(obj_cnt)
+															.arg(object->getName(true))
+															.arg(object->getTypeName())));
 
 						/* Special case for extensions:
 						 * Before pgModeler 0.9.4-alpha1 the types handled by extension (for example hstore, ltree, etc) were
@@ -1300,7 +1304,7 @@ void PgModelerCliApp::recreateObjects()
 			{
 				//Outputs the code of the objects that wasn't created
 				printText();
-				printText(tr("** Object(s) that couldn't be fixed: "));
+				printText(tr("** A total of %1 object(s) couldn't be fixed: ").arg(fail_objs.size()));
 
 				while(!fail_objs.isEmpty())
 				{
