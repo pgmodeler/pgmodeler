@@ -295,6 +295,11 @@ PgModelerCliApp::PgModelerCliApp(int argc, char **argv) : Application(argc, argv
 
 PgModelerCliApp::~PgModelerCliApp()
 {
+	bool show_flush_msg = model && model->getObjectCount() > 0;
+
+	if(show_flush_msg)
+		printMessage(tr("Flushing used memory..."));
+
 	if(scene)
 		delete scene;
 
@@ -317,6 +322,9 @@ PgModelerCliApp::~PgModelerCliApp()
 
 	if(general_conf)
 		delete general_conf;
+
+	if(show_flush_msg)
+		printMessage(tr("Done!"));
 }
 
 void PgModelerCliApp::printText(const QString &txt)
@@ -824,7 +832,7 @@ int PgModelerCliApp::exec()
 			showVersionInfo();
 
 			if(parsed_opts.count(ListConns))
-				 listConnections();
+				listConnections();
 			else if(parsed_opts.count(FixModel))
 				fixModel();
 			else if(parsed_opts.count(DbmMimeType))
