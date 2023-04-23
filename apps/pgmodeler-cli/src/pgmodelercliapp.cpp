@@ -101,6 +101,8 @@ const QString PgModelerCliApp::AttributeExpr("(%1)( )*(=)(\")(\\w|\\d|,|\\.|\\&|
 const QString PgModelerCliApp::MsgFileAssociated(tr("Database model files (*%1) are already associated with pgModeler! Try using the option `%2' to install the file association anyway.").arg(GlobalAttributes::DbModelExt, Force));
 const QString PgModelerCliApp::MsgNoFileAssociation(tr("There is no file association related to pgModeler and *%1 files! Try using the option `%2' to uninstall the file association anyway.").arg(GlobalAttributes::DbModelExt, Force));
 
+const QString PgModelerCliApp::ModelFixLog("model_fix.log");
+
 attribs_map PgModelerCliApp::short_opts = {
 	{ Input, "-if" },		{ Output, "-of" },	{ InputDb, "-id" },
 	{ ExportToFile, "-ef" },	{ ExportToPng, "-ep" },	{ ExportToSvg, "-es" },
@@ -185,6 +187,8 @@ PgModelerCliApp::PgModelerCliApp(int argc, char **argv) : Application(argc, argv
 		attribs_map opts;
 		QStringList args = arguments();
 
+		has_fix_log = false;
+		buffer_size = 0;
 		model=nullptr;
 		scene=nullptr;
 		xmlparser=nullptr;
@@ -934,7 +938,7 @@ void PgModelerCliApp::handleObjectRemoval(BaseObject *object)
 
 void PgModelerCliApp::extractObjectXML()
 {
-	QString buf, lin, def_xml, end_tag, pgmodeler_ver;
+	QString buf, lin, def_xml, end_tag;
 	QTextStream ts;
 	int start=-1, end=-1;
 	bool open_tag=false, close_tag=false, is_rel=false, short_tag=false, end_extract_rel=false, is_change_log=false;
@@ -1137,7 +1141,10 @@ void PgModelerCliApp::extractObjectXML()
 		{
 			//Pushes the extracted definition to the list (only if not empty)
 			if(def_xml!="\n")
+			{
 				objs_xml.push_back(def_xml);
+				buffer_size += def_xml.size();
+			}
 
 			def_xml.clear();
 			open_tag=close_tag=is_rel=false;
@@ -1155,7 +1162,8 @@ void PgModelerCliApp::recreateObjects()
 	attribs_map attribs, fmt_ext_names;
 	bool use_fail_obj=false;
 	unsigned tries=0, max_tries=parsed_opts[FixTries].toUInt();
-	int start_pos=-1, end_pos=-1, len=0, obj_id = 0, obj_cnt = objs_xml.count();
+	int start_pos=-1, end_pos=-1, len=0;
+	qint64 curr_size = 0;
 
 	printMessage(tr("Recreating objects..."));
 
@@ -1169,13 +1177,13 @@ void PgModelerCliApp::recreateObjects()
 		//If there are failed objects and the flag is set
 		if(use_fail_obj && !fail_objs.isEmpty())
 		{
-			xml_def=fail_objs.front();
+			xml_def = fail_objs.front();
 			fail_objs.pop_front();
 			use_fail_obj=false;
 		}
 		else
 		{
-			xml_def=objs_xml.front();
+			xml_def = objs_xml.front();
 			objs_xml.pop_front();
 			fixObjectAttributes(xml_def);
 		}
@@ -1223,14 +1231,12 @@ void PgModelerCliApp::recreateObjects()
 						if(!dynamic_cast<TableObject *>(object) && obj_type!=ObjectType::Relationship && obj_type!=ObjectType::BaseRelationship)
 							model->addObject(object);
 
-						obj_id++;
+						curr_size += xml_def.size();
 						printMessage(QString("[%1%] %2")
-												 .arg(static_cast<int>((obj_id/static_cast<double>(obj_cnt)) * 100))
-												 .arg(tr("Object %1 of %2 recreated: `%3' (%4)")
-															.arg(obj_id)
-															.arg(obj_cnt)
-															.arg(object->getName(true))
-															.arg(object->getTypeName())));
+												 .arg(static_cast<int>((curr_size/static_cast<double>(buffer_size)) * 100))
+												 .arg(tr("Object recreated: `%1' (%2)"))
+												 .arg(object->getName(true))
+												 .arg(object->getTypeName()));
 
 						/* Special case for extensions:
 						 * Before pgModeler 0.9.4-alpha1 the types handled by extension (for example hstore, ltree, etc) were
@@ -1245,7 +1251,10 @@ void PgModelerCliApp::recreateObjects()
 
 					//For each sucessful created object the method will try to create a failed one
 					use_fail_obj=(!fail_objs.isEmpty());
-				}
+				}				
+				else if(obj_type == ObjectType::Relationship &&
+								xml_def.contains(QString("\"%1\"").arg(Attributes::RelationshipFk)))
+					curr_size += xml_def.size();
 
 				/* Additional step to extract indexes/triggers/rules from within tables/views
 				 * and putting their xml on the list of object to be created */
@@ -1288,8 +1297,20 @@ void PgModelerCliApp::recreateObjects()
 		{
 			if(obj_type!=ObjectType::Database)
 			{
+				QString error = tr("** WARNING: Failed to recreate the object!");
+
 				fail_objs.push_back(xml_def);
-				printText(tr("** WARNING: Failed to recreate an object!"));
+				printText(QString("\n** %1\n ** %2").arg(error, e.getErrorMessage()));
+				error += QString("%1\n\n%2\n***").arg(e.getExceptionsText(), xml_def);
+
+				// Store the error in the log file as well as the XML code of the failed object
+				QFile fix_log;
+				fix_log.setFileName(GlobalAttributes::getTemporaryFilePath(ModelFixLog));
+				fix_log.open(QFile::Append);
+				fix_log.write(error.toUtf8());
+				fix_log.close();
+
+				has_fix_log = true;
 			}
 			else
 				throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
@@ -1318,7 +1339,7 @@ void PgModelerCliApp::recreateObjects()
 			{
 				printMessage(tr("** WARNING: There are objects that maybe can't be fixed. Trying again... (tries %1/%2)").arg(tries).arg(max_tries));
 				model->validateRelationships();
-				objs_xml=fail_objs;
+				objs_xml = fail_objs;
 				objs_xml.append(constr);
 				fail_objs.clear();
 				constr.clear();
@@ -1631,8 +1652,9 @@ void PgModelerCliApp::fixObjectAttributes(QString &obj_xml)
 	}
 
 	//Rename the attribute layer to layers
-	if(obj_xml.contains(QRegularExpression("(layer)( )*(=)")))
-		obj_xml.replace("layer", Attributes::Layers);
+	QRegularExpression layer_regexp("(layer)( )*(=)");
+	if(obj_xml.contains(QRegularExpression(layer_regexp)))
+		obj_xml.replace(layer_regexp, Attributes::Layers + "=");
 
 	//Fix the references to op. classes and families if needed
 	fixOpClassesFamiliesReferences(obj_xml);
@@ -1709,6 +1731,8 @@ void PgModelerCliApp::fixModel()
 	printMessage(tr("Loading input file: %1").arg(parsed_opts[Input]));
 	printMessage(tr("Fixed model file: %1").arg(parsed_opts[Output]));
 
+	QString fix_log = GlobalAttributes::getTemporaryFilePath(ModelFixLog);
+	QFile::remove(fix_log);
 	extractObjectXML();
 	recreateObjects();
 
@@ -1727,7 +1751,13 @@ void PgModelerCliApp::fixModel()
 	printMessage(tr("Saving fixed output model..."));
 	model->saveModel(parsed_opts[Output], SchemaParser::XmlCode);
 
-	printMessage(tr("Model successfully fixed!"));
+	if(!has_fix_log)
+		printMessage(tr("Model successfully fixed!"));
+	else
+	{
+		printMessage(tr("Model fixed with some errors!"));
+		printMessage(tr("Failures registered in log file: %1").arg(fix_log));
+	}
 }
 
 void PgModelerCliApp::loadModel()
