@@ -1,17 +1,18 @@
-v1.0.2
+v1.0.3
 ------
-<em>Release date: March 14, 2023</em><br/>
-<em>Changes since: <strong>v1.0.1</strong></em><br/>
+<em>Release date: March 24, 2023</em><br/>
+<em>Changes since: <strong>v1.0.2</strong></em><br/>
 
 This patch release for pgModeler 1.0.x brings the following changes and fixes:
 
-* Fixed a bug related to importing referenced tables of FKs in partial import mode.
-* Fixed the attributes toggler item border style in partition tables.
-* Fixed a regression that was preventing the canvas color to be changed.
-* Fixed a bug in BaseObjectWidget::finishConfiguration that was preventing the creation of a role and a table with the same names.
-* Fixed the generation of DROP command for policy, trigger, and rule.
-* Fixed a bug that was causing objects to be selected in the sample model at appearance settings.
-* Forcing the usage of Qt 6.x due to problems on Windows when compiling with Qt 5.
-* Minor adjustment in CodeCompletionWidget stylesheet.
-* Saving/restoring the painter settings after drawing the background in ObjectsScene.
-* Fixed a malformed diff code for policies.
+* pgmodeler-cli now logs objects that fail to be recreated in fix process into a log file stored in pgModeler's temp directory.
+* Added a progress bar to model fix form and a cancel button which allows aborting the fix operation without close that form.
+* Added a specific icon for CSV load button in CsvLoadWidget.
+* Added the methods Trigger::getColumns and Trigger::addColumns.
+* Adjusted the behavior of hide and close events of model fix form.
+* Minor adjustment in pgmodeler-cli model fix messages.
+* Refactored TriggerWidget to use an instance of ColumnPickerWidget.
+* Fixed the database model file header validation for huge models in pgmodeler-cli.
+* Fixed a bug in TableDataWidget::generateDataBuffer that was causing the generation of malformed CSV in some circumstances.
+* Fixed the PluginsConfigWidget::initPlugins in such a way to remove the plugins that failed to load from the plugins grid.
+* Fixed a bug in BaseRelationship::canSimulateRelationship11 that was wrongly returning true.
