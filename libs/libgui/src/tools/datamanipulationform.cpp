@@ -52,7 +52,7 @@ DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f):
 	filter_hl->loadConfiguration(GlobalAttributes::getSQLHighlightConfPath());
 
 	code_compl_wgt=new CodeCompletionWidget(filter_txt);
-	code_compl_wgt->configureCompletion(nullptr, filter_hl);
+	code_compl_wgt->configureCompletion(nullptr, filter_hl, "");
 
 	results_tbw->setItemDelegate(new PlainTextItemDelegate(this, false));
 	browse_tabs_tb->setMenu(&fks_menu);
