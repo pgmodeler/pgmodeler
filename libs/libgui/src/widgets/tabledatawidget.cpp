@@ -345,104 +345,124 @@ void TableDataWidget::setAttributes(DatabaseModel *model, PhysicalTable *table)
 
 void TableDataWidget::populateDataGrid(const CsvDocument &csv_doc)
 {
-	try
+	PhysicalTable *table = dynamic_cast<PhysicalTable *>(this->object);
+	QTableWidgetItem *item = nullptr;
+	QStringList columns, aux_cols;
+	QVector<int> invalid_cols;
+	Column *column = nullptr;
+	CsvDocument ini_data_csv;
+
+	QApplication::setOverrideCursor(Qt::WaitCursor);
+	clearRows(false);
+
+	if(!csv_doc.isEmpty())
+		ini_data_csv = csv_doc;
+	else
 	{
-		PhysicalTable *table = dynamic_cast<PhysicalTable *>(this->object);
-		QTableWidgetItem *item = nullptr;
-		QStringList columns, aux_cols;
-		QVector<int> invalid_cols;
-		Column *column = nullptr;
-		CsvDocument ini_data_csv;
-
-		QApplication::setOverrideCursor(Qt::WaitCursor);
-		clearRows(false);
-
-		if(!csv_doc.isEmpty())
-			ini_data_csv = csv_doc;
-		else
+		try
 		{
 			CsvParser csv_parser;
 			csv_parser.setColumnInFirstRow(true);
 			ini_data_csv = csv_parser.parseBuffer(table->getInitialData());
 		}
+		catch(Exception &e)
+		{
+			QApplication::restoreOverrideCursor();
 
-		/* If the initial data buffer is preset the columns
+			Messagebox msgbox;
+			msgbox.show(e,
+									tr("Failed to parse the table's initial data, check the stack trace for more detail. Do you want to dump the data into an external file in order to fix and import them back into the table?"),
+									Messagebox::AlertIcon,
+									Messagebox::YesNoButtons);
+
+			if(msgbox.result() == QDialog::Accepted)
+			{
+				try
+				{
+					GuiUtilsNs::saveFile(table->getInitialData().toUtf8(),
+															 tr("Save CSV to file..."), QFileDialog::AnyFile,
+															 {}, {"text/csv", "application/octet-stream"}, "csv");
+				}
+				catch(Exception &e)
+				{
+					msgbox.show(e);
+				}
+			}
+		}
+	}
+
+	/* If the initial data buffer is preset the columns
 		there have priority over the current table's columns */
-		if(!ini_data_csv.isEmpty())
-			columns = ini_data_csv.getColumnNames();
-		else
-		{
-			for(auto object : *table->getObjectList(ObjectType::Column))
-				columns.push_back(object->getName());
-		}
-
-		data_tbw->setColumnCount(columns.size());
-
-		//Creating the header of the grid
-		int col = 0;
-		for(auto &col_name : columns)
-		{
-			column = table->getColumn(col_name);
-			item = new QTableWidgetItem(col_name);
-
-			/* Marking the invalid columns. The ones which aren't present in the table
-			or were already created in a previous iteration */
-			if(!column || aux_cols.contains(col_name))
-			{
-				invalid_cols.push_back(col);
-
-				if(!column)
-					item->setToolTip(tr("Unknown column"));
-				else
-					item->setToolTip(tr("Duplicated column"));
-			}
-			else
-				item->setToolTip(QString("%1 [%2]").arg(col_name).arg(~column->getType()));
-
-			aux_cols.append(col_name);
-			data_tbw->setHorizontalHeaderItem(col++, item);
-		}
-
-		//Populating the grid with the data
-		for(int row = 0; row < ini_data_csv.getRowCount(); row++)
-		{
-			addRow();
-
-			for(col = 0; col < ini_data_csv.getColumnCount(); col++)
-			{
-				//if(col < columns.size())
-					data_tbw->item(row, col)->setText(ini_data_csv.getValue(row, col));
-			}
-		}
-
-		//Disabling invalid columns avoiding the user interaction
-		if(!invalid_cols.isEmpty())
-		{
-			for(int dis_col : invalid_cols)
-			{
-				for(int row = 0; row < data_tbw->rowCount(); row++)
-					setItemInvalid(data_tbw->item(row, dis_col));
-
-				item=data_tbw->horizontalHeaderItem(dis_col);
-				item->setFlags(Qt::NoItemFlags);
-				item->setForeground(QColor(Qt::red));
-			}
-		}
-
-		alert_frm->setVisible(!invalid_cols.isEmpty());
-		data_tbw->resizeColumnsToContents();
-		data_tbw->resizeRowsToContents();
-
-		add_row_tb->setEnabled(!columns.isEmpty());
-		clear_cols_tb->setEnabled(!columns.isEmpty());
-		configureColumnNamesMenu();
-		QApplication::restoreOverrideCursor();
-	}
-	catch(Exception &e)
+	if(!ini_data_csv.isEmpty())
+		columns = ini_data_csv.getColumnNames();
+	else
 	{
-		QApplication::restoreOverrideCursor();
-		throw Exception(e.getErrorMessage(), e.getErrorCode(), __PRETTY_FUNCTION__, __FILE__, __LINE__, &e);
+		for(auto object : *table->getObjectList(ObjectType::Column))
+			columns.push_back(object->getName());
 	}
+
+	data_tbw->setColumnCount(columns.size());
+
+	//Creating the header of the grid
+	int col = 0;
+	for(auto &col_name : columns)
+	{
+		column = table->getColumn(col_name);
+		item = new QTableWidgetItem(col_name);
+
+		/* Marking the invalid columns. The ones which aren't present in the table
+			or were already created in a previous iteration */
+		if(!column || aux_cols.contains(col_name))
+		{
+			invalid_cols.push_back(col);
+
+			if(!column)
+				item->setToolTip(tr("Unknown column"));
+			else
+				item->setToolTip(tr("Duplicated column"));
+		}
+		else
+			item->setToolTip(QString("%1 [%2]").arg(col_name).arg(~column->getType()));
+
+		aux_cols.append(col_name);
+		data_tbw->setHorizontalHeaderItem(col++, item);
+	}
+
+	//Populating the grid with the data
+	for(int row = 0; row < ini_data_csv.getRowCount(); row++)
+	{
+		addRow();
+
+		for(col = 0; col < ini_data_csv.getColumnCount(); col++)
+		{
+			//if(col < columns.size())
+			data_tbw->item(row, col)->setText(ini_data_csv.getValue(row, col));
+		}
+	}
+
+	//Disabling invalid columns avoiding the user interaction
+	if(!invalid_cols.isEmpty())
+	{
+		for(int dis_col : invalid_cols)
+		{
+			for(int row = 0; row < data_tbw->rowCount(); row++)
+				setItemInvalid(data_tbw->item(row, dis_col));
+
+			item=data_tbw->horizontalHeaderItem(dis_col);
+			item->setFlags(Qt::NoItemFlags);
+			item->setForeground(QColor(Qt::red));
+		}
+	}
+
+	alert_frm->setVisible(!invalid_cols.isEmpty());
+	data_tbw->resizeColumnsToContents();
+	data_tbw->resizeRowsToContents();
+
+	add_row_tb->setEnabled(!columns.isEmpty());
+	clear_cols_tb->setEnabled(!columns.isEmpty());
+	configureColumnNamesMenu();
+	QApplication::restoreOverrideCursor();
+
 }
 
 void TableDataWidget::configureColumnNamesMenu()

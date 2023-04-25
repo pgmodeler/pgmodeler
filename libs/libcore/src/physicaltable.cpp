@@ -21,8 +21,6 @@
 #include "coreutilsns.h"
 #include "csvparser.h"
 
-const QString PhysicalTable::DataLineBreak = QString("%1%2").arg("⸣").arg('\n');
-
 PhysicalTable::PhysicalTable() : BaseTable()
 {
 	gen_alter_cmds=false;
