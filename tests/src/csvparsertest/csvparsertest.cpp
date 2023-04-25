@@ -25,6 +25,7 @@ class CsvParserTest: public QObject {
 		Q_OBJECT
 
 	private slots:
+		void testColumnsInFirstRowAndOneRowUnquotedWithoutLastBreak();
 		void testOneRowWithoutLineBreak();
 		void testRaiseExceptionOnMalformedDocument();
 		void testRaiseExceptionWhenRefInvValue();
@@ -37,6 +38,24 @@ class CsvParserTest: public QObject {
 		void testSaveParsedDocumentToFile();
 		void testRaiseExceptionOnMissingCloseDelim();
 };
+
+void CsvParserTest::testColumnsInFirstRowAndOneRowUnquotedWithoutLastBreak()
+{
+	try
+	{
+		CsvParser csvparser;
+		CsvDocument csvdoc;
+		QString buffer;
+
+		csvparser.setColumnInFirstRow(true);
+		buffer = "col1;col2;col3;col4;col5\n;val2;val3;val4;";
+		csvdoc = csvparser.parseBuffer(buffer);
+	}
+	catch(Exception &e)
+	{
+		QFAIL(e.getExceptionsText().toStdString().c_str());
+	}
+}
 
 void CsvParserTest::testRaiseExceptionWhenRefInvValue()
 {
