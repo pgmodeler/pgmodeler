@@ -35,6 +35,7 @@ const char SchemaParser::CharStartCompExpr='(';
 const char SchemaParser::CharEndCompExpr=')';
 const char SchemaParser::CharValueDelim='"';
 const char SchemaParser::CharValueOf='@';
+const char SchemaParser::CharToXmlEntity='&';
 
 const QString SchemaParser::TokenIf=QString("if");
 const QString SchemaParser::TokenThen=QString("then");
@@ -58,6 +59,7 @@ const QString SchemaParser::TokenMetaPs=QString("ps");
 const QString SchemaParser::TokenMetaHs=QString("hs");
 const QString SchemaParser::TokenMetaAt=QString("at");
 const QString SchemaParser::TokenMetaDs=QString("ds");
+const QString SchemaParser::TokenMetaAm=QString("am");
 
 const QString SchemaParser::TokenEqOper=QString("==");
 const QString SchemaParser::TokenNeOper=QString("!=");
@@ -223,7 +225,7 @@ void SchemaParser::loadFile(const QString &filename)
 	}
 }
 
-QString SchemaParser::getAttribute()
+QString SchemaParser::getAttribute(bool &found_conv_to_xml)
 {
 	QString atrib, current_line;
 	bool start_attrib, end_attrib, error=false;
@@ -231,14 +233,31 @@ QString SchemaParser::getAttribute()
 	//Get the current line from the buffer
 	current_line=buffer[line];
 
-	/* Only start extracting an attribute if it starts with a {
+	/* Only start extracting an attribute if it starts with a { or &{
 		even if the current character is an attribute delimiter */
-	if(current_line[column]!=CharStartAttribute)
+	if((current_line[column] != CharStartAttribute &&
+			current_line[column] != CharToXmlEntity) ||
+
+		 (current_line[column] == CharToXmlEntity &&
+			column + 1 < current_line.length() -  1 &&
+			current_line[column + 1] != CharStartAttribute))
+	{
 		error=true;
+	}
 	else
 	{
-		//Step to the next column in the line
-		column++;
+		//If the starting char is the & we need to move two chars to reach the starting of the attribute name
+		if(current_line[column] == CharToXmlEntity)
+		{
+			found_conv_to_xml = true;
+			column += 2;
+		}
+		//Otherwise move only one char after {
+		else
+		{
+			found_conv_to_xml = false;
+			column++;
+		}
 
 		//Marks the flag indicating start of attribute
 		start_attrib=true;
@@ -452,7 +471,7 @@ bool SchemaParser::isSpecialCharacter(char chr)
 bool SchemaParser::evaluateComparisonExpr()
 {
 	QString curr_line, attrib, value, oper, valid_op_chrs="=!<>fi", extra_error_msg;
-	bool error=false, end_eval=false, expr_is_true=true;
+	bool error = false, end_eval = false, expr_is_true = true, to_xml_entity = false;
 	static QStringList opers = { TokenEqOper, TokenNeOper, TokenGtOper,
 															 TokenLtOper, TokenGtEqOper, TokenLtEqOper };
 
@@ -472,18 +491,19 @@ bool SchemaParser::evaluateComparisonExpr()
 
 			switch(curr_line[column].toLatin1())
 			{
+				case CharToXmlEntity:
 				case CharStartAttribute:
 					/* Extract the attribute (the first element in the expression) only
-			 if the comparison operator and values aren't extracted */
+					 * if the comparison operator and values aren't extracted */
 					if(attrib.isEmpty() && oper.isEmpty() && value.isEmpty())
-						attrib=getAttribute();
+						attrib = getAttribute(to_xml_entity);
 					else
-						error=true;
+						error = true;
 				break;
 
 				case CharValueDelim:
 					/* Extract the value (the last element in the expression) only
-			 if the attribute and operator were extracted */
+					 * if the attribute and operator were extracted */
 					if(value.isEmpty() && !attrib.isEmpty() && !oper.isEmpty())
 					{
 						value+=curr_line[column++];
@@ -522,26 +542,29 @@ bool SchemaParser::evaluateComparisonExpr()
 					else
 					{
 						QVariant left_val, right_val;
+						QString attr_val = to_xml_entity ?
+									UtilsNs::convertToXmlEntities(attributes[attrib]) : attributes[attrib];
+
 						value.remove(CharValueDelim);
 
 						//Evaluating the attribute value against the one captured on the expression without casting
 						if(oper.endsWith('f'))
 						{
-							left_val = QVariant(attributes[attrib].toFloat());
+							left_val = QVariant(attr_val.toFloat());
 							right_val = QVariant(value.toFloat());
 							oper.remove('f');
 							expr_is_true = getExpressionResult<float>(oper, left_val, right_val);
 						}
 						else if(oper.endsWith('i'))
 						{
-							left_val = QVariant(attributes[attrib].toInt());
+							left_val = QVariant(attr_val.toInt());
 							right_val = QVariant(value.toInt());
 							oper.remove('i');
 							expr_is_true = getExpressionResult<int>(oper, left_val, right_val);
 						}
 						else
 						{
-							left_val = QVariant(attributes[attrib]);
+							left_val = QVariant(attr_val);
 							right_val = QVariant(value);
 							expr_is_true = getExpressionResult<QString>(oper, left_val, right_val);
 						}
@@ -592,7 +615,7 @@ bool SchemaParser::evaluateComparisonExpr()
 void SchemaParser::defineAttribute()
 {
 	QString curr_line, attrib, value, new_attrib;
-	bool error=false, end_def=false, use_val_as_name=false;
+	bool error=false, end_def=false, use_val_as_name=false, to_xml_entity = false;
 
 	try
 	{
@@ -613,7 +636,7 @@ void SchemaParser::defineAttribute()
 					{
 						use_val_as_name=true;
 						column++;
-						new_attrib=getAttribute();
+						new_attrib = getAttribute(to_xml_entity);
 					}
 					else
 						error=true;
@@ -623,13 +646,14 @@ void SchemaParser::defineAttribute()
 					error=true;
 				break;
 
+				case CharToXmlEntity:
 				case CharStartAttribute:
 					if(new_attrib.isEmpty())
-						new_attrib=getAttribute();
+						new_attrib = getAttribute(to_xml_entity);
 					else
 					{
 						//Get the attribute in the middle of the value
-						attrib=getAttribute();
+						attrib = getAttribute(to_xml_entity);
 
 						if(attributes.count(attrib)==0 && !ignore_unk_atribs)
 						{
@@ -638,7 +662,8 @@ void SchemaParser::defineAttribute()
 											ErrorCode::UnkownAttribute,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 						}
 
-						value+=attributes[attrib];
+						value += to_xml_entity ?
+									UtilsNs::convertToXmlEntities(attributes[attrib]) : attributes[attrib];
 					}
 				break;
 
@@ -690,7 +715,7 @@ void SchemaParser::defineAttribute()
 void SchemaParser::unsetAttribute()
 {
 	QString curr_line, attrib;
-	bool end_def=false;
+	bool end_def=false, to_xml_entity = false;
 
 	try
 	{
@@ -707,7 +732,7 @@ void SchemaParser::unsetAttribute()
 				break;
 
 				case CharStartAttribute:
-					attrib=getAttribute();
+					attrib = getAttribute(to_xml_entity);
 
 					if(attributes.count(attrib)==0 && !ignore_unk_atribs)
 					{
@@ -729,6 +754,7 @@ void SchemaParser::unsetAttribute()
 					throw Exception(Exception::getErrorMessage(ErrorCode::InvalidSyntax)
 									.arg(filename).arg(getCurrentLine()).arg(getCurrentColumn()),
 									ErrorCode::InvalidSyntax,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+				break;
 			}
 		}
 	}
@@ -740,7 +766,8 @@ void SchemaParser::unsetAttribute()
 bool SchemaParser::evaluateExpression()
 {
 	QString current_line, cond, attrib, prev_cond;
-	bool error=false, end_eval=false, expr_is_true=true, attrib_true=true, comp_true=true;
+	bool error = false, end_eval = false, expr_is_true = true,
+			attrib_true = true, comp_true = true, to_xml_entity = false;
 	unsigned attrib_count=0, and_or_count=0;
 
 	try
@@ -798,8 +825,9 @@ bool SchemaParser::evaluateExpression()
 						and_or_count++;
 				break;
 
+				case CharToXmlEntity:
 				case CharStartAttribute:
-					attrib=getAttribute();
+					attrib = getAttribute(to_xml_entity);
 
 					//Raises an error if the attribute does is unknown
 					if(attributes.count(attrib)==0 && !ignore_unk_atribs)
@@ -898,7 +926,8 @@ QString SchemaParser::translateMetaCharacter(const QString &meta)
 														{ TokenMetaHs, QChar(CharComment) },
 														{ TokenMetaPs, QChar(CharStartConditional) },
 														{ TokenMetaAt, QChar(CharValueOf) },
-														{ TokenMetaDs, UtilsNs::DataSeparator } };
+														{ TokenMetaDs, UtilsNs::DataSeparator },
+														{ TokenMetaAm, QChar(CharToXmlEntity) }};
 
 	if(metas.count(meta)==0)
 	{
@@ -950,10 +979,10 @@ void SchemaParser::ignoreEmptyAttributes(bool ignore)
 QString SchemaParser::getSourceCode(const attribs_map &attribs)
 {
 	QString object_def;
-	unsigned end_cnt, if_cnt;
-	int if_level, prev_if_level;
+	unsigned end_cnt = 0, if_cnt = 0;
+	int if_level = -1, prev_if_level = -1;
 	QString atrib, cond, prev_cond, word, meta;
-	bool error, if_expr;
+	bool error = false, if_expr = false, to_xml_entity = false;
 	char chr;
 	std::vector<bool> vet_expif, vet_tk_if, vet_tk_then, vet_tk_else;
 	std::map<int, std::vector<QString> > if_map, else_map;
@@ -1031,10 +1060,11 @@ QString SchemaParser::getSourceCode(const attribs_map &attribs)
 
 				break;
 
-					//Attribute extraction
+				//Attribute extraction
+				case CharToXmlEntity:
 				case CharStartAttribute:
 				case CharEndAttribute:
-					atrib=getAttribute();
+					atrib = getAttribute(to_xml_entity);
 
 					//Checks if the attribute extracted belongs to the passed list of attributes
 					if(attributes.count(atrib)==0)
@@ -1085,7 +1115,8 @@ QString SchemaParser::getSourceCode(const attribs_map &attribs)
 
 						/* If the parser is not in an if / else, concatenates the value of the attribute
 							directly in definition in sql */
-						object_def+=attributes[atrib];
+						object_def += to_xml_entity ?
+									UtilsNs::convertToXmlEntities(attributes[atrib]) : attributes[atrib];
 					}
 				break;
 
@@ -1145,7 +1176,7 @@ QString SchemaParser::getSourceCode(const attribs_map &attribs)
 							/* When the %set instruction is ignored due to the fact of it being under a if expression evaluated as false
 							 * there's the need to create an empty representation of it in the set of attributes so in further expressions
 							 * evaluations the parser isn't broke by a unknow attribute exception */
-							atrib = getAttribute();
+							atrib = getAttribute(to_xml_entity);
 							if(attributes.count(atrib) == 0)
 								attributes[atrib]="";
 
@@ -1268,8 +1299,8 @@ QString SchemaParser::getSourceCode(const attribs_map &attribs)
 										}
 									}
 
-									//Else, insert the work directly on the object definition
-									object_def+=word;
+									//Else, insert the word directly on the object definition
+									object_def += to_xml_entity ? UtilsNs::convertToXmlEntities(word) : word;
 								}
 								itr++;
 							}
@@ -1321,11 +1352,10 @@ QString SchemaParser::getSourceCode(const attribs_map &attribs)
 
 					//Extraction of pure text or simple words
 				default:
-					if(chr==CharStartPlainText ||
-							chr==CharEndPlainText)
+					if(chr == CharStartPlainText || chr == CharEndPlainText)
 						word=getPlainText();
 					else
-						word=getWord();
+						word = getWord();
 
 					//Case the parser is in 'if/else'
 					if(if_level>=0)

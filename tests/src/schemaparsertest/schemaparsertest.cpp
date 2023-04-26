@@ -27,6 +27,7 @@ class SchemaParserTest: public QObject {
 		void testExpressionEvaluationWithCasts();
 		void testSetOperationInIf();
 		void testSetOperationUnderIfEvaluatedAsFalse();
+		void testConvertAttribsToXmlEntities();
 };
 
 void SchemaParserTest::testExpressionEvaluationWithCasts()
@@ -103,6 +104,26 @@ void SchemaParserTest::testSetOperationUnderIfEvaluatedAsFalse()
 		//out <<  buffer;
 		schparser.loadBuffer(buffer);
 		QCOMPARE(schparser.getSourceCode(attribs) == "", true);
+	}
+	catch(Exception &e)
+	{
+		QFAIL(e.getExceptionsText().toStdString().c_str());
+	}
+}
+
+void SchemaParserTest::testConvertAttribsToXmlEntities()
+{
+	SchemaParser schparser;
+	QString buffer;
+	attribs_map attribs;
+
+	buffer = "%set {attrib} [<obj name=\"test\"/>]\n";
+	buffer+= "&{attrib}\n";
+
+	try
+	{
+		schparser.loadBuffer(buffer);
+		QCOMPARE(schparser.getSourceCode(attribs) == "&lt;obj name=&quot;test&quot;/&lt", true);
 	}
 	catch(Exception &e)
 	{

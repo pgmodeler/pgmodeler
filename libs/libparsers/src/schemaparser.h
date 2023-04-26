@@ -50,7 +50,7 @@ class __libparsers SchemaParser {
 		static const QRegularExpression AttribRegExp;
 
 		//! \brief Get an attribute name from the buffer on the current position
-		QString getAttribute();
+		QString getAttribute(bool &found_conv_to_xml);
 
 		//! \brief Get an conditional instruction from the buffer on the current position
 		QString getConditional();
@@ -162,7 +162,8 @@ class __libparsers SchemaParser {
 		CharStartCompExpr,	//! \brief Character that starts a comparison expression
 		CharEndCompExpr,	//! \brief Character that ends a comparison expression
 		CharValueDelim,	//! \brief Character that delimiters a value (string)
-		CharValueOf;	//! \brief Character that is used on %set instructions to create an attribute name based upon another attribute value
+		CharValueOf,	//! \brief Character that is used on %set instructions to create an attribute name based upon another attribute value
+		CharToXmlEntity;	//! \brief Character that is used on attributes, e.g. &{attribute}, to indicate that their content must be converted to xml entities
 
 		//! \brief Tokens related to conditional instructions and operators
 		static const QString	TokenIf,  // %if
@@ -187,7 +188,8 @@ class __libparsers SchemaParser {
 		TokenMetaHs,// $hs (hash/number sign '#')
 		TokenMetaPs,// $ps (percentage sign '%')
 		TokenMetaAt,// $at (at character '@')
-		TokenMetaDs;// $ds (special data separator character '•')
+		TokenMetaDs,// $ds (special data separator character '•')
+		TokenMetaAm;// $am (ampersand character '&')
 
 		//! \brief Tokens related to comparison expressions
 		static const QString	TokenEqOper,// == (equal)
