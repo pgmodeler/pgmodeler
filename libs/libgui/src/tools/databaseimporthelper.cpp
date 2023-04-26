@@ -570,6 +570,9 @@ void DatabaseImportHelper::importDatabase()
 		dbmodel->setLoadingModel(true);
 		dbmodel->setObjectListsCapacity(creation_order.size());
 
+		cached_names.clear();
+		cached_signatures.clear();
+
 		retrieveSystemObjects();
 		retrieveUserObjects();
 		createObjects();
@@ -2990,7 +2993,6 @@ QString DatabaseImportHelper::getObjectName(const QString &oid, bool signature_f
 {
 	unsigned obj_oid=oid.toUInt();
 	attribs_map obj_attr = getObjectAttributes(obj_oid);
-	static std::map<unsigned, QString> cached_names, cached_signatures;
 
 	if(obj_oid == 0 || obj_attr.empty())
 		return "";
