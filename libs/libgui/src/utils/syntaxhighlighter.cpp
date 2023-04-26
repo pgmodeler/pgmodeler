@@ -49,20 +49,33 @@ SyntaxHighlighter::SyntaxHighlighter(QPlainTextEdit *parent, bool single_line_mo
 		parent->setTabChangesFocus(true);
 		parent->setLineWrapMode(QPlainTextEdit::NoWrap);
 		parent->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-		parent->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+
+		connect(parent, &QPlainTextEdit::textChanged, this, [parent](){
+			// Avoiding pasting code with line breaks when the single line mode is activated
+			QString txt = parent->toPlainText();
+			if(!txt.isEmpty() && txt.contains(QChar::LineFeed))
+			{
+				txt.remove(QChar::LineFeed);
+				parent->blockSignals(true);
+				parent->setPlainText(txt);
+				parent->blockSignals(false);
+			}
+		});
 	}
 }
 
 bool SyntaxHighlighter::eventFilter(QObject *object, QEvent *event)
 {
 	//Filters the ENTER/RETURN avoiding line breaks
-	if(this->single_line_mode &&
-			event->type() == QEvent::KeyPress &&
-			(dynamic_cast<QKeyEvent *>(event)->key()==Qt::Key_Return ||
-			 dynamic_cast<QKeyEvent *>(event)->key()==Qt::Key_Enter))
+	if(this->single_line_mode && event->type() == QEvent::KeyPress)
 	{
-		event->ignore();
-		return true;
+		QKeyEvent *k_event = dynamic_cast<QKeyEvent *>(event);
+
+		if(k_event->key()==Qt::Key_Return || k_event->key()==Qt::Key_Enter)
+		{
+			event->ignore();
+			return true;
+		}
 	}
 
 	/* If the user is about press Control to paste contents or Right mouse button in
