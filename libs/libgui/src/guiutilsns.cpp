@@ -650,6 +650,8 @@ namespace GuiUtilsNs {
 			{
 				return UtilsNs::loadFile(file_dlg.selectedFiles().at(0));
 			}
+
+			return QByteArray();
 		}
 		catch(Exception &e)
 		{
