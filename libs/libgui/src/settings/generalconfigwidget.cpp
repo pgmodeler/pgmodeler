@@ -460,19 +460,12 @@ void GeneralConfigWidget::saveConfiguration()
 			//Checking if the current attribute is a file to be stored in a <session> tag
 			if((itr->first).contains(QRegularExpression(QString("(") + Attributes::File + QString(")([0-9]+)"))))
 			{
-				#warning "Test me!"
-				/* config_params[Attributes::Configuration][Attributes::File]+=
-						XmlParser::convertCharsToXMLEntities(schparser.getSourceCode(file_sch, itr->second)); */
 				config_params[Attributes::Configuration][Attributes::File] +=	schparser.getSourceCode(file_sch, itr->second);
 			}
 			//Checking if the current attribute is a file to be stored in a <recent-models> tag
 			else if(recent_mdl_idx < MaxRecentModels && (itr->first).contains(QRegularExpression(QString("(") + Attributes::Recent + QString(")([0-9]+)"))))
 			{
-				#warning "Test me!"
-				/* config_params[Attributes::Configuration][Attributes::RecentModels]+=
-						XmlParser::convertCharsToXMLEntities(schparser.getSourceCode(file_sch, itr->second)); */
 				config_params[Attributes::Configuration][Attributes::RecentModels] +=	schparser.getSourceCode(file_sch, itr->second);
-
 				recent_mdl_idx++;
 			}
 			else if(itr->first==Attributes::Validator ||
