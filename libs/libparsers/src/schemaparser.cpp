@@ -969,7 +969,6 @@ QString SchemaParser::getSourceCode(const QString & obj_name, attribs_map &attri
 			attribs[Attributes::PgSqlVersion] = pgsql_version;
 		}
 		else
-			#warning "Test me!"
 			filename = GlobalAttributes::getSchemaFilePath(GlobalAttributes::XMLSchemaDir, obj_name);
 
 		//Try to get the object definitin from the specified path

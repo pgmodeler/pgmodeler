@@ -11219,10 +11219,6 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, MetaAttrOptions
 
 				schparser.ignoreUnkownAttributes(true);
 
-				#warning "Test me!"
-				/* objs_def+=XmlParser::convertCharsToXMLEntities(
-										schparser.getSourceCode(GlobalAttributes::getSchemaFilePath(GlobalAttributes::XMLSchemaDir, Attributes::Info),
-																								attribs)); */
 				objs_def +=	schparser.getSourceCode(
 											GlobalAttributes::getSchemaFilePath(GlobalAttributes::XMLSchemaDir,
 																													Attributes::Info), attribs);

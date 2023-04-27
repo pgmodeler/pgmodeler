@@ -575,10 +575,10 @@ void OperationList::undoOperation()
 		Operation *operation=nullptr;
 		bool chain_active=false;
 		Exception error;
-		unsigned chain_size=0, pos=0;
+		//unsigned chain_size=0, pos=0;
 
 		//if(!this->signalsBlocked())
-		chain_size=getChainSize();
+		//chain_size=getChainSize();
 
 		do
 		{
@@ -603,8 +603,8 @@ void OperationList::undoOperation()
 
 			try
 			{
-				if(chain_size > 0 && operation->isOperationValid())
-					pos++;
+				//if(chain_size > 0 && operation->isOperationValid())
+				//	pos++;
 
 				//Executes the undo operation
 				executeOperation(operation, false);
@@ -634,9 +634,9 @@ void OperationList::redoOperation()
 		Operation *operation=nullptr;
 		bool chain_active=false;
 		Exception error;
-		unsigned chain_size=0, pos=0;
+		//unsigned chain_size=0, pos=0;
 
-		chain_size=getChainSize();
+		//chain_size=getChainSize();
 
 		do
 		{
@@ -659,8 +659,8 @@ void OperationList::redoOperation()
 
 			try
 			{
-				if(chain_size > 0 && operation->isOperationValid())
-					pos++;
+				//if(chain_size > 0 && operation->isOperationValid())
+				//	pos++;
 
 				//Executes the redo operation (second argument as 'true')
 				executeOperation(operation, true);
