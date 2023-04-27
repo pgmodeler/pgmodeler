@@ -113,6 +113,8 @@ void SourceCodeWidget::generateSourceCode(int)
 		sqlcode_txt->clear();
 		xmlcode_txt->clear();
 
+		QApplication::setOverrideCursor(Qt::WaitCursor);
+
 		obj_type=object->getObjectType();
 		if(obj_type!=ObjectType::Textbox ||
 				(obj_type==ObjectType::BaseRelationship &&
@@ -173,9 +175,13 @@ void SourceCodeWidget::generateSourceCode(int)
 			disconnect(this->model, nullptr, task_prog_wgt, nullptr);
 			delete task_prog_wgt;
 		}
+
+		QApplication::restoreOverrideCursor();
 	}
 	catch(Exception &e)
 	{
+		QApplication::restoreOverrideCursor();
+
 		if(task_prog_wgt)
 		{
 			task_prog_wgt->close();
