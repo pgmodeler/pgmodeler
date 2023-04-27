@@ -111,6 +111,7 @@ void Messagebox::show(const QString &title, const QString &msg, IconType icon_ty
 						const QString &cancel_lbl, const QString &yes_ico, const QString &no_ico, const QString &cancel_ico)
 {
 	QString icon_name, aux_title=title;
+	QWidgetList btns = { yes_ok_btn, no_btn, cancel_btn, show_errors_tb };
 
 	if(!yes_lbl.isEmpty())
 		yes_ok_btn->setText(yes_lbl);
@@ -141,6 +142,12 @@ void Messagebox::show(const QString &title, const QString &msg, IconType icon_ty
 
 	no_btn->setVisible(buttons==YesNoButtons || buttons==AllButtons);
 	cancel_btn->setVisible(buttons==OkCancelButtons || buttons==AllButtons);
+
+	for(auto &btn : btns)
+	{
+		btn->adjustSize();
+		btn->setMinimumSize(btn->size());
+	}
 
 	if(title.isEmpty())
 	{
@@ -205,11 +212,14 @@ void Messagebox::show(const QString &title, const QString &msg, IconType icon_ty
 
 	double w_factor = 0.25, h_factor = 0.15;
 	QSize sz = screen()->size();
-	setMinimumWidth(sz.width() * w_factor);
+
+	if(sz.width() * w_factor > minimumWidth())
+		setMinimumWidth(sz.width() * w_factor);
+
 	setMinimumHeight(sz.height() * h_factor);
 
 	int ln_cnt = QString(msg).replace(QRegularExpression("(<)(br)(/)?(>)",
-																			QRegularExpression::CaseInsensitiveOption),
+																		QRegularExpression::CaseInsensitiveOption),
 																		QString("\n")).count('\n');
 
 	if(ln_cnt > 0)
