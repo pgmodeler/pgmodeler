@@ -3,10 +3,10 @@
 # Code generation can be broken if incorrect changes are made.
 %if {decl-in-table} %then $tb %end
 
-[<constraint name=] "{name}" [ type=] "{type}"
+[<constraint name=] "&{name}" [ type=] "{type}"
 
 %if {alias} %then
-	$sp alias="{alias}"
+	$sp alias="&{alias}"
 %end
 
 %if {fk-constr} %then
@@ -16,7 +16,7 @@
 	$tb
 	[ upd-action=] "{upd-action}"
 	[ del-action=] "{del-action}"
-	[ ref-table=] "{ref-table}"
+	[ ref-table=] "&{ref-table}"
 %end
 
 
@@ -47,7 +47,7 @@
 %end
 
 %if {table} %then
-	[ table=] "{table}"
+	[ table=] "&{table}"
 %end
 
 > $br
@@ -57,12 +57,12 @@
 %if {decl-in-table} %then $tb %end
 
 %if {src-columns} %then
-	$tb <columns $sp names="{src-columns}" $sp ref-type="src-columns"/> $br
+	$tb <columns $sp names="&{src-columns}" $sp ref-type="src-columns"/> $br
 %end
 
 %if {dst-columns} %then
 	%if {decl-in-table} %then $tb %end
-	$tb <columns $sp names="{dst-columns}" $sp ref-type="dst-columns"/> $br
+	$tb <columns $sp names="&{dst-columns}" $sp ref-type="dst-columns"/> $br
 %end
 
 %if {ex-constr} %then

@@ -2,7 +2,7 @@
 # CAUTION: Do not modify this file unless you know what you are doing.
 # Code generation can be broken if incorrect changes are made.
 
-<procedure [ name=] "{name}"
+<procedure [ name=] "&{name}"
 
 %if {protected} %then [ protected=] "true" %end
 %if {sql-disabled} %then [ sql-disabled=] "true" %end
@@ -17,7 +17,7 @@
 %if {language} %then {language} %end
 
 %if {transform-types} %then
-	$tb [<transform-types names=] "{transform-types}" /> $br
+	$tb [<transform-types names=] "&{transform-types}" /> $br
 %end
 
 %if {config-params} %then
@@ -27,10 +27,10 @@
 %if {parameters} %then {parameters} %end
 
 %if {library} %then
-	$tb [<definition library=] "{library}"
+	$tb [<definition library=] "&{library}"
 
 	%if {symbol} %then
-		[ symbol=] "{symbol}"
+		[ symbol=] "&{symbol}"
 	%end
 
 	/> $br

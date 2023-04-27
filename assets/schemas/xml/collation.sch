@@ -4,10 +4,10 @@
 
 %if {reduced-form} %then $tb %end
 
-<collation [ name=] "{name}"
+<collation [ name=] "&{name}"
 
 %if %not {reduced-form} %then
-	%if {collation} %then [ collation=] "{collation}" %end
+	%if {collation} %then [ collation=] "&{collation}" %end
 	%if {locale} %then [ locale=] "{locale}" %end
 	%if {locale-mod} %then [ locale-mod=] "{locale-mod}" %end
 	%if {encoding} %then [ encoding=] "{encoding}" %end

@@ -1,7 +1,7 @@
 # XML definition for event triggers
 # CAUTION: Do not modify this file unless you know what you are doing.
 # Code generation can be broken if incorrect changes are made.
-[<eventtrigger name=] "{name}"
+[<eventtrigger name=] "&{name}"
 
 %if {event} %then
 	[ event=] "{event}"

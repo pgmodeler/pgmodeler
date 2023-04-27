@@ -1,10 +1,10 @@
 # XML definition for indexes
 # CAUTION: Do not modify this file unless you know what you are doing.
 # Code generation can be broken if incorrect changes are made.
-[<rule name=] "{name}" [ event-type=] "{event-type}" [ exec-type=] "{exec-type}" $br
+[<rule name=] "&{name}" [ event-type=] "{event-type}" [ exec-type=] "{exec-type}" $br
 
 %if {alias} %then
-	$sp alias="{alias}"
+	$sp alias="&{alias}"
 %end
 
 %if {protected} %then
@@ -16,7 +16,7 @@
 %end
 
 #%if {table} %then
-[ table=] "{table}"
+[ table=] "&{table}"
 #%end
 
 > $br

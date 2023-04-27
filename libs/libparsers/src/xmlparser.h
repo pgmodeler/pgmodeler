@@ -90,16 +90,6 @@ class __libparsers XmlParser {
 			PreviousElement
 		};
 
-		static const QString CharAmp, //! \brief & = &amp;
-		CharLt, //! \brief  < = &lt;
-		CharGt, //! \brief  < = &gt;
-		CharQuot, //! \brief  " = &quot;
-		CharApos, //! \brief  ' = &apos;
-		CdataStart, //! \brief Constant that indicates <![CDATA instruction start
-		CdataEnd, //! \brief Constant that indicates <![CDATA instruction end (]]>)
-		CommentStart, //! \brief Constant that indicates xml comments start
-		CommentEnd; //! \brief Constant that indicates xml comments end
-
 		XmlParser();
 		~XmlParser();
 
@@ -168,10 +158,6 @@ class __libparsers XmlParser {
 		/*! \brief Reset all the parser attributes, deallocating the element tree. The user have to
 		 reload the file to analyze it again */
 		void restartParser();
-
-		/*! \brief Converts any chars (operators) < > " to the respective XML entities.
-		 * This method will not convert chars between XML comments <!-- --> as well <![CDATA ]]> entity */
-		static QString convertCharsToXMLEntities(QString buf);
 };
 
 #endif

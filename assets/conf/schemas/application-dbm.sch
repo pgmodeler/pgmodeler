@@ -3,7 +3,7 @@
 $tb [<mime-type type="application/dbm">]
 
 $tb [<comment>pgModeler Database Model</comment>] $br
-$tb [<icon name=] "{icon}" [/>] $br
+$tb [<icon name=] "&{icon}" [/>] $br
 $tb [<glob-deleteall/>] $br
 $tb [<glob pattern="*.dbm"/>] $br
 $tb [</mime-type>] $br

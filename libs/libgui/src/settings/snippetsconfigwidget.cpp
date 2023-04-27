@@ -462,8 +462,10 @@ void SnippetsConfigWidget::saveConfiguration()
 
 			for(auto &snip : snippets)
 			{
-				attribs[Attributes::Snippet]+=
-						XmlParser::convertCharsToXMLEntities(schparser.getSourceCode(snippet_sch, snip));
+				#warning "Test me!"
+				/* attribs[Attributes::Snippet]+=
+						XmlParser::convertCharsToXMLEntities(schparser.getSourceCode(snippet_sch, snip)); */
+				attribs[Attributes::Snippet] +=	schparser.getSourceCode(snippet_sch, snip);
 			}
 		}
 

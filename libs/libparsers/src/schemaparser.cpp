@@ -465,7 +465,8 @@ bool SchemaParser::isSpecialCharacter(char chr)
 {
 	return chr==CharStartAttribute || chr==CharEndAttribute ||
 			chr==CharStartConditional || chr==CharStartMetachar ||
-			chr==CharStartPlainText || chr==CharEndPlainText;
+			chr==CharStartPlainText || chr==CharEndPlainText ||
+			chr==CharToXmlEntity;
 }
 
 bool SchemaParser::evaluateComparisonExpr()
@@ -545,6 +546,7 @@ bool SchemaParser::evaluateComparisonExpr()
 						QString attr_val = to_xml_entity ?
 									UtilsNs::convertToXmlEntities(attributes[attrib]) : attributes[attrib];
 
+						to_xml_entity = false;
 						value.remove(CharValueDelim);
 
 						//Evaluating the attribute value against the one captured on the expression without casting
@@ -662,8 +664,8 @@ void SchemaParser::defineAttribute()
 											ErrorCode::UnkownAttribute,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 						}
 
-						value += to_xml_entity ?
-									UtilsNs::convertToXmlEntities(attributes[attrib]) : attributes[attrib];
+						value += to_xml_entity ? UtilsNs::convertToXmlEntities(attributes[attrib]) : attributes[attrib];
+						to_xml_entity = false;
 					}
 				break;
 
@@ -945,7 +947,7 @@ QString SchemaParser::getSourceCode(const QString & obj_name, attribs_map &attri
 	{
 		QString filename;
 
-		if(def_type==SqlCode)
+		/* if(def_type==SqlCode)
 		{
 			//Formats the filename
 			filename = GlobalAttributes::getSchemaFilePath(GlobalAttributes::SQLSchemaDir, obj_name);
@@ -957,8 +959,21 @@ QString SchemaParser::getSourceCode(const QString & obj_name, attribs_map &attri
 		else
 		{
 			filename = GlobalAttributes::getSchemaFilePath(GlobalAttributes::XMLSchemaDir, obj_name);
+			#warning "Fix me!"
 			return XmlParser::convertCharsToXMLEntities(getSourceCode(filename, attribs));
+		} */
+
+		if(def_type == SqlCode)
+		{
+			filename = GlobalAttributes::getSchemaFilePath(GlobalAttributes::SQLSchemaDir, obj_name);
+			attribs[Attributes::PgSqlVersion] = pgsql_version;
 		}
+		else
+			#warning "Test me!"
+			filename = GlobalAttributes::getSchemaFilePath(GlobalAttributes::XMLSchemaDir, obj_name);
+
+		//Try to get the object definitin from the specified path
+		return getSourceCode(filename, attribs);
 	}
 	catch(Exception &e)
 	{
@@ -1032,9 +1047,6 @@ QString SchemaParser::getSourceCode(const attribs_map &attribs)
 					else
 					{
 						//Converting the metacharacter drawn to the character that represents this
-						//chr=translateMetaCharacter(meta);
-						//meta="";
-						//meta+=chr;
 						meta = translateMetaCharacter(meta);
 
 						//If the parser is inside an 'if / else' extracting tokens
@@ -1085,16 +1097,18 @@ QString SchemaParser::getSourceCode(const attribs_map &attribs)
 						//If the parser evaluated the 'if' conditional and is inside the current if block
 						if(!(!if_expr && vet_tk_if[if_level] && !vet_tk_then[if_level]))
 						{
-							word=atrib;
-							atrib="";
-							atrib+=CharStartAttribute;
-							atrib+=word;
-							atrib+=CharEndAttribute;
+							word = atrib;
+							atrib = "";
+
+							if(to_xml_entity)
+								atrib += CharToXmlEntity;
+
+							atrib += CharStartAttribute;
+							atrib += word;
+							atrib += CharEndAttribute;
 
 							//If the parser is in the 'if' section
-							if(vet_tk_if[if_level] &&
-									vet_tk_then[if_level] &&
-									!vet_tk_else[if_level])
+							if(vet_tk_if[if_level] &&	vet_tk_then[if_level] &&	!vet_tk_else[if_level])
 								//Inserts the attribute value in the map of the words of current the 'if' section
 								if_map[if_level].push_back(atrib);
 							else if(vet_tk_else[if_level])
@@ -1115,8 +1129,8 @@ QString SchemaParser::getSourceCode(const attribs_map &attribs)
 
 						/* If the parser is not in an if / else, concatenates the value of the attribute
 							directly in definition in sql */
-						object_def += to_xml_entity ?
-									UtilsNs::convertToXmlEntities(attributes[atrib]) : attributes[atrib];
+						object_def += to_xml_entity ? UtilsNs::convertToXmlEntities(attributes[atrib]) : attributes[atrib];
+						to_xml_entity = false;
 					}
 				break;
 
@@ -1283,11 +1297,17 @@ QString SchemaParser::getSourceCode(const attribs_map &attribs)
 									word=(*itr);
 
 									//Check if the word is not an attribute
-									if(!word.isEmpty() && word.startsWith(CharStartAttribute) && word.endsWith(CharEndAttribute))
+									if(!word.isEmpty() &&
+										 (word.startsWith(CharStartAttribute) ||
+											word.startsWith(CharToXmlEntity)) &&
+										 word.endsWith(CharEndAttribute))
 									{
 										//If its an attribute, extracts the name between { } and checks if the same has empty value
-										atrib=word.mid(1, word.size()-2);
-										word=attributes[atrib];
+										bool conv_entity = word.startsWith(CharToXmlEntity);
+										int pos = conv_entity ? 2 : 1;
+
+										atrib = word.mid(pos, word.size() - (pos + 1));
+										word = conv_entity ? UtilsNs::convertToXmlEntities(attributes[atrib]) : attributes[atrib];
 
 										/* If the attribute has no value set and parser must not ignore empty values
 										raises an exception */
@@ -1300,7 +1320,9 @@ QString SchemaParser::getSourceCode(const attribs_map &attribs)
 									}
 
 									//Else, insert the word directly on the object definition
-									object_def += to_xml_entity ? UtilsNs::convertToXmlEntities(word) : word;
+									//object_def += to_xml_entity ? UtilsNs::convertToXmlEntities(word) : word;
+									//to_xml_entity = false;
+									object_def += word;
 								}
 								itr++;
 							}
