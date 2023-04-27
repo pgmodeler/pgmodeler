@@ -1204,10 +1204,10 @@ void RelationshipView::configureLine()
 		for semantics purposes shows the type of this relationship as "Relationship" unlike "Link" */
 		if(rel_type==BaseRelationship::RelationshipFk)
 			tool_tip=base_rel->getName(true) +
-					 QString(" (") + BaseObject::getTypeName(ObjectType::Relationship) + QString(")");
+					 " (" + BaseObject::getTypeName(ObjectType::Relationship) + ")";
 		else
 			tool_tip=base_rel->getName(true) +
-					 QString(" (") + base_rel->getTypeName() + QString(")");
+					 " (" + base_rel->getTypeName() + ")";
 
 		tool_tip += QString("\nId: %1\n").arg(base_rel->getObjectId()) +
 								TableObjectView::ConstrDelimStart +

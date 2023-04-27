@@ -276,7 +276,7 @@ void SchemaView::configureObject()
 		this->setVisible(scene && scene->isLayersActive(schema->getLayers()));
 
 		this->setToolTip(schema->getName(true) +
-										 QString(" (") + schema->getTypeName() + QString(")") +
+										 " (" + schema->getTypeName() + ")" +
 										 QString("\nId: %1").arg(schema->getObjectId()));
 		sch_name->setToolTip(this->toolTip());
 
