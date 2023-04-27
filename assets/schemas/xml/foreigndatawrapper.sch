@@ -6,13 +6,13 @@
 	$tb
 %end
 
-[<foreigndatawrapper name=] "{name}"
+[<foreigndatawrapper name=] "&{name}"
 
 %if {reduced-form} %then
 	/> $br
 %else
 	%if {options} %then
-		[ options=] "{options}"
+		[ options=] "&{options}"
 	%end
 
 	%if {protected} %then

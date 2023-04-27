@@ -32,7 +32,7 @@ $sp ext-attribs-per-page="{ext-attribs-per-page}"
 [/>] $br
 
 $br $tb <code
-$sp font="{font}" 
+$sp font="&{font}" 
 $sp font-size="{font-size}"
 $sp tab-width="{tab-width}" $br
 {spc} display-line-numbers=" %if {display-line-numbers} %then true %else false %end "

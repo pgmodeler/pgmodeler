@@ -4,9 +4,9 @@
 [<opclass ]
 
 %if {reduced-form} %then
-	[ signature=] "{signature}"
+	[ signature=] "&{signature}"
 %else
-	[ name=] "{name}"
+	[ name=] "&{name}"
 %end
 
 %if {reduced-form} %then

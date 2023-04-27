@@ -2,10 +2,10 @@
 # CAUTION: Do not modify this file unless you know what you are doing.
 # Code generation can be broken if incorrect changes are made.
 
-[<index name=] "{name}" [ table=] "{table}"
+[<index name=] "&{name}" [ table=] "&{table}"
 
 %if {alias} %then
-	$sp alias="{alias}"
+	$sp alias="&{alias}"
 %end
 
 $br $tb
@@ -40,7 +40,7 @@ $br $tb
 %end
 
 %if {include-cols} %then
-	$tb [<columns names="] {include-cols} ["/>] $br
+	$tb [<columns names="] &{include-cols} ["/>] $br
 %end
 
 </index> $br $br

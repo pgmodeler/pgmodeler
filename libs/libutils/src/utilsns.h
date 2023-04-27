@@ -29,6 +29,16 @@
 #include <QString>
 
 namespace UtilsNs {
+	static const QString EntityAmp("&amp;");
+
+	static const QString EntityLt("&lt;");
+
+	static const QString EntityGt("&gt;");
+
+	static const QString EntityQuot("&quot;");
+
+	static const QString EntityApos("&apos;");
+
 	//! \brief Default char for data/value separator for special usage
 	static const QString DataSeparator("•");
 
@@ -57,6 +67,9 @@ namespace UtilsNs {
 	/*! \brief Read the contents of the file specified by its filename returning its contents.
 	 * Raises an exception in case of the file couldn,t be open */
 	extern __libutils QByteArray loadFile(const QString &filename);
+
+	//! \brief Converts any chars (operators) < > " to the respective XML entities.
+	extern __libutils QString convertToXmlEntities(QString value);
 }
 
 #endif

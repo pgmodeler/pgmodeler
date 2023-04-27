@@ -21,6 +21,7 @@
 #include "widgets/customsqlwidget.h"
 #include "baseform.h"
 #include "settings/generalconfigwidget.h"
+#include "utilsns.h"
 
 BaseObjectWidget::BaseObjectWidget(QWidget *parent, ObjectType obj_type): QWidget(parent)
 {
@@ -507,11 +508,11 @@ void BaseObjectWidget::configureFormLayout(QGridLayout *grid, ObjectType obj_typ
 QString BaseObjectWidget::generateVersionsInterval(unsigned ver_interv_id, const QString &ini_ver, const QString &end_ver)
 {
 	if(ver_interv_id==UntilVersion && !ini_ver.isEmpty())
-		return (XmlParser::CharLt + QString("= ") + ini_ver);
+		return (UtilsNs::EntityLt + "= " + ini_ver);
 	else if(ver_interv_id==VersionsInterval && !ini_ver.isEmpty() && !end_ver.isEmpty())
-		return (XmlParser::CharGt + QString("= ") + ini_ver + XmlParser::CharAmp + XmlParser::CharLt + QString("= ") + end_ver);
+		return (UtilsNs::EntityGt + "= " + ini_ver + UtilsNs::EntityAmp + UtilsNs::EntityLt + "= " + end_ver);
 	else if(ver_interv_id==AfterVersion &&  !ini_ver.isEmpty())
-		return (XmlParser::CharGt + QString("= ") + ini_ver);
+		return (UtilsNs::EntityGt + "= " + ini_ver);
 	else
 		return "";
 }

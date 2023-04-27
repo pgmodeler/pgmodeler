@@ -18,6 +18,7 @@
 
 #include <QtTest/QtTest>
 #include "xmlparser.h"
+#include "utilsns.h"
 
 class XmlParserTest: public QObject {
 	private:
@@ -35,7 +36,7 @@ void XmlParserTest::correctlyConvertJsonValsToXmlEntites()
 
 	try
 	{
-		result = XmlParser::convertCharsToXMLEntities(value);
+		result = UtilsNs::convertToXmlEntities(value);
 		QCOMPARE(result, expected);
 	}
 	catch(Exception &e)

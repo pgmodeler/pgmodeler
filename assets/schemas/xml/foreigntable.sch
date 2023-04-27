@@ -1,9 +1,9 @@
 # XML definition for tables
 # CAUTION: Do not modify this file unless you know what you are doing.
 # Code generation can be broken if incorrect changes are made.
-[<foreigntable name=] "{name}"
+[<foreigntable name=] "&{name}"
 %if {layers} %then [ layers=]"{layers}" %end
-%if {alias} %then [ alias=]"{alias}" %end
+%if {alias} %then [ alias=]"&{alias}" %end
 %if {gen-alter-cmds} %then [ gen-alter-cmds="true"] %end
 %if {protected} %then [ protected=] "true" %end
 %if {sql-disabled} %then [ sql-disabled=] "true" %end
@@ -13,7 +13,7 @@
 %if {ext-attribs-page} %then [ ext-attribs-page=] "{ext-attribs-page}" %end
 %if {faded-out} %then [ faded-out=] "true" %end
 %if {max-obj-count} %then [ max-obj-count=] "{max-obj-count}" %end
-%if {options} %then [ options=] "{options}" %end
+%if {options} %then [ options=] "&{options}" %end
 %if {z-value} %then [ z-value=] "{z-value}" %end
 > $br
 

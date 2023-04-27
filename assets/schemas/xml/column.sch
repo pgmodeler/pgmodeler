@@ -1,10 +1,10 @@
 # XML definition for columns
 # CAUTION: Do not modify this file unless you know what you are doing.
 # Code generation can be broken if incorrect changes are made.
-$tb [<column name=] "{name}"
+$tb [<column name=] "&{name}"
 
 %if {alias} %then
-	$sp alias="{alias}"
+	$sp alias="&{alias}"
 %end
 
 %if {not-null} %then
@@ -12,7 +12,7 @@ $tb [<column name=] "{name}"
 %end
 
 %if {default-value} %and %not {sequence} %then
-	[ default-value=] "{default-value}"
+	[ default-value=] "&{default-value}"
 
 	%if {generated} %then
 		[ generated=] "true"
@@ -20,7 +20,7 @@ $tb [<column name=] "{name}"
 %end
 
 %if {sequence} %then
-	[ sequence=] "{sequence}"
+	[ sequence=] "&{sequence}"
 %end
 
 %if {identity-type} %then
