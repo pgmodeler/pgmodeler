@@ -4,21 +4,21 @@
 
 %if {reduced-form} %then $tb %end
 
-[<foreignserver name=] "{name}"
+[<foreignserver name=] "&{name}"
 
 %if {reduced-form} %then
 	/> $br
 %else
 	%if {type} %then
-		[ type=] "{type}"
+		[ type=] "&{type}"
 	%end
 
 	%if {version} %then
-		[ version=] "{version}"
+		[ version=] "&{version}"
 	%end
 
 	%if {options} %then
-		[ options=] "{options}"
+		[ options=] "&{options}"
 	%end
 
 	%if {protected} %then

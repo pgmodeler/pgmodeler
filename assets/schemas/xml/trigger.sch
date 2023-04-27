@@ -1,10 +1,10 @@
 # XML definition for triggers
 # CAUTION: Do not modify this file unless you know what you are doing.
 # Code generation can be broken if incorrect changes are made.
-[<trigger name=] "{name}"
+[<trigger name=] "&{name}"
 
 %if {alias} %then
-	$sp alias="{alias}"
+	$sp alias="&{alias}"
 %end
 
 [ firing-type=] "{firing-type}"
@@ -19,7 +19,7 @@ $br $tb
 [ trunc-event=] %if {trunc-event} %then "true" %else "false" %end
 
 %if {arguments} %then
-	[ arguments=] "{arguments}"
+	[ arguments=] "&{arguments}"
 %end
 
 %if {deferrable} %then
@@ -30,14 +30,14 @@ $br $tb
 %end
 
 %if {ref-table} %then
-	[ ref-table=] "{ref-table}"
+	[ ref-table=] "&{ref-table}"
 %end
 
 %if {protected} %then
 	[ protected=] "true"
 %end
 
-$br $tb [ table=] "{table}"
+$br $tb [ table=] "&{table}"
 
 
 %if {sql-disabled} %then
@@ -46,8 +46,8 @@ $br $tb [ table=] "{table}"
 
 %if {old-table-name} %or {new-table-name} %then
 	$br $tb
-	%if {old-table-name} %then [ old-table-name=] "{old-table-name}" %end
-	%if {new-table-name} %then [ new-table-name=] "{new-table-name}" %end
+	%if {old-table-name} %then [ old-table-name=] "&{old-table-name}" %end
+	%if {new-table-name} %then [ new-table-name=] "&{new-table-name}" %end
 %end
 
 > $br
@@ -64,7 +64,7 @@ $tb {trigger-func}
 
 %if {columns} %then
 	%if {decl-in-table} %then $tb %end
-	$tb [<columns ] names="{columns}"/> $br
+	$tb [<columns ] names="&{columns}"/> $br
 %end
 
 </trigger> $br $br

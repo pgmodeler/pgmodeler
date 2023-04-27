@@ -4,10 +4,10 @@
 
 %set {space} $br $tb $tb
 
-$tb [<info object=] "{name}" [ type=] "{type}"
+$tb [<info object=] "&{name}" [ type=] "{type}"
 
 %if {tag} %then
-	[ tag=] "{tag}"
+	[ tag=] "&{tag}"
 %end
 
 %if {protected} %or {sql-disabled} %then
@@ -18,7 +18,7 @@ $tb [<info object=] "{name}" [ type=] "{type}"
 
 %if {author} %or {last-position} %or {last-zoom} %then
 	{space}
-	%if {author} %then [ author=] "{author}" %end
+	%if {author} %then [ author=] "&{author}" %end
 	%if {last-position} %then [ last-position=] "{last-position}" %end
 	%if {last-zoom} %then [ last-zoom=] "{last-zoom}" %end
 %end
@@ -31,22 +31,22 @@ $tb [<info object=] "{name}" [ type=] "{type}"
 
 %if {default-schema} %or {default-owner} %then
 	{space}
-	%if {default-schema} %then [ default-schema=] "{default-schema}" %end
-	%if {default-owner} %then [ default-owner=] "{default-owner}" %end
+	%if {default-schema} %then [ default-schema=] "&{default-schema}" %end
+	%if {default-owner} %then [ default-owner=] "&{default-owner}" %end
 %end
 
 %if {default-collation} %or {default-tablespace} %then
 	{space}
-	%if {default-collation} %then [ default-collation=] "{default-collation}" %end
-	%if {default-tablespace} %then [ default-tablespace=] "{default-tablespace}" %end
+	%if {default-collation} %then [ default-collation=] "&{default-collation}" %end
+	%if {default-tablespace} %then [ default-tablespace=] "&{default-tablespace}" %end
 %end
 
 %if {src-table} %then
-	{space} [ src-table=] "{src-table}" [ src-type=] "{src-type}"
+	{space} [ src-table=] "&{src-table}" [ src-type=] "{src-type}"
 %end
 
 %if {dst-table} %then
-	{space} [ dst-table=] "{dst-table}" [ dst-type=] "{dst-type}"
+	{space} [ dst-table=] "&{dst-table}" [ dst-type=] "{dst-type}"
 %end
 
 %if {custom-color} %or {rect-visible} %then
@@ -63,8 +63,8 @@ $tb [<info object=] "{name}" [ type=] "{type}"
 
 %if {alias} %then
 	{space}
-	%if {alias} %then [ alias=] "{alias}" %end
-	%if {table} %then [ table=] "{table}" %end
+	%if {alias} %then [ alias=] "&{alias}" %end
+	%if {table} %then [ table=] "&{table}" %end
 %end
 
 %if {z-value} %then
@@ -72,7 +72,7 @@ $tb [<info object=] "{name}" [ type=] "{type}"
 %end
 
 %if {layers} %then
-	{space} [ layers]="{layers}"
+	{space} [ layers]="&{layers}"
 %end
 
 %if {active-layers} %then

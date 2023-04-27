@@ -316,20 +316,12 @@ namespace GuiUtilsNs {
 		if(!widget)
 			return;
 
-		QSize min_size=widget->minimumSize();
 		int max_h = 0, curr_w =0, curr_h = 0;
-		QScreen *screen=qApp->primaryScreen();
-		/* double dpi_factor = 0;
-		double pixel_ratio = 0;
+		QScreen *screen = qApp->primaryScreen();
+		QSize min_size = widget->minimumSize(),
+				screen_sz = screen->size();
 
-		dpi_factor = screen->logicalDotsPerInch() / 96.0;
-		pixel_ratio = screen->devicePixelRatio(); */
-
-		//If the dpi_factor is unchanged (1) we keep the dialog original dimension
-		/* if(dpi_factor <= 1.01)
-			return; */
-
-		max_h = screen->size().height() * 0.70;
+		max_h = screen_sz.height() * 0.70;
 
 		/* If the widget's minimum size is zero then we need to do
 				a size adjustment on the widget prior to insert it into the dialog */
@@ -353,15 +345,15 @@ namespace GuiUtilsNs {
 		/* curr_w *= dpi_factor * pixel_ratio;
 		curr_h *= dpi_factor * pixel_ratio; */
 
-		if(curr_w > screen->size().width())
-			curr_w = screen->size().width() * 0.80;
+		if(curr_w > screen_sz.width())
+			curr_w = screen_sz.width() * 0.80;
 
-		if(curr_h > screen->size().height())
-			curr_h = screen->size().height() * 0.80;
+		if(curr_h > screen_sz.height())
+			curr_h = screen_sz.height() * 0.80;
 
 		widget->setMinimumSize(widget->minimumSize());
 		widget->resize(curr_w, curr_h);
-		widget->adjustSize();
+		//widget->adjustSize();
 	}
 
 	void bulkDataEdit(QTableWidget *results_tbw)

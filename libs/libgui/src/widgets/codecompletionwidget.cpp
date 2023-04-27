@@ -813,7 +813,7 @@ bool CodeCompletionWidget::updateObjectsList()
 
 	try
 	{
-		QApplication::setOverrideCursor(Qt::WaitCursor);
+		qApp->setOverrideCursor(Qt::WaitCursor);
 
 		bool cols_retrieved = false, objs_retrieved = false;
 
@@ -824,13 +824,13 @@ bool CodeCompletionWidget::updateObjectsList()
 		if(!cols_retrieved)
 			objs_retrieved = retrieveObjectNames();
 
-		QApplication::restoreOverrideCursor();
+		qApp->restoreOverrideCursor();
 
 		return cols_retrieved || objs_retrieved;
 	}
 	catch(Exception &e)
 	{
-		QApplication::restoreOverrideCursor();
+		qApp->restoreOverrideCursor();
 		QTextStream out(stdout);
 		out << e.getExceptionsText() << Qt::endl;
 		return false;

@@ -360,7 +360,7 @@ void SchemaEditorForm::indentAll()
 {
 	SourceEditorWidget *editor = nullptr;
 
-	QApplication::setOverrideCursor(Qt::WaitCursor);
+	qApp->setOverrideCursor(Qt::WaitCursor);
 
 	for(int tab = 0; tab < editors_tbw->count(); tab++)
 	{
@@ -368,12 +368,12 @@ void SchemaEditorForm::indentAll()
 		editor->indent_tb->click();
 	}
 
-	QApplication::restoreOverrideCursor();
+	qApp->restoreOverrideCursor();
 }
 
 void SchemaEditorForm::saveAll()
 {
-	QApplication::setOverrideCursor(Qt::WaitCursor);
+	qApp->setOverrideCursor(Qt::WaitCursor);
 
 	for(int tab = 0; tab < editors_tbw->count(); tab++)
 	{
@@ -391,7 +391,7 @@ void SchemaEditorForm::saveAll()
 		}
 	}
 
-	QApplication::restoreOverrideCursor();
+	qApp->restoreOverrideCursor();
 }
 
 void SchemaEditorForm::closeAll()
@@ -406,12 +406,12 @@ void SchemaEditorForm::closeAll()
 			return;
 	}
 
-	QApplication::setOverrideCursor(Qt::WaitCursor);
+	qApp->setOverrideCursor(Qt::WaitCursor);
 
 	while(editors_tbw->count() > 0)
 		closeEditorTab(0, false);
 
-	QApplication::restoreOverrideCursor();
+	qApp->restoreOverrideCursor();
 }
 
 QStringList SchemaEditorForm::showFileDialog(bool save_mode)
@@ -478,16 +478,16 @@ void SchemaEditorForm::loadFiles(const QStringList &filenames)
 {
 	try
 	{
-		QApplication::setOverrideCursor(Qt::WaitCursor);
+		qApp->setOverrideCursor(Qt::WaitCursor);
 
 		for(auto &file : filenames)
 			addEditorTab(file);
 
-		QApplication::restoreOverrideCursor();
+		qApp->restoreOverrideCursor();
 	}
 	catch(Exception &e)
 	{
-		QApplication::restoreOverrideCursor();
+		qApp->restoreOverrideCursor();
 		throw Exception(e.getErrorMessage(), e.getErrorCode(), __PRETTY_FUNCTION__, __FILE__, __LINE__, &e);
 	}
 }

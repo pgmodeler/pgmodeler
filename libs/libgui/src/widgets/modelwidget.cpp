@@ -748,7 +748,7 @@ bool ModelWidget::eventFilter(QObject *object, QEvent *event)
 				panning_mode = true;
 
 				//Forcing the closed hand cursor because the default behavior of panning mode in QGraphicsView is to set an open hand cursor
-				QApplication::setOverrideCursor(Qt::ClosedHandCursor);
+				qApp->setOverrideCursor(Qt::ClosedHandCursor);
 			}
 
 			QPointF pos = m_event->lastScreenPos() - m_event->screenPos();
@@ -769,8 +769,8 @@ bool ModelWidget::eventFilter(QObject *object, QEvent *event)
 		{
 			startPanningMove();
 			viewport->setDragMode(QGraphicsView::ScrollHandDrag);
-			QApplication::restoreOverrideCursor();
-			QApplication::setOverrideCursor(Qt::OpenHandCursor);
+			qApp->restoreOverrideCursor();
+			qApp->setOverrideCursor(Qt::OpenHandCursor);
 			return true;
 		}
 		//Deactivating the panning mode
@@ -780,8 +780,8 @@ bool ModelWidget::eventFilter(QObject *object, QEvent *event)
 			viewport->setDragMode(QGraphicsView::NoDrag);
 			finishPanningMove();
 
-			QApplication::restoreOverrideCursor();
-			QApplication::restoreOverrideCursor();
+			qApp->restoreOverrideCursor();
+			qApp->restoreOverrideCursor();
 			return true;
 		}
 	}
@@ -1604,7 +1604,7 @@ void ModelWidget::convertRelationship1N()
 			columns.push_back(column);
 		}
 
-		QApplication::setOverrideCursor(Qt::WaitCursor);
+		qApp->setOverrideCursor(Qt::WaitCursor);
 		op_list->startOperationChain();
 
 		db_model->storeSpecialObjectsXML();
@@ -1663,12 +1663,12 @@ void ModelWidget::convertRelationship1N()
 		op_list->registerObject(fk_rel, Operation::ObjModified);
 		op_list->finishOperationChain();
 
-		QApplication::restoreOverrideCursor();
+		qApp->restoreOverrideCursor();
 		emit s_objectCreated();
 	}
 	catch(Exception &e)
 	{
-		QApplication::restoreOverrideCursor();
+		qApp->restoreOverrideCursor();
 
 		if(op_count < op_list->getCurrentSize())
 		{
@@ -2284,7 +2284,7 @@ void ModelWidget::moveToSchema()
 
 	try
 	{
-		QApplication::setOverrideCursor(Qt::WaitCursor);
+		qApp->setOverrideCursor(Qt::WaitCursor);
 
 		op_list->startOperationChain();
 
@@ -2326,11 +2326,11 @@ void ModelWidget::moveToSchema()
 
 		emit s_objectModified();
 
-		QApplication::restoreOverrideCursor();
+		qApp->restoreOverrideCursor();
 	}
 	catch(Exception &e)
 	{
-		QApplication::restoreOverrideCursor();
+		qApp->restoreOverrideCursor();
 
 		if(op_id >=0 && op_id > op_curr_idx)
 			op_list->removeLastOperation();
@@ -2344,10 +2344,10 @@ void ModelWidget::updateObjectsLayers()
 	if(!layers_wgt->isLayersChanged())
 		return;
 
-	QApplication::setOverrideCursor(Qt::WaitCursor);
+	qApp->setOverrideCursor(Qt::WaitCursor);
 	scene->updateActiveLayers();
 	db_model->setObjectsModified({ ObjectType::Schema });
-	QApplication::restoreOverrideCursor();
+	qApp->restoreOverrideCursor();
 }
 
 void ModelWidget::changeOwner()
@@ -3231,7 +3231,7 @@ void ModelWidget::removeObjects(bool cascade)
 		//If the user confirmed the removal or its a cut operation
 		if(msg_box.result()==QDialog::Accepted || ModelWidget::cut_operation)
 		{
-			QApplication::setOverrideCursor(Qt::WaitCursor);
+			qApp->setOverrideCursor(Qt::WaitCursor);
 
 			try
 			{
@@ -3501,7 +3501,7 @@ void ModelWidget::removeObjects(bool cascade)
 			/* In case of any object removal we clear the copied objects list in order to avoid
 			 * segfaults when trying to paste an object that was removed previously */
 			copied_objects.clear();
-			QApplication::restoreOverrideCursor();
+			qApp->restoreOverrideCursor();
 		}
 	}
 }

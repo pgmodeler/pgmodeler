@@ -52,15 +52,15 @@ $tb [<configuration pgmodeler-ver="] {pgmodeler-ver} ["] $br
 {spc} [hide-obj-shadows="] %if {hide-obj-shadows} %then true %else false %end ["] $br
 
 %if {source-editor-app} %then
-	{spc} [source-editor-app="] {source-editor-app} ["] $br
+	{spc} [source-editor-app="] &{source-editor-app} ["] $br
 %end
 
 %if {source-editor-app} %and {source-editor-args} %then
-	{spc} [source-editor-args="] {source-editor-args} ["] $br
+	{spc} [source-editor-args="] &{source-editor-args} ["] $br
 %end
 
 %if {ui-language} %then
-	{spc} [ui-language="] {ui-language} ["] $br
+	{spc} [ui-language="] &{ui-language} ["] $br
 %end
 
 $tb /> $br

@@ -8,7 +8,7 @@
 [-->] $br
 <dbmodel [ pgmodeler-ver=] "{pgmodeler-ver}" [ use-changelog]= "{use-changelog}"
 
-%if {author} %then [ author=] "{author}" %end
+%if {author} %then [ author=] "&{author}" %end
 
 %if {protected} %then
 	[ protected=] "true"
@@ -30,11 +30,11 @@
 	$br $tb
 
 	%if {default-schema} %then
-		[ default-schema=] "{default-schema}"
+		[ default-schema=] "&{default-schema}"
 	%end
 
 	%if {default-owner} %then
-		[ default-owner=] "{default-owner}"
+		[ default-owner=] "&{default-owner}"
 	%end
 %end
 
@@ -42,17 +42,17 @@
 	$br $tb
 
 	%if {default-collation} %then
-		[ default-collation=] "{default-collation}"
+		[ default-collation=] "&{default-collation}"
 	%end
 
 	%if {default-tablespace} %then
-		[ default-tablespace=] "{default-tablespace}"
+		[ default-tablespace=] "&{default-tablespace}"
 	%end
 %end
 
 %if {layers} %then
 	$br $tb
-	[ layers]="{layers}"
+	[ layers]="&{layers}"
 
 	$br $tb [ active-layers]=
 

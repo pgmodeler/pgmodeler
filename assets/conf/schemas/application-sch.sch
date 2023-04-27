@@ -3,7 +3,7 @@
 $tb [<mime-type type="application/sch">]
 
 $tb [<comment>pgModeler Schema File</comment>] $br
-$tb [<icon name=] "{icon}" [/>] $br
+$tb [<icon name=] "&{icon}" [/>] $br
 $tb [<glob-deleteall/>] $br
 $tb [<glob pattern="*.sch"/>] $br
 $tb [</mime-type>] $br

@@ -1281,8 +1281,9 @@ void PgModelerCliApp::recreateObjects()
 								//If the extract object doesn't contains the 'table=' attribute it'll be added.
 								if(!aux_def.contains("table="))
 								{
-									aux_def.replace(aux_tag, QString("%1 table=\"%2\"").arg(aux_tag).arg(object->getName(true)));
-									aux_def=XmlParser::convertCharsToXMLEntities(aux_def);
+									#warning "Test me!"
+									aux_def.replace(aux_tag, QString("%1 table=\"%2\"")
+																	.arg(aux_tag, UtilsNs::convertToXmlEntities(object->getName(true))));
 								}
 
 								objs_xml.push_back(aux_def);
@@ -1704,7 +1705,7 @@ void PgModelerCliApp::fixOpClassesFamiliesReferences(QString &obj_xml)
 			obj_name.remove('"');
 
 			//Transforming xml entity for quote into the char
-			obj_name.replace(XmlParser::CharQuot, "\"");
+			obj_name.replace(UtilsNs::EntityQuot, "\"");
 
 			for(auto &idx_type : index_types)
 			{
@@ -1713,7 +1714,7 @@ void PgModelerCliApp::fixOpClassesFamiliesReferences(QString &obj_xml)
 				if(model->getObjectIndex(aux_obj_name, ref_obj_type) >= 0)
 				{
 					//Replacing the old signature with the corrected form
-					aux_obj_name.replace("\"", XmlParser::CharQuot);
+					aux_obj_name.replace("\"", UtilsNs::EntityQuot);
 					obj_xml.replace(pos, match.capturedLength(), QString("signature=\"%1\"").arg(aux_obj_name));
 					break;
 				}

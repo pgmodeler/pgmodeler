@@ -268,7 +268,7 @@ void ObjectFinderWidget::findObjects()
 		QString search_attr = search_attribs.at(search_attrs_cmb->currentIndex());
 		QTableWidgetItem *item = result_tbw->horizontalHeaderItem(result_tbw->columnCount() - 1);
 
-		QApplication::setOverrideCursor(Qt::WaitCursor);
+		qApp->setOverrideCursor(Qt::WaitCursor);
 		clearResult();
 		types = obj_types_lst->getTypesPerCheckState(Qt::Checked);
 
@@ -306,7 +306,7 @@ void ObjectFinderWidget::findObjects()
 		select_btn->setEnabled(!found_objs.empty());
 		fade_btn->setEnabled(!found_objs.empty());
 		//fadeObjects();
-		QApplication::restoreOverrideCursor();
+		qApp->restoreOverrideCursor();
 	}
 }
 

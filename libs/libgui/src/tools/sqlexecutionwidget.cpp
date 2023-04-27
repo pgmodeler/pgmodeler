@@ -712,7 +712,7 @@ void SQLExecutionWidget::exportResults(QTableView *results_tbw)
 
 	if(csv_file_dlg.result()==QDialog::Accepted)
 	{
-		QApplication::setOverrideCursor(Qt::WaitCursor);
+		qApp->setOverrideCursor(Qt::WaitCursor);
 		results_tbw->setUpdatesEnabled(false);
 		results_tbw->blockSignals(true);
 		results_tbw->selectAll();
@@ -722,7 +722,7 @@ void SQLExecutionWidget::exportResults(QTableView *results_tbw)
 		results_tbw->clearSelection();
 		results_tbw->blockSignals(false);
 		results_tbw->setUpdatesEnabled(true);
-		QApplication::restoreOverrideCursor();
+		qApp->restoreOverrideCursor();
 	}
 }
 

@@ -1,18 +1,18 @@
 # XML definition for extensions
 # CAUTION: Do not modify this file unless you know what you are doing.
 # Code generation can be broken if incorrect changes are made.
-[<extension name=] "{name}"
+[<extension name=] "&{name}"
 
 %if {handles-type} %then
 	[ handles-type="true"]
 %end
 
 %if {cur-version} %then
-	[ cur-version=]"{cur-version}"
+	[ cur-version=]"&{cur-version}"
 %end
 
 %if {old-version} %then
-	[ old-version=]"{old-version}"
+	[ old-version=]"&{old-version}"
 %end
 
 %if {protected} %then

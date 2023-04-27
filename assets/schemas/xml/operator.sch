@@ -7,9 +7,9 @@
 
 %if {reduced-form} %then
 	%if {ref-type} %then ref-type="{ref-type}" %end
-	[ signature=] "{signature}"
+	[ signature=] "&{signature}"
 %else
-	name="{name}"
+	name="&{name}"
 %end
 
 %if {reduced-form} %then

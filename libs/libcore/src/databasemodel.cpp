@@ -11218,9 +11218,14 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, MetaAttrOptions
 														.arg(object->getSignature()).arg(object->getTypeName()), enum_t(obj_type));
 
 				schparser.ignoreUnkownAttributes(true);
-				objs_def+=XmlParser::convertCharsToXMLEntities(
+
+				#warning "Test me!"
+				/* objs_def+=XmlParser::convertCharsToXMLEntities(
 										schparser.getSourceCode(GlobalAttributes::getSchemaFilePath(GlobalAttributes::XMLSchemaDir, Attributes::Info),
-																								attribs));
+																								attribs)); */
+				objs_def +=	schparser.getSourceCode(
+											GlobalAttributes::getSchemaFilePath(GlobalAttributes::XMLSchemaDir,
+																													Attributes::Info), attribs);
 			}
 			else
 				idx++;

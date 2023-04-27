@@ -153,14 +153,14 @@ void OperationListWidget::undoOperation()
 {
 	try
 	{
-		QApplication::setOverrideCursor(Qt::WaitCursor);
+		qApp->setOverrideCursor(Qt::WaitCursor);
 		model_wgt->op_list->undoOperation();
 		notifyUpdateOnModel();
-		QApplication::restoreOverrideCursor();
+		qApp->restoreOverrideCursor();
 	}
 	catch(Exception &e)
 	{
-		QApplication::restoreOverrideCursor();
+		qApp->restoreOverrideCursor();
 		this->updateOperationList();
 
 		if(e.getErrorCode()==ErrorCode::UndoRedoOperationInvalidObject)
@@ -177,14 +177,14 @@ void OperationListWidget::redoOperation()
 {
 	try
 	{
-		QApplication::setOverrideCursor(Qt::WaitCursor);
+		qApp->setOverrideCursor(Qt::WaitCursor);
 		model_wgt->op_list->redoOperation();
 		notifyUpdateOnModel();
-		QApplication::restoreOverrideCursor();
+		qApp->restoreOverrideCursor();
 	}
 	catch(Exception &e)
 	{
-		QApplication::restoreOverrideCursor();
+		qApp->restoreOverrideCursor();
 
 		if(e.getErrorCode()==ErrorCode::UndoRedoOperationInvalidObject)
 		{
