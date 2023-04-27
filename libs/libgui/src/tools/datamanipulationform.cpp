@@ -422,7 +422,7 @@ void DataManipulationForm::retrieveData()
 		if(limit > 0)
 			query+=QString(" LIMIT %1").arg(limit);
 
-		QApplication::setOverrideCursor(Qt::WaitCursor);
+		qApp->setOverrideCursor(Qt::WaitCursor);
 
 		catalog.setConnection(conn_cat);
 		conn_sql.connect();
@@ -464,7 +464,7 @@ void DataManipulationForm::retrieveData()
 		conn_sql.close();
 		catalog.closeConnection();
 
-		QApplication::restoreOverrideCursor();
+		qApp->restoreOverrideCursor();
 
 		paste_tb->setEnabled(!qApp->clipboard()->text().isEmpty() &&
 													PhysicalTable::isPhysicalTable(obj_type) &&
@@ -512,7 +512,7 @@ void DataManipulationForm::retrieveData()
 	}
 	catch(Exception &e)
 	{
-		QApplication::restoreOverrideCursor();
+		qApp->restoreOverrideCursor();
 		conn_sql.close();
 		catalog.closeConnection();
 		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
@@ -627,7 +627,7 @@ void DataManipulationForm::loadDataFromCsv(bool load_from_clipboard, bool force_
 	int row_id = 0, col_id = 0;
 	CsvDocument csv_doc;
 
-	QApplication::setOverrideCursor(Qt::WaitCursor);
+	qApp->setOverrideCursor(Qt::WaitCursor);
 	results_tbw->setUpdatesEnabled(false);
 
 	if(load_from_clipboard)
@@ -710,7 +710,7 @@ void DataManipulationForm::loadDataFromCsv(bool load_from_clipboard, bool force_
 	}
 
 	results_tbw->setUpdatesEnabled(true);
-	QApplication::restoreOverrideCursor();
+	qApp->restoreOverrideCursor();
 }
 
 void DataManipulationForm::removeSortColumnFromList()
@@ -767,7 +767,7 @@ void DataManipulationForm::listObjects(QComboBox *combo, std::vector<ObjectType>
 		QStringList items;
 		int idx=0, count=0;
 
-		QApplication::setOverrideCursor(Qt::WaitCursor);
+		qApp->setOverrideCursor(Qt::WaitCursor);
 
 		catalog.setConnection(conn);
 		catalog.setQueryFilter(Catalog::ListAllObjects);
@@ -804,7 +804,7 @@ void DataManipulationForm::listObjects(QComboBox *combo, std::vector<ObjectType>
 		combo->blockSignals(false);
 		catalog.closeConnection();
 
-		QApplication::restoreOverrideCursor();
+		qApp->restoreOverrideCursor();
 	}
 	catch(Exception &e)
 	{

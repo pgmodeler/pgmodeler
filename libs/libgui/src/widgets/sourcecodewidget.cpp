@@ -113,7 +113,7 @@ void SourceCodeWidget::generateSourceCode(int)
 		sqlcode_txt->clear();
 		xmlcode_txt->clear();
 
-		QApplication::setOverrideCursor(Qt::WaitCursor);
+		qApp->setOverrideCursor(Qt::WaitCursor);
 
 		obj_type=object->getObjectType();
 		if(obj_type!=ObjectType::Textbox ||
@@ -176,11 +176,11 @@ void SourceCodeWidget::generateSourceCode(int)
 			delete task_prog_wgt;
 		}
 
-		QApplication::restoreOverrideCursor();
+		qApp->restoreOverrideCursor();
 	}
 	catch(Exception &e)
 	{
-		QApplication::restoreOverrideCursor();
+		qApp->restoreOverrideCursor();
 
 		if(task_prog_wgt)
 		{

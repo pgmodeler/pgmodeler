@@ -352,7 +352,7 @@ void TableDataWidget::populateDataGrid(const CsvDocument &csv_doc)
 	Column *column = nullptr;
 	CsvDocument ini_data_csv;
 
-	QApplication::setOverrideCursor(Qt::WaitCursor);
+	qApp->setOverrideCursor(Qt::WaitCursor);
 	clearRows(false);
 
 	if(!csv_doc.isEmpty())
@@ -367,7 +367,7 @@ void TableDataWidget::populateDataGrid(const CsvDocument &csv_doc)
 		}
 		catch(Exception &e)
 		{
-			QApplication::restoreOverrideCursor();
+			qApp->restoreOverrideCursor();
 
 			Messagebox msgbox;
 			msgbox.show(e,
@@ -461,7 +461,7 @@ void TableDataWidget::populateDataGrid(const CsvDocument &csv_doc)
 	add_row_tb->setEnabled(!columns.isEmpty());
 	clear_cols_tb->setEnabled(!columns.isEmpty());
 	configureColumnNamesMenu();
-	QApplication::restoreOverrideCursor();
+	qApp->restoreOverrideCursor();
 
 }
 

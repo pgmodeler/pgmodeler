@@ -685,7 +685,7 @@ void BaseObjectWidget::applyConfiguration()
 			ObjectType obj_type=object->getObjectType();
 			QString obj_name;
 
-			QApplication::setOverrideCursor(Qt::WaitCursor);
+			qApp->setOverrideCursor(Qt::WaitCursor);
 			obj_name=BaseObject::formatName(name_edt->text().toUtf8(), obj_type==ObjectType::Operator);
 
 			if(this->object->acceptsSchema() &&  schema_sel->getSelectedObject())
@@ -777,7 +777,7 @@ void BaseObjectWidget::applyConfiguration()
 		}
 		catch(Exception &e)
 		{
-			QApplication::restoreOverrideCursor();
+			qApp->restoreOverrideCursor();
 			throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 		}
 	}
@@ -865,11 +865,11 @@ void BaseObjectWidget::finishConfiguration()
 			emit s_closeRequested();
 		}
 
-		QApplication::restoreOverrideCursor();
+		qApp->restoreOverrideCursor();
 	}
 	catch(Exception &e)
 	{
-		QApplication::restoreOverrideCursor();
+		qApp->restoreOverrideCursor();
 
 		if(e.getErrorCode()==ErrorCode::AsgObjectInvalidDefinition)
 			throw Exception(Exception::getErrorMessage(ErrorCode::RequiredFieldsNotFilled)
@@ -922,7 +922,7 @@ void BaseObjectWidget::cancelConfiguration()
 		catch(Exception &){}
 	}
 
-	QApplication::restoreOverrideCursor();
+	qApp->restoreOverrideCursor();
 	emit s_objectManipulated();
 }
 

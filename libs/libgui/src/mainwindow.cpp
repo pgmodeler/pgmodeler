@@ -950,7 +950,7 @@ void MainWindow::saveTemporaryModels()
 
 		if(count > 0)
 		{
-			QApplication::setOverrideCursor(Qt::WaitCursor);
+			qApp->setOverrideCursor(Qt::WaitCursor);
 			scene_info_parent->setVisible(false);
 			bg_saving_wgt->setVisible(true);
 			bg_saving_pb->setValue(0);
@@ -968,14 +968,14 @@ void MainWindow::saveTemporaryModels()
 			bg_saving_pb->setValue(100);
 			bg_saving_wgt->setVisible(false);
 			scene_info_parent->setVisible(true);
-			QApplication::restoreOverrideCursor();
+			qApp->restoreOverrideCursor();
 		}
 
 		tmpmodel_save_timer.start();
 	}
 	catch(Exception &e)
 	{
-		QApplication::restoreOverrideCursor();
+		qApp->restoreOverrideCursor();
 		Messagebox msg_box;
 		msg_box.show(e);
 		tmpmodel_save_timer.start();
@@ -1539,7 +1539,7 @@ void MainWindow::applyConfigurations()
 		tmpmodel_save_timer.setInterval(model_save_timer.interval() < InfinityInterval ? model_save_timer.interval()/2 : 300000);
 		tmpmodel_save_timer.start();
 
-		QApplication::setOverrideCursor(Qt::WaitCursor);
+		qApp->setOverrideCursor(Qt::WaitCursor);
 
 		//Force the update of all opened models
 		count=models_tbw->count();
@@ -1557,7 +1557,7 @@ void MainWindow::applyConfigurations()
 		sql_tool_wgt->configureSnippets();
 		sql_tool_wgt->reloadHighlightConfigs();
 
-		QApplication::restoreOverrideCursor();
+		qApp->restoreOverrideCursor();
 	}
 
 	sql_tool_wgt->updateTabs();
@@ -2329,7 +2329,7 @@ void MainWindow::arrangeObjects()
 
 	if(msgbox.result() == QDialog::Accepted)
 	{
-		QApplication::setOverrideCursor(Qt::WaitCursor);
+		qApp->setOverrideCursor(Qt::WaitCursor);
 
 		if(sender() == arrange_menu.actions().at(0))
 			current_model->rearrangeSchemasInGrid();
@@ -2338,7 +2338,7 @@ void MainWindow::arrangeObjects()
 		else
 			current_model->rearrangeTablesInSchemas();
 
-		QApplication::restoreOverrideCursor();
+		qApp->restoreOverrideCursor();
 	}
 }
 
@@ -2347,7 +2347,7 @@ void MainWindow::toggleCompactView()
 	ModelWidget *model_wgt = nullptr;
 
 	BaseObjectView::setCompactViewEnabled(action_compact_view->isChecked());
-	QApplication::setOverrideCursor(Qt::WaitCursor);
+	qApp->setOverrideCursor(Qt::WaitCursor);
 
 	for(int idx = 0; idx < models_tbw->count(); idx++)
 	{
@@ -2366,7 +2366,7 @@ void MainWindow::toggleCompactView()
 	if(current_model)
 		current_model->update();
 
-	QApplication::restoreOverrideCursor();
+	qApp->restoreOverrideCursor();
 }
 
 void MainWindow::toggleLayersWidget(bool show)

@@ -983,11 +983,11 @@ void AppearanceConfigWidget::previewUiSettings()
 	syntax_hl_theme_cmb->setCurrentIndex(idx);
 	syntax_hl_theme_cmb->blockSignals(false);
 
-	QApplication::setOverrideCursor(Qt::WaitCursor);
+	qApp->setOverrideCursor(Qt::WaitCursor);
 	applyUiTheme();
 	applyDesignCodeTheme();
 	updateDropShadows(ui_theme_cmb->currentData(Qt::UserRole).toString());
-	QApplication::restoreOverrideCursor();
+	qApp->restoreOverrideCursor();
 }
 
 void AppearanceConfigWidget::applySyntaxHighlightTheme()
