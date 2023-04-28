@@ -656,6 +656,7 @@ namespace Attributes {
 	TypeClass("type-class"),
 	TypeOid("type-oid"),
 	Types("types"),
+	TypeRelationName("type-rel-name"),
 	TyplesUpd("tuples-upd"),
 	UiLanguage("ui-language"),
 	UiTheme("ui-theme"),

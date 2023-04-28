@@ -12,6 +12,10 @@
 
 [ WHERE objoid = ] {oid}
 
+%if {type-rel-name} %then
+	[ AND classoid = (SELECT oid FROM pg_class WHERE relname = ] '{type-rel-name}' )
+%end
+
 %if %not {shared-obj} %then
 	[ AND objsubid = 0 ]
 %end

@@ -670,6 +670,7 @@ namespace Attributes {
 	TypeAttribute,
 	TypeClass,
 	TypeOid,
+	TypeRelationName,
 	Types,
 	TyplesUpd,
 	UiLanguage,
