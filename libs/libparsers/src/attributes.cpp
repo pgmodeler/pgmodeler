@@ -405,6 +405,7 @@ namespace Attributes {
 	Objects("objects"),
 	ObjectType("object-type"),
 	ObjCount("objcount"),
+	ObjRelationName("obj-rel-name"),
 	ObjSelection("obj-selection"),
 	ObjShadow("obj-shadow"),
 	Oid("oid"),

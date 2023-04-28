@@ -420,6 +420,7 @@ namespace Attributes {
 	Objects,
 	ObjectType,
 	ObjCount,
+	ObjRelationName,
 	ObjSelection,
 	ObjShadow,
 	Oid,
