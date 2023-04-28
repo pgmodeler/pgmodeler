@@ -128,7 +128,7 @@ void BaseFunctionWidget::duplicateParameter(ObjectsTableWidget *params_tab, int 
 {
 	Parameter new_param;
 	new_param = getParameter(params_tab, curr_row, dup_param_modes);
-	new_param.setName(new_param.getName() + QString("_cp"));
+	new_param.setName(new_param.getName() + "_cp");
 	showParameterData(params_tab, new_param, new_row, dup_param_modes);
 }
 

@@ -183,10 +183,10 @@ void ConnectionsConfigWidget::newConnection()
 	validation_chk->setChecked(false);
 
 	ssl_mode_cmb->setCurrentIndex(0);
-	client_cert_edt->setText(QString("~/.postgresql/postgresql.crt"));
-	root_cert_edt->setText(QString("~/.postgresql/root.crt"));
-	crl_edt->setText(QString("~/.postgresql/root.crl"));
-	client_key_edt->setText(QString("~/.postgresql/postgresql.key"));
+	client_cert_edt->setText("~/.postgresql/postgresql.crt");
+	root_cert_edt->setText("~/.postgresql/root.crt");
+	crl_edt->setText("~/.postgresql/root.crl");
+	client_key_edt->setText("~/.postgresql/postgresql.key");
 
 	gssapi_auth_chk->setChecked(false);
 	krb_server_edt->clear();
@@ -304,7 +304,7 @@ void ConnectionsConfigWidget::editConnection()
 		timeout_sbp->setValue(conn->getConnectionParam(Connection::ParamConnTimeout).toInt());
 
 		krb_server_edt->setText(conn->getConnectionParam(Connection::ParamKerberosServer));
-		gssapi_auth_chk->setChecked(conn->getConnectionParam(Connection::ParamLibGssapi)==QString("gssapi"));
+		gssapi_auth_chk->setChecked(conn->getConnectionParam(Connection::ParamLibGssapi)=="gssapi");
 		other_params_edt->setText(conn->getConnectionParam(Connection::ParamOthers));
 
 		if(conn->getConnectionParam(Connection::ParamSslMode)==Connection::SslDisable)
@@ -397,7 +397,7 @@ void ConnectionsConfigWidget::configureConnection(Connection *conn, bool is_upda
 		}
 
 		if(gssapi_auth_chk->isChecked())
-			conn->setConnectionParam(Connection::ParamLibGssapi, QString("gssapi"));
+			conn->setConnectionParam(Connection::ParamLibGssapi, "gssapi");
 
 		if(!krb_server_edt->text().isEmpty())
 			conn->setConnectionParam(Connection::ParamKerberosServer, krb_server_edt->text());
@@ -478,7 +478,7 @@ void ConnectionsConfigWidget::saveConfiguration()
 		/* Workaround: When there is no connection, to prevent saving an empty file, is necessary to
 		 fill the attribute CONNECTIONS with white spaces */
 		if(connections.empty())
-			config_params[GlobalAttributes::ConnectionsConf][Attributes::Connections]=QString("  ");
+			config_params[GlobalAttributes::ConnectionsConf][Attributes::Connections]="  ";
 		else
 		{
 			for(Connection *conn : connections)
@@ -527,7 +527,7 @@ void ConnectionsConfigWidget::getConnections(std::map<QString, Connection *> &co
 		alias=conn->getConnectionId();
 
 		if(!inc_hosts)
-			alias.remove(QRegularExpression(QString(" \\((.)*\\)")));
+			alias.remove(QRegularExpression(" \\((.)*\\)"));
 
 		conns[alias]=conn;
 	}

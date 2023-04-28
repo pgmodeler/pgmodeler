@@ -109,7 +109,7 @@ bool ModelRestorationForm::hasTemporaryModels()
 void ModelRestorationForm::removeTemporaryFiles()
 {
 	QDir tmp_file;
-	QStringList tmp_files = QDir(GlobalAttributes::getTemporaryPath(), QString("*"),
+	QStringList tmp_files = QDir(GlobalAttributes::getTemporaryPath(), "*",
 															 QDir::Name, QDir::Files | QDir::NoDotAndDotDot).entryList();
 
 	for(auto &file : tmp_files)

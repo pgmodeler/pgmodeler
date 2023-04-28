@@ -518,7 +518,7 @@ void OperationList::getOperationData(unsigned oper_idx, unsigned &oper_type, QSt
 		obj_name=pool_obj->getName(true);
 
 		if(TableObject::isTableObject(obj_type))
-			obj_name=operation->getParentObject()->getName(true) + QString(".") + obj_name;
+			obj_name=operation->getParentObject()->getName(true) + "." + obj_name;
 	}
 	else
 	{

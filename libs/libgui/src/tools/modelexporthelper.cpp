@@ -335,7 +335,7 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
 	unsigned i, count;
 	ObjectType types[]={ObjectType::Role, ObjectType::Tablespace};
 	BaseObject *object=nullptr;
-	QString tmpl_comm_regexp = QString("(COMMENT)( )+(ON)( )+(%1)(.)+(\n)(") + Attributes::DdlEndToken + QString(")");
+	QString tmpl_comm_regexp = QString("(COMMENT)( )+(ON)( )+(%1)(.)+(\n)(") + Attributes::DdlEndToken + ")";
 	QRegularExpression comm_regexp;
 	QRegularExpressionMatch match;
 
@@ -729,9 +729,9 @@ void ModelExportHelper::generateTempObjectNames(DatabaseModel *db_model)
 	QTextStream stream(&tmp_name);
 	QDateTime dt=QDateTime::currentDateTime();
 	QCryptographicHash hash(QCryptographicHash::Md5);
-	std::map<ObjectType, QString> obj_suffixes={ { ObjectType::Database, QString("db_") },
-											{ ObjectType::Role, QString("rl_")},
-											{ ObjectType::Tablespace, QString("tb_")} };
+	std::map<ObjectType, QString> obj_suffixes={ { ObjectType::Database, "db_" },
+											{ ObjectType::Role, "rl_"},
+											{ ObjectType::Tablespace, "tb_"} };
 
 	orig_obj_names.clear();
 	orig_obj_names[db_model]=db_model->getName();
@@ -751,7 +751,7 @@ void ModelExportHelper::generateTempObjectNames(DatabaseModel *db_model)
 
 	for(auto &obj : orig_obj_names)
 	{
-		stream << reinterpret_cast<unsigned *>(obj.first) << QString("_") << dt.toMSecsSinceEpoch();
+		stream << reinterpret_cast<unsigned *>(obj.first) << "_" << dt.toMSecsSinceEpoch();
 
 		//Generates an unique name for the object through md5 hash
 		hash.addData(QByteArray(tmp_name.toStdString().c_str()));
@@ -796,9 +796,9 @@ bool ModelExportHelper::isDuplicationError(const QString &error_code)
 
 	 Reference:
 	  http://www.postgresql.org/docs/current/static/errcodes-appendix.html*/
-	static QStringList err_codes = {QString("42P04"), QString("42723"), QString("42P06"),
-									QString("42P07"), QString("42710"), QString("42701"),
-									QString("42P16")};
+	static QStringList err_codes = {"42P04", "42723", "42P06",
+																	"42P07", "42710", "42701",
+																	"42P16"};
 
 	return err_codes.contains(error_code);
 }
@@ -808,7 +808,7 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
 	Connection aux_conn;
 	QString sql_buf=buffer, sql_cmd, aux_cmd, lin, msg,
 			obj_name, obj_tp_name, tab_name, orig_conn_db_name,
-			alter_tab=QString("ALTER TABLE");
+			alter_tab="ALTER TABLE";
 	std::vector<QString> db_sql_cmds;
 	QTextStream ts;
 	ObjectType obj_type=ObjectType::BaseObject;

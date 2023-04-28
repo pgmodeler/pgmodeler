@@ -317,7 +317,7 @@ void CodeCompletionWidget::populateNameList(std::vector<BaseObject *> &objects, 
 	QListWidgetItem *item=nullptr;
 	QString obj_name;
 	ObjectType obj_type;
-	QRegularExpression regexp(QRegularExpression::wildcardToRegularExpression(filter.remove('"') + QString("*")),
+	QRegularExpression regexp(QRegularExpression::wildcardToRegularExpression(filter.remove('"') + "*"),
 														QRegularExpression::CaseInsensitiveOption);
 
 	name_list->clear();
@@ -1119,12 +1119,12 @@ void CodeCompletionWidget::insertObjectName(BaseObject *obj)
 		{
 			PhysicalTable *tab=dynamic_cast<PhysicalTable *>(obj);
 
-			name+=QString("(");
+			name+="(";
 			for(unsigned i=0; i < tab->getColumnCount(); i++)
-				name+=tab->getColumn(i)->getName(true) + QString(",");
+				name+=tab->getColumn(i)->getName(true) + ",";
 
 			name.remove(name.size()-1, 1);
-			name+=QString(")");
+			name+=")";
 		}
 		else
 		{
@@ -1145,13 +1145,13 @@ void CodeCompletionWidget::insertObjectName(BaseObject *obj)
 	}
 	else if(obj_type==ObjectType::Cast)
 	{
-		name.replace(',', QLatin1String(" AS "));
+		name.replace(',', " AS ");
 	}
 	else if(obj_type==ObjectType::Aggregate)
 	{
 		Aggregate *agg;
 		agg=dynamic_cast<Aggregate *>(obj);
-		name+=QString("(");
+		name+="(";
 
 		if(agg->getDataTypeCount()==0)
 			name+='*';

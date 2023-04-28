@@ -104,12 +104,12 @@ void Cast::setCastFunction(Function *cast_func)
 		/* Error condition 2: Check if the second function parameter data type
 		 is different from 'integer' */
 		if(!error && param_count>=2)
-			error=(cast_func->getParameter(1).getType()!=QString("integer"));
+			error=(cast_func->getParameter(1).getType()!="integer");
 
 		/* Error condition 3: Check if the third function parameter data type is
 		 different from 'boolean' */
 		if(!error && param_count==3)
-			error=(cast_func->getParameter(2).getType()!=QString("boolean"));
+			error=(cast_func->getParameter(2).getType()!="boolean");
 
 		//In case some error condition is reached raises an error
 		if(error)
@@ -158,7 +158,7 @@ Cast::CastType Cast::getCastType()
 
 QString Cast::getDropCode(bool cascade)
 {
-	attributes[Attributes::Signature].replace(QString(","), QString(" AS "));
+	attributes[Attributes::Signature].replace(",", " AS ");
 	return BaseObject::getDropCode(cascade);
 }
 
@@ -203,7 +203,7 @@ QString Cast::getSourceCode(SchemaParser::CodeType def_type)
 
 QString Cast::getSignature(bool)
 {
-	attributes[Attributes::Signature]=this->getName().remove(QString("cast"));
+	attributes[Attributes::Signature]=this->getName().remove("cast");
 	return BaseObject::getSignature(false);
 }
 

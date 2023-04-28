@@ -52,7 +52,7 @@ QString Textbox::getSourceCode(SchemaParser::CodeType def_type)
 		if(text_attributes[UnderlineText])
 			attributes[Attributes::Underline]=Attributes::True;
 
-		if(text_color.name()!=QString("#000000"))
+		if(text_color.name()!="#000000")
 			attributes[Attributes::Color]=text_color.name();
 
 		attributes[Attributes::FontSize]=QString("%1").arg(font_size);

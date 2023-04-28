@@ -30,7 +30,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	setupUi(this);
 	pending_op = NoPendingOp;
 	welcome_wgt = nullptr;
-	window_title = this->windowTitle() + QString(" ") + GlobalAttributes::PgModelerVersion;
+	window_title = this->windowTitle() + " " + GlobalAttributes::PgModelerVersion;
 
 	recent_models_menu = new QMenu(this);
 	recent_models_menu->setObjectName("recent_models_menu");
@@ -761,7 +761,7 @@ void MainWindow::fixModel(const QString &filename)
 	{
 		QFileInfo fi(filename);
 		model_fix_form.input_file_sel->setSelectedFile(fi.absoluteFilePath());
-		model_fix_form.output_file_sel->setSelectedFile(fi.absolutePath() + GlobalAttributes::DirSeparator + fi.baseName() + QString("_fixed.") + fi.suffix());
+		model_fix_form.output_file_sel->setSelectedFile(fi.absolutePath() + GlobalAttributes::DirSeparator + fi.baseName() + "_fixed." + fi.suffix());
 	}
 
 	GuiUtilsNs::resizeDialog(&model_fix_form);
@@ -1069,7 +1069,7 @@ void MainWindow::addModel(const QString &filename)
 
 		//Set a name for the tab widget
 		str_aux=QString("%1").arg(models_tbw->count());
-		obj_name=QString("model_");
+		obj_name="model_";
 		obj_name+=str_aux;
 		tab_name=obj_name;
 
@@ -1100,7 +1100,7 @@ void MainWindow::addModel(const QString &filename)
 				models_tbw->setTabToolTip(models_tbw->currentIndex(), filename);
 
 				//Get the "public" schema and set as system object
-				public_sch=dynamic_cast<Schema *>(model_tab->db_model->getObject(QString("public"), ObjectType::Schema));
+				public_sch=dynamic_cast<Schema *>(model_tab->db_model->getObject("public", ObjectType::Schema));
 				if(public_sch)	public_sch->setSystemObject(true);
 
 				model_tab->db_model->setInvalidated(false);
@@ -1508,7 +1508,7 @@ void MainWindow::updateWindowTitle()
 	if(!current_model || current_model->getFilename().isEmpty())
 		setWindowTitle(window_title);
 	else
-		setWindowTitle(window_title + QString(" - ") + QDir::toNativeSeparators(current_model->getFilename()));
+		setWindowTitle(window_title + " - " + QDir::toNativeSeparators(current_model->getFilename()));
 }
 
 void MainWindow::applyConfigurations()
@@ -1679,7 +1679,6 @@ void MainWindow::saveModel(ModelWidget *model)
 						model->saveModel();
 				}
 
-				//this->setWindowTitle(window_title + QString(" - ") + QDir::toNativeSeparators(model->getFilename()));
 				updateWindowTitle();
 				model_valid_wgt->clearOutput();
 				emit s_modelSaved(model);

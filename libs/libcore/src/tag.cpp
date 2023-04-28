@@ -156,8 +156,8 @@ QString Tag::getSourceCode(SchemaParser::CodeType def_type, bool reduced_form)
 				if(itr.first==Attributes::TableName || itr.first==Attributes::TableSchemaName)
 					attribs[Attributes::Colors]=itr.second[enum_t(ColorId::FillColor1)].name();
 				else
-					attribs[Attributes::Colors]=itr.second[enum_t(ColorId::FillColor1)].name() + QString(",") +
-							itr.second[enum_t(ColorId::FillColor2)].name() + QString(",") +
+					attribs[Attributes::Colors]=itr.second[enum_t(ColorId::FillColor1)].name() + "," +
+							itr.second[enum_t(ColorId::FillColor2)].name() + "," +
 							itr.second[enum_t(ColorId::BorderColor)].name();
 
 				attributes[Attributes::Styles]+=schparser.getSourceCode(Attributes::Style, attribs, SchemaParser::XmlCode);

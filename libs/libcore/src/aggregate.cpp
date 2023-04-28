@@ -291,7 +291,7 @@ QString Aggregate::getSignature(bool format)
 	QStringList types;
 
 	if(data_types.empty())
-		types.push_back(QString("*"));
+		types.push_back("*");
 	else
 	{
 		for(auto &tp : data_types)

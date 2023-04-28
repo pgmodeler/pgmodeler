@@ -143,7 +143,7 @@ void OperatorClassWidget::showElementData(OperatorClassElement elem, int lin_idx
 	if(elem_type!=OperatorClassElement::StorageElem)
 		elements_tab->setCellText(QString("%1").arg(elem.getStrategyNumber()), lin_idx, 2);
 	else
-		elements_tab->setCellText(QString(" "), lin_idx, 2);
+		elements_tab->setCellText(" ", lin_idx, 2);
 
 	if(elem_type==OperatorClassElement::OperatorElem && elem.getOperatorFamily())
 		elements_tab->setCellText(elem.getOperatorFamily()->getName(true), lin_idx, 3);

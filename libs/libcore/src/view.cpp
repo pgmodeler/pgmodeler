@@ -557,7 +557,7 @@ void View::setReferencesAttribute()
 		for(i1=0; i1 < cnt; i1++)
 		{
 			str_aux+=QString("%1").arg(vect_exp[i]->at(i1));
-			if(i1 < cnt-1) str_aux+=QString(",");
+			if(i1 < cnt-1) str_aux+=",";
 		}
 		attributes[attribs[i]]=str_aux;
 	}
@@ -684,7 +684,7 @@ QString View::getSourceCode(SchemaParser::CodeType def_type)
 void View::setSQLObjectAttribute()
 {
 	if(materialized)
-		attributes[Attributes::SqlObject]=QString("MATERIALIZED ") + BaseObject::getSQLName(ObjectType::View);
+		attributes[Attributes::SqlObject]="MATERIALIZED " + BaseObject::getSQLName(ObjectType::View);
 }
 
 QString View::getUniqueColumnName(const QString &name)

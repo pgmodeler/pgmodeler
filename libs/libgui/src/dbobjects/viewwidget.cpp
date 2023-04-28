@@ -215,7 +215,7 @@ void ViewWidget::duplicateObject(int curr_row, int new_row)
 			object = reinterpret_cast<BaseObject *>(obj_table->getRowData(curr_row).value<void *>());
 
 		CoreUtilsNs::copyObject(&dup_object, object, obj_type);
-		dup_object->setName(CoreUtilsNs::generateUniqueName(dup_object, *view->getObjectList(obj_type), false, QString("_cp")));
+		dup_object->setName(CoreUtilsNs::generateUniqueName(dup_object, *view->getObjectList(obj_type), false, "_cp"));
 
 		op_id=op_list->registerObject(dup_object, Operation::ObjCreated, new_row, this->object);
 
@@ -366,7 +366,7 @@ void ViewWidget::showObjectData(TableObject *object, int row)
 		for(i=0; i < sizeof(events)/sizeof(EventType); i++)
 		{
 			if(trigger->isExecuteOnEvent(events[i]))
-				str_aux+=~events[i] + QString(", ");
+				str_aux+=~events[i] + ", ";
 		}
 
 		str_aux.remove(str_aux.size()-2, 2);
@@ -505,11 +505,11 @@ void ViewWidget::showReferenceData(Reference refer, unsigned ref_flags, unsigned
 		/* If the table is allocated but not the column indicates that the reference
 		 is to all table columns this way shows a string in format: [SCHEMA].[TABLE].* */
 		if(tab && !col)
-			references_tab->setCellText(tab->getName(true) + QString(".*"),row,0);
+			references_tab->setCellText(tab->getName(true) + ".*",row,0);
 		/* If the table and column are allocated indicates that the reference
 		 is to a specific column this way shows a string in format: [SCHEMA].[TABLE].[COLUMN] */
 		else
-			references_tab->setCellText(tab->getName(true) + QString(".") + col->getName(true),row,0);
+			references_tab->setCellText(tab->getName(true) + "." + col->getName(true),row,0);
 
 		references_tab->setCellText(refer.getAlias(),row,1);
 
@@ -523,11 +523,11 @@ void ViewWidget::showReferenceData(Reference refer, unsigned ref_flags, unsigned
 	}
 
 	//Configures the string that denotes the SQL application for the reference
-	str_aux+=(selec_from ? QString("1") : QString("0"));
-	str_aux+=(from_where ? QString("1") : QString("0"));
-	str_aux+=(after_where ? QString("1") : QString("0"));
-	str_aux+=(end_expr ? QString("1") : QString("0"));
-	str_aux+=(view_def ? QString("1") : QString("0"));
+	str_aux+=(selec_from ? "1" : "0");
+	str_aux+=(from_where ? "1" : "0");
+	str_aux+=(after_where ? "1" : "0");
+	str_aux+=(end_expr ? "1" : "0");
+	str_aux+=(view_def ? "1" : "0");
 	references_tab->setCellText(str_aux, row, 3);
 
 	references_tab->setCellText(refer.getReferenceAlias(), row, 4);

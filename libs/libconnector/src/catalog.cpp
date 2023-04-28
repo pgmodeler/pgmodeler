@@ -221,7 +221,7 @@ void Catalog::setObjectFilters(QStringList filters, bool only_matching, bool mat
 		 * This one comes in form of a regexp matching on oid::regclass::text */
 		parent_alias_ref = QString("%1 %2 ~* '(#)'")
 											 .arg(match_signature ? parent_sch_ref : "")
-											 .arg(AliasPlaceholder + QString(".relname"))
+											 .arg(AliasPlaceholder + ".relname")
 											 .replace("#", "%1");
 
 		// Validating the provided table children objects types
@@ -331,13 +331,13 @@ void Catalog::setObjectFilters(QStringList filters, bool only_matching, bool mat
 			 * "relation kind" in pg_class in order to avoid bringing children object of
 			 * table types not filtered */
 			if(has_tab_filter && BaseObject::isChildObjectType(ObjectType::Table, obj_type))
-				fmt_conds.append(QString("(%1)").arg(fmt_tab_patterns[ObjectType::Table] + QString("IN ('r','p')")));
+				fmt_conds.append(QString("(%1)").arg(fmt_tab_patterns[ObjectType::Table] + "IN ('r','p')"));
 
 			if(has_view_filter && BaseObject::isChildObjectType(ObjectType::View, obj_type))
-				fmt_conds.append(QString("(%1)").arg(fmt_tab_patterns[ObjectType::View] + QString("IN ('v','m')")));
+				fmt_conds.append(QString("(%1)").arg(fmt_tab_patterns[ObjectType::View] + "IN ('v','m')"));
 
 			if(has_ftab_filter && BaseObject::isChildObjectType(ObjectType::ForeignTable, obj_type))
-				fmt_conds.append(QString("(%1)").arg(fmt_tab_patterns[ObjectType::ForeignTable] + QString("= 'f'")));
+				fmt_conds.append(QString("(%1)").arg(fmt_tab_patterns[ObjectType::ForeignTable] + "= 'f'"));
 
 			if(!fmt_conds.isEmpty())
 			{
@@ -410,7 +410,7 @@ QString Catalog::getCatalogQuery(const QString &qry_type, ObjectType obj_type, b
 	for(auto &attr : attribs)
 	{
 		if(attr.first != Attributes::CustomFilter && attr.first != Attributes::Comment && attr.second.contains(QChar('\'')))
-			attr.second.replace(QChar('\''), QString("''"));
+			attr.second.replace(QChar('\''), "''");
 	}
 
 	schparser.setPgSQLVersion(connection.getPgSQLVersion(true),
@@ -421,9 +421,9 @@ QString Catalog::getCatalogQuery(const QString &qry_type, ObjectType obj_type, b
 		attribs[Attributes::LastSysOid]=QString::number(last_sys_oid);
 
 	if(list_only_sys_objs)
-		attribs[Attributes::OidFilterOp]=QString("<=");
+		attribs[Attributes::OidFilterOp]="<=";
 	else
-		attribs[Attributes::OidFilterOp]=QString(">");
+		attribs[Attributes::OidFilterOp]=">";
 
 	if(obj_type==ObjectType::Type && exclude_array_types)
 		attribs[Attributes::ExcBuiltinArrays]=Attributes::True;
@@ -502,8 +502,10 @@ QString Catalog::getCatalogQuery(const QString &qry_type, ObjectType obj_type, b
 	//Append a LIMIT clause when the single_result is set
 	if(single_result)
 	{
-		if(sql.endsWith(';'))	sql.remove(sql.size()-1, 1);
-		sql+=QString(" LIMIT 1");
+		if(sql.endsWith(';'))
+			sql.remove(sql.size()-1, 1);
+
+		sql+=" LIMIT 1";
 	}
 
 	return sql;
@@ -653,7 +655,7 @@ std::vector<attribs_map> Catalog::getObjectsNames(std::vector<ObjectType> obj_ty
 	{
 		ResultSet res;
 		std::vector<attribs_map> objects;
-		QString sql, select_kw=QString("SELECT");
+		QString sql, select_kw="SELECT";
 		QStringList queries;
 		attribs_map attribs;
 
@@ -680,10 +682,10 @@ std::vector<attribs_map> Catalog::getObjectsNames(std::vector<ObjectType> obj_ty
 		}
 
 		//Joining the generated queries by using union in order to retrieve all results at once
-		sql = QChar('(') +  queries.join(QString(") UNION (")) + QChar(')');
+		sql = QChar('(') +  queries.join(") UNION (") + QChar(')');
 
 		if(sort_results)
-			sql += QString(" ORDER BY oid, object_type");
+			sql += " ORDER BY oid, object_type";
 
 		connection.executeDMLCommand(sql, res);
 
@@ -828,7 +830,7 @@ QString Catalog::getCommentQuery(const QString &oid_field, ObjectType obj_type, 
 
 QString Catalog::getNotExtObjectQuery(const QString &oid_field)
 {
-	QString query_id=QString("notextobject");
+	QString query_id="notextobject";
 
 	try
 	{
@@ -967,7 +969,7 @@ attribs_map Catalog::getServerAttributes()
 		QString sql, attr_name;
 		attribs_map tuple, attribs_aux;
 
-		loadCatalogQuery(QString("server"));
+		loadCatalogQuery("server");
 		schparser.ignoreUnkownAttributes(true);
 		schparser.ignoreEmptyAttributes(true);
 		sql = schparser.getSourceCode(attribs).simplified();
@@ -1045,7 +1047,7 @@ QStringList Catalog::parseArrayValues(const QString &array_val)
 		QString value=array_val.mid(start, (end - start)+1);
 
 		if(value.contains('"'))
-			list = parseDefaultValues(value, QString("\""), QString(","));
+			list = parseDefaultValues(value, "\"", ",");
 		else
 			list = value.split(',', Qt::SkipEmptyParts);
 	}
@@ -1077,7 +1079,7 @@ QStringList Catalog::parseDefaultValues(const QString &def_values, const QString
 
 		if(pos >= 0)
 		{
-			idx = aux_def_vals.indexOf(QString("], "), pos + 1);
+			idx = aux_def_vals.indexOf("], ", pos + 1);
 
 			if(idx < 0)
 				idx = aux_def_vals.indexOf(']', pos + 1);

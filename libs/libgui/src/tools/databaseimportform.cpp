@@ -862,7 +862,7 @@ void DatabaseImportForm::listObjects(DatabaseImportHelper &import_helper, QTreeW
 				while(!sch_items.empty())
 				{
 					item=new QTreeWidgetItem(sch_items.back());
-					item->setText(0, QString("..."));
+					item->setText(0, "...");
 					item->setData(ObjectOtherData, Qt::UserRole, QVariant::fromValue<int>(-1));
 					sch_items.pop_back();
 				}
@@ -983,7 +983,7 @@ std::vector<QTreeWidgetItem *> DatabaseImportForm::updateObjectsTree(DatabaseImp
 				//Creates individual items for each object of the current type
 				oid=attribs[Attributes::Oid].toUInt();
 
-				attribs[Attributes::Name].remove(QRegularExpression(QString("( )(without)( time zone)")));
+				attribs[Attributes::Name].remove(QRegularExpression("( )(without)( time zone)"));
 				label=name=attribs[Attributes::Name];
 
 				//Removing the trailing type string from op. families or op. classes names
@@ -1008,7 +1008,7 @@ std::vector<QTreeWidgetItem *> DatabaseImportForm::updateObjectsTree(DatabaseImp
 					 * since only the ones matching the object types are checked in the final step of the tree creation */
 					if(/*!has_obj_filters &&*/
 						 ((oid > import_helper.getLastSystemOID()) ||
-							(obj_type==ObjectType::Schema && name==QString("public")) ||
+							(obj_type==ObjectType::Schema && name=="public") ||
 							(obj_type==ObjectType::Column && root && root->data(0, Qt::UserRole).toUInt() > import_helper.getLastSystemOID())))
 					{
 						item->setCheckState(0, Qt::Checked);
@@ -1024,9 +1024,9 @@ std::vector<QTreeWidgetItem *> DatabaseImportForm::updateObjectsTree(DatabaseImp
 						item->setToolTip(0, tr("This is a PostgreSQL built-in data type and cannot be imported."));
 					}
 					//Disabling items that refers to pgModeler's built-in system objects
-					else if((obj_type==ObjectType::Tablespace && (name==QString("pg_default") || name==QString("pg_global"))) ||
-									(obj_type==ObjectType::Role && (name==QString("postgres"))) ||
-									(obj_type==ObjectType::Schema && (name==QString("pg_catalog") || name==QString("public"))) ||
+					else if((obj_type==ObjectType::Tablespace && (name=="pg_default" || name=="pg_global")) ||
+									(obj_type==ObjectType::Role && (name=="postgres")) ||
+									(obj_type==ObjectType::Schema && (name=="pg_catalog" || name=="public")) ||
 									(obj_type==ObjectType::Language && (name.toLower() == DefaultLanguages::C ||
 																											name.toLower() == DefaultLanguages::Sql ||
 																											name.toLower() == DefaultLanguages::PlPgsql)))
@@ -1041,7 +1041,7 @@ std::vector<QTreeWidgetItem *> DatabaseImportForm::updateObjectsTree(DatabaseImp
 				item->setData(ObjectId, Qt::UserRole, oid);
 
 				if(!item->toolTip(0).isEmpty())
-					item->setToolTip(0,item->toolTip(0) + QString("\n") + tooltip.arg(oid));
+					item->setToolTip(0,item->toolTip(0) + "\n" + tooltip.arg(oid));
 				else
 					item->setToolTip(0,tooltip.arg(oid));
 

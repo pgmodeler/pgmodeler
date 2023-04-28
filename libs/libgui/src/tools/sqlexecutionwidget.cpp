@@ -61,7 +61,7 @@ SQLExecutionWidget::SQLExecutionWidget(QWidget * parent) : QWidget(parent)
 	results_parent->setVisible(false);
 	output_tbw->setTabEnabled(0, false);
 
-	sql_file_dlg.setDefaultSuffix(QString("sql"));
+	sql_file_dlg.setDefaultSuffix("sql");
 	sql_file_dlg.setFileMode(QFileDialog::AnyFile);
 	sql_file_dlg.setNameFilter(tr("SQL file (*.sql);;All files (*.*)"));
 	sql_file_dlg.setModal(true);
@@ -374,7 +374,7 @@ void SQLExecutionWidget::fillResultsTable(Catalog &catalog, ResultSet &res, QTab
 
 void SQLExecutionWidget::handleExecutionAborted(Exception e)
 {
-	QString time_str=QString("[%1]:").arg(QTime::currentTime().toString(QString("hh:mm:ss.zzz")));
+	QString time_str=QString("[%1]:").arg(QTime::currentTime().toString("hh:mm:ss.zzz"));
 
 	switchToExecutionMode(false);
 	msgoutput_lst->clear();
@@ -464,13 +464,13 @@ void SQLExecutionWidget::finishExecution(int rows_affected)
 		for(QString notice : sql_exec_hlp.getNotices())
 		{
 			GuiUtilsNs::createOutputListItem(msgoutput_lst,
-																					QString("[%1]: %2").arg(QTime::currentTime().toString(QString("hh:mm:ss.zzz"))).arg(notice.trimmed()),
+																					QString("[%1]: %2").arg(QTime::currentTime().toString("hh:mm:ss.zzz")).arg(notice.trimmed()),
 																					QPixmap(GuiUtilsNs::getIconPath("alert")), false);
 		}
 
 		GuiUtilsNs::createOutputListItem(msgoutput_lst,
 																				GuiUtilsNs::formatMessage(tr("[%1]: SQL command successfully executed in <em><strong>%2</strong></em>. <em>%3 <strong>%4</strong></em>")
-																																		 .arg(QTime::currentTime().toString(QString("hh:mm:ss.zzz")))
+																																		 .arg(QTime::currentTime().toString("hh:mm:ss.zzz"))
 																																		 .arg(total_exec >= 1000 ? QString("%1 s").arg(total_exec/1000.0) : QString("%1 ms").arg(total_exec))
 																																		 .arg(!res_model ? tr("Rows affected") :  tr("Rows retrieved"))
 																																		 .arg(rows_affected)),
@@ -526,11 +526,11 @@ void SQLExecutionWidget::addToSQLHistory(const QString &cmd, unsigned rows, cons
 		QString fmt_cmd;
 
 		if(!cmd_history_txt->toPlainText().isEmpty())
-			fmt_cmd += QString("\n");
+			fmt_cmd += "\n";
 
 		fmt_cmd += QString("-- %1 [%2] -- \n")
 							 .arg(tr("Executed at"))
-							 .arg(QDateTime::currentDateTime().toString(QString("yyyy-MM-dd hh:mm:ss.zzz")));
+							 .arg(QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss.zzz"));
 		fmt_cmd += cmd;
 		fmt_cmd += QChar('\n');
 
@@ -641,7 +641,7 @@ void SQLExecutionWidget::runSQLCommand()
 	output_tbw->setCurrentIndex(1);
 	GuiUtilsNs::createOutputListItem(msgoutput_lst,
 																			tr("[%1]: SQL command is running...")
-																			.arg(QTime::currentTime().toString(QString("hh:mm:ss.zzz"))),
+																			.arg(QTime::currentTime().toString("hh:mm:ss.zzz")),
 																			QPixmap(GuiUtilsNs::getIconPath("info")), false);
 }
 
@@ -699,7 +699,7 @@ void SQLExecutionWidget::exportResults(QTableView *results_tbw)
 
 	QFileDialog csv_file_dlg;
 
-	csv_file_dlg.setDefaultSuffix(QString("csv"));
+	csv_file_dlg.setDefaultSuffix("csv");
 	csv_file_dlg.setFileMode(QFileDialog::AnyFile);
 	csv_file_dlg.setWindowTitle(tr("Save CSV file"));
 	csv_file_dlg.setNameFilter(tr("Comma-separated values file (*.csv);;All files (*.*)"));

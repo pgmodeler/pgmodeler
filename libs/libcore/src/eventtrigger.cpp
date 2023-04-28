@@ -42,8 +42,8 @@ void EventTrigger::setFunction(Function *func)
 						.arg(BaseObject::getTypeName(ObjectType::EventTrigger)),
 						ErrorCode::AsgNotAllocatedFunction,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	//Functions with return type other that event_trigger are not accepted
-	else if(func->getReturnType()!=QString("event_trigger"))
-		throw Exception(Exception::getErrorMessage(ErrorCode::AsgInvalidTriggerFunction).arg(QString("event_trigger")),__PRETTY_FUNCTION__,__FILE__,__LINE__);
+	else if(func->getReturnType()!="event_trigger")
+		throw Exception(Exception::getErrorMessage(ErrorCode::AsgInvalidTriggerFunction).arg("event_trigger"),__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	//Functions with one or more parameters are not accepted
 	else if(func->getParameterCount()!=0)
 		throw Exception(Exception::getErrorMessage(ErrorCode::AsgFunctionInvalidParamCount)
@@ -120,9 +120,9 @@ QString EventTrigger::getSourceCode(SchemaParser::CodeType def_type)
 			attributes[Attributes::Function]=function->getSignature();
 
 		for(auto &flt : filter)
-			str_list.push_back(QString("%1 IN ('%2')").arg(flt.first).arg(flt.second.join(QString("','"))));
+			str_list.push_back(QString("%1 IN ('%2')").arg(flt.first).arg(flt.second.join("','")));
 
-		attributes[Attributes::Filter]=str_list.join(QString("\n\t AND "));
+		attributes[Attributes::Filter]=str_list.join("\n\t AND ");
 	}
 	else
 	{

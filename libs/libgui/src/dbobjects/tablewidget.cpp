@@ -518,7 +518,7 @@ void TableWidget::showObjectData(TableObject *object, int row)
 
 	QStringList contr_types={ ~ConstraintType(ConstraintType::PrimaryKey), ~ConstraintType(ConstraintType::ForeignKey),
 														~ConstraintType(ConstraintType::Check), ~ConstraintType(ConstraintType::Unique),
-														QString("NOT NULL") },
+														"NOT NULL" },
 			constr_codes={ TableObjectView::TextPrimaryKey,
 										 TableObjectView::TextForeignKey,
 										 TableObjectView::TextCheck,
@@ -557,7 +557,7 @@ void TableWidget::showObjectData(TableObject *object, int row)
 		else
 			str_aux=column->getDefaultValue();
 
-		if(str_aux.isEmpty()) str_aux=QString("-");
+		if(str_aux.isEmpty()) str_aux="-";
 		tab->setCellText(str_aux,row,3);
 
 		//Column 4: Column attributes (constraints which belongs)
@@ -565,11 +565,11 @@ void TableWidget::showObjectData(TableObject *object, int row)
 		for(int i=0; i < constr_codes.size(); i++)
 		{
 			if(str_aux.indexOf(constr_codes[i]) >= 0)
-				str_aux1+=contr_types[i] + QString(", ");
+				str_aux1+=contr_types[i] + ", ";
 		}
 
 		if(str_aux1.isEmpty())
-			str_aux1=QString("-");
+			str_aux1="-";
 		else
 			str_aux1.remove(str_aux1.size()-2, 2);
 
@@ -603,8 +603,8 @@ void TableWidget::showObjectData(TableObject *object, int row)
 		}
 		else
 		{
-			tab->setCellText(QString("-"),row,2);
-			tab->setCellText(QString("-"),row,3);
+			tab->setCellText("-",row,2);
+			tab->setCellText("-",row,3);
 		}
 
 		tab->setCellText(constr->getAlias(), row, 4);
@@ -625,7 +625,7 @@ void TableWidget::showObjectData(TableObject *object, int row)
 		for(i=0; i < 4; i++)
 		{
 			if(trigger->isExecuteOnEvent(events[i]))
-				str_aux+=~events[i] + QString(", ");
+				str_aux+=~events[i] + ", ";
 		}
 		str_aux.remove(str_aux.size()-2, 2);
 		tab->setCellText(str_aux ,row,3);		
@@ -674,7 +674,7 @@ void TableWidget::showObjectData(TableObject *object, int row)
 			rol_names.append(role->getName());
 
 		//Column 5: Roles
-		tab->setCellText(!rol_names.isEmpty() ? rol_names.join(", ") : QString("PUBLIC"), row, 5);
+		tab->setCellText(!rol_names.isEmpty() ? rol_names.join(", ") : "PUBLIC", row, 5);
 
 		tab->setCellText(policy->getAlias(), row, 6);
 	}
@@ -861,7 +861,7 @@ void TableWidget::duplicateObject(int sel_row, int new_row)
 			object = reinterpret_cast<BaseObject *>(obj_table->getRowData(sel_row).value<void *>());
 
 		CoreUtilsNs::copyObject(&dup_object, object, obj_type);
-		dup_object->setName(CoreUtilsNs::generateUniqueName(dup_object, *table->getObjectList(obj_type), false, QString("_cp")));
+		dup_object->setName(CoreUtilsNs::generateUniqueName(dup_object, *table->getObjectList(obj_type), false, "_cp"));
 
 		op_id=op_list->registerObject(dup_object, Operation::ObjCreated, new_row, this->object);
 

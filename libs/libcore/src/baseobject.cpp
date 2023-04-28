@@ -636,12 +636,12 @@ QString BaseObject::getEscapedComment(bool escape_special_chars)
 
 	if(escape_special_chars)
 	{
-		fmt_comm.replace(QChar('\\'), QString("\\\\"));
-		fmt_comm.replace(QChar::LineFeed, QString("\\n"));
-		fmt_comm.replace(QChar::Tabulation, QString("\\t"));
+		fmt_comm.replace(QChar('\\'), "\\\\");
+		fmt_comm.replace(QChar::LineFeed, "\\n");
+		fmt_comm.replace(QChar::Tabulation, "\\t");
 	}
 
-	fmt_comm.replace(QChar('\''), QString("''"));
+	fmt_comm.replace(QChar('\''), "''");
 	return fmt_comm;
 }
 
@@ -848,7 +848,7 @@ QString BaseObject::getSourceCode(SchemaParser::CodeType def_type, bool reduced_
 			}
 			else
 			{
-				attributes[Attributes::AppendedSql]=QString("\n-- Appended SQL commands --\n") +	appended_sql;
+				attributes[Attributes::AppendedSql]="\n-- Appended SQL commands --\n" + appended_sql;
 			}
 		}
 
@@ -864,7 +864,7 @@ QString BaseObject::getSourceCode(SchemaParser::CodeType def_type, bool reduced_
 			}
 			else
 			{
-				attributes[Attributes::PrependedSql]=QString("\n-- Prepended SQL commands --\n") +	prepended_sql;
+				attributes[Attributes::PrependedSql]="\n-- Prepended SQL commands --\n" + prepended_sql;
 			}
 		}
 

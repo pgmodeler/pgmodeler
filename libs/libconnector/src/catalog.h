@@ -277,7 +277,7 @@ class __libconnector Catalog {
 		/*! \brief Parse a function's default value and return the elements in a string list.
 		It can be specified the string delimiter as well the value separator if the input default value
 		contains several values */
-		static QStringList parseDefaultValues(const QString &def_vals, const QString &str_delim=QString("'"), const QString &val_sep=QString(", "));
+		static QStringList parseDefaultValues(const QString &def_vals, const QString &str_delim="'", const QString &val_sep=", ");
 
 		//! \brief Parse the raw commands of a rule retrieved by the catalog and returns only the relevant parts
 		static QStringList parseRuleCommands(const QString &cmd);

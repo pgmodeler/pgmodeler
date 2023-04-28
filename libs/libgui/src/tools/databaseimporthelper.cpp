@@ -603,8 +603,8 @@ void DatabaseImportHelper::importDatabase()
 
 				//Writing the erros to log file
 				log_name=GlobalAttributes::getTemporaryFilePath(QString("%1_%2_%3.log").arg(dbmodel->getName())
-																												.arg(QString("import"))
-																												.arg(QDateTime::currentDateTime().toString(QString("yyyy-MM-dd_hhmmss"))));
+																												.arg("import")
+																												.arg(QDateTime::currentDateTime().toString("yyyy-MM-dd_hhmmss")));
 
 				import_log.setFileName(log_name);
 				import_log.open(QFile::WriteOnly);
@@ -947,7 +947,7 @@ QString DatabaseImportHelper::dumpObjectAttributes(attribs_map &attribs)
 	for(auto &attr : attribs)
 		dump_str+=QString("%1: %2\n").arg(attr.first).arg(attr.second);
 
-	dump_str+=QString("---\n");
+	dump_str+="---\n";
 
 	return dump_str;
 }
@@ -1161,13 +1161,13 @@ void DatabaseImportHelper::configureBaseFunctionAttribs(attribs_map &attribs)
 			//Parameter modes: i = IN, o = OUT, b = INOUT, v = VARIADIC
 			if(!param_modes.isEmpty())
 			{
-				param.setIn(param_modes[i] == QString("i") || param_modes[i] == QString("b"));
-				param.setOut(param_modes[i] == QString("o") || param_modes[i] == QString("b"));
-				param.setVariadic(param_modes[i] == QString("v"));
+				param.setIn(param_modes[i] == "i" || param_modes[i] == "b");
+				param.setOut(param_modes[i] == "o" || param_modes[i] == "b");
+				param.setVariadic(param_modes[i] == "v");
 			}
 
 			//If the mode is 't' indicates that the current parameter will be used as a return table colum
-			if(!param_modes.isEmpty() && param_modes[i]==QString("t"))
+			if(!param_modes.isEmpty() && param_modes[i]=="t")
 				attribs[Attributes::ReturnTable]+=param.getSourceCode(SchemaParser::XmlCode);
 			else
 				parameters.push_back(param);
@@ -1242,7 +1242,7 @@ void DatabaseImportHelper::createFunction(attribs_map &attribs)
 			if(attribs[Attributes::RefType] == Attributes::InputFunc ||
 					attribs[Attributes::RefType] == Attributes::RecvFunc ||
 					attribs[Attributes::RefType] == Attributes::CanonicalFunc)
-				attribs[Attributes::ReturnType] = PgSqlType(QString("\"any\"")).getSourceCode(SchemaParser::XmlCode);
+				attribs[Attributes::ReturnType] = PgSqlType("\"any\"").getSourceCode(SchemaParser::XmlCode);
 			else
 				attribs[Attributes::ReturnType] = getType(attribs[Attributes::ReturnType], true);
 		}
@@ -1347,7 +1347,7 @@ void DatabaseImportHelper::createOperatorClass(attribs_map &attribs)
 		attribs[Attributes::Type]=getType(attribs[Attributes::Type], true /*, attribs */);
 
 		//Generating attributes for STORAGE elements
-		if(attribs[Attributes::Storage]!=QString("0"))
+		if(attribs[Attributes::Storage]!="0")
 		{
 			elem_attr[Attributes::Storage]=Attributes::True;
 			elem_attr[Attributes::Definition]=getType(attribs[Attributes::Storage], true);
@@ -1442,7 +1442,7 @@ void DatabaseImportHelper::createOperator(attribs_map &attribs)
 		for(unsigned i=0; i < 2; i++)
 			attribs[arg_types[i]]=getType(attribs[arg_types[i]], true, {{Attributes::RefType, arg_types[i]}});
 
-		regexp.setPattern(Attributes::Signature + QString("(=)(\")"));
+		regexp.setPattern(Attributes::Signature + "(=)(\")");
 		for(unsigned i=0; i < 2; i++)
 		{
 			attribs[op_types[i]]=getDependencyObject(attribs[op_types[i]], ObjectType::Operator, true, false, true, {{Attributes::RefType, op_types[i]}});
@@ -1558,8 +1558,8 @@ void DatabaseImportHelper::createSequence(attribs_map &attribs)
 			QString col_name, tab_name;
 			attribs_map extra_attrs,
 					pos_attrib={
-				{ Attributes::XPos, QString("0") },
-				{ Attributes::YPos, QString("0") }};
+				{ Attributes::XPos, "0" },
+				{ Attributes::YPos, "0" }};
 
 			if(attribs[Attributes::Oid].toUInt() > owner_col[0].toUInt())
 				seq_tab_swap[attribs[Attributes::Oid]]=owner_col[0];
@@ -1724,7 +1724,7 @@ void DatabaseImportHelper::createType(attribs_map &attribs)
 
 					/* Since pgModeler requires that type functions refers to the constructing type as "any"
 						 it's necessary to replace the function parameter types names */
-					attribs[func_types[i]].replace(QString("IN ") + type_name, QString("IN any"));
+					attribs[func_types[i]].replace("IN " + type_name, "IN any");
 				}
 			}
 		}
@@ -1749,8 +1749,8 @@ void DatabaseImportHelper::createTable(attribs_map &attribs)
 	{
 		std::vector<unsigned> inh_cols;
 		attribs_map pos_attrib={
-			{ Attributes::XPos, QString("0") },
-			{ Attributes::YPos, QString("0") }};
+			{ Attributes::XPos, "0" },
+			{ Attributes::YPos, "0" }};
 
 		attribs[Attributes::Columns]="";
 		attribs[Attributes::Position]=schparser.getSourceCode(Attributes::Position, pos_attrib, SchemaParser::XmlCode);
@@ -1809,7 +1809,7 @@ void DatabaseImportHelper::createTable(attribs_map &attribs)
 				part_key = PartitionKey();
 
 				// Retrieving the column used by the partition key
-				if(cols[i] != QString("0"))
+				if(cols[i] != "0")
 					part_key.setColumn(table->getColumn(getColumnName(attribs[Attributes::Oid], cols[i])));
 				else if(!exprs.isEmpty())
 				{
@@ -1818,19 +1818,19 @@ void DatabaseImportHelper::createTable(attribs_map &attribs)
 				}
 
 				// Retriving the collation for the partion key
-				if(i < collations.size() && collations[i] != QString("0"))
+				if(i < collations.size() && collations[i] != "0")
 				{
 					coll_name = getDependencyObject(collations[i], ObjectType::Collation, false, true, false);
 					coll = dynamic_cast<Collation *>(dbmodel->getObject(coll_name, ObjectType::Collation));
 
 					//Even if the collation exists we'll ignore it when it is the "pg_catalog.default"
 					if(coll && (!coll->isSystemObject() ||
-											(coll->isSystemObject() && coll->getName() != QString("default"))))
+											(coll->isSystemObject() && coll->getName() != "default")))
 						part_key.setCollation(coll);
 				}
 
 				// Retriving the operator class for the partion key
-				if(i < opclasses.size() && opclasses[i] != QString("0"))
+				if(i < opclasses.size() && opclasses[i] != "0")
 				{
 					opc_name = getDependencyObject(opclasses[i], ObjectType::OpClass, true, true, false);
 					opclass = dynamic_cast<OperatorClass *>(dbmodel->getObject(opc_name, ObjectType::OpClass));
@@ -1869,8 +1869,8 @@ void DatabaseImportHelper::createView(attribs_map &attribs)
 
 	try
 	{
-		attribs_map pos_attrib={{ Attributes::XPos, QString("0") },
-														{ Attributes::YPos, QString("0") }};
+		attribs_map pos_attrib={{ Attributes::XPos, "0" },
+														{ Attributes::YPos, "0" }};
 
 		attribs[Attributes::Position]=schparser.getSourceCode(Attributes::Position, pos_attrib, SchemaParser::XmlCode);
 
@@ -1894,12 +1894,12 @@ void DatabaseImportHelper::createView(attribs_map &attribs)
 				/* Building the type name prepending the schema name in order to search it on
 				 * the user defined types list at PgSQLType class */
 				type_name=BaseObject::formatName(getObjectName(types[type_oid][Attributes::Schema], true), false);
-				type_name+=QString(".");
+				type_name+=".";
 
 				if(types[type_oid][Attributes::Category] == ~CategoryType(CategoryType::Array))
 				{
-					int dim = types[type_oid][Attributes::Name].count(QString("[]"));
-					QString aux_name = types[type_oid][Attributes::Name].remove(QString("[]"));
+					int dim = types[type_oid][Attributes::Name].count("[]");
+					QString aux_name = types[type_oid][Attributes::Name].remove("[]");
 					type_name+=BaseObject::formatName(aux_name, false);
 					type_name+=QString("[]").repeated(dim);
 				}
@@ -1918,7 +1918,7 @@ void DatabaseImportHelper::createView(attribs_map &attribs)
 			 * if not it'll be created when auto_resolve_deps is checked. The only exception here if for
 			 * array types [] that will not be automatically created because they are derivated from
 			 * the non-array type, this way, if the original type is created there is no need to create the array form */
-			if(auto_resolve_deps && !is_type_registered && !type_name.contains(QString("[]")))
+			if(auto_resolve_deps && !is_type_registered && !type_name.contains("[]"))
 				// Try to create the missing data type
 				getType(itr.second[Attributes::TypeOid], false);
 
@@ -2028,7 +2028,7 @@ void DatabaseImportHelper::createIndex(attribs_map &attribs)
 		int i = 0, elem_cnt = 0;
 		bool desc_order = false, nulls_first = false;
 
-		attribs[Attributes::Factor]=QString("90");
+		attribs[Attributes::Factor]="90";
 		tab_name=getDependencyObject(attribs[Attributes::Table], ObjectType::Table, true, auto_resolve_deps, false);
 		parent_tab=dynamic_cast<BaseTable *>(dbmodel->getObject(tab_name, ObjectType::Table));
 
@@ -2089,18 +2089,18 @@ void DatabaseImportHelper::createIndex(attribs_map &attribs)
 				elem.setSortingAttribute(IndexElement::NullsFirst, nulls_first);
 			}
 
-			if(i < collations.size() && collations[i]!=QString("0"))
+			if(i < collations.size() && collations[i]!="0")
 			{
 				coll_name=getDependencyObject(collations[i], ObjectType::Collation, false, true, false);
 				coll=dynamic_cast<Collation *>(dbmodel->getObject(coll_name, ObjectType::Collation));
 
 				//Even if the collation exists we'll ignore it when it is the "pg_catalog.default"
 				if(coll && (!coll->isSystemObject() ||
-										(coll->isSystemObject() && coll->getName() != QString("default"))))
+										(coll->isSystemObject() && coll->getName() != "default")))
 					elem.setCollation(coll);
 			}
 
-			if(i < opclasses.size() && opclasses[i]!=QString("0"))
+			if(i < opclasses.size() && opclasses[i]!="0")
 			{
 				opc_name=getDependencyObject(opclasses[i], ObjectType::OpClass, true, true, false);
 				opclass=dynamic_cast<OperatorClass *>(dbmodel->getObject(opc_name, ObjectType::OpClass));
@@ -2142,7 +2142,7 @@ void DatabaseImportHelper::createConstraint(attribs_map &attribs)
 		PhysicalTable *table=nullptr;
 
 		//If the table oid is 0 indicates that the constraint is part of a data type like domains
-		if(!table_oid.isEmpty() && table_oid!=QString("0"))
+		if(!table_oid.isEmpty() && table_oid!="0")
 		{
 			ObjectType tab_type = BaseObject::getObjectType(attribs[Attributes::TableType]);
 			QStringList factor=Catalog::parseArrayValues(attribs[Attributes::Factor]);
@@ -2150,8 +2150,8 @@ void DatabaseImportHelper::createConstraint(attribs_map &attribs)
 			//Retrieving the table is it was not imported yet and auto_resolve_deps is true
 			tab_name=getDependencyObject(table_oid, tab_type, true, auto_resolve_deps, false);
 
-			if(!factor.isEmpty() && factor[0].startsWith(QString("fillfactor=")))
-				attribs[Attributes::Factor]=factor[0].remove(QString("fillfactor="));
+			if(!factor.isEmpty() && factor[0].startsWith("fillfactor="))
+				attribs[Attributes::Factor]=factor[0].remove("fillfactor=");
 
 			attribs[attribs[Attributes::Type]]=Attributes::True;
 			table=dynamic_cast<PhysicalTable *>(dbmodel->getObject(tab_name, tab_type));
@@ -2188,14 +2188,14 @@ void DatabaseImportHelper::createConstraint(attribs_map &attribs)
 				{
 					elem=ExcludeElement();
 
-					if(cols[i] != QString("0"))
+					if(cols[i] != "0")
 						elem.setColumn(table->getColumn(getColumnName(table_oid, cols[i])));
 					else
 						elem.setExpression(exprs.front().trimmed());
 
 					exprs.pop_front();
 
-					if(i < opclasses.size() && opclasses[i]!=QString("0"))
+					if(i < opclasses.size() && opclasses[i]!="0")
 					{
 						opc_name=getDependencyObject(opclasses[i], ObjectType::OpClass, true, true, false);
 						opclass=dynamic_cast<OperatorClass *>(dbmodel->getObject(opc_name, ObjectType::OpClass));
@@ -2204,7 +2204,7 @@ void DatabaseImportHelper::createConstraint(attribs_map &attribs)
 							elem.setOperatorClass(opclass);
 					}
 
-					if(i < opers.size() && opers[i]!=QString("0"))
+					if(i < opers.size() && opers[i]!="0")
 					{
 						op_name=getDependencyObject(opers[i], ObjectType::Operator, true, true, false);
 						oper=dynamic_cast<Operator *>(dbmodel->getObject(op_name, ObjectType::Operator));
@@ -2233,7 +2233,7 @@ void DatabaseImportHelper::createConstraint(attribs_map &attribs)
 				else if(attribs[Attributes::Type]==Attributes::CkConstr)
 				{
 					QString expr = attribs[Attributes::Expressions];
-					expr.replace(QString("CHECK ("), "");
+					expr.replace("CHECK (", "");
 					expr.remove(expr.lastIndexOf(')'), 1);
 					attribs[Attributes::Expression] = expr;
 				}
@@ -2376,8 +2376,8 @@ void DatabaseImportHelper::createForeignTable(attribs_map &attribs)
 	{
 		std::vector<unsigned> inh_cols;
 		attribs_map pos_attrib={
-			{ Attributes::XPos, QString("0") },
-			{ Attributes::YPos, QString("0") }};
+			{ Attributes::XPos, "0" },
+			{ Attributes::YPos, "0" }};
 
 		attribs[Attributes::Server] = getDependencyObject(attribs[Attributes::Server], ObjectType::ForeignServer, true , true, true);
 		attribs[Attributes::Options] = Catalog::parseArrayValues(attribs[Attributes::Options]).join(ForeignDataWrapper::OptionsSeparator);
@@ -2706,7 +2706,7 @@ void DatabaseImportHelper::createColumns(attribs_map &attribs, std::vector<unsig
 			/* Building the type name prepending the schema name in order to search it on
 			 * the user defined types list at PgSQLType class */
 			QString sch_name = BaseObject::formatName(getObjectName(types[type_oid][Attributes::Schema], true), false);
-			sch_name += QString(".");
+			sch_name += ".";
 			type_name.clear();
 
 			/* Special verification for PostGiS types: if the current type is a gis based one
@@ -2725,8 +2725,8 @@ void DatabaseImportHelper::createColumns(attribs_map &attribs, std::vector<unsig
 			{
 				if(types[type_oid][Attributes::Category] == ~CategoryType(CategoryType::Array))
 				{
-					int dim = types[type_oid][Attributes::Name].count(QString("[]"));
-					QString aux_name = types[type_oid][Attributes::Name].remove(QString("[]"));
+					int dim = types[type_oid][Attributes::Name].count("[]");
+					QString aux_name = types[type_oid][Attributes::Name].remove("[]");
 					type_name+=BaseObject::formatName(aux_name, false);
 					type_name+=QString("[]").repeated(dim);
 					type_name.prepend(sch_name);
@@ -2747,7 +2747,7 @@ void DatabaseImportHelper::createColumns(attribs_map &attribs, std::vector<unsig
 	 if not it'll be created when auto_resolve_deps is checked. The only exception here if for
 	 array types [] that will not be automatically created because they are derivated from
 	 the non-array type, this way, if the original type is created there is no need to create the array form */
-		if(auto_resolve_deps && !is_type_registered && !type_name.contains(QString("[]")))
+		if(auto_resolve_deps && !is_type_registered && !type_name.contains("[]"))
 			// Try to create the missing data type
 			getType(itr->second[Attributes::TypeOid], false);
 
@@ -2789,13 +2789,13 @@ void DatabaseImportHelper::createColumns(attribs_map &attribs, std::vector<unsig
 			 the cast if the casting is equivalent to the column type. */
 			def_val = itr->second[Attributes::DefaultValue];
 
-			if(!def_val.startsWith(QString("nextval(")) && def_val.contains(QString("::")))
+			if(!def_val.startsWith("nextval(") && def_val.contains("::"))
 			{
-				QStringList values = def_val.split(QString("::"));
+				QStringList values = def_val.split("::");
 
 				if(values.size() > 1 &&
 					 ((~col.getType() == values[1]) ||
-						(~col.getType() == QString("char") && values[1] == QString("bpchar")) ||
+						(~col.getType() == "char" && values[1] == "bpchar") ||
 						(col.getType().isUserType() && (~col.getType()).endsWith(values[1]))))
 					def_val=values[0];
 			}
@@ -2838,7 +2838,7 @@ void DatabaseImportHelper::assignSequencesToColumns()
 
 			//Translating the default value nextval('sequence'::regclass)
 			if(col->getType().isIntegerType() &&
-					col->getDefaultValue().contains(QString("nextval(")))
+					col->getDefaultValue().contains("nextval("))
 			{
 				QString seq_name=col->getDefaultValue();
 				Sequence *seq=nullptr;
@@ -3015,7 +3015,7 @@ QString DatabaseImportHelper::getObjectName(const QString &oid, bool signature_f
 			sch_name = getObjectName(obj_attr[Attributes::Schema]);
 
 		if(!sch_name.isEmpty())
-			obj_name.prepend(sch_name + QString("."));
+			obj_name.prepend(sch_name + ".");
 	}
 
 	//Formatting the name in form of signature (only for functions and operators)
@@ -3035,12 +3035,12 @@ QString DatabaseImportHelper::getObjectName(const QString &oid, bool signature_f
 			{
 				if(arg_modes.isEmpty())
 					params.push_back(arg_types[i]);
-				else if(arg_modes[i]!=QString("t") && arg_modes[i]!=QString("o"))
+				else if(arg_modes[i]!="t" && arg_modes[i]!="o")
 				{
-					if(arg_modes[i]==QString("i") || arg_modes[i]==QString("b"))
+					if(arg_modes[i]=="i" || arg_modes[i]=="b")
 						params.push_back(arg_types[i]);
 					else
-						params.push_back(QString("VARIADIC ") + arg_types[i]);
+						params.push_back("VARIADIC " + arg_types[i]);
 				}
 			}
 		}
@@ -3049,19 +3049,19 @@ QString DatabaseImportHelper::getObjectName(const QString &oid, bool signature_f
 			QStringList params=getTypes(obj_attr[Attributes::Types], false);
 
 			if(params.isEmpty())
-				params.push_back(QString("*"));
+				params.push_back("*");
 		}
 		else if(obj_type==ObjectType::Operator)
 		{
 			if(obj_attr[Attributes::LeftType].toUInt() > 0)
 				params.push_back(getType(obj_attr[Attributes::LeftType], false));
 			else
-				params.push_back(QString("NONE"));
+				params.push_back("NONE");
 
 			if(obj_attr[Attributes::RightType].toUInt() > 0)
 				params.push_back(getType(obj_attr[Attributes::RightType], false));
 			else
-				params.push_back(QString("NONE"));
+				params.push_back("NONE");
 		}
 		else
 		{
@@ -3069,7 +3069,7 @@ QString DatabaseImportHelper::getObjectName(const QString &oid, bool signature_f
 		}
 
 		if(obj_type != ObjectType::OpFamily && obj_type != ObjectType::OpClass)
-			obj_name+=QString("(") + params.join(',') + QString(")");
+			obj_name+="(" + params.join(',') + ")";
 	}
 
 	if(signature_form)
@@ -3112,7 +3112,7 @@ QString DatabaseImportHelper::getColumnName(const QString &tab_oid_str, const QS
 	if(columns.count(tab_oid) && columns[tab_oid].count(col_id))
 	{
 		if(prepend_tab_name)
-			col_name=getObjectName(tab_oid_str) + QString(".");
+			col_name=getObjectName(tab_oid_str) + ".";
 
 		col_name+=columns[tab_oid][col_id].at(Attributes::Name);
 	}
@@ -3129,7 +3129,7 @@ QStringList DatabaseImportHelper::getColumnNames(const QString &tab_oid_str, con
 	if(columns.count(tab_oid))
 	{
 		if(prepend_tab_name)
-			tab_name=getObjectName(tab_oid_str) + QString(".");
+			tab_name=getObjectName(tab_oid_str) + ".";
 
 		col_ids=Catalog::parseArrayValues(col_id_vect);
 
@@ -3256,8 +3256,8 @@ QString DatabaseImportHelper::getType(const QString &oid_str, bool generate_xml,
 		/* Removing the optional modifier "without time zone" from date/time types.
 				 Since the class PgSQLTypes ommits the modifier it is necessary to reproduce
 				 this behavior here to avoid futher errors */
-		if(obj_name.startsWith(QString("timestamp")) || obj_name.startsWith(QString("time")))
-			obj_name.remove(QString(" without time zone"));
+		if(obj_name.startsWith("timestamp") || obj_name.startsWith("time"))
+			obj_name.remove(" without time zone");
 
 		/* Prepend the schema name only if the type it is not in a system schema ('pg_catalog' or 'information_schema'),
 			 * if the schema's names is already present in the type's name (in case of table types) or if the type being
@@ -3268,11 +3268,11 @@ QString DatabaseImportHelper::getType(const QString &oid_str, bool generate_xml,
 
 		if(!sch_name.isEmpty() && !is_postgis_type &&
 			 (is_derivated_from_obj ||
-				(sch_name != QString("pg_catalog") && sch_name != QString("information_schema")) ||
+				(sch_name != "pg_catalog" && sch_name != "information_schema") ||
 				type_oid > catalog.getLastSysObjectOID()) &&
 			 !obj_name.contains(QRegularExpression(QString("^(\\\")?(%1)(\\\")?(\\.)").arg(sch_name))))
 		{
-			obj_name.prepend(sch_name + QString("."));
+			obj_name.prepend(sch_name + ".");
 		}
 
 		/* In case of auto resolve dependencies, if the type is a user defined one and is
@@ -3285,7 +3285,7 @@ QString DatabaseImportHelper::getType(const QString &oid_str, bool generate_xml,
 			 type_oid > catalog.getLastSysObjectOID() && !dbmodel->getType(aux_name))
 		{
 			//If the type is not an array one we simply use the current type attributes map
-			if(type_attr[Attributes::Category] != QString("A"))
+			if(type_attr[Attributes::Category] != "A")
 				createObject(type_attr);
 			/* In case the type is an array one we should use the oid held by "element" attribute to
 				 create the type related to current one */

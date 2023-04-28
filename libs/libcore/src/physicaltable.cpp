@@ -164,7 +164,7 @@ void PhysicalTable::setCommentAttribute(TableObject *tab_obj)
 
 		schparser.ignoreUnkownAttributes(true);
 		if(tab_obj->isSQLDisabled())
-			attributes[Attributes::ColsComment]+=QString("-- ");
+			attributes[Attributes::ColsComment]+="-- ";
 
 		attributes[Attributes::ColsComment]+=schparser.getSourceCode(Attributes::Comment, attribs, SchemaParser::SqlCode);
 		schparser.ignoreUnkownAttributes(false);
@@ -1699,9 +1699,9 @@ QString PhysicalTable::createInsertCommand(const QStringList &col_names, const Q
 		{
 			value.replace(QString("\\") + UtilsNs::UnescValueStart, UtilsNs::UnescValueStart);
 			value.replace(QString("\\") + UtilsNs::UnescValueEnd, UtilsNs::UnescValueEnd);
-			value.replace(QString("\'"), QString("''"));
-			value.replace(QChar(QChar::LineFeed), QString("\\n"));
-			value=QString("E'") + value + QString("'");
+			value.replace("\'", "''");
+			value.replace(QChar(QChar::LineFeed), "\\n");
+			value="E'" + value + "'";
 		}
 
 		val_list.push_back(value);
@@ -1716,7 +1716,7 @@ QString PhysicalTable::createInsertCommand(const QStringList &col_names, const Q
 		else if(col_list.size() > val_list.size())
 		{
 			for(curr_col = val_list.size(); curr_col < col_list.size(); curr_col++)
-				val_list.append(QString("DEFAULT"));
+				val_list.append("DEFAULT");
 		}
 
 		fmt_cmd=insert_cmd.arg(getSignature()).arg(col_list.join(", "))

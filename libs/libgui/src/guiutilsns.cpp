@@ -81,7 +81,7 @@ namespace GuiUtilsNs {
 			QLabel *label=new QLabel;
 			int txt_height = 0;
 
-			txt_height = output_lst->fontMetrics().height() * text.count(QString("<br/>"));
+			txt_height = output_lst->fontMetrics().height() * text.count("<br/>");
 
 			if(txt_height == 0)
 				txt_height = output_lst->fontMetrics().height() * 1.25;
@@ -189,8 +189,8 @@ namespace GuiUtilsNs {
 		QString fmt_msg=msg;
 		QChar start_chrs[2]={'`','('},
 				end_chrs[2]={'\'', ')'};
-		QStringList start_tags={ QString("<strong>"), QString("<em>(") },
-				end_tags={ QString("</strong>"), QString(")</em>") };
+		QStringList start_tags={ "<strong>", "<em>(" },
+				end_tags={ "</strong>", ")</em>" };
 		int pos=-1, pos1=-1;
 
 		// Replacing the form `' by <strong></strong> and () by <em></em>
@@ -216,7 +216,7 @@ namespace GuiUtilsNs {
 			while(pos >= 0 && pos < fmt_msg.size());
 		}
 
-		fmt_msg.replace(QString("\n"), QString("<br/>"));
+		fmt_msg.replace("\n", "<br/>");
 
 		return fmt_msg;
 	}
@@ -454,7 +454,7 @@ namespace GuiUtilsNs {
 		for(lin_idx=0, i=0; i < objs.size(); i++)
 		{
 			if(objs[i]->getObjectType()==ObjectType::BaseRelationship)
-				str_aux = QString("tv");
+				str_aux = "tv";
 			else
 				str_aux.clear();
 
@@ -526,7 +526,7 @@ namespace GuiUtilsNs {
 				else
 					parent_obj=objs[i]->getDatabase();
 
-				tab_item->setText(parent_obj ? parent_obj->getName() : QString("-"));
+				tab_item->setText(parent_obj ? parent_obj->getName() : "-");
 				tab_item->setData(Qt::UserRole, QVariant::fromValue<void *>(reinterpret_cast<void *>(parent_obj)));
 				if(new_row) tab_wgt->setItem(lin_idx, 3, tab_item);
 
@@ -551,7 +551,7 @@ namespace GuiUtilsNs {
 				tab_item=(new_row ? new QTableWidgetItem : tab_wgt->item(lin_idx, 4));
 				fnt.setItalic(true);
 				tab_item->setFont(fnt);
-				tab_item->setText(parent_obj ? parent_obj->getTypeName() : QString("-"));
+				tab_item->setText(parent_obj ? parent_obj->getTypeName() : "-");
 				if(new_row) tab_wgt->setItem(lin_idx, 4, tab_item);
 			}
 

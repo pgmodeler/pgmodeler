@@ -104,7 +104,7 @@ void XmlParser::loadXMLBuffer(const QString &xml_buf)
 			xml_buffer.replace(pos1,tam,"");
 		}
 		else
-			xml_decl=QString("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
+			xml_decl="<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
 
 		removeDTD();
 		readBuffer();
@@ -126,17 +126,15 @@ void XmlParser::setDTDFile(const QString &dtd_file, const QString &dtd_name)
 		throw Exception(ErrorCode::AsgEmptyDTDName,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 #ifndef Q_OS_WIN
-	fmt_dtd_file=QString("file://");
+	fmt_dtd_file="file://";
 #else
-	fmt_dtd_file=QString("file:///");
+	fmt_dtd_file="file:///";
 #endif
 
 	//Formats the dtd file path to URL style (converting to percentage format the non reserved chars)
 	fmt_dtd_file=QUrl::toPercentEncoding(QFileInfo(dtd_file).absoluteFilePath(), "/:");
-	dtd_decl=QString("<!DOCTYPE ") + dtd_name +
-			 QString(" SYSTEM ") +
-			 QString("\"") +
-			 fmt_dtd_file + QString("\">\n");
+	dtd_decl="<!DOCTYPE " + dtd_name +
+			" SYSTEM " + "\"" + fmt_dtd_file + "\">\n";
 }
 
 void XmlParser::readBuffer()

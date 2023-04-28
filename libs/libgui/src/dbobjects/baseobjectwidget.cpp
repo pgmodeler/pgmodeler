@@ -151,9 +151,9 @@ void BaseObjectWidget::setRequiredField(QWidget *widget)
 				lbl->setText(str_aux + lbl->text());
 
 			if(pgtype || grp)
-				widget->setStyleSheet(QString("QGroupBox {	font-weight: bold; }"));
+				widget->setStyleSheet("QGroupBox {	font-weight: bold; }");
 			else if(lbl)
-				widget->setStyleSheet(QString("QWidget {	font-weight: bold; }"));
+				widget->setStyleSheet("QWidget {	font-weight: bold; }");
 		}
 		else if(edt || txt || sel)
 		{
@@ -166,7 +166,7 @@ void BaseObjectWidget::setRequiredField(QWidget *widget)
 				widget->setStyleSheet(QString("%1 { border: 2px solid %2; padding-top: 2px; padding-bottom: 2px; border-radius: 4px; }").arg(widget->metaObject()->className()).arg(border_color.name()));
 		}
 
-		str_aux=(!widget->toolTip().isEmpty() ? QString("\n") : "");
+		str_aux=(!widget->toolTip().isEmpty() ? "\n" : "");
 		widget->setToolTip(widget->toolTip() + str_aux + tr("Required field. Leaving this empty will raise errors!"));
 	}
 }
@@ -576,7 +576,7 @@ void BaseObjectWidget::highlightVersionSpecificFields(std::map<QString, std::vec
 		{
 			if(values && values->count(wgt) > 0)
 			{
-				field_name+=QString("<br/>") + tr("Value(s)") + QString(": (");
+				field_name+="<br/>" + tr("Value(s)") + ": (";
 				for(auto value : values->at(wgt))
 				{
 					field_name += value;
@@ -587,8 +587,8 @@ void BaseObjectWidget::highlightVersionSpecificFields(std::map<QString, std::vec
 				field_name+=")";
 			}
 
-			wgt->setStyleSheet(QString("QWidget {	font-weight: bold; font-style: italic; text-decoration: underline; }"));
-			wgt->setToolTip(QString("<p>PostgreSQL") + itr.first + QString(" %1</p>").arg(field_name));
+			wgt->setStyleSheet("QWidget {	font-weight: bold; font-style: italic; text-decoration: underline; }");
+			wgt->setToolTip("<p>PostgreSQL" + itr.first + QString(" %1</p>").arg(field_name));
 		}
 	}
 }
