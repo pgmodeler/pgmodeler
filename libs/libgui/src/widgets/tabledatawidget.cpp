@@ -505,7 +505,7 @@ void TableDataWidget::setItemInvalid(QTableWidgetItem *item)
 	if(item)
 	{
 		item->setData(Qt::UserRole, item->background());
-		item->setBackground(QColor(QString("#FFC0C0")));
+		item->setBackground(QColor("#FFC0C0"));
 		item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
 	}
 }

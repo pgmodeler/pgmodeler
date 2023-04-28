@@ -96,12 +96,12 @@ void PgSQLTypeWidget::updateTypeFormat()
 			type=data.toUInt();
 
 		length_sb->setEnabled(allow_qualifiers && type.hasVariableLength());
-		timezone_chk->setVisible(type==QString("timestamp") || type==QString("time"));
-		timezone_lbl->setVisible(type==QString("timestamp") || type==QString("time"));
+		timezone_chk->setVisible(type=="timestamp" || type=="time");
+		timezone_lbl->setVisible(type=="timestamp" || type=="time");
 		precision_sb->setEnabled(allow_qualifiers && type.acceptsPrecision());
-		dimension_sb->setEnabled(type!=QString("void"));
+		dimension_sb->setEnabled(type!="void");
 
-		interval_cmb->setVisible(type==QString("interval"));
+		interval_cmb->setVisible(type=="interval");
 		interval_lbl->setVisible(interval_cmb->isVisible());
 		interval_cmb->setEnabled(allow_qualifiers);
 
@@ -189,7 +189,7 @@ void PgSQLTypeWidget::setAttributes(PgSqlType type, DatabaseModel *model, bool a
 
 		//Get the passed type index
 		type_name=~type;
-		type_name.remove(QRegularExpression(QString("( )(with)(out)?(.)*")));
+		type_name.remove(QRegularExpression("( )(with)(out)?(.)*"));
 		idx=type_cmb->findText(type_name);
 
 		//Select the type on the combo

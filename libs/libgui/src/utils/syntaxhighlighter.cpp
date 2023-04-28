@@ -20,8 +20,8 @@
 #include "widgets/numberedtexteditor.h"
 #include "textblockinfo.h"
 
-QFont SyntaxHighlighter::default_font = QFont(QString("Source Code Pro"), 12);
-const QString SyntaxHighlighter::UnformattedGroup = QString("__unformatted__");
+QFont SyntaxHighlighter::default_font = QFont("Source Code Pro", 12);
+const QString SyntaxHighlighter::UnformattedGroup("__unformatted__");
 
 SyntaxHighlighter::SyntaxHighlighter(QPlainTextEdit *parent, bool single_line_mode, bool use_custom_tab_width) : QSyntaxHighlighter(parent)
 {
@@ -159,7 +159,7 @@ void SyntaxHighlighter::highlightBlock(const QString &txt)
 		QChar chr_delim, lookahead_chr;
 		bool force_disable_compl = false;
 
-		text = txt + QString("\n");
+		text = txt + "\n";
 		len = text.length();
 
 		do

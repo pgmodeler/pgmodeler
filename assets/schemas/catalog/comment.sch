@@ -12,6 +12,10 @@
 
 [ WHERE objoid = ] {oid}
 
+%if {obj-rel-name} %then
+	[ AND classoid = '] {obj-rel-name} ['::regclass::oid ]
+%end
+
 %if %not {shared-obj} %then
 	[ AND objsubid = 0 ]
 %end

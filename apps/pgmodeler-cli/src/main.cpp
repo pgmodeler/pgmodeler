@@ -25,7 +25,7 @@ int main(int argc, char **argv)
 
 #ifdef DEMO_VERSION
 	out << Qt::endl;
-	out << QString("pgModeler ") << GlobalAttributes::PgModelerVersion << QT_TR_NOOP(" command line interface.") << Qt::endl;
+	out << "pgModeler " << GlobalAttributes::PgModelerVersion << QT_TR_NOOP(" command line interface.") << Qt::endl;
 	out << QT_TR_NOOP("PostgreSQL Database Modeler Project - pgmodeler.io") << Qt::endl;
 	out << QT_TR_NOOP("Copyright 2006-2022 Raphael Araújo e Silva <raphael@pgmodeler.io>") << Qt::endl;
 	out << QT_TR_NOOP("\n** CLI disabled in demonstration version! **") << Qt::endl << Qt::endl;
@@ -53,7 +53,7 @@ int main(int argc, char **argv)
 	{
 		out << Qt::endl;
 		out << e.getExceptionsText();
-		out << QString("** pgmodeler-cli aborted due to critical error(s). **") << Qt::endl << Qt::endl;
+		out << "** pgmodeler-cli aborted due to critical error(s). **" << Qt::endl << Qt::endl;
 		return (e.getErrorCode()==ErrorCode::Custom ? -1 : enum_t(e.getErrorCode()));
 	}
 #endif

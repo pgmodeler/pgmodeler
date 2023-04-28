@@ -57,6 +57,25 @@ std::map<ObjectType, QString> Catalog::ext_oid_fields={
 	{ObjectType::Policy, "pl.polrelid"}
 };
 
+std::map<ObjectType, QString> Catalog::obj_relnames={
+	{ObjectType::Aggregate, "pg_aggregate"},	{ObjectType::Cast, "pg_cast"},
+	{ObjectType::Collation, "pg_collation"},	{ObjectType::Column, "pg_attribute"},
+	{ObjectType::Constraint, "pg_constraint"},	{ObjectType::Conversion, "pg_conversion"},
+	{ObjectType::Database, "pg_database"},	{ObjectType::Domain, "pg_type"},
+	{ObjectType::Extension, "pg_extension"},	{ObjectType::EventTrigger, "pg_event_trigger"},
+	{ObjectType::ForeignDataWrapper, "pg_foreign_data_wrapper"},	{ObjectType::ForeignTable, "pg_foreign_table"},
+	{ObjectType::Function, "pg_proc"},	{ObjectType::Index, "pg_index"},
+	{ObjectType::Operator, "pg_operator"},	{ObjectType::OpClass, "pg_opclass"},
+	{ObjectType::OpFamily, "pg_opfamily"},	{ObjectType::Policy, "pg_policy"},
+	{ObjectType::Language, "pg_language"},	{ObjectType::Procedure, "pg_proc"},
+	{ObjectType::Role, "pg_authid"},	{ObjectType::Rule, "pg_rewrite"},
+	{ObjectType::Schema, "pg_namespace"},	{ObjectType::Sequence, "pg_sequence"},
+	{ObjectType::ForeignServer, "pg_foreign_server"},	{ObjectType::Table, "pg_class"},
+	{ObjectType::Tablespace, "pg_tablespace"},	{ObjectType::Transform, "pg_transform"},
+	{ObjectType::Trigger, "pg_trigger"},	{ObjectType::Type, "pg_type"},
+	{ObjectType::View, "pg_class"}
+};
+
 std::map<ObjectType, QString> Catalog::parent_aliases={
 	{ObjectType::Constraint, "tb"},
 	{ObjectType::Index, "tb"},
@@ -202,7 +221,7 @@ void Catalog::setObjectFilters(QStringList filters, bool only_matching, bool mat
 		 * This one comes in form of a regexp matching on oid::regclass::text */
 		parent_alias_ref = QString("%1 %2 ~* '(#)'")
 											 .arg(match_signature ? parent_sch_ref : "")
-											 .arg(AliasPlaceholder + QString(".relname"))
+											 .arg(AliasPlaceholder + ".relname")
 											 .replace("#", "%1");
 
 		// Validating the provided table children objects types
@@ -312,13 +331,13 @@ void Catalog::setObjectFilters(QStringList filters, bool only_matching, bool mat
 			 * "relation kind" in pg_class in order to avoid bringing children object of
 			 * table types not filtered */
 			if(has_tab_filter && BaseObject::isChildObjectType(ObjectType::Table, obj_type))
-				fmt_conds.append(QString("(%1)").arg(fmt_tab_patterns[ObjectType::Table] + QString("IN ('r','p')")));
+				fmt_conds.append(QString("(%1)").arg(fmt_tab_patterns[ObjectType::Table] + "IN ('r','p')"));
 
 			if(has_view_filter && BaseObject::isChildObjectType(ObjectType::View, obj_type))
-				fmt_conds.append(QString("(%1)").arg(fmt_tab_patterns[ObjectType::View] + QString("IN ('v','m')")));
+				fmt_conds.append(QString("(%1)").arg(fmt_tab_patterns[ObjectType::View] + "IN ('v','m')"));
 
 			if(has_ftab_filter && BaseObject::isChildObjectType(ObjectType::ForeignTable, obj_type))
-				fmt_conds.append(QString("(%1)").arg(fmt_tab_patterns[ObjectType::ForeignTable] + QString("= 'f'")));
+				fmt_conds.append(QString("(%1)").arg(fmt_tab_patterns[ObjectType::ForeignTable] + "= 'f'"));
 
 			if(!fmt_conds.isEmpty())
 			{
@@ -390,8 +409,8 @@ QString Catalog::getCatalogQuery(const QString &qry_type, ObjectType obj_type, b
 	 * due to support to this char in the middle of objects' names */
 	for(auto &attr : attribs)
 	{
-		if(attr.first != Attributes::CustomFilter && attr.second.contains(QChar('\'')))
-			attr.second.replace(QChar('\''), QString("''"));
+		if(attr.first != Attributes::CustomFilter && attr.first != Attributes::Comment && attr.second.contains(QChar('\'')))
+			attr.second.replace(QChar('\''), "''");
 	}
 
 	schparser.setPgSQLVersion(connection.getPgSQLVersion(true),
@@ -402,9 +421,9 @@ QString Catalog::getCatalogQuery(const QString &qry_type, ObjectType obj_type, b
 		attribs[Attributes::LastSysOid]=QString::number(last_sys_oid);
 
 	if(list_only_sys_objs)
-		attribs[Attributes::OidFilterOp]=QString("<=");
+		attribs[Attributes::OidFilterOp]="<=";
 	else
-		attribs[Attributes::OidFilterOp]=QString(">");
+		attribs[Attributes::OidFilterOp]=">";
 
 	if(obj_type==ObjectType::Type && exclude_array_types)
 		attribs[Attributes::ExcBuiltinArrays]=Attributes::True;
@@ -483,8 +502,10 @@ QString Catalog::getCatalogQuery(const QString &qry_type, ObjectType obj_type, b
 	//Append a LIMIT clause when the single_result is set
 	if(single_result)
 	{
-		if(sql.endsWith(';'))	sql.remove(sql.size()-1, 1);
-		sql+=QString(" LIMIT 1");
+		if(sql.endsWith(';'))
+			sql.remove(sql.size()-1, 1);
+
+		sql+=" LIMIT 1";
 	}
 
 	return sql;
@@ -634,7 +655,7 @@ std::vector<attribs_map> Catalog::getObjectsNames(std::vector<ObjectType> obj_ty
 	{
 		ResultSet res;
 		std::vector<attribs_map> objects;
-		QString sql, select_kw=QString("SELECT");
+		QString sql, select_kw="SELECT";
 		QStringList queries;
 		attribs_map attribs;
 
@@ -661,10 +682,10 @@ std::vector<attribs_map> Catalog::getObjectsNames(std::vector<ObjectType> obj_ty
 		}
 
 		//Joining the generated queries by using union in order to retrieve all results at once
-		sql = QChar('(') +  queries.join(QString(") UNION (")) + QChar(')');
+		sql = QChar('(') +  queries.join(") UNION (") + QChar(')');
 
 		if(sort_results)
-			sql += QString(" ORDER BY oid, object_type");
+			sql += " ORDER BY oid, object_type";
 
 		connection.executeDMLCommand(sql, res);
 
@@ -787,14 +808,15 @@ std::vector<attribs_map> Catalog::getMultipleAttributes(const QString &catalog_s
 	}
 }
 
-QString Catalog::getCommentQuery(const QString &oid_field, bool is_shared_obj)
+QString Catalog::getCommentQuery(const QString &oid_field, ObjectType obj_type, bool is_shared_obj)
 {
 	QString query_id=Attributes::Comment;
 
 	try
 	{
-		attribs_map attribs={{Attributes::Oid, oid_field},
-												 {Attributes::SharedObj, (is_shared_obj ? Attributes::True : "")}};
+		attribs_map attribs={{ Attributes::Oid, oid_field },
+												 { Attributes::SharedObj, (is_shared_obj ? Attributes::True : "") },
+												 { Attributes::ObjRelationName, obj_relnames[obj_type] }};
 
 		loadCatalogQuery(query_id);
 		return schparser.getSourceCode(attribs).simplified();
@@ -808,7 +830,7 @@ QString Catalog::getCommentQuery(const QString &oid_field, bool is_shared_obj)
 
 QString Catalog::getNotExtObjectQuery(const QString &oid_field)
 {
-	QString query_id=QString("notextobject");
+	QString query_id="notextobject";
 
 	try
 	{
@@ -881,7 +903,7 @@ std::vector<attribs_map> Catalog::getObjectsAttributes(ObjectType obj_type, cons
 
 		//Retrieve the comment catalog query. Only columns need to retreive comments in their own catalog query file
 		if(obj_type != ObjectType::Column)
-			extra_attribs[Attributes::Comment]=getCommentQuery(oid_fields[obj_type], is_shared_obj);
+			extra_attribs[Attributes::Comment] = getCommentQuery(oid_fields[obj_type], obj_type, is_shared_obj);
 
 		return getMultipleAttributes(obj_type, extra_attribs);
 	}
@@ -947,7 +969,7 @@ attribs_map Catalog::getServerAttributes()
 		QString sql, attr_name;
 		attribs_map tuple, attribs_aux;
 
-		loadCatalogQuery(QString("server"));
+		loadCatalogQuery("server");
 		schparser.ignoreUnkownAttributes(true);
 		schparser.ignoreEmptyAttributes(true);
 		sql = schparser.getSourceCode(attribs).simplified();
@@ -1025,7 +1047,7 @@ QStringList Catalog::parseArrayValues(const QString &array_val)
 		QString value=array_val.mid(start, (end - start)+1);
 
 		if(value.contains('"'))
-			list = parseDefaultValues(value, QString("\""), QString(","));
+			list = parseDefaultValues(value, "\"", ",");
 		else
 			list = value.split(',', Qt::SkipEmptyParts);
 	}
@@ -1057,7 +1079,7 @@ QStringList Catalog::parseDefaultValues(const QString &def_values, const QString
 
 		if(pos >= 0)
 		{
-			idx = aux_def_vals.indexOf(QString("], "), pos + 1);
+			idx = aux_def_vals.indexOf("], ", pos + 1);
 
 			if(idx < 0)
 				idx = aux_def_vals.indexOf(']', pos + 1);

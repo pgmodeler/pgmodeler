@@ -135,7 +135,7 @@ void ModelFixForm::fixModel()
 	QStringList args;
 
 #ifdef Q_OS_MAC
-	cmd+=QString(" pgmodeler-cli");
+	cmd+=" pgmodeler-cli";
 #endif
 
 	args.append("--fix-model");

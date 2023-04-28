@@ -19,7 +19,7 @@
 #include <QApplication>
 
 QString Exception::messages[Exception::ErrorCount][2]={
-	{"Custom", QString(" ")},
+	{"Custom", " "},
 	{"AsgPseudoTypeColumn", QT_TR_NOOP("Assignment of a pseudo-type to the type of the column!")},
 	{"AsgInvalidPrecision", QT_TR_NOOP("Assignment of a precision greater than the length of the type!")},
 	{"AsgInvalidPrecisionTimestamp", QT_TR_NOOP("Assignment of an invalid precision to type time, timestamp or interval. The precision in this case must be equal to or less than 6!")},
@@ -472,7 +472,7 @@ QString Exception::getExceptionsText()
 		if(!itr->getExtraInfo().isEmpty())
 			exceptions_txt+=QString("       ** %1\n\n").arg(itr->getExtraInfo());
 		else
-			exceptions_txt+=QString("\n");
+			exceptions_txt+="\n";
 
 		itr++; idx++;
 

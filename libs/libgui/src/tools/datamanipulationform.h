@@ -122,7 +122,7 @@ class __libgui DataManipulationForm: public QDialog, public Ui::DataManipulation
 		DataManipulationForm(QWidget * parent = nullptr, Qt::WindowFlags f = Qt::Widget);
 		
 		//! \brief Defines the connection and current schema and table to be handled, this method should be called before show the dialog
-		void setAttributes(Connection conn, const QString curr_schema=QString("public"), const QString curr_table_name="", const QString &filter="");
+		void setAttributes(Connection conn, const QString curr_schema="public", const QString curr_table_name="", const QString &filter="");
 
 	private slots:
 		void reject();

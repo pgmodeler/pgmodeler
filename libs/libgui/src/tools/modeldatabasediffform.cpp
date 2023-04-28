@@ -335,7 +335,7 @@ void ModelDatabaseDiffForm::createThread(ThreadId thread_id)
 	{
 		export_thread=new QThread;
 		export_helper=new ModelExportHelper;
-		export_helper->setIgnoredErrors({ QString("0A000") });
+		export_helper->setIgnoredErrors({ "0A000" });
 		export_helper->moveToThread(export_thread);
 
 		connect(apply_on_server_btn, &QPushButton::clicked, this, [this](){
@@ -417,10 +417,10 @@ void ModelDatabaseDiffForm::clearOutput()
 	step_pb->setValue(0);
 	progress_pb->setValue(0);
 
-	create_tb->setText(QString("0"));
-	alter_tb->setText(QString("0"));
-	drop_tb->setText(QString("0"));
-	ignore_tb->setText(QString("0"));
+	create_tb->setText("0");
+	alter_tb->setText("0");
+	drop_tb->setText("0");
+	ignore_tb->setText("0");
 }
 
 void ModelDatabaseDiffForm::listDatabases()
@@ -950,7 +950,7 @@ void ModelDatabaseDiffForm::handleErrorIgnored(QString err_code, QString err_msg
 											 export_item, false);
 
 	GuiUtilsNs::createOutputTreeItem(output_trw, GuiUtilsNs::formatMessage(err_msg),
-										QPixmap(QString("alert")),
+										QPixmap(GuiUtilsNs::getIconPath("alert")),
 										item, false, true);
 
 	GuiUtilsNs::createOutputTreeItem(output_trw, cmd,
@@ -1278,15 +1278,15 @@ void ModelDatabaseDiffForm::savePreset()
 	if(src_database_rb->isChecked())
 	{
 		conf[Attributes::InputDatabase] = QString("%1@%2")
-																			.arg(src_database_cmb->currentIndex() > 0 ? src_database_cmb->currentText() : QString("-"))
-																			.arg(src_connections_cmb->currentIndex() > 0 ? src_connections_cmb->currentText() : QString("-"));
+																			.arg(src_database_cmb->currentIndex() > 0 ? src_database_cmb->currentText() : "-")
+																			.arg(src_connections_cmb->currentIndex() > 0 ? src_connections_cmb->currentText() : "-");
 	}
 	else
 		conf[Attributes::InputDatabase] = "";
 
 	conf[Attributes::CompareToDatabase] = QString("%1@%2")
-																				.arg(database_cmb->currentIndex() > 0 ? database_cmb->currentText() : QString("-"))
-																				.arg(connections_cmb->currentIndex() > 0 ? connections_cmb->currentText() : QString("-"));
+																				.arg(database_cmb->currentIndex() > 0 ? database_cmb->currentText() : "-")
+																				.arg(connections_cmb->currentIndex() > 0 ? connections_cmb->currentText() : "-");
 	conf[Attributes::Version] = pgsql_ver_chk->isChecked() ? pgsql_ver_cmb->currentText() : "";
 	conf[Attributes::StoreInFile] = store_in_file_rb->isChecked() ? Attributes::True : "";
 	conf[Attributes::ApplyOnServer] = apply_on_server_rb->isChecked() ? Attributes::True : "";

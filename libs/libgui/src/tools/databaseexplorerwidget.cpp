@@ -370,8 +370,8 @@ attribs_map DatabaseExplorerWidget::formatObjectAttribs(attribs_map &attribs)
 
 		//Removing system schemas from object's name
 		if(attribs.count(Attributes::Name)!=0 &&
-			 (attribs[Attributes::Name].startsWith(QString("pg_catalog.")) ||
-				attribs[Attributes::Name].startsWith(QString("information_schema."))))
+			 (attribs[Attributes::Name].startsWith("pg_catalog.") ||
+				attribs[Attributes::Name].startsWith("information_schema.")))
 			attribs[Attributes::Name]=attribs[Attributes::Name].split('.').at(1);
 
 	for(auto &attrib : attribs)
@@ -469,7 +469,7 @@ void DatabaseExplorerWidget::formatAggregateAttribs(attribs_map &attribs)
 	formatOidAttribs(attribs, { Attributes::Types }, ObjectType::Type, true);
 	attribs[Attributes::Signature]=(QString("%1(%2)")
 											 .arg(BaseObject::formatName(attribs[Attributes::Name]))
-											.arg(attribs[Attributes::Types])).replace(UtilsNs::DataSeparator, QString(","));
+											.arg(attribs[Attributes::Types])).replace(UtilsNs::DataSeparator, ",");
 
 	attribs[Attributes::StateType]=getObjectName(ObjectType::Type, attribs[Attributes::StateType]);
 	attribs[Attributes::SortOp]=getObjectName(ObjectType::Operator, attribs[Attributes::SortOp]);
@@ -528,7 +528,7 @@ void DatabaseExplorerWidget::formatBaseFunctionAttribs(attribs_map &attribs)
 	formatOidAttribs(attribs, { Attributes::ArgTypes }, ObjectType::Type, true);
 	attribs[Attributes::Signature]=(QString("%1(%2)")
 																	.arg(BaseObject::formatName(attribs[Attributes::Name]))
-																	.arg(attribs[Attributes::ArgTypes])).replace(UtilsNs::DataSeparator, QString(","));
+																	.arg(attribs[Attributes::ArgTypes])).replace(UtilsNs::DataSeparator, ",");
 }
 
 void DatabaseExplorerWidget::formatProcedureAttribs(attribs_map &attribs)
@@ -564,7 +564,7 @@ void DatabaseExplorerWidget::formatOperatorAttribs(attribs_map &attribs)
 	attribs[Attributes::Signature]=(QString("%1(%2,%3)")
 											 .arg(BaseObject::formatName(attribs[Attributes::Name], true))
 											.arg(attribs[Attributes::LeftType])
-			.arg(attribs[Attributes::RightType])).replace(UtilsNs::DataSeparator, QString(","));
+			.arg(attribs[Attributes::RightType])).replace(UtilsNs::DataSeparator, ",");
 }
 
 void DatabaseExplorerWidget::formatTableAttribs(attribs_map &attribs)
@@ -629,7 +629,7 @@ void DatabaseExplorerWidget::formatSequenceAttribs(attribs_map &attribs)
 		conn.executeDMLCommand(QString("SELECT last_value FROM \"%1\".\"%2\"").arg(sch_name).arg(BaseObject::formatName(attribs[Attributes::Name])), res);
 
 		if(res.accessTuple(ResultSet::FirstTuple))
-			attribs[Attributes::LastValue]=res.getColumnValue(QString("last_value"));
+			attribs[Attributes::LastValue]=res.getColumnValue("last_value");
 
 		conn.close();
 	}
@@ -873,7 +873,7 @@ QString DatabaseExplorerWidget::formatObjectName(attribs_map &attribs)
 	{
 		if(attribs.empty() ||
 				attribs[Attributes::Oid].isEmpty() ||
-				attribs[Attributes::Oid]==QString("0") ||
+				attribs[Attributes::Oid]=="0" ||
 				attribs[Attributes::Name].isEmpty())
 			return DepNotDefined;
 		else
@@ -890,13 +890,13 @@ QString DatabaseExplorerWidget::formatObjectName(attribs_map &attribs)
 
 			//Retrieving the schema name
 			if(!attribs[Attributes::Schema].isEmpty() &&
-					attribs[Attributes::Schema]!=QString("0"))
+					attribs[Attributes::Schema]!="0")
 			{
 				aux_attribs=catalog.getObjectAttributes(ObjectType::Schema, attribs[Attributes::Schema].toUInt());
 				sch_name=BaseObject::formatName(aux_attribs[Attributes::Name], false);
 
 				if(!sch_name.isEmpty())
-					obj_name=sch_name + QString(".") + obj_name;
+					obj_name=sch_name + "." + obj_name;
 			}
 
 			//Formatting paramenter types for function
@@ -924,7 +924,7 @@ QString DatabaseExplorerWidget::formatObjectName(attribs_map &attribs)
 					names=getObjectName(ObjectType::Type, attribs[attr]).split('.');
 					type_name=names[names.size()-1];
 
-					if(type_name.isEmpty()) type_name=QString("-");
+					if(type_name.isEmpty()) type_name="-";
 					arg_types.push_back(type_name);
 				}
 
@@ -979,7 +979,7 @@ QString DatabaseExplorerWidget::getObjectName(ObjectType obj_type, const QString
 {
 	try
 	{
-		if(oid==QString("0") || oid.isEmpty())
+		if(oid=="0" || oid.isEmpty())
 			return DepNotDefined;
 		else
 		{
@@ -996,7 +996,7 @@ QString DatabaseExplorerWidget::getObjectName(ObjectType obj_type, const QString
 void DatabaseExplorerWidget::setConnection(Connection conn, const QString &default_db)
 {
 	this->connection=conn;
-	this->default_db=(default_db.isEmpty() ? QString("postgres") : default_db);
+	this->default_db=(default_db.isEmpty() ? "postgres" : default_db);
 }
 
 Connection DatabaseExplorerWidget::getConnection()
@@ -1179,7 +1179,7 @@ void DatabaseExplorerWidget::handleSelectedSnippet(const QString &snip_id)
 
 		//Formatting a schema qualified "table" attribute for table children objects
 		if(TableObject::isTableObject(obj_type) && !sch_name.isEmpty() && !tab_name.isEmpty())
-			attribs[Attributes::Table]=BaseObject::formatName(sch_name) + QString(".") + BaseObject::formatName(tab_name);
+			attribs[Attributes::Table]=BaseObject::formatName(sch_name) + "." + BaseObject::formatName(tab_name);
 	}
 	//Formatting the "name" attribute if it is not schema qualified
 	else if(attribs.count(Attributes::Schema) &&
@@ -1193,7 +1193,7 @@ void DatabaseExplorerWidget::handleSelectedSnippet(const QString &snip_id)
 		else
 			obj_name=attribs[Attributes::Name];
 
-		attribs[Attributes::Name]=BaseObject::formatName(attribs[Attributes::Schema]) + QString(".") + obj_name;
+		attribs[Attributes::Name]=BaseObject::formatName(attribs[Attributes::Schema]) + "." + obj_name;
 	}
 
 	if(attribs.count(Attributes::SqlObject)==0)
@@ -1205,7 +1205,7 @@ void DatabaseExplorerWidget::handleSelectedSnippet(const QString &snip_id)
 	for(auto &attr : attribs)
 	{
 		if(attr.second.contains(UtilsNs::DataSeparator))
-			attribs[attr.first]=attr.second.replace(UtilsNs::DataSeparator,QString(","));
+			attribs[attr.first]=attr.second.replace(UtilsNs::DataSeparator,",");
 	}
 
 	emit s_snippetShowRequested(SnippetsConfigWidget::getParsedSnippet(snip_id, attribs));
@@ -1232,7 +1232,7 @@ attribs_map DatabaseExplorerWidget::extractAttributesFromItem(QTreeWidgetItem *i
 		idx=obj_name.indexOf('(');
 		idx1=obj_name.indexOf(')');
 		types=obj_name.mid(idx+1, idx1-idx-1).split(',');
-		types.removeAll(QString("-"));
+		types.removeAll("-");
 		obj_name.remove(idx, obj_name.size());
 	}
 	else if(obj_type==ObjectType::OpFamily || obj_type==ObjectType::OpClass)
@@ -1246,7 +1246,7 @@ attribs_map DatabaseExplorerWidget::extractAttributesFromItem(QTreeWidgetItem *i
 	//For table objects the "table" attribute must be schema qualified
 	if(obj_type!=ObjectType::Index && TableObject::isTableObject(obj_type))
 	{
-		attribs[Attributes::Table]=attribs[Attributes::Schema] + QString(".") + attribs[Attributes::Table];
+		attribs[Attributes::Table]=attribs[Attributes::Schema] + "." + attribs[Attributes::Table];
 		attribs[Attributes::Signature]=attribs[Attributes::Name] + QString(" ON %1").arg(attribs[Attributes::Table]);
 	}
 	//For operators and functions there must exist the signature attribute
@@ -1283,8 +1283,8 @@ attribs_map DatabaseExplorerWidget::extractAttributesFromItem(QTreeWidgetItem *i
 		}
 
 		if(!attribs[Attributes::Schema].isEmpty() &&
-				attribs[Attributes::Name].indexOf(attribs[Attributes::Schema] + QString(".")) < 0)
-			attribs[Attributes::Signature]=attribs[Attributes::Schema] + QString(".") + attribs[Attributes::Name];
+				attribs[Attributes::Name].indexOf(attribs[Attributes::Schema] + ".") < 0)
+			attribs[Attributes::Signature]=attribs[Attributes::Schema] + "." + attribs[Attributes::Name];
 		else
 			attribs[Attributes::Signature]=attribs[Attributes::Name];
 	}
@@ -1353,7 +1353,7 @@ void DatabaseExplorerWidget::dropObject(QTreeWidgetItem *item, bool cascade)
 				drop_cmd=schparser.getSourceCode(Attributes::Drop, attribs, SchemaParser::SqlCode);
 
 				if(cascade)
-					drop_cmd.replace(';', QString(" CASCADE;"));
+					drop_cmd.replace(';', " CASCADE;");
 
 				//Executes the drop cmd
 				conn=connection;
@@ -1590,7 +1590,7 @@ void DatabaseExplorerWidget::updateItem(QTreeWidgetItem *item, bool restore_tree
 				for(auto &item : gen_items)
 				{
 					aux_item=new QTreeWidgetItem(item);
-					aux_item->setText(0, QString("..."));
+					aux_item->setText(0, "...");
 					aux_item->setData(DatabaseImportForm::ObjectOtherData, Qt::UserRole, QVariant::fromValue<int>(-1));
 				}
 			}
@@ -1753,7 +1753,7 @@ void DatabaseExplorerWidget::showObjectProperties(bool force_reload)
 					{
 						//If the values contatins more the one item, the a combo box will be placed instead of the text
 						QComboBox *combo=new QComboBox;
-						combo->setStyleSheet(QString("border: 0px"));
+						combo->setStyleSheet("border: 0px");
 						combo->addItems(values);
 						properties_tbw->setCellWidget(row, 1, combo);
 					}

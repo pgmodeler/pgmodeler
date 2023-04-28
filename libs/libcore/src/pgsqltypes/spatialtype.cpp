@@ -36,20 +36,20 @@ SpatialType::SpatialType(const QString &type_name, int srid, VariationId variati
 {
 	QString name=type_name;
 
-	if(name.endsWith(QString("ZM")))
+	if(name.endsWith("ZM"))
 	{
 		variation_id=VarZm;
-		name.remove(QString("ZM"));
+		name.remove("ZM");
 	}
-	else if(name.endsWith(QString("M")))
+	else if(name.endsWith("M"))
 	{
 		variation_id=VarM;
-		name.remove(QString("M"));
+		name.remove("M");
 	}
-	else if(name.endsWith(QString("Z")))
+	else if(name.endsWith("Z"))
 	{
 		variation_id=VarZ;
-		name.remove(QString("Z"));
+		name.remove("Z");
 	}
 
 	setType(name);
@@ -103,9 +103,9 @@ QString SpatialType::operator * ()
 
 		switch(variation)
 		{
-			case VarZ: var_str+=QString("Z"); break;
-			case VarM: var_str+=QString("M"); break;
-			case VarZm: var_str+=QString("ZM"); break;
+			case VarZ: var_str+="Z"; break;
+			case VarM: var_str+="M"; break;
+			case VarZm: var_str+="ZM"; break;
 			default: var_str=""; break;
 		}
 

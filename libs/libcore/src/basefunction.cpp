@@ -127,7 +127,7 @@ void BaseFunction::setBasicFunctionAttributes(SchemaParser::CodeType def_type)
 		}
 
 		if(def_type==SchemaParser::SqlCode)
-			types.replaceInStrings(UtilsNs::DataSeparator, QString(" FOR TYPE "));
+			types.replaceInStrings(UtilsNs::DataSeparator, " FOR TYPE ");
 
 		attributes[Attributes::TransformTypes] = types.join(',');
 
@@ -390,7 +390,7 @@ void BaseFunction::createSignature(bool format, bool prepend_schema)
 	}
 
 	//Signature format NAME(IN|OUT PARAM1_TYPE,IN|OUT PARAM2_TYPE,...,IN|OUT PARAMn_TYPE)
-	signature=this->getName(format, prepend_schema) + QString("(") + fmt_params.join(",") + QString(")");
+	signature=this->getName(format, prepend_schema) + "(" + fmt_params.join(",") + ")";
 	this->setCodeInvalidated(true);
 }
 

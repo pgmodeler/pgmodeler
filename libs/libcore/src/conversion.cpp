@@ -63,17 +63,17 @@ void Conversion::setConversionFunction(Function *conv_func)
 						ErrorCode::AsgFunctionInvalidParamCount,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	/* Raises an error if the function parameters does not following the type order:
 		interger, integer, cstring, internal, integer */
-	else if(conv_func->getParameter(0).getType()!=QString("integer") ||
-			conv_func->getParameter(1).getType()!=QString("integer") ||
-			conv_func->getParameter(2).getType()!=QString("cstring") ||
-			conv_func->getParameter(3).getType()!=QString("internal") ||
-			conv_func->getParameter(4).getType()!=QString("integer"))
+	else if(conv_func->getParameter(0).getType()!="integer" ||
+			conv_func->getParameter(1).getType()!="integer" ||
+			conv_func->getParameter(2).getType()!="cstring" ||
+			conv_func->getParameter(3).getType()!="internal" ||
+			conv_func->getParameter(4).getType()!="integer")
 		throw Exception(Exception::getErrorMessage(ErrorCode::AsgFunctionInvalidParameters)
 						.arg(this->getName(true))
 						.arg(BaseObject::getTypeName(ObjectType::Conversion)),
 						ErrorCode::AsgFunctionInvalidParameters,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	//Raises an error if the conversion function return type is not 'void'
-	else if(conv_func->getReturnType()!=QString("void"))
+	else if(conv_func->getReturnType()!="void")
 		throw Exception(Exception::getErrorMessage(ErrorCode::AsgFunctionInvalidReturnType)
 						.arg(this->getName(true))
 						.arg(BaseObject::getTypeName(ObjectType::Conversion)),

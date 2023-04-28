@@ -159,9 +159,9 @@ GeneralConfigWidget::GeneralConfigWidget(QWidget * parent) : BaseConfigWidget(pa
 	//Retrieving the available UI dictionaries
 	QStringList langs = QDir(GlobalAttributes::getLanguagesPath() +
 													 GlobalAttributes::DirSeparator,
-													 QString("*.qm"), QDir::Name, QDir::AllEntries | QDir::NoDotAndDotDot).entryList();
+													 "*.qm", QDir::Name, QDir::AllEntries | QDir::NoDotAndDotDot).entryList();
 
-	langs.replaceInStrings(QString(".qm"), "");
+	langs.replaceInStrings(".qm", "");
 	ui_language_cmb->addItem(tr("System default"));
 	QString native_lang;
 
@@ -458,12 +458,12 @@ void GeneralConfigWidget::saveConfiguration()
 		while(itr!=itr_end)
 		{
 			//Checking if the current attribute is a file to be stored in a <session> tag
-			if((itr->first).contains(QRegularExpression(QString("(") + Attributes::File + QString(")([0-9]+)"))))
+			if((itr->first).contains(QRegularExpression("(" + Attributes::File + ")([0-9]+)")))
 			{
 				config_params[Attributes::Configuration][Attributes::File] +=	schparser.getSourceCode(file_sch, itr->second);
 			}
 			//Checking if the current attribute is a file to be stored in a <recent-models> tag
-			else if(recent_mdl_idx < MaxRecentModels && (itr->first).contains(QRegularExpression(QString("(") + Attributes::Recent + QString(")([0-9]+)"))))
+			else if(recent_mdl_idx < MaxRecentModels && (itr->first).contains(QRegularExpression("(" + Attributes::Recent + ")([0-9]+)")))
 			{
 				config_params[Attributes::Configuration][Attributes::RecentModels] +=	schparser.getSourceCode(file_sch, itr->second);
 				recent_mdl_idx++;

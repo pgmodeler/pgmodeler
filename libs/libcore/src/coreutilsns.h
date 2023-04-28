@@ -94,7 +94,7 @@ namespace CoreUtilsNs {
 
 			//Append the id of the object on its name (this is not applied to operators)
 			if(obj_type!=ObjectType::Operator)
-				obj_name += QString("_") + id;
+				obj_name += "_" + id;
 		}
 
 		obj_name.remove('"');

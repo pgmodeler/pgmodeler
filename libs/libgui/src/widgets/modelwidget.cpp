@@ -81,7 +81,7 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	QGridLayout *grid=nullptr;
 	QAction *action=nullptr;
 	QString str_ico;
-	QStringList rel_types_cod={QString("11"), QString("1n"), QString("nn"), QString("dep"), QString("gen"), QString("part") };
+	QStringList rel_types_cod={"11", "1n", "nn", "dep", "gen", "part" };
 	unsigned i;
 	BaseRelationship::RelType
 			rel_types_id[]={ BaseRelationship::Relationship11, BaseRelationship::Relationship1n,
@@ -465,7 +465,7 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	}
 
 	new_obj_overlay_wgt=new NewObjectOverlayWidget(this);
-	new_obj_overlay_wgt->setObjectName(QString("new_obj_overlay_wgt"));
+	new_obj_overlay_wgt->setObjectName("new_obj_overlay_wgt");
 	new_obj_overlay_wgt->setVisible(false);
 	GuiUtilsNs::createDropShadow(new_obj_overlay_wgt, 5, 5, 20);
 
@@ -928,7 +928,7 @@ void ModelWidget::handleObjectAddition(BaseObject *object)
 
 			case ObjectType::Schema:
 				if(!graph_obj->isSystemObject() ||
-						(graph_obj->isSystemObject() && graph_obj->getName()==QString("public")))
+						(graph_obj->isSystemObject() && graph_obj->getName()=="public"))
 				{
 					item=new SchemaView(dynamic_cast<Schema *>(graph_obj));
 				}
@@ -1477,7 +1477,7 @@ void ModelWidget::convertRelationshipNN()
 							for(QString pk_col : pk_cols)
 								aux_constr->addColumn(tab->getColumn(pk_col), Constraint::SourceCols);
 
-							aux_constr->setName(CoreUtilsNs::generateUniqueName(tab, *tab->getObjectList(ObjectType::Constraint), false, QString("_pk")));
+							aux_constr->setName(CoreUtilsNs::generateUniqueName(tab, *tab->getObjectList(ObjectType::Constraint), false, "_pk"));
 							tab->addConstraint(aux_constr);
 
 							op_list->registerObject(aux_constr, Operation::ObjCreated, -1, tab);
@@ -2823,7 +2823,7 @@ void ModelWidget::pasteObjects(bool duplicate_mode)
 					if(obj_type==ObjectType::Function)
 					{
 						func=dynamic_cast<Function *>(object);
-						func->setName(CoreUtilsNs::generateUniqueName(func, (*db_model->getObjectList(ObjectType::Function)), false, QString("_cp")));
+						func->setName(CoreUtilsNs::generateUniqueName(func, (*db_model->getObjectList(ObjectType::Function)), false, "_cp"));
 						copy_obj_name=func->getName();
 						func->setName(orig_obj_names[object]);
 					}
@@ -2839,12 +2839,12 @@ void ModelWidget::pasteObjects(bool duplicate_mode)
 						if(tab_obj)
 						{
 							if(sel_table)
-								tab_obj->setName(CoreUtilsNs::generateUniqueName(tab_obj, (*sel_table->getObjectList(tab_obj->getObjectType())), false, QString("_cp"), true));
+								tab_obj->setName(CoreUtilsNs::generateUniqueName(tab_obj, (*sel_table->getObjectList(tab_obj->getObjectType())), false, "_cp", true));
 							else
-								tab_obj->setName(CoreUtilsNs::generateUniqueName(tab_obj, (*sel_view->getObjectList(tab_obj->getObjectType())), false, QString("_cp"), true));
+								tab_obj->setName(CoreUtilsNs::generateUniqueName(tab_obj, (*sel_view->getObjectList(tab_obj->getObjectType())), false, "_cp", true));
 						}
 						else
-							object->setName(CoreUtilsNs::generateUniqueName(object, (*db_model->getObjectList(object->getObjectType())), false, QString("_cp"), true));
+							object->setName(CoreUtilsNs::generateUniqueName(object, (*db_model->getObjectList(object->getObjectType())), false, "_cp", true));
 
 						copy_obj_name=object->getName();
 						object->setName(orig_obj_names[object]);
@@ -2991,7 +2991,7 @@ void ModelWidget::pasteObjects(bool duplicate_mode)
 				if(object && !tab_obj && !dynamic_cast<Relationship *>(object))
 				{
 					if(db_model->getObjectIndex(object->getSignature(), object->getObjectType()) >= 0)
-						object->setName(CoreUtilsNs::generateUniqueName(object, *db_model->getObjectList(object->getObjectType()), false, QString("_cp")));
+						object->setName(CoreUtilsNs::generateUniqueName(object, *db_model->getObjectList(object->getObjectType()), false, "_cp"));
 
 					db_model->addObject(object);
 				}
@@ -3105,9 +3105,9 @@ void ModelWidget::duplicateObject()
 				CoreUtilsNs::copyObject(&dup_object, tab_obj, obj_type);
 
 				if(PhysicalTable::isPhysicalTable(table->getObjectType()))
-					dup_object->setName(CoreUtilsNs::generateUniqueName(dup_object, *dynamic_cast<PhysicalTable *>(table)->getObjectList(obj_type), false, QString("_cp")));
+					dup_object->setName(CoreUtilsNs::generateUniqueName(dup_object, *dynamic_cast<PhysicalTable *>(table)->getObjectList(obj_type), false, "_cp"));
 				else
-					dup_object->setName(CoreUtilsNs::generateUniqueName(dup_object, *dynamic_cast<View *>(table)->getObjectList(obj_type), false, QString("_cp")));
+					dup_object->setName(CoreUtilsNs::generateUniqueName(dup_object, *dynamic_cast<View *>(table)->getObjectList(obj_type), false, "_cp"));
 
 				op_id=op_list->registerObject(dup_object, Operation::ObjCreated, -1, table);
 				table->addObject(dup_object);
@@ -4706,7 +4706,7 @@ void ModelWidget::createSequenceFromColumn()
 
 		//Creates a sequence which name is like the ones auto generated by PostgreSQL
 		seq=new Sequence;
-		seq->setName(BaseObject::formatName(tab->getName() + QString("_") + col->getName() + QString("_seq")));
+		seq->setName(BaseObject::formatName(tab->getName() + "_" + col->getName() + "_seq"));
 		seq->setName(CoreUtilsNs::generateUniqueName(seq, *db_model->getObjectList(ObjectType::Sequence), false));
 
 		seq->setSchema(tab->getSchema());
@@ -4746,7 +4746,7 @@ void ModelWidget::convertIntegerToSerial()
 		Column *col=reinterpret_cast<Column *>(action->data().value<void *>());
 		Table *tab=dynamic_cast<Table *>(col->getParentTable());
 		PgSqlType col_type=col->getType();
-		QRegularExpression regexp(QString("^nextval\\(.+\\:\\:regclass\\)"));
+		QRegularExpression regexp("^nextval\\(.+\\:\\:regclass\\)");
 		QString serial_tp;
 
 		if(!col_type.isIntegerType() || (!col->getDefaultValue().contains(regexp) && !col->getSequence()))
@@ -4755,12 +4755,12 @@ void ModelWidget::convertIntegerToSerial()
 
 		op_list->registerObject(col, Operation::ObjModified, -1, tab);
 
-		if(col_type==QString("integer") || col_type==QString("int4"))
-			serial_tp=QString("serial");
-		else if(col_type==QString("smallint") || col_type==QString("int2"))
-			serial_tp=QString("smallserial");
+		if(col_type=="integer" || col_type=="int4")
+			serial_tp="serial";
+		else if(col_type=="smallint" || col_type=="int2")
+			serial_tp="smallserial";
 		else
-			serial_tp=QString("bigserial");
+			serial_tp="bigserial";
 
 		col->setType(PgSqlType(serial_tp));
 		col->setDefaultValue("");

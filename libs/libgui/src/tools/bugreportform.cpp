@@ -95,7 +95,7 @@ void BugReportForm::generateReport(const QByteArray &buf)
 	QFileInfo fi(QString(output_sel->getSelectedFile() +
 											 GlobalAttributes::DirSeparator +
 											 GlobalAttributes::BugReportFile)
-											.arg(QDateTime::currentDateTime().toString(QString("_yyyyMMdd_hhmm"))));
+											.arg(QDateTime::currentDateTime().toString("_yyyyMMdd_hhmm")));
 	QString filename=fi.absoluteFilePath();
 
 	//Opens the file for writting

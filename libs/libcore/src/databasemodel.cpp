@@ -1835,7 +1835,7 @@ void DatabaseModel::checkRelationshipRedundancy(Relationship *rel)
 						recv_table=rel_aux->getReceiverTable();
 
 						//Stores the relationship name to raise an error in case of closing cycle
-						str_aux+=rel_aux->getName() + QString(", ");
+						str_aux+=rel_aux->getName() + ", ";
 
 						//Checking the closing cycle
 						found_cycle=(recv_table==ref_table);
@@ -4297,10 +4297,10 @@ PgSqlType DatabaseModel::createPgSQLType()
 	/* A small tweak to detect a timestamp/date type which name contains the time zone modifier.
 		 This situation can occur mainly on reverse engineering operation where the data type of objects
 		 in most of times came as string form and need to be parsed */
-	if(!with_timezone && attribs[Attributes::Name].contains(QString("with time zone"), Qt::CaseInsensitive))
+	if(!with_timezone && attribs[Attributes::Name].contains("with time zone", Qt::CaseInsensitive))
 	{
 		with_timezone=true;
-		name.remove(QString(" with time zone"), Qt::CaseInsensitive);
+		name.remove(" with time zone", Qt::CaseInsensitive);
 	}
 
 	type_idx=PgSqlType::getBaseTypeIndex(name);
@@ -6469,7 +6469,7 @@ Sequence *DatabaseModel::createSequence(bool ignore_onwer)
 
 			if(count==3)
 			{
-				tab_name=elem_list[0] + QString(".") + elem_list[1];
+				tab_name=elem_list[0] + "." + elem_list[1];
 				col_name=elem_list[2];
 			}
 			else if(count==2)
@@ -6590,7 +6590,7 @@ View *DatabaseModel::createView()
 									str_aux=Exception::getErrorMessage(ErrorCode::RefObjectInexistsModel)
 											.arg(view->getName())
 											.arg(BaseObject::getTypeName(ObjectType::View))
-											.arg(attribs[Attributes::Table] + QString(".") +
+											.arg(attribs[Attributes::Table] + "." +
 											attribs[Attributes::Column])
 											.arg(BaseObject::getTypeName(ObjectType::Column));
 
@@ -7366,7 +7366,7 @@ void DatabaseModel::validateColumnRemoval(Column *column)
 		//Raises an error if there are objects referencing the column
 		if(!refs.empty())
 			throw Exception(Exception::getErrorMessage(ErrorCode::RemDirectReference)
-							.arg(column->getParentTable()->getName(true) + QString(".") + column->getName(true))
+							.arg(column->getParentTable()->getName(true) + "." + column->getName(true))
 							.arg(column->getTypeName())
 							.arg(refs[0]->getName(true))
 				.arg(refs[0]->getTypeName()),
@@ -7575,10 +7575,10 @@ QString DatabaseModel::getSourceCode(SchemaParser::CodeType def_type, bool expor
 	attribs_map attribs_aux;
 	unsigned general_obj_cnt, gen_defs_count;
 	BaseObject *object=nullptr;
-	QString def, search_path=QString("pg_catalog,public"),
+	QString def, search_path="pg_catalog,public",
 			msg=tr("Generating %1 code: `%2' (%3)"),
 			attrib=Attributes::Objects, attrib_aux,
-			def_type_str=(def_type==SchemaParser::SqlCode ? QString("SQL") : QString("XML"));
+			def_type_str=(def_type==SchemaParser::SqlCode ? "SQL" : "XML");
 	Type *usr_type=nullptr;
 	std::map<unsigned, BaseObject *> objects_map;
 	ObjectType obj_type;
@@ -7653,11 +7653,11 @@ QString DatabaseModel::getSourceCode(SchemaParser::CodeType def_type, bool expor
 				//System object doesn't has the XML generated (the only exception is for public schema)
 				else if((obj_type!=ObjectType::Schema && !object->isSystemObject()) ||
 								(obj_type==ObjectType::Schema &&
-								 ((object->getName()==QString("public") && def_type==SchemaParser::XmlCode) ||
-									(object->getName()!=QString("public") && object->getName()!=QString("pg_catalog")))))
+								 ((object->getName()=="public" && def_type==SchemaParser::XmlCode) ||
+									(object->getName()!="public" && object->getName()!="pg_catalog"))))
 				{
 					if(object->getObjectType()==ObjectType::Schema)
-						search_path+=QString(",") + object->getName(true);
+						search_path+="," + object->getName(true);
 
 					//Generates the code definition and concatenates to the others
 					attribs_aux[attrib_aux]+=object->getSourceCode(def_type);
@@ -7728,10 +7728,10 @@ QString DatabaseModel::getSourceCode(SchemaParser::CodeType def_type, bool expor
 	def=schparser.getSourceCode(Attributes::DbModel, attribs_aux, def_type);
 
 	if(prepend_at_bod && def_type==SchemaParser::SqlCode)
-		def=QString("-- Prepended SQL commands --\n") +	this->prepended_sql + Attributes::DdlEndToken + def;
+		def="-- Prepended SQL commands --\n" + this->prepended_sql + Attributes::DdlEndToken + def;
 
 	if(append_at_eod && def_type==SchemaParser::SqlCode)
-		def+=QString("-- Appended SQL commands --\n") +	this->appended_sql + QChar('\n') + Attributes::DdlEndToken;
+		def+="-- Appended SQL commands --\n" + this->appended_sql + QChar('\n') + Attributes::DdlEndToken;
 
 	return def;
 }
@@ -8220,13 +8220,13 @@ bool DatabaseModel::saveSplitCustomSQL(bool save_appended, const QString &path, 
 
 	if(!save_appended && prepend_at_bod && !prepended_sql.isEmpty())
 	{
-		filename = file_prefix + QString("_prepended_code.sql");
+		filename = file_prefix + "_prepended_code.sql";
 		msg = tr("Saving prepended SQL code to file `%1'.").arg(filename);
 		buffer.append((prepended_sql + QChar('\n') + Attributes::DdlEndToken).toUtf8());
 	}
 	else if(save_appended && append_at_eod && !appended_sql.isEmpty())
 	{
-		filename = file_prefix + QString("_appended_code.sql");
+		filename = file_prefix + "_appended_code.sql";
 		msg = tr("Saving appended SQL code to file `%1'.").arg(filename);
 		buffer.append((appended_sql + QChar('\n') + Attributes::DdlEndToken).toUtf8());
 	}
@@ -10569,7 +10569,7 @@ void DatabaseModel::validateSchemaRenaming(Schema *schema, const QString &prev_s
 	for(auto &obj : sch_objs)
 	{
 		//Configures the previous type name
-		prev_name=BaseObject::formatName(prev_sch_name) + QString(".") +
+		prev_name=BaseObject::formatName(prev_sch_name) + "." +
 							BaseObject::formatName(obj->getName(), false);
 
 		/* Special case for tables. Need to make a dynamic_cast before the reinterpret_cast to get
@@ -10621,17 +10621,17 @@ void DatabaseModel::createSystemObjects(bool create_public)
 	/* The particular case is for public schema that is created only when the flag
 	is set. This because the public schema is written on model file even being
 	a system object. This strategy permits the user controls the schema rectangle behavior */
-	if(create_public && getObjectIndex(QString("public"), ObjectType::Schema) < 0)
+	if(create_public && getObjectIndex("public", ObjectType::Schema) < 0)
 	{
 		public_sch=new Schema;
-		public_sch->setName(QString("public"));
+		public_sch->setName("public");
 		public_sch->setSystemObject(true);
 		addSchema(public_sch);
 	}
 
 	//Create the pg_catalog schema in order to insert default collations in
 	pg_catalog=new Schema;
-	pg_catalog->BaseObject::setName(QString("pg_catalog"));
+	pg_catalog->BaseObject::setName("pg_catalog");
 	pg_catalog->setSystemObject(true);
 	addSchema(pg_catalog);
 
@@ -10641,8 +10641,8 @@ void DatabaseModel::createSystemObjects(bool create_public)
 		collation=new Collation;
 		collation->setName(collnames[i]);
 		collation->setSchema(pg_catalog);
-		collation->setEncoding(EncodingType(QString("UTF8")));
-		collation->setLocale(QString("C"));
+		collation->setEncoding(EncodingType("UTF8"));
+		collation->setLocale("C");
 		collation->setSystemObject(true);
 		addCollation(collation);
 	}
@@ -10659,25 +10659,25 @@ void DatabaseModel::createSystemObjects(bool create_public)
 	}
 
 	tbspace=new Tablespace;
-	tbspace->BaseObject::setName(QString("pg_global"));
-	tbspace->setDirectory(QString("_pg_global_dir_"));
+	tbspace->BaseObject::setName("pg_global");
+	tbspace->setDirectory("_pg_global_dir_");
 	tbspace->setSystemObject(true);
 	addTablespace(tbspace);
 
 	tbspace=new Tablespace;
-	tbspace->BaseObject::setName(QString("pg_default"));
-	tbspace->setDirectory(QString("_pg_default_dir_"));
+	tbspace->BaseObject::setName("pg_default");
+	tbspace->setDirectory("_pg_default_dir_");
 	tbspace->setSystemObject(true);
 	addTablespace(tbspace);
 
 	postgres=new Role;
-	postgres->setName(QString("postgres"));
+	postgres->setName("postgres");
 	postgres->setOption(Role::OpSuperuser, true);
 	postgres->setSystemObject(true);
 	addRole(postgres);
 
 	setDefaultObject(postgres);
-	setDefaultObject(getObject(QString("public"), ObjectType::Schema), ObjectType::Schema);
+	setDefaultObject(getObject("public", ObjectType::Schema), ObjectType::Schema);
 }
 
 std::vector<BaseObject *> DatabaseModel::findObjects(const QStringList &filters, const QString &search_attr)
@@ -11977,7 +11977,7 @@ void DatabaseModel::getDataDictionary(attribs_map &datadict, bool browsable, boo
 		attribs[Attributes::Styles] = styles;
 	else
 		// Otherwise we create a separated stylesheet file
-		datadict[Attributes::Styles + QString(".css")] = styles;
+		datadict[Attributes::Styles + ".css"] = styles;
 
 	// Generating individual data dictionaries
 	for(auto &itr : objs_map)
@@ -12021,7 +12021,7 @@ void DatabaseModel::getDataDictionary(attribs_map &datadict, bool browsable, boo
 		// If the generation is configured to be splitted we generate a complete HTML file for the current table
 		if(split && !attribs[Attributes::Objects].isEmpty())
 		{
-			id = itr.first + QString(".html");
+			id = itr.first + ".html";
 			schparser.ignoreEmptyAttributes(true);			
 			datadict[id] = schparser.getSourceCode(dict_sch_file, attribs);
 			attribs[Attributes::Objects].clear();
@@ -12055,7 +12055,7 @@ void DatabaseModel::getDataDictionary(attribs_map &datadict, bool browsable, boo
 
 	// If the data dictionary is browsable and splitted the index goes into a separated file
 	if(split && browsable)
-		datadict[Attributes::Index + QString(".html")] = dict_index;
+		datadict[Attributes::Index + ".html"] = dict_index;
 	else if(!split)
 	{
 		attribs[Attributes::DataDictIndex] = dict_index;

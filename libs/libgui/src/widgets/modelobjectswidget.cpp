@@ -57,7 +57,7 @@ ModelObjectsWidget::ModelObjectsWidget(bool simplified_view, QWidget *parent) : 
 		obj_types_wgt = new ObjectTypesListWidget(this);
 		visibleobjects_grp->layout()->addWidget(obj_types_wgt);
 
-		widgets_conf.setValue(QString("splitterSize"), splitter->saveState());
+		widgets_conf.setValue("splitterSize", splitter->saveState());
 		connect(options_tb, &QToolButton::clicked,this, &ModelObjectsWidget::changeObjectsView);
 
 		connect(obj_types_wgt, &ObjectTypesListWidget::s_typeCheckStateChanged, [this](ObjectType obj_type, Qt::CheckState state) {
@@ -214,7 +214,7 @@ void ModelObjectsWidget::selectObject()
 				connect(model_wgt->getDatabaseModel(), &DatabaseModel::s_objectAdded, this, &ModelObjectsWidget::selectCreatedObject, Qt::QueuedConnection);
 
 			p_act->setIcon(QIcon(GuiUtilsNs::getIconPath(obj_type)));
-			p_act->setText(tr("New") + QString(" ") + BaseObject::getTypeName(obj_type));
+			p_act->setText(tr("New") + " " + BaseObject::getTypeName(obj_type));
 			popup.addAction(p_act);
 			popup.exec(QCursor::pos());
 			disconnect(p_act, nullptr, model_wgt, nullptr);
@@ -291,7 +291,7 @@ QTreeWidgetItem *ModelObjectsWidget::createItemForObject(BaseObject *object, QTr
 	else if(obj_type==ObjectType::OpClass || obj_type == ObjectType::OpFamily)
 	{
 		obj_name=object->getSignature(false);
-		obj_name.replace(QRegularExpression("( )+(USING)( )+"), QString(" ["));
+		obj_name.replace(QRegularExpression("( )+(USING)( )+"), " [");
 		obj_name+=QChar(']');
 		item->setText(0,obj_name);
 	}
@@ -331,20 +331,20 @@ QTreeWidgetItem *ModelObjectsWidget::createItemForObject(BaseObject *object, QTr
 		if(obj_type==ObjectType::BaseRelationship)
 		{
 			if(rel_type==BaseRelationship::RelationshipFk)
-				str_aux=QString("fk");
+				str_aux="fk";
 			else
-				str_aux=QString("tv");
+				str_aux="tv";
 		}
 		else if(rel_type==BaseRelationship::Relationship11)
-			str_aux=QString("11");
+			str_aux="11";
 		else if(rel_type==BaseRelationship::Relationship1n)
-			str_aux=QString("1n");
+			str_aux="1n";
 		else if(rel_type==BaseRelationship::RelationshipNn)
-			str_aux=QString("nn");
+			str_aux="nn";
 		else if(rel_type==BaseRelationship::RelationshipDep)
-			str_aux=QString("dep");
+			str_aux="dep";
 		else if(rel_type==BaseRelationship::RelationshipGen)
-			str_aux=QString("gen");
+			str_aux="gen";
 	}
 	else if(obj_type==ObjectType::Constraint)
 	{
@@ -417,7 +417,7 @@ void ModelObjectsWidget::changeObjectsView()
 
 		//Restore the splitter state if the options toolbutton is not toggled
 		if(!options_tb->isChecked())
-			splitter->restoreState(widgets_conf.value(QString("splitterSize")).toByteArray());
+			splitter->restoreState(widgets_conf.value("splitterSize").toByteArray());
 	}
 
 	expand_all_tb->setEnabled(tree_view_tb->isChecked());

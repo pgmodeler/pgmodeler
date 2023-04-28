@@ -38,7 +38,7 @@ void startCrashHandler(int signal)
 	symbols = backtrace_symbols(stack, stack_size);
 #endif
 
-	cmd=QString("\"%1\"").arg(GlobalAttributes::getPgModelerCHandlerPath()) + QString(" -style ") + GlobalAttributes::DefaultQtStyle;
+	cmd=QString("\"%1\"").arg(GlobalAttributes::getPgModelerCHandlerPath()) + " -style " + GlobalAttributes::DefaultQtStyle;
 
 	//Creates the stacktrace file
 	output.setFileName(GlobalAttributes::getTemporaryFilePath(GlobalAttributes::StacktraceFile));
@@ -48,7 +48,7 @@ void startCrashHandler(int signal)
 	{
 		lin=QString("** pgModeler crashed after receive signal: %1 **\n\nDate/Time: %2 \nVersion: %3 \nBuild: %4 \n")
 			.arg(signal)
-			.arg(QDateTime::currentDateTime().toString(QString("yyyy-MM-dd hh:mm:ss")))
+			.arg(QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss"))
 			.arg(GlobalAttributes::PgModelerVersion)
 			.arg(GlobalAttributes::PgModelerBuildNumber);
 
@@ -61,12 +61,12 @@ void startCrashHandler(int signal)
 #ifndef Q_OS_WIN
 		for(size_t i=0; i < stack_size; i++)
 		{
-			lin=QString("[%1] ").arg(stack_size-1-i) + QString(symbols[i]) + QString("\n");
+			lin=QString("[%1] ").arg(stack_size-1-i) + QString(symbols[i]) + "\n";
 			output.write(lin.toStdString().c_str(), lin.size());
 		}
 		free(symbols);
 #else
-		lin=QString("** Stack trace unavailable on Windows system **");
+		lin = "** Stack trace unavailable on Windows system **";
 		output.write(lin.toStdString().c_str(), lin.size());
 #endif
 

@@ -38,7 +38,7 @@ void Rule::setCommandsAttribute()
 	for(i=0; i < qtd; i++)
 	{
 		str_cmds+=commands[i];
-		if(i < (qtd-1)) str_cmds+=QString(";");
+		if(i < (qtd-1)) str_cmds+=";";
 	}
 
 	attributes[Attributes::Commands]=str_cmds;

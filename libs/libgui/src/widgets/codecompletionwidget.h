@@ -169,7 +169,7 @@ class __libgui CodeCompletionWidget: public QWidget {
 		/*! \brief Configures the completion. If an syntax highlighter is specified, the completion widget will
 		retrive the keywords and the trigger char from it. The keyword group name can be also specified in case the
 		highlighter uses an different configuration */
-		void configureCompletion(DatabaseModel *db_model, SyntaxHighlighter *syntax_hl=nullptr, const QString &keywords_grp=QString("keywords"));
+		void configureCompletion(DatabaseModel *db_model, SyntaxHighlighter *syntax_hl=nullptr, const QString &keywords_grp="keywords");
 		
 		//! \brief Inserts a custom named item on the list with a custom icon. Custom item will always appear at the beggining of the list
 		void insertCustomItem(const QString &name, const QString &tooltip, const QPixmap &icon);

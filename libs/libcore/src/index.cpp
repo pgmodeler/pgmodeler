@@ -435,7 +435,7 @@ QString Index::getSourceCode(SchemaParser::CodeType def_type)
 		attributes[Attributes::StorageParams]=Attributes::True;
 	}
 	else if(def_type==SchemaParser::XmlCode)
-		attributes[Attributes::Factor]=QString("0");
+		attributes[Attributes::Factor]="0";
 
 	QStringList incl_cols;
 

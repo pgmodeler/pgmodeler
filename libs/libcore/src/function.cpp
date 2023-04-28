@@ -21,7 +21,7 @@
 
 Function::Function() : BaseFunction()
 {
-	return_type = PgSqlType(QString("void"));
+	return_type = PgSqlType("void");
 	returns_setof=false;
 	is_wnd_function=false;
 	is_leakproof=false;
@@ -282,7 +282,7 @@ QString Function::getAlterCode(BaseObject *object)
 			 this->library!=func->library || this->symbol!=func->symbol)
 		{
 			attribs[Attributes::Definition]=func->getSourceCode(SchemaParser::SqlCode);
-			attribs[Attributes::Definition].replace(QString("CREATE FUNCTION"), QString("CREATE OR REPLACE FUNCTION"));
+			attribs[Attributes::Definition].replace("CREATE FUNCTION", "CREATE OR REPLACE FUNCTION");
 		}
 		else
 		{

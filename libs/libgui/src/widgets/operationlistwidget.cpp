@@ -60,8 +60,8 @@ void OperationListWidget::updateOperationList()
 	if(!model_wgt)
 	{
 		operations_tw->clear();
-		op_count_lbl->setText(QString("-"));
-		current_pos_lbl->setText(QString("-"));
+		op_count_lbl->setText("-");
+		current_pos_lbl->setText("-");
 	}
 	else
 	{
@@ -96,7 +96,7 @@ void OperationListWidget::updateOperationList()
 			item->setData(0, Qt::UserRole, QVariant(enum_t(obj_type)));
 
 			if(obj_type==ObjectType::BaseRelationship)
-				str_aux+=QString("tv");
+				str_aux+="tv";
 
 			item->setIcon(0,QPixmap(GuiUtilsNs::getIconPath(str_aux)));
 
@@ -106,22 +106,22 @@ void OperationListWidget::updateOperationList()
 
 			if(op_type==Operation::ObjCreated)
 			{
-				op_icon=QString("created");
+				op_icon="created";
 				op_name=tr("created");
 			}
 			else if(op_type==Operation::ObjRemoved)
 			{
-				op_icon=QString("removed");
+				op_icon="removed";
 				op_name=tr("removed");
 			}
 			else if(op_type==Operation::ObjModified)
 			{
-				op_icon=QString("modified");
+				op_icon="modified";
 				op_name=tr("modified");
 			}
 			else if(op_type==Operation::ObjMoved)
 			{
-				op_icon=QString("moved");
+				op_icon="moved";
 				op_name=tr("moved");
 			}
 

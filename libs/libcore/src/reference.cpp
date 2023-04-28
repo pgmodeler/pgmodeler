@@ -217,14 +217,14 @@ QString Reference::getSQLDefinition(SqlType sql_type)
 			[TABLE_ALIAS.]{COLUMN_NAME | *} [AS COLUMN_ALIAS] */
 
 			if(!alias.isEmpty())
-				tab_name=BaseObject::formatName(alias) + QString(".");
+				tab_name=BaseObject::formatName(alias) + ".";
 			else
-				tab_name=table->getSignature() + QString(".");
+				tab_name=table->getSignature() + ".";
 
 			/* Case there is no column definede the default behavior is consider
 			all the table columns (e.g. table.*) */
 			if(!column)
-				sql_def=tab_name + QString("*");
+				sql_def=tab_name + "*";
 			else
 			{
 				//Case there is an column concatenates its name to the code definition
@@ -232,7 +232,7 @@ QString Reference::getSQLDefinition(SqlType sql_type)
 
 				//Case there is a column alias concatenate it to the definition
 				if(!column_alias.isEmpty())
-					sql_def+=QString(" AS ") + BaseObject::formatName(column_alias);
+					sql_def+=" AS " + BaseObject::formatName(column_alias);
 			}
 		}
 		//Case the reference is linked to an expression
@@ -242,9 +242,9 @@ QString Reference::getSQLDefinition(SqlType sql_type)
 			{expression} [AS ALIAS] */
 			sql_def=expression;
 			if(!alias.isEmpty())
-				sql_def+=QString(" AS ") + BaseObject::formatName(alias);
+				sql_def+=" AS " + BaseObject::formatName(alias);
 		}
-		sql_def+=QString(",\n");
+		sql_def+=",\n";
 	}
 	//Case the reference is between the FROM-[JOIN | WHERE] keywords
 	else if(sql_type==SqlFrom)
@@ -259,12 +259,12 @@ QString Reference::getSQLDefinition(SqlType sql_type)
 			sql_def+=table->getName(true);
 
 			if(!alias.isEmpty())
-				sql_def+=QString(" AS ") + BaseObject::formatName(alias);
+				sql_def+=" AS " + BaseObject::formatName(alias);
 		}
 		else
 			sql_def=expression;
 
-		sql_def+=QString(",\n");
+		sql_def+=",\n";
 	}
 	//Case the reference is after [JOIN | WHERE] keywords
 	else
@@ -280,7 +280,7 @@ QString Reference::getSQLDefinition(SqlType sql_type)
 			else
 				sql_def=BaseObject::formatName(alias);
 
-			sql_def+=QString(".");
+			sql_def+=".";
 
 			if(column)
 				sql_def+=column->getName(true);
@@ -289,7 +289,7 @@ QString Reference::getSQLDefinition(SqlType sql_type)
 			sql_def=expression;
 	}
 
-	sql_def=QString("   ") + sql_def;
+	sql_def="   " + sql_def;
 	return sql_def;
 }
 

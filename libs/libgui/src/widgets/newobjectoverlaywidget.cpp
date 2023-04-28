@@ -81,7 +81,7 @@ NewObjectOverlayWidget::NewObjectOverlayWidget(ModelWidget *parent): QWidget(par
 		shortcut=std::get<0>(itr.second);
 		obj_type=std::get<1>(itr.second);
 
-		button->setText(shortcut + QString(": ") + button->text());
+		button->setText(shortcut + ": " + button->text());
 		button->setShortcut(QKeySequence(shortcut));
 		btn_actions[button] = parent->actions_new_objects[obj_type];
 	}
@@ -92,7 +92,7 @@ NewObjectOverlayWidget::NewObjectOverlayWidget(ModelWidget *parent): QWidget(par
 		shortcut=std::get<0>(itr.second);
 		action_idx=std::get<1>(itr.second);
 
-		button->setText(shortcut + QString(": ") + button->text());
+		button->setText(shortcut + ": " + button->text());
 		button->setShortcut(QKeySequence(shortcut));
 		btn_actions[button] = rel_actions[action_idx];
 	}
@@ -101,7 +101,7 @@ NewObjectOverlayWidget::NewObjectOverlayWidget(ModelWidget *parent): QWidget(par
 	for(auto &itr : permission_btns)
 	{
 		button = itr;
-		button->setText(shortcut + QString(": ") + button->text());
+		button->setText(shortcut + ": " + button->text());
 		button->setShortcut(QKeySequence(shortcut));
 		btn_actions[button] = parent->action_edit_perms;
 	}

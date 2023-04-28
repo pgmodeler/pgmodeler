@@ -30,7 +30,7 @@
 bool NumberedTextEditor::line_nums_visible=true;
 bool NumberedTextEditor::highlight_lines=true;
 QColor NumberedTextEditor::line_hl_color=Qt::yellow;
-QFont NumberedTextEditor::default_font=QFont(QString("Source Code Pro"), 10);
+QFont NumberedTextEditor::default_font=QFont("Source Code Pro", 10);
 double NumberedTextEditor::tab_width=0;
 QString NumberedTextEditor::src_editor_app="";
 QString NumberedTextEditor::src_editor_app_args="";
@@ -226,21 +226,21 @@ void NumberedTextEditor::showContextMenu()
 	{
 		ctx_menu->addSeparator();
 
-		act = ctx_menu->addAction(tr("Paste code"), this, &NumberedTextEditor::pasteCode, QKeySequence(QString("Ctrl+Shift+V")));
+		act = ctx_menu->addAction(tr("Paste code"), this, &NumberedTextEditor::pasteCode, QKeySequence("Ctrl+Shift+V"));
 		act->setEnabled(!qApp->clipboard()->text().isEmpty());
 
-		act = ctx_menu->addAction(tr("Upper case"), this, &NumberedTextEditor::changeSelectionToUpper, QKeySequence(QString("Ctrl+U")));
+		act = ctx_menu->addAction(tr("Upper case"), this, &NumberedTextEditor::changeSelectionToUpper, QKeySequence("Ctrl+U"));
 		act->setEnabled(textCursor().hasSelection());
 
-		act = ctx_menu->addAction(tr("Lower case"), this, &NumberedTextEditor::changeSelectionToLower, QKeySequence(QString("Ctrl+Shift+U")));
+		act = ctx_menu->addAction(tr("Lower case"), this, &NumberedTextEditor::changeSelectionToLower, QKeySequence("Ctrl+Shift+U"));
 		act->setEnabled(textCursor().hasSelection());
 
 		ctx_menu->addSeparator();
 
-		act = ctx_menu->addAction(tr("Ident right"), this, &NumberedTextEditor::identSelectionRight, QKeySequence(QString("Tab")));
+		act = ctx_menu->addAction(tr("Ident right"), this, &NumberedTextEditor::identSelectionRight, QKeySequence("Tab"));
 		act->setEnabled(textCursor().hasSelection());
 
-		act = ctx_menu->addAction(tr("Ident left"), this, &NumberedTextEditor::identSelectionLeft, QKeySequence(QString("Shift+Tab")));
+		act = ctx_menu->addAction(tr("Ident left"), this, &NumberedTextEditor::identSelectionLeft, QKeySequence("Shift+Tab"));
 		act->setEnabled(textCursor().hasSelection());
 	}
 
@@ -381,7 +381,7 @@ void NumberedTextEditor::loadFile()
 {
 	QFileDialog sql_file_dlg;
 
-	sql_file_dlg.setDefaultSuffix(QString("sql"));
+	sql_file_dlg.setDefaultSuffix("sql");
 	sql_file_dlg.setFileMode(QFileDialog::AnyFile);
 	sql_file_dlg.setNameFilter(tr("SQL file (*.sql);;All files (*.*)"));
 	sql_file_dlg.setModal(true);
@@ -493,7 +493,7 @@ void NumberedTextEditor::handleProcessError()
 
 	msg_box.show(GuiUtilsNs::formatMessage(tr("Failed to the source code editor <strong>%1</strong>! Make to sure that the source editor path points to a valid executable and the current user has permission to run the application. Error message returned: <strong>%2</strong>")
 																						.arg(src_editor_proc.program())
-																						.arg(errors.join(QString("\n\n")))), Messagebox::ErrorIcon);
+																						.arg(errors.join("\n\n"))), Messagebox::ErrorIcon);
 
 	enableEditor();
 }

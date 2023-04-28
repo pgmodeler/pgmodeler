@@ -400,22 +400,22 @@ void DataManipulationForm::retrieveData()
 
 		//Building the where clause
 		if(!filter_txt->toPlainText().trimmed().isEmpty())
-			query+=QString(" WHERE ") + filter_txt->toPlainText();
+			query+=" WHERE " + filter_txt->toPlainText();
 
 		//Building the order by clause
 		if(ord_columns_lst->count() > 0)
 		{
 			QStringList ord_cols, col;
 
-			query+=QString("\n ORDER BY ");
+			query+="\n ORDER BY ";
 
 			for(int idx=0; idx < ord_columns_lst->count(); idx++)
 			{
 				col=ord_columns_lst->item(idx)->text().split(" ");
-				ord_cols.push_back(QString("\"") + col[0] + QString("\" ") + col[1]);
+				ord_cols.push_back("\"" + col[0] + "\" " + col[1]);
 			}
 
-			query+=ord_cols.join(QString(", "));
+			query+=ord_cols.join(", ");
 		}
 
 		//Building the limit clause
@@ -578,7 +578,7 @@ void DataManipulationForm::addSortColumnToList()
 		QString item_text;
 
 		item_text=ord_column_cmb->currentText();
-		item_text+=(asc_rb->isChecked() ? QString(" ASC") : QString(" DESC"));
+		item_text+=(asc_rb->isChecked() ? " ASC" : " DESC");
 
 		ord_columns_lst->addItem(item_text);
 		ord_column_cmb->removeItem(ord_column_cmb->currentIndex());
@@ -747,12 +747,12 @@ void DataManipulationForm::changeOrderMode(QListWidgetItem *item)
 {
 	if(qApp->mouseButtons()==Qt::RightButton)
 	{
-		QStringList texts=item->text().split(QString(" "));
+		QStringList texts=item->text().split(" ");
 
 		if(texts.size() > 1)
-			texts[1]=(texts[1]==QString("ASC") ? QString("DESC") : QString("ASC"));
+			texts[1]=(texts[1]=="ASC" ? "DESC" : "ASC");
 
-		item->setText(texts[0] + QString(" ") + texts[1]);
+		item->setText(texts[0] + " " + texts[1]);
 	}
 }
 
@@ -834,7 +834,7 @@ void DataManipulationForm::retrievePKColumns(const QString &schema, const QStrin
 		{
 			catalog.setConnection(conn);
 			//Retrieving the constraints from catalog using a custom filter to select only primary keys (contype=p)
-			pks=catalog.getObjectsAttributes(ObjectType::Constraint, schema, table, {}, {{Attributes::CustomFilter, QString("contype='p'")}});
+			pks=catalog.getObjectsAttributes(ObjectType::Constraint, schema, table, {}, {{Attributes::CustomFilter, "contype='p'"}});
 
 			warning_frm->setVisible(pks.empty());
 
@@ -899,7 +899,7 @@ void DataManipulationForm::retrieveFKColumns(const QString &schema, const QStrin
 		catalog.setConnection(conn);
 
 		//Retrieving the constraints from catalog using a custom filter to select only foreign keys (contype=f)
-		fks=catalog.getObjectsAttributes(ObjectType::Constraint, schema, table, {}, {{Attributes::CustomFilter, QString("contype='f'")}});
+		fks=catalog.getObjectsAttributes(ObjectType::Constraint, schema, table, {}, {{Attributes::CustomFilter, "contype='f'"}});
 		ref_fks=catalog.getObjectsAttributes(ObjectType::Constraint, "", "", {}, {{Attributes::CustomFilter, QString("contype='f' AND cs.confrelid=%1").arg(table_oid)}});
 
 		if(!fks.empty() || !ref_fks.empty())
@@ -1047,7 +1047,7 @@ void DataManipulationForm::markOperationOnRow(OperationId operation, int row)
 		{
 			item=results_tbw->item(row, col);
 
-			if(results_tbw->horizontalHeaderItem(col)->data(Qt::UserRole)!=QString("bytea"))
+			if(results_tbw->horizontalHeaderItem(col)->data(Qt::UserRole)!="bytea")
 			{
 				item->setToolTip(tooltip);
 
@@ -1160,7 +1160,7 @@ void DataManipulationForm::addRow(bool focus_new_row)
 		item=new QTableWidgetItem;
 
 		//bytea (binary data) columns can't be handled this way the new item is disabled
-		if(results_tbw->horizontalHeaderItem(col)->data(Qt::UserRole)==QString("bytea"))
+		if(results_tbw->horizontalHeaderItem(col)->data(Qt::UserRole)=="bytea")
 		{
 			item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
 			item->setText(tr("[binary data]"));
@@ -1294,7 +1294,7 @@ void DataManipulationForm::browseTable(const QString &fk_name, bool browse_ref_t
 
 	data_manip->setWindowModality(Qt::NonModal);
 	data_manip->setAttribute(Qt::WA_DeleteOnClose, true);
-	data_manip->setAttributes(conn, schema, table, filter.join(QString("AND")));
+	data_manip->setAttributes(conn, schema, table, filter.join("AND"));
 
 	GuiUtilsNs::resizeDialog(data_manip);
 	data_manip->show();
@@ -1401,7 +1401,7 @@ void DataManipulationForm::saveChanges()
 			results_tbw->setCurrentCell(-1,-1, QItemSelectionModel::Clear);
 
 			conn.connect();
-			conn.executeDDLCommand(QString("START TRANSACTION"));
+			conn.executeDDLCommand("START TRANSACTION");
 
 			for(unsigned idx=0; idx < changed_rows.size(); idx++)
 			{
@@ -1410,7 +1410,7 @@ void DataManipulationForm::saveChanges()
 				conn.executeDDLCommand(cmd);
 			}
 
-			conn.executeDDLCommand(QString("COMMIT"));
+			conn.executeDDLCommand("COMMIT");
 			conn.close();
 
 			changed_rows.clear();
@@ -1433,7 +1433,7 @@ void DataManipulationForm::saveChanges()
 
 		if(conn.isStablished())
 		{
-			conn.executeDDLCommand(QString("ROLLBACK"));
+			conn.executeDDLCommand("ROLLBACK");
 			conn.close();
 		}
 
@@ -1470,7 +1470,7 @@ QString DataManipulationForm::getDMLCommand(int row)
 			//Considering all columns as pk when the tables doesn't has one (except bytea columns)
 			for(int col=0; col < results_tbw->columnCount(); col++)
 			{
-				if(results_tbw->horizontalHeaderItem(col)->data(Qt::UserRole)!=QString("bytea"))
+				if(results_tbw->horizontalHeaderItem(col)->data(Qt::UserRole)!="bytea")
 					pk_col_names.push_back(results_tbw->horizontalHeaderItem(col)->text());
 			}
 		}
@@ -1489,7 +1489,7 @@ QString DataManipulationForm::getDMLCommand(int row)
 
 	if(op_type==OpDelete)
 	{
-		fmt_cmd=QString(del_cmd).arg(tab_name).arg(flt_list.join(QString(" AND ")));
+		fmt_cmd=QString(del_cmd).arg(tab_name).arg(flt_list.join(" AND "));
 	}
 	else if(op_type==OpUpdate || op_type==OpInsert)
 	{
@@ -1500,7 +1500,7 @@ QString DataManipulationForm::getDMLCommand(int row)
 			item=results_tbw->item(row, col);
 
 			//bytea columns are ignored
-			if(results_tbw->horizontalHeaderItem(col)->data(Qt::UserRole)!=QString("bytea"))
+			if(results_tbw->horizontalHeaderItem(col)->data(Qt::UserRole)!="bytea")
 			{
 				value=item->text();
 				col_name=results_tbw->horizontalHeaderItem(col)->text();
@@ -1520,7 +1520,7 @@ QString DataManipulationForm::getDMLCommand(int row)
 					//Empty values as considered as DEFAULT
 					if(value.isEmpty())
 					{
-						value=QString("DEFAULT");
+						value="DEFAULT";
 					}
 					//Unescaped values will not be enclosed in quotes
 					else if(value.startsWith(UtilsNs::UnescValueStart) && value.endsWith(UtilsNs::UnescValueEnd))
@@ -1534,7 +1534,7 @@ QString DataManipulationForm::getDMLCommand(int row)
 						value.replace(QString("\\") + UtilsNs::UnescValueStart, UtilsNs::UnescValueStart);
 						value.replace(QString("\\") + UtilsNs::UnescValueEnd, UtilsNs::UnescValueEnd);
 						value.replace("\'","''");
-						value=QString("E'") + value + QString("'");
+						value="E'" + value + "'";
 					}
 
 					if(op_type==OpInsert)
@@ -1550,9 +1550,9 @@ QString DataManipulationForm::getDMLCommand(int row)
 		else
 		{
 			if(op_type==OpUpdate)
-				fmt_cmd=fmt_cmd.arg(tab_name).arg(val_list.join(QString(", "))).arg(flt_list.join(QString(" AND ")));
+				fmt_cmd=fmt_cmd.arg(tab_name).arg(val_list.join(", ")).arg(flt_list.join(" AND "));
 			else
-				fmt_cmd=fmt_cmd.arg(tab_name).arg(col_list.join(QString(", "))).arg(val_list.join(QString(", ")));
+				fmt_cmd=fmt_cmd.arg(tab_name).arg(col_list.join(", ")).arg(val_list.join(", "));
 		}
 	}
 

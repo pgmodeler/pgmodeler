@@ -177,19 +177,19 @@ void Messagebox::show(const QString &title, const QString &msg, IconType icon_ty
 	switch(icon_type)
 	{
 		case ErrorIcon:
-			icon_name=QString("error");
+			icon_name="error";
 		break;
 
 		case InfoIcon:
-			icon_name=QString("info");
+			icon_name="info";
 		break;
 
 		case AlertIcon:
-			icon_name=QString("alert");
+			icon_name="alert";
 		break;
 
 		case ConfirmIcon:
-			icon_name=QString("question");
+			icon_name="question";
 		break;
 
 		default:
@@ -220,7 +220,7 @@ void Messagebox::show(const QString &title, const QString &msg, IconType icon_ty
 
 	int ln_cnt = QString(msg).replace(QRegularExpression("(<)(br)(/)?(>)",
 																		QRegularExpression::CaseInsensitiveOption),
-																		QString("\n")).count('\n');
+																		"\n").count('\n');
 
 	if(ln_cnt > 0)
 		adjustSize();
