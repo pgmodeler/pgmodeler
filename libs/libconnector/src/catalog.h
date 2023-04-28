@@ -94,8 +94,8 @@ class __libconnector Catalog {
 		composed by the pg_[OBJECT_TYPE] table alias. Refer to catalog query schema files for details */
 		static std::map<ObjectType, QString> oid_fields,
 
-		/*! \brief This map stores the relation names value from pg_class table for each object type */
-		type_relnames,
+		//! \brief This map stores the relation names in catalogs for each object type
+		obj_relnames,
 		
 		/*! \brief This map stores the name field for each object type. Refer to catalog query schema files for details */
 		name_fields,
@@ -162,9 +162,9 @@ class __libconnector Catalog {
 		 a extension. */
 		QString getNotExtObjectQuery(const QString &oid_field);
 
-		/*! \brief Returns the query that is used to retrieve an objects comment. The 'is_shared_object' is used
-		to query the pg_shdescription instead of pg_description */
-		QString getCommentQuery(const QString &oid_field, const QString &type_relname, bool is_shared_obj=false);
+		/*! \brief Returns the query that is used to retrieve an objects comment. The 'is_shared_obj' is used
+		 * to query the pg_shdescription instead of pg_description */
+		QString getCommentQuery(const QString &oid_field, ObjectType obj_type, bool is_shared_obj=false);
 
 		//! \brief Creates a comma separated string containing all the oids to be filtered
 		QString createOidFilter(const std::vector<unsigned> &oids);
