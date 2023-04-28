@@ -379,27 +379,17 @@ void NumberedTextEditor::identSelection(bool ident_right)
 
 void NumberedTextEditor::loadFile()
 {
-	QFileDialog sql_file_dlg;
+	QByteArray buff;
+	bool loaded = GuiUtilsNs::selectAndLoadFile(buff,
+																							tr("Load SQL commands"),
+																							QFileDialog::ExistingFile,
+																							{ tr("SQL file (*.sql)"),	tr("All files (*.*)") });
 
-	sql_file_dlg.setDefaultSuffix("sql");
-	sql_file_dlg.setFileMode(QFileDialog::AnyFile);
-	sql_file_dlg.setNameFilter(tr("SQL file (*.sql);;All files (*.*)"));
-	sql_file_dlg.setModal(true);
-	sql_file_dlg.setWindowTitle(tr("Load file"));
-	sql_file_dlg.setAcceptMode(QFileDialog::AcceptOpen);
-
-	GuiUtilsNs::restoreFileDialogState(&sql_file_dlg);
-	sql_file_dlg.exec();
-	GuiUtilsNs::saveFileDialogState(&sql_file_dlg);
-
-	if(sql_file_dlg.result()==QDialog::Accepted)
+	if(loaded)
 	{
-		QByteArray buf;
-
-		buf.append(UtilsNs::loadFile(sql_file_dlg.selectedFiles().at(0)));
-		this->clear();
-		this->setPlainText(buf);
-		clear_btn->setEnabled(!this->toPlainText().isEmpty());
+		clear();
+		setPlainText(buff);
+		clear_btn->setEnabled(!document()->isEmpty());
 	}
 }
 

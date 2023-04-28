@@ -61,11 +61,6 @@ SQLExecutionWidget::SQLExecutionWidget(QWidget * parent) : QWidget(parent)
 	results_parent->setVisible(false);
 	output_tbw->setTabEnabled(0, false);
 
-	sql_file_dlg.setDefaultSuffix("sql");
-	sql_file_dlg.setFileMode(QFileDialog::AnyFile);
-	sql_file_dlg.setNameFilter(tr("SQL file (*.sql);;All files (*.*)"));
-	sql_file_dlg.setModal(true);
-
 	snippets_tb->setMenu(&snippets_menu);
 	code_compl_wgt=new CodeCompletionWidget(sql_cmd_txt, true);
 
@@ -652,15 +647,14 @@ void SQLExecutionWidget::saveCommands()
 
 	if(browse_file)
 	{
-		sql_file_dlg.setWindowTitle(tr("Save SQL commands"));
-		sql_file_dlg.setAcceptMode(QFileDialog::AcceptSave);
+		QStringList sel_files = GuiUtilsNs::selectFiles(
+															tr("Save SQL commands"),
+															QFileDialog::AnyFile,	QFileDialog::AcceptSave,
+															{ tr("SQL file (*.sql)"),
+																tr("All files (*.*)") }, {}, "sql");
 
-		GuiUtilsNs::restoreFileDialogState(&sql_file_dlg);
-		sql_file_dlg.exec();
-		GuiUtilsNs::saveFileDialogState(&sql_file_dlg);
-
-		if(sql_file_dlg.result()==QDialog::Accepted)
-			filename = sql_file_dlg.selectedFiles().at(0);
+		if(!sel_files.isEmpty())
+			filename = sel_files.at(0);
 	}
 	else
 		filename = filename_edt->text();
@@ -675,19 +669,18 @@ void SQLExecutionWidget::saveCommands()
 
 void SQLExecutionWidget::loadCommands()
 {
-	sql_file_dlg.setWindowTitle(tr("Load SQL commands"));
-	sql_file_dlg.setAcceptMode(QFileDialog::AcceptOpen);
+	QStringList sel_files = GuiUtilsNs::selectFiles(
+														tr("Load SQL commands"),
+														QFileDialog::ExistingFile,	QFileDialog::AcceptOpen,
+														{ tr("SQL file (*.sql)"),
+															tr("All files (*.*)") }, {});
 
-	GuiUtilsNs::restoreFileDialogState(&sql_file_dlg);
-	sql_file_dlg.exec();
-	GuiUtilsNs::saveFileDialogState(&sql_file_dlg);
-
-	if(sql_file_dlg.result()==QDialog::Accepted)
+	if(!sel_files.isEmpty())
 	{
 		sql_cmd_txt->clear();
-		sql_cmd_txt->setPlainText(UtilsNs::loadFile(sql_file_dlg.selectedFiles().at(0)));
+		sql_cmd_txt->setPlainText(UtilsNs::loadFile(sel_files.at(0)));
 
-		filename_edt->setText(sql_file_dlg.selectedFiles().at(0));
+		filename_edt->setText(sel_files.at(0));
 		filename_wgt->setVisible(true);
 	}
 }
@@ -697,27 +690,20 @@ void SQLExecutionWidget::exportResults(QTableView *results_tbw)
 	if(!results_tbw)
 		throw Exception(ErrorCode::OprNotAllocatedObject ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	QFileDialog csv_file_dlg;
+	QStringList sel_files = GuiUtilsNs::selectFiles(
+														tr("Save CSV file"),
+														QFileDialog::AnyFile,	QFileDialog::AcceptSave,
+														{ tr("Comma-separated values file (*.csv)"),
+															tr("All files (*.*)") }, {}, "csv");
 
-	csv_file_dlg.setDefaultSuffix("csv");
-	csv_file_dlg.setFileMode(QFileDialog::AnyFile);
-	csv_file_dlg.setWindowTitle(tr("Save CSV file"));
-	csv_file_dlg.setNameFilter(tr("Comma-separated values file (*.csv);;All files (*.*)"));
-	csv_file_dlg.setModal(true);
-	csv_file_dlg.setAcceptMode(QFileDialog::AcceptSave);
-
-	GuiUtilsNs::restoreFileDialogState(&csv_file_dlg);
-	csv_file_dlg.exec();
-	GuiUtilsNs::saveFileDialogState(&csv_file_dlg);
-
-	if(csv_file_dlg.result()==QDialog::Accepted)
+	if(!sel_files.isEmpty())
 	{
 		qApp->setOverrideCursor(Qt::WaitCursor);
 		results_tbw->setUpdatesEnabled(false);
 		results_tbw->blockSignals(true);
 		results_tbw->selectAll();
 
-		UtilsNs::saveFile(csv_file_dlg.selectedFiles().at(0), generateCSVBuffer(results_tbw));
+		UtilsNs::saveFile(sel_files.at(0), generateCSVBuffer(results_tbw));
 
 		results_tbw->clearSelection();
 		results_tbw->blockSignals(false);

@@ -106,17 +106,27 @@ namespace GuiUtilsNs {
 	 * The parameter search_attr is used to display the attribute value in which the search was performed. */
 	extern void updateObjectTable(QTableWidget *tab_wgt, std::vector<BaseObject *> &objects, const QString &search_attr = Attributes::Name, bool checkable_items = false);
 
+	/*! \brief Opens an instance of QFileDialog with the provided attributes.
+	 *  The method returns the files/directories selected by the user in the dialog */
+	extern QStringList selectFiles(const QString &title = QT_TR_NOOP("Select file..."), QFileDialog::FileMode file_mode = QFileDialog::AnyFile,
+																 QFileDialog::AcceptMode accept_mode = QFileDialog::AcceptOpen,	const QStringList &name_filters = {},
+																 const QStringList &mime_filters = {}, const QString &default_suffix = "", const QString &selected_file = "");
+
 	/*! \brief Writes the provided buffer to a file which path is selected via QFileDialog.
 	 * Custom attributes for the QFileDialog instance can be provided.
 	 * Raises an exception in case of the file couldn't be saved.
 	 * The method does nothing if file_mode is different from QFileDialog::ExistingFile and QFileDialog::AnyFile */
-	extern void saveFile(const QByteArray &buffer, const QString &title = QT_TR_NOOP("Save file..."), QFileDialog::FileMode file_mode = QFileDialog::AnyFile, const QStringList &name_filters = {}, const QStringList &mime_filters = {}, const QString &default_suffix = "");
+	extern bool selectAndSaveFile(const QByteArray &buffer, const QString &title = QT_TR_NOOP("Save file..."),
+																QFileDialog::FileMode file_mode = QFileDialog::AnyFile, const QStringList &name_filters = {},
+																const QStringList &mime_filters = {}, const QString &default_suffix = "", const QString &selected_file = "");
 
 	/*! \brief Loads a file which path is selected via QFileDialog returning the buffer with the contents of the file.
 	 * Custom attributes for the QFileDialog instance can be provided.
 	 * Raises an exception in case of the file couldn't be loaded.
 	 * The method does nothing if file_mode is different from QFileDialog::ExistingFile and QFileDialog::AnyFile */
-	extern QByteArray loadFile(const QString &title = QT_TR_NOOP("Load file..."), QFileDialog::FileMode file_mode = QFileDialog::AnyFile, const QStringList &name_filters = {}, const QStringList &mime_filters = {});
+	extern bool selectAndLoadFile(QByteArray &buffer,
+																const QString &title = QT_TR_NOOP("Load file..."), QFileDialog::FileMode file_mode = QFileDialog::AnyFile,
+																const QStringList &name_filters = {}, const QStringList &mime_filters = {}, const QString &selected_file = "");
 }
 
 #endif
