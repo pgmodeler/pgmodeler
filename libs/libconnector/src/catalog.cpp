@@ -57,6 +57,19 @@ std::map<ObjectType, QString> Catalog::ext_oid_fields={
 	{ObjectType::Policy, "pl.polrelid"}
 };
 
+std::map<ObjectType, QString> Catalog::type_relnames={
+    {ObjectType::Procedure, "pg_proc"},
+    {ObjectType::Operator, "pg_operator"},
+    {ObjectType::Language, "pg_language"},
+    {ObjectType::Extension, "pg_extension"},
+    {ObjectType::Schema, "pg_namespace"},
+    {ObjectType::Conversion, "pg_conversion"},
+    {ObjectType::Constraint, "pg_constraint"},
+    {ObjectType::Collation, "pg_collation"},
+    {ObjectType::ForeignDataWrapper, "pg_foreign_data_wrapper"},
+    {ObjectType::Type, "pg_type"}
+};
+
 std::map<ObjectType, QString> Catalog::parent_aliases={
 	{ObjectType::Constraint, "tb"},
 	{ObjectType::Index, "tb"},
@@ -385,7 +398,7 @@ QString Catalog::getCatalogQuery(const QString &qry_type, ObjectType obj_type, b
 	 * due to support to this char in the middle of objects' names */
 	for(auto &attr : attribs)
 	{
-		if(attr.first != Attributes::CustomFilter && attr.second.contains(QChar('\'')))
+		if(attr.first != Attributes::CustomFilter && attr.first != Attributes::Comment && attr.second.contains(QChar('\'')))
 			attr.second.replace(QChar('\''), QString("''"));
 	}
 
@@ -782,14 +795,15 @@ std::vector<attribs_map> Catalog::getMultipleAttributes(const QString &catalog_s
 	}
 }
 
-QString Catalog::getCommentQuery(const QString &oid_field, bool is_shared_obj)
+QString Catalog::getCommentQuery(const QString &oid_field, const QString &type_relname, bool is_shared_obj)
 {
 	QString query_id=Attributes::Comment;
 
 	try
 	{
 		attribs_map attribs={{Attributes::Oid, oid_field},
-												 {Attributes::SharedObj, (is_shared_obj ? Attributes::True : "")}};
+							 {Attributes::SharedObj, (is_shared_obj ? Attributes::True : "")},
+							 {Attributes::TypeRelationName, type_relname}};
 
 		loadCatalogQuery(query_id);
 		return schparser.getSourceCode(attribs).simplified();
@@ -876,7 +890,7 @@ std::vector<attribs_map> Catalog::getObjectsAttributes(ObjectType obj_type, cons
 
 		//Retrieve the comment catalog query. Only columns need to retreive comments in their own catalog query file
 		if(obj_type != ObjectType::Column)
-			extra_attribs[Attributes::Comment]=getCommentQuery(oid_fields[obj_type], is_shared_obj);
+			extra_attribs[Attributes::Comment]=getCommentQuery(oid_fields[obj_type], type_relnames[obj_type], is_shared_obj);
 
 		return getMultipleAttributes(obj_type, extra_attribs);
 	}
