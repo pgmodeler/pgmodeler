@@ -1633,25 +1633,19 @@ void MainWindow::saveModel(ModelWidget *model)
 				//If the action that calls the slot were the 'save as' or the model filename isn't set
 				if(sender()==action_save_as || model->filename.isEmpty() || pending_op==PendingSaveAsOp)
 				{
-					QFileDialog file_dlg;
+					QStringList sel_files = GuiUtilsNs::selectFiles(
+																		tr("Save '%1' as...").arg(model->db_model->getName()),
+																		QFileDialog::AnyFile,	QFileDialog::AcceptSave,
+																		{ tr("Database model (*%1)").arg(GlobalAttributes::DbModelExt),
+																			tr("All files (*.*)") }, {},
+																		GlobalAttributes::DbModelExt);
 
-					file_dlg.setDefaultSuffix(QString(GlobalAttributes::DbModelExt).remove('.'));
-					file_dlg.setWindowTitle(tr("Save '%1' as...").arg(model->db_model->getName()));
-					file_dlg.setNameFilter(tr("Database model (*%1);;All files (*.*)").arg(GlobalAttributes::DbModelExt));
-					file_dlg.setFileMode(QFileDialog::AnyFile);
-					file_dlg.setAcceptMode(QFileDialog::AcceptSave);
-					file_dlg.setModal(true);
-
-					GuiUtilsNs::restoreFileDialogState(&file_dlg);
-
-					if(file_dlg.exec()==QFileDialog::Accepted && !file_dlg.selectedFiles().isEmpty())
+					if(!sel_files.isEmpty())
 					{
-						model->saveModel(file_dlg.selectedFiles().at(0));
-						registerRecentModel(file_dlg.selectedFiles().at(0));
-						model_nav_wgt->updateModelText(models_tbw->indexOf(model), model->getDatabaseModel()->getName(), file_dlg.selectedFiles().at(0));
+						model->saveModel(sel_files.at(0));
+						registerRecentModel(sel_files.at(0));
+						model_nav_wgt->updateModelText(models_tbw->indexOf(model), model->getDatabaseModel()->getName(), sel_files.at(0));
 					}
-
-					GuiUtilsNs::saveFileDialogState(&file_dlg);
 				}
 				else
 				{
@@ -1862,22 +1856,17 @@ void MainWindow::printModel()
 
 void MainWindow::loadModel()
 {
-	QFileDialog file_dlg;
-
 	try
 	{
-		file_dlg.setNameFilter(tr("Database model (*%1);;All files (*.*)").arg(GlobalAttributes::DbModelExt));
-		file_dlg.setWindowIcon(QPixmap(GuiUtilsNs::getIconPath("pgmodeler_logo")));
-		file_dlg.setWindowTitle(tr("Load model"));
-		file_dlg.setFileMode(QFileDialog::ExistingFiles);
-		file_dlg.setAcceptMode(QFileDialog::AcceptOpen);
+		QStringList sel_files = GuiUtilsNs::selectFiles(
+															tr("Load model"),
+															QFileDialog::ExistingFiles,	QFileDialog::AcceptOpen,
+															{ tr("Database model (*%1)").arg(GlobalAttributes::DbModelExt),
+																tr("All files (*.*)") }, {},
+															GlobalAttributes::DbModelExt);
 
-		GuiUtilsNs::restoreFileDialogState(&file_dlg);
-
-		if(file_dlg.exec()==QFileDialog::Accepted)
-			loadModels(file_dlg.selectedFiles());
-
-		GuiUtilsNs::saveFileDialogState(&file_dlg);
+		if(!sel_files.isEmpty())
+			loadModels(sel_files);
 	}
 	catch(Exception &e)
 	{

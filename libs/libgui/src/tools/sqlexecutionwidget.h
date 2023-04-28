@@ -61,9 +61,6 @@ class __libgui SQLExecutionWidget: public QWidget, public Ui::SQLExecutionWidget
 		//! \brief Connection used to run commands specified on sql input field
 		Connection sql_cmd_conn;
 
-		//! \brief Dialog for SQL save/load
-		QFileDialog sql_file_dlg;
-
 		QMenu snippets_menu,
 
 		file_menu;

@@ -379,7 +379,7 @@ void TableDataWidget::populateDataGrid(const CsvDocument &csv_doc)
 			{
 				try
 				{
-					GuiUtilsNs::saveFile(table->getInitialData().toUtf8(),
+					GuiUtilsNs::selectAndSaveFile(table->getInitialData().toUtf8(),
 															 tr("Save CSV to file..."), QFileDialog::AnyFile,
 															 {}, {"text/csv", "application/octet-stream"}, "csv");
 				}

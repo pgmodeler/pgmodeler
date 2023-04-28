@@ -586,32 +586,58 @@ namespace GuiUtilsNs {
 		tab_wgt->resizeRowsToContents();
 	}
 
-	void saveFile(const QByteArray &buffer, const QString &title, QFileDialog::FileMode file_mode,
-								const QStringList &name_filters, const QStringList &mime_filters,
-								const QString &default_suffix)
+	QStringList selectFiles(const QString &title, QFileDialog::FileMode file_mode, QFileDialog::AcceptMode accept_mode,
+													const QStringList &name_filters, const QStringList &mime_filters, const QString &default_suffix,
+													const QString &selected_file)
 	{
-		if(file_mode != QFileDialog::ExistingFile &&
-			 file_mode != QFileDialog::AnyFile)
-			return;
-
 		QFileDialog file_dlg;
 
 		file_dlg.setWindowIcon(QIcon(getIconPath("pgmodeler_logo")));
 		file_dlg.setWindowTitle(title);
 		file_dlg.setDefaultSuffix(default_suffix);
-		file_dlg.setNameFilters(name_filters);
-		file_dlg.setMimeTypeFilters(mime_filters);
+		file_dlg.selectFile(selected_file);
+
+		if(!name_filters.isEmpty())
+		 file_dlg.setNameFilters(name_filters);
+
+		if(!mime_filters.isEmpty())
+			file_dlg.setMimeTypeFilters(mime_filters);
+
 		file_dlg.setFileMode(file_mode);
-		file_dlg.setAcceptMode(QFileDialog::AcceptSave);
+		file_dlg.setAcceptMode(accept_mode);
 		file_dlg.setModal(true);
+
+		GuiUtilsNs::restoreFileDialogState(&file_dlg);
+		file_dlg.exec();
+		GuiUtilsNs::saveFileDialogState(&file_dlg);
+
+		if(file_dlg.result() == QDialog::Accepted)
+			return file_dlg.selectedFiles();
+
+		return QStringList();
+	}
+
+	bool selectAndSaveFile(const QByteArray &buffer, const QString &title, QFileDialog::FileMode file_mode,
+												 const QStringList &name_filters, const QStringList &mime_filters,
+												 const QString &default_suffix, const QString &selected_file)
+	{
+		if(file_mode != QFileDialog::ExistingFile &&
+			 file_mode != QFileDialog::AnyFile)
+			return false;
 
 		try
 		{
-			if(file_dlg.exec() == QDialog::Accepted &&
-				 !file_dlg.selectedFiles().isEmpty())
+			QStringList sel_files = selectFiles(title, file_mode, QFileDialog::AcceptSave,
+																					name_filters, mime_filters, default_suffix,
+																					selected_file);
+
+			if(!sel_files.isEmpty())
 			{
-				return UtilsNs::saveFile(file_dlg.selectedFiles().at(0), buffer);
+				UtilsNs::saveFile(sel_files.at(0), buffer);
+				return true;
 			}
+
+			return false;
 		}
 		catch(Exception &e)
 		{
@@ -619,31 +645,28 @@ namespace GuiUtilsNs {
 		}
 	}
 
-	QByteArray loadFile(const QString &title, QFileDialog::FileMode file_mode, const QStringList &name_filters, const QStringList &mime_filters)
+	bool selectAndLoadFile(QByteArray &buffer,
+												 const QString &title, QFileDialog::FileMode file_mode, const QStringList &name_filters,
+												 const QStringList &mime_filters, const QString &selected_file)
 	{
+		buffer.clear();
+
 		if(file_mode != QFileDialog::ExistingFile &&
 			 file_mode != QFileDialog::AnyFile)
-			return QByteArray();
-
-		QFileDialog file_dlg;
-
-		file_dlg.setWindowIcon(QIcon(getIconPath("pgmodeler_logo")));
-		file_dlg.setWindowTitle(title);
-		file_dlg.setNameFilters(name_filters);
-		file_dlg.setMimeTypeFilters(mime_filters);
-		file_dlg.setFileMode(file_mode);
-		file_dlg.setAcceptMode(QFileDialog::AcceptOpen);
-		file_dlg.setModal(true);
+			return false;
 
 		try
 		{
-			if(file_dlg.exec() == QDialog::Accepted &&
-				 !file_dlg.selectedFiles().isEmpty())
+			QStringList sel_files = selectFiles(title, file_mode, QFileDialog::AcceptOpen,
+																					name_filters, mime_filters, "", selected_file);
+
+			if(!sel_files.isEmpty())
 			{
-				return UtilsNs::loadFile(file_dlg.selectedFiles().at(0));
+				buffer = UtilsNs::loadFile(sel_files.at(0));
+				return true;
 			}
 
-			return QByteArray();
+			return false;
 		}
 		catch(Exception &e)
 		{

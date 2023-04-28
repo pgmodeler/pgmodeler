@@ -123,22 +123,17 @@ void BugReportForm::generateReport(const QByteArray &buf)
 
 void BugReportForm::attachModel()
 {
-	QFileDialog file_dlg;
-
 	try
 	{
-		file_dlg.setDefaultSuffix(GlobalAttributes::DbModelExt);
-		file_dlg.setWindowTitle(tr("Load model"));
-		file_dlg.setNameFilter(tr("Database model (*%1);;All files (*.*)").arg(GlobalAttributes::DbModelExt));
-		file_dlg.setFileMode(QFileDialog::ExistingFile);
-		file_dlg.setModal(true);
+		QStringList sel_files = GuiUtilsNs::selectFiles(
+															tr("Load model"),
+															QFileDialog::ExistingFiles,	QFileDialog::AcceptOpen,
+															{ tr("Database model (*%1)").arg(GlobalAttributes::DbModelExt),
+																tr("All files (*.*)") }, {},
+															GlobalAttributes::DbModelExt);
 
-		GuiUtilsNs::restoreFileDialogState(&file_dlg);
-
-		if(file_dlg.exec()==QFileDialog::Accepted)
-			attachModel(file_dlg.selectedFiles().at(0));
-
-		GuiUtilsNs::saveFileDialogState(&file_dlg);
+		if(!sel_files.isEmpty())
+			attachModel(sel_files.at(0));
 	}
 	catch(Exception &e)
 	{
