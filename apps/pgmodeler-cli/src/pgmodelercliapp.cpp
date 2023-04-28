@@ -1281,7 +1281,6 @@ void PgModelerCliApp::recreateObjects()
 								//If the extract object doesn't contains the 'table=' attribute it'll be added.
 								if(!aux_def.contains("table="))
 								{
-									#warning "Test me!"
 									aux_def.replace(aux_tag, QString("%1 table=\"%2\"")
 																	.arg(aux_tag, UtilsNs::convertToXmlEntities(object->getName(true))));
 								}
@@ -2429,9 +2428,10 @@ void PgModelerCliApp::createConfigurations()
 			QString bkp_conf_dir = conf_dir + QDateTime::currentDateTime().toString("_yyyyMMd_hhmmss");
 
 			printMessage(tr("Configuration files already exist! Creating a backup..."));
+			printMessage(tr("Backup path: %1").arg(bkp_conf_dir));
 
 			if(!dir.rename(conf_dir, bkp_conf_dir))
-				throw Exception(tr("Failed to create a backup of the configuration files!"), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+				throw Exception(tr("Failed to create the configuration files backup!").arg(bkp_conf_dir), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		}
 
 		createUserConfiguration(missing_only);
