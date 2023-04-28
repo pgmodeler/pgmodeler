@@ -1281,7 +1281,6 @@ void PgModelerCliApp::recreateObjects()
 								//If the extract object doesn't contains the 'table=' attribute it'll be added.
 								if(!aux_def.contains("table="))
 								{
-									#warning "Test me!"
 									aux_def.replace(aux_tag, QString("%1 table=\"%2\"")
 																	.arg(aux_tag, UtilsNs::convertToXmlEntities(object->getName(true))));
 								}
