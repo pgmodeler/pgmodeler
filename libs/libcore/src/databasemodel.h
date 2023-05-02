@@ -84,9 +84,21 @@ class __libcore DatabaseModel:  public QObject, public BaseObject {
 		 * differently from OperationList class, it's data persisted in the database model file. */
 		std::vector<std::tuple<QDateTime,QString,ObjectType,QString>> changelog;
 
-		/*! \brief Stores the references of all object lists of each type. This map is used by getObjectList() in order
+		/*! \brief Stores the references to all object lists of each type. This map is used by getObjectList() in order
 		 * to return the list according to the provided type */
 		std::map<ObjectType, std::vector<BaseObject *> *> obj_lists;
+
+		/*! \brief Stores the references to the methods that create objects from XML code. This map is used by createObject() in order
+		 * to return the created object */
+		std::map<ObjectType, std::function<BaseObject*(void)>> create_methods;
+
+		/*! \brief Stores the references to the methods that add objects from database. This map is used by addObject() in order
+		 * to return the created object */
+		std::map<ObjectType, std::function<void(BaseObject *, int)>> add_methods;
+
+		/*! \brief Stores the references to the methods that remove objects from database. This map is used by removeObject() in order
+		 * to return the created object */
+		std::map<ObjectType, std::function<void(BaseObject *, int)>> remove_methods;
 
 		static unsigned dbmodel_id;
 
