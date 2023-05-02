@@ -33,6 +33,41 @@ DatabaseImportHelper::DatabaseImportHelper(QObject *parent) : QObject(parent)
 	import_filter=Catalog::ListAllObjects | Catalog::ExclExtensionObjs | Catalog::ExclSystemObjs;
 	xmlparser=nullptr;
 	dbmodel=nullptr;
+
+	//Binding create methods
+	create_methods = {
+		{ ObjectType::Database, std::bind(&DatabaseImportHelper::configureDatabase, this, std::placeholders::_1) },
+		{ ObjectType::Tablespace, std::bind(&DatabaseImportHelper::createTablespace, this, std::placeholders::_1) },
+		{ ObjectType::Schema, std::bind(&DatabaseImportHelper::createSchema, this, std::placeholders::_1) },
+		{ ObjectType::Role, std::bind(&DatabaseImportHelper::createRole, this, std::placeholders::_1) },
+		{ ObjectType::Domain, std::bind(&DatabaseImportHelper::createDomain, this, std::placeholders::_1) },
+		{ ObjectType::Extension, std::bind(&DatabaseImportHelper::createExtension, this, std::placeholders::_1) },
+		{ ObjectType::Function, std::bind(&DatabaseImportHelper::createFunction, this, std::placeholders::_1) },
+		{ ObjectType::Language, std::bind(&DatabaseImportHelper::createLanguage, this, std::placeholders::_1) },
+		{ ObjectType::OpFamily, std::bind(&DatabaseImportHelper::createOperatorFamily, this, std::placeholders::_1) },
+		{ ObjectType::OpClass, std::bind(&DatabaseImportHelper::createOperatorClass, this, std::placeholders::_1) },
+		{ ObjectType::Operator, std::bind(&DatabaseImportHelper::createOperator, this, std::placeholders::_1) },
+		{ ObjectType::Collation, std::bind(&DatabaseImportHelper::createCollation, this, std::placeholders::_1) },
+		{ ObjectType::Cast, std::bind(&DatabaseImportHelper::createCast, this, std::placeholders::_1) },
+		{ ObjectType::Conversion, std::bind(&DatabaseImportHelper::createConversion, this, std::placeholders::_1) },
+		{ ObjectType::Sequence, std::bind(&DatabaseImportHelper::createSequence, this, std::placeholders::_1) },
+		{ ObjectType::Aggregate, std::bind(&DatabaseImportHelper::createAggregate, this, std::placeholders::_1) },
+		{ ObjectType::Type, std::bind(&DatabaseImportHelper::createType, this, std::placeholders::_1) },
+		{ ObjectType::Table, std::bind(&DatabaseImportHelper::createTable, this, std::placeholders::_1) },
+		{ ObjectType::View, std::bind(&DatabaseImportHelper::createView, this, std::placeholders::_1) },
+		{ ObjectType::Rule, std::bind(&DatabaseImportHelper::createRule, this, std::placeholders::_1) },
+		{ ObjectType::Trigger, std::bind(&DatabaseImportHelper::createTrigger, this, std::placeholders::_1) },
+		{ ObjectType::Index, std::bind(&DatabaseImportHelper::createIndex, this, std::placeholders::_1) },
+		{ ObjectType::Constraint, std::bind(&DatabaseImportHelper::createConstraint, this, std::placeholders::_1) },
+		{ ObjectType::Policy, std::bind(&DatabaseImportHelper::createPolicy, this, std::placeholders::_1) },
+		{ ObjectType::EventTrigger, std::bind(&DatabaseImportHelper::createEventTrigger, this, std::placeholders::_1) },
+		{ ObjectType::ForeignDataWrapper, std::bind(&DatabaseImportHelper::createForeignDataWrapper, this, std::placeholders::_1) },
+		{ ObjectType::ForeignServer, std::bind(&DatabaseImportHelper::createForeignServer, this, std::placeholders::_1) },
+		{ ObjectType::UserMapping, std::bind(&DatabaseImportHelper::createUserMapping, this, std::placeholders::_1) },
+		{ ObjectType::ForeignTable, std::bind(&DatabaseImportHelper::createForeignTable, this, std::placeholders::_1) },
+		{ ObjectType::Transform, std::bind(&DatabaseImportHelper::createTransform, this, std::placeholders::_1) },
+		{ ObjectType::Procedure, std::bind(&DatabaseImportHelper::createProcedure, this, std::placeholders::_1) }
+	};
 }
 
 void DatabaseImportHelper::setConnection(Connection &conn)
@@ -731,51 +766,16 @@ void DatabaseImportHelper::createObject(attribs_map &attribs)
 				ts << dumpObjectAttributes(attribs) << Qt::endl;
 			}
 
-			switch(obj_type)
+			if(create_methods.count(obj_type))
 			{
-				case ObjectType::Database: configureDatabase(attribs); break;
-				case ObjectType::Tablespace: createTablespace(attribs); break;
-				case ObjectType::Schema: createSchema(attribs); break;
-				case ObjectType::Role: createRole(attribs); break;
-				case ObjectType::Domain: createDomain(attribs); break;
-				case ObjectType::Extension: createExtension(attribs); break;
-				case ObjectType::Function: createFunction(attribs); break;
-				case ObjectType::Language: createLanguage(attribs); break;
-				case ObjectType::OpFamily: createOperatorFamily(attribs); break;
-				case ObjectType::OpClass: createOperatorClass(attribs); break;
-				case ObjectType::Operator: createOperator(attribs); break;
-				case ObjectType::Collation: createCollation(attribs); break;
-				case ObjectType::Cast: createCast(attribs); break;
-				case ObjectType::Conversion: createConversion(attribs); break;
-				case ObjectType::Sequence: createSequence(attribs); break;
-				case ObjectType::Aggregate: createAggregate(attribs); break;
-				case ObjectType::Type: createType(attribs); break;
-				case ObjectType::Table: createTable(attribs); break;
-				case ObjectType::View: createView(attribs); break;
-				case ObjectType::Rule: createRule(attribs); break;
-				case ObjectType::Trigger: createTrigger(attribs); break;
-				case ObjectType::Index: createIndex(attribs); break;
-				case ObjectType::Constraint: createConstraint(attribs); break;
-				case ObjectType::Policy: createPolicy(attribs); break;
-				case ObjectType::EventTrigger: createEventTrigger(attribs); break;
-				case ObjectType::ForeignDataWrapper: createForeignDataWrapper(attribs); break;
-				case ObjectType::ForeignServer: createForeignServer(attribs); break;
-				case ObjectType::UserMapping: createUserMapping(attribs); break;
-				case ObjectType::ForeignTable: createForeignTable(attribs); break;
-				case ObjectType::Transform: createTransform(attribs); break;
-				case ObjectType::Procedure: createProcedure(attribs); break;
+				create_methods[obj_type](attribs);
 
-				default:
-					if(debug_mode)
-					{
-						qDebug() << QString("create() method for %s isn't implemented!").arg(BaseObject::getSchemaName(obj_type)) << Qt::endl;
-					}
-				break;
+				/* Register that the object was successfully created in order to avoid
+				 * creating it again on the recursive object creation. (see getDependencyObject()) */
+				created_objs.push_back(oid);
 			}
-
-			/* Register that the object was successfully created in order to avoid
-			 * creating it again on the recursive object creation. (see getDependencyObject()) */
-			created_objs.push_back(oid);
+			else if (debug_mode)
+				qDebug() << QString("create() method for %s isn't implemented!").arg(BaseObject::getSchemaName(obj_type)) << Qt::endl;
 		}
 	}
 	catch(Exception &e)

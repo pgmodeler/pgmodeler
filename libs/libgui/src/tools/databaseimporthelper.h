@@ -130,6 +130,9 @@ class __libgui DatabaseImportHelper: public QObject {
 		dettached from parent columns on the resulting model before the inheritances creation they
 		will be removed from their related tables if there is no object referencing them */
 		std::vector<Column *> inherited_cols;
+
+		//! \brief Stores the references to the methods that create objects from database catalogs.
+		std::map<ObjectType, std::function<void(attribs_map&)>> create_methods;
 		
 		//! \brief Reference for the database model instance of the model widget
 		DatabaseModel *dbmodel;
