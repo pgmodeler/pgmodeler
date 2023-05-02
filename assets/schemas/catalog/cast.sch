@@ -5,7 +5,8 @@
 %if {list} %then
 	%set {cast-name} ['cast('|| castsource::regtype::text || ',' || casttarget::regtype::text || ')']
 
-	[SELECT cs.oid, ] {cast-name} [ AS name, current_database() AS parent, 'database' AS parent_type
+	[SELECT cs.oid, ] {cast-name} [ AS name, current_database() AS parent, 
+	 'database' AS parent_type, NULL AS extra_info
 	FROM pg_cast AS cs ]
 
 

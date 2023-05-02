@@ -8,7 +8,8 @@
 	%end
 
 	[SELECT dm.oid, dm.typname AS name,
-	_dm1.domain_schema AS parent, 'schema' AS parent_type FROM pg_type AS dm
+	_dm1.domain_schema AS parent, 'schema' AS parent_type, NULL AS extra_info
+    FROM pg_type AS dm
 	INNER JOIN information_schema.domains AS _dm1 ON dm.typname=_dm1.domain_name
 	WHERE dm.typrelid=0 ]
 

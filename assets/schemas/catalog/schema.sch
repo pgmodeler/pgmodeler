@@ -3,7 +3,8 @@
 # Code generation can be broken if incorrect changes are made.
 
 %if {list} %then
-	[SELECT oid, nspname AS name, current_database() AS parent, 'database' AS parent_type FROM pg_namespace
+	[SELECT oid, nspname AS name, current_database() AS parent, 'database' AS parent_type, NULL AS extra_info
+     FROM pg_namespace
 	WHERE (nspname NOT LIKE 'pg_temp%' AND nspname NOT LIKE 'pg_toast%') ]
 
 	%if {last-sys-oid} %then

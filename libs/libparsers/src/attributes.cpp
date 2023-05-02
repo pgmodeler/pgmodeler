@@ -226,6 +226,7 @@ namespace Attributes {
 	ExtAttribsPerPage("ext-attribs-per-page"),
 	ExtObjOids("ext-obj-oids"),
 	ExtraCondition("extra-condition"),
+	ExtraInfo("extra-info"),
 	Factor("factor"),
 	FadedOut("faded-out"),
 	FadeInObjects("fadein-objects"),

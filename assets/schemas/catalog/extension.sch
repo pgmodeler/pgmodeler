@@ -3,7 +3,8 @@
 # Code generation can be broken if incorrect changes are made.
 
 %if {list} %then
-	[SELECT ex.oid, extname AS name, ns.nspname AS parent, 'schema' AS parent_type
+	[SELECT ex.oid, extname AS name, ns.nspname AS parent, 
+     'schema' AS parent_type, NULL AS extra_info
 	FROM pg_extension AS ex
 	LEFT JOIN pg_namespace AS ns ON ex.extnamespace = ns.oid ]
 

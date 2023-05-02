@@ -842,7 +842,7 @@ void DatabaseImportForm::listObjects(DatabaseImportHelper &import_helper, QTreeW
 				//Creating database item
 				db_item=new QTreeWidgetItem;
 				db_item->setText(0, import_helper.getCurrentDatabase());
-				db_item->setIcon(0, QPixmap(GuiUtilsNs::getIconPath(ObjectType::Database)));
+				db_item->setIcon(0, QIcon(GuiUtilsNs::getIconPath(ObjectType::Database)));
 				attribs = catalog.getObjectsAttributes(ObjectType::Database, "", "", {}, {{Attributes::Name, import_helper.getCurrentDatabase()}});
 
 				db_item->setData(ObjectId, Qt::UserRole, attribs[0].at(Attributes::Oid).toUInt());
@@ -944,6 +944,11 @@ std::vector<QTreeWidgetItem *> DatabaseImportForm::updateObjectsTree(DatabaseImp
 		QList<QTreeWidgetItem*> groups_list;
 		unsigned oid=0;
 		int start=-1, end=-1;
+		std::map<QString, QString> constr_icons = { { Attributes::PkConstr, "constraint_pk" },
+																								{ Attributes::FkConstr, "constraint_fk" },
+																								{ Attributes::UqConstr, "constraint_uq" },
+																								{ Attributes::CkConstr, "constraint_ck" },
+																								{ Attributes::ExConstr, "constraint_ex" } };
 
 		grp_fnt.setItalic(true);
 		tree_wgt->blockSignals(true);
@@ -956,7 +961,7 @@ std::vector<QTreeWidgetItem *> DatabaseImportForm::updateObjectsTree(DatabaseImp
 			{
 				//Create a group item for the current type
 				group=new QTreeWidgetItem(root);
-				group->setIcon(0, QPixmap(GuiUtilsNs::getIconPath(BaseObject::getSchemaName(grp_type))));
+				group->setIcon(0, QIcon(GuiUtilsNs::getIconPath(BaseObject::getSchemaName(grp_type))));
 				group->setFont(0, grp_fnt);
 
 				//Group items does contains a zero valued id to indicate that is not a valide object
@@ -996,7 +1001,12 @@ std::vector<QTreeWidgetItem *> DatabaseImportForm::updateObjectsTree(DatabaseImp
 				}
 
 				item=new QTreeWidgetItem(group);
-				item->setIcon(0, QPixmap(GuiUtilsNs::getIconPath(obj_type)));
+
+				if(obj_type == ObjectType::Constraint)
+					item->setIcon(0, QIcon(GuiUtilsNs::getIconPath(constr_icons[attribs[Attributes::ExtraInfo]])));
+				else
+					item->setIcon(0, QIcon(GuiUtilsNs::getIconPath(obj_type)));
+
 				item->setText(0, label);
 				item->setText(ObjectId, attribs[Attributes::Oid].rightJustified(10, '0'));
 				item->setData(ObjectId, Qt::UserRole, attribs[Attributes::Oid].toUInt());

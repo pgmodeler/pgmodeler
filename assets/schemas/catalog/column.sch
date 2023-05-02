@@ -7,8 +7,9 @@
 
 %if {list} %then
 	[ SELECT cl.attnum AS oid, cl.attname AS name,
-	cl.attrelid::regclass::text AS parent,
-	'table' AS parent_type FROM pg_attribute AS cl
+	  cl.attrelid::regclass::text AS parent,
+	 'table' AS parent_type, NULL AS extra_info
+    FROM pg_attribute AS cl
 	LEFT JOIN pg_class AS tb ON tb.oid = cl.attrelid
 	LEFT JOIN pg_namespace AS ns ON ns.oid = tb.relnamespace
 	WHERE cl.attisdropped IS FALSE AND relname=]'{table}' [ AND nspname= ] '{schema}'

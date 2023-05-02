@@ -3,7 +3,7 @@
 # Code generation can be broken if incorrect changes are made.
 
 %if {list} %then
-	[SELECT oid, spcname AS name, current_database() AS parent, 'database' AS parent_type
+	[SELECT oid, spcname AS name, current_database() AS parent, 'database' AS parent_type, NULL AS extra_info
 	FROM pg_tablespace ]
 
 	%if {last-sys-oid} %then

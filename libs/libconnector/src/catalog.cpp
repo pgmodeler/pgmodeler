@@ -696,18 +696,19 @@ std::vector<attribs_map> Catalog::getObjectsNames(std::vector<ObjectType> obj_ty
 
 		if(res.accessTuple(ResultSet::FirstTuple))
 		{
-			QString obj_type_attr = QString(Attributes::ObjectType).replace('-', '_'),
-					parent_type_attr = QString(Attributes::ParentType).replace('-', '_');
+			QString fmt_attr_name;
 
 			do
 			{
-				attribs[Attributes::Oid]=res.getColumnValue(Attributes::Oid);
-				attribs[Attributes::Name]=res.getColumnValue(Attributes::Name);
-				attribs[Attributes::ObjectType]=res.getColumnValue(obj_type_attr);
-				attribs[Attributes::Parent]=res.getColumnValue(Attributes::Parent);
-				attribs[Attributes::ParentType]=res.getColumnValue(parent_type_attr);
+				for(auto &col_name : res.getColumnNames())
+				{
+					fmt_attr_name = QString(col_name).replace('_', '-');
+					attribs[fmt_attr_name] = res.getColumnValue(col_name);
+				}
+
 				objects.push_back(attribs);
 				attribs.clear();
+				fmt_attr_name.clear();
 			}
 			while(res.accessTuple(ResultSet::NextTuple));
 		}

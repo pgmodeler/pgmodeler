@@ -240,6 +240,7 @@ namespace Attributes {
 	ExtAttribsPerPage,
 	ExtObjOids,
 	ExtraCondition,
+	ExtraInfo,
 	Factor,
 	FadedOut,
 	FadeInObjects,

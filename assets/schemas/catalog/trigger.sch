@@ -9,7 +9,7 @@
 		%set {signature} {parent-name} [ || '.' || ]
 	%end
 
-	[SELECT tg.oid, tgname AS name, ] {parent-name} [ AS parent, 'table' AS parent_type
+	[SELECT tg.oid, tgname AS name, ] {parent-name} [ AS parent, 'table' AS parent_type, NULL AS extra_info
 	FROM pg_trigger AS tg
 	LEFT JOIN pg_class AS tb ON tg.tgrelid = tb.oid AND relkind IN ('r','v','m','f')
 	LEFT JOIN pg_namespace AS ns ON ns.oid = tb.relnamespace ]

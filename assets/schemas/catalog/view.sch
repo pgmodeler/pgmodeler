@@ -7,7 +7,7 @@
 		%set {signature} [ ns.nspname || '.' || ]
 	%end
 
-	[SELECT vw.oid, vw.relname AS name, ns.nspname AS parent, 'schema' AS parent_type
+	[SELECT vw.oid, vw.relname AS name, ns.nspname AS parent, 'schema' AS parent_type, NULL AS extra_info
 	 FROM pg_class AS vw
  	 LEFT JOIN pg_namespace AS ns ON ns.oid=vw.relnamespace 
 	 WHERE vw.relkind IN ('v','m') ]

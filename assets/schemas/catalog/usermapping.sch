@@ -6,7 +6,7 @@
 	%set {usermap-name} [um.usename || '@' || um.srvname]
 
 	[ SELECT um.umid AS oid, ] {usermap-name} [ AS name,
-	current_database() AS parent, 'database' AS parent_type
+	current_database() AS parent, 'database' AS parent_type, NULL AS extra_info
 	FROM pg_user_mappings AS um ]
 
 	%if {last-sys-oid} %or {not-ext-object} %or {name-filter} %then

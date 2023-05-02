@@ -9,8 +9,9 @@
 		%set {signature} {parent-name} [ || '.' || ]
 	%end
 
-	[SELECT rl.oid, rl.rulename AS name, ] {parent-name} [ AS parent, 'table' AS parent_type
-	FROM ( SELECT rw.* ]
+	[SELECT rl.oid, rl.rulename AS name, ] {parent-name} [ AS parent,
+     'table' AS parent_type, NULL AS extra_info
+  	FROM ( SELECT rw.* ]
 
 	%if ({pgsql-ver} <=f "11.0") %then
 		[ , rw.oid ]

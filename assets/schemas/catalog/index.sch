@@ -9,7 +9,8 @@
 		%set {signature} {parent-name} [ || '.' || ]
 	%end
 
-	[SELECT id.indexrelid AS oid, cl.relname AS name, ] {parent-name} [ AS parent, 'table' AS parent_type
+	[SELECT id.indexrelid AS oid, cl.relname AS name, ] {parent-name} [ AS parent,
+     'table' AS parent_type, NULL AS extra_info
 	FROM pg_index AS id
 	LEFT JOIN pg_class AS cl ON cl.oid = id.indexrelid
 	LEFT JOIN pg_class AS tb ON id.indrelid = tb.oid

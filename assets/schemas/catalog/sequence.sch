@@ -7,7 +7,7 @@
 		%set {signature} [ ns.nspname || '.' || ]
 	%end
 
-	[SELECT sq.oid, relname AS name, ns.nspname AS parent, 'schema' AS parent_type
+	[SELECT sq.oid, relname AS name, ns.nspname AS parent, 'schema' AS parent_type, NULL AS extra_info
 	FROM pg_class AS sq
 	LEFT JOIN pg_namespace AS ns ON sq.relnamespace = ns.oid ]
 
