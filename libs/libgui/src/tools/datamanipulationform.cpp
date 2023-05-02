@@ -504,8 +504,8 @@ void DataManipulationForm::retrieveData()
 			results_tbw->horizontalHeader()->setSectionHidden(idx, true);
 		}
 
-		if(!curr_hidden_cols.empty())
-			results_tbw->resizeRowsToContents();
+		//if(!curr_hidden_cols.empty())
+		//	results_tbw->resizeColumnsToContents();
 
 		results_tbw->horizontalHeader()->blockSignals(false);
 		setWindowTitle(tmpl_window_title.arg(curr_table_name.isEmpty() ? "" : curr_table_name + " / "));
@@ -1059,14 +1059,20 @@ void DataManipulationForm::markOperationOnRow(OperationId operation, int row)
 				}
 
 				if(operation==NoOperation)
-					//Restore the item's background
-					item->setBackground(prev_row_colors[row]);
+				{
+					//Restore the item's colors
+					item->setBackground(prev_bg_colors[row]);
+					item->setForeground(prev_fg_colors[row]);
+				}
 				else
 				{
-					//Saves the item's background if it isn't already marked
+					//Saves the item's colors if it isn't already marked
 					if(header_item->data(Qt::UserRole)!=OpDelete &&
 							header_item->data(Qt::UserRole)!=OpUpdate)
-						prev_row_colors[row]=item->background();
+					{
+						prev_bg_colors[row]=item->background();
+						prev_fg_colors[row]=item->foreground();
+					}
 
 					//Changes the item's background and foreground colors according to the operation
 					item->setBackground(item_bg_colors[operation - 1]);
@@ -1084,7 +1090,8 @@ void DataManipulationForm::markOperationOnRow(OperationId operation, int row)
 			if(operation==NoOperation && itr!=changed_rows.end())
 			{
 				changed_rows.erase(std::find(changed_rows.begin(), changed_rows.end(), row));
-				prev_row_colors.erase(row);
+				prev_bg_colors.erase(row);
+				prev_fg_colors.erase(row);
 			}
 			else if(operation!=NoOperation && itr==changed_rows.end())
 				changed_rows.push_back(row);
@@ -1119,6 +1126,7 @@ void DataManipulationForm::markUpdateOnRow(QTableWidgetItem *item)
 		}
 
 		fnt.setBold(items_changed);
+		fnt.setUnderline(items_changed);
 		item->setFont(fnt);
 		markOperationOnRow((items_changed ? OpUpdate : NoOperation), item->row());
 	}
@@ -1253,7 +1261,7 @@ void DataManipulationForm::removeNewRows(std::vector<int> ins_rows)
 void DataManipulationForm::clearChangedRows()
 {
 	changed_rows.clear();
-	prev_row_colors.clear();
+	prev_bg_colors.clear();
 	undo_tb->setEnabled(false);
 	save_tb->setEnabled(false);
 }

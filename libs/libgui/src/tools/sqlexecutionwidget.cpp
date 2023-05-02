@@ -356,10 +356,10 @@ void SQLExecutionWidget::fillResultsTable(Catalog &catalog, ResultSet &res, QTab
 			while(res.accessTuple(ResultSet::NextTuple));
 		}
 
+		results_tbw->resizeColumnsToContents();
+		//results_tbw->resizeRowsToContents();
 		results_tbw->setUpdatesEnabled(true);
 		results_tbw->blockSignals(false);
-		results_tbw->resizeColumnsToContents();
-		results_tbw->resizeRowsToContents();
 	}
 	catch(Exception &e)
 	{

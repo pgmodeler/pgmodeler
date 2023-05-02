@@ -75,8 +75,11 @@ class __libgui DataManipulationForm: public QDialog, public Ui::DataManipulation
 		//! \brief Stores the ids of changed rows. These ids are handled on saveChanges() method
 		std::vector<int> changed_rows;
 		
-		//! \brief Stores the previous color of the rows before being marked with some operation
-		std::map<int, QBrush> prev_row_colors;
+		//! \brief Stores the previous background color of the rows before being marked with some operation
+		std::map<int, QBrush> prev_bg_colors,
+
+		//! \brief Stores the previous foreground color of the rows before being marked with some operation
+		prev_fg_colors;
 
 		//! \brief Stores the fk informations about referenced tables
 		std::map<QString, attribs_map> fk_infos,

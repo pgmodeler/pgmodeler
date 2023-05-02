@@ -6,13 +6,13 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>499</width>
+    <width>300</width>
     <height>695</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
-    <width>0</width>
+    <width>300</width>
     <height>0</height>
    </size>
   </property>
@@ -110,7 +110,7 @@
          </font>
         </property>
         <property name="text">
-         <string>&lt;strong&gt;WARNING:&lt;/strong&gt; the server version unsupported! The database browsing will not work properly.</string>
+         <string>Unsupported server version! The browsing may not work properly.</string>
         </property>
         <property name="wordWrap">
          <bool>true</bool>

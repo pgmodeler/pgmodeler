@@ -368,6 +368,9 @@ namespace GuiUtilsNs {
 		base_frm.setButtonConfiguration(Messagebox::OkCancelButtons);
 		base_frm.apply_ok_btn->setShortcut(QKeySequence("Ctrl+Return"));
 
+		if(results_tbw->selectedItems().size() == 1)
+			bulkedit_wgt->value_edt->setPlainText(results_tbw->currentItem()->text());
+
 		if(base_frm.exec() == QDialog::Accepted)
 		{
 			QList<QTableWidgetSelectionRange> sel_ranges=results_tbw->selectedRanges();
