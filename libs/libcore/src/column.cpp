@@ -191,7 +191,7 @@ void Column::setSequence(BaseObject *seq)
 							.arg(this->getTypeName())
 							.arg(BaseObject::getTypeName(ObjectType::Sequence)),
 							ErrorCode::AsgInvalidObjectType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-		else if(!type.isIntegerType())
+		else if(!type.isIntegerType() && !type.isNumericType())
 			throw Exception(Exception::getErrorMessage(ErrorCode::IncompColumnTypeForSequence)
 							.arg(seq->getName(true))
 							.arg(this->obj_name),

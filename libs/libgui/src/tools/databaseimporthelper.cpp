@@ -2837,7 +2837,7 @@ void DatabaseImportHelper::assignSequencesToColumns()
 			col=dynamic_cast<Column *>(tab_obj);
 
 			//Translating the default value nextval('sequence'::regclass)
-			if(col->getType().isIntegerType() &&
+			if((col->getType().isIntegerType() || col->getType().isNumericType()) &&
 					col->getDefaultValue().contains("nextval("))
 			{
 				QString seq_name=col->getDefaultValue();
