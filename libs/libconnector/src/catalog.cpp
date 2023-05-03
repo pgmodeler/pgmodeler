@@ -477,7 +477,7 @@ QString Catalog::getCatalogQuery(const QString &qry_type, ObjectType obj_type, b
 		if(where_idx < 0)
 		{
 			// Adding the custom filter with a WHERE statement
-			custom_filter.prepend("WHERE ");
+			custom_filter.prepend(" WHERE ");
 
 			/* If we have and order by then the where statement will
 			 * be placed before the order by */

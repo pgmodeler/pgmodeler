@@ -9,7 +9,7 @@
 
 	[SELECT cl.oid, collname AS name,
 	ns.nspname AS parent, 'schema' AS parent_type, NULL AS extra_info
-    FROM pg_collation AS cl
+	FROM pg_collation AS cl
 	LEFT JOIN pg_namespace AS ns ON cl.collnamespace = ns.oid ]
 
 	%if {schema} %then

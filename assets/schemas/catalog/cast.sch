@@ -9,7 +9,6 @@
 	 'database' AS parent_type, NULL AS extra_info
 	FROM pg_cast AS cs ]
 
-
 	%if {last-sys-oid} %or {not-ext-object} %or {name-filter} %then
 		[ WHERE ]
 
