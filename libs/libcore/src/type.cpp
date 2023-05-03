@@ -382,7 +382,7 @@ void Type::setElement(PgSqlType elem)
 		throw Exception(Exception::getErrorMessage(ErrorCode::InvUserTypeSelfReference).arg(this->getName(true)),
 						ErrorCode::InvUserTypeSelfReference,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	else if(elem!="\"any\"" &&
-			(elem.isOIDType() || elem.isPseudoType() ||
+			(elem.isOidType() || elem.isPseudoType() ||
 			 elem.isUserType() || elem.isArrayType()))
 		throw Exception(Exception::getErrorMessage(ErrorCode::AsgInvalidElementType).arg(this->getName(true)),
 						ErrorCode::AsgInvalidElementType,__PRETTY_FUNCTION__,__FILE__,__LINE__);

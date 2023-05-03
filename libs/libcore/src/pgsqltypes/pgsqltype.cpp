@@ -464,7 +464,7 @@ bool PgSqlType::isWithTimezone()
 	return with_timezone;
 }
 
-bool PgSqlType::isOIDType()
+bool PgSqlType::isOidType()
 {
 	return (type_idx>=OidStart && type_idx<=OidEnd);
 }
@@ -727,7 +727,7 @@ bool PgSqlType::isUserType()
 
 bool PgSqlType::isNetworkType()
 {
-	QString curr_type=(!isUserType() ? type_names[type_idx] : "");
+	QString curr_type = getTypeName(false); //(!isUserType() ? type_names[type_idx] : "");
 
 	return (!isUserType() &&
 				 (curr_type=="cidr" ||
@@ -736,20 +736,21 @@ bool PgSqlType::isNetworkType()
 					curr_type=="macaddr8"));
 }
 
-bool PgSqlType::isGeoType(const QString &type_name)
+bool PgSqlType::isPostGisGeoType(const QString &type_name)
 {
 	return (type_name=="geography" ||
 					type_name=="geometry" ||
 					type_name=="geometry_dump");
 }
 
-bool PgSqlType::isBoxType()
+bool PgSqlType::isPostGisBoxType()
 {
-	QString curr_type=(!isUserType() ? type_names[type_idx] : "");
-	return (!isUserType() && isBoxType(curr_type));
+	QString curr_type = getTypeName(false); //(!isUserType() ? type_names[type_idx] : "");
+
+	return (!isUserType() && isPostGisBoxType(curr_type));
 }
 
-bool PgSqlType::isBoxType(const QString &type_name)
+bool PgSqlType::isPostGisBoxType(const QString &type_name)
 {
 	return (type_name=="box2d" || type_name=="box3d" ||
 					type_name=="box2df" || type_name=="box3df");
@@ -760,15 +761,16 @@ bool PgSqlType::isPostGiSType()
 	return (type_idx >= PostGiSStart && type_idx <= PostGiSEnd);
 }
 
-bool PgSqlType::isGeoType()
+bool PgSqlType::isPostGisGeoType()
 {
-	QString curr_type=(!isUserType() ? type_names[type_idx] : "");
-	return (!isUserType() && isGeoType(curr_type));
+	QString curr_type = getTypeName(false);	//(!isUserType() ? type_names[type_idx] : "");
+
+	return (!isUserType() && isPostGisGeoType(curr_type));
 }
 
 bool PgSqlType::isRangeType()
 {
-	QString curr_type=(!isUserType() ? type_names[type_idx] : "");
+	QString curr_type = getTypeName(false); //(!isUserType() ? type_names[type_idx] : "");
 
 	return (!isUserType() &&
 					(curr_type=="int4range" || curr_type=="int8range" ||
@@ -778,7 +780,7 @@ bool PgSqlType::isRangeType()
 
 bool PgSqlType::isSerialType()
 {
-	QString curr_type=(!isUserType() ? type_names[this->type_idx] : "");
+	QString curr_type = getTypeName(false); //(!isUserType() ? type_names[this->type_idx] : "");
 
 	return (!isUserType() &&
 					(curr_type=="serial" ||
@@ -788,7 +790,7 @@ bool PgSqlType::isSerialType()
 
 bool PgSqlType::isDateTimeType()
 {
-	QString curr_type=(!isUserType() ? type_names[this->type_idx] : "");
+	QString curr_type = getTypeName(false); //(!isUserType() ? type_names[this->type_idx] : "");
 
 	return (!isUserType() &&
 					(isTimezoneType() ||
@@ -798,15 +800,16 @@ bool PgSqlType::isDateTimeType()
 
 bool PgSqlType::isTimezoneType()
 {
-	QString curr_type=(!isUserType() ? type_names[this->type_idx] : "");
+	QString curr_type = getTypeName(false); //(!isUserType() ? type_names[this->type_idx] : "");
 
 	return (!isUserType() &&
-					(curr_type=="timetz" || curr_type=="timestamptz"));
+					(curr_type=="timetz" || curr_type == "timestamptz" ||
+					 curr_type=="time with time zone" || curr_type=="timestamp with time zone"));
 }
 
 bool PgSqlType::isNumericType()
 {
-	QString curr_type=(!isUserType() ? type_names[this->type_idx] : "");
+	QString curr_type = getTypeName(false); //(!isUserType() ? type_names[this->type_idx] : "");
 
 	return (!isUserType() &&
 					(curr_type=="numeric" || curr_type=="decimal"));
@@ -814,7 +817,7 @@ bool PgSqlType::isNumericType()
 
 bool PgSqlType::isIntegerType()
 {
-	QString curr_type=(!isUserType() ? type_names[this->type_idx] : "");
+	QString curr_type = getTypeName(false); //(!isUserType() ? type_names[this->type_idx] : "");
 
 	return (!isUserType() &&
 					(curr_type=="smallint" || curr_type=="integer" ||
@@ -836,20 +839,93 @@ bool PgSqlType::hasVariableLength()
 
 bool PgSqlType::isCharacterType()
 {
-	QString curr_type=(!isUserType() ? type_names[this->type_idx] : "");
+	QString curr_type = getTypeName(false); //(!isUserType() ? type_names[this->type_idx] : "");
 
-	return (curr_type=="\"char\"" || curr_type=="char" ||
+	return !isUserType() &&
+				 (curr_type=="\"char\"" || curr_type=="char" ||
 					curr_type=="character" || curr_type=="varchar" ||
 					curr_type=="character varying" || curr_type=="text");
 }
 
 bool PgSqlType::isPolymorphicType()
 {
-		QString curr_type=(!isUserType() ? type_names[this->type_idx] : "");
+	QString curr_type = getTypeName(false); //(!isUserType() ? type_names[this->type_idx] : "");
 
-	return (curr_type=="anyarray" || curr_type=="anyelement" ||
+	return !isUserType() &&
+				 (curr_type=="anyarray" || curr_type=="anyelement" ||
 					curr_type=="anyenum" || curr_type=="anynonarray" ||
 					curr_type=="anyrange" || curr_type=="\"any\"");
+}
+
+bool PgSqlType::isMonetaryType()
+{
+	QString curr_type = getTypeName(false); //(!isUserType() ? type_names[this->type_idx] : "");
+
+	return !isUserType() && curr_type=="money";
+}
+
+bool PgSqlType::isBinaryType()
+{
+	QString curr_type = getTypeName(false); //(!isUserType() ? type_names[this->type_idx] : "");
+
+	return !isUserType() && curr_type=="bytea";
+}
+
+bool PgSqlType::isBooleanType()
+{
+	QString curr_type = getTypeName(false);
+
+	return !isUserType() &&
+			(curr_type=="bool" || curr_type == "boolean");
+}
+
+bool PgSqlType::isGeometricType()
+{
+	QString curr_type = getTypeName(false);
+
+	return !isUserType() &&
+			(curr_type=="point" || curr_type=="line" ||
+			 curr_type=="lseg" ||	curr_type=="box" ||
+			 curr_type=="path" || 	curr_type=="polygon" ||
+			 curr_type=="circle");
+}
+
+bool PgSqlType::isBitStringType()
+{
+	QString curr_type = getTypeName(false);
+
+	return !isUserType() &&
+			(curr_type=="bit" || curr_type=="bit varying" || curr_type == "varbit");
+}
+
+bool PgSqlType::isTextSearchType()
+{
+	QString curr_type = getTypeName(false);
+
+	return !isUserType() &&
+			(curr_type=="tsquery" || curr_type=="tsvector");
+}
+
+bool PgSqlType::isUuidType()
+{
+	QString curr_type = getTypeName(false);
+
+	return !isUserType() && curr_type=="uuid";
+}
+
+bool PgSqlType::isXmlType()
+{
+	QString curr_type = getTypeName(false);
+
+	return !isUserType() && curr_type=="xml";
+}
+
+bool PgSqlType::isJsonType()
+{
+	QString curr_type = getTypeName(false);
+
+	return !isUserType() &&
+			(curr_type=="json" || curr_type=="jsonb");
 }
 
 bool PgSqlType::acceptsPrecision()
@@ -890,8 +966,8 @@ bool PgSqlType::canCastTo(PgSqlType type)
 		 (type.isCharacterType() || type.isNetworkType())) ||
 
 		//Integer to OID
-		((isIntegerType() || isOIDType()) &&
-		 (type.isIntegerType() || type.isOIDType())) ||
+		((isIntegerType() || isOidType()) &&
+		 (type.isIntegerType() || type.isOidType())) ||
 
 		//abstime to integer
 		((((*this)=="integer" || (*this)=="int4") && type=="abstime") ||
@@ -1054,7 +1130,7 @@ QString PgSqlType::getSourceCode(SchemaParser::CodeType def_type, QString ref_ty
 	if(interval_type != IntervalType::Null)
 		attribs[Attributes::IntervalType]=(~interval_type);
 
-	if(isGeoType())
+	if(isPostGisGeoType())
 	{
 		attribs[Attributes::SpatialType]=(~spatial_type);
 		attribs[Attributes::Variation]=QString("%1").arg(spatial_type.getVariation());

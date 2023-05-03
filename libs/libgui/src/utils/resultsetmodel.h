@@ -29,13 +29,17 @@
 #include <QAbstractTableModel>
 #include "resultset.h"
 #include "catalog.h"
+#include <QIcon>
 
 class __libgui ResultSetModel: public QAbstractTableModel {
 	private:
 		Q_OBJECT
 
 		int col_count, row_count;
+
 		QStringList item_data, header_data, tooltip_data;
+
+		QList<QIcon> header_icons;
 
 		void insertColumn(int, const QModelIndex &){}
 		void insertRow(int, const QModelIndex &){}

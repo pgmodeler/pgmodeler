@@ -172,18 +172,9 @@ class __libcore PgSqlType: public TemplateType<PgSqlType>{
 
 		bool isWithTimezone();
 		bool isPseudoType();
-		bool isOIDType();
+		bool isOidType();
 		bool isUserType();
 		bool isArrayType();
-
-		bool isGeoType();
-		static bool isGeoType(const QString &type_name);
-
-		bool isBoxType();
-		static bool isBoxType(const QString &type_name);
-
-		bool isPostGiSType();
-
 		bool isRangeType();
 		bool isSerialType();
 		bool isDateTimeType();
@@ -193,6 +184,22 @@ class __libcore PgSqlType: public TemplateType<PgSqlType>{
 		bool isCharacterType();
 		bool isNetworkType();
 		bool isPolymorphicType();
+		bool isMonetaryType();
+		bool isBinaryType();
+		bool isBooleanType();
+		bool isGeometricType();
+		bool isBitStringType();
+		bool isTextSearchType();
+		bool isUuidType();
+		bool isXmlType();
+		bool isJsonType();
+
+		bool isPostGiSType();
+		bool isPostGisGeoType();
+		bool isPostGisBoxType();
+		static bool isPostGisGeoType(const QString &type_name);
+		static bool isPostGisBoxType(const QString &type_name);
+
 		bool hasVariableLength();
 		bool acceptsPrecision();
 

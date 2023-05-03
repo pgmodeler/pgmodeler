@@ -17,6 +17,7 @@
 */
 
 #include "resultsetmodel.h"
+#include "guiutilsns.h"
 
 ResultSetModel::ResultSetModel(ResultSet &res, Catalog &catalog, QObject *parent) : QAbstractTableModel(parent)
 {
@@ -29,14 +30,17 @@ ResultSetModel::ResultSetModel(ResultSet &res, Catalog &catalog, QObject *parent
 		std::map<int, QString> type_names;
 		int col = 0;
 
+		header_icons.clear();
 		col_count = res.getColumnCount();
 		row_count = res.getTupleCount();
+
 		insertColumns(0, col_count);
 		insertRows(0, row_count);
 
 		for(col=0; col < col_count; col++)
 		{
 			header_data.push_back(res.getColumnName(col));
+			header_icons.append(QIcon(GuiUtilsNs::getIconPath("usertype")));
 			type_ids.push_back(res.getColumnTypeId(col));
 		}
 
@@ -120,6 +124,9 @@ QVariant ResultSetModel::headerData(int section, Qt::Orientation orientation, in
 		if(role == Qt::DisplayRole)
 			return header_data.at(section);
 
+		if(role == Qt::DecorationRole)
+			return header_icons.at(section);
+
 		if(role == Qt::ToolTipRole)
 			return tooltip_data.at(section);
 
@@ -176,4 +183,3 @@ bool ResultSetModel::isEmpty()
 {
 	return (row_count <= 0);
 }
-
