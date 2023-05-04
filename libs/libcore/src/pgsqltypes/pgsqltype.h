@@ -105,6 +105,7 @@ class __libcore PgSqlType: public TemplateType<PgSqlType>{
 	public:
 		enum TypeCategory: unsigned {
 			OidType,
+			PolymorphicType,
 			PseudoType,
 			SerialType,
 			DateTimeType,
@@ -113,7 +114,6 @@ class __libcore PgSqlType: public TemplateType<PgSqlType>{
 			IntegerType,
 			CharacterType,
 			NetworkType,
-			PolymorphicType,
 			MonetaryType,
 			BinaryType,
 			BooleanType,
@@ -123,6 +123,7 @@ class __libcore PgSqlType: public TemplateType<PgSqlType>{
 			UuidType,
 			XmlType,
 			JsonType,
+			RangeType,
 			PostGiSType,
 			OtherType,
 			UserType

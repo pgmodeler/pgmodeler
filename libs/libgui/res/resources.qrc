@@ -261,6 +261,7 @@
         <file>icons/typetimezone.png</file>
         <file>icons/typeuuid.png</file>
         <file>icons/typexml.png</file>
+        <file>icons/typerange.png</file>
     </qresource>
     <qresource prefix="/images">
         <file>images/brazil_flag.png</file>

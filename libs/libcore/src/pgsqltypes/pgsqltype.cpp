@@ -267,6 +267,7 @@ PgSqlType::TypeCategory PgSqlType::getCategory()
 {
 	std::map<TypeCategory, std::function<bool(void)>> type_check_func = {
 		{ TypeCategory::OidType, std::bind(&PgSqlType::isOidType, this) },
+		{	TypeCategory::PolymorphicType, std::bind(&PgSqlType::isPolymorphicType, this) },
 		{ TypeCategory::PseudoType, std::bind(&PgSqlType::isPseudoType, this) },
 		{ TypeCategory::SerialType, std::bind(&PgSqlType::isSerialType, this) },
 		{ TypeCategory::DateTimeType, std::bind(&PgSqlType::isDateTimeType, this) },
@@ -275,7 +276,6 @@ PgSqlType::TypeCategory PgSqlType::getCategory()
 		{	TypeCategory::IntegerType, std::bind(&PgSqlType::isIntegerType, this) },
 		{	TypeCategory::CharacterType, std::bind(&PgSqlType::isCharacterType, this) },
 		{	TypeCategory::NetworkType, std::bind(&PgSqlType::isNetworkType, this) },
-		{	TypeCategory::PolymorphicType, std::bind(&PgSqlType::isPolymorphicType, this) },
 		{	TypeCategory::MonetaryType, std::bind(&PgSqlType::isMonetaryType, this) },
 		{	TypeCategory::BinaryType, std::bind(&PgSqlType::isBinaryType, this) },
 		{	TypeCategory::BooleanType, std::bind(&PgSqlType::isBooleanType, this) },
@@ -285,6 +285,7 @@ PgSqlType::TypeCategory PgSqlType::getCategory()
 		{	TypeCategory::UuidType, std::bind(&PgSqlType::isUuidType, this) },
 		{ TypeCategory::XmlType, std::bind(&PgSqlType::isXmlType, this) },
 		{	TypeCategory::JsonType, std::bind(&PgSqlType::isJsonType, this) },
+		{	TypeCategory::RangeType, std::bind(&PgSqlType::isRangeType, this) },
 		{	TypeCategory::PostGiSType, std::bind(&PgSqlType::isPostGiSType, this) },
 		{	TypeCategory::UserType, std::bind(&PgSqlType::isUserType, this) },
 	};

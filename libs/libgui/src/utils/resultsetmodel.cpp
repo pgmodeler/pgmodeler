@@ -197,6 +197,7 @@ QString ResultSetModel::getPgTypeIconName(const QString &type)
 
 		static QStringList category_icons = {
 			/* OidType */ "typeoid",
+			/* PolymorphicType */ "typepolymorphic",
 			/* PseudoType */ "typepseudo",
 			/* SerialType */ "typeserial",
 			/* DateTimeType */ "typedatetime",
@@ -205,7 +206,6 @@ QString ResultSetModel::getPgTypeIconName(const QString &type)
 			/* IntegerType */ "typeinteger",
 			/* CharacterType */ "typecharacter",
 			/* NetworkType */ "typenetwork",
-			/* PolymorphicType */ "typepolymorphic",
 			/* MonetaryType */ "typemonetary",
 			/* BinaryType */ "typebinary",
 			/* BooleanType */ "typeboolean",
@@ -215,6 +215,7 @@ QString ResultSetModel::getPgTypeIconName(const QString &type)
 			/* UuidType */ "typeuuid",
 			/* XmlType */ "typexml",
 			/* JsonType */ "typejson",
+			/* RangeType */ "typerange",
 			/* PostGiSType */ "typepostgis",
 			/* OtherType */ "typeother",
 			/* UserType */ "usertype"
