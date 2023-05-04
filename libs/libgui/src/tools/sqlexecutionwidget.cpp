@@ -293,7 +293,7 @@ void SQLExecutionWidget::fillResultsTable(Catalog &catalog, ResultSet &res, QTab
 		for(col=0; col < col_cnt; col++)
 		{
 			type_ids.push_back(res.getColumnTypeId(col));
-			item=new QTableWidgetItem(res.getColumnName(col));
+			item=new QTableWidgetItem(" " + res.getColumnName(col));
 			item->setTextAlignment(Qt::AlignLeft | Qt::AlignVCenter);
 			results_tbw->setHorizontalHeaderItem(col, item);
 		}
@@ -312,11 +312,15 @@ void SQLExecutionWidget::fillResultsTable(Catalog &catalog, ResultSet &res, QTab
 		catalog.setQueryFilter(orig_filter);
 
 		//Assinging the type names as tooltip on header items
+		QString type_name;
+
 		for(col=0; col < col_cnt; col++)
 		{
 			item=results_tbw->horizontalHeaderItem(col);
 			item->setToolTip(type_names[res.getColumnTypeId(col)]);
-			item->setData(Qt::UserRole, type_names[res.getColumnTypeId(col)]);
+			type_name = type_names[res.getColumnTypeId(col)];
+			item->setData(Qt::UserRole, type_name);
+			item->setIcon(QIcon(GuiUtilsNs::getIconPath(ResultSetModel::getPgTypeIconName(type_name))));
 		}
 
 		if(res.accessTuple(ResultSet::FirstTuple))

@@ -55,6 +55,8 @@ class __libgui ResultSetModel: public QAbstractTableModel {
 		virtual Qt::ItemFlags flags(const QModelIndex &) const;
 		void append(ResultSet &res);
 		bool isEmpty();
+
+		static QString getPgTypeIconName(const QString &type);
 };
 
 #endif

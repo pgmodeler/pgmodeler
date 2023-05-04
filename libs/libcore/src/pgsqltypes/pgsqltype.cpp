@@ -263,6 +263,41 @@ QStringList PgSqlType::getTypes(bool oids, bool pseudos)
 	return type_list;
 }
 
+PgSqlType::TypeCategory PgSqlType::getCategory()
+{
+	std::map<TypeCategory, std::function<bool(void)>> type_check_func = {
+		{ TypeCategory::OidType, std::bind(&PgSqlType::isOidType, this) },
+		{ TypeCategory::PseudoType, std::bind(&PgSqlType::isPseudoType, this) },
+		{ TypeCategory::SerialType, std::bind(&PgSqlType::isSerialType, this) },
+		{ TypeCategory::DateTimeType, std::bind(&PgSqlType::isDateTimeType, this) },
+		{ TypeCategory::TimezoneType, std::bind(&PgSqlType::isTimezoneType, this) },
+		{ TypeCategory::NumericType, std::bind(&PgSqlType::isNumericType, this) },
+		{	TypeCategory::IntegerType, std::bind(&PgSqlType::isIntegerType, this) },
+		{	TypeCategory::CharacterType, std::bind(&PgSqlType::isCharacterType, this) },
+		{	TypeCategory::NetworkType, std::bind(&PgSqlType::isNetworkType, this) },
+		{	TypeCategory::PolymorphicType, std::bind(&PgSqlType::isPolymorphicType, this) },
+		{	TypeCategory::MonetaryType, std::bind(&PgSqlType::isMonetaryType, this) },
+		{	TypeCategory::BinaryType, std::bind(&PgSqlType::isBinaryType, this) },
+		{	TypeCategory::BooleanType, std::bind(&PgSqlType::isBooleanType, this) },
+		{	TypeCategory::GeometricType, std::bind(&PgSqlType::isGeometricType, this) },
+		{	TypeCategory::BitStringType, std::bind(&PgSqlType::isBitStringType, this) },
+		{ TypeCategory::TextSearchType, std::bind(&PgSqlType::isTextSearchType, this) },
+		{	TypeCategory::UuidType, std::bind(&PgSqlType::isUuidType, this) },
+		{ TypeCategory::XmlType, std::bind(&PgSqlType::isXmlType, this) },
+		{	TypeCategory::JsonType, std::bind(&PgSqlType::isJsonType, this) },
+		{	TypeCategory::PostGiSType, std::bind(&PgSqlType::isPostGiSType, this) },
+		{	TypeCategory::UserType, std::bind(&PgSqlType::isUserType, this) },
+	};
+
+	for(auto &itr : type_check_func)
+	{
+		if(itr.second())
+			return itr.first;
+	}
+
+	return TypeCategory::OtherType;
+}
+
 unsigned PgSqlType::setType(unsigned type_id)
 {
 	if(type_id == Null)
@@ -271,9 +306,7 @@ unsigned PgSqlType::setType(unsigned type_id)
 	if(type_id >= static_cast<unsigned>(type_names.size()))
 		return setUserType(type_id);
 
-	unsigned tp_idx = TemplateType<PgSqlType>::setType(type_id, type_names);
-
-	return tp_idx;
+	return TemplateType<PgSqlType>::setType(type_id, type_names);
 }
 
 unsigned PgSqlType::setType(const QString &type_name)

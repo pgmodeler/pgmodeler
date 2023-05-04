@@ -35,7 +35,6 @@ class __libcore PgSqlType: public TemplateType<PgSqlType>{
 	private:
 		static QStringList type_names;
 
-	private:
 		//! \brief Offset for all PostGiS types
 		static constexpr unsigned PostGiSStart = 64,
 		PostGiSEnd = 82;
@@ -104,6 +103,31 @@ class __libcore PgSqlType: public TemplateType<PgSqlType>{
 		unsigned setType(const QString &type_name) override;
 
 	public:
+		enum TypeCategory: unsigned {
+			OidType,
+			PseudoType,
+			SerialType,
+			DateTimeType,
+			TimezoneType,
+			NumericType,
+			IntegerType,
+			CharacterType,
+			NetworkType,
+			PolymorphicType,
+			MonetaryType,
+			BinaryType,
+			BooleanType,
+			GeometricType,
+			BitStringType,
+			TextSearchType,
+			UuidType,
+			XmlType,
+			JsonType,
+			PostGiSType,
+			OtherType,
+			UserType
+		};
+
 		PgSqlType();
 
 		/*! \brief Creates a type from a simple string containing the name of the type.
@@ -170,10 +194,12 @@ class __libcore PgSqlType: public TemplateType<PgSqlType>{
 		IntervalType getIntervalType();
 		SpatialType getSpatialType();
 
-		bool isWithTimezone();
+		//! \brief Returns the type category code based upon the current type id
+		TypeCategory getCategory();
+
+		bool isWithTimezone();		
 		bool isPseudoType();
 		bool isOidType();
-		bool isUserType();
 		bool isArrayType();
 		bool isRangeType();
 		bool isSerialType();
@@ -193,8 +219,9 @@ class __libcore PgSqlType: public TemplateType<PgSqlType>{
 		bool isUuidType();
 		bool isXmlType();
 		bool isJsonType();
-
 		bool isPostGiSType();
+		bool isUserType();
+
 		bool isPostGisGeoType();
 		bool isPostGisBoxType();
 		static bool isPostGisGeoType(const QString &type_name);

@@ -18,6 +18,7 @@
 
 #include "resultsetmodel.h"
 #include "guiutilsns.h"
+#include <pgsqltypes/pgsqltype.h>
 
 ResultSetModel::ResultSetModel(ResultSet &res, Catalog &catalog, QObject *parent) : QAbstractTableModel(parent)
 {
@@ -39,8 +40,7 @@ ResultSetModel::ResultSetModel(ResultSet &res, Catalog &catalog, QObject *parent
 
 		for(col=0; col < col_count; col++)
 		{
-			header_data.push_back(res.getColumnName(col));
-			header_icons.append(QIcon(GuiUtilsNs::getIconPath("usertype")));
+			header_data.push_back(" " + res.getColumnName(col));
 			type_ids.push_back(res.getColumnTypeId(col));
 		}
 
@@ -69,10 +69,15 @@ ResultSetModel::ResultSetModel(ResultSet &res, Catalog &catalog, QObject *parent
 		col = 0;
 
 		for(auto &tp : types)
-			type_names[tp[Attributes::Oid].toInt()]=tp[Attributes::Name];
+			type_names[tp[Attributes::Oid].toInt()] = tp[Attributes::Name];
 
+		int tp_id = 0;
 		for(col=0; col < col_count; col++)
-			tooltip_data.push_back(type_names[res.getColumnTypeId(col)]);
+		{
+			tp_id = res.getColumnTypeId(col);
+			header_icons.append(QIcon(GuiUtilsNs::getIconPath(getPgTypeIconName(type_names[tp_id]))));
+			tooltip_data.push_back(type_names[tp_id]);
+		}
 	}
 	catch(Exception &e)
 	{
@@ -182,4 +187,44 @@ void ResultSetModel::append(ResultSet &res)
 bool ResultSetModel::isEmpty()
 {
 	return (row_count <= 0);
+}
+
+QString ResultSetModel::getPgTypeIconName(const QString &type)
+{
+	try
+	{
+		PgSqlType pgtype(type);
+
+		static QStringList category_icons = {
+			/* OidType */ "typeoid",
+			/* PseudoType */ "typepseudo",
+			/* SerialType */ "typeserial",
+			/* DateTimeType */ "typedatetime",
+			/* TimezoneType */ "typetimezone",
+			/* NumericType */ "typenumeric",
+			/* IntegerType */ "typeinteger",
+			/* CharacterType */ "typecharacter",
+			/* NetworkType */ "typenetwork",
+			/* PolymorphicType */ "typepolymorphic",
+			/* MonetaryType */ "typemonetary",
+			/* BinaryType */ "typebinary",
+			/* BooleanType */ "typeboolean",
+			/* GeometricType */ "typegeometric",
+			/* BitStringType */ "typebitstring",
+			/* TextSearchType */ "typetextsearch",
+			/* UuidType */ "typeuuid",
+			/* XmlType */ "typexml",
+			/* JsonType */ "typejson",
+			/* PostGiSType */ "typepostgis",
+			/* OtherType */ "typeother",
+			/* UserType */ "usertype"
+		};
+
+		PgSqlType::TypeCategory cat = pgtype.getCategory();
+		return category_icons.at(cat);
+	}
+	catch(Exception &)
+	{
+		return "usertype";
+	}
 }
