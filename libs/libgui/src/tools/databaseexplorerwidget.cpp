@@ -1490,15 +1490,23 @@ void DatabaseExplorerWidget::restoreTreeState()
 	objects_trw->verticalScrollBar()->setValue(curr_scroll_value);
 }
 
-void DatabaseExplorerWidget::addPluginToolButton(QToolButton *plugin_btn)
+void DatabaseExplorerWidget::addPluginToolButton(QToolButton *btn)
 {
-	if(!plugin_btn)
+	if(!btn)
 		return;
 
+	QToolButton *plugin_btn = new QToolButton(this);
+
+	plugin_btn->setIcon(btn->icon());
+	plugin_btn->setIconSize(btn->iconSize());
+	plugin_btn->setToolTip(btn->toolTip());
 	plugin_btn->setPopupMode(QToolButton::InstantPopup);
 	plugin_btn->setToolButtonStyle(Qt::ToolButtonIconOnly);
 	plugin_btn->setAutoRaise(true);
 	toolbuttons_lt->insertWidget(toolbuttons_lt->count() - 2, plugin_btn);
+
+	connect(plugin_btn, &QToolButton::clicked, btn, &QToolButton::clicked);
+	connect(plugin_btn, &QToolButton::triggered, btn, &QToolButton::triggered);
 }
 
 void DatabaseExplorerWidget::truncateTable(QTreeWidgetItem *item, bool cascade)

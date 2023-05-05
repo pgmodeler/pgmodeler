@@ -158,7 +158,7 @@ class __libgui DatabaseExplorerWidget: public QWidget, public Ui::DatabaseExplor
 	protected:
 		/*! \brief Add a custom tool button in the set of buttons in the top of database tree.
 		 *  This can be used to add custom actions for the current database explorer instance */
-		void addPluginToolButton(QToolButton *plugin_btn);
+		void addPluginToolButton(QToolButton *btn);
 
 	public:
 		DatabaseExplorerWidget(QWidget * parent = nullptr);
