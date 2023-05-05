@@ -193,17 +193,15 @@ QString ResultSetModel::getPgTypeIconName(const QString &type)
 {
 	try
 	{
-		PgSqlType pgtype(type);
-
 		static QStringList category_icons = {
 			/* OidType */ "typeoid",
 			/* PolymorphicType */ "typepolymorphic",
 			/* PseudoType */ "typepseudo",
-			/* SerialType */ "typeserial",
-			/* DateTimeType */ "typedatetime",
 			/* TimezoneType */ "typetimezone",
+			/* DateTimeType */ "typedatetime",
 			/* NumericType */ "typenumeric",
 			/* IntegerType */ "typeinteger",
+			/* FloatPointType */ "typefloatpoint",
 			/* CharacterType */ "typecharacter",
 			/* NetworkType */ "typenetwork",
 			/* MonetaryType */ "typemonetary",
@@ -217,12 +215,16 @@ QString ResultSetModel::getPgTypeIconName(const QString &type)
 			/* JsonType */ "typejson",
 			/* RangeType */ "typerange",
 			/* PostGiSType */ "typepostgis",
-			/* OtherType */ "typeother",
-			/* UserType */ "usertype"
+			/* OtherType */ "typeother"
+			/* SerialType (not used) */
+			/* UserType (not used) */
 		};
 
+		PgSqlType pgtype = PgSqlType::parseString(type);
 		PgSqlType::TypeCategory cat = pgtype.getCategory();
-		return category_icons.at(cat);
+
+		return cat < category_icons.size() ?
+					 category_icons.at(cat) : "usertype";
 	}
 	catch(Exception &)
 	{

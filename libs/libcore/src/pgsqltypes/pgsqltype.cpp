@@ -269,11 +269,11 @@ PgSqlType::TypeCategory PgSqlType::getCategory()
 		{ TypeCategory::OidType, std::bind(&PgSqlType::isOidType, this) },
 		{	TypeCategory::PolymorphicType, std::bind(&PgSqlType::isPolymorphicType, this) },
 		{ TypeCategory::PseudoType, std::bind(&PgSqlType::isPseudoType, this) },
-		{ TypeCategory::SerialType, std::bind(&PgSqlType::isSerialType, this) },
-		{ TypeCategory::DateTimeType, std::bind(&PgSqlType::isDateTimeType, this) },
 		{ TypeCategory::TimezoneType, std::bind(&PgSqlType::isTimezoneType, this) },
+		{ TypeCategory::DateTimeType, std::bind(&PgSqlType::isDateTimeType, this) },
 		{ TypeCategory::NumericType, std::bind(&PgSqlType::isNumericType, this) },
 		{	TypeCategory::IntegerType, std::bind(&PgSqlType::isIntegerType, this) },
+		{	TypeCategory::FloatPointType, std::bind(&PgSqlType::isFloatPointType, this) },
 		{	TypeCategory::CharacterType, std::bind(&PgSqlType::isCharacterType, this) },
 		{	TypeCategory::NetworkType, std::bind(&PgSqlType::isNetworkType, this) },
 		{	TypeCategory::MonetaryType, std::bind(&PgSqlType::isMonetaryType, this) },
@@ -287,6 +287,7 @@ PgSqlType::TypeCategory PgSqlType::getCategory()
 		{	TypeCategory::JsonType, std::bind(&PgSqlType::isJsonType, this) },
 		{	TypeCategory::RangeType, std::bind(&PgSqlType::isRangeType, this) },
 		{	TypeCategory::PostGiSType, std::bind(&PgSqlType::isPostGiSType, this) },
+		{ TypeCategory::SerialType, std::bind(&PgSqlType::isSerialType, this) },
 		{	TypeCategory::UserType, std::bind(&PgSqlType::isUserType, this) },
 	};
 
@@ -761,7 +762,7 @@ bool PgSqlType::isUserType()
 
 bool PgSqlType::isNetworkType()
 {
-	QString curr_type = getTypeName(false); //(!isUserType() ? type_names[type_idx] : "");
+	QString curr_type = getTypeName(false);
 
 	return (!isUserType() &&
 				 (curr_type=="cidr" ||
@@ -779,7 +780,7 @@ bool PgSqlType::isPostGisGeoType(const QString &type_name)
 
 bool PgSqlType::isPostGisBoxType()
 {
-	QString curr_type = getTypeName(false); //(!isUserType() ? type_names[type_idx] : "");
+	QString curr_type = getTypeName(false);
 
 	return (!isUserType() && isPostGisBoxType(curr_type));
 }
@@ -797,14 +798,14 @@ bool PgSqlType::isPostGiSType()
 
 bool PgSqlType::isPostGisGeoType()
 {
-	QString curr_type = getTypeName(false);	//(!isUserType() ? type_names[type_idx] : "");
+	QString curr_type = getTypeName(false);
 
 	return (!isUserType() && isPostGisGeoType(curr_type));
 }
 
 bool PgSqlType::isRangeType()
 {
-	QString curr_type = getTypeName(false); //(!isUserType() ? type_names[type_idx] : "");
+	QString curr_type = getTypeName(false);
 
 	return (!isUserType() &&
 					(curr_type=="int4range" || curr_type=="int8range" ||
@@ -814,7 +815,7 @@ bool PgSqlType::isRangeType()
 
 bool PgSqlType::isSerialType()
 {
-	QString curr_type = getTypeName(false); //(!isUserType() ? type_names[this->type_idx] : "");
+	QString curr_type = getTypeName(false);
 
 	return (!isUserType() &&
 					(curr_type=="serial" ||
@@ -824,7 +825,7 @@ bool PgSqlType::isSerialType()
 
 bool PgSqlType::isDateTimeType()
 {
-	QString curr_type = getTypeName(false); //(!isUserType() ? type_names[this->type_idx] : "");
+	QString curr_type = getTypeName(false);
 
 	return (!isUserType() &&
 					(isTimezoneType() ||
@@ -834,7 +835,7 @@ bool PgSqlType::isDateTimeType()
 
 bool PgSqlType::isTimezoneType()
 {
-	QString curr_type = getTypeName(false); //(!isUserType() ? type_names[this->type_idx] : "");
+	QString curr_type = getTypeName(false);
 
 	return (!isUserType() &&
 					(curr_type=="timetz" || curr_type == "timestamptz" ||
@@ -843,15 +844,24 @@ bool PgSqlType::isTimezoneType()
 
 bool PgSqlType::isNumericType()
 {
-	QString curr_type = getTypeName(false); //(!isUserType() ? type_names[this->type_idx] : "");
+	QString curr_type = getTypeName(false);
 
 	return (!isUserType() &&
 					(curr_type=="numeric" || curr_type=="decimal"));
 }
 
+bool PgSqlType::isFloatPointType()
+{
+	QString curr_type = getTypeName(false);
+
+	return (!isUserType() &&
+					(curr_type=="real" || curr_type=="double precision" ||
+					 curr_type=="float4" || curr_type=="float8"));
+}
+
 bool PgSqlType::isIntegerType()
 {
-	QString curr_type = getTypeName(false); //(!isUserType() ? type_names[this->type_idx] : "");
+	QString curr_type = getTypeName(false);
 
 	return (!isUserType() &&
 					(curr_type=="smallint" || curr_type=="integer" ||

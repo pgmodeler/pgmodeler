@@ -107,11 +107,11 @@ class __libcore PgSqlType: public TemplateType<PgSqlType>{
 			OidType,
 			PolymorphicType,
 			PseudoType,
-			SerialType,
-			DateTimeType,
 			TimezoneType,
+			DateTimeType,
 			NumericType,
 			IntegerType,
+			FloatPointType,
 			CharacterType,
 			NetworkType,
 			MonetaryType,
@@ -126,6 +126,7 @@ class __libcore PgSqlType: public TemplateType<PgSqlType>{
 			RangeType,
 			PostGiSType,
 			OtherType,
+			SerialType,
 			UserType
 		};
 
@@ -208,6 +209,7 @@ class __libcore PgSqlType: public TemplateType<PgSqlType>{
 		bool isTimezoneType();
 		bool isNumericType();
 		bool isIntegerType();
+		bool isFloatPointType();
 		bool isCharacterType();
 		bool isNetworkType();
 		bool isPolymorphicType();

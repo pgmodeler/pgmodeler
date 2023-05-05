@@ -256,12 +256,12 @@
         <file>icons/typepolymorphic.png</file>
         <file>icons/typepostgis.png</file>
         <file>icons/typepseudo.png</file>
-        <file>icons/typeserial.png</file>
         <file>icons/typetextsearch.png</file>
         <file>icons/typetimezone.png</file>
         <file>icons/typeuuid.png</file>
         <file>icons/typexml.png</file>
         <file>icons/typerange.png</file>
+        <file>icons/typefloatpoint.png</file>
     </qresource>
     <qresource prefix="/images">
         <file>images/brazil_flag.png</file>
