@@ -1478,8 +1478,8 @@ QString DataManipulationForm::getDMLCommand(int row)
 			//Considering all columns as pk when the tables doesn't has one (except bytea columns)
 			for(int col=0; col < results_tbw->columnCount(); col++)
 			{
-				if(results_tbw->horizontalHeaderItem(col)->data(Qt::UserRole)!="bytea")
-					pk_col_names.push_back(results_tbw->horizontalHeaderItem(col)->text());
+				if(results_tbw->horizontalHeaderItem(col)->data(Qt::ToolTipRole) != "bytea")
+					pk_col_names.push_back(results_tbw->horizontalHeaderItem(col)->data(Qt::UserRole).toString());
 			}
 		}
 
@@ -1508,10 +1508,10 @@ QString DataManipulationForm::getDMLCommand(int row)
 			item=results_tbw->item(row, col);
 
 			//bytea columns are ignored
-			if(results_tbw->horizontalHeaderItem(col)->data(Qt::UserRole)!="bytea")
+			if(results_tbw->horizontalHeaderItem(col)->data(Qt::ToolTipRole) != "bytea")
 			{
 				value=item->text();
-				col_name=results_tbw->horizontalHeaderItem(col)->text();
+				col_name=results_tbw->horizontalHeaderItem(col)->data(Qt::UserRole).toString();
 
 				if(op_type==OpInsert || (op_type==OpUpdate && value!=item->data(Qt::UserRole)))
 				{

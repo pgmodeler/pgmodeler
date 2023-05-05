@@ -338,15 +338,22 @@ void NumberedTextEditor::identSelection(bool ident_right)
 		QStringList lines;
 		int start=-1,	end=-1,
 				factor=(ident_right ? 1 : -1),	count=0;
+		QString buff = toPlainText();
 
 		/* Forcing the selection of the very beggining of the first line and
 		as well the end of the last line to avoid moving chars and break words wrongly */
-		start=toPlainText().lastIndexOf(QChar('\n'), cursor.selectionStart());
-		end=toPlainText().indexOf(QChar('\n'), cursor.selectionEnd());
+		start = buff.lastIndexOf(QChar('\n'), cursor.selectionStart());
+		end = buff.indexOf(QChar('\n'), cursor.selectionEnd());
+
+		if(start < 0)
+			start = 0;
+
+		if(end < 0)
+			end = buff.length();
 
 		cursor.setPosition(start, QTextCursor::MoveAnchor);
 		cursor.setPosition(end, QTextCursor::KeepAnchor);
-		lines=cursor.selectedText().split(QChar(QChar::ParagraphSeparator));
+		lines = cursor.selectedText().split(QChar(QChar::ParagraphSeparator));
 
 		for(int i=0; i < lines.size(); i++)
 		{
@@ -520,7 +527,7 @@ void NumberedTextEditor::updateLineNumbers()
 			top = static_cast<int>(blockBoundingGeometry(block).translated(contentOffset()).top()),
 			bottom = top +  static_cast<int>(blockBoundingRect(block).height()),
 			dy = top;
-	unsigned first_line=0, line_count=0;	
+	unsigned first_line=0, line_count=0;
 	double tab_stop_dist = 0;
 
 	// Calculates the visible lines by iterating over the visible/valid text blocks.
@@ -617,8 +624,8 @@ void NumberedTextEditor::keyPressEvent(QKeyEvent *event)
 		else
 			QPlainTextEdit::keyPressEvent(event);
 	}
-
-	QPlainTextEdit::keyPressEvent(event);
+	else
+		QPlainTextEdit::keyPressEvent(event);
 }
 
 void NumberedTextEditor::highlightCurrentLine()

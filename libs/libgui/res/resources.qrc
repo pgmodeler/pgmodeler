@@ -240,6 +240,28 @@
         <file>icons/pluginsconfig.png</file>
         <file>icons/lockdelim.png</file>
         <file>icons/csvload.png</file>
+        <file>icons/typebinary.png</file>
+        <file>icons/typebitstring.png</file>
+        <file>icons/typeboolean.png</file>
+        <file>icons/typecharacter.png</file>
+        <file>icons/typedatetime.png</file>
+        <file>icons/typegeometric.png</file>
+        <file>icons/typeinteger.png</file>
+        <file>icons/typejson.png</file>
+        <file>icons/typemonetary.png</file>
+        <file>icons/typenetwork.png</file>
+        <file>icons/typenumeric.png</file>
+        <file>icons/typeoid.png</file>
+        <file>icons/typeother.png</file>
+        <file>icons/typepolymorphic.png</file>
+        <file>icons/typepostgis.png</file>
+        <file>icons/typepseudo.png</file>
+        <file>icons/typetextsearch.png</file>
+        <file>icons/typetimezone.png</file>
+        <file>icons/typeuuid.png</file>
+        <file>icons/typexml.png</file>
+        <file>icons/typerange.png</file>
+        <file>icons/typefloatpoint.png</file>
     </qresource>
     <qresource prefix="/images">
         <file>images/brazil_flag.png</file>

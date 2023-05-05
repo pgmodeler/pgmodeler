@@ -19,6 +19,7 @@
 #include "appearanceconfigwidget.h"
 #include "widgets/modelwidget.h"
 #include "widgets/objectstablewidget.h"
+#include "customuistyle.h"
 
 std::map<QString, attribs_map> AppearanceConfigWidget::config_params;
 
@@ -1050,8 +1051,9 @@ void AppearanceConfigWidget::applyUiStyleSheet()
 	else
 	{
 		QByteArray ui_stylesheet = ui_style.readAll();
-		QString ico_style_conf = GlobalAttributes::getTmplConfigurationFilePath("",
-																																						"icons-" + icons_size_cmb->currentData().toString().toLower() +
+		QString icon_size = icons_size_cmb->currentData().toString().toLower(),
+				ico_style_conf = GlobalAttributes::getTmplConfigurationFilePath("",
+																																						"icons-" + icon_size +
 																																						GlobalAttributes::ConfigurationExt);
 		QString ui_theme = ui_theme_cmb->currentData(Qt::UserRole).toString(),
 		extra_style_conf = GlobalAttributes::getTmplConfigurationFilePath(GlobalAttributes::ThemesDir +
@@ -1084,6 +1086,18 @@ void AppearanceConfigWidget::applyUiStyleSheet()
 		}
 
 		qApp->setStyleSheet(ui_stylesheet);
+
+		// Overriding pixel metrics of small icons in table headers, menu icons, etc
+		int small_ico_sz = 0;
+
+		if(icon_size == Attributes::Small)
+			small_ico_sz = 16;
+		else if(icon_size == Attributes::Medium)
+			small_ico_sz = 20;
+		else
+			small_ico_sz = 24;
+
+		CustomUiStyle::setPixelMetricValue(QStyle::PM_SmallIconSize, small_ico_sz);
 	}
 }
 

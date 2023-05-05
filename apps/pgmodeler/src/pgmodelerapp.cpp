@@ -19,6 +19,7 @@
 #include "globalattributes.h"
 #include "messagebox.h"
 #include "attributes.h"
+#include "customuistyle.h"
 #include <QScreen>
 
 PgModelerApp::PgModelerApp(int &argc, char **argv) : Application(argc,argv)
@@ -46,7 +47,7 @@ PgModelerApp::PgModelerApp(int &argc, char **argv) : Application(argc,argv)
 
 	//If no custom style is specified we force the usage of Fusion (the default for Qt and pgModeler)
 	if(!using_style)
-		setStyle(GlobalAttributes::DefaultQtStyle);
+		setStyle(new CustomUiStyle(GlobalAttributes::DefaultQtStyle));
 
 	//Changing the current working dir to the executable's directory in
 	QDir::setCurrent(this->applicationDirPath());
