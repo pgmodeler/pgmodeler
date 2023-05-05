@@ -110,13 +110,14 @@ void LineNumbersWidget::mousePressEvent(QMouseEvent *event)
 {
 	if(event->buttons() == Qt::LeftButton && !has_selection)
 	{
-		QTextCursor cursor = parent_edt->cursorForPosition(QPoint(0, event->pos().y()));
+		QTextCursor evnt_cursor = parent_edt->cursorForPosition(QPoint(0, event->pos().y()));
 
 		has_selection = true;
-		cursor.select(QTextCursor::LineUnderCursor);
-		parent_edt->setTextCursor(cursor);
-		start_sel_line = cursor.blockNumber();
-		start_sel_pos = cursor.position();
+		evnt_cursor.movePosition(QTextCursor::EndOfLine);
+		evnt_cursor.movePosition(QTextCursor::StartOfLine, QTextCursor::KeepAnchor);
+		parent_edt->setTextCursor(evnt_cursor);
+		start_sel_line = evnt_cursor.blockNumber();
+		start_sel_pos = evnt_cursor.position();
 	}
 }
 
@@ -124,28 +125,30 @@ void LineNumbersWidget::mouseMoveEvent(QMouseEvent *event)
 {
 	if(event->buttons() == Qt::LeftButton && has_selection)
 	{
-		QTextCursor cursor = parent_edt->cursorForPosition(QPoint(0, event->pos().y())),
+		QTextCursor evnt_cursor = parent_edt->cursorForPosition(QPoint(0, event->pos().y())),
 				curr_cursor = parent_edt->textCursor();
 
-		//If the user wants selects lines below the first
-		if(start_sel_line < cursor.blockNumber())
+		//If the user wants to select the lines below the first
+		if(evnt_cursor.blockNumber() > start_sel_line)
 		{
-			cursor.movePosition(QTextCursor::EndOfLine);
-			curr_cursor.setPosition(cursor.position(), QTextCursor::KeepAnchor);
+			curr_cursor.setPosition(start_sel_pos);
+			evnt_cursor.movePosition(QTextCursor::EndOfLine);
+			curr_cursor.setPosition(evnt_cursor.position(), QTextCursor::KeepAnchor);
 			parent_edt->setTextCursor(curr_cursor);
 		}
-		//If the user wants selects lines above the first
-		else if(start_sel_line > cursor.blockNumber())
+		//If the user wants to select the lines above the first
+		else if(evnt_cursor.blockNumber() < start_sel_line)
 		{
 			curr_cursor.setPosition(start_sel_pos);
 			curr_cursor.movePosition(QTextCursor::EndOfLine);
-			curr_cursor.movePosition(QTextCursor::PreviousCharacter, QTextCursor::KeepAnchor, curr_cursor.position() - cursor.position());
+			evnt_cursor.movePosition(QTextCursor::StartOfLine);
+			curr_cursor.setPosition(evnt_cursor.position(), QTextCursor::KeepAnchor);
 			parent_edt->setTextCursor(curr_cursor);
 		}
 		else
 		{
-			cursor.movePosition(QTextCursor::EndOfLine, QTextCursor::KeepAnchor);
-			parent_edt->setTextCursor(cursor);
+			evnt_cursor.movePosition(QTextCursor::EndOfLine, QTextCursor::KeepAnchor);
+			parent_edt->setTextCursor(evnt_cursor);
 		}
 
 		this->update();
