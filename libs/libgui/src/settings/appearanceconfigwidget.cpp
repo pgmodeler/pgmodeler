@@ -1093,9 +1093,9 @@ void AppearanceConfigWidget::applyUiStyleSheet()
 		if(icon_size == Attributes::Small)
 			small_ico_sz = 16;
 		else if(icon_size == Attributes::Medium)
-			small_ico_sz = 20;
+			small_ico_sz = 18;
 		else
-			small_ico_sz = 24;
+			small_ico_sz = 20;
 
 		CustomUiStyle::setPixelMetricValue(QStyle::PM_SmallIconSize, small_ico_sz);
 	}
