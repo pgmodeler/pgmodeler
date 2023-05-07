@@ -90,7 +90,7 @@ TableDataWidget::TableDataWidget(QWidget *parent): BaseObjectWidget(parent, Obje
 	});
 
 	connect(bulkedit_tb, &QToolButton::clicked, this, [this](){
-		GuiUtilsNs::bulkDataEdit(data_tbw);
+		GuiUtilsNs::openBulkDataEditForm(data_tbw);
 	});
 
 	connect(copy_tb, &QToolButton::clicked, this, [this](){

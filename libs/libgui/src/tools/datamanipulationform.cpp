@@ -102,7 +102,7 @@ DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f):
 	action_bulk_edit->setToolTip(tr("Change the values of all selected cells at once"));
 
 	connect(action_bulk_edit, &QAction::triggered, this, [this](){
-		GuiUtilsNs::bulkDataEdit(results_tbw);
+		GuiUtilsNs::openBulkDataEditForm(results_tbw);
 	});
 
 	action_duplicate = edit_menu.addAction(QIcon(GuiUtilsNs::getIconPath("duprow")), tr("Duplicate row(s)"), this, &DataManipulationForm::duplicateRows, QKeySequence("Ctrl+D"));

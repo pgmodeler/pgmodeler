@@ -8,6 +8,7 @@
 #include "widgets/bulkdataeditwidget.h"
 #include "utilsns.h"
 #include "objectstablewidget.h"
+#include "generalconfigwidget.h"
 
 namespace GuiUtilsNs {
 
@@ -356,22 +357,26 @@ namespace GuiUtilsNs {
 		//widget->adjustSize();
 	}
 
-	void bulkDataEdit(QTableWidget *results_tbw)
+	void openBulkDataEditForm(QTableWidget *results_tbw)
 	{
 		if(!results_tbw)
 			return;
 
-		BaseForm base_frm;
+		BaseForm base_form;
 		BulkDataEditWidget *bulkedit_wgt = new BulkDataEditWidget;
 
-		base_frm.setMainWidget(bulkedit_wgt);
-		base_frm.setButtonConfiguration(Messagebox::OkCancelButtons);
-		base_frm.apply_ok_btn->setShortcut(QKeySequence("Ctrl+Return"));
+		base_form.setMainWidget(bulkedit_wgt);
+		base_form.setButtonConfiguration(Messagebox::OkCancelButtons);
+		base_form.apply_ok_btn->setShortcut(QKeySequence("Ctrl+Return"));
 
 		if(results_tbw->selectedItems().size() == 1)
 			bulkedit_wgt->value_edt->setPlainText(results_tbw->currentItem()->text());
 
-		if(base_frm.exec() == QDialog::Accepted)
+		GeneralConfigWidget::restoreWidgetGeometry(&base_form, bulkedit_wgt->metaObject()->className());
+		base_form.exec();
+		GeneralConfigWidget::saveWidgetGeometry(&base_form, bulkedit_wgt->metaObject()->className());
+
+		if(base_form.result() == QDialog::Accepted)
 		{
 			QList<QTableWidgetSelectionRange> sel_ranges=results_tbw->selectedRanges();
 
