@@ -195,6 +195,15 @@ DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f):
 	connect(results_tbw, &QTableWidget::currentCellChanged, this, &DataManipulationForm::insertRowOnTabPress, Qt::QueuedConnection);
 	connect(results_tbw, &QTableWidget::itemPressed, this, &DataManipulationForm::showPopupMenu);
 
+	connect(results_tbw, &QTableWidget::itemDoubleClicked, this, [this](QTableWidgetItem *item){
+		if(PlainTextItemDelegate::getMaxDisplayLength() > 0 &&
+			 !PlainTextItemDelegate::isTextEditorEnabled() &&
+			 item->data(Qt::UserRole).toString().length() > PlainTextItemDelegate::getMaxDisplayLength())
+		{
+			GuiUtilsNs::openBulkDataEditForm(results_tbw);
+		}
+	});
+
 	connect(export_tb, &QToolButton::clicked, this, [this](){
 		SQLExecutionWidget::exportResults(results_tbw);
 	});

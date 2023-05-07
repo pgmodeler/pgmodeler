@@ -88,6 +88,9 @@ namespace GuiUtilsNs {
 	//! brief Changes the values of the grid selection at once
 	extern __libgui void openBulkDataEditForm(QTableWidget *results_tbw);
 
+	//! brief Opens the bulk data edit in readonly mode and display the text of the provided model index
+	extern __libgui void openBulkDataEditForm(const QModelIndex &index);
+
 	//! \brief Creates drop shadown on a widget
 	extern __libgui void createDropShadow(QWidget *wgt, int x_offset = 2, int y_offset = 2, int radius = 5, const QColor &color = QColor(0, 0, 0, 100));
 

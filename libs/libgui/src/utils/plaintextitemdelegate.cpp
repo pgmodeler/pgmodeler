@@ -20,7 +20,9 @@
 #include <QPlainTextEdit>
 #include <QLineEdit>
 
-int PlainTextItemDelegate::MaxDisplayLength = 200;
+int PlainTextItemDelegate::max_display_len = 500;
+
+bool PlainTextItemDelegate::txt_editor_enabled = true;
 
 PlainTextItemDelegate::PlainTextItemDelegate(QObject *parent, bool read_only) : QStyledItemDelegate(parent)
 {
@@ -30,6 +32,26 @@ PlainTextItemDelegate::PlainTextItemDelegate(QObject *parent, bool read_only) : 
 PlainTextItemDelegate::~PlainTextItemDelegate()
 {
 
+}
+
+void PlainTextItemDelegate::setMaxDisplayLength(int value)
+{
+	max_display_len = value;
+}
+
+int PlainTextItemDelegate::getMaxDisplayLength()
+{
+	return max_display_len;
+}
+
+void PlainTextItemDelegate::setTextEditorEnabled(bool value)
+{
+	txt_editor_enabled = value;
+}
+
+bool PlainTextItemDelegate::isTextEditorEnabled()
+{
+	return txt_editor_enabled;
 }
 
 void PlainTextItemDelegate::setEditorData(QWidget * editor, const QModelIndex & index) const
@@ -54,9 +76,14 @@ void PlainTextItemDelegate::setEditorData(QWidget * editor, const QModelIndex & 
 
 QWidget *PlainTextItemDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &, const QModelIndex &index) const
 {
+	QString text = index.data().toString();
+
+	if(!txt_editor_enabled && max_display_len > 0 && text.length() >= max_display_len)
+		return nullptr;
+
 	QWidget *editor = nullptr;
 
-	if(index.data().toString().contains(QChar::LineFeed))
+	if(text.contains(QChar::LineFeed))
 	{
 		editor = new QPlainTextEdit(parent);
 		qobject_cast<QPlainTextEdit *>(editor)->setFrameShape(QFrame::NoFrame);
@@ -72,7 +99,7 @@ QWidget *PlainTextItemDelegate::createEditor(QWidget *parent, const QStyleOption
 
 void PlainTextItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
-	if(MaxDisplayLength <= 0 || index.data().toString().length() < MaxDisplayLength)
+	if(max_display_len <= 0 || index.data().toString().length() < max_display_len)
 		QStyledItemDelegate::paint(painter, option, index);
 	else
 	{
@@ -97,7 +124,9 @@ void PlainTextItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem 
 			painter->setPen(idx_opt.palette.color(QPalette::Text));
 		}
 
-		painter->drawText(option.rect, truncateText(idx_opt.text), Qt::AlignLeft | Qt::AlignVCenter);
+		painter->drawText(option.rect,
+											option.displayAlignment,
+											truncateText(idx_opt.text));
 		painter->restore();
 	}
 }
@@ -106,16 +135,15 @@ QSize PlainTextItemDelegate::sizeHint(const QStyleOptionViewItem &option, const 
 {
 	QString text = index.data().toString();
 
-	if(MaxDisplayLength <= 0 || text.length() < MaxDisplayLength)
+	if(max_display_len <= 0 || text.length() < max_display_len)
 		return QStyledItemDelegate::sizeHint(option, index);
 
-	QStyleOptionViewItem opt;
-	initStyleOption(&opt, index);
-
-	return opt.fontMetrics.boundingRect(truncateText(text), Qt::AlignLeft | Qt::AlignVCenter).size() + QSize(40, 0);
+	return option.fontMetrics.boundingRect(option.rect,
+																				 option.displayAlignment,
+																				 truncateText(text)).size();
 }
 
 QString PlainTextItemDelegate::truncateText(const QString &text) const
 {
-	return text.mid(0, MaxDisplayLength).remove(QChar::LineFeed) + "...";
+	return text.mid(0, max_display_len) + " ...";
 }

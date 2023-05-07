@@ -34,7 +34,9 @@ class __libgui PlainTextItemDelegate : public QStyledItemDelegate {
 	private:
 		Q_OBJECT
 
-		static int MaxDisplayLength;
+		static int max_display_len;
+
+		static bool txt_editor_enabled;
 
 		bool read_only;
 
@@ -44,6 +46,14 @@ class __libgui PlainTextItemDelegate : public QStyledItemDelegate {
 		explicit PlainTextItemDelegate(QObject * parent, bool read_only);
 
 		virtual ~PlainTextItemDelegate();
+
+		static void setMaxDisplayLength(int value);
+
+		static int getMaxDisplayLength();
+
+		static void setTextEditorEnabled(bool value);
+
+		static bool isTextEditorEnabled();
 
 	protected:
 		//! \brief Overrides the default implementation and set the editor as read only/disable to prevent change the item data

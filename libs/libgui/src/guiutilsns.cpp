@@ -357,6 +357,24 @@ namespace GuiUtilsNs {
 		//widget->adjustSize();
 	}
 
+	void openBulkDataEditForm(const QModelIndex &index)
+	{
+		if(!index.isValid())
+			return;
+
+		BaseForm base_form;
+		BulkDataEditWidget *bulkedit_wgt = new BulkDataEditWidget;
+
+		base_form.setMainWidget(bulkedit_wgt);
+		base_form.setButtonConfiguration(Messagebox::OkButton);
+		bulkedit_wgt->value_edt->setPlainText(index.data().toString());
+		bulkedit_wgt->value_edt->setReadOnly(true);
+
+		GeneralConfigWidget::restoreWidgetGeometry(&base_form, bulkedit_wgt->metaObject()->className());
+		base_form.exec();
+		GeneralConfigWidget::saveWidgetGeometry(&base_form, bulkedit_wgt->metaObject()->className());
+	}
+
 	void openBulkDataEditForm(QTableWidget *results_tbw)
 	{
 		if(!results_tbw)
