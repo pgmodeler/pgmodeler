@@ -343,21 +343,21 @@ void SQLExecutionWidget::fillResultsTable(Catalog &catalog, ResultSet &res, QTab
 				{
 					item=new QTableWidgetItem;
 
-					if(res.isColumnBinaryFormat(col))
+					/* if(res.isColumnBinaryFormat(col))
 					{
 						//Binary columns can't be edited by user
 						item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
 						item->setText(tr("[binary data]"));
 					}
 					else
-					{
+					{ */
 						item->setText(res.getColumnValue(col));
 
 						/* When storing column values in the QTableWidget items we need distinguish empty from null values
 						 * Since it may affect the generation of SQL like delete when the field value is used somehow (see DataManipulationForm::getDMLCommand) */
 						if(store_data)
 							item->setData(Qt::UserRole, res.isColumnValueNull(col) ? ColumnNullValue : item->text());
-					}
+					//}
 
 					results_tbw->setItem(row, col, item);
 				}

@@ -51,9 +51,9 @@ ResultSetModel::ResultSetModel(ResultSet &res, Catalog &catalog, QObject *parent
 				//Fills the current row with the values of current tuple
 				for(int col=0; col < col_count; col++)
 				{
-					if(res.isColumnBinaryFormat(col))
-						item_data.push_back(tr("[binary data]"));
-					else
+					//if(res.isColumnBinaryFormat(col))
+					//	item_data.push_back(tr("[binary data]"));
+					//else
 						item_data.push_back(res.getColumnValue(col));
 				}
 			}
