@@ -28,14 +28,21 @@
 #include "guiglobal.h"
 #include <QObject>
 #include <QStyledItemDelegate>
+#include <QPainter>
 
 class __libgui PlainTextItemDelegate : public QStyledItemDelegate {
 	private:
 		Q_OBJECT
+
+		static int MaxDisplayLength;
+
 		bool read_only;
+
+		QString truncateText(const QString &text) const;
 
 	public:
 		explicit PlainTextItemDelegate(QObject * parent, bool read_only);
+
 		virtual ~PlainTextItemDelegate();
 
 	protected:
@@ -43,6 +50,10 @@ class __libgui PlainTextItemDelegate : public QStyledItemDelegate {
 		virtual void setEditorData(QWidget *editor, const QModelIndex &index) const;
 
 		virtual QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &, const QModelIndex &index) const;
+
+		virtual void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
+
+		virtual QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const;
 };
 
 #endif
