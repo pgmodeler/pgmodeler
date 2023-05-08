@@ -18,7 +18,7 @@
 
 #include "tabledatawidget.h"
 #include "utils/htmlitemdelegate.h"
-#include "bulkdataeditwidget.h"
+#include "columndatawidget.h"
 #include "tools/sqlexecutionwidget.h"
 #include "utilsns.h"
 
@@ -90,7 +90,7 @@ TableDataWidget::TableDataWidget(QWidget *parent): BaseObjectWidget(parent, Obje
 	});
 
 	connect(bulkedit_tb, &QToolButton::clicked, this, [this](){
-		GuiUtilsNs::openBulkDataEditForm(data_tbw);
+		GuiUtilsNs::openColumnDataForm(data_tbw);
 	});
 
 	connect(copy_tb, &QToolButton::clicked, this, [this](){

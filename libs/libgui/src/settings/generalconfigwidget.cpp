@@ -74,6 +74,10 @@ GeneralConfigWidget::GeneralConfigWidget(QWidget * parent) : BaseConfigWidget(pa
 	connect(save_restore_geometry_chk, &QCheckBox::toggled, reset_sizes_tb, &QToolButton::setEnabled);
 	connect(reset_sizes_tb, &QToolButton::clicked, this, &GeneralConfigWidget::resetDialogsSizes);
 
+	connect(trunc_columns_data_chk, &QCheckBox::toggled, trunc_columns_data_spb, &QComboBox::setEnabled);
+	connect(trunc_columns_data_chk, &QCheckBox::toggled, disable_inline_editor_chk, &QComboBox::setEnabled);
+	connect(trunc_columns_data_chk, &QCheckBox::toggled, bytes_lbl, &QLabel::setEnabled);
+
 	config_params[Attributes::Configuration][Attributes::GridSize]="";
 	config_params[Attributes::Configuration][Attributes::OpListSize]="";
 	config_params[Attributes::Configuration][Attributes::AutoSaveInterval]="";
@@ -246,6 +250,15 @@ void GeneralConfigWidget::loadConfiguration()
 		reset_sizes_tb->setEnabled(save_restore_geometry_chk->isChecked());
 		low_verbosity_chk->setChecked(config_params[Attributes::Configuration][Attributes::LowVerbosity]==Attributes::True);
 		escape_comments_chk->setChecked(config_params[Attributes::Configuration][Attributes::EscapeComment]==Attributes::True);
+
+		trunc_columns_data_chk->setChecked(config_params[Attributes::Configuration][Attributes::TruncateColumnData]==Attributes::True);
+		trunc_columns_data_spb->setValue(config_params[Attributes::Configuration][Attributes::ColumnTruncThreshold].toInt());
+
+		trunc_columns_data_spb->setEnabled(trunc_columns_data_chk->isChecked());
+		bytes_lbl->setEnabled(trunc_columns_data_chk->isChecked());
+
+		disable_inline_editor_chk->setChecked(config_params[Attributes::Configuration][Attributes::DisableInlineEditor]==Attributes::True);
+		disable_inline_editor_chk->setEnabled(disable_inline_editor_chk->isChecked());
 
 		int ui_idx = ui_language_cmb->findData(config_params[Attributes::Configuration][Attributes::UiLanguage]);
 		ui_language_cmb->setCurrentIndex(ui_idx >= 0 ? ui_idx : 0);
@@ -444,6 +457,11 @@ void GeneralConfigWidget::saveConfiguration()
 		config_params[Attributes::Configuration][Attributes::EscapeComment]=(escape_comments_chk->isChecked() ? Attributes::True : "");
 		config_params[Attributes::Configuration][Attributes::OldPgSqlVersions]=(old_pgsql_versions_chk->isChecked() ? Attributes::True : "");
 
+		config_params[Attributes::Configuration][Attributes::TruncateColumnData]=(trunc_columns_data_chk->isChecked() ? Attributes::True : "");
+		config_params[Attributes::Configuration][Attributes::ColumnTruncThreshold]=QString::number(trunc_columns_data_spb->value());
+		config_params[Attributes::Configuration][Attributes::DisableInlineEditor]=(trunc_columns_data_chk->isChecked() &&
+																																							 disable_inline_editor_chk->isChecked() ? Attributes::True : "");
+
 		config_params[Attributes::Configuration][Attributes::File]="";
 		config_params[Attributes::Configuration][Attributes::RecentModels]="";
 
@@ -573,6 +591,9 @@ void GeneralConfigWidget::applyConfiguration()
 	DatabaseImportForm::setLowVerbosity(low_verbosity_chk->isChecked());
 	ModelExportForm::setLowVerbosity(low_verbosity_chk->isChecked());
 	Connection::setIgnoreDbVersion(old_pgsql_versions_chk->isChecked());
+
+	PlainTextItemDelegate::setMaxDisplayLength(trunc_columns_data_chk->isChecked() ? trunc_columns_data_spb->value() : 0);
+	PlainTextItemDelegate::setTextEditorEnabled(trunc_columns_data_chk->isChecked() ? !disable_inline_editor_chk->isChecked() : false);
 }
 
 void GeneralConfigWidget::restoreDefaults()

@@ -128,6 +128,15 @@ SQLExecutionWidget::SQLExecutionWidget(QWidget * parent) : QWidget(parent)
 	connect(find_replace_wgt, &FindReplaceWidget::s_hideRequested, find_tb, &QToolButton::toggle);
 	connect(find_history_wgt, &FindReplaceWidget::s_hideRequested, find_history_parent, &QWidget::hide);
 
+	connect(results_tbw, &QTableView::doubleClicked, this, [](const QModelIndex &index){
+		if(PlainTextItemDelegate::getMaxDisplayLength() > 0 &&
+			 !PlainTextItemDelegate::isTextEditorEnabled() &&
+			 index.data().toString().length() > PlainTextItemDelegate::getMaxDisplayLength())
+		{
+			GuiUtilsNs::openColumnDataForm(index);
+		}
+	});
+
 	connect(results_tbw, &QTableView::pressed, this, [this](){
 		SQLExecutionWidget::copySelection(results_tbw);
 	});
@@ -334,21 +343,21 @@ void SQLExecutionWidget::fillResultsTable(Catalog &catalog, ResultSet &res, QTab
 				{
 					item=new QTableWidgetItem;
 
-					if(res.isColumnBinaryFormat(col))
+					/* if(res.isColumnBinaryFormat(col))
 					{
 						//Binary columns can't be edited by user
 						item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
 						item->setText(tr("[binary data]"));
 					}
 					else
-					{
+					{ */
 						item->setText(res.getColumnValue(col));
 
 						/* When storing column values in the QTableWidget items we need distinguish empty from null values
 						 * Since it may affect the generation of SQL like delete when the field value is used somehow (see DataManipulationForm::getDMLCommand) */
 						if(store_data)
 							item->setData(Qt::UserRole, res.isColumnValueNull(col) ? ColumnNullValue : item->text());
-					}
+					//}
 
 					results_tbw->setItem(row, col, item);
 				}
@@ -361,7 +370,7 @@ void SQLExecutionWidget::fillResultsTable(Catalog &catalog, ResultSet &res, QTab
 		}
 
 		results_tbw->resizeColumnsToContents();
-		//results_tbw->resizeRowsToContents();
+		results_tbw->resizeRowsToContents();
 		results_tbw->setUpdatesEnabled(true);
 		results_tbw->blockSignals(false);
 	}
@@ -424,6 +433,7 @@ void SQLExecutionWidget::finishExecution(int rows_affected)
 
 		results_tbw->setModel(res_model);
 		results_tbw->resizeColumnsToContents();
+		results_tbw->resizeRowsToContents();
 		results_tbw->setUpdatesEnabled(true);
 		results_tbw->blockSignals(false);
 

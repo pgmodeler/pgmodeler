@@ -20,6 +20,10 @@
 #include <QPlainTextEdit>
 #include <QLineEdit>
 
+int PlainTextItemDelegate::max_display_len = 500;
+
+bool PlainTextItemDelegate::txt_editor_enabled = true;
+
 PlainTextItemDelegate::PlainTextItemDelegate(QObject *parent, bool read_only) : QStyledItemDelegate(parent)
 {
 	this->read_only = read_only;
@@ -30,6 +34,26 @@ PlainTextItemDelegate::~PlainTextItemDelegate()
 
 }
 
+void PlainTextItemDelegate::setMaxDisplayLength(int value)
+{
+	max_display_len = value;
+}
+
+int PlainTextItemDelegate::getMaxDisplayLength()
+{
+	return max_display_len;
+}
+
+void PlainTextItemDelegate::setTextEditorEnabled(bool value)
+{
+	txt_editor_enabled = value;
+}
+
+bool PlainTextItemDelegate::isTextEditorEnabled()
+{
+	return txt_editor_enabled;
+}
+
 void PlainTextItemDelegate::setEditorData(QWidget * editor, const QModelIndex & index) const
 {
 	QPlainTextEdit *text_edt=qobject_cast<QPlainTextEdit *>(editor);
@@ -38,13 +62,13 @@ void PlainTextItemDelegate::setEditorData(QWidget * editor, const QModelIndex & 
 	if(text_edt)
 	{
 		text_edt->setReadOnly(read_only);
-		text_edt->setPlainText(index.data(Qt::DisplayRole).toString());
+		text_edt->setPlainText(index.data().toString());
 		text_edt->selectAll();
 	}
 	else if(line_edt)
 	{
 		line_edt->setReadOnly(read_only);
-		line_edt->setText(index.data(Qt::DisplayRole).toString());
+		line_edt->setText(index.data().toString());
 	}
 	else
 		QStyledItemDelegate::setEditorData(editor, index);
@@ -52,9 +76,14 @@ void PlainTextItemDelegate::setEditorData(QWidget * editor, const QModelIndex & 
 
 QWidget *PlainTextItemDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &, const QModelIndex &index) const
 {
+	QString text = index.data().toString();
+
+	if(!txt_editor_enabled && max_display_len > 0 && text.length() >= max_display_len)
+		return nullptr;
+
 	QWidget *editor = nullptr;
 
-	if(index.data(Qt::DisplayRole).toString().contains(QChar('\n')))
+	if(text.contains(QChar::LineFeed))
 	{
 		editor = new QPlainTextEdit(parent);
 		qobject_cast<QPlainTextEdit *>(editor)->setFrameShape(QFrame::NoFrame);
@@ -66,4 +95,55 @@ QWidget *PlainTextItemDelegate::createEditor(QWidget *parent, const QStyleOption
 	}
 
 	return editor;
+}
+
+void PlainTextItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
+{
+	if(max_display_len <= 0 || index.data().toString().length() < max_display_len)
+		QStyledItemDelegate::paint(painter, option, index);
+	else
+	{
+		QStyleOptionViewItem idx_opt;
+		initStyleOption(&idx_opt, index);
+
+		painter->save();
+		painter->setFont(idx_opt.font);
+
+		// If the index is selected we need to preserve the selection foreground and background color
+		if (option.state & QStyle::State_Selected &&
+				option.state & QStyle::State_Active)
+		{
+			painter->setPen(option.palette.color(QPalette::HighlightedText));
+			painter->fillRect(option.rect, option.backgroundBrush);
+		}
+		/* When not selected, we just use the colors configured in the idx_opt the item with the correct
+		 * foreground and background colors */
+		else
+		{
+			painter->fillRect(option.rect, idx_opt.backgroundBrush);
+			painter->setPen(idx_opt.palette.color(QPalette::Text));
+		}
+
+		painter->drawText(option.rect,
+											option.displayAlignment,
+											truncateText(idx_opt.text));
+		painter->restore();
+	}
+}
+
+QSize PlainTextItemDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const
+{
+	QString text = index.data().toString();
+
+	if(max_display_len <= 0 || text.length() < max_display_len)
+		return QStyledItemDelegate::sizeHint(option, index);
+
+	return option.fontMetrics.boundingRect(option.rect,
+																				 option.displayAlignment,
+																				 truncateText(text)).size();
+}
+
+QString PlainTextItemDelegate::truncateText(const QString &text) const
+{
+	return text.mid(0, max_display_len) + " ...";
 }

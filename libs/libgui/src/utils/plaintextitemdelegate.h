@@ -28,21 +28,42 @@
 #include "guiglobal.h"
 #include <QObject>
 #include <QStyledItemDelegate>
+#include <QPainter>
 
 class __libgui PlainTextItemDelegate : public QStyledItemDelegate {
 	private:
 		Q_OBJECT
+
+		static int max_display_len;
+
+		static bool txt_editor_enabled;
+
 		bool read_only;
+
+		QString truncateText(const QString &text) const;
 
 	public:
 		explicit PlainTextItemDelegate(QObject * parent, bool read_only);
+
 		virtual ~PlainTextItemDelegate();
+
+		static void setMaxDisplayLength(int value);
+
+		static int getMaxDisplayLength();
+
+		static void setTextEditorEnabled(bool value);
+
+		static bool isTextEditorEnabled();
 
 	protected:
 		//! \brief Overrides the default implementation and set the editor as read only/disable to prevent change the item data
 		virtual void setEditorData(QWidget *editor, const QModelIndex &index) const;
 
 		virtual QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &, const QModelIndex &index) const;
+
+		virtual void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
+
+		virtual QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const;
 };
 
 #endif
