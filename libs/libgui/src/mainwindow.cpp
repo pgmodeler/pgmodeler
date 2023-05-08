@@ -368,6 +368,29 @@ void MainWindow::createMainWidgets()
 	}
 	catch(Exception &e)
 	{
+		Messagebox msgbox;
+
+		msgbox.show(e, tr("Failed to initialize one or more components of the UI due to corrupted or incompatible configuration files. Running the CLI tool to restore the files may solve the issue, how do you want to proceed?"),
+								Messagebox::ErrorIcon, Messagebox::YesNoButtons,
+								tr("Restore files"), tr("Abort"), "",
+								GuiUtilsNs::getIconPath("defaults"), GuiUtilsNs::getIconPath("cancel"), "");
+
+		if(msgbox.result() == QDialog::Accepted)
+		{
+			QProcess cli;
+			cli.execute(GlobalAttributes::getPgModelerCLIPath(), { "-cc -ff --silent"});
+			cli.waitForFinished();
+			QTextStream out(stdout);
+
+			out << cli.readAllStandardOutput();
+
+			if(cli.exitCode() != 0)
+				throw Exception(tr("The CLI failed to restore the configuration files! Error(s) returned: %1").arg(cli.readAllStandardOutput()),
+												ErrorCode::Custom, __PRETTY_FUNCTION__, __FILE__, __LINE__, &e);
+			else
+				msgbox.show(tr("Configuration files restored"), tr("The configuration files were successfully restored! Please, restart the pgModeler so the files can be correctly loaded."), Messagebox::InfoIcon);
+		}
+
 		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
