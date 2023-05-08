@@ -21,6 +21,7 @@
 #include "tools/bugreportform.h"
 #include "tools/metadatahandlingform.h"
 #include "tools/sqlexecutionwidget.h"
+#include "utilsns.h"
 
 bool MainWindow::confirm_validation=true;
 int MainWindow::ToolsActionsCount=0;
@@ -370,25 +371,41 @@ void MainWindow::createMainWidgets()
 	{
 		Messagebox msgbox;
 
-		msgbox.show(e, tr("Failed to initialize one or more components of the UI due to corrupted or incompatible configuration files. Running the CLI tool to restore the files may solve the issue, how do you want to proceed?"),
+		/* In case of initialization problems related to broken configuration files
+		 * We try to restore them so the next initialization can occur without problems */
+		msgbox.show(e, tr("Failed to initialize one or more components of the UI due to corrupted or incompatible configuration files. Running the CLI tool to restore the default settings may solve this issue. How do you want to proceed?"),
 								Messagebox::ErrorIcon, Messagebox::YesNoButtons,
-								tr("Restore files"), tr("Abort"), "",
+								tr("Restore"), tr("Abort"), "",
 								GuiUtilsNs::getIconPath("defaults"), GuiUtilsNs::getIconPath("cancel"), "");
 
+		// Running the CLI in config file restoration mode is the user accepts the message box
 		if(msgbox.result() == QDialog::Accepted)
 		{
-			QProcess cli;
-			cli.execute(GlobalAttributes::getPgModelerCLIPath(), { "-cc -ff --silent"});
-			cli.waitForFinished();
-			QTextStream out(stdout);
+			QProcess proc;
+			proc.setProgram(GlobalAttributes::getPgModelerCLIPath());
+			proc.setArguments({ "-cc", "-ff", "--silent" });
+			proc.start();
+			proc.waitForFinished();
 
-			out << cli.readAllStandardOutput();
-
-			if(cli.exitCode() != 0)
-				throw Exception(tr("The CLI failed to restore the configuration files! Error(s) returned: %1").arg(cli.readAllStandardOutput()),
-												ErrorCode::Custom, __PRETTY_FUNCTION__, __FILE__, __LINE__, &e);
+			if(proc.error() != QProcess::UnknownError || proc.exitCode() != 0)
+			{
+				msgbox.show(tr("The CLI failed to restore the configuration files! \
+ The command executed was: <br/><br/> <strong>%1</strong> \
+ <br/><br/> Error(s) returned: <br/><br/><em>%2</em>")
+											 .arg(proc.program() + " " + proc.arguments().join(" "),
+														proc.readAllStandardOutput()), Messagebox::ErrorIcon);
+			}
 			else
-				msgbox.show(tr("Configuration files restored"), tr("The configuration files were successfully restored! Please, restart the pgModeler so the files can be correctly loaded."), Messagebox::InfoIcon);
+			{
+				msgbox.show(tr("The default settings were successfully restored! pgModeler will be restarted now so the configuration files can be correctly loaded."),
+										Messagebox::InfoIcon);
+
+				// Starting a new instance of pgModeler (detached)
+				proc.setProgram(GlobalAttributes::getPgModelerAppPath());
+				proc.setArguments({});
+				proc.startDetached();
+				proc.waitForFinished();
+			}
 		}
 
 		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
