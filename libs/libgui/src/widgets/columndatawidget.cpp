@@ -15,22 +15,15 @@
 # The complete text of GPLv3 is at LICENSE file on source code root directory.
 # Also, you can get the complete GNU General Public License at <http://www.gnu.org/licenses/>
 */
+#include "columndatawidget.h"
 
-#ifndef BULK_DATA_EDIT_WIDGET_H
-#define BULK_DATA_EDIT_WIDGET_H
+ColumnDataWidget::ColumnDataWidget(QWidget *parent) : QWidget(parent)
+{
+	setupUi(this);
+	value_edt->installEventFilter(this);
+}
 
-#include "guiglobal.h"
-#include <QWidget>
-#include "ui_bulkdataeditwidget.h"
-
-class __libgui BulkDataEditWidget: public QWidget, public Ui::BulkDataEditWidget {
-	private:
-		Q_OBJECT
-
-		void showEvent(QShowEvent *);
-
-	public:
-		BulkDataEditWidget(QWidget *parent = nullptr);
-};
-
-#endif
+void ColumnDataWidget::showEvent(QShowEvent *)
+{
+	value_edt->setFocus();
+}

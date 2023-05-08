@@ -22,7 +22,7 @@
 #include "utilsns.h"
 #include "utils/plaintextitemdelegate.h"
 #include "baseform.h"
-#include "widgets/bulkdataeditwidget.h"
+#include "widgets/columndatawidget.h"
 #include "widgets/objectstablewidget.h"
 #include "databaseexplorerwidget.h"
 #include "settings/generalconfigwidget.h"
@@ -102,7 +102,7 @@ DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f):
 	action_bulk_edit->setToolTip(tr("Change the values of all selected cells at once"));
 
 	connect(action_bulk_edit, &QAction::triggered, this, [this](){
-		GuiUtilsNs::openBulkDataEditForm(results_tbw);
+		GuiUtilsNs::openColumnDataForm(results_tbw);
 	});
 
 	action_duplicate = edit_menu.addAction(QIcon(GuiUtilsNs::getIconPath("duprow")), tr("Duplicate row(s)"), this, &DataManipulationForm::duplicateRows, QKeySequence("Ctrl+D"));
@@ -200,7 +200,7 @@ DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f):
 			 !PlainTextItemDelegate::isTextEditorEnabled() &&
 			 item->data(Qt::UserRole).toString().length() > PlainTextItemDelegate::getMaxDisplayLength())
 		{
-			GuiUtilsNs::openBulkDataEditForm(results_tbw);
+			GuiUtilsNs::openColumnDataForm(results_tbw);
 		}
 	});
 

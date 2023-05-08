@@ -5,7 +5,7 @@
 #include "databasemodel.h"
 #include "widgets/numberedtexteditor.h"
 #include "baseform.h"
-#include "widgets/bulkdataeditwidget.h"
+#include "widgets/columndatawidget.h"
 #include "utilsns.h"
 #include "objectstablewidget.h"
 #include "generalconfigwidget.h"
@@ -357,13 +357,13 @@ namespace GuiUtilsNs {
 		//widget->adjustSize();
 	}
 
-	void openBulkDataEditForm(const QModelIndex &index)
+	void openColumnDataForm(const QModelIndex &index)
 	{
 		if(!index.isValid())
 			return;
 
 		BaseForm base_form;
-		BulkDataEditWidget *bulkedit_wgt = new BulkDataEditWidget;
+		ColumnDataWidget *bulkedit_wgt = new ColumnDataWidget;
 
 		base_form.setMainWidget(bulkedit_wgt);
 		base_form.setButtonConfiguration(Messagebox::OkButton);
@@ -375,24 +375,24 @@ namespace GuiUtilsNs {
 		GeneralConfigWidget::saveWidgetGeometry(&base_form, bulkedit_wgt->metaObject()->className());
 	}
 
-	void openBulkDataEditForm(QTableWidget *results_tbw)
+	void openColumnDataForm(QTableWidget *results_tbw)
 	{
 		if(!results_tbw)
 			return;
 
 		BaseForm base_form;
-		BulkDataEditWidget *bulkedit_wgt = new BulkDataEditWidget;
+		ColumnDataWidget *col_data_edit_wgt = new ColumnDataWidget;
 
-		base_form.setMainWidget(bulkedit_wgt);
+		base_form.setMainWidget(col_data_edit_wgt);
 		base_form.setButtonConfiguration(Messagebox::OkCancelButtons);
 		base_form.apply_ok_btn->setShortcut(QKeySequence("Ctrl+Return"));
 
 		if(results_tbw->selectedItems().size() == 1)
-			bulkedit_wgt->value_edt->setPlainText(results_tbw->currentItem()->text());
+			col_data_edit_wgt->value_edt->setPlainText(results_tbw->currentItem()->text());
 
-		GeneralConfigWidget::restoreWidgetGeometry(&base_form, bulkedit_wgt->metaObject()->className());
+		GeneralConfigWidget::restoreWidgetGeometry(&base_form, col_data_edit_wgt->metaObject()->className());
 		base_form.exec();
-		GeneralConfigWidget::saveWidgetGeometry(&base_form, bulkedit_wgt->metaObject()->className());
+		GeneralConfigWidget::saveWidgetGeometry(&base_form, col_data_edit_wgt->metaObject()->className());
 
 		if(base_form.result() == QDialog::Accepted)
 		{
@@ -404,7 +404,7 @@ namespace GuiUtilsNs {
 				{
 					for(int col = range.leftColumn(); col <= range.rightColumn(); col++)
 					{
-						results_tbw->item(row, col)->setText(bulkedit_wgt->value_edt->toPlainText());
+						results_tbw->item(row, col)->setText(col_data_edit_wgt->value_edt->toPlainText());
 					}
 				}
 			}

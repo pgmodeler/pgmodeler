@@ -128,12 +128,12 @@ SQLExecutionWidget::SQLExecutionWidget(QWidget * parent) : QWidget(parent)
 	connect(find_replace_wgt, &FindReplaceWidget::s_hideRequested, find_tb, &QToolButton::toggle);
 	connect(find_history_wgt, &FindReplaceWidget::s_hideRequested, find_history_parent, &QWidget::hide);
 
-	connect(results_tbw, &QTableView::doubleClicked, this, [this](const QModelIndex &index){
+	connect(results_tbw, &QTableView::doubleClicked, this, [](const QModelIndex &index){
 		if(PlainTextItemDelegate::getMaxDisplayLength() > 0 &&
 			 !PlainTextItemDelegate::isTextEditorEnabled() &&
 			 index.data().toString().length() > PlainTextItemDelegate::getMaxDisplayLength())
 		{
-			GuiUtilsNs::openBulkDataEditForm(index);
+			GuiUtilsNs::openColumnDataForm(index);
 		}
 	});
 
