@@ -2425,7 +2425,7 @@ void PgModelerCliApp::createConfigurations()
 		if(force)
 		{
 			QDir dir;
-			QString bkp_conf_dir = conf_dir + QDateTime::currentDateTime().toString("_yyyyMMd_hhmmss");
+			QString bkp_conf_dir = conf_dir + QDateTime::currentDateTime().toString("_yyyyMMdd_hhmmss");
 
 			printMessage(tr("Configuration files already exist! Creating a backup..."));
 			printMessage(tr("Backup path: %1").arg(bkp_conf_dir));
