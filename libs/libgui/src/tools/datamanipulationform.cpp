@@ -142,6 +142,21 @@ DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f):
 
 	columns_lst->installEventFilter(this);
 
+	export_tb->setMenu(&export_menu);
+	act = export_menu.addAction(tr("Text file"));
+	act->setIcon(QIcon(GuiUtilsNs::getIconPath("txtfile")));
+
+	connect(act, &QAction::triggered, this, [this](){
+		SQLExecutionWidget::exportResults(results_tbw, false);
+	});
+
+	act = export_menu.addAction(tr("CSV file"));
+	act->setIcon(QIcon(GuiUtilsNs::getIconPath("csvfile")));
+
+	connect(act, &QAction::triggered, this, [this](){
+		SQLExecutionWidget::exportResults(results_tbw, true);
+	});
+
 	connect(columns_lst, &QListWidget::itemDoubleClicked, this, [this](QListWidgetItem *item){
 		if(item->checkState() == Qt::Checked)
 			item->setCheckState(Qt::Unchecked);
@@ -202,10 +217,6 @@ DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f):
 		{
 			GuiUtilsNs::openColumnDataForm(results_tbw);
 		}
-	});
-
-	connect(export_tb, &QToolButton::clicked, this, [this](){
-		SQLExecutionWidget::exportResults(results_tbw);
 	});
 
 	connect(results_tbw, &QTableWidget::itemSelectionChanged, this, &DataManipulationForm::enableRowControlButtons);

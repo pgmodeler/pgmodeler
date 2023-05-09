@@ -430,7 +430,8 @@ void NumberedTextEditor::saveFile()
 	GuiUtilsNs::selectAndSaveFile(toPlainText().toUtf8(),
 																tr("Save file"),
 																QFileDialog::AnyFile,
-																{ tr("SQL file (*.sql)"),	tr("All files (*.*)") });
+																{ tr("SQL file (*.sql)"),	tr("All files (*.*)") },
+																{}, "sql");
 }
 
 void NumberedTextEditor::editSource()

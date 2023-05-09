@@ -63,7 +63,9 @@ class __libgui SQLExecutionWidget: public QWidget, public Ui::SQLExecutionWidget
 
 		QMenu snippets_menu,
 
-		file_menu;
+		file_menu,
+
+		export_menu;
 
 		QAction *action_save, *action_save_as, *action_load;
 
@@ -127,7 +129,7 @@ class __libgui SQLExecutionWidget: public QWidget, public Ui::SQLExecutionWidget
 		static QByteArray generateBuffer(QTableView *results_tbw, QChar separator, bool incl_col_names, bool csv_format);
 
 		//! \brief Exports the results to csv file
-		static void exportResults(QTableView *results_tbw);
+		static void exportResults(QTableView *results_tbw, bool csv_format);
 
 		//! \brief Save the history of all connections open in the SQL Execution to the sql-history.conf
 		static void saveSQLHistory();

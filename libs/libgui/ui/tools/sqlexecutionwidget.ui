@@ -409,6 +409,9 @@
        <property name="checked">
         <bool>false</bool>
        </property>
+       <property name="popupMode">
+        <enum>QToolButton::InstantPopup</enum>
+       </property>
        <property name="toolButtonStyle">
         <enum>Qt::ToolButtonTextBesideIcon</enum>
        </property>

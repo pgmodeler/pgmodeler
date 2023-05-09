@@ -263,6 +263,9 @@
         <file>icons/typerange.png</file>
         <file>icons/typefloatpoint.png</file>
         <file>icons/wordwrap.png</file>
+        <file>icons/txtfile.png</file>
+        <file>icons/csvfile.png</file>
+        <file>icons/selection.png</file>
     </qresource>
     <qresource prefix="/images">
         <file>images/brazil_flag.png</file>

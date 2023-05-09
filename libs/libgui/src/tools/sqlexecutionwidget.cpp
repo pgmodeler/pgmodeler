@@ -91,6 +91,24 @@ SQLExecutionWidget::SQLExecutionWidget(QWidget * parent) : QWidget(parent)
 
 	filter_wgt->setVisible(false);
 
+	export_tb->setMenu(&export_menu);
+
+	QAction *act = nullptr;
+
+	act = export_menu.addAction(tr("Text file"));
+	act->setIcon(QIcon(GuiUtilsNs::getIconPath("txtfile")));
+
+	connect(act, &QAction::triggered, this, [this](){
+		SQLExecutionWidget::exportResults(results_tbw, false);
+	});
+
+	act = export_menu.addAction(tr("CSV file"));
+	act->setIcon(QIcon(GuiUtilsNs::getIconPath("csvfile")));
+
+	connect(act, &QAction::triggered, this, [this](){
+		SQLExecutionWidget::exportResults(results_tbw, true);
+	});
+
 	connect(columns_cmb, &QComboBox::currentIndexChanged, this, &SQLExecutionWidget::filterResults);
 	connect(filter_edt, &QLineEdit::textChanged, this, &SQLExecutionWidget::filterResults);
 	connect(hide_tb, &QToolButton::clicked, filter_tb, &QToolButton::click);
@@ -139,10 +157,6 @@ SQLExecutionWidget::SQLExecutionWidget(QWidget * parent) : QWidget(parent)
 
 	connect(results_tbw, &QTableView::pressed, this, [this](){
 		SQLExecutionWidget::copySelection(results_tbw);
-	});
-
-	connect(export_tb, &QToolButton::clicked, this, [this](){
-		SQLExecutionWidget::exportResults(results_tbw);
 	});
 
 	connect(close_file_tb, &QToolButton::clicked, this, [this](){
@@ -342,22 +356,12 @@ void SQLExecutionWidget::fillResultsTable(Catalog &catalog, ResultSet &res, QTab
 				for(col=0; col < col_cnt; col++)
 				{
 					item=new QTableWidgetItem;
+					item->setText(res.getColumnValue(col));
 
-					/* if(res.isColumnBinaryFormat(col))
-					{
-						//Binary columns can't be edited by user
-						item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
-						item->setText(tr("[binary data]"));
-					}
-					else
-					{ */
-						item->setText(res.getColumnValue(col));
-
-						/* When storing column values in the QTableWidget items we need distinguish empty from null values
-						 * Since it may affect the generation of SQL like delete when the field value is used somehow (see DataManipulationForm::getDMLCommand) */
-						if(store_data)
-							item->setData(Qt::UserRole, res.isColumnValueNull(col) ? ColumnNullValue : item->text());
-					//}
+					/* When storing column values in the QTableWidget items we need distinguish empty from null values
+					 * Since it may affect the generation of SQL like delete when the field value is used somehow (see DataManipulationForm::getDMLCommand) */
+					if(store_data)
+						item->setData(Qt::UserRole, res.isColumnValueNull(col) ? ColumnNullValue : item->text());
 
 					results_tbw->setItem(row, col, item);
 				}
@@ -699,16 +703,16 @@ void SQLExecutionWidget::loadCommands()
 	}
 }
 
-void SQLExecutionWidget::exportResults(QTableView *results_tbw)
+void SQLExecutionWidget::exportResults(QTableView *results_tbw, bool csv_format)
 {
 	if(!results_tbw)
 		throw Exception(ErrorCode::OprNotAllocatedObject ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	QStringList sel_files = GuiUtilsNs::selectFiles(
-														tr("Save CSV file"),
+														tr("Save file"),
 														QFileDialog::AnyFile,	QFileDialog::AcceptSave,
-														{ tr("Comma-separated values file (*.csv)"),
-															tr("All files (*.*)") }, {}, "csv");
+														{ csv_format ? tr("CSV file (*.csv)") : tr("Text file (*.txt"),
+															tr("All files (*.*)") }, {}, csv_format ? "csv" : "txt");
 
 	if(!sel_files.isEmpty())
 	{
@@ -717,7 +721,10 @@ void SQLExecutionWidget::exportResults(QTableView *results_tbw)
 		results_tbw->blockSignals(true);
 		results_tbw->selectAll();
 
-		UtilsNs::saveFile(sel_files.at(0), generateCSVBuffer(results_tbw));
+		UtilsNs::saveFile(sel_files.at(0),
+											csv_format ?
+												generateCSVBuffer(results_tbw) :
+												generateTextBuffer(results_tbw));
 
 		results_tbw->clearSelection();
 		results_tbw->blockSignals(false);
@@ -842,34 +849,60 @@ void SQLExecutionWidget::copySelection(QTableView *results_tbw, bool use_popup, 
 
 	if(selection && (!use_popup || (use_popup && QApplication::mouseButtons()==Qt::RightButton)))
 	{
-		QMenu copy_menu, copy_mode_menu;
-		QAction *act = nullptr, *act_csv = nullptr, *act_txt = nullptr;
+		QMenu copy_menu, copy_mode_menu, save_menu;
+		QAction *act = nullptr, *act_csv = nullptr, *act_txt = nullptr,
+				*act_save = nullptr, *act_save_txt = nullptr, *act_save_csv = nullptr;
 
 		if(use_popup)
 		{
 			act = copy_mode_menu.menuAction();
-			act->setText(tr("Copy selection"));
-			act_txt = copy_mode_menu.addAction(tr("Plain format"));
-			act_csv = copy_mode_menu.addAction(tr("CVS format"));
+			act->setText(tr("Selection"));
+			act->setIcon(QIcon(GuiUtilsNs::getIconPath("selection")));
+
+			act_txt = copy_mode_menu.addAction(tr("Copy as text"));
+			act_txt->setIcon(QIcon(GuiUtilsNs::getIconPath("txtfile")));
+
+			act_csv = copy_mode_menu.addAction(tr("Copy as CSV"));
+			act_csv->setIcon(QIcon(GuiUtilsNs::getIconPath("csvfile")));
+
+			act_save = save_menu.menuAction();
+			act_save->setText(tr("Save as..."));
+			act_save->setIcon(QIcon(GuiUtilsNs::getIconPath("saveas")));
+			copy_mode_menu.addAction(act_save);
+
+			act_save_txt = save_menu.addAction(tr("Text file"));
+			act_save_txt->setIcon(QIcon(GuiUtilsNs::getIconPath("txtfile")));
+
+			act_save_csv = save_menu.addAction(tr("CSV file"));
+			act_save_csv->setIcon(QIcon(GuiUtilsNs::getIconPath("csvfile")));
+
 			copy_menu.addAction(act);
 			act = copy_menu.exec(QCursor::pos());
 		}
 
 		if(!use_popup || act)
 		{
-			QByteArray buf;
+			QByteArray buffer;
 
-			if((use_popup && act == act_csv) || (!use_popup && csv_is_default))
-			{
-				//Generates the csv buffer and assigns it to application's clipboard
-				buf=generateCSVBuffer(results_tbw);
-			}
-			else if((use_popup && act == act_txt) || (!use_popup && !csv_is_default))
-			{
-				buf=generateTextBuffer(results_tbw);
-			}
+			bool is_csv = ((!use_popup && csv_is_default) ||
+										 (use_popup && (act == act_csv || act_save_csv))),
 
-			qApp->clipboard()->setText(buf);
+					is_save = (use_popup && (act == act_save_txt || act == act_save_csv));
+
+			buffer = is_csv ?
+						generateCSVBuffer(results_tbw) :
+						generateTextBuffer(results_tbw);
+
+			if(!is_save)
+				qApp->clipboard()->setText(buffer);
+			else
+			{
+				GuiUtilsNs::selectAndSaveFile(buffer,
+																			tr("Save file"),
+																			QFileDialog::AnyFile,
+																			{ is_csv ? tr("CSV file (*.csv)") :tr("Text file (*.txt)"),	tr("All files (*.*)") },
+																			{}, is_csv ? "csv" : "txt");
+			}
 		}
 	}
 }
