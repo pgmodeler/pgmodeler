@@ -82,21 +82,45 @@ NumberedTextEditor::NumberedTextEditor(QWidget * parent, bool handle_ext_files) 
 		load_file_btn->setIcon(QIcon(GuiUtilsNs::getIconPath("open")));
 		load_file_btn->setAutoRaise(true);
 		load_file_btn->setText(tr("Load"));
-		load_file_btn->setToolTip(tr("Load the object's source code from an external file"));
+		load_file_btn->setToolTip(tr("Load text from an external file"));
 		load_file_btn->setFont(font);
 		load_file_btn->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
 		hbox->addWidget(load_file_btn);
 		connect(load_file_btn, &QToolButton::clicked, this, &NumberedTextEditor::loadFile);
 
+		save_file_btn = new QToolButton(top_widget);
+		save_file_btn->setIcon(QIcon(GuiUtilsNs::getIconPath("save")));
+		save_file_btn->setAutoRaise(true);
+		save_file_btn->setText(tr("Save"));
+		save_file_btn->setToolTip(tr("Save the text to a file"));
+		save_file_btn->setFont(font);
+		save_file_btn->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+		hbox->addWidget(save_file_btn);
+		connect(save_file_btn, &QToolButton::clicked, this, &NumberedTextEditor::saveFile);
+
 		edit_src_btn = new QToolButton(top_widget);
 		edit_src_btn->setIcon(QIcon(GuiUtilsNs::getIconPath("edit")));
 		edit_src_btn->setAutoRaise(true);
 		edit_src_btn->setText(tr("Edit"));
-		edit_src_btn->setToolTip(tr("Edit the source code in the preferred external editor"));
+		edit_src_btn->setToolTip(tr("Edit the text in the defined external editor"));
 		edit_src_btn->setFont(font);
 		edit_src_btn->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
 		hbox->addWidget(edit_src_btn);
 		connect(edit_src_btn,  &QToolButton::clicked, this, &NumberedTextEditor::editSource);
+
+		word_wrap_btn = new QToolButton(top_widget);
+		word_wrap_btn->setIcon(QIcon(GuiUtilsNs::getIconPath("wordwrap")));
+		word_wrap_btn->setAutoRaise(true);
+		word_wrap_btn->setCheckable(true);
+		word_wrap_btn->setText(tr("Wrap"));
+		word_wrap_btn->setToolTip(tr("Toggles the word wrap"));
+		word_wrap_btn->setFont(font);
+		word_wrap_btn->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+		word_wrap_btn->setDisabled(true);
+		hbox->addWidget(word_wrap_btn);
+		connect(word_wrap_btn,  &QToolButton::toggled, this, [this](bool checked) {
+			setWordWrapMode(checked ? QTextOption::WrapAtWordBoundaryOrAnywhere : QTextOption::NoWrap);
+		});
 
 		clear_btn = new QToolButton(top_widget);
 		clear_btn->setIcon(QIcon(GuiUtilsNs::getIconPath("cleartext")));
@@ -112,7 +136,8 @@ NumberedTextEditor::NumberedTextEditor(QWidget * parent, bool handle_ext_files) 
 		});
 
 		connect(this, &NumberedTextEditor::textChanged, this, [this](){
-			clear_btn->setEnabled(!this->toPlainText().isEmpty() && !this->isReadOnly());
+			clear_btn->setEnabled(!this->document()->isEmpty() && !this->isReadOnly());
+			word_wrap_btn->setEnabled(!document()->isEmpty());
 		});
 
 		ico->setMaximumSize(edit_src_btn->iconSize());
@@ -388,7 +413,7 @@ void NumberedTextEditor::loadFile()
 {
 	QByteArray buff;
 	bool loaded = GuiUtilsNs::selectAndLoadFile(buff,
-																							tr("Load SQL commands"),
+																							tr("Load file"),
 																							QFileDialog::ExistingFile,
 																							{ tr("SQL file (*.sql)"),	tr("All files (*.*)") });
 
@@ -398,6 +423,14 @@ void NumberedTextEditor::loadFile()
 		setPlainText(buff);
 		clear_btn->setEnabled(!document()->isEmpty());
 	}
+}
+
+void NumberedTextEditor::saveFile()
+{
+	GuiUtilsNs::selectAndSaveFile(toPlainText().toUtf8(),
+																tr("Save file"),
+																QFileDialog::AnyFile,
+																{ tr("SQL file (*.sql)"),	tr("All files (*.*)") });
 }
 
 void NumberedTextEditor::editSource()
@@ -444,7 +477,8 @@ void NumberedTextEditor::enableEditor()
 	editor_alert_wgt->setVisible(false);
 	load_file_btn->setEnabled(true);
 	edit_src_btn->setEnabled(true);
-	clear_btn->setEnabled(!this->toPlainText().isEmpty());
+	clear_btn->setEnabled(!this->document()->isEmpty());
+	word_wrap_btn->setEnabled(!this->document()->isEmpty());
 	this->setReadOnly(false);
 }
 
@@ -488,7 +522,7 @@ void NumberedTextEditor::handleProcessError()
 	Messagebox msg_box;
 	QStringList errors = { src_editor_proc.errorString(),  src_editor_proc.readAllStandardError() };
 
-	msg_box.show(GuiUtilsNs::formatMessage(tr("Failed to the source code editor <strong>%1</strong>! Make to sure that the source editor path points to a valid executable and the current user has permission to run the application. Error message returned: <strong>%2</strong>")
+	msg_box.show(GuiUtilsNs::formatMessage(tr("Failed to run the source code editor <strong>%1</strong>! Make to sure that the application path points to a valid executable and the current user has permission to run the application. Error message returned: <strong>%2</strong>")
 																						.arg(src_editor_proc.program())
 																						.arg(errors.join("\n\n"))), Messagebox::ErrorIcon);
 
@@ -501,7 +535,7 @@ void NumberedTextEditor::setReadOnly(bool ro)
 	{
 		load_file_btn->setEnabled(!ro);
 		edit_src_btn->setEnabled(!ro);
-		clear_btn->setEnabled(!ro && !this->toPlainText().isEmpty());
+		clear_btn->setEnabled(!ro && !this->document()->isEmpty());
 	}
 
 	QPlainTextEdit::setReadOnly(ro);

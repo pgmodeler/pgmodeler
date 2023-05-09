@@ -16,14 +16,37 @@
 # Also, you can get the complete GNU General Public License at <http://www.gnu.org/licenses/>
 */
 #include "columndatawidget.h"
+#include <QVBoxLayout>
+#include "guiutilsns.h"
 
 ColumnDataWidget::ColumnDataWidget(QWidget *parent) : QWidget(parent)
 {
-	setupUi(this);
-	value_edt->installEventFilter(this);
+	QVBoxLayout *vbox = new QVBoxLayout(this);
+
+	value_txt = new NumberedTextEditor(this, true);
+	value_txt->installEventFilter(this);
+
+	vbox->addWidget(value_txt);
+	vbox->setContentsMargins(GuiUtilsNs::LtMargin, GuiUtilsNs::LtMargin,
+													 GuiUtilsNs::LtMargin, GuiUtilsNs::LtMargin);
+}
+
+void ColumnDataWidget::setData(const QString &data)
+{
+	value_txt->setPlainText(data);
+}
+
+QString ColumnDataWidget::getData()
+{
+	return value_txt->toPlainText();
+}
+
+void ColumnDataWidget::setReadOnly(bool value)
+{
+	value_txt->setReadOnly(value);
 }
 
 void ColumnDataWidget::showEvent(QShowEvent *)
 {
-	value_edt->setFocus();
+	value_txt->setFocus();
 }

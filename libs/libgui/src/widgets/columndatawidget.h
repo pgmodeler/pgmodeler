@@ -21,16 +21,24 @@
 
 #include "guiglobal.h"
 #include <QWidget>
-#include "ui_columndatawidget.h"
+#include "numberedtexteditor.h"
 
-class __libgui ColumnDataWidget: public QWidget, public Ui::ColumnDataWidget {
+class __libgui ColumnDataWidget: public QWidget {
 	private:
 		Q_OBJECT
+
+		NumberedTextEditor *value_txt;
 
 		void showEvent(QShowEvent *);
 
 	public:
 		ColumnDataWidget(QWidget *parent = nullptr);
+
+		void setData(const QString &data);
+
+		QString getData();
+
+		void setReadOnly(bool value);
 };
 
 #endif
