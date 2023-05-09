@@ -314,8 +314,13 @@ QString Column::getAlterCode(BaseObject *object)
 
 		if(!this->type.isEquivalentTo(col->type) ||
 				(this->type.isEquivalentTo(col->type) &&
-				 ((this->type.hasVariableLength() && (this->type.getLength()!=col->type.getLength())) ||
-					(this->type.acceptsPrecision() && (this->type.getPrecision()!=col->type.getPrecision())))))
+
+				 ((this->type.hasVariableLength() &&
+					 this->type.getLength() != col->type.getLength()) ||
+
+					(this->type.acceptsPrecision() &&
+					 col->type.getPrecision() > 0 &&
+					 this->type.getPrecision() != col->type.getPrecision()))))
 			attribs[Attributes::Type]=col->type.getSourceCode(SchemaParser::SqlCode);
 
 		if(col->sequence)
