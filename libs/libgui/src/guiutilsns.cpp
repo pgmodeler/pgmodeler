@@ -363,16 +363,17 @@ namespace GuiUtilsNs {
 			return;
 
 		BaseForm base_form;
-		ColumnDataWidget *bulkedit_wgt = new ColumnDataWidget;
+		ColumnDataWidget *col_data_wgt = new ColumnDataWidget;
 
-		base_form.setMainWidget(bulkedit_wgt);
+		base_form.setMainWidget(col_data_wgt);
 		base_form.setButtonConfiguration(Messagebox::OkButton);
-		bulkedit_wgt->value_edt->setPlainText(index.data().toString());
-		bulkedit_wgt->value_edt->setReadOnly(true);
 
-		GeneralConfigWidget::restoreWidgetGeometry(&base_form, bulkedit_wgt->metaObject()->className());
+		col_data_wgt->setData(index.data().toString());
+		col_data_wgt->setReadOnly(true);
+
+		GeneralConfigWidget::restoreWidgetGeometry(&base_form, col_data_wgt->metaObject()->className());
 		base_form.exec();
-		GeneralConfigWidget::saveWidgetGeometry(&base_form, bulkedit_wgt->metaObject()->className());
+		GeneralConfigWidget::saveWidgetGeometry(&base_form, col_data_wgt->metaObject()->className());
 	}
 
 	void openColumnDataForm(QTableWidget *results_tbw)
@@ -388,7 +389,7 @@ namespace GuiUtilsNs {
 		base_form.apply_ok_btn->setShortcut(QKeySequence("Ctrl+Return"));
 
 		if(results_tbw->selectedItems().size() == 1)
-			col_data_edit_wgt->value_edt->setPlainText(results_tbw->currentItem()->text());
+			col_data_edit_wgt->setData(results_tbw->currentItem()->text());
 
 		GeneralConfigWidget::restoreWidgetGeometry(&base_form, col_data_edit_wgt->metaObject()->className());
 		base_form.exec();
@@ -404,7 +405,7 @@ namespace GuiUtilsNs {
 				{
 					for(int col = range.leftColumn(); col <= range.rightColumn(); col++)
 					{
-						results_tbw->item(row, col)->setText(col_data_edit_wgt->value_edt->toPlainText());
+						results_tbw->item(row, col)->setText(col_data_edit_wgt->getData());
 					}
 				}
 			}

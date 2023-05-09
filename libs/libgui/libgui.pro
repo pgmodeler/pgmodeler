@@ -310,7 +310,6 @@ ui/tools/modelrestorationform.ui \
 ui/tools/swapobjectsidswidget.ui \
 ui/tools/modelvalidationwidget.ui \
 ui/widgets/aboutwidget.ui \
-    ui/widgets/columndatawidget.ui \
 ui/widgets/donatewidget.ui \
 ui/widgets/modelobjectswidget.ui \
 ui/widgets/objectrenamewidget.ui \
