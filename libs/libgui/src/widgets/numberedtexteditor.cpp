@@ -138,6 +138,7 @@ NumberedTextEditor::NumberedTextEditor(QWidget * parent, bool handle_ext_files) 
 		connect(this, &NumberedTextEditor::textChanged, this, [this](){
 			clear_btn->setEnabled(!this->document()->isEmpty() && !this->isReadOnly());
 			word_wrap_btn->setEnabled(!document()->isEmpty());
+			save_file_btn->setEnabled(!document()->isEmpty());
 		});
 
 		ico->setMaximumSize(edit_src_btn->iconSize());
@@ -480,6 +481,7 @@ void NumberedTextEditor::enableEditor()
 	edit_src_btn->setEnabled(true);
 	clear_btn->setEnabled(!this->document()->isEmpty());
 	word_wrap_btn->setEnabled(!this->document()->isEmpty());
+	save_file_btn->setEnabled(!this->document()->isEmpty());
 	this->setReadOnly(false);
 }
 

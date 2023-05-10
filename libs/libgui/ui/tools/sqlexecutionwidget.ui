@@ -385,7 +385,7 @@
         </sizepolicy>
        </property>
        <property name="toolTip">
-        <string>Export results to a CSV file</string>
+        <string>Export results to a file</string>
        </property>
        <property name="text">
         <string>E&amp;xport</string>

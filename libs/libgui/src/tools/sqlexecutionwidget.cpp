@@ -802,7 +802,7 @@ QByteArray SQLExecutionWidget::generateBuffer(QTableView *results_tbw, QChar sep
 			if(results_tbw->isColumnHidden(col))
 				continue;
 
-			value = model->headerData(col, Qt::Horizontal).toString();
+			value = model->headerData(col, Qt::Horizontal).toString().trimmed();
 
 			if(csv_format)
 				value.replace(CsvDocument::TextDelimiter, QString("%1%1").arg(CsvDocument::TextDelimiter));

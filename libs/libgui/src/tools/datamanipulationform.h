@@ -52,7 +52,8 @@ class __libgui DataManipulationForm: public QDialog, public Ui::DataManipulation
 		QAction *action_add, *action_delete, *action_bulk_edit,
 		*action_duplicate, *action_clear;
 
-		QMenu fks_menu, copy_menu, truncate_menu, paste_menu, edit_menu, export_menu;
+		QMenu items_menu, fks_menu, copy_menu, truncate_menu,
+		paste_menu, edit_menu, export_menu, save_menu;
 
 		//! \brief Store the template connection params to be used by catalogs and command execution connections
 		attribs_map tmpl_conn_params;
@@ -213,6 +214,9 @@ class __libgui DataManipulationForm: public QDialog, public Ui::DataManipulation
 
 		//! \brief Shows the popup menu over the current selection
 		void showPopupMenu();
+
+		//! \brief Save the selected items to external file
+		void saveSelectedItems(bool csv_format);
 };
 
 #endif

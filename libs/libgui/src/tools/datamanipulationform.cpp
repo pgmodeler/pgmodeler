@@ -59,6 +59,7 @@ DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f):
 
 	act = copy_menu.addAction(tr("Copy as text"));
 	act->setShortcut(QKeySequence("Ctrl+C"));
+	act->setIcon(QIcon(GuiUtilsNs::getIconPath("txtfile")));
 
 	connect(act, &QAction::triggered,	this, [this](){
 		SQLExecutionWidget::copySelection(results_tbw, false, false);
@@ -67,14 +68,37 @@ DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f):
 
 	act = copy_menu.addAction(tr("Copy as CSV"));
 	act->setShortcut(QKeySequence("Ctrl+Shift+C"));
+	act->setIcon(QIcon(GuiUtilsNs::getIconPath("csvfile")));
 
 	connect(act, &QAction::triggered, this, [this](){
 		SQLExecutionWidget::copySelection(results_tbw, false, true);
 		paste_tb->setEnabled(true);
 	});
 
+	act = save_menu.menuAction();
+	act->setText(tr("Save as..."));
+	act->setIcon(QIcon(GuiUtilsNs::getIconPath("saveas")));
+	copy_menu.addAction(act);
+
+	act = save_menu.addAction(tr("Text file"));
+	act->setIcon(QIcon(GuiUtilsNs::getIconPath("txtfile")));
+	act->setShortcut(QKeySequence("Ctrl+Shift+T"));
+
+	connect(act, &QAction::triggered, this, [this](){
+		saveSelectedItems(false);
+	});
+
+	act = save_menu.addAction(tr("CSV file"));
+	act->setIcon(QIcon(GuiUtilsNs::getIconPath("csvfile")));
+	act->setShortcut(QKeySequence("Ctrl+Shift+S"));
+
+	connect(act, &QAction::triggered, this, [this](){
+		saveSelectedItems(true);
+	});
+
 	act = paste_menu.addAction(tr("Paste as text"));
 	act->setShortcut(QKeySequence("Ctrl+V"));
+	act->setIcon(QIcon(GuiUtilsNs::getIconPath("txtfile")));
 
 	connect(act, &QAction::triggered,	this, [this](){
 		loadDataFromCsv(true, false);
@@ -83,6 +107,7 @@ DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f):
 
 	act = paste_menu.addAction(tr("Paste as CSV"));
 	act->setShortcut(QKeySequence("Ctrl+Shift+V"));
+	act->setIcon(QIcon(GuiUtilsNs::getIconPath("csvfile")));
 
 	connect(act, &QAction::triggered,	this, [this](){
 		loadDataFromCsv(true, true);
@@ -116,7 +141,7 @@ DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f):
 	truncate_menu.addAction(QIcon(GuiUtilsNs::getIconPath("truncate")), tr("Truncate"), this, &DataManipulationForm::truncateTable, QKeySequence("Ctrl+Del"))->setData(QVariant::fromValue<bool>(false));
 	truncate_menu.addAction(QIcon(GuiUtilsNs::getIconPath("trunccascade")), tr("Truncate cascade"), this, &DataManipulationForm::truncateTable, QKeySequence("Ctrl+Shift+Del"))->setData(QVariant::fromValue<bool>(true));
 
-	copy_tb->setMenu(&copy_menu);
+	selection_tb->setMenu(&copy_menu);
 	refresh_tb->setToolTip(refresh_tb->toolTip() + QString(" (%1)").arg(refresh_tb->shortcut().toString()));
 	save_tb->setToolTip(save_tb->toolTip() + QString(" (%1)").arg(save_tb->shortcut().toString()));
 	paste_tb->setToolTip(paste_tb->toolTip() + QString(" (%1)").arg(paste_tb->shortcut().toString()));
@@ -232,6 +257,15 @@ DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f):
 		else
 			selectColumn(section, sort_order);
 	});
+
+	/* Installing event filters in the menus to override their
+	 * default position */
+	fks_menu.installEventFilter(this);
+	copy_menu.installEventFilter(this);
+	truncate_menu.installEventFilter(this);
+	paste_menu.installEventFilter(this);
+	edit_menu.installEventFilter(this);
+	export_menu.installEventFilter(this);
 }
 
 void DataManipulationForm::setAttributes(Connection conn, const QString curr_schema, const QString curr_table, const QString &filter)
@@ -574,7 +608,7 @@ void DataManipulationForm::enableRowControlButtons()
 	action_bulk_edit->setEnabled(sel_ranges.count() != 0);
 	action_clear->setEnabled(sel_ranges.count() != 0);
 
-	copy_tb->setEnabled(sel_ranges.count() != 0);
+	selection_tb->setEnabled(sel_ranges.count() != 0);
 	paste_tb->setEnabled(!qApp->clipboard()->text().isEmpty() &&
 											 PhysicalTable::isPhysicalTable(obj_type)  &&
 											 !col_names.isEmpty());
@@ -1636,6 +1670,26 @@ bool DataManipulationForm::eventFilter(QObject *object, QEvent *event)
 			toggleColumnDisplay(columns_lst->currentItem());
 		}
 	}
+	/* We override the menu position only if it's being triggered by their
+	 * parent buttons. If the menu is being displayed from the items context menu
+	 * the default position is preserved */
+	else if(event->type() == QEvent::Show &&
+					object->metaObject()->className() == QString("QMenu") &&
+					!items_menu.isVisible())
+	{
+		QMenu *menu = dynamic_cast<QMenu *>(object);
+		QWidget *btn = bnts_parent_wgt->childAt(bnts_parent_wgt->mapFromGlobal(QCursor::pos()));
+
+		/* Since the menus in this form have no parent we calculate their new position
+		 * taking into account the position of the button associated to the menu as
+		 * well as the height of the window title bar */
+		menu->move(this->pos().x() + btn->pos().x() + btn->width(),
+							 this->pos().y() + btn->pos().y() +
+							 qApp->style()->pixelMetric(QStyle::PM_TitleBarHeight) +
+							 GuiUtilsNs::LtSpacing);
+
+		return false;
+	}
 
 	return QDialog::eventFilter(object, event);
 }
@@ -1685,41 +1739,55 @@ void DataManipulationForm::openNewWindow()
 
 void DataManipulationForm::showPopupMenu()
 {
-	if(QApplication::mouseButtons()==Qt::RightButton)
+	if(QApplication::mouseButtons()!=Qt::RightButton)
+		return;
+
+	QAction *act = nullptr;
+	ObjectType obj_type=static_cast<ObjectType>(table_cmb->currentData().toUInt());
+
+	items_menu.clear();
+
+	act = copy_menu.menuAction();
+	act->setIcon(QIcon(GuiUtilsNs::getIconPath("selection")));
+	act->setText(tr("Selected items"));
+	items_menu.addAction(act);
+
+	act = paste_menu.menuAction();
+	act->setIcon(QIcon(GuiUtilsNs::getIconPath("paste")));
+	act->setText(tr("Paste items"));
+	act->setEnabled(paste_tb->isEnabled());
+	items_menu.addAction(act);
+
+	act = items_menu.addAction(QIcon(GuiUtilsNs::getIconPath("cleartext")), tr("Clear items"), this, &DataManipulationForm::clearItemsText);
+	act->setEnabled(!results_tbw->selectedRanges().isEmpty());
+
+	if(obj_type == ObjectType::Table)
 	{
-		QMenu item_menu;
-		QAction *act = nullptr;
-		ObjectType obj_type=static_cast<ObjectType>(table_cmb->currentData().toUInt());
+		items_menu.addSeparator();
+		act = fks_menu.menuAction();
+		act->setIcon(browse_tabs_tb->icon());
+		act->setText(tr("Browse tables"));
+		act->setEnabled(browse_tabs_tb->isEnabled());
+		items_menu.addAction(act);
 
-		act = copy_menu.menuAction();
-		act->setIcon(QIcon(GuiUtilsNs::getIconPath("copy")));
-		act->setText(tr("Copy items"));
-		item_menu.addAction(act);
-
-		act = paste_menu.menuAction();
-		act->setIcon(QIcon(GuiUtilsNs::getIconPath("paste")));
-		act->setText(tr("Paste items"));
-		act->setEnabled(paste_tb->isEnabled());
-		item_menu.addAction(act);
-
-		act = item_menu.addAction(QIcon(GuiUtilsNs::getIconPath("cleartext")), tr("Clear items"), this, &DataManipulationForm::clearItemsText);
-		act->setEnabled(!results_tbw->selectedRanges().isEmpty());
-
-		if(obj_type == ObjectType::Table)
-		{
-			item_menu.addSeparator();
-			act = fks_menu.menuAction();
-			act->setIcon(browse_tabs_tb->icon());
-			act->setText(tr("Browse tables"));
-			act->setEnabled(browse_tabs_tb->isEnabled());
-			item_menu.addAction(act);
-
-			item_menu.addSeparator();
-			item_menu.addAction(action_duplicate);
-			item_menu.addAction(action_delete);
-			item_menu.addAction(action_bulk_edit);
-		}
-
-		item_menu.exec(QCursor::pos());
+		items_menu.addSeparator();
+		items_menu.addAction(action_duplicate);
+		items_menu.addAction(action_delete);
+		items_menu.addAction(action_bulk_edit);
 	}
+
+	items_menu.exec(QCursor::pos());
+}
+
+void DataManipulationForm::saveSelectedItems(bool csv_format)
+{
+	QByteArray buffer = csv_format ?
+				SQLExecutionWidget::generateCSVBuffer(results_tbw) :
+				SQLExecutionWidget::generateTextBuffer(results_tbw);
+
+	GuiUtilsNs::selectAndSaveFile(buffer,
+																tr("Save file"),
+																QFileDialog::AnyFile,
+																{ csv_format ? tr("CSV file (*.csv)") :tr("Text file (*.txt)"),	tr("All files (*.*)") },
+																{}, csv_format ? "csv" : "txt");
 }
