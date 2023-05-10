@@ -19,6 +19,7 @@
 #include "linenumberswidget.h"
 #include <QPainter>
 #include <QPaintEvent>
+#include <QTextBlock>
 #include "exception.h"
 
 QColor LineNumbersWidget::font_color=Qt::lightGray;
@@ -41,15 +42,10 @@ LineNumbersWidget::LineNumbersWidget(QPlainTextEdit * parent) : QWidget(parent)
 
 void LineNumbersWidget::drawLineNumbers(int first_line, int line_count, int dy)
 {
-	bool update=(first_line!=this->first_line || line_count != this->line_count);
-
-	if(update)
-	{
-		this->first_line=first_line;
-		this->line_count=line_count;
-		this->dy=dy;
-		this->update();
-	}
+	this->first_line=first_line;
+	this->line_count=line_count;
+	this->dy=dy;
+	this->update();
 }
 
 void LineNumbersWidget::setColors(const QColor &font_color, const QColor &bg_color)
@@ -61,29 +57,39 @@ void LineNumbersWidget::setColors(const QColor &font_color, const QColor &bg_col
 void LineNumbersWidget::paintEvent(QPaintEvent *event)
 {
 	QPainter painter(this);
-	int y = dy, height = 0, fs_line = 0,	ls_line = 0,
+	int y = dy, height = 0,
 			last_line=first_line + line_count;
 	QFont font = painter.font();
 	QTextCursor cursor = parent_edt->textCursor();
-
-	if(cursor.hasSelection())
-	{
-		QTextCursor start = cursor,	end = cursor;
-		start.setPosition(cursor.selectionStart(), QTextCursor::MoveAnchor);
-		fs_line = start.blockNumber();
-		end.setPosition(cursor.selectionEnd(), QTextCursor::KeepAnchor);
-		ls_line = end.blockNumber();
-	}
 
 	//Repaint the widget to clear previous drawn numbers
 	painter.fillRect(event->rect(), bg_color);
 	painter.setPen(font_color);
 
+	QTextCursor aux_cur;
+	QTextBlock block;
+	int blk_num = 0, prev_blk_num = -1;
+	QString lin_str;
+
 	//Draw line numbers
 	for(int lin = first_line; lin < last_line; lin++)
 	{
-		if((lin-1 == cursor.blockNumber()) ||
-			 (cursor.hasSelection() && lin-1 >= fs_line && lin-1 <= ls_line))
+		aux_cur = parent_edt->cursorForPosition(QPoint(0, y));
+		block = aux_cur.block();
+		blk_num = block.blockNumber();
+
+		if(blk_num != prev_blk_num)
+		{
+			lin_str = QString::number(blk_num + 1);
+			prev_blk_num = blk_num;
+		}
+		else
+			lin_str = "↪";
+
+		if(cursor.blockNumber() == aux_cur.blockNumber() ||
+			 (cursor.hasSelection() &&
+				aux_cur.position() >= cursor.selectionStart() &&
+				aux_cur.position() <= cursor.selectionEnd()))
 			font.setBold(true);
 		else
 			font.setBold(false);
@@ -101,8 +107,8 @@ void LineNumbersWidget::paintEvent(QPaintEvent *event)
 		else
 			painter.setPen(font_color);
 
-		painter.drawText(0, y, this->width(), height, Qt::AlignHCenter, QString::number(lin));
-		y+=height;
+		painter.drawText(0, y, this->width(), height, Qt::AlignHCenter, lin_str);
+		y += height;
 	}
 }
 

@@ -572,9 +572,10 @@ void NumberedTextEditor::updateLineNumbers()
 	{
 		if(block.isVisible())
 		{
-			line_count++;
-			if(first_line==0)
-				first_line=static_cast<unsigned>(block_number + 1);
+			line_count += block.lineCount();
+
+			if(first_line == 0)
+				first_line = static_cast<unsigned>(block_number + 1);
 		}
 
 		block = block.next();
