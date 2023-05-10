@@ -1383,6 +1383,9 @@
           <height>0</height>
          </size>
         </property>
+        <property name="toolTip">
+         <string>Copy / save the selected items</string>
+        </property>
         <property name="text">
          <string>Selection</string>
         </property>
