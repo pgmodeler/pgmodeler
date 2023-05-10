@@ -1015,6 +1015,10 @@ void PgModelerCliApp::extractObjectXML()
 	//Active layers
 	attr_start = attr_end;
 	attr_end = aux_buf.indexOf(Attributes::LayerNameColors, attr_start);
+
+	if(attr_end < 0)
+		attr_end = aux_buf.indexOf(">", attr_start);
+
 	active_layers = aux_buf.mid(attr_start, attr_end - attr_start);
 	active_layers.remove(QRegularExpression(attr_expr.arg(Attributes::ActiveLayers)));
 	active_layers.remove('"');
@@ -1027,12 +1031,12 @@ void PgModelerCliApp::extractObjectXML()
 	buf.remove(0, dbm_start);
 
 	//Checking if the header ends on a role declaration
-	QRegularExpression role_regexp = QRegularExpression(QString("<%1").arg(Attributes::Role));
-	end = buf.indexOf(role_regexp);
+	start = buf.indexOf(QString("<%1").arg(Attributes::Role)),
+	end = buf.lastIndexOf(QString("/%1>").arg(Attributes::Role));
 
 	// If we found role declarations we clear the header until there
-	if(end >= 0)
-		buf.remove(0, end);
+	if(start >= 0 && end > start)
+		buf.remove(0, start);
 	else
 		// Instead, we clear the header until the starting of database declaration
 		buf.remove(0, buf.indexOf(QString("<%1").arg(Attributes::Database)));
