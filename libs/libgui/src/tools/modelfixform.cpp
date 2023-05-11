@@ -164,8 +164,7 @@ void ModelFixForm::cancelFix()
 	cancel_btn->setEnabled(false);
 	pgmodeler_cli_proc.terminate();
 	pgmodeler_cli_proc.waitForFinished();
-	output_txt->insertPlainText(QString("\n%1\n").arg(tr("** Process cancelled by the user!")));
-	output_txt->moveCursor(QTextCursor::End);
+	output_txt->append(QString("\n%1\n").arg(tr("** Process cancelled by the user!")));
 	enableFixOptions(true);
 }
 
@@ -200,10 +199,7 @@ void ModelFixForm::updateOutput()
 		}
 	}
 
-	output_txt->insertPlainText(txt);
-
-	//Moving the output to the last line
-	output_txt->moveCursor(QTextCursor::End);
+	output_txt->append(txt.trimmed());
 }
 
 void ModelFixForm::handleProcessFinish(int res)
