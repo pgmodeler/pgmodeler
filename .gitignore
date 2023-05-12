@@ -28,6 +28,7 @@ moc/*
 obj/*
 plugins
 plugins/*
+priv-plugins
 priv-plugins/*
 release/*
 apps/pgmodeler/build/*
