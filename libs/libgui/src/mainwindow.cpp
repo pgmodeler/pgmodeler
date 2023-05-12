@@ -29,6 +29,8 @@ int MainWindow::ToolsActionsCount=0;
 MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(parent, flags)
 {
 	setupUi(this);
+	setAcceptDrops(true);
+
 	pending_op = NoPendingOp;
 	welcome_wgt = nullptr;
 	window_title = this->windowTitle() + " " + GlobalAttributes::PgModelerVersion;
@@ -136,6 +138,45 @@ MainWindow::~MainWindow()
 	delete restoration_form;
 	delete overview_wgt;
 	delete configuration_form;
+}
+
+void MainWindow::dragEnterEvent(QDragEnterEvent *event)
+{
+	if(!event->mimeData()->hasUrls())
+	{
+		event->ignore();
+		return;
+	}
+
+	for(auto &url : event->mimeData()->urls())
+	{
+		if(!url.toLocalFile().endsWith(GlobalAttributes::DbModelExt, Qt::CaseInsensitive))
+		{
+			event->ignore();
+			return;
+		}
+	}
+
+	event->accept();
+}
+
+void MainWindow::dropEvent(QDropEvent *event)
+{
+	if(event->mimeData()->hasUrls())
+	{
+		QStringList dbm_files;
+		QString file;
+
+		for(auto &url : event->mimeData()->urls())
+		{
+			file = url.toLocalFile();
+
+			if(file.endsWith(GlobalAttributes::DbModelExt, Qt::CaseInsensitive))
+				dbm_files.append(file);
+		}
+
+		loadModels(dbm_files);
+	}
 }
 
 void MainWindow::configureMenusActionsWidgets()
@@ -1922,6 +1963,9 @@ void MainWindow::loadModel(const QString &filename)
 
 void MainWindow::loadModels(const QStringList &files)
 {
+	if(files.isEmpty())
+		return;
+
 	int i = -1;
 
 	try

@@ -202,6 +202,10 @@ class __libgui MainWindow: public QMainWindow, public Ui::MainWindow {
 
 		void setPluginsActions(ModelWidget *model_wgt);
 
+		void dragEnterEvent(QDragEnterEvent *event);
+
+		void dropEvent(QDropEvent *event);
+
 	public:
 		enum MWViewsId {
 			WelcomeView,
