@@ -24,6 +24,10 @@
 
 	%if {password} %then [ password=] "{password}" %end
 
+	%if {role} %then
+		{spc} role="{role}"
+	%end
+
 	[ connection-timeout=] "{connection-timeout}"
 
 	{spc} [sslmode=] "{sslmode}"

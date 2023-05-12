@@ -56,6 +56,9 @@ class __libgui DataManipulationForm: public QDialog, public Ui::DataManipulation
 
 		//! \brief Store the template connection params to be used by catalogs and command execution connections
 		attribs_map tmpl_conn_params;
+
+		//! \brief Store the template role to be used by catalogs and command execution connections
+		QString tmpl_conn_role;
 		
 		//! \brief Current editing table columns names
 		QStringList col_names,

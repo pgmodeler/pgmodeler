@@ -2119,7 +2119,7 @@ QString DatabaseExplorerWidget::getObjectSource(BaseObject *object, DatabaseMode
 void DatabaseExplorerWidget::openDataGrid(const QString &schema, const QString &table, bool hide_views)
 {
 	DataManipulationForm *data_manip=new DataManipulationForm;
-	Connection conn=Connection(this->connection.getConnectionParams());
+	Connection conn=Connection(this->connection.getConnectionParams(), this->connection.getRole());
 
 	data_manip->setWindowModality(Qt::NonModal);
 	data_manip->setAttribute(Qt::WA_DeleteOnClose, true);

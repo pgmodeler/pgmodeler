@@ -251,6 +251,26 @@
           <property name="spacing">
            <number>5</number>
           </property>
+          <item row="6" column="1">
+           <widget class="QLineEdit" name="role_edt">
+            <property name="toolTip">
+             <string>Set user identifier of current SQL session by &lt;strong&gt;SET ROLE&lt;/strong&gt;, permissions checking for SQL commands is carried out as though the name role were the one that had logged originally.</string>
+            </property>
+           </widget>
+          </item>
+          <item row="6" column="0">
+           <widget class="QLabel" name="role_lbl">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="text">
+             <string>Role:</string>
+            </property>
+           </widget>
+          </item>
           <item row="5" column="0">
            <widget class="QLabel" name="timeout_lbl">
             <property name="sizePolicy">
@@ -264,7 +284,7 @@
             </property>
            </widget>
           </item>
-          <item row="9" column="0" colspan="2">
+          <item row="10" column="0" colspan="2">
            <layout class="QHBoxLayout" name="horizontalLayout_2">
             <property name="spacing">
              <number>5</number>
@@ -432,7 +452,7 @@
             </item>
            </layout>
           </item>
-          <item row="7" column="0">
+          <item row="8" column="0">
            <widget class="QLabel" name="options_lbl_2">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
@@ -529,7 +549,7 @@
             </property>
            </widget>
           </item>
-          <item row="6" column="0">
+          <item row="7" column="0">
            <widget class="QLabel" name="other_params_lbl">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
@@ -542,7 +562,7 @@
             </property>
            </widget>
           </item>
-          <item row="6" column="1">
+          <item row="7" column="1">
            <layout class="QHBoxLayout" name="horizontalLayout_9">
             <property name="spacing">
              <number>5</number>
@@ -605,7 +625,7 @@
             </property>
            </widget>
           </item>
-          <item row="7" column="1">
+          <item row="8" column="1">
            <layout class="QHBoxLayout" name="horizontalLayout_5">
             <property name="spacing">
              <number>5</number>
@@ -695,7 +715,7 @@
             </item>
            </layout>
           </item>
-          <item row="10" column="0">
+          <item row="11" column="0">
            <spacer name="verticalSpacer">
             <property name="orientation">
              <enum>Qt::Vertical</enum>
@@ -708,7 +728,7 @@
             </property>
            </spacer>
           </item>
-          <item row="8" column="0">
+          <item row="9" column="0">
            <spacer name="verticalSpacer_3">
             <property name="orientation">
              <enum>Qt::Vertical</enum>
@@ -998,7 +1018,7 @@
             </property>
            </widget>
           </item>
-          <item row="6" column="1">
+          <item row="7" column="1">
            <spacer name="verticalSpacer_2">
             <property name="orientation">
              <enum>Qt::Vertical</enum>

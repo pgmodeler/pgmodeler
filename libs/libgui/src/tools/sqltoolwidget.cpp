@@ -454,7 +454,7 @@ void SQLToolWidget::dropDatabase(int database_idx)
 	Messagebox msg_box;
 	QString dbname = database_cmb->itemText(database_idx),
 			maintanance_db = tmpl_conn->getConnectionParam(Connection::ParamDbName);
-	Connection conn = Connection(tmpl_conn->getConnectionParams());
+	Connection conn = Connection(tmpl_conn->getConnectionParams(), tmpl_conn->getRole());
 
 	msg_box.show(tr("Warning"),
 				 tr("<strong>CAUTION:</strong> You are about to drop the entire database <strong>%1</strong> from the server <strong>%2</strong>! All data will be completely wiped out. Do you really want to proceed?")

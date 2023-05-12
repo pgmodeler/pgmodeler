@@ -220,6 +220,8 @@ void DataManipulationForm::setAttributes(Connection conn, const QString curr_sch
 	{
 		tmpl_conn_params=conn.getConnectionParams();
 
+		tmpl_conn_role=conn.getRole();
+
 		tmpl_window_title = windowTitle() + QString(" - %1") + conn.getConnectionId(true, true);
 		setWindowTitle(tmpl_window_title.arg(""));
 
@@ -321,7 +323,7 @@ void DataManipulationForm::listTables()
 void DataManipulationForm::listColumns()
 {
 	Catalog catalog;
-	Connection conn=Connection(tmpl_conn_params);
+	Connection conn=Connection(tmpl_conn_params, tmpl_conn_role);
 
 	try
 	{
@@ -364,8 +366,8 @@ void DataManipulationForm::retrieveData()
 
 	Messagebox msg_box;
 	Catalog catalog;
-	Connection conn_sql=Connection(tmpl_conn_params),
-			conn_cat=Connection(tmpl_conn_params);
+	Connection conn_sql=Connection(tmpl_conn_params, tmpl_conn_role),
+			conn_cat=Connection(tmpl_conn_params, tmpl_conn_role);
 
 	try
 	{
@@ -759,7 +761,7 @@ void DataManipulationForm::changeOrderMode(QListWidgetItem *item)
 void DataManipulationForm::listObjects(QComboBox *combo, std::vector<ObjectType> obj_types, const QString &schema)
 {
 	Catalog catalog;
-	Connection conn=Connection(tmpl_conn_params);
+	Connection conn=Connection(tmpl_conn_params, tmpl_conn_role);
 
 	try
 	{
@@ -816,7 +818,7 @@ void DataManipulationForm::listObjects(QComboBox *combo, std::vector<ObjectType>
 void DataManipulationForm::retrievePKColumns(const QString &schema, const QString &table)
 {
 	Catalog catalog;
-	Connection conn=Connection(tmpl_conn_params);
+	Connection conn=Connection(tmpl_conn_params, tmpl_conn_role);
 
 	try
 	{
@@ -880,7 +882,7 @@ void DataManipulationForm::retrievePKColumns(const QString &schema, const QStrin
 void DataManipulationForm::retrieveFKColumns(const QString &schema, const QString &table)
 {
 	Catalog catalog;
-	Connection conn=Connection(tmpl_conn_params);
+	Connection conn=Connection(tmpl_conn_params, tmpl_conn_role);
 
 	try
 	{
@@ -1262,7 +1264,7 @@ void DataManipulationForm::browseTable(const QString &fk_name, bool browse_ref_t
 {
 	QString value, schema, table;
 	DataManipulationForm *data_manip = new DataManipulationForm;
-	Connection conn = Connection(tmpl_conn_params);
+	Connection conn = Connection(tmpl_conn_params, tmpl_conn_role);
 	QStringList filter, src_cols, ref_cols;
 
 	if(browse_ref_tab)
@@ -1383,7 +1385,7 @@ void DataManipulationForm::saveChanges()
 				 Messagebox::AlertIcon, Messagebox::OkButton);
 #else
 	int row=0;
-	Connection conn=Connection(tmpl_conn_params);
+	Connection conn=Connection(tmpl_conn_params, tmpl_conn_role);
 
 	try
 	{
@@ -1619,7 +1621,7 @@ void DataManipulationForm::truncateTable()
 		QAction *act = dynamic_cast<QAction *>(sender());
 
 		if(DatabaseExplorerWidget::truncateTable(schema_cmb->currentText(), table_cmb->currentText(),
-																						 act->data().toBool(), Connection(tmpl_conn_params)))
+																						 act->data().toBool(), Connection(tmpl_conn_params, tmpl_conn_role)))
 			retrieveData();
 	}
 	catch(Exception &e)
@@ -1651,7 +1653,7 @@ void DataManipulationForm::toggleColumnDisplay(QListWidgetItem *item)
 void DataManipulationForm::openNewWindow()
 {
 	DataManipulationForm *data_manip = new DataManipulationForm;
-	data_manip->setAttributes(tmpl_conn_params, "");
+	data_manip->setAttributes(Connection(tmpl_conn_params, tmpl_conn_role), "");
 	data_manip->show();
 }
 

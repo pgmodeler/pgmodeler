@@ -123,6 +123,8 @@ void ConnectionsConfigWidget::loadConfiguration()
 			conn->setConnectionParam(Connection::ParamKerberosServer, itr.second[Connection::ParamKerberosServer]);
 			conn->setConnectionParam(Connection::ParamOthers, itr.second[Connection::ParamOthers]);
 
+			conn->setRole(itr.second[Attributes::Role]);
+
 			conn->setAutoBrowseDB(itr.second[Attributes::AutoBrowseDb]==Attributes::True);
 			conn->setDefaultForOperation(Connection::OpDiff, itr.second[DefaultFor.arg(Attributes::Diff)]==Attributes::True);
 			conn->setDefaultForOperation(Connection::OpExport, itr.second[DefaultFor.arg(Attributes::Export)]==Attributes::True);
@@ -174,6 +176,7 @@ void ConnectionsConfigWidget::newConnection()
 	host_edt->clear();
 	port_sbp->setValue(5432);
 	passwd_edt->clear();
+	role_edt->clear();
 	other_params_edt->clear();
 
 	auto_browse_chk->setChecked(false);
@@ -300,6 +303,7 @@ void ConnectionsConfigWidget::editConnection()
 		conn_db_edt->setText(conn->getConnectionParam(Connection::ParamDbName));
 		user_edt->setText(conn->getConnectionParam(Connection::ParamUser));
 		passwd_edt->setText(conn->getConnectionParam(Connection::ParamPassword));
+		role_edt->setText(conn->getRole());
 		port_sbp->setValue(conn->getConnectionParam(Connection::ParamPort).toInt());
 		timeout_sbp->setValue(conn->getConnectionParam(Connection::ParamConnTimeout).toInt());
 
@@ -362,6 +366,8 @@ void ConnectionsConfigWidget::configureConnection(Connection *conn, bool is_upda
 		conn->setConnectionParam(Connection::ParamPassword, passwd_edt->text());
 		conn->setConnectionParam(Connection::ParamDbName, conn_db_edt->text());
 		conn->setConnectionParam(Connection::ParamConnTimeout, QString("%1").arg(timeout_sbp->value()));
+
+		conn->setRole(role_edt->text());
 
 		conn->setDefaultForOperation(Connection::OpDiff, diff_chk->isChecked());
 		conn->setDefaultForOperation(Connection::OpExport, export_chk->isChecked());
@@ -491,6 +497,8 @@ void ConnectionsConfigWidget::saveConfiguration()
 				attribs[Attributes::Alias]=attribs[Connection::ParamAlias];
 				attribs[Attributes::AutoBrowseDb]=(conn->isAutoBrowseDB() ? Attributes::True : "");
 				attribs[Attributes::ConnectionTimeout]=attribs[Connection::ParamConnTimeout];
+
+                attribs[Attributes::Role]=conn->getRole();
 
 				attribs[DefaultFor.arg(Attributes::Export)]=(conn->isDefaultForOperation(Connection::OpExport) ? Attributes::True : "");
 				attribs[DefaultFor.arg(Attributes::Import)]=(conn->isDefaultForOperation(Connection::OpImport) ? Attributes::True : "");

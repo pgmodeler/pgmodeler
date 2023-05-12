@@ -10,6 +10,7 @@
 <!ATTLIST connection port CDATA #REQUIRED>
 <!ATTLIST connection user CDATA #REQUIRED>
 <!ATTLIST connection password CDATA #IMPLIED>
+<!ATTLIST connection role CDATA #IMPLIED>
 <!ATTLIST connection connection-timeout CDATA #IMPLIED>
 <!ATTLIST connection options CDATA #IMPLIED>
 <!ATTLIST connection sslmode (disable|allow|prefer|require|verify-ca|verify-full) "disable">

@@ -40,6 +40,7 @@ void DatabaseImportHelper::setConnection(Connection &conn)
 	try
 	{
 		connection.setConnectionParams(conn.getConnectionParams());
+		connection.setRole(conn.getRole());
 		catalog.setConnection(connection);
 	}
 	catch(Exception &e)

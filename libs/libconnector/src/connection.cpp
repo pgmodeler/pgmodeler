@@ -69,16 +69,20 @@ Connection::Connection()
 		default_for_oper[idx]=false;
 
 	setConnectionParam(ParamApplicationName, GlobalAttributes::PgModelerAppName);
+
+	role="";
 }
 
 Connection::Connection(const Connection &conn) : Connection()
 {
    setConnectionParams(conn.getConnectionParams());
+   setRole(conn.getRole());
 }
 
-Connection::Connection(const attribs_map &params) : Connection()
+Connection::Connection(const attribs_map &params, const QString &current_role) : Connection()
 {
 	setConnectionParams(params);
+	setRole(current_role);
 }
 
 Connection::~Connection()
@@ -118,6 +122,11 @@ void Connection::setConnectionParam(const QString &param, const QString &value)
 
 	//Updates the connection string
 	generateConnectionString();
+}
+
+void Connection::setRole(const QString &current_role)
+{
+    role=current_role;
 }
 
 void Connection::setConnectionParams(const attribs_map &params)
@@ -236,6 +245,7 @@ bool Connection::isDbVersionIgnored()
 
 void Connection::connect()
 {
+	PGresult *sql_res=nullptr;
 	/* If the connection string is not established indicates that the user
 		is trying to connect without configuring connection parameters,
 		thus an error is raised */
@@ -286,6 +296,33 @@ void Connection::connect()
 										ErrorCode::UnsupportedPGVersion,
 										__PRETTY_FUNCTION__, __FILE__, __LINE__);
 	}
+
+    if(!role.isEmpty())
+    {
+        //Set current user role according current role papameter
+        QString sql = QString("SET ROLE '%1'").arg(role);
+        sql_res=PQexec(connection,sql.toStdString().c_str());
+
+    	//Prints the SQL to stdout when the flag is active
+    	if(print_sql)
+    	{
+    		QTextStream out(stdout);
+    		out << QString("\n---\n") << sql << Qt::endl;
+    	}
+
+        //Raise an error in case the command sql execution is not sucessful
+        if(strlen(PQerrorMessage(connection))>0)
+        {
+            PQclear(sql_res);
+
+            throw Exception(Exception::getErrorMessage(ErrorCode::SQLCommandNotExecuted)
+                            .arg(PQerrorMessage(connection)),
+                            ErrorCode::SQLCommandNotExecuted, __PRETTY_FUNCTION__, __FILE__, __LINE__, nullptr,
+                            QString(PQresultErrorField(sql_res, PG_DIAG_SQLSTATE)));
+        }
+    }
+
+    PQclear(sql_res);
 }
 
 void Connection::close()
@@ -319,6 +356,11 @@ QString Connection::getConnectionParam(const QString &param)
 attribs_map Connection::getConnectionParams() const
 {
 	return connection_params;
+}
+
+QString Connection::getRole(void) const
+{
+    return role;
 }
 
 attribs_map Connection::getServerInfo()
@@ -556,6 +598,7 @@ void Connection::operator = (const Connection &conn)
 
 	this->auto_browse_db=conn.auto_browse_db;
 	this->connection_params=conn.connection_params;
+	this->role=conn.role;
 	this->connection_str=conn.connection_str;
 	this->connection=nullptr;
 

@@ -100,6 +100,7 @@ void Catalog::setConnection(Connection &conn)
 
 		connection.close();
 		connection.setConnectionParams(conn.getConnectionParams());
+		connection.setRole(conn.getRole());
 		connection.connect();
 
 		//Retrieving the last system oid
@@ -1244,6 +1245,7 @@ void Catalog::operator = (const Catalog &catalog)
 		this->ext_objects=catalog.ext_objects;
 		this->ext_objs_oids=catalog.ext_objs_oids;
 		this->connection.setConnectionParams(catalog.connection.getConnectionParams());
+		this->connection.setRole(catalog.connection.getRole());
 		this->last_sys_oid=catalog.last_sys_oid;
 		this->filter=catalog.filter;
 		this->exclude_ext_objs=catalog.exclude_ext_objs;

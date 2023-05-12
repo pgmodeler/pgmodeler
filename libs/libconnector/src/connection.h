@@ -42,6 +42,9 @@ class __libconnector Connection {
 		//! \brief Formated connection string
 		QString connection_str;
 
+		//! \brief Stores role used to set as current_role on connection establish
+		QString role;
+
 		/*! \brief Date-time value used to check the timeout between commands execution.
 		This attribute is used to abort the command execution to avoid program crashes
 		if the connection is closed by the server due to timeouts */
@@ -139,7 +142,7 @@ class __libconnector Connection {
 
 		Connection();
 		Connection(const Connection &);
-		Connection(const attribs_map &params);
+		Connection(const attribs_map &params, const QString &current_role);
 		~Connection();
 
 		/*! \brief Set the maximum timeout that a connectio can be idle (without running commands)
@@ -179,6 +182,9 @@ class __libconnector Connection {
 		 the connection to the database */
 		void setConnectionParam(const QString &param, const QString &value);
 
+		//! \brief Sets role for the connection
+		void setRole(const QString &current_role);
+
 		//! \brief Sets all the connection parameters at once
 		void setConnectionParams(const attribs_map &params);
 
@@ -199,6 +205,9 @@ class __libconnector Connection {
 
 		//! \brief Returns the value of specified parameter name
 		QString getConnectionParam(const QString &param);
+
+		//! \brief Returns the role used for connection
+		QString getRole(void) const;
 
 		//! \brief Returns the full parameter map
 		attribs_map getConnectionParams(void) const;

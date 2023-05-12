@@ -55,7 +55,7 @@ void SQLExecutionHelper::executeCommand()
 	{
 		ResultSet res;
 		Catalog catalog;
-		Connection aux_conn = Connection(connection.getConnectionParams());
+		Connection aux_conn = Connection(connection.getConnectionParams(), connection.getRole());
 
 		catalog.setConnection(aux_conn);
 		result_model = nullptr;
