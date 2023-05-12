@@ -26,6 +26,8 @@
 
 	[ connection-timeout=] "{connection-timeout}"
 
+	%if {setrole} %then [ setrole=] "&{setrole}" %end
+
 	{spc} [sslmode=] "{sslmode}"
 
 	%if {sslcert} %then {spc} [sslcert=] "&{sslcert}" %end

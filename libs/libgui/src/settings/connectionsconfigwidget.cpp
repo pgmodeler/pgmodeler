@@ -122,6 +122,7 @@ void ConnectionsConfigWidget::loadConfiguration()
 			conn->setConnectionParam(Connection::ParamLibGssapi, itr.second[Connection::ParamLibGssapi]);
 			conn->setConnectionParam(Connection::ParamKerberosServer, itr.second[Connection::ParamKerberosServer]);
 			conn->setConnectionParam(Connection::ParamOthers, itr.second[Connection::ParamOthers]);
+			conn->setConnectionParam(Connection::ParamSetRole, itr.second[Connection::ParamSetRole]);
 
 			conn->setAutoBrowseDB(itr.second[Attributes::AutoBrowseDb]==Attributes::True);
 			conn->setDefaultForOperation(Connection::OpDiff, itr.second[DefaultFor.arg(Attributes::Diff)]==Attributes::True);
@@ -306,6 +307,7 @@ void ConnectionsConfigWidget::editConnection()
 		krb_server_edt->setText(conn->getConnectionParam(Connection::ParamKerberosServer));
 		gssapi_auth_chk->setChecked(conn->getConnectionParam(Connection::ParamLibGssapi)=="gssapi");
 		other_params_edt->setText(conn->getConnectionParam(Connection::ParamOthers));
+		set_role_edt->setText(conn->getConnectionParam(Connection::ParamSetRole));
 
 		if(conn->getConnectionParam(Connection::ParamSslMode)==Connection::SslDisable)
 			ssl_mode_cmb->setCurrentIndex(0);
@@ -399,11 +401,9 @@ void ConnectionsConfigWidget::configureConnection(Connection *conn, bool is_upda
 		if(gssapi_auth_chk->isChecked())
 			conn->setConnectionParam(Connection::ParamLibGssapi, "gssapi");
 
-		if(!krb_server_edt->text().isEmpty())
-			conn->setConnectionParam(Connection::ParamKerberosServer, krb_server_edt->text());
-
-		if(!other_params_edt->text().isEmpty())
-			conn->setConnectionParam(Connection::ParamOthers, other_params_edt->text());
+		conn->setConnectionParam(Connection::ParamKerberosServer, krb_server_edt->text());
+		conn->setConnectionParam(Connection::ParamOthers, other_params_edt->text());
+		conn->setConnectionParam(Connection::ParamSetRole, set_role_edt->text());
 	}
 }
 

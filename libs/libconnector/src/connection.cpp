@@ -47,6 +47,7 @@ const QString Connection::ParamSslRootCert("sslrootcert");
 const QString Connection::ParamSslCrl("sslcrl");
 const QString Connection::ParamKerberosServer("krbsrvname");
 const QString Connection::ParamLibGssapi("gsslib");
+const QString Connection::ParamSetRole("setrole");
 
 const QString Connection::ServerPid("server-pid");
 const QString Connection::ServerProtocol("server-protocol");
@@ -140,25 +141,24 @@ void Connection::generateConnectionString()
 
 	for(auto &itr : connection_params)
 	{
-		if(itr.first!=ParamAlias)
+		if(itr.first == ParamAlias || itr.first == ParamSetRole)
+			continue;
+
+		value=itr.second;
+		value.replace("\\","\\\\");
+		value.replace("'","\\'");
+
+		if(itr.first==ParamPassword && (value.contains(' ') || value.isEmpty()))
+			value=QString("'%1'").arg(value);
+
+		if(!value.isEmpty())
 		{
-			value=itr.second;
-
-			value.replace("\\","\\\\");
-			value.replace("'","\\'");
-
-			if(itr.first==ParamPassword && (value.contains(' ') || value.isEmpty()))
-				value=QString("'%1'").arg(value);
-
-			if(!value.isEmpty())
-			{
-				if(itr.first==ParamDbName)
-					connection_str.prepend(param_str.arg(itr.first).arg(value));
-				else if(itr.first!=ParamOthers)
-					connection_str+=param_str.arg(itr.first).arg(value);
-				else
-					connection_str+=value;
-			}
+			if(itr.first == ParamDbName)
+				connection_str.prepend(param_str.arg(itr.first, value));
+			else if(itr.first != ParamOthers)
+				connection_str += param_str.arg(itr.first, value);
+			else
+				connection_str += value;
 		}
 	}
 
@@ -255,8 +255,8 @@ void Connection::connect()
 	}
 
 	//Try to connect to the database
-	connection=PQconnectdb(connection_str.toStdString().c_str());
-	last_cmd_execution=QDateTime::currentDateTime();
+	connection = PQconnectdb(connection_str.toStdString().c_str());
+	last_cmd_execution = QDateTime::currentDateTime();
 
 	/* If the connection descriptor has not been allocated or if the connection state
 		is CONNECTION_BAD it indicates that the connection was not successful */
@@ -286,6 +286,10 @@ void Connection::connect()
 										ErrorCode::UnsupportedPGVersion,
 										__PRETTY_FUNCTION__, __FILE__, __LINE__);
 	}
+
+	// Switching to another role if the related parameter is set
+	if(!connection_params[ParamSetRole].isEmpty())
+		executeDDLCommand(QString("SET ROLE '%1'").arg(connection_params[ParamSetRole]));
 }
 
 void Connection::close()
