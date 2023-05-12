@@ -202,6 +202,12 @@ class __libgui MainWindow: public QMainWindow, public Ui::MainWindow {
 
 		void setPluginsActions(ModelWidget *model_wgt);
 
+        /*! \brief Handle dragEnter event for catching file drop*/
+        void dragEnterEvent(QDragEnterEvent *event);
+
+        /*! \brief Handle drop event for catching file drop*/
+        void dropEvent(QDropEvent *event);
+
 	public:
 		enum MWViewsId {
 			WelcomeView,
