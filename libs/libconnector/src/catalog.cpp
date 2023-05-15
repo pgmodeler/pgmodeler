@@ -529,7 +529,7 @@ void Catalog::executeCatalogQuery(const QString &qry_type, ObjectType obj_type, 
 	}
 }
 
-unsigned Catalog::getObjectCount(ObjectType obj_type, const QString &sch_name, const QString &tab_name, attribs_map extra_attribs)
+/*unsigned Catalog::getObjectCount(ObjectType obj_type, const QString &sch_name, const QString &tab_name, attribs_map extra_attribs)
 {
 	try
 	{
@@ -541,6 +541,46 @@ unsigned Catalog::getObjectCount(ObjectType obj_type, const QString &sch_name, c
 		executeCatalogQuery(QueryList, obj_type, res, false, extra_attribs);
 		res.accessTuple(ResultSet::FirstTuple);
 		return res.getTupleCount();
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
+} */
+
+unsigned Catalog::getObjectsCount(std::vector<ObjectType> obj_types, bool incl_sys_objs, const QString &sch_name, const QString &tab_name, attribs_map extra_attribs)
+{
+	try
+	{
+		QStringList queries;
+		QString sql;
+
+		if(!incl_sys_objs)
+			extra_attribs[Attributes::LastSysOid] = QString::number(last_sys_oid);
+
+		extra_attribs[Attributes::Schema] = sch_name;
+		extra_attribs[Attributes::Table] = tab_name;
+
+		for(auto &obj_type : obj_types)
+		{
+			//Build the catalog query for the specified object type
+			sql = getCatalogQuery(QueryList, obj_type, false, extra_attribs);
+			sql.remove(sql.indexOf("SELECT"), sql.indexOf("FROM"));
+
+			// Removing the selected colums and instead injecting a count(oid)
+			sql.prepend(QString("SELECT count(%1) ").arg(oid_fields[obj_type]));
+			queries.append(sql);
+		}
+
+		sql = QString("SELECT (") +  queries.join(") + (") + QChar(')');
+
+		ResultSet res;
+		connection.executeDMLCommand(sql, res);
+
+		if(res.accessTuple(ResultSet::FirstTuple))
+			return QString(res.getColumnValue(0)).toUInt();
+
+		return 0;
 	}
 	catch(Exception &e)
 	{
@@ -1006,7 +1046,7 @@ attribs_map Catalog::getServerAttributes()
 	return attribs;
 }
 
-unsigned Catalog::getObjectCount(bool incl_sys_objs)
+/* unsigned Catalog::getObjectCount(bool incl_sys_objs)
 {
 	unsigned count = 0;
 
@@ -1034,11 +1074,11 @@ unsigned Catalog::getObjectCount(bool incl_sys_objs)
 	catch(Exception &e)
 	{
 		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e,
-						QApplication::translate("Catalog","Object type: server","", -1));
+						QApplication::translate("Catalog", QString("catalog: %1").arg(Attributes::ObjCount).toStdString().c_str(), "", -1));
 	}
 
 	return count;
-}
+} */
 
 QStringList Catalog::parseArrayValues(const QString &array_val)
 {

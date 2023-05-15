@@ -453,7 +453,11 @@ void DatabaseImportForm::listObjects()
 																			objs_filter_wgt->isOnlyMatching(),
 																			objs_filter_wgt->isMatchSignature(),
 																			objs_filter_wgt->getForceObjectsFilter());
-			if(obj_filter.isEmpty() && import_helper->getCatalog().getObjectCount(false) > ObjectCountThreshould)
+			if(obj_filter.isEmpty() &&
+				 import_helper->getCatalog().getObjectsCount({ ObjectType::Table, ObjectType::ForeignTable,
+																											 ObjectType::View, ObjectType::Index,
+																											 ObjectType::Type, ObjectType::Function,
+																											 ObjectType::Procedure }, false) > ObjectCountThreshould)
 			{
 				Messagebox msgbox;
 				msgbox.show(tr("The selected database seems to have a huge amount of objects! \

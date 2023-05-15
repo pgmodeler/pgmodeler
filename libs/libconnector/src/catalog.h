@@ -217,9 +217,14 @@ class __libconnector Catalog {
 		 * in the second parameter. */
 		bool isExtensionObject(unsigned oid, const QString &ext_name = "");
 
-		/*! \brief Returns the count for the specified object type. A schema name can be specified
-		in order to filter only objects of the specifed schema */
-		unsigned getObjectCount(ObjectType obj_type, const QString &sch_name="", const QString &tab_name="", attribs_map extra_attribs=attribs_map());
+		/*! \brief Returns the count for the specified object types. A schema name can be specified
+		 * in order to filter only objects of the specifed schema. The parameter incl_sys_objs
+		 * indicates if the system object need to be included in the resulting counting. */
+		unsigned getObjectsCount(std::vector<ObjectType> types, bool incl_sys_objs, const QString &sch_name = "", const QString &tab_name = "", attribs_map extra_attribs = attribs_map());
+
+		/*! \brief This special method returns the amount of object in pg_class table.
+		 * The parameter incl_sys_objs will also count the system objects not only used created ones */
+		//unsigned getObjectCount(bool incl_sys_objs);
 
 		//! \brief Returns the current filter configuration for the catalog queries
 		QueryFilter getQueryFilter();
@@ -266,10 +271,6 @@ class __libconnector Catalog {
 
 		//! \brief This special method returns some server's attributes read from pg_settings
 		attribs_map getServerAttributes();
-
-		/*! \brief This special method returns the amount of object in pg_class table.
-		 * The parameter incl_sys_objs will also count the system objects not only used created ones */
-		unsigned getObjectCount(bool incl_sys_objs);
 
 		//! \brief Parse a PostgreSQL array value and return the elements in a string list
 		static QStringList parseArrayValues(const QString &array_val);
