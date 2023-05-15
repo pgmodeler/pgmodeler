@@ -37,6 +37,11 @@
 class __libgui AppearanceConfigWidget: public BaseConfigWidget, public Ui::AppearanceConfigWidget  {
 	private:
 		Q_OBJECT
+
+		/*! \brief This palette instance holds the current system palette. It is used
+		 * to detect if the system uses dark or light theme and helps pgModeler to
+		 * determine the proper colors when user used System default theme setting */
+		static QPalette system_pal;
 		
 		//! \brief Holds the currently loaded config params
 		static std::map<QString, attribs_map> config_params;
@@ -120,13 +125,19 @@ class __libgui AppearanceConfigWidget: public BaseConfigWidget, public Ui::Appea
 		void storeSystemUiColors();
 
 		void applyDesignCodeTheme();
+
 		void applyUiStyleSheet();
+
+		//! \brief Returns the theme id (light/dark) depending on the selection in ui_theme_cmb
+		QString getUiThemeId();
 
 	public:
 		AppearanceConfigWidget(QWidget * parent = nullptr);
+
 		virtual ~AppearanceConfigWidget();
 		
 		void saveConfiguration();
+
 		void loadConfiguration();
 
 		//! \brief Applies the selected ui theme to the whole application
@@ -135,7 +146,7 @@ class __libgui AppearanceConfigWidget: public BaseConfigWidget, public Ui::Appea
 		static std::map<QString, attribs_map> getConfigurationParams();
 
 		//! \brief Changes the tool buttons drop shadows color and offset to match the current theme.
-		static void updateDropShadows(const QString theme_id);
+		void updateDropShadows();
 
 	private slots:
 		void enableConfigElement();

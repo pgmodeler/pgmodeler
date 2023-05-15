@@ -10,7 +10,6 @@
 
 $br <appearance 
 $sp ui-theme="{ui-theme}" 
-$sp syntax-hl-theme="{syntax-hl-theme}"
 $sp icons-size="{icons-size}"
 
 %if {custom-scale} %then
