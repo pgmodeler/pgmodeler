@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>580</width>
-    <height>373</height>
+    <height>385</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -82,6 +82,19 @@
           <property name="bottomMargin">
            <number>5</number>
           </property>
+          <property name="spacing">
+           <number>5</number>
+          </property>
+          <item row="0" column="3">
+           <widget class="QComboBox" name="icons_size_cmb"/>
+          </item>
+          <item row="0" column="0">
+           <widget class="QLabel" name="label">
+            <property name="text">
+             <string>Theme:</string>
+            </property>
+           </widget>
+          </item>
           <item row="0" column="1">
            <widget class="QComboBox" name="ui_theme_cmb">
             <property name="sizePolicy">
@@ -95,50 +108,7 @@
             </property>
            </widget>
           </item>
-          <item row="0" column="3">
-           <widget class="QComboBox" name="syntax_hl_theme_cmb">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="sizeAdjustPolicy">
-             <enum>QComboBox::AdjustToContentsOnFirstShow</enum>
-            </property>
-           </widget>
-          </item>
           <item row="0" column="2">
-           <widget class="QLabel" name="label_3">
-            <property name="text">
-             <string>Syntax highlight:</string>
-            </property>
-            <property name="indent">
-             <number>10</number>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="0">
-           <widget class="QLabel" name="label">
-            <property name="text">
-             <string>Theme:</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="4" rowspan="3">
-           <spacer name="horizontalSpacer_3">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>40</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-          <item row="1" column="0">
            <widget class="QLabel" name="icons_size_lbl">
             <property name="text">
              <string>Icons size:</string>
@@ -148,37 +118,60 @@
             </property>
            </widget>
           </item>
-          <item row="1" column="1">
-           <widget class="QComboBox" name="icons_size_cmb"/>
-          </item>
-          <item row="1" column="2">
-           <widget class="QCheckBox" name="custom_scale_chk">
-            <property name="toolTip">
-             <string>&lt;p&gt;Defines a custom UI scale factor. This factor is applied when drawing widgets and fonts. Requires restarting pgModeler when in use.&lt;/p&gt;</string>
+          <item row="0" column="4">
+           <layout class="QHBoxLayout" name="horizontalLayout">
+            <property name="spacing">
+             <number>5</number>
             </property>
-            <property name="text">
-             <string>Custom scale:</string>
+            <property name="leftMargin">
+             <number>5</number>
             </property>
-           </widget>
-          </item>
-          <item row="1" column="3">
-           <widget class="QDoubleSpinBox" name="custom_scale_spb">
-            <property name="enabled">
-             <bool>false</bool>
+            <property name="bottomMargin">
+             <number>0</number>
             </property>
-            <property name="decimals">
-             <number>1</number>
-            </property>
-            <property name="minimum">
-             <double>1.000000000000000</double>
-            </property>
-            <property name="maximum">
-             <double>2.000000000000000</double>
-            </property>
-            <property name="singleStep">
-             <double>0.100000000000000</double>
-            </property>
-           </widget>
+            <item>
+             <widget class="QCheckBox" name="custom_scale_chk">
+              <property name="toolTip">
+               <string>&lt;p&gt;Defines a custom UI scale factor. This factor is applied when drawing widgets and fonts. Requires restarting pgModeler when in use.&lt;/p&gt;</string>
+              </property>
+              <property name="text">
+               <string>Custom scale:</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QDoubleSpinBox" name="custom_scale_spb">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
+              <property name="decimals">
+               <number>1</number>
+              </property>
+              <property name="minimum">
+               <double>1.000000000000000</double>
+              </property>
+              <property name="maximum">
+               <double>2.000000000000000</double>
+              </property>
+              <property name="singleStep">
+               <double>0.100000000000000</double>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="horizontalSpacer_4">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+           </layout>
           </item>
          </layout>
         </widget>
@@ -1299,10 +1292,6 @@
  <tabstops>
   <tabstop>appearance_tbw</tabstop>
   <tabstop>ui_theme_cmb</tabstop>
-  <tabstop>syntax_hl_theme_cmb</tabstop>
-  <tabstop>icons_size_cmb</tabstop>
-  <tabstop>custom_scale_chk</tabstop>
-  <tabstop>custom_scale_spb</tabstop>
   <tabstop>code_font_cmb</tabstop>
   <tabstop>code_font_size_spb</tabstop>
   <tabstop>tab_width_chk</tabstop>

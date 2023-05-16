@@ -23,6 +23,8 @@
 
 std::map<QString, attribs_map> AppearanceConfigWidget::config_params;
 
+QPalette AppearanceConfigWidget::system_pal;
+
 std::map<QPalette::ColorRole, QStringList> AppearanceConfigWidget::system_ui_colors = {
 	{ QPalette::WindowText, {} },
 	{ QPalette::Button, {} },
@@ -263,9 +265,6 @@ CREATE TABLE public.table_b (\n \
 	ui_theme_cmb->addItem(tr("Light"), Attributes::Light);
 	ui_theme_cmb->addItem(tr("Dark"), Attributes::Dark);
 
-	syntax_hl_theme_cmb->addItem(tr("Light"), Attributes::Light);
-	syntax_hl_theme_cmb->addItem(tr("Dark"), Attributes::Dark);
-
 	icons_size_cmb->addItem(tr("Big"), Attributes::Big);
 	icons_size_cmb->addItem(tr("Medium"), Attributes::Medium);
 	icons_size_cmb->addItem(tr("Small"), Attributes::Small);
@@ -308,9 +307,7 @@ CREATE TABLE public.table_b (\n \
 	connect(grid_size_spb, &QSpinBox::textChanged, this, &AppearanceConfigWidget::previewCanvasColors);
 	connect(grid_pattern_cmb, &QComboBox::currentIndexChanged, this, &AppearanceConfigWidget::previewCanvasColors);
 
-	connect(syntax_hl_theme_cmb, &QComboBox::currentTextChanged, this, &AppearanceConfigWidget::applySyntaxHighlightTheme);
-
-	connect(ui_theme_cmb, &QComboBox::currentTextChanged, this, &AppearanceConfigWidget::previewUiSettings);
+	connect(ui_theme_cmb, &QComboBox::activated, this, &AppearanceConfigWidget::previewUiSettings);
 	connect(icons_size_cmb, &QComboBox::currentTextChanged, this, &AppearanceConfigWidget::previewUiSettings);
 
 	connect(custom_scale_chk, &QCheckBox::toggled, this, [this](bool toggled){
@@ -350,14 +347,14 @@ std::map<QString, attribs_map> AppearanceConfigWidget::getConfigurationParams()
 	return config_params;
 }
 
-void AppearanceConfigWidget::updateDropShadows(const QString theme_id)
+void AppearanceConfigWidget::updateDropShadows()
 {
 	QColor color(0, 0, 0, 80);
 	int radius = 6, x = 1, y = 1;
 	QGraphicsDropShadowEffect *shadow = nullptr;
 	QString class_name = "QToolButton";
 
-	if(theme_id == Attributes::Light)
+	if(getUiThemeId() == Attributes::Light)
 	{
 		radius = 1;
 		color.setRgb(225, 225, 225);
@@ -470,23 +467,21 @@ void AppearanceConfigWidget::loadConfiguration()
 {
 	try
 	{
+		// Storing the original system palette before loading the appearance config file
+		system_pal = qApp->palette();
+
 		BaseConfigWidget::loadConfiguration(GlobalAttributes::AppearanceConf, config_params, { Attributes::Id }, true);
 
 		ui_theme_cmb->blockSignals(true);
-		syntax_hl_theme_cmb->blockSignals(true);
 		icons_size_cmb->blockSignals(true);
 
 		int idx = ui_theme_cmb->findData(config_params[GlobalAttributes::AppearanceConf][Attributes::UiTheme], Qt::UserRole, Qt::MatchExactly);
 		ui_theme_cmb->setCurrentIndex(idx < 0 ? 0 : idx);
 
-		idx = syntax_hl_theme_cmb->findData(config_params[GlobalAttributes::AppearanceConf][Attributes::SyntaxHlTheme], Qt::UserRole, Qt::MatchExactly);
-		syntax_hl_theme_cmb->setCurrentIndex(idx < 0 ? 0 : idx);
-
 		idx = icons_size_cmb->findData(config_params[GlobalAttributes::AppearanceConf][Attributes::IconsSize], Qt::UserRole, Qt::MatchExactly);
 		icons_size_cmb->setCurrentIndex(idx < 0 ? 0 : idx);
 
 		ui_theme_cmb->blockSignals(false);
-		syntax_hl_theme_cmb->blockSignals(false);
 		icons_size_cmb->blockSignals(false);
 
 		custom_scale_chk->setChecked(config_params[GlobalAttributes::AppearanceConf].count(Attributes::CustomScale));
@@ -609,12 +604,11 @@ void AppearanceConfigWidget::saveConfiguration()
 	{
 		attribs_map attribs;
 		AppearanceConfigItem item;
-		QString attrib_id, hl_theme = syntax_hl_theme_cmb->currentData(Qt::UserRole).toString();
+		QString attrib_id;
 		QFont font;
 
 		config_params.erase(GlobalAttributes::AppearanceConf);
 		attribs[Attributes::UiTheme] =  ui_theme_cmb->currentData(Qt::UserRole).toString();
-		attribs[Attributes::SyntaxHlTheme] = hl_theme;
 		attribs[Attributes::IconsSize] = icons_size_cmb->currentData(Qt::UserRole).toString();
 
 		attribs[Attributes::CustomScale] = custom_scale_chk->isChecked() ?
@@ -689,6 +683,8 @@ void AppearanceConfigWidget::saveConfiguration()
 
 		config_params[Attributes::Objects] = attribs;
 		BaseConfigWidget::saveConfiguration(GlobalAttributes::AppearanceConf, config_params);
+
+		QString hl_theme = getUiThemeId();
 
 		/* Copying the syntax highilighting files from the selected theme folder to the user's storage
 		 * in order to reflect the new syntax highlighting setting in the whole application */
@@ -818,30 +814,9 @@ void AppearanceConfigWidget::applyConfiguration()
 	applyDesignCodeStyle();
 	applyObjectsStyle();
 
-	ObjectsScene::setCanvasColor(canvas_color_cp->getColor(0));
-	ObjectsScene::setGridColor(grid_color_cp->getColor(0));
-	ObjectsScene::setDelimitersColor(delimiters_color_cp->getColor(0));
-	ObjectsScene::setGridPattern(grid_pattern_cmb->currentIndex() == 0 ?
-																 ObjectsScene::SquarePattern : ObjectsScene::DotPattern);
-	ObjectsScene::setGridSize(grid_size_spb->value());
 	BaseTableView::setAttributesPerPage(BaseTable::AttribsSection, attribs_per_page_spb->value());
 	BaseTableView::setAttributesPerPage(BaseTable::ExtAttribsSection, ext_attribs_per_page_spb->value());
 	ModelWidget::setMinimumObjectOpacity(min_obj_opacity_spb->value());
-
-	double fnt_size = config_params[Attributes::Code][Attributes::FontSize].toDouble();
-	QFont fnt;
-
-	if(fnt_size < 5.0)
-		fnt_size = 5.0;
-
-	fnt.setFamily(config_params[Attributes::Code][Attributes::Font]);
-	fnt.setPointSizeF(fnt_size);
-	NumberedTextEditor::setLineNumbersVisible(disp_line_numbers_chk->isChecked());
-	NumberedTextEditor::setLineHighlightColor(line_highlight_cp->getColor(0));
-	NumberedTextEditor::setHighlightLines(hightlight_lines_chk->isChecked());
-	NumberedTextEditor::setDefaultFont(fnt);
-	LineNumbersWidget::setColors(line_numbers_cp->getColor(0), line_numbers_bg_cp->getColor(0));
-	SyntaxHighlighter::setDefaultFont(fnt);
 
 	loadExampleModel();
 	model->setObjectsModified();
@@ -933,18 +908,10 @@ void AppearanceConfigWidget::applyUiTheme()
 		{ { Attributes::Light }, { &light_tab_item_colors } }
 	};
 
-	QString ui_theme = ui_theme_cmb->currentData(Qt::UserRole).toString();
+	QString ui_theme = getUiThemeId();
 	std::map<QPalette::ColorRole, QStringList> *color_map = color_maps[ui_theme];
 	QStringList *item_colors = item_color_lists[ui_theme];
-
-	/* Storing an immutable copy of the original application's palette
-	 * in order to use it on each time the UI theme changes.
-	 *
-	 * NOTE: if we just copy the qApp palette everytime to pal we don't get
-	 * the desired result, instead, the color theme switches randomly from dark to
-	 * light and vice-versa.*/
-	static const QPalette orig_pal = qApp->palette();
-	QPalette pal = orig_pal;
+	QPalette pal = system_pal;
 
 	for(unsigned idx = 0; idx < static_cast<unsigned>(item_colors->size()); idx++)
 	{
@@ -975,19 +942,10 @@ void AppearanceConfigWidget::applyUiTheme()
 
 void AppearanceConfigWidget::previewUiSettings()
 {
-	int idx = ui_theme_cmb->currentIndex() - 1;
-
-	if(idx < 0 )
-		idx = 0;
-
-	syntax_hl_theme_cmb->blockSignals(true);
-	syntax_hl_theme_cmb->setCurrentIndex(idx);
-	syntax_hl_theme_cmb->blockSignals(false);
-
 	qApp->setOverrideCursor(Qt::WaitCursor);
 	applyUiTheme();
 	applyDesignCodeTheme();
-	updateDropShadows(ui_theme_cmb->currentData(Qt::UserRole).toString());
+	updateDropShadows();
 	qApp->restoreOverrideCursor();
 }
 
@@ -995,7 +953,7 @@ void AppearanceConfigWidget::applySyntaxHighlightTheme()
 {
 	QString filename = GlobalAttributes::getTmplConfigurationFilePath(GlobalAttributes::ThemesDir +
 																																		GlobalAttributes::DirSeparator +
-																																		syntax_hl_theme_cmb->currentData(Qt::UserRole).toString().toLower(),
+																																		getUiThemeId(),
 																																		GlobalAttributes::SQLHighlightConf +
 																																		GlobalAttributes::ConfigurationExt);
 
@@ -1015,7 +973,7 @@ void AppearanceConfigWidget::applyDesignCodeTheme()
 {
 	QString filename = GlobalAttributes::getTmplConfigurationFilePath(GlobalAttributes::ThemesDir +
 																																		GlobalAttributes::DirSeparator +
-																																		syntax_hl_theme_cmb->currentData(Qt::UserRole).toString().toLower(),
+																																		getUiThemeId(),
 																																		GlobalAttributes::AppearanceConf +
 																																		GlobalAttributes::ConfigurationExt);
 
@@ -1032,6 +990,21 @@ void AppearanceConfigWidget::applyDesignCodeTheme()
 	{
 		throw Exception(e.getErrorMessage(), e.getErrorCode(), __PRETTY_FUNCTION__, __FILE__, __LINE__, &e);
 	}
+}
+
+QString AppearanceConfigWidget::getUiThemeId()
+{
+	if(ui_theme_cmb->currentIndex() > 0)
+		return ui_theme_cmb->currentData(Qt::UserRole).toString();
+
+	/* If the user chose the "System default" theme
+	 * we check if the system is using dark theme (text color lightness greater than window color lightness)
+	 * or light theme */
+	if(system_pal.color(QPalette::WindowText).lightness() >
+			system_pal.color(QPalette::Window).lightness())
+		return Attributes::Dark;
+
+	return Attributes::Light;
 }
 
 void AppearanceConfigWidget::applyUiStyleSheet()
@@ -1055,12 +1028,13 @@ void AppearanceConfigWidget::applyUiStyleSheet()
 				ico_style_conf = GlobalAttributes::getTmplConfigurationFilePath("",
 																																						"icons-" + icon_size +
 																																						GlobalAttributes::ConfigurationExt);
-		QString ui_theme = ui_theme_cmb->currentData(Qt::UserRole).toString(),
+		QString ui_theme = getUiThemeId(), extra_style_conf;
+
 		extra_style_conf = GlobalAttributes::getTmplConfigurationFilePath(GlobalAttributes::ThemesDir +
-																																		 GlobalAttributes::DirSeparator +
-																																		 ui_theme,
-																																		 "extra-" + GlobalAttributes::UiStyleConf +
-																																		 GlobalAttributes::ConfigurationExt);
+																																			GlobalAttributes::DirSeparator +
+																																			ui_theme,
+																																			"extra-" + GlobalAttributes::UiStyleConf +
+																																			GlobalAttributes::ConfigurationExt);
 
 		if(QFileInfo::exists(extra_style_conf))
 		{
