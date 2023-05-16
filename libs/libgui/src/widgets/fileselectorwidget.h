@@ -40,7 +40,7 @@ class __libgui FileSelectorWidget: public QWidget, public Ui::FileSelectorWidget
 		QLabel *warn_ico_lbl;
 
 		bool allow_filename_input, read_only,
-		check_exec_flag, file_is_mandatory;
+		check_exec_flag, file_is_mandatory, file_must_exist;
 
 		QRegularExpression name_regexp;
 
@@ -76,6 +76,9 @@ class __libgui FileSelectorWidget: public QWidget, public Ui::FileSelectorWidget
 
 		//! \brief If true, the selected file must be provided otherwise an warning is displayed
 		void setFileIsMandatory(bool value);
+
+		//! \brief If true, the selected file must exist in the file system
+		void setFileMustExist(bool value);
 
 		//! \brief Configures the window title of the file dialog instance
 		void setFileDialogTitle(const QString &title);

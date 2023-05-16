@@ -176,7 +176,7 @@ void BaseConfigWidget::loadConfiguration(const QString &conf_id, std::map<QStrin
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, e.getExtraInfo());
 	}
 }
 

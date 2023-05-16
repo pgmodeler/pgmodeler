@@ -24,6 +24,7 @@ FileSelectorWidget::FileSelectorWidget(QWidget *parent) : QWidget(parent)
 	setupUi(this);
 	allow_filename_input = read_only = false;
 	file_is_mandatory = check_exec_flag = false;
+	file_must_exist = false;
 
 	file_dlg.setWindowIcon(QPixmap(GuiUtilsNs::getIconPath("pgmodeler_logo")));
 
@@ -109,6 +110,11 @@ void FileSelectorWidget::setCheckExecutionFlag(bool value)
 void FileSelectorWidget::setFileIsMandatory(bool value)
 {
 	file_is_mandatory = value;
+}
+
+void FileSelectorWidget::setFileMustExist(bool value)
+{
+	file_must_exist = value;
 }
 
 void FileSelectorWidget::setFileDialogTitle(const QString &title)
@@ -239,7 +245,7 @@ void FileSelectorWidget::validateSelectedFile()
 			warn_ico_lbl->setToolTip(tr("The provided path is not a file!"));
 		else if(fi.exists() && fi.isFile() && file_dlg.fileMode() == QFileDialog::Directory)
 			warn_ico_lbl->setToolTip(tr("The provided path is not a directory!"));
-		else if(!fi.exists() && file_dlg.fileMode() != QFileDialog::AnyFile)
+		else if(file_must_exist && !fi.exists() /*&& file_dlg.fileMode() != QFileDialog::AnyFile*/)
 		{
 			if(file_dlg.fileMode() == QFileDialog::Directory)
 				warn_ico_lbl->setToolTip(tr("No such directory!"));
