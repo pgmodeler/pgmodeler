@@ -1505,8 +1505,25 @@ void DatabaseExplorerWidget::addPluginToolButton(QToolButton *btn)
 	plugin_btn->setAutoRaise(true);
 	toolbuttons_lt->insertWidget(toolbuttons_lt->count() - 2, plugin_btn);
 
-	connect(plugin_btn, &QToolButton::clicked, btn, &QToolButton::clicked);
-	connect(plugin_btn, &QToolButton::triggered, btn, &QToolButton::triggered);
+	connect(plugin_btn, &QToolButton::clicked, this, [this, btn](bool checked){
+		btn->setProperty(Attributes::Connection.toStdString().c_str(),
+										 connection.getConnectionId());
+
+		btn->setProperty(Attributes::Database.toStdString().c_str(),
+										 connection.getConnectionParam(Connection::ParamDbName));
+
+		emit btn->clicked(checked);
+	});
+
+	connect(plugin_btn, &QToolButton::triggered, this, [this, btn](QAction *act){
+		btn->setProperty(Attributes::Connection.toStdString().c_str(),
+										 connection.getConnectionId());
+
+		btn->setProperty(Attributes::Database.toStdString().c_str(),
+										 connection.getConnectionParam(Connection::ParamDbName));
+
+		emit btn->triggered(act);
+	});
 }
 
 void DatabaseExplorerWidget::truncateTable(QTreeWidgetItem *item, bool cascade)
