@@ -629,7 +629,6 @@ namespace Attributes {
 	Superuser("superuser"),
 	Symbol("symbol"),
 	System("system"),
-	SyntaxHlTheme("syntax-hl-theme"),
 	Table("table"),
 	TableTogglerButtons("table-toggler-btns"),
 	TableTogglerBody("table-toggler-body"),

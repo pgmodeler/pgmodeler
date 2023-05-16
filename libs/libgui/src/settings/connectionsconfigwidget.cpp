@@ -176,6 +176,7 @@ void ConnectionsConfigWidget::newConnection()
 	port_sbp->setValue(5432);
 	passwd_edt->clear();
 	other_params_edt->clear();
+	set_role_edt->clear();
 
 	auto_browse_chk->setChecked(false);
 	diff_chk->setChecked(false);

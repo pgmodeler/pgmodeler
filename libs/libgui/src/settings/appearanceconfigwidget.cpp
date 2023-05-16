@@ -1026,8 +1026,8 @@ void AppearanceConfigWidget::applyUiStyleSheet()
 		QByteArray ui_stylesheet = ui_style.readAll();
 		QString icon_size = icons_size_cmb->currentData().toString().toLower(),
 				ico_style_conf = GlobalAttributes::getTmplConfigurationFilePath("",
-																																						"icons-" + icon_size +
-																																						GlobalAttributes::ConfigurationExt);
+																																				"icons-" + icon_size +
+																																				GlobalAttributes::ConfigurationExt);
 		QString ui_theme = getUiThemeId(), extra_style_conf;
 
 		extra_style_conf = GlobalAttributes::getTmplConfigurationFilePath(GlobalAttributes::ThemesDir +
@@ -1053,10 +1053,10 @@ void AppearanceConfigWidget::applyUiStyleSheet()
 			{
 				Messagebox msg;
 				msg.show(Exception(Exception::getErrorMessage(ErrorCode::FileDirectoryNotAccessed).arg(ico_style_conf),
-													 ErrorCode::FileDirectoryNotAccessed,__PRETTY_FUNCTION__,__FILE__,__LINE__));
+														ErrorCode::FileDirectoryNotAccessed,__PRETTY_FUNCTION__,__FILE__,__LINE__));
 			}
 			else
-				ui_stylesheet.append(ico_style.readAll());		
+				ui_stylesheet.append(ico_style.readAll());
 		}
 
 		qApp->setStyleSheet(ui_stylesheet);

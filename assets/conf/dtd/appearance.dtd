@@ -4,7 +4,6 @@
 -->
 <!ELEMENT appearance (design, code, objects)>
 <!ATTLIST appearance ui-theme (system|dark|light) "system">
-<!ATTLIST appearance syntax-hl-theme (dark|light) "light">
 <!ATTLIST appearance icons-size (big|medium|small) "big">
 <!ATTLIST appearance custom-scale CDATA #IMPLIED>
 

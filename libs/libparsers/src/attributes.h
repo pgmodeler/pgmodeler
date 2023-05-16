@@ -643,7 +643,6 @@ namespace Attributes {
 	SubtypeDiffFunc,
 	Superuser,
 	Symbol,
-	SyntaxHlTheme,
 	System,
 	Table,
 	TableTogglerButtons,
