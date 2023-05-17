@@ -202,9 +202,15 @@ class __libgui MainWindow: public QMainWindow, public Ui::MainWindow {
 
 		void setPluginsActions(ModelWidget *model_wgt);
 
+<<<<<<< HEAD
 		void dragEnterEvent(QDragEnterEvent *event);
 
 		void dropEvent(QDropEvent *event);
+=======
+		/*! \brief Tries to restore the default configuration files and restart pgModeler
+		 *  in case of any configuration file is broken or missing */
+		void handleInitializationFailure(Exception &e);
+>>>>>>> 1.0.4
 
 	public:
 		enum MWViewsId {

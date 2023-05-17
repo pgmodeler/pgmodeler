@@ -1025,6 +1025,7 @@ void AppearanceConfigWidget::applyUiStyleSheet()
 	else
 	{
 		QByteArray ui_stylesheet = ui_style.readAll();
+
 		QString icon_size = icons_size_cmb->currentData().toString().toLower(),
 				ico_style_conf = GlobalAttributes::getTmplConfigurationFilePath("",
 																																				"icons-" + icon_size +
