@@ -52,8 +52,6 @@ DatabaseImportForm::DatabaseImportForm(QWidget *parent, Qt::WindowFlags f) : QDi
 	connect(import_sys_objs_chk, &QCheckBox::clicked, this, qOverload<>(&DatabaseImportForm::listObjects));
 	connect(import_ext_objs_chk, &QCheckBox::clicked, this, qOverload<>(&DatabaseImportForm::listObjects));
 	connect(by_oid_chk,  &QCheckBox::toggled, this, qOverload<>(&DatabaseImportForm::filterObjects));
-	connect(expand_all_tb, &QToolButton::clicked, db_objects_tw, &QTreeWidget::expandAll);
-	connect(collapse_all_tb, &QToolButton::clicked, db_objects_tw, &QTreeWidget::collapseAll);
 	connect(db_objects_tw, &QTreeWidget::itemChanged, this, qOverload<QTreeWidgetItem *, int>(&DatabaseImportForm::setItemCheckState));
 	connect(select_all_tb, &QToolButton::clicked, this, &DatabaseImportForm::setItemsCheckState);
 	connect(clear_all_tb, &QToolButton::clicked, this, &DatabaseImportForm::setItemsCheckState);
@@ -61,6 +59,28 @@ DatabaseImportForm::DatabaseImportForm(QWidget *parent, Qt::WindowFlags f) : QDi
 	connect(import_btn, &QPushButton::clicked, this,  &DatabaseImportForm::importDatabase);
 	connect(cancel_btn, &QPushButton::clicked, this,  &DatabaseImportForm::cancelImport);
 	connect(objs_filter_wgt, &ObjectsFilterWidget::s_filterApplyingRequested, this, qOverload<>(&DatabaseImportForm::listObjects));
+
+	connect(expand_all_tb, &QToolButton::clicked,  this, [this](){
+		db_objects_tw->blockSignals(true);
+		db_objects_tw->expandAll();
+		db_objects_tw->blockSignals(false);
+		db_objects_tw->resizeColumnToContents(0);
+	});
+
+	connect(collapse_all_tb, &QToolButton::clicked,  this, [this](){
+		db_objects_tw->blockSignals(true);
+		db_objects_tw->collapseAll();
+		db_objects_tw->blockSignals(false);
+		db_objects_tw->resizeColumnToContents(0);
+	});
+
+	connect(db_objects_tw, &QTreeWidget::itemCollapsed, this, [this](){
+		db_objects_tw->resizeColumnToContents(0);
+	});
+
+	connect(db_objects_tw, &QTreeWidget::itemExpanded, this, [this](){
+		db_objects_tw->resizeColumnToContents(0);
+	});
 
 	connect(objs_filter_wgt, &ObjectsFilterWidget::s_filtersRemoved, this, [this](){
 		listObjects();

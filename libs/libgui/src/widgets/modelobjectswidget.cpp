@@ -45,12 +45,33 @@ ModelObjectsWidget::ModelObjectsWidget(bool simplified_view, QWidget *parent) : 
 
 	connect(objectstree_tw, &QTreeWidget::itemPressed, this, &ModelObjectsWidget::selectObject);
 	connect(objectstree_tw, &QTreeWidget::itemPressed, this, &ModelObjectsWidget::showObjectMenu);
+
+	connect(objectstree_tw, &QTreeWidget::itemCollapsed, this, [this](){
+		objectstree_tw->resizeColumnToContents(0);
+	});
+
+	connect(objectstree_tw, &QTreeWidget::itemExpanded, this, [this](){
+		objectstree_tw->resizeColumnToContents(0);
+	});
+
 	connect(objectslist_tbw, &QTableWidget::itemPressed, this, &ModelObjectsWidget::selectObject);
 	connect(objectslist_tbw, &QTableWidget::itemPressed, this, &ModelObjectsWidget::showObjectMenu);
 	connect(objectstree_tw, &QTreeWidget::itemSelectionChanged, this, &ModelObjectsWidget::selectObject);
 	connect(objectslist_tbw, &QTableWidget::itemSelectionChanged, this, &ModelObjectsWidget::selectObject);
-	connect(expand_all_tb, &QToolButton::clicked, objectstree_tw, &QTreeWidget::expandAll);
-	connect(collapse_all_tb, &QToolButton::clicked, this, &ModelObjectsWidget::collapseAll);
+
+	connect(expand_all_tb, &QToolButton::clicked,  this, [this](){
+		objectstree_tw->blockSignals(true);
+		objectstree_tw->expandAll();
+		objectstree_tw->blockSignals(false);
+		objectstree_tw->resizeColumnToContents(0);
+	});
+
+	connect(collapse_all_tb, &QToolButton::clicked,  this, [this](){
+		objectstree_tw->blockSignals(true);
+		objectstree_tw->collapseAll();
+		objectstree_tw->blockSignals(false);
+		objectstree_tw->resizeColumnToContents(0);
+	});
 
 	if(!simplified_view)
 	{
@@ -753,7 +774,6 @@ void ModelObjectsWidget::updateDatabaseTree()
 			if(save_tree_state)
 				saveTreeState(tree_state);
 
-			//objectstree_tw->setUpdatesEnabled(false);
 			objectstree_tw->clear();
 
 			if(visible_objs_map[ObjectType::Database])
@@ -767,7 +787,7 @@ void ModelObjectsWidget::updateDatabaseTree()
 				{
 					if(visible_objs_map[type])
 					{
-						item1=new QTreeWidgetItem(root);
+						item1 = new QTreeWidgetItem(root);
 						str_aux=QString(BaseObject::getSchemaName(type));
 
 						item1->setIcon(0,QPixmap(GuiUtilsNs::getIconPath(str_aux)));
@@ -805,7 +825,6 @@ void ModelObjectsWidget::updateDatabaseTree()
 					}
 				}
 
-				//objectstree_tw->setUpdatesEnabled(true);
 				objectstree_tw->expandItem(root);
 
 				if(save_tree_state)

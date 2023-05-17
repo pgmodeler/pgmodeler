@@ -205,8 +205,15 @@ DatabaseExplorerWidget::DatabaseExplorerWidget(QWidget *parent): QWidget(parent)
 	connect(raw_attrib_names_chk, &QCheckBox::toggled, this, &DatabaseExplorerWidget::showObjectProperties);
 
 	connect(objects_trw, &QTreeWidget::currentItemChanged, this, &DatabaseExplorerWidget::cancelObjectRename);
-	connect(objects_trw, &QTreeWidget::itemCollapsed, this, &DatabaseExplorerWidget::cancelObjectRename);
-	connect(objects_trw, &QTreeWidget::itemExpanded, this, &DatabaseExplorerWidget::cancelObjectRename);
+	connect(objects_trw, &QTreeWidget::itemCollapsed, this, [this](){
+		objects_trw->resizeColumnToContents(0);
+		cancelObjectRename();
+	});
+
+	connect(objects_trw, &QTreeWidget::itemExpanded, this, [this](){
+		objects_trw->resizeColumnToContents(0);
+		cancelObjectRename();
+	});
 
 	connect(data_grid_tb, &QToolButton::clicked, this, [this](){
 		openDataGrid();

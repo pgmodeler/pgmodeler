@@ -565,6 +565,12 @@ unsigned Catalog::getObjectsCount(std::vector<ObjectType> obj_types, bool incl_s
 		{
 			//Build the catalog query for the specified object type
 			sql = getCatalogQuery(QueryList, obj_type, false, extra_attribs);
+
+			/* An catalog query will be empty if the object type doesn't exist in the
+			 * current database version being queried */
+			if(sql.isEmpty())
+				continue;
+
 			sql.remove(sql.indexOf("SELECT"), sql.indexOf("FROM"));
 
 			// Removing the selected colums and instead injecting a count(oid)
