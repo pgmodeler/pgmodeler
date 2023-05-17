@@ -812,6 +812,7 @@ void AppearanceConfigWidget::applyConfiguration()
 	applyUiTheme();
 	applyDesignCodeStyle();
 	applyObjectsStyle();
+	previewCanvasColors();
 
 	BaseTableView::setAttributesPerPage(BaseTable::AttribsSection, attribs_per_page_spb->value());
 	BaseTableView::setAttributesPerPage(BaseTable::ExtAttribsSection, ext_attribs_per_page_spb->value());
