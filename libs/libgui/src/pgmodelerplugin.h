@@ -107,47 +107,47 @@ class __libgui PgModelerPlugin {
 		virtual ~PgModelerPlugin();
 
 		//! \brief Returns the plugin's title, this same text is used as action's text on plugins toolbar.
-		virtual QString getPluginTitle(void)=0;
+		virtual QString getPluginTitle(void) const = 0;
 
 		//! \brief Returns the plugin's author
-		virtual QString getPluginAuthor(void)=0;
+		virtual QString getPluginAuthor(void) const = 0;
 
 		//! \brief Returns the plugin's version
-		virtual QString getPluginVersion(void)=0;
+		virtual QString getPluginVersion(void) const = 0;
 
 		//! \brief Returns the plugin's complete description
-		virtual QString getPluginDescription(void)=0;
+		virtual QString getPluginDescription(void) const = 0;
 
 		//! \brief Shows the plugin's information dialog
-		virtual void showPluginInfo(void);
+		virtual void showPluginInfo(void) const;
 
 		//! \brief Returns the action that will be put in the toolbar at main window
-		virtual QAction *getToolbarAction() = 0;
+		virtual QAction *getToolbarAction() const = 0;
 
 		//! \brief Returns the action that will be put in the model's context menu
-		virtual QAction *getModelAction() = 0;
+		virtual QAction *getModelAction() const = 0;
 
 		//! \brief Returns the action that will be put in the main window menu reserved for plugins settings
-		virtual QAction *getConfigAction() = 0;
+		virtual QAction *getConfigAction() const = 0;
 
 		//! \brief Returns the tool button that will be put in every DatabaseExplorerWidget instance when browsing databases
-		virtual QToolButton *getDbExplorerButton() = 0;
+		virtual QToolButton *getDbExplorerButton() const = 0;
 
 		//! \brief Returns the name of the library of the plugin
-		QString getLibraryName();
+		QString getLibraryName() const;
 
 		//! \brief Returns the name of the plugin
-		QString getPluginName();
+		QString getPluginName() const;
 
 		//! \brief Returns the path to a plugin icon in the plugin's qrc file
-		QString getPluginIcon(const QString &icon_name);
+		QString getPluginIcon(const QString &icon_name) const;
 
 		/*! \brief This method mimics the behavior of GlobalAttributes::getTmplConfigurationFilePath
 		 * returning the full path to a file inside a subdirectory in the plugin's root directory.
 		 * If both subdir and filename are empty, only the full path to the plugin's root directory is returned.
 		 * If subdir is empty and filename not then a path in the format [plugin-root]/filename is returned.
 		 * If both subdir and filename are set then a path in the format [plugin-root]/subdir/filename is returned. */
-		QString getPluginFilePath(const QString &subdir, const QString &filename);
+		QString getPluginFilePath(const QString &subdir, const QString &filename) const;
 
 		friend class PluginsConfigWidget;
 };

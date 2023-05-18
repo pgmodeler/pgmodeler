@@ -100,7 +100,7 @@ void PgModelerPlugin::postInitPlugin()
 	}
 }
 
-void PgModelerPlugin::showPluginInfo()
+void PgModelerPlugin::showPluginInfo() const
 {
 	plugin_info_frm->show();
 }
@@ -115,22 +115,22 @@ void PgModelerPlugin::setPluginName(const QString &name)
 	plugin_name = name;
 }
 
-QString PgModelerPlugin::getLibraryName()
+QString PgModelerPlugin::getLibraryName() const
 {
 	return libname;
 }
 
-QString PgModelerPlugin::getPluginName()
+QString PgModelerPlugin::getPluginName() const
 {
 	return plugin_name;
 }
 
-QString PgModelerPlugin::getPluginIcon(const QString &icon_name)
+QString PgModelerPlugin::getPluginIcon(const QString &icon_name) const
 {
 	return QString(":/%1/%2.png").arg(plugin_name, icon_name);
 }
 
-QString PgModelerPlugin::getPluginFilePath(const QString &subdir, const QString &filename)
+QString PgModelerPlugin::getPluginFilePath(const QString &subdir, const QString &filename) const
 {
 	QString file_pth = GlobalAttributes::getPluginsPath() + GlobalAttributes::DirSeparator + getPluginName();
 
