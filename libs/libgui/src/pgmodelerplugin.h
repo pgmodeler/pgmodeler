@@ -82,6 +82,12 @@ class __libgui PgModelerPlugin {
 		//! \brief Defines the name of plugin itself. In practical terms, it's the plugin's root folder name
 		void setPluginName(const QString &name);
 
+		/*! \brief This method returns a full path to a file using the plugin's name as the root folder.
+		 * If both subdir and filename are empty, only the root path is returned [root-path]/[plugin-name]
+		 * If subdir is empty and filename not then a path in the format [root-path]/[plugin-name]/filename is returned.
+		 * If both subdir and filename are set then a path in the format [root-path]/[plugin-name]/subdir/filename is returned. */
+		QString getPluginFilePath(const QString &root_path, const QString &subdir, const QString &filename) const;
+
 	protected:
 		BaseForm *plugin_info_frm;
 
@@ -142,12 +148,19 @@ class __libgui PgModelerPlugin {
 		//! \brief Returns the path to a plugin icon in the plugin's qrc file
 		QString getPluginIcon(const QString &icon_name) const;
 
-		/*! \brief This method mimics the behavior of GlobalAttributes::getTmplConfigurationFilePath
+		/*! \brief This method mimics the behavior of GlobalAttributes::getConfigurationFilePath
 		 * returning the full path to a file inside a subdirectory in the plugin's root directory.
 		 * If both subdir and filename are empty, only the full path to the plugin's root directory is returned.
 		 * If subdir is empty and filename not then a path in the format [plugin-root]/filename is returned.
 		 * If both subdir and filename are set then a path in the format [plugin-root]/subdir/filename is returned. */
 		QString getPluginFilePath(const QString &subdir, const QString &filename) const;
+
+		/*! \brief This method mimics the behavior of GlobalAttributes::getTmplConfigurationFilePath
+		 * returning the full path to a file inside a subdirectory in the plugin's template confs directory.
+		 * If both subdir and filename are empty, only the full path to the plugin's template confs directory is returned.
+		 * If subdir is empty and filename not then a path in the format [plugin-tmpl-conf]/filename is returned.
+		 * If both subdir and filename are set then a path in the format [plugin-tmpl-conf]/subdir/filename is returned. */
+		QString getTmplPluginFilePath(const QString &subdir, const QString &filename) const;
 
 		friend class PluginsConfigWidget;
 };

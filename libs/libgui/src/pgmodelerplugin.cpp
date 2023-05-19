@@ -130,9 +130,9 @@ QString PgModelerPlugin::getPluginIcon(const QString &icon_name) const
 	return QString(":/%1/%2.png").arg(plugin_name, icon_name);
 }
 
-QString PgModelerPlugin::getPluginFilePath(const QString &subdir, const QString &filename) const
+QString PgModelerPlugin::getPluginFilePath(const QString &root_path, const QString &subdir, const QString &filename) const
 {
-	QString file_pth = GlobalAttributes::getPluginsPath() + GlobalAttributes::DirSeparator + getPluginName();
+	QString file_pth = root_path + GlobalAttributes::DirSeparator + getPluginName();
 
 	if(!subdir.isEmpty())
 		file_pth += GlobalAttributes::DirSeparator + subdir;
@@ -141,6 +141,18 @@ QString PgModelerPlugin::getPluginFilePath(const QString &subdir, const QString 
 		file_pth += GlobalAttributes::DirSeparator + filename;
 
 	return file_pth;
+}
+
+QString PgModelerPlugin::getPluginFilePath(const QString &subdir, const QString &filename) const
+{
+	return getPluginFilePath(GlobalAttributes::getConfigurationsPath() +
+													 GlobalAttributes::DirSeparator +
+													 GlobalAttributes::PluginsDir, subdir, filename);
+}
+
+QString PgModelerPlugin::getTmplPluginFilePath(const QString &subdir, const QString &filename) const
+{
+	return getPluginFilePath(GlobalAttributes::getPluginsPath(), subdir, filename);
 }
 
 void PgModelerPlugin::configurePluginInfo(const QString &title, const QString &version, const QString &author, const QString &description)
