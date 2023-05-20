@@ -121,11 +121,11 @@ bool Constraint::isColumnsExist(std::vector<Column *> columns, ColumnsId cols_id
 	{
 		is_ref = isColumnExists(col, cols_id);
 		if(!strict_check && !is_ref) break;
-		if(strict_check) found_cols++;
+		if(strict_check && is_ref) found_cols++;
 	}
 
 	return (!strict_check && is_ref) ||
-					(strict_check && found_cols == getColumnCount(cols_id));
+				 (strict_check && found_cols == getColumnCount(cols_id));
 }
 
 bool Constraint::isColumnReferenced(Column *column, bool search_only_ref_cols)

@@ -1,6 +1,58 @@
 Changelog
 ---------
 
+v1.0.4
+------
+<em>Release date: May 19, 2023</em><br/>
+
+* [New] Now pgModeler selects the UI element colors based upon the system's default colors set (light/dark).
+* [New] pgModeler now restores the default settings in case of some configuration file is corrupted/incompatible and causes the initialization to fail.
+* [New] Allowing sequences to be assigned to columns with numeric type.
+* [New] Created the methods GuiUtilsNs::saveFile and GuiUtilsNs::loadFile.
+* [Change] Removed the deprecated attribute partial-match from configuration files in conf/defaults.
+* [Change] Minor adjustment in output messages in PgModelerCliApp::createConfigurations.
+* [Change] SyntaxHighlighter when in single-line mode will strip any line break char in the input field.
+* [Change] Minor adjustment in SyntaxHighlighter to force no line wrap in the parent input when single_line_mode is activated.
+* [Change] Changed the behavior of TableDataWidget::populateDataGrid. Instead of failing and never opening the dialog again for the user to try to import another file, the method now ask for saving the current (corrupted data) to a file and opens an empty grid to a new CSV import.
+* [Change] Removed unused constant PhysicalTable::DataLineBreak.
+* [Fix] Fixed a false-positive diff result when comparing numeric columns.
+* [Fix] Minor fix in the name pattern of the settings backup folder in PgModelerCliApp::createConfigurations.
+* [Fix] Fixed bug in reverse engineering that was happening during the creation of object permissions.
+* [Fix] Minor fixes in the catalog queries for cast, collation, and role.
+* [Fix] Fixed the wrong usage of cached names and signatures in DatabaseImportHelper.
+* [Fix] Additional fix in CsvParser::parseBuffer to append a line break character at the end of the buffer in case it is missing so the parsing can be done correctly.
+
+v1.0.3
+------
+<em>Release date: April 24, 2023</em><br/>
+
+* [New] pgmodeler-cli now logs objects that fail to be recreated in fix process into a log file stored in pgModeler's temp directory.
+* [New] Added a progress bar to model fix form and a cancel button which allows aborting the fix operation without close that form.
+* [New] Added a specific icon for CSV load button in CsvLoadWidget.
+* [New] Added the methods Trigger::getColumns and Trigger::addColumns.
+* [Change] Adjusted the behavior of hide and close events of model fix form.
+* [Change] Minor adjustment in pgmodeler-cli model fix messages.
+* [Change] Refactored TriggerWidget to use an instance of ColumnPickerWidget.
+* [Fix] Fixed the database model file header validation for huge models in pgmodeler-cli.
+* [Fix] Fixed a bug in TableDataWidget::generateDataBuffer that was causing the generation of malformed CSV in some circumstances.
+* [Fix] Fixed the PluginsConfigWidget::initPlugins in such a way to remove the plugins that failed to load from the plugins grid.
+* [Fix] Fixed a bug in BaseRelationship::canSimulateRelationship11 that was wrongly returning true.
+
+v1.0.2
+------
+<em>Release date: March 14, 2023</em><br/>
+
+* [Fix] Fixed a bug related to importing referenced tables of FKs in partial import mode.
+* [Fix] Fixed the attributes toggler item border style in partition tables.
+* [Fix] Fixed a regression that was preventing the canvas color to be changed.
+* [Fix] Fixed a bug in BaseObjectWidget::finishConfiguration that was preventing the creation of a role and a table with the same names.
+* [Fix] Fixed the generation of DROP command for policy, trigger, and rule.
+* [Fix] Fixed a bug that was causing objects to be selected in the sample model at appearance settings.
+* [Fix] Forcing the usage of Qt 6.x due to problems on Windows when compiling with Qt 5.
+* [Fix] Minor adjustment in CodeCompletionWidget stylesheet.
+* [Fix] Saving/restoring the painter settings after drawing the background in ObjectsScene.
+* [Fix] Fixed a malformed diff code for policies.
+
 v1.0.1
 ------
 <em>Release date: February 17, 2023</em><br/>

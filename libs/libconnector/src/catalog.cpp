@@ -382,11 +382,16 @@ QString Catalog::getCatalogQuery(const QString &qry_type, ObjectType obj_type, b
 	QString sql, custom_filter;
 
 	/* Escaping apostrophe (') in the attributes values to avoid SQL errors
-	 * due to support to this char in the middle of objects' names */
+	 * due to support to this char in the middle of objects' names. The only exception
+	 * is for custom filter attribute and comment retrive queries that remain unchaged */
 	for(auto &attr : attribs)
-	{
-		if(attr.first != Attributes::CustomFilter && attr.second.contains(QChar('\'')))
-			attr.second.replace(QChar('\''), QString("''"));
+	{	
+		if(attr.first != Attributes::CustomFilter &&
+			 attr.first != Attributes::Comment &&
+			 attr.second.contains(QChar('\'')))
+		{
+			attr.second.replace(QChar('\''), "''");
+		}
 	}
 
 	schparser.__setPgSQLVersion(connection.getPgSQLVersion(true),
@@ -448,7 +453,7 @@ QString Catalog::getCatalogQuery(const QString &qry_type, ObjectType obj_type, b
 		if(where_idx < 0)
 		{
 			// Adding the custom filter with a WHERE statement
-			custom_filter.prepend("WHERE ");
+			custom_filter.prepend(" WHERE ");
 
 			/* If we have and order by then the where statement will
 			 * be placed before the order by */

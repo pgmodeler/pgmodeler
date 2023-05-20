@@ -21,6 +21,7 @@
 #include "tools/bugreportform.h"
 #include "tools/metadatahandlingform.h"
 #include "tools/sqlexecutionwidget.h"
+#include "utilsns.h"
 
 bool MainWindow::confirm_validation=true;
 int MainWindow::ToolsActionsCount=0;
@@ -123,8 +124,8 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	plugins_conf_wgt->postInitPlugins();
 
 	// Updating drop shadows settings to match the current UI theme
-	confs = AppearanceConfigWidget::getConfigurationParams();
-	AppearanceConfigWidget::updateDropShadows(confs[GlobalAttributes::AppearanceConf][Attributes::UiTheme]);
+	AppearanceConfigWidget *appearance_wgt = dynamic_cast<AppearanceConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::AppearanceConfWgt));
+	appearance_wgt->updateDropShadows();
 }
 
 MainWindow::~MainWindow()
@@ -313,6 +314,48 @@ void MainWindow::setPluginsActions(ModelWidget *model_wgt)
 	model_wgt->setPluginActions(plugins_conf_wgt->getPluginsModelsActions());
 }
 
+void MainWindow::handleInitializationFailure(Exception &e)
+{
+	Messagebox msgbox;
+
+	/* In case of initialization problems related to broken configuration files
+			 * We try to restore them so the next initialization can occur without problems */
+	msgbox.show(e, tr("Failed to initialize one or more components of the UI due to corrupted or incompatible configuration files. Running the CLI tool to restore the default settings may solve this issue. How do you want to proceed?"),
+							Messagebox::ErrorIcon, Messagebox::YesNoButtons,
+							tr("Restore"), tr("Abort"), "",
+							GuiUtilsNs::getIconPath("defaults"), GuiUtilsNs::getIconPath("cancel"), "");
+
+	// Running the CLI in config file restoration mode is the user accepts the message box
+	if(msgbox.result() == QDialog::Accepted)
+	{
+		QProcess proc;
+		proc.setProgram(GlobalAttributes::getPgModelerCLIPath());
+		proc.setArguments({ "-cc", "-ff", "--silent" });
+		proc.start();
+		proc.waitForFinished();
+
+		if(proc.error() != QProcess::UnknownError || proc.exitCode() != 0)
+		{
+			msgbox.show(tr("The CLI failed to restore the configuration files! \
+										 The command executed was: <br/><br/> <strong>%1</strong> \
+										 <br/><br/> Error(s) returned: <br/><br/><em>%2</em>")
+										 .arg(proc.program() + " " + proc.arguments().join(" "),
+													proc.readAllStandardOutput()), Messagebox::ErrorIcon);
+		}
+		else
+		{
+			msgbox.show(tr("The default settings were successfully restored! pgModeler will be restarted now so the configuration files can be correctly loaded."),
+									Messagebox::InfoIcon);
+
+			// Starting a new instance of pgModeler (detached)
+			proc.setProgram(GlobalAttributes::getPgModelerAppPath());
+			proc.setArguments({});
+			proc.startDetached();
+			proc.waitForFinished();
+		}
+	}
+}
+
 void MainWindow::createMainWidgets()
 {
 	try
@@ -368,6 +411,7 @@ void MainWindow::createMainWidgets()
 	}
 	catch(Exception &e)
 	{
+		handleInitializationFailure(e);
 		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
@@ -395,30 +439,22 @@ void MainWindow::loadConfigurations()
 		{
 			if(itr.second.count(Attributes::Path)!=0)
 			{
-				try
-				{
-					//Storing the file of a previous session
-					if(itr.first.contains(Attributes::File) &&
-							!itr.second[Attributes::Path].isEmpty())
-						prev_session_files.push_back(itr.second[Attributes::Path]);
+				//Storing the file of a previous session
+				if(itr.first.contains(Attributes::File) &&
+						!itr.second[Attributes::Path].isEmpty())
+					prev_session_files.push_back(itr.second[Attributes::Path]);
 
-					//Creating the recent models menu
-					else if(itr.first.contains(Attributes::Recent) &&
-							!itr.second[Attributes::Path].isEmpty())
-						recent_models.push_back(itr.second[Attributes::Path]);
-				}
-				catch(Exception &e)
-				{
-					Messagebox msg_box;
-					msg_box.show(e);
-				}
+				//Creating the recent models menu
+				else if(itr.first.contains(Attributes::Recent) &&
+						!itr.second[Attributes::Path].isEmpty())
+					recent_models.push_back(itr.second[Attributes::Path]);
 			}
 		}
 	}
 	catch(Exception &e)
 	{
-		Messagebox msg_box;
-		msg_box.show(e);
+		handleInitializationFailure(e);
+		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
@@ -748,7 +784,9 @@ void MainWindow::fixModel(const QString &filename)
 {
 	ModelFixForm model_fix_form(nullptr, Qt::Dialog | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint);
 
-	connect(&model_fix_form, &ModelFixForm::s_modelLoadRequested, this, qOverload<const QString &>(&MainWindow::loadModel));
+	connect(&model_fix_form, &ModelFixForm::s_modelLoadRequested,
+					this, qOverload<const QString &>(&MainWindow::loadModel),
+					Qt::QueuedConnection);
 
 	if(!filename.isEmpty())
 	{

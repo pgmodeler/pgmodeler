@@ -43,8 +43,9 @@ class __libgui ModelFixForm: public QDialog, public Ui::ModelFixForm {
 		*output_file_sel,
 		*pgmodeler_cli_sel;
 
-		void hideEvent(QHideEvent *);
+		void closeEvent(QCloseEvent *event);
 		void resetFixForm();
+		void enableFixOptions(bool enable);
 
 	public:
 		ModelFixForm(QWidget * parent = nullptr, Qt::WindowFlags f = Qt::Widget);
@@ -55,6 +56,7 @@ class __libgui ModelFixForm: public QDialog, public Ui::ModelFixForm {
 	private slots:
 		void enableFix();
 		void fixModel();
+		void cancelFix();
 		void updateOutput();
 		void handleProcessFinish(int res);
 

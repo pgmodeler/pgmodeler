@@ -13,12 +13,12 @@ SUBDIRS = libs/$$LIBUTILS \
 CONFIG(debug, debug|release): SUBDIRS += tests
 
 !exists($$PLUGINS_PRO_FILE) {
-   !defined(PRIVATE_PLUGINS,var) {
+   !isEqual(PRIVATE_PLUGINS, true) {
      warning("The subproject $$PLUGINS_SRC_ROOT wasn't found! pgModeler will be build without plug-ins.")
      warning("If you want to compile pgModeler with plug-ins make sure to clone https://github.com/pgmodeler/plugins inside pgModeler's root folder and rerun qmake.")
    }
 
-   defined(PRIVATE_PLUGINS,var) {
+   isEqual(PRIVATE_PLUGINS, true) {
      error("The private plug-ins build was specified but the subproject $$PLUGINS_SRC_ROOT wasn't found! Aborting.")
    }
 }
@@ -34,8 +34,8 @@ SUBDIRS += apps/pgmodeler \
 	   apps/pgmodeler-se
 
 # Deployment settings
-defined(DEMO_VERSION, var): samples.files = assets/samples/demo.dbm
-!defined(DEMO_VERSION, var): samples.files = assets/samples/*
+isEqual(DEMO_VERSION, true): samples.files = assets/samples/demo.dbm
+!isEqual(DEMO_VERSION, true): samples.files = assets/samples/*
 samples.path = $$SAMPLESDIR
 
 schemas.files = assets/schemas/*

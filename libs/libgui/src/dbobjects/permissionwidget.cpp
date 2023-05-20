@@ -243,7 +243,6 @@ void PermissionWidget::showSelectedRoleData()
 	role=dynamic_cast<Role *>(object_selection_wgt->getSelectedObject());
 	row=roles_tab->getSelectedRow();
 
-
 	if(role)
 		row_idx=roles_tab->getRowIndex(QVariant::fromValue<void *>(dynamic_cast<void *>(role)));
 

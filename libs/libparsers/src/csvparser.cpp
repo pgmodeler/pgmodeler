@@ -64,13 +64,19 @@ CsvDocument CsvParser::parseBuffer(const QString &csv_buf)
 
 		buffer = csv_buf;
 
-		// Converting Windows line breaks (\r\n) into a single line feed char
+		// Converting Windows line breaks (\r\n) into a single line break char
 		if(buffer.contains(win_line_break))
-			buffer.replace(win_line_break, QString(QChar::LineFeed));
+			buffer.replace(win_line_break, line_break);
 
-		// Converting MacOs line breaks (\r) to a into single line feed char
+		// Converting MacOs line breaks (\r) to a into single line break char
 		if(buffer.contains(mac_line_break))
-			buffer.replace(mac_line_break, QString(QChar::LineFeed));
+			buffer.replace(mac_line_break, line_break);
+
+		/* The buffer needs the have the last char being a line break,
+		 * so the data can be extracted correctly. If the line break isn't found
+		 * at the end we add one */
+		if(!buffer.endsWith(line_break))
+			buffer.append(line_break);
 
 		curr_pos = curr_row = 0;
 
@@ -158,6 +164,11 @@ QString CsvParser::extractValue()
 			{
 				value.append(chr);
 				curr_pos++;
+
+				/* If the current position reaches the end of the buffer without finding a
+				 * line break we force the return of the value and increment the current row value */
+				if(curr_pos >= buffer.length())
+					curr_row++;
 			}
 		}
 	}

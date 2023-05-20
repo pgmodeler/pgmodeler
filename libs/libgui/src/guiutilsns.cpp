@@ -593,4 +593,69 @@ namespace GuiUtilsNs {
 
 		tab_wgt->resizeRowsToContents();
 	}
+
+	void saveFile(const QByteArray &buffer, const QString &title, QFileDialog::FileMode file_mode,
+								const QStringList &name_filters, const QStringList &mime_filters,
+								const QString &default_suffix)
+	{
+		if(file_mode != QFileDialog::ExistingFile &&
+			 file_mode != QFileDialog::AnyFile)
+			return;
+
+		QFileDialog file_dlg;
+
+		file_dlg.setWindowIcon(QIcon(getIconPath("pgmodeler_logo")));
+		file_dlg.setWindowTitle(title);
+		file_dlg.setDefaultSuffix(default_suffix);
+		file_dlg.setNameFilters(name_filters);
+		file_dlg.setMimeTypeFilters(mime_filters);
+		file_dlg.setFileMode(file_mode);
+		file_dlg.setAcceptMode(QFileDialog::AcceptSave);
+		file_dlg.setModal(true);
+
+		try
+		{
+			if(file_dlg.exec() == QDialog::Accepted &&
+				 !file_dlg.selectedFiles().isEmpty())
+			{
+				return UtilsNs::saveFile(file_dlg.selectedFiles().at(0), buffer);
+			}
+		}
+		catch(Exception &e)
+		{
+			throw Exception(e.getErrorMessage(), __PRETTY_FUNCTION__, __FILE__, __LINE__, &e);
+		}
+	}
+
+	QByteArray loadFile(const QString &title, QFileDialog::FileMode file_mode, const QStringList &name_filters, const QStringList &mime_filters)
+	{
+		if(file_mode != QFileDialog::ExistingFile &&
+			 file_mode != QFileDialog::AnyFile)
+			return QByteArray();
+
+		QFileDialog file_dlg;
+
+		file_dlg.setWindowIcon(QIcon(getIconPath("pgmodeler_logo")));
+		file_dlg.setWindowTitle(title);
+		file_dlg.setNameFilters(name_filters);
+		file_dlg.setMimeTypeFilters(mime_filters);
+		file_dlg.setFileMode(file_mode);
+		file_dlg.setAcceptMode(QFileDialog::AcceptOpen);
+		file_dlg.setModal(true);
+
+		try
+		{
+			if(file_dlg.exec() == QDialog::Accepted &&
+				 !file_dlg.selectedFiles().isEmpty())
+			{
+				return UtilsNs::loadFile(file_dlg.selectedFiles().at(0));
+			}
+
+			return QByteArray();
+		}
+		catch(Exception &e)
+		{
+			throw Exception(e.getErrorMessage(), __PRETTY_FUNCTION__, __FILE__, __LINE__, &e);
+		}
+	}
 }

@@ -150,6 +150,19 @@ void Trigger::addColumn(Column *column)
 	setCodeInvalidated(true);
 }
 
+void Trigger::addColumns(const std::vector<Column *> &cols)
+{
+	try
+	{
+		for(auto &col : cols)
+			addColumn(col);
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorCode(), __PRETTY_FUNCTION__, __FILE__, __LINE__, &e);
+	}
+}
+
 void Trigger::editArgument(unsigned arg_idx, const QString &new_arg)
 {
 	//Raises an error if the argument index is invalid (out of bound)
@@ -195,6 +208,11 @@ Column *Trigger::getColumn(unsigned col_idx)
 		throw Exception(ErrorCode::RefColumnInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	return upd_columns[col_idx];
+}
+
+std::vector<Column *> Trigger::getColumns()
+{
+	return upd_columns;
 }
 
 unsigned Trigger::getArgumentCount()

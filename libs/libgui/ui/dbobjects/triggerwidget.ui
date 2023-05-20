@@ -154,53 +154,6 @@
        <property name="spacing">
         <number>5</number>
        </property>
-       <item row="0" column="0">
-        <widget class="QLabel" name="column_lbl">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="minimumSize">
-          <size>
-           <width>0</width>
-           <height>0</height>
-          </size>
-         </property>
-         <property name="text">
-          <string>Column:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="1">
-        <widget class="QComboBox" name="column_cmb">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="minimumSize">
-          <size>
-           <width>180</width>
-           <height>0</height>
-          </size>
-         </property>
-         <property name="maximumSize">
-          <size>
-           <width>16777215</width>
-           <height>16777215</height>
-          </size>
-         </property>
-         <property name="iconSize">
-          <size>
-           <width>28</width>
-           <height>28</height>
-          </size>
-         </property>
-        </widget>
-       </item>
       </layout>
      </widget>
      <widget class="QWidget" name="tab_3">
@@ -768,7 +721,6 @@
   <tabstop>new_table_edt</tabstop>
   <tabstop>arg_cols_tbw</tabstop>
   <tabstop>argument_edt</tabstop>
-  <tabstop>column_cmb</tabstop>
   <tabstop>deferrable_chk</tabstop>
   <tabstop>deferral_type_cmb</tabstop>
   <tabstop>cond_expr_txt</tabstop>

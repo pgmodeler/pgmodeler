@@ -46,6 +46,10 @@ class PgModelerCliApp: public Application {
 
 		XmlParser *xmlparser;
 
+		qint64 buffer_size;
+
+		bool has_fix_log;
+
 		//! \brief Holds the pgModeler version in which the model was construted (used by the fix operation)
 		QString model_version;
 
@@ -203,7 +207,8 @@ class PgModelerCliApp: public Application {
 		AttributeExpr,
 
 		MsgFileAssociated,
-		MsgNoFileAssociation;
+		MsgNoFileAssociation,
+		ModelFixLog;
 
 		//! \brief Parsers the options and executes the action specified by them
 		void parseOptions(attribs_map &parsed_opts);

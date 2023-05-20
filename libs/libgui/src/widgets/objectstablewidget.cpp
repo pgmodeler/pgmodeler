@@ -320,24 +320,21 @@ int ObjectsTableWidget::getSelectedRow()
 
 int ObjectsTableWidget::getRowIndex(const QVariant &data)
 {
-	unsigned i, count;
-	QTableWidgetItem *item=nullptr;
-	bool found=false;
+	QTableWidgetItem *item = nullptr;
+	int idx = -1;
 
-	count=table_tbw->rowCount();
-
-	for(i=0; !found && i < count; i++)
+	for(auto row = 0; row < table_tbw->rowCount(); row++)
 	{
-		item=table_tbw->verticalHeaderItem(i);
+		item = table_tbw->verticalHeaderItem(row);
 
-		//Checking if the item data is equal to the passed data
-		found=(item && item->data(Qt::UserRole).value<void *>() == data.value<void *>());
+		if(item && item->data(Qt::UserRole) == data)
+		{
+			idx = row;
+			break;
+		}
 	}
 
-	if(!found)
-		return -1;
-	else
-		return i;
+	return idx;
 }
 
 void ObjectsTableWidget::addColumn(unsigned col_idx)

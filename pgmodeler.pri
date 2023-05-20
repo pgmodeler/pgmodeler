@@ -12,6 +12,11 @@ UI_DIR = src
 DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000
 !defined(NO_CHECK_CURR_VER, var):DEFINES+=CHECK_CURR_VER
 
+# Forcing the compilation using Qt 6.x
+!versionAtLeast(QT_VERSION, "6.0.0") {
+   error("Unsupported Qt version detected: $${QT_VERSION}! pgModeler must be compiled with at least Qt 6.0.0.")
+}
+
 # Store the absolute paths to library subprojects to be referenced in other .pro files
 # *_ROOT -> the path to the root folder of the subproject
 # *_LIB -> the libary flags (-L -l) (LIBS on qmake) passed to the compiler that points to the library generated from a subproject
@@ -47,20 +52,20 @@ LIBUTILS_LIB = -L$$LIBUTILS_ROOT -lutils
 LIBUTILS_INC = $$LIBUTILS_ROOT/src
 
 # Set the flag passed to compiler to indicate a snapshot build
-defined(SNAPSHOT_BUILD, var): DEFINES+=SNAPSHOT_BUILD
+isEqual(SNAPSHOT_BUILD, true): DEFINES+=SNAPSHOT_BUILD
 
 # Set the flag passed to compiler to build the demo version
-defined(DEMO_VERSION, var) {
+isEqual(DEMO_VERSION, true) {
  DEFINES+=DEMO_VERSION
  unset(PRIVATE_PLUGINS)
 }
 
 # Set up the flag passed to compiler to disable all code related to update checking
-defined(NO_UPDATE_CHECK, var): DEFINES+=NO_UPDATE_CHECK
+isEqual(NO_UPDATE_CHECK, true): DEFINES+=NO_UPDATE_CHECK
 
 # Set up the plugin folder to be used
 PLUGINS_FOLDER=plugins
-defined(PRIVATE_PLUGINS, var) {
+isEqual(PRIVATE_PLUGINS, true) {
   DEFINES+=PRIVATE_PLUGINS_SYMBOLS
   PLUGINS_FOLDER=priv-plugins
 }
@@ -105,7 +110,7 @@ linux {
   CONFIG += x11
 
   # If the AppImage generation option is set
-  defined(APPIMAGE_BUILD, var):{
+  isEqual(APPIMAGE_BUILD, true):{
 	!defined(PREFIX, var): PREFIX = /usr/local/pgmodeler-appimage
 	BINDIR = $$PREFIX
 	PRIVATEBINDIR = $$PREFIX
@@ -119,7 +124,7 @@ linux {
 	SCHEMASDIR = $$SHAREDIR/schemas
   }
 
-  !defined(APPIMAGE_BUILD, var):{
+  !isEqual(APPIMAGE_BUILD, true):{
 	# Default configuration for package pgModeler.
 	# The default prefix is /usr/local
 	!defined(PREFIX, var):        PREFIX = /usr/local

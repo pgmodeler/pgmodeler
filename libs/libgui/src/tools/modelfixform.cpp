@@ -18,7 +18,6 @@
 
 #include "modelfixform.h"
 #include "settings/configurationform.h"
-#include <iostream>
 #include "guiutilsns.h"
 
 const QString ModelFixForm::PgModelerCli("pgmodeler-cli");
@@ -72,7 +71,11 @@ ModelFixForm::ModelFixForm(QWidget *parent, Qt::WindowFlags f) : QDialog(parent,
 	connect(input_file_sel, &FileSelectorWidget::s_selectorChanged, this, &ModelFixForm::enableFix);
 	connect(output_file_sel, &FileSelectorWidget::s_selectorChanged, this, &ModelFixForm::enableFix);
 	connect(pgmodeler_cli_sel, &FileSelectorWidget::s_selectorChanged, this, &ModelFixForm::enableFix);
-	connect(close_btn, &QPushButton::clicked, this, &ModelFixForm::reject);
+	connect(close_btn, &QPushButton::clicked, this, &ModelFixForm::close);
+
+	connect(cancel_btn, &QPushButton::clicked, this, [this](){
+		cancelFix();
+	});
 
 	resetFixForm();
 }
@@ -86,11 +89,26 @@ void ModelFixForm::resetFixForm()
 	output_file_sel->clearSelector();
 	output_txt->setPlainText(tr("Waiting process to start..."));
 	load_model_chk->setChecked(true);
+	enableFixOptions(true);
+	progress_pb->setVisible(false);
+	cancel_btn->setVisible(false);
 }
 
-void ModelFixForm::hideEvent(QHideEvent *)
+void ModelFixForm::enableFixOptions(bool enable)
 {
-	resetFixForm();
+	fix_btn->setEnabled(enable);
+	output_file_sel->setEnabled(enable);
+	input_file_sel->setEnabled(enable);
+	fix_tries_sb->setEnabled(enable);
+	load_model_chk->setEnabled(enable);
+}
+
+void ModelFixForm::closeEvent(QCloseEvent *event)
+{
+	if(pgmodeler_cli_proc.state() == QProcess::Running)
+		event->ignore();
+	else
+		resetFixForm();
 }
 
 int ModelFixForm::exec()
@@ -159,35 +177,79 @@ void ModelFixForm::fixModel()
 	pgmodeler_cli_proc.setArguments(args);
 	pgmodeler_cli_proc.setProgram(pgmodeler_cli_sel->getSelectedFile());
 	pgmodeler_cli_proc.start();
+
+	progress_pb->setValue(0);
+	progress_pb->setVisible(true);
+	cancel_btn->setEnabled(true);
+	cancel_btn->setVisible(true);
+	enableFixOptions(false);
+}
+
+void ModelFixForm::cancelFix()
+{
+	cancel_btn->setEnabled(false);
+	pgmodeler_cli_proc.terminate();
+	pgmodeler_cli_proc.waitForFinished();
+	output_txt->insertPlainText(QString("\n%1\n").arg(tr("** Process cancelled by the user!")));
+	output_txt->moveCursor(QTextCursor::End);
+	enableFixOptions(true);
 }
 
 void ModelFixForm::updateOutput()
 {
-	QTextCursor cursor;
-	QString txt=output_txt->toPlainText();
+	QString txt;
 
 	//Append both stdout and stderr
 	txt.append(pgmodeler_cli_proc.readAllStandardOutput());
 	txt.append(pgmodeler_cli_proc.readAllStandardError());
-	output_txt->setPlainText(txt);
+
+	if(txt.contains(QRegularExpression("^\\[\\d+\\%\\]")))
+	{
+		QStringList list = txt.split(QChar::LineFeed, Qt::SkipEmptyParts);
+		int pos = -1;
+		QString prog_str;
+
+		for(auto &str : list)
+		{
+			// Extracting the progress value to display in the progress bar widget
+			pos = str.indexOf("]");
+			prog_str = str.mid(0, pos);
+			prog_str.remove(QRegularExpression("(?!(\\d))(\\W)"));
+
+			if(prog_str.toInt() >= progress_pb->value())
+			{
+				progress_pb->setValue(prog_str.toInt());
+				str.remove(0, pos + 2);
+			}
+
+			txt = str + "\n";
+		}
+	}
+
+	output_txt->insertPlainText(txt);
 
 	//Moving the output to the last line
-	cursor=output_txt->textCursor();
-	cursor.movePosition(QTextCursor::End);
-	output_txt->setTextCursor(cursor);
+	output_txt->moveCursor(QTextCursor::End);
 }
 
 void ModelFixForm::handleProcessFinish(int res)
 {
-	/* If the model as sucessfully fixed and user
-	 requested the loading */
-	if(res==0 && load_model_chk->isChecked())
-	{
-		//Emit a signal indicating the file to be loaded
-		emit s_modelLoadRequested(output_file_sel->getSelectedFile());
-		this->close();
-	}
-
+	enableFixOptions(true);
 	pgmodeler_cli_proc.blockSignals(true);
+	cancel_btn->setEnabled(false);
+
+	if(res == 0)
+	{
+		progress_pb->setValue(100);
+
+		/* If the model as sucessfully fixed and user
+		 requested the loading */
+		if(load_model_chk->isChecked())
+		{
+			//Emit a signal indicating the file to be loaded
+			emit s_modelLoadRequested(output_file_sel->getSelectedFile());
+			close();
+		}
+	}
 }
 

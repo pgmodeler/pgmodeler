@@ -124,11 +124,8 @@ class __libcore PhysicalTable: public BaseTable {
 		void destroyObjects();
 
 	public:
-		//! \brief Default char for data line break in initial-data tag
-		static const QString DataLineBreak;
-
 		PhysicalTable();
-		~PhysicalTable(void){}
+		~PhysicalTable(){}
 
 		//! \brief Returns true if the provided table is considered a physical table (Table, ForeignTable, PhysicalTable)
 		static bool isPhysicalTable(ObjectType obj_type);

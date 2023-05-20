@@ -70,6 +70,7 @@ void PluginsConfigWidget::loadConfiguration()
 	QStringList dir_list;
 	PgModelerPlugin *plugin=nullptr;
 	QFileInfo fi;
+	unsigned row = 0;
 
 	//The plugin loader must resolve all symbols otherwise return an error if some symbol is missing on library
 	plugin_loader.setLoadHints(QLibrary::ResolveAllSymbolsHint);
@@ -123,6 +124,10 @@ void PluginsConfigWidget::loadConfiguration()
 			plugins_tab->setCellIcon(QIcon(plugin->getPluginIcon(plugin_name)), plugins_tab->getRowCount()-1, 0);
 			plugins_tab->setCellText(plugin->getPluginVersion(), plugins_tab->getRowCount()-1, 1);
 			plugins_tab->setCellText(fi.fileName(), plugins_tab->getRowCount()-1, 2);
+			plugins_tab->setRowData(
+							QVariant::fromValue<void *>(plugin),
+							row++
+						);
 		}
 		else
 		{
@@ -146,6 +151,7 @@ void PluginsConfigWidget::initPlugins(MainWindow *main_window)
 {
 	std::vector<PgModelerPlugin *> inv_plugins;
 	std::vector<Exception> errors;
+	int row_idx = -1;
 
 	for(auto &plugin : plugins)
 	{
@@ -163,7 +169,12 @@ void PluginsConfigWidget::initPlugins(MainWindow *main_window)
 	// Erasing the plugins/actions related to the ones that failed to initialize
 	while(!inv_plugins.empty())
 	{
+		row_idx = plugins_tab->getRowIndex(QVariant::fromValue<void *>(inv_plugins.back()));
 		plugins.erase(std::find(plugins.begin(), plugins.end(), inv_plugins.back()));
+
+		if(row_idx >= 0)
+			plugins_tab->removeRow(row_idx);
+
 		delete inv_plugins.back();
 		inv_plugins.pop_back();
 	}

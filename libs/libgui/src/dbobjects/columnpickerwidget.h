@@ -67,6 +67,9 @@ class __libgui ColumnPickerWidget: public QWidget, public Ui::ColumnPickerWidget
 		//! \brief Returns a list of the view columns that are in the grid.
 		std::vector<SimpleColumn> getSimpleColumns();
 
+		//! \brief Removes all columns from the grid
+		void clear();
+
 	private slots:
 		void updateColumnsCombo();
 		void addColumn(int row);

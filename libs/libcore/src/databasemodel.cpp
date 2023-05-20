@@ -5033,12 +5033,14 @@ Column *DatabaseModel::createColumn()
 			seq=getObject(attribs[Attributes::Sequence], ObjectType::Sequence);
 
 			if(!seq)
+			{
 				throw Exception(Exception::getErrorMessage(ErrorCode::RefObjectInexistsModel)
 								.arg(attribs[Attributes::Name])
 					.arg(BaseObject::getTypeName(ObjectType::Column))
 					.arg(attribs[Attributes::Sequence])
 					.arg(BaseObject::getTypeName(ObjectType::Sequence)),
-					ErrorCode::PermissionRefInexistObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+					ErrorCode::RefObjectInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			}
 
 
 			column->setSequence(seq);
