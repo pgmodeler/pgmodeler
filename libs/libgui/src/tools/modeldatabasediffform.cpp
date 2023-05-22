@@ -63,7 +63,6 @@ ModelDatabaseDiffForm::ModelDatabaseDiffForm(QWidget *parent, Qt::WindowFlags fl
 
 		file_sel = new FileSelectorWidget(this);
 		file_sel->setAllowFilenameInput(true);
-		file_sel->setFileMode(QFileDialog::AnyFile);
 		file_sel->setAcceptMode(QFileDialog::AcceptSave);
 		file_sel->setFileDialogTitle(tr("Save diff as"));
 		file_sel->setMimeTypeFilters({"application/sql", "application/octet-stream"});
@@ -85,7 +84,6 @@ ModelDatabaseDiffForm::ModelDatabaseDiffForm(QWidget *parent, Qt::WindowFlags fl
 		sqlcode_hl->loadConfiguration(GlobalAttributes::getSQLHighlightConfPath());
 
 		pgsql_ver_cmb->addItems(PgSqlVersions::AllVersions);
-		//GuiUtilsNs::configureWidgetFont(message_lbl, GuiUtilsNs::MediumFontFactor);
 
 		cancel_preset_edit_tb->setVisible(false);
 		preset_name_edt->setVisible(false);

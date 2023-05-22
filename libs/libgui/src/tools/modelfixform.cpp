@@ -29,7 +29,8 @@ ModelFixForm::ModelFixForm(QWidget *parent, Qt::WindowFlags f) : QDialog(parent,
 	setupUi(this);
 
 	input_file_sel = new FileSelectorWidget(this);
-	input_file_sel->setFileMode(QFileDialog::ExistingFile);
+	//input_file_sel->setFileMode(QFileDialog::ExistingFile);
+	input_file_sel->setFileMustExist(true);
 	input_file_sel->setNameFilters({tr("Database model (*%1)").arg(GlobalAttributes::DbModelExt), tr("All files (*.*)")});
 	input_file_sel->setAcceptMode(QFileDialog::AcceptOpen);
 	input_file_sel->setAllowFilenameInput(true);
@@ -37,7 +38,6 @@ ModelFixForm::ModelFixForm(QWidget *parent, Qt::WindowFlags f) : QDialog(parent,
 	model_fix_grid->addWidget(input_file_sel, 1, 2);
 
 	output_file_sel = new FileSelectorWidget(this);
-	output_file_sel->setFileMode(QFileDialog::AnyFile);
 	output_file_sel->setNameFilters({tr("Database model (*%1)").arg(GlobalAttributes::DbModelExt), tr("All files (*.*)")});
 	output_file_sel->setDefaultSuffix(GlobalAttributes::DbModelExt);
 	output_file_sel->setAcceptMode(QFileDialog::AcceptSave);
@@ -46,7 +46,7 @@ ModelFixForm::ModelFixForm(QWidget *parent, Qt::WindowFlags f) : QDialog(parent,
 	model_fix_grid->addWidget(output_file_sel, 2, 2);
 
 	pgmodeler_cli_sel = new FileSelectorWidget(this);
-	pgmodeler_cli_sel->setFileMode(QFileDialog::ExistingFile);
+	pgmodeler_cli_sel->setFileMustExist(true);
 	pgmodeler_cli_sel->setNameFilters({tr("pgModeler command line tool (%1)").arg(PgModelerCli)});
 	pgmodeler_cli_sel->setAcceptMode(QFileDialog::AcceptOpen);
 	pgmodeler_cli_sel->setAllowFilenameInput(true);

@@ -25,6 +25,7 @@ FileSelectorWidget::FileSelectorWidget(QWidget *parent) : QWidget(parent)
 	allow_filename_input = read_only = false;
 	file_is_mandatory = check_exec_flag = false;
 	file_must_exist = false;
+	file_mode = QFileDialog::AnyFile;
 
 	file_dlg.setWindowIcon(QPixmap(GuiUtilsNs::getIconPath("pgmodeler_logo")));
 
@@ -77,11 +78,17 @@ void FileSelectorWidget::setAllowFilenameInput(bool allow_fl_input)
 	filename_edt->setReadOnly(!allow_filename_input);
 }
 
-void FileSelectorWidget::setFileMode(QFileDialog::FileMode file_mode)
+void FileSelectorWidget::setDirectoryMode(bool dir_mode)
 {
-	// Forcing the ExistingFile (single file selection) if multiple file selection is provided
-	if(file_mode == QFileDialog::ExistingFiles)
-		file_mode = QFileDialog::ExistingFile;
+	if(dir_mode)
+		file_mode = QFileDialog::Directory;
+	else
+	{
+		if(file_must_exist)
+			file_mode = QFileDialog::ExistingFile;
+		else
+			file_mode = QFileDialog::AnyFile;
+	}
 
 	file_dlg.setFileMode(file_mode);
 	validateSelectedFile();
@@ -115,6 +122,14 @@ void FileSelectorWidget::setFileIsMandatory(bool value)
 void FileSelectorWidget::setFileMustExist(bool value)
 {
 	file_must_exist = value;
+
+	if(file_must_exist && file_mode == QFileDialog::AnyFile)
+	{
+		file_mode = QFileDialog::ExistingFile;
+		file_dlg.setFileMode(file_mode);
+	}
+
+	validateSelectedFile();
 }
 
 void FileSelectorWidget::setFileDialogTitle(const QString &title)
@@ -234,20 +249,20 @@ void FileSelectorWidget::validateSelectedFile()
 
 	if(file_is_mandatory && fi.absoluteFilePath().isEmpty())
 	{
-		if(file_dlg.fileMode() == QFileDialog::Directory)
+		if(file_mode == QFileDialog::Directory)
 			warn_ico_lbl->setToolTip(tr("A path to a directory must be provided!"));
 		else
 			warn_ico_lbl->setToolTip(tr("A path to a file must be provided!"));
 	}
 	else if(!fi.absoluteFilePath().isEmpty())
 	{
-		if(fi.exists() && fi.isDir() && file_dlg.fileMode() != QFileDialog::Directory)
+		if(fi.exists() && fi.isDir() && file_mode != QFileDialog::Directory)
 			warn_ico_lbl->setToolTip(tr("The provided path is not a file!"));
-		else if(fi.exists() && fi.isFile() && file_dlg.fileMode() == QFileDialog::Directory)
+		else if(fi.exists() && fi.isFile() && file_mode == QFileDialog::Directory)
 			warn_ico_lbl->setToolTip(tr("The provided path is not a directory!"));
-		else if(file_must_exist && !fi.exists() /*&& file_dlg.fileMode() != QFileDialog::AnyFile*/)
+		else if(file_must_exist && !fi.exists())
 		{
-			if(file_dlg.fileMode() == QFileDialog::Directory)
+			if(file_mode == QFileDialog::Directory)
 				warn_ico_lbl->setToolTip(tr("No such directory!"));
 			else
 				warn_ico_lbl->setToolTip(tr("No such file!"));
@@ -257,7 +272,7 @@ void FileSelectorWidget::validateSelectedFile()
 			// Validating the name pattern against the selected filename
 			if(name_regexp.isValid() && !fi.absoluteFilePath().contains(name_regexp))
 			{
-				if(file_dlg.fileMode() == QFileDialog::Directory)
+				if(file_mode == QFileDialog::Directory)
 					warn_ico_lbl->setToolTip(tr("The selected directory is not valid!"));
 				else
 					warn_ico_lbl->setToolTip(tr("The selected file is not valid!"));

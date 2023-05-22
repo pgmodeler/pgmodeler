@@ -23,12 +23,11 @@ PluginsConfigWidget::PluginsConfigWidget(QWidget *parent) : BaseConfigWidget(par
 	setupUi(this);
 
 	QGridLayout *grid=new QGridLayout(loaded_plugins_gb);
-	QDir dir=QDir(GlobalAttributes::getPluginsPath());
 
 	root_dir_sel = new FileSelectorWidget(this);
 	root_dir_sel->setToolTip(tr("pgModeler plugins directory"));
 	root_dir_sel->setReadOnly(true);
-	root_dir_sel->setFileMode(QFileDialog::Directory);
+	root_dir_sel->setDirectoryMode(true);
 	root_dir_sel->setSelectedFile(GlobalAttributes::getPluginsPath());
 	plugins_layout->insertWidget(1, root_dir_sel);
 

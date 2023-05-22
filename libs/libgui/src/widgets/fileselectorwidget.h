@@ -37,6 +37,8 @@ class __libgui FileSelectorWidget: public QWidget, public Ui::FileSelectorWidget
 
 		QFileDialog file_dlg;
 
+		QFileDialog::FileMode file_mode;
+
 		QLabel *warn_ico_lbl;
 
 		bool allow_filename_input, read_only,
@@ -56,10 +58,8 @@ class __libgui FileSelectorWidget: public QWidget, public Ui::FileSelectorWidget
 		//! \brief Indicate if the selector allows manual filename input
 		void setAllowFilenameInput(bool allow_fl_input);
 
-		/*! \brief Configures the file selection mode. This one just configures the internal
-		 * QFileDialog file mode (see QFileDialog::setFileMode). Multiple file selection trough
-		 * QFileDialog::ExistingFiles is not allowed and will be overriden by QFileDialog::ExistingFile if provided. */
-		void setFileMode(QFileDialog::FileMode file_mode);
+		//! \brief Toggles the directory selection mode. The default is to always select a single file.
+		void setDirectoryMode(bool dir_mode);
 
 		/*! \brief Indicate if the accept mode that the selector uses, this is used to configure
 		 * the internal QFileDialog instance (see QFileDialog::setAcceptMode) */

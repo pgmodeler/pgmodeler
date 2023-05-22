@@ -45,14 +45,13 @@ GeneralConfigWidget::GeneralConfigWidget(QWidget * parent) : BaseConfigWidget(pa
 	confs_dir_sel = new FileSelectorWidget(this);
 	confs_dir_sel->setToolTip(tr("pgModeler configurations directory for the current user"));
 	confs_dir_sel->setReadOnly(true);
-	confs_dir_sel->setFileMode(QFileDialog::Directory);
+	confs_dir_sel->setDirectoryMode(true);
 	confs_dir_sel->setSelectedFile(GlobalAttributes::getConfigurationsPath());
 	general_grid->addWidget(confs_dir_sel, 1, 1, 1, 1);
 
 	source_editor_sel = new FileSelectorWidget(this);
-	source_editor_sel->setToolTip(tr("pgModeler configurations directory for the current user"));
 	source_editor_sel->setAllowFilenameInput(true);
-	source_editor_sel->setFileMode(QFileDialog::ExistingFile);
+	source_editor_sel->setFileMustExist(true);
 	source_editor_sel->setAcceptMode(QFileDialog::AcceptOpen);
 	source_editor_sel->setWindowTitle(tr("Select application"));
 	source_editor_sel->setToolTip(tr("External source code editor application"));

@@ -75,7 +75,7 @@ CrashHandlerForm::CrashHandlerForm(bool analysis_mode, QWidget *parent, Qt::Wind
 
 	input_sel = new FileSelectorWidget(this);
 	input_sel->setFileDialogTitle(tr("Select bug report file"));
-	input_sel->setFileMode(QFileDialog::ExistingFile);
+	input_sel->setFileMustExist(true);
 	input_sel->setAcceptMode(QFileDialog::AcceptOpen);
 	input_sel->setNameFilters({ tr("pgModeler bug report (*.bug)"), tr("All files (*.*)") });
 	input_sel->setToolTip(tr("Load report file for analysis"));

@@ -412,12 +412,14 @@ void ModelExportForm::selectDataDictMode()
 		dict_file_sel->setMimeTypeFilters({"text/html", "application/octet-stream"});
 		dict_file_sel->setDefaultSuffix("html");
 		dict_file_sel->setAcceptMode(QFileDialog::AcceptSave);
-		dict_file_sel->setFileMode(QFileDialog::AnyFile);
+		dict_file_sel->setDirectoryMode(false);
+		dict_file_sel->setFileMustExist(false);
 	}
 	else
 	{
 		dict_file_sel->setDefaultSuffix("");
-		dict_file_sel->setFileMode(QFileDialog::Directory);
+		dict_file_sel->setDirectoryMode(true);
+		dict_file_sel->setFileMustExist(false);
 		dict_file_sel->setAcceptMode(QFileDialog::AcceptOpen);
 	}
 }
@@ -428,13 +430,15 @@ void ModelExportForm::selectSQLExportMode()
 	{
 		sql_file_sel->setMimeTypeFilters({"application/sql", "application/octet-stream"});
 		sql_file_sel->setDefaultSuffix("sql");
-		sql_file_sel->setFileMode(QFileDialog::AnyFile);
+		sql_file_sel->setFileMustExist(false);
+		sql_file_sel->setDirectoryMode(false);
 		sql_file_sel->setAcceptMode(QFileDialog::AcceptSave);
 	}
 	else
 	{
 		sql_file_sel->setDefaultSuffix("");
 		sql_file_sel->setAcceptMode(QFileDialog::AcceptOpen);
-		sql_file_sel->setFileMode(QFileDialog::Directory);
+		sql_file_sel->setFileMustExist(false);
+		sql_file_sel->setDirectoryMode(true);
 	}
 }

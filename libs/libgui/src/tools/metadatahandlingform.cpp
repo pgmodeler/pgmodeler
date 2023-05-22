@@ -252,13 +252,13 @@ void MetadataHandlingForm::configureSelector()
 	if(extract_restore_rb->isChecked() || extract_only_rb->isChecked())
 	{
 		backup_file_sel->setFileDialogTitle(tr("Save backup file"));
-		backup_file_sel->setFileMode(QFileDialog::AnyFile);
+		backup_file_sel->setFileMustExist(false);
 		backup_file_sel->setAcceptMode(QFileDialog::AcceptSave);
 	}
 	else
 	{
 		backup_file_sel->setFileDialogTitle(tr("Load backup file"));
-		backup_file_sel->setFileMode(QFileDialog::ExistingFiles);
+		backup_file_sel->setFileMustExist(true);
 		backup_file_sel->setAcceptMode(QFileDialog::AcceptOpen);
 	}
 }
