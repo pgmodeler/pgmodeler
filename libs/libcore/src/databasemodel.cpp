@@ -331,7 +331,7 @@ std::vector<BaseObject *> *DatabaseModel::getObjectList(ObjectType obj_type)
 
 void DatabaseModel::addObject(BaseObject *object, int obj_idx)
 {
-	if(!object)
+	if(!object || add_methods.count(object->getObjectType()) == 0)
 		return;
 
 	try
@@ -346,7 +346,7 @@ void DatabaseModel::addObject(BaseObject *object, int obj_idx)
 
 void DatabaseModel::removeObject(BaseObject *object, int obj_idx)
 {
-	if(!object)
+	if(!object || remove_methods.count(object->getObjectType()))
 		return;
 
 	try
