@@ -45,7 +45,6 @@ FileSelectorWidget::FileSelectorWidget(QWidget *parent) : QWidget(parent)
 	connect(rem_file_tb, &QToolButton::clicked, this, &FileSelectorWidget::clearSelector);
 
 	connect(filename_edt, &QLineEdit::textChanged, this, [this](const QString &text){
-		rem_file_tb->setEnabled(!text.isEmpty());
 		validateSelectedFile();
 		emit s_selectorChanged(!text.isEmpty());
 	});
@@ -245,7 +244,9 @@ void FileSelectorWidget::showWarning()
 void FileSelectorWidget::validateSelectedFile()
 {
 	QFileInfo fi(filename_edt->text());
+
 	warn_ico_lbl->setToolTip("");
+	rem_file_tb->setEnabled(!filename_edt->text().isEmpty());
 
 	if(file_is_mandatory && fi.absoluteFilePath().isEmpty())
 	{
