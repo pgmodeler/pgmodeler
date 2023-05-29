@@ -470,9 +470,9 @@ void MainWindow::loadConfigurations()
 
 		PluginsConfigWidget *plugins_conf_wgt = dynamic_cast<PluginsConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::PluginsConfWgt));
 		plugins_conf_wgt->initPlugins(this);
-		plugins_conf_wgt->installPluginsActions(plugins_config_menu, plugins_tb_acts, plugins_db_expl_btns);
+		plugins_conf_wgt->installPluginsActions(plugins_config_menu, plugins_tb_acts, plugins_db_expl_wgts);
 		plugins_config_menu->setEnabled(!plugins_config_menu->isEmpty());
-		sql_tool_wgt->setPluginsToolButtons(plugins_db_expl_btns);
+		sql_tool_wgt->setPluginsWidgets(plugins_db_expl_wgts);
 
 		QAction *action_plugins_config = plugins_config_menu->menuAction();
 		action_plugins_config->setText(tr("Plug-ins"));
