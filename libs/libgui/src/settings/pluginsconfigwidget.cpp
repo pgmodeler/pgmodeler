@@ -216,24 +216,24 @@ QList<QAction *> PluginsConfigWidget::getPluginsModelsActions()
 
 	for(auto &plugin : plugins)
 	{
-		if(plugin->getModelAction())
-			list.append(plugin->getModelAction());
+		if(plugin->getAction(PgModelerPlugin::ModelAction))
+			list.append(plugin->getAction(PgModelerPlugin::ModelAction));
 	}
 
 	return list;
 }
 
-void PluginsConfigWidget::installPluginsActions(QMenu *conf_menu, QList<QAction *> &tb_actions, QList<QToolButton *> &db_expl_btns)
+void PluginsConfigWidget::installPluginsActions(QMenu *conf_menu, QList<QAction *> &tb_actions, QWidgetList &db_expl_btns)
 {
 	for(auto &plugin : plugins)
 	{
-		if(conf_menu && plugin->getConfigAction())
-			conf_menu->addAction(plugin->getConfigAction());
+		if(conf_menu && plugin->getAction(PgModelerPlugin::ConfigAction))
+			conf_menu->addAction(plugin->getAction(PgModelerPlugin::ConfigAction));
 
-		if(plugin->getToolbarAction())
-			tb_actions.append(plugin->getToolbarAction());
+		if(plugin->getAction(PgModelerPlugin::ToolbarAction))
+			tb_actions.append(plugin->getAction(PgModelerPlugin::ToolbarAction));
 
-		if(plugin->getDbExplorerButton())
-			db_expl_btns.append(plugin->getDbExplorerButton());
+		if(plugin->getWidget(PgModelerPlugin::DbExplorerButton))
+			db_expl_btns.append(plugin->getWidget(PgModelerPlugin::DbExplorerButton));
 	}
 }

@@ -108,6 +108,28 @@ class __libgui PgModelerPlugin {
 		void configurePluginInfo(const QString &title, const QString &version, const QString &author, const QString &description);
 
 	public:
+		enum WidgetId {
+			//! \brief References the tool button that will be put in every DatabaseExplorerWidget instance when browsing databases
+			DbExplorerButton,
+
+			//! \brief References a general purpose widget that must be handled by the plugin developer
+			OtherWidget
+		};
+
+		enum ActionId {
+			//! \brief References the action that will be put in the toolbar at main window
+			ToolbarAction,
+
+			//! \brief References the action that will be put in the model's context menu
+			ModelAction,
+
+			//! \brief References the action that will be put in the main window menu reserved for plugins settings
+			ConfigAction,
+
+			//! \brief References a general purpose action that must be handled by the plugin developer
+			OtherAction
+		};
+
 		PgModelerPlugin();
 
 		virtual ~PgModelerPlugin();
@@ -127,17 +149,11 @@ class __libgui PgModelerPlugin {
 		//! \brief Shows the plugin's information dialog
 		virtual void showPluginInfo(void) const;
 
-		//! \brief Returns the action that will be put in the toolbar at main window
-		virtual QAction *getToolbarAction() const = 0;
+		//! \brief Returns the action identified by act_id
+		virtual QAction *getAction(ActionId act_id) const = 0;
 
-		//! \brief Returns the action that will be put in the model's context menu
-		virtual QAction *getModelAction() const = 0;
-
-		//! \brief Returns the action that will be put in the main window menu reserved for plugins settings
-		virtual QAction *getConfigAction() const = 0;
-
-		//! \brief Returns the tool button that will be put in every DatabaseExplorerWidget instance when browsing databases
-		virtual QToolButton *getDbExplorerButton() const = 0;
+		//! \brief Returns the widget identified by wgt_id
+		virtual QWidget *getWidget(WidgetId wgt_id) const = 0;
 
 		//! \brief Returns the name of the library of the plugin
 		QString getLibraryName() const;
