@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup libgui
+\ingroup libutils
 \class CustomUiStyle
 \brief Implements a derivative class of QProxyStyle that can be used to override the application UI style at rendering level.
 One instance of this class is created in the moment the application is instantiated and the custom style is applied to
@@ -27,10 +27,11 @@ all widgets in the application.
 #ifndef CUSTOM_UI_STYLE_H
 #define CUSTOM_UI_STYLE_H
 
+#include "utilsglobal.h"
 #include <QProxyStyle>
 #include <QMap>
 
-class CustomUiStyle : public QProxyStyle {
+class __libutils CustomUiStyle : public QProxyStyle {
 	private:
 		static QMap<PixelMetric, int> pixel_metrics;
 
