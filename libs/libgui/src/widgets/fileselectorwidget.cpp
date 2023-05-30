@@ -34,7 +34,10 @@ FileSelectorWidget::FileSelectorWidget(QWidget *parent) : QWidget(parent)
 
 	warn_ico_lbl = new QLabel(this);
 	warn_ico_lbl->setVisible(false);
-	warn_ico_lbl->setMinimumSize(filename_edt->height() * 0.75, filename_edt->height() * 0.75);
+	warn_ico_lbl->setMinimumSize(filename_edt->style()->pixelMetric(QStyle::PM_LineEditIconSize) +
+															 filename_edt->style()->pixelMetric(QStyle::PM_LineEditIconMargin),
+															 filename_edt->style()->pixelMetric(QStyle::PM_LineEditIconSize) +
+															 filename_edt->style()->pixelMetric(QStyle::PM_LineEditIconMargin));
 	warn_ico_lbl->setMaximumSize(warn_ico_lbl->minimumSize());
 	warn_ico_lbl->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 	warn_ico_lbl->setScaledContents(true);
