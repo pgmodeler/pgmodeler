@@ -35,7 +35,7 @@ ObjectTypesListWidget::ObjectTypesListWidget(QWidget *parent)	: QWidget(parent)
 		obj_types_lst->addItem(item);
 	}
 
-	obj_types_lst->adjustSize();	
+	obj_types_lst->adjustSize();
 
 	connect(check_all_tb, &QToolButton::clicked, this, [this](){
 		setItemsCheckState(Qt::Checked);
