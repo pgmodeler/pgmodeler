@@ -16,9 +16,6 @@
 # Also, you can get the complete GNU General Public License at <http://www.gnu.org/licenses/>
 */
 
-#ifndef CORE_UTILS_NS_H
-#define CORE_UTILS_NS_H
-
 #include "coreutilsns.h"
 #include "databasemodel.h"
 #include <QDebug>
@@ -251,5 +248,3 @@ namespace CoreUtilsNs {
 		}
 	}
 }
-
-#endif
