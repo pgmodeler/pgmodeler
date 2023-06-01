@@ -1,6 +1,124 @@
 Changelog
 ---------
 
+v1.1.0-alpha
+------
+<em>Release date: June 06, 2023</em><br/>
+
+* [New] Add drag&drop feature to open files
+* [New] Added NOBYPASSRLS keyword to sql-highlight.conf
+* [New] Added OS type information in AboutWidget
+* [New] Added support for hiding objects' shadows on settings.
+* [New] Added support for installing widgets created by plugins in DatabaseExplorerWidget
+* [New] Added support to code completion based on living database object names in CodeCompletionWidget. It is now possible to list column/table names in the middle of the INSERT/DELETE/TRUNCATE/UPDATE commands.
+* [New] Added support to export results in CSV and Txt format DataManipulationForm and SQLExecutionWidget
+* [New] Added support to highlight enclosing chars (),{},{} in SyntaxHighlighter.
+* [New] Added the action NumberedTextEditor::pasteCode which tries to remove unneeded string concatenation chars ", ', + and . in the clipboard text before insert in the input field. This is useful for developers that copy SQL code from IDE (source code) and want to test it in the database
+* [New] Added the button id Messagebox::CloseButton that creates a message box with only a close button.
+* [New] Added the class CustomUiStyle to control global settings for pixel metrics of UI elements.
+* [New] Added the method BaseForm::adjustMinimumSize
+* [New] Added the method CodeCompletionWidget::setConnectionParams.
+* [New] Added the method FileSelectorWidget::setFileMustExist
+* [New] Added the method PgModelerPlugin::getTmplPluginFilePath
+* [New] Added the methods FileSelectorWidget::setCheckExecutionFlag, FileSelectorWidget::setFileIsMandatory, FileSelectorWidget::setNamePattern
+* [New] Added the options in GeneralConfigWidget that controls the column data truncation in the results grid
+* [New] Adding support for setup name color in schema objects
+* [New] Adding the support to convert to XML entities attribute values in SchemaParser.
+* [New] Adds support for switching the current user when successfully connecting to a database.
+* [New] Created the method DatabaseImportForm::listDatabases(Connection,QComboBox).
+* [New] Enabling the displaying of byta column data in the results grid
+* [New] Now any SQL result grid header will display an icon according to the data type of each column
+* [New] Removed the method FileSelectorWidget::setFileMode and created to FileSelectorWidget::setDirectoryMode that toggles the selection of directories instead of files (the default behavior)
+* [Change] Minor adjustment in FileSelectorWidget::validateSelectedFile
+* [Change] Added a wait cursor during the code preview in SourceCodeWidget
+* [Change] Added a wait cursor while searching objects in ObjectFinderWidget
+* [Change] Adjusted the access modifier in PgModelerPlugin methods
+* [Change] Adjusted the CodeCompletionWidget to ignore double quotes when parsing objects' names and aliases.
+* [Change] Adjusted the object catalog queries to include a general-purpose field named extra_info in the object list catalog query.
+* [Change] Adjusted the warning icon size in FileSelectorWidget
+* [Change] Adjusting CodeCompletionWidget::extractTableAliases so a list of aliases in FROM can be correctly extracted (WIP)
+* [Change] The code completion will not be triggered inside comment blocks and in the middle of strings.
+* [Change] Avoiding using keywords in code completion in DataManipulationForm filter
+* [Change] Dropped the use of syntax-hl-theme in appearance.conf
+* [Change] Improved CodeCompletionWidget::extractTableNames in such a way to extract table names from more complex SQL commands
+* [Change] Improved the behavior of the "System default" UI theme.
+* [Change] Improved the drag & drop solution (PR #1781, issue #1780)
+* [Change] Improved the methods GuiUtilsNs::selectAndSaveFile, GuiUtilsNs::selectAndLoadFile
+* [Change] Improved the tooltip text of items related to database objects in CodeCompletionWidget.
+* [Change] Improvements in LineNumbersWidget and NumberedTextEditor to correctly draw line numbers on text with the word wrap option activated.
+* [Change] In data manipulation form when editing a single element with column data edit dialog, the form will display the current value.
+* [Change] Making medium icons size the default
+* [Change] Minor adjustment in aboutsewidget.ui and aboutwidget.ui
+* [Change] Minor adjustment in CodeCompletionWidget in order to retrive columns related to an alias when the name is partially typed.
+* [Change] Minor adjustment in CodeCompletionWidget::retrieveColumnNames and CodeCompletionWidget::retrieveObjectNames
+* [Change] Minor adjustment in the minimum size of Messagebox
+* [Change] Minor adjustment in Catalog::isConnectionValid
+* [Change] Minor adjustment in file coreutilsns.cpp
+* [Change] Minor adjustment in ModelFixForm to display pgmodeler-cli selector when the provided path to the executable is not valid.
+* [Change] Minor adjustment in the doubled-quoted identifier extraction in CodeCompletionWidget.
+* [Change] Minor adjustment in generalconfigwidget.ui
+* [Change] Minor adjustment in ObjectFinderWidget
+* [Change] Minor adjustment in schemaeditorform.ui
+* [Change] Minor refactor in TableObjectView, Connection, SchemaParser
+* [Change] Moved the copy actions to the "Selection" button
+* [Change] Now CodeCompletionWidget::extractTableNames will perform the extraction only if the SQL code changes otherwise it'll cache the table names/ aliases
+* [Change] Now the ColumnDataEditWidget instances have their geometry saved/restored.
+* [Change] Replace the QPlainTextEdit by NumberedTextEditor in ColumnDataWidget
+* [Change] Refactored DatabaseImportHelper::createObject in such a way to use a map of bind methods to perform operations instead of using a long list of switch/case to determine which method must be called to create the object during reverse engineering.
+* [Change] Refactored DatabaseModel::createObject, DatabaseModel::addObject, and DatabaseModel::removeObject in such a way to use a map of bind methods to perform operations instead of using a long list of if/else to determine which method must be called.
+* [Change] Removed the get*Action and getDbExplorerButton methods in PgModelerPlugin and created getAction and getWidget instead.
+* [Change] Removed the method Catalog::getObjectCount(bool) and created a version that accepts a list of object types
+* [Change] Removed unneeded use of QString("")
+* [Change] Removed unused frame in modelfixform.ui
+* [Change] Renamed BulkDataEditWidget to ColumnDataWidget
+* [Change] Replaced QApplication::setOverrideCursor/restoreOverrideCursor by qApp- >setOverrideCursor/restoreOverrideCursor
+* [Change] The method DatabaseExplorerWidget::addPluginToolButton now passes the current connection id and database name as the plugin button property to be read in the click/triggered slots implemented in the plugin.
+* [Change] Update all schema files that generate XML code to use &{} attribute form where there's the need to convert chars to their XML entities counterparts.
+* [Change] When retrieving objects from the database CodeCompletionWidget will not display keywords and snippets in the popup list
+* [Fix] Added the __libutils export declaration to CustomUiStyle
+* [Fix] Additional fix in AppearanceConfigWidget to correctly load canvas colors
+* [Fix] Additional fix in CodeCompletionWidget::extractTableNames.
+* [Fix] Addition fix in CodeCompletionWidget in such a way to preserve cursor position when inserting the selected word after a special char.
+* [Fix] Fix a bug in PgModelerCliApp::fixModel that was causing the generation of empty models when the input file had no tag <role>
+* [Fix] Fixed a bug in Catalog::getObjectsCount
+* [Fix] Fixed a bug in DatabaseModel that could lead to an "unknown exception caught" error.
+* [Fix] Fixed a bug in NumberedTextEditor::identSelection
+* [Fix] Fixed a bug in SqlExecutionWidget::fillResultsTable
+* [Fix] Fixed a bug in TableDataWidget::generateDataBuffer that was causing the generation of malformed CSV in some circumstances.
+* [Fix] Fixed a crash in CodeCompletionWidget when parsing subqueries.
+* [Fix] Fixed a crash in the SQL tool when closing a database explorer instance that owns a plugin tool button.
+* [Fix] Fixed CodeCompletionWidget::retrieveColumnNames when referencing a table via an alias.
+* [Fix] Fixed problems with comments on a database having the same OIDs of different types of objects
+* [Fix] Fixed the diff process on legacy database versions.
+* [Fix] Fixed the line selection operation in LineNumbersWidget
+* [Fix] Fixed the undefined reference error when building on Windows
+* [Fix] Minor fixes in the catalog queries for cast, collation, and role.
+* [Fix] Minor fix in catalog query of columns
+* [Fix] Minor fix in GeneralConfigWidget when using NO_UPDATE_CHECK
+* [Fix] Minor fix in process output capturing in ModelFixForm
+* [Fix] Minor tooltip fix in DataManipulationForm
+
+v1.0.4
+------
+<em>Release date: May 19, 2023</em><br/>
+
+* [New] Now pgModeler selects the UI element colors based upon the system's default colors set (light/dark).
+* [New] pgModeler now restores the default settings in case of some configuration file is corrupted/incompatible and causes the initialization to fail.
+* [New] Allowing sequences to be assigned to columns with numeric type.
+* [New] Created the methods GuiUtilsNs::saveFile and GuiUtilsNs::loadFile.
+* [Change] Removed the deprecated attribute partial-match from configuration files in conf/defaults.
+* [Change] Minor adjustment in output messages in PgModelerCliApp::createConfigurations.
+* [Change] SyntaxHighlighter when in single-line mode will strip any line break char in the input field.
+* [Change] Minor adjustment in SyntaxHighlighter to force no line wrap in the parent input when single_line_mode is activated.
+* [Change] Changed the behavior of TableDataWidget::populateDataGrid. Instead of failing and never opening the dialog again for the user to try to import another file, the method now ask for saving the current (corrupted data) to a file and opens an empty grid to a new CSV import.
+* [Change] Removed unused constant PhysicalTable::DataLineBreak.
+* [Fix] Fixed a false-positive diff result when comparing numeric columns.
+* [Fix] Minor fix in the name pattern of the settings backup folder in PgModelerCliApp::createConfigurations.
+* [Fix] Fixed bug in reverse engineering that was happening during the creation of object permissions.
+* [Fix] Minor fixes in the catalog queries for cast, collation, and role.
+* [Fix] Fixed the wrong usage of cached names and signatures in DatabaseImportHelper.
+* [Fix] Additional fix in CsvParser::parseBuffer to append a line break character at the end of the buffer in case it is missing so the parsing can be done correctly.
+
 v1.0.3
 ------
 <em>Release date: March 24, 2023</em><br/>
