@@ -346,7 +346,7 @@ void DatabaseModel::addObject(BaseObject *object, int obj_idx)
 
 void DatabaseModel::removeObject(BaseObject *object, int obj_idx)
 {
-	if(!object || remove_methods.count(object->getObjectType()))
+	if(!object || remove_methods.count(object->getObjectType()) == 0)
 		return;
 
 	try

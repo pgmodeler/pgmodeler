@@ -223,7 +223,7 @@ QList<QAction *> PluginsConfigWidget::getPluginsModelsActions()
 	return list;
 }
 
-void PluginsConfigWidget::installPluginsActions(QMenu *conf_menu, QList<QAction *> &tb_actions, QWidgetList &db_expl_btns)
+void PluginsConfigWidget::installPluginsActions(QMenu *conf_menu, QList<QAction *> &tb_actions, QList<QToolButton *> &db_expl_btns)
 {
 	for(auto &plugin : plugins)
 	{
@@ -233,7 +233,7 @@ void PluginsConfigWidget::installPluginsActions(QMenu *conf_menu, QList<QAction 
 		if(plugin->getAction(PgModelerPlugin::ToolbarAction))
 			tb_actions.append(plugin->getAction(PgModelerPlugin::ToolbarAction));
 
-		if(plugin->getWidget(PgModelerPlugin::DbExplorerButton))
-			db_expl_btns.append(plugin->getWidget(PgModelerPlugin::DbExplorerButton));
+		if(plugin->getToolButton())
+			db_expl_btns.append(plugin->getToolButton());
 	}
 }

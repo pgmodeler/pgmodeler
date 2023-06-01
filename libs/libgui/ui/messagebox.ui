@@ -388,7 +388,7 @@
                  <font/>
                 </property>
                 <property name="lineWrapMode">
-                 <enum>QTextEdit::NoWrap</enum>
+                 <enum>QTextEdit::WidgetWidth</enum>
                 </property>
                 <property name="acceptRichText">
                  <bool>false</bool>
@@ -423,7 +423,7 @@
                  <font/>
                 </property>
                 <property name="lineWrapMode">
-                 <enum>QTextEdit::NoWrap</enum>
+                 <enum>QTextEdit::WidgetWidth</enum>
                 </property>
                 <property name="acceptRichText">
                  <bool>false</bool>

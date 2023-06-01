@@ -156,12 +156,11 @@ class __libgui DatabaseExplorerWidget: public QWidget, public Ui::DatabaseExplor
 		QString getObjectSource(BaseObject *object, DatabaseModel *dbmodel);
 
 	protected:
-		/*! \brief Add a custom widget in the set of buttons in the top of database tree.
+		/*! \brief Add a custom tool button in the set of buttons in the top of database tree.
 		 *  This can be used to add custom actions for the current database explorer instance.
-		 *  If the provided widget is a tool button then the method will perform the need operation
-		 *  to configure it (assing icon, connect signal/slots, etc). If the widget is of any other
-		 *  type it is just inserted aside the buttons */
-		void addPluginWidget(QWidget *wgt);
+		 *  the method will perform the need operations to create a copy of the provided button
+		 *  (icon, connect signal/slots, etc). */
+		void addPluginButton(QToolButton *btn);
 
 	public:
 		DatabaseExplorerWidget(QWidget * parent = nullptr);

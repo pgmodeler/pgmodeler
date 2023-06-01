@@ -108,14 +108,6 @@ class __libgui PgModelerPlugin {
 		void configurePluginInfo(const QString &title, const QString &version, const QString &author, const QString &description);
 
 	public:
-		enum WidgetId {
-			//! \brief References the tool button that will be put in every DatabaseExplorerWidget instance when browsing databases
-			DbExplorerButton,
-
-			//! \brief References a general purpose widget that must be handled by the plugin developer
-			OtherWidget
-		};
-
 		enum ActionId {
 			//! \brief References the action that will be put in the toolbar at main window
 			ToolbarAction,
@@ -152,8 +144,8 @@ class __libgui PgModelerPlugin {
 		//! \brief Returns the action identified by act_id
 		virtual QAction *getAction(ActionId act_id) const = 0;
 
-		//! \brief Returns the widget identified by wgt_id
-		virtual QWidget *getWidget(WidgetId wgt_id) const = 0;
+		//! \brief Returns the tool button inserted in database explorer instances
+		virtual QToolButton *getToolButton() const = 0;
 
 		//! \brief Returns the name of the library of the plugin
 		QString getLibraryName() const;

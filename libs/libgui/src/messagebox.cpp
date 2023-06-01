@@ -24,7 +24,7 @@ Messagebox::Messagebox(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 {
 	setupUi(this);
 	this->setWindowFlags(Qt::Dialog | Qt::WindowTitleHint | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint);
-	cancelled=has_custom_size=false;
+	cancelled=false;
 	show_errors_tb->setVisible(false);
 	custom_option_chk->setVisible(false);
 
@@ -35,11 +35,8 @@ Messagebox::Messagebox(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 	connect(show_errors_tb, &QToolButton::toggled, this, [this](bool checked){
 			objs_group_wgt->setCurrentIndex(checked ? 1 : 0);
 
-			if(!has_custom_size)
-			{
-				resize(baseSize().width(),baseSize().height() * (checked ? 2 : 1));
-				has_custom_size = false;
-			}
+			if(height() <= baseSize().height())
+				resize(baseSize().width(), baseSize().height() * (checked ? 2 : 1));
 	});
 }
 
@@ -233,8 +230,5 @@ void Messagebox::show(const QString &title, const QString &msg, IconType icon_ty
 
 void Messagebox::resizeEvent(QResizeEvent *event)
 {
-	if(isVisible())
-		has_custom_size = true;
-
 	QWidget::resizeEvent(event);
 }

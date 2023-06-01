@@ -40,7 +40,7 @@ class __libgui SQLToolWidget: public QWidget, public Ui::SQLToolWidget {
 	private:
 		Q_OBJECT
 
-		QWidgetList plugins_wgts;
+		QList<QToolButton *> plugins_btns;
 
 		QToolButton *sql_exec_corner_btn;
 
@@ -56,7 +56,7 @@ class __libgui SQLToolWidget: public QWidget, public Ui::SQLToolWidget {
 		bool eventFilter(QObject *object, QEvent *event);
 
 	protected:
-		void setPluginsWidgets(const QWidgetList &list);
+		void setPluginsButtons(const QList<QToolButton *> &list);
 
 	public:
 		SQLToolWidget(QWidget * parent = nullptr);

@@ -1497,47 +1497,40 @@ void DatabaseExplorerWidget::restoreTreeState()
 	objects_trw->verticalScrollBar()->setValue(curr_scroll_value);
 }
 
-void DatabaseExplorerWidget::addPluginWidget(QWidget *wgt)
+void DatabaseExplorerWidget::addPluginButton(QToolButton *btn)
 {
-	if(!wgt)
+	if(!btn)
 		return;
 
-	QToolButton *btn = qobject_cast<QToolButton *>(wgt);
+	QToolButton	*plugin_btn = new QToolButton(this);
 
-	if(!btn)
-		toolbuttons_lt->insertWidget(toolbuttons_lt->count() - 2, wgt);
-	else
-	{
-		QToolButton	*plugin_btn = new QToolButton(this);
+	plugin_btn->setIcon(btn->icon());
+	plugin_btn->setIconSize(btn->iconSize());
+	plugin_btn->setToolTip(btn->toolTip());
+	plugin_btn->setPopupMode(QToolButton::InstantPopup);
+	plugin_btn->setToolButtonStyle(Qt::ToolButtonIconOnly);
+	plugin_btn->setAutoRaise(true);
+	toolbuttons_lt->insertWidget(toolbuttons_lt->count() - 2, plugin_btn);
 
-		plugin_btn->setIcon(btn->icon());
-		plugin_btn->setIconSize(btn->iconSize());
-		plugin_btn->setToolTip(btn->toolTip());
-		plugin_btn->setPopupMode(QToolButton::InstantPopup);
-		plugin_btn->setToolButtonStyle(Qt::ToolButtonIconOnly);
-		plugin_btn->setAutoRaise(true);
-		toolbuttons_lt->insertWidget(toolbuttons_lt->count() - 2, plugin_btn);
+	connect(plugin_btn, &QToolButton::clicked, this, [this, btn](bool checked){
+		btn->setProperty(Attributes::Connection.toStdString().c_str(),
+										 connection.getConnectionId());
 
-		connect(plugin_btn, &QToolButton::clicked, this, [this, btn](bool checked){
-			btn->setProperty(Attributes::Connection.toStdString().c_str(),
-											 connection.getConnectionId());
+		btn->setProperty(Attributes::Database.toStdString().c_str(),
+										 connection.getConnectionParam(Connection::ParamDbName));
 
-			btn->setProperty(Attributes::Database.toStdString().c_str(),
-											 connection.getConnectionParam(Connection::ParamDbName));
+		emit btn->clicked(checked);
+	});
 
-			emit btn->clicked(checked);
-		});
+	connect(plugin_btn, &QToolButton::triggered, this, [this, btn](QAction *act){
+		btn->setProperty(Attributes::Connection.toStdString().c_str(),
+										 connection.getConnectionId());
 
-		connect(plugin_btn, &QToolButton::triggered, this, [this, btn](QAction *act){
-			btn->setProperty(Attributes::Connection.toStdString().c_str(),
-											 connection.getConnectionId());
+		btn->setProperty(Attributes::Database.toStdString().c_str(),
+										 connection.getConnectionParam(Connection::ParamDbName));
 
-			btn->setProperty(Attributes::Database.toStdString().c_str(),
-											 connection.getConnectionParam(Connection::ParamDbName));
-
-			emit btn->triggered(act);
-		});
-	}
+		emit btn->triggered(act);
+	});
 }
 
 void DatabaseExplorerWidget::truncateTable(QTreeWidgetItem *item, bool cascade)

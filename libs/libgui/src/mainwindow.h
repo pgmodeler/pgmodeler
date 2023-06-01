@@ -154,8 +154,8 @@ class __libgui MainWindow: public QMainWindow, public Ui::MainWindow {
 		//! \brief Stores the loaded plugins toolbar actions
 		QList<QAction *> plugins_tb_acts;
 
-		//! \brief Stores the loaded plugins widgets
-		QWidgetList plugins_db_expl_wgts;
+		//! \brief Stores the loaded plugins tool buttons
+		QList<QToolButton *> plugins_tool_btns;
 
 		QMap<QString, QIcon> recent_models_icons;
 
