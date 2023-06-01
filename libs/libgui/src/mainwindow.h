@@ -370,6 +370,9 @@ class __libgui MainWindow: public QMainWindow, public Ui::MainWindow {
 		void showDemoVersionWarning(bool exit_msg = false);
 		#endif
 
+		bool mimeDataHasModelFiles(const QMimeData *mime_data);
+		void loadModelsFromMimeData(const QMimeData *mime_data);
+
 	signals:
 		void s_currentModelChanged(ModelWidget *model_wgt);
 		void s_modelSaved(ModelWidget *model_wgt);

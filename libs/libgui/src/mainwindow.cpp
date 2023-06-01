@@ -29,7 +29,6 @@ int MainWindow::ToolsActionsCount=0;
 MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(parent, flags)
 {
 	setupUi(this);
-	setAcceptDrops(true);
 
 	pending_op = NoPendingOp;
 	welcome_wgt = nullptr;
@@ -140,43 +139,53 @@ MainWindow::~MainWindow()
 	delete configuration_form;
 }
 
+bool MainWindow::mimeDataHasModelFiles(const QMimeData *mime_data)
+{
+	if(!mime_data || !mime_data->hasUrls())
+		return false;
+
+	for(auto &url : mime_data->urls())
+	{
+		if(!url.toLocalFile().endsWith(GlobalAttributes::DbModelExt, Qt::CaseInsensitive))
+			return false;
+	}
+
+	return true;
+}
+
 void MainWindow::dragEnterEvent(QDragEnterEvent *event)
 {
-	if(!event->mimeData()->hasUrls())
+	if(!mimeDataHasModelFiles(event->mimeData()))
 	{
 		event->ignore();
 		return;
 	}
 
-	for(auto &url : event->mimeData()->urls())
+	event->accept();
+}
+
+void MainWindow::loadModelsFromMimeData(const QMimeData *mime_data)
+{
+	if(!mimeDataHasModelFiles(mime_data))
+		return;
+
+	QStringList dbm_files;
+	QString file;
+
+	for(auto &url : mime_data->urls())
 	{
-		if(!url.toLocalFile().endsWith(GlobalAttributes::DbModelExt, Qt::CaseInsensitive))
-		{
-			event->ignore();
-			return;
-		}
+		file = url.toLocalFile();
+
+		if(file.endsWith(GlobalAttributes::DbModelExt, Qt::CaseInsensitive))
+			dbm_files.append(file);
 	}
 
-	event->accept();
+	loadModels(dbm_files);
 }
 
 void MainWindow::dropEvent(QDropEvent *event)
 {
-	if(event->mimeData()->hasUrls())
-	{
-		QStringList dbm_files;
-		QString file;
-
-		for(auto &url : event->mimeData()->urls())
-		{
-			file = url.toLocalFile();
-
-			if(file.endsWith(GlobalAttributes::DbModelExt, Qt::CaseInsensitive))
-				dbm_files.append(file);
-		}
-
-		loadModels(dbm_files);
-	}
+	loadModelsFromMimeData(event->mimeData());
 }
 
 void MainWindow::configureMenusActionsWidgets()
@@ -1380,6 +1389,7 @@ void MainWindow::setCurrentModel()
 			if(modified) updateToolsState();
 		});
 
+		connect(current_model, &ModelWidget::s_sceneDragDropped, this, &MainWindow::loadModelsFromMimeData, Qt::UniqueConnection);
 		connect(current_model, &ModelWidget::s_manipulationCanceled, oper_list_wgt, &OperationListWidget::updateOperationList, Qt::UniqueConnection);
 		connect(current_model, &ModelWidget::s_objectsMoved, oper_list_wgt, &OperationListWidget::updateOperationList, Qt::UniqueConnection);
 		connect(current_model, &ModelWidget::s_objectModified,this, &MainWindow::updateDockWidgets, Qt::UniqueConnection);

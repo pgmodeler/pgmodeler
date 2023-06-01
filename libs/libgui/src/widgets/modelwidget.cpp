@@ -161,6 +161,8 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	viewport->setCacheMode(QGraphicsView::CacheBackground);
 	viewport->centerOn(0,0);
 	viewport->setMouseTracking(true);
+	viewport->installEventFilter(this);
+	viewport->setAcceptDrops(true);
 
 	grid=new QGridLayout;
 	grid->addWidget(protected_model_frm, 0,0,1,1);
@@ -674,6 +676,20 @@ void ModelWidget::resizeEvent(QResizeEvent *)
 
 bool ModelWidget::eventFilter(QObject *object, QEvent *event)
 {
+	/* Emitting a signal when the scene successfully made a drag & drop event
+	 * This signal is handled in main window so the mime data containing the url
+	 * to dbm files can be correctly loaded */
+	if(object == scene && (event->type() == QEvent::GraphicsSceneDragEnter ||
+												 event->type() == QEvent::GraphicsSceneDragMove ||
+												 event->type() == QEvent::GraphicsSceneDrop))
+	{
+		QGraphicsSceneDragDropEvent *drg_event = dynamic_cast<QGraphicsSceneDragDropEvent *>(event);
+
+		if(event->type() == QEvent::GraphicsSceneDrop)
+			emit s_sceneDragDropped(drg_event->mimeData());
+
+		return true;
+	}
 
 	if(object == viewport->horizontalScrollBar() ||
 		 object == viewport->verticalScrollBar())
