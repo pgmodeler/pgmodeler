@@ -34,9 +34,8 @@ Messagebox::Messagebox(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 
 	connect(show_errors_tb, &QToolButton::toggled, this, [this](bool checked){
 			objs_group_wgt->setCurrentIndex(checked ? 1 : 0);
-
-			if(height() <= baseSize().height())
-				resize(baseSize().width(), baseSize().height() * (checked ? 2 : 1));
+			resize(baseSize().width() * (checked ? 1.25 : 1),
+						 baseSize().height() * (checked ? 3 : 1));
 	});
 }
 
