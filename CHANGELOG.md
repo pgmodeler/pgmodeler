@@ -3,13 +3,13 @@ Changelog
 
 v1.1.0-alpha
 ------
-<em>Release date: June 06, 2023</em><br/>
+<em>Release date: June 09, 2023</em><br/>
 
 * [New] Added support for drag & drop files in the main window to load models.
 * [New] Added NOBYPASSRLS keyword to sql-highlight.conf.
 * [New] Added OS type information in AboutWidget.
 * [New] Added support for hiding objects' shadows in the settings.
-* [New] Added support for installing widgets created by plugins in DatabaseExplorerWidget.
+* [New] Added support for installing tool buttons created by plugins in DatabaseExplorerWidget.
 * [New] Added support for code completion based on living database object names in CodeCompletionWidget. It is now possible to list column/table names in the middle of the INSERT/DELETE/TRUNCATE/UPDATE commands.
 * [New] Added support for exporting results in CSV and plain text format in DataManipulationForm and SQLExecutionWidget.
 * [New] Added support for highlighting enclosing characters (),{},{} in SyntaxHighlighter.
