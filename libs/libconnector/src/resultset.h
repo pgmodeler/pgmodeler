@@ -100,6 +100,9 @@ class __libconnector ResultSet {
 		//! \brief Returns the name of the column specified by it's index
 		QString getColumnName(int column_idx);
 
+		//! \brief Returns a list containing the name of the columns in this result set
+		QStringList getColumnNames();
+
 		//! \brief Returns the type OID of the column specified by it's index
 		unsigned getColumnTypeId(int column_idx);
 

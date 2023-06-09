@@ -215,17 +215,17 @@ void BaseRelationship::setMandatoryTable(TableId table_id, bool value)
 		label_id=DstCardLabel;
 	}
 
-	if(!value) cmin=QString("0");
-	else cmin=QString("1");
+	if(!value) cmin="0";
+	else cmin="1";
 
 	if(lables[label_id])
 	{
 		if(rel_type==Relationship11)
-			lables[label_id]->setComment(cmin + QString(":1"));
+			lables[label_id]->setComment(cmin + ":1");
 		else if(rel_type==Relationship1n)
 		{
-			aux=(table_id==SrcTable ? QString("1") : QString("n"));
-			lables[label_id]->setComment(cmin + QString(":") + aux);
+			aux=(table_id==SrcTable ? "1" : "n");
+			lables[label_id]->setComment(cmin + ":" + aux);
 		}
 		else if(rel_type==RelationshipFk)
 		{
@@ -428,20 +428,20 @@ bool BaseRelationship::canSimulateRelationship11()
 
 	if(table)
 	{
-		Constraint *constr = nullptr, *uq_constr = nullptr;
+		Constraint *fk_constr = nullptr, *uq_constr = nullptr;
 
-		for(unsigned idx = 0; idx < table->getConstraintCount(); idx++)
+		for(auto &tab_obj : *table->getObjectList(ObjectType::Constraint))
 		{
-			constr = table->getConstraint(idx);
+			fk_constr = dynamic_cast<Constraint *>(tab_obj);
 
-			if(constr->getConstraintType() == ConstraintType::ForeignKey)
+			if(fk_constr->getConstraintType() == ConstraintType::ForeignKey)
 			{
-				for(unsigned idx1 = 0; idx1 < table->getConstraintCount(); idx1++)
+				for(auto &tab_obj1 : *table->getObjectList(ObjectType::Constraint))
 				{
-					uq_constr = table->getConstraint(idx1);
+					uq_constr = dynamic_cast<Constraint *>(tab_obj1);
 
 					if(uq_constr->getConstraintType() == ConstraintType::Unique &&
-						 uq_constr->isColumnsExist(constr->getColumns(Constraint::SourceCols), Constraint::SourceCols, true))
+						 uq_constr->isColumnsExist(fk_constr->getColumns(Constraint::SourceCols), Constraint::SourceCols, true))
 					{
 						return true;
 					}

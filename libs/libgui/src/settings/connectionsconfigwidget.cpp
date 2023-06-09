@@ -122,6 +122,7 @@ void ConnectionsConfigWidget::loadConfiguration()
 			conn->setConnectionParam(Connection::ParamLibGssapi, itr.second[Connection::ParamLibGssapi]);
 			conn->setConnectionParam(Connection::ParamKerberosServer, itr.second[Connection::ParamKerberosServer]);
 			conn->setConnectionParam(Connection::ParamOthers, itr.second[Connection::ParamOthers]);
+			conn->setConnectionParam(Connection::ParamSetRole, itr.second[Connection::ParamSetRole]);
 
 			conn->setAutoBrowseDB(itr.second[Attributes::AutoBrowseDb]==Attributes::True);
 			conn->setDefaultForOperation(Connection::OpDiff, itr.second[DefaultFor.arg(Attributes::Diff)]==Attributes::True);
@@ -175,6 +176,7 @@ void ConnectionsConfigWidget::newConnection()
 	port_sbp->setValue(5432);
 	passwd_edt->clear();
 	other_params_edt->clear();
+	set_role_edt->clear();
 
 	auto_browse_chk->setChecked(false);
 	diff_chk->setChecked(false);
@@ -183,10 +185,10 @@ void ConnectionsConfigWidget::newConnection()
 	validation_chk->setChecked(false);
 
 	ssl_mode_cmb->setCurrentIndex(0);
-	client_cert_edt->setText(QString("~/.postgresql/postgresql.crt"));
-	root_cert_edt->setText(QString("~/.postgresql/root.crt"));
-	crl_edt->setText(QString("~/.postgresql/root.crl"));
-	client_key_edt->setText(QString("~/.postgresql/postgresql.key"));
+	client_cert_edt->setText("~/.postgresql/postgresql.crt");
+	root_cert_edt->setText("~/.postgresql/root.crt");
+	crl_edt->setText("~/.postgresql/root.crl");
+	client_key_edt->setText("~/.postgresql/postgresql.key");
 
 	gssapi_auth_chk->setChecked(false);
 	krb_server_edt->clear();
@@ -304,8 +306,9 @@ void ConnectionsConfigWidget::editConnection()
 		timeout_sbp->setValue(conn->getConnectionParam(Connection::ParamConnTimeout).toInt());
 
 		krb_server_edt->setText(conn->getConnectionParam(Connection::ParamKerberosServer));
-		gssapi_auth_chk->setChecked(conn->getConnectionParam(Connection::ParamLibGssapi)==QString("gssapi"));
+		gssapi_auth_chk->setChecked(conn->getConnectionParam(Connection::ParamLibGssapi)=="gssapi");
 		other_params_edt->setText(conn->getConnectionParam(Connection::ParamOthers));
+		set_role_edt->setText(conn->getConnectionParam(Connection::ParamSetRole));
 
 		if(conn->getConnectionParam(Connection::ParamSslMode)==Connection::SslDisable)
 			ssl_mode_cmb->setCurrentIndex(0);
@@ -397,13 +400,11 @@ void ConnectionsConfigWidget::configureConnection(Connection *conn, bool is_upda
 		}
 
 		if(gssapi_auth_chk->isChecked())
-			conn->setConnectionParam(Connection::ParamLibGssapi, QString("gssapi"));
+			conn->setConnectionParam(Connection::ParamLibGssapi, "gssapi");
 
-		if(!krb_server_edt->text().isEmpty())
-			conn->setConnectionParam(Connection::ParamKerberosServer, krb_server_edt->text());
-
-		if(!other_params_edt->text().isEmpty())
-			conn->setConnectionParam(Connection::ParamOthers, other_params_edt->text());
+		conn->setConnectionParam(Connection::ParamKerberosServer, krb_server_edt->text());
+		conn->setConnectionParam(Connection::ParamOthers, other_params_edt->text());
+		conn->setConnectionParam(Connection::ParamSetRole, set_role_edt->text());
 	}
 }
 
@@ -478,7 +479,7 @@ void ConnectionsConfigWidget::saveConfiguration()
 		/* Workaround: When there is no connection, to prevent saving an empty file, is necessary to
 		 fill the attribute CONNECTIONS with white spaces */
 		if(connections.empty())
-			config_params[GlobalAttributes::ConnectionsConf][Attributes::Connections]=QString("  ");
+			config_params[GlobalAttributes::ConnectionsConf][Attributes::Connections]="  ";
 		else
 		{
 			for(Connection *conn : connections)
@@ -527,7 +528,7 @@ void ConnectionsConfigWidget::getConnections(std::map<QString, Connection *> &co
 		alias=conn->getConnectionId();
 
 		if(!inc_hosts)
-			alias.remove(QRegularExpression(QString(" \\((.)*\\)")));
+			alias.remove(QRegularExpression(" \\((.)*\\)"));
 
 		conns[alias]=conn;
 	}
@@ -597,7 +598,8 @@ bool ConnectionsConfigWidget::openConnectionsConfiguration(QComboBox *combo, boo
 	{
 		conn_cfg_wgt.loadConfiguration();
 		conn_cfg_wgt.frame->setFrameShape(QFrame::NoFrame);
-		conn_cfg_wgt.layout()->setContentsMargins(0,0,0,0);
+		conn_cfg_wgt.layout()->setContentsMargins(GuiUtilsNs::LtMargin, GuiUtilsNs::LtMargin,
+																							GuiUtilsNs::LtMargin, GuiUtilsNs::LtMargin);
 		conn_cfg_wgt.frame->layout()->setContentsMargins(0,0,0,0);
 
 		connect(parent_form.cancel_btn, &QPushButton::clicked, &parent_form, [&conn_cfg_wgt](){
@@ -611,6 +613,7 @@ bool ConnectionsConfigWidget::openConnectionsConfiguration(QComboBox *combo, boo
 
 		parent_form.setMainWidget(&conn_cfg_wgt);
 		parent_form.setButtonConfiguration(Messagebox::OkCancelButtons);
+		parent_form.adjustMinimumSize();
 		parent_form.exec();
 
 		conn_cfg_wgt.fillConnectionsComboBox(combo, incl_placeholder);

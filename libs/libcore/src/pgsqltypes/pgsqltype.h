@@ -35,7 +35,6 @@ class __libcore PgSqlType: public TemplateType<PgSqlType>{
 	private:
 		static QStringList type_names;
 
-	private:
 		//! \brief Offset for all PostGiS types
 		static constexpr unsigned PostGiSStart = 64,
 		PostGiSEnd = 82;
@@ -104,6 +103,33 @@ class __libcore PgSqlType: public TemplateType<PgSqlType>{
 		unsigned setType(const QString &type_name) override;
 
 	public:
+		enum TypeCategory: unsigned {
+			OidType,
+			PolymorphicType,
+			PseudoType,
+			TimezoneType,
+			DateTimeType,
+			NumericType,
+			IntegerType,
+			FloatPointType,
+			CharacterType,
+			NetworkType,
+			MonetaryType,
+			BinaryType,
+			BooleanType,
+			GeometricType,
+			BitStringType,
+			TextSearchType,
+			UuidType,
+			XmlType,
+			JsonType,
+			RangeType,
+			PostGiSType,
+			OtherType,
+			SerialType,
+			UserType
+		};
+
 		PgSqlType();
 
 		/*! \brief Creates a type from a simple string containing the name of the type.
@@ -170,29 +196,40 @@ class __libcore PgSqlType: public TemplateType<PgSqlType>{
 		IntervalType getIntervalType();
 		SpatialType getSpatialType();
 
-		bool isWithTimezone();
+		//! \brief Returns the type category code based upon the current type id
+		TypeCategory getCategory();
+
+		bool isWithTimezone();		
 		bool isPseudoType();
-		bool isOIDType();
-		bool isUserType();
+		bool isOidType();
 		bool isArrayType();
-
-		bool isGeoType();
-		static bool isGeoType(const QString &type_name);
-
-		bool isBoxType();
-		static bool isBoxType(const QString &type_name);
-
-		bool isPostGiSType();
-
 		bool isRangeType();
 		bool isSerialType();
 		bool isDateTimeType();
 		bool isTimezoneType();
 		bool isNumericType();
 		bool isIntegerType();
+		bool isFloatPointType();
 		bool isCharacterType();
 		bool isNetworkType();
 		bool isPolymorphicType();
+		bool isMonetaryType();
+		bool isBinaryType();
+		bool isBooleanType();
+		bool isGeometricType();
+		bool isBitStringType();
+		bool isTextSearchType();
+		bool isUuidType();
+		bool isXmlType();
+		bool isJsonType();
+		bool isPostGiSType();
+		bool isUserType();
+
+		bool isPostGisGeoType();
+		bool isPostGisBoxType();
+		static bool isPostGisGeoType(const QString &type_name);
+		static bool isPostGisBoxType(const QString &type_name);
+
 		bool hasVariableLength();
 		bool acceptsPrecision();
 

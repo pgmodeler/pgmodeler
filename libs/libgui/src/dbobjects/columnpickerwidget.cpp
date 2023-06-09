@@ -158,6 +158,7 @@ void ColumnPickerWidget::updateColumnsCombo()
 		}
 
 		columns_tab->setButtonsEnabled(ObjectsTableWidget::AddButton, columns_cmb->count() != 0);
+		columns_cmb->adjustSize();
 	}
 	catch(Exception &e)
 	{
@@ -254,4 +255,9 @@ std::vector<SimpleColumn> ColumnPickerWidget::getSimpleColumns()
 		cols.push_back(columns_tab->getRowData(row).value<SimpleColumn>());
 
 	return cols;
+}
+
+void ColumnPickerWidget::clear()
+{
+	columns_tab->removeRows();
 }

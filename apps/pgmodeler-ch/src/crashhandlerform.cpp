@@ -75,14 +75,14 @@ CrashHandlerForm::CrashHandlerForm(bool analysis_mode, QWidget *parent, Qt::Wind
 
 	input_sel = new FileSelectorWidget(this);
 	input_sel->setFileDialogTitle(tr("Select bug report file"));
-	input_sel->setFileMode(QFileDialog::ExistingFile);
+	input_sel->setFileMustExist(true);
 	input_sel->setAcceptMode(QFileDialog::AcceptOpen);
 	input_sel->setNameFilters({ tr("pgModeler bug report (*.bug)"), tr("All files (*.*)") });
 	input_sel->setToolTip(tr("Load report file for analysis"));
 	layout->addWidget(input_sel);
 
 	save_tb=new QToolButton(input_wgt);
-	save_tb->setIcon(QPixmap(GuiUtilsNs::getIconPath("save")));
+	save_tb->setIcon(QIcon(GuiUtilsNs::getIconPath("save")));
 	save_tb->setSizePolicy(attach_tb->sizePolicy());
 	save_tb->setToolButtonStyle(attach_tb->toolButtonStyle());
 	save_tb->setIconSize(attach_tb->iconSize());
@@ -167,23 +167,13 @@ void CrashHandlerForm::loadReport(QString filename)
 
 void CrashHandlerForm::saveModel()
 {
-	QFileDialog file_dlg;
-
 	try
 	{
-		file_dlg.setDefaultSuffix(GlobalAttributes::DbModelExt);
-		file_dlg.setWindowTitle(tr("Save model"));
-		file_dlg.setNameFilter(tr("Database model (*%1);;All files (*.*)").arg(GlobalAttributes::DbModelExt));
-		file_dlg.setFileMode(QFileDialog::AnyFile);
-		file_dlg.setAcceptMode(QFileDialog::AcceptSave);
-		file_dlg.setModal(true);
-
-		GuiUtilsNs::restoreFileDialogState(&file_dlg);
-
-		if(file_dlg.exec()==QFileDialog::Accepted)
-			UtilsNs::saveFile(file_dlg.selectedFiles().at(0), model_txt->toPlainText().toUtf8());
-
-		GuiUtilsNs::saveFileDialogState(&file_dlg);
+		GuiUtilsNs::selectAndSaveFile(model_txt->toPlainText().toUtf8(),
+																	tr("Save model"), QFileDialog::AnyFile,
+																	{ tr("Database model (*%1)").arg(GlobalAttributes::DbModelExt),
+																		tr("All files (*.*)") }, {},
+																	GlobalAttributes::DbModelExt);
 	}
 	catch(Exception &e)
 	{

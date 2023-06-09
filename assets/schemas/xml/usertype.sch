@@ -1,7 +1,7 @@
 # XML definition for user defined types
 # CAUTION: Do not modify this file unless you know what you are doing.
 # Code generation can be broken if incorrect changes are made.
-[<usertype name=] "{name}"
+[<usertype name=] "&{name}"
 
 $sp
 %if {base} %then configuration="base" %end
@@ -20,7 +20,7 @@ $sp
 	$br
 
 	%if {element} %then
-		[ element=] "{element}"
+		[ element=] "&{element}"
 	%end
 
 	%if {delimiter} %then
@@ -30,7 +30,7 @@ $sp
 	$br
 
 	%if {default-value} %then
-		[ default-value=] "{default-value}"
+		[ default-value=] "&{default-value}"
 	%end
 
 	%if {category} %then

@@ -116,15 +116,21 @@ class __libconnector Connection {
 		ParamSslCrl,
 		ParamKerberosServer,
 		ParamLibGssapi,
+
+		/*! \brief Special parameter that store the name of the role
+		 *  to be switched in case of a successful connection */
+		ParamSetRole,
+
+		//! \brief Constants used to reference the connection ssl mode
 		SslDisable,
 		SslAllow,
 		SslPrefer,
 		SslRequire,
 		SslCaVerify,
-		SslFullVerify;
+		SslFullVerify,
 
 		//! \brief Constants used to reference the server info details (see getServerInfo())
-		static const QString	ServerVersion,
+		ServerVersion,
 		ServerProtocol,
 		ServerPid;
 

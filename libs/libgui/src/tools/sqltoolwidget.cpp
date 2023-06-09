@@ -37,7 +37,7 @@ SQLToolWidget::SQLToolWidget(QWidget * parent) : QWidget(parent)
 	v_splitter->setSizes({1000, 400});
 
 	sql_exec_corner_btn = new QToolButton;
-	sql_exec_corner_btn->setIcon(QPixmap(GuiUtilsNs::getIconPath("newtab")));
+	sql_exec_corner_btn->setIcon(QIcon(GuiUtilsNs::getIconPath("newtab")));
 	sql_exec_corner_btn->setIconSize(disconnect_tb->iconSize());
 	sql_exec_corner_btn->setToolTip(tr("Add a new execution tab for the current database (%1)").arg(QKeySequence("Ctrl+T").toString()));
 
@@ -136,6 +136,11 @@ bool SQLToolWidget::eventFilter(QObject *object, QEvent *event)
 	return QWidget::eventFilter(object, event);
 }
 
+void SQLToolWidget::setPluginsButtons(const QList<QToolButton *> &list)
+{
+	plugins_btns = list;
+}
+
 void SQLToolWidget::updateTabs()
 {
 	SQLExecutionWidget *sql_exec_wgt=nullptr;
@@ -187,9 +192,7 @@ void SQLToolWidget::connectToServer()
 
 			if(conn)
 			{
-				import_helper.setConnection(*conn);								
-				DatabaseImportForm::listDatabases(import_helper, database_cmb);
-				import_helper.closeConnection();
+				DatabaseImportForm::listDatabases(*conn, database_cmb);
 
 				if(sender()==connections_cmb && conn->isAutoBrowseDB())
 				{
@@ -259,6 +262,9 @@ DatabaseExplorerWidget *SQLToolWidget::browseDatabase()
 			conn.setConnectionParam(Connection::ParamDbName, database_cmb->currentText());
 			db_explorer_wgt->setConnection(conn, maintainance_db);
 			db_explorer_wgt->listObjects();
+
+			for(auto &btn : plugins_btns)
+				db_explorer_wgt->addPluginButton(btn);
 
 			databases_tbw->addTab(db_explorer_wgt, database_cmb->currentText());
 			databases_tbw->setTabToolTip(databases_tbw->count() - 1, db_explorer_wgt->getConnection().getConnectionId(true, true));
@@ -344,6 +350,27 @@ void SQLToolWidget::addSQLExecutionTab(const QString &conn_id, const QString &da
 	 * in order to load the sql file there */
 	sql_exec_wgt = dynamic_cast<SQLExecutionWidget *>(sql_exec_wgts[db_explorer_wgt].at(0));
 	sql_exec_wgt->setSQLCommand(buf);
+}
+
+void SQLToolWidget::reloadHighlightConfigs()
+{
+	try
+	{
+		SQLExecutionWidget *sql_exec_wgt = nullptr;
+
+		for(int i = 0; i < sql_exec_tbw->count(); i++)
+		{
+			sql_exec_wgt = dynamic_cast<SQLExecutionWidget *>(sql_exec_tbw->widget(i));
+			sql_exec_wgt->reloadHighlightConfigs();
+		}
+
+		sourcecode_hl->loadConfiguration(GlobalAttributes::getSQLHighlightConfPath());
+	}
+	catch(Exception &e)
+	{
+		Messagebox msgbox;
+		msgbox.show(e);
+	}
 }
 
 void SQLToolWidget::closeDatabaseExplorer(int idx)

@@ -18,23 +18,25 @@
 
 	%set {spc} $br $tb
 
-	$tb [<connection alias="] {alias} [" host=] "{host}" [ port=] "{port}" [ dbname=] "{dbname}"
+	$tb [<connection alias="] &{alias} [" host=] "&{host}" [ port=] "{port}" [ dbname=] "&{dbname}"
 
-	{spc} [user=] "{user}"
+	{spc} [user=] "&{user}"
 
-	%if {password} %then [ password=] "{password}" %end
+	%if {password} %then [ password=] "&{password}" %end
 
 	[ connection-timeout=] "{connection-timeout}"
 
+	%if {setrole} %then [ setrole=] "&{setrole}" %end
+
 	{spc} [sslmode=] "{sslmode}"
 
-	%if {sslcert} %then {spc} [sslcert=] "{sslcert}" %end
-	%if {sslkey} %then {spc} [sslkey=] "{sslkey}" %end
-	%if {sslrootcert} %then {spc} [sslrootcert=] "{sslrootcert}" %end
-	%if {sslcrl} %then {spc} [sslcrl=] "{sslcrl}" %end
+	%if {sslcert} %then {spc} [sslcert=] "&{sslcert}" %end
+	%if {sslkey} %then {spc} [sslkey=] "&{sslkey}" %end
+	%if {sslrootcert} %then {spc} [sslrootcert=] "&{sslrootcert}" %end
+	%if {sslcrl} %then {spc} [sslcrl=] "&{sslcrl}" %end
 
 	%if {krbsrvname} %then
-		 {spc} [krbsrvname=] "{krbsrvname}"
+		 {spc} [krbsrvname=] "&{krbsrvname}"
 
 		%if {gsslib} %then
 			[ gsslib=] "{gsslib}"
@@ -46,7 +48,7 @@
 	%end
 
 	%if {options} %then
-		{spc} options="{options}"
+		{spc} options="&{options}"
 	%end
 
 	%if {default-for-export} %then {spc} [default-for-export=] "{default-for-export}" %end

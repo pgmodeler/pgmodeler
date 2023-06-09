@@ -7,7 +7,7 @@
 
 	%if {list} %then
 
-		[ SELECT tr.oid, ] {transf-name} [ AS name, current_database() AS parent, 'database' AS parent_type
+		[ SELECT tr.oid, ] {transf-name} [ AS name, current_database() AS parent, 'database' AS parent_type, NULL AS extra_info
 		FROM pg_transform AS tr
 		LEFT JOIN pg_language AS lg ON lg.oid = tr.trflang ]
 

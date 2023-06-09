@@ -37,9 +37,14 @@ class __libgui FileSelectorWidget: public QWidget, public Ui::FileSelectorWidget
 
 		QFileDialog file_dlg;
 
+		QFileDialog::FileMode file_mode;
+
 		QLabel *warn_ico_lbl;
 
-		bool allow_filename_input, read_only;
+		bool allow_filename_input, read_only,
+		check_exec_flag, file_is_mandatory, file_must_exist;
+
+		QRegularExpression name_regexp;
 
 		void showWarning();
 
@@ -53,10 +58,8 @@ class __libgui FileSelectorWidget: public QWidget, public Ui::FileSelectorWidget
 		//! \brief Indicate if the selector allows manual filename input
 		void setAllowFilenameInput(bool allow_fl_input);
 
-		/*! \brief Configures the file selection mode. This one just configures the internal
-		 * QFileDialog file mode (see QFileDialog::setFileMode). Multiple file selection trough
-		 * QFileDialog::ExistingFiles is not allowed and will be overriden by QFileDialog::ExistingFile if provided. */
-		void setFileMode(QFileDialog::FileMode file_mode);
+		//! \brief Toggles the directory selection mode. The default is to always select a single file.
+		void setDirectoryMode(bool dir_mode);
 
 		/*! \brief Indicate if the accept mode that the selector uses, this is used to configure
 		 * the internal QFileDialog instance (see QFileDialog::setAcceptMode) */
@@ -64,6 +67,18 @@ class __libgui FileSelectorWidget: public QWidget, public Ui::FileSelectorWidget
 
 		//! \brief Configures the name filters of the internal QFileDialog (see QFileDialog::setNameFilters)
 		void setNameFilters(const QStringList &filters);
+
+		//! \brief Configures a name pattern to validate the selected file/director name
+		void setNamePattern(const QString &pattern);
+
+		//! \brief If true, the selected file must be executable otherwise an warning is displayed
+		void setCheckExecutionFlag(bool value);
+
+		//! \brief If true, the selected file must be provided otherwise an warning is displayed
+		void setFileIsMandatory(bool value);
+
+		//! \brief If true, the selected file must exist in the file system
+		void setFileMustExist(bool value);
 
 		//! \brief Configures the window title of the file dialog instance
 		void setFileDialogTitle(const QString &title);

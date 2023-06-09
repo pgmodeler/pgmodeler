@@ -7,7 +7,8 @@
 		%set {signature} [ ns.nspname || '.' || ]
 	%end
 
-	[SELECT tp.oid, replace(replace(tp.oid::regtype::text,'"', ''), ns.nspname || '.', '') AS name, ns.nspname AS parent, 'schema' AS parent_type
+	[SELECT tp.oid, replace(replace(tp.oid::regtype::text,'"', ''), ns.nspname || '.', '') AS name, 
+     ns.nspname AS parent, 'schema' AS parent_type, NULL AS extra_info
 	FROM pg_type AS tp
 	LEFT JOIN pg_namespace AS ns ON tp.typnamespace = ns.oid ]
 

@@ -24,7 +24,7 @@ Messagebox::Messagebox(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 {
 	setupUi(this);
 	this->setWindowFlags(Qt::Dialog | Qt::WindowTitleHint | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint);
-	cancelled=has_custom_size=false;
+	cancelled=false;
 	show_errors_tb->setVisible(false);
 	custom_option_chk->setVisible(false);
 
@@ -34,12 +34,8 @@ Messagebox::Messagebox(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 
 	connect(show_errors_tb, &QToolButton::toggled, this, [this](bool checked){
 			objs_group_wgt->setCurrentIndex(checked ? 1 : 0);
-
-			if(!has_custom_size)
-			{
-				resize(baseSize().width(),baseSize().height() * (checked ? 2 : 1));
-				has_custom_size = false;
-			}
+			resize(baseSize().width() * (checked ? 1.25 : 1),
+						 baseSize().height() * (checked ? 3 : 1));
 	});
 }
 
@@ -111,22 +107,43 @@ void Messagebox::show(const QString &title, const QString &msg, IconType icon_ty
 						const QString &cancel_lbl, const QString &yes_ico, const QString &no_ico, const QString &cancel_ico)
 {
 	QString icon_name, aux_title=title;
+	QWidgetList btns = { yes_ok_btn, no_btn, cancel_btn, show_errors_tb };
 
 	if(!yes_lbl.isEmpty())
 		yes_ok_btn->setText(yes_lbl);
 	else
-		yes_ok_btn->setText(buttons==OkButton ? tr("&Ok") : tr("&Yes"));
+	{
+		QString btn_txt;
 
-	yes_ok_btn->setIcon(!yes_ico.isEmpty() ? QIcon(yes_ico) : QPixmap(GuiUtilsNs::getIconPath("confirm")));
+		if(buttons == CloseButton)
+			btn_txt = tr("&Close");
+		else if(buttons == OkButton)
+			btn_txt = tr("&Ok");
+		else
+			btn_txt = tr("&Yes");
+
+		yes_ok_btn->setText(btn_txt);
+	}
+
+	if(!yes_ico.isEmpty())
+		yes_ok_btn->setIcon(QIcon(yes_ico));
+	else
+		yes_ok_btn->setIcon(buttons != CloseButton ? QIcon(GuiUtilsNs::getIconPath("confirm")) : QIcon(GuiUtilsNs::getIconPath("close1")));
 
 	no_btn->setText(!no_lbl.isEmpty() ? no_lbl : tr("&No"));
-	no_btn->setIcon(!no_ico.isEmpty() ? QIcon(no_ico) : QPixmap(GuiUtilsNs::getIconPath("close1")));
+	no_btn->setIcon(!no_ico.isEmpty() ? QIcon(no_ico) : QIcon(GuiUtilsNs::getIconPath("close1")));
 
 	cancel_btn->setText(!cancel_lbl.isEmpty() ? cancel_lbl : tr("&Cancel"));
-	cancel_btn->setIcon(!cancel_ico.isEmpty() ? QIcon(cancel_ico) : QPixmap(GuiUtilsNs::getIconPath("cancel")));
+	cancel_btn->setIcon(!cancel_ico.isEmpty() ? QIcon(cancel_ico) : QIcon(GuiUtilsNs::getIconPath("cancel")));
 
 	no_btn->setVisible(buttons==YesNoButtons || buttons==AllButtons);
 	cancel_btn->setVisible(buttons==OkCancelButtons || buttons==AllButtons);
+
+	for(auto &btn : btns)
+	{
+		btn->adjustSize();
+		btn->setMinimumSize(btn->size());
+	}
 
 	if(title.isEmpty())
 	{
@@ -156,19 +173,19 @@ void Messagebox::show(const QString &title, const QString &msg, IconType icon_ty
 	switch(icon_type)
 	{
 		case ErrorIcon:
-			icon_name=QString("error");
+			icon_name="error";
 		break;
 
 		case InfoIcon:
-			icon_name=QString("info");
+			icon_name="info";
 		break;
 
 		case AlertIcon:
-			icon_name=QString("alert");
+			icon_name="alert";
 		break;
 
 		case ConfirmIcon:
-			icon_name=QString("question");
+			icon_name="question";
 		break;
 
 		default:
@@ -191,12 +208,15 @@ void Messagebox::show(const QString &title, const QString &msg, IconType icon_ty
 
 	double w_factor = 0.25, h_factor = 0.15;
 	QSize sz = screen()->size();
-	setMinimumWidth(sz.width() * w_factor);
+
+	if(sz.width() * w_factor > minimumWidth())
+		setMinimumWidth(sz.width() * w_factor);
+
 	setMinimumHeight(sz.height() * h_factor);
 
 	int ln_cnt = QString(msg).replace(QRegularExpression("(<)(br)(/)?(>)",
-																			QRegularExpression::CaseInsensitiveOption),
-																		QString("\n")).count('\n');
+																		QRegularExpression::CaseInsensitiveOption),
+																		"\n").count('\n');
 
 	if(ln_cnt > 0)
 		adjustSize();
@@ -209,8 +229,5 @@ void Messagebox::show(const QString &title, const QString &msg, IconType icon_ty
 
 void Messagebox::resizeEvent(QResizeEvent *event)
 {
-	if(isVisible())
-		has_custom_size = true;
-
 	QWidget::resizeEvent(event);
 }

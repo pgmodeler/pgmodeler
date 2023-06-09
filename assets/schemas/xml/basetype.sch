@@ -1,7 +1,7 @@
 # XML definition for native types
 # CAUTION: Do not modify this file unless you know what you are doing.
 # Code generation can be broken if incorrect changes are made.
-$tb [<type name=] "{name}"
+$tb [<type name=] "&{name}"
 
 %if {length} %then
 	[ length=] "{length}"

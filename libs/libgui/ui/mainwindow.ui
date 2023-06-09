@@ -25,6 +25,9 @@
   <property name="focusPolicy">
    <enum>Qt::NoFocus</enum>
   </property>
+  <property name="acceptDrops">
+   <bool>true</bool>
+  </property>
   <property name="windowTitle">
    <string>pgModeler - PostgreSQL Database Modeler</string>
   </property>
@@ -749,7 +752,7 @@
      <x>0</x>
      <y>0</y>
      <width>1668</width>
-     <height>26</height>
+     <height>27</height>
     </rect>
    </property>
    <property name="autoFillBackground">

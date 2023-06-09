@@ -1,6 +1,124 @@
 Changelog
 ---------
 
+v1.1.0-alpha
+------
+<em>Release date: June 09, 2023</em><br/>
+
+* [New] Added support for drag & drop files in the main window to load models.
+* [New] Added NOBYPASSRLS keyword to sql-highlight.conf.
+* [New] Added OS type information in AboutWidget.
+* [New] Added support for hiding objects' shadows in the settings.
+* [New] Added support for installing tool buttons created by plugins in DatabaseExplorerWidget.
+* [New] Added support for code completion based on living database object names in CodeCompletionWidget. It is now possible to list column/table names in the middle of the INSERT/DELETE/TRUNCATE/UPDATE commands.
+* [New] Added support for exporting results in CSV and plain text format in DataManipulationForm and SQLExecutionWidget.
+* [New] Added support for highlighting enclosing characters (),{},{} in SyntaxHighlighter.
+* [New] Added the action NumberedTextEditor::pasteCode which tries to remove unneeded string concatenation chars ", ', + and . in the clipboard text before inserting it in the input field. This is useful for developers that copy SQL code in the middle of a programming language source code and want to test it in the database.
+* [New] Added the button id Messagebox::CloseButton that creates a message box with only a close button.
+* [New] Added the class CustomUiStyle to control global settings for pixel metrics of UI elements.
+* [New] Added the method BaseForm::adjustMinimumSize.
+* [New] Added the method CodeCompletionWidget::setConnectionParams.
+* [New] Added the method PgModelerPlugin::getTmplPluginFilePath.
+* [New] Added the methods setFileMustExist, setCheckExecutionFlag, setFileIsMandatory, and setNamePattern to FileSelectorWidget.
+* [New] Added the options in GeneralConfigWidget that controls the column data truncation in the results grid.
+* [New] Added support for setup name color of schema objects.
+* [New] Added support to convert to XML entities the characters in attribute values in SchemaParser.
+* [New] Added support for switching the current user when successfully connecting to a database via SET ROLE command.
+* [New] Created the method DatabaseImportForm::listDatabases(Connection,QComboBox).
+* [New] Enabling the displaying of byta column data in the results grid.
+* [New] Now any SQL result grid header will display an icon according to the data type of each column.
+* [New] Removed the method FileSelectorWidget::setFileMode and created to FileSelectorWidget::setDirectoryMode that toggles the selection of directories instead of files (the default behavior).
+* [Change] Minor adjustment in FileSelectorWidget::validateSelectedFile.
+* [Change] Added a wait cursor during the code preview in SourceCodeWidget.
+* [Change] Added a wait cursor while searching objects in ObjectFinderWidget.
+* [Change] Adjusted the access modifier in PgModelerPlugin methods.
+* [Change] Adjusted the object catalog queries to include a general-purpose field named extra_info in the object list catalog query.
+* [Change] Adjusted the warning icon size in FileSelectorWidget.
+* [Change] Disabled the usage of keywords in the code completion instance of DataManipulationForm filter field.
+* [Change] Dropped the use of syntax-hl-theme in appearance.conf.
+* [Change] Improved the behavior of the "System default" UI theme.
+* [Change] Improved the methods GuiUtilsNs::selectAndSaveFile, GuiUtilsNs::selectAndLoadFile.
+* [Change] Improvements in LineNumbersWidget and NumberedTextEditor to correctly draw line numbers on text with the word wrap option activated.
+* [Change] In data manipulation form when editing a single element with column data edit dialog, the form will display the current column's value.
+* [Change] Change to medium the UI icons size of default settings.
+* [Change] Minor adjustment in aboutsewidget.ui and aboutwidget.ui.
+* [Change] Minor adjustment in the minimum size of Messagebox.
+* [Change] Minor adjustment in Catalog::isConnectionValid.
+* [Change] Minor adjustment in file coreutilsns.cpp.
+* [Change] Minor adjustment in ModelFixForm to display pgmodeler-cli selector when the provided path to the executable is not valid.
+* [Change] Minor adjustment in generalconfigwidget.ui.
+* [Change] Minor adjustment in ObjectFinderWidget.
+* [Change] Minor adjustment in schemaeditorform.ui.
+* [Change] Minor refactor in TableObjectView, Connection, SchemaParser.
+* [Change] Moved the copy actions in SQL results grid context menu to an action named the "Selection" in the same menu. 
+* [Change] Now the ColumnDataEditWidget instances have their geometry saved/restored.
+* [Change] Replace the QPlainTextEdit by NumberedTextEditor in ColumnDataWidget.
+* [Change] Refactored DatabaseImportHelper::createObject in such a way to use a map of bind methods to perform operations instead of using a long list of switch/case to determine which method must be called to create the object during reverse engineering.
+* [Change] Refactored DatabaseModel::createObject, DatabaseModel::addObject, and DatabaseModel::removeObject in such a way to use a map of bind methods to perform operations instead of using a long list of if/else to determine which method must be called.
+* [Change] Removed the get*Action and getDbExplorerButton methods in PgModelerPlugin and created the methods getAction and getWidget instead.
+* [Change] Removed the method Catalog::getObjectCount(bool) and created a version that accepts a list of object types.
+* [Change] Removed unneeded use of QString("").
+* [Change] Removed unused frame in modelfixform.ui.
+* [Change] Renamed BulkDataEditWidget to ColumnDataWidget
+* [Change] Replaced QApplication::setOverrideCursor/restoreOverrideCursor by qApp- >setOverrideCursor/restoreOverrideCursor.
+* [Change] The method DatabaseExplorerWidget::addPluginToolButton passes the current connection id and database name as the plugin button property to be read in the click/triggered slots implemented in the plugin.
+* [Change] Update all schema files that generate XML code to use &{} attribute form where there's the need to convert chars to their XML entities counterparts.
+* [Change] When retrieving objects from the database CodeCompletionWidget will not display keywords and snippets in the popup list.
+* [Fix] Addition fix in CodeCompletionWidget in such a way to preserve cursor position when inserting the selected word after a special char.
+* [Fix] Fix a bug in PgModelerCliApp::fixModel that was causing the generation of empty models when the input file had no tag <role>
+* [Fix] Fixed a bug in Catalog::getObjectsCount.
+* [Fix] Fixed a bug in DatabaseModel that could lead to an "unknown exception caught" error.
+* [Fix] Fixed a bug in NumberedTextEditor::identSelection.
+* [Fix] Fixed a bug in SqlExecutionWidget::fillResultsTable.
+* [Fix] Fixed a bug in TableDataWidget::generateDataBuffer that was causing the generation of malformed CSV in some circumstances.
+* [Fix] Fixed a crash in the SQL tool when closing a database explorer instance that owns a plugin tool button.
+* [Fix] Fixed CodeCompletionWidget::retrieveColumnNames when referencing a table via an alias.
+* [Fix] Fixed problems with comments on a database having the same OIDs of different types of objects
+* [Fix] Fixed the diff process on legacy database versions.
+* [Fix] Fixed the line selection operation in LineNumbersWidget.
+* [Fix] Fixed the undefined reference error when building on Windows.
+* [Fix] Minor fixes in the catalog queries for column, cast, collation, and role.
+* [Fix] Minor fix in GeneralConfigWidget when using NO_UPDATE_CHECK.
+* [Fix] Minor fix in process output capturing in ModelFixForm.
+* [Fix] Minor tooltip fix in DataManipulationForm.
+
+v1.0.4
+------
+<em>Release date: May 19, 2023</em><br/>
+
+* [New] Now pgModeler selects the UI element colors based upon the system's default colors set (light/dark).
+* [New] pgModeler now restores the default settings in case of some configuration file is corrupted/incompatible and causes the initialization to fail.
+* [New] Allowing sequences to be assigned to columns with numeric type.
+* [New] Created the methods GuiUtilsNs::saveFile and GuiUtilsNs::loadFile.
+* [Change] Removed the deprecated attribute partial-match from configuration files in conf/defaults.
+* [Change] Minor adjustment in output messages in PgModelerCliApp::createConfigurations.
+* [Change] SyntaxHighlighter when in single-line mode will strip any line break char in the input field.
+* [Change] Minor adjustment in SyntaxHighlighter to force no line wrap in the parent input when single_line_mode is activated.
+* [Change] Changed the behavior of TableDataWidget::populateDataGrid. Instead of failing and never opening the dialog again for the user to try to import another file, the method now ask for saving the current (corrupted data) to a file and opens an empty grid to a new CSV import.
+* [Change] Removed unused constant PhysicalTable::DataLineBreak.
+* [Fix] Fixed a false-positive diff result when comparing numeric columns.
+* [Fix] Minor fix in the name pattern of the settings backup folder in PgModelerCliApp::createConfigurations.
+* [Fix] Fixed bug in reverse engineering that was happening during the creation of object permissions.
+* [Fix] Minor fixes in the catalog queries for cast, collation, and role.
+* [Fix] Fixed the wrong usage of cached names and signatures in DatabaseImportHelper.
+* [Fix] Additional fix in CsvParser::parseBuffer to append a line break character at the end of the buffer in case it is missing so the parsing can be done correctly.
+
+v1.0.3
+------
+<em>Release date: March 24, 2023</em><br/>
+
+* [New] pgmodeler-cli now logs objects that fail to be recreated in fix process into a log file stored in pgModeler's temp directory.
+* [New] Added a progress bar to model fix form and a cancel button which allows aborting the fix operation without close that form.
+* [New] Added a specific icon for CSV load button in CsvLoadWidget.
+* [New] Added the methods Trigger::getColumns and Trigger::addColumns.
+* [Change] Adjusted the behavior of hide and close events of model fix form.
+* [Change] Minor adjustment in pgmodeler-cli model fix messages.
+* [Change] Refactored TriggerWidget to use an instance of ColumnPickerWidget.
+* [Fix] Fixed the database model file header validation for huge models in pgmodeler-cli.
+* [Fix] Fixed a bug in TableDataWidget::generateDataBuffer that was causing the generation of malformed CSV in some circumstances.
+* [Fix] Fixed the PluginsConfigWidget::initPlugins in such a way to remove the plugins that failed to load from the plugins grid.
+* [Fix] Fixed a bug in BaseRelationship::canSimulateRelationship11 that was wrongly returning true.
+
 v1.0.2
 ------
 <em>Release date: March 14, 2023</em><br/>

@@ -65,7 +65,7 @@ void BaseConfigWidget::saveConfiguration(const QString &conf_id, std::map<QStrin
 
 		//Generates the configuration from the schema file
 		schparser.ignoreEmptyAttributes(true);
-		UtilsNs::saveFile(cfg_filename, XmlParser::convertCharsToXMLEntities(schparser.getSourceCode(sch_filename, attribs)).toUtf8());
+		UtilsNs::saveFile(cfg_filename, schparser.getSourceCode(sch_filename, attribs).toUtf8());
 
 		config_params.erase(conf_id);
 	}
@@ -176,7 +176,7 @@ void BaseConfigWidget::loadConfiguration(const QString &conf_id, std::map<QStrin
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, e.getExtraInfo());
 	}
 }
 

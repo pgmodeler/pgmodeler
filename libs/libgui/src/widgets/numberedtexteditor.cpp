@@ -30,7 +30,7 @@
 bool NumberedTextEditor::line_nums_visible=true;
 bool NumberedTextEditor::highlight_lines=true;
 QColor NumberedTextEditor::line_hl_color=Qt::yellow;
-QFont NumberedTextEditor::default_font=QFont(QString("Source Code Pro"), 10);
+QFont NumberedTextEditor::default_font=QFont("Source Code Pro", 10);
 double NumberedTextEditor::tab_width=0;
 QString NumberedTextEditor::src_editor_app="";
 QString NumberedTextEditor::src_editor_app_args="";
@@ -79,27 +79,51 @@ NumberedTextEditor::NumberedTextEditor(QWidget * parent, bool handle_ext_files) 
 		hbox->addSpacerItem(new QSpacerItem(10,10, QSizePolicy::Expanding));
 
 		load_file_btn = new QToolButton(top_widget);
-		load_file_btn->setIcon(QPixmap(GuiUtilsNs::getIconPath("open")));
+		load_file_btn->setIcon(QIcon(GuiUtilsNs::getIconPath("open")));
 		load_file_btn->setAutoRaise(true);
 		load_file_btn->setText(tr("Load"));
-		load_file_btn->setToolTip(tr("Load the object's source code from an external file"));
+		load_file_btn->setToolTip(tr("Load text from an external file"));
 		load_file_btn->setFont(font);
 		load_file_btn->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
 		hbox->addWidget(load_file_btn);
 		connect(load_file_btn, &QToolButton::clicked, this, &NumberedTextEditor::loadFile);
 
+		save_file_btn = new QToolButton(top_widget);
+		save_file_btn->setIcon(QIcon(GuiUtilsNs::getIconPath("save")));
+		save_file_btn->setAutoRaise(true);
+		save_file_btn->setText(tr("Save"));
+		save_file_btn->setToolTip(tr("Save the text to a file"));
+		save_file_btn->setFont(font);
+		save_file_btn->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+		hbox->addWidget(save_file_btn);
+		connect(save_file_btn, &QToolButton::clicked, this, &NumberedTextEditor::saveFile);
+
 		edit_src_btn = new QToolButton(top_widget);
-		edit_src_btn->setIcon(QPixmap(GuiUtilsNs::getIconPath("edit")));
+		edit_src_btn->setIcon(QIcon(GuiUtilsNs::getIconPath("edit")));
 		edit_src_btn->setAutoRaise(true);
 		edit_src_btn->setText(tr("Edit"));
-		edit_src_btn->setToolTip(tr("Edit the source code in the preferred external editor"));
+		edit_src_btn->setToolTip(tr("Edit the text in the defined external editor"));
 		edit_src_btn->setFont(font);
 		edit_src_btn->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
 		hbox->addWidget(edit_src_btn);
 		connect(edit_src_btn,  &QToolButton::clicked, this, &NumberedTextEditor::editSource);
 
+		word_wrap_btn = new QToolButton(top_widget);
+		word_wrap_btn->setIcon(QIcon(GuiUtilsNs::getIconPath("wordwrap")));
+		word_wrap_btn->setAutoRaise(true);
+		word_wrap_btn->setCheckable(true);
+		word_wrap_btn->setText(tr("Wrap"));
+		word_wrap_btn->setToolTip(tr("Toggles the word wrap"));
+		word_wrap_btn->setFont(font);
+		word_wrap_btn->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+		word_wrap_btn->setDisabled(true);
+		hbox->addWidget(word_wrap_btn);
+		connect(word_wrap_btn,  &QToolButton::toggled, this, [this](bool checked) {
+			setWordWrapMode(checked ? QTextOption::WrapAtWordBoundaryOrAnywhere : QTextOption::NoWrap);
+		});
+
 		clear_btn = new QToolButton(top_widget);
-		clear_btn->setIcon(QPixmap(GuiUtilsNs::getIconPath("cleartext")));
+		clear_btn->setIcon(QIcon(GuiUtilsNs::getIconPath("cleartext")));
 		clear_btn->setAutoRaise(true);
 		clear_btn->setText(tr("Clear"));
 		clear_btn->setFont(font);
@@ -112,7 +136,9 @@ NumberedTextEditor::NumberedTextEditor(QWidget * parent, bool handle_ext_files) 
 		});
 
 		connect(this, &NumberedTextEditor::textChanged, this, [this](){
-			clear_btn->setEnabled(!this->toPlainText().isEmpty() && !this->isReadOnly());
+			clear_btn->setEnabled(!this->document()->isEmpty() && !this->isReadOnly());
+			word_wrap_btn->setEnabled(!document()->isEmpty());
+			save_file_btn->setEnabled(!document()->isEmpty());
 		});
 
 		ico->setMaximumSize(edit_src_btn->iconSize());
@@ -174,9 +200,19 @@ void NumberedTextEditor::setHighlightLines(bool value)
 	highlight_lines=value;
 }
 
+bool NumberedTextEditor::isHighlightLines()
+{
+	return highlight_lines;
+}
+
 void NumberedTextEditor::setLineHighlightColor(const QColor &color)
 {
 	line_hl_color=color;
+}
+
+QColor NumberedTextEditor::getLineHighlightColor()
+{
+	return line_hl_color;
 }
 
 void NumberedTextEditor::setTabDistance(double value)
@@ -216,23 +252,67 @@ void NumberedTextEditor::showContextMenu()
 	{
 		ctx_menu->addSeparator();
 
-		act=ctx_menu->addAction(tr("Upper case"), this, &NumberedTextEditor::changeSelectionToUpper, QKeySequence(QString("Ctrl+U")));
+		act = ctx_menu->addAction(tr("Paste code"), this, &NumberedTextEditor::pasteCode, QKeySequence("Ctrl+Shift+V"));
+		act->setEnabled(!qApp->clipboard()->text().isEmpty());
+
+		act = ctx_menu->addAction(tr("Upper case"), this, &NumberedTextEditor::changeSelectionToUpper, QKeySequence("Ctrl+U"));
 		act->setEnabled(textCursor().hasSelection());
 
-		act=ctx_menu->addAction(tr("Lower case"), this, &NumberedTextEditor::changeSelectionToLower, QKeySequence(QString("Ctrl+Shift+U")));
+		act = ctx_menu->addAction(tr("Lower case"), this, &NumberedTextEditor::changeSelectionToLower, QKeySequence("Ctrl+Shift+U"));
 		act->setEnabled(textCursor().hasSelection());
 
 		ctx_menu->addSeparator();
 
-		act=ctx_menu->addAction(tr("Ident right"), this, &NumberedTextEditor::identSelectionRight, QKeySequence(QString("Tab")));
+		act = ctx_menu->addAction(tr("Ident right"), this, &NumberedTextEditor::identSelectionRight, QKeySequence("Tab"));
 		act->setEnabled(textCursor().hasSelection());
 
-		act=ctx_menu->addAction(tr("Ident left"), this, &NumberedTextEditor::identSelectionLeft, QKeySequence(QString("Shift+Tab")));
+		act = ctx_menu->addAction(tr("Ident left"), this, &NumberedTextEditor::identSelectionLeft, QKeySequence("Shift+Tab"));
 		act->setEnabled(textCursor().hasSelection());
 	}
 
 	ctx_menu->exec(QCursor::pos());
 	delete ctx_menu;
+}
+
+void NumberedTextEditor::pasteCode()
+{
+	QString code = qApp->clipboard()->text();
+	QStringList buffer = code.split(QChar::LineFeed),
+		patterns = {
+			"^(\\s)*((\\%2)?(\\s)*)*(%1)",
+			"(%1)((\\s)*(\\%2)?)*$",
+			"(%1)(\\s)*(\\%2)(\\s)*(%1)",
+			"(%1)(\\s)*(\\%2)",
+			"(\\%2)(\\s)*(%1)"
+		},
+			opers = { "\"+", "'.", "'+", "\"." };
+	QChar concat_opr = '+', str_delim = '"';
+	QRegularExpression regexp;
+
+	for(auto &line : buffer)
+	{
+		/* Detecting the combination of string delimiter and concatenation operator
+		 * present in the current buffer line */
+		for(auto &opr : opers)
+		{
+			str_delim = opr[0];
+			concat_opr = opr[1];
+
+			if(line.contains(QRegularExpression(QString("^(\\s)*(\\%1|\\%2)+(\\s)*").arg(str_delim, concat_opr))) &&
+				 line.contains(QRegularExpression(QString("(\\s)*(\\%1|\\%2)+(\\s)*$").arg(str_delim, concat_opr))))
+				break;
+		}
+
+		/* Cleaning up the line using the patterns configured with the
+		 * determined string delimiter and concatation operator */
+		for(auto &pattern : patterns)
+		{
+			regexp.setPattern(pattern.arg(str_delim, concat_opr));
+			line.remove(regexp);
+		}
+	}
+
+	insertPlainText(buffer.join(QChar::LineFeed));
 }
 
 void NumberedTextEditor::changeSelectionToLower()
@@ -284,15 +364,22 @@ void NumberedTextEditor::identSelection(bool ident_right)
 		QStringList lines;
 		int start=-1,	end=-1,
 				factor=(ident_right ? 1 : -1),	count=0;
+		QString buff = toPlainText();
 
 		/* Forcing the selection of the very beggining of the first line and
 		as well the end of the last line to avoid moving chars and break words wrongly */
-		start=toPlainText().lastIndexOf(QChar('\n'), cursor.selectionStart());
-		end=toPlainText().indexOf(QChar('\n'), cursor.selectionEnd());
+		start = buff.lastIndexOf(QChar('\n'), cursor.selectionStart());
+		end = buff.indexOf(QChar('\n'), cursor.selectionEnd());
+
+		if(start < 0)
+			start = 0;
+
+		if(end < 0)
+			end = buff.length();
 
 		cursor.setPosition(start, QTextCursor::MoveAnchor);
 		cursor.setPosition(end, QTextCursor::KeepAnchor);
-		lines=cursor.selectedText().split(QChar(QChar::ParagraphSeparator));
+		lines = cursor.selectedText().split(QChar(QChar::ParagraphSeparator));
 
 		for(int i=0; i < lines.size(); i++)
 		{
@@ -325,28 +412,27 @@ void NumberedTextEditor::identSelection(bool ident_right)
 
 void NumberedTextEditor::loadFile()
 {
-	QFileDialog sql_file_dlg;
+	QByteArray buff;
+	bool loaded = GuiUtilsNs::selectAndLoadFile(buff,
+																							tr("Load file"),
+																							QFileDialog::ExistingFile,
+																							{ tr("SQL file (*.sql)"),	tr("All files (*.*)") });
 
-	sql_file_dlg.setDefaultSuffix(QString("sql"));
-	sql_file_dlg.setFileMode(QFileDialog::AnyFile);
-	sql_file_dlg.setNameFilter(tr("SQL file (*.sql);;All files (*.*)"));
-	sql_file_dlg.setModal(true);
-	sql_file_dlg.setWindowTitle(tr("Load file"));
-	sql_file_dlg.setAcceptMode(QFileDialog::AcceptOpen);
-
-	GuiUtilsNs::restoreFileDialogState(&sql_file_dlg);
-	sql_file_dlg.exec();
-	GuiUtilsNs::saveFileDialogState(&sql_file_dlg);
-
-	if(sql_file_dlg.result()==QDialog::Accepted)
+	if(loaded)
 	{
-		QByteArray buf;
-
-		buf.append(UtilsNs::loadFile(sql_file_dlg.selectedFiles().at(0)));
-		this->clear();
-		this->setPlainText(buf);
-		clear_btn->setEnabled(!this->toPlainText().isEmpty());
+		clear();
+		setPlainText(buff);
+		clear_btn->setEnabled(!document()->isEmpty());
 	}
+}
+
+void NumberedTextEditor::saveFile()
+{
+	GuiUtilsNs::selectAndSaveFile(toPlainText().toUtf8(),
+																tr("Save file"),
+																QFileDialog::AnyFile,
+																{ tr("SQL file (*.sql)"),	tr("All files (*.*)") },
+																{}, "sql");
 }
 
 void NumberedTextEditor::editSource()
@@ -393,7 +479,9 @@ void NumberedTextEditor::enableEditor()
 	editor_alert_wgt->setVisible(false);
 	load_file_btn->setEnabled(true);
 	edit_src_btn->setEnabled(true);
-	clear_btn->setEnabled(!this->toPlainText().isEmpty());
+	clear_btn->setEnabled(!this->document()->isEmpty());
+	word_wrap_btn->setEnabled(!this->document()->isEmpty());
+	save_file_btn->setEnabled(!this->document()->isEmpty());
 	this->setReadOnly(false);
 }
 
@@ -437,9 +525,9 @@ void NumberedTextEditor::handleProcessError()
 	Messagebox msg_box;
 	QStringList errors = { src_editor_proc.errorString(),  src_editor_proc.readAllStandardError() };
 
-	msg_box.show(GuiUtilsNs::formatMessage(tr("Failed to the source code editor <strong>%1</strong>! Make to sure that the source editor path points to a valid executable and the current user has permission to run the application. Error message returned: <strong>%2</strong>")
+	msg_box.show(GuiUtilsNs::formatMessage(tr("Failed to run the source code editor <strong>%1</strong>! Make to sure that the application path points to a valid executable and the current user has permission to run the application. Error message returned: <strong>%2</strong>")
 																						.arg(src_editor_proc.program())
-																						.arg(errors.join(QString("\n\n")))), Messagebox::ErrorIcon);
+																						.arg(errors.join("\n\n"))), Messagebox::ErrorIcon);
 
 	enableEditor();
 }
@@ -450,7 +538,7 @@ void NumberedTextEditor::setReadOnly(bool ro)
 	{
 		load_file_btn->setEnabled(!ro);
 		edit_src_btn->setEnabled(!ro);
-		clear_btn->setEnabled(!ro && !this->toPlainText().isEmpty());
+		clear_btn->setEnabled(!ro && !this->document()->isEmpty());
 	}
 
 	QPlainTextEdit::setReadOnly(ro);
@@ -476,7 +564,7 @@ void NumberedTextEditor::updateLineNumbers()
 			top = static_cast<int>(blockBoundingGeometry(block).translated(contentOffset()).top()),
 			bottom = top +  static_cast<int>(blockBoundingRect(block).height()),
 			dy = top;
-	unsigned first_line=0, line_count=0;	
+	unsigned first_line=0, line_count=0;
 	double tab_stop_dist = 0;
 
 	// Calculates the visible lines by iterating over the visible/valid text blocks.
@@ -484,9 +572,10 @@ void NumberedTextEditor::updateLineNumbers()
 	{
 		if(block.isVisible())
 		{
-			line_count++;
-			if(first_line==0)
-				first_line=static_cast<unsigned>(block_number + 1);
+			line_count += block.lineCount();
+
+			if(first_line == 0)
+				first_line = static_cast<unsigned>(block_number + 1);
 		}
 
 		block = block.next();
@@ -550,7 +639,11 @@ void NumberedTextEditor::resizeEvent(QResizeEvent *event)
 
 void NumberedTextEditor::keyPressEvent(QKeyEvent *event)
 {
-	if(!isReadOnly() && textCursor().hasSelection())
+	if(!isReadOnly() && event->key()==Qt::Key_V && event->modifiers() == (Qt::ControlModifier | Qt::ShiftModifier))
+	{
+		pasteCode();
+	}
+	else if(!isReadOnly() && textCursor().hasSelection())
 	{
 		if(event->key()==Qt::Key_U && event->modifiers()!=Qt::NoModifier)
 		{

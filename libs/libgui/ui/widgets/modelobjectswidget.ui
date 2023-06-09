@@ -165,7 +165,7 @@
               <enum>QFrame::Sunken</enum>
              </property>
              <property name="horizontalScrollBarPolicy">
-              <enum>Qt::ScrollBarAlwaysOff</enum>
+              <enum>Qt::ScrollBarAsNeeded</enum>
              </property>
              <property name="autoScroll">
               <bool>true</bool>
@@ -195,7 +195,7 @@
               <number>20</number>
              </property>
              <property name="rootIsDecorated">
-              <bool>false</bool>
+              <bool>true</bool>
              </property>
              <property name="uniformRowHeights">
               <bool>true</bool>

@@ -44,6 +44,10 @@
 <!ATTLIST configuration pgmodeler-ver CDATA #IMPLIED>
 <!ATTLIST configuration first-run CDATA #IMPLIED>
 <!ATTLIST configuration old-pgsql-versions (false|true) "false">
+<!ATTLIST configuration hide-obj-shadows (false|true) "false">
+<!ATTLIST configuration disable-inline-editor (false|true) "false">
+<!ATTLIST configuration truncate-column-data (false|true) "false">
+<!ATTLIST configuration column-trunc-threshold CDATA #IMPLIED>
 
 <!ELEMENT session (file+)>
 <!ELEMENT recent-models (file+)>

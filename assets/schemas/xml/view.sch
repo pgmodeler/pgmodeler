@@ -1,10 +1,10 @@
 # XML definition for views
 # CAUTION: Do not modify this file unless you know what you are doing.
 # Code generation can be broken if incorrect changes are made.
-[<view name=] "{name}"
+[<view name=] "&{name}"
 
-%if {layers} %then [ layers=]"{layers}" %end
-%if {alias} %then [ alias=]"{alias}" %end
+%if {layers} %then [ layers=] "{layers}" %end
+%if {alias} %then [ alias=] "&{alias}" %end
 %if {protected} %then [ protected=] "true" %end
 %if {materialized} %then [ materialized=] "true" %end
 %if {recursive} %then [ recursive=] "true" %end

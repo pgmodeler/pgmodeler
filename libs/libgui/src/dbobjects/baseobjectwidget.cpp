@@ -21,6 +21,7 @@
 #include "widgets/customsqlwidget.h"
 #include "baseform.h"
 #include "settings/generalconfigwidget.h"
+#include "utilsns.h"
 
 BaseObjectWidget::BaseObjectWidget(QWidget *parent, ObjectType obj_type): QWidget(parent)
 {
@@ -150,9 +151,9 @@ void BaseObjectWidget::setRequiredField(QWidget *widget)
 				lbl->setText(str_aux + lbl->text());
 
 			if(pgtype || grp)
-				widget->setStyleSheet(QString("QGroupBox {	font-weight: bold; }"));
+				widget->setStyleSheet("QGroupBox {	font-weight: bold; }");
 			else if(lbl)
-				widget->setStyleSheet(QString("QWidget {	font-weight: bold; }"));
+				widget->setStyleSheet("QWidget {	font-weight: bold; }");
 		}
 		else if(edt || txt || sel)
 		{
@@ -165,7 +166,7 @@ void BaseObjectWidget::setRequiredField(QWidget *widget)
 				widget->setStyleSheet(QString("%1 { border: 2px solid %2; padding-top: 2px; padding-bottom: 2px; border-radius: 4px; }").arg(widget->metaObject()->className()).arg(border_color.name()));
 		}
 
-		str_aux=(!widget->toolTip().isEmpty() ? QString("\n") : "");
+		str_aux=(!widget->toolTip().isEmpty() ? "\n" : "");
 		widget->setToolTip(widget->toolTip() + str_aux + tr("Required field. Leaving this empty will raise errors!"));
 	}
 }
@@ -507,11 +508,11 @@ void BaseObjectWidget::configureFormLayout(QGridLayout *grid, ObjectType obj_typ
 QString BaseObjectWidget::generateVersionsInterval(unsigned ver_interv_id, const QString &ini_ver, const QString &end_ver)
 {
 	if(ver_interv_id==UntilVersion && !ini_ver.isEmpty())
-		return (XmlParser::CharLt + QString("= ") + ini_ver);
+		return (UtilsNs::EntityLt + "= " + ini_ver);
 	else if(ver_interv_id==VersionsInterval && !ini_ver.isEmpty() && !end_ver.isEmpty())
-		return (XmlParser::CharGt + QString("= ") + ini_ver + XmlParser::CharAmp + XmlParser::CharLt + QString("= ") + end_ver);
+		return (UtilsNs::EntityGt + "= " + ini_ver + UtilsNs::EntityAmp + UtilsNs::EntityLt + "= " + end_ver);
 	else if(ver_interv_id==AfterVersion &&  !ini_ver.isEmpty())
-		return (XmlParser::CharGt + QString("= ") + ini_ver);
+		return (UtilsNs::EntityGt + "= " + ini_ver);
 	else
 		return "";
 }
@@ -575,7 +576,7 @@ void BaseObjectWidget::highlightVersionSpecificFields(std::map<QString, std::vec
 		{
 			if(values && values->count(wgt) > 0)
 			{
-				field_name+=QString("<br/>") + tr("Value(s)") + QString(": (");
+				field_name+="<br/>" + tr("Value(s)") + ": (";
 				for(auto value : values->at(wgt))
 				{
 					field_name += value;
@@ -586,8 +587,8 @@ void BaseObjectWidget::highlightVersionSpecificFields(std::map<QString, std::vec
 				field_name+=")";
 			}
 
-			wgt->setStyleSheet(QString("QWidget {	font-weight: bold; font-style: italic; text-decoration: underline; }"));
-			wgt->setToolTip(QString("<p>PostgreSQL") + itr.first + QString(" %1</p>").arg(field_name));
+			wgt->setStyleSheet("QWidget {	font-weight: bold; font-style: italic; text-decoration: underline; }");
+			wgt->setToolTip("<p>PostgreSQL" + itr.first + QString(" %1</p>").arg(field_name));
 		}
 	}
 }
@@ -653,7 +654,7 @@ void BaseObjectWidget::editPermissions()
 
 	permission_wgt->setAttributes(this->model, parent_obj, this->object);
 	parent_form.setMainWidget(permission_wgt);
-	parent_form.setButtonConfiguration(Messagebox::OkButton);
+	parent_form.setButtonConfiguration(Messagebox::CloseButton);
 
 	GeneralConfigWidget::restoreWidgetGeometry(&parent_form, permission_wgt->metaObject()->className());
 	parent_form.exec();
@@ -684,7 +685,7 @@ void BaseObjectWidget::applyConfiguration()
 			ObjectType obj_type=object->getObjectType();
 			QString obj_name;
 
-			QApplication::setOverrideCursor(Qt::WaitCursor);
+			qApp->setOverrideCursor(Qt::WaitCursor);
 			obj_name=BaseObject::formatName(name_edt->text().toUtf8(), obj_type==ObjectType::Operator);
 
 			if(this->object->acceptsSchema() &&  schema_sel->getSelectedObject())
@@ -776,7 +777,7 @@ void BaseObjectWidget::applyConfiguration()
 		}
 		catch(Exception &e)
 		{
-			QApplication::restoreOverrideCursor();
+			qApp->restoreOverrideCursor();
 			throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 		}
 	}
@@ -864,11 +865,11 @@ void BaseObjectWidget::finishConfiguration()
 			emit s_closeRequested();
 		}
 
-		QApplication::restoreOverrideCursor();
+		qApp->restoreOverrideCursor();
 	}
 	catch(Exception &e)
 	{
-		QApplication::restoreOverrideCursor();
+		qApp->restoreOverrideCursor();
 
 		if(e.getErrorCode()==ErrorCode::AsgObjectInvalidDefinition)
 			throw Exception(Exception::getErrorMessage(ErrorCode::RequiredFieldsNotFilled)
@@ -921,7 +922,7 @@ void BaseObjectWidget::cancelConfiguration()
 		catch(Exception &){}
 	}
 
-	QApplication::restoreOverrideCursor();
+	qApp->restoreOverrideCursor();
 	emit s_objectManipulated();
 }
 

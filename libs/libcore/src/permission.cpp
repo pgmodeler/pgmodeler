@@ -406,7 +406,7 @@ QString Permission::getSourceCode(SchemaParser::CodeType def_type)
 			//Views, Tables and foreign tables use the same keyword when setting permission (TABLE)
 			attributes[Attributes::Type] = BaseObject::getSQLName(ObjectType::Table);
 		else if(obj_type == ObjectType::ForeignServer)
-			attributes[Attributes::Type] = QString("FOREIGN ") + object->getSQLName();
+			attributes[Attributes::Type] = "FOREIGN " + object->getSQLName();
 		else
 			attributes[Attributes::Type] = BaseObject::getSQLName(obj_type);
 	}
@@ -452,7 +452,7 @@ QString Permission::getSourceCode(SchemaParser::CodeType def_type)
 	count=roles.size();
 
 	for(i=0; i < count; i++)
-		attributes[Attributes::Roles]+=roles[i]->getName(true) + QString(",");
+		attributes[Attributes::Roles]+=roles[i]->getName(true) + ",";
 
 	attributes[Attributes::Roles].remove(attributes[Attributes::Roles].size()-1,1);
 

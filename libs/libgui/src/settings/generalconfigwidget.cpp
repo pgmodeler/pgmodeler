@@ -45,17 +45,17 @@ GeneralConfigWidget::GeneralConfigWidget(QWidget * parent) : BaseConfigWidget(pa
 	confs_dir_sel = new FileSelectorWidget(this);
 	confs_dir_sel->setToolTip(tr("pgModeler configurations directory for the current user"));
 	confs_dir_sel->setReadOnly(true);
-	confs_dir_sel->setFileMode(QFileDialog::Directory);
+	confs_dir_sel->setDirectoryMode(true);
 	confs_dir_sel->setSelectedFile(GlobalAttributes::getConfigurationsPath());
 	general_grid->addWidget(confs_dir_sel, 1, 1, 1, 1);
 
 	source_editor_sel = new FileSelectorWidget(this);
-	source_editor_sel->setToolTip(tr("pgModeler configurations directory for the current user"));
 	source_editor_sel->setAllowFilenameInput(true);
-	source_editor_sel->setFileMode(QFileDialog::ExistingFile);
+	source_editor_sel->setFileMustExist(true);
 	source_editor_sel->setAcceptMode(QFileDialog::AcceptOpen);
 	source_editor_sel->setWindowTitle(tr("Select application"));
 	source_editor_sel->setToolTip(tr("External source code editor application"));
+	source_editor_sel->setCheckExecutionFlag(true);
 	general_grid->addWidget(source_editor_sel, 2, 1, 1, 1);
 
 	int i = 0;
@@ -72,6 +72,10 @@ GeneralConfigWidget::GeneralConfigWidget(QWidget * parent) : BaseConfigWidget(pa
 	connect(paper_cmb, &QComboBox::currentIndexChanged, this,  &GeneralConfigWidget::selectPaperSize);
 	connect(save_restore_geometry_chk, &QCheckBox::toggled, reset_sizes_tb, &QToolButton::setEnabled);
 	connect(reset_sizes_tb, &QToolButton::clicked, this, &GeneralConfigWidget::resetDialogsSizes);
+
+	connect(trunc_columns_data_chk, &QCheckBox::toggled, trunc_columns_data_spb, &QComboBox::setEnabled);
+	connect(trunc_columns_data_chk, &QCheckBox::toggled, disable_inline_editor_chk, &QComboBox::setEnabled);
+	connect(trunc_columns_data_chk, &QCheckBox::toggled, bytes_lbl, &QLabel::setEnabled);
 
 	config_params[Attributes::Configuration][Attributes::GridSize]="";
 	config_params[Attributes::Configuration][Attributes::OpListSize]="";
@@ -152,14 +156,15 @@ GeneralConfigWidget::GeneralConfigWidget(QWidget * parent) : BaseConfigWidget(pa
 #ifdef NO_UPDATE_CHECK
 	check_update_chk->setChecked(false);
 	check_update_chk->setVisible(false);
+	check_versions_cmb->setVisible(false);
 #endif
 
 	//Retrieving the available UI dictionaries
 	QStringList langs = QDir(GlobalAttributes::getLanguagesPath() +
 													 GlobalAttributes::DirSeparator,
-													 QString("*.qm"), QDir::Name, QDir::AllEntries | QDir::NoDotAndDotDot).entryList();
+													 "*.qm", QDir::Name, QDir::AllEntries | QDir::NoDotAndDotDot).entryList();
 
-	langs.replaceInStrings(QString(".qm"), "");
+	langs.replaceInStrings(".qm", "");
 	ui_language_cmb->addItem(tr("System default"));
 	QString native_lang;
 
@@ -235,6 +240,7 @@ void GeneralConfigWidget::loadConfiguration()
 		hide_rel_name_chk->setChecked(config_params[Attributes::Configuration][Attributes::HideRelName]==Attributes::True);
 		hide_table_tags_chk->setChecked(config_params[Attributes::Configuration][Attributes::HideTableTags]==Attributes::True);
 		hide_sch_name_usr_types_chk->setChecked(config_params[Attributes::Configuration][Attributes::HideSchNameUserTypes]==Attributes::True);
+		hide_obj_shadows_chk->setChecked(config_params[Attributes::Configuration][Attributes::HideObjShadows]==Attributes::True);
 
 		source_editor_sel->setSelectedFile(config_params[Attributes::Configuration][Attributes::SourceEditorApp]);
 		source_editor_args_edt->setText(config_params[Attributes::Configuration][Attributes::SourceEditorArgs]);
@@ -243,6 +249,15 @@ void GeneralConfigWidget::loadConfiguration()
 		reset_sizes_tb->setEnabled(save_restore_geometry_chk->isChecked());
 		low_verbosity_chk->setChecked(config_params[Attributes::Configuration][Attributes::LowVerbosity]==Attributes::True);
 		escape_comments_chk->setChecked(config_params[Attributes::Configuration][Attributes::EscapeComment]==Attributes::True);
+
+		trunc_columns_data_chk->setChecked(config_params[Attributes::Configuration][Attributes::TruncateColumnData]==Attributes::True);
+		trunc_columns_data_spb->setValue(config_params[Attributes::Configuration][Attributes::ColumnTruncThreshold].toInt());
+
+		trunc_columns_data_spb->setEnabled(trunc_columns_data_chk->isChecked());
+		bytes_lbl->setEnabled(trunc_columns_data_chk->isChecked());
+
+		disable_inline_editor_chk->setChecked(config_params[Attributes::Configuration][Attributes::DisableInlineEditor]==Attributes::True);
+		disable_inline_editor_chk->setEnabled(disable_inline_editor_chk->isChecked());
 
 		int ui_idx = ui_language_cmb->findData(config_params[Attributes::Configuration][Attributes::UiLanguage]);
 		ui_language_cmb->setCurrentIndex(ui_idx >= 0 ? ui_idx : 0);
@@ -429,6 +444,7 @@ void GeneralConfigWidget::saveConfiguration()
 		config_params[Attributes::Configuration][Attributes::HideRelName]=(hide_rel_name_chk->isChecked() ? Attributes::True : "");
 		config_params[Attributes::Configuration][Attributes::HideTableTags]=(hide_table_tags_chk->isChecked() ? Attributes::True : "");
 		config_params[Attributes::Configuration][Attributes::HideSchNameUserTypes]=(hide_sch_name_usr_types_chk->isChecked() ? Attributes::True : "");
+		config_params[Attributes::Configuration][Attributes::HideObjShadows]=(hide_obj_shadows_chk->isChecked() ? Attributes::True : "");
 
 		config_params[Attributes::Configuration][Attributes::SourceEditorApp]=source_editor_sel->getSelectedFile();
 		config_params[Attributes::Configuration][Attributes::SourceEditorArgs]=source_editor_args_edt->text();
@@ -439,6 +455,11 @@ void GeneralConfigWidget::saveConfiguration()
 		config_params[Attributes::Configuration][Attributes::LowVerbosity]=(low_verbosity_chk->isChecked() ? Attributes::True : "");
 		config_params[Attributes::Configuration][Attributes::EscapeComment]=(escape_comments_chk->isChecked() ? Attributes::True : "");
 		config_params[Attributes::Configuration][Attributes::OldPgSqlVersions]=(old_pgsql_versions_chk->isChecked() ? Attributes::True : "");
+
+		config_params[Attributes::Configuration][Attributes::TruncateColumnData]=(trunc_columns_data_chk->isChecked() ? Attributes::True : "");
+		config_params[Attributes::Configuration][Attributes::ColumnTruncThreshold]=QString::number(trunc_columns_data_spb->value());
+		config_params[Attributes::Configuration][Attributes::DisableInlineEditor]=(trunc_columns_data_chk->isChecked() &&
+																																							 disable_inline_editor_chk->isChecked() ? Attributes::True : "");
 
 		config_params[Attributes::Configuration][Attributes::File]="";
 		config_params[Attributes::Configuration][Attributes::RecentModels]="";
@@ -454,17 +475,14 @@ void GeneralConfigWidget::saveConfiguration()
 		while(itr!=itr_end)
 		{
 			//Checking if the current attribute is a file to be stored in a <session> tag
-			if((itr->first).contains(QRegularExpression(QString("(") + Attributes::File + QString(")([0-9]+)"))))
+			if((itr->first).contains(QRegularExpression("(" + Attributes::File + ")([0-9]+)")))
 			{
-				config_params[Attributes::Configuration][Attributes::File]+=
-						XmlParser::convertCharsToXMLEntities(schparser.getSourceCode(file_sch, itr->second));
+				config_params[Attributes::Configuration][Attributes::File] +=	schparser.getSourceCode(file_sch, itr->second);
 			}
 			//Checking if the current attribute is a file to be stored in a <recent-models> tag
-			else if(recent_mdl_idx < MaxRecentModels && (itr->first).contains(QRegularExpression(QString("(") + Attributes::Recent + QString(")([0-9]+)"))))
+			else if(recent_mdl_idx < MaxRecentModels && (itr->first).contains(QRegularExpression("(" + Attributes::Recent + ")([0-9]+)")))
 			{
-				config_params[Attributes::Configuration][Attributes::RecentModels]+=
-						XmlParser::convertCharsToXMLEntities(schparser.getSourceCode(file_sch, itr->second));
-
+				config_params[Attributes::Configuration][Attributes::RecentModels] +=	schparser.getSourceCode(file_sch, itr->second);
 				recent_mdl_idx++;
 			}
 			else if(itr->first==Attributes::Validator ||
@@ -565,12 +583,16 @@ void GeneralConfigWidget::applyConfiguration()
 
 	BaseObjectView::setCompactViewEnabled(config_params[Attributes::Configuration][Attributes::CompactView]==Attributes::True);
 	BaseObjectView::setPlaceholderEnabled(use_placeholders_chk->isChecked());
+	BaseObjectView::setShadowHidden(hide_obj_shadows_chk->isChecked());
 
 	SQLExecutionWidget::setSQLHistoryMaxLength(history_max_length_spb->value());
 	ModelDatabaseDiffForm::setLowVerbosity(low_verbosity_chk->isChecked());
 	DatabaseImportForm::setLowVerbosity(low_verbosity_chk->isChecked());
 	ModelExportForm::setLowVerbosity(low_verbosity_chk->isChecked());
 	Connection::setIgnoreDbVersion(old_pgsql_versions_chk->isChecked());
+
+	PlainTextItemDelegate::setMaxDisplayLength(trunc_columns_data_chk->isChecked() ? trunc_columns_data_spb->value() : 0);
+	PlainTextItemDelegate::setTextEditorEnabled(trunc_columns_data_chk->isChecked() ? !disable_inline_editor_chk->isChecked() : false);
 }
 
 void GeneralConfigWidget::restoreDefaults()

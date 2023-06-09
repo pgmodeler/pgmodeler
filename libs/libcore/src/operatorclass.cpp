@@ -76,7 +76,7 @@ void OperatorClass::setElementsAttribute(SchemaParser::CodeType def_type)
 	{
 		str_elems+=elements[i].getSourceCode(def_type);
 		if(def_type==SchemaParser::SqlCode &&
-				i < count-1) str_elems+=QString(",\n");
+				i < count-1) str_elems+=",\n";
 	}
 
 	attributes[Attributes::Elements]=str_elems;

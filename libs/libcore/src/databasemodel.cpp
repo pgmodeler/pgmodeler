@@ -98,6 +98,179 @@ DatabaseModel::DatabaseModel()
 		{ ObjectType::Transform, &transforms },
 		{ ObjectType::Procedure, &procedures }
 	};
+
+	// Binding the creation methods
+	create_methods = {
+		{ ObjectType::Role, std::bind(&DatabaseModel::createRole, this) },
+		{ ObjectType::Tablespace, std::bind(&DatabaseModel::createTablespace, this) },
+		{ ObjectType::Schema, std::bind(&DatabaseModel::createSchema, this) },
+		{ ObjectType::Language, std::bind(&DatabaseModel::createLanguage, this) },
+		{ ObjectType::Function, std::bind(&DatabaseModel::createFunction, this) },
+		{ ObjectType::Type, std::bind(&DatabaseModel::createType, this) },
+		{ ObjectType::Domain, std::bind(&DatabaseModel::createDomain, this) },
+		{ ObjectType::Cast, std::bind(&DatabaseModel::createCast, this) },
+		{ ObjectType::Conversion, std::bind(&DatabaseModel::createConversion, this) },
+		{ ObjectType::Operator, std::bind(&DatabaseModel::createOperator, this) },
+		{ ObjectType::OpFamily, std::bind(&DatabaseModel::createOperatorFamily, this) },
+		{ ObjectType::OpClass, std::bind(&DatabaseModel::createOperatorClass, this) },
+		{ ObjectType::Aggregate, std::bind(&DatabaseModel::createAggregate, this) },
+		{ ObjectType::Table, std::bind(&DatabaseModel::createTable, this) },
+		{ ObjectType::View, std::bind(&DatabaseModel::createView, this) },
+		{ ObjectType::Textbox, std::bind(&DatabaseModel::createTextbox, this) },
+		{ ObjectType::Trigger, std::bind(&DatabaseModel::createTrigger, this) },
+		{ ObjectType::Index, std::bind(&DatabaseModel::createIndex, this) },
+		{ ObjectType::Column, std::bind(&DatabaseModel::createColumn, this) },
+		{ ObjectType::Rule, std::bind(&DatabaseModel::createRule, this) },
+		{ ObjectType::Relationship, std::bind(&DatabaseModel::createRelationship, this) },
+		{ ObjectType::BaseRelationship, std::bind(&DatabaseModel::createRelationship, this) },
+		{ ObjectType::Collation, std::bind(&DatabaseModel::createCollation, this) },
+		{ ObjectType::Extension, std::bind(&DatabaseModel::createExtension, this) },
+		{ ObjectType::Tag, std::bind(&DatabaseModel::createTag, this) },
+		{ ObjectType::Permission, std::bind(&DatabaseModel::createPermission, this) },
+		{ ObjectType::EventTrigger, std::bind(&DatabaseModel::createEventTrigger, this) },
+		{ ObjectType::GenericSql, std::bind(&DatabaseModel::createGenericSQL, this) },
+		{ ObjectType::Policy, std::bind(&DatabaseModel::createPolicy, this) },
+		{ ObjectType::ForeignDataWrapper, std::bind(&DatabaseModel::createForeignDataWrapper, this) },
+		{ ObjectType::ForeignServer, std::bind(&DatabaseModel::createForeignServer, this) },
+		{ ObjectType::UserMapping, std::bind(&DatabaseModel::createUserMapping, this) },
+		{ ObjectType::ForeignTable, std::bind(&DatabaseModel::createForeignTable, this) },
+		{ ObjectType::Transform, std::bind(&DatabaseModel::createTransform, this) },
+		{ ObjectType::Procedure, std::bind(&DatabaseModel::createProcedure, this) },
+		{ ObjectType::Sequence, [this](){ return createSequence(); } },
+		{ ObjectType::Constraint, [this](){ return createConstraint(nullptr); } }
+	};
+
+	//Binding add methods
+	add_methods = {
+		{ ObjectType::Relationship, [this](BaseObject *obj, int idx){
+				addRelationship(dynamic_cast<BaseRelationship *>(obj), idx); }},
+		{ ObjectType::BaseRelationship, [this](BaseObject *obj, int idx){
+				addRelationship(dynamic_cast<BaseRelationship *>(obj), idx); }},
+		{ ObjectType::Textbox, [this](BaseObject *obj, int idx){
+				addTextbox(dynamic_cast<Textbox *>(obj), idx); }},
+		{ ObjectType::Table, [this](BaseObject *obj, int idx){
+				addTable(dynamic_cast<Table *>(obj), idx); }},
+		{ ObjectType::Function, [this](BaseObject *obj, int idx){
+				addFunction(dynamic_cast<Function *>(obj), idx); }},
+		{ ObjectType::Aggregate, [this](BaseObject *obj, int idx){
+				addAggregate(dynamic_cast<Aggregate *>(obj), idx); }},
+		{ ObjectType::Schema, [this](BaseObject *obj, int idx){
+				addSchema(dynamic_cast<Schema *>(obj), idx); }},
+		{ ObjectType::View, [this](BaseObject *obj, int idx){
+				addView(dynamic_cast<View *>(obj), idx); }},
+		{ ObjectType::Type, [this](BaseObject *obj, int idx){
+				addType(dynamic_cast<Type *>(obj), idx); }},
+		{ ObjectType::Role, [this](BaseObject *obj, int idx){
+				addRole(dynamic_cast<Role *>(obj), idx); }},
+		{ ObjectType::Tablespace, [this](BaseObject *obj, int idx){
+				addTablespace(dynamic_cast<Tablespace *>(obj), idx); }},
+		{ ObjectType::Language, [this](BaseObject *obj, int idx){
+				addLanguage(dynamic_cast<Language *>(obj), idx); }},
+		{ ObjectType::Cast,	[this](BaseObject *obj, int idx){
+				addCast(dynamic_cast<Cast *>(obj), idx); }},
+		{ ObjectType::Conversion, [this](BaseObject *obj, int idx){
+				addConversion(dynamic_cast<Conversion *>(obj), idx); }},
+		{ ObjectType::Operator, [this](BaseObject *obj, int idx){
+				addOperator(dynamic_cast<Operator *>(obj), idx); }},
+		{ ObjectType::OpClass, [this](BaseObject *obj, int idx){
+				addOperatorClass(dynamic_cast<OperatorClass *>(obj), idx); }},
+		{ ObjectType::OpFamily, [this](BaseObject *obj, int idx){
+				addOperatorFamily(dynamic_cast<OperatorFamily *>(obj), idx); }},
+		{ ObjectType::Domain,	[this](BaseObject *obj, int idx){
+				addDomain(dynamic_cast<Domain *>(obj), idx); }},
+		{ ObjectType::Sequence, [this](BaseObject *obj, int idx){
+				addSequence(dynamic_cast<Sequence *>(obj), idx); }},
+		{ ObjectType::Collation, [this](BaseObject *obj, int idx){
+				addCollation(dynamic_cast<Collation *>(obj), idx); }},
+		{ ObjectType::Extension, [this](BaseObject *obj, int idx){
+				addExtension(dynamic_cast<Extension *>(obj), idx); }},
+		{ ObjectType::Tag, [this](BaseObject *obj, int idx){
+				addTag(dynamic_cast<Tag *>(obj), idx); }},
+		{ ObjectType::EventTrigger, [this](BaseObject *obj, int idx){
+				addEventTrigger(dynamic_cast<EventTrigger *>(obj), idx); }},
+		{ ObjectType::GenericSql,[this](BaseObject *obj, int idx){
+				addGenericSQL(dynamic_cast<GenericSQL *>(obj), idx); }},
+		{ ObjectType::ForeignDataWrapper, [this](BaseObject *obj, int idx){
+				addForeignDataWrapper(dynamic_cast<ForeignDataWrapper *>(obj), idx); }},
+		{ ObjectType::ForeignServer, [this](BaseObject *obj, int idx){
+				addForeignServer(dynamic_cast<ForeignServer *>(obj), idx); }},
+		{ ObjectType::UserMapping, [this](BaseObject *obj, int idx){
+				addUserMapping(dynamic_cast<UserMapping *>(obj), idx); }},
+		{ ObjectType::ForeignTable, [this](BaseObject *obj, int idx){
+				addForeignTable(dynamic_cast<ForeignTable *>(obj), idx); }},
+		{ ObjectType::Transform, [this](BaseObject *obj, int idx){
+				addTransform(dynamic_cast<Transform *>(obj), idx); }},
+		{ ObjectType::Procedure, [this](BaseObject *obj, int idx){
+				addProcedure(dynamic_cast<Procedure *>(obj), idx); }},
+		{ ObjectType::Permission, [this](BaseObject *obj, int){
+				addPermission(dynamic_cast<Permission *>(obj)); }},
+	};
+
+	//Binding remove methods
+	remove_methods = {
+		{ ObjectType::Relationship, [this](BaseObject *obj, int idx){
+				removeRelationship(dynamic_cast<BaseRelationship *>(obj), idx);	}},
+		{ ObjectType::BaseRelationship, [this](BaseObject *obj, int idx){
+				removeRelationship(dynamic_cast<BaseRelationship *>(obj), idx);	}},
+		{ ObjectType::Textbox, [this](BaseObject *obj, int idx){
+				removeTextbox(dynamic_cast<Textbox *>(obj), idx);	}},
+		{ ObjectType::Table, [this](BaseObject *obj, int idx){
+				removeTable(dynamic_cast<Table *>(obj), idx);	}},
+		{ ObjectType::Function, [this](BaseObject *obj, int idx){
+				removeFunction(dynamic_cast<Function *>(obj), idx);	}},
+		{ ObjectType::Aggregate, [this](BaseObject *obj, int idx){
+				removeAggregate(dynamic_cast<Aggregate *>(obj), idx);	}},
+		{ ObjectType::Schema, [this](BaseObject *obj, int idx){
+				removeSchema(dynamic_cast<Schema *>(obj), idx);	}},
+		{ ObjectType::View, [this](BaseObject *obj, int idx){
+				removeView(dynamic_cast<View *>(obj), idx);	}},
+		{ ObjectType::Type, [this](BaseObject *obj, int idx){
+				removeType(dynamic_cast<Type *>(obj), idx);	}},
+		{ ObjectType::Role, [this](BaseObject *obj, int idx){
+				removeRole(dynamic_cast<Role *>(obj), idx);	}},
+		{ ObjectType::Tablespace, [this](BaseObject *obj, int idx){
+				removeTablespace(dynamic_cast<Tablespace *>(obj), idx);	}},
+		{ ObjectType::Language, [this](BaseObject *obj, int idx){
+				removeLanguage(dynamic_cast<Language *>(obj), idx);	}},
+		{ ObjectType::Cast,	[this](BaseObject *obj, int idx){
+				removeCast(dynamic_cast<Cast *>(obj), idx);	}},
+		{ ObjectType::Conversion, [this](BaseObject *obj, int idx){
+				removeConversion(dynamic_cast<Conversion *>(obj), idx);	}},
+		{ ObjectType::Operator, [this](BaseObject *obj, int idx){
+				removeOperator(dynamic_cast<Operator *>(obj), idx);	}},
+		{ ObjectType::OpClass, [this](BaseObject *obj, int idx){
+				removeOperatorClass(dynamic_cast<OperatorClass *>(obj), idx);	}},
+		{ ObjectType::OpFamily, [this](BaseObject *obj, int idx){
+				removeOperatorFamily(dynamic_cast<OperatorFamily *>(obj), idx);	}},
+		{ ObjectType::Domain,	[this](BaseObject *obj, int idx){
+			removeDomain(dynamic_cast<Domain *>(obj), idx);	}},
+		{ ObjectType::Sequence, [this](BaseObject *obj, int idx){
+				removeSequence(dynamic_cast<Sequence *>(obj), idx);	}},
+		{ ObjectType::Collation, [this](BaseObject *obj, int idx){
+				removeCollation(dynamic_cast<Collation *>(obj), idx);	}},
+		{ ObjectType::Extension, [this](BaseObject *obj, int idx){
+				removeExtension(dynamic_cast<Extension *>(obj), idx);	}},
+		{ ObjectType::Tag, [this](BaseObject *obj, int idx){
+				removeTag(dynamic_cast<Tag *>(obj), idx);	}},
+		{ ObjectType::EventTrigger, [this](BaseObject *obj, int idx){
+				removeEventTrigger(dynamic_cast<EventTrigger *>(obj), idx);	}},
+		{ ObjectType::GenericSql,[this](BaseObject *obj, int idx){
+				removeGenericSQL(dynamic_cast<GenericSQL *>(obj), idx);	}},
+		{ ObjectType::ForeignDataWrapper, [this](BaseObject *obj, int idx){
+				removeForeignDataWrapper(dynamic_cast<ForeignDataWrapper *>(obj), idx);	}},
+		{ ObjectType::ForeignServer, [this](BaseObject *obj, int idx){
+				removeForeignServer(dynamic_cast<ForeignServer *>(obj), idx);	}},
+		{ ObjectType::UserMapping, [this](BaseObject *obj, int idx){
+				removeUserMapping(dynamic_cast<UserMapping *>(obj), idx);	}},
+		{ ObjectType::ForeignTable, [this](BaseObject *obj, int idx){
+				removeForeignTable(dynamic_cast<ForeignTable *>(obj), idx);	}},
+		{ ObjectType::Transform, [this](BaseObject *obj, int idx){
+				removeTransform(dynamic_cast<Transform *>(obj), idx);	}},
+		{ ObjectType::Procedure, [this](BaseObject *obj, int idx){
+				removeProcedure(dynamic_cast<Procedure *>(obj), idx);	}},
+		{ ObjectType::Permission, [this](BaseObject *obj, int){
+				removePermission(dynamic_cast<Permission *>(obj)); }},
+	};
 }
 
 DatabaseModel::DatabaseModel(ModelWidget *model_wgt):DatabaseModel()
@@ -158,75 +331,12 @@ std::vector<BaseObject *> *DatabaseModel::getObjectList(ObjectType obj_type)
 
 void DatabaseModel::addObject(BaseObject *object, int obj_idx)
 {
-	ObjectType obj_type;
-
-	if(!object)
+	if(!object || add_methods.count(object->getObjectType()) == 0)
 		return;
 
 	try
 	{
-		obj_type=object->getObjectType();
-
-		if(obj_type==ObjectType::Relationship || obj_type==ObjectType::BaseRelationship)
-			addRelationship(dynamic_cast<BaseRelationship *>(object), obj_idx);
-		else if(obj_type==ObjectType::Textbox)
-			addTextbox(dynamic_cast<Textbox *>(object), obj_idx);
-		else if(obj_type==ObjectType::Table)
-			addTable(dynamic_cast<Table *>(object), obj_idx);
-		else if(obj_type==ObjectType::Function)
-			addFunction(dynamic_cast<Function *>(object), obj_idx);
-		else if(obj_type==ObjectType::Aggregate)
-			addAggregate(dynamic_cast<Aggregate *>(object), obj_idx);
-		else if(obj_type==ObjectType::Schema)
-			addSchema(dynamic_cast<Schema *>(object), obj_idx);
-		else if(obj_type==ObjectType::View)
-			addView(dynamic_cast<View *>(object), obj_idx);
-		else if(obj_type==ObjectType::Type)
-			addType(dynamic_cast<Type *>(object), obj_idx);
-		else if(obj_type==ObjectType::Role)
-			addRole(dynamic_cast<Role *>(object), obj_idx);
-		else if(obj_type==ObjectType::Tablespace)
-			addTablespace(dynamic_cast<Tablespace *>(object), obj_idx);
-		else if(obj_type==ObjectType::Language)
-			addLanguage(dynamic_cast<Language *>(object), obj_idx);
-		else if(obj_type==ObjectType::Cast)
-			addCast(dynamic_cast<Cast *>(object), obj_idx);
-		else if(obj_type==ObjectType::Conversion)
-			addConversion(dynamic_cast<Conversion *>(object), obj_idx);
-		else if(obj_type==ObjectType::Operator)
-			addOperator(dynamic_cast<Operator *>(object), obj_idx);
-		else if(obj_type==ObjectType::OpClass)
-			addOperatorClass(dynamic_cast<OperatorClass *>(object), obj_idx);
-		else if(obj_type==ObjectType::OpFamily)
-			addOperatorFamily(dynamic_cast<OperatorFamily *>(object), obj_idx);
-		else if(obj_type==ObjectType::Domain)
-			addDomain(dynamic_cast<Domain *>(object), obj_idx);
-		else if(obj_type==ObjectType::Sequence)
-			addSequence(dynamic_cast<Sequence *>(object), obj_idx);
-		else if(obj_type==ObjectType::Collation)
-			addCollation(dynamic_cast<Collation *>(object), obj_idx);
-		else if(obj_type==ObjectType::Extension)
-			addExtension(dynamic_cast<Extension *>(object), obj_idx);
-		else if(obj_type==ObjectType::Tag)
-			addTag(dynamic_cast<Tag *>(object), obj_idx);
-		else if(obj_type==ObjectType::Permission)
-			addPermission(dynamic_cast<Permission *>(object));
-		else if(obj_type==ObjectType::EventTrigger)
-			addEventTrigger(dynamic_cast<EventTrigger *>(object));
-		else if(obj_type==ObjectType::GenericSql)
-			addGenericSQL(dynamic_cast<GenericSQL *>(object));
-		else if(obj_type==ObjectType::ForeignDataWrapper)
-			addForeignDataWrapper(dynamic_cast<ForeignDataWrapper *>(object));
-		else if(obj_type==ObjectType::ForeignServer)
-			addForeignServer(dynamic_cast<ForeignServer *>(object));
-		else if(obj_type==ObjectType::UserMapping)
-			addUserMapping(dynamic_cast<UserMapping *>(object));
-		else if(obj_type==ObjectType::ForeignTable)
-			addForeignTable(dynamic_cast<ForeignTable *>(object));
-		else if(obj_type==ObjectType::Transform)
-			addTransform(dynamic_cast<Transform *>(object));
-		else if(obj_type==ObjectType::Procedure)
-			addProcedure(dynamic_cast<Procedure *>(object));
+		add_methods[object->getObjectType()](object, obj_idx);
 	}
 	catch(Exception &e)
 	{
@@ -236,75 +346,12 @@ void DatabaseModel::addObject(BaseObject *object, int obj_idx)
 
 void DatabaseModel::removeObject(BaseObject *object, int obj_idx)
 {
-	ObjectType obj_type;
-
-	if(!object)
+	if(!object || remove_methods.count(object->getObjectType()) == 0)
 		return;
 
 	try
 	{
-		obj_type=object->getObjectType();
-
-		if(obj_type==ObjectType::Relationship || obj_type==ObjectType::BaseRelationship)
-			removeRelationship(dynamic_cast<BaseRelationship *>(object), obj_idx);
-		else if(obj_type==ObjectType::Textbox)
-			removeTextbox(dynamic_cast<Textbox *>(object), obj_idx);
-		else if(obj_type==ObjectType::Table)
-			removeTable(dynamic_cast<Table *>(object), obj_idx);
-		else if(obj_type==ObjectType::Function)
-			removeFunction(dynamic_cast<Function *>(object), obj_idx);
-		else if(obj_type==ObjectType::Aggregate)
-			removeAggregate(dynamic_cast<Aggregate *>(object), obj_idx);
-		else if(obj_type==ObjectType::Schema)
-			removeSchema(dynamic_cast<Schema *>(object), obj_idx);
-		else if(obj_type==ObjectType::View)
-			removeView(dynamic_cast<View *>(object), obj_idx);
-		else if(obj_type==ObjectType::Type)
-			removeType(dynamic_cast<Type *>(object), obj_idx);
-		else if(obj_type==ObjectType::Role)
-			removeRole(dynamic_cast<Role *>(object), obj_idx);
-		else if(obj_type==ObjectType::Tablespace)
-			removeTablespace(dynamic_cast<Tablespace *>(object), obj_idx);
-		else if(obj_type==ObjectType::Language)
-			removeLanguage(dynamic_cast<Language *>(object), obj_idx);
-		else if(obj_type==ObjectType::Cast)
-			removeCast(dynamic_cast<Cast *>(object), obj_idx);
-		else if(obj_type==ObjectType::Conversion)
-			removeConversion(dynamic_cast<Conversion *>(object), obj_idx);
-		else if(obj_type==ObjectType::Operator)
-			removeOperator(dynamic_cast<Operator *>(object), obj_idx);
-		else if(obj_type==ObjectType::OpClass)
-			removeOperatorClass(dynamic_cast<OperatorClass *>(object), obj_idx);
-		else if(obj_type==ObjectType::OpFamily)
-			removeOperatorFamily(dynamic_cast<OperatorFamily *>(object), obj_idx);
-		else if(obj_type==ObjectType::Domain)
-			removeDomain(dynamic_cast<Domain *>(object), obj_idx);
-		else if(obj_type==ObjectType::Sequence)
-			removeSequence(dynamic_cast<Sequence *>(object), obj_idx);
-		else if(obj_type==ObjectType::Collation)
-			removeCollation(dynamic_cast<Collation *>(object), obj_idx);
-		else if(obj_type==ObjectType::Extension)
-			removeExtension(dynamic_cast<Extension *>(object), obj_idx);
-		else if(obj_type==ObjectType::Tag)
-			removeTag(dynamic_cast<Tag *>(object), obj_idx);
-		else if(obj_type==ObjectType::Permission)
-			removePermission(dynamic_cast<Permission *>(object));
-		else if(obj_type==ObjectType::EventTrigger)
-			removeEventTrigger(dynamic_cast<EventTrigger *>(object));
-		else if(obj_type==ObjectType::GenericSql)
-			removeGenericSQL(dynamic_cast<GenericSQL *>(object));
-		else if(obj_type==ObjectType::ForeignDataWrapper)
-			removeForeignDataWrapper(dynamic_cast<ForeignDataWrapper *>(object));
-		else if(obj_type==ObjectType::ForeignServer)
-			removeForeignServer(dynamic_cast<ForeignServer *>(object));
-		else if(obj_type==ObjectType::UserMapping)
-			removeUserMapping(dynamic_cast<UserMapping *>(object));
-		else if(obj_type==ObjectType::ForeignTable)
-			removeForeignTable(dynamic_cast<ForeignTable *>(object));
-		else if(obj_type==ObjectType::Transform)
-			removeTransform(dynamic_cast<Transform *>(object));
-		else if(obj_type==ObjectType::Procedure)
-			removeProcedure(dynamic_cast<Procedure *>(object));
+		remove_methods[object->getObjectType()](object, obj_idx);
 	}
 	catch(Exception &e)
 	{
@@ -1835,7 +1882,7 @@ void DatabaseModel::checkRelationshipRedundancy(Relationship *rel)
 						recv_table=rel_aux->getReceiverTable();
 
 						//Stores the relationship name to raise an error in case of closing cycle
-						str_aux+=rel_aux->getName() + QString(", ");
+						str_aux+=rel_aux->getName() + ", ";
 
 						//Checking the closing cycle
 						found_cycle=(recv_table==ref_table);
@@ -3093,33 +3140,31 @@ int DatabaseModel::getObjectIndex(BaseObject *object)
 {
 	if(!object)
 		return -1;
+
+	ObjectType obj_type=object->getObjectType();
+	std::vector<BaseObject *> *obj_list=nullptr;
+	std::vector<BaseObject *>::iterator itr, itr_end;
+	bool found=false;
+
+	obj_list=getObjectList(obj_type);
+
+	if(!obj_list)
+		throw Exception(ErrorCode::ObtObjectInvalidType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	else
 	{
-		ObjectType obj_type=object->getObjectType();
-		std::vector<BaseObject *> *obj_list=nullptr;
-		std::vector<BaseObject *>::iterator itr, itr_end;
-		bool found=false;
+		itr=obj_list->begin();
+		itr_end=obj_list->end();
 
-		obj_list=getObjectList(obj_type);
-
-		if(!obj_list)
-			throw Exception(ErrorCode::ObtObjectInvalidType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-		else
+		while(itr!=itr_end && !found)
 		{
-			itr=obj_list->begin();
-			itr_end=obj_list->end();
-
-			while(itr!=itr_end && !found)
-			{
-				found=((*itr)==object);
-				if(!found) itr++;
-			}
-
-			if(found)
-				return itr - obj_list->begin();
-			else
-				return -1;
+			found=((*itr)==object);
+			if(!found) itr++;
 		}
+
+		if(found)
+			return itr - obj_list->begin();
+		else
+			return -1;
 	}
 }
 
@@ -3395,7 +3440,8 @@ void DatabaseModel::loadModel(const QString &filename)
 			if(xmlparser.getCurrentElement())
 				extra_info=QString(QObject::tr("%1 (line: %2)")).arg(xmlparser.getLoadedFilename()).arg(xmlparser.getCurrentElement()->line);
 
-			if(e.getErrorCode()>=ErrorCode::InvalidSyntax)
+			if(e.getErrorCode() != ErrorCode::FileDirectoryNotAccessed &&
+				 e.getErrorCode() >= ErrorCode::InvalidSyntax)
 			{
 				str_aux=Exception::getErrorMessage(ErrorCode::InvModelFileNotLoaded).arg(filename);
 				throw Exception(str_aux,ErrorCode::InvModelFileNotLoaded,__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, extra_info);
@@ -3408,86 +3454,17 @@ void DatabaseModel::loadModel(const QString &filename)
 
 BaseObject *DatabaseModel::createObject(ObjectType obj_type)
 {
-	BaseObject *object=nullptr;
+	if(create_methods.count(obj_type) == 0)
+		return nullptr;
 
-	if(obj_type!=ObjectType::BaseObject)
+	try
 	{
-		if(obj_type==ObjectType::Role)
-			object=createRole();
-		else if(obj_type==ObjectType::Tablespace)
-			object=createTablespace();
-		else if(obj_type==ObjectType::Schema)
-			object=createSchema();
-		else if(obj_type==ObjectType::Language)
-			object=createLanguage();
-		else if(obj_type==ObjectType::Function)
-			object=createFunction();
-		else if(obj_type==ObjectType::Type)
-			object=createType();
-		else if(obj_type==ObjectType::Domain)
-			object=createDomain();
-		else if(obj_type==ObjectType::Cast)
-			object=createCast();
-		else if(obj_type==ObjectType::Conversion)
-			object=createConversion();
-		else if(obj_type==ObjectType::Operator)
-			object=createOperator();
-		else if(obj_type==ObjectType::OpFamily)
-			object=createOperatorFamily();
-		else if(obj_type==ObjectType::OpClass)
-			object=createOperatorClass();
-		else if(obj_type==ObjectType::Aggregate)
-			object=createAggregate();
-		else if(obj_type==ObjectType::Table)
-			object=createTable();
-		else if(obj_type==ObjectType::Sequence)
-			object=createSequence();
-		else if(obj_type==ObjectType::View)
-			object=createView();
-		else if(obj_type==ObjectType::Textbox)
-			object=createTextbox();
-		else if(obj_type==ObjectType::Constraint)
-			object=createConstraint(nullptr);
-		else if(obj_type==ObjectType::Trigger)
-			object=createTrigger();
-		else if(obj_type==ObjectType::Index)
-			object=createIndex();
-		else if(obj_type==ObjectType::Column)
-			object=createColumn();
-		else if(obj_type==ObjectType::Rule)
-			object=createRule();
-		else if(obj_type==ObjectType::Relationship ||
-				obj_type==ObjectType::BaseRelationship)
-			object=createRelationship();
-		else if(obj_type==ObjectType::Collation)
-			object=createCollation();
-		else if(obj_type==ObjectType::Extension)
-			object=createExtension();
-		else if(obj_type==ObjectType::Tag)
-			object=createTag();
-		else if(obj_type==ObjectType::Permission)
-			object=createPermission();
-		else if(obj_type==ObjectType::EventTrigger)
-			object=createEventTrigger();
-		else if(obj_type==ObjectType::GenericSql)
-			object=createGenericSQL();
-		else if(obj_type==ObjectType::Policy)
-			object=createPolicy();
-		else if(obj_type==ObjectType::ForeignDataWrapper)
-			object=createForeignDataWrapper();
-		else if(obj_type==ObjectType::ForeignServer)
-			object=createForeignServer();
-		else if(obj_type==ObjectType::UserMapping)
-			object=createUserMapping();
-		else if(obj_type==ObjectType::ForeignTable)
-			object=createForeignTable();
-		else if(obj_type==ObjectType::Transform)
-			object=createTransform();
-		else if(obj_type==ObjectType::Procedure)
-			object=createProcedure();
+		return create_methods[obj_type]();
 	}
-
-	return object;
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+	}
 }
 
 void DatabaseModel::setBasicAttributes(BaseObject *object)
@@ -3852,8 +3829,9 @@ Schema *DatabaseModel::createSchema()
 		xmlparser.getElementAttributes(attribs);
 		setBasicAttributes(schema);
 		schema->setFillColor(QColor(attribs[Attributes::FillColor]));
-		schema->setRectVisible(attribs[Attributes::RectVisible]==Attributes::True);
-		schema->setFadedOut(attribs[Attributes::FadedOut]==Attributes::True);
+		schema->setNameColor(QColor(attribs[Attributes::NameColor]));
+		schema->setRectVisible(attribs[Attributes::RectVisible] == Attributes::True);
+		schema->setFadedOut(attribs[Attributes::FadedOut] == Attributes::True);
 		schema->setLayers(attribs[Attributes::Layers].split(','));
 	}
 	catch(Exception &e)
@@ -4296,10 +4274,10 @@ PgSqlType DatabaseModel::createPgSQLType()
 	/* A small tweak to detect a timestamp/date type which name contains the time zone modifier.
 		 This situation can occur mainly on reverse engineering operation where the data type of objects
 		 in most of times came as string form and need to be parsed */
-	if(!with_timezone && attribs[Attributes::Name].contains(QString("with time zone"), Qt::CaseInsensitive))
+	if(!with_timezone && attribs[Attributes::Name].contains("with time zone", Qt::CaseInsensitive))
 	{
 		with_timezone=true;
-		name.remove(QString(" with time zone"), Qt::CaseInsensitive);
+		name.remove(" with time zone", Qt::CaseInsensitive);
 	}
 
 	type_idx=PgSqlType::getBaseTypeIndex(name);
@@ -5033,12 +5011,14 @@ Column *DatabaseModel::createColumn()
 			seq=getObject(attribs[Attributes::Sequence], ObjectType::Sequence);
 
 			if(!seq)
+			{
 				throw Exception(Exception::getErrorMessage(ErrorCode::RefObjectInexistsModel)
 								.arg(attribs[Attributes::Name])
 					.arg(BaseObject::getTypeName(ObjectType::Column))
 					.arg(attribs[Attributes::Sequence])
 					.arg(BaseObject::getTypeName(ObjectType::Sequence)),
-					ErrorCode::PermissionRefInexistObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+					ErrorCode::RefObjectInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			}
 
 
 			column->setSequence(seq);
@@ -6466,7 +6446,7 @@ Sequence *DatabaseModel::createSequence(bool ignore_onwer)
 
 			if(count==3)
 			{
-				tab_name=elem_list[0] + QString(".") + elem_list[1];
+				tab_name=elem_list[0] + "." + elem_list[1];
 				col_name=elem_list[2];
 			}
 			else if(count==2)
@@ -6587,7 +6567,7 @@ View *DatabaseModel::createView()
 									str_aux=Exception::getErrorMessage(ErrorCode::RefObjectInexistsModel)
 											.arg(view->getName())
 											.arg(BaseObject::getTypeName(ObjectType::View))
-											.arg(attribs[Attributes::Table] + QString(".") +
+											.arg(attribs[Attributes::Table] + "." +
 											attribs[Attributes::Column])
 											.arg(BaseObject::getTypeName(ObjectType::Column));
 
@@ -7363,7 +7343,7 @@ void DatabaseModel::validateColumnRemoval(Column *column)
 		//Raises an error if there are objects referencing the column
 		if(!refs.empty())
 			throw Exception(Exception::getErrorMessage(ErrorCode::RemDirectReference)
-							.arg(column->getParentTable()->getName(true) + QString(".") + column->getName(true))
+							.arg(column->getParentTable()->getName(true) + "." + column->getName(true))
 							.arg(column->getTypeName())
 							.arg(refs[0]->getName(true))
 				.arg(refs[0]->getTypeName()),
@@ -7572,10 +7552,10 @@ QString DatabaseModel::getSourceCode(SchemaParser::CodeType def_type, bool expor
 	attribs_map attribs_aux;
 	unsigned general_obj_cnt, gen_defs_count;
 	BaseObject *object=nullptr;
-	QString def, search_path=QString("pg_catalog,public"),
+	QString def, search_path="pg_catalog,public",
 			msg=tr("Generating %1 code: `%2' (%3)"),
 			attrib=Attributes::Objects, attrib_aux,
-			def_type_str=(def_type==SchemaParser::SqlCode ? QString("SQL") : QString("XML"));
+			def_type_str=(def_type==SchemaParser::SqlCode ? "SQL" : "XML");
 	Type *usr_type=nullptr;
 	std::map<unsigned, BaseObject *> objects_map;
 	ObjectType obj_type;
@@ -7650,11 +7630,11 @@ QString DatabaseModel::getSourceCode(SchemaParser::CodeType def_type, bool expor
 				//System object doesn't has the XML generated (the only exception is for public schema)
 				else if((obj_type!=ObjectType::Schema && !object->isSystemObject()) ||
 								(obj_type==ObjectType::Schema &&
-								 ((object->getName()==QString("public") && def_type==SchemaParser::XmlCode) ||
-									(object->getName()!=QString("public") && object->getName()!=QString("pg_catalog")))))
+								 ((object->getName()=="public" && def_type==SchemaParser::XmlCode) ||
+									(object->getName()!="public" && object->getName()!="pg_catalog"))))
 				{
 					if(object->getObjectType()==ObjectType::Schema)
-						search_path+=QString(",") + object->getName(true);
+						search_path+="," + object->getName(true);
 
 					//Generates the code definition and concatenates to the others
 					attribs_aux[attrib_aux]+=object->getSourceCode(def_type);
@@ -7725,10 +7705,10 @@ QString DatabaseModel::getSourceCode(SchemaParser::CodeType def_type, bool expor
 	def=schparser.getSourceCode(Attributes::DbModel, attribs_aux, def_type);
 
 	if(prepend_at_bod && def_type==SchemaParser::SqlCode)
-		def=QString("-- Prepended SQL commands --\n") +	this->prepended_sql + Attributes::DdlEndToken + def;
+		def="-- Prepended SQL commands --\n" + this->prepended_sql + Attributes::DdlEndToken + def;
 
 	if(append_at_eod && def_type==SchemaParser::SqlCode)
-		def+=QString("-- Appended SQL commands --\n") +	this->appended_sql + QChar('\n') + Attributes::DdlEndToken;
+		def+="-- Appended SQL commands --\n" + this->appended_sql + QChar('\n') + Attributes::DdlEndToken;
 
 	return def;
 }
@@ -8217,13 +8197,13 @@ bool DatabaseModel::saveSplitCustomSQL(bool save_appended, const QString &path, 
 
 	if(!save_appended && prepend_at_bod && !prepended_sql.isEmpty())
 	{
-		filename = file_prefix + QString("_prepended_code.sql");
+		filename = file_prefix + "_prepended_code.sql";
 		msg = tr("Saving prepended SQL code to file `%1'.").arg(filename);
 		buffer.append((prepended_sql + QChar('\n') + Attributes::DdlEndToken).toUtf8());
 	}
 	else if(save_appended && append_at_eod && !appended_sql.isEmpty())
 	{
-		filename = file_prefix + QString("_appended_code.sql");
+		filename = file_prefix + "_appended_code.sql";
 		msg = tr("Saving appended SQL code to file `%1'.").arg(filename);
 		buffer.append((appended_sql + QChar('\n') + Attributes::DdlEndToken).toUtf8());
 	}
@@ -10566,7 +10546,7 @@ void DatabaseModel::validateSchemaRenaming(Schema *schema, const QString &prev_s
 	for(auto &obj : sch_objs)
 	{
 		//Configures the previous type name
-		prev_name=BaseObject::formatName(prev_sch_name) + QString(".") +
+		prev_name=BaseObject::formatName(prev_sch_name) + "." +
 							BaseObject::formatName(obj->getName(), false);
 
 		/* Special case for tables. Need to make a dynamic_cast before the reinterpret_cast to get
@@ -10618,17 +10598,17 @@ void DatabaseModel::createSystemObjects(bool create_public)
 	/* The particular case is for public schema that is created only when the flag
 	is set. This because the public schema is written on model file even being
 	a system object. This strategy permits the user controls the schema rectangle behavior */
-	if(create_public && getObjectIndex(QString("public"), ObjectType::Schema) < 0)
+	if(create_public && getObjectIndex("public", ObjectType::Schema) < 0)
 	{
 		public_sch=new Schema;
-		public_sch->setName(QString("public"));
+		public_sch->setName("public");
 		public_sch->setSystemObject(true);
 		addSchema(public_sch);
 	}
 
 	//Create the pg_catalog schema in order to insert default collations in
 	pg_catalog=new Schema;
-	pg_catalog->BaseObject::setName(QString("pg_catalog"));
+	pg_catalog->BaseObject::setName("pg_catalog");
 	pg_catalog->setSystemObject(true);
 	addSchema(pg_catalog);
 
@@ -10638,8 +10618,8 @@ void DatabaseModel::createSystemObjects(bool create_public)
 		collation=new Collation;
 		collation->setName(collnames[i]);
 		collation->setSchema(pg_catalog);
-		collation->setEncoding(EncodingType(QString("UTF8")));
-		collation->setLocale(QString("C"));
+		collation->setEncoding(EncodingType("UTF8"));
+		collation->setLocale("C");
 		collation->setSystemObject(true);
 		addCollation(collation);
 	}
@@ -10656,25 +10636,25 @@ void DatabaseModel::createSystemObjects(bool create_public)
 	}
 
 	tbspace=new Tablespace;
-	tbspace->BaseObject::setName(QString("pg_global"));
-	tbspace->setDirectory(QString("_pg_global_dir_"));
+	tbspace->BaseObject::setName("pg_global");
+	tbspace->setDirectory("_pg_global_dir_");
 	tbspace->setSystemObject(true);
 	addTablespace(tbspace);
 
 	tbspace=new Tablespace;
-	tbspace->BaseObject::setName(QString("pg_default"));
-	tbspace->setDirectory(QString("_pg_default_dir_"));
+	tbspace->BaseObject::setName("pg_default");
+	tbspace->setDirectory("_pg_default_dir_");
 	tbspace->setSystemObject(true);
 	addTablespace(tbspace);
 
 	postgres=new Role;
-	postgres->setName(QString("postgres"));
+	postgres->setName("postgres");
 	postgres->setOption(Role::OpSuperuser, true);
 	postgres->setSystemObject(true);
 	addRole(postgres);
 
 	setDefaultObject(postgres);
-	setDefaultObject(getObject(QString("public"), ObjectType::Schema), ObjectType::Schema);
+	setDefaultObject(getObject("public", ObjectType::Schema), ObjectType::Schema);
 }
 
 std::vector<BaseObject *> DatabaseModel::findObjects(const QStringList &filters, const QString &search_attr)
@@ -11215,9 +11195,10 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, MetaAttrOptions
 														.arg(object->getSignature()).arg(object->getTypeName()), enum_t(obj_type));
 
 				schparser.ignoreUnkownAttributes(true);
-				objs_def+=XmlParser::convertCharsToXMLEntities(
-										schparser.getSourceCode(GlobalAttributes::getSchemaFilePath(GlobalAttributes::XMLSchemaDir, Attributes::Info),
-																								attribs));
+
+				objs_def +=	schparser.getSourceCode(
+											GlobalAttributes::getSchemaFilePath(GlobalAttributes::XMLSchemaDir,
+																													Attributes::Info), attribs);
 			}
 			else
 				idx++;
@@ -11973,7 +11954,7 @@ void DatabaseModel::getDataDictionary(attribs_map &datadict, bool browsable, boo
 		attribs[Attributes::Styles] = styles;
 	else
 		// Otherwise we create a separated stylesheet file
-		datadict[Attributes::Styles + QString(".css")] = styles;
+		datadict[Attributes::Styles + ".css"] = styles;
 
 	// Generating individual data dictionaries
 	for(auto &itr : objs_map)
@@ -12017,7 +11998,7 @@ void DatabaseModel::getDataDictionary(attribs_map &datadict, bool browsable, boo
 		// If the generation is configured to be splitted we generate a complete HTML file for the current table
 		if(split && !attribs[Attributes::Objects].isEmpty())
 		{
-			id = itr.first + QString(".html");
+			id = itr.first + ".html";
 			schparser.ignoreEmptyAttributes(true);			
 			datadict[id] = schparser.getSourceCode(dict_sch_file, attribs);
 			attribs[Attributes::Objects].clear();
@@ -12051,7 +12032,7 @@ void DatabaseModel::getDataDictionary(attribs_map &datadict, bool browsable, boo
 
 	// If the data dictionary is browsable and splitted the index goes into a separated file
 	if(split && browsable)
-		datadict[Attributes::Index + QString(".html")] = dict_index;
+		datadict[Attributes::Index + ".html"] = dict_index;
 	else if(!split)
 	{
 		attribs[Attributes::DataDictIndex] = dict_index;

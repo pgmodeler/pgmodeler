@@ -3,7 +3,8 @@
 # Code generation can be broken if incorrect changes are made.
 
 %if {list} %then
-	[SELECT oid, lanname AS name, current_database() AS parent, 'database' AS parent_type
+	[SELECT oid, lanname AS name, current_database() AS parent, 
+	 'database' AS parent_type, NULL AS extra_info
 	FROM pg_language ]
 
 	%if {last-sys-oid} %then

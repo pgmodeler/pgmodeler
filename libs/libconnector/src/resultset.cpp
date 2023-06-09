@@ -93,6 +93,19 @@ QString ResultSet::getColumnName(int column_idx)
 	return QString(PQfname(sql_result, column_idx));
 }
 
+QStringList ResultSet::getColumnNames()
+{
+	if(isEmpty() || !isValid())
+		return QStringList();
+
+	QStringList names;
+
+	for(int col_idx = 0; col_idx < getColumnCount(); col_idx++)
+		names.append(QString(PQfname(sql_result, col_idx)));
+
+	return names;
+}
+
 unsigned ResultSet::getColumnTypeId(int column_idx)
 {
 	//Throws an error in case the column index is invalid

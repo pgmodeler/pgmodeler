@@ -33,7 +33,9 @@ class __libgui SchemaWidget: public BaseObjectWidget, public Ui::SchemaWidget {
 	private:
 		Q_OBJECT
 
-		ColorPickerWidget *color_picker;
+		ColorPickerWidget *fill_color_picker,
+
+		*name_color_picker;
 
 	public:
 		SchemaWidget(QWidget * parent = nullptr);

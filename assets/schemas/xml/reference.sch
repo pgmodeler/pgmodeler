@@ -4,16 +4,16 @@
 $tb <reference
 
 %if {ref-alias} %then
-	[ ref-alias=] "{ref-alias}"
+	[ ref-alias=] "&{ref-alias}"
 %end
 
 %if {table} %then
-	[ table=] "{table}"
-	%if {column} %then [ column=] "{column}" %end
-	%if {alias} %then [ alias=] "{alias}" %end
-	%if {column-alias} %then [ column-alias=] "{column-alias}" %end
+	[ table=] "&{table}"
+	%if {column} %then [ column=] "&{column}" %end
+	%if {alias} %then [ alias=] "&{alias}" %end
+	%if {column-alias} %then [ column-alias=] "&{column-alias}" %end
 %else
-	%if {alias} %then [ alias=] "{alias}" %end
+	%if {alias} %then [ alias=] "&{alias}" %end
 %end
 
 %if {expression} %then

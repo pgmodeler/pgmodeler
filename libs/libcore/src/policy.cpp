@@ -126,7 +126,7 @@ QString Policy::getSourceCode(SchemaParser::CodeType def_type)
 	attributes[Attributes::Permissive] = (permissive ? Attributes::True : "");
 	attributes[Attributes::UsingExp] = using_expr;
 	attributes[Attributes::CheckExp] = check_expr;
-	attributes[Attributes::Roles] = rol_names.join(QString(", "));
+	attributes[Attributes::Roles] = rol_names.join(", ");
 
 	return BaseObject::__getSourceCode(def_type);
 }
@@ -163,8 +163,8 @@ QString Policy::getAlterCode(BaseObject *object)
 
 		if(!rol_names.isEmpty() && aux_rol_names.isEmpty())
 			attribs[Attributes::Roles] = Attributes::Unset;
-		else if(rol_names.join(QString(", ")) != aux_rol_names.join(QString(", ")))
-			attribs[Attributes::Roles] = aux_rol_names.join(QString(", "));
+		else if(rol_names.join(", ") != aux_rol_names.join(", "))
+			attribs[Attributes::Roles] = aux_rol_names.join(", ");
 
 		copyAttributes(attribs);
 		return BaseObject::getAlterCode(this->getSchemaName(), attributes, false, true);

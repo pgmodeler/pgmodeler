@@ -46,23 +46,23 @@ CustomSQLWidget::CustomSQLWidget(QWidget *parent) : BaseObjectWidget(parent)
 		GuiUtilsNs::configureWidgetFont(message_lbl, GuiUtilsNs::MediumFontFactor);
 
 		action_gen_insert=new QAction(tr("Generic INSERT"), this);
-		action_gen_insert->setObjectName(QString("action_gen_insert"));
+		action_gen_insert->setObjectName("action_gen_insert");
 		action_inc_serials=new QAction(tr("Include serial columns"), this);
-		action_inc_serials->setObjectName(QString("action_inc_serials"));
+		action_inc_serials->setObjectName("action_inc_serials");
 		action_exc_serials=new QAction(tr("Exclude serial columns"), this);
-		action_exc_serials->setObjectName(QString("action_exc_serials"));
+		action_exc_serials->setObjectName("action_exc_serials");
 		action_gen_select=new QAction(tr("Generic SELECT"), this);
-		action_gen_select->setObjectName(QString("action_gen_select"));
+		action_gen_select->setObjectName("action_gen_select");
 		action_tab_select=new QAction(tr("Table SELECT"), this);
-		action_tab_select->setObjectName(QString("action_tab_select"));
+		action_tab_select->setObjectName("action_tab_select");
 		action_gen_update=new QAction(tr("Generic UPDATE"), this);
-		action_gen_update->setObjectName(QString("action_gen_update"));
+		action_gen_update->setObjectName("action_gen_update");
 		action_tab_update=new QAction(tr("Table UPDATE"), this);
-		action_tab_update->setObjectName(QString("action_tab_update"));
+		action_tab_update->setObjectName("action_tab_update");
 		action_gen_delete=new QAction(tr("Generic DELETE"), this);
-		action_gen_delete->setObjectName(QString("action_gen_delete"));
+		action_gen_delete->setObjectName("action_gen_delete");
 		action_tab_delete=new QAction(tr("Table DELETE"), this);
-		action_tab_delete->setObjectName(QString("action_tab_delete"));
+		action_tab_delete->setObjectName("action_tab_delete");
 
 		insert_menu.addAction(action_inc_serials);
 		insert_menu.addAction(action_exc_serials);
@@ -188,8 +188,8 @@ void CustomSQLWidget::addCommand()
 			upd_cmd=QString("UPDATE %1 SET ;");
 	QPlainTextEdit *sqlcode_txt=(sqlcodes_twg->currentIndex()==0 ? append_sql_txt : prepend_sql_txt);
 
-	if(sender()->objectName().contains(QString("insert")) ||
-			sender()->objectName().contains(QString("serial")))
+	if(sender()->objectName().contains("insert") ||
+			sender()->objectName().contains("serial"))
 	{
 		if(!table || sender()==action_gen_insert)
 			cmd=ins_cmd.arg("table").arg("cols").arg("values");
@@ -214,14 +214,14 @@ void CustomSQLWidget::addCommand()
 			cmd=ins_cmd.arg(table->getName(true)).arg(cols).arg(vals);
 		}
 	}
-	else if(sender()->objectName().contains(QString("select")))
+	else if(sender()->objectName().contains("select"))
 	{
 		if(!base_table || sender()==action_gen_select)
 			cmd=sel_cmd.arg("object");
 		else if(base_table)
 			cmd=sel_cmd.arg(base_table->getName(true));
 	}
-	else if(sender()->objectName().contains(QString("delete")))
+	else if(sender()->objectName().contains("delete"))
 	{
 		if(!table || sender()==action_gen_delete)
 			cmd=del_cmd.arg("object");
@@ -237,7 +237,7 @@ void CustomSQLWidget::addCommand()
 	}
 
 	if(!sqlcode_txt->toPlainText().isEmpty())
-		sqlcode_txt->insertPlainText(QString("\n"));
+		sqlcode_txt->insertPlainText("\n");
 
 	sqlcode_txt->insertPlainText(cmd);
 }

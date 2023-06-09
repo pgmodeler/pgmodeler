@@ -3,7 +3,8 @@
 # Code generation can be broken if incorrect changes are made.
 
 %if {list} %then
-	[SELECT oid, rolname AS name, current_database() AS parent, 'database' AS parent_type FROM pg_roles]
+	[SELECT oid, rolname AS name, current_database() AS parent, 
+	'database' AS parent_type, NULL AS extra_info FROM pg_roles ]
 
 	%if {last-sys-oid} %then
 		[ WHERE oid ] {oid-filter-op} $sp {last-sys-oid}

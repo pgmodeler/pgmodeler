@@ -29,6 +29,7 @@ void TextBlockInfo::reset(void)
 	is_multi_expr = false;
 	is_closed = false;
 	closed_once = false;
+	allow_completion = false;
 }
 
 void TextBlockInfo::setGroup(const QString &grp)
@@ -49,6 +50,11 @@ void TextBlockInfo::setMultiExpr(bool value)
 	is_multi_expr = value;
 }
 
+void TextBlockInfo::setAllowCompletion(bool value)
+{
+	allow_completion = value;
+}
+
 QString TextBlockInfo::getGroup()
 {
 	return group;
@@ -67,4 +73,9 @@ bool TextBlockInfo::isClosedOnce()
 bool TextBlockInfo::isClosed()
 {
 	return is_closed;
+}
+
+bool TextBlockInfo::isCompletionAllowed()
+{
+	return allow_completion;
 }

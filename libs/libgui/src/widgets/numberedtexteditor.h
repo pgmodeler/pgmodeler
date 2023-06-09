@@ -67,7 +67,7 @@ class __libgui NumberedTextEditor : public QPlainTextEdit {
 
 		QLabel *msg_lbl;
 
-		QToolButton *load_file_btn, *edit_src_btn, *clear_btn;
+		QToolButton *load_file_btn, *edit_src_btn, *clear_btn, *save_file_btn, *word_wrap_btn;
 
 		//! \brief The name of the temp file currently being used to edit the souce
 		QString tmp_src_file;
@@ -89,7 +89,9 @@ class __libgui NumberedTextEditor : public QPlainTextEdit {
 		static void setDefaultFont(const QFont &font);
 		static void setLineNumbersVisible(bool value);
 		static void setHighlightLines(bool value);
+		static bool isHighlightLines();
 		static void setLineHighlightColor(const QColor &color);
+		static QColor getLineHighlightColor();
 		static void setTabDistance(double value);
 		static double getTabDistance();
 		static void setSourceEditorApp(const QString &app);
@@ -103,6 +105,8 @@ class __libgui NumberedTextEditor : public QPlainTextEdit {
 	private slots:
 		void showContextMenu();
 
+		void pasteCode();
+
 		void changeSelectionToLower();
 		void changeSelectionToUpper();
 		void changeSelectionCase(bool lower);
@@ -112,6 +116,7 @@ class __libgui NumberedTextEditor : public QPlainTextEdit {
 		void identSelection(bool ident_right);
 
 		void loadFile();
+		void saveFile();
 		void editSource();
 		void updateSource(int exit_code);
 		void handleProcessStart();

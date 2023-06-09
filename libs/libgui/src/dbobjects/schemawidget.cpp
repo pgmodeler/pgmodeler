@@ -24,9 +24,14 @@ SchemaWidget::SchemaWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType
 	QHBoxLayout *hbox = dynamic_cast<QHBoxLayout *>(attributes_gb->layout());
 
 	configureFormLayout(schema_grid, ObjectType::Schema);
-	color_picker=new ColorPickerWidget(1, this);
-	hbox->insertWidget(1, color_picker);
-	configureTabOrder({ color_picker, show_rect_chk });
+
+	fill_color_picker = new ColorPickerWidget(1, this);
+	hbox->insertWidget(1, fill_color_picker);
+
+	name_color_picker = new ColorPickerWidget(1, this);
+	hbox->insertWidget(3, name_color_picker);
+
+	configureTabOrder({ fill_color_picker, name_color_picker, show_rect_chk });
 
 	setMinimumSize(480, 140);
 }
@@ -50,11 +55,12 @@ void SchemaWidget::setAttributes(DatabaseModel *model, OperationList *op_list, S
 		if(schema->isSystemObject())
 			protected_obj_frm->setVisible(false);
 
-		color_picker->setColor(0, schema->getFillColor());
+		fill_color_picker->setColor(0, schema->getFillColor());
+		name_color_picker->setColor(0, schema->getNameColor());
 		show_rect_chk->setChecked(schema && schema->isRectVisible());
 	}
 	else
-		color_picker->setColor(0, QColor(225,225,225));
+		fill_color_picker->setColor(0, QColor(225,225,225));
 }
 
 void SchemaWidget::applyConfiguration()
@@ -68,7 +74,8 @@ void SchemaWidget::applyConfiguration()
 		BaseObjectWidget::applyConfiguration();
 
 		schema->setRectVisible(show_rect_chk->isChecked());
-		schema->setFillColor(color_picker->getColor(0));
+		schema->setFillColor(fill_color_picker->getColor(0));
+		schema->setNameColor(name_color_picker->getColor(0));
 		model->validateSchemaRenaming(dynamic_cast<Schema *>(this->object), this->prev_name);
 
 		finishConfiguration();

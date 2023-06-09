@@ -27,7 +27,7 @@ CsvLoadWidget::CsvLoadWidget(QWidget * parent, bool cols_in_first_row) : QWidget
 	setupUi(this);
 
 	file_sel = new FileSelectorWidget(this);
-	file_sel->setFileMode(QFileDialog::ExistingFile);
+	file_sel->setFileMustExist(true);
 	file_sel->setFileDialogTitle(tr("Load CSV file"));
 	file_sel->setMimeTypeFilters({"text/csv", "application/octet-stream"});
 	load_csv_grid->addWidget(file_sel, 0, 1, 1, 8);

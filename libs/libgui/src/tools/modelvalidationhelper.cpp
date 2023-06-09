@@ -286,7 +286,7 @@ void ModelValidationHelper::validateModel()
 		std::map<QString, std::vector<BaseObject *> > dup_objects;
 		std::map<QString, std::vector<BaseObject *> >::iterator mitr;
 		QString name, signal_msg=QString("`%1' (%2)");
-		bool postgis_exists = db_model->getObjectIndex(QString("postgis"), ObjectType::Extension) >= 0;
+		bool postgis_exists = db_model->getObjectIndex("postgis", ObjectType::Extension) >= 0;
 
 		warn_count=error_count=progress=0;
 		val_infos.clear();
@@ -499,7 +499,7 @@ void ModelValidationHelper::validateModel()
 					tab_obj=dynamic_cast<TableObject *>(base_tab->getObject(i1, tab_obj_types[i]));
 
 					//Configures the full name of the object including the parent name
-					name=tab_obj->getParentTable()->getSchema()->getName(true) + QString(".") + tab_obj->getName(true);
+					name=tab_obj->getParentTable()->getSchema()->getName(true) + "." + tab_obj->getName(true);
 					//name=tab_obj->TableObject::getSignature(true);
 					name.remove('"');
 

@@ -36,7 +36,7 @@ Collation *PartitionKey::getCollation()
 QString PartitionKey::getSourceCode(SchemaParser::CodeType def_type)
 {
 	attribs_map attribs;
-	schparser.setPgSQLVersion(BaseObject::getPgSQLVersion());
+	schparser.setPgSQLVersion(BaseObject::getPgSQLVersion(), BaseObject::isDbVersionIgnored());
 
 	attribs[Attributes::Collation]="";
 	configureAttributes(attribs, def_type);

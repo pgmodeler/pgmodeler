@@ -56,8 +56,8 @@ void StyledTextboxView::configureObject()
 
 	bounding_rect = text_item->boundingRect();
 
-	this->configureObjectShadow();
-	this->configureObjectSelection();
+	configureObjectShadow();
+	configureObjectSelection();
 
 	if((old_width != 0 && bounding_rect.width() != old_width) ||
 		 (old_height != 0 && bounding_rect.height()!= old_height))

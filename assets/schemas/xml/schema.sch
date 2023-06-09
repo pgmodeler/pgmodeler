@@ -2,17 +2,17 @@
 # CAUTION: Do not modify this file unless you know what you are doing.
 # Code generation can be broken if incorrect changes are made.
 %if {reduced-form} %then $tb %end
-[<schema name=] "{name}"
+[<schema name=] "&{name}"
 
 %if {reduced-form} %then
 	/> $br
 %else
 	%if {layers} %then
-		[ layers=]"{layers}"
+		[ layers=] "{layers}"
 	%end
 
 	%if {alias} %then
-		$sp alias="{alias}"
+		$sp alias="&{alias}"
 	%end
 
 	%if {protected} %then
@@ -25,6 +25,10 @@
 
 	%if {fill-color} %then
 		[ fill-color=] "{fill-color}"
+	%end
+
+	%if {name-color} %then
+		[ name-color=] "{name-color}"
 	%end
 
 	%if {sql-disabled} %then

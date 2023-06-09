@@ -33,9 +33,9 @@ SequenceWidget::SequenceWidget(QWidget *parent): BaseObjectWidget(parent, Object
 		configureTabOrder();
 
 		def_values_cmb->addItem(tr("User defined"));
-		def_values_cmb->addItem(QString("smallserial"));
-		def_values_cmb->addItem(QString("serial"));
-		def_values_cmb->addItem(QString("bigserial"));
+		def_values_cmb->addItem("smallserial");
+		def_values_cmb->addItem("serial");
+		def_values_cmb->addItem("bigserial");
 		setMinimumSize(520, 350);
 
 		connect(def_values_cmb, &QComboBox::currentIndexChanged, this, &SequenceWidget::setDefaultValues);
@@ -87,11 +87,11 @@ void SequenceWidget::setAttributes(DatabaseModel *model, Sequence *sequence)
 	else
 	{
 		cyclic_chk->setChecked(false);
-		start_edt->setText(QString("1"));
+		start_edt->setText("1");
 		maximum_edt->setText(Sequence::MaxPositiveValue);
-		minimum_edt->setText(QString("0"));
-		cache_edt->setText(QString("1"));
-		increment_edt->setText(QString("1"));
+		minimum_edt->setText("0");
+		cache_edt->setText("1");
+		increment_edt->setText("1");
 	}
 }
 

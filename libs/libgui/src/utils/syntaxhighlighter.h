@@ -39,6 +39,15 @@ class __libgui SyntaxHighlighter: public QSyntaxHighlighter {
 	private:
 		Q_OBJECT
 
+		/*! \brief This struct stores the configuration of enclosing characters
+		 *  and their respective foreground/background color */
+		struct EnclosingCharsCfg {
+				QChar open_char, close_char;
+				QColor fg_color, bg_color;
+		};
+
+		QPlainTextEdit *code_field_txt;
+
 		/*! \brief The default name of the group related to unformatted words.
 		 * This is just a dummy group and just serves to force the non-formatting of
 		 * any word that doesn't fit the configured groups */
@@ -69,11 +78,17 @@ class __libgui SyntaxHighlighter: public QSyntaxHighlighter {
 		//! \brief Stores the text formatting to each group
 		std::map<QString, QTextCharFormat> formats;
 
+		//! \brief Stores the completion allowed status for each group
+		std::map<QString, bool> allow_completion;
+
 		//! \brief Stores the char used to break the highlight for a group. This char is not highlighted itself.
 		std::map<QString, QChar> lookahead_char;
 
 		//! \brief Stores the order in which the groups must be applied
 		std::vector<QString> groups_order;
+
+		//! \brief Stores the enclosing characters config read from file
+		std::vector<EnclosingCharsCfg> enclosing_chrs;
 
 		//! \brief Indicates if the configuration is loaded or not
 		bool conf_loaded,
@@ -103,6 +118,8 @@ class __libgui SyntaxHighlighter: public QSyntaxHighlighter {
 		//! \brief Stores the char that triggers the code completion
 		QChar	completion_trigger;
 
+		QTimer highlight_timer;
+
 		//! \brief Configures the initial attributes of the highlighter
 		void configureAttributes();
 
@@ -125,6 +142,9 @@ class __libgui SyntaxHighlighter: public QSyntaxHighlighter {
 		If the word matches then the match_idx and match_len parameters will be configured with the index and length of chars that
 		the expression could match. Additionally this method returns a boolean indicating the if the match was successful */
 		bool isWordMatchGroup(const QString &word, const QString &group, bool use_final_expr, const QChar &lookahead_chr, int &match_idx, int &match_len);
+
+		//! \brief Applies the enclosing char formats based on the current cursor position on the parent input
+		void highlightEnclosingChars(const EnclosingCharsCfg &cfg);
 
 	public:
 		/*! \brief Install the syntax highlighter in a QPlainTextEdit. If single_line_mode is true

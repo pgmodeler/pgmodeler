@@ -104,7 +104,7 @@ void RoleWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Rol
 		passwd_edt->setText(role->getPassword());
 
 		validity_chk->setChecked(!role->getValidity().isEmpty());
-		validity_dte->setDateTime(QDateTime::fromString(role->getValidity(), QString("yyyy-MM-dd hh:mm:ss")));
+		validity_dte->setDateTime(QDateTime::fromString(role->getValidity(), "yyyy-MM-dd hh:mm:ss"));
 
 		superusr_chk->setChecked(role->getOption(Role::OpSuperuser));
 		create_db_chk->setChecked(role->getOption(Role::OpCreateDb));

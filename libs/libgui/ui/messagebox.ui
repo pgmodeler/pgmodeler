@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>715</width>
-    <height>384</height>
+    <width>530</width>
+    <height>175</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -21,7 +21,7 @@
   </property>
   <property name="minimumSize">
    <size>
-    <width>500</width>
+    <width>530</width>
     <height>175</height>
    </size>
   </property>
@@ -121,7 +121,10 @@
           <property name="bottomMargin">
            <number>0</number>
           </property>
-          <property name="spacing">
+          <property name="horizontalSpacing">
+           <number>10</number>
+          </property>
+          <property name="verticalSpacing">
            <number>5</number>
           </property>
           <item row="0" column="0">
@@ -155,7 +158,7 @@
              <bool>true</bool>
             </property>
             <property name="sizePolicy">
-             <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+             <sizepolicy hsizetype="Preferred" vsizetype="MinimumExpanding">
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
@@ -191,7 +194,10 @@
              <bool>true</bool>
             </property>
             <property name="margin">
-             <number>4</number>
+             <number>0</number>
+            </property>
+            <property name="indent">
+             <number>0</number>
             </property>
             <property name="openExternalLinks">
              <bool>true</bool>
@@ -382,7 +388,7 @@
                  <font/>
                 </property>
                 <property name="lineWrapMode">
-                 <enum>QTextEdit::NoWrap</enum>
+                 <enum>QTextEdit::WidgetWidth</enum>
                 </property>
                 <property name="acceptRichText">
                  <bool>false</bool>
@@ -417,7 +423,7 @@
                  <font/>
                 </property>
                 <property name="lineWrapMode">
-                 <enum>QTextEdit::NoWrap</enum>
+                 <enum>QTextEdit::WidgetWidth</enum>
                 </property>
                 <property name="acceptRichText">
                  <bool>false</bool>
@@ -486,7 +492,7 @@
         <item row="0" column="6">
          <widget class="QPushButton" name="no_btn">
           <property name="sizePolicy">
-           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+           <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
@@ -507,9 +513,12 @@
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
           </property>
+          <property name="sizeType">
+           <enum>QSizePolicy::Expanding</enum>
+          </property>
           <property name="sizeHint" stdset="0">
            <size>
-            <width>40</width>
+            <width>5</width>
             <height>20</height>
            </size>
           </property>
@@ -518,7 +527,7 @@
         <item row="0" column="7">
          <widget class="QPushButton" name="cancel_btn">
           <property name="sizePolicy">
-           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+           <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
@@ -537,7 +546,7 @@
         <item row="0" column="4">
          <widget class="QPushButton" name="yes_ok_btn">
           <property name="sizePolicy">
-           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+           <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
@@ -562,7 +571,7 @@
         <item row="0" column="2">
          <widget class="QToolButton" name="show_errors_tb">
           <property name="sizePolicy">
-           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+           <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>

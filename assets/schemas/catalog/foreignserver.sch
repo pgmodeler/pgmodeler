@@ -3,7 +3,8 @@
 # Code generation can be broken if incorrect changes are made.
 
 %if {list} %then
-	[ SELECT sv.oid, srvname AS name, current_database() AS parent, 'database' AS parent_type
+	[ SELECT sv.oid, srvname AS name, current_database() AS parent, 
+      'database' AS parent_type, NULL AS extra_info
 	FROM pg_foreign_server AS sv ]
 
 	%if {last-sys-oid} %or {not-ext-object} %or {name-filter} %then

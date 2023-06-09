@@ -125,7 +125,7 @@ void ModelOverviewWidget::updateOverview(bool force_update)
 	{
 		QPixmap pix;
 
-		QApplication::setOverrideCursor(Qt::WaitCursor);
+		qApp->setOverrideCursor(Qt::WaitCursor);
 
 		//Creates a pixmap with the size of the scene
 		pix = QPixmap(pixmap_size);
@@ -154,7 +154,7 @@ void ModelOverviewWidget::updateOverview(bool force_update)
 		}
 
 		label->resize(curr_size.toSize());
-		QApplication::restoreOverrideCursor();
+		qApp->restoreOverrideCursor();
 	}
 }
 

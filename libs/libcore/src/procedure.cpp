@@ -62,7 +62,7 @@ QString Procedure::getAlterCode(BaseObject *object)
 			 this->library != proc->library || this->symbol != proc->symbol)
 		{
 			attribs[Attributes::Definition] = proc->getSourceCode(SchemaParser::SqlCode);
-			attribs[Attributes::Definition].replace(QString("CREATE PROCEDURE").arg(this->getSQLName()), QString("CREATE OR REPLACE PROCEDURE"));
+			attribs[Attributes::Definition].replace("CREATE PROCEDURE", "CREATE OR REPLACE PROCEDURE");
 		}
 
 		copyAttributes(attribs);

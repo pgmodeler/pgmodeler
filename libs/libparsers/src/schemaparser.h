@@ -50,7 +50,7 @@ class __libparsers SchemaParser {
 		static const QRegularExpression AttribRegExp;
 
 		//! \brief Get an attribute name from the buffer on the current position
-		QString getAttribute();
+		QString getAttribute(bool &found_conv_to_xml);
 
 		//! \brief Get an conditional instruction from the buffer on the current position
 		QString getConditional();
@@ -146,8 +146,6 @@ class __libparsers SchemaParser {
 		template<typename Type>
 		bool getExpressionResult(const QString &oper, const QVariant &left_val, const QVariant &right_val);
 
-		void __setPgSQLVersion(const QString &pgsql_ver, bool ignore_db_version);
-
 	public:
 		static const char CharComment,	//! \brief Character that starts a comment
 		CharLineEnd,	//! \brief Character that indicates end of line
@@ -162,7 +160,8 @@ class __libparsers SchemaParser {
 		CharStartCompExpr,	//! \brief Character that starts a comparison expression
 		CharEndCompExpr,	//! \brief Character that ends a comparison expression
 		CharValueDelim,	//! \brief Character that delimiters a value (string)
-		CharValueOf;	//! \brief Character that is used on %set instructions to create an attribute name based upon another attribute value
+		CharValueOf,	//! \brief Character that is used on %set instructions to create an attribute name based upon another attribute value
+		CharToXmlEntity;	//! \brief Character that is used on attributes, e.g. &{attribute}, to indicate that their content must be converted to xml entities
 
 		//! \brief Tokens related to conditional instructions and operators
 		static const QString	TokenIf,  // %if
@@ -187,7 +186,8 @@ class __libparsers SchemaParser {
 		TokenMetaHs,// $hs (hash/number sign '#')
 		TokenMetaPs,// $ps (percentage sign '%')
 		TokenMetaAt,// $at (at character '@')
-		TokenMetaDs;// $ds (special data separator character '•')
+		TokenMetaDs,// $ds (special data separator character '•')
+		TokenMetaAm;// $am (ampersand character '&')
 
 		//! \brief Tokens related to comparison expressions
 		static const QString	TokenEqOper,// == (equal)
@@ -209,7 +209,8 @@ class __libparsers SchemaParser {
 		 the definition of the objects. This function should always be called at
 		 software startup or when the user wants to change the default version
 		 of the database */
-		void setPgSQLVersion(const QString &pgsql_ver);
+		//void setPgSQLVersion(const QString &pgsql_ver);
+		void setPgSQLVersion(const QString &pgsql_ver, bool ignore_db_version);
 
 		/*! \brief Returns the complete xml/sql definition for an database object represented by the
 		 map 'attributes'. For SQL definition is necessary to indicate the version of PostgreSQL

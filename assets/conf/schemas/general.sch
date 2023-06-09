@@ -49,17 +49,21 @@ $tb [<configuration pgmodeler-ver="] {pgmodeler-ver} ["] $br
 {spc} [escape-comment="] %if {escape-comment} %then true %else false %end ["] $br
 {spc} [hide-schema-names-of-types="] %if {hide-schema-names-of-types} %then true %else false %end ["] $br
 {spc} [old-pgsql-versions="] %if {old-pgsql-versions} %then true %else false %end ["] $br
+{spc} [hide-obj-shadows="] %if {hide-obj-shadows} %then true %else false %end ["] $br
+{spc} [truncate-column-data="] %if {truncate-column-data} %then true %else false %end ["] $br
+{spc} [column-trunc-threshold="] {column-trunc-threshold} ["] $br
+{spc} [disable-inline-editor="] %if {disable-inline-editor} %then true %else false %end ["] $br
 
 %if {source-editor-app} %then
-	{spc} [source-editor-app="] {source-editor-app} ["] $br
+	{spc} [source-editor-app="] &{source-editor-app} ["] $br
 %end
 
 %if {source-editor-app} %and {source-editor-args} %then
-	{spc} [source-editor-args="] {source-editor-args} ["] $br
+	{spc} [source-editor-args="] &{source-editor-args} ["] $br
 %end
 
 %if {ui-language} %then
-	{spc} [ui-language="] {ui-language} ["] $br
+	{spc} [ui-language="] &{ui-language} ["] $br
 %end
 
 $tb /> $br

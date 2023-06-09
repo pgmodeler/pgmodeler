@@ -52,7 +52,8 @@ class __libgui DataManipulationForm: public QDialog, public Ui::DataManipulation
 		QAction *action_add, *action_delete, *action_bulk_edit,
 		*action_duplicate, *action_clear;
 
-		QMenu fks_menu, copy_menu, truncate_menu, paste_menu, edit_menu;
+		QMenu items_menu, fks_menu, copy_menu, truncate_menu,
+		paste_menu, edit_menu, export_menu, save_menu;
 
 		//! \brief Store the template connection params to be used by catalogs and command execution connections
 		attribs_map tmpl_conn_params;
@@ -75,8 +76,11 @@ class __libgui DataManipulationForm: public QDialog, public Ui::DataManipulation
 		//! \brief Stores the ids of changed rows. These ids are handled on saveChanges() method
 		std::vector<int> changed_rows;
 		
-		//! \brief Stores the previous color of the rows before being marked with some operation
-		std::map<int, QBrush> prev_row_colors;
+		//! \brief Stores the previous background color of the rows before being marked with some operation
+		std::map<int, QBrush> prev_bg_colors,
+
+		//! \brief Stores the previous foreground color of the rows before being marked with some operation
+		prev_fg_colors;
 
 		//! \brief Stores the fk informations about referenced tables
 		std::map<QString, attribs_map> fk_infos,
@@ -122,7 +126,7 @@ class __libgui DataManipulationForm: public QDialog, public Ui::DataManipulation
 		DataManipulationForm(QWidget * parent = nullptr, Qt::WindowFlags f = Qt::Widget);
 		
 		//! \brief Defines the connection and current schema and table to be handled, this method should be called before show the dialog
-		void setAttributes(Connection conn, const QString curr_schema=QString("public"), const QString curr_table_name="", const QString &filter="");
+		void setAttributes(Connection conn, const QString curr_schema="public", const QString curr_table_name="", const QString &filter="");
 
 	private slots:
 		void reject();
@@ -210,6 +214,9 @@ class __libgui DataManipulationForm: public QDialog, public Ui::DataManipulation
 
 		//! \brief Shows the popup menu over the current selection
 		void showPopupMenu();
+
+		//! \brief Save the selected items to external file
+		void saveSelectedItems(bool csv_format);
 };
 
 #endif

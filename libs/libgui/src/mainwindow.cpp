@@ -21,6 +21,7 @@
 #include "tools/bugreportform.h"
 #include "tools/metadatahandlingform.h"
 #include "tools/sqlexecutionwidget.h"
+#include "utilsns.h"
 
 bool MainWindow::confirm_validation=true;
 int MainWindow::ToolsActionsCount=0;
@@ -28,9 +29,10 @@ int MainWindow::ToolsActionsCount=0;
 MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(parent, flags)
 {
 	setupUi(this);
+
 	pending_op = NoPendingOp;
 	welcome_wgt = nullptr;
-	window_title = this->windowTitle() + QString(" ") + GlobalAttributes::PgModelerVersion;
+	window_title = this->windowTitle() + " " + GlobalAttributes::PgModelerVersion;
 
 	recent_models_menu = new QMenu(this);
 	recent_models_menu->setObjectName("recent_models_menu");
@@ -123,8 +125,8 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	plugins_conf_wgt->postInitPlugins();
 
 	// Updating drop shadows settings to match the current UI theme
-	confs = AppearanceConfigWidget::getConfigurationParams();
-	AppearanceConfigWidget::updateDropShadows(confs[GlobalAttributes::AppearanceConf][Attributes::UiTheme]);
+	AppearanceConfigWidget *appearance_wgt = dynamic_cast<AppearanceConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::AppearanceConfWgt));
+	appearance_wgt->updateDropShadows();
 }
 
 MainWindow::~MainWindow()
@@ -135,6 +137,55 @@ MainWindow::~MainWindow()
 	delete restoration_form;
 	delete overview_wgt;
 	delete configuration_form;
+}
+
+bool MainWindow::mimeDataHasModelFiles(const QMimeData *mime_data)
+{
+	if(!mime_data || !mime_data->hasUrls())
+		return false;
+
+	for(auto &url : mime_data->urls())
+	{
+		if(!url.toLocalFile().endsWith(GlobalAttributes::DbModelExt, Qt::CaseInsensitive))
+			return false;
+	}
+
+	return true;
+}
+
+void MainWindow::dragEnterEvent(QDragEnterEvent *event)
+{
+	if(!mimeDataHasModelFiles(event->mimeData()))
+	{
+		event->ignore();
+		return;
+	}
+
+	event->accept();
+}
+
+void MainWindow::loadModelsFromMimeData(const QMimeData *mime_data)
+{
+	if(!mimeDataHasModelFiles(mime_data))
+		return;
+
+	QStringList dbm_files;
+	QString file;
+
+	for(auto &url : mime_data->urls())
+	{
+		file = url.toLocalFile();
+
+		if(file.endsWith(GlobalAttributes::DbModelExt, Qt::CaseInsensitive))
+			dbm_files.append(file);
+	}
+
+	loadModels(dbm_files);
+}
+
+void MainWindow::dropEvent(QDropEvent *event)
+{
+	loadModelsFromMimeData(event->mimeData());
 }
 
 void MainWindow::configureMenusActionsWidgets()
@@ -191,7 +242,10 @@ void MainWindow::configureMenusActionsWidgets()
 	if(!plugins_tb_acts.isEmpty())
 	{
 		for(auto &act : plugins_tb_acts)
+		{
 			model_acts_tb->insertAction(act_plugins_conf, act);
+			dynamic_cast<QToolButton *>(model_acts_tb->widgetForAction(act))->setPopupMode(QToolButton::InstantPopup);
+		}
 
 		model_acts_tb->addSeparator();
 	}
@@ -267,12 +321,12 @@ void MainWindow::configureMenusActionsWidgets()
 	model_acts_tb->insertAction(action_load_model, act);
 	dynamic_cast<QToolButton *>(model_acts_tb->widgetForAction(act))->setPopupMode(QToolButton::InstantPopup);
 
-	QToolButton *btn=nullptr;
+	QToolButton *btn = nullptr;
 	QFont font;
 
 	for(auto &act : tools_acts_tb->actions())
 	{
-		btn=qobject_cast<QToolButton *>(tools_acts_tb->widgetForAction(act));
+		btn = qobject_cast<QToolButton *>(tools_acts_tb->widgetForAction(act));
 
 		if(btn)
 		{
@@ -311,6 +365,48 @@ void MainWindow::setPluginsActions(ModelWidget *model_wgt)
 
 	PluginsConfigWidget *plugins_conf_wgt = dynamic_cast<PluginsConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::PluginsConfWgt));
 	model_wgt->setPluginActions(plugins_conf_wgt->getPluginsModelsActions());
+}
+
+void MainWindow::handleInitializationFailure(Exception &e)
+{
+	Messagebox msgbox;
+
+	/* In case of initialization problems related to broken configuration files
+			 * We try to restore them so the next initialization can occur without problems */
+	msgbox.show(e, tr("Failed to initialize one or more components of the UI due to corrupted or incompatible configuration files. Running the CLI tool to restore the default settings may solve this issue. How do you want to proceed?"),
+							Messagebox::ErrorIcon, Messagebox::YesNoButtons,
+							tr("Restore"), tr("Abort"), "",
+							GuiUtilsNs::getIconPath("defaults"), GuiUtilsNs::getIconPath("cancel"), "");
+
+	// Running the CLI in config file restoration mode is the user accepts the message box
+	if(msgbox.result() == QDialog::Accepted)
+	{
+		QProcess proc;
+		proc.setProgram(GlobalAttributes::getPgModelerCLIPath());
+		proc.setArguments({ "-cc", "-ff", "--silent" });
+		proc.start();
+		proc.waitForFinished();
+
+		if(proc.error() != QProcess::UnknownError || proc.exitCode() != 0)
+		{
+			msgbox.show(tr("The CLI failed to restore the configuration files! \
+										 The command executed was: <br/><br/> <strong>%1</strong> \
+										 <br/><br/> Error(s) returned: <br/><br/><em>%2</em>")
+										 .arg(proc.program() + " " + proc.arguments().join(" "),
+													proc.readAllStandardOutput()), Messagebox::ErrorIcon);
+		}
+		else
+		{
+			msgbox.show(tr("The default settings were successfully restored! pgModeler will be restarted now so the configuration files can be correctly loaded."),
+									Messagebox::InfoIcon);
+
+			// Starting a new instance of pgModeler (detached)
+			proc.setProgram(GlobalAttributes::getPgModelerAppPath());
+			proc.setArguments({});
+			proc.startDetached();
+			proc.waitForFinished();
+		}
+	}
 }
 
 void MainWindow::createMainWidgets()
@@ -368,6 +464,7 @@ void MainWindow::createMainWidgets()
 	}
 	catch(Exception &e)
 	{
+		handleInitializationFailure(e);
 		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
@@ -382,8 +479,9 @@ void MainWindow::loadConfigurations()
 
 		PluginsConfigWidget *plugins_conf_wgt = dynamic_cast<PluginsConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::PluginsConfWgt));
 		plugins_conf_wgt->initPlugins(this);
-		plugins_tb_acts = plugins_conf_wgt->installPluginsActions(plugins_config_menu);
+		plugins_conf_wgt->installPluginsActions(plugins_config_menu, plugins_tb_acts, plugins_tool_btns);
 		plugins_config_menu->setEnabled(!plugins_config_menu->isEmpty());
+		sql_tool_wgt->setPluginsButtons(plugins_tool_btns);
 
 		QAction *action_plugins_config = plugins_config_menu->menuAction();
 		action_plugins_config->setText(tr("Plug-ins"));
@@ -395,30 +493,22 @@ void MainWindow::loadConfigurations()
 		{
 			if(itr.second.count(Attributes::Path)!=0)
 			{
-				try
-				{
-					//Storing the file of a previous session
-					if(itr.first.contains(Attributes::File) &&
-							!itr.second[Attributes::Path].isEmpty())
-						prev_session_files.push_back(itr.second[Attributes::Path]);
+				//Storing the file of a previous session
+				if(itr.first.contains(Attributes::File) &&
+						!itr.second[Attributes::Path].isEmpty())
+					prev_session_files.push_back(itr.second[Attributes::Path]);
 
-					//Creating the recent models menu
-					else if(itr.first.contains(Attributes::Recent) &&
-							!itr.second[Attributes::Path].isEmpty())
-						recent_models.push_back(itr.second[Attributes::Path]);
-				}
-				catch(Exception &e)
-				{
-					Messagebox msg_box;
-					msg_box.show(e);
-				}
+				//Creating the recent models menu
+				else if(itr.first.contains(Attributes::Recent) &&
+						!itr.second[Attributes::Path].isEmpty())
+					recent_models.push_back(itr.second[Attributes::Path]);
 			}
 		}
 	}
 	catch(Exception &e)
 	{
-		Messagebox msg_box;
-		msg_box.show(e);
+		handleInitializationFailure(e);
+		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
@@ -517,6 +607,7 @@ void MainWindow::connectSignalsToSlots()
 	connect(action_welcome, &QAction::triggered, this, &MainWindow::changeCurrentView);
 	connect(action_design, &QAction::triggered, this, &MainWindow::changeCurrentView);
 	connect(action_manage, &QAction::triggered, this, &MainWindow::changeCurrentView);
+	connect(action_manage, &QAction::toggled, this, &MainWindow::changeCurrentView);
 
 	connect(action_bug_report, &QAction::triggered, this, &MainWindow::reportBug);
 	connect(action_handle_metadata, &QAction::triggered, this, &MainWindow::handleObjectsMetadata);
@@ -748,13 +839,15 @@ void MainWindow::fixModel(const QString &filename)
 {
 	ModelFixForm model_fix_form(nullptr, Qt::Dialog | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint);
 
-	connect(&model_fix_form, &ModelFixForm::s_modelLoadRequested, this, qOverload<const QString &>(&MainWindow::loadModel));
+	connect(&model_fix_form, &ModelFixForm::s_modelLoadRequested,
+					this, qOverload<const QString &>(&MainWindow::loadModel),
+					Qt::QueuedConnection);
 
 	if(!filename.isEmpty())
 	{
 		QFileInfo fi(filename);
 		model_fix_form.input_file_sel->setSelectedFile(fi.absoluteFilePath());
-		model_fix_form.output_file_sel->setSelectedFile(fi.absolutePath() + GlobalAttributes::DirSeparator + fi.baseName() + QString("_fixed.") + fi.suffix());
+		model_fix_form.output_file_sel->setSelectedFile(fi.absolutePath() + GlobalAttributes::DirSeparator + fi.baseName() + "_fixed." + fi.suffix());
 	}
 
 	GuiUtilsNs::resizeDialog(&model_fix_form);
@@ -943,7 +1036,7 @@ void MainWindow::saveTemporaryModels()
 
 		if(count > 0)
 		{
-			QApplication::setOverrideCursor(Qt::WaitCursor);
+			qApp->setOverrideCursor(Qt::WaitCursor);
 			scene_info_parent->setVisible(false);
 			bg_saving_wgt->setVisible(true);
 			bg_saving_pb->setValue(0);
@@ -961,14 +1054,14 @@ void MainWindow::saveTemporaryModels()
 			bg_saving_pb->setValue(100);
 			bg_saving_wgt->setVisible(false);
 			scene_info_parent->setVisible(true);
-			QApplication::restoreOverrideCursor();
+			qApp->restoreOverrideCursor();
 		}
 
 		tmpmodel_save_timer.start();
 	}
 	catch(Exception &e)
 	{
-		QApplication::restoreOverrideCursor();
+		qApp->restoreOverrideCursor();
 		Messagebox msg_box;
 		msg_box.show(e);
 		tmpmodel_save_timer.start();
@@ -1062,7 +1155,7 @@ void MainWindow::addModel(const QString &filename)
 
 		//Set a name for the tab widget
 		str_aux=QString("%1").arg(models_tbw->count());
-		obj_name=QString("model_");
+		obj_name="model_";
 		obj_name+=str_aux;
 		tab_name=obj_name;
 
@@ -1093,7 +1186,7 @@ void MainWindow::addModel(const QString &filename)
 				models_tbw->setTabToolTip(models_tbw->currentIndex(), filename);
 
 				//Get the "public" schema and set as system object
-				public_sch=dynamic_cast<Schema *>(model_tab->db_model->getObject(QString("public"), ObjectType::Schema));
+				public_sch=dynamic_cast<Schema *>(model_tab->db_model->getObject("public", ObjectType::Schema));
 				if(public_sch)	public_sch->setSystemObject(true);
 
 				model_tab->db_model->setInvalidated(false);
@@ -1296,6 +1389,7 @@ void MainWindow::setCurrentModel()
 			if(modified) updateToolsState();
 		});
 
+		connect(current_model, &ModelWidget::s_sceneDragDropped, this, &MainWindow::loadModelsFromMimeData, Qt::UniqueConnection);
 		connect(current_model, &ModelWidget::s_manipulationCanceled, oper_list_wgt, &OperationListWidget::updateOperationList, Qt::UniqueConnection);
 		connect(current_model, &ModelWidget::s_objectsMoved, oper_list_wgt, &OperationListWidget::updateOperationList, Qt::UniqueConnection);
 		connect(current_model, &ModelWidget::s_objectModified,this, &MainWindow::updateDockWidgets, Qt::UniqueConnection);
@@ -1501,7 +1595,7 @@ void MainWindow::updateWindowTitle()
 	if(!current_model || current_model->getFilename().isEmpty())
 		setWindowTitle(window_title);
 	else
-		setWindowTitle(window_title + QString(" - ") + QDir::toNativeSeparators(current_model->getFilename()));
+		setWindowTitle(window_title + " - " + QDir::toNativeSeparators(current_model->getFilename()));
 }
 
 void MainWindow::applyConfigurations()
@@ -1532,7 +1626,7 @@ void MainWindow::applyConfigurations()
 		tmpmodel_save_timer.setInterval(model_save_timer.interval() < InfinityInterval ? model_save_timer.interval()/2 : 300000);
 		tmpmodel_save_timer.start();
 
-		QApplication::setOverrideCursor(Qt::WaitCursor);
+		qApp->setOverrideCursor(Qt::WaitCursor);
 
 		//Force the update of all opened models
 		count=models_tbw->count();
@@ -1548,8 +1642,9 @@ void MainWindow::applyConfigurations()
 
 		updateConnections();
 		sql_tool_wgt->configureSnippets();
+		sql_tool_wgt->reloadHighlightConfigs();
 
-		QApplication::restoreOverrideCursor();
+		qApp->restoreOverrideCursor();
 	}
 
 	sql_tool_wgt->updateTabs();
@@ -1625,25 +1720,19 @@ void MainWindow::saveModel(ModelWidget *model)
 				//If the action that calls the slot were the 'save as' or the model filename isn't set
 				if(sender()==action_save_as || model->filename.isEmpty() || pending_op==PendingSaveAsOp)
 				{
-					QFileDialog file_dlg;
+					QStringList sel_files = GuiUtilsNs::selectFiles(
+																		tr("Save '%1' as...").arg(model->db_model->getName()),
+																		QFileDialog::AnyFile,	QFileDialog::AcceptSave,
+																		{ tr("Database model (*%1)").arg(GlobalAttributes::DbModelExt),
+																			tr("All files (*.*)") }, {},
+																		GlobalAttributes::DbModelExt);
 
-					file_dlg.setDefaultSuffix(QString(GlobalAttributes::DbModelExt).remove('.'));
-					file_dlg.setWindowTitle(tr("Save '%1' as...").arg(model->db_model->getName()));
-					file_dlg.setNameFilter(tr("Database model (*%1);;All files (*.*)").arg(GlobalAttributes::DbModelExt));
-					file_dlg.setFileMode(QFileDialog::AnyFile);
-					file_dlg.setAcceptMode(QFileDialog::AcceptSave);
-					file_dlg.setModal(true);
-
-					GuiUtilsNs::restoreFileDialogState(&file_dlg);
-
-					if(file_dlg.exec()==QFileDialog::Accepted && !file_dlg.selectedFiles().isEmpty())
+					if(!sel_files.isEmpty())
 					{
-						model->saveModel(file_dlg.selectedFiles().at(0));
-						registerRecentModel(file_dlg.selectedFiles().at(0));
-						model_nav_wgt->updateModelText(models_tbw->indexOf(model), model->getDatabaseModel()->getName(), file_dlg.selectedFiles().at(0));
+						model->saveModel(sel_files.at(0));
+						registerRecentModel(sel_files.at(0));
+						model_nav_wgt->updateModelText(models_tbw->indexOf(model), model->getDatabaseModel()->getName(), sel_files.at(0));
 					}
-
-					GuiUtilsNs::saveFileDialogState(&file_dlg);
 				}
 				else
 				{
@@ -1671,7 +1760,6 @@ void MainWindow::saveModel(ModelWidget *model)
 						model->saveModel();
 				}
 
-				//this->setWindowTitle(window_title + QString(" - ") + QDir::toNativeSeparators(model->getFilename()));
 				updateWindowTitle();
 				model_valid_wgt->clearOutput();
 				emit s_modelSaved(model);
@@ -1784,7 +1872,7 @@ void MainWindow::diffModelDatabase()
 		stopTimers(true);
 		connect(&modeldb_diff_frm, &ModelDatabaseDiffForm::s_connectionsUpdateRequest, this, [this](){ updateConnections(true); });
 		connect(&modeldb_diff_frm, &ModelDatabaseDiffForm::s_loadDiffInSQLTool, this, [this](QString conn_id, QString database, QString filename){
-			action_manage->toggle();
+			action_manage->setChecked(true);
 			sql_tool_wgt->addSQLExecutionTab(conn_id, database, filename);
 		});
 
@@ -1855,22 +1943,17 @@ void MainWindow::printModel()
 
 void MainWindow::loadModel()
 {
-	QFileDialog file_dlg;
-
 	try
 	{
-		file_dlg.setNameFilter(tr("Database model (*%1);;All files (*.*)").arg(GlobalAttributes::DbModelExt));
-		file_dlg.setWindowIcon(QPixmap(GuiUtilsNs::getIconPath("pgmodeler_logo")));
-		file_dlg.setWindowTitle(tr("Load model"));
-		file_dlg.setFileMode(QFileDialog::ExistingFiles);
-		file_dlg.setAcceptMode(QFileDialog::AcceptOpen);
+		QStringList sel_files = GuiUtilsNs::selectFiles(
+															tr("Load model"),
+															QFileDialog::ExistingFiles,	QFileDialog::AcceptOpen,
+															{ tr("Database model (*%1)").arg(GlobalAttributes::DbModelExt),
+																tr("All files (*.*)") }, {},
+															GlobalAttributes::DbModelExt);
 
-		GuiUtilsNs::restoreFileDialogState(&file_dlg);
-
-		if(file_dlg.exec()==QFileDialog::Accepted)
-			loadModels(file_dlg.selectedFiles());
-
-		GuiUtilsNs::saveFileDialogState(&file_dlg);
+		if(!sel_files.isEmpty())
+			loadModels(sel_files);
 	}
 	catch(Exception &e)
 	{
@@ -1886,6 +1969,9 @@ void MainWindow::loadModel(const QString &filename)
 
 void MainWindow::loadModels(const QStringList &files)
 {
+	if(files.isEmpty())
+		return;
+
 	int i = -1;
 
 	try
@@ -2321,7 +2407,7 @@ void MainWindow::arrangeObjects()
 
 	if(msgbox.result() == QDialog::Accepted)
 	{
-		QApplication::setOverrideCursor(Qt::WaitCursor);
+		qApp->setOverrideCursor(Qt::WaitCursor);
 
 		if(sender() == arrange_menu.actions().at(0))
 			current_model->rearrangeSchemasInGrid();
@@ -2330,7 +2416,7 @@ void MainWindow::arrangeObjects()
 		else
 			current_model->rearrangeTablesInSchemas();
 
-		QApplication::restoreOverrideCursor();
+		qApp->restoreOverrideCursor();
 	}
 }
 
@@ -2339,7 +2425,7 @@ void MainWindow::toggleCompactView()
 	ModelWidget *model_wgt = nullptr;
 
 	BaseObjectView::setCompactViewEnabled(action_compact_view->isChecked());
-	QApplication::setOverrideCursor(Qt::WaitCursor);
+	qApp->setOverrideCursor(Qt::WaitCursor);
 
 	for(int idx = 0; idx < models_tbw->count(); idx++)
 	{
@@ -2358,7 +2444,7 @@ void MainWindow::toggleCompactView()
 	if(current_model)
 		current_model->update();
 
-	QApplication::restoreOverrideCursor();
+	qApp->restoreOverrideCursor();
 }
 
 void MainWindow::toggleLayersWidget(bool show)

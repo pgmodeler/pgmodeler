@@ -57,9 +57,10 @@ class __libgui PluginsConfigWidget: public BaseConfigWidget, public Ui::PluginsC
 		//! \brief Since plugins has its own configurations this method load all plugins instead
 		void loadConfiguration();
 
-		/*! \brief Installs the plugins's ocnfiguration action in the provided menu.
-		 *  Additionally, it returns a list of actions that is meant to be placed in a toolbar. */
-		QList<QAction *> installPluginsActions(QMenu *menu);
+		/*! \brief Installs the plugins's configuration action in the provided menu.
+		 *  Additionally, it fills a list of actions that is meant to be placed in a toolbar,
+		 *  as well as a list of toolbuttons that is put in all database explorer widget instances. */
+		void installPluginsActions(QMenu *conf_menu, QList<QAction *> &tb_actions, QList<QToolButton *> &db_expl_btns);
 
 		//! \brief Performs the initialization of all loaded plugins (see PgModelerPlugin::initPlugin())
 		void initPlugins(MainWindow *main_window);

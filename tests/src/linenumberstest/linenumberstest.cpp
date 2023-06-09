@@ -37,52 +37,57 @@ void LineNumbersTest::handleLineSelectionUsingMouse()
 
 	LineNumbersWidget::setColors(Qt::darkGray, QColor(230,230,230));
   layout->addWidget(edt);
-	dlg->setMinimumSize(640,220);
+	dlg->setMinimumSize(800,600);
 
-	edt->setPlainText("--\n\
--- PostgreSQL database dump\n\
---\n\
--- Dumped from database version 9.4.4\n\
--- Dumped by pg_dump version 9.4.4\n\
--- Started on 2015-07-20 19:24:52 WEST\n\
-\n\
-SET statement_timeout = 0;\n\
-SET lock_timeout = 0;\n\
-SET client_encoding = 'UTF8';\n\
-SET standard_conforming_strings = on;\n\
-SET check_function_bodies = false;\n\
-SET client_min_messages = warning;\n\
---\n\
--- PostgreSQL database dump\n\
---\n\
--- Dumped from database version 9.4.4\n\
--- Dumped by pg_dump version 9.4.4\n\
--- Started on 2015-07-20 19:24:52 WEST\n\
-SET statement_timeout = 0;\n\
-SET lock_timeout = 0;\n\
-SET client_encoding = 'UTF8';\n\
-SET standard_conforming_strings = on;\n\
-SET check_function_bodies = false;\n\
-SET client_min_messages = warning;\n\
--- Dumped from database version 9.4.4\n\
--- Dumped by pg_dump version 9.4.4\n\
--- Started on 2015-07-20 19:24:52 WEST\n\
-SET statement_timeout = 0;\n\
-SET lock_timeout = 0;\n\
-SET client_encoding = 'UTF8';\n\
-SET standard_conforming_strings = on;\n\
-SET check_function_bodies = false;\n\
-SET client_min_messages = warning;\n\
--- Dumped from database version 9.4.4\n\
--- Dumped by pg_dump version 9.4.4\n\
--- Started on 2015-07-20 19:24:52 WEST\n\
-SET statement_timeout = 0;\n\
-SET lock_timeout = 0;\n\
-SET client_encoding = 'UTF8';\n\
-SET standard_conforming_strings = on;\n\
-SET check_function_bodies = false;\n\
-SET client_min_messages = warning;");
+	QFont fnt = edt->font();
+	edt->setFont(fnt);
+	edt->setPlainText("--\
+-- PostgreSQL database dump\
+--\
+-- Dumped from database version 9.4.4 \
+-- Dumped by pg_dump version 9.4.4 \
+-- Started on 2015-07-20 19:24:52 WEST \
+ \
+SET statement_timeout = 0; \
+SET lock_timeout = 0; \
+SET client_encoding = 'UTF8'; \
+SET standard_conforming_strings = on; \
+SET check_function_bodies = false; \
+SET client_min_messages = warning; \
+-- \
+-- PostgreSQL database dump \
+-- \
+-- Dumped from database version 9.4.4 \
+-- Dumped by pg_dump version 9.4.4 \
+-- Started on 2015-07-20 19:24:52 WEST \
+SET statement_timeout = 0; \
+SET lock_timeout = 0; \
+SET client_encoding = 'UTF8'; \
+SET standard_conforming_strings = on; \
+SET check_function_bodies = false; \
+SET client_min_messages = warning; \
+-- Dumped from database version 9.4.4 \
+-- Dumped by pg_dump version 9.4.4 \
+-- Started on 2015-07-20 19:24:52 WEST \
+SET statement_timeout = 0; \
+SET lock_timeout = 0; \
+SET client_encoding = 'UTF8'; \
+SET standard_conforming_strings = on; \
+SET check_function_bodies = false; \
+SET client_min_messages = warning; \
+-- Dumped from database version 9.4.4 \
+-- Dumped by pg_dump version 9.4.4 \
+-- Started on 2015-07-20 19:24:52 WEST \
+SET statement_timeout = 0; \
+SET lock_timeout = 0; \
+SET client_encoding = 'UTF8'; \
+SET standard_conforming_strings = on; \
+SET check_function_bodies = false; \
+SET client_min_messages = warning; \n\
+foobaar\n\
+bla\n");
 
+	edt->setWordWrapMode(QTextOption::WrapAtWordBoundaryOrAnywhere);
   dlg->exec();
 }
 

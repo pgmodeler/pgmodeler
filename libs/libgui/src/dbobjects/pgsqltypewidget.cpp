@@ -96,29 +96,29 @@ void PgSQLTypeWidget::updateTypeFormat()
 			type=data.toUInt();
 
 		length_sb->setEnabled(allow_qualifiers && type.hasVariableLength());
-		timezone_chk->setVisible(type==QString("timestamp") || type==QString("time"));
-		timezone_lbl->setVisible(type==QString("timestamp") || type==QString("time"));
+		timezone_chk->setVisible(type=="timestamp" || type=="time");
+		timezone_lbl->setVisible(type=="timestamp" || type=="time");
 		precision_sb->setEnabled(allow_qualifiers && type.acceptsPrecision());
-		dimension_sb->setEnabled(type!=QString("void"));
+		dimension_sb->setEnabled(type!="void");
 
-		interval_cmb->setVisible(type==QString("interval"));
+		interval_cmb->setVisible(type=="interval");
 		interval_lbl->setVisible(interval_cmb->isVisible());
 		interval_cmb->setEnabled(allow_qualifiers);
 
 		spatial_cmb->setEnabled(allow_qualifiers);
-		spatial_cmb->setVisible(type.isGeoType());
-		spatial_lbl->setVisible(type.isGeoType());
-		variation_lbl->setVisible(type.isGeoType());
+		spatial_cmb->setVisible(type.isPostGisGeoType());
+		spatial_lbl->setVisible(type.isPostGisGeoType());
+		variation_lbl->setVisible(type.isPostGisGeoType());
 
-		srid_lbl->setVisible(type.isGeoType());
+		srid_lbl->setVisible(type.isPostGisGeoType());
 		srid_spb->setEnabled(allow_qualifiers);
-		srid_spb->setVisible(type.isGeoType());
+		srid_spb->setVisible(type.isPostGisGeoType());
 
 		var_m_chk->setEnabled(allow_qualifiers);
-		var_m_chk->setVisible(type.isGeoType());
+		var_m_chk->setVisible(type.isPostGisGeoType());
 
 		var_z_chk->setEnabled(allow_qualifiers);
-		var_z_chk->setVisible(type.isGeoType());
+		var_z_chk->setVisible(type.isPostGisGeoType());
 
 		if(spatial_cmb->isVisible())
 		{
@@ -189,7 +189,7 @@ void PgSQLTypeWidget::setAttributes(PgSqlType type, DatabaseModel *model, bool a
 
 		//Get the passed type index
 		type_name=~type;
-		type_name.remove(QRegularExpression(QString("( )(with)(out)?(.)*")));
+		type_name.remove(QRegularExpression("( )(with)(out)?(.)*"));
 		idx=type_cmb->findText(type_name);
 
 		//Select the type on the combo

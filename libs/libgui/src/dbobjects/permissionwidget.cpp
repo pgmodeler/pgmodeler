@@ -78,7 +78,7 @@ PermissionWidget::PermissionWidget(QWidget *parent): BaseObjectWidget(parent, Ob
 		connect(check, &QCheckBox::clicked, this, &PermissionWidget::checkPrivilege);
 
 		check=new QCheckBox;
-		check->setText(QString("GRANT OPTION"));
+		check->setText("GRANT OPTION");
 		check->setEnabled(false);
 		privileges_tbw->setCellWidget(i,1,check);
 		connect(check, &QCheckBox::clicked, this, &PermissionWidget::checkPrivilege);
@@ -224,7 +224,7 @@ void PermissionWidget::listPermissions()
 			for(i1=0; i1 < count1; i1++)
 			{
 				str_aux+=perm->getRole(i1)->getName();
-				str_aux+=QString(",");
+				str_aux+=",";
 			}
 			str_aux.remove(str_aux.size()-1,1);
 			permissions_tab->setCellText(str_aux,i,1);
@@ -242,7 +242,6 @@ void PermissionWidget::showSelectedRoleData()
 
 	role=dynamic_cast<Role *>(object_selection_wgt->getSelectedObject());
 	row=roles_tab->getSelectedRow();
-
 
 	if(role)
 		row_idx=roles_tab->getRowIndex(QVariant::fromValue<void *>(dynamic_cast<void *>(role)));

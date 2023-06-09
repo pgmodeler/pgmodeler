@@ -2,10 +2,10 @@
 # CAUTION: Do not modify this file unless you know what you are doing.
 # Code generation can be broken if incorrect changes are made.
 
-[<usermapping name=] "{name}"
+[<usermapping name=] "&{name}"
 
 %if {options} %then
-	[ options=] "{options}"
+	[ options=] "&{options}"
 %end
 
 %if {protected} %then

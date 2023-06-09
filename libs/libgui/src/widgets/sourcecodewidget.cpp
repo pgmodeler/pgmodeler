@@ -85,22 +85,11 @@ void SourceCodeWidget::setSourceCodeTab(int)
 
 void SourceCodeWidget::saveSQLCode()
 {
-	QFileDialog file_dlg;
-
-	file_dlg.setWindowTitle(tr("Save SQL code as..."));
-
-	file_dlg.setFileMode(QFileDialog::AnyFile);
-	file_dlg.setAcceptMode(QFileDialog::AcceptSave);
-	file_dlg.setModal(true);
-	file_dlg.setNameFilter(tr("SQL code (*.sql);;All files (*.*)"));
-	file_dlg.selectFile(QString("%1-%2.sql").arg(object->getSchemaName()).arg(object->getName()));
-
-	GuiUtilsNs::restoreFileDialogState(&file_dlg);
-
-	if(file_dlg.exec() == QFileDialog::Accepted && !file_dlg.selectedFiles().isEmpty())
-		UtilsNs::saveFile(file_dlg.selectedFiles().at(0), sqlcode_txt->toPlainText().toUtf8());
-
-	GuiUtilsNs::saveFileDialogState(&file_dlg);
+	GuiUtilsNs::selectAndSaveFile(sqlcode_txt->toPlainText().toUtf8(),
+																tr("Save SQL code as..."),
+																QFileDialog::AnyFile,
+																{ tr("SQL code (*.sql)"), tr("All files (*.*)") }, {}, "sql",
+																QString("%1-%2.sql").arg(object->getSchemaName(), object->getName()));
 }
 
 void SourceCodeWidget::generateSourceCode(int)
@@ -112,6 +101,8 @@ void SourceCodeWidget::generateSourceCode(int)
 	{
 		sqlcode_txt->clear();
 		xmlcode_txt->clear();
+
+		qApp->setOverrideCursor(Qt::WaitCursor);
 
 		obj_type=object->getObjectType();
 		if(obj_type!=ObjectType::Textbox ||
@@ -173,9 +164,13 @@ void SourceCodeWidget::generateSourceCode(int)
 			disconnect(this->model, nullptr, task_prog_wgt, nullptr);
 			delete task_prog_wgt;
 		}
+
+		qApp->restoreOverrideCursor();
 	}
 	catch(Exception &e)
 	{
+		qApp->restoreOverrideCursor();
+
 		if(task_prog_wgt)
 		{
 			task_prog_wgt->close();

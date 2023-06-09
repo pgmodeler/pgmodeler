@@ -105,6 +105,10 @@ class __libcore BaseObject {
 	protected:
 		SchemaParser schparser;
 
+		/*! \brief Indicates if the PostgreSQL version checking must be ignored during code generation.
+		 * This flag allows generating code (poorly!) for older versions ( < 10). */
+		static bool ignore_db_version;
+
 		/*! \brief This static attribute is used to generate the unique identifier for objects.
 		 As object instances are created this value ​​are incremented. In some classes
 		 like Schema, DatabaseModel, Tablespace, Role, Type and Function id generators are
@@ -521,6 +525,15 @@ class __libcore BaseObject {
 
 		//! \brief Returns the set of attributes used by the search mechanism
 		attribs_map getSearchAttributes();
+
+		/*! \brief Ignores the PostgreSQL version checking during code generation.
+		 *  When false (the default behavior), when generating code which db version is < 10, an error
+		 *  is raised. When true, the error is not raised, but the overall usage of the tool may be affected
+		 *  since pgModeler is strictly tied to newer version. */
+		static void setIgnoreDbVersion(bool ignore);
+
+		//! \brief Indicates if the database version is ignored in the code generation
+		static bool isDbVersionIgnored();
 
 		friend class DatabaseModel;
 		friend class ModelValidationHelper;

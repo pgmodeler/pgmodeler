@@ -33,7 +33,8 @@ void FileSelectorTest::testFileSelection()
   QHBoxLayout *layout = new QHBoxLayout(dlg);
   FileSelectorWidget *selector = new FileSelectorWidget;
 
-	selector->setFileMode(QFileDialog::ExistingFile);
+	//selector->setFileMode(QFileDialog::ExistingFile);
+	selector->setFileMustExist(true);
 	selector->setAcceptMode(QFileDialog::AcceptOpen);
 	//selector->setNameFilters({"Database model file (*.dbm)", "All files (*.*)"});
 	selector->setFileDialogTitle("Select *.dbm file...");

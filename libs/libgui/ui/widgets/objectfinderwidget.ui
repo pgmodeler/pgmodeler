@@ -111,6 +111,9 @@
      </item>
      <item>
       <widget class="QToolButton" name="find_btn">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
        <property name="sizePolicy">
         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
          <horstretch>0</horstretch>

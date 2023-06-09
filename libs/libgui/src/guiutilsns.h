@@ -86,7 +86,10 @@ namespace GuiUtilsNs {
 	extern __libgui void resizeDialog(QWidget *dialog);
 
 	//! brief Changes the values of the grid selection at once
-	extern __libgui void bulkDataEdit(QTableWidget *results_tbw);
+	extern __libgui void openColumnDataForm(QTableWidget *results_tbw);
+
+	//! brief Opens the bulk data edit in readonly mode and display the text of the provided model index
+	extern __libgui void openColumnDataForm(const QModelIndex &index);
 
 	//! \brief Creates drop shadown on a widget
 	extern __libgui void createDropShadow(QWidget *wgt, int x_offset = 2, int y_offset = 2, int radius = 5, const QColor &color = QColor(0, 0, 0, 100));
@@ -104,7 +107,29 @@ namespace GuiUtilsNs {
 
 	/*! \brief Lists the objects of a vector in a QTableWidget. The first column on each row of table contains thereference to the object
 	 * The parameter search_attr is used to display the attribute value in which the search was performed. */
-	extern void updateObjectTable(QTableWidget *tab_wgt, std::vector<BaseObject *> &objects, const QString &search_attr = Attributes::Name, bool checkable_items = false);
+	extern __libgui void updateObjectTable(QTableWidget *tab_wgt, std::vector<BaseObject *> &objects, const QString &search_attr = Attributes::Name, bool checkable_items = false);
+
+	/*! \brief Opens an instance of QFileDialog with the provided attributes.
+	 *  The method returns the files/directories selected by the user in the dialog */
+	extern __libgui QStringList selectFiles(const QString &title = QT_TR_NOOP("Select file..."), QFileDialog::FileMode file_mode = QFileDialog::AnyFile,
+																					QFileDialog::AcceptMode accept_mode = QFileDialog::AcceptOpen,	const QStringList &name_filters = {},
+																					const QStringList &mime_filters = {}, const QString &default_suffix = "", const QString &selected_file = "");
+
+	/*! \brief Writes the provided buffer to a file which path is selected via QFileDialog.
+	 * Custom attributes for the QFileDialog instance can be provided.
+	 * Raises an exception in case of the file couldn't be saved.
+	 * The method does nothing if file_mode is different from QFileDialog::ExistingFile and QFileDialog::AnyFile */
+	extern __libgui bool selectAndSaveFile(const QByteArray &buffer, const QString &title = QT_TR_NOOP("Save file..."),
+																				 QFileDialog::FileMode file_mode = QFileDialog::AnyFile, const QStringList &name_filters = {},
+																				 const QStringList &mime_filters = {}, const QString &default_suffix = "", const QString &selected_file = "");
+
+	/*! \brief Loads a file which path is selected via QFileDialog returning the buffer with the contents of the file.
+	 * Custom attributes for the QFileDialog instance can be provided.
+	 * Raises an exception in case of the file couldn't be loaded.
+	 * The method does nothing if file_mode is different from QFileDialog::ExistingFile and QFileDialog::AnyFile */
+	extern __libgui  bool selectAndLoadFile(QByteArray &buffer,
+																					const QString &title = QT_TR_NOOP("Load file..."), QFileDialog::FileMode file_mode = QFileDialog::AnyFile,
+																					const QStringList &name_filters = {}, const QStringList &mime_filters = {}, const QString &selected_file = "");
 }
 
 #endif

@@ -16,21 +16,35 @@
 # Also, you can get the complete GNU General Public License at <http://www.gnu.org/licenses/>
 */
 
-#ifndef BULK_DATA_EDIT_WIDGET_H
-#define BULK_DATA_EDIT_WIDGET_H
+#include "customuistyle.h"
 
-#include "guiglobal.h"
-#include <QWidget>
-#include "ui_bulkdataeditwidget.h"
+QMap<QStyle::PixelMetric, int> CustomUiStyle::pixel_metrics;
 
-class __libgui BulkDataEditWidget: public QWidget, public Ui::BulkDataEditWidget {
-	private:
-		Q_OBJECT
+CustomUiStyle::CustomUiStyle() : QProxyStyle()
+{
 
-		void showEvent(QShowEvent *);
+}
 
-	public:
-		BulkDataEditWidget(QWidget *parent = nullptr);
-};
+CustomUiStyle::CustomUiStyle(const QString &key): QProxyStyle(key)
+{
 
-#endif
+}
+
+void CustomUiStyle::setPixelMetricValue(QStyle::PixelMetric metric, int value)
+{
+	pixel_metrics[metric] = value;
+}
+
+CustomUiStyle::~CustomUiStyle()
+{
+
+}
+
+int CustomUiStyle::pixelMetric(QStyle::PixelMetric metric, const QStyleOption * option, const QWidget * widget) const
+{
+	if(pixel_metrics.contains(metric))
+		return pixel_metrics[metric];
+
+	// Use the default pixel metric attribute value if there's no custom value defined
+	return QProxyStyle::pixelMetric(metric, option, widget);
+}

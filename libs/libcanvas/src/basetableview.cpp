@@ -459,7 +459,7 @@ void BaseTableView::__configureObject(double width)
 													height - attribs_toggler->boundingRect().height());
 
 	this->table_tooltip=this->getUnderlyingObject()->getName(true) +
-						QString(" (") + this->getUnderlyingObject()->getTypeName() + QString(") \n") +
+						" (" + this->getUnderlyingObject()->getTypeName() + ") \n" +
 						QString("Id: %1\n").arg(this->getUnderlyingObject()->getObjectId()) +
 						tr("Connected rels: %1").arg(this->getConnectRelsCount());
 
@@ -505,6 +505,8 @@ void BaseTableView::configureObjectShadow()
 	rect_item->setBrush(getFillStyle(Attributes::ObjShadow));
 	rect_item->setRect(this->boundingRect());
 	rect_item->setPos(ObjectShadowXPos, ObjectShadowYPos);
+
+	BaseObjectView::configureObjectShadow();
 }
 
 QList<TableObjectView *> BaseTableView::getSelectedChidren()

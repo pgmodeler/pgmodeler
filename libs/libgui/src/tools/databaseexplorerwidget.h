@@ -155,6 +155,13 @@ class __libgui DatabaseExplorerWidget: public QWidget, public Ui::DatabaseExplor
 		//! \brief Generate the SQL code for the specified object appending the permissions code for it as well
 		QString getObjectSource(BaseObject *object, DatabaseModel *dbmodel);
 
+	protected:
+		/*! \brief Add a custom tool button in the set of buttons in the top of database tree.
+		 *  This can be used to add custom actions for the current database explorer instance.
+		 *  the method will perform the need operations to create a copy of the provided button
+		 *  (icon, connect signal/slots, etc). */
+		void addPluginButton(QToolButton *btn);
+
 	public:
 		DatabaseExplorerWidget(QWidget * parent = nullptr);
 		
@@ -199,7 +206,7 @@ class __libgui DatabaseExplorerWidget: public QWidget, public Ui::DatabaseExplor
 		void cancelObjectRename();
 
 		//! \brief Show the widget to handle data in tables
-		void openDataGrid(const QString &schema=QString("public"), const QString &table="", bool hide_views=true);
+		void openDataGrid(const QString &schema="public", const QString &table="", bool hide_views=true);
 
 		void loadObjectSource();
 
@@ -217,6 +224,8 @@ class __libgui DatabaseExplorerWidget: public QWidget, public Ui::DatabaseExplor
 
 		//! \brief This signal is emmited containing the source code to be shown in an input field
 		void s_sourceCodeShowRequested(QString source);
+
+	friend class SQLToolWidget;
 };
 
 #endif

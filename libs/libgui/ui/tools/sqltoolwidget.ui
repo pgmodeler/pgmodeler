@@ -237,7 +237,7 @@
            <widget class="QTabWidget" name="databases_tbw">
             <property name="minimumSize">
              <size>
-              <width>285</width>
+              <width>305</width>
               <height>0</height>
              </size>
             </property>

@@ -33,9 +33,25 @@ void BaseForm::setButtonConfiguration(Messagebox::ButtonsId button_conf)
 	}
 	else
 	{
-		apply_ok_btn->setText(tr("&Ok"));
+		if(button_conf==Messagebox::CloseButton)
+		{
+			apply_ok_btn->setText(tr("&Close"));
+			apply_ok_btn->setIcon(QIcon(GuiUtilsNs::getIconPath("close1")));
+		}
+		else
+		{
+			apply_ok_btn->setText(tr("&Ok"));
+			apply_ok_btn->setIcon(QIcon(GuiUtilsNs::getIconPath("confirm")));
+		}
+
 		cancel_btn->setVisible(false);
 	}
+}
+
+void BaseForm::adjustMinimumSize()
+{
+	adjustSize();
+	setMinimumSize(size());
 }
 
 void BaseForm::resizeForm(QWidget *widget)
@@ -47,9 +63,10 @@ void BaseForm::resizeForm(QWidget *widget)
 	QSize min_size=widget->minimumSize();
 	int max_h = 0, max_w = 0, curr_w =0, curr_h = 0;
 	QScreen *screen = qApp->primaryScreen();
+	QSize screen_sz = screen->size();
 
-	max_w = screen->size().width() * 0.70;
-	max_h = screen->size().height() * 0.70;
+	max_w = screen_sz.width() * 0.70;
+	max_h = screen_sz.height() * 0.70;
 	vbox->setContentsMargins(0, 0, 0, 0);
 
 	/* If the widget's minimum size is zero then we need to do
@@ -57,7 +74,7 @@ void BaseForm::resizeForm(QWidget *widget)
 	if(min_size.height() <= 0 || min_size.width() <= 0)
 	{
 		widget->adjustSize();
-		min_size=widget->size();
+		min_size = widget->size();
 	}
 
 	//Insert the widget into a scroll area if it's minimum size exceeds the 70% of screen's dimensions
@@ -98,11 +115,11 @@ void BaseForm::resizeForm(QWidget *widget)
 							((buttons_lt->contentsMargins().top() +
 								buttons_lt->contentsMargins().bottom()) * 6);
 
-	if(curr_w > screen->size().width())
-		curr_w = screen->size().width() * 0.80;
+	if(curr_w > screen_sz.width())
+		curr_w = screen_sz.width() * 0.80;
 
-	if(curr_h > screen->size().height())
-		curr_h = screen->size().height() * 0.80;
+	if(curr_h > screen_sz.height())
+		curr_h = screen_sz.height() * 0.80;
 
 	this->setMinimumSize(min_size);
 	this->resize(curr_w, curr_h);

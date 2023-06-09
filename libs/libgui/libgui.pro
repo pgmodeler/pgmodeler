@@ -93,12 +93,12 @@ src/utils/resultsetmodel.cpp \
 src/utils/syntaxhighlighter.cpp \
 src/utils/textblockinfo.cpp \
 src/widgets/aboutwidget.cpp \
+    src/widgets/columndatawidget.cpp \
 src/widgets/donatewidget.cpp \
 src/widgets/modelnavigationwidget.cpp \
 src/widgets/numberedtexteditor.cpp \
 	src/widgets/objecttypeslistwidget.cpp \
 src/widgets/operationlistwidget.cpp \
-src/widgets/bulkdataeditwidget.cpp \
 src/widgets/modelobjectswidget.cpp \
 src/widgets/objectdepsrefswidget.cpp \
 src/widgets/sceneinfowidget.cpp \
@@ -211,12 +211,12 @@ src/utils/resultsetmodel.h \
 src/utils/syntaxhighlighter.h \
 src/utils/textblockinfo.h \
 src/widgets/aboutwidget.h \
+    src/widgets/columndatawidget.h \
 src/widgets/donatewidget.h \
 src/widgets/modelnavigationwidget.h \
 src/widgets/numberedtexteditor.h \
 	src/widgets/objecttypeslistwidget.h \
 src/widgets/operationlistwidget.h \
-src/widgets/bulkdataeditwidget.h \
 src/widgets/modelobjectswidget.h \
 src/widgets/objectdepsrefswidget.h \
 src/widgets/sceneinfowidget.h \
@@ -315,7 +315,6 @@ ui/widgets/modelobjectswidget.ui \
 ui/widgets/objectrenamewidget.ui \
 	ui/widgets/objecttypeslistwidget.ui \
 ui/widgets/sourcecodewidget.ui \
-ui/widgets/bulkdataeditwidget.ui \
 ui/widgets/fileselectorwidget.ui \
 ui/widgets/modeloverviewwidget.ui \
 ui/widgets/objectselectorwidget.ui \
@@ -362,7 +361,7 @@ DEPENDPATH += $$LIBCANVAS_ROOT \
 	      $$LIBPARSERS_ROOT \
 	      $$LIBUTILS_ROOT
 
-defined(PRIVATE_PLUGINS,var) {
+isEqual(PRIVATE_PLUGINS, true) {
   HEADERS+=$$PLUGINS_SRC_ROOT/src/privpluginsns.h
   SOURCES+=$$PLUGINS_SRC_ROOT/src/privpluginsns.cpp
 }

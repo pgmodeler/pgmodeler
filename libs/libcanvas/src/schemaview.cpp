@@ -238,6 +238,7 @@ void SchemaView::configureObject()
 		font.setPointSizeF(font.pointSizeF() * 1.3);
 
 		sch_name->setFont(font);
+		sch_name->setBrush(schema->getNameColor());
 		sch_name->setPos(HorizSpacing, VertSpacing);
 		txt_h=sch_name->boundingRect().height() + (2 * VertSpacing);
 
@@ -275,7 +276,7 @@ void SchemaView::configureObject()
 		this->setVisible(scene && scene->isLayersActive(schema->getLayers()));
 
 		this->setToolTip(schema->getName(true) +
-										 QString(" (") + schema->getTypeName() + QString(")") +
+										 " (" + schema->getTypeName() + ")" +
 										 QString("\nId: %1").arg(schema->getObjectId()));
 		sch_name->setToolTip(this->toolTip());
 

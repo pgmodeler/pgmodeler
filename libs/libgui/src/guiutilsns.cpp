@@ -1,3 +1,21 @@
+/*
+# PostgreSQL Database Modeler (pgModeler)
+#
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation version 3.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# The complete text of GPLv3 is at LICENSE file on source code root directory.
+# Also, you can get the complete GNU General Public License at <http://www.gnu.org/licenses/>
+*/
+
 #include <QLabel>
 #include <QGraphicsDropShadowEffect>
 #include "guiutilsns.h"
@@ -5,9 +23,10 @@
 #include "databasemodel.h"
 #include "widgets/numberedtexteditor.h"
 #include "baseform.h"
-#include "widgets/bulkdataeditwidget.h"
+#include "widgets/columndatawidget.h"
 #include "utilsns.h"
 #include "objectstablewidget.h"
+#include "generalconfigwidget.h"
 
 namespace GuiUtilsNs {
 
@@ -81,7 +100,7 @@ namespace GuiUtilsNs {
 			QLabel *label=new QLabel;
 			int txt_height = 0;
 
-			txt_height = output_lst->fontMetrics().height() * text.count(QString("<br/>"));
+			txt_height = output_lst->fontMetrics().height() * text.count("<br/>");
 
 			if(txt_height == 0)
 				txt_height = output_lst->fontMetrics().height() * 1.25;
@@ -189,8 +208,8 @@ namespace GuiUtilsNs {
 		QString fmt_msg=msg;
 		QChar start_chrs[2]={'`','('},
 				end_chrs[2]={'\'', ')'};
-		QStringList start_tags={ QString("<strong>"), QString("<em>(") },
-				end_tags={ QString("</strong>"), QString(")</em>") };
+		QStringList start_tags={ "<strong>", "<em>(" },
+				end_tags={ "</strong>", ")</em>" };
 		int pos=-1, pos1=-1;
 
 		// Replacing the form `' by <strong></strong> and () by <em></em>
@@ -216,7 +235,7 @@ namespace GuiUtilsNs {
 			while(pos >= 0 && pos < fmt_msg.size());
 		}
 
-		fmt_msg.replace(QString("\n"), QString("<br/>"));
+		fmt_msg.replace("\n", "<br/>");
 
 		return fmt_msg;
 	}
@@ -316,20 +335,12 @@ namespace GuiUtilsNs {
 		if(!widget)
 			return;
 
-		QSize min_size=widget->minimumSize();
 		int max_h = 0, curr_w =0, curr_h = 0;
-		QScreen *screen=qApp->primaryScreen();
-		/* double dpi_factor = 0;
-		double pixel_ratio = 0;
+		QScreen *screen = qApp->primaryScreen();
+		QSize min_size = widget->minimumSize(),
+				screen_sz = screen->size();
 
-		dpi_factor = screen->logicalDotsPerInch() / 96.0;
-		pixel_ratio = screen->devicePixelRatio(); */
-
-		//If the dpi_factor is unchanged (1) we keep the dialog original dimension
-		/* if(dpi_factor <= 1.01)
-			return; */
-
-		max_h = screen->size().height() * 0.70;
+		max_h = screen_sz.height() * 0.70;
 
 		/* If the widget's minimum size is zero then we need to do
 				a size adjustment on the widget prior to insert it into the dialog */
@@ -353,30 +364,56 @@ namespace GuiUtilsNs {
 		/* curr_w *= dpi_factor * pixel_ratio;
 		curr_h *= dpi_factor * pixel_ratio; */
 
-		if(curr_w > screen->size().width())
-			curr_w = screen->size().width() * 0.80;
+		if(curr_w > screen_sz.width())
+			curr_w = screen_sz.width() * 0.80;
 
-		if(curr_h > screen->size().height())
-			curr_h = screen->size().height() * 0.80;
+		if(curr_h > screen_sz.height())
+			curr_h = screen_sz.height() * 0.80;
 
 		widget->setMinimumSize(widget->minimumSize());
 		widget->resize(curr_w, curr_h);
-		widget->adjustSize();
+		//widget->adjustSize();
 	}
 
-	void bulkDataEdit(QTableWidget *results_tbw)
+	void openColumnDataForm(const QModelIndex &index)
+	{
+		if(!index.isValid())
+			return;
+
+		BaseForm base_form;
+		ColumnDataWidget *col_data_wgt = new ColumnDataWidget;
+
+		base_form.setMainWidget(col_data_wgt);
+		base_form.setButtonConfiguration(Messagebox::OkButton);
+
+		col_data_wgt->setData(index.data().toString());
+		col_data_wgt->setReadOnly(true);
+
+		GeneralConfigWidget::restoreWidgetGeometry(&base_form, col_data_wgt->metaObject()->className());
+		base_form.exec();
+		GeneralConfigWidget::saveWidgetGeometry(&base_form, col_data_wgt->metaObject()->className());
+	}
+
+	void openColumnDataForm(QTableWidget *results_tbw)
 	{
 		if(!results_tbw)
 			return;
 
-		BaseForm base_frm;
-		BulkDataEditWidget *bulkedit_wgt = new BulkDataEditWidget;
+		BaseForm base_form;
+		ColumnDataWidget *col_data_edit_wgt = new ColumnDataWidget;
 
-		base_frm.setMainWidget(bulkedit_wgt);
-		base_frm.setButtonConfiguration(Messagebox::OkCancelButtons);
-		base_frm.apply_ok_btn->setShortcut(QKeySequence("Ctrl+Return"));
+		base_form.setMainWidget(col_data_edit_wgt);
+		base_form.setButtonConfiguration(Messagebox::OkCancelButtons);
+		base_form.apply_ok_btn->setShortcut(QKeySequence("Ctrl+Return"));
 
-		if(base_frm.exec() == QDialog::Accepted)
+		if(results_tbw->selectedItems().size() == 1)
+			col_data_edit_wgt->setData(results_tbw->currentItem()->text());
+
+		GeneralConfigWidget::restoreWidgetGeometry(&base_form, col_data_edit_wgt->metaObject()->className());
+		base_form.exec();
+		GeneralConfigWidget::saveWidgetGeometry(&base_form, col_data_edit_wgt->metaObject()->className());
+
+		if(base_form.result() == QDialog::Accepted)
 		{
 			QList<QTableWidgetSelectionRange> sel_ranges=results_tbw->selectedRanges();
 
@@ -386,7 +423,7 @@ namespace GuiUtilsNs {
 				{
 					for(int col = range.leftColumn(); col <= range.rightColumn(); col++)
 					{
-						results_tbw->item(row, col)->setText(bulkedit_wgt->value_edt->toPlainText());
+						results_tbw->item(row, col)->setText(col_data_edit_wgt->getData());
 					}
 				}
 			}
@@ -462,7 +499,7 @@ namespace GuiUtilsNs {
 		for(lin_idx=0, i=0; i < objs.size(); i++)
 		{
 			if(objs[i]->getObjectType()==ObjectType::BaseRelationship)
-				str_aux = QString("tv");
+				str_aux = "tv";
 			else
 				str_aux.clear();
 
@@ -480,7 +517,7 @@ namespace GuiUtilsNs {
 			fnt=tab_item->font();
 
 			tab_item->setText(objs[i]->getName());
-			tab_item->setIcon(QPixmap(GuiUtilsNs::getIconPath(BaseObject::getSchemaName(objs[i]->getObjectType()) + str_aux)));
+			tab_item->setIcon(QIcon(GuiUtilsNs::getIconPath(BaseObject::getSchemaName(objs[i]->getObjectType()) + str_aux)));
 			if(new_row) tab_wgt->setItem(lin_idx, 0, tab_item);
 			if(checkable_items)	tab_item->setCheckState(Qt::Checked);
 
@@ -534,7 +571,7 @@ namespace GuiUtilsNs {
 				else
 					parent_obj=objs[i]->getDatabase();
 
-				tab_item->setText(parent_obj ? parent_obj->getName() : QString("-"));
+				tab_item->setText(parent_obj ? parent_obj->getName() : "-");
 				tab_item->setData(Qt::UserRole, QVariant::fromValue<void *>(reinterpret_cast<void *>(parent_obj)));
 				if(new_row) tab_wgt->setItem(lin_idx, 3, tab_item);
 
@@ -549,7 +586,7 @@ namespace GuiUtilsNs {
 						fnt.setItalic(false);
 
 					tab_item->setFont(fnt);
-					tab_item->setIcon(QPixmap(GuiUtilsNs::getIconPath(parent_obj->getObjectType())));
+					tab_item->setIcon(QIcon(GuiUtilsNs::getIconPath(parent_obj->getObjectType())));
 				}
 			}
 
@@ -559,7 +596,7 @@ namespace GuiUtilsNs {
 				tab_item=(new_row ? new QTableWidgetItem : tab_wgt->item(lin_idx, 4));
 				fnt.setItalic(true);
 				tab_item->setFont(fnt);
-				tab_item->setText(parent_obj ? parent_obj->getTypeName() : QString("-"));
+				tab_item->setText(parent_obj ? parent_obj->getTypeName() : "-");
 				if(new_row) tab_wgt->setItem(lin_idx, 4, tab_item);
 			}
 
@@ -592,5 +629,93 @@ namespace GuiUtilsNs {
 		tab_wgt->resizeColumnsToContents();
 
 		tab_wgt->resizeRowsToContents();
+	}
+
+	QStringList selectFiles(const QString &title, QFileDialog::FileMode file_mode, QFileDialog::AcceptMode accept_mode,
+													const QStringList &name_filters, const QStringList &mime_filters, const QString &default_suffix,
+													const QString &selected_file)
+	{
+		QFileDialog file_dlg;
+
+		file_dlg.setWindowIcon(QIcon(getIconPath("pgmodeler_logo")));
+		file_dlg.setWindowTitle(title);
+		file_dlg.setDefaultSuffix(default_suffix);
+		file_dlg.selectFile(selected_file);
+
+		if(!name_filters.isEmpty())
+		 file_dlg.setNameFilters(name_filters);
+
+		if(!mime_filters.isEmpty())
+			file_dlg.setMimeTypeFilters(mime_filters);
+
+		file_dlg.setFileMode(file_mode);
+		file_dlg.setAcceptMode(accept_mode);
+		file_dlg.setModal(true);
+
+		GuiUtilsNs::restoreFileDialogState(&file_dlg);
+		file_dlg.exec();
+		GuiUtilsNs::saveFileDialogState(&file_dlg);
+
+		if(file_dlg.result() == QDialog::Accepted)
+			return file_dlg.selectedFiles();
+
+		return QStringList();
+	}
+
+	bool selectAndSaveFile(const QByteArray &buffer, const QString &title, QFileDialog::FileMode file_mode,
+												 const QStringList &name_filters, const QStringList &mime_filters,
+												 const QString &default_suffix, const QString &selected_file)
+	{
+		if(file_mode != QFileDialog::ExistingFile &&
+			 file_mode != QFileDialog::AnyFile)
+			return false;
+
+		try
+		{
+			QStringList sel_files = selectFiles(title, file_mode, QFileDialog::AcceptSave,
+																					name_filters, mime_filters, default_suffix,
+																					selected_file);
+
+			if(!sel_files.isEmpty())
+			{
+				UtilsNs::saveFile(sel_files.at(0), buffer);
+				return true;
+			}
+
+			return false;
+		}
+		catch(Exception &e)
+		{
+			throw Exception(e.getErrorMessage(), __PRETTY_FUNCTION__, __FILE__, __LINE__, &e);
+		}
+	}
+
+	bool selectAndLoadFile(QByteArray &buffer,
+												 const QString &title, QFileDialog::FileMode file_mode, const QStringList &name_filters,
+												 const QStringList &mime_filters, const QString &selected_file)
+	{
+		buffer.clear();
+
+		if(file_mode != QFileDialog::ExistingFile &&
+			 file_mode != QFileDialog::AnyFile)
+			return false;
+
+		try
+		{
+			QStringList sel_files = selectFiles(title, file_mode, QFileDialog::AcceptOpen,
+																					name_filters, mime_filters, "", selected_file);
+
+			if(!sel_files.isEmpty())
+			{
+				buffer = UtilsNs::loadFile(sel_files.at(0));
+				return true;
+			}
+
+			return false;
+		}
+		catch(Exception &e)
+		{
+			throw Exception(e.getErrorMessage(), __PRETTY_FUNCTION__, __FILE__, __LINE__, &e);
+		}
 	}
 }

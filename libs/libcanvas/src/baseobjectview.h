@@ -52,6 +52,9 @@ class __libcanvas BaseObjectView: public QObject, public QGraphicsItemGroup {
 		 * as well the table's extended area is collapsed by default */
 		static bool compact_view;
 
+		//! \brief Indicate if the graphical element representing object's shadow must be hidden.
+		static bool hide_shadow;
+
 		/*! \brief Stores the selection order of the current object. This attribute is used to
 		 know when an item was selected before another in the scene because the implementation of
 		 the method QGraphicsScene :: selectedItem() the selected objects are returned without
@@ -87,7 +90,7 @@ class __libcanvas BaseObjectView: public QObject, public QGraphicsItemGroup {
 		static std::map<QString, std::vector<QColor>> color_config;
 
 		//! \brief Configures the objects shadow polygon
-		void configureObjectShadow(void) {}
+		void configureObjectShadow(void);
 
 		//! \brief Configures the object selection polygon
 		void configureObjectSelection();
@@ -166,6 +169,10 @@ class __libcanvas BaseObjectView: public QObject, public QGraphicsItemGroup {
 		static void setCompactViewEnabled(bool value);
 
 		static bool isCompactViewEnabled();
+
+		static void setShadowHidden(bool value);
+
+		static bool isShadowHidden();
 
 		//! \brief Sets the  font style for the specified element id
 		static void setFontStyle(const QString &id, QTextCharFormat font_fmt);

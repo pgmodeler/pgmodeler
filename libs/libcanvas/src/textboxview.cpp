@@ -139,6 +139,8 @@ void TextboxView::configureObjectShadow()
 	pol_item->setBrush(getFillStyle(Attributes::ObjShadow));
 	pol_item->setPolygon(text_item->polygon());
 	pol_item->setPos(ObjectShadowXPos, ObjectShadowYPos);
+
+	BaseObjectView::configureObjectShadow();
 }
 
 void TextboxView::configureObjectSelection()

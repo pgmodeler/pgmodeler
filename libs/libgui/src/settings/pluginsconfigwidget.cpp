@@ -23,12 +23,11 @@ PluginsConfigWidget::PluginsConfigWidget(QWidget *parent) : BaseConfigWidget(par
 	setupUi(this);
 
 	QGridLayout *grid=new QGridLayout(loaded_plugins_gb);
-	QDir dir=QDir(GlobalAttributes::getPluginsPath());
 
 	root_dir_sel = new FileSelectorWidget(this);
 	root_dir_sel->setToolTip(tr("pgModeler plugins directory"));
 	root_dir_sel->setReadOnly(true);
-	root_dir_sel->setFileMode(QFileDialog::Directory);
+	root_dir_sel->setDirectoryMode(true);
 	root_dir_sel->setSelectedFile(GlobalAttributes::getPluginsPath());
 	plugins_layout->insertWidget(1, root_dir_sel);
 
@@ -70,6 +69,7 @@ void PluginsConfigWidget::loadConfiguration()
 	QStringList dir_list;
 	PgModelerPlugin *plugin=nullptr;
 	QFileInfo fi;
+	unsigned row = 0;
 
 	//The plugin loader must resolve all symbols otherwise return an error if some symbol is missing on library
 	plugin_loader.setLoadHints(QLibrary::ResolveAllSymbolsHint);
@@ -123,6 +123,10 @@ void PluginsConfigWidget::loadConfiguration()
 			plugins_tab->setCellIcon(QIcon(plugin->getPluginIcon(plugin_name)), plugins_tab->getRowCount()-1, 0);
 			plugins_tab->setCellText(plugin->getPluginVersion(), plugins_tab->getRowCount()-1, 1);
 			plugins_tab->setCellText(fi.fileName(), plugins_tab->getRowCount()-1, 2);
+			plugins_tab->setRowData(
+							QVariant::fromValue<void *>(plugin),
+							row++
+						);
 		}
 		else
 		{
@@ -146,6 +150,7 @@ void PluginsConfigWidget::initPlugins(MainWindow *main_window)
 {
 	std::vector<PgModelerPlugin *> inv_plugins;
 	std::vector<Exception> errors;
+	int row_idx = -1;
 
 	for(auto &plugin : plugins)
 	{
@@ -163,7 +168,12 @@ void PluginsConfigWidget::initPlugins(MainWindow *main_window)
 	// Erasing the plugins/actions related to the ones that failed to initialize
 	while(!inv_plugins.empty())
 	{
+		row_idx = plugins_tab->getRowIndex(QVariant::fromValue<void *>(inv_plugins.back()));
 		plugins.erase(std::find(plugins.begin(), plugins.end(), inv_plugins.back()));
+
+		if(row_idx >= 0)
+			plugins_tab->removeRow(row_idx);
+
 		delete inv_plugins.back();
 		inv_plugins.pop_back();
 	}
@@ -206,25 +216,24 @@ QList<QAction *> PluginsConfigWidget::getPluginsModelsActions()
 
 	for(auto &plugin : plugins)
 	{
-		if(plugin->getModelAction())
-			list.append(plugin->getModelAction());
+		if(plugin->getAction(PgModelerPlugin::ModelAction))
+			list.append(plugin->getAction(PgModelerPlugin::ModelAction));
 	}
 
 	return list;
 }
 
-QList<QAction *> PluginsConfigWidget::installPluginsActions(QMenu *conf_menu)
+void PluginsConfigWidget::installPluginsActions(QMenu *conf_menu, QList<QAction *> &tb_actions, QList<QToolButton *> &db_expl_btns)
 {
-	QList<QAction  *> tb_actions;
-
 	for(auto &plugin : plugins)
 	{
-		if(conf_menu && plugin->getConfigAction())
-			conf_menu->addAction(plugin->getConfigAction());
+		if(conf_menu && plugin->getAction(PgModelerPlugin::ConfigAction))
+			conf_menu->addAction(plugin->getAction(PgModelerPlugin::ConfigAction));
 
-		if(plugin->getToolbarAction())
-			tb_actions.append(plugin->getToolbarAction());
-	}	
+		if(plugin->getAction(PgModelerPlugin::ToolbarAction))
+			tb_actions.append(plugin->getAction(PgModelerPlugin::ToolbarAction));
 
-	return tb_actions;
+		if(plugin->getToolButton())
+			db_expl_btns.append(plugin->getToolButton());
+	}
 }

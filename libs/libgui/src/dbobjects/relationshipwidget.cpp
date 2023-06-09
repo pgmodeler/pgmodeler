@@ -803,7 +803,7 @@ void RelationshipWidget::duplicateObject(int curr_row, int new_row)
 			object = reinterpret_cast<BaseObject *>(tab->getRowData(curr_row).value<void *>());
 
 		CoreUtilsNs::copyObject(&dup_object, object, obj_type);
-		dup_object->setName(CoreUtilsNs::generateUniqueName(dup_object, obj_list, false, QString("_cp")));
+		dup_object->setName(CoreUtilsNs::generateUniqueName(dup_object, obj_list, false, "_cp"));
 		op_id=op_list->registerObject(dup_object, Operation::ObjCreated, new_row, rel);
 
 		dynamic_cast<TableObject*>(dup_object)->setParentTable(nullptr);
@@ -1024,7 +1024,7 @@ void RelationshipWidget::listSpecialPkColumns()
 		for(idx=0; idx < count; idx++)
 		{
 			rel_columns_lst->addItem(cols[idx]->getName().toUtf8() +
-									 QString(" (") + *cols[idx]->getType() + QString(")"));
+									 " (" + *cols[idx]->getType() + ")");
 			item=rel_columns_lst->item(idx);
 			item->setCheckState(Qt::Unchecked);
 		}
@@ -1181,7 +1181,7 @@ void RelationshipWidget::applyConfiguration()
 	catch(Exception &e)
 	{
 		model->validateRelationships();
-		QApplication::restoreOverrideCursor();
+		qApp->restoreOverrideCursor();
 		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }

@@ -24,6 +24,10 @@ class SchemaParserTest: public QObject {
 		Q_OBJECT
 
 	private slots:
+		void testConvertAttribsToXmlEntitiesInCondExpr();
+		void testConvertAttribsToXmlEntitiesInQuotes();
+		void testConvertAttribsToXmlEntitiesInSet();
+		void testConvertAttribsToXmlEntities();
 		void testExpressionEvaluationWithCasts();
 		void testSetOperationInIf();
 		void testSetOperationUnderIfEvaluatedAsFalse();
@@ -103,6 +107,91 @@ void SchemaParserTest::testSetOperationUnderIfEvaluatedAsFalse()
 		//out <<  buffer;
 		schparser.loadBuffer(buffer);
 		QCOMPARE(schparser.getSourceCode(attribs) == "", true);
+	}
+	catch(Exception &e)
+	{
+		QFAIL(e.getExceptionsText().toStdString().c_str());
+	}
+}
+
+void SchemaParserTest::testConvertAttribsToXmlEntities()
+{
+	SchemaParser schparser;
+	QString buffer;
+	attribs_map attribs;
+
+	buffer = "%set {attrib} [<obj name=\"test\"/>]\n";
+	buffer+= "&{attrib}\n";
+
+	try
+	{
+		schparser.loadBuffer(buffer);
+		QCOMPARE(schparser.getSourceCode(attribs), "&lt;obj name=&quot;test&quot;/&gt;");
+	}
+	catch(Exception &e)
+	{
+		QFAIL(e.getExceptionsText().toStdString().c_str());
+	}
+}
+
+void SchemaParserTest::testConvertAttribsToXmlEntitiesInSet()
+{
+	SchemaParser schparser;
+	QString buffer;
+	attribs_map attribs;
+
+	buffer = "%set {attr1} [<p class=\"test\"/>]\n";
+	buffer += "%set {attr2} &{attr1}\n";
+	buffer += "{attr2}\n";
+
+	try
+	{
+		schparser.loadBuffer(buffer);
+		QCOMPARE(schparser.getSourceCode(attribs), "&lt;p class=&quot;test&quot;/&gt;");
+	}
+	catch(Exception &e)
+	{
+		QFAIL(e.getExceptionsText().toStdString().c_str());
+	}
+}
+
+void SchemaParserTest::testConvertAttribsToXmlEntitiesInQuotes()
+{
+
+	SchemaParser schparser;
+	QString buffer;
+	attribs_map attribs;
+
+	attribs["name"] = "\"<obj_name>\"";
+	buffer += "[<column name=] \"&{name}\"\n";
+
+	try
+	{
+		schparser.loadBuffer(buffer);
+		QCOMPARE(schparser.getSourceCode(attribs), "<column name=\"&quot;&lt;obj_name&gt;&quot;\"");
+	}
+	catch(Exception &e)
+	{
+		QFAIL(e.getExceptionsText().toStdString().c_str());
+	}
+}
+
+void SchemaParserTest::testConvertAttribsToXmlEntitiesInCondExpr()
+{
+	SchemaParser schparser;
+	QString buffer;
+	attribs_map attribs;
+
+	attribs["attr1"] = "<p class=\"test\"/>";
+	buffer += "%set {attr2} &{attr1}\n";
+	buffer += "%if (&{attr2} == \"&lt;p class=&quot;test&quot;/&gt;\") %then\n";
+	buffer += "[value=] \"&{attr1}\"\n";
+	buffer += "%end\n";
+
+	try
+	{
+		schparser.loadBuffer(buffer);
+		QCOMPARE(schparser.getSourceCode(attribs), "value=\"&lt;p class=&quot;test&quot;/&gt;\"");
 	}
 	catch(Exception &e)
 	{

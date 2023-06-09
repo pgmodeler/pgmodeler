@@ -32,13 +32,18 @@
 class __libcore Schema: public BaseGraphicObject {
 	private:
 		static unsigned schema_id;
-		QColor fill_color;
+
+		QColor fill_color, name_color;
+
 		bool rect_visible;
 
 	public:
 		Schema();
 
 		void setName(const QString &name);
+
+		void setNameColor(const QColor &color);
+		QColor getNameColor();
 
 		void setFillColor(const QColor &color);
 		QColor getFillColor();

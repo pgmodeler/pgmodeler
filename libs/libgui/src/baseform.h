@@ -48,6 +48,9 @@ class __libgui BaseForm: public QDialog, public Ui::BaseForm {
 
 		void setButtonConfiguration(Messagebox::ButtonsId button_conf = Messagebox::OkCancelButtons);
 
+		//! \brief Sets the current form size as the minimum size
+		void adjustMinimumSize();
+
 		/*! \brief Injects the specified object into the form and turns it the main widget.
 		 * The widget is reparented to the stack widget within the form. */
 		void setMainWidget(QWidget *widget);

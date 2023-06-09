@@ -87,13 +87,13 @@ void TableTitleView::configureObject(BaseGraphicObject *object)
 		schema_name->setBrush(tag->getElementColor(schema_name_attrib, ColorId::FillColor1));
 
 	if(schema->isRectVisible())
-		schema_name->setText(QString(" "));
+		schema_name->setText(" ");
 	else
 	{
 		if(compact_view && !schema->getAlias().isEmpty())
-			schema_name->setText(schema->getAlias() + QString("."));
+			schema_name->setText(schema->getAlias() + ".");
 		else
-			schema_name->setText(schema->getName() + QString("."));
+			schema_name->setText(schema->getName() + ".");
 	}
 
 	fmt=font_config[name_attrib];
@@ -139,7 +139,7 @@ void TableTitleView::resizeTitle(double width, double height)
 	box->setPos(0,0);
 	box->setRect(QRectF(0,0, width, height));
 
-	if(schema_name->text()==QString(" "))
+	if(schema_name->text()==" ")
 		obj_name->setPos((box->boundingRect().width() - obj_name->boundingRect().width())/2.0, py);
 	else
 	{

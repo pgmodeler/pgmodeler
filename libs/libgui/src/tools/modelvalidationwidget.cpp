@@ -298,7 +298,7 @@ void ModelValidationWidget::updateValidation(ValidationInfo val_info)
 		if(tab_obj)
 		{
 			table=tab_obj->getParentTable();
-			ref_name=table->getName(true).remove('"') + QString(".") + val_info.getObject()->getName(true).remove('"');
+			ref_name=table->getName(true).remove('"') + "." + val_info.getObject()->getName(true).remove('"');
 		}
 		else
 			ref_name=val_info.getObject()->getName(true).remove('"');
@@ -392,7 +392,7 @@ void ModelValidationWidget::updateValidation(ValidationInfo val_info)
 				ref_name=ref_obj->getName(true);
 
 				if(tab_obj)
-					ref_name=dynamic_cast<TableObject *>(ref_obj)->getParentTable()->getName(true) + QString(".") + ref_name;
+					ref_name=dynamic_cast<TableObject *>(ref_obj)->getParentTable()->getName(true) + "." + ref_name;
 
 				if(val_info.getValidationType()==ValidationInfo::NoUniqueName)
 				{

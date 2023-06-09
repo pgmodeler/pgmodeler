@@ -1,7 +1,7 @@
 # XML definition for sequences
 # CAUTION: Do not modify this file unless you know what you are doing.
 # Code generation can be broken if incorrect changes are made.
-[<sequence name=] "{name}"
+[<sequence name=] "&{name}"
 
 [ cycle=] %if {cycle} %then "true" %else "false" %end
 
@@ -26,7 +26,7 @@
 %end
 
 %if {owner-col} %then
-	[ owner-col=] "{owner-col}"
+	[ owner-col=] "&{owner-col}"
 %end
 
 %if {protected} %then

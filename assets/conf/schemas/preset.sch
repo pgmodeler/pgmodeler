@@ -1,15 +1,15 @@
 %set {spacer} $br $tb $tb
 
-$tb [<preset ] name="{name}"
+$tb [<preset ] name="&{name}"
 
 %if {current-model} %then
 	{spacer} current-model="true"
 %else
-	{spacer} input-db="{input-db}"
+	{spacer} input-db="&{input-db}"
 %end
 
 %if {compare-to-db} %then
-	{spacer} compare-to-db="{compare-to-db}"
+	{spacer} compare-to-db="&{compare-to-db}"
 %end
 
 %if {version} %then

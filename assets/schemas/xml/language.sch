@@ -4,7 +4,7 @@
 
 %if {reduced-form} %then $tb %end
 
-[<language name=]"{name}"
+[<language name=] "&{name}"
 
 %if {reduced-form} %then
 	[/>] $br

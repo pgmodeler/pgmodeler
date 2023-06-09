@@ -8,7 +8,7 @@
 	%end
 
 	[SELECT op.oid, opcname || ' ] $ob [' || am.amname || '] $cb [' AS name,
-	ns.nspname AS parent, 'schema' AS parent_type
+	ns.nspname AS parent, 'schema' AS parent_type, NULL AS extra_info
 	FROM pg_opclass AS op
 	LEFT JOIN pg_namespace AS ns ON op.opcnamespace = ns.oid
 	LEFT JOIN pg_am AS am ON op.opcmethod = am.oid ]

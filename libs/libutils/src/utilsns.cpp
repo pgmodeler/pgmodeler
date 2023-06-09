@@ -19,6 +19,7 @@
 #include "utilsns.h"
 #include "exception.h"
 #include <QFile>
+#include <QRegularExpression>
 
 namespace UtilsNs {
 	void saveFile(const QString &filename, const QByteArray &buffer)
@@ -51,5 +52,24 @@ namespace UtilsNs {
 		 * and returning it making two copies we just return the result of readAll().
 		 * The file descriptor will be closed in the destructor of QFile */
 		return input.readAll();
+	}
+
+	QString convertToXmlEntities(QString value)
+	{
+		/* If the extracted value has one of the expected special chars
+		 * in order to perform the replacemnt to xml entities */
+		if(value.contains(QRegularExpression("(&|\\<|\\>|\")")))
+		{
+			if(!value.contains(UtilsNs::EntityQuot) && !value.contains(UtilsNs::EntityLt) &&
+				 !value.contains(UtilsNs::EntityGt) && !value.contains(UtilsNs::EntityAmp) &&
+				 !value.contains(UtilsNs::EntityApos) && value.contains('&'))
+					value.replace('&', UtilsNs::EntityAmp);
+
+				value.replace('"', UtilsNs::EntityQuot);
+				value.replace('<', UtilsNs::EntityLt);
+				value.replace('>', UtilsNs::EntityGt);
+		}
+
+		return value;
 	}
 }

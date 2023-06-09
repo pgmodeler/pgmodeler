@@ -647,6 +647,10 @@ class __libgui ModelWidget: public QWidget {
 		 * This version carries the amount objects selected and their bounding rects */
 		void s_sceneInteracted(int obj_count, const QRectF &objs_rect);
 
+		/*! \brief Signal emitted whenever the scene suffered a successful drag & drop event.
+		 * It passes the mime data when the event occurred */
+		void s_sceneDragDropped(const QMimeData *mime_data);
+
 		friend class MainWindow;
 		friend class ModelExportForm;
 		friend class OperationListWidget;

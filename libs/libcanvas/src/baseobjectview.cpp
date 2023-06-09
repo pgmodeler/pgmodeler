@@ -26,6 +26,7 @@ std::map<QString, std::vector<QColor>> BaseObjectView::color_config;
 unsigned BaseObjectView::global_sel_order=1;
 bool BaseObjectView::use_placeholder=true;
 bool BaseObjectView::compact_view=false;
+bool BaseObjectView::hide_shadow=false;
 
 BaseObjectView::BaseObjectView(BaseObject *object)
 {
@@ -292,6 +293,16 @@ bool BaseObjectView::isCompactViewEnabled()
 	return compact_view;
 }
 
+void BaseObjectView::setShadowHidden(bool value)
+{
+	hide_shadow = value;
+}
+
+bool BaseObjectView::isShadowHidden()
+{
+	return hide_shadow;
+}
+
 QVariant BaseObjectView::itemChange(GraphicsItemChange change, const QVariant &value)
 {
 	if(change==ItemPositionHasChanged)
@@ -342,6 +353,16 @@ void BaseObjectView::toggleProtectionIcon(bool value)
 
 	if(obj_graf)
 		obj_graf->setModified(true);
+}
+
+void BaseObjectView::configureObjectShadow()
+{
+	if(obj_shadow)
+	{
+		obj_shadow->setVisible(!hide_shadow);
+		obj_shadow->setFlag(QGraphicsItem::ItemHasNoContents, hide_shadow);
+		obj_shadow->setFlag(QGraphicsItem::ItemSendsGeometryChanges, !hide_shadow);
+	}
 }
 
 void BaseObjectView::configureObjectSelection()
@@ -474,8 +495,8 @@ void BaseObjectView::__configureObject()
 	{
 		this->setPos(graph_obj->getPosition());
 		this->setToolTip(graph_obj->getName(true) +
-						 QString(" (") + graph_obj->getTypeName() +
-						 QString(") ") + QString("\nId: %1").arg(graph_obj->getObjectId()));
+						 " (" + graph_obj->getTypeName() +
+						 ") " + QString("\nId: %1").arg(graph_obj->getObjectId()));
 		this->configurePositionInfo(graph_obj->getPosition());
 		this->configureProtectedIcon();
 	}

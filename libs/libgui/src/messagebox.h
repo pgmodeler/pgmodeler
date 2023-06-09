@@ -34,12 +34,7 @@ class __libgui Messagebox: public QDialog, public Ui::Messagebox {
 		Q_OBJECT
 
 		//! \brief Indicates wether the message box was cancelled
-		bool cancelled,
-
-		/*! \brief Indicates if the message box was manually resized by the user when visible
-		 * This flag is use know if the message box will have its height doubled when
-		 * the user clicks the stack trace button */
-		has_custom_size;
+		bool cancelled;
 
 	protected:
 		void resizeEvent(QResizeEvent *);
@@ -59,6 +54,7 @@ class __libgui Messagebox: public QDialog, public Ui::Messagebox {
 			YesNoButtons,
 			OkCancelButtons,
 			OkButton,
+			CloseButton,
 			AllButtons
 		};
 

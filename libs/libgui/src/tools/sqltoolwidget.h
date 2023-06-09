@@ -40,14 +40,13 @@ class __libgui SQLToolWidget: public QWidget, public Ui::SQLToolWidget {
 	private:
 		Q_OBJECT
 
+		QList<QToolButton *> plugins_btns;
+
 		QToolButton *sql_exec_corner_btn;
 
 		NumberedTextEditor *sourcecode_txt;
 
 		SyntaxHighlighter *sourcecode_hl;
-
-		//! \brief Database import helper used to list objects from current connection
-		DatabaseImportHelper import_helper;
 
 		/*! \brief Controls the link between a database explorer instance and SQL execution widgets.
 		When a database explorer is closed all the SQL execution panes related to it are closed too.
@@ -55,6 +54,9 @@ class __libgui SQLToolWidget: public QWidget, public Ui::SQLToolWidget {
 		QMap<QWidget *, QWidgetList> sql_exec_wgts;
 
 		bool eventFilter(QObject *object, QEvent *event);
+
+	protected:
+		void setPluginsButtons(const QList<QToolButton *> &list);
 
 	public:
 		SQLToolWidget(QWidget * parent = nullptr);
@@ -76,6 +78,9 @@ class __libgui SQLToolWidget: public QWidget, public Ui::SQLToolWidget {
 	protected slots:
 		//! \brief Add a tab by browsing a database in the specified connection, loads the sql file and put its contents on a SQL execution
 		void addSQLExecutionTab(const QString &conn_id, const QString &database, const QString &sql_file);
+
+		//! \brief Force all SQL execution widget to reload the syntax highlight configuration
+		void reloadHighlightConfigs();
 
 	private slots:
 		//! \brief Opens a connection to the selected server

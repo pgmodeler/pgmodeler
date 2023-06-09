@@ -30,7 +30,7 @@ Sequence::Sequence()
 {
 	obj_type=ObjectType::Sequence;
 	cycle=false;
-	setDefaultValues(PgSqlType(QString("serial")));
+	setDefaultValues(PgSqlType("serial"));
 	owner_col=nullptr;
 
 	attributes[Attributes::Increment]="";
@@ -121,7 +121,7 @@ QString Sequence::formatValue(const QString &value)
 		}
 
 		//When the negative signal count is odd the number is negative
-		if(neg_cnt % 2 != 0) fmt_value+=QString("-");
+		if(neg_cnt % 2 != 0) fmt_value+="-";
 
 		fmt_value+=value.mid(i, count);
 	}
@@ -183,14 +183,14 @@ void Sequence::setDefaultValues(PgSqlType serial_type)
 {
 	QString min, max;
 
-	if(serial_type==QString("smallserial") ||
-		 serial_type.isEquivalentTo(QString("smallint")))
+	if(serial_type=="smallserial" ||
+		 serial_type.isEquivalentTo(PgSqlType("smallint")))
 	{
 		min=MaxSmallNegativeValue;
 		max=MaxSmallPositiveValue;
 	}
-	else if(serial_type==QString("bigserial") ||
-					serial_type.isEquivalentTo(QString("bigint")))
+	else if(serial_type=="bigserial" ||
+					serial_type.isEquivalentTo(PgSqlType("bigint")))
 	{
 		min=MaxBigNegativeValue;
 		max=MaxBigPositiveValue;
@@ -201,7 +201,7 @@ void Sequence::setDefaultValues(PgSqlType serial_type)
 		max=MaxPositiveValue;
 	}
 
-	setValues(min, max, QString("1"), QString("1"), QString("1"));
+	setValues(min, max, "1", "1", "1");
 }
 
 

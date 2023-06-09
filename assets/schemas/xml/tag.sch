@@ -6,7 +6,7 @@
 	$tb
 %end
 
-[<tag name=] "{name}"
+[<tag name=] "&{name}"
 
 %if {reduced-form} %then
 	/> $br

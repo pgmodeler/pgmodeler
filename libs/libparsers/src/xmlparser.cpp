@@ -21,15 +21,6 @@
 #include "utilsns.h"
 
 int XmlParser::parser_instances = 0;
-const QString XmlParser::CharAmp("&amp;");
-const QString XmlParser::CharLt("&lt;");
-const QString XmlParser::CharGt("&gt;");
-const QString XmlParser::CharQuot("&quot;");
-const QString XmlParser::CharApos("&apos;");
-const QString XmlParser::CdataStart("<![CDATA[");
-const QString XmlParser::CdataEnd("]]>");
-const QString XmlParser::CommentStart("<!--");
-const QString XmlParser::CommentEnd("-->");
 
 XmlParser::XmlParser()
 {
@@ -113,7 +104,7 @@ void XmlParser::loadXMLBuffer(const QString &xml_buf)
 			xml_buffer.replace(pos1,tam,"");
 		}
 		else
-			xml_decl=QString("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
+			xml_decl="<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
 
 		removeDTD();
 		readBuffer();
@@ -135,17 +126,15 @@ void XmlParser::setDTDFile(const QString &dtd_file, const QString &dtd_name)
 		throw Exception(ErrorCode::AsgEmptyDTDName,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 #ifndef Q_OS_WIN
-	fmt_dtd_file=QString("file://");
+	fmt_dtd_file="file://";
 #else
-	fmt_dtd_file=QString("file:///");
+	fmt_dtd_file="file:///";
 #endif
 
 	//Formats the dtd file path to URL style (converting to percentage format the non reserved chars)
 	fmt_dtd_file=QUrl::toPercentEncoding(QFileInfo(dtd_file).absoluteFilePath(), "/:");
-	dtd_decl=QString("<!DOCTYPE ") + dtd_name +
-			 QString(" SYSTEM ") +
-			 QString("\"") +
-			 fmt_dtd_file + QString("\">\n");
+	dtd_decl="<!DOCTYPE " + dtd_name +
+			" SYSTEM " + "\"" + fmt_dtd_file + "\">\n";
 }
 
 void XmlParser::readBuffer()
@@ -453,107 +442,4 @@ int XmlParser::getBufferLineCount()
 	}
 	else
 		return 0;
-}
-
-QString XmlParser::convertCharsToXMLEntities(QString buf)
-{
-	QTextStream ts(&buf);
-	QRegularExpression attr_regexp("([a-z]|\\-|[0-9])+( )*(=\\\")"),
-			attr_end_regexp("(\\\")((\\t)+|(\\n)|((\\/\\>)|(\\>)))"),
-			next_attr_regexp(QString("(( )|(\\t))+%1").arg(attr_regexp.pattern()));
-	int attr_start=0, attr_end=0, count=0, cdata_start = -1,
-			cdata_end = -1, start = -1, end = -1, pos = 0;
-	QString value, fmt_buf, lin;
-	QRegularExpressionMatch attr_match, next_attr_match, attr_end_match;
-
-	while(!ts.atEnd())
-	{
-		lin = ts.readLine();
-		lin += "\n";
-
-		// Ignoring the xml header
-		if(lin.indexOf("<?xml") >= 0)
-		{
-			fmt_buf += lin;
-			continue;
-		}
-
-		// Checking if the current line has at least one attribute in form (attr="value")
-		attr_match = attr_regexp.match(lin);
-		attr_start = attr_match.capturedStart();
-
-		if(attr_start >= 0)
-		{
-			/* Checking the presence of <![[CDATA ]]> tag in the current line.
-			 * In case of finding it we need to perform specific operation to avoid
-			 * replacing contents within that tag */
-			cdata_start = lin.indexOf(CdataStart);
-			cdata_end = lin.indexOf(CdataEnd);
-			start = std::min<int>(cdata_start, cdata_end);
-			end = std::max<int>(cdata_start, cdata_end);
-
-			do
-			{
-				// First we try to find the next attribute so we can delimite the current attribute's value
-				next_attr_match = next_attr_regexp.match(lin, attr_start + attr_match.capturedLength());
-				attr_end = next_attr_match.capturedStart();
-
-				// Found the next attribute we decrement in 1 char the current attribute's value in order to eliminate the unneeded "
-				if(attr_end >= 0)
-					attr_end--;
-				else
-				{
-					// If there's no next attribute we try to match the end of the attribute's value at the end of the line/tag
-					attr_end_match = attr_end_regexp.match(lin, attr_start + attr_match.capturedLength());
-					attr_end = attr_end_match.capturedStart();
-				}
-
-				if(attr_start >= 0 && attr_end >= 0 &&
-					 //CDATA absent in the current line
-					 ((start < 0 && end < 0) ||
-						//The attribute is at left of the CDATA tag
-						(start >= 0 && attr_start < start && attr_end < start) ||
-						//The attribute is at right of the CDATA tag
-						(end >= 0 && attr_start > end && attr_end > end)))
-				{
-					// Calculates the initial position where the value to be  retrived is (in that case rigth after attrib=")
-					pos = attr_start + attr_match.capturedLength();
-					count = attr_end - pos;
-					value = lin.mid(pos, count);
-				}
-				else
-					break;
-
-				/* If the extracted value has one of the expected special chars
-				 * in order to perform the replacemnt to xml entities */
-				if(value.contains(QRegularExpression("(&|\\<|\\>|\")")))
-				{
-					if(!value.contains(CharQuot) && !value.contains(CharLt) &&
-						 !value.contains(CharGt) && !value.contains(CharAmp) &&
-						 !value.contains(CharApos) && value.contains('&'))
-							value.replace('&', CharAmp);
-
-						value.replace('"', CharQuot);
-						value.replace('<', CharLt);
-						value.replace('>', CharGt);
-
-					//Puts in the original XML definition the modified string
-					lin.replace(pos, count, value);
-				}
-
-				// Moving the position to the next attribute in the line (if existent)
-				pos += value.length() + 1;
-				attr_match = attr_regexp.match(lin, pos);
-				attr_start = attr_match.capturedStart();
-
-				value.clear();
-			}
-			while(attr_start >=0 && attr_start < lin.size());
-		}
-
-		fmt_buf += lin;
-		lin.clear();
-	}
-
-	return fmt_buf;
 }
