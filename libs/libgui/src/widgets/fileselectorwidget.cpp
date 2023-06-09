@@ -35,8 +35,13 @@ FileSelectorWidget::FileSelectorWidget(QWidget *parent) : QWidget(parent)
 	warn_ico_lbl = new QLabel(this);
 	warn_ico_lbl->setVisible(false);
 
-	int sz = filename_edt->style()->pixelMetric(QStyle::PM_LineEditIconSize) +
-			(filename_edt->style()->pixelMetric(QStyle::PM_LineEditIconMargin)/2);
+	#if QT_VERSION >= QT_VERSION_CHECK(6, 3, 0)
+		int sz = filename_edt->style()->pixelMetric(QStyle::PM_LineEditIconSize) +
+				(filename_edt->style()->pixelMetric(QStyle::PM_LineEditIconMargin)/2);
+	#else
+		int sz = filename_edt->height() * 0.75;
+	#endif
+
 	warn_ico_lbl->setMinimumSize(sz, sz);
 	warn_ico_lbl->setMaximumSize(warn_ico_lbl->minimumSize());
 	warn_ico_lbl->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
@@ -71,7 +76,14 @@ bool FileSelectorWidget::eventFilter(QObject *obj, QEvent *evnt)
 void FileSelectorWidget::resizeEvent(QResizeEvent *)
 {
 	warn_ico_lbl->move(filename_edt->width() - warn_ico_lbl->width() - 5,
-										 filename_edt->style()->pixelMetric(QStyle::PM_LineEditIconMargin) + 1);
+
+	#if QT_VERSION >= QT_VERSION_CHECK(6, 3, 0)
+		filename_edt->style()->pixelMetric(QStyle::PM_LineEditIconMargin) + 1
+	#else
+		(filename_edt->height() - warn_ico_lbl->height()) / 2
+	#endif
+
+	);
 }
 
 void FileSelectorWidget::setAllowFilenameInput(bool allow_fl_input)
