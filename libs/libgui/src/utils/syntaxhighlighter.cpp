@@ -626,8 +626,14 @@ void SyntaxHighlighter::loadConfiguration(const QString &filename)
 							EnclosingCharsCfg cfg;
 							cfg.open_char = attribs[Attributes::OpenChar].front();
 							cfg.close_char = attribs[Attributes::CloseChar].front();
-							cfg.fg_color = QColor::fromString(attribs[Attributes::ForegroundColor]);
-							cfg.bg_color = QColor::fromString(attribs[Attributes::BackgroundColor]);
+
+							#if QT_VERSION >= QT_VERSION_CHECK(6, 4, 0)
+								cfg.fg_color = QColor::fromString(attribs[Attributes::ForegroundColor]);
+								cfg.bg_color = QColor::fromString(attribs[Attributes::BackgroundColor]);
+							#else
+								cfg.fg_color.setNamedColor(attribs[Attributes::ForegroundColor]);
+								cfg.bg_color.setNamedColor(attribs[Attributes::BackgroundColor]);
+							#endif
 
 							enclosing_chrs.push_back(cfg);
 						}
