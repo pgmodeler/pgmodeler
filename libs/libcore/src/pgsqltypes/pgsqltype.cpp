@@ -55,12 +55,15 @@ QStringList PgSqlType::type_names =
 	"gidx", "spheroid", "valid_detail",
 
 	//Range-types
-	//offsets 83 to 88
+	//offsets 83 to 93
 	"int4range", "int8range", "numrange",
 	"tsrange","tstzrange","daterange",
+	"int4multirange","int8multirange",
+	"nummultirange", "tsmultirange",
+	"tstzmultirange",
 
 	//Object Identification type (OID)
-	//offsets 89 to 103
+	//offsets 94 to 108
 	"oid", "regproc", "regprocedure",
 	"regoper", "regoperator", "regclass",
 	"regrole", "regnamespace", "regtype",
@@ -68,10 +71,11 @@ QStringList PgSqlType::type_names =
 	"tid", "oidvector",
 
 	//Pseudo-types
-	//offsets 104 to 118
+	//offsets 109 to 124
 	"\"any\"","anyarray","anyelement","anyenum",
 	"anynonarray", "anyrange", "cstring","internal","language_handler",
-	"record","trigger","void","opaque", "fdw_handler", "event_trigger"
+	"record","trigger","void","opaque", "fdw_handler", "event_trigger",
+	"anymultirange"
 };
 
 PgSqlType::PgSqlType()
@@ -810,7 +814,10 @@ bool PgSqlType::isRangeType()
 	return (!isUserType() &&
 					(curr_type=="int4range" || curr_type=="int8range" ||
 					 curr_type=="numrange" ||	curr_type=="tsrange" ||
-					 curr_type=="tstzrange" || curr_type=="daterange"));
+					 curr_type=="tstzrange" || curr_type=="daterange" ||
+					 curr_type=="int4multirange" || curr_type=="int8multirange" ||
+					 curr_type=="nummultirange" || curr_type=="tsmultirange" ||
+					 curr_type=="tstzmultirange"));
 }
 
 bool PgSqlType::isSerialType()

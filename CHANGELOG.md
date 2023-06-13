@@ -105,7 +105,7 @@ v1.0.4
 
 v1.0.3
 ------
-<em>Release date: March 24, 2023</em><br/>
+<em>Release date: April 24, 2023</em><br/>
 
 * [New] pgmodeler-cli now logs objects that fail to be recreated in fix process into a log file stored in pgModeler's temp directory.
 * [New] Added a progress bar to model fix form and a cancel button which allows aborting the fix operation without close that form.
