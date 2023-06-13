@@ -92,7 +92,7 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 																																					ObjectType::BaseRelationship, ObjectType::Relationship });
 
 	current_zoom = 1;
-	modified = panning_mode = wheel_move = false;
+	modified = panning_mode = wheel_move = scene_moving = false;
 	curr_show_grid = curr_show_delim = true;
 	new_obj_type = ObjectType::BaseObject;
 
@@ -599,7 +599,7 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	wheel_timer.setInterval(300);
 
 	connect(&wheel_timer, &QTimer::timeout, this, [this](){
-		finishPanningMove();
+		finishSceneMove();
 		wheel_timer.stop();
 		wheel_move = false;
 	});
@@ -691,28 +691,29 @@ bool ModelWidget::eventFilter(QObject *object, QEvent *event)
 		return true;
 	}
 
-	if(object == viewport->horizontalScrollBar() ||
-		 object == viewport->verticalScrollBar())
+	if(!panning_mode &&
+		 (object == viewport->horizontalScrollBar() ||
+			object == viewport->verticalScrollBar()))
 	{
 		if(event->type() == QEvent::MouseButtonPress)
 		{
-			startPanningMove();
+			startSceneMove();
 		}
 		else if(event->type() == QEvent::MouseButtonRelease)
 		{
-			finishPanningMove();
+			finishSceneMove();
 		}
 		//Filters the Wheel event if it is raised by the viewport scrollbars
 		else if(event->type() == QEvent::Wheel)
 		{
 			QWheelEvent *w_event=dynamic_cast<QWheelEvent *>(event);
-
 			wheel_timer.start();
 
 			if(!wheel_move)
 			{
-				startPanningMove();
+				startSceneMove();
 				wheel_move = true;
+				panning_mode = false;
 			}
 
 			if(w_event->modifiers() != Qt::ControlModifier)
@@ -762,6 +763,7 @@ bool ModelWidget::eventFilter(QObject *object, QEvent *event)
 			if(!panning_mode)
 			{
 				panning_mode = true;
+				wheel_move = false;
 
 				//Forcing the closed hand cursor because the default behavior of panning mode in QGraphicsView is to set an open hand cursor
 				qApp->setOverrideCursor(Qt::ClosedHandCursor);
@@ -783,7 +785,7 @@ bool ModelWidget::eventFilter(QObject *object, QEvent *event)
 		//Activating the panning mode
 		else if(m_event->button() == Qt::MiddleButton && event->type() == QEvent::GraphicsSceneMousePress)
 		{
-			startPanningMove();
+			startSceneMove();
 			viewport->setDragMode(QGraphicsView::ScrollHandDrag);
 			qApp->restoreOverrideCursor();
 			qApp->setOverrideCursor(Qt::OpenHandCursor);
@@ -794,7 +796,7 @@ bool ModelWidget::eventFilter(QObject *object, QEvent *event)
 		{
 			panning_mode = false;
 			viewport->setDragMode(QGraphicsView::NoDrag);
-			finishPanningMove();
+			finishSceneMove();
 
 			qApp->restoreOverrideCursor();
 			qApp->restoreOverrideCursor();
@@ -1176,8 +1178,12 @@ void ModelWidget::emitSceneInteracted()
 		emit s_sceneInteracted(static_cast<int>(selected_objects.size()), scene->itemsBoundingRect(true, true));
 }
 
-void ModelWidget::startPanningMove()
+void ModelWidget::startSceneMove()
 {
+	if(scene_moving)
+		return;
+
+	scene_moving = true;
 	curr_show_grid = ObjectsScene::isShowGrid();
 	curr_show_delim = ObjectsScene::isShowPageDelimiters();
 	ObjectsScene::setShowGrid(false);
@@ -1185,8 +1191,9 @@ void ModelWidget::startPanningMove()
 	scene->setShowSceneLimits(false);
 }
 
-void ModelWidget::finishPanningMove()
+void ModelWidget::finishSceneMove()
 {
+	scene_moving = false;
 	ObjectsScene::setShowGrid(curr_show_grid);
 	ObjectsScene::setShowPageDelimiters(curr_show_delim);
 	scene->setShowSceneLimits(true);

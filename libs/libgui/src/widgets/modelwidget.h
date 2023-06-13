@@ -79,7 +79,10 @@ class __libgui ModelWidget: public QWidget {
 		curr_show_delim,
 
 		//! \brief Indicates if the canvas panning move is being made via mouse wheel
-		wheel_move;
+		wheel_move,
+
+		//! \brief Indicates if the scene is being moved by either panning move or via mouse wheel
+		scene_moving;
 
 		/*! \brief Indicates if the cut operation is currently activated. This flag modifies
 		the way the methods copyObjects() and removeObject() works. */
@@ -597,11 +600,11 @@ class __libgui ModelWidget: public QWidget {
 
 		void showMagnifierArea(bool show);
 
-		//! \brief Prepares the viewport to a panning move by hiding grid/delimiters
-		void startPanningMove();
+		//! \brief Prepares the viewport to a move by hiding grid/delimiters
+		void startSceneMove();
 
-		//! \brief Restores the previous grid/delimiter visibility state after finishing a panning move
-		void finishPanningMove();
+		//! \brief Restores the previous grid/delimiter visibility state after finishing a scene move
+		void finishSceneMove();
 
 	public slots:
 		void loadModel(const QString &filename);
