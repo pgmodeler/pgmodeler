@@ -151,6 +151,8 @@ void PermissionWidget::setAttributes(DatabaseModel *model, BaseObject *parent_ob
 			privileges_tbw->setRowHidden(priv, !Permission::acceptsPermission(object->getObjectType(), priv));
 		}
 
+		privileges_tbw->resizeColumnsToContents();
+
 		listPermissions();
 		permissions_tab->blockSignals(true);
 		permissions_tab->clearSelection();
