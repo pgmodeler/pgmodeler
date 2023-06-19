@@ -65,6 +65,9 @@ class __libgui AppearanceConfigWidget: public BaseConfigWidget, public Ui::Appea
 		//! \brief Colors used for ObjectTableWidget items when in light theme
 		light_tab_item_colors;
 
+		//! \brief Holds the current user interface theme id (light/dark)
+		static QString UiThemeId;
+
 		//! \brief Auxiliary class that stores the formating data of each element
 		class AppearanceConfigItem {
 			public:
@@ -129,7 +132,7 @@ class __libgui AppearanceConfigWidget: public BaseConfigWidget, public Ui::Appea
 		void applyUiStyleSheet();
 
 		//! \brief Returns the theme id (light/dark) depending on the selection in ui_theme_cmb
-		QString getUiThemeId();
+		QString __getUiThemeId();
 
 	public:
 		AppearanceConfigWidget(QWidget * parent = nullptr);
@@ -143,10 +146,9 @@ class __libgui AppearanceConfigWidget: public BaseConfigWidget, public Ui::Appea
 		//! \brief Applies the selected ui theme to the whole application
 		void applyUiTheme();
 
-		static std::map<QString, attribs_map> getConfigurationParams();
+		static QString getUiThemeId();
 
-		//! \brief Changes the tool buttons drop shadows color and offset to match the current theme.
-		void updateDropShadows();
+		static std::map<QString, attribs_map> getConfigurationParams();
 
 	private slots:
 		void enableConfigElement();

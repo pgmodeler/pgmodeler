@@ -21,7 +21,6 @@
 #include "tools/bugreportform.h"
 #include "tools/metadatahandlingform.h"
 #include "tools/sqlexecutionwidget.h"
-#include "utilsns.h"
 
 bool MainWindow::confirm_validation=true;
 int MainWindow::ToolsActionsCount=0;
@@ -125,8 +124,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	plugins_conf_wgt->postInitPlugins();
 
 	// Updating drop shadows settings to match the current UI theme
-	AppearanceConfigWidget *appearance_wgt = dynamic_cast<AppearanceConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::AppearanceConfWgt));
-	appearance_wgt->updateDropShadows();
+	GuiUtilsNs::updateDropShadows(qApp->allWidgets());
 }
 
 MainWindow::~MainWindow()

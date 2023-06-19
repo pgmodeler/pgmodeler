@@ -20,10 +20,13 @@
 #include "widgets/modelwidget.h"
 #include "widgets/objectstablewidget.h"
 #include "customuistyle.h"
+#include "guiutilsns.h"
 
 std::map<QString, attribs_map> AppearanceConfigWidget::config_params;
 
 QPalette AppearanceConfigWidget::system_pal;
+
+QString AppearanceConfigWidget::UiThemeId;
 
 std::map<QPalette::ColorRole, QStringList> AppearanceConfigWidget::system_ui_colors = {
 	{ QPalette::WindowText, {} },
@@ -347,7 +350,7 @@ std::map<QString, attribs_map> AppearanceConfigWidget::getConfigurationParams()
 	return config_params;
 }
 
-void AppearanceConfigWidget::updateDropShadows()
+/* void AppearanceConfigWidget::updateDropShadows(QWidgetList wgt_list)
 {
 	QColor color(0, 0, 0, 80);
 	int radius = 6, x = 1, y = 1;
@@ -371,7 +374,7 @@ void AppearanceConfigWidget::updateDropShadows()
 			shadow->setBlurRadius(radius);
 		}
 	}
-}
+} */
 
 void AppearanceConfigWidget::loadExampleModel()
 {
@@ -684,7 +687,7 @@ void AppearanceConfigWidget::saveConfiguration()
 		config_params[Attributes::Objects] = attribs;
 		BaseConfigWidget::saveConfiguration(GlobalAttributes::AppearanceConf, config_params);
 
-		QString hl_theme = getUiThemeId();
+		QString hl_theme = __getUiThemeId();
 
 		/* Copying the syntax highilighting files from the selected theme folder to the user's storage
 		 * in order to reflect the new syntax highlighting setting in the whole application */
@@ -909,10 +912,12 @@ void AppearanceConfigWidget::applyUiTheme()
 		{ { Attributes::Light }, { &light_tab_item_colors } }
 	};
 
-	QString ui_theme = getUiThemeId();
+	QString ui_theme = __getUiThemeId();
 	std::map<QPalette::ColorRole, QStringList> *color_map = color_maps[ui_theme];
 	QStringList *item_colors = item_color_lists[ui_theme];
 	QPalette pal = system_pal;
+
+	UiThemeId = ui_theme;
 
 	for(unsigned idx = 0; idx < static_cast<unsigned>(item_colors->size()); idx++)
 	{
@@ -941,12 +946,17 @@ void AppearanceConfigWidget::applyUiTheme()
 	setConfigurationChanged(true);
 }
 
+QString AppearanceConfigWidget::getUiThemeId()
+{
+	return UiThemeId;
+}
+
 void AppearanceConfigWidget::previewUiSettings()
 {
 	qApp->setOverrideCursor(Qt::WaitCursor);
 	applyUiTheme();
 	applyDesignCodeTheme();
-	updateDropShadows();
+	GuiUtilsNs::updateDropShadows(qApp->allWidgets());
 	qApp->restoreOverrideCursor();
 }
 
@@ -954,7 +964,7 @@ void AppearanceConfigWidget::applySyntaxHighlightTheme()
 {
 	QString filename = GlobalAttributes::getTmplConfigurationFilePath(GlobalAttributes::ThemesDir +
 																																		GlobalAttributes::DirSeparator +
-																																		getUiThemeId(),
+																																				__getUiThemeId(),
 																																		GlobalAttributes::SQLHighlightConf +
 																																		GlobalAttributes::ConfigurationExt);
 
@@ -974,7 +984,7 @@ void AppearanceConfigWidget::applyDesignCodeTheme()
 {
 	QString filename = GlobalAttributes::getTmplConfigurationFilePath(GlobalAttributes::ThemesDir +
 																																		GlobalAttributes::DirSeparator +
-																																		getUiThemeId(),
+																																				__getUiThemeId(),
 																																		GlobalAttributes::AppearanceConf +
 																																		GlobalAttributes::ConfigurationExt);
 
@@ -993,7 +1003,7 @@ void AppearanceConfigWidget::applyDesignCodeTheme()
 	}
 }
 
-QString AppearanceConfigWidget::getUiThemeId()
+QString AppearanceConfigWidget::__getUiThemeId()
 {
 	if(ui_theme_cmb->currentIndex() > 0)
 		return ui_theme_cmb->currentData(Qt::UserRole).toString();
@@ -1030,7 +1040,7 @@ void AppearanceConfigWidget::applyUiStyleSheet()
 				ico_style_conf = GlobalAttributes::getTmplConfigurationFilePath("",
 																																				"icons-" + icon_size +
 																																				GlobalAttributes::ConfigurationExt);
-		QString ui_theme = getUiThemeId(), extra_style_conf;
+		QString ui_theme = __getUiThemeId(), extra_style_conf;
 
 		extra_style_conf = GlobalAttributes::getTmplConfigurationFilePath(GlobalAttributes::ThemesDir +
 																																			GlobalAttributes::DirSeparator +

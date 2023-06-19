@@ -94,6 +94,9 @@ namespace GuiUtilsNs {
 	//! \brief Creates drop shadown on a widget
 	extern __libgui void createDropShadow(QWidget *wgt, int x_offset = 2, int y_offset = 2, int radius = 5, const QColor &color = QColor(0, 0, 0, 100));
 
+	//! \brief Changes the tool buttons drop shadows color and offset to match the current theme.
+	extern __libgui void updateDropShadows(QWidgetList widgets);
+
 	/*! \brief Handles the currently provided file dialog state to file.
 	 * If save_state is true, then the dialog's state is saved to file
 	 * otherwise is restored */

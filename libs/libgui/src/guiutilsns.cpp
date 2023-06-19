@@ -27,6 +27,7 @@
 #include "utilsns.h"
 #include "objectstablewidget.h"
 #include "generalconfigwidget.h"
+#include "appearanceconfigwidget.h"
 
 namespace GuiUtilsNs {
 
@@ -716,6 +717,32 @@ namespace GuiUtilsNs {
 		catch(Exception &e)
 		{
 			throw Exception(e.getErrorMessage(), __PRETTY_FUNCTION__, __FILE__, __LINE__, &e);
+		}
+	}
+
+	void updateDropShadows(QWidgetList widgets)
+	{
+		QColor color(0, 0, 0, 80);
+		int radius = 6, x = 1, y = 1;
+		QGraphicsDropShadowEffect *shadow = nullptr;
+		QString class_name = "QToolButton";
+
+		if(AppearanceConfigWidget::getUiThemeId() == Attributes::Light)
+		{
+			radius = 1;
+			color.setRgb(225, 225, 225);
+			color.setAlpha(255);
+		}
+
+		for(auto &wgt : widgets)
+		{
+			if(wgt->metaObject()->className() == class_name && wgt->graphicsEffect())
+			{
+				shadow = qobject_cast<QGraphicsDropShadowEffect *>(wgt->graphicsEffect());
+				shadow->setColor(color);
+				shadow->setOffset(x, y);
+				shadow->setBlurRadius(radius);
+			}
 		}
 	}
 }

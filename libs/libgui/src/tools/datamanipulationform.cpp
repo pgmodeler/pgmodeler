@@ -21,8 +21,6 @@
 #include "guiutilsns.h"
 #include "utilsns.h"
 #include "utils/plaintextitemdelegate.h"
-#include "baseform.h"
-#include "widgets/columndatawidget.h"
 #include "widgets/objectstablewidget.h"
 #include "databaseexplorerwidget.h"
 #include "settings/generalconfigwidget.h"
@@ -265,6 +263,8 @@ DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f):
 	paste_menu.installEventFilter(this);
 	edit_menu.installEventFilter(this);
 	export_menu.installEventFilter(this);
+
+	GuiUtilsNs::updateDropShadows(bnts_parent_wgt->findChildren<QWidget *>());
 }
 
 void DataManipulationForm::setAttributes(Connection conn, const QString curr_schema, const QString curr_table, const QString &filter)

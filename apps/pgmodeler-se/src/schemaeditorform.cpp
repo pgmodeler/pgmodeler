@@ -53,7 +53,7 @@ SchemaEditorForm::SchemaEditorForm(QWidget *parent) : QWidget(parent)
 
 	AppearanceConfigWidget appearance_conf_wgt;
 	appearance_conf_wgt.loadConfiguration();
-	appearance_conf_wgt.updateDropShadows();
+	GuiUtilsNs::updateDropShadows(qApp->allWidgets());
 
 	GeneralConfigWidget general_conf_wgt;
 	general_conf_wgt.loadConfiguration();
