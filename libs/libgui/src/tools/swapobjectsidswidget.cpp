@@ -8,44 +8,29 @@ SwapObjectsIdsWidget::SwapObjectsIdsWidget(QWidget *parent, Qt::WindowFlags f) :
 {
 	try
 	{
-		QGridLayout *swap_objs_grid=new QGridLayout(this);
-		std::vector<ObjectType> types=BaseObject::getObjectTypes(true, {ObjectType::Permission,
-																															 ObjectType::Textbox,
-																															 ObjectType::Column,
-																															 ObjectType::Constraint });
+		std::vector<ObjectType> types=BaseObject::getObjectTypes(true, { ObjectType::Permission,
+																																		 ObjectType::Textbox,
+																																		 ObjectType::Column,
+																																		 ObjectType::Constraint });
 		setupUi(this);
-
-		//GuiUtilsNs::configureWidgetFont(message_lbl, GuiUtilsNs::MediumFontFactor);
 
 		selector_idx = 0;
 		src_object_sel=nullptr;
 		dst_object_sel=nullptr;
 
-		src_object_sel=new ObjectSelectorWidget(types, this);
+		filter_lt->setAlignment(filter_btn, Qt::AlignLeft);
+
+		QHBoxLayout *hbox = new QHBoxLayout(src_sel_parent);
+		hbox->setContentsMargins(0,0,0,0);
+		src_object_sel=new ObjectSelectorWidget(types, src_sel_parent);
 		src_object_sel->enableObjectCreation(false);
+		hbox->addWidget(src_object_sel);
 
-		dst_object_sel=new ObjectSelectorWidget(types, this);
+		hbox = new QHBoxLayout(dst_sel_parent);
+		hbox->setContentsMargins(0,0,0,0);
+		dst_object_sel=new ObjectSelectorWidget(types, dst_sel_parent);
 		dst_object_sel->enableObjectCreation(false);
-
-		swap_objs_grid->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
-		swap_objs_grid->setSpacing(GuiUtilsNs::LtSpacing);
-
-		swap_objs_grid->addWidget(create_lbl, 0, 0);
-		swap_objs_grid->addWidget(src_object_sel, 0, 1);
-		swap_objs_grid->addWidget(swap_values_tb, 0, 2, 2, 1);
-		swap_objs_grid->addWidget(src_id_lbl, 0, 3);
-		swap_objs_grid->addWidget(src_ico_lbl, 0, 4);
-
-		swap_objs_grid->addWidget(before_lbl, 1, 0);
-		swap_objs_grid->addWidget(dst_object_sel, 1, 1);
-		swap_objs_grid->addWidget(dst_id_lbl, 1, 3);
-		swap_objs_grid->addWidget(dst_ico_lbl, 1, 4);
-
-		swap_objs_grid->addWidget(filter_btn, 2, 0, 1, 1);
-		swap_objs_grid->addWidget(filter_wgt, 2, 1, 1, 4);
-
-		swap_objs_grid->addWidget(objects_tbw, 3, 0, 1, 5);
-		swap_objs_grid->addWidget(alert_frm, 4, 0, 1, 5);
+		hbox->addWidget(dst_object_sel);
 
 		setModel(nullptr);
 		filter_wgt->setVisible(false);
