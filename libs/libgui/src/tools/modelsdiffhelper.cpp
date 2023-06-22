@@ -21,6 +21,7 @@
 #include "utilsns.h"
 #include <QDate>
 #include "connection.h"
+#include "pgsqlversions.h"
 
 const QStringList ModelsDiffHelper::TableObjsIgnoredAttribs = { Attributes::Alias };
 

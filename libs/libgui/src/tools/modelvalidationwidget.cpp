@@ -19,6 +19,7 @@
 #include "modelvalidationwidget.h"
 #include "guiutilsns.h"
 #include "connectionsconfigwidget.h"
+#include "pgsqlversions.h"
 
 ModelValidationWidget::ModelValidationWidget(QWidget *parent): QWidget(parent)
 {

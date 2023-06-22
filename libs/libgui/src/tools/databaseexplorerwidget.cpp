@@ -25,6 +25,7 @@
 #include "guiutilsns.h"
 #include "settings/generalconfigwidget.h"
 #include "tools/datamanipulationform.h"
+#include "pgsqlversions.h"
 
 const QString DatabaseExplorerWidget::DepNotDefined;
 const QString DatabaseExplorerWidget::DepNotFound=QT_TR_NOOP("(not found, OID: %1)");

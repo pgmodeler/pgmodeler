@@ -33,6 +33,8 @@
 #include <QStringList>
 #include <QTextStream>
 #include <type_traits>
+#include "enumtype.h"
+#include "exception.h"
 
 enum class ObjectType: unsigned {
 	Column,

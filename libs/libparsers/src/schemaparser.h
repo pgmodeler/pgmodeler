@@ -27,13 +27,11 @@
 
 #include "parsersglobal.h"
 #include "globalattributes.h"
-#include "exception.h"
 #include <map>
 #include <vector>
 #include <QDir>
 #include <QTextStream>
 #include "attribsmap.h"
-#include "pgsqlversions.h"
 #include <QRegularExpression>
 
 class __libparsers SchemaParser {

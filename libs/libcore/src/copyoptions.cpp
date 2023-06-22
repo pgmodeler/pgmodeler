@@ -18,6 +18,7 @@
 
 #include "copyoptions.h"
 #include "exception.h"
+#include "enumtype.h"
 
 CopyOptions::CopyOptions()
 {

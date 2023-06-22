@@ -28,11 +28,9 @@
 
 #include "utilsglobal.h"
 #include <QObject>
-#include "doublenan.h"
 #include <exception>
 #include <signal.h>
 #include <vector>
-#include "enumtype.h"
 
 //! \brief This enum defines the global error codes used throughout the application
 enum class ErrorCode: unsigned {

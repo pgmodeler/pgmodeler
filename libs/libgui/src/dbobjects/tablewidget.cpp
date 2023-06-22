@@ -29,6 +29,7 @@
 #include "coreutilsns.h"
 #include "relationshipview.h"
 #include "guiutilsns.h"
+#include "pgsqlversions.h"
 
 TableWidget::TableWidget(QWidget *parent, ObjectType tab_type): BaseObjectWidget(parent, tab_type)
 {

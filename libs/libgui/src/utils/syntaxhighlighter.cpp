@@ -20,6 +20,8 @@
 #include "widgets/numberedtexteditor.h"
 #include "textblockinfo.h"
 #include "attributes.h"
+#include "exception.h"
+#include "globalattributes.h"
 
 QFont SyntaxHighlighter::default_font = QFont("Source Code Pro", 12);
 const QString SyntaxHighlighter::UnformattedGroup("__unformatted__");

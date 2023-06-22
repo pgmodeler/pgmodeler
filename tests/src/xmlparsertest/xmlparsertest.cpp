@@ -17,8 +17,8 @@
 */
 
 #include <QtTest/QtTest>
-#include "xmlparser.h"
 #include "utilsns.h"
+#include "exception.h"
 
 class XmlParserTest: public QObject {
 	private:

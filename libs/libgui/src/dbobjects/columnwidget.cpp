@@ -21,6 +21,7 @@
 #include "baseform.h"
 #include "settings/generalconfigwidget.h"
 #include "coreutilsns.h"
+#include "pgsqlversions.h"
 
 ColumnWidget::ColumnWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Column)
 {

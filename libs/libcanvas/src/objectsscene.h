@@ -30,6 +30,7 @@
 #include "layeritem.h"
 #include "baseobjectview.h"
 #include "basetableview.h"
+#include "doublenan.h"
 
 class __libcanvas ObjectsScene: public QGraphicsScene {
 	public:

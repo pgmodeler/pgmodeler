@@ -22,6 +22,7 @@
 #include <QtDebug>
 #include <random>
 #include "utilsns.h"
+#include "doublenan.h"
 
 unsigned DatabaseModel::dbmodel_id=2000;
 

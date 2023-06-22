@@ -17,8 +17,10 @@
 */
 
 #include "xmlparser.h"
-#include <QUrl>
 #include "utilsns.h"
+#include "exception.h"
+#include <QUrl>
+#include <QFileInfo>
 
 int XmlParser::parser_instances = 0;
 

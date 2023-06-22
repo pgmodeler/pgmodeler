@@ -19,6 +19,7 @@
 #include "sourcecodewidget.h"
 #include "taskprogresswidget.h"
 #include "guiutilsns.h"
+#include "pgsqlversions.h"
 
 SourceCodeWidget::SourceCodeWidget(QWidget *parent): BaseObjectWidget(parent)
 {

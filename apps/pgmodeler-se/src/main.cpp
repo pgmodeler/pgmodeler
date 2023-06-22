@@ -20,6 +20,8 @@
 #include <QTranslator>
 #include "schemaeditorform.h"
 #include "pgmodelerapp.h"
+#include "exception.h"
+#include "enumtype.h"
 
 int main(int argc, char **argv)
 {

@@ -16,6 +16,7 @@
 # Also, you can get the complete GNU General Public License at <http://www.gnu.org/licenses/>
 */
 #include "exception.h"
+#include "enumtype.h"
 #include <QApplication>
 
 QString Exception::messages[Exception::ErrorCount][2]={

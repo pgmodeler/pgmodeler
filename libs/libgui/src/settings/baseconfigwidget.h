@@ -29,6 +29,7 @@
 
 #include "guiglobal.h"
 #include "xmlparser.h"
+#include "schemaparser.h"
 #include <algorithm>
 #include <QWidget>
 

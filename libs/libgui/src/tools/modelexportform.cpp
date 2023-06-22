@@ -19,6 +19,7 @@
 #include "modelexportform.h"
 #include "guiutilsns.h"
 #include "connectionsconfigwidget.h"
+#include "pgsqlversions.h"
 
 bool ModelExportForm::low_verbosity = false;
 
