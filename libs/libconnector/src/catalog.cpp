@@ -17,6 +17,7 @@
 */
 #include "catalog.h"
 #include "utilsns.h"
+#include "tableobject.h"
 
 const QString Catalog::QueryList("list");
 const QString Catalog::QueryAttribs("attribs");

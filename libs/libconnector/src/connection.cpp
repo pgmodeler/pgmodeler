@@ -21,6 +21,7 @@
 #include <iostream>
 #include "globalattributes.h"
 #include "pgsqlversions.h"
+#include "exception.h"
 
 const QString Connection::SslDisable("disable");
 const QString Connection::SslAllow("allow");
