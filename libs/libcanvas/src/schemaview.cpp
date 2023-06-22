@@ -18,6 +18,7 @@
 
 #include "schemaview.h"
 #include "objectsscene.h"
+#include "databasemodel.h"
 
 SchemaView::SchemaView(Schema *schema) : BaseObjectView(schema)
 {

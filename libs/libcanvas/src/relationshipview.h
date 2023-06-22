@@ -26,8 +26,8 @@
 #define RELATIONSHIP_VIEW_H
 
 #include "textboxview.h"
-#include "tableview.h"
-#include "relationship.h"
+#include "baserelationship.h"
+#include "basetableview.h"
 #include "beziercurveitem.h"
 
 class __libcanvas RelationshipView: public BaseObjectView {

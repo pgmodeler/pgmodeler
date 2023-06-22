@@ -27,12 +27,9 @@
 
 #include <QtWidgets>
 #include <QPrinter>
-#include "relationshipview.h"
-#include "graphicalview.h"
-#include "tableview.h"
-#include "schemaview.h"
-#include "styledtextboxview.h"
 #include "layeritem.h"
+#include "baseobjectview.h"
+#include "basetableview.h"
 
 class __libcanvas ObjectsScene: public QGraphicsScene {
 	public:

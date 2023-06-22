@@ -19,6 +19,11 @@
 #include "pgmodelercliapp.h"
 #include "utilsns.h"
 #include "settings/appearanceconfigwidget.h"
+#include "tableview.h"
+#include "graphicalview.h"
+#include "tableview.h"
+#include "schemaview.h"
+#include "styledtextboxview.h"
 
 QTextStream PgModelerCliApp::out(stdout);
 

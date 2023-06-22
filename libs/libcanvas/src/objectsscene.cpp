@@ -17,6 +17,12 @@
 */
 
 #include "objectsscene.h"
+#include "relationshipview.h"
+#include "styledtextboxview.h"
+#include "graphicalview.h"
+#include "tableview.h"
+#include "schemaview.h"
+#include "databasemodel.h"
 
 ObjectsScene::GridPattern ObjectsScene::grid_pattern = ObjectsScene::SquarePattern;
 

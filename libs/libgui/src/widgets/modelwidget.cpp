@@ -64,6 +64,10 @@
 #include "dbobjects/transformwidget.h"
 #include "dbobjects/procedurewidget.h"
 #include "coreutilsns.h"
+#include "graphicalview.h"
+#include "relationshipview.h"
+#include "schemaview.h"
+#include "styledtextboxview.h"
 
 std::vector<BaseObject *> ModelWidget::copied_objects;
 std::vector<BaseObject *> ModelWidget::cut_objects;

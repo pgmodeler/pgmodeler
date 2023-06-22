@@ -27,6 +27,7 @@
 #include "policywidget.h"
 #include "settings/generalconfigwidget.h"
 #include "coreutilsns.h"
+#include "relationshipview.h"
 
 TableWidget::TableWidget(QWidget *parent, ObjectType tab_type): BaseObjectWidget(parent, tab_type)
 {

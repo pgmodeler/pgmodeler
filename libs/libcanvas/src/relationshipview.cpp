@@ -17,6 +17,8 @@
 */
 
 #include "relationshipview.h"
+#include "relationship.h"
+#include "tableview.h"
 
 bool RelationshipView::hide_name_label=false;
 bool RelationshipView::use_curved_lines=true;

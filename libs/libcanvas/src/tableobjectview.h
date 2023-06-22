@@ -25,9 +25,10 @@
 #ifndef TABLE_OBJECT_VIEW_H
 #define TABLE_OBJECT_VIEW_H
 
-#include "view.h"
-#include "table.h"
 #include "baseobjectview.h"
+#include "reference.h"
+#include "pgsqltypes/constrainttype.h"
+#include "pgsqltypes/pgsqltype.h"
 
 class __libcanvas TableObjectView: public BaseObjectView {
 	private:

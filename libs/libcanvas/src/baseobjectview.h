@@ -27,8 +27,6 @@
 
 #include <QtWidgets>
 #include "basegraphicobject.h"
-#include "baserelationship.h"
-#include "xmlparser.h"
 #include "roundedrectitem.h"
 #include "textpolygonitem.h"
 

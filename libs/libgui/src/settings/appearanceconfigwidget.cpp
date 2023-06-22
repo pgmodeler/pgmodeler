@@ -21,6 +21,10 @@
 #include "widgets/objectstablewidget.h"
 #include "customuistyle.h"
 #include "guiutilsns.h"
+#include "relationshipview.h"
+#include "tableview.h"
+#include "styledtextboxview.h"
+#include "graphicalview.h"
 
 std::map<QString, attribs_map> AppearanceConfigWidget::config_params;
 
