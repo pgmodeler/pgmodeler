@@ -27,7 +27,6 @@
 
 #include <QWidget>
 #include "ui_aboutsewidget.h"
-#include "globalattributes.h"
 
 class AboutSEWidget: public QWidget, public Ui::AboutSEWidget {
 	private:

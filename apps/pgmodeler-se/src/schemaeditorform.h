@@ -31,7 +31,6 @@
 #include "widgets/numberedtexteditor.h"
 #include "utils/syntaxhighlighter.h"
 #include "widgets/fileselectorwidget.h"
-#include "widgets/findreplacewidget.h"
 
 class SchemaEditorForm: public QWidget, public Ui::SchemaEditorForm {
 	private:

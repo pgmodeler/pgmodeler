@@ -29,9 +29,6 @@
 #include <QObject>
 #include <QTextStream>
 #include <QCoreApplication>
-#include "exception.h"
-#include "globalattributes.h"
-#include "widgets/modelwidget.h"
 #include "tools/modelexporthelper.h"
 #include "settings/generalconfigwidget.h"
 #include "settings/connectionsconfigwidget.h"
