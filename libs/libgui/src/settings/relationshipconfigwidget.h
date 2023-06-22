@@ -27,8 +27,6 @@
 
 #include "ui_relationshipconfigwidget.h"
 #include "baseconfigwidget.h"
-#include "utils/syntaxhighlighter.h"
-#include "relationshipview.h"
 
 class __libgui RelationshipConfigWidget:  public BaseConfigWidget, public Ui::RelationshipConfigWidget {
 	private:

@@ -27,7 +27,6 @@
 
 #include "basefunctionwidget.h"
 #include "ui_functionwidget.h"
-#include "pgsqltypewidget.h"
 
 class __libgui FunctionWidget: public BaseFunctionWidget, public Ui::FunctionWidget  {
 	private:

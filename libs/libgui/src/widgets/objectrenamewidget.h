@@ -29,7 +29,7 @@
 #include "ui_objectrenamewidget.h"
 #include "databasemodel.h"
 #include "operationlist.h"
-#include "messagebox.h"
+#include "guiglobal.h"
 
 class __libgui ObjectRenameWidget: public QDialog, public Ui::ObjectRenameWidget {
 	private:

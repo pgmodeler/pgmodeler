@@ -18,6 +18,7 @@
 
 #include "generalconfigwidget.h"
 #include "objectsscene.h"
+#include "relationshipview.h"
 #include "widgets/modelwidget.h"
 #include "operationlist.h"
 #include "mainwindow.h"

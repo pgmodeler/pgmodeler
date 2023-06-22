@@ -28,7 +28,6 @@
 #include <QtWidgets>
 #include "ui_modelobjectswidget.h"
 #include "modelwidget.h"
-#include "messagebox.h"
 #include "objecttypeslistwidget.h"
 
 class __libgui ModelObjectsWidget: public QWidget, public Ui::ModelObjectsWidget {

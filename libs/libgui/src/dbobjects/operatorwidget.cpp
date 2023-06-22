@@ -17,6 +17,7 @@
 */
 
 #include "operatorwidget.h"
+#include "guiutilsns.h"
 
 OperatorWidget::OperatorWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Operator)
 {

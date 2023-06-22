@@ -28,9 +28,7 @@
 #define BASE_CONF_WIDGET_H
 
 #include "guiglobal.h"
-#include "exception.h"
 #include "xmlparser.h"
-#include "attributes.h"
 #include <algorithm>
 #include <QWidget>
 

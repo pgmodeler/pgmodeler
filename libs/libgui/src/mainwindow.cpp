@@ -21,6 +21,10 @@
 #include "tools/bugreportform.h"
 #include "tools/metadatahandlingform.h"
 #include "tools/sqlexecutionwidget.h"
+#include "tools/modelfixform.h"
+#include "tools/modelexportform.h"
+#include "tools/databaseimportform.h"
+#include "tools/modeldatabasediffform.h"
 
 bool MainWindow::confirm_validation=true;
 int MainWindow::ToolsActionsCount=0;

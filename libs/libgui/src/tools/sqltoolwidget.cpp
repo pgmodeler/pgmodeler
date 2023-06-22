@@ -21,6 +21,7 @@
 #include "guiutilsns.h"
 #include "utils/deletableitemdelegate.h"
 #include "utilsns.h"
+#include "tools/databaseimportform.h"
 
 SQLToolWidget::SQLToolWidget(QWidget * parent) : QWidget(parent)
 {

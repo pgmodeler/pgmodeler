@@ -27,7 +27,6 @@
 
 #include <QtWidgets>
 #include "ui_baseform.h"
-#include "exception.h"
 #include "messagebox.h"
 #include "dbobjects/baseobjectwidget.h"
 

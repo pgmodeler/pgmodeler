@@ -17,6 +17,7 @@
 */
 
 #include "foreigndatawrapperwidget.h"
+#include "guiutilsns.h"
 
 ForeignDataWrapperWidget::ForeignDataWrapperWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::ForeignDataWrapper)
 {

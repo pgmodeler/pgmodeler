@@ -26,7 +26,6 @@
 #define MODEL_OVERVIEW_WIDGET_H
 
 #include <QtWidgets>
-#include "exception.h"
 #include "ui_modeloverviewwidget.h"
 #include "modelwidget.h"
 

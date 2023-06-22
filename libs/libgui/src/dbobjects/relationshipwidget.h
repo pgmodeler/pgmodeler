@@ -29,6 +29,8 @@
 #include "ui_relationshipwidget.h"
 #include "widgets/objectstablewidget.h"
 #include "widgets/colorpickerwidget.h"
+#include "widgets/numberedtexteditor.h"
+#include "utils/syntaxhighlighter.h"
 
 class __libgui RelationshipWidget: public BaseObjectWidget, public Ui::RelationshipWidget {
 	private:

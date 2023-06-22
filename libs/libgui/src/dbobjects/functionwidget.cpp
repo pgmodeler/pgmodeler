@@ -17,6 +17,7 @@
 */
 
 #include "functionwidget.h"
+#include "guiutilsns.h"
 
 FunctionWidget::FunctionWidget(QWidget *parent): BaseFunctionWidget(parent, ObjectType::Function)
 {

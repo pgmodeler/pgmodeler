@@ -17,6 +17,7 @@
 */
 
 #include "domainwidget.h"
+#include "guiutilsns.h"
 
 DomainWidget::DomainWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Domain)
 {

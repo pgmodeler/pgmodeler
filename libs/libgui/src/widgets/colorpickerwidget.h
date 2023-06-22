@@ -30,7 +30,6 @@
 #include <QColorDialog>
 #include <QHBoxLayout>
 #include "ui_colorpickerwidget.h"
-#include "exception.h"
 #include <QTime>
 #include <random>
 

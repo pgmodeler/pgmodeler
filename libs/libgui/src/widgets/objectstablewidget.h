@@ -29,8 +29,7 @@ of rows on the table.
 #define OBJECT_TABLE_WIDGET_H
 
 #include "ui_objectstablewidget.h"
-#include "messagebox.h"
-#include "dbobjects/baseobjectwidget.h"
+#include "guiglobal.h"
 
 class __libgui ObjectsTableWidget: public QWidget, public Ui::ObjectsTableWidget {
 	private:

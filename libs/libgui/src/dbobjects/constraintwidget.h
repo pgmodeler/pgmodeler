@@ -27,8 +27,6 @@
 
 #include "baseobjectwidget.h"
 #include "ui_constraintwidget.h"
-#include "widgets/objectstablewidget.h"
-#include "messagebox.h"
 #include "elementstablewidget.h"
 #include "columnpickerwidget.h"
 

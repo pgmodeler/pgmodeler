@@ -27,11 +27,6 @@
 
 #include "ui_sqltoolwidget.h"
 #include "utils/syntaxhighlighter.h"
-#include "connection.h"
-#include "databaseimportform.h"
-#include "datamanipulationform.h"
-#include "widgets/findreplacewidget.h"
-#include "widgets/codecompletionwidget.h"
 #include "widgets/numberedtexteditor.h"
 #include "databaseexplorerwidget.h"
 #include "sqlexecutionwidget.h"

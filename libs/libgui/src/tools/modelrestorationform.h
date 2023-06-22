@@ -27,7 +27,6 @@
 
 #include "guiglobal.h"
 #include <QtWidgets>
-#include "globalattributes.h"
 #include "ui_modelrestorationform.h"
 
 class __libgui ModelRestorationForm: public QDialog, public Ui::ModelRestorationForm {

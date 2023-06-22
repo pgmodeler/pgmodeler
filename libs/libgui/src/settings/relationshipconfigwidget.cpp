@@ -17,6 +17,9 @@
 */
 
 #include "relationshipconfigwidget.h"
+#include "attributes.h"
+#include "utils/syntaxhighlighter.h"
+#include "relationshipview.h"
 
 std::map<QString, attribs_map> RelationshipConfigWidget::config_params;
 

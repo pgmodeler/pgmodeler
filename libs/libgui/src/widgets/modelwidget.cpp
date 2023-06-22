@@ -68,6 +68,7 @@
 #include "relationshipview.h"
 #include "schemaview.h"
 #include "styledtextboxview.h"
+#include "tableview.h"
 
 std::vector<BaseObject *> ModelWidget::copied_objects;
 std::vector<BaseObject *> ModelWidget::cut_objects;

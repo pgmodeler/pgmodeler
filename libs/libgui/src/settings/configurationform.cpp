@@ -17,6 +17,7 @@
 */
 
 #include "configurationform.h"
+#include "guiutilsns.h"
 
 ConfigurationForm::ConfigurationForm(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 {

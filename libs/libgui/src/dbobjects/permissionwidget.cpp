@@ -17,6 +17,7 @@
 */
 
 #include "permissionwidget.h"
+#include "guiutilsns.h"
 
 PermissionWidget::PermissionWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Permission)
 {

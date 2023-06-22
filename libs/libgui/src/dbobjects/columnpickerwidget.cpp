@@ -17,6 +17,10 @@
 */
 
 #include "columnpickerwidget.h"
+#include "guiutilsns.h"
+#include "table.h"
+#include "view.h"
+#include "relationship.h"
 
 ColumnPickerWidget::ColumnPickerWidget(QWidget *parent) :	QWidget(parent)
 {

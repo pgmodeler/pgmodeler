@@ -28,11 +28,8 @@
 #include <QtWidgets>
 #include "databasemodel.h"
 #include "operationlist.h"
-#include "widgets/modelobjectswidget.h"
 #include "widgets/objectselectorwidget.h"
 #include "ui_baseobjectwidget.h"
-#include "pgsqltypewidget.h"
-#include "guiutilsns.h"
 
 class __libgui BaseObjectWidget: public QWidget, public Ui::BaseObjectWidget {
 	private:

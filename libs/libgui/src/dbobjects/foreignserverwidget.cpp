@@ -17,6 +17,7 @@
 */
 
 #include "foreignserverwidget.h"
+#include "guiutilsns.h"
 
 ForeignServerWidget::ForeignServerWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::ForeignServer)
 {

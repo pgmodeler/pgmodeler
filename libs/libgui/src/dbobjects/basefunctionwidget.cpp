@@ -19,6 +19,8 @@
 #include "basefunctionwidget.h"
 #include "baseform.h"
 #include "defaultlanguages.h"
+#include "guiutilsns.h"
+#include "dbobjects/parameterwidget.h"
 
 BaseFunctionWidget::BaseFunctionWidget(QWidget *parent, ObjectType obj_type) : BaseObjectWidget(parent, obj_type)
 {

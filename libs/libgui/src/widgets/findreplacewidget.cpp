@@ -19,6 +19,7 @@
 #include "findreplacewidget.h"
 #include <QRegularExpression>
 #include <QTimer>
+#include "exception.h"
 
 FindReplaceWidget::FindReplaceWidget(QPlainTextEdit *txt_edit, QWidget *parent): QWidget(parent)
 {

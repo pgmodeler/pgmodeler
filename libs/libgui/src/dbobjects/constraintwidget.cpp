@@ -17,6 +17,7 @@
 */
 
 #include "constraintwidget.h"
+#include "guiutilsns.h"
 
 ConstraintWidget::ConstraintWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Constraint)
 {

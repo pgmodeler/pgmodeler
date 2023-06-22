@@ -24,6 +24,7 @@
 #include "tableview.h"
 #include "schemaview.h"
 #include "styledtextboxview.h"
+#include "relationshipview.h"
 
 QTextStream PgModelerCliApp::out(stdout);
 

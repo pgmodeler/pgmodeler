@@ -27,7 +27,6 @@
 
 #include "ui_objectdepsrefswidget.h"
 #include "dbobjects/baseobjectwidget.h"
-#include "baseobjectview.h"
 
 class __libgui ObjectDepsRefsWidget: public BaseObjectWidget, public Ui::ObjectDepsRefsWidget {
 	private:

@@ -20,6 +20,7 @@
 #include "messagebox.h"
 #include <QDate>
 #include "utilsns.h"
+#include "attributes.h"
 
 BaseConfigWidget::BaseConfigWidget(QWidget *parent) : QWidget(parent)
 {

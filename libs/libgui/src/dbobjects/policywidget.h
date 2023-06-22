@@ -25,6 +25,8 @@
 #include "policy.h"
 #include "widgets/objectstablewidget.h"
 #include "widgets/modelobjectswidget.h"
+#include "utils/syntaxhighlighter.h"
+#include "widgets/numberedtexteditor.h"
 
 class __libgui PolicyWidget : public BaseObjectWidget, Ui::PolicyWidget {
 	private:

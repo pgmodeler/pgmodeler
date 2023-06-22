@@ -18,6 +18,7 @@
 
 #include "rolewidget.h"
 #include "widgets/modelobjectswidget.h"
+#include "guiutilsns.h"
 
 RoleWidget::RoleWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Role)
 {

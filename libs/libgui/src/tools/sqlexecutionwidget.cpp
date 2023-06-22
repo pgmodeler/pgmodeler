@@ -22,6 +22,7 @@
 #include "utils/plaintextitemdelegate.h"
 #include "utilsns.h"
 #include "csvdocument.h"
+#include "messagebox.h"
 
 std::map<QString, QString> SQLExecutionWidget::cmd_history;
 

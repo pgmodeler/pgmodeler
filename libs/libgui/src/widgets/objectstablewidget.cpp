@@ -17,6 +17,8 @@
 */
 
 #include "objectstablewidget.h"
+#include "exception.h"
+#include "messagebox.h"
 
 QColor ObjectsTableWidget::item_colors[12] = { QColor("#ffb4b4"), QColor("#303030"),
 																							 QColor("#a4f9b0"), QColor("#303030"),

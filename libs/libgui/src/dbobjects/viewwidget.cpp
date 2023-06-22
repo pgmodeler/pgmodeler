@@ -23,6 +23,7 @@
 #include "baseform.h"
 #include "referencewidget.h"
 #include "coreutilsns.h"
+#include "guiutilsns.h"
 
 ViewWidget::ViewWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::View)
 {

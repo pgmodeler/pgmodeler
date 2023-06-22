@@ -26,10 +26,8 @@
 #define MODEL_VALIDATION_WIDGET_H
 
 #include "ui_modelvalidationwidget.h"
-#include "connection.h"
 #include "widgets/modelwidget.h"
 #include "modelvalidationhelper.h"
-#include "swapobjectsidswidget.h"
 #include "utils/htmlitemdelegate.h"
 
 class __libgui ModelValidationWidget: public QWidget, public Ui::ModelValidationWidget {

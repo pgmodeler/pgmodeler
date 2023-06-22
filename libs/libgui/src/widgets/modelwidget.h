@@ -30,7 +30,6 @@
 #include "operationlist.h"
 #include "messagebox.h"
 #include "objectsscene.h"
-#include "taskprogresswidget.h"
 #include "newobjectoverlaywidget.h"
 #include "layerswidget.h"
 

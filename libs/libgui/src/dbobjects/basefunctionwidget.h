@@ -31,8 +31,8 @@ treat other attribute of those classes.
 #include "ui_basefunctionwidget.h"
 #include "widgets/objectstablewidget.h"
 #include "codecompletionwidget.h"
-#include "parameterwidget.h"
 #include "widgets/numberedtexteditor.h"
+#include "pgsqltypewidget.h"
 
 class __libgui BaseFunctionWidget: public BaseObjectWidget, public Ui::BaseFunctionWidget  {
 	private:
