@@ -17,7 +17,6 @@
 */
 
 #include "table.h"
-#include "coreutilsns.h"
 
 Table::Table() : PhysicalTable()
 {

@@ -17,12 +17,11 @@
 */
 
 #include "modeldatabasediffform.h"
-#include "settings/configurationform.h"
 #include "databaseimportform.h"
 #include "guiutilsns.h"
 #include <QTemporaryFile>
 #include "utilsns.h"
-#include "objectfinderwidget.h"
+#include "settings/connectionsconfigwidget.h"
 
 bool ModelDatabaseDiffForm::low_verbosity = false;
 std::map<QString, attribs_map> ModelDatabaseDiffForm::config_params;

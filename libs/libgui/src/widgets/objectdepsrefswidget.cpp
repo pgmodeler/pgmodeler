@@ -18,7 +18,6 @@
 
 #include "objectdepsrefswidget.h"
 #include "guiutilsns.h"
-#include "objectfinderwidget.h"
 
 ObjectDepsRefsWidget::ObjectDepsRefsWidget(QWidget *parent): BaseObjectWidget(parent)
 {

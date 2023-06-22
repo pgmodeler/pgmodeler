@@ -17,8 +17,6 @@
 */
 
 #include "functionwidget.h"
-#include "baseform.h"
-#include "defaultlanguages.h"
 
 FunctionWidget::FunctionWidget(QWidget *parent): BaseFunctionWidget(parent, ObjectType::Function)
 {

@@ -18,7 +18,6 @@
 
 #include "newobjectoverlaywidget.h"
 #include "modelwidget.h"
-#include "guiutilsns.h"
 
 NewObjectOverlayWidget::NewObjectOverlayWidget(ModelWidget *parent): QWidget(parent)
 {

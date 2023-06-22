@@ -19,7 +19,6 @@
 #include "sourcecodewidget.h"
 #include "taskprogresswidget.h"
 #include "guiutilsns.h"
-#include "utilsns.h"
 
 SourceCodeWidget::SourceCodeWidget(QWidget *parent): BaseObjectWidget(parent)
 {

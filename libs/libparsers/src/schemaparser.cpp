@@ -19,7 +19,6 @@
 #include "schemaparser.h"
 #include "attributes.h"
 #include "utilsns.h"
-#include "xmlparser.h"
 
 const char SchemaParser::CharComment='#';
 const char SchemaParser::CharLineEnd='\n';

@@ -17,8 +17,6 @@
 */
 
 #include "sqltoolwidget.h"
-#include "widgets/taskprogresswidget.h"
-#include "settings/snippetsconfigwidget.h"
 #include "settings/connectionsconfigwidget.h"
 #include "guiutilsns.h"
 #include "utils/deletableitemdelegate.h"

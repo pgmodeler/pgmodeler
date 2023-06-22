@@ -16,7 +16,6 @@
 # Also, you can get the complete GNU General Public License at <http://www.gnu.org/licenses/>
 */
 #include "catalog.h"
-#include "coreutilsns.h"
 #include "utilsns.h"
 
 const QString Catalog::QueryList("list");

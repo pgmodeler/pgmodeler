@@ -1,6 +1,5 @@
 #include "swapobjectsidswidget.h"
 #include "guiutilsns.h"
-#include "objectfinderwidget.h"
 
 const QString SwapObjectsIdsWidget::IdLabel("ID: <strong>%1</strong>");
 

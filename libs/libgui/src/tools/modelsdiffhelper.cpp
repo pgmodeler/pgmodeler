@@ -20,7 +20,7 @@
 #include <QThread>
 #include "utilsns.h"
 #include <QDate>
-#include "catalog.h"
+#include "connection.h"
 
 const QStringList ModelsDiffHelper::TableObjsIgnoredAttribs = { Attributes::Alias };
 

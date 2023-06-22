@@ -18,11 +18,10 @@
 
 #include "databaseimportform.h"
 #include "widgets/taskprogresswidget.h"
-#include "settings/configurationform.h"
 #include "widgets/taskprogresswidget.h"
 #include "guiutilsns.h"
-#include "coreutilsns.h"
 #include "defaultlanguages.h"
+#include "settings/connectionsconfigwidget.h"
 
 bool DatabaseImportForm::low_verbosity = false;
 

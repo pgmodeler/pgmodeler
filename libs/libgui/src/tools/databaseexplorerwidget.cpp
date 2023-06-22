@@ -18,13 +18,13 @@
 
 #include "databaseexplorerwidget.h"
 #include "databaseimportform.h"
-#include "sqltoolwidget.h"
 #include "sqlexecutionwidget.h"
 #include "settings/snippetsconfigwidget.h"
 #include "utils/plaintextitemdelegate.h"
 #include "utilsns.h"
 #include "guiutilsns.h"
 #include "settings/generalconfigwidget.h"
+#include "tools/datamanipulationform.h"
 
 const QString DatabaseExplorerWidget::DepNotDefined;
 const QString DatabaseExplorerWidget::DepNotFound=QT_TR_NOOP("(not found, OID: %1)");

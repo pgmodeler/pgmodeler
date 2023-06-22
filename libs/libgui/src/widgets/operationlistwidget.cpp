@@ -17,7 +17,6 @@
 */
 
 #include "operationlistwidget.h"
-#include "taskprogresswidget.h"
 #include "guiutilsns.h"
 
 OperationListWidget::OperationListWidget(QWidget *parent) : QWidget(parent)

@@ -17,9 +17,25 @@
 */
 
 #include "coreutilsns.h"
-#include "databasemodel.h"
 #include <QDebug>
 #include <QHash>
+#include "relationship.h"
+#include "cast.h"
+#include "domain.h"
+#include "aggregate.h"
+#include "language.h"
+#include "sequence.h"
+#include "type.h"
+#include "conversion.h"
+#include "view.h"
+#include "eventtrigger.h"
+#include "genericsql.h"
+#include "extension.h"
+#include "foreignserver.h"
+#include "foreigntable.h"
+#include "transform.h"
+#include "procedure.h"
+#include "usermapping.h"
 
 namespace CoreUtilsNs {
 	template <class Class>

@@ -17,10 +17,7 @@
 */
 
 #include "tabledatawidget.h"
-#include "utils/htmlitemdelegate.h"
-#include "columndatawidget.h"
 #include "tools/sqlexecutionwidget.h"
-#include "utilsns.h"
 
 const QString TableDataWidget::PlaceholderColumn("$placeholder$");
 

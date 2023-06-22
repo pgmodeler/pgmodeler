@@ -18,7 +18,6 @@
 
 #include "application.h"
 #include <QTranslator>
-#include "guiutilsns.h"
 #include "schemaeditorform.h"
 #include "pgmodelerapp.h"
 

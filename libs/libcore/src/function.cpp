@@ -17,7 +17,6 @@
 */
 
 #include "function.h"
-#include "defaultlanguages.h"
 
 Function::Function() : BaseFunction()
 {

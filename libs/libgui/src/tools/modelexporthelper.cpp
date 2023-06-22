@@ -1,6 +1,5 @@
 #include "modelexporthelper.h"
 #include <QSvgGenerator>
-#include "guiutilsns.h"
 
 ModelExportHelper::ModelExportHelper(QObject *parent) : QObject(parent)
 {

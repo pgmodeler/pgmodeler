@@ -17,14 +17,11 @@
 */
 
 #include "modelrestorationform.h"
-#include "guiutilsns.h"
 #include "utilsns.h"
 
 ModelRestorationForm::ModelRestorationForm(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 {
 	setupUi(this);
-
-	//GuiUtilsNs::configureWidgetFont(message_lbl, GuiUtilsNs::MediumFontFactor);
 
 	connect(restore_btn, &QPushButton::clicked, this, &ModelRestorationForm::accept);
 	connect(cancel_btn, &QPushButton::clicked, this, &ModelRestorationForm::reject);

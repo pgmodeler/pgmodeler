@@ -17,8 +17,9 @@
 */
 
 #include "modelfixform.h"
-#include "settings/configurationform.h"
-#include "guiutilsns.h"
+#include "attribsmap.h"
+#include "attributes.h"
+#include "settings/appearanceconfigwidget.h"
 
 const QString ModelFixForm::PgModelerCli("pgmodeler-cli");
 

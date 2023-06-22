@@ -21,7 +21,6 @@
 #include "guiutilsns.h"
 #include "settings/generalconfigwidget.h"
 #include "objectstablewidget.h"
-#include "objectfinderwidget.h"
 
 ModelObjectsWidget::ModelObjectsWidget(bool simplified_view, QWidget *parent) : QWidget(parent)
 {

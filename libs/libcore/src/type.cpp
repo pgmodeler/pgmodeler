@@ -18,7 +18,6 @@
 
 #include "type.h"
 #include "defaultlanguages.h"
-#include "utilsns.h"
 
 Type::Type()
 {

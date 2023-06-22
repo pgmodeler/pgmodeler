@@ -17,9 +17,8 @@
 */
 
 #include "modelexportform.h"
-#include "widgets/taskprogresswidget.h"
-#include "settings/configurationform.h"
 #include "guiutilsns.h"
+#include "connectionsconfigwidget.h"
 
 bool ModelExportForm::low_verbosity = false;
 

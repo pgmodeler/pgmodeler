@@ -17,7 +17,6 @@
 */
 
 #include "copyoptions.h"
-#include "baseobject.h"
 
 CopyOptions::CopyOptions()
 {

@@ -17,13 +17,11 @@
 */
 
 #include "sqlexecutionwidget.h"
-#include "widgets/taskprogresswidget.h"
-#include "databaseexplorerwidget.h"
 #include "settings/snippetsconfigwidget.h"
 #include "guiutilsns.h"
 #include "utils/plaintextitemdelegate.h"
-#include "datamanipulationform.h"
 #include "utilsns.h"
+#include "csvdocument.h"
 
 std::map<QString, QString> SQLExecutionWidget::cmd_history;
 
