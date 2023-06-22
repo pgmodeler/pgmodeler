@@ -27,7 +27,6 @@
 #define CONSTRAINT_H
 
 #include "tableobject.h"
-#include "tablespace.h"
 #include "column.h"
 #include "excludeelement.h"
 #include "pgsqltypes/constrainttype.h"

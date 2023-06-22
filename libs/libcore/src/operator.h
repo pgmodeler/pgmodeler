@@ -27,8 +27,6 @@
 
 #include "baseobject.h"
 #include "function.h"
-#include "schema.h"
-#include "role.h"
 
 class __libcore Operator: public BaseObject {
 	private:

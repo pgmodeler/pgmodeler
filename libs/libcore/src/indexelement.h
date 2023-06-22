@@ -24,11 +24,8 @@
 #ifndef INDEX_ELEMENT_H
 #define INDEX_ELEMENT_H
 
-#include "column.h"
-#include "operatorclass.h"
 #include "collation.h"
 #include "element.h"
-#include "simplecolumn.h"
 
 class __libcore IndexElement: public Element {
 	private:

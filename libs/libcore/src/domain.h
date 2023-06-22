@@ -27,7 +27,6 @@
 #define DOMAIN_H
 
 #include "baseobject.h"
-#include "schema.h"
 #include "pgsqltypes/pgsqltype.h"
 
 class __libcore Domain: public BaseObject{

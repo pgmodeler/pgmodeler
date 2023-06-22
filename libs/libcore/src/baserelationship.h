@@ -26,9 +26,8 @@
 #ifndef BASE_RELATIONSHIP_H
 #define BASE_RELATIONSHIP_H
 
-#include "table.h"
 #include "textbox.h"
-#include "schema.h"
+#include "constraint.h"
 #include <cmath>
 #include <QColor>
 

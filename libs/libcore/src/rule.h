@@ -27,7 +27,6 @@
 #define RULE_H
 
 #include "tableobject.h"
-#include "column.h"
 #include "pgsqltypes/executiontype.h"
 #include "pgsqltypes/eventtype.h"
 

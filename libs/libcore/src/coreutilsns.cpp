@@ -36,6 +36,8 @@
 #include "transform.h"
 #include "procedure.h"
 #include "usermapping.h"
+#include "tablespace.h"
+#include "schema.h"
 
 namespace CoreUtilsNs {
 	template <class Class>

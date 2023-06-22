@@ -26,7 +26,6 @@
 #define CORE_UTILS_NS_H
 
 #include "baseobject.h"
-#include "tableobject.h"
 #include <QCryptographicHash>
 
 namespace CoreUtilsNs {

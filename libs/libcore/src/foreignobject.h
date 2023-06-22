@@ -27,7 +27,6 @@
 
 #include "coreglobal.h"
 #include "attribsmap.h"
-#include "schemaparser.h"
 
 class __libcore ForeignObject {
 	protected:

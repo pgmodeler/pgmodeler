@@ -27,9 +27,7 @@
 
 #include "coreglobal.h"
 #include "attributes.h"
-#include "exception.h"
 #include "schemaparser.h"
-#include "xmlparser.h"
 #include <map>
 #include <QRegularExpression>
 #include <QStringList>

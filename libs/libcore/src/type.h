@@ -27,9 +27,7 @@
 #define TYPE_H
 
 #include "baseobject.h"
-#include "schema.h"
 #include "function.h"
-#include "role.h"
 #include "typeattribute.h"
 #include "operatorclass.h"
 #include "pgsqltypes/storagetype.h"

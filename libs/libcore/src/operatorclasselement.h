@@ -27,7 +27,6 @@
 #ifndef OPERATOR_CLASS_ELEMENT_H
 #define OPERATOR_CLASS_ELEMENT_H
 
-#include "baseobject.h"
 #include "operator.h"
 #include "function.h"
 #include "operatorfamily.h"

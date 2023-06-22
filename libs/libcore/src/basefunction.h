@@ -24,11 +24,7 @@
 #ifndef BASE_FUNCTION_H
 #define BASE_FUNCTION_H
 
-#include "schema.h"
-#include "role.h"
 #include "parameter.h"
-#include "pgsqltypes/behaviortype.h"
-#include "pgsqltypes/functiontype.h"
 #include "pgsqltypes/securitytype.h"
 
 class __libcore BaseFunction: public BaseObject {

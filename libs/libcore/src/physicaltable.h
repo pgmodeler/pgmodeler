@@ -30,8 +30,6 @@
 #include "column.h"
 #include "constraint.h"
 #include "trigger.h"
-#include "function.h"
-#include "role.h"
 #include "partitionkey.h"
 #include "copyoptions.h"
 #include "pgsqltypes/partitioningtype.h"

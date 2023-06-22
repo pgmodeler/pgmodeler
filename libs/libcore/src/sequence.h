@@ -26,8 +26,7 @@
 #ifndef SEQUENCE_H
 #define SEQUENCE_H
 
-#include "baseobject.h"
-#include "table.h"
+#include "physicaltable.h"
 
 class __libcore Sequence: public BaseObject {
 	private:

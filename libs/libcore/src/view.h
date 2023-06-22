@@ -27,6 +27,8 @@
 
 #include "reference.h"
 #include "basetable.h"
+#include "rule.h"
+#include "index.h"
 
 class __libcore View: public BaseTable {
 	private:

@@ -17,6 +17,9 @@
 */
 
 #include "tableobjectview.h"
+#include "rule.h"
+#include "index.h"
+#include "policy.h"
 
 bool TableObjectView::hide_sch_name_usr_type = false;
 const QString TableObjectView::TypeSeparator(" ");

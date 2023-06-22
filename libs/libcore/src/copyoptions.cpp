@@ -17,6 +17,7 @@
 */
 
 #include "copyoptions.h"
+#include "exception.h"
 
 CopyOptions::CopyOptions()
 {

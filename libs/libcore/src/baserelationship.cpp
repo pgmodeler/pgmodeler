@@ -17,6 +17,8 @@
 */
 
 #include "baserelationship.h"
+#include "table.h"
+#include "schema.h"
 #include <QApplication>
 
 BaseRelationship::BaseRelationship(BaseRelationship *rel)

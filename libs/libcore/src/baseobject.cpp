@@ -18,6 +18,8 @@
 
 #include "baseobject.h"
 #include "coreutilsns.h"
+#include "exception.h"
+#include "xmlparser.h"
 #include <QApplication>
 
 bool BaseObject::ignore_db_version = false;

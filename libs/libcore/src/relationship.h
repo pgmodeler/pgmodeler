@@ -29,7 +29,6 @@ also generates the SQL code definition to represente the table link on PostgreSQ
 
 #include "baserelationship.h"
 #include "table.h"
-#include "textbox.h"
 #include "pgsqltypes/actiontype.h"
 
 /*

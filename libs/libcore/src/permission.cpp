@@ -17,6 +17,7 @@
 */
 
 #include "permission.h"
+#include "column.h"
 
 const QString Permission::priv_codes("rawdDxtCcTXU");
 

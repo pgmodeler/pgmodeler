@@ -28,7 +28,6 @@
 
 #include "baseobject.h"
 #include "function.h"
-#include "role.h"
 
 class __libcore Language: public BaseObject{
 	private:

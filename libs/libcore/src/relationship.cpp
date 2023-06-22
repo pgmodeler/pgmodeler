@@ -18,6 +18,7 @@
 
 #include "relationship.h"
 #include "coreutilsns.h"
+#include "tablespace.h"
 #include <QApplication>
 
 const QString Relationship::SuffixSeparator("_");

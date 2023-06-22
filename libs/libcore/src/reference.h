@@ -26,9 +26,9 @@
 #ifndef REFERENCE_H
 #define REFERENCE_H
 
-#include "table.h"
-#include "schema.h"
+#include "coreglobal.h"
 #include "simplecolumn.h"
+#include "physicaltable.h"
 
 class __libcore Reference {
 	private:

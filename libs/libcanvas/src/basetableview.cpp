@@ -17,6 +17,7 @@
 */
 
 #include "basetableview.h"
+#include "schema.h"
 
 bool BaseTableView::hide_ext_attribs = false;
 bool BaseTableView::hide_tags = false;
