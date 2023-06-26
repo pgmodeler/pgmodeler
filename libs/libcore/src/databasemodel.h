@@ -103,6 +103,9 @@ class __libcore DatabaseModel:  public QObject, public BaseObject {
 
 		QList<unsigned> active_layers;
 
+		//! \brief Stores the layer information of FK relationships during the model loading
+		std::map<QString, QStringList> fk_rel_layers;
+
 		//! \brief Stores the model widget that is managing this database model instance
 		ModelWidget *model_wgt;
 
@@ -300,7 +303,10 @@ class __libcore DatabaseModel:  public QObject, public BaseObject {
 		//! \brief Updates all the relationships in such a way to create the missing columns/constraints
 		void updateRelsGeneratedObjects();
 
-	protected:
+		//! \brief Restore the layer information of FK relationship during loading process
+		void restoreFKRelationshipLayers();
+
+protected:
 		//! \brief Set the layer names (only to be written in the XML definition)
 		void setLayers(const QStringList &layers);
 
