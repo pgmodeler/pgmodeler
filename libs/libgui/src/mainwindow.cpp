@@ -433,6 +433,7 @@ void MainWindow::loadConfigurations()
 		action_plugins_config->setText(tr("Plug-ins"));
 		action_plugins_config->setToolTip(tr("Access the loaded plug-ins settings"));
 		action_plugins_config->setEnabled(!plugins_config_menu->isEmpty());
+		action_plugins_config->setIcon(QIcon(GuiUtilsNs::getIconPath("pluginsconfig")));
 
 		//Configuring the widget visibility according to the configurations
 		for(auto &itr : GeneralConfigWidget::getConfigurationParams())
