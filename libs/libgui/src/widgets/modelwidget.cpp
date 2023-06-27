@@ -497,8 +497,13 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	action_stacking = stacking_menu.menuAction();
 	action_stacking->setIcon(QIcon(GuiUtilsNs::getIconPath("stacking")));
 	action_stacking->setText(tr("Stacking"));
+
 	action_send_to_back=new QAction(QIcon(GuiUtilsNs::getIconPath("sendtoback")), tr("Send to back"), this);
+	action_send_to_back->setShortcut(QKeySequence("Shift+Down"));
+
 	action_bring_to_front=new QAction(QIcon(GuiUtilsNs::getIconPath("bringtofront")), tr("Bring to front"), this);
+	action_bring_to_front->setShortcut(QKeySequence("Shift+Up"));
+
 	stacking_menu.addAction(action_send_to_back);
 	stacking_menu.addAction(action_bring_to_front);
 
@@ -3465,7 +3470,7 @@ void ModelWidget::removeObjects(bool cascade)
 
 				op_list->finishOperationChain();
 				scene->clearSelection();
-				this->configurePopupMenu();
+				configurePopupMenu();
 				setModified(true);
 				emit s_objectRemoved();
 
@@ -5080,14 +5085,6 @@ void ModelWidget::updateModelLayersInfo()
 	db_model->setLayerRectsVisible(scene->isLayerRectsVisible());
 	setModified(true);
 }
-
-/*void ModelWidget::toggleMagnifierArea()
-{
-	if(!magnifier_area_lbl->isVisible())
-		showMagnifierArea(current_zoom < 1);
-	else
-		showMagnifierArea(false);
-}*/
 
 void ModelWidget::rearrangeTablesHierarchically()
 {
