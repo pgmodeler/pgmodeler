@@ -1428,10 +1428,10 @@ void DatabaseModel::restoreFKRelationshipLayers()
 
 void DatabaseModel::updateViewRelationships(View *view, bool force_rel_removal)
 {
-	PhysicalTable *table=nullptr;
-	BaseRelationship *rel=nullptr;
+	PhysicalTable *table = nullptr;
+	BaseRelationship *rel = nullptr;
 	Reference ref;
-	unsigned i, ref_count, idx;
+	unsigned i = 0, ref_count = 0, idx = 0;
 	std::vector<BaseObject *>::iterator itr, itr_end;
 	std::vector<PhysicalTable *> tables;
 
@@ -1441,16 +1441,16 @@ void DatabaseModel::updateViewRelationships(View *view, bool force_rel_removal)
 	if(getObjectIndex(view) < 0 || force_rel_removal)
 	{
 		//Remove all the relationship related to the view when this latter no longer exists
-		itr=base_relationships.begin();
-		itr_end=base_relationships.end();
+		itr = base_relationships.begin();
+		itr_end = base_relationships.end();
 
-		idx=0;
-		while(itr!=itr_end)
+		idx = 0;
+		while(itr != itr_end)
 		{
-			rel=dynamic_cast<BaseRelationship *>(*itr);
+			rel = dynamic_cast<BaseRelationship *>(*itr);
 
 			if(rel->getTable(BaseRelationship::SrcTable)==view ||
-					rel->getTable(BaseRelationship::DstTable)==view)
+				 rel->getTable(BaseRelationship::DstTable)==view)
 			{
 				removeRelationship(rel);
 				itr=base_relationships.begin() + idx;
@@ -1466,13 +1466,13 @@ void DatabaseModel::updateViewRelationships(View *view, bool force_rel_removal)
 	{
 		/* Remove the relationships between tables and the view
 		 when this latter doesn't reference the first */
-		itr=base_relationships.begin();
-		itr_end=base_relationships.end();
+		itr = base_relationships.begin();
+		itr_end = base_relationships.end();
 
-		idx=0;
-		while(itr!=itr_end)
+		idx = 0;
+		while(itr != itr_end)
 		{
-			rel=dynamic_cast<BaseRelationship *>(*itr);
+			rel = dynamic_cast<BaseRelationship *>(*itr);
 
 			if(rel->getTable(BaseRelationship::SrcTable)==view ||
 					rel->getTable(BaseRelationship::DstTable)==view)
@@ -1485,8 +1485,8 @@ void DatabaseModel::updateViewRelationships(View *view, bool force_rel_removal)
 				if(!view->isReferencingTable(table))
 				{
 					removeRelationship(rel);
-					itr=base_relationships.begin() + idx;
-					itr_end=base_relationships.end();
+					itr = base_relationships.begin() + idx;
+					itr_end =base_relationships.end();
 				}
 				else
 				{
@@ -1501,8 +1501,8 @@ void DatabaseModel::updateViewRelationships(View *view, bool force_rel_removal)
 
 		/* Creates the relationships from the view references
 		 * First we try to create relationship from referecences in SELECT portion of view's definition */
-		ref_count=view->getReferenceCount(Reference::SqlSelect);
-		for(i=0; i < ref_count; i++)
+		ref_count = view->getReferenceCount(Reference::SqlSelect);
+		for(i = 0; i < ref_count; i++)
 		{
 			table = view->getReference(i, Reference::SqlSelect).getTable();
 			if(table) tables.push_back(table);
@@ -2050,7 +2050,6 @@ void DatabaseModel::storeSpecialObjectsXML()
 							xml_special_objs[rel->getObjectId()]=rel->getSourceCode(SchemaParser::XmlCode);
 							removeRelationship(rel);
 							invalid_special_objs.push_back(rel);
-							//delete rel;
 						}
 					}
 				}
@@ -2063,12 +2062,10 @@ void DatabaseModel::storeSpecialObjectsXML()
 					xml_special_objs[obj->getObjectId()]=obj->getSourceCode(SchemaParser::XmlCode);
 					view->removeObject(obj);
 					invalid_special_objs.push_back(obj);
-					//delete obj;
 				}
 
 				removeView(view);
 				invalid_special_objs.push_back(view);
-				//delete view;
 			}
 		}
 
