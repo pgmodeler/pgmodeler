@@ -2,11 +2,11 @@ name: Linux build
 
 on:
   push:
-    branches: [ master, develop, 1.0.* ]
-    tags: 1.0.*
+    branches: [ main, develop, 1.* ]
+    tags: 1.*
     
   pull_request:
-    branches: [ master, develop, 1.0.* ]
+    branches: [ main, develop, 1.* ]
 
 jobs:
   build:
@@ -14,13 +14,13 @@ jobs:
 
     strategy:
       matrix:
-        qt: ['6.2.4', '6.3.2', '6.4.1']
+        qt: ['6.2.8', '6.3.2', '6.4.3', '6.5.1']
 
     steps:
     - uses: actions/checkout@v2
       
     - name: Installing Qt framework
-      uses: jurplel/install-qt-action@v2
+      uses: jurplel/install-qt-action@v3
       with:
         version: ${{ matrix.qt }}      
 
