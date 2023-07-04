@@ -63,7 +63,7 @@ $br </table> $br
 	$br <div>
 
 	%if {split} %and {previous} %then
-		{spc} <a $sp href="{previous}.html" $sp class="nav-link"> &larr; $sp {previous}</a>
+		{spc} <a $sp href="{previous}.html" $sp class="nav-link"> [&larr;] $sp {previous}</a>
 	%end
 
 	%if {split} %then
@@ -75,7 +75,7 @@ $br </table> $br
 	[&uarr; Index</a>]
 
 	%if {split} %and {next} %then
-		{spc} <a $sp href="{next}.html" $sp class="nav-link"> {next} $sp &rarr;</a>
+		{spc} <a $sp href="{next}.html" $sp class="nav-link"> {next} $sp [&rarr;]</a>
 	%end
 
 	$br </div> $br
