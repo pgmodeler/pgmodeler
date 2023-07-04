@@ -318,7 +318,7 @@ class __libcore DatabaseModel:  public QObject, public BaseObject {
 		//! \brief Restore the layer information of FK relationship during loading process
 		void restoreFKRelationshipLayers();
 
-protected:
+	protected:
 		//! \brief Set the layer names (only to be written in the XML definition)
 		void setLayers(const QStringList &layers);
 
@@ -347,9 +347,6 @@ protected:
 		 * This version accepts string parameters to make the changelog loading from file more easy to handle.
 		 * This method will validate all the provided parameters and in case of invalid values will raise and exception */
 		void addChangelogEntry(const QString &signature, const QString &type, const QString &action, const QString &date);
-
-		//! \brief Returns the XML code for the changelog
-		QString getChangelogDefinition();
 
 		//! \brief Loads the basic attributes, common between all children of BaseObject, from XML code
 		void setBasicAttributes(BaseObject *object);
@@ -908,7 +905,7 @@ protected:
 		QDateTime getFirstChangelogDate();
 
 		//! \brief Returns the amount of entries in the changelog
-		unsigned getChangelogLength();
+		unsigned getChangelogLength(Operation::OperType op_type = Operation::NoOperation);
 
 		QStringList getLayers();
 		QStringList getLayerNameColors();
@@ -921,6 +918,9 @@ protected:
 		/*! \brief Fills the provided attributes map with the database model attributes only.
 		 *  The result varies according to the code_type provided */
 		void setDatabaseModelAttributes(attribs_map &attribs, SchemaParser::CodeType code_type);
+
+		//! \brief Returns the XML code for the changelog
+		QString getChangelogDefinition();
 
 	signals:
 		//! \brief Signal emitted when a new object is added to the model

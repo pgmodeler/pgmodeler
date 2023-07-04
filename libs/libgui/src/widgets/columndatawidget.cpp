@@ -18,13 +18,27 @@
 #include "columndatawidget.h"
 #include <QVBoxLayout>
 #include "guiutilsns.h"
+#include "syntaxhighlighter.h"
 
-ColumnDataWidget::ColumnDataWidget(QWidget *parent) : QWidget(parent)
+ColumnDataWidget::ColumnDataWidget(bool use_syntax_hl, const QString &hl_conf, QWidget *parent) : QWidget(parent)
 {
 	QVBoxLayout *vbox = new QVBoxLayout(this);
 
 	value_txt = new NumberedTextEditor(this, true);
 	value_txt->installEventFilter(this);
+
+	if(use_syntax_hl)
+	{
+		try
+		{
+			SyntaxHighlighter *value_hl	= new SyntaxHighlighter(value_txt);
+			value_hl->loadConfiguration(hl_conf);
+		}
+		catch(Exception &e)
+		{
+			throw Exception(e.getErrorMessage(), e.getErrorCode(), __PRETTY_FUNCTION__, __FILE__, __LINE__, &e);
+		}
+	}
 
 	vbox->addWidget(value_txt);
 	vbox->setContentsMargins(GuiUtilsNs::LtMargin, GuiUtilsNs::LtMargin,

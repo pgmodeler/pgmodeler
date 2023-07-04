@@ -32,7 +32,7 @@ class __libgui ColumnDataWidget: public QWidget {
 		void showEvent(QShowEvent *);
 
 	public:
-		ColumnDataWidget(QWidget *parent = nullptr);
+		ColumnDataWidget(bool use_syntax_hl = false, const QString &hl_conf = "", QWidget *parent = nullptr);
 
 		void setData(const QString &data);
 

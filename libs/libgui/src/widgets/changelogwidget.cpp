@@ -19,6 +19,8 @@
 #include "changelogwidget.h"
 #include "settings/generalconfigwidget.h"
 #include "guiutilsns.h"
+#include "columndatawidget.h"
+#include "baseform.h"
 
 ChangelogWidget::ChangelogWidget(QWidget *parent) : QWidget(parent)
 {
@@ -27,6 +29,12 @@ ChangelogWidget::ChangelogWidget(QWidget *parent) : QWidget(parent)
 	setModel(nullptr);
 	GuiUtilsNs::createDropShadow(this, 5, 5, 30);
 
+	GuiUtilsNs::configureWidgetFont(added_cnt_lbl, GuiUtilsNs::HugeFontFactor);
+	GuiUtilsNs::configureWidgetFont(removed_cnt_lbl, GuiUtilsNs::HugeFontFactor);
+	GuiUtilsNs::configureWidgetFont(updated_cnt_lbl, GuiUtilsNs::HugeFontFactor);
+	GuiUtilsNs::configureWidgetFont(total_cnt_lbl, GuiUtilsNs::HugeFontFactor);
+
+	connect(inspect_tb, &QToolButton::clicked, this, &ChangelogWidget::inspectChangelog);
 	connect(hide_tb, &QToolButton::clicked, this, &ChangelogWidget::s_visibilityChanged);
 	connect(clear_tb, &QToolButton::clicked, this, &ChangelogWidget::clearChangelog);
 	connect(persisted_chk, &QCheckBox::toggled, this, [this](bool checked){
@@ -44,33 +52,41 @@ void ChangelogWidget::setVisible(bool value)
 
 void ChangelogWidget::updateChangelogInfo()
 {
-	QString entries_text = tr("Changelog entries: <strong>%1</strong>"),
-			last_change_text = tr("Last modified: <strong>%1</strong>"),
+	QString last_change_text = tr("Last modified: <strong>%1</strong>"),
 			first_change_text = tr("First modified: <strong>%1</strong>");
-	unsigned log_len = !model ? 0 : model->getDatabaseModel()->getChangelogLength();
+	unsigned total_len = !model ? 0 : model->getDatabaseModel()->getChangelogLength();
 
-	if(log_len == 0)
+	if(total_len == 0)
 	{
-		info_lbl->setText(entries_text.arg('-'));
 		last_change_lbl->setText(last_change_text.arg('-'));
 		first_change_lbl->setText(first_change_text.arg('-'));
+		added_cnt_lbl->setText("-");
+		removed_cnt_lbl->setText("-");
+		updated_cnt_lbl->setText("-");
+		total_cnt_lbl->setText("-");
 	}
 	else
 	{
 		QString ui_lang = GeneralConfigWidget::getConfigurationParam(Attributes::Configuration, Attributes::UiLanguage),
 				dt_format;
 		QLocale locale(ui_lang);
+		DatabaseModel *db_model = model->getDatabaseModel();
 
 		dt_format = locale.dateTimeFormat();
 		dt_format.remove('t'); // Removing timezone info
-		dt_format.remove("dddd,"); //Removing month's full name info
+		dt_format.remove("dddd,"); //Removing day of week name info
 
-		info_lbl->setText(entries_text.arg(log_len));
-		last_change_lbl->setText(last_change_text.arg(locale.toString(model->getDatabaseModel()->getLastChangelogDate(), dt_format)));
-		first_change_lbl->setText(first_change_text.arg(locale.toString(model->getDatabaseModel()->getFirstChangelogDate(), dt_format)));
+		last_change_lbl->setText(last_change_text.arg(locale.toString(db_model->getLastChangelogDate(), dt_format)));
+		first_change_lbl->setText(first_change_text.arg(locale.toString(db_model->getFirstChangelogDate(), dt_format)));
+
+		added_cnt_lbl->setText(QString::number(db_model->getChangelogLength(Operation::ObjCreated)));
+		removed_cnt_lbl->setText(QString::number(db_model->getChangelogLength(Operation::ObjRemoved)));
+		updated_cnt_lbl->setText(QString::number(db_model->getChangelogLength(Operation::ObjModified)));
+		total_cnt_lbl->setText(QString::number(total_len));
 	}
 
-	clear_tb->setEnabled(log_len > 0);
+	inspect_tb->setEnabled(total_len > 0);
+	clear_tb->setEnabled(total_len > 0);
 	adjustSize();
 }
 
@@ -89,6 +105,24 @@ date of modification in partial diff will be unavailable! Do you want to proceed
 		model->setModified(true);
 		updateChangelogInfo();
 	}
+}
+
+void ChangelogWidget::inspectChangelog()
+{
+	BaseForm base_form;
+	ColumnDataWidget *data_wgt = new ColumnDataWidget(true, GlobalAttributes::getXMLHighlightConfPath());
+
+	base_form.setMainWidget(data_wgt);
+	base_form.setButtonConfiguration(Messagebox::OkButton);
+	base_form.apply_ok_btn->setShortcut(QKeySequence("Enter"));
+
+	data_wgt->setWindowTitle(tr("Changelog entries"));
+	data_wgt->setData(model->getDatabaseModel()->getChangelogDefinition());
+	data_wgt->setReadOnly(true);
+
+	GeneralConfigWidget::restoreWidgetGeometry(&base_form, this->metaObject()->className());
+	base_form.exec();
+	GeneralConfigWidget::saveWidgetGeometry(&base_form, this->metaObject()->className());
 }
 
 void ChangelogWidget::setModel(ModelWidget *model)

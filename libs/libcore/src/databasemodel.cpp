@@ -11646,15 +11646,13 @@ void DatabaseModel::addChangelogEntry(BaseObject *object, Operation::OperType op
 	if(op_type == Operation::NoOperation || op_type == Operation::ObjMoved)
 		return;
 
-	QString action, obj_signature;
 	QDateTime date_time = QDateTime::currentDateTime();
+	std::map<Operation::OperType, QString> actions = {
+		{ Operation::ObjCreated, Attributes::Created },
+		{ Operation::ObjRemoved, Attributes::Deleted },
+		{ Operation::ObjModified, Attributes::Updated }	};
 
-	if(op_type == Operation::ObjCreated)
-		action = Attributes::Created;
-	else if(op_type == Operation::ObjRemoved)
-		action = Attributes::Deleted;
-	else
-		action = Attributes::Updated;
+	QString action = actions[op_type], obj_signature;
 
 	if(!object || (object && TableObject::isTableObject(object->getObjectType()) && !parent_obj))
 	{
@@ -11757,9 +11755,26 @@ QDateTime DatabaseModel::getFirstChangelogDate()
 				 QDateTime() : std::get<LogDate>(changelog.front());
 }
 
-unsigned DatabaseModel::getChangelogLength()
+unsigned DatabaseModel::getChangelogLength(Operation::OperType op_type)
 {
-	return changelog.size();
+	if(op_type == Operation::NoOperation || op_type == Operation::ObjMoved)
+		return changelog.size();
+
+	unsigned cnt = 0;
+	std::map<Operation::OperType, QString> actions = {
+		{ Operation::ObjCreated, Attributes::Created },
+		{ Operation::ObjRemoved, Attributes::Deleted },
+		{ Operation::ObjModified, Attributes::Updated }	};
+
+	QString act = actions[op_type];
+
+	for(auto &entry : changelog)
+	{
+		if(std::get<LogAction>(entry) == act)
+			cnt++;
+	}
+
+	return cnt;
 }
 
 template<class TableClass>
