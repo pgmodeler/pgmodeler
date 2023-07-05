@@ -2450,106 +2450,121 @@ void DatabaseImportHelper::createTransform(attribs_map &attribs)
 void DatabaseImportHelper::createPermission(attribs_map &attribs)
 {
 	ObjectType obj_type=static_cast<ObjectType>(attribs[Attributes::ObjectType].toUInt());
-	Permission *perm=nullptr;
+
+	if(!Permission::acceptsPermission(obj_type))
+		return;
+
+	Permission *permission=nullptr;
 	QString sig;
+	QStringList perm_list;
+	std::vector<Permission::PrivilegeId> privs, gop_privs;
+	QString role_name;
+	Role *role=nullptr;
+	BaseObject *object=nullptr;
+	PhysicalTable *table=nullptr;
 
-	if(Permission::acceptsPermission(obj_type))
+	//Parses the permissions vector string
+	perm_list=Catalog::parseArrayValues(attribs[Attributes::Permission]);
+
+	if(!perm_list.isEmpty())
 	{
-		QStringList perm_list;
-		std::vector<Permission::PrivilegeId> privs, gop_privs;
-		QString role_name;
-		Role *role=nullptr;
-		BaseObject *object=nullptr;
-		PhysicalTable *table=nullptr;
-
-		//Parses the permissions vector string
-		perm_list=Catalog::parseArrayValues(attribs[Attributes::Permission]);
-
-		if(!perm_list.isEmpty())
+		if(obj_type!=ObjectType::Column)
 		{
-			if(obj_type!=ObjectType::Column)
-			{
-				if(obj_type==ObjectType::Database)
-					object=dbmodel;
-				else
-				{
-					sig = getObjectName(attribs[Attributes::Oid], true);
-					object = dbmodel->getObject(getObjectName(attribs[Attributes::Oid], true), obj_type);
-				}
-			}
+			if(obj_type==ObjectType::Database)
+				object=dbmodel;
 			else
 			{
-				//If the object is column it's necessary to retrive the parent table to get the valid reference to column
-				table=dynamic_cast<PhysicalTable *>(dbmodel->getObject(getObjectName(attribs[Attributes::Table]), {ObjectType::Table, ObjectType::ForeignTable}));
-				object=table->getObject(getColumnName(attribs[Attributes::Table], attribs[Attributes::Oid]), ObjectType::Column);
+				sig = getObjectName(attribs[Attributes::Oid], true);
+				object = dbmodel->getObject(getObjectName(attribs[Attributes::Oid], true), obj_type);
 			}
 		}
-
-		for(int i=0; i < perm_list.size(); i++)
+		else
 		{
-			//Parses the permission retrieving the role name as well the privileges over the object
-			role_name=Permission::parsePermissionString(perm_list[i], privs, gop_privs);
+			//If the object is column it's necessary to retrive the parent table to get the valid reference to column
+			table=dynamic_cast<PhysicalTable *>(dbmodel->getObject(getObjectName(attribs[Attributes::Table]), {ObjectType::Table, ObjectType::ForeignTable}));
+			object=table->getObject(getColumnName(attribs[Attributes::Table], attribs[Attributes::Oid]), ObjectType::Column);
+		}
+	}
 
-			//Removing extra backslash from the role's names to avoid the role not to be found
-			role_name.remove(QChar('\\'));
+	//for(int i=0; i < perm_list.size(); i++)
+	for(auto perm_str : perm_list)
+	{
+		//Parses the permission retrieving the role name as well the privileges over the object
+		role_name=Permission::parsePermissionString(perm_str, privs, gop_privs);
 
-			if(!privs.empty() || gop_privs.empty())
+		//Removing extra backslash from the role's names to avoid the role not to be found
+		role_name.remove(QChar('\\'));
+
+		if(!privs.empty() || gop_privs.empty())
+		{
+			role=dynamic_cast<Role *>(dbmodel->getObject(role_name, ObjectType::Role));
+
+			if(auto_resolve_deps && !role_name.isEmpty() && !role)
 			{
-				role=dynamic_cast<Role *>(dbmodel->getObject(role_name, ObjectType::Role));
-
-				if(auto_resolve_deps && !role_name.isEmpty() && !role)
+				try
 				{
 					QString oid = catalog.getObjectOID(role_name, ObjectType::Role);
 					getDependencyObject(oid, ObjectType::Role);
-					role=dynamic_cast<Role *>(dbmodel->getObject(role_name, ObjectType::Role));
+					role = dynamic_cast<Role *>(dbmodel->getObject(role_name, ObjectType::Role));
 				}
-
-				/* If the role doesn't exists and there is a name defined, throws an error because
-				the roles wasn't found on the model */
-				if(!role && !role_name.isEmpty())
-					throw Exception(Exception::getErrorMessage(ErrorCode::RefObjectInexistsModel)
-									.arg(QString("permission_%1").arg(perm_list[i])).arg(BaseObject::getTypeName(ObjectType::Permission))
-									.arg(role_name).arg(BaseObject::getTypeName(ObjectType::Role))
-									,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-				else
+				catch(Exception &e)
 				{
-					try
+					throw Exception(Exception::getErrorMessage(ErrorCode::ObjectNotImported)
+													.arg(perm_str)
+													.arg(BaseObject::getTypeName(ObjectType::Permission))
+													.arg("n/d"),
+													ErrorCode::ObjectNotImported,__PRETTY_FUNCTION__,__FILE__,__LINE__, &e,
+													dumpObjectAttributes(attribs));
+				}
+			}
+
+			/* If the role doesn't exists and there is a name defined, throws an error because
+			the roles wasn't found on the model */
+			if(!role && !role_name.isEmpty())
+				throw Exception(Exception::getErrorMessage(ErrorCode::RefObjectInexistsModel)
+								.arg(QString("%1").arg(perm_str)).arg(BaseObject::getTypeName(ObjectType::Permission))
+								.arg(role_name).arg(BaseObject::getTypeName(ObjectType::Role))
+								,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			else
+			{
+				try
+				{
+					//Configuring the permisison
+					permission = new Permission(object);
+
+					if(role)
+						permission->addRole(role);
+
+					//Setting the ordinary privileges
+					while(!privs.empty())
 					{
-						//Configuring the permisison
-						perm=new Permission(object);
-
-						if(role)
-							perm->addRole(role);
-
-						//Setting the ordinary privileges
-						while(!privs.empty())
-						{
-							perm->setPrivilege(privs.back(), true, false);
-							privs.pop_back();
-						}
-
-						//Setting the grant option privileges
-						while(!gop_privs.empty())
-						{
-							perm->setPrivilege(gop_privs.back(), true, true);
-							gop_privs.pop_back();
-						}
-
-						dbmodel->addPermission(perm);
+						permission->setPrivilege(privs.back(), true, false);
+						privs.pop_back();
 					}
-					catch(Exception &e)
+
+					//Setting the grant option privileges
+					while(!gop_privs.empty())
 					{
-						if(perm) delete perm;
-
-						if(ignore_errors)
-							errors.push_back(Exception(e.getErrorMessage(), e.getErrorCode(), __PRETTY_FUNCTION__,__FILE__,__LINE__, &e, dumpObjectAttributes(attribs)));
-						else
-							throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+						permission->setPrivilege(gop_privs.back(), true, true);
+						gop_privs.pop_back();
 					}
+
+					dbmodel->addPermission(permission);
+				}
+				catch(Exception &e)
+				{
+					if(permission)
+						delete permission;
+
+					if(ignore_errors)
+						errors.push_back(Exception(e.getErrorMessage(), e.getErrorCode(), __PRETTY_FUNCTION__,__FILE__,__LINE__, &e, dumpObjectAttributes(attribs)));
+					else
+						throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 				}
 			}
 		}
 	}
+
 }
 
 void DatabaseImportHelper::createTableInheritances()
