@@ -10625,7 +10625,7 @@ void DatabaseModel::createSystemObjects(bool create_public)
 	Tablespace *tbspace=nullptr;
 	QStringList langs={ DefaultLanguages::C, DefaultLanguages::Sql,
 											DefaultLanguages::PlPgsql, DefaultLanguages::Internal };
-	Role *role=nullptr;
+	Role *postgres=nullptr;
 	Collation *collation=nullptr;
 	QString collnames[]={ "default", "C", "POSIX" };
 
@@ -10681,21 +10681,13 @@ void DatabaseModel::createSystemObjects(bool create_public)
 	tbspace->setSystemObject(true);
 	addTablespace(tbspace);
 
-	QStringList role_names = { "postgres", "pg_read_all_data", "pg_write_all_data", "pg_read_all_settings",
-														 "pg_read_all_stats", "pg_stat_scan_tables", "pg_monitor" , "pg_database_owner",
-														 "pg_signal_backend", "pg_read_server_files", "pg_write_server_files",
-														 "pg_execute_server_program", "pg_checkpoint" };
+	postgres=new Role;
+	postgres->setName(QString("postgres"));
+	postgres->setOption(Role::OpSuperuser, true);
+	postgres->setSystemObject(true);
+	addRole(postgres);
 
-	for(auto &rl_name : role_names)
-	{
-		role = new Role;
-		role->setName(rl_name);
-		role->setOption(Role::OpSuperuser, true);
-		role->setSystemObject(true);
-		addRole(role);
-	}
-
-	setDefaultObject(getRole("postgres"));
+	setDefaultObject(postgres);
 	setDefaultObject(getObject(QString("public"), ObjectType::Schema), ObjectType::Schema);
 }
 
