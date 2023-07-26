@@ -2,11 +2,11 @@ name: Windows build
 
 on:
   push:
-    branches: [ master, develop, 1.0.* ]
-    tags: 1.0.*
+    branches: [ main, develop, 1.* ]
+    tags: 1.*
     
   pull_request:
-    branches: [ master, develop, 1.0.* ]
+    branches: [ main, develop, 1.* ]
 
 jobs:
   build:

@@ -959,45 +959,45 @@ void ObjectsScene::handleChildrenSelectionChanged()
 
 void ObjectsScene::addItem(QGraphicsItem *item)
 {
-	if(item)
+	if(!item)	return;
+
+	RelationshipView *rel=dynamic_cast<RelationshipView *>(item);
+	BaseTableView *tab=dynamic_cast<BaseTableView *>(item);
+	BaseObjectView *obj=dynamic_cast<BaseObjectView *>(item);
+	TextboxView *txtbox=dynamic_cast<TextboxView *>(item);
+
+	if(rel)
+		connect(rel, &RelationshipView::s_relationshipModified, this, &ObjectsScene::s_objectModified);
+	else if(tab)
 	{
-		RelationshipView *rel=dynamic_cast<RelationshipView *>(item);
-		BaseTableView *tab=dynamic_cast<BaseTableView *>(item);
-		BaseObjectView *obj=dynamic_cast<BaseObjectView *>(item);
-		TextboxView *txtbox=dynamic_cast<TextboxView *>(item);
-
-		if(rel)
-			connect(rel, &RelationshipView::s_relationshipModified, this, &ObjectsScene::s_objectModified);
-		else if(tab)
-		{
-			connect(tab, &BaseTableView::s_popupMenuRequested, this, &ObjectsScene::handlePopupMenuRequested);
-			connect(tab, &BaseTableView::s_childrenSelectionChanged, this, &ObjectsScene::handleChildrenSelectionChanged);
-			connect(tab, &BaseTableView::s_collapseModeChanged, this, &ObjectsScene::s_collapseModeChanged);
-			connect(tab, &BaseTableView::s_paginationToggled, this, &ObjectsScene::s_paginationToggled);
-			connect(tab, &BaseTableView::s_currentPageChanged, this, &ObjectsScene::s_currentPageChanged);
-			connect(tab, &BaseTableView::s_sceneClearRequested, this, &ObjectsScene::clearSelection);
-		}
-
-		if(obj)
-		{		
-			obj->setVisible(isLayersActive(obj->getLayers()));
-
-			// Relationships and schemas don't have their z value changed
-			if(!rel && !dynamic_cast<SchemaView *>(item))
-				obj->setZValue(dynamic_cast<BaseGraphicObject *>(obj->getUnderlyingObject())->getZValue());
-
-			connect(obj, &BaseObjectView::s_objectSelected, this, &ObjectsScene::handleObjectSelection);
-
-			// Tables and textboxes are observed for dimension changes so the layers they are in are correctly updated
-			if(tab || txtbox)
-				connect(obj, &BaseObjectView::s_objectDimensionChanged, this, &ObjectsScene::updateLayerRects);
-		}
-
-		QGraphicsScene::addItem(item);
-
-		if(tab || txtbox)
-			updateLayerRects();
+		connect(tab, &BaseTableView::s_popupMenuRequested, this, &ObjectsScene::handlePopupMenuRequested);
+		connect(tab, &BaseTableView::s_childrenSelectionChanged, this, &ObjectsScene::handleChildrenSelectionChanged);
+		connect(tab, &BaseTableView::s_collapseModeChanged, this, &ObjectsScene::s_collapseModeChanged);
+		connect(tab, &BaseTableView::s_paginationToggled, this, &ObjectsScene::s_paginationToggled);
+		connect(tab, &BaseTableView::s_currentPageChanged, this, &ObjectsScene::s_currentPageChanged);
+		connect(tab, &BaseTableView::s_sceneClearRequested, this, &ObjectsScene::clearSelection);
 	}
+
+	if(obj)
+	{
+		obj->setVisible(isLayersActive(obj->getLayers()));
+
+		// Relationships and schemas don't have their z value changed
+		if(!rel && !dynamic_cast<SchemaView *>(item))
+			obj->setZValue(dynamic_cast<BaseGraphicObject *>(obj->getUnderlyingObject())->getZValue());
+
+		connect(obj, &BaseObjectView::s_objectSelected, this, &ObjectsScene::handleObjectSelection);
+
+		// Tables and textboxes are observed for dimension changes so the layers they are in are correctly updated
+		if(tab || txtbox)
+			connect(obj, &BaseObjectView::s_objectDimensionChanged, this, &ObjectsScene::updateLayerRects);
+	}
+
+	QGraphicsScene::addItem(item);
+
+	if(tab || txtbox)
+		updateLayerRects();
+
 }
 
 void ObjectsScene::removeItem(QGraphicsItem *item)

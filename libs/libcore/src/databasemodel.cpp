@@ -1309,19 +1309,19 @@ void DatabaseModel::updateTableFKRelationships(Table *table)
 		BaseRelationship *rel=nullptr;
 		unsigned idx;
 		std::vector<Constraint *> fks;
-		std::vector<BaseObject *>::iterator itr1, itr1_end;
+				std::vector<BaseObject *>::iterator itr, itr_end;
 
 		table->getForeignKeys(fks);
 
 		/* First remove the invalid relationships (the foreign key that generates the
 			relationship no longer exists) */
-		itr1=base_relationships.begin();
-		itr1_end=base_relationships.end();
+		itr = base_relationships.begin();
+		itr_end = base_relationships.end();
 
-		idx=0;
-		while(itr1!=itr1_end)
+		idx = 0;
+		while(itr != itr_end)
 		{
-			rel=dynamic_cast<BaseRelationship *>(*itr1);
+						rel = dynamic_cast<BaseRelationship *>(*itr);
 
 			if(rel->getRelationshipType()==BaseRelationship::RelationshipFk &&
 					(rel->getTable(BaseRelationship::SrcTable)==table ||
@@ -1345,28 +1345,28 @@ void DatabaseModel::updateTableFKRelationships(Table *table)
 					 (table->getObjectIndex(fk) < 0 && fk->getReferencedTable() == ref_tab))
 				{
 					removeRelationship(rel);
-					itr1=base_relationships.begin() + idx;
-					itr1_end=base_relationships.end();
+					itr=base_relationships.begin() + idx;
+					itr_end=base_relationships.end();
 				}
 				else
 				{
 					rel->setModified(!loading_model);
-					itr1++; idx++;
+					itr++; idx++;
 				}
 			}
 			else
 			{
-				itr1++; idx++;
+				itr++; idx++;
 			}
 		}
 
 		//Creating the relationships from the foreign keys
 		for(auto &fk : fks)
 		{
-			ref_tab=dynamic_cast<Table *>(fk->getReferencedTable());
+			ref_tab = dynamic_cast<Table *>(fk->getReferencedTable());
 
-			//Only creates the relationship if does'nt exist one between the tables
-			rel=getRelationship(table, ref_tab, fk);
+			//Only creates the relationship if doesn't exist one between the tables
+			rel = getRelationship(table, ref_tab, fk);
 
 			if(!rel && ref_tab->getDatabase()==this)
 			{
@@ -1408,12 +1408,30 @@ void DatabaseModel::updateTablesFKRelationships()
 	}
 }
 
+void DatabaseModel::restoreFKRelationshipLayers()
+{
+	BaseRelationship *rel = nullptr;
+
+	for(auto &obj : base_relationships)
+	{
+		rel = dynamic_cast<BaseRelationship *>(obj);
+
+		if(rel->getRelationshipType() != BaseRelationship::RelationshipFk ||
+			 !fk_rel_layers.count(rel->getName()))
+			continue;
+
+		rel->setLayers(fk_rel_layers.at(rel->getName()));
+	}
+
+	fk_rel_layers.clear();
+}
+
 void DatabaseModel::updateViewRelationships(View *view, bool force_rel_removal)
 {
-	PhysicalTable *table=nullptr;
-	BaseRelationship *rel=nullptr;
+	PhysicalTable *table = nullptr;
+	BaseRelationship *rel = nullptr;
 	Reference ref;
-	unsigned i, ref_count, idx;
+	unsigned i = 0, ref_count = 0, idx = 0;
 	std::vector<BaseObject *>::iterator itr, itr_end;
 	std::vector<PhysicalTable *> tables;
 
@@ -1423,16 +1441,16 @@ void DatabaseModel::updateViewRelationships(View *view, bool force_rel_removal)
 	if(getObjectIndex(view) < 0 || force_rel_removal)
 	{
 		//Remove all the relationship related to the view when this latter no longer exists
-		itr=base_relationships.begin();
-		itr_end=base_relationships.end();
+		itr = base_relationships.begin();
+		itr_end = base_relationships.end();
 
-		idx=0;
-		while(itr!=itr_end)
+		idx = 0;
+		while(itr != itr_end)
 		{
-			rel=dynamic_cast<BaseRelationship *>(*itr);
+			rel = dynamic_cast<BaseRelationship *>(*itr);
 
 			if(rel->getTable(BaseRelationship::SrcTable)==view ||
-					rel->getTable(BaseRelationship::DstTable)==view)
+				 rel->getTable(BaseRelationship::DstTable)==view)
 			{
 				removeRelationship(rel);
 				itr=base_relationships.begin() + idx;
@@ -1448,13 +1466,13 @@ void DatabaseModel::updateViewRelationships(View *view, bool force_rel_removal)
 	{
 		/* Remove the relationships between tables and the view
 		 when this latter doesn't reference the first */
-		itr=base_relationships.begin();
-		itr_end=base_relationships.end();
+		itr = base_relationships.begin();
+		itr_end = base_relationships.end();
 
-		idx=0;
-		while(itr!=itr_end)
+		idx = 0;
+		while(itr != itr_end)
 		{
-			rel=dynamic_cast<BaseRelationship *>(*itr);
+			rel = dynamic_cast<BaseRelationship *>(*itr);
 
 			if(rel->getTable(BaseRelationship::SrcTable)==view ||
 					rel->getTable(BaseRelationship::DstTable)==view)
@@ -1467,8 +1485,8 @@ void DatabaseModel::updateViewRelationships(View *view, bool force_rel_removal)
 				if(!view->isReferencingTable(table))
 				{
 					removeRelationship(rel);
-					itr=base_relationships.begin() + idx;
-					itr_end=base_relationships.end();
+					itr = base_relationships.begin() + idx;
+					itr_end =base_relationships.end();
 				}
 				else
 				{
@@ -1483,8 +1501,8 @@ void DatabaseModel::updateViewRelationships(View *view, bool force_rel_removal)
 
 		/* Creates the relationships from the view references
 		 * First we try to create relationship from referecences in SELECT portion of view's definition */
-		ref_count=view->getReferenceCount(Reference::SqlSelect);
-		for(i=0; i < ref_count; i++)
+		ref_count = view->getReferenceCount(Reference::SqlSelect);
+		for(i = 0; i < ref_count; i++)
 		{
 			table = view->getReference(i, Reference::SqlSelect).getTable();
 			if(table) tables.push_back(table);
@@ -2032,7 +2050,6 @@ void DatabaseModel::storeSpecialObjectsXML()
 							xml_special_objs[rel->getObjectId()]=rel->getSourceCode(SchemaParser::XmlCode);
 							removeRelationship(rel);
 							invalid_special_objs.push_back(rel);
-							//delete rel;
 						}
 					}
 				}
@@ -2045,12 +2062,10 @@ void DatabaseModel::storeSpecialObjectsXML()
 					xml_special_objs[obj->getObjectId()]=obj->getSourceCode(SchemaParser::XmlCode);
 					view->removeObject(obj);
 					invalid_special_objs.push_back(obj);
-					//delete obj;
 				}
 
 				removeView(view);
 				invalid_special_objs.push_back(view);
-				//delete view;
 			}
 		}
 
@@ -3313,12 +3328,6 @@ void DatabaseModel::loadModel(const QString &filename)
 									if(!dynamic_cast<TableObject *>(object) && obj_type!=ObjectType::Relationship && obj_type!=ObjectType::BaseRelationship)
 										addObject(object);
 
-									/* If there is at least one inheritance relationship we need to flag this situation
-									 in order to do an addtional rel. validation in the end of loading */
-									/* if(!found_inh_rel && object->getObjectType()==ObjectType::Relationship &&
-											dynamic_cast<Relationship *>(object)->getRelationshipType()==BaseRelationship::RelationshipGen)
-										found_inh_rel=true; */
-
 									emit s_objectLoaded((xmlparser.getCurrentBufferLine()/static_cast<double>(xmlparser.getBufferLineCount()))*100,
 														tr("Loading: `%1' (%2)")
 														.arg(object->getName())
@@ -3376,14 +3385,9 @@ void DatabaseModel::loadModel(const QString &filename)
 			this->setInvalidated(false);
 			emit s_objectLoaded(100, tr("Validating relationships..."), enum_t(ObjectType::Relationship));
 
-			//Doing another relationship validation when there are inheritances to avoid incomplete tables
-			/* if(found_inh_rel)
-			{
-				emit s_objectLoaded(100, tr("Validating relationships..."), enum_cast(ObjectType::Relationship));
-				validateRelationships();
-			} */
-
 			updateTablesFKRelationships();
+			restoreFKRelationshipLayers();
+
 			emit s_objectLoaded(100, tr("Rendering database model..."), enum_t(ObjectType::BaseObject));
 			this->setObjectsModified();
 		}
@@ -6977,6 +6981,14 @@ BaseRelationship *DatabaseModel::createRelationship()
 				base_rel->setName(attribs[Attributes::Name]);
 				base_rel->setAlias(attribs[Attributes::Alias]);
 				addRelationship(base_rel);
+
+				/* Workaround: in very specific cases when the FK relationship is generated from a FK that references
+				 * columns created by a relationship in the referenced table, we have to save the layers information
+				 * of that relatinship because that one can be destroyed and recreated at the end of the loading process
+				 * leading to the loss of the original layer configuration. This way, we store the layers in a special
+				 * map which is read at DatabaseModel::restoreFKRelationshipLayer (called at the end of DatabaseModel::loadModel) */
+				if(loading_model)
+					fk_rel_layers[attribs[Attributes::Name]] = layers;
 
 				/* If the source table doesn't have any fk that references the destination table indicates that the relationship
 				is being created before the fk that represents it or the fk is invalid (inconsistence!). In this case an error is raised. */
