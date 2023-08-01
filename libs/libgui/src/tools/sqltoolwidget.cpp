@@ -62,11 +62,17 @@ SQLToolWidget::SQLToolWidget(QWidget * parent) : QWidget(parent)
 
 	connect(connections_cmb, &QComboBox::activated, this, &SQLToolWidget::connectToServer);
 	connect(refresh_tb, &QToolButton::clicked, this, &SQLToolWidget::connectToServer);
-	connect(databases_tbw, &QTabWidget::tabCloseRequested, this, &SQLToolWidget::closeDatabaseExplorer);
-	connect(sql_exec_tbw, &QTabWidget::tabCloseRequested, this, &SQLToolWidget::closeSQLExecutionTab);
 	connect(database_cmb, &QComboBox::activated, this, &SQLToolWidget::browseDatabase);
 	connect(disconnect_tb, &QToolButton::clicked, this, &SQLToolWidget::disconnectFromDatabases);
 	connect(source_pane_tb, &QToolButton::toggled, sourcecode_gb, &QGroupBox::setVisible);
+
+	connect(databases_tbw, &QTabWidget::tabCloseRequested, this, [this](int idx){
+		closeDatabaseExplorer(idx, true);
+	});
+
+	connect(sql_exec_tbw, &QTabWidget::tabCloseRequested, this, [this](int idx) {
+		closeSQLExecutionTab(idx, true);
+	});
 
 	connect(sql_exec_corner_btn, &QToolButton::clicked, this, [this](){
 		addSQLExecutionTab();
@@ -108,7 +114,7 @@ SQLToolWidget::~SQLToolWidget()
 	databases_tbw->blockSignals(true);
 
 	while(databases_tbw->count() > 0)
-		closeDatabaseExplorer(0);
+		closeDatabaseExplorer(0, false);
 }
 
 bool SQLToolWidget::eventFilter(QObject *object, QEvent *event)
@@ -229,7 +235,7 @@ void SQLToolWidget::disconnectFromDatabases()
 			while(databases_tbw->count() > 0)
 			{
 				databases_tbw->blockSignals(true);
-				closeDatabaseExplorer(0);
+				closeDatabaseExplorer(0, false);
 				databases_tbw->blockSignals(false);
 			}
 
@@ -372,13 +378,13 @@ void SQLToolWidget::reloadHighlightConfigs()
 	}
 }
 
-void SQLToolWidget::closeDatabaseExplorer(int idx)
+void SQLToolWidget::closeDatabaseExplorer(int idx, bool confirm_close)
 {
-	DatabaseExplorerWidget *db_explorer=dynamic_cast<DatabaseExplorerWidget *>(databases_tbw->widget(idx));
+	DatabaseExplorerWidget *db_explorer = dynamic_cast<DatabaseExplorerWidget *>(databases_tbw->widget(idx));
 
 	/* Display a message box confirming the database explorer tab only if the user
 	 * click the close button on the DatabaseExplorerWidget instance */
-	if(sender() == databases_tbw)
+	if(confirm_close)
 	{
 		Messagebox msg_box;
 		msg_box.show(tr("Warning"),
@@ -403,31 +409,38 @@ void SQLToolWidget::closeDatabaseExplorer(int idx)
 		delete db_explorer;
 }
 
-void SQLToolWidget::closeSQLExecutionTab(int idx)
+void SQLToolWidget::closeSQLExecutionTab(int idx, bool confirm_close)
 {
-	SQLExecutionWidget *sql_exec_wgt=dynamic_cast<SQLExecutionWidget *>(sql_exec_tbw->widget(idx));
-	QMap<QWidget *, QWidgetList> ::iterator itr=sql_exec_wgts.begin();
-	int idx1=-1;
+	SQLExecutionWidget *sql_exec_wgt = dynamic_cast<SQLExecutionWidget *>(sql_exec_tbw->widget(idx));
+	int idx1 = -1;
 
 	//Removing the widget from the list it belongs
-	while(itr!=sql_exec_wgts.end())
+	for(auto &itr : sql_exec_wgts)
 	{
-		idx1=itr.value().indexOf(sql_exec_wgt);
+		idx1 = itr.indexOf(sql_exec_wgt);
 
-		if(idx1 >= 0)
+		if(idx1 < 0)
+			continue;
+
+		if(confirm_close &&	sql_exec_wgt->hasSQLCommand())
 		{
-			itr.value().removeAt(idx1);
-			break;
+			Messagebox msg_box;
+			msg_box.show(tr("Warning"),
+									 tr("The SQL execution panel contains a typed command! Do you really want to close it?"),
+									 Messagebox::AlertIcon, Messagebox::YesNoButtons);
+
+			if(msg_box.result() == QDialog::Rejected)
+				return;
 		}
 
-		itr++;
+		itr.removeAt(idx1);
+		break;
 	}
 
 	sql_exec_tbw->removeTab(idx);
 
 	if(sql_exec_wgt)
 		delete sql_exec_wgt;
-
 }
 
 void SQLToolWidget::showSnippet(const QString &snip)
@@ -471,6 +484,20 @@ bool SQLToolWidget::hasDatabasesBrowsed()
 	return (databases_tbw->count() > 0);
 }
 
+bool SQLToolWidget::hasSQLExecutionPanels()
+{
+	for(auto &itr : sql_exec_wgts)
+	{
+		for(auto &wgt : itr)
+		{
+			if(dynamic_cast<SQLExecutionWidget *>(wgt)->hasSQLCommand())
+				return true;
+		}
+	}
+
+	return false;
+}
+
 void SQLToolWidget::dropDatabase(int database_idx)
 {
 	if(connections_cmb->currentIndex() <= 0 || database_idx <= 0)
@@ -500,7 +527,7 @@ void SQLToolWidget::dropDatabase(int database_idx)
 			{
 				if(databases_tbw->tabText(i).remove('&') == dbname)
 				{
-					closeDatabaseExplorer(i);
+					closeDatabaseExplorer(i, false);
 					i=-1;
 				}
 			}

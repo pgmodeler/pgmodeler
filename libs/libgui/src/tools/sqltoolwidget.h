@@ -63,6 +63,9 @@ class __libgui SQLToolWidget: public QWidget, public Ui::SQLToolWidget {
 		//! \brief Indicates if there is at least one database being browsed through explorer widget
 		bool hasDatabasesBrowsed();
 
+		//! \brief Indicates if there is at least one SQL execution panel with typed commands
+		bool hasSQLExecutionPanels();
+
 	public slots:
 		void configureSnippets();
 		void clearDatabases();
@@ -94,10 +97,10 @@ class __libgui SQLToolWidget: public QWidget, public Ui::SQLToolWidget {
 		void showSourceCode(const QString &source);
 
 		//! \brief Close the database explorer specified by its index. Also, closes any SQL exec. tab related to it
-		void closeDatabaseExplorer(int idx);
+		void closeDatabaseExplorer(int idx, bool confirm_close);
 
 		//! \brief Close the SQL execution tab specified by its index
-		void closeSQLExecutionTab(int idx);
+		void closeSQLExecutionTab(int idx, bool confirm_close);
 
 		//! \brief Drops the database selected in the database combo
 		void dropDatabase(int database_idx);

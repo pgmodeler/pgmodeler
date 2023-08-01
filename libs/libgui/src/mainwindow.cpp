@@ -896,13 +896,16 @@ void MainWindow::closeEvent(QCloseEvent *event)
 
 		//If not in demo version there is no confirmation before close the software
 #ifndef DEMO_VERSION
-		int i=0;
-		QStringList model_names;
-		ModelWidget *model=nullptr;
+		Messagebox msg_box;
 
 		//Checking if there is modified models and ask the user to save them before close the application
 		if(models_tbw->count() > 0)
 		{
+			int i = 0;
+			QStringList model_names;
+			ModelWidget *model = nullptr;
+
+			action_design->trigger();
 			i=0;
 			while(i < models_tbw->count())
 			{
@@ -914,96 +917,103 @@ void MainWindow::closeEvent(QCloseEvent *event)
 
 			if(!model_names.isEmpty())
 			{
-				Messagebox msg_box;
-
 				msg_box.show(tr("Save modified model(s)"),
 							 tr("The following models were modified but not saved: %1. Do you really want to quit pgModeler?").arg(model_names.join(", ")),
 							 Messagebox::ConfirmIcon,Messagebox::YesNoButtons);
 
 				/* If the user rejects the message box the close event will be aborted
 				causing pgModeler not to be finished */
-				if(msg_box.result()==QDialog::Rejected)
+				if(msg_box.result() == QDialog::Rejected)
 					event->ignore();
 			}
+		}
+
+		// Warning the user about non empty sql execution panels
+		if(event->isAccepted() && sql_tool_wgt->hasSQLExecutionPanels())
+		{
+			action_manage->trigger();
+			msg_box.show(tr("Confirmation"),
+									 tr("There are one or more SQL panels with typed commands! Do you really want to quit pgModeler?"),
+									 Messagebox::ConfirmIcon,Messagebox::YesNoButtons);
+
+			if(msg_box.result()==QDialog::Rejected)
+				event->ignore();
 		}
 #else
 		showDemoVersionWarning(true);
 #endif
 
-		if(event->isAccepted())
+		if(!event->isAccepted())
+			return;
+
+		QString param_id;
+		attribs_map attribs;
+		ModelWidget *model = nullptr;
+
+		this->overview_wgt->close();
+		conf_wgt=dynamic_cast<GeneralConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::GeneralConfWgt));
+		confs=conf_wgt->getConfigurationParams();
+
+		attribs[Attributes::PgModelerVersion]=GlobalAttributes::PgModelerVersion;
+		attribs[Attributes::FirstRun]=Attributes::False;
+
+		attribs[Attributes::CompactView]=action_compact_view->isChecked() ? Attributes::True : "";
+		attribs[Attributes::ShowMainMenu]=main_menu_mb->isVisible() ? Attributes::True : "";
+
+		conf_wgt->addConfigurationParam(Attributes::Configuration, attribs);
+		attribs.clear();
+
+		//Remove the references to old session
+		conf_wgt->removeConfigurationParam(QRegularExpression(QString("(%1)([0-9])+").arg(Attributes::File)));
+
+		//Saving the session
+		for(auto i = 0; i < models_tbw->count(); i++)
 		{
-			int i, count;
-			ModelWidget *model=nullptr;
+			model=dynamic_cast<ModelWidget *>(models_tbw->widget(i));
+
+			if(!model->getFilename().isEmpty() &&
+				 /* Models loaded from temporary dir are not included in the session
+					* since they are removed once pgModeler is closed */
+				 !model->getFilename().contains(GlobalAttributes::getTemporaryPath()))
+			{
+				param_id=QString("%1%2").arg(Attributes::File).arg(i);
+				attribs[Attributes::Id]=param_id;
+				attribs[Attributes::Path]=model->getFilename();
+				conf_wgt->addConfigurationParam(param_id, attribs);
+				attribs.clear();
+			}
+		}
+
+		//Saving recent models list
+		if(!recent_models.isEmpty())
+		{
+			int i=0;
 			QString param_id;
 			attribs_map attribs;
 
-			this->overview_wgt->close();
-			conf_wgt=dynamic_cast<GeneralConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::GeneralConfWgt));
-			confs=conf_wgt->getConfigurationParams();
-
-			attribs[Attributes::PgModelerVersion]=GlobalAttributes::PgModelerVersion;
-			attribs[Attributes::FirstRun]=Attributes::False;
-
-			attribs[Attributes::CompactView]=action_compact_view->isChecked() ? Attributes::True : "";
-			attribs[Attributes::ShowMainMenu]=main_menu_mb->isVisible() ? Attributes::True : "";
-
-			conf_wgt->addConfigurationParam(Attributes::Configuration, attribs);
-			attribs.clear();
-
-			count=models_tbw->count();
-
-			//Remove the references to old session
-			conf_wgt->removeConfigurationParam(QRegularExpression(QString("(%1)([0-9])+").arg(Attributes::File)));
-
-			//Saving the session
-			for(i=0; i < count; i++)
+			while(!recent_models.isEmpty())
 			{
-				model=dynamic_cast<ModelWidget *>(models_tbw->widget(i));
-
-				if(!model->getFilename().isEmpty() &&
-					 /* Models loaded from temporary dir are not included in the session
-						* since they are removed once pgModeler is closed */
-					 !model->getFilename().contains(GlobalAttributes::getTemporaryPath()))
-				{
-					param_id=QString("%1%2").arg(Attributes::File).arg(i);
-					attribs[Attributes::Id]=param_id;
-					attribs[Attributes::Path]=model->getFilename();
-					conf_wgt->addConfigurationParam(param_id, attribs);
-					attribs.clear();
-				}
+				param_id=QString("%1%2").arg(Attributes::Recent).arg(QString::number(i++).rightJustified(2, '0'));
+				attribs[Attributes::Id]=param_id;
+				attribs[Attributes::Path]=recent_models.front();
+				conf_wgt->addConfigurationParam(param_id, attribs);
+				attribs.clear();
+				recent_models.pop_front();
 			}
 
-			//Saving recent models list
-			if(!recent_models.isEmpty())
-			{
-				int i=0;
-				QString param_id;
-				attribs_map attribs;
-
-				while(!recent_models.isEmpty())
-				{
-					param_id=QString("%1%2").arg(Attributes::Recent).arg(QString::number(i++).rightJustified(2, '0'));
-					attribs[Attributes::Id]=param_id;
-					attribs[Attributes::Path]=recent_models.front();
-					conf_wgt->addConfigurationParam(param_id, attribs);
-					attribs.clear();
-					recent_models.pop_front();
-				}
-
-				recent_models_menu->clear();
-			}
-			else
-				conf_wgt->removeConfigurationParam(QRegularExpression(QString("(%1)(.)+").arg(Attributes::Recent)));
-
-			//Saving dock widgets settings
-			storeDockWidgetsSettings();
-
-			conf_wgt->saveConfiguration();
-			restoration_form->removeTemporaryFiles();
-
-			SQLExecutionWidget::saveSQLHistory();
-			qApp->quit();
+			recent_models_menu->clear();
 		}
+		else
+			conf_wgt->removeConfigurationParam(QRegularExpression(QString("(%1)(.)+").arg(Attributes::Recent)));
+
+		//Saving dock widgets settings
+		storeDockWidgetsSettings();
+
+		conf_wgt->saveConfiguration();
+		restoration_form->removeTemporaryFiles();
+
+		SQLExecutionWidget::saveSQLHistory();
+		qApp->quit();
 	}
 }
 
