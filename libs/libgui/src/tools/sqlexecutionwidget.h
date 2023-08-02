@@ -109,6 +109,7 @@ class __libgui SQLExecutionWidget: public QWidget, public Ui::SQLExecutionWidget
 		//! \brief Insert the provided sql commands in the input field. This method clears the current commands before adding new content
 		void setSQLCommand(const QString &sql);
 
+		//! \brief Returns true when there is a SQL command typed, otherwise, false is returned
 		bool hasSQLCommand();
 
 		/*! \brief Fills up the results grid based upon the specified result set.
