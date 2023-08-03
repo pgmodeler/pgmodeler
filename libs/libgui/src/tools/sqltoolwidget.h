@@ -66,6 +66,9 @@ class __libgui SQLToolWidget: public QWidget, public Ui::SQLToolWidget {
 		//! \brief Indicates if there is at least one SQL execution panel with typed commands
 		bool hasSQLExecutionPanels();
 
+		//! \brief Returns the list of execution tabs associated to the specified database explorer widget
+		QWidgetList getExecutionTabs(DatabaseExplorerWidget *db_expl_wgt);
+
 	public slots:
 		void configureSnippets();
 		void clearDatabases();

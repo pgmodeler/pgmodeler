@@ -260,6 +260,11 @@ bool SQLExecutionWidget::hasSQLCommand()
 	return !sql_cmd_txt->document()->isEmpty();
 }
 
+QString SQLExecutionWidget::getSQLCommand()
+{
+	return sql_cmd_txt->toPlainText();
+}
+
 void SQLExecutionWidget::enableCommandButtons()
 {
 	run_sql_tb->setEnabled(!sql_cmd_txt->toPlainText().isEmpty());

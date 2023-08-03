@@ -550,3 +550,11 @@ void SQLToolWidget::dropDatabase(const QString &dbname)
 {
 	dropDatabase(database_cmb->findText(dbname));
 }
+
+QWidgetList SQLToolWidget::getExecutionTabs(DatabaseExplorerWidget *db_expl_wgt)
+{
+	if(!db_expl_wgt || !sql_exec_wgts.contains(db_expl_wgt))
+		return QWidgetList();
+
+	return sql_exec_wgts.value(db_expl_wgt);
+}
