@@ -1,6 +1,19 @@
 Changelog
 ---------
 
+v1.0.5
+------
+<em>Release date: July 26, 2023</em><br/>
+
+* [New] Added shortcuts to Z-stack operations in ModelWidget.
+* [New] Added missing PostgreSQL multirange types
+* [Change] Improved the import error message when it's not possible to create/import a permission which references a predefined PostgreSQL role.
+* [Change] Minor code refactor in ObjectsScene and DatabaseModel.
+* [Fix] Fixed Qt 6.2 release in linuxbuild.yml and macosbuild.yml.
+* [Fix] Fixed a bug in DatabaseModel that was causing FK relationships of a hidden layer to be displayed after loading the model.
+* [Fix] Fixed a bug in MainWindow that was causing the plugins config action icon to disappear when triggering validation.
+* [Fix] Fixed a bug in PgModelerCliApp::fixModel that was causing the generation of empty models when the input file had no tag <role>.
+
 v1.1.0-alpha
 ------
 <em>Release date: June 09, 2023</em><br/>
