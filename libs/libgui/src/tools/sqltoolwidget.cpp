@@ -78,35 +78,34 @@ SQLToolWidget::SQLToolWidget(QWidget * parent) : QWidget(parent)
 		addSQLExecutionTab();
 	});
 
-	connect(databases_tbw, &QTabWidget::currentChanged,
-			[this](){
-				DatabaseExplorerWidget *dbexplorer=qobject_cast<DatabaseExplorerWidget *>(databases_tbw->currentWidget());
-				QMap<QWidget *, QWidgetList> ::iterator itr=sql_exec_wgts.begin();
+	connect(databases_tbw, &QTabWidget::currentChanged,	this, [this](){
+		DatabaseExplorerWidget *dbexplorer=qobject_cast<DatabaseExplorerWidget *>(databases_tbw->currentWidget());
+		QMap<QWidget *, QWidgetList> ::iterator itr=sql_exec_wgts.begin();
 
-				sourcecode_txt->clear();
+		sourcecode_txt->clear();
 
-				if(dbexplorer && dbexplorer->objects_trw->currentItem())
-					sourcecode_txt->setPlainText(dbexplorer->objects_trw->currentItem()->
-																			 data(DatabaseImportForm::ObjectSource, Qt::UserRole).toString());
+		if(dbexplorer && dbexplorer->objects_trw->currentItem())
+			sourcecode_txt->setPlainText(dbexplorer->objects_trw->currentItem()->
+																	 data(DatabaseImportForm::ObjectSource, Qt::UserRole).toString());
 
-				while(itr != sql_exec_wgts.end())
-				{
-					if(itr.key() != dbexplorer)
-					{
-						for(auto &wgt : itr.value())
-							sql_exec_tbw->removeTab(sql_exec_tbw->indexOf(wgt));
-					}
-					else
-					{
-						for(auto &wgt : itr.value())
-							sql_exec_tbw->addTab(wgt, dbexplorer->getConnection().getConnectionParam(Connection::ParamDbName));
-					}
+		while(itr != sql_exec_wgts.end())
+		{
+			if(itr.key() != dbexplorer)
+			{
+				for(auto &wgt : itr.value())
+					sql_exec_tbw->removeTab(sql_exec_tbw->indexOf(wgt));
+			}
+			else
+			{
+				for(auto &wgt : itr.value())
+					sql_exec_tbw->addTab(wgt, dbexplorer->getConnection().getConnectionParam(Connection::ParamDbName));
+			}
 
-					itr++;
-				}
+			itr++;
+		}
 
-				disconnect_tb->setEnabled(databases_tbw->count() > 0);
-			});
+		disconnect_tb->setEnabled(databases_tbw->count() > 0);
+	});
 }
 
 SQLToolWidget::~SQLToolWidget()
