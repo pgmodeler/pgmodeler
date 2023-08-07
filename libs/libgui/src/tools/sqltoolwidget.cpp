@@ -27,6 +27,8 @@ SQLToolWidget::SQLToolWidget(QWidget * parent) : QWidget(parent)
 {
 	setupUi(this);
 
+	ignore_auto_browse_flag = false;
+
 	DeletableItemDelegate *combo_del = new DeletableItemDelegate(database_cmb, tr("Delete this database"));
 	database_cmb->setItemDelegate(combo_del);
 	connect(combo_del, &DeletableItemDelegate::s_itemDeleteRequested, this, qOverload<int>(&SQLToolWidget::dropDatabase));
@@ -198,7 +200,7 @@ void SQLToolWidget::connectToServer()
 			{
 				DatabaseImportForm::listDatabases(*conn, database_cmb);
 
-				if(sender()==connections_cmb && conn->isAutoBrowseDB())
+				if(sender()==connections_cmb && conn->isAutoBrowseDB() && !ignore_auto_browse_flag)
 				{
 					database_cmb->setCurrentText(conn->getConnectionParam(Connection::ParamDbName));
 					browseDatabase();
@@ -287,7 +289,8 @@ DatabaseExplorerWidget *SQLToolWidget::browseDatabase()
 
 			/* Forcing the signal s_sqlExecutionRequested to be emitted to properly register the
 			new tab on the map of sql panes related to the database explorer */
-			db_explorer_wgt->runsql_tb->click();
+			if(!ignore_auto_browse_flag)
+				db_explorer_wgt->runsql_tb->click();
 		}
 
 		return db_explorer_wgt;
@@ -406,6 +409,11 @@ void SQLToolWidget::closeDatabaseExplorer(int idx, bool confirm_close)
 
 	if(db_explorer)
 		delete db_explorer;
+}
+
+void SQLToolWidget::ignoreAutoBrowseFlag(bool value)
+{
+	ignore_auto_browse_flag = value;
 }
 
 void SQLToolWidget::closeSQLExecutionTab(int idx, bool confirm_close)

@@ -43,6 +43,8 @@ class __libgui SQLToolWidget: public QWidget, public Ui::SQLToolWidget {
 
 		SyntaxHighlighter *sourcecode_hl;
 
+		bool ignore_auto_browse_flag;
+
 		/*! \brief Controls the link between a database explorer instance and SQL execution widgets.
 		When a database explorer is closed all the SQL execution panes related to it are closed too.
 		(see addSQLExecutionTab and closeSQLExecutionTab for deitails) */
@@ -69,12 +71,21 @@ class __libgui SQLToolWidget: public QWidget, public Ui::SQLToolWidget {
 		//! \brief Returns the list of execution tabs associated to the specified database explorer widget
 		QWidgetList getExecutionTabs(DatabaseExplorerWidget *db_expl_wgt);
 
+		/*! \brief Indicates if SQL tool must ignore the auto-browse flag of the connections.
+		 * This causes a selected connection with auto-browse=true to not open an instance of
+		 * the maintanance database. Also, it causes the selected database in database_cmb to not
+		 * create an empty SQL explorer tab */
+		void ignoreAutoBrowseFlag(bool value);
+
 	public slots:
 		void configureSnippets();
 		void clearDatabases();
 
 		//! \brief Add a tab to permit the SQL execution for the current database being browsed
 		SQLExecutionWidget *addSQLExecutionTab(const QString &sql_cmd = "");
+
+		//! \brief Close the database explorer specified by its index. Also, closes any SQL exec. tab related to it
+		void closeDatabaseExplorer(int idx, bool confirm_close);
 
 	protected slots:
 		//! \brief Add a tab by browsing a database in the specified connection, loads the sql file and put its contents on a SQL execution
@@ -98,9 +109,6 @@ class __libgui SQLToolWidget: public QWidget, public Ui::SQLToolWidget {
 
 		//! \brief Show the provided code in the source panel
 		void showSourceCode(const QString &source);
-
-		//! \brief Close the database explorer specified by its index. Also, closes any SQL exec. tab related to it
-		void closeDatabaseExplorer(int idx, bool confirm_close);
 
 		//! \brief Close the SQL execution tab specified by its index
 		void closeSQLExecutionTab(int idx, bool confirm_close);
