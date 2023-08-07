@@ -103,7 +103,7 @@
            <number>5</number>
           </property>
           <item>
-           <layout class="QHBoxLayout" name="horizontalLayout">
+           <layout class="QHBoxLayout" name="connections_lt">
             <property name="spacing">
              <number>5</number>
             </property>
