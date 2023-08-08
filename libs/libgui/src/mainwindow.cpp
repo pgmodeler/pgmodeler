@@ -884,9 +884,8 @@ void MainWindow::closeEvent(QCloseEvent *event)
 		event->ignore();
 	else
 	{
-		GeneralConfigWidget *conf_wgt=nullptr;
-		std::map<QString, attribs_map > confs;
-
+		GeneralConfigWidget *conf_wgt = dynamic_cast<GeneralConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::GeneralConfWgt));
+		std::map<QString, attribs_map > confs = conf_wgt->getConfigurationParams();
 		GeneralConfigWidget::saveWidgetGeometry(this);
 
 		//Stops the saving timers as well the temp. model saving thread before close pgmodeler
@@ -917,6 +916,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
 
 			if(!model_names.isEmpty())
 			{
+				msg_box.setCustomOptionText(tr("Remember my decision"));
 				msg_box.show(tr("Save modified model(s)"),
 							 tr("The following models were modified but not saved: %1. Do you really want to quit pgModeler?").arg(model_names.join(", ")),
 							 Messagebox::ConfirmIcon,Messagebox::YesNoButtons);
@@ -932,6 +932,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
 		if(event->isAccepted() && sql_tool_wgt->hasSQLExecutionPanels())
 		{
 			action_manage->trigger();
+			msg_box.setCustomOptionText(tr("Remember my decision"));
 			msg_box.show(tr("Confirmation"),
 									 tr("There are one or more SQL panels with typed commands! Do you really want to quit pgModeler?"),
 									 Messagebox::ConfirmIcon,Messagebox::YesNoButtons);
@@ -950,9 +951,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
 		attribs_map attribs;
 		ModelWidget *model = nullptr;
 
-		this->overview_wgt->close();
-		conf_wgt=dynamic_cast<GeneralConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::GeneralConfWgt));
-		confs=conf_wgt->getConfigurationParams();
+		this->overview_wgt->close();		
 
 		attribs[Attributes::PgModelerVersion]=GlobalAttributes::PgModelerVersion;
 		attribs[Attributes::FirstRun]=Attributes::False;

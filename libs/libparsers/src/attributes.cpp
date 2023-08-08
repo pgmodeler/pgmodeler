@@ -24,6 +24,8 @@ namespace Attributes {
 	ActiveLayers("active-layers"),
 	AdminOption("admin-option"),
 	AdminRoles("admin-roles"),
+	AlertUnsavedModels("alert-unsaved-models"),
+	AlertOpenSqlTabs("alert-open-sqltabs"),
 	Alias("alias"),
 	Alignment("alignment"),
 	AlignObjsToGrid("align-objs-to-grid"),

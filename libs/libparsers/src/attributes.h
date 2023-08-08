@@ -37,6 +37,8 @@ namespace Attributes {
 	ActiveLayers,
 	AdminOption,
 	AdminRoles,
+	AlertUnsavedModels,
+	AlertOpenSqlTabs,
 	Alias,
 	Alignment,
 	AlignObjsToGrid,
