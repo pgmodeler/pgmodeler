@@ -53,8 +53,8 @@ $tb [<configuration pgmodeler-ver="] {pgmodeler-ver} ["] $br
 {spc} [truncate-column-data="] %if {truncate-column-data} %then true %else false %end ["] $br
 {spc} [column-trunc-threshold="] {column-trunc-threshold} ["] $br
 {spc} [disable-inline-editor="] %if {disable-inline-editor} %then true %else false %end ["] $br
-{spc} [alert-unsaved-models="] %if {alert-unsaved-models} %then true %else false %end ["] $br
-{spc} [alert-open-sqltabs="] %if {alert-open-sqltabs} %then true %else false %end ["] $br
+{spc} [alert-unsaved-models="] {alert-unsaved-models} ["] $br
+{spc} [alert-open-sqltabs="] {alert-open-sqltabs} ["] $br
 
 %if {source-editor-app} %then
 	{spc} [source-editor-app="] &{source-editor-app} ["] $br

@@ -152,6 +152,8 @@ GeneralConfigWidget::GeneralConfigWidget(QWidget * parent) : BaseConfigWidget(pa
 		SQLExecutionWidget::destroySQLHistory();
 	});
 
+	connect(reset_exit_alerts_tb, &QToolButton::clicked, this, &GeneralConfigWidget::resetExitAlerts);
+
 #ifdef NO_UPDATE_CHECK
 	check_update_chk->setChecked(false);
 	check_update_chk->setVisible(false);
@@ -191,11 +193,12 @@ void GeneralConfigWidget::loadConfiguration()
 
 		BaseConfigWidget::loadConfiguration(GlobalAttributes::GeneralConf, config_params, { Attributes::Id });
 
-		if(!config_params[Attributes::Configuration].count(Attributes::AlertUnsavedModels))
-			config_params[Attributes::Configuration][Attributes::AlertUnsavedModels] = Attributes::True;
+		if(!config_params[Attributes::Configuration].count(Attributes::AlertUnsavedModels) ||
+			 !config_params[Attributes::Configuration].count(Attributes::AlertOpenSqlTabs))
+			resetExitAlerts();
 
-		if(!config_params[Attributes::Configuration].count(Attributes::AlertOpenSqlTabs))
-			config_params[Attributes::Configuration][Attributes::AlertOpenSqlTabs] = Attributes::True;
+		reset_exit_alerts_tb->setEnabled(config_params[Attributes::Configuration][Attributes::AlertUnsavedModels] != Attributes::True ||
+																		 config_params[Attributes::Configuration][Attributes::AlertOpenSqlTabs] != Attributes::True);
 
 		oplist_size_spb->setValue((config_params[Attributes::Configuration][Attributes::OpListSize]).toUInt());
 		history_max_length_spb->setValue(config_params[Attributes::Configuration][Attributes::HistoryMaxLength].toUInt());
@@ -664,5 +667,12 @@ void GeneralConfigWidget::resetDialogsSizes()
 						Messagebox::ConfirmIcon, Messagebox::YesNoButtons);
 
 	if(msg_box.result() == QDialog::Accepted)
-	  widgets_geom.clear();
+		widgets_geom.clear();
+}
+
+void GeneralConfigWidget::resetExitAlerts()
+{
+	config_params[Attributes::Configuration][Attributes::AlertUnsavedModels] = Attributes::True;
+	config_params[Attributes::Configuration][Attributes::AlertOpenSqlTabs] = Attributes::True;
+	reset_exit_alerts_tb->setEnabled(false);
 }

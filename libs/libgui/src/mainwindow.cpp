@@ -915,14 +915,14 @@ void MainWindow::closeEvent(QCloseEvent *event)
 
 			if(!model_names.isEmpty() && confs[Attributes::Configuration][Attributes::AlertUnsavedModels] != Attributes::False)
 			{
-				msg_box.setCustomOptionText(tr("Don't show this message again"));
-				msg_box.show(tr("Save modified model(s)"),
+				msg_box.setCustomOptionText(tr("Always close without alerting next time."));
+				msg_box.show(tr("Unsaved model(s)"),
 							 tr("The following models were modified but not saved: %1. Do you really want to quit pgModeler?").arg(model_names.join(", ")),
 							 Messagebox::ConfirmIcon,Messagebox::YesNoButtons);
 
 				conf_wgt->appendConfigurationSection(Attributes::Configuration,
 																						 {{ Attributes::AlertUnsavedModels,
-																								msg_box.isCustomOptionChecked() ? "" : Attributes::True }});
+																								msg_box.isCustomOptionChecked() ? Attributes::False : Attributes::True }});
 
 				/* If the user rejects the message box the close event will be aborted
 				causing pgModeler not to be finished */
@@ -936,14 +936,14 @@ void MainWindow::closeEvent(QCloseEvent *event)
 				confs[Attributes::Configuration][Attributes::AlertOpenSqlTabs] != Attributes::False)
 		{
 			action_manage->trigger();
-			msg_box.setCustomOptionText(tr("Don't show this message again"));
-			msg_box.show(tr("Confirmation"),
-									 tr("There are one or more SQL panels with typed commands! Do you really want to quit pgModeler?"),
+			msg_box.setCustomOptionText(tr("Always close without alerting next time."));
+			msg_box.show(tr("Open SQL execution tab(s)"),
+									 tr("There are one or more SQL execution tabs with typed commands! Do you really want to quit pgModeler?"),
 									 Messagebox::ConfirmIcon,Messagebox::YesNoButtons);
 
 			conf_wgt->appendConfigurationSection(Attributes::Configuration,
 																					 {{ Attributes::AlertOpenSqlTabs,
-																							msg_box.isCustomOptionChecked() ? "" : Attributes::True }});
+																							msg_box.isCustomOptionChecked() ? Attributes::False : Attributes::True }});
 
 			if(msg_box.result()==QDialog::Rejected)
 				event->ignore();

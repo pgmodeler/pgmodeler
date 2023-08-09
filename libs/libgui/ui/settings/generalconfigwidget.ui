@@ -156,22 +156,85 @@
             <property name="spacing">
              <number>5</number>
             </property>
-            <item row="0" column="0">
-             <widget class="QCheckBox" name="check_update_chk">
+            <item row="0" column="4">
+             <widget class="QToolButton" name="reset_sizes_tb">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
               <property name="sizePolicy">
-               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+               <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
               </property>
+              <property name="maximumSize">
+               <size>
+                <width>16777215</width>
+                <height>16777215</height>
+               </size>
+              </property>
+              <property name="focusPolicy">
+               <enum>Qt::StrongFocus</enum>
+              </property>
               <property name="toolTip">
-               <string>Check if there is a new version on the server at the startup</string>
+               <string>Reset the dialogs sizes and positions to their default values.</string>
               </property>
               <property name="text">
-               <string>Check for new versions:</string>
+               <string>Reset sizes</string>
               </property>
-              <property name="checked">
-               <bool>false</bool>
+              <property name="icon">
+               <iconset resource="../../res/resources.qrc">
+                <normaloff>:/icons/icons/resetsizes.png</normaloff>:/icons/icons/resetsizes.png</iconset>
+              </property>
+              <property name="iconSize">
+               <size>
+                <width>25</width>
+                <height>25</height>
+               </size>
+              </property>
+              <property name="toolButtonStyle">
+               <enum>Qt::ToolButtonTextBesideIcon</enum>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="4">
+             <widget class="QToolButton" name="reset_exit_alerts_tb">
+              <property name="enabled">
+               <bool>true</bool>
+              </property>
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>16777215</width>
+                <height>16777215</height>
+               </size>
+              </property>
+              <property name="focusPolicy">
+               <enum>Qt::StrongFocus</enum>
+              </property>
+              <property name="toolTip">
+               <string>Reset exit alert statuses regarding unsaved models and open SQL execution tabs.</string>
+              </property>
+              <property name="text">
+               <string>Reset exit alerts</string>
+              </property>
+              <property name="icon">
+               <iconset resource="../../res/resources.qrc">
+                <normaloff>:/icons/icons/resetalerts.png</normaloff>:/icons/icons/resetalerts.png</iconset>
+              </property>
+              <property name="iconSize">
+               <size>
+                <width>25</width>
+                <height>25</height>
+               </size>
+              </property>
+              <property name="toolButtonStyle">
+               <enum>Qt::ToolButtonTextBesideIcon</enum>
               </property>
              </widget>
             </item>
@@ -222,48 +285,39 @@
               </property>
              </widget>
             </item>
-            <item row="0" column="4">
-             <widget class="QToolButton" name="reset_sizes_tb">
-              <property name="enabled">
-               <bool>false</bool>
-              </property>
+            <item row="0" column="0">
+             <widget class="QCheckBox" name="check_update_chk">
               <property name="sizePolicy">
-               <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
               </property>
-              <property name="maximumSize">
-               <size>
-                <width>16777215</width>
-                <height>16777215</height>
-               </size>
-              </property>
-              <property name="focusPolicy">
-               <enum>Qt::StrongFocus</enum>
-              </property>
               <property name="toolTip">
-               <string>Reset the dialogs sizes and positions to their default values.</string>
+               <string>Check if there is a new version on the server at the startup</string>
               </property>
               <property name="text">
-               <string>Reset sizes</string>
+               <string>Check for new versions:</string>
               </property>
-              <property name="icon">
-               <iconset resource="../../res/resources.qrc">
-                <normaloff>:/icons/icons/refresh.png</normaloff>:/icons/icons/refresh.png</iconset>
-              </property>
-              <property name="iconSize">
-               <size>
-                <width>25</width>
-                <height>25</height>
-               </size>
-              </property>
-              <property name="toolButtonStyle">
-               <enum>Qt::ToolButtonTextBesideIcon</enum>
+              <property name="checked">
+               <bool>false</bool>
               </property>
              </widget>
             </item>
-            <item row="1" column="0" rowspan="5" colspan="7">
+            <item row="0" column="5" rowspan="2" colspan="2">
+             <spacer name="horizontalSpacer_2">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item row="1" column="0" rowspan="2" colspan="4">
              <widget class="QCheckBox" name="low_verbosity_chk">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
@@ -281,19 +335,6 @@
                <string>Low verbosity for export, import and diff </string>
               </property>
              </widget>
-            </item>
-            <item row="0" column="5" colspan="2">
-             <spacer name="horizontalSpacer_2">
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>40</width>
-                <height>20</height>
-               </size>
-              </property>
-             </spacer>
             </item>
            </layout>
           </item>
@@ -805,84 +846,46 @@
             </property>
            </widget>
           </item>
-          <item row="1" column="2">
-           <layout class="QHBoxLayout" name="horizontalLayout_4">
-            <property name="spacing">
-             <number>5</number>
+          <item row="2" column="0">
+           <widget class="QCheckBox" name="disable_inline_editor_chk">
+            <property name="enabled">
+             <bool>false</bool>
             </property>
-            <property name="leftMargin">
-             <number>0</number>
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
             </property>
-            <item>
-             <widget class="QSpinBox" name="trunc_columns_data_spb">
-              <property name="enabled">
-               <bool>false</bool>
-              </property>
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="minimumSize">
-               <size>
-                <width>60</width>
-                <height>0</height>
-               </size>
-              </property>
-              <property name="toolTip">
-               <string>&lt;p&gt;Columns exceeding the specified number of bytes are automatically truncated to the maximum length. This threshold only affects text display. When editing columns data the original values are displayed instead of the truncated ones.&lt;/p&gt;</string>
-              </property>
-              <property name="minimum">
-               <number>100</number>
-              </property>
-              <property name="maximum">
-               <number>10000</number>
-              </property>
-              <property name="singleStep">
-               <number>100</number>
-              </property>
-              <property name="value">
-               <number>500</number>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QLabel" name="bytes_lbl">
-              <property name="enabled">
-               <bool>true</bool>
-              </property>
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="minimumSize">
-               <size>
-                <width>0</width>
-                <height>0</height>
-               </size>
-              </property>
-              <property name="text">
-               <string>bytes</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <spacer name="horizontalSpacer">
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>40</width>
-                <height>20</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-           </layout>
+            <property name="toolTip">
+             <string>&lt;p&gt;In data manipulation form, long texts that exceed the truncation threshold will be displayed in an input form instead of opening an inline editor in the data grid.&lt;/p&gt;</string>
+            </property>
+            <property name="statusTip">
+             <string/>
+            </property>
+            <property name="text">
+             <string>Disable inline editor for long texts</string>
+            </property>
+            <property name="checked">
+             <bool>false</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="2">
+           <widget class="QCheckBox" name="old_pgsql_versions_chk">
+            <property name="toolTip">
+             <string>&lt;p&gt;pgModeler will try to connect to older server versions (below 10) in a minimum compatibility mode. &lt;strong&gt;WARNING:&lt;/strong&gt; this option may cause the diff and import processes to fail or produce unreliable results. Also, it can lead to data loss when handling table data. Enable this option at &lt;strong&gt;your own risk&lt;/strong&gt;!&lt;/p&gt;</string>
+            </property>
+            <property name="text">
+             <string>Allow unsupported server versions</string>
+            </property>
+            <property name="iconSize">
+             <size>
+              <width>22</width>
+              <height>22</height>
+             </size>
+            </property>
+           </widget>
           </item>
           <item row="1" column="0">
            <widget class="QCheckBox" name="trunc_columns_data_chk">
@@ -903,22 +906,6 @@
             </property>
             <property name="checked">
              <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="2">
-           <widget class="QCheckBox" name="old_pgsql_versions_chk">
-            <property name="toolTip">
-             <string>&lt;p&gt;pgModeler will try to connect to older server versions (below 10) in a minimum compatibility mode. &lt;strong&gt;WARNING:&lt;/strong&gt; this option may cause the diff and import processes to fail or produce unreliable results. Also, it can lead to data loss when handling table data. Enable this option at &lt;strong&gt;your own risk&lt;/strong&gt;!&lt;/p&gt;</string>
-            </property>
-            <property name="text">
-             <string>Allow unsupported server versions</string>
-            </property>
-            <property name="iconSize">
-             <size>
-              <width>22</width>
-              <height>22</height>
-             </size>
             </property>
            </widget>
           </item>
@@ -1008,30 +995,84 @@
             </item>
            </layout>
           </item>
-          <item row="2" column="0">
-           <widget class="QCheckBox" name="disable_inline_editor_chk">
-            <property name="enabled">
-             <bool>false</bool>
+          <item row="1" column="2">
+           <layout class="QHBoxLayout" name="horizontalLayout_4">
+            <property name="spacing">
+             <number>5</number>
             </property>
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
+            <property name="leftMargin">
+             <number>0</number>
             </property>
-            <property name="toolTip">
-             <string>&lt;p&gt;In data manipulation form, long texts that exceed the truncation threshold will be displayed in an input form instead of opening an inline editor in the data grid.&lt;/p&gt;</string>
-            </property>
-            <property name="statusTip">
-             <string/>
-            </property>
-            <property name="text">
-             <string>Disable inline editor for long texts</string>
-            </property>
-            <property name="checked">
-             <bool>false</bool>
-            </property>
-           </widget>
+            <item>
+             <widget class="QSpinBox" name="trunc_columns_data_spb">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>60</width>
+                <height>0</height>
+               </size>
+              </property>
+              <property name="toolTip">
+               <string>&lt;p&gt;Columns exceeding the specified number of bytes are automatically truncated to the maximum length. This threshold only affects text display. When editing columns data the original values are displayed instead of the truncated ones.&lt;/p&gt;</string>
+              </property>
+              <property name="minimum">
+               <number>100</number>
+              </property>
+              <property name="maximum">
+               <number>10000</number>
+              </property>
+              <property name="singleStep">
+               <number>100</number>
+              </property>
+              <property name="value">
+               <number>500</number>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="bytes_lbl">
+              <property name="enabled">
+               <bool>true</bool>
+              </property>
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>0</height>
+               </size>
+              </property>
+              <property name="text">
+               <string>bytes</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="horizontalSpacer">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+           </layout>
           </item>
          </layout>
         </widget>
