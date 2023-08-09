@@ -142,7 +142,9 @@ class __libgui MainWindow: public QMainWindow, public Ui::MainWindow {
 
 		more_actions_menu,
 
-		fix_menu;
+		fix_menu,
+
+		plugins_config_menu;
 
 		//! \brief Stores the loaded plugins toolbar actions
 		QList<QAction *> plugins_tb_acts;

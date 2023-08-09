@@ -191,6 +191,12 @@ void GeneralConfigWidget::loadConfiguration()
 
 		BaseConfigWidget::loadConfiguration(GlobalAttributes::GeneralConf, config_params, { Attributes::Id });
 
+		if(!config_params[Attributes::Configuration].count(Attributes::AlertUnsavedModels))
+			config_params[Attributes::Configuration][Attributes::AlertUnsavedModels] = Attributes::True;
+
+		if(!config_params[Attributes::Configuration].count(Attributes::AlertOpenSqlTabs))
+			config_params[Attributes::Configuration][Attributes::AlertOpenSqlTabs] = Attributes::True;
+
 		oplist_size_spb->setValue((config_params[Attributes::Configuration][Attributes::OpListSize]).toUInt());
 		history_max_length_spb->setValue(config_params[Attributes::Configuration][Attributes::HistoryMaxLength].toUInt());
 
@@ -286,12 +292,12 @@ void GeneralConfigWidget::loadConfiguration()
 	}
 }
 
-void GeneralConfigWidget::addConfigurationParam(const QString &param, const attribs_map &attribs)
+void GeneralConfigWidget::setConfigurationSection(const QString &section_id, const attribs_map &params)
 {
-	BaseConfigWidget::addConfigurationParam(config_params, param, attribs);
+	BaseConfigWidget::setConfigurationSection(config_params, section_id, params);
 }
 
-void GeneralConfigWidget::removeConfigurationParam(const QRegularExpression &param_reg)
+void GeneralConfigWidget::removeConfigurationSection(const QRegularExpression &section_regex)
 {
 	std::map<QString, attribs_map>::iterator itr, itr_end;
 
@@ -300,7 +306,7 @@ void GeneralConfigWidget::removeConfigurationParam(const QRegularExpression &par
 
 	while(itr!=itr_end)
 	{
-		if(param_reg.match(itr->first).hasMatch())
+		if(section_regex.match(itr->first).hasMatch())
 		{
 			config_params.erase(itr);
 			itr=config_params.begin();
@@ -314,6 +320,11 @@ void GeneralConfigWidget::removeConfigurationParam(const QRegularExpression &par
 std::map<QString, attribs_map> GeneralConfigWidget::getConfigurationParams()
 {
 	return config_params;
+}
+
+void GeneralConfigWidget::appendConfigurationSection(const QString &section_id, const attribs_map &params)
+{
+	BaseConfigWidget::appendConfigurationSection(config_params, section_id, params);
 }
 
 QString GeneralConfigWidget::getConfigurationParam(const QString &section_id, const QString &param_name)

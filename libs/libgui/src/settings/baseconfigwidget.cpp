@@ -27,10 +27,21 @@ BaseConfigWidget::BaseConfigWidget(QWidget *parent) : QWidget(parent)
 	config_changed=false;
 }
 
-void BaseConfigWidget::addConfigurationParam(std::map<QString, attribs_map> &config_params, const QString &param, const attribs_map &attribs)
+void BaseConfigWidget::setConfigurationSection(std::map<QString, attribs_map> &config_params, const QString &section_id, const attribs_map &params)
 {
-	if(!param.isEmpty() && !attribs.empty())
-		config_params[param]=attribs;
+	if(section_id.isEmpty() || params.empty())
+		return;
+
+	config_params[section_id]=params;
+}
+
+void BaseConfigWidget::appendConfigurationSection(std::map<QString, attribs_map> &config_params, const QString &section_id, const attribs_map &params)
+{
+	if(section_id.isEmpty() || params.empty())
+		return;
+
+	for(auto &itr : params)
+		config_params[section_id][itr.first] = itr.second;
 }
 
 void BaseConfigWidget::showEvent(QShowEvent *)

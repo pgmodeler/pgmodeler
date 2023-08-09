@@ -497,7 +497,7 @@ bool SQLToolWidget::hasSQLExecutionPanels()
 	{
 		for(auto &wgt : itr)
 		{
-			if(dynamic_cast<SQLExecutionWidget *>(wgt)->hasSQLCommand())
+			if(qobject_cast<SQLExecutionWidget *>(wgt)->hasSQLCommand())
 				return true;
 		}
 	}

@@ -234,9 +234,9 @@ void MainWindow::configureMenusActionsWidgets()
 	model_acts_tb->addWidget(model_nav_wgt);
 	model_acts_tb->addSeparator();
 
-	QAction *act_plugins_conf = plugins_config_menu->menuAction();
-	model_acts_tb->addAction(plugins_config_menu->menuAction());
-	QToolButton *plugins_btn = dynamic_cast<QToolButton *>(model_acts_tb->widgetForAction(plugins_config_menu->menuAction()));
+	QAction *act_plugins_conf = plugins_config_menu.menuAction();
+	model_acts_tb->addAction(plugins_config_menu.menuAction());
+	QToolButton *plugins_btn = dynamic_cast<QToolButton *>(model_acts_tb->widgetForAction(plugins_config_menu.menuAction()));
 	plugins_btn->setPopupMode(QToolButton::InstantPopup);
 	plugins_btn->setIcon(QIcon(GuiUtilsNs::getIconPath("pluginsconfig")));
 	plugins_btn->setToolButtonStyle(Qt::ToolButtonIconOnly);
@@ -300,11 +300,10 @@ void MainWindow::configureMenusActionsWidgets()
 //	model_acts_tb->removeAction(action_main_menu);
 //	action_main_menu->setEnabled(false);
 #else
-	plugins_config_menu->menuAction()->setIconVisibleInMenu(false);
+	plugins_config_menu.menuAction()->setIconVisibleInMenu(false);
 	main_menu.addMenu(file_menu);
 	main_menu.addMenu(edit_menu);
 	main_menu.addMenu(show_menu);
-	main_menu.addMenu(plugins_config_menu);
 	main_menu.addMenu(about_menu);
 	main_menu.addSeparator();
 	main_menu.addAction(action_show_main_menu);
@@ -481,14 +480,14 @@ void MainWindow::loadConfigurations()
 
 		PluginsConfigWidget *plugins_conf_wgt = dynamic_cast<PluginsConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::PluginsConfWgt));
 		plugins_conf_wgt->initPlugins(this);
-		plugins_conf_wgt->installPluginsActions(plugins_config_menu, plugins_tb_acts, plugins_tool_btns);
-		plugins_config_menu->setEnabled(!plugins_config_menu->isEmpty());
+		plugins_conf_wgt->installPluginsActions(&plugins_config_menu, plugins_tb_acts, plugins_tool_btns);
+		plugins_config_menu.setEnabled(!plugins_config_menu.isEmpty());
 		sql_tool_wgt->setPluginsButtons(plugins_tool_btns);
 
-		QAction *action_plugins_config = plugins_config_menu->menuAction();
+		QAction *action_plugins_config = plugins_config_menu.menuAction();
 		action_plugins_config->setText(tr("Plug-ins"));
 		action_plugins_config->setToolTip(tr("Access the loaded plug-ins settings"));
-		action_plugins_config->setEnabled(!plugins_config_menu->isEmpty());
+		action_plugins_config->setEnabled(!plugins_config_menu.isEmpty());
 		action_plugins_config->setIcon(QIcon(GuiUtilsNs::getIconPath("pluginsconfig")));
 
 		//Configuring the widget visibility according to the configurations
@@ -891,7 +890,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
 		//Stops the saving timers as well the temp. model saving thread before close pgmodeler
 		model_save_timer.stop();
 		tmpmodel_save_timer.stop();
-		plugins_config_menu->clear();
+		plugins_config_menu.clear();
 
 		//If not in demo version there is no confirmation before close the software
 #ifndef DEMO_VERSION
@@ -914,12 +913,16 @@ void MainWindow::closeEvent(QCloseEvent *event)
 					model_names.push_back(QString("<strong>%1</strong>").arg(model->getDatabaseModel()->getName()));
 			}
 
-			if(!model_names.isEmpty())
+			if(!model_names.isEmpty() && confs[Attributes::Configuration][Attributes::AlertUnsavedModels] != Attributes::False)
 			{
-				msg_box.setCustomOptionText(tr("Remember my decision"));
+				msg_box.setCustomOptionText(tr("Don't show this message again"));
 				msg_box.show(tr("Save modified model(s)"),
 							 tr("The following models were modified but not saved: %1. Do you really want to quit pgModeler?").arg(model_names.join(", ")),
 							 Messagebox::ConfirmIcon,Messagebox::YesNoButtons);
+
+				conf_wgt->appendConfigurationSection(Attributes::Configuration,
+																						 {{ Attributes::AlertUnsavedModels,
+																								msg_box.isCustomOptionChecked() ? "" : Attributes::True }});
 
 				/* If the user rejects the message box the close event will be aborted
 				causing pgModeler not to be finished */
@@ -929,13 +932,18 @@ void MainWindow::closeEvent(QCloseEvent *event)
 		}
 
 		// Warning the user about non empty sql execution panels
-		if(event->isAccepted() && sql_tool_wgt->hasSQLExecutionPanels())
+		if(event->isAccepted() && sql_tool_wgt->hasSQLExecutionPanels() &&
+				confs[Attributes::Configuration][Attributes::AlertOpenSqlTabs] != Attributes::False)
 		{
 			action_manage->trigger();
-			msg_box.setCustomOptionText(tr("Remember my decision"));
+			msg_box.setCustomOptionText(tr("Don't show this message again"));
 			msg_box.show(tr("Confirmation"),
 									 tr("There are one or more SQL panels with typed commands! Do you really want to quit pgModeler?"),
 									 Messagebox::ConfirmIcon,Messagebox::YesNoButtons);
+
+			conf_wgt->appendConfigurationSection(Attributes::Configuration,
+																					 {{ Attributes::AlertOpenSqlTabs,
+																							msg_box.isCustomOptionChecked() ? "" : Attributes::True }});
 
 			if(msg_box.result()==QDialog::Rejected)
 				event->ignore();
@@ -959,11 +967,11 @@ void MainWindow::closeEvent(QCloseEvent *event)
 		attribs[Attributes::CompactView]=action_compact_view->isChecked() ? Attributes::True : "";
 		attribs[Attributes::ShowMainMenu]=main_menu_mb->isVisible() ? Attributes::True : "";
 
-		conf_wgt->addConfigurationParam(Attributes::Configuration, attribs);
+		conf_wgt->appendConfigurationSection(Attributes::Configuration, attribs);
 		attribs.clear();
 
 		//Remove the references to old session
-		conf_wgt->removeConfigurationParam(QRegularExpression(QString("(%1)([0-9])+").arg(Attributes::File)));
+		conf_wgt->removeConfigurationSection(QRegularExpression(QString("(%1)([0-9])+").arg(Attributes::File)));
 
 		//Saving the session
 		for(auto i = 0; i < models_tbw->count(); i++)
@@ -978,7 +986,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
 				param_id=QString("%1%2").arg(Attributes::File).arg(i);
 				attribs[Attributes::Id]=param_id;
 				attribs[Attributes::Path]=model->getFilename();
-				conf_wgt->addConfigurationParam(param_id, attribs);
+				conf_wgt->setConfigurationSection(param_id, attribs);
 				attribs.clear();
 			}
 		}
@@ -995,7 +1003,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
 				param_id=QString("%1%2").arg(Attributes::Recent).arg(QString::number(i++).rightJustified(2, '0'));
 				attribs[Attributes::Id]=param_id;
 				attribs[Attributes::Path]=recent_models.front();
-				conf_wgt->addConfigurationParam(param_id, attribs);
+				conf_wgt->setConfigurationSection(param_id, attribs);
 				attribs.clear();
 				recent_models.pop_front();
 			}
@@ -1003,7 +1011,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
 			recent_models_menu->clear();
 		}
 		else
-			conf_wgt->removeConfigurationParam(QRegularExpression(QString("(%1)(.)+").arg(Attributes::Recent)));
+			conf_wgt->removeConfigurationSection(QRegularExpression(QString("(%1)(.)+").arg(Attributes::Recent)));
 
 		//Saving dock widgets settings
 		storeDockWidgetsSettings();
@@ -1499,7 +1507,7 @@ void MainWindow::setGridOptions()
 		current_model->update();
 	}
 
-	conf_wgt->addConfigurationParam(Attributes::Configuration, attribs[Attributes::Configuration]);
+	conf_wgt->setConfigurationSection(Attributes::Configuration, attribs[Attributes::Configuration]);
 }
 
 void MainWindow::applyZoom()
@@ -2221,7 +2229,7 @@ void MainWindow::storeDockWidgetsSettings()
 	params[Attributes::SqlValidation]=(model_valid_wgt->sql_validation_chk->isChecked() ? Attributes::True : "");
 	params[Attributes::UseUniqueNames]=(model_valid_wgt->use_tmp_names_chk->isChecked() ? Attributes::True : "");
 	params[Attributes::Version]=model_valid_wgt->version_cmb->currentText();
-	conf_wgt->addConfigurationParam(Attributes::Validator, params);
+	conf_wgt->setConfigurationSection(Attributes::Validator, params);
 	params.clear();
 
 	params[Attributes::ObjectFinder]=Attributes::True;
@@ -2230,13 +2238,13 @@ void MainWindow::storeDockWidgetsSettings()
 	params[Attributes::RegularExp]=(obj_finder_wgt->regexp_chk->isChecked() ? Attributes::True : "");
 	params[Attributes::CaseSensitive]=(obj_finder_wgt->case_sensitive_chk->isChecked() ? Attributes::True : "");
 	params[Attributes::ExactMatch]=(obj_finder_wgt->exact_match_chk->isChecked() ? Attributes::True : "");
-	conf_wgt->addConfigurationParam(Attributes::ObjectFinder, params);
+	conf_wgt->setConfigurationSection(Attributes::ObjectFinder, params);
 	params.clear();
 
 	params[Attributes::SqlTool]=Attributes::True;
 	params[Attributes::ShowAttributesGrid]=(sql_tool_wgt->attributes_tb->isChecked() ? Attributes::True : "");
 	params[Attributes::ShowSourcePane]=(sql_tool_wgt->source_pane_tb->isChecked() ? Attributes::True : "");
-	conf_wgt->addConfigurationParam(Attributes::SqlTool, params);
+	conf_wgt->setConfigurationSection(Attributes::SqlTool, params);
 	params.clear();
 }
 

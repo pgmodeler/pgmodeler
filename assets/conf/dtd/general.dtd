@@ -48,9 +48,8 @@
 <!ATTLIST configuration disable-inline-editor (false|true) "false">
 <!ATTLIST configuration truncate-column-data (false|true) "false">
 <!ATTLIST configuration column-trunc-threshold CDATA #IMPLIED>
-<!ATTLIST configuration truncate-column-data (false|true|) "false">
-<!ATTLIST configuration alert-unsaved-models (false|true|undefined) "undefined">
-<!ATTLIST configuration alert-open-sqltabs (false|true|undefined) "undefined">
+<!ATTLIST configuration alert-unsaved-models (false|true) "true">
+<!ATTLIST configuration alert-open-sqltabs (false|true) "true">
 
 <!ELEMENT session (file+)>
 <!ELEMENT recent-models (file+)>
