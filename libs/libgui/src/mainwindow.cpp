@@ -915,7 +915,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
 
 			if(!model_names.isEmpty() && confs[Attributes::Configuration][Attributes::AlertUnsavedModels] != Attributes::False)
 			{
-				msg_box.setCustomOptionText(tr("Always close without alerting next time."));
+				msg_box.setCustomOptionText(tr("Always close without alerting me next time."));
 				msg_box.show(tr("Unsaved model(s)"),
 							 tr("The following models were modified but not saved: %1. Do you really want to quit pgModeler?").arg(model_names.join(", ")),
 							 Messagebox::ConfirmIcon,Messagebox::YesNoButtons);
@@ -936,7 +936,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
 				confs[Attributes::Configuration][Attributes::AlertOpenSqlTabs] != Attributes::False)
 		{
 			action_manage->trigger();
-			msg_box.setCustomOptionText(tr("Always close without alerting next time."));
+			msg_box.setCustomOptionText(tr("Always close without alerting me next time."));
 			msg_box.show(tr("Open SQL execution tab(s)"),
 									 tr("There are one or more SQL execution tabs with typed commands! Do you really want to quit pgModeler?"),
 									 Messagebox::ConfirmIcon,Messagebox::YesNoButtons);
