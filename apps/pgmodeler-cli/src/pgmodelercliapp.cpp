@@ -81,6 +81,7 @@ const QString PgModelerCliApp::FilterObjects("--filter-objects");
 const QString PgModelerCliApp::MatchByName("--match-by-name");
 const QString PgModelerCliApp::ForceChildren("--force-children");
 const QString PgModelerCliApp::OnlyMatching("--only-matching");
+const QString PgModelerCliApp::CommentsAsAliases("--comments-as-aliases");
 const QString PgModelerCliApp::PartialDiff("--partial");
 const QString PgModelerCliApp::Force("--force");
 const QString PgModelerCliApp::StartDate("--start-date");
@@ -132,7 +133,8 @@ attribs_map PgModelerCliApp::short_opts = {
 	{ NoSequenceReuse, "-ns" },	{ NoCascadeDrop, "-nd" },	{ ForceRecreateObjs, "-nf" },
 	{ OnlyUnmodifiable, "-nu" },	{ NoIndex, "-ni" },	{ Split, "-sp" },
 	{ SystemWide, "-sw" },	{ CreateConfigs, "-cc" }, { Force, "-ff" },
-	{ MissingOnly, "-mo" }, { DependenciesSql, "-ds" }, { ChildrenSql, "-cs" }
+	{ MissingOnly, "-mo" }, { DependenciesSql, "-ds" }, { ChildrenSql, "-cs" },
+	{ CommentsAsAliases, "-cl" }
 };
 
 std::map<QString, bool> PgModelerCliApp::long_opts = {
@@ -157,7 +159,7 @@ std::map<QString, bool> PgModelerCliApp::long_opts = {
 	{ ForceRecreateObjs, false },	{ OnlyUnmodifiable, false },	{ ExportToDict, false },
 	{ NoIndex, false },	{ Split, false },	{ SystemWide, false },
 	{ CreateConfigs, false }, { Force, false }, { MissingOnly, false },
-	{ DependenciesSql, false }, { ChildrenSql, false }
+	{ DependenciesSql, false }, { ChildrenSql, false }, { CommentsAsAliases, false }
 };
 
 std::map<QString, QStringList> PgModelerCliApp::accepted_opts = {
@@ -172,7 +174,7 @@ std::map<QString, QStringList> PgModelerCliApp::accepted_opts = {
 
 	{{ ImportDb }, { InputDb, Output, IgnoreImportErrors, ImportSystemObjs, ImportExtensionObjs,
 									 FilterObjects, OnlyMatching, MatchByName, ForceChildren, DebugMode, ConnAlias,
-									 Host, Port, User, Passwd, InitialDb }},
+									 Host, Port, User, Passwd, InitialDb, CommentsAsAliases }},
 
 	{{ Diff }, { Input, PgSqlVer, IgnoreDuplicates, IgnoreErrorCodes, CompareTo, PartialDiff, Force,
 							 StartDate, EndDate, SaveDiff, ApplyDiff, NoDiffPreview, DropClusterObjs, RevokePermissions,
@@ -483,6 +485,7 @@ void PgModelerCliApp::showMenu()
 	printText(tr("  %1, %2\t\t    Ignores all errors and tries to create as many as possible objects.").arg(short_opts[IgnoreImportErrors]).arg(IgnoreImportErrors));
 	printText(tr("  %1, %2\t    Imports built-in system objects. This option causes the model to bloat due to the importing of unneeded objects.").arg(short_opts[ImportSystemObjs]).arg(ImportSystemObjs));
 	printText(tr("  %1, %2\t    Imports extension objects. This option causes the model to bloat due to the importing of unneeded objects.").arg(short_opts[ImportExtensionObjs]).arg(ImportExtensionObjs));
+	printText(tr("  %1, %2\t    Use objects comments as aliases. This option is takes effect on objects graphically represented in the database model.").arg(short_opts[CommentsAsAliases]).arg(CommentsAsAliases));
 	printText(tr("  %1, %2 [FILTER]    Makes the import process retrieve only those objects matching the filter(s). The FILTER should be in the form type:pattern:mode.").arg(short_opts[FilterObjects]).arg(FilterObjects));
 	printText(tr("  %1, %2\t\t    Makes only objects matching the provided filter(s) to be imported. Those not matching filter(s) are discarded.").arg(short_opts[OnlyMatching]).arg(OnlyMatching));
 	printText(tr("  %1, %2\t\t    Makes the objects matching to be performed over their names instead of their signature ([schema].[name]).").arg(short_opts[MatchByName]).arg(MatchByName));
@@ -1934,7 +1937,9 @@ void PgModelerCliApp::importDatabase(DatabaseModel *model, Connection conn)
 																 true,
 																 parsed_opts.count(IgnoreImportErrors) > 0,
 																 parsed_opts.count(DebugMode) > 0,
-																 !parsed_opts.count(Diff), !parsed_opts.count(Diff));
+																 !parsed_opts.count(Diff),
+																 !parsed_opts.count(Diff),
+																 parsed_opts.count(CommentsAsAliases) > 0);
 
 		model->createSystemObjects(true);
 		import_hlp->setSelectedOIDs(model, obj_oids, col_oids);

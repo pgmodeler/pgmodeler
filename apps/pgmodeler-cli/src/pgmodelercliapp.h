@@ -177,6 +177,7 @@ class PgModelerCliApp: public Application {
 		MatchByName,
 		ForceChildren,
 		AllChildren,
+		CommentsAsAliases,
 
 		PartialDiff,
 		Force,

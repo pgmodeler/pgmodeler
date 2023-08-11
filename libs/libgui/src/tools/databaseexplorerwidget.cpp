@@ -1087,7 +1087,7 @@ void DatabaseExplorerWidget::configureImportHelper()
 	import_helper.setCurrentDatabase(connection.getConnectionParam(Connection::ParamDbName));
 	import_helper.setImportOptions(show_sys_objs->isChecked(),
 																 show_ext_objs->isChecked(),
-																 false, false, false, false, false);
+																 false, false, false, false, false, false);
 
 	catalog.closeConnection();
 	catalog.setQueryFilter(Catalog::ListAllObjects);
@@ -2025,7 +2025,7 @@ void DatabaseExplorerWidget::loadObjectSource()
 
 				import_hlp.setImportOptions(show_sys_objs->isChecked(),
 																		show_ext_objs->isChecked(),
-																		true, false, false, false, false);
+																		true, false, false, false, false, false);
 
 				import_hlp.setSelectedOIDs(&dbmodel, {{ObjectType::Database, {db_oid}}, {obj_type, {oid}}}, {});
 

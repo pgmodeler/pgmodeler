@@ -332,7 +332,8 @@ void DatabaseImportForm::importDatabase()
 		model_wgt->setUpdatesEnabled(false);
 		import_helper->setImportOptions(import_sys_objs_chk->isChecked(), import_ext_objs_chk->isChecked(),
 																		resolve_deps_chk->isChecked(), ignore_errors_chk->isChecked(),
-																		debug_mode_chk->isChecked(), rand_rel_color_chk->isChecked(), true);
+																		debug_mode_chk->isChecked(), rand_rel_color_chk->isChecked(), true,
+																		comments_as_aliases_chk->isChecked());
 
 		import_helper->setSelectedOIDs(model_wgt->getDatabaseModel(), obj_oids, col_oids);
 		import_thread->start();
@@ -466,7 +467,8 @@ void DatabaseImportForm::listObjects()
 			import_helper->setCurrentDatabase(database_cmb->currentText());
 			import_helper->setImportOptions(import_sys_objs_chk->isChecked(), import_ext_objs_chk->isChecked(),
 																			resolve_deps_chk->isChecked(), ignore_errors_chk->isChecked(),
-																			debug_mode_chk->isChecked(), rand_rel_color_chk->isChecked(), true);
+																			debug_mode_chk->isChecked(), rand_rel_color_chk->isChecked(), true,
+																			comments_as_aliases_chk->isChecked());
 
 			import_helper->setObjectFilters(obj_filter,
 																			objs_filter_wgt->isOnlyMatching(),
