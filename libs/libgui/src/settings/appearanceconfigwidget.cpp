@@ -271,6 +271,7 @@ CREATE TABLE public.table_b (\n \
 	ui_theme_cmb->addItem(tr("System default"), Attributes::System);
 	ui_theme_cmb->addItem(tr("Light"), Attributes::Light);
 	ui_theme_cmb->addItem(tr("Dark"), Attributes::Dark);
+	ui_theme_cmb->addItem(tr("InkSaver"), Attributes::InkSaver);
 
 	icons_size_cmb->addItem(tr("Big"), Attributes::Big);
 	icons_size_cmb->addItem(tr("Medium"), Attributes::Medium);
@@ -353,32 +354,6 @@ std::map<QString, attribs_map> AppearanceConfigWidget::getConfigurationParams()
 {
 	return config_params;
 }
-
-/* void AppearanceConfigWidget::updateDropShadows(QWidgetList wgt_list)
-{
-	QColor color(0, 0, 0, 80);
-	int radius = 6, x = 1, y = 1;
-	QGraphicsDropShadowEffect *shadow = nullptr;
-	QString class_name = "QToolButton";
-
-	if(getUiThemeId() == Attributes::Light)
-	{
-		radius = 1;
-		color.setRgb(225, 225, 225);
-		color.setAlpha(255);
-	}
-
-	for(auto &wgt : qApp->allWidgets())
-	{
-		if(wgt->metaObject()->className() == class_name && wgt->graphicsEffect())
-		{
-			shadow = qobject_cast<QGraphicsDropShadowEffect *>(wgt->graphicsEffect());
-			shadow->setColor(color);
-			shadow->setOffset(x, y);
-			shadow->setBlurRadius(radius);
-		}
-	}
-} */
 
 void AppearanceConfigWidget::loadExampleModel()
 {
@@ -907,13 +882,15 @@ void AppearanceConfigWidget::applyUiTheme()
 	std::map<QString, std::map<QPalette::ColorRole, QStringList> *> color_maps = {
 		{ { Attributes::System }, { &system_ui_colors } },
 		{ { Attributes::Dark }, { &dark_ui_colors } },
-		{ { Attributes::Light }, { &light_ui_colors } }
+		{ { Attributes::Light }, { &light_ui_colors } },
+		{ { Attributes::InkSaver }, { &light_ui_colors } }
 	};
 
 	std::map<QString, QStringList *> item_color_lists = {
 		{ { Attributes::System }, { &light_tab_item_colors } },
 		{ { Attributes::Dark }, { &dark_tab_item_colors } },
-		{ { Attributes::Light }, { &light_tab_item_colors } }
+		{ { Attributes::Light }, { &light_tab_item_colors } },
+		{ { Attributes::InkSaver }, { &light_tab_item_colors } },
 	};
 
 	QString ui_theme = __getUiThemeId();

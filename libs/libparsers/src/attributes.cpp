@@ -318,6 +318,7 @@ namespace Attributes {
 	InitialCond("initial-cond"),
 	InitialData("initial-data"),
 	InitialExp("initial-exp"),
+	InkSaver("inksaver"),
 	InlineFunc("inline"),
 	InputDatabase("input-db"),
 	InputFunc("input"),
