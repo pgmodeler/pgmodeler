@@ -937,6 +937,10 @@ void AppearanceConfigWidget::previewUiSettings()
 	qApp->setOverrideCursor(Qt::WaitCursor);
 	applyUiTheme();
 	applyDesignCodeTheme();
+
+	model->setObjectsModified();
+	scene->update();
+
 	GuiUtilsNs::updateDropShadows(qApp->allWidgets());
 	qApp->restoreOverrideCursor();
 }
