@@ -629,7 +629,7 @@ void ModelDatabaseDiffForm::importDatabase(ThreadId thread_id)
 		import_hlp->setSelectedOIDs(db_model, obj_oids, col_oids);
 		import_hlp->setCurrentDatabase(db_cmb->currentText());
 		import_hlp->setImportOptions(import_sys_objs_chk->isChecked(), import_ext_objs_chk->isChecked(), true,
-																 ignore_errors_chk->isChecked(), debug_mode_chk->isChecked(), false, false);
+																 ignore_errors_chk->isChecked(), debug_mode_chk->isChecked(), false, false, false);
 		thread->start();
 	}
 	catch(Exception &e)

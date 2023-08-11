@@ -28,7 +28,8 @@ DatabaseImportHelper::DatabaseImportHelper(QObject *parent) : QObject(parent)
 	std::random_device rand_seed;
 	rand_num_engine.seed(rand_seed());
 
-	import_canceled=ignore_errors=import_sys_objs=import_ext_objs=rand_rel_colors=update_fk_rels=false;
+	import_canceled=ignore_errors=import_sys_objs=import_ext_objs=false;
+	comments_as_aliases=rand_rel_colors=update_fk_rels=false;
 	auto_resolve_deps=true;
 	import_filter=Catalog::ListAllObjects | Catalog::ExclExtensionObjs | Catalog::ExclSystemObjs;
 	xmlparser=nullptr;
@@ -125,26 +126,28 @@ void DatabaseImportHelper::setSelectedOIDs(DatabaseModel *db_model, const std::m
 	system_objs.clear();
 }
 
-void DatabaseImportHelper::setImportOptions(bool import_sys_objs, bool import_ext_objs, bool auto_resolve_deps, bool ignore_errors, bool debug_mode, bool rand_rel_colors, bool update_rels)
+void DatabaseImportHelper::setImportOptions(bool import_sys_objs, bool import_ext_objs, bool auto_resolve_deps, bool ignore_errors,
+																						bool debug_mode, bool rand_rel_colors, bool update_rels, bool comments_as_aliases)
 {
-	this->import_sys_objs=import_sys_objs;
-	this->import_ext_objs=import_ext_objs;
-	this->auto_resolve_deps=auto_resolve_deps;
-	this->ignore_errors=ignore_errors;
-	this->debug_mode=debug_mode;
-	this->rand_rel_colors=rand_rel_colors;
-	this->update_fk_rels=update_rels;
+	this->import_sys_objs = import_sys_objs;
+	this->import_ext_objs = import_ext_objs;
+	this->auto_resolve_deps = auto_resolve_deps;
+	this->ignore_errors = ignore_errors;
+	this->debug_mode = debug_mode;
+	this->rand_rel_colors = rand_rel_colors;
+	this->update_fk_rels = update_rels;
+	this->comments_as_aliases = comments_as_aliases;
 
 	Connection::setPrintSQL(debug_mode);
 
 	if(!import_sys_objs && import_ext_objs)
-		import_filter=Catalog::ListAllObjects | Catalog::ExclBuiltinArrayTypes | Catalog::ExclSystemObjs;
+		import_filter = Catalog::ListAllObjects | Catalog::ExclBuiltinArrayTypes | Catalog::ExclSystemObjs;
 	else if(import_sys_objs && !import_ext_objs)
-		import_filter=Catalog::ListAllObjects | Catalog::ExclBuiltinArrayTypes | Catalog::ExclExtensionObjs;
+		import_filter = Catalog::ListAllObjects | Catalog::ExclBuiltinArrayTypes | Catalog::ExclExtensionObjs;
 	else if(import_sys_objs && import_ext_objs)
-		import_filter=Catalog::ListAllObjects | Catalog::ExclBuiltinArrayTypes;
+		import_filter = Catalog::ListAllObjects | Catalog::ExclBuiltinArrayTypes;
 	else
-		import_filter=Catalog::ListAllObjects | Catalog::ExclBuiltinArrayTypes | Catalog::ExclExtensionObjs | Catalog::ExclSystemObjs;
+		import_filter = Catalog::ListAllObjects | Catalog::ExclBuiltinArrayTypes | Catalog::ExclExtensionObjs | Catalog::ExclSystemObjs;
 }
 
 unsigned DatabaseImportHelper::getLastSystemOID()
@@ -738,6 +741,11 @@ void DatabaseImportHelper::createObject(attribs_map &attribs)
 
 			//System objects will have the sql disabled by default
 			attribs[Attributes::SqlDisabled]=(catalog.isSystemObject(oid) || catalog.isExtensionObject(oid) ? Attributes::True : "");
+
+			if(comments_as_aliases &&
+					(BaseGraphicObject::isGraphicObject(obj_type) || TableObject::isTableObject(obj_type)))
+				attribs[Attributes::Alias] = attribs[Attributes::Comment].mid(0, BaseObject::ObjectNameMaxLength - 1);
+
 			attribs[Attributes::Comment]=getComment(attribs);
 
 			if(attribs.count(Attributes::Owner))
@@ -2771,6 +2779,9 @@ void DatabaseImportHelper::createColumns(attribs_map &attribs, std::vector<unsig
 		col.setType(PgSqlType::parseString(type_name));
 		col.setNotNull(!itr->second[Attributes::NotNull].isEmpty());
 		col.setComment(itr->second[Attributes::Comment]);
+
+		if(comments_as_aliases)
+			col.setAlias(col.getComment().mid(0, BaseObject::ObjectNameMaxLength - 1));
 
 		//Overriding the default value if the column is identity
 		if(!itr->second[Attributes::IdentityType].isEmpty())
