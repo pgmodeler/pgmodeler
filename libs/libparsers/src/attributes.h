@@ -332,6 +332,7 @@ namespace Attributes {
 	InitialCond,
 	InitialData,
 	InitialExp,
+	InkSaver,
 	InlineFunc,
 	InputDatabase,
 	InputDatabase,

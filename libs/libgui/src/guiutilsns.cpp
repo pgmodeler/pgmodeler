@@ -727,7 +727,8 @@ namespace GuiUtilsNs {
 		QGraphicsDropShadowEffect *shadow = nullptr;
 		QString class_name = "QToolButton";
 
-		if(AppearanceConfigWidget::getUiThemeId() == Attributes::Light)
+		if(AppearanceConfigWidget::getUiThemeId() == Attributes::Light ||
+			 AppearanceConfigWidget::getUiThemeId() == Attributes::InkSaver)
 		{
 			radius = 1;
 			color.setRgb(225, 225, 225);
