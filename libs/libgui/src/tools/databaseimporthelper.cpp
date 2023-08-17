@@ -728,9 +728,31 @@ void DatabaseImportHelper::createObject(attribs_map &attribs)
 	ObjectType obj_type=static_cast<ObjectType>(attribs[Attributes::ObjectType].toUInt());
 	QString obj_name=getObjectName(attribs[Attributes::Oid], (obj_type==ObjectType::Function || obj_type==ObjectType::Operator));
 
-	//Avoiding the creation of pgModeler's temp objects created in database during the catalog reading
+	// Avoiding the creation of pgModeler's temp objects created in database during the catalog reading
 	if(obj_name.contains(Catalog::PgModelerTempDbObj))
 		return;
+
+	/* If the current object is a system one and it is already exists in the database model we just
+	 * register the OID in the list of created objects to avoid creating it further.
+	 *
+	 * By system objects in this case we mean any object which OID is less than the last system oid
+	 * of the database:
+	 *
+	 * Schema: public, pg_catalog, information_schema
+	 * Role: postgres
+	 * Collation: C, POSIX, default
+	 * Languages: C, SQL, PlPgsql, Internal
+	 * Tablespaces: pg_global, pg_default */
+
+	if(catalog.isSystemObject(oid) &&
+			(obj_type == ObjectType::Schema || obj_type == ObjectType::Role ||
+			 obj_type == ObjectType::Collation || obj_type == ObjectType::Tablespace ||
+			 obj_type == ObjectType::Language) &&
+			dbmodel->getObjectIndex(obj_name, obj_type) >= 0)
+	{
+		created_objs.push_back(oid);
+		return;
+	}
 
 	try
 	{
@@ -853,22 +875,27 @@ QString DatabaseImportHelper::getDependencyObject(const QString &oid, ObjectType
 
 		if(!obj_attr.empty())
 		{
-			QString obj_name;
+			for(auto &itr : extra_attribs)
+				obj_attr[itr.first] = itr.second;
 
 			for(auto &itr : extra_attribs)
 				obj_attr[itr.first] = itr.second;
 
+			/* If the attributes of the dependency exists but it was not created yet,
+				 pgModeler will create it and it's dependencies recursively */
+			if(recursive_dep_res &&
+					obj_type != ObjectType::Database &&	!TableObject::isTableObject(obj_type) &&
+					std::find(created_objs.begin(), created_objs.end(), oid.toUInt()) == created_objs.end())
+			{
+				createObject(obj_attr);
+			}
+
+			QString obj_name;
+
 			if(use_signature)
 				obj_name = obj_attr[Attributes::Signature] = getObjectName(oid, true);
 			else
-				//obj_name = obj_attr[Attributes::Name] = getObjectName(oid);
 				obj_name = getObjectName(oid);
-
-			/* If the attributes of the dependency exists but it was not created on the model yet,
-				 pgModeler will create it and it's dependencies recursively */
-			if(recursive_dep_res && !TableObject::isTableObject(obj_type) &&
-					obj_type!=ObjectType::Database && dbmodel->getObjectIndex(obj_name, obj_type) < 0)
-				createObject(obj_attr);
 
 			if(generate_xml)
 			{
