@@ -195,6 +195,25 @@ void Catalog::setObjectFilters(QStringList filters, bool only_matching, bool mat
 	if(filters.isEmpty())
 		return;
 
+	QStringList aux_filters, filterable_types = getFilterableObjectNames();
+	QRegularExpression any_filter = QRegularExpression(QString("^(%1)(.)+").arg(Attributes::Any));
+
+	for(auto &filter : filters)
+	{
+		/* If there's at least one "any" filter we create filters
+		 * for all object types using the pattern associated to the "any" filter */
+		if(filter.contains(any_filter))
+		{
+			for(auto &type : filterable_types)
+				aux_filters.append(QString(filter).replace(Attributes::Any, type));
+		}
+		else
+			aux_filters.append(filter);
+	}
+
+	if(!aux_filters.isEmpty())
+		filters = aux_filters;
+
 	ObjectType obj_type;
 	QString pattern, mode, aux_filter, parent_alias_ref, tab_filter = "^(%1)(.)+", _tmpl_filter;
 	QStringList values,	modes = { UtilsNs::FilterWildcard, UtilsNs::FilterRegExp };

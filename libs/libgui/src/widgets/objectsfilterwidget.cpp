@@ -161,6 +161,9 @@ QComboBox *ObjectsFilterWidget::createObjectsCombo()
 		}
 	}
 
+	combo->insertItem(0, QIcon(GuiUtilsNs::getIconPath("typepolymorphic")),
+										tr("Any object"), Attributes::Any);
+	combo->setCurrentIndex(0);
 	combo->setStyleSheet("border: 0px");
 
 	return combo;

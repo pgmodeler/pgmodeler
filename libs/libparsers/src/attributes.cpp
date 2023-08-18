@@ -35,6 +35,7 @@ namespace Attributes {
 	AlterCmds("alter-cmds"),
 	AnalyzeFunc("analyze"),
 	AncestorTable("ancestor-table"),
+	Any("any"),
 	AppendAtEod("append-at-eod"),
 	AppendedSql("appended-sql"),
 	Application("application"),

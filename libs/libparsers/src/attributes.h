@@ -48,6 +48,7 @@ namespace Attributes {
 	AlterCmds,
 	AnalyzeFunc,
 	AncestorTable,
+	Any,
 	AppendAtEod,
 	AppendedSql,
 	Application,
