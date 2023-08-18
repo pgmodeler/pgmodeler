@@ -550,6 +550,8 @@ void PgModelerCliApp::showMenu()
 	QStringList fmt_types, lines, type_list = Catalog::getFilterableObjectNames();
 	int i = 0;
 
+	type_list.prepend(Attributes::Any);
+
 	for(auto &type : type_list)
 	{
 		fmt_types.append(type);
@@ -562,6 +564,8 @@ void PgModelerCliApp::showMenu()
 	}
 	printText(lines.join('\n'));
 
+	printText();
+	printText(tr("   * The special type `%1' allows writing a single filter that applies to all object types.").arg(Attributes::Any));
 	printText();
 	printText(tr("   * The section `pattern' is the text pattern that is matched against the objects' names."));
 	printText();
