@@ -724,9 +724,9 @@ void DatabaseImportHelper::cancelImport()
 
 void DatabaseImportHelper::createObject(attribs_map &attribs)
 {
-	unsigned oid=attribs[Attributes::Oid].toUInt();
-	ObjectType obj_type=static_cast<ObjectType>(attribs[Attributes::ObjectType].toUInt());
-	QString obj_name=getObjectName(attribs[Attributes::Oid], (obj_type==ObjectType::Function || obj_type==ObjectType::Operator));
+	unsigned oid = attribs[Attributes::Oid].toUInt();
+	ObjectType obj_type = static_cast<ObjectType>(attribs[Attributes::ObjectType].toUInt());
+	QString obj_name = getObjectName(attribs[Attributes::Oid], (obj_type==ObjectType::Function || obj_type==ObjectType::Operator));
 
 	// Avoiding the creation of pgModeler's temp objects created in database during the catalog reading
 	if(obj_name.contains(Catalog::PgModelerTempDbObj))
@@ -878,8 +878,8 @@ QString DatabaseImportHelper::getDependencyObject(const QString &oid, ObjectType
 			for(auto &itr : extra_attribs)
 				obj_attr[itr.first] = itr.second;
 
-			for(auto &itr : extra_attribs)
-				obj_attr[itr.first] = itr.second;
+
+
 
 			/* If the attributes of the dependency exists but it was not created yet,
 				 pgModeler will create it and it's dependencies recursively */
@@ -3052,7 +3052,8 @@ QString DatabaseImportHelper::getObjectName(const QString &oid, bool signature_f
 
 	if(!signature_form && cached_names.count(obj_oid))
 		return cached_names[obj_oid];
-	else if(signature_form && cached_signatures.count(obj_oid))
+
+	if(signature_form && cached_signatures.count(obj_oid))
 		return cached_signatures[obj_oid];
 
 	QString sch_name,
@@ -3125,9 +3126,14 @@ QString DatabaseImportHelper::getObjectName(const QString &oid, bool signature_f
 			obj_name+="(" + params.join(',') + ")";
 	}
 
-	if(signature_form)
+	/* If signature must be returned and the schema name couldn't be determined
+	 * above, we don't cache the object signature, instead, the entire above
+	 * routine is repeated until the schema name of the object is known */
+	if(signature_form &&
+			(!BaseObject::acceptsSchema(obj_type) ||
+			 (BaseObject::acceptsSchema(obj_type) && !sch_name.isEmpty())))
 		cached_signatures[obj_oid] = obj_name;
-	else
+	else if(!signature_form)
 		cached_names[obj_oid] = obj_name;
 
 	return obj_name;
