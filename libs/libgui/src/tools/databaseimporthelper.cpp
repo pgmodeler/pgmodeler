@@ -605,7 +605,9 @@ void DatabaseImportHelper::importDatabase()
 		if(!dbmodel)
 			throw Exception(ErrorCode::OprNotAllocatedObject ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-		dbmodel->setLoadingModel(true);
+		BaseGraphicObject::setUpdatesEnabled(false);
+
+		//dbmodel->setLoadingModel(true);
 		dbmodel->setObjectListsCapacity(creation_order.size());
 
 		cached_names.clear();
@@ -620,13 +622,15 @@ void DatabaseImportHelper::importDatabase()
 		destroyDetachedColumns();
 		createPermissions();
 
+		BaseGraphicObject::setUpdatesEnabled(true);
+
 		if(update_fk_rels)
 			updateFKRelationships();
 
 		if(!inherited_cols.empty())
 		{
 			emit s_progressUpdated(100, tr("Validating relationships..."), ObjectType::Relationship);
-			dbmodel->setLoadingModel(false);
+			//dbmodel->setLoadingModel(false);
 			dbmodel->validateRelationships();
 		}
 
@@ -2708,7 +2712,7 @@ void DatabaseImportHelper::destroyDetachedColumns()
 
 	/* Force the validation and connection of inheritance relationships
 	 leading to the creation of inherited columns */
-	dbmodel->setLoadingModel(false);
+	//dbmodel->setLoadingModel(false);
 	dbmodel->validateRelationships();
 }
 

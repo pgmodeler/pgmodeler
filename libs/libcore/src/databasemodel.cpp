@@ -3203,257 +3203,262 @@ void DatabaseModel::configureDatabase(attribs_map &attribs)
 
 void DatabaseModel::loadModel(const QString &filename)
 {
-	if(!filename.isEmpty())
+	if(filename.isEmpty())
+		return;
+
+	BaseGraphicObject::setUpdatesEnabled(false);
+
+	QString dtd_file, str_aux, elem_name;
+	ObjectType obj_type;
+	attribs_map attribs;
+	BaseObject *object=nullptr;
+	bool protected_model=false;
+	QStringList pos_str;
+	std::map<ObjectType, QString> def_objs;
+
+	//Configuring the path to the base path for objects DTD
+	dtd_file=GlobalAttributes::getSchemasRootPath() +
+					 GlobalAttributes::DirSeparator +
+					 GlobalAttributes::XMLSchemaDir +
+					 GlobalAttributes::DirSeparator +
+					 GlobalAttributes::ObjectDTDDir +
+					 GlobalAttributes::DirSeparator;
+
+	try
 	{
-		QString dtd_file, str_aux, elem_name;
-		ObjectType obj_type;
-		attribs_map attribs;
-		BaseObject *object=nullptr;
-		bool protected_model=false; //, found_inh_rel = false;
-		QStringList pos_str;
-		std::map<ObjectType, QString> def_objs;
+		loading_model=true;
+		xmlparser.restartParser();
 
-		//Configuring the path to the base path for objects DTD
-		dtd_file=GlobalAttributes::getSchemasRootPath() +
-						 GlobalAttributes::DirSeparator +
-						 GlobalAttributes::XMLSchemaDir +
-						 GlobalAttributes::DirSeparator +
-						 GlobalAttributes::ObjectDTDDir +
-						 GlobalAttributes::DirSeparator;
+		//Loads the root DTD
+		xmlparser.setDTDFile(dtd_file + GlobalAttributes::RootDTD +
+							 GlobalAttributes::ObjectDTDExt,
+							 GlobalAttributes::RootDTD);
 
-		try
+		//Loads the file validating it against the root DTD
+		xmlparser.loadXMLFile(filename);
+
+		//Gets the basic model information
+		xmlparser.getElementAttributes(attribs);
+
+		setObjectListsCapacity(attribs[Attributes::MaxObjCount].toUInt());
+
+		this->author=attribs[Attributes::ModelAuthor];
+
+		pos_str=attribs[Attributes::LastPosition].split(',');
+
+		if(pos_str.size()>=2)
+			this->last_pos=QPoint(pos_str[0].toUInt(),pos_str[1].toUInt());
+
+		this->last_zoom=attribs[Attributes::LastZoom].toDouble();
+		if(this->last_zoom <= 0) this->last_zoom=1;
+
+		this->is_template = attribs[Attributes::IsTemplate] == Attributes::True;
+		this->allow_conns = (attribs[Attributes::AllowConns].isEmpty() ||
+												 attribs[Attributes::AllowConns] == Attributes::True);
+
+		persist_changelog = attribs[Attributes::UseChangelog] == Attributes::True;
+
+		/* Compatibility with models created prior the multiple layers features:
+		 * We need to replace semi-colon by comma in the attribute Layers in order to split the
+		 * string correctly, otherwise, the model will have only one layer no matter the amount of
+		 * layers created preivously (in an older version) */
+		layers = attribs[Attributes::Layers].replace(';',',').split(',', Qt::SkipEmptyParts);
+		attribs[Attributes::ActiveLayers].replace(';',',');
+
+		layer_name_colors = attribs[Attributes::LayerNameColors].split(',', Qt::SkipEmptyParts);
+		layer_rect_colors = attribs[Attributes::LayerRectColors].split(',', Qt::SkipEmptyParts);
+
+		is_layer_names_visible = attribs[Attributes::ShowLayerNames] == Attributes::True;
+		is_layer_rects_visible = attribs[Attributes::ShowLayerRects] == Attributes::True;
+
+		/*  Compatibility with models created prior the layers features:
+		 * If the layer rect colors is empty (probably a model generated in an older version)
+		 * we create random colors as fallback */
+
+		// Forcing the creation of the default layer is not present
+		if(layers.isEmpty())
+			layers.push_back(tr("Default layer"));
+
+		if(layer_rect_colors.size() != layers.size())
 		{
-			loading_model=true;
-			xmlparser.restartParser();
+			std::random_device rand_seed;
+			std::default_random_engine rand_num_engine;
+			std::uniform_int_distribution<unsigned> dist(0,255);
 
-			//Loads the root DTD
-			xmlparser.setDTDFile(dtd_file + GlobalAttributes::RootDTD +
-								 GlobalAttributes::ObjectDTDExt,
-								 GlobalAttributes::RootDTD);
+			layer_name_colors.clear();
+			layer_rect_colors.clear();
+			rand_num_engine.seed(rand_seed());
 
-			//Loads the file validating it against the root DTD
-			xmlparser.loadXMLFile(filename);
-
-			//Gets the basic model information
-			xmlparser.getElementAttributes(attribs);
-
-			setObjectListsCapacity(attribs[Attributes::MaxObjCount].toUInt());
-
-			this->author=attribs[Attributes::ModelAuthor];
-
-			pos_str=attribs[Attributes::LastPosition].split(',');
-
-			if(pos_str.size()>=2)
-				this->last_pos=QPoint(pos_str[0].toUInt(),pos_str[1].toUInt());
-
-			this->last_zoom=attribs[Attributes::LastZoom].toDouble();
-			if(this->last_zoom <= 0) this->last_zoom=1;
-
-			this->is_template = attribs[Attributes::IsTemplate] == Attributes::True;
-			this->allow_conns = (attribs[Attributes::AllowConns].isEmpty() ||
-													 attribs[Attributes::AllowConns] == Attributes::True);
-
-			persist_changelog = attribs[Attributes::UseChangelog] == Attributes::True;
-
-			/* Compatibility with models created prior the multiple layers features:
-			 * We need to replace semi-colon by comma in the attribute Layers in order to split the
-			 * string correctly, otherwise, the model will have only one layer no matter the amount of
-			 * layers created preivously (in an older version) */
-			layers = attribs[Attributes::Layers].replace(';',',').split(',', Qt::SkipEmptyParts);
-			attribs[Attributes::ActiveLayers].replace(';',',');
-
-			layer_name_colors = attribs[Attributes::LayerNameColors].split(',', Qt::SkipEmptyParts);
-			layer_rect_colors = attribs[Attributes::LayerRectColors].split(',', Qt::SkipEmptyParts);
-
-			is_layer_names_visible = attribs[Attributes::ShowLayerNames] == Attributes::True;
-			is_layer_rects_visible = attribs[Attributes::ShowLayerRects] == Attributes::True;
-
-			/*  Compatibility with models created prior the layers features:
-			 * If the layer rect colors is empty (probably a model generated in an older version)
-			 * we create random colors as fallback */
-
-			// Forcing the creation of the default layer is not present
-			if(layers.isEmpty())
-				layers.push_back(tr("Default layer"));
-
-			if(layer_rect_colors.size() != layers.size())
+			for(int i = 0; i < layers.size(); i++)
 			{
-				std::random_device rand_seed;
-				std::default_random_engine rand_num_engine;
-				std::uniform_int_distribution<unsigned> dist(0,255);
+				layer_rect_colors.append(QColor(dist(rand_num_engine),
+																				dist(rand_num_engine),
+																				dist(rand_num_engine)).name());
 
-				layer_name_colors.clear();
-				layer_rect_colors.clear();
-				rand_num_engine.seed(rand_seed());
-
-				for(int i = 0; i < layers.size(); i++)
-				{
-					layer_rect_colors.append(QColor(dist(rand_num_engine),
-																					dist(rand_num_engine),
-																					dist(rand_num_engine)).name());
-
-					layer_name_colors.append(QColor(0,0,0).name());
-				}
+				layer_name_colors.append(QColor(0,0,0).name());
 			}
+		}
 
-			/* Compatibility with models created prior the layers features:
-			 * If the "active-layers" is absent we make the default layer always visible */
-			active_layers.clear();
+		/* Compatibility with models created prior the layers features:
+		 * If the "active-layers" is absent we make the default layer always visible */
+		active_layers.clear();
 
-			for(auto &layer_id : attribs[Attributes::ActiveLayers].split(',', Qt::SkipEmptyParts))
+		for(auto &layer_id : attribs[Attributes::ActiveLayers].split(',', Qt::SkipEmptyParts))
+		{
+			if(layer_id.toInt() >= layers.size())
+				continue;
+
+			active_layers.push_back(layer_id.toInt());
+		}
+
+		if(active_layers.isEmpty())
+			active_layers.push_back(0);
+
+		/* Perfoming size validations between the layer color lists and the layers lists
+		 * The excessive items from both list are removed until their sizes matches
+		 * the layers list */
+		while(layer_name_colors.size() > layers.size())
+			layer_name_colors.removeLast();
+
+		while(layer_rect_colors.size() > layers.size())
+			layer_rect_colors.removeLast();
+
+		protected_model=(attribs[Attributes::Protected]==Attributes::True);
+
+		def_objs[ObjectType::Schema]=attribs[Attributes::DefaultSchema];
+		def_objs[ObjectType::Role]=attribs[Attributes::DefaultOwner];
+		def_objs[ObjectType::Collation]=attribs[Attributes::DefaultCollation];
+		def_objs[ObjectType::Tablespace]=attribs[Attributes::DefaultTablespace];
+
+		if(xmlparser.accessElement(XmlParser::ChildElement))
+		{
+			do
 			{
-				if(layer_id.toInt() >= layers.size())
-					continue;
-
-				active_layers.push_back(layer_id.toInt());
-			}
-
-			if(active_layers.isEmpty())
-				active_layers.push_back(0);
-
-			/* Perfoming size validations between the layer color lists and the layers lists
-			 * The excessive items from both list are removed until their sizes matches
-			 * the layers list */
-			while(layer_name_colors.size() > layers.size())
-				layer_name_colors.removeLast();
-
-			while(layer_rect_colors.size() > layers.size())
-				layer_rect_colors.removeLast();
-
-			protected_model=(attribs[Attributes::Protected]==Attributes::True);
-
-			def_objs[ObjectType::Schema]=attribs[Attributes::DefaultSchema];
-			def_objs[ObjectType::Role]=attribs[Attributes::DefaultOwner];
-			def_objs[ObjectType::Collation]=attribs[Attributes::DefaultCollation];
-			def_objs[ObjectType::Tablespace]=attribs[Attributes::DefaultTablespace];
-
-			if(xmlparser.accessElement(XmlParser::ChildElement))
-			{
-				do
+				if(xmlparser.getElementType()==XML_ELEMENT_NODE)
 				{
-					if(xmlparser.getElementType()==XML_ELEMENT_NODE)
+					elem_name=xmlparser.getElementName();
+
+					//Indentifies the object type to be load according to the current element on the parser
+					obj_type=getObjectType(elem_name);
+
+					if(elem_name == Attributes::Changelog)
 					{
-						elem_name=xmlparser.getElementName();
+						attribs_map entry_attr;
+						xmlparser.savePosition();
 
-						//Indentifies the object type to be load according to the current element on the parser
-						obj_type=getObjectType(elem_name);
-
-						if(elem_name == Attributes::Changelog)
+						if(xmlparser.accessElement(XmlParser::ChildElement))
 						{
-							attribs_map entry_attr;
-							xmlparser.savePosition();
-
-							if(xmlparser.accessElement(XmlParser::ChildElement))
+							do
 							{
-								do
-								{
-									xmlparser.getElementAttributes(entry_attr);
-									addChangelogEntry(entry_attr[Attributes::Signature], entry_attr[Attributes::Type],
-																		entry_attr[Attributes::Action], entry_attr[Attributes::Date]);
-								}
-								while(xmlparser.accessElement(XmlParser::NextElement));
+								xmlparser.getElementAttributes(entry_attr);
+								addChangelogEntry(entry_attr[Attributes::Signature], entry_attr[Attributes::Type],
+																	entry_attr[Attributes::Action], entry_attr[Attributes::Date]);
+							}
+							while(xmlparser.accessElement(XmlParser::NextElement));
+						}
+
+						xmlparser.restorePosition();
+					}
+					else if(obj_type==ObjectType::Database)
+					{
+						xmlparser.getElementAttributes(attribs);
+						configureDatabase(attribs);
+					}
+					else
+					{
+						try
+						{
+							//Saves the current position of the parser before create any object
+							xmlparser.savePosition();
+							object=createObject(obj_type);
+
+							if(object)
+							{
+								if(!dynamic_cast<TableObject *>(object) && obj_type!=ObjectType::Relationship && obj_type!=ObjectType::BaseRelationship)
+									addObject(object);
+
+								emit s_objectLoaded((xmlparser.getCurrentBufferLine()/static_cast<double>(xmlparser.getBufferLineCount()))*100,
+													tr("Loading: `%1' (%2)")
+													.arg(object->getName())
+													.arg(object->getTypeName()),
+													enum_t(obj_type));
 							}
 
 							xmlparser.restorePosition();
 						}
-						else if(obj_type==ObjectType::Database)
+						catch(Exception &e)
 						{
-							xmlparser.getElementAttributes(attribs);
-							configureDatabase(attribs);
-						}
-						else
-						{
-							try
-							{
-								//Saves the current position of the parser before create any object
-								xmlparser.savePosition();
-								object=createObject(obj_type);
-
-								if(object)
-								{
-									if(!dynamic_cast<TableObject *>(object) && obj_type!=ObjectType::Relationship && obj_type!=ObjectType::BaseRelationship)
-										addObject(object);
-
-									emit s_objectLoaded((xmlparser.getCurrentBufferLine()/static_cast<double>(xmlparser.getBufferLineCount()))*100,
-														tr("Loading: `%1' (%2)")
-														.arg(object->getName())
-														.arg(object->getTypeName()),
-														enum_t(obj_type));
-								}
-
-								xmlparser.restorePosition();
-							}
-							catch(Exception &e)
-							{
-								QString info_adicional=QString(QObject::tr("%1 (line: %2)")).arg(xmlparser.getLoadedFilename()).arg(xmlparser.getCurrentElement()->line);
-								throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, info_adicional);
-							}
+							QString info_adicional=QString(QObject::tr("%1 (line: %2)")).arg(xmlparser.getLoadedFilename()).arg(xmlparser.getCurrentElement()->line);
+							throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, info_adicional);
 						}
 					}
 				}
-				while(xmlparser.accessElement(XmlParser::NextElement));
 			}
-
-			this->BaseObject::setProtected(protected_model);
-
-			//Validating default objects
-			for(auto &itr : def_objs)
-			{
-				if(!itr.second.isEmpty())
-				{
-					object=this->getObject(itr.second, itr.first);
-
-					if(!object)
-						throw Exception(Exception::getErrorMessage(ErrorCode::RefObjectInexistsModel)
-										.arg(this->getName())
-										.arg(this->getTypeName())
-										.arg(itr.second)
-										.arg(BaseObject::getTypeName(itr.first)),
-										ErrorCode::AsgDuplicatedPermission,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-
-					this->setDefaultObject(object);
-				}
-				else
-					this->setDefaultObject(nullptr, itr.first);
-			}
-
-			loading_model=false;
-
-			//If there are relationship make a relationship validation to recreate any special object left behind
-			if(!relationships.empty())
-			{
-				emit s_objectLoaded(100, tr("Validating relationships..."), enum_t(ObjectType::Relationship));
-				storeSpecialObjectsXML();
-				disconnectRelationships();
-				validateRelationships();
-			}
-
-			this->setInvalidated(false);
-			emit s_objectLoaded(100, tr("Validating relationships..."), enum_t(ObjectType::Relationship));
-
-			updateTablesFKRelationships();
-			restoreFKRelationshipLayers();
-
-			emit s_objectLoaded(100, tr("Rendering database model..."), enum_t(ObjectType::BaseObject));
-			this->setObjectsModified();
+			while(xmlparser.accessElement(XmlParser::NextElement));
 		}
-		catch(Exception &e)
+
+		this->BaseObject::setProtected(protected_model);
+
+		//Validating default objects
+		for(auto &itr : def_objs)
 		{
-			QString extra_info;
-			loading_model=false;
-
-			if(xmlparser.getCurrentElement())
-				extra_info=QString(QObject::tr("%1 (line: %2)")).arg(xmlparser.getLoadedFilename()).arg(xmlparser.getCurrentElement()->line);
-
-			if(e.getErrorCode() != ErrorCode::FileDirectoryNotAccessed &&
-				 e.getErrorCode() >= ErrorCode::InvalidSyntax)
+			if(!itr.second.isEmpty())
 			{
-				str_aux=Exception::getErrorMessage(ErrorCode::InvModelFileNotLoaded).arg(filename);
-				throw Exception(str_aux,ErrorCode::InvModelFileNotLoaded,__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, extra_info);
+				object=this->getObject(itr.second, itr.first);
+
+				if(!object)
+					throw Exception(Exception::getErrorMessage(ErrorCode::RefObjectInexistsModel)
+									.arg(this->getName())
+									.arg(this->getTypeName())
+									.arg(itr.second)
+									.arg(BaseObject::getTypeName(itr.first)),
+									ErrorCode::AsgDuplicatedPermission,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+				this->setDefaultObject(object);
 			}
 			else
-				throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, extra_info);
+				this->setDefaultObject(nullptr, itr.first);
 		}
+
+		BaseGraphicObject::setUpdatesEnabled(true);
+		setObjectsModified({ ObjectType::Table, ObjectType::View, ObjectType::ForeignTable,
+												 ObjectType::Textbox, ObjectType::Schema });
+		loading_model=false;
+
+		//If there are relationship make a relationship validation to recreate any special object left behind
+		if(!relationships.empty())
+		{
+			emit s_objectLoaded(100, tr("Validating relationships..."), enum_t(ObjectType::Relationship));
+			storeSpecialObjectsXML();
+			disconnectRelationships();
+			validateRelationships();
+		}
+
+		this->setInvalidated(false);
+		emit s_objectLoaded(100, tr("Validating relationships..."), enum_t(ObjectType::Relationship));
+
+		updateTablesFKRelationships();
+		restoreFKRelationshipLayers();
+
+		emit s_objectLoaded(100, tr("Rendering database model..."), enum_t(ObjectType::BaseObject));
+		//this->setObjectsModified();
+	}
+	catch(Exception &e)
+	{
+		QString extra_info;
+		loading_model=false;
+
+		if(xmlparser.getCurrentElement())
+			extra_info=QString(QObject::tr("%1 (line: %2)")).arg(xmlparser.getLoadedFilename()).arg(xmlparser.getCurrentElement()->line);
+
+		if(e.getErrorCode() != ErrorCode::FileDirectoryNotAccessed &&
+			 e.getErrorCode() >= ErrorCode::InvalidSyntax)
+		{
+			str_aux=Exception::getErrorMessage(ErrorCode::InvModelFileNotLoaded).arg(filename);
+			throw Exception(str_aux,ErrorCode::InvModelFileNotLoaded,__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, extra_info);
+		}
+		else
+			throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, extra_info);
 	}
 }
 
@@ -3639,10 +3644,10 @@ QString DatabaseModel::getErrorExtraInfo()
 	return extra_info;
 }
 
-void DatabaseModel::setLoadingModel(bool value)
+/*void DatabaseModel::setLoadingModel(bool value)
 {
 	loading_model = value;
-}
+}*/
 
 void DatabaseModel::setCancelSaving(bool value)
 {

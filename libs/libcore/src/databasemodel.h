@@ -246,7 +246,7 @@ class __libcore DatabaseModel:  public QObject, public BaseObject {
 		 * for instance, if loading_model = true graphical objects will be rendered only when the loading process finishes (loading_model =false)
 		 * otherwise the objects are rendered as they are added to the model. The drawback of this approach is, depending on the operation being used after
 		 * calling this method, the user is obligated to call the methdo setObjectsModified() to force the graphical objects rendering. */
-		void setLoadingModel(bool value);
+		//void setLoadingModel(bool value);
 
 		/*! \brief This method forces the breaking of the code generation/saving in the methods getSourceCode, saveModel and saveSplitModel.
 		 *  This method is used only by the export helper in such a way to allow the user to abort any export to file in a threaded operation. */

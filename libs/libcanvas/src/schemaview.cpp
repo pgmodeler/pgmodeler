@@ -170,6 +170,12 @@ void SchemaView::moveTo(QPointF new_pos)
 
 void SchemaView::configureObject()
 {
+	if(!BaseGraphicObject::isUpdatesEnabled())
+		return;
+
+	QTextStream out(stdout);
+	out << "SchemaView::configureObject() -> " <<  this->getUnderlyingObject()->getSignature() << Qt::endl;
+
 	Schema *schema=dynamic_cast<Schema *>(this->getUnderlyingObject());
 	this->fetchChildren();
 

@@ -119,6 +119,12 @@ void TextboxView::__configureObject()
 
 void TextboxView::configureObject()
 {
+	if(!BaseGraphicObject::isUpdatesEnabled())
+		return;
+
+	QTextStream out(stdout);
+	out << "TextboxView::configureObject() -> " <<  this->getUnderlyingObject()->getSignature() << Qt::endl;
+
 	double old_width = bounding_rect.width(),
 			old_height = bounding_rect.height();
 
