@@ -3421,8 +3421,7 @@ void DatabaseModel::loadModel(const QString &filename)
 		}
 
 		BaseGraphicObject::setUpdatesEnabled(true);
-		setObjectsModified({ ObjectType::Table, ObjectType::View, ObjectType::ForeignTable,
-												 ObjectType::Textbox, ObjectType::Schema });
+		setObjectsModified();
 		loading_model=false;
 
 		//If there are relationship make a relationship validation to recreate any special object left behind
@@ -10452,25 +10451,25 @@ void DatabaseModel::setObjectsModified(std::vector<ObjectType> types)
 							ObjectType::Relationship, ObjectType::BaseRelationship,
 							ObjectType::Textbox, ObjectType::Schema };
 	std::vector<BaseObject *>::iterator itr, itr_end;
-	std::vector<BaseObject *> *obj_list=nullptr;
-	Textbox *label=nullptr;
-	BaseRelationship *rel=nullptr;
-	unsigned i, i1, count=sizeof(obj_types)/sizeof(ObjectType);
+	std::vector<BaseObject *> *obj_list = nullptr;
+	Textbox *label = nullptr;
+	BaseRelationship *rel = nullptr;
+	unsigned i1 = 0;
 
-	for(i=0; i < count; i++)
+	for(auto obj_type : obj_types)
 	{
-		if(types.empty() || find(types.begin(), types.end(), obj_types[i])!=types.end())
+		if(types.empty() || std::find(types.begin(), types.end(), obj_type) != types.end())
 		{
-			obj_list=getObjectList(obj_types[i]);
-			itr=obj_list->begin();
-			itr_end=obj_list->end();
+			obj_list = getObjectList(obj_type);
+			itr = obj_list->begin();
+			itr_end = obj_list->end();
 
-			while(itr!=itr_end)
+			while(itr != itr_end)
 			{
 				dynamic_cast<BaseGraphicObject *>(*itr)->setModified(true);
 
 				//For relationships is needed to set the labels as modified too
-				if(obj_types[i]==ObjectType::Relationship || obj_types[i]==ObjectType::BaseRelationship)
+				if(obj_type == ObjectType::Relationship || obj_type == ObjectType::BaseRelationship)
 				{
 					rel=dynamic_cast<BaseRelationship *>(*itr);
 					for(i1 = BaseRelationship::SrcCardLabel; i1 <= BaseRelationship::RelNameLabel; i1++)
