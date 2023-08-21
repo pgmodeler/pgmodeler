@@ -3206,6 +3206,11 @@ void DatabaseModel::loadModel(const QString &filename)
 	if(filename.isEmpty())
 		return;
 
+	QTextStream out(stdout);
+	qint64 start = QDateTime::currentSecsSinceEpoch();
+	out << "Start:" << start << Qt::endl;
+
+
 	BaseGraphicObject::setUpdatesEnabled(false);
 
 	QString dtd_file, str_aux, elem_name;
@@ -3420,8 +3425,6 @@ void DatabaseModel::loadModel(const QString &filename)
 				this->setDefaultObject(nullptr, itr.first);
 		}
 
-		BaseGraphicObject::setUpdatesEnabled(true);
-		setObjectsModified();
 		loading_model=false;
 
 		//If there are relationship make a relationship validation to recreate any special object left behind
@@ -3438,6 +3441,14 @@ void DatabaseModel::loadModel(const QString &filename)
 
 		updateTablesFKRelationships();
 		restoreFKRelationshipLayers();
+
+		BaseGraphicObject::setUpdatesEnabled(true);
+		setObjectsModified();
+
+		qint64 end = QDateTime::currentSecsSinceEpoch();
+		out << "End:  " << end << Qt::endl;
+		out << "Delta:" << end - start << Qt::endl;
+		out << "---" << Qt::endl;
 
 		emit s_objectLoaded(100, tr("Rendering database model..."), enum_t(ObjectType::BaseObject));
 		//this->setObjectsModified();
