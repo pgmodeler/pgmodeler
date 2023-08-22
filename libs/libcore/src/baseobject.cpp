@@ -80,7 +80,6 @@ const QString BaseObject::objs_sql[BaseObject::ObjectTypeCount]={
 unsigned BaseObject::global_id=5000;
 
 QString BaseObject::pgsql_ver=PgSqlVersions::DefaulVersion;
-bool BaseObject::use_cached_code=true;
 bool BaseObject::escape_comments=true;
 
 BaseObject::BaseObject()
@@ -600,21 +599,32 @@ void BaseObject::setPrependedSQL(const QString &sql)
 
 QString BaseObject::getName(bool format, bool prepend_schema)
 {
+	CachedNameId name_id = RawName;
+
+	if(format && !prepend_schema)
+		name_id = FmtName;
+	else if(format && prepend_schema)
+		name_id = Signature;
+
+	if(!cached_names[name_id].isEmpty())
+		return cached_names[name_id];
+
 	if(format)
 	{
-		QString aux_name;
-		aux_name=formatName(this->obj_name, (obj_type==ObjectType::Operator));
+		QString aux_name = formatName(obj_name, (obj_type == ObjectType::Operator));
 
-		if(this->schema && prepend_schema)
-			aux_name=formatName(this->schema->getName(format)) + QChar('.') + aux_name;
+		if(schema && prepend_schema)
+			aux_name = formatName(schema->getName(format)) + QChar('.') + aux_name;
 
 		if(!aux_name.isEmpty())
+		{
+			cached_names[name_id] = aux_name;
 			return aux_name;
-		else
-			return this->obj_name;
+		}
 	}
 
-	return this->obj_name;
+	cached_names[name_id] = obj_name;
+	return obj_name;
 }
 
 QString BaseObject::getAlias()
@@ -899,16 +909,15 @@ QString BaseObject::getSourceCode(SchemaParser::CodeType def_type, bool reduced_
 			clearAttributes();
 
 			//Database object doesn't handles cached code.
-			if(use_cached_code && obj_type!=ObjectType::Database)
+			if(obj_type != ObjectType::Database)
 			{
-				if(def_type==SchemaParser::SqlCode ||
-						(!reduced_form && def_type==SchemaParser::XmlCode))
-					cached_code[def_type]=code_def;
+				if(def_type==SchemaParser::SqlCode ||	(!reduced_form && def_type==SchemaParser::XmlCode))
+					cached_code[def_type] = code_def;
 				else if(reduced_form)
-					cached_reduced_code=code_def;
+					cached_reduced_code = code_def;
 			}
 
-			code_invalidated=false;
+			code_invalidated = false;
 		}
 		catch(Exception &e)
 		{
@@ -1099,11 +1108,6 @@ bool BaseObject::isDbVersionIgnored()
 	return ignore_db_version;
 }
 
-void BaseObject::enableCachedCode(bool value)
-{
-	use_cached_code=value;
-}
-
 void BaseObject::operator = (BaseObject &obj)
 {
 	this->owner=obj.owner;
@@ -1117,21 +1121,28 @@ void BaseObject::operator = (BaseObject &obj)
 	this->is_protected=obj.is_protected;
 	this->sql_disabled=obj.sql_disabled;
 	this->system_obj=obj.system_obj;
-	this->setCodeInvalidated(use_cached_code);
+	this->setCodeInvalidated(true);
 }
 
 void BaseObject::setCodeInvalidated(bool value)
 {
-	if(use_cached_code && value!=code_invalidated)
+	if(value != code_invalidated)
 	{
 		if(value)
 		{
 			cached_reduced_code.clear();
-			cached_code[0].clear();
-			cached_code[1].clear();
+			cached_code[SchemaParser::SqlCode].clear();
+			cached_code[SchemaParser::XmlCode].clear();
 		}
 
 		code_invalidated=value;
+	}
+
+	if(value)
+	{
+		cached_names[RawName].clear();
+		cached_names[FmtName].clear();
+		cached_names[Signature].clear();
 	}
 }
 
@@ -1147,7 +1158,7 @@ void BaseObject::configureSearchAttributes()
 
 bool BaseObject::isCodeInvalidated()
 {
-	return (use_cached_code && code_invalidated);
+	return code_invalidated;
 }
 
 bool BaseObject::isCodeDiffersFrom(const QString &xml_def1, const QString &xml_def2, const QStringList &ignored_attribs, const QStringList &ignored_tags)
@@ -1216,7 +1227,7 @@ bool BaseObject::isCodeDiffersFrom(BaseObject *object, const QStringList &ignore
 
 QString BaseObject::getCachedCode(unsigned def_type, bool reduced_form)
 {
-	if(use_cached_code && def_type==SchemaParser::SqlCode && schparser.getPgSQLVersion()!=BaseObject::pgsql_ver)
+	if(def_type==SchemaParser::SqlCode && schparser.getPgSQLVersion()!=BaseObject::pgsql_ver)
 		code_invalidated=true;
 
 	if(!code_invalidated &&

@@ -579,9 +579,6 @@ void RelationshipView::configureLine()
 	if(!BaseGraphicObject::isUpdatesEnabled())
 		return;
 
-	QTextStream out(stdout);
-	out << "RelationshipView::configureLine() -> " <<  this->getUnderlyingObject()->getSignature() << Qt::endl;
-
 	//Reconnect the tables is the placeholder usage changes
 	if(using_placeholders!=BaseObjectView::isPlaceholderEnabled())
 	{

@@ -3206,11 +3206,6 @@ void DatabaseModel::loadModel(const QString &filename)
 	if(filename.isEmpty())
 		return;
 
-	QTextStream out(stdout);
-	qint64 start = QDateTime::currentSecsSinceEpoch();
-	out << "Start:" << start << Qt::endl;
-
-
 	BaseGraphicObject::setUpdatesEnabled(false);
 
 	QString dtd_file, str_aux, elem_name;
@@ -3444,14 +3439,7 @@ void DatabaseModel::loadModel(const QString &filename)
 
 		BaseGraphicObject::setUpdatesEnabled(true);
 		setObjectsModified();
-
-		qint64 end = QDateTime::currentSecsSinceEpoch();
-		out << "End:  " << end << Qt::endl;
-		out << "Delta:" << end - start << Qt::endl;
-		out << "---" << Qt::endl;
-
 		emit s_objectLoaded(100, tr("Rendering database model..."), enum_t(ObjectType::BaseObject));
-		//this->setObjectsModified();
 	}
 	catch(Exception &e)
 	{

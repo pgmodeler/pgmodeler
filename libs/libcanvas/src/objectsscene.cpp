@@ -1003,7 +1003,6 @@ void ObjectsScene::addItem(QGraphicsItem *item)
 
 	if(tab || txtbox)
 		updateLayerRects();
-
 }
 
 void ObjectsScene::removeItem(QGraphicsItem *item)

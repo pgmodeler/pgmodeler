@@ -34,9 +34,6 @@ void GraphicalView::configureObject()
 	if(!BaseGraphicObject::isUpdatesEnabled())
 		return;
 
-	QTextStream out(stdout);
-	out << "GraphicalView::configureObject() -> " <<  this->getUnderlyingObject()->getSignature() << Qt::endl;
-
 	/* If the table isn't visible we abort the current configuration
 	 * and mark its geometry update as pending so in the next call to
 	 * setVisible(true) the geometry can be updated (see BaseObjectView::itemChange()) */
