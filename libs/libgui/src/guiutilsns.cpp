@@ -487,7 +487,7 @@ namespace GuiUtilsNs {
 		if(!tab_wgt || tab_wgt->columnCount() == 0)
 			return;
 
-		unsigned lin_idx = 0, i = 0;
+		unsigned lin_idx = 0;
 		QTableWidgetItem *tab_item=nullptr;
 		BaseObject *parent_obj=nullptr;
 		QFont fnt;
@@ -497,9 +497,9 @@ namespace GuiUtilsNs {
 		tab_wgt->setUpdatesEnabled(false);
 		tab_wgt->setSortingEnabled(false);
 
-		for(lin_idx=0, i=0; i < objs.size(); i++)
+		for(auto &obj : objs)
 		{
-			if(objs[i]->getObjectType()==ObjectType::BaseRelationship)
+			if(obj->getObjectType()==ObjectType::BaseRelationship)
 				str_aux = "tv";
 			else
 				str_aux.clear();
@@ -514,21 +514,21 @@ namespace GuiUtilsNs {
 
 			//First column: Object name
 			tab_item=(new_row ? new QTableWidgetItem : tab_wgt->item(lin_idx, 0));
-			tab_item->setData(Qt::UserRole, QVariant::fromValue<void *>(reinterpret_cast<void *>(objs[i])));
+			tab_item->setData(Qt::UserRole, QVariant::fromValue<void *>(reinterpret_cast<void *>(obj)));
 			fnt=tab_item->font();
 
-			tab_item->setText(objs[i]->getName());
-			tab_item->setIcon(QIcon(GuiUtilsNs::getIconPath(BaseObject::getSchemaName(objs[i]->getObjectType()) + str_aux)));
+			tab_item->setText(obj->getName());
+			tab_item->setIcon(QIcon(GuiUtilsNs::getIconPath(BaseObject::getSchemaName(obj->getObjectType()) + str_aux)));
 			if(new_row) tab_wgt->setItem(lin_idx, 0, tab_item);
 			if(checkable_items)	tab_item->setCheckState(Qt::Checked);
 
-			if(objs[i]->isProtected() || objs[i]->isSystemObject())
+			if(obj->isProtected() || obj->isSystemObject())
 			{
 				fnt.setItalic(true);
 				tab_item->setForeground(ObjectsTableWidget::getTableItemColor(ObjectsTableWidget::ProtItemAltFgColor));
 			}
-			else if(dynamic_cast<TableObject *>(objs[i]) &&
-					dynamic_cast<TableObject *>(objs[i])->isAddedByRelationship())
+			else if(dynamic_cast<TableObject *>(obj) &&
+					dynamic_cast<TableObject *>(obj)->isAddedByRelationship())
 			{
 				fnt.setItalic(true);
 				tab_item->setForeground(ObjectsTableWidget::getTableItemColor(ObjectsTableWidget::RelAddedItemAltFgColor));
@@ -536,7 +536,7 @@ namespace GuiUtilsNs {
 			else
 				fnt.setItalic(false);
 
-			fnt.setStrikeOut(objs[i]->isSQLDisabled() && !objs[i]->isSystemObject());
+			fnt.setStrikeOut(obj->isSQLDisabled() && !obj->isSystemObject());
 			tab_item->setFont(fnt);
 			fnt.setStrikeOut(false);
 
@@ -546,7 +546,7 @@ namespace GuiUtilsNs {
 				fnt.setItalic(true);
 				tab_item=(new_row ? new QTableWidgetItem : tab_wgt->item(lin_idx, 1));
 				tab_item->setFont(fnt);
-				tab_item->setText(objs[i]->getTypeName());
+				tab_item->setText(obj->getTypeName());
 				if(new_row) tab_wgt->setItem(lin_idx, 1, tab_item);
 			}
 
@@ -554,7 +554,7 @@ namespace GuiUtilsNs {
 			if(tab_wgt->columnCount() > 2)
 			{
 				tab_item=(new_row ? new QTableWidgetItem : tab_wgt->item(lin_idx, 2));
-				tab_item->setText(QString::number(objs[i]->getObjectId()));
+				tab_item->setText(QString::number(obj->getObjectId()));
 				if(new_row) tab_wgt->setItem(lin_idx, 2, tab_item);
 			}
 
@@ -563,14 +563,14 @@ namespace GuiUtilsNs {
 			{
 				tab_item=(new_row ? new QTableWidgetItem : tab_wgt->item(lin_idx, 3));
 
-				if(dynamic_cast<TableObject *>(objs[i]))
-					parent_obj=dynamic_cast<TableObject *>(objs[i])->getParentTable();
-				else if(objs[i]->getSchema())
-					parent_obj=objs[i]->getSchema();
-				else if(dynamic_cast<Permission *>(objs[i]))
-					parent_obj=dynamic_cast<Permission *>(objs[i])->getObject();
+				if(dynamic_cast<TableObject *>(obj))
+					parent_obj=dynamic_cast<TableObject *>(obj)->getParentTable();
+				else if(obj->getSchema())
+					parent_obj=obj->getSchema();
+				else if(dynamic_cast<Permission *>(obj))
+					parent_obj=dynamic_cast<Permission *>(obj)->getObject();
 				else
-					parent_obj=objs[i]->getDatabase();
+					parent_obj=obj->getDatabase();
 
 				tab_item->setText(parent_obj ? parent_obj->getName() : "-");
 				tab_item->setData(Qt::UserRole, QVariant::fromValue<void *>(reinterpret_cast<void *>(parent_obj)));
@@ -604,7 +604,7 @@ namespace GuiUtilsNs {
 			//Sixth column: object comment
 			if(tab_wgt->columnCount() > 5)
 			{
-				attribs_map search_attribs = objs[i]->getSearchAttributes();
+				attribs_map search_attribs = obj->getSearchAttributes();
 				tab_item=(new_row ? new QTableWidgetItem : tab_wgt->item(lin_idx, 5));
 				fnt.setItalic(false);
 				tab_item->setFont(fnt);
@@ -614,7 +614,7 @@ namespace GuiUtilsNs {
 					 search_attr != Attributes::Comment)
 					tab_item->setText(search_attribs[search_attr]);
 				else
-					tab_item->setText(objs[i]->getComment());
+					tab_item->setText(obj->getComment());
 
 				if(new_row) tab_wgt->setItem(lin_idx, 5, tab_item);
 			}
