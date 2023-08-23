@@ -91,9 +91,6 @@ class __libcore BaseObject {
 		//! \brief Current PostgreSQL version used in SQL code generation
 		static QString pgsql_ver;
 
-		//! \brief Indicates the the cached code enabled.
-		static bool use_cached_code;
-
 		static bool escape_comments;
 
 		//! \brief Stores the set of special (valid) chars that forces the object's name quoting
@@ -151,7 +148,19 @@ class __libcore BaseObject {
 		QString cached_code[2],
 
 		//! \brief Stores the xml code in reduced form
-		cached_reduced_code;
+		cached_reduced_code,
+
+		/*! \brief Store the cached names of the object (raw name, formated name, signature)
+		 *  This will avoid calling the name validation/formatting everytime the object name
+		 *  need to be retrieved, improving the overall perfomance */
+		cached_names[3];
+
+		//! \brief References the cached names entries
+		enum CachedNameId: unsigned {
+			RawName, // Original name without formatting (double-quotes)
+			FmtName, // Original name with formatting (double-quotes)
+			Signature // Original name prefixed by the schema's name (both formatted)
+		};
 
 		/*! \brief This map stores the name of each object type associated to a schema file
 		 that generates the object's code definition */
@@ -494,13 +503,6 @@ class __libcore BaseObject {
 		/*! \brief Compares the xml code between the "this" object and another one. The user can specify which attributes
 		and tags must be ignored when makin the comparison. NOTE: only the name for attributes and tags must be informed */
 		virtual bool isCodeDiffersFrom(BaseObject *object, const QStringList &ignored_attribs={}, const QStringList &ignored_tags={});
-
-		/*! \brief Enable/disable the use of cached sql/xml code. When enabled the code generation speed is hugely increased
-				but the downward is an increasing on memory usage. Make sure to every time when an attribute of any instance derivated
-				of this class changes you need to call setCodeInvalidated() in order to force the update of the code cache.
-				This cached code switch may be removed in the future since and the cache will be mandatorily used due to its better
-				performance compared to non cached code, even with the drawback of using more memory. */
-		static void enableCachedCode(bool value);
 
 		/*! \brief Returns the valid object types in a vector. The types
 		ObjectType::ObjBaseObject, TYPE_ATTRIBUTE and ObjectType::ObjBaseTable aren't included in return vector.

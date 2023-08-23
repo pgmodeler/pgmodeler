@@ -18,6 +18,8 @@
 
 #include "basegraphicobject.h"
 
+bool BaseGraphicObject::updates_enabled = true;
+
 BaseGraphicObject::BaseGraphicObject()
 {
 	is_modified=true;
@@ -48,7 +50,7 @@ void BaseGraphicObject::setModified(bool value)
 {
 	is_modified=value;
 
-	if(is_modified)
+	if(is_modified && updates_enabled)
 		emit s_objectModified();
 }
 
@@ -58,7 +60,7 @@ void BaseGraphicObject::setSQLDisabled(bool value)
 
 	BaseObject::setSQLDisabled(value);
 
-	if(value != curr_val)
+	if(value != curr_val && updates_enabled)
 		emit s_objectModified();
 }
 
@@ -205,4 +207,14 @@ void BaseGraphicObject::setZValue(int z_value)
 int BaseGraphicObject::getZValue()
 {
 	return z_value;
+}
+
+void BaseGraphicObject::setUpdatesEnabled(bool value)
+{
+	updates_enabled = value;
+}
+
+bool BaseGraphicObject::isUpdatesEnabled()
+{
+	return updates_enabled;
 }

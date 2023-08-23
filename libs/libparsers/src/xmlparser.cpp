@@ -75,9 +75,8 @@ void XmlParser::loadXMLFile(const QString &filename)
 	{
 		if(!filename.isEmpty())
 		{
-			QString buffer(UtilsNs::loadFile(filename));
-			xml_doc_filename=filename;
-			loadXMLBuffer(buffer);
+			xml_doc_filename = filename;
+			loadXMLBuffer(UtilsNs::loadFile(filename));
 		}
 	}
 	catch(Exception &e)
@@ -97,7 +96,7 @@ void XmlParser::loadXMLBuffer(const QString &xml_buf)
 
 		pos1=xml_buf.indexOf(QLatin1String("<?xml"));
 		pos2=xml_buf.indexOf(QLatin1String("?>"));
-		xml_buffer=xml_buf;
+		xml_buffer.append(xml_buf);
 
 		if(pos1 >= 0 && pos2 >= 0)
 		{

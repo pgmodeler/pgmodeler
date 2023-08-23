@@ -119,6 +119,9 @@ void TextboxView::__configureObject()
 
 void TextboxView::configureObject()
 {
+	if(!BaseGraphicObject::isUpdatesEnabled())
+		return;
+
 	double old_width = bounding_rect.width(),
 			old_height = bounding_rect.height();
 

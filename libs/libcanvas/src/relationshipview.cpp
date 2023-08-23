@@ -576,6 +576,9 @@ void RelationshipView::configurePositionInfo()
 
 void RelationshipView::configureLine()
 {
+	if(!BaseGraphicObject::isUpdatesEnabled())
+		return;
+
 	//Reconnect the tables is the placeholder usage changes
 	if(using_placeholders!=BaseObjectView::isPlaceholderEnabled())
 	{

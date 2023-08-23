@@ -62,6 +62,8 @@ class __libcore BaseGraphicObject: public QObject, public BaseObject {
 		 it in the QGraphcisScene) */
 		QObject *receiver_object;
 
+		static bool updates_enabled;
+
 	protected:
 		//! \brief This attribute holds the layers in which the object is visible.
 		QList<unsigned> layers;
@@ -154,6 +156,10 @@ class __libcore BaseGraphicObject: public QObject, public BaseObject {
 		virtual void setZValue(int z_value);
 
 		int getZValue();
+
+		static void setUpdatesEnabled(bool value);
+
+		static bool isUpdatesEnabled();
 
 	signals:
 		//! \brief Signal emitted when the user calls the setModified() method
