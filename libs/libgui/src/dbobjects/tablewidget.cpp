@@ -87,7 +87,7 @@ TableWidget::TableWidget(QWidget *parent, ObjectType tab_type): BaseObjectWidget
 	vbox = new QVBoxLayout;
 	vbox->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
 	vbox->addWidget(options_tab);
-	attributes_tbw->widget(8)->setLayout(vbox);
+	attributes_tbw->widget(9)->setLayout(vbox);
 
 	tag_sel = new ObjectSelectorWidget(ObjectType::Tag, this);
 	vbox = new QVBoxLayout(tag_sel_parent);
@@ -97,7 +97,7 @@ TableWidget::TableWidget(QWidget *parent, ObjectType tab_type): BaseObjectWidget
 	grid=new QGridLayout;
 	grid->addWidget(parent_tables, 0,0,1,1);
 	grid->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
-	attributes_tbw->widget(7)->setLayout(grid);
+	attributes_tbw->widget(8)->setLayout(grid);
 
 	//Configuring the table objects that stores the columns, triggers, constraints, rules and indexes
 	for(unsigned i=0; i <= 5; i++)
@@ -110,7 +110,7 @@ TableWidget::TableWidget(QWidget *parent, ObjectType tab_type): BaseObjectWidget
 		grid=new QGridLayout;
 		grid->addWidget(tab, 0,0,1,1);
 		grid->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
-		attributes_tbw->widget(i)->setLayout(grid);
+		attributes_tbw->widget(i + 1)->setLayout(grid);
 
 		connect(tab, &ObjectsTableWidget::s_rowsRemoved, this, &TableWidget::removeObjects);
 		connect(tab, &ObjectsTableWidget::s_rowRemoved, this, &TableWidget::removeObject);
@@ -197,7 +197,7 @@ TableWidget::TableWidget(QWidget *parent, ObjectType tab_type): BaseObjectWidget
 
 	partition_keys_tab = new ElementsTableWidget;
 	partition_keys_tab->setEnabled(false);
-	grid = dynamic_cast<QGridLayout *>(attributes_tbw->widget(6)->layout());
+	grid = dynamic_cast<QGridLayout *>(attributes_tbw->widget(7)->layout());
 	grid->addWidget(partition_keys_tab, 1, 0, 1, 2);
 
 	part_types = PartitioningType::getTypes();
@@ -210,7 +210,11 @@ TableWidget::TableWidget(QWidget *parent, ObjectType tab_type): BaseObjectWidget
 
 	setRequiredField(server_lbl);
 	setRequiredField(server_sel);
-	configureFormLayout(table_grid, tab_type);
+
+	configureFormFields(tab_type);
+	baseobject_grid->setContentsMargins(0, 0, 0, 0);
+	dynamic_cast<QGridLayout*>(attributes_tbw->widget(0)->layout())->addLayout(baseobject_grid, 0, 0);
+
 	configureTabOrder({ tag_sel });
 	setMinimumSize(660, 630);
 }
@@ -280,7 +284,7 @@ void TableWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Sc
 	__setAttributes(model, op_list, schema, table, pos_x, pos_y);
 	server_lbl->setVisible(false);
 	server_wgt->setVisible(false);
-	attributes_tbw->removeTab(8); // Removing the options tab
+	attributes_tbw->removeTab(9); // Removing the options tab
 }
 
 void TableWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Schema *schema, ForeignTable *ftable, double pos_x, double pos_y)

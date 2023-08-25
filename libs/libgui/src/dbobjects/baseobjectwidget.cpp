@@ -50,8 +50,6 @@ BaseObjectWidget::BaseObjectWidget(QWidget *parent, ObjectType obj_type): QWidge
 		tablespace_sel=nullptr;
 		object_protected = false;
 
-		//GuiUtilsNs::configureWidgetFont(protected_obj_lbl, GuiUtilsNs::MediumFontFactor);
-
 		connect(edt_perms_tb, &QPushButton::clicked, this, &BaseObjectWidget::editPermissions);
 		connect(append_sql_tb, &QPushButton::clicked, this, &BaseObjectWidget::editCustomSQL);
 
@@ -401,23 +399,21 @@ void BaseObjectWidget::setAttributes(DatabaseModel *model, OperationList *op_lis
 
 void BaseObjectWidget::configureFormLayout(QGridLayout *grid, ObjectType obj_type)
 {
-	bool show_comment;
-	QObjectList chld_list;
-	QWidget *wgt=nullptr;
-
-
-	if(grid)
+	if(!grid)
+		setLayout(baseobject_grid);
+	else
 	{
-		QLayoutItem *item=nullptr;
-		int lin, col, col_span,row_span, item_id, item_count;
+		QLayoutItem *item = nullptr;
+		int lin = 0, col = 0, col_span = 0,
+				row_span = 0, item_id = 0, item_count = 0;
 
 		/* Move all the widgets of the passed grid layout one row down,
 		 permiting the insertion of the 'baseobject_grid' at the top
 		 of the items */
-		item_count=grid->count();
-		for(item_id=item_count-1; item_id >= 0; item_id--)
+		item_count = grid->count();
+		for(item_id = item_count-1; item_id >= 0; item_id--)
 		{
-			item=grid->itemAt(item_id);
+			item = grid->itemAt(item_id);
 			grid->getItemPosition(item_id, &lin, &col, &row_span, &col_span);
 			grid->removeItem(item);
 			grid->addItem(item, lin+1, col, row_span, col_span);
@@ -431,12 +427,19 @@ void BaseObjectWidget::configureFormLayout(QGridLayout *grid, ObjectType obj_typ
 
 		//Adding the base layout on the top
 		grid->addLayout(baseobject_grid, 0,0,1,0);
-		baseobject_grid=grid;
+		baseobject_grid = grid;
 	}
-	else
-		this->setLayout(baseobject_grid);
 
 	baseobject_grid->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
+	configureFormFields(obj_type);
+}
+
+void BaseObjectWidget::configureFormFields(ObjectType obj_type)
+{
+	bool show_comment = false;
+	QObjectList chld_list;
+	QWidget *wgt = nullptr;
+
 	disable_sql_chk->setVisible(obj_type!=ObjectType::BaseObject && obj_type!=ObjectType::Permission &&
 															obj_type!=ObjectType::Textbox && obj_type!=ObjectType::Tag &&
 															obj_type!=ObjectType::Parameter);
@@ -460,8 +463,8 @@ void BaseObjectWidget::configureFormLayout(QGridLayout *grid, ObjectType obj_typ
 	collation_sel->setVisible(BaseObject::acceptsCollation(obj_type));
 
 	show_comment=obj_type!=ObjectType::Relationship && obj_type!=ObjectType::Textbox &&
-							 obj_type!=ObjectType::Parameter && obj_type!=ObjectType::UserMapping &&
-							 obj_type!=ObjectType::Permission;
+								 obj_type!=ObjectType::Parameter && obj_type!=ObjectType::UserMapping &&
+								 obj_type!=ObjectType::Permission;
 	comment_lbl->setVisible(show_comment);
 	comment_edt->setVisible(show_comment);
 
@@ -471,7 +474,7 @@ void BaseObjectWidget::configureFormLayout(QGridLayout *grid, ObjectType obj_typ
 		obj_icon_lbl->setToolTip(BaseObject::getTypeName(obj_type));
 
 		if(obj_type != ObjectType::Permission && obj_type != ObjectType::Cast &&
-			 obj_type != ObjectType::UserMapping && obj_type != ObjectType::Transform)
+				obj_type != ObjectType::UserMapping && obj_type != ObjectType::Transform)
 		{
 			setRequiredField(name_lbl);
 			setRequiredField(name_edt);
