@@ -213,7 +213,7 @@ TableWidget::TableWidget(QWidget *parent, ObjectType tab_type): BaseObjectWidget
 
 	configureFormFields(tab_type);
 	baseobject_grid->setContentsMargins(0, 0, 0, 0);
-	dynamic_cast<QGridLayout*>(attributes_tbw->widget(0)->layout())->addLayout(baseobject_grid, 0, 0);
+	dynamic_cast<QGridLayout*>(attributes_tbw->widget(0)->layout())->addLayout(baseobject_grid, 0, 0, 1, 3);
 
 	configureTabOrder({ tag_sel });
 	setMinimumSize(660, 630);

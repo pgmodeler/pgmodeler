@@ -29,10 +29,10 @@ ViewWidget::ViewWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Vi
 {
 	try
 	{
-		ObjectsTableWidget *tab=nullptr;
-		ObjectType types[]={ ObjectType::Trigger, ObjectType::Rule, ObjectType::Index };
-		QGridLayout *grid=nullptr;
-		QVBoxLayout *vbox=nullptr;
+		ObjectsTableWidget *tab = nullptr;
+		ObjectType types[] = { ObjectType::Trigger, ObjectType::Rule, ObjectType::Index };
+		QGridLayout *grid = nullptr;
+		QVBoxLayout *vbox = nullptr;
 
 		Ui_ViewWidget::setupUi(this);
 
@@ -62,24 +62,27 @@ ViewWidget::ViewWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Vi
 		references_tab->setHeaderLabel(tr("Flags: SF FW AW EX VD"), 3);
 		references_tab->setHeaderLabel(tr("Reference alias"), 4);
 
-		vbox=new QVBoxLayout(tabWidget->widget(0));
+		vbox=new QVBoxLayout(attributes_tbw->widget(1));
 		vbox->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
 		vbox->addWidget(references_tab);
 
 		cte_expression_cp=new CodeCompletionWidget(cte_expression_txt, true);
 
 		//Configuring the table objects that stores the triggers and rules
-		for(unsigned i=0, tab_id=1; i < sizeof(types)/sizeof(ObjectType); i++, tab_id++)
-		{
-			tab=new ObjectsTableWidget(ObjectsTableWidget::AllButtons ^
-									  (ObjectsTableWidget::UpdateButton  | ObjectsTableWidget::MoveButtons), true, this);
+		unsigned tab_id = 2;
 
-			objects_tab_map[types[i]]=tab;
+		for(auto &type : types)
+		{
+			tab = new ObjectsTableWidget(ObjectsTableWidget::AllButtons ^
+																	(ObjectsTableWidget::UpdateButton  | ObjectsTableWidget::MoveButtons), true, this);
+
+			objects_tab_map[type] = tab;
 
 			grid=new QGridLayout;
-			grid->addWidget(tab, 0,0,1,1);
+			grid->addWidget(tab, 0, 0, 1, 1);
 			grid->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
-			tabWidget->widget(tab_id)->setLayout(grid);
+			attributes_tbw->widget(tab_id)->setLayout(grid);
+			tab_id++;
 
 			connect(tab, &ObjectsTableWidget::s_rowsRemoved, this, &ViewWidget::removeObjects);
 			connect(tab, &ObjectsTableWidget::s_rowRemoved, this, &ViewWidget::removeObject);
@@ -114,15 +117,13 @@ ViewWidget::ViewWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Vi
 		objects_tab_map[ObjectType::Rule]->setHeaderLabel(tr("Alias"), 3);
 		objects_tab_map[ObjectType::Rule]->setHeaderLabel(tr("Comment"), 4);
 
-
 		tablespace_sel->setEnabled(false);
 		tablespace_lbl->setEnabled(false);
-		configureFormLayout(view_grid, ObjectType::View);
 
 		connect(references_tab, &ObjectsTableWidget::s_rowAdded, this, &ViewWidget::addReference);
 		connect(references_tab, &ObjectsTableWidget::s_rowEdited, this, &ViewWidget::editReference);
 		connect(references_tab, &ObjectsTableWidget::s_rowDuplicated, this, &ViewWidget::duplicateReference);
-		connect(tabWidget, &QTabWidget::currentChanged, this, &ViewWidget::updateCodePreview);
+		connect(attributes_tbw, &QTabWidget::currentChanged, this, &ViewWidget::updateCodePreview);
 
 		connect(materialized_rb, &QRadioButton::toggled, with_no_data_chk, &QCheckBox::setEnabled);
 		connect(materialized_rb, &QRadioButton::toggled, tablespace_sel, &ObjectSelectorWidget::setEnabled);
@@ -136,7 +137,11 @@ ViewWidget::ViewWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Vi
 		connect(schema_sel, &ObjectSelectorWidget::s_objectSelected, this, &ViewWidget::updateCodePreview);
 		connect(schema_sel, &ObjectSelectorWidget::s_selectorCleared, this, &ViewWidget::updateCodePreview);
 
-		configureTabOrder({ tag_sel, ordinary_rb, recursive_rb, with_no_data_chk, tabWidget });
+		configureFormFields(ObjectType::View);
+		baseobject_grid->setContentsMargins(0, 0, 0, 0);
+		dynamic_cast<QVBoxLayout*>(attributes_tbw->widget(0)->layout())->insertLayout(0, baseobject_grid);
+
+		configureTabOrder({ tag_sel, ordinary_rb, recursive_rb, with_no_data_chk, attributes_tbw });
 		setMinimumSize(660, 650);
 	}
 	catch(Exception &e)
@@ -541,7 +546,7 @@ void ViewWidget::updateCodePreview()
 {
 	try
 	{
-		if(tabWidget->currentIndex()==tabWidget->count()-1)
+		if(attributes_tbw->currentIndex()==attributes_tbw->count()-1)
 		{
 			View aux_view;
 			Reference refer;
