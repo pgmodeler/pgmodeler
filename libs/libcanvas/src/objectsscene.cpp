@@ -773,7 +773,7 @@ void ObjectsScene::drawBackground(QPainter *painter, const QRectF &rect)
 	painter->setRenderHint(QPainter::TextAntialiasing, false);
 	painter->fillRect(rect, canvas_color);
 
-	if(show_grid)
+	if(show_grid && !move_scene)
 	{
 		int px = 0, py = 0;
 
@@ -808,7 +808,7 @@ void ObjectsScene::drawBackground(QPainter *painter, const QRectF &rect)
 	}
 
 	//Creates the page delimiter lines
-	if(show_page_delim)
+	if(show_page_delim && !move_scene)
 	{
 		pen.setWidthF(pen_width * 1.15);
 		pen.setColor(delimiters_color);
@@ -827,7 +827,7 @@ void ObjectsScene::drawBackground(QPainter *painter, const QRectF &rect)
 	}
 
 	// Drawing the scene boundaries
-	if(show_scene_limits)
+	if(show_scene_limits && !move_scene)
 	{
 		pen.setColor(QColor(255, 0, 0));
 		pen.setStyle(Qt::SolidLine);

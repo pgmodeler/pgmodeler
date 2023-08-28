@@ -82,8 +82,8 @@ class __libcanvas ObjectsScene: public QGraphicsScene {
 		show_scene_limits;
 
 		static constexpr int SceneMoveStep=20,
-		SceneMoveTimeout=50,
-		SceneMoveThreshold=30;
+		SceneMoveTimeout=20,
+		SceneMoveThreshold=100;
 
 		//! \brief Timer responsible to move the scene
 		QTimer scene_move_timer,
