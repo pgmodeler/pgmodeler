@@ -549,17 +549,22 @@ void RelationshipView::connectTables()
 
 void RelationshipView::configureObject()
 {
-	BaseRelationship *rel_base=this->getUnderlyingObject();
+	BaseRelationship *rel_base = this->getUnderlyingObject();
+	BaseRelationship::TableId src_tab = BaseRelationship::SrcTable,
+			dst_tab = BaseRelationship::DstTable;
 
-	tables[0]=dynamic_cast<BaseTableView *>(rel_base->getTable(BaseRelationship::SrcTable)->getOverlyingObject());
-	tables[1]=dynamic_cast<BaseTableView *>(rel_base->getTable(BaseRelationship::DstTable)->getOverlyingObject());
+	tables[src_tab] =
+		dynamic_cast<BaseTableView *>(rel_base->getTable(src_tab)->getOverlyingObject());
 
-	tables[0]->addConnectedRelationship(rel_base);
+	tables[dst_tab] =
+		dynamic_cast<BaseTableView *>(rel_base->getTable(dst_tab)->getOverlyingObject());
+
+	tables[src_tab]->addConnectedRelationship(rel_base);
 
 	if(!rel_base->isSelfRelationship())
-		tables[1]->addConnectedRelationship(rel_base);
+		tables[dst_tab]->addConnectedRelationship(rel_base);
 
-	configureLine();
+	configureLine();	
 	connectTables();
 	connect(rel_base, &BaseRelationship::s_objectModified, this, &RelationshipView::configureLine);
 }

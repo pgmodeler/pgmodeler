@@ -1701,7 +1701,6 @@ void DatabaseModel::validateRelationships()
 	std::vector<Exception> errors;
 	std::map<Relationship *, Exception> rel_errors;
 	std::vector<Relationship *> failed_rels;
-	std::vector<BaseTable *> tabs;
 
 	if(!hasInvalidRelatioships())
 		return;
@@ -1722,11 +1721,6 @@ void DatabaseModel::validateRelationships()
 			rel->blockSignals(true);
 			rel->connectRelationship();
 			rel->blockSignals(false);
-
-			/* Storing the tables here in an auxiliary list so we can
-			 * update their geometry and their parent schemas rectangles */
-			tabs.push_back(rel->getTable(Relationship::SrcTable));
-			tabs.push_back(rel->getTable(Relationship::DstTable));
 		}
 		catch(Exception &)
 		{
@@ -1774,30 +1768,6 @@ void DatabaseModel::validateRelationships()
 
 	//Recreating the special objects that depends on the columns created by relationshps
 	errors = createSpecialObjects();
-
-	if(!loading_model && !schemas.empty())
-	{
-		std::vector<Schema *> schs;
-
-		std::sort(tabs.begin(), tabs.end());
-		auto tab_end = std::unique(tabs.begin(), tabs.end());
-		tabs.erase(tab_end, tabs.end());
-
-		// Updating the tables to reflect their sizes due to the creationg of new columns/constraints
-		for(auto &tab : tabs)
-		{
-			tab->setModified(true);
-			schs.push_back(dynamic_cast<Schema *>(tab->getSchema()));
-		}
-
-		std::sort(schs.begin(), schs.end());
-		auto sch_end = std::unique(schs.begin(), schs.end());
-		schs.erase(sch_end, schs.end());
-
-		//Updates the schemas to ajdust its sizes due to the tables resizings
-		for(auto &sch : schs)
-			sch->setModified(true);
-	}
 
 	if(!loading_model)
 	{
