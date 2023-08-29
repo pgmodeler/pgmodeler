@@ -482,6 +482,9 @@ namespace GuiUtilsNs {
 		handleFileDialogSatate(file_dlg, false);
 	}
 
+	#warning "Performance bottleneck here!"
+	#warning "Function performs pooly with large set of data!"
+	#warning "Create a version that updates a QTableView!"
 	void updateObjectTable(QTableWidget *tab_wgt, std::vector<BaseObject *> &objs, const QString &search_attr, bool checkable_items)
 	{
 		if(!tab_wgt || tab_wgt->columnCount() == 0)
@@ -628,7 +631,6 @@ namespace GuiUtilsNs {
 		tab_wgt->setUpdatesEnabled(true);
 		tab_wgt->setSortingEnabled(true);
 		tab_wgt->resizeColumnsToContents();
-
 		tab_wgt->resizeRowsToContents();
 	}
 

@@ -50,6 +50,10 @@ class __libcore BaseTable: public BaseGraphicObject {
 		//! \brief Stores the current page visible on the table
 		unsigned curr_page[2];
 
+		QString hash_code;
+
+		virtual void generateHashCode();
+
 	public:
 		enum TableSection: unsigned {
 			AttribsSection,
@@ -58,7 +62,10 @@ class __libcore BaseTable: public BaseGraphicObject {
 
 		BaseTable();
 
+		QString getHashCode();
+
 		virtual void setTag(Tag *tag);
+
 		virtual Tag *getTag();
 
 		//! \brief Returns true if the provided table is considered a base table (Table, ForeignTable, View)
@@ -137,6 +144,8 @@ class __libcore BaseTable: public BaseGraphicObject {
 		 * The split parameter is used to inform the generation process that the dicts are being
 		 * saved in separated files. This changes the way links are generated inside the data dictionaries */
 		virtual QString getDataDictionary(bool split, const attribs_map &extra_attribs = {}) = 0;
+
+		virtual void setCodeInvalidated(bool value) override;
 
 		friend class DatabaseModel;
 };

@@ -60,6 +60,8 @@ class __libcanvas BaseObjectView: public QObject, public QGraphicsItemGroup {
 		 mainly when creating relationships between tables. */
 		unsigned sel_order;
 
+		QString curr_hash_code;
+
 		//! \brief This item display the current object position on the scene
 		TextPolygonItem *pos_info_item;
 

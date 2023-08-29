@@ -1705,6 +1705,9 @@ void DatabaseModel::validateRelationships()
 	if(!hasInvalidRelatioships())
 		return;
 
+	QTextStream out(stdout);
+	out << "Start rel. validation" << Qt::endl;
+
 	//Stores the special objects definition if there is some invalidated relationships
 	if(!loading_model && xml_special_objs.empty())
 		storeSpecialObjectsXML();
@@ -1802,6 +1805,8 @@ void DatabaseModel::validateRelationships()
 		//Redirects all the errors captured on the revalidation
 		throw Exception(ErrorCode::RemInvalidatedObjects,__PRETTY_FUNCTION__,__FILE__,__LINE__, errors);
 	}
+
+	out << "End rel. validation" << Qt::endl;
 }
 
 void DatabaseModel::checkRelationshipRedundancy(Relationship *rel)

@@ -74,6 +74,8 @@ class __libcanvas RelationshipView: public BaseObjectView {
 		//! \brief Stores the graphical representation for the participant tables
 		BaseTableView *tables[2];
 
+		QString tab_hashes[2];
+
 		/*! \brief Stores the points on tables where the relationship line is connected.
 		This attribute is updated every time the configureLine() method is called.
 		When the relationship uses the classical link mode (center points) this attribute

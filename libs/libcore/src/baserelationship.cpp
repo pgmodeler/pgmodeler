@@ -21,6 +21,7 @@
 #include "schema.h"
 #include "doublenan.h"
 #include <QApplication>
+#include <QCryptographicHash>
 
 BaseRelationship::BaseRelationship(BaseRelationship *rel)
 {
@@ -402,6 +403,29 @@ void BaseRelationship::configureSearchAttributes()
 	BaseGraphicObject::configureSearchAttributes();
 }
 
+/*void BaseRelationship::generateHashCode()
+{
+	if(!code_invalidated)
+		return;
+
+	QString buf;
+	QCryptographicHash hash_gen(QCryptographicHash::Md5);
+
+	buf.append(custom_color == Qt::transparent ? "" : custom_color.name());
+	buf.append(obj_name);
+	buf.append(QString::number(static_cast<int>(src_mandatory)));
+	buf.append(QString::number(static_cast<int>(dst_mandatory)));
+
+	for(auto &pnt : points)
+	{
+		buf.append(QString::number(pnt.x()));
+		buf.append(QString::number(pnt.y()));
+	}
+
+	hash_gen.addData(buf.toUtf8());
+	hash_code = hash_gen.result().toHex();
+} */
+
 Constraint *BaseRelationship::getReferenceForeignKey()
 {
 	return reference_fk;
@@ -496,6 +520,7 @@ QPointF BaseRelationship::getLabelDistance(LabelId label_id)
 void BaseRelationship::setCustomColor(const QColor &color)
 {
 	custom_color=color;
+	setCodeInvalidated(color != custom_color);
 }
 
 QColor BaseRelationship::getCustomColor()
@@ -588,14 +613,20 @@ QString BaseRelationship::getRelationshipTypeName()
 	return getRelationshipTypeName(rel_type, src_table->getObjectType()==ObjectType::View);
 }
 
+void BaseRelationship::setModified(bool value)
+{
+	//generateHashCode();
+	BaseGraphicObject::setModified(value);
+}
+
 void BaseRelationship::setCodeInvalidated(bool value)
 {
-	BaseObject::setCodeInvalidated(value);
-
 	if(src_table)
 		src_table->setCodeInvalidated(value);
 
 	if(dst_table)
 		dst_table->setCodeInvalidated(value);
+
+	BaseGraphicObject::setCodeInvalidated(value);
 }
 

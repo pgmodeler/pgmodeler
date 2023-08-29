@@ -1604,7 +1604,7 @@ void PhysicalTable::setCodeInvalidated(bool value)
 			obj->setCodeInvalidated(value);
 	}
 
-	BaseObject::setCodeInvalidated(value);
+	BaseGraphicObject::setCodeInvalidated(value);
 }
 
 void PhysicalTable::setInitialData(const QString &value)

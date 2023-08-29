@@ -479,6 +479,10 @@ void ModelObjectsWidget::filterObjects()
 
 void ModelObjectsWidget::updateObjectsView()
 {
+	#warning "Performance bottleneck here!"
+	#warning "Change objectslist_tbw from QTableWidget to QTableView!"
+	#warning "Change objectslist_trw from QTreeWidget to QTreeView!"
+
 	selected_objs.clear();
 	updateDatabaseTree();
 	updateObjectsList();
@@ -762,6 +766,8 @@ void ModelObjectsWidget::updateDatabaseTree()
 		std::vector<ObjectType> types = BaseObject::getChildObjectTypes(ObjectType::Database);
 		unsigned count = 0, i = 0, i1 = 0;
 
+		objectstree_tw->setUpdatesEnabled(false);
+
 		types.push_back(ObjectType::Tag);
 		types.push_back(ObjectType::GenericSql);
 		types.push_back(ObjectType::Textbox);
@@ -832,10 +838,12 @@ void ModelObjectsWidget::updateDatabaseTree()
 		}
 		catch(Exception &e)
 		{
+			objectstree_tw->setUpdatesEnabled(true);
 			throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 		}
 
 		objectstree_tw->sortByColumn(0, Qt::AscendingOrder);
+		objectstree_tw->setUpdatesEnabled(true);
 	}
 }
 
@@ -1028,7 +1036,7 @@ void ModelObjectsWidget::restoreTreeState(std::vector<BaseObject *> &tree_items)
 {
 	QTreeWidgetItem *item=nullptr, *parent_item=nullptr;
 
-	objectslist_tbw->setUpdatesEnabled(false);
+	//objectslist_tbw->setUpdatesEnabled(false);
 
 	while(!tree_items.empty())
 	{
@@ -1048,7 +1056,7 @@ void ModelObjectsWidget::restoreTreeState(std::vector<BaseObject *> &tree_items)
 		tree_items.pop_back();
 	}
 
-	objectslist_tbw->setUpdatesEnabled(true);
+	//objectslist_tbw->setUpdatesEnabled(true);
 }
 
 QTreeWidgetItem *ModelObjectsWidget::getTreeItem(BaseObject *object)
