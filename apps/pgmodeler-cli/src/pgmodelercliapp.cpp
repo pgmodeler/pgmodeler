@@ -1024,7 +1024,17 @@ void PgModelerCliApp::extractObjectXML()
 	layers = aux_buf.mid(attr_start, attr_end - attr_start);
 	layers.remove(QRegularExpression(attr_expr.arg(Attributes::Layers)));
 	layers.remove('"');
-	model->setLayers(layers.trimmed().split(',', Qt::SkipEmptyParts));
+
+	QStringList aux_layers = layers.trimmed().split(',', Qt::SkipEmptyParts);
+
+	/* In 0.9.x there was a "Default" layer created automatically in the model
+	 * In order to not losing the correct layer arrangement, we include that default
+	 * layer in the list of layers in the model so the objects doesn't put in the
+	 * wrong layer when loaded after the model is fixed */
+	if(model_version < "1.0.0" && !aux_layers.contains("Default"))
+		aux_layers.prepend("Default,");
+
+	model->setLayers(aux_layers);
 
 	//Active layers
 	attr_start = attr_end;
