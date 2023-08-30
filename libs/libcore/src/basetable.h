@@ -52,8 +52,6 @@ class __libcore BaseTable: public BaseGraphicObject {
 
 		QString hash_code;
 
-		virtual void generateHashCode();
-
 	public:
 		enum TableSection: unsigned {
 			AttribsSection,
@@ -148,6 +146,8 @@ class __libcore BaseTable: public BaseGraphicObject {
 		virtual void setCodeInvalidated(bool value) override;
 
 		virtual void setModified(bool value) override;
+
+		virtual void generateHashCode();
 
 		void resetHashCode();
 

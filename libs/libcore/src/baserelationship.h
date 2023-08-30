@@ -186,8 +186,6 @@ class __libcore BaseRelationship: public BaseGraphicObject  {
 
 		QString getRelationshipTypeName();
 
-		virtual void setModified(bool value);
-
 		friend class DatabaseModel;
 		friend class RelationshipWidget;
 		friend class ModelWidget;

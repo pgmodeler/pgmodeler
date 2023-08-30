@@ -618,12 +618,6 @@ QString BaseRelationship::getRelationshipTypeName()
 	return getRelationshipTypeName(rel_type, src_table->getObjectType()==ObjectType::View);
 }
 
-void BaseRelationship::setModified(bool value)
-{
-	//generateHashCode();
-	BaseGraphicObject::setModified(value);
-}
-
 void BaseRelationship::setCodeInvalidated(bool value)
 {
 	if(src_table)

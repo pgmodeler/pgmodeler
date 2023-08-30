@@ -771,7 +771,7 @@ void ObjectsScene::drawBackground(QPainter *painter, const QRectF &rect)
 	painter->setClipRect(rect);
 	painter->setRenderHint(QPainter::Antialiasing, false);
 	painter->setRenderHint(QPainter::TextAntialiasing, false);
-	painter->fillRect(rect, canvas_color);
+	//painter->fillRect(rect, canvas_color);
 
 	if(show_grid && !move_scene)
 	{
@@ -781,8 +781,6 @@ void ObjectsScene::drawBackground(QPainter *painter, const QRectF &rect)
 		pen.setColor(grid_color);
 		painter->setPen(pen);
 
-		#warning "Performance bottleneck here!"
-		#warning "Draw grid rects/dots without nested for's"
 		//Draws the grid
 		for(px = 0; px < scene_w; px += grid_size)
 		{
@@ -809,8 +807,6 @@ void ObjectsScene::drawBackground(QPainter *painter, const QRectF &rect)
 		scene_lim_y = scene_h;
 	}
 
-	#warning "Performance bottleneck here!"
-	#warning "Draw page delimiters without nested for's"
 	//Creates the page delimiter lines
 	if(show_page_delim && !move_scene)
 	{

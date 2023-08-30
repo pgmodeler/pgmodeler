@@ -147,7 +147,7 @@ class __libcanvas BaseObjectView: public QObject, public QGraphicsItemGroup {
 		BaseObject *getUnderlyingObject();
 
 		//! \brief Returns the objects bounding rect in local coordination
-		QRectF boundingRect(void) const;
+		QRectF boundingRect() const;
 
 		//! \brief Returns the fill style in a form of gradient for the specified element id
 		static QLinearGradient getFillStyle(const QString &id);

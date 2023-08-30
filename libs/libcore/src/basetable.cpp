@@ -38,7 +38,7 @@ BaseTable::BaseTable()
 void BaseTable::setCodeInvalidated(bool value)
 {
 	BaseGraphicObject::setCodeInvalidated(value);
-	generateHashCode();
+	hash_code = "";
 }
 
 void BaseTable::resetCurrentPages()
