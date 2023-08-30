@@ -101,7 +101,7 @@ class __libcore BaseGraphicObject: public QObject, public BaseObject {
 		virtual void setSystemObject(bool value);
 
 		//! \brief Sets the object's position
-		void setPosition(const QPointF &pos);
+		virtual void setPosition(const QPointF &pos);
 
 		/*! \brief Sets if the objects is modified or not.
 		 This method emits the signal s_objectModified() */

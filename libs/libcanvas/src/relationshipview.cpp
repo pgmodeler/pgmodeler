@@ -589,7 +589,7 @@ void RelationshipView::configureLine()
 			!BaseGraphicObject::isUpdatesEnabled() ||
 
 			((!tab_hashes[src_tab].isEmpty() &&
-					tab_hashes[src_tab] == base_rel->getTable(src_tab)->getHashCode()) ||
+					tab_hashes[src_tab] == base_rel->getTable(src_tab)->getHashCode()) &&
 
 			 (!tab_hashes[dst_tab].isEmpty() &&
 					tab_hashes[dst_tab] == base_rel->getTable(dst_tab)->getHashCode())))

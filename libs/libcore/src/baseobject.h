@@ -467,6 +467,9 @@ class __libcore BaseObject {
 		//! \brief Returns if the specified type accepts an alias (friendly name)
 		static bool acceptsAlias(ObjectType obj_type);
 
+		//! \brief Returns if the specified type accepts comment
+		static bool acceptsComment(ObjectType obj_type);
+
 		//! \brief Returns if the object accepts to have a schema assigned
 		bool acceptsSchema();
 
@@ -487,6 +490,12 @@ class __libcore BaseObject {
 
 		//! \brief Returns if the object accepts the use of DROP commands
 		bool acceptsDropCommand();
+
+		//! \brief Returns if the object accepts the use of alias
+		bool acceptsAlias();
+
+		//! \brief Returns if the object accepts comment
+		bool acceptsComment();
 
 		/*! \brief Marks the current cached code as invalid and forces its regenaration.
 				Some key attributes / setters in the base classes BaseObject, BaseTable and BaseRelationship

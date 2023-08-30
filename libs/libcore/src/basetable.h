@@ -102,9 +102,9 @@ class __libcore BaseTable: public BaseGraphicObject {
 		//! \brief Returns all children objects of the table but excluding the ones of the provided type
 		virtual std::vector<BaseObject *> getObjects(const std::vector<ObjectType> &excl_types = {})=0;
 
-		virtual QString getSourceCode(SchemaParser::CodeType tipo_def)=0;
+		virtual QString getSourceCode(SchemaParser::CodeType tipo_def) override = 0;
 
-		virtual QString getAlterCode(BaseObject *object);
+		virtual QString getAlterCode(BaseObject *object) override;
 
 		/*! \brief Set the initial capacity of the objects list for a optimized memory usage.
 		 * This method should be called prior to adding the first object to the table because, depending o the capacity,
@@ -131,7 +131,7 @@ class __libcore BaseTable: public BaseGraphicObject {
 
 		bool isPaginationEnabled();
 
-		virtual void setZValue(int z_value);
+		virtual void setZValue(int z_value) override;
 
 		/*! \brief Defines the current page visible on the table. Calling this method direclty
 		 * will not update the geometry of the graphical representation of this object. For that,
@@ -146,6 +146,12 @@ class __libcore BaseTable: public BaseGraphicObject {
 		virtual QString getDataDictionary(bool split, const attribs_map &extra_attribs = {}) = 0;
 
 		virtual void setCodeInvalidated(bool value) override;
+
+		virtual void setModified(bool value) override;
+
+		void resetHashCode();
+
+		virtual void setPosition(const QPointF &pos) override;
 
 		friend class DatabaseModel;
 };

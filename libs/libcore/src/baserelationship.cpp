@@ -298,6 +298,11 @@ void BaseRelationship::connectRelationship()
 	{
 		setConnected(true);
 		setCodeInvalidated(true);
+
+		src_table->setModified(true);
+
+		if(src_table != dst_table)
+			dst_table->setModified(true);
 	}
 }
 

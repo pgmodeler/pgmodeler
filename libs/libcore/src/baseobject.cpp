@@ -512,7 +512,14 @@ bool BaseObject::acceptsAlias(ObjectType obj_type)
 				 obj_type == ObjectType::Column || obj_type == ObjectType::Constraint ||
 				 obj_type == ObjectType::Index || obj_type == ObjectType::Rule ||
 				 obj_type == ObjectType::Trigger || obj_type == ObjectType::Policy ||
-				 obj_type==ObjectType::ForeignTable);
+					obj_type==ObjectType::ForeignTable);
+}
+
+bool BaseObject::acceptsComment(ObjectType obj_type)
+{
+	return obj_type!=ObjectType::Relationship && obj_type!=ObjectType::Textbox &&
+				 obj_type!=ObjectType::Parameter && obj_type!=ObjectType::UserMapping &&
+				 obj_type!=ObjectType::Permission;
 }
 
 bool BaseObject::acceptsCustomSQL()
@@ -528,6 +535,16 @@ bool BaseObject::acceptsAlterCommand()
 bool BaseObject::acceptsDropCommand()
 {
 	return BaseObject::acceptsDropCommand(this->obj_type);
+}
+
+bool BaseObject::acceptsAlias()
+{
+	return BaseObject::acceptsAlias(this->obj_type);
+}
+
+bool BaseObject::acceptsComment()
+{
+	return BaseObject::acceptsComment(this->obj_type);
 }
 
 void BaseObject::setSchema(BaseObject *schema)

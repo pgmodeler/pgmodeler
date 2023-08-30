@@ -436,7 +436,6 @@ void BaseObjectWidget::configureFormLayout(QGridLayout *grid, ObjectType obj_typ
 
 void BaseObjectWidget::configureFormFields(ObjectType obj_type)
 {
-	bool show_comment = false;
 	QObjectList chld_list;
 	QWidget *wgt = nullptr;
 
@@ -462,11 +461,8 @@ void BaseObjectWidget::configureFormFields(ObjectType obj_type)
 	collation_lbl->setVisible(BaseObject::acceptsCollation(obj_type));
 	collation_sel->setVisible(BaseObject::acceptsCollation(obj_type));
 
-	show_comment=obj_type!=ObjectType::Relationship && obj_type!=ObjectType::Textbox &&
-								 obj_type!=ObjectType::Parameter && obj_type!=ObjectType::UserMapping &&
-								 obj_type!=ObjectType::Permission;
-	comment_lbl->setVisible(show_comment);
-	comment_edt->setVisible(show_comment);
+	comment_lbl->setVisible(BaseObject::acceptsComment(obj_type));
+	comment_edt->setVisible(BaseObject::acceptsComment(obj_type));
 
 	if(obj_type!=ObjectType::BaseObject)
 	{
@@ -750,27 +746,27 @@ void BaseObjectWidget::applyConfiguration()
 				object->setName(name_edt->text().trimmed().toUtf8());
 			}
 
-			if(alias_edt->isVisible())
+			if(object->acceptsAlias())
 				object->setAlias(alias_edt->text().trimmed());
 
 			//Sets the object's comment
-			if(comment_edt->isVisible())
+			if(object->acceptsComment())
 				object->setComment(comment_edt->toPlainText().toUtf8());
 
 			//Sets the object's tablespace
-			if(tablespace_sel->isVisible())
+			if(object->acceptsTablespace())
 				object->setTablespace(tablespace_sel->getSelectedObject());
 
 			//Sets the object's owner
-			if(owner_sel->isVisible())
+			if(object->acceptsOwner())
 				object->setOwner(owner_sel->getSelectedObject());
 
 			//Sets the object's collation
-			if(collation_sel->isVisible())
+			if(object->acceptsCollation())
 				object->setCollation(collation_sel->getSelectedObject());
 
-			//Sets the object's schema
-			if(schema_sel->isVisible())
+			//Sets the object's schema			
+			if(object->acceptsSchema())
 			{
 				Schema *esquema=dynamic_cast<Schema *>(schema_sel->getSelectedObject());
 				this->prev_schema=dynamic_cast<Schema *>(object->getSchema());

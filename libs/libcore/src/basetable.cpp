@@ -121,11 +121,11 @@ unsigned BaseTable::getCurrentPage(TableSection section_id)
 
 void BaseTable::generateHashCode()
 {
-	if(!code_invalidated)
+	if(!isModified())
 		return;
 
 	QTextStream out(stdout);
-	out << "Generate hash:" << getSignature()  << Qt::endl;
+	out << "Generate hash: " << getSignature() << Qt::endl;
 
 	QString buf;
 	QStringList tab_obj_names;
@@ -150,6 +150,9 @@ void BaseTable::generateHashCode()
 
 	hash_gen.addData(buf.toUtf8());
 	hash_code = hash_gen.result().toHex();
+
+	out << "Hash: " << hash_code << Qt::endl;
+	out << "---" << Qt::endl;
 }
 
 void BaseTable::setCollapseMode(CollapseMode coll_mode)
@@ -167,4 +170,16 @@ void BaseTable::setZValue(int z_value)
 QString BaseTable::getHashCode()
 {
 	return hash_code;
+}
+
+void BaseTable::setModified(bool value)
+{
+	BaseGraphicObject::setModified(value);
+	generateHashCode();
+}
+
+void BaseTable::setPosition(const QPointF &pos)
+{
+	BaseGraphicObject::setPosition(pos);
+	hash_code = "";
 }
