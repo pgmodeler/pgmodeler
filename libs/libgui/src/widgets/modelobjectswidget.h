@@ -83,7 +83,7 @@ class __libgui ModelObjectsWidget: public QWidget, public Ui::ModelObjectsWidget
 		void updateDatabaseTree();
 
 		//! \brief Updates the whole object list
-		void updateObjectsList();
+		void updateObjectsTable();
 
 		//! \brief Returns an item from the tree related to the specified object reference
 		QTreeWidgetItem *getTreeItem(BaseObject *object);

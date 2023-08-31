@@ -106,8 +106,8 @@ void SwapObjectsIdsWidget::fillCreationOrderGrid()
 			objects.push_back(itr.second);
 		}
 	});
-
-	GuiUtilsNs::updateObjectTable(objects_tbw, objects);
+	
+	GuiUtilsNs::updateObjectsTable(objects_tbw, objects);
 	objects_tbw->resizeColumnsToContents();
 
 	if(!filter_edt->text().isEmpty() || hide_rels_chk->isChecked() || hide_sys_objs_chk->isChecked())

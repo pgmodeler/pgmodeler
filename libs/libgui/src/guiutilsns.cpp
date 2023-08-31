@@ -482,10 +482,150 @@ namespace GuiUtilsNs {
 		handleFileDialogSatate(file_dlg, false);
 	}
 
+	void updateObjectsTable(QTableView *table_vw, std::vector<BaseObject *> &objects, const QString &search_attr, bool checkable_items)
+	{
+		if(!table_vw)
+			return;
+
+		/*QAbstractItemModel *old_model = table_vw->model(),
+				new_model = new QItemModel();
+
+		if(model)
+		{
+			QItemSelectionModel *sel_model = table_vw->selectionModel();
+
+			table_vw->setModel(nullptr);
+			model->deleteLater();
+
+			if(sel_model)
+				sel_model->deleteLater();
+		}*/
+
+		unsigned lin_idx = 0;
+		QStandardItem *item = nullptr;
+		QStandardItemModel *model = new QStandardItemModel(objects.size(), 6);
+		BaseObject *parent_obj = nullptr;
+		QFont fnt;
+		QString str_aux;
+
+		table_vw->setUpdatesEnabled(false);
+		table_vw->setSortingEnabled(false);
+
+		for(auto &obj : objects)
+		{
+			if(obj->getObjectType()==ObjectType::BaseRelationship)
+				str_aux = "tv";
+			else
+				str_aux.clear();
+
+			//First column: Object name
+			item = new QStandardItem;
+			item->setData(QVariant::fromValue<void *>(reinterpret_cast<void *>(obj)), Qt::UserRole);
+			fnt = item->font();
+
+			item->setText(obj->getName());
+			item->setIcon(QIcon(GuiUtilsNs::getIconPath(BaseObject::getSchemaName(obj->getObjectType()) + str_aux)));
+
+			model->setItem(lin_idx, 0, item);
+
+			if(checkable_items)
+				item->setCheckState(Qt::Checked);
+
+			if(obj->isProtected() || obj->isSystemObject())
+			{
+				fnt.setItalic(true);
+				item->setForeground(ObjectsTableWidget::getTableItemColor(ObjectsTableWidget::ProtItemAltFgColor));
+			}
+			else if(dynamic_cast<TableObject *>(obj) &&
+							dynamic_cast<TableObject *>(obj)->isAddedByRelationship())
+			{
+				fnt.setItalic(true);
+				item->setForeground(ObjectsTableWidget::getTableItemColor(ObjectsTableWidget::RelAddedItemAltFgColor));
+			}
+			else
+				fnt.setItalic(false);
+
+			fnt.setStrikeOut(obj->isSQLDisabled() && !obj->isSystemObject());
+			item->setFont(fnt);
+			fnt.setStrikeOut(false);
+
+			//Second column: Object type
+			fnt.setItalic(true);
+			item = new QStandardItem;
+			item->setFont(fnt);
+			item->setText(obj->getTypeName());
+			model->setItem(lin_idx, 1, item);
+
+			//Third column: Object id
+			item = new QStandardItem;
+			item->setText(QString::number(obj->getObjectId()));
+			model->setItem(lin_idx, 2, item);
+
+			//Fourth column: Parent object name
+			item = new QStandardItem;
+
+			if(dynamic_cast<TableObject *>(obj))
+				parent_obj = dynamic_cast<TableObject *>(obj)->getParentTable();
+			else if(obj->getSchema())
+				parent_obj = obj->getSchema();
+			else if(dynamic_cast<Permission *>(obj))
+				parent_obj = dynamic_cast<Permission *>(obj)->getObject();
+			else
+				parent_obj = obj->getDatabase();
+
+			item->setText(parent_obj ? parent_obj->getName() : "-");
+			item->setData(QVariant::fromValue<void *>(reinterpret_cast<void *>(parent_obj)), Qt::UserRole);
+			model->setItem(lin_idx, 3, item);
+
+			if(parent_obj)
+			{
+				if(parent_obj->isProtected() || parent_obj->isSystemObject())
+				{
+					fnt.setItalic(true);
+					item->setForeground(ObjectsTableWidget::getTableItemColor(ObjectsTableWidget::ProtItemAltFgColor));
+				}
+				else
+					fnt.setItalic(false);
+
+				item->setFont(fnt);
+				item->setIcon(QIcon(GuiUtilsNs::getIconPath(parent_obj->getObjectType())));
+			}
+
+			//Fifth column: Parent object type
+			item = new QStandardItem;
+			fnt.setItalic(true);
+			item->setFont(fnt);
+			item->setText(parent_obj ? parent_obj->getTypeName() : "-");
+			model->setItem(lin_idx, 4, item);
+
+			//Sixth column: object comment
+			attribs_map search_attribs = obj->getSearchAttributes();
+			item = new QStandardItem;
+			fnt.setItalic(false);
+			item->setFont(fnt);
+
+			if(search_attr != Attributes::Name &&
+					search_attr != Attributes::Schema &&
+					search_attr != Attributes::Comment)
+				item->setText(search_attribs[search_attr]);
+			else
+				item->setText(obj->getComment());
+
+			model->setItem(lin_idx, 5, item);
+			lin_idx++;
+		}
+
+		table_vw->setModel(model);
+		table_vw->setUpdatesEnabled(true);
+		//table_vw->setSortingEnabled(true);
+		//table_vw->resizeColumnsToContents();
+		//table_vw->resizeRowsToContents();
+	}
+
 	#warning "Performance bottleneck here!"
 	#warning "Function performs pooly with large set of data!"
 	#warning "Create a version that updates a QTableView!"
-	void updateObjectTable(QTableWidget *tab_wgt, std::vector<BaseObject *> &objs, const QString &search_attr, bool checkable_items)
+	void updateObjectsTable(QTableWidget *tab_wgt, std::vector<BaseObject *> &objs, const QString &search_attr, bool checkable_items)
 	{
 		if(!tab_wgt || tab_wgt->columnCount() == 0)
 			return;

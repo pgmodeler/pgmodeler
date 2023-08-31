@@ -84,15 +84,15 @@ void ObjectDepsRefsWidget::updateObjectTables()
 	/* As the list of dependencies include the this->object itself is necessary
 	to remove only for semantics reasons */
 	objs.erase(std::find(objs.begin(), objs.end(), this->object));
-	GuiUtilsNs::updateObjectTable(dependences_tbw, objs);
+	GuiUtilsNs::updateObjectsTable(dependences_tbw, objs);
 
 	objs.clear();
 	if(!inc_ind_refs_chk->isChecked())
 		model->getObjectReferences(object, objs);
 	else
 		model->__getObjectReferences(object, objs);
-
-	GuiUtilsNs::updateObjectTable(references_tbw, objs);
+	
+	GuiUtilsNs::updateObjectsTable(references_tbw, objs);
 
 	references_tbw->resizeColumnsToContents();
 	dependences_tbw->resizeColumnsToContents();

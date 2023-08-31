@@ -278,7 +278,7 @@ void ObjectFinderWidget::findObjects()
 																													search_attr);
 
 		//Show the found objects on the result table
-		GuiUtilsNs::updateObjectTable(result_tbw, found_objs, search_attr);
+		GuiUtilsNs::updateObjectsTable(result_tbw, found_objs, search_attr);
 
 		//Rename the last column of the results grid wth the name of the field used to search objects
 		if(search_attr != Attributes::Name &&

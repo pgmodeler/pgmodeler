@@ -53,10 +53,7 @@ ModelObjectsWidget::ModelObjectsWidget(bool simplified_view, QWidget *parent) : 
 		objectstree_tw->resizeColumnToContents(0);
 	});
 
-	connect(objectslist_tbw, &QTableWidget::itemPressed, this, &ModelObjectsWidget::selectObject);
-	connect(objectslist_tbw, &QTableWidget::itemPressed, this, &ModelObjectsWidget::showObjectMenu);
 	connect(objectstree_tw, &QTreeWidget::itemSelectionChanged, this, &ModelObjectsWidget::selectObject);
-	connect(objectslist_tbw, &QTableWidget::itemSelectionChanged, this, &ModelObjectsWidget::selectObject);
 
 	connect(expand_all_tb, &QToolButton::clicked,  this, [this](){
 		objectstree_tw->blockSignals(true);
@@ -90,13 +87,10 @@ ModelObjectsWidget::ModelObjectsWidget(bool simplified_view, QWidget *parent) : 
 		});
 
 		connect(objectstree_tw, &QTreeWidget::itemDoubleClicked, this, &ModelObjectsWidget::editObject);
-		connect(objectslist_tbw, &QTableWidget::itemDoubleClicked, this, &ModelObjectsWidget::editObject);
 		connect(hide_tb, &QToolButton::clicked, this, &ModelObjectsWidget::hide);
 
-		setAllObjectsVisible(true);
-		objectslist_tbw->installEventFilter(this);
+		setAllObjectsVisible(true);	
 		objectstree_tw->installEventFilter(this);
-		objectslist_tbw->setSelectionMode(QAbstractItemView::ExtendedSelection);
 		objectstree_tw->setSelectionMode(QAbstractItemView::ExtendedSelection);
 	}
 	else
@@ -105,21 +99,17 @@ ModelObjectsWidget::ModelObjectsWidget(bool simplified_view, QWidget *parent) : 
 		setWindowModality(Qt::ApplicationModal);
 		setWindowFlags(Qt::Dialog | Qt::WindowCloseButtonHint | Qt::WindowTitleHint);
 		connect(objectstree_tw, &QTreeWidget::itemDoubleClicked, this, &ModelObjectsWidget::close);
-		connect(objectslist_tbw, &QTableWidget::itemDoubleClicked, this, &ModelObjectsWidget::close);
 		connect(select_tb, &QToolButton::clicked, this, &ModelObjectsWidget::close);
 		connect(cancel_tb, &QToolButton::clicked, this, &ModelObjectsWidget::close);
 	}
 
-	connect(tree_view_tb, &QToolButton::clicked, this, &ModelObjectsWidget::changeObjectsView);
-	connect(list_view_tb, &QToolButton::clicked, this, &ModelObjectsWidget::changeObjectsView);
 	connect(filter_edt, &QLineEdit::textChanged, this, &ModelObjectsWidget::filterObjects);
 	connect(by_id_chk, &QCheckBox::toggled, this, &ModelObjectsWidget::filterObjects);
 }
 
 bool ModelObjectsWidget::eventFilter(QObject *object, QEvent *event)
 {
-	if(event->type() == QEvent::FocusOut &&
-		 (object==objectslist_tbw || object==objectstree_tw))
+	if(event->type() == QEvent::FocusOut && object==objectstree_tw)
 	{
 		QFocusEvent *evnt=dynamic_cast<QFocusEvent *>(event);
 
@@ -162,16 +152,6 @@ void ModelObjectsWidget::editObject()
 			 objectstree_tw->currentItem()->data(1, Qt::UserRole).toUInt() == enum_t(ObjectType::Permission))
 			model_wgt->showObjectForm(ObjectType::Permission, reinterpret_cast<BaseObject *>(objectstree_tw->currentItem()->data(0, Qt::UserRole).value<void *>()));
 		//If the user double-clicked a permission on  list view
-		else if(sender() == objectslist_tbw && objectslist_tbw->currentRow() >= 0)
-		{
-			BaseObject *obj=reinterpret_cast<Permission *>(objectslist_tbw->item(objectslist_tbw->currentRow(), 0)->data(Qt::UserRole).value<void *>());
-			Permission *perm=dynamic_cast<Permission *>(obj);
-
-			if(perm)
-				model_wgt->showObjectForm(ObjectType::Permission, perm->getObject());
-			else
-			  model_wgt->editObject();
-		}
 		else
 			model_wgt->editObject();
 
@@ -192,75 +172,51 @@ void ModelObjectsWidget::selectObject()
 	else if(simplified_view)
 		model_wgt = db_model->getModelWidget();
 
-	if(tree_view_tb->isChecked())
+	QTreeWidgetItem *tree_item = objectstree_tw->currentItem();
+
+	if(tree_item)
 	{
-		QTreeWidgetItem *tree_item = objectstree_tw->currentItem();
+		obj_type = static_cast<ObjectType>(tree_item->data(1,Qt::UserRole).toUInt());
+		selected_obj = reinterpret_cast<BaseObject *>(tree_item->data(0,Qt::UserRole).value<void *>());
 
-		if(tree_item)
+		for(auto &item : objectstree_tw->selectedItems())
 		{
-			obj_type = static_cast<ObjectType>(tree_item->data(1,Qt::UserRole).toUInt());
-			selected_obj = reinterpret_cast<BaseObject *>(tree_item->data(0,Qt::UserRole).value<void *>());
+			selected_obj = reinterpret_cast<BaseObject *>(item->data(0,Qt::UserRole).value<void *>());
 
-			for(auto &item : objectstree_tw->selectedItems())
-			{
-				selected_obj = reinterpret_cast<BaseObject *>(item->data(0,Qt::UserRole).value<void *>());
-
-				if(selected_obj)
-					selected_objs.push_back(selected_obj);
-			}
-		}
-
-		//If user select a group item popups a "New [OBJECT]" menu
-		if((!simplified_view || (simplified_view && enable_obj_creation)) &&
-				!selected_obj && QApplication::mouseButtons() == Qt::RightButton &&
-				obj_type != ObjectType::Column && obj_type != ObjectType::Constraint && obj_type != ObjectType::Rule &&
-				obj_type != ObjectType::Index && obj_type != ObjectType::Trigger && obj_type != ObjectType::Permission)
-		{
-			QAction act, *p_act = nullptr;
-			QMenu popup;
-
-			//If not a relationship, connect the action to the addNewObject method of the model wiget
-			if(obj_type != ObjectType::Relationship)
-			{
-				act.setData(QVariant(enum_t(obj_type)));
-				p_act = &act;
-				connect(p_act, &QAction::triggered, model_wgt, &ModelWidget::addNewObject);
-			}
-			//Case is a relationship, insert the relationship menu of the model wiget into the action
-			else
-				p_act = model_wgt->rels_menu->menuAction();
-
-			if(simplified_view && enable_obj_creation)
-				connect(model_wgt->getDatabaseModel(), &DatabaseModel::s_objectAdded, this, &ModelObjectsWidget::selectCreatedObject, Qt::QueuedConnection);
-
-			p_act->setIcon(QIcon(GuiUtilsNs::getIconPath(obj_type)));
-			p_act->setText(tr("New") + " " + BaseObject::getTypeName(obj_type));
-			popup.addAction(p_act);
-			popup.exec(QCursor::pos());
-			disconnect(p_act, nullptr, model_wgt, nullptr);
-			disconnect(model_wgt->getDatabaseModel(), nullptr, this, nullptr);
+			if(selected_obj)
+				selected_objs.push_back(selected_obj);
 		}
 	}
-	else
+
+	//If user select a group item popups a "New [OBJECT]" menu
+	if((!simplified_view || (simplified_view && enable_obj_creation)) &&
+			!selected_obj && QApplication::mouseButtons() == Qt::RightButton &&
+			obj_type != ObjectType::Column && obj_type != ObjectType::Constraint && obj_type != ObjectType::Rule &&
+			obj_type != ObjectType::Index && obj_type != ObjectType::Trigger && obj_type != ObjectType::Permission)
 	{
-		QTableWidgetItem *tab_item=objectslist_tbw->item(objectslist_tbw->currentRow(), 0);
+		QAction act, *p_act = nullptr;
+		QMenu popup;
 
-		if(tab_item)
+		//If not a relationship, connect the action to the addNewObject method of the model wiget
+		if(obj_type != ObjectType::Relationship)
 		{
-			selected_obj = reinterpret_cast<BaseObject *>(tab_item->data(Qt::UserRole).value<void *>());
-			obj_type = selected_obj->getObjectType();
-
-			for(auto &item : objectslist_tbw->selectedItems())
-			{
-				if(item->column() !=0 )
-					continue;
-
-				selected_obj = reinterpret_cast<BaseObject *>(item->data(Qt::UserRole).value<void *>());
-
-				if(selected_obj)
-					selected_objs.push_back(selected_obj);
-			}
+			act.setData(QVariant(enum_t(obj_type)));
+			p_act = &act;
+			connect(p_act, &QAction::triggered, model_wgt, &ModelWidget::addNewObject);
 		}
+		//Case is a relationship, insert the relationship menu of the model wiget into the action
+		else
+			p_act = model_wgt->rels_menu->menuAction();
+
+		if(simplified_view && enable_obj_creation)
+			connect(model_wgt->getDatabaseModel(), &DatabaseModel::s_objectAdded, this, &ModelObjectsWidget::selectCreatedObject, Qt::QueuedConnection);
+
+		p_act->setIcon(QIcon(GuiUtilsNs::getIconPath(obj_type)));
+		p_act->setText(tr("New") + " " + BaseObject::getTypeName(obj_type));
+		popup.addAction(p_act);
+		popup.exec(QCursor::pos());
+		disconnect(p_act, nullptr, model_wgt, nullptr);
+		disconnect(model_wgt->getDatabaseModel(), nullptr, this, nullptr);
 	}
 
 	if(obj_type != ObjectType::Permission && !selected_objs.empty() && !simplified_view)
@@ -422,14 +378,15 @@ void ModelObjectsWidget::setAllObjectsVisible(bool value)
 
 void ModelObjectsWidget::changeObjectsView()
 {
-	if(sender()==tree_view_tb || sender()==list_view_tb)
+	/* if(sender()==tree_view_tb || sender()==list_view_tb)
 	{
 		visaoobjetos_stw->setCurrentIndex(sender()==tree_view_tb ? 0 : 1);
 		tree_view_tb->setChecked(sender()==tree_view_tb);
 		list_view_tb->setChecked(sender()==list_view_tb);
 		by_id_chk->setEnabled(sender()==tree_view_tb);
 	}
-	else if(sender()==options_tb)
+	else */
+	if(sender()==options_tb)
 	{
 		filter_wgt->setVisible(options_tb->isChecked());
 		visibleobjects_grp->setVisible(options_tb->isChecked());
@@ -440,8 +397,8 @@ void ModelObjectsWidget::changeObjectsView()
 			splitter->restoreState(widgets_conf.value("splitterSize").toByteArray());
 	}
 
-	expand_all_tb->setEnabled(tree_view_tb->isChecked());
-	collapse_all_tb->setEnabled(tree_view_tb->isChecked());
+	expand_all_tb->setEnabled(true);
+	collapse_all_tb->setEnabled(true);
 }
 
 void ModelObjectsWidget::collapseAll()
@@ -455,26 +412,7 @@ void ModelObjectsWidget::collapseAll()
 
 void ModelObjectsWidget::filterObjects()
 {
-	if(tree_view_tb->isChecked())
-	{
-		DatabaseImportForm::filterObjects(objectstree_tw, filter_edt->text(), (by_id_chk->isChecked() ? 1 : 0), simplified_view);
-	}
-	else
-	{
-		QList<QTableWidgetItem*> items=objectslist_tbw->findItems(filter_edt->text(), Qt::MatchStartsWith | Qt::MatchRecursive);
-
-		objectslist_tbw->blockSignals(true);
-		for(int row=0; row < objectslist_tbw->rowCount(); row++)
-			objectslist_tbw->setRowHidden(row, true);
-
-		while(!items.isEmpty())
-		{
-			objectslist_tbw->setRowHidden(items.front()->row(), false);
-			items.pop_front();
-		}
-
-		objectslist_tbw->blockSignals(false);
-	}
+	DatabaseImportForm::filterObjects(objectstree_tw, filter_edt->text(), (by_id_chk->isChecked() ? 1 : 0), simplified_view);
 }
 
 void ModelObjectsWidget::updateObjectsView()
@@ -485,31 +423,9 @@ void ModelObjectsWidget::updateObjectsView()
 
 	selected_objs.clear();
 	updateDatabaseTree();
-	updateObjectsList();
 
 	if(!filter_edt->text().isEmpty())
 		filterObjects();
-}
-
-void ModelObjectsWidget::updateObjectsList()
-{
-	std::vector<BaseObject *> objects;
-
-	if(db_model)
-	{
-		std::vector<ObjectType> visible_types;
-
-		for(auto &tp : visible_objs_map)
-		{
-			if(tp.second)
-				visible_types.push_back(tp.first);
-		}
-
-		objects = db_model->findObjects("*", visible_types, false, false, false);
-	}
-
-	GuiUtilsNs::updateObjectTable(objectslist_tbw, objects);
-	objectslist_tbw->clearSelection();
 }
 
 void ModelObjectsWidget::updateSchemaTree(QTreeWidgetItem *root)
@@ -871,10 +787,8 @@ void ModelObjectsWidget::close()
 		QVariant data;
 		BaseObject *selected_obj = nullptr;
 
-		if(tree_view_tb->isChecked() && objectstree_tw->currentItem())
+		if(objectstree_tw->currentItem())
 			data = objectstree_tw->currentItem()->data(0,Qt::UserRole);
-		else if(objectslist_tbw->currentItem())
-			data = objectslist_tbw->currentItem()->data(Qt::UserRole);
 
 		selected_obj = reinterpret_cast<BaseObject *>(data.value<void *>());
 
@@ -901,12 +815,9 @@ void ModelObjectsWidget::setModel(DatabaseModel *db_model)
 
 	this->db_model=db_model;
 	content_wgt->setEnabled(enable);
-	updateObjectsView();
-	visaoobjetos_stw->setEnabled(true);
-	expand_all_tb->setEnabled(enable && tree_view_tb->isChecked());
-	collapse_all_tb->setEnabled(enable && tree_view_tb->isChecked());
-	tree_view_tb->setEnabled(enable);
-	list_view_tb->setEnabled(enable);
+	updateObjectsView();	
+	expand_all_tb->setEnabled(enable);
+	collapse_all_tb->setEnabled(enable);
 	options_tb->setEnabled(enable);
 	filter_lbl->setEnabled(enable);
 	filter_edt->setEnabled(enable);
@@ -1004,11 +915,8 @@ void ModelObjectsWidget::saveTreeState(bool value)
 void ModelObjectsWidget::clearSelectedObject()
 {
 	objectstree_tw->blockSignals(true);
-	objectslist_tbw->blockSignals(true);
 	objectstree_tw->clearSelection();
-	objectslist_tbw->clearSelection();
 	objectstree_tw->blockSignals(false);
-	objectslist_tbw->blockSignals(false);
 	selected_objs.clear();
 	model_wgt->configurePopupMenu(nullptr);
 	model_wgt->emitSceneInteracted();

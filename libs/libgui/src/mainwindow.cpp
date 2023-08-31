@@ -1472,14 +1472,9 @@ void MainWindow::setCurrentModel()
 	changelog_wgt->setModel(current_model);
 
 	if(current_model)
-	{
-		model_objs_wgt->objectslist_tbw->setUpdatesEnabled(false);
 		model_objs_wgt->restoreTreeState(model_tree_states[current_model]);
-		model_objs_wgt->objectslist_tbw->setUpdatesEnabled(true);
-	}
 
 	model_objs_wgt->saveTreeState(true);
-
 	resizeGeneralToolbarButtons();
 
 	emit s_currentModelChanged(current_model);
@@ -2096,6 +2091,8 @@ void MainWindow::updateToolsState(bool model_closed)
 
 void MainWindow::updateDockWidgets()
 {
+	qApp->setOverrideCursor(Qt::WaitCursor);
+
 	oper_list_wgt->updateOperationList();
 	model_objs_wgt->updateObjectsView();
 
@@ -2105,6 +2102,8 @@ void MainWindow::updateDockWidgets()
 
 	if(current_model && obj_finder_wgt->result_tbw->rowCount() > 0)
 		obj_finder_wgt->findObjects();
+
+	qApp->restoreOverrideCursor();
 }
 
 void MainWindow::showOverview(bool show)
