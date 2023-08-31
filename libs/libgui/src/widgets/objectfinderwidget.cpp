@@ -88,6 +88,11 @@ ObjectFinderWidget::ObjectFinderWidget(QWidget *parent) : QWidget(parent)
 	connect(result_tbw, &QTableWidget::itemPressed, this, &ObjectFinderWidget::showObjectMenu);
 	connect(clear_res_btn, &QToolButton::clicked, this, &ObjectFinderWidget::clearResult);
 
+	#warning "Uncomment when slots are refactored"
+	//connect(result_view, &QTableView::selectionChanged, this, &ObjectFinderWidget::selectObject);
+	//connect(result_view, &QTableView::doubleClicked, this, &ObjectFinderWidget::editObject);
+	//connect(result_view, &QTableView::pressed, this, &ObjectFinderWidget::showObjectMenu);
+
 	connect(regexp_chk, &QCheckBox::toggled, this, [this](bool checked){
 		exact_match_chk->setEnabled(checked);
 

@@ -615,9 +615,9 @@ namespace GuiUtilsNs {
 
 		table_vw->setModel(model);
 		table_vw->setUpdatesEnabled(true);
-		//table_vw->setSortingEnabled(true);
-		//table_vw->resizeColumnsToContents();
-		//table_vw->resizeRowsToContents();
+		table_vw->setSortingEnabled(true);
+		table_vw->resizeColumnsToContents();
+		table_vw->resizeRowsToContents();
 	}
 
 	#warning "Performance bottleneck here!"
