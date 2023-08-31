@@ -40,7 +40,6 @@ ModelObjectsWidget::ModelObjectsWidget(bool simplified_view, QWidget *parent) : 
 	options_tb->setVisible(!simplified_view);
 	visibleobjects_grp->setVisible(false);
 	filter_wgt->setVisible(simplified_view);
-	splitter->handle(1)->setEnabled(false);
 
 	connect(objectstree_tw, &QTreeWidget::itemPressed, this, &ModelObjectsWidget::selectObject);
 	connect(objectstree_tw, &QTreeWidget::itemPressed, this, &ModelObjectsWidget::showObjectMenu);
@@ -74,7 +73,6 @@ ModelObjectsWidget::ModelObjectsWidget(bool simplified_view, QWidget *parent) : 
 		obj_types_wgt = new ObjectTypesListWidget(this);
 		visibleobjects_grp->layout()->addWidget(obj_types_wgt);
 
-		widgets_conf.setValue("splitterSize", splitter->saveState());
 		connect(options_tb, &QToolButton::clicked,this, &ModelObjectsWidget::changeObjectsView);
 
 		connect(obj_types_wgt, &ObjectTypesListWidget::s_typeCheckStateChanged, [this](ObjectType obj_type, Qt::CheckState state) {
@@ -390,11 +388,6 @@ void ModelObjectsWidget::changeObjectsView()
 	{
 		filter_wgt->setVisible(options_tb->isChecked());
 		visibleobjects_grp->setVisible(options_tb->isChecked());
-		splitter->handle(1)->setEnabled(options_tb->isChecked());
-
-		//Restore the splitter state if the options toolbutton is not toggled
-		if(!options_tb->isChecked())
-			splitter->restoreState(widgets_conf.value("splitterSize").toByteArray());
 	}
 
 	expand_all_tb->setEnabled(true);
