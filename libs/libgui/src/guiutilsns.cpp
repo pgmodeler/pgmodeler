@@ -28,6 +28,7 @@
 #include "objectstablewidget.h"
 #include "generalconfigwidget.h"
 #include "appearanceconfigwidget.h"
+#include "objectslistmodel.h"
 
 namespace GuiUtilsNs {
 
@@ -487,31 +488,28 @@ namespace GuiUtilsNs {
 		if(!table_vw)
 			return;
 
-		/*QAbstractItemModel *old_model = table_vw->model(),
-				new_model = new QItemModel();
+		QAbstractItemModel *old_model = table_vw->model();
 
-		if(model)
+		if(old_model)
 		{
-			QItemSelectionModel *sel_model = table_vw->selectionModel();
-
+			table_vw->clearSelection();
 			table_vw->setModel(nullptr);
-			model->deleteLater();
-
-			if(sel_model)
-				sel_model->deleteLater();
-		}*/
+			old_model->deleteLater();
+		}
 
 		unsigned lin_idx = 0;
 		QStandardItem *item = nullptr;
-		QStandardItemModel *model = new QStandardItemModel(objects.size(), 6);
+		//QStandardItemModel *model = new QStandardItemModel(objects.size(), 6);
 		BaseObject *parent_obj = nullptr;
 		QFont fnt;
 		QString str_aux;
 
+		ObjectsListModel *model = new ObjectsListModel(objects);
+
 		table_vw->setUpdatesEnabled(false);
 		table_vw->setSortingEnabled(false);
 
-		for(auto &obj : objects)
+		/*for(auto &obj : objects)
 		{
 			if(obj->getObjectType()==ObjectType::BaseRelationship)
 				str_aux = "tv";
@@ -613,7 +611,7 @@ namespace GuiUtilsNs {
 
 			model->setItem(lin_idx, 5, item);
 			lin_idx++;
-		}
+		} */
 
 		table_vw->setModel(model);
 		table_vw->setUpdatesEnabled(true);

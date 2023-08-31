@@ -38,6 +38,9 @@ ObjectFinderWidget::ObjectFinderWidget(QWidget *parent) : QWidget(parent)
 {
 	setupUi(this);
 
+	#warning "Test!"
+	result_tbw->setVisible(false);
+
 	filter_wgt = new QWidget(this);
 	obj_types_lst = new ObjectTypesListWidget(this);
 	obj_types_lst->layout()->setContentsMargins(0,0,0,0);
@@ -248,8 +251,14 @@ void ObjectFinderWidget::clearResult()
 	found_objs.clear();
 	selected_objs.clear();
 
-	result_tbw->clearContents();
-	result_tbw->setRowCount(0);
+	//result_tbw->clearContents();
+	//result_tbw->setRowCount(0);
+	result_view->clearSelection();
+
+	if(result_view->model())
+		result_view->model()->deleteLater();
+
+	result_view->setModel(nullptr);
 
 	found_lbl->setVisible(false);
 	clear_res_btn->setEnabled(false);
@@ -271,22 +280,34 @@ void ObjectFinderWidget::findObjects()
 		types = obj_types_lst->getTypesPerCheckState(Qt::Checked);
 
 		//Search the objects on model
-		found_objs=model_wgt->getDatabaseModel()->findObjects(pattern_edt->text(), types,
-																													case_sensitive_chk->isChecked(),
-																													regexp_chk->isChecked(),
-																													exact_match_chk->isChecked(),
-																													search_attr);
+		found_objs = model_wgt->getDatabaseModel()->findObjects(pattern_edt->text(), types,
+																														case_sensitive_chk->isChecked(),
+																														regexp_chk->isChecked(),
+																														exact_match_chk->isChecked(),
+																														search_attr);
 
 		//Show the found objects on the result table
-		GuiUtilsNs::updateObjectsTable(result_tbw, found_objs, search_attr);
+		//GuiUtilsNs::updateObjectsTable(result_tbw, found_objs, search_attr);
+
+		qint64 start = QDateTime::currentSecsSinceEpoch();
+		GuiUtilsNs::updateObjectsTable(result_view, found_objs, search_attr);
+		qint64 end = QDateTime::currentSecsSinceEpoch();
+		QTextStream out(stdout);
+		out << "Update QTableView: " << QString::number(end - start) << " s" << Qt::endl;
+
+		//start = QDateTime::currentSecsSinceEpoch();
+		//GuiUtilsNs::updateObjectsTable(result_tbw, found_objs, search_attr);
+		//end = QDateTime::currentSecsSinceEpoch();
+		//out << "Update QTableWidget: " << QString::number(end - start) << " s" << Qt::endl;
+		//out << "---" << Qt::endl;
 
 		//Rename the last column of the results grid wth the name of the field used to search objects
-		if(search_attr != Attributes::Name &&
+		/* if(search_attr != Attributes::Name &&
 			 search_attr != Attributes::Schema &&
 			 search_attr != Attributes::Comment)
 			item->setText(search_attrs_cmb->currentText());
 		else
-			item->setText(tr("Comment"));
+			item->setText(tr("Comment")); */
 
 		found_lbl->setVisible(true);
 
@@ -294,8 +315,8 @@ void ObjectFinderWidget::findObjects()
 		if(!found_objs.empty())
 		{
 			found_lbl->setText(tr("Found <strong>%1</strong> object(s).").arg(found_objs.size()));
-			result_tbw->horizontalHeader()->setStretchLastSection(true);
-			result_tbw->resizeColumnsToContents();
+			//result_tbw->horizontalHeader()->setStretchLastSection(true);
+			//result_tbw->resizeColumnsToContents();
 		}
 		else
 			found_lbl->setText(tr("No objects found."));

@@ -88,6 +88,7 @@ src/tools/swapobjectsidswidget.cpp \
 src/tools/modelvalidationwidget.cpp \
 src/utils/deletableitemdelegate.cpp \
 src/utils/htmlitemdelegate.cpp \
+	src/utils/objectslistmodel.cpp \
 src/utils/plaintextitemdelegate.cpp \
 src/utils/resultsetmodel.cpp \
 src/utils/syntaxhighlighter.cpp \
@@ -206,6 +207,7 @@ src/tools/swapobjectsidswidget.h \
 src/tools/modelvalidationwidget.h \
 src/utils/deletableitemdelegate.h \
 src/utils/htmlitemdelegate.h \
+	src/utils/objectslistmodel.h \
 src/utils/plaintextitemdelegate.h \
 src/utils/resultsetmodel.h \
 src/utils/syntaxhighlighter.h \
