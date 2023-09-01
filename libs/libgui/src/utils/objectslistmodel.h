@@ -28,23 +28,45 @@
 #include "guiglobal.h"
 #include <QAbstractTableModel>
 #include <QIcon>
+#include <QFont>
 #include "baseobject.h"
 
 class __libgui ObjectsListModel: public QAbstractTableModel {
 	private:
 		Q_OBJECT
 
+		struct ItemData {
+			QString text;
+			BaseObject *data;
+			QString icon;
+			QString fg_color,	bg_color;
+			bool italic, strikeout;
+
+			ItemData() {
+				clear();
+			}
+
+			inline void clear() {
+				text = "";
+				data = nullptr;
+				italic = strikeout = false;
+				fg_color = bg_color = "";
+			}
+		};
+
 		int col_count, row_count;
 
-		QStringList item_data, header_data, tooltip_data;
+		QList<ItemData> item_data;
 
-		QList<QIcon> header_icons;
+		QStringList header_data, items_text;
+
+		QList<QIcon> header_icons, items_icon;
 
 		void insertColumn(int, const QModelIndex &){}
 		void insertRow(int, const QModelIndex &){}
 
 	public:		
-		ObjectsListModel(const std::vector<BaseObject *> &list, QObject *parent = nullptr);
+		ObjectsListModel(const std::vector<BaseObject *> &list, const QString &search_attr, QObject *parent = nullptr);
 		virtual ~ObjectsListModel();
 		virtual int rowCount(const QModelIndex & = QModelIndex()) const;
 		virtual int columnCount(const QModelIndex &) const;

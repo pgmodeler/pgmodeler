@@ -298,45 +298,14 @@ QTreeWidgetItem *ModelObjectsWidget::createItemForObject(BaseObject *object, QTr
 
 	item->setFont(0,font);
 
-	if(obj_type==ObjectType::BaseRelationship || obj_type==ObjectType::Relationship)
-	{
-		rel_type=dynamic_cast<BaseRelationship *>(object)->getRelationshipType();
+	int sub_type = -1;
 
-		if(obj_type==ObjectType::BaseRelationship)
-		{
-			if(rel_type==BaseRelationship::RelationshipFk)
-				str_aux="fk";
-			else
-				str_aux="tv";
-		}
-		else if(rel_type==BaseRelationship::Relationship11)
-			str_aux="11";
-		else if(rel_type==BaseRelationship::Relationship1n)
-			str_aux="1n";
-		else if(rel_type==BaseRelationship::RelationshipNn)
-			str_aux="nn";
-		else if(rel_type==BaseRelationship::RelationshipDep)
-			str_aux="dep";
-		else if(rel_type==BaseRelationship::RelationshipGen)
-			str_aux="gen";
-	}
-	else if(obj_type==ObjectType::Constraint)
-	{
-		constr_type=dynamic_cast<Constraint *>(object)->getConstraintType();
+	if(obj_type == ObjectType::BaseRelationship || obj_type == ObjectType::Relationship)
+		sub_type = dynamic_cast<BaseRelationship *>(object)->getRelationshipType();
+	else if(obj_type == ObjectType::Constraint)
+		sub_type = dynamic_cast<Constraint *>(object)->getConstraintType().getTypeId();
 
-		if(constr_type==ConstraintType::PrimaryKey)
-			str_aux=QString("_%1").arg(TableObjectView::TextPrimaryKey);
-		else if(constr_type==ConstraintType::ForeignKey)
-			str_aux=QString("_%1").arg(TableObjectView::TextForeignKey);
-		else if(constr_type==ConstraintType::Check)
-			str_aux=QString("_%1").arg(TableObjectView::TextCheck);
-		else if(constr_type==ConstraintType::Unique)
-			str_aux=QString("_%1").arg(TableObjectView::TextUnique);
-		else if(constr_type==ConstraintType::Exclude)
-			str_aux=QString("_%1").arg(TableObjectView::TextExclude);
-	}
-
-	item->setIcon(0, QPixmap(GuiUtilsNs::getIconPath(BaseObject::getSchemaName(obj_type) + str_aux)));
+	item->setIcon(0, QIcon(GuiUtilsNs::getIconPath(obj_type, sub_type)));
 
 	return item;
 }

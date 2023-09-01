@@ -79,8 +79,11 @@ namespace GuiUtilsNs {
 	//! \brief Returns the path, in the icon resource, to the provided icon name
 	extern __libgui QString getIconPath(const QString &icon);
 
-	//! \brief Returns the path, in the icon resource, to the icon of the provided object type
-	extern __libgui QString getIconPath(ObjectType obj_type);
+	/*! \brief Returns the path, in the icon resource, to the icon of the provided object type
+	 *  The parameter sub_type is used to retrive the sub type icon. Currently only relationships
+	 *  and constraints have sub types being for relationships the Relationship::RelType enum and
+	 *  constraints the class ConstraintType */
+	extern __libgui QString getIconPath(ObjectType obj_type, int sub_type = -1);
 
 	//! \brief Resizes the provided dialog considering font dpi changes as well screen size
 	extern __libgui void resizeDialog(QWidget *dialog);

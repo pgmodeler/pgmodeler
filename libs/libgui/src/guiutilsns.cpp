@@ -327,9 +327,50 @@ namespace GuiUtilsNs {
 		return QString(":/icons/icons/%1.png").arg(icon);
 	}
 
-	QString getIconPath(ObjectType obj_type)
+	QString getIconPath(ObjectType obj_type, int sub_type)
 	{
-		return getIconPath(BaseObject::getSchemaName(obj_type));
+		QString suffix;
+
+		if(sub_type >= 0)
+		{
+			if(obj_type == ObjectType::BaseRelationship || obj_type == ObjectType::Relationship)
+			{
+				BaseRelationship::RelType rel_type = static_cast<BaseRelationship::RelType>(sub_type);
+
+				if(obj_type == ObjectType::BaseRelationship)
+				{
+					if(rel_type==BaseRelationship::RelationshipFk)
+						suffix = "fk";
+					else
+						suffix = "tv";
+				}
+				else if(rel_type == BaseRelationship::Relationship11)
+					suffix = "11";
+				else if(rel_type == BaseRelationship::Relationship1n)
+					suffix = "1n";
+				else if(rel_type == BaseRelationship::RelationshipNn)
+					suffix = "nn";
+				else if(rel_type == BaseRelationship::RelationshipDep)
+					suffix = "dep";
+				else if(rel_type == BaseRelationship::RelationshipGen)
+					suffix = "gen";
+			}
+			else if(obj_type==ObjectType::Constraint)
+			{
+				if(sub_type == ConstraintType::PrimaryKey)
+					suffix = QString("_%1").arg(TableObjectView::TextPrimaryKey);
+				else if(sub_type == ConstraintType::ForeignKey)
+					suffix = QString("_%1").arg(TableObjectView::TextForeignKey);
+				else if(sub_type == ConstraintType::Check)
+					suffix = QString("_%1").arg(TableObjectView::TextCheck);
+				else if(sub_type == ConstraintType::Unique)
+					suffix = QString("_%1").arg(TableObjectView::TextUnique);
+				else if(sub_type == ConstraintType::Exclude)
+					suffix = QString("_%1").arg(TableObjectView::TextExclude);
+			}
+		}
+
+		return getIconPath(BaseObject::getSchemaName(obj_type) + suffix);
 	}
 
 	void resizeDialog(QWidget *widget)
@@ -497,127 +538,15 @@ namespace GuiUtilsNs {
 			old_model->deleteLater();
 		}
 
-		unsigned lin_idx = 0;
-		QStandardItem *item = nullptr;
-		//QStandardItemModel *model = new QStandardItemModel(objects.size(), 6);
-		BaseObject *parent_obj = nullptr;
-		QFont fnt;
-		QString str_aux;
-
-		ObjectsListModel *model = new ObjectsListModel(objects);
+		ObjectsListModel *model = new ObjectsListModel(objects, search_attr);
 
 		table_vw->setUpdatesEnabled(false);
 		table_vw->setSortingEnabled(false);
-
-		/*for(auto &obj : objects)
-		{
-			if(obj->getObjectType()==ObjectType::BaseRelationship)
-				str_aux = "tv";
-			else
-				str_aux.clear();
-
-			//First column: Object name
-			item = new QStandardItem;
-			item->setData(QVariant::fromValue<void *>(reinterpret_cast<void *>(obj)), Qt::UserRole);
-			fnt = item->font();
-
-			item->setText(obj->getName());
-			item->setIcon(QIcon(GuiUtilsNs::getIconPath(BaseObject::getSchemaName(obj->getObjectType()) + str_aux)));
-
-			model->setItem(lin_idx, 0, item);
-
-			if(checkable_items)
-				item->setCheckState(Qt::Checked);
-
-			if(obj->isProtected() || obj->isSystemObject())
-			{
-				fnt.setItalic(true);
-				item->setForeground(ObjectsTableWidget::getTableItemColor(ObjectsTableWidget::ProtItemAltFgColor));
-			}
-			else if(dynamic_cast<TableObject *>(obj) &&
-							dynamic_cast<TableObject *>(obj)->isAddedByRelationship())
-			{
-				fnt.setItalic(true);
-				item->setForeground(ObjectsTableWidget::getTableItemColor(ObjectsTableWidget::RelAddedItemAltFgColor));
-			}
-			else
-				fnt.setItalic(false);
-
-			fnt.setStrikeOut(obj->isSQLDisabled() && !obj->isSystemObject());
-			item->setFont(fnt);
-			fnt.setStrikeOut(false);
-
-			//Second column: Object type
-			fnt.setItalic(true);
-			item = new QStandardItem;
-			item->setFont(fnt);
-			item->setText(obj->getTypeName());
-			model->setItem(lin_idx, 1, item);
-
-			//Third column: Object id
-			item = new QStandardItem;
-			item->setText(QString::number(obj->getObjectId()));
-			model->setItem(lin_idx, 2, item);
-
-			//Fourth column: Parent object name
-			item = new QStandardItem;
-
-			if(dynamic_cast<TableObject *>(obj))
-				parent_obj = dynamic_cast<TableObject *>(obj)->getParentTable();
-			else if(obj->getSchema())
-				parent_obj = obj->getSchema();
-			else if(dynamic_cast<Permission *>(obj))
-				parent_obj = dynamic_cast<Permission *>(obj)->getObject();
-			else
-				parent_obj = obj->getDatabase();
-
-			item->setText(parent_obj ? parent_obj->getName() : "-");
-			item->setData(QVariant::fromValue<void *>(reinterpret_cast<void *>(parent_obj)), Qt::UserRole);
-			model->setItem(lin_idx, 3, item);
-
-			if(parent_obj)
-			{
-				if(parent_obj->isProtected() || parent_obj->isSystemObject())
-				{
-					fnt.setItalic(true);
-					item->setForeground(ObjectsTableWidget::getTableItemColor(ObjectsTableWidget::ProtItemAltFgColor));
-				}
-				else
-					fnt.setItalic(false);
-
-				item->setFont(fnt);
-				item->setIcon(QIcon(GuiUtilsNs::getIconPath(parent_obj->getObjectType())));
-			}
-
-			//Fifth column: Parent object type
-			item = new QStandardItem;
-			fnt.setItalic(true);
-			item->setFont(fnt);
-			item->setText(parent_obj ? parent_obj->getTypeName() : "-");
-			model->setItem(lin_idx, 4, item);
-
-			//Sixth column: object comment
-			attribs_map search_attribs = obj->getSearchAttributes();
-			item = new QStandardItem;
-			fnt.setItalic(false);
-			item->setFont(fnt);
-
-			if(search_attr != Attributes::Name &&
-					search_attr != Attributes::Schema &&
-					search_attr != Attributes::Comment)
-				item->setText(search_attribs[search_attr]);
-			else
-				item->setText(obj->getComment());
-
-			model->setItem(lin_idx, 5, item);
-			lin_idx++;
-		} */
-
 		table_vw->setModel(model);
 		table_vw->setUpdatesEnabled(true);
-		table_vw->setSortingEnabled(true);
-		table_vw->resizeColumnsToContents();
-		table_vw->resizeRowsToContents();
+		//table_vw->setSortingEnabled(true);
+		//table_vw->resizeColumnsToContents();
+		//table_vw->resizeRowsToContents();
 	}
 
 	#warning "Performance bottleneck here!"
