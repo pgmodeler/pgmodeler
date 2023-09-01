@@ -72,6 +72,22 @@ const QString BaseObject::objs_sql[BaseObject::ObjectTypeCount]={
 	"PROCEDURE"
 };
 
+const attribs_map BaseObject::search_attribs_i18n =	{
+	{ Attributes::Name, QT_TR_NOOP("Name") },
+	{ Attributes::Comment, QT_TR_NOOP("Comment") },
+	{ Attributes::Signature, QT_TR_NOOP("Signature") },
+	{ Attributes::Schema, QT_TR_NOOP("Schema") },
+	{ Attributes::Owner, QT_TR_NOOP("Owner") },
+	{ Attributes::Tablespace, QT_TR_NOOP("Tablespace") },
+	{ Attributes::Type, QT_TR_NOOP("Data type") },
+	{ Attributes::ReturnType, QT_TR_NOOP("Return type") },
+	{ Attributes::SrcTable, QT_TR_NOOP("Source table") },
+	{ Attributes::DstTable, QT_TR_NOOP("Destination table") },
+	{ Attributes::RelatedForeignKey, QT_TR_NOOP("Related foreign key") },
+	{ Attributes::SrcColumns, QT_TR_NOOP("Source column(s)") },
+	{ Attributes::RefColumns, QT_TR_NOOP("Referenced column(s)") }
+};
+
 /* Initializes the global id which is shared between instances
 	 of classes derived from the this class. The value of global_id
 	 starts at 4k because the id ranges 0, 1k, 2k, 3k, 4k
@@ -1123,6 +1139,19 @@ void BaseObject::setIgnoreDbVersion(bool ignore)
 bool BaseObject::isDbVersionIgnored()
 {
 	return ignore_db_version;
+}
+
+QString BaseObject::getSearchAttributeI18N(const QString &search_attr)
+{
+	if(!search_attribs_i18n.count(search_attr))
+		return "";
+
+	return search_attribs_i18n.at(search_attr);
+}
+
+attribs_map BaseObject::getSearchAttributesI18N()
+{
+	return search_attribs_i18n;
 }
 
 void BaseObject::operator = (BaseObject &obj)

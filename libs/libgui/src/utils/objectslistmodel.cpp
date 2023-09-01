@@ -28,28 +28,51 @@ ObjectsListModel::ObjectsListModel(const std::vector<BaseObject *> &list, const 
 {
 	try
 	{
-		header_icons.clear();
-		col_count = 6;
+		col_count = search_attr.isEmpty() ? 5 : 6;
 		row_count = list.size();
 
 		insertColumns(0, col_count);
 		insertRows(0, row_count);
 
-		for(int col=0; col < col_count; col++)
-		{
-			header_data.push_back("Column" + QString::number(col));
-			header_icons.push_back(QIcon());
-		}
+		QStyle *style = qApp->style();
+		int	lf_cnt = 0,
 
-		/* for(auto &obj : list)
+				// Item's horizontal margin without icon
+				h_margin_no_ico = (style->pixelMetric(QStyle::PM_HeaderMargin) * 2) +
+													style->pixelMetric(QStyle::PM_HeaderGripMargin) +
+													style->pixelMetric(QStyle::PM_HeaderMarkSize),
+
+				// Item's horizontal margin with icon
+				h_margin = h_margin_no_ico + style->pixelMetric(QStyle::PM_SmallIconSize),
+
+				// Item's vertical margin without icon
+				v_margin = style->pixelMetric(QStyle::PM_HeaderMargin) * 2;
+
+		QSize sz;
+		QFont fnt;
+		QFontMetrics fm(fnt);
+		ItemData header_dt;
+		QStringList header_texts = { tr("Object"), tr("Type"), tr("ID"),
+																tr("Parent"), tr("Parent type"),
+																BaseObject::getSearchAttributeI18N(
+																	 (search_attr != Attributes::Name &&
+																		search_attr != Attributes::Schema &&
+																		search_attr != Attributes::Comment) ? search_attr : Attributes::Comment) },
+
+				header_icons = { "objects", "usertype", "typeoid", "schema", "usertype", "attribute" };
+
+		// Configuring the reader items
+		for(int col = 0; col < col_count; col++)
 		{
-			items_text.append(obj->getName());
-			items_text.append(obj->getTypeName());
-			items_text.append("object id");
-			items_text.append("parent");
-			items_text.append("parent type");
-			items_text.append(obj->getComment());
-		} */
+			if(header_texts.isEmpty())
+				continue;
+
+			header_dt.text = header_texts[col];
+			header_dt.icon = GuiUtilsNs::getIconPath(header_icons[col]);
+			header_dt.sz_hint = fm.boundingRect(header_dt.text).size() + QSize(h_margin, v_margin);
+			header_data.append(header_dt);
+			header_dt.clear();
+		}
 
 		ItemData item_dt;
 		BaseObject *parent_obj;
@@ -63,48 +86,43 @@ ObjectsListModel::ObjectsListModel(const std::vector<BaseObject *> &list, const 
 			obj_type = obj->getObjectType();
 
 			if(obj_type == ObjectType::BaseRelationship ||
-				 obj_type == ObjectType::Relationship)
+					obj_type == ObjectType::Relationship)
 				sub_type = dynamic_cast<BaseRelationship *>(obj)->getRelationshipType();
 			else if(obj_type == ObjectType::Constraint)
 				sub_type = dynamic_cast<Constraint *>(obj)->getConstraintType().getTypeId();
 
 			//First column: Object name
 			item_dt.text = obj->getName();
-			//item_dt.icon = QIcon(GuiUtilsNs::getIconPath(obj_type, sub_type));
+			item_dt.sz_hint = fm.boundingRect(item_dt.text).size() + QSize(h_margin, v_margin);
 			item_dt.icon = GuiUtilsNs::getIconPath(obj_type, sub_type);
-			//item_dt.data = QVariant::fromValue<void *>(reinterpret_cast<void *>(obj));
-			item_dt.data = obj; //QVariant::fromValue<void *>(reinterpret_cast<void *>(obj));
+			item_dt.data = obj;
 
 			if(obj->isProtected() || obj->isSystemObject())
 			{
-				//item_dt.font.setItalic(true);
 				item_dt.italic = true;
-				//item_dt.fg_color = ObjectsTableWidget::getTableItemColor(ObjectsTableWidget::ProtItemAltFgColor);
 				item_dt.fg_color = ObjectsTableWidget::getTableItemColor(ObjectsTableWidget::ProtItemAltFgColor).name();
 			}
 			else if(dynamic_cast<TableObject *>(obj) &&
-							dynamic_cast<TableObject *>(obj)->isAddedByRelationship())
+							 dynamic_cast<TableObject *>(obj)->isAddedByRelationship())
 			{
-				//item_dt.font.setItalic(true);
 				item_dt.italic = true;
-				//item_dt.fg_color = ObjectsTableWidget::getTableItemColor(ObjectsTableWidget::RelAddedItemAltFgColor);
 				item_dt.fg_color = ObjectsTableWidget::getTableItemColor(ObjectsTableWidget::RelAddedItemAltFgColor).name();
 			}
 
-			//item_dt.font.setStrikeOut(obj->isSQLDisabled() && !obj->isSystemObject());
 			item_dt.strikeout = obj->isSQLDisabled() && !obj->isSystemObject();
 			item_data.append(item_dt);
 
 			//Second column: Object type
 			item_dt.clear();
 			item_dt.text = obj->getTypeName();
-			//item_dt.font.setItalic(true);
+			item_dt.sz_hint = fm.boundingRect(item_dt.text).size() + QSize(h_margin_no_ico, v_margin);
 			item_dt.italic = true;
 			item_data.append(item_dt);
 
 			//Third column: Object id
 			item_dt.clear();
 			item_dt.text = QString::number(obj->getObjectId());
+			item_dt.sz_hint = fm.boundingRect(item_dt.text).size() + QSize(h_margin_no_ico, v_margin);
 			item_data.append(item_dt);
 
 			//Fourth column: Parent object name
@@ -120,19 +138,16 @@ ObjectsListModel::ObjectsListModel(const std::vector<BaseObject *> &list, const 
 				parent_obj = obj->getDatabase();
 
 			item_dt.text = parent_obj ? parent_obj->getName() : "-";
-			//item_dt.data = QVariant::fromValue<void *>(reinterpret_cast<void *>(parent_obj));
+			item_dt.sz_hint = fm.boundingRect(item_dt.text).size() + QSize(h_margin, v_margin);
 			item_dt.data = parent_obj;
 
 			if(parent_obj)
 			{
-				//item_dt.icon = QIcon(GuiUtilsNs::getIconPath(parent_obj->getObjectType()));
 				item_dt.icon = GuiUtilsNs::getIconPath(parent_obj->getObjectType());
 
 				if(parent_obj->isProtected() || parent_obj->isSystemObject())
 				{
-					//item_dt.font.setItalic(true);
 					item_dt.italic = true;
-					//item_dt.fg_color = ObjectsTableWidget::getTableItemColor(ObjectsTableWidget::ProtItemAltFgColor);
 					item_dt.fg_color = ObjectsTableWidget::getTableItemColor(ObjectsTableWidget::ProtItemAltFgColor).name();
 				}
 			}
@@ -142,38 +157,37 @@ ObjectsListModel::ObjectsListModel(const std::vector<BaseObject *> &list, const 
 			//Fifth column: Parent object type
 			item_dt.clear();
 			item_dt.text = parent_obj ? parent_obj->getTypeName() : "-";
-			//item_dt.font.setItalic(true);
+			item_dt.sz_hint = fm.boundingRect(item_dt.text).size() + QSize(h_margin_no_ico, v_margin);
 			item_dt.italic = true;
 			item_data.append(item_dt);
 
 			//Sixth column: object comment or the specified search attribute
-			item_dt.clear();
-			search_attribs = obj->getSearchAttributes();
-
-			if(search_attr != Attributes::Name &&
-				 search_attr != Attributes::Schema &&
-				 search_attr != Attributes::Comment)
+			if(!search_attr.isEmpty())
 			{
-				item_dt.text = search_attribs[search_attr];
-			}
-			else
-				item_dt.text = obj->getComment();
+				item_dt.clear();
+				search_attribs = obj->getSearchAttributes();
 
-			item_data.append(item_dt);
+				if(search_attr != Attributes::Name &&
+						search_attr != Attributes::Schema &&
+						search_attr != Attributes::Comment)
+				{
+					item_dt.text = search_attribs[search_attr];
+				}
+				else
+					item_dt.text = obj->getComment();
+
+				sz = fm.boundingRect(item_dt.text).size();
+				lf_cnt = item_dt.text.count(QChar(QChar::LineFeed)) + 1;
+				sz.setHeight((sz.height() * lf_cnt) + v_margin);
+				item_dt.sz_hint = sz;
+				item_data.append(item_dt);
+			}
 		}
 	}
 	catch(Exception &e)
 	{
 		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
-}
-
-ObjectsListModel::~ObjectsListModel()
-{
-	QTextStream out(stdout);
-	out << "ObjectsListModel::~ObjectsListModel()" << Qt::endl;
-	item_data.clear();
-	header_data.clear();
 }
 
 int ObjectsListModel::rowCount(const QModelIndex &) const
@@ -196,37 +210,44 @@ QModelIndex ObjectsListModel::parent(const QModelIndex &) const
 	return QModelIndex();
 }
 
+QVariant ObjectsListModel::getItemData(const ItemData &item_dt, int role) const
+{
+	if(role == Qt::DisplayRole)
+		return item_dt.text;
+
+	if(role == Qt::ForegroundRole && !item_dt.fg_color.isEmpty())
+		return QColor(item_dt.fg_color);
+
+	if(role == Qt::BackgroundRole && !item_dt.bg_color.isEmpty())
+		return QColor(item_dt.bg_color);
+
+	if(role == Qt::UserRole)
+		return QVariant::fromValue<void *>(reinterpret_cast<void *>(item_dt.data));
+
+	if(role == Qt::FontRole)
+	{
+		QFont font;
+		font.setItalic(item_dt.italic);
+		font.setStrikeOut(item_dt.strikeout);
+		return font;
+	}
+
+	if(role == Qt::DecorationRole)
+		return QIcon(item_dt.icon);
+
+	if(role == Qt::SizeHintRole)
+		return item_dt.sz_hint;
+
+	if(role == Qt::TextAlignmentRole)
+		return QVariant(Qt::AlignLeft | Qt::AlignVCenter);
+
+	return QVariant();
+}
+
 QVariant ObjectsListModel::data(const QModelIndex &index, int role) const
 {
 	if(index.row() < row_count && index.column() < col_count)
-	{
-		const ItemData &item_dt = item_data.at(index.row() * col_count + index.column());
-		//int idx = index.row() * col_count + index.column();
-
-		if(role == Qt::DisplayRole)
-			return item_dt.text;
-			//return items_text.at(index.row() * col_count + index.column());
-			//return item_text.at(index.row() * col_count + index.column());
-
-		//if(role == Qt::ForegroundRole && item_dt.fg_color != Qt::transparent)
-		//	return QColor(item_dt.fg_color);
-
-		//if(role == Qt::BackgroundRole && item_dt.bg_color != Qt::transparent)
-		//	return item_dt.bg_color;
-
-		//if(role == Qt::UserRole)
-		//	return item_dt.data;
-
-		//if(role == Qt::FontRole)
-		//	return item_dt.font;
-
-		if(role == Qt::DecorationRole)
-			return QIcon(item_dt.icon);
-			//return items_icon.at(idx);
-
-		if(role == Qt::TextAlignmentRole)
-			return QVariant(Qt::AlignLeft | Qt::AlignVCenter);
-	}
+		return getItemData(item_data.at(index.row() * col_count + index.column()), role);
 
 	return QVariant();
 }
@@ -238,14 +259,8 @@ QVariant ObjectsListModel::headerData(int section, Qt::Orientation orientation, 
 		if(section >= col_count)
 			return QVariant();
 
-		if(role == Qt::DisplayRole)
-			return header_data.at(section);
-
-		if(role == Qt::DecorationRole)
-			return header_icons.at(section);
-
-		if(role == Qt::TextAlignmentRole)
-			return QVariant(Qt::AlignLeft | Qt::AlignVCenter);
+		const ItemData &header_dt = header_data.at(section);
+		return getItemData(header_dt, role);
 	}
 
 	return QAbstractTableModel::headerData(section, orientation, role);

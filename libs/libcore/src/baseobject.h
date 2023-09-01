@@ -174,6 +174,9 @@ class __libcore BaseObject {
 		 and others operations that envolves object type name */
 		static const QString obj_type_names[ObjectTypeCount];
 
+		//! \brief This map stores the translate human readable names of each search attribute use by the object
+		static const attribs_map search_attribs_i18n;
+
 		/*! \brief Role that is owner of the object. Some objects cannot be associated to a role
 		 so if one is assigned to the object an error will be raised */
 		BaseObject *owner;
@@ -545,6 +548,11 @@ class __libcore BaseObject {
 
 		//! \brief Indicates if the database version is ignored in the code generation
 		static bool isDbVersionIgnored();
+
+		//! \brief Returns the translated human readable search attribute name
+		static QString getSearchAttributeI18N(const QString &search_attr);
+
+		static attribs_map getSearchAttributesI18N();
 
 		friend class DatabaseModel;
 		friend class ModelValidationHelper;

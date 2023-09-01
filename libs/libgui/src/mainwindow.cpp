@@ -2100,7 +2100,9 @@ void MainWindow::updateDockWidgets()
 	the finder will execute the search again */
 	model_valid_wgt->setModel(current_model);
 
-	if(current_model && obj_finder_wgt->result_tbw->rowCount() > 0)
+	if(current_model &&
+			obj_finder_wgt->result_view->model() &&
+			obj_finder_wgt->result_view->model()->rowCount() > 0)
 		obj_finder_wgt->findObjects();
 
 	qApp->restoreOverrideCursor();

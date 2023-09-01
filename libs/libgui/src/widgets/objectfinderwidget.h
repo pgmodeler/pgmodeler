@@ -34,14 +34,6 @@ class __libgui ObjectFinderWidget : public QWidget, public Ui::ObjectFinderWidge
 	private:
 		Q_OBJECT
 
-		/*! \brief Store in a unordered list the attributes in order to allow the user
-		 * select which attribute will be used to search objects */
-		static const QStringList search_attribs,
-
-		/*! \brief Store in a unordered list the attributes in a translated way in order to
-		 * populate the combo box used to select which attribute will be used to search objects */
-		search_attribs_i18n;
-
 		std::vector<BaseObject *> found_objs,
 
 		selected_objs;

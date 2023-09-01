@@ -18,12 +18,12 @@
 
 /**
 \ingroup libgui
-\class ResultSetModel
-\brief Implements a model representation of ResultSet class which can be used to show large amount of data in instances of QTableView.
+\class ObjectsListModel
+\brief Implements a model representation for quickly fill a QTableView object with database model objects infow.
 */
 
-#ifndef RESULT_SET_MODEL_H
-#define RESULT_SET_MODEL_H
+#ifndef OBJECTS_LIST_MODEL_H
+#define OBJECTS_LIST_MODEL_H
 
 #include "guiglobal.h"
 #include <QAbstractTableModel>
@@ -32,50 +32,58 @@
 #include "baseobject.h"
 
 class __libgui ObjectsListModel: public QAbstractTableModel {
-	private:
-		Q_OBJECT
+ private:
+	Q_OBJECT
 
-		struct ItemData {
-			QString text;
-			BaseObject *data;
-			QString icon;
-			QString fg_color,	bg_color;
-			bool italic, strikeout;
+	struct ItemData {
+		QString text, fg_color, bg_color, icon;
+		bool italic, strikeout;
+		BaseObject *data;
+		QSize sz_hint;
 
-			ItemData() {
-				clear();
-			}
+		ItemData() {
+			clear();
+		}
 
-			inline void clear() {
-				text = "";
-				data = nullptr;
-				italic = strikeout = false;
-				fg_color = bg_color = "";
-			}
-		};
+		inline void clear() {
+			text = icon = "";
+			fg_color = bg_color = "";
+			italic = strikeout = false;
+			data = nullptr;
+			sz_hint.setHeight(0);
+			sz_hint.setWidth(0);
+		}
+	};
 
-		int col_count, row_count;
+	int col_count, row_count;
 
-		QList<ItemData> item_data;
+	QList<ItemData> item_data;
 
-		QStringList header_data, items_text;
+	QList<ItemData> header_data;
 
-		QList<QIcon> header_icons, items_icon;
+	void insertColumn(int, const QModelIndex &){}
+	void insertRow(int, const QModelIndex &){}
+	inline QVariant getItemData(const ItemData &item_dt, int role) const;
 
-		void insertColumn(int, const QModelIndex &){}
-		void insertRow(int, const QModelIndex &){}
+ public:
+	enum ColumnId: int {
+		ObjName,
+		ObjType,
+		ObjId,
+		ParentName,
+		ParentType,
+		SearchAttr
+	};
 
-	public:		
-		ObjectsListModel(const std::vector<BaseObject *> &list, const QString &search_attr, QObject *parent = nullptr);
-		virtual ~ObjectsListModel();
-		virtual int rowCount(const QModelIndex & = QModelIndex()) const;
-		virtual int columnCount(const QModelIndex &) const;
-		virtual QModelIndex index(int row, int column, const QModelIndex &parent) const;
-		virtual QModelIndex parent(const QModelIndex &) const;
-		virtual QVariant data(const QModelIndex &index, int role) const;
-		virtual QVariant headerData(int section, Qt::Orientation orientation, int role) const;
-		virtual Qt::ItemFlags flags(const QModelIndex &) const;
-		bool isEmpty();
+	ObjectsListModel(const std::vector<BaseObject *> &list, const QString &search_attr =  "", QObject *parent = nullptr);
+	virtual int rowCount(const QModelIndex & = QModelIndex()) const;
+	virtual int columnCount(const QModelIndex &) const;
+	virtual QModelIndex index(int row, int column, const QModelIndex &parent) const;
+	virtual QModelIndex parent(const QModelIndex &) const;
+	virtual QVariant data(const QModelIndex &index, int role) const;
+	virtual QVariant headerData(int section, Qt::Orientation orientation, int role) const;
+	virtual Qt::ItemFlags flags(const QModelIndex &) const;
+	bool isEmpty();
 };
 
 #endif
