@@ -529,20 +529,23 @@ namespace GuiUtilsNs {
 		if(!table_vw)
 			return;
 
-		QAbstractItemModel *old_model = table_vw->model();
-
-		if(old_model)
+		// Scheduling the destruction of the current table view model
+		if(table_vw->model())
 		{
-			table_vw->clearSelection();
+			table_vw->model()->deleteLater();
 			table_vw->setModel(nullptr);
-			old_model->deleteLater();
 		}
-
-		ObjectsListModel *model = new ObjectsListModel(objects, search_attr);
 
 		table_vw->setUpdatesEnabled(false);
 		table_vw->setSortingEnabled(false);
-		table_vw->setModel(model);
+
+		// Create a proxy model for sorting purposes
+		QSortFilterProxyModel *proxy_model = new QSortFilterProxyModel(table_vw);
+		ObjectsListModel *model = new ObjectsListModel(objects, search_attr, proxy_model);
+
+		proxy_model->setSourceModel(model);
+		table_vw->setModel(proxy_model);
+
 		table_vw->resizeColumnsToContents();
 		table_vw->resizeRowsToContents();
 		table_vw->setUpdatesEnabled(true);
