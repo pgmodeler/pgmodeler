@@ -78,8 +78,8 @@ ObjectFinderWidget::ObjectFinderWidget(QWidget *parent) : QWidget(parent)
 			exact_match_chk->setChecked(false);
 	});
 
-	for(auto &attr : BaseObject::getSearchAttributesI18N())
-		search_attrs_cmb->addItem(attr.second, attr.first);
+	for(auto &attr : BaseObject::getSearchAttributesNames())
+		search_attrs_cmb->addItem(BaseObject::getSearchAttributeI18N(attr), attr);
 
 	this->setModel(nullptr);
 	pattern_edt->installEventFilter(this);

@@ -72,7 +72,15 @@ const QString BaseObject::objs_sql[BaseObject::ObjectTypeCount]={
 	"PROCEDURE"
 };
 
-const attribs_map BaseObject::search_attribs_i18n =	{
+const QStringList BaseObject::search_attribs_names = {
+		Attributes::Name, Attributes::Comment, Attributes::Signature,
+		Attributes::Schema, Attributes::Owner, Attributes::Tablespace,
+		Attributes::Type, Attributes::ReturnType, Attributes::SrcTable,
+		Attributes::DstTable, Attributes::RelatedForeignKey, Attributes::SrcColumns,
+		Attributes::RefColumns
+};
+
+const attribs_map BaseObject::search_attribs_i18n = {
 	{ Attributes::Name, QT_TR_NOOP("Name") },
 	{ Attributes::Comment, QT_TR_NOOP("Comment") },
 	{ Attributes::Signature, QT_TR_NOOP("Signature") },
@@ -1149,9 +1157,9 @@ QString BaseObject::getSearchAttributeI18N(const QString &search_attr)
 	return search_attribs_i18n.at(search_attr);
 }
 
-attribs_map BaseObject::getSearchAttributesI18N()
+QStringList BaseObject::getSearchAttributesNames()
 {
-	return search_attribs_i18n;
+	return search_attribs_names;
 }
 
 void BaseObject::operator = (BaseObject &obj)

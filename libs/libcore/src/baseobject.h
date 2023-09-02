@@ -177,6 +177,8 @@ class __libcore BaseObject {
 		//! \brief This map stores the translate human readable names of each search attribute use by the object
 		static const attribs_map search_attribs_i18n;
 
+		static const QStringList search_attribs_names;
+
 		/*! \brief Role that is owner of the object. Some objects cannot be associated to a role
 		 so if one is assigned to the object an error will be raised */
 		BaseObject *owner;
@@ -552,7 +554,7 @@ class __libcore BaseObject {
 		//! \brief Returns the translated human readable search attribute name
 		static QString getSearchAttributeI18N(const QString &search_attr);
 
-		static attribs_map getSearchAttributesI18N();
+		static QStringList getSearchAttributesNames();
 
 		friend class DatabaseModel;
 		friend class ModelValidationHelper;
