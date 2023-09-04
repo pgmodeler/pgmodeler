@@ -26,168 +26,13 @@
 
 ObjectsListModel::ObjectsListModel(const std::vector<BaseObject *> &list, const QString &search_attr, QObject *parent) : QAbstractTableModel(parent)
 {
-	try
-	{
-		col_count = search_attr.isEmpty() ? 5 : 6;
-		row_count = list.size();
+	col_count = search_attr.isEmpty() ? 5 : 6;
+	row_count = list.size();
 
-		insertColumns(0, col_count);
-		insertRows(0, row_count);
+	insertColumns(0, col_count);
+	insertRows(0, row_count);
 
-		QStyle *style = qApp->style();
-		int	lf_cnt = 0,
-
-				// Item's horizontal margin without icon
-				h_margin_no_ico = (style->pixelMetric(QStyle::PM_HeaderMargin) * 2) +
-													style->pixelMetric(QStyle::PM_HeaderGripMargin) +
-													style->pixelMetric(QStyle::PM_HeaderMarkSize),
-
-				// Item's horizontal margin with icon
-				h_margin = h_margin_no_ico + style->pixelMetric(QStyle::PM_SmallIconSize),
-
-				// Item's vertical margin without icon
-				v_margin = style->pixelMetric(QStyle::PM_HeaderMargin) * 2;
-
-		QSize sz;
-		QFont fnt;
-		QFontMetrics fm(fnt);
-		ItemData header_dt;
-		QStringList header_texts = { tr("Object"), tr("Type"), tr("ID"),
-																tr("Parent"), tr("Parent type"),
-																BaseObject::getSearchAttributeI18N(
-																	 (search_attr != Attributes::Name &&
-																		search_attr != Attributes::Schema &&
-																		search_attr != Attributes::Comment) ? search_attr : Attributes::Comment) },
-
-				header_icons = { "objects", "usertype", "typeoid", "schema", "usertype", "attribute" };
-
-		// Configuring the reader items
-		for(int col = 0; col < col_count; col++)
-		{
-			if(header_texts.isEmpty())
-				continue;
-
-			header_dt.text = header_texts[col];
-			header_dt.icon = GuiUtilsNs::getIconPath(header_icons[col]);
-			header_dt.sz_hint = fm.boundingRect(header_dt.text).size() + QSize(h_margin, v_margin);
-			header_data.append(header_dt);
-			header_dt.clear();
-		}
-
-		ItemData item_dt;
-		BaseObject *parent_obj;
-		attribs_map search_attribs;
-		ObjectType obj_type;
-		int sub_type = -1;
-
-		for(auto &obj : list)
-		{
-			sub_type = -1;
-			obj_type = obj->getObjectType();
-
-			if(obj_type == ObjectType::BaseRelationship ||
-					obj_type == ObjectType::Relationship)
-				sub_type = dynamic_cast<BaseRelationship *>(obj)->getRelationshipType();
-			else if(obj_type == ObjectType::Constraint)
-				sub_type = dynamic_cast<Constraint *>(obj)->getConstraintType().getTypeId();
-
-			//First column: Object name
-			item_dt.text = obj->getName();
-			item_dt.sz_hint = fm.boundingRect(item_dt.text).size() + QSize(h_margin, v_margin);
-			item_dt.icon = GuiUtilsNs::getIconPath(obj_type, sub_type);
-			item_dt.data = obj;
-
-			if(obj->isProtected() || obj->isSystemObject())
-			{
-				item_dt.italic = true;
-				item_dt.fg_color = ObjectsTableWidget::getTableItemColor(ObjectsTableWidget::ProtItemAltFgColor).name();
-			}
-			else if(dynamic_cast<TableObject *>(obj) &&
-							 dynamic_cast<TableObject *>(obj)->isAddedByRelationship())
-			{
-				item_dt.italic = true;
-				item_dt.fg_color = ObjectsTableWidget::getTableItemColor(ObjectsTableWidget::RelAddedItemAltFgColor).name();
-			}
-
-			item_dt.strikeout = obj->isSQLDisabled() && !obj->isSystemObject();
-			item_data.append(item_dt);
-
-			//Second column: Object type
-			item_dt.clear();
-			item_dt.text = obj->getTypeName();
-			item_dt.sz_hint = fm.boundingRect(item_dt.text).size() + QSize(h_margin_no_ico, v_margin);
-			item_dt.italic = true;
-			item_data.append(item_dt);
-
-			//Third column: Object id
-			item_dt.clear();
-			item_dt.text = QString::number(obj->getObjectId());
-			item_dt.sz_hint = fm.boundingRect(item_dt.text).size() + QSize(h_margin_no_ico, v_margin);
-			item_data.append(item_dt);
-
-			//Fourth column: Parent object name
-			item_dt.clear();
-
-			if(dynamic_cast<TableObject *>(obj))
-				parent_obj = dynamic_cast<TableObject *>(obj)->getParentTable();
-			else if(obj->getSchema())
-				parent_obj = obj->getSchema();
-			else if(dynamic_cast<Permission *>(obj))
-				parent_obj = dynamic_cast<Permission *>(obj)->getObject();
-			else
-				parent_obj = obj->getDatabase();
-
-			item_dt.text = parent_obj ? parent_obj->getName() : "-";
-			item_dt.sz_hint = fm.boundingRect(item_dt.text).size() + QSize(h_margin, v_margin);
-			item_dt.data = parent_obj;
-
-			if(parent_obj)
-			{
-				item_dt.icon = GuiUtilsNs::getIconPath(parent_obj->getObjectType());
-
-				if(parent_obj->isProtected() || parent_obj->isSystemObject())
-				{
-					item_dt.italic = true;
-					item_dt.fg_color = ObjectsTableWidget::getTableItemColor(ObjectsTableWidget::ProtItemAltFgColor).name();
-				}
-			}
-
-			item_data.append(item_dt);
-
-			//Fifth column: Parent object type
-			item_dt.clear();
-			item_dt.text = parent_obj ? parent_obj->getTypeName() : "-";
-			item_dt.sz_hint = fm.boundingRect(item_dt.text).size() + QSize(h_margin_no_ico, v_margin);
-			item_dt.italic = true;
-			item_data.append(item_dt);
-
-			//Sixth column: object comment or the specified search attribute
-			if(!search_attr.isEmpty())
-			{
-				item_dt.clear();
-				search_attribs = obj->getSearchAttributes();
-
-				if(search_attr != Attributes::Name &&
-						search_attr != Attributes::Schema &&
-						search_attr != Attributes::Comment)
-				{
-					item_dt.text = search_attribs[search_attr];
-				}
-				else
-					item_dt.text = obj->getComment();
-
-				sz = fm.boundingRect(item_dt.text).size();
-				lf_cnt = item_dt.text.count(QChar(QChar::LineFeed)) + 1;
-				sz.setHeight((sz.height() * lf_cnt) + v_margin);
-				item_dt.sz_hint = sz;
-				item_data.append(item_dt);
-			}
-		}
-	}
-	catch(Exception &e)
-	{
-		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
-	}
+	fillModel(list, search_attr);
 }
 
 int ObjectsListModel::rowCount(const QModelIndex &) const
@@ -242,6 +87,160 @@ QVariant ObjectsListModel::getItemData(const ItemData &item_dt, int role) const
 		return QVariant(Qt::AlignLeft | Qt::AlignVCenter);
 
 	return QVariant();
+}
+
+void ObjectsListModel::fillModel(const std::vector<BaseObject*>& list, const QString& search_attr)
+{
+	QStyle *style = qApp->style();
+	int	lf_cnt = 0,
+
+			// Item's horizontal margin without icon
+			h_margin_no_ico = (style->pixelMetric(QStyle::PM_HeaderMargin) * 2) +
+												style->pixelMetric(QStyle::PM_HeaderGripMargin) +
+												style->pixelMetric(QStyle::PM_HeaderMarkSize),
+
+			// Item's horizontal margin with icon
+			h_margin = h_margin_no_ico + style->pixelMetric(QStyle::PM_SmallIconSize),
+
+			// Item's vertical margin without icon
+			v_margin = style->pixelMetric(QStyle::PM_HeaderMargin) * 2;
+
+	QSize sz;
+	QFont fnt;
+	QFontMetrics fm(fnt);
+	ItemData header_dt;
+	QStringList header_texts = { tr("Object"), tr("Type"), tr("ID"),
+															tr("Parent"), tr("Parent type"),
+															BaseObject::getSearchAttributeI18N(
+																	(search_attr != Attributes::Name &&
+																	 search_attr != Attributes::Schema &&
+																	 search_attr != Attributes::Comment) ? search_attr : Attributes::Comment) },
+
+			header_icons = { "objects", "usertype", "typeoid", "schema", "usertype", "attribute" };
+
+	// Configuring the reader items
+	for(int col = 0; col < col_count; col++)
+	{
+		if(header_texts.isEmpty())
+			continue;
+
+		header_dt.text = header_texts[col];
+		header_dt.icon = GuiUtilsNs::getIconPath(header_icons[col]);
+		header_dt.sz_hint = fm.boundingRect(header_dt.text).size() + QSize(h_margin, v_margin);
+		header_data.append(header_dt);
+		header_dt.clear();
+	}
+
+	ItemData item_dt;
+	BaseObject *parent_obj;
+	attribs_map search_attribs;
+	ObjectType obj_type;
+	int sub_type = -1;
+
+	for(auto &obj : list)
+	{
+		sub_type = -1;
+		obj_type = obj->getObjectType();
+
+		if(obj_type == ObjectType::BaseRelationship ||
+				obj_type == ObjectType::Relationship)
+			sub_type = dynamic_cast<BaseRelationship *>(obj)->getRelationshipType();
+		else if(obj_type == ObjectType::Constraint)
+			sub_type = dynamic_cast<Constraint *>(obj)->getConstraintType().getTypeId();
+
+						//First column: Object name
+		item_dt.clear();
+		item_dt.text = obj->getName();
+		item_dt.sz_hint = fm.boundingRect(item_dt.text).size() + QSize(h_margin, v_margin);
+		item_dt.icon = GuiUtilsNs::getIconPath(obj_type, sub_type);
+		item_dt.data = obj;
+
+		if(obj->isProtected() || obj->isSystemObject())
+		{
+			item_dt.italic = true;
+			item_dt.fg_color = ObjectsTableWidget::getTableItemColor(ObjectsTableWidget::ProtItemAltFgColor).name();
+		}
+		else if(dynamic_cast<TableObject *>(obj) &&
+						 dynamic_cast<TableObject *>(obj)->isAddedByRelationship())
+		{
+			item_dt.italic = true;
+			item_dt.fg_color = ObjectsTableWidget::getTableItemColor(ObjectsTableWidget::RelAddedItemAltFgColor).name();
+		}
+
+		item_dt.strikeout = obj->isSQLDisabled() && !obj->isSystemObject();
+		item_data.append(item_dt);
+
+		//Second column: Object type
+		item_dt.clear();
+		item_dt.text = obj->getTypeName();
+		item_dt.sz_hint = fm.boundingRect(item_dt.text).size() + QSize(h_margin_no_ico, v_margin);
+		item_dt.italic = true;
+		item_data.append(item_dt);
+
+		//Third column: Object id
+		item_dt.clear();
+		item_dt.text = QString::number(obj->getObjectId());
+		item_dt.sz_hint = fm.boundingRect(item_dt.text).size() + QSize(h_margin_no_ico, v_margin);
+		item_data.append(item_dt);
+
+		//Fourth column: Parent object name
+		item_dt.clear();
+
+		if(dynamic_cast<TableObject *>(obj))
+			parent_obj = dynamic_cast<TableObject *>(obj)->getParentTable();
+		else if(obj->getSchema())
+			parent_obj = obj->getSchema();
+		else if(dynamic_cast<Permission *>(obj))
+			parent_obj = dynamic_cast<Permission *>(obj)->getObject();
+		else
+			parent_obj = obj->getDatabase();
+
+		item_dt.text = parent_obj ? parent_obj->getName() : "-";
+		item_dt.sz_hint = fm.boundingRect(item_dt.text).size() + QSize(h_margin, v_margin);
+		item_dt.data = parent_obj;
+
+		if(parent_obj)
+		{
+			item_dt.icon = GuiUtilsNs::getIconPath(parent_obj->getObjectType());
+
+			if(parent_obj->isProtected() || parent_obj->isSystemObject())
+			{
+				item_dt.italic = true;
+				item_dt.fg_color = ObjectsTableWidget::getTableItemColor(ObjectsTableWidget::ProtItemAltFgColor).name();
+			}
+		}
+
+		item_data.append(item_dt);
+
+		//Fifth column: Parent object type
+		item_dt.clear();
+		item_dt.text = parent_obj ? parent_obj->getTypeName() : "-";
+		item_dt.sz_hint = fm.boundingRect(item_dt.text).size() + QSize(h_margin_no_ico, v_margin);
+		item_dt.italic = true;
+		item_data.append(item_dt);
+
+		//Sixth column: object comment or the specified search attribute
+		if(!search_attr.isEmpty())
+		{
+			item_dt.clear();
+			search_attribs = obj->getSearchAttributes();
+
+			if(search_attr != Attributes::Name &&
+					search_attr != Attributes::Schema &&
+					search_attr != Attributes::Comment)
+			{
+				item_dt.text = search_attribs[search_attr];
+			}
+			else
+				item_dt.text = obj->getComment();
+
+			sz = fm.boundingRect(item_dt.text).size();
+			lf_cnt = item_dt.text.count(QChar(QChar::LineFeed)) + 1;
+			sz.setHeight((sz.height() * lf_cnt) + v_margin);
+			item_dt.sz_hint = sz;
+			item_data.append(item_dt);
+		}
+	}
 }
 
 QVariant ObjectsListModel::data(const QModelIndex &index, int role) const

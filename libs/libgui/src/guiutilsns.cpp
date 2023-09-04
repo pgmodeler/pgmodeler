@@ -524,7 +524,7 @@ namespace GuiUtilsNs {
 		handleFileDialogSatate(file_dlg, false);
 	}
 
-	void updateObjectsTable(QTableView *table_vw, std::vector<BaseObject *> &objects, const QString &search_attr, bool checkable_items)
+	void updateObjectsTable(QTableView *table_vw, std::vector<BaseObject *> &objects, const QString &search_attr)
 	{
 		if(!table_vw)
 			return;

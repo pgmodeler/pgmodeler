@@ -63,7 +63,9 @@ class __libgui ObjectsListModel: public QAbstractTableModel {
 
 	void insertColumn(int, const QModelIndex &){}
 	void insertRow(int, const QModelIndex &){}
+
 	inline QVariant getItemData(const ItemData &item_dt, int role) const;
+	void fillModel(const std::vector<BaseObject *> &list, const QString &search_attr =  "");
 
  public:
 	enum ColumnId: int {
