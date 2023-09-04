@@ -24,6 +24,16 @@
 #include "permission.h"
 #include "baserelationship.h"
 
+const QStringList ObjectsListModel::HeaderTexts = {
+		QT_TR_NOOP("Object"), QT_TR_NOOP("Type"), QT_TR_NOOP("ID"),
+		QT_TR_NOOP("Parent"), QT_TR_NOOP("Parent type")
+};
+
+const QStringList ObjectsListModel::HeaderIcons = {
+		"objects", "usertype", "typeoid",
+		"schema", "usertype", "attribute"
+};
+
 ObjectsListModel::ObjectsListModel(const std::vector<BaseObject *> &obj_list, const QString &search_attr, QObject *parent) : QAbstractTableModel(parent)
 {
 	col_count = search_attr.isEmpty() ? 5 : 6;
@@ -60,6 +70,43 @@ QModelIndex ObjectsListModel::index(int row, int column, const QModelIndex &pare
 QModelIndex ObjectsListModel::parent(const QModelIndex &) const
 {
 	return QModelIndex();
+}
+
+std::tuple<int,int,int> ObjectsListModel::getIndexMargins()
+{
+	static int horiz_margin_no_icon = (qApp->style()->pixelMetric(QStyle::PM_HeaderMargin) * 2) +
+																		qApp->style()->pixelMetric(QStyle::PM_HeaderGripMargin) +
+																		qApp->style()->pixelMetric(QStyle::PM_HeaderMarkSize),
+
+			horiz_margin = horiz_margin_no_icon + qApp->style()->pixelMetric(QStyle::PM_SmallIconSize),
+
+			vert_margin = qApp->style()->pixelMetric(QStyle::PM_HeaderMargin) * 2;
+
+	return { horiz_margin, horiz_margin_no_icon, vert_margin };
+}
+
+void ObjectsListModel::configureHeader(const QString &search_attr)
+{
+	QFontMetrics fm(qApp->font());
+	ItemData header_dt;
+	QStringList header_texts = HeaderTexts;
+	auto [ h_margin, h_margin_no_ico, v_margin ] = getIndexMargins();
+
+	// Configuring the header items
+	header_texts.append(
+			BaseObject::getSearchAttributeI18N(
+					(search_attr != Attributes::Name &&
+					 search_attr != Attributes::Schema &&
+					 search_attr != Attributes::Comment) ? search_attr : Attributes::Comment));
+
+	for(int col = 0; col < col_count; col++)
+	{
+		header_dt.text = header_texts[col];
+		header_dt.icon = GuiUtilsNs::getIconPath(HeaderIcons[col]);
+		header_dt.sz_hint = fm.boundingRect(header_dt.text).size() + QSize(h_margin, v_margin);
+		header_data.append(header_dt);
+		header_dt.clear();
+	}
 }
 
 QVariant ObjectsListModel::getItemData(const ItemData &item_dt, int role) const
@@ -106,51 +153,17 @@ QVariant ObjectsListModel::getItemData(const ItemData &item_dt, int role) const
 
 void ObjectsListModel::fillModel(const std::vector<BaseObject*>& obj_list, const QString& search_attr)
 {
-	QStyle *style = qApp->style();
-	int	lf_cnt = 0,
-
-			// Item's horizontal margin without icon
-			h_margin_no_ico = (style->pixelMetric(QStyle::PM_HeaderMargin) * 2) +
-												style->pixelMetric(QStyle::PM_HeaderGripMargin) +
-												style->pixelMetric(QStyle::PM_HeaderMarkSize),
-
-			// Item's horizontal margin with icon
-			h_margin = h_margin_no_ico + style->pixelMetric(QStyle::PM_SmallIconSize),
-
-			// Item's vertical margin without icon
-			v_margin = style->pixelMetric(QStyle::PM_HeaderMargin) * 2;
-
+	QFontMetrics fm(qApp->font());
+	int	lf_cnt = 0;
 	QSize sz;
-	QFont fnt;
-	QFontMetrics fm(fnt);
-	ItemData header_dt;
-	QStringList header_texts = { tr("Object"), tr("Type"), tr("ID"),
-															tr("Parent"), tr("Parent type"),
-															BaseObject::getSearchAttributeI18N(
-																	(search_attr != Attributes::Name &&
-																	 search_attr != Attributes::Schema &&
-																	 search_attr != Attributes::Comment) ? search_attr : Attributes::Comment) },
-
-			header_icons = { "objects", "usertype", "typeoid", "schema", "usertype", "attribute" };
-
-	// Configuring the reader items
-	for(int col = 0; col < col_count; col++)
-	{
-		if(header_texts.isEmpty())
-			continue;
-
-		header_dt.text = header_texts[col];
-		header_dt.icon = GuiUtilsNs::getIconPath(header_icons[col]);
-		header_dt.sz_hint = fm.boundingRect(header_dt.text).size() + QSize(h_margin, v_margin);
-		header_data.append(header_dt);
-		header_dt.clear();
-	}
-
 	ItemData item_dt;
-	BaseObject *parent_obj;
+	BaseObject *parent_obj = nullptr;
 	attribs_map search_attribs;
 	ObjectType obj_type;
 	int sub_type = -1;
+	auto [ h_margin, h_margin_no_ico, v_margin ] = getIndexMargins();
+
+	configureHeader(search_attr);
 
 	for(auto &obj : obj_list)
 	{
@@ -233,7 +246,7 @@ void ObjectsListModel::fillModel(const std::vector<BaseObject*>& obj_list, const
 		item_dt.clear();
 		item_dt.text = parent_obj ? parent_obj->getTypeName() : "-";
 		item_dt.obj_type = parent_obj ? parent_obj->getObjectType() : ObjectType::BaseObject;
-		item_dt.sz_hint = fm.boundingRect(item_dt.text).size() + QSize(h_margin_no_ico, v_margin);
+		item_dt.sz_hint = fm.boundingRect(item_dt.text).size() + QSize(h_margin, v_margin);
 		item_dt.italic = true;
 		item_data.append(item_dt);
 
@@ -263,42 +276,12 @@ void ObjectsListModel::fillModel(const std::vector<BaseObject*>& obj_list, const
 
 void ObjectsListModel::fillModel(const std::vector<attribs_map> &attr_list)
 {
-	QStyle *style = qApp->style();
-	int	lf_cnt = 0,
-
-			// Item's horizontal margin without icon
-			h_margin_no_ico = (style->pixelMetric(QStyle::PM_HeaderMargin) * 2) +
-												style->pixelMetric(QStyle::PM_HeaderGripMargin) +
-												style->pixelMetric(QStyle::PM_HeaderMarkSize),
-
-			// Item's horizontal margin with icon
-			h_margin = h_margin_no_ico + style->pixelMetric(QStyle::PM_SmallIconSize),
-
-			// Item's vertical margin without icon
-			v_margin = style->pixelMetric(QStyle::PM_HeaderMargin) * 2;
-
-	QSize sz;
-	QFont fnt;
-	QFontMetrics fm(fnt);
-	ItemData header_dt;
-	QStringList header_texts = { tr("Object"), tr("Type"), tr("ID"),
-															 tr("Parent"), tr("Parent type") },
-
-			header_icons = { "objects", "usertype", "typeoid", "schema", "usertype" };
-
-	// Configuring the reader items
-	for(int col = 0; col < col_count; col++)
-	{
-		header_dt.text = header_texts[col];
-		header_dt.icon = GuiUtilsNs::getIconPath(header_icons[col]);
-		header_dt.sz_hint = fm.boundingRect(header_dt.text).size() + QSize(h_margin, v_margin);
-		header_data.append(header_dt);
-		header_dt.clear();
-	}
-
+	QFontMetrics fm(qApp->font());
 	ItemData item_dt;
-	attribs_map search_attribs;
 	ObjectType obj_type, parent_type;
+	auto [ h_margin, h_margin_no_ico, v_margin ] = getIndexMargins();
+
+	configureHeader();
 
 	for(auto &attribs : attr_list)
 	{
@@ -340,7 +323,7 @@ void ObjectsListModel::fillModel(const std::vector<attribs_map> &attr_list)
 		item_dt.clear();
 		item_dt.text = parent_type != ObjectType::BaseObject ? BaseObject::getTypeName(parent_type) : "-";
 		item_dt.obj_type = parent_type;
-		item_dt.sz_hint = fm.boundingRect(item_dt.text).size() + QSize(h_margin_no_ico, v_margin);
+		item_dt.sz_hint = fm.boundingRect(item_dt.text).size() + QSize(h_margin, v_margin);
 		item_dt.italic = true;
 		item_data.append(item_dt);
 	}
@@ -361,8 +344,7 @@ QVariant ObjectsListModel::headerData(int section, Qt::Orientation orientation, 
 		if(section >= col_count)
 			return QVariant();
 
-		const ItemData &header_dt = header_data.at(section);
-		return getItemData(header_dt, role);
+		return getItemData(header_data.at(section), role);
 	}
 
 	return QAbstractTableModel::headerData(section, orientation, role);

@@ -679,7 +679,7 @@
                  <bool>true</bool>
                 </property>
                 <property name="currentIndex">
-                 <number>0</number>
+                 <number>1</number>
                 </property>
                 <widget class="QWidget" name="page">
                  <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -871,7 +871,7 @@
                      <bool>true</bool>
                     </property>
                     <property name="selectionMode">
-                     <enum>QAbstractItemView::ExtendedSelection</enum>
+                     <enum>QAbstractItemView::NoSelection</enum>
                     </property>
                     <property name="selectionBehavior">
                      <enum>QAbstractItemView::SelectRows</enum>

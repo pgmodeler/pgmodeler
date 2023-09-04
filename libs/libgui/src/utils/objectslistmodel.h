@@ -27,6 +27,7 @@
 
 #include "guiglobal.h"
 #include <QAbstractTableModel>
+#include <QSortFilterProxyModel>
 #include <QIcon>
 #include <QFont>
 #include "baseobject.h"
@@ -63,16 +64,22 @@ class __libgui ObjectsListModel: public QAbstractTableModel {
 
 	QList<ItemData> header_data;
 
+	static const QStringList HeaderTexts,
+
+			HeaderIcons;
+
+	inline QVariant getItemData(const ItemData &item_dt, int role) const;
+	static std::tuple<int, int, int> getIndexMargins();
+
+	void configureHeader(const QString& search_attr = "");
+	void fillModel(const std::vector<BaseObject *> &obj_list, const QString &search_attr =  "");
+	void fillModel(const std::vector<attribs_map> &attr_list);
+
 	void insertColumn(int, const QModelIndex &){}
 	void insertRow(int, const QModelIndex &){}
 
-	inline QVariant getItemData(const ItemData &item_dt, int role) const;
-
-	void fillModel(const std::vector<BaseObject *> &obj_list, const QString &search_attr =  "");
-
-	void fillModel(const std::vector<attribs_map> &attr_list);
-
  public:
+
 	enum ColumnId: int {
 		ObjName,
 		ObjType,

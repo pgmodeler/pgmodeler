@@ -29,6 +29,7 @@
 #include "generalconfigwidget.h"
 #include "appearanceconfigwidget.h"
 #include "objectslistmodel.h"
+#include "customsortproxymodel.h"
 
 namespace GuiUtilsNs {
 
@@ -543,7 +544,7 @@ namespace GuiUtilsNs {
 		table_vw->setSortingEnabled(false);
 
 		// Create a proxy model for sorting purposes
-		QSortFilterProxyModel *proxy_model = new QSortFilterProxyModel(table_vw);
+		CustomSortProxyModel *proxy_model = new CustomSortProxyModel(table_vw);
 		ObjectsListModel *model = new ObjectsListModel(objects, search_attr, proxy_model);
 
 		proxy_model->setSourceModel(model);
@@ -574,8 +575,8 @@ namespace GuiUtilsNs {
 		table_vw->setUpdatesEnabled(false);
 		table_vw->setSortingEnabled(false);
 
-						// Create a proxy model for sorting purposes
-		QSortFilterProxyModel *proxy_model = new QSortFilterProxyModel(table_vw);
+		// Create a proxy model for sorting purposes
+		CustomSortProxyModel *proxy_model = new CustomSortProxyModel(table_vw);
 		ObjectsListModel *model = new ObjectsListModel(attribs, proxy_model);
 
 		proxy_model->setSourceModel(model);
