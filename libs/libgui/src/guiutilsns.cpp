@@ -548,6 +548,7 @@ namespace GuiUtilsNs {
 
 		table_vw->resizeColumnsToContents();
 		table_vw->resizeRowsToContents();
+		table_vw->sortByColumn(0, Qt::AscendingOrder);
 		table_vw->setUpdatesEnabled(true);
 		table_vw->setSortingEnabled(true);
 	}

@@ -44,9 +44,8 @@ class __libgui ObjectDepsRefsWidget: public BaseObjectWidget, public Ui::ObjectD
 		void applyConfiguration();
 
 	private slots:
-		void clearTables();
 		void updateObjectTables();
-		void handleItemSelection(QTableWidgetItem *item);
+		void handleItemSelection(const QModelIndex &index);
 };
 
 #endif

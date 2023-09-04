@@ -24,15 +24,15 @@ ObjectDepsRefsWidget::ObjectDepsRefsWidget(QWidget *parent): BaseObjectWidget(pa
 	Ui_ObjectDepsRefsWidget::setupUi(this);
 	configureFormLayout(objectdepsrefs_grid, ObjectType::BaseObject);
 
-	//GuiUtilsNs::configureWidgetFont(message_lbl, GuiUtilsNs::MediumFontFactor);
-
 	model_wgt=nullptr;
 	alert_frm->setVisible(false);
 
 	connect(exc_ind_deps_chk,	&QCheckBox::toggled, this, &ObjectDepsRefsWidget::updateObjectTables);
 	connect(inc_ind_refs_chk,	&QCheckBox::toggled, this, &ObjectDepsRefsWidget::updateObjectTables);
-	connect(dependences_tbw, &QTableWidget::itemDoubleClicked, this, &ObjectDepsRefsWidget::handleItemSelection);
-	connect(references_tbw, &QTableWidget::itemDoubleClicked, this, &ObjectDepsRefsWidget::handleItemSelection);
+	//connect(dependences_tbw, &QTableWidget::itemDoubleClicked, this, &ObjectDepsRefsWidget::handleItemSelection);
+	//connect(references_tbw, &QTableWidget::itemDoubleClicked, this, &ObjectDepsRefsWidget::handleItemSelection);
+	connect(dependencies_view, &QTableView::doubleClicked, this, &ObjectDepsRefsWidget::handleItemSelection);
+	connect(references_view, &QTableView::doubleClicked, this, &ObjectDepsRefsWidget::handleItemSelection);
 
 	setMinimumSize(580, 350);
 }
@@ -67,15 +67,6 @@ void ObjectDepsRefsWidget::applyConfiguration()
 	emit s_closeRequested();
 }
 
-void ObjectDepsRefsWidget::clearTables()
-{
-	dependences_tbw->clearContents();
-	dependences_tbw->setRowCount(0);
-
-	references_tbw->clearContents();
-	references_tbw->setRowCount(0);
-}
-
 void ObjectDepsRefsWidget::updateObjectTables()
 {
 	std::vector<BaseObject *> objs;
@@ -84,7 +75,7 @@ void ObjectDepsRefsWidget::updateObjectTables()
 	/* As the list of dependencies include the this->object itself is necessary
 	to remove only for semantics reasons */
 	objs.erase(std::find(objs.begin(), objs.end(), this->object));
-	GuiUtilsNs::updateObjectsTable(dependences_tbw, objs);
+	GuiUtilsNs::updateObjectsTable(dependencies_view, objs);
 
 	objs.clear();
 	if(!inc_ind_refs_chk->isChecked())
@@ -92,19 +83,16 @@ void ObjectDepsRefsWidget::updateObjectTables()
 	else
 		model->__getObjectReferences(object, objs);
 	
-	GuiUtilsNs::updateObjectsTable(references_tbw, objs);
-
-	references_tbw->resizeColumnsToContents();
-	dependences_tbw->resizeColumnsToContents();
+	GuiUtilsNs::updateObjectsTable(references_view, objs);
 }
 
-void ObjectDepsRefsWidget::handleItemSelection(QTableWidgetItem *item)
+void ObjectDepsRefsWidget::handleItemSelection(const QModelIndex& index)
 {
-	BaseObject *sel_obj=nullptr, *parent=nullptr;
-	Table *parent_tab=nullptr;
-	View *parent_view=nullptr;
+	BaseObject *sel_obj = nullptr, *parent = nullptr;
+	Table *parent_tab = nullptr;
+	View *parent_view = nullptr;
 
-	sel_obj=reinterpret_cast<BaseObject*>(item->data(Qt::UserRole).value<void *>());
+	sel_obj = reinterpret_cast<BaseObject*>(index.data(Qt::UserRole).value<void *>());
 
 	if(sel_obj)
 	{
@@ -112,7 +100,6 @@ void ObjectDepsRefsWidget::handleItemSelection(QTableWidgetItem *item)
 			parent=dynamic_cast<TableObject *>(sel_obj)->getParentTable();
 
 		model_wgt->showObjectForm(sel_obj->getObjectType(), sel_obj, parent);
-		clearTables();
 
 		if(TableObject::isTableObject(this->object->getObjectType()))
 		{
@@ -132,8 +119,8 @@ void ObjectDepsRefsWidget::handleItemSelection(QTableWidgetItem *item)
 		}
 		else
 		{
-			references_tbw->setEnabled(false);
-			dependences_tbw->setEnabled(false);
+			references_view->setEnabled(false);
+			dependencies_view->setEnabled(false);
 			exc_ind_deps_chk->setEnabled(false);
 			alert_frm->setVisible(true);
 		}
