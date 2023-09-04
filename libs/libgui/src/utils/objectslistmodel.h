@@ -38,8 +38,9 @@ class __libgui ObjectsListModel: public QAbstractTableModel {
 	struct ItemData {
 		QString text, fg_color, bg_color, icon;
 		bool italic, strikeout;
-		BaseObject *data;
 		QSize sz_hint;
+		BaseObject *object;
+		ObjectType obj_type;
 
 		ItemData() {
 			clear();
@@ -49,7 +50,8 @@ class __libgui ObjectsListModel: public QAbstractTableModel {
 			text = icon = "";
 			fg_color = bg_color = "";
 			italic = strikeout = false;
-			data = nullptr;
+			object = nullptr;
+			obj_type = ObjectType::BaseObject;
 			sz_hint.setHeight(0);
 			sz_hint.setWidth(0);
 		}
@@ -65,7 +67,10 @@ class __libgui ObjectsListModel: public QAbstractTableModel {
 	void insertRow(int, const QModelIndex &){}
 
 	inline QVariant getItemData(const ItemData &item_dt, int role) const;
-	void fillModel(const std::vector<BaseObject *> &list, const QString &search_attr =  "");
+
+	void fillModel(const std::vector<BaseObject *> &obj_list, const QString &search_attr =  "");
+
+	void fillModel(const std::vector<attribs_map> &attr_list);
 
  public:
 	enum ColumnId: int {
@@ -77,7 +82,8 @@ class __libgui ObjectsListModel: public QAbstractTableModel {
 		SearchAttr
 	};
 
-	ObjectsListModel(const std::vector<BaseObject *> &list, const QString &search_attr =  "", QObject *parent = nullptr);
+	explicit ObjectsListModel(const std::vector<BaseObject *> &obj_list, const QString &search_attr =  "", QObject *parent = nullptr);
+	explicit ObjectsListModel(const std::vector<attribs_map> &attr_list, QObject *parent = nullptr);
 	virtual int rowCount(const QModelIndex & = QModelIndex()) const;
 	virtual int columnCount(const QModelIndex &) const;
 	virtual QModelIndex index(int row, int column, const QModelIndex &parent) const;

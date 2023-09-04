@@ -23,6 +23,7 @@
 #include "utilsns.h"
 #include "settings/connectionsconfigwidget.h"
 #include "pgsqlversions.h"
+#include "objectslistmodel.h"
 
 bool ModelDatabaseDiffForm::low_verbosity = false;
 std::map<QString, attribs_map> ModelDatabaseDiffForm::config_params;
@@ -168,7 +169,7 @@ ModelDatabaseDiffForm::ModelDatabaseDiffForm(QWidget *parent, Qt::WindowFlags fl
 		connect(pd_filter_wgt, &ObjectsFilterWidget::s_filterApplyingRequested, this, &ModelDatabaseDiffForm::applyPartialDiffFilters);
 
 		connect(pd_filter_wgt, &ObjectsFilterWidget::s_filtersRemoved, this, [this](){
-			filtered_objs_tbw->setRowCount(0);
+			GuiUtilsNs::updateObjectsTable(filtered_objs_view, std::vector<attribs_map>());
 		});
 
 #ifdef DEMO_VERSION
@@ -1356,8 +1357,10 @@ void ModelDatabaseDiffForm::applyPartialDiffFilters()
 		QString search_attr = (gen_filters_from_log_chk->isChecked() ||
 													 pd_filter_wgt->isMatchSignature()) ?
 														Attributes::Signature : Attributes::Name;
+
 		std::vector<BaseObject *> filterd_objs = loaded_model->findObjects(pd_filter_wgt->getObjectFilters(), search_attr);
-		GuiUtilsNs::updateObjectsTable(filtered_objs_tbw, filterd_objs, search_attr);
+
+		GuiUtilsNs::updateObjectsTable(filtered_objs_view, filterd_objs, search_attr);
 		getFilteredObjects(filtered_objs);
 	}
 	else if(src_connections_cmb->currentIndex() > 0 &&
@@ -1374,7 +1377,7 @@ void ModelDatabaseDiffForm::applyPartialDiffFilters()
 																	 pd_filter_wgt->isMatchSignature(),
 																	 pd_filter_wgt->getForceObjectsFilter());
 
-		DatabaseImportForm::listFilteredObjects(import_helper, filtered_objs_tbw);
+		DatabaseImportForm::listFilteredObjects(import_helper, filtered_objs_view);
 	}
 }
 
@@ -1399,16 +1402,17 @@ void ModelDatabaseDiffForm::generateFiltersFromChangelog()
 
 void ModelDatabaseDiffForm::getFilteredObjects(std::vector<BaseObject *> &objects)
 {
-	int row_cnt = filtered_objs_tbw->rowCount();
-	QTableWidgetItem *item = nullptr;
+	QAbstractItemModel *model = filtered_objs_view->model();
+	int row_cnt = model->rowCount();
+	QModelIndex index;
 	BaseObject *obj = nullptr;
 
 	objects.clear();
 
 	for(int row = 0; row < row_cnt; row++)
 	{
-		item = filtered_objs_tbw->item(row, 0);
-		obj = reinterpret_cast<BaseObject *>(item->data(Qt::UserRole).value<void *>());
+		index = model->index(row, 0);
+		obj = reinterpret_cast<BaseObject *>(index.data(Qt::UserRole).value<void *>());
 
 		if(!obj)
 			continue;
@@ -1417,19 +1421,26 @@ void ModelDatabaseDiffForm::getFilteredObjects(std::vector<BaseObject *> &object
 	}
 }
 
-void ModelDatabaseDiffForm::getFilteredObjects(std::map<ObjectType, std::vector<unsigned>> &obj_oids)
+/*void ModelDatabaseDiffForm::getFilteredObjects(std::map<ObjectType, std::vector<unsigned>> &obj_oids)
 {
 	ObjectType obj_type;
-	int row_cnt = filtered_objs_tbw->rowCount();
-	QTableWidgetItem *oid_item = nullptr, *type_item  = nullptr;
+	QAbstractItemModel *model = filtered_objs_view->model();
+	int row_cnt = model->rowCount(); //filtered_objs_tbw->rowCount();
+	//QTableWidgetItem *oid_item = nullptr, *type_item  = nullptr;
+	QModelIndex oid_index, type_index, index;
+	BaseObject *object = nullptr;
 
 	obj_oids.clear();
 
 	for(int row = 0; row < row_cnt; row++)
 	{
-		oid_item = filtered_objs_tbw->item(row, 0);
-		type_item = filtered_objs_tbw->item(row, 2);
-		obj_type = static_cast<ObjectType>(type_item->data(Qt::UserRole).toUInt());
-		obj_oids[obj_type].push_back(oid_item->data(Qt::UserRole).toUInt());
+		//oid_item = filtered_objs_tbw->item(row, 0);
+		//type_item = filtered_objs_tbw->item(row, 2);
+		//oid_index = model->item(row, ObjectsListModel::ObjName);
+		//type_index = model->item(row, ObjectsListModel::ObjType);
+		index =
+		object = static_cast<ObjectType>(type_index->data(Qt::UserRole).toUInt());
+		obj_type = static_cast<ObjectType>(type_index->data(Qt::UserRole).toUInt());
+		obj_oids[obj_type].push_back(oid_index->data(Qt::UserRole).toUInt());
 	}
-}
+}*/

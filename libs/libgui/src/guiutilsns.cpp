@@ -524,7 +524,7 @@ namespace GuiUtilsNs {
 		handleFileDialogSatate(file_dlg, false);
 	}
 
-	void updateObjectsTable(QTableView *table_vw, std::vector<BaseObject *> &objects, const QString &search_attr)
+	void updateObjectsTable(QTableView *table_vw, const std::vector<BaseObject *> &objects, const QString &search_attr)
 	{
 		if(!table_vw)
 			return;
@@ -536,12 +536,47 @@ namespace GuiUtilsNs {
 			table_vw->setModel(nullptr);
 		}
 
+		if(objects.empty())
+			return;
+
 		table_vw->setUpdatesEnabled(false);
 		table_vw->setSortingEnabled(false);
 
 		// Create a proxy model for sorting purposes
 		QSortFilterProxyModel *proxy_model = new QSortFilterProxyModel(table_vw);
 		ObjectsListModel *model = new ObjectsListModel(objects, search_attr, proxy_model);
+
+		proxy_model->setSourceModel(model);
+		table_vw->setModel(proxy_model);
+
+		table_vw->resizeColumnsToContents();
+		table_vw->resizeRowsToContents();
+		table_vw->sortByColumn(0, Qt::AscendingOrder);
+		table_vw->setUpdatesEnabled(true);
+		table_vw->setSortingEnabled(true);
+	}
+
+	void updateObjectsTable(QTableView *table_vw, const std::vector<attribs_map> &attribs)
+	{
+		if(!table_vw)
+			return;
+
+		// Scheduling the destruction of the current table view model
+		if(table_vw->model())
+		{
+			table_vw->model()->deleteLater();
+			table_vw->setModel(nullptr);
+		}
+
+		if(attribs.empty())
+			return;
+
+		table_vw->setUpdatesEnabled(false);
+		table_vw->setSortingEnabled(false);
+
+						// Create a proxy model for sorting purposes
+		QSortFilterProxyModel *proxy_model = new QSortFilterProxyModel(table_vw);
+		ObjectsListModel *model = new ObjectsListModel(attribs, proxy_model);
 
 		proxy_model->setSourceModel(model);
 		table_vw->setModel(proxy_model);

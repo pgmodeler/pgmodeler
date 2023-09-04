@@ -231,12 +231,7 @@ void ObjectFinderWidget::clearResult()
 	found_objs.clear();
 	selected_objs.clear();
 
-	result_view->clearSelection();
-
-	if(result_view->model())
-		result_view->model()->deleteLater();
-
-	result_view->setModel(nullptr);
+	GuiUtilsNs::updateObjectsTable(result_view, std::vector<BaseObject *>());
 
 	found_lbl->setVisible(false);
 	clear_res_btn->setEnabled(false);

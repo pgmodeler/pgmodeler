@@ -10655,6 +10655,7 @@ std::vector<BaseObject *> DatabaseModel::findObjects(const QStringList &filters,
 	QStringList values, modes = { UtilsNs::FilterWildcard, UtilsNs::FilterRegExp };
 	ObjectType obj_type;
 	bool exact_match = false;
+	std::vector<ObjectType> types;
 
 	for(auto &filter : filters)
 	{
@@ -10673,13 +10674,24 @@ std::vector<BaseObject *> DatabaseModel::findObjects(const QStringList &filters,
 		exact_match = (mode == UtilsNs::FilterWildcard && !pattern.contains(UtilsNs::WildcardChar));
 
 		// Raises an error if the filter has an invalid object type, pattern or mode
-		if(obj_type == ObjectType::BaseObject || pattern.isEmpty() || !modes.contains(mode))
+		if((values[0] != Attributes::Any && obj_type == ObjectType::BaseObject) ||
+				pattern.isEmpty() || !modes.contains(mode))
 		{
 			throw Exception(Exception::getErrorMessage(ErrorCode::InvalidObjectFilter).arg(filter).arg(modes.join('|')),
 											ErrorCode::InvalidObjectFilter,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		}
 
-		aux_objs = findObjects(pattern, { obj_type }, false, mode == UtilsNs::FilterRegExp, exact_match, search_attr);
+		// If we use the "any" filter key word all object types will be retrieved
+		types.clear();
+
+		if(obj_type == ObjectType::BaseObject)
+			types = BaseObject::getObjectTypes(true, { ObjectType::BaseRelationship, ObjectType::Textbox,
+																								ObjectType::Tag, ObjectType::GenericSql, ObjectType::Database });
+		else
+			types.push_back(obj_type);
+
+		aux_objs = findObjects(pattern, types, false,
+													 mode == UtilsNs::FilterRegExp, exact_match, search_attr);
 		objects.insert(objects.end(), aux_objs.begin(), aux_objs.end());
 	}
 

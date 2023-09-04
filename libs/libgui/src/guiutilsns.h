@@ -115,9 +115,13 @@ namespace GuiUtilsNs {
 	 * The parameter search_attr is used to display the attribute value in which the search was performed. */
 	extern __libgui void updateObjectsTable(QTableWidget *tab_wgt, std::vector<BaseObject *> &objects, const QString &search_attr = Attributes::Name, bool checkable_items = false);
 
-	/*! \brief Lists the objects in a QTableView. The first column on each row of table contains the reference to the object
+	/*! \brief Lists the objects in a QTableView using a list of database model objects as data source.
+	 * The first column on each row of table contains the reference to the object.
 	 * The parameter search_attr is used to display the attribute value in which the search was performed. */
-	extern __libgui void updateObjectsTable(QTableView *tab_view, std::vector<BaseObject *> &objects, const QString &search_attr = "");
+	extern __libgui void updateObjectsTable(QTableView *tab_view, const std::vector<BaseObject *> &objects, const QString &search_attr = "");
+
+	//! \brief Lists the objects in a QTableView using a list of object attributes (see Catalog::getObjects) as data source.
+	extern __libgui void updateObjectsTable(QTableView *tab_view, const std::vector<attribs_map> &attribs);
 
 	/*! \brief Opens an instance of QFileDialog with the provided attributes.
 	 *  The method returns the files/directories selected by the user in the dialog */

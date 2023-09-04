@@ -24,15 +24,22 @@
 #include "permission.h"
 #include "baserelationship.h"
 
-ObjectsListModel::ObjectsListModel(const std::vector<BaseObject *> &list, const QString &search_attr, QObject *parent) : QAbstractTableModel(parent)
+ObjectsListModel::ObjectsListModel(const std::vector<BaseObject *> &obj_list, const QString &search_attr, QObject *parent) : QAbstractTableModel(parent)
 {
 	col_count = search_attr.isEmpty() ? 5 : 6;
-	row_count = list.size();
+	row_count = obj_list.size();
+	insertColumns(0, col_count);
+	insertRows(0, row_count);	
+	fillModel(obj_list, search_attr);
+}
 
+ObjectsListModel::ObjectsListModel(const std::vector<attribs_map> &attr_list, QObject* parent) : QAbstractTableModel(parent)
+{
+	col_count = 5;
+	row_count = attr_list.size();
 	insertColumns(0, col_count);
 	insertRows(0, row_count);
-
-	fillModel(list, search_attr);
+	fillModel(attr_list);
 }
 
 int ObjectsListModel::rowCount(const QModelIndex &) const
@@ -67,7 +74,15 @@ QVariant ObjectsListModel::getItemData(const ItemData &item_dt, int role) const
 		return QColor(item_dt.bg_color);
 
 	if(role == Qt::UserRole)
-		return QVariant::fromValue<void *>(reinterpret_cast<void *>(item_dt.data));
+	{
+		if(item_dt.object)
+			return QVariant::fromValue<void *>(reinterpret_cast<void *>(item_dt.object));
+
+		if(item_dt.obj_type != ObjectType::BaseObject)
+			return QVariant::fromValue<ObjectType>(item_dt.obj_type);
+
+		return item_dt.text;
+	}
 
 	if(role == Qt::FontRole)
 	{
@@ -89,7 +104,7 @@ QVariant ObjectsListModel::getItemData(const ItemData &item_dt, int role) const
 	return QVariant();
 }
 
-void ObjectsListModel::fillModel(const std::vector<BaseObject*>& list, const QString& search_attr)
+void ObjectsListModel::fillModel(const std::vector<BaseObject*>& obj_list, const QString& search_attr)
 {
 	QStyle *style = qApp->style();
 	int	lf_cnt = 0,
@@ -137,7 +152,7 @@ void ObjectsListModel::fillModel(const std::vector<BaseObject*>& list, const QSt
 	ObjectType obj_type;
 	int sub_type = -1;
 
-	for(auto &obj : list)
+	for(auto &obj : obj_list)
 	{
 		sub_type = -1;
 		obj_type = obj->getObjectType();
@@ -148,12 +163,12 @@ void ObjectsListModel::fillModel(const std::vector<BaseObject*>& list, const QSt
 		else if(obj_type == ObjectType::Constraint)
 			sub_type = dynamic_cast<Constraint *>(obj)->getConstraintType().getTypeId();
 
-						//First column: Object name
+		//First column: Object name
 		item_dt.clear();
 		item_dt.text = obj->getName();
 		item_dt.sz_hint = fm.boundingRect(item_dt.text).size() + QSize(h_margin, v_margin);
 		item_dt.icon = GuiUtilsNs::getIconPath(obj_type, sub_type);
-		item_dt.data = obj;
+		item_dt.object = obj;
 
 		if(obj->isProtected() || obj->isSystemObject())
 		{
@@ -173,6 +188,7 @@ void ObjectsListModel::fillModel(const std::vector<BaseObject*>& list, const QSt
 		//Second column: Object type
 		item_dt.clear();
 		item_dt.text = obj->getTypeName();
+		item_dt.obj_type = obj ? obj->getObjectType() : ObjectType::BaseObject;
 		item_dt.sz_hint = fm.boundingRect(item_dt.text).size() + QSize(h_margin_no_ico, v_margin);
 		item_dt.italic = true;
 		item_data.append(item_dt);
@@ -196,8 +212,9 @@ void ObjectsListModel::fillModel(const std::vector<BaseObject*>& list, const QSt
 			parent_obj = obj->getDatabase();
 
 		item_dt.text = parent_obj ? parent_obj->getName() : "-";
+		item_dt.obj_type = parent_obj ? parent_obj->getObjectType() : ObjectType::BaseObject;
 		item_dt.sz_hint = fm.boundingRect(item_dt.text).size() + QSize(h_margin, v_margin);
-		item_dt.data = parent_obj;
+		item_dt.object = parent_obj;
 
 		if(parent_obj)
 		{
@@ -215,6 +232,7 @@ void ObjectsListModel::fillModel(const std::vector<BaseObject*>& list, const QSt
 		//Fifth column: Parent object type
 		item_dt.clear();
 		item_dt.text = parent_obj ? parent_obj->getTypeName() : "-";
+		item_dt.obj_type = parent_obj ? parent_obj->getObjectType() : ObjectType::BaseObject;
 		item_dt.sz_hint = fm.boundingRect(item_dt.text).size() + QSize(h_margin_no_ico, v_margin);
 		item_dt.italic = true;
 		item_data.append(item_dt);
@@ -240,6 +258,91 @@ void ObjectsListModel::fillModel(const std::vector<BaseObject*>& list, const QSt
 			item_dt.sz_hint = sz;
 			item_data.append(item_dt);
 		}
+	}
+}
+
+void ObjectsListModel::fillModel(const std::vector<attribs_map> &attr_list)
+{
+	QStyle *style = qApp->style();
+	int	lf_cnt = 0,
+
+			// Item's horizontal margin without icon
+			h_margin_no_ico = (style->pixelMetric(QStyle::PM_HeaderMargin) * 2) +
+												style->pixelMetric(QStyle::PM_HeaderGripMargin) +
+												style->pixelMetric(QStyle::PM_HeaderMarkSize),
+
+			// Item's horizontal margin with icon
+			h_margin = h_margin_no_ico + style->pixelMetric(QStyle::PM_SmallIconSize),
+
+			// Item's vertical margin without icon
+			v_margin = style->pixelMetric(QStyle::PM_HeaderMargin) * 2;
+
+	QSize sz;
+	QFont fnt;
+	QFontMetrics fm(fnt);
+	ItemData header_dt;
+	QStringList header_texts = { tr("Object"), tr("Type"), tr("ID"),
+															 tr("Parent"), tr("Parent type") },
+
+			header_icons = { "objects", "usertype", "typeoid", "schema", "usertype" };
+
+	// Configuring the reader items
+	for(int col = 0; col < col_count; col++)
+	{
+		header_dt.text = header_texts[col];
+		header_dt.icon = GuiUtilsNs::getIconPath(header_icons[col]);
+		header_dt.sz_hint = fm.boundingRect(header_dt.text).size() + QSize(h_margin, v_margin);
+		header_data.append(header_dt);
+		header_dt.clear();
+	}
+
+	ItemData item_dt;
+	attribs_map search_attribs;
+	ObjectType obj_type, parent_type;
+
+	for(auto &attribs : attr_list)
+	{
+		obj_type = static_cast<ObjectType>(attribs.at(Attributes::ObjectType).toUInt());
+
+		//First column: Object name
+		item_dt.clear();
+		item_dt.text = attribs.at(Attributes::Name);
+		item_dt.sz_hint = fm.boundingRect(item_dt.text).size() + QSize(h_margin, v_margin);
+		item_dt.icon = GuiUtilsNs::getIconPath(obj_type);
+		item_data.append(item_dt);
+
+		//Second column: Object type
+		item_dt.clear();
+		item_dt.text = BaseObject::getTypeName(obj_type);
+		item_dt.obj_type = obj_type;
+		item_dt.sz_hint = fm.boundingRect(item_dt.text).size() + QSize(h_margin_no_ico, v_margin);
+		item_dt.italic = true;
+		item_data.append(item_dt);
+
+		//Third column: Object id
+		item_dt.clear();
+		item_dt.text = attribs.at(Attributes::Oid);
+		item_dt.sz_hint = fm.boundingRect(item_dt.text).size() + QSize(h_margin_no_ico, v_margin);
+		item_data.append(item_dt);
+
+		//Fourth column: Parent object name
+		item_dt.clear();
+		parent_type = BaseObject::getObjectType(attribs.at(Attributes::ParentType));
+		item_dt.text = parent_type != ObjectType::BaseObject ? attribs.at(Attributes::Parent) : "-";
+		item_dt.sz_hint = fm.boundingRect(item_dt.text).size() + QSize(h_margin, v_margin);
+
+		if(parent_type != ObjectType::BaseObject)
+			item_dt.icon = GuiUtilsNs::getIconPath(parent_type);
+
+		item_data.append(item_dt);
+
+		//Fifth column: Parent object type
+		item_dt.clear();
+		item_dt.text = parent_type != ObjectType::BaseObject ? BaseObject::getTypeName(parent_type) : "-";
+		item_dt.obj_type = parent_type;
+		item_dt.sz_hint = fm.boundingRect(item_dt.text).size() + QSize(h_margin_no_ico, v_margin);
+		item_dt.italic = true;
+		item_data.append(item_dt);
 	}
 }
 
