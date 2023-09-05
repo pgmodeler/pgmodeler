@@ -623,7 +623,6 @@ void ObjectsScene::setLockDelimiterScale(bool lock, double curr_scale)
 		delimiter_scale = 1;
 
 	lock_delim_scale = lock;
-	//setGridSize(grid_size);
 }
 
 bool ObjectsScene::isDelimiterScaleLocked()
@@ -757,7 +756,9 @@ void ObjectsScene::drawBackground(QPainter *painter, const QRectF &rect)
 									BaseObjectView::getScreenDpiFactor();
 	QSizeF aux_size;
 	QPen pen = QPen(QColor(), pen_width);
-	int scene_lim_x = 0, scene_lim_y = 0;
+	int scene_lim_x = 0, scene_lim_y = 0,
+			start_x = 0, start_y = 0,
+			end_x = 0, end_y = 0;
 
 	// Retrieve the page rect considering the orientation, margin and page size
 	aux_size = page_layout.paintRect(QPageLayout::Point).size() * delim_factor;
@@ -771,20 +772,24 @@ void ObjectsScene::drawBackground(QPainter *painter, const QRectF &rect)
 	painter->setClipRect(rect);
 	painter->setRenderHint(QPainter::Antialiasing, false);
 	painter->setRenderHint(QPainter::TextAntialiasing, false);
-	//painter->fillRect(rect, canvas_color);
+
+	start_x = round(rect.left()/grid_size) * grid_size;
+	start_y = round(rect.top()/grid_size) * grid_size;
+	end_x = rect.right() < scene_w ? rect.right() : scene_w;
+	end_y = rect.bottom() < scene_h ? rect.bottom() : scene_h;
 
 	if(show_grid && !move_scene)
 	{
 		int px = 0, py = 0;
 
-		pen.setWidthF(pen_width *	(grid_pattern == GridPattern::DotPattern ? 1.50 : 1));
+		pen.setWidthF(pen_width *	(grid_pattern == GridPattern::DotPattern ? 1.65 : 1));
 		pen.setColor(grid_color);
 		painter->setPen(pen);
 
 		//Draws the grid
-		for(px = 0; px < scene_w; px += grid_size)
+		for(px = start_x; px <= end_x; px += grid_size)
 		{
-			for(py = 0; py < scene_h; py += grid_size)
+			for(py = start_y; py <= end_y; py += grid_size)
 			{
 				if(grid_pattern == GridPattern::SquarePattern)
 					painter->drawRect(QRectF(QPointF(px, py), QPointF(px + grid_size, py + grid_size)));
@@ -816,9 +821,9 @@ void ObjectsScene::drawBackground(QPainter *painter, const QRectF &rect)
 		pen.setDashPattern({3, 5});
 		painter->setPen(pen);
 
-		for(int px = 0; px < scene_w; px += page_w)
+		for(int px = 0; px < end_x; px += page_w)
 		{
-			for(int py = 0; py < scene_h; py += page_h)
+			for(int py = 0; py < end_y; py += page_h)
 			{
 				painter->drawLine(px + page_w, py, px + page_w, py + page_h);
 				painter->drawLine(px, py + page_h, px + page_w, py + page_h);

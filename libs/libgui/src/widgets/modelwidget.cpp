@@ -1734,7 +1734,8 @@ void ModelWidget::loadModel(const QString &filename)
 
 		#warning "Debug"
 		qint64 start = QDateTime::currentSecsSinceEpoch();
-		db_model->loadModel(filename);		
+
+		db_model->loadModel(filename);
 		this->filename=filename;
 		updateObjectsOpacity();
 		updateSceneLayers();
@@ -1747,7 +1748,6 @@ void ModelWidget::loadModel(const QString &filename)
 		#warning "Debug"
 		qint64 end = QDateTime::currentSecsSinceEpoch();
 		QTextStream out(stdout);
-
 		out << "Model loaded in " << QString::number(end - start) << "s" << Qt::endl;
 	}
 	catch(Exception &e)

@@ -30,6 +30,7 @@ also generates the SQL code definition to represente the table link on PostgreSQ
 #include "baserelationship.h"
 #include "table.h"
 #include "pgsqltypes/actiontype.h"
+#include <stack>
 
 /*
 ### Relationship implementation rules ###
@@ -222,6 +223,19 @@ class __libcore Relationship: public BaseRelationship {
 
 		//! \brief The partition bounding expression
 		QString part_bounding_expr;
+
+		std::stack<Column *> cols_stack;
+
+		std::stack<Constraint *> constrs_stack;
+
+		/*! \brief This method creates via "new" operator the object of the type Class, or, return an object from the
+		 * stack of discarded objects if available for reused */
+		template<class Class>
+		Class *createObject();
+
+		/*! \brief This method stores the object in a stack of discarded objects instead of using delete operator
+		 *  to free memory so the object can be resused the next time createObject() is called */
+		void discardObject(TableObject *object);
 
 		//! \brief Indicates if the column exists on the referenced column list
 		bool isColumnExists(Column *column);

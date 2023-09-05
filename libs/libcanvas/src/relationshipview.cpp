@@ -598,9 +598,6 @@ void RelationshipView::configureLine()
 	tab_hashes[src_tab] = base_rel->getTable(src_tab)->getHashCode();
 	tab_hashes[dst_tab] = base_rel->getTable(dst_tab)->getHashCode();
 
-	QTextStream out(stdout);
-	out << "Rendering: " << base_rel->getSignature() << " (relationship)" << Qt::endl;
-
 	//Reconnect the tables is the placeholder usage changes
 	if(using_placeholders!=BaseObjectView::isPlaceholderEnabled())
 	{

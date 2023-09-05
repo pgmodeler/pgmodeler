@@ -1705,8 +1705,8 @@ void DatabaseModel::validateRelationships()
 	if(!hasInvalidRelatioships())
 		return;
 
-	QTextStream out(stdout);
-	out << "Start rel. validation" << Qt::endl;
+	if(!loading_model)
+		BaseGraphicObject::setUpdatesEnabled(false);
 
 	//Stores the special objects definition if there is some invalidated relationships
 	if(!loading_model && xml_special_objs.empty())
@@ -1798,15 +1798,17 @@ void DatabaseModel::validateRelationships()
 			if(base_rel->getRelationshipType() == BaseRelationship::RelationshipFk)
 				this->updateTableFKRelationships(dynamic_cast<Table *>(base_rel->getTable(BaseRelationship::SrcTable)));
 		}
-
-		//Set all the model objects as modified to force the redraw of the entire model
-		setObjectsModified();
-
-		//Redirects all the errors captured on the revalidation
-		throw Exception(ErrorCode::RemInvalidatedObjects,__PRETTY_FUNCTION__,__FILE__,__LINE__, errors);
 	}
 
-	out << "End rel. validation" << Qt::endl;
+	if(!loading_model)
+	{
+		//Set all the model objects as modified to force the redraw of the entire model
+		BaseGraphicObject::setUpdatesEnabled(true);
+		setObjectsModified();
+	}
+
+	if(!errors.empty())
+		throw Exception(ErrorCode::RemInvalidatedObjects,__PRETTY_FUNCTION__,__FILE__,__LINE__, errors);
 }
 
 void DatabaseModel::checkRelationshipRedundancy(Relationship *rel)

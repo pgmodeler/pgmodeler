@@ -29,11 +29,11 @@ void TableView::configureObject()
 	PhysicalTable *table = dynamic_cast<PhysicalTable *>(this->getUnderlyingObject());
 
 	if(!BaseGraphicObject::isUpdatesEnabled() ||
-			(!pending_geom_update && !curr_hash_code.isEmpty() && curr_hash_code == table->getHashCode()))
+			(!pending_geom_update &&
+			 !curr_hash_code.isEmpty() &&
+			 (curr_hash_code == table->getHashCode())))
 		return;
 
-	QTextStream out(stdout);
-	out << "Rendering: " << table->getSignature() << "(table)" << Qt::endl;
 	curr_hash_code = table->getHashCode();
 
 	/* If the table isn't visible we abort the current configuration

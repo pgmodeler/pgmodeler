@@ -124,9 +124,6 @@ void BaseTable::generateHashCode()
 	if(!isModified())
 		return;
 
-	QTextStream out(stdout);
-	out << "Generate hash: " << getSignature() << Qt::endl;
-
 	QString buf;
 	QStringList tab_obj_names;
 	QCryptographicHash hash_gen(QCryptographicHash::Md5);
@@ -134,10 +131,7 @@ void BaseTable::generateHashCode()
 	buf.append(obj_name);
 
 	for(auto &obj : getObjects())
-		tab_obj_names.append(obj->getName());
-
-	tab_obj_names.sort();
-	buf.append(tab_obj_names.join(' '));
+		buf.append(obj->getName());
 
 	buf.append(tag ? tag->getName() : "");
 	buf.append(schema ? schema->getName() : "");
@@ -150,9 +144,6 @@ void BaseTable::generateHashCode()
 
 	hash_gen.addData(buf.toUtf8());
 	hash_code = hash_gen.result().toHex();
-
-	out << "Hash: " << hash_code << Qt::endl;
-	out << "---" << Qt::endl;
 }
 
 void BaseTable::setCollapseMode(CollapseMode coll_mode)

@@ -37,8 +37,6 @@ void GraphicalView::configureObject()
 			(!pending_geom_update && !curr_hash_code.isEmpty() && curr_hash_code == view->getHashCode()))
 		return;
 
-	QTextStream out(stdout);
-	out << "Rendering: " << view->getSignature() << "(view)" << Qt::endl;
 	curr_hash_code = view->getHashCode();
 
 	/* If the table isn't visible we abort the current configuration

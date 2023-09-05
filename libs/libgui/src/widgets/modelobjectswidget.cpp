@@ -379,10 +379,6 @@ void ModelObjectsWidget::filterObjects()
 
 void ModelObjectsWidget::updateObjectsView()
 {
-	#warning "Performance bottleneck here!"
-	#warning "Change objectslist_tbw from QTableWidget to QTableView!"
-	#warning "Change objectslist_trw from QTreeWidget to QTreeView!"
-
 	selected_objs.clear();
 	updateDatabaseTree();
 
