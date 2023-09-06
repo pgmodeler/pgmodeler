@@ -28,6 +28,8 @@
 #include "objectstablewidget.h"
 #include "generalconfigwidget.h"
 #include "appearanceconfigwidget.h"
+#include "objectslistmodel.h"
+#include "customsortproxymodel.h"
 
 namespace GuiUtilsNs {
 
@@ -326,9 +328,50 @@ namespace GuiUtilsNs {
 		return QString(":/icons/icons/%1.png").arg(icon);
 	}
 
-	QString getIconPath(ObjectType obj_type)
+	QString getIconPath(ObjectType obj_type, int sub_type)
 	{
-		return getIconPath(BaseObject::getSchemaName(obj_type));
+		QString suffix;
+
+		if(sub_type >= 0)
+		{
+			if(obj_type == ObjectType::BaseRelationship || obj_type == ObjectType::Relationship)
+			{
+				BaseRelationship::RelType rel_type = static_cast<BaseRelationship::RelType>(sub_type);
+
+				if(obj_type == ObjectType::BaseRelationship)
+				{
+					if(rel_type==BaseRelationship::RelationshipFk)
+						suffix = "fk";
+					else
+						suffix = "tv";
+				}
+				else if(rel_type == BaseRelationship::Relationship11)
+					suffix = "11";
+				else if(rel_type == BaseRelationship::Relationship1n)
+					suffix = "1n";
+				else if(rel_type == BaseRelationship::RelationshipNn)
+					suffix = "nn";
+				else if(rel_type == BaseRelationship::RelationshipDep)
+					suffix = "dep";
+				else if(rel_type == BaseRelationship::RelationshipGen)
+					suffix = "gen";
+			}
+			else if(obj_type==ObjectType::Constraint)
+			{
+				if(sub_type == ConstraintType::PrimaryKey)
+					suffix = QString("_%1").arg(TableObjectView::TextPrimaryKey);
+				else if(sub_type == ConstraintType::ForeignKey)
+					suffix = QString("_%1").arg(TableObjectView::TextForeignKey);
+				else if(sub_type == ConstraintType::Check)
+					suffix = QString("_%1").arg(TableObjectView::TextCheck);
+				else if(sub_type == ConstraintType::Unique)
+					suffix = QString("_%1").arg(TableObjectView::TextUnique);
+				else if(sub_type == ConstraintType::Exclude)
+					suffix = QString("_%1").arg(TableObjectView::TextExclude);
+			}
+		}
+
+		return getIconPath(BaseObject::getSchemaName(obj_type) + suffix);
 	}
 
 	void resizeDialog(QWidget *widget)
@@ -482,154 +525,68 @@ namespace GuiUtilsNs {
 		handleFileDialogSatate(file_dlg, false);
 	}
 
-	void updateObjectTable(QTableWidget *tab_wgt, std::vector<BaseObject *> &objs, const QString &search_attr, bool checkable_items)
+	void updateObjectsTable(QTableView *table_vw, const std::vector<BaseObject *> &objects, const QString &search_attr)
 	{
-		if(!tab_wgt || tab_wgt->columnCount() == 0)
+		if(!table_vw)
 			return;
 
-		unsigned lin_idx = 0;
-		QTableWidgetItem *tab_item=nullptr;
-		BaseObject *parent_obj=nullptr;
-		QFont fnt;
-		QString str_aux;
-		bool new_row = false;
-
-		tab_wgt->setUpdatesEnabled(false);
-		tab_wgt->setSortingEnabled(false);
-
-		for(auto &obj : objs)
+		// Scheduling the destruction of the current table view model
+		if(table_vw->model())
 		{
-			if(obj->getObjectType()==ObjectType::BaseRelationship)
-				str_aux = "tv";
-			else
-				str_aux.clear();
-
-			new_row = false;
-
-			if(static_cast<int>(lin_idx) >= tab_wgt->rowCount())
-			{
-				tab_wgt->insertRow(lin_idx);
-				new_row = true;
-			}
-
-			//First column: Object name
-			tab_item=(new_row ? new QTableWidgetItem : tab_wgt->item(lin_idx, 0));
-			tab_item->setData(Qt::UserRole, QVariant::fromValue<void *>(reinterpret_cast<void *>(obj)));
-			fnt=tab_item->font();
-
-			tab_item->setText(obj->getName());
-			tab_item->setIcon(QIcon(GuiUtilsNs::getIconPath(BaseObject::getSchemaName(obj->getObjectType()) + str_aux)));
-			if(new_row) tab_wgt->setItem(lin_idx, 0, tab_item);
-			if(checkable_items)	tab_item->setCheckState(Qt::Checked);
-
-			if(obj->isProtected() || obj->isSystemObject())
-			{
-				fnt.setItalic(true);
-				tab_item->setForeground(ObjectsTableWidget::getTableItemColor(ObjectsTableWidget::ProtItemAltFgColor));
-			}
-			else if(dynamic_cast<TableObject *>(obj) &&
-					dynamic_cast<TableObject *>(obj)->isAddedByRelationship())
-			{
-				fnt.setItalic(true);
-				tab_item->setForeground(ObjectsTableWidget::getTableItemColor(ObjectsTableWidget::RelAddedItemAltFgColor));
-			}
-			else
-				fnt.setItalic(false);
-
-			fnt.setStrikeOut(obj->isSQLDisabled() && !obj->isSystemObject());
-			tab_item->setFont(fnt);
-			fnt.setStrikeOut(false);
-
-			//Second column: Object type
-			if(tab_wgt->columnCount() > 1)
-			{
-				fnt.setItalic(true);
-				tab_item=(new_row ? new QTableWidgetItem : tab_wgt->item(lin_idx, 1));
-				tab_item->setFont(fnt);
-				tab_item->setText(obj->getTypeName());
-				if(new_row) tab_wgt->setItem(lin_idx, 1, tab_item);
-			}
-
-			//Third column: Object id
-			if(tab_wgt->columnCount() > 2)
-			{
-				tab_item=(new_row ? new QTableWidgetItem : tab_wgt->item(lin_idx, 2));
-				tab_item->setText(QString::number(obj->getObjectId()));
-				if(new_row) tab_wgt->setItem(lin_idx, 2, tab_item);
-			}
-
-			//Fourth column: Parent object name
-			if(tab_wgt->columnCount() > 3)
-			{
-				tab_item=(new_row ? new QTableWidgetItem : tab_wgt->item(lin_idx, 3));
-
-				if(dynamic_cast<TableObject *>(obj))
-					parent_obj=dynamic_cast<TableObject *>(obj)->getParentTable();
-				else if(obj->getSchema())
-					parent_obj=obj->getSchema();
-				else if(dynamic_cast<Permission *>(obj))
-					parent_obj=dynamic_cast<Permission *>(obj)->getObject();
-				else
-					parent_obj=obj->getDatabase();
-
-				tab_item->setText(parent_obj ? parent_obj->getName() : "-");
-				tab_item->setData(Qt::UserRole, QVariant::fromValue<void *>(reinterpret_cast<void *>(parent_obj)));
-				if(new_row) tab_wgt->setItem(lin_idx, 3, tab_item);
-
-				if(parent_obj)
-				{
-					if(parent_obj->isProtected() || parent_obj->isSystemObject())
-					{
-						fnt.setItalic(true);
-						tab_item->setForeground(ObjectsTableWidget::getTableItemColor(ObjectsTableWidget::ProtItemAltFgColor));
-					}
-					else
-						fnt.setItalic(false);
-
-					tab_item->setFont(fnt);
-					tab_item->setIcon(QIcon(GuiUtilsNs::getIconPath(parent_obj->getObjectType())));
-				}
-			}
-
-			//Fifth column: Parent object type
-			if(tab_wgt->columnCount() > 4)
-			{
-				tab_item=(new_row ? new QTableWidgetItem : tab_wgt->item(lin_idx, 4));
-				fnt.setItalic(true);
-				tab_item->setFont(fnt);
-				tab_item->setText(parent_obj ? parent_obj->getTypeName() : "-");
-				if(new_row) tab_wgt->setItem(lin_idx, 4, tab_item);
-			}
-
-			//Sixth column: object comment
-			if(tab_wgt->columnCount() > 5)
-			{
-				attribs_map search_attribs = obj->getSearchAttributes();
-				tab_item=(new_row ? new QTableWidgetItem : tab_wgt->item(lin_idx, 5));
-				fnt.setItalic(false);
-				tab_item->setFont(fnt);
-
-				if(search_attr != Attributes::Name &&
-					 search_attr != Attributes::Schema &&
-					 search_attr != Attributes::Comment)
-					tab_item->setText(search_attribs[search_attr]);
-				else
-					tab_item->setText(obj->getComment());
-
-				if(new_row) tab_wgt->setItem(lin_idx, 5, tab_item);
-			}
-
-			lin_idx++;
+			table_vw->model()->deleteLater();
+			table_vw->setModel(nullptr);
 		}
 
-		if(static_cast<int>(objs.size()) != tab_wgt->rowCount())
-			tab_wgt->setRowCount(objs.size());
+		if(objects.empty())
+			return;
 
-		tab_wgt->setUpdatesEnabled(true);
-		tab_wgt->setSortingEnabled(true);
-		tab_wgt->resizeColumnsToContents();
+		table_vw->setUpdatesEnabled(false);
+		table_vw->setSortingEnabled(false);
 
-		tab_wgt->resizeRowsToContents();
+		// Create a proxy model for sorting purposes
+		CustomSortProxyModel *proxy_model = new CustomSortProxyModel(table_vw);
+		ObjectsListModel *model = new ObjectsListModel(objects, search_attr, proxy_model);
+
+		proxy_model->setSourceModel(model);
+		table_vw->setModel(proxy_model);
+
+		table_vw->resizeColumnsToContents();
+		table_vw->resizeRowsToContents();
+		table_vw->sortByColumn(0, Qt::AscendingOrder);
+		table_vw->setUpdatesEnabled(true);
+		table_vw->setSortingEnabled(true);
+	}
+
+	void updateObjectsTable(QTableView *table_vw, const std::vector<attribs_map> &attribs)
+	{
+		if(!table_vw)
+			return;
+
+		// Scheduling the destruction of the current table view model
+		if(table_vw->model())
+		{
+			table_vw->model()->deleteLater();
+			table_vw->setModel(nullptr);
+		}
+
+		if(attribs.empty())
+			return;
+
+		table_vw->setUpdatesEnabled(false);
+		table_vw->setSortingEnabled(false);
+
+		// Create a proxy model for sorting purposes
+		CustomSortProxyModel *proxy_model = new CustomSortProxyModel(table_vw);
+		ObjectsListModel *model = new ObjectsListModel(attribs, proxy_model);
+
+		proxy_model->setSourceModel(model);
+		table_vw->setModel(proxy_model);
+
+		table_vw->resizeColumnsToContents();
+		table_vw->resizeRowsToContents();
+		table_vw->sortByColumn(0, Qt::AscendingOrder);
+		table_vw->setUpdatesEnabled(true);
+		table_vw->setSortingEnabled(true);
 	}
 
 	QStringList selectFiles(const QString &title, QFileDialog::FileMode file_mode, QFileDialog::AcceptMode accept_mode,

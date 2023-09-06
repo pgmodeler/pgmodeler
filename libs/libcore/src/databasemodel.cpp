@@ -1701,10 +1701,12 @@ void DatabaseModel::validateRelationships()
 	std::vector<Exception> errors;
 	std::map<Relationship *, Exception> rel_errors;
 	std::vector<Relationship *> failed_rels;
-	std::vector<BaseTable *> tabs;
 
 	if(!hasInvalidRelatioships())
 		return;
+
+	if(!loading_model)
+		BaseGraphicObject::setUpdatesEnabled(false);
 
 	//Stores the special objects definition if there is some invalidated relationships
 	if(!loading_model && xml_special_objs.empty())
@@ -1722,11 +1724,6 @@ void DatabaseModel::validateRelationships()
 			rel->blockSignals(true);
 			rel->connectRelationship();
 			rel->blockSignals(false);
-
-			/* Storing the tables here in an auxiliary list so we can
-			 * update their geometry and their parent schemas rectangles */
-			tabs.push_back(rel->getTable(Relationship::SrcTable));
-			tabs.push_back(rel->getTable(Relationship::DstTable));
 		}
 		catch(Exception &)
 		{
@@ -1775,30 +1772,6 @@ void DatabaseModel::validateRelationships()
 	//Recreating the special objects that depends on the columns created by relationshps
 	errors = createSpecialObjects();
 
-	if(!loading_model && !schemas.empty())
-	{
-		std::vector<Schema *> schs;
-
-		std::sort(tabs.begin(), tabs.end());
-		auto tab_end = std::unique(tabs.begin(), tabs.end());
-		tabs.erase(tab_end, tabs.end());
-
-		// Updating the tables to reflect their sizes due to the creationg of new columns/constraints
-		for(auto &tab : tabs)
-		{
-			tab->setModified(true);
-			schs.push_back(dynamic_cast<Schema *>(tab->getSchema()));
-		}
-
-		std::sort(schs.begin(), schs.end());
-		auto sch_end = std::unique(schs.begin(), schs.end());
-		schs.erase(sch_end, schs.end());
-
-		//Updates the schemas to ajdust its sizes due to the tables resizings
-		for(auto &sch : schs)
-			sch->setModified(true);
-	}
-
 	if(!loading_model)
 	{
 		for(auto &tab : tables)
@@ -1825,13 +1798,17 @@ void DatabaseModel::validateRelationships()
 			if(base_rel->getRelationshipType() == BaseRelationship::RelationshipFk)
 				this->updateTableFKRelationships(dynamic_cast<Table *>(base_rel->getTable(BaseRelationship::SrcTable)));
 		}
-
-		//Set all the model objects as modified to force the redraw of the entire model
-		setObjectsModified();
-
-		//Redirects all the errors captured on the revalidation
-		throw Exception(ErrorCode::RemInvalidatedObjects,__PRETTY_FUNCTION__,__FILE__,__LINE__, errors);
 	}
+
+	if(!loading_model)
+	{
+		//Set all the model objects as modified to force the redraw of the entire model
+		BaseGraphicObject::setUpdatesEnabled(true);
+		setObjectsModified();
+	}
+
+	if(!errors.empty())
+		throw Exception(ErrorCode::RemInvalidatedObjects,__PRETTY_FUNCTION__,__FILE__,__LINE__, errors);
 }
 
 void DatabaseModel::checkRelationshipRedundancy(Relationship *rel)
@@ -10680,6 +10657,7 @@ std::vector<BaseObject *> DatabaseModel::findObjects(const QStringList &filters,
 	QStringList values, modes = { UtilsNs::FilterWildcard, UtilsNs::FilterRegExp };
 	ObjectType obj_type;
 	bool exact_match = false;
+	std::vector<ObjectType> types;
 
 	for(auto &filter : filters)
 	{
@@ -10698,13 +10676,24 @@ std::vector<BaseObject *> DatabaseModel::findObjects(const QStringList &filters,
 		exact_match = (mode == UtilsNs::FilterWildcard && !pattern.contains(UtilsNs::WildcardChar));
 
 		// Raises an error if the filter has an invalid object type, pattern or mode
-		if(obj_type == ObjectType::BaseObject || pattern.isEmpty() || !modes.contains(mode))
+		if((values[0] != Attributes::Any && obj_type == ObjectType::BaseObject) ||
+				pattern.isEmpty() || !modes.contains(mode))
 		{
 			throw Exception(Exception::getErrorMessage(ErrorCode::InvalidObjectFilter).arg(filter).arg(modes.join('|')),
 											ErrorCode::InvalidObjectFilter,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		}
 
-		aux_objs = findObjects(pattern, { obj_type }, false, mode == UtilsNs::FilterRegExp, exact_match, search_attr);
+		// If we use the "any" filter key word all object types will be retrieved
+		types.clear();
+
+		if(obj_type == ObjectType::BaseObject)
+			types = BaseObject::getObjectTypes(true, { ObjectType::BaseRelationship, ObjectType::Textbox,
+																								ObjectType::Tag, ObjectType::GenericSql, ObjectType::Database });
+		else
+			types.push_back(obj_type);
+
+		aux_objs = findObjects(pattern, types, false,
+													 mode == UtilsNs::FilterRegExp, exact_match, search_attr);
 		objects.insert(objects.end(), aux_objs.begin(), aux_objs.end());
 	}
 

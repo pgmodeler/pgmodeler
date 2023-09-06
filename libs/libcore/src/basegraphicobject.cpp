@@ -102,7 +102,7 @@ void BaseGraphicObject::setPositionAttribute()
 	attributes[Attributes::Position]=schparser.getSourceCode(Attributes::Position, attributes, SchemaParser::XmlCode);
 }
 
-void  BaseGraphicObject::setPosition(QPointF pos)
+void  BaseGraphicObject::setPosition(const QPointF &pos)
 {
 	setCodeInvalidated(position != pos);
 	position=pos;

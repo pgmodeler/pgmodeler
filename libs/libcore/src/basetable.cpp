@@ -17,6 +17,7 @@
 */
 
 #include "basetable.h"
+#include <QCryptographicHash>
 
 BaseTable::BaseTable()
 {
@@ -32,6 +33,12 @@ BaseTable::BaseTable()
 	pagination_enabled = false;
 	collapse_mode = CollapseMode::NotCollapsed;
 	resetCurrentPages();
+}
+
+void BaseTable::setCodeInvalidated(bool value)
+{
+	BaseGraphicObject::setCodeInvalidated(value);
+	hash_code = "";
 }
 
 void BaseTable::resetCurrentPages()
@@ -112,6 +119,33 @@ unsigned BaseTable::getCurrentPage(TableSection section_id)
 	return curr_page[section_id];
 }
 
+void BaseTable::generateHashCode()
+{
+	if(!isModified())
+		return;
+
+	QString buf;
+	QStringList tab_obj_names;
+	QCryptographicHash hash_gen(QCryptographicHash::Md5);
+
+	buf.append(obj_name);
+
+	for(auto &obj : getObjects())
+		buf.append(obj->getName());
+
+	buf.append(tag ? tag->getName() : "");
+	buf.append(schema ? schema->getName() : "");
+	buf.append(QString::number(collapse_mode));
+	buf.append(QString::number(static_cast<int>(pagination_enabled)));
+	buf.append(QString::number(curr_page[0]));
+	buf.append(QString::number(curr_page[1]));
+	buf.append(QString::number(getPosition().x()));
+	buf.append(QString::number(getPosition().y()));
+
+	hash_gen.addData(buf.toUtf8());
+	hash_code = hash_gen.result().toHex();
+}
+
 void BaseTable::setCollapseMode(CollapseMode coll_mode)
 {
 	setCodeInvalidated(collapse_mode != coll_mode);
@@ -122,4 +156,21 @@ void BaseTable::setZValue(int z_value)
 {
 	setCodeInvalidated(this->z_value != z_value);
 	BaseGraphicObject::setZValue(z_value);
+}
+
+QString BaseTable::getHashCode()
+{
+	return hash_code;
+}
+
+void BaseTable::setModified(bool value)
+{
+	BaseGraphicObject::setModified(value);
+	generateHashCode();
+}
+
+void BaseTable::setPosition(const QPointF &pos)
+{
+	BaseGraphicObject::setPosition(pos);
+	hash_code = "";
 }

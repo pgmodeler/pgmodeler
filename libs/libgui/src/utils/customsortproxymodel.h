@@ -18,34 +18,24 @@
 
 /**
 \ingroup libgui
-\class ObjectDepsRefsWidget
-\brief Implements the form to show the object's dependeces and references
+\class CustomSortProxyModel
+\brief Implements a custom sort/filter proxy model that preserves the vertical headers numbers order.
 */
 
-#ifndef OBJECT_DEPS_REFS_WIDGET_H
-#define OBJECT_DEPS_REFS_WIDGET_H
+#ifndef CUSTOM_SORT_PROXY_MODEL_H
+#define CUSTOM_SORT_PROXY_MODEL_H
 
-#include "ui_objectdepsrefswidget.h"
-#include "dbobjects/baseobjectwidget.h"
+#include "guiglobal.h"
+#include <QSortFilterProxyModel>
 
-class __libgui ObjectDepsRefsWidget: public BaseObjectWidget, public Ui::ObjectDepsRefsWidget {
+class __libgui CustomSortProxyModel: public QSortFilterProxyModel {
 	private:
 		Q_OBJECT
 
-		ModelWidget *model_wgt;
-
-		void setAttributes(DatabaseModel *model, BaseObject *object, BaseObject *parent_obj);
-
 	public:
-		ObjectDepsRefsWidget(QWidget * parent = nullptr);
-		void setAttributes(ModelWidget *model_wgt, BaseObject *object, BaseObject *parent_obj=nullptr);
+		CustomSortProxyModel(QObject *parent = nullptr);
 
-	public slots:
-		void applyConfiguration();
-
-	private slots:
-		void updateObjectTables();
-		void handleItemSelection(const QModelIndex &index);
+		virtual QVariant headerData(int section, Qt::Orientation orientation, int role) const;
 };
 
 #endif

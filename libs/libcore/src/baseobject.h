@@ -174,6 +174,11 @@ class __libcore BaseObject {
 		 and others operations that envolves object type name */
 		static const QString obj_type_names[ObjectTypeCount];
 
+		//! \brief This map stores the translate human readable names of each search attribute use by the object
+		static const attribs_map search_attribs_i18n;
+
+		static const QStringList search_attribs_names;
+
 		/*! \brief Role that is owner of the object. Some objects cannot be associated to a role
 		 so if one is assigned to the object an error will be raised */
 		BaseObject *owner;
@@ -467,6 +472,9 @@ class __libcore BaseObject {
 		//! \brief Returns if the specified type accepts an alias (friendly name)
 		static bool acceptsAlias(ObjectType obj_type);
 
+		//! \brief Returns if the specified type accepts comment
+		static bool acceptsComment(ObjectType obj_type);
+
 		//! \brief Returns if the object accepts to have a schema assigned
 		bool acceptsSchema();
 
@@ -487,6 +495,12 @@ class __libcore BaseObject {
 
 		//! \brief Returns if the object accepts the use of DROP commands
 		bool acceptsDropCommand();
+
+		//! \brief Returns if the object accepts the use of alias
+		bool acceptsAlias();
+
+		//! \brief Returns if the object accepts comment
+		bool acceptsComment();
 
 		/*! \brief Marks the current cached code as invalid and forces its regenaration.
 				Some key attributes / setters in the base classes BaseObject, BaseTable and BaseRelationship
@@ -536,6 +550,11 @@ class __libcore BaseObject {
 
 		//! \brief Indicates if the database version is ignored in the code generation
 		static bool isDbVersionIgnored();
+
+		//! \brief Returns the translated human readable search attribute name
+		static QString getSearchAttributeI18N(const QString &search_attr);
+
+		static QStringList getSearchAttributesNames();
 
 		friend class DatabaseModel;
 		friend class ModelValidationHelper;

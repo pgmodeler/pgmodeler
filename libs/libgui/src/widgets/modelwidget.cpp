@@ -1732,7 +1732,7 @@ void ModelWidget::loadModel(const QString &filename)
 		task_prog_wgt.setWindowTitle(tr("Loading database model"));
 		task_prog_wgt.show();
 
-		db_model->loadModel(filename);		
+		db_model->loadModel(filename);
 		this->filename=filename;
 		updateObjectsOpacity();
 		updateSceneLayers();

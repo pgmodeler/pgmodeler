@@ -87,6 +87,7 @@ class __libcore BaseGraphicObject: public QObject, public BaseObject {
 		MinZValue = -50;
 
 		BaseGraphicObject();
+
 		~BaseGraphicObject(void){}
 
 		/*! \brief Sets whether the object is protected or not (method overloading
@@ -100,7 +101,7 @@ class __libcore BaseGraphicObject: public QObject, public BaseObject {
 		virtual void setSystemObject(bool value);
 
 		//! \brief Sets the object's position
-		void setPosition(QPointF pos);
+		virtual void setPosition(const QPointF &pos);
 
 		/*! \brief Sets if the objects is modified or not.
 		 This method emits the signal s_objectModified() */

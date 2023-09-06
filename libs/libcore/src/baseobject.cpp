@@ -72,6 +72,30 @@ const QString BaseObject::objs_sql[BaseObject::ObjectTypeCount]={
 	"PROCEDURE"
 };
 
+const QStringList BaseObject::search_attribs_names = {
+		Attributes::Name, Attributes::Comment, Attributes::Signature,
+		Attributes::Schema, Attributes::Owner, Attributes::Tablespace,
+		Attributes::Type, Attributes::ReturnType, Attributes::SrcTable,
+		Attributes::DstTable, Attributes::RelatedForeignKey, Attributes::SrcColumns,
+		Attributes::RefColumns
+};
+
+const attribs_map BaseObject::search_attribs_i18n = {
+	{ Attributes::Name, QT_TR_NOOP("Name") },
+	{ Attributes::Comment, QT_TR_NOOP("Comment") },
+	{ Attributes::Signature, QT_TR_NOOP("Signature") },
+	{ Attributes::Schema, QT_TR_NOOP("Schema") },
+	{ Attributes::Owner, QT_TR_NOOP("Owner") },
+	{ Attributes::Tablespace, QT_TR_NOOP("Tablespace") },
+	{ Attributes::Type, QT_TR_NOOP("Data type") },
+	{ Attributes::ReturnType, QT_TR_NOOP("Return type") },
+	{ Attributes::SrcTable, QT_TR_NOOP("Source table") },
+	{ Attributes::DstTable, QT_TR_NOOP("Destination table") },
+	{ Attributes::RelatedForeignKey, QT_TR_NOOP("Related foreign key") },
+	{ Attributes::SrcColumns, QT_TR_NOOP("Source column(s)") },
+	{ Attributes::RefColumns, QT_TR_NOOP("Referenced column(s)") }
+};
+
 /* Initializes the global id which is shared between instances
 	 of classes derived from the this class. The value of global_id
 	 starts at 4k because the id ranges 0, 1k, 2k, 3k, 4k
@@ -512,7 +536,14 @@ bool BaseObject::acceptsAlias(ObjectType obj_type)
 				 obj_type == ObjectType::Column || obj_type == ObjectType::Constraint ||
 				 obj_type == ObjectType::Index || obj_type == ObjectType::Rule ||
 				 obj_type == ObjectType::Trigger || obj_type == ObjectType::Policy ||
-				 obj_type==ObjectType::ForeignTable);
+					obj_type==ObjectType::ForeignTable);
+}
+
+bool BaseObject::acceptsComment(ObjectType obj_type)
+{
+	return obj_type!=ObjectType::Relationship && obj_type!=ObjectType::Textbox &&
+				 obj_type!=ObjectType::Parameter && obj_type!=ObjectType::UserMapping &&
+				 obj_type!=ObjectType::Permission;
 }
 
 bool BaseObject::acceptsCustomSQL()
@@ -528,6 +559,16 @@ bool BaseObject::acceptsAlterCommand()
 bool BaseObject::acceptsDropCommand()
 {
 	return BaseObject::acceptsDropCommand(this->obj_type);
+}
+
+bool BaseObject::acceptsAlias()
+{
+	return BaseObject::acceptsAlias(this->obj_type);
+}
+
+bool BaseObject::acceptsComment()
+{
+	return BaseObject::acceptsComment(this->obj_type);
 }
 
 void BaseObject::setSchema(BaseObject *schema)
@@ -1106,6 +1147,19 @@ void BaseObject::setIgnoreDbVersion(bool ignore)
 bool BaseObject::isDbVersionIgnored()
 {
 	return ignore_db_version;
+}
+
+QString BaseObject::getSearchAttributeI18N(const QString &search_attr)
+{
+	if(!search_attribs_i18n.count(search_attr))
+		return "";
+
+	return search_attribs_i18n.at(search_attr);
+}
+
+QStringList BaseObject::getSearchAttributesNames()
+{
+	return search_attribs_names;
 }
 
 void BaseObject::operator = (BaseObject &obj)
