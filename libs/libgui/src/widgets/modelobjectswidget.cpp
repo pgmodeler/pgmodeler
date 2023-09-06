@@ -234,9 +234,6 @@ QTreeWidgetItem *ModelObjectsWidget::createItemForObject(BaseObject *object, QTr
 {
 	QTreeWidgetItem *item=nullptr;
 	QFont font;
-	QString str_aux;
-	BaseRelationship::RelType rel_type;
-	ConstraintType constr_type;
 	ObjectType obj_type;
 	TableObject *tab_obj=nullptr;
 	QString obj_name;

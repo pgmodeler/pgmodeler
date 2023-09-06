@@ -145,11 +145,11 @@ class __libcanvas RelationshipView: public BaseObjectView {
 		double getDefaultPenWidth();
 
 	protected:
-		QVariant itemChange(GraphicsItemChange change, const QVariant &value);
-		void mousePressEvent(QGraphicsSceneMouseEvent *event);
-		void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
-		void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
-		void paint(QPainter *, const QStyleOptionGraphicsItem *, QWidget *){}
+		virtual QVariant itemChange(GraphicsItemChange change, const QVariant &value) override;
+		virtual void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
+		virtual void mouseReleaseEvent(QGraphicsSceneMouseEvent *event) override;
+		virtual void mouseMoveEvent(QGraphicsSceneMouseEvent *event) override;
+		virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = nullptr) override;
 
 		/*! \brief (Re)connects the tables to the relationship changing the signals captured.
 		This method is called whenever the placeholder usage is toggled. If the placeholders are on
@@ -164,7 +164,7 @@ class __libcanvas RelationshipView: public BaseObjectView {
 		virtual ~RelationshipView();
 
 		//! \brief Calculates the relationship bounding rect considering all the children objects dimension
-		QRectF __boundingRect();
+		void configureBoundingRect();
 
 		//! \brief Returns the relationship that generates the graphical representation
 		BaseRelationship *getUnderlyingObject();
@@ -213,7 +213,7 @@ class __libcanvas RelationshipView: public BaseObjectView {
 
 	private slots:
 		//! \brief Makes the comple relationship configuration
-		void configureObject();
+		virtual void configureObject() override;
 
 	signals:
 		void s_relationshipModified(BaseGraphicObject *rel);

@@ -705,7 +705,9 @@ QRectF ObjectsScene::itemsBoundingRect(bool seek_only_db_objs, bool selected_onl
 						}
 					}
 					else
-						pnt=dynamic_cast<RelationshipView *>(obj_view)->__boundingRect().topLeft();
+						#warning "Test"
+						//pnt=dynamic_cast<RelationshipView *>(obj_view)->__boundingRect().topLeft();
+						pnt = dynamic_cast<RelationshipView *>(obj_view)->boundingRect().topLeft();
 
 					if(pnt.x() < x)
 						x=pnt.x();
@@ -727,7 +729,9 @@ QRectF ObjectsScene::itemsBoundingRect(bool seek_only_db_objs, bool selected_onl
 							}
 						}
 						else
-							pnt = pnt +  dynamic_cast<RelationshipView *>(obj_view)->__boundingRect().bottomRight();
+							#warning "Test!"
+							//pnt = pnt +  dynamic_cast<RelationshipView *>(obj_view)->__boundingRect().bottomRight();
+							pnt = pnt +  dynamic_cast<RelationshipView *>(obj_view)->boundingRect().bottomRight();
 
 						if(pnt.x() > x2)
 							x2 = pnt.x();

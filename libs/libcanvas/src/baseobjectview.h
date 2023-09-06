@@ -106,7 +106,7 @@ class __libcanvas BaseObjectView: public QObject, public QGraphicsItemGroup {
 
 		void configurePlaceholder();
 
-		void mousePressEvent(QGraphicsSceneMouseEvent *event);
+		virtual void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
 
 		void setSelectionOrder(bool selected);
 
@@ -141,13 +141,13 @@ class __libcanvas BaseObjectView: public QObject, public QGraphicsItemGroup {
 		unsigned getSelectionOrder();
 
 		//! \brief Controls the changes during the object's selection and moving
-		QVariant itemChange(GraphicsItemChange change, const QVariant &value);
+		virtual QVariant itemChange(GraphicsItemChange change, const QVariant &value) override;
 
 		//! \brief Returns the object that is representend by the graphical object
 		BaseObject *getUnderlyingObject();
 
 		//! \brief Returns the objects bounding rect in local coordination
-		QRectF boundingRect() const;
+		virtual QRectF boundingRect() const override;
 
 		//! \brief Returns the fill style in a form of gradient for the specified element id
 		static QLinearGradient getFillStyle(const QString &id);

@@ -484,10 +484,19 @@ void RelationshipView::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 			}
 		}
 		else if(dynamic_cast<TextboxView *>(sel_object))
+		{
 			sel_object->setPos(event->pos());
+			configureBoundingRect();
+		}
 	}
 
 	BaseObjectView::mouseMoveEvent(event);
+}
+
+void RelationshipView::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
+{
+	#warning "Test!"
+	//BaseObjectView::paint(painter, option, widget);
 }
 
 void RelationshipView::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
@@ -566,6 +575,7 @@ void RelationshipView::configureObject()
 
 	configureLine();	
 	connectTables();
+
 	connect(rel_base, &BaseRelationship::s_objectModified, this, &RelationshipView::configureLine);
 }
 
@@ -584,6 +594,8 @@ void RelationshipView::configureLine()
 	BaseRelationship *base_rel = this->getUnderlyingObject();
 	BaseRelationship::TableId src_tab = BaseRelationship::SrcTable,
 			dst_tab = BaseRelationship::DstTable;
+
+	configureBoundingRect();
 
 	if(configuring_line ||
 			!BaseGraphicObject::isUpdatesEnabled() ||
@@ -2023,30 +2035,41 @@ double RelationshipView::getDefaultPenWidth()
 	}
 }
 
-QRectF RelationshipView::__boundingRect()
+void RelationshipView::configureBoundingRect()
 {
-	unsigned i;
 	QRectF rect, brect;
-	std::vector<QPointF> points=dynamic_cast<BaseRelationship *>(this->getUnderlyingObject())->getPoints();
 
-	brect = QRectF(QPointF(descriptor->pos().x(), descriptor->pos().y()), descriptor->boundingRect().size());
-
-	for(auto &p : points)
+	if(descriptor && descriptor->isVisible())
 	{
-		brect = rect.united(QRectF(p.x() - GraphicPointRadius, p.y() - GraphicPointRadius,
-															 p.x() + GraphicPointRadius, p.y() + GraphicPointRadius));
+		brect.setTopLeft(descriptor->pos());
+		brect.setSize(descriptor->boundingRect().size());
 	}
 
-	//Checks if some label is out of reference dimension
-	for(i=0; i < 3; i++)
+	for(int i = 0; i < 2; i++)
 	{
-		if(labels[i] && labels[i]->isVisible())
-		{
-			rect.setTopLeft(labels[i]->scenePos());
-			rect.setSize(labels[i]->boundingRect().size());
-			brect = brect.united(rect);
-		}
+		if(!cf_descriptors[i])
+			continue;
+
+		rect.setTopLeft(mapToScene(cf_descriptors[i]->pos()));
+		rect.setSize(cf_descriptors[i]->boundingRect().size());
+		brect = brect.united(rect);
 	}
 
-	return brect;
+	for(int i = 0; i < 3; i++)
+	{
+		if(!labels[i] || !labels[i]->isVisible())
+			continue;
+
+		rect.setTopLeft(labels[i]->scenePos());
+		rect.setSize(labels[i]->boundingRect().size());
+		brect = brect.united(rect);
+	}
+
+	for(auto &line : lines)
+	{
+		rect = line->boundingRect();
+		brect = brect.united(line->boundingRect());
+	}
+
+	bounding_rect = brect;
 }
