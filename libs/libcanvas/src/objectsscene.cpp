@@ -705,8 +705,6 @@ QRectF ObjectsScene::itemsBoundingRect(bool seek_only_db_objs, bool selected_onl
 						}
 					}
 					else
-						#warning "Test"
-						//pnt=dynamic_cast<RelationshipView *>(obj_view)->__boundingRect().topLeft();
 						pnt = dynamic_cast<RelationshipView *>(obj_view)->boundingRect().topLeft();
 
 					if(pnt.x() < x)
@@ -729,8 +727,6 @@ QRectF ObjectsScene::itemsBoundingRect(bool seek_only_db_objs, bool selected_onl
 							}
 						}
 						else
-							#warning "Test!"
-							//pnt = pnt +  dynamic_cast<RelationshipView *>(obj_view)->__boundingRect().bottomRight();
 							pnt = pnt +  dynamic_cast<RelationshipView *>(obj_view)->boundingRect().bottomRight();
 
 						if(pnt.x() > x2)
@@ -777,8 +773,8 @@ void ObjectsScene::drawBackground(QPainter *painter, const QRectF &rect)
 	painter->setRenderHint(QPainter::Antialiasing, false);
 	painter->setRenderHint(QPainter::TextAntialiasing, false);
 
-	start_x = round(rect.left()/grid_size) * grid_size;
-	start_y = round(rect.top()/grid_size) * grid_size;
+	start_x = (round(rect.left()/grid_size) * grid_size) - grid_size;
+	start_y = (round(rect.top()/grid_size) * grid_size) - grid_size;
 	end_x = rect.right() < scene_w ? rect.right() : scene_w;
 	end_y = rect.bottom() < scene_h ? rect.bottom() : scene_h;
 

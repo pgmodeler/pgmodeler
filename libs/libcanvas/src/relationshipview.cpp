@@ -493,12 +493,6 @@ void RelationshipView::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 	BaseObjectView::mouseMoveEvent(event);
 }
 
-void RelationshipView::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
-{
-	#warning "Test!"
-	//BaseObjectView::paint(painter, option, widget);
-}
-
 void RelationshipView::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
 	BaseRelationship *base_rel=this->getUnderlyingObject();
