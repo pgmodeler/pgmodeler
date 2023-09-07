@@ -30,7 +30,6 @@
 #include "role.h"
 #include <algorithm>
 #include <QTextStream>
-#include <QCryptographicHash>
 #include <QRegularExpression>
 
 class __libcore Permission: public BaseObject {

@@ -10532,9 +10532,11 @@ BaseObject *DatabaseModel::getObjectPgSQLType(PgSqlType type)
 void DatabaseModel::validateSchemaRenaming(Schema *schema, const QString &prev_sch_name)
 {
 	std::vector<ObjectType> types = { ObjectType::Table, ObjectType::ForeignTable, ObjectType::View,
-															 ObjectType::Domain, ObjectType::Type, ObjectType::Sequence };
+																		ObjectType::Domain, ObjectType::Type, ObjectType::Sequence };
 	std::vector<BaseObject *> list, sch_objs, refs;
-	QString prev_name;
+	QString prev_name,
+			fmt_prev_sch_name = BaseObject::formatName(prev_sch_name, false),
+			obj_sig;
 
 	//Raise an error if the schema is not allocated
 	if(!schema)
@@ -10550,30 +10552,30 @@ void DatabaseModel::validateSchemaRenaming(Schema *schema, const QString &prev_s
 	for(auto &obj : sch_objs)
 	{
 		//Configures the previous type name
-		prev_name=BaseObject::formatName(prev_sch_name) + "." +
-							BaseObject::formatName(obj->getName(), false);
+		prev_name = fmt_prev_sch_name + "." +	obj->getName();
+		obj_sig = obj->getSignature();
 
 		/* Special case for tables. Need to make a dynamic_cast before the reinterpret_cast to get
 		the correct reference to table */
 		if(obj->getObjectType() == ObjectType::Table)
-			PgSqlType::renameUserType(prev_name, reinterpret_cast<void *>(dynamic_cast<Table *>(obj)), obj->getName(true));
+			PgSqlType::renameUserType(prev_name, reinterpret_cast<void *>(dynamic_cast<Table *>(obj)), obj_sig);
 		else if(obj->getObjectType() == ObjectType::View)
-			PgSqlType::renameUserType(prev_name, reinterpret_cast<void *>(dynamic_cast<View *>(obj)), obj->getName(true));
+			PgSqlType::renameUserType(prev_name, reinterpret_cast<void *>(dynamic_cast<View *>(obj)), obj_sig);
 		else if(obj->getObjectType() == ObjectType::ForeignTable)
-			PgSqlType::renameUserType(prev_name, reinterpret_cast<void *>(dynamic_cast<ForeignTable *>(obj)), obj->getName(true));
+			PgSqlType::renameUserType(prev_name, reinterpret_cast<void *>(dynamic_cast<ForeignTable *>(obj)), obj_sig);
 		else
-			PgSqlType::renameUserType(prev_name, reinterpret_cast<void *>(obj), obj->getName(true));
+			PgSqlType::renameUserType(prev_name, reinterpret_cast<void *>(obj), obj_sig);
 
 		getObjectReferences(obj, refs);
 
 		//For graphical objects set them as modified to redraw them
 		if(BaseTable::isBaseTable(obj->getObjectType()))
-			dynamic_cast<BaseGraphicObject *>(obj)->setModified(true);
+			dynamic_cast<BaseTable *>(obj)->setModified(true);
 
 		for(auto &ref_obj : refs)
 		{
 			if(BaseTable::isBaseTable(ref_obj->getObjectType()))
-				dynamic_cast<BaseGraphicObject *>(ref_obj)->setModified(true);
+				dynamic_cast<BaseTable *>(ref_obj)->setModified(true);
 			else if(TableObject::isTableObject(ref_obj->getObjectType()))
 			{
 				BaseTable *tab = dynamic_cast<TableObject *>(ref_obj)->getParentTable();

@@ -21,7 +21,6 @@
 #include "schema.h"
 #include "doublenan.h"
 #include <QApplication>
-#include <QCryptographicHash>
 
 BaseRelationship::BaseRelationship(BaseRelationship *rel)
 {
@@ -407,29 +406,6 @@ void BaseRelationship::configureSearchAttributes()
 	search_attribs[Attributes::RelatedForeignKey] = reference_fk ? reference_fk->getSignature(true) : "";
 	BaseGraphicObject::configureSearchAttributes();
 }
-
-/*void BaseRelationship::generateHashCode()
-{
-	if(!code_invalidated)
-		return;
-
-	QString buf;
-	QCryptographicHash hash_gen(QCryptographicHash::Md5);
-
-	buf.append(custom_color == Qt::transparent ? "" : custom_color.name());
-	buf.append(obj_name);
-	buf.append(QString::number(static_cast<int>(src_mandatory)));
-	buf.append(QString::number(static_cast<int>(dst_mandatory)));
-
-	for(auto &pnt : points)
-	{
-		buf.append(QString::number(pnt.x()));
-		buf.append(QString::number(pnt.y()));
-	}
-
-	hash_gen.addData(buf.toUtf8());
-	hash_code = hash_gen.result().toHex();
-} */
 
 Constraint *BaseRelationship::getReferenceForeignKey()
 {

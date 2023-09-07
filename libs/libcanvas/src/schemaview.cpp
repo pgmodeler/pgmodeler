@@ -19,6 +19,7 @@
 #include "schemaview.h"
 #include "objectsscene.h"
 #include "databasemodel.h"
+#include "utilsns.h"
 
 SchemaView::SchemaView(Schema *schema) : BaseObjectView(schema)
 {
@@ -173,12 +174,14 @@ void SchemaView::configureObject()
 	if(!BaseGraphicObject::isUpdatesEnabled())
 		return;
 
-	Schema *schema=dynamic_cast<Schema *>(this->getUnderlyingObject());
+	Schema *schema = dynamic_cast<Schema *>(this->getUnderlyingObject());
 	this->fetchChildren();
 
+	if(!schema->isRectVisible() || children.isEmpty())
+		this->setVisible(false);
 	/* Only configures the schema view if the rectangle is visible and there are
 		children objects. Otherwise the schema view is hidden */
-	if(schema->isRectVisible() && !children.isEmpty())
+	else if(schema->isRectVisible() && !children.isEmpty())
 	{
 		QColor color;
 		QRectF rect;
@@ -187,9 +190,9 @@ void SchemaView::configureObject()
 		x1=1000000, y1=1000000, x2=-1000000, y2=-1000000, width=0,
 		height = 0, size_inc = 0, left_inc = 0, top_inc = 0;
 		QList<BaseObjectView *>::Iterator itr=children.begin();
-		BaseObjectView *obj_view = nullptr;
-		ObjectsScene *scene = dynamic_cast<ObjectsScene *>(this->scene());
+		BaseObjectView *obj_view = nullptr;		
 		QFontMetricsF fm(LayerItem::getDefaultFont());
+		ObjectsScene *scene = dynamic_cast<ObjectsScene *>(this->scene());
 		QList<unsigned> act_layers = scene->getActiveLayersIds();
 		int num_layers = 0;
 
@@ -247,6 +250,8 @@ void SchemaView::configureObject()
 		txt_h=sch_name->boundingRect().height() + (2 * VertSpacing);
 
 		//Configures the box with the points calculated above
+		prepareGeometryChange();
+
 		sp_h=(4 * HorizSpacing);
 		sp_v=(4 * VertSpacing) + txt_h;
 
@@ -292,6 +297,4 @@ void SchemaView::configureObject()
 		this->configurePositionInfo(this->pos());
 		this->configureSQLDisabledInfo();
 	}
-	else
-		this->setVisible(false);
 }

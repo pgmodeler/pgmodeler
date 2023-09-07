@@ -69,7 +69,9 @@ namespace UtilsNs {
 	extern __libutils QByteArray loadFile(const QString &filename);
 
 	//! \brief Converts any chars (operators) < > " to the respective XML entities.
-	extern __libutils QString convertToXmlEntities(QString value);
+	extern __libutils QString convertToXmlEntities(const QString value);
+
+	extern __libutils QString getStringHash(const QString &string);
 }
 
 #endif

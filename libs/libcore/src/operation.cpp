@@ -17,6 +17,7 @@
 */
 
 #include "operation.h"
+#include "utilsns.h"
 
 Operation::Operation()
 {
@@ -32,7 +33,6 @@ QString Operation::generateOperationId()
 {
 	QString addr;
 	QTextStream stream(&addr);
-	QCryptographicHash hash(QCryptographicHash::Md5);
 
 	//Stores the permission address on a string
 	stream << reinterpret_cast<unsigned *>(original_obj);
@@ -40,8 +40,7 @@ QString Operation::generateOperationId()
 	stream << reinterpret_cast<unsigned *>(parent_obj);
 
 	//Generates an unique id through md5 hash
-	hash.addData(QByteArray(addr.toStdString().c_str()));
-	return hash.result().toHex();
+	return UtilsNs::getStringHash(addr);
 }
 
 void Operation::setObjectIndex(int idx)

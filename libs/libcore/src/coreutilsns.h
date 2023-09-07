@@ -26,7 +26,7 @@
 #define CORE_UTILS_NS_H
 
 #include "baseobject.h"
-#include <QCryptographicHash>
+#include "utilsns.h"
 
 namespace CoreUtilsNs {
 	/*! \brief Holds the check mark character for use in data dictionary
@@ -65,8 +65,6 @@ namespace CoreUtilsNs {
 		typename std::vector<Class *>::iterator itr=obj_vector.begin(), itr_end=obj_vector.end();
 		QChar oper_uniq_chr='?'; //Char appended at end of operator names in order to resolve conflicts
 		ObjectType obj_type;
-		QCryptographicHash hash(QCryptographicHash::Md5);
-		QByteArray buffer;
 
 		if(!obj)
 			return("");
@@ -81,8 +79,7 @@ namespace CoreUtilsNs {
 			obj_name += suffix;
 
 		counter = (use_suf_on_conflict && obj_type!= ObjectType::Operator? 0 : 1);
-		buffer.append(obj_name.toUtf8());
-		id = hash.result().toHex().mid(0,6);
+		id = UtilsNs::getStringHash(obj_name).mid(0,6);
 		len = obj_name.size() + id.size();
 
 		//If the name length exceeds the maximum size

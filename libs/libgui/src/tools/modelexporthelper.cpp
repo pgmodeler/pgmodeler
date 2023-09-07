@@ -1,4 +1,5 @@
 #include "modelexporthelper.h"
+#include "utilsns.h"
 #include <QSvgGenerator>
 
 ModelExportHelper::ModelExportHelper(QObject *parent) : QObject(parent)
@@ -727,7 +728,6 @@ void ModelExportHelper::generateTempObjectNames(DatabaseModel *db_model)
 	QString tmp_name, old_name;
 	QTextStream stream(&tmp_name);
 	QDateTime dt=QDateTime::currentDateTime();
-	QCryptographicHash hash(QCryptographicHash::Md5);
 	std::map<ObjectType, QString> obj_suffixes={ { ObjectType::Database, "db_" },
 											{ ObjectType::Role, "rl_"},
 											{ ObjectType::Tablespace, "tb_"} };
@@ -747,14 +747,12 @@ void ModelExportHelper::generateTempObjectNames(DatabaseModel *db_model)
 			orig_obj_names[tabspc]=tabspc->getName();
 	}
 
-
 	for(auto &obj : orig_obj_names)
 	{
 		stream << reinterpret_cast<unsigned *>(obj.first) << "_" << dt.toMSecsSinceEpoch();
 
 		//Generates an unique name for the object through md5 hash
-		hash.addData(QByteArray(tmp_name.toStdString().c_str()));
-		tmp_name=obj_suffixes[obj.first->getObjectType()] + hash.result().toHex();
+		tmp_name = obj_suffixes[obj.first->getObjectType()] + UtilsNs::getStringHash(tmp_name);
 
 		old_name=obj.first->getName();
 		obj.first->setName(tmp_name.mid(0,15));

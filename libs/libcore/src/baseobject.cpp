@@ -647,6 +647,13 @@ QString BaseObject::getName(bool format, bool prepend_schema)
 	else if(format && prepend_schema)
 		name_id = Signature;
 
+	/* If the schema name have changed somewhere we need to invalidate
+	 * the cache for the object's signature so it is generated again */
+	if(schema && name_id == Signature &&
+			!cached_names[name_id].isEmpty() &&
+			!cached_names[name_id].startsWith(schema->getName(true)))
+		cached_names[name_id].clear();
+
 	if(!cached_names[name_id].isEmpty())
 		return cached_names[name_id];
 

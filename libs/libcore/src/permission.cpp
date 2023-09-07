@@ -18,6 +18,7 @@
 
 #include "permission.h"
 #include "column.h"
+#include "utilsns.h"
 
 const QString Permission::priv_codes("rawdDxtCcTXU");
 
@@ -362,7 +363,6 @@ void Permission::generatePermissionId()
 {
 	QStringList values;
 	QString hash_id = object->getSignature(true);
-	QCryptographicHash hash(QCryptographicHash::Md5);
 
 	for(auto &role : roles)
 		values.append(role->getName());
@@ -377,8 +377,7 @@ void Permission::generatePermissionId()
 		hash_id += "000000";
 
 	//Generates an unique name for the permission through md5 hash
-	hash.addData(QByteArray(hash_id.toStdString().c_str()));
-	hash_id = hash.result().toHex();
+	hash_id = UtilsNs::getStringHash(hash_id);
 	this->obj_name = (!revoke ? "grant_" : "revoke_") + getPermissionString() + '_' + hash_id.mid(0, 10);
 }
 

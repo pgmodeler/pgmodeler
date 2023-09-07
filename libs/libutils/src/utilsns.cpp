@@ -20,6 +20,7 @@
 #include "exception.h"
 #include <QFile>
 #include <QRegularExpression>
+#include <QCryptographicHash>
 
 namespace UtilsNs {
 	void saveFile(const QString &filename, const QByteArray &buffer)
@@ -71,5 +72,12 @@ namespace UtilsNs {
 		}
 
 		return value;
+	}
+
+	QString getStringHash(const QString& string)
+	{
+		QCryptographicHash hash_gen(QCryptographicHash::Md5);
+		hash_gen.addData(string.toUtf8());
+		return hash_gen.result().toHex();
 	}
 }

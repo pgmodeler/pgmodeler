@@ -17,7 +17,7 @@
 */
 
 #include "basetable.h"
-#include <QCryptographicHash>
+#include "utilsns.h"
 
 BaseTable::BaseTable()
 {
@@ -125,9 +125,6 @@ void BaseTable::generateHashCode()
 		return;
 
 	QString buf;
-	QStringList tab_obj_names;
-	QCryptographicHash hash_gen(QCryptographicHash::Md5);
-
 	buf.append(obj_name);
 
 	for(auto &obj : getObjects())
@@ -142,8 +139,7 @@ void BaseTable::generateHashCode()
 	buf.append(QString::number(getPosition().x()));
 	buf.append(QString::number(getPosition().y()));
 
-	hash_gen.addData(buf.toUtf8());
-	hash_code = hash_gen.result().toHex();
+	hash_code = UtilsNs::getStringHash(buf);
 }
 
 void BaseTable::resetHashCode()
