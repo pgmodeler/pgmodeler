@@ -44,6 +44,10 @@ class __libcanvas RelationshipView: public BaseObjectView {
 		//! \brief Graphical point radius
 		static constexpr double GraphicPointRadius=6.0;
 
+		/*! \brief The width of the path stroke used to select relationship line
+		 *  as well as add points to it */
+		static constexpr double LineSelStrokeWidth=15;
+
 		//! \brief Length of the lines linked to fk/pk columns
 		static constexpr double ConnLineLength=20.0;
 
@@ -144,11 +148,15 @@ class __libcanvas RelationshipView: public BaseObjectView {
 		 * whether the relationship is identifier or not */
 		double getDefaultPenWidth();
 
+		QPainterPath rel_shape;
+
 	protected:
 		virtual QVariant itemChange(GraphicsItemChange change, const QVariant &value) override;
 		virtual void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
 		virtual void mouseReleaseEvent(QGraphicsSceneMouseEvent *event) override;
 		virtual void mouseMoveEvent(QGraphicsSceneMouseEvent *event) override;
+		virtual QPainterPath shape() const;
+		virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = nullptr);
 
 		/*! \brief (Re)connects the tables to the relationship changing the signals captured.
 		This method is called whenever the placeholder usage is toggled. If the placeholders are on

@@ -38,7 +38,7 @@ BaseTable::BaseTable()
 void BaseTable::setCodeInvalidated(bool value)
 {
 	BaseGraphicObject::setCodeInvalidated(value);
-	hash_code = "";
+	resetHashCode();
 }
 
 void BaseTable::resetCurrentPages()
@@ -146,6 +146,11 @@ void BaseTable::generateHashCode()
 	hash_code = hash_gen.result().toHex();
 }
 
+void BaseTable::resetHashCode()
+{
+	hash_code = "";
+}
+
 void BaseTable::setCollapseMode(CollapseMode coll_mode)
 {
 	setCodeInvalidated(collapse_mode != coll_mode);
@@ -172,5 +177,5 @@ void BaseTable::setModified(bool value)
 void BaseTable::setPosition(const QPointF &pos)
 {
 	BaseGraphicObject::setPosition(pos);
-	hash_code = "";
+	resetHashCode();
 }

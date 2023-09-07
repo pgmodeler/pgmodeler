@@ -73,6 +73,8 @@ void TextboxView::__configureObject()
 	QTextCharFormat fmt=font_config[Attributes::Global];
 	QPolygonF polygon;
 
+	prepareGeometryChange();
+
 	polygon.append(QPointF(0.0,0.0));
 	polygon.append(QPointF(1.0,0.0));
 	polygon.append(QPointF(1.0,1.0));

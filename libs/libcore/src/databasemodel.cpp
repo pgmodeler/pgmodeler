@@ -10430,9 +10430,10 @@ void DatabaseModel::setObjectsModified(std::vector<ObjectType> types)
 	std::vector<BaseObject *> *obj_list = nullptr;
 	Textbox *label = nullptr;
 	BaseRelationship *rel = nullptr;
+	BaseGraphicObject *graph_obj = nullptr;
 	unsigned i1 = 0;
 
-	for(auto obj_type : obj_types)
+	for(auto &obj_type : obj_types)
 	{
 		if(types.empty() || std::find(types.begin(), types.end(), obj_type) != types.end())
 		{
@@ -10442,7 +10443,17 @@ void DatabaseModel::setObjectsModified(std::vector<ObjectType> types)
 
 			while(itr != itr_end)
 			{
-				dynamic_cast<BaseGraphicObject *>(*itr)->setModified(true);
+				graph_obj = dynamic_cast<BaseGraphicObject *>(*itr);
+
+				if(BaseTable::isBaseTable(obj_type))
+				{
+					/* We call the BaseTable::resetHashCode version to force
+					 * to force table to be redrawn by overriding the
+					 * hash validation in TableView::configureObject */
+					dynamic_cast<BaseTable *>(graph_obj)->resetHashCode();
+				}
+
+				graph_obj->setModified(true);
 
 				//For relationships is needed to set the labels as modified too
 				if(obj_type == ObjectType::Relationship || obj_type == ObjectType::BaseRelationship)

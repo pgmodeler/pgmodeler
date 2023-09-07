@@ -360,9 +360,9 @@ void RelationshipView::mousePressEvent(QGraphicsSceneMouseEvent *event)
 			QLineF lin;
 			QPointF p;
 			QRectF rect;
-			unsigned i, count;
+			unsigned i = 0, count = 0;
 			bool pnt_rem=false;
-			std::vector<QPointF> points=base_rel->getPoints();
+			std::vector<QPointF> points = base_rel->getPoints();
 			QLineF::IntersectType inter_type;
 
 			if(!base_rel->isSelfRelationship())
@@ -390,21 +390,22 @@ void RelationshipView::mousePressEvent(QGraphicsSceneMouseEvent *event)
 						}
 					}
 
-					//Create a point when the user press SHIFT and clicks the line
-					count=lines.size();
+										/* Create a path stroke based on the relationship lines so
+						 when the user press SHIFT and clicks next to the line (based on a threshold)
+						 a new point is inserted */
+					QPainterPathStroker ps;
+					QPainterPath stroke;
+					ps.setWidth(LineSelStrokeWidth);
+
+					count = lines.size();
 					for(i=0; i < count && !pnt_rem; i++)
 					{
-						/* Creates a auxiliary line based upon the cursor position. This
-						 * line is used to calculate the exact point (intersection) where the new one
-						 * must be inserted */
-						lin.setP1(QPointF(event->pos().x() - 50, event->pos().y() - 50));
-						lin.setP2(QPointF(event->pos().x() + 50, event->pos().y() + 50));
+						if(use_curved_lines)
+							stroke = ps.createStroke(curves[i]->shape());
+						else
+							stroke = ps.createStroke(lines[i]->shape());
 
-						//Case the auxiliary line intercepts one relationship line
-						inter_type = lines[i]->line().intersects(lin, &p);
-
-						if((!use_curved_lines && inter_type == QLineF::BoundedIntersection) ||
-							 (use_curved_lines && curves[i]->contains(event->pos())))
+						if(stroke.contains(event->pos()))
 						{
 							//Inserts the point to the line
 							if(i >= points.size())
@@ -491,6 +492,24 @@ void RelationshipView::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 	}
 
 	BaseObjectView::mouseMoveEvent(event);
+}
+
+QPainterPath RelationshipView::shape() const
+{
+	return rel_shape;
+}
+
+void RelationshipView::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget)
+{
+	/* Workaround: For some unkown reason, an artifact rectangle is being draw
+	 * around the relationship everytime it is selected. To avoid that we force
+	 * the painter to have no pen and the clipping area to be the exposed area
+	 * of the object */
+	painter->save();
+	painter->setPen(Qt::NoPen);
+	painter->setClipRect(option->exposedRect);
+	BaseObjectView::paint(painter, option, widget);
+	painter->restore();
 }
 
 void RelationshipView::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
@@ -2033,10 +2052,15 @@ void RelationshipView::configureBoundingRect()
 {
 	QRectF rect, brect;
 
+	rel_shape.clear();
+	setFlag(QGraphicsItem::ItemClipsToShape);
+	prepareGeometryChange();
+
 	if(descriptor && descriptor->isVisible())
 	{
 		brect.setTopLeft(descriptor->pos());
 		brect.setSize(descriptor->boundingRect().size());
+		rel_shape.addPath(descriptor->shape());
 	}
 
 	for(int i = 0; i < 2; i++)
@@ -2057,13 +2081,34 @@ void RelationshipView::configureBoundingRect()
 		rect.setTopLeft(labels[i]->scenePos());
 		rect.setSize(labels[i]->boundingRect().size());
 		brect = brect.united(rect);
+		rel_shape.addPath(labels[i]->shape());
 	}
 
-	for(auto &line : lines)
+	QPainterPathStroker ps;
+	QPainterPath	stroke;
+	ps.setWidth(LineSelStrokeWidth);
+
+	if(!use_curved_lines)
 	{
-		rect = line->boundingRect();
-		brect = brect.united(line->boundingRect());
+		for(auto &line : lines)
+		{
+			rect = line->boundingRect();
+			brect = brect.united(line->boundingRect());
+			stroke = ps.createStroke(line->shape());
+			rel_shape.addPath(stroke);
+		}
+	}
+	else
+	{
+		for(auto &curve : curves)
+		{
+			rect = curve->boundingRect();
+			brect = brect.united(curve->boundingRect());
+			stroke = ps.createStroke(curve->shape());
+			rel_shape.addPath(stroke);
+		}
 	}
 
+	rect = rel_shape.boundingRect();
 	bounding_rect = brect;
 }

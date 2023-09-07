@@ -404,6 +404,8 @@ void BaseTableView::__configureObject(double width)
 	QPen togg_pen, togg_btns_pen;
 	double height = 0;
 
+	prepareGeometryChange();
+
 	if(tag)
 	{
 		togg_brush = tag->getFillStyle(Attributes::TableTogglerBody);
