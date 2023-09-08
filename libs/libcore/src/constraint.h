@@ -107,6 +107,7 @@ class __libcore Constraint: public TableObject{
 
 	public:
 		Constraint();
+
 		virtual ~Constraint();
 
 		/*! \brief Adds one column to the internal column list referenced by the

@@ -56,6 +56,7 @@ class __libcore OperatorClass: public BaseObject {
 
 	public:
 		OperatorClass();
+
 		virtual ~OperatorClass();
 
 		//! \brief Sets the data type that the operator class works on

@@ -669,6 +669,8 @@ void PhysicalTable::removeObject(BaseObject *obj)
 				removeObject(getObjectIndex(tab_obj), obj->getObjectType());
 			else
 				removeObject(obj->getName(true), ObjectType::Table);
+
+			obj->unsetDependencies();
 		}
 	}
 	catch(Exception &e)

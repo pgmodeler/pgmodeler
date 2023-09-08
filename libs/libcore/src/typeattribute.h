@@ -38,6 +38,8 @@ class __libcore TypeAttribute: public BaseObject {
 		TypeAttribute();
 		TypeAttribute(const TypeAttribute &type_attr);
 
+		virtual ~TypeAttribute(){}
+
 		void setType(PgSqlType type);
 		PgSqlType getType();
 

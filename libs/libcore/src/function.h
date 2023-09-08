@@ -73,6 +73,8 @@ class __libcore Function: public BaseFunction {
 	public:
 		Function();
 
+		virtual ~Function(){}
+
 		//! \brief Adds a column to the function returned table
 		void addReturnedTableColumn(const QString &name, PgSqlType type);
 

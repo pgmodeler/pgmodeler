@@ -63,6 +63,8 @@ class __libcore GenericSQL: public BaseObject{
 	public:
 		GenericSQL();
 
+		virtual ~GenericSQL(){}
+
 		void setDefinition(const QString &def);
 		QString getDefinition();
 

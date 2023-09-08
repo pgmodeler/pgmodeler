@@ -82,6 +82,7 @@ class __libcore View: public BaseTable {
 
 	public:
 		View();
+
 		virtual ~View();
 
 		void setName(const QString &name);

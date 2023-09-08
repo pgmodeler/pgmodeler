@@ -102,6 +102,8 @@ class __libcore Permission: public BaseObject {
 		 the class is created. */
 		Permission(BaseObject *obj);
 
+		virtual ~Permission(){}
+
 		//! \brief Adds a role that will have privileges over the object
 		void addRole(Role *role);
 

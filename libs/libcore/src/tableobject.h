@@ -67,6 +67,8 @@ class __libcore TableObject: public BaseObject {
 	public:
 		TableObject();
 
+		virtual ~TableObject(){}
+
 		//! \brief Defines the parent table for the object
 		virtual void setParentTable(BaseTable *table);
 
@@ -100,7 +102,7 @@ class __libcore TableObject: public BaseObject {
 		//! \brief Returns if the passed type is a table child object (column, constraint, index, rule, trigger)
 		static bool isTableObject(ObjectType type);
 
-		void setCodeInvalidated(bool value);
+		virtual void setCodeInvalidated(bool value) override;
 
 		void operator = (TableObject &object);
 

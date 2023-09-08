@@ -67,6 +67,8 @@ class __libcore  Cast: public BaseObject {
 	public:
 		Cast();
 
+	 virtual ~Cast(){}
+
 		//! \brief This method has a hardcoded way to generated the cast's name. It'll reject any value passed by its parameter
 		virtual void setName(const QString &);
 

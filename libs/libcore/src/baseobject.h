@@ -99,6 +99,12 @@ class __libcore BaseObject {
 		//! \brief Stores the database wich the object belongs
 		BaseObject *database;
 
+		//! \brief Stores the objects that references the "this" object
+		std::vector<BaseObject *> object_refs,
+
+				//! \brief Stores the objects that "this" object depends on to create a valid SQL code
+				object_deps;
+
 	protected:
 		SchemaParser schparser;
 
@@ -266,7 +272,19 @@ class __libcore BaseObject {
 
 		QString getAlterCommentDefinition(BaseObject *object, attribs_map attributes);
 
+		virtual void setDependency(BaseObject *dep_obj);
+
+		virtual void setReference(BaseObject *ref_obj);
+
+		virtual void unsetReference(BaseObject *ref_obj);
+
+		virtual void unsetDependency(BaseObject *dep_obj);
+
 	public:
+		void unsetDependencies();
+
+		void unsetReferences();
+
 		//! \brief Maximum number of characters that an object name on PostgreSQL can have
 		static constexpr int ObjectNameMaxLength=63;
 
@@ -276,7 +294,8 @@ class __libcore BaseObject {
 		static constexpr unsigned DefMaxObjectCount=20;
 
 		BaseObject();
-		virtual ~BaseObject(void){}
+
+		virtual ~BaseObject();
 
 		//! \brief Returns the reference to the database that owns the object
 		BaseObject *getDatabase();
@@ -541,6 +560,10 @@ class __libcore BaseObject {
 
 		//! \brief Returns the set of attributes used by the search mechanism
 		attribs_map getSearchAttributes();
+
+		std::vector<BaseObject *> getDependencies();
+
+		std::vector<BaseObject *> getReferences();
 
 		/*! \brief Ignores the PostgreSQL version checking during code generation.
 		 *  When false (the default behavior), when generating code which db version is < 10, an error

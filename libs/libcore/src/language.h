@@ -52,6 +52,8 @@ class __libcore Language: public BaseObject{
 
 		Language();
 
+		virtual ~Language(){}
+
 		//! \brief Sets the language name
 		void setName(const QString &name);
 

@@ -64,6 +64,8 @@ class __libcore Operator: public BaseObject {
 
 		Operator();
 
+		virtual ~Operator(){}
+
 		//! \brief Defines the name of the operator
 		void setName(const QString &name);
 

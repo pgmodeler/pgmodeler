@@ -42,7 +42,7 @@ View::~View()
 
 	for(unsigned i=0; i < 3; i++)
 	{
-		list=getObjectList(types[i]);
+		list = getObjectList(types[i]);
 		while(!list->empty())
 		{
 			delete list->back();
@@ -900,6 +900,9 @@ void View::removeObject(unsigned obj_idx, ObjectType obj_type)
 		throw Exception(ErrorCode::RefObjectInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	itr=obj_list->begin() + obj_idx;
+
+	(*itr)->unsetDependencies();
+
 	(*itr)->setParentTable(nullptr);
 	obj_list->erase(itr);
 	setCodeInvalidated(true);

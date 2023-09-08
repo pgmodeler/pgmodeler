@@ -52,6 +52,8 @@ class __libcore Conversion: public BaseObject {
 
 		Conversion();
 
+		virtual ~Conversion(){}
+
 		//! \brief Defines whether the conversion is the default for the encodings
 		void setDefault(bool value);
 

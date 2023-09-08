@@ -60,6 +60,8 @@ class __libcore BaseTable: public BaseGraphicObject {
 
 		BaseTable();
 
+		virtual ~BaseTable() {}
+
 		QString getHashCode();
 
 		virtual void setTag(Tag *tag);

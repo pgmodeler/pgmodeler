@@ -123,7 +123,8 @@ class __libcore PhysicalTable: public BaseTable {
 
 	public:
 		PhysicalTable();
-		~PhysicalTable(){}
+
+		virtual ~PhysicalTable(){}
 
 		//! \brief Returns true if the provided table is considered a physical table (Table, ForeignTable, PhysicalTable)
 		static bool isPhysicalTable(ObjectType obj_type);
@@ -338,7 +339,7 @@ class __libcore PhysicalTable: public BaseTable {
 		void setRelObjectsIndexes(const std::vector<QString> &obj_names, const std::vector<unsigned> &idxs, ObjectType obj_type);
 
 		//! \brief Invalidates the cached code forcing the generation of both SQL and XML
-		void setCodeInvalidated(bool value);
+		virtual void setCodeInvalidated(bool value) override;
 
 		/*! \brief Returns the alter definition by comparing the this table against the one provided via parameter
 		 * This is a pure virtual method and must be implemented by children classes */

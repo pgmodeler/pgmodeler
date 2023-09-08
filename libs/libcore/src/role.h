@@ -78,6 +78,8 @@ class __libcore Role: public BaseObject {
 
 		Role();
 
+		virtual ~Role(){}
+
 		//! \brief Sets one option for the role (Via OP_??? constants)
 		void setOption(RoleOpts op_type, bool value);
 

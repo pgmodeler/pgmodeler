@@ -46,6 +46,8 @@ class __libcore EventTrigger: public BaseObject {
 	public:
 		EventTrigger();
 
+		virtual ~EventTrigger(){}
+
 		void setEvent(EventTriggerType evnt_type);
 		void setFunction(Function *func);
 		void setFilter(const QString &variable, const QStringList &values);

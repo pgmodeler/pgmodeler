@@ -36,6 +36,8 @@ class __libcore UserMapping: public BaseObject, public ForeignObject {
 	public:
 		UserMapping();
 
+		virtual ~UserMapping(){}
+
 		void setForeignServer(ForeignServer *server);
 		ForeignServer *getForeignServer();
 

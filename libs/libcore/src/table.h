@@ -56,6 +56,7 @@ class __libcore Table: public PhysicalTable {
 
 	public:
 		Table();
+
 		virtual ~Table();
 
 		//! \brief Defines if the table is unlogged

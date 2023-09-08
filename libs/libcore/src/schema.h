@@ -40,6 +40,8 @@ class __libcore Schema: public BaseGraphicObject {
 	public:
 		Schema();
 
+	 virtual ~Schema(){}
+
 		void setName(const QString &name);
 
 		void setNameColor(const QColor &color);

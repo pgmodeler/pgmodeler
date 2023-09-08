@@ -90,6 +90,8 @@ class __libcore Column: public TableObject{
 
 		Column();
 
+		virtual ~Column(){}
+
 		//! \brief Defines if the column accepts null values or not
 		void setNotNull(bool value);
 

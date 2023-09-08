@@ -345,6 +345,8 @@ class __libcore Relationship: public BaseRelationship {
 					 ActionType fk_upd_act=ActionType::Null,
 					 CopyOptions copy_op = CopyOptions());
 
+		virtual ~Relationship(){}
+
 		//! \brief  Connects the relationship making the configuration according to its type
 		void connectRelationship();
 

@@ -52,6 +52,8 @@ class __libcore Policy : public TableObject {
 	public:
 		Policy();
 
+		virtual ~Policy(){}
+
 		virtual void setParentTable(BaseTable *table) final;
 
 		//! \brief Defines if the the policy is permissive or restrictive

@@ -448,7 +448,7 @@ bool BaseRelationship::canSimulateRelationship11()
 
 QString BaseRelationship::getSourceCode(SchemaParser::CodeType def_type)
 {
-	QString code_def=getCachedCode(def_type);
+	QString code_def = getCachedCode(def_type);
 	if(!code_def.isEmpty()) return code_def;
 
 	if(def_type==SchemaParser::SqlCode)

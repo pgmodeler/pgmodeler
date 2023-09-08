@@ -77,6 +77,8 @@ class __libcore Sequence: public BaseObject {
 
 		Sequence();
 
+		virtual ~Sequence(){}
+
 		//! \brief Defines if the sequence is a cycle
 		void setCycle(bool value);
 

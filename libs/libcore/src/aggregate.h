@@ -75,6 +75,8 @@ class __libcore Aggregate: public BaseObject {
 
 		Aggregate();
 
+		virtual ~Aggregate() {}
+
 		//! \brief Defines one of the functions used by the aggregate
 		void setFunction(FunctionId func_id, Function *func);
 

@@ -72,6 +72,8 @@ class __libcore BaseFunction: public BaseObject {
 
 		BaseFunction();
 
+		virtual ~BaseFunction() {}
+
 		//! \brief Sets the function name updating its signature
 		void setName(const QString &name);
 

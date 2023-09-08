@@ -35,7 +35,7 @@ class __libcore IndexElement: public Element {
 	public:
 		IndexElement();
 
-		virtual ~IndexElement(void){}
+		virtual ~IndexElement(){}
 
 		//! \brief Defines the collation referenced by the element
 		void setCollation(Collation *collation);

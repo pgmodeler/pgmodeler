@@ -134,6 +134,13 @@ BaseObject::BaseObject()
 	this->setName(QApplication::translate("BaseObject","new_object","", -1));
 }
 
+BaseObject::~BaseObject()
+{
+	#warning "Cleanup dependencies and references before destroy object!"
+	unsetDependencies();
+	unsetReferences();
+}
+
 unsigned BaseObject::getGlobalId()
 {
 	return global_id;
@@ -585,6 +592,8 @@ void BaseObject::setSchema(BaseObject *schema)
 
 	setCodeInvalidated(this->schema != schema);
 	this->schema=schema;
+
+	setDependency(schema);
 }
 
 void BaseObject::setOwner(BaseObject *owner)
@@ -596,6 +605,8 @@ void BaseObject::setOwner(BaseObject *owner)
 
 	setCodeInvalidated(this->owner != owner);
 	this->owner=owner;
+
+	setDependency(owner);
 }
 
 void BaseObject::setTablespace(BaseObject *tablespace)
@@ -607,6 +618,8 @@ void BaseObject::setTablespace(BaseObject *tablespace)
 
 	setCodeInvalidated(this->tablespace != tablespace);
 	this->tablespace=tablespace;
+
+	setDependency(tablespace);
 }
 
 void BaseObject::setCollation(BaseObject *collation)
@@ -618,6 +631,8 @@ void BaseObject::setCollation(BaseObject *collation)
 
 	setCodeInvalidated(this->collation != collation);
 	this->collation=collation;
+
+	setDependency(collation);
 }
 
 void BaseObject::setAppendedSQL(const QString &sql)
@@ -1204,6 +1219,10 @@ void BaseObject::setCodeInvalidated(bool value)
 		cached_names[RawName].clear();
 		cached_names[FmtName].clear();
 		cached_names[Signature].clear();
+
+		#warning "Define the best place to call the deps update method"
+		//object_deps.clear();
+		//updateDependencies();
 	}
 }
 
@@ -1447,4 +1466,72 @@ QString BaseObject::getAlterCommentDefinition(BaseObject *object, attribs_map at
 	{
 		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 	}
+}
+
+std::vector<BaseObject*> BaseObject::getDependencies()
+{
+	//if(object_deps.empty())
+	//	updateDependencies();
+
+	return object_deps;
+}
+
+std::vector<BaseObject*> BaseObject::getReferences()
+{
+	return object_refs;
+}
+
+void BaseObject::setDependency(BaseObject* dep_obj)
+{
+	if(!dep_obj)
+		return;
+
+	object_deps.push_back(dep_obj);
+	dep_obj->setReference(this);
+}
+
+void BaseObject::setReference(BaseObject *ref_obj)
+{
+	if(!ref_obj)
+		return;
+
+	object_refs.push_back(ref_obj);
+}
+
+void BaseObject::unsetReference(BaseObject *ref_obj)
+{
+	if(!ref_obj)
+		throw Exception(ErrorCode::OprNotAllocatedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+	auto itr = std::find(object_refs.begin(), object_refs.end(), ref_obj);
+
+	if(itr != object_refs.end())
+		object_refs.erase(itr);
+}
+
+void BaseObject::unsetDependency(BaseObject *dep_obj)
+{
+	if(!dep_obj)
+		throw Exception(ErrorCode::OprNotAllocatedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+	auto itr = std::find(object_deps.begin(), object_deps.end(), dep_obj);
+
+	if(itr != object_deps.end())
+		object_deps.erase(itr);
+}
+
+void BaseObject::unsetDependencies()
+{
+	for(auto &obj : object_deps)
+		obj->unsetReference(this);
+
+	object_deps.clear();
+}
+
+void BaseObject::unsetReferences()
+{
+	for(auto &obj : object_refs)
+		obj->unsetDependency(this);
+
+	object_refs.clear();
 }

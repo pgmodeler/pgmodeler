@@ -37,6 +37,8 @@ class __libcore Parameter: public Column {
 		Parameter(const Parameter &param);
 		Parameter(const QString &name, PgSqlType type, bool in = false, bool out = false, bool variadic = false);
 
+		virtual ~Parameter(){}
+
 		void setType(PgSqlType type);
 		void setIn(bool value);
 		void setOut(bool value);

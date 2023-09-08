@@ -35,6 +35,7 @@ class __libcore ForeignTable: public PhysicalTable, public ForeignObject {
 
 	public:
 		ForeignTable();
+
 		virtual ~ForeignTable();
 
 		void setForeignServer(ForeignServer *server);

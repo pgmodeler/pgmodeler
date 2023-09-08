@@ -70,6 +70,8 @@ class __libcore Index: public TableObject{
 
 		Index();
 
+		virtual ~Index(){}
+
 		//! \brief Adds an element to the index using an column
 		void addIndexElement(Column *column, Collation *coll, OperatorClass *op_class, bool use_sorting, bool asc_order, bool nulls_first);
 

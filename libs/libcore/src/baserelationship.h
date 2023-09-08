@@ -178,9 +178,9 @@ class __libcore BaseRelationship: public BaseGraphicObject  {
 
 		QString getRelTypeAttribute();
 
-		virtual void setCodeInvalidated(bool value);
+		virtual void setCodeInvalidated(bool value) override;
 
-		virtual QString getAlterCode(BaseObject *) { return ""; }
+		virtual QString getAlterCode(BaseObject *) override { return ""; }
 
 		static QString getRelationshipTypeName(RelType rel_type, bool is_view = false);
 

@@ -541,6 +541,9 @@ void DatabaseModel::__removeObject(BaseObject *object, int obj_idx, bool check_r
 			}
 		}
 
+		#warning "Clears up the dependencies/references of the object being removed"
+		object->unsetDependencies();
+
 		object->setDatabase(nullptr);
 		emit s_objectRemoved(object);
 	}

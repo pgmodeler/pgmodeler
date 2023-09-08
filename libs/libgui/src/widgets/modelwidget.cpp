@@ -1732,6 +1732,8 @@ void ModelWidget::loadModel(const QString &filename)
 		task_prog_wgt.setWindowTitle(tr("Loading database model"));
 		task_prog_wgt.show();
 
+		quint64 start = QDateTime::currentSecsSinceEpoch();
+
 		db_model->loadModel(filename);
 		this->filename=filename;
 		updateObjectsOpacity();
@@ -1741,6 +1743,10 @@ void ModelWidget::loadModel(const QString &filename)
 		task_prog_wgt.close();
 		protected_model_frm->setVisible(db_model->isProtected());
 		setModified(false);
+
+		quint64 end = QDateTime::currentSecsSinceEpoch();
+		QTextStream out(stdout);
+		out << "Model loaded in " << end - start << "s" << Qt::endl;
 	}
 	catch(Exception &e)
 	{

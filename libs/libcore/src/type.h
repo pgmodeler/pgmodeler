@@ -125,6 +125,8 @@ class __libcore Type: public BaseObject {
 	public:
 		Type();
 
+		virtual ~Type(){}
+
 		//! \brief Sets the type name
 		void setName(const QString &name);
 

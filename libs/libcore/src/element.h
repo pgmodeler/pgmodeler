@@ -69,7 +69,8 @@ class __libcore Element {
 		};
 
 		Element();
-		virtual ~Element(void) {}
+
+		virtual ~Element() {}
 
 		//! \brief Element configuration methods
 		virtual void setColumn(Column *column);

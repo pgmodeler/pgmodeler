@@ -38,6 +38,8 @@ class __libcore ForeignServer: public BaseObject, public ForeignObject {
 	public:
 		ForeignServer();
 
+		virtual ~ForeignServer(){}
+
 		void setType(const QString &type);
 		void setVersion(const QString &version);
 		void setForeignDataWrapper(ForeignDataWrapper *fdw);

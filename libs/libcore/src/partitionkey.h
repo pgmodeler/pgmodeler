@@ -34,6 +34,8 @@ class __libcore PartitionKey: public Element {
 	public:
 		PartitionKey();
 
+		virtual ~PartitionKey(){}
+
 		//! \brief Defines the collation referenced by the element
 		void setCollation(Collation *collation);
 

@@ -84,6 +84,12 @@ void ObjectDepsRefsWidget::updateObjectTables()
 		model->__getObjectReferences(object, objs);
 	
 	GuiUtilsNs::updateObjectsTable(references_view, objs);
+
+	#warning "Testing new dependencies/references mechanism!"
+	GuiUtilsNs::updateObjectsTable(test_deps_view, this->object->getDependencies());
+
+	#warning "Testing new dependencies/references mechanism!"
+	GuiUtilsNs::updateObjectsTable(test_refs_view, this->object->getReferences());
 }
 
 void ObjectDepsRefsWidget::handleItemSelection(const QModelIndex& index)

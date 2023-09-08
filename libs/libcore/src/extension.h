@@ -47,6 +47,8 @@ class __libcore Extension: public BaseObject {
 
 		Extension();
 
+		virtual ~Extension(){}
+
 		void setName(const QString &name);
 		void setSchema(BaseObject *schema);
 
