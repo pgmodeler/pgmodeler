@@ -181,6 +181,7 @@ void Constraint::addColumn(Column *column, ColumnsId cols_id)
 				setColumnsNotNull(true);
 			}
 
+			setDependency(column);
 			setCodeInvalidated(true);
 		}
 	}
@@ -190,10 +191,12 @@ void Constraint::addColumns(const std::vector<Column *> &cols, ColumnsId cols_id
 {
 	try
 	{
-		if(cols_id == ReferencedCols)
+		/* if(cols_id == ReferencedCols)
 			ref_columns.clear();
 		else
-			columns.clear();
+			columns.clear(); */
+
+		removeColumns(cols_id);
 
 		for(auto &col : cols)
 			addColumn(col, cols_id);
@@ -264,9 +267,10 @@ void Constraint::setColumnsAttribute(ColumnsId cols_id, unsigned def_type, bool 
 	attributes[attrib]=str_cols;
 }
 
-void Constraint::setReferencedTable(BaseTable *tab_ref)
+void Constraint::setReferencedTable(BaseTable *ref_tab)
 {
-	this->ref_table=tab_ref;
+	setDependency(ref_tab, this->ref_table);
+	this->ref_table = ref_tab;
 }
 
 void Constraint::setDeferralType(DeferralType deferral_type)
@@ -372,11 +376,21 @@ unsigned Constraint::getColumnCount(ColumnsId cols_id)
 	return columns.size();
 }
 
+void Constraint::removeColumns(ColumnsId cols_id)
+{
+	auto *cols_vect = (cols_id == SourceCols ? &columns : &ref_columns);
+
+	for(auto &col : *cols_vect)
+		unsetDependency(col);
+
+	cols_vect->clear();
+}
+
 void Constraint::removeColumns()
 {
 	setColumnsNotNull(false);
-	columns.clear();
-	ref_columns.clear();
+	removeColumns(SourceCols);
+	removeColumns(ReferencedCols);
 	setCodeInvalidated(true);
 }
 
@@ -407,6 +421,7 @@ void Constraint::removeColumn(const QString &name, ColumnsId cols_id)
 
 			//Remove its iterator from the list
 			cols->erase(itr);
+			unsetDependency(col);
 			setCodeInvalidated(true);
 			break;
 		}
@@ -528,6 +543,7 @@ void Constraint::addExcludeElements(std::vector<ExcludeElement> &elems)
 	{
 		excl_elements.clear();
 
+		#warning "Set dependency to all objects inside exclude elem."
 		for(unsigned i=0; i < elems.size(); i++)
 			addExcludeElement(elems[i]);
 	}
@@ -546,6 +562,7 @@ void Constraint::addExcludeElement(ExcludeElement elem)
 	if(elem.getExpression().isEmpty() && !elem.getColumn())
 		throw Exception(ErrorCode::AsgInvalidExpressionObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
+	#warning "Set dependency to all objects inside exclude elem."
 	excl_elements.push_back(elem);
 	setCodeInvalidated(true);
 }
@@ -571,6 +588,7 @@ void Constraint::addExcludeElement(const QString &expr, Operator *oper, Operator
 		if(getExcludeElementIndex(elem) >= 0)
 			throw Exception(ErrorCode::InsDuplicatedElement,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
+		#warning "Set dependency to all objects inside exclude elem."
 		excl_elements.push_back(elem);
 		setCodeInvalidated(true);
 	}
@@ -604,6 +622,7 @@ void Constraint::addExcludeElement(Column *column, Operator *oper, OperatorClass
 		if(getExcludeElementIndex(elem) >= 0)
 			throw Exception(ErrorCode::InsDuplicatedElement,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
+		#warning "Set dependency to all objects inside exclude elem."
 		excl_elements.push_back(elem);
 		setCodeInvalidated(true);
 	}
@@ -624,6 +643,7 @@ void Constraint::removeExcludeElement(unsigned elem_idx)
 
 void Constraint::removeExcludeElements()
 {
+	#warning "Unset dependency to all objects inside exclude elem."
 	excl_elements.clear();
 	setCodeInvalidated(true);
 }
@@ -633,10 +653,7 @@ void Constraint::setColumnsNotNull(bool value)
 	if(constr_type==ConstraintType::PrimaryKey)
 	{
 		for(auto &col : columns)
-		{
-			//if(!col->isAddedByRelationship())
 			col->setNotNull(value);
-		}
 	}
 }
 
