@@ -592,7 +592,6 @@ void BaseObject::setSchema(BaseObject *schema)
 
 	setCodeInvalidated(this->schema != schema);
 	this->schema=schema;
-
 	setDependency(schema);
 }
 
@@ -605,9 +604,7 @@ void BaseObject::setOwner(BaseObject *owner)
 
 	setCodeInvalidated(this->owner != owner);
 	this->owner=owner;
-
-	if(owner)
-		setDependency(owner);
+	setDependency(owner);
 }
 
 void BaseObject::setTablespace(BaseObject *tablespace)
@@ -619,9 +616,7 @@ void BaseObject::setTablespace(BaseObject *tablespace)
 
 	setCodeInvalidated(this->tablespace != tablespace);
 	this->tablespace=tablespace;
-
-	if(tablespace)
-		setDependency(tablespace);
+	setDependency(tablespace);
 }
 
 void BaseObject::setCollation(BaseObject *collation)
@@ -633,9 +628,7 @@ void BaseObject::setCollation(BaseObject *collation)
 
 	setCodeInvalidated(this->collation != collation);
 	this->collation=collation;
-
-	if(collation)
-		setDependency(collation);
+	setDependency(collation);
 }
 
 void BaseObject::setAppendedSQL(const QString &sql)
@@ -1477,13 +1470,14 @@ std::vector<BaseObject*> BaseObject::getReferences()
 	return object_refs;
 }
 
-void BaseObject::setDependency(BaseObject* dep_obj)
+void BaseObject::setDependency(BaseObject* dep_obj, BaseObject *prev_dep_obj)
 {
-	if(!dep_obj)
-		throw Exception(ErrorCode::OprNotAllocatedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+	// If we are replacing a dependency we first need to undo the previous dependency
+	if(prev_dep_obj)
+		unsetDependency(prev_dep_obj);
 
-	if(obj_name == "table_c")
-		getName();
+	if(!dep_obj)
+		return;
 
 	object_deps.push_back(dep_obj);
 	dep_obj->setReference(this);
@@ -1492,10 +1486,7 @@ void BaseObject::setDependency(BaseObject* dep_obj)
 void BaseObject::setReference(BaseObject *ref_obj)
 {
 	if(!ref_obj)
-		throw Exception(ErrorCode::OprNotAllocatedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-
-	if(obj_name == "table_c")
-		getName();
+		return;
 
 	object_refs.push_back(ref_obj);
 }
@@ -1503,10 +1494,7 @@ void BaseObject::setReference(BaseObject *ref_obj)
 void BaseObject::unsetReference(BaseObject *ref_obj)
 {
 	if(!ref_obj)
-		throw Exception(ErrorCode::OprNotAllocatedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-
-	if(obj_name == "table_c")
-		getName();
+		return;
 
 	auto itr = std::find(object_refs.begin(), object_refs.end(), ref_obj);
 
@@ -1517,10 +1505,7 @@ void BaseObject::unsetReference(BaseObject *ref_obj)
 void BaseObject::unsetDependency(BaseObject *dep_obj)
 {
 	if(!dep_obj)
-		throw Exception(ErrorCode::OprNotAllocatedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-
-	if(obj_name == "table_c")
-		getName();
+		return;
 
 	auto itr = std::find(object_deps.begin(), object_deps.end(), dep_obj);
 

@@ -272,7 +272,7 @@ class __libcore BaseObject {
 
 		QString getAlterCommentDefinition(BaseObject *object, attribs_map attributes);
 
-		virtual void setDependency(BaseObject *dep_obj);
+		virtual void setDependency(BaseObject *dep_obj, BaseObject *prev_dep_obj = nullptr);
 
 		virtual void setReference(BaseObject *ref_obj);
 
