@@ -81,7 +81,7 @@ class __libcore Aggregate: public BaseObject {
 		void setFunction(FunctionId func_id, Function *func);
 
 		//! \brief Defines the state data type of the aggregate
-		void setStateType(PgSqlType state_type);
+		void setStateType(PgSqlType st_type);
 
 		//! \brief Defines the initial condition for the aggregate
 		void setInitialCondition(const QString &cond);
