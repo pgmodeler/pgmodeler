@@ -363,7 +363,6 @@ void RelationshipView::mousePressEvent(QGraphicsSceneMouseEvent *event)
 			unsigned i = 0, count = 0;
 			bool pnt_rem=false;
 			std::vector<QPointF> points = base_rel->getPoints();
-			QLineF::IntersectType inter_type;
 
 			if(!base_rel->isSelfRelationship())
 			{

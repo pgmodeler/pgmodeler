@@ -332,7 +332,7 @@ bool DatabaseImportForm::hasObjectsToImport()
 			++itr;
 		}
 	}
-	else
+	else if(filtered_objs_view->model())
 	{
 		selected = filtered_objs_view->model()->rowCount() > 0;
 	}
