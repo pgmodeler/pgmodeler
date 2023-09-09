@@ -4233,7 +4233,7 @@ PgSqlType DatabaseModel::createPgSQLType()
 	unsigned length=1, dimension=0, type_idx=0;
 	int precision=-1;
 	QString name;
-	void *ptype=nullptr;
+	BaseObject *ptype=nullptr;
 	bool with_timezone;
 	IntervalType interv_type;
 	SpatialType spatial_type;
@@ -9349,7 +9349,7 @@ void DatabaseModel::getUserDefTypesReferences(BaseObject *object, std::vector<Ba
 	Operator *oper=nullptr;
 	Type *type=nullptr;
 	Relationship *rel=nullptr;
-	void *ptr_pgsqltype=nullptr;
+	BaseObject *ptr_pgsqltype=nullptr;
 	ObjectType obj_type = object->getObjectType();
 	bool check_gis_type = false;
 
@@ -10560,14 +10560,17 @@ void DatabaseModel::validateSchemaRenaming(Schema *schema, const QString &prev_s
 
 		/* Special case for tables. Need to make a dynamic_cast before the reinterpret_cast to get
 		the correct reference to table */
-		if(obj->getObjectType() == ObjectType::Table)
+		/*if(obj->getObjectType() == ObjectType::Table)
 			PgSqlType::renameUserType(prev_name, reinterpret_cast<void *>(dynamic_cast<Table *>(obj)), obj_sig);
 		else if(obj->getObjectType() == ObjectType::View)
 			PgSqlType::renameUserType(prev_name, reinterpret_cast<void *>(dynamic_cast<View *>(obj)), obj_sig);
 		else if(obj->getObjectType() == ObjectType::ForeignTable)
 			PgSqlType::renameUserType(prev_name, reinterpret_cast<void *>(dynamic_cast<ForeignTable *>(obj)), obj_sig);
 		else
-			PgSqlType::renameUserType(prev_name, reinterpret_cast<void *>(obj), obj_sig);
+			PgSqlType::renameUserType(prev_name, reinterpret_cast<void *>(obj), obj_sig);*/
+
+		#warning "Debug!"
+		PgSqlType::renameUserType(prev_name, obj, obj_sig);
 
 		getObjectReferences(obj, refs);
 
